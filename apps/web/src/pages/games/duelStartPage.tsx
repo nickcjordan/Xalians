@@ -223,6 +223,7 @@ class DuelStartPage extends React.Component<{}, DuelStartPageState> {
                             <div className="flex items-center justify-between gap-4 border-t border-edge px-6 py-4">
                                 <span className="type-legend">Randomize start positions</span>
                                 <Switch
+                                    aria-label="Randomize start positions"
                                     checked={this.state.randomizeStartingPositions}
                                     onCheckedChange={(checked: boolean) => this.setState({ randomizeStartingPositions: checked })} />
                             </div>
@@ -238,6 +239,7 @@ class DuelStartPage extends React.Component<{}, DuelStartPageState> {
                                 <div className="flex items-center justify-between gap-4 border-t border-edge px-6 py-4">
                                     <span className="type-legend">Debug mode</span>
                                     <Switch
+                                        aria-label="Debug mode"
                                         checked={this.state.debugMode}
                                         onCheckedChange={(checked: boolean) => this.setState({ debugMode: checked })} />
                                 </div>

@@ -158,6 +158,7 @@ class PhysicsGamePage extends React.Component {
 	render() {
 		return (
 			<React.Fragment>
+				<h1 className="sr-only">Physics training</h1>
 				{/* <Container fluid className="content-background-container">
 					<XalianNavbar></XalianNavbar>
                     <GameContainer> */}

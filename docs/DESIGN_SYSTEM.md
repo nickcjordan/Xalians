@@ -86,7 +86,7 @@ The room is a warm near-black and the ink is bone rather than white. Mint on a w
 | `--g-s3` | `#31302b` | Hover on level 2. |
 | `--g-glass` | `#0e100f` | Live data only: a fresh record, a match summary, a live figure. |
 | `--g-edge`, `--g-edge-hi`, `--g-edge-strong`, `--g-glass-edge` | `rgba(217,210,192,.10)`, `rgba(255,244,214,.07)`, `rgba(217,210,192,.22)`, `rgba(217,210,192,.14)` | Hairlines, the one inset top highlight, strong borders, glass edges. |
-| `--g-ink`, `--g-ink-2`, `--g-ink-3`, `--g-ink-4` | `#d9d2c0`, `#9a9382`, `#6c6659`, `#4a4640` | Text, secondary text, labels and kickers, disabled. |
+| `--g-ink`, `--g-ink-2`, `--g-ink-3`, `--g-ink-4` | `#d9d2c0`, `#aaa391`, `#9e9786`, `#4a4640` | Text, secondary text, labels and kickers, disabled. Both secondary tiers clear 4.5:1 on the lightest standard surface. |
 
 ### 3.4 Element hues (revised 2026-09-08)
 

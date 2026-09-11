@@ -279,7 +279,7 @@ class MatchCardGamePage extends React.Component {
 		let imageId = id + '-xalian-image';
 		let xId = id + '-x-image';
 		let card = (
-			<React.Fragment>
+			<React.Fragment key={id}>
 				<div style={{ flex: `0 0 ${100 / rowSize}%`, width: `${100 / rowSize}%`, maxWidth: `${100 / rowSize}%`, position: 'relative', overflow: 'visible', justifyContent: 'center', alignContent: 'center' }}>
 					<div
 						onClick={(event) => {
@@ -319,9 +319,9 @@ class MatchCardGamePage extends React.Component {
 					    the round begins, which is what it was always acting as */}
 					<div className="absolute inset-0 z-[1000] flex flex-col items-center justify-center gap-3 bg-glass/85" id="match-game-curtain">
 						<p className="type-legend m-0">Xalian Match</p>
-						<h2 className="type-title m-0" id="match-game-display-text">
+						<h1 className="type-title m-0" id="match-game-display-text">
 							Ready...
-						</h2>
+						</h1>
 						{this.state.text && <p className="type-data m-0 text-small text-ink-2">{this.state.text}</p>}
 						<Button size="lg" id="match-game-start-button" className="mt-3" onClick={this.startGameTapped}>
 							Start

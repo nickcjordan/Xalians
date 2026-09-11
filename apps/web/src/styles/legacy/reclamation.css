@@ -1856,6 +1856,7 @@
 .rec-mode { flex: 0 0 auto; }
 
 .rec-mode .g-segment {
+	min-height: 44px;
 	padding: 2px var(--g-3);
 	font-size: var(--g-size-micro);
 }

@@ -247,7 +247,7 @@ Coordinate with CSS route loading so both changes agree on route boundaries. Kee
 - Deploy: [frontend run 34624895087](https://github.com/nickcjordan/Xalians/actions/runs/34624895087) passed its production build, S3 sync, and CloudFront invalidation with an empty job-annotation response.
 - Production verification: numeric species and retired tour-beat deep links resolve to their canonical records with query/hash state intact. The phone catch-all renders at exactly 390 px document width in a 390 px viewport, with no console errors or loading residue.
 
-### 6. Redux Toolkit and React runtime — In progress
+### 6. Redux Toolkit and React runtime — Complete
 
 **Scope**
 
@@ -276,7 +276,10 @@ Router modernization and authentication integration coverage, which provide stro
 - Deterministic verification: a new three-case runtime guard pins the dependency boundary, forbids deprecated mount/router/Redux imports, proves `createRoot` plus `StrictMode`, and exercises the real error boundary. Full local verification passes typecheck, 58 frontend files / 1,093 tests, 12 API files / 65 tests, 12 content files / 37 tests, 12 rules files / 311 tests, and a zero-vulnerability production audit.
 - Bundle measurement: the current Router 8 build is 1.9 kB raw / 0.6 kB gzip smaller than the same React 19 build on Router 7. React 19 raises the initial graph from 549.1/175.0 kB to 592.2/185.3 kB raw/gzip; the initial budget is rebaselined to 622/195 kB under the existing approximately-five-percent policy, with every route-specific budget unchanged.
 - Production build and browser verification: all budgets pass; Account and its sign-in dialog, Reclamation, Long Return, Encyclopedia, canonical/retired deep links, and a live Duel board render at desktop and 390 px phone widths without horizontal overflow, loading residue, or console errors.
-- PR, CI, deployment, and production smoke evidence pending.
+- PR: [#240, Modernize the frontend React runtime](https://github.com/nickcjordan/Xalians/pull/240), merged as `f67283e` on 2026-09-11.
+- CI: [CI run 34626311580](https://github.com/nickcjordan/Xalians/actions/runs/34626311580) and [Terraform-plan run 34626311514](https://github.com/nickcjordan/Xalians/actions/runs/34626311514) passed; both test jobs and the Terraform job had empty annotation responses.
+- Deploy: [frontend run 34626434878](https://github.com/nickcjordan/Xalians/actions/runs/34626434878) passed its production build, S3 sync, and CloudFront invalidation with an empty job-annotation response.
+- Production verification: Account and its dialog, Reclamation, Long Return, Xylum's record, Duel setup, and a live Duel board loaded at desktop and 390 px widths without overflow, loading residue, broken images, or console errors.
 
 ### 7. Developer-only styleguide and enforceable bundle budgets — Complete
 
@@ -309,7 +312,7 @@ Can land early, but budget values must be revised after CSS/font/router/runtime 
 - Deploy: [frontend run 34609681141](https://github.com/nickcjordan/Xalians/actions/runs/34609681141) passed its bundle gate, S3 sync, and CloudFront invalidation; its job-annotation response was empty.
 - Production verification: `https://xalians.com/`, `/generator`, `/duel`, and `/styleguide` loaded at 1,440×900 and 390×844 without page/console errors or document-level horizontal overflow. The first three retained their expected paint; `/styleguide` rendered the intentional not-found page.
 
-### 8. Final cross-route regression pass — Planned
+### 8. Final cross-route regression pass — In progress
 
 **Scope**
 
@@ -329,7 +332,11 @@ All preceding workstreams.
 
 **Evidence / links**
 
-Pending.
+- Audit matrix and findings: [`docs/design/frontend-final-regression.md`](frontend-final-regression.md).
+- Seven accessibility/responsive findings are fixed in the current slice: focus paint, dialog restoration, control names, text contrast, narrow Duel reference overflow, touch targets, and training semantics/list identity.
+- Local verification: web typecheck; 58 web files / 1,110 tests; 12 API files / 65 tests; 12 content files / 37 tests; 12 rules files / 311 tests; zero production dependency vulnerabilities; production build; and every bundle budget.
+- Browser verification covers the full route/state matrix at 1,440×900 and 390×844 plus the live Duel board at 768×900. The Duel flow reached a loss result after setup, movement, invalid-range feedback, attack selection, effectiveness overlays, bot turns, and knockouts.
+- PR, CI, deployment, and post-deploy production evidence pending.
 
 ## Decisions
 
@@ -358,6 +365,7 @@ Pending.
 | 2026-09-11 | Completed the type-colour utility deletion and resumed the residual shared-selector audit from deployed `main` at `b3d73d0`. | [PR #232](https://github.com/nickcjordan/Xalians/pull/232); clean CI/deploy annotations, shipped CSS reduction, and live type-badge evidence recorded in workstream 2. |
 | 2026-09-11 | Completed the authentication integration slice and began React Router modernization from deployed `main` at `e2370bd`. | [PR #238](https://github.com/nickcjordan/Xalians/pull/238); authentication evidence is complete in workstream 4. Router implementation, 36 route-contract tests, full local gates, and browser evidence are recorded in workstream 5; PR pending. |
 | 2026-09-11 | Completed the React Router 7 slice and began the React/Redux runtime decision from deployed `main` at `440a3dd`. | [PR #239](https://github.com/nickcjordan/Xalians/pull/239); clean CI/deploy annotations and live redirect/deep-link evidence are complete in workstream 5. React 19, Router 8, dead-store removal, and local compatibility evidence are recorded in workstream 6; PR pending. |
+| 2026-09-11 | Completed the React 19 / Router 8 runtime slice and began the final cross-route regression pass from deployed `main` at `f67283e`. | [PR #240](https://github.com/nickcjordan/Xalians/pull/240); clean CI/deploy annotations and production evidence are complete in workstream 6. The final matrix and seven closed findings are recorded in `frontend-final-regression.md`; release evidence pending. |
 | 2026-09-11 | Completed the retired-navbar CSS deletion and continued the residual selector audit from deployed `main` at `9e3924b`. | [PR #233](https://github.com/nickcjordan/Xalians/pull/233); clean CI/deploy annotations, shipped CSS reduction, and live desktop/mobile navigation evidence recorded in workstream 2. |
 | 2026-09-11 | Completed the unreachable chrome-page CSS deletion and continued the residual selector audit from deployed `main` at `1129875`. | [PR #234](https://github.com/nickcjordan/Xalians/pull/234); clean CI/deploy annotations, shipped CSS reduction, and live cross-route evidence recorded in workstream 2. |
 | 2026-09-11 | Completed the residual shared-selector deletion and folded the final element defaults from deployed `main` at `1b1f7f6`. | [PR #235](https://github.com/nickcjordan/Xalians/pull/235); clean CI/deploy annotations, shipped CSS reduction, and live active-game evidence recorded in workstream 2. |
