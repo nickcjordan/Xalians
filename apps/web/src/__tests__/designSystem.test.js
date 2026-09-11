@@ -115,9 +115,8 @@ const V4_IMPORTS = [
  * their colours onto tokens; they may never grow it.
  */
 const LEGACY_HEX_BASELINE = {
-	// Was 102 before the retired Bootstrap navbar blocks were deleted; the
-	// remaining 40 are the file's exact current count, not migration slack.
-	'style.css': 40,
+	// The residual file contains only element-level immersive defaults.
+	'style.css': 7,
 	'duel.css': 1,
 	'duel-playground.css': 11,
 	'tokens.css': 29,

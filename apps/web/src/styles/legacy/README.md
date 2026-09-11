@@ -7,7 +7,7 @@ Nothing in this directory may be linked from `index.html` or imported by a chrom
 - `longReturnPage.js`
 - `matchCardGamePage.js` and `physicsGamePage.js` (also rendered by the training lobby)
 
-Its import order is `tokens.css`, `system.css`, then `style.css`. The route sheets follow it:
+Its import order is `tokens.css`, `system.css`, then the residual element defaults in `style.css`. Route/component selectors have been removed from `style.css`; the route sheets follow it:
 
 - `duel.css`: imported by the live Duel match and the Duel affordance reference.
 - `duel-playground.css`: imported after `duel.css` by the Duel affordance reference only.

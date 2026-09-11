@@ -79,6 +79,9 @@ describe('legacy CSS ownership boundaries', () => {
 		const sharedCss = read('src/styles/legacy/style.css');
 		const trainingCss = read('src/styles/legacy/training.css');
 		const trainingSelectors = [
+			'.xalian-image-wrapper',
+			'.xalian-image-bordered',
+			'.xalian-image-shadowed',
 			'.match-card-game-wrapper',
 			'.match-game-card-flipped',
 			'.game-container',
@@ -91,6 +94,15 @@ describe('legacy CSS ownership boundaries', () => {
 			expect(sharedCss).not.toContain(selector);
 			expect(trainingCss).toContain(selector);
 		});
+	});
+
+	it('keeps the residual shared stylesheet at element-level defaults only', () => {
+		const css = read('src/styles/legacy/style.css');
+		const stripped = css.replace(/\/\*[\s\S]*?\*\//g, '');
+
+		expect(stripped).not.toMatch(/(^|})\s*[.#][\w-]+/m);
+		expect(css).not.toContain('vertically-center-contents');
+		expect(css).not.toContain('.themed-modal');
 	});
 
 	it('does not leave compatibility styles in the public tree', () => {
