@@ -42,7 +42,7 @@ It is not a machine carrying a repair tool. Feeding keeps its alloy mobile, its 
 
 ## Signature
 
-**The Unbroken Making** uses `secretion / mend / metal` at intensity 40 to 80.
+**Ruin Made Whole** uses `secretion / mend / metal` at intensity 40 to 80.
 
 Plain behavior: the Sinterel fills damage with living alloy, forms it into a support lattice, and holds the target steady until the repair bears weight.
 
@@ -102,11 +102,52 @@ Crystorn is a plated mineral quadruped whose crystal horns focus stored light in
 - **Tremorsense capture:** rejected. Contact drumming is task behavior represented by hearing; Foromeer retains the explicit special sense.
 - **Ageless metal:** rejected. Self-repair explains centuries, not immortality.
 
+## Naming pass
+
+The repository previously had a broad naming convention, not a complete selection system: creature names should sound like their function and tend toward readable portmanteaus or mashups. It did not require the name to come after the design, document its roots, explore different construction modes, or compare sound and spelling against the roster. The [creature naming system](../creature-naming-system.md) now supplies those missing gates.
+
+### Name brief
+
+| Input | Sinterel answer |
+| --- | --- |
+| Defining act | Rejoins a damaged body or structure with worked living alloy |
+| Material or anatomy | Bare metal body, six gripping legs, pincers, tendrils, seam vents |
+| Ecological role | Patient maintainer of Veridium's metal fauna and factoryscape |
+| Temperament | Attentive, persistent, deliberate, helpful without being socially commanding |
+| Sound intent | Softer and more flowing than Foromeer, but still carrying a metallic center |
+
+Root palette: `sinter`, `sentinel`, `seam`, `suture`, `alloy`, `forge`, `join`, `lattice`, `tendril`, and `whole`.
+
+### Candidate set
+
+| Mode | Candidate | Decision |
+| --- | --- | --- |
+| Transparent compound | Seamwright | Clear, but reads as an occupation or tool-user rather than an organism |
+| Transparent compound | Forgeweaver | Evocative, but overstates weaving and sounds more magical than bodily |
+| Fused roots | Sintervine | Keeps the joining process but overpromises plant-like anatomy |
+| Fused roots | Allotril | Alloy plus tendril, but difficult to parse aloud and visually close to a chemical trade name |
+| Transformed root | Sintera | Readable, but its open ending leans toward the existing planet-name register |
+| Transformed root | Sutrel | Compact, but too close to suture alone and loses the metal process |
+| Tonal coinage | Velori | Patient and flowing, but insufficiently connected to the creature |
+| Hybrid | Sinterel | Selected: a compression of `sinter` and `sentinel`, with both roots serving defining facts |
+
+`Sinterel` is pronounced **SIN-ter-el**, three syllables. `Sinter` names the heat-assisted joining process at the center of its body and signature. `Sentinel` contributes the watchful maintainer that detects damage and responds to it. The overlap keeps the derivation abstract: the result is neither a tool name nor a literal registry summary.
+
+The first draft was driven primarily by `sinter` and softened with a creature-like ending. The systematic re-audit strengthens that derivation through the independently relevant `sentinel` root rather than pretending the complete two-root explanation existed before the naming framework did.
+
+In roster sound, it has a softer three-syllable cadence than the hard compounds used by several function-forward species. Its `Sint-` opening and `-erel` ending do not duplicate a current species, and it does not rely on X or Z for alienness. It shares an initial S with Smokat and Scalatto, but neither the full opening sound nor the ending is close in speech.
+
+### Signature-title candidates
+
+The completed act is not merely an unbroken object being made. It takes existing ruin and returns it to function. Candidates considered were `The Metal Remembers`, `The Shape Endures`, `Ruin Cannot Hold`, `The Unbroken Making`, and `Ruin Made Whole`.
+
+`Ruin Made Whole` is the recommendation. Its three beats state a transformation from damage to restoration, fit the signature's broad legal target set, and remain grander than a generated name such as `Metal Weld` or `Repair`. It does not invent mythology or imply that only metal targets can be restored.
+
 ## Review judgments before art
 
 The proposal recommends these decisions as a package:
 
-1. **Name:** `Sinterel`, from the joining process rather than a repair-tool name. It is a working recommendation and has no current repository collision.
+1. **Name:** `Sinterel`, from `sinter` plus `sentinel`, with a sound deliberately softer than Veridium's breaker. It is the post-design recommendation and has no current repository collision.
 2. **Silhouette:** low hexapod with separate front pincers and two fine tendrils. This is the minimum anatomy that makes stable bracing and precise seam work simultaneously visible.
 3. **Healing scope:** retain universal mechanical targeting and let living alloy act as replacement, graft, brace, or recovery scaffold according to the target.
 4. **Enduring lifespan:** accept centuries as a direct consequence of ongoing material replacement, without escalating to `ageless`.
@@ -122,4 +163,4 @@ If these judgments hold, the next gate is concept art followed by an art-to-reco
 - Channel source: pass; the secretion is established in the description, appearance, feeding, behavior, and signature.
 - Signature instrument/action relationship: pass; `secretion` directly permits `mend` without an exception.
 - Ability-catalog reachability: 81 reachable instrument/action/medium cells, zero thin cells, and 3,962 distinct valid generated names against the 30-name floor.
-- Repository collisions: none for `Sinterel` or `The Unbroken Making` in current species and ability data.
+- Repository collisions: none for `Sinterel` or `Ruin Made Whole` in current species and ability data.
