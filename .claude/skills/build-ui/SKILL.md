@@ -14,7 +14,7 @@ Answer before writing markup: **does this screen read, browse, configure or mana
 
 - Reads, browses, configures, manages: **site chrome**. Navigation, home, account, encyclopedia, generator, every lobby, setup, results and reference screen.
 - A rich piece inside a chrome page that gives the area character (a map, a plate, a reader, a chart, a splash): **featured component**. Built from the same tokens; it may not change the page around it.
-- A game in progress: **immersive experience**. It may replace the chrome, keeps the core, always has a way out, and needs a short brief approved by Nick before it is built. Do not start an immersive experience from this skill alone. Until a game gets its brief it keeps its legacy stylesheet under `public/assets/css/legacy/` and you do not restyle it.
+- A game in progress: **immersive experience**. It may replace the chrome, keeps the core, and always has a way out. **The whole tier is parked (Nick, 2026-09-11):** the games are still being built as games, so none of them is being restyled and no brief is being written. Reclamation, the duel board and reference, Long Return and the training games keep their legacy stylesheets under `public/assets/css/legacy/` and you do not restyle them, do not delete a stylesheet they read, and do not report their version 3 look as a bug. Design effort goes to chrome and featured components. This restarts on Nick's word.
 
 Write the answer as the first comment in the file and set it on the root:
 
