@@ -1,6 +1,6 @@
 {
-  "version": "1.1.0",
-  "note": "Species whose templates Nick has ratified (all 29 as of 2026-09-03, PR #73). Only these are bundled into packages/content/json/speciesRecords.json by scripts/bundleLore.js; *-run.* files and unratified drafts never ship. A new species is added here only after ratification. Frackworm (00030) ratified 2026-09-09 as the thirtieth species.",
+  "version": "1.2.0",
+  "note": "Species whose templates Nick has ratified (all 29 as of 2026-09-03, PR #73). Only these are bundled into packages/content/json/speciesRecords.json by scripts/bundleLore.js; *-run.* files and unratified drafts never ship. A new species is added here only after ratification. Frackworm (00030) was ratified 2026-09-09 as the thirtieth species; Sonalloy (00031) was ratified 2026-09-11 as the thirty-first.",
   "species": [
     "akinza",
     "avilily",
@@ -24,6 +24,7 @@
     "newtapede",
     "scalatto",
     "smokat",
+    "sonalloy",
     "terragoyle",
     "vespersyn",
     "thirstaserp",

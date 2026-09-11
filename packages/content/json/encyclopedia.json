@@ -978,6 +978,21 @@
       ]
     },
     {
+      "key": "sonalloy",
+      "title": "Sonalloy",
+      "category": "xalians",
+      "definition": "The Sonalloy is a low six-legged Xalian of living metal generated on Veridium to maintain metal-shaping fauna and factory systems. It locates fractures by drumming, braces the broken creature or structure with broad pincers, extrudes warm living alloy between two fine tendrils, and works the material into the fracture until the join bears weight.",
+      "pronunciation": {
+        "respelling": "son-AL-loy",
+        "ipa": "sɒnˈælɔɪ"
+      },
+      "related": [
+        "foromeer",
+        "veridium",
+        "xalians"
+      ]
+    },
+    {
       "key": "source-code-606",
       "title": "Source Code 606",
       "category": "technology",
