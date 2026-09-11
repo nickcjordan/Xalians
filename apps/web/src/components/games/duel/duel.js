@@ -12,7 +12,7 @@ import { PluginPlayer } from 'boardgame.io/plugins';
 import { v4 as uuidv4 } from 'uuid'; 
 import gsap from 'gsap';
 import Flip from 'gsap/Flip';
-import { Hub } from "aws-amplify";
+import { Hub } from '@aws-amplify/core';
 gsap.registerPlugin(Flip);
 
 // define a function to initialize each player’s state

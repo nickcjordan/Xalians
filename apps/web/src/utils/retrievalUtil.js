@@ -1,4 +1,4 @@
-import { Auth } from 'aws-amplify';
+import { Auth } from '@aws-amplify/auth';
 import * as authUtil from './authUtil';
 import * as dbApi from '../utils/dbApi';
 import mockUserData from '@xalians/content/mock/mockUserData.json';

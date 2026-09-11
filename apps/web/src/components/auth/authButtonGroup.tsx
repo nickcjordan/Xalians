@@ -3,19 +3,20 @@
 // accent-filled forward action (docs/DESIGN_SYSTEM.md section 3.1).
 import * as React from 'react';
 import { Link } from 'react-router-dom';
-import { Auth, Hub } from 'aws-amplify';
+import { Hub } from '@aws-amplify/core';
+import { Auth } from '@aws-amplify/auth';
 import { store } from 'state-pool';
 
-import SignUpModal from './signUpModal';
-import VerifyEmailModal from './verifyEmailModal';
-import SignInModal from './signInModal';
 import * as authUtil from '../../utils/authUtil';
-import * as dbApi from '../../utils/dbApi';
 
 import { Button } from '@/components/ui/button';
 import {
 	DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem,
 } from '@/components/ui/dropdown-menu';
+
+const SignUpModal = React.lazy(() => import('./signUpModal'));
+const VerifyEmailModal = React.lazy(() => import('./verifyEmailModal'));
+const SignInModal = React.lazy(() => import('./signInModal'));
 
 type AuthState = { username: string; hasVerifiedEmail: boolean } | null;
 
@@ -88,9 +89,8 @@ function AuthButtonGroup({ authAlertCallback, size = "default" }: AuthButtonGrou
 		setVerifyEmailModalShow(false);
 		authUtil
 			.signIn(username as string, password as string)
-			.then(() => {
-				dbApi.callCreateUser({ userId: username, xalianIds: [] });
-			})
+			.then(() => import('../../utils/dbApi'))
+			.then(({ callCreateUser }) => callCreateUser({ userId: username, xalianIds: [] }))
 			.catch(() => {
 				setSignInModalShow(true);
 			});
@@ -125,31 +125,39 @@ function AuthButtonGroup({ authAlertCallback, size = "default" }: AuthButtonGrou
 				</React.Fragment>
 			)}
 
-			<SignUpModal
-				show={signupModalShow}
-				callback={signUpCallback}
-				onHide={() => setSignupModalShow(false)}
-			/>
+			<React.Suspense fallback={null}>
+				{signupModalShow && (
+					<SignUpModal
+						show
+						callback={signUpCallback}
+						onHide={() => setSignupModalShow(false)}
+					/>
+				)}
 
-			<VerifyEmailModal
-				show={verifyEmailModalShow}
-				callback={emailVerifiedCallback}
-				onHide={() => setVerifyEmailModalShow(false)}
-				username={username}
-				email={email}
-			/>
+				{verifyEmailModalShow && (
+					<VerifyEmailModal
+						show
+						callback={emailVerifiedCallback}
+						onHide={() => setVerifyEmailModalShow(false)}
+						username={username}
+						email={email}
+					/>
+				)}
 
-			<SignInModal
-				show={signInModalShow}
-				callback={() => {}}
-				onHide={() => setSignInModalShow(false)}
-				mustVerifyEmailCallback={(u) => {
-					setUsername(u || username);
-					setVerifyEmailModalShow(true);
-				}}
-				username={username}
-				password={password}
-			/>
+				{signInModalShow && (
+					<SignInModal
+						show
+						callback={() => {}}
+						onHide={() => setSignInModalShow(false)}
+						mustVerifyEmailCallback={(u) => {
+							setUsername(u || username);
+							setVerifyEmailModalShow(true);
+						}}
+						username={username}
+						password={password}
+					/>
+				)}
+			</React.Suspense>
 		</React.Fragment>
 	);
 }

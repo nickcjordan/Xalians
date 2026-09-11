@@ -3,7 +3,7 @@
 // sonner toasts. Renders nothing itself — the toast is drawn by <Toaster />
 // in App.js. Mounted once, from the navbar, so it exists on every page.
 import * as React from 'react';
-import { Hub } from 'aws-amplify';
+import { Hub } from '@aws-amplify/core';
 import { toast } from 'sonner';
 
 const VARIANT_TO_TOAST: Record<string, (message: string) => void> = {

@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Hub } from 'aws-amplify';
+import { Hub } from '@aws-amplify/core';
 import { toast } from 'sonner';
 
 import * as authUtil from '../../utils/authUtil';

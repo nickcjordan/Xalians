@@ -17,8 +17,10 @@ vi.mock('../../components/auth/signInModal', () => ({ default: () => null }));
 vi.mock('../../components/auth/verifyEmailModal', () => ({ default: () => null }));
 
 const currentUserInfo = vi.fn();
-vi.mock('aws-amplify', () => ({
+vi.mock('@aws-amplify/auth', () => ({
 	Auth: { currentUserInfo: (...args) => currentUserInfo(...args) },
+}));
+vi.mock('@aws-amplify/core', () => ({
 	Hub: { listen: vi.fn(), remove: vi.fn() },
 }));
 

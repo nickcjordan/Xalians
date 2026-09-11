@@ -2,7 +2,8 @@
 // so it keeps its own data-tier="chrome" and uses only v4 primitives.
 import * as React from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
-import { Hub, Auth } from 'aws-amplify';
+import { Hub } from '@aws-amplify/core';
+import { Auth } from '@aws-amplify/auth';
 import { Menu } from 'lucide-react';
 
 import AuthButtonGroup from './auth/authButtonGroup';

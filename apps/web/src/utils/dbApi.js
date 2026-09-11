@@ -1,5 +1,5 @@
 import axios from "axios";
-import { Auth } from "aws-amplify";
+import { Auth } from '@aws-amplify/auth';
 import { UserRecordSchema, PublicProfileSchema, XalianRecordSchema } from "@xalians/content/schema";
 import { generateXalian, getSpeciesTemplates } from "@xalians/rules/generator";
 
