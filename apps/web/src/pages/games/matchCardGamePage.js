@@ -1,11 +1,12 @@
 // Terminal: field. Training games are diagnostic programs on the salvaged ECHELON survey unit.
 import React from 'react';
 import '../../styles/legacy/immersive.css';
+import '../../styles/legacy/training.css';
 
 import XalianImage from '../../components/xalianImage';
 import MatchGameFlippedCard from '../../components/games/elements/matchGameFlippedCard';
 import species from '@xalians/content/species.json';
-import { gsap, Linear } from 'gsap';
+import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { MotionPathPlugin } from 'gsap/MotionPathPlugin';
 import { TextPlugin } from 'gsap/TextPlugin';

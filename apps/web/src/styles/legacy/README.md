@@ -12,5 +12,6 @@ Its import order is `tokens.css`, `system.css`, `style.css`, then `typeColors.cs
 - `duel.css`: imported by the live Duel match and the Duel affordance reference.
 - `duel-playground.css`: imported after `duel.css` by the Duel affordance reference only.
 - `reclamation.css`: imported by Reclamation only.
+- `training.css`: imported after `immersive.css` by Xalian Match and Physics only; the Training Grounds lobby receives it through those embedded game modules.
 
 They remain legacy because their immersive redesigns have not been commissioned. Do not add unrelated page rules here. When a route is modernized, move reusable primitives into the shared design system, keep genuinely route-specific styling with the route, and tighten `bundle-budgets.json` from measured output.
