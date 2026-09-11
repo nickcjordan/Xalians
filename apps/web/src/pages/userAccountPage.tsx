@@ -37,7 +37,7 @@ function UserAccountPage() {
 	const [loggedInUser, setLoggedInUser] = React.useState<AuthUser>(null);
 	const [records, setRecords] = React.useState<XalianRecord[]>([]);
 	const [cursor, setCursor] = React.useState<string | undefined>();
-	const [isLoading, setIsLoading] = React.useState(false);
+	const [isLoading, setIsLoading] = React.useState(true);
 	const [isLoadingMore, setIsLoadingMore] = React.useState(false);
 	const [signedOut, setSignedOut] = React.useState(false);
 	const [message, setMessage] = React.useState<string | null>(null);
@@ -94,12 +94,20 @@ function UserAccountPage() {
 					loadFirstPage();
 				} else {
 					setIsLoading(false);
+					setLoggedInUser(null);
+					setRecords([]);
+					setCursor(undefined);
+					setMessage(null);
 					setSignedOut(true);
 				}
 			})
 			.catch(() => {
 				setIsLoading(false);
-				setSignedOut(true);
+				setLoggedInUser(null);
+				setRecords([]);
+				setCursor(undefined);
+				setSignedOut(false);
+				setMessage('Could not check your sign-in status. Please try again later.');
 			});
 	}, [loadFirstPage]);
 
@@ -113,6 +121,8 @@ function UserAccountPage() {
 			if (data.payload.event === 'signedOut') {
 				setLoggedInUser(null);
 				setRecords([]);
+				setCursor(undefined);
+				setMessage(null);
 				setSignedOut(true);
 			}
 		};
@@ -200,7 +210,7 @@ function UserAccountPage() {
 					</EmptyState>
 				)}
 
-				{!isLoading && !signedOut && records.length > 0 && (
+				{!isLoading && !signedOut && !message && records.length > 0 && (
 					<React.Fragment>
 						<div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
 							{records.map((record) => (

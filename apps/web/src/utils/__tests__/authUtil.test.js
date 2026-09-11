@@ -45,6 +45,34 @@ describe('Amplify 6 auth boundary', () => {
 		await expect(authUtil.currentUser()).resolves.toBeNull();
 	});
 
+	it('normalizes Cognito NotAuthorized as an absent or expired session', async () => {
+		amplifyAuth.getCurrentUser.mockRejectedValue(Object.assign(new Error('session expired'), {
+			name: 'NotAuthorizedException',
+		}));
+
+		await expect(authUtil.currentUser()).resolves.toBeNull();
+	});
+
+	it('does not hide service failures as a signed-out session', async () => {
+		amplifyAuth.getCurrentUser.mockRejectedValue(Object.assign(new Error('service unavailable'), {
+			name: 'ServiceUnavailableException',
+		}));
+
+		await expect(authUtil.currentUser()).rejects.toMatchObject({
+			name: 'ServiceUnavailableException',
+			message: 'service unavailable',
+		});
+	});
+
+	it('retains an unverified email as an explicit auth state', async () => {
+		amplifyAuth.getCurrentUser.mockResolvedValue({ username: 'nick', userId: 'subject-1' });
+		amplifyAuth.fetchUserAttributes.mockResolvedValue({ email: 'nick@example.com', email_verified: 'false' });
+
+		const user = await authUtil.currentUser();
+
+		expect(authUtil.buildAuthState(user)).toMatchObject({ hasVerifiedEmail: false });
+	});
+
 	it('uses the Amplify 6 named input shapes', async () => {
 		await authUtil.signUp('nick@example.com', 'nick-user', 'password');
 		await authUtil.confirmSignUp('nick-user', '123456');
@@ -65,5 +93,11 @@ describe('Amplify 6 auth boundary', () => {
 		amplifyAuth.fetchAuthSession.mockResolvedValue({ tokens: { idToken: { toString: () => 'jwt-token' } } });
 
 		await expect(authUtil.getIdToken()).resolves.toBe('jwt-token');
+	});
+
+	it('rejects an absent ID token before a protected request can be sent', async () => {
+		amplifyAuth.fetchAuthSession.mockResolvedValue({ tokens: {} });
+
+		await expect(authUtil.getIdToken()).rejects.toThrow('The signed-in session did not include an ID token.');
 	});
 });

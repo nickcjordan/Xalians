@@ -35,11 +35,16 @@ function AuthButtonGroup({ authAlertCallback, size = "default" }: AuthButtonGrou
 
 	const handleSignInEvent = React.useCallback(
 		async () => {
-			const data = await authUtil.currentUser();
-			if (!data) return;
-			const authState = authUtil.buildAuthState(data);
-			setLoggedInUser(authState);
-			authAlertCallback(authState);
+			try {
+				const data = await authUtil.currentUser();
+				if (!data) return;
+				const authState = authUtil.buildAuthState(data);
+				setLoggedInUser(authState);
+				authAlertCallback(authState);
+			} catch {
+				// A Hub event can race a failed attribute refresh. Leave the last
+				// known state in place; the owning page handles service feedback.
+			}
 		},
 		[authAlertCallback]
 	);
@@ -50,11 +55,16 @@ function AuthButtonGroup({ authAlertCallback, size = "default" }: AuthButtonGrou
 	}, [authAlertCallback]);
 
 	React.useEffect(() => {
-		authUtil.currentUser().then((data: any) => {
-			if (data && data.attributes) {
-				setLoggedInUser(authUtil.buildAuthState(data));
-			}
-		});
+		authUtil.currentUser()
+			.then((data: any) => {
+				if (data && data.attributes) {
+					setLoggedInUser(authUtil.buildAuthState(data));
+				}
+			})
+			.catch(() => {
+				// The controls remain usable as signed-out controls. Pages that need
+				// to distinguish signed-out from unavailable resolve auth themselves.
+			});
 
 		const authListener = (data: any) => {
 			switch (data.payload.event) {
