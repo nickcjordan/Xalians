@@ -286,7 +286,7 @@ class MatchCardGamePage extends React.Component {
 						style={{ padding: '0px', position: 'relative', overflow: 'visible', margin: 'auto' }}
 						id={id}
 					>
-						<XalianImage id={imageId} moreClasses="match-game-card-flipped" speciesName={x.name} primaryType={x.type} colored bordered />
+						<XalianImage id={imageId} variant="token" moreClasses="match-game-card-flipped" speciesName={x.name} primaryType={x.type} colored bordered />
 						<MatchGameFlippedCard delay={rand} id={xId} moreClasses="match-game-card-flipped" visibility="visible" />
 						<div className={'xalian-image-wrapper '}></div>
 					</div>

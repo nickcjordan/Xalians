@@ -1,93 +1,81 @@
-import React from 'react';
+import React, { Suspense, lazy } from 'react';
 
-import { ReactComponent as XylumSVG } from './xylum.svg';
-import { ReactComponent as DromeusSVG } from './dromeus.svg';
-import { ReactComponent as VespersynSVG } from './vespersyn.svg';
-import { ReactComponent as BioflimSVG } from './bioflim.svg';
-import { ReactComponent as SmokatSVG } from './smokat.svg';
-import { ReactComponent as NewtapedeSVG } from './newtapede.svg';
-import { ReactComponent as VoltishSVG } from './voltish.svg';
-import { ReactComponent as TizzieSVG } from './tizzie.svg';
-import { ReactComponent as CrystornSVG } from './crystorn.svg';
-import { ReactComponent as LucerasSVG } from './luceras.svg';
-import { ReactComponent as CodazzoSVG } from './codazzo.svg';
-import { ReactComponent as FigzySVG } from './figzy.svg';
-import { ReactComponent as ForomeerSVG } from './foromeer.svg';
-import { ReactComponent as VenemistSVG } from './venemist.svg';
-import { ReactComponent as KosanosSVG } from './kosanos.svg';
-import { ReactComponent as ImpritSVG } from './imprit.svg';
-import { ReactComponent as ScalattoSVG } from './scalatto.svg';
-import { ReactComponent as AkinzaSVG } from './akinza.svg';
-import { ReactComponent as AvililySVG } from './avilily.svg';
-import { ReactComponent as ThirstaserpSVG } from './thirstaserp.svg';
-import { ReactComponent as GraviclawSVG } from './graviclaw.svg';
-import { ReactComponent as YetimothSVG } from './yetimoth.svg';
-import { ReactComponent as ChromocatSVG } from './chromocat.svg';
-import { ReactComponent as EctoghoulSVG } from './ectoghoul.svg';
-import { ReactComponent as HippochampSVG } from './hippochamp.svg';
-import { ReactComponent as NephSVG } from './neph.svg';
-import { ReactComponent as TerragoyleSVG } from './terragoyle.svg';
-import { ReactComponent as HypnopetSVG } from './hypnopet.svg';
-import { ReactComponent as DrilltailSVG } from './drilltail.svg';
-import { ReactComponent as FrackwormSVG } from './frackworm.svg';
+/**
+ * Species art has two deliberately different jobs:
+ *
+ * - portrait: the authored, high-detail illustration for records and lore
+ * - token: a simplified 64-unit silhouette for game pieces and compact UI
+ *
+ * Token art is eager because game boards need it on their first frame. Portrait
+ * art is split by species so opening one record no longer downloads the whole
+ * fleet. Adding a same-named SVG to both directories is the complete artwork
+ * registration step for a new species.
+ */
+const tokenModules = import.meta.glob('./token/*.svg', {
+	eager: true,
+	import: 'ReactComponent',
+});
 
+const portraitLoaders = import.meta.glob('./*.svg');
+const portraitComponents = new Map();
+const warnedMissingSpecies = new Set();
 
-
-
-class XalianSVG extends React.Component {
-
-    // render() {
-    //         const elem = require(`./${this.props.name}.svg`).default;
-    //     return (<React.Fragment>
-    //         {elem &&
-    //             <SVG src={elem} onError={(error) => console.log(error.message)} style={this.props.style} className={this.props.className}/>
-    //         }
-    //     </React.Fragment>
-    //     );
-    // }
-
-    render() {
-        let speciesName = this.props.name;
-        if (speciesName == 'xylum') { return <XylumSVG style={this.props.style} className={this.props.className} /> }
-        if (speciesName == 'dromeus') { return <DromeusSVG style={this.props.style} className={this.props.className} /> }
-        if (speciesName == 'vespersyn') { return <VespersynSVG style={this.props.style} className={this.props.className} /> }
-        if (speciesName == 'bioflim') { return <BioflimSVG style={this.props.style} className={this.props.className} /> }
-        if (speciesName == 'smokat') { return <SmokatSVG style={this.props.style} className={this.props.className} /> }
-        if (speciesName == 'newtapede') { return <NewtapedeSVG style={this.props.style} className={this.props.className} /> }
-        if (speciesName == 'voltish') { return <VoltishSVG style={this.props.style} className={this.props.className} /> }
-        if (speciesName == 'tizzie') { return <TizzieSVG style={this.props.style} className={this.props.className} /> }
-        if (speciesName == 'crystorn') { return <CrystornSVG style={this.props.style} className={this.props.className} /> }
-        if (speciesName == 'luceras') { return <LucerasSVG style={this.props.style} className={this.props.className} /> }
-        if (speciesName == 'codazzo') { return <CodazzoSVG style={this.props.style} className={this.props.className} /> }
-        if (speciesName == 'figzy') { return <FigzySVG style={this.props.style} className={this.props.className} /> }
-        if (speciesName == 'foromeer') { return <ForomeerSVG style={this.props.style} className={this.props.className} /> }
-        if (speciesName == 'venemist') { return <VenemistSVG style={this.props.style} className={this.props.className} /> }
-        if (speciesName == 'kosanos') { return <KosanosSVG style={this.props.style} className={this.props.className} /> }
-        if (speciesName == 'imprit') { return <ImpritSVG style={this.props.style} className={this.props.className} /> }
-        if (speciesName == 'scalatto') { return <ScalattoSVG style={this.props.style} className={this.props.className} /> }
-        if (speciesName == 'akinza') { return <AkinzaSVG style={this.props.style} className={this.props.className} /> }
-        if (speciesName == 'avilily') { return <AvililySVG style={this.props.style} className={this.props.className} /> }
-        if (speciesName == 'thirstaserp') { return <ThirstaserpSVG style={this.props.style} className={this.props.className} /> }
-        if (speciesName == 'graviclaw') { return <GraviclawSVG style={this.props.style} className={this.props.className} /> }
-        if (speciesName == 'yetimoth') { return <YetimothSVG style={this.props.style} className={this.props.className} /> }
-        if (speciesName == 'chromocat') { return <ChromocatSVG style={this.props.style} className={this.props.className} /> }
-        if (speciesName == 'ectoghoul') { return <EctoghoulSVG style={this.props.style} className={this.props.className} /> }
-        if (speciesName == 'hippochamp') { return <HippochampSVG style={this.props.style} className={this.props.className} /> }
-        if (speciesName == 'neph') { return <NephSVG style={this.props.style} className={this.props.className} /> }
-        if (speciesName == 'terragoyle') { return <TerragoyleSVG style={this.props.style} className={this.props.className} /> }
-        if (speciesName == 'hypnopet') { return <HypnopetSVG style={this.props.style} className={this.props.className} /> }
-        if (speciesName == 'drilltail') { return <DrilltailSVG style={this.props.style} className={this.props.className} /> }
-        if (speciesName == 'frackworm') { return <FrackwormSVG style={this.props.style} className={this.props.className} /> }
-        else {
-            // Every canon species has a static import above. A name that is
-            // not one of them has no art; render nothing rather than reach
-            // for a bundler-time require that Vite cannot resolve.
-            console.warn(`No SVG found for species "${this.props.name}"`);
-            return null;
-        }
-    }
+function speciesNameFromPath(path) {
+	return path.split('/').pop().replace('.svg', '');
 }
 
+export const tokenArtBySpecies = Object.freeze(Object.fromEntries(
+	Object.entries(tokenModules).map(([path, Component]) => [speciesNameFromPath(path), Component]),
+));
 
+export const portraitLoaderBySpecies = Object.freeze(Object.fromEntries(
+	Object.entries(portraitLoaders).map(([path, loader]) => [speciesNameFromPath(path), loader]),
+));
 
-export default XalianSVG;
+export const speciesArtNames = Object.freeze(Object.keys(tokenArtBySpecies).sort());
+
+function getPortraitComponent(speciesName) {
+	if (portraitComponents.has(speciesName)) return portraitComponents.get(speciesName);
+
+	const loader = portraitLoaderBySpecies[speciesName];
+	if (!loader) return null;
+
+	const Component = lazy(() => loader().then((module) => ({ default: module.ReactComponent })));
+	portraitComponents.set(speciesName, Component);
+	return Component;
+}
+
+function MissingSpeciesArt(props) {
+	return (
+		<svg viewBox="0 0 64 64" aria-hidden="true" focusable="false" {...props}>
+			<path d="M32 5a27 27 0 1 0 0 54 27 27 0 0 0 0-54Zm0 42.5a3.5 3.5 0 1 1 0 7 3.5 3.5 0 0 1 0-7Zm4.8-9.8c-1.8 1.3-2.3 2.1-2.3 4.8h-6c0-5.7 1.9-7.7 4.9-9.9 2.5-1.8 4.1-3.1 4.1-6.2 0-3.3-2-5.4-5.4-5.4-3.5 0-5.8 2.3-6 6.2h-6c.3-7.4 5-12.1 12-12.1 7.1 0 11.4 4.3 11.4 11.1 0 6.2-3.5 8.8-6.7 11.5Z" />
+		</svg>
+	);
+}
+
+function warnForMissingArt(speciesName) {
+	if (warnedMissingSpecies.has(speciesName)) return;
+	warnedMissingSpecies.add(speciesName);
+	console.warn(`No complete species art set found for "${speciesName}".`);
+}
+
+export default function XalianSVG({ name, variant = 'portrait', ...props }) {
+	const speciesName = String(name || '').trim().toLowerCase();
+	const Token = tokenArtBySpecies[speciesName];
+
+	if (!Token || !portraitLoaderBySpecies[speciesName]) {
+		warnForMissingArt(speciesName || '(empty name)');
+		return <MissingSpeciesArt {...props} />;
+	}
+
+	if (variant === 'token') {
+		return <Token aria-hidden="true" focusable="false" {...props} id={undefined} />;
+	}
+
+	const Portrait = getPortraitComponent(speciesName);
+	return (
+		<Suspense fallback={<Token aria-hidden="true" focusable="false" {...props} id={undefined} />}>
+			<Portrait aria-hidden="true" focusable="false" {...props} id={undefined} />
+		</Suspense>
+	);
+}

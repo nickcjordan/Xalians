@@ -75,10 +75,10 @@ export default function ScoutTransition({ action, onComplete, soundEnabled = tru
     <div className="lr-scout-stage" aria-hidden="true">
       <div className="lr-scout-origin"><BiIcon cls="bi bi-people-fill" /></div>
       <div className="lr-scout-trail"><i /><i /><i /><i /></div>
-      <div className="lr-scout-performer"><XalianImage speciesName={action.scout.species} primaryType={action.scout.element.primary} fill="#070907" stroke="#cbf7dc" strokeWidth="1.2" unPadded /></div>
+      <div className="lr-scout-performer"><XalianImage variant="token" speciesName={action.scout.species} primaryType={action.scout.element.primary} fill="#070907" stroke="#cbf7dc" strokeWidth="1.2" unPadded /></div>
       {(beat.kind === 'observe' || beat.kind === 'signal' || beat.kind === 'silence') && <div className={`lr-scout-effect is-${beat.kind}`}><BiIcon cls={`bi ${beat.icon}`} /></div>}
       {(beat.kind === 'depart' || beat.kind === 'observe') && <div className={`lr-scout-role-effect is-${performance.id}`}><BiIcon cls={`bi ${performance.icon}`} /></div>}
-      {action.encounter && index >= nativeAt && <div className="lr-scout-native"><XalianImage speciesName={action.encounter.species} primaryType={action.encounter.element.primary} fill="#050705" stroke="#f2d25e" strokeWidth="1.3" unPadded /></div>}
+      {action.encounter && index >= nativeAt && <div className="lr-scout-native"><XalianImage variant="token" speciesName={action.encounter.species} primaryType={action.encounter.element.primary} fill="#050705" stroke="#f2d25e" strokeWidth="1.3" unPadded /></div>}
     </div>
     <div className="lr-scout-hud">
       <strong>{action.scout.species}</strong>
