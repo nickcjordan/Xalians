@@ -18,7 +18,6 @@ import * as designTokens from '../constants/designTokens';
 // literal text "var(--g-phosphor)".
 
 const SYSTEM_PATH = path.join(__dirname, '..', 'styles', 'legacy', 'system.css');
-const TYPE_COLORS_PATH = path.join(__dirname, '..', 'styles', 'legacy', 'typeColors.css');
 
 /** Parses :root and every [data-terminal="x"] block into { root: {...}, x: {...} }. */
 const readBlocks = (css) => {
@@ -56,9 +55,9 @@ const resolveToken = (name, blockMap, rootMap, seen) => {
 const blocks = readBlocks(fs.readFileSync(SYSTEM_PATH, 'utf8'));
 const rootBlock = blocks.root || {};
 
-// Flat map used by the structural checks below (element colours, TYPE_COLORS
-// hex ban); every value here is a raw :root declaration, none of which are
-// var() references, so no resolution is needed for these specific checks.
+// Flat map used by the structural element-colour checks below. Every value
+// here is a raw :root declaration, none of which are var() references, so no
+// resolution is needed for these specific checks.
 const tokens = rootBlock;
 
 const resolvedRoot = (name) => resolveToken(name, rootBlock, rootBlock);
@@ -263,9 +262,4 @@ describe('design tokens', () => {
 		});
 	});
 
-	it('leaves no raw hex colours in the element colour utilities', () => {
-		const css = fs.readFileSync(TYPE_COLORS_PATH, 'utf8');
-		const strippedComments = css.replace(/\/\*[\s\S]*?\*\//g, '');
-		expect(strippedComments.match(/#[0-9a-fA-F]{3,8}\b/g)).toBeNull();
-	});
 });

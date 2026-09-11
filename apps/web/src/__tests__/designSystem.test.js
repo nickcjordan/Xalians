@@ -123,7 +123,6 @@ const LEGACY_HEX_BASELINE = {
 	'duel-playground.css': 11,
 	'tokens.css': 29,
 	'reclamation.css': 0,
-	'typeColors.css': 0,
 };
 
 const countHex = (css) => {

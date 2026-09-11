@@ -814,13 +814,6 @@
 .g-page .g-record-term,
 .g-page .g-legend { font-family: var(--g-font-legend); color: var(--g-text-2); }
 
-
-/* Art mounts on chrome pages (Nick, 2026-09-09): one flat square in the
-   element hue with the black silhouette on it. The legacy .<element>-color
-   wrapper (typeColors.css) and the component's inline gradient carry no
-   color of their own, so there is never a second square inside the mount. */
-.g-page .xalian-image-wrapper[class*='-color'] { background: transparent !important; }
-
 /* The square keeps the old plate's soft vignette (the hue at the center,
    falling to a darker rim) and the silhouette fills it edge to edge, with
    just enough margin that limbs do not touch the frame. */
