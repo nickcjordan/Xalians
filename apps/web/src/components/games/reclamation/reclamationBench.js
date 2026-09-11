@@ -92,7 +92,7 @@ function Plinth({ record, view, you, armed, suggested, disabled, onArm, onInspec
 			>
 				<span className="rec-plinth-stage" aria-hidden="true">
 					<span className="rec-plinth-base" />
-					<XalianImage speciesName={record.species} primaryType={el} padding="0px" fill="black" filter={pieceShadowFilter(team.one, 44)} moreClasses="rec-plinth-art" />
+					<XalianImage variant="token" speciesName={record.species} primaryType={el} padding="0px" fill="black" filter={pieceShadowFilter(team.one, 44)} moreClasses="rec-plinth-art" />
 				</span>
 				<span className="rec-plinth-name">{speciesLabel(record)}</span>
 				{role && role !== 'none' && (

@@ -68,9 +68,9 @@ export default function EncounterResolutionTransition({ action, onComplete, soun
       <ReserveMeter kind="stability" label="Annex stability" max={MAX_INSTABILITY} before={action.stabilityBefore} after={action.stabilityAfter} eventAt={stabilityAt} index={index} />
     </aside>
     <div className={`lr-encounter-sequence-stage${outcome ? ' is-outcome' : ''}`} aria-hidden="true">
-      <div className={`lr-encounter-sequence-creature is-actor${current.kind === 'response' ? ' is-acting' : ''}`}><XalianImage speciesName={action.actor.species} primaryType={action.actor.element.primary} fill="#050705" stroke="#c9f6dc" strokeWidth="1.1" unPadded /></div>
-      {action.witness && <div className="lr-encounter-sequence-creature is-witness"><XalianImage speciesName={action.witness.species} primaryType={action.witness.element.primary} fill="#050705" stroke="#91b9aa" strokeWidth="1" unPadded /></div>}
-      <div className={`lr-encounter-sequence-creature is-native is-${action.option.resolution}${action.option.companion ? ' is-companion' : ''}`}><XalianImage speciesName={action.native.species} primaryType={action.native.element.primary} fill="#050705" stroke="#f2d25e" strokeWidth="1.35" unPadded /></div>
+      <div className={`lr-encounter-sequence-creature is-actor${current.kind === 'response' ? ' is-acting' : ''}`}><XalianImage variant="token" speciesName={action.actor.species} primaryType={action.actor.element.primary} fill="#050705" stroke="#c9f6dc" strokeWidth="1.1" unPadded /></div>
+      {action.witness && <div className="lr-encounter-sequence-creature is-witness"><XalianImage variant="token" speciesName={action.witness.species} primaryType={action.witness.element.primary} fill="#050705" stroke="#91b9aa" strokeWidth="1" unPadded /></div>}
+      <div className={`lr-encounter-sequence-creature is-native is-${action.option.resolution}${action.option.companion ? ' is-companion' : ''}`}><XalianImage variant="token" speciesName={action.native.species} primaryType={action.native.element.primary} fill="#050705" stroke="#f2d25e" strokeWidth="1.35" unPadded /></div>
       <div className="lr-encounter-sequence-link"><BiIcon cls={`bi ${action.presentation.identity.icon}`} /></div>
       {outcome && <div className={`lr-encounter-sequence-outcome is-${current.kind}`} key={current.kind}><BiIcon cls={`bi ${eventIcons[current.kind]}`} /></div>}
     </div>

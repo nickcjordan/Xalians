@@ -400,6 +400,7 @@ class DuelBoardCell extends React.Component {
 				{/* GHOST IMAGE WHEN DRAGGING */}
 				<div id={"ghost-xalian-on-drag-" + cellXalian.xalianId} className="duel-piece-ghost" style={{ opacity: 0, position: 'absolute', height: '100%', width: '100%' }}>
 					<XalianImage className='animate-state'
+							variant="token"
 							padding={'0px'}
 							speciesName={cellXalian.species.name}
 							primaryType={cellXalian.elementType}

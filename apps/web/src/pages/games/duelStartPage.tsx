@@ -124,7 +124,7 @@ class DuelStartPage extends React.Component<{}, DuelStartPageState> {
                                 className={`el-${primaryType.toLowerCase()} flex flex-col items-center gap-1 border p-2 text-center outline-none transition-[background-color,border-color] duration-1 ease-out focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring ${selected ? 'border-viable-lo bg-viable-tint' : 'border-edge bg-s0 hover:bg-s1'}`}
                                 onClick={() => this.toggleXalianSelection(x.xalianId)}>
                                 <span className="block h-11 w-11 overflow-hidden bg-el/80">
-                                    <XalianImage colored speciesName={x.species.name} primaryType={primaryType} unPadded />
+                                    <XalianImage variant="token" colored speciesName={x.species.name} primaryType={primaryType} unPadded />
                                 </span>
                                 <span className="text-small text-ink-2">{x.species.name}</span>
                             </button>
@@ -149,7 +149,7 @@ class DuelStartPage extends React.Component<{}, DuelStartPageState> {
                             key={`squad-plate-${x.xalianId}`}
                             className={`el-${primaryType.toLowerCase()} block h-9 w-9 overflow-hidden bg-el/80`}
                             title={x.species.name}>
-                            <XalianImage colored speciesName={x.species.name} primaryType={primaryType} unPadded />
+                            <XalianImage variant="token" colored speciesName={x.species.name} primaryType={primaryType} unPadded />
                         </span>
                     );
                 })}

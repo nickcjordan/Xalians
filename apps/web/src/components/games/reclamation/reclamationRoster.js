@@ -117,7 +117,7 @@ export function RosterSlot({
 				data-arm={inHand ? record.id : undefined}
 			>
 				<span className="rec-slot-portrait" aria-hidden="true">
-					<XalianImage speciesName={record.species} primaryType={el} padding="0px" fill="black" moreClasses="rec-slot-portrait-art" />
+					<XalianImage variant="token" speciesName={record.species} primaryType={el} padding="0px" fill="black" moreClasses="rec-slot-portrait-art" />
 				</span>
 				<span className="rec-slot-body">
 					<span className="rec-slot-ident">

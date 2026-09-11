@@ -175,6 +175,7 @@ function ReclamationFigure({
 				<span className="rec-piece-base" />
 				{portrait && (
 					<XalianImage
+						variant="token"
 						speciesName={portrait}
 						primaryType={element || 'ghost'}
 						padding="0px"

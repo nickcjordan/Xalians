@@ -56,6 +56,7 @@ class DuelPieceToken extends React.Component {
 				}}>
 
 				<XalianImage className='animate-state'
+					variant="token"
 					padding={'0px'}
 					speciesName={xalian.species.name}
 					primaryType={xalian.elementType}
