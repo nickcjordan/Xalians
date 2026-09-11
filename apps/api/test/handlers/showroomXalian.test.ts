@@ -29,4 +29,34 @@ describe('showroomXalian handler', () => {
     expect(first.record.id).not.toBe(second.record.id);
     expect(first.record.provenance.seed).not.toBe(second.record.provenance.seed);
   });
+
+  it('defaults to the showroom profile when no query parameter is given (issue #197)', async () => {
+    const result = await handler({ requestContext: {} }, fakeContext());
+    const body = JSON.parse(result.body as string);
+
+    expect(body.profile).toBe('showroom');
+    expect(body.record.provenance.profile).toBe('showroom');
+  });
+
+  it('runs the unrestricted generator when profile=full is requested', async () => {
+    const result = await handler(
+      { requestContext: {}, queryStringParameters: { profile: 'full' } },
+      fakeContext()
+    );
+    const body = JSON.parse(result.body as string);
+
+    expect(result.statusCode).toBe(200);
+    expect(body.profile).toBe('full');
+    expect(body.record.provenance.profile).toBe('full');
+  });
+
+  it('rejects an unknown profile value with 400 BAD_REQUEST', async () => {
+    const result = await handler(
+      { requestContext: {}, queryStringParameters: { profile: 'unlimited' } },
+      fakeContext()
+    );
+
+    expect(result.statusCode).toBe(400);
+    expect(JSON.parse(result.body as string).errorCode).toBe('BAD_REQUEST');
+  });
 });

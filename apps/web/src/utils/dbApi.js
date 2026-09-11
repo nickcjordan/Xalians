@@ -24,15 +24,24 @@ const API = "https://api.xalians.com/prod";
 // generated record, so the pages render exactly what the API would return.
 const useCache = () => import.meta.env.VITE_USE_CACHE === "true";
 
-function sampleRecords(count = 1) {
+// A cheap counter, not a real 128-bit genome: it only needs to change the seed on each
+// offline pull so repeated "Generate another" clicks under VITE_USE_CACHE=true actually
+// render a different creature, the way the real API's random seed does.
+let pullCounter = 0;
+
+function sampleRecords(count = 1, profile, pullSeed) {
   const templates = getSpeciesTemplates();
   const picks = ["graviclaw", "neph", "yetimoth"];
   return Array.from({ length: count }, (unused, index) => {
     const key = picks[index % picks.length];
     const template = templates.find((t) => t.key === key) || templates[index % templates.length];
-    return generateXalian(template, `sample-${template.key}-${index + 1}`, {
+    const seed = pullSeed
+      ? `sample-${template.key}-${pullSeed}-${profile || "full"}`
+      : `sample-${template.key}-${index + 1}-${profile || "full"}`;
+    return generateXalian(template, seed, {
       origin: template.homePlanet,
       generatedAt: "2026-09-07T00:00:00Z",
+      profile,
     });
   });
 }
@@ -62,23 +71,43 @@ const callDelete = (url) =>
  * The free lever (docs/design/xalians-platform-vision-and-economy.md section 3):
  * an anonymous pull that generates a real record and keeps nothing. Resolves
  * with { record, keepable }, where keepable is always false today.
+ *
+ * profile (issue #197): 'showroom' (the default the API applies when omitted)
+ * or 'full'. Driven by the visible generator-profile toggle on the generator
+ * page; this parameter is client-supplied on an anonymous route and is
+ * deliberately not an entitlement check while that toggle exists.
  */
-export const callShowroomXalian = () => {
+export const callShowroomXalian = (profile) => {
   if (useCache()) {
-    return Promise.resolve({ record: XalianRecordSchema.parse(sampleRecords(1)[0]), keepable: false });
+    pullCounter += 1;
+    return Promise.resolve({
+      record: XalianRecordSchema.parse(sampleRecords(1, profile || "showroom", pullCounter)[0]),
+      keepable: false,
+    });
   }
-  return axios.get(`${API}/xalians/showroom`).then((response) => ({
+  const suffix = profile ? `?profile=${encodeURIComponent(profile)}` : "";
+  return axios.get(`${API}/xalians/showroom${suffix}`).then((response) => ({
     record: XalianRecordSchema.parse(response.data.record),
     keepable: response.data.keepable === true,
   }));
 };
 
-/** Generates a record server-side and keeps it under the caller. */
-export const callGenerateXalian = (species) => {
+/**
+ * Generates a record server-side and keeps it under the caller.
+ *
+ * profile (issue #197): 'full' (the API's default) or 'showroom', driven by
+ * the same generator-profile toggle so a signed-in visitor can compare modes
+ * too.
+ */
+export const callGenerateXalian = (species, profile) => {
   if (useCache()) {
-    return Promise.resolve(XalianRecordSchema.parse(sampleRecords(1)[0]));
+    pullCounter += 1;
+    return Promise.resolve(XalianRecordSchema.parse(sampleRecords(1, profile, pullCounter)[0]));
   }
-  return callCreate(`${API}/xalians`, species ? { species } : {}).then((data) => XalianRecordSchema.parse(data));
+  const body = {};
+  if (species) body.species = species;
+  if (profile) body.profile = profile;
+  return callCreate(`${API}/xalians`, body).then((data) => XalianRecordSchema.parse(data));
 };
 
 /**

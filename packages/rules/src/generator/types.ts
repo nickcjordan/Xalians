@@ -80,10 +80,18 @@ export type { CorporealityKey as Corporeality };
 // generateXalian / generateBatch options -- generator-internal, no schema counterpart
 // -----------------------------------------------------------------------------------
 
+// The showroom lever (issue #197, docs/design/xalians-platform-vision-and-economy.md
+// section 3): 'full' is the current unconstrained generator, 'showroom' pins finish to
+// standard, drops rare trait outcomes and never rolls a secondary affinity. It is a
+// generator-internal option, not an entitlement check -- see constants.ts's
+// SHOWROOM_PROFILE for the actual table and apps/web's toggle for how it is driven today.
+export type GeneratorProfile = 'full' | 'showroom';
+
 export interface GenerateOptions {
 	origin?: string;
 	serial?: number;
 	generatedAt?: string;
+	profile?: GeneratorProfile;
 }
 
 export interface GenerateBatchOptions extends Omit<GenerateOptions, 'origin' | 'serial'> {
@@ -98,6 +106,7 @@ export interface GenerateXalianArgs {
 	generatedAt?: string;
 	registries?: Registries;
 	catalog?: AbilityCatalog;
+	profile?: GeneratorProfile;
 }
 
 // -----------------------------------------------------------------------------------
@@ -124,4 +133,5 @@ export interface GenerateBatchArgs {
 	registries?: Registries;
 	catalog?: AbilityCatalog;
 	generatedAt?: string;
+	profile?: GeneratorProfile;
 }

@@ -4,6 +4,12 @@
 // platform-wide): the creature is the caller's from the moment it exists, so there is no
 // second "keep" call a client could skip, forge, or race.
 // GET /xalians/showroom is the same generator with nothing persisted.
+//
+// profile (issue #197) defaults to 'full', the unrestricted generator: a signed-in
+// caller only gets the constrained showroom preview when the request asks for it, which
+// is what lets the visible site toggle drive this branch too. It persists in the returned
+// record's provenance, so a claimed record stays reproducible under the profile it was
+// generated with.
 import { randomBytes } from 'node:crypto';
 import { ApiError, withApi } from '../lib/api.ts';
 import { GenerateRegistryXalianBodySchema } from '../lib/schemas.ts';
@@ -33,6 +39,7 @@ export const handler = withApi(
       origin: template.homePlanet,
       serial,
       generatedAt: new Date().toISOString(),
+      profile: body.profile || 'full',
     });
 
     // The generator and the schema are already integration-tested together (see

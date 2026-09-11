@@ -101,6 +101,14 @@ const ProvenanceSchema = z.object({
   generatedAt: z.string().datetime({ offset: true }),
   origin: z.string().min(1), // planet key the generator ran on
   serial: z.number().int().positive(),
+  // The generator profile a seed was expanded under (issue #197): 'full' is the
+  // unconstrained generator, 'showroom' is the finish-pinned, no-rare-trait,
+  // no-secondary-affinity preview lever behind the visible site toggle. Optional so
+  // every record stored before this field existed still validates; absent means 'full',
+  // matching the generator's own default. Travels with the record so a seed re-expands
+  // identically later (the vision doc's claim step re-expands "under the preview
+  // profile").
+  profile: z.enum(['full', 'showroom']).optional(),
 });
 
 const CompositionSchema = z.object({

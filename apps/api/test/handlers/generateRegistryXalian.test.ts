@@ -88,4 +88,43 @@ describe('generateRegistryXalian handler', () => {
     const keys = getSpeciesTemplates().map((t) => t.key);
     expect(keys).toContain(body.species);
   });
+
+  // issue #197: profile defaults to 'full' (the unrestricted generator) so a signed-in
+  // caller is unaffected unless the site's visible toggle asks for the showroom preview.
+  it('defaults to the full profile when none is given', async () => {
+    ddbMock.on(PutCommand).resolves({});
+
+    const result = await handler(authedEvent('nick', { body: '{}' }), fakeContext());
+
+    expect(result.statusCode).toBe(201);
+    const body = JSON.parse(result.body as string);
+    expect(body.provenance.profile).toBe('full');
+  });
+
+  it('runs the constrained showroom profile and stamps it into provenance when requested', async () => {
+    ddbMock.on(PutCommand).resolves({});
+    const species = 'graviclaw';
+
+    const result = await handler(
+      authedEvent('nick', { body: JSON.stringify({ species, profile: 'showroom' }) }),
+      fakeContext()
+    );
+
+    expect(result.statusCode).toBe(201);
+    const body = JSON.parse(result.body as string);
+    expect(body.provenance.profile).toBe('showroom');
+    expect(body.appearance.finish).toBe('standard');
+    expect(Object.keys(body.element.affinities)).toEqual([body.element.primary]);
+  });
+
+  it('rejects an unknown profile value with 400 BAD_REQUEST', async () => {
+    const result = await handler(
+      authedEvent('nick', { body: JSON.stringify({ profile: 'unlimited' }) }),
+      fakeContext()
+    );
+
+    expect(result.statusCode).toBe(400);
+    expect(JSON.parse(result.body as string).errorCode).toBe('BAD_REQUEST');
+    expect(ddbMock.calls()).toHaveLength(0);
+  });
 });

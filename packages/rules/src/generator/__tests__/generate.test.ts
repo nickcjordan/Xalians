@@ -7,7 +7,7 @@ import { generateXalian, generateBatch, getSpeciesTemplates, speciesDisplayName,
 import registriesJson from '@xalians/content/registries.json';
 import catalogJson from '@xalians/content/abilityCatalog.json';
 import speciesRecordsJson from '@xalians/content/speciesRecords.json';
-import { ELEMENT_ADJACENCY, CONDUIT_ACTIONS_BY_MEDIUM, TRAIT_EXCLUSIONS, HEFT_BANDS } from '../constants.ts';
+import { ELEMENT_ADJACENCY, CONDUIT_ACTIONS_BY_MEDIUM, TRAIT_EXCLUSIONS, HEFT_BANDS, SHOWROOM_RARE_TRAIT_MAX_PERCENT } from '../constants.ts';
 import { makeRng } from '../prng.ts';
 import type { AttributeKey, ElementKey } from '../types.ts';
 
@@ -397,5 +397,88 @@ describe('generator: names are drawn toward the rolled intensity', () => {
 		expect(heavy.length).toBeGreaterThan(200);
 		expect(light.length).toBeGreaterThan(200);
 		expect(mean(heavy)).toBeGreaterThan(mean(light));
+	});
+});
+
+// issue #197: the showroom profile is a generator-internal lever, not an entitlement
+// check (a visible site toggle drives it while gating is parked, see constants.ts's
+// SHOWROOM_PROFILE comment). These tests check the three constraints it applies plus the
+// stream-identity claim: the same seed differs between profiles only in the fields the
+// profile actually constrains.
+describe('generator: showroom profile', () => {
+	const templateByKey = new Map(TEMPLATES.map((t) => [t.key, t] as const));
+
+	test('finish is always standard under the showroom profile', () => {
+		const batch = generateBatch(TEMPLATES.length * 10, 'showroom-finish-seed', { generatedAt: FIXED_TIME, profile: 'showroom' });
+		batch.forEach((r) => expect(r.appearance.finish).toBe('standard'));
+	});
+
+	test('no rare trait ever lands under the showroom profile', () => {
+		const batch = generateBatch(TEMPLATES.length * 20, 'showroom-trait-seed', { generatedAt: FIXED_TIME, profile: 'showroom' });
+		batch.forEach((r) => {
+			const template = templateByKey.get(r.species)!;
+			const pool = (template.traits && (template.traits as any).pool) || {};
+			r.traits.forEach((trait) => {
+				const percent = pool[trait];
+				if (percent !== undefined) {
+					expect(percent).toBeGreaterThanOrEqual(SHOWROOM_RARE_TRAIT_MAX_PERCENT);
+				}
+			});
+		});
+	});
+
+	test('no record has a secondary affinity under the showroom profile', () => {
+		const batch = generateBatch(TEMPLATES.length * 20, 'showroom-affinity-seed', { generatedAt: FIXED_TIME, profile: 'showroom' });
+		batch.forEach((r) => {
+			expect(Object.keys(r.element.affinities)).toEqual([r.element.primary]);
+		});
+	});
+
+	test('provenance carries the profile', () => {
+		const full = generateXalian('graviclaw', 'profile-seed', { generatedAt: FIXED_TIME });
+		const showroom = generateXalian('graviclaw', 'profile-seed', { generatedAt: FIXED_TIME, profile: 'showroom' });
+		expect(full.provenance.profile).toBe('full');
+		expect(showroom.provenance.profile).toBe('showroom');
+	});
+
+	test('the default profile still produces the current unconstrained distribution', () => {
+		const batch = generateBatch(TEMPLATES.length * 40, 'default-distribution-seed', { generatedAt: FIXED_TIME });
+		expect(batch.some((r) => r.appearance.finish !== 'standard')).toBe(true);
+		expect(batch.some((r) => Object.keys(r.element.affinities).length > 1)).toBe(true);
+		const rarePercents = new Set<number>();
+		batch.forEach((r) => {
+			const template = templateByKey.get(r.species)!;
+			const pool = (template.traits && (template.traits as any).pool) || {};
+			r.traits.forEach((trait) => {
+				const percent = pool[trait];
+				if (percent !== undefined && percent < SHOWROOM_RARE_TRAIT_MAX_PERCENT) {
+					rarePercents.add(percent);
+				}
+			});
+		});
+		expect(rarePercents.size).toBeGreaterThan(0);
+	});
+
+	test('same seed under both profiles agrees on every unconstrained field', () => {
+		// The showroom constraint on affinity discards a landed secondary rather than
+		// suppressing the draw, so abilities (which read the rolled secondary to pick a
+		// medium) only line up exactly between profiles when the full profile itself did
+		// not land one. Search for such a seed rather than hardcode one.
+		let agreementSeed: string | null = null;
+		for (let i = 0; i < 300; i++) {
+			const candidate = `agree-seed-${i}`;
+			const full = generateXalian('graviclaw', candidate, { generatedAt: FIXED_TIME });
+			if (Object.keys(full.element.affinities).length === 1) {
+				agreementSeed = candidate;
+				break;
+			}
+		}
+		expect(agreementSeed).not.toBeNull();
+		const full = generateXalian('graviclaw', agreementSeed as string, { generatedAt: FIXED_TIME });
+		const showroom = generateXalian('graviclaw', agreementSeed as string, { generatedAt: FIXED_TIME, profile: 'showroom' });
+		expect(showroom.species).toBe(full.species);
+		expect(showroom.attributes).toEqual(full.attributes);
+		expect(showroom.physiology).toEqual(full.physiology);
+		expect(showroom.abilities).toEqual(full.abilities);
 	});
 });

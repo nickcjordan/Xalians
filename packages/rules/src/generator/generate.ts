@@ -40,6 +40,7 @@ import {
 	TEMPERAMENT_ATTRIBUTE_PULL,
 	TEMPERAMENT_JITTER,
 	TEMPERAMENT_TILTS,
+	SHOWROOM_PROFILE,
 } from './constants.ts';
 import type {
 	AbilityCatalog,
@@ -52,6 +53,7 @@ import type {
 	ElementKey,
 	Finish,
 	GenerateBatchArgs,
+	GeneratorProfile,
 	GenerateXalianArgs,
 	InstrumentKey,
 	Registries,
@@ -217,7 +219,7 @@ interface AffinitiesResult {
 	secondary: ElementKey | null;
 }
 
-function rollAffinities(rng: Rng, template: SpeciesTemplate): AffinitiesResult {
+function rollAffinities(rng: Rng, template: SpeciesTemplate, profile: GeneratorProfile): AffinitiesResult {
 	// template.element is validated against the closed element enum by
 	// SpeciesTemplateSchema (packages/content/src/schema/speciesTemplate.ts) at bundle
 	// parse time in index.ts, but registries.json-derived key enums infer as a bare
@@ -227,9 +229,16 @@ function rollAffinities(rng: Rng, template: SpeciesTemplate): AffinitiesResult {
 	const affinities: RecordElement['affinities'] = { [primary]: 100 };
 	const graph = ELEMENT_ADJACENCY[primary] || [];
 	let secondary: ElementKey | null = null;
+	// draw exactly as the full profile does (same chance, same follow-up draws when it
+	// lands) so the rng stream never shifts between profiles; the showroom constraint
+	// (no rare affinity outcomes) only discards the landed result afterward.
 	if (graph.length > 0 && rng.chance(SECONDARY_AFFINITY_CHANCE)) {
-		secondary = rng.pick(graph);
-		affinities[secondary] = rng.range(1, 99);
+		const rolledSecondary = rng.pick(graph);
+		const rolledPercent = rng.range(1, 99);
+		if (profile !== 'showroom') {
+			secondary = rolledSecondary;
+			affinities[secondary] = rolledPercent;
+		}
 	}
 	return { element: { primary, affinities }, secondary };
 }
@@ -285,7 +294,7 @@ function tiltedPercent(key: TraitKey, percent: number, ctx: TiltContext): number
 	return clamp(Math.round(percent * factor), 1, 99);
 }
 
-function rollTraits(rng: Rng, template: SpeciesTemplate, ctx: TiltContext): TraitKey[] {
+function rollTraits(rng: Rng, template: SpeciesTemplate, ctx: TiltContext, profile: GeneratorProfile): TraitKey[] {
 	// template.traits.pool is keyed by TraitKeySchema (Partial<Record<TraitKey, number>>);
 	// Object.keys always returns string[] regardless of the record's key type (a TS
 	// limitation, not a narrowing gap), so every key pulled off it here is cast back to
@@ -317,20 +326,32 @@ function rollTraits(rng: Rng, template: SpeciesTemplate, ctx: TiltContext): Trai
 			landed.push(key);
 		}
 	});
+	// showroom (no rare trait outcomes): every candidate above still rolled exactly as the
+	// full profile does; this only drops a landed rare trait from the final list afterward,
+	// keyed on the species' authored pool percent, not the tilted one, so a tilt can never
+	// smuggle a rare trait through. Traits outside the pool (the forced 'phasing' push
+	// above) default to 100 and are never dropped.
+	const kept = profile === 'showroom'
+		? landed.filter((key) => (pool[key] ?? 100) >= SHOWROOM_PROFILE.rareTraitMaxPercent)
+		: landed;
 	// stored in template order so two individuals of a species list traits alike
-	return poolKeys.concat(['phasing']).filter((k, i, arr) => landed.includes(k) && arr.indexOf(k) === i);
+	return poolKeys.concat(['phasing']).filter((k, i, arr) => kept.includes(k) && arr.indexOf(k) === i);
 }
 
-function rollFinish(rng: Rng): Finish {
+function rollFinish(rng: Rng, profile: GeneratorProfile): Finish {
 	const r = rng.float();
 	let acc = 0;
+	let result: Finish = 'standard';
 	for (const [finish, odds] of FINISH_ODDS) {
 		acc += odds;
 		if (r < acc) {
-			return finish;
+			result = finish;
+			break;
 		}
 	}
-	return 'standard';
+	// showroom (finish forced to standard): the draw above still happens so the rng
+	// stream matches the full profile; only the returned outcome is pinned.
+	return profile === 'showroom' ? 'standard' : result;
 }
 
 function instrumentRow(registries: Registries, instrument: InstrumentKey): ActionKey[] {
@@ -505,16 +526,17 @@ function rollTemperament(rng: Rng, attributes: Record<AttributeKey, number>, arc
 	registries:  registries.json (archetype favors, instrument action rows)
 	catalog:     abilityCatalog.json (name cells)
 */
-export function generateXalian({ template, seed, origin, serial, generatedAt, registries, catalog }: GenerateXalianArgs): XalianRecord {
+export function generateXalian({ template, seed, origin, serial, generatedAt, registries, catalog, profile }: GenerateXalianArgs): XalianRecord {
 	if (!template || !template.key) {
 		throw new Error('generateXalian: a species template with a key is required');
 	}
+	const resolvedProfile: GeneratorProfile = profile || 'full';
 	const root = makeRng(`${template.key}|${seed}|${GENERATOR_VERSION}`);
 
 	const archetype = rollArchetype(root.fork('archetype'), template, registries || ({} as Registries));
 	const { attributes, bands: attributeBands } = rollAttributes(root.fork('attributes'), template, archetype);
 	const phys = rollPhysiology(root.fork('physiology'), template);
-	const { element, secondary } = rollAffinities(root.fork('affinity'), template);
+	const { element, secondary } = rollAffinities(root.fork('affinity'), template, resolvedProfile);
 
 	const tiltContext: TiltContext = {
 		physiology: phys.physiology,
@@ -526,8 +548,8 @@ export function generateXalian({ template, seed, origin, serial, generatedAt, re
 		attributeBands,
 		element,
 	};
-	const traits = rollTraits(root.fork('traits'), template, tiltContext);
-	const finish = rollFinish(root.fork('appearance'));
+	const traits = rollTraits(root.fork('traits'), template, tiltContext, resolvedProfile);
+	const finish = rollFinish(root.fork('appearance'), resolvedProfile);
 	const abilities = rollAbilities(root.fork('abilities'), template, element, secondary, registries || ({} as Registries), catalog || ({} as AbilityCatalog));
 	const temperament = rollTemperament(root.fork('temperament'), attributes, archetype, traits);
 	const id = `xal_${root.fork('id').hex(20)}`;
@@ -542,6 +564,7 @@ export function generateXalian({ template, seed, origin, serial, generatedAt, re
 			generatedAt: generatedAt || new Date().toISOString(),
 			origin: origin || template.homePlanet,
 			serial: typeof serial === 'number' ? serial : 1,
+			profile: resolvedProfile,
 		},
 		physiology: phys.physiology,
 		archetype,
@@ -559,7 +582,7 @@ export function generateXalian({ template, seed, origin, serial, generatedAt, re
 	  -> array of records, cycling through the templates in order so a batch of N covers
 	     every species about N / templates.length times. Deterministic under seed.
 */
-export function generateBatch({ templates, seed, count, registries, catalog, generatedAt }: GenerateBatchArgs): XalianRecord[] {
+export function generateBatch({ templates, seed, count, registries, catalog, generatedAt, profile }: GenerateBatchArgs): XalianRecord[] {
 	if (!Array.isArray(templates) || templates.length === 0) {
 		return [];
 	}
@@ -575,6 +598,7 @@ export function generateBatch({ templates, seed, count, registries, catalog, gen
 			generatedAt,
 			registries,
 			catalog,
+			profile,
 		}));
 	}
 	return records;
