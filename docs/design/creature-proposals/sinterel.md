@@ -104,6 +104,8 @@ Crystorn is a plated mineral quadruped whose crystal horns focus stored light in
 
 ## Naming pass
 
+The first spoken round trip failed: the intended **SIN-ter-el** was heard and transcribed as `Centerel`. That does not mean the reader pronounced it incorrectly. It means the written and spoken forms do not transmit one another reliably enough. `Sinterel` remains only the proposal file's temporary identifier while a replacement name is selected; its derivation is retained below as the record of why the candidate was originally considered.
+
 The repository previously had a broad naming convention, not a complete selection system: creature names should sound like their function and tend toward readable portmanteaus or mashups. It did not require the name to come after the design, document its roots, explore different construction modes, or compare sound and spelling against the roster. The [creature naming system](../creature-naming-system.md) now supplies those missing gates.
 
 ### Name brief
