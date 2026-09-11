@@ -1,5 +1,7 @@
 // Terminal: registry. Duel Playground is the arena's own design reference, read at the clerk's counter.
 import React from 'react';
+import '../../styles/legacy/duel.css';
+import '../../styles/legacy/duel-playground.css';
 import XalianNavbar from '../../components/navbar';
 import DuelSpecimenBoard from '../../components/games/duel/playground/duelSpecimenBoard';
 import DuelRosterRail from '../../components/games/duel/board/duelRosterRail';

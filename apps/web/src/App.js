@@ -56,7 +56,6 @@ const UserDetailsPage = lazy(() => import('./pages/userDetailsPage'));
 const MatchCardGamePage = lazy(() => import('./pages/games/matchCardGamePage'));
 const PhysicsGamePage = lazy(() => import('./pages/games/physicsGamePage'));
 const TrainingGroundsPage = lazy(() => import('./pages/trainingGroundsPage'));
-const DuelPage = lazy(() => import('./pages/games/duelPage'));
 const DuelStartPage = lazy(() => import('./pages/games/duelStartPage'));
 const ReclamationPage = lazy(() => import('./pages/games/reclamationPage'));
 const DuelPlaygroundPage = lazy(() => import('./pages/games/duelPlaygroundPage'));

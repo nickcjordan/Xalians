@@ -73,7 +73,7 @@ None. This is first because every later PR benefits from clean workflow output.
 - Deploy: [frontend run 34608744209](https://github.com/nickcjordan/Xalians/actions/runs/34608744209) and [backend run 34608744217](https://github.com/nickcjordan/Xalians/actions/runs/34608744217) passed with checkout v7, setup-node v7, AWS credentials v6, and Terraform setup v4. Both production job-annotation responses were empty.
 - Production verification: `https://xalians.com/` and `/duel` loaded at 1,440×900 and 390×844 with no page/console errors or document-level horizontal overflow. Home and Duel setup paints matched the pre-change smoke check.
 
-### 2. Legacy CSS ownership and route boundaries — Planned
+### 2. Legacy CSS ownership and route boundaries — In progress
 
 **Scope**
 
@@ -97,7 +97,10 @@ Do before the font pass so font consumers can be attributed to their final CSS o
 
 **Evidence / links**
 
-Pending.
+- Ownership inventory: [`docs/design/frontend-css-ownership.md`](frontend-css-ownership.md) records every stylesheet, consumers, boundary, disposition, and remaining audit order.
+- First boundary measurement: moving Duel, Duel reference, and Reclamation CSS out of `index.html` reduced initial stylesheet transfer from 623.1 kB raw / 126.0 kB gzip to 406.3 kB / 80.1 kB. Their 216,847 source bytes now emit only in the relevant route graphs: Duel 21.9 kB / 4.3 kB gzip, Duel reference 33.1 kB / 6.7 kB, and Reclamation 97.2 kB / 14.8 kB.
+- First boundary verification: ownership/design-system tests pass; production build and tightened initial/route CSS budgets pass; local desktop/mobile smoke covers home, Duel setup, a 64-cell live Duel board, Duel reference, and Reclamation without console errors. Duel-reference document overflow at 390 px was reproduced on the deployed pre-change baseline and remains a known responsive-pass issue, not a regression from the boundary move.
+- First boundary PR/CI/deploy/production: pending.
 
 ### 3. Font loading — Planned
 
@@ -199,7 +202,7 @@ Router modernization and authentication integration coverage, which provide stro
 
 Pending.
 
-### 7. Developer-only styleguide and enforceable bundle budgets — In progress
+### 7. Developer-only styleguide and enforceable bundle budgets — Complete
 
 **Scope**
 
@@ -225,8 +228,10 @@ Can land early, but budget values must be revised after CSS/font/router/runtime 
 - Production implementation measurement: the styleguide chunk is absent from the manifest and emitted assets. The production entry plus auth graph is 536.6 kB raw / 170.1 kB gzip; initial CSS including direct-linked legacy files is 623.1 kB / 126.0 kB. The styleguide build mode still emits `styleGuidePage` at 517.22 kB / 147.58 kB gzip.
 - Enforcement: `bundle-budgets.json` gives the initial graph, initial CSS, auth vendor, and all route graphs approximately five-percent headroom; `npm run build` now fails when the manifest-based checker exceeds any raw or gzip limit or emits the forbidden production styleguide entry.
 - Local verification: typecheck; 51 test files / 1,019 tests; zero production vulnerabilities; production build and all budgets; developer styleguide build; production-mode browser smoke for home, generator, Duel setup, and the intentional `/styleguide` not-found page at 1,440×900 and 390×844, with no page/console errors or document-level overflow.
-- PR: pending.
-- CI/deploy/production: pending.
+- PR: [#223, Keep developer styleguide out of production bundles](https://github.com/nickcjordan/Xalians/pull/223), merged as `75435c3` on 2026-09-11.
+- CI: [CI run 34609532123](https://github.com/nickcjordan/Xalians/actions/runs/34609532123) and [Terraform-plan run 34609532068](https://github.com/nickcjordan/Xalians/actions/runs/34609532068) passed. The Linux production build printed both `PASS production excludes styleGuidePage` and `All production bundle budgets passed`; all job annotations were empty.
+- Deploy: [frontend run 34609681141](https://github.com/nickcjordan/Xalians/actions/runs/34609681141) passed its bundle gate, S3 sync, and CloudFront invalidation; its job-annotation response was empty.
+- Production verification: `https://xalians.com/`, `/generator`, `/duel`, and `/styleguide` loaded at 1,440×900 and 390×844 without page/console errors or document-level horizontal overflow. The first three retained their expected paint; `/styleguide` rendered the intentional not-found page.
 
 ### 8. Final cross-route regression pass — Planned
 
@@ -267,3 +272,4 @@ Pending.
 | 2026-09-11 | Reanalyzed current `origin/main`, established the program baseline, and selected the workflow runtime warning cleanup as the first slice. | Commands and measurements recorded above; implementation pending. |
 | 2026-09-11 | Completed the action-runtime slice. | [PR #221](https://github.com/nickcjordan/Xalians/pull/221); clean CI/deploy annotations and live desktop/mobile smoke evidence recorded in workstream 1. |
 | 2026-09-11 | Started the production styleguide exclusion and bundle-budget slice from deployed `main` at `90ee054`. | Production and developer builds plus local browser evidence recorded in workstream 7; PR pending. |
+| 2026-09-11 | Completed the production styleguide exclusion and bundle-budget slice. | [PR #223](https://github.com/nickcjordan/Xalians/pull/223); CI, deploy, budget, and live route evidence recorded in workstream 7. |

@@ -10,6 +10,7 @@ import * as designTokens from '../constants/designTokens';
 // test fails naming the token that no longer matches.
 
 const TOKENS_PATH = path.join(__dirname, '..', 'styles', 'tokens.css');
+const ROUTE_LEGACY_DIR = path.join(__dirname, '..', 'styles', 'legacy');
 const css = fs.readFileSync(TOKENS_PATH, 'utf8');
 
 const theme = {};
@@ -73,13 +74,16 @@ describe('tailwind tokens (src/styles/tokens.css)', () => {
 		});
 	});
 
-	it('is the only stylesheet under src with a raw hex color', () => {
+	it('is the only non-legacy stylesheet under src with a raw hex color', () => {
 		const walk = (dir) =>
 			fs.readdirSync(dir, { withFileTypes: true }).flatMap((d) =>
 				d.isDirectory() ? walk(path.join(dir, d.name)) : d.name.endsWith('.css') ? [path.join(dir, d.name)] : []
 			);
 		const offenders = walk(path.join(__dirname, '..', 'styles'))
 			.filter((p) => path.basename(p) !== 'tokens.css')
+			// Route-owned legacy files retain shrinking per-file ceilings in
+			// designSystem.test.js until their immersive redesigns.
+			.filter((p) => !p.startsWith(`${ROUTE_LEGACY_DIR}${path.sep}`))
 			.filter((p) => /#[0-9a-f]{3,8}\b/i.test(fs.readFileSync(p, 'utf8')));
 		expect(offenders).toEqual([]);
 	});

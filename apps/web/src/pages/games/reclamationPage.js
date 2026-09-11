@@ -1,5 +1,6 @@
 // Terminal: field. Reclamation is survey work on the salvaged ECHELON unit.
 import React from 'react';
+import '../../styles/legacy/reclamation.css';
 import XalianNavbar from '../../components/navbar';
 import ReclamationMatch from '../../components/games/reclamation/reclamationMatch';
 import { HoldMeter } from '../../components/games/reclamation/reclamationFigure';
