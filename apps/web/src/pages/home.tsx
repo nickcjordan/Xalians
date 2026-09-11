@@ -60,9 +60,9 @@ function Home() {
 			<XalianNavbar />
 
 			<Shell className="pt-8 pb-16">
-				<section className="mb-12 grid gap-6 md:grid-cols-[1.1fr_0.9fr] md:items-start">
+				<section className="mb-12 grid gap-8 xl:grid-cols-[1.1fr_0.9fr] xl:items-center">
 					<div className="flex flex-col items-start gap-3">
-						<XaliansLogoDnaAnimated />
+						<div className="max-sm:hidden"><XaliansLogoDnaAnimated /></div>
 						<p className="type-legend mt-2">Xalia</p>
 						<h1 className="type-display m-0">Creatures grown for dying worlds</h1>
 						<p className="mt-2 max-w-[62ch] font-body text-lead text-ink-2">
@@ -79,7 +79,7 @@ function Home() {
 					</div>
 
 					<section data-tier="featured" aria-label="The worlds of Xalia">
-						<div className="grid grid-cols-4 gap-2 sm:grid-cols-4 md:grid-cols-7">
+						<div className="grid grid-cols-4 gap-2 sm:grid-cols-[repeat(auto-fill,minmax(112px,1fr))]">
 							{worlds.map((world: any) => (
 								<Link
 									key={world.key}
