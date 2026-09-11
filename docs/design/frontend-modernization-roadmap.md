@@ -45,7 +45,7 @@ Every implementation slice follows this gate:
 
 ## Workstreams
 
-### 1. GitHub Actions Node runtime warnings — In progress
+### 1. GitHub Actions Node runtime warnings — Complete
 
 **Scope**
 
@@ -68,9 +68,10 @@ None. This is first because every later PR benefits from clean workflow output.
 **Evidence / links**
 
 - Official current action releases checked 2026-09-11: [checkout v7.0.1](https://github.com/actions/checkout/releases/tag/v7.0.1), [setup-node v7.0.0](https://github.com/actions/setup-node/releases/tag/v7.0.0), [configure-aws-credentials v6.2.4](https://github.com/aws-actions/configure-aws-credentials/releases/tag/v6.2.4), [setup-terraform v4.0.1](https://github.com/hashicorp/setup-terraform/releases/tag/v4.0.1).
-- PR: pending.
-- CI/deploy: pending.
-- Production verification: pending.
+- PR: [#221, Start frontend roadmap and update action runtimes](https://github.com/nickcjordan/Xalians/pull/221), merged as `90ee054` on 2026-09-11.
+- CI: [CI run 34608607248](https://github.com/nickcjordan/Xalians/actions/runs/34608607248) and [Terraform-plan run 34608607178](https://github.com/nickcjordan/Xalians/actions/runs/34608607178) passed. All three job-annotation responses were empty, replacing the warning present on PR #219.
+- Deploy: [frontend run 34608744209](https://github.com/nickcjordan/Xalians/actions/runs/34608744209) and [backend run 34608744217](https://github.com/nickcjordan/Xalians/actions/runs/34608744217) passed with checkout v7, setup-node v7, AWS credentials v6, and Terraform setup v4. Both production job-annotation responses were empty.
+- Production verification: `https://xalians.com/` and `/duel` loaded at 1,440×900 and 390×844 with no page/console errors or document-level horizontal overflow. Home and Duel setup paints matched the pre-change smoke check.
 
 ### 2. Legacy CSS ownership and route boundaries — Planned
 
@@ -260,3 +261,4 @@ Pending.
 | Date | Change | Evidence |
 |---|---|---|
 | 2026-09-11 | Reanalyzed current `origin/main`, established the program baseline, and selected the workflow runtime warning cleanup as the first slice. | Commands and measurements recorded above; implementation pending. |
+| 2026-09-11 | Completed the action-runtime slice. | [PR #221](https://github.com/nickcjordan/Xalians/pull/221); clean CI/deploy annotations and live desktop/mobile smoke evidence recorded in workstream 1. |
