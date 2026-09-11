@@ -205,6 +205,9 @@
 	.type-heading { font-family: var(--font-legend); font-size: var(--text-heading); font-weight: 600; letter-spacing: var(--tracking-heading); text-transform: uppercase; color: var(--color-ink); }
 	.type-subhead { font-family: var(--font-legend); font-size: var(--text-subhead); font-weight: 500; letter-spacing: var(--tracking-heading); text-transform: uppercase; color: var(--color-ink); }
 	.type-data { font-family: var(--font-data); font-variant-numeric: tabular-nums; font-style: normal; }
+	/* The reading measure: running text sets near 62 characters however wide
+	   its container is. Every paragraph of prose on the site carries it. */
+	.measure { max-width: 62ch; }
 }
 
 @keyframes helix-rung {

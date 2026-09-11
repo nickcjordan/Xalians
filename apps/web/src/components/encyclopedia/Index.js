@@ -35,7 +35,7 @@ function IndexRecord({ entry }) {
                 </div>
             }
         >
-            <Prose text={entry.definition} except={entry.key} className="m-0 max-w-none text-small text-ink-2" />
+            <Prose text={entry.definition} except={entry.key} className="m-0 text-small text-ink-2" />
         </RecordRow>
     );
 }

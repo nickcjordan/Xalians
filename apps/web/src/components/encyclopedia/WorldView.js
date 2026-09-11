@@ -253,16 +253,16 @@ export default function WorldView() {
 
                 <div className="flex min-w-0 flex-col gap-5">
                     <WorldLede world={world} />
-                </div>
-            </div>
 
-            <div className="mt-6 flex flex-col items-start gap-2 border-t border-edge pt-4">
-                <span className="type-legend whitespace-nowrap">In the story</span>
-                <nav className="min-w-0 flex flex-wrap gap-1" aria-label="In the story">
-                    {timeline.map((row) => (
-                        <ChronicleStation key={row.era.key} row={row} />
-                    ))}
-                </nav>
+                    <div className="flex flex-col items-start gap-2 border-t border-edge pt-4">
+                        <span className="type-legend whitespace-nowrap">In the story</span>
+                        <nav className="min-w-0 flex flex-wrap gap-1" aria-label="In the story">
+                            {timeline.map((row) => (
+                                <ChronicleStation key={row.era.key} row={row} />
+                            ))}
+                        </nav>
+                    </div>
+                </div>
             </div>
 
             <div className="mt-6 flex flex-col gap-6">
@@ -362,7 +362,7 @@ export default function WorldView() {
                                         </Link>
                                     }
                                 >
-                                    <Prose text={entry.definition} className="m-0 max-w-none text-small text-ink-2" />
+                                    <Prose text={entry.definition} className="m-0 text-small text-ink-2" />
                                 </RecordRow>
                             ))}
                         </Card>

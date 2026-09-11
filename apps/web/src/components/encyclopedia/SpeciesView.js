@@ -263,7 +263,7 @@ export default function SpeciesView() {
                     {view.nameOrigin && (
                         <div className="flex flex-col gap-1">
                             <h3 className="type-heading m-0 text-[19px]">Name origin</h3>
-                            <p className="m-0 font-body text-body text-ink-2">{view.nameOrigin}</p>
+                            <p className="measure m-0 font-body text-body text-ink-2">{view.nameOrigin}</p>
                         </div>
                     )}
                     <Prose text={view.description} except={view.entry && view.entry.key} />
@@ -271,7 +271,7 @@ export default function SpeciesView() {
                     {Array.isArray(view.appearance) && view.appearance.length > 0 && (
                         <div className="flex flex-col gap-1">
                             <h3 className="type-heading m-0 text-[19px]">Appearance</h3>
-                            <ul className="m-0 flex list-none flex-col gap-1 p-0 font-body text-body text-ink-2">
+                            <ul className="measure m-0 flex list-none flex-col gap-1 p-0 font-body text-body text-ink-2">
                                 {view.appearance.map((quality) => (
                                     <li key={quality}>{quality}</li>
                                 ))}
@@ -282,7 +282,7 @@ export default function SpeciesView() {
                     {Array.isArray(view.fields) && view.fields.length > 0 && view.fields.map((field) => (
                         <div key={field.key} className="flex flex-col gap-1">
                             <h3 className="type-heading m-0 text-[19px]">{field.label}</h3>
-                            <p className="m-0 font-body text-body text-ink-2">{field.text}</p>
+                            <p className="measure m-0 font-body text-body text-ink-2">{field.text}</p>
                         </div>
                     ))}
                 </div>
