@@ -1,6 +1,6 @@
 # Frontend final regression audit
 
-Status: local validation complete on 2026-09-11; PR, CI, deployment, and post-deploy production evidence pending.
+Status: complete and deployed on 2026-09-11.
 
 This is the audit of record for workstream 8 of [`frontend-modernization-roadmap.md`](frontend-modernization-roadmap.md). The comparison baseline is deployed `main` at `f67283e`, after the React 19 / Router 8 runtime migration. Checks used the production Vite build plus Chromium at 1,440×900, 768×900 for the Duel board, and 390×844. Production smoke never submitted credentials or changed persistent account data.
 
@@ -51,8 +51,9 @@ The comparison uses the same manifest graph method introduced by PR #223, so the
 |---|---:|---:|---:|
 | Initial JavaScript, raw | 536.6 kB | 592.3 kB | +10.4% |
 | Initial JavaScript, gzip | 170.1 kB | 185.3 kB | +8.9% |
-| Initial CSS, raw | 623.1 kB | 208.1 kB | -66.6% |
+| Initial CSS, raw | 623.1 kB | 208.2 kB | -66.6% |
 | Initial CSS, gzip | 126.0 kB | 34.3 kB | -72.8% |
+| Initial JS + CSS, gzip | 296.1 kB | 219.6 kB | -25.8% |
 
 The JavaScript increase is the reviewed React 19 runtime cost recorded in workstream 6; Router 8 recovered 0.6 kB gzip relative to the React 19 / Router 7 comparison build. The CSS reduction is the cumulative result of the ownership and font workstreams. Current gzip route graphs remain within their checked-in budgets: home 42.5 kB, generator 303.8 kB, encyclopedia 175.8 kB, Duel setup 196.9 kB, live Duel 259.8 kB plus 16.0 kB CSS, Duel reference 341.2 kB plus 18.4 kB CSS, Reclamation 326.7 kB plus 26.5 kB CSS, Long Return 78.5 kB plus 39.7 kB CSS, and training 99.3 kB plus 12.4 kB CSS.
 
@@ -60,4 +61,10 @@ Local release gates are green: web typecheck; 58 web files / 1,110 tests; 12 API
 
 ## Release evidence
 
-PR, CI, deployment, production route responses, asset transfer, console/network checks, and final desktop/phone smoke will be appended after this slice reaches production.
+- PR [#241, Complete the frontend regression pass](https://github.com/nickcjordan/Xalians/pull/241) merged as `d2fba5d`. [CI run 34629620563](https://github.com/nickcjordan/Xalians/actions/runs/34629620563), [Terraform-plan run 34629620585](https://github.com/nickcjordan/Xalians/actions/runs/34629620585), and [deploy run 34629782908](https://github.com/nickcjordan/Xalians/actions/runs/34629782908) passed with empty annotation streams.
+- The production recheck found two residual P2/P3 gaps and closed both rather than waiving them. PR [#242, Finish Encyclopedia touch targets](https://github.com/nickcjordan/Xalians/pull/242) merged as `89db63e`; [CI run 34630220729](https://github.com/nickcjordan/Xalians/actions/runs/34630220729), [Terraform-plan run 34630220725](https://github.com/nickcjordan/Xalians/actions/runs/34630220725), and [deploy run 34630334413](https://github.com/nickcjordan/Xalians/actions/runs/34630334413) passed with empty annotations. All nine category targets then measured 44 px in production.
+- PR [#243, Guard Physics animation setup](https://github.com/nickcjordan/Xalians/pull/243) merged as `c79a30d`; [CI run 34630599053](https://github.com/nickcjordan/Xalians/actions/runs/34630599053), [Terraform-plan run 34630599060](https://github.com/nickcjordan/Xalians/actions/runs/34630599060), and [deploy run 34630712091](https://github.com/nickcjordan/Xalians/actions/runs/34630712091) passed with empty annotations. The final production Physics load rendered its arena, target, and two spinners with no console entry.
+- Cache-busted production requests returned HTTP 200 for all 12 representative shell routes, including the intentional client-side not-found path. The shell response was 2,187 bytes and consistent-request TTFB ranged from 144 to 221 ms. Representative compressed asset transfers were 152,188 bytes for the entry chunk, 36,351 bytes for auth vendor, 35,182 bytes for initial CSS, 30,650 bytes for Encyclopedia, and 19,367 bytes for Physics.
+- Final Chromium verification at 390×844 confirmed no document overflow or broken images on the changed routes, a painted keyboard ring, exact dialog focus restoration, named Duel switches, 44 px shared/category/Reclamation targets, locally contained Duel-reference scrollers, corrected terminal/game colours, and a clean Physics console. The 1,440 px and 768 px matrix remained visually unchanged from the release-candidate pass.
+
+There are no open findings or deferred frontend-modernization actions.
