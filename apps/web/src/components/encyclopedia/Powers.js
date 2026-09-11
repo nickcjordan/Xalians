@@ -16,7 +16,7 @@ function EntryRecord({ entry }) {
                 </Link>
             }
         >
-            <Prose text={entry.definition} except={entry.key} className="m-0 max-w-none text-small text-ink-2" />
+            <Prose text={entry.definition} except={entry.key} className="m-0 text-small text-ink-2" />
         </RecordRow>
     );
 }
@@ -72,7 +72,7 @@ export default function Powers() {
                             }
                         >
                             {p.entry ? (
-                                <Prose text={p.entry.definition} except={p.entry.key} className="m-0 max-w-none text-small text-ink-2" />
+                                <Prose text={p.entry.definition} except={p.entry.key} className="m-0 text-small text-ink-2" />
                             ) : (
                                 <p className="type-data m-0 text-small text-ink-3">
                                     No entry on file; see {p.planet ? p.planet.name : 'their homeworld'}.

@@ -63,7 +63,7 @@ function NarratorBeat({ beat, indexInPart, beatCount }) {
 				</p>
 			)}
 			<h2 className="type-heading m-0">{beat.title}</h2>
-			<Prose text={beat.prose} className="max-w-none" />
+			<Prose text={beat.prose} />
 			<RecordsConsulted beat={beat} />
 		</Card>
 	);
@@ -113,7 +113,7 @@ function StoryParagraph({ world, index, text }) {
 			className="grid grid-cols-[8rem_minmax(0,1fr)] items-start gap-4 border-t border-edge py-4 first:border-t-0 max-sm:grid-cols-1"
 		>
 			<MarginNote world={world} index={index} read={read} />
-			<Prose text={text} className="m-0 max-w-none" />
+			<Prose text={text} className="m-0" />
 		</div>
 	);
 }

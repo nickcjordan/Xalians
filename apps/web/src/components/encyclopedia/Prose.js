@@ -14,7 +14,7 @@ export default function Prose({ text, except, as: Tag = 'p', className = '' }) {
     if (!text) return null;
     const segments = lore.linkify(text, { except });
     return (
-        <Tag className={`max-w-[62ch] font-body text-body text-ink ${className}`.trim()}>
+        <Tag className={`measure font-body text-body text-ink ${className}`.trim()}>
             {segments.map((seg, i) =>
                 seg.key ? (
                     <EntryHoverCard key={i} entryKey={seg.key}>

@@ -184,7 +184,7 @@ export default function EntryView() {
                                             </Link>
                                         }
                                     >
-                                        <Prose text={rel.definition} except={rel.key} className="m-0 max-w-none text-small text-ink-2" />
+                                        <Prose text={rel.definition} except={rel.key} className="m-0 text-small text-ink-2" />
                                     </RecordRow>
                                 ))}
                             </Card>
