@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router';
 import { Hub } from 'aws-amplify/utils';
 import { toast } from 'sonner';
 import type { XalianRecord } from '@xalians/content/schema';
@@ -168,7 +168,7 @@ function GeneratorPage() {
 							type="single"
 							variant="outline"
 							value={profile}
-							onValueChange={(value) => { if (value) handleProfileChange(value); }}
+							onValueChange={(value: string) => { if (value) handleProfileChange(value as GeneratorProfile); }}
 							aria-label="Generator profile"
 							className="shrink-0"
 						>

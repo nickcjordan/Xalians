@@ -1,6 +1,5 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import { act } from 'react-dom/test-utils';
+import React, { act } from 'react';
+import { createRoot } from 'react-dom/client';
 import LongReturnGame, { encounterNarrative, recommendationFor, routeAdvantage, supportRoleForPlan } from './longReturnGame';
 import { readCheckpoint } from './expeditionSave';
 
@@ -86,6 +85,7 @@ function playRecommendedScene(container) {
 
 describe('Long Return Simple mode', () => {
   let container;
+  let root;
 
   beforeEach(() => {
     window.localStorage.clear();
@@ -94,16 +94,23 @@ describe('Long Return Simple mode', () => {
   });
 
   afterEach(() => {
-    act(() => {
-      ReactDOM.unmountComponentAtNode(container);
-    });
+    if (root) {
+      act(() => root.unmount());
+      root = null;
+    }
     container.remove();
   });
 
   function renderGame() {
+    if (!root) root = createRoot(container);
     act(() => {
-      ReactDOM.render(<LongReturnGame />, container);
+      root.render(<LongReturnGame />);
     });
+  }
+
+  function unmountGame() {
+    act(() => root.unmount());
+    root = null;
   }
 
   test('plays the recommended Simple plan through a complete crossing', () => {
@@ -166,7 +173,7 @@ describe('Long Return Simple mode', () => {
     const saved = readCheckpoint();
     expect(saved.salvage).toBe(0);
     expect(saved.fieldReceipt).toBeTruthy();
-    act(() => ReactDOM.unmountComponentAtNode(container));
+    unmountGame();
     renderGame();
     expect(container.textContent).toContain('Your expedition is waiting');
     click(container, /resume expedition/i);
@@ -190,7 +197,7 @@ describe('Long Return Simple mode', () => {
     click(container, /^send /i);
     expect(container.querySelector('[aria-label="Scouting in progress"]')).toBeTruthy();
     expect(readCheckpoint().phase).toBe('scout');
-    act(() => ReactDOM.unmountComponentAtNode(container));
+    unmountGame();
     renderGame();
     click(container, /resume expedition/i);
     expect(container.querySelector('.lr-simple-scouts')).toBeTruthy();

@@ -1,6 +1,6 @@
 // Tier: chrome. Reference reading -- browses and searches the archive, no play surface.
 import React, { useEffect, useRef } from 'react';
-import { Routes, Route, Navigate, useLocation, useParams } from 'react-router-dom';
+import { Routes, Route, Navigate, useLocation, useParams } from 'react-router';
 import * as lore from '../lore';
 import XalianNavbar from '../components/navbar';
 import EncyclopediaShell from '../components/encyclopedia/EncyclopediaShell';

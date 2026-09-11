@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "measuredAt": "residual shared-selector deletion based on 1129875b746d56bff474f588619bd72d6875b641",
+    "measuredAt": "React 19.3 and React Router 8.3 runtime migration based on 440a3dd593319a20c1d1223e249289307a417e75",
     "measuredOn": "2026-09-11",
     "policy": "Initial limits and route limits are the measured production output after removing the developer styleguide, rounded up with approximately five percent headroom. Update a limit only with measured evidence and review."
   },
@@ -8,7 +8,7 @@
     "styleGuidePage"
   ],
   "initial": {
-    "javascript": { "raw": 564000, "gzip": 179000 },
+    "javascript": { "raw": 622000, "gzip": 195000 },
     "stylesheets": { "raw": 218000, "gzip": 36000 }
   },
   "chunks": {

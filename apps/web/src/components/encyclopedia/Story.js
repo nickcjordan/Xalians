@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router';
 import * as lore from '../../lore';
 import Prose from './Prose';
 import { useVisit, useReadMark, markRead, recordStoryPosition } from './trail';

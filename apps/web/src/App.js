@@ -29,16 +29,14 @@ import {
   Navigate,
   useLocation,
   useParams,
-} from "react-router-dom";
+} from "react-router";
 
 import { Amplify } from 'aws-amplify';
 import awsconfig from './aws-exports';
 
-import { Provider } from 'react-redux'
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { Toaster } from '@/components/ui/sonner';
 import { ErrorBoundary } from '@/components/system/status';
-import store from './store/store';
 
 Amplify.configure(awsconfig);
 
@@ -137,16 +135,12 @@ class App extends React.Component {
 
   render() {
     return (
-      <Provider store={store}>
-
-      
       <TooltipProvider>
         <Router>
           <AppRoutes />
         </Router>
         <Toaster />
       </TooltipProvider>
-      </Provider>
     );
   }
   

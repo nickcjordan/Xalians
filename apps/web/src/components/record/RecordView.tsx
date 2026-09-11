@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router';
 import type { XalianRecord } from '@xalians/content/schema';
 import { getSpeciesTemplate, speciesDisplayName } from '@xalians/rules/generator';
 

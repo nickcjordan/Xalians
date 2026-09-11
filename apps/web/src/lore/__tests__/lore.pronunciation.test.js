@@ -1,8 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import React from 'react';
-import ReactDOM from 'react-dom';
-import { act } from 'react-dom/test-utils';
-import { MemoryRouter, Routes, Route } from 'react-router-dom';
+import { render } from '@testing-library/react';
+import { MemoryRouter, Routes, Route } from 'react-router';
 import encyclopedia from '@xalians/content/encyclopedia.json';
 import Pronunciation from '../../components/encyclopedia/Pronunciation';
 import EntryView from '../../components/encyclopedia/EntryView';
@@ -10,16 +9,10 @@ import EncyclopediaShell from '../../components/encyclopedia/EncyclopediaShell';
 
 const byKey = Object.fromEntries(encyclopedia.entries.map((e) => [e.key, e]));
 
-// No @testing-library/react in this project, so mount with react-dom directly
-// and read the painted DOM. Returns the container so a test can assert on
-// what actually rendered rather than on props.
+// Return Testing Library's container so these data tests can assert on what
+// actually rendered rather than on component props.
 function paint(element) {
-	const container = document.createElement('div');
-	document.body.appendChild(container);
-	act(() => {
-		ReactDOM.render(element, container);
-	});
-	return container;
+	return render(element).container;
 }
 
 

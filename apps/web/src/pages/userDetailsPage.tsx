@@ -103,7 +103,7 @@ function UserDetailsPage({ id }: UserDetailsPageProps) {
 				)}
 			</Shell>
 
-			<Dialog open={!!openRecord} onOpenChange={(open) => !open && setOpenRecord(null)}>
+			<Dialog open={!!openRecord} onOpenChange={(open: boolean) => !open && setOpenRecord(null)}>
 				<DialogContent className="sm:max-w-4xl">
 					<DialogHeader>
 						<VisuallyHidden>

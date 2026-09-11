@@ -15,7 +15,6 @@ import DuelTargetLayer, { verdictFor } from './duelTargetLayer';
 import AttackActionModal from './attackActionModal';
 import AttackMoveChooserModal from './attackMoveChooserModal';
 import HowToPlayModal from '../howToPlayModal';
-import { AnimationHub } from '../../../../store/AnimationHub';
 import * as boardStateManager from '@xalians/rules/duel/boardStateManager';
 import * as boardUtil from '../../../../utils/duelBoardSizeStorage';
 import * as playerStateManager from '@xalians/rules/duel/playerStateManager';

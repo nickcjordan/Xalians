@@ -77,7 +77,7 @@ function SignUpModal({ show, onHide, callback }: SignUpModalProps) {
 	};
 
 	return (
-		<Dialog open={show} onOpenChange={(open) => !open && closeModal()}>
+		<Dialog open={show} onOpenChange={(open: boolean) => !open && closeModal()}>
 			<DialogContent>
 				<DialogHeader>
 					<DialogTitle>Create a Xalians account</DialogTitle>

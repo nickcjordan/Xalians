@@ -197,7 +197,7 @@ class DuelStartPage extends React.Component<{}, DuelStartPageState> {
                                     type="single"
                                     variant="outline"
                                     value={this.state.players === 1 ? 'bot' : 'second'}
-                                    onValueChange={(v) => { if (v) { this.setState({ players: v === 'bot' ? 1 : 2 }); } }}
+                                    onValueChange={(v: string) => { if (v) { this.setState({ players: v === 'bot' ? 1 : 2 }); } }}
                                     aria-label="Opponent">
                                     <ToggleGroupItem value="bot">Bot</ToggleGroupItem>
                                     <ToggleGroupItem value="second">Second player</ToggleGroupItem>
@@ -210,7 +210,7 @@ class DuelStartPage extends React.Component<{}, DuelStartPageState> {
                                     type="single"
                                     variant="outline"
                                     value={String(this.state.numberOfPieces)}
-                                    onValueChange={(v) => { if (v) { this.setTeamSize(Number(v)); } }}
+                                    onValueChange={(v: string) => { if (v) { this.setTeamSize(Number(v)); } }}
                                     aria-label="Team size">
                                     {TEAM_SIZE_OPTIONS.map((size) => (
                                         <ToggleGroupItem value={String(size)} key={`team-size-${size}`}>
@@ -224,7 +224,7 @@ class DuelStartPage extends React.Component<{}, DuelStartPageState> {
                                 <span className="type-legend">Randomize start positions</span>
                                 <Switch
                                     checked={this.state.randomizeStartingPositions}
-                                    onCheckedChange={(checked) => this.setState({ randomizeStartingPositions: checked })} />
+                                    onCheckedChange={(checked: boolean) => this.setState({ randomizeStartingPositions: checked })} />
                             </div>
 
                             <div className={`flex gap-4 border-t border-edge px-6 py-4 ${this.state.userXalians ? 'flex-col items-stretch' : 'items-center justify-between'}`}>
@@ -239,7 +239,7 @@ class DuelStartPage extends React.Component<{}, DuelStartPageState> {
                                     <span className="type-legend">Debug mode</span>
                                     <Switch
                                         checked={this.state.debugMode}
-                                        onCheckedChange={(checked) => this.setState({ debugMode: checked })} />
+                                        onCheckedChange={(checked: boolean) => this.setState({ debugMode: checked })} />
                                 </div>
                             }
                         </Card>

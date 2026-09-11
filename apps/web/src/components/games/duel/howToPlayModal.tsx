@@ -115,7 +115,7 @@ function renderSection(section: Section) {
 
 function HowToPlayModal({ show, onHide }: HowToPlayModalProps) {
     return (
-        <Dialog open={show} onOpenChange={(open) => { if (!open) { onHide(); } }}>
+        <Dialog open={show} onOpenChange={(open: boolean) => { if (!open) { onHide(); } }}>
             <DialogContent className="grid-rows-[auto_minmax(0,1fr)_auto] max-h-[85vh] overflow-hidden sm:max-w-2xl">
                 <DialogHeader>
                     <DialogTitle className="type-heading">How to play Duel</DialogTitle>

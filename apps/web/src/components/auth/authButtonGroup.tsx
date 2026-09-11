@@ -2,7 +2,7 @@
 // sign out. Never the page's one primary key — the navbar never carries the
 // accent-filled forward action (docs/DESIGN_SYSTEM.md section 3.1).
 import * as React from 'react';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router';
 import { Hub } from 'aws-amplify/utils';
 
 import * as authUtil from '../../utils/authUtil';

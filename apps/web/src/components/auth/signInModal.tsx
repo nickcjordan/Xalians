@@ -72,7 +72,7 @@ function SignInModal({ show, onHide, callback, mustVerifyEmailCallback, username
 	};
 
 	return (
-		<Dialog open={show} onOpenChange={(open) => !open && closeModal()}>
+		<Dialog open={show} onOpenChange={(open: boolean) => !open && closeModal()}>
 			<DialogContent>
 				<DialogHeader>
 					<DialogTitle>Sign in</DialogTitle>
