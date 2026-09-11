@@ -8,19 +8,20 @@
     "veridium"
   ],
   "lore": {
-    "description": "A low six-limbed creature of living metal, the Sonalloy climbs Veridium's gantries and draws warm alloy from vents along its body, working it into damaged creatures and structures with a pair of fine tendrils and broad pincers.",
+    "description": "A low six-legged creature of living metal, the Sonalloy climbs Veridium's gantries and draws warm alloy from a broad extrusion vent beneath its front body, working it into damaged creatures and structures with a pair of fine tendrils and broad pincers.",
     "appearance": [
       "A low broad body made entirely of satin-finished metal",
+      "Two small recessed eyes grouped on the lower forward slope directly above the extrusion vent",
       "Six jointed load-bearing legs tipped with split gripping pads",
       "A pair of broad facing pincers beneath the front of the body",
       "Two fine tendrils that unfurl from recesses beside the pincers",
-      "Narrow vents between the body segments that release bright liquid alloy",
+      "A single broad downward-facing extrusion vent centered beneath the front body between the two tendril bases",
       "A bare unplated surface crossed by slow-moving lines of forge glow"
     ],
     "origin": "The Veridium Generator produced Sonalloys to maintain metal-shaping fauna and factory systems in forge districts where damage accumulates faster than ordinary crews can answer it.",
     "habitat": "They move along factory trenches, gantries, salvage fields, and the cooler banks of Veridium's liquid metal channels.",
     "feeding": "They draw heat from forge districts and passing metal channels, retaining enough of it to keep a reserve of seam alloy mobile inside the body, and fold small pieces of scrap into that reserve to replace material spent on repairs.",
-    "behavior": "A Sonalloy drums across a damaged surface to map the break, braces it with its pincers, and uses its tendrils to work secreted alloy through the fracture until the joined material bears weight again.",
+    "behavior": "A Sonalloy drums across a damaged surface to map the break, braces it with its pincers, extrudes warm alloy between its tendrils, and uses them to draw the material directly into the fracture and work it until the join bears weight again.",
     "company": "Several may converge on widespread damage and coordinate through alternating patterns of seam glow, but they separate once the damaged area is stable."
   },
   "physiology": {

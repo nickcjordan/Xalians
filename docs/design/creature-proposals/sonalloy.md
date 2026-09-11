@@ -8,13 +8,13 @@ The proposal should advance to art and population testing only after its identit
 
 ## Identity
 
-The Sonalloy is a low, six-legged organism made of living metal. It moves through Veridium's factory trenches and gantries, finds structural damage by drumming across it, secretes warm mobile alloy into the break, and works the repair with fine tendrils while broad pincers hold the damaged body or structure still.
+The Sonalloy is a low, six-legged organism made of living metal. Two small recessed eyes are grouped on its lower forward slope directly above a single broad, downward-facing extrusion vent centered between the bases of its two fine tendrils. It moves through Veridium's factory trenches and gantries, finds structural damage by drumming across it, braces the damaged body or structure with broad pincers, extrudes warm mobile alloy between the tendrils, and uses them to draw that material directly into the break and work the repair.
 
 This is restoration as a bodily sequence:
 
 1. locate the fracture through contact and vibration;
 2. brace the damaged object with visible anatomy;
-3. extrude a finite material from visible vents;
+3. extrude a finite material from the visible underside vent directly between the working tendrils;
 4. shape and compress that material until it carries weight.
 
 It is not a machine carrying a repair tool. Feeding keeps its alloy mobile, its body continuously replaces lost material, it responds behaviorally to damage, and groups form and disperse around ecological need.
@@ -28,7 +28,7 @@ It is not a machine carrying a repair tool. Feeding keeps its alloy mobile, its 
 | Corporeality | Corporeal | Its defining act depends on weight, contact, bracing, and transferred material |
 | Body plan | `multiped` | Six load-bearing legs provide a stable gantry silhouette and avoid Foromeer's biped profile |
 | Covering | `bare` | A continuous metal surface is not automatically protective plating; this deliberately rejects automatic `armored` |
-| Anatomy | Pincers, tendrils, vents, body | Pincers brace, tendrils perform fine work, vents establish the source of secretion, and the body supplies the six-legged mass |
+| Anatomy | Pincers, tendrils, vents, body | Pincers brace, tendrils pull material from the centered underside vent and perform fine work, the vent establishes the source of secretion, and the body supplies the six-legged mass |
 | Diet | `energy-feeder` | It explicitly takes in forge and channel heat to keep internal alloy mobile |
 | Respiration | None | The fully metal organism has no stated gas exchange; gas remains its normal ambient medium |
 | Lifespan | `enduring` | Continuous replacement of a metal body supports a life measured in centuries, while still allowing wear and death rather than claiming agelessness |
@@ -111,7 +111,7 @@ The repository previously had a broad naming convention, not a complete selectio
 | Input | Sonalloy answer |
 | --- | --- |
 | Defining act | Rejoins a damaged body or structure with worked living alloy |
-| Material or anatomy | Bare metal body, six gripping legs, pincers, tendrils, seam vents |
+| Material or anatomy | Bare metal body, six gripping legs, pincers, tendrils, centered underside extrusion vent |
 | Ecological role | Patient maintainer of Veridium's metal fauna and factoryscape |
 | Temperament | Attentive, persistent, deliberate, helpful without being socially commanding |
 | Sound intent | Softer and more flowing than Foromeer, but still carrying a metallic center |
