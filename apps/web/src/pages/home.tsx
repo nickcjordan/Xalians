@@ -1,7 +1,7 @@
 // Tier: chrome. The front door: the splash, the fourteen worlds and a
 // species strip as featured components, and the site's five destinations.
 import * as React from 'react';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router';
 import XalianNavbar from '../components/navbar';
 import XaliansLogoDnaAnimated from '../components/animations/xaliansLogoDnaAnimated';
 import XalianImage from '../components/xalianImage';

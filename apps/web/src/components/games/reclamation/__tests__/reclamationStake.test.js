@@ -1,6 +1,5 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import { act } from 'react-dom/test-utils';
+import React, { act } from 'react';
+import { createRoot } from 'react-dom/client';
 import ReclamationWorld from '../reclamationWorld';
 import ReclamationBench from '../reclamationBench';
 import ReclamationDraft from '../reclamationDraft';
@@ -25,8 +24,8 @@ import { ROSTER_SIZE } from '@xalians/rules/expedition/expeditionInterpretation'
 	force (whose turn it is, how many sends are spent) are overridden on the copy, since
 	neither is reachable from the outside without playing a whole round.
 
-	Mounted with plain ReactDOM.render + react-dom/test-utils' act against a jsdom
-	container, the same way reclamationReport.test.js mounts the notes panel.
+	Mounted with React's concurrent root against a jsdom container, the same way
+	reclamationReport.test.js mounts the notes panel.
 */
 
 const SEED = 7;
@@ -54,12 +53,14 @@ function withSentCount(view, seat, sentCount) {
 }
 
 let container;
+let root;
 
 function mount(element) {
 	container = document.createElement('div');
 	document.body.appendChild(container);
+	root = createRoot(container);
 	act(() => {
-		ReactDOM.render(element, container);
+		root.render(element);
 	});
 	return container;
 }
@@ -67,10 +68,11 @@ function mount(element) {
 afterEach(() => {
 	if (container) {
 		act(() => {
-			ReactDOM.unmountComponentAtNode(container);
+			root.unmount();
 		});
 		container.remove();
 		container = null;
+		root = null;
 	}
 });
 
@@ -279,9 +281,8 @@ describe('the price of hiding, on the bench', () => {
 		expect(container.querySelector('[data-hidden-price]')).toBeFalsy();
 
 		act(() => {
-			ReactDOM.render(
+			root.render(
 				<ReclamationBench {...benchProps(mine, { armedRecordId: stealthy, sendHidden: true })} />,
-				container
 			);
 		});
 		// armed and hidden: still one, since a hidden send costs the same as any other

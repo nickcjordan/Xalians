@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router';
 import * as lore from '../../lore';
 import Prose from './Prose';
 import { useReadMark } from './trail';

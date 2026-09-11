@@ -1,7 +1,7 @@
 // Tier: chrome. The navbar is on every page, including unmigrated v3 ones,
 // so it keeps its own data-tier="chrome" and uses only v4 primitives.
 import * as React from 'react';
-import { NavLink, useLocation } from 'react-router-dom';
+import { NavLink, useLocation } from 'react-router';
 import { Hub } from 'aws-amplify/utils';
 import { Menu } from 'lucide-react';
 

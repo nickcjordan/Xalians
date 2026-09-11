@@ -1,5 +1,5 @@
 import * as React from "react"
-import { Link } from "react-router-dom"
+import { Link } from "react-router"
 import { ArrowUp, ArrowDown, ArrowUpDown } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table"
@@ -112,7 +112,7 @@ function DataTable<T extends { id?: React.Key }>({
                 <Checkbox
                   aria-label="Select all rows"
                   checked={allSelected}
-                  onCheckedChange={(checked) => {
+                  onCheckedChange={(checked: boolean | "indeterminate") => {
                     const next = new Set<React.Key>()
                     if (checked) sortedRows.forEach((r, i) => next.add(getRowId(r, i)))
                     setSelected(next)
@@ -175,7 +175,7 @@ function DataTable<T extends { id?: React.Key }>({
                     <Checkbox
                       aria-label="Select row"
                       checked={isSelected}
-                      onCheckedChange={(checked) => {
+                      onCheckedChange={(checked: boolean | "indeterminate") => {
                         const next = new Set(activeSelected)
                         if (checked) next.add(id)
                         else next.delete(id)

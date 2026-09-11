@@ -7,7 +7,7 @@
 // old flow still exist and the table is retained, but nothing reads it any
 // more; what becomes of those roughly 70 records is Nick's decision (#180).
 import * as React from 'react';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router';
 import { Hub } from 'aws-amplify/utils';
 import { Trash2 } from 'lucide-react';
 import type { XalianRecord } from '@xalians/content/schema';
@@ -244,7 +244,7 @@ function UserAccountPage() {
 				)}
 			</Shell>
 
-			<Dialog open={!!openRecord} onOpenChange={(open) => !open && setOpenRecord(null)}>
+			<Dialog open={!!openRecord} onOpenChange={(open: boolean) => !open && setOpenRecord(null)}>
 				<DialogContent className="sm:max-w-4xl">
 					<DialogHeader>
 						<VisuallyHidden>

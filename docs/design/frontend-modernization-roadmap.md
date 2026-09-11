@@ -215,7 +215,7 @@ Prefer after route modernization if test helpers would otherwise be rewritten tw
 - Deploy: [frontend run 34623269872](https://github.com/nickcjordan/Xalians/actions/runs/34623269872) passed its production build, S3 sync, and CloudFront invalidation with an empty job-annotation response.
 - Production verification: signed-out `/account`, the sign-in dialog and client-side validation, phone layout, and the anonymous Generator showroom all rendered without loading/error residue. No real credentials were entered or stored.
 
-### 5. React Router modernization — In progress
+### 5. React Router modernization — Complete
 
 **Scope**
 
@@ -242,9 +242,12 @@ Coordinate with CSS route loading so both changes agree on route boundaries. Kee
 - Implementation: `react-router-dom` 7.18.3 replaces 5.3.4; route elements, `Routes`, `Navigate`, `useNavigate`, relative encyclopedia routes, `NavLink end`, and typed upstream declarations replace every v5-only API and the blanket local module shim.
 - Deterministic route verification: two new suites / 36 tests cover the application and encyclopedia boundaries, canonical/deep/dynamic routes, catch-alls, and all retired redirects with search/hash state. The tests exposed and now guard a v7 structured-path incompatibility in the retired tour-beat redirect.
 - Local verification: typecheck, 57 frontend files / 1,090 tests, zero production vulnerabilities, production build, and every bundle budget pass. Browser checks cover direct numeric-species and retired-tour links, query/hash preservation, navbar navigation, back/forward, deep story loading, and the catch-all at desktop and phone widths. A discovered long-path phone overflow is fixed and remeasured at 390 px content width in a 390 px viewport with no console errors.
-- PR, CI, deployment, and production smoke evidence pending.
+- PR: [#239, Modernize frontend routing](https://github.com/nickcjordan/Xalians/pull/239), merged as `440a3dd` on 2026-09-11.
+- CI: [CI run 34624743153](https://github.com/nickcjordan/Xalians/actions/runs/34624743153) and [Terraform-plan run 34624743083](https://github.com/nickcjordan/Xalians/actions/runs/34624743083) passed; all three job-annotation responses were empty.
+- Deploy: [frontend run 34624895087](https://github.com/nickcjordan/Xalians/actions/runs/34624895087) passed its production build, S3 sync, and CloudFront invalidation with an empty job-annotation response.
+- Production verification: numeric species and retired tour-beat deep links resolve to their canonical records with query/hash state intact. The phone catch-all renders at exactly 390 px document width in a 390 px viewport, with no console errors or loading residue.
 
-### 6. Redux Toolkit and React runtime — Planned
+### 6. Redux Toolkit and React runtime — In progress
 
 **Scope**
 
@@ -267,7 +270,13 @@ Router modernization and authentication integration coverage, which provide stro
 
 **Evidence / links**
 
-Pending.
+- Compatibility decision and runtime contract: [`docs/design/frontend-react-runtime-migration.md`](frontend-react-runtime-migration.md).
+- Store audit: the only configured slice fed an `AnimationHub` imported but never rendered or invoked; Duel already owns the active animation queue in component state. The unused Provider, store, two slices, counter, and animation hub are removed rather than upgraded.
+- Runtime implementation: React/React DOM and their declarations move to 19.3.0; React Router moves to 8.3.1 and its package imports move from `react-router-dom` to `react-router`. Legacy test mounts now use concurrent roots and React's `act`; React 19's stricter types make 16 UI callback contracts explicit.
+- Deterministic verification: a new three-case runtime guard pins the dependency boundary, forbids deprecated mount/router/Redux imports, proves `createRoot` plus `StrictMode`, and exercises the real error boundary. Full local verification passes typecheck, 58 frontend files / 1,093 tests, 12 API files / 65 tests, 12 content files / 37 tests, 12 rules files / 311 tests, and a zero-vulnerability production audit.
+- Bundle measurement: the current Router 8 build is 1.9 kB raw / 0.6 kB gzip smaller than the same React 19 build on Router 7. React 19 raises the initial graph from 549.1/175.0 kB to 592.2/185.3 kB raw/gzip; the initial budget is rebaselined to 622/195 kB under the existing approximately-five-percent policy, with every route-specific budget unchanged.
+- Production build and browser verification: all budgets pass; Account and its sign-in dialog, Reclamation, Long Return, Encyclopedia, canonical/retired deep links, and a live Duel board render at desktop and 390 px phone widths without horizontal overflow, loading residue, or console errors.
+- PR, CI, deployment, and production smoke evidence pending.
 
 ### 7. Developer-only styleguide and enforceable bundle budgets — Complete
 
@@ -348,6 +357,7 @@ Pending.
 | 2026-09-11 | Completed the training-style ownership split and began removing the retired type-colour utility contract from deployed `main` at `82f6b9d`. | [PR #231](https://github.com/nickcjordan/Xalians/pull/231); clean CI/deploy annotations, shipped bundle and route-JavaScript reductions, and live cross-game evidence recorded in workstream 2. |
 | 2026-09-11 | Completed the type-colour utility deletion and resumed the residual shared-selector audit from deployed `main` at `b3d73d0`. | [PR #232](https://github.com/nickcjordan/Xalians/pull/232); clean CI/deploy annotations, shipped CSS reduction, and live type-badge evidence recorded in workstream 2. |
 | 2026-09-11 | Completed the authentication integration slice and began React Router modernization from deployed `main` at `e2370bd`. | [PR #238](https://github.com/nickcjordan/Xalians/pull/238); authentication evidence is complete in workstream 4. Router implementation, 36 route-contract tests, full local gates, and browser evidence are recorded in workstream 5; PR pending. |
+| 2026-09-11 | Completed the React Router 7 slice and began the React/Redux runtime decision from deployed `main` at `440a3dd`. | [PR #239](https://github.com/nickcjordan/Xalians/pull/239); clean CI/deploy annotations and live redirect/deep-link evidence are complete in workstream 5. React 19, Router 8, dead-store removal, and local compatibility evidence are recorded in workstream 6; PR pending. |
 | 2026-09-11 | Completed the retired-navbar CSS deletion and continued the residual selector audit from deployed `main` at `9e3924b`. | [PR #233](https://github.com/nickcjordan/Xalians/pull/233); clean CI/deploy annotations, shipped CSS reduction, and live desktop/mobile navigation evidence recorded in workstream 2. |
 | 2026-09-11 | Completed the unreachable chrome-page CSS deletion and continued the residual selector audit from deployed `main` at `1129875`. | [PR #234](https://github.com/nickcjordan/Xalians/pull/234); clean CI/deploy annotations, shipped CSS reduction, and live cross-route evidence recorded in workstream 2. |
 | 2026-09-11 | Completed the residual shared-selector deletion and folded the final element defaults from deployed `main` at `1b1f7f6`. | [PR #235](https://github.com/nickcjordan/Xalians/pull/235); clean CI/deploy annotations, shipped CSS reduction, and live active-game evidence recorded in workstream 2. |

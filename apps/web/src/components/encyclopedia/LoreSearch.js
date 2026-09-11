@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router';
 import * as lore from '../../lore';
 import { Input } from '@/components/ui/input';
 import { Kbd } from '@/components/ui/kbd';

@@ -7,7 +7,7 @@ Starting point: `e2370bd` (`main` after PR #238)
 
 This slice upgrades `react-router-dom` from 5.3.4 to 7.18.3 while retaining React 18.3.1. It adopts the supported declarative v7 API without changing the application's rendering model: `Routes`, route `element` values, `Navigate`, `useNavigate`, relative nested routes, and `NavLink end` replace their v5 counterparts.
 
-React Router 8 is intentionally part of the later React runtime decision. It requires React 19.2.7 or newer and removes the `react-router-dom` package in favor of imports from `react-router`; taking it here would combine the router, React runtime, and package-import migrations in one review.
+React Router 8 was intentionally left to the later React runtime decision because it requires React 19.2.7 or newer and removes the `react-router-dom` package in favor of imports from `react-router`. That follow-up is now implemented by the React runtime workstream on top of this slice, at React Router 8.3.1 and React 19.3.0.
 
 ## Route ownership
 
