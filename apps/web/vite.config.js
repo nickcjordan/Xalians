@@ -102,11 +102,9 @@ export default defineConfig(({ mode }) => ({
 	build: {
 		// CI and `npm run deploy` sync `build/` to S3. Keep CRA's directory.
 		outDir: 'build',
-		// /styleguide intentionally imports every real design-system primitive in
-		// one lazy, developer-only reference route. It is currently ~522 kB and is
-		// never in a player route's initial graph; keep warnings meaningful for a
-		// materially larger regression instead of warning on that known boundary.
-		chunkSizeWarningLimit: 550,
+		// The checked-in manifest is consumed by scripts/checkBundleBudgets.cjs.
+		// Vite places it under build/.vite/, alongside no user-facing assets.
+		manifest: true,
 		rollupOptions: {
 			output: {
 				// Auth is required by the global navbar, but it changes much less
