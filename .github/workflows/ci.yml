@@ -20,6 +20,9 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Typecheck
+        run: npm run typecheck -w apps/web
+
       - name: Test
         run: npm test -w apps/web -- --run --passWithNoTests
 
@@ -43,6 +46,9 @@ jobs:
 
       - name: Typecheck
         run: npm run typecheck -w packages/content
+
+      - name: Typecheck rules
+        run: npm run typecheck -w packages/rules
 
       - name: Test
         run: npm test -w packages/content

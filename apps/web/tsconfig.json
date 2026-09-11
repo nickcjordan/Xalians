@@ -13,6 +13,11 @@
     "isolatedModules": true,
     "esModuleInterop": true,
     "resolveJsonModule": true,
+    // packages/rules and packages/content are consumed as TypeScript source with
+    // no build step, and their own imports carry the .ts extension. noEmit is
+    // on here, so allowing it costs nothing and keeps this app's typecheck
+    // agreeing with the packages it imports.
+    "allowImportingTsExtensions": true,
     "paths": { "@/*": ["./src/*"] }
   },
   "include": ["src", "vite.config.js", "../packages/rules/src"]

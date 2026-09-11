@@ -595,7 +595,7 @@ resource "aws_cloudfront_distribution" "site" {
 
   default_cache_behavior {
     target_origin_id           = var.frontend_bucket_name
-    viewer_protocol_policy     = "allow-all"
+    viewer_protocol_policy     = "redirect-to-https"
     allowed_methods            = ["GET", "HEAD", "OPTIONS"]
     cached_methods             = ["GET", "HEAD"]
     compress                   = true
@@ -632,6 +632,40 @@ resource "aws_cloudfront_distribution" "site" {
 
   lifecycle {
     prevent_destroy = true
+  }
+}
+
+# The site's own DNS. The www record was created in the console alongside the
+# distribution and is imported here; the apex record is new -- xalians.com was
+# listed as a distribution alias and covered by the certificate, but had no
+# record, so only www resolved. Both are alias records to the distribution;
+# Z2FDTNDATAQYW2 is CloudFront's fixed hosted zone id.
+import {
+  to = aws_route53_record.site_www
+  id = "${var.hosted_zone_id}_www.${var.frontend_bucket_name}_A"
+}
+
+resource "aws_route53_record" "site_www" {
+  zone_id = data.aws_route53_zone.xalian_zone.zone_id
+  name    = "www.${var.frontend_bucket_name}"
+  type    = "A"
+
+  alias {
+    name                   = aws_cloudfront_distribution.site.domain_name
+    zone_id                = aws_cloudfront_distribution.site.hosted_zone_id
+    evaluate_target_health = true
+  }
+}
+
+resource "aws_route53_record" "site_apex" {
+  zone_id = data.aws_route53_zone.xalian_zone.zone_id
+  name    = var.frontend_bucket_name
+  type    = "A"
+
+  alias {
+    name                   = aws_cloudfront_distribution.site.domain_name
+    zone_id                = aws_cloudfront_distribution.site.hosted_zone_id
+    evaluate_target_health = true
   }
 }
 
