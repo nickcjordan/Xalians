@@ -4,6 +4,7 @@ Per-species decisions that a migration agent cannot derive from the sources alon
 
 ## General
 
+- 2026-09-11 (Nick): playable-roster common encounter envelope. Xalians are bioengineered for purposes on worlds that contain more than one terrain and medium, so environmental specialization is optimization rather than accidental helplessness. Every new playable species must sustain ordinary encounter-length activity in gas and assume a visually credible unsupported pose and basic movement on solid ground. It need not live, feed, travel well, or reach native mobility there indefinitely. Truly medium-bound organisms may exist as fauna but do not enter the cross-game playable roster without an explicit product-level exception. Once validly present, every move retains a complete baseline without local weather, terrain, resources, structures, or companions; native conditions may amplify or restyle it only.
 - 2026-09-02: levers, not stone. Every ruling here is a tuned setting, reopened by a concrete case met while building, never by taste; agents report the case and the smallest fix in the moment, Nick decides. Full statement in the repo `CLAUDE.md`.
 - 2026-09-02: one surface key. `shell` is the armored aspect; `hide` means the body has no armored aspect; a species never declares both. Enforced by the script (`anatomy.surface`).
 

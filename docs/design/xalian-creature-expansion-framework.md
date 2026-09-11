@@ -9,9 +9,11 @@ New creatures are selected from demonstrated universe needs, not from an isolate
 3. **Population balance:** What distributions emerge after archetype, attribute, affinity, trait, appearance, and ability rolls?
 4. **Game balance:** What happens when a generated creature is interpreted by an actual game?
 
-Every design also obeys a **portable baseline** rule: environmental specialization may govern where a creature can live comfortably, but it may not make the creature's moveset conditional on a home-world event. Every generated ability and signature must retain a complete, lore-valid baseline anywhere the creature itself can participate. A home biome, storm, resource, structure, allied species, or other external condition may amplify the effect or change its presentation, but may never be required to invoke it.
+Every playable design also obeys a **common encounter envelope**: it must sustain ordinary encounter-length activity in gas and assume a visually credible unsupported pose with basic movement on solid ground. This is a bioengineering constraint, not a claim that every creature thrives everywhere. Native environments may remain necessary for long-term life, feeding, travel, or peak mobility. Truly medium-bound organisms may exist as fauna, but they do not enter the cross-game playable roster without an explicit product-level decision.
 
-This rule does not make every creature environmentally universal. Temperature, breathing medium, terrain, and other tolerances may remain narrow. It distinguishes the creature's survival envelope from access to its authored actions.
+Within that envelope, every design obeys a **portable moveset baseline**: environmental specialization may govern where a creature lives comfortably, but it may not make the creature's moveset conditional on a home-world event. Every generated ability and signature must retain a complete, lore-valid baseline anywhere the creature itself can participate. A home biome, storm, resource, structure, allied species, or other external condition may amplify the effect or change its presentation, but may never be required to invoke it.
+
+These rules do not make every creature environmentally universal. They distinguish temporary cross-game deployment, long-term ecological fitness, and access to authored actions. Invisible short-term physiology may be explained lightly, but visible support and movement may not be hand-waved: no unexplained hovering and no improvised life-support equipment added after the creature is designed.
 
 The generated [coverage ledger](./CREATURE-EXPANSION-COVERAGE.md) answers the first question. It deliberately does not pretend that equal representation means equal strength.
 
@@ -86,8 +88,9 @@ Before any name, silhouette, or lore paragraph is proposed, write a one-page tar
 4. **Mechanical identity:** the observable act that distinguishes it from existing species, stated without game-specific numbers.
 5. **Contrast set:** the two or three current species it could be confused with and the exact distinction from each.
 6. **Constraints:** home-world habitable band, terrain mobility, breathes/ambient-media relationship, element graph, and established lore.
-7. **Portable baseline:** how the central act remains available without a home-world weather event, terrain feature, resource, structure, or companion. State any environmental amplification separately.
-8. **Do-not-force list:** attractive coverage gaps that do not belong on this creature.
+7. **Encounter deployment:** how the body sustains encounter-length activity in gas and visibly supports and moves itself on solid ground without equipment, while preserving its native ecological specialization.
+8. **Portable moveset baseline:** how the central act remains available without a home-world weather event, terrain feature, resource, structure, or companion. State any environmental amplification separately.
+9. **Do-not-force list:** attractive coverage gaps that do not belong on this creature.
 
 A target is strong when two to four deficits collapse into one coherent identity. A design that exists only to tick unrelated boxes is rejected before prose or art work begins.
 
@@ -96,7 +99,7 @@ A target is strong when two to four deficits collapse into one coherent identity
 Build in dependency order so later choices cannot quietly contradict earlier ones:
 
 1. Home world, primary element, origin, and ecological function.
-2. Corporeality, composition, body plan, covering, size, lifespan, diet, and environmental contract.
+2. Corporeality, composition, body plan, covering, size, lifespan, diet, environmental contract, and common encounter envelope.
 3. Anatomy and instruments visible in the creature's silhouette.
 4. Capabilities and senses required by the body and ecological function.
 5. Attribute bands describing the species before archetype modification.
@@ -123,6 +126,7 @@ At every step, compare the draft to its contrast set and record the coverage del
 
 - Physiology supports the stated capabilities, senses, instruments, and signature.
 - Temperature and media fit the home world.
+- A neutral encounter pose shows unsupported body weight and basic movement on solid ground; `gas` is included in playable ambient tolerance without erasing native specialization.
 - Traits follow from ratified facts and do not duplicate raw fields.
 - Lore, data, and art describe the same silhouette and central act.
 - Every ability instrument and the signature's complete baseline remain usable wherever the creature can participate; environmental bonuses are explicitly secondary.
@@ -143,7 +147,7 @@ At every step, compare the draft to its contrast set and record the coverage del
 ### Gate E: Consumer
 
 - Run every implemented game or derived-stat consumer that reads the affected fields.
-- Exercise the creature outside its home-world presentation and confirm that no move becomes fictionally unavailable because a local storm, terrain feature, resource, structure, or companion is absent.
+- Exercise the creature in a neutral gas-and-solid-surface encounter: its body remains credibly present and mobile, and no move becomes fictionally unavailable because a local storm, terrain feature, resource, structure, or companion is absent.
 - Attribute a balance problem to the correct layer before proposing a correction.
 - Keep the creature locked until the design works as a creature; tune game interpretation separately when that is the actual fault.
 

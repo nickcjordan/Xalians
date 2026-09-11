@@ -95,6 +95,8 @@ Outward signaling to other creatures. Controlling one's own body, familiars, or 
 
 `breathes` lists the phases the body draws on to live; empty means a non-breather. `ambientMedia` lists the phases the creature can sustain activity in. Solid is never a medium: living inside rock or sand is the `burrow` capability. Chemistry, pressure, and humidity are not modeled.
 
+Playable-roster convention: every newly designed cross-game species includes `gas` in `ambientMedia` and can remain active for an ordinary encounter on a solid surface without external life-support equipment. A breathing body therefore includes `gas` in `breathes`, uses another supported respiratory route, or is a non-breather. Native liquid or another habitat may remain its ecological optimum, and land movement may be slow, but the body and neutral encounter pose must show credible support and basic motion without unexplained hovering. A truly obligate-medium organism can exist as non-playable fauna; adding it to the playable roster requires an explicit product-level exception rather than an improvised tank, carried medium, or game-specific delivery story.
+
 ## senses.special (array, optional; omit rather than leave empty)
 
 Senses beyond sight, hearing, and smell. Each must be supported by a source sentence or the art; none is authored to fill space.

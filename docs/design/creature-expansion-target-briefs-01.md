@@ -127,12 +127,18 @@ A native of Poseidas's stable deep layer whose defining competence is navigating
 
 - **World and element:** Poseidas; Water.
 - **Body plan:** `piscine`. This is the brief's clearest morphological requirement, not a suggestion to copy an Earth fish.
-- **Environmental fit:** breathes and tolerates liquid; sustained activity stays inside Poseidas's -2 to 40 C habitable band. Pressure is expressed through lore, `hardened`, and the central act because pressure itself is not a separate record field.
-- **Capabilities:** swim must dominate. Sprint and climb should remain genuinely inapplicable or weak rather than being raised to make the template broadly capable.
+- **Environmental fit:** breathes and tolerates both liquid and gas for ordinary activity; sustained activity stays inside Poseidas's -2 to 40 C habitable band. Pressure is expressed through lore, `hardened`, and the central act because pressure itself is not a separate record field. Gas tolerance supports temporary deployment and does not make dry land its ecological home.
+- **Capabilities:** swim must dominate. Sprint and climb should remain genuinely weak rather than being raised to make the template broadly capable, but the body must still support slow deliberate movement on solid ground.
 - **Sense:** echolocation is the preferred special sense for deep navigation. Its visible or behavioral mechanism must be established without importing an Earth-animal silhouette wholesale.
 - **Trait foundation:** `hardened` is required if the species normally operates at crush depth. `perceptive` is not automatically required merely because echolocation is present.
 - **Signature direction:** `crush`, currently unused by signatures, is preferred if the central act turns pressure into direct compression. It must remain distinct from Newtapede's `snare`: crushing is the effect, not prolonged restraint.
 - **Instrument direction:** body, jaws, or tail can support `crush` in the existing matrix. The anatomy must decide among them; the action must not decide the anatomy backward.
+
+### Encounter deployment
+
+The final piscine silhouette must include a credible neutral pose in which its own anatomy supports its weight and produces basic movement on a solid surface. Broad ventral contact surfaces, load-bearing fins, body undulation, or another biological solution may qualify if it follows from the complete design. Unexplained hovering and external water containers do not qualify.
+
+Its gas tolerance is encounter-scale bioengineering, not terrestrial equivalence. It may be slower, less agile, and unable to remain away from liquid indefinitely while still participating normally in a cross-game encounter.
 
 ### Contrast set
 
@@ -150,13 +156,14 @@ A native of Poseidas's stable deep layer whose defining competence is navigating
 ### Do not force
 
 - A recognizable shark, whale, ray, or ordinary fish with an elemental effect attached.
+- A literal obligate-water fish, unexplained aerial suspension, or external life-support vessel added to make the design playable.
 - Grasping anatomy or high manipulation without a visible means.
 - `perceptive`, scales, carnivory, or solitary behavior as assumed consequences of deep-ocean life.
 - Mend simply because Poseidas has healing associations; this brief is about deep pressure, not Algael processing.
 
 ### Success test
 
-The template should remain unmistakably a deep-water navigator when its signature is temporarily removed, and the signature should remain a crush rather than a disguised beam, spray, or snare.
+The template should remain unmistakably a deep-water navigator when its signature is temporarily removed, while its neutral pose still makes temporary solid-ground participation visually credible. Its signature should remain a crush rather than a disguised beam, spray, or snare.
 
 ## Reserve briefs, not yet recommended
 
