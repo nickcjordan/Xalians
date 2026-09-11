@@ -4,7 +4,9 @@
 
 Version 4 was ruled by Nick on 2026-09-08 and 2026-09-09 after the version 3 "one relay, many terminals" release was judged cheesy: every page had become a prop (cases, counters, desks, tape, screws, stamps, fake readouts, in-world button copy) and the site read as cosplay. Version 4 keeps what version 3 got right (one room, one type system, one frame, element hues as the only saturated color, tokens mirrored in CSS and JavaScript with tests) and removes the props. The world lives in the content. The interface stays quiet so the content can be loud.
 
-**Implementation state (2026-09-09): steps 1 and 2 of the migration have landed.** The v4 token layer, the restyled primitives, the new components and the brand pieces are in `system.css`, and every chrome page (navbar, home, account, user details, encyclopedia, generator, duel setup, training menu, styleguide) sets `data-tier="chrome"`. The version 3 terminal blocks and furniture classes are still in `system.css` only because the immersive experiences (duel board and playground, Reclamation, the training games, Long Return) still use them; they are deleted as each immersive brief lands. Do not use a version 3 class on a chrome page.
+**Implementation state (2026-09-11): steps 1 and 2 of the migration have landed; step 3 is deferred.** The v4 token layer, the restyled primitives, the new components and the brand pieces are in the Tailwind token layer and `globals.css`, and every chrome page (navbar, home, account, user details, encyclopedia, generator, duel setup, training menu, styleguide) sets `data-tier="chrome"`. The version 3 stylesheets under `public/assets/css/legacy/` survive only because the games still use them; they come out as each game is eventually brought over. Do not use a version 3 class on a chrome page.
+
+**Scope, ruled by Nick 2026-09-11: the games are out of scope for design work until they are built.** Reclamation, the duel board and reference, Long Return and the training games are all still being designed as games, so restyling them now would be spent twice. They are also the immersive tier, which is allowed to look like itself rather than like the chrome, so the cost of leaving them on version 3 is low. What is in scope is everything a visitor reads and operates: the home page, the encyclopedia, the generator, the account pages and the chrome around all of it. A game page is worth touching only when it is genuinely broken, when a change is cheap and self-contained, or when its own build work reaches the point of needing a look.
 
 For interaction vocabulary, game-feel standards, quality scoring, playtest questions, and the living decision registry, also read [`GAME_EXPERIENCE_QUALITY_GUIDE.md`](./GAME_EXPERIENCE_QUALITY_GUIDE.md). This document defines how the interface looks; that guide defines how a game experience should communicate and behave.
 
@@ -19,6 +21,8 @@ Every visual thing on the site belongs to exactly one tier. Decide the tier befo
 | **Immersive experience** | A game in progress. Entered deliberately. | May replace the chrome. Keeps the core (section 2). Always has a visible way back out. Gets its own short design brief, approved before it is built. | The duel board, the Reclamation match, the training minigames, Long Return. |
 
 The classification test: **lobbies, setup, results and reference are chrome; play itself is immersive.** If a screen is both (a duel results overlay on the board), the play surface is immersive and the overlay is chrome.
+
+**The immersive tier is parked (Nick, 2026-09-11).** No brief is being written and no game is being restyled while the games themselves are still being built. Classify new work into this tier as usual, then leave it on whatever it already uses. Chrome and featured components are where design effort goes.
 
 **Ruled 2026-09-08:** the generator and the encyclopedia are chrome for now. Either may later gain featured components or an immersive mode, but that is a separate decision.
 
@@ -136,6 +140,8 @@ The version 3 faces (Barlow Condensed, Barlow, IBM Plex Mono, Special Elite and 
 - **The chamfer is the signature shape**, reserved for emphasis: a twelve pixel cut at top left and bottom right on the **glass tier** (live data), and an eight pixel cut on the **one primary key** per screen. Nothing else is cut. The cut echoes the logo's corners, and because it is rare it marks what is live and what is next. It is drawn as two clipped layers (an edge-colored layer and a one pixel inset surface layer) so the hairline follows the contour; `.g-glass` and `.g-key--primary` carry this and nothing else needs to.
 - **Depth is low.** Surfaces are told apart by tone and a hairline edge with one inset top highlight. Levels: page (`--g-room`), 0, 1, 2, glass, floating. Drop shadows exist only on things that float over the page: modal, drawer, popover, toast, menu, search results. The one shadow they cast is `--g-shadow-float`; no page CSS writes a literal shadow.
 - The room keeps a very faint grain and edge vignette. It is not a flat fill.
+
+**Under review, not ratified (opened 2026-09-10).** The site currently carries more depth than the three bullets above describe: keys, toggles and tiles cast a solid diagonal mass down and to the right, in ink-3 under level-2 keys, viable-lo under the primary, and the element at 45 percent black under tiles. A pressed segment loses its mass without moving; flat things such as cards, badges and chips have none. The proposal is `docs/design/v4-pressed-plate.html`, the live comparison is the "Depth, round two" section of `/styleguide`, and the working phrase is that depth is thickness rather than light, so thickness means pressable. **Nick has not ruled on it.** Until he does, this section and section 13 describe the older, flatter rule while the site runs ahead of them. Do not remove the mass as a contract violation, and do not extend it to anything new.
 
 ## 6. Controls and states
 
@@ -258,7 +264,7 @@ Each step is one PR, verified by paint with `scripts/design/snap.js`, auto-merge
 
 1. **Done 2026-09-09 (PR: design/v4-migration).** Tokens and components. Rewrite `system.css` to the version 4 primitives, semantic aliases and component set; remove every terminal material block and every piece of terminal furniture (`.g-case`, `.g-counter`, `.g-desk`, `.g-cover-plate`, `.g-tube`, `.g-standoff`, `.g-keybank`, `.g-tape`, `.g-asset-plate`, `.g-nameplate`, `.g-stamp`, `.g-clip`, `.g-pencil`, `.g-vfd`, `.g-crt`, `.g-ledger`, `.g-paper*`, `.g-plate--photo`, `.g-meter--ink`, `.g-readout-mode`). Update `designTokens.js`, `colorConstants.js`, both tests, the fonts in `index.html`. Rebuild `/styleguide`. Add the spinner and the lockup components.
 2. **Done 2026-09-09, same PR, except the Reclamation lobby, which lives on the same page as the match and moves with it.** Chrome pages. Navbar and home (with the new lockup, the morph and the planet field replacing the stat tiles and equal destination cards), account, user details, encyclopedia, generator, duel setup, Reclamation lobby, training menu. Delete the terminal furniture and in-world copy from each. Set `data-tier`.
-3. **Immersive experiences**, one at a time, each with a short brief approved first: duel board, then Reclamation match, then the training games and Long Return.
+3. **Immersive experiences: deferred, 2026-09-11.** The plan was one game at a time, each with a short brief approved first, in the order duel board, Reclamation match, then the training games and Long Return. That work is parked until the games stop changing. It restarts on Nick's word, not on an agent's judgment that a page looks dated.
 
 ## 12. Rules for new work
 
@@ -272,7 +278,8 @@ Each step is one PR, verified by paint with `scripts/design/snap.js`, auto-merge
 8. **Plain copy on controls.** The world speaks in the content.
 9. **Contrast 4.5:1, visible focus, keyboard order, 44 pixel touch targets, reduced motion honored.**
 10. **Verify by paint.** Run the harness, open the PNGs at both widths. A check that could not have failed is not a check.
-11. **Report friction in the moment.** If a rule forces something absurd or a page fits no tier, say so with the concrete case and the smallest change. These are levers, not stone.
+11. **Leave the games alone.** Reclamation, the duel board and reference, Long Return and the training games are parked (section 1). They still carry version 3 classes on purpose. Do not restyle one because it looks dated, and do not delete a legacy stylesheet they still read.
+12. **Report friction in the moment.** If a rule forces something absurd or a page fits no tier, say so with the concrete case and the smallest change. These are levers, not stone.
 
 ## 13. Deliberately avoided
 
@@ -281,7 +288,8 @@ Each step is one PR, verified by paint with `scripts/design/snap.js`, auto-merge
 - Per-area typefaces or accents. One system.
 - Stat tile rows and equal-card feature grids on the home page. They are dashboard and marketing shapes.
 - Skeleton screens.
-- Rounded corners, pills (except dots and toggles), drop shadows on things that do not float.
+- Rounded corners and pills, except dots and toggles.
+- Drop shadows on things that do not float. **Under review since 2026-09-10:** the solid diagonal mass now on keys and tiles is not a drop shadow in the blurred sense, but it is a shadow on something that does not float, and it is live. See the note at the end of section 5; Nick has not ruled.
 - Whole-page scanlines, noise overlays, glow on surfaces, pulsing anything.
 - Fallout signals: Pip-Boy green as a screen wash, hazard yellow, atomic iconography. The mint is an accent on a full-color site, never a monochrome screen.
 - Orange as the accent. Withdrawn 2026-09-08.
