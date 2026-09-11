@@ -73,7 +73,7 @@ None. This is first because every later PR benefits from clean workflow output.
 - Deploy: [frontend run 34608744209](https://github.com/nickcjordan/Xalians/actions/runs/34608744209) and [backend run 34608744217](https://github.com/nickcjordan/Xalians/actions/runs/34608744217) passed with checkout v7, setup-node v7, AWS credentials v6, and Terraform setup v4. Both production job-annotation responses were empty.
 - Production verification: `https://xalians.com/` and `/duel` loaded at 1,440×900 and 390×844 with no page/console errors or document-level horizontal overflow. Home and Duel setup paints matched the pre-change smoke check.
 
-### 2. Legacy CSS ownership and route boundaries — In progress
+### 2. Legacy CSS ownership and route boundaries — Complete
 
 **Scope**
 
@@ -147,8 +147,11 @@ Do before the font pass so font consumers can be attributed to their final CSS o
 - Sixth selector-audit deploy: [frontend run 34620056308](https://github.com/nickcjordan/Xalians/actions/runs/34620056308) passed its production build, S3 sync, and CloudFront invalidation with an empty job-annotation response.
 - Sixth selector-audit production verification: all eleven routes loaded at 1,440×900 and 390×844 without console errors or new overflow. A started Match rendered all 16 faces and backs, and a started Duel rendered 64 cells plus eight aligned, gradient-painted badges at both widths. The previously tracked Duel-reference phone overflow is unchanged.
 - Final shared-file consolidation: the 885-byte, zero-class residual `style.css` is appended unchanged to `system.css`, preserving its final cascade position, then deleted from the shared import graph. The emitted immersive artifact remains byte-identical at `immersive-B5YtPtE8.css` (57.63/11.79 kB), so no route budget changes. Focused ownership/design-system tests, typecheck, 52 files / 1,031 tests, zero production vulnerabilities, production build, and every budget pass.
+- Final consolidation PR: [#236, Fold final immersive defaults into system CSS](https://github.com/nickcjordan/Xalians/pull/236), merged as `ccd2af6` on 2026-09-11.
+- Final consolidation CI: [CI run 34620786800](https://github.com/nickcjordan/Xalians/actions/runs/34620786800) and [Terraform-plan run 34620786888](https://github.com/nickcjordan/Xalians/actions/runs/34620786888) passed; Linux reproduced 52 frontend files / 1,031 tests, 12 content files / 37 tests, zero dependency vulnerabilities, the byte-identical asset, and every bundle budget. All three job-annotation responses were empty.
+- Final consolidation deploy: [frontend run 34620942570](https://github.com/nickcjordan/Xalians/actions/runs/34620942570) passed its production build, S3 sync, and CloudFront invalidation with an empty job-annotation response. Because the emitted artifact was byte-for-byte identical to the already verified #235 production asset, the deployment introduced no browser-visible route delta to re-test.
 
-### 3. Font loading — Planned
+### 3. Font loading — In progress
 
 **Scope**
 
@@ -156,7 +159,9 @@ Map actual face/weight/style use after CSS ownership is clear; consolidate reque
 
 **Measured baseline**
 
-At the program baseline, `index.html` issued four Google Fonts stylesheet requests representing 18 families and approximately 35 requested face/style variants. It includes a standalone Abel request, broad legacy terminal families, and the v4 family request. Only `fonts.gstatic.com` is preconnected; `fonts.googleapis.com` is not. The first selector-audit slice removes both unused 10,144-byte copies of `ProcrastinatingPixie-WyVOO.ttf` and its dead `@font-face`; the broader live-face audit remains here.
+At the program baseline, `index.html` issued four Google Fonts stylesheet requests representing 18 families and approximately 35 requested face/style variants. It included a standalone Abel request, broad legacy terminal families, and the v4 family request. Only `fonts.gstatic.com` was preconnected; `fonts.googleapis.com` was not. The first selector-audit slice removed both unused 10,144-byte copies of `ProcrastinatingPixie-WyVOO.ttf` and its dead `@font-face`.
+
+The live-consumer audit now narrows the request to seven families and eleven explicit family/weight variants. With the same Chrome user agent, Google Fonts returns 11,682 bytes / 27 subset `@font-face` rules for the consolidated request versus 45,453 bytes / 124 rules across the four prior requests, a 74.3% CSS response reduction. The two active terminal nameplate faces are retained; remote fallback-only, unreferenced, and dormant-terminal faces are removed from the request while their readable CSS fallback stacks remain.
 
 **Acceptance criteria**
 
@@ -171,7 +176,10 @@ Legacy CSS ownership audit.
 
 **Evidence / links**
 
-Pending.
+- Checked-in family/variant/route audit: [`docs/design/frontend-font-loading.md`](frontend-font-loading.md).
+- Automated guard: `fontLoading.test.js` enforces one request, both connection hints, `display=swap`, the exact retained variants, and the retired-family set.
+- Local verification: focused font/ownership/design-system tests, typecheck, 53 files / 1,034 tests, zero production vulnerabilities, production build, and every bundle budget pass. All eleven route entries render without loading/error residue at 1,440×900 and 390×844; desktop chrome and mobile Reclamation typography remain visually consistent with production.
+- PR, CI, deployment, and production font-resource evidence pending.
 
 ### 4. Cognito authentication integration coverage — Planned
 

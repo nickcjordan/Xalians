@@ -231,16 +231,10 @@
 	--g-chart-cursor-fill: #ffffff25;
 	--g-chart-axis: #ddd4bd;
 
-	/* --- type -------------------------------------------------------------
-	   Oswald is a mid-century poster and signage face: the condensed caps
-	   stencilled onto equipment and painted on placards. IBM Plex Mono is the
-	   machine's own output — a terminal line, a printed slip. Neither is a
-	   "sci-fi" typeface, because the fiction is industrial, not futuristic. */
+	/* --- type ------------------------------------------------------------- */
 	--g-font-ui: var(--g-font-body);
 
-	/* --g-size-micro/--g-size-tiny bumped a hair for Barlow Condensed: its
-	   caps run a touch smaller than Oswald's at the same rem size, and the
-	   smallest legends (asset plates, tabs) were the first to feel thin. */
+	/* Small legends stay a hair larger so condensed Saira caps remain legible. */
 	--g-size-micro: 0.7rem;
 	--g-size-tiny: 0.8125rem;
 	--g-size-small: 0.875rem;
@@ -251,11 +245,7 @@
 	--g-size-h1: clamp(2.5rem, 1.8rem + 3.4vw, 4.25rem);
 	--g-size-readout: clamp(1.75rem, 1.2rem + 2.2vw, 2.75rem);
 
-	/* Re-tuned once for Barlow Condensed (round3-coherence.md): it is already
-	   a condensed face, unlike Oswald's semi-condensed, so the same tracking
-	   read airy rather than stencilled. Pulled in a touch and the small
-	   sizes bumped so caps at --g-size-tiny/--g-size-micro stay legible at
-	   the tighter spacing. */
+	/* Tracking is tuned for condensed Saira at the smallest legend sizes. */
 	--g-track-label: 0.1em;
 	--g-track-wide: 0.2em;
 
@@ -343,12 +333,9 @@
 	--g-paper-ink-faint: #5c584d;
 	--g-paper-rule: rgba(35, 35, 26, 0.2);
 
-	/* One type system, core (Rule A / round3-coherence.md): Barlow Condensed
-	   is the legend face everywhere, IBM Plex Mono the machine's output
-	   everywhere, Special Elite the typewriter everywhere, Barlow the prose
-	   everywhere. No [data-terminal] block below overrides any of these four
-	   — the v3 build let each terminal set its own legend face and that was
-	   the single biggest thing that made the site read as six unrelated
+	/* One type system, core (Rule A / round3-coherence.md): no
+	   [data-terminal] block overrides the shared legend, output, paper, or
+	   prose roles. The v3 build did, making the site read as unrelated
 	   products (docs/DESIGN_SYSTEM.md Rule A). */
 	/* --g-font-legend is declared once, above, as the v4 primitive (Saira). */
 	--g-font-out: var(--g-font-data);

@@ -104,8 +104,8 @@ The remaining 885-byte `style.css` contains only element defaults and no class/i
 
 Focused ownership/design-system tests, typecheck, 52 files / 1,031 tests, dependency audit, production build, and every existing budget pass.
 
-## Remaining audit sequence
+PR [#236, Fold final immersive defaults into system CSS](https://github.com/nickcjordan/Xalians/pull/236) merged as `ccd2af6`. CI run `34620786800`, Terraform-plan run `34620786888`, and production deploy `34620942570` passed with empty annotation streams. The deployed stylesheet was byte-identical to the already verified #235 artifact, so the source consolidation had no browser-visible production delta.
 
-1. Continue the selector-use report for non-foundation sections of `system.css`; verify ambiguous selectors and library-generated state classes in the browser before deletion.
-2. Move any surviving route-only rules from `system.css` to the narrowest owner.
-3. Tighten route CSS budgets after every deletion, then remove Tailwind's temporary `important` interop once no legacy specificity requires it.
+## Completion boundary
+
+The ownership audit is complete: chrome receives no immersive compatibility CSS, every route stylesheet has an explicit importer set and budget, and the shared immersive graph contains only tokens plus cross-game terminal foundations. Further removal from `system.css` now belongs to an individual experience's visual migration, where selectors can be retired with that route's markup rather than guessed globally. Tailwind's temporary `important` interop remains a separate runtime-stack concern after the immersive routes leave the compatibility layer.
