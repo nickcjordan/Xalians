@@ -46,8 +46,8 @@
 
 	/* Ink: bone rather than white. */
 	--g-ink: #d9d2c0;
-	--g-ink-2: #9a9382;
-	--g-ink-3: #6c6659;
+	--g-ink-2: #aaa391;
+	--g-ink-3: #9e9786;
 	--g-ink-4: #4a4640;
 
 	/* The viable signal: the accent. Three tiers of one hue, the bright one
@@ -172,7 +172,7 @@
 	/* --- lamps ------------------------------------------------------------
 	   Bulbs behind coloured plastic. */
 	--g-lamp-amber: #ffb037;
-	--g-lamp-red: #e4483c;
+	--g-lamp-red: #e84f43;
 	--g-lamp-off: #3d3a30;
 
 	/* --- hazard -----------------------------------------------------------
@@ -439,7 +439,7 @@
 	--g-trim-light: #4a4a45;
 
 	--g-accent: #c8572b;
-	--g-accent-ink: #f5efe2;
+	--g-accent-ink: #0a0704;
 
 	--g-glass: #0f0d0a;
 	--g-screen-glass: #0f0d0a;
@@ -519,7 +519,7 @@
 
 	--g-radius: 0;
 	--g-wear: 0.3;
-	--g-lamp-on: #e4483c;
+	--g-lamp-on: #e84f43;
 
 	/* The docket's ID photo: a black-and-white admission photo, not a colour
 	   print. */
@@ -595,7 +595,7 @@
 	--g-trim-light: #55607a;
 
 	--g-accent: #e0364a;
-	--g-accent-ink: #fff3f2;
+	--g-accent-ink: #0b0908;
 
 	--g-glass: #07090d;
 	--g-screen-glass: #07090d;

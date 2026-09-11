@@ -213,6 +213,41 @@ const TERMINAL_FIELD_TOKENS = {
 	lampOn: '--g-lamp-on',
 };
 
+const relativeLuminance = (hex) => {
+	const channels = hex.slice(1).match(/../g).map((value) => parseInt(value, 16) / 255);
+	const linear = channels.map((value) => value <= 0.03928
+		? value / 12.92
+		: ((value + 0.055) / 1.055) ** 2.4);
+	return 0.2126 * linear[0] + 0.7152 * linear[1] + 0.0722 * linear[2];
+};
+
+const contrastRatio = (foreground, background) => {
+	const foregroundLuminance = relativeLuminance(foreground);
+	const backgroundLuminance = relativeLuminance(background);
+	return (Math.max(foregroundLuminance, backgroundLuminance) + 0.05)
+		/ (Math.min(foregroundLuminance, backgroundLuminance) + 0.05);
+};
+
+describe('v4 text contrast', () => {
+	const textInks = ['ink', 'ink2', 'ink3'];
+	const surfaces = ['room', 's0', 's1', 's2', 's3'];
+
+	it.each(textInks.flatMap((ink) => surfaces.map((surface) => [ink, surface])))
+		('%s clears 4.5:1 on %s', (ink, surface) => {
+			expect(contrastRatio(designTokens.v4[ink], designTokens.v4[surface])).toBeGreaterThanOrEqual(4.5);
+		});
+
+	it('every terminal accent carries readable text', () => {
+		const terminalBlocks = ['root', 'field', 'registry', 'archive', 'relay', 'readout'];
+		terminalBlocks.forEach((name) => {
+			const block = name === 'root' ? rootBlock : blocks[name];
+			const accent = resolveToken('--g-accent', block, rootBlock);
+			const accentInk = resolveToken('--g-accent-ink', block, rootBlock);
+			expect(contrastRatio(accentInk, accent), `${name} accent`).toBeGreaterThanOrEqual(4.5);
+		});
+	});
+});
+
 describe('design tokens', () => {
 
 	describe('element colours', () => {

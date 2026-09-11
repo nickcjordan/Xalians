@@ -812,4 +812,7 @@
 /* Phones: the big lockup is wider than half a row; give its cell the row. */
 @media (max-width: 640px) {
 	.sg4-brand-row .sg4-brand-cell:nth-child(2) { flex: 1 1 100%; }
+	/* The bench deliberately magnifies real board pixels. Keep that scale, but
+	   contain it in a local horizontal inspection surface on narrow screens. */
+	.dp-bench .duel-specimen { width: 100%; max-width: 100%; overflow-x: auto; }
 }

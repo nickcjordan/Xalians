@@ -47,6 +47,22 @@ describe('AuthButtonGroup', () => {
 		expect(await screen.findByRole('heading', { name: 'Sign in' })).toBeInTheDocument();
 	});
 
+	it('restores keyboard focus to the opener when a dialog closes', async () => {
+		const user = userEvent.setup();
+		render(
+			<MemoryRouter>
+				<AuthButtonGroup authAlertCallback={vi.fn()} />
+			</MemoryRouter>
+		);
+
+		const trigger = await screen.findByRole('button', { name: 'Sign in' });
+		await user.click(trigger);
+		expect(await screen.findByLabelText('Username')).toHaveFocus();
+
+		await user.keyboard('{Escape}');
+		expect(trigger).toHaveFocus();
+	});
+
 	it('keeps signed-out controls usable when the initial Cognito probe fails', async () => {
 		authUtil.currentUser.mockRejectedValue(new Error('service unavailable'));
 		render(

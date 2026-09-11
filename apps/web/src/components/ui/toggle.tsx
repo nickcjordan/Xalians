@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils"
 import { Toggle as TogglePrimitive } from "radix-ui"
 
 const toggleVariants = cva(
-  "mass-key inline-flex items-center justify-center gap-2 border border-edge bg-s2 px-3 font-legend text-[13px] font-medium uppercase tracking-legend whitespace-nowrap text-ink-2 transition-[background-color,color] duration-1 ease-out outline-none hover:bg-s3 hover:text-ink focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring disabled:pointer-events-none disabled:opacity-40 data-[state=on]:border-edge-strong data-[state=on]:bg-s0 data-[state=on]:text-ink data-[state=on]:shadow-[inset_0_-2px_0_var(--color-viable)] [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+  "mass-key inline-flex min-h-11 min-w-11 shrink-0 items-center justify-center gap-2 border border-edge bg-s2 px-3 font-legend text-[13px] font-medium uppercase tracking-legend whitespace-nowrap text-ink-2 transition-[background-color,color] duration-1 ease-out outline-none hover:bg-s3 hover:text-ink focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring disabled:pointer-events-none disabled:opacity-40 sm:min-h-0 sm:min-w-0 data-[state=on]:border-edge-strong data-[state=on]:bg-s0 data-[state=on]:text-ink data-[state=on]:shadow-[inset_0_-2px_0_var(--color-viable)] [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
   {
     variants: {
       variant: {

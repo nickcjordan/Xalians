@@ -220,6 +220,17 @@
 	.helix-spinner .rung { animation: none; opacity: 0.7; }
 }
 
+/* Tailwind's outline width/color utilities do not restore the outline style
+   after outline-none. Keep the component-specific width, offset and colour,
+   but make every keyboard focus treatment actually paint. */
+@layer utilities {
+	:where(a, button, input, select, textarea, summary, [tabindex]):focus-visible:focus {
+		/* Utilities are imported with `important` while immersive CSS remains,
+		   so this corrective style belongs to that same cascade layer. */
+		outline-style: solid !important;
+	}
+}
+
 /* Legacy interop, until the immersive redesign deletes src/styles/legacy:
    the old template paints every bare <a> mint; on the new stack a link is the
    ink of its text unless a class says otherwise. */
