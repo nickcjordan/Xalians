@@ -73,7 +73,7 @@ None. This is first because every later PR benefits from clean workflow output.
 - Deploy: [frontend run 34608744209](https://github.com/nickcjordan/Xalians/actions/runs/34608744209) and [backend run 34608744217](https://github.com/nickcjordan/Xalians/actions/runs/34608744217) passed with checkout v7, setup-node v7, AWS credentials v6, and Terraform setup v4. Both production job-annotation responses were empty.
 - Production verification: `https://xalians.com/` and `/duel` loaded at 1,440×900 and 390×844 with no page/console errors or document-level horizontal overflow. Home and Duel setup paints matched the pre-change smoke check.
 
-### 2. Legacy CSS ownership and route boundaries — Planned
+### 2. Legacy CSS ownership and route boundaries — In progress
 
 **Scope**
 
@@ -97,7 +97,10 @@ Do before the font pass so font consumers can be attributed to their final CSS o
 
 **Evidence / links**
 
-Pending.
+- Ownership inventory: [`docs/design/frontend-css-ownership.md`](frontend-css-ownership.md) records every stylesheet, consumers, boundary, disposition, and remaining audit order.
+- First boundary measurement: moving Duel, Duel reference, and Reclamation CSS out of `index.html` reduced initial stylesheet transfer from 623.1 kB raw / 126.0 kB gzip to 406.3 kB / 80.1 kB. Their 216,847 source bytes now emit only in the relevant route graphs: Duel 21.9 kB / 4.3 kB gzip, Duel reference 33.1 kB / 6.7 kB, and Reclamation 97.2 kB / 14.8 kB.
+- First boundary verification: ownership/design-system tests pass; production build and tightened initial/route CSS budgets pass; local desktop/mobile smoke covers home, Duel setup, a 64-cell live Duel board, Duel reference, and Reclamation without console errors. Duel-reference document overflow at 390 px was reproduced on the deployed pre-change baseline and remains a known responsive-pass issue, not a regression from the boundary move.
+- First boundary PR/CI/deploy/production: pending.
 
 ### 3. Font loading — Planned
 

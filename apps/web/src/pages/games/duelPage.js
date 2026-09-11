@@ -1,5 +1,6 @@
 // Terminal: registry. The live board runs inside Kozrak's arena ledger.
 import React from 'react';
+import '../../styles/legacy/duel.css';
 import XalianNavbar from '../../components/navbar';
 import XalianImage from '../../components/xalianImage';
 import MatchGameFlippedCard from '../../components/games/elements/matchGameFlippedCard';
