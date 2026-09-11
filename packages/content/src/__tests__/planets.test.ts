@@ -19,4 +19,10 @@ describe('planetRecords.json', () => {
       throw new Error(JSON.stringify(result.error.issues, null, 2));
     }
   });
+
+  it('requires the habitable band used by creature validation', () => {
+    const withoutBand = JSON.parse(JSON.stringify(planetRecords));
+    delete (withoutBand[0] as { environment?: unknown }).environment;
+    expect(PlanetRecordsSchema.safeParse(withoutBand).success).toBe(false);
+  });
 });

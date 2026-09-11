@@ -18,6 +18,9 @@
         "high": 355
       }
     },
+    "environment": {
+      "habitableBandC": { "min": 40, "max": 105 }
+    },
     "report": {
       "unit": "Magmuth Xalian Generator",
       "protocol": "apex-accords-standard",
@@ -101,6 +104,9 @@
         "low": 5,
         "high": 67
       }
+    },
+    "environment": {
+      "habitableBandC": { "min": -2, "max": 40 }
     },
     "report": {
       "unit": "Poseidas Xalian Generator",
@@ -188,6 +194,9 @@
         "high": 93
       }
     },
+    "environment": {
+      "habitableBandC": { "min": -60, "max": 5 }
+    },
     "report": {
       "unit": "Grimedes Xalian Generator",
       "protocol": "apex-accords-standard",
@@ -270,6 +279,9 @@
         "low": 24.5,
         "high": 122
       }
+    },
+    "environment": {
+      "habitableBandC": { "min": 10, "max": 70 }
     },
     "report": {
       "unit": "Luminax Xalian Generator",
@@ -362,6 +374,9 @@
         "high": 40
       }
     },
+    "environment": {
+      "habitableBandC": { "min": -5, "max": 45 }
+    },
     "report": {
       "unit": "Genesis Prototype, Floria",
       "protocol": "apex-accords-standard",
@@ -448,6 +463,9 @@
         "low": -71,
         "high": 57
       }
+    },
+    "environment": {
+      "habitableBandC": { "min": -55, "max": 35 }
     },
     "report": {
       "unit": "Zolton Xalian Generator",
@@ -537,6 +555,9 @@
         "high": 53
       }
     },
+    "environment": {
+      "habitableBandC": { "min": -50, "max": 20 }
+    },
     "report": {
       "unit": "Phantiri Xalian Generator",
       "unitNote": "operating under Leviticus Overdrive revision",
@@ -621,6 +642,9 @@
         "low": -28,
         "high": 34
       }
+    },
+    "environment": {
+      "habitableBandC": { "min": -45, "max": 25 }
     },
     "report": {
       "unit": "Stonera Xalian Generator",
@@ -707,6 +731,9 @@
         "low": -24,
         "high": 43
       }
+    },
+    "environment": {
+      "habitableBandC": { "min": 0, "max": 60 }
     },
     "report": {
       "unit": "Drainov Xalian Generator",
@@ -796,6 +823,9 @@
         "high": 58
       }
     },
+    "environment": {
+      "habitableBandC": { "min": -30, "max": 45 }
+    },
     "report": {
       "unit": "Saiphus Xalian Generator",
       "protocol": "apex-accords-standard",
@@ -880,6 +910,9 @@
         "high": 65
       }
     },
+    "environment": {
+      "habitableBandC": { "min": 5, "max": 50 }
+    },
     "report": {
       "unit": "Telypso Xalian Generator",
       "protocol": "apex-accords-standard",
@@ -962,6 +995,9 @@
         "low": -122,
         "high": -10
       }
+    },
+    "environment": {
+      "habitableBandC": { "min": -60, "max": 15 }
     },
     "report": {
       "unit": "Krystos Xalian Generator",
@@ -1053,6 +1089,9 @@
         "high": 36
       }
     },
+    "environment": {
+      "habitableBandC": { "min": -10, "max": 80 }
+    },
     "report": {
       "unit": "Veridium Xalian Generator",
       "protocol": "apex-accords-standard",
@@ -1140,6 +1179,9 @@
         "low": -50,
         "high": 173
       }
+    },
+    "environment": {
+      "habitableBandC": { "min": -10, "max": 55 }
     },
     "report": {
       "unit": "unregistered prototype, Endessa",

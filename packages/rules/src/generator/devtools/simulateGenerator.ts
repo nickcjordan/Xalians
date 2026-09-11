@@ -98,13 +98,16 @@ interface Args {
 	n: number;
 	seed: string;
 	calibrate: boolean;
+	check: boolean;
 }
 
 function parseArgs(argv: string[]): Args {
-	const args: Args = { n: 200, seed: 'batch-2026-09-07', calibrate: false };
+	const args: Args = { n: 200, seed: 'batch-2026-09-07', calibrate: false, check: false };
 	argv.forEach((arg) => {
 		if (arg === '--calibrate') {
 			args.calibrate = true;
+		} else if (arg === '--check') {
+			args.check = true;
 		} else if (arg.startsWith('--n=')) {
 			args.n = parseInt(arg.slice('--n='.length), 10) || args.n;
 		} else if (arg.startsWith('--seed=')) {
@@ -400,11 +403,11 @@ function renderTraitCountDist(dist: Record<string, number>, total: number): stri
 	return ['0', '1', '2', '3', '4', '5+'].map((b) => `${b}: ${dist[b] || 0} (${fmtPct(pct(dist[b] || 0, total))})`).join(', ');
 }
 
-function renderRoster(stats: RosterStats, args: Args, generatorVersion: string, generatedAt: string): string[] {
+function renderRoster(stats: RosterStats, args: Args, generatorVersion: string): string[] {
 	const lines: string[] = [];
 	lines.push('# Batch report');
 	lines.push('');
-	lines.push(`Generator version: ${generatorVersion}. Seed: \`${args.seed}\`. N per species: ${args.n}. Generated: ${generatedAt}.`);
+	lines.push(`Generator version: ${generatorVersion}. Seed: \`${args.seed}\`. N per species: ${args.n}. Deterministic sample.`);
 	lines.push('');
 	lines.push('Every number here is an observation for the tuning session, not a target.');
 	lines.push('');
@@ -482,7 +485,9 @@ function main(): void {
 	const args = parseArgs(process.argv.slice(2));
 	const root = process.cwd();
 	const templates = getSpeciesTemplates();
-	const generatedAt = new Date().toISOString();
+	// Generation time is record metadata, not a simulation input. Pin it so the report
+	// can be checked byte-for-byte in CI.
+	const generatedAt = '2000-01-01T00:00:00.000Z';
 
 	const perSpecies = new Map<string, XalianRecord[]>();
 	templates.forEach((t) => {
@@ -495,15 +500,24 @@ function main(): void {
 	const speciesSections = templates.map((t) => speciesStats(t, perSpecies.get(t.key) || []));
 
 	const lines: string[] = [];
-	lines.push(...renderRoster(roster, args, GENERATOR_VERSION, generatedAt));
+	lines.push(...renderRoster(roster, args, GENERATOR_VERSION));
 	lines.push('## Per species');
 	lines.push('');
 	speciesSections.forEach((s) => lines.push(...renderSpecies(s)));
 
 	const reportPath = path.resolve(root, 'docs/species-templates/BATCH-REPORT.md');
-	fs.mkdirSync(path.dirname(reportPath), { recursive: true });
-	fs.writeFileSync(reportPath, lines.join('\n'));
-	console.log(`wrote ${reportPath}`);
+	const report = lines.join('\n');
+	if (args.check) {
+		const existing = fs.existsSync(reportPath) ? fs.readFileSync(reportPath, 'utf8').replace(/\r\n/g, '\n') : '';
+		if (existing !== report) {
+			console.error('generator batch report is stale; run the simulator without --check');
+			process.exitCode = 1;
+		}
+	} else {
+		fs.mkdirSync(path.dirname(reportPath), { recursive: true });
+		fs.writeFileSync(reportPath, report);
+		console.log(`wrote ${reportPath}`);
+	}
 
 	if (args.calibrate) {
 		const scores = allRecords.map((r) => scoreRecord(r, templates.find((t) => t.key === r.species)!).score).sort((a, b) => a - b);

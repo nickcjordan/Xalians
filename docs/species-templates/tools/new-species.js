@@ -52,7 +52,7 @@ const raw = fs.readFileSync(SPECIES, 'utf8');
 const eol = raw.includes('\r\n') ? '\r\n' : '\n';
 species.push(entry);
 fs.writeFileSync(SPECIES, JSON.stringify(species, null, 2).replace(/\n/g, eol) + eol);
-status.species[args.key] = { description: 'source', appearance: 'pending', fields: 'pending', note: 'scaffolded ' + new Date().toISOString().slice(0, 10) + ' as species ' + nextId + '; not yet migrated' };
+status.species[args.key] = { description: 'source', appearance: 'pending', fields: 'pending', traits: 'pending', note: 'scaffolded ' + new Date().toISOString().slice(0, 10) + ' as species ' + nextId + '; not yet migrated' };
 const sraw = fs.readFileSync(STATUS, 'utf8');
 const seol = sraw.includes('\r\n') ? '\r\n' : '\n';
 fs.writeFileSync(STATUS, JSON.stringify(status, null, 2).replace(/\n/g, seol) + seol);

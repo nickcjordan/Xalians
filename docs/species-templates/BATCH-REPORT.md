@@ -1,97 +1,97 @@
 # Batch report
 
-Generator version: 0.2.0. Seed: `batch-2026-09-07`. N per species: 200. Generated: 2026-09-09T00:36:58.228Z.
+Generator version: 0.2.0. Seed: `batch-2026-09-07`. N per species: 200. Deterministic sample.
 
 Every number here is an observation for the tuning session, not a target.
 
 ## Roster-wide
 
-Total records: 5800.
+Total records: 6000.
 
 ### Build (archetype) share, observed vs authored weights
 
 | archetype | observed share | expected share |
 | --- | --- | --- |
-| berserker | 2.2% | 2.3% |
-| bulwark | 12.1% | 11.7% |
-| juggernaut | 8.7% | 9.0% |
-| predator | 10.6% | 11.1% |
-| prowler | 13.4% | 13.2% |
-| rogue | 2.0% | 1.9% |
-| runner | 5.0% | 4.9% |
-| sage | 6.5% | 6.8% |
-| seeker | 3.5% | 3.2% |
-| skirmisher | 14.0% | 13.8% |
-| sovereign | 2.9% | 2.8% |
-| stalwart | 4.6% | 4.9% |
-| survivor | 10.3% | 9.8% |
-| vanguard | 1.9% | 2.0% |
-| virtuoso | 2.4% | 2.7% |
+| berserker | 2.7% | 2.8% |
+| bulwark | 12.2% | 11.7% |
+| juggernaut | 9.9% | 10.2% |
+| predator | 10.3% | 10.7% |
+| prowler | 12.9% | 12.8% |
+| rogue | 1.9% | 1.9% |
+| runner | 4.8% | 4.8% |
+| sage | 6.3% | 6.5% |
+| seeker | 3.4% | 3.1% |
+| skirmisher | 13.5% | 13.3% |
+| sovereign | 2.8% | 2.7% |
+| stalwart | 4.4% | 4.7% |
+| survivor | 10.8% | 10.3% |
+| vanguard | 1.8% | 1.9% |
+| virtuoso | 2.3% | 2.6% |
 
 ### Secondary affinity
 
-Observed share with a secondary: 25.3% (target 25%). Share of secondaries at or above strength 50: 50.1% (of 1470 with a secondary).
+Observed share with a secondary: 25.4% (target 25%). Share of secondaries at or above strength 50: 50.4% (of 1525 with a secondary).
 
 Strength histogram, deciles 1-10 through 91-99:
 
 | 1-10 | 11-20 | 21-30 | 31-40 | 41-50 | 51-60 | 61-70 | 71-80 | 81-90 | 91-99 |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 165 | 142 | 158 | 146 | 142 | 159 | 150 | 145 | 141 | 122 |
+| 169 | 145 | 162 | 155 | 146 | 163 | 155 | 159 | 146 | 125 |
 
 ### Finish, observed vs odds
 
 | finish | observed | expected |
 | --- | --- | --- |
-| standard | 5654 | 5639.0 |
-| eclipse | 1 | 1.4 |
-| prismatic | 11 | 14.5 |
-| gleam | 134 | 145.0 |
+| standard | 5848 | 5833.5 |
+| eclipse | 1 | 1.5 |
+| prismatic | 13 | 15.0 |
+| gleam | 138 | 150.0 |
 
 ### Trait count distribution, roster-wide
 
-0: 0 (0.0%), 1: 987 (17.0%), 2: 2217 (38.2%), 3: 1773 (30.6%), 4: 674 (11.6%), 5+: 149 (2.6%)
+0: 0 (0.0%), 1: 960 (16.0%), 2: 2201 (36.7%), 3: 1908 (31.8%), 4: 763 (12.7%), 5+: 168 (2.8%)
 
 ### Action mix across rolled abilities
 
 | action | count | share |
 | --- | --- | --- |
-| crush | 2145 | 14.9% |
-| shove | 2024 | 14.0% |
-| strike | 1919 | 13.3% |
-| ward | 1342 | 9.3% |
-| snare | 1125 | 7.8% |
-| drain | 878 | 6.1% |
-| rake | 856 | 5.9% |
-| burst | 746 | 5.2% |
-| lash | 641 | 4.4% |
-| terrorize | 624 | 4.3% |
-| hurl | 512 | 3.5% |
-| ambush | 510 | 3.5% |
-| mend | 422 | 2.9% |
+| crush | 2206 | 14.8% |
+| shove | 2053 | 13.7% |
+| strike | 1986 | 13.3% |
+| ward | 1399 | 9.4% |
+| snare | 1183 | 7.9% |
+| drain | 935 | 6.3% |
+| rake | 907 | 6.1% |
+| burst | 810 | 5.4% |
+| terrorize | 664 | 4.4% |
+| lash | 641 | 4.3% |
+| hurl | 512 | 3.4% |
+| ambush | 510 | 3.4% |
+| mend | 422 | 2.8% |
 | spray | 292 | 2.0% |
-| cloud | 229 | 1.6% |
+| cloud | 253 | 1.7% |
 | beam | 175 | 1.2% |
 
 ### Medium mix across rolled abilities
 
 | medium | count | share |
 | --- | --- | --- |
-| psychic | 1513 | 10.5% |
-| sand | 1384 | 9.6% |
-| plant | 1362 | 9.4% |
-| water | 1093 | 7.6% |
-| ghost | 1037 | 7.2% |
-| fire | 1019 | 7.1% |
-| chemical | 1017 | 7.0% |
-| dark | 1009 | 7.0% |
-| rock | 1009 | 7.0% |
-| ice | 987 | 6.8% |
-| light | 966 | 6.7% |
-| air | 920 | 6.4% |
-| metal | 594 | 4.1% |
-| electric | 530 | 3.7% |
+| sand | 1845 | 12.3% |
+| psychic | 1513 | 10.1% |
+| plant | 1362 | 9.1% |
+| water | 1111 | 7.4% |
+| ghost | 1050 | 7.0% |
+| rock | 1025 | 6.9% |
+| fire | 1019 | 6.8% |
+| chemical | 1017 | 6.8% |
+| dark | 1009 | 6.8% |
+| ice | 987 | 6.6% |
+| light | 966 | 6.5% |
+| air | 920 | 6.2% |
+| metal | 594 | 4.0% |
+| electric | 530 | 3.5% |
 
-Share of rolled abilities using the secondary medium: 10.1% (of 14440 rolled abilities).
+Share of rolled abilities using the secondary medium: 10.1% (of 14948 rolled abilities).
 
 Mean favored-vs-unfavored attribute band-position lift, averaged across species: 17.3 points (0-100 scale).
 
@@ -130,14 +130,14 @@ Trait landed rate vs authored percent:
 | --- | --- | --- |
 | stealthy | 100.0 | 100.0% |
 | nocturnal | 100.0 | 100.0% |
-| slippery | 35.0 | 35.5% |
-| perceptive | 30.0 | 29.0% |
-| territorial | 20.0 | 21.0% |
+| solitary | 35.0 | 31.5% |
+| perceptive | 25.0 | 24.0% |
+| territorial | 25.0 | 29.0% |
 | hardened | 15.0 | 15.0% |
 
-Observed trait count mean: 3.00 (authored expected count: 3.00). Distribution: 0: 0 (0.0%), 1: 0 (0.0%), 2: 65 (32.5%), 3: 81 (40.5%), 4: 43 (21.5%), 5+: 11 (5.5%)
+Observed trait count mean: 3.00 (authored expected count: 3.00). Distribution: 0: 0 (0.0%), 1: 0 (0.0%), 2: 64 (32.0%), 3: 85 (42.5%), 4: 40 (20.0%), 5+: 11 (5.5%)
 
-Ability name diversity: 0.58 (707 abilities rolled).
+Ability name diversity: 0.57 (707 abilities rolled).
 
 Size mean: height 147.0 cm (band position 0.49), weight 60.7 kg (band position 0.49).
 
@@ -175,14 +175,14 @@ Trait landed rate vs authored percent:
 | --- | --- | --- |
 | toxic | 100.0 | 100.0% |
 | territorial | 100.0 | 100.0% |
-| stealthy | 35.0 | 36.0% |
-| pack-bonded | 30.0 | 29.0% |
-| resistant | 20.0 | 15.5% |
-| perceptive | 15.0 | 14.0% |
+| pack-bonded | 40.0 | 37.5% |
+| stealthy | 30.0 | 29.5% |
+| resistant | 18.0 | 15.0% |
+| perceptive | 12.0 | 12.0% |
 
-Observed trait count mean: 2.94 (authored expected count: 3.00). Distribution: 0: 0 (0.0%), 1: 0 (0.0%), 2: 66 (33.0%), 3: 89 (44.5%), 4: 36 (18.0%), 5+: 9 (4.5%)
+Observed trait count mean: 2.94 (authored expected count: 3.00). Distribution: 0: 0 (0.0%), 1: 0 (0.0%), 2: 65 (32.5%), 3: 90 (45.0%), 4: 38 (19.0%), 5+: 7 (3.5%)
 
-Ability name diversity: 0.59 (705 abilities rolled).
+Ability name diversity: 0.58 (705 abilities rolled).
 
 Size mean: height 48.0 cm (band position 0.50), weight 8.0 kg (band position 0.50).
 
@@ -223,11 +223,11 @@ Trait landed rate vs authored percent:
 | toxic | 40.0 | 40.0% |
 | resistant | 25.0 | 28.0% |
 | volatile | 20.0 | 18.0% |
-| perceptive | 15.0 | 20.5% |
+| solitary | 15.0 | 19.5% |
 
-Observed trait count mean: 3.06 (authored expected count: 3.00). Distribution: 0: 0 (0.0%), 1: 0 (0.0%), 2: 57 (28.5%), 3: 84 (42.0%), 4: 48 (24.0%), 5+: 11 (5.5%)
+Observed trait count mean: 3.06 (authored expected count: 3.00). Distribution: 0: 0 (0.0%), 1: 0 (0.0%), 2: 58 (29.0%), 3: 85 (42.5%), 4: 45 (22.5%), 5+: 12 (6.0%)
 
-Ability name diversity: 0.58 (709 abilities rolled).
+Ability name diversity: 0.59 (709 abilities rolled).
 
 Size mean: height 215.1 cm (band position 0.50), weight 412.3 kg (band position 0.51).
 
@@ -264,12 +264,13 @@ Trait landed rate vs authored percent:
 | trait | authored % | observed % |
 | --- | --- | --- |
 | luminous | 100.0 | 100.0% |
-| slippery | 45.0 | 45.0% |
-| resistant | 30.0 | 36.0% |
-| perceptive | 15.0 | 14.0% |
-| pack-bonded | 10.0 | 10.5% |
+| slippery | 38.0 | 42.0% |
+| resistant | 26.0 | 32.0% |
+| perceptive | 13.0 | 14.0% |
+| solitary | 15.0 | 15.0% |
+| pack-bonded | 8.0 | 4.5% |
 
-Observed trait count mean: 2.06 (authored expected count: 2.00). Distribution: 0: 0 (0.0%), 1: 53 (26.5%), 2: 93 (46.5%), 3: 44 (22.0%), 4: 10 (5.0%), 5+: 0 (0.0%)
+Observed trait count mean: 2.08 (authored expected count: 2.00). Distribution: 0: 0 (0.0%), 1: 54 (27.0%), 2: 90 (45.0%), 3: 43 (21.5%), 4: 13 (6.5%), 5+: 0 (0.0%)
 
 Ability name diversity: 0.59 (698 abilities rolled).
 
@@ -308,12 +309,13 @@ Trait landed rate vs authored percent:
 | trait | authored % | observed % |
 | --- | --- | --- |
 | regenerative | 100.0 | 100.0% |
-| stealthy | 40.0 | 32.5% |
-| volatile | 30.0 | 27.5% |
-| insulated | 20.0 | 15.5% |
-| perceptive | 10.0 | 9.0% |
+| stealthy | 35.0 | 30.0% |
+| solitary | 30.0 | 32.0% |
+| volatile | 20.0 | 15.5% |
+| insulated | 10.0 | 9.0% |
+| perceptive | 5.0 | 4.5% |
 
-Observed trait count mean: 1.84 (authored expected count: 2.00). Distribution: 0: 0 (0.0%), 1: 72 (36.0%), 2: 92 (46.0%), 3: 31 (15.5%), 4: 5 (2.5%), 5+: 0 (0.0%)
+Observed trait count mean: 1.91 (authored expected count: 2.00). Distribution: 0: 0 (0.0%), 1: 67 (33.5%), 2: 91 (45.5%), 3: 35 (17.5%), 4: 7 (3.5%), 5+: 0 (0.0%)
 
 Ability name diversity: 0.53 (706 abilities rolled).
 
@@ -352,13 +354,14 @@ Trait landed rate vs authored percent:
 | trait | authored % | observed % |
 | --- | --- | --- |
 | luminous | 100.0 | 100.0% |
-| reflective | 40.0 | 45.5% |
-| resistant | 35.0 | 36.0% |
-| mind-sealed | 25.0 | 29.5% |
+| solitary | 40.0 | 43.0% |
+| reflective | 25.0 | 24.0% |
+| resistant | 20.0 | 22.5% |
+| mind-sealed | 15.0 | 15.5% |
 
-Observed trait count mean: 2.11 (authored expected count: 2.00). Distribution: 0: 0 (0.0%), 1: 56 (28.0%), 2: 78 (39.0%), 3: 54 (27.0%), 4: 12 (6.0%), 5+: 0 (0.0%)
+Observed trait count mean: 2.05 (authored expected count: 2.00). Distribution: 0: 0 (0.0%), 1: 58 (29.0%), 2: 85 (42.5%), 3: 47 (23.5%), 4: 9 (4.5%), 5+: 1 (0.5%)
 
-Ability name diversity: 0.54 (695 abilities rolled).
+Ability name diversity: 0.53 (695 abilities rolled).
 
 Size mean: height 176.9 cm (band position 0.48), weight 357.0 kg (band position 0.47).
 
@@ -396,11 +399,12 @@ Trait landed rate vs authored percent:
 | --- | --- | --- |
 | armored | 100.0 | 100.0% |
 | stealthy | 100.0 | 100.0% |
-| slippery | 45.0 | 46.5% |
-| hardened | 30.0 | 33.0% |
-| perceptive | 25.0 | 28.5% |
+| slippery | 35.0 | 36.5% |
+| hardened | 25.0 | 25.0% |
+| solitary | 20.0 | 25.5% |
+| perceptive | 20.0 | 21.0% |
 
-Observed trait count mean: 3.08 (authored expected count: 3.00). Distribution: 0: 0 (0.0%), 1: 0 (0.0%), 2: 57 (28.5%), 3: 83 (41.5%), 4: 47 (23.5%), 5+: 13 (6.5%)
+Observed trait count mean: 3.08 (authored expected count: 3.00). Distribution: 0: 0 (0.0%), 1: 0 (0.0%), 2: 60 (30.0%), 3: 83 (41.5%), 4: 40 (20.0%), 5+: 17 (8.5%)
 
 Ability name diversity: 0.53 (702 abilities rolled).
 
@@ -438,11 +442,12 @@ Trait landed rate vs authored percent:
 | trait | authored % | observed % |
 | --- | --- | --- |
 | ramming | 100.0 | 100.0% |
-| hardened | 40.0 | 45.0% |
-| resistant | 35.0 | 35.5% |
-| perceptive | 25.0 | 22.0% |
+| hardened | 35.0 | 36.5% |
+| pack-bonded | 30.0 | 31.5% |
+| resistant | 20.0 | 14.0% |
+| perceptive | 15.0 | 14.5% |
 
-Observed trait count mean: 2.02 (authored expected count: 2.00). Distribution: 0: 0 (0.0%), 1: 51 (25.5%), 2: 99 (49.5%), 3: 44 (22.0%), 4: 6 (3.0%), 5+: 0 (0.0%)
+Observed trait count mean: 1.97 (authored expected count: 2.00). Distribution: 0: 0 (0.0%), 1: 60 (30.0%), 2: 96 (48.0%), 3: 36 (18.0%), 4: 7 (3.5%), 5+: 1 (0.5%)
 
 Ability name diversity: 0.52 (699 abilities rolled).
 
@@ -482,14 +487,14 @@ Trait landed rate vs authored percent:
 | --- | --- | --- |
 | phasing | 100.0 | 100.0% |
 | menacing | 100.0 | 100.0% |
-| stealthy | 35.0 | 38.5% |
-| slippery | 30.0 | 32.5% |
-| resistant | 20.0 | 23.5% |
-| hardened | 15.0 | 18.0% |
+| solitary | 35.0 | 38.0% |
+| stealthy | 30.0 | 35.0% |
+| slippery | 20.0 | 23.5% |
+| resistant | 15.0 | 18.0% |
 
-Observed trait count mean: 3.13 (authored expected count: 3.00). Distribution: 0: 0 (0.0%), 1: 0 (0.0%), 2: 56 (28.0%), 3: 79 (39.5%), 4: 50 (25.0%), 5+: 15 (7.5%)
+Observed trait count mean: 3.15 (authored expected count: 3.00). Distribution: 0: 0 (0.0%), 1: 0 (0.0%), 2: 57 (28.5%), 3: 77 (38.5%), 4: 48 (24.0%), 5+: 18 (9.0%)
 
-Ability name diversity: 0.53 (694 abilities rolled).
+Ability name diversity: 0.52 (694 abilities rolled).
 
 Size mean: height 92.4 cm (band position 0.49), weight 0.3 kg (band position 0.48).
 
@@ -526,12 +531,13 @@ Trait landed rate vs authored percent:
 | trait | authored % | observed % |
 | --- | --- | --- |
 | telekinetic | 100.0 | 100.0% |
-| hypnotic | 35.0 | 38.0% |
-| perceptive | 30.0 | 31.0% |
-| mind-sealed | 27.0 | 27.5% |
-| foresighted | 8.0 | 9.5% |
+| protective | 100.0 | 100.0% |
+| perceptive | 45.0 | 47.0% |
+| mind-sealed | 30.0 | 35.0% |
+| hypnotic | 15.0 | 14.0% |
+| foresighted | 10.0 | 13.0% |
 
-Observed trait count mean: 2.06 (authored expected count: 2.00). Distribution: 0: 0 (0.0%), 1: 57 (28.5%), 2: 88 (44.0%), 3: 42 (21.0%), 4: 12 (6.0%), 5+: 1 (0.5%)
+Observed trait count mean: 3.09 (authored expected count: 3.00). Distribution: 0: 0 (0.0%), 1: 0 (0.0%), 2: 52 (26.0%), 3: 93 (46.5%), 4: 41 (20.5%), 5+: 14 (7.0%)
 
 Ability name diversity: 0.59 (689 abilities rolled).
 
@@ -571,16 +577,61 @@ Trait landed rate vs authored percent:
 | --- | --- | --- |
 | armored | 100.0 | 100.0% |
 | ramming | 100.0 | 100.0% |
-| regenerative | 35.0 | 32.0% |
-| hardened | 30.0 | 21.0% |
-| perceptive | 25.0 | 27.0% |
-| anchored | 10.0 | 12.0% |
+| hardened | 35.0 | 31.0% |
+| regenerative | 30.0 | 23.0% |
+| perceptive | 20.0 | 19.5% |
+| solitary | 15.0 | 20.0% |
 
-Observed trait count mean: 2.92 (authored expected count: 3.00). Distribution: 0: 0 (0.0%), 1: 0 (0.0%), 2: 72 (36.0%), 3: 79 (39.5%), 4: 43 (21.5%), 5+: 6 (3.0%)
+Observed trait count mean: 2.94 (authored expected count: 3.00). Distribution: 0: 0 (0.0%), 1: 0 (0.0%), 2: 70 (35.0%), 3: 80 (40.0%), 4: 44 (22.0%), 5+: 6 (3.0%)
 
-Ability name diversity: 0.48 (690 abilities rolled).
+Ability name diversity: 0.49 (690 abilities rolled).
 
 Size mean: height 197.2 cm (band position 0.49), weight 96.7 kg (band position 0.49).
+
+### Frackworm (`frackworm`), n = 200
+
+Attributes (mean, band position 0-1):
+
+| attribute | mean | band position |
+| --- | --- | --- |
+| strength | 83.9 | 0.63 |
+| vitality | 79.6 | 0.58 |
+| endurance | 84.2 | 0.55 |
+| agility | 15.6 | 0.48 |
+| reflex | 18.9 | 0.50 |
+| intelligence | 20.7 | 0.54 |
+| willpower | 46.4 | 0.50 |
+| instinct | 56.6 | 0.51 |
+| charisma | 15.0 | 0.50 |
+| resilience | 68.8 | 0.60 |
+
+Favored mean band position: 0.68. Unfavored: 0.50. Lift: 17.7 points.
+
+Build shares (observed vs authored weight):
+
+| archetype | observed | authored |
+| --- | --- | --- |
+| juggernaut | 46.0% | 45.0% |
+| survivor | 23.5% | 25.0% |
+| berserker | 17.5% | 18.0% |
+| bulwark | 13.0% | 12.0% |
+
+Trait landed rate vs authored percent:
+
+| trait | authored % | observed % |
+| --- | --- | --- |
+| armored | 100.0 | 100.0% |
+| anchored | 30.0 | 36.0% |
+| ramming | 25.0 | 26.0% |
+| hardened | 20.0 | 18.5% |
+| solitary | 15.0 | 14.0% |
+| pack-bonded | 10.0 | 9.0% |
+
+Observed trait count mean: 2.04 (authored expected count: 2.00). Distribution: 0: 0 (0.0%), 1: 61 (30.5%), 2: 79 (39.5%), 3: 52 (26.0%), 4: 8 (4.0%), 5+: 0 (0.0%)
+
+Ability name diversity: 0.60 (708 abilities rolled).
+
+Size mean: height 1197.4 cm (band position 0.50), weight 3181.2 kg (band position 0.49).
 
 ### Graviclaw (`graviclaw`), n = 200
 
@@ -616,12 +667,12 @@ Trait landed rate vs authored percent:
 | --- | --- | --- |
 | armored | 100.0 | 100.0% |
 | anchored | 100.0 | 100.0% |
-| grappling | 32.0 | 38.0% |
-| stealthy | 28.0 | 29.5% |
+| grappling | 36.0 | 40.5% |
+| solitary | 26.0 | 31.5% |
 | telekinetic | 22.0 | 19.0% |
-| nocturnal | 18.0 | 18.5% |
+| stealthy | 16.0 | 18.0% |
 
-Observed trait count mean: 3.05 (authored expected count: 3.00). Distribution: 0: 0 (0.0%), 1: 0 (0.0%), 2: 54 (27.0%), 3: 91 (45.5%), 4: 46 (23.0%), 5+: 9 (4.5%)
+Observed trait count mean: 3.09 (authored expected count: 3.00). Distribution: 0: 0 (0.0%), 1: 0 (0.0%), 2: 48 (24.0%), 3: 95 (47.5%), 4: 48 (24.0%), 5+: 9 (4.5%)
 
 Ability name diversity: 0.59 (696 abilities rolled).
 
@@ -667,7 +718,7 @@ Trait landed rate vs authored percent:
 
 Observed trait count mean: 2.04 (authored expected count: 2.00). Distribution: 0: 0 (0.0%), 1: 63 (31.5%), 2: 84 (42.0%), 3: 39 (19.5%), 4: 10 (5.0%), 5+: 4 (2.0%)
 
-Ability name diversity: 0.56 (710 abilities rolled).
+Ability name diversity: 0.55 (710 abilities rolled).
 
 Size mean: height 130.0 cm (band position 0.50), weight 143.1 kg (band position 0.51).
 
@@ -705,12 +756,12 @@ Trait landed rate vs authored percent:
 | --- | --- | --- |
 | healing | 100.0 | 100.0% |
 | hypnotic | 100.0 | 100.0% |
-| regenerative | 35.0 | 34.5% |
-| luminous | 30.0 | 29.0% |
+| luminous | 40.0 | 41.0% |
+| regenerative | 30.0 | 27.5% |
 | protective | 20.0 | 23.0% |
-| perceptive | 15.0 | 17.0% |
+| perceptive | 10.0 | 11.5% |
 
-Observed trait count mean: 3.04 (authored expected count: 3.00). Distribution: 0: 0 (0.0%), 1: 0 (0.0%), 2: 62 (31.0%), 3: 84 (42.0%), 4: 41 (20.5%), 5+: 13 (6.5%)
+Observed trait count mean: 3.03 (authored expected count: 3.00). Distribution: 0: 0 (0.0%), 1: 0 (0.0%), 2: 64 (32.0%), 3: 79 (39.5%), 4: 45 (22.5%), 5+: 12 (6.0%)
 
 Ability name diversity: 0.57 (689 abilities rolled).
 
@@ -749,15 +800,15 @@ Trait landed rate vs authored percent:
 | trait | authored % | observed % |
 | --- | --- | --- |
 | hardened | 100.0 | 100.0% |
-| slippery | 30.0 | 30.0% |
-| luminous | 25.0 | 20.0% |
-| volatile | 20.0 | 16.5% |
-| nocturnal | 15.0 | 16.5% |
-| solitary | 10.0 | 9.0% |
+| solitary | 30.0 | 28.5% |
+| luminous | 30.0 | 26.5% |
+| slippery | 20.0 | 15.0% |
+| volatile | 15.0 | 16.5% |
+| nocturnal | 5.0 | 3.0% |
 
-Observed trait count mean: 1.92 (authored expected count: 2.00). Distribution: 0: 0 (0.0%), 1: 74 (37.0%), 2: 73 (36.5%), 3: 48 (24.0%), 4: 5 (2.5%), 5+: 0 (0.0%)
+Observed trait count mean: 1.90 (authored expected count: 2.00). Distribution: 0: 0 (0.0%), 1: 80 (40.0%), 2: 66 (33.0%), 3: 50 (25.0%), 4: 3 (1.5%), 5+: 1 (0.5%)
 
-Ability name diversity: 0.53 (705 abilities rolled).
+Ability name diversity: 0.52 (705 abilities rolled).
 
 Size mean: height 85.8 cm (band position 0.53), weight 39.5 kg (band position 0.53).
 
@@ -794,12 +845,13 @@ Trait landed rate vs authored percent:
 | trait | authored % | observed % |
 | --- | --- | --- |
 | anchored | 100.0 | 100.0% |
-| resistant | 35.0 | 33.5% |
-| regenerative | 30.0 | 28.0% |
-| perceptive | 20.0 | 23.0% |
-| territorial | 15.0 | 20.5% |
+| pack-bonded | 35.0 | 32.5% |
+| resistant | 25.0 | 20.5% |
+| territorial | 20.0 | 23.5% |
+| regenerative | 10.0 | 15.0% |
+| perceptive | 10.0 | 14.5% |
 
-Observed trait count mean: 2.05 (authored expected count: 2.00). Distribution: 0: 0 (0.0%), 1: 56 (28.0%), 2: 90 (45.0%), 3: 43 (21.5%), 4: 10 (5.0%), 5+: 1 (0.5%)
+Observed trait count mean: 2.06 (authored expected count: 2.00). Distribution: 0: 0 (0.0%), 1: 56 (28.0%), 2: 88 (44.0%), 3: 45 (22.5%), 4: 10 (5.0%), 5+: 1 (0.5%)
 
 Ability name diversity: 0.56 (693 abilities rolled).
 
@@ -838,11 +890,12 @@ Trait landed rate vs authored percent:
 | trait | authored % | observed % |
 | --- | --- | --- |
 | ramming | 100.0 | 100.0% |
-| slippery | 45.0 | 47.5% |
-| resistant | 30.0 | 31.0% |
-| perceptive | 25.0 | 27.5% |
+| pack-bonded | 35.0 | 41.0% |
+| slippery | 30.0 | 35.0% |
+| resistant | 20.0 | 18.5% |
+| perceptive | 15.0 | 17.5% |
 
-Observed trait count mean: 2.06 (authored expected count: 2.00). Distribution: 0: 0 (0.0%), 1: 49 (24.5%), 2: 100 (50.0%), 3: 41 (20.5%), 4: 10 (5.0%), 5+: 0 (0.0%)
+Observed trait count mean: 2.12 (authored expected count: 2.00). Distribution: 0: 0 (0.0%), 1: 54 (27.0%), 2: 84 (42.0%), 3: 47 (23.5%), 4: 14 (7.0%), 5+: 1 (0.5%)
 
 Ability name diversity: 0.53 (689 abilities rolled).
 
@@ -928,9 +981,9 @@ Trait landed rate vs authored percent:
 | slippery | 25.0 | 25.0% |
 | hardened | 18.0 | 17.5% |
 | resistant | 14.0 | 21.0% |
-| perceptive | 13.0 | 17.0% |
+| pack-bonded | 13.0 | 17.5% |
 
-Observed trait count mean: 2.07 (authored expected count: 2.00). Distribution: 0: 0 (0.0%), 1: 58 (29.0%), 2: 87 (43.5%), 3: 42 (21.0%), 4: 10 (5.0%), 5+: 3 (1.5%)
+Observed trait count mean: 2.08 (authored expected count: 2.00). Distribution: 0: 0 (0.0%), 1: 55 (27.5%), 2: 91 (45.5%), 3: 42 (21.0%), 4: 9 (4.5%), 5+: 3 (1.5%)
 
 Ability name diversity: 0.49 (694 abilities rolled).
 
@@ -969,11 +1022,13 @@ Trait landed rate vs authored percent:
 | trait | authored % | observed % |
 | --- | --- | --- |
 | armored | 100.0 | 100.0% |
-| ramming | 45.0 | 43.0% |
-| hardened | 35.0 | 38.0% |
-| perceptive | 20.0 | 23.5% |
+| ramming | 30.0 | 32.5% |
+| nocturnal | 25.0 | 28.5% |
+| hardened | 20.0 | 24.5% |
+| solitary | 15.0 | 11.5% |
+| perceptive | 10.0 | 9.5% |
 
-Observed trait count mean: 2.04 (authored expected count: 2.00). Distribution: 0: 0 (0.0%), 1: 50 (25.0%), 2: 97 (48.5%), 3: 47 (23.5%), 4: 6 (3.0%), 5+: 0 (0.0%)
+Observed trait count mean: 2.06 (authored expected count: 2.00). Distribution: 0: 0 (0.0%), 1: 60 (30.0%), 2: 77 (38.5%), 3: 53 (26.5%), 4: 10 (5.0%), 5+: 0 (0.0%)
 
 Ability name diversity: 0.54 (714 abilities rolled).
 
@@ -986,7 +1041,7 @@ Attributes (mean, band position 0-1):
 | attribute | mean | band position |
 | --- | --- | --- |
 | strength | 57.8 | 0.51 |
-| vitality | 47.1 | 0.48 |
+| vitality | 37.1 | 0.48 |
 | endurance | 47.6 | 0.50 |
 | agility | 72.8 | 0.66 |
 | reflex | 71.3 | 0.60 |
@@ -994,7 +1049,7 @@ Attributes (mean, band position 0-1):
 | willpower | 47.6 | 0.50 |
 | instinct | 65.8 | 0.61 |
 | charisma | 39.2 | 0.57 |
-| resilience | 37.6 | 0.51 |
+| resilience | 32.6 | 0.51 |
 
 Favored mean band position: 0.69. Unfavored: 0.51. Lift: 18.2 points.
 
@@ -1011,18 +1066,18 @@ Trait landed rate vs authored percent:
 
 | trait | authored % | observed % |
 | --- | --- | --- |
+| phasing | 100.0 | 100.0% |
 | stealthy | 100.0 | 100.0% |
-| slippery | 100.0 | 100.0% |
-| phasing | 35.0 | 51.5% |
-| nocturnal | 30.0 | 29.0% |
-| perceptive | 20.0 | 20.0% |
-| resistant | 15.0 | 21.5% |
+| slippery | 35.0 | 40.0% |
+| solitary | 30.0 | 28.0% |
+| nocturnal | 20.0 | 20.0% |
+| perceptive | 15.0 | 17.5% |
 
-Observed trait count mean: 3.22 (authored expected count: 3.00). Distribution: 0: 0 (0.0%), 1: 0 (0.0%), 2: 45 (22.5%), 3: 86 (43.0%), 4: 49 (24.5%), 5+: 20 (10.0%)
+Observed trait count mean: 3.06 (authored expected count: 3.00). Distribution: 0: 0 (0.0%), 1: 0 (0.0%), 2: 59 (29.5%), 3: 81 (40.5%), 4: 50 (25.0%), 5+: 10 (5.0%)
 
-Ability name diversity: 0.48 (694 abilities rolled).
+Ability name diversity: 0.47 (694 abilities rolled).
 
-Size mean: height 167.6 cm (band position 0.50), weight 71.1 kg (band position 0.51).
+Size mean: height 167.6 cm (band position 0.50), weight 1.8 kg (band position 0.51).
 
 ### Terragoyle (`terragoyle`), n = 200
 
@@ -1058,12 +1113,12 @@ Trait landed rate vs authored percent:
 | --- | --- | --- |
 | telekinetic | 100.0 | 100.0% |
 | territorial | 100.0 | 100.0% |
-| dormant | 35.0 | 29.0% |
-| anchored | 25.0 | 24.0% |
-| perceptive | 20.0 | 20.0% |
-| insulated | 20.0 | 22.0% |
+| dormant | 40.0 | 34.0% |
+| anchored | 20.0 | 20.0% |
+| perceptive | 20.0 | 17.0% |
+| insulated | 20.0 | 21.5% |
 
-Observed trait count mean: 2.95 (authored expected count: 3.00). Distribution: 0: 0 (0.0%), 1: 0 (0.0%), 2: 65 (32.5%), 3: 87 (43.5%), 4: 41 (20.5%), 5+: 7 (3.5%)
+Observed trait count mean: 2.92 (authored expected count: 3.00). Distribution: 0: 0 (0.0%), 1: 0 (0.0%), 2: 65 (32.5%), 3: 90 (45.0%), 4: 40 (20.0%), 5+: 5 (2.5%)
 
 Ability name diversity: 0.50 (705 abilities rolled).
 
@@ -1102,12 +1157,13 @@ Trait landed rate vs authored percent:
 | trait | authored % | observed % |
 | --- | --- | --- |
 | commanding | 100.0 | 100.0% |
-| nocturnal | 34.0 | 32.5% |
-| slippery | 28.0 | 35.0% |
-| perceptive | 22.0 | 19.0% |
-| mind-sealed | 16.0 | 18.5% |
+| nocturnal | 30.0 | 31.0% |
+| solitary | 26.0 | 27.0% |
+| stealthy | 22.0 | 25.0% |
+| slippery | 12.0 | 12.5% |
+| perceptive | 10.0 | 10.5% |
 
-Observed trait count mean: 2.05 (authored expected count: 2.00). Distribution: 0: 0 (0.0%), 1: 59 (29.5%), 2: 82 (41.0%), 3: 49 (24.5%), 4: 10 (5.0%), 5+: 0 (0.0%)
+Observed trait count mean: 2.06 (authored expected count: 2.00). Distribution: 0: 0 (0.0%), 1: 59 (29.5%), 2: 82 (41.0%), 3: 47 (23.5%), 4: 12 (6.0%), 5+: 0 (0.0%)
 
 Ability name diversity: 0.64 (703 abilities rolled).
 
@@ -1147,14 +1203,14 @@ Trait landed rate vs authored percent:
 | --- | --- | --- |
 | toxic | 100.0 | 100.0% |
 | stealthy | 100.0 | 100.0% |
-| hypnotic | 40.0 | 39.0% |
-| hardened | 25.0 | 31.0% |
-| perceptive | 20.0 | 19.5% |
-| menacing | 15.0 | 18.5% |
+| hypnotic | 35.0 | 33.0% |
+| menacing | 25.0 | 29.0% |
+| solitary | 25.0 | 30.0% |
+| hardened | 15.0 | 16.5% |
 
-Observed trait count mean: 3.08 (authored expected count: 3.00). Distribution: 0: 0 (0.0%), 1: 0 (0.0%), 2: 55 (27.5%), 3: 85 (42.5%), 4: 49 (24.5%), 5+: 11 (5.5%)
+Observed trait count mean: 3.08 (authored expected count: 3.00). Distribution: 0: 0 (0.0%), 1: 0 (0.0%), 2: 54 (27.0%), 3: 85 (42.5%), 4: 52 (26.0%), 5+: 9 (4.5%)
 
-Ability name diversity: 0.56 (694 abilities rolled).
+Ability name diversity: 0.57 (694 abilities rolled).
 
 Size mean: height 221.3 cm (band position 0.52), weight 121.6 kg (band position 0.53).
 
@@ -1192,13 +1248,14 @@ Trait landed rate vs authored percent:
 | trait | authored % | observed % |
 | --- | --- | --- |
 | hypnotic | 100.0 | 100.0% |
-| perceptive | 55.0 | 57.5% |
-| healing | 37.0 | 38.0% |
-| foresighted | 8.0 | 12.0% |
+| perceptive | 45.0 | 45.5% |
+| healing | 35.0 | 36.0% |
+| pack-bonded | 15.0 | 19.0% |
+| foresighted | 5.0 | 4.5% |
 
-Observed trait count mean: 2.08 (authored expected count: 2.00). Distribution: 0: 0 (0.0%), 1: 47 (23.5%), 2: 94 (47.0%), 3: 56 (28.0%), 4: 3 (1.5%), 5+: 0 (0.0%)
+Observed trait count mean: 2.05 (authored expected count: 2.00). Distribution: 0: 0 (0.0%), 1: 51 (25.5%), 2: 96 (48.0%), 3: 46 (23.0%), 4: 6 (3.0%), 5+: 1 (0.5%)
 
-Ability name diversity: 0.56 (683 abilities rolled).
+Ability name diversity: 0.55 (683 abilities rolled).
 
 Size mean: height 87.6 cm (band position 0.50), weight 13.0 kg (band position 0.50).
 
@@ -1235,13 +1292,15 @@ Trait landed rate vs authored percent:
 | trait | authored % | observed % |
 | --- | --- | --- |
 | toxic | 100.0 | 100.0% |
-| resistant | 55.0 | 52.0% |
-| volatile | 25.0 | 29.0% |
-| perceptive | 20.0 | 19.5% |
+| resistant | 40.0 | 38.0% |
+| volatile | 20.0 | 24.0% |
+| solitary | 20.0 | 22.0% |
+| stealthy | 12.0 | 13.0% |
+| perceptive | 8.0 | 8.5% |
 
-Observed trait count mean: 2.00 (authored expected count: 2.00). Distribution: 0: 0 (0.0%), 1: 52 (26.0%), 2: 101 (50.5%), 3: 41 (20.5%), 4: 6 (3.0%), 5+: 0 (0.0%)
+Observed trait count mean: 2.06 (authored expected count: 2.00). Distribution: 0: 0 (0.0%), 1: 57 (28.5%), 2: 91 (45.5%), 3: 37 (18.5%), 4: 14 (7.0%), 5+: 1 (0.5%)
 
-Ability name diversity: 0.60 (694 abilities rolled).
+Ability name diversity: 0.59 (694 abilities rolled).
 
 Size mean: height 107.4 cm (band position 0.50), weight 51.9 kg (band position 0.50).
 
@@ -1279,14 +1338,14 @@ Trait landed rate vs authored percent:
 | --- | --- | --- |
 | insulated | 100.0 | 100.0% |
 | volatile | 30.0 | 28.0% |
-| menacing | 22.0 | 23.5% |
-| resistant | 20.0 | 23.0% |
-| hardened | 16.0 | 17.5% |
-| perceptive | 12.0 | 9.5% |
+| solitary | 22.0 | 23.0% |
+| hardened | 20.0 | 22.0% |
+| menacing | 18.0 | 19.5% |
+| perceptive | 10.0 | 8.0% |
 
-Observed trait count mean: 2.02 (authored expected count: 2.00). Distribution: 0: 0 (0.0%), 1: 61 (30.5%), 2: 89 (44.5%), 3: 38 (19.0%), 4: 10 (5.0%), 5+: 2 (1.0%)
+Observed trait count mean: 2.00 (authored expected count: 2.00). Distribution: 0: 0 (0.0%), 1: 64 (32.0%), 2: 87 (43.5%), 3: 35 (17.5%), 4: 12 (6.0%), 5+: 2 (1.0%)
 
-Ability name diversity: 0.49 (703 abilities rolled).
+Ability name diversity: 0.50 (703 abilities rolled).
 
 Size mean: height 214.2 cm (band position 0.54), weight 126.4 kg (band position 0.54).
 
@@ -1323,12 +1382,13 @@ Trait landed rate vs authored percent:
 | trait | authored % | observed % |
 | --- | --- | --- |
 | anchored | 100.0 | 100.0% |
-| regenerative | 35.0 | 36.5% |
-| territorial | 25.0 | 22.5% |
-| resistant | 22.0 | 21.0% |
-| perceptive | 18.0 | 17.0% |
+| regenerative | 100.0 | 100.0% |
+| solitary | 30.0 | 28.0% |
+| grappling | 30.0 | 32.5% |
+| territorial | 22.0 | 18.0% |
+| resistant | 18.0 | 21.0% |
 
-Observed trait count mean: 1.97 (authored expected count: 2.00). Distribution: 0: 0 (0.0%), 1: 68 (34.0%), 2: 81 (40.5%), 3: 41 (20.5%), 4: 9 (4.5%), 5+: 1 (0.5%)
+Observed trait count mean: 3.00 (authored expected count: 3.00). Distribution: 0: 0 (0.0%), 1: 0 (0.0%), 2: 63 (31.5%), 3: 88 (44.0%), 4: 37 (18.5%), 5+: 12 (6.0%)
 
 Ability name diversity: 0.54 (684 abilities rolled).
 
@@ -1368,12 +1428,12 @@ Trait landed rate vs authored percent:
 | --- | --- | --- |
 | armored | 100.0 | 100.0% |
 | territorial | 100.0 | 100.0% |
-| menacing | 30.0 | 33.0% |
-| pack-bonded | 27.0 | 25.5% |
-| anchored | 23.0 | 22.5% |
-| hardened | 20.0 | 24.5% |
+| pack-bonded | 35.0 | 33.5% |
+| menacing | 25.0 | 27.0% |
+| anchored | 20.0 | 21.0% |
+| hardened | 20.0 | 23.5% |
 
-Observed trait count mean: 3.06 (authored expected count: 3.00). Distribution: 0: 0 (0.0%), 1: 0 (0.0%), 2: 52 (26.0%), 3: 98 (49.0%), 4: 38 (19.0%), 5+: 12 (6.0%)
+Observed trait count mean: 3.05 (authored expected count: 3.00). Distribution: 0: 0 (0.0%), 1: 0 (0.0%), 2: 52 (26.0%), 3: 96 (48.0%), 4: 42 (21.0%), 5+: 10 (5.0%)
 
 Ability name diversity: 0.59 (694 abilities rolled).
 

@@ -24,10 +24,8 @@ const path = require('path');
 const ROOT = path.resolve(__dirname, '..', '..', '..');
 const TEMPLATES = path.join(ROOT, 'docs', 'species-templates');
 const CATALOG = path.join(ROOT, 'docs', 'ability-catalog');
-// The worktree's content package is the source. XALIANS_CONTENT_FALLBACK may name one more
-// directory (another checkout's packages/content/json) to read a planetRecords.json that carries
-// environment.habitableBandC while the committed file lacks it (issue #167); never a hardcoded path.
-const SOURCE_DIRS = [path.join(ROOT, 'packages', 'content', 'json'), process.env.XALIANS_CONTENT_FALLBACK].filter(Boolean);
+// The committed content package is the single source of truth.
+const SOURCE_DIR = path.join(ROOT, 'packages', 'content', 'json');
 const ENCYCLOPEDIA_PATH = path.join(ROOT, 'docs', 'encyclopedia', 'encyclopedia.json');
 
 // ---------- registries (mirror of SKILL.md sections 5.1 to 5.7; keep in sync) ----------
@@ -173,17 +171,12 @@ const ENC = readEncyclopediaEntry(encPath, key || (T && T.key));
 // ---------- sources ----------
 let species = null, planet = null;
 (function loadSources() {
-  const dir = SOURCE_DIRS.find(d => fs.existsSync(path.join(d, 'species.json')));
-  if (!dir) { fail('source.missing', 'species.json not found in ' + SOURCE_DIRS.join(' or ')); return; }
+  const dir = SOURCE_DIR;
+  if (!fs.existsSync(path.join(dir, 'species.json'))) { fail('source.missing', 'species.json not found in ' + dir); return; }
   const speciesAll = JSON.parse(fs.readFileSync(path.join(dir, 'species.json'), 'utf8'));
-  // planetRecords.json is the planet source (rebuilt 2026-09-02): history prose, physical.derived.gravityEarth, environment.habitableBandC.
+  // planetRecords.json is the planet source: history prose and environment.habitableBandC.
   // planets.json is legacy; its data-block values stay in the quotation corpus only so records validated before the rebuild keep passing.
-  // 2026-09-10: the committed planetRecords.json carries no environment.habitableBandC (issue #167). Prefer whichever copy carries the
-  // band the temperature rule needs (the worktree first, then XALIANS_CONTENT_FALLBACK), and warn when the worktree copy does not.
-  const recCandidates = SOURCE_DIRS.map(d => path.join(d, 'planetRecords.json')).filter(f => fs.existsSync(f));
-  const hasBand = f => { try { const j = JSON.parse(fs.readFileSync(f, 'utf8')); return (Array.isArray(j) ? j : Object.values(j)).some(pl => pl && pl.environment && pl.environment.habitableBandC); } catch (e) { return false; } };
-  const recPath = recCandidates.find(hasBand) || recCandidates[0] || path.join(dir, 'planetRecords.json');
-  if (recCandidates[0] && recPath !== recCandidates[0]) warn('source.planet.band', 'the planetRecords.json in ' + path.dirname(recCandidates[0]) + ' has no environment.habitableBandC; using ' + recPath + ' for the habitable band');
+  const recPath = path.join(dir, 'planetRecords.json');
   const legacyPath = path.join(dir, 'planets.json');
   const recordsAll = fs.existsSync(recPath) ? JSON.parse(fs.readFileSync(recPath, 'utf8')) : null;
   const legacyAll = fs.existsSync(legacyPath) ? JSON.parse(fs.readFileSync(legacyPath, 'utf8')) : [];
@@ -264,7 +257,7 @@ if (T) {
   if (species && normalize(L.description) !== normalize(species.description)) fail('lore.description.verbatim', 'lore.description must be the species.json description verbatim (it is the teaser; presentation goes in lore.appearance and the rest in the five short fields)');
   checkProse('lore.description', L.description, 'lore.description');
   if ('body' in L) fail('lore.extra', 'lore.body is struck (Nick, 2026-09-09); presentation is the lore.appearance list');
-  if (!Array.isArray(L.appearance) || L.appearance.length < 3 || L.appearance.length > 10) fail('lore.appearance', 'lore.appearance must be a list of 3 to 10 defining presentation qualities');
+  if (!Array.isArray(L.appearance) || L.appearance.length < 3 || L.appearance.length > 8) fail('lore.appearance', 'lore.appearance must be a list of 3 to 8 defining presentation qualities');
   else L.appearance.forEach((e, i) => {
     if (typeof e !== 'string' || !e.trim()) { fail('lore.appearance.entry', 'lore.appearance[' + i + '] is empty'); return; }
     proseFieldsChecked.push(['lore.appearance[' + i + ']', e]);
@@ -392,9 +385,9 @@ if (T) {
   // Nick's pool shape guideline (2026-09-08): one required trait minimum, two normally, three only as a special case; rolled entries share 100 points between them so extra traits are rare; a pool never lists more than six entries.
   { const req = Object.values(pool).filter(v => v >= 100).length; const rolled = Object.values(pool).filter(v => v > 0 && v < 100).reduce((a, b) => a + b, 0);
     if (req > 2) warn('traits.pool.required', `${req} traits at 100; the guideline is one, two at most, three only as a justified special case`);
-    if (req < 1) warn('traits.pool.required', 'no trait at 100; every species has at least one required trait that defines it');
-    if (rolled < 90 || rolled > 110) warn('traits.pool.rolledSum', `rolled percents sum to ${rolled}; the guideline is 100 (90 to 110)`);
-    if (Object.keys(pool).length > 6) warn('traits.pool.size', `${Object.keys(pool).length} entries; a pool lists at most six`); }
+    if (req < 1) fail('traits.pool.required', 'no trait at 100; every species requires at least one defining trait');
+    if (rolled !== 100) fail('traits.pool.rolledSum', `rolled percents sum to ${rolled}; they must sum to exactly 100`);
+    if (Object.keys(pool).length > 6) fail('traits.pool.size', `${Object.keys(pool).length} entries; a pool may list at most six`); }
   const g = Object.keys(pool).filter(k => pool[k] === 100);
   for (const [x, y] of TRAIT_EXCLUSIONS) {
     if (pool[x] === 100 && pool[y] === 100) fail('traits.exclusion', x + ' and ' + y + ' are exclusion partners and cannot both be at 100');

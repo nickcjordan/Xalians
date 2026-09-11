@@ -81,7 +81,10 @@ const TemplatePhysiologySchema = z.object({
   breathes: z.array(MediumPhaseKeySchema),
   environmentalTolerance: z.object({
     ambientMedia: z.array(MediumPhaseKeySchema).min(1),
-    temperatureC: z.object({ min: z.number(), max: z.number() }),
+    temperatureC: z.object({ min: z.number(), max: z.number() }).refine(
+      ({ min, max }) => min <= max,
+      { message: 'temperature minimum must not exceed maximum' },
+    ),
   }),
   capabilities: TemplateCapabilitiesSchema,
   senses: TemplateSensesSchema,
@@ -89,13 +92,38 @@ const TemplatePhysiologySchema = z.object({
 
 const LoreSchema = z.object({
   description: z.string().min(1),
-  appearance: z.array(z.string().min(1)).min(1),
+  appearance: z.array(z.string().min(1)).min(3).max(8),
   origin: z.string().min(1),
   habitat: z.string().min(1),
   feeding: z.string().min(1),
   behavior: z.string().min(1),
   company: z.string().min(1),
 });
+
+const ArchetypeWeightsSchema = z
+  .partialRecord(ArchetypeKeySchema, z.number().int().min(1).max(100))
+  .refine((weights) => Object.keys(weights).length > 0, {
+    message: 'at least one archetype weight is required',
+  })
+  .refine((weights) => Object.values(weights).reduce((sum, weight) => sum + weight, 0) === 100, {
+    message: 'archetype percentages must sum to exactly 100',
+  });
+
+const TraitPoolSchema = z
+  .partialRecord(TraitKeySchema, z.number().int().min(1).max(100))
+  .superRefine((pool, ctx) => {
+    const values = Object.values(pool);
+    const rolledSum = values.filter((value) => value < 100).reduce((sum, value) => sum + value, 0);
+    if (Object.keys(pool).length > 6) {
+      ctx.addIssue({ code: 'custom', message: 'a trait pool may list at most six traits' });
+    }
+    if (!values.some((value) => value === 100)) {
+      ctx.addIssue({ code: 'custom', message: 'a trait pool requires at least one trait at 100 percent' });
+    }
+    if (rolledSum !== 100) {
+      ctx.addIssue({ code: 'custom', message: `rolled trait percentages must sum to exactly 100; received ${rolledSum}` });
+    }
+  });
 
 const SignatureAbilityTemplateSchema = z.object({
   name: z.string().min(1),
@@ -114,9 +142,8 @@ export const SpeciesTemplateSchema = z.object({
   generatorPlanets: z.array(z.string().min(1)).min(1),
   lore: LoreSchema,
   physiology: TemplatePhysiologySchema,
-  // Weighted odds by which an individual's archetype is drawn; weights are relative, not
-  // percentages, so no sum-to-100 constraint.
-  archetypeWeights: z.partialRecord(ArchetypeKeySchema, z.number().positive()),
+  // Integer percentages for the one archetype rolled per individual.
+  archetypeWeights: ArchetypeWeightsSchema,
   attributes: z.object({
     strength: zeroToHundredRange,
     vitality: zeroToHundredRange,
@@ -132,7 +159,7 @@ export const SpeciesTemplateSchema = z.object({
   // Each rolled independently at its own percent (1-100); an unlisted trait key is an
   // implicit 0, never rolled.
   traits: z.object({
-    pool: z.partialRecord(TraitKeySchema, z.number().min(1).max(100)),
+    pool: TraitPoolSchema,
   }),
   instruments: z.array(InstrumentKeySchema).min(1),
   signatureAbility: SignatureAbilityTemplateSchema,

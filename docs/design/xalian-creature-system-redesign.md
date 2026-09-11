@@ -1,5 +1,7 @@
 # Xalian Creature System Redesign
 
+> **Current status (2026-09-10):** The species-template format, all 30 current species records, their appearance lists, five presentation fields, and trait pools are ratified. This document preserves the design history, so early draft examples remain below but are not current data. For implementation, the authoritative sources are `packages/content/src/schema/speciesTemplate.ts`, `docs/species-templates/REGISTRY-DEFINITIONS.md`, `docs/species-templates/RULINGS.md`, `docs/species-templates/RATIFIED.json`, and the ratified JSON templates. The remaining work is consumer development and measured balance tuning, not completion of the existing creature records.
+
 ## Context
 
 Xalians is pivoting: the core product is now a creature-generation engine plus an ownership/collection platform (a "digital Pokémon binder" with trading), with games (starting with the existing Duel prototype) acting as consumers of creature data rather than the center of the design. The current stat system (8 Pokémon-style stats, `canFly`/`attackRange` traits, element-weighted point distribution in `lambda/src/ai.js`) was a first implementation and is being scrapped, not adjusted. This document is the ground-up redesign of the creature data structure, the generation pipeline, and the lore-integration decisions that support them, produced from a multi-session brainstorm with Nick (2026-08-30). The existing stats generator code can be fully replaced; the 14-element/14-planet lore structure is retained and extended per the decisions below.
@@ -412,6 +414,8 @@ Existing 29 species migrate by hand-authoring templates from their descriptions 
 
 ### Graviclaw pilot (ratified 2026-08-31 — the migration pattern)
 
+Historical note: this section records the first migration experiment. Its literal field names and values were superseded during the later all-species migration; use `docs/species-templates/graviclaw.json` for Graviclaw's current record and use this section only for the reasoning lessons it introduced.
+
 The first full template was drafted for Graviclaw and reviewed by Nick; its corrections became system rules (uniform 0–100 scale, optional-field contract, vocabularies-as-registry-data, body-demanded traits, size authoring rule, no-speech canon — all recorded in their sections). Pilot-specific decisions: instruments `pincers` + `mind`; signature ability = the prey-drag ("Gravity Well", **instrument `pincers`**, archetype `snare`, medium `dark`, intensity 8 — corrected from `mind` after Nick flagged that the lore explicitly pulls prey *to the claw*; migration lesson: classify every ability field against the full description, not the power in isolation); signature format gains a one-line `nature` field for games/binder display (to be formalized in the signature deep-dive); trait pool `armored: 100`, `anchored: 100`, `stealthy: 60`, `solitary: 45`, `perceptive: 30`, `menacing: 30`, `telekinetic: 6`; `mintablePlanets` home-only (most legacy species will be — they were purpose-designed for one planet; cross-planet species are a new-species-design concern); respiration amphibious, tremorsense, signaling communication. Phenotype entries in all templates stay DRAFT until the phenotype deep-dive lands.
 
 ## 10. Rarity model (ratified: hybrid)
@@ -424,7 +428,9 @@ Status 2026-09-10 (orchestrator recommendation, overridable by Nick): build this
 
 Illustrative only, to prove the derivation layer works: HP = f(vitality, resilience); Power = f(strength, ability intensity); Guard = f(resilience, guard-ish traits); movement squares = f(agility); attack range = f(ability archetype/delivery); stamina pool = f(endurance); evasion = f(reflex); Airborne = flight ≥ 6; `spectral` → phase-movement; `anchor` → immune to push + full-speed flag carry; affinity ≥ 50 → dual-type for STAB/effectiveness; `ward`/`mend`/`snare` abilities → non-damage board actions. The duel's current mock-JSON squads get regenerated from the new engine when this phase starts.
 
-## 12. Open questions
+## 12. Decision history and remaining tuning work
+
+Most entries below were open questions when first written and now record their resolution. The live items are affinity simulation/tuning and implementation concerns that must be tested through real consumers; they do not leave any current species in a pending state.
 
 1. **Ability grammar authoring** (§8): RATIFIED 2026-08-30 — see `xalian-ability-grammar-draft.md` (same folder): 16 archetypes, 25 instruments (species- and D&D-natural-weapon-validated), element word pools, 4 name templates with intensity-weighted naming. Per-species instruments + signature abilities fold into the species-template migration.
 2. **Affinity odds tuning** (§5b): baseline ratified at 75/24/1 (none/secondary/anomalous); secondary-strength distribution and per-species variance still need a tuning pass with simulated batches.
@@ -448,10 +454,9 @@ Second-opinion audit run at Nick's request (25 findings, saved in `xalian-catalo
 
 **Ruled by Nick (2026-08-31):** (1) **intensity rescaled to 0-100** — full uniformity, no exemptions ("make it one hundred and be consistent"); ability intensity, signature intensity bands, and catalog minIntensity/heft thresholds all move to the 0-100 scale (Gravity Well band [6,9] → [60,90]); (2) **Smothering Darkness stays** in dark terrorize, justified as void-is-absence-of-light (darkness-as-void is dark's register; shadow-as-specter remains ghost's) — justification to be encoded in the medium-ownership matrix.
 
-## Next steps
+## Next steps after the 2026-09-10 creature lock
 
-1. Nick reviews this doc — especially Assumptions #8–10 and the open questions.
-2. Ratify attribute keys and first trait vocabulary (edits welcome; keys freeze at first mint).
-3. Author the species-template migration for the existing 29 species.
-4. Write the "Biomes & fauna" lore blocks.
-5. Separate plan: registry/API implementation. Then phase 2: duel derivation layer.
+1. Build the coverage ledger across elements, worlds, physiology, archetypes, traits, capabilities, senses, instruments, actions, and affinity reachability.
+2. Use that ledger to choose expansion targets before naming or writing any new creature.
+3. Run generated populations and real game consumers against the ratified records; propose lever changes only from observed imbalance or authoring friction.
+4. Keep broader planet astronomy and mutable world-status expansion in their own review. Creature validation consumes the committed `environment.habitableBandC` values without requiring those speculative additions.

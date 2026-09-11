@@ -8,6 +8,10 @@
   ],
   "scripts": {
     "test": "npm test --workspaces --if-present",
+    "coverage:creatures": "node scripts/creatureCoverage.js",
+    "check:creature-coverage": "node scripts/creatureCoverage.js --check",
+    "simulate:creatures": "node apps/web/scripts/runNode.cjs packages/rules/src/generator/devtools/simulateGenerator.ts",
+    "check:creature-simulation": "node apps/web/scripts/runNode.cjs packages/rules/src/generator/devtools/simulateGenerator.ts --check",
     "publish": "terraform apply -auto-approve"
   },
   "devDependencies": {
