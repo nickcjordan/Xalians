@@ -9,11 +9,15 @@ New creatures are selected from demonstrated universe needs, not from an isolate
 3. **Population balance:** What distributions emerge after archetype, attribute, affinity, trait, appearance, and ability rolls?
 4. **Game balance:** What happens when a generated creature is interpreted by an actual game?
 
+Every design also obeys a **portable baseline** rule: environmental specialization may govern where a creature can live comfortably, but it may not make the creature's moveset conditional on a home-world event. Every generated ability and signature must retain a complete, lore-valid baseline anywhere the creature itself can participate. A home biome, storm, resource, structure, allied species, or other external condition may amplify the effect or change its presentation, but may never be required to invoke it.
+
+This rule does not make every creature environmentally universal. Temperature, breathing medium, terrain, and other tolerances may remain narrow. It distinguishes the creature's survival envelope from access to its authored actions.
+
 The generated [coverage ledger](./CREATURE-EXPANSION-COVERAGE.md) answers the first question. It deliberately does not pretend that equal representation means equal strength.
 
 The first application of this process is recorded in [Creature Expansion Target Briefs 01](./creature-expansion-target-briefs-01.md).
 
-The first complete proposal produced from an approved target brief is [Sonalloy](./creature-proposals/sonalloy.md), kept outside the ratified species bundle until its review gates are complete.
+The first complete proposal produced from an approved target brief was [Sonalloy](./creature-proposals/sonalloy.md). It completed the gates and was ratified as species 00031; the proposal remains as the process record that preceded its canonical template.
 
 ## Sources of truth
 
@@ -82,7 +86,8 @@ Before any name, silhouette, or lore paragraph is proposed, write a one-page tar
 4. **Mechanical identity:** the observable act that distinguishes it from existing species, stated without game-specific numbers.
 5. **Contrast set:** the two or three current species it could be confused with and the exact distinction from each.
 6. **Constraints:** home-world habitable band, terrain mobility, breathes/ambient-media relationship, element graph, and established lore.
-7. **Do-not-force list:** attractive coverage gaps that do not belong on this creature.
+7. **Portable baseline:** how the central act remains available without a home-world weather event, terrain feature, resource, structure, or companion. State any environmental amplification separately.
+8. **Do-not-force list:** attractive coverage gaps that do not belong on this creature.
 
 A target is strong when two to four deficits collapse into one coherent identity. A design that exists only to tick unrelated boxes is rejected before prose or art work begins.
 
@@ -97,7 +102,7 @@ Build in dependency order so later choices cannot quietly contradict earlier one
 5. Attribute bands describing the species before archetype modification.
 6. Archetype percentages expressing plausible individual variation.
 7. Required traits, followed by a rolled trait pool with its fixed probability budget.
-8. Signature instrument/action/medium and its plain baseline behavior.
+8. Signature instrument/action/medium and its plain baseline behavior. The behavior must be fully invocable without an external environmental prerequisite; home-world conditions may only amplify or restyle it.
 9. Conduits only where a source shows the element leaving through a particular part.
 10. Appearance qualities and the five presentation fields.
 11. Species name, using the [creature naming system](./creature-naming-system.md) only after the defining pieces above are stable.
@@ -120,6 +125,7 @@ At every step, compare the draft to its contrast set and record the coverage del
 - Temperature and media fit the home world.
 - Traits follow from ratified facts and do not duplicate raw fields.
 - Lore, data, and art describe the same silhouette and central act.
+- Every ability instrument and the signature's complete baseline remain usable wherever the creature can participate; environmental bonuses are explicitly secondary.
 
 ### Gate C: Population
 
@@ -137,6 +143,7 @@ At every step, compare the draft to its contrast set and record the coverage del
 ### Gate E: Consumer
 
 - Run every implemented game or derived-stat consumer that reads the affected fields.
+- Exercise the creature outside its home-world presentation and confirm that no move becomes fictionally unavailable because a local storm, terrain feature, resource, structure, or companion is absent.
 - Attribute a balance problem to the correct layer before proposing a correction.
 - Keep the creature locked until the design works as a creature; tune game interpretation separately when that is the actual fault.
 
