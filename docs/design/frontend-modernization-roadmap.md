@@ -100,7 +100,10 @@ Do before the font pass so font consumers can be attributed to their final CSS o
 - Ownership inventory: [`docs/design/frontend-css-ownership.md`](frontend-css-ownership.md) records every stylesheet, consumers, boundary, disposition, and remaining audit order.
 - First boundary measurement: moving Duel, Duel reference, and Reclamation CSS out of `index.html` reduced initial stylesheet transfer from 623.1 kB raw / 126.0 kB gzip to 406.3 kB / 80.1 kB. Their 216,847 source bytes now emit only in the relevant route graphs: Duel 21.9 kB / 4.3 kB gzip, Duel reference 33.1 kB / 6.7 kB, and Reclamation 97.2 kB / 14.8 kB.
 - First boundary verification: ownership/design-system tests pass; production build and tightened initial/route CSS budgets pass; local desktop/mobile smoke covers home, Duel setup, a 64-cell live Duel board, Duel reference, and Reclamation without console errors. Duel-reference document overflow at 390 px was reproduced on the deployed pre-change baseline and remains a known responsive-pass issue, not a regression from the boundary move.
-- First boundary PR/CI/deploy/production: pending.
+- First boundary PR: [#226, Move immersive CSS behind route boundaries](https://github.com/nickcjordan/Xalians/pull/226), merged as `6cdd7ea` on 2026-09-11.
+- First boundary CI: [CI run 34610550137](https://github.com/nickcjordan/Xalians/actions/runs/34610550137) and [Terraform-plan run 34610550194](https://github.com/nickcjordan/Xalians/actions/runs/34610550194) passed; all job-annotation responses were empty. The Linux bundle gate measured initial stylesheets at 398.7 kB raw / 79.7 kB gzip and the route CSS budgets passed.
+- First boundary deploy: [frontend run 34610725724](https://github.com/nickcjordan/Xalians/actions/runs/34610725724) passed the production bundle gate, S3 sync, and CloudFront invalidation with an empty job-annotation response.
+- First boundary production verification: `https://xalians.com/`, `/duel`, `/duel/reference`, and `/reclamation` loaded at 1,440×900 and 390×844 with no page/console errors. Home, Duel setup, a started 64-cell Duel board, and Reclamation had no document-level overflow and matched the reviewed local paint. Duel reference retained its pre-existing 526 px document width at the 390 px viewport; it is reserved for the responsive regression pass rather than attributed to this CSS boundary.
 
 ### 3. Font loading — Planned
 
@@ -273,3 +276,4 @@ Pending.
 | 2026-09-11 | Completed the action-runtime slice. | [PR #221](https://github.com/nickcjordan/Xalians/pull/221); clean CI/deploy annotations and live desktop/mobile smoke evidence recorded in workstream 1. |
 | 2026-09-11 | Started the production styleguide exclusion and bundle-budget slice from deployed `main` at `90ee054`. | Production and developer builds plus local browser evidence recorded in workstream 7; PR pending. |
 | 2026-09-11 | Completed the production styleguide exclusion and bundle-budget slice. | [PR #223](https://github.com/nickcjordan/Xalians/pull/223); CI, deploy, budget, and live route evidence recorded in workstream 7. |
+| 2026-09-11 | Completed the first legacy CSS route-boundary slice and began the remaining shared-layer audit. | [PR #226](https://github.com/nickcjordan/Xalians/pull/226); CI, deploy, bundle reduction, and live route evidence recorded in workstream 2. |
