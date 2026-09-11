@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Link, useHistory } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import * as lore from '../../lore';
 import { Input } from '@/components/ui/input';
 import { Kbd } from '@/components/ui/kbd';
@@ -20,7 +20,7 @@ export default function LoreSearch() {
     const [query, setQuery] = useState('');
     const [open, setOpen] = useState(false);
     const [activeIndex, setActiveIndex] = useState(-1);
-    const history = useHistory();
+    const navigate = useNavigate();
     const box = useRef(null);
     const inputRef = useRef(null);
 
@@ -66,7 +66,7 @@ export default function LoreSearch() {
         setOpen(false);
         setQuery('');
         setActiveIndex(-1);
-        history.push(hit.route);
+        navigate(hit.route);
     }
 
     function submit(e) {
@@ -77,7 +77,7 @@ export default function LoreSearch() {
         }
         if (!trimmed) return;
         setOpen(false);
-        history.push(`/encyclopedia/index?q=${encodeURIComponent(trimmed)}`);
+        navigate(`/encyclopedia/index?q=${encodeURIComponent(trimmed)}`);
     }
 
     function onKeyDownInput(e) {

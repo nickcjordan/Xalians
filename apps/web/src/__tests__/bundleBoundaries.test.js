@@ -43,7 +43,7 @@ describe('production bundle boundaries', () => {
 
 		expect(app).toContain("import.meta.env.MODE === 'styleguide'");
 		expect(app).toContain('const StyleGuidePage = includeStyleGuide');
-		expect(app).toContain('StyleGuidePage && <Route exact path="/styleguide">');
+		expect(app).toContain('StyleGuidePage && <Route path="/styleguide" element={<StyleGuidePage />} />');
 		expect(app).not.toMatch(/^const StyleGuidePage = lazy\(/m);
 	});
 

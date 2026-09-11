@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { act } from 'react-dom/test-utils';
-import { MemoryRouter, Route } from 'react-router-dom';
+import { MemoryRouter, Routes, Route } from 'react-router-dom';
 import encyclopedia from '@xalians/content/encyclopedia.json';
 import Pronunciation from '../../components/encyclopedia/Pronunciation';
 import EntryView from '../../components/encyclopedia/EntryView';
@@ -80,7 +80,9 @@ describe('pronunciation rendering', () => {
 		const c = paint(
 			<MemoryRouter initialEntries={['/encyclopedia/index/telypso']}>
 				<EncyclopediaShell>
-					<Route path="/encyclopedia/index/:key"><EntryView /></Route>
+					<Routes>
+						<Route path="/encyclopedia/index/:key" element={<EntryView />} />
+					</Routes>
 				</EncyclopediaShell>
 			</MemoryRouter>
 		);

@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { Link, useHistory, useLocation } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import * as lore from '../../lore';
 import Prose from './Prose';
 import { useReadMark } from './trail';
@@ -46,7 +46,7 @@ function IndexRecord({ entry }) {
  */
 export default function Index() {
     const location = useLocation();
-    const history = useHistory();
+    const navigate = useNavigate();
     const initialQuery = useMemo(() => {
         const params = new URLSearchParams(location.search);
         return params.get('q') || '';
@@ -86,7 +86,7 @@ export default function Index() {
 
     function pullRandom() {
         const record = lore.getRandomRecord();
-        history.push(lore.routeFor(record.kind, record.key));
+        navigate(lore.routeFor(record.kind, record.key));
     }
 
     return (
