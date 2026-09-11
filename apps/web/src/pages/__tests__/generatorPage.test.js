@@ -72,6 +72,15 @@ describe('GeneratorPage, signed out', () => {
 		await waitFor(() => expect(dbApi.callShowroomXalian).toHaveBeenCalledTimes(2));
 		expect(dbApi.callGenerateXalian).not.toHaveBeenCalled();
 	});
+
+	it('keeps anonymous generation available when the Cognito probe is unavailable', async () => {
+		currentUser.mockRejectedValue(new Error('service unavailable'));
+		renderPage();
+
+		await waitFor(() => expect(dbApi.callShowroomXalian).toHaveBeenCalledTimes(1));
+		expect(dbApi.callGenerateXalian).not.toHaveBeenCalled();
+		expect(await screen.findByText('Showroom creature')).toBeInTheDocument();
+	});
 });
 
 describe('GeneratorPage, signed in', () => {

@@ -60,8 +60,10 @@ function SignInModal({ show, onHide, callback, mustVerifyEmailCallback, username
 				if (code === 'UserNotConfirmedException') {
 					onHide();
 					mustVerifyEmailCallback(values.username);
-				} else if (code === 'UserNotFoundException') {
-					form.setError('username', { message: 'User not found.' });
+				} else if (code === 'UserNotFoundException' || code === 'NotAuthorizedException') {
+					// Do not disclose whether a username exists. Cognito uses both
+					// exceptions for invalid credentials depending on pool settings.
+					form.setError('password', { message: 'Username or password is incorrect.' });
 				} else {
 					toast.error(e.message || 'Sign in failed.');
 				}

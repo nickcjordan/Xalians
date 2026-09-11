@@ -151,7 +151,7 @@ Do before the font pass so font consumers can be attributed to their final CSS o
 - Final consolidation CI: [CI run 34620786800](https://github.com/nickcjordan/Xalians/actions/runs/34620786800) and [Terraform-plan run 34620786888](https://github.com/nickcjordan/Xalians/actions/runs/34620786888) passed; Linux reproduced 52 frontend files / 1,031 tests, 12 content files / 37 tests, zero dependency vulnerabilities, the byte-identical asset, and every bundle budget. All three job-annotation responses were empty.
 - Final consolidation deploy: [frontend run 34620942570](https://github.com/nickcjordan/Xalians/actions/runs/34620942570) passed its production build, S3 sync, and CloudFront invalidation with an empty job-annotation response. Because the emitted artifact was byte-for-byte identical to the already verified #235 production asset, the deployment introduced no browser-visible route delta to re-test.
 
-### 3. Font loading — In progress
+### 3. Font loading — Complete
 
 **Scope**
 
@@ -179,9 +179,12 @@ Legacy CSS ownership audit.
 - Checked-in family/variant/route audit: [`docs/design/frontend-font-loading.md`](frontend-font-loading.md).
 - Automated guard: `fontLoading.test.js` enforces one request, both connection hints, `display=swap`, the exact retained variants, and the retired-family set.
 - Local verification: focused font/ownership/design-system tests, typecheck, 53 files / 1,034 tests, zero production vulnerabilities, production build, and every bundle budget pass. All eleven route entries render without loading/error residue at 1,440×900 and 390×844; desktop chrome and mobile Reclamation typography remain visually consistent with production.
-- PR, CI, deployment, and production font-resource evidence pending.
+- PR: [#237, Consolidate frontend font loading](https://github.com/nickcjordan/Xalians/pull/237), merged as `0965b6d` on 2026-09-11.
+- CI: [CI run 34621935617](https://github.com/nickcjordan/Xalians/actions/runs/34621935617) and [Terraform-plan run 34621935557](https://github.com/nickcjordan/Xalians/actions/runs/34621935557) passed; Linux reproduced 53 frontend files / 1,034 tests, 12 content files / 37 tests, zero dependency vulnerabilities, the 57.51/11.78 kB immersive asset, and every bundle budget. All three job-annotation responses were empty.
+- Deploy: [frontend run 34622085179](https://github.com/nickcjordan/Xalians/actions/runs/34622085179) passed its production build, S3 sync, and CloudFront invalidation with an empty job-annotation response.
+- Production verification: the served HTML contains exactly one audited Google Fonts stylesheet plus both preconnects. All eleven route entries render without loading/error residue at 1,440×900 and 390×844, and the active field-terminal typography remains visually identical to the local reviewed build.
 
-### 4. Cognito authentication integration coverage — Planned
+### 4. Cognito authentication integration coverage — In progress
 
 **Scope**
 
@@ -189,7 +192,7 @@ Test the UI-to-Amplify/API boundary, not Cognito itself. Cover sign-in success, 
 
 **Measured baseline**
 
-There are unit tests for `authUtil`, `dbApi`, and `AuthButtonGroup`, all with mocked Amplify functions. There is no route-level integration harness that exercises authentication state through the navbar/account/generator surfaces together, and no browser-level Cognito contract test.
+The baseline had unit tests for `authUtil`, `dbApi`, and `AuthButtonGroup`, all with mocked Amplify functions, but no route-level account harness or modal-level error/transition coverage. The first integration slice adds two test files and expands four existing suites, taking the frontend from 53 files / 1,034 tests to 55 files / 1,054 tests. It also corrects two observed boundary behaviors: account-session service failures are no longer misreported as signed out, and navbar/auth-control session probes no longer create unhandled promise rejections.
 
 **Acceptance criteria**
 
@@ -204,7 +207,10 @@ Prefer after route modernization if test helpers would otherwise be rewritten tw
 
 **Evidence / links**
 
-Pending.
+- Contract and deterministic scenario matrix: [`docs/design/frontend-auth-integration.md`](frontend-auth-integration.md).
+- Focused local verification: six auth/account/generator suites / 32 tests cover verified, unverified, signed-out, expired/absent-token, invalid-credential, generic service-error, protected API, and anonymous-generation paths.
+- Full local verification: typecheck, 55 files / 1,054 tests, zero production vulnerabilities, production build, and every bundle budget pass. Browser smoke confirms the signed-out account recovery surface, sign-in dialog/client validation, and anonymous showroom generation at desktop and phone widths without using or storing real credentials.
+- PR, CI, deployment, and production smoke evidence pending.
 
 ### 5. React Router modernization — Planned
 

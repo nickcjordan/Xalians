@@ -4,7 +4,14 @@ import sampleGraviclaw from '../../../../../docs/design/sample-record-graviclaw.
 const getIdToken = vi.hoisted(() => vi.fn());
 vi.mock('../authUtil', () => ({ getIdToken }));
 
-import { callCreateUser, callGetUser, callShowroomXalian } from '../dbApi';
+import {
+	callCreateUser,
+	callGenerateXalian,
+	callGetUser,
+	callListXalians,
+	callReleaseXalian,
+	callShowroomXalian,
+} from '../dbApi';
 
 beforeEach(() => {
 	vi.restoreAllMocks();
@@ -34,6 +41,31 @@ describe('native API client', () => {
 			headers: { Authorization: 'Bearer jwt-token', 'content-type': 'application/json' },
 			body: JSON.stringify({ userId: 'nick', xalianIds: [] }),
 		});
+	});
+
+	it('propagates the current ID token to protected reads and deletes', async () => {
+		vi.spyOn(globalThis, 'fetch')
+			.mockResolvedValueOnce(new Response(JSON.stringify({ items: [], nextCursor: undefined }), { status: 200 }))
+			.mockResolvedValueOnce(new Response(JSON.stringify({ message: 'ok' }), { status: 200 }));
+
+		await callListXalians(undefined, 'page 2');
+		await callReleaseXalian('xal/one');
+
+		expect(fetch).toHaveBeenNthCalledWith(1, 'https://api.xalians.com/prod/xalians?cursor=page+2', {
+			headers: { Authorization: 'Bearer jwt-token' },
+		});
+		expect(fetch).toHaveBeenNthCalledWith(2, 'https://api.xalians.com/prod/xalians/xal%2Fone', {
+			method: 'DELETE',
+			headers: { Authorization: 'Bearer jwt-token' },
+		});
+	});
+
+	it('does not send a protected request when the session has no usable token', async () => {
+		const fetchSpy = vi.spyOn(globalThis, 'fetch');
+		getIdToken.mockRejectedValue(new Error('The signed-in session did not include an ID token.'));
+
+		await expect(callGenerateXalian(undefined, 'full')).rejects.toThrow('did not include an ID token');
+		expect(fetchSpy).not.toHaveBeenCalled();
 	});
 
 	it('turns a failed HTTP response into a useful error', async () => {

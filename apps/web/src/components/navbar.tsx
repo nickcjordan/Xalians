@@ -88,11 +88,16 @@ function XalianNavbar({ authAlertCallback }: XalianNavbarProps) {
 		};
 		window.addEventListener('scroll', scrollListener);
 
-		authUtil.currentUser().then((data: any) => {
-			if (data && data.attributes) {
-				handleUserAuthAction(authUtil.buildAuthState(data));
-			}
-		});
+		authUtil.currentUser()
+			.then((data: any) => {
+				if (data && data.attributes) {
+					handleUserAuthAction(authUtil.buildAuthState(data));
+				}
+			})
+			.catch(() => {
+				// Keep navigation available when Cognito is temporarily unavailable.
+				// Auth-aware pages resolve and present their own recoverable state.
+			});
 
 		return () => {
 			stopListening();
