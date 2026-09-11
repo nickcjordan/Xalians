@@ -42,7 +42,14 @@ import store from './store/store';
 Amplify.configure(awsconfig);
 
 const Home = lazy(() => import('./pages/home'));
-const StyleGuidePage = lazy(() => import('./pages/styleGuidePage'));
+// The style guide imports every design-system primitive and exists only as a
+// developer reference. Vite replaces import.meta.env.DEV at build time, so a
+// production build drops both this import and the /styleguide route rather
+// than emitting a large player-inaccessible chunk.
+const includeStyleGuide = import.meta.env.DEV || import.meta.env.MODE === 'styleguide';
+const StyleGuidePage = includeStyleGuide
+  ? lazy(() => import('./pages/styleGuidePage'))
+  : null;
 const GeneratorPage = lazy(() => import('./pages/generatorPage'));
 const UserAccountPage = lazy(() => import('./pages/userAccountPage'));
 const UserDetailsPage = lazy(() => import('./pages/userDetailsPage'));
@@ -101,7 +108,7 @@ class App extends React.Component {
               <Route path="/encyclopedia"><EncyclopediaPage /></Route>
               {/* the design system reference - unlinked from the navbar, it is a
                   developer tool rather than a page for players */}
-              <Route exact path="/styleguide"><StyleGuidePage /></Route>
+              {StyleGuidePage && <Route exact path="/styleguide"><StyleGuidePage /></Route>}
               {/* throws on render, to exercise ErrorBoundary/ErrorPage - a developer
                   route, unlinked like /styleguide */}
               <Route exact path="/dev/error"><DevErrorPage /></Route>

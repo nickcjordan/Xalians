@@ -29,6 +29,15 @@ describe('production bundle boundaries', () => {
 		expect(app).not.toMatch(/^import\s+Home\s+from\s+['\"]\.\/pages\/home['\"];?/m);
 	});
 
+	it('omits the developer style guide from production builds', () => {
+		const app = fs.readFileSync(path.join(SRC_DIR, 'App.js'), 'utf8');
+
+		expect(app).toContain("import.meta.env.MODE === 'styleguide'");
+		expect(app).toContain('const StyleGuidePage = includeStyleGuide');
+		expect(app).toContain('StyleGuidePage && <Route exact path="/styleguide">');
+		expect(app).not.toMatch(/^const StyleGuidePage = lazy\(/m);
+	});
+
 	it('builds Home from the compact generated content contract', () => {
 		const home = fs.readFileSync(path.join(SRC_DIR, 'pages', 'home.tsx'), 'utf8');
 

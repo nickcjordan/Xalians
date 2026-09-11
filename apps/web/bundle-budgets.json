@@ -1,0 +1,34 @@
+{
+  "_meta": {
+    "measuredAt": "90ee054554756cd5fa31e44a9e6cf4792d3e9671",
+    "measuredOn": "2026-09-11",
+    "policy": "Initial limits and route limits are the measured production output after removing the developer styleguide, rounded up with approximately five percent headroom. Update a limit only with measured evidence and review."
+  },
+  "forbiddenProductionEntries": [
+    "styleGuidePage"
+  ],
+  "initial": {
+    "javascript": { "raw": 564000, "gzip": 179000 },
+    "stylesheets": { "raw": 655000, "gzip": 134000 }
+  },
+  "chunks": {
+    "vendor-auth": { "javascript": { "raw": 132000, "gzip": 38000 } }
+  },
+  "routes": {
+    "home": { "javascript": { "raw": 113000, "gzip": 45000 }, "stylesheets": { "raw": 0, "gzip": 0 } },
+    "generatorPage": { "javascript": { "raw": 1100000, "gzip": 319000 }, "stylesheets": { "raw": 0, "gzip": 0 } },
+    "encyclopediaPage": { "javascript": { "raw": 600000, "gzip": 184000 }, "stylesheets": { "raw": 0, "gzip": 0 } },
+    "duelStartPage": { "javascript": { "raw": 1578000, "gzip": 475000 }, "stylesheets": { "raw": 0, "gzip": 0 } },
+    "duelPage": { "javascript": { "raw": 1560000, "gzip": 468000 }, "stylesheets": { "raw": 0, "gzip": 0 } },
+    "duelPlaygroundPage": { "javascript": { "raw": 1247000, "gzip": 358000 }, "stylesheets": { "raw": 0, "gzip": 0 } },
+    "reclamationPage": { "javascript": { "raw": 1162000, "gzip": 343000 }, "stylesheets": { "raw": 0, "gzip": 0 } },
+    "longReturnPage": { "javascript": { "raw": 280000, "gzip": 83000 }, "stylesheets": { "raw": 173000, "gzip": 30000 } },
+    "trainingGroundsPage": { "javascript": { "raw": 262000, "gzip": 105000 }, "stylesheets": { "raw": 0, "gzip": 0 } },
+    "matchCardGamePage": { "javascript": { "raw": 147000, "gzip": 58000 }, "stylesheets": { "raw": 0, "gzip": 0 } },
+    "physicsGamePage": { "javascript": { "raw": 249000, "gzip": 100000 }, "stylesheets": { "raw": 0, "gzip": 0 } },
+    "userAccountPage": { "javascript": { "raw": 1117000, "gzip": 324000 }, "stylesheets": { "raw": 0, "gzip": 0 } },
+    "userDetailsPage": { "javascript": { "raw": 1059000, "gzip": 302000 }, "stylesheets": { "raw": 0, "gzip": 0 } },
+    "notFoundPage": { "javascript": { "raw": 1000, "gzip": 1000 }, "stylesheets": { "raw": 0, "gzip": 0 } },
+    "devErrorPage": { "javascript": { "raw": 1000, "gzip": 1000 }, "stylesheets": { "raw": 0, "gzip": 0 } }
+  }
+}
