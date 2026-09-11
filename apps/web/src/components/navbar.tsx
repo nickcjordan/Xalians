@@ -114,7 +114,10 @@ function XalianNavbar({ authAlertCallback }: XalianNavbarProps) {
 				<Shell className="flex min-h-14 items-center gap-6">
 					<BrandLockup />
 
-					<nav className="ml-2 hidden flex-1 items-center gap-5 md:flex" aria-label="Primary">
+					{/* The bar needs about 1155px for seven links plus the two auth keys,
+					    which is between lg and xl, so the switch to the sheet is measured
+					    rather than named. Below it the whole bar overflowed the viewport. */}
+					<nav className="ml-2 hidden flex-1 items-center gap-5 min-[1180px]:flex" aria-label="Primary">
 						{NAV_LINKS.map((link) => (
 							<NavLink
 								key={link.href}
@@ -129,7 +132,7 @@ function XalianNavbar({ authAlertCallback }: XalianNavbarProps) {
 						))}
 					</nav>
 
-					<div className="ml-auto hidden items-center gap-2 md:flex">
+					<div className="ml-auto hidden items-center gap-2 min-[1180px]:flex">
 						<AuthButtonGroup size="sm" authAlertCallback={handleUserAuthAction} />
 					</div>
 
@@ -138,7 +141,7 @@ function XalianNavbar({ authAlertCallback }: XalianNavbarProps) {
 							variant="ghost"
 							size="icon"
 							aria-label="Open menu"
-							className="ml-auto md:hidden"
+							className="ml-auto min-[1180px]:hidden"
 							onClick={() => setMenuOpen(true)}
 						>
 							<Menu />
