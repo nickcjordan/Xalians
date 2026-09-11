@@ -24,7 +24,7 @@ Every route above was checked for document overflow, loading residue, missing im
 - Keyboard traversal follows visual order in the shell and sign-in form. Focused links, buttons, inputs, toggles, and custom tab stops now paint the component-defined 2 px ring; the shared legacy reset can no longer erase its outline style.
 - The sign-in dialog announces its title, focuses Username on open, closes with Escape, and returns focus to the exact Sign in opener. A deterministic interaction test protects the restoration path.
 - Duel's setup switches are named `Randomize start positions` and `Debug mode`. Training game pages now expose a primary heading. The match-card list no longer emits a missing-key warning.
-- Phone controls backed by Button, Toggle, and ToggleGroup measure at least 44 px. The visually compact 32×18 Duel switches retain their shape but expose a 58×44 hit area through a pseudo-element. Reclamation's mode controls measure 73×44 and 94×44.
+- Phone controls backed by Button, Toggle, and ToggleGroup measure at least 44 px, as do the Encyclopedia index's page-specific category tabs. The visually compact 32×18 Duel switches retain their shape but expose a 58×44 hit area through a pseudo-element. Reclamation's mode controls measure 73×44 and 94×44.
 - The 390 px route matrix has zero document overflow. Duel reference previously exceeded the viewport by 146 px; its specimen bench now remains 390 px wide and gives its two intrinsically wide specimens local horizontal scrolling. The live board also has zero document overflow at the 768 px intermediate width.
 - The universal reduced-motion rule collapses CSS animation and transitions. The logo avoids starting its GSAP timeline, encyclopedia scrolling becomes immediate, Long Return's timed transitions collapse to their terminal state, and Duel/Reclamation declare game-specific reduced-motion overrides. Pointer-launched physics and turn-result state changes remain direct gameplay feedback rather than ambient motion.
 - `ink`, `ink2`, and `ink3` now clear 4.5:1 on every shared surface token. All six terminal accent/ink pairs also clear 4.5:1. These 21 combinations are enforced in `designTokens.test.js`; live sampling also caught and fixed Long Return role text, Duel's red down-state label, and Field/Relay primary-button ink.
@@ -38,7 +38,7 @@ Every route above was checked for document overflow, loading residue, missing im
 | FR-03 | P2 | Closing a controlled auth dialog left focus on `body`. | Captured the opener and restored it through Radix close autofocus. | Frontend / none |
 | FR-04 | P2 | Duel setup switches had no accessible names. | Added stable purpose-specific labels. | Duel / none |
 | FR-05 | P2 | Duel reference overflowed a 390 px document by 146 px. | Constrained the bench and isolated unavoidable specimen width inside local scrollers. | Duel / none |
-| FR-06 | P2 | Several phone controls exposed 18–39 px targets. | Applied the 44 px interaction contract to shared controls and Reclamation segments; enlarged switch hit areas without visual inflation. | Frontend / none |
+| FR-06 | P2 | Several phone controls exposed 18–39 px targets. | Applied the 44 px interaction contract to shared controls, Encyclopedia category tabs, and Reclamation segments; enlarged switch hit areas without visual inflation. | Frontend / none |
 | FR-07 | P3 | Training subgames lacked primary headings and Match emitted a React key warning. | Added route headings and keyed the repeated fragment. | Training / none |
 
 No open regression remains from this matrix.
