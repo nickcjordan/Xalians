@@ -119,6 +119,16 @@ for (const [name, budget] of Object.entries(budgets.routes)) {
 	check(`route ${name} stylesheets`, actual.stylesheets, budget.stylesheets);
 }
 
+for (const [name, budget] of Object.entries(budgets.nestedRoutes || {})) {
+	const key = entryByName(name, (entry) => entry.isDynamicEntry);
+	const parentKey = entryByName(budget.parent, (entry) => entry.isDynamicEntry);
+	const inheritedKeys = new Set([...initialKeys, ...dependencyGraph(parentKey)]);
+	const nestedOnlyKeys = new Set([...dependencyGraph(key)].filter((dependency) => !inheritedKeys.has(dependency)));
+	const actual = graphSize(nestedOnlyKeys);
+	check(`nested route ${name} JavaScript`, actual.javascript, budget.javascript);
+	check(`nested route ${name} stylesheets`, actual.stylesheets, budget.stylesheets);
+}
+
 if (failures.length) {
 	console.error(`\n${failures.length} bundle budget check(s) failed:`);
 	for (const failure of failures) console.error(`- ${failure}`);

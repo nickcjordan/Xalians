@@ -304,7 +304,8 @@
 	   Every [data-terminal="..."] block below sets all of these; the values
 	   here are the "panel" terminal's defaults, i.e. the version 2 look kept
 	   as the migration baseline (docs/DESIGN_SYSTEM.md section 3 and 6).
-	   --g-trim*/--g-accent* are the new names for --g-brass*/--g-hazard*; both
+	   The --g-trim and --g-accent families are the new names for the
+	   --g-brass and --g-hazard families; both
 	   pairs carry literal duplicate values (not var() aliases) so the token
 	   mirror test in designTokens.test.js can check each one independently. */
 	--g-face: var(--g-hull);
@@ -431,7 +432,8 @@
 /* FIELD — ECHELON-era portable survey unit: gunmetal case, off-white enamel
    face, color CRT under dark glass, one-line amber VFD status strip. */
 [data-terminal='field'] {
-	/* The room (--g-void/--g-hull*/--g-seam) is core (Rule A) and is not set
+	/* The room token families (--g-void, --g-hull, and --g-seam) are core
+	   (Rule A) and are not set
 	   here; the case's own gunmetal body is --g-face-lo/--g-face-hi below. */
 	--g-face: #cfc8b6;
 	--g-face-lo: #262829;
