@@ -29,6 +29,15 @@ describe('production bundle boundaries', () => {
 		expect(app).not.toMatch(/^import\s+Home\s+from\s+['\"]\.\/pages\/home['\"];?/m);
 	});
 
+	it('keeps the live Duel board behind the setup-state boundary', () => {
+		const setup = fs.readFileSync(path.join(SRC_DIR, 'pages', 'games', 'duelStartPage.tsx'), 'utf8');
+		const budgets = JSON.parse(fs.readFileSync(path.join(SRC_DIR, '..', 'bundle-budgets.json'), 'utf8'));
+
+		expect(setup).toContain("const DuelPage = React.lazy(() => import('./duelPage'));");
+		expect(setup).not.toMatch(/^import\s+DuelPage\s+from\s+['"]\.\/duelPage['"];?/m);
+		expect(budgets.nestedRoutes.duelPage.parent).toBe('duelStartPage');
+	});
+
 	it('omits the developer style guide from production builds', () => {
 		const app = fs.readFileSync(path.join(SRC_DIR, 'App.js'), 'utf8');
 

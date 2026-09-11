@@ -16,7 +16,7 @@
 /* XALIAN FONT */
 @font-face {
   font-family: 'ProcrastinatingPixie';
-  src: local('Procrastinating Pixie'), url(./fonts/ProcrastinatingPixie-WyVOO.ttf) format('truetype');
+  src: local('Procrastinating Pixie'), url('/assets/css/fonts/ProcrastinatingPixie-WyVOO.ttf') format('truetype');
 }
 
 .xalian-font {
@@ -1014,7 +1014,7 @@ a:active {
 
 .spaceship-screen {
   /* background: rgb(62,75,75); */
-  background: no-repeat center url("../img/animation/ship_screen.svg");
+  background: no-repeat center url("/assets/img/animation/ship_screen.svg");
   background-color: rgb(0, 0, 0);
   background-repeat: no-repeat;
   /* height: 100%; */
@@ -1379,7 +1379,7 @@ section {
 --------------------------------------------------------------*/
 
 .tokens-section {
-  background: radial-gradient(circle, rgba(0, 0, 0, 0.94) 0%, rgba(0, 0, 0, 0.90) 53%, rgba(0, 0, 0, 0.54) 85%, rgba(0, 0, 0, 0.34) 95%, rgba(0, 0, 0, 0) 100%), url("../img/background/vault.jpg") fixed center center;
+  background: radial-gradient(circle, rgba(0, 0, 0, 0.94) 0%, rgba(0, 0, 0, 0.90) 53%, rgba(0, 0, 0, 0.54) 85%, rgba(0, 0, 0, 0.34) 95%, rgba(0, 0, 0, 0) 100%), url("/assets/img/background/vault.jpg") fixed center center;
   background-size: cover;
   /* padding: 60px 0; */
 }
@@ -2017,7 +2017,7 @@ section {
   background-color: var(--x-bg);
   background-image:
     radial-gradient(circle, rgba(35, 35, 35, 0.55) 21%, rgba(13, 13, 13, 0.85) 100%),
-    url("../img/background/stars_bg.png");
+    url("/assets/img/background/stars_bg.png");
   background-size: auto, 50%;
   background-position: center center, center center;
   background-repeat: no-repeat, repeat;

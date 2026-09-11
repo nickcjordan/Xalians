@@ -1,3 +1,0 @@
-# Legacy stylesheets
-
-The four files here are the still-global compatibility layer read by multiple immersive pages (Duel, Reclamation, training games, and Long Return). `system.css` is the version 3 design system, `style.css` the old BootstrapMade template, and `tokens.css` plus `typeColors.css` are the shims those pages still need. Never add a rule here; remove or relocate rules as ownership is proven. Route-owned legacy CSS lives under `src/styles/legacy` and is loaded by its route entry only. Contract: `docs/design/frontend-stack-migration.md`, phase 4, and `docs/design/frontend-css-ownership.md`.

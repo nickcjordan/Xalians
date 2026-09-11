@@ -1,5 +1,6 @@
 // Terminal: field. Long Return is survey work on the salvaged ECHELON unit.
 import React from 'react';
+import '../../styles/legacy/immersive.css';
 import XalianNavbar from '../../components/navbar';
 import LongReturnGame from '../../components/games/longReturn/longReturnGame';
 

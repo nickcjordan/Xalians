@@ -10,9 +10,10 @@ import { Switch } from '@/components/ui/switch';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 
 import * as retrievalUtil from '@/utils/retrievalUtil';
-import DuelPage from './duelPage';
 import HowToPlayModal from '@/components/games/duel/howToPlayModal';
 import LocalDuelStorage from '@/store/LocalStorage';
+
+const DuelPage = React.lazy(() => import('./duelPage'));
 
 const TEAM_SIZE_OPTIONS = [2, 3, 4, 5, 6];
 
@@ -160,7 +161,9 @@ class DuelStartPage extends React.Component<{}, DuelStartPageState> {
     render() {
         if (this.state.gameDetails) {
             return (
-                <DuelPage gameDetails={this.state.gameDetails} />
+                <React.Suspense fallback={<div className="p-8 font-body text-ink-2">Loading arena...</div>}>
+                    <DuelPage gameDetails={this.state.gameDetails} />
+                </React.Suspense>
             );
         }
 

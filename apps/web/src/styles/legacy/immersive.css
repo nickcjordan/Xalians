@@ -1,0 +1,10 @@
+/*
+ * Shared compatibility boundary for the remaining v3 immersive games.
+ * Keep this order: aliases, terminal materials/primitives, old game/template
+ * selectors, then element utility wrappers. Chrome route entries must never
+ * import this file.
+ */
+@import './tokens.css';
+@import './system.css';
+@import './style.css';
+@import './typeColors.css';

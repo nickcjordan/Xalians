@@ -220,7 +220,7 @@
 	.helix-spinner .rung { animation: none; opacity: 0.7; }
 }
 
-/* Legacy interop, until the immersive redesign deletes public/assets/css/legacy:
+/* Legacy interop, until the immersive redesign deletes src/styles/legacy:
    the old template paints every bare <a> mint; on the new stack a link is the
    ink of its text unless a class says otherwise. */
 a { color: inherit; }

@@ -27,9 +27,8 @@ const path = require('path');
  */
 
 const PAGES_DIR = path.join(__dirname, '..', 'pages');
-const SYSTEM_PATH = path.join(__dirname, '..', '..', 'public', 'assets', 'css', 'legacy', 'system.css');
-const CSS_DIR = path.join(__dirname, '..', '..', 'public', 'assets', 'css', 'legacy');
-const ROUTE_CSS_DIR = path.join(__dirname, '..', 'styles', 'legacy');
+const CSS_DIR = path.join(__dirname, '..', 'styles', 'legacy');
+const SYSTEM_PATH = path.join(CSS_DIR, 'system.css');
 const STYLEGUIDE_PATH = path.join(PAGES_DIR, 'styleGuidePage.tsx');
 const STYLEGUIDE_DIR = path.join(PAGES_DIR, 'styleguide');
 /** The page plus its section files under pages/styleguide/. */
@@ -253,14 +252,12 @@ describe('design system structure', () => {
 
 		Object.entries(LEGACY_HEX_BASELINE).forEach(([file, baseline]) => {
 			it(`${file} has no more raw hex than the ${baseline}-colour baseline`, () => {
-				const publicPath = path.join(CSS_DIR, file);
-				const routePath = path.join(ROUTE_CSS_DIR, file);
-				const css = fs.readFileSync(fs.existsSync(publicPath) ? publicPath : routePath, 'utf8');
+				const css = fs.readFileSync(path.join(CSS_DIR, file), 'utf8');
 				expect(countHex(css)).toBeLessThanOrEqual(baseline);
 			});
 		});
 
-		it('public/assets/css/pages/*.css contain zero raw hex', () => {
+		it('legacy pages/*.css contain zero raw hex', () => {
 			const pagesDir = path.join(CSS_DIR, 'pages');
 			if (!fs.existsSync(pagesDir)) return;
 			fs.readdirSync(pagesDir)

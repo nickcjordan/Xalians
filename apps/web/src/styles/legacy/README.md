@@ -1,6 +1,13 @@
-# Route-owned legacy CSS
+# Immersive legacy CSS
 
-These stylesheets belong to specific lazy route entries and must not be linked from `index.html`:
+Nothing in this directory may be linked from `index.html` or imported by a chrome route. The shared `immersive.css` entry preserves the v3 cascade for the remaining games and is imported only by their lazy entries:
+
+- `duelPage.js` and `duelPlaygroundPage.js`
+- `reclamationPage.js`
+- `longReturnPage.js`
+- `matchCardGamePage.js` and `physicsGamePage.js` (also rendered by the training lobby)
+
+Its import order is `tokens.css`, `system.css`, `style.css`, then `typeColors.css`. The route sheets follow it:
 
 - `duel.css`: imported by the live Duel match and the Duel affordance reference.
 - `duel-playground.css`: imported after `duel.css` by the Duel affordance reference only.

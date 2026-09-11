@@ -6,7 +6,7 @@
  * attributes. None of those can read a CSS custom property, so the palette has
  * to exist on both sides.
  *
- * public/assets/css/system.css is the CSS half. The two are held identical by
+ * src/styles/legacy/system.css is the v3 CSS half. The two are held identical by
  * src/__tests__/designTokens.test.js, which fails if any value here disagrees
  * with the matching --g-* token. Change a colour in one place and the test will
  * tell you about the other.
@@ -21,7 +21,7 @@ import { themeColors as elementThemeColors } from './colorConstants';
 /**
  * Version 4 (docs/DESIGN_SYSTEM.md section 3): the room, surfaces, glass,
  * edges, ink, the viable accent (three tiers of one hue) and semantic
- * status colours. Mirrors public/assets/css/system.css's :root primitives
+ * status colours. Mirrors src/styles/legacy/system.css's :root primitives
  * exactly; paired in src/__tests__/designTokens.test.js.
  */
 export const v4 = {

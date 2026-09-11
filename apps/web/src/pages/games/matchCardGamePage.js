@@ -1,5 +1,6 @@
 // Terminal: field. Training games are diagnostic programs on the salvaged ECHELON survey unit.
 import React from 'react';
+import '../../styles/legacy/immersive.css';
 
 import XalianImage from '../../components/xalianImage';
 import MatchGameFlippedCard from '../../components/games/elements/matchGameFlippedCard';
