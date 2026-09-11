@@ -146,4 +146,20 @@ describe('legacy CSS ownership boundaries', () => {
 		expect(systemCss).not.toContain('CONSOLE HEADER');
 		expect(navbarSource).not.toContain('react-bootstrap');
 	});
+
+	it('keeps unreachable chrome-page sections out of immersive CSS', () => {
+		const styleCss = read('src/styles/legacy/style.css');
+		const systemCss = read('src/styles/legacy/system.css');
+		const retiredSelectors = [
+			'.generator-page-gradient-overlay',
+			'.generator-shell',
+			'.species-grid',
+			'.duel-setup-shell',
+			'.account-shell',
+			'.record-strip',
+		];
+
+		retiredSelectors.forEach((selector) => expect(styleCss).not.toContain(selector));
+		expect(systemCss).toContain('.g-panel > p:last-child');
+	});
 });
