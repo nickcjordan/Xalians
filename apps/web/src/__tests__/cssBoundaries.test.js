@@ -59,7 +59,20 @@ describe('legacy CSS ownership boundaries', () => {
 		const css = read('src/styles/legacy/immersive.css');
 		const imports = [...css.matchAll(/@import ['"]\.\/([^'"]+)['"]/g)].map((match) => match[1]);
 
-		expect(imports).toEqual(['tokens.css', 'system.css', 'style.css', 'typeColors.css']);
+		expect(imports).toEqual(['tokens.css', 'system.css', 'style.css']);
+	});
+
+	it('keeps the retired element-colour utility contract deleted', () => {
+		const retiredCss = path.join(WEB_ROOT, 'src', 'styles', 'legacy', 'typeColors.css');
+		const badge = read('src/components/games/duel/board/xalianTypeSymbolBadge.js');
+		const executableSource = sourceFiles(SRC_ROOT)
+			.map((file) => fs.readFileSync(file, 'utf8'))
+			.join('\n');
+		const retiredLiteral = /(?:fire|water|air|electric|rock|plant|chemical|light|dark|metal|psychic|ghost|ice|sand)-(?:text-|border-)?color/;
+
+		expect(fs.existsSync(retiredCss)).toBe(false);
+		expect(executableSource).not.toMatch(retiredLiteral);
+		expect(badge).not.toContain("toLowerCase()}-color");
 	});
 
 	it('keeps training board geometry out of the shared immersive stylesheet', () => {
