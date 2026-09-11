@@ -1,6 +1,6 @@
 # Xalian generation system: Generators, tokens, and targeting
 
-Status: proposal, revised 2026-09-11 after Nick's second pass. Not ratified. Written at Nick's request after the species-rarity discussion, which settled that no species is intentionally rare and that scarcity should come from mechanisms rather than from a rarity field. This doc proposes those mechanisms. Nothing here is implemented except where section 7 says so.
+Status: proposal, revised twice on 2026-09-11 after Nick's second and third passes. Not ratified. Written at Nick's request after the species-rarity discussion, which settled that no species is intentionally rare and that scarcity should come from mechanisms rather than from a rarity field. This doc proposes those mechanisms. Nothing here is implemented except where section 7 says so.
 
 ## Context
 
@@ -29,6 +29,11 @@ Two constraints from Nick, 2026-09-11, in his words: avoid a system "that allows
 | 13 | Signature abilities become dormant at birth and awaken through play, which is a change to current behavior | 60%, a design call; the abilities and their prose already exist and are granted at generation today | `packages/rules/src/generator/generate.ts` |
 | 14 | Releasing a creature is a token faucet and a creature sink, not a token sink | 95%, follows from what the action does | this doc, section 4d |
 | 15 | Duplicates are never fused or merged into one stronger creature | 85%, fusion contradicts the platform premise that each creature is a unique individual that is owned and carried between games | `docs/design/xalians-platform-vision-and-economy.md` |
+| 16 | Acclimation is demoted because tolerance is stated as physiology, so editing it later contradicts the record's own claim about the creature | 80%, Nick's read plus the schema's framing of tolerance as a physiology field | `packages/content/src/schema/record.ts` |
+| 17 | Development is zero sum: specialization trades breadth for depth and never raises total force | 85%, a design call that removes power creep and the need for levels | this doc, section 4b |
+| 18 | Squad cohesion lives on the group, cannot be bought, and does not transfer with a traded creature | 75%, a design call aimed at squad-building depth; `pack bonded` already exists in the trait pools | `packages/content/json/speciesRecords.json` |
+| 19 | Trading creatures to Kozrak must be a net loss in raw tokens, buying choice rather than value | 90%, otherwise the loop is a currency press | this doc, section 4e |
+| 20 | World restoration is per player, inside a galaxy whose state is authored rather than summed from players | 80%, the lore scopes restoration to a homeworld population, and a shared meter fails at both small and large populations | `packages/content/json/planets.json`, this doc, section 5b |
 
 ## 1. Two machines, not one
 
@@ -76,15 +81,21 @@ No species carries a rarity value. A species is hard to get when several conditi
 
 A Neph is therefore hard to get because Saiphus is far, because its Generator prints Neph only while the Benthane band is running, and because attempts cost tokens. Nowhere does anything say a Neph is rare. Every one of those conditions is tunable per world without editing a species record, which keeps species as content and rarity as tuning.
 
-## 4b. Development: the second half of the effort
+## 4b. Development: what a creature earns, and what it never gains
 
-Finding a creature is one kind of work. Making it into what you want is the other, and it is the half this system was missing. Two axes, both lore-native, both earned by play and never sold.
+Finding a creature is one kind of work. Making it into what you want is the other, and it is the half this system was missing. The constraint that shapes every option below: no experience bar, no evolution, and nothing that raises raw attributes.
 
-**Acclimation.** A Generator adapts life to a planet's environment. Living on a world does the same thing slowly. Every record already carries an environmental tolerance, an ambient media list and a temperature band, and Reclamation already grades strain by how far a creature's tolerance sits from a site's conditions. So a creature that repeatedly survives strain on a world shifts its tolerance toward that world, and far enough along picks up a weak affinity for that world's element. Taking a Smokat to Magmuth and keeping it alive is how it becomes a Smokat that can work on Magmuth. This is the closest thing in our lore to raising a creature, and most of the machinery exists.
+**Acclimation is demoted.** The earlier draft proposed that a creature surviving strain on a world drifts its temperature band toward that world. Nick's read on 2026-09-11 is that it plays as a cheat code, and he is right about why. The record states environmental tolerance as physiology, a fact the Generator produced when it printed the creature. Editing that fact later contradicts the record's own claim about what the creature is. Habit can change what an animal does. It should not quietly rewrite what it is. Keep acclimation only as a narrow, slow, visible case, or drop it.
 
-**Signature awakening.** Every species carries a hand-written signature ability, and the generator grants it at birth today. Proposal: it is present but dormant, and it awakens when the creature does the thing the ability describes. The Akinza's Silence of the Long Night wakes after it lands enough ambushes, or survives a night-side site. Every creature arrives with a small personal quest attached to writing that already exists. This is a change in current behavior, not a free hook, and it makes a fresh creature weaker than it is today, which is the point.
+Three axes that do not have that problem.
 
-**The bound that keeps this fair.** Development changes what a creature can do and where it can survive. It never raises raw attributes. A veteran creature is more useful and better fitted, not stronger in a straight fight, so a new player is behind on options rather than behind on force. Reclamation's fielding budget already handles the rest.
+**Specialization by use, the primary axis.** A creature narrows rather than grows. Commit it to a role and it trades breadth for depth: the thing it does repeatedly sharpens, something else dulls, and its total force is unchanged. In lore this is the least exotic claim in the whole system, since a body printed by a damaged machine settling into what it repeatedly does is just an animal becoming what it practices. Reclamation already runs on four roles, strike, area, bolster, and shield, so the vocabulary exists. Because the trade is zero sum there is no power creep, no level, and no way to grind a creature into something a newer player cannot answer.
+
+**Squad cohesion, the axis that adds depth to squad building.** Creatures that campaign together build cohesion, and cohesion lives on the group rather than on any one creature. It cannot be bought, and it cannot be transferred with a creature when it is traded away. `pack bonded` already exists as a trait in the species pools, so the idea is already in the world. This turns squad building into an activity with history behind it instead of a roster sort, and it gives a reason to keep a creature that is not the best on paper.
+
+**Provenance, the prestige layer.** The record accrues history: worlds walked, tournaments entered, flags carried, opponents beaten. Nothing about capability changes. On a registry platform, history is the natural thing to accumulate, and it is what makes one Smokat worth more than another when two players trade. This costs almost nothing to build, since the record is already the product.
+
+**The bound that keeps all of it fair.** Development changes what a creature can do, what it is good for, and what it is worth to another player. It never changes how hard it hits. A veteran creature is better fitted and better company, not stronger, so a newer player is behind on options rather than behind on force.
 
 ## 4c. Duplicates, and why the fix is a tilt rather than a rule
 
@@ -112,6 +123,28 @@ Nick's note that release matters "to keep the token economy working" needs one c
 
 **What release must never become.** Fusing two creatures into a better one is off the table. It is the standard answer in collection games and it is wrong here, because the platform's premise is that each creature is a unique individual a player owns and carries between games. A system that eats individuals to upgrade other individuals argues against that premise every time it runs.
 
+## 4e. Two ways to give up a creature, and what tokens actually come in
+
+Fusing duplicates is still off the table for the reason in section 4d. Nick's alternative on 2026-09-11 is better and it is lore-native: you trade unwanted creatures to Kozrak, who feeds them into his arena as fodder, and you get back a better token. The Vallerii used Xalians as expendable labor for their entire history, on Zolton, on Magmuth, on Stonera. Kozrak buying bodies is the most in-character transaction in the setting.
+
+That gives two ways to part with a creature, and they should mean different things.
+
+**Release** returns the creature to its homeworld population. It pays tokens in proportion to how much that world needs it and it advances your restoration of that world, which feeds the conditions in section 4a.
+
+**Kozrak's levy** sells the creature into the arena. It pays a better token and it advances nothing. It also costs standing with the world the creature came from, because you sold a native into a pit.
+
+So the disposal decision is a moral one with real mechanics on both sides, rather than a math problem with one right answer. That is worth more than either route alone.
+
+**What a better token can be, now that buying a species is gone.** Three grades, none of which name a creature.
+
+A **standard token** is one genome expressed once. You take what comes.
+
+A **spread token** makes the Generator print several candidates and lets you keep one. This is choice among what chance produced rather than selection from the roster, and the funnel already ratified exactly this shape for the starter spread, where a new player picks two from about six candidates. It is the cleanest answer to Nick's wish for some ability to specify without the ability to buy.
+
+An **attuned token** forces a Generator into one of its uncommon modes, which is where the conditional species in section 4a come from. It buys access to a condition, never an identity, so a player who wants a ghost still has to be standing at Phantiri's Generator.
+
+**The exchange rule that keeps this from printing money.** Trading creatures in must be a net loss measured in raw tokens. If the creatures you feed Kozrak cost fewer tokens to generate than the token he hands back is worth, the loop becomes a press and the currency dies. What a player buys with a trade-in is variance reduction and choice, never value. That is the same rule the finish ladder follows: you pay for the shape of the outcome, not for more of it.
+
 ## 5. Access as the progression spine
 
 Planet access is what a player earns by playing, and it is the only thing in this system that gates content. The canonical loop is already the right one: Xalians fight in Kozrak's tournaments to win Scrambler Tokens to repopulate their homeworlds. Reclamation already visits worlds and sites, and the duel already fields squads.
@@ -119,6 +152,20 @@ Planet access is what a player earns by playing, and it is the only thing in thi
 So winning on a world, or completing an expedition there, earns standing with that world's Generator. Tokens buy the genome. Play buys the address. A player who plays more collects more worlds, which is a content gate rather than a power gate, and a new player is never locked out by luck, only by not having been somewhere yet.
 
 This also gives the fourteen planets a job in the product rather than only in the fiction.
+
+## 5b. What rebuilding a world means for one player
+
+This is the question that decides the shape of the product, and the lore already answers it more narrowly than the marketing language suggests. Canon does not say Xalians are rebuilding the galaxy. It says Xalians fight to win Scrambler Tokens to repopulate **their homeworlds**. A player is one restoration effort among many, not the protagonist of Xalia.
+
+**The recommendation is personal restoration inside an authored galaxy.** Each player runs their own population on a world, their own reserve. Two players restoring Saiphus are two separate efforts in different regions, not competitors for one meter. Nobody finds it strange that two wildlife reserves breed the same species, and nobody feels cheated that another reserve exists.
+
+**Why not one shared meter.** At a small population it never moves, and a progress bar that does not move reads as a dead game. At a large population the most active players finish it, and everyone who arrives afterward inherits a solved world with nothing left to restore. It needs contention-safe shared state that nothing in the current stack provides. And it dilutes the one thing that makes a collection mean anything, which is that this population is yours and you built it. Note the inversion of the ratified principle about designing for the population you want: the finish ladder works at any size, while a shared meter *requires* a large population and breaks without one.
+
+**What is genuinely shared.** The galaxy's authored state. Story chapters, seasons, Kozrak's moves, a world opening or closing. That advances when the fiction advances, on Nick's schedule, not as a sum of player actions. Everyone lives in the same world and the same week of its history. What differs is what each player has rebuilt in it.
+
+**What is optionally shared.** Trade, ghost duels, leaderboards. These rank effort rather than feeding one meter, so they add company without adding dependency.
+
+Technically this is a per-user record, which the existing DynamoDB setup does without any new infrastructure. The shared alternative is a different product with a different budget.
 
 ## 6. The free showroom
 
@@ -131,10 +178,11 @@ This gives the constrained profile from issue #197 a lore-native reason to exist
 1. **Make `origin` real.** Generation takes a planet, draws the species from that planet's natives through `generatorPlanets`, and records the planet it ran on. This is a small change in `packages/rules` and both handlers, and it is the foundation for everything else. Until access exists, the planet is a free parameter defaulting to a random world.
 2. **Lead the record with what differs.** Presentation only, in `RecordView`.
 3. **Restoration tilt.** Needs the owner's holdings at generation time, which the registry repository can already answer by owner.
-4. **Acclimation.** Needs the expedition to report per-creature strain survived, which it already computes, plus a place to record drift on the creature.
+4. **Provenance on the record.** The cheapest development axis, since the record is already the product. Needs a history block and something writing to it.
 5. **Signature awakening.** Needs a per-creature progress counter and a condition per species. The abilities and their prose already exist.
-6. **Release for credit.** Needs token accounting, which is server-only today and unwired, plus per-world population state.
-7. **Planet access and Generator modes.** Needs a per-user standing record, per-world state, and a hook from whichever game ships first.
+6. **Specialization and squad cohesion.** Needs roles reported from whichever game ships first, plus a squad as a stored thing rather than a selection.
+7. **Release and levy for credit.** Needs token accounting, which is server-only today and unwired, plus per-world population state.
+8. **Planet access and Generator modes.** Needs a per-user world record, per-world state, and a hook from whichever game ships first.
 
 Steps 1 and 2 are worth doing now. Everything after them waits on the economy and on which game ships first.
 
