@@ -39,7 +39,7 @@ Every route above was checked for document overflow, loading residue, missing im
 | FR-04 | P2 | Duel setup switches had no accessible names. | Added stable purpose-specific labels. | Duel / none |
 | FR-05 | P2 | Duel reference overflowed a 390 px document by 146 px. | Constrained the bench and isolated unavoidable specimen width inside local scrollers. | Duel / none |
 | FR-06 | P2 | Several phone controls exposed 18–39 px targets. | Applied the 44 px interaction contract to shared controls, Encyclopedia category tabs, and Reclamation segments; enlarged switch hit areas without visual inflation. | Frontend / none |
-| FR-07 | P3 | Training subgames lacked primary headings and Match emitted a React key warning. | Added route headings and keyed the repeated fragment. | Training / none |
+| FR-07 | P3 | Training subgames lacked primary headings, Match emitted a React key warning, and Physics asked GSAP to animate its conditional SVG before mount. | Added route headings, keyed the repeated fragment, and moved Physics animation setup behind the arena's committed render. | Training / none |
 
 No open regression remains from this matrix.
 
