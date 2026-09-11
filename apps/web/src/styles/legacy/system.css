@@ -2107,101 +2107,6 @@
 }
 
 /* -------------------------------------------------------------------------
-   CONSOLE HEADER
-   The navbar as a bulkhead strip: enamelled metal, stencilled legends, one
-   hazard-painted key. Overrides bootstrap, hence the specificity.
-   ------------------------------------------------------------------------- */
-
-.xalian-navbar.navbar {
-	background: linear-gradient(180deg, var(--g-hull-hi) 0%, var(--g-hull) 100%) !important;
-	border: 0 !important;
-	border-bottom: 2px solid var(--g-seam) !important;
-	box-shadow: inset 0 1px 0 var(--g-bevel-light), 0 3px 10px rgba(0, 0, 0, 0.6);
-	padding: var(--g-2) 0 !important;
-	z-index: var(--g-layer-nav) !important;
-}
-
-.xalian-navbar .nav-link {
-	font-family: var(--g-font-stencil) !important;
-	font-size: var(--g-size-body) !important;
-	font-weight: 500;
-	text-transform: uppercase;
-	letter-spacing: var(--g-track-label);
-	color: var(--g-ink-mid) !important;
-	padding: var(--g-2) var(--g-4) !important;
-	transition: color var(--g-snap);
-}
-
-.xalian-navbar .nav-link:hover,
-.xalian-navbar .nav-link:focus-visible {
-	color: var(--g-ink) !important;
-}
-
-.xalian-navbar .xalian-generator-navbar-button {
-	color: var(--g-accent-ink) !important;
-	background: var(--g-hazard);
-	border: var(--g-hairline) solid var(--g-hazard-dark);
-	border-radius: var(--g-radius);
-	box-shadow: var(--g-relief), 0 3px 0 var(--g-seam);
-	margin-left: var(--g-3);
-	font-style: normal !important;
-	font-weight: 600;
-	transition: background var(--g-snap), transform var(--g-snap);
-}
-
-.xalian-navbar .xalian-generator-navbar-button:hover {
-	background: var(--g-accent-hover);
-	color: var(--g-accent-ink) !important;
-}
-
-.xalian-navbar .xalian-generator-navbar-button:active {
-	transform: translateY(3px);
-	box-shadow: var(--g-recess);
-}
-
-.xalian-navbar .navbar-auth-button-wrapper { margin-left: var(--g-2); }
-
-.xalian-navbar .navbar-auth-button-wrapper .btn {
-	font-family: var(--g-font-stencil) !important;
-	font-size: var(--g-size-body) !important;
-	font-style: normal !important;
-	font-weight: 600;
-	text-transform: uppercase;
-	letter-spacing: var(--g-track-label);
-	color: var(--g-ink) !important;
-	background: var(--g-hull-hi) !important;
-	border: var(--g-hairline) solid var(--g-seam) !important;
-	border-radius: var(--g-radius) !important;
-	padding: var(--g-1) var(--g-4) !important;
-	box-shadow: var(--g-relief), 0 3px 0 var(--g-seam) !important;
-	/* just above the collapse breakpoint the bar is tight and these were
-	   breaking "SIGN IN" across two lines */
-	white-space: nowrap;
-}
-
-.xalian-navbar .navbar-auth-button-wrapper .btn:hover {
-	background: var(--g-hull-hover) !important;
-}
-
-.xalian-navbar .navbar-toggler {
-	border: var(--g-hairline) solid var(--g-seam);
-	border-radius: var(--g-radius);
-	background: var(--g-hull-hi);
-	box-shadow: var(--g-relief);
-	padding: var(--g-2) var(--g-3);
-}
-
-.xalian-navbar .username-navbar-link {
-	font-family: var(--g-font-stencil);
-	font-size: var(--g-size-body);
-	font-weight: 600;
-	text-transform: uppercase;
-	letter-spacing: var(--g-track-label);
-	color: var(--g-hazard);
-	text-decoration: none;
-}
-
-/* -------------------------------------------------------------------------
    BOOTSTRAP TABS
    react-bootstrap <Tabs> renders .nav-tabs, whose defaults are blue links on a
    white pill. Restyled as the same bank of selector keys as .g-segmented.
@@ -2329,26 +2234,6 @@
 .g-range:focus-visible {
 	outline: 2px solid var(--g-focus);
 	outline-offset: 4px;
-}
-
-/* The nav sits on the same rail as page content. */
-/* .xalian-navbar/.navbar-shell below (and the whole "CONSOLE HEADER" block
-   above it) is dead: navbar.js carries .relay-navbar/.g-cover-plate now, not
-   .xalian-navbar. Left alone here (not in this round's scope) rather than
-   deleted; pages/relay.css's real .relay-navbar-shell carries the live
-   max-width fix, next to it. */
-.xalian-navbar .navbar-shell {
-	max-width: 1440px;
-	margin: 0 auto;
-	padding-left: var(--g-5);
-	padding-right: var(--g-5);
-}
-
-/* bootstrap pads the brand, which pushed the wordmark 30px off the rail every
-   page title sits on */
-.xalian-navbar .navbar-brand {
-	padding-left: 0;
-	padding-right: var(--g-5);
 }
 
 /* The sticky nav measures against the window while page content measures

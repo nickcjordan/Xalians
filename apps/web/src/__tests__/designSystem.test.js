@@ -115,10 +115,9 @@ const V4_IMPORTS = [
  * their colours onto tokens; they may never grow it.
  */
 const LEGACY_HEX_BASELINE = {
-	// Was 112; round1-findings.md S11 deleted the dead .specimen-* block
-	// (0 hex of its own) and this baseline tightens to the file's actual
-	// current count rather than carrying stale slack forward.
-	'style.css': 102,
+	// Was 102 before the retired Bootstrap navbar blocks were deleted; the
+	// remaining 40 are the file's exact current count, not migration slack.
+	'style.css': 40,
 	'duel.css': 1,
 	'duel-playground.css': 11,
 	'tokens.css': 29,

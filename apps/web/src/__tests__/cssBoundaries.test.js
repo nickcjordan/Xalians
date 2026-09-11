@@ -124,4 +124,26 @@ describe('legacy CSS ownership boundaries', () => {
 		expect(fs.existsSync(path.join(WEB_ROOT, 'public/assets/fonts/ProcrastinatingPixie-WyVOO.ttf'))).toBe(false);
 		expect(fs.existsSync(path.join(WEB_ROOT, 'public/assets/img/background/vault.jpg'))).toBe(false);
 	});
+
+	it('keeps the retired Bootstrap navbar contract out of shared CSS', () => {
+		const styleCss = read('src/styles/legacy/style.css');
+		const systemCss = read('src/styles/legacy/system.css');
+		const navbarSource = read('src/components/navbar.tsx');
+		const retiredSelectors = [
+			'.xalian-navbar',
+			'.navbar-mobile',
+			'.mobile-nav-toggle',
+			'.navbar-auth-button-wrapper',
+			'.username-navbar-link',
+			'.xalian-generator-navbar-button',
+		];
+
+		retiredSelectors.forEach((selector) => {
+			expect(styleCss).not.toContain(selector);
+			expect(systemCss).not.toContain(selector);
+		});
+		expect(styleCss).not.toContain('# Navigation Menu');
+		expect(systemCss).not.toContain('CONSOLE HEADER');
+		expect(navbarSource).not.toContain('react-bootstrap');
+	});
 });

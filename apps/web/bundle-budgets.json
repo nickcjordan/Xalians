@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "measuredAt": "type-colour utility deletion based on 82f6b9d5718cd6f88f7882738a36a8297ba5ce60",
+    "measuredAt": "retired navbar CSS deletion based on b3d73d014cc20b5d978015db143927567bfab5df",
     "measuredOn": "2026-09-11",
     "policy": "Initial limits and route limits are the measured production output after removing the developer styleguide, rounded up with approximately five percent headroom. Update a limit only with measured evidence and review."
   },
@@ -19,12 +19,12 @@
     "generatorPage": { "javascript": { "raw": 1100000, "gzip": 319000 }, "stylesheets": { "raw": 0, "gzip": 0 } },
     "encyclopediaPage": { "javascript": { "raw": 600000, "gzip": 184000 }, "stylesheets": { "raw": 0, "gzip": 0 } },
     "duelStartPage": { "javascript": { "raw": 795000, "gzip": 207000 }, "stylesheets": { "raw": 0, "gzip": 0 } },
-    "duelPlaygroundPage": { "javascript": { "raw": 1247000, "gzip": 358000 }, "stylesheets": { "raw": 126000, "gzip": 26000 } },
-    "reclamationPage": { "javascript": { "raw": 1162000, "gzip": 343000 }, "stylesheets": { "raw": 194000, "gzip": 34000 } },
-    "longReturnPage": { "javascript": { "raw": 280000, "gzip": 83000 }, "stylesheets": { "raw": 264000, "gzip": 48000 } },
-    "trainingGroundsPage": { "javascript": { "raw": 262000, "gzip": 105000 }, "stylesheets": { "raw": 93000, "gzip": 19000 } },
-    "matchCardGamePage": { "javascript": { "raw": 147000, "gzip": 58000 }, "stylesheets": { "raw": 93000, "gzip": 19000 } },
-    "physicsGamePage": { "javascript": { "raw": 236000, "gzip": 96000 }, "stylesheets": { "raw": 93000, "gzip": 19000 } },
+    "duelPlaygroundPage": { "javascript": { "raw": 1247000, "gzip": 358000 }, "stylesheets": { "raw": 120000, "gzip": 25000 } },
+    "reclamationPage": { "javascript": { "raw": 1162000, "gzip": 343000 }, "stylesheets": { "raw": 188000, "gzip": 33000 } },
+    "longReturnPage": { "javascript": { "raw": 280000, "gzip": 83000 }, "stylesheets": { "raw": 258000, "gzip": 47000 } },
+    "trainingGroundsPage": { "javascript": { "raw": 262000, "gzip": 105000 }, "stylesheets": { "raw": 87000, "gzip": 18000 } },
+    "matchCardGamePage": { "javascript": { "raw": 147000, "gzip": 58000 }, "stylesheets": { "raw": 87000, "gzip": 18000 } },
+    "physicsGamePage": { "javascript": { "raw": 236000, "gzip": 96000 }, "stylesheets": { "raw": 87000, "gzip": 18000 } },
     "userAccountPage": { "javascript": { "raw": 1117000, "gzip": 324000 }, "stylesheets": { "raw": 0, "gzip": 0 } },
     "userDetailsPage": { "javascript": { "raw": 1059000, "gzip": 302000 }, "stylesheets": { "raw": 0, "gzip": 0 } },
     "notFoundPage": { "javascript": { "raw": 1000, "gzip": 1000 }, "stylesheets": { "raw": 0, "gzip": 0 } },
@@ -34,7 +34,7 @@
     "duelPage": {
       "parent": "duelStartPage",
       "javascript": { "raw": 790000, "gzip": 269000 },
-      "stylesheets": { "raw": 115000, "gzip": 23000 }
+      "stylesheets": { "raw": 108000, "gzip": 22000 }
     }
   }
 }
