@@ -7,7 +7,7 @@ import * as duelUtil from '@xalians/rules/duel/boardUtil';
 import * as duelCalculator from '@xalians/rules/duel/duelCalculator';
 import * as duelConstants from '@xalians/rules/duel/duelGameConstants';
 import species from '@xalians/content/species.json';
-import { Hub } from '@aws-amplify/core';
+import { Hub } from 'aws-amplify/utils';
 import DuelBoardCell from './duelBoardCell';
 import DuelRosterRail from './duelRosterRail';
 import DuelMoveRegion from './duelMoveRegion';

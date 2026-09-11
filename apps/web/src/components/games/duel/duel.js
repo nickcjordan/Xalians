@@ -9,10 +9,9 @@ import * as boardStateManager from '@xalians/rules/duel/boardStateManager';
 import * as playerStateManager from '@xalians/rules/duel/playerStateManager';
 import * as plugins from '@xalians/rules/duel/plugins';
 import { PluginPlayer } from 'boardgame.io/plugins';
-import { v4 as uuidv4 } from 'uuid'; 
 import gsap from 'gsap';
 import Flip from 'gsap/Flip';
-import { Hub } from '@aws-amplify/core';
+import { Hub } from 'aws-amplify/utils';
 gsap.registerPlugin(Flip);
 
 // define a function to initialize each player’s state
@@ -43,7 +42,7 @@ export const Duel = (data) => {
 			  }),
 		],
 
-		setup: (ctx, setupData) => {
+		setup: ({ ctx }, setupData) => {
 			// let unsetXalianIds = [];
 			// data.playerXalians.forEach((x) => {
 			// 	unsetXalianIds.push(x.xalianId);
@@ -118,7 +117,7 @@ export const Duel = (data) => {
 			// order: TurnOrder.DEFAULT,
 
 			// Called at the beginning of a turn.
-			onBegin: (G, ctx) => {
+			onBegin: ({ G, ctx }) => {
 				// console.log('STARTING TURN');
 				G.currentTurnActions = [];
 				G.currentTurnDetails = null;
@@ -135,7 +134,7 @@ export const Duel = (data) => {
 			},
 
 			// Called at the end of a turn.
-			onEnd: (G, ctx) => {
+			onEnd: ({ G, ctx }) => {
 				// G.selectedIndex = null;
 				// G.selectedId = null;
 				let playerState = G.playerStates[parseInt(ctx.currentPlayer)];
@@ -164,7 +163,7 @@ export const Duel = (data) => {
 			},
 
 			// Ends the turn if this returns true.
-			endIf: (G, ctx) => {
+			endIf: ({ G, ctx }) => {
 				// if (ctx.phase === 'setup') {
 				// 	let totalXaliansActive = G.playerStates[0].activeXalianIds.length + G.playerStates[1].activeXalianIds.length;
 				// 	let totalXaliansUnset = G.playerStates[0].unsetXalianIds.length + G.playerStates[1].unsetXalianIds.length;
@@ -188,7 +187,7 @@ export const Duel = (data) => {
 			},
 
 			// Called at the end of each move.
-			onMove: (G, ctx) => {
+			onMove: ({ G, ctx }) => {
 				// if (ctx.phase === 'play') {
 					G.currentTurnDetails = boardStateManager.currentTurnState(G, ctx);
 				// } 
@@ -229,7 +228,7 @@ export const Duel = (data) => {
 				moves: data.randomizeStartingPositions ? { initializeSetup } : { setPiece, initializeSetup },
 				// start: data.randomizeStartingPositions? false : true,
 				start: true,
-				endIf: G => { 
+				endIf: ({ G }) => {
 					let totalXaliansActive = G.playerStates[0].activeXalianIds.length + G.playerStates[1].activeXalianIds.length;
 					let totalXaliansUnset = G.playerStates[0].unsetXalianIds.length + G.playerStates[1].unsetXalianIds.length;
 					let allPiecesAreSet = (totalXaliansActive == G.xalians.length);
@@ -260,7 +259,7 @@ export const Duel = (data) => {
 
 		// moves: { selectPiece },
 
-		endIf: (G, ctx) => {
+		endIf: ({ G, ctx }) => {
 			// if (isVictory(G.cells)) {
 			// 	return { winner: ctx.currentPlayer };
 			// }
@@ -361,25 +360,25 @@ export const Duel = (data) => {
 
 // COMMON
 // function selectPiece(G, ctx, index, id) {
-function selectPiece(G, ctx, id, dragged) {
+function selectPiece({ G, ctx }, id, dragged) {
 	// G.selectedIndex = index;
 	G.selectedId = id;
 }
 
-function endTurn(G, ctx) {
-	ctx.events.endTurn();
+function endTurn({ events }) {
+	events.endTurn();
 }
 
 // SETUP
 
-function initializeSetup(G, ctx, playerId = null) {
+function initializeSetup({ G, events }, playerId = null) {
 
 	// G.playerStates.forEach( playerState => {
 	// 	initializeSetupForPlayer(playerState, G);
 	// })
 	
 		initializeSetupForPlayer(G.playerStates[playerId], G);
-		ctx.events.endTurn();
+		events.endTurn();
 }
 
 function initializeSetupForPlayer(playerState, G) {
@@ -395,7 +394,7 @@ function initializeSetupForPlayer(playerState, G) {
 }
 
 
-function setPiece(G, ctx, index, selectedXalianId) {
+function setPiece({ G, ctx, events }, index, selectedXalianId) {
 	if (G.cells[index] !== null) {
 		return INVALID_MOVE;
 	}
@@ -406,7 +405,7 @@ function setPiece(G, ctx, index, selectedXalianId) {
 	if (currentPlayerState.unsetXalianIds) {
 		let unset = currentPlayerState.unsetXalianIds;
 		let active = currentPlayerState.activeXalianIds;
-		moveXalianToActive(selectedXalianId, unset, active, ctx, true);
+		moveXalianToActive(selectedXalianId, unset, active, events, true);
 	}
 	//  else if (duelUtil.isOpponentsTurn(ctx) && G.playerStates[1].unsetXalianIds) {
 	// 	moveXalianToActive(selectedXalianId, G.playerStates[1].unsetXalianIds, G.playerStates[1].activeXalianIds, ctx, true);
@@ -421,12 +420,12 @@ function setPiece(G, ctx, index, selectedXalianId) {
 	// return G;
 }
 
-function moveXalianToActive(id, unset, active, ctx, endTurnAfterMove = false) {
+function moveXalianToActive(id, unset, active, events, endTurnAfterMove = false) {
 	if (unset.includes(id)) {
 		unset.splice(unset.indexOf(id), 1);
 		active.push(id);
 		if (unset.length === 0 || endTurnAfterMove) {
-			ctx.events.endTurn();
+			events.endTurn();
 		}
 	}
 }
@@ -438,7 +437,7 @@ function moveXalianToActive(id, unset, active, ctx, endTurnAfterMove = false) {
 // }
 
 // function movePiece(G, ctx, startIndex, endIndex, data = {}) {
-function movePiece(G, ctx, path, data = {}) {
+function movePiece({ G, ctx }, path, data = {}) {
 	// sanity-check the client-submitted path shape before trusting any of it
 	if (!path
 		|| !Number.isInteger(path.startIndex) || !Number.isInteger(path.endIndex)
@@ -509,7 +508,7 @@ function movePiece(G, ctx, path, data = {}) {
 }
 
 
-function doAttack(G, ctx, path, data = {}) {
+function doAttack({ G, ctx }, path, data = {}) {
 	// sanity-check the client-submitted path shape before trusting any of it
 	if (!path
 		|| !Number.isInteger(path.startIndex) || !Number.isInteger(path.endIndex)

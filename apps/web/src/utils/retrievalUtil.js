@@ -1,4 +1,3 @@
-import { Auth } from '@aws-amplify/auth';
 import * as authUtil from './authUtil';
 import * as dbApi from '../utils/dbApi';
 import mockUserData from '@xalians/content/mock/mockUserData.json';
@@ -12,7 +11,7 @@ import xalianSamples from '@xalians/content/mock/xalianSamples.json';
 // squad picker still reads the old shape and simply falls back to random squads when
 // it is absent, until its derivation layer over the record lands (#184).
 export function getCurrentUserAndXalians() {
-    return Auth.currentUserInfo().then((data) => {
+    return authUtil.currentUser().then((data) => {
         if (!data) {
             return null;
         }

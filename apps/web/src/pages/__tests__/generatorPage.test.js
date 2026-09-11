@@ -16,11 +16,17 @@ vi.mock('../../components/navbar', () => ({ default: () => null }));
 vi.mock('../../components/auth/signInModal', () => ({ default: () => null }));
 vi.mock('../../components/auth/verifyEmailModal', () => ({ default: () => null }));
 
-const currentUserInfo = vi.fn();
-vi.mock('@aws-amplify/auth', () => ({
-	Auth: { currentUserInfo: (...args) => currentUserInfo(...args) },
+const { currentUser } = vi.hoisted(() => ({ currentUser: vi.fn() }));
+vi.mock('../../utils/authUtil', () => ({
+	currentUser,
+	buildAuthState: (data) => ({
+		userId: data.attributes.sub,
+		username: data.username,
+		email: data.attributes.email,
+		hasVerifiedEmail: data.attributes.email_verified === true,
+	}),
 }));
-vi.mock('@aws-amplify/core', () => ({
+vi.mock('aws-amplify/utils', () => ({
 	Hub: { listen: vi.fn(), remove: vi.fn() },
 }));
 
@@ -43,7 +49,7 @@ beforeEach(() => {
 
 describe('GeneratorPage, signed out', () => {
 	beforeEach(() => {
-		currentUserInfo.mockResolvedValue(null);
+		currentUser.mockResolvedValue(null);
 	});
 
 	it('pulls the free lever and says the creature cannot be kept', async () => {
@@ -70,7 +76,7 @@ describe('GeneratorPage, signed out', () => {
 
 describe('GeneratorPage, signed in', () => {
 	beforeEach(() => {
-		currentUserInfo.mockResolvedValue({ username: 'nick', attributes: { email: 'nick@example.com', email_verified: true } });
+		currentUser.mockResolvedValue({ username: 'nick', attributes: { sub: 'nick', email: 'nick@example.com', email_verified: true } });
 	});
 
 	it('still opens on the showroom, so arriving costs nothing', async () => {

@@ -1,7 +1,6 @@
-import axios from "axios";
-import { Auth } from '@aws-amplify/auth';
 import { UserRecordSchema, PublicProfileSchema, XalianRecordSchema } from "@xalians/content/schema";
 import { generateXalian, getSpeciesTemplates } from "@xalians/rules/generator";
+import { getIdToken } from './authUtil';
 
 /**
  * The one HTTP client for the Xalians API.
@@ -47,21 +46,43 @@ function sampleRecords(count = 1, profile, pullSeed) {
 }
 
 async function authHeaders() {
-  const session = await Auth.currentSession();
-  return { Authorization: `Bearer ${session.getIdToken().getJwtToken()}` };
+  return { Authorization: `Bearer ${await getIdToken()}` };
 }
 
-const callGet = (url) =>
-  authHeaders().then((headers) => axios.get(url, { headers }).then((response) => response.data));
+async function requestJson(url, options = {}) {
+  const response = await fetch(url, options);
+  const text = await response.text();
+  let data;
+  try {
+    data = text ? JSON.parse(text) : undefined;
+  } catch {
+    data = text;
+  }
 
-const callCreate = (url, data) =>
-  authHeaders().then((headers) =>
-    axios({ method: "post", url, headers: { ...headers, "content-type": "application/json" }, data })
-      .then((response) => response.data)
-  );
+  if (!response.ok) {
+    const message = data && typeof data === 'object' && data.message
+      ? data.message
+      : `Xalians API request failed (${response.status}).`;
+    const error = new Error(message);
+    error.status = response.status;
+    error.data = data;
+    throw error;
+  }
+  return data;
+}
 
-const callDelete = (url) =>
-  authHeaders().then((headers) => axios.delete(url, { headers }).then((response) => response.data));
+const callGet = async (url) => requestJson(url, { headers: await authHeaders() });
+
+const callCreate = async (url, data) => requestJson(url, {
+  method: 'POST',
+  headers: { ...await authHeaders(), 'content-type': 'application/json' },
+  body: JSON.stringify(data),
+});
+
+const callDelete = async (url) => requestJson(url, {
+  method: 'DELETE',
+  headers: await authHeaders(),
+});
 
 // ---------------------------------------------------------------------------
 // The registry: ratified creature records
@@ -86,9 +107,9 @@ export const callShowroomXalian = (profile) => {
     });
   }
   const suffix = profile ? `?profile=${encodeURIComponent(profile)}` : "";
-  return axios.get(`${API}/xalians/showroom${suffix}`).then((response) => ({
-    record: XalianRecordSchema.parse(response.data.record),
-    keepable: response.data.keepable === true,
+  return requestJson(`${API}/xalians/showroom${suffix}`).then((data) => ({
+    record: XalianRecordSchema.parse(data.record),
+    keepable: data.keepable === true,
   }));
 };
 

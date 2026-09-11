@@ -4,14 +4,14 @@ import species from '@xalians/content/species.json';
 import { readFileSync, readdirSync } from 'node:fs';
 import { resolve } from 'node:path';
 import XalianImage from '../../components/xalianImage';
-import XalianSVG, { portraitLoaderBySpecies, speciesArtNames, tokenArtBySpecies } from './xalianSvg';
+import XalianSVG, { portraitLoaderBySpecies, speciesArtNames, tokenLoaderBySpecies } from './xalianSvg';
 
 const canonicalSpeciesNames = species.map(({ name }) => name.toLowerCase()).sort();
 
 describe('species art registry', () => {
 	test('has matching portrait and token art for every canonical species', () => {
 		expect(speciesArtNames).toEqual(canonicalSpeciesNames);
-		expect(Object.keys(tokenArtBySpecies).sort()).toEqual(canonicalSpeciesNames);
+		expect(Object.keys(tokenLoaderBySpecies).sort()).toEqual(canonicalSpeciesNames);
 		expect(Object.keys(portraitLoaderBySpecies).sort()).toEqual(canonicalSpeciesNames);
 		expect(speciesArtNames).toEqual(expect.arrayContaining(['avilily', 'frackworm', 'vespersyn']));
 		expect(speciesArtNames).not.toContain('tetrahive');
@@ -27,24 +27,23 @@ describe('species art registry', () => {
 		}
 	});
 
-	test('renders the compact 64-unit asset when a surface requests token art', () => {
+	test('loads the compact 64-unit asset when a surface requests token art', async () => {
 		const { container } = render(<XalianSVG name="Terragoyle" variant="token" data-testid="species-art" />);
-		const svg = screen.getByTestId('species-art');
 
-		expect(svg).toHaveAttribute('viewBox', '0 0 64 64');
+		await waitFor(() => expect(screen.getByTestId('species-art')).toHaveAttribute('viewBox', '0 0 64 64'));
+		const svg = screen.getByTestId('species-art');
 		expect(svg).toHaveAttribute('aria-hidden', 'true');
 		expect(container.querySelectorAll('svg')).toHaveLength(1);
 	});
 
-	test('loads only the requested authored portrait and keeps the token as its fallback', async () => {
+	test('loads only the requested authored portrait', async () => {
 		const { container } = render(<XalianSVG name="Frackworm" data-testid="species-art" />);
 
-		expect(screen.getByTestId('species-art')).toHaveAttribute('viewBox', '0 0 64 64');
 		await waitFor(() => expect(container.querySelector('svg')).toHaveAttribute('viewBox', '0 0 1254 1254'));
 		expect(container.querySelector('svg')).not.toHaveAttribute('id');
 	});
 
-	test('keeps legacy presentation props without losing zero values or wrapper classes', () => {
+	test('keeps legacy presentation props without losing zero values or wrapper classes', async () => {
 		const { container } = render(
 			<XalianImage
 				variant="token"
@@ -58,6 +57,7 @@ describe('species art registry', () => {
 			/>,
 		);
 
+		await waitFor(() => expect(container.querySelector('svg')).toHaveAttribute('viewBox', '0 0 64 64'));
 		const wrapper = container.firstElementChild;
 		const svg = wrapper.querySelector('svg');
 		expect(wrapper).toHaveClass('animate-state', 'game-piece');

@@ -8,7 +8,7 @@
 // more; what becomes of those roughly 70 records is Nick's decision (#180).
 import * as React from 'react';
 import { Link } from 'react-router-dom';
-import { Hub } from '@aws-amplify/core';
+import { Hub } from 'aws-amplify/utils';
 import { Trash2 } from 'lucide-react';
 import type { XalianRecord } from '@xalians/content/schema';
 import { speciesDisplayName } from '@xalians/rules/generator';
@@ -106,17 +106,18 @@ function UserAccountPage() {
 	React.useEffect(() => {
 		refreshUser();
 		const authListener = (data: any) => {
-			if (data.payload.event === 'signIn') {
+			if (data.payload.event === 'signedIn') {
 				setSignInModalShow(false);
 				refreshUser();
 			}
-			if (data.payload.event === 'signIn_failure' && data.payload.data.code === 'UserNotConfirmedException') {
-				setSignInModalShow(false);
-				setVerifyEmailModalShow(true);
+			if (data.payload.event === 'signedOut') {
+				setLoggedInUser(null);
+				setRecords([]);
+				setSignedOut(true);
 			}
 		};
-		Hub.listen('auth', authListener);
-		return () => Hub.remove('auth', authListener);
+		const stopListening = Hub.listen('auth', authListener);
+		return stopListening;
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 

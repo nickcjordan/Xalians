@@ -1,4 +1,4 @@
-import { Hub } from '@aws-amplify/core';
+import { Hub } from 'aws-amplify/utils';
 
 export const sendAlert = (title, text, variant = "dark") => {
   Hub.dispatch("alert", {

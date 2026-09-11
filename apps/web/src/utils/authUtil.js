@@ -1,111 +1,83 @@
-import { Auth } from '@aws-amplify/auth';
-// const listener = (data) => {
-//     console.log('inbound event data:\n' + JSON.stringify(data.payload, null, 2));
-//     switch (data.payload.event) {
-//         case 'signIn':
-//             logger.info('LISTENER :: user signed in');
-//             // setAuthenticatedUser(data.payload.data)
-//             break;
-//         case 'signUp':
-//             logger.info('LISTENER :: user signed up');
-//             break;
-//         case 'signOut':
-//             logger.info('LISTENER :: user signed out');
-//             break;
-//         case 'signIn_failure':
-//             logger.error('LISTENER :: user sign in failed');
-//             break;
-//         case 'tokenRefresh':
-//             logger.info('LISTENER :: token refresh succeeded');
-//             break;
-//         case 'tokenRefresh_failure':
-//             logger.error('LISTENER :: token refresh failed');
-//             break;
-//         case 'configured':
-//             logger.info('LISTENER :: the Auth module is configured');
-//     }
-// }
+import {
+    confirmSignUp as amplifyConfirmSignUp,
+    fetchAuthSession,
+    fetchUserAttributes,
+    getCurrentUser,
+    resendSignUpCode,
+    signIn as amplifySignIn,
+    signOut as amplifySignOut,
+    signUp as amplifySignUp,
+} from 'aws-amplify/auth';
 
-// Hub.listen('auth', listener);
-
-// const setAuthenticatedUser = (data) => {
-//     store.setState('authenticatedUser', {
-//         username: data.username,
-//         attributes: data.attributes
-//     });
-// }
+function isSignedOutError(error) {
+    return error && (
+        error.name === 'UserUnAuthenticatedException' ||
+        error.name === 'NotAuthorizedException'
+    );
+}
 
 /**
- * The current session, or null when signed out.
- *
- * VITE_USE_CACHE_AUTH=true answers with a stub account instead of asking
- * Cognito, which is what lets the signed-in pages be opened and screenshot
- * locally with no real session. It is separate from VITE_USE_CACHE (which
- * makes dbApi answer from sample records) so the signed-out branch of a page
- * can be painted with stubbed data too. Both are development switches only;
- * the production build sets neither.
+ * Return a v4-compatible user shape to the existing UI, or null when signed
+ * out. Keeping this normalization at one edge lets the rest of the site move
+ * to Amplify 6 without spreading Cognito's new functional response shapes
+ * through every page.
  */
-export const currentUser = () => {
+export const currentUser = async () => {
     if (import.meta.env.VITE_USE_CACHE_AUTH === 'true') {
-        return Promise.resolve({
+        return {
+            id: 'sample',
+            userId: 'sample',
             username: 'sample',
             attributes: { sub: 'sample', email: 'sample@xalians.com', email_verified: true },
-        });
+        };
     }
-    return Auth.currentUserInfo();
+
+    try {
+        const user = await getCurrentUser();
+        const attributes = await fetchUserAttributes();
+        return {
+            ...user,
+            id: user.userId,
+            attributes: {
+                ...attributes,
+                sub: attributes.sub || user.userId,
+                email_verified: attributes.email_verified === true || attributes.email_verified === 'true',
+            },
+        };
+    } catch (error) {
+        if (isSignedOutError(error)) return null;
+        throw error;
+    }
 };
 
-export const buildAuthState = (data) => {
-    return { 
-        userId: data.attributes.sub,
-        username: data.username,
-        email: data.attributes.email,
-        hasVerifiedEmail: data.attributes.email_verified
+export const buildAuthState = (data) => ({
+    userId: data.id || data.userId || data.attributes.sub,
+    username: data.username,
+    email: data.attributes.email,
+    hasVerifiedEmail: data.attributes.email_verified === true || data.attributes.email_verified === 'true',
+});
+
+export const getIdToken = async () => {
+    const session = await fetchAuthSession();
+    if (!session.tokens?.idToken) {
+        throw new Error('The signed-in session did not include an ID token.');
     }
-}
+    return session.tokens.idToken.toString();
+};
 
-export const signUp = (email, user, pass) => {
-    // export const signUp = (email, pass) => {
-    return new Promise((resolve, reject) => {
-        try {
-            Auth.signUp({
-                username: user,
-                password: pass,
-                attributes: {
-                    email: email
-                }
-                }).then(response => {
-                console.log(JSON.stringify(response, null, 2));
-                resolve(response);
-            }).catch(error => {
-                // console.log('error signing up:', error);
-                // if (error.code === 'UsernameExistsException') {
-                //     this.setState({});
+export const signUp = (email, user, pass) => amplifySignUp({
+    username: user,
+    password: pass,
+    options: { userAttributes: { email } },
+});
 
+export const confirmSignUp = (user, code) => amplifyConfirmSignUp({
+    username: user,
+    confirmationCode: code,
+});
 
+export const resendConfirmationCode = (user) => resendSignUpCode({ username: user });
 
-                // }
-                reject(error)
-            });
-        } catch (error) {
-            console.log('error signing up:', error);
-        }
-    });
-}
+export const signIn = (user, pass) => amplifySignIn({ username: user, password: pass });
 
-export const confirmSignUp = (user, code) => {
-    return Auth.confirmSignUp(user, code);
-}
-
-export const resendConfirmationCode = (user) => {
-    return Auth.resendSignUp(user);
-}
-
-export const signIn = (user, pass) => {
-    return Auth.signIn(user, pass);
-}
-
-export const signOut = () => {
-    return Auth.signOut().then(() => true);
-}
-
+export const signOut = () => amplifySignOut().then(() => true);
