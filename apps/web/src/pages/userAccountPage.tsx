@@ -178,7 +178,9 @@ function UserAccountPage() {
 
 				{!isLoading && signedOut && (
 					<EmptyState legend="Sign in to see your Xalians">
-						<div className="mt-1 flex items-center gap-4">
+						Anything the Generator prints for you is written into the registry under your name, kept
+						at its own record, and drawn on for every game on the site.
+						<div className="mt-4 flex items-center gap-4">
 							<Button onClick={() => setSignInModalShow(true)}>Sign in</Button>
 							<Button variant="link" onClick={() => setSignupModalShow(true)}>Create account</Button>
 						</div>
