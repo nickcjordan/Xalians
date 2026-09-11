@@ -1,0 +1,109 @@
+/**
+ * Training-only compatibility styles.
+ *
+ * The Match and Physics modules can render directly or inside the chrome
+ * Training Grounds shell. Keep their board geometry here so unrelated
+ * immersive routes do not inherit it from style.css.
+ */
+
+.match-card-game-wrapper {
+  display: flex;
+  flex-flow: column wrap;
+  align-content: center;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.match-game-card-flipped {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+.game-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: fit-content !important;
+  max-width: 100%;
+  margin: 0 auto var(--g-8) auto !important;
+  padding: var(--g-4) !important;
+  background: var(--g-hull-lo);
+  border: var(--g-hairline) solid var(--g-seam);
+  border-radius: var(--g-radius-housing);
+  box-shadow: var(--g-relief), var(--g-drop);
+}
+
+.game-container-content-wrapper {
+  position: relative;
+}
+
+.physics-controls {
+  position: absolute;
+  z-index: 999;
+  top: var(--g-3);
+  right: var(--g-3);
+  left: var(--g-3);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: var(--g-4);
+  padding: var(--g-3) var(--g-4);
+  background: var(--g-hull);
+  border: var(--g-hairline) solid var(--g-seam);
+  border-radius: var(--g-radius-panel);
+  box-shadow: var(--g-relief), var(--g-drop);
+}
+
+.physics-control {
+  flex: 1 1 180px;
+  min-width: 140px;
+  margin: 0;
+}
+
+.physics-control-label {
+  display: block;
+  margin-bottom: var(--g-1);
+  color: var(--g-ink-mid);
+  font-family: var(--g-font-stencil);
+  font-size: var(--g-size-tiny);
+  font-weight: 600;
+  letter-spacing: var(--g-track-label);
+  text-transform: uppercase;
+}
+
+.physics-control-value {
+  color: var(--g-ink);
+  font-family: var(--g-font-mono);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: normal;
+}
+
+.physics-fire {
+  flex: 0 0 auto;
+}
+
+.physics-arena {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: var(--g-hull-lo);
+  border-radius: var(--g-radius-panel);
+  box-shadow: var(--g-recess);
+}
+
+.physics-target {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 50px;
+  height: 50px;
+  background: var(--g-hazard);
+  border: 2px solid var(--g-hazard-dark);
+  border-radius: var(--g-radius);
+}

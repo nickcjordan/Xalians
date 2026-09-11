@@ -1,6 +1,6 @@
 # Frontend CSS ownership audit
 
-Last audited: 2026-09-11 on the selector-audit branch based on deployed `origin/main` `ef513f9ebc1da406506545a197c2bb32d86995e2`
+Last audited: 2026-09-11 on the training-style split branch based on deployed `origin/main` `9394d49573a2657d3419d8028a71845a2357ce52`
 
 This inventory defines which route or layer owns every non-component stylesheet. Its purpose is to make page-wide leakage visible and to support deleting the legacy layer in measured slices. Source-local Tailwind and shadcn classes remain governed by `docs/DESIGN_SYSTEM.md` and are not duplicated here.
 
@@ -12,7 +12,8 @@ This inventory defines which route or layer owns every non-component stylesheet.
 | `src/styles/globals.css` | 11,487 | Every route | Application entry | Retain only resets, page ground, semantic mappings, and documented global utilities. Audit again after the legacy layer leaves. |
 | `src/styles/legacy/tokens.css` | 3,189 | Immersive v3 terminals | Imported through lazy `immersive.css` only | Merge required values into the immersive token block, then delete the aliases. |
 | `src/styles/legacy/system.css` | 108,853 | Duel match/reference, Reclamation, training games, Long Return | Imported through lazy `immersive.css` only | Split the v3 terminal foundation from dead v4 duplicates and route/component sections. This is the main shared-ownership audit. |
-| `src/styles/legacy/style.css` | 84,843 at baseline; 53,699 after the first selector cut | Training games plus older shared immersive selectors; the retired landing-page template surface is deleted | Imported through lazy `immersive.css` only | Continue proving residual selectors live/dead, then move remaining training/shared rules behind their narrow entries. |
+| `src/styles/legacy/style.css` | 84,843 at baseline; 49,830 after the first two selector cuts | Older shared immersive selectors; retired template and training-only sections are deleted or extracted | Imported through lazy `immersive.css` only | Continue proving residual selectors live/dead and move any remaining route rules behind their narrow entries. |
+| `src/styles/legacy/training.css` | 2,325 | Xalian Match and Physics board geometry/controls | Imported after `immersive.css` by the two training game entries | Route-family owned; replace only with a deliberate training-game redesign. |
 | `src/styles/legacy/typeColors.css` | 2,616 | Element/type utility classes in immersive views | Imported through lazy `immersive.css` only | Replace with token-backed element scopes where semantics match. |
 | `src/styles/legacy/duel.css` | 46,022 | Live Duel match and Duel affordance reference | Imported by `duelPage.js` and `duelPlaygroundPage.js` | Route-owned; remove only with a Duel immersive redesign. |
 | `src/styles/legacy/duel-playground.css` | 28,733 | Duel affordance reference | Imported after `duel.css` by `duelPlaygroundPage.js` | Developer-route owned. |
@@ -47,9 +48,17 @@ The cut removes 1,451 lines / 31,171 source bytes from `style.css`, both 10,144-
 
 Local desktop/mobile smoke covers Training, Xalian Match, Physics, Duel setup/reference and a started 64-cell board, Reclamation, and Long Return without page/console errors or new document overflow. Direct before/after paint comparison of Xalian Match, Physics, Duel reference, and Long Return is unchanged; Duel reference retains the already-recorded phone overflow.
 
+PR [#230, Remove retired frontend template styles](https://github.com/nickcjordan/Xalians/pull/230) merged as `9394d49`. CI run `34614031727`, Terraform-plan run `34614031618`, and production deploy `34614190720` passed with empty annotation streams. The deployed asset and live route/game measurements matched the local evidence.
+
+## Second selector-audit slice
+
+The live Match board, shared training game container, and Physics controls move into the 2,325-byte `training.css`, imported only by the Match and Physics entries. Comment-only overlay helpers and obsolete Training Grounds selectors are deleted instead of carried forward. Unused component/data imports are also removed from Physics and Duel, severing their dead source coupling to training helpers.
+
+The shared immersive asset falls from 91.19 kB raw / 17.93 kB gzip to 88.98 kB / 17.56 kB. Training loads a separate 1.74 kB / 0.62 kB asset and its complete CSS graph is 90.7 kB / 18.1 kB, slightly smaller than before the split. Physics route JavaScript falls from 237.2 kB / 94.3 kB gzip to 224.2 kB / 90.7 kB; the nested Duel graph falls from 751.7 kB / 256.2 kB to 749.3 kB / 255.0 kB. Exact before/after screenshots match for Physics, Reclamation, and Long Return; the animated Match paint and Duel reference are visually unchanged.
+
 ## Remaining audit sequence
 
 1. Continue the selector-use report for residual `style.css` and the non-foundation sections of `system.css`; verify ambiguous selectors and library-generated state classes in the browser before deletion.
-2. Split the remaining training-game rules from shared immersive rules in `style.css`; delete further confirmed dead selectors and assets.
+2. Audit the remaining shared rules in `style.css`; delete further confirmed dead selectors and move any surviving route-only rules to the narrowest owner.
 3. Replace `typeColors.css` with existing v4 element tokens/scopes where semantics match.
 4. Tighten route CSS budgets after every deletion, then remove Tailwind's temporary `important` interop once no legacy specificity requires it.

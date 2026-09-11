@@ -31,6 +31,10 @@ describe('legacy CSS ownership boundaries', () => {
 			'pages/games/physicsGamePage.js',
 			'pages/games/reclamationPage.js',
 		],
+		'training.css': [
+			'pages/games/matchCardGamePage.js',
+			'pages/games/physicsGamePage.js',
+		],
 		'duel.css': [
 			'pages/games/duelPage.js',
 			'pages/games/duelPlaygroundPage.js',
@@ -56,6 +60,24 @@ describe('legacy CSS ownership boundaries', () => {
 		const imports = [...css.matchAll(/@import ['"]\.\/([^'"]+)['"]/g)].map((match) => match[1]);
 
 		expect(imports).toEqual(['tokens.css', 'system.css', 'style.css', 'typeColors.css']);
+	});
+
+	it('keeps training board geometry out of the shared immersive stylesheet', () => {
+		const sharedCss = read('src/styles/legacy/style.css');
+		const trainingCss = read('src/styles/legacy/training.css');
+		const trainingSelectors = [
+			'.match-card-game-wrapper',
+			'.match-game-card-flipped',
+			'.game-container',
+			'.physics-controls',
+			'.physics-arena',
+			'.physics-target',
+		];
+
+		trainingSelectors.forEach((selector) => {
+			expect(sharedCss).not.toContain(selector);
+			expect(trainingCss).toContain(selector);
+		});
 	});
 
 	it('does not leave compatibility styles in the public tree', () => {
