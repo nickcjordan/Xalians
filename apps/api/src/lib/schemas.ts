@@ -90,3 +90,29 @@ export const ReleaseRegistryXalianParamsSchema = z.object({
   xalianId: z.string().min(1),
 });
 export type ReleaseRegistryXalianParams = z.infer<typeof ReleaseRegistryXalianParamsSchema>;
+
+const TradeXalianIdsSchema = z
+  .array(z.string().regex(/^xal_/, 'xalian id must start with "xal_"'))
+  .min(1)
+  .max(6)
+  .refine((ids) => new Set(ids).size === ids.length, 'a trade side cannot repeat a Xalian');
+
+// POST /trades. Both sides are required: trades are direct swaps, not gifts, listings,
+// auctions, or price-bearing marketplace offers.
+export const CreateTradeBodySchema = z
+  .object({
+    recipientId: z.string().min(1),
+    offeredXalianIds: TradeXalianIdsSchema,
+    requestedXalianIds: TradeXalianIdsSchema,
+    counterTo: z.string().regex(/^trd_/, 'counter trade id must start with "trd_"').optional(),
+  })
+  .refine(
+    (trade) => trade.offeredXalianIds.every((id) => !trade.requestedXalianIds.includes(id)),
+    { message: 'the same Xalian cannot appear on both sides', path: ['requestedXalianIds'] }
+  );
+export type CreateTradeBody = z.infer<typeof CreateTradeBodySchema>;
+
+export const TradeParamsSchema = z.object({
+  tradeId: z.string().regex(/^trd_/, 'trade id must start with "trd_"'),
+});
+export type TradeParams = z.infer<typeof TradeParamsSchema>;

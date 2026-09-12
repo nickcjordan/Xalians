@@ -14,3 +14,4 @@ export * from './encyclopedia.ts';
 export * from './user.ts';
 export * from './lore.ts';
 export * from './legacy.ts';
+export * from './trade.ts';

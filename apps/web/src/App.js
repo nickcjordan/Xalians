@@ -53,6 +53,8 @@ const GeneratorPage = lazy(() => import('./pages/generatorPage'));
 const UserAccountPage = lazy(() => import('./pages/userAccountPage'));
 const UserDetailsPage = lazy(() => import('./pages/userDetailsPage'));
 const RecordPage = lazy(() => import('./pages/recordPage'));
+const TradeBuilderPage = lazy(() => import('./pages/tradeBuilderPage'));
+const TradePage = lazy(() => import('./pages/tradePage'));
 const MatchCardGamePage = lazy(() => import('./pages/games/matchCardGamePage'));
 const PhysicsGamePage = lazy(() => import('./pages/games/physicsGamePage'));
 const TrainingGroundsPage = lazy(() => import('./pages/trainingGroundsPage'));
@@ -100,6 +102,11 @@ function RecordRoute() {
   return <RecordPage id={id} />;
 }
 
+function TradeRoute() {
+  const { id } = useParams();
+  return <TradePage id={id} />;
+}
+
 export function AppRoutes() {
   return (
     <Suspense fallback={<div>Loading...</div>}>
@@ -112,6 +119,8 @@ export function AppRoutes() {
           <Route path="/species/:id" element={<RedirectSpecies />} />
           <Route path="/user/:id" element={<UserDetailsRoute />} />
           <Route path="/xalian/:id" element={<RecordRoute />} />
+          <Route path="/trade/new" element={<TradeBuilderPage />} />
+          <Route path="/trade/:id" element={<TradeRoute />} />
           <Route path="/planets" element={<PreserveLocationRedirect to="/encyclopedia/worlds" />} />
           <Route path="/glossary" element={<PreserveLocationRedirect to="/encyclopedia/index" />} />
           <Route path="/encyclopedia/*" element={<EncyclopediaPage />} />
