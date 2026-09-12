@@ -189,7 +189,7 @@ function GeneratorPage() {
 					) : record ? (
 						<React.Fragment>
 							{mode === 'owned' ? (
-								<Callout variant="viable" title="Saved to your collection" className="mb-6">
+								<Callout variant="viable" title="Kept" className="mb-6">
 									<p className="m-0">This one is yours. It is in the registry under your name.</p>
 									<div className="mt-3 flex flex-wrap gap-2">
 										<Button disabled={isGenerating} onClick={() => generate(true, profile)}>
@@ -201,7 +201,7 @@ function GeneratorPage() {
 									</div>
 								</Callout>
 							) : signedIn ? (
-								<Callout variant="note" title="Preview only" className="mb-6">
+								<Callout variant="note" title="Showroom creature" className="mb-6">
 									<p className="m-0">
 										The first creature is a showroom preview, so it was not saved. Generate again and the next
 										creature will be written to your collection.
@@ -213,7 +213,7 @@ function GeneratorPage() {
 									</div>
 								</Callout>
 							) : (
-								<Callout variant="note" title="Preview only" className="mb-6">
+								<Callout variant="note" title="Showroom creature" className="mb-6">
 									<p className="m-0">
 										Showroom creatures cannot be kept. This one is real, and it is gone the moment the lever turns
 										again. Sign in and the Generator writes what it prints into the registry under your name.

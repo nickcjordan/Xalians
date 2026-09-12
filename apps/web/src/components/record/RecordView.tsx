@@ -201,7 +201,9 @@ function RecordView({ record, kicker = 'Record' }: RecordViewProps) {
 
 			<section aria-labelledby="creature-brief-title" className="border-y border-edge py-6">
 				<p className="type-legend m-0">Creature brief</p>
-				<h3 id="creature-brief-title" className="type-heading mt-2 mb-2 text-[19px]">Read this one at a glance</h3>
+				<p id="creature-brief-title" className="type-heading mt-2 mb-2 text-[19px]">
+					Read this one at a glance
+				</p>
 				<p className="measure mt-0 mb-5 font-body text-body text-ink-2">
 					{name} presents as {archetype.name.toLowerCase()}, led by{' '}
 					{strongestAttributes.map(({ key }) => attributeTerm(key).name.toLowerCase()).join(' and ')}.
