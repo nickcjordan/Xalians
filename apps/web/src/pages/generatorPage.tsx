@@ -188,32 +188,50 @@ function GeneratorPage() {
 						</Card>
 					) : record ? (
 						<React.Fragment>
-							<Card variant="glass">
-								<RecordView record={record} kicker={mode === 'owned' ? 'Yours' : 'Showroom'} />
-							</Card>
-
 							{mode === 'owned' ? (
-								<Callout variant="viable" title="Kept" className="mt-6">
+								<Callout variant="viable" title="Kept" className="mb-6">
 									<p className="m-0">This one is yours. It is in the registry under your name.</p>
-									<div className="mt-3">
+									<div className="mt-3 flex flex-wrap gap-2">
+										<Button disabled={isGenerating} onClick={() => generate(true, profile)}>
+											Generate another
+										</Button>
 										<Button variant="secondary" asChild>
 											<Link to="/account">See your Xalians</Link>
 										</Button>
 									</div>
 								</Callout>
+							) : signedIn ? (
+								<Callout variant="note" title="Showroom creature" className="mb-6">
+									<p className="m-0">
+										The first creature is a showroom preview, so it was not saved. Generate again and the next
+										creature will be written to your collection.
+									</p>
+									<div className="mt-3">
+										<Button disabled={isGenerating} onClick={() => generate(true, profile)}>
+											Generate yours
+										</Button>
+									</div>
+								</Callout>
 							) : (
-								<Callout variant="note" title="Showroom creature" className="mt-6">
+								<Callout variant="note" title="Showroom creature" className="mb-6">
 									<p className="m-0">
 										Showroom creatures cannot be kept. This one is real, and it is gone the moment the lever turns
 										again. Sign in and the Generator writes what it prints into the registry under your name.
 									</p>
-									<div className="mt-3">
+									<div className="mt-3 flex flex-wrap gap-2">
+										<Button disabled={isGenerating} onClick={() => generate(false, profile)}>
+											Generate another preview
+										</Button>
 										<Button variant="secondary" onClick={() => setSignInShow(true)}>
 											Sign in to generate
 										</Button>
 									</div>
 								</Callout>
 							)}
+
+							<Card variant="glass">
+								<RecordView record={record} kicker={mode === 'owned' ? 'Yours' : 'Showroom'} />
+							</Card>
 						</React.Fragment>
 					) : (
 						<EmptyState legend="No Xalian yet">
