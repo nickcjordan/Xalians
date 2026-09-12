@@ -158,6 +158,30 @@ export const callGetXalian = (id) => {
   return callGet(`${API}/xalians/${encodeURIComponent(id)}`).then((data) => XalianRecordSchema.parse(data));
 };
 
+/** Public read used by shareable creature pages; sends no identity or token. */
+export const callGetPublicXalian = (id) => {
+  if (useCache()) {
+    return Promise.resolve(XalianRecordSchema.parse(sampleRecords(1)[0]));
+  }
+  return requestJson(`${API}/registry/xalians/${encodeURIComponent(id)}`)
+    .then((data) => XalianRecordSchema.parse(data));
+};
+
+/** Public read used by shareable binder pages; sends no identity or token. */
+export const callListPublicXalians = (ownerId, cursor) => {
+  if (useCache()) {
+    return Promise.resolve({ items: sampleRecords(3).map((r) => XalianRecordSchema.parse(r)), nextCursor: undefined });
+  }
+  const params = new URLSearchParams();
+  if (cursor) params.set("cursor", cursor);
+  const suffix = params.toString() ? `?${params.toString()}` : "";
+  return requestJson(`${API}/registry/owners/${encodeURIComponent(ownerId)}/xalians${suffix}`)
+    .then((data) => ({
+      items: data.items.map((item) => XalianRecordSchema.parse(item)),
+      nextCursor: data.nextCursor,
+    }));
+};
+
 /** Releases one of the caller's own records. Owner-only; the server enforces it. */
 export const callReleaseXalian = (id) => {
   if (useCache()) {
