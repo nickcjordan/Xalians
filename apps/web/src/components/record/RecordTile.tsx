@@ -3,7 +3,7 @@ import type { XalianRecord } from '@xalians/content/schema';
 import { speciesDisplayName } from '@xalians/rules/generator';
 
 import XalianImage from '../xalianImage';
-import { elementTerm, generatedOnShort, capitalize } from './vocabulary';
+import { archetypeTerm, elementTerm, generatedOnShort, capitalize } from './vocabulary';
 import { Tile, TileArt, TileMeta } from '@/components/system/record';
 import { Badge } from '@/components/ui/badge';
 
@@ -26,6 +26,8 @@ function RecordTile({ record, onOpen, action }: RecordTileProps) {
 	const secondary = Object.keys(affinities).find((key) => key !== element) || null;
 	const name = speciesDisplayName(record.species);
 	const finish = record.appearance.finish;
+	const archetype = archetypeTerm(record.archetype.key).name;
+	const signatureAbility = record.abilities.find((ability) => ability.signature) || record.abilities[0];
 
 	return (
 		<div className={`el-${element} relative`}>
@@ -47,6 +49,9 @@ function RecordTile({ record, onOpen, action }: RecordTileProps) {
 				</TileArt>
 				<TileMeta className="flex flex-col gap-2">
 					<span className="type-legend text-ink">{name}</span>
+					<span className="truncate font-body text-small text-ink-2" title={`${archetype}${signatureAbility ? ` · ${signatureAbility.name}` : ''}`}>
+						{archetype}{signatureAbility ? ` · ${signatureAbility.name}` : ''}
+					</span>
 					<div className="flex flex-wrap gap-2">
 						<span className={`el-${element}`}><Badge variant="chip">{elementTerm(element).name}</Badge></span>
 						{secondary ? (

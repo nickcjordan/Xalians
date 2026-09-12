@@ -26,12 +26,16 @@ import * as dbApi from '../utils/dbApi';
 import { Shell, Masthead } from '@/components/system/masthead';
 import { HelixSpinner } from '@/components/system/brand';
 import { EmptyState } from '@/components/system/record';
+import { FilterBar, SearchField } from '@/components/system/filters';
 import { VisuallyHidden } from '@/components/system/a11y';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { NativeSelect, NativeSelectOption } from '@/components/ui/native-select';
+import { archetypeTerm, elementTerm, traitTerm } from '@/components/record/vocabulary';
 
 type AuthUser = { username: string; hasVerifiedEmail: boolean } | null;
+type CollectionSort = 'newest' | 'oldest' | 'species';
 
 function UserAccountPage() {
 	const [loggedInUser, setLoggedInUser] = React.useState<AuthUser>(null);
@@ -52,6 +56,50 @@ function UserAccountPage() {
 	const [openRecord, setOpenRecord] = React.useState<XalianRecord | null>(null);
 	const [recordToRelease, setRecordToRelease] = React.useState<XalianRecord | null>(null);
 	const [verifyReleaseShow, setVerifyReleaseShow] = React.useState(false);
+	const [query, setQuery] = React.useState('');
+	const [affinity, setAffinity] = React.useState('all');
+	const [sort, setSort] = React.useState<CollectionSort>('newest');
+
+	const availableAffinities = React.useMemo(() => {
+		const keys = new Set<string>();
+		records.forEach((record) => Object.keys(record.element.affinities).forEach((key) => keys.add(key)));
+		return [...keys].sort((a, b) => elementTerm(a).name.localeCompare(elementTerm(b).name));
+	}, [records]);
+
+	const visibleRecords = React.useMemo(() => {
+		const normalizedQuery = query.trim().toLowerCase();
+		const filtered = records.filter((record) => {
+			if (affinity !== 'all' && !(affinity in record.element.affinities)) return false;
+			if (!normalizedQuery) return true;
+
+			const searchable = [
+				speciesDisplayName(record.species),
+				record.species,
+				archetypeTerm(record.archetype.key).name,
+				...Object.keys(record.element.affinities).map((key) => elementTerm(key).name),
+				...record.traits.map((key) => traitTerm(key).name),
+				...record.abilities.map((ability) => ability.name),
+			].join(' ').toLowerCase();
+			return searchable.includes(normalizedQuery);
+		});
+
+		return [...filtered].sort((a, b) => {
+			if (sort === 'species') {
+				return speciesDisplayName(a.species).localeCompare(speciesDisplayName(b.species));
+			}
+			const aGenerated = Date.parse(a.provenance.generatedAt);
+			const bGenerated = Date.parse(b.provenance.generatedAt);
+			return sort === 'oldest' ? aGenerated - bGenerated : bGenerated - aGenerated;
+		});
+	}, [records, query, affinity, sort]);
+
+	const filtersActive = query.trim().length > 0 || affinity !== 'all' || sort !== 'newest';
+	const activeFilterCount = Number(query.trim().length > 0) + Number(affinity !== 'all') + Number(sort !== 'newest');
+	const clearFilters = () => {
+		setQuery('');
+		setAffinity('all');
+		setSort('newest');
+	};
 
 	const loadFirstPage = React.useCallback(() => {
 		dbApi
@@ -212,26 +260,78 @@ function UserAccountPage() {
 
 				{!isLoading && !signedOut && !message && records.length > 0 && (
 					<React.Fragment>
-						<div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-							{records.map((record) => (
-								<RecordTile
-									key={record.id}
-									record={record}
-									onOpen={setOpenRecord}
-									action={
-										<Button
-											variant="ghost"
-											size="icon"
-											className="bg-s0"
-											aria-label={`Release ${speciesDisplayName(record.species)}`}
-											onClick={() => askToRelease(record)}
-										>
-											<Trash2 />
-										</Button>
-									}
+						<FilterBar
+							className="mb-3"
+							search={
+								<SearchField
+									value={query}
+									onChange={setQuery}
+									placeholder="Search species, abilities, traits"
+									aria-label="Search your Xalians"
 								/>
-							))}
-						</div>
+							}
+							active={filtersActive}
+							activeCount={activeFilterCount}
+							onClear={clearFilters}
+							sheetTitle="Collection filters"
+						>
+							<NativeSelect
+								value={affinity}
+								onChange={(event) => setAffinity(event.target.value)}
+								aria-label="Filter by affinity"
+								className="w-52 sm:w-44"
+							>
+								<NativeSelectOption value="all">All affinities</NativeSelectOption>
+								{availableAffinities.map((key) => (
+									<NativeSelectOption key={key} value={key}>{elementTerm(key).name}</NativeSelectOption>
+								))}
+							</NativeSelect>
+
+							<NativeSelect
+								value={sort}
+								onChange={(event) => setSort(event.target.value as CollectionSort)}
+								aria-label="Sort collection"
+								className="w-52 sm:w-40"
+							>
+								<NativeSelectOption value="newest">Newest first</NativeSelectOption>
+								<NativeSelectOption value="oldest">Oldest first</NativeSelectOption>
+								<NativeSelectOption value="species">Species name</NativeSelectOption>
+							</NativeSelect>
+						</FilterBar>
+
+						<p className="type-data mt-0 mb-4 text-small text-ink-2" aria-live="polite">
+							{visibleRecords.length} of {records.length} loaded Xalians
+						</p>
+
+						{visibleRecords.length === 0 ? (
+							<EmptyState legend="No matching Xalians">
+								Nothing in the loaded collection matches those filters.
+								<div className="mt-3">
+									<Button variant="secondary" onClick={clearFilters}>Clear filters</Button>
+								</div>
+							</EmptyState>
+						) : (
+							<div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+								{visibleRecords.map((record) => (
+									<RecordTile
+										key={record.id}
+										record={record}
+										onOpen={setOpenRecord}
+										action={
+											<Button
+												variant="ghost"
+												size="icon"
+												className="bg-s0"
+												aria-label={`Release ${speciesDisplayName(record.species)}`}
+												onClick={() => askToRelease(record)}
+											>
+												<Trash2 />
+											</Button>
+										}
+									/>
+								))}
+							</div>
+						)}
 
 						{cursor && (
 							<div className="mt-6 flex justify-center">
