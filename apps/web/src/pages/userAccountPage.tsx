@@ -20,6 +20,7 @@ import SignUpModal from '../components/auth/signUpModal';
 import VerifyEmailModal from '../components/auth/verifyEmailModal';
 import RecordTile from '../components/record/RecordTile';
 import RecordView from '../components/record/RecordView';
+import RecordCompare from '../components/record/RecordCompare';
 import * as authUtil from '../utils/authUtil';
 import * as dbApi from '../utils/dbApi';
 
@@ -27,6 +28,7 @@ import { Shell, Masthead } from '@/components/system/masthead';
 import { HelixSpinner } from '@/components/system/brand';
 import { EmptyState } from '@/components/system/record';
 import { FilterBar, SearchField } from '@/components/system/filters';
+import { Callout } from '@/components/system/readouts';
 import { VisuallyHidden } from '@/components/system/a11y';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
@@ -59,6 +61,9 @@ function UserAccountPage() {
 	const [query, setQuery] = React.useState('');
 	const [affinity, setAffinity] = React.useState('all');
 	const [sort, setSort] = React.useState<CollectionSort>('newest');
+	const [compareMode, setCompareMode] = React.useState(false);
+	const [compareIds, setCompareIds] = React.useState<string[]>([]);
+	const [compareOpen, setCompareOpen] = React.useState(false);
 
 	const availableAffinities = React.useMemo(() => {
 		const keys = new Set<string>();
@@ -99,6 +104,19 @@ function UserAccountPage() {
 		setQuery('');
 		setAffinity('all');
 		setSort('newest');
+	};
+	const compareRecords = compareIds
+		.map((id) => records.find((record) => record.id === id))
+		.filter((record): record is XalianRecord => !!record);
+	const toggleCompareMode = () => {
+		setCompareMode((current) => !current);
+		setCompareIds([]);
+		setCompareOpen(false);
+	};
+	const toggleComparisonRecord = (record: XalianRecord) => {
+		setCompareIds((current) => current.includes(record.id)
+			? current.filter((id) => id !== record.id)
+			: current.length < 2 ? [...current, record.id] : current);
 	};
 
 	const loadFirstPage = React.useCallback(() => {
@@ -198,6 +216,7 @@ function UserAccountPage() {
 
 	const onReleased = () => {
 		setRecords((prev) => prev.filter((x) => x.id !== (recordToRelease && recordToRelease.id)));
+		setCompareIds((prev) => prev.filter((id) => id !== (recordToRelease && recordToRelease.id)));
 		if (openRecord && recordToRelease && openRecord.id === recordToRelease.id) {
 			setOpenRecord(null);
 		}
@@ -221,9 +240,16 @@ function UserAccountPage() {
 					subtitle={records.length > 0 ? `${records.length} generated` : undefined}
 					aside={
 						!signedOut ? (
-							<Button asChild>
-								<Link to="/generator">Generate a Xalian</Link>
-							</Button>
+							<div className="flex w-full flex-col gap-3 sm:flex-row md:w-auto">
+								{records.length > 1 ? (
+									<Button variant="secondary" onClick={toggleCompareMode}>
+										{compareMode ? 'Done comparing' : 'Compare Xalians'}
+									</Button>
+								) : null}
+								<Button asChild>
+									<Link to="/generator">Generate a Xalian</Link>
+								</Button>
+							</div>
 						) : undefined
 					}
 				/>
@@ -260,6 +286,22 @@ function UserAccountPage() {
 
 				{!isLoading && !signedOut && !message && records.length > 0 && (
 					<React.Fragment>
+						{compareMode ? (
+							<Callout variant="note" title="Choose two Xalians" className="mb-4">
+								<p className="m-0">
+									{compareIds.length === 0
+										? 'Use the plus keys on two collection tiles.'
+										: compareIds.length === 1 ? 'One chosen. Pick one more.' : 'Two chosen and ready to compare.'}
+								</p>
+								{compareIds.length === 2 ? (
+									<div className="mt-3 flex flex-wrap gap-2">
+										<Button onClick={() => setCompareOpen(true)}>Compare selected</Button>
+										<Button variant="ghost" onClick={() => setCompareIds([])}>Start over</Button>
+									</div>
+								) : null}
+							</Callout>
+						) : null}
+
 						<FilterBar
 							className="mb-3"
 							search={
@@ -328,6 +370,11 @@ function UserAccountPage() {
 												<Trash2 />
 											</Button>
 										}
+										comparison={compareMode ? {
+											selected: compareIds.includes(record.id),
+											disabled: compareIds.length >= 2 && !compareIds.includes(record.id),
+											onToggle: toggleComparisonRecord,
+										} : undefined}
 									/>
 								))}
 							</div>
@@ -352,7 +399,20 @@ function UserAccountPage() {
 						</VisuallyHidden>
 					</DialogHeader>
 					<ScrollArea className="max-h-[75vh] pr-4">
-						{openRecord && <RecordView record={openRecord} kicker="Yours" />}
+						{openRecord && <RecordView record={openRecord} kicker="Yours" recordLink={`/xalian/${openRecord.id}`} />}
+					</ScrollArea>
+				</DialogContent>
+			</Dialog>
+
+			<Dialog open={compareOpen} onOpenChange={setCompareOpen}>
+				<DialogContent className="sm:max-w-4xl">
+					<DialogHeader>
+						<DialogTitle>Compare Xalians</DialogTitle>
+					</DialogHeader>
+					<ScrollArea className="max-h-[75vh] pr-4">
+						{compareRecords.length === 2 ? (
+							<RecordCompare records={compareRecords as [XalianRecord, XalianRecord]} />
+						) : null}
 					</ScrollArea>
 				</DialogContent>
 			</Dialog>

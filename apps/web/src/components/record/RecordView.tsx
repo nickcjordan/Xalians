@@ -8,6 +8,7 @@ import XalianImage from '../xalianImage';
 import * as lore from '../../lore';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Collapsible, CollapsibleTrigger, CollapsibleContent } from '@/components/ui/collapsible';
 import { SpecPlate, Meter } from '@/components/system/record';
@@ -41,6 +42,8 @@ type RecordViewProps = {
 	record: XalianRecord;
 	/** A legend above the designation: what this record is on this page. */
 	kicker?: React.ReactNode;
+	/** Direct registry route when this persisted record can be shared. */
+	recordLink?: string;
 };
 
 function Layer({ title, children, className }: { title: string; children: React.ReactNode; className?: string }) {
@@ -100,7 +103,7 @@ function ordinal(value: number): string {
 	return `${value}th`;
 }
 
-function RecordView({ record, kicker = 'Record' }: RecordViewProps) {
+function RecordView({ record, kicker = 'Record', recordLink }: RecordViewProps) {
 	const template = getSpeciesTemplate(record.species);
 	const name = speciesDisplayName(record.species);
 	const element = record.element.primary;
@@ -196,6 +199,14 @@ function RecordView({ record, kicker = 'Record' }: RecordViewProps) {
 							{ key: 'Seed', value: <span className="break-all">{record.provenance.seed}</span> },
 							{ key: 'Generator', value: `v${record.provenance.generatorVersion}` },
 						]} />
+
+					{recordLink ? (
+						<div className="mt-1">
+							<Button variant="secondary" asChild>
+								<Link to={recordLink}>Open shareable record</Link>
+							</Button>
+						</div>
+					) : null}
 				</div>
 			</header>
 

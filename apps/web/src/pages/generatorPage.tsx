@@ -230,7 +230,11 @@ function GeneratorPage() {
 							)}
 
 							<Card variant="glass">
-								<RecordView record={record} kicker={mode === 'owned' ? 'Yours' : 'Showroom'} />
+								<RecordView
+									record={record}
+									kicker={mode === 'owned' ? 'Yours' : 'Showroom'}
+									recordLink={mode === 'owned' ? `/xalian/${record.id}` : undefined}
+								/>
 							</Card>
 						</React.Fragment>
 					) : (

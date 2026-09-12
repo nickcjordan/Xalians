@@ -72,6 +72,19 @@ export const RetrieveRegistryXalianParamsSchema = z.object({
 });
 export type RetrieveRegistryXalianParams = z.infer<typeof RetrieveRegistryXalianParamsSchema>;
 
+// Public binder route: explicit owner in the path, with the same bounded pagination
+// controls as the authenticated collection route.
+export const PublicRegistryOwnerParamsSchema = z.object({
+  ownerId: z.string().min(1),
+});
+export type PublicRegistryOwnerParams = z.infer<typeof PublicRegistryOwnerParamsSchema>;
+
+export const PublicRegistryListQuerySchema = z.object({
+  limit: z.coerce.number().int().positive().max(200).optional(),
+  cursor: z.string().min(1).optional(),
+});
+export type PublicRegistryListQuery = z.infer<typeof PublicRegistryListQuerySchema>;
+
 // DELETE /xalians/{xalianId}
 export const ReleaseRegistryXalianParamsSchema = z.object({
   xalianId: z.string().min(1),

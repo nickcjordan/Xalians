@@ -407,6 +407,48 @@ module "retrieve_registry_xalian_lambda_module" {
 
 #########################################################
 #####               LAMBDA INSTANCE                 #####
+##       Public Retrieve Registry Xalian Lambda        ##
+#########################################################
+module "retrieve_public_registry_xalian_lambda_module" {
+  source = "./terraform/modules/lambda"
+
+  function_name                   = "RetrievePublicRegistryXalian"
+  lambda_bucket_id                = aws_s3_bucket.lambda_bucket.id
+  lambda_bucket_object_key        = aws_s3_object.lambda_bucket_object.key
+  lambda_handler_path             = "retrievePublicRegistryXalian/index.handler"
+  lambda_archive_file_output_hash = data.archive_file.lambda_zip_file.output_base64sha256
+  iam_role_arn                    = aws_iam_role.lambda_exec.arn
+  apigw_lambda_id                 = aws_apigatewayv2_api.lambda.id
+  apigw_lambda_route_key          = "GET /registry/xalians/{xalianId}"
+  base_apigw_lambda_execution_arn = aws_apigatewayv2_api.lambda.execution_arn
+  authorization_type              = "NONE"
+}
+#####                                               #####
+#########################################################
+
+#########################################################
+#####               LAMBDA INSTANCE                 #####
+##        Public List Registry Xalians Lambda          ##
+#########################################################
+module "list_public_registry_xalians_lambda_module" {
+  source = "./terraform/modules/lambda"
+
+  function_name                   = "ListPublicRegistryXalians"
+  lambda_bucket_id                = aws_s3_bucket.lambda_bucket.id
+  lambda_bucket_object_key        = aws_s3_object.lambda_bucket_object.key
+  lambda_handler_path             = "listPublicRegistryXalians/index.handler"
+  lambda_archive_file_output_hash = data.archive_file.lambda_zip_file.output_base64sha256
+  iam_role_arn                    = aws_iam_role.lambda_exec.arn
+  apigw_lambda_id                 = aws_apigatewayv2_api.lambda.id
+  apigw_lambda_route_key          = "GET /registry/owners/{ownerId}/xalians"
+  base_apigw_lambda_execution_arn = aws_apigatewayv2_api.lambda.execution_arn
+  authorization_type              = "NONE"
+}
+#####                                               #####
+#########################################################
+
+#########################################################
+#####               LAMBDA INSTANCE                 #####
 ##           Release Registry Xalian Lambda            ##
 #########################################################
 module "release_registry_xalian_lambda_module" {
