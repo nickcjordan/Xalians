@@ -4,7 +4,8 @@
 import * as React from 'react';
 import type { XalianRecord } from '@xalians/content/schema';
 import { speciesDisplayName } from '@xalians/rules/generator';
-import { Copy } from 'lucide-react';
+import { ArrowRightLeft, Copy } from 'lucide-react';
+import { Link } from 'react-router';
 import { toast } from 'sonner';
 
 import XalianNavbar from '../components/navbar';
@@ -78,7 +79,12 @@ function UserDetailsPage({ id }: UserDetailsPageProps) {
 					kicker="Account"
 					title={id}
 					subtitle={records.length > 0 ? `${records.length} generated` : undefined}
-					aside={<Button variant="secondary" onClick={copyBinderLink}><Copy /> Copy binder link</Button>}
+					aside={
+						<div className="flex w-full flex-col gap-3 sm:flex-row md:w-auto">
+							<Button variant="secondary" onClick={copyBinderLink}><Copy /> Copy binder link</Button>
+							<Button asChild><Link to={`/trade/new?with=${encodeURIComponent(id)}`}><ArrowRightLeft /> Propose a trade</Link></Button>
+						</div>
+					}
 				/>
 
 				{isLoading && (

@@ -22,6 +22,7 @@ type RecordTileProps = {
 	comparison?: {
 		selected: boolean;
 		disabled?: boolean;
+		label?: string;
 		onToggle: (record: XalianRecord) => void;
 	};
 };
@@ -73,7 +74,7 @@ function RecordTile({ record, onOpen, action, comparison }: RecordTileProps) {
 					<button
 						type="button"
 						className="inline-flex size-10 items-center justify-center border border-edge-strong bg-s0 text-ink transition-colors hover:bg-s2 focus-visible:outline-2 focus-visible:outline-ring disabled:opacity-40"
-						aria-label={`${comparison.selected ? 'Remove' : 'Add'} ${name} ${comparison.selected ? 'from' : 'to'} comparison`}
+						aria-label={`${comparison.selected ? 'Remove' : 'Add'} ${name} ${comparison.selected ? 'from' : 'to'} ${comparison.label || 'comparison'}`}
 						aria-pressed={comparison.selected}
 						disabled={comparison.disabled}
 						onClick={() => comparison.onToggle(record)}

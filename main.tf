@@ -81,12 +81,14 @@ resource "aws_iam_role_policy" "dynamodb_policy" {
           "dynamodb:Query",
           "dynamodb:DeleteItem",
           "dynamodb:ConditionCheckItem",
+          "dynamodb:TransactWriteItems",
         ]
         Resource = [
           "arn:aws:dynamodb:${var.aws_region}:${data.aws_caller_identity.current.account_id}:table/XalianUsersTable",
           # Exact table names, not a table-level wildcard, so each table needs its own
           # ARN here. The index wildcard below covers XalianRegistry's byOwner GSI.
           "arn:aws:dynamodb:${var.aws_region}:${data.aws_caller_identity.current.account_id}:table/XalianRegistry",
+          "arn:aws:dynamodb:${var.aws_region}:${data.aws_caller_identity.current.account_id}:table/XalianTradeOffers",
           "arn:aws:dynamodb:${var.aws_region}:${data.aws_caller_identity.current.account_id}:table/Xalian*/index/*",
         ]
       },
@@ -462,6 +464,75 @@ module "release_registry_xalian_lambda_module" {
   iam_role_arn                    = aws_iam_role.lambda_exec.arn
   apigw_lambda_id                 = aws_apigatewayv2_api.lambda.id
   apigw_lambda_route_key          = "DELETE /xalians/{xalianId}"
+  base_apigw_lambda_execution_arn = aws_apigatewayv2_api.lambda.execution_arn
+  authorization_type              = "JWT"
+  authorizer_id                   = aws_apigatewayv2_authorizer.cognito.id
+}
+#####                                               #####
+#########################################################
+
+#########################################################
+#####               LAMBDA INSTANCE                 #####
+##                 Create Trade Lambda                 ##
+#########################################################
+module "create_trade_lambda_module" {
+  source = "./terraform/modules/lambda"
+
+  function_name                   = "CreateTrade"
+  lambda_bucket_id                = aws_s3_bucket.lambda_bucket.id
+  lambda_bucket_object_key        = aws_s3_object.lambda_bucket_object.key
+  lambda_handler_path             = "createTrade/index.handler"
+  lambda_archive_file_output_hash = data.archive_file.lambda_zip_file.output_base64sha256
+  iam_role_arn                    = aws_iam_role.lambda_exec.arn
+  apigw_lambda_id                 = aws_apigatewayv2_api.lambda.id
+  apigw_lambda_route_key          = "POST /trades"
+  base_apigw_lambda_execution_arn = aws_apigatewayv2_api.lambda.execution_arn
+  authorization_type              = "JWT"
+  authorizer_id                   = aws_apigatewayv2_authorizer.cognito.id
+}
+
+module "retrieve_trade_lambda_module" {
+  source = "./terraform/modules/lambda"
+
+  function_name                   = "RetrieveTrade"
+  lambda_bucket_id                = aws_s3_bucket.lambda_bucket.id
+  lambda_bucket_object_key        = aws_s3_object.lambda_bucket_object.key
+  lambda_handler_path             = "retrieveTrade/index.handler"
+  lambda_archive_file_output_hash = data.archive_file.lambda_zip_file.output_base64sha256
+  iam_role_arn                    = aws_iam_role.lambda_exec.arn
+  apigw_lambda_id                 = aws_apigatewayv2_api.lambda.id
+  apigw_lambda_route_key          = "GET /trades/{tradeId}"
+  base_apigw_lambda_execution_arn = aws_apigatewayv2_api.lambda.execution_arn
+  authorization_type              = "NONE"
+}
+
+module "accept_trade_lambda_module" {
+  source = "./terraform/modules/lambda"
+
+  function_name                   = "AcceptTrade"
+  lambda_bucket_id                = aws_s3_bucket.lambda_bucket.id
+  lambda_bucket_object_key        = aws_s3_object.lambda_bucket_object.key
+  lambda_handler_path             = "acceptTrade/index.handler"
+  lambda_archive_file_output_hash = data.archive_file.lambda_zip_file.output_base64sha256
+  iam_role_arn                    = aws_iam_role.lambda_exec.arn
+  apigw_lambda_id                 = aws_apigatewayv2_api.lambda.id
+  apigw_lambda_route_key          = "POST /trades/{tradeId}/accept"
+  base_apigw_lambda_execution_arn = aws_apigatewayv2_api.lambda.execution_arn
+  authorization_type              = "JWT"
+  authorizer_id                   = aws_apigatewayv2_authorizer.cognito.id
+}
+
+module "cancel_trade_lambda_module" {
+  source = "./terraform/modules/lambda"
+
+  function_name                   = "CancelTrade"
+  lambda_bucket_id                = aws_s3_bucket.lambda_bucket.id
+  lambda_bucket_object_key        = aws_s3_object.lambda_bucket_object.key
+  lambda_handler_path             = "cancelTrade/index.handler"
+  lambda_archive_file_output_hash = data.archive_file.lambda_zip_file.output_base64sha256
+  iam_role_arn                    = aws_iam_role.lambda_exec.arn
+  apigw_lambda_id                 = aws_apigatewayv2_api.lambda.id
+  apigw_lambda_route_key          = "POST /trades/{tradeId}/cancel"
   base_apigw_lambda_execution_arn = aws_apigatewayv2_api.lambda.execution_arn
   authorization_type              = "JWT"
   authorizer_id                   = aws_apigatewayv2_authorizer.cognito.id
@@ -1161,6 +1232,28 @@ resource "aws_dynamodb_table" "xalian_registry" {
     hash_key        = "ownerId"
     range_key       = "generatedAt"
     projection_type = "ALL"
+  }
+
+  point_in_time_recovery {
+    enabled = true
+  }
+
+  lifecycle {
+    prevent_destroy = true
+  }
+}
+
+# Direct-swap proposals. The item is immutable except for its status and response time;
+# ownership transfers happen in a transaction with the registry rows, so no partial
+# trade can be committed.
+resource "aws_dynamodb_table" "xalian_trade_offers" {
+  name         = "XalianTradeOffers"
+  billing_mode = "PAY_PER_REQUEST"
+  hash_key     = "tradeId"
+
+  attribute {
+    name = "tradeId"
+    type = "S"
   }
 
   point_in_time_recovery {
