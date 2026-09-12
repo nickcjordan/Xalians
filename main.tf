@@ -27,6 +27,12 @@ terraform {
 
 provider "aws" {
   region = var.aws_region
+
+  default_tags {
+    tags = {
+      Project = "Xalians"
+    }
+  }
 }
 
 
@@ -165,52 +171,6 @@ resource "aws_apigatewayv2_stage" "prod" {
   api_id = aws_apigatewayv2_api.lambda.id
 
   name        = "prod"
-  auto_deploy = true
-
-  # Tuned levers, not fixed limits: revisit if legitimate traffic gets
-  # throttled or if the free generator route needs tighter protection.
-  default_route_settings {
-    throttling_burst_limit = 50
-    throttling_rate_limit  = 20
-  }
-
-  # The free lever is the one anonymous route, so it keeps its own tighter
-  # throttle (the vision doc's ratified "endpoint gets API Gateway throttling
-  # regardless").
-  route_settings {
-    route_key              = "GET /xalians/showroom"
-    throttling_burst_limit = 10
-    throttling_rate_limit  = 5
-  }
-
-  access_log_settings {
-    destination_arn = aws_cloudwatch_log_group.api_gw.arn
-
-    format = jsonencode({
-      requestId               = "$context.requestId"
-      sourceIp                = "$context.identity.sourceIp"
-      requestTime             = "$context.requestTime"
-      protocol                = "$context.protocol"
-      httpMethod              = "$context.httpMethod"
-      resourcePath            = "$context.resourcePath"
-      routeKey                = "$context.routeKey"
-      status                  = "$context.status"
-      responseLength          = "$context.responseLength"
-      integrationErrorMessage = "$context.integrationErrorMessage"
-      }
-    )
-  }
-}
-
-resource "aws_apigatewayv2_stage" "test" {
-  # route_settings names "GET /xalians/showroom"; API Gateway rejects the stage update
-  # when that route does not exist yet, so the stage must wait for the module that
-  # creates it (seen on the 2026-09-10 apply that introduced the route).
-  depends_on = [module.showroom_xalian_lambda_module]
-
-  api_id = aws_apigatewayv2_api.lambda.id
-
-  name        = "test"
   auto_deploy = true
 
   # Tuned levers, not fixed limits: revisit if legitimate traffic gets
@@ -584,18 +544,6 @@ resource "aws_apigatewayv2_domain_name" "api" {
   }
 }
 
-resource "aws_apigatewayv2_domain_name" "testapi" {
-  domain_name = "testapi.xalians.com"
-
-  domain_name_configuration {
-    certificate_arn = var.cert_arn
-    endpoint_type   = "REGIONAL"
-    security_policy = "TLS_1_2"
-  }
-}
-
-
-
 // ROUTE 53
 
 data "aws_route53_zone" "xalian_zone" {
@@ -619,15 +567,6 @@ resource "aws_apigatewayv2_api_mapping" "api_mapping" {
   domain_name = aws_apigatewayv2_domain_name.api.id
   stage       = aws_apigatewayv2_stage.prod.id
 }
-
-resource "aws_apigatewayv2_api_mapping" "testapi_mapping" {
-  api_id      = aws_apigatewayv2_api.lambda.id
-  domain_name = aws_apigatewayv2_domain_name.testapi.id
-  stage       = aws_apigatewayv2_stage.test.id
-}
-
-
-
 
 ###################
 # react front end #
