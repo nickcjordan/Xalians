@@ -79,7 +79,6 @@ class ReclamationMatch extends React.Component {
 			log: props.initialLog ? props.initialLog.slice() : [],
 			notice: null,
 			armedRecordId: null,
-			sendHidden: false,
 			// assumption 20: the swift creature armed to move, if any. A move does not spend
 			// the turn, so this is its own arming, separate from armedRecordId.
 			movingRecordId: null,
@@ -388,7 +387,7 @@ class ReclamationMatch extends React.Component {
 		if (e.key === 'Escape') {
 			if (this.state.armedRecordId || this.state.movingRecordId || this.state.inspect || this.state.pendingStakeSiteId) {
 				this.setState({
-					armedRecordId: null, movingRecordId: null, inspect: null, sendHidden: false, pendingStakeSiteId: null,
+					armedRecordId: null, movingRecordId: null, inspect: null, pendingStakeSiteId: null,
 				});
 			}
 			return;
@@ -605,17 +604,12 @@ class ReclamationMatch extends React.Component {
 		}
 		this.setState((prev) => ({
 			armedRecordId: prev.armedRecordId === recordId ? null : recordId,
-			sendHidden: false,
 			movingRecordId: null,
 		}));
 	};
 
-	toggleHidden = () => {
-		this.setState((prev) => ({ sendHidden: !prev.sendHidden }));
-	};
-
 	handleSiteClick = (siteId) => {
-		const { match, armedRecordId, movingRecordId, sendHidden } = this.state;
+		const { match, armedRecordId, movingRecordId } = this.state;
 		if (this.state.playback) {
 			this.notice('The round is still resolving.');
 			return;
@@ -659,23 +653,12 @@ class ReclamationMatch extends React.Component {
 			return;
 		}
 		const record = match.players[YOU].roster.find((r) => r.id === armedRecordId);
-		const next = send(match, YOU, armedRecordId, siteId, sendHidden);
+		const next = send(match, YOU, armedRecordId, siteId);
 		if (!next) {
-			if (sendHidden) {
-				const live = this.view();
-				const cost = typeof live.hiddenSendCost === 'number' ? live.hiddenSendCost : 1;
-				const left = (live.players[YOU].sendableCap || SENDABLE) - (live.players[YOU].sentCount || 0);
-				this.notice(left < cost
-					// the price of hiding (assumption 21): a hidden send too dear for what is
-					// left of the cap is refused, and the open send is still there
-					? `A hidden send costs ${cost} of your sends and you have ${left} left. Send it in the open instead.`
-					: `${speciesLabel(record)} is not stealthy and cannot be sent hidden.`);
-			} else {
-				this.notice('That send is not allowed right now.');
-			}
+			this.notice('That send is not allowed right now.');
 			return;
 		}
-		this.tellSend(match, next, record, siteId, sendHidden);
+		this.tellSend(match, next, record, siteId);
 		this.cue('send');
 		if (this.props.telemetry) {
 			this.props.telemetry.decisionEnd('deploy', 'send', { round: match.frameIndex });
@@ -685,12 +668,16 @@ class ReclamationMatch extends React.Component {
 		// passed inside this one call and the round resolves. It therefore goes through
 		// commitStep like every other engine step, or that round's clash is never told.
 		this.commitStep(match, next, {
-			armedRecordId: null, sendHidden: false, hoverSiteId: null, hoverRecordId: null,
+			armedRecordId: null, hoverSiteId: null, hoverRecordId: null,
 		});
 	};
 
-	// your own send, told the same way as the rival's: log line, arrival, callout
-	tellSend = (match, next, record, siteId, hidden) => {
+	// your own send, told the same way as the rival's: log line, arrival, callout. Hiding is
+	// no longer a choice (Nick, 2026-09-13): whether it arrived hidden is read off the board
+	// entry the engine just wrote, the same truth the bench's plinths read via prepare().
+	tellSend = (match, next, record, siteId) => {
+		const entry = (next.board[siteId] && next.board[siteId][YOU] || []).find((e) => e.recordId === record.id);
+		const hidden = !!(entry && entry.hidden);
 		const line = narrateSend({
 			you: true,
 			actorName: speciesLabel(record),
@@ -1628,13 +1615,11 @@ class ReclamationMatch extends React.Component {
 								mode={simple ? 'simple' : 'advanced'}
 								armedRecordId={this.state.armedRecordId}
 								recommendation={rec}
-								sendHidden={this.state.sendHidden}
 								movingRecordId={this.state.movingRecordId}
 								movable={movable}
 								onArm={this.armRecord}
 								onInspect={(record) => this.inspectRecord(record, null)}
 								onHoverRecord={(id) => this.setState({ hoverRecordId: id })}
-								onToggleHidden={this.toggleHidden}
 								onPass={this.handlePass}
 								onBeginMove={this.beginMove}
 								rivalBeat={this.rivalBeat()}

@@ -242,8 +242,10 @@ function drawFrames(worlds: World[], rngState: number): { frames: Frame[]; nextS
 	ratified first settings.
 
 	Ablation switches:
-	- hiddenSends: false makes send(..., hidden=true) illegal, the way an illegal
-	  recordId is illegal (send returns null).
+	- hiddenSends: false makes every creature arrive in the open, stealthy or not. Since
+	  pass 4b (assumption 27) hiding is not a choice: a stealthy creature arrives hidden
+	  and everyone else arrives open, so this key is the ablation that removes concealment
+	  from the game rather than a permission on a send.
 	- lokiLine: false drops the return-to-roster on a LOST world, so a lost world is
 	  withdrawn exactly like a tied one.
 	- trailingBonus: the number of extra sends the trailing seat gets next round; 0
@@ -590,28 +592,46 @@ function sendableCapFor(state: MatchState, player: Seat): number {
 }
 
 /*
+	Does this creature arrive hidden? The whole of concealment since pass 4b (assumption
+	27): a stealthy creature arrives hidden, everyone else arrives in the open, and the
+	hiddenSends ablation takes concealment out of the game for both seats. No handler
+	chooses this.
+*/
+function arrivesHidden(record: XalianRecord, rules: Rules): boolean {
+	return !!rules.hiddenSends && traitKeywordsOf(record).includes('stealthy');
+}
+
+/*
 	The send cost for one record, against the round's sendable cap: RETURNED_SEND_COST if it
 	is flagged `returned` (the Loki line - a creature back in the roster after its world was
-	lost), rules.hiddenSendCost when it is sent hidden (assumption 21; 1 since pass 4, so
-	a hidden send is priced like any other), 1 otherwise. A returned creature sent hidden pays the LARGER of the two rather than
+	lost), rules.hiddenSendCost when it arrives hidden (assumption 21; 1 since pass 4, so
+	a hidden send is priced like any other), 1 otherwise. The hidden flag is derived, not
+	chosen (pass 4b, assumption 27). A returned creature arriving hidden pays the LARGER of the two rather than
 	their sum: each is a price on the same one send, and stacking them could make a send
 	illegal that neither price alone forbids.
 */
-function sendCostFor(playerState: PlayerState, recordId: string, hidden = false, rules: Rules = DEFAULT_RULES): number {
+function sendCostFor(playerState: PlayerState, recordId: string, rules: Rules = DEFAULT_RULES): number {
 	const returnedCost = (playerState.returned || []).includes(recordId) ? RETURNED_SEND_COST : 1;
+	const record = playerState.roster.find((r) => r.id === recordId);
+	const hidden = !!record && arrivesHidden(record, rules);
 	const hiddenCost = hidden && typeof rules.hiddenSendCost === 'number' ? rules.hiddenSendCost : 1;
 	return Math.max(returnedCost, hiddenCost);
 }
 
-// the records this handler could still send OPENLY. Hiding is always optional, so a
-// hidden send's own price (assumption 21) never makes a handler's turn illegal: a creature
-// too expensive to hide can still be sent in the open.
-function sendableRoster(playerState: PlayerState, cap: number): XalianRecord[] {
+/*
+	The records this handler could still send. Since pass 4b (assumption 27) concealment is
+	derived rather than chosen, so a stealthy creature's send has exactly one price and
+	this list can be exact: a creature the remaining cap cannot afford at its OWN cost is
+	simply not sendable. Before pass 4b a stealthy creature too expensive to hide could
+	still be sent in the open, so this list was deliberately priced at the open cost; that
+	escape hatch is gone with the choice.
+*/
+function sendableRoster(playerState: PlayerState, cap: number, rules: Rules = DEFAULT_RULES): XalianRecord[] {
 	if (playerState.sentCount >= cap) {
 		return [];
 	}
 	const remaining = cap - playerState.sentCount;
-	return playerState.roster.filter((r) => sendCostFor(playerState, r.id) <= remaining);
+	return playerState.roster.filter((r) => sendCostFor(playerState, r.id, rules) <= remaining);
 }
 
 export function hasLegalSend(state: MatchState, player: Seat): boolean {
@@ -622,7 +642,7 @@ export function hasLegalSend(state: MatchState, player: Seat): boolean {
 	if (p.passed) {
 		return false;
 	}
-	return sendableRoster(p, sendableCapFor(state, player)).length > 0;
+	return sendableRoster(p, sendableCapFor(state, player), rulesOf(state)).length > 0;
 }
 
 // ---------------------------------------------------------------------------
@@ -634,14 +654,20 @@ function isPlayersDeployTurn(state: MatchState, player: Seat): boolean {
 }
 
 /*
-	send(state, handler, recordId, siteId, hidden=false)
+	send(state, handler, recordId, siteId, hidden?)
 
 	Only in deploy, only on your turn, only if fewer than the round's sendable cap (SENDABLE,
 	plus ROSTER_TRAILING_BONUS if this player is compensated as this round's trailing seat)
-	sent so far by you, hidden only if the creature is stealthy. Any number of creatures may
-	stand at a site.
+	sent so far by you. Any number of creatures may stand at a site.
+
+	The rulebook sentence is "A stealthy creature arrives hidden". Since pass 4b
+	(assumption 27) concealment is not a decision a handler makes: the hidden flag is
+	derived from the creature's own traits and the hiddenSends lever, never from the
+	caller. The fifth argument is IGNORED and kept only so existing callers compile; it
+	will be dropped once nothing passes it. The rival learns that something was sent, not
+	which creature or where, until the Clash reveals it.
 */
-export function send(state: MatchState, handler: Seat, recordId: string, siteId: string, hidden = false): MatchState | null {
+export function send(state: MatchState, handler: Seat, recordId: string, siteId: string, _hidden = false): MatchState | null {
 	if (!isPlayersDeployTurn(state, handler)) {
 		return null;
 	}
@@ -658,19 +684,13 @@ export function send(state: MatchState, handler: Seat, recordId: string, siteId:
 	if (!site) {
 		return null;
 	}
-	if (hidden) {
-		// the hiddenSends ablation makes every hidden send illegal, the same null-return
-		// way a non-stealthy creature's hidden send has always been illegal
-		if (!rulesOf(state).hiddenSends) {
-			return null;
-		}
-		if (!traitKeywordsOf(record).includes('stealthy')) {
-			return null;
-		}
-	}
+	// derived, not chosen (pass 4b): a stealthy creature arrives hidden unless the
+	// hiddenSends ablation has taken concealment out of the game, in which case everyone
+	// arrives in the open. A send never becomes illegal for this reason any more.
+	const hidden = arrivesHidden(record, rulesOf(state));
 	// the Loki line and the price of hiding (assumption 21) are both charged against the
 	// round's cap - illegal if there is not enough of it left for this send.
-	const cost = sendCostFor(p, recordId, hidden, rulesOf(state));
+	const cost = sendCostFor(p, recordId, rulesOf(state));
 	if (p.sentCount + cost > sendableCapFor(state, handler)) {
 		return null;
 	}
@@ -681,7 +701,7 @@ export function send(state: MatchState, handler: Seat, recordId: string, siteId:
 		record,
 		player: handler,
 		siteId,
-		hidden: !!hidden,
+		hidden,
 		sentIndex,
 		downed: false,
 		// filled in by recomputeHoldsAtSite immediately below, and again whenever the
