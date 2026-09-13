@@ -10,18 +10,12 @@ import species from '@xalians/content/species.json';
 // import TestPage from './pages/testPage';
 // import Sandboxtwo from './pages/sandboxtwo';
 // import Sandboxthree from './pages/sandboxthree';
-// import MatchCardGamePage from './pages/games/matchCardGamePage';
-// import PhysicsGamePage from './pages/games/physicsGamePage';
-// import TrainingGroundsPage from './pages/trainingGroundsPage';
 // import DuelPage from './pages/games/duelPage';
 // import DuelStartPage from './pages/games/duelStartPage';
 
 
 import XalianNavbar from './components/navbar';
 import React, { Suspense, lazy } from 'react';
-// import React, { lazy } from 'react';
-
-
 import {
   BrowserRouter as Router,
   Routes,
@@ -55,9 +49,12 @@ const UserDetailsPage = lazy(() => import('./pages/userDetailsPage'));
 const RecordPage = lazy(() => import('./pages/recordPage'));
 const TradeBuilderPage = lazy(() => import('./pages/tradeBuilderPage'));
 const TradePage = lazy(() => import('./pages/tradePage'));
-const MatchCardGamePage = lazy(() => import('./pages/games/matchCardGamePage'));
-const PhysicsGamePage = lazy(() => import('./pages/games/physicsGamePage'));
-const TrainingGroundsPage = lazy(() => import('./pages/trainingGroundsPage'));
+const ArcadePage = lazy(() => import('./pages/arcadePage'));
+const ArtilleryGamePage = lazy(() => import('./pages/games/artilleryGamePage'));
+const SolitaireGamePage = lazy(() => import('./pages/games/solitaireGamePage'));
+const HazardSweepGamePage = lazy(() => import('./pages/games/hazardSweepGamePage'));
+const RelayMergeGamePage = lazy(() => import('./pages/games/relayMergeGamePage'));
+const ArcadeMatchGamePage = lazy(() => import('./pages/games/arcadeMatchGamePage'));
 const DuelStartPage = lazy(() => import('./pages/games/duelStartPage'));
 const ReclamationPage = lazy(() => import('./pages/games/reclamationPage'));
 const DuelPlaygroundPage = lazy(() => import('./pages/games/duelPlaygroundPage'));
@@ -137,9 +134,15 @@ export function AppRoutes() {
           <Route path="/reclamation" element={<ReclamationPage />} />
           <Route path="/long-return" element={<LongReturnPage />} />
           <Route path="/account" element={<UserAccountPage />} />
-          <Route path="/train" element={<TrainingGroundsPage />} />
-          <Route path="/train/match" element={<MatchCardGamePage />} />
-          <Route path="/train/physics" element={<PhysicsGamePage />} />
+          <Route path="/arcade" element={<ArcadePage />} />
+          <Route path="/arcade/artillery" element={<ArtilleryGamePage />} />
+          <Route path="/arcade/patience" element={<SolitaireGamePage />} />
+          <Route path="/arcade/sweep" element={<HazardSweepGamePage />} />
+          <Route path="/arcade/relay" element={<RelayMergeGamePage />} />
+          <Route path="/arcade/match" element={<ArcadeMatchGamePage />} />
+          <Route path="/train" element={<PreserveLocationRedirect to="/arcade" />} />
+          <Route path="/train/match" element={<PreserveLocationRedirect to="/arcade/match" />} />
+          <Route path="/train/physics" element={<PreserveLocationRedirect to="/arcade/artillery" />} />
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </ErrorBoundary>

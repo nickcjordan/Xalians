@@ -13,9 +13,12 @@ vi.mock('../pages/userAccountPage', () => ({ default: () => <div>route:account</
 vi.mock('../pages/userDetailsPage', () => ({
 	default: ({ id }) => <div>route:user:{id}</div>,
 }));
-vi.mock('../pages/games/matchCardGamePage', () => ({ default: () => <div>route:match</div> }));
-vi.mock('../pages/games/physicsGamePage', () => ({ default: () => <div>route:physics</div> }));
-vi.mock('../pages/trainingGroundsPage', () => ({ default: () => <div>route:training</div> }));
+vi.mock('../pages/arcadePage', () => ({ default: () => <div>route:arcade</div> }));
+vi.mock('../pages/games/artilleryGamePage', () => ({ default: () => <div>route:artillery</div> }));
+vi.mock('../pages/games/solitaireGamePage', () => ({ default: () => <div>route:patience</div> }));
+vi.mock('../pages/games/hazardSweepGamePage', () => ({ default: () => <div>route:sweep</div> }));
+vi.mock('../pages/games/relayMergeGamePage', () => ({ default: () => <div>route:relay</div> }));
+vi.mock('../pages/games/arcadeMatchGamePage', () => ({ default: () => <div>route:match</div> }));
 vi.mock('../pages/games/duelStartPage', () => ({ default: () => <div>route:duel</div> }));
 vi.mock('../pages/games/reclamationPage', () => ({ default: () => <div>route:reclamation</div> }));
 vi.mock('../pages/games/duelPlaygroundPage', () => ({ default: () => <div>route:duel-reference</div> }));
@@ -45,9 +48,12 @@ describe('application route contract', () => {
 		['/', 'route:home'],
 		['/generator', 'route:generator'],
 		['/account', 'route:account'],
-		['/train', 'route:training'],
-		['/train/match', 'route:match'],
-		['/train/physics', 'route:physics'],
+		['/arcade', 'route:arcade'],
+		['/arcade/artillery', 'route:artillery'],
+		['/arcade/patience', 'route:patience'],
+		['/arcade/sweep', 'route:sweep'],
+		['/arcade/relay', 'route:relay'],
+		['/arcade/match', 'route:match'],
 		['/duel', 'route:duel'],
 		['/duel/reference', 'route:duel-reference'],
 		['/reclamation', 'route:reclamation'],
@@ -57,6 +63,16 @@ describe('application route contract', () => {
 		renderRoute(entry);
 		expect(await screen.findByText(marker)).toBeInTheDocument();
 		expect(screen.getByTestId('location')).toHaveTextContent(entry);
+	});
+
+	it.each([
+		['/train', '/arcade', 'route:arcade'],
+		['/train/match', '/arcade/match', 'route:match'],
+		['/train/physics', '/arcade/artillery', 'route:artillery'],
+	])('redirects the legacy training route %s', async (entry, destination, expectedPage) => {
+		renderRoute(entry);
+		expect(await screen.findByText(expectedPage)).toBeInTheDocument();
+		expect(screen.getByTestId('location')).toHaveTextContent(destination);
 	});
 
 	it('passes the dynamic user id to the detail page', async () => {

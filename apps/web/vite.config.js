@@ -126,7 +126,7 @@ export default defineConfig(({ mode }) => ({
 		environment: 'jsdom',
 		setupFiles: ['./src/setupTests.js'],
 		// Same discovery rule react-scripts used.
-		include: ['src/**/__tests__/**/*.js', 'src/**/*.{spec,test}.js'],
+		include: ['src/**/__tests__/**/*.{js,ts,tsx}', 'src/**/*.{spec,test}.{js,ts,tsx}'],
 		// The game-data JSON in the @xalians/content workspace package is imported
 		// by the engine code under test. Keep it in Vite's module graph rather than
 		// handing it to Node's loader, which would demand `with { type: 'json' }`.

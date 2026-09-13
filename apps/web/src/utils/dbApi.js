@@ -304,3 +304,23 @@ export const callGetUser = (id) => {
 };
 
 export const callCreateUser = (user) => callCreate(`${API}/db/user`, user);
+
+// ---------------------------------------------------------------------------
+// Arcade rewards
+// ---------------------------------------------------------------------------
+
+export const callCompleteArcade = (completion) => {
+  if (useCache()) {
+    const award = { artillery: 30, patience: 35, sweep: 20, relay: 20, match: 15 }[completion.gameId] || 0;
+    return Promise.resolve({
+      awardedCredits: award,
+      credits: award % 100,
+      earnedToday: award,
+      dailyCap: 100,
+      tokensAwarded: 0,
+      tokenBalance: 0,
+      duplicate: false,
+    });
+  }
+  return callCreate(`${API}/arcade/complete`, completion);
+};

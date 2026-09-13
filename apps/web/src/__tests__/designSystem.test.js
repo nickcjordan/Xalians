@@ -57,9 +57,7 @@ const listPageFiles = (dir, base) => {
 	return out;
 };
 
-// baseGamePage.js is dead code (see CLAUDE.md conventions): it is not a route
-// and never gets a terminal.
-const DEAD_PAGES = ['games/baseGamePage.js'];
+const DEAD_PAGES = [];
 
 /**
  * Pages that do not yet render `data-terminal=` anywhere in their source.
@@ -172,7 +170,7 @@ describe('design system structure', () => {
 		// "Version 4 was ruled by Nick on 2026-09-08 and 2026-09-09"); the five
 		// [data-terminal] blocks below still live in system.css because the
 		// remaining immersive experiences (duel board/playground, Reclamation,
-		// training games, Long Return) still read them, but /styleguide itself
+		// and Long Return) still read them, but /styleguide itself
 		// must not reference any of them any more.
 		const css = fs.readFileSync(SYSTEM_PATH, 'utf8');
 		const cssTerminals = Array.from(

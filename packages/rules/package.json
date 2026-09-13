@@ -11,7 +11,9 @@
     "./expedition": "./src/expedition/index.ts",
     "./expedition/*": "./src/expedition/*.ts",
     "./duel": "./src/duel/index.ts",
-    "./duel/*": "./src/duel/*.ts"
+    "./duel/*": "./src/duel/*.ts",
+    "./arcade": "./src/arcade/index.ts",
+    "./arcade/*": "./src/arcade/*.ts"
   },
   "dependencies": {
     "@xalians/content": "1.0.0",

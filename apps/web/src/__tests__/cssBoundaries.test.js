@@ -28,13 +28,7 @@ describe('legacy CSS ownership boundaries', () => {
 			'pages/games/duelPage.js',
 			'pages/games/duelPlaygroundPage.js',
 			'pages/games/longReturnPage.js',
-			'pages/games/matchCardGamePage.js',
-			'pages/games/physicsGamePage.js',
 			'pages/games/reclamationPage.js',
-		],
-		'training.css': [
-			'pages/games/matchCardGamePage.js',
-			'pages/games/physicsGamePage.js',
 		],
 		'duel.css': [
 			'pages/games/duelPage.js',
@@ -74,28 +68,6 @@ describe('legacy CSS ownership boundaries', () => {
 		expect(fs.existsSync(retiredCss)).toBe(false);
 		expect(executableSource).not.toMatch(retiredLiteral);
 		expect(badge).not.toContain("toLowerCase()}-color");
-	});
-
-	it('keeps training board geometry out of the shared immersive stylesheet', () => {
-		const sharedCss = read('src/styles/legacy/system.css');
-		const trainingCss = read('src/styles/legacy/training.css');
-		const trainingSelectors = [
-			'.xalian-image-wrapper',
-			'.xalian-image-bordered',
-			'.xalian-image-shadowed',
-			'.match-card-game-wrapper',
-			'.match-game-card-flipped',
-			'.game-container',
-			'.physics-controls',
-			'.physics-arena',
-			'.physics-target',
-		];
-
-		trainingSelectors.forEach((selector) => {
-			const exactRule = new RegExp(`(^|})\\s*${selector.replace('.', '\\.')}\\s*\\{`, 'm');
-			expect(sharedCss).not.toMatch(exactRule);
-			expect(trainingCss).toContain(selector);
-		});
 	});
 
 	it('keeps immersive element defaults at the end of the terminal foundation', () => {
