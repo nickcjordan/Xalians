@@ -1,6 +1,6 @@
 # Crater Command quality brief
 
-Status: active product-quality goal, 2026-09-13
+Status: completed and deployed, 2026-09-13
 
 ## Intended feeling
 
@@ -145,3 +145,7 @@ impact animation and the final battlefield state.
   build compiles successfully. Measured production weight is 65.2 kB raw / 23.2 kB gzip
   for the lazy artillery route and 219.0 kB raw shared CSS; their budgets retain about
   five percent reviewed headroom.
+- Pull request #257 merged as `c73e6f7`; its production workflow completed the S3 sync
+  and CloudFront invalidation. A post-deploy browser match at xalians.com confirmed one
+  Core guide, three Fan guides, a four-unit crawler movement preview, a Core/Fan/Bore
+  win, and zero page errors.
