@@ -19,7 +19,7 @@ export const ARCADE_GAMES: ArcadeGameDefinition[] = [
     id: 'artillery',
     name: 'Crater Command',
     rulesName: 'Artillery duel',
-    description: 'Set angle and power, read the wind, and range a rival crawler across destructible terrain.',
+    description: 'Command a Xalian battery, read the wind, and shape destructible terrain with three distinct payloads.',
     duration: '4–8 min',
     credits: 30,
     icon: Bomb,

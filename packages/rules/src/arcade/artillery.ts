@@ -3,6 +3,7 @@ import { hashSeed, nextRandom } from './random.ts';
 export type ArtillerySide = 'left' | 'right';
 export type ArtilleryMode = 'bot' | 'local';
 export type ArtilleryPhase = 'aiming' | 'finished';
+export type ArtilleryPayload = 'shell' | 'barb' | 'bore';
 
 export type ArtilleryTank = {
   side: ArtillerySide;
@@ -13,6 +14,7 @@ export type ArtilleryTank = {
 export type ArtilleryShot = {
   angle: number;
   power: number;
+  payload?: ArtilleryPayload;
 };
 
 export type ArtilleryPoint = { x: number; y: number };
@@ -23,13 +25,17 @@ export type ArtilleryOutcome = {
   hit: ArtillerySide | null;
   damage: number;
   outOfBounds: boolean;
+  payload: ArtilleryPayload;
 };
+
+export type ArtilleryPayloadInventory = Record<Exclude<ArtilleryPayload, 'shell'>, number>;
 
 export type ArtilleryState = {
   seed: string;
   mode: ArtilleryMode;
   terrain: number[];
   tanks: Record<ArtillerySide, ArtilleryTank>;
+  payloads: Record<ArtillerySide, ArtilleryPayloadInventory>;
   current: ArtillerySide;
   wind: number;
   turn: number;
@@ -42,6 +48,15 @@ export type ArtilleryState = {
 export const ARTILLERY_WIDTH = 100;
 export const ARTILLERY_HEIGHT = 60;
 export const ARTILLERY_MAX_INTEGRITY = 3;
+export const ARTILLERY_PAYLOAD_RULES: Record<ArtilleryPayload, {
+  blastRadius: number;
+  craterRadius: number;
+  craterDepth: number;
+}> = {
+  shell: { blastRadius: 4.5, craterRadius: 4.8, craterDepth: 0.72 },
+  barb: { blastRadius: 7.2, craterRadius: 6.4, craterDepth: 0.48 },
+  bore: { blastRadius: 3.2, craterRadius: 4.1, craterDepth: 1.28 },
+};
 const ARTILLERY_SPEED_SCALE = 0.2;
 
 function buildTerrain(seed: string): { terrain: number[]; rngState: number } {
@@ -82,6 +97,10 @@ export function createArtilleryState(seed: string, mode: ArtilleryMode = 'bot'):
       left: { side: 'left', x: 10, integrity: ARTILLERY_MAX_INTEGRITY },
       right: { side: 'right', x: 90, integrity: ARTILLERY_MAX_INTEGRITY },
     },
+    payloads: {
+      left: { barb: 2, bore: 2 },
+      right: { barb: 2, bore: 2 },
+    },
     current: 'left',
     wind: Math.round((windDraw.value * 2 - 1) * 8),
     turn: 0,
@@ -93,14 +112,23 @@ export function createArtilleryState(seed: string, mode: ArtilleryMode = 'bot'):
 }
 
 function normalizedShot(shot: ArtilleryShot): ArtilleryShot {
+  const payload: ArtilleryPayload = shot.payload === 'barb' || shot.payload === 'bore' ? shot.payload : 'shell';
   return {
     angle: Math.max(10, Math.min(80, Math.round(shot.angle))),
     power: Math.max(15, Math.min(100, Math.round(shot.power))),
+    payload,
   };
 }
 
+function availableShot(state: ArtilleryState, input: ArtilleryShot): Required<ArtilleryShot> {
+  const shot = normalizedShot(input) as Required<ArtilleryShot>;
+  if (shot.payload !== 'shell' && state.payloads[state.current][shot.payload] <= 0) return { ...shot, payload: 'shell' };
+  return shot;
+}
+
 export function simulateArtilleryShot(state: ArtilleryState, input: ArtilleryShot): ArtilleryOutcome {
-  const shot = normalizedShot(input);
+  const shot = availableShot(state, input);
+  const payloadRules = ARTILLERY_PAYLOAD_RULES[shot.payload];
   const shooter = state.tanks[state.current];
   const targetSide: ArtillerySide = state.current === 'left' ? 'right' : 'left';
   const target = state.tanks[targetSide];
@@ -127,29 +155,29 @@ export function simulateArtilleryShot(state: ArtilleryState, input: ArtillerySho
     if (Math.hypot(x - target.x, y - tankY) <= 2.3) {
       const impact = { x, y };
       path.push(impact);
-      return { path, impact, hit: targetSide, damage: 1, outOfBounds: false };
+      return { path, impact, hit: targetSide, damage: 1, outOfBounds: false, payload: shot.payload };
     }
     if (x < -3 || x > ARTILLERY_WIDTH + 3 || y > ARTILLERY_HEIGHT + 20) {
-      return { path, impact: null, hit: null, damage: 0, outOfBounds: true };
+      return { path, impact: null, hit: null, damage: 0, outOfBounds: true, payload: shot.payload };
     }
     if (y <= terrainHeight(state.terrain, x)) {
       const impact = { x, y: terrainHeight(state.terrain, x) };
       path.push(impact);
       const distance = Math.abs(x - target.x);
-      const damage = distance <= 4.5 ? 1 : 0;
-      return { path, impact, hit: damage ? targetSide : null, damage, outOfBounds: false };
+      const damage = distance <= payloadRules.blastRadius ? 1 : 0;
+      return { path, impact, hit: damage ? targetSide : null, damage, outOfBounds: false, payload: shot.payload };
     }
   }
-  return { path, impact: null, hit: null, damage: 0, outOfBounds: true };
+  return { path, impact: null, hit: null, damage: 0, outOfBounds: true, payload: shot.payload };
 }
 
-function craterTerrain(terrain: readonly number[], impact: ArtilleryPoint | null): number[] {
+function craterTerrain(terrain: readonly number[], impact: ArtilleryPoint | null, payload: ArtilleryPayload): number[] {
   if (!impact) return [...terrain];
-  const radius = 4.8;
+  const { craterRadius: radius, craterDepth } = ARTILLERY_PAYLOAD_RULES[payload];
   return terrain.map((height, x) => {
     const distance = Math.abs(x - impact.x);
     if (distance >= radius) return height;
-    const depth = Math.sqrt(radius * radius - distance * distance) * 0.72;
+    const depth = Math.sqrt(radius * radius - distance * distance) * craterDepth;
     return Math.max(2, height - depth);
   });
 }
@@ -159,7 +187,7 @@ export function applyArtilleryShot(
   input: ArtilleryShot
 ): { state: ArtilleryState; outcome: ArtilleryOutcome } {
   if (state.phase !== 'aiming') throw new Error('The artillery match is already finished.');
-  const shot = normalizedShot(input);
+  const shot = availableShot(state, input);
   const outcome = simulateArtilleryShot(state, shot);
   const targetSide: ArtillerySide = state.current === 'left' ? 'right' : 'left';
   const tanks = {
@@ -175,8 +203,18 @@ export function applyArtilleryShot(
     outcome,
     state: {
       ...state,
-      terrain: craterTerrain(state.terrain, outcome.impact),
+      terrain: craterTerrain(state.terrain, outcome.impact, shot.payload),
       tanks,
+      payloads: {
+        left: { ...state.payloads.left },
+        right: { ...state.payloads.right },
+        ...(shot.payload === 'shell' ? {} : {
+          [state.current]: {
+            ...state.payloads[state.current],
+            [shot.payload]: state.payloads[state.current][shot.payload] - 1,
+          },
+        }),
+      },
       current: winner ? state.current : targetSide,
       wind: Math.round((nextWind.value * 2 - 1) * 8),
       turn: state.turn + 1,
@@ -193,10 +231,14 @@ export function chooseArtilleryBotShot(state: ArtilleryState): ArtilleryShot {
   const draw = nextRandom(state.rngState ^ (state.turn + 1));
   if (state.botPrevious) {
     const correction = Math.max(-13, Math.min(13, state.botPrevious.miss * 0.58));
+    const payload: ArtilleryPayload = Math.abs(state.botPrevious.miss) <= 9 && state.payloads.right.barb > 0
+      ? 'barb'
+      : state.payloads.right.bore > 0 && draw.value > 0.82 ? 'bore' : 'shell';
     return normalizedShot({
       angle: state.botPrevious.shot.angle + (draw.value - 0.5) * 3,
       power: state.botPrevious.shot.power + correction,
+      payload,
     });
   }
-  return normalizedShot({ angle: 42 + (draw.value - 0.5) * 12, power: 70 + (draw.value - 0.5) * 8 });
+  return normalizedShot({ angle: 42 + (draw.value - 0.5) * 12, power: 70 + (draw.value - 0.5) * 8, payload: 'shell' });
 }

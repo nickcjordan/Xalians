@@ -67,6 +67,30 @@ The next wave is Supply Run (snake), Containment Break (brick breaker), signal
 nonograms, and an original affinity-orb launcher. They are not required for the initial
 Arcade to prove the product loop.
 
+## Crater Command second pass
+
+Status: implemented as trial mechanics, 2026-09-13
+
+The artillery duel keeps angle, power, wind, and destructible terrain as its familiar
+center. Its Xalians layer now explains play instead of sitting beside it:
+
+- Codazzo and Terragoyle crews make the two batteries identifiable at a glance and tie
+  their field roles to established species behavior.
+- The unlimited core shell is the dependable baseline. Two Codazzo-pattern barb bursts
+  per crew trade crater depth for a wider blast, while two Drilltail-pattern bore charges
+  cut a deeper, narrower crater. Limited payloads add terrain-shaping decisions without
+  making the first turn harder to understand.
+- The active barrel, partial launch guide, persistent blast-radius marker, and short/long
+  impact readout use one visual language from preview through result. The full landing
+  point remains hidden so wind and ranging still matter.
+- Health appears both on the field and with each crew. Turn, volley, wind, ammunition,
+  and the three-hit objective remain visible while aiming; the result names the crew that
+  held the range and how many shots were exchanged.
+
+These mechanics remain Trial until ordinary players demonstrate that they understand
+the payload trade-offs without reading the explanatory copy and that the wider blast does
+not dominate the core shell.
+
 ## Implementation checklist
 
 ### Foundation
