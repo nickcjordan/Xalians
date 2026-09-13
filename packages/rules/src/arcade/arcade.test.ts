@@ -30,6 +30,23 @@ describe('Arcade deterministic rules', () => {
     expect(state).toEqual(before);
   });
 
+  it('always offers a shot that can reach the opposing crawler', () => {
+    const seeds = [
+      '2026-09-13:artillery:v1',
+      ...Array.from({ length: 50 }, (_, index) => `artillery-reach-${index}`),
+    ];
+
+    for (const seed of seeds) {
+      const state = createArtilleryState(seed);
+      const canHit = Array.from({ length: 71 }, (_, index) => index + 10).some((angle) =>
+        Array.from({ length: 86 }, (_, index) => index + 15).some((power) =>
+          simulateArtilleryShot(state, { angle, power }).hit === 'right'
+        )
+      );
+      expect(canHit, `${seed} should have a reachable opening shot`).toBe(true);
+    }
+  });
+
   it('guarantees a safe first sweep reveal and is replayable', () => {
     const first = applySweepAction(createSweepState('field'), { type: 'reveal', index: 40 });
     const replay = applySweepAction(createSweepState('field'), { type: 'reveal', index: 40 });
