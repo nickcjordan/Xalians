@@ -550,7 +550,7 @@ function ArtilleryBoard({ seed, mode, onStatus, onComplete, onRematch }: {
       </section>
 
       <section aria-label="Command deck" className="grid min-w-0 gap-2 border border-edge-strong bg-s1 p-2 lg:grid-cols-12">
-        <div className="grid gap-2 border-b border-edge pb-2 sm:grid-cols-3 sm:items-center lg:col-span-12">
+        <div className="grid gap-2 border-b border-edge pb-2 sm:flex sm:items-center sm:justify-between lg:col-span-12">
           <div className="flex items-center gap-3">
             <span className="type-legend">Codazzo</span>
             <span className="flex gap-1" aria-label={`${state.tanks.left.integrity} of ${ARTILLERY_MAX_INTEGRITY} integrity`}>
