@@ -502,6 +502,28 @@ module "cancel_trade_lambda_module" {
 
 #########################################################
 #####               LAMBDA INSTANCE                 #####
+##                  List Trades                       ##
+#########################################################
+module "list_trades_lambda_module" {
+  source = "./terraform/modules/lambda"
+
+  function_name                   = "ListTrades"
+  lambda_handler_path             = "listTrades/index.handler"
+  apigw_lambda_route_key          = "GET /trades"
+  lambda_bucket_id                = aws_s3_bucket.lambda_bucket.id
+  lambda_bucket_object_key        = aws_s3_object.lambda_bucket_object.key
+  lambda_archive_file_output_hash = data.archive_file.lambda_zip_file.output_base64sha256
+  iam_role_arn                    = aws_iam_role.lambda_exec.arn
+  apigw_lambda_id                 = aws_apigatewayv2_api.lambda.id
+  base_apigw_lambda_execution_arn = aws_apigatewayv2_api.lambda.execution_arn
+  authorization_type              = "JWT"
+  authorizer_id                   = aws_apigatewayv2_authorizer.cognito.id
+}
+#####                                               #####
+#########################################################
+
+#########################################################
+#####               LAMBDA INSTANCE                 #####
 ##               Showroom Xalian Lambda                ##
 #########################################################
 # The free lever: the one route on this API with no authorizer. It generates a
@@ -1193,6 +1215,35 @@ resource "aws_dynamodb_table" "xalian_trade_offers" {
   attribute {
     name = "tradeId"
     type = "S"
+  }
+
+  attribute {
+    name = "proposerId"
+    type = "S"
+  }
+
+  attribute {
+    name = "recipientId"
+    type = "S"
+  }
+
+  attribute {
+    name = "createdAt"
+    type = "S"
+  }
+
+  global_secondary_index {
+    name            = "byProposer"
+    hash_key        = "proposerId"
+    range_key       = "createdAt"
+    projection_type = "ALL"
+  }
+
+  global_secondary_index {
+    name            = "byRecipient"
+    hash_key        = "recipientId"
+    range_key       = "createdAt"
+    projection_type = "ALL"
   }
 
   point_in_time_recovery {

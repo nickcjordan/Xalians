@@ -10,7 +10,7 @@ import * as React from 'react';
 import { Link } from 'react-router';
 import { Hub } from 'aws-amplify/utils';
 import { Trash2 } from 'lucide-react';
-import type { XalianRecord } from '@xalians/content/schema';
+import type { TradeOffer, XalianRecord } from '@xalians/content/schema';
 import { speciesDisplayName } from '@xalians/rules/generator';
 
 import XalianNavbar from '../components/navbar';
@@ -21,6 +21,7 @@ import VerifyEmailModal from '../components/auth/verifyEmailModal';
 import RecordTile from '../components/record/RecordTile';
 import RecordView from '../components/record/RecordView';
 import RecordCompare from '../components/record/RecordCompare';
+import TradeInbox from '../components/trade/TradeInbox';
 import * as authUtil from '../utils/authUtil';
 import * as dbApi from '../utils/dbApi';
 
@@ -34,10 +35,12 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { NativeSelect, NativeSelectOption } from '@/components/ui/native-select';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { archetypeTerm, elementTerm, traitTerm } from '@/components/record/vocabulary';
 
 type AuthUser = { username: string; hasVerifiedEmail: boolean } | null;
 type CollectionSort = 'newest' | 'oldest' | 'species';
+type AccountView = 'collection' | 'trades';
 
 function UserAccountPage() {
 	const [loggedInUser, setLoggedInUser] = React.useState<AuthUser>(null);
@@ -47,6 +50,10 @@ function UserAccountPage() {
 	const [isLoadingMore, setIsLoadingMore] = React.useState(false);
 	const [signedOut, setSignedOut] = React.useState(false);
 	const [message, setMessage] = React.useState<string | null>(null);
+	const [trades, setTrades] = React.useState<TradeOffer[]>([]);
+	const [tradesLoading, setTradesLoading] = React.useState(false);
+	const [tradeMessage, setTradeMessage] = React.useState<string | null>(null);
+	const [accountView, setAccountView] = React.useState<AccountView>('collection');
 
 	const [signInModalShow, setSignInModalShow] = React.useState(false);
 	const [signupModalShow, setSignupModalShow] = React.useState(false);
@@ -64,6 +71,11 @@ function UserAccountPage() {
 	const [compareMode, setCompareMode] = React.useState(false);
 	const [compareIds, setCompareIds] = React.useState<string[]>([]);
 	const [compareOpen, setCompareOpen] = React.useState(false);
+	const openTradeCount = trades.filter((trade) => trade.status === 'open').length;
+	const incomingTradeCount = loggedInUser
+		? trades.filter((trade) => trade.status === 'open' && trade.recipientId === loggedInUser.username.toLowerCase())
+				.length
+		: 0;
 
 	const availableAffinities = React.useMemo(() => {
 		const keys = new Set<string>();
@@ -84,7 +96,9 @@ function UserAccountPage() {
 				...Object.keys(record.element.affinities).map((key) => elementTerm(key).name),
 				...record.traits.map((key) => traitTerm(key).name),
 				...record.abilities.map((ability) => ability.name),
-			].join(' ').toLowerCase();
+			]
+				.join(' ')
+				.toLowerCase();
 			return searchable.includes(normalizedQuery);
 		});
 
@@ -114,9 +128,13 @@ function UserAccountPage() {
 		setCompareOpen(false);
 	};
 	const toggleComparisonRecord = (record: XalianRecord) => {
-		setCompareIds((current) => current.includes(record.id)
-			? current.filter((id) => id !== record.id)
-			: current.length < 2 ? [...current, record.id] : current);
+		setCompareIds((current) =>
+			current.includes(record.id)
+				? current.filter((id) => id !== record.id)
+				: current.length < 2
+				? [...current, record.id]
+				: current
+		);
 	};
 
 	const loadFirstPage = React.useCallback(() => {
@@ -130,6 +148,21 @@ function UserAccountPage() {
 			.catch(() => {
 				setIsLoading(false);
 				setMessage('Could not load your Xalians. Please try again later.');
+			});
+	}, []);
+
+	const loadTrades = React.useCallback(() => {
+		setTradesLoading(true);
+		setTradeMessage(null);
+		dbApi
+			.callListTrades()
+			.then((page: { items: TradeOffer[] }) => {
+				setTrades(page.items);
+				setTradesLoading(false);
+			})
+			.catch(() => {
+				setTradesLoading(false);
+				setTradeMessage('Could not load your trade activity. Please try again later.');
 			});
 	}, []);
 
@@ -151,18 +184,23 @@ function UserAccountPage() {
 
 	const refreshUser = React.useCallback(() => {
 		setIsLoading(true);
-		authUtil.currentUser()
+		authUtil
+			.currentUser()
 			.then((data: any) => {
 				if (data) {
 					setLoggedInUser(authUtil.buildAuthState(data));
 					setSignedOut(false);
 					setMessage(null);
 					loadFirstPage();
+					loadTrades();
 				} else {
 					setIsLoading(false);
 					setLoggedInUser(null);
 					setRecords([]);
 					setCursor(undefined);
+					setTrades([]);
+					setTradesLoading(false);
+					setTradeMessage(null);
 					setMessage(null);
 					setSignedOut(true);
 				}
@@ -172,10 +210,13 @@ function UserAccountPage() {
 				setLoggedInUser(null);
 				setRecords([]);
 				setCursor(undefined);
+				setTrades([]);
+				setTradesLoading(false);
+				setTradeMessage(null);
 				setSignedOut(false);
 				setMessage('Could not check your sign-in status. Please try again later.');
 			});
-	}, [loadFirstPage]);
+	}, [loadFirstPage, loadTrades]);
 
 	React.useEffect(() => {
 		refreshUser();
@@ -188,6 +229,9 @@ function UserAccountPage() {
 				setLoggedInUser(null);
 				setRecords([]);
 				setCursor(undefined);
+				setTrades([]);
+				setTradesLoading(false);
+				setTradeMessage(null);
 				setMessage(null);
 				setSignedOut(true);
 			}
@@ -237,11 +281,17 @@ function UserAccountPage() {
 				<Masthead
 					kicker="Account"
 					title={(loggedInUser && loggedInUser.username) || 'Your account'}
-					subtitle={records.length > 0 ? `${records.length} generated` : undefined}
+					subtitle={
+						loggedInUser
+							? `${records.length} ${records.length === 1 ? 'Xalian' : 'Xalians'} · ${openTradeCount} open ${
+									openTradeCount === 1 ? 'trade' : 'trades'
+							  }`
+							: undefined
+					}
 					aside={
 						!signedOut ? (
 							<div className="flex w-full flex-col gap-3 sm:flex-row md:w-auto">
-								{records.length > 1 ? (
+								{accountView === 'collection' && records.length > 1 ? (
 									<Button variant="secondary" onClick={toggleCompareMode}>
 										{compareMode ? 'Done comparing' : 'Compare Xalians'}
 									</Button>
@@ -262,132 +312,169 @@ function UserAccountPage() {
 
 				{!isLoading && signedOut && (
 					<EmptyState legend="Sign in to see your Xalians">
-						Anything the Generator prints for you is written into the registry under your name, kept
-						at its own record, and drawn on for every game on the site.
+						Anything the Generator prints for you is written into the registry under your name, kept at its own record,
+						and drawn on for every game on the site.
 						<div className="mt-4 flex items-center gap-4">
 							<Button onClick={() => setSignInModalShow(true)}>Sign in</Button>
-							<Button variant="link" onClick={() => setSignupModalShow(true)}>Create account</Button>
+							<Button variant="link" onClick={() => setSignupModalShow(true)}>
+								Create account
+							</Button>
 						</div>
 					</EmptyState>
 				)}
 
 				{!isLoading && !signedOut && message && <EmptyState legend={message} />}
 
-				{!isLoading && !signedOut && !message && records.length === 0 && (
-					<EmptyState legend="No Xalians yet">
-						Generate one and it is yours.
-						<div className="mt-3">
-							<Button asChild>
-								<Link to="/generator">Generate a Xalian</Link>
-							</Button>
-						</div>
-					</EmptyState>
-				)}
+				{!isLoading && !signedOut && !message && (
+					<Tabs value={accountView} onValueChange={(value: string) => setAccountView(value as AccountView)}>
+						<TabsList aria-label="Account sections">
+							<TabsTrigger value="collection">Collection · {records.length}</TabsTrigger>
+						<TabsTrigger value="trades">
+							Trades · {trades.length}
+							{incomingTradeCount > 0 ? ` · ${incomingTradeCount} to review` : ''}
+						</TabsTrigger>
+						</TabsList>
 
-				{!isLoading && !signedOut && !message && records.length > 0 && (
-					<React.Fragment>
-						{compareMode ? (
-							<Callout variant="note" title="Choose two Xalians" className="mb-4">
-								<p className="m-0">
-									{compareIds.length === 0
-										? 'Use the plus keys on two collection tiles.'
-										: compareIds.length === 1 ? 'One chosen. Pick one more.' : 'Two chosen and ready to compare.'}
-								</p>
-								{compareIds.length === 2 ? (
-									<div className="mt-3 flex flex-wrap gap-2">
-										<Button onClick={() => setCompareOpen(true)}>Compare selected</Button>
-										<Button variant="ghost" onClick={() => setCompareIds([])}>Start over</Button>
+						<TabsContent value="collection" className="mt-6">
+							{records.length === 0 && (
+								<EmptyState legend="No Xalians yet">
+									Generate one and it is yours.
+									<div className="mt-3">
+										<Button asChild>
+											<Link to="/generator">Generate a Xalian</Link>
+										</Button>
 									</div>
-								) : null}
-							</Callout>
-						) : null}
+								</EmptyState>
+							)}
 
-						<FilterBar
-							className="mb-3"
-							search={
-								<SearchField
-									value={query}
-									onChange={setQuery}
-									placeholder="Search species, abilities, traits"
-									aria-label="Search your Xalians"
-								/>
-							}
-							active={filtersActive}
-							activeCount={activeFilterCount}
-							onClear={clearFilters}
-							sheetTitle="Collection filters"
-						>
-							<NativeSelect
-								value={affinity}
-								onChange={(event) => setAffinity(event.target.value)}
-								aria-label="Filter by affinity"
-								className="w-52 sm:w-44"
-							>
-								<NativeSelectOption value="all">All affinities</NativeSelectOption>
-								{availableAffinities.map((key) => (
-									<NativeSelectOption key={key} value={key}>{elementTerm(key).name}</NativeSelectOption>
-								))}
-							</NativeSelect>
+							{records.length > 0 && (
+								<React.Fragment>
+									{compareMode ? (
+										<Callout variant="note" title="Choose two Xalians" className="mb-4">
+											<p className="m-0">
+												{compareIds.length === 0
+													? 'Use the plus keys on two collection tiles.'
+													: compareIds.length === 1
+													? 'One chosen. Pick one more.'
+													: 'Two chosen and ready to compare.'}
+											</p>
+											{compareIds.length === 2 ? (
+												<div className="mt-3 flex flex-wrap gap-2">
+													<Button onClick={() => setCompareOpen(true)}>Compare selected</Button>
+													<Button variant="ghost" onClick={() => setCompareIds([])}>
+														Start over
+													</Button>
+												</div>
+											) : null}
+										</Callout>
+									) : null}
 
-							<NativeSelect
-								value={sort}
-								onChange={(event) => setSort(event.target.value as CollectionSort)}
-								aria-label="Sort collection"
-								className="w-52 sm:w-40"
-							>
-								<NativeSelectOption value="newest">Newest first</NativeSelectOption>
-								<NativeSelectOption value="oldest">Oldest first</NativeSelectOption>
-								<NativeSelectOption value="species">Species name</NativeSelectOption>
-							</NativeSelect>
-						</FilterBar>
-
-						<p className="type-data mt-0 mb-4 text-small text-ink-2" aria-live="polite">
-							{visibleRecords.length} of {records.length} loaded Xalians
-						</p>
-
-						{visibleRecords.length === 0 ? (
-							<EmptyState legend="No matching Xalians">
-								Nothing in the loaded collection matches those filters.
-								<div className="mt-3">
-									<Button variant="secondary" onClick={clearFilters}>Clear filters</Button>
-								</div>
-							</EmptyState>
-						) : (
-							<div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-								{visibleRecords.map((record) => (
-									<RecordTile
-										key={record.id}
-										record={record}
-										onOpen={setOpenRecord}
-										action={
-											<Button
-												variant="ghost"
-												size="icon"
-												className="bg-s0"
-												aria-label={`Release ${speciesDisplayName(record.species)}`}
-												onClick={() => askToRelease(record)}
-											>
-												<Trash2 />
-											</Button>
+									<FilterBar
+										className="mb-3"
+										search={
+											<SearchField
+												value={query}
+												onChange={setQuery}
+												placeholder="Search species, abilities, traits"
+												aria-label="Search your Xalians"
+											/>
 										}
-										comparison={compareMode ? {
-											selected: compareIds.includes(record.id),
-											disabled: compareIds.length >= 2 && !compareIds.includes(record.id),
-											onToggle: toggleComparisonRecord,
-										} : undefined}
-									/>
-								))}
-							</div>
-						)}
+										active={filtersActive}
+										activeCount={activeFilterCount}
+										onClear={clearFilters}
+										sheetTitle="Collection filters"
+									>
+										<NativeSelect
+											value={affinity}
+											onChange={(event) => setAffinity(event.target.value)}
+											aria-label="Filter by affinity"
+											className="w-52 sm:w-44"
+										>
+											<NativeSelectOption value="all">All affinities</NativeSelectOption>
+											{availableAffinities.map((key) => (
+												<NativeSelectOption key={key} value={key}>
+													{elementTerm(key).name}
+												</NativeSelectOption>
+											))}
+										</NativeSelect>
 
-						{cursor && (
-							<div className="mt-6 flex justify-center">
-								<Button variant="secondary" disabled={isLoadingMore} onClick={loadMore}>
-									{isLoadingMore ? 'Loading' : 'Load more'}
-								</Button>
-							</div>
-						)}
-					</React.Fragment>
+										<NativeSelect
+											value={sort}
+											onChange={(event) => setSort(event.target.value as CollectionSort)}
+											aria-label="Sort collection"
+											className="w-52 sm:w-40"
+										>
+											<NativeSelectOption value="newest">Newest first</NativeSelectOption>
+											<NativeSelectOption value="oldest">Oldest first</NativeSelectOption>
+											<NativeSelectOption value="species">Species name</NativeSelectOption>
+										</NativeSelect>
+									</FilterBar>
+
+									<p className="type-data mt-0 mb-4 text-small text-ink-2" aria-live="polite">
+										{visibleRecords.length} of {records.length} loaded Xalians
+									</p>
+
+									{visibleRecords.length === 0 ? (
+										<EmptyState legend="No matching Xalians">
+											Nothing in the loaded collection matches those filters.
+											<div className="mt-3">
+												<Button variant="secondary" onClick={clearFilters}>
+													Clear filters
+												</Button>
+											</div>
+										</EmptyState>
+									) : (
+										<div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+											{visibleRecords.map((record) => (
+												<RecordTile
+													key={record.id}
+													record={record}
+													onOpen={setOpenRecord}
+													action={
+														<Button
+															variant="ghost"
+															size="icon"
+															className="bg-s0"
+															aria-label={`Release ${speciesDisplayName(record.species)}`}
+															onClick={() => askToRelease(record)}
+														>
+															<Trash2 />
+														</Button>
+													}
+													comparison={
+														compareMode
+															? {
+																	selected: compareIds.includes(record.id),
+																	disabled: compareIds.length >= 2 && !compareIds.includes(record.id),
+																	onToggle: toggleComparisonRecord,
+															  }
+															: undefined
+													}
+												/>
+											))}
+										</div>
+									)}
+
+									{cursor && (
+										<div className="mt-6 flex justify-center">
+											<Button variant="secondary" disabled={isLoadingMore} onClick={loadMore}>
+												{isLoadingMore ? 'Loading' : 'Load more'}
+											</Button>
+										</div>
+									)}
+								</React.Fragment>
+							)}
+						</TabsContent>
+
+						<TabsContent value="trades" className="mt-6">
+							<TradeInbox
+								username={loggedInUser?.username.toLowerCase() || ''}
+								trades={trades}
+								loading={tradesLoading}
+								error={tradeMessage}
+							/>
+						</TabsContent>
+					</Tabs>
 				)}
 			</Shell>
 
@@ -438,11 +525,7 @@ function UserAccountPage() {
 				password={password}
 			/>
 
-			<SignUpModal
-				show={signupModalShow}
-				callback={signUpCallback}
-				onHide={() => setSignupModalShow(false)}
-			/>
+			<SignUpModal show={signupModalShow} callback={signUpCallback} onHide={() => setSignupModalShow(false)} />
 
 			<VerifyEmailModal
 				show={verifyEmailModalShow}

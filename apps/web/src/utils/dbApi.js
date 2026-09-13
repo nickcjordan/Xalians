@@ -1,6 +1,6 @@
 import { UserRecordSchema, PublicProfileSchema, TradeOfferSchema, XalianRecordSchema } from "@xalians/content/schema";
 import { generateXalian, getSpeciesTemplates } from "@xalians/rules/generator";
-import { getIdToken } from './authUtil';
+import { getIdToken } from "./authUtil";
 
 /**
  * The one HTTP client for the Xalians API.
@@ -64,9 +64,10 @@ async function requestJson(url, options = {}) {
   }
 
   if (!response.ok) {
-    const message = data && typeof data === 'object' && (data.errorMessage || data.message)
-      ? data.errorMessage || data.message
-      : `Xalians API request failed (${response.status}).`;
+    const message =
+      data && typeof data === "object" && (data.errorMessage || data.message)
+        ? data.errorMessage || data.message
+        : `Xalians API request failed (${response.status}).`;
     const error = new Error(message);
     error.status = response.status;
     error.data = data;
@@ -77,16 +78,18 @@ async function requestJson(url, options = {}) {
 
 const callGet = async (url) => requestJson(url, { headers: await authHeaders() });
 
-const callCreate = async (url, data) => requestJson(url, {
-  method: 'POST',
-  headers: { ...await authHeaders(), 'content-type': 'application/json' },
-  body: JSON.stringify(data),
-});
+const callCreate = async (url, data) =>
+  requestJson(url, {
+    method: "POST",
+    headers: { ...(await authHeaders()), "content-type": "application/json" },
+    body: JSON.stringify(data),
+  });
 
-const callDelete = async (url) => requestJson(url, {
-  method: 'DELETE',
-  headers: await authHeaders(),
-});
+const callDelete = async (url) =>
+  requestJson(url, {
+    method: "DELETE",
+    headers: await authHeaders(),
+  });
 
 // ---------------------------------------------------------------------------
 // The registry: ratified creature records
@@ -141,7 +144,10 @@ export const callGenerateXalian = (species, profile) => {
  */
 export const callListXalians = (ownerId, cursor) => {
   if (useCache()) {
-    return Promise.resolve({ items: sampleRecords(3).map((r) => XalianRecordSchema.parse(r)), nextCursor: undefined });
+    return Promise.resolve({
+      items: sampleRecords(3).map((r) => XalianRecordSchema.parse(r)),
+      nextCursor: undefined,
+    });
   }
   const params = new URLSearchParams();
   if (ownerId) params.set("ownerId", ownerId);
@@ -168,8 +174,9 @@ export const callGetPublicXalian = (id) => {
     const cached = sampleRecordCache.get(id) || sampleRecords(1, undefined, id)[0];
     return Promise.resolve(XalianRecordSchema.parse(cached));
   }
-  return requestJson(`${API}/registry/xalians/${encodeURIComponent(id)}`)
-    .then((data) => XalianRecordSchema.parse(data));
+  return requestJson(`${API}/registry/xalians/${encodeURIComponent(id)}`).then((data) =>
+    XalianRecordSchema.parse(data)
+  );
 };
 
 /** Public read used by shareable binder pages; sends no identity or token. */
@@ -183,11 +190,10 @@ export const callListPublicXalians = (ownerId, cursor) => {
   const params = new URLSearchParams();
   if (cursor) params.set("cursor", cursor);
   const suffix = params.toString() ? `?${params.toString()}` : "";
-  return requestJson(`${API}/registry/owners/${encodeURIComponent(ownerId)}/xalians${suffix}`)
-    .then((data) => ({
-      items: data.items.map((item) => XalianRecordSchema.parse(item)),
-      nextCursor: data.nextCursor,
-    }));
+  return requestJson(`${API}/registry/owners/${encodeURIComponent(ownerId)}/xalians${suffix}`).then((data) => ({
+    items: data.items.map((item) => XalianRecordSchema.parse(item)),
+    nextCursor: data.nextCursor,
+  }));
 };
 
 /** Releases one of the caller's own records. Owner-only; the server enforces it. */
@@ -202,17 +208,17 @@ export const callReleaseXalian = (id) => {
 // Direct swaps
 // ---------------------------------------------------------------------------
 
-function sampleTrade(id = 'trd_sample') {
-  const offered = sampleRecords(2, undefined, 'collector');
+function sampleTrade(id = "trd_sample") {
+  const offered = sampleRecords(2, undefined, "collector");
   const requested = sampleRecords(2);
   return TradeOfferSchema.parse({
     id,
-    proposerId: 'collector',
-    recipientId: 'sample',
+    proposerId: "collector",
+    recipientId: "sample",
     offeredXalianIds: offered.map((record) => record.id),
     requestedXalianIds: requested.map((record) => record.id),
-    status: 'open',
-    createdAt: '2026-09-12T12:00:00Z',
+    status: "open",
+    createdAt: "2026-09-12T12:00:00Z",
   });
 }
 
@@ -222,14 +228,19 @@ export const callCreateTrade = (proposal) => {
     const trade = TradeOfferSchema.parse({
       ...proposal,
       id: `trd_sample_${pullCounter}`,
-      proposerId: 'sample',
+      proposerId: "sample",
       recipientId: proposal.recipientId.toLowerCase(),
-      status: 'open',
+      status: "open",
       createdAt: new Date().toISOString(),
     });
     if (trade.counterTo) {
       const original = sampleTradeCache.get(trade.counterTo);
-      if (original) sampleTradeCache.set(original.id, { ...original, status: 'countered', respondedAt: trade.createdAt });
+      if (original)
+        sampleTradeCache.set(original.id, {
+          ...original,
+          status: "countered",
+          respondedAt: trade.createdAt,
+        });
     }
     sampleTradeCache.set(trade.id, trade);
     return Promise.resolve(trade);
@@ -242,30 +253,57 @@ export const callGetTrade = (id) => {
     if (!sampleTradeCache.has(id)) sampleTradeCache.set(id, sampleTrade(id));
     return Promise.resolve(TradeOfferSchema.parse(sampleTradeCache.get(id)));
   }
-  return requestJson(`${API}/trades/${encodeURIComponent(id)}`)
-    .then((data) => TradeOfferSchema.parse(data));
+  return requestJson(`${API}/trades/${encodeURIComponent(id)}`).then((data) => TradeOfferSchema.parse(data));
+};
+
+/** Lists every recent trade where the signed-in caller is proposer or recipient. */
+export const callListTrades = () => {
+  if (useCache()) {
+    const incoming = sampleTrade("trd_sample_incoming");
+    const outgoing = TradeOfferSchema.parse({
+      ...sampleTrade("trd_sample_outgoing"),
+      proposerId: "sample",
+      recipientId: "collector",
+    });
+    const completed = TradeOfferSchema.parse({
+      ...sampleTrade("trd_sample_completed"),
+      recipientId: "sample",
+      status: "accepted",
+      respondedAt: "2026-09-12T13:00:00Z",
+    });
+    return Promise.resolve({ items: [incoming, outgoing, completed] });
+  }
+  return callGet(`${API}/trades`).then((data) => ({
+    items: data.items.map((item) => TradeOfferSchema.parse(item)),
+  }));
 };
 
 export const callAcceptTrade = (id) => {
   if (useCache()) {
     const current = sampleTradeCache.get(id) || sampleTrade(id);
-    const trade = TradeOfferSchema.parse({ ...current, status: 'accepted', respondedAt: new Date().toISOString() });
+    const trade = TradeOfferSchema.parse({
+      ...current,
+      status: "accepted",
+      respondedAt: new Date().toISOString(),
+    });
     sampleTradeCache.set(id, trade);
     return Promise.resolve(trade);
   }
-  return callCreate(`${API}/trades/${encodeURIComponent(id)}/accept`, {})
-    .then((data) => TradeOfferSchema.parse(data));
+  return callCreate(`${API}/trades/${encodeURIComponent(id)}/accept`, {}).then((data) => TradeOfferSchema.parse(data));
 };
 
 export const callCancelTrade = (id) => {
   if (useCache()) {
     const current = sampleTradeCache.get(id) || sampleTrade(id);
-    const trade = TradeOfferSchema.parse({ ...current, status: 'cancelled', respondedAt: new Date().toISOString() });
+    const trade = TradeOfferSchema.parse({
+      ...current,
+      status: "cancelled",
+      respondedAt: new Date().toISOString(),
+    });
     sampleTradeCache.set(id, trade);
     return Promise.resolve(trade);
   }
-  return callCreate(`${API}/trades/${encodeURIComponent(id)}/cancel`, {})
-    .then((data) => TradeOfferSchema.parse(data));
+  return callCreate(`${API}/trades/${encodeURIComponent(id)}/cancel`, {}).then((data) => TradeOfferSchema.parse(data));
 };
 
 // ---------------------------------------------------------------------------

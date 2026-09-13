@@ -58,7 +58,7 @@ describe('GeneratorPage, signed out', () => {
 		await waitFor(() => expect(dbApi.callShowroomXalian).toHaveBeenCalledTimes(1));
 		expect(dbApi.callGenerateXalian).not.toHaveBeenCalled();
 
-		expect(await screen.findByText('Showroom creature')).toBeInTheDocument();
+		expect(await screen.findByText('Unowned preview')).toBeInTheDocument();
 		expect(screen.getByRole('button', { name: 'Sign in to generate' })).toBeInTheDocument();
 		expect(screen.getByRole('heading', { level: 2, name: 'Graviclaw' })).toBeInTheDocument();
 	});
@@ -79,7 +79,7 @@ describe('GeneratorPage, signed out', () => {
 
 		await waitFor(() => expect(dbApi.callShowroomXalian).toHaveBeenCalledTimes(1));
 		expect(dbApi.callGenerateXalian).not.toHaveBeenCalled();
-		expect(await screen.findByText('Showroom creature')).toBeInTheDocument();
+		expect(await screen.findByText('Unowned preview')).toBeInTheDocument();
 	});
 });
 
@@ -100,12 +100,12 @@ describe('GeneratorPage, signed in', () => {
 		await waitFor(() => expect(dbApi.callShowroomXalian).toHaveBeenCalledTimes(1));
 		const button = await screen.findByRole('button', { name: 'Generate another' });
 
-		await waitFor(() => expect(screen.queryByText('Showroom creature')).toBeInTheDocument());
+		await waitFor(() => expect(screen.queryByText('Unowned preview')).toBeInTheDocument());
 		button.click();
 
 		await waitFor(() => expect(dbApi.callGenerateXalian).toHaveBeenCalledTimes(1));
 		expect(await screen.findByText('Kept')).toBeInTheDocument();
-		expect(screen.queryByText('Showroom creature')).not.toBeInTheDocument();
+		expect(screen.queryByText('Unowned preview')).not.toBeInTheDocument();
 		expect(screen.getByRole('link', { name: 'See your Xalians' })).toHaveAttribute('href', '/account');
 	});
 });
