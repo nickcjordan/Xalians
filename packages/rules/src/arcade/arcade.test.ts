@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   applyArtilleryShot,
+  artilleryMovedX,
   chooseArtilleryBotShot,
   applyRelayMove,
   applySweepAction,
@@ -72,8 +73,41 @@ describe('Arcade deterministic rules', () => {
     const impactX = Math.round(shell.outcome.impact!.x);
 
     expect(bore.state.terrain[impactX]).toBeLessThan(shell.state.terrain[impactX]);
-    expect(barb.state.terrain.filter((height, index) => height !== state.terrain[index]).length)
-      .toBeGreaterThan(shell.state.terrain.filter((height, index) => height !== state.terrain[index]).length);
+    expect(shell.outcome.projectiles).toHaveLength(1);
+    expect(barb.outcome.projectiles).toHaveLength(3);
+    expect(barb.state.terrain).not.toEqual(shell.state.terrain);
+    expect(bore.outcome.path.at(-1)!.y).toBeLessThan(bore.outcome.path.at(-2)!.y);
+  });
+
+  it('holds wind through a volley so the reply preserves ranging information', () => {
+    const initial = createArtilleryState('stable-volley');
+    const left = applyArtilleryShot(initial, { angle: 45, power: 62 });
+    expect(left.state.wind).toBe(initial.wind);
+    expect(left.state.rngState).toBe(initial.rngState);
+
+    const right = applyArtilleryShot(left.state, { angle: 45, power: 62 });
+    expect(right.state.rngState).not.toBe(initial.rngState);
+  });
+
+  it('previews and commits two tactical crawler moves without mutating the field', () => {
+    const initial = createArtilleryState('crawler-movement');
+    const originalX = initial.tanks.left.x;
+    expect(artilleryMovedX(initial, 'left', 1)).toBe(originalX + 4);
+    expect(initial.tanks.left.x).toBe(originalX);
+
+    const first = applyArtilleryShot(initial, { angle: 45, power: 62, move: 1 });
+    expect(first.state.tanks.left.x).toBe(originalX + 4);
+    expect(first.state.traction.left).toBe(1);
+
+    const leftAgain = { ...first.state, current: 'left' as const };
+    const second = applyArtilleryShot(leftAgain, { angle: 45, power: 62, move: -1 });
+    expect(second.state.tanks.left.x).toBe(originalX);
+    expect(second.state.traction.left).toBe(0);
+
+    const exhausted = { ...second.state, current: 'left' as const };
+    const third = applyArtilleryShot(exhausted, { angle: 45, power: 62, move: 1 });
+    expect(third.state.tanks.left.x).toBe(originalX);
+    expect(third.state.traction.left).toBe(0);
   });
 
   it('replays an artillery win that uses every payload', () => {
