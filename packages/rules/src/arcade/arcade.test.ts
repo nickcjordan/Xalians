@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   applyArtilleryShot,
+  chooseArtilleryBotShot,
   applyRelayMove,
   applySweepAction,
   createArtilleryState,
@@ -45,6 +46,62 @@ describe('Arcade deterministic rules', () => {
       );
       expect(canHit, `${seed} should have a reachable opening shot`).toBe(true);
     }
+  });
+
+  it('spends limited artillery payloads and falls back to a core shell when empty', () => {
+    const initial = createArtilleryState('payload-stock');
+    const first = applyArtilleryShot(initial, { angle: 45, power: 70, payload: 'barb' });
+    expect(first.outcome.payload).toBe('barb');
+    expect(first.state.payloads.left.barb).toBe(1);
+
+    const leftAgain = { ...first.state, current: 'left' as const };
+    const second = applyArtilleryShot(leftAgain, { angle: 45, power: 70, payload: 'barb' });
+    expect(second.state.payloads.left.barb).toBe(0);
+
+    const empty = { ...second.state, current: 'left' as const };
+    const fallback = applyArtilleryShot(empty, { angle: 45, power: 70, payload: 'barb' });
+    expect(fallback.outcome.payload).toBe('shell');
+    expect(fallback.state.payloads.left.barb).toBe(0);
+  });
+
+  it('gives artillery payloads distinct terrain effects', () => {
+    const state = createArtilleryState('payload-terrain');
+    const shell = applyArtilleryShot(state, { angle: 32, power: 54, payload: 'shell' });
+    const barb = applyArtilleryShot(state, { angle: 32, power: 54, payload: 'barb' });
+    const bore = applyArtilleryShot(state, { angle: 32, power: 54, payload: 'bore' });
+    const impactX = Math.round(shell.outcome.impact!.x);
+
+    expect(bore.state.terrain[impactX]).toBeLessThan(shell.state.terrain[impactX]);
+    expect(barb.state.terrain.filter((height, index) => height !== state.terrain[index]).length)
+      .toBeGreaterThan(shell.state.terrain.filter((height, index) => height !== state.terrain[index]).length);
+  });
+
+  it('replays an artillery win that uses every payload', () => {
+    const seed = '2026-09-13:artillery:v1';
+    const payloads = ['barb', 'bore', 'shell'] as const;
+    const actions = [];
+    let state = createArtilleryState(seed, 'bot');
+
+    for (const payload of payloads) {
+      let shot;
+      for (let angle = 10; angle <= 80 && !shot; angle += 1) {
+        for (let power = 15; power <= 100; power += 1) {
+          if (simulateArtilleryShot(state, { angle, power, payload }).hit === 'right') {
+            shot = { angle, power, payload };
+            break;
+          }
+        }
+      }
+      expect(shot).toBeDefined();
+      actions.push(shot!);
+      state = applyArtilleryShot(state, shot!).state;
+      if (state.phase === 'finished') break;
+      state = applyArtilleryShot(state, chooseArtilleryBotShot(state)).state;
+    }
+
+    expect(state.winner).toBe('left');
+    expect(verifyArcadeCompletion({ gameId: 'artillery', seed, actions })).toBe(true);
+    expect(verifyArcadeCompletion({ gameId: 'artillery', seed, actions: actions.slice(0, -1) })).toBe(false);
   });
 
   it('guarantees a safe first sweep reveal and is replayable', () => {
