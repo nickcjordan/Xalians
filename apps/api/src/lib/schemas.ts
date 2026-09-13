@@ -29,6 +29,49 @@ export const UpdateUserBodySchema = z.discriminatedUnion('action', [
 ]);
 export type UpdateUserBody = z.infer<typeof UpdateUserBodySchema>;
 
+const ArcadeSeedSchema = z.string().min(1).max(128);
+const ArcadeSessionSchema = z.string().min(8).max(128).regex(/^[a-zA-Z0-9:_-]+$/);
+const SolitaireSourceSchema = z.discriminatedUnion('zone', [
+  z.object({ zone: z.literal('waste') }),
+  z.object({ zone: z.literal('foundation'), suit: z.enum(['ember', 'tide', 'stone', 'signal']) }),
+  z.object({ zone: z.literal('tableau'), column: z.number().int().min(0).max(6), index: z.number().int().min(0).max(51) }),
+]);
+const SolitaireTargetSchema = z.discriminatedUnion('zone', [
+  z.object({ zone: z.literal('foundation'), suit: z.enum(['ember', 'tide', 'stone', 'signal']) }),
+  z.object({ zone: z.literal('tableau'), column: z.number().int().min(0).max(6) }),
+]);
+const SolitaireActionSchema = z.discriminatedUnion('type', [
+  z.object({ type: z.literal('draw') }),
+  z.object({ type: z.literal('move'), source: SolitaireSourceSchema, target: SolitaireTargetSchema }),
+]);
+
+// POST /arcade/complete. The client submits inputs, never a claimed score or reward;
+// the handler deterministically replays them before touching account value.
+export const ArcadeCompleteBodySchema = z.discriminatedUnion('gameId', [
+  z.object({
+    gameId: z.literal('artillery'), sessionId: ArcadeSessionSchema, seed: ArcadeSeedSchema,
+    actions: z.array(z.object({ angle: z.number().min(10).max(80), power: z.number().min(15).max(100) })).max(80),
+  }),
+  z.object({
+    gameId: z.literal('sweep'), sessionId: ArcadeSessionSchema, seed: ArcadeSeedSchema,
+    level: z.enum(['survey', 'field', 'frontier']),
+    actions: z.array(z.object({ type: z.enum(['reveal', 'flag']), index: z.number().int().min(0).max(479) })).max(600),
+  }),
+  z.object({
+    gameId: z.literal('relay'), sessionId: ArcadeSessionSchema, seed: ArcadeSeedSchema,
+    actions: z.array(z.enum(['up', 'down', 'left', 'right'])).max(5000),
+  }),
+  z.object({
+    gameId: z.literal('patience'), sessionId: ArcadeSessionSchema, seed: ArcadeSeedSchema,
+    drawCount: z.union([z.literal(1), z.literal(3)]), actions: z.array(SolitaireActionSchema).max(5000),
+  }),
+  z.object({
+    gameId: z.literal('match'), sessionId: ArcadeSessionSchema, seed: ArcadeSeedSchema,
+    actions: z.array(z.number().int().min(0).max(11)).max(1000),
+  }),
+]);
+export type ArcadeCompleteBody = z.infer<typeof ArcadeCompleteBodySchema>;
+
 // The showroom lever (issue #197, docs/design/xalians-platform-vision-and-economy.md
 // section 3): 'full' is the unconstrained generator, 'showroom' pins finish to standard,
 // drops rare trait outcomes and never rolls a secondary affinity. Shared by both routes

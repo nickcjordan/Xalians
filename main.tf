@@ -303,6 +303,28 @@ module "table_update_xalian_user_lambda_module" {
 
 #########################################################
 #####               LAMBDA INSTANCE                 #####
+##              Complete Arcade Session             ##
+#########################################################
+module "complete_arcade_lambda_module" {
+  source = "./terraform/modules/lambda"
+
+  function_name                   = "CompleteArcade"
+  lambda_handler_path             = "completeArcade/index.handler"
+  apigw_lambda_route_key          = "POST /arcade/complete"
+  lambda_bucket_id                = aws_s3_bucket.lambda_bucket.id
+  lambda_bucket_object_key        = aws_s3_object.lambda_bucket_object.key
+  lambda_archive_file_output_hash = data.archive_file.lambda_zip_file.output_base64sha256
+  iam_role_arn                    = aws_iam_role.lambda_exec.arn
+  apigw_lambda_id                 = aws_apigatewayv2_api.lambda.id
+  base_apigw_lambda_execution_arn = aws_apigatewayv2_api.lambda.execution_arn
+  authorization_type              = "JWT"
+  authorizer_id                   = aws_apigatewayv2_authorizer.cognito.id
+}
+#####                                               #####
+#########################################################
+
+#########################################################
+#####               LAMBDA INSTANCE                 #####
 ##          Generate Registry Xalian Lambda (D1)       ##
 #########################################################
 module "generate_registry_xalian_lambda_module" {

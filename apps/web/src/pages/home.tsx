@@ -46,9 +46,9 @@ const DESTINATIONS = [
 		to: '/reclamation',
 	},
 	{
-		name: 'Training',
-		copy: 'Short games to learn the pieces before the arena.',
-		to: '/train',
+		name: 'Arcade',
+		copy: 'Familiar games that turn a quick win into progress toward another Xalian.',
+		to: '/arcade',
 	},
 ];
 

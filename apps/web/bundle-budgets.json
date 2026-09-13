@@ -1,7 +1,7 @@
 {
   "_meta": {
-    "measuredAt": "React 19.3 and React Router 8.3 runtime migration based on 440a3dd593319a20c1d1223e249289307a417e75",
-    "measuredOn": "2026-09-11",
+    "measuredAt": "Xalians Arcade production build after retiring Training Grounds",
+    "measuredOn": "2026-09-13",
     "policy": "Initial limits and route limits are the measured production output after removing the developer styleguide, rounded up with approximately five percent headroom. Update a limit only with measured evidence and review."
   },
   "forbiddenProductionEntries": [
@@ -22,9 +22,12 @@
     "duelPlaygroundPage": { "javascript": { "raw": 1247000, "gzip": 358000 }, "stylesheets": { "raw": 96000, "gzip": 20000 } },
     "reclamationPage": { "javascript": { "raw": 1162000, "gzip": 343000 }, "stylesheets": { "raw": 163000, "gzip": 28000 } },
     "longReturnPage": { "javascript": { "raw": 280000, "gzip": 83000 }, "stylesheets": { "raw": 233000, "gzip": 42000 } },
-    "trainingGroundsPage": { "javascript": { "raw": 262000, "gzip": 105000 }, "stylesheets": { "raw": 63000, "gzip": 14000 } },
-    "matchCardGamePage": { "javascript": { "raw": 147000, "gzip": 58000 }, "stylesheets": { "raw": 63000, "gzip": 14000 } },
-    "physicsGamePage": { "javascript": { "raw": 236000, "gzip": 96000 }, "stylesheets": { "raw": 63000, "gzip": 14000 } },
+    "arcadePage": { "javascript": { "raw": 16000, "gzip": 7500 }, "stylesheets": { "raw": 0, "gzip": 0 } },
+    "artilleryGamePage": { "javascript": { "raw": 32500, "gzip": 13900 }, "stylesheets": { "raw": 0, "gzip": 0 } },
+    "solitaireGamePage": { "javascript": { "raw": 22700, "gzip": 10100 }, "stylesheets": { "raw": 0, "gzip": 0 } },
+    "hazardSweepGamePage": { "javascript": { "raw": 17200, "gzip": 8400 }, "stylesheets": { "raw": 0, "gzip": 0 } },
+    "relayMergeGamePage": { "javascript": { "raw": 17400, "gzip": 8700 }, "stylesheets": { "raw": 0, "gzip": 0 } },
+    "arcadeMatchGamePage": { "javascript": { "raw": 27500, "gzip": 10800 }, "stylesheets": { "raw": 0, "gzip": 0 } },
     "userAccountPage": { "javascript": { "raw": 1117000, "gzip": 324000 }, "stylesheets": { "raw": 0, "gzip": 0 } },
     "userDetailsPage": { "javascript": { "raw": 1059000, "gzip": 302000 }, "stylesheets": { "raw": 0, "gzip": 0 } },
     "notFoundPage": { "javascript": { "raw": 1000, "gzip": 1000 }, "stylesheets": { "raw": 0, "gzip": 0 } },

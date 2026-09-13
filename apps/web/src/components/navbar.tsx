@@ -24,7 +24,7 @@ const NAV_LINKS = [
 	{ href: '/duel', label: 'Duel' },
 	{ href: '/reclamation', label: 'Reclamation' },
 	{ href: '/long-return', label: 'Expedition' },
-	{ href: '/train', label: 'Training' },
+	{ href: '/arcade', label: 'Arcade' },
 ];
 
 // The section links wear the tab underline mark without the tab "box":
