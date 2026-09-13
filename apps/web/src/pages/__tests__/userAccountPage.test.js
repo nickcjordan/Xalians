@@ -19,6 +19,7 @@ const auth = vi.hoisted(() => ({
 }));
 const db = vi.hoisted(() => ({
 	callListXalians: vi.fn(),
+	callListTrades: vi.fn(),
 	callReleaseXalian: vi.fn(),
 }));
 const hub = vi.hoisted(() => ({ listen: vi.fn(() => vi.fn()) }));
@@ -43,6 +44,7 @@ function renderPage() {
 beforeEach(() => {
 	vi.clearAllMocks();
 	db.callListXalians.mockResolvedValue({ items: [], nextCursor: undefined });
+	db.callListTrades.mockResolvedValue({ items: [] });
 });
 
 describe('account auth integration', () => {
