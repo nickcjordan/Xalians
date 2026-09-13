@@ -4,6 +4,7 @@ import {
   ARTILLERY_HEIGHT,
   ARTILLERY_MAX_INTEGRITY,
   ARTILLERY_MAX_TRACTION,
+  ARTILLERY_MOVE_DISTANCE,
   ARTILLERY_PAYLOAD_RULES,
   ARTILLERY_WIDTH,
   applyArtilleryShot,
@@ -48,9 +49,9 @@ const PAYLOAD_META: Record<ArtilleryPayload, {
   glyph: string;
   elementClass: string;
 }> = {
-  shell: { label: 'Core shell', shortLabel: 'Core', detail: 'One round · balanced surface blast · unlimited', purpose: 'Precise', glyph: '●', elementClass: 'el-metal' },
-  barb: { label: 'Barb fan', shortLabel: 'Fan', detail: 'Three Codazzo barbs · broad coverage · 2', purpose: '3-way spread', glyph: '⋰', elementClass: 'el-rock' },
-  bore: { label: 'Bore charge', shortLabel: 'Bore', detail: 'Drilltail penetrator · underground blast · 2', purpose: 'Burrows', glyph: '◆', elementClass: 'el-sand' },
+  shell: { label: 'Core shell', shortLabel: 'Core', detail: 'Single surface round · unlimited', purpose: 'Best for precise ranging', glyph: '●', elementClass: 'el-metal' },
+  barb: { label: 'Barb fan', shortLabel: 'Fan', detail: 'Three projectiles spread in flight · 2 charges', purpose: 'Forgiving when range is uncertain', glyph: '⋰', elementClass: 'el-rock' },
+  bore: { label: 'Bore charge', shortLabel: 'Bore', detail: 'Detonates below the surface · 2 charges', purpose: 'Reaches through protective terrain', glyph: '◆', elementClass: 'el-sand' },
 };
 
 const BARREL_LENGTH = 4.2;
@@ -75,22 +76,50 @@ export function artilleryBarrelEndpoint(
   };
 }
 
-function FireControl({ label, value, suffix = '', min, max, disabled, onChange }: {
+export function FireControl({ label, value, suffix = '', min, max, disabled, guidance, onChange }: {
   label: string;
   value: number;
   suffix?: string;
   min: number;
   max: number;
   disabled: boolean;
+  guidance: string;
   onChange: (value: number) => void;
 }) {
+  const adjust = (amount: number) => onChange(Math.max(min, Math.min(max, value + amount)));
   return (
-    <div className="grid gap-2">
-      <span className="flex justify-between type-legend"><span>{label}</span><span className="type-data">{value}{suffix}</span></span>
-      <div className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2">
-        <Button type="button" size="icon-sm" variant="secondary" disabled={disabled || value <= min} aria-label={`Decrease ${label.toLowerCase()}`} onClick={() => onChange(Math.max(min, value - 1))}>−</Button>
-        <Slider value={[value]} min={min} max={max} step={1} disabled={disabled} onValueChange={([next]: number[]) => onChange(next)} aria-label={`Firing ${label.toLowerCase()}`} />
-        <Button type="button" size="icon-sm" variant="secondary" disabled={disabled || value >= max} aria-label={`Increase ${label.toLowerCase()}`} onClick={() => onChange(Math.min(max, value + 1))}>+</Button>
+    <div className="grid gap-3 border border-edge bg-s0 p-3">
+      <div className="flex items-end justify-between gap-3">
+        <div>
+          <span className="type-legend">{label}</span>
+          <p className="mt-1 mb-0 font-body text-tiny text-ink-3">{guidance}</p>
+        </div>
+        <output className="font-mono text-heading leading-none text-ink" aria-live="polite">{value}{suffix}</output>
+      </div>
+      <Slider
+        value={[value]}
+        min={min}
+        max={max}
+        step={1}
+        disabled={disabled}
+        onValueChange={([next]: number[]) => onChange(next)}
+        aria-label={`Firing ${label.toLowerCase()}`}
+        className="h-6 [&_[data-slot=slider-track]]:h-2 [&_[data-slot=slider-thumb]]:size-6"
+      />
+      <div className="grid grid-cols-2 gap-2" aria-label={`${label} fine adjustment`}>
+        {[-1, 1].map((amount) => (
+          <Button
+            key={amount}
+            type="button"
+            size="sm"
+            variant="secondary"
+            disabled={disabled || value + amount < min || value + amount > max}
+            aria-label={`${amount < 0 ? 'Decrease' : 'Increase'} ${label.toLowerCase()} by ${Math.abs(amount)}`}
+            onClick={() => adjust(amount)}
+          >
+            {amount > 0 ? `+${amount}` : `−${Math.abs(amount)}`}
+          </Button>
+        ))}
       </div>
     </div>
   );
@@ -272,6 +301,16 @@ function ArtilleryBoard({ seed, mode, onStatus, onComplete, onRematch }: {
     : referenceShot?.shooter === state.current
       ? `Correct from the ${referenceShotLabel?.toLowerCase() ?? 'last impact'} above; the wind changed only after the rival reply.`
       : 'Watch the rival impact, then use movement if its next correction threatens your shelf.';
+  const angleGuidance = angle < 35 ? 'Low, flatter arc' : angle < 60 ? 'Balanced arc' : 'High arc for ridges';
+  const powerGuidance = power < 45 ? 'Shorter range' : power < 75 ? 'Medium range' : 'Longer range';
+  const windAssists = state.wind !== 0 && (state.current === 'left' ? state.wind > 0 : state.wind < 0);
+  const windLabel = state.wind === 0
+    ? 'Still air'
+    : `${state.wind > 0 ? '→' : '←'} ${Math.abs(state.wind)} · ${windAssists ? 'helps shot' : 'fights shot'}`;
+  const moveGuidance = move === 0
+    ? 'Fire from the current position. No movement charge spent.'
+    : `${move === 1 ? 'Advance toward' : 'Retreat from'} the rival by ${ARTILLERY_MOVE_DISTANCE} units before firing. Spends 1 move.`;
+  const shotPosition = move === 1 ? 'advance' : move === -1 ? 'retreat' : 'hold';
 
   const tank = (side: 'left' | 'right') => {
     const value = state.tanks[side];
@@ -389,7 +428,7 @@ function ArtilleryBoard({ seed, mode, onStatus, onComplete, onRematch }: {
   };
 
   return (
-    <div className="grid min-w-0 gap-4 lg:grid-cols-[minmax(0,1fr)_340px]">
+    <div className="grid min-w-0 gap-4 lg:grid-cols-[minmax(0,1fr)_380px]">
       <section aria-label="Artillery field" className="min-w-0 self-start border border-edge bg-glass">
         <svg viewBox={`0 0 ${ARTILLERY_WIDTH} ${ARTILLERY_HEIGHT}`} className="block aspect-[5/3] w-full" role="img" aria-label="Codazzo and Terragoyle crawler batteries on destructible terrain">
           <rect width={ARTILLERY_WIDTH} height={ARTILLERY_HEIGHT} className="fill-s0" />
@@ -486,15 +525,22 @@ function ArtilleryBoard({ seed, mode, onStatus, onComplete, onRematch }: {
       </section>
 
       <aside className="flex min-w-0 flex-col gap-4 border border-edge bg-s1 p-4">
-        <div className="flex items-center justify-between gap-3">
-          <Badge variant={state.phase === 'finished' ? 'ok' : state.current === 'left' ? 'warn' : 'info'}>
-            {state.phase === 'finished' ? `${CREWS[state.winner!].name} won` : `${CREWS[state.current].name} turn`}
-          </Badge>
-          <div className="flex items-center gap-2">
+        <div className="grid gap-3 border-b border-edge pb-3">
+          <div className="flex items-center justify-between gap-3">
+            <Badge variant={state.phase === 'finished' ? 'ok' : state.current === 'left' ? 'warn' : 'info'}>
+              {state.phase === 'finished' ? `${CREWS[state.winner!].name} won` : `${CREWS[state.current].name} turn`}
+            </Badge>
+            <span className="type-data">Volley {Math.floor(state.turn / 2) + 1}</span>
+          </div>
+          <div className="flex items-center justify-between gap-3">
+            <div>
+              <p className="type-legend m-0">Wind</p>
+              <p className="mt-1 mb-0 font-body text-small text-ink-2">{windLabel}</p>
+            </div>
             <Button
               type="button"
-              size="xs"
-              variant="ghost"
+              size="sm"
+              variant="secondary"
               aria-pressed={soundOn}
               onClick={() => {
                 const next = !soundOn;
@@ -503,34 +549,31 @@ function ArtilleryBoard({ seed, mode, onStatus, onComplete, onRematch }: {
                 onStatus(`Artillery sound ${next ? 'enabled' : 'muted'}.`);
               }}
             >
-              Sound {soundOn ? 'on' : 'off'}
+              Audio: {soundOn ? 'On' : 'Off'}
             </Button>
-            <span className="type-data">Wind {state.wind > 0 ? `→ ${state.wind}` : state.wind < 0 ? `← ${Math.abs(state.wind)}` : 'still'}</span>
           </div>
         </div>
         {state.phase !== 'finished' && (
           <React.Fragment>
-            <div className="flex items-center justify-between gap-3 border-y border-edge py-2">
-              <p className="m-0 font-body text-small text-ink-2">Disable the rival battery with three hits. Wind holds for both shots in a volley.</p>
-              <span className="type-data shrink-0">Volley {Math.floor(state.turn / 2) + 1}</span>
-            </div>
-            <div className="grid grid-cols-2 gap-3">
+            <p className="m-0 font-body text-small text-ink-2">Land three hits before the rival battery disables your crawler. Wind stays fixed through both shots in this volley.</p>
+            <div className="grid grid-cols-2 gap-2" aria-label="Battery integrity">
               {(['left', 'right'] as const).map((side) => (
-                <div key={side} className="border border-edge bg-s0 p-3">
-                  <div className="mb-2 flex items-center gap-2">
+                <div key={side} className="flex min-w-0 items-center gap-2 border border-edge bg-s0 p-2">
+                  <div className="flex items-center gap-2">
                     <XalianImage
                       variant="token"
                       speciesName={CREWS[side].name}
                       primaryType={CREWS[side].type}
                       colored
-                      moreClasses="size-12 shrink-0"
+                      moreClasses="size-9 shrink-0"
                     />
-                    <p className="type-legend m-0">{CREWS[side].name}{mode === 'bot' && side === 'right' ? ' · Bot' : ''}</p>
+                    <div className="min-w-0">
+                      <p className="type-legend m-0 truncate">{CREWS[side].name}{mode === 'bot' && side === 'right' ? ' · Bot' : ''}</p>
+                      <span className="mt-1 flex gap-1" aria-label={`${state.tanks[side].integrity} of ${ARTILLERY_MAX_INTEGRITY} integrity`}>
+                        {Array.from({ length: ARTILLERY_MAX_INTEGRITY }, (_, index) => <span key={index} className={`size-2 border border-edge-strong ${index < state.tanks[side].integrity ? 'bg-viable-hi' : 'bg-s2'}`} />)}
+                      </span>
+                    </div>
                   </div>
-                  <p className="mt-1 mb-0 font-body text-small text-ink-2">{CREWS[side].role}</p>
-                  <span className="mt-2 flex gap-1" aria-label={`${state.tanks[side].integrity} of ${ARTILLERY_MAX_INTEGRITY} integrity`}>
-                    {Array.from({ length: ARTILLERY_MAX_INTEGRITY }, (_, index) => <span key={index} className={`size-2 border border-edge-strong ${index < state.tanks[side].integrity ? 'bg-viable-hi' : 'bg-s2'}`} />)}
-                  </span>
                 </div>
               ))}
             </div>
@@ -576,23 +619,23 @@ function ArtilleryBoard({ seed, mode, onStatus, onComplete, onRematch }: {
           </div>
         ) : (
           <React.Fragment>
-            <div className="grid grid-cols-2 gap-3 border border-edge bg-s0 p-3" aria-label="Fire control">
-              <FireControl label="Angle" value={angle} suffix="°" min={10} max={80} disabled={!canFire} onChange={setAngle} />
-              <FireControl label="Power" value={power} min={15} max={100} disabled={!canFire} onChange={setPower} />
-            </div>
-            <div className="grid gap-2" role="group" aria-label="Crawler position">
-              <span className="flex justify-between type-legend"><span>Track position</span><span className="type-data">{state.traction[state.current]} / {ARTILLERY_MAX_TRACTION} moves</span></span>
+            <div className="grid gap-2" role="group" aria-label="Position before firing">
+              <span className="flex items-end justify-between gap-3 type-legend">
+                <span><b className="mr-2 text-viable-hi">1</b> Position <span className="text-ink-3">· optional</span></span>
+                <span className="type-data">{state.traction[state.current]} moves left</span>
+              </span>
               <div className="grid grid-cols-3 gap-2">
                 {([
-                  { value: -1 as const, label: 'Withdraw' },
-                  { value: 0 as const, label: 'Hold' },
-                  { value: 1 as const, label: 'Advance' },
+                  { value: -1 as const, label: 'Retreat', marker: `${ARTILLERY_MOVE_DISTANCE} away` },
+                  { value: 0 as const, label: 'Hold', marker: 'No move' },
+                  { value: 1 as const, label: 'Advance', marker: `${ARTILLERY_MOVE_DISTANCE} closer` },
                 ]).map((choice) => (
                   <Button
                     key={choice.value}
                     type="button"
                     size="sm"
-                    variant={move === choice.value ? 'outline' : 'ghost'}
+                    variant="ghost"
+                    className={`h-auto min-w-0 flex-col gap-1 border px-2 py-2.5 ${move === choice.value ? 'border-viable-lo bg-viable-tint text-viable-hi' : 'border-edge bg-s0'}`}
                     disabled={!canFire || (choice.value !== 0 && state.traction[state.current] <= 0)}
                     aria-pressed={move === choice.value}
                     onClick={() => {
@@ -601,26 +644,36 @@ function ArtilleryBoard({ seed, mode, onStatus, onComplete, onRematch }: {
                       onStatus(choice.value === 0 ? 'Crawler will hold position.' : `Crawler will ${choice.label.toLowerCase()} before firing. The guide has moved with it.`);
                     }}
                   >
-                    {choice.label}
+                    <span>{choice.label}</span>
+                    <span className="font-body text-tiny normal-case tracking-normal text-ink-3">{choice.marker}</span>
                   </Button>
                 ))}
               </div>
+              <p className="m-0 font-body text-small text-ink-2">{moveGuidance}</p>
             </div>
-            <div className="grid gap-2" role="group" aria-label="Payload">
-              <span className="type-legend">Payload pattern</span>
+
+            <div className="grid grid-cols-2 gap-2" aria-label="Aim the shot">
+              <span className="col-span-2 type-legend"><b className="mr-2 text-viable-hi">2</b> Aim</span>
+              <FireControl label="Angle" value={angle} suffix="°" min={10} max={80} disabled={!canFire} guidance={angleGuidance} onChange={setAngle} />
+              <FireControl label="Power" value={power} min={15} max={100} disabled={!canFire} guidance={powerGuidance} onChange={setPower} />
+            </div>
+
+            <div className="grid gap-2" role="group" aria-label="Choose a payload">
+              <span className="type-legend"><b className="mr-2 text-viable-hi">3</b> Payload</span>
               <div className="grid grid-cols-3 gap-2">
                 {(Object.keys(PAYLOAD_META) as ArtilleryPayload[]).map((choice) => {
                   const remaining = payloadRemaining(state.current, choice);
                   const unavailable = remaining <= 0;
+                  const selected = payload === choice;
                   return (
                     <Button
                       key={choice}
                       type="button"
                       size="sm"
-                      variant={payload === choice ? 'outline' : 'ghost'}
+                      variant="ghost"
                       disabled={!canFire || unavailable}
-                      aria-pressed={payload === choice}
-                      className="h-auto min-w-0 flex-col gap-0.5 px-1 py-2"
+                      aria-pressed={selected}
+                      className={`h-auto min-w-0 flex-col gap-1 border px-2 py-2.5 ${selected ? 'border-viable-lo bg-viable-tint text-viable-hi' : 'border-edge bg-s0'}`}
                       onClick={() => {
                         sound.play('select');
                         setPayload(choice);
@@ -628,22 +681,29 @@ function ArtilleryBoard({ seed, mode, onStatus, onComplete, onRematch }: {
                       }}
                     >
                       <span className={`text-body text-el ${PAYLOAD_META[choice].elementClass}`} aria-hidden>{PAYLOAD_META[choice].glyph}</span>
-                      <span>{PAYLOAD_META[choice].shortLabel} <span className="type-data text-ink-2">{choice === 'shell' ? '∞' : remaining}</span></span>
-                      <span className="font-body text-tiny normal-case tracking-normal text-ink-3">{PAYLOAD_META[choice].purpose}</span>
+                      <span>{PAYLOAD_META[choice].shortLabel}</span>
+                      <span className="font-body text-tiny normal-case tracking-normal text-ink-2">{choice === 'shell' ? 'Unlimited' : `${remaining} left`}</span>
                     </Button>
                   );
                 })}
               </div>
-              <p className="m-0 font-body text-small text-ink-2">{PAYLOAD_META[payload].detail}</p>
+              <p className="m-0 border-l-2 border-viable-lo pl-3 font-body text-small text-ink-2"><strong className="text-ink">{PAYLOAD_META[payload].label}:</strong> {PAYLOAD_META[payload].purpose.toLowerCase()}. {PAYLOAD_META[payload].detail}.</p>
             </div>
-            <Button type="button" disabled={!canFire} onClick={() => animateShot({ angle, power, payload, move })}>Fire {PAYLOAD_META[payload].shortLabel}</Button>
+
+            <Button
+              type="button"
+              size="lg"
+              className="h-auto w-full flex-col gap-1 py-3"
+              disabled={!canFire}
+              onClick={() => animateShot({ angle, power, payload, move })}
+            >
+              <span>Fire {PAYLOAD_META[payload].shortLabel}</span>
+              <span className="font-body text-small normal-case tracking-normal opacity-80">{angle}° angle · {power} power · {shotPosition}</span>
+            </Button>
           </React.Fragment>
         )}
-        {state.phase !== 'finished' && (
-          <div className="mt-auto border-t border-edge pt-3">
-            <p className="type-legend m-0">{state.turn === 0 ? 'Opening order' : 'Range note'}</p>
-            <p className="mt-1 mb-0 font-body text-small text-ink-2">{rangeNote}</p>
-          </div>
+        {state.phase !== 'finished' && referenceShot && (
+          <p className="m-0 border-t border-edge pt-3 font-body text-small text-ink-2">{rangeNote}</p>
         )}
       </aside>
     </div>
