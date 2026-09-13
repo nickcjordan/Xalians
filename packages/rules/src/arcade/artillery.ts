@@ -42,6 +42,7 @@ export type ArtilleryState = {
 export const ARTILLERY_WIDTH = 100;
 export const ARTILLERY_HEIGHT = 60;
 export const ARTILLERY_MAX_INTEGRITY = 3;
+const ARTILLERY_SPEED_SCALE = 0.2;
 
 function buildTerrain(seed: string): { terrain: number[]; rngState: number } {
   let rngState = hashSeed(`${seed}:terrain`);
@@ -105,7 +106,7 @@ export function simulateArtilleryShot(state: ArtilleryState, input: ArtillerySho
   const target = state.tanks[targetSide];
   const direction = state.current === 'left' ? 1 : -1;
   const radians = (shot.angle * Math.PI) / 180;
-  const speed = shot.power * 0.165;
+  const speed = shot.power * ARTILLERY_SPEED_SCALE;
   let x = shooter.x + direction * 1.8;
   let y = terrainHeight(state.terrain, shooter.x) + 3.2;
   let vx = Math.cos(radians) * speed * direction;

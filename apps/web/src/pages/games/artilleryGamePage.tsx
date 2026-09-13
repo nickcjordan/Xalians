@@ -7,6 +7,7 @@ import {
   applyArtilleryShot,
   chooseArtilleryBotShot,
   createArtilleryState,
+  simulateArtilleryShot,
   terrainHeight,
   type ArtilleryMode,
   type ArtilleryOutcome,
@@ -25,6 +26,23 @@ const GAME = arcadeGame('artillery')!;
 
 type AnimatedShot = { outcome: ArtilleryOutcome; pointIndex: number } | null;
 
+const BARREL_LENGTH = 4.2;
+const AIM_PREVIEW_POINTS = 14;
+
+export function artilleryBarrelEndpoint(
+  x: number,
+  y: number,
+  side: 'left' | 'right',
+  angle: number,
+) {
+  const radians = (angle * Math.PI) / 180;
+  const direction = side === 'left' ? 1 : -1;
+  return {
+    x: x + Math.cos(radians) * BARREL_LENGTH * direction,
+    y: y - Math.sin(radians) * BARREL_LENGTH,
+  };
+}
+
 function ArtilleryBoard({ seed, mode, onStatus, onComplete }: {
   seed: string;
   mode: ArtilleryMode;
@@ -34,6 +52,7 @@ function ArtilleryBoard({ seed, mode, onStatus, onComplete }: {
   const [state, setState] = React.useState<ArtilleryState>(() => createArtilleryState(seed, mode));
   const [angle, setAngle] = React.useState(45);
   const [power, setPower] = React.useState(70);
+  const [settledAim, setSettledAim] = React.useState<Record<'left' | 'right', number>>({ left: 45, right: 45 });
   const [animated, setAnimated] = React.useState<AnimatedShot>(null);
   const pendingTimers = React.useRef<number[]>([]);
   const completed = React.useRef(false);
@@ -44,6 +63,7 @@ function ArtilleryBoard({ seed, mode, onStatus, onComplete }: {
 
   const animateShot = React.useCallback((shot: ArtilleryShot) => {
     if (animated || state.phase !== 'aiming') return;
+    setSettledAim((current) => ({ ...current, [state.current]: shot.angle }));
     if (mode === 'bot' && state.current === 'left') actions.current.push({ angle: Math.round(shot.angle), power: Math.round(shot.power) });
     const applied = applyArtilleryShot(state, shot);
     const path = applied.outcome.path;
@@ -97,15 +117,30 @@ function ArtilleryBoard({ seed, mode, onStatus, onComplete }: {
   const projectile = animated?.outcome.path[animated.pointIndex];
   const visiblePath = animated?.outcome.path.slice(0, animated.pointIndex + 1) ?? [];
   const canFire = !animated && state.phase === 'aiming' && (mode === 'local' || state.current === 'left');
+  const aimPreview = React.useMemo(
+    () => canFire ? simulateArtilleryShot(state, { angle, power }).path.slice(0, AIM_PREVIEW_POINTS) : [],
+    [angle, canFire, power, state],
+  );
 
   const tank = (side: 'left' | 'right') => {
     const value = state.tanks[side];
     const y = ARTILLERY_HEIGHT - terrainHeight(state.terrain, value.x) - 1.5;
+    const displayAngle = canFire && state.current === side ? angle : settledAim[side];
+    const barrel = artilleryBarrelEndpoint(value.x, y - 1.8, side, displayAngle);
     return (
       <g className={side === 'left' ? 'el-fire' : 'el-water'} aria-label={`${side} crawler, ${value.integrity} integrity`}>
         <rect x={value.x - 2.5} y={y - 1.1} width="5" height="2.2" className="fill-el stroke-black" strokeWidth="0.35" />
         <circle cx={value.x} cy={y - 1.1} r="1.25" className="fill-el stroke-black" strokeWidth="0.35" />
-        <line x1={value.x} y1={y - 1.8} x2={value.x + (side === 'left' ? 3 : -3)} y2={y - 3.7} className="stroke-ink" strokeWidth="0.55" />
+        <line
+          x1={value.x}
+          y1={y - 1.8}
+          x2={barrel.x}
+          y2={barrel.y}
+          className="stroke-ink"
+          strokeWidth="0.65"
+          data-testid={`artillery-barrel-${side}`}
+          data-angle={displayAngle}
+        />
       </g>
     );
   };
@@ -116,6 +151,15 @@ function ArtilleryBoard({ seed, mode, onStatus, onComplete }: {
         <svg viewBox={`0 0 ${ARTILLERY_WIDTH} ${ARTILLERY_HEIGHT}`} className="block aspect-[5/3] w-full" role="img" aria-label="Two crawler tanks on destructible terrain">
           <rect width={ARTILLERY_WIDTH} height={ARTILLERY_HEIGHT} className="fill-s0" />
           <path d={terrainPath} className="fill-s2 stroke-ink-3" strokeWidth="0.3" />
+          {aimPreview.length > 1 && (
+            <polyline
+              points={aimPreview.map((point) => `${point.x},${ARTILLERY_HEIGHT - point.y}`).join(' ')}
+              className="fill-none stroke-viable-hi opacity-50"
+              strokeWidth="0.3"
+              strokeDasharray="1 1.4"
+              data-testid="artillery-aim-preview"
+            />
+          )}
           {tank('left')}{tank('right')}
           {visiblePath.length > 1 && <polyline points={visiblePath.map((point) => `${point.x},${ARTILLERY_HEIGHT - point.y}`).join(' ')} className="fill-none stroke-ink-2" strokeWidth="0.25" strokeDasharray="1 1" />}
           {projectile && <circle cx={projectile.x} cy={ARTILLERY_HEIGHT - projectile.y} r="0.7" className="fill-viable-hi" />}
@@ -155,7 +199,7 @@ function ArtilleryBoard({ seed, mode, onStatus, onComplete }: {
             <Button type="button" disabled={!canFire} onClick={() => animateShot({ angle, power })}>Fire</Button>
           </React.Fragment>
         )}
-        <p className="m-0 mt-auto font-body text-small text-ink-2">Shots arc with gravity and wind. Near impacts cause the same damage as a direct hit.</p>
+        <p className="m-0 mt-auto font-body text-small text-ink-2">The short guide previews your launch. Shots arc with gravity and wind; near impacts cause the same damage as a direct hit.</p>
       </aside>
     </div>
   );
