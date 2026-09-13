@@ -61,7 +61,7 @@ export const ARTILLERY_WIDTH = 100;
 export const ARTILLERY_HEIGHT = 60;
 export const ARTILLERY_MAX_INTEGRITY = 3;
 export const ARTILLERY_MAX_TRACTION = 2;
-export const ARTILLERY_MOVE_DISTANCE = 4;
+export const ARTILLERY_MOVE_DISTANCE = 8;
 export const ARTILLERY_PAYLOAD_RULES: Record<ArtilleryPayload, {
   blastRadius: number;
   craterRadius: number;
