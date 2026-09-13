@@ -3,7 +3,7 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 
-import { FireControl, artilleryBarrelEndpoint } from '../pages/games/artilleryGamePage';
+import { CommandMeter, artilleryBarrelEndpoint } from '../pages/games/artilleryGamePage';
 
 class ResizeObserverStub {
   observe() {}
@@ -34,9 +34,9 @@ describe('Crater Command aim feedback', () => {
 
   it('offers explicit one-step corrections with a readable value and guidance', async () => {
     const onChange = vi.fn();
-    render(createElement(FireControl, {
+    render(createElement(CommandMeter, {
       label: 'Angle', value: 45, suffix: '°', min: 10, max: 80,
-      disabled: false, guidance: 'Balanced arc', onChange,
+      disabled: false, guidance: 'Balanced arc', decreaseKey: 'S', increaseKey: 'W', onChange,
     }));
 
     expect(screen.getByText('45°')).toBeInTheDocument();

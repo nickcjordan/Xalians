@@ -92,11 +92,11 @@ describe('Arcade deterministic rules', () => {
   it('previews and commits two tactical crawler moves without mutating the field', () => {
     const initial = createArtilleryState('crawler-movement');
     const originalX = initial.tanks.left.x;
-    expect(artilleryMovedX(initial, 'left', 1)).toBe(originalX + 4);
+    expect(artilleryMovedX(initial, 'left', 1)).toBe(originalX + 8);
     expect(initial.tanks.left.x).toBe(originalX);
 
     const first = applyArtilleryShot(initial, { angle: 45, power: 62, move: 1 });
-    expect(first.state.tanks.left.x).toBe(originalX + 4);
+    expect(first.state.tanks.left.x).toBe(originalX + 8);
     expect(first.state.traction.left).toBe(1);
 
     const leftAgain = { ...first.state, current: 'left' as const };
