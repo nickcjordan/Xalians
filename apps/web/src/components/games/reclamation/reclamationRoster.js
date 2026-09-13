@@ -128,7 +128,7 @@ export function RosterSlot({
 						{slot.state === 'downed' && <span className="rec-slot-tag rec-slot-tag--downed">downed</span>}
 						{slot.state === 'away' && <span className="rec-slot-tag">away</span>}
 						{inHand && suggested && <span className="rec-slot-tag rec-slot-tag--suggested">suggested</span>}
-						{inHand && stealthy && <span className="rec-slot-tag rec-slot-tag--stealthy" title="Can be sent hidden">stealthy</span>}
+						{inHand && stealthy && <span className="rec-slot-tag rec-slot-tag--stealthy" title="Arrives hidden">stealthy</span>}
 					</span>
 					{(!simple || !inHand || !holds) && <BaseHoldRow value={baseHold(record)} />}
 					{simple && inHand && holds && holdsAgree(holds) && <HoldHere h={holds[0]} />}

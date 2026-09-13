@@ -244,20 +244,30 @@ describe('Deploy phase: send/pass/alternation', () => {
 		}
 	});
 
-	test('hidden send is only legal for a stealthy creature', () => {
-		let state = freshMatch('stealth-seed');
+	// pass 4b (assumption 27): hiding is not a choice. A stealthy creature arrives hidden,
+	// everyone else arrives in the open, and the fifth argument is ignored either way.
+	test('a stealthy creature arrives hidden, a non-stealthy one arrives open, whatever the fifth argument says', () => {
+		const state = freshMatch('stealth-seed');
 		const starter = state.starter;
 		const frame = currentFrame(state);
+		const siteId = frame.sites[0].id;
 		const nonStealthId = state.players[starter].roster[0].id;
-		expect(send(state, starter, nonStealthId, frame.sites[0].id, true)).toBeNull();
+		// asking to hide a non-stealthy creature is no longer illegal; it just arrives open
+		const openAnyway = send(state, starter, nonStealthId, siteId, true)!;
+		expect(openAnyway).not.toBeNull();
+		expect(openAnyway.board[siteId][starter][0].hidden).toBe(false);
 
 		const stealthyRoster = makeRoster('S', () => ({ traits: { guaranteed: [], rolled: ['stealthy'] } }));
 		const stealthState = createMatch({ rosterA: stealthyRoster, rosterB: makeRoster('B'), worlds: makeWorlds(), seed: 'stealth-seed-2' });
-		const stealthStarter = stealthState.starter;
-		if (stealthStarter === 'A') {
-			const next = send(stealthState, 'A', stealthyRoster[0].id, currentFrame(stealthState).sites[0].id, true)!;
-			expect(next).not.toBeNull();
-			expect(next.board[currentFrame(stealthState).sites[0].id].A[0].hidden).toBe(true);
+		if (stealthState.starter === 'A') {
+			const stealthSite = currentFrame(stealthState).sites[0].id;
+			// no fifth argument at all, and it still arrives hidden
+			const arrived = send(stealthState, 'A', stealthyRoster[0].id, stealthSite)!;
+			expect(arrived).not.toBeNull();
+			expect(arrived.board[stealthSite].A[0].hidden).toBe(true);
+			// and asking for an open send does not get one
+			const asked = send(stealthState, 'A', stealthyRoster[0].id, stealthSite, false)!;
+			expect(asked.board[stealthSite].A[0].hidden).toBe(true);
 		}
 	});
 
@@ -1281,21 +1291,24 @@ describe('rules ablation switches', () => {
 		expect(view.rules.magnitudeScale).toBe(2);
 	});
 
-	it('hiddenSends false makes a hidden send illegal even for a stealthy creature', () => {
+	it('under hiddenSends false a stealthy creature arrives open', () => {
 		const state = matchWithRules({ hiddenSends: false }, stealthyRoster);
 		const handler = state.turn!;
 		const site = currentFrame(state).sites[0].id;
 		const recordId = `${handler}_0`;
-		expect(send(state, handler, recordId, site, true)).toBeNull();
-		// the same creature sent openly is still perfectly legal
-		expect(send(state, handler, recordId, site, false)).not.toBeNull();
+		// the ablation takes concealment out of the game rather than making a send illegal
+		const sent = send(state, handler, recordId, site, true)!;
+		expect(sent).not.toBeNull();
+		expect(sent.board[site][handler][0].hidden).toBe(false);
 	});
 
-	it('hiddenSends true (the default) still allows a stealthy hidden send', () => {
+	it('hiddenSends true (the default) has a stealthy creature arrive hidden', () => {
 		const state = matchWithRules({}, stealthyRoster);
 		const handler = state.turn!;
 		const site = currentFrame(state).sites[0].id;
-		expect(send(state, handler, `${handler}_0`, site, true)).not.toBeNull();
+		const sent = send(state, handler, `${handler}_0`, site)!;
+		expect(sent).not.toBeNull();
+		expect(sent.board[site][handler][0].hidden).toBe(true);
 	});
 
 
@@ -1667,14 +1680,24 @@ describe('pass 3: the price of hiding (assumption 21), kept as levers since pass
 		const siteId = currentFrame(state).sites[0].id;
 		const forced = { ...state, turn: 'A' } as MatchState;
 
-		const openSend = send(forced, 'A', rosterA[0].id, siteId, false)!;
-		expect(openSend.players.A.sentCount).toBe(1);
-
-		const hiddenSend = send(forced, 'A', rosterA[0].id, siteId, true)!;
+		// pass 4b: this roster is stealthy, so every one of its sends arrives hidden and
+		// pays the hidden price. The open baseline is an ordinary creature.
+		const hiddenSend = send(forced, 'A', rosterA[0].id, siteId)!;
 		expect(hiddenSend.players.A.sentCount).toBe(2);
+		expect(hiddenSend.board[siteId].A[0].hidden).toBe(true);
+
+		const plain = makeRoster('P');
+		const openState = createMatch({
+			rosterA: plain, rosterB: makeRoster('B'), worlds: makeWorlds(), seed: 'hidden-cost-seed',
+			rules: { hiddenSendCost: 2 },
+		});
+		const openSend = send({ ...openState, turn: 'A' } as MatchState, 'A', plain[0].id, siteId, false)!;
+		expect(openSend.players.A.sentCount).toBe(1);
 	});
 
-	test('a hidden send the remaining cap cannot afford is illegal, but the open send is not', () => {
+	test('a stealthy creature the remaining cap cannot afford is unsendable, while a non-stealthy one still goes', () => {
+		// since pass 4b the price follows the creature rather than a choice, so a stealthy
+		// creature under a raised hiddenSendCost has no cheaper open send to fall back on
 		const rosterA = stealthyRosterOf('S');
 		let state = createMatch({
 			rosterA, rosterB: makeRoster('B'), worlds: makeWorlds(), seed: 'hidden-cap-seed',
@@ -1684,7 +1707,16 @@ describe('pass 3: the price of hiding (assumption 21), kept as levers since pass
 		// one unit of the cap left
 		state = { ...state, turn: 'A', players: { ...state.players, A: { ...state.players.A, sentCount: SENDABLE - 1 } } };
 		expect(send(state, 'A', rosterA[0].id, siteId, true)).toBeNull();
-		expect(send(state, 'A', rosterA[0].id, siteId, false)).not.toBeNull();
+		expect(send(state, 'A', rosterA[0].id, siteId, false)).toBeNull();
+
+		// the same board with an ordinary creature: one unit is enough
+		const plain = makeRoster('P');
+		let openState = createMatch({
+			rosterA: plain, rosterB: makeRoster('B'), worlds: makeWorlds(), seed: 'hidden-cap-seed',
+			rules: { hiddenSendCost: 2 },
+		});
+		openState = { ...openState, turn: 'A', players: { ...openState.players, A: { ...openState.players.A, sentCount: SENDABLE - 1 } } };
+		expect(send(openState, 'A', plain[0].id, siteId, false)).not.toBeNull();
 	});
 
 	test('a returned creature sent hidden pays the larger of the two prices, not their sum', () => {
@@ -1699,14 +1731,16 @@ describe('pass 3: the price of hiding (assumption 21), kept as levers since pass
 			turn: 'A',
 			players: { ...state.players, A: { ...state.players.A, returned: [rosterA[0].id] } },
 		};
-		const sent = send(state, 'A', rosterA[0].id, siteId, true)!;
+		const sent = send(state, 'A', rosterA[0].id, siteId)!;
 		expect(sent.players.A.sentCount).toBe(2);
 	});
 
 	test('hiddenPower scales an attack thrown from hiding and leaves an open attack alone', () => {
-		function powerOfFirstAttack(hiddenPower: any, hidden: any) {
+		// pass 4b: whether the attack comes from hiding is decided by the creature's own
+		// traits, so the open variants use a non-stealthy attacker rather than a flag
+		function powerOfFirstAttack(hiddenPower: any, stealthy: any) {
 			const attacker = makeRecord('att', {
-				traits: { guaranteed: ['stealthy'], rolled: [] },
+				traits: { guaranteed: stealthy ? ['stealthy'] : [], rolled: [] },
 				attributes: { strength: 90, vitality: 60, endurance: 60, agility: 90, reflex: 90, intelligence: 50, willpower: 20, instinct: 50, charisma: 50, resilience: 60 },
 			});
 			const rosterA = makeRoster('A').map((r: any, i: any) => (i === 0 ? { ...attacker, id: 'A_0' } : r));
@@ -1716,7 +1750,7 @@ describe('pass 3: the price of hiding (assumption 21), kept as levers since pass
 			});
 			const siteId = currentFrame(state).sites[0].id;
 			state = { ...state, turn: 'A' };
-			state = send(state, 'A', 'A_0', siteId, hidden)!;
+			state = send(state, 'A', 'A_0', siteId)!;
 			state = { ...state, turn: 'B' };
 			state = send(state, 'B', state.players.B.roster[0].id, siteId, false)!;
 			state = pass(state, 'A')!;

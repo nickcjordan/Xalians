@@ -401,25 +401,24 @@ describe('pass 3: the new ablation rows', () => {
 	});
 });
 
-describe('pass 4: the read (assumption 24)', () => {
-	it('is one of the report sections, renders, and reports concealment rather than gauging it', () => {
+describe('pass 4: the read (assumption 24; pass 4b, assumption 27)', () => {
+	it('is one of the report sections and renders, with the hiding rows gone', () => {
 		expect(ALL_SECTIONS).toContain('read');
 		const report = runValidation({ matches: MATCHES, seed: SEED, only: ['read'] });
-		expect(report.read.rows.map((r: any) => r.id)).toEqual(['anticipation', 'blind', 'sharpRead', 'alwaysHidden', 'neverHides', 'alwaysHiddenVsBlind']);
+		// pass 4b: concealment is no longer a policy choice, so the only thing left to
+		// read is the read itself
+		expect(report.read.rows.map((r: any) => r.id)).toEqual(['anticipation', 'blind', 'sharpRead']);
 		report.read.rows.forEach((r: any) => {
 			expect(r.rate).toBeTruthy();
 			expect(r.rate.p).toBeGreaterThanOrEqual(0);
 			expect(r.rate.p).toBeLessThanOrEqual(1);
 		});
-		expect(report.read.readings.some((line: any) => line.includes('Concealment against the bot'))).toBe(true);
 		const sections = buildSections(report);
 		expect(sections.map((x: any) => x.id)).toContain('read');
 		expect(toMarkdown(report)).toContain('8. The read');
 	});
 
-	it('the always-hidden regret row is reported, never flagged', () => {
-		const report = runValidation({ matches: MATCHES, seed: SEED, only: ['regret'] });
-		const row = report.regret.rows.find((r: any) => r.id === 'alwaysHidden');
-		expect(row.flag).toBe('reported only (pass 4)');
+	it('no policy hides by choice any more', () => {
+		expect(NAIVE_POLICIES.map((p: any) => p.id)).not.toContain('alwaysHidden');
 	});
 });

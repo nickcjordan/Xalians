@@ -216,6 +216,20 @@ Nick's brief: hiding had become "a concept that is getting a little too out of p
 
 **Ladder** (400 to 1000 matches, three seeds): envoy 41, heir 47, proctor 48, broker 48.5, windsailor 50.5.
 
+## Pass 4b: hiding is a trait (2026-09-13)
+
+Nick, on the question pass 4 left open: "I'm fine with either direction, whatever you think is better for the game mechanics." The trait is better. A choice with no downside is not a choice: hiding costs nothing and can only help, the reading bot already hid every stealthy creature it sent, and never hiding cost it about seven points on three seeds at 1000 matches. Keeping the toggle would have been one more control on the bench that a handler must learn and then always leave on. So a stealthy creature arrives hidden, a non-stealthy one in the open, and the send call's hidden argument is ignored. The stealthy trait now says exactly one thing on the card ("arrives hidden") and the base rule "no synonyms, basics first" is served.
+
+What went with it: the bot's hide decision (`hideBias`, `concealmentValue`, `priceHiding`), the always-hidden naive policy and the never-hides comparison in the validation tool (there is no policy left to compare), and the bench toggle with its price. What stayed: the `hiddenSends` ablation (every creature arrives open), the pass 3 price levers as ablation rows, the read, and the broker's taste for stealthy creatures in the draft, which is now the whole of its "hides and baits" habit.
+
+| # | Assumption / Decision | Confidence | Supporting Evidence |
+|---|---|---|---|
+| 27 | Hiding is a trait: a stealthy creature arrives hidden, there is no toggle | 80% (the choice measured degenerate; Nick delegated the call) | rulebook assumption 61; Pass 4 measurements |
+
+### Pass 4b measurements (2026-09-13)
+
+Validation seed 7, 200 matches, after the change (`reclamation-validation-report.md`): proctor mirror 46.5; greedy 0, always-stack 0, never-contest 0, random 2, pass-early 22, presence-first 28; the always-hidden row is gone because there is no policy to write. Decided after round 1 45, comeback 31.1, resolution changes the leader at 13.4 percent of contested worlds, downs per match 1.44. The read: proctor against no anticipation 74.0, against blind 87.0, sharp read against the even spread 41.5. Nothing here is a rules effect: the bot already sent every stealthy creature hidden, so the numbers move only by the seed's noise. Friction found while building (recorded as a lever consequence): with the flag derived, a stealthy creature has exactly one price, so under the `hidingPriced` ablation row (`hiddenSendCost` 2) a stealthy creature with one cap unit left is unsendable rather than sendable in the open; `sendableRoster` and `hasLegalSend` price it consistently so the harness is never handed an illegal send. At the shipped setting (cost 1) nothing differs.
+
 ## Open items
 
 - Whether menacing should merge into shield (a weaker cousin that draws rather than cancels).

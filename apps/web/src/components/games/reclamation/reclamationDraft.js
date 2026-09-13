@@ -72,7 +72,7 @@ function DraftCard({ record, frames, kept, onToggle }) {
 			</span>
 			<span className="rec-draft-best g-mono">{formatHold(bestRow.hold)} <span className="rec-draft-best-planet">{bestRow.planet}</span></span>
 			{isStealthy && (
-				<span className="rec-draft-stealthy" title="Stealthy: can be sent hidden">
+				<span className="rec-draft-stealthy" title="Stealthy: arrives hidden">
 					<HiddenGlyph />
 				</span>
 			)}

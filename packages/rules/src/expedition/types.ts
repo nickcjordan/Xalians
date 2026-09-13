@@ -346,8 +346,6 @@ export interface RivalWeights {
 	minSendValue: number;
 	overspendAllowance: number;
 	nearWindow: number;
-	hideBias: number;
-	concealmentValue: number;
 	baitPass: number;
 	stakeEagerness: number;
 }
@@ -363,7 +361,8 @@ export interface Rival {
 	weights?: Partial<RivalWeights>;
 }
 
-// scoreSends' per-(creature, site) candidate; the priceHiding fields are spread onto it
+// scoreSends' per-(creature, site) candidate. The hiding fields it used to carry went with
+// the hide decision itself in pass 4b (assumption 27): a stealthy creature arrives hidden.
 export interface SendCandidate {
 	record: XalianRecord;
 	site: FrameSite;
@@ -375,9 +374,6 @@ export interface SendCandidate {
 	roleValue: number;
 	effect: number;
 	role: Role;
-	hideValue: number;
-	hideCost: number;
-	hideAffordable: boolean;
 }
 
 export interface ScoredSends {
