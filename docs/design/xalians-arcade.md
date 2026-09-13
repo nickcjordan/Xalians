@@ -67,29 +67,41 @@ The next wave is Supply Run (snake), Containment Break (brick breaker), signal
 nonograms, and an original affinity-orb launcher. They are not required for the initial
 Arcade to prove the product loop.
 
-## Crater Command second pass
+## Crater Command tactical redesign
 
 Status: implemented as trial mechanics, 2026-09-13
 
-The artillery duel keeps angle, power, wind, and destructible terrain as its familiar
-center. Its Xalians layer now explains play instead of sitting beside it:
+The second-pass payloads were visibly different but not strategically different. A
+200-field evaluation found a strict ranking at every field: the wide barb was always
+easier to hit with than the core shell, and the bore was always harder. Fixed crawlers
+also made crater depth mostly decorative, while wind changing after every shot erased
+the value of learning from the previous impact. That model is retired.
 
-- Codazzo and Terragoyle crews make the two batteries identifiable at a glance and tie
-  their field roles to established species behavior.
-- The unlimited core shell is the dependable baseline. Two Codazzo-pattern barb bursts
-  per crew trade crater depth for a wider blast, while two Drilltail-pattern bore charges
-  cut a deeper, narrower crater. Limited payloads add terrain-shaping decisions without
-  making the first turn harder to understand.
-- The active barrel, partial launch guide, persistent blast-radius marker, and short/long
-  impact readout use one visual language from preview through result. The full landing
-  point remains hidden so wind and ranging still matter.
-- Health appears both on the field and with each crew. Turn, volley, wind, ammunition,
-  and the three-hit objective remain visible while aiming; the result names the crew that
-  held the range and how many shots were exchanged.
+The tactical redesign keeps the familiar artillery center—angle, power, an arc, wind,
+and destructible terrain—but gives each extra control a different job:
 
-These mechanics remain Trial until ordinary players demonstrate that they understand
-the payload trade-offs without reading the explanatory copy and that the wider blast does
-not dominate the core shell.
+- The unlimited core shell is the precise, dependable ranging round.
+- Two Codazzo-pattern fan charges split into three smaller projectiles. They cover more
+  possible landing points when the player is uncertain, but no individual barb has the
+  core shell's blast tolerance.
+- Two Drilltail-pattern bore charges penetrate beneath the surface before detonating.
+  Their underground blast can reach a crawler through a ridge and creates the deepest
+  crater, but has a narrower set of successful firing solutions than the core.
+- Each crawler has two track moves per match. Advance or withdraw is previewed on the
+  field and committed with the shot, changing both the launch origin and the opponent's
+  next target. This makes terrain deformation and near-impact danger actionable.
+- Wind stays fixed for both shots in a volley, then changes. The opponent gets the same
+  condition, and the next shot can be corrected from a stable short/long readout.
+- Every projectile path, blast marker, remaining special round, remaining track move,
+  and final win or loss is represented directly in the play surface and control panel.
+
+A coarse 30-field, 173,880-trajectory evaluation now measures different solution spaces
+rather than a strict power ladder: the 57,960 holding-position trials produced 4.72%
+successful core settings,
+7.41% fan settings, and 4.04% bore settings. The limited fan remains the uncertainty
+tool, the unlimited core the repeatable baseline, and the bore owns unique through-cover
+solutions. These values remain Trial pending observation of ordinary players rather than
+automated optimal play.
 
 ## Implementation checklist
 

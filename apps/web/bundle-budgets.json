@@ -23,7 +23,7 @@
     "reclamationPage": { "javascript": { "raw": 1162000, "gzip": 343000 }, "stylesheets": { "raw": 163000, "gzip": 28000 } },
     "longReturnPage": { "javascript": { "raw": 280000, "gzip": 83000 }, "stylesheets": { "raw": 233000, "gzip": 42000 } },
     "arcadePage": { "javascript": { "raw": 16000, "gzip": 7500 }, "stylesheets": { "raw": 0, "gzip": 0 } },
-    "artilleryGamePage": { "javascript": { "raw": 52000, "gzip": 19500 }, "stylesheets": { "raw": 0, "gzip": 0 } },
+    "artilleryGamePage": { "javascript": { "raw": 54000, "gzip": 19500 }, "stylesheets": { "raw": 0, "gzip": 0 } },
     "solitaireGamePage": { "javascript": { "raw": 22700, "gzip": 10100 }, "stylesheets": { "raw": 0, "gzip": 0 } },
     "hazardSweepGamePage": { "javascript": { "raw": 17200, "gzip": 8400 }, "stylesheets": { "raw": 0, "gzip": 0 } },
     "relayMergeGamePage": { "javascript": { "raw": 17400, "gzip": 8700 }, "stylesheets": { "raw": 0, "gzip": 0 } },
