@@ -42,6 +42,7 @@ type AnimatedShot = {
   phase: 'move' | 'charge' | 'flight' | 'impact';
   shooter: ArtillerySide;
   shot: Required<ArtilleryShot>;
+  terrainAfter: number[];
 } | null;
 type AnimatedMove = { side: ArtillerySide; fromX: number; toX: number; progress: number } | null;
 type CombatStats = {
@@ -55,13 +56,16 @@ type CombatStats = {
 
 const CREATURES: Record<ArtilleryCreature, {
   name: string;
+  title: string;
+  doctrine: string;
+  glyph: string;
   ability: string;
   abilityShort: string;
   system: Exclude<ArtillerySystem, 'none'>;
   detail: string;
 }> = {
-  codazzo: { name: 'Codazzo', ability: 'Root Carapace', abilityShort: 'Repair 12 · Guard 22', system: 'anchor', detail: 'Repairs 12 hull now and blocks up to 22 damage from the next hit.' },
-  terragoyle: { name: 'Terragoyle', ability: 'Lift Veil', abilityShort: 'Guard 18 · Soft landing', system: 'lift', detail: 'Blocks up to 18 damage from the next hit and halves terrain-collapse damage.' },
+  codazzo: { name: 'Codazzo', title: 'Regenerative siege crew', doctrine: 'Recover and endure', glyph: '✤', ability: 'Root Carapace', abilityShort: 'Repair 12 · Guard 22', system: 'anchor', detail: 'Repairs 12 hull now and blocks up to 22 damage from the next hit.' },
+  terragoyle: { name: 'Terragoyle', title: 'Levitation range crew', doctrine: 'Defy collapse', glyph: '◇', ability: 'Lift Veil', abilityShort: 'Guard 18 · Soft landing', system: 'lift', detail: 'Blocks up to 18 damage from the next hit and halves terrain-collapse damage.' },
 } as const;
 
 const CONDITION_SHORT = {
@@ -137,6 +141,16 @@ export function artilleryAimFromDrag(
   return { angle, power };
 }
 
+export function artilleryImpactTerrainFrame(
+  before: readonly number[],
+  after: readonly number[],
+  progress: number,
+): number[] {
+  const clamped = Math.max(0, Math.min(1, progress));
+  const eased = 1 - Math.pow(1 - clamped, 3);
+  return before.map((height, index) => height + ((after[index] ?? height) - height) * eased);
+}
+
 export function artilleryFlightFrameIndex(pathLength: number, longestPath: number, progress: number) {
   if (pathLength <= 1 || longestPath <= 1) return 0;
   return Math.min(pathLength - 1, Math.floor(Math.max(0, Math.min(1, progress)) * (longestPath - 1)));
@@ -204,7 +218,7 @@ export function CommandMeter({ label, value, suffix = '', min, max, disabled, gu
   );
 }
 
-export function ArtilleryBoard({ seed, mode, difficulty, playerCreature, onStatus, onComplete, onRematch, onChangeCreature }: {
+export function ArtilleryBoard({ seed, mode, difficulty, playerCreature, onStatus, onComplete, onRematch }: {
   seed: string;
   mode: ArtilleryMode;
   difficulty: ArtilleryDifficulty;
@@ -212,7 +226,6 @@ export function ArtilleryBoard({ seed, mode, difficulty, playerCreature, onStatu
   onStatus: (status: string) => void;
   onComplete: (result: { score: number; actions: ArtilleryAction[] }) => void;
   onRematch: () => void;
-  onChangeCreature: () => void;
 }) {
   const [state, setState] = React.useState<ArtilleryState>(() => createArtilleryState(seed, mode, difficulty, playerCreature));
   const [angle, setAngle] = React.useState(45);
@@ -294,7 +307,7 @@ export function ArtilleryBoard({ seed, mode, difficulty, playerCreature, onStatu
     }
 
     const frameState = (phase: NonNullable<AnimatedShot>['phase'], progress: number) => {
-      setAnimated({ outcome: applied.outcome, progress, phase, shooter: state.current, shot: resolvedShot });
+      setAnimated({ outcome: applied.outcome, progress, phase, shooter: state.current, shot: resolvedShot, terrainAfter: applied.state.terrain });
     };
     const runPhase = (phase: NonNullable<AnimatedShot>['phase'], frames: number, delay: number, done: () => void) => {
       if (reduced) {
@@ -408,16 +421,22 @@ export function ArtilleryBoard({ seed, mode, difficulty, playerCreature, onStatu
     if (state.systemCharges[state.current] <= 0 && system !== 'none') setSystem('none');
   }, [payload, state.coreAmmo, state.current, state.payloads, state.systemCharges, system]);
 
+  const displayTerrain = React.useMemo(
+    () => animated?.phase === 'impact'
+      ? artilleryImpactTerrainFrame(state.terrain, animated.terrainAfter, animated.progress)
+      : state.terrain,
+    [animated, state.terrain],
+  );
   const terrainPath = React.useMemo(() => {
-    const points = state.terrain.map((height, x) => `L ${x} ${ARTILLERY_HEIGHT - height}`).join(' ');
+    const points = displayTerrain.map((height, x) => `L ${x} ${ARTILLERY_HEIGHT - height}`).join(' ');
     return `M 0 ${ARTILLERY_HEIGHT} ${points} L ${ARTILLERY_WIDTH} ${ARTILLERY_HEIGHT} Z`;
-  }, [state.terrain]);
+  }, [displayTerrain]);
   const terrainContours = React.useMemo(() => [4, 8].map((offset) =>
-    state.terrain.filter((_, x) => x % 2 === 0).map((height, index) => {
+    displayTerrain.filter((_, x) => x % 2 === 0).map((height, index) => {
       const x = index * 2;
       return `${index === 0 ? 'M' : 'L'} ${x} ${Math.min(ARTILLERY_HEIGHT, ARTILLERY_HEIGHT - height + offset)}`;
     }).join(' ')
-  ), [state.terrain]);
+  ), [displayTerrain]);
   const distantTerrainPath = React.useMemo(() => {
     const ridge = state.terrain.filter((_, x) => x % 4 === 0).map((height, index) => {
       const x = index * 4;
@@ -625,7 +644,7 @@ export function ArtilleryBoard({ seed, mode, difficulty, playerCreature, onStatu
       : animatedMove !== 0
         ? value.x + (movementTargetX - value.x) * (1 - Math.pow(1 - animated!.progress, 3))
         : value.x;
-    const y = ARTILLERY_HEIGHT - terrainHeight(state.terrain, displayX) - 1.5;
+    const y = ARTILLERY_HEIGHT - terrainHeight(displayTerrain, displayX) - 1.5;
     const displayAngle = canFire && state.current === side ? angle : settledAim[side];
     const barrel = artilleryBarrelEndpoint(displayX, y - 1.8, side, displayAngle);
     const creatureId = state.creatures[side];
@@ -892,24 +911,48 @@ export function ArtilleryBoard({ seed, mode, difficulty, playerCreature, onStatu
               )}
             </g>
           ))}
-          {impactFrames.map((impact, index) => (
-            <g key={index} className={activePayloadMeta.elementClass} aria-hidden>
-              {activePayload === 'bore' && <line x1={impact.x} y1={ARTILLERY_HEIGHT - impact.y - ARTILLERY_PAYLOAD_RULES.bore.penetration} x2={impact.x} y2={ARTILLERY_HEIGHT - impact.y} className="stroke-el opacity-80" strokeWidth="0.65" strokeDasharray="0.5 0.35" />}
-              <circle cx={impact.x} cy={ARTILLERY_HEIGHT - impact.y} r={ARTILLERY_PAYLOAD_RULES[activePayload].blastRadius * (0.4 + (animated?.progress ?? 0) * 1.35)} className="fill-el opacity-10" />
-              <circle cx={impact.x} cy={ARTILLERY_HEIGHT - impact.y} r={ARTILLERY_PAYLOAD_RULES[activePayload].blastRadius * (0.2 + (animated?.progress ?? 0) * 0.72)} className="fill-el opacity-30" />
-              <circle cx={impact.x} cy={ARTILLERY_HEIGHT - impact.y} r={ARTILLERY_PAYLOAD_RULES[activePayload].blastRadius * Math.min(1, (animated?.progress ?? 0) * 2)} className="fill-none stroke-el" strokeWidth="0.55" />
-              {[0, 45, 90, 135, 180, 225, 270, 315].map((degrees) => {
-                const radians = degrees * Math.PI / 180;
-                const inner = ARTILLERY_PAYLOAD_RULES[activePayload].blastRadius * 0.45;
-                const outer = ARTILLERY_PAYLOAD_RULES[activePayload].blastRadius * (index % 2 ? 1.18 : 1.05);
-                return <line key={degrees} x1={impact.x + Math.cos(radians) * inner} y1={ARTILLERY_HEIGHT - impact.y + Math.sin(radians) * inner} x2={impact.x + Math.cos(radians) * outer} y2={ARTILLERY_HEIGHT - impact.y + Math.sin(radians) * outer} className="stroke-el" strokeWidth="0.38" />;
-              })}
-            </g>
-          ))}
+          {impactFrames.map((impact, index) => {
+            const rules = ARTILLERY_PAYLOAD_RULES[activePayload];
+            const progress = animated?.progress ?? 0;
+            const shockwaveRadius = rules.blastRadius * (0.22 + progress * 0.78);
+            const terrainRadius = rules.craterRadius * Math.min(1, progress * 1.35);
+            const flashOpacity = Math.max(0.04, 0.34 * (1 - progress));
+            const rayOpacity = Math.max(0, 0.75 * (1 - progress * 1.4));
+            return (
+              <g key={index} className={activePayloadMeta.elementClass} aria-hidden>
+                {activePayload === 'bore' && <line x1={impact.x} y1={ARTILLERY_HEIGHT - impact.y - ARTILLERY_PAYLOAD_RULES.bore.penetration} x2={impact.x} y2={ARTILLERY_HEIGHT - impact.y} className="stroke-el opacity-80" strokeWidth="0.65" strokeDasharray="0.5 0.35" />}
+                <circle
+                  data-testid="artillery-impact-core"
+                  cx={impact.x}
+                  cy={ARTILLERY_HEIGHT - impact.y}
+                  r={terrainRadius}
+                  className="fill-el stroke-el"
+                  strokeWidth="0.34"
+                  style={{ opacity: flashOpacity }}
+                />
+                <circle
+                  data-testid="artillery-impact-shockwave"
+                  cx={impact.x}
+                  cy={ARTILLERY_HEIGHT - impact.y}
+                  r={shockwaveRadius}
+                  className="fill-none stroke-el"
+                  strokeWidth="0.24"
+                  strokeDasharray="0.75 0.48"
+                  style={{ opacity: Math.max(0.04, 0.38 * (1 - progress)) }}
+                />
+                {[0, 45, 90, 135, 180, 225, 270, 315].map((degrees) => {
+                  const radians = degrees * Math.PI / 180;
+                  const inner = rules.craterRadius * 0.18;
+                  const outer = rules.craterRadius * (index % 2 ? 0.82 : 0.68);
+                  return <line key={degrees} x1={impact.x + Math.cos(radians) * inner} y1={ARTILLERY_HEIGHT - impact.y + Math.sin(radians) * inner} x2={impact.x + Math.cos(radians) * outer} y2={ARTILLERY_HEIGHT - impact.y + Math.sin(radians) * outer} className="stroke-el" strokeWidth="0.34" style={{ opacity: rayOpacity }} />;
+                })}
+              </g>
+            );
+          })}
           {impactMoment && animated && animated.outcome.damage > 0 && (() => {
             const targetSide: ArtillerySide = animated.shooter === 'left' ? 'right' : 'left';
             const target = state.tanks[targetSide];
-            const targetY = ARTILLERY_HEIGHT - terrainHeight(state.terrain, target.x) - 8;
+            const targetY = ARTILLERY_HEIGHT - terrainHeight(displayTerrain, target.x) - 8;
             return (
               <g className={targetSide === 'left' ? 'el-fire' : 'el-water'} aria-hidden>
                 <text x={target.x} y={targetY} textAnchor="middle" className="fill-el font-mono" fontSize="2.2" fontWeight="700">−{animated.outcome.damage}</text>
@@ -1039,7 +1082,7 @@ export function ArtilleryBoard({ seed, mode, difficulty, playerCreature, onStatu
               <div className="grid min-w-0 gap-1 border border-edge p-2">
                 <span className="flex items-center justify-between gap-2 type-legend">
                   <span>{mode === 'local' ? 'Current creature' : state.current === 'right' && mode === 'bot' ? 'Rival creature' : 'Your creature'}</span>
-                  {mode !== 'local' && state.current === 'left' && <Button type="button" size="xs" variant="ghost" className="h-7 border border-edge px-2" disabled={!canFire} onClick={onChangeCreature}>Switch ↻</Button>}
+                  <span className="font-body text-[9px] normal-case tracking-normal text-ink-3">{currentCreature.doctrine}</span>
                 </span>
                 <div className="flex min-w-0 items-start justify-between gap-3">
                   <div className="min-w-0">
@@ -1084,12 +1127,84 @@ export function ArtilleryBoard({ seed, mode, difficulty, playerCreature, onStatu
   );
 }
 
+export function CreatureDeployment({ selected, mode, difficulty, onSelect, onDeploy }: {
+  selected: ArtilleryCreature;
+  mode: ArtilleryMode;
+  difficulty: ArtilleryDifficulty;
+  onSelect: (creature: ArtilleryCreature) => void;
+  onDeploy: () => void;
+}) {
+  const matchup = mode === 'bot'
+    ? `a ${difficulty} rival battery`
+    : mode === 'local'
+      ? 'a two-creature local duel'
+      : mode === 'range'
+        ? 'the six-shot calibration range'
+        : 'the five-round field trial';
+  const selectedCrew = CREATURES[selected];
+
+  return (
+    <section className="artillery-command mx-auto grid min-h-[34rem] w-full content-center gap-5 border border-edge-strong bg-s1 p-4 sm:p-7" aria-labelledby="creature-deployment-title">
+      <header className="mx-auto max-w-2xl text-center">
+        <p className="type-legend m-0 text-viable-hi">Creature deployment</p>
+        <h2 id="creature-deployment-title" className="type-heading mt-2 mb-0">Choose who commands your crawler</h2>
+        <p className="mt-2 mb-0 font-body text-small text-ink-2">This choice defines your defensive ability for the entire battle. You are deploying into {matchup}; your rival fields the other creature.</p>
+      </header>
+
+      <div className="mx-auto grid w-full max-w-4xl gap-3 md:grid-cols-2" role="radiogroup" aria-label="Creature crew">
+        {(Object.keys(CREATURES) as ArtilleryCreature[]).map((creatureId) => {
+          const creature = CREATURES[creatureId];
+          const chosen = selected === creatureId;
+          return (
+            <button
+              key={creatureId}
+              type="button"
+              role="radio"
+              aria-checked={chosen}
+              className={`group grid min-h-52 grid-cols-[4.5rem_minmax(0,1fr)] gap-4 border-2 p-4 text-left transition-[border-color,background-color,transform] hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-viable-hi ${chosen ? 'border-viable-hi bg-viable-tint' : 'border-edge-strong bg-s0 hover:border-ink-3'}`}
+              onClick={() => onSelect(creatureId)}
+            >
+              <span className={`grid size-[4.5rem] place-items-center border text-[2.5rem] ${creatureId === 'codazzo' ? 'el-plant border-el bg-viable-tint text-el' : 'el-air border-el bg-info-tint text-el'}`} aria-hidden>{creature.glyph}</span>
+              <span className="min-w-0">
+                <span className="flex items-start justify-between gap-3">
+                  <span>
+                    <strong className="block font-display text-heading uppercase tracking-display text-ink">{creature.name}</strong>
+                    <span className="block font-body text-tiny text-ink-3">{creature.title}</span>
+                  </span>
+                  <span className={`shrink-0 border px-2 py-1 font-legend text-[9px] uppercase tracking-legend ${chosen ? 'border-viable-hi text-viable-hi' : 'border-edge text-ink-3'}`}>{chosen ? 'Selected' : 'Choose'}</span>
+                </span>
+                <span className="mt-4 block border-l-2 border-current pl-3">
+                  <span className="block font-legend text-small uppercase tracking-legend text-ink">{creature.ability}</span>
+                  <span className="mt-1 block font-body text-small text-ink-2">{creature.detail}</span>
+                </span>
+                <span className="mt-4 flex items-center justify-between gap-3 font-body text-tiny text-ink-3">
+                  <span>{creature.doctrine}</span>
+                  <span className="font-mono text-ink-2">2 uses</span>
+                </span>
+              </span>
+            </button>
+          );
+        })}
+      </div>
+
+      <div className="mx-auto grid w-full max-w-xl gap-2 text-center">
+        <Button type="button" size="lg" className="min-h-16 border-2 border-viable-lo text-heading" onClick={onDeploy}>
+          Deploy {selectedCrew.name}
+        </Button>
+        <span className="font-body text-tiny text-ink-3">Locked for this battle · {selectedCrew.abilityShort}</span>
+      </div>
+    </section>
+  );
+}
+
 export default function ArtilleryGamePage() {
   const [mode, setMode] = React.useState<ArtilleryMode>('bot');
   const [difficulty, setDifficulty] = React.useState<ArtilleryDifficulty>('standard');
   const [playerCreature, setPlayerCreature] = React.useState<ArtilleryCreature>('codazzo');
+  const [draftCreature, setDraftCreature] = React.useState<ArtilleryCreature>('codazzo');
+  const [deploymentOpen, setDeploymentOpen] = React.useState(true);
   const [seed, setSeed] = React.useState(() => dailyArcadeSeed('artillery'));
-  const [status, setStatus] = React.useState('Drag up and outward on the battlefield to aim, then fire.');
+  const [status, setStatus] = React.useState('Choose the creature that will command your crawler.');
   const startedAt = React.useRef(performance.now());
   const sessionId = React.useRef(arcadeSessionId());
 
@@ -1098,6 +1213,8 @@ export default function ArtilleryGamePage() {
     setMode(nextMode);
     setDifficulty(nextDifficulty);
     setPlayerCreature(nextCreature);
+    setDraftCreature(nextCreature);
+    setDeploymentOpen(false);
     const briefing = nextMode === 'challenge'
       ? 'Five-round trial: disable the target with the limited field magazine.'
       : nextMode === 'range'
@@ -1110,6 +1227,14 @@ export default function ArtilleryGamePage() {
     sessionId.current = arcadeSessionId();
   }, [difficulty, mode, playerCreature]);
 
+  const openDeployment = React.useCallback((nextMode = mode, nextDifficulty = difficulty) => {
+    setMode(nextMode);
+    setDifficulty(nextDifficulty);
+    setDraftCreature(playerCreature);
+    setDeploymentOpen(true);
+    setStatus('Choose the creature that will command your crawler. The choice is locked for this battle.');
+  }, [difficulty, mode, playerCreature]);
+
   const complete = React.useCallback(async ({ score, actions }: { score: number; actions: ArtilleryAction[] }) => {
     setStatus('Match won. Verifying the firing record…');
     const reward = await completeArcadeGame('artillery', { gameId: 'artillery', sessionId: sessionId.current, seed, difficulty, creature: playerCreature, actions }, { score, timeMs: performance.now() - startedAt.current });
@@ -1117,7 +1242,7 @@ export default function ArtilleryGamePage() {
   }, [difficulty, playerCreature, seed]);
 
   return (
-    <ArcadeGameShell game={GAME} status={status} onNewGame={() => newGame()} aside={
+    <ArcadeGameShell game={GAME} status={status} onNewGame={() => openDeployment()} aside={
       <div className="flex gap-1" role="group" aria-label="Opponent">
         <Button
           size="xs"
@@ -1125,31 +1250,43 @@ export default function ArtilleryGamePage() {
           aria-label={`Bot mode. Difficulty ${difficulty}.`}
           title={mode === 'bot' ? 'Select again to cycle difficulty' : 'Play versus bot'}
           onClick={() => {
-            if (mode !== 'bot') newGame('bot');
+            if (mode !== 'bot') openDeployment('bot');
             else {
               const next: ArtilleryDifficulty = difficulty === 'rookie' ? 'standard' : difficulty === 'standard' ? 'expert' : 'rookie';
-              newGame('bot', next);
+              openDeployment('bot', next);
             }
           }}
         >
           Bot <span className="font-mono text-[9px]">{difficulty === 'rookie' ? 'I' : difficulty === 'standard' ? 'II' : 'III'}↻</span>
         </Button>
-        <Button size="xs" variant={mode === 'local' ? 'outline' : 'ghost'} onClick={() => newGame('local')}>Local</Button>
-        <Button size="xs" variant={mode === 'range' ? 'outline' : 'ghost'} onClick={() => newGame('range')}>Range</Button>
-        <Button size="xs" variant={mode === 'challenge' ? 'outline' : 'ghost'} onClick={() => newGame('challenge')}>Trial</Button>
+        <Button size="xs" variant={mode === 'local' ? 'outline' : 'ghost'} onClick={() => openDeployment('local')}>Local</Button>
+        <Button size="xs" variant={mode === 'range' ? 'outline' : 'ghost'} onClick={() => openDeployment('range')}>Range</Button>
+        <Button size="xs" variant={mode === 'challenge' ? 'outline' : 'ghost'} onClick={() => openDeployment('challenge')}>Trial</Button>
       </div>
     }>
-      <ArtilleryBoard
-        key={`${seed}:${mode}:${difficulty}:${playerCreature}`}
-        seed={seed}
-        mode={mode}
-        difficulty={difficulty}
-        playerCreature={playerCreature}
-        onStatus={setStatus}
-        onComplete={complete}
-        onRematch={() => newGame()}
-        onChangeCreature={() => newGame(mode, difficulty, playerCreature === 'codazzo' ? 'terragoyle' : 'codazzo')}
-      />
+      {deploymentOpen ? (
+        <CreatureDeployment
+          selected={draftCreature}
+          mode={mode}
+          difficulty={difficulty}
+          onSelect={(creature) => {
+            setDraftCreature(creature);
+            setStatus(`${CREATURES[creature].name} selected. ${CREATURES[creature].detail}`);
+          }}
+          onDeploy={() => newGame(mode, difficulty, draftCreature)}
+        />
+      ) : (
+        <ArtilleryBoard
+          key={`${seed}:${mode}:${difficulty}:${playerCreature}`}
+          seed={seed}
+          mode={mode}
+          difficulty={difficulty}
+          playerCreature={playerCreature}
+          onStatus={setStatus}
+          onComplete={complete}
+          onRematch={() => newGame()}
+        />
+      )}
     </ArcadeGameShell>
   );
 }
