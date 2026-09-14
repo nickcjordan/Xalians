@@ -1,6 +1,6 @@
 # Crater Command V2 improvement program
 
-Status: active
+Status: complete
 
 This document supersedes the “finished-game candidate” conclusion in
 `crater-command-quality-brief.md`. A live audit on 2026-09-14 showed that the game is a
@@ -128,7 +128,7 @@ Research sources:
 - [x] Capture and inspect 320/390/430 px phone, landscape phone, tablet, 768 px desktop,
       and wide desktop states during aim, animation, bot turn, and result.
 - [x] Pass all workspace tests, typechecks, production build, and bundle budgets.
-- [ ] Deploy only through pull request/CI, then repeat a live production smoke match on
+- [x] Deploy only through pull request/CI, then repeat a live production smoke match on
       desktop and phone.
 
 ## Implementation order
@@ -159,3 +159,7 @@ does not by itself establish that a game interaction feels good.
   has `scrollWidth === clientWidth`; short landscape and 320 px keep Fire in view.
 - Automated gates: 100 test files / 1,566 tests pass across the workspace, all workspace
   typechecks pass, API and web production builds pass, and bundle budgets pass.
+- Release: [PR #263](https://github.com/nickcjordan/Xalians/pull/263) passed CI and merged
+  as `b390d52`; the frontend and backend production workflows passed. A live 390×844 smoke
+  test exercised direct aim, a 14-unit Push, firing, and the bot reply with no overflow;
+  a live 1280×720 check also fit the complete field and action tray without scrolling.
