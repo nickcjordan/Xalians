@@ -167,7 +167,7 @@ export const MISSION = {
           outcomes: {
             clean: 'The gantry bows once, then settles. The crew reaches the far seal without waking the machinery beyond it.',
             costly: 'Old bolts tear free behind the lead, but support holds the span long enough for everyone to cross.',
-            rough: 'The gantry folds into the flood. The crew scrambles onto the far ledge as the impact wakes machinery deeper inside.'
+            rough: 'The crew inches across a sagging span, hauling one another onto the far ledge. The effort drains them, but the turbine bank remains asleep.'
           },
           environment: { medium: 'gas', temperatureC: 5, element: 'metal' }, hazardIds: [],
           reaction: { axis: 'boldness', direction: 'low', label: 'A cautious lead tests each span.' },
@@ -216,8 +216,8 @@ export const MISSION = {
           legacyAdjustments: [{ flag: 'quiet-entry', difficulty: -5, label: 'Quiet entry', detail: 'Because the crew entered quietly, the turbine starts later and the catwalk window is wider.' }],
           consequence: { id: 'security-pulse', label: 'Security pulse transmitted', detail: 'The fast crossing wakes authentication systems ahead.', future: 'Makes forcing the next security door harder.' },
           outcomes: {
-            clean: 'The crew crosses between turbine pulses. Only their footfalls reach the security wing ahead.',
-            costly: 'The turbine starts early. The lead clears the final gap as support drags the reserve out of the sweep.',
+            clean: 'The crew crosses between turbine pulses. Their footfalls trigger an authentication signal in the security wing ahead.',
+            costly: 'The turbine starts early. The lead clears the final gap as support drags the reserve out of the sweep; a security pulse follows them into the next wing.',
             rough: 'The crew outruns the turning assembly by moments, triggering a security pulse beyond the hall.'
           },
           environment: { medium: 'gas', temperatureC: -12, element: 'ice' }, hazardIds: ['servo-cycle'],

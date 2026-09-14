@@ -1,0 +1,48 @@
+/* Setup owns its briefing and roster; the global page masthead is redundant. */
+.lr-console .lr-brand-banner { display: none; }
+.lr-console .lr-setup-shell { padding-top: 18px; }
+.lr-setup-shell .lr-briefing { min-height: 0; grid-template-columns: 1fr; gap: 14px; padding: 28px; }
+.lr-setup-shell .lr-briefing-copy { max-width: 720px; padding: 20px; }
+.lr-setup-shell .lr-briefing-copy .g-title { font-size: 40px; max-width: none; margin: 8px 0; }
+.lr-setup-shell .lr-lead { font-size: 17px; line-height: 1.5; margin: 12px 0; }
+.lr-setup-shell .lr-mission-stamp { margin-top: 12px; padding: 10px 14px; }
+.lr-briefing-details { max-width: 720px; position: relative; z-index: 2; }
+.lr-briefing-details summary,.lr-setup-settings summary { cursor: pointer; font-size: 15px; padding: 10px 0; }
+.lr-setup-shell .lr-briefing-details[open] .lr-briefing-screen { display: block; position: static; width: 100%; max-width: none; min-height: 0; margin: 0; }
+.lr-setup-shell .lr-crew-select { margin-top: 24px; }
+.lr-setup-shell .lr-section-head { margin-bottom: 8px; }
+.lr-setup-shell .lr-section-head h2 { font-size: 27px; }
+.lr-roster-instruction { color: var(--g-ink-mid); font-size: 15px; margin: 8px 0 18px; }
+.lr-setup-shell.lr-mode-simple .lr-choice-grid { grid-template-columns: repeat(3,minmax(0,1fr)); gap: 10px; }
+.lr-setup-shell.lr-mode-simple .lr-crew-choice { grid-template-columns: 74px minmax(0,1fr); min-height: 108px; }
+.lr-setup-shell.lr-mode-simple .lr-crew-choice .lr-portrait { min-height: 108px; height: 108px; }
+.lr-setup-shell.lr-mode-simple .lr-crew-choice-body { padding: 14px 30px 14px 12px; }
+.lr-setup-shell.lr-mode-simple .lr-crew-choice h3 { font-size: 19px; letter-spacing: 0; }
+.lr-setup-shell.lr-mode-simple .lr-crew-choice .g-kicker { display: none; }
+.lr-setup-shell.lr-mode-simple .lr-choice-disabled { display: none; }
+.lr-setup-shell.lr-mode-simple .lr-role { font: 400 14px/1.4 var(--g-font-body); margin: 4px 0; }
+.lr-setup-settings { border-top: 1px solid var(--g-rule); margin-top: 18px; }
+.lr-setup-shell .lr-guidance-setup { margin-top: 0; }
+.lr-setup-shell .lr-launch-row { margin-top: 12px; }
+.lr-setup-shell .lr-launch-row > p { max-width: 520px; font: 400 13px/1.4 var(--g-font-body); }
+@media(max-width:900px) { .lr-setup-shell.lr-mode-simple .lr-choice-grid { grid-template-columns: repeat(2,minmax(0,1fr)); } }
+@media(max-width:600px) {
+  .lr-setup-shell .lr-briefing { padding: 16px; }
+  .lr-setup-shell .lr-briefing-copy { padding: 12px; }
+  .lr-setup-shell .lr-briefing-copy .g-title { font-size: 32px; }
+  .lr-setup-shell.lr-mode-simple .lr-choice-grid { grid-template-columns: 1fr; }
+}
+.lr-briefing-hardware { display: none; }
+.lr-setup-shell .lr-launch-row { justify-content: flex-end; border: 0; background: none; padding-inline: 0; }
+.lr-prototype-source { color: var(--g-ink-mid); font: 400 13px/1.5 var(--g-font-body); }
+.lr-roster-action { display: block; font: 600 12px/1.4 var(--g-font-body); color: var(--g-ink); margin-top: 10px; }
+.lr-roster-swap-heading { display: flex; align-items: center; justify-content: space-between; gap: 18px; margin: 12px 0 18px; }
+.lr-roster-swap-heading h3 { font: 600 21px/1.4 var(--g-font-body); color: var(--g-ink); margin: 0; }
+.lr-roster-swap-heading h3:focus-visible { outline: 2px solid var(--g-phosphor); outline-offset: 4px; }
+.lr-roster-swap-heading > .lr-portrait { width: 80px; height: 90px; min-height: 0; flex: none; }
+.lr-roster-swap-heading > div:not(.lr-portrait) { flex: 1; }
+.lr-roster-swap-heading p { color: var(--g-ink-mid); font: 400 15px/1.4 var(--g-font-body); margin: 5px 0 0; }
+.lr-setup-shell:has(.lr-roster-swap-heading) .lr-briefing,
+.lr-setup-shell:has(.lr-roster-swap-heading) .lr-setup-settings,
+.lr-setup-shell:has(.lr-roster-swap-heading) .lr-launch-row { display: none; }
+@media(max-width:600px) { .lr-roster-swap-heading { display: grid; grid-template-columns: 80px minmax(0,1fr); align-items: center; gap: 10px; } .lr-roster-swap-heading > button { grid-column: 1 / -1; } }

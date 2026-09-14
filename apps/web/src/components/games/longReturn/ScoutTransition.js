@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import XalianImage from '../../xalianImage';
+import { beatDuration } from './beatTiming';
 import { MAX_INSTABILITY, MAX_STRAIN } from './longReturnData';
 import { sceneArtFor } from './sceneArt';
 import { scoutPerformance } from './performanceVisuals';
@@ -58,9 +59,9 @@ export default function ScoutTransition({ action, onComplete, soundEnabled = tru
   useEffect(() => {
     if (final) return undefined;
     if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) { setIndex(beats.length - 1); return undefined; }
-    const timer = window.setTimeout(() => setIndex((value) => value + 1), beat.kind === 'depart' || beat.kind === 'return' ? 1350 : 950);
+    const timer = window.setTimeout(() => setIndex((value) => value + 1), beatDuration(beat.kind, beat.text));
     return () => window.clearTimeout(timer);
-  }, [beat.kind, beats.length, final]);
+  }, [index, beat.kind, beats.length, final]);
   useEffect(() => { playGameSound(beat.kind, soundEnabled); }, [beat.kind, soundEnabled]);
 
   const energyBefore = action.energyBefore;

@@ -1,0 +1,86 @@
+/* Simple mode: one workspace with a context, a decision, and a local action.
+   Borders separate groups; they are not announcement frames around every fact. */
+.lr-mode-simple .lr-wizard-chrome { box-shadow: none; }
+.lr-mode-simple .lr-wizard-objective { border: 0; background: none; padding: 8px 0; }
+.lr-mode-simple .lr-wizard-resources > span { border: 0; border-right: 1px solid #394238; background: none; }
+.lr-mode-simple .lr-simple-question { border: 0; padding-bottom: 14px; }
+.lr-mode-simple .lr-simple-question h3 { font-size: clamp(23px,2.3vw,30px); text-transform: none; letter-spacing: 0; }
+.lr-mode-simple .lr-field-sign { border: 0; background: none; margin: 0 0 12px; padding: 0; }
+.lr-mode-simple .lr-field-sign summary { padding: 6px 0; }
+.lr-mode-simple .lr-simple-scouts { gap: 0; border-top: 1px solid #485040; }
+.lr-mode-simple .lr-simple-scouts > button { border: 0; border-bottom: 1px solid #485040; box-shadow: none; background: transparent; }
+.lr-mode-simple .lr-wizard-phase-scout .lr-simple-scouts > button.is-selected { border: 0; border-bottom: 1px solid #485040; box-shadow: inset 4px 0 #8ad5a8; background: #273329; }
+.lr-mode-simple .lr-simple-scouts .lr-scout-action { border: 0; background: none; }
+.lr-mode-simple .lr-scout-commit-bar, .lr-mode-simple .lr-encounter-commit-bar { border: 0; border-top: 1px solid #485040; box-shadow: none; }
+.lr-mode-simple .lr-simple-report { display: grid; grid-template-columns: 180px minmax(0,1fr); gap: 28px; max-width: none; }
+.lr-report-source { display: flex; flex-direction: column; gap: 8px; padding-right: 22px; border-right: 1px solid #485040; font-size: 15px; }
+.lr-report-source .lr-portrait { width: 100%; min-height: 160px; margin-bottom: 10px; }
+.lr-report-source .lr-portrait { flex: none; height: 160px; max-height: 160px; }
+.lr-mode-simple .lr-simple-report-result h3 { font-size: 26px; text-transform: none; letter-spacing: 0; }
+.lr-mode-simple .lr-simple-report-result > svg { width: 26px; height: 26px; padding: 0; background: none; border: 0; }
+.lr-report-source span, .lr-report-source small { color: #adbaac; font-size: 14px; }
+.lr-mode-simple .lr-report-content .lr-simple-report-result { border: 0; background: none; padding: 0; }
+.lr-mode-simple .lr-report-content .lr-simple-story { margin: 16px 0; font-size: 17px; line-height: 1.6; }
+.lr-mode-simple .lr-report-content .lr-simple-finding { border: 0; border-top: 1px solid #485040; background: none; padding: 18px 0; margin: 16px 0; }
+.lr-mode-simple .lr-report-content .lr-simple-finding strong { font-size: 17px; }
+.lr-mode-simple .lr-report-content > .g-btn { position: static; transform: none; width: auto; margin-top: 12px; }
+.lr-mode-simple .lr-route-map { margin: 0; border-bottom: 0; min-height: 170px; }
+.lr-mode-simple .lr-route-board { margin-top: 0; }
+.lr-mode-simple .lr-field-encounter { border: 0; background: none; padding: 0; }
+.lr-mode-simple .lr-field-encounter.is-resolved { box-shadow: none; }
+.lr-mode-simple .lr-encounter-resolution-grid { display: grid; grid-template-columns: 180px minmax(0,1fr); gap: 28px; }
+.lr-mode-simple .lr-encounter-result-head > svg { display: none; }
+.lr-mode-simple .lr-encounter-result-head h3 { font-size: 26px; text-transform: none; letter-spacing: 0; }
+.lr-mode-simple .lr-encounter-resolution-grid .lr-simple-story { font-size: 17px; line-height: 1.6; }
+.lr-mode-simple .lr-encounter-resolution-grid .lr-encounter-impact > span { font-size: 15px; }
+@media(max-width:650px) { .lr-mode-simple .lr-encounter-resolution-grid { grid-template-columns: 1fr; } }
+.lr-mode-simple .lr-encounter-heading { border: 0; background: none; padding: 0; margin-bottom: 12px; }
+.lr-mode-simple .lr-encounter-heading h3 { font-size: 27px; text-transform: none; letter-spacing: 0; }
+.lr-mode-simple .lr-encounter-posture { background: none; border: 0; padding: 0 0 18px; margin: 0; display: flex; gap: 8px; flex-wrap: wrap; }
+.lr-mode-simple .lr-encounter-posture strong { font-size: 15px; }
+.lr-mode-simple .lr-encounter-posture { box-shadow: none; }
+.lr-mode-simple .lr-encounter-posture span, .lr-mode-simple .lr-encounter-posture small { font-size: 14px; }
+.lr-mode-simple .lr-encounter-options { gap: 0; border-top: 1px solid #485040; }
+.lr-mode-simple .lr-encounter-options > button { box-shadow: none; border: 0; border-bottom: 1px solid #485040; border-right: 1px solid #485040; background: transparent; }
+.lr-mode-simple .lr-encounter-options > button.is-selected { box-shadow: inset 0 3px #8ad5a8; background: #273329; }
+.lr-mode-simple .lr-encounter-choice-path > span { background: none; border: 0; }
+.lr-mode-simple .lr-encounter-choice-path .is-action { display: none; }
+.lr-mode-simple .lr-encounter-choice-path > .is-action + svg { display: none; }
+.lr-mode-simple .lr-encounter-choice-path { grid-template-columns: 1fr 18px 1fr; }
+.lr-mode-simple .lr-encounter-impact { display: flex; flex-wrap: wrap; border-top: 1px solid #485040; border-bottom: 1px solid #485040; margin: 20px 0; padding: 14px 0; }
+.lr-mode-simple .lr-encounter-impact > span { border: 0; background: none; padding: 10px; }
+.lr-mode-simple .lr-transition-beat { background: none; border: 0; box-shadow: none; max-width: none; padding: 20px 0 0; }
+.lr-mode-simple .lr-transition-beat blockquote { background: none; border: 0; padding: 0; }
+.lr-mode-simple .lr-memory-card { box-shadow: none; }
+.lr-mode-simple .lr-memory-card { background: none; border: 0; border-top: 1px solid #485040; margin-top: 20px; padding: 16px 0; }
+.lr-setup-shell .lr-simple-primer { border: 0; background: none; box-shadow: none; }
+.lr-setup-shell .lr-guidance-setup { border: 0; border-top: 1px solid #485040; background: none; box-shadow: none; }
+.lr-end-shell .lr-end-stats { gap: 0; border-top: 1px solid #485040; border-bottom: 1px solid #485040; }
+.lr-end-shell .lr-end-stats > div { border: 0; border-right: 1px solid #485040; background: none; }
+.lr-mode-simple .lr-assignment-board .lr-assignment-head { box-shadow: none; background: none; }
+.lr-mode-simple .lr-depth-decision { background: none; border: 0; padding: 18px 0 0; }
+.lr-mode-simple .lr-depth-reserve { display: none; }
+.lr-mode-simple .lr-field-receipt { background: none; border: 0; box-shadow: none; }
+.lr-mode-simple .lr-workshop-bank { border: 0; background: none; }
+.lr-mode-simple .lr-workshop-options > button { box-shadow: none; }
+@media(max-width:650px) { .lr-mode-simple .lr-simple-report { grid-template-columns: 1fr; gap: 16px; } .lr-report-source { display: grid; grid-template-columns: 80px 1fr; border-right: 0; padding: 0; } .lr-report-source .lr-portrait { min-height: 85px; grid-row: span 3; margin: 0; } }
+@media(max-width:800px) {
+  .lr-mode-simple.lr-is-customizing .lr-ability-ledger { display: none; }
+  .lr-mode-simple .lr-route-map__origin { display: none; }
+  .lr-mode-simple .lr-route-map__destination { top: auto; bottom: 14px; left: 14px; right: 14px; text-align: center; font-size: 11px; }
+  .lr-mode-simple .lr-route-map__path:not(.is-active) { display: none; }
+  .lr-mode-simple .lr-route-map__path.is-active { top: 18px; height: 70px; left: 12px; right: 12px; transform: none; }
+  .lr-mode-simple .lr-route-map__path > span { left: 0; right: 0; max-width: none; justify-content: center; flex-wrap: wrap; }
+  .lr-mode-simple .lr-wizard-topline { flex-wrap: wrap; gap: 12px; }
+  .lr-mode-simple .lr-wizard-topline > div:first-child { width: 100%; }
+  .lr-mode-simple.lr-is-customizing .lr-game-grid { display: flex; flex-direction: column; width: 100%; }
+  .lr-mode-simple.lr-is-customizing .lr-crew-rail { position: static; width: 100%; min-width: 0; display: grid; grid-template-columns: 1fr; }
+  .lr-mode-simple.lr-is-customizing .lr-scene { width: 100%; min-width: 0; }
+  .lr-mode-simple .lr-assignment-head { flex-wrap: wrap; }
+  .lr-mode-simple .lr-support-select { flex-wrap: wrap; }
+  .lr-mode-simple .lr-support-button { min-width: 0; }
+  .lr-mode-simple .lr-scout-commit-bar, .lr-mode-simple .lr-encounter-commit-bar { position: static; transform: none !important; width: 100%; margin-top: 16px; }
+}
+@media(max-width:650px) {
+  .lr-report-source .lr-portrait { height: 85px; max-height: 85px; }
+}

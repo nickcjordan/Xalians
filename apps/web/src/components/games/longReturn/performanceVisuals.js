@@ -1,5 +1,5 @@
 const METHOD_MOTIONS = {
-  swim: ['swim', 'bi-water'], flight: ['flight', 'bi-wind'], climb: ['climb', 'bi-ladder'], burrow: ['climb', 'bi-layers'],
+  swim: ['swim', 'bi-water'], flight: ['flight', 'bi-wind'], climb: ['climb', 'bi-ladder'], burrow: ['burrow', 'bi-layers'],
   leap: ['burst', 'bi-arrow-up-right'], sprint: ['burst', 'bi-speedometer2'], ambush: ['burst', 'bi-eye-slash'], beam: ['beam', 'bi-brightness-high'],
   ward: ['ward', 'bi-shield'], snare: ['tow', 'bi-bezier2'], crush: ['brace', 'bi-hammer'], rake: ['cut', 'bi-slash-lg'],
   mend: ['mend', 'bi-bandaid'], phasing: ['phase', 'bi-transparency'], spray: ['spray', 'bi-droplet-fill'],

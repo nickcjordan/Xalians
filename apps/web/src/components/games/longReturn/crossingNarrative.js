@@ -1,3 +1,5 @@
+import { crossingScene } from './crossingScene';
+
 // Each account concerns only the chosen route. Resource consequences remain
 // authoritative in the result, not inferred from dramatic prose.
 const STORIES = {
@@ -67,5 +69,6 @@ export function crossingNarrative({ route, lead, support, method, result, compan
   else if (result.naturalReaction && (result.margin < 14 || result.environment.strain > 0 || result.unseenHazards.some(hazard => hazard.strain > 0))) turningPoint = `${lead.species}'s ${style} approach suited the crossing, preserving 1 energy.`;
   else if (result.margin < 0) turningPoint = `${lead.species} and ${support.species} forced a passage. This method was a difficult fit for the route.`;
   else turningPoint = `${lead.species} put ${method.label.toLowerCase()} to work; ${support.species} backed up the crossing.`;
-  return { story, turningPoint, supportHelp };
+  const paragraphs = crossingScene({ route, lead, support, method, result, companionHelp });
+  return { story: paragraphs ? paragraphs.join('\n\n') : story, paragraphs, turningPoint, supportHelp };
 }

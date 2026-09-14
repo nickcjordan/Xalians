@@ -114,7 +114,7 @@ function XalianNavbar({ authAlertCallback }: XalianNavbarProps) {
 				<Shell className="flex min-h-14 items-center gap-6">
 					<BrandLockup />
 
-					<nav className="ml-2 hidden flex-1 items-center gap-5 md:flex" aria-label="Primary">
+					<nav className="ml-2 hidden flex-1 items-center gap-5 xl:flex" aria-label="Primary">
 						{NAV_LINKS.map((link) => (
 							<NavLink
 								key={link.href}
@@ -129,7 +129,7 @@ function XalianNavbar({ authAlertCallback }: XalianNavbarProps) {
 						))}
 					</nav>
 
-					<div className="ml-auto hidden items-center gap-2 md:flex">
+					<div className="ml-auto hidden items-center gap-2 xl:flex">
 						<AuthButtonGroup size="sm" authAlertCallback={handleUserAuthAction} />
 					</div>
 
@@ -138,7 +138,7 @@ function XalianNavbar({ authAlertCallback }: XalianNavbarProps) {
 							variant="ghost"
 							size="icon"
 							aria-label="Open menu"
-							className="ml-auto md:hidden"
+							className="ml-auto xl:hidden"
 							onClick={() => setMenuOpen(true)}
 						>
 							<Menu />
