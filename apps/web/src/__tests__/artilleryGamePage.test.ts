@@ -3,7 +3,7 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 
-import { ArtilleryBoard, CommandMeter, artilleryAimFromDrag, artilleryBarrelEndpoint, artilleryFlightFrameIndex } from '../pages/games/artilleryGamePage';
+import { ArtilleryBoard, CommandMeter, CreatureDeployment, artilleryAimFromDrag, artilleryBarrelEndpoint, artilleryFlightFrameIndex, artilleryImpactTerrainFrame } from '../pages/games/artilleryGamePage';
 
 class ResizeObserverStub {
   observe() {}
@@ -76,6 +76,32 @@ describe('Crater Command aim feedback', () => {
     expect(artilleryFlightFrameIndex(5, 10, 1)).toBe(4);
   });
 
+  it('excavates terrain progressively and lands on the exact resulting crater', () => {
+    const before = [12, 12, 12];
+    const after = [12, 7, 12];
+
+    expect(artilleryImpactTerrainFrame(before, after, 0)).toEqual(before);
+    expect(artilleryImpactTerrainFrame(before, after, 0.5)[1]).toBeLessThan(12);
+    expect(artilleryImpactTerrainFrame(before, after, 0.5)[1]).toBeGreaterThan(7);
+    expect(artilleryImpactTerrainFrame(before, after, 1)).toEqual(after);
+  });
+
+  it('makes creature selection a dedicated deployment decision', async () => {
+    const onSelect = vi.fn();
+    const onDeploy = vi.fn();
+    render(createElement(CreatureDeployment, {
+      selected: 'codazzo', mode: 'bot', difficulty: 'standard', onSelect, onDeploy,
+    }));
+
+    expect(screen.getByRole('heading', { name: /choose who commands your crawler/i })).toBeInTheDocument();
+    expect(screen.getByRole('radio', { name: /Terragoyle/i })).toHaveAttribute('aria-checked', 'false');
+    expect(screen.getByText(/locked for this battle/i)).toBeInTheDocument();
+    await userEvent.click(screen.getByRole('radio', { name: /Terragoyle/i }));
+    await userEvent.click(screen.getByRole('button', { name: /Deploy Codazzo/i }));
+    expect(onSelect).toHaveBeenCalledWith('terragoyle');
+    expect(onDeploy).toHaveBeenCalledOnce();
+  });
+
   it('offers explicit one-step corrections with a readable value and guidance', async () => {
     const onChange = vi.fn();
     render(createElement(CommandMeter, {
@@ -114,7 +140,6 @@ describe('Crater Command aim feedback', () => {
       onStatus: vi.fn(),
       onComplete: vi.fn(),
       onRematch: vi.fn(),
-      onChangeCreature: vi.fn(),
     }));
 
     expect(screen.getByRole('img', { name: /drag up and outward/i })).toBeInTheDocument();
@@ -136,7 +161,6 @@ describe('Crater Command aim feedback', () => {
       onStatus,
       onComplete: vi.fn(),
       onRematch: vi.fn(),
-      onChangeCreature: vi.fn(),
     }));
 
     await userEvent.click(screen.getByRole('button', { name: /Advance/i }));
