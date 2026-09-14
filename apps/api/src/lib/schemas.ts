@@ -50,7 +50,14 @@ const SolitaireActionSchema = z.discriminatedUnion('type', [
 export const ArcadeCompleteBodySchema = z.discriminatedUnion('gameId', [
   z.object({
     gameId: z.literal('artillery'), sessionId: ArcadeSessionSchema, seed: ArcadeSeedSchema,
-    actions: z.array(z.object({ angle: z.number().min(10).max(80), power: z.number().min(15).max(100) })).max(80),
+    difficulty: z.enum(['rookie', 'standard', 'expert']).optional(),
+    actions: z.array(z.object({
+      angle: z.number().min(10).max(80),
+      power: z.number().min(15).max(100),
+      payload: z.enum(['shell', 'barb', 'bore', 'cluster', 'bloom', 'lance']).optional(),
+      move: z.union([z.literal(-1), z.literal(0), z.literal(1)]).optional(),
+      system: z.enum(['none', 'anchor', 'lift']).optional(),
+    })).max(80),
   }),
   z.object({
     gameId: z.literal('sweep'), sessionId: ArcadeSessionSchema, seed: ArcadeSeedSchema,

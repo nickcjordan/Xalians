@@ -1,5 +1,5 @@
 export type ArtillerySoundCue = 'select' | 'launch' | 'impact' | 'hit' | 'win' | 'loss';
-export type ArtillerySoundPayload = 'shell' | 'barb' | 'bore';
+export type ArtillerySoundPayload = 'shell' | 'barb' | 'bore' | 'cluster' | 'bloom' | 'lance';
 
 const STORAGE_KEY = 'xalians.arcade.artillery.sound';
 
@@ -66,17 +66,21 @@ export function createArtillerySound(storage: Storage | undefined = globalThis.l
     try {
       if (cue === 'select') tone(420, 0.055, 0.025, 0, 'square');
       if (cue === 'launch') {
-        noise(payload === 'barb' ? 0.11 : 0.18, 0.035);
-        tone(payload === 'bore' ? 72 : payload === 'barb' ? 170 : 105, payload === 'bore' ? 0.32 : 0.2, 0.07, 0, 'sawtooth');
+        noise(payload === 'barb' || payload === 'cluster' ? 0.11 : 0.18, 0.035);
+        const launchPitch = payload === 'bore' ? 72 : payload === 'barb' ? 170 : payload === 'lance' ? 360 : payload === 'bloom' ? 125 : 105;
+        tone(launchPitch, payload === 'bore' ? 0.32 : 0.2, 0.07, 0, payload === 'bloom' ? 'triangle' : 'sawtooth');
         if (payload === 'barb') {
           tone(310, 0.12, 0.025, 0.045, 'triangle');
           tone(390, 0.1, 0.02, 0.085, 'triangle');
         }
+        if (payload === 'cluster') [240, 290, 340].forEach((frequency, index) => tone(frequency, 0.09, 0.018, index * 0.035, 'square'));
+        if (payload === 'lance') tone(620, 0.1, 0.035, 0.02, 'sine');
       }
       if (cue === 'impact' || cue === 'hit') {
         noise(cue === 'hit' ? 0.32 : 0.22, cue === 'hit' ? 0.09 : 0.055);
         tone(payload === 'bore' ? 48 : 64, cue === 'hit' ? 0.42 : 0.28, cue === 'hit' ? 0.1 : 0.065, 0, 'sawtooth');
         if (payload === 'bore') tone(135, 0.38, 0.035, 0.06, 'triangle');
+        if (payload === 'bloom') [120, 155, 190].forEach((frequency, index) => tone(frequency, 0.22, 0.025, index * 0.04, 'triangle'));
       }
       if (cue === 'win') [262, 330, 392, 523].forEach((frequency, index) => tone(frequency, 0.18, 0.045, index * 0.09, 'triangle'));
       if (cue === 'loss') [180, 145, 110].forEach((frequency, index) => tone(frequency, 0.24, 0.04, index * 0.12, 'sawtooth'));

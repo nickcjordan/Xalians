@@ -69,6 +69,35 @@
 .el-metal { --el: var(--color-el-metal); }
 .el-sand { --el: var(--color-el-sand); }
 .el-chemical { --el: var(--color-el-chemical); }
+
+.artillery-field,
+.artillery-command {
+  max-width: 72rem;
+}
+
+/* Short landscape screens are a distinct game surface: the range and command tray
+   share the viewport instead of forcing the player to scroll past the battlefield. */
+@media (min-width: 700px) and (max-height: 500px) {
+  .artillery-layout {
+    grid-template-columns: minmax(0, 1.45fr) minmax(19rem, 1fr);
+    align-items: start;
+  }
+
+  .artillery-command {
+    font-size: 0.9em;
+  }
+
+  .artillery-command-top {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+}
+
+@media (min-width: 1024px) {
+  .artillery-field,
+  .artillery-command {
+    max-width: min(72rem, calc((100svh - 313px) * 2));
+  }
+}
 .el-psychic { --el: var(--color-el-psychic); }
 .el-ghost { --el: var(--color-el-ghost); }
 

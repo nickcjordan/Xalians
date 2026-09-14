@@ -19,7 +19,7 @@ export const ARCADE_GAMES: ArcadeGameDefinition[] = [
     id: 'artillery',
     name: 'Crater Command',
     rulesName: 'Artillery duel',
-    description: 'Range a Xalian battery, reposition under fire, and reshape the battlefield with three tactical payloads.',
+    description: 'Drag to range a living battery, reshape the field with six payloads, and outfight a rival crew across shifting crater weather.',
     duration: '4–8 min',
     credits: 30,
     icon: Bomb,

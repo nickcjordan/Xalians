@@ -1,4 +1,4 @@
-import { applyArtilleryShot, chooseArtilleryBotShot, createArtilleryState, type ArtilleryShot } from './artillery.ts';
+import { applyArtilleryShot, chooseArtilleryBotShot, createArtilleryState, type ArtilleryDifficulty, type ArtilleryShot } from './artillery.ts';
 import { applySweepAction, createSweepState, type SweepAction } from './hazardSweep.ts';
 import { applyMemoryReveal, createMemoryState } from './memory.ts';
 import { applyRelayMove, createRelayState, type RelayDirection } from './relayMerge.ts';
@@ -14,7 +14,7 @@ export const ARCADE_AWARDS = {
 
 export type ArcadeGameId = keyof typeof ARCADE_AWARDS;
 export type ArcadeCompletion =
-  | { gameId: 'artillery'; seed: string; actions: ArtilleryShot[] }
+  | { gameId: 'artillery'; seed: string; difficulty?: ArtilleryDifficulty; actions: ArtilleryShot[] }
   | { gameId: 'sweep'; seed: string; level: 'survey' | 'field' | 'frontier'; actions: SweepAction[] }
   | { gameId: 'relay'; seed: string; actions: RelayDirection[] }
   | { gameId: 'patience'; seed: string; drawCount: 1 | 3; actions: SolitaireAction[] }
@@ -28,7 +28,7 @@ const SWEEP_LEVELS = {
 
 function replayArtillery(completion: Extract<ArcadeCompletion, { gameId: 'artillery' }>): boolean {
   if (completion.actions.length > 80) return false;
-  let state = createArtilleryState(completion.seed, 'bot');
+  let state = createArtilleryState(completion.seed, 'bot', completion.difficulty ?? 'standard');
   for (const shot of completion.actions) {
     if (state.phase !== 'aiming' || state.current !== 'left') return false;
     state = applyArtilleryShot(state, shot).state;
