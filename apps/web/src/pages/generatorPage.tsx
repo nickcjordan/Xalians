@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { Link } from 'react-router-dom';
-import { Hub } from 'aws-amplify';
+import { Link } from 'react-router';
+import { Hub } from 'aws-amplify/utils';
 import { toast } from 'sonner';
 import type { XalianRecord } from '@xalians/content/schema';
 
@@ -35,13 +35,22 @@ import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 type Mode = 'showroom' | 'owned';
 type AuthUser = { username: string; hasVerifiedEmail: boolean } | null;
 
-// issue #197: the generator profile is a real lever now (packages/rules), not just a
-// showroom-vs-owned mode. This toggle is exploratory rather than enforcement -- Nick's
-// 2026-09-10 direction is a visible control so the two modes can be compared on the live
-// site while gating good creatures behind tokens is still parked. It is remembered for
-// the session only (sessionStorage), never a persisted account setting.
+// The profile controls the range of possible outcomes while ownership independently
+// controls whether the generated Xalian is saved. The choice lasts for this browser
+// session only; it is not a persisted account setting.
 type GeneratorProfile = 'showroom' | 'full';
 const PROFILE_STORAGE_KEY = 'xalians.generatorProfile';
+
+const PROFILE_COPY: Record<GeneratorProfile, { label: string; summary: string }> = {
+	showroom: {
+		label: 'Commoner',
+		summary: 'Standard finish, one affinity, and no rare traits.',
+	},
+	full: {
+		label: 'Full spectrum',
+		summary: 'Every finish, affinity combination, and trait outcome is available.',
+	},
+};
 
 function readStoredProfile(): GeneratorProfile {
 	try {
@@ -63,6 +72,14 @@ function GeneratorPage() {
 	const [profile, setProfile] = React.useState<GeneratorProfile>(() => readStoredProfile());
 
 	const signedIn = !!loggedInUser;
+	const profileCopy = PROFILE_COPY[profile];
+	const generatorSubtitle = signedIn
+		? profile === 'showroom'
+			? 'Print a commoner and save it directly to your collection.'
+			: 'Explore the full range of possible Xalians. Every creature you print is saved to your collection.'
+		: profile === 'showroom'
+		? 'Preview commoner Xalians without saving them. Sign in to make the next one yours.'
+		: 'Preview the full range of possible Xalians. Sign in to make the next one yours.';
 
 	const generate = React.useCallback((asOwner: boolean, forProfile: GeneratorProfile) => {
 		setIsGenerating(true);
@@ -97,7 +114,8 @@ function GeneratorPage() {
 	// so arriving with a session already open would otherwise read as anonymous.
 	React.useEffect(() => {
 		let cancelled = false;
-		authUtil.currentUser()
+		authUtil
+			.currentUser()
 			.then((data: any) => {
 				if (cancelled) return;
 				if (data && data.attributes) {
@@ -112,7 +130,7 @@ function GeneratorPage() {
 		};
 	}, []);
 
-	// The first record is always a showroom pull, even for a signed-in visitor:
+	// The first record is always an unowned preview, even for a signed-in visitor:
 	// arriving on the page should never spend anything or write to the registry.
 	React.useEffect(() => {
 		generate(false, profile);
@@ -121,16 +139,18 @@ function GeneratorPage() {
 
 	React.useEffect(() => {
 		const authListener = (data: any) => {
-			if (data.payload.event === 'signIn') {
+			if (data.payload.event === 'signedIn') {
 				setSignInShow(false);
-				setLoggedInUser(authUtil.buildAuthState(data.payload.data));
+				authUtil.currentUser().then((user: any) => {
+					if (user) setLoggedInUser(authUtil.buildAuthState(user));
+				});
 			}
-			if (data.payload.event === 'signOut') {
+			if (data.payload.event === 'signedOut') {
 				setLoggedInUser(null);
 			}
 		};
-		Hub.listen('auth', authListener);
-		return () => Hub.remove('auth', authListener);
+		const stopListening = Hub.listen('auth', authListener);
+		return stopListening;
 	}, []);
 
 	return (
@@ -142,11 +162,7 @@ function GeneratorPage() {
 					<Masthead
 						kicker="Generator"
 						title="Generator"
-						subtitle={
-							signedIn
-								? 'Every creature it prints for you is yours, written into the registry under your name.'
-								: 'The showroom prints commoners, and prints them all day. Sign in and what it prints is yours to keep.'
-						}
+						subtitle={generatorSubtitle}
 						aside={
 							<Button disabled={isGenerating} onClick={() => generate(signedIn, profile)}>
 								{record ? 'Generate another' : 'Generate a Xalian'}
@@ -156,22 +172,24 @@ function GeneratorPage() {
 
 					<Card variant="glass" className="mb-6 flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between">
 						<div className="min-w-0">
-							<p className="type-legend m-0">Generator profile</p>
-							<p className="mt-1 m-0 font-body text-small text-ink-2">
-								Showroom prints commoners: standard finish, no rare traits, a single element. Unrestricted
-								is the full generator. This control is temporary while the economy is being explored.
+							<p className="type-legend m-0">Generation range</p>
+							<p className="measure mt-1 m-0 font-body text-small text-ink-2">
+								<strong className="text-ink">{profileCopy.label}:</strong> {profileCopy.summary} Your selection applies
+								to the next pull.
 							</p>
 						</div>
 						<ToggleGroup
 							type="single"
 							variant="outline"
 							value={profile}
-							onValueChange={(value) => { if (value) handleProfileChange(value); }}
-							aria-label="Generator profile"
+							onValueChange={(value: string) => {
+								if (value) handleProfileChange(value as GeneratorProfile);
+							}}
+							aria-label="Generation range"
 							className="shrink-0"
 						>
-							<ToggleGroupItem value="showroom">Showroom</ToggleGroupItem>
-							<ToggleGroupItem value="full">Unrestricted</ToggleGroupItem>
+							<ToggleGroupItem value="showroom">Commoner</ToggleGroupItem>
+							<ToggleGroupItem value="full">Full spectrum</ToggleGroupItem>
 						</ToggleGroup>
 					</Card>
 
@@ -186,32 +204,54 @@ function GeneratorPage() {
 						</Card>
 					) : record ? (
 						<React.Fragment>
-							<Card variant="glass">
-								<RecordView record={record} kicker={mode === 'owned' ? 'Yours' : 'Showroom'} />
-							</Card>
-
 							{mode === 'owned' ? (
-								<Callout variant="viable" title="Kept" className="mt-6">
+								<Callout variant="viable" title="Kept" className="mb-6">
 									<p className="m-0">This one is yours. It is in the registry under your name.</p>
-									<div className="mt-3">
+									<div className="mt-3 flex flex-wrap gap-2">
+										<Button disabled={isGenerating} onClick={() => generate(true, profile)}>
+											Generate another
+										</Button>
 										<Button variant="secondary" asChild>
 											<Link to="/account">See your Xalians</Link>
 										</Button>
 									</div>
 								</Callout>
-							) : (
-								<Callout variant="note" title="Showroom creature" className="mt-6">
+							) : signedIn ? (
+								<Callout variant="note" title="Not saved" className="mb-6">
 									<p className="m-0">
-										Showroom creatures cannot be kept. This one is real, and it is gone the moment the lever turns
-										again. Sign in and the Generator writes what it prints into the registry under your name.
+										The first creature is a preview, so it was not saved. Generate again and the next creature will be
+										written to your collection.
 									</p>
 									<div className="mt-3">
+										<Button disabled={isGenerating} onClick={() => generate(true, profile)}>
+											Generate yours
+										</Button>
+									</div>
+								</Callout>
+							) : (
+								<Callout variant="note" title="Not saved" className="mb-6">
+									<p className="m-0">
+										Previews cannot be kept. This one is real, and it is gone the moment the lever turns again. Sign in
+										and the Generator writes what it prints into the registry under your name.
+									</p>
+									<div className="mt-3 flex flex-wrap gap-2">
+										<Button disabled={isGenerating} onClick={() => generate(false, profile)}>
+											Generate another preview
+										</Button>
 										<Button variant="secondary" onClick={() => setSignInShow(true)}>
 											Sign in to generate
 										</Button>
 									</div>
 								</Callout>
 							)}
+
+							<Card variant="glass">
+								<RecordView
+									record={record}
+									kicker={mode === 'owned' ? 'Yours' : 'Unowned preview'}
+									recordLink={mode === 'owned' ? `/xalian/${record.id}` : undefined}
+								/>
+							</Card>
 						</React.Fragment>
 					) : (
 						<EmptyState legend="No Xalian yet">

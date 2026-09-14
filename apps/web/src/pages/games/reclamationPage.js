@@ -1,5 +1,7 @@
 // Terminal: field. Reclamation is survey work on the salvaged ECHELON unit.
 import React from 'react';
+import '../../styles/legacy/immersive.css';
+import '../../styles/legacy/reclamation.css';
 import XalianNavbar from '../../components/navbar';
 import ReclamationMatch from '../../components/games/reclamation/reclamationMatch';
 import { HoldMeter } from '../../components/games/reclamation/reclamationFigure';
@@ -470,7 +472,7 @@ class ReclamationPage extends React.Component {
 								</div>
 							</div>
 							<div className="rec-intro-actions">
-								<div className="rec-intro-mode" title={mode === 'simple' ? 'Simple: the suggested move is marked and only what would down a creature is printed.' : 'Advanced: every number on the figures, the plan lines under a send, hidden sends, the log and the dossiers.'}>
+								<div className="rec-intro-mode" title={mode === 'simple' ? 'Simple: the suggested move is marked and only what would down a creature is printed.' : 'Advanced: every number on the figures, the plan lines under a send, the log and the dossiers.'}>
 									<ModeSwitch mode={mode} onChange={this.setMode} />
 								</div>
 								<button type="button" className="g-key g-key--primary rec-enter" onClick={this.startMatch} data-enter>
@@ -484,7 +486,7 @@ class ReclamationPage extends React.Component {
 							<summary className="rec-fiction-summary">Why the frame</summary>
 							<div className="g-screen rec-rules-screen">
 								<div className="g-screen-line">The worlds were lost to war and plague, and no expedition goes in blind. Before Kozrak grants a Charter over a world, the claim is proved on the Court's <strong>frame</strong>: the Generators' own models of the fourteen worlds, run on Poseidas without the Generators. Only the fighting is simulated. The Charter, and the Tokens that come with it, are real.</div>
-								<div className="g-screen-line">Each round the frame loads three worlds side by side, every one at a different site of its surface, and no world is loaded twice in a Proving. When both handlers have passed, every world clashes at once: each creature does the one thing its nature does there, attacks subtract from hold, and a creature driven to nothing is downed out of the Proving. Creatures on a won world stay in its model to hold the claim; the rest withdraw; either way they are out of the Proving. A pass is permanent for the round. A stealthy creature may be sent hidden: the rival learns that you sent something, not what or where, until the worlds clash, and the send costs the same one of your ten that any other send does.</div>
+								<div className="g-screen-line">Each round the frame loads three worlds side by side, every one at a different site of its surface, and no world is loaded twice in a Proving. When both handlers have passed, every world clashes at once: each creature does the one thing its nature does there, attacks subtract from hold, and a creature driven to nothing is downed out of the Proving. Creatures on a won world stay in its model to hold the claim; the rest withdraw; either way they are out of the Proving. A pass is permanent for the round. A stealthy creature arrives hidden: the rival learns that you sent something, not what or where, until the worlds clash.</div>
 								<div className="g-screen-line">Attacks land in speed order, and a creature already hurt attacks for less, in proportion to the hold it has left, so hitting first shapes the whole exchange. A swift creature already on a world may step to another world of the frame once a round, without spending a turn. At the Ruling, allies standing with a bolster recover half of what the round took from them before the Court reads the worlds. Once a Proving, before your first send of a round, either handler may stake one of the round's worlds: it then counts two toward the Charter for whoever holds it at the Ruling, three if both handlers staked it, and nothing at all if it is tied. Nothing is given to the side that is behind: there is no catch-up send, the stake is a risk you choose and it doubles the loss as readily as the gain, and every world is won on what you put on it.</div>
 							</div>
 						</details>

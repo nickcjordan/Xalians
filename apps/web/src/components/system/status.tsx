@@ -1,5 +1,5 @@
 import * as React from "react"
-import { Link } from "react-router-dom"
+import { Link } from "react-router"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Shell } from "@/components/system/masthead"
@@ -51,7 +51,7 @@ function NotFoundPage({ path }: { path?: string }) {
     <StatusFrame>
       <StatusBody
         kicker="Not found"
-        title={<span className="type-data normal-case tracking-normal">{shownPath}</span>}
+        title={<span className="type-data break-all normal-case tracking-normal">{shownPath}</span>}
         actions={
           <>
             <Button asChild>
@@ -125,7 +125,7 @@ function OfflinePage({ onRetry }: { onRetry?: () => void }) {
 
 type ErrorBoundaryState = { error: Error | null }
 
-/** Wraps the router `<Switch>` so a render error shows `ErrorPage` instead of a blank tab. */
+/** Wraps the router `<Routes>` so a render error shows `ErrorPage` instead of a blank tab. */
 class ErrorBoundary extends React.Component<{ children: React.ReactNode }, ErrorBoundaryState> {
   state: ErrorBoundaryState = { error: null }
 

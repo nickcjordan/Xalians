@@ -210,6 +210,13 @@
       "fields": "ratified",
       "note": "ratified 2026-09-09 as species 00030; fields ratified 2026-09-10 (batch three)",
       "traits": "ratified"
+    },
+    "sonalloy": {
+      "description": "source",
+      "appearance": "ratified",
+      "fields": "ratified",
+      "traits": "ratified",
+      "note": "ratified 2026-09-11 as species 00031 after completed identity, record, trait, naming, and art review"
     }
   }
 }

@@ -27,8 +27,8 @@ const path = require('path');
  */
 
 const PAGES_DIR = path.join(__dirname, '..', 'pages');
-const SYSTEM_PATH = path.join(__dirname, '..', '..', 'public', 'assets', 'css', 'legacy', 'system.css');
-const CSS_DIR = path.join(__dirname, '..', '..', 'public', 'assets', 'css', 'legacy');
+const CSS_DIR = path.join(__dirname, '..', 'styles', 'legacy');
+const SYSTEM_PATH = path.join(CSS_DIR, 'system.css');
 const STYLEGUIDE_PATH = path.join(PAGES_DIR, 'styleGuidePage.tsx');
 const STYLEGUIDE_DIR = path.join(PAGES_DIR, 'styleguide');
 /** The page plus its section files under pages/styleguide/. */
@@ -57,9 +57,7 @@ const listPageFiles = (dir, base) => {
 	return out;
 };
 
-// baseGamePage.js is dead code (see CLAUDE.md conventions): it is not a route
-// and never gets a terminal.
-const DEAD_PAGES = ['games/baseGamePage.js'];
+const DEAD_PAGES = [];
 
 /**
  * Pages that do not yet render `data-terminal=` anywhere in their source.
@@ -115,15 +113,10 @@ const V4_IMPORTS = [
  * their colours onto tokens; they may never grow it.
  */
 const LEGACY_HEX_BASELINE = {
-	// Was 112; round1-findings.md S11 deleted the dead .specimen-* block
-	// (0 hex of its own) and this baseline tightens to the file's actual
-	// current count rather than carrying stale slack forward.
-	'style.css': 102,
 	'duel.css': 1,
 	'duel-playground.css': 11,
 	'tokens.css': 29,
 	'reclamation.css': 0,
-	'typeColors.css': 0,
 };
 
 const countHex = (css) => {
@@ -177,7 +170,7 @@ describe('design system structure', () => {
 		// "Version 4 was ruled by Nick on 2026-09-08 and 2026-09-09"); the five
 		// [data-terminal] blocks below still live in system.css because the
 		// remaining immersive experiences (duel board/playground, Reclamation,
-		// training games, Long Return) still read them, but /styleguide itself
+		// and Long Return) still read them, but /styleguide itself
 		// must not reference any of them any more.
 		const css = fs.readFileSync(SYSTEM_PATH, 'utf8');
 		const cssTerminals = Array.from(
@@ -236,9 +229,12 @@ describe('design system structure', () => {
 	});
 
 	describe('no new raw hex in CSS', () => {
-		it('system.css confines hex to :root and [data-terminal] blocks', () => {
+		it('system.css confines hex to token/material blocks and the final legacy defaults', () => {
 			const css = fs.readFileSync(SYSTEM_PATH, 'utf8');
-			const stripped = css.replace(/\/\*[\s\S]*?\*\//g, '');
+			const defaultsMarker = css.indexOf('IMMERSIVE ELEMENT DEFAULTS');
+			const foundation = css.slice(0, defaultsMarker);
+			const defaults = css.slice(defaultsMarker);
+			const stripped = foundation.replace(/\/\*[\s\S]*?\*\//g, '');
 			// Neither :root nor any [data-terminal="x"] block in this file contains
 			// a nested rule (they are flat custom-property declarations), so a
 			// non-greedy "selector { ... }" match captures each one whole. Remove
@@ -248,6 +244,8 @@ describe('design system structure', () => {
 				''
 			);
 			expect(withoutAllowedBlocks.match(/#[0-9a-fA-F]{3,8}\b/g)).toBeNull();
+			expect(defaultsMarker).toBeGreaterThan(0);
+			expect(countHex(defaults)).toBeLessThanOrEqual(7);
 		});
 
 		Object.entries(LEGACY_HEX_BASELINE).forEach(([file, baseline]) => {
@@ -257,7 +255,7 @@ describe('design system structure', () => {
 			});
 		});
 
-		it('public/assets/css/pages/*.css contain zero raw hex', () => {
+		it('legacy pages/*.css contain zero raw hex', () => {
 			const pagesDir = path.join(CSS_DIR, 'pages');
 			if (!fs.existsSync(pagesDir)) return;
 			fs.readdirSync(pagesDir)

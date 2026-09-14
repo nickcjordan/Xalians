@@ -33,9 +33,9 @@ jobs:
     env:
       TF_IN_AUTOMATION: "true"
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: 22
           cache: npm
@@ -53,7 +53,7 @@ jobs:
       - name: Build backend bundles
         run: npm run build -w apps/api
 
-      - uses: hashicorp/setup-terraform@v3
+      - uses: hashicorp/setup-terraform@v4
         with:
           terraform_version: "~1.14"
 
@@ -61,7 +61,7 @@ jobs:
         run: terraform fmt -check -recursive
 
       - name: Configure AWS credentials (OIDC)
-        uses: aws-actions/configure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@v6
         with:
           role-to-assume: arn:aws:iam::174497891311:role/xalians-github-terraform
           aws-region: us-east-1

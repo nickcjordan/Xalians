@@ -69,6 +69,35 @@
 .el-metal { --el: var(--color-el-metal); }
 .el-sand { --el: var(--color-el-sand); }
 .el-chemical { --el: var(--color-el-chemical); }
+
+.artillery-field,
+.artillery-command {
+  max-width: 72rem;
+}
+
+/* Short landscape screens are a distinct game surface: the range and command tray
+   share the viewport instead of forcing the player to scroll past the battlefield. */
+@media (min-width: 700px) and (max-height: 500px) {
+  .artillery-layout {
+    grid-template-columns: minmax(0, 1.45fr) minmax(19rem, 1fr);
+    align-items: start;
+  }
+
+  .artillery-command {
+    font-size: 0.9em;
+  }
+
+  .artillery-command-top {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+}
+
+@media (min-width: 1024px) {
+  .artillery-field,
+  .artillery-command {
+    max-width: min(72rem, calc((100svh - 313px) * 2));
+  }
+}
 .el-psychic { --el: var(--color-el-psychic); }
 .el-ghost { --el: var(--color-el-ghost); }
 
@@ -106,7 +135,7 @@
 	   tile. Flat things (cards, badges, content chips, slots) carry none. */
 	.mass-key {
 		--mass: var(--color-ink-3);
-		--thick: 3px;
+		--thick: var(--thickness-key);
 		box-shadow: inset 0 1px 0 var(--color-edge-hi), var(--thick) var(--thick) 0 0 var(--mass);
 		transition: transform 120ms ease-out, box-shadow 120ms ease-out, background-color 120ms ease-out, color 120ms ease-out, border-color 120ms ease-out;
 	}
@@ -124,7 +153,7 @@
 	.key-primary {
 		--key-face: var(--color-viable);
 		--key-mass: var(--color-viable-lo);
-		--thick: 4px;
+		--thick: var(--thickness-primary);
 		position: relative;
 		isolation: isolate;
 		background: transparent;
@@ -149,7 +178,7 @@
 
 	/* An element tile is a plate you can lift: its mass is its own hue, dimmed. */
 	.mass-el {
-		--thick: 4px;
+		--thick: var(--thickness-tile);
 		--mass: color-mix(in srgb, var(--color-el) 45%, black);
 		box-shadow: var(--thick) var(--thick) 0 0 var(--mass);
 		transition: transform 120ms ease-out, box-shadow 120ms ease-out, background-color 120ms ease-out, border-color 120ms ease-out;
@@ -205,6 +234,9 @@
 	.type-heading { font-family: var(--font-legend); font-size: var(--text-heading); font-weight: 600; letter-spacing: var(--tracking-heading); text-transform: uppercase; color: var(--color-ink); }
 	.type-subhead { font-family: var(--font-legend); font-size: var(--text-subhead); font-weight: 500; letter-spacing: var(--tracking-heading); text-transform: uppercase; color: var(--color-ink); }
 	.type-data { font-family: var(--font-data); font-variant-numeric: tabular-nums; font-style: normal; }
+	/* The reading measure: running text sets near 62 characters however wide
+	   its container is. Every paragraph of prose on the site carries it. */
+	.measure { max-width: 62ch; }
 }
 
 @keyframes helix-rung {
@@ -217,7 +249,18 @@
 	.helix-spinner .rung { animation: none; opacity: 0.7; }
 }
 
-/* Legacy interop, until the immersive redesign deletes public/assets/css/legacy:
+/* Tailwind's outline width/color utilities do not restore the outline style
+   after outline-none. Keep the component-specific width, offset and colour,
+   but make every keyboard focus treatment actually paint. */
+@layer utilities {
+	:where(a, button, input, select, textarea, summary, [tabindex]):focus-visible:focus {
+		/* Utilities are imported with `important` while immersive CSS remains,
+		   so this corrective style belongs to that same cascade layer. */
+		outline-style: solid !important;
+	}
+}
+
+/* Legacy interop, until the immersive redesign deletes src/styles/legacy:
    the old template paints every bare <a> mint; on the new stack a link is the
    ink of its text unless a class says otherwise. */
 a { color: inherit; }

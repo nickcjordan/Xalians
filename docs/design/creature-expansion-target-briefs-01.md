@@ -4,6 +4,8 @@
 
 These are proposed design targets, not creature concepts and not ratified species. They identify what a future creature should accomplish before it receives a name, complete anatomy, appearance, measurements, prose, or a finalized ability.
 
+Target 1 was completed by Sonalloy, ratified as species 00031 on 2026-09-11. Target 2 is now the active brief; its current-routing direction was revised after review to exclude entanglement and external storms as moveset prerequisites.
+
 The ranking applies the [expansion framework](./xalian-creature-expansion-framework.md) to the current [coverage ledger](./CREATURE-EXPANSION-COVERAGE.md). It favors a coherent cluster of needs over the raw number of empty registry cells.
 
 ## Recommended sequence
@@ -11,7 +13,7 @@ The ranking applies the [expansion framework](./xalian-creature-expansion-framew
 | Rank | Target | Primary reason | Coherent coverage gain | Main risk |
 | --- | --- | --- | --- | --- |
 | 1 | Veridium / Metal | Metal has only one species | Primary metal body, enduring lifespan, restorative identity, high manipulation | Turning material into automatic armor or making a machine instead of a creature |
-| 2 | Zolton / Electric | Electric has only one species | Non-storage electrical identity, group contrast, possible canyon-navigation sense | Repeating Voltish with a different silhouette or forcing unused vocabulary |
+| 2 | Zolton / Electric | Electric has only one species | Non-storage electrical identity, protective routing, possible canyon-navigation sense | Repeating Voltish with a different silhouette or making ambient lightning a prerequisite |
 | 3 | Poseidas / Water | The deep-ocean lane is absent | Piscine body plan, echolocation, pressure specialization, unused crush signature | Becoming a generic Earth fish or duplicating Newtapede's underwater control |
 
 This order is not a power ranking. It is the order in which the target briefs currently provide the most information and coverage per new species.
@@ -60,7 +62,7 @@ A Veridium organism whose defining act is restoring, rejoining, or reconfiguring
 
 Remove its name and element label. A reader should still distinguish it from Foromeer as Veridium's restorative, metal-bodied manipulator rather than its breaker.
 
-## Target 2: Zolton discharge router
+## Target 2: Zolton current router
 
 ### Primary deficit
 
@@ -68,7 +70,7 @@ Electric and Zolton have only one species, Voltish. Voltish already occupies the
 
 ### Proposed target identity
 
-A Zolton organism centered on the world's universal conduction-and-redirection adaptation and discharge-cycle timing, without storing charge as its defining behavior. It should manage where a strike or surface current goes rather than serving as another battery.
+A Zolton organism centered on the world's universal conduction-and-redirection adaptation and discharge-cycle timing, without storing charge as its defining behavior. It should use a bodily structure and a modest self-generated working current to divert force or energy around itself or another creature, rather than serving as another battery.
 
 ### Proposed constraints
 
@@ -77,9 +79,15 @@ A Zolton organism centered on the world's universal conduction-and-redirection a
 - **Trait foundation:** `insulated` is required by the report's universal adaptation. Other electrical traits must describe this organism specifically rather than restate its element.
 - **Mobility:** climb, timed sprint, or storm-shelter burrow are supported. Flight is inefficient and swim is unsupported; neither should be used to manufacture novelty.
 - **Body contrast:** it should not be another biped with grasping claws. The exact body plan remains open until its current-routing mechanism and silhouette are chosen.
-- **Signature direction:** deflection, redirection, or controlled displacement is preferred over another `strike`. `ward` or `shove` are stronger baseline candidates than forcing the currently unused `lash`, `crush`, or `mend` actions.
-- **Social direction:** the discontinued relay program provides a legitimate paired-lineage lane. If used, synchronized joint action must be central enough to support `pack-bonded`; mere proximity is insufficient.
+- **Signature direction:** `ward` through visible physical shielding and electrical activation is preferred over another `strike`. The protective act must work on its own current and anatomy; ambient lightning may make the routing more dramatic but may not be required.
+- **Social direction:** entangled pair lineages are a rare result of the discontinued relay program, not a general Electric-species motif. Reserve that identity for a later creature designed specifically around it rather than attaching it to this common current-routing form.
 - **Sense candidate:** echolocation is currently unused and coherent with canyon navigation through dense gas, but it remains optional because the world report does not require every canyon organism to use it.
+
+### Portable baseline
+
+The creature's complete signature must remain available away from Zolton and outside an active storm. Its own metabolism supplies only the working current needed to activate its visible protective anatomy; this is generation for immediate use, not Voltish-style storage. The anatomy must physically shield, brace, or deflect even when there is no environmental current to capture. On Zolton, nearby lightning can enter the same pathway and be routed harmlessly away, amplifying the established act without unlocking it.
+
+If the eventual anatomy cannot complete the `ward` action without external electricity, the design fails this brief. Current routing must then become ecological behavior rather than the signature, or the bodily mechanism must be redesigned.
 
 ### Contrast set
 
@@ -91,18 +99,19 @@ A Zolton organism centered on the world's universal conduction-and-redirection a
 
 - Echolocation, if canyon navigation becomes defining.
 - A non-biped electrical silhouette.
-- A cooperative electrical profile contrasting Voltish's solitary weighting.
+- A protective electrical profile contrasting Voltish's offensive contact discharge.
 - An unused instrument such as antennae only if it is physically necessary for sensing or routing current.
 
 ### Do not force
 
 - An unused signature action, `balanced`, `inspiring`, antennae, or echolocation solely for ledger improvement.
+- Entanglement, a paired companion, an active lightning storm, conductive terrain, or Zolton infrastructure as a requirement for any move.
 - Electrical storage, claw delivery, humanoid posture, or generic lightning projection.
 - Flight through a report that explicitly makes Zolton's air corridors hazardous.
 
 ### Success test
 
-Its defining act must still work as a distinct baseline if all electrical spectacle is described plainly as current entering, moving through, and leaving the body.
+Its defining act must remain protective and mechanically complete when performed alone on neutral ground with no storm or external current present. Electrical spectacle on Zolton may amplify that same act, never replace its baseline.
 
 ## Target 3: Poseidas deep-pressure navigator
 
@@ -118,12 +127,18 @@ A native of Poseidas's stable deep layer whose defining competence is navigating
 
 - **World and element:** Poseidas; Water.
 - **Body plan:** `piscine`. This is the brief's clearest morphological requirement, not a suggestion to copy an Earth fish.
-- **Environmental fit:** breathes and tolerates liquid; sustained activity stays inside Poseidas's -2 to 40 C habitable band. Pressure is expressed through lore, `hardened`, and the central act because pressure itself is not a separate record field.
-- **Capabilities:** swim must dominate. Sprint and climb should remain genuinely inapplicable or weak rather than being raised to make the template broadly capable.
+- **Environmental fit:** breathes and tolerates both liquid and gas for ordinary activity; sustained activity stays inside Poseidas's -2 to 40 C habitable band. Pressure is expressed through lore, `hardened`, and the central act because pressure itself is not a separate record field. Gas tolerance supports temporary deployment and does not make dry land its ecological home.
+- **Capabilities:** swim must dominate. Sprint and climb should remain genuinely weak rather than being raised to make the template broadly capable, but the body must still support slow deliberate movement on solid ground.
 - **Sense:** echolocation is the preferred special sense for deep navigation. Its visible or behavioral mechanism must be established without importing an Earth-animal silhouette wholesale.
 - **Trait foundation:** `hardened` is required if the species normally operates at crush depth. `perceptive` is not automatically required merely because echolocation is present.
 - **Signature direction:** `crush`, currently unused by signatures, is preferred if the central act turns pressure into direct compression. It must remain distinct from Newtapede's `snare`: crushing is the effect, not prolonged restraint.
 - **Instrument direction:** body, jaws, or tail can support `crush` in the existing matrix. The anatomy must decide among them; the action must not decide the anatomy backward.
+
+### Encounter deployment
+
+The final piscine silhouette must include a credible neutral pose in which its own anatomy supports its weight and produces basic movement on a solid surface. Broad ventral contact surfaces, load-bearing fins, body undulation, or another biological solution may qualify if it follows from the complete design. Unexplained hovering and external water containers do not qualify.
+
+Its gas tolerance is encounter-scale bioengineering, not terrestrial equivalence. It may be slower, less agile, and unable to remain away from liquid indefinitely while still participating normally in a cross-game encounter.
 
 ### Contrast set
 
@@ -141,13 +156,14 @@ A native of Poseidas's stable deep layer whose defining competence is navigating
 ### Do not force
 
 - A recognizable shark, whale, ray, or ordinary fish with an elemental effect attached.
+- A literal obligate-water fish, unexplained aerial suspension, or external life-support vessel added to make the design playable.
 - Grasping anatomy or high manipulation without a visible means.
 - `perceptive`, scales, carnivory, or solitary behavior as assumed consequences of deep-ocean life.
 - Mend simply because Poseidas has healing associations; this brief is about deep pressure, not Algael processing.
 
 ### Success test
 
-The template should remain unmistakably a deep-water navigator when its signature is temporarily removed, and the signature should remain a crush rather than a disguised beam, spray, or snare.
+The template should remain unmistakably a deep-water navigator when its signature is temporarily removed, while its neutral pose still makes temporary solid-ground participation visually credible. Its signature should remain a crush rather than a disguised beam, spray, or snare.
 
 ## Reserve briefs, not yet recommended
 

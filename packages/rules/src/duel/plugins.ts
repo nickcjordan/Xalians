@@ -7,7 +7,6 @@
 	typed structurally against what apps/web's boardgame.io Game definition expects.
 */
 
-import { v4 as uuidv4 } from 'uuid';
 import * as boardStateManager from './boardStateManager.ts';
 import * as duelConstants from './duelGameConstants.ts';
 import type { BoardState, DuelCtx } from './types.ts';
@@ -16,8 +15,11 @@ interface LogEntry {
 	setMetadata: (meta: Record<string, unknown>) => void;
 }
 
-interface PluginCtx extends DuelCtx {
+interface PluginContext {
+	G: BoardState;
+	ctx: DuelCtx;
 	log: LogEntry;
+	[key: string]: unknown;
 }
 
 export const actionPlugin = {
@@ -27,19 +29,25 @@ export const actionPlugin = {
 	// Function that accepts a move / trigger function and returns another function
 	// that wraps it. This wrapper can modify G before passing it down to the wrapped
 	// function. It is a good practice to undo the change at the end of the call.
-	fnWrap: (fn: (G: BoardState, ctx: PluginCtx, ...args: unknown[]) => BoardState) => (G: BoardState, ctx: PluginCtx, ...args: unknown[]) => {
-		G = preprocess(G, ctx, args);
-		G = fn(G, ctx, ...args);
-		G = postprocess(G, ctx, args);
+	fnWrap: (
+		fn: (context: PluginContext, ...args: unknown[]) => BoardState | void,
+		methodType: string,
+	) => (context: PluginContext, ...args: unknown[]) => {
+		if (methodType !== 'MOVE') return fn(context, ...args);
 
-		return G;
+		const preparedG = preprocess(context.G, context.ctx, args);
+		const preparedContext = { ...context, G: preparedG };
+		const result = fn(preparedContext, ...args);
+		const nextG = result === undefined ? preparedG : result;
+
+		return postprocess(nextG, preparedContext, args);
 	},
 };
 
 function preprocess(G: BoardState, ctx: DuelCtx, args: unknown[]): BoardState {
 	let startState = boardStateManager.buildBoardState(G, ctx);
 
-	let moveId = uuidv4();
+	let moveId = globalThis.crypto.randomUUID();
 	return {
 		...G,
 		moveId: moveId,
@@ -47,7 +55,7 @@ function preprocess(G: BoardState, ctx: DuelCtx, args: unknown[]): BoardState {
 	};
 }
 
-function postprocess(G: BoardState, ctx: PluginCtx, args: unknown[]): BoardState {
+function postprocess(G: BoardState, context: PluginContext, args: unknown[]): BoardState {
 	// initialize action metadata
 	let actionMeta: Record<string, unknown> = {
 		moveId: G.moveId,
@@ -65,7 +73,7 @@ function postprocess(G: BoardState, ctx: PluginCtx, args: unknown[]): BoardState
 	actionMeta.startState = G.startState;
 
 	// set this moves log meta
-	ctx.log.setMetadata(actionMeta);
+	context.log.setMetadata(actionMeta);
 
 	return {
 		...G,

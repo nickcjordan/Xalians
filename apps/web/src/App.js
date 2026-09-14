@@ -1,4 +1,3 @@
-import Home from './pages/home';
 import species from '@xalians/content/species.json';
 // import ProjectPage from './pages/projectPage';
 // import FAQPage from './pages/faqPage';
@@ -11,45 +10,51 @@ import species from '@xalians/content/species.json';
 // import TestPage from './pages/testPage';
 // import Sandboxtwo from './pages/sandboxtwo';
 // import Sandboxthree from './pages/sandboxthree';
-// import MatchCardGamePage from './pages/games/matchCardGamePage';
-// import PhysicsGamePage from './pages/games/physicsGamePage';
-// import TrainingGroundsPage from './pages/trainingGroundsPage';
 // import DuelPage from './pages/games/duelPage';
 // import DuelStartPage from './pages/games/duelStartPage';
 
 
 import XalianNavbar from './components/navbar';
 import React, { Suspense, lazy } from 'react';
-// import React, { lazy } from 'react';
-
-
 import {
   BrowserRouter as Router,
-  Switch,
+  Routes,
   Route,
-  Redirect,
-  Link
-} from "react-router-dom";
+  Navigate,
+  useLocation,
+  useParams,
+} from "react-router";
 
-import Amplify from 'aws-amplify';
+import { Amplify } from 'aws-amplify';
 import awsconfig from './aws-exports';
 
-import { Provider } from 'react-redux'
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { Toaster } from '@/components/ui/sonner';
 import { ErrorBoundary } from '@/components/system/status';
-import store from './store/store';
 
+Amplify.configure(awsconfig);
 
-// const Home = lazy(() => import('./pages/home'));
-const StyleGuidePage = lazy(() => import('./pages/styleGuidePage'));
+const Home = lazy(() => import('./pages/home'));
+// The style guide imports every design-system primitive and exists only as a
+// developer reference. Vite replaces import.meta.env.DEV at build time, so a
+// production build drops both this import and the /styleguide route rather
+// than emitting a large player-inaccessible chunk.
+const includeStyleGuide = import.meta.env.DEV || import.meta.env.MODE === 'styleguide';
+const StyleGuidePage = includeStyleGuide
+  ? lazy(() => import('./pages/styleGuidePage'))
+  : null;
 const GeneratorPage = lazy(() => import('./pages/generatorPage'));
 const UserAccountPage = lazy(() => import('./pages/userAccountPage'));
 const UserDetailsPage = lazy(() => import('./pages/userDetailsPage'));
-const MatchCardGamePage = lazy(() => import('./pages/games/matchCardGamePage'));
-const PhysicsGamePage = lazy(() => import('./pages/games/physicsGamePage'));
-const TrainingGroundsPage = lazy(() => import('./pages/trainingGroundsPage'));
-const DuelPage = lazy(() => import('./pages/games/duelPage'));
+const RecordPage = lazy(() => import('./pages/recordPage'));
+const TradeBuilderPage = lazy(() => import('./pages/tradeBuilderPage'));
+const TradePage = lazy(() => import('./pages/tradePage'));
+const ArcadePage = lazy(() => import('./pages/arcadePage'));
+const ArtilleryGamePage = lazy(() => import('./pages/games/artilleryGamePage'));
+const SolitaireGamePage = lazy(() => import('./pages/games/solitaireGamePage'));
+const HazardSweepGamePage = lazy(() => import('./pages/games/hazardSweepGamePage'));
+const RelayMergeGamePage = lazy(() => import('./pages/games/relayMergeGamePage'));
+const ArcadeMatchGamePage = lazy(() => import('./pages/games/arcadeMatchGamePage'));
 const DuelStartPage = lazy(() => import('./pages/games/duelStartPage'));
 const ReclamationPage = lazy(() => import('./pages/games/reclamationPage'));
 const DuelPlaygroundPage = lazy(() => import('./pages/games/duelPlaygroundPage'));
@@ -65,67 +70,96 @@ const DevErrorPage = lazy(() => import('./pages/system/devErrorPage'));
 // species name instead, so this redirect resolves the incoming id against
 // species.json and hands the result to the new route. An id that matches
 // nothing lands on the Bestiary grid rather than a broken page.
-function RedirectSpecies({ match }) {
-  let inboundId = match.params.id ? match.params.id.toString() : '';
+function PreserveLocationRedirect({ to }) {
+  const location = useLocation();
+  return <Navigate replace to={{ pathname: to, search: location.search, hash: location.hash }} />;
+}
+
+function RedirectSpecies() {
+  const { id = '' } = useParams();
+  const location = useLocation();
+  let inboundId = id.toString();
   if (inboundId && inboundId.length < 5 && /^\d+$/.test(inboundId)) {
     inboundId = inboundId.padStart(5, '0');
   }
   let xal = species.find((x) =>
-    x.id === inboundId || x.name.toLowerCase() === match.params.id.toLowerCase()
+    x.id === inboundId || x.name.toLowerCase() === id.toLowerCase()
   );
-  return <Redirect to={xal ? `/encyclopedia/species/${xal.name.toLowerCase()}` : '/encyclopedia/species'} />;
+  const pathname = xal ? `/encyclopedia/species/${xal.name.toLowerCase()}` : '/encyclopedia/species';
+  return <Navigate replace to={{ pathname, search: location.search, hash: location.hash }} />;
+}
+
+function UserDetailsRoute() {
+  const { id } = useParams();
+  return <UserDetailsPage id={id} />;
+}
+
+function RecordRoute() {
+  const { id } = useParams();
+  return <RecordPage id={id} />;
+}
+
+function TradeRoute() {
+  const { id } = useParams();
+  return <TradePage id={id} />;
+}
+
+export function AppRoutes() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <ErrorBoundary>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/generator" element={<GeneratorPage />} />
+          {/* legacy lore pages retired in favor of the Encyclopedia (docs/design/xalian-encyclopedia-page.md) */}
+          <Route path="/species" element={<PreserveLocationRedirect to="/encyclopedia/species" />} />
+          <Route path="/species/:id" element={<RedirectSpecies />} />
+          <Route path="/user/:id" element={<UserDetailsRoute />} />
+          <Route path="/xalian/:id" element={<RecordRoute />} />
+          <Route path="/trade/new" element={<TradeBuilderPage />} />
+          <Route path="/trade/:id" element={<TradeRoute />} />
+          <Route path="/planets" element={<PreserveLocationRedirect to="/encyclopedia/worlds" />} />
+          <Route path="/glossary" element={<PreserveLocationRedirect to="/encyclopedia/index" />} />
+          <Route path="/encyclopedia/*" element={<EncyclopediaPage />} />
+          {/* the design system reference - unlinked from the navbar, it is a
+              developer tool rather than a page for players */}
+          {StyleGuidePage && <Route path="/styleguide" element={<StyleGuidePage />} />}
+          {/* throws on render, to exercise ErrorBoundary/ErrorPage - a developer
+              route, unlinked like /styleguide */}
+          <Route path="/dev/error" element={<DevErrorPage />} />
+          {/* the duel's own affordance reference - also a developer tool,
+              also deliberately unlinked */}
+          <Route path="/duel/reference" element={<DuelPlaygroundPage />} />
+          <Route path="/duel" element={<DuelStartPage />} />
+          <Route path="/reclamation" element={<ReclamationPage />} />
+          <Route path="/long-return" element={<LongReturnPage />} />
+          <Route path="/account" element={<UserAccountPage />} />
+          <Route path="/arcade" element={<ArcadePage />} />
+          <Route path="/arcade/artillery" element={<ArtilleryGamePage />} />
+          <Route path="/arcade/patience" element={<SolitaireGamePage />} />
+          <Route path="/arcade/sweep" element={<HazardSweepGamePage />} />
+          <Route path="/arcade/relay" element={<RelayMergeGamePage />} />
+          <Route path="/arcade/match" element={<ArcadeMatchGamePage />} />
+          <Route path="/train" element={<PreserveLocationRedirect to="/arcade" />} />
+          <Route path="/train/match" element={<PreserveLocationRedirect to="/arcade/match" />} />
+          <Route path="/train/physics" element={<PreserveLocationRedirect to="/arcade/artillery" />} />
+          <Route path="*" element={<NotFoundPage />} />
+        </Routes>
+      </ErrorBoundary>
+    </Suspense>
+  );
 }
 
 class App extends React.Component {
 
   render() {
-    Amplify.configure(awsconfig);
-
     return (
-      <Provider store={store}>
-
-      
       <TooltipProvider>
         <Router>
-         <Suspense fallback={<div>Loading...</div>}>
-          <ErrorBoundary>
-            <Switch>
-              <Route exact path="/"><Home /></Route>
-              <Route exact path="/generator"><GeneratorPage /></Route>
-              {/* legacy lore pages retired in favor of the Encyclopedia (docs/design/xalian-encyclopedia-page.md) */}
-              <Route exact path="/species"><Redirect to="/encyclopedia/species" /></Route>
-                <Route exact path="/species/:id" component={RedirectSpecies} />
-                <Route exact path="/user/:id"
-                  render={({ match }) => <UserDetailsPage id={match.params.id} />}
-                />
-              <Route exact path="/planets"><Redirect to="/encyclopedia/worlds" /></Route>
-              <Route exact path="/glossary"><Redirect to="/encyclopedia/index" /></Route>
-              <Route path="/encyclopedia"><EncyclopediaPage /></Route>
-              {/* the design system reference - unlinked from the navbar, it is a
-                  developer tool rather than a page for players */}
-              <Route exact path="/styleguide"><StyleGuidePage /></Route>
-              {/* throws on render, to exercise ErrorBoundary/ErrorPage - a developer
-                  route, unlinked like /styleguide */}
-              <Route exact path="/dev/error"><DevErrorPage /></Route>
-              {/* the duel's own affordance reference - also a developer tool,
-                  also deliberately unlinked */}
-              <Route exact path="/duel/reference"><DuelPlaygroundPage /></Route>
-              <Route exact path="/duel"><DuelStartPage/></Route>
-              <Route exact path="/reclamation"><ReclamationPage/></Route>
-              <Route exact path="/long-return"><LongReturnPage /></Route>
-              <Route exact path="/account"><UserAccountPage /></Route>
-              <Route exact path="/train"><TrainingGroundsPage /></Route>
-                <Route exact path="/train/match"><MatchCardGamePage /></Route>
-                <Route exact path="/train/physics"><PhysicsGamePage /></Route>
-              {/* catch-all: keep this last */}
-              <Route><NotFoundPage /></Route>
-            </Switch>
-          </ErrorBoundary>
-      </Suspense>
+          <AppRoutes />
         </Router>
         <Toaster />
       </TooltipProvider>
-      </Provider>
     );
   }
   

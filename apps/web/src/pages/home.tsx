@@ -1,13 +1,11 @@
 // Tier: chrome. The front door: the splash, the fourteen worlds and a
 // species strip as featured components, and the site's five destinations.
 import * as React from 'react';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router';
 import XalianNavbar from '../components/navbar';
 import XaliansLogoDnaAnimated from '../components/animations/xaliansLogoDnaAnimated';
 import XalianImage from '../components/xalianImage';
-import { routeFor } from '../lore/routeFor';
-import * as lore from '../lore';
-import species from '@xalians/content/species.json';
+import { species, worlds } from 'virtual:xalians-home-data';
 
 import { Shell } from '@/components/system/masthead';
 import { Button } from '@/components/ui/button';
@@ -48,24 +46,23 @@ const DESTINATIONS = [
 		to: '/reclamation',
 	},
 	{
-		name: 'Training',
-		copy: 'Short games to learn the pieces before the arena.',
-		to: '/train',
+		name: 'Arcade',
+		copy: 'Familiar games that turn a quick win into progress toward another Xalian.',
+		to: '/arcade',
 	},
 ];
 
 function Home() {
 	const [featuredSpecies] = React.useState(pickRandomSpecies);
-	const worlds = lore.getWorlds();
 
 	return (
 		<main className="min-h-screen bg-room text-ink font-body" data-tier="chrome">
 			<XalianNavbar />
 
 			<Shell className="pt-8 pb-16">
-				<section className="mb-12 grid gap-6 md:grid-cols-[1.1fr_0.9fr] md:items-start">
+				<section className="mb-12 grid gap-8 xl:grid-cols-[1.1fr_0.9fr] xl:items-center">
 					<div className="flex flex-col items-start gap-3">
-						<XaliansLogoDnaAnimated />
+						<div className="max-sm:hidden"><XaliansLogoDnaAnimated /></div>
 						<p className="type-legend mt-2">Xalia</p>
 						<h1 className="type-display m-0">Creatures grown for dying worlds</h1>
 						<p className="mt-2 max-w-[62ch] font-body text-lead text-ink-2">
@@ -82,16 +79,16 @@ function Home() {
 					</div>
 
 					<section data-tier="featured" aria-label="The worlds of Xalia">
-						<div className="grid grid-cols-4 gap-2 sm:grid-cols-4 md:grid-cols-7">
+						<div className="grid grid-cols-4 gap-2 sm:grid-cols-[repeat(auto-fill,minmax(112px,1fr))]">
 							{worlds.map((world: any) => (
 								<Link
 									key={world.key}
-									to={routeFor('world', world.key)}
+									to={`/encyclopedia/worlds/${world.key}`}
 									className={`el-${world.element} mass-el group flex flex-col items-start gap-1 overflow-hidden border border-edge bg-s1 pb-2 hover:border-edge-strong hover:bg-s2 focus-visible:outline-2 focus-visible:outline-ring`}
 								>
 									<div className="flex aspect-square w-full items-center justify-center bg-el/24">
 										<img
-											src={`/${world.images.planet}`}
+											src={`/${world.planetImage}`}
 											alt={`${world.name} globe`}
 											className="h-[68%] w-[68%] object-contain sm:h-[76%] sm:w-[76%]"
 										/>
@@ -113,7 +110,7 @@ function Home() {
 						{featuredSpecies.map((s: any) => (
 							<Link
 								key={s.id || s.name}
-								to={routeFor('species', s.name.toLowerCase())}
+								to={`/encyclopedia/species/${s.name.toLowerCase()}`}
 								className={`el-${s.type.toLowerCase()} mass-el flex w-[140px] shrink-0 snap-start flex-col items-center gap-2 overflow-hidden border border-edge bg-s1 pb-3 hover:border-edge-strong hover:bg-s2 focus-visible:outline-2 focus-visible:outline-ring sm:w-auto sm:shrink`}
 							>
 								<div className="aspect-square w-full bg-el">

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation } from 'react-router';
 import * as lore from '../../lore';
 import GalaxyMap from './GalaxyMap';
 import EraScrubber from './EraScrubber';

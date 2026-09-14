@@ -1,6 +1,6 @@
 {
-  "version": "1.1.0",
-  "note": "Species whose templates Nick has ratified (all 29 as of 2026-09-03, PR #73). Only these are bundled into packages/content/json/speciesRecords.json by scripts/bundleLore.js; *-run.* files and unratified drafts never ship. A new species is added here only after ratification. Frackworm (00030) ratified 2026-09-09 as the thirtieth species.",
+  "version": "1.2.0",
+  "note": "Species whose templates Nick has ratified (all 29 as of 2026-09-03, PR #73). Only these are bundled into packages/content/json/speciesRecords.json by scripts/bundleLore.js; *-run.* files and unratified drafts never ship. A new species is added here only after ratification. Frackworm (00030) was ratified 2026-09-09 as the thirtieth species; Sonalloy (00031) was ratified 2026-09-11 as the thirty-first.",
   "records": [
     {
       "key": "akinza",
@@ -4197,6 +4197,196 @@
           85
         ],
         "description": "It comes apart into smoke mid-stride, crosses the ground as haze, and is whole again with its claws already closing."
+      }
+    },
+    {
+      "key": "sonalloy",
+      "name": "Sonalloy",
+      "nameOrigin": "A fusion of sonic and alloy, naming the vibrations it uses to locate damage and the living metal it works into the repair.",
+      "element": "metal",
+      "homePlanet": "veridium",
+      "generatorPlanets": [
+        "veridium"
+      ],
+      "lore": {
+        "description": "A low six-legged creature of living metal, the Sonalloy climbs Veridium's gantries and draws warm alloy from a broad extrusion vent beneath its front body, working it into damaged creatures and structures with a pair of fine tendrils and broad pincers.",
+        "appearance": [
+          "A low broad body made entirely of satin-finished metal",
+          "Two small recessed eyes grouped on the lower forward slope directly above the extrusion vent",
+          "Six jointed load-bearing legs tipped with split gripping pads",
+          "A pair of broad facing pincers beneath the front of the body",
+          "Two fine tendrils that unfurl from recesses beside the pincers",
+          "A single broad downward-facing extrusion vent centered beneath the front body between the two tendril bases",
+          "A bare unplated surface crossed by slow-moving lines of forge glow"
+        ],
+        "origin": "The Veridium Generator produced Sonalloys to maintain metal-shaping fauna and factory systems in forge districts where fractures accumulate faster than ordinary crews can answer them.",
+        "habitat": "They move along factory trenches, gantries, salvage fields, and the cooler banks of Veridium's liquid metal channels.",
+        "feeding": "They draw heat from forge districts and passing metal channels, retaining enough of it to keep a reserve of seam alloy mobile inside the body, and fold small pieces of scrap into that reserve to replace material spent on repairs.",
+        "behavior": "A Sonalloy drums across a damaged surface to map the break, braces it with its pincers, extrudes warm alloy between its tendrils, and uses them to draw the material directly into the fracture and work it until the join bears weight again.",
+        "company": "Several may converge on widespread breakage and coordinate through alternating patterns of seam glow, but they separate once the repair is stable."
+      },
+      "physiology": {
+        "corporeality": "corporeal",
+        "composition": {
+          "primary": "metal"
+        },
+        "bodyPlan": "multiped",
+        "anatomy": [
+          "pincers",
+          "tendrils",
+          "vents",
+          "body"
+        ],
+        "covering": "bare",
+        "size": {
+          "heightCm": [
+            72,
+            98
+          ],
+          "weightKg": [
+            220,
+            360
+          ]
+        },
+        "lifespan": "enduring",
+        "genome": {
+          "chirality": "rolled"
+        },
+        "diet": "energy-feeder",
+        "communication": [
+          "vibration",
+          "display"
+        ],
+        "breathes": [],
+        "environmentalTolerance": {
+          "ambientMedia": [
+            "gas"
+          ],
+          "temperatureC": {
+            "min": -10,
+            "max": 80
+          }
+        },
+        "capabilities": {
+          "flight": [
+            0,
+            0
+          ],
+          "swim": [
+            0,
+            8
+          ],
+          "burrow": [
+            0,
+            5
+          ],
+          "climb": [
+            62,
+            86
+          ],
+          "sprint": [
+            18,
+            38
+          ],
+          "leap": [
+            4,
+            16
+          ],
+          "manipulation": [
+            72,
+            94
+          ]
+        },
+        "senses": {
+          "sight": [
+            38,
+            62
+          ],
+          "hearing": [
+            48,
+            72
+          ],
+          "smell": [
+            0,
+            5
+          ]
+        }
+      },
+      "archetypeWeights": {
+        "sage": 40,
+        "stalwart": 30,
+        "bulwark": 20,
+        "survivor": 10
+      },
+      "attributes": {
+        "strength": [
+          38,
+          58
+        ],
+        "vitality": [
+          54,
+          76
+        ],
+        "endurance": [
+          56,
+          80
+        ],
+        "agility": [
+          28,
+          48
+        ],
+        "reflex": [
+          34,
+          56
+        ],
+        "intelligence": [
+          60,
+          84
+        ],
+        "willpower": [
+          58,
+          82
+        ],
+        "instinct": [
+          44,
+          66
+        ],
+        "charisma": [
+          26,
+          46
+        ],
+        "resilience": [
+          62,
+          88
+        ]
+      },
+      "traits": {
+        "pool": {
+          "regenerative": 100,
+          "healing": 100,
+          "hardened": 55,
+          "protective": 30,
+          "anchored": 15
+        }
+      },
+      "instruments": [
+        "pincers",
+        "tendrils",
+        "secretion"
+      ],
+      "signatureAbility": {
+        "name": "Ruin Made Whole",
+        "instrument": "secretion",
+        "action": "mend",
+        "medium": "metal",
+        "intensity": [
+          40,
+          80
+        ],
+        "description": "The Sonalloy floods a wound or fracture with living alloy, then draws the support lattice tight with its tendrils while its pincers hold the damaged body still."
+      },
+      "conduits": {
+        "secretion": "metal"
       }
     },
     {

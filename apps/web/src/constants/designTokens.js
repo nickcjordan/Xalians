@@ -6,7 +6,7 @@
  * attributes. None of those can read a CSS custom property, so the palette has
  * to exist on both sides.
  *
- * public/assets/css/system.css is the CSS half. The two are held identical by
+ * src/styles/legacy/system.css is the v3 CSS half. The two are held identical by
  * src/__tests__/designTokens.test.js, which fails if any value here disagrees
  * with the matching --g-* token. Change a colour in one place and the test will
  * tell you about the other.
@@ -21,7 +21,7 @@ import { themeColors as elementThemeColors } from './colorConstants';
 /**
  * Version 4 (docs/DESIGN_SYSTEM.md section 3): the room, surfaces, glass,
  * edges, ink, the viable accent (three tiers of one hue) and semantic
- * status colours. Mirrors public/assets/css/system.css's :root primitives
+ * status colours. Mirrors src/styles/legacy/system.css's :root primitives
  * exactly; paired in src/__tests__/designTokens.test.js.
  */
 export const v4 = {
@@ -36,8 +36,8 @@ export const v4 = {
 	edgeStrong: 'rgba(217, 210, 192, 0.22)',
 	glassEdge: 'rgba(217, 210, 192, 0.14)',
 	ink: '#d9d2c0',
-	ink2: '#9a9382',
-	ink3: '#6c6659',
+	ink2: '#aaa391',
+	ink3: '#9e9786',
 	ink4: '#4a4640',
 	viableHi: '#86ffb5',
 	viable: '#4fc98d',
@@ -91,7 +91,7 @@ export const phosphor = {
 /** Bulbs behind coloured plastic, and painted warning livery. */
 export const lamp = {
 	amber: '#ffb037',
-	red: '#e4483c',
+	red: '#e84f43',
 	off: '#3d3a30',
 };
 
@@ -220,7 +220,7 @@ export const terminals = {
 		vfd: '#e7c98a',
 		paper: '#e6dcc6',
 		paperInk: '#1d1710',
-		lampOn: '#e4483c',
+		lampOn: '#e84f43',
 	},
 	archive: {
 		face: '#f8f5ec',

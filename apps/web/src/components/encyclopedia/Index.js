@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { Link, useHistory, useLocation } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router';
 import * as lore from '../../lore';
 import Prose from './Prose';
 import { useReadMark } from './trail';
@@ -35,7 +35,7 @@ function IndexRecord({ entry }) {
                 </div>
             }
         >
-            <Prose text={entry.definition} except={entry.key} className="m-0 max-w-none text-small text-ink-2" />
+            <Prose text={entry.definition} except={entry.key} className="m-0 text-small text-ink-2" />
         </RecordRow>
     );
 }
@@ -46,7 +46,7 @@ function IndexRecord({ entry }) {
  */
 export default function Index() {
     const location = useLocation();
-    const history = useHistory();
+    const navigate = useNavigate();
     const initialQuery = useMemo(() => {
         const params = new URLSearchParams(location.search);
         return params.get('q') || '';
@@ -86,7 +86,7 @@ export default function Index() {
 
     function pullRandom() {
         const record = lore.getRandomRecord();
-        history.push(lore.routeFor(record.kind, record.key));
+        navigate(lore.routeFor(record.kind, record.key));
     }
 
     return (
@@ -108,7 +108,7 @@ export default function Index() {
                         <button
                             type="button"
                             data-state={category === 'all' ? 'active' : 'inactive'}
-                            className={`${tabTriggerClass} max-sm:shrink-0`}
+                            className={`${tabTriggerClass} max-sm:min-h-11 max-sm:shrink-0`}
                             aria-pressed={category === 'all'}
                             onClick={() => setCategory('all')}
                         >
@@ -119,7 +119,7 @@ export default function Index() {
                                 key={c}
                                 type="button"
                                 data-state={category === c ? 'active' : 'inactive'}
-                                className={`${tabTriggerClass} max-sm:shrink-0`}
+                                className={`${tabTriggerClass} max-sm:min-h-11 max-sm:shrink-0`}
                                 aria-pressed={category === c}
                                 onClick={() => setCategory(c)}
                             >

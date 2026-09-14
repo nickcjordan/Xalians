@@ -4,6 +4,9 @@
 import * as React from 'react';
 import type { XalianRecord } from '@xalians/content/schema';
 import { speciesDisplayName } from '@xalians/rules/generator';
+import { ArrowRightLeft, Copy } from 'lucide-react';
+import { Link } from 'react-router';
+import { toast } from 'sonner';
 
 import XalianNavbar from '../components/navbar';
 import RecordTile from '../components/record/RecordTile';
@@ -33,7 +36,7 @@ function UserDetailsPage({ id }: UserDetailsPageProps) {
 	React.useEffect(() => {
 		setIsLoading(true);
 		dbApi
-			.callListXalians(id)
+			.callListPublicXalians(id)
 			.then((page: any) => {
 				setRecords(page.items);
 				setCursor(page.nextCursor);
@@ -49,7 +52,7 @@ function UserDetailsPage({ id }: UserDetailsPageProps) {
 		if (!cursor) return;
 		setIsLoadingMore(true);
 		dbApi
-			.callListXalians(id, cursor)
+			.callListPublicXalians(id, cursor)
 			.then((page: any) => {
 				setRecords((prev) => [...prev, ...page.items]);
 				setCursor(page.nextCursor);
@@ -61,6 +64,12 @@ function UserDetailsPage({ id }: UserDetailsPageProps) {
 			});
 	};
 
+	const copyBinderLink = () => {
+		navigator.clipboard.writeText(window.location.href)
+			.then(() => toast.success('Binder link copied'))
+			.catch(() => toast.error('Could not copy the binder link'));
+	};
+
 	return (
 		<main id="main" className="min-h-screen bg-room text-ink font-body" data-tier="chrome">
 			<XalianNavbar />
@@ -70,6 +79,12 @@ function UserDetailsPage({ id }: UserDetailsPageProps) {
 					kicker="Account"
 					title={id}
 					subtitle={records.length > 0 ? `${records.length} generated` : undefined}
+					aside={
+						<div className="flex w-full flex-col gap-3 sm:flex-row md:w-auto">
+							<Button variant="secondary" onClick={copyBinderLink}><Copy /> Copy binder link</Button>
+							<Button asChild><Link to={`/trade/new?with=${encodeURIComponent(id)}`}><ArrowRightLeft /> Propose a trade</Link></Button>
+						</div>
+					}
 				/>
 
 				{isLoading && (
@@ -103,7 +118,7 @@ function UserDetailsPage({ id }: UserDetailsPageProps) {
 				)}
 			</Shell>
 
-			<Dialog open={!!openRecord} onOpenChange={(open) => !open && setOpenRecord(null)}>
+			<Dialog open={!!openRecord} onOpenChange={(open: boolean) => !open && setOpenRecord(null)}>
 				<DialogContent className="sm:max-w-4xl">
 					<DialogHeader>
 						<VisuallyHidden>
@@ -111,7 +126,7 @@ function UserDetailsPage({ id }: UserDetailsPageProps) {
 						</VisuallyHidden>
 					</DialogHeader>
 					<ScrollArea className="max-h-[75vh] pr-4">
-						{openRecord && <RecordView record={openRecord} kicker="Record" />}
+						{openRecord && <RecordView record={openRecord} kicker="Record" recordLink={`/xalian/${openRecord.id}`} />}
 					</ScrollArea>
 				</DialogContent>
 			</Dialog>

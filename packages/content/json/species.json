@@ -718,5 +718,29 @@
       "canFly": false,
       "attackRange": "low"
     }
+  },
+  {
+    "name": "Sonalloy",
+    "id": "00031",
+    "type": "Metal",
+    "planet": "Veridium",
+    "height": "33 in / 85 cm",
+    "weight": "639 lbs / 290 kg",
+    "description": "A low six-legged creature of living metal, the Sonalloy climbs Veridium's gantries and draws warm alloy from a broad extrusion vent beneath its front body, working it into damaged creatures and structures with a pair of fine tendrils and broad pincers.",
+    "statRatings": {
+      "healthRating": "",
+      "standardAttackRating": "",
+      "specialAttackRating": "",
+      "standardDefenseRating": "",
+      "specialDefenseRating": "",
+      "speedRating": "",
+      "evasionRating": "",
+      "staminaRating": "",
+      "recoveryRating": ""
+    },
+    "traits": {
+      "canFly": false,
+      "attackRange": "low"
+    }
   }
 ]

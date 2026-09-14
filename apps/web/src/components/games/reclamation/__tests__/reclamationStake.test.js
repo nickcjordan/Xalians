@@ -1,6 +1,5 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import { act } from 'react-dom/test-utils';
+import React, { act } from 'react';
+import { createRoot } from 'react-dom/client';
 import ReclamationWorld from '../reclamationWorld';
 import ReclamationBench from '../reclamationBench';
 import ReclamationDraft from '../reclamationDraft';
@@ -15,18 +14,19 @@ import { ROSTER_SIZE } from '@xalians/rules/expedition/expeditionInterpretation'
 
 /*
 	PASS 3 on the table (docs/design/reclamation-base-redesign.md, assumptions 21 to 23):
-	the stake's control and its mark, the price of hiding on the sends-left pips, and the
-	draft's new shape in words.
+	the stake's control and its mark, the draft's new shape in words, and (pass 4b, Nick
+	2026-09-13) that hiding is no longer a choice on the bench: a stealthy creature simply
+	arrives hidden when sent, and nothing offers a toggle for it any more.
 
 	The public state under test is the ENGINE'S OWN, not a hand-written fixture: a real
 	match is created from a real draft pool and read through getPublicState, so a test
-	here fails the moment the engine stops carrying `stakes`, `stakeableSiteIds` or
-	`hiddenSendCost` in the shape the table reads. Only the two fields a test needs to
-	force (whose turn it is, how many sends are spent) are overridden on the copy, since
-	neither is reachable from the outside without playing a whole round.
+	here fails the moment the engine stops carrying `stakes` or `stakeableSiteIds` in the
+	shape the table reads. Only the one field a test needs to force (whose turn it is) is
+	overridden on the copy, since it is not reachable from the outside without playing a
+	whole round.
 
-	Mounted with plain ReactDOM.render + react-dom/test-utils' act against a jsdom
-	container, the same way reclamationReport.test.js mounts the notes panel.
+	Mounted with React's concurrent root against a jsdom container, the same way
+	reclamationReport.test.js mounts the notes panel.
 */
 
 const SEED = 7;
@@ -46,20 +46,15 @@ function withTurn(view, seat) {
 	return { ...view, turn: seat };
 }
 
-function withSentCount(view, seat, sentCount) {
-	return {
-		...view,
-		players: { ...view.players, [seat]: { ...view.players[seat], sentCount } },
-	};
-}
-
 let container;
+let root;
 
 function mount(element) {
 	container = document.createElement('div');
 	document.body.appendChild(container);
+	root = createRoot(container);
 	act(() => {
-		ReactDOM.render(element, container);
+		root.render(element);
 	});
 	return container;
 }
@@ -67,10 +62,11 @@ function mount(element) {
 afterEach(() => {
 	if (container) {
 		act(() => {
-			ReactDOM.unmountComponentAtNode(container);
+			root.unmount();
 		});
 		container.remove();
 		container = null;
+		root = null;
 	}
 });
 
@@ -230,8 +226,8 @@ describe('the stake, in words', () => {
 	});
 });
 
-describe('the price of hiding, on the bench', () => {
-	// a stealthy creature in the handler's own roster: only that one shows the toggle
+describe('hiding, on the bench (Nick, 2026-09-13: no longer a choice)', () => {
+	// a stealthy creature in the handler's own roster
 	function stealthyIdOf(view) {
 		const site = view.frame.sites[0];
 		const found = (view.players.A.roster || []).find(
@@ -248,13 +244,11 @@ describe('the price of hiding, on the bench', () => {
 			mode: 'advanced',
 			armedRecordId: null,
 			recommendation: null,
-			sendHidden: false,
 			movingRecordId: null,
 			movable: [],
 			onArm: () => {},
 			onInspect: () => {},
 			onHoverRecord: () => {},
-			onToggleHidden: () => {},
 			onPass: () => {},
 			onBeginMove: () => {},
 			rivalBeat: null,
@@ -262,76 +256,34 @@ describe('the price of hiding, on the bench', () => {
 		};
 	}
 
-	it('the engine tells the table what a hidden send costs', () => {
-		const { view } = makeView('A');
-		expect(view.hiddenSendCost).toBe(1);
-	});
-
-	it('at the default cost of one, the toggle shows no price and the pips preview one spent either way', () => {
+	it('arming a stealthy creature prints the arrives-hidden lead, and no hidden toggle is ever rendered', () => {
 		const { view } = makeView('A');
 		const mine = withTurn(view, 'A');
 		const stealthy = stealthyIdOf(mine);
 		expect(stealthy).toBeTruthy();
 
-		// armed but open: one pip is previewed
 		mount(<ReclamationBench {...benchProps(mine, { armedRecordId: stealthy })} />);
-		expect(container.querySelectorAll('.rec-send-pip--pending').length).toBe(1);
-		expect(container.querySelector('[data-hidden-price]')).toBeFalsy();
-
-		act(() => {
-			ReactDOM.render(
-				<ReclamationBench {...benchProps(mine, { armedRecordId: stealthy, sendHidden: true })} />,
-				container
-			);
-		});
-		// armed and hidden: still one, since a hidden send costs the same as any other
-		expect(container.querySelectorAll('.rec-send-pip--pending').length).toBe(1);
-		expect(container.querySelector('[data-hidden-toggle]').disabled).toBe(false);
-		expect(container.querySelector('[data-hidden-price]')).toBeFalsy();
-	});
-
-	it('the lead names the hidden send but no price when it costs one', () => {
-		const { view } = makeView('A');
-		const mine = withTurn(view, 'A');
-		const stealthy = stealthyIdOf(mine);
-		mount(<ReclamationBench {...benchProps(mine, { armedRecordId: stealthy, sendHidden: true })} />);
 		const lead = container.querySelector('[data-bench-lead]').textContent;
-		expect(lead).toContain('Hidden: the rival will not see it until the worlds clash.');
-		expect(lead).not.toContain('lands first');
-		expect(lead).not.toContain('three quarters power');
-		expect(lead).not.toContain('costs');
+		expect(lead).toContain('Stealthy: it arrives hidden. The rival will not see it until the worlds clash.');
+		expect(container.querySelector('[data-hidden-toggle]')).toBeFalsy();
+		expect(container.querySelector('[data-hidden-price]')).toBeFalsy();
+		// the send pips preview one spent, the same as any other send
+		expect(container.querySelectorAll('.rec-send-pip--pending').length).toBe(1);
 	});
 
-	it('when a rules variant raises the cost above one, the toggle prints the price', () => {
+	it('arming a non-stealthy creature prints no hidden language and still no toggle', () => {
 		const { view } = makeView('A');
 		const mine = withTurn(view, 'A');
-		const stealthy = stealthyIdOf(mine);
-		const dearer = { ...mine, hiddenSendCost: 2 };
-		mount(<ReclamationBench {...benchProps(dearer, { armedRecordId: stealthy })} />);
-		const price = container.querySelector('[data-hidden-price]');
-		expect(price).toBeTruthy();
-		expect(price.textContent).toBe('costs 2 sends');
-	});
+		const site = mine.frame.sites[0];
+		const open = (mine.players.A.roster || []).find(
+			(r) => !prepare(r, site, null, 0, { rules: mine.rules }).stealthy
+		);
+		expect(open).toBeTruthy();
 
-	it('with no sends left the toggle is disabled', () => {
-		const { view } = makeView('A');
-		const mine = withSentCount(withTurn(view, 'A'), 'A', (view.players.A.sendableCap || 10));
-		const stealthy = stealthyIdOf(mine);
-		mount(<ReclamationBench {...benchProps(mine, { armedRecordId: stealthy, sendHidden: true })} />);
-		const toggle = container.querySelector('[data-hidden-toggle]');
-		expect(toggle.disabled).toBe(true);
-		expect(toggle.checked).toBe(false);
-	});
-
-	it('a rules variant that raises the cost above what is left shows the unaffordable price', () => {
-		const { view } = makeView('A');
-		const mine = withSentCount(withTurn(view, 'A'), 'A', (view.players.A.sendableCap || 10) - 1);
-		const stealthy = stealthyIdOf(mine);
-		const dearer = { ...mine, hiddenSendCost: 2 };
-		mount(<ReclamationBench {...benchProps(dearer, { armedRecordId: stealthy, sendHidden: true })} />);
-		const toggle = container.querySelector('[data-hidden-toggle]');
-		expect(toggle.disabled).toBe(true);
-		expect(container.querySelector('[data-hidden-price]').textContent).toBe('not enough sends left');
+		mount(<ReclamationBench {...benchProps(mine, { armedRecordId: open.id })} />);
+		const lead = container.querySelector('[data-bench-lead]').textContent;
+		expect(lead).not.toContain('hidden');
+		expect(container.querySelector('[data-hidden-toggle]')).toBeFalsy();
 	});
 });
 

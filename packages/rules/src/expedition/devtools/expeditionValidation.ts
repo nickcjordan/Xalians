@@ -30,7 +30,8 @@
 	Seven sections: five per lever in the principles doc, the per-attribute lanes Pass 2 asks
 	for (split per role since Pass 3), and the stake's own numbers.
 
-		1. Naive-policy regret. Six trivial policies play side A against the proctor; if a
+		1. Naive-policy regret. Six trivial policies (greedy, random, pass early, always
+		   stack, never contest, always presence first) play side A against the proctor; if a
 		   trivial policy wins nearly as often as the proctor, the deeper decisions are
 		   decorative, and if one BEATS the proctor there is a hole in the rules.
 		2. Option spread. Every deploy decision the proctor makes is scored with the bot's
@@ -264,47 +265,10 @@ function otherSeat(seat: any) {
 
 const RANDOM_PASS_PROBABILITY = 0.12;
 
-function traitsOf(record: any) {
-	const t = record && record.traits;
-	if (Array.isArray(t)) {
-		return t;
-	}
-	if (t && typeof t === 'object') {
-		return [...(t.guaranteed || []), ...(t.rolled || [])];
-	}
-	return [];
-}
-
 function remainingSendsOf(publicState: any, ownRoster: any, handler: any) {
 	const me = publicState.players[handler];
 	const cap = typeof me.sendableCap === 'number' ? me.sendableCap : SENDABLE;
 	return Math.min(cap - me.sentCount, ownRoster.length);
-}
-
-/*
-	Can this policy legally hide this send? Stealthy, hidden sends allowed by the rules, AND
-	the round's remaining cap able to afford the hidden send's price (1 since pass 4's
-	assumption 24, but rules.hiddenSendCost is still a lever an ablation row can raise, so
-	"every send the rules allow to be hidden" keeps its affordability clause; a policy that ignored it would
-	name a send the engine rejects).
-*/
-function canHideUnder(publicState: any, record: any, handler: any) {
-	if (publicState.rules && publicState.rules.hiddenSends === false) {
-		return false;
-	}
-	if (!traitsOf(record).includes('stealthy')) {
-		return false;
-	}
-	if (!handler) {
-		return true;
-	}
-	const me = publicState.players[handler];
-	const cap = typeof me.sendableCap === 'number' ? me.sendableCap : SENDABLE;
-	const capRemaining = cap - me.sentCount;
-	const returned = (me.returned || []).includes(record.id) ? RETURNED_SEND_COST : 1;
-	const hiddenCost = publicState.rules && typeof publicState.rules.hiddenSendCost === 'number'
-		? publicState.rules.hiddenSendCost : 1;
-	return Math.max(returned, hiddenCost) <= capRemaining;
 }
 
 // random: uniformly random among legal (record, site) pairs, with a small fixed pass
@@ -343,8 +307,9 @@ function policyRandom(publicState: any, ownRoster: any, handler: any, rng: any) 
 		});
 	});
 	const pick = candidates[Math.floor(rng.float() * candidates.length)];
-	const hidden = canHideUnder(publicState, pick.record, handler) && rng.float() < 0.5;
-	return { type: 'send', recordId: pick.record.id, siteId: pick.site.id, hidden };
+	// no hidden coin flip since pass 4b (assumption 27): the engine derives concealment
+	// from the creature and ignores the flag a caller passes.
+	return { type: 'send', recordId: pick.record.id, siteId: pick.site.id, hidden: false };
 }
 
 // greedy: always the single top-scored candidate from the bot's own scoring, never passing
@@ -381,18 +346,6 @@ function policyPassEarly(publicState: any, ownRoster: any, handler: any, rng: an
 		return { type: 'pass', reason: 'pass-early' };
 	}
 	return chooseSend(publicState, ownRoster, handler, rng, null);
-}
-
-// alwaysHidden: the proctor, but every send the rules allow to be hidden is hidden. Under
-// the hiddenSends ablation this collapses back to the proctor, which is the correct
-// reading of "every send the rules allow".
-function policyAlwaysHidden(publicState: any, ownRoster: any, handler: any, rng: any) {
-	const action = chooseSend(publicState, ownRoster, handler, rng, null);
-	if (action.type !== 'send') {
-		return action;
-	}
-	const record = ownRoster.find((r: any) => r.id === action.recordId);
-	return { ...action, hidden: canHideUnder(publicState, record, handler) };
 }
 
 // alwaysStack: the proctor's scoring, but the site is decided before the creature - always
@@ -498,7 +451,6 @@ export const NAIVE_POLICIES = [
 	{ id: 'greedy', label: 'greedy (top-scored, never rations)', send: policyGreedy },
 	{ id: 'random', label: 'random (uniform legal)', send: policyRandom },
 	{ id: 'passEarly', label: 'pass early (even share then stop)', send: policyPassEarly },
-	{ id: 'alwaysHidden', label: 'always hidden', send: policyAlwaysHidden },
 	{ id: 'alwaysStack', label: 'always stack', send: policyAlwaysStack },
 	{ id: 'neverContest', label: 'never contest (secure only)', send: policyNeverContest },
 	{ id: 'alwaysPresenceFirst', label: 'always presence first (bolster/shield before any attacker)', send: policyAlwaysPresenceFirst },
@@ -660,22 +612,26 @@ export function playMatch(options: any) {
 			if (action.type === 'send') {
 				const wasReturned = (state.players[handler].returned || []).includes(action.recordId);
 				const sentRecord = state.players[handler].roster.find((r: any) => r.id === action.recordId);
-				nextState = send(state, handler, action.recordId, action.siteId, action.hidden);
+				nextState = send(state, handler, action.recordId, action.siteId);
 				if (nextState) {
 					sends++;
+					// concealment is derived by the engine since pass 4b, so the flag comes
+					// off the arriving board entry, never off the policy's action
+					const arrived = (((nextState.board as any)[action.siteId] || {})[handler] || []).find((e: any) => e.recordId === action.recordId);
+					const arrivedHidden = !!(arrived && arrived.hidden);
 					// every send is recorded lightly (its world, its seat, whether it was
 					// hidden) so the hidden-send site win rate can be read without a second
 					// batch; the attribute payload is only carried under collectLanes.
 					sendsThisFrame.push({
 						seat: handler,
 						siteId: action.siteId,
-						hidden: !!action.hidden,
+						hidden: arrivedHidden,
 						attributes: collectLanes && sentRecord ? (sentRecord.attributes || {}) : null,
 						role: collectLanes && sentRecord ? roleOf(sentRecord, rules) : null,
 					});
 
 					sendsBySeat[handler]++;
-					if (action.hidden) {
+					if (arrivedHidden) {
 						hiddenSends++;
 					}
 					if (wasReturned) {
@@ -914,14 +870,6 @@ export function sectionRegret({ matches, seed, pool, rules }: any) {
 	const readings = [];
 	rows.forEach((row: any) => {
 		if (!row.vsProctor) {
-			return;
-		}
-		// since pass 4 (assumption 24) hiding is concealment only, so "the proctor, hiding
-		// everything it can" IS the proctor as far as any bot can tell: what it measures
-		// is the bot's read of unseen sends, which section 8 reads directly. Reported here,
-		// never flagged.
-		if (row.id === 'alwaysHidden') {
-			row.flag = 'reported only (pass 4)';
 			return;
 		}
 		if (row.vsProctor.p > 0.5) {
@@ -1662,7 +1610,7 @@ export function sectionStake({ matches, seed, pool, rules }: any) {
 }
 
 // ---------------------------------------------------------------------------
-// section 8: the read (pass 4, assumption 24)
+// section 8: the read (pass 4, assumption 24; pass 4b, assumption 27)
 // ---------------------------------------------------------------------------
 
 /*
@@ -1672,16 +1620,17 @@ export function sectionStake({ matches, seed, pool, rules }: any) {
 	guess wrong, so the bot guesses (expeditionBot.readUnseen): it spreads every hidden send
 	the rival has made this round, plus the sends still to come from a rival who has not
 	passed (anticipation), across the round's worlds by where the rival would most want
-	them, and values each send as the average of its worth under each guess. This section
-	reads the read: the proctor against a proctor that does not anticipate (the pass 3
-	bot), against one that ignores unseen creatures altogether, and then hiding itself:
-	the proctor hiding everything it can, and never hiding, each against the proctor.
+	them, and values each send as the average of its worth under each guess.
+
+	Since pass 4b (assumption 27) concealment is no longer a policy choice at all: a
+	stealthy creature arrives hidden, everyone else arrives open, and no handler decides
+	otherwise. So the only thing left to read here is the read itself, and the hiding rows
+	are gone with the decision they measured. What remains is the proctor against a proctor
+	that does not anticipate (the pass 3 bot), against one that ignores unseen creatures
+	altogether, and a sharper read against the proctor's even spread.
 
 	Gauge: the read must beat the bot without it by more than the mirror's interval, or it
-	is decoration. Concealment's own worth is REPORTED, never gauged: against a bot it can
-	only be worth whatever the bot's guess is wrong by, and whether it is worth anything
-	to a human is the human session's question (docs/design/game-validation-principles.md,
-	"what none of these can tell you").
+	is decoration.
 */
 function readPolicy(weights: any, id: any) {
 	return policyForRival({ id, name: id, weights });
@@ -1694,9 +1643,6 @@ export function sectionRead({ matches, seed, pool, rules }: any) {
 		{ id: 'anticipation', label: 'proctor vs no anticipation (pass 3 bot: hidden sends read, coming sends not)', rate: run(PROCTOR_POLICY.send, readPolicy({ anticipation: 0 }, 'noAnticipation')) },
 		{ id: 'blind', label: 'proctor vs blind (ignores hidden and coming sends alike)', rate: run(PROCTOR_POLICY.send, readPolicy({ hiddenHoldGuess: 0 }, 'blind')) },
 		{ id: 'sharpRead', label: 'sharp read (sharpness 1, a guess at WHERE) vs proctor (even spread)', rate: run(readPolicy({ readSharpness: 1 }, 'sharp'), PROCTOR_POLICY.send) },
-		{ id: 'alwaysHidden', label: 'always hidden vs proctor', rate: run((NAIVE_POLICIES.find((p: any) => p.id === 'alwaysHidden') as any).send, PROCTOR_POLICY.send) },
-		{ id: 'neverHides', label: 'never hides vs proctor', rate: run(readPolicy({ hideBias: 0 }, 'neverHides'), PROCTOR_POLICY.send) },
-		{ id: 'alwaysHiddenVsBlind', label: 'always hidden vs blind', rate: run((NAIVE_POLICIES.find((p: any) => p.id === 'alwaysHidden') as any).send, readPolicy({ hiddenHoldGuess: 0 }, 'blind')) },
 	];
 	const half = mirror ? (mirror.hi - mirror.lo) / 2 : 0.05;
 	const readings = [];
@@ -1705,12 +1651,6 @@ export function sectionRead({ matches, seed, pool, rules }: any) {
 		readings.push(`The read carries weight: the proctor beats the bot without anticipation ${fmtPct(anticipation)} against a mirror of ${fmtPct(mirror)}.`);
 	} else if (anticipation) {
 		readings.push(`DECORATION? The proctor beats the bot without anticipation only ${fmtPct(anticipation)} against a mirror of ${fmtPct(mirror)}, inside the interval. The read is not doing measurable work at this batch size.`);
-	}
-	const hidden = rows[3].rate;
-	const never = rows[4].rate;
-	if (hidden && never) {
-		const gap = (hidden.p - never.p) * 100;
-		readings.push(`Concealment against the bot: hiding everything reads ${fmtPct(hidden)} and never hiding ${fmtPct(never)} against the proctor (${gap >= 0 ? '+' : ''}${gap.toFixed(1)} points for hiding). Reported, not a gauge: against a bot concealment is worth only what the bot's guess is wrong by, and whether a human values it is the human session's question.`);
 	}
 	return { rows, mirror, readings };
 }

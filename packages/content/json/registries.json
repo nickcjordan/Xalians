@@ -1,56 +1,56 @@
 {
   "version": "1.0.0",
-  "note": "Registry vocabularies: key, display name, one-line nature. Transcribed from the ratified definitions in the migrate-species skill (sections 5.1 to 5.7). Games and the Encyclopedia read display names and natures from here; the skill text remains the source.",
+  "note": "Registry vocabularies: key, display name, and a player-facing description. Games and the Encyclopedia read display names and descriptions from here; the migrate-species skill remains the source for authoring rules.",
   "attributes": [
     {
       "key": "strength",
       "name": "Strength",
-      "nature": "Physical force."
+      "nature": "Physical power behind lifting, pushing, and striking."
     },
     {
       "key": "vitality",
       "name": "Vitality",
-      "nature": "Life force."
+      "nature": "Health and life force."
     },
     {
       "key": "endurance",
       "name": "Endurance",
-      "nature": "Sustained output."
+      "nature": "Ability to sustain effort over time."
     },
     {
       "key": "agility",
       "name": "Agility",
-      "nature": "Speed and maneuvering."
+      "nature": "Speed, balance, and control in motion."
     },
     {
       "key": "reflex",
       "name": "Reflex",
-      "nature": "Reaction time."
+      "nature": "Speed of reaction."
     },
     {
       "key": "intelligence",
       "name": "Intelligence",
-      "nature": "Brain power; never true-human range."
+      "nature": "Capacity to learn, reason, and solve problems."
     },
     {
       "key": "willpower",
       "name": "Willpower",
-      "nature": "Mental fortitude."
+      "nature": "Ability to resist fear, pain, and mental pressure."
     },
     {
       "key": "instinct",
       "name": "Instinct",
-      "nature": "Perception and gut sense."
+      "nature": "Awareness guided by perception and intuition."
     },
     {
       "key": "charisma",
       "name": "Charisma",
-      "nature": "Presence, not eloquence."
+      "nature": "The force of its presence."
     },
     {
       "key": "resilience",
       "name": "Resilience",
-      "nature": "Physical toughness."
+      "nature": "Ability to withstand physical harm."
     }
   ],
   "archetypes": [
@@ -192,7 +192,7 @@
     {
       "key": "balanced",
       "name": "Balanced",
-      "nature": "Favors nothing.",
+      "nature": "Draws evenly from every attribute.",
       "favors": []
     }
   ],
@@ -200,7 +200,7 @@
     {
       "key": "healing",
       "name": "Healing",
-      "nature": "Restores others; element colors how; flavor never restricts targets."
+      "nature": "Restores injuries and vitality in others."
     },
     {
       "key": "protective",
@@ -210,12 +210,12 @@
     {
       "key": "regenerative",
       "name": "Regenerative",
-      "nature": "Rapid self-repair, organic or mechanical."
+      "nature": "Rapidly repairs its own body, whether organic or mechanical."
     },
     {
       "key": "armored",
       "name": "Armored",
-      "nature": "Natural plating, shell, integrated chassis, or a covering the body reliably forms on itself (frost, resin, slag)."
+      "nature": "Carries natural armor such as plating, shell, chassis, or a covering it forms around itself."
     },
     {
       "key": "anchored",
@@ -225,57 +225,57 @@
     {
       "key": "phasing",
       "name": "Phasing",
-      "nature": "Some physical interactions pass through it; auto-granted to non-corporeal bodies, rare roll on corporeal ones."
+      "nature": "Allows some physical attacks and obstacles to pass through its body."
     },
     {
       "key": "resistant",
       "name": "Resistant",
-      "nature": "Shrugs off contamination: toxins, disease, radiation, corrosion, chemically hostile air (bodily only; thin or crushing air is hardened, charge is insulated)."
+      "nature": "Shrugs off toxins, disease, radiation, corrosion, and hostile chemicals."
     },
     {
       "key": "hardened",
       "name": "Hardened",
-      "nature": "Built for physical extremes: heat, cold, pressure, dryness, thin or crushing air (bodily only; the physical twin of resistant, which covers contamination)."
+      "nature": "Endures extremes of heat, cold, pressure, dryness, and atmosphere."
     },
     {
       "key": "dormant",
       "name": "Dormant",
-      "nature": "Suspends its own vitals to wait out what it cannot survive awake and wakes on a trigger (bodily only)."
+      "nature": "Suspends its vital functions until conditions are safe or a trigger wakes it."
     },
     {
       "key": "insulated",
       "name": "Insulated",
-      "nature": "Charge, current and discharge pass over or through it without harm (bodily only; the energy twin of resistant and hardened)."
+      "nature": "Lets electrical charge and current pass over or through it without harm."
     },
     {
       "key": "territorial",
       "name": "Territorial",
-      "nature": "Stronger holding ground it has claimed or been set to hold; denies passage rather than pursuing."
+      "nature": "Grows stronger while defending ground it has claimed or been set to hold."
     },
     {
       "key": "grappling",
       "name": "Grappling",
-      "nature": "Stronger holding what it has caught; the mirror of slippery."
+      "nature": "Grows stronger while holding something it has caught."
     },
     {
       "key": "commanding",
       "name": "Commanding",
-      "nature": "Directs other bodies, or projections of itself, as one unit."
+      "nature": "Directs other bodies or projections of itself as a single unit."
     },
     {
       "key": "ramming",
       "name": "Ramming",
-      "nature": "A living ram; blows land far harder with movement behind them."
+      "nature": "Turns its momentum into devastating collisions."
     },
     {
       "key": "toxic",
       "name": "Toxic",
-      "nature": "Natural weapons deliver debilitating agents; element colors which."
+      "nature": "Delivers debilitating substances through its natural weapons."
     },
     {
       "key": "volatile",
       "name": "Volatile",
-      "nature": "Hazardous to strike; reacts when hit, element-colored."
+      "nature": "Releases a dangerous reaction when struck."
     },
     {
       "key": "reflective",
@@ -290,12 +290,12 @@
     {
       "key": "hypnotic",
       "name": "Hypnotic",
-      "nature": "Entrances and holds attention, dulling the will to act (caps there)."
+      "nature": "Entrances others and dulls their will to act."
     },
     {
       "key": "perceptive",
       "name": "Perceptive",
-      "nature": "Perceives what hides; the counter to stealthy."
+      "nature": "Perceives creatures and threats that try to hide."
     },
     {
       "key": "foresighted",
@@ -305,17 +305,17 @@
     {
       "key": "mind-sealed",
       "name": "Mind Sealed",
-      "nature": "Nothing enters, sways, or breaks its mind; counters hypnotic and menacing."
+      "nature": "Keeps outside forces from entering, swaying, or breaking its mind."
     },
     {
       "key": "pack-bonded",
       "name": "Pack Bonded",
-      "nature": "Stronger coordinating with others (excludes solitary)."
+      "nature": "Grows stronger when coordinating with others."
     },
     {
       "key": "solitary",
       "name": "Solitary",
-      "nature": "Stronger operating alone (excludes pack-bonded)."
+      "nature": "Grows stronger when operating alone."
     },
     {
       "key": "stealthy",
@@ -335,54 +335,54 @@
     {
       "key": "slippery",
       "name": "Slippery",
-      "nature": "Cannot be held: escapes grabs, pins, traps, snares."
+      "nature": "Escapes grabs, pins, traps, and snares."
     },
     {
       "key": "luminous",
       "name": "Luminous",
-      "nature": "Its body sheds light; strips darkness and shadow concealment nearby."
+      "nature": "Its body sheds light and reveals what darkness would conceal nearby."
     },
     {
       "key": "telekinetic",
       "name": "Telekinetic",
-      "nature": "Moves things without touching them; levitation is constant, flinging is the derived ability."
+      "nature": "Moves and suspends objects without touching them."
     }
   ],
   "elements": [
     {
       "key": "fire",
       "name": "Fire",
-      "nature": "Heat and relentless aggression."
+      "nature": "Burning heat and relentless force."
     },
     {
       "key": "water",
       "name": "Water",
-      "nature": "Flow and restoration."
+      "nature": "Flow, adaptation, and restoration."
     },
     {
       "key": "dark",
       "name": "Dark",
-      "nature": "Gravity, void, and time (never spooky)."
+      "nature": "Gravity, void, and the pull of time."
     },
     {
       "key": "light",
       "name": "Light",
-      "nature": "Radiance and precision energy."
+      "nature": "Radiance, revelation, and precise energy."
     },
     {
       "key": "plant",
       "name": "Plant",
-      "nature": "Growth and territory."
+      "nature": "Growth, roots, and claimed ground."
     },
     {
       "key": "electric",
       "name": "Electric",
-      "nature": "Storm and surge, chain and link."
+      "nature": "Storms, surges, and power that leaps between targets."
     },
     {
       "key": "ghost",
       "name": "Ghost",
-      "nature": "Incorporeality and dread."
+      "nature": "Incorporeality, haunting, and dread."
     },
     {
       "key": "rock",
@@ -392,7 +392,7 @@
     {
       "key": "chemical",
       "name": "Chemical",
-      "nature": "Reaction and corrosion."
+      "nature": "Transformation, reaction, and corrosion."
     },
     {
       "key": "air",
@@ -412,7 +412,7 @@
     {
       "key": "metal",
       "name": "Metal",
-      "nature": "Machinery and precision."
+      "nature": "Machinery, endurance, and precision."
     },
     {
       "key": "sand",
@@ -437,12 +437,12 @@
       {
         "key": "flesh",
         "name": "Flesh",
-        "nature": "Living animal tissue, muscle and organ, whatever covers it."
+        "nature": "A living body of animal tissue, muscle, and organs."
       },
       {
         "key": "plant",
         "name": "Plant",
-        "nature": "Living vegetable tissue: wood, fiber, stem, leaf, root."
+        "nature": "A living body of wood, fiber, stems, leaves, or roots."
       },
       {
         "key": "mineral",
@@ -472,14 +472,14 @@
       {
         "key": "spectral",
         "name": "Spectral",
-        "nature": "A body of the ghost register: present, visible, and acting, but made of neither matter nor energy that instruments can name."
+        "nature": "A ghostly body that is visible and active but made of neither ordinary matter nor measurable energy."
       }
     ],
     "bodyPlan": [
       {
         "key": "biped",
         "name": "Biped",
-        "nature": "Stands and moves on two legs; forelimbs, if any, are free for other work."
+        "nature": "Stands and moves on two legs, leaving any forelimbs free for other tasks."
       },
       {
         "key": "quadruped",
@@ -489,7 +489,7 @@
       {
         "key": "multiped",
         "name": "Multiped",
-        "nature": "Stands and moves on more than four limbs, or on a limb arrangement that no other key names."
+        "nature": "Moves on more than four limbs or an unusual arrangement of limbs."
       },
       {
         "key": "serpentine",
@@ -514,12 +514,12 @@
       {
         "key": "swarm",
         "name": "Swarm",
-        "nature": "The creature presents as many bodies acting as one, whether the units are its own flesh, split-off pieces, or conjured projections held by a central mind."
+        "nature": "Exists as many bodies, fragments, or projections acting together as one creature."
       },
       {
         "key": "floating",
         "name": "Floating",
-        "nature": "A body that hangs, drifts, or glides in its medium with no wings and no fins, held up by gas, field, or the ghost register."
+        "nature": "Hangs, drifts, or glides without wings or fins, held aloft by gas, energy, or ghostly force."
       }
     ],
     "covering": [
@@ -536,7 +536,7 @@
       {
         "key": "scales",
         "name": "Scales",
-        "nature": "Overlapping plates of skin or horn, reptile or fish style, flexible as a whole."
+        "nature": "Flexible layers of overlapping skin or horn plates."
       },
       {
         "key": "chitin",
@@ -546,12 +546,12 @@
       {
         "key": "hide",
         "name": "Hide",
-        "nature": "Thick, leathery, or rugged skin with no armored aspect."
+        "nature": "Thick, leathery, or rugged skin."
       },
       {
         "key": "plating",
         "name": "Plating",
-        "nature": "Rigid plates that are not grown chitin: stone, metal, bone, or crystal armor integrated into the body."
+        "nature": "Rigid armor of stone, metal, bone, or crystal integrated into the body."
       },
       {
         "key": "crystal",
@@ -566,7 +566,7 @@
       {
         "key": "bare",
         "name": "Bare",
-        "nature": "Smooth unprotected skin, membrane, or surface; the default for any body, of any composition, whose surface neither source names."
+        "nature": "A smooth, unprotected skin, membrane, or surface."
       }
     ],
     "diet": [
@@ -593,19 +593,19 @@
       {
         "key": "energy-feeder",
         "name": "Energy Feeder",
-        "nature": "Feeds on a non-food energy the description names it taking in: heat, charge, radiation, gravity, minds."
+        "nature": "Feeds directly on heat, charge, radiation, gravity, thought, or another form of energy."
       },
       {
         "key": "none",
         "name": "None",
-        "nature": "Does not feed at all, stated or implied by a body with no way to take anything in."
+        "nature": "Does not need to feed."
       }
     ],
     "communication": [
       {
         "key": "vocal",
         "name": "Vocal",
-        "nature": "Calls, cries, roars, songs, hisses; any sound the body makes to signal."
+        "nature": "Signals through calls, cries, roars, songs, hisses, or other sounds."
       },
       {
         "key": "vibration",
@@ -625,7 +625,7 @@
       {
         "key": "telepathic",
         "name": "Telepathic",
-        "nature": "Signals by direct impression on another mind; feeling and image, never words."
+        "nature": "Signals by placing feelings and images directly into another mind."
       }
     ],
     "media": [
@@ -681,12 +681,12 @@
       {
         "key": "rolled",
         "name": "Rolled",
-        "nature": "Each individual rolls levo or dextro at 50/50; the default."
+        "nature": "May be levo or dextro, with each equally likely."
       },
       {
         "key": "achiral",
         "name": "Achiral",
-        "nature": "The species has no handedness to roll; declared only when the body has no chiral chemistry."
+        "nature": "Has no biological handedness."
       }
     ]
   },
@@ -724,24 +724,24 @@
     {
       "key": "manipulation",
       "name": "Manipulation",
-      "nature": "Handling objects; an upper bound above 40 needs grasping anatomy or telekinetic at 100."
+      "nature": "Ability to grasp, carry, and control objects."
     }
   ],
   "senses": [
     {
       "key": "sight",
       "name": "Sight",
-      "nature": "Graded vision; how well the creature sees."
+      "nature": "How clearly and accurately it sees."
     },
     {
       "key": "hearing",
       "name": "Hearing",
-      "nature": "Graded hearing; how well the creature hears."
+      "nature": "How clearly and accurately it hears."
     },
     {
       "key": "smell",
       "name": "Smell",
-      "nature": "Graded smell; how well the creature scents."
+      "nature": "How clearly and accurately it follows scents."
     },
     {
       "key": "echolocation",
@@ -776,7 +776,7 @@
     {
       "key": "void-sense",
       "name": "Void Sense",
-      "nature": "Senses gravity, mass, and the structure of space; the dark register's sense.",
+      "nature": "Senses gravity, mass, and distortions in space.",
       "special": true
     }
   ],
@@ -784,7 +784,7 @@
     {
       "key": "jaws",
       "name": "Jaws",
-      "nature": "Full biting mechanism incl. mandibles."
+      "nature": "A complete biting structure, including mandibles."
     },
     {
       "key": "fangs",
@@ -794,7 +794,7 @@
     {
       "key": "beak",
       "name": "Beak",
-      "nature": "Head and mouth instrument."
+      "nature": "A hard mouth structure used to bite, pierce, or strike."
     },
     {
       "key": "tusks",
@@ -804,189 +804,189 @@
     {
       "key": "horns",
       "name": "Horns",
-      "nature": "Permanent cranial spikes incl. drill-horns."
+      "nature": "Permanent spikes or drilling structures grown from the head."
     },
     {
       "key": "antlers",
       "name": "Antlers",
-      "nature": "Branched rack."
+      "nature": "A branching rack grown from the head."
     },
     {
       "key": "trunk",
       "name": "Trunk",
-      "nature": "Muscular flexible snout."
+      "nature": "A long, muscular, flexible snout."
     },
     {
       "key": "tongue",
       "name": "Tongue",
-      "nature": "Projectile, sticky, or lashing."
+      "nature": "A tongue used to lash, grasp, or strike at range."
     },
     {
       "key": "crest",
       "name": "Crest",
-      "nature": "Emissive or display head-growth."
+      "nature": "A prominent head growth used for display or emission."
     },
     {
       "key": "lure",
       "name": "Lure",
-      "nature": "Dangled bait appendage."
+      "nature": "A bait-like appendage used to attract or distract others."
     },
     {
       "key": "claws",
       "name": "Claws",
-      "nature": "Hooking or raking digits."
+      "nature": "Hooked digits used to grip, climb, or rake."
     },
     {
       "key": "talons",
       "name": "Talons",
-      "nature": "Raptorial grip-and-pierce."
+      "nature": "Powerful hooked feet built to grip and pierce."
     },
     {
       "key": "fists",
       "name": "Fists",
-      "nature": "Blunt striking hands."
+      "nature": "Hands used for blunt, forceful strikes."
     },
     {
       "key": "hooves",
       "name": "Hooves",
-      "nature": "Limb instrument."
+      "nature": "Hard feet used to kick, trample, or strike."
     },
     {
       "key": "pincers",
       "name": "Pincers",
-      "nature": "Opposing grip; a crab's, scorpion's, or lobster's claws that snap shut are pincers, never claws, whatever word the description uses."
+      "nature": "Opposing limbs that close together to grip, crush, or cut."
     },
     {
       "key": "blades",
       "name": "Blades",
-      "nature": "Limb ending in a cutting edge."
+      "nature": "Limbs that end in a cutting edge."
     },
     {
       "key": "spurs",
       "name": "Spurs",
-      "nature": "Limb spikes."
+      "nature": "Spikes grown from the limbs for piercing strikes."
     },
     {
       "key": "wings",
       "name": "Wings",
-      "nature": "Strike, gust, shroud as well as flight."
+      "nature": "Wings used for flight, striking, gusts, or shrouding."
     },
     {
       "key": "tail",
       "name": "Tail",
-      "nature": "Tail and trunk-body instrument."
+      "nature": "A tail or trailing section of the body used as a natural weapon."
     },
     {
       "key": "stinger",
       "name": "Stinger",
-      "nature": "Venom-injecting spike."
+      "nature": "A spike that pierces and may inject venom."
     },
     {
       "key": "rattle",
       "name": "Rattle",
-      "nature": "Sound-warning tail organ."
+      "nature": "A tail organ that produces a warning or disorienting sound."
     },
     {
       "key": "coils",
       "name": "Coils",
-      "nature": "Serpentine wrap-and-crush body."
+      "nature": "A serpentine body used to wrap, restrain, and crush."
     },
     {
       "key": "hide",
       "name": "Hide",
-      "nature": "An unarmored body surface used defensively: bare, leathery, furred, or scaled skin; declaring hide states that the body has no armored aspect."
+      "nature": "An unarmored body surface used to absorb or deflect harm."
     },
     {
       "key": "shell",
       "name": "Shell",
-      "nature": "The armored aspect: a rigid enclosing casing, exoskeleton, carapace, or integrated plating."
+      "nature": "A rigid casing, exoskeleton, carapace, or layer of integrated armor."
     },
     {
       "key": "spines",
       "name": "Spines",
-      "nature": "Rigid projections: quills, barbs, thorns, crystal growths."
+      "nature": "Rigid quills, barbs, thorns, or crystal growths."
     },
     {
       "key": "tendrils",
       "name": "Tendrils",
-      "nature": "Tentacles, vines, streamers."
+      "nature": "Flexible tentacles, vines, or streamers used to reach and grasp."
     },
     {
       "key": "roots",
       "name": "Roots",
-      "nature": "Ground-anchored gripping or erupting structures."
+      "nature": "Structures that anchor into the ground, grip, or erupt upward."
     },
     {
       "key": "pseudopods",
       "name": "Pseudopods",
-      "nature": "Temporary limbs coalesced from a formless body."
+      "nature": "Temporary limbs formed from a fluid or formless body."
     },
     {
       "key": "spinnerets",
       "name": "Spinnerets",
-      "nature": "Emission structure."
+      "nature": "Structures that emit fibers, webbing, or similar material."
     },
     {
       "key": "light-organs",
       "name": "Light Organs",
-      "nature": "Emission structure."
+      "nature": "Organs that produce or project light."
     },
     {
       "key": "vents",
       "name": "Vents",
-      "nature": "Pressurized discharge openings."
+      "nature": "Openings that release matter or energy under pressure."
     },
     {
       "key": "core",
       "name": "Core",
-      "nature": "Exposed radiant or crystal focal mass."
+      "nature": "An exposed radiant, mechanical, or crystalline center of power."
     },
     {
       "key": "antennae",
       "name": "Antennae",
-      "nature": "Sensory-dual instrument."
+      "nature": "Sensitive feelers used to detect surroundings or deliver an attack."
     },
     {
       "key": "body",
       "name": "Body",
-      "nature": "Whole-body mass as instrument; universal fallback."
+      "nature": "Uses the force or mass of its whole body."
     }
   ],
   "channels": [
     {
       "key": "mind",
       "name": "Mind",
-      "nature": "Psychic element, a psychic special sense, or telekinetic/hypnotic at 100 in the trait pool."
+      "nature": "Channels power directly through thought."
     },
     {
       "key": "gaze",
       "name": "Gaze",
-      "nature": "Sight band above 0, plus the description supports a stare."
+      "nature": "Channels power through a focused stare."
     },
     {
       "key": "voice",
       "name": "Voice",
-      "nature": "Vocal in communication."
+      "nature": "Channels power through calls, cries, or song."
     },
     {
       "key": "breath",
       "name": "Breath",
-      "nature": "Breathes non-empty."
+      "nature": "Channels power through its breath."
     },
     {
       "key": "secretion",
       "name": "Secretion",
-      "nature": "Description supports an emitted substance."
+      "nature": "Channels power through a substance released by its body."
     },
     {
       "key": "swarm",
       "name": "Swarm",
-      "nature": "BodyPlan: swarm, or the description and art show a conjured familiar swarm held by the creature's mind."
+      "nature": "Channels power through the many bodies or projections in its swarm."
     },
     {
       "key": "aura",
       "name": "Aura",
-      "nature": "The description describes an emanation from the body as a whole that acts on everything around it, such as a presence, a field, a chill, or a glow."
+      "nature": "Channels power through a presence, field, chill, glow, or other force surrounding its body."
     }
   ],
   "actions": [

@@ -12,15 +12,28 @@
     "check:creature-coverage": "node scripts/creatureCoverage.js --check",
     "simulate:creatures": "node apps/web/scripts/runNode.cjs packages/rules/src/generator/devtools/simulateGenerator.ts",
     "check:creature-simulation": "node apps/web/scripts/runNode.cjs packages/rules/src/generator/devtools/simulateGenerator.ts --check",
+    "wt": "node scripts/worktrees.js",
     "publish": "terraform apply -auto-approve"
   },
   "devDependencies": {
-    "react": "18.3.1",
-    "react-dom": "18.3.1",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
     "url": "^0.11.0"
   },
   "overrides": {
-    "maplibre-gl": "1.15.3"
+    "boardgame.io": {
+      "@koa/cors": "5.0.0",
+      "koa": "2.16.4",
+      "koa-socket-2": {
+        "socket.io": "4.8.3"
+      },
+      "react-cookies": {
+        "cookie": "0.7.2"
+      },
+      "svelte": "5.57.0"
+    },
+    "socket.io-parser": "4.2.7",
+    "ws": "8.21.3"
   },
   "optionalDependencies": {
     "@esbuild/linux-x64": "0.28.2",

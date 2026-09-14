@@ -43,7 +43,7 @@ function VerifyRemoveXalianModal({ show, onHide, onXalianDelete, record }: Verif
 	};
 
 	return (
-		<AlertDialog open={show} onOpenChange={(open) => !open && onHide()}>
+		<AlertDialog open={show} onOpenChange={(open: boolean) => !open && onHide()}>
 			<AlertDialogContent>
 				<AlertDialogHeader>
 					<AlertDialogTitle>Release {name}?</AlertDialogTitle>

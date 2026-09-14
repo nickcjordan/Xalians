@@ -126,6 +126,7 @@ class DuelRosterRail extends React.Component {
 
 				<span className="duel-roster-portrait">
 					<XalianImage
+						variant="token"
 						padding="0px"
 						speciesName={xalian.species.name}
 						primaryType={xalian.elementType}

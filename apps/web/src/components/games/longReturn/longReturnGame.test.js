@@ -1,6 +1,5 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import { act } from 'react-dom/test-utils';
+import React, { act } from 'react';
+import { createRoot } from 'react-dom/client';
 import LongReturnGame, { encounterNarrative, missionOutcomePresentation, recommendationFor, routeAdvantage, supportRoleForPlan } from './longReturnGame';
 import { readCheckpoint, writeCheckpoint } from './expeditionSave';
 
@@ -116,6 +115,7 @@ describe('Long Return Simple mode', () => {
     expect(collapsed.label).toContain('Objective lost');
   });
   let container;
+  let root;
 
   beforeEach(() => {
     window.localStorage.clear();
@@ -124,15 +124,17 @@ describe('Long Return Simple mode', () => {
   });
 
   afterEach(() => {
-    act(() => {
-      ReactDOM.unmountComponentAtNode(container);
-    });
+    if (root) {
+      act(() => root.unmount());
+      root = null;
+    }
     container.remove();
   });
 
   function renderGame() {
+    if (!root) root = createRoot(container);
     act(() => {
-      ReactDOM.render(<LongReturnGame />, container);
+      root.render(<LongReturnGame />);
     });
   }
 
@@ -187,6 +189,11 @@ describe('Long Return Simple mode', () => {
     expect(banked.textContent).toContain('0 · None');
     expect(container.querySelector('.lr-end-copy').textContent).toContain('no salvage is banked');
   });
+
+  function unmountGame() {
+    act(() => root.unmount());
+    root = null;
+  }
 
   test('plays the recommended Simple plan through a complete crossing', () => {
     renderGame();
@@ -259,7 +266,7 @@ describe('Long Return Simple mode', () => {
     const saved = readCheckpoint();
     expect(saved.salvage).toBe(0);
     expect(saved.fieldReceipt).toBeTruthy();
-    act(() => ReactDOM.unmountComponentAtNode(container));
+    unmountGame();
     renderGame();
     expect(container.textContent).toContain('Your expedition is waiting');
     click(container, /resume expedition/i);
@@ -283,7 +290,7 @@ describe('Long Return Simple mode', () => {
     const saved = readCheckpoint();
     delete saved.lastResult.paragraphs;
     saved.lastResult.story = 'Old brief crossing account.';
-    act(() => ReactDOM.unmountComponentAtNode(container));
+    unmountGame();
     expect(writeCheckpoint(saved)).toBe(true);
     renderGame();
     click(container, /resume expedition/i);
@@ -301,7 +308,7 @@ describe('Long Return Simple mode', () => {
     click(container, /^send /i);
     expect(container.querySelector('[aria-label="Scouting in progress"]')).toBeTruthy();
     expect(readCheckpoint().phase).toBe('scout');
-    act(() => ReactDOM.unmountComponentAtNode(container));
+    unmountGame();
     renderGame();
     click(container, /resume expedition/i);
     expect(container.querySelector('.lr-simple-scouts')).toBeTruthy();
@@ -323,7 +330,7 @@ describe('Long Return Simple mode', () => {
     delete saved.lastResult.paragraphs;
     delete saved.lastResult.resolvedMethod;
     saved.lastResult.story = 'Old ability account.';
-    act(() => ReactDOM.unmountComponentAtNode(container));
+    unmountGame();
     expect(writeCheckpoint(saved)).toBe(true);
     renderGame();
     click(container, /resume expedition/i);

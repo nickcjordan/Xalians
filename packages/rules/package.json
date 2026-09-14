@@ -11,16 +11,16 @@
     "./expedition": "./src/expedition/index.ts",
     "./expedition/*": "./src/expedition/*.ts",
     "./duel": "./src/duel/index.ts",
-    "./duel/*": "./src/duel/*.ts"
+    "./duel/*": "./src/duel/*.ts",
+    "./arcade": "./src/arcade/index.ts",
+    "./arcade/*": "./src/arcade/*.ts"
   },
   "dependencies": {
     "@xalians/content": "1.0.0",
-    "pathfinding": "^0.4.7",
-    "uuid": "^8.3.2"
+    "pathfinding": "^0.4.7"
   },
   "devDependencies": {
-    "@types/pathfinding": "^0.1.0",
-    "@types/uuid": "^8.3.4"
+    "@types/pathfinding": "^0.1.0"
   },
   "scripts": {
     "test": "vitest run",

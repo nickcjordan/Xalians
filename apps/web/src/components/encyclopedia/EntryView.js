@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router';
 import * as lore from '../../lore';
 import Prose from './Prose';
 import Connections from './Connections';
@@ -184,7 +184,7 @@ export default function EntryView() {
                                             </Link>
                                         }
                                     >
-                                        <Prose text={rel.definition} except={rel.key} className="m-0 max-w-none text-small text-ink-2" />
+                                        <Prose text={rel.definition} except={rel.key} className="m-0 text-small text-ink-2" />
                                     </RecordRow>
                                 ))}
                             </Card>

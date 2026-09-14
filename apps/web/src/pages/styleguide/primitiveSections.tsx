@@ -157,7 +157,7 @@ function HoverCardSection() {
                     <HoverCardContent>
                         <div className="flex items-start gap-3">
                             <div className="w-16 shrink-0 el-psychic">
-                                <XalianImage colored speciesName="Hypnopet" primaryType="psychic" moreClasses="w-full" />
+								<XalianImage variant="token" colored speciesName="Hypnopet" primaryType="psychic" moreClasses="w-full" />
                             </div>
                             <div>
                                 <p className="type-legend">Telypso &middot; Psychic</p>

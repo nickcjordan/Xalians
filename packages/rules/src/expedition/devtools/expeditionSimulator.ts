@@ -270,15 +270,10 @@ function randomChooseSend(publicState: PublicState, ownRoster: XalianRecord[], h
 		return { type: 'pass', reason: 'no-affordable-candidates' };
 	}
 	const pick = candidates[Math.floor(rng.float() * candidates.length)];
-	// a defensive read against a legacy { guaranteed, rolled } traits shape; see
-	// creatureOnTable.traitKeywordsOf's comment on why this branch still exists.
-	const rawTraits: unknown = pick.record.traits;
-	const traits = Array.isArray(rawTraits)
-		? rawTraits
-		: [...(((rawTraits as { guaranteed?: string[] })?.guaranteed) || []), ...(((rawTraits as { rolled?: string[] })?.rolled) || [])];
-	const canHide = traits.includes('stealthy');
-	const hidden = canHide && rng.float() < 0.5;
-	return { type: 'send', recordId: pick.record.id, siteId: pick.site.id, hidden };
+	// no hidden coin flip since pass 4b (assumption 27): a stealthy creature arrives
+	// hidden, everyone else arrives open, and the engine ignores this flag entirely. The
+	// hidden-send stats below read the board, not the action.
+	return { type: 'send', recordId: pick.record.id, siteId: pick.site.id, hidden: false };
 }
 
 // ---------------------------------------------------------------------------
@@ -503,9 +498,13 @@ function runOneMatch(matchSeed: string, pool: XalianRecord[], rng: ReturnType<ty
 				// captured BEFORE send(), which clears the flag on the sent record
 				const wasReturned = (state.players[handler].returned || []).includes(action.recordId);
 				const record = state.players[handler].roster.find((r: any) => r.id === action.recordId) as XalianRecord;
-				nextState = send(state, handler, action.recordId, action.siteId, action.hidden);
+				nextState = send(state, handler, action.recordId, action.siteId);
 				if (nextState) {
 					const site = frame.sites.find((s: any) => s.id === action.siteId) as FrameSite;
+					// concealment is the engine's to decide (pass 4b), so read the arriving
+					// entry's own flag rather than anything the policy asked for
+					const arrived = (((nextState.board as any)[action.siteId] || {})[handler] || []).find((e: any) => e.recordId === action.recordId);
+					const arrivedHidden = !!(arrived && arrived.hidden);
 					const prepared = prepare(record, site, site.world, 0, { rules: state.rules });
 					sentThisRound[action.recordId] = {
 						recordId: action.recordId,
@@ -513,7 +512,7 @@ function runOneMatch(matchSeed: string, pool: XalianRecord[], rng: ReturnType<ty
 						side: handler,
 						frameIndex,
 						site: action.siteId,
-						hidden: !!action.hidden,
+						hidden: arrivedHidden,
 						role: prepared.role,
 						blowFallback: !!prepared.blowIsFallback,
 						strainLevel: strainLevel(record, site, site.world),

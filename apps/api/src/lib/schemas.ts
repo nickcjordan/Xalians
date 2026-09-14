@@ -29,6 +29,56 @@ export const UpdateUserBodySchema = z.discriminatedUnion('action', [
 ]);
 export type UpdateUserBody = z.infer<typeof UpdateUserBodySchema>;
 
+const ArcadeSeedSchema = z.string().min(1).max(128);
+const ArcadeSessionSchema = z.string().min(8).max(128).regex(/^[a-zA-Z0-9:_-]+$/);
+const SolitaireSourceSchema = z.discriminatedUnion('zone', [
+  z.object({ zone: z.literal('waste') }),
+  z.object({ zone: z.literal('foundation'), suit: z.enum(['ember', 'tide', 'stone', 'signal']) }),
+  z.object({ zone: z.literal('tableau'), column: z.number().int().min(0).max(6), index: z.number().int().min(0).max(51) }),
+]);
+const SolitaireTargetSchema = z.discriminatedUnion('zone', [
+  z.object({ zone: z.literal('foundation'), suit: z.enum(['ember', 'tide', 'stone', 'signal']) }),
+  z.object({ zone: z.literal('tableau'), column: z.number().int().min(0).max(6) }),
+]);
+const SolitaireActionSchema = z.discriminatedUnion('type', [
+  z.object({ type: z.literal('draw') }),
+  z.object({ type: z.literal('move'), source: SolitaireSourceSchema, target: SolitaireTargetSchema }),
+]);
+
+// POST /arcade/complete. The client submits inputs, never a claimed score or reward;
+// the handler deterministically replays them before touching account value.
+export const ArcadeCompleteBodySchema = z.discriminatedUnion('gameId', [
+  z.object({
+    gameId: z.literal('artillery'), sessionId: ArcadeSessionSchema, seed: ArcadeSeedSchema,
+    difficulty: z.enum(['rookie', 'standard', 'expert']).optional(),
+    actions: z.array(z.object({
+      angle: z.number().min(10).max(80),
+      power: z.number().min(15).max(100),
+      payload: z.enum(['shell', 'barb', 'bore', 'cluster', 'bloom', 'lance']).optional(),
+      move: z.union([z.literal(-1), z.literal(0), z.literal(1)]).optional(),
+      system: z.enum(['none', 'anchor', 'lift']).optional(),
+    })).max(80),
+  }),
+  z.object({
+    gameId: z.literal('sweep'), sessionId: ArcadeSessionSchema, seed: ArcadeSeedSchema,
+    level: z.enum(['survey', 'field', 'frontier']),
+    actions: z.array(z.object({ type: z.enum(['reveal', 'flag']), index: z.number().int().min(0).max(479) })).max(600),
+  }),
+  z.object({
+    gameId: z.literal('relay'), sessionId: ArcadeSessionSchema, seed: ArcadeSeedSchema,
+    actions: z.array(z.enum(['up', 'down', 'left', 'right'])).max(5000),
+  }),
+  z.object({
+    gameId: z.literal('patience'), sessionId: ArcadeSessionSchema, seed: ArcadeSeedSchema,
+    drawCount: z.union([z.literal(1), z.literal(3)]), actions: z.array(SolitaireActionSchema).max(5000),
+  }),
+  z.object({
+    gameId: z.literal('match'), sessionId: ArcadeSessionSchema, seed: ArcadeSeedSchema,
+    actions: z.array(z.number().int().min(0).max(11)).max(1000),
+  }),
+]);
+export type ArcadeCompleteBody = z.infer<typeof ArcadeCompleteBodySchema>;
+
 // The showroom lever (issue #197, docs/design/xalians-platform-vision-and-economy.md
 // section 3): 'full' is the unconstrained generator, 'showroom' pins finish to standard,
 // drops rare trait outcomes and never rolls a secondary affinity. Shared by both routes
@@ -72,8 +122,47 @@ export const RetrieveRegistryXalianParamsSchema = z.object({
 });
 export type RetrieveRegistryXalianParams = z.infer<typeof RetrieveRegistryXalianParamsSchema>;
 
+// Public binder route: explicit owner in the path, with the same bounded pagination
+// controls as the authenticated collection route.
+export const PublicRegistryOwnerParamsSchema = z.object({
+  ownerId: z.string().min(1),
+});
+export type PublicRegistryOwnerParams = z.infer<typeof PublicRegistryOwnerParamsSchema>;
+
+export const PublicRegistryListQuerySchema = z.object({
+  limit: z.coerce.number().int().positive().max(200).optional(),
+  cursor: z.string().min(1).optional(),
+});
+export type PublicRegistryListQuery = z.infer<typeof PublicRegistryListQuerySchema>;
+
 // DELETE /xalians/{xalianId}
 export const ReleaseRegistryXalianParamsSchema = z.object({
   xalianId: z.string().min(1),
 });
 export type ReleaseRegistryXalianParams = z.infer<typeof ReleaseRegistryXalianParamsSchema>;
+
+const TradeXalianIdsSchema = z
+  .array(z.string().regex(/^xal_/, 'xalian id must start with "xal_"'))
+  .min(1)
+  .max(6)
+  .refine((ids) => new Set(ids).size === ids.length, 'a trade side cannot repeat a Xalian');
+
+// POST /trades. Both sides are required: trades are direct swaps, not gifts, listings,
+// auctions, or price-bearing marketplace offers.
+export const CreateTradeBodySchema = z
+  .object({
+    recipientId: z.string().min(1),
+    offeredXalianIds: TradeXalianIdsSchema,
+    requestedXalianIds: TradeXalianIdsSchema,
+    counterTo: z.string().regex(/^trd_/, 'counter trade id must start with "trd_"').optional(),
+  })
+  .refine(
+    (trade) => trade.offeredXalianIds.every((id) => !trade.requestedXalianIds.includes(id)),
+    { message: 'the same Xalian cannot appear on both sides', path: ['requestedXalianIds'] }
+  );
+export type CreateTradeBody = z.infer<typeof CreateTradeBodySchema>;
+
+export const TradeParamsSchema = z.object({
+  tradeId: z.string().regex(/^trd_/, 'trade id must start with "trd_"'),
+});
+export type TradeParams = z.infer<typeof TradeParamsSchema>;

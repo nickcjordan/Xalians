@@ -117,7 +117,7 @@ export function RosterSlot({
 				data-arm={inHand ? record.id : undefined}
 			>
 				<span className="rec-slot-portrait" aria-hidden="true">
-					<XalianImage speciesName={record.species} primaryType={el} padding="0px" fill="black" moreClasses="rec-slot-portrait-art" />
+					<XalianImage variant="token" speciesName={record.species} primaryType={el} padding="0px" fill="black" moreClasses="rec-slot-portrait-art" />
 				</span>
 				<span className="rec-slot-body">
 					<span className="rec-slot-ident">
@@ -128,7 +128,7 @@ export function RosterSlot({
 						{slot.state === 'downed' && <span className="rec-slot-tag rec-slot-tag--downed">downed</span>}
 						{slot.state === 'away' && <span className="rec-slot-tag">away</span>}
 						{inHand && suggested && <span className="rec-slot-tag rec-slot-tag--suggested">suggested</span>}
-						{inHand && stealthy && <span className="rec-slot-tag rec-slot-tag--stealthy" title="Can be sent hidden">stealthy</span>}
+						{inHand && stealthy && <span className="rec-slot-tag rec-slot-tag--stealthy" title="Arrives hidden">stealthy</span>}
 					</span>
 					{(!simple || !inHand || !holds) && <BaseHoldRow value={baseHold(record)} />}
 					{simple && inHand && holds && holdsAgree(holds) && <HoldHere h={holds[0]} />}

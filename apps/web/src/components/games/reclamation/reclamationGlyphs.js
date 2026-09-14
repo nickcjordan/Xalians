@@ -107,7 +107,7 @@ export function InfoGlyph({ className }) {
 	);
 }
 
-// stealthy: may be sent hidden
+// stealthy: arrives hidden
 export function HiddenGlyph({ className }) {
 	return (
 		<svg className={`rec-glyph rec-glyph--hidden${className ? ` ${className}` : ''}`} {...box}>

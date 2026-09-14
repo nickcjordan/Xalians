@@ -1,12 +1,14 @@
 import * as React from 'react';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router';
 import type { XalianRecord } from '@xalians/content/schema';
 import { getSpeciesTemplate, speciesDisplayName } from '@xalians/rules/generator';
+import { gradeWithBundledCalibration } from '@xalians/rules/generator/grade';
 
 import XalianImage from '../xalianImage';
 import * as lore from '../../lore';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Collapsible, CollapsibleTrigger, CollapsibleContent } from '@/components/ui/collapsible';
 import { SpecPlate, Meter } from '@/components/system/record';
@@ -40,6 +42,8 @@ type RecordViewProps = {
 	record: XalianRecord;
 	/** A legend above the designation: what this record is on this page. */
 	kicker?: React.ReactNode;
+	/** Direct registry route when this persisted record can be shared. */
+	recordLink?: string;
 };
 
 function Layer({ title, children, className }: { title: string; children: React.ReactNode; className?: string }) {
@@ -75,12 +79,31 @@ function Ability({ ability }: { ability: XalianRecord['abilities'][number] }) {
 				{', through '}
 				<span title={medium.nature}>{medium.name.toLowerCase()}</span>.
 			</p>
-			{ability.description ? <p className="mt-2 mb-0 font-body text-body text-ink">{ability.description}</p> : null}
+			{ability.description ? <p className="measure mt-2 mb-0 font-body text-body text-ink">{ability.description}</p> : null}
 		</li>
 	);
 }
 
-function RecordView({ record, kicker = 'Record' }: RecordViewProps) {
+function BriefCard({ label, value, caption }: { label: string; value: React.ReactNode; caption: React.ReactNode }) {
+	return (
+		<Card variant="recessed" className="gap-2 p-4">
+			<p className="type-legend m-0">{label}</p>
+			<p className="type-subhead m-0 text-ink">{value}</p>
+			<p className="m-0 font-body text-small text-ink-2">{caption}</p>
+		</Card>
+	);
+}
+
+function ordinal(value: number): string {
+	const lastTwo = value % 100;
+	if (lastTwo >= 11 && lastTwo <= 13) return `${value}th`;
+	if (value % 10 === 1) return `${value}st`;
+	if (value % 10 === 2) return `${value}nd`;
+	if (value % 10 === 3) return `${value}rd`;
+	return `${value}th`;
+}
+
+function RecordView({ record, kicker = 'Record', recordLink }: RecordViewProps) {
 	const template = getSpeciesTemplate(record.species);
 	const name = speciesDisplayName(record.species);
 	const element = record.element.primary;
@@ -90,6 +113,16 @@ function RecordView({ record, kicker = 'Record' }: RecordViewProps) {
 	const archetype = archetypeTerm(record.archetype.key);
 	const finish = record.appearance.finish;
 	const appearance = template ? template.lore.appearance : [];
+	const strongestAttributes = ATTRIBUTE_ORDER
+		.map((key) => ({ key, value: record.attributes[key as keyof XalianRecord['attributes']] }))
+		.sort((a, b) => b.value - a.value)
+		.slice(0, 2);
+	const strongestCapability = CAPABILITY_ORDER
+		.map((key) => ({ key, value: physiology.capabilities[key as keyof typeof physiology.capabilities] }))
+		.sort((a, b) => b.value - a.value)[0];
+	const signatureAbility = record.abilities.find((ability) => ability.signature) || record.abilities[0];
+	const distinction = template ? gradeWithBundledCalibration(record, template).percentile : null;
+	const roundedDistinction = distinction == null ? null : Math.round(distinction);
 
 	const speciesRoute = lore.getSpecies(record.species) ? lore.routeFor('species', record.species) : null;
 	const originKey = record.provenance.origin;
@@ -166,8 +199,56 @@ function RecordView({ record, kicker = 'Record' }: RecordViewProps) {
 							{ key: 'Seed', value: <span className="break-all">{record.provenance.seed}</span> },
 							{ key: 'Generator', value: `v${record.provenance.generatorVersion}` },
 						]} />
+
+					{recordLink ? (
+						<div className="mt-1">
+							<Button variant="secondary" asChild>
+								<Link to={recordLink}>Open shareable record</Link>
+							</Button>
+						</div>
+					) : null}
 				</div>
 			</header>
+
+			<section aria-labelledby="creature-brief-title" className="border-y border-edge py-6">
+				<p className="type-legend m-0">Creature brief</p>
+				<p id="creature-brief-title" className="type-heading mt-2 mb-2 text-[19px]">
+					Read this one at a glance
+				</p>
+				<p className="measure mt-0 mb-5 font-body text-body text-ink-2">
+					{name} presents as {archetype.name.toLowerCase()}, led by{' '}
+					{strongestAttributes.map(({ key }) => attributeTerm(key).name.toLowerCase()).join(' and ')}.
+					{strongestCapability ? ` Its strongest physical aptitude is ${capabilityTerm(strongestCapability.key).name.toLowerCase()}.` : ''}
+					{signatureAbility ? ` ${signatureAbility.name} is its signature ability.` : ''}
+				</p>
+
+				<div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+					<BriefCard
+						label="Disposition"
+						value={archetype.name}
+						caption={record.archetype.favors.length > 0
+							? `Naturally favors ${record.archetype.favors.map((key) => attributeTerm(key).name.toLowerCase()).join(' and ')}.`
+							: 'Its broad natural bearing.'}
+					/>
+					<BriefCard
+						label="Strongest aptitude"
+						value={strongestCapability ? capabilityTerm(strongestCapability.key).name : '—'}
+						caption={strongestCapability ? `${strongestCapability.value} out of 100 in its natural capability record.` : 'No capability reading.'}
+					/>
+					<BriefCard
+						label="Signature ability"
+						value={signatureAbility ? signatureAbility.name : '—'}
+						caption={signatureAbility
+							? `${intensityBand(signatureAbility.intensity)} expression through ${elementTerm(signatureAbility.medium).name.toLowerCase()}.`
+							: 'No signature ability recorded.'}
+					/>
+					<BriefCard
+						label="Registry distinction"
+						value={roundedDistinction == null ? 'Uncalibrated' : `${ordinal(roundedDistinction)} percentile`}
+						caption="How unusual this record is among calibrated generations—not combat power."
+					/>
+				</div>
+			</section>
 
 			<Layer title="Physiology">
 				<SpecPlate

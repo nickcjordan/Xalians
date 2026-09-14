@@ -27,6 +27,12 @@ terraform {
 
 provider "aws" {
   region = var.aws_region
+
+  default_tags {
+    tags = {
+      Project = "Xalians"
+    }
+  }
 }
 
 
@@ -81,12 +87,14 @@ resource "aws_iam_role_policy" "dynamodb_policy" {
           "dynamodb:Query",
           "dynamodb:DeleteItem",
           "dynamodb:ConditionCheckItem",
+          "dynamodb:TransactWriteItems",
         ]
         Resource = [
           "arn:aws:dynamodb:${var.aws_region}:${data.aws_caller_identity.current.account_id}:table/XalianUsersTable",
           # Exact table names, not a table-level wildcard, so each table needs its own
           # ARN here. The index wildcard below covers XalianRegistry's byOwner GSI.
           "arn:aws:dynamodb:${var.aws_region}:${data.aws_caller_identity.current.account_id}:table/XalianRegistry",
+          "arn:aws:dynamodb:${var.aws_region}:${data.aws_caller_identity.current.account_id}:table/XalianTradeOffers",
           "arn:aws:dynamodb:${var.aws_region}:${data.aws_caller_identity.current.account_id}:table/Xalian*/index/*",
         ]
       },
@@ -163,52 +171,6 @@ resource "aws_apigatewayv2_stage" "prod" {
   api_id = aws_apigatewayv2_api.lambda.id
 
   name        = "prod"
-  auto_deploy = true
-
-  # Tuned levers, not fixed limits: revisit if legitimate traffic gets
-  # throttled or if the free generator route needs tighter protection.
-  default_route_settings {
-    throttling_burst_limit = 50
-    throttling_rate_limit  = 20
-  }
-
-  # The free lever is the one anonymous route, so it keeps its own tighter
-  # throttle (the vision doc's ratified "endpoint gets API Gateway throttling
-  # regardless").
-  route_settings {
-    route_key              = "GET /xalians/showroom"
-    throttling_burst_limit = 10
-    throttling_rate_limit  = 5
-  }
-
-  access_log_settings {
-    destination_arn = aws_cloudwatch_log_group.api_gw.arn
-
-    format = jsonencode({
-      requestId               = "$context.requestId"
-      sourceIp                = "$context.identity.sourceIp"
-      requestTime             = "$context.requestTime"
-      protocol                = "$context.protocol"
-      httpMethod              = "$context.httpMethod"
-      resourcePath            = "$context.resourcePath"
-      routeKey                = "$context.routeKey"
-      status                  = "$context.status"
-      responseLength          = "$context.responseLength"
-      integrationErrorMessage = "$context.integrationErrorMessage"
-      }
-    )
-  }
-}
-
-resource "aws_apigatewayv2_stage" "test" {
-  # route_settings names "GET /xalians/showroom"; API Gateway rejects the stage update
-  # when that route does not exist yet, so the stage must wait for the module that
-  # creates it (seen on the 2026-09-10 apply that introduced the route).
-  depends_on = [module.showroom_xalian_lambda_module]
-
-  api_id = aws_apigatewayv2_api.lambda.id
-
-  name        = "test"
   auto_deploy = true
 
   # Tuned levers, not fixed limits: revisit if legitimate traffic gets
@@ -341,6 +303,28 @@ module "table_update_xalian_user_lambda_module" {
 
 #########################################################
 #####               LAMBDA INSTANCE                 #####
+##              Complete Arcade Session             ##
+#########################################################
+module "complete_arcade_lambda_module" {
+  source = "./terraform/modules/lambda"
+
+  function_name                   = "CompleteArcade"
+  lambda_handler_path             = "completeArcade/index.handler"
+  apigw_lambda_route_key          = "POST /arcade/complete"
+  lambda_bucket_id                = aws_s3_bucket.lambda_bucket.id
+  lambda_bucket_object_key        = aws_s3_object.lambda_bucket_object.key
+  lambda_archive_file_output_hash = data.archive_file.lambda_zip_file.output_base64sha256
+  iam_role_arn                    = aws_iam_role.lambda_exec.arn
+  apigw_lambda_id                 = aws_apigatewayv2_api.lambda.id
+  base_apigw_lambda_execution_arn = aws_apigatewayv2_api.lambda.execution_arn
+  authorization_type              = "JWT"
+  authorizer_id                   = aws_apigatewayv2_authorizer.cognito.id
+}
+#####                                               #####
+#########################################################
+
+#########################################################
+#####               LAMBDA INSTANCE                 #####
 ##          Generate Registry Xalian Lambda (D1)       ##
 #########################################################
 module "generate_registry_xalian_lambda_module" {
@@ -407,6 +391,48 @@ module "retrieve_registry_xalian_lambda_module" {
 
 #########################################################
 #####               LAMBDA INSTANCE                 #####
+##       Public Retrieve Registry Xalian Lambda        ##
+#########################################################
+module "retrieve_public_registry_xalian_lambda_module" {
+  source = "./terraform/modules/lambda"
+
+  function_name                   = "RetrievePublicRegistryXalian"
+  lambda_bucket_id                = aws_s3_bucket.lambda_bucket.id
+  lambda_bucket_object_key        = aws_s3_object.lambda_bucket_object.key
+  lambda_handler_path             = "retrievePublicRegistryXalian/index.handler"
+  lambda_archive_file_output_hash = data.archive_file.lambda_zip_file.output_base64sha256
+  iam_role_arn                    = aws_iam_role.lambda_exec.arn
+  apigw_lambda_id                 = aws_apigatewayv2_api.lambda.id
+  apigw_lambda_route_key          = "GET /registry/xalians/{xalianId}"
+  base_apigw_lambda_execution_arn = aws_apigatewayv2_api.lambda.execution_arn
+  authorization_type              = "NONE"
+}
+#####                                               #####
+#########################################################
+
+#########################################################
+#####               LAMBDA INSTANCE                 #####
+##        Public List Registry Xalians Lambda          ##
+#########################################################
+module "list_public_registry_xalians_lambda_module" {
+  source = "./terraform/modules/lambda"
+
+  function_name                   = "ListPublicRegistryXalians"
+  lambda_bucket_id                = aws_s3_bucket.lambda_bucket.id
+  lambda_bucket_object_key        = aws_s3_object.lambda_bucket_object.key
+  lambda_handler_path             = "listPublicRegistryXalians/index.handler"
+  lambda_archive_file_output_hash = data.archive_file.lambda_zip_file.output_base64sha256
+  iam_role_arn                    = aws_iam_role.lambda_exec.arn
+  apigw_lambda_id                 = aws_apigatewayv2_api.lambda.id
+  apigw_lambda_route_key          = "GET /registry/owners/{ownerId}/xalians"
+  base_apigw_lambda_execution_arn = aws_apigatewayv2_api.lambda.execution_arn
+  authorization_type              = "NONE"
+}
+#####                                               #####
+#########################################################
+
+#########################################################
+#####               LAMBDA INSTANCE                 #####
 ##           Release Registry Xalian Lambda            ##
 #########################################################
 module "release_registry_xalian_lambda_module" {
@@ -420,6 +446,97 @@ module "release_registry_xalian_lambda_module" {
   iam_role_arn                    = aws_iam_role.lambda_exec.arn
   apigw_lambda_id                 = aws_apigatewayv2_api.lambda.id
   apigw_lambda_route_key          = "DELETE /xalians/{xalianId}"
+  base_apigw_lambda_execution_arn = aws_apigatewayv2_api.lambda.execution_arn
+  authorization_type              = "JWT"
+  authorizer_id                   = aws_apigatewayv2_authorizer.cognito.id
+}
+#####                                               #####
+#########################################################
+
+#########################################################
+#####               LAMBDA INSTANCE                 #####
+##                 Create Trade Lambda                 ##
+#########################################################
+module "create_trade_lambda_module" {
+  source = "./terraform/modules/lambda"
+
+  function_name                   = "CreateTrade"
+  lambda_bucket_id                = aws_s3_bucket.lambda_bucket.id
+  lambda_bucket_object_key        = aws_s3_object.lambda_bucket_object.key
+  lambda_handler_path             = "createTrade/index.handler"
+  lambda_archive_file_output_hash = data.archive_file.lambda_zip_file.output_base64sha256
+  iam_role_arn                    = aws_iam_role.lambda_exec.arn
+  apigw_lambda_id                 = aws_apigatewayv2_api.lambda.id
+  apigw_lambda_route_key          = "POST /trades"
+  base_apigw_lambda_execution_arn = aws_apigatewayv2_api.lambda.execution_arn
+  authorization_type              = "JWT"
+  authorizer_id                   = aws_apigatewayv2_authorizer.cognito.id
+}
+
+module "retrieve_trade_lambda_module" {
+  source = "./terraform/modules/lambda"
+
+  function_name                   = "RetrieveTrade"
+  lambda_bucket_id                = aws_s3_bucket.lambda_bucket.id
+  lambda_bucket_object_key        = aws_s3_object.lambda_bucket_object.key
+  lambda_handler_path             = "retrieveTrade/index.handler"
+  lambda_archive_file_output_hash = data.archive_file.lambda_zip_file.output_base64sha256
+  iam_role_arn                    = aws_iam_role.lambda_exec.arn
+  apigw_lambda_id                 = aws_apigatewayv2_api.lambda.id
+  apigw_lambda_route_key          = "GET /trades/{tradeId}"
+  base_apigw_lambda_execution_arn = aws_apigatewayv2_api.lambda.execution_arn
+  authorization_type              = "NONE"
+}
+
+module "accept_trade_lambda_module" {
+  source = "./terraform/modules/lambda"
+
+  function_name                   = "AcceptTrade"
+  lambda_bucket_id                = aws_s3_bucket.lambda_bucket.id
+  lambda_bucket_object_key        = aws_s3_object.lambda_bucket_object.key
+  lambda_handler_path             = "acceptTrade/index.handler"
+  lambda_archive_file_output_hash = data.archive_file.lambda_zip_file.output_base64sha256
+  iam_role_arn                    = aws_iam_role.lambda_exec.arn
+  apigw_lambda_id                 = aws_apigatewayv2_api.lambda.id
+  apigw_lambda_route_key          = "POST /trades/{tradeId}/accept"
+  base_apigw_lambda_execution_arn = aws_apigatewayv2_api.lambda.execution_arn
+  authorization_type              = "JWT"
+  authorizer_id                   = aws_apigatewayv2_authorizer.cognito.id
+}
+
+module "cancel_trade_lambda_module" {
+  source = "./terraform/modules/lambda"
+
+  function_name                   = "CancelTrade"
+  lambda_bucket_id                = aws_s3_bucket.lambda_bucket.id
+  lambda_bucket_object_key        = aws_s3_object.lambda_bucket_object.key
+  lambda_handler_path             = "cancelTrade/index.handler"
+  lambda_archive_file_output_hash = data.archive_file.lambda_zip_file.output_base64sha256
+  iam_role_arn                    = aws_iam_role.lambda_exec.arn
+  apigw_lambda_id                 = aws_apigatewayv2_api.lambda.id
+  apigw_lambda_route_key          = "POST /trades/{tradeId}/cancel"
+  base_apigw_lambda_execution_arn = aws_apigatewayv2_api.lambda.execution_arn
+  authorization_type              = "JWT"
+  authorizer_id                   = aws_apigatewayv2_authorizer.cognito.id
+}
+#####                                               #####
+#########################################################
+
+#########################################################
+#####               LAMBDA INSTANCE                 #####
+##                  List Trades                       ##
+#########################################################
+module "list_trades_lambda_module" {
+  source = "./terraform/modules/lambda"
+
+  function_name                   = "ListTrades"
+  lambda_handler_path             = "listTrades/index.handler"
+  apigw_lambda_route_key          = "GET /trades"
+  lambda_bucket_id                = aws_s3_bucket.lambda_bucket.id
+  lambda_bucket_object_key        = aws_s3_object.lambda_bucket_object.key
+  lambda_archive_file_output_hash = data.archive_file.lambda_zip_file.output_base64sha256
+  iam_role_arn                    = aws_iam_role.lambda_exec.arn
+  apigw_lambda_id                 = aws_apigatewayv2_api.lambda.id
   base_apigw_lambda_execution_arn = aws_apigatewayv2_api.lambda.execution_arn
   authorization_type              = "JWT"
   authorizer_id                   = aws_apigatewayv2_authorizer.cognito.id
@@ -471,18 +588,6 @@ resource "aws_apigatewayv2_domain_name" "api" {
   }
 }
 
-resource "aws_apigatewayv2_domain_name" "testapi" {
-  domain_name = "testapi.xalians.com"
-
-  domain_name_configuration {
-    certificate_arn = var.cert_arn
-    endpoint_type   = "REGIONAL"
-    security_policy = "TLS_1_2"
-  }
-}
-
-
-
 // ROUTE 53
 
 data "aws_route53_zone" "xalian_zone" {
@@ -506,15 +611,6 @@ resource "aws_apigatewayv2_api_mapping" "api_mapping" {
   domain_name = aws_apigatewayv2_domain_name.api.id
   stage       = aws_apigatewayv2_stage.prod.id
 }
-
-resource "aws_apigatewayv2_api_mapping" "testapi_mapping" {
-  api_id      = aws_apigatewayv2_api.lambda.id
-  domain_name = aws_apigatewayv2_domain_name.testapi.id
-  stage       = aws_apigatewayv2_stage.test.id
-}
-
-
-
 
 ###################
 # react front end #
@@ -1118,6 +1214,57 @@ resource "aws_dynamodb_table" "xalian_registry" {
     name            = "byOwner"
     hash_key        = "ownerId"
     range_key       = "generatedAt"
+    projection_type = "ALL"
+  }
+
+  point_in_time_recovery {
+    enabled = true
+  }
+
+  lifecycle {
+    prevent_destroy = true
+  }
+}
+
+# Direct-swap proposals. The item is immutable except for its status and response time;
+# ownership transfers happen in a transaction with the registry rows, so no partial
+# trade can be committed.
+resource "aws_dynamodb_table" "xalian_trade_offers" {
+  name         = "XalianTradeOffers"
+  billing_mode = "PAY_PER_REQUEST"
+  hash_key     = "tradeId"
+
+  attribute {
+    name = "tradeId"
+    type = "S"
+  }
+
+  attribute {
+    name = "proposerId"
+    type = "S"
+  }
+
+  attribute {
+    name = "recipientId"
+    type = "S"
+  }
+
+  attribute {
+    name = "createdAt"
+    type = "S"
+  }
+
+  global_secondary_index {
+    name            = "byProposer"
+    hash_key        = "proposerId"
+    range_key       = "createdAt"
+    projection_type = "ALL"
+  }
+
+  global_secondary_index {
+    name            = "byRecipient"
+    hash_key        = "recipientId"
+    range_key       = "createdAt"
     projection_type = "ALL"
   }
 

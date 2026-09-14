@@ -79,7 +79,6 @@ class ReclamationMatch extends React.Component {
 			log: props.initialLog ? props.initialLog.slice() : [],
 			notice: null,
 			armedRecordId: null,
-			sendHidden: false,
 			// assumption 20: the swift creature armed to move, if any. A move does not spend
 			// the turn, so this is its own arming, separate from armedRecordId.
 			movingRecordId: null,
@@ -266,8 +265,9 @@ class ReclamationMatch extends React.Component {
 		handler passes the live state has already moved to the next world. Replaying the
 		round against that state would draw the wrong board, so while playback runs the
 		table renders a FROZEN copy of the view as it stood the instant before the clash,
-		with every hurt, downing and recovery applied by the events replayed so far. Once playback ends the
-		live view takes over again.
+		with every hurt, downing and recovery applied by the events replayed so far. Once
+		playback ends, the held Ruling view takes its board from the engine's judge event;
+		the live view takes over only when the player advances to the next world.
 	*/
 	view() {
 		const { playback, judgedSnapshot } = this.state;
@@ -388,7 +388,7 @@ class ReclamationMatch extends React.Component {
 		if (e.key === 'Escape') {
 			if (this.state.armedRecordId || this.state.movingRecordId || this.state.inspect || this.state.pendingStakeSiteId) {
 				this.setState({
-					armedRecordId: null, movingRecordId: null, inspect: null, sendHidden: false, pendingStakeSiteId: null,
+					armedRecordId: null, movingRecordId: null, inspect: null, pendingStakeSiteId: null,
 				});
 			}
 			return;
@@ -605,17 +605,12 @@ class ReclamationMatch extends React.Component {
 		}
 		this.setState((prev) => ({
 			armedRecordId: prev.armedRecordId === recordId ? null : recordId,
-			sendHidden: false,
 			movingRecordId: null,
 		}));
 	};
 
-	toggleHidden = () => {
-		this.setState((prev) => ({ sendHidden: !prev.sendHidden }));
-	};
-
 	handleSiteClick = (siteId) => {
-		const { match, armedRecordId, movingRecordId, sendHidden } = this.state;
+		const { match, armedRecordId, movingRecordId } = this.state;
 		if (this.state.playback) {
 			this.notice('The round is still resolving.');
 			return;
@@ -659,23 +654,12 @@ class ReclamationMatch extends React.Component {
 			return;
 		}
 		const record = match.players[YOU].roster.find((r) => r.id === armedRecordId);
-		const next = send(match, YOU, armedRecordId, siteId, sendHidden);
+		const next = send(match, YOU, armedRecordId, siteId);
 		if (!next) {
-			if (sendHidden) {
-				const live = this.view();
-				const cost = typeof live.hiddenSendCost === 'number' ? live.hiddenSendCost : 1;
-				const left = (live.players[YOU].sendableCap || SENDABLE) - (live.players[YOU].sentCount || 0);
-				this.notice(left < cost
-					// the price of hiding (assumption 21): a hidden send too dear for what is
-					// left of the cap is refused, and the open send is still there
-					? `A hidden send costs ${cost} of your sends and you have ${left} left. Send it in the open instead.`
-					: `${speciesLabel(record)} is not stealthy and cannot be sent hidden.`);
-			} else {
-				this.notice('That send is not allowed right now.');
-			}
+			this.notice('That send is not allowed right now.');
 			return;
 		}
-		this.tellSend(match, next, record, siteId, sendHidden);
+		this.tellSend(match, next, record, siteId);
 		this.cue('send');
 		if (this.props.telemetry) {
 			this.props.telemetry.decisionEnd('deploy', 'send', { round: match.frameIndex });
@@ -685,12 +669,16 @@ class ReclamationMatch extends React.Component {
 		// passed inside this one call and the round resolves. It therefore goes through
 		// commitStep like every other engine step, or that round's clash is never told.
 		this.commitStep(match, next, {
-			armedRecordId: null, sendHidden: false, hoverSiteId: null, hoverRecordId: null,
+			armedRecordId: null, hoverSiteId: null, hoverRecordId: null,
 		});
 	};
 
-	// your own send, told the same way as the rival's: log line, arrival, callout
-	tellSend = (match, next, record, siteId, hidden) => {
+	// your own send, told the same way as the rival's: log line, arrival, callout. Hiding is
+	// no longer a choice (Nick, 2026-09-13): whether it arrived hidden is read off the board
+	// entry the engine just wrote, the same truth the bench's plinths read via prepare().
+	tellSend = (match, next, record, siteId) => {
+		const entry = (next.board[siteId] && next.board[siteId][YOU] || []).find((e) => e.recordId === record.id);
+		const hidden = !!(entry && entry.hidden);
 		const line = narrateSend({
 			you: true,
 			actorName: speciesLabel(record),
@@ -1127,9 +1115,14 @@ class ReclamationMatch extends React.Component {
 				};
 			});
 		}
-		const resolved = this.applyPlaybackEffects({ ...playback, index: playback.events.length });
+		const resolved = judgedViewFromRuling(
+			this.applyPlaybackEffects({ ...playback, index: playback.events.length }),
+			judgeEvent,
+		);
 		const live = getPublicState(match, YOU);
-		// the resolved board of the world just played, carrying the post-judge site counts
+		// Hold the world just played while the live engine is already on the next one. Its
+		// board is the Court's own post-resolution board, so the figures and totals cannot
+		// disagree with the verdict stamped on the site.
 		const judgedSnapshot = {
 			...resolved,
 			players: live.players,
@@ -1628,13 +1621,11 @@ class ReclamationMatch extends React.Component {
 								mode={simple ? 'simple' : 'advanced'}
 								armedRecordId={this.state.armedRecordId}
 								recommendation={rec}
-								sendHidden={this.state.sendHidden}
 								movingRecordId={this.state.movingRecordId}
 								movable={movable}
 								onArm={this.armRecord}
 								onInspect={(record) => this.inspectRecord(record, null)}
 								onHoverRecord={(id) => this.setState({ hoverRecordId: id })}
-								onToggleHidden={this.toggleHidden}
 								onPass={this.handlePass}
 								onBeginMove={this.beginMove}
 								rivalBeat={this.rivalBeat()}
@@ -1760,6 +1751,44 @@ export function playbackEffects(frozenView, events, index) {
 		});
 	});
 	return { ...base, board, hurt };
+}
+
+/*
+	judgedViewFromRuling(resolvedView, judgeEvent) -> the held verdict view with its
+	board replaced by the engine's own post-resolution entries. Playback is deliberately
+	an animation over a pre-clash snapshot; it must not become a second implementation of
+	the Court's final board. Every surviving creature is public once the Court rules.
+*/
+export function judgedViewFromRuling(resolvedView, judgeEvent) {
+	if (!judgeEvent || !judgeEvent.siteResults) {
+		return resolvedView;
+	}
+	const board = { ...resolvedView.board };
+	const hurt = {};
+	resolvedView.frame.sites.forEach((site) => {
+		const result = judgeEvent.siteResults[site.id];
+		if (!result || !result.entries) {
+			return;
+		}
+		board[site.id] = { A: [], B: [] };
+		['A', 'B'].forEach((seat) => {
+			board[site.id][seat] = (result.entries[seat] || [])
+				.filter((entry) => entry.record && !entry.downed)
+				.map((entry) => {
+					const currentHold = typeof entry.hold === 'number' ? entry.hold : entry.currentHold;
+					if (entry.hurt && currentHold > 0) {
+						hurt[entry.recordId] = true;
+					}
+					return {
+						...entry,
+						currentHold,
+						hidden: false,
+						revealPending: false,
+					};
+				});
+		});
+	});
+	return { ...resolvedView, board, hurt };
 }
 
 // the word that pops over a creature as an attack lands on it during playback: the number

@@ -1,6 +1,5 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import { act } from 'react-dom/test-utils';
+import React, { act } from 'react';
+import { createRoot } from 'react-dom/client';
 import { describe, it, expect, afterEach } from 'vitest';
 import { createMatch, send, pass, moveSwift, getPublicState, createRngState, nextRandom } from '@xalians/rules/expedition/expeditionRules';
 import { chooseSend } from '@xalians/rules/expedition/expeditionBot';
@@ -268,11 +267,8 @@ describe('buildMatchReport', () => {
 /*
 	ReclamationReport / the Proving notes panel.
 
-	@testing-library/react is not a devDependency here (see reclamationDraft.test.js's
-	file header for the same note), but react-dom 17 is a direct dependency, so this
-	file mounts the component with plain ReactDOM.render + react-dom/test-utils' act,
-	against a real jsdom container, and drives it with native DOM events. No new
-	dependency is added.
+	The file mounts the component with React's concurrent root against a real
+	jsdom container and drives it with native DOM events.
 
 	Storage is injected via the `storage` prop (a fake object, the same shape used
 	throughout this test suite and in reclamationStorage.test.js / reclamationTelemetry.
@@ -316,12 +312,14 @@ function minimalReport(won) {
 
 describe('ReclamationReport / Proving notes panel', () => {
 	let container;
+	let root;
 
 	function mount(props) {
 		container = document.createElement('div');
 		document.body.appendChild(container);
+		root = createRoot(container);
 		act(() => {
-			ReactDOM.render(<ReclamationReport {...props} />, container);
+			root.render(<ReclamationReport {...props} />);
 		});
 		return container;
 	}
@@ -329,10 +327,11 @@ describe('ReclamationReport / Proving notes panel', () => {
 	afterEach(() => {
 		if (container) {
 			act(() => {
-				ReactDOM.unmountComponentAtNode(container);
+				root.unmount();
 			});
 			container.remove();
 			container = null;
+			root = null;
 		}
 	});
 

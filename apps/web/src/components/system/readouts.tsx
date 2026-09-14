@@ -128,7 +128,7 @@ function Callout({
       <Icon className={cn("mt-0.5 size-4 shrink-0", CALLOUT_ICON_CLASS[variant])} />
       <div className="min-w-0">
         <p className="type-legend m-0">{title}</p>
-        <div className="mt-1 font-body text-small text-ink-2">{children}</div>
+        <div className="measure mt-1 font-body text-small text-ink-2">{children}</div>
       </div>
     </div>
   )

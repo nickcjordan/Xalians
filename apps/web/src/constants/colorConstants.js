@@ -2,7 +2,7 @@
  * The fourteen element hues (docs/DESIGN_SYSTEM.md section 3.4, revised
  * 2026-09-08). Measured in OKLCH for contrast under dark text (floor 4.5:1)
  * and distance to their nearest neighbor; must equal the --g-el-* tokens in
- * public/assets/css/system.css, checked by designTokens.test.js.
+ * src/styles/legacy/system.css, checked by designTokens.test.js.
  */
 export const themeColors = {
 	electric: '#e9c93a',

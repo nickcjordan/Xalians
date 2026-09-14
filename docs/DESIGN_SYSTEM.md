@@ -4,7 +4,11 @@
 
 Version 4 was ruled by Nick on 2026-09-08 and 2026-09-09 after the version 3 "one relay, many terminals" release was judged cheesy: every page had become a prop (cases, counters, desks, tape, screws, stamps, fake readouts, in-world button copy) and the site read as cosplay. Version 4 keeps what version 3 got right (one room, one type system, one frame, element hues as the only saturated color, tokens mirrored in CSS and JavaScript with tests) and removes the props. The world lives in the content. The interface stays quiet so the content can be loud.
 
-**Implementation state (2026-09-09): steps 1 and 2 of the migration have landed.** The v4 token layer, the restyled primitives, the new components and the brand pieces are in `system.css`, and every chrome page (navbar, home, account, user details, encyclopedia, generator, duel setup, training menu, styleguide) sets `data-tier="chrome"`. The version 3 terminal blocks and furniture classes are still in `system.css` only because the immersive experiences (duel board and playground, Reclamation, the training games, Long Return) still use them; they are deleted as each immersive brief lands. Do not use a version 3 class on a chrome page.
+**Implementation state (2026-09-13): steps 1 and 2 of the migration have landed, and the new Arcade is the first completed step-3 family.** The v4 token layer, the restyled primitives, the new components and the brand pieces are in the Tailwind token layer and `globals.css`, and every chrome page (navbar, home, account, user details, encyclopedia, generator, duel setup, Arcade, styleguide) sets `data-tier="chrome"`. The Arcade's active games use v4 tokens in their own immersive shell. The version 3 stylesheets under `src/styles/legacy/` survive only because the older Duel, Reclamation, and Long Return experiences still use them; `immersive.css` loads with those lazy game entries and never from the application shell. Do not use a version 3 class on a chrome page.
+
+**Scope, updated by Nick 2026-09-13: the Arcade family was authorized and built; the other established games remain parked.** Reclamation, the Duel board and reference, and Long Return are still being designed as games, so restyling them now would be spent twice. They are also the immersive tier, which is allowed to look like itself rather than like the chrome. The Arcade hub and its active games are in scope under their approved brief in `docs/design/xalians-arcade.md`.
+
+**The five descriptors (ratified 2026-09-11).** New work is checked against these before it is checked against any rule below. The interface is an **instrument**: it is operated, and its controls look like they can be. It is **warm**: the neutrals carry a hue, and nothing is a pure gray or a pure black. It is **printed**: surfaces have grain and washes have vignettes, because nothing here is a flat fill. It is **physical**: a thing that can be pressed has thickness, and a thing that cannot does not. It is **quiet**: the accent is rare, the world lives in the content, and the interface does not compete with it.
 
 For interaction vocabulary, game-feel standards, quality scoring, playtest questions, and the living decision registry, also read [`GAME_EXPERIENCE_QUALITY_GUIDE.md`](./GAME_EXPERIENCE_QUALITY_GUIDE.md). This document defines how the interface looks; that guide defines how a game experience should communicate and behave.
 
@@ -14,11 +18,13 @@ Every visual thing on the site belongs to exactly one tier. Decide the tier befo
 
 | Tier | What it is | Rule | Examples |
 |---|---|---|---|
-| **Site chrome** | Everything that reads, browses, configures or manages. One design system for all of it. | Uses only the tokens and components in this document. No custom look. No in-world furniture. | Navbar, home, sign-in, account, user details, encyclopedia, generator, duel setup and results, Reclamation lobby and reports, training menu, styleguide. |
+| **Site chrome** | Everything that reads, browses, configures or manages. One design system for all of it. | Uses only the tokens and components in this document. No custom look. No in-world furniture. | Navbar, home, sign-in, account, user details, encyclopedia, generator, duel setup and results, Reclamation lobby and reports, Arcade hub, styleguide. |
 | **Featured component** | A richer piece that lives inside the chrome and gives an area character. | Built from the same tokens, type, spacing and corner rules as the chrome. May be large, animated, illustrated, interactive. May not change the page around it. | The galaxy map, a species plate with its element wash, the story reader, the stat chart, the splash animation, the planet field on the home page. |
-| **Immersive experience** | A game in progress. Entered deliberately. | May replace the chrome. Keeps the core (section 2). Always has a visible way back out. Gets its own short design brief, approved before it is built. | The duel board, the Reclamation match, the training minigames, Long Return. |
+| **Immersive experience** | A game in progress. Entered deliberately. | May replace the chrome. Keeps the core (section 2). Always has a visible way back out. Gets its own short design brief, approved before it is built. | The Duel board, the Reclamation match, the Arcade games, Long Return. |
 
 The classification test: **lobbies, setup, results and reference are chrome; play itself is immersive.** If a screen is both (a duel results overlay on the board), the play surface is immersive and the overlay is chrome.
+
+**The immersive tier is parked (Nick, 2026-09-11).** No brief is being written and no game is being restyled while the games themselves are still being built. Classify new work into this tier as usual, then leave it on whatever it already uses. Chrome and featured components are where design effort goes.
 
 **Ruled 2026-09-08:** the generator and the encyclopedia are chrome for now. Either may later gain featured components or an immersive mode, but that is a separate decision.
 
@@ -80,7 +86,7 @@ The room is a warm near-black and the ink is bone rather than white. Mint on a w
 | `--g-s3` | `#31302b` | Hover on level 2. |
 | `--g-glass` | `#0e100f` | Live data only: a fresh record, a match summary, a live figure. |
 | `--g-edge`, `--g-edge-hi`, `--g-edge-strong`, `--g-glass-edge` | `rgba(217,210,192,.10)`, `rgba(255,244,214,.07)`, `rgba(217,210,192,.22)`, `rgba(217,210,192,.14)` | Hairlines, the one inset top highlight, strong borders, glass edges. |
-| `--g-ink`, `--g-ink-2`, `--g-ink-3`, `--g-ink-4` | `#d9d2c0`, `#9a9382`, `#6c6659`, `#4a4640` | Text, secondary text, labels and kickers, disabled. |
+| `--g-ink`, `--g-ink-2`, `--g-ink-3`, `--g-ink-4` | `#d9d2c0`, `#aaa391`, `#9e9786`, `#4a4640` | Text, secondary text, labels and kickers, disabled. Both secondary tiers clear 4.5:1 on the lightest standard surface. |
 
 ### 3.4 Element hues (revised 2026-09-08)
 
@@ -134,10 +140,26 @@ The version 3 faces (Barlow Condensed, Barlow, IBM Plex Mono, Special Elite and 
 - **Space** is a 4 point scale: 4, 8, 12, 16, 24, 32, 48, 64 (`--g-1` to `--g-8`).
 - **Corners are square.** No radius anywhere except dots and toggles. Ruled 2026-09-09.
 - **The chamfer is the signature shape**, reserved for emphasis: a twelve pixel cut at top left and bottom right on the **glass tier** (live data), and an eight pixel cut on the **one primary key** per screen. Nothing else is cut. The cut echoes the logo's corners, and because it is rare it marks what is live and what is next. It is drawn as two clipped layers (an edge-colored layer and a one pixel inset surface layer) so the hairline follows the contour; `.g-glass` and `.g-key--primary` carry this and nothing else needs to.
-- **Depth is low.** Surfaces are told apart by tone and a hairline edge with one inset top highlight. Levels: page (`--g-room`), 0, 1, 2, glass, floating. Drop shadows exist only on things that float over the page: modal, drawer, popover, toast, menu, search results. The one shadow they cast is `--g-shadow-float`; no page CSS writes a literal shadow.
+- **Surfaces are told apart by tone,** a hairline edge and one inset top highlight, not by light. Levels: page (`--color-room`), 0, 1, 2, glass, floating. Nothing is lit, nothing glows, nothing is beveled.
 - The room keeps a very faint grain and edge vignette. It is not a flat fill.
 
+### 5.1 Depth is thickness (ratified 2026-09-11)
+
+**Thickness means pressable.** An object that can be pressed stands off the surface behind it and casts a solid, unblurred mass. An object that cannot has none. That is the whole rule, and it only carries meaning because most things stay flat.
+
+- **Direction is diagonal**, down and to the right, echoing the chamfer corner. Never straight down, never up, never to the left.
+- **The mass is colored by what it belongs to**, never by a generic shadow color: the ink under ordinary keys, `--color-viable-lo` under the primary key, a darkened plague under destructive, and the element's own hue at 45 percent black under a tile.
+- **Thickness comes from a token**, never a literal: `--thickness-key`, `--thickness-primary`, `--thickness-tile`. The primary key is the thickest thing on a screen.
+- **Pressing moves the object into its own mass.** Hover lifts it by one pixel and the mass grows by one. Active translates by the full thickness and the mass disappears. Disabled has neither.
+- **A selected segment is already pressed:** it loses its mass without moving, so a row of filters stays aligned and its unselected neighbors standing proud carry the message.
+- **What stays flat:** cards, panels, badges, chips, inputs, slots, meters, the masthead, anything purely being read. Adding mass to one of these is what would destroy the rule.
+- **Floating is a separate thing.** Modals, drawers, popovers, toasts, menus and search results cast `--shadow-float`, a real blurred drop shadow, because they float over the page rather than standing on it. No page CSS writes a literal shadow of either kind.
+
+**Set aside, 2026-09-11, after being built and judged live:** mass straight down rather than diagonal, mass on filter chips, mass under the switch knob, slots that sink into an inset lip, and a record number printed on the plate. Do not reintroduce one without a ruling.
+
 ## 6. Controls and states
+
+Every control in this section is pressable, so every one of them carries thickness (section 5.1): the mass in its own color, cast diagonally, taken back on press.
 
 Four ranks of button, five states each. Focus is always a two pixel ring in `--g-viable-hi`, offset two.
 
@@ -212,7 +234,7 @@ The vehicle changed on 2026-09-09 (Nick: strip all Bootstrap; shadcn on Tailwind
 | `apps/web/src/pages/styleGuidePage.tsx`, `apps/web/src/pages/styleguide/*.tsx` | `/styleguide`: every component in every state, rendered from the real code. The reference an agent checks before building anything. The page holds the foundations; the section files hold the rest. |
 | `apps/web/src/pages/system/*.tsx` | The status pages: `/404` and the router fallback, `/dev/error` for the boundary. |
 | `apps/web/src/__tests__/designSystem.test.js`, `systemGuards.test.js` | Fail if a page is unclassified (`data-tier`), if a component under `ui` or `system` is not on the style guide, or if a chrome file carries a raw hex, a version 3 class or a Bootstrap import. |
-| `apps/web/public/assets/css/legacy/*` | Legacy: the version 3 system (`system.css`), the old template (`style.css`), and the immersive pages' own stylesheets. Read only by the immersive pages until each gets its brief, which deletes its share. Never add a rule; never load on a chrome page. |
+| `apps/web/src/styles/legacy/*` | Legacy: the version 3 system (`system.css`), the old template (`style.css`), and the immersive pages' own stylesheets. Read only through lazy immersive route entries until each gets its brief, which deletes its share. Never add a rule; never load from the application shell or a chrome-only route. |
 | `docs/design/v4-foundations.html`, `docs/design/v4-chrome.html` | The ratified proposal pages. |
 | `docs/design/terminal-mockups.html` | Version 3, kept as the record of what was tried. |
 | `scripts/design/snap.js` | Screenshot harness: every route at desktop and phone with overflow and console-error checks. Run it before claiming visual work is done. |
@@ -257,8 +279,8 @@ Page classification is declared on the page root: `data-tier="chrome"`, `data-ti
 Each step is one PR, verified by paint with `scripts/design/snap.js`, auto-merged.
 
 1. **Done 2026-09-09 (PR: design/v4-migration).** Tokens and components. Rewrite `system.css` to the version 4 primitives, semantic aliases and component set; remove every terminal material block and every piece of terminal furniture (`.g-case`, `.g-counter`, `.g-desk`, `.g-cover-plate`, `.g-tube`, `.g-standoff`, `.g-keybank`, `.g-tape`, `.g-asset-plate`, `.g-nameplate`, `.g-stamp`, `.g-clip`, `.g-pencil`, `.g-vfd`, `.g-crt`, `.g-ledger`, `.g-paper*`, `.g-plate--photo`, `.g-meter--ink`, `.g-readout-mode`). Update `designTokens.js`, `colorConstants.js`, both tests, the fonts in `index.html`. Rebuild `/styleguide`. Add the spinner and the lockup components.
-2. **Done 2026-09-09, same PR, except the Reclamation lobby, which lives on the same page as the match and moves with it.** Chrome pages. Navbar and home (with the new lockup, the morph and the planet field replacing the stat tiles and equal destination cards), account, user details, encyclopedia, generator, duel setup, Reclamation lobby, training menu. Delete the terminal furniture and in-world copy from each. Set `data-tier`.
-3. **Immersive experiences**, one at a time, each with a short brief approved first: duel board, then Reclamation match, then the training games and Long Return.
+2. **Done 2026-09-09, with Training replaced by Arcade 2026-09-13, except the Reclamation lobby, which lives on the same page as the match and moves with it.** Chrome pages. Navbar and home (with the new lockup, the morph and the planet field replacing the stat tiles and equal destination cards), account, user details, encyclopedia, generator, duel setup, Reclamation lobby, Arcade hub. Delete the terminal furniture and in-world copy from each. Set `data-tier`.
+3. **Immersive experiences: Arcade restarted 2026-09-13; older families remain deferred.** Work proceeds one game family at a time from an approved short brief. Nick authorized the Arcade family in `docs/design/xalians-arcade.md`; the Duel board, Reclamation match, and Long Return remain parked until separately restarted.
 
 ## 12. Rules for new work
 
@@ -272,7 +294,8 @@ Each step is one PR, verified by paint with `scripts/design/snap.js`, auto-merge
 8. **Plain copy on controls.** The world speaks in the content.
 9. **Contrast 4.5:1, visible focus, keyboard order, 44 pixel touch targets, reduced motion honored.**
 10. **Verify by paint.** Run the harness, open the PNGs at both widths. A check that could not have failed is not a check.
-11. **Report friction in the moment.** If a rule forces something absurd or a page fits no tier, say so with the concrete case and the smallest change. These are levers, not stone.
+11. **Leave parked games alone.** Reclamation, the Duel board and reference, and Long Return are parked (section 1). They still carry version 3 classes on purpose. Do not restyle one because it looks dated, and do not delete a legacy stylesheet they still read. The Arcade family is governed by its approved brief.
+12. **Report friction in the moment.** If a rule forces something absurd or a page fits no tier, say so with the concrete case and the smallest change. These are levers, not stone.
 
 ## 13. Deliberately avoided
 
@@ -281,7 +304,9 @@ Each step is one PR, verified by paint with `scripts/design/snap.js`, auto-merge
 - Per-area typefaces or accents. One system.
 - Stat tile rows and equal-card feature grids on the home page. They are dashboard and marketing shapes.
 - Skeleton screens.
-- Rounded corners, pills (except dots and toggles), drop shadows on things that do not float.
+- Rounded corners and pills, except dots and toggles.
+- Blurred drop shadows on anything that does not float. The solid diagonal mass under a pressable object (section 5.1) is not one of these and is the only shadow a resting object may cast.
+- Mass on anything that cannot be pressed. A card or a badge with thickness breaks what thickness means.
 - Whole-page scanlines, noise overlays, glow on surfaces, pulsing anything.
 - Fallout signals: Pip-Boy green as a screen wash, hazard yellow, atomic iconography. The mint is an accent on a full-color site, never a monochrome screen.
 - Orange as the accent. Withdrawn 2026-09-08.

@@ -102,20 +102,6 @@ export const OVERSPEND_ALLOWANCE = 1;
 // the randomizer window in chooseSend: candidates within this much of the best value are
 // treated as near-equal and picked among at random. Larger is more random, so easier.
 export const NEAR_WINDOW = 0.25;
-// scales how often a stealthy creature is sent hidden when the existing rule (canHide &&
-// the send is not obviously safe) would allow it. 1 is the rule as written; a value above
-// 1 also allows hiding on sends the rule would otherwise send openly, up to "always hide a
-// stealthy creature" at 2. See applyHideBias below for the exact math.
-export const HIDE_BIAS = 1;
-/*
-	What concealment alone is worth, in hold units, apart from landing first. A hidden send
-	is unseen at Deploy, and the opponent's own margin reading discounts every world by
-	hiddenHoldGuess for each hidden send it knows was made, so hiding distorts what the
-	rival thinks it is looking at even when the creature has nothing to attack. Without
-	this a presence, or a striker sent to a world with no enemy on it yet, would price
-	hiding at exactly zero and never hide, which is not how a bluffer plays.
-*/
-export const HIDE_CONCEALMENT_VALUE = 1;
 // when set, the handler may pass early on frame 1 or 2 while holding a majority even if the
 // opponent has not passed yet, to bait overspend. 0 is the bot as it was (it never gives up
 // the last word while the opponent can still answer).
@@ -173,8 +159,6 @@ function weightsFor(rival: Rival | null | undefined): RivalWeights {
 		minSendValue: w.minSendValue ?? MIN_SEND_VALUE,
 		overspendAllowance: w.overspendAllowance ?? OVERSPEND_ALLOWANCE,
 		nearWindow: w.nearWindow ?? NEAR_WINDOW,
-		hideBias: w.hideBias ?? HIDE_BIAS,
-		concealmentValue: w.concealmentValue ?? HIDE_CONCEALMENT_VALUE,
 		baitPass: w.baitPass ?? BAIT_PASS,
 		stakeEagerness: w.stakeEagerness ?? STAKE_EAGERNESS,
 	};
@@ -454,87 +438,6 @@ function evaluateSwiftMoves(publicState: PublicState, handler: Seat, margins: Re
 	return overall;
 }
 
-// applies hideBias to the base hiding rule (canHide && the send is not already safely
-// decisive on visible hold alone). hideBias is a multiplier on top of that rule read as:
-// 0 never hides; 1 (default) is the rule exactly as written; between 0 and 1 scales down
-// how often a qualifying send is actually hidden (a coin flip weighted by the bias); above
-// 1, the excess (hideBias - 1, capped at 1) is the chance of hiding EVEN WHEN the base rule
-// would send openly, so a bias of 2 hides every stealthy send regardless of the board.
-function applyHideBias(baseRuleSaysHide: boolean, canHide: boolean, hideBias: number, rng: RngLike | null | undefined): boolean {
-	if (!canHide) {
-		return false;
-	}
-	// hideBias === 1 is the rule exactly as written, with no randomizer draw at all, so the
-	// default proctor (weights all defaults) consumes rng in the exact same sequence the
-	// bot always has - this keeps "no rival argument" bit-identical to the old behaviour.
-	if (hideBias === 1) {
-		return baseRuleSaysHide;
-	}
-	const roll = rng ? rng.float() : 0;
-	if (baseRuleSaysHide) {
-		return roll < Math.min(1, hideBias);
-	}
-	const excess = Math.max(0, hideBias - 1);
-	return roll < Math.min(1, excess);
-}
-
-/*
-	priceHiding(publicState, weights, candidate) -> { hideValue, hideCost, hideAffordable }
-
-	What hiding this send is worth, in the same hold units every other number in scoreSends
-	is in. Since pass 4 (assumption 24) hiding is concealment only, so in the shipped game
-	this is weights.concealmentValue and nothing else: the rules levers below are all at
-	their off settings and only an ablation row turns them on. They stay priced so the bot
-	never proposes a hidden send that is worse than the open one under any lever, and
-	never one the engine would reject:
-
-	- rules.hiddenFirst: the pass 2 gain. Going first is worth the creature's role value,
-	  because an attack that lands before the reply lands unhurt and may take its target
-	  off the world entirely.
-	- rules.hiddenPower: the loss. An attack from hiding lands at hiddenPower of its power,
-	  whether or not it goes first, so hiding costs (1 - hiddenPower) of the role value.
-	- rules.hiddenSendCost: the cap. Extra units against the round's sendable cap are
-	  priced the way the Loki line's extra unit already is, and a send the remaining cap
-	  cannot afford to hide is marked unaffordable rather than discounted.
-*/
-interface HidingCandidate {
-	record: XalianRecord;
-	roleValue?: number;
-	effect?: number;
-	cost?: number;
-	capRemaining?: number;
-}
-
-function priceHiding(publicState: PublicState, weights: RivalWeights, candidate: HidingCandidate): { hideValue: number; hideCost: number; hideAffordable: boolean } {
-	const rules = rulesOf(publicState);
-	const { record, roleValue = 0, effect = 0, cost = 1, capRemaining = 0 } = candidate;
-	const canHide = traitsOf(record).includes('stealthy') && (!rules || rules.hiddenSends !== false);
-	if (!canHide) {
-		return { hideValue: 0, hideCost: cost, hideAffordable: false };
-	}
-	const hiddenSendCost = rules && typeof rules.hiddenSendCost === 'number' ? rules.hiddenSendCost : 1;
-	const hiddenPower = rules && typeof rules.hiddenPower === 'number' ? rules.hiddenPower : 1;
-	const goesFirst = !!(rules && rules.hiddenFirst);
-	// concealmentValue is a rival-weighted habit, not a rules discount: the engine charges
-	// both seats the same hiddenSendCost, and this is only how much a given handler BELIEVES
-	// an unseen send is worth. A bluffer reads it higher than a proctor does.
-	const firstGain = (goesFirst ? roleValue * hiddenPower : 0) + weights.concealmentValue;
-	const powerLoss = (1 - hiddenPower) * roleValue;
-	const hideCost = Math.max(cost, hiddenSendCost);
-	// The extra units a hidden send costs against the round's cap, priced the way the Loki
-	// line's extra unit already is - and divided by hideBias, because hideBias is exactly
-	// "how much this handler likes hiding", so a broker weighs the send it gives up less
-	// than a proctor does. Without this the price of hiding flattened every rival's habit
-	// onto the same hidden rate (measured 2026-09-10: at hiddenSendCost 2 the broker's rate
-	// fell to the proctor's on all three seeds), which would cost the ladder a character.
-	const capPenalty = (weights.holdCost * effect * (hideCost - cost)) / Math.max(0.25, weights.hideBias);
-	return {
-		hideValue: round1(firstGain - powerLoss - capPenalty),
-		hideCost,
-		hideAffordable: hideCost <= capRemaining,
-	};
-}
-
 /*
 	scoreSends(publicState, ownRoster, handler, rival) -> {
 		candidates, best, margins, weights, remainingSends, capRemaining, evenShare,
@@ -624,16 +527,9 @@ export function scoreSends(publicState: PublicState, ownRoster: XalianRecord[], 
 			if (cost > 1) {
 				value -= weights.holdCost * h * (cost - 1);
 			}
-			const hiding = priceHiding(publicState, weights, {
-				record, roleValue, effect: h, cost, capRemaining,
-			});
 			candidates.push({
 				record, site, prepared, margin: m, value, flips: m <= 0 && h > -m, cost,
 				roleValue, effect: h, role: prepared.role,
-				// what hiding this particular send is worth, priced against all three of
-				// pass 3's hiding levers (assumption 21). chooseSend reads it rather than
-				// recomputing the first-strike bonus itself.
-				...hiding,
 			});
 		});
 	});
@@ -664,7 +560,7 @@ export function scoreSends(publicState: PublicState, ownRoster: XalianRecord[], 
 	rival is optional and defaults to the Court proctor (the bot as it always was); see
 	RIVALS below for the five handlers and rivalById for the lookup with a safe fallback.
 	The candidate scoring itself lives in scoreSends above; this function is the policy
-	layer over it (the swift move, the pass rules, the near-equal pick, the hide bias).
+	layer over it (the swift move, the pass rules, the near-equal pick).
 */
 export function chooseSend(publicState: PublicState, ownRoster: XalianRecord[], handler: Seat, rng?: RngLike | null, rival?: Rival | null): BotAction {
 	const weights = weightsFor(rival);
@@ -722,47 +618,17 @@ export function chooseSend(publicState: PublicState, ownRoster: XalianRecord[], 
 	const near = candidates.filter((c) => c.value >= best.value - weights.nearWindow);
 	const pick = near.length > 1 && rng ? near[Math.floor(rng.float() * near.length)] : best;
 
-	const canHide = traitsOf(pick.record).includes('stealthy');
-	// the base hide rule (docs/design/reclamation-play-enhancements.md "Pass 2 levers"):
-	// hide when the send flips or contests a world the rival can still answer (the rival
-	// has not passed) AND the creature's hold is at least the site's current margin; send
-	// openly when securing a lead. Margin here is BEFORE this creature lands (candidates
-	// are always scored against the pre-send margin), so almost every real send has
-	// margin <= 0 - the old rule (|margin| < hold) read that as "always hide", which was
-	// the flip condition restated and gave hideBias nothing to act on (pass-1 friction).
-	// The fix judges the site by where the send LEAVES it: resultMargin is this seat's
-	// margin after the creature's own hold is added. A flip or a still-contested site
-	// (resultMargin not comfortably positive, i.e. the rival's remaining hold could still
-	// answer it) hides; a send that leaves the site solidly ahead (resultMargin at least
-	// the creature's own hold beyond breakeven - the rival would need to match this send
-	// again just to get back to even) is "securing a lead" and goes openly.
-	// A rules ablation can turn hidden sends off entirely (publicState.rules.hiddenSends);
-	// the bot must never propose a send the engine would reject, so the flag gates hiding
-	// before the bias is ever consulted.
-	// Hidden first (assumption 9) is what gives hiding its teeth: a hidden creature's blow
-	// lands before anyone else's at its world, so the value of hiding rises by the blow
-	// the creature would land. A blow that would be worth nothing here (a presence, or a
-	// striker with nothing to hit) gains nothing from going first, and is sent openly
-	// unless the site is contested on hold alone.
-	// Pass 3 (assumption 21): the worth of hiding THIS send is priced in scoreSends by
-	// priceHiding, against all three hiding levers at once, so a lever that makes hiding
-	// worthless (or unaffordable) turns the bot off it without any rule here changing.
-	const rulesAllowHiding = !publicState.rules || publicState.rules.hiddenSends !== false;
-	const hideBonus = Math.max(0, pick.hideValue || 0);
-	const effect = pick.prepared.hold + hideBonus;
-	const resultMargin = pick.margin + effect;
-	// "securing a lead" is unchanged in spirit: the send leaves the site far enough ahead
-	// that the rival would have to match this whole creature again just to get back to
-	// even. What has changed is that `effect` now counts the role's own worth as well as
-	// the hold it puts on the table.
-	const securesALead = resultMargin >= pick.prepared.hold;
-	const rivalCanStillAnswer = !opp.passed;
-	// hiding has to be worth something and has to be affordable against the round's cap
-	// before the base rule is even consulted (assumption 21)
-	const hidingPays = (pick.hideValue || 0) > 0 && pick.hideAffordable !== false;
-	const baseRuleSaysHide = canHide && hidingPays && rivalCanStillAnswer && !securesALead && effect >= pick.margin;
-	const wantsHidden = applyHideBias(baseRuleSaysHide, canHide && hidingPays, weights.hideBias, rng);
-	const hidden = rulesAllowHiding && wantsHidden;
+	/*
+		Concealment is derived, not chosen (pass 4b, assumption 27): a stealthy creature
+		arrives hidden and everyone else arrives in the open, and the hiddenSends ablation
+		takes concealment out of the game for both seats. The bot used to decide this (a
+		base rule plus a hideBias weight); the measurement that ended it was that the
+		reading proctor already hid every stealthy creature it sent, and never hiding cost
+		it about seven points, so the choice was degenerate. The engine ignores the flag
+		the caller passes; it is reported here only so consumers that narrate the action
+		read the same thing the board will show.
+	*/
+	const hidden = traitsOf(pick.record).includes('stealthy') && (!publicState.rules || publicState.rules.hiddenSends !== false);
 
 	return { type: 'send', recordId: pick.record.id, siteId: pick.site.id, hidden };
 }
@@ -1101,16 +967,14 @@ export const RIVALS: Rival[] = [
 		home: 'Drainov',
 		style: 'Keeps its creatures hidden until the last moment and bets you cannot tell a bluff from a real threat.',
 		measured: { vsProctor: 0.485 },
+		/*
+			Pass 4b (assumption 27) took the hide decision away from every handler, so the
+			broker's old hideBias weight is gone. Its identity survives in the draft
+			(draft.ts prefers stealthy creatures for it, and a stealthy creature arrives
+			hidden) and in baitPass, which is the bluff half of "hides and baits".
+		*/
 		weights: {
 			stakeEagerness: 1.2,
-			/*
-				Pass 4 (assumption 24): hiding is concealment only and free, so the broker
-				hides every stealthy creature it sends (2 is "always hide a stealthy
-				creature" in applyHideBias). The pass 3 retune to 1.3 was for the priced
-				game and is superseded; the broker's hidden rate has to sit above the
-				proctor's, which is the one thing its habit may not fail to do.
-			*/
-			hideBias: 2,
 			baitPass: 1,
 		},
 	},

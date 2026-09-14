@@ -23,8 +23,11 @@ function SpecPlate({
       data-slot="spec-plate"
       className={cn(
         "m-0 grid items-baseline gap-x-6 gap-y-2",
+        // Four columns need real width: two 9rem labels alone are 288px, so in
+        // a 350px column (the record header at 760) the value tracks collapsed
+        // to nothing and their content spilled off the page. It waits for lg.
         columns === 2
-          ? "grid-cols-[minmax(7rem,max-content)_minmax(0,1fr)] md:grid-cols-[minmax(9rem,max-content)_minmax(0,1fr)_minmax(9rem,max-content)_minmax(0,1fr)]"
+          ? "grid-cols-[minmax(7rem,max-content)_minmax(0,1fr)] lg:grid-cols-[minmax(9rem,max-content)_minmax(0,1fr)_minmax(9rem,max-content)_minmax(0,1fr)]"
           : "grid-cols-[minmax(7rem,max-content)_minmax(0,1fr)]",
         className
       )}
@@ -33,7 +36,7 @@ function SpecPlate({
       {entries.map((e, i) => (
         <React.Fragment key={i}>
           <dt className="type-legend">{e.key}</dt>
-          <dd className={cn("m-0 text-small text-ink", e.body ? "font-body" : "type-data", nowrap && "whitespace-nowrap")}>{e.value}</dd>
+          <dd className={cn("m-0 min-w-0 text-small text-ink wrap-anywhere", e.body ? "font-body" : "type-data", nowrap && "whitespace-nowrap")}>{e.value}</dd>
         </React.Fragment>
       ))}
     </dl>
@@ -130,7 +133,7 @@ function EmptyState({
   return (
     <div data-slot="empty-state" className={cn("surface-0 border border-edge bg-s0 p-6", className)} {...props}>
       <p className="type-legend mb-3">{legend}</p>
-      <div className="font-body text-body text-ink-2">{children}</div>
+      <div className="measure font-body text-body text-ink-2">{children}</div>
     </div>
   )
 }

@@ -76,7 +76,7 @@ function VerifyEmailModal({ show, onHide, callback, username, email }: VerifyEma
 	};
 
 	return (
-		<Dialog open={show} onOpenChange={(open) => !open && onHide()}>
+		<Dialog open={show} onOpenChange={(open: boolean) => !open && onHide()}>
 			<DialogContent>
 				<DialogHeader>
 					<DialogTitle>Verify email address</DialogTitle>

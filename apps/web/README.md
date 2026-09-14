@@ -1,15 +1,19 @@
 # Xalians frontend
 
-A Vite + React 17 frontend for Xalians, hosted on S3 at `xalians.com`.
+A Vite + React 18 frontend for Xalians, hosted on S3 at `xalians.com`.
 
 ## Scripts
 
 - `npm run dev` (alias `npm start`) - starts the Vite dev server on port 3000.
-- `npm run build` - `vite build`, emits to `build/`.
+- `npm run build` - creates the production build in `build/` and enforces the checked-in bundle budgets.
+- `npm run build:styleguide` - creates a developer build that includes `/styleguide`; normal production builds omit that route and its component graph.
+- `npm run check:bundle` - checks an existing production build against `bundle-budgets.json`.
 - `npm run preview` - serves the built `build/` folder with `vite preview`.
 - `npm test` - runs Vitest in watch mode; `npm test -- --run` for a single run; `npm test -- -t "name"` filters by test name.
 - `npm run build-deploy` - build + `aws s3 sync build s3://xalians.com`.
 - `npm run deploy` - deploys the existing `build/` folder without rebuilding.
+
+The budget checker reads Vite's `build/.vite/manifest.json`, follows each route's static import graph, and measures both raw and gzip bytes. Initial CSS also includes the legacy stylesheets linked directly from `index.html`. Keep the approximately five-percent headroom intentional: update a threshold only alongside measured build evidence, and tighten it when modernization removes assets.
 
 ## Shared game data
 

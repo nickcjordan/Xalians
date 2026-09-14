@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { NavLink, Link, useLocation } from 'react-router-dom';
+import { NavLink, Link, useLocation } from 'react-router';
 import * as lore from '../../lore';
 import { isRead } from './trail';
 import LoreSearch from './LoreSearch';
@@ -209,7 +209,7 @@ export default function EncyclopediaShell({ children }) {
                     <NavLink
                         key={s.to}
                         to={s.to}
-                        exact={s.exact}
+                        end={s.exact}
                         className={tabTriggerClass}
                         aria-current={s === activeSection ? 'page' : undefined}
                     >

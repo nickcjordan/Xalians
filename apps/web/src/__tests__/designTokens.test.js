@@ -17,8 +17,7 @@ import * as designTokens from '../constants/designTokens';
 // `--g-vfd: var(--g-phosphor)` compares against its resolved colour, not the
 // literal text "var(--g-phosphor)".
 
-const SYSTEM_PATH = path.join(__dirname, '..', '..', 'public', 'assets', 'css', 'legacy', 'system.css');
-const TYPE_COLORS_PATH = path.join(__dirname, '..', '..', 'public', 'assets', 'css', 'legacy', 'typeColors.css');
+const SYSTEM_PATH = path.join(__dirname, '..', 'styles', 'legacy', 'system.css');
 
 /** Parses :root and every [data-terminal="x"] block into { root: {...}, x: {...} }. */
 const readBlocks = (css) => {
@@ -56,9 +55,9 @@ const resolveToken = (name, blockMap, rootMap, seen) => {
 const blocks = readBlocks(fs.readFileSync(SYSTEM_PATH, 'utf8'));
 const rootBlock = blocks.root || {};
 
-// Flat map used by the structural checks below (element colours, TYPE_COLORS
-// hex ban); every value here is a raw :root declaration, none of which are
-// var() references, so no resolution is needed for these specific checks.
+// Flat map used by the structural element-colour checks below. Every value
+// here is a raw :root declaration, none of which are var() references, so no
+// resolution is needed for these specific checks.
 const tokens = rootBlock;
 
 const resolvedRoot = (name) => resolveToken(name, rootBlock, rootBlock);
@@ -214,6 +213,41 @@ const TERMINAL_FIELD_TOKENS = {
 	lampOn: '--g-lamp-on',
 };
 
+const relativeLuminance = (hex) => {
+	const channels = hex.slice(1).match(/../g).map((value) => parseInt(value, 16) / 255);
+	const linear = channels.map((value) => value <= 0.03928
+		? value / 12.92
+		: ((value + 0.055) / 1.055) ** 2.4);
+	return 0.2126 * linear[0] + 0.7152 * linear[1] + 0.0722 * linear[2];
+};
+
+const contrastRatio = (foreground, background) => {
+	const foregroundLuminance = relativeLuminance(foreground);
+	const backgroundLuminance = relativeLuminance(background);
+	return (Math.max(foregroundLuminance, backgroundLuminance) + 0.05)
+		/ (Math.min(foregroundLuminance, backgroundLuminance) + 0.05);
+};
+
+describe('v4 text contrast', () => {
+	const textInks = ['ink', 'ink2', 'ink3'];
+	const surfaces = ['room', 's0', 's1', 's2', 's3'];
+
+	it.each(textInks.flatMap((ink) => surfaces.map((surface) => [ink, surface])))
+		('%s clears 4.5:1 on %s', (ink, surface) => {
+			expect(contrastRatio(designTokens.v4[ink], designTokens.v4[surface])).toBeGreaterThanOrEqual(4.5);
+		});
+
+	it('every terminal accent carries readable text', () => {
+		const terminalBlocks = ['root', 'field', 'registry', 'archive', 'relay', 'readout'];
+		terminalBlocks.forEach((name) => {
+			const block = name === 'root' ? rootBlock : blocks[name];
+			const accent = resolveToken('--g-accent', block, rootBlock);
+			const accentInk = resolveToken('--g-accent-ink', block, rootBlock);
+			expect(contrastRatio(accentInk, accent), `${name} accent`).toBeGreaterThanOrEqual(4.5);
+		});
+	});
+});
+
 describe('design tokens', () => {
 
 	describe('element colours', () => {
@@ -263,9 +297,4 @@ describe('design tokens', () => {
 		});
 	});
 
-	it('leaves no raw hex colours in the element colour utilities', () => {
-		const css = fs.readFileSync(TYPE_COLORS_PATH, 'utf8');
-		const strippedComments = css.replace(/\/\*[\s\S]*?\*\//g, '');
-		expect(strippedComments.match(/#[0-9a-fA-F]{3,8}\b/g)).toBeNull();
-	});
 });

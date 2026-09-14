@@ -10,9 +10,10 @@ import { Switch } from '@/components/ui/switch';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 
 import * as retrievalUtil from '@/utils/retrievalUtil';
-import DuelPage from './duelPage';
 import HowToPlayModal from '@/components/games/duel/howToPlayModal';
 import LocalDuelStorage from '@/store/LocalStorage';
+
+const DuelPage = React.lazy(() => import('./duelPage'));
 
 const TEAM_SIZE_OPTIONS = [2, 3, 4, 5, 6];
 
@@ -124,7 +125,7 @@ class DuelStartPage extends React.Component<{}, DuelStartPageState> {
                                 className={`el-${primaryType.toLowerCase()} flex flex-col items-center gap-1 border p-2 text-center outline-none transition-[background-color,border-color] duration-1 ease-out focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring ${selected ? 'border-viable-lo bg-viable-tint' : 'border-edge bg-s0 hover:bg-s1'}`}
                                 onClick={() => this.toggleXalianSelection(x.xalianId)}>
                                 <span className="block h-11 w-11 overflow-hidden bg-el/80">
-                                    <XalianImage colored speciesName={x.species.name} primaryType={primaryType} unPadded />
+                                    <XalianImage variant="token" colored speciesName={x.species.name} primaryType={primaryType} unPadded />
                                 </span>
                                 <span className="text-small text-ink-2">{x.species.name}</span>
                             </button>
@@ -149,7 +150,7 @@ class DuelStartPage extends React.Component<{}, DuelStartPageState> {
                             key={`squad-plate-${x.xalianId}`}
                             className={`el-${primaryType.toLowerCase()} block h-9 w-9 overflow-hidden bg-el/80`}
                             title={x.species.name}>
-                            <XalianImage colored speciesName={x.species.name} primaryType={primaryType} unPadded />
+                            <XalianImage variant="token" colored speciesName={x.species.name} primaryType={primaryType} unPadded />
                         </span>
                     );
                 })}
@@ -160,7 +161,9 @@ class DuelStartPage extends React.Component<{}, DuelStartPageState> {
     render() {
         if (this.state.gameDetails) {
             return (
-                <DuelPage gameDetails={this.state.gameDetails} />
+                <React.Suspense fallback={<div className="p-8 font-body text-ink-2">Loading arena...</div>}>
+                    <DuelPage gameDetails={this.state.gameDetails} />
+                </React.Suspense>
             );
         }
 
@@ -194,7 +197,7 @@ class DuelStartPage extends React.Component<{}, DuelStartPageState> {
                                     type="single"
                                     variant="outline"
                                     value={this.state.players === 1 ? 'bot' : 'second'}
-                                    onValueChange={(v) => { if (v) { this.setState({ players: v === 'bot' ? 1 : 2 }); } }}
+                                    onValueChange={(v: string) => { if (v) { this.setState({ players: v === 'bot' ? 1 : 2 }); } }}
                                     aria-label="Opponent">
                                     <ToggleGroupItem value="bot">Bot</ToggleGroupItem>
                                     <ToggleGroupItem value="second">Second player</ToggleGroupItem>
@@ -207,7 +210,7 @@ class DuelStartPage extends React.Component<{}, DuelStartPageState> {
                                     type="single"
                                     variant="outline"
                                     value={String(this.state.numberOfPieces)}
-                                    onValueChange={(v) => { if (v) { this.setTeamSize(Number(v)); } }}
+                                    onValueChange={(v: string) => { if (v) { this.setTeamSize(Number(v)); } }}
                                     aria-label="Team size">
                                     {TEAM_SIZE_OPTIONS.map((size) => (
                                         <ToggleGroupItem value={String(size)} key={`team-size-${size}`}>
@@ -220,8 +223,9 @@ class DuelStartPage extends React.Component<{}, DuelStartPageState> {
                             <div className="flex items-center justify-between gap-4 border-t border-edge px-6 py-4">
                                 <span className="type-legend">Randomize start positions</span>
                                 <Switch
+                                    aria-label="Randomize start positions"
                                     checked={this.state.randomizeStartingPositions}
-                                    onCheckedChange={(checked) => this.setState({ randomizeStartingPositions: checked })} />
+                                    onCheckedChange={(checked: boolean) => this.setState({ randomizeStartingPositions: checked })} />
                             </div>
 
                             <div className={`flex gap-4 border-t border-edge px-6 py-4 ${this.state.userXalians ? 'flex-col items-stretch' : 'items-center justify-between'}`}>
@@ -235,8 +239,9 @@ class DuelStartPage extends React.Component<{}, DuelStartPageState> {
                                 <div className="flex items-center justify-between gap-4 border-t border-edge px-6 py-4">
                                     <span className="type-legend">Debug mode</span>
                                     <Switch
+                                        aria-label="Debug mode"
                                         checked={this.state.debugMode}
-                                        onCheckedChange={(checked) => this.setState({ debugMode: checked })} />
+                                        onCheckedChange={(checked: boolean) => this.setState({ debugMode: checked })} />
                                 </div>
                             }
                         </Card>

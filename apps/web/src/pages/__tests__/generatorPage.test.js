@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
-import { MemoryRouter } from 'react-router-dom';
+import { MemoryRouter } from 'react-router';
 import { vi } from 'vitest';
 
 import sampleGraviclaw from '../../../../../docs/design/sample-record-graviclaw.json';
@@ -16,9 +16,17 @@ vi.mock('../../components/navbar', () => ({ default: () => null }));
 vi.mock('../../components/auth/signInModal', () => ({ default: () => null }));
 vi.mock('../../components/auth/verifyEmailModal', () => ({ default: () => null }));
 
-const currentUserInfo = vi.fn();
-vi.mock('aws-amplify', () => ({
-	Auth: { currentUserInfo: (...args) => currentUserInfo(...args) },
+const { currentUser } = vi.hoisted(() => ({ currentUser: vi.fn() }));
+vi.mock('../../utils/authUtil', () => ({
+	currentUser,
+	buildAuthState: (data) => ({
+		userId: data.attributes.sub,
+		username: data.username,
+		email: data.attributes.email,
+		hasVerifiedEmail: data.attributes.email_verified === true,
+	}),
+}));
+vi.mock('aws-amplify/utils', () => ({
 	Hub: { listen: vi.fn(), remove: vi.fn() },
 }));
 
@@ -41,7 +49,7 @@ beforeEach(() => {
 
 describe('GeneratorPage, signed out', () => {
 	beforeEach(() => {
-		currentUserInfo.mockResolvedValue(null);
+		currentUser.mockResolvedValue(null);
 	});
 
 	it('pulls the free lever and says the creature cannot be kept', async () => {
@@ -50,7 +58,7 @@ describe('GeneratorPage, signed out', () => {
 		await waitFor(() => expect(dbApi.callShowroomXalian).toHaveBeenCalledTimes(1));
 		expect(dbApi.callGenerateXalian).not.toHaveBeenCalled();
 
-		expect(await screen.findByText('Showroom creature')).toBeInTheDocument();
+		expect(await screen.findByText('Unowned preview')).toBeInTheDocument();
 		expect(screen.getByRole('button', { name: 'Sign in to generate' })).toBeInTheDocument();
 		expect(screen.getByRole('heading', { level: 2, name: 'Graviclaw' })).toBeInTheDocument();
 	});
@@ -64,11 +72,20 @@ describe('GeneratorPage, signed out', () => {
 		await waitFor(() => expect(dbApi.callShowroomXalian).toHaveBeenCalledTimes(2));
 		expect(dbApi.callGenerateXalian).not.toHaveBeenCalled();
 	});
+
+	it('keeps anonymous generation available when the Cognito probe is unavailable', async () => {
+		currentUser.mockRejectedValue(new Error('service unavailable'));
+		renderPage();
+
+		await waitFor(() => expect(dbApi.callShowroomXalian).toHaveBeenCalledTimes(1));
+		expect(dbApi.callGenerateXalian).not.toHaveBeenCalled();
+		expect(await screen.findByText('Unowned preview')).toBeInTheDocument();
+	});
 });
 
 describe('GeneratorPage, signed in', () => {
 	beforeEach(() => {
-		currentUserInfo.mockResolvedValue({ username: 'nick', attributes: { email: 'nick@example.com', email_verified: true } });
+		currentUser.mockResolvedValue({ username: 'nick', attributes: { sub: 'nick', email: 'nick@example.com', email_verified: true } });
 	});
 
 	it('still opens on the showroom, so arriving costs nothing', async () => {
@@ -83,12 +100,12 @@ describe('GeneratorPage, signed in', () => {
 		await waitFor(() => expect(dbApi.callShowroomXalian).toHaveBeenCalledTimes(1));
 		const button = await screen.findByRole('button', { name: 'Generate another' });
 
-		await waitFor(() => expect(screen.queryByText('Showroom creature')).toBeInTheDocument());
+		await waitFor(() => expect(screen.queryByText('Unowned preview')).toBeInTheDocument());
 		button.click();
 
 		await waitFor(() => expect(dbApi.callGenerateXalian).toHaveBeenCalledTimes(1));
 		expect(await screen.findByText('Kept')).toBeInTheDocument();
-		expect(screen.queryByText('Showroom creature')).not.toBeInTheDocument();
+		expect(screen.queryByText('Unowned preview')).not.toBeInTheDocument();
 		expect(screen.getByRole('link', { name: 'See your Xalians' })).toHaveAttribute('href', '/account');
 	});
 });

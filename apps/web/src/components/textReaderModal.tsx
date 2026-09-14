@@ -15,7 +15,7 @@ type TextReaderModalProps = {
 
 function TextReaderModal({ show, onHide, title, body, footer }: TextReaderModalProps) {
 	return (
-		<Dialog open={show} onOpenChange={(open) => !open && onHide()}>
+		<Dialog open={show} onOpenChange={(open: boolean) => !open && onHide()}>
 			<DialogContent className="flex max-h-[85vh] flex-col sm:max-w-2xl">
 				{title && (
 					<DialogHeader>

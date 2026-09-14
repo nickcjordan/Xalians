@@ -1,7 +1,7 @@
 import { describe, test, it, expect } from 'vitest';
 import type { XalianRecord } from '@xalians/content/schema';
 import { createMatch, send, pass, getPublicState, createRngState, nextRandom, moveSwift } from '../expeditionRules.ts';
-import { chooseSend, chooseStake, scoreSends, roleValueOf, readUnseen, RIVALS, DEFAULT_RIVAL_ID, rivalById, HIDE_CONCEALMENT_VALUE } from '../expeditionBot.ts';
+import { chooseSend, chooseStake, scoreSends, roleValueOf, readUnseen, RIVALS, DEFAULT_RIVAL_ID, rivalById } from '../expeditionBot.ts';
 import { ROSTER_SIZE, SENDABLE } from '../expeditionInterpretation.ts';
 import type { Seat, World } from '../types.ts';
 
@@ -168,16 +168,19 @@ describe('chooseSend', () => {
 		}
 	});
 
-	test('never hides a send for a non-stealthy creature', () => {
-		const rosterA = makeRoster('A'); // no stealthy traits
-		const rosterB = makeRoster('B');
-		const state = createMatch({ rosterA, rosterB, worlds: makeWorlds(), seed: 'bot-seed-3' });
-		const handler = state.starter;
-		const publicState = getPublicState(state, handler);
-		const action = chooseSend(publicState, state.players[handler].roster, handler, makeRng(3));
-		if (action.type === 'send') {
-			expect(action.hidden).toBe(false);
+	// pass 4b (assumption 27): the bot no longer decides this, it reports what the engine
+	// will do, so the flag it returns has to track the creature's own traits exactly.
+	test('reports hidden exactly when the creature is stealthy', () => {
+		function reportedHiddenFor(stealthy: any, seed: any) {
+			const rosterA = makeRoster('A', () => ({ traits: { guaranteed: stealthy ? ['stealthy'] : [], rolled: [] } }));
+			const rosterB = makeRoster('B');
+			const state = createMatch({ rosterA, rosterB, worlds: makeWorlds(), seed });
+			const publicState = getPublicState(state, 'A');
+			const action = chooseSend(publicState, state.players.A.roster, 'A', makeRng(3));
+			return action.type === 'send' ? (action as any).hidden : null;
 		}
+		expect(reportedHiddenFor(false, 'bot-seed-3')).toBe(false);
+		expect(reportedHiddenFor(true, 'bot-seed-3')).toBe(true);
 	});
 
 	test('passes when the roster is empty', () => {
@@ -336,59 +339,6 @@ describe('rivals', () => {
 		expect(['A', 'B']).toContain(result.finalState.winner);
 	});
 
-	test('behaviour: hideBias hides a send the base rule would send openly, given the same board (the broker\'s weight)', () => {
-		// a hand-built publicState isolates the hide decision itself from the surrounding
-		// deploy-economy checks (evenShare, overspend, minSendValue, stack discount, hold
-		// cost). Those checks are real and, at the proctor's own tunables, a "secure with
-		// margin already >= the sender's hold" candidate never clears MIN_SEND_VALUE in the
-		// first place (securing an already-decisive site is cheap value against a real hold
-		// cost) - so this test holds every OTHER weight at a permissive baseline and varies
-		// only hideBias, which is the broker's actual point of difference from the proctor.
-		// The candidate's hold and the existing ally's hold are set so the base hiding rule
-		// (canHide && the send is not already a safely decisive margin) reads false: margin
-		// (from the ally already at the site) is at least as large as the candidate's own
-		// hold, so hideBias=1 (the rule exactly as written, which the proctor uses) sends it
-		// openly, and the broker's hideBias=1.8 sends the identical candidate hidden.
-		function site(id: any) {
-			return { id, name: id, environment: { medium: 'gas', temperatureC: { min: -50, max: 200 } }, world: { planet: 'Magmuth', element: 'fire' } };
-		}
-		const ally = makeRecord('A_ally', { attributes: { vitality: 100, resilience: 100, endurance: 100 } });
-		const candidate = makeRecord('A_stealth', { traits: { guaranteed: [], rolled: ['stealthy'] }, attributes: { vitality: 60, resilience: 60, endurance: 60 } });
-		const ownRoster = [candidate];
-		// deliberately hand-built, partial public state (see the comment above) - not a
-		// full PublicState, so it is typed loosely rather than filling in every field the
-		// real getPublicState would carry but this isolation test does not need
-		const publicState: any = {
-			frameIndex: 2, // last frame: mustHold, so the evenShare/overspend gate (which would otherwise pass first) does not apply
-			frame: { sites: [site('s0')] },
-			nextFrame: null,
-			phase: 'deploy',
-			turn: 'A',
-			starter: 'A',
-			board: { s0: { A: [{ recordId: 'A_ally', record: ally, sentIndex: 0, hidden: false }], B: [] } },
-			hurt: {},
-			wardedBy: {},
-			snared: {},
-			players: {
-				A: { rosterCount: 1, sentCount: 1, holding: 0, withdrawn: 0, downed: 0, passed: false, sitesWon: 0, hiddenSentThisRound: 0, roster: ownRoster, movableRecordIds: [] },
-				B: { rosterCount: 12, sentCount: 0, holding: 0, withdrawn: 0, downed: 0, passed: false, sitesWon: 0, hiddenSentThisRound: 0 },
-			},
-		};
-
-		const permissive: any = { id: 'permissive-test', weights: { minSendValue: 0.1, stackDiscount: 1, holdCost: 0, overspendAllowance: 5, hideBias: 1 } };
-		const brokerHideBias: any = { id: 'broker-hidebias-test', weights: { ...permissive.weights, hideBias: rivalById('broker').weights!.hideBias } };
-		// seed chosen so the hide-bias roll lands well under the broker's 0.8 excess chance
-		// (hideBias 1.8 -> excess = 0.8), so the outcome is not a coin-flip on CI
-		const seed = 'hide-bias-isolation-1';
-		const baseAction = chooseSend(publicState, ownRoster, 'A', makeRng(seed), permissive);
-		const brokerAction = chooseSend(publicState, ownRoster, 'A', makeRng(seed), brokerHideBias);
-
-		expect(baseAction.type).toBe('send');
-		expect(brokerAction.type).toBe('send');
-		expect((baseAction as any).hidden).toBe(false);
-		expect((brokerAction as any).hidden).toBe(true);
-	});
-
 	test('behaviour: the envoy sends fewer creatures in frame 1 than the windsailor over a batch of matches', () => {
 		const envoy = rivalById('envoy');
 		const windsailor = rivalById('windsailor');
@@ -420,55 +370,8 @@ describe('rivals', () => {
 		expect(envoyFrame1Sends).toBeLessThan(windsailorFrame1Sends);
 	});
 
-	/*
-		Coverage for docs/design/reclamation-play-enhancements.md's "Pass 2 levers", lever 1
-		(the hide rule). The old rule (|margin| < hold) was the flip condition restated: since
-		the bot's own scoring always prefers a flip/contest over securing an already-won site
-		(flipValue >> secureValue), the picked candidate's pre-send margin is <= 0 for nearly
-		every real send, so the old rule read "hide" on almost all of them and hideBias had
-		nothing to act on. The new rule judges the site by where the send LEAVES it
-		(resultMargin = pre-send margin + this creature's hold): a send that leaves the site
-		only just past even, or that the rival can still answer, hides; one that leaves it
-		solidly ahead goes openly. This asserts the broker's hideBias (1.8) actually produces
-		a higher hidden-send rate than the proctor's (1) over a batch of full matches with a
-		mixed stealthy/non-stealthy roster - the behaviour Pass 1 found missing.
-	*/
-	test('behaviour: hideBias measurably moves the hidden-send rate over a batch (the pass-1 friction, fixed)', () => {
-		const broker = rivalById('broker');
-		const proctor = rivalById('proctor');
-		const BATCH = 20;
-		let brokerHidden = 0;
-		let brokerSends = 0;
-		let proctorHidden = 0;
-		let proctorSends = 0;
-
-		function makeStealthyRoster(prefix: any) {
-			return makeRoster(prefix, (i: any) => ({
-				traits: { guaranteed: [], rolled: i % 2 === 0 ? ['stealthy'] : [] },
-				attributes: { vitality: 40 + (i % 6) * 10, resilience: 40 + (i % 5) * 10, endurance: 50 + (i % 4) * 8 },
-			}));
-		}
-
-		for (let i = 0; i < BATCH; i++) {
-			const rosterA = makeStealthyRoster('A');
-			const rosterB = makeStealthyRoster('B');
-
-			const brokerMatch = playMatch(rosterA, rosterB, makeWorlds(), `hidebias-broker-${i}`, { A: broker, B: proctor });
-			const brokerActionsA = brokerMatch.actionLog.filter((a: any) => a.handler === 'A' && a.type === 'send');
-			brokerSends += brokerActionsA.length;
-			brokerHidden += brokerActionsA.filter((a: any) => a.hidden).length;
-
-			const proctorMatch = playMatch(rosterA, rosterB, makeWorlds(), `hidebias-proctor-${i}`, { A: proctor, B: proctor });
-			const proctorActionsA = proctorMatch.actionLog.filter((a: any) => a.handler === 'A' && a.type === 'send');
-			proctorSends += proctorActionsA.length;
-			proctorHidden += proctorActionsA.filter((a: any) => a.hidden).length;
-		}
-
-		const brokerRate = brokerHidden / brokerSends;
-		const proctorRate = proctorHidden / proctorSends;
-		expect(brokerRate).toBeGreaterThan(proctorRate);
-	});
 });
+
 
 /*
 	The swift move (docs/design/reclamation-base-redesign.md assumption 20). The bot only
@@ -542,66 +445,31 @@ describe('chooseSend: swift creatures move', () => {
 
 
 /*
-	PASS 3 (docs/design/reclamation-base-redesign.md assumptions 21 and 22). The bot has to
-	price hiding against all three hiding levers and has to be able to take the stake, both
-	from public information only.
+	PASS 3 (docs/design/reclamation-base-redesign.md assumptions 21 and 22). The bot's own
+	pricing of hiding went with the hide decision in pass 4b (assumption 27): a stealthy
+	creature arrives hidden, so there is nothing left to price. What remains of pass 3 in
+	the bot is the stake.
 */
-describe('pass 3: the bot prices hiding (assumption 21)', () => {
+describe('pass 4b: concealment is reported, not chosen (assumption 27)', () => {
 	function stealthMatch(rules: any) {
 		const rosterA = makeRoster('A', () => ({ traits: { guaranteed: ['stealthy'], rolled: [] } }));
 		return createMatch({ rosterA, rosterB: makeRoster('B'), worlds: makeWorlds(), seed: 'hide-price-seed', rules });
 	}
 
-	function hideValuesOf(rules: any) {
-		const state = stealthMatch(rules);
-		const view = getPublicState(state, 'A');
-		const scored = scoreSends(view, state.players.A.roster, 'A', null);
-		return scored.candidates;
-	}
-
-	it('every candidate carries a priced hide value, a hide cost and whether the cap affords it', () => {
-		hideValuesOf({}).forEach((c: any) => {
-			expect(typeof c.hideValue).toBe('number');
-			expect(typeof c.hideCost).toBe('number');
-			expect(typeof c.hideAffordable).toBe('boolean');
-		});
+	it('reports hidden true for a stealthy roster under the default rules', () => {
+		const state = stealthMatch({});
+		const handler = state.turn!;
+		const view = getPublicState(state, handler);
+		const action = chooseSend(view, state.players[handler].roster, handler, null, null);
+		expect((action as any).hidden).toBe(true);
 	});
 
-	it('a hidden send costs more against the cap under hiddenSendCost, and is worth less', () => {
-		const free = hideValuesOf({ hiddenSendCost: 1 });
-		const priced = hideValuesOf({ hiddenSendCost: 2 });
-		expect(free[0].hideCost).toBe(1);
-		expect(priced[0].hideCost).toBe(2);
-		expect(priced[0].hideValue).toBeLessThan(free[0].hideValue);
-	});
-
-	it('pass 4: in the shipped game hiding is worth concealment alone, and the hiddenFirst lever adds the first strike back', () => {
-		hideValuesOf({}).forEach((c: any) => {
-			expect(c.hideValue).toBe(HIDE_CONCEALMENT_VALUE);
-			expect(c.hideCost).toBe(1);
-			expect(c.hideAffordable).toBe(true);
-		});
-		hideValuesOf({ hiddenFirst: true }).forEach((c: any) => {
-			expect(c.hideValue).toBeCloseTo(c.roleValue + HIDE_CONCEALMENT_VALUE, 1);
-		});
-	});
-
-	it('a creature that cannot hide is priced at zero and marked unaffordable', () => {
-		const state = createMatch({ rosterA: makeRoster('A'), rosterB: makeRoster('B'), worlds: makeWorlds(), seed: 'no-hide-seed' });
-		const view = getPublicState(state, 'A');
-		const scored = scoreSends(view, state.players.A.roster, 'A', null);
-		scored.candidates.forEach((c: any) => {
-			expect(c.hideValue).toBe(0);
-			expect(c.hideAffordable).toBe(false);
-		});
-	});
-
-	it('never proposes a hidden send under the hiddenSends ablation', () => {
+	it('reports hidden false under the hiddenSends ablation', () => {
 		const state = stealthMatch({ hiddenSends: false });
 		const handler = state.turn!;
 		const view = getPublicState(state, handler);
 		const action = chooseSend(view, state.players[handler].roster, handler, null, null);
-		expect((action as any).hidden).toBeFalsy();
+		expect((action as any).hidden).toBe(false);
 	});
 });
 

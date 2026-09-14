@@ -1,8 +1,8 @@
 // Tier: chrome. The navbar is on every page, including unmigrated v3 ones,
 // so it keeps its own data-tier="chrome" and uses only v4 primitives.
 import * as React from 'react';
-import { NavLink, useLocation } from 'react-router-dom';
-import { Hub, Auth } from 'aws-amplify';
+import { NavLink, useLocation } from 'react-router';
+import { Hub } from 'aws-amplify/utils';
 import { Menu } from 'lucide-react';
 
 import AuthButtonGroup from './auth/authButtonGroup';
@@ -24,7 +24,7 @@ const NAV_LINKS = [
 	{ href: '/duel', label: 'Duel' },
 	{ href: '/reclamation', label: 'Reclamation' },
 	{ href: '/long-return', label: 'Expedition' },
-	{ href: '/train', label: 'Training' },
+	{ href: '/arcade', label: 'Arcade' },
 ];
 
 // The section links wear the tab underline mark without the tab "box":
@@ -67,7 +67,7 @@ function XalianNavbar({ authAlertCallback }: XalianNavbarProps) {
 				setHidden(true);
 			}
 		};
-		Hub.listen('navbar-channel', hubListener);
+		const stopListening = Hub.listen('navbar-channel', hubListener);
 
 		let lastScrollTop = window.scrollY;
 		const mountedAt = Date.now();
@@ -88,14 +88,19 @@ function XalianNavbar({ authAlertCallback }: XalianNavbarProps) {
 		};
 		window.addEventListener('scroll', scrollListener);
 
-		Auth.currentUserInfo().then((data: any) => {
-			if (data && data.attributes) {
-				handleUserAuthAction(authUtil.buildAuthState(data));
-			}
-		});
+		authUtil.currentUser()
+			.then((data: any) => {
+				if (data && data.attributes) {
+					handleUserAuthAction(authUtil.buildAuthState(data));
+				}
+			})
+			.catch(() => {
+				// Keep navigation available when Cognito is temporarily unavailable.
+				// Auth-aware pages resolve and present their own recoverable state.
+			});
 
 		return () => {
-			Hub.remove('navbar-channel', hubListener);
+			stopListening();
 			window.removeEventListener('scroll', scrollListener);
 		};
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -114,13 +119,15 @@ function XalianNavbar({ authAlertCallback }: XalianNavbarProps) {
 				<Shell className="flex min-h-14 items-center gap-6">
 					<BrandLockup />
 
-					<nav className="ml-2 hidden flex-1 items-center gap-5 xl:flex" aria-label="Primary">
+					{/* The bar needs about 1155px for seven links plus the two auth keys,
+					    which is between lg and xl, so the switch to the sheet is measured
+					    rather than named. Below it the whole bar overflowed the viewport. */}
+					<nav className="ml-2 hidden flex-1 items-center gap-5 min-[1180px]:flex" aria-label="Primary">
 						{NAV_LINKS.map((link) => (
 							<NavLink
 								key={link.href}
 								to={link.href}
-								exact={link.href === '/'}
-								activeClassName=""
+								end={link.href === '/'}
 								className={navLinkClass}
 								aria-current={isActiveRoute(location.pathname, link.href) ? 'page' : undefined}
 							>
@@ -129,7 +136,7 @@ function XalianNavbar({ authAlertCallback }: XalianNavbarProps) {
 						))}
 					</nav>
 
-					<div className="ml-auto hidden items-center gap-2 xl:flex">
+					<div className="ml-auto hidden items-center gap-2 min-[1180px]:flex">
 						<AuthButtonGroup size="sm" authAlertCallback={handleUserAuthAction} />
 					</div>
 
@@ -138,7 +145,7 @@ function XalianNavbar({ authAlertCallback }: XalianNavbarProps) {
 							variant="ghost"
 							size="icon"
 							aria-label="Open menu"
-							className="ml-auto xl:hidden"
+							className="ml-auto min-[1180px]:hidden"
 							onClick={() => setMenuOpen(true)}
 						>
 							<Menu />
@@ -154,8 +161,7 @@ function XalianNavbar({ authAlertCallback }: XalianNavbarProps) {
 									<SheetClose asChild key={link.href}>
 										<NavLink
 											to={link.href}
-											exact={link.href === '/'}
-											activeClassName=""
+											end={link.href === '/'}
 											className="border-0 border-b border-edge bg-transparent px-1 py-3 font-legend text-[13px] font-medium uppercase tracking-legend text-ink-2 aria-[current=page]:text-viable-hi"
 											aria-current={isActiveRoute(location.pathname, link.href) ? 'page' : undefined}
 										>

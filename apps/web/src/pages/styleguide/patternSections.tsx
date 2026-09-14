@@ -1,5 +1,5 @@
 import * as React from "react"
-import { Link } from "react-router-dom"
+import { Link } from "react-router"
 
 import { SectionHead } from "@/components/system/masthead"
 import { Button } from "@/components/ui/button"
@@ -94,7 +94,7 @@ function FiltersDemo() {
           setElement("all")
         }}
       >
-        <ToggleGroup type="single" value={element} onValueChange={(v) => v && setElement(v)}>
+        <ToggleGroup type="single" value={element} onValueChange={(v: string) => v && setElement(v)}>
           <ToggleGroupItem value="all">All</ToggleGroupItem>
           <ToggleGroupItem value="psychic">Psychic</ToggleGroupItem>
           <ToggleGroupItem value="fire">Fire</ToggleGroupItem>

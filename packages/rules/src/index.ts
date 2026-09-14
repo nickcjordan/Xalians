@@ -5,3 +5,4 @@
 	the more precise import most call sites use.
 */
 export * from './generator/index.ts';
+export * from './arcade/index.ts';
