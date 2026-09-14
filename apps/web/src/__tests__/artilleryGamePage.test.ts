@@ -3,7 +3,7 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 
-import { ArtilleryBoard, CommandMeter, artilleryAimFromFieldPoint, artilleryBarrelEndpoint } from '../pages/games/artilleryGamePage';
+import { ArtilleryBoard, CommandMeter, artilleryAimFromDrag, artilleryBarrelEndpoint } from '../pages/games/artilleryGamePage';
 
 class ResizeObserverStub {
   observe() {}
@@ -44,14 +44,30 @@ describe('Crater Command aim feedback', () => {
     expect(left.y).toBeCloseTo(right.y);
   });
 
-  it('maps direct battlefield gestures to angle and power for either side', () => {
-    const shallow = artilleryAimFromFieldPoint(10, 44, 'left', 50, 34);
-    const steep = artilleryAimFromFieldPoint(10, 44, 'left', 28, 12);
-    const mirrored = artilleryAimFromFieldPoint(90, 44, 'right', 50, 34);
+  it('maps direct battlefield gestures consistently for either side and field size', () => {
+    const shallow = artilleryAimFromDrag(100, 300, 'left', 300, 250, 600);
+    const steep = artilleryAimFromDrag(100, 300, 'left', 200, 150, 600);
+    const mirrored = artilleryAimFromDrag(500, 300, 'right', 300, 250, 600);
+    const halfSize = artilleryAimFromDrag(50, 150, 'left', 150, 125, 300);
 
+    expect(shallow).not.toBeNull();
+    expect(steep).not.toBeNull();
+    expect(mirrored).not.toBeNull();
+    expect(halfSize).not.toBeNull();
+    if (!shallow || !steep || !mirrored || !halfSize) return;
     expect(steep.angle).toBeGreaterThan(shallow.angle);
     expect(shallow.power).toBeGreaterThan(15);
     expect(mirrored).toEqual(shallow);
+    expect(halfSize.angle).toBe(shallow.angle);
+    expect(Math.abs(halfSize.power - shallow.power)).toBeLessThanOrEqual(1);
+  });
+
+  it('ignores taps, micro-drags, and swipes away from the playable direction', () => {
+    expect(artilleryAimFromDrag(100, 300, 'left', 100, 300, 600)).toBeNull();
+    expect(artilleryAimFromDrag(100, 300, 'left', 106, 295, 600)).toBeNull();
+    expect(artilleryAimFromDrag(100, 300, 'left', 60, 250, 600)).toBeNull();
+    expect(artilleryAimFromDrag(500, 300, 'right', 540, 250, 600)).toBeNull();
+    expect(artilleryAimFromDrag(100, 300, 'left', 200, 340, 600)).toBeNull();
   });
 
   it('offers explicit one-step corrections with a readable value and guidance', async () => {
