@@ -3,7 +3,7 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 
-import { ArtilleryBoard, CommandMeter, artilleryAimFromDrag, artilleryBarrelEndpoint } from '../pages/games/artilleryGamePage';
+import { ArtilleryBoard, CommandMeter, artilleryAimFromDrag, artilleryBarrelEndpoint, artilleryFlightFrameIndex } from '../pages/games/artilleryGamePage';
 
 class ResizeObserverStub {
   observe() {}
@@ -70,17 +70,37 @@ describe('Crater Command aim feedback', () => {
     expect(artilleryAimFromDrag(100, 300, 'left', 200, 340, 600)).toBeNull();
   });
 
+  it('advances every fan projectile on the same physics tick', () => {
+    expect(artilleryFlightFrameIndex(5, 10, 0.5)).toBe(4);
+    expect(artilleryFlightFrameIndex(10, 10, 0.5)).toBe(4);
+    expect(artilleryFlightFrameIndex(5, 10, 1)).toBe(4);
+  });
+
   it('offers explicit one-step corrections with a readable value and guidance', async () => {
     const onChange = vi.fn();
     render(createElement(CommandMeter, {
       label: 'Angle', value: 45, suffix: '°', min: 10, max: 80,
-      disabled: false, guidance: 'Balanced arc', decreaseKey: 'S', increaseKey: 'W', onChange,
+      disabled: false, guidance: 'Balanced arc', decreaseKey: 'S', increaseKey: 'W', kind: 'angle', side: 'left', onChange,
     }));
 
     expect(screen.getByText('45°')).toBeInTheDocument();
     expect(screen.getByText('Balanced arc')).toBeInTheDocument();
-    await userEvent.click(screen.getByRole('button', { name: 'Decrease angle by 1' }));
-    await userEvent.click(screen.getByRole('button', { name: 'Increase angle by 1' }));
+    expect(screen.getByRole('slider', { name: 'Angle 45°' })).toBeInTheDocument();
+    await userEvent.click(screen.getByRole('button', { name: 'Aim barrel left' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Aim barrel right' }));
+    expect(onChange).toHaveBeenNthCalledWith(1, 46);
+    expect(onChange).toHaveBeenNthCalledWith(2, 44);
+  });
+
+  it('mirrors barrel arrow adjustments for the right-side crawler', async () => {
+    const onChange = vi.fn();
+    render(createElement(CommandMeter, {
+      label: 'Barrel', value: 45, suffix: '°', min: 10, max: 80,
+      disabled: false, guidance: 'Balanced arc', decreaseKey: 'S', increaseKey: 'W', kind: 'angle', side: 'right', onChange,
+    }));
+
+    await userEvent.click(screen.getByRole('button', { name: 'Aim barrel left' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Aim barrel right' }));
     expect(onChange).toHaveBeenNthCalledWith(1, 44);
     expect(onChange).toHaveBeenNthCalledWith(2, 46);
   });
@@ -90,9 +110,11 @@ describe('Crater Command aim feedback', () => {
       seed: 'component-actions',
       mode: 'bot',
       difficulty: 'standard',
+      playerCreature: 'codazzo',
       onStatus: vi.fn(),
       onComplete: vi.fn(),
       onRematch: vi.fn(),
+      onChangeCreature: vi.fn(),
     }));
 
     expect(screen.getByRole('img', { name: /drag up and outward/i })).toBeInTheDocument();
@@ -100,23 +122,26 @@ describe('Crater Command aim feedback', () => {
       expect(screen.getByRole('button', { name: new RegExp(`^${payload}\\b`, 'i') })).toBeEnabled();
     }
     expect(screen.getByRole('button', { name: /Fire Core/i })).toBeEnabled();
-    expect(screen.getByRole('button', { name: /Root.*2/i })).toBeEnabled();
+    expect(screen.getByRole('button', { name: /Arm Root Carapace/i })).toBeEnabled();
+    expect(screen.getByText(/Repairs 12 hull now/i)).toBeInTheDocument();
   });
 
-  it('previews movement and crew defense before committing a shot', async () => {
+  it('commits movement immediately instead of previewing a firing position', async () => {
+    const onStatus = vi.fn();
     render(createElement(ArtilleryBoard, {
       seed: 'component-preview',
       mode: 'bot',
       difficulty: 'standard',
-      onStatus: vi.fn(),
+      playerCreature: 'codazzo',
+      onStatus,
       onComplete: vi.fn(),
       onRematch: vi.fn(),
+      onChangeCreature: vi.fn(),
     }));
 
-    await userEvent.click(screen.getByRole('button', { name: /Push/i }));
-    expect(screen.getByTestId('artillery-move-preview')).toBeInTheDocument();
-    await userEvent.click(screen.getByRole('button', { name: /Root.*2/i }));
+    await userEvent.click(screen.getByRole('button', { name: /Advance/i }));
+    expect(screen.getByText('2 moves left')).toBeInTheDocument();
     expect(screen.queryByTestId('artillery-move-preview')).not.toBeInTheDocument();
-    expect(screen.getByTestId('artillery-guard-left')).toBeInTheDocument();
+    expect(onStatus).toHaveBeenCalledWith(expect.stringMatching(/Advancing/i));
   });
 });
