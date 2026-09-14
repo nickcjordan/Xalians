@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   applyArtilleryShot,
+  applyArtilleryMove,
   ARTILLERY_MOVE_DISTANCE,
   ARTILLERY_PAYLOADS,
   artilleryMovedX,
@@ -17,6 +18,7 @@ import {
   applyMemoryReveal,
   createMemoryState,
   verifyArcadeCompletion,
+  type ArtilleryAction,
 } from './index.ts';
 
 describe('Arcade deterministic rules', () => {
@@ -91,29 +93,35 @@ describe('Arcade deterministic rules', () => {
     expect(right.state.rngState).not.toBe(initial.rngState);
   });
 
-  it('previews and commits two tactical crawler moves without mutating the field', () => {
+  it('commits crawler movement immediately and spends one drive charge', () => {
     const initial = createArtilleryState('crawler-movement');
     const originalX = initial.tanks.left.x;
     expect(artilleryMovedX(initial, 'left', 1)).toBe(originalX + ARTILLERY_MOVE_DISTANCE);
     expect(initial.tanks.left.x).toBe(originalX);
 
-    const first = applyArtilleryShot(initial, { angle: 45, power: 62, move: 1 });
+    const first = applyArtilleryMove(initial, 1);
     expect(first.state.tanks.left.x).toBe(originalX + ARTILLERY_MOVE_DISTANCE);
     expect(first.state.traction.left).toBe(2);
+    expect(first.state.turn).toBe(0);
 
-    const leftAgain = { ...first.state, current: 'left' as const };
-    const second = applyArtilleryShot(leftAgain, { angle: 45, power: 62, move: -1 });
+    const second = applyArtilleryMove(first.state, -1);
     expect(second.state.tanks.left.x).toBe(originalX);
     expect(second.state.traction.left).toBe(1);
 
-    const leftThird = { ...second.state, current: 'left' as const };
-    const third = applyArtilleryShot(leftThird, { angle: 45, power: 62, move: -1 });
+    const third = applyArtilleryMove(second.state, -1);
     expect(third.state.traction.left).toBe(0);
 
-    const exhausted = { ...third.state, current: 'left' as const };
-    const fourth = applyArtilleryShot(exhausted, { angle: 45, power: 62, move: 1 });
+    const fourth = applyArtilleryMove(third.state, 1);
     expect(fourth.state.tanks.left.x).toBe(third.state.tanks.left.x);
     expect(fourth.state.traction.left).toBe(0);
+  });
+
+  it('assigns the chosen player creature and its distinct system', () => {
+    const terragoyle = createArtilleryState('chosen-creature', 'bot', 'standard', 'terragoyle');
+    expect(terragoyle.creatures).toEqual({ left: 'terragoyle', right: 'codazzo' });
+    const lifted = applyArtilleryShot(terragoyle, { angle: 10, power: 15, system: 'lift' });
+    expect(lifted.state.guard.left).toBe(18);
+    expect(lifted.state.systemCharges.left).toBe(1);
   });
 
   it('lets crater walls block a planned crawler route', () => {
@@ -124,10 +132,11 @@ describe('Arcade deterministic rules', () => {
     expect(artilleryMovedX(blocked, 'left', 1)).toBe(blocked.tanks.left.x);
   });
 
-  it('replays an artillery win with variable hull damage', () => {
+  it('replays an artillery win with committed movement and a chosen creature', () => {
     const seed = '2026-09-13:artillery:v1';
-    const actions = [];
-    let state = createArtilleryState(seed, 'bot', 'rookie');
+    const actions: ArtilleryAction[] = [{ type: 'move', direction: 1 }];
+    let state = createArtilleryState(seed, 'bot', 'rookie', 'terragoyle');
+    state = applyArtilleryMove(state, 1).state;
 
     while (state.phase === 'aiming' && state.turn < 30) {
       let shot;
@@ -148,8 +157,8 @@ describe('Arcade deterministic rules', () => {
     }
 
     expect(state.winner).toBe('left');
-    expect(verifyArcadeCompletion({ gameId: 'artillery', seed, difficulty: 'rookie', actions })).toBe(true);
-    expect(verifyArcadeCompletion({ gameId: 'artillery', seed, difficulty: 'rookie', actions: actions.slice(0, -1) })).toBe(false);
+    expect(verifyArcadeCompletion({ gameId: 'artillery', seed, difficulty: 'rookie', creature: 'terragoyle', actions })).toBe(true);
+    expect(verifyArcadeCompletion({ gameId: 'artillery', seed, difficulty: 'rookie', creature: 'terragoyle', actions: actions.slice(0, -1) })).toBe(false);
   });
 
   it('gives all six payloads a distinct deterministic role', () => {

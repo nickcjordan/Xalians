@@ -1,4 +1,4 @@
-import { applyArtilleryShot, chooseArtilleryBotShot, createArtilleryState, type ArtilleryDifficulty, type ArtilleryShot } from './artillery.ts';
+import { applyArtilleryMove, applyArtilleryShot, chooseArtilleryBotShot, createArtilleryState, type ArtilleryAction, type ArtilleryCreature, type ArtilleryDifficulty } from './artillery.ts';
 import { applySweepAction, createSweepState, type SweepAction } from './hazardSweep.ts';
 import { applyMemoryReveal, createMemoryState } from './memory.ts';
 import { applyRelayMove, createRelayState, type RelayDirection } from './relayMerge.ts';
@@ -14,7 +14,7 @@ export const ARCADE_AWARDS = {
 
 export type ArcadeGameId = keyof typeof ARCADE_AWARDS;
 export type ArcadeCompletion =
-  | { gameId: 'artillery'; seed: string; difficulty?: ArtilleryDifficulty; actions: ArtilleryShot[] }
+  | { gameId: 'artillery'; seed: string; difficulty?: ArtilleryDifficulty; creature?: ArtilleryCreature; actions: ArtilleryAction[] }
   | { gameId: 'sweep'; seed: string; level: 'survey' | 'field' | 'frontier'; actions: SweepAction[] }
   | { gameId: 'relay'; seed: string; actions: RelayDirection[] }
   | { gameId: 'patience'; seed: string; drawCount: 1 | 3; actions: SolitaireAction[] }
@@ -28,10 +28,14 @@ const SWEEP_LEVELS = {
 
 function replayArtillery(completion: Extract<ArcadeCompletion, { gameId: 'artillery' }>): boolean {
   if (completion.actions.length > 80) return false;
-  let state = createArtilleryState(completion.seed, 'bot', completion.difficulty ?? 'standard');
-  for (const shot of completion.actions) {
+  let state = createArtilleryState(completion.seed, 'bot', completion.difficulty ?? 'standard', completion.creature ?? 'codazzo');
+  for (const action of completion.actions) {
     if (state.phase !== 'aiming' || state.current !== 'left') return false;
-    state = applyArtilleryShot(state, shot).state;
+    if ('direction' in action) {
+      state = applyArtilleryMove(state, action.direction).state;
+      continue;
+    }
+    state = applyArtilleryShot(state, action).state;
     if (state.phase === 'finished') break;
     if (state.current !== 'right') return false;
     state = applyArtilleryShot(state, chooseArtilleryBotShot(state)).state;
