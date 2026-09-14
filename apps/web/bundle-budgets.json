@@ -9,7 +9,7 @@
   ],
   "initial": {
     "javascript": { "raw": 622000, "gzip": 195000 },
-    "stylesheets": { "raw": 230000, "gzip": 36000 }
+    "stylesheets": { "raw": 230000, "gzip": 37000 }
   },
   "chunks": {
     "vendor-auth": { "javascript": { "raw": 132000, "gzip": 38000 } }

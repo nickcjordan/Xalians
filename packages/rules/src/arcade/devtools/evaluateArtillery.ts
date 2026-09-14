@@ -1,61 +1,98 @@
 import {
+  ARTILLERY_PAYLOADS,
   applyArtilleryShot,
   chooseArtilleryBotShot,
   createArtilleryState,
   simulateArtilleryShot,
-  type ArtilleryMove,
+  type ArtilleryDifficulty,
   type ArtilleryPayload,
+  type ArtilleryShot,
+  type ArtilleryState,
 } from '../artillery.ts';
 
-const payloads: ArtilleryPayload[] = ['shell', 'barb', 'bore'];
-const moves: ArtilleryMove[] = [-1, 0, 1];
-const seeds = Array.from({ length: 30 }, (_, index) => `artillery-evaluation-${index}`);
-
-type Result = { hits: number; samples: number; uniqueHits: number };
-const results = Object.fromEntries(payloads.flatMap((payload) =>
-  moves.map((move) => [`${payload}:${move}`, { hits: 0, samples: 0, uniqueHits: 0 } satisfies Result]))) as Record<string, Result>;
+const seeds = Array.from({ length: 100 }, (_, index) => `artillery-v2-evaluation-${index}`);
+const efficacy = Object.fromEntries(ARTILLERY_PAYLOADS.map((payload) => [payload, {
+  samples: 0,
+  damaging: 0,
+  totalDamage: 0,
+  uniqueDamage: 0,
+}])) as Record<ArtilleryPayload, { samples: number; damaging: number; totalDamage: number; uniqueDamage: number }>;
 
 for (const seed of seeds) {
   const state = createArtilleryState(seed);
   for (let angle = 12; angle <= 78; angle += 3) {
     for (let power = 18; power <= 99; power += 3) {
-      for (const move of moves) {
-        const hits = payloads.map((payload) => simulateArtilleryShot(state, { angle, power, payload, move }).hit === 'right');
-        for (let index = 0; index < payloads.length; index += 1) {
-          const result = results[`${payloads[index]}:${move}`];
-          result.samples += 1;
-          if (hits[index]) result.hits += 1;
-          if (hits[index] && hits.filter(Boolean).length === 1) result.uniqueHits += 1;
-        }
-      }
+      const outcomes = ARTILLERY_PAYLOADS.map((payload) => simulateArtilleryShot(state, { angle, power, payload }));
+      outcomes.forEach((outcome, index) => {
+        const result = efficacy[ARTILLERY_PAYLOADS[index]];
+        result.samples += 1;
+        result.totalDamage += outcome.damage;
+        if (outcome.damage > 0) result.damaging += 1;
+        if (outcome.damage > 0 && outcomes.filter((candidate) => candidate.damage > 0).length === 1) result.uniqueDamage += 1;
+      });
     }
   }
 }
 
-for (const payload of payloads) {
-  for (const move of moves) {
-    const result = results[`${payload}:${move}`];
-    const percentage = (result.hits / result.samples) * 100;
-    console.log(`${payload.padEnd(5)} ${String(move).padStart(2)}: ${result.hits.toString().padStart(5)} hits (${percentage.toFixed(2)}%), ${result.uniqueHits} unique`);
-  }
+console.log('payload solution-space audit (100 fields)');
+for (const payload of ARTILLERY_PAYLOADS) {
+  const result = efficacy[payload];
+  console.log(
+    `${payload.padEnd(8)} ${(100 * result.damaging / result.samples).toFixed(2).padStart(6)}% damaging · ` +
+    `${(result.totalDamage / Math.max(1, result.damaging)).toFixed(1).padStart(5)} avg on damage · ` +
+    `${String(result.uniqueDamage).padStart(4)} unique solutions`,
+  );
 }
 
-let match = createArtilleryState('2026-09-13:artillery:v1');
-const matchShots = [];
-for (const payload of payloads) {
-  let selected: { angle: number; power: number; payload: ArtilleryPayload } | undefined;
-  for (let angle = 10; angle <= 80 && !selected; angle += 1) {
-    for (let power = 15; power <= 100; power += 1) {
-      if (simulateArtilleryShot(match, { angle, power, payload }).hit === 'right') {
-        selected = { angle, power, payload };
-        break;
-      }
+function playerShot(state: ArtilleryState, previous: { miss: number; shot: ArtilleryShot } | null): ArtilleryShot {
+  const miss = Math.abs(previous?.miss ?? 99);
+  const payload: ArtilleryPayload = miss <= 5 && state.payloads.left.lance > 0
+    ? 'lance'
+    : miss <= 11 && state.payloads.left.barb > 0
+      ? 'barb'
+      : miss <= 18 && state.payloads.left.cluster > 0 ? 'cluster' : 'shell';
+  const move = state.lastImpact && Math.abs(state.lastImpact.x - state.tanks.left.x) <= 9 && state.traction.left > 0 ? 1 : 0;
+  let solution = { angle: previous?.shot.angle ?? 44, power: previous?.shot.power ?? 70, score: -1 };
+  for (let angle = 16; angle <= 76; angle += 3) {
+    for (let power = 20; power <= 100; power += 2) {
+      const outcome = simulateArtilleryShot(state, { angle, power, payload, move });
+      const score = outcome.damage * 100 - power;
+      if (score > solution.score) solution = { angle, power, score };
     }
   }
-  if (!selected) throw new Error(`No ${payload} hit found for the evaluation match.`);
-  matchShots.push(selected);
-  match = applyArtilleryShot(match, selected).state;
-  if (match.phase === 'finished') break;
-  match = applyArtilleryShot(match, chooseArtilleryBotShot(match)).state;
+  const error = state.turn % 3 - 1;
+  return {
+    angle: solution.angle + error,
+    power: solution.power + error * 1.6,
+    payload,
+    move,
+    system: state.tanks.left.integrity <= 58 && state.systemCharges.left > 0 ? 'anchor' : 'none',
+  };
 }
-console.log(`evaluation match: ${JSON.stringify(matchShots)} -> ${match.winner} in ${match.turn} shots`);
+
+for (const difficulty of ['rookie', 'standard', 'expert'] as ArtilleryDifficulty[]) {
+  const turns: number[] = [];
+  let playerWins = 0;
+  for (const seed of seeds) {
+    let state = createArtilleryState(seed, 'bot', difficulty);
+    let previous: { miss: number; shot: ArtilleryShot } | null = null;
+    while (state.phase === 'aiming' && state.turn < 40) {
+      if (state.current === 'left') {
+        const shot = playerShot(state, previous);
+        const applied = applyArtilleryShot(state, shot);
+        const impactX = applied.outcome.impact?.x ?? 108;
+        previous = { miss: impactX - state.tanks.right.x, shot };
+        state = applied.state;
+      } else {
+        state = applyArtilleryShot(state, chooseArtilleryBotShot(state)).state;
+      }
+    }
+    if (state.winner === 'left') playerWins += 1;
+    turns.push(state.turn);
+  }
+  turns.sort((a, b) => a - b);
+  console.log(
+    `${difficulty.padEnd(8)} player win ${playerWins}% · median ${turns[49]} shots · ` +
+    `p90 ${turns[89]} · max ${turns[99]}`,
+  );
+}
