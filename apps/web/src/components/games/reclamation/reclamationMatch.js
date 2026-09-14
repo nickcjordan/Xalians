@@ -265,8 +265,9 @@ class ReclamationMatch extends React.Component {
 		handler passes the live state has already moved to the next world. Replaying the
 		round against that state would draw the wrong board, so while playback runs the
 		table renders a FROZEN copy of the view as it stood the instant before the clash,
-		with every hurt, downing and recovery applied by the events replayed so far. Once playback ends the
-		live view takes over again.
+		with every hurt, downing and recovery applied by the events replayed so far. Once
+		playback ends, the held Ruling view takes its board from the engine's judge event;
+		the live view takes over only when the player advances to the next world.
 	*/
 	view() {
 		const { playback, judgedSnapshot } = this.state;
@@ -1114,9 +1115,14 @@ class ReclamationMatch extends React.Component {
 				};
 			});
 		}
-		const resolved = this.applyPlaybackEffects({ ...playback, index: playback.events.length });
+		const resolved = judgedViewFromRuling(
+			this.applyPlaybackEffects({ ...playback, index: playback.events.length }),
+			judgeEvent,
+		);
 		const live = getPublicState(match, YOU);
-		// the resolved board of the world just played, carrying the post-judge site counts
+		// Hold the world just played while the live engine is already on the next one. Its
+		// board is the Court's own post-resolution board, so the figures and totals cannot
+		// disagree with the verdict stamped on the site.
 		const judgedSnapshot = {
 			...resolved,
 			players: live.players,
@@ -1745,6 +1751,44 @@ export function playbackEffects(frozenView, events, index) {
 		});
 	});
 	return { ...base, board, hurt };
+}
+
+/*
+	judgedViewFromRuling(resolvedView, judgeEvent) -> the held verdict view with its
+	board replaced by the engine's own post-resolution entries. Playback is deliberately
+	an animation over a pre-clash snapshot; it must not become a second implementation of
+	the Court's final board. Every surviving creature is public once the Court rules.
+*/
+export function judgedViewFromRuling(resolvedView, judgeEvent) {
+	if (!judgeEvent || !judgeEvent.siteResults) {
+		return resolvedView;
+	}
+	const board = { ...resolvedView.board };
+	const hurt = {};
+	resolvedView.frame.sites.forEach((site) => {
+		const result = judgeEvent.siteResults[site.id];
+		if (!result || !result.entries) {
+			return;
+		}
+		board[site.id] = { A: [], B: [] };
+		['A', 'B'].forEach((seat) => {
+			board[site.id][seat] = (result.entries[seat] || [])
+				.filter((entry) => entry.record && !entry.downed)
+				.map((entry) => {
+					const currentHold = typeof entry.hold === 'number' ? entry.hold : entry.currentHold;
+					if (entry.hurt && currentHold > 0) {
+						hurt[entry.recordId] = true;
+					}
+					return {
+						...entry,
+						currentHold,
+						hidden: false,
+						revealPending: false,
+					};
+				});
+		});
+	});
+	return { ...resolvedView, board, hurt };
 }
 
 // the word that pops over a creature as an attack lands on it during playback: the number
