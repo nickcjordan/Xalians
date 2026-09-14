@@ -1,0 +1,43 @@
+import React from 'react';
+import { renderToStaticMarkup } from 'react-dom/server';
+import RouteComparison, { comparisonCosts } from './RouteComparison';
+
+const base = { route: { id: 'a', title: 'Gantry', salvage: 1 }, lead: { species: 'Lead' }, support: { species: 'Support' }, method: { label: 'Climb' }, knownLeadStrain: 1, baseSupportStrain: 0, knownPressure: 1, unresolvedHazards: [], risk: 1 };
+function board(hazard) {
+  const root = document.createElement('div');
+  root.innerHTML = renderToStaticMarkup(<RouteComparison plans={[base, { ...base, route: { id: 'b', title: 'Intake', salvage: 2 }, knownLeadStrain: 0, knownPressure: 0, unresolvedHazards: [hazard] }]} onSelect={() => {}} onPreview={() => {}} />);
+  return root;
+}
+test('unknown costs occupy the same shared rows without presenting zero as the total', () => {
+  const root = board({ id: 'concealed', strain: 2 });
+  for (const kind of ['energy', 'stability']) {
+    const cells = root.querySelectorAll(`.is-${kind} [role="cell"]`);
+    expect(cells).toHaveLength(2);
+    expect(cells[0].textContent).toContain('1');
+    expect(cells[1].querySelector('.lr-board-amount').textContent).toBe('?');
+    expect(cells[1].textContent).toContain('total unknown');
+  }
+  expect(root.querySelectorAll('.is-salvage .lr-board-token-run svg')).toHaveLength(3);
+  expect(root.querySelectorAll('.lr-board-analysis[open]')).toHaveLength(0);
+});
+test('the board does not expose hidden identities, amounts, or damage ranges', () => {
+  expect(board({ id: 'secret-a', strain: 99, pressure: 0 }).innerHTML)
+    .toBe(board({ id: 'secret-b', strain: 0, pressure: 99 }).innerHTML);
+});
+test('the shared energy row includes support and a confirmed companion saving', () => {
+  expect(comparisonCosts({ ...base, baseSupportStrain: 1 }, { ready: true }).energy).toBe(1);
+  expect(comparisonCosts({ ...base, baseSupportStrain: 1, nativeRisk: true }, { ready: true }).energy).toBe(2);
+});
+
+test('confirmed ally savings are explained at the energy value, not only in analysis', () => {
+  const root = document.createElement('div');
+  root.innerHTML = renderToStaticMarkup(<RouteComparison plans={[base]} companion={{ ready: true, creature: { species: 'Xylum' } }} onSelect={() => {}} onPreview={() => {}} />);
+  expect(root.querySelector('.is-energy [role="cell"] small').textContent).toBe('Xylum saves 1 energy');
+});
+
+test('one-use costs share a comparison row only when a plan uses an ability', () => {
+  const root=document.createElement('div');
+  root.innerHTML=renderToStaticMarkup(<RouteComparison plans={[base,{...base,route:{id:'b'},method:{abilityId:'beam',ability:{name:'Corona Line'}}}]} onSelect={()=>{}} onPreview={()=>{}} />);
+  expect(root.querySelector('.lr-board-abilities').textContent).toMatch(/All kept.*Uses Corona Line.*Unavailable afterward/);
+  expect(board({id:'hidden'}).querySelector('.lr-board-abilities')).toBeNull();
+});

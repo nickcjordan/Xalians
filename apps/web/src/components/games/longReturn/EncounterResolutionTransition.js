@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import XalianImage from '../../xalianImage';
+import { beatDuration } from './beatTiming';
 import { MAX_INSTABILITY, MAX_STRAIN } from './longReturnData';
 import { buildEncounterResolutionSequence, encounterEventIndex } from './encounterSequence';
 import { sceneArtFor } from './sceneArt';
@@ -52,9 +53,9 @@ export default function EncounterResolutionTransition({ action, onComplete, soun
     if (final) return undefined;
     const reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (reduced) { setIndex(events.length - 1); return undefined; }
-    const timer = window.setTimeout(() => setIndex((value) => Math.min(events.length - 1, value + 1)), current.kind === 'response' ? 1350 : 1050);
+    const timer = window.setTimeout(() => setIndex((value) => Math.min(events.length - 1, value + 1)), beatDuration(current.kind, current.message));
     return () => window.clearTimeout(timer);
-  }, [current.kind, events.length, final]);
+  }, [index, current.kind, events.length, final]);
 
   useEffect(() => { playGameSound(eventSounds[current.kind] || 'select', soundEnabled); }, [current.kind, soundEnabled]);
 

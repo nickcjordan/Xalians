@@ -5,7 +5,7 @@ const titleCase = (value) => value ? value.charAt(0).toUpperCase() + value.slice
 export function readinessState(strain = 0) {
   if (strain >= 6) return { id: 'spent', label: 'Spent', detail: 'Cannot scout, lead, or support. Must be protected during extraction.', scorePenalty: 100, supportPenalty: 100 };
   if (strain >= 5) return { id: 'critical', label: 'Critical', detail: 'Cannot scout. Only 1 energy remains.', scorePenalty: 9, supportPenalty: 4 };
-  if (strain >= 3) return { id: 'worn', label: 'Worn', detail: 'Reduced performance until the expedition ends.', scorePenalty: 4, supportPenalty: 2 };
+  if (strain >= 3) return { id: 'worn', label: 'Worn', detail: 'Reduced performance while energy is low. Resupplying can restore performance.', scorePenalty: 4, supportPenalty: 2 };
   return { id: 'ready', label: 'Ready', detail: 'All expedition roles are available.', scorePenalty: 0, supportPenalty: 0 };
 }
 
@@ -163,8 +163,8 @@ export function scanReport(scene, creature, scan) {
   if (scan.mode === 'blind') {
     return {
       outcome: 'blind',
-      title: 'No field scan performed',
-      narrative: `The crew held at the threshold of ${scene.title} and committed no scout to ${scene.surveyFocus}.`,
+      title: 'The crew stays together',
+      narrative: `The crew stays together at the threshold. Beyond them lie ${scene.surveyFocus}, still untested by a scout.`,
       finding: `${scene.hazards.length} possible signal${scene.hazards.length === 1 ? '' : 's'} ${scene.hazards.length === 1 ? 'remains' : 'remain'} unresolved. No energy was spent, but route intelligence is incomplete.`,
       decision: 'Every route remains available. An unresolved signal may consume extra crew energy and annex stability if its route is chosen.',
       strainCost: 0,
@@ -180,8 +180,8 @@ export function scanReport(scene, creature, scan) {
     const affectedRoutes = scene.routes.filter((route) => revealed.some((hazard) => route.hazardIds.includes(hazard.id)));
     return {
       outcome: revealed.length ? 'revealed' : 'quiet',
-      title: revealed.length ? 'Scout returned with actionable intelligence' : 'Scout returned—no danger identified',
-      narrative: `${creature.species} could not report remotely, so it retraced the route and delivered its observations in person.`,
+      title: revealed.length ? 'The scout returns with a warning' : 'The scout returns without a warning',
+      narrative: `${creature.species} reappears along the route it took into the chamber. With no signal able to reach the crew, the news has had to make the journey back in person.${revealed.length ? ` ${revealed.map(hazard => hazard.detail).filter(Boolean).join(' ')}` : ' Nothing it could identify as danger stood out during the search.'}`,
       finding: revealed.length ? `${revealed.length} hazard signature${revealed.length === 1 ? '' : 's'} became usable after the scout returned.` : 'The scout returned safely but found no danger its senses could identify.',
       decision: revealed.length ? `${affectedRoutes.map((route) => route.title).join(' and ')} ${affectedRoutes.length === 1 ? 'is now marked' : 'are now marked'} with known danger.` : 'Compare the routes normally. Unknown danger may still remain.',
       strainCost: 2,
@@ -200,8 +200,8 @@ export function scanReport(scene, creature, scan) {
   if (revealed.length) {
     return {
       outcome: 'revealed',
-      title: 'Actionable intelligence received',
-      narrative: `${creature.species} entered the threshold and surveyed ${scene.surveyFocus}. Its senses found a danger the unaided crew could not confirm.`,
+      title: 'A warning from the scout',
+      narrative: `${creature.species} moves ahead to examine ${scene.surveyFocus}. A warning reaches the waiting crew. ${revealed.map(hazard => hazard.detail).filter(Boolean).join(' ')}`,
       finding: `${revealed.length} hazard signature${revealed.length === 1 ? '' : 's'} reached command over ${channel}.`,
       decision: `${affectedRoutes.map((route) => route.title).join(' and ')} ${affectedRoutes.length === 1 ? 'is now marked' : 'are now marked'} with the revealed hazard. You can avoid it or prepare the right lead for it.`,
       strainCost: 1,
@@ -215,8 +215,8 @@ export function scanReport(scene, creature, scan) {
   if (trapped.length) {
     return {
       outcome: 'trapped',
-      title: 'Signal detected—report lost',
-      narrative: `${creature.species} surveyed ${scene.surveyFocus} and reacted to something in the field, but its ${creature.physiology.communication.join(' / ') || 'lack of communication'} could not cross this chamber.`,
+      title: 'The scout notices something—but cannot reach you',
+      narrative: `${creature.species} pauses while examining ${scene.surveyFocus}. Something has drawn its attention, but no usable signal reaches the waiting crew. Until the scout returns, they cannot know what it found.`,
       finding: `${trapped.length} sensed signature${trapped.length === 1 ? ' stayed' : 's stayed'} with the scout. Command cannot use details it never received.`,
       decision: 'The affected route still shows an unresolved signal. Choosing it may expose the crew to surprise consequences.',
       strainCost: 1,
@@ -230,8 +230,8 @@ export function scanReport(scene, creature, scan) {
   if (!channel) {
     return {
       outcome: 'unrelayed',
-      title: 'Scan complete—no command link',
-      narrative: `${creature.species} surveyed ${scene.surveyFocus}, but none of its communication channels could carry a field report across ${scene.title}.`,
+      title: 'The scout cannot reach you',
+      narrative: `${creature.species} goes ahead among ${scene.surveyFocus}. The crew waits at the threshold, but the chamber lets no report through. Silence is not an all-clear.`,
       finding: 'The scout showed no detectable reaction to a hazard, but command cannot treat silence as a reliable all-clear.',
       decision: 'Route intelligence remains incomplete. Any unresolved signal still carries surprise consequences if you choose its route.',
       strainCost: 1,
@@ -244,8 +244,8 @@ export function scanReport(scene, creature, scan) {
 
   return {
     outcome: 'quiet',
-    title: 'Scan complete—no actionable signature',
-    narrative: `${creature.species} surveyed ${scene.surveyFocus} and successfully checked back with command${channel ? ` over ${channel}` : ''}.`,
+    title: 'The scout checks back without a warning',
+    narrative: `${creature.species} checks ${scene.surveyFocus} and makes contact with the crew again. There is no warning to pass back this time—but what escaped its notice may still be waiting ahead.`,
     finding: 'The scout found nothing its available senses could identify as an actionable hazard. That is a limited result, not proof that every route is safe.',
     decision: 'Compare the routes normally. Unresolved signals remain unresolved because the scout may not possess the sense needed to identify them.',
     strainCost: 1,

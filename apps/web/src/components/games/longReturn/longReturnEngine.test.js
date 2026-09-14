@@ -151,10 +151,12 @@ describe('Long Return prototype engine', () => {
     expect(revealed.revealed[0].label).toBe('Conductive brine');
     expect(revealed.affectedRoutes.map((route) => route.id)).toEqual(['intake']);
     expect(revealed.decision).toMatch(/Ride the intake current/);
+    expect(revealed.narrative).toContain(firstScene.hazards[0].detail);
 
     const trappedScene = MISSION.scenes[1];
     const trappedScan = { ...scanScene(trappedScene, creature('Ectoghoul')), mode: 'scan' };
     expect(scanReport(trappedScene, creature('Ectoghoul'), trappedScan).outcome).toBe('trapped');
+    expect(scanReport(trappedScene, creature('Ectoghoul'), trappedScan).narrative).not.toContain(trappedScene.hazards[0].detail);
 
     const quietScan = { ...scanScene(firstScene, creature('Graviclaw')), mode: 'scan' };
     expect(scanReport(firstScene, creature('Graviclaw'), quietScan).outcome).toBe('quiet');
@@ -169,6 +171,7 @@ describe('Long Return prototype engine', () => {
     });
     expect(blind.outcome).toBe('blind');
     expect(blind.strainCost).toBe(0);
+    expect(blind.narrative).not.toContain(firstScene.hazards[0].detail);
     expect(blind.decision).toMatch(/crew energy and annex stability/i);
   });
 

@@ -11,7 +11,9 @@ import {
   Undo2, Unlock, UserCheck, UserPlus, Users, Volume2, VolumeX, Waves, Wind, Wrench, X, Zap,
 } from 'lucide-react';
 
+const Ladder = (props) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" {...props}><path d="M6 3v18M18 3v18M6 6h12M6 12h12M6 18h12" /></svg>;
 const ICONS = {
+  'bi-map': Network,
   'bi-anchor': Anchor, 'bi-arrow-down-right-circle': ArrowDownRight, 'bi-arrow-left': ArrowLeft,
   'bi-arrow-left-right': ArrowLeftRight, 'bi-arrow-return-left': Undo2, 'bi-arrow-return-right': CornerDownRight,
   'bi-arrow-right': ArrowRight, 'bi-arrow-right-circle-fill': ArrowRightCircle, 'bi-arrow-up-right': ArrowUpRight,
@@ -31,7 +33,7 @@ const ICONS = {
   'bi-exclamation-triangle-fill': TriangleAlert, 'bi-eye': Eye, 'bi-eye-fill': Eye,
   'bi-eye-slash': EyeOff, 'bi-eye-slash-fill': EyeOff, 'bi-geo-alt-fill': MapPin, 'bi-hammer': Hammer,
   'bi-heart-fill': Heart, 'bi-heart-pulse': HeartPulse, 'bi-hourglass-split': Hourglass,
-  'bi-info-circle': Info, 'bi-journal-text': BookOpen, 'bi-key': KeyRound, 'bi-ladder': Signpost,
+  'bi-info-circle': Info, 'bi-journal-text': BookOpen, 'bi-key': KeyRound, 'bi-ladder': Ladder,
   'bi-layers': Layers, 'bi-lightning': Zap, 'bi-lightning-charge': Zap, 'bi-lightning-charge-fill': Zap,
   'bi-lock-fill': Lock, 'bi-moon-stars': MoonStar, 'bi-people': Users, 'bi-people-fill': Users,
   'bi-person-check-fill': UserCheck, 'bi-person-fill': PersonStanding, 'bi-person-plus-fill': UserPlus,

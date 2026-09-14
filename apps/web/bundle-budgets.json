@@ -21,7 +21,7 @@
     "duelStartPage": { "javascript": { "raw": 795000, "gzip": 207000 }, "stylesheets": { "raw": 0, "gzip": 0 } },
     "duelPlaygroundPage": { "javascript": { "raw": 1247000, "gzip": 358000 }, "stylesheets": { "raw": 96000, "gzip": 20000 } },
     "reclamationPage": { "javascript": { "raw": 1162000, "gzip": 343000 }, "stylesheets": { "raw": 163000, "gzip": 28000 } },
-    "longReturnPage": { "javascript": { "raw": 280000, "gzip": 83000 }, "stylesheets": { "raw": 233000, "gzip": 42000 } },
+    "longReturnPage": { "javascript": { "raw": 317000, "gzip": 97000 }, "stylesheets": { "raw": 280000, "gzip": 50000 } },
     "arcadePage": { "javascript": { "raw": 16000, "gzip": 7500 }, "stylesheets": { "raw": 0, "gzip": 0 } },
     "artilleryGamePage": { "javascript": { "raw": 69000, "gzip": 24500 }, "stylesheets": { "raw": 0, "gzip": 0 } },
     "solitaireGamePage": { "javascript": { "raw": 22700, "gzip": 10100 }, "stylesheets": { "raw": 0, "gzip": 0 } },

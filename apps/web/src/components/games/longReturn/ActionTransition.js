@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import XalianImage from '../../xalianImage';
+import { beatDuration } from './beatTiming';
 import { MAX_INSTABILITY, MAX_STRAIN } from './longReturnData';
 import { buildActionSequence, eventIndexFor } from './actionSequence';
 import { sceneArtFor } from './sceneArt';
@@ -7,7 +8,9 @@ import { methodPerformance } from './performanceVisuals';
 import { playGameSound } from './gameAudio';
 import BiIcon from './BiIcon';
 import './actionTransition.css';
-const icons = { move: 'bi-arrow-right', hazard: 'bi-lightning-charge-fill', support: 'bi-people-fill', companion: 'bi-person-check-fill', energy: 'bi-lightning-charge-fill', stability: 'bi-building-fill-exclamation', salvage: 'bi-box-seam', complete: 'bi-check-lg', encounter: 'bi-exclamation-diamond-fill', decision: 'bi-signpost-split-fill' };
+import CrossingTerrain from './CrossingTerrain';
+import './crossingChoreography.css';
+const icons = { ability: 'bi-hourglass-split', move: 'bi-arrow-right', hazard: 'bi-lightning-charge-fill', support: 'bi-people-fill', companion: 'bi-person-check-fill', energy: 'bi-lightning-charge-fill', stability: 'bi-building-fill-exclamation', salvage: 'bi-box-seam', complete: 'bi-check-lg', encounter: 'bi-exclamation-diamond-fill', decision: 'bi-signpost-split-fill' };
 
 function PipMeter({ kind, label, max, before, after, eventAt, index }) {
   return <div className={`lr-sequence-meter is-${kind}`} aria-label={`${label}: ${index < eventAt ? before : after} of ${max}`}>
@@ -55,10 +58,10 @@ export default function ActionTransition({ action, onComplete, soundEnabled = tr
     if (final) return undefined;
     const reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (reduced) { setIndex(events.length - 1); return undefined; }
-    const duration = current.kind === 'move' ? 1500 : current.kind === 'hazard' || current.kind === 'encounter' ? 1250 : 950;
+    const duration = beatDuration(current.kind, current.message);
     const timer = window.setTimeout(() => setIndex((value) => Math.min(events.length - 1, value + 1)), duration);
     return () => window.clearTimeout(timer);
-  }, [current.kind, events.length, final]);
+  }, [index, current.kind, events.length, final]);
 
   useEffect(() => { playGameSound(current.kind, soundEnabled); }, [current.kind, soundEnabled]);
 
@@ -71,6 +74,7 @@ export default function ActionTransition({ action, onComplete, soundEnabled = tr
   const art = sceneArtFor(action.scene);
   const performance = methodPerformance(action.method);
   const recap = !encounter && result ? [
+    result.abilityId ? { kind: 'ability', icon: 'bi-hourglass-split', label: action.method.ability?.name || 'Ability', value: 'Spent this expedition' } : null,
     ...crewChanges.filter((change) => change.added > 0).map((change) => ({ kind: 'energy', icon: 'bi-lightning-charge-fill', label: change.creature.species, value: `−${change.added} energy` })),
     result.instabilityChange.added > 0 ? { kind: 'stability', icon: 'bi-building', label: 'Annex', value: `−${result.instabilityChange.added} stability` } : null,
     result.salvage > 0 ? { kind: 'salvage', icon: 'bi-box-seam', label: 'Mission haul', value: `+${result.salvage} salvage` } : null
@@ -87,9 +91,9 @@ export default function ActionTransition({ action, onComplete, soundEnabled = tr
     {!encounter && <aside className={`lr-sequence-annex${stabilityAt === index ? ' is-taking-hit' : ''}`}><PipMeter kind="stability" label="Annex stability" max={MAX_INSTABILITY} before={MAX_INSTABILITY - result.instabilityChange.before} after={MAX_INSTABILITY - result.instabilityChange.after} eventAt={stabilityAt} index={index} /></aside>}
     {!encounter && <div className={`lr-sequence-salvage${salvageAt === index ? ' is-collecting' : ''}`} aria-label={`${index < salvageAt ? result.salvageAfter - result.salvage : result.salvageAfter} salvage carried`}><BiIcon cls="bi bi-box-seam" /><strong>{index < salvageAt ? result.salvageAfter - result.salvage : result.salvageAfter}</strong></div>}
 
-    <div className="lr-action-stage" aria-hidden="true">
-      <div className="lr-action-path"><i /><i /><i /><i /><i /></div>
-      <div className={`lr-action-creature is-lead${current.actorId === action.lead.id ? ' is-performing' : ''}${current.kind === 'hazard' ? ' is-hit' : ''}`}><XalianImage variant="token" speciesName={action.lead.species} primaryType={action.lead.element.primary} fill="#080a08" stroke="#cbf7dc" strokeWidth="1" unPadded moreClasses="lr-action-silhouette" /></div>
+    <div className={`lr-action-stage${index > 0 ? ' is-settled' : ''}`} aria-hidden="true">
+      {!encounter ? <CrossingTerrain route={action.route} resolved={index > 0} /> : <div className="lr-action-path"><i /><i /><i /><i /><i /></div>}
+      <div className={`lr-action-creature is-lead${current.kind === 'move' && current.actorId === action.lead.id ? ' is-performing' : ''}${current.kind === 'hazard' ? ' is-hit' : ''}`}><XalianImage variant="token" speciesName={action.lead.species} primaryType={action.lead.element.primary} fill="#080a08" stroke="#cbf7dc" strokeWidth="1" unPadded moreClasses="lr-action-silhouette" /></div>
       {action.support && <div className={`lr-action-creature is-support${current.kind === 'support' ? ' is-performing' : ''}`}><XalianImage variant="token" speciesName={action.support.species} primaryType={action.support.element.primary} fill="#080a08" stroke="#c6d8d1" strokeWidth="1" unPadded moreClasses="lr-action-silhouette" /></div>}
       {action.reserve && <div className="lr-action-creature is-reserve"><XalianImage variant="token" speciesName={action.reserve.species} primaryType={action.reserve.element.primary} fill="#080a08" stroke="#91a29b" strokeWidth="1" unPadded moreClasses="lr-action-silhouette" /></div>}
       {action.companion && <div className={`lr-action-creature is-companion${current.kind === 'companion' ? ' is-performing' : ''}`}><XalianImage variant="token" speciesName={action.companion.species} primaryType={action.companion.element.primary} fill="#060806" stroke="#74ffb0" strokeWidth="1.2" unPadded moreClasses="lr-action-silhouette" /></div>}
