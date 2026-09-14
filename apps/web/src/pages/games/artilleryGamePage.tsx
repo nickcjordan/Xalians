@@ -94,18 +94,32 @@ export function artilleryBarrelEndpoint(
   };
 }
 
-export function artilleryAimFromFieldPoint(
-  tankX: number,
-  tankY: number,
+export function artilleryAimFromDrag(
+  startX: number,
+  startY: number,
   side: ArtillerySide,
-  pointerX: number,
-  pointerY: number,
-) {
+  endX: number,
+  endY: number,
+  fieldWidth: number,
+): { angle: number; power: number } | null {
+  const deltaX = endX - startX;
+  const deltaY = endY - startY;
+  const distance = Math.hypot(deltaX, deltaY);
+  if (distance < 12 || fieldWidth <= 0) return null;
+
   const direction = side === 'left' ? 1 : -1;
-  const forward = Math.max(2, (pointerX - tankX) * direction);
-  const rise = Math.max(1, tankY - pointerY);
+  const directedForward = deltaX * direction;
+  const directedRise = -deltaY;
+  // Give small finger wobble some grace, but never turn a backwards/downwards
+  // swipe into a surprising minimum-power shot.
+  if (directedForward < -8 || directedRise < -8) return null;
+
+  const forward = Math.max(1, directedForward);
+  const rise = Math.max(0, directedRise);
   const angle = Math.max(10, Math.min(80, Math.round(Math.atan2(rise, forward) * 180 / Math.PI)));
-  const power = Math.max(15, Math.min(100, Math.round(Math.hypot(forward, rise) * 1.62)));
+  const fullPowerDistance = Math.max(120, fieldWidth * 0.48);
+  const powerProgress = Math.max(0, Math.min(1, (Math.hypot(forward, rise) - 12) / (fullPowerDistance - 12)));
+  const power = Math.round(15 + powerProgress * 85);
   return { angle, power };
 }
 
@@ -191,6 +205,7 @@ export function ArtilleryBoard({ seed, mode, difficulty, onStatus, onComplete, o
   const fieldRef = React.useRef<SVGSVGElement>(null);
   const activePointer = React.useRef<number | null>(null);
   const dragOrigin = React.useRef<{ x: number; y: number } | null>(null);
+  const [dragGuide, setDragGuide] = React.useState<{ start: { x: number; y: number }; end: { x: number; y: number } } | null>(null);
   const [shortLandscape, setShortLandscape] = React.useState(false);
 
   React.useEffect(() => () => {
@@ -438,28 +453,44 @@ export function ArtilleryBoard({ seed, mode, difficulty, onStatus, onComplete, o
     const field = fieldRef.current;
     if (!field || !canFire || !dragOrigin.current) return;
     const rect = field.getBoundingClientRect();
-    const pointerX = ((clientX - rect.left) / rect.width) * ARTILLERY_WIDTH;
-    const pointerY = 10 + ((clientY - rect.top) / rect.height) * (ARTILLERY_HEIGHT - 10);
-    const next = artilleryAimFromFieldPoint(dragOrigin.current.x, dragOrigin.current.y, state.current, pointerX, pointerY);
+    const next = artilleryAimFromDrag(
+      dragOrigin.current.x,
+      dragOrigin.current.y,
+      state.current,
+      clientX,
+      clientY,
+      rect.width,
+    );
+    const toFieldPoint = (x: number, y: number) => ({
+      x: ((x - rect.left) / rect.width) * ARTILLERY_WIDTH,
+      y: 10 + ((y - rect.top) / rect.height) * (ARTILLERY_HEIGHT - 10),
+    });
+    setDragGuide({
+      start: toFieldPoint(dragOrigin.current.x, dragOrigin.current.y),
+      end: toFieldPoint(clientX, clientY),
+    });
+    if (!next) return;
     setAngle(next.angle);
     setPower(next.power);
   }, [canFire, state.current]);
 
   const beginDirectAim = React.useCallback((event: React.PointerEvent<SVGSVGElement>) => {
-    if (!canFire) return;
+    if (!canFire || !event.isPrimary || (event.pointerType === 'mouse' && event.button !== 0)) return;
+    event.preventDefault();
     activePointer.current = event.pointerId;
     const field = fieldRef.current;
-    if (!field) return;
-    const rect = field.getBoundingClientRect();
-    dragOrigin.current = {
-      x: ((event.clientX - rect.left) / rect.width) * ARTILLERY_WIDTH,
-      y: 10 + ((event.clientY - rect.top) / rect.height) * (ARTILLERY_HEIGHT - 10),
-    };
+    if (!field) {
+      activePointer.current = null;
+      return;
+    }
+    dragOrigin.current = { x: event.clientX, y: event.clientY };
+    setDragGuide(null);
     event.currentTarget.setPointerCapture(event.pointerId);
   }, [canFire]);
 
   const continueDirectAim = React.useCallback((event: React.PointerEvent<SVGSVGElement>) => {
     if (activePointer.current !== event.pointerId) return;
+    event.preventDefault();
     aimAtPointer(event.clientX, event.clientY);
   }, [aimAtPointer]);
 
@@ -468,8 +499,17 @@ export function ArtilleryBoard({ seed, mode, difficulty, onStatus, onComplete, o
     aimAtPointer(event.clientX, event.clientY);
     activePointer.current = null;
     dragOrigin.current = null;
+    setDragGuide(null);
     if (event.currentTarget.hasPointerCapture(event.pointerId)) event.currentTarget.releasePointerCapture(event.pointerId);
   }, [aimAtPointer]);
+
+  const cancelDirectAim = React.useCallback((event: React.PointerEvent<SVGSVGElement>) => {
+    if (activePointer.current !== event.pointerId) return;
+    activePointer.current = null;
+    dragOrigin.current = null;
+    setDragGuide(null);
+    if (event.currentTarget.hasPointerCapture(event.pointerId)) event.currentTarget.releasePointerCapture(event.pointerId);
+  }, []);
 
   React.useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -704,7 +744,8 @@ export function ArtilleryBoard({ seed, mode, difficulty, onStatus, onComplete, o
           onPointerDown={beginDirectAim}
           onPointerMove={continueDirectAim}
           onPointerUp={finishDirectAim}
-          onPointerCancel={finishDirectAim}
+          onPointerCancel={cancelDirectAim}
+          onLostPointerCapture={cancelDirectAim}
         >
           <rect width={ARTILLERY_WIDTH} height={ARTILLERY_HEIGHT} className="fill-s0" />
           <circle cx="77" cy="13" r="8.5" className="fill-s1 stroke-ink-4 opacity-60" strokeWidth="0.25" />
@@ -738,6 +779,21 @@ export function ArtilleryBoard({ seed, mode, difficulty, onStatus, onComplete, o
                   strokeDasharray="1 1.4"
                 />
               ))}
+            </g>
+          )}
+          {dragGuide && (
+            <g aria-hidden className="pointer-events-none">
+              <line
+                x1={dragGuide.start.x}
+                y1={dragGuide.start.y}
+                x2={dragGuide.end.x}
+                y2={dragGuide.end.y}
+                className="stroke-viable-hi opacity-70"
+                strokeWidth="0.5"
+                strokeDasharray="1 0.7"
+              />
+              <circle cx={dragGuide.start.x} cy={dragGuide.start.y} r="0.8" className="fill-s0 stroke-viable-hi" strokeWidth="0.35" />
+              <circle cx={dragGuide.end.x} cy={dragGuide.end.y} r="1.1" className="fill-viable-hi opacity-90" />
             </g>
           )}
           {referenceShot && !animated && referenceShot.outcome.projectiles.some((projectile) => projectile.impact) && (
