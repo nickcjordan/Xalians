@@ -38,6 +38,10 @@ try {
       assert(lastChoice.y + lastChoice.height <= 900, 'Both route choices must be visible without scrolling');
     }
     await capture('lead-comparison');
+    if (width === 390) {
+      const cross = await page.getByRole('button', { name: /Cross now/ }).boundingBox();
+      assert(cross.y >= 0 && cross.y + cross.height <= 900, 'Mobile crossing action must be reachable before scrolling through all leads');
+    }
     await page.locator('.lr-lead-options button[aria-pressed="false"]').first().click();
     assert.equal(await page.locator('.lr-lead-options button').count(), 3, 'All lead alternatives remain visible');
     assert(await page.locator('.lr-lead-options button[aria-pressed="true"]').evaluate(el => el === document.activeElement), 'Lead choice retains keyboard focus');
