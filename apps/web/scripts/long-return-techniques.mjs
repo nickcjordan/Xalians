@@ -26,7 +26,7 @@ try {
     assert.notEqual(initial,moving,'Performer must actually move');
     await page.screenshot({path:`${output}/${ability?'ability':'movement'}-motion.png`});
     await page.getByRole('button',{name:/Continue to result/}).waitFor({timeout:30000});
-    if(ability) assert.match(await page.locator('.lr-sequence-recap').innerText(),/Spent this expedition/i);
+    if(ability) assert.match(await page.locator('.lr-sequence-story').innerText(),/spent for the rest of the expedition/i);
     await page.getByRole('button',{name:/Continue to result/}).click();
     assert.equal(await page.locator('.lr-result-ability').count(),ability?1:0);
     assert.deepEqual(errors,[]);

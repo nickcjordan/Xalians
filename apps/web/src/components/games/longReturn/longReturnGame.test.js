@@ -206,7 +206,7 @@ describe('Long Return Simple mode', () => {
     expect(container.querySelector('[role="dialog"][aria-label="Crossing in progress"]')).toBeTruthy();
     expect(container.querySelector('.lr-action-resources').textContent).toMatch(/Crew energy.*Stability.*Salvage/i);
     click(container, /skip to outcome/i);
-    expect(container.querySelector('.lr-sequence-caption').textContent).toMatch(/crossing complete/i);
+    expect(container.querySelector('.lr-sequence-story').textContent).toMatch(/What happened/i);
     click(container, /continue to result/i);
     expect(container.querySelector('.lr-action-curtain')).toBeNull();
     expect(container.textContent).toContain('Crossing complete');
@@ -493,7 +493,7 @@ describe('Long Return Simple mode', () => {
     expect(container.querySelector('[role="dialog"][aria-label="Encounter discovered"]')).toBeTruthy();
     expect(container.querySelector('.lr-action-curtain').textContent).toMatch(/emerges from the annex.*response next/i);
     click(container, /skip to outcome/i);
-    expect(container.querySelector('.lr-sequence-caption').textContent).toMatch(/contact established/i);
+    expect(container.querySelector('.lr-sequence-story').textContent).toMatch(/The next move belongs to the crew/i);
     click(container, /choose response/i);
     expect(container.textContent).toContain('Unexpected crew encounter');
     expect(container.textContent).toContain('The native acts before the crew can organize');
@@ -563,9 +563,9 @@ describe('Long Return Simple mode', () => {
     click(container, /^send /i);
     expect(document.activeElement).toBe(findButton(container, /skip to outcome/i));
     act(() => container.querySelector('[role="dialog"]').dispatchEvent(new KeyboardEvent('keydown', { key: 'Tab', bubbles: true })));
-    expect(document.activeElement).toBe(findButton(container, /skip to outcome/i));
+    expect(document.activeElement).toBe(container.querySelector('.lr-sequence-story-scroll'));
     click(container, /skip to outcome/i);
-    expect(document.activeElement).toBe(findButton(container, /review scout report/i));
+    expect(document.activeElement).toBe(container.querySelector('.lr-sequence-story-scroll'));
     click(container, /review scout report/i);
     expect(document.activeElement).toBe(container.querySelector('[data-wizard-focus]'));
     if (findButton(container, /choose a route/i)) click(container, /choose a route/i);

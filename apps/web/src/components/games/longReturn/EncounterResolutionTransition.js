@@ -7,6 +7,7 @@ import { sceneArtFor } from './sceneArt';
 import { playGameSound } from './gameAudio';
 import BiIcon from './BiIcon';
 import './encounterResolutionTransition.css';
+import SequenceStory, { trapSequenceFocus } from './SequenceStory';
 
 const eventIcons = {
   response: 'bi-cursor-fill', energy: 'bi-lightning-charge-fill', stability: 'bi-building', preserve: 'bi-shield-check',
@@ -28,6 +29,7 @@ function ReserveMeter({ kind, label, max, before, after, eventAt, index }) {
 export default function EncounterResolutionTransition({ action, onComplete, soundEnabled = true }) {
   const events = useMemo(() => buildEncounterResolutionSequence(action), [action]);
   const [index, setIndex] = useState(0);
+  const [paused, setPaused] = useState(false);
   const buttonRef = useRef(null);
   const current = events[index];
   const final = index === events.length - 1;
@@ -39,6 +41,7 @@ export default function EncounterResolutionTransition({ action, onComplete, soun
 
   useEffect(() => {
     setIndex(0);
+    setPaused(false);
     const previousOverflow = document.documentElement.style.overflow;
     const previousFocus = document.activeElement;
     document.documentElement.style.overflow = 'hidden';
@@ -50,17 +53,17 @@ export default function EncounterResolutionTransition({ action, onComplete, soun
   }, [action]);
 
   useEffect(() => {
-    if (final) return undefined;
+    if (final || paused) return undefined;
     const reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (reduced) { setIndex(events.length - 1); return undefined; }
     const timer = window.setTimeout(() => setIndex((value) => Math.min(events.length - 1, value + 1)), beatDuration(current.kind, current.message));
     return () => window.clearTimeout(timer);
-  }, [index, current.kind, events.length, final]);
+  }, [index, current.kind, events.length, final, paused]);
 
   useEffect(() => { playGameSound(eventSounds[current.kind] || 'select', soundEnabled); }, [current.kind, soundEnabled]);
 
   const advance = () => final ? onComplete() : setIndex(events.length - 1);
-  return <div className={`lr-encounter-curtain event-${current.kind} is-${art.tone}`} style={{ '--encounter-accent': art.accent }} role="dialog" aria-modal="true" aria-label="Encounter response in progress" onKeyDown={(event) => { if (event.key === 'Tab') { event.preventDefault(); buttonRef.current?.focus(); } }}>
+  return <div className={`lr-encounter-curtain has-story event-${current.kind} is-${art.tone}`} style={{ '--encounter-accent': art.accent }} role="dialog" aria-modal="true" aria-label="Encounter response in progress" onKeyDown={trapSequenceFocus}>
     <div className="lr-encounter-curtain__art" style={{ backgroundImage: `url(${art.src})` }} />
     <div className="lr-encounter-curtain__vignette" />
     <header><span>{action.scene.deck} · field response</span><h2>{action.option.label}</h2><p>{action.presentation.identity.label}</p></header>
@@ -75,7 +78,7 @@ export default function EncounterResolutionTransition({ action, onComplete, soun
       <div className="lr-encounter-sequence-link"><BiIcon cls={`bi ${action.presentation.identity.icon}`} /></div>
       {outcome && <div className={`lr-encounter-sequence-outcome is-${current.kind}`} key={current.kind}><BiIcon cls={`bi ${eventIcons[current.kind]}`} /></div>}
     </div>
-    <section className="lr-sequence-caption" key={`${index}-${current.kind}`} aria-live="polite"><BiIcon cls={`bi ${eventIcons[current.kind]}`} /><div><small>{outcome ? 'Encounter outcome' : 'Response in progress'}</small><strong>{current.message}</strong></div><span>{index + 1} / {events.length}</span></section>
+    <SequenceStory events={events} index={index} paused={paused} onPause={() => setPaused(!paused)} onNext={() => { setPaused(true); setIndex(Math.min(events.length - 1, index + 1)); }} />
     <button ref={buttonRef} type="button" onClick={advance}>{final ? 'See encounter result' : 'Skip to outcome'} <BiIcon cls="bi bi-arrow-right" /></button>
   </div>;
 }
