@@ -1,0 +1,44 @@
+.lr-sequence-story { display:flex; flex-direction:column; min-height:0; background:linear-gradient(90deg,rgba(5,9,8,.96),rgba(5,9,8,.78)); padding:22px; color:#eeeada; }
+.lr-sequence-story > header { display:flex; align-items:center; justify-content:space-between; padding-bottom:16px; border-bottom:1px solid #536157; gap:16px; }
+.lr-sequence-story > header > span { font:600 18px/1.4 var(--g-font-body); }
+.lr-sequence-story > header > small { font:400 13px/1.4 var(--g-font-body); color:#b7c5bb; }
+.lr-sequence-story-scroll { min-height:0; overflow-y:auto; flex:1; scrollbar-gutter:stable; overscroll-behavior:contain; }
+.lr-sequence-story ol { list-style:none; margin:0; padding:14px 0; }
+.lr-sequence-story li { display:grid; grid-template-columns:24px minmax(0,1fr); gap:12px; padding:10px 0; animation:lr-story-appear .4s ease-out both; }
+.lr-sequence-story li > span { font:400 12px/2.3 var(--g-font-body); color:#92ab9b; }
+.lr-sequence-story li > p { margin:0; font:400 18px/1.65 var(--g-font-body); color:#eeeada; }
+.lr-sequence-story li.is-energy > span { color:#72d8ff; }
+.lr-sequence-story li.is-hazard > span,.lr-sequence-story li.is-encounter > span { color:#efd27b; }
+.lr-sequence-story footer { display:flex; flex-wrap:wrap; gap:10px; padding-top:14px; border-top:1px solid #536157; }
+.lr-sequence-story footer button { padding:8px 12px; font:500 14px/1.4 var(--g-font-body); color:#eeeada; background:transparent; border:1px solid #789383; cursor:pointer; }
+.lr-sequence-story footer button:disabled { opacity:.4; cursor:default; }
+.lr-sequence-story footer small { flex-basis:100%; color:#b7c5bb; font:400 12px/1.4 var(--g-font-body); }
+.lr-sequence-story :focus-visible { outline:2px solid #b4f2ca; outline-offset:3px; }
+@keyframes lr-story-appear { from { opacity:0; } to { opacity:1; } }
+
+/* Stable two-part composition: accumulated account + physical scene. */
+.lr-action-curtain.has-story,.lr-scout-curtain.has-story,.lr-encounter-curtain.has-story { grid-template-columns:minmax(300px, .95fr) minmax(0,1.2fr); grid-template-rows:auto minmax(0,1fr) auto auto; gap:16px 24px; height:100dvh; min-height:0; padding:24px; }
+.lr-action-curtain.has-story,.lr-scout-curtain.has-story,.lr-encounter-curtain.has-story { top:0; padding-top:76px; }
+.has-story > header { grid-column:1; grid-row:1; }
+.has-story > .lr-sequence-story { grid-column:1; grid-row:2 / 4; }
+.has-story > .lr-action-stage,.has-story > .lr-scout-stage,.has-story > .lr-encounter-sequence-stage { grid-column:2; grid-row:2; min-height:0; }
+.has-story > .lr-sequence-crew,.has-story > .lr-scout-hud { position:static; grid-column:2; grid-row:3; display:flex; flex-wrap:wrap; gap:8px; }
+.has-story .lr-sequence-creature-status { width:auto; flex:1; min-width:110px; border:0; background:rgba(5,9,8,.8); }
+.has-story > .lr-sequence-annex,.has-story > .lr-encounter-sequence-reserves { grid-column:2; grid-row:1; position:static; min-width:0; width:auto; align-self:start; }
+.has-story > .lr-sequence-salvage { top:auto; bottom:30px; right:auto; left:calc(45% + 35px); }
+.has-story > button { grid-column:2; grid-row:4; align-self:end; width:auto; max-width:100%; white-space:normal; overflow:visible; }
+.has-story .lr-sequence-title h2,.lr-scout-curtain.has-story > header h2,.lr-encounter-curtain.has-story > header h2 { font-size:clamp(24px,2.8vw,40px); }
+.has-story .lr-action-creature { max-width:45%; max-height:85%; }
+.has-story .lr-scout-meter { flex:1; min-width:140px; }
+@media(max-width:760px) {
+  .lr-action-curtain.has-story,.lr-scout-curtain.has-story,.lr-encounter-curtain.has-story { grid-template-columns:minmax(0,1fr); grid-template-rows:auto 140px minmax(0,1fr) auto; padding:76px 14px 14px; gap:10px; }
+  .has-story > header { grid-column:1; grid-row:1; }
+  .has-story > .lr-action-stage,.has-story > .lr-scout-stage,.has-story > .lr-encounter-sequence-stage { grid-column:1; grid-row:2; height:140px; }
+  .has-story > .lr-sequence-story { grid-column:1; grid-row:3; padding:14px; }
+  .has-story > button { grid-column:1; grid-row:4; }
+  .has-story > .lr-sequence-annex,.has-story > .lr-sequence-salvage,.has-story > .lr-sequence-crew,.has-story > .lr-scout-hud,.has-story > .lr-encounter-sequence-reserves { display:none; }
+  .lr-sequence-story li > p { font-size:16px; line-height:1.6; }
+  .has-story .lr-action-creature,.has-story .lr-scout-performer,.has-story .lr-scout-native { height:125px; width:130px; }
+  .has-story .lr-encounter-sequence-creature { height:125px; width:130px; }
+}
+@media(prefers-reduced-motion:reduce) { .lr-sequence-story li { animation:none; } }

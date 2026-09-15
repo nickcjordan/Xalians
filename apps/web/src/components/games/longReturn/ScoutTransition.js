@@ -7,6 +7,7 @@ import { scoutPerformance } from './performanceVisuals';
 import { playGameSound } from './gameAudio';
 import BiIcon from './BiIcon';
 import './scoutTransition.css';
+import SequenceStory, { trapSequenceFocus } from './SequenceStory';
 
 function scoutBeats(action) {
   if (action.type === 'scout-return') return [
@@ -41,6 +42,7 @@ function Meter({ kind, before, after, active }) {
 export default function ScoutTransition({ action, onComplete, soundEnabled = true }) {
   const beats = useMemo(() => scoutBeats(action), [action]);
   const [index, setIndex] = useState(0);
+  const [paused, setPaused] = useState(false);
   const buttonRef = useRef(null);
   const beat = beats[index];
   const final = index === beats.length - 1;
@@ -57,11 +59,11 @@ export default function ScoutTransition({ action, onComplete, soundEnabled = tru
     return () => { document.documentElement.style.overflow = previousOverflow; };
   }, []);
   useEffect(() => {
-    if (final) return undefined;
+    if (final || paused) return undefined;
     if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) { setIndex(beats.length - 1); return undefined; }
     const timer = window.setTimeout(() => setIndex((value) => value + 1), beatDuration(beat.kind, beat.text));
     return () => window.clearTimeout(timer);
-  }, [index, beat.kind, beats.length, final]);
+  }, [index, beat.kind, beats.length, final, paused]);
   useEffect(() => { playGameSound(beat.kind, soundEnabled); }, [beat.kind, soundEnabled]);
 
   const energyBefore = action.energyBefore;
@@ -70,7 +72,7 @@ export default function ScoutTransition({ action, onComplete, soundEnabled = tru
   const stabilityAfter = action.stabilityAfter ?? stabilityBefore;
   const skip = () => final ? onComplete() : setIndex(beats.length - 1);
   const performance = scoutPerformance(action.profile);
-  return <div className={`lr-scout-curtain is-${beat.kind} is-${art.tone} performance-${performance.id}`} style={{ '--action-accent': art.accent }} role="dialog" aria-modal="true" aria-label={returning ? 'Scout returning' : 'Scouting in progress'} onKeyDown={(event) => { if (event.key === 'Tab') { event.preventDefault(); buttonRef.current?.focus(); } }}>
+  return <div className={`lr-scout-curtain has-story is-${beat.kind} is-${art.tone} performance-${performance.id}`} style={{ '--action-accent': art.accent }} role="dialog" aria-modal="true" aria-label={returning ? 'Scout returning' : 'Scouting in progress'} onKeyDown={trapSequenceFocus}>
     <div className="lr-scout-art" style={{ backgroundImage: `url(${art.src})` }} /><div className="lr-scout-vignette" />
     <header><small>{action.scene.deck} · field action</small><h2>{returning ? 'The scout returns' : 'Scouting ahead'}</h2></header>
     <div className="lr-scout-stage" aria-hidden="true">
@@ -86,7 +88,7 @@ export default function ScoutTransition({ action, onComplete, soundEnabled = tru
       <Meter kind="energy" before={energyBefore} after={energyAfter} active={index >= energyAt} />
       {returning && <Meter kind="stability" before={stabilityBefore} after={stabilityAfter} active={index >= stabilityAt} />}
     </div>
-    <section className="lr-scout-caption" key={`${index}-${beat.kind}`} aria-live="polite"><BiIcon cls={`bi ${beat.icon}`} /><div><small>{final ? action.encounter ? 'Contact' : 'Scout action complete' : 'Scout action'}</small><strong>{beat.text}</strong></div><span>{index + 1}/{beats.length}</span></section>
+    <SequenceStory events={beats} index={index} paused={paused} onPause={() => setPaused(!paused)} onNext={() => { setPaused(true); setIndex(Math.min(beats.length - 1, index + 1)); }} />
     <button ref={buttonRef} type="button" onClick={skip}>{final ? action.encounter ? 'Respond to encounter' : !returning && !action.result.relay ? 'Check scout status' : 'Review scout report' : 'Skip to outcome'} <BiIcon cls="bi bi-arrow-right" /></button>
   </div>;
 }

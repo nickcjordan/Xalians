@@ -21,6 +21,16 @@ Statuses progress independently: identified → implementing → technically ver
 
 ### Live findings
 
+### September 14 — persistent action storytelling
+
+- [x] Replace the expiring caption slot in crossing, scouting/return and encounter-response animations with a cumulative account beside the artwork.
+- [x] Keep earlier events readable; provide pause, manual next-event, skip-to-full-account and explicit continue. Skipping reveals rather than dismisses.
+- [x] Remove the duplicate crossing recap banner. Keep resource animation alongside the same account.
+- [x] Verify normal-motion pause/persistence/stepping at 390, 768 and 1280px; reduced-motion flow across scout, route, result, repairs and companion; 157 unit tests; production build and bundle limits.
+- [ ] Player acceptance of pacing and cohesion remains open. This is not a blocker to independently testable work.
+
+Evidence: `apps/web/scripts/long-return-story.mjs`, `long-return-techniques.mjs`, `long-return-viewport.mjs`, and `ActionTransition.test.js`. Browser review caught and corrected navigation overlap and mobile composition; accumulated text remains visible until an explicit continuation.
+
 2026-09-13 player feedback reopens clear consequences and presentation: the receipt is understandable, but results read as logs rather than an adventure. Conductive brine and the coolant bypass appear without enough physical context. Narrative coherence is not accepted merely because the numerical changes are understood.
 
 | ID | Player problem / evidence | Next action | Status |

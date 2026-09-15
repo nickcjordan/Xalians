@@ -431,3 +431,6 @@ Move a Trial to Established only when evidence shows that players understand and
 - `docs/LONG_RETURN_GENERATION_MANIFEST.md` — exact prompts and generated environment assets.
 - `apps/web/src/components/games/longReturn/sceneArt.js` — scene-to-art mapping.
 - `apps/web/src/components/games/longReturn/actionSequence.js` — ordered committed-action beats.
+# Action-story persistence (September 14)
+
+Action narration is part of the scene, not a toast notification. Reveal events cumulatively next to the artwork, retain earlier lines at full readability, and let the player pause or advance at their own pace. Never dismiss an important consequence on a timer. Skip reveals the entire account; Continue leaves it. Auto-follow must stop when the player scrolls back to read. Reduced motion reveals the complete account immediately without bypassing acknowledgement. Keep calculations in the existing result details rather than layering another recap banner over the scene.

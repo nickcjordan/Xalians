@@ -10,6 +10,7 @@ import BiIcon from './BiIcon';
 import './actionTransition.css';
 import CrossingTerrain from './CrossingTerrain';
 import './crossingChoreography.css';
+import SequenceStory, { trapSequenceFocus } from './SequenceStory';
 const icons = { ability: 'bi-hourglass-split', move: 'bi-arrow-right', hazard: 'bi-lightning-charge-fill', support: 'bi-people-fill', companion: 'bi-person-check-fill', energy: 'bi-lightning-charge-fill', stability: 'bi-building-fill-exclamation', salvage: 'bi-box-seam', complete: 'bi-check-lg', encounter: 'bi-exclamation-diamond-fill', decision: 'bi-signpost-split-fill' };
 
 function PipMeter({ kind, label, max, before, after, eventAt, index }) {
@@ -36,6 +37,7 @@ function CreatureStatus({ creature, change, events, index, role }) {
 export default function ActionTransition({ action, onComplete, soundEnabled = true }) {
   const events = useMemo(() => buildActionSequence(action), [action]);
   const [index, setIndex] = useState(0);
+  const [paused, setPaused] = useState(false);
   const closeButtonRef = useRef(null);
   const current = events[index];
   const final = index === events.length - 1;
@@ -44,6 +46,7 @@ export default function ActionTransition({ action, onComplete, soundEnabled = tr
 
   useEffect(() => {
     setIndex(0);
+    setPaused(false);
     const previousOverflow = document.documentElement.style.overflow;
     const previousFocus = document.activeElement;
     document.documentElement.style.overflow = 'hidden';
@@ -55,13 +58,13 @@ export default function ActionTransition({ action, onComplete, soundEnabled = tr
   }, [action]);
 
   useEffect(() => {
-    if (final) return undefined;
+    if (final || paused) return undefined;
     const reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (reduced) { setIndex(events.length - 1); return undefined; }
     const duration = beatDuration(current.kind, current.message);
     const timer = window.setTimeout(() => setIndex((value) => Math.min(events.length - 1, value + 1)), duration);
     return () => window.clearTimeout(timer);
-  }, [index, current.kind, events.length, final]);
+  }, [index, current.kind, events.length, final, paused]);
 
   useEffect(() => { playGameSound(current.kind, soundEnabled); }, [current.kind, soundEnabled]);
 
@@ -73,14 +76,8 @@ export default function ActionTransition({ action, onComplete, soundEnabled = tr
   const skip = () => final ? onComplete() : setIndex(events.length - 1);
   const art = sceneArtFor(action.scene);
   const performance = methodPerformance(action.method);
-  const recap = !encounter && result ? [
-    result.abilityId ? { kind: 'ability', icon: 'bi-hourglass-split', label: action.method.ability?.name || 'Ability', value: 'Spent this expedition' } : null,
-    ...crewChanges.filter((change) => change.added > 0).map((change) => ({ kind: 'energy', icon: 'bi-lightning-charge-fill', label: change.creature.species, value: `−${change.added} energy` })),
-    result.instabilityChange.added > 0 ? { kind: 'stability', icon: 'bi-building', label: 'Annex', value: `−${result.instabilityChange.added} stability` } : null,
-    result.salvage > 0 ? { kind: 'salvage', icon: 'bi-box-seam', label: 'Mission haul', value: `+${result.salvage} salvage` } : null
-  ].filter(Boolean) : [];
 
-  return <div className={`lr-action-curtain event-${current.kind} is-${art.tone} performance-${performance.id}`} style={{ '--action-accent': art.accent }} role="dialog" aria-modal="true" aria-label={encounter ? 'Encounter discovered' : 'Crossing in progress'} onKeyDown={(event) => { if (event.key === 'Tab') { event.preventDefault(); closeButtonRef.current?.focus(); } }}>
+  return <div className={`lr-action-curtain has-story event-${current.kind} is-${art.tone} performance-${performance.id}`} style={{ '--action-accent': art.accent }} role="dialog" aria-modal="true" aria-label={encounter ? 'Encounter discovered' : 'Crossing in progress'} onKeyDown={trapSequenceFocus}>
     <div className="lr-action-art" style={{ backgroundImage: `url(${art.src})` }} />
     <div className="lr-action-vignette" />
     {encounter
@@ -104,8 +101,7 @@ export default function ActionTransition({ action, onComplete, soundEnabled = tr
 
     {!encounter && <div className="lr-sequence-crew"><CreatureStatus creature={action.lead} change={crewChanges.find((change) => change.creature.id === action.lead.id)} events={events} index={index} role="lead" />{action.support && <CreatureStatus creature={action.support} change={crewChanges.find((change) => change.creature.id === action.support.id)} events={events} index={index} role="support" />}{action.reserve && <CreatureStatus creature={action.reserve} change={crewChanges.find((change) => change.creature.id === action.reserve.id)} events={events} index={index} role="reserve · crosses safely" />}</div>}
 
-    {final && !encounter && <section className="lr-sequence-recap" aria-label="Crossing changes"><header><BiIcon cls="bi bi-check-circle-fill" /><span><small>Crossing complete</small><strong>Changes held for review</strong></span></header><div>{recap.length ? recap.map((item) => <span className={`is-${item.kind}`} key={`${item.kind}-${item.label}`}><BiIcon cls={`bi ${item.icon}`} /><small>{item.label}</small><strong>{item.value}</strong></span>) : <span className="is-safe"><BiIcon cls="bi bi-shield-check" /><small>Crew and annex</small><strong>No resources lost</strong></span>}</div></section>}
-    <section className="lr-sequence-caption" key={`${index}-${current.kind}`} aria-live="polite"><BiIcon cls={`bi ${icons[current.kind]}`} /><div><small>{current.kind === 'complete' ? 'Crossing complete' : current.kind === 'decision' ? 'Contact established' : 'In progress'}</small><strong>{current.message}</strong></div><span>{index + 1} / {events.length}</span></section>
+    <SequenceStory events={events} index={index} paused={paused} onPause={() => setPaused(!paused)} onNext={() => { setPaused(true); setIndex(Math.min(events.length - 1, index + 1)); }} />
     <button ref={closeButtonRef} type="button" onClick={skip}>{final ? encounter ? 'Choose response' : 'Continue to result' : 'Skip to outcome'} <BiIcon cls="bi bi-arrow-right" /></button>
   </div>;
 }
