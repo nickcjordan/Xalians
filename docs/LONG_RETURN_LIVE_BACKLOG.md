@@ -21,6 +21,16 @@ Statuses progress independently: identified → implementing → technically ver
 
 ### Live findings
 
+### September 15 follow-up — method interpretation audit
+
+- [x] Audit every available method across all fourteen routes: traits and fallback moves must not both be described as a generic workable fit.
+- [x] Describe source strength as a skill, not a guaranteed route outcome; final cost also depends on support, environment and reaction.
+- [x] Attribute shared energy to lead and supporter when support spends energy, using the same companion-adjusted forecast.
+- [x] 159 game tests, production bundle gates, and 390/768/1280px route/lead/reselect/ability/crossing checks pass.
+- [ ] Next audit: test causal storytelling for support effort and environment changes in later-scene results, not only first-scene route choices.
+
+Previous goal turn: progress (implemented and deployed two-step lead choice). This continuation: progress (corrected misleading method interpretation and attribution). Human acceptance remains unproven; no player-input blocker is asserted.
+
 ### September 15 — approachable lead selection
 
 - [x] Separate route comparison from a visible three-lead choice; short directional transition and explicit Change route preserve the selected approach without spending resources.
