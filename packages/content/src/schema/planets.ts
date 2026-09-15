@@ -88,5 +88,15 @@ const PlanetRecordEntrySchema = z.object({
 
 export const PlanetRecordsSchema = z.array(PlanetRecordEntrySchema).length(14);
 
+// Gallery metadata stays separate from planet facts, which the game engine also reads.
+export const PlanetArtworkSchema = z.record(z.string().min(1), z.array(z.object({
+  src: z.string().min(1),
+  small: z.string().min(1),
+  thumbnail: z.string().min(1),
+  title: z.string().min(1),
+  alt: z.string().min(1),
+  caption: z.string().min(1),
+})).length(2));
+
 export type LegacyPlanetEntry = z.infer<typeof LegacyPlanetEntrySchema>;
 export type PlanetRecordEntry = z.infer<typeof PlanetRecordEntrySchema>;

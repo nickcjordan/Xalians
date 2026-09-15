@@ -19,13 +19,15 @@ function homeSummaryData() {
 
 			const contentDir = path.resolve(__dirname, '../../packages/content/json');
 			const planetRecords = JSON.parse(fs.readFileSync(path.join(contentDir, 'planetRecords.json'), 'utf8'));
+			const planetArtwork = JSON.parse(fs.readFileSync(path.join(contentDir, 'planetArtwork.json'), 'utf8'));
 			const speciesRecords = JSON.parse(fs.readFileSync(path.join(contentDir, 'species.json'), 'utf8'));
 
-			const worlds = planetRecords.map(({ key, name, element, images }) => {
-				if (!key || !name || !element || !images?.planet) {
+			const worlds = planetRecords.map(({ key, name, element }) => {
+				const art = planetArtwork[key]?.[0];
+				if (!key || !name || !element || !art?.thumbnail || !art?.alt) {
 					throw new Error(`Home world summary is missing a required field: ${name || key || 'unknown world'}`);
 				}
-				return { key, name, element, planetImage: images.planet };
+				return { key, name, element, image: art.thumbnail, imageAlt: art.alt };
 			});
 			const species = speciesRecords.map(({ id, name, type }) => {
 				if (!id || !name || !type) {

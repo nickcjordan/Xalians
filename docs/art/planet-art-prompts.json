@@ -1,0 +1,319 @@
+{
+  "tool": "built-in image_gen",
+  "sourceLore": [
+    "packages/content/json/planetRecords.json",
+    "packages/content/json/sites.json"
+  ],
+  "artRule": "Do not depict bioengineered Xalians or recognizable Earth-like animals. Incidental indigenous wildlife may appear only where supported by lore and must be unnamed and distinctly alien in anatomy and silhouette.",
+  "images": [
+    {
+      "key": "magmuth-landscape",
+      "prompt": "Use case: stylized-concept. Asset: wide 1536x1024 landscape illustration for Xalians planetary encyclopedia. Original scene of MAGMUTH, current era. Vast lava ocean broken by temporary obsidian islands, fractured black basalt crags and volcanic-glass spires. Low ash-coated foreground ledge with red glowing cracks overlooks islands receding through crimson sulfur smoke; dark pyroclastic cloud on distant horizon; small remnants of industrial extraction gantries almost swallowed by geology. Desolate, immense, hostile, mineral-rich. Cinematic science-fiction environment painting with naturalistic materials, finely resolved geology, restrained painterly texture, atmospheric depth, dramatic yet legible lighting. Strong coherent landscape composition readable as a thumbnail and expansive full-size. No people, no characters, no text, logos, frames, collage, cartoon, floating globes, oversaturated neon, or generic fantasy castle. The old artwork was only a mood check; invent this composition from this lore, do not copy any prior image. This is the establishing landscape of a coherent fourteen-world art series.",
+      "source": "C:\\Users\\njord\\.codex\\generated_images\\01a0a2d1-ad91-7e72-8ea7-e7ed72f8ba6a\\exec-74031d79-52bf-49f5-a9b9-dad7e2b4116a.png",
+      "files": [
+        "apps/web/public/assets/img/planets/art/magmuth-landscape.webp",
+        "apps/web/public/assets/img/planets/art/magmuth-landscape-768.webp",
+        "apps/web/public/assets/img/planets/art/magmuth-landscape-384.webp"
+      ]
+    },
+    {
+      "key": "magmuth-detail",
+      "prompt": "Use case: stylized-concept. Asset: wide 1536x1024 environment illustration for Xalians planetary encyclopedia, matching a coherent fourteen-world series. Cinematic science-fiction environment painting, naturalistic materials, finely resolved surfaces, restrained painterly texture, atmospheric depth, dramatic yet legible lighting, strong readable composition. Current era after the End Wars. No text, logos, frames, collage, cartoon, floating globe, humans, or generic fantasy castles. Create original composition from the supplied lore; old reference images are mood only and should not be copied. MAGMUTH \u2014 The Fissure Forges. Ground-level view along a deep basalt crevasse lit from below by magma. Ash-coated industrial forge and gas-extraction pipework straddles the fissure on battered metal trusses, a legacy of corporate mining still in use. Sulfur vapor and scattered hot sparks obscure the distant red crags; foreground obsidian has sharp fracture textures. Show infrastructure dwarfed by unstable geology, soot-black and ember copper. No workers or battles.",
+      "source": "C:\\Users\\njord\\.codex\\generated_images\\01a0a2d1-ad91-7e72-8ea7-e7ed72f8ba6a\\exec-37f5f4fa-be25-47fd-bfa9-cd9e6dc77a1b.png",
+      "files": [
+        "apps/web/public/assets/img/planets/art/magmuth-detail.webp",
+        "apps/web/public/assets/img/planets/art/magmuth-detail-768.webp",
+        "apps/web/public/assets/img/planets/art/magmuth-detail-384.webp"
+      ]
+    },
+    {
+      "key": "poseidas-landscape",
+      "prompt": "Use case: stylized-concept. Asset: wide 1536x1024 environment illustration for Xalians planetary encyclopedia, matching a coherent fourteen-world series. Cinematic science-fiction environment painting, naturalistic materials, finely resolved surfaces, restrained painterly texture, atmospheric depth, dramatic yet legible lighting, strong readable composition. Current era after the End Wars. No text, logos, frames, collage, cartoon, floating globe, humans, or generic fantasy castles. Create original composition from the supplied lore; old reference images are mood only and should not be copied. POSEIDAS \u2014 The storm ocean. Vast deep-blue global ocean beneath layered storm fronts. A tiny isolated pale sand-and-rock island in foreground is dwarfed by immense ocean swells, teal plankton streaks and slate cyclonic cloud. Far offshore, barely visible old hydro-processing structures project above water, reminders of drowned industrialization. Strong blue-white world identity, beautiful but uninhabitable surface, no major continents, no pleasant tropical resort, no flying land.",
+      "source": "C:\\Users\\njord\\.codex\\generated_images\\01a0a2d1-ad91-7e72-8ea7-e7ed72f8ba6a\\exec-d2392b6a-782a-4df1-8d0c-c7e075507b40.png",
+      "files": [
+        "apps/web/public/assets/img/planets/art/poseidas-landscape.webp",
+        "apps/web/public/assets/img/planets/art/poseidas-landscape-768.webp",
+        "apps/web/public/assets/img/planets/art/poseidas-landscape-384.webp"
+      ]
+    },
+    {
+      "key": "poseidas-detail",
+      "prompt": "Use case: stylized-concept. Asset: wide 1536x1024 environment illustration for Xalians planetary encyclopedia, matching a coherent fourteen-world series. Cinematic science-fiction environment painting, naturalistic materials, finely resolved surfaces, restrained painterly texture, atmospheric depth, dramatic yet legible lighting, strong readable composition. Current era after the End Wars. No text, logos, frames, collage, cartoon, floating globe, humans, or generic fantasy castles. Create original composition from the supplied lore; old reference images are mood only and should not be copied. POSEIDAS \u2014 The deep cities. Entirely underwater, wide establishing view along submerged continental ridge, sophisticated inhabited aquatic city of weathered pressure-resistant research and commerce structures with small restrained warm window lights. Hydro-processing pipe networks and algae collection rigs descend down the ridge, blue-green algal beds in midground, suspended marine particles, fading navy depths behind. Deep stable water below lethal storm layer; no sky, no surface horizon, no human divers, no mermaid fantasy. Peaceful and quietly resilient.",
+      "source": "C:/Users/njord/.codex/generated_images/01a0a2d1-ad91-7e72-8ea7-e7ed72f8ba6a/exec-108e50e9-f722-47da-bdea-1683778b98e0.png",
+      "files": [
+        "apps/web/public/assets/img/planets/art/poseidas-detail.webp",
+        "apps/web/public/assets/img/planets/art/poseidas-detail-768.webp",
+        "apps/web/public/assets/img/planets/art/poseidas-detail-384.webp"
+      ],
+      "revisions": [
+        {
+          "prompt": "Use case: precise-object-edit. Edit target: supplied Poseidas underwater city illustration. Remove ALL swimming animals throughout the entire frame: the prominent dolphin/shark-like animal left of center, smaller sharks, fish silhouettes, all schools of fish in foreground and background. Seamlessly replace them with clear blue water, subtle non-animal suspended sediment and the obscured environment. Preserve the city architecture, glass domes, warm lights, pipes, algae cultivation rigs, rocky ridge, plants, original composition, lighting, palette, painterly detail and underwater atmosphere as closely as possible. Do not add replacement animals. No Earth-like creatures, no fish, whales, dolphins, sharks, jellyfish, tentacles, humans, bioengineered Xalian creatures or ghost figures. Output 1536x1024.",
+          "reference": "C:\\Users\\njord\\.codex\\generated_images\\01a0a2d1-ad91-7e72-8ea7-e7ed72f8ba6a\\exec-0fea4663-0a35-4322-953d-0cbda863755d.png",
+          "source": "C:/Users/njord/.codex/generated_images/01a0a2d1-ad91-7e72-8ea7-e7ed72f8ba6a/exec-e38ad821-c1c4-4e46-a938-5a86c5a95eb1.png",
+          "reason": "Remove recognizable Earth-like fauna while preserving the underwater city."
+        },
+        {
+          "prompt": "Use case: precise-object-edit. Preserve this underwater city image, but remove the remaining school of small fish: the dense diagonal band of tiny dark streamlined fish silhouettes over the lower-left rocky slope, running from approximately x=120 y=630 down toward x=530 y=970 in this 1536x1024 image. Remove every one of those fish-like marks and all other animal silhouettes anywhere. Repaint that region as uninterrupted naturally craggy rock and empty softly hazy blue water, with no repeated oval or teardrop marks. Also remove isolated swimming specks on the far left around x=20 y=500. Keep the city, glass growing chambers, pipelines, algae cultivation rigs, plants, lights, composition, color and atmosphere intact. Absolutely no fish, dolphin, shark, whale, recognizable Earth fauna or Xalian creatures. Output 1536x1024.",
+          "reference": "C:/Users/njord/.codex/generated_images/01a0a2d1-ad91-7e72-8ea7-e7ed72f8ba6a/exec-e38ad821-c1c4-4e46-a938-5a86c5a95eb1.png",
+          "source": "C:/Users/njord/.codex/generated_images/01a0a2d1-ad91-7e72-8ea7-e7ed72f8ba6a/exec-108e50e9-f722-47da-bdea-1683778b98e0.png",
+          "reason": "Remove recognizable Earth-like fauna while preserving the underwater city."
+        }
+      ]
+    },
+    {
+      "key": "grimedes-landscape",
+      "prompt": "Use case: stylized-concept. Asset: wide 1536x1024 environment illustration for Xalians planetary encyclopedia, matching a coherent fourteen-world series. Cinematic science-fiction environment painting, naturalistic materials, finely resolved surfaces, restrained painterly texture, atmospheric depth, dramatic yet legible lighting, strong readable composition. Current era after the End Wars. No text, logos, frames, collage, cartoon, floating globe, humans, or generic fantasy castles. Create original composition from the supplied lore; old reference images are mood only and should not be copied. GRIMEDES \u2014 The lightless undergrowth. Almost flat wet rock plain covered in dense stalky pitch-black vegetation, black broad leaves evolved to capture scarce infrared light. Low unmoving fog around shallow wetlands, very faint bloody-red horizon glow from a dying brown dwarf; perpetual night. Composition is legible with restrained cool rim light and silver moisture on black leaves. No bright sun, no golden daylight, no green jungle, no mountainous terrain. Profound galactic-edge loneliness.",
+      "source": "C:\\Users\\njord\\.codex\\generated_images\\01a0a2d1-ad91-7e72-8ea7-e7ed72f8ba6a\\exec-a7328986-3072-4ba3-918d-d85527fb7449.png",
+      "files": [
+        "apps/web/public/assets/img/planets/art/grimedes-landscape.webp",
+        "apps/web/public/assets/img/planets/art/grimedes-landscape-768.webp",
+        "apps/web/public/assets/img/planets/art/grimedes-landscape-384.webp"
+      ]
+    },
+    {
+      "key": "grimedes-detail",
+      "prompt": "Use case: stylized-concept. Asset: wide 1536x1024 environment illustration for Xalians planetary encyclopedia, matching a coherent fourteen-world series. Cinematic science-fiction environment painting, naturalistic materials, finely resolved surfaces, restrained painterly texture, atmospheric depth, dramatic yet legible lighting, strong readable composition. Current era after the End Wars. No text, logos, frames, collage, cartoon, floating globe, humans, or generic fantasy castles. Create original composition from the supplied lore; old reference images are mood only and should not be copied. GRIMEDES \u2014 Black-site observatories. A remote weather-beaten astrophysics observatory with low research bunkers and a large tilted telescope dish amid flat fields of black stalky leaves and wet fog. Scarred equipment, distant wreckage half-concealed in scrub hints at the final End War. A few dim red instrument lights, black starry sky barely discernible over fog. Quiet watching against an empty intergalactic horizon, no giant black hole filling sky, no combat, no confirmed returning enemy.",
+      "source": "C:\\Users\\njord\\.codex\\generated_images\\01a0a2d1-ad91-7e72-8ea7-e7ed72f8ba6a\\exec-b5652eeb-3879-4d99-b0da-d9163a7fce12.png",
+      "files": [
+        "apps/web/public/assets/img/planets/art/grimedes-detail.webp",
+        "apps/web/public/assets/img/planets/art/grimedes-detail-768.webp",
+        "apps/web/public/assets/img/planets/art/grimedes-detail-384.webp"
+      ]
+    },
+    {
+      "key": "luminax-landscape",
+      "prompt": "Use case: stylized-concept. Asset: wide 1536x1024 environment illustration for Xalians planetary encyclopedia, matching a coherent fourteen-world series. Cinematic science-fiction environment painting, naturalistic materials, finely resolved surfaces, restrained painterly texture, atmospheric depth, dramatic yet legible lighting, strong readable composition. Current era after the End Wars. No text, logos, frames, collage, cartoon, floating globe, humans, or generic fantasy castles. Create original composition from the supplied lore; old reference images are mood only and should not be copied. LUMINAX \u2014 The prismatic solarscape on the permanently daylit face. Wide hot pale grassland dotted with oases of low alabaster-white translucent plants and crystalline prism-shaped leaves. Hints of spectral rainbow light refract through a high bright sky. Vast old silver solar-farm grids recede into distance, interrupted by a scorched blast scar from a malfunctioning orbital solar weapon. Two solar light sources, one partially obscured by remote engineered collectors, are tiny and atmospheric, not giant fantasy moons. Radiant but harsh; plants not giant crystal mountains.",
+      "source": "C:\\Users\\njord\\.codex\\generated_images\\01a0a2d1-ad91-7e72-8ea7-e7ed72f8ba6a\\exec-31232551-42b8-4ac4-9169-46db04727eb5.png",
+      "files": [
+        "apps/web/public/assets/img/planets/art/luminax-landscape.webp",
+        "apps/web/public/assets/img/planets/art/luminax-landscape-768.webp",
+        "apps/web/public/assets/img/planets/art/luminax-landscape-384.webp"
+      ]
+    },
+    {
+      "key": "luminax-detail",
+      "prompt": "Use case: stylized-concept. Asset: wide 1536x1024 environment illustration for Xalians planetary encyclopedia, matching a coherent fourteen-world series. Cinematic science-fiction environment painting, naturalistic materials, finely resolved surfaces, restrained painterly texture, atmospheric depth, dramatic yet legible lighting, strong readable composition. Current era after the End Wars. No text, logos, frames, collage, cartoon, floating globe, humans, or generic fantasy castles. Create original composition from the supplied lore; old reference images are mood only and should not be copied. LUMINAX \u2014 Prismatic oasis at the edge of an ION-9 blast zone. Closer naturalist environmental view: low pearl-white and translucent glass-leaf plants, articulated botanical stems with faceted leaves refracting split colored light onto dry pale earth. Behind this living oasis, scorched ground and damaged silver solar arrays fade in intense white haze. No giant gemstones, no fantasy castle, no laser firing, no wildlife mutation invented as canon. Beauty survives beneath relentless permanent daylight.",
+      "source": "C:\\Users\\njord\\.codex\\generated_images\\01a0a2d1-ad91-7e72-8ea7-e7ed72f8ba6a\\exec-2fa02a3d-bcba-4096-b659-80e037c4562f.png",
+      "files": [
+        "apps/web/public/assets/img/planets/art/luminax-detail.webp",
+        "apps/web/public/assets/img/planets/art/luminax-detail-768.webp",
+        "apps/web/public/assets/img/planets/art/luminax-detail-384.webp"
+      ]
+    },
+    {
+      "key": "floria-landscape",
+      "prompt": "Use case: stylized-concept. Asset: wide 1536x1024 environment illustration for Xalians planetary encyclopedia, matching a coherent fourteen-world series. Cinematic science-fiction environment painting, naturalistic materials, finely resolved surfaces, restrained painterly texture, atmospheric depth, dramatic yet legible lighting, strong readable composition. Current era after the End Wars. No text, logos, frames, collage, cartoon, floating globe, humans, or generic fantasy castles. Create original composition from the supplied lore; old reference images are mood only and should not be copied. FLORIA \u2014 The World Trees. Aerial canopy-level vista of unimaginably enormous trees, each crown city-sized, interwoven branches broad as roads carrying landing-pad-sized leaves. Multiple trunks descend out of sight into atmospheric layers of rich emerald underforest. Living forest covers all visible terrain to horizon; these trees absorbed the planet's oceans. Diffused sunlight and moist cloud threads, monumental organic architecture without any buildings. Not ordinary Earth redwoods, no open ocean, no city, no giant mushrooms dominating canopy.",
+      "source": "C:\\Users\\njord\\.codex\\generated_images\\01a0a2d1-ad91-7e72-8ea7-e7ed72f8ba6a\\exec-840f2f17-5705-4922-9b1e-445ad2632c34.png",
+      "files": [
+        "apps/web/public/assets/img/planets/art/floria-landscape.webp",
+        "apps/web/public/assets/img/planets/art/floria-landscape-768.webp",
+        "apps/web/public/assets/img/planets/art/floria-landscape-384.webp"
+      ]
+    },
+    {
+      "key": "floria-detail",
+      "prompt": "Use case: stylized-concept. Asset: wide 1536x1024 environment illustration for Xalians planetary encyclopedia, matching a coherent fourteen-world series. Cinematic science-fiction environment painting, naturalistic materials, finely resolved surfaces, restrained painterly texture, atmospheric depth, dramatic yet legible lighting, strong readable composition. Current era after the End Wars. No text, logos, frames, collage, cartoon, floating globe, humans, or generic fantasy castles. Create original composition from the supplied lore; old reference images are mood only and should not be copied. FLORIA \u2014 The underforests. Low view through dark root-saturated marsh beneath World Trees. Massive buttress roots span pools of still water, towering trunks vanish beyond frame into immense leaf canopy, dense layered fungal thickets and alien ferns occupy wet foreground. Small openings of filtered yellow-green sunlight, textured bark, moss, humid air. A primordial living ecosystem with dangerous depth and no industrial structures. Make scale read through successive layers of tiny plants against enormous roots.",
+      "source": "C:\\Users\\njord\\.codex\\generated_images\\01a0a2d1-ad91-7e72-8ea7-e7ed72f8ba6a\\exec-30b76802-6087-4736-8b35-e50471418a67.png",
+      "files": [
+        "apps/web/public/assets/img/planets/art/floria-detail.webp",
+        "apps/web/public/assets/img/planets/art/floria-detail-768.webp",
+        "apps/web/public/assets/img/planets/art/floria-detail-384.webp"
+      ]
+    },
+    {
+      "key": "zolton-landscape",
+      "prompt": "Use case: stylized-concept. Asset: wide 1536x1024 environment illustration for Xalians planetary encyclopedia, matching a coherent fourteen-world series. Cinematic science-fiction environment painting, naturalistic materials, finely resolved surfaces, restrained painterly texture, atmospheric depth, dramatic yet legible lighting, strong readable composition. Current era after the End Wars. No text, logos, frames, collage, cartoon, floating globe, humans, or generic fantasy castles. Create original composition from the supplied lore; old reference images are mood only and should not be copied. ZOLTON \u2014 The lightning canyons. Vast deep frozen canyons filled with dense cryogenic blue-grey gases, steep craggy metallic spires as natural lightning rods. Many fine branching white-blue lightning channels join clouds to peaks, while visible electrical currents flow like brief luminous rivers down canyon floors. Dark iron cliffs, frozen surfaces and cold storm sky, sparse ruined grid pylons dwarfed by landscape. Not lava, not tropical weather, no green slime.",
+      "source": "C:\\Users\\njord\\.codex\\generated_images\\01a0a2d1-ad91-7e72-8ea7-e7ed72f8ba6a\\exec-434f4df1-b890-4e52-8371-75e706e25e93.png",
+      "files": [
+        "apps/web/public/assets/img/planets/art/zolton-landscape.webp",
+        "apps/web/public/assets/img/planets/art/zolton-landscape-768.webp",
+        "apps/web/public/assets/img/planets/art/zolton-landscape-384.webp"
+      ]
+    },
+    {
+      "key": "zolton-detail",
+      "prompt": "Use case: stylized-concept. Asset: wide 1536x1024 environment illustration for Xalians planetary encyclopedia, matching a coherent fourteen-world series. Cinematic science-fiction environment painting, naturalistic materials, finely resolved surfaces, restrained painterly texture, atmospheric depth, dramatic yet legible lighting, strong readable composition. Current era after the End Wars. No text, logos, frames, collage, cartoon, floating globe, humans, or generic fantasy castles. Create original composition from the supplied lore; old reference images are mood only and should not be copied. ZOLTON \u2014 Bloodstorm QED manufactory. On a high metal ridge above dense cryogenic clouds, battered industrial paired collector towers stand around a carefully aligned processing apparatus, remnants of a quantum-entanglement manufactory under repair. Far above towers a crimson lightning sprite spreads fine jellyfish-like filaments above the storm cloud. Dim red glow on frosted metal, blue-black foreground; electrically violent but grounded industrial detail. No literal jellyfish creatures, no humans, no invented glowing portal.",
+      "source": "C:\\Users\\njord\\.codex\\generated_images\\01a0a2d1-ad91-7e72-8ea7-e7ed72f8ba6a\\exec-f8ec11fe-b582-4b07-92d6-35aac7029f2d.png",
+      "files": [
+        "apps/web/public/assets/img/planets/art/zolton-detail.webp",
+        "apps/web/public/assets/img/planets/art/zolton-detail-768.webp",
+        "apps/web/public/assets/img/planets/art/zolton-detail-384.webp"
+      ]
+    },
+    {
+      "key": "phantiri-landscape",
+      "prompt": "Use case: stylized-concept. Asset: wide 1536x1024 environment illustration for Xalians planetary encyclopedia, matching a coherent fourteen-world series. Cinematic science-fiction environment painting, naturalistic materials, finely resolved surfaces, restrained painterly texture, atmospheric depth, dramatic yet legible lighting, strong readable composition. Current era after the End Wars. No text, logos, frames, collage, cartoon, floating globe, humans, or generic fantasy castles. Create original composition from the supplied lore; old reference images are mood only and should not be copied. PHANTIRI \u2014 The Dreadscape. Windless cold grey fog veils immense coastal cliffs and shallow black tar-like runoff basins. Cliffs are layers of ancient compressed organic remains, visually like dark fossil strata with pale bone-like fragments and occasional branching limb-like silhouettes, not ordinary granite. Distant ridges disappear in still mist. Convey planetary mass grave at geological distance without explicit wounds, gore or individual bodies. A few faint spectral wisps suggest incorporeal life. No green plants, no populated city, no exposed buried precursor city.",
+      "revision": {
+        "prompt": "Edit this Phantiri landscape, retaining the exact coast composition, still dark fluid, immense layered cliffs, windless grey fog, quiet pale lighting and naturalistic cinematic painting style at 1536x1024. Remove EVERY luminous spectral wisp, ghost silhouette, spirit, and creature throughout the image. Fill their locations with ordinary fog or dark ground matching surroundings. Render the embedded remains as abstract compressed fossil-rich organic strata, reducing recognizable whole skeleton shapes into fragmented ancient sediment texture; no identifiable Xalian anatomy. The planet is a geological mass grave, but this plate depicts only its environment, NO living or spectral characters and no creature portraits. Keep the cold dread and material detail. No text.",
+        "reference": "C:\\Users\\njord\\.codex\\generated_images\\01a0a2d1-ad91-7e72-8ea7-e7ed72f8ba6a\\exec-26a1e2ec-76ed-43fb-a25d-197d7802034f.png",
+        "reason": "Exclude bioengineered Xalians from environment artwork."
+      },
+      "source": "C:\\Users\\njord\\.codex\\generated_images\\01a0a2d1-ad91-7e72-8ea7-e7ed72f8ba6a\\exec-7bbb784e-8115-4494-b6d0-6015ad4fab0d.png",
+      "files": [
+        "apps/web/public/assets/img/planets/art/phantiri-landscape.webp",
+        "apps/web/public/assets/img/planets/art/phantiri-landscape-768.webp",
+        "apps/web/public/assets/img/planets/art/phantiri-landscape-384.webp"
+      ]
+    },
+    {
+      "key": "phantiri-detail",
+      "prompt": "Use case: stylized-concept. Asset: wide 1536x1024 environment illustration for Xalians planetary encyclopedia, matching a coherent fourteen-world series. Cinematic science-fiction environment painting, naturalistic materials, finely resolved surfaces, restrained painterly texture, atmospheric depth, dramatic yet legible lighting, strong readable composition. Current era after the End Wars. No text, logos, frames, collage, cartoon, floating globe, humans, or generic fantasy castles. Create original composition from the supplied lore; old reference images are mood only and should not be copied. PHANTIRI \u2014 A Dreadscape basin. From a dark fossil-stratum shoreline, a quiet black fluid inlet leads beneath sheer layered banks of compressed ancient remains; pale skeletal mineral-like branches emerge above low windless fog. Several faint translucent spectral energy forms drift over the basin, indistinct and nonhuman, with restrained pallid blue luminescence. Scale and stillness, not horror action. No blood, no explicit corpse closeups, no human skull piles, no explanation of the unknown moon weapon, no unburied City of Wraiths.",
+      "revision": {
+        "prompt": "Edit this Phantiri inlet scene, retaining coast, layered cliffs, black fluid, windless grey fog, pale cold lighting and cinematic environment painting at 1536x1024. Remove ALL luminous ghost figures and spectral wisps from foreground, middle and distance, replacing with ordinary still fog and scenery. No blue glowing or humanoid mist shapes. Convert the most recognizable giant ribcages into abstract fragmented fossil-rich compressed organic strata with irregular pale mineral-like branches, not an identifiable creature skeleton. Remove the smaller second moon, retaining the larger distant moon. Depict environment only, no Xalians, animals, people or ghosts. No text.",
+        "reference": "C:\\Users\\njord\\.codex\\generated_images\\01a0a2d1-ad91-7e72-8ea7-e7ed72f8ba6a\\exec-3a49ce2d-df77-4168-bcc9-6d8adb2fd538.png",
+        "reason": "Exclude bioengineered Xalians from environment artwork."
+      },
+      "source": "C:\\Users\\njord\\.codex\\generated_images\\01a0a2d1-ad91-7e72-8ea7-e7ed72f8ba6a\\exec-da938b42-8248-4115-8101-17a755b483a4.png",
+      "files": [
+        "apps/web/public/assets/img/planets/art/phantiri-detail.webp",
+        "apps/web/public/assets/img/planets/art/phantiri-detail-768.webp",
+        "apps/web/public/assets/img/planets/art/phantiri-detail-384.webp"
+      ]
+    },
+    {
+      "key": "stonera-landscape",
+      "prompt": "Use case: stylized-concept. Asset: wide 1536x1024 environment illustration for Xalians planetary encyclopedia, matching a coherent fourteen-world series. Cinematic science-fiction environment painting, naturalistic materials, finely resolved surfaces, restrained painterly texture, atmospheric depth, dramatic yet legible lighting, strong readable composition. Current era after the End Wars. No text, logos, frames, collage, cartoon, floating globe, humans, or generic fantasy castles. Create original composition from the supplied lore; old reference images are mood only and should not be copied. STONERA \u2014 The Chasm. Colossal terraced wound into an entire world, jagged grey impact-broken crust walls descend to a huge exposed silvery liquid-metal ocean. Planetary strip-mine switchbacks spiral along the walls, machinery tiny for scale. Vast rocky ejecta masses hang high above in orbit, partly roofing the Chasm and shading it. Dust-grey thin atmosphere with small static discharges; distant cratered ridges. Silvery sea is reflective metal, not blue water or orange lava. Immense exploitation and planetary damage.",
+      "source": "C:\\Users\\njord\\.codex\\generated_images\\01a0a2d1-ad91-7e72-8ea7-e7ed72f8ba6a\\exec-8f38ffcd-55c9-43b1-b7e0-f1e212d58420.png",
+      "files": [
+        "apps/web/public/assets/img/planets/art/stonera-landscape.webp",
+        "apps/web/public/assets/img/planets/art/stonera-landscape-768.webp",
+        "apps/web/public/assets/img/planets/art/stonera-landscape-384.webp"
+      ]
+    },
+    {
+      "key": "stonera-detail",
+      "prompt": "Use case: stylized-concept. Asset: wide 1536x1024 environment illustration for Xalians planetary encyclopedia, matching a coherent fourteen-world series. Cinematic science-fiction environment painting, naturalistic materials, finely resolved surfaces, restrained painterly texture, atmospheric depth, dramatic yet legible lighting, strong readable composition. Current era after the End Wars. No text, logos, frames, collage, cartoon, floating globe, humans, or generic fantasy castles. Create original composition from the supplied lore; old reference images are mood only and should not be copied. STONERA \u2014 The Jorian impact fields. Ground-level traverse of barren fractured grey ridges, overlapping craters and dangerous sinkholes, a battered mine entrance set into exposed mineral bands. Fine static lightning threads crackle through low dust, two distant meteor trails descend through dusty grey sky. Dry severe geology and dark metallic ore textures. No vegetation, no blue rivers, no living workers, no catastrophic giant asteroid centered in sky.",
+      "source": "C:\\Users\\njord\\.codex\\generated_images\\01a0a2d1-ad91-7e72-8ea7-e7ed72f8ba6a\\exec-90c881ba-c3d5-42a9-a6e7-ad4d0f9c3dba.png",
+      "files": [
+        "apps/web/public/assets/img/planets/art/stonera-detail.webp",
+        "apps/web/public/assets/img/planets/art/stonera-detail-768.webp",
+        "apps/web/public/assets/img/planets/art/stonera-detail-384.webp"
+      ]
+    },
+    {
+      "key": "drainov-landscape",
+      "prompt": "Use case: stylized-concept. Asset: wide 1536x1024 environment illustration for Xalians planetary encyclopedia, matching a coherent fourteen-world series. Cinematic science-fiction environment painting, naturalistic materials, finely resolved surfaces, restrained painterly texture, atmospheric depth, dramatic yet legible lighting, strong readable composition. Current era after the End Wars. No text, logos, frames, collage, cartoon, floating globe, humans, or generic fantasy castles. Create original composition from the supplied lore; old reference images are mood only and should not be copied. DRAINOV \u2014 The acid swamps. Wide drowned factoryscape: corroded high industrial buildings and broken elevated pipeways slowly subside into bubbling acidic wetlands. Thick poisonous olive-green smog erases the horizon. Silvery chemical sheen on sickly chartreuse and brown pools, deeply pitted steel, peeling concrete, steaming corrosive rain. A small distant streak of burning orbital refuse overhead. Show ruined industrial civilization rather than natural jungle. No bright cartoon green slime, no lava volcano, no flourishing trees.",
+      "source": "C:\\Users\\njord\\.codex\\generated_images\\01a0a2d1-ad91-7e72-8ea7-e7ed72f8ba6a\\exec-77fae511-b1b4-4eff-b36e-70fca4fa61b4.png",
+      "files": [
+        "apps/web/public/assets/img/planets/art/drainov-landscape.webp",
+        "apps/web/public/assets/img/planets/art/drainov-landscape-768.webp",
+        "apps/web/public/assets/img/planets/art/drainov-landscape-384.webp"
+      ]
+    },
+    {
+      "key": "drainov-detail",
+      "prompt": "Use case: stylized-concept. Asset: wide 1536x1024 environment illustration for Xalians planetary encyclopedia, matching a coherent fourteen-world series. Cinematic science-fiction environment painting, naturalistic materials, finely resolved surfaces, restrained painterly texture, atmospheric depth, dramatic yet legible lighting, strong readable composition. Current era after the End Wars. No text, logos, frames, collage, cartoon, floating globe, humans, or generic fantasy castles. Create original composition from the supplied lore; old reference images are mood only and should not be copied. DRAINOV \u2014 Carbide-1. Close environmental view into a monumental derelict refinery, ruptured containment tanks, sagging feedstock pipes, automated processing equipment still venting poison into dense green-grey air. Acid runoff eats support columns and collects in opaque pools between old service walkways. Faint remaining amber industrial glow, rust, corrosion and chemical deposits. Long aftermath of catastrophic cost-cutting; no current explosion, no people, no warning signs or lettering.",
+      "source": "C:\\Users\\njord\\.codex\\generated_images\\01a0a2d1-ad91-7e72-8ea7-e7ed72f8ba6a\\exec-f0b4e89e-4f6b-40e5-a5d4-97aa88a9f9fe.png",
+      "files": [
+        "apps/web/public/assets/img/planets/art/drainov-detail.webp",
+        "apps/web/public/assets/img/planets/art/drainov-detail-768.webp",
+        "apps/web/public/assets/img/planets/art/drainov-detail-384.webp"
+      ]
+    },
+    {
+      "key": "saiphus-landscape",
+      "prompt": "Use case: stylized-concept. Asset: wide 1536x1024 environment illustration for Xalians planetary encyclopedia, matching a coherent fourteen-world series. Cinematic science-fiction environment painting, naturalistic materials, finely resolved surfaces, restrained painterly texture, atmospheric depth, dramatic yet legible lighting, strong readable composition. Current era after the End Wars. No text, logos, frames, collage, cartoon, floating globe, humans, or generic fantasy castles. Create original composition from the supplied lore; old reference images are mood only and should not be copied. SAIPHUS \u2014 The floating archipelago. Inside the habitable upper atmosphere of a gas giant. Buoyant islands of land suspended at varied distances over an unbroken abyss of clouds; their tops carry rolling grassy plains and deep water-condensing canyons, undersides taper into rugged rock. One far island holds a small glimmering city. Rose-orange sunrise lights the cloud sea, distant dark storm bands and sulfur-yellow cloud bank imply danger. Natural immense sky, no visible solid planetary surface, no ocean below, no fantasy castle.",
+      "source": "C:\\Users\\njord\\.codex\\generated_images\\01a0a2d1-ad91-7e72-8ea7-e7ed72f8ba6a\\exec-dcdc7c3c-7af8-40b9-98f1-881316354de8.png",
+      "files": [
+        "apps/web/public/assets/img/planets/art/saiphus-landscape.webp",
+        "apps/web/public/assets/img/planets/art/saiphus-landscape-768.webp",
+        "apps/web/public/assets/img/planets/art/saiphus-landscape-384.webp"
+      ]
+    },
+    {
+      "key": "saiphus-detail",
+      "prompt": "Use case: stylized-concept. Asset: wide 1536x1024 environment illustration for Xalians planetary encyclopedia, matching a coherent fourteen-world series. Cinematic science-fiction environment painting, naturalistic materials, finely resolved surfaces, restrained painterly texture, atmospheric depth, dramatic yet legible lighting, strong readable composition. Current era after the End Wars. No text, logos, frames, collage, cartoon, floating globe, humans, or generic fantasy castles. Create original composition from the supplied lore; old reference images are mood only and should not be copied. SAIPHUS \u2014 The cloud pastures. Wide sky pastoral: colossal translucent hydrogen jellyfish called Neph drift in a small flock beside a grassy floating island, their amorphous gasbag bells luminous in peach cloudlight and long fine tentacles vanish far down through the cloud layers to gather Benthane. Small industrial compression fixtures on island edge, subtle and subordinate. Golden pink light over cool grey-blue abyss, huge scale and delicate atmospheric perspective. No humans, no Earth cattle, no balloons tied by strings.",
+      "revision": {
+        "prompt": "Edit this Saiphus environment image. Remove EVERY jellyfish / Neph / animal / creature, including all translucent bells and ALL long tentacles in foreground, distance, and clouds. Reconstruct ordinary empty rose-lit cloud atmosphere where they were. Emphasize the Benthane compression and refinery infrastructure on the existing floating island: coherent weathered pressure tanks, gas pipes, service platforms and collection machinery, integrated into the grassy rock terrain and dwarfed by the huge cloud abyss. Preserve the floating islands, peach-gold lighting, naturalistic cinematic environment painting style, scale, and 1536x1024 wide format. No creatures, no people, no ghosts, no jellyfish-shaped clouds, no new lettering. The focus is the Benthane refineries, not cloud pastures.",
+        "reference": "C:\\Users\\njord\\.codex\\generated_images\\01a0a2d1-ad91-7e72-8ea7-e7ed72f8ba6a\\exec-2ec28790-715d-4e2f-b7c6-cf621949ff38.png",
+        "reason": "Exclude bioengineered Xalians from environment artwork."
+      },
+      "source": "C:\\Users\\njord\\.codex\\generated_images\\01a0a2d1-ad91-7e72-8ea7-e7ed72f8ba6a\\exec-875b9c10-55f8-4871-9730-690d57b0fc68.png",
+      "files": [
+        "apps/web/public/assets/img/planets/art/saiphus-detail.webp",
+        "apps/web/public/assets/img/planets/art/saiphus-detail-768.webp",
+        "apps/web/public/assets/img/planets/art/saiphus-detail-384.webp"
+      ]
+    },
+    {
+      "key": "telypso-landscape",
+      "prompt": "Use case: stylized-concept. Asset: wide 1536x1024 environment illustration for Xalians planetary encyclopedia, matching a coherent fourteen-world series. Cinematic science-fiction environment painting, naturalistic materials, finely resolved surfaces, restrained painterly texture, atmospheric depth, dramatic yet legible lighting, strong readable composition. Current era after the End Wars. No text, logos, frames, collage, cartoon, floating globe, humans, or generic fantasy castles. Create original composition from the supplied lore; old reference images are mood only and should not be copied. TELYPSO \u2014 The fungal forests. Towering alien mushrooms rise through humid fluorescent mists, bulbous pitcher plants and intricate fungi pulse with iridescent violets, rose and turquoise. A winding river shimmers with quicksilver oil-like colors under membranous gold-lit clouds and ultraviolet sun. Lush dense alien ecology, a few subtle floating droplets indicate unsettled physics. Painterly naturalistic textures rather than candy plastic; coherent spatial depth and controlled color, no city, no smiling mushrooms or faces.",
+      "source": "C:\\Users\\njord\\.codex\\generated_images\\01a0a2d1-ad91-7e72-8ea7-e7ed72f8ba6a\\exec-4348fc2b-6766-4d23-95b8-13ba206fcca6.png",
+      "files": [
+        "apps/web/public/assets/img/planets/art/telypso-landscape.webp",
+        "apps/web/public/assets/img/planets/art/telypso-landscape-768.webp",
+        "apps/web/public/assets/img/planets/art/telypso-landscape-384.webp"
+      ]
+    },
+    {
+      "key": "telypso-detail",
+      "prompt": "Use case: stylized-concept. Asset: wide 1536x1024 environment illustration for Xalians planetary encyclopedia, matching a coherent fourteen-world series. Cinematic science-fiction environment painting, naturalistic materials, finely resolved surfaces, restrained painterly texture, atmospheric depth, dramatic yet legible lighting, strong readable composition. Current era after the End Wars. No text, logos, frames, collage, cartoon, floating globe, humans, or generic fantasy castles. Create original composition from the supplied lore; old reference images are mood only and should not be copied. TELYPSO \u2014 The quicksilver rivers. River-bank perspective in a dense alien fungal forest. Iridescent liquid curls upward into a few suspended round pools and levitating bubbles; rain droplets rise through mist. Foreground pitcher plants like multicolored glass and resonant slender crystal growths among mossy fungal forms. Violet and amber light reflecting off mercury-like liquid, quiet uncanny dream state. No literal wine bottles, hallucinated human faces, religious symbols or giant portal; impossible physics expressed gently within a believable ecosystem.",
+      "source": "C:\\Users\\njord\\.codex\\generated_images\\01a0a2d1-ad91-7e72-8ea7-e7ed72f8ba6a\\exec-fc611716-6bd6-4c38-bccb-18b4fb602e9d.png",
+      "files": [
+        "apps/web/public/assets/img/planets/art/telypso-detail.webp",
+        "apps/web/public/assets/img/planets/art/telypso-detail-768.webp",
+        "apps/web/public/assets/img/planets/art/telypso-detail-384.webp"
+      ]
+    },
+    {
+      "key": "krystos-landscape",
+      "prompt": "Use case: stylized-concept. Asset: wide 1536x1024 environment illustration for Xalians planetary encyclopedia, matching a coherent fourteen-world series. Cinematic science-fiction environment painting, naturalistic materials, finely resolved surfaces, restrained painterly texture, atmospheric depth, dramatic yet legible lighting, strong readable composition. Current era after the End Wars. No text, logos, frames, collage, cartoon, floating globe, humans, or generic fantasy castles. Create original composition from the supplied lore; old reference images are mood only and should not be copied. KRYSTOS \u2014 The frozen estates. Vast frozen ocean and wind-swept tundra below ice-crystal mountain peaks, once-private islands now joined by solid sea ice. Weathered remnants of extravagant ancient island estates half buried in snow, elegant alien terraces and collapsed ornamental facades, tiny against glacial expanse. Sun blotted by permanent dusty atmospheric debris, muted blue-grey daylight, white spindrift. The mourning aftermath of a lost warmwater paradise, no bright tropical water, no medieval ice castle.",
+      "source": "C:\\Users\\njord\\.codex\\generated_images\\01a0a2d1-ad91-7e72-8ea7-e7ed72f8ba6a\\exec-eae97fa5-4402-47cc-a4e8-3de4194a733e.png",
+      "files": [
+        "apps/web/public/assets/img/planets/art/krystos-landscape.webp",
+        "apps/web/public/assets/img/planets/art/krystos-landscape-768.webp",
+        "apps/web/public/assets/img/planets/art/krystos-landscape-384.webp"
+      ]
+    },
+    {
+      "key": "krystos-detail",
+      "prompt": "Use case: stylized-concept. Asset: wide 1536x1024 environment illustration for Xalians planetary encyclopedia, matching a coherent fourteen-world series. Cinematic science-fiction environment painting, naturalistic materials, finely resolved surfaces, restrained painterly texture, atmospheric depth, dramatic yet legible lighting, strong readable composition. Current era after the End Wars. No text, logos, frames, collage, cartoon, floating globe, humans, or generic fantasy castles. Create original composition from the supplied lore; old reference images are mood only and should not be copied. KRYSTOS \u2014 The techno-catacombs. A cavernous tunnel carved into a mountain on the frozen world, dense old computational cabinets and bundled cables recede into cold darkness under rime and ice. Weathered industrial conduits and a few dim amber status indicators illuminate frosted metal and drifting condensation. This former APEX computing repository birthed the Nemesis Plague; show abandoned immense cold-storage architecture without revealing a cure or active artificial intelligence. No human figures, no lettering, no modern server brand logos.",
+      "source": "C:\\Users\\njord\\.codex\\generated_images\\01a0a2d1-ad91-7e72-8ea7-e7ed72f8ba6a\\exec-18dc9485-1595-46ef-bd7d-9245bdda5b1c.png",
+      "files": [
+        "apps/web/public/assets/img/planets/art/krystos-detail.webp",
+        "apps/web/public/assets/img/planets/art/krystos-detail-768.webp",
+        "apps/web/public/assets/img/planets/art/krystos-detail-384.webp"
+      ]
+    },
+    {
+      "key": "veridium-landscape",
+      "prompt": "Use case: stylized-concept. Asset: wide 1536x1024 environment illustration for Xalians planetary encyclopedia, matching a coherent fourteen-world series. Cinematic science-fiction environment painting, naturalistic materials, finely resolved surfaces, restrained painterly texture, atmospheric depth, dramatic yet legible lighting, strong readable composition. Current era after the End Wars. No text, logos, frames, collage, cartoon, floating globe, humans, or generic fantasy castles. Create original composition from the supplied lore; old reference images are mood only and should not be copied. VERIDIUM \u2014 The factory world. High vista over an endless gunmetal industrial terrain, giant piston structures and furnace districts along factory trenches, rivers of reflective liquid metal cutting chrome paths through ore-rich ground. In foreground a small remnant grove of silvery mineral-plated trees; sparse warm forge glow, many factories now dormant. Natural metallic crust under layers of infrastructure, soft neutral grey atmosphere, no green trees, no futuristic neon metropolis, do not depict a confirmed worldship or planetary engine.",
+      "source": "C:\\Users\\njord\\.codex\\generated_images\\01a0a2d1-ad91-7e72-8ea7-e7ed72f8ba6a\\exec-0a3284e5-7c69-4f64-b57b-af42218364e9.png",
+      "files": [
+        "apps/web/public/assets/img/planets/art/veridium-landscape.webp",
+        "apps/web/public/assets/img/planets/art/veridium-landscape-768.webp",
+        "apps/web/public/assets/img/planets/art/veridium-landscape-384.webp"
+      ]
+    },
+    {
+      "key": "veridium-detail",
+      "prompt": "Use case: stylized-concept. Asset: wide 1536x1024 environment illustration for Xalians planetary encyclopedia, matching a coherent fourteen-world series. Cinematic science-fiction environment painting, naturalistic materials, finely resolved surfaces, restrained painterly texture, atmospheric depth, dramatic yet legible lighting, strong readable composition. Current era after the End Wars. No text, logos, frames, collage, cartoon, floating globe, humans, or generic fantasy castles. Create original composition from the supplied lore; old reference images are mood only and should not be copied. VERIDIUM \u2014 The drone scrapfields. Low wide view across a field of ancient broken machines and salvaged robotic frames, finely differentiated weathered metal, half-disassembled crashed starship hull beyond, immense shipyard cranes and active furnace haze on far horizon. Silvery underbrush emerges from iron-rich soil around scrap. Restrained amber forge highlights in silver-grey world; an industrial ecosystem slowly rebuilding. No human engineers, no giant battle robot hero, no exposed planet interior.",
+      "source": "C:\\Users\\njord\\.codex\\generated_images\\01a0a2d1-ad91-7e72-8ea7-e7ed72f8ba6a\\exec-6fd75eef-95ae-4b17-8dbf-633dab261397.png",
+      "files": [
+        "apps/web/public/assets/img/planets/art/veridium-detail.webp",
+        "apps/web/public/assets/img/planets/art/veridium-detail-768.webp",
+        "apps/web/public/assets/img/planets/art/veridium-detail-384.webp"
+      ]
+    },
+    {
+      "key": "endessa-landscape",
+      "prompt": "Use case: stylized-concept. Asset: wide 1536x1024 environment illustration for Xalians planetary encyclopedia, matching a coherent fourteen-world series. Cinematic science-fiction environment painting, naturalistic materials, finely resolved surfaces, restrained painterly texture, atmospheric depth, dramatic yet legible lighting, strong readable composition. Current era after the End Wars. No text, logos, frames, collage, cartoon, floating globe, humans, or generic fantasy castles. Create original composition from the supplied lore; old reference images are mood only and should not be copied. ENDESSA \u2014 The glass dunes. Endless sweeping dunes made of finely ground ancient vitrified seafloor, pale copper and honey sand with subtle glass sparkle. Twin small hot suns in a cloudless pale sky cast overlapping shadows across enormous dune ridges. Wind reveals dark glassy substrate and just the tips of buried ancient underwater structures near foreground. No living ocean, no lush oasis, no giant leviathan, no pyramid, no medieval desert city. Desolation with buried history, elegant simple spacious composition.",
+      "source": "C:\\Users\\njord\\.codex\\generated_images\\01a0a2d1-ad91-7e72-8ea7-e7ed72f8ba6a\\exec-78cbc501-ba62-47a6-a11f-c1f3b62884fb.png",
+      "files": [
+        "apps/web/public/assets/img/planets/art/endessa-landscape.webp",
+        "apps/web/public/assets/img/planets/art/endessa-landscape-768.webp",
+        "apps/web/public/assets/img/planets/art/endessa-landscape-384.webp"
+      ]
+    },
+    {
+      "key": "endessa-detail",
+      "prompt": "Use case: stylized-concept. Asset: wide 1536x1024 environment illustration for Xalians planetary encyclopedia, matching a coherent fourteen-world series. Cinematic science-fiction environment painting, naturalistic materials, finely resolved surfaces, restrained painterly texture, atmospheric depth, dramatic yet legible lighting, strong readable composition. Current era after the End Wars. No text, logos, frames, collage, cartoon, floating globe, humans, or generic fantasy castles. Create original composition from the supplied lore; old reference images are mood only and should not be copied. ENDESSA \u2014 The Nightcap wells. Deep beneath a desert of glass sand, a large dry cavern network cut through vitrified former seafloor. Improvised industrial drilling rigs and reinforced pipework extract thick dark green-black stasis oil from pools, small amber work lights catch old seabed strata. A deeper unlit tunnel recedes mysteriously beyond extraction equipment. No living ocean, no visible monster, no confirmed Deepwater Black secret, no human workers, no neon slime. Quiet dangerous frontier industry.",
+      "source": "C:\\Users\\njord\\.codex\\generated_images\\01a0a2d1-ad91-7e72-8ea7-e7ed72f8ba6a\\exec-4dc13353-c0ee-47ea-a703-154425a8c49b.png",
+      "files": [
+        "apps/web/public/assets/img/planets/art/endessa-detail.webp",
+        "apps/web/public/assets/img/planets/art/endessa-detail-768.webp",
+        "apps/web/public/assets/img/planets/art/endessa-detail-384.webp"
+      ]
+    }
+  ]
+}

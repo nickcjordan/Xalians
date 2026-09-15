@@ -1,7 +1,7 @@
 [
     {
         "name": "Magmuth",
-        "image": "assets/img/planets/landscape/fire_landscape_planet.jpg",
+        "image": "assets/img/planets/art/magmuth-landscape.webp",
         "planetImage": "assets/img/planets/gif/fire_planet_gif.gif",
         "data": {
             "Type": "Fire",
@@ -25,7 +25,7 @@
     },
     {
         "name": "Poseidas",
-        "image": "assets/img/planets/landscape/water_landscape_planet.jpg",
+        "image": "assets/img/planets/art/poseidas-landscape.webp",
         "planetImage": "assets/img/planets/gif/water_planet_gif.gif",
         "data": {
             "Type": "Water",
@@ -53,7 +53,7 @@
     },
     {
         "name": "Grimedes",
-        "image": "assets/img/planets/landscape/dark_landscape_planet.jpg",
+        "image": "assets/img/planets/art/grimedes-landscape.webp",
         "planetImage": "assets/img/planets/gif/dark_planet_gif.gif",
         "data": {
             "Type": "Dark",
@@ -79,7 +79,7 @@
     },
     {
         "name": "Luminax",
-        "image": "assets/img/planets/landscape/light_landscape_planet.jpg",
+        "image": "assets/img/planets/art/luminax-landscape.webp",
         "planetImage": "assets/img/planets/gif/light_planet_gif.gif",
         "data": {
             "Type": "Light",
@@ -110,7 +110,7 @@
     },
     {
         "name": "Floria",
-        "image": "assets/img/planets/landscape/plant_landscape_planet.jpg",
+        "image": "assets/img/planets/art/floria-landscape.webp",
         "planetImage": "assets/img/planets/gif/plant_planet_gif.gif",
         "data": {
             "Type": "Plant",
@@ -137,7 +137,7 @@
     },
     {
         "name": "Zolton",
-        "image": "assets/img/planets/landscape/electric_landscape_planet.jpg",
+        "image": "assets/img/planets/art/zolton-landscape.webp",
         "planetImage": "assets/img/planets/gif/electric_planet_gif.gif",
         "data": {
             "Type": "Electric",
@@ -165,7 +165,7 @@
     },
     {
         "name": "Phantiri",
-        "image": "assets/img/planets/landscape/ghost_landscape_planet.jpg",
+        "image": "assets/img/planets/art/phantiri-landscape.webp",
         "planetImage": "assets/img/planets/gif/ghost_planet_gif.gif",
         "data": {
             "Type": "Ghost",
@@ -196,7 +196,7 @@
     },
     {
         "name": "Stonera",
-        "image": "assets/img/planets/landscape/rock_landscape_planet.jpg",
+        "image": "assets/img/planets/art/stonera-landscape.webp",
         "planetImage": "assets/img/planets/gif/rock_planet_gif.gif",
         "data": {
             "Type": "Rock",
@@ -222,7 +222,7 @@
     },
     {
         "name": "Drainov",
-        "image": "assets/img/planets/landscape/chemical_landscape_planet.jpg",
+        "image": "assets/img/planets/art/drainov-landscape.webp",
         "planetImage": "assets/img/planets/gif/chemical_planet_gif.gif",
         "data": {
             "Type": "Chemical",
@@ -247,7 +247,7 @@
     },
     {
         "name": "Saiphus",
-        "image": "assets/img/planets/landscape/air_landscape_planet.jpg",
+        "image": "assets/img/planets/art/saiphus-landscape.webp",
         "planetImage": "assets/img/planets/gif/air_planet_gif.gif",
         "data": {
             "Type": "Air",
@@ -273,7 +273,7 @@
     },
     {
         "name": "Telypso",
-        "image": "assets/img/planets/landscape/psychic_landscape_planet.jpg",
+        "image": "assets/img/planets/art/telypso-landscape.webp",
         "planetImage": "assets/img/planets/gif/psychic_planet_gif.gif",
         "data": {
             "Type": "Psychic",
@@ -297,7 +297,7 @@
     },
     {
         "name": "Krystos",
-        "image": "assets/img/planets/landscape/ice_landscape_planet.jpg",
+        "image": "assets/img/planets/art/krystos-landscape.webp",
         "planetImage": "assets/img/planets/gif/ice_planet_gif.gif",
         "data": {
             "Type": "Ice",
@@ -327,7 +327,7 @@
     },
     {
         "name": "Veridium",
-        "image": "assets/img/planets/landscape/metal_landscape_planet.jpg",
+        "image": "assets/img/planets/art/veridium-landscape.webp",
         "planetImage": "assets/img/planets/gif/metal_planet_gif.gif",
         "data": {
             "Type": "Metal",
@@ -354,7 +354,7 @@
     },
     {
         "name": "Endessa",
-        "image": "assets/img/planets/landscape/sand_landscape_planet.jpg",
+        "image": "assets/img/planets/art/endessa-landscape.webp",
         "planetImage": "assets/img/planets/gif/sand_planet_gif.gif",
         "data": {
             "Type": "Sand",
