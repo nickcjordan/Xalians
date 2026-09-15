@@ -574,7 +574,7 @@ describe('Long Return Simple mode', () => {
     act(() => container.querySelector('[role="dialog"]').dispatchEvent(new KeyboardEvent('keydown', { key: 'Tab', bubbles: true })));
     expect(document.activeElement).toBe(container.querySelector('.lr-sequence-story-scroll'));
     click(container, /skip to outcome/i);
-    expect(document.activeElement).toBe(container.querySelector('.lr-sequence-story-scroll'));
+    expect(document.activeElement).toBe(findButton(container, /review scout report/i));
     click(container, /review scout report/i);
     expect(document.activeElement).toBe(container.querySelector('[data-wizard-focus]'));
     if (findButton(container, /choose a route/i)) click(container, /choose a route/i);
