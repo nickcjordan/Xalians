@@ -403,7 +403,7 @@ export function supportRoleForPlan(plan) {
   return 'Backup role · no energy projected';
 }
 
-export function encounterNarrative({ archetype, option, nativeName, actorName, scoutName, mode = 'group', helperName }) {
+export function encounterNarrative({ archetype, option, nativeName, actorName, scoutName, mode = 'group', helperName, reportDelivered = true }) {
   const actor = actorName || 'The crew';
   const scout = scoutName || actor;
   const medic = helperName || 'the medic';
@@ -423,7 +423,9 @@ export function encounterNarrative({ archetype, option, nativeName, actorName, s
     ? `The crew makes space between the moving authentication arms. For a moment, ${nativeName} stays where it is, as though the opening might close again. Then it slips clear, and the panicked signal begins to fade.${rescueCost}\n\nWhen the crew moves on, ${nativeName} follows at a cautious distance. This time, nothing is holding it here. It has chosen their company.`
     : `${aidArrival}, giving ${nativeName} room to watch as help reaches its injury. The roots gripping the machinery begin to loosen. What looked like an obstacle was a frightened creature with nowhere safe to go.${rescueCost}\n\n${aidDeparture}`;
   if (option.resolution === 'detour') return `The crew stops short of ${nativeName}'s position. Rather than press closer, they retrace their approach, leaving the space between them open.\n\nBack at the junction, the other passage is still there to consider. Behind them, ${nativeName} remains where they found it; nothing has forced it to leave.`;
-  if (option.resolution === 'unresolved') return `${scoutName || actor} breaks contact and retraces the approach, carrying the warning back rather than trying to settle the encounter alone.\n\nThe crew now knows where ${nativeName} is waiting. The route has not been cleared; approaching it will mean facing that presence together.`;
+  if (option.resolution === 'unresolved') return reportDelivered
+    ? `${scoutName || actor} breaks contact and sends a warning rather than trying to settle the encounter alone.\n\nThe crew now knows where ${nativeName} is waiting. The route has not been cleared; approaching it will mean facing that presence together.`
+    : `${scoutName || actor} backs out of ${nativeName}'s reach without trying to settle the encounter alone. The native holds its ground.\n\nThere is space to retreat now, but no signal can reach the waiting crew. The scout still has to make the journey back before they can hear the warning.`;
   if (archetype === 'territorial') {
     if (option.id === 'distract') return `${actor} creates a disturbance away from the conduit mouth. ${nativeName} turns toward it, then moves out to investigate, leaving its sheltered passage unguarded.\n\nThe diversion has opened a way through, but the noise has carried into the old annex. The machinery around the crew no longer feels quite so still.`;
     if (option.id === 'challenge') return `${actor} holds position instead of retreating from the conduit mouth. ${nativeName} answers the challenge, but cannot keep the approach closed. The confrontation drives it back into the hull.\n\nThe passage is open now. ${actor} has paid for that space in effort, and the disturbance has reached the surrounding structure.`;
@@ -992,6 +994,7 @@ function LongReturnGame() {
       actorName: affected ? affected.species : null,
       mode: encounterState.mode,
       helperName: helper?.species,
+      reportDelivered: encounterState.mode !== 'scout' || !!scan?.returned,
       scoutName: encounterState.scout ? encounterState.scout.species : null
     });
     const energyCost = option.scoutStrain || option.crewStrain || 0;
@@ -1404,7 +1407,7 @@ function LongReturnGame() {
                 </div>}
               </> : <>
                 <div className="lr-encounter-resolution-grid"><div className="lr-report-source"><CreaturePortrait creature={encounterCreature} /><strong>{encounterCreature.species}</strong><span>{encounterState.result.companion ? 'Temporary field ally' : 'Encounter resolved'}</span></div><div>
-                <div className="lr-encounter-result-head"><BiIcon cls={`bi ${encounterState.result.companion ? 'bi-person-check-fill' : encounterState.result.resolution === 'detour' ? 'bi-arrow-return-right' : 'bi-shield-check'}`} /><div><span>Encounter resolved</span><h3>{encounterState.result.companion ? 'The native chooses to follow' : encounterState.result.resolution === 'unresolved' ? 'The scout returns with a warning' : encounterState.result.resolution === 'detour' ? 'The crew avoids contact' : 'The route is clear'}</h3></div></div>
+                <div className="lr-encounter-result-head"><BiIcon cls={`bi ${encounterState.result.companion ? 'bi-person-check-fill' : encounterState.result.resolution === 'detour' ? 'bi-arrow-return-right' : 'bi-shield-check'}`} /><div><span>Encounter resolved</span><h3>{encounterState.result.companion ? 'The native chooses to follow' : encounterState.result.resolution === 'unresolved' ? 'Contact broken; the native remains' : encounterState.result.resolution === 'detour' ? 'The crew avoids contact' : 'The route is clear'}</h3></div></div>
                 <div className="lr-encounter-prose">{encounterState.result.narrative.split('\n\n').map((paragraph, index) => <p className="lr-simple-story" key={index}>{paragraph}</p>)}</div>
                 {guidanceLevel === 'simple' ? <EncounterAftermath result={encounterState.result} native={encounterCreature} /> : <div className="lr-encounter-impact">
                   {(encounterState.result.scoutStrain || encounterState.result.crewStrain) > 0 ? <span><BiIcon cls="bi bi-lightning-charge-fill" /><strong>Energy spent</strong> −{encounterState.result.scoutStrain || encounterState.result.crewStrain}</span> : <span className="is-good"><BiIcon cls="bi bi-check-circle" /><strong>No energy spent</strong></span>}
