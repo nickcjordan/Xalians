@@ -18,13 +18,13 @@ try {
   assert.equal(await page.locator('.lr-route-board').count(),0);
   assert.equal(await page.locator('.lr-lead-options button').count(),3);
   assert.match(await page.locator('.lr-lead-options button[aria-pressed=true]').innerText(),/Hippochamp/);
-  assert.match(await page.locator('.lr-lead-options').innerText(),/Swimming: a weak fit/);
-  await page.locator('.lr-lead-options button').filter({hasText:'Graviclaw'}).click();
+  assert.match(await page.locator('.lr-lead-options').innerText(),/Swimming: a weak skill/);
+  await page.locator('.lr-lead-options button').filter({has:page.getByText('Graviclaw',{exact:true})}).click();
   await page.locator('.lr-method-alternatives > summary').click();
   await page.locator('.lr-method-alternatives button').filter({hasText:'Spends this ability'}).first().click();
   assert.match(await page.locator('.lr-lead-options button[aria-pressed=true]').innerText(),/Ability unavailable after crossing/);
-  assert.doesNotMatch(await page.locator('.lr-lead-options button[aria-pressed=true]').innerText(),/Swimming: a workable fit/);
-  const alternative=page.locator('.lr-lead-options button').filter({hasText:'Chromocat'});
+  assert.doesNotMatch(await page.locator('.lr-lead-options button[aria-pressed=true]').innerText(),/Swimming: a practiced skill/);
+  const alternative=page.locator('.lr-lead-options button').filter({has:page.getByText('Chromocat',{exact:true})});
   await alternative.click();
   await page.getByRole('button',{name:'← Change route',exact:true}).click();
   await page.getByRole('button',{name:'Choose crew for: Ride the intake current',exact:true}).click();
@@ -32,7 +32,7 @@ try {
   assert.equal(await page.locator('.lr-wizard-resources').innerText(),before);
   await page.screenshot({path:`${output}/${width}-lead.png`,fullPage:true});
   assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),'No horizontal overflow');
-  await page.locator('.lr-lead-options button').filter({hasText:'Hippochamp'}).click();
+  await page.locator('.lr-lead-options button').filter({has:page.getByText('Hippochamp',{exact:true})}).click();
   await page.getByRole('button',{name:/Cross now/}).click();
   await page.getByRole('button',{name:/Continue to result/}).click();
   assert(await page.locator('.lr-arrival-story').isVisible());
