@@ -2,6 +2,7 @@ import React from 'react';
 import { Link, useParams } from 'react-router';
 import * as lore from '../../lore';
 import Prose from './Prose';
+import LoreArt from './LoreArt';
 import Connections from './Connections';
 import { useVisit, useResume } from './trail';
 import { SectionHead } from '@/components/system/masthead';
@@ -158,6 +159,7 @@ export default function EntryView() {
             <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(240px,360px)_minmax(0,1fr)]">
                 <div className="min-w-0 max-w-[40ch] lg:sticky lg:top-8">
                     <Prose text={entry.definition} except={key} />
+                    <LoreArt kind="entries" recordKey={key} />
                 </div>
 
                 <div className="flex min-w-0 flex-col gap-8">

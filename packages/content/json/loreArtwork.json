@@ -1,0 +1,51 @@
+{
+  "images": {
+    "tachyon-drive-core": {
+      "src": "assets/img/lore/details/tachyon-drive-core-768.webp",
+      "small": "assets/img/lore/details/tachyon-drive-core-768.webp",
+      "thumbnail": "assets/img/lore/details/tachyon-drive-core-384.webp",
+      "title": "The engine of expansion",
+      "alt": "A cold blue drive chamber hangs inside heavy shielding and coolant pipes in an empty engineering bay.",
+      "caption": "Tachyon Drive Cores enabled faster-than-light travel, but their radiation brought the Age of Unbirth."
+    },
+    "wraithix": {
+      "src": "assets/img/lore/details/wraithix-768.webp",
+      "small": "assets/img/lore/details/wraithix-768.webp",
+      "thumbnail": "assets/img/lore/details/wraithix-384.webp",
+      "title": "The fleet before the empire",
+      "alt": "Broken angular spacecraft and satellite fragments drift in a dark violet starfield.",
+      "caption": "The Wraithix derelicts predated Vallerii spaceflight. Their manifests pointed to Shadharam IV."
+    },
+    "stellaris-superstructure": {
+      "src": "assets/img/lore/details/stellaris-superstructure-768.webp",
+      "small": "assets/img/lore/details/stellaris-superstructure-768.webp",
+      "thumbnail": "assets/img/lore/details/stellaris-superstructure-384.webp",
+      "title": "A star put to work",
+      "alt": "Articulated golden collector panels enclose a brilliant star; a second sun shines in the distance.",
+      "caption": "Built around one of Luminax's stars, the Stellaris Superstructure made the system the empire's solar capital."
+    },
+    "mercurius-machine": {
+      "src": "assets/img/lore/details/mercurius-machine-768.webp",
+      "small": "assets/img/lore/details/mercurius-machine-768.webp",
+      "thumbnail": "assets/img/lore/details/mercurius-machine-384.webp",
+      "title": "The machine keeps printing",
+      "alt": "Small circuit chips emerge from a precision machine onto a tray lit by warm task lights.",
+      "caption": "The Mercurius Machine prints Scrambler Tokens: encrypted genomes that allow Generators to create plague-immune Xalians."
+    }
+  },
+  "entries": {
+    "tachyon-drive-core": "tachyon-drive-core",
+    "wraithix": "wraithix",
+    "stellaris-superstructure": "stellaris-superstructure",
+    "mercurius-machine": "mercurius-machine",
+    "scrambler-token": "mercurius-machine"
+  },
+  "beats": {
+    "vallerii-and-tachyon-drive": "tachyon-drive-core",
+    "before-the-vallerii": "wraithix",
+    "kozrak-and-tournament": "mercurius-machine"
+  },
+  "paragraphs": {
+    "luminax:9": "stellaris-superstructure"
+  }
+}
