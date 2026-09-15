@@ -12,7 +12,10 @@ try {
   let crossed = 0;
   const responses = {};
   page.on('pageerror', error => errors.push(error.message));
-  await page.goto('http://127.0.0.1:4173/long-return');
+  page.on('response', response => {
+    if (response.status() >= 400 && ['image', 'stylesheet', 'script', 'font'].includes(response.request().resourceType())) errors.push(`Asset ${response.status()}: ${response.url()}`);
+  });
+  await page.goto(`${process.env.LR_BASE_URL || 'http://127.0.0.1:4173'}/long-return`);
   if (process.env.LR_SWAP) {
     const [incoming, outgoing] = process.env.LR_SWAP.split(':');
     await page.locator(`[data-creature-id="${incoming}"]`).click();
