@@ -1,10 +1,14 @@
 # Xalians Game Experience Quality Guide
 
 Status: Living standard  
-Last updated: 2026-09-13
+Last updated: 2026-09-15
 First reference implementation: The Long Return
 
 ## Why this guide exists
+
+### Essential labels are not decorative microtype — 2026-09-15
+
+Resource identities, costs, current-step labels and outcomes must remain readable without zooming. The Long Return's technical baseline is 12px for compact essential labels and 14px for action instructions; this is a project floor, not a claim of accessibility certification or player acceptance. Prefer compact body type over shrinking monospaced names. Verify names do not truncate, critical warnings wrap, and larger labels do not hide commitment controls. The responsive replay checks rendered sizes and clipping; visual review must still judge hierarchy and comfort.
 
 ### Narrative, not explanatory clutter — 2026-09-13
 

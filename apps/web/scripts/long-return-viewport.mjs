@@ -15,6 +15,11 @@ try {
       await page.screenshot({ path: `${output}/${width}-${name}.png`, fullPage: true });
       const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
       assert(overflow <= 1, `${width}/${name}: horizontal overflow ${overflow}px`);
+      const smallEssentialLabels = await page.locator('.lr-wizard-resources small, .lr-wizard-progress span, .lr-simple-override span, .lr-end-stats > div > span, .lr-end-crew .lr-meter-label strong').evaluateAll(elements => elements.filter(el => el.checkVisibility() && parseFloat(getComputedStyle(el).fontSize) < 12).map(el => el.textContent));
+      assert.deepEqual(smallEssentialLabels, [], `${width}/${name}: essential labels below 12px`);
+      const clippedResourceNames = await page.locator('.lr-wizard-resources small').evaluateAll(elements => elements.filter(el => el.checkVisibility() && el.scrollWidth > el.clientWidth + 1).map(el => el.textContent));
+      assert.deepEqual(clippedResourceNames, [], `${width}/${name}: resource names must remain readable`);
+      if (process.env.LR_AUDIT_TYPE) await writeFile(`${output}/${width}-${name}-type.json`, JSON.stringify(await page.locator('.lr-shell *').evaluateAll(elements => elements.filter(el => el.checkVisibility() && [...el.childNodes].some(node => node.nodeType === Node.TEXT_NODE && node.textContent.trim()) && parseFloat(getComputedStyle(el).fontSize) < 12).map(el => ({ selector: el.className || el.tagName, text: el.textContent.trim().slice(0, 100), size: getComputedStyle(el).fontSize, color: getComputedStyle(el).color }))), null, 2));
       if (name === 'encounter') await writeFile(`${output}/${width}-encounter-layout.json`, JSON.stringify(await page.locator('.lr-field-encounter, .lr-field-encounter *').evaluateAll(elements => elements.flatMap(el => ['', '::before', '::after'].map(pseudo => { const style = getComputedStyle(el, pseudo); return { cls: el.className, pseudo, content: style.content, border: style.borderLeft, shadow: style.boxShadow, background: style.backgroundImage, width: style.width, height: style.height, position: style.position }; })).filter(el => (!el.border.startsWith('0px') || el.shadow !== 'none' || el.background !== 'none' || el.pseudo && el.content !== 'none') && el.content !== 'normal')), null, 2));
     };
     await page.goto('http://127.0.0.1:4173/long-return');
