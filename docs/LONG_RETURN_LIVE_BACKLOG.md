@@ -27,6 +27,7 @@ Statuses progress independently: identified → implementing → technically ver
 - [x] Fixed the focused wizard header announcing the same decision for both route and lead views. It now names route selection, lead selection or custom planning accurately without adding visible clutter.
 - [x] Updated the keyboard replay for the split flow: Enter to select/back/reselect, command retention, focus staying on a selected lead, explicit commitment, modal focus restoration and checkpoint resume all pass.
 - [x] 165 engine/component tests and production build/bundle budgets pass.
+- [x] Browser mission replays reached both exhausted-crew emergency extraction (6 scenes, Index retained) and deep retrieval (7 scenes, 14 salvage, 2 stability). These verify terminal flow continuity, not human enjoyment.
 - [ ] Complete player experience acceptance remains pending; keyboard automation verifies behavior, not perceived clarity or enjoyment.
 
 Previous turn: verified server availability and opened the playtest. This continuation: progress through guidance evidence, keyboard-flow regression coverage and an accessibility correction.
