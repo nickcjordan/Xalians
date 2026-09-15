@@ -21,6 +21,15 @@ Statuses progress independently: identified → implementing → technically ver
 
 ### Live findings
 
+### September 15 — phone crossing controls and entry position
+
+- [x] Phone lead selection keeps the crossing commitment visible with the selected creature named. Advanced customization stays outside the persistent area; critical crossing warnings remain attached to commitment.
+- [x] Visual replay revealed that the scene header consumed most of a short phone viewport on entry. The lead substep now scrolls/focuses its local route/back section, preserving one transition without a second animated scroll.
+- [x] Dedicated 390×667 browser replay covers normal/reduced motion, entry focus, visible back control, all lead changes, no-cost reselection, route back, and crossing. Full 390/768/1280 replay and desktop keyboard flow pass.
+- [ ] Human judgment of the revised phone flow remains pending; technical reachability does not establish comfort.
+
+Previous continuation: progress (essential label sizes, PR #286 merged). Current continuation: progress (persistent mobile commitment and replay-driven entry-position refinement).
+
 ### September 15 — measured essential-label legibility
 
 - [x] Rendered audit found 8–9px resource identities, outcome labels and command instructions across several screens. Essential labels now have a 12px floor; action instructions use 14px.

@@ -816,13 +816,16 @@ function LongReturnGame() {
     if (!started || status !== 'playing' || !sceneRef.current || actionTransition) return;
     const root = sceneRef.current;
     let target = root;
-    // The Simple workspace owns its context header. Always return to the top of
-    // that workspace when a phase changes so the player sees both where they
-    // are and what changed; advanced layouts retain their focused deep-link.
+    const phoneLead = guidanceLevel === 'simple' && choosingLead && !simpleCustomizing && window.matchMedia?.('(max-width: 650px)').matches
+      ? root.querySelector('.lr-simple-plan') : null;
+    // New phases start at their context header. On phones, the lead substep
+    // starts at its own route/back heading, not the already-seen scene header.
+    // Advanced layouts retain their focused deep-link.
     if (guidanceLevel !== 'simple') {
       if (phase === 'assign') target = root.querySelector('.lr-crossing-flow') || root.querySelector('.lr-current-action') || root;
       else target = root.querySelector('.lr-scene-stage') || root.querySelector('.lr-current-action') || root;
     }
+    if (phoneLead) target = phoneLead;
     // Align the new phase before its entrance animation. Smooth scrolling and
     // panel motion running together read as camera shake, especially at
     // fractional display scaling.
@@ -838,7 +841,7 @@ function LongReturnGame() {
     // the next Tab lands on the first relevant control, not an old control that
     // has disappeared with the previous step.
     if (guidanceLevel === 'simple') {
-      const focusTarget = root.querySelector('[data-wizard-focus]');
+      const focusTarget = phoneLead || root.querySelector('[data-wizard-focus]');
       if (focusTarget && typeof focusTarget.focus === 'function') {
         focusTarget.focus({ preventScroll: true });
       }
@@ -1552,7 +1555,7 @@ function LongReturnGame() {
 
 
               {route && choosingLead && guidanceLevel === 'simple' && !simpleCustomizing && suggestedPlan && (
-                <div className="lr-simple-plan">
+                <div className="lr-simple-plan" tabIndex={-1} aria-label={`${route.title} · Choose who leads`}>
                   <button type="button" className="lr-lead-back" onClick={() => { setWizardDirection('back'); setChoosingLead(false); }}>← Change route</button>
                   <div className="lr-simple-plan-head"><div><span>2 · Choose who leads · all three cross together</span><h3>{route.title}</h3></div></div>
                   <LeadChoices plans={leadChoices.map(plan => plan.lead.id === suggestedPlan.lead.id ? suggestedPlan : applyCommandPreview(plan))} companion={companion} selectedId={suggestedPlan.lead.id} onSelect={leadId => setSimpleLeadChoice({ sceneId: scene.id, routeId: route.id, leadId })} />
@@ -1569,9 +1572,9 @@ function LongReturnGame() {
                   <div className="lr-simple-plan-actions">
                     {crossingWarning && <p className="lr-crossing-warning" role="status"><TriangleAlert aria-hidden="true" /><span><strong>{crossingWarning.label}</strong><small>{crossingWarning.detail}</small></span></p>}
                     <span className="lr-commit-identity"><strong>{route.title}</strong><small>{suggestedPlan.lead.species} leads · all three cross</small></span>
-                    <button type="button" className="lr-simple-secondary lr-customize-plan" onClick={() => setSimpleCustomizing(true)}><BiIcon cls="bi bi-sliders" /> Advanced: customize crew plan</button>
                     <button type="button" className="g-btn g-btn--primary lr-cross-now" onClick={() => commit(suggestedPlan)}><BiIcon cls="bi bi-play-fill" /> Cross now<small>{suggestedPlan.lead.species} leads</small></button>
                   </div>
+                  <button type="button" className="lr-simple-secondary lr-customize-plan" onClick={() => setSimpleCustomizing(true)}><BiIcon cls="bi bi-sliders" /> Advanced: customize crew plan</button>
                 </div>
               )}
 
