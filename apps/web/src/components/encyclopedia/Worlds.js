@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router';
 import * as lore from '../../lore';
+import planetArtwork from '@xalians/content/planetArtwork.json';
 import { Tile, TileArt, TileMeta } from '@/components/system/record';
 
 function sentenceCase(text) {
@@ -25,9 +26,13 @@ export default function Worlds() {
                 <Tile as={Link} key={world.key} to={lore.routeFor('world', world.key)} className={`el-${world.element}`}>
                     <TileArt>
                         <img
-                            src={`/${world.images.planet}`}
-                            alt={`${world.name} globe`}
-                            className="h-[62%] w-[62%] object-contain"
+                            src={`/${planetArtwork[world.key][0].thumbnail}`}
+                            alt={planetArtwork[world.key][0].alt}
+                            width={384}
+                            height={256}
+                            loading="lazy"
+                            decoding="async"
+                            className="h-full w-full object-cover"
                         />
                     </TileArt>
                     <TileMeta>

@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router';
 import * as lore from '../../lore';
 import Prose from './Prose';
+import LoreArt from './LoreArt';
 import { useVisit, useReadMark, markRead, recordStoryPosition } from './trail';
 import StoryContents from './StoryContents';
 import { SectionHead } from '@/components/system/masthead';
@@ -64,6 +65,7 @@ function NarratorBeat({ beat, indexInPart, beatCount }) {
 			)}
 			<h2 className="type-heading m-0">{beat.title}</h2>
 			<Prose text={beat.prose} />
+			<LoreArt kind="beats" recordKey={beat.key} />
 			<RecordsConsulted beat={beat} />
 		</Card>
 	);
@@ -113,7 +115,10 @@ function StoryParagraph({ world, index, text }) {
 			className="grid grid-cols-[8rem_minmax(0,1fr)] items-start gap-4 border-t border-edge py-4 first:border-t-0 max-sm:grid-cols-1"
 		>
 			<MarginNote world={world} index={index} read={read} />
-			<Prose text={text} className="m-0" />
+			<div className="min-w-0">
+				<Prose text={text} className="m-0" />
+				<LoreArt kind="paragraphs" recordKey={`${world.key}:${index}`} />
+			</div>
 		</div>
 	);
 }
@@ -418,13 +423,11 @@ function StoryPart() {
 				<PartRail story={story} part={part} progress={progress} />
 				<div className="min-w-0 max-w-[62ch]">
 					{part.plate && (
-						<figure className="mb-8 border border-edge-strong bg-s0 p-2 shadow-float">
+						<figure className="m-0 mb-8 w-full max-w-[480px] border border-edge-strong bg-s0 p-2 shadow-float">
 							<img
-								src={part.plate.src}
-								srcSet={`${part.plate.srcSmall} 768w, ${part.plate.src} 1536w`}
-								sizes="(max-width: 900px) 100vw, 760px"
-								width={1536}
-								height={768}
+								src={part.plate.srcSmall}
+								width={768}
+								height={384}
 								alt={part.plate.alt}
 								loading="eager"
 								decoding="async"

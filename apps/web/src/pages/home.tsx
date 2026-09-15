@@ -88,9 +88,12 @@ function Home() {
 								>
 									<div className="flex aspect-square w-full items-center justify-center bg-el/24">
 										<img
-											src={`/${world.planetImage}`}
-											alt={`${world.name} globe`}
-											className="h-[68%] w-[68%] object-contain sm:h-[76%] sm:w-[76%]"
+											src={`/${world.image}`}
+											alt={world.imageAlt}
+											width={384}
+											height={256}
+											decoding="async"
+											className="h-full w-full object-cover"
 										/>
 									</div>
 									<span className="type-legend mt-2 max-w-full overflow-hidden px-2 text-[10px] whitespace-nowrap text-ellipsis text-ink sm:text-[11.5px]">

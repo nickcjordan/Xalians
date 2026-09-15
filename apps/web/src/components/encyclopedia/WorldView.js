@@ -2,6 +2,8 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Link, useParams } from 'react-router';
 import * as lore from '../../lore';
 import Prose from './Prose';
+import WorldArt from './WorldArt';
+import planetArtwork from '@xalians/content/planetArtwork.json';
 import XalianImage from '../xalianImage';
 import Connections from './Connections';
 import { useVisit, useReadMark, markRead, useResume } from './trail';
@@ -239,15 +241,12 @@ export default function WorldView() {
 
     return (
         <article className={`el-${world.element}`}>
+            <div className="mb-6 grid max-w-[984px] grid-cols-1 gap-6 md:grid-cols-2">
+                <WorldArt art={planetArtwork[world.key][0]} hero />
+                <WorldArt art={planetArtwork[world.key][1]} />
+            </div>
             <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(240px,360px)_minmax(0,1fr)]">
                 <div className="flex min-w-0 flex-col gap-4">
-                    <div className="grid aspect-square w-full place-items-center bg-el/24">
-                        <img
-                            src={`/${world.images.planet}`}
-                            alt={`${world.name} globe`}
-                            className="h-[72%] w-[72%] object-contain"
-                        />
-                    </div>
                     <SpecPlate entries={factsEntries} />
                 </div>
 
