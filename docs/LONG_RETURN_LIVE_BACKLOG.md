@@ -21,6 +21,15 @@ Statuses progress independently: identified → implementing → technically ver
 
 ### Live findings
 
+### September 15 — assistance belongs beside the decision
+
+- [x] Route and lead energy previews now identify confirmed companion savings and the expenditure of its one intervention. Unknown, free and already-assisted cases do not promise a discount.
+- [x] Visual replay found weak-skill/low-cost combinations still unexplained. Lead descriptions now identify the supporter when it raises the outcome tier, and the specific temperament response when it reduces energy use. Raw skill descriptions remain truthful; no balance changes.
+- [x] Extended the 390/768/1280 browser replay through companion recruitment, report and lead selection; verified the saving remains attributable. Inspected the rendered desktop layout; crossing action remains visible.
+- [x] 167 tests pass. Player acceptance remains unproven.
+
+Previous continuation: progress (keyboard flow correction, PR #282 merged). Current continuation: progress (companion cost attribution and support/temperament causality found through visual replay).
+
 ### September 15 — keyboard and guidance replay
 
 - [x] Replayed Guided, Standard and Expert with manual route, lead, support and method selection through crossing and field recovery. All passed.

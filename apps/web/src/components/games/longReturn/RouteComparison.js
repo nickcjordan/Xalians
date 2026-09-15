@@ -35,7 +35,7 @@ export default function RouteComparison({ plans, selectedId, onSelect, onPreview
         const unknown = key !== 'salvage' && values[index].uncertain;
         return <div key={plan.route.id} role="cell" className={`lr-board-value${selectedId === plan.route.id ? ' is-selected' : ''}`} aria-label={`${plan.route.title}: ${value} ${key}${unknown ? ' known, plus unknown extra cost' : ''}`}>
           <div className="lr-board-amount">{(!unknown || value > 0) && <b>{value}</b>}<span className="lr-board-token-run" aria-hidden="true">{Array.from({ length: value }, (_, i) => <Icon key={i} />)}</span>{unknown && <span className="lr-board-unknown" title={`${value} known cost. The scout has not established the extra cost; it may affect energy, stability, or both.`}>{value > 0 ? '+ ?' : '?'}</span>}{value === 0 && !unknown && <Check aria-label="None spent" />}</div>
-          <small>{key === 'energy' && values[index].saved > 0 ? `${companion.creature.species} saves 1 energy` : unknown ? value > 0 ? 'known cost + unknown extra' : 'total unknown' : key === 'salvage' ? 'salvage' : value === 0 ? 'none spent' : 'fixed cost'}</small>
+          <small>{key === 'energy' && values[index].saved > 0 ? `${companion.creature.species} saves 1 · uses its one help` : unknown ? value > 0 ? 'known cost + unknown extra' : 'total unknown' : key === 'salvage' ? 'salvage' : value === 0 ? 'none spent' : 'fixed cost'}</small>
         </div>;
       })}
     </div>)}

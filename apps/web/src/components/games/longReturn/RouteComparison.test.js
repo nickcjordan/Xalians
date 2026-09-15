@@ -32,7 +32,7 @@ test('the shared energy row includes support and a confirmed companion saving', 
 test('confirmed ally savings are explained at the energy value, not only in analysis', () => {
   const root = document.createElement('div');
   root.innerHTML = renderToStaticMarkup(<RouteComparison plans={[base]} companion={{ ready: true, creature: { species: 'Xylum' } }} onSelect={() => {}} onPreview={() => {}} />);
-  expect(root.querySelector('.is-energy [role="cell"] small').textContent).toBe('Xylum saves 1 energy');
+  expect(root.querySelector('.is-energy [role="cell"] small').textContent).toBe('Xylum saves 1 · uses its one help');
 });
 
 test('one-use costs share a comparison row only when a plan uses an ability', () => {
