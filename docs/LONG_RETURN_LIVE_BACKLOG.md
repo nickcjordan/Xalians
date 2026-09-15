@@ -21,6 +21,16 @@ Statuses progress independently: identified → implementing → technically ver
 
 ### Live findings
 
+### September 15 — returning from the expedition
+
+- [x] Temporary companions now receive a farewell in the existing ending narrative, without implying ownership or inventing an intervention when they never helped.
+- [x] When salvage is lost, the banked amount shows carried minus left-behind loot in the same settlement cell; no extra alert panel.
+- [x] Phone replay exposed a generic 200px portrait minimum inflating every end-crew card. Scoped compact sizing removes the empty space and lets condition text wrap rather than truncate.
+- [x] Extended 390/768/1280 replays through companion recruitment to withdrawal and settlement. Added a mobile card-height regression assertion and inspected the resulting phone image.
+- [x] 168 tests pass. Full experience acceptance remains unproven.
+
+Previous continuation: progress (companion/support cost attribution, PR #283 merged). Current continuation: progress (ending continuity, visible settlement and a replay-discovered mobile layout fix).
+
 ### September 15 — assistance belongs beside the decision
 
 - [x] Route and lead energy previews now identify confirmed companion savings and the expenditure of its one intervention. Unknown, free and already-assisted cases do not promise a discount.

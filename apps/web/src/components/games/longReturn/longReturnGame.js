@@ -19,7 +19,7 @@ import { encounterActor } from './encounterActor';
 import EncounterAftermath from './EncounterAftermath';
 import ExtractionChoice from './ExtractionChoice';
 import ExpeditionReserves from './ExpeditionReserves';
-import { bankedSalvage } from './extractionOutcome';
+import { bankedSalvage, companionFarewell } from './extractionOutcome';
 import { planStakes } from './planStakes';
 import './routeTradeoff.css';
 import ActionTransition from './ActionTransition';
@@ -1237,10 +1237,10 @@ function LongReturnGame() {
           <div className="lr-end-seal"><BiIcon cls={`bi ${outcome.icon}`} /></div>
           <span className="lr-end-outcome">{outcome.label}</span>
           <h1 className="g-title">{outcome.title}</h1>
-          <p className="lr-end-copy">{outcome.copy}</p>
+          <p className="lr-end-copy">{outcome.copy}{companion ? ` ${companionFarewell(companion)}` : ''}</p>
           <div className="lr-end-stats">
             <div><span>Objective</span><strong>{objectiveReached ? 'SECURED' : 'LOST'}</strong></div>
-            <div><span>Salvage banked</span><strong>{banked} · {banked >= 20 ? 'Exceptional haul' : banked >= 10 ? 'Strong haul' : banked > 0 ? 'Light haul' : 'None'}</strong></div>
+            <div><span>Salvage banked</span><strong>{banked} · {banked >= 20 ? 'Exceptional haul' : banked >= 10 ? 'Strong haul' : banked > 0 ? 'Light haul' : 'None'}</strong>{salvage > banked && <small className="lr-end-haul-loss">{salvage} carried − {salvage - banked} left behind</small>}</div>
             <div><span>Annex stability</span><strong>{MAX_INSTABILITY - pressure} / {MAX_INSTABILITY}</strong></div>
             <div><span>Scenes crossed</span><strong>{sceneIndex + (phase === 'result' ? 1 : 0)} / {MISSION.scenes.length}</strong></div>
           </div>
