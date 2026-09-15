@@ -51,6 +51,12 @@ type ActiveThrust = {
   direction: Exclude<ArtilleryMove, 0>;
   mobility: ArtilleryMobility;
   pulse: number;
+  phase: 'thrust' | 'landing';
+  launchX: number;
+  launchY: number;
+  startFuel: number;
+  flightY: number;
+  landingProgress: number;
 } | null;
 type CombatStats = {
   shots: number;
@@ -187,6 +193,11 @@ export function artilleryMoveAnimationProgress(
   return clamped * clamped * (3 - 2 * clamped);
 }
 
+export function artilleryJetFlightY(launchY: number, landingY: number, fuelSpent: number, startFuel: number): number {
+  const progress = Math.max(0, Math.min(1, fuelSpent / Math.max(1, startFuel)));
+  return launchY + (landingY - launchY) * progress - Math.sin(progress * Math.PI) * 42;
+}
+
 export function CommandMeter({ label, value, suffix = '', min, max, disabled, guidance, decreaseKey, increaseKey, compact = false, kind = 'power', side = 'left', onChange }: {
   label: string;
   value: number;
@@ -285,6 +296,7 @@ export function ArtilleryBoard({ seed, mode, difficulty, mapSize, world, onStatu
   const botScheduled = React.useRef(false);
   const stateRef = React.useRef(state);
   const thrustTimer = React.useRef<number | null>(null);
+  const movementRef = React.useRef<ActiveThrust>(null);
   const fieldRef = React.useRef<SVGSVGElement>(null);
   const activePointer = React.useRef<number | null>(null);
   const dragOrigin = React.useRef<{ x: number; y: number } | null>(null);
@@ -295,6 +307,7 @@ export function ArtilleryBoard({ seed, mode, difficulty, mapSize, world, onStatu
   const environment = ARTILLERY_CONDITIONS[state.condition];
 
   React.useEffect(() => { stateRef.current = state; }, [state]);
+  React.useEffect(() => { movementRef.current = movement; }, [movement]);
 
   React.useEffect(() => () => {
     pendingTimers.current.forEach(window.clearTimeout);
@@ -616,13 +629,47 @@ export function ArtilleryBoard({ seed, mode, difficulty, mapSize, world, onStatu
   const stopThrust = React.useCallback(() => {
     if (thrustTimer.current !== null) window.clearInterval(thrustTimer.current);
     thrustTimer.current = null;
-    setMovement((active) => {
-      if (!active) return null;
-      const current = stateRef.current;
-      const remaining = active.mobility === 'jet' ? current.jetCharges[active.side] : current.traction[active.side];
-      onStatus(`${active.mobility === 'jet' ? 'Jet' : 'Drive'} idle · ${Math.round(remaining)}% fuel remains.`);
-      return null;
-    });
+    const active = movementRef.current;
+    if (!active || active.phase === 'landing') return;
+    const current = stateRef.current;
+    const remaining = active.mobility === 'jet' ? current.jetCharges[active.side] : current.traction[active.side];
+    if (active.mobility === 'drive') {
+      movementRef.current = null;
+      setMovement(null);
+      onStatus(`Drive idle · ${Math.round(remaining)}% fuel remains.`);
+      return;
+    }
+
+    const landingX = current.tanks[active.side].x;
+    const landingY = ARTILLERY_HEIGHT - terrainHeight(current.terrain, landingX) - 1.5;
+    const landingStart = active.flightY;
+    const reducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+    const frames = reducedMotion ? 1 : 24;
+    let frame = 0;
+    const landing = { ...active, phase: 'landing' as const, landingProgress: 0 };
+    movementRef.current = landing;
+    setMovement(landing);
+    onStatus(`Jet thrust cut · coasting to landing with ${Math.round(remaining)}% fuel.`);
+    const tick = () => {
+      frame += 1;
+      const progress = Math.min(1, frame / frames);
+      const eased = progress * progress * (3 - 2 * progress);
+      const next: NonNullable<ActiveThrust> = {
+        ...landing,
+        landingProgress: progress,
+        flightY: landingStart + (landingY - landingStart) * eased,
+      };
+      if (progress >= 1) {
+        movementRef.current = null;
+        setMovement(null);
+        onStatus(`Jump jet landed · ${Math.round(remaining)}% fuel remains.`);
+        return;
+      }
+      movementRef.current = next;
+      setMovement(next);
+      pendingTimers.current.push(window.setTimeout(tick, 18));
+    };
+    pendingTimers.current.push(window.setTimeout(tick, 18));
   }, [onStatus]);
 
   const beginThrust = React.useCallback((event: React.PointerEvent<HTMLButtonElement>, direction: Exclude<ArtilleryMove, 0>, mobility: ArtilleryMobility) => {
@@ -633,12 +680,28 @@ export function ArtilleryBoard({ seed, mode, difficulty, mapSize, world, onStatu
     event.preventDefault();
     event.currentTarget.setPointerCapture?.(event.pointerId);
     const startedAt = performance.now();
-    const active = { side: current.current, direction, mobility, pulse: 0 } as const;
+    const launchX = current.tanks[current.current].x;
+    const launchY = ARTILLERY_HEIGHT - terrainHeight(current.terrain, launchX) - 1.5;
+    const active: NonNullable<ActiveThrust> = {
+      side: current.current,
+      direction,
+      mobility,
+      pulse: 0,
+      phase: 'thrust',
+      launchX,
+      launchY,
+      startFuel: available,
+      flightY: launchY,
+      landingProgress: 0,
+    };
+    movementRef.current = active;
     setMovement(active);
     moveRig(direction, mobility, Math.min(0.6, available));
     sound.play('select');
     fieldRef.current?.scrollIntoView?.({ behavior: 'smooth', block: 'center' });
-    onStatus(`${mobility === 'jet' ? 'Jump jets' : 'Drive'} engaged · hold for thrust, release to stop.`);
+    onStatus(mobility === 'jet'
+      ? 'Jump jet engaged · hold for a longer high arc, release to land.'
+      : 'Drive engaged · hold for distance, release to stop.');
     thrustTimer.current = window.setInterval(() => {
       const elapsed = performance.now() - startedAt;
       const fuelPerSecond = 8 + 32 * Math.min(1, elapsed / 1800);
@@ -650,7 +713,22 @@ export function ArtilleryBoard({ seed, mode, difficulty, mapSize, world, onStatu
         return;
       }
       moveRig(direction, mobility, Math.min(pulseFuel, fuel));
-      setMovement((value) => value ? { ...value, pulse: value.pulse + 1 } : null);
+      const afterMove = stateRef.current;
+      setMovement((value) => {
+        if (!value || value.phase !== 'thrust') return value;
+        const fuelAfterMove = mobility === 'jet' ? afterMove.jetCharges[active.side] : afterMove.traction[active.side];
+        const landingX = afterMove.tanks[active.side].x;
+        const landingY = ARTILLERY_HEIGHT - terrainHeight(afterMove.terrain, landingX) - 1.5;
+        const next = {
+          ...value,
+          pulse: value.pulse + 1,
+          flightY: mobility === 'jet'
+            ? artilleryJetFlightY(value.launchY, landingY, value.startFuel - fuelAfterMove, value.startFuel)
+            : value.flightY,
+        };
+        movementRef.current = next;
+        return next;
+      });
     }, 80);
   }, [canOperate, moveRig, movement, onStatus, sound, stopThrust]);
 
@@ -702,9 +780,12 @@ export function ArtilleryBoard({ seed, mode, difficulty, mapSize, world, onStatu
     const strideProgress = driving ? movement.pulse / 5 : animated?.phase === 'move' && animatedMove !== 0 ? animated.progress : 0;
     const stride = Math.sin(strideProgress * Math.PI * 10) * 0.65;
     const bodyLift = driving ? -Math.abs(Math.sin(strideProgress * Math.PI * 5)) * 0.32 : 0;
-    const jetProgress = movement?.side === side && movement.mobility === 'jet' ? Math.min(1, 0.3 + movement.pulse / 18) : 0;
-    const jetLift = jetProgress > 0 ? -2.5 - jetProgress * 5.5 : 0;
-    const y = ARTILLERY_HEIGHT - terrainHeight(displayTerrain, displayX) - 1.5 + bodyLift + jetLift;
+    const jetting = movement?.side === side && movement.mobility === 'jet';
+    const jetProgress = jetting
+      ? movement.phase === 'thrust' ? Math.min(1, 0.3 + movement.pulse / 18) : Math.max(0, 1 - movement.landingProgress)
+      : 0;
+    const terrainY = ARTILLERY_HEIGHT - terrainHeight(displayTerrain, displayX) - 1.5;
+    const y = jetting ? movement.flightY : terrainY + bodyLift;
     const displayAngle = canOperate && state.current === side ? angle : settledAim[side];
     const barrel = artilleryBarrelEndpoint(displayX, y - 1.8, side, displayAngle);
     const crew = RANGE_RIGS[side];
@@ -787,7 +868,7 @@ export function ArtilleryBoard({ seed, mode, difficulty, mapSize, world, onStatu
             <circle cx={displayX + 3.8} cy={y + 2.7} r={0.3 + Math.abs(stride) * 0.16} className="fill-el opacity-25" />
           </g>
         )}
-        {jetProgress > 0 && (
+        {jetProgress > 0 && movement?.phase === 'thrust' && (
           <g className="el-fire" aria-hidden>
             <path d={`M ${displayX - 1.7} ${y + 1} l -0.75 ${2.4 + Math.sin(jetProgress * Math.PI * 8) * 0.5} 1.35 -0.6 Z M ${displayX + 1.7} ${y + 1} l 0.75 ${2.4 - Math.sin(jetProgress * Math.PI * 8) * 0.5} -1.35 -0.6 Z`} className="fill-el opacity-75" />
             <circle cx={displayX - 2.25} cy={y + 4.1} r="0.7" className="fill-el opacity-25" />
@@ -944,6 +1025,17 @@ export function ArtilleryBoard({ seed, mode, difficulty, mapSize, world, onStatu
               <circle cx={dragGuide.end.x} cy={dragGuide.end.y} r="1.1" className="fill-viable-hi opacity-90" />
             </g>
           )}
+          {movement?.mobility === 'jet' && (
+            <g className="el-electric" aria-hidden data-testid="artillery-jet-trajectory">
+              <path
+                d={`M ${movement.launchX} ${movement.launchY} Q ${(movement.launchX + state.tanks[movement.side].x) / 2} ${Math.min(movement.launchY, movement.flightY) - 7} ${state.tanks[movement.side].x} ${movement.flightY}`}
+                className="fill-none stroke-el opacity-45"
+                strokeWidth="0.36"
+                strokeDasharray="0.8 0.7"
+              />
+              <circle cx={state.tanks[movement.side].x} cy={movement.flightY + 3.2} r="1.7" className="fill-none stroke-el opacity-25" strokeWidth="0.25" />
+            </g>
+          )}
           {tank('left')}{tank('right')}
           {animatedProjectiles.map((projectile, index) => (
             <g key={index} className={activePayloadMeta.elementClass}>
@@ -1062,7 +1154,7 @@ export function ArtilleryBoard({ seed, mode, difficulty, mapSize, world, onStatu
               <div className="cockpit-instrument cockpit-mobility grid min-w-0 content-start gap-1.5 border border-edge-strong p-2" role="group" aria-label="Mobility thrusters">
                 <span className="flex items-center justify-between gap-2 type-legend">
                   <span>Thrust</span>
-                  <span className="font-body text-[11px] normal-case tracking-normal text-ink-3">Hold to move · ramps while held</span>
+                  <span className="font-body text-[11px] normal-case tracking-normal text-ink-3">Drive crawls · jet leaps</span>
                 </span>
                 {(['drive', 'jet'] as const).map((choice) => {
                   const fuel = choice === 'drive' ? state.traction[state.current] : state.jetCharges[state.current];
@@ -1086,14 +1178,14 @@ export function ArtilleryBoard({ seed, mode, difficulty, mapSize, world, onStatu
                             onPointerUp={stopThrust}
                             onPointerCancel={stopThrust}
                           >
-                            <span aria-hidden>{screenDirection < 0 ? '◀' : '▶'}</span>
+                            <span aria-hidden>{choice === 'jet' ? screenDirection < 0 ? '↖' : '↗' : screenDirection < 0 ? '◀' : '▶'}</span>
                           </Button>
                         );
                         if (index === 0) return button;
                         return (
                           <React.Fragment key={direction}>
                             <div className="min-w-0">
-                              <span className="flex justify-between font-mono text-[10px] uppercase text-ink-2"><b>{choice === 'drive' ? 'Drive' : 'Jump jet'}</b><b>{Math.round(fuel)}%</b></span>
+                              <span className="flex justify-between font-mono text-[10px] uppercase text-ink-2"><b>{choice === 'drive' ? 'Drive' : 'Jump jet · arc'}</b><b>{Math.round(fuel)}%</b></span>
                               <span className="mt-1 block h-1.5 overflow-hidden border border-edge bg-s0"><span className={`block h-full ${choice === 'drive' ? 'bg-viable-hi' : 'bg-el-electric'}`} style={{ width: `${fuel}%` }} /></span>
                             </div>
                             {button}

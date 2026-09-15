@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   applyArtilleryShot,
   applyArtilleryMove,
+  ARTILLERY_HEIGHT,
   ARTILLERY_MAX_DRIVE_FUEL,
   ARTILLERY_MAX_JET_FUEL,
   ARTILLERY_MOVE_DISTANCE,
@@ -55,6 +56,16 @@ describe('Arcade deterministic rules', () => {
     expect(outcome.path.length).toBeGreaterThan(2);
     expect(applied.state.turn).toBe(1);
     expect(state).toEqual(before);
+  });
+
+  it('lets high projectiles leave the camera and return to the terrain', () => {
+    const state = createArtilleryState('high-arc-return', 'bot', 'standard', { world: 'stonera', mapSize: 'wide' });
+    const outcome = simulateArtilleryShot(state, { angle: 80, power: 100 });
+    const projectile = outcome.projectiles[0];
+
+    expect(Math.max(...projectile.path.map((point) => point.y))).toBeGreaterThan(ARTILLERY_HEIGHT + 35);
+    expect(projectile.outOfBounds).toBe(false);
+    expect(projectile.impact).not.toBeNull();
   });
 
   it('always offers a shot that can reach the opposing range rig', () => {
