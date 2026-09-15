@@ -786,7 +786,7 @@ function LongReturnGame() {
   const report = scene && scan ? scanReport(scene, scanScout, scan) : null;
   const encounterCreature = scene && scene.encounter ? CREATURES.find((entry) => entry.id === scene.encounter.creatureId) : null;
   const activeEncounterOptions = encounterState && !encounterState.result
-    ? encounterOptions(scene, encounterState.scout, crew, encounterState.mode, encounterState.informed)
+    ? encounterOptions(scene, encounterState.scout, crew, encounterState.mode, encounterState.informed, strain)
     : [];
   const currentAction = phase === 'transition'
     ? { stage: `Scene ${sceneIndex + 1} of ${MISSION.scenes.length} · Arrival`, title: 'See what your last choice changed', hint: 'This beat connects the previous result to the situation now in front of the crew.', icon: 'bi-arrow-down-right-circle', resolved: true }
@@ -970,7 +970,7 @@ function LongReturnGame() {
     cueChanges({ energy: affected && (option.scoutStrain || option.crewStrain) ? { [affected.id]: option.scoutStrain || option.crewStrain } : {}, stability: option.instability || 0 });
     if (option.companion) setCompanion({ creature: encounterCreature, ready: true, benefit: scene.encounter.companionBenefit });
     const archetype = scene.encounter.archetype || 'injured';
-    const helper = option.companion ? crew.find((member) => option.label.includes(member.species)) : null;
+    const helper = option.helperId ? crew.find((member) => member.id === option.helperId) : null;
     const narrative = encounterNarrative({
       archetype,
       option,

@@ -70,10 +70,10 @@ export function encounterOutlook(scene, creature) {
   };
 }
 
-export function encounterOptions(scene, scout, crew, mode = 'scout', informed = false) {
+export function encounterOptions(scene, scout, crew, mode = 'scout', informed = false, strain = {}) {
   if (!scene.encounter) return [];
   const outlook = scout ? encounterOutlook(scene, scout) : null;
-  const medic = crew.find((member) => member.traits.includes('healing') || member.abilities.some((ability) => ability.action === 'mend'));
+  const medic = crew.find((member) => readinessState(strain[member.id]).id !== 'spent' && (member.traits.includes('healing') || member.abilities.some((ability) => ability.action === 'mend')));
   const baseSurprise = mode === 'group' && !informed ? 1 : outlook ? outlook.surpriseStrain : 0;
   const archetype = scene.encounter.archetype || 'injured';
 
@@ -107,20 +107,20 @@ export function encounterOptions(scene, scout, crew, mode = 'scout', informed = 
 
   if (mode === 'group') {
     const options = [];
-    if (medic) options.push({ id: 'aid', label: `${medic.species} treats the injury`, summary: 'Help the native and attempt a temporary field bond.', crewStrain: baseSurprise, instability: informed ? 0 : 1, companion: true, resolution: 'befriended', recommended: true });
+    if (medic) options.push({ id: 'aid', helperId: medic.id, label: `${medic.species} treats the injury`, summary: 'Help the native and attempt a temporary field bond.', crewStrain: baseSurprise, instability: informed ? 0 : 1, companion: true, resolution: 'befriended', recommended: true });
     options.push({ id: 'drive-off', label: 'Drive it out of the underdeck', summary: 'Open the route by force. The crew stays together, but the annex hears it.', crewStrain: baseSurprise + 1, instability: 2, companion: false, resolution: 'cleared' });
     options.push({ id: 'detour', label: 'Back out and take the catwalk', summary: 'Avoid contact and reconsider the other route.', crewStrain: baseSurprise, instability: informed ? 0 : 1, companion: false, resolution: 'detour' });
     return options;
   }
 
-  const directMedic = scout && (scout.traits.includes('healing') || scout.abilities.some((ability) => ability.action === 'mend'));
+  const directMedic = scout && readinessState(strain[scout.id]).id !== 'spent' && (scout.traits.includes('healing') || scout.abilities.some((ability) => ability.action === 'mend'));
   const options = [];
   if (directMedic) {
-    options.push({ id: 'aid', label: 'Treat the injury', summary: 'Use the scout’s healing ability to establish trust without calling the crew.', scoutStrain: baseSurprise, instability: 0, companion: true, resolution: 'befriended', recommended: true });
+    options.push({ id: 'aid', helperId: scout.id, label: 'Treat the injury', summary: 'Use the scout’s healing ability to establish trust without calling the crew.', scoutStrain: baseSurprise, instability: 0, companion: true, resolution: 'befriended', recommended: true });
   } else if (medic && outlook && outlook.channel) {
-    options.push({ id: 'call-medic', label: `Call ${medic.species} to help`, summary: `Use ${outlook.channel} to summon help. The delay destabilizes the annex, but may earn an ally.`, scoutStrain: baseSurprise, instability: 1, companion: true, resolution: 'befriended', recommended: true });
+    options.push({ id: 'call-medic', helperId: medic.id, label: `Call ${medic.species} to help`, summary: `Use ${outlook.channel} to summon help. The delay destabilizes the annex, but may earn an ally.`, scoutStrain: baseSurprise, instability: 1, companion: true, resolution: 'befriended', recommended: true });
   } else if (medic) {
-    options.push({ id: 'return-for-medic', label: `Return for ${medic.species}`, summary: 'Leave and physically guide the medic back. Safe, but tiring and slow.', scoutStrain: baseSurprise + 1, instability: 1, companion: true, resolution: 'befriended', recommended: true });
+    options.push({ id: 'return-for-medic', helperId: medic.id, label: `Return for ${medic.species}`, summary: 'Leave and physically guide the medic back. Safe, but tiring and slow.', scoutStrain: baseSurprise + 1, instability: 1, companion: true, resolution: 'befriended', recommended: true });
   }
   const escapeCost = baseSurprise + (outlook && outlook.stealth >= 62 ? 0 : 1);
   options.push({ id: 'withdraw', label: 'Withdraw and report', summary: 'Preserve the encounter for the full crew. The route remains occupied.', scoutStrain: escapeCost, instability: 0, companion: false, resolution: 'unresolved' });
