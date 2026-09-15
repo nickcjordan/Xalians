@@ -21,6 +21,15 @@ Statuses progress independently: identified → implementing → technically ver
 
 ### Live findings
 
+### September 15 — explicit helper identity
+
+- [x] Bind group aid, direct scout treatment, remote medic call and physical return to an explicit helper ID, never a substring in the button label.
+- [x] Exclude spent medics from aid options using the engine's readiness rule; previews no longer offer unavailable helpers.
+- [x] 164 tests, responsive encounter/companion flow and production bundle checks pass. Renamed-label identity, exhausted medic group and direct scout treatment covered.
+- [ ] Audit whether spent one-use mending techniques should affect encounter treatment availability independently of innate healing; inspect existing rule contract before changing gameplay.
+
+Previous turn: progress (available defender selection and layout fix, PR #279 merged). Current continuation: progress (helper identity and availability correction). Full player acceptance remains unproven; goal stays active.
+
 ### September 15 — encounter readiness attribution
 
 - [x] Group encounter preview, animation and resolution share one actor selection that excludes spent creatures. Solo encounters retain their actual scout.
