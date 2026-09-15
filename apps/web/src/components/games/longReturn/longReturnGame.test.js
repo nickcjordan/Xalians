@@ -441,7 +441,7 @@ describe('Long Return Simple mode', () => {
     expect(findButton(container, /^send /i).disabled).toBe(false);
     click(container, /^send /i);
     expect(container.querySelector('[aria-label="Scouting in progress"]')).toBeTruthy();
-    expect(container.querySelector('.lr-scout-meter.is-energy').getAttribute('aria-label')).toContain('6 of 6');
+    expect(container.querySelector('.lr-scout-meter.is-energy').getAttribute('aria-label')).toContain('5 of 6');
     click(container, /skip to outcome/i);
     expect(container.querySelector('.lr-scout-meter.is-energy').getAttribute('aria-label')).toContain('5 of 6');
     click(container, /review scout report/i);

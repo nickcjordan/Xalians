@@ -21,6 +21,13 @@ Statuses progress independently: identified → implementing → technically ver
 
 ### Live findings
 
+### September 15 — player feedback: scouting needs a causal story
+
+- Reopened from the player's published screenshot: five isolated statements separated energy from departure, duplicated report delivery, and retained dead playback controls after completion.
+- Replaced scout narration with titled departure/search/communication beats, adding contact only when encountered. Actual energy and stability costs sit beside the trip that caused them. Physical return retains its separate delivery boundary.
+- Scout continuation now sits with story controls; completed stories remove pause/step controls instead of disabling them. Earlier beats remain readable, and continuation remains explicit.
+- Verification: 172 game tests, production build/budgets, physical-return/contact/checkpoint replay passed. Responsive persistent-story replay covers crossing, scouting and encounter controls. Player acceptance remains open.
+
 ### September 15 — published release review and acceptance boundary
 
 Deployment `34987496761` completed successfully for main commit `46d4705bb0e3a5dcda940247605288c7d1a3270a` (PR #289). The published `https://xalians.com/long-return` passed both the physical-return/contact-report replay and a seven-scene run with 14 salvage and 2 stability. Static asset HTTP failures are now checked alongside JavaScript errors. Replays accept `LR_BASE_URL` so deployment validation does not silently test localhost.

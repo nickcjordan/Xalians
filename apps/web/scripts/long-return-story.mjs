@@ -25,7 +25,8 @@ try {
       assert(await story.isVisible(), 'No automatic dismissal');
       const panel = await story.boundingBox();
       assert(panel.x >= 0 && panel.x + panel.width <= width + 1 && panel.y >= 52 && panel.y + panel.height <= 900);
-      const next = page.locator('[role="dialog"] > button');
+      assert.equal(await story.getByRole('button', { name: 'Pause story', exact: true }).count(), 0, 'Finished stories have no dead playback controls');
+      const next = page.locator('[role="dialog"] button').last();
       const button = await next.boundingBox();
       assert(button.y + button.height <= 900, 'Continue stays visible');
       await page.screenshot({ path: `${output}/${width}-${name}.png` });
