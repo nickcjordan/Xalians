@@ -28,20 +28,19 @@ try {
     await capture('route');
     if (width === 1280) {
       const cross = await page.getByRole('button', { name: /Cross now/ }).boundingBox();
-      const lastChoice = await page.locator('.lr-board-select').last().boundingBox();
+      const lastChoice = await page.locator('.lr-lead-options button').last().boundingBox();
       assert(cross.y >= 0 && cross.y + cross.height <= 900, 'Crossing action must be visible without scrolling');
       assert(lastChoice.y + lastChoice.height <= 900, 'Both route choices must be visible without scrolling');
     }
-    await page.locator('.lr-lead-options > summary').click();
     await capture('lead-comparison');
     await page.locator('.lr-lead-options button[aria-pressed="false"]').first().click();
-    assert.equal(await page.locator('.lr-lead-options').getAttribute('open'), null, 'Choosing a lead closes the optional picker');
-    assert(await page.locator('.lr-lead-options > summary').evaluate(el => el === document.activeElement), 'Lead choice returns keyboard focus to its picker');
+    assert.equal(await page.locator('.lr-lead-options button').count(), 3, 'All lead alternatives remain visible');
+    assert(await page.locator('.lr-lead-options button[aria-pressed="true"]').evaluate(el => el === document.activeElement), 'Lead choice retains keyboard focus');
     await capture('lead-choices');
     await page.getByRole('button', { name: /Advanced: customize/ }).click();
     await capture('custom-crew');
     await page.getByRole('button', { name: 'Back to crossing choices', exact: true }).click();
-    await page.locator('.lr-board-pick').first().click();
+    if (await page.locator('.lr-board-pick').count()) await page.locator('.lr-board-pick').first().click();
     await page.getByRole('button', { name: /Cross now/ }).click();
     await page.getByRole('button', { name: /Continue to result/ }).click();
     await capture('result');

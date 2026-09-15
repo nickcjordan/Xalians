@@ -21,6 +21,15 @@ Statuses progress independently: identified → implementing → technically ver
 
 ### Live findings
 
+### September 15 — approachable lead selection
+
+- [x] Separate route comparison from a visible three-lead choice; short directional transition and explicit Change route preserve the selected approach without spending resources.
+- [x] Present approach, capability fit, and sacrifice in consistent rows. Hide anatomy/element provenance in optional technique details, not the primary choice.
+- [x] Prefer reusable methods at equal ranked known cost before rewarding surplus crossing score. Intake current now suggests Hippochamp rather than needlessly spending Graviclaw's ability.
+- [x] Selected ability overrides are reflected in the lead card. Companion savings and spent warnings use the same forecast as the route comparison.
+- [x] Check phone/tablet/desktop flow, advanced detour, persistent transitions, and a seven-scene deep extraction (14 salvage, 2 stability). Automated evidence: `long-return-leads.mjs`, `long-return-viewport.mjs`, `long-return-mission.mjs`, and game tests.
+- [ ] Player acceptance of approach clarity remains open; no claim that the overall experience is complete.
+
 ### September 14 — persistent action storytelling
 
 - [x] Replace the expiring caption slot in crossing, scouting/return and encounter-response animations with a cumulative account beside the artwork.

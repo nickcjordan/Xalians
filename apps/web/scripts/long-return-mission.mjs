@@ -25,7 +25,7 @@ try {
       await dialog.getByRole('button', { name: /Continue to result|Review scout report|Check scout status|Respond to encounter|See encounter result|Choose response/ }).waitFor({ timeout: 30000 });
       events.push({ type: 'animation', elapsed: Date.now()-started, text: await dialog.innerText() });
       await page.screenshot({ path: `${output}/${step}-animation.png` });
-      await dialog.getByRole('button').click();
+      await dialog.locator(':scope > button').click();
       continue;
     }
     await page.screenshot({ path: `${output}/${step}-view.png`, fullPage: true });

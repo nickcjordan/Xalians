@@ -433,4 +433,8 @@ Move a Trial to Established only when evidence shows that players understand and
 - `apps/web/src/components/games/longReturn/actionSequence.js` — ordered committed-action beats.
 # Action-story persistence (September 14)
 
+## Approachable choices (September 15)
+
+Simple mode makes meaningful alternatives understandable rather than hiding them. Route and lead decisions occupy separate views; a visible back control preserves preparation, while Cross now alone executes it. Lead alternatives use the same sequence: physical approach, relevant strength, resource/one-use sacrifice. Raw anatomy and element provenance belong in optional analysis. Recommendations should not consume an irreplaceable tool merely to increase an already sufficient crossing score. Short directional motion communicates navigation, with reduced-motion support and focus moving to the new view.
+
 Action narration is part of the scene, not a toast notification. Reveal events cumulatively next to the artwork, retain earlier lines at full readability, and let the player pause or advance at their own pace. Never dismiss an important consequence on a timer. Skip reveals the entire account; Continue leaves it. Auto-follow must stop when the player scrolls back to read. Reduced motion reveals the complete account immediately without bypassing acknowledgement. Keep calculations in the existing result details rather than layering another recap banner over the scene.

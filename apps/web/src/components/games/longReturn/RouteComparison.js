@@ -50,7 +50,7 @@ export default function RouteComparison({ plans, selectedId, onSelect, onPreview
     <div className="lr-board-row lr-board-footer" role="row">
       <div className="lr-board-axis" role="rowheader">Your route</div>
       {plans.map((plan, index) => <div role="cell" key={plan.route.id} className={selectedId === plan.route.id ? 'is-selected' : ''}>
-        <button type="button" className="lr-board-select" aria-label={`${selectedId === plan.route.id ? 'Selected' : 'Select'}: ${plan.route.title}`} aria-pressed={selectedId === plan.route.id} onClick={() => onSelect(plan.route.id)}>{selectedId === plan.route.id ? <><Check />Selected</> : <>Select route<ArrowRight /></>}</button>
+        <button type="button" className="lr-board-select" aria-label={`Choose crew for: ${plan.route.title}`} aria-pressed={selectedId === plan.route.id} onClick={() => onSelect(plan.route.id)}>Choose who leads<ArrowRight /></button>
         <details className="lr-board-analysis"><summary>Why these costs?</summary><p>{plan.route.description}</p><p>{plan.lead.species} leads with {plan.method.label}; {plan.support.species} supports. Crew score {plan.teamScore} against target {plan.difficulty}.</p>{values[index].saved > 0 && <p>{companion.creature.species} preserves 1 lead energy.</p>}<p>{values[index].uncertain ? 'The displayed cost is the known part. An unresolved hazard or native encounter can add energy or stability costs.' : 'These costs include the chosen crew, method, and known conditions.'}</p>{plan.route.consequence && <p><strong>{plan.route.consequence.label}:</strong> {plan.route.consequence.future}</p>}</details>
       </div>)}
     </div>
