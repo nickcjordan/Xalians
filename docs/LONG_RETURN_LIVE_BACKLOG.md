@@ -21,6 +21,16 @@ Statuses progress independently: identified → implementing → technically ver
 
 ### Live findings
 
+### September 15 — healing versus crossing techniques
+
+- [x] Audited the current medic roster: every mending creature also has innate healing. Treatment remains available independently of crossing techniques; no numerical rule change justified.
+- [x] Encounter detail now calls direct treatment innate healing, not a one-use ability. Regression test flags future mending-only creatures for an explicit rule decision.
+- [x] Rescue narration distinguishes surprise before treatment from the scout's extra trip fetching a medic; the healer is not incorrectly charged in prose.
+- [x] 165 tests and responsive encounter/companion flow plus build/bundle checks pass.
+- [ ] Broader human validation of the route/lead flow and complete mission remains unproven. Continue independent UX auditing, not acceptance-by-test-count.
+
+Previous continuation: progress (explicit helper identity, PR #280 merged). Current continuation: progress (rule audit and causal narration correction, with no speculative balance change).
+
 ### September 15 — explicit helper identity
 
 - [x] Bind group aid, direct scout treatment, remote medic call and physical return to an explicit helper ID, never a substring in the button label.

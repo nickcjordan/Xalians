@@ -35,3 +35,16 @@ test('aid names its actual helper by ID and excludes spent medics', () => {
   expect(solo.helperId).toBe(medics[0].id);
   expect(encounterOptions(scene, scout, crew, 'scout').filter(o => o.companion).every(o => o.helperId === medics[0].id)).toBe(true);
 });
+
+test('current medics have innate care independent of one-use crossing techniques', () => {
+  const medics = CREATURES.filter(c => c.abilities.some(a => a.action === 'mend'));
+  expect(medics.length).toBeGreaterThan(0);
+  for (const medic of medics) {
+    expect(medic.traits).toContain('healing');
+    const withoutTechniques = { ...medic, abilities: [] };
+    const aid = encounterOptions(MISSION.scenes[1], withoutTechniques, [withoutTechniques], 'scout').find(o => o.id === 'aid');
+    expect(aid.summary).toContain('innate healing');
+    expect(aid.summary).toContain('one-use crossing techniques stay available');
+    expect(aid.helperId).toBe(medic.id);
+  }
+});

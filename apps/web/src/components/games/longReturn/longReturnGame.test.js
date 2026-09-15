@@ -771,5 +771,11 @@ describe('Long Return decision language', () => {
     expect(tell('call-medic')).not.toContain('second time');
     expect(tell('return-for-medic')).toContain('goes back for Hippochamp');
     expect(tell('return-for-medic')).toContain('second time');
+    const surprised = encounterNarrative({ ...context, option: { id: 'call-medic', companion: true, scoutStrain: 1 } });
+    expect(surprised).toContain('strength from Chromocat before the treatment begins');
+    expect(surprised).not.toContain('work leaves Hippochamp');
+    const fetched = encounterNarrative({ ...context, option: { id: 'return-for-medic', companion: true, scoutStrain: 1 } });
+    expect(fetched).toContain('extra trip leaves Chromocat');
+    expect(tell('call-medic')).not.toContain('taken strength');
   });
 });

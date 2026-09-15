@@ -116,7 +116,7 @@ export function encounterOptions(scene, scout, crew, mode = 'scout', informed = 
   const directMedic = scout && readinessState(strain[scout.id]).id !== 'spent' && (scout.traits.includes('healing') || scout.abilities.some((ability) => ability.action === 'mend'));
   const options = [];
   if (directMedic) {
-    options.push({ id: 'aid', helperId: scout.id, label: 'Treat the injury', summary: 'Use the scout’s healing ability to establish trust without calling the crew.', scoutStrain: baseSurprise, instability: 0, companion: true, resolution: 'befriended', recommended: true });
+    options.push({ id: 'aid', helperId: scout.id, label: 'Treat the injury', summary: scout.traits.includes('healing') ? 'Use the scout’s innate healing to establish trust. Its one-use crossing techniques stay available.' : 'Use the scout’s mending expertise to establish trust without calling the crew.', scoutStrain: baseSurprise, instability: 0, companion: true, resolution: 'befriended', recommended: true });
   } else if (medic && outlook && outlook.channel) {
     options.push({ id: 'call-medic', helperId: medic.id, label: `Call ${medic.species} to help`, summary: `Use ${outlook.channel} to summon help. The delay destabilizes the annex, but may earn an ally.`, scoutStrain: baseSurprise, instability: 1, companion: true, resolution: 'befriended', recommended: true });
   } else if (medic) {

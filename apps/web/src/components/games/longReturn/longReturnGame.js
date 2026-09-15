@@ -409,7 +409,11 @@ export function encounterNarrative({ archetype, option, nativeName, actorName, s
   const aidDeparture = mode === 'scout' && option.id === 'aid'
     ? `When ${scout} draws back, ${nativeName} follows. It keeps a little distance, but no longer stands in the way.`
     : `When the rescuers draw back, ${nativeName} comes with them. It keeps a little distance, but no longer stands in their way.`;
-  const rescueCost = `${option.scoutStrain || option.crewStrain ? ` The work leaves ${scoutName || actor} with less strength for the next passage.` : ''}${option.instability ? ' The annex does not wait for the rescue; while the crew works, the old machinery continues straining its failing supports.' : ''}`;
+  const rescueEffort = option.scoutStrain || option.crewStrain
+    ? option.id === 'return-for-medic' ? ` Making the extra trip leaves ${scoutName || actor} with less strength for the next passage.`
+      : archetype === 'injured' ? ` The first contact has already taken strength from ${scoutName || actor} before the treatment begins.`
+        : ` The work leaves ${scoutName || actor} with less strength for the next passage.` : '';
+  const rescueCost = `${rescueEffort}${option.instability ? ' The annex does not wait for the rescue; while the crew works, the old machinery continues straining its failing supports.' : ''}`;
   if (option.companion) return archetype === 'trapped'
     ? `The crew makes space between the moving authentication arms. For a moment, ${nativeName} stays where it is, as though the opening might close again. Then it slips clear, and the panicked signal begins to fade.${rescueCost}\n\nWhen the crew moves on, ${nativeName} follows at a cautious distance. This time, nothing is holding it here. It has chosen their company.`
     : `${aidArrival}, giving ${nativeName} room to watch as help reaches its injury. The roots gripping the machinery begin to loosen. What looked like an obstacle was a frightened creature with nowhere safe to go.${rescueCost}\n\n${aidDeparture}`;
