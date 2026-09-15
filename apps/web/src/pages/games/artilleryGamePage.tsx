@@ -2,12 +2,12 @@
 import * as React from 'react';
 import {
   ARTILLERY_HEIGHT,
+  ARTILLERY_CONDITIONS,
+  ARTILLERY_MAP_WIDTHS,
   ARTILLERY_MAX_INTEGRITY,
-  ARTILLERY_MAX_TRACTION,
   ARTILLERY_PAYLOADS,
   ARTILLERY_PAYLOAD_RULES,
   ARTILLERY_SPECIAL_PAYLOADS,
-  ARTILLERY_WIDTH,
   applyArtilleryMove,
   applyArtilleryShot,
   artilleryMovedX,
@@ -16,16 +16,17 @@ import {
   simulateArtilleryShot,
   terrainHeight,
   type ArtilleryAction,
-  type ArtilleryCreature,
   type ArtilleryDifficulty,
+  type ArtilleryMapSize,
   type ArtilleryMode,
+  type ArtilleryMobility,
   type ArtilleryMove,
   type ArtilleryOutcome,
   type ArtilleryPayload,
   type ArtillerySide,
   type ArtilleryShot,
   type ArtilleryState,
-  type ArtillerySystem,
+  type ArtilleryWorld,
 } from '@xalians/rules/arcade';
 
 import { arcadeGame } from '@/arcade/catalog';
@@ -33,6 +34,7 @@ import { createArtillerySound } from '@/arcade/artillerySound';
 import { arcadeSessionId, completeArcadeGame, dailyArcadeSeed, practiceArcadeSeed } from '@/arcade/progress';
 import { ArcadeGameShell } from '@/components/arcade/ArcadeGameShell';
 import { Button } from '@/components/ui/button';
+import { Volume2, VolumeX } from 'lucide-react';
 
 const GAME = arcadeGame('artillery')!;
 
@@ -44,7 +46,18 @@ type AnimatedShot = {
   shot: Required<ArtilleryShot>;
   terrainAfter: number[];
 } | null;
-type AnimatedMove = { side: ArtillerySide; fromX: number; toX: number; progress: number } | null;
+type ActiveThrust = {
+  side: ArtillerySide;
+  direction: Exclude<ArtilleryMove, 0>;
+  mobility: ArtilleryMobility;
+  pulse: number;
+  phase: 'thrust' | 'landing';
+  launchX: number;
+  launchY: number;
+  startFuel: number;
+  flightY: number;
+  landingProgress: number;
+} | null;
 type CombatStats = {
   shots: number;
   hits: number;
@@ -54,44 +67,57 @@ type CombatStats = {
   payloads: ArtilleryPayload[];
 };
 
-const CREATURES: Record<ArtilleryCreature, {
-  name: string;
-  title: string;
-  doctrine: string;
-  glyph: string;
-  ability: string;
-  abilityShort: string;
-  system: Exclude<ArtillerySystem, 'none'>;
-  detail: string;
-}> = {
-  codazzo: { name: 'Codazzo', title: 'Regenerative siege crew', doctrine: 'Recover and endure', glyph: '✤', ability: 'Root Carapace', abilityShort: 'Repair 12 · Guard 22', system: 'anchor', detail: 'Repairs 12 hull now and blocks up to 22 damage from the next hit.' },
-  terragoyle: { name: 'Terragoyle', title: 'Levitation range crew', doctrine: 'Defy collapse', glyph: '◇', ability: 'Lift Veil', abilityShort: 'Guard 18 · Soft landing', system: 'lift', detail: 'Blocks up to 18 damage from the next hit and halves terrain-collapse damage.' },
+const RANGE_RIGS = {
+  left: { name: 'Range Rig A', shortName: 'Rig A' },
+  right: { name: 'Range Rig B', shortName: 'Rig B' },
 } as const;
 
 const CONDITION_SHORT = {
-  standard: 'Standard',
-  'heavy-gravity': 'Gravity +',
-  'thin-air': 'Thin air',
-  'spore-gust': 'Spore gust',
+  standard: 'Standard gravity',
+  'heavy-gravity': 'Heavy gravity',
+  'thin-air': 'Low gravity',
+  'dust-gust': 'Dust gusts',
 } as const;
+
+const WORLD_META: Record<ArtilleryWorld, {
+  name: string;
+  terrain: string;
+  quirk: string;
+  image: string;
+  elementClass: string;
+}> = {
+  stonera: { name: 'Stonera', terrain: 'Cratered ridges', quirk: 'Low gravity lengthens every arc.', image: '/assets/img/planets/landscape/rock_landscape_planet.jpg', elementClass: 'el-rock' },
+  magmuth: { name: 'Magmuth', terrain: 'Obsidian crags', quirk: 'Heavy gravity demands more power.', image: '/assets/img/planets/landscape/fire_landscape_planet.jpg', elementClass: 'el-fire' },
+  krystos: { name: 'Krystos', terrain: 'Frozen peaks', quirk: 'Sharp ice shelves constrain driving.', image: '/assets/img/planets/landscape/ice_landscape_planet.jpg', elementClass: 'el-ice' },
+  endessa: { name: 'Endessa', terrain: 'Rolling glass dunes', quirk: 'Dust gusts amplify the wind.', image: '/assets/img/planets/landscape/sand_landscape_planet.jpg', elementClass: 'el-sand' },
+};
+
+const MAP_META: Record<ArtilleryMapSize, { label: string; detail: string }> = {
+  compact: { label: 'Compact', detail: '300 units · quicker duels' },
+  standard: { label: 'Standard', detail: '360 units · balanced range' },
+  wide: { label: 'Wide', detail: '440 units · longest shots' },
+};
 
 const PAYLOAD_META: Record<ArtilleryPayload, {
   label: string;
   shortLabel: string;
   detail: string;
   purpose: string;
+  rackHint: string;
   glyph: string;
   elementClass: string;
 }> = {
-  shell: { label: 'Core shell', shortLabel: 'Core', detail: 'Balanced blast · unlimited', purpose: 'Reliable ranging and steady damage', glyph: '●', elementClass: 'el-metal' },
-  barb: { label: 'Barb fan', shortLabel: 'Fan', detail: 'Three spreading barbs · 2 charges', purpose: 'Catches uncertain ranges', glyph: '⋰', elementClass: 'el-rock' },
-  bore: { label: 'Frack bore', shortLabel: 'Bore', detail: 'Burrows before detonation · 2 charges', purpose: 'Collapses ground beneath cover', glyph: '◆', elementClass: 'el-sand' },
-  cluster: { label: 'Spore cluster', shortLabel: 'Cluster', detail: 'Five small warheads · 1 charge', purpose: 'Saturates a wide shelf', glyph: '✣', elementClass: 'el-chemical' },
-  bloom: { label: 'Rampart bloom', shortLabel: 'Bloom', detail: 'Grows a living berm · 1 charge', purpose: 'Builds cover and changes the terrain', glyph: '✦', elementClass: 'el-plant' },
-  lance: { label: 'Light lance', shortLabel: 'Lance', detail: 'Fast, narrow, heavy hit · 1 charge', purpose: 'Rewards a precise low arc', glyph: '➤', elementClass: 'el-light' },
+  shell: { label: 'Impact round', shortLabel: 'Impact', detail: 'Balanced blast · unlimited', purpose: 'Reliable ranging and steady damage', rackHint: 'Balanced blast', glyph: '●', elementClass: 'el-metal' },
+  barb: { label: 'Scatter volley', shortLabel: 'Scatter', detail: 'Three diverging rounds · 2 charges', purpose: 'Covers uncertain ranges', rackHint: '3-way spread', glyph: '⋰', elementClass: 'el-rock' },
+  bore: { label: 'Breach charge', shortLabel: 'Breach', detail: 'Penetrates before detonation · 2 charges', purpose: 'Collapses ground beneath cover', rackHint: 'Digs deep', glyph: '◆', elementClass: 'el-sand' },
+  cluster: { label: 'Fragment burst', shortLabel: 'Fragment', detail: 'Five submunitions · 1 charge', purpose: 'Saturates a wide shelf', rackHint: '5-shot burst', glyph: '✣', elementClass: 'el-chemical' },
+  bloom: { label: 'Barrier projector', shortLabel: 'Barrier', detail: 'Constructs protective terrain · 1 charge', purpose: 'Builds cover and changes the field', rackHint: 'Builds cover', glyph: '✦', elementClass: 'el-plant' },
+  lance: { label: 'Kinetic lance', shortLabel: 'Lance', detail: 'Fast, narrow, heavy hit · 1 charge', purpose: 'Rewards a precise low arc', rackHint: 'Fast direct hit', glyph: '➤', elementClass: 'el-light' },
 };
 
 const BARREL_LENGTH = 4.2;
+const ARTILLERY_SKY_TOP = -38;
+const ARTILLERY_VIEW_HEIGHT = ARTILLERY_HEIGHT - ARTILLERY_SKY_TOP;
 const RANGE_STARS = [
   [7, 9, 0.16], [14, 16, 0.1], [22, 7, 0.12], [31, 13, 0.08], [38, 5, 0.14],
   [47, 18, 0.09], [57, 8, 0.15], [65, 15, 0.1], [73, 5, 0.08], [82, 13, 0.14],
@@ -156,6 +182,22 @@ export function artilleryFlightFrameIndex(pathLength: number, longestPath: numbe
   return Math.min(pathLength - 1, Math.floor(Math.max(0, Math.min(1, progress)) * (longestPath - 1)));
 }
 
+export function artilleryMoveAnimationProgress(
+  phase: NonNullable<AnimatedShot>['phase'] | null,
+  progress: number,
+  move: ArtilleryMove,
+) {
+  if (move === 0 || phase === null) return 0;
+  if (phase !== 'move') return 1;
+  const clamped = Math.max(0, Math.min(1, progress));
+  return clamped * clamped * (3 - 2 * clamped);
+}
+
+export function artilleryJetFlightY(launchY: number, landingY: number, fuelSpent: number, startFuel: number): number {
+  const progress = Math.max(0, Math.min(1, fuelSpent / Math.max(1, startFuel)));
+  return launchY + (landingY - launchY) * progress - Math.sin(progress * Math.PI) * 42;
+}
+
 export function CommandMeter({ label, value, suffix = '', min, max, disabled, guidance, decreaseKey, increaseKey, compact = false, kind = 'power', side = 'left', onChange }: {
   label: string;
   value: number;
@@ -177,11 +219,11 @@ export function CommandMeter({ label, value, suffix = '', min, max, disabled, gu
   const leftLabel = kind === 'angle' ? 'Aim barrel left' : `Decrease ${label.toLowerCase()} by 1`;
   const rightLabel = kind === 'angle' ? 'Aim barrel right' : `Increase ${label.toLowerCase()} by 1`;
   return (
-    <div className="grid min-w-0 grid-cols-[2.5rem_minmax(0,1fr)_2.5rem] items-center gap-1 border border-edge bg-s0 p-1.5">
+    <div className="grid min-w-0 grid-cols-[3rem_minmax(0,1fr)_3rem] items-center gap-2 border border-edge bg-s0 p-2">
       <Button
         type="button"
         variant="secondary"
-        className={`${compact ? 'h-8' : 'h-10'} w-8 shrink-0 border border-edge-strong p-0 text-heading`}
+        className={`${compact ? 'h-9' : 'h-12'} w-11 shrink-0 border border-edge-strong p-0 text-heading`}
         disabled={disabled || value + leftDelta < min || value + leftDelta > max}
         aria-label={leftLabel}
         onClick={() => adjust(leftDelta)}
@@ -202,12 +244,12 @@ export function CommandMeter({ label, value, suffix = '', min, max, disabled, gu
           className="col-span-2 mt-1 h-5 w-full cursor-pointer accent-[var(--color-viable-hi)] disabled:cursor-not-allowed disabled:opacity-40"
           style={kind === 'angle' && side === 'left' ? { direction: 'rtl' } : undefined}
         />
-        <span className="hidden max-w-full truncate font-body text-[10px] text-ink-3 min-[380px]:block">{guidance}</span>
+        <span className="hidden max-w-full truncate font-body text-small text-ink-3 min-[380px]:block">{guidance}</span>
       </label>
       <Button
         type="button"
         variant="secondary"
-        className={`${compact ? 'h-8' : 'h-10'} w-8 shrink-0 border border-edge-strong p-0 text-heading`}
+        className={`${compact ? 'h-9' : 'h-12'} w-11 shrink-0 border border-edge-strong p-0 text-heading`}
         disabled={disabled || value + rightDelta < min || value + rightDelta > max}
         aria-label={rightLabel}
         onClick={() => adjust(rightDelta)}
@@ -218,23 +260,23 @@ export function CommandMeter({ label, value, suffix = '', min, max, disabled, gu
   );
 }
 
-export function ArtilleryBoard({ seed, mode, difficulty, playerCreature, onStatus, onComplete, onRematch }: {
+export function ArtilleryBoard({ seed, mode, difficulty, mapSize, world, onStatus, onComplete, onRematch }: {
   seed: string;
   mode: ArtilleryMode;
   difficulty: ArtilleryDifficulty;
-  playerCreature: ArtilleryCreature;
+  mapSize: ArtilleryMapSize;
+  world: ArtilleryWorld;
   onStatus: (status: string) => void;
   onComplete: (result: { score: number; actions: ArtilleryAction[] }) => void;
   onRematch: () => void;
 }) {
-  const [state, setState] = React.useState<ArtilleryState>(() => createArtilleryState(seed, mode, difficulty, playerCreature));
+  const [state, setState] = React.useState<ArtilleryState>(() => createArtilleryState(seed, mode, difficulty, { mapSize, world }));
   const [angle, setAngle] = React.useState(45);
   const [power, setPower] = React.useState(70);
   const [payload, setPayload] = React.useState<ArtilleryPayload>('shell');
-  const [system, setSystem] = React.useState<ArtillerySystem>('none');
   const [settledAim, setSettledAim] = React.useState<Record<'left' | 'right', number>>({ left: 45, right: 45 });
   const [animated, setAnimated] = React.useState<AnimatedShot>(null);
-  const [movement, setMovement] = React.useState<AnimatedMove>(null);
+  const [movement, setMovement] = React.useState<ActiveThrust>(null);
   const [shotCallout, setShotCallout] = React.useState<string | null>(null);
   const [handoffPending, setHandoffPending] = React.useState(false);
   const [coachVisible, setCoachVisible] = React.useState(true);
@@ -252,14 +294,24 @@ export function ArtilleryBoard({ seed, mode, difficulty, playerCreature, onStatu
   const completed = React.useRef(false);
   const actions = React.useRef<ArtilleryAction[]>([]);
   const botScheduled = React.useRef(false);
+  const stateRef = React.useRef(state);
+  const thrustTimer = React.useRef<number | null>(null);
+  const movementRef = React.useRef<ActiveThrust>(null);
   const fieldRef = React.useRef<SVGSVGElement>(null);
   const activePointer = React.useRef<number | null>(null);
   const dragOrigin = React.useRef<{ x: number; y: number } | null>(null);
   const [dragGuide, setDragGuide] = React.useState<{ start: { x: number; y: number }; end: { x: number; y: number } } | null>(null);
   const [shortLandscape, setShortLandscape] = React.useState(false);
+  const fieldWidth = state.terrain.length - 1;
+  const worldMeta = WORLD_META[state.world];
+  const environment = ARTILLERY_CONDITIONS[state.condition];
+
+  React.useEffect(() => { stateRef.current = state; }, [state]);
+  React.useEffect(() => { movementRef.current = movement; }, [movement]);
 
   React.useEffect(() => () => {
     pendingTimers.current.forEach(window.clearTimeout);
+    if (thrustTimer.current !== null) window.clearInterval(thrustTimer.current);
     sound.dispose();
   }, [sound]);
 
@@ -280,6 +332,7 @@ export function ArtilleryBoard({ seed, mode, difficulty, playerCreature, onStatu
 
   const animateShot = React.useCallback((shot: ArtilleryShot) => {
     if (animated || movement || state.phase !== 'aiming') return;
+    fieldRef.current?.scrollIntoView?.({ behavior: 'smooth', block: 'center' });
     const resolvedShot: Required<ArtilleryShot> = {
       angle: Math.round(shot.angle),
       power: Math.round(shot.power),
@@ -292,7 +345,7 @@ export function ArtilleryBoard({ seed, mode, difficulty, playerCreature, onStatu
     const applied = applyArtilleryShot(state, resolvedShot);
     const longestPath = Math.max(...applied.outcome.projectiles.map((projectile) => projectile.path.length));
     const reduced = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
-    const shooterCreature = CREATURES[state.creatures[state.current]];
+    const firingRig = RANGE_RIGS[state.current];
     const targetSide: ArtillerySide = state.current === 'left' ? 'right' : 'left';
     const target = state.tanks[targetSide];
     const payloadName = PAYLOAD_META[applied.outcome.payload].label;
@@ -308,6 +361,7 @@ export function ArtilleryBoard({ seed, mode, difficulty, playerCreature, onStatu
 
     const frameState = (phase: NonNullable<AnimatedShot>['phase'], progress: number) => {
       setAnimated({ outcome: applied.outcome, progress, phase, shooter: state.current, shot: resolvedShot, terrainAfter: applied.state.terrain });
+      if (phase === 'impact' && progress >= 0.72) setShotCallout(result);
     };
     const runPhase = (phase: NonNullable<AnimatedShot>['phase'], frames: number, delay: number, done: () => void) => {
       if (reduced) {
@@ -346,32 +400,30 @@ export function ArtilleryBoard({ seed, mode, difficulty, playerCreature, onStatu
         });
         setState(applied.state);
         if (mode === 'local' && !applied.state.winner) setHandoffPending(true);
-        setSystem('none');
         const windLabel = applied.state.wind === 0 ? 'still' : `${Math.abs(applied.state.wind)} ${applied.state.wind > 0 ? 'right' : 'left'}`;
-        const nextCreature = CREATURES[applied.state.creatures[applied.state.current]].name;
+        const nextRig = RANGE_RIGS[applied.state.current].name;
         onStatus(applied.state.winner
           ? result
           : mode === 'bot' && state.current === 'left'
-            ? `${nextCreature} is taking aim.`
-            : `${nextCreature} has command. Wind ${windLabel}.`);
+            ? `${nextRig} is taking aim.`
+            : `${nextRig} has command. Wind ${windLabel}.`);
       }, reduced ? 1 : 260));
     };
 
     const impact = () => {
       sound.play(applied.outcome.hit ? 'hit' : 'impact', applied.outcome.payload);
-      setShotCallout(result);
       runPhase('impact', 26, 24, finish);
     };
     const flight = () => {
       sound.play('launch', resolvedShot.payload);
-      onStatus(`${shooterCreature.name} fires ${payloadName}.`);
+      onStatus(`${firingRig.name} fires ${payloadName}.`);
       runPhase('flight', Math.max(58, Math.min(96, longestPath)), 20, impact);
     };
     const charge = () => {
-      onStatus(`${shooterCreature.name} primes ${payloadName}.`);
+      onStatus(`${firingRig.name} charges ${payloadName}.`);
       runPhase('charge', 14, 24, flight);
     };
-    if (resolvedShot.move !== 0) runPhase('move', 18, 24, charge);
+    if (resolvedShot.move !== 0) runPhase('move', 72, 20, charge);
     else charge();
   }, [animated, mode, movement, onStatus, sound, state]);
 
@@ -383,20 +435,20 @@ export function ArtilleryBoard({ seed, mode, difficulty, playerCreature, onStatu
         onComplete({ score: Math.max(0, 1000 - state.turn * 40), actions: actions.current });
       } else if (mode === 'bot') {
         sound.play('loss');
-        onStatus(`The ${CREATURES[state.creatures.right].name} battery disabled your crawler. Start a new match to retake the range.`);
+        onStatus('The rival range rig disabled your launcher. Start a new match to retake the range.');
       } else if (mode === 'range') {
         onStatus(`Calibration complete: ${stats.left.damage} damage across ${state.turn} shots.`);
       } else if (mode === 'challenge') {
         onStatus(state.winner === 'left' ? 'Limited-ordnance trial cleared.' : 'The trial target survived the five-round magazine.');
       } else {
-        onStatus(`${CREATURES[state.creatures[state.winner]].name} holds the range after ${state.turn} shots.`);
+        onStatus(`${RANGE_RIGS[state.winner].name} holds the range after ${state.turn} shots.`);
       }
       return;
     }
     if (mode === 'bot' && state.current === 'right' && state.phase === 'aiming' && !animated) {
       if (botScheduled.current) return;
       botScheduled.current = true;
-      onStatus('Rival crawler is ranging its shot.');
+      onStatus('Rival rig is calculating its shot.');
       pendingTimers.current.push(window.setTimeout(() => {
         botScheduled.current = false;
         animateShot(chooseArtilleryBotShot(state));
@@ -418,8 +470,7 @@ export function ArtilleryBoard({ seed, mode, difficulty, playerCreature, onStatu
       const next = ARTILLERY_SPECIAL_PAYLOADS.find((choice) => state.payloads[state.current][choice] > 0);
       if (next) setPayload(next);
     }
-    if (state.systemCharges[state.current] <= 0 && system !== 'none') setSystem('none');
-  }, [payload, state.coreAmmo, state.current, state.payloads, state.systemCharges, system]);
+  }, [payload, state.coreAmmo, state.current, state.payloads]);
 
   const displayTerrain = React.useMemo(
     () => animated?.phase === 'impact'
@@ -429,22 +480,16 @@ export function ArtilleryBoard({ seed, mode, difficulty, playerCreature, onStatu
   );
   const terrainPath = React.useMemo(() => {
     const points = displayTerrain.map((height, x) => `L ${x} ${ARTILLERY_HEIGHT - height}`).join(' ');
-    return `M 0 ${ARTILLERY_HEIGHT} ${points} L ${ARTILLERY_WIDTH} ${ARTILLERY_HEIGHT} Z`;
-  }, [displayTerrain]);
+    return `M 0 ${ARTILLERY_HEIGHT} ${points} L ${fieldWidth} ${ARTILLERY_HEIGHT} Z`;
+  }, [displayTerrain, fieldWidth]);
   const terrainContours = React.useMemo(() => [4, 8].map((offset) =>
     displayTerrain.filter((_, x) => x % 2 === 0).map((height, index) => {
       const x = index * 2;
       return `${index === 0 ? 'M' : 'L'} ${x} ${Math.min(ARTILLERY_HEIGHT, ARTILLERY_HEIGHT - height + offset)}`;
     }).join(' ')
   ), [displayTerrain]);
-  const distantTerrainPath = React.useMemo(() => {
-    const ridge = state.terrain.filter((_, x) => x % 4 === 0).map((height, index) => {
-      const x = index * 4;
-      return `L ${x} ${35 - height * 0.22}`;
-    }).join(' ');
-    return `M 0 ${ARTILLERY_HEIGHT} L 0 32 ${ridge} L ${ARTILLERY_WIDTH} ${ARTILLERY_HEIGHT} Z`;
-  }, [state.terrain]);
-  const canFire = !animated && !movement && !handoffPending && state.phase === 'aiming' && (mode !== 'bot' || state.current === 'left');
+  const canOperate = !animated && !handoffPending && state.phase === 'aiming' && (mode !== 'bot' || state.current === 'left');
+  const canFire = canOperate && !movement;
   const animatedProjectiles = React.useMemo(() => animated?.outcome.projectiles.map((projectile) => {
     const longestPath = Math.max(...animated.outcome.projectiles.map((candidate) => candidate.path.length));
     const flightProgress = animated.phase === 'flight' ? animated.progress : animated.phase === 'impact' ? 1 : 0;
@@ -455,18 +500,17 @@ export function ArtilleryBoard({ seed, mode, difficulty, playerCreature, onStatu
     ? animated.outcome.projectiles.flatMap((projectile) => projectile.impact ? [projectile.impact] : [])
     : [];
   const cameraViewBox = React.useMemo(() => {
-    if (!narrowScreen || !animatedProjectiles.length) return `0 10 ${ARTILLERY_WIDTH} ${ARTILLERY_HEIGHT - 10}`;
-    const focus = animatedProjectiles[Math.floor(animatedProjectiles.length / 2)].point;
-    const width = 76;
-    const height = 38;
-    const screenY = ARTILLERY_HEIGHT - focus.y;
-    const x = Math.max(0, Math.min(ARTILLERY_WIDTH - width, focus.x - width / 2));
-    const y = Math.max(10, Math.min(ARTILLERY_HEIGHT - height, screenY - height / 2));
-    return `${x} ${y} ${width} ${height}`;
-  }, [animatedProjectiles, narrowScreen]);
+    if (!narrowScreen) return `0 ${ARTILLERY_SKY_TOP} ${fieldWidth} ${ARTILLERY_VIEW_HEIGHT}`;
+    const focusX = animatedProjectiles.length
+      ? animatedProjectiles[Math.floor(animatedProjectiles.length / 2)].point.x
+      : (state.tanks.left.x + state.tanks.right.x) / 2;
+    const width = Math.min(fieldWidth, Math.max(190, fieldWidth * 0.58));
+    const x = Math.max(0, Math.min(fieldWidth - width, focusX - width / 2));
+    return `${x} ${ARTILLERY_SKY_TOP} ${width} ${ARTILLERY_VIEW_HEIGHT}`;
+  }, [animatedProjectiles, fieldWidth, narrowScreen, state.tanks.left.x, state.tanks.right.x]);
   const aimOutcome = React.useMemo(
-    () => canFire ? simulateArtilleryShot(state, { angle, power, payload, move: 0, system }) : null,
-    [angle, canFire, payload, power, state, system],
+    () => canFire ? simulateArtilleryShot(state, { angle, power, payload, move: 0, system: 'none' }) : null,
+    [angle, canFire, payload, power, state],
   );
   const aimPreviews = aimOutcome?.projectiles.map((projectile) =>
     projectile.path.slice(0, Math.min(14, Math.max(8, projectile.path.length - 7)))
@@ -481,7 +525,7 @@ export function ArtilleryBoard({ seed, mode, difficulty, playerCreature, onStatu
   const payloadRemaining = (side: ArtillerySide, choice: ArtilleryPayload) =>
     choice === 'shell' ? (state.coreAmmo[side] < 0 ? Number.POSITIVE_INFINITY : state.coreAmmo[side]) : state.payloads[side][choice];
 
-  const botThreatened = !!state.lastImpact && Math.abs(state.lastImpact.x - state.tanks.right.x) <= 8 && state.traction.right > 0;
+  const botThreatened = !!state.lastImpact && Math.abs(state.lastImpact.x - state.tanks.right.x) <= 14 && state.traction.right > 0;
   const botFortifying = botThreatened && state.tanks.right.integrity <= 60 && state.payloads.right.bloom > 0;
   const botIntent = botFortifying ? 'Growing crater cover' : botThreatened ? 'Evasive reposition' : state.botPrevious ? 'Correcting range' : 'Measuring range';
   const resultSide = mode === 'bot' || mode === 'range' || mode === 'challenge' ? 'left' : state.winner ?? 'left';
@@ -501,11 +545,7 @@ export function ArtilleryBoard({ seed, mode, difficulty, playerCreature, onStatu
   const windLabel = state.wind === 0
     ? 'Still air'
     : `${state.wind > 0 ? '→' : '←'} ${Math.abs(state.wind)} · ${windAssists ? 'helps shot' : 'fights shot'}`;
-  const currentCreature = CREATURES[state.creatures[state.current]];
-  const crewSystem = currentCreature.system;
-  const systemLabel = currentCreature.ability;
-  const systemDetail = currentCreature.detail;
-  const crewAt = (side: ArtillerySide) => CREATURES[state.creatures[side]];
+  const crewAt = (side: ArtillerySide) => RANGE_RIGS[side];
   const displayedHull = (side: ArtillerySide) => {
     if (!impactMoment || !animated) return state.tanks[side].integrity;
     const targetSide: ArtillerySide = animated.shooter === 'left' ? 'right' : 'left';
@@ -526,8 +566,8 @@ export function ArtilleryBoard({ seed, mode, difficulty, playerCreature, onStatu
       rect.width,
     );
     const toFieldPoint = (x: number, y: number) => ({
-      x: ((x - rect.left) / rect.width) * ARTILLERY_WIDTH,
-      y: 10 + ((y - rect.top) / rect.height) * (ARTILLERY_HEIGHT - 10),
+      x: ((x - rect.left) / rect.width) * fieldWidth,
+      y: ARTILLERY_SKY_TOP + ((y - rect.top) / rect.height) * ARTILLERY_VIEW_HEIGHT,
     });
     setDragGuide({
       start: toFieldPoint(dragOrigin.current.x, dragOrigin.current.y),
@@ -536,10 +576,10 @@ export function ArtilleryBoard({ seed, mode, difficulty, playerCreature, onStatu
     if (!next) return;
     setAngle(next.angle);
     setPower(next.power);
-  }, [canFire, state.current]);
+  }, [canFire, fieldWidth, state.current]);
 
   const beginDirectAim = React.useCallback((event: React.PointerEvent<SVGSVGElement>) => {
-    if (!canFire || !event.isPrimary || (event.pointerType === 'mouse' && event.button !== 0)) return;
+    if (!canFire || event.isPrimary === false || (event.pointerType === 'mouse' && event.button !== 0)) return;
     event.preventDefault();
     activePointer.current = event.pointerId;
     const field = fieldRef.current;
@@ -575,46 +615,143 @@ export function ArtilleryBoard({ seed, mode, difficulty, playerCreature, onStatu
     if (event.currentTarget.hasPointerCapture(event.pointerId)) event.currentTarget.releasePointerCapture(event.pointerId);
   }, []);
 
-  const moveCrawler = React.useCallback((direction: Exclude<ArtilleryMove, 0>) => {
-    if (!canFire || state.traction[state.current] <= 0) return;
-    const fromX = state.tanks[state.current].x;
-    const applied = applyArtilleryMove(state, direction);
-    if (applied.distance === 0) {
-      onStatus('Broken ground blocks the crawler. No drive charge was spent.');
+  const moveRig = React.useCallback((direction: Exclude<ArtilleryMove, 0>, mobility: ArtilleryMobility, thrust: number) => {
+    const current = stateRef.current;
+    const available = mobility === 'jet' ? current.jetCharges[current.current] : current.traction[current.current];
+    if (current.phase !== 'aiming' || available <= 0 || (mode === 'bot' && current.current !== 'left')) return;
+    const applied = applyArtilleryMove(current, direction, mobility, thrust);
+    if (applied.fuelSpent <= 0) return;
+    if (mode === 'bot' && current.current === 'left') actions.current.push({ type: 'move', direction, mobility, thrust: applied.fuelSpent });
+    stateRef.current = applied.state;
+    setState(applied.state);
+  }, [mode]);
+
+  const stopThrust = React.useCallback(() => {
+    if (thrustTimer.current !== null) window.clearInterval(thrustTimer.current);
+    thrustTimer.current = null;
+    const active = movementRef.current;
+    if (!active || active.phase === 'landing') return;
+    const current = stateRef.current;
+    const remaining = active.mobility === 'jet' ? current.jetCharges[active.side] : current.traction[active.side];
+    if (active.mobility === 'drive') {
+      movementRef.current = null;
+      setMovement(null);
+      onStatus(`Drive idle · ${Math.round(remaining)}% fuel remains.`);
       return;
     }
-    const side = state.current;
-    const remaining = applied.state.traction[side];
-    if (mode === 'bot' && side === 'left') actions.current.push({ type: 'move', direction });
-    setState(applied.state);
-    setSystem('none');
-    sound.play('select');
-    const reduced = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
-    const frames = reduced ? 1 : 22;
+
+    const landingX = current.tanks[active.side].x;
+    const landingY = ARTILLERY_HEIGHT - terrainHeight(current.terrain, landingX) - 1.5;
+    const landingStart = active.flightY;
+    const reducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+    const frames = reducedMotion ? 1 : 24;
     let frame = 0;
-    setMovement({ side, fromX, toX: applied.state.tanks[side].x, progress: 0 });
-    onStatus(`${direction === 1 ? 'Advancing' : 'Falling back'}… ${remaining} drive ${remaining === 1 ? 'charge' : 'charges'} remain.`);
+    const landing = { ...active, phase: 'landing' as const, landingProgress: 0 };
+    movementRef.current = landing;
+    setMovement(landing);
+    onStatus(`Jet thrust cut · coasting to landing with ${Math.round(remaining)}% fuel.`);
     const tick = () => {
       frame += 1;
       const progress = Math.min(1, frame / frames);
-      setMovement({ side, fromX, toX: applied.state.tanks[side].x, progress });
-      if (progress < 1) pendingTimers.current.push(window.setTimeout(tick, reduced ? 1 : 20));
-      else {
+      const eased = progress * progress * (3 - 2 * progress);
+      const next: NonNullable<ActiveThrust> = {
+        ...landing,
+        landingProgress: progress,
+        flightY: landingStart + (landingY - landingStart) * eased,
+      };
+      if (progress >= 1) {
+        movementRef.current = null;
         setMovement(null);
-        onStatus(`Position locked. ${remaining} drive ${remaining === 1 ? 'charge' : 'charges'} remain.`);
+        onStatus(`Jump jet landed · ${Math.round(remaining)}% fuel remains.`);
+        return;
       }
+      movementRef.current = next;
+      setMovement(next);
+      pendingTimers.current.push(window.setTimeout(tick, 18));
     };
-    pendingTimers.current.push(window.setTimeout(tick, reduced ? 1 : 20));
-  }, [canFire, mode, onStatus, sound, state]);
+    pendingTimers.current.push(window.setTimeout(tick, 18));
+  }, [onStatus]);
+
+  const beginThrust = React.useCallback((event: React.PointerEvent<HTMLButtonElement>, direction: Exclude<ArtilleryMove, 0>, mobility: ArtilleryMobility) => {
+    if (!canOperate || movement || event.isPrimary === false || (event.pointerType === 'mouse' && event.button !== 0)) return;
+    const current = stateRef.current;
+    const available = mobility === 'jet' ? current.jetCharges[current.current] : current.traction[current.current];
+    if (available <= 0) return;
+    event.preventDefault();
+    event.currentTarget.setPointerCapture?.(event.pointerId);
+    const startedAt = performance.now();
+    const launchX = current.tanks[current.current].x;
+    const launchY = ARTILLERY_HEIGHT - terrainHeight(current.terrain, launchX) - 1.5;
+    const active: NonNullable<ActiveThrust> = {
+      side: current.current,
+      direction,
+      mobility,
+      pulse: 0,
+      phase: 'thrust',
+      launchX,
+      launchY,
+      startFuel: available,
+      flightY: launchY,
+      landingProgress: 0,
+    };
+    movementRef.current = active;
+    setMovement(active);
+    moveRig(direction, mobility, Math.min(0.6, available));
+    sound.play('select');
+    fieldRef.current?.scrollIntoView?.({ behavior: 'smooth', block: 'center' });
+    onStatus(mobility === 'jet'
+      ? 'Jump jet engaged · hold for a longer high arc, release to land.'
+      : 'Drive engaged · hold for distance, release to stop.');
+    thrustTimer.current = window.setInterval(() => {
+      const elapsed = performance.now() - startedAt;
+      const fuelPerSecond = 8 + 32 * Math.min(1, elapsed / 1800);
+      const pulseFuel = Math.min(3.2, fuelPerSecond * 0.08);
+      const latest = stateRef.current;
+      const fuel = mobility === 'jet' ? latest.jetCharges[active.side] : latest.traction[active.side];
+      if (fuel <= 0) {
+        stopThrust();
+        return;
+      }
+      moveRig(direction, mobility, Math.min(pulseFuel, fuel));
+      const afterMove = stateRef.current;
+      setMovement((value) => {
+        if (!value || value.phase !== 'thrust') return value;
+        const fuelAfterMove = mobility === 'jet' ? afterMove.jetCharges[active.side] : afterMove.traction[active.side];
+        const landingX = afterMove.tanks[active.side].x;
+        const landingY = ARTILLERY_HEIGHT - terrainHeight(afterMove.terrain, landingX) - 1.5;
+        const next = {
+          ...value,
+          pulse: value.pulse + 1,
+          flightY: mobility === 'jet'
+            ? artilleryJetFlightY(value.launchY, landingY, value.startFuel - fuelAfterMove, value.startFuel)
+            : value.flightY,
+        };
+        movementRef.current = next;
+        return next;
+      });
+    }, 80);
+  }, [canOperate, moveRig, movement, onStatus, sound, stopThrust]);
+
+  React.useEffect(() => {
+    const stop = () => stopThrust();
+    window.addEventListener('blur', stop);
+    window.addEventListener('pointerup', stop);
+    window.addEventListener('pointercancel', stop);
+    return () => {
+      window.removeEventListener('blur', stop);
+      window.removeEventListener('pointerup', stop);
+      window.removeEventListener('pointercancel', stop);
+    };
+  }, [stopThrust]);
 
   React.useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       const target = event.target as HTMLElement | null;
       if (target?.matches('input, textarea, select, button, [contenteditable="true"]') || !canFire) return;
       const key = event.key.toLowerCase();
-      if (['a', 'd', 'w', 's', 'q', 'e', 'r', 'arrowup', 'arrowdown', '1', '2', '3', '4', '5', '6', ' '].includes(key)) event.preventDefault();
-      if (key === 'a' && state.traction[state.current] > 0) moveCrawler(-1);
-      else if (key === 'd' && state.traction[state.current] > 0) moveCrawler(1);
+      if (['a', 'd', 'w', 's', 'q', 'e', 'arrowup', 'arrowdown', '1', '2', '3', '4', '5', '6', ' '].includes(key)) event.preventDefault();
+      if (key === 'a') moveRig(-1, 'drive', 1);
+      else if (key === 'd') moveRig(1, 'drive', 1);
       else if (key === 'w' || key === 'arrowup') setAngle((current) => Math.min(80, current + 1));
       else if (key === 's' || key === 'arrowdown') setAngle((current) => Math.max(10, current - 1));
       else if (key === 'q') setPower((current) => Math.max(15, current - 1));
@@ -623,33 +760,36 @@ export function ArtilleryBoard({ seed, mode, difficulty, playerCreature, onStatu
         const choice = ARTILLERY_PAYLOADS[Number(key) - 1];
         if (choice === 'shell' || state.payloads[state.current][choice] > 0) setPayload(choice);
       }
-      else if (key === 'r' && state.systemCharges[state.current] > 0) {
-        setSystem((current) => current === crewSystem ? 'none' : crewSystem);
-      }
-      else if (key === ' ' && !event.repeat) animateShot({ angle, power, payload, move: 0, system });
+      else if (key === ' ' && !event.repeat) animateShot({ angle, power, payload, move: 0, system: 'none' });
       else return;
       if (key !== ' ' && !event.repeat) sound.play('select');
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [angle, animateShot, canFire, crewSystem, moveCrawler, payload, power, sound, state.current, state.payloads, state.systemCharges, state.traction, system]);
+  }, [angle, animateShot, canFire, moveRig, payload, power, sound, state.current, state.payloads]);
 
   const tank = (side: 'left' | 'right') => {
     const value = state.tanks[side];
-    const animatedMove = animated?.shooter === side && animated.phase === 'move' ? animated.shot.move : 0;
+    const animatedMove = animated?.shooter === side ? animated.shot.move : 0;
     const movementTargetX = artilleryMovedX(state, side, animatedMove);
-    const easedMovement = movement ? 1 - Math.pow(1 - movement.progress, 3) : 1;
-    const displayX = movement?.side === side
-      ? movement.fromX + (movement.toX - movement.fromX) * easedMovement
-      : animatedMove !== 0
-        ? value.x + (movementTargetX - value.x) * (1 - Math.pow(1 - animated!.progress, 3))
+    const animatedMoveEase = artilleryMoveAnimationProgress(animated?.phase ?? null, animated?.progress ?? 0, animatedMove);
+    const displayX = animatedMove !== 0
+        ? value.x + (movementTargetX - value.x) * animatedMoveEase
         : value.x;
-    const y = ARTILLERY_HEIGHT - terrainHeight(displayTerrain, displayX) - 1.5;
-    const displayAngle = canFire && state.current === side ? angle : settledAim[side];
+    const driving = movement?.side === side && movement.mobility === 'drive';
+    const strideProgress = driving ? movement.pulse / 5 : animated?.phase === 'move' && animatedMove !== 0 ? animated.progress : 0;
+    const stride = Math.sin(strideProgress * Math.PI * 10) * 0.65;
+    const bodyLift = driving ? -Math.abs(Math.sin(strideProgress * Math.PI * 5)) * 0.32 : 0;
+    const jetting = movement?.side === side && movement.mobility === 'jet';
+    const jetProgress = jetting
+      ? movement.phase === 'thrust' ? Math.min(1, 0.3 + movement.pulse / 18) : Math.max(0, 1 - movement.landingProgress)
+      : 0;
+    const terrainY = ARTILLERY_HEIGHT - terrainHeight(displayTerrain, displayX) - 1.5;
+    const y = jetting ? movement.flightY : terrainY + bodyLift;
+    const displayAngle = canOperate && state.current === side ? angle : settledAim[side];
     const barrel = artilleryBarrelEndpoint(displayX, y - 1.8, side, displayAngle);
-    const creatureId = state.creatures[side];
-    const crew = CREATURES[creatureId];
-    const movementLabel = displayX === value.x ? '' : ', moving';
+    const crew = RANGE_RIGS[side];
+    const movementLabel = movement?.side === side || displayX !== value.x ? ', moving' : '';
     const firingProgress = animated?.phase === 'charge' ? animated.progress : animated?.phase === 'flight' ? Math.min(1, animated.progress * 8) : 1;
     const firing = !!animated && animated.shooter === side && (animated.phase === 'charge' || (animated.phase === 'flight' && animated.progress < 0.125));
     const recoiling = firing && !window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
@@ -659,9 +799,6 @@ export function ArtilleryBoard({ seed, mode, difficulty, playerCreature, onStatu
     const damageJolt = takingDamage && !window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
       ? (side === 'left' ? -0.45 : 0.45)
       : 0;
-    const selectedGuard = canFire && state.current === side && system === crew.system;
-    const firingGuard = animated?.shooter === side && animated.shot.system === crew.system;
-    const guardActive = state.guard[side] > 0 || selectedGuard || firingGuard;
     const impactTarget = animated?.shooter === 'left' ? 'right' : 'left';
     const displayedIntegrity = impactMoment && impactTarget === side
       ? Math.max(0, value.integrity - (animated?.outcome.damage ?? 0) * (animated?.progress ?? 0))
@@ -669,24 +806,9 @@ export function ArtilleryBoard({ seed, mode, difficulty, playerCreature, onStatu
     return (
       <g
         className={side === 'left' ? 'el-fire' : 'el-water'}
-        aria-label={`${crew.name} crawler, ${value.integrity} integrity${movementLabel}`}
+        aria-label={`${crew.name} mobile launcher, ${value.integrity} integrity${movementLabel}`}
         transform={`translate(${recoiling + damageJolt} 0)`}
       >
-        {guardActive && (
-          <g className={creatureId === 'codazzo' ? 'el-plant' : 'el-air'} aria-hidden data-testid={`artillery-guard-${side}`}>
-            {creatureId === 'codazzo' ? (
-              <>
-                <path d={`M ${displayX - 4} ${y + 2.2} q 1.2 -3 3 -3.4 M ${displayX + 4} ${y + 2.2} q -1.2 -3 -3 -3.4 M ${displayX - 3.1} ${y + 1.9} l -1.4 1.8 M ${displayX + 3.1} ${y + 1.9} l 1.4 1.8`} className="fill-none stroke-el opacity-80" strokeWidth="0.5" />
-                <circle cx={displayX} cy={y - 1.2} r="4.6" className="fill-el opacity-10" />
-              </>
-            ) : (
-              <>
-                <ellipse cx={displayX} cy={y - 1.5} rx="4.8" ry="5.6" className="fill-el opacity-10 stroke-el" strokeWidth="0.35" strokeDasharray="1 0.7" />
-                <path d={`M ${displayX - 4.4} ${y - 0.4} q 4.4 -5.8 8.8 0`} className="fill-none stroke-el opacity-70" strokeWidth="0.42" />
-              </>
-            )}
-          </g>
-        )}
         <rect x={displayX - 3.2} y={y - 7.2} width="6.4" height="0.85" className="fill-s0 stroke-ink-4" strokeWidth="0.18" />
         <rect x={displayX - 3.1} y={y - 7.1} width={6.2 * displayedIntegrity / ARTILLERY_MAX_INTEGRITY} height="0.65" className="fill-el" />
         {state.current === side && state.phase === 'aiming' && (
@@ -695,12 +817,10 @@ export function ArtilleryBoard({ seed, mode, difficulty, playerCreature, onStatu
             <line x1={displayX} y1={y - 6.8} x2={displayX} y2={y - 5.5} className="stroke-viable-hi opacity-70" strokeWidth="0.2" />
           </g>
         )}
-        <rect x={displayX - 3.25} y={y + 0.15} width="6.5" height="1.8" rx="0.75" className="fill-ink-4 stroke-black" strokeWidth="0.35" />
-        {[-2.1, 0, 2.1].map((offset) => (
-          <circle key={offset} cx={displayX + offset} cy={y + 1.05} r="0.58" className="fill-s0 stroke-el" strokeWidth="0.28" />
-        ))}
+        <path d={`M ${displayX - 2.4} ${y + 0.2} L ${displayX - 3.5 - stride} ${y + 2.6} M ${displayX - 0.8} ${y + 0.5} L ${displayX - 1.8 + stride} ${y + 2.8} M ${displayX + 0.8} ${y + 0.5} L ${displayX + 1.8 - stride} ${y + 2.8} M ${displayX + 2.4} ${y + 0.2} L ${displayX + 3.5 + stride} ${y + 2.6}`} className="fill-none stroke-black" strokeWidth="0.8" strokeLinecap="round" />
+        <path d={`M ${displayX - 2.4} ${y + 0.2} L ${displayX - 3.5 - stride} ${y + 2.6} M ${displayX - 0.8} ${y + 0.5} L ${displayX - 1.8 + stride} ${y + 2.8} M ${displayX + 0.8} ${y + 0.5} L ${displayX + 1.8 - stride} ${y + 2.8} M ${displayX + 2.4} ${y + 0.2} L ${displayX + 3.5 + stride} ${y + 2.6}`} className="fill-none stroke-el" strokeWidth="0.34" strokeLinecap="round" />
         <path
-          d={`M ${displayX - 3.2} ${y + 0.2} L ${displayX - 2.3} ${y - 1.9} L ${displayX + 2.2} ${y - 2.15} L ${displayX + 3.2} ${y + 0.2} Z`}
+          d={`M ${displayX - 3} ${y + 0.1} L ${displayX - 2.2} ${y - 2.1} L ${displayX + 2.2} ${y - 2.1} L ${displayX + 3} ${y + 0.1} L ${displayX + 1.6} ${y + 1} L ${displayX - 1.6} ${y + 1} Z`}
           className="fill-el stroke-black"
           strokeWidth="0.38"
         />
@@ -711,19 +831,9 @@ export function ArtilleryBoard({ seed, mode, difficulty, playerCreature, onStatu
             <circle cx={displayX - 1.5} cy={y - 6.8} r="1.05" className="fill-el opacity-15" />
           </g>
         )}
-        <path d={`M ${displayX - 2.15} ${y - 1.85} L ${displayX - 1.2} ${y - 3.05} L ${displayX + 0.75} ${y - 3.05} L ${displayX + 1.55} ${y - 2}`} className="fill-el stroke-black" strokeWidth="0.35" />
-        <circle cx={displayX} cy={y - 2.7} r="1.22" className="fill-s0 stroke-el" strokeWidth="0.45" />
-        {creatureId === 'codazzo' ? (
-          <g aria-hidden>
-            <path d={`M ${displayX - 2.4} ${y - 1.75} l -1.2 -1.5 1.75 0.35 -0.45 -1.8 1.65 1`} className="fill-el stroke-black" strokeWidth="0.25" />
-            <circle cx={displayX - 0.25} cy={y - 2.85} r="0.35" className="fill-el" />
-          </g>
-        ) : (
-          <g aria-hidden>
-            <path d={`M ${displayX - 2.85} ${y - 0.15} q 2.85 1.4 5.7 0 q -2.85 2.2 -5.7 0 Z`} className="fill-el opacity-50" />
-            <circle cx={displayX} cy={y - 2.8} r="0.38" className="fill-el" />
-          </g>
-        )}
+        <path d={`M ${displayX - 1.8} ${y - 1.9} L ${displayX - 1.1} ${y - 3.2} L ${displayX + 1.1} ${y - 3.2} L ${displayX + 1.8} ${y - 1.9}`} className="fill-el stroke-black" strokeWidth="0.35" />
+        <circle cx={displayX} cy={y - 2.8} r="1.08" className="fill-s0 stroke-el" strokeWidth="0.4" />
+        <circle cx={displayX} cy={y - 2.8} r="0.32" className="fill-el" />
         <line
           x1={displayX}
           y1={y - 2.7}
@@ -751,6 +861,20 @@ export function ArtilleryBoard({ seed, mode, difficulty, playerCreature, onStatu
         )}
         <rect x={displayX - 3.5} y={y + 1.9} width="1.2" height="0.45" className="fill-el opacity-60" />
         <rect x={displayX + 2.3} y={y + 1.9} width="1.2" height="0.45" className="fill-el opacity-60" />
+        {driving && (
+          <g className="el-sand" aria-hidden>
+            <circle cx={displayX - 3.8} cy={y + 2.7} r={0.35 + Math.abs(stride) * 0.2} className="fill-el opacity-30" />
+            <circle cx={displayX - 5.1} cy={y + 2.2} r="0.28" className="fill-el opacity-18" />
+            <circle cx={displayX + 3.8} cy={y + 2.7} r={0.3 + Math.abs(stride) * 0.16} className="fill-el opacity-25" />
+          </g>
+        )}
+        {jetProgress > 0 && movement?.phase === 'thrust' && (
+          <g className="el-fire" aria-hidden>
+            <path d={`M ${displayX - 1.7} ${y + 1} l -0.75 ${2.4 + Math.sin(jetProgress * Math.PI * 8) * 0.5} 1.35 -0.6 Z M ${displayX + 1.7} ${y + 1} l 0.75 ${2.4 - Math.sin(jetProgress * Math.PI * 8) * 0.5} -1.35 -0.6 Z`} className="fill-el opacity-75" />
+            <circle cx={displayX - 2.25} cy={y + 4.1} r="0.7" className="fill-el opacity-25" />
+            <circle cx={displayX + 2.25} cy={y + 4.1} r="0.7" className="fill-el opacity-25" />
+          </g>
+        )}
         {takingDamage && (
           <g className="el-electric" aria-hidden>
             <path d={`M ${displayX} ${y - 4.5} l -1.2 -2.2 1.5 0.7 0.4 -2 1 2.4 1.6 -0.6 -1.1 2.2`} className="fill-none stroke-el" strokeWidth="0.45" />
@@ -769,38 +893,40 @@ export function ArtilleryBoard({ seed, mode, difficulty, playerCreature, onStatu
 
   return (
     <div className="artillery-layout grid w-full min-w-0 gap-2 overflow-x-clip">
-      <section aria-label="Artillery field" className="artillery-field relative mx-auto w-full self-start overflow-hidden border border-edge-strong bg-glass">
-        <div className="pointer-events-none absolute inset-x-2 top-2 z-10 grid grid-cols-[minmax(0,1fr)_5.6rem_minmax(0,1fr)] items-start gap-1 min-[390px]:gap-2">
+      <section aria-label="Artillery field" className="artillery-field artillery-viewport relative mx-auto w-full self-start overflow-hidden border-2 border-edge-strong bg-s0 shadow-panel">
+        <div className="pointer-events-none absolute inset-x-2 top-2 z-10 grid grid-cols-[minmax(0,1fr)_7.25rem_minmax(0,1fr)] items-start gap-1 sm:grid-cols-[minmax(0,1fr)_9.5rem_minmax(0,1fr)] sm:gap-2">
           <div className="min-w-0 border border-edge-strong bg-s0/90 p-1.5">
-            <div className="flex items-center justify-between gap-1 type-micro"><span>{crewAt('left').name}</span><span>{Math.round(displayedHull('left'))}</span></div>
+            <div className="flex items-center justify-between gap-1 font-legend text-small uppercase tracking-legend"><span><i className="not-italic sm:hidden">A</i><i className="hidden not-italic sm:inline">{crewAt('left').name}</i></span><span>{Math.round(displayedHull('left'))}</span></div>
             <div className="mt-1 h-1.5 bg-s2"><div className="h-full bg-viable-hi transition-[width] duration-300" style={{ width: `${displayedHull('left')}%` }} /></div>
           </div>
           <div className="border border-edge-strong bg-s0/90 px-2 py-1 text-center">
             <span className="block type-micro">{state.phase === 'finished'
               ? mode === 'range' ? 'Range complete' : mode === 'challenge' ? state.winner === 'left' ? 'Trial clear' : 'Trial failed' : `${crewAt(state.winner!).name} wins`
-              : `${crewAt(state.current).name} · Volley ${Math.floor(state.turn / 2) + 1}`}</span>
-            <span className="block font-mono text-[10px] text-ink-2">{windLabel}</span>
-            <span className="block font-body text-[8px] text-ink-3 min-[390px]:text-[9px]">{state.turn >= 10 ? `${CONDITION_SHORT[state.condition]} · pressure` : CONDITION_SHORT[state.condition]}</span>
+              : `${crewAt(state.current).shortName} · V${Math.floor(state.turn / 2) + 1}`}</span>
+            <span className="block font-mono text-[11px] text-ink-2">{windLabel}</span>
+            <span className="hidden font-body text-[11px] text-ink-3 sm:block">{worldMeta.name} · {CONDITION_SHORT[state.condition]}</span>
+            <span className="mt-0.5 block font-mono text-[10px] uppercase text-ink-2"><i className="not-italic sm:hidden">G {environment.gravity.toFixed(2)}× · W {environment.wind.toFixed(1)}×</i><i className="hidden not-italic sm:inline">Gravity {environment.gravity.toFixed(2)}× · wind {environment.wind.toFixed(1)}×</i></span>
+            {state.turn >= 10 && <span className="block font-mono text-[10px] uppercase text-plague">Damage pressure {Math.min(1.6, 1 + Math.max(0, state.turn - 9) * 0.12).toFixed(2)}×</span>}
           </div>
           <div className="min-w-0 border border-edge-strong bg-s0/90 p-1.5">
-            <div className="flex items-center justify-between gap-1 type-micro"><span>{crewAt('right').name}</span><span>{Math.round(displayedHull('right'))}</span></div>
+            <div className="flex items-center justify-between gap-1 font-legend text-small uppercase tracking-legend"><span><i className="not-italic sm:hidden">B</i><i className="hidden not-italic sm:inline">{crewAt('right').name}</i></span><span>{Math.round(displayedHull('right'))}</span></div>
             <div className="mt-1 h-1.5 bg-s2"><div className="h-full bg-plague transition-[width] duration-300" style={{ width: `${displayedHull('right')}%` }} /></div>
           </div>
         </div>
         {coachVisible && <div className="pointer-events-none absolute inset-x-0 bottom-2 z-10 px-8 text-center">
-          <span className="inline-block border border-edge-strong bg-s0/90 px-2 py-1 font-body text-[10px] text-ink-2">
+          <span className="inline-block border border-edge-strong bg-s0/90 px-3 py-1.5 font-body text-small text-ink-2">
             {canFire
               ? state.turn === 0 && angle === 45 && power === 70
                 ? '1 · Drag up and outward: direction sets arc · distance sets power'
                 : state.turn === 0
-                  ? '2 · Choose your ordnance · then Fire'
+                  ? '2 · Choose a weapon · then Fire'
                   : 'Drag the field or use the aim sliders'
-              : movement ? 'Crawler relocating' : animated ? animated.phase === 'charge' ? 'Weapon charging' : animated.phase === 'flight' ? 'Projectile in flight' : 'Impact' : mode === 'bot' && state.current === 'right' ? `${crewAt('right').name}: ${botIntent}` : ''}
+              : movement ? 'Range rig relocating' : animated ? animated.phase === 'move' ? 'Range rig relocating' : animated.phase === 'charge' ? 'Weapon charging' : animated.phase === 'flight' ? 'Projectile in flight' : 'Impact' : mode === 'bot' && state.current === 'right' ? `${crewAt('right').name}: ${botIntent}` : ''}
           </span>
         </div>}
         {shotCallout && (
           <div className="pointer-events-none absolute inset-x-0 top-[42%] z-20 text-center">
-            <span className="inline-block border-2 border-ink-2 bg-s0/90 px-4 py-2 font-legend text-heading tracking-legend text-ink shadow-panel">
+            <span className="inline-block border-2 border-ink-2 bg-s0/90 px-4 py-2 font-legend text-body tracking-legend text-ink shadow-panel min-[500px]:text-heading">
               {shotCallout}
             </span>
           </div>
@@ -814,11 +940,26 @@ export function ArtilleryBoard({ seed, mode, difficulty, playerCreature, onStatu
           aria-pressed={coachVisible}
           onClick={() => setCoachVisible((visible) => !visible)}
         >?</Button>
+        <Button
+          type="button"
+          size="icon-xs"
+          variant="ghost"
+          className="absolute bottom-1 left-1 z-20 border border-edge-strong bg-s0/90"
+          aria-label={soundOn ? 'Mute artillery audio' : 'Enable artillery audio'}
+          aria-pressed={soundOn}
+          title={soundOn ? 'Mute cockpit audio' : 'Enable cockpit audio'}
+          onClick={() => {
+            const next = !soundOn;
+            sound.setEnabled(next);
+            setSoundOn(next);
+            onStatus(`Artillery sound ${next ? 'enabled' : 'muted'}.`);
+          }}
+        >{soundOn ? <Volume2 aria-hidden /> : <VolumeX aria-hidden />}</Button>
         {handoffPending && (
           <div className="absolute inset-0 z-30 grid place-items-center bg-s0/90 p-4 text-center">
             <div className="max-w-xs border border-edge-strong bg-s1 p-1.5 shadow-panel min-[390px]:p-4">
               <span className="type-micro text-ink-3">Pass the command</span>
-              <p className="mt-1 mb-2 font-legend text-body uppercase tracking-legend min-[390px]:mb-3 min-[390px]:text-heading">{crewAt(state.current).name} crew</p>
+              <p className="mt-1 mb-2 font-legend text-body uppercase tracking-legend min-[390px]:mb-3 min-[390px]:text-heading">{crewAt(state.current).name}</p>
               <p className="mb-3 hidden font-body text-small text-ink-2 min-[390px]:block">The field is ready. Hand over the device before revealing the next firing choice.</p>
               <Button type="button" className="w-full" onClick={() => {
                 setHandoffPending(false);
@@ -832,33 +973,29 @@ export function ArtilleryBoard({ seed, mode, difficulty, playerCreature, onStatu
           viewBox={cameraViewBox}
           className={`block h-auto w-full touch-none ${canFire ? 'cursor-crosshair' : ''}`}
           role="img"
-          aria-label="Codazzo and Terragoyle crawler batteries on destructible terrain. Drag up and outward anywhere on the battlefield; direction sets angle and distance sets power."
+          aria-label={`Two mobile range rigs on ${worldMeta.name}. Drag up and outward anywhere on the battlefield; direction sets angle and distance sets power.`}
           onPointerDown={beginDirectAim}
           onPointerMove={continueDirectAim}
           onPointerUp={finishDirectAim}
           onPointerCancel={cancelDirectAim}
           onLostPointerCapture={cancelDirectAim}
         >
-          <rect width={ARTILLERY_WIDTH} height={ARTILLERY_HEIGHT} className="fill-s0" />
-          <circle cx="77" cy="13" r="8.5" className="fill-s1 stroke-ink-4 opacity-60" strokeWidth="0.25" />
-          <circle cx="74.5" cy="11" r="1.3" className="fill-s0 opacity-40" />
-          <circle cx="80" cy="15.5" r="2" className="fill-s0 opacity-30" />
-          {RANGE_STARS.map(([x, y, radius], index) => <circle key={index} cx={x} cy={y} r={radius} className="fill-ink-3" />)}
-          <path d={distantTerrainPath} className="fill-s1 stroke-ink-4 opacity-70" strokeWidth="0.25" />
-          {[25, 50, 75].map((x) => (
+          <rect y={ARTILLERY_SKY_TOP} width={fieldWidth} height={ARTILLERY_VIEW_HEIGHT} className="fill-s0" />
+          <image href={worldMeta.image} x="0" y={ARTILLERY_SKY_TOP} width={fieldWidth} height={ARTILLERY_VIEW_HEIGHT} preserveAspectRatio="xMidYMid slice" opacity="0.42" aria-hidden />
+          <rect y={ARTILLERY_SKY_TOP} width={fieldWidth} height={ARTILLERY_VIEW_HEIGHT} className="fill-s0 opacity-55" />
+          {RANGE_STARS.map(([x, y, radius], index) => <circle key={index} cx={x * (fieldWidth / 100)} cy={ARTILLERY_SKY_TOP + y * 1.8} r={radius} className="fill-ink-2 opacity-60" />)}
+          {[0.25, 0.5, 0.75].map((ratio) => {
+            const x = fieldWidth * ratio;
+            return (
             <g key={x} aria-hidden>
-              <line x1={x} y1="24" x2={x} y2="57" className="stroke-ink-4 opacity-40" strokeWidth="0.18" strokeDasharray="0.7 1.2" />
+              <line x1={x} y1="30" x2={x} y2="105" className="stroke-ink-4 opacity-40" strokeWidth="0.18" strokeDasharray="0.7 1.2" />
               <path d={`M ${x - 1.1} 28 L ${x} 26.5 L ${x + 1.1} 28`} className="fill-none stroke-ink-4 opacity-50" strokeWidth="0.25" />
-              <text x={x} y="25" textAnchor="middle" className="fill-ink-4 font-mono" fontSize="1.25">{x}</text>
+              <text x={x} y="27" textAnchor="middle" className="fill-ink-4 font-mono" fontSize="1.25">{x}</text>
             </g>
-          ))}
-          <g aria-hidden>
-            <path d="M 2 33 l 2 -5 2 5 M 3 30 h 2 M 94 31 l 2 -6 2 6 M 95 28 h 2" className="fill-none stroke-ink-4 opacity-60" strokeWidth="0.3" />
-            <circle cx="4" cy="27.4" r="0.45" className="fill-viable-hi opacity-60" />
-            <circle cx="96" cy="24.4" r="0.45" className="fill-plague-hi opacity-60" />
-          </g>
+          )})}
           <g transform={`translate(${shotShake} 0)`}>
           <path d={terrainPath} className="fill-s2 stroke-ink-2" strokeWidth="0.42" />
+          <path d={terrainPath} className={`${worldMeta.elementClass} fill-el opacity-15`} />
           {terrainContours.map((contour, index) => <path key={index} d={contour} className="fill-none stroke-ink-4 opacity-40" strokeWidth="0.22" />)}
           {aimPreviews.some((preview) => preview.length > 1) && (
             <g className={activePayloadMeta.elementClass} data-testid="artillery-aim-preview">
@@ -888,12 +1025,26 @@ export function ArtilleryBoard({ seed, mode, difficulty, playerCreature, onStatu
               <circle cx={dragGuide.end.x} cy={dragGuide.end.y} r="1.1" className="fill-viable-hi opacity-90" />
             </g>
           )}
+          {movement?.mobility === 'jet' && (
+            <g className="el-electric" aria-hidden data-testid="artillery-jet-trajectory">
+              <path
+                d={`M ${movement.launchX} ${movement.launchY} Q ${(movement.launchX + state.tanks[movement.side].x) / 2} ${Math.min(movement.launchY, movement.flightY) - 7} ${state.tanks[movement.side].x} ${movement.flightY}`}
+                className="fill-none stroke-el opacity-45"
+                strokeWidth="0.36"
+                strokeDasharray="0.8 0.7"
+              />
+              <circle cx={state.tanks[movement.side].x} cy={movement.flightY + 3.2} r="1.7" className="fill-none stroke-el opacity-25" strokeWidth="0.25" />
+            </g>
+          )}
           {tank('left')}{tank('right')}
           {animatedProjectiles.map((projectile, index) => (
             <g key={index} className={activePayloadMeta.elementClass}>
               {projectile.path.length > 1 && <polyline points={projectile.path.map((point) => `${point.x},${ARTILLERY_HEIGHT - point.y}`).join(' ')} className="fill-none stroke-el opacity-50" strokeWidth={activePayload === 'bore' ? 0.45 : 0.28} strokeDasharray={activePayload === 'barb' ? '0.6 0.8' : '1 0.7'} />}
               {activePayload === 'barb' || activePayload === 'cluster' ? (
-                <path d={`M ${projectile.point.x} ${ARTILLERY_HEIGHT - projectile.point.y - 0.75} l 0.55 0.75 -0.55 0.75 -0.55 -0.75 Z`} className="fill-el stroke-black" strokeWidth="0.18" />
+                <g>
+                  <circle cx={projectile.point.x} cy={ARTILLERY_HEIGHT - projectile.point.y} r="1.65" className="fill-none stroke-el opacity-25" strokeWidth="0.24" />
+                  <path d={`M ${projectile.point.x} ${ARTILLERY_HEIGHT - projectile.point.y - 1} l 0.75 1 -0.75 1 -0.75 -1 Z`} className="fill-el stroke-black" strokeWidth="0.18" />
+                </g>
               ) : activePayload === 'bore' ? (
                 <g>
                   <path d={`M ${projectile.point.x - 0.85} ${ARTILLERY_HEIGHT - projectile.point.y} l 0.85 -0.62 0.85 0.62 -0.85 0.62 Z`} className="fill-el stroke-black" strokeWidth="0.2" />
@@ -907,7 +1058,10 @@ export function ArtilleryBoard({ seed, mode, difficulty, playerCreature, onStatu
               ) : activePayload === 'lance' ? (
                 <path d={`M ${projectile.point.x - 1.2} ${ARTILLERY_HEIGHT - projectile.point.y + 0.3} L ${projectile.point.x + 0.8} ${ARTILLERY_HEIGHT - projectile.point.y} L ${projectile.point.x - 1.2} ${ARTILLERY_HEIGHT - projectile.point.y - 0.3}`} className="fill-el stroke-el" strokeWidth="0.25" />
               ) : (
-                <circle cx={projectile.point.x} cy={ARTILLERY_HEIGHT - projectile.point.y} r="0.7" className="fill-el stroke-black" strokeWidth="0.2" />
+                <g>
+                  <circle cx={projectile.point.x} cy={ARTILLERY_HEIGHT - projectile.point.y} r="1.8" className="fill-none stroke-el opacity-25" strokeWidth="0.24" />
+                  <circle cx={projectile.point.x} cy={ARTILLERY_HEIGHT - projectile.point.y} r="1" className="fill-el stroke-black" strokeWidth="0.2" />
+                </g>
               )}
             </g>
           ))}
@@ -964,13 +1118,13 @@ export function ArtilleryBoard({ seed, mode, difficulty, playerCreature, onStatu
         </svg>
       </section>
 
-      <section aria-label="Command deck" className={`artillery-command mx-auto grid w-full min-w-0 border border-edge-strong bg-s1 lg:grid-cols-[minmax(0,1fr)_auto] ${shortLandscape ? 'gap-1 p-1' : 'gap-2 p-2'}`}>
+      <section aria-label="Command deck" className={`artillery-command cockpit-console mx-auto grid w-full min-w-0 border-2 border-edge-strong bg-s1 lg:grid-cols-[minmax(0,1fr)_auto] ${shortLandscape ? 'gap-1 p-1' : 'gap-1.5 p-1.5'}`}>
         {state.phase === 'finished' ? (
           <div className={`border p-4 lg:col-span-2 ${mode === 'bot' && state.winner === 'right' ? 'border-plague-lo bg-plague-tint' : 'border-viable-lo bg-viable-tint'}`}>
             <div className="flex items-start justify-between gap-4">
               <div>
                 <p className="type-legend m-0">{mode === 'range' ? 'Calibration complete' : mode === 'challenge' ? state.winner === 'left' ? 'Trial cleared' : 'Trial failed' : mode === 'local' ? 'Range secured' : state.winner === 'left' ? 'Contract cleared' : 'Battery disabled'}</p>
-                <p className="mt-2 mb-0 font-body text-body">{mode === 'range' ? `Range record: ${resultStats.damage} damage in ${state.turn} shots.` : mode === 'challenge' ? `${ARTILLERY_MAX_INTEGRITY - state.tanks.right.integrity} damage dealt with the five-round field magazine.` : `The ${crewAt(state.winner!).name} crew holds Crater Sector after ${state.turn} shots.`}</p>
+                <p className="mt-2 mb-0 font-body text-body">{mode === 'range' ? `Range record: ${resultStats.damage} damage in ${state.turn} shots.` : mode === 'challenge' ? `${ARTILLERY_MAX_INTEGRITY - state.tanks.right.integrity} damage dealt with the five-round field magazine.` : `${crewAt(state.winner!).name} holds Crater Sector after ${state.turn} shots.`}</p>
               </div>
               <div className="border border-current px-3 py-2 text-center">
                 <span className="block type-micro">Grade</span>
@@ -981,75 +1135,76 @@ export function ArtilleryBoard({ seed, mode, difficulty, playerCreature, onStatu
               <span><b className="block type-data">{resultStats.damage}</b><small className="type-micro">damage</small></span>
               <span><b className="block type-data">{resultAccuracy}%</b><small className="type-micro">accuracy</small></span>
               <span><b className="block type-data">{state.tanks[resultSide].integrity}</b><small className="type-micro">hull</small></span>
-              <span><b className="block type-data">{resultStats.payloads.length}</b><small className="type-micro">payloads</small></span>
+              <span><b className="block type-data">{resultStats.payloads.length}</b><small className="type-micro">weapons</small></span>
             </div>
-            <p className="mt-3 mb-3 font-body text-small text-ink-2">{mode === 'range' ? 'Practice records no Arcade Credits. Use it to learn wind, atmosphere, and every living payload.' : mode === 'challenge' ? 'The trial records no Arcade Credits. Clear it by choosing five complementary payloads instead of repeating one solution.' : `${crewAt(state.winner!).name} used ${crewAt(state.winner!).ability.toLowerCase()} to hold the crater range.`}</p>
+            <p className="mt-3 mb-3 font-body text-small text-ink-2">{mode === 'range' ? 'Practice records no Arcade Credits. Use it to learn wind, atmosphere, and every weapon system.' : mode === 'challenge' ? 'The trial records no Arcade Credits. Clear it by choosing five complementary weapons instead of repeating one solution.' : `${crewAt(state.winner!).name} held the crater range with disciplined ranging and field control.`}</p>
             <p className="mb-3 font-body text-tiny text-ink-3">{resultStats.directHits} direct · {resultSpecialsSpent} special rounds · {resultStats.terrainShift.toFixed(1)} terrain shift{mode === 'range' ? ` · best ${Math.max(rangeBest, resultStats.damage)}` : ''}</p>
             <Button type="button" className="w-full" onClick={onRematch}>Run a fresh sector</Button>
           </div>
         ) : (
           <>
-            <div className={`artillery-command-top grid min-w-0 gap-2 lg:col-span-2 ${shortLandscape ? '' : 'md:grid-cols-[minmax(0,1.4fr)_minmax(15rem,0.6fr)]'}`}>
-              <div className="grid min-w-0 gap-1.5 border border-edge p-2" aria-label="Aim the cannon">
-                <span className="flex items-center justify-between gap-2 type-legend">
-                  <span>Aim <span className="font-body normal-case tracking-normal text-ink-3">drag the battlefield or slide</span></span>
-                  <Button
-                    type="button"
-                    size="xs"
-                    variant="ghost"
-                    className="h-7 border border-edge px-2"
-                    aria-label={soundOn ? 'Mute artillery audio' : 'Enable artillery audio'}
-                    aria-pressed={soundOn}
-                    onClick={() => {
-                      const next = !soundOn;
-                      sound.setEnabled(next);
-                      setSoundOn(next);
-                      onStatus(`Artillery sound ${next ? 'enabled' : 'muted'}.`);
-                    }}
-                  >{soundOn ? 'Sound on' : 'Sound off'}</Button>
-                </span>
+            <div className={`artillery-command-top grid min-w-0 gap-1.5 lg:col-span-2 ${shortLandscape ? '' : 'md:grid-cols-[minmax(0,1.55fr)_minmax(17rem,0.45fr)]'}`}>
+              <div className="cockpit-instrument grid min-w-0 border border-edge-strong p-1.5" aria-label="Aim the cannon">
                 <div className="grid min-w-0 gap-1.5 sm:grid-cols-2">
                   <CommandMeter label="Barrel" value={angle} suffix="°" min={10} max={80} disabled={!canFire} guidance={angleGuidance} decreaseKey="S" increaseKey="W" compact={shortLandscape} kind="angle" side={state.current} onChange={setAngle} />
                   <CommandMeter label="Power" value={power} min={15} max={100} disabled={!canFire} guidance={powerGuidance} decreaseKey="Q" increaseKey="E" compact={shortLandscape} kind="power" side={state.current} onChange={setPower} />
                 </div>
               </div>
 
-              <div className="grid min-w-0 content-start gap-1.5 border border-edge p-2" role="group" aria-label="Drive crawler now">
+              <div className="cockpit-instrument cockpit-mobility grid min-w-0 content-start gap-1.5 border border-edge-strong p-2" role="group" aria-label="Mobility thrusters">
                 <span className="flex items-center justify-between gap-2 type-legend">
-                  <span>Drive</span>
-                  <span className="font-mono text-ink-2">{state.traction[state.current]} moves left</span>
+                  <span>Thrust</span>
+                  <span className="font-body text-[11px] normal-case tracking-normal text-ink-3">Drive crawls · jet leaps</span>
                 </span>
-                <p className="m-0 font-body text-[10px] text-ink-3">Movement happens now and spends one move. Firing is a separate action.</p>
-                <div className="grid grid-cols-2 gap-1">
-                  {([-1, 1] as const).map((direction) => {
-                    const arrow = state.current === 'left'
-                      ? direction === -1 ? '←' : '→'
-                      : direction === -1 ? '→' : '←';
-                    const label = direction === -1 ? 'Fall back' : 'Advance';
-                    return (
-                      <Button
-                        key={direction}
-                        type="button"
-                        size="sm"
-                        variant="ghost"
-                        className={`${shortLandscape ? 'h-9' : 'h-12'} min-w-0 border border-edge bg-s0 px-2`}
-                        disabled={!canFire || state.traction[state.current] <= 0}
-                        onClick={() => moveCrawler(direction)}
-                      >
-                        <span aria-hidden>{arrow}</span><span>{label}</span>
-                      </Button>
-                    );
-                  })}
-                </div>
+                {(['drive', 'jet'] as const).map((choice) => {
+                  const fuel = choice === 'drive' ? state.traction[state.current] : state.jetCharges[state.current];
+                  return (
+                    <div key={choice} className="grid grid-cols-[2.7rem_minmax(0,1fr)_2.7rem] items-center gap-1">
+                      {([-1, 1] as const).map((direction, index) => {
+                        const screenDirection = state.current === 'left' ? direction : -direction;
+                        const label = `${choice === 'drive' ? 'Drive' : 'Jet'} ${direction === -1 ? 'backward' : 'forward'}`;
+                        const active = movement?.mobility === choice && movement.direction === direction;
+                        const button = (
+                          <Button
+                            key={direction}
+                            type="button"
+                            size="sm"
+                            variant="ghost"
+                            aria-label={`Hold to ${label.toLowerCase()}`}
+                            aria-pressed={active}
+                            disabled={!canOperate || fuel <= 0}
+                            className={`cockpit-thrust h-9 touch-none border p-0 text-heading ${active ? 'is-active border-viable-hi text-viable-hi' : 'border-edge bg-s0'}`}
+                            onPointerDown={(event) => beginThrust(event, direction, choice)}
+                            onPointerUp={stopThrust}
+                            onPointerCancel={stopThrust}
+                          >
+                            <span aria-hidden>{choice === 'jet' ? screenDirection < 0 ? '↖' : '↗' : screenDirection < 0 ? '◀' : '▶'}</span>
+                          </Button>
+                        );
+                        if (index === 0) return button;
+                        return (
+                          <React.Fragment key={direction}>
+                            <div className="min-w-0">
+                              <span className="flex justify-between font-mono text-[10px] uppercase text-ink-2"><b>{choice === 'drive' ? 'Drive' : 'Jump jet · arc'}</b><b>{Math.round(fuel)}%</b></span>
+                              <span className="mt-1 block h-1.5 overflow-hidden border border-edge bg-s0"><span className={`block h-full ${choice === 'drive' ? 'bg-viable-hi' : 'bg-el-electric'}`} style={{ width: `${fuel}%` }} /></span>
+                            </div>
+                            {button}
+                          </React.Fragment>
+                        );
+                      })}
+                    </div>
+                  );
+                })}
               </div>
             </div>
 
-            <div className="grid min-w-0 gap-1.5 border border-edge p-2 lg:col-span-2" role="group" aria-label="Choose a payload">
-              <span className="flex items-center justify-between gap-2 type-legend">
-                <span>Living ordnance</span>
-                <span className="truncate font-body text-[10px] normal-case tracking-normal text-ink-2">{PAYLOAD_META[payload].purpose}</span>
-              </span>
-              <div className="grid grid-cols-3 gap-1 sm:grid-cols-6">
+            <div className="cockpit-instrument grid min-w-0 gap-1.5 border border-edge-strong p-2 lg:col-span-2 lg:grid-cols-[minmax(0,1fr)_15rem]" role="group" aria-label="Choose a weapon">
+              <div className="grid min-w-0 gap-1.5">
+                <span className="flex items-center justify-between gap-2 type-legend">
+                  <span>Ordnance</span>
+                  <span className="truncate font-body text-small normal-case tracking-normal text-ink-2">{PAYLOAD_META[payload].purpose}</span>
+                </span>
+                <div className="grid grid-cols-2 gap-1 sm:grid-cols-3 lg:grid-cols-6">
                 {ARTILLERY_PAYLOADS.map((choice, index) => {
                   const remaining = payloadRemaining(state.current, choice);
                   const unavailable = remaining <= 0;
@@ -1062,62 +1217,48 @@ export function ArtilleryBoard({ seed, mode, difficulty, playerCreature, onStatu
                       variant="ghost"
                       disabled={!canFire || unavailable}
                       aria-pressed={selected}
-                      className={`${shortLandscape ? 'h-9' : 'h-[3.15rem]'} min-w-0 flex-col gap-0 border px-1 ${selected ? 'border-viable-lo bg-viable-tint text-viable-hi' : 'border-edge bg-s0'}`}
+                      className={`h-14 min-w-0 flex-col gap-0 border px-1.5 ${selected ? 'border-viable-lo bg-viable-tint text-viable-hi' : 'border-edge bg-s0'}`}
                       onClick={() => {
                         sound.play('select');
                         setPayload(choice);
                         onStatus(`${PAYLOAD_META[choice].label} selected. ${PAYLOAD_META[choice].detail}.`);
                       }}
                     >
-                      <span className={`text-small text-el ${PAYLOAD_META[choice].elementClass}`} aria-hidden>{PAYLOAD_META[choice].glyph}</span>
-                      <span className="max-w-full truncate text-[10px] sm:text-small">{PAYLOAD_META[choice].shortLabel} {Number.isFinite(remaining) ? remaining : '∞'}</span>
+                      <span className={`text-[11px] text-el ${PAYLOAD_META[choice].elementClass}`} aria-hidden>{PAYLOAD_META[choice].glyph}</span>
+                      <span className="max-w-full truncate text-[11px]">{PAYLOAD_META[choice].shortLabel} {Number.isFinite(remaining) ? remaining : '∞'}</span>
+                      <span className="max-w-full truncate font-body text-[11px] normal-case tracking-normal opacity-70">{PAYLOAD_META[choice].rackHint}</span>
                       <kbd className="sr-only">{index + 1}</kbd>
                     </Button>
                   );
                 })}
-              </div>
-            </div>
-
-            <div className="grid min-w-0 gap-2 lg:col-span-2 md:grid-cols-[minmax(0,1fr)_minmax(18rem,1.15fr)]">
-              <div className="grid min-w-0 gap-1 border border-edge p-2">
-                <span className="flex items-center justify-between gap-2 type-legend">
-                  <span>{mode === 'local' ? 'Current creature' : state.current === 'right' && mode === 'bot' ? 'Rival creature' : 'Your creature'}</span>
-                  <span className="font-body text-[9px] normal-case tracking-normal text-ink-3">{currentCreature.doctrine}</span>
-                </span>
-                <div className="flex min-w-0 items-start justify-between gap-3">
-                  <div className="min-w-0">
-                    <strong className="block font-legend text-body uppercase tracking-legend text-ink">{currentCreature.name} · {currentCreature.ability}</strong>
-                    <span className="block font-body text-[10px] text-ink-3">{currentCreature.detail}</span>
-                  </div>
-                  <span className="shrink-0 font-mono text-small text-ink-2">{state.systemCharges[state.current]} uses</span>
                 </div>
-                <Button
-                  type="button"
-                  size="sm"
-                  variant="ghost"
-                  disabled={!canFire || state.systemCharges[state.current] <= 0}
-                  aria-pressed={system === crewSystem}
-                  className={`${shortLandscape ? 'h-9' : 'h-11'} min-w-0 border px-2 ${system === crewSystem ? 'border-viable-lo bg-viable-tint text-viable-hi' : 'border-edge bg-s0'}`}
-                  onClick={() => {
-                    sound.play('select');
-                    const next = system === crewSystem ? 'none' : crewSystem;
-                    setSystem(next);
-                    onStatus(next === 'none' ? `${systemLabel} canceled.` : `${systemLabel} armed: ${systemDetail}`);
-                  }}
-                >
-                  <span>{system === crewSystem ? 'Ability armed' : `Arm ${systemLabel}`}</span>
-                  <span className="font-body text-[9px] normal-case tracking-normal text-ink-3">{currentCreature.abilityShort}</span>
-                </Button>
+                <div className="flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1 border border-edge bg-s0 px-2 py-1.5">
+                  <strong className="font-legend text-small uppercase tracking-legend text-ink">{PAYLOAD_META[payload].label}</strong>
+                  <span className="font-body text-small text-ink-3">{PAYLOAD_META[payload].detail}</span>
+                  <span className="ml-auto flex flex-wrap gap-1 font-mono text-[10px] uppercase text-ink-3">
+                    <span>Arc {payload === 'lance' ? 'flat' : payload === 'bore' ? 'heavy' : 'ballistic'}</span>
+                    <span>· {ARTILLERY_PAYLOAD_RULES[payload].projectileCount}×</span>
+                    <span>· Terrain {payload === 'bloom' ? 'build' : payload === 'bore' ? 'deep' : 'blast'}</span>
+                  </span>
+                </div>
               </div>
               <Button
                 type="button"
                 size="lg"
-                className={`${shortLandscape ? 'h-14' : 'min-h-24'} min-w-0 overflow-hidden border-2 border-viable-lo px-3 text-heading`}
+                variant="ghost"
+                className="order-first min-h-20 min-w-0 overflow-hidden border-2 border-edge-strong bg-s0 p-2 shadow-panel lg:order-last lg:h-full"
                 disabled={!canFire}
-                onClick={() => animateShot({ angle, power, payload, move: 0, system })}
+                aria-label={`Fire ${PAYLOAD_META[payload].shortLabel}, angle ${angle} degrees, power ${power}`}
+                onClick={() => animateShot({ angle, power, payload, move: 0, system: 'none' })}
               >
-                <span>Fire {PAYLOAD_META[payload].shortLabel}</span>
-                {!shortLandscape && <span className="font-body text-tiny normal-case tracking-normal opacity-80">{angle}° · power {power}</span>}
+                <span className="grid w-full grid-cols-[3rem_minmax(0,1fr)] items-center gap-2" aria-hidden>
+                  <span className="grid size-12 place-items-center rounded-full border-2 border-viable-lo bg-viable-tint font-mono text-[28px] leading-none text-viable-hi">◎</span>
+                  <span className="min-w-0 text-left">
+                    <span className="block font-mono text-[10px] uppercase tracking-[0.18em] text-ink-3">Weapon armed</span>
+                    <span className="block truncate font-legend text-heading uppercase tracking-legend text-viable-hi">Fire {PAYLOAD_META[payload].shortLabel}</span>
+                    <span className="block font-mono text-[11px] text-ink-2">A{angle}° · P{power}</span>
+                  </span>
+                </span>
               </Button>
             </div>
           </>
@@ -1127,71 +1268,84 @@ export function ArtilleryBoard({ seed, mode, difficulty, playerCreature, onStatu
   );
 }
 
-export function CreatureDeployment({ selected, mode, difficulty, onSelect, onDeploy }: {
-  selected: ArtilleryCreature;
+export function ArtillerySetup({ mode, difficulty, mapSize, world, onMode, onDifficulty, onMapSize, onWorld, onStart }: {
   mode: ArtilleryMode;
   difficulty: ArtilleryDifficulty;
-  onSelect: (creature: ArtilleryCreature) => void;
-  onDeploy: () => void;
+  mapSize: ArtilleryMapSize;
+  world: ArtilleryWorld;
+  onMode: (mode: ArtilleryMode) => void;
+  onDifficulty: (difficulty: ArtilleryDifficulty) => void;
+  onMapSize: (size: ArtilleryMapSize) => void;
+  onWorld: (world: ArtilleryWorld) => void;
+  onStart: () => void;
 }) {
-  const matchup = mode === 'bot'
-    ? `a ${difficulty} rival battery`
-    : mode === 'local'
-      ? 'a two-creature local duel'
-      : mode === 'range'
-        ? 'the six-shot calibration range'
-        : 'the five-round field trial';
-  const selectedCrew = CREATURES[selected];
-
+  const modeMeta: Array<{ value: ArtilleryMode; label: string; detail: string }> = [
+    { value: 'bot', label: 'Versus bot', detail: 'A full rewarded duel' },
+    { value: 'local', label: 'Two players', detail: 'Pass-and-play locally' },
+    { value: 'range', label: 'Practice range', detail: 'Six shots, highest damage' },
+    { value: 'challenge', label: 'Ordnance trial', detail: 'Five limited rounds' },
+  ];
   return (
-    <section className="artillery-command mx-auto grid min-h-[34rem] w-full content-center gap-5 border border-edge-strong bg-s1 p-4 sm:p-7" aria-labelledby="creature-deployment-title">
-      <header className="mx-auto max-w-2xl text-center">
-        <p className="type-legend m-0 text-viable-hi">Creature deployment</p>
-        <h2 id="creature-deployment-title" className="type-heading mt-2 mb-0">Choose who commands your crawler</h2>
-        <p className="mt-2 mb-0 font-body text-small text-ink-2">This choice defines your defensive ability for the entire battle. You are deploying into {matchup}; your rival fields the other creature.</p>
-      </header>
-
-      <div className="mx-auto grid w-full max-w-4xl gap-3 md:grid-cols-2" role="radiogroup" aria-label="Creature crew">
-        {(Object.keys(CREATURES) as ArtilleryCreature[]).map((creatureId) => {
-          const creature = CREATURES[creatureId];
-          const chosen = selected === creatureId;
-          return (
-            <button
-              key={creatureId}
-              type="button"
-              role="radio"
-              aria-checked={chosen}
-              className={`group grid min-h-52 grid-cols-[4.5rem_minmax(0,1fr)] gap-4 border-2 p-4 text-left transition-[border-color,background-color,transform] hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-viable-hi ${chosen ? 'border-viable-hi bg-viable-tint' : 'border-edge-strong bg-s0 hover:border-ink-3'}`}
-              onClick={() => onSelect(creatureId)}
-            >
-              <span className={`grid size-[4.5rem] place-items-center border text-[2.5rem] ${creatureId === 'codazzo' ? 'el-plant border-el bg-viable-tint text-el' : 'el-air border-el bg-info-tint text-el'}`} aria-hidden>{creature.glyph}</span>
-              <span className="min-w-0">
-                <span className="flex items-start justify-between gap-3">
-                  <span>
-                    <strong className="block font-display text-heading uppercase tracking-display text-ink">{creature.name}</strong>
-                    <span className="block font-body text-tiny text-ink-3">{creature.title}</span>
-                  </span>
-                  <span className={`shrink-0 border px-2 py-1 font-legend text-[9px] uppercase tracking-legend ${chosen ? 'border-viable-hi text-viable-hi' : 'border-edge text-ink-3'}`}>{chosen ? 'Selected' : 'Choose'}</span>
-                </span>
-                <span className="mt-4 block border-l-2 border-current pl-3">
-                  <span className="block font-legend text-small uppercase tracking-legend text-ink">{creature.ability}</span>
-                  <span className="mt-1 block font-body text-small text-ink-2">{creature.detail}</span>
-                </span>
-                <span className="mt-4 flex items-center justify-between gap-3 font-body text-tiny text-ink-3">
-                  <span>{creature.doctrine}</span>
-                  <span className="font-mono text-ink-2">2 uses</span>
-                </span>
-              </span>
-            </button>
-          );
-        })}
+    <section className="mx-auto grid w-full max-w-6xl gap-3 border border-edge-strong bg-s1 p-4" aria-labelledby="crater-setup-title">
+      <div>
+        <p className="type-micro m-0 text-ink-3">New match</p>
+        <h2 id="crater-setup-title" className="type-heading mt-1 mb-2">Configure Crater Command</h2>
+        <p className="m-0 max-w-3xl font-body text-body text-ink-2">Choose a world and range. Each planet changes the terrain profile and projectile physics; the controls and weapon rack stay consistent.</p>
       </div>
 
-      <div className="mx-auto grid w-full max-w-xl gap-2 text-center">
-        <Button type="button" size="lg" className="min-h-16 border-2 border-viable-lo text-heading" onClick={onDeploy}>
-          Deploy {selectedCrew.name}
-        </Button>
-        <span className="font-body text-tiny text-ink-3">Locked for this battle · {selectedCrew.abilityShort}</span>
+      <div className="grid gap-3 lg:grid-cols-[1fr_1fr]">
+        <fieldset className="grid gap-2 border border-edge p-3">
+          <legend className="type-legend px-1">Match type</legend>
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+            {modeMeta.map((choice) => (
+              <Button key={choice.value} type="button" variant="ghost" aria-pressed={mode === choice.value} className={`min-h-14 flex-col items-start gap-0.5 whitespace-normal border px-3 text-left ${mode === choice.value ? 'border-viable-lo bg-viable-tint text-viable-hi' : 'border-edge bg-s0'}`} onClick={() => onMode(choice.value)}>
+                <span className="text-small">{choice.label}</span>
+                <span className="font-body text-small normal-case tracking-normal opacity-75">{choice.detail}</span>
+              </Button>
+            ))}
+          </div>
+          {mode === 'bot' && (
+            <div className="mt-1 grid grid-cols-3 gap-2" role="group" aria-label="Bot difficulty">
+              {(['rookie', 'standard', 'expert'] as const).map((choice) => (
+                <Button key={choice} type="button" size="sm" variant={difficulty === choice ? 'outline' : 'ghost'} aria-pressed={difficulty === choice} onClick={() => onDifficulty(choice)}>{choice}</Button>
+              ))}
+            </div>
+          )}
+        </fieldset>
+
+        <fieldset className="grid gap-2 border border-edge p-3">
+          <legend className="type-legend px-1">Map size</legend>
+          {(['compact', 'standard', 'wide'] as const).map((choice) => (
+            <Button key={choice} type="button" variant="ghost" aria-pressed={mapSize === choice} className={`min-h-12 justify-between border px-3 text-left ${mapSize === choice ? 'border-viable-lo bg-viable-tint text-viable-hi' : 'border-edge bg-s0'}`} onClick={() => onMapSize(choice)}>
+              <span>{MAP_META[choice].label}</span>
+              <span className="font-body text-small normal-case tracking-normal opacity-75">{MAP_META[choice].detail}</span>
+            </Button>
+          ))}
+        </fieldset>
+      </div>
+
+      <fieldset className="grid gap-3 border border-edge p-3">
+        <legend className="type-legend px-1">Planet</legend>
+        <div className="grid gap-3 min-[360px]:grid-cols-2 lg:grid-cols-4">
+          {(Object.keys(WORLD_META) as ArtilleryWorld[]).map((choice) => {
+            const meta = WORLD_META[choice];
+            return (
+              <button key={choice} type="button" aria-pressed={world === choice} className={`${meta.elementClass} overflow-hidden whitespace-normal border text-left transition-colors ${world === choice ? 'border-viable-lo bg-viable-tint' : 'border-edge bg-s0 hover:border-edge-strong'}`} onClick={() => onWorld(choice)}>
+                <img src={meta.image} alt="" loading="lazy" className="h-16 w-full object-cover opacity-75" />
+                <span className="block p-2.5">
+                  <strong className="block font-legend text-body uppercase tracking-legend text-ink">{meta.name}</strong>
+                  <span className="mt-1 block font-body text-small text-ink-2">{meta.terrain}</span>
+                  <span className="mt-1 block font-body text-small text-ink-3">{meta.quirk}</span>
+                </span>
+              </button>
+            );
+          })}
+        </div>
+      </fieldset>
+
+      <div className="grid items-center gap-3 border-t border-edge pt-4 sm:grid-cols-[1fr_auto]">
+        <p className="m-0 font-body text-body text-ink-2"><strong className="text-ink">{WORLD_META[world].name}</strong> · {MAP_META[mapSize].label} · {modeMeta.find((choice) => choice.value === mode)?.label}{mode === 'bot' ? ` · ${difficulty}` : ''}</p>
+        <Button type="button" size="lg" className="min-h-14 px-8 text-heading" onClick={onStart}>Start match</Button>
       </div>
     </section>
   );
@@ -1200,91 +1354,56 @@ export function CreatureDeployment({ selected, mode, difficulty, onSelect, onDep
 export default function ArtilleryGamePage() {
   const [mode, setMode] = React.useState<ArtilleryMode>('bot');
   const [difficulty, setDifficulty] = React.useState<ArtilleryDifficulty>('standard');
-  const [playerCreature, setPlayerCreature] = React.useState<ArtilleryCreature>('codazzo');
-  const [draftCreature, setDraftCreature] = React.useState<ArtilleryCreature>('codazzo');
-  const [deploymentOpen, setDeploymentOpen] = React.useState(true);
+  const [mapSize, setMapSize] = React.useState<ArtilleryMapSize>('standard');
+  const [world, setWorld] = React.useState<ArtilleryWorld>('stonera');
+  const [setupOpen, setSetupOpen] = React.useState(true);
   const [seed, setSeed] = React.useState(() => dailyArcadeSeed('artillery'));
-  const [status, setStatus] = React.useState('Choose the creature that will command your crawler.');
+  const [status, setStatus] = React.useState('Choose a planet, map size, and match type.');
   const startedAt = React.useRef(performance.now());
   const sessionId = React.useRef(arcadeSessionId());
 
-  const newGame = React.useCallback((nextMode = mode, nextDifficulty = difficulty, nextCreature = playerCreature) => {
+  const startGame = React.useCallback(() => {
     setSeed(practiceArcadeSeed('artillery'));
-    setMode(nextMode);
-    setDifficulty(nextDifficulty);
-    setPlayerCreature(nextCreature);
-    setDraftCreature(nextCreature);
-    setDeploymentOpen(false);
-    const briefing = nextMode === 'challenge'
+    setSetupOpen(false);
+    window.requestAnimationFrame(() => window.scrollTo({ top: 0, behavior: 'auto' }));
+    const briefing = mode === 'challenge'
       ? 'Five-round trial: disable the target with the limited field magazine.'
-      : nextMode === 'range'
+      : mode === 'range'
         ? 'Six-shot range: score as much damage as possible.'
-        : nextMode === 'bot'
-          ? `${nextDifficulty} rival battery.`
-          : 'Two-creature local duel.';
-    setStatus(`${briefing} Drag the battlefield to aim.`);
+        : mode === 'bot'
+          ? `${difficulty} rival range rig.`
+          : 'Two-player local duel.';
+    setStatus(`${WORLD_META[world].name} · ${MAP_META[mapSize].label}. ${briefing} Drag the battlefield to aim.`);
     startedAt.current = performance.now();
     sessionId.current = arcadeSessionId();
-  }, [difficulty, mode, playerCreature]);
+  }, [difficulty, mapSize, mode, world]);
 
-  const openDeployment = React.useCallback((nextMode = mode, nextDifficulty = difficulty) => {
-    setMode(nextMode);
-    setDifficulty(nextDifficulty);
-    setDraftCreature(playerCreature);
-    setDeploymentOpen(true);
-    setStatus('Choose the creature that will command your crawler. The choice is locked for this battle.');
-  }, [difficulty, mode, playerCreature]);
+  const openSetup = React.useCallback(() => {
+    setSetupOpen(true);
+    setStatus('Choose a planet, map size, and match type.');
+  }, []);
 
   const complete = React.useCallback(async ({ score, actions }: { score: number; actions: ArtilleryAction[] }) => {
     setStatus('Match won. Verifying the firing record…');
-    const reward = await completeArcadeGame('artillery', { gameId: 'artillery', sessionId: sessionId.current, seed, difficulty, creature: playerCreature, actions }, { score, timeMs: performance.now() - startedAt.current });
+    const reward = await completeArcadeGame('artillery', { gameId: 'artillery', sessionId: sessionId.current, seed, difficulty, mapSize, world, actions }, { score, timeMs: performance.now() - startedAt.current });
     setStatus(`Match won. ${reward.message}`);
-  }, [difficulty, playerCreature, seed]);
+  }, [difficulty, mapSize, seed, world]);
 
   return (
-    <ArcadeGameShell game={GAME} status={status} onNewGame={() => openDeployment()} aside={
-      <div className="flex gap-1" role="group" aria-label="Opponent">
-        <Button
-          size="xs"
-          variant={mode === 'bot' ? 'outline' : 'ghost'}
-          aria-label={`Bot mode. Difficulty ${difficulty}.`}
-          title={mode === 'bot' ? 'Select again to cycle difficulty' : 'Play versus bot'}
-          onClick={() => {
-            if (mode !== 'bot') openDeployment('bot');
-            else {
-              const next: ArtilleryDifficulty = difficulty === 'rookie' ? 'standard' : difficulty === 'standard' ? 'expert' : 'rookie';
-              openDeployment('bot', next);
-            }
-          }}
-        >
-          Bot <span className="font-mono text-[9px]">{difficulty === 'rookie' ? 'I' : difficulty === 'standard' ? 'II' : 'III'}↻</span>
-        </Button>
-        <Button size="xs" variant={mode === 'local' ? 'outline' : 'ghost'} onClick={() => openDeployment('local')}>Local</Button>
-        <Button size="xs" variant={mode === 'range' ? 'outline' : 'ghost'} onClick={() => openDeployment('range')}>Range</Button>
-        <Button size="xs" variant={mode === 'challenge' ? 'outline' : 'ghost'} onClick={() => openDeployment('challenge')}>Trial</Button>
-      </div>
-    }>
-      {deploymentOpen ? (
-        <CreatureDeployment
-          selected={draftCreature}
-          mode={mode}
-          difficulty={difficulty}
-          onSelect={(creature) => {
-            setDraftCreature(creature);
-            setStatus(`${CREATURES[creature].name} selected. ${CREATURES[creature].detail}`);
-          }}
-          onDeploy={() => newGame(mode, difficulty, draftCreature)}
-        />
+    <ArcadeGameShell game={GAME} status={status} onNewGame={openSetup} aside={!setupOpen ? <span className="font-mono text-small text-ink-2">{WORLD_META[world].name} · {MAP_META[mapSize].label}</span> : undefined}>
+      {setupOpen ? (
+        <ArtillerySetup mode={mode} difficulty={difficulty} mapSize={mapSize} world={world} onMode={setMode} onDifficulty={setDifficulty} onMapSize={setMapSize} onWorld={setWorld} onStart={startGame} />
       ) : (
         <ArtilleryBoard
-          key={`${seed}:${mode}:${difficulty}:${playerCreature}`}
+          key={`${seed}:${mode}:${difficulty}:${mapSize}:${world}`}
           seed={seed}
           mode={mode}
           difficulty={difficulty}
-          playerCreature={playerCreature}
+          mapSize={mapSize}
+          world={world}
           onStatus={setStatus}
           onComplete={complete}
-          onRematch={() => newGame()}
+          onRematch={openSetup}
         />
       )}
     </ArcadeGameShell>

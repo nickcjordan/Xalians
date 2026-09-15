@@ -1,7 +1,7 @@
 {
   "_meta": {
-    "measuredAt": "Crater Command finished-game pass with authored battlefield, feedback, controls, and synthesized audio",
-    "measuredOn": "2026-09-13",
+    "measuredAt": "Crater Command hold-thrust mobility and cockpit instrumentation pass",
+    "measuredOn": "2026-09-14",
     "policy": "Initial limits and route limits are the measured production output after removing the developer styleguide, rounded up with approximately five percent headroom. Update a limit only with measured evidence and review."
   },
   "forbiddenProductionEntries": [
@@ -9,7 +9,7 @@
   ],
   "initial": {
     "javascript": { "raw": 622000, "gzip": 195000 },
-    "stylesheets": { "raw": 230000, "gzip": 37000 }
+    "stylesheets": { "raw": 240500, "gzip": 39000 }
   },
   "chunks": {
     "vendor-auth": { "javascript": { "raw": 132000, "gzip": 38000 } }
@@ -23,7 +23,7 @@
     "reclamationPage": { "javascript": { "raw": 1162000, "gzip": 343000 }, "stylesheets": { "raw": 163000, "gzip": 28000 } },
     "longReturnPage": { "javascript": { "raw": 317000, "gzip": 97000 }, "stylesheets": { "raw": 280000, "gzip": 50000 } },
     "arcadePage": { "javascript": { "raw": 16000, "gzip": 7500 }, "stylesheets": { "raw": 0, "gzip": 0 } },
-    "artilleryGamePage": { "javascript": { "raw": 69000, "gzip": 24500 }, "stylesheets": { "raw": 0, "gzip": 0 } },
+    "artilleryGamePage": { "javascript": { "raw": 74500, "gzip": 25900 }, "stylesheets": { "raw": 0, "gzip": 0 } },
     "solitaireGamePage": { "javascript": { "raw": 22700, "gzip": 10100 }, "stylesheets": { "raw": 0, "gzip": 0 } },
     "hazardSweepGamePage": { "javascript": { "raw": 17200, "gzip": 8400 }, "stylesheets": { "raw": 0, "gzip": 0 } },
     "relayMergeGamePage": { "javascript": { "raw": 17400, "gzip": 8700 }, "stylesheets": { "raw": 0, "gzip": 0 } },

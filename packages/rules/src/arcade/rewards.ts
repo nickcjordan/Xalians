@@ -1,4 +1,4 @@
-import { applyArtilleryMove, applyArtilleryShot, chooseArtilleryBotShot, createArtilleryState, type ArtilleryAction, type ArtilleryCreature, type ArtilleryDifficulty } from './artillery.ts';
+import { applyArtilleryMove, applyArtilleryShot, chooseArtilleryBotShot, createArtilleryState, type ArtilleryAction, type ArtilleryCreature, type ArtilleryDifficulty, type ArtilleryMapSize, type ArtilleryWorld } from './artillery.ts';
 import { applySweepAction, createSweepState, type SweepAction } from './hazardSweep.ts';
 import { applyMemoryReveal, createMemoryState } from './memory.ts';
 import { applyRelayMove, createRelayState, type RelayDirection } from './relayMerge.ts';
@@ -14,7 +14,7 @@ export const ARCADE_AWARDS = {
 
 export type ArcadeGameId = keyof typeof ARCADE_AWARDS;
 export type ArcadeCompletion =
-  | { gameId: 'artillery'; seed: string; difficulty?: ArtilleryDifficulty; creature?: ArtilleryCreature; actions: ArtilleryAction[] }
+  | { gameId: 'artillery'; seed: string; difficulty?: ArtilleryDifficulty; creature?: ArtilleryCreature; mapSize?: ArtilleryMapSize; world?: ArtilleryWorld; actions: ArtilleryAction[] }
   | { gameId: 'sweep'; seed: string; level: 'survey' | 'field' | 'frontier'; actions: SweepAction[] }
   | { gameId: 'relay'; seed: string; actions: RelayDirection[] }
   | { gameId: 'patience'; seed: string; drawCount: 1 | 3; actions: SolitaireAction[] }
@@ -27,12 +27,16 @@ const SWEEP_LEVELS = {
 } as const;
 
 function replayArtillery(completion: Extract<ArcadeCompletion, { gameId: 'artillery' }>): boolean {
-  if (completion.actions.length > 80) return false;
-  let state = createArtilleryState(completion.seed, 'bot', completion.difficulty ?? 'standard', completion.creature ?? 'codazzo');
+  if (completion.actions.length > 400) return false;
+  let state = createArtilleryState(completion.seed, 'bot', completion.difficulty ?? 'standard', {
+    mapSize: completion.mapSize ?? 'compact',
+    world: completion.world ?? 'stonera',
+    playerCreature: completion.creature ?? 'codazzo',
+  });
   for (const action of completion.actions) {
     if (state.phase !== 'aiming' || state.current !== 'left') return false;
     if ('direction' in action) {
-      state = applyArtilleryMove(state, action.direction).state;
+      state = applyArtilleryMove(state, action.direction, action.mobility ?? 'drive', action.thrust).state;
       continue;
     }
     state = applyArtilleryShot(state, action).state;
