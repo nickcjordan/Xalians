@@ -159,7 +159,9 @@ describe('Crater Command aim feedback', () => {
       expect(screen.getByRole('button', { name: new RegExp(`^${payload}\\b`, 'i') })).toBeEnabled();
     }
     expect(screen.getByRole('button', { name: /Fire Impact/i })).toBeEnabled();
-    expect(screen.getByText(/Selected weapon/i)).toBeInTheDocument();
+    expect(screen.getByText('Impact round')).toBeInTheDocument();
+    expect(screen.getByRole('img', { name: /Two mobile range rigs on Stonera/i })).toHaveAttribute('viewBox', '0 -38 360 148');
+    expect(screen.getByRole('button', { name: /Enable artillery audio/i })).toBeInTheDocument();
     expect(screen.queryByText(/Codazzo|Terragoyle|creature ability/i)).not.toBeInTheDocument();
   });
 
