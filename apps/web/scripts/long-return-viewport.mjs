@@ -79,6 +79,16 @@ try {
     await page.locator('.lr-board-pick').first().click();
     assert(await page.locator('.lr-lead-ally-saving').count(), 'Companion energy saving must remain attributable when choosing a lead');
     await capture('companion-leads');
+    await page.getByRole('button', { name: /Cross now/ }).click();
+    await page.getByRole('button', { name: /Continue to result/ }).click();
+    await page.getByRole('button', { name: 'Abort mission', exact: true }).click();
+    assert.match(await page.locator('.lr-end-copy').innerText(), /takes a path of its own/);
+    assert.match(await page.locator('.lr-end-haul-loss').innerText(), /carried.*left behind/);
+    await capture('companion-ending');
+    if (width === 390) {
+      const cards = await page.locator('.lr-end-crew .lr-crew-member').evaluateAll(elements => elements.map(el => el.getBoundingClientRect().height));
+      assert(cards.every(height => height < 160), 'Mobile end crew cards must not inherit the 200px gallery portrait height');
+    }
     assert.deepEqual(errors, []);
     console.log(`${width}px: scout, route, custom crew, result, repairs, ending, encounter, companion, report checked`);
     await context.close();
