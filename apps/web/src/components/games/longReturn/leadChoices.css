@@ -1,4 +1,7 @@
 .lr-lead-options { margin: 12px 0; }
+.lr-lead-back { align-self:flex-start; background:none; border:0; color:#a1e3ba; padding:8px 0 18px; cursor:pointer; font:inherit; }
+.lr-lead-uncertainty { font-size:14px; color:#e6ca7b; margin:10px 0; }
+.lr-lead-option-cost small { display:flex; gap:6px; align-items:center; }
 .lr-lead-options summary { cursor: pointer; padding: 10px 0; font-size: 15px; }
 .lr-lead-options-list { display: grid; gap: 4px; }
 .lr-lead-options-list > button { display: grid; grid-template-columns: 64px minmax(0,1fr) 130px 20px; gap: 12px; align-items: center; text-align: left; border: 1px solid #495449; background: #171d18; color: #dddcd0; padding: 10px; cursor: pointer; }

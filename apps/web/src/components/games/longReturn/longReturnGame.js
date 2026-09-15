@@ -311,12 +311,12 @@ function safestPlanForRoute(route, crew, strain, spentAbilities, scan, preferred
         const forecast = decisionForecast({ route, lead, support, method, scan, leadLoad: strain[lead.id] || 0, supportLoad: strain[support.id] || 0 });
         const knownLeadStrain = Math.max(0, forecast.baseLeadStrain + forecast.environment.strain - (forecast.naturalReaction ? 1 : 0));
         const knownPressure = route.pressure + (forecast.naturalReaction ? 0 : 1);
-        const risk = knownLeadStrain * 18 + forecast.baseSupportStrain * 12 + knownPressure * 8 + forecast.unresolvedHazards.length * 14 - Math.min(30, forecast.margin) * .15;
+        const risk = knownLeadStrain * 18 + forecast.baseSupportStrain * 12 + knownPressure * 8 + forecast.unresolvedHazards.length * 14;
         plans.push({ ...forecast, route, lead, support, method, knownLeadStrain, knownPressure, risk });
       });
     });
   });
-  return plans.sort((a, b) => a.risk - b.risk || b.margin - a.margin)[0] || null;
+  return plans.sort((a, b) => a.risk - b.risk || Number(Boolean(a.method.abilityId)) - Number(Boolean(b.method.abilityId)) || b.margin - a.margin)[0] || null;
 }
 
 export function routeAdvantage(plan, plans) {
@@ -709,6 +709,8 @@ function LongReturnGame() {
   const closeMechanics = () => { setMechanicsOpen(false); requestAnimationFrame(() => rulesTriggerRef.current?.isConnected && rulesTriggerRef.current.focus()); };
   const [memoryOpen, setMemoryOpen] = useState(false);
   const [simpleCustomizing, setSimpleCustomizing] = useState(false);
+  const [choosingLead, setChoosingLead] = useState(false);
+  React.useEffect(() => { if (phase !== 'assign') setChoosingLead(false); }, [phase]);
   const [simpleLeadChoice, setSimpleLeadChoice] = useState(null);
   const [encounterState, setEncounterState] = useState(null);
   const [encounterOptionId, setEncounterOptionId] = useState(null);
@@ -832,7 +834,7 @@ function LongReturnGame() {
         focusTarget.focus({ preventScroll: true });
       }
     }
-  }, [started, status, guidanceLevel, phase, sceneIndex, guidanceLevel === 'simple' ? null : routeId, simpleCustomizing, encounterState && encounterState.result, actionTransition]);
+  }, [started, status, guidanceLevel, phase, sceneIndex, choosingLead, guidanceLevel === 'simple' ? null : routeId, simpleCustomizing, encounterState && encounterState.result, actionTransition]);
   const methodForecasts = useMemo(() => lead && route ? methods.map((entry) => ({
     method: entry,
     ...decisionForecast({ route, lead, support, method: entry, scan, leadLoad: strain[lead.id] || 0, supportLoad: support ? strain[support.id] || 0 : 0 })
@@ -1016,12 +1018,15 @@ function LongReturnGame() {
   };
 
   const changeRoute = () => {
+    setChoosingLead(false);
     setWizardDirection('back');
     setRouteId(null); setPendingRouteId(routeId); setRouteVisualId(routeId); setLeadId(null); setSupportId(null); setMethodId(null); setUseCommand(false); setSimpleCustomizing(false);
   };
 
   const previewSimpleRoute = (id) => {
     chooseRoute(id);
+    setWizardDirection('forward');
+    setChoosingLead(true);
   };
 
   const chooseLead = (id) => {
@@ -1253,7 +1258,7 @@ function LongReturnGame() {
   const crossingsToIndex = Math.max(0, MISSION.scenes.findIndex(entry => entry.objective) - sceneIndex);
   const optionalScenesRemaining = MISSION.scenes.slice(sceneIndex + 1).filter((entry) => entry.optional);
   const optionalSalvagePotential = optionalScenesRemaining.reduce((total, entry) => total + Math.max(...entry.routes.map((entryRoute) => entryRoute.salvage)), 0);
-  const wizardViewKey = `${scene.id}-${phase}`;
+  const wizardViewKey = `${scene.id}-${phase}-${phase === 'assign' ? choosingLead ? 'lead' : 'route' : ''}`;
   return (
     <main className={`lr-shell lr-play-shell lr-mode-${guidanceLevel}${simpleCustomizing ? ' lr-is-customizing' : ''}`}>
       {actionTransition && (actionTransition.type === 'scout' || actionTransition.type === 'scout-return'
@@ -1528,19 +1533,19 @@ function LongReturnGame() {
                 </div>
                 {scan.revealedIds.length > 0 && <div className="lr-scan-strip"><BiIcon cls="bi-broadcast-pin" /><span>{scan.revealedIds.length} hazard signature relayed to command.</span></div>}
               </>}
-              {(guidanceLevel === 'simple' ? !simpleCustomizing : !route) && <details className="lr-terrain-details"><summary><BiIcon cls="bi bi-map" /> Explore the terrain</summary><RouteMap scene={scene} activeRouteId={routeVisualId || pendingRouteId} runFlags={runFlags} encounterStatus={encounterResolution ? { ...encounterResolution, label: encounterResolution.companion ? `${encounterCreature.species} joined the crew` : encounterResolution.resolution === 'unresolved' ? `${encounterCreature.species} remains in the route` : encounterResolution.resolution === 'detour' ? 'Crew withdrew from contact' : 'Native passage cleared' } : null} /></details>}
-              {guidanceLevel === 'simple' && simpleCustomizing ? null : guidanceLevel === 'simple' ? <>
+              {(guidanceLevel === 'simple' ? !simpleCustomizing && !choosingLead : !route) && <details className="lr-terrain-details"><summary><BiIcon cls="bi bi-map" /> Explore the terrain</summary><RouteMap scene={scene} activeRouteId={routeVisualId || pendingRouteId} runFlags={runFlags} encounterStatus={encounterResolution ? { ...encounterResolution, label: encounterResolution.companion ? `${encounterCreature.species} joined the crew` : encounterResolution.resolution === 'unresolved' ? `${encounterCreature.species} remains in the route` : encounterResolution.resolution === 'detour' ? 'Crew withdrew from contact' : 'Native passage cleared' } : null} /></details>}
+              {guidanceLevel === 'simple' && (simpleCustomizing || choosingLead) ? null : guidanceLevel === 'simple' ? <>
                 <RouteComparison plans={simpleRoutePlans.map((plan) => useCommand && plan.route.id === routeId && !plan.naturalReaction ? { ...plan, knownPressure: Math.max(0, plan.knownPressure - 1) } : plan)} selectedId={routeId} onSelect={previewSimpleRoute} onPreview={setRouteVisualId} companion={companion} recommendation={routeRecommendation} />
               </> : <div className="lr-route-grid">
                 {scene.routes.map((entry) => <RouteCard key={entry.id} route={entry} selected={routeId === entry.id} onSelect={() => chooseRoute(entry.id)} onPreview={() => setRouteVisualId(entry.id)} onPreviewEnd={() => setRouteVisualId(routeId)} scan={scan} />)}
               </div>}
 
-              {guidanceLevel === 'simple' && !simpleCustomizing && !route && <aside className="lr-crossing-empty" style={{ backgroundImage: `linear-gradient(0deg,#111710 5%,transparent),url(${sceneArtFor(scene).src})` }}><div><BiIcon cls="bi bi-signpost-split" /><h3>Choose your route</h3><p>Then cross with the suggested crew—or try another lead.</p></div></aside>}
 
-              {route && guidanceLevel === 'simple' && !simpleCustomizing && suggestedPlan && (
+              {route && choosingLead && guidanceLevel === 'simple' && !simpleCustomizing && suggestedPlan && (
                 <div className="lr-simple-plan">
-                  <div className="lr-simple-plan-head"><BiIcon cls="bi bi-people" /><div><span>All three cross together</span><h3>{suggestedPlan.lead.species} leads</h3><MethodIdentity method={suggestedPlan.method} /></div></div>
-                  <LeadChoices plans={leadChoices.map(applyCommandPreview)} companion={companion} selectedId={suggestedPlan.lead.id} onSelect={leadId => setSimpleLeadChoice({ sceneId: scene.id, routeId: route.id, leadId })} />
+                  <button type="button" className="lr-lead-back" onClick={() => { setWizardDirection('back'); setChoosingLead(false); }}>← Change route</button>
+                  <div className="lr-simple-plan-head"><div><span>2 · Choose who leads · all three cross together</span><h3>{route.title}</h3></div></div>
+                  <LeadChoices plans={leadChoices.map(plan => plan.lead.id === suggestedPlan.lead.id ? suggestedPlan : applyCommandPreview(plan))} companion={companion} selectedId={suggestedPlan.lead.id} onSelect={leadId => setSimpleLeadChoice({ sceneId: scene.id, routeId: route.id, leadId })} />
                   {methodChoices.length > 1 && <details className="lr-method-alternatives"><summary>Try another technique</summary><div aria-label="Compare crossing techniques">{methodChoices.map(plan => <button type="button" key={plan.method.id} aria-pressed={plan.method.id === suggestedPlan.method.id} onClick={event => { const picker = event.currentTarget.closest('details'); setSimpleLeadChoice({ sceneId: scene.id, routeId: route.id, leadId: plan.lead.id, methodId: plan.method.id }); picker.open = false; picker.querySelector('summary').focus(); }}><MethodIdentity method={plan.method} /><span>{Math.max(0, plan.knownLeadStrain - (companion?.ready && !plan.nativeRisk && !plan.unresolvedHazards.length && plan.knownLeadStrain > 0 ? 1 : 0)) + plan.baseSupportStrain} energy{plan.nativeRisk || plan.unresolvedHazards.length ? ' + ?' : ''}<small>{plan.method.abilityId ? 'Spends this ability' : 'Keeps your abilities'}</small></span></button>)}</div></details>}
                   <details className="lr-plan-roles"><summary>See crew roles</summary><div className="lr-simple-plan-crew" aria-label="Every creature crosses; each has a different role">
                     <span className="is-lead"><BiIcon cls="bi bi-play-fill" /><small>Lead acts</small><strong>{suggestedPlan.lead.species}</strong><em>{suggestedPlan.method.label}</em></span>
@@ -1555,7 +1560,7 @@ function LongReturnGame() {
                     {crossingWarning && <p className="lr-crossing-warning" role="status"><TriangleAlert aria-hidden="true" /><span><strong>{crossingWarning.label}</strong><small>{crossingWarning.detail}</small></span></p>}
                     <span className="lr-commit-identity"><strong>{route.title}</strong><small>{suggestedPlan.lead.species} leads · all three cross</small></span>
                     <button type="button" className="lr-simple-secondary lr-customize-plan" onClick={() => setSimpleCustomizing(true)}><BiIcon cls="bi bi-sliders" /> Advanced: customize crew plan</button>
-                    <button type="button" className="g-btn g-btn--primary lr-cross-now" onClick={() => commit(suggestedPlan)}><BiIcon cls="bi bi-play-fill" /> Cross now<small>Take action · costs apply</small></button>
+                    <button type="button" className="g-btn g-btn--primary lr-cross-now" onClick={() => commit(suggestedPlan)}><BiIcon cls="bi bi-play-fill" /> Cross now<small>{suggestedPlan.lead.species} leads</small></button>
                   </div>
                 </div>
               )}
