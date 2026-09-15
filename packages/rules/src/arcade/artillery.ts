@@ -364,7 +364,10 @@ function simulateProjectile(
       return { path, impact, hit: targetSide, damage: damageAtDistance(shot.payload, 0, true), directHit: true, outOfBounds: false };
     }
     const width = state.terrain.length - 1;
-    if (x < -10 || x > width + 10 || y > ARTILLERY_HEIGHT + 35) {
+    // The visible viewport is a camera, not the edge of the simulation. High
+    // shots can leave the top of the screen and must keep flying until gravity
+    // brings them back down. Horizontal range remains the only escape boundary.
+    if (x < -10 || x > width + 10) {
       return { path, impact: null, hit: null, damage: 0, directHit: false, outOfBounds: true };
     }
     if (y <= terrainHeight(state.terrain, x)) {

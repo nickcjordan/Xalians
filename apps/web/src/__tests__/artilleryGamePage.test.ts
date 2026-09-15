@@ -3,7 +3,7 @@ import { act, fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 
-import { ArtilleryBoard, ArtillerySetup, CommandMeter, artilleryAimFromDrag, artilleryBarrelEndpoint, artilleryFlightFrameIndex, artilleryImpactTerrainFrame, artilleryMoveAnimationProgress } from '../pages/games/artilleryGamePage';
+import { ArtilleryBoard, ArtillerySetup, CommandMeter, artilleryAimFromDrag, artilleryBarrelEndpoint, artilleryFlightFrameIndex, artilleryImpactTerrainFrame, artilleryJetFlightY, artilleryMoveAnimationProgress } from '../pages/games/artilleryGamePage';
 
 class ResizeObserverStub {
   observe() {}
@@ -84,6 +84,12 @@ describe('Crater Command aim feedback', () => {
     expect(artilleryMoveAnimationProgress('impact', 0.9, 1)).toBe(1);
   });
 
+  it('flies jump jets on a high arc instead of following the terrain', () => {
+    expect(artilleryJetFlightY(80, 65, 0, 100)).toBe(80);
+    expect(artilleryJetFlightY(80, 65, 50, 100)).toBeLessThan(31);
+    expect(artilleryJetFlightY(80, 65, 100, 100)).toBeCloseTo(65);
+  });
+
   it('excavates terrain progressively and lands on the exact resulting crater', () => {
     const before = [12, 12, 12];
     const after = [12, 7, 12];
@@ -160,7 +166,7 @@ describe('Crater Command aim feedback', () => {
     }
     expect(screen.getByRole('button', { name: /Fire Impact/i })).toBeEnabled();
     expect(screen.getByText(/Gravity 0\.86× · wind 1\.0×/i)).toBeInTheDocument();
-    expect(screen.getByText(/Hold to move · ramps while held/i)).toBeInTheDocument();
+    expect(screen.getByText(/Drive crawls · jet leaps/i)).toBeInTheDocument();
     expect(screen.getByText('Impact round')).toBeInTheDocument();
     expect(screen.getByRole('img', { name: /Two mobile range rigs on Stonera/i })).toHaveAttribute('viewBox', '0 -38 360 148');
     expect(screen.getByRole('button', { name: /Enable artillery audio/i })).toBeInTheDocument();
@@ -208,6 +214,33 @@ describe('Crater Command aim feedback', () => {
       const remaining = Number(screen.getAllByText(/%$/)[0].textContent?.replace('%', ''));
       expect(remaining).toBeLessThan(88);
       expect(remaining).toBeGreaterThan(70);
+      expect(screen.getByRole('button', { name: /Fire Impact/i })).toBeEnabled();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it('keeps the rig airborne after jet release until its landing animation finishes', () => {
+    vi.useFakeTimers();
+    try {
+      render(createElement(ArtilleryBoard, {
+        seed: 'component-jet-arc',
+        mode: 'bot',
+        difficulty: 'standard',
+        mapSize: 'standard',
+        world: 'stonera',
+        onStatus: vi.fn(),
+        onComplete: vi.fn(),
+        onRematch: vi.fn(),
+      }));
+      const jet = screen.getByRole('button', { name: /Hold to jet forward/i });
+      fireEvent.pointerDown(jet, { pointerId: 3, pointerType: 'mouse', isPrimary: true, button: 0 });
+      act(() => vi.advanceTimersByTime(800));
+      expect(screen.getByTestId('artillery-jet-trajectory')).toBeInTheDocument();
+      fireEvent.pointerUp(jet, { pointerId: 3, pointerType: 'mouse', isPrimary: true, button: 0 });
+      expect(screen.getByRole('button', { name: /Fire Impact/i })).toBeDisabled();
+      act(() => vi.advanceTimersByTime(500));
+      expect(screen.queryByTestId('artillery-jet-trajectory')).not.toBeInTheDocument();
       expect(screen.getByRole('button', { name: /Fire Impact/i })).toBeEnabled();
     } finally {
       vi.useRealTimers();
