@@ -9,6 +9,13 @@ function findButton(container, label) {
   return Array.from(container.querySelectorAll('button')).find((button) => label.test(button.textContent));
 }
 
+test('breaking contact does not claim an undelivered report already reached the crew', () => {
+  const encounter = { option: { resolution: 'unresolved' }, nativeName: 'Xylum', scoutName: 'Chromocat', mode: 'scout' };
+  expect(encounterNarrative({ ...encounter, reportDelivered: false })).toContain('scout still has to make the journey back');
+  expect(encounterNarrative({ ...encounter, reportDelivered: false })).not.toContain('crew now knows');
+  expect(encounterNarrative({ ...encounter, reportDelivered: true })).toContain('crew now knows');
+});
+
 function click(container, label) {
   const button = findButton(container, label);
   expect(button, `Missing ${label}; available: ${[...container.querySelectorAll('button')].map(b => b.textContent).join(' / ')}`).toBeTruthy();

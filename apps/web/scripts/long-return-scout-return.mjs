@@ -22,6 +22,20 @@ try {
   await page.reload();
   await page.getByRole('button', { name: /Resume expedition/i }).click();
   assert.equal(await page.locator('.lr-wizard-resources').innerText(), resources);
+  await page.getByRole('button', { name: 'Continue mission', exact: true }).click();
+  await page.getByRole('button', { name: /^Enter / }).click();
+  await page.locator('.lr-simple-scouts > button').filter({ hasText: 'Hippochamp' }).click();
+  await page.getByRole('button', { name: /^Send Hippochamp/ }).click();
+  await page.getByRole('button', { name: 'Respond to encounter', exact: true }).click();
+  await page.locator('.lr-encounter-options > button').filter({ hasText: 'Break contact' }).click();
+  await page.locator('.lr-encounter-commit-bar button').click();
+  await page.getByRole('button', { name: 'See encounter result', exact: true }).click();
+  assert.match(await page.locator('.lr-field-encounter').innerText(), /scout still has to make the journey back/);
+  assert.doesNotMatch(await page.locator('.lr-field-encounter').innerText(), /crew now knows/);
+  await page.getByRole('button', { name: 'Review scout report', exact: true }).click();
+  await page.getByRole('button', { name: /Wait for Hippochamp to return/ }).click();
+  await page.getByRole('button', { name: 'Review scout report', exact: true }).click();
+  assert.match(await page.locator('.lr-scout-trip-receipt').innerText(), /2 energy scouting\s+1 stability waiting/);
   assert.deepEqual(errors, []);
-  console.log('Physical scout return receipt, crossing and checkpoint resource continuity passed.');
+  console.log('Physical scout return, checkpoint continuity, and non-relay contact break before reporting passed.');
 } finally { await browser.close(); }

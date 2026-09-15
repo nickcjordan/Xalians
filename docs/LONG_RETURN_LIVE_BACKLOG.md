@@ -21,6 +21,16 @@ Statuses progress independently: identified → implementing → technically ver
 
 ### Live findings
 
+### September 15 — breaking contact is not report delivery
+
+- [x] Retreat/mark options distinguish breaking contact from delivering intelligence. Non-relay descriptions no longer promise the crew has already heard a warning before the separate return action.
+- [x] Encounter aftermath names the native's continued presence, not a return that has not occurred. Narrative branches on actual report delivery; relay-capable scouts retain immediate communication.
+- [x] Browser replay uses Hippochamp's non-relay channel in the turbine hall to verify retreat, pending report, paid return and persistent trip receipt. Chromocat's display channel in that room correctly takes the immediate-report branch.
+- [x] A full alternate-response mission reached forced extraction after six crossings with the Index and 4 salvage retained; no flow errors. 171 tests and production bundle checks pass.
+- [ ] Player interpretation and full-mission acceptance remain unproven.
+
+Previous continuation: progress (depleted preview correction, PR #288 merged). Current continuation: progress (encounter/report chronology correction and branch replay).
+
 ### September 15 — full phone mission and depleted previews
 
 - [x] Parameterized mission replay viewport and captured every selected plan, not just route/result pages. Seven-scene 390×667 run reached deep retrieval with 14 salvage and 2 stability.

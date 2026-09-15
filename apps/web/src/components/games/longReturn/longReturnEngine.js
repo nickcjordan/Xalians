@@ -86,7 +86,7 @@ export function encounterOptions(scene, scout, crew, mode = 'scout', informed = 
     const canSignal = outlook && (outlook.contact >= 62 || outlook.channel);
     return [
       ...(canSignal ? [{ id: 'signal-space', label: 'Signal peaceful intent', summary: 'Show that the scout wants passage, not its shelter.', scoutStrain: baseSurprise, instability: 0, companion: false, resolution: 'cleared', recommended: true }] : []),
-      { id: 'withdraw', label: 'Withdraw and report', summary: 'Leave its boundary intact and return with a warning for the crew.', scoutStrain: baseSurprise + (outlook && outlook.stealth >= 62 ? 0 : 1), instability: 0, companion: false, resolution: 'unresolved', recommended: !canSignal },
+      { id: 'withdraw', label: 'Break contact', summary: outlook?.channel ? 'Leave its boundary intact and relay a warning to the crew.' : 'Leave its boundary intact. The scout must still return to deliver the warning.', scoutStrain: baseSurprise + (outlook && outlook.stealth >= 62 ? 0 : 1), instability: 0, companion: false, resolution: 'unresolved', recommended: !canSignal },
       { id: 'challenge', label: 'Challenge its claim', summary: 'Force the native out alone. A defensive scout fares better than a quiet one.', scoutStrain: baseSurprise + (outlook && outlook.hold >= 62 ? 1 : 2), instability: 2, companion: false, resolution: 'cleared' }
     ];
   }
@@ -100,7 +100,7 @@ export function encounterOptions(scene, scout, crew, mode = 'scout', informed = 
     const precise = outlook && (outlook.contact >= 62 || outlook.detect >= 72);
     return [
       { id: 'release', label: 'Release it from the arms', summary: 'Use empathy or careful observation to stop its panic without calling the crew.', scoutStrain: baseSurprise + (precise ? 0 : 1), instability: precise ? 0 : 1, companion: false, resolution: 'cleared', recommended: precise },
-      { id: 'mark', label: 'Mark the safe controls and return', summary: 'Do not intervene alone. Give the full crew what it needs to approach safely.', scoutStrain: baseSurprise, instability: 0, companion: false, resolution: 'unresolved', recommended: !precise },
+      { id: 'mark', label: 'Mark the safe controls and withdraw', summary: outlook?.channel ? 'Do not intervene alone. Relay the safe approach to the crew.' : 'Do not intervene alone. The scout must return to explain the safe approach.', scoutStrain: baseSurprise, instability: 0, companion: false, resolution: 'unresolved', recommended: !precise },
       { id: 'force-arms', label: 'Force the arms apart', summary: 'Resolve the trap through strength. It works, but the rig records the intrusion.', scoutStrain: baseSurprise + (outlook && outlook.hold >= 62 ? 1 : 2), instability: 2, companion: false, resolution: 'cleared' }
     ];
   }
@@ -123,7 +123,7 @@ export function encounterOptions(scene, scout, crew, mode = 'scout', informed = 
     options.push({ id: 'return-for-medic', helperId: medic.id, label: `Return for ${medic.species}`, summary: 'Leave and physically guide the medic back. Safe, but tiring and slow.', scoutStrain: baseSurprise + 1, instability: 1, companion: true, resolution: 'befriended', recommended: true });
   }
   const escapeCost = baseSurprise + (outlook && outlook.stealth >= 62 ? 0 : 1);
-  options.push({ id: 'withdraw', label: 'Withdraw and report', summary: 'Preserve the encounter for the full crew. The route remains occupied.', scoutStrain: escapeCost, instability: 0, companion: false, resolution: 'unresolved' });
+  options.push({ id: 'withdraw', label: 'Break contact', summary: outlook?.channel ? 'Relay a warning and leave the encounter for the full crew. The route remains occupied.' : 'Leave the encounter for the full crew. The scout must still return to report; the route remains occupied.', scoutStrain: escapeCost, instability: 0, companion: false, resolution: 'unresolved' });
   const holdCost = baseSurprise + (outlook && outlook.hold >= 62 ? 1 : 2);
   options.push({ id: 'hold', label: 'Hold ground and drive it away', summary: 'Resolve the encounter alone through force and presence.', scoutStrain: holdCost, instability: outlook && outlook.hold >= 62 ? 1 : 2, companion: false, resolution: 'cleared' });
   return options;
