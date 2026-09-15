@@ -2,10 +2,9 @@
 import * as React from 'react';
 import {
   ARTILLERY_HEIGHT,
+  ARTILLERY_CONDITIONS,
   ARTILLERY_MAP_WIDTHS,
   ARTILLERY_MAX_INTEGRITY,
-  ARTILLERY_MAX_JET_CHARGES,
-  ARTILLERY_MAX_TRACTION,
   ARTILLERY_PAYLOADS,
   ARTILLERY_PAYLOAD_RULES,
   ARTILLERY_SPECIAL_PAYLOADS,
@@ -47,7 +46,12 @@ type AnimatedShot = {
   shot: Required<ArtilleryShot>;
   terrainAfter: number[];
 } | null;
-type AnimatedMove = { side: ArtillerySide; fromX: number; toX: number; progress: number; mobility: ArtilleryMobility } | null;
+type ActiveThrust = {
+  side: ArtillerySide;
+  direction: Exclude<ArtilleryMove, 0>;
+  mobility: ArtilleryMobility;
+  pulse: number;
+} | null;
 type CombatStats = {
   shots: number;
   hits: number;
@@ -259,10 +263,9 @@ export function ArtilleryBoard({ seed, mode, difficulty, mapSize, world, onStatu
   const [angle, setAngle] = React.useState(45);
   const [power, setPower] = React.useState(70);
   const [payload, setPayload] = React.useState<ArtilleryPayload>('shell');
-  const [mobility, setMobility] = React.useState<ArtilleryMobility>('drive');
   const [settledAim, setSettledAim] = React.useState<Record<'left' | 'right', number>>({ left: 45, right: 45 });
   const [animated, setAnimated] = React.useState<AnimatedShot>(null);
-  const [movement, setMovement] = React.useState<AnimatedMove>(null);
+  const [movement, setMovement] = React.useState<ActiveThrust>(null);
   const [shotCallout, setShotCallout] = React.useState<string | null>(null);
   const [handoffPending, setHandoffPending] = React.useState(false);
   const [coachVisible, setCoachVisible] = React.useState(true);
@@ -280,6 +283,8 @@ export function ArtilleryBoard({ seed, mode, difficulty, mapSize, world, onStatu
   const completed = React.useRef(false);
   const actions = React.useRef<ArtilleryAction[]>([]);
   const botScheduled = React.useRef(false);
+  const stateRef = React.useRef(state);
+  const thrustTimer = React.useRef<number | null>(null);
   const fieldRef = React.useRef<SVGSVGElement>(null);
   const activePointer = React.useRef<number | null>(null);
   const dragOrigin = React.useRef<{ x: number; y: number } | null>(null);
@@ -287,9 +292,13 @@ export function ArtilleryBoard({ seed, mode, difficulty, mapSize, world, onStatu
   const [shortLandscape, setShortLandscape] = React.useState(false);
   const fieldWidth = state.terrain.length - 1;
   const worldMeta = WORLD_META[state.world];
+  const environment = ARTILLERY_CONDITIONS[state.condition];
+
+  React.useEffect(() => { stateRef.current = state; }, [state]);
 
   React.useEffect(() => () => {
     pendingTimers.current.forEach(window.clearTimeout);
+    if (thrustTimer.current !== null) window.clearInterval(thrustTimer.current);
     sound.dispose();
   }, [sound]);
 
@@ -466,7 +475,8 @@ export function ArtilleryBoard({ seed, mode, difficulty, mapSize, world, onStatu
       return `${index === 0 ? 'M' : 'L'} ${x} ${Math.min(ARTILLERY_HEIGHT, ARTILLERY_HEIGHT - height + offset)}`;
     }).join(' ')
   ), [displayTerrain]);
-  const canFire = !animated && !movement && !handoffPending && state.phase === 'aiming' && (mode !== 'bot' || state.current === 'left');
+  const canOperate = !animated && !handoffPending && state.phase === 'aiming' && (mode !== 'bot' || state.current === 'left');
+  const canFire = canOperate && !movement;
   const animatedProjectiles = React.useMemo(() => animated?.outcome.projectiles.map((projectile) => {
     const longestPath = Math.max(...animated.outcome.projectiles.map((candidate) => candidate.path.length));
     const flightProgress = animated.phase === 'flight' ? animated.progress : animated.phase === 'impact' ? 1 : 0;
@@ -556,7 +566,7 @@ export function ArtilleryBoard({ seed, mode, difficulty, mapSize, world, onStatu
   }, [canFire, fieldWidth, state.current]);
 
   const beginDirectAim = React.useCallback((event: React.PointerEvent<SVGSVGElement>) => {
-    if (!canFire || !event.isPrimary || (event.pointerType === 'mouse' && event.button !== 0)) return;
+    if (!canFire || event.isPrimary === false || (event.pointerType === 'mouse' && event.button !== 0)) return;
     event.preventDefault();
     activePointer.current = event.pointerId;
     const field = fieldRef.current;
@@ -592,48 +602,69 @@ export function ArtilleryBoard({ seed, mode, difficulty, mapSize, world, onStatu
     if (event.currentTarget.hasPointerCapture(event.pointerId)) event.currentTarget.releasePointerCapture(event.pointerId);
   }, []);
 
-  const moveRig = React.useCallback((direction: Exclude<ArtilleryMove, 0>) => {
-    const available = mobility === 'jet' ? state.jetCharges[state.current] : state.traction[state.current];
-    if (!canFire || available <= 0) return;
-    const fromX = state.tanks[state.current].x;
-    const applied = applyArtilleryMove(state, direction, mobility);
-    if (applied.distance === 0) {
-      const side = state.current;
-      if (mode === 'bot' && side === 'left') actions.current.push({ type: 'move', direction, mobility });
-      setState(applied.state);
-      if (mobility === 'jet') setMobility('drive');
-      sound.play('select');
-      onStatus(mobility === 'drive'
-        ? 'The drive could not clear that slope. One drive charge was spent; use the jump jet to escape.'
-        : 'The jump jet found no safe landing room. Its charge was spent.');
-      return;
-    }
-    const side = state.current;
-    const remaining = mobility === 'jet' ? applied.state.jetCharges[side] : applied.state.traction[side];
-    if (mode === 'bot' && side === 'left') actions.current.push({ type: 'move', direction, mobility });
+  const moveRig = React.useCallback((direction: Exclude<ArtilleryMove, 0>, mobility: ArtilleryMobility, thrust: number) => {
+    const current = stateRef.current;
+    const available = mobility === 'jet' ? current.jetCharges[current.current] : current.traction[current.current];
+    if (current.phase !== 'aiming' || available <= 0 || (mode === 'bot' && current.current !== 'left')) return;
+    const applied = applyArtilleryMove(current, direction, mobility, thrust);
+    if (applied.fuelSpent <= 0) return;
+    if (mode === 'bot' && current.current === 'left') actions.current.push({ type: 'move', direction, mobility, thrust: applied.fuelSpent });
+    stateRef.current = applied.state;
     setState(applied.state);
+  }, [mode]);
+
+  const stopThrust = React.useCallback(() => {
+    if (thrustTimer.current !== null) window.clearInterval(thrustTimer.current);
+    thrustTimer.current = null;
+    setMovement((active) => {
+      if (!active) return null;
+      const current = stateRef.current;
+      const remaining = active.mobility === 'jet' ? current.jetCharges[active.side] : current.traction[active.side];
+      onStatus(`${active.mobility === 'jet' ? 'Jet' : 'Drive'} idle · ${Math.round(remaining)}% fuel remains.`);
+      return null;
+    });
+  }, [onStatus]);
+
+  const beginThrust = React.useCallback((event: React.PointerEvent<HTMLButtonElement>, direction: Exclude<ArtilleryMove, 0>, mobility: ArtilleryMobility) => {
+    if (!canOperate || movement || event.isPrimary === false || (event.pointerType === 'mouse' && event.button !== 0)) return;
+    const current = stateRef.current;
+    const available = mobility === 'jet' ? current.jetCharges[current.current] : current.traction[current.current];
+    if (available <= 0) return;
+    event.preventDefault();
+    event.currentTarget.setPointerCapture?.(event.pointerId);
+    const startedAt = performance.now();
+    const active = { side: current.current, direction, mobility, pulse: 0 } as const;
+    setMovement(active);
+    moveRig(direction, mobility, Math.min(0.6, available));
     sound.play('select');
     fieldRef.current?.scrollIntoView?.({ behavior: 'smooth', block: 'center' });
-    const reduced = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
-    const frames = reduced ? 1 : mobility === 'jet' ? 66 : 72;
-    let frame = 0;
-    setMovement({ side, fromX, toX: applied.state.tanks[side].x, progress: 0, mobility });
-    onStatus(mobility === 'jet'
-      ? `Jump jet firing… ${remaining} jet ${remaining === 1 ? 'charge' : 'charges'} remain.`
-      : `${direction === 1 ? 'Advancing' : 'Falling back'}… ${remaining} drive ${remaining === 1 ? 'charge' : 'charges'} remain.`);
-    const tick = () => {
-      frame += 1;
-      const progress = Math.min(1, frame / frames);
-      setMovement({ side, fromX, toX: applied.state.tanks[side].x, progress, mobility });
-      if (progress < 1) pendingTimers.current.push(window.setTimeout(tick, reduced ? 1 : 20));
-      else {
-        setMovement(null);
-        if (mobility === 'jet' && remaining === 0) setMobility('drive');
-        onStatus(`Position locked. ${remaining} ${mobility === 'jet' ? 'jet' : 'drive'} ${remaining === 1 ? 'charge' : 'charges'} remain.`);
+    onStatus(`${mobility === 'jet' ? 'Jump jets' : 'Drive'} engaged · hold for thrust, release to stop.`);
+    thrustTimer.current = window.setInterval(() => {
+      const elapsed = performance.now() - startedAt;
+      const fuelPerSecond = 8 + 32 * Math.min(1, elapsed / 1800);
+      const pulseFuel = Math.min(3.2, fuelPerSecond * 0.08);
+      const latest = stateRef.current;
+      const fuel = mobility === 'jet' ? latest.jetCharges[active.side] : latest.traction[active.side];
+      if (fuel <= 0) {
+        stopThrust();
+        return;
       }
+      moveRig(direction, mobility, Math.min(pulseFuel, fuel));
+      setMovement((value) => value ? { ...value, pulse: value.pulse + 1 } : null);
+    }, 80);
+  }, [canOperate, moveRig, movement, onStatus, sound, stopThrust]);
+
+  React.useEffect(() => {
+    const stop = () => stopThrust();
+    window.addEventListener('blur', stop);
+    window.addEventListener('pointerup', stop);
+    window.addEventListener('pointercancel', stop);
+    return () => {
+      window.removeEventListener('blur', stop);
+      window.removeEventListener('pointerup', stop);
+      window.removeEventListener('pointercancel', stop);
     };
-    pendingTimers.current.push(window.setTimeout(tick, reduced ? 1 : 20));
-  }, [canFire, mobility, mode, onStatus, sound, state]);
+  }, [stopThrust]);
 
   React.useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -641,8 +672,8 @@ export function ArtilleryBoard({ seed, mode, difficulty, mapSize, world, onStatu
       if (target?.matches('input, textarea, select, button, [contenteditable="true"]') || !canFire) return;
       const key = event.key.toLowerCase();
       if (['a', 'd', 'w', 's', 'q', 'e', 'arrowup', 'arrowdown', '1', '2', '3', '4', '5', '6', ' '].includes(key)) event.preventDefault();
-      if (key === 'a') moveRig(-1);
-      else if (key === 'd') moveRig(1);
+      if (key === 'a') moveRig(-1, 'drive', 1);
+      else if (key === 'd') moveRig(1, 'drive', 1);
       else if (key === 'w' || key === 'arrowup') setAngle((current) => Math.min(80, current + 1));
       else if (key === 's' || key === 'arrowdown') setAngle((current) => Math.max(10, current - 1));
       else if (key === 'q') setPower((current) => Math.max(15, current - 1));
@@ -663,24 +694,21 @@ export function ArtilleryBoard({ seed, mode, difficulty, mapSize, world, onStatu
     const value = state.tanks[side];
     const animatedMove = animated?.shooter === side ? animated.shot.move : 0;
     const movementTargetX = artilleryMovedX(state, side, animatedMove);
-    const easedMovement = movement ? movement.progress * movement.progress * (3 - 2 * movement.progress) : 1;
     const animatedMoveEase = artilleryMoveAnimationProgress(animated?.phase ?? null, animated?.progress ?? 0, animatedMove);
-    const displayX = movement?.side === side
-      ? movement.fromX + (movement.toX - movement.fromX) * easedMovement
-      : animatedMove !== 0
+    const displayX = animatedMove !== 0
         ? value.x + (movementTargetX - value.x) * animatedMoveEase
         : value.x;
     const driving = movement?.side === side && movement.mobility === 'drive';
-    const strideProgress = driving ? movement.progress : animated?.phase === 'move' && animatedMove !== 0 ? animated.progress : 0;
+    const strideProgress = driving ? movement.pulse / 5 : animated?.phase === 'move' && animatedMove !== 0 ? animated.progress : 0;
     const stride = Math.sin(strideProgress * Math.PI * 10) * 0.65;
-    const bodyLift = strideProgress > 0 && strideProgress < 1 ? -Math.abs(Math.sin(strideProgress * Math.PI * 5)) * 0.32 : 0;
-    const jetProgress = movement?.side === side && movement.mobility === 'jet' ? movement.progress : 0;
-    const jetLift = jetProgress > 0 && jetProgress < 1 ? -Math.sin(jetProgress * Math.PI) * 16 : 0;
+    const bodyLift = driving ? -Math.abs(Math.sin(strideProgress * Math.PI * 5)) * 0.32 : 0;
+    const jetProgress = movement?.side === side && movement.mobility === 'jet' ? Math.min(1, 0.3 + movement.pulse / 18) : 0;
+    const jetLift = jetProgress > 0 ? -2.5 - jetProgress * 5.5 : 0;
     const y = ARTILLERY_HEIGHT - terrainHeight(displayTerrain, displayX) - 1.5 + bodyLift + jetLift;
-    const displayAngle = canFire && state.current === side ? angle : settledAim[side];
+    const displayAngle = canOperate && state.current === side ? angle : settledAim[side];
     const barrel = artilleryBarrelEndpoint(displayX, y - 1.8, side, displayAngle);
     const crew = RANGE_RIGS[side];
-    const movementLabel = displayX === value.x ? '' : ', moving';
+    const movementLabel = movement?.side === side || displayX !== value.x ? ', moving' : '';
     const firingProgress = animated?.phase === 'charge' ? animated.progress : animated?.phase === 'flight' ? Math.min(1, animated.progress * 8) : 1;
     const firing = !!animated && animated.shooter === side && (animated.phase === 'charge' || (animated.phase === 'flight' && animated.progress < 0.125));
     const recoiling = firing && !window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
@@ -752,14 +780,14 @@ export function ArtilleryBoard({ seed, mode, difficulty, mapSize, world, onStatu
         )}
         <rect x={displayX - 3.5} y={y + 1.9} width="1.2" height="0.45" className="fill-el opacity-60" />
         <rect x={displayX + 2.3} y={y + 1.9} width="1.2" height="0.45" className="fill-el opacity-60" />
-        {strideProgress > 0 && strideProgress < 1 && (
+        {driving && (
           <g className="el-sand" aria-hidden>
             <circle cx={displayX - 3.8} cy={y + 2.7} r={0.35 + Math.abs(stride) * 0.2} className="fill-el opacity-30" />
             <circle cx={displayX - 5.1} cy={y + 2.2} r="0.28" className="fill-el opacity-18" />
             <circle cx={displayX + 3.8} cy={y + 2.7} r={0.3 + Math.abs(stride) * 0.16} className="fill-el opacity-25" />
           </g>
         )}
-        {jetProgress > 0 && jetProgress < 1 && (
+        {jetProgress > 0 && (
           <g className="el-fire" aria-hidden>
             <path d={`M ${displayX - 1.7} ${y + 1} l -0.75 ${2.4 + Math.sin(jetProgress * Math.PI * 8) * 0.5} 1.35 -0.6 Z M ${displayX + 1.7} ${y + 1} l 0.75 ${2.4 - Math.sin(jetProgress * Math.PI * 8) * 0.5} -1.35 -0.6 Z`} className="fill-el opacity-75" />
             <circle cx={displayX - 2.25} cy={y + 4.1} r="0.7" className="fill-el opacity-25" />
@@ -785,9 +813,9 @@ export function ArtilleryBoard({ seed, mode, difficulty, mapSize, world, onStatu
   return (
     <div className="artillery-layout grid w-full min-w-0 gap-2 overflow-x-clip">
       <section aria-label="Artillery field" className="artillery-field artillery-viewport relative mx-auto w-full self-start overflow-hidden border-2 border-edge-strong bg-s0 shadow-panel">
-        <div className="pointer-events-none absolute inset-x-2 top-2 z-10 grid grid-cols-[minmax(0,1fr)_7.5rem_minmax(0,1fr)] items-start gap-1 min-[390px]:gap-2">
+        <div className="pointer-events-none absolute inset-x-2 top-2 z-10 grid grid-cols-[minmax(0,1fr)_7.25rem_minmax(0,1fr)] items-start gap-1 sm:grid-cols-[minmax(0,1fr)_9.5rem_minmax(0,1fr)] sm:gap-2">
           <div className="min-w-0 border border-edge-strong bg-s0/90 p-1.5">
-            <div className="flex items-center justify-between gap-1 font-legend text-small uppercase tracking-legend"><span>{crewAt('left').name}</span><span>{Math.round(displayedHull('left'))}</span></div>
+            <div className="flex items-center justify-between gap-1 font-legend text-small uppercase tracking-legend"><span><i className="not-italic sm:hidden">A</i><i className="hidden not-italic sm:inline">{crewAt('left').name}</i></span><span>{Math.round(displayedHull('left'))}</span></div>
             <div className="mt-1 h-1.5 bg-s2"><div className="h-full bg-viable-hi transition-[width] duration-300" style={{ width: `${displayedHull('left')}%` }} /></div>
           </div>
           <div className="border border-edge-strong bg-s0/90 px-2 py-1 text-center">
@@ -795,10 +823,12 @@ export function ArtilleryBoard({ seed, mode, difficulty, mapSize, world, onStatu
               ? mode === 'range' ? 'Range complete' : mode === 'challenge' ? state.winner === 'left' ? 'Trial clear' : 'Trial failed' : `${crewAt(state.winner!).name} wins`
               : `${crewAt(state.current).shortName} · V${Math.floor(state.turn / 2) + 1}`}</span>
             <span className="block font-mono text-[11px] text-ink-2">{windLabel}</span>
-            <span className="block font-body text-[11px] text-ink-3">{worldMeta.name} · {state.turn >= 10 ? `${CONDITION_SHORT[state.condition]} · pressure` : CONDITION_SHORT[state.condition]}</span>
+            <span className="hidden font-body text-[11px] text-ink-3 sm:block">{worldMeta.name} · {CONDITION_SHORT[state.condition]}</span>
+            <span className="mt-0.5 block font-mono text-[10px] uppercase text-ink-2"><i className="not-italic sm:hidden">G {environment.gravity.toFixed(2)}× · W {environment.wind.toFixed(1)}×</i><i className="hidden not-italic sm:inline">Gravity {environment.gravity.toFixed(2)}× · wind {environment.wind.toFixed(1)}×</i></span>
+            {state.turn >= 10 && <span className="block font-mono text-[10px] uppercase text-plague">Damage pressure {Math.min(1.6, 1 + Math.max(0, state.turn - 9) * 0.12).toFixed(2)}×</span>}
           </div>
           <div className="min-w-0 border border-edge-strong bg-s0/90 p-1.5">
-            <div className="flex items-center justify-between gap-1 font-legend text-small uppercase tracking-legend"><span>{crewAt('right').name}</span><span>{Math.round(displayedHull('right'))}</span></div>
+            <div className="flex items-center justify-between gap-1 font-legend text-small uppercase tracking-legend"><span><i className="not-italic sm:hidden">B</i><i className="hidden not-italic sm:inline">{crewAt('right').name}</i></span><span>{Math.round(displayedHull('right'))}</span></div>
             <div className="mt-1 h-1.5 bg-s2"><div className="h-full bg-plague transition-[width] duration-300" style={{ width: `${displayedHull('right')}%` }} /></div>
           </div>
         </div>
@@ -1029,49 +1059,50 @@ export function ArtilleryBoard({ seed, mode, difficulty, mapSize, world, onStatu
                 </div>
               </div>
 
-              <div className="cockpit-instrument grid min-w-0 content-start gap-1.5 border border-edge-strong p-2" role="group" aria-label="Reposition range rig">
+              <div className="cockpit-instrument cockpit-mobility grid min-w-0 content-start gap-1.5 border border-edge-strong p-2" role="group" aria-label="Mobility thrusters">
                 <span className="flex items-center justify-between gap-2 type-legend">
-                  <span>Mobility</span>
-                  <span className="font-mono text-small text-ink-2">Drive {state.traction[state.current]} · Jet {state.jetCharges[state.current]}</span>
+                  <span>Thrust</span>
+                  <span className="font-body text-[11px] normal-case tracking-normal text-ink-3">Hold to move · ramps while held</span>
                 </span>
-                <div className="grid grid-cols-2 gap-1">
-                  {(['drive', 'jet'] as const).map((choice) => (
-                    <Button
-                      key={choice}
-                      type="button"
-                      size="sm"
-                      variant="ghost"
-                      aria-pressed={mobility === choice}
-                      disabled={!canFire || (choice === 'drive' ? state.traction[state.current] : state.jetCharges[state.current]) <= 0}
-                      className={`h-10 flex-col gap-0 border px-2 ${mobility === choice ? 'border-viable-lo bg-viable-tint text-viable-hi' : 'border-edge bg-s0'}`}
-                      onClick={() => setMobility(choice)}
-                    >
-                      <span>{choice === 'drive' ? 'Drive' : 'Jump jet'}</span>
-                      <span className="font-body text-[11px] normal-case tracking-normal opacity-75">{choice === 'drive' ? 'Follows terrain' : 'Clears craters'}</span>
-                    </Button>
-                  ))}
-                </div>
-                <div className="grid grid-cols-2 gap-1">
-                  {([-1, 1] as const).map((direction) => {
-                    const arrow = state.current === 'left'
-                      ? direction === -1 ? '←' : '→'
-                      : direction === -1 ? '→' : '←';
-                    const label = direction === -1 ? 'Fall back' : 'Advance';
-                    return (
-                      <Button
-                        key={direction}
-                        type="button"
-                        size="sm"
-                        variant="ghost"
-                        className="h-10 min-w-0 border border-edge bg-s0 px-2 text-small"
-                        disabled={!canFire || (mobility === 'jet' ? state.jetCharges[state.current] : state.traction[state.current]) <= 0}
-                        onClick={() => moveRig(direction)}
-                      >
-                        <span aria-hidden>{arrow}</span><span>{label}</span>
-                      </Button>
-                    );
-                  })}
-                </div>
+                {(['drive', 'jet'] as const).map((choice) => {
+                  const fuel = choice === 'drive' ? state.traction[state.current] : state.jetCharges[state.current];
+                  return (
+                    <div key={choice} className="grid grid-cols-[2.7rem_minmax(0,1fr)_2.7rem] items-center gap-1">
+                      {([-1, 1] as const).map((direction, index) => {
+                        const screenDirection = state.current === 'left' ? direction : -direction;
+                        const label = `${choice === 'drive' ? 'Drive' : 'Jet'} ${direction === -1 ? 'backward' : 'forward'}`;
+                        const active = movement?.mobility === choice && movement.direction === direction;
+                        const button = (
+                          <Button
+                            key={direction}
+                            type="button"
+                            size="sm"
+                            variant="ghost"
+                            aria-label={`Hold to ${label.toLowerCase()}`}
+                            aria-pressed={active}
+                            disabled={!canOperate || fuel <= 0}
+                            className={`cockpit-thrust h-9 touch-none border p-0 text-heading ${active ? 'is-active border-viable-hi text-viable-hi' : 'border-edge bg-s0'}`}
+                            onPointerDown={(event) => beginThrust(event, direction, choice)}
+                            onPointerUp={stopThrust}
+                            onPointerCancel={stopThrust}
+                          >
+                            <span aria-hidden>{screenDirection < 0 ? '◀' : '▶'}</span>
+                          </Button>
+                        );
+                        if (index === 0) return button;
+                        return (
+                          <React.Fragment key={direction}>
+                            <div className="min-w-0">
+                              <span className="flex justify-between font-mono text-[10px] uppercase text-ink-2"><b>{choice === 'drive' ? 'Drive' : 'Jump jet'}</b><b>{Math.round(fuel)}%</b></span>
+                              <span className="mt-1 block h-1.5 overflow-hidden border border-edge bg-s0"><span className={`block h-full ${choice === 'drive' ? 'bg-viable-hi' : 'bg-el-electric'}`} style={{ width: `${fuel}%` }} /></span>
+                            </div>
+                            {button}
+                          </React.Fragment>
+                        );
+                      })}
+                    </div>
+                  );
+                })}
               </div>
             </div>
 
@@ -1122,12 +1153,20 @@ export function ArtilleryBoard({ seed, mode, difficulty, mapSize, world, onStatu
               <Button
                 type="button"
                 size="lg"
-                className="cockpit-fire min-h-16 min-w-0 overflow-hidden border-2 border-viable-lo px-3 text-heading lg:h-full"
+                variant="ghost"
+                className="order-first min-h-20 min-w-0 overflow-hidden border-2 border-edge-strong bg-s0 p-2 shadow-panel lg:order-last lg:h-full"
                 disabled={!canFire}
+                aria-label={`Fire ${PAYLOAD_META[payload].shortLabel}, angle ${angle} degrees, power ${power}`}
                 onClick={() => animateShot({ angle, power, payload, move: 0, system: 'none' })}
               >
-                <span>Fire {PAYLOAD_META[payload].shortLabel}</span>
-                <span className="font-body text-tiny normal-case tracking-normal opacity-80">{angle}° · power {power}</span>
+                <span className="grid w-full grid-cols-[3rem_minmax(0,1fr)] items-center gap-2" aria-hidden>
+                  <span className="grid size-12 place-items-center rounded-full border-2 border-viable-lo bg-viable-tint font-mono text-[28px] leading-none text-viable-hi">◎</span>
+                  <span className="min-w-0 text-left">
+                    <span className="block font-mono text-[10px] uppercase tracking-[0.18em] text-ink-3">Weapon armed</span>
+                    <span className="block truncate font-legend text-heading uppercase tracking-legend text-viable-hi">Fire {PAYLOAD_META[payload].shortLabel}</span>
+                    <span className="block font-mono text-[11px] text-ink-2">A{angle}° · P{power}</span>
+                  </span>
+                </span>
               </Button>
             </div>
           </>

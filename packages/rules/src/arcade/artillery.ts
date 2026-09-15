@@ -22,7 +22,7 @@ export type ArtilleryShot = {
   move?: ArtilleryMove;
   system?: ArtillerySystem;
 };
-export type ArtilleryMoveAction = { type: 'move'; direction: Exclude<ArtilleryMove, 0>; mobility?: ArtilleryMobility };
+export type ArtilleryMoveAction = { type: 'move'; direction: Exclude<ArtilleryMove, 0>; mobility?: ArtilleryMobility; thrust?: number };
 export type ArtilleryAction = ArtilleryShot | ArtilleryMoveAction;
 export type ArtilleryProjectileOutcome = {
   path: ArtilleryPoint[];
@@ -77,9 +77,12 @@ export type ArtilleryState = {
 export const ARTILLERY_WIDTH = 300;
 export const ARTILLERY_HEIGHT = 110;
 export const ARTILLERY_MAX_INTEGRITY = 100;
-export const ARTILLERY_MAX_TRACTION = 3;
-export const ARTILLERY_MAX_JET_CHARGES = 1;
+export const ARTILLERY_MAX_DRIVE_FUEL = 100;
+export const ARTILLERY_MAX_JET_FUEL = 100;
+export const ARTILLERY_MAX_TRACTION = ARTILLERY_MAX_DRIVE_FUEL;
+export const ARTILLERY_MAX_JET_CHARGES = ARTILLERY_MAX_JET_FUEL;
 export const ARTILLERY_MOVE_DISTANCE = 22;
+export const ARTILLERY_DEFAULT_THRUST = 25;
 export const ARTILLERY_MAP_WIDTHS: Record<ArtilleryMapSize, number> = {
   compact: 300,
   standard: 360,
@@ -248,10 +251,15 @@ function availableShot(state: ArtilleryState, input: ArtilleryShot): Required<Ar
   return { ...shot, payload, move, system };
 }
 
-export function artilleryMoveDistance(state: ArtilleryState, mobility: ArtilleryMobility = 'drive'): number {
+export function artilleryMoveDistance(
+  state: ArtilleryState,
+  mobility: ArtilleryMobility = 'drive',
+  thrust = ARTILLERY_DEFAULT_THRUST,
+): number {
   const width = state.terrain.length - 1;
   const scaledDrive = ARTILLERY_MOVE_DISTANCE * (width / ARTILLERY_WIDTH);
-  return Math.round(scaledDrive * (mobility === 'jet' ? 1.25 : 1) * 10) / 10;
+  const fuelScale = Math.max(0, Math.min(ARTILLERY_MAX_DRIVE_FUEL, thrust)) / ARTILLERY_DEFAULT_THRUST;
+  return Math.round(scaledDrive * (mobility === 'jet' ? 1.25 : 1) * fuelScale * 100) / 100;
 }
 
 export function artilleryMovedX(
@@ -259,14 +267,17 @@ export function artilleryMovedX(
   side: ArtillerySide,
   move: ArtilleryMove,
   mobility: ArtilleryMobility = 'drive',
+  thrust = ARTILLERY_DEFAULT_THRUST,
 ): number {
   const available = mobility === 'jet' ? state.jetCharges[side] : state.traction[side];
   if (!move || available <= 0) return state.tanks[side].x;
+  const fuel = Math.min(available, Math.max(0, thrust));
+  if (fuel <= 0) return state.tanks[side].x;
   const width = state.terrain.length - 1;
   const direction = side === 'left' ? move : -move;
   const minimum = side === 'left' ? 4 : width / 2 + 4;
   const maximum = side === 'left' ? width / 2 - 4 : width - 4;
-  const target = Math.max(minimum, Math.min(maximum, state.tanks[side].x + direction * artilleryMoveDistance(state, mobility)));
+  const target = Math.max(minimum, Math.min(maximum, state.tanks[side].x + direction * artilleryMoveDistance(state, mobility, fuel)));
   if (mobility === 'jet') return Math.round(target * 10) / 10;
   let reached = state.tanks[side].x;
   const steps = Math.ceil(Math.abs(target - reached));
@@ -282,14 +293,17 @@ export function applyArtilleryMove(
   state: ArtilleryState,
   move: ArtilleryMove,
   mobility: ArtilleryMobility = 'drive',
-): { state: ArtilleryState; distance: number } {
+  thrust = ARTILLERY_DEFAULT_THRUST,
+): { state: ArtilleryState; distance: number; fuelSpent: number } {
   if (state.phase !== 'aiming') throw new Error('The artillery match is already finished.');
   const available = mobility === 'jet' ? state.jetCharges[state.current] : state.traction[state.current];
-  if (move === 0 || available <= 0) return { state, distance: 0 };
-  const destination = artilleryMovedX(state, state.current, move, mobility);
+  const fuelSpent = Math.min(available, Math.max(0, thrust));
+  if (move === 0 || fuelSpent <= 0) return { state, distance: 0, fuelSpent: 0 };
+  const destination = artilleryMovedX(state, state.current, move, mobility, fuelSpent);
   const distance = Math.round(Math.abs(destination - state.tanks[state.current].x) * 10) / 10;
   return {
     distance,
+    fuelSpent,
     state: {
       ...state,
       tanks: {
@@ -298,11 +312,11 @@ export function applyArtilleryMove(
       },
       traction: {
         ...state.traction,
-        [state.current]: state.traction[state.current] - Number(mobility === 'drive'),
+        [state.current]: Math.max(0, state.traction[state.current] - (mobility === 'drive' ? fuelSpent : 0)),
       },
       jetCharges: {
         ...state.jetCharges,
-        [state.current]: state.jetCharges[state.current] - Number(mobility === 'jet'),
+        [state.current]: Math.max(0, state.jetCharges[state.current] - (mobility === 'jet' ? fuelSpent : 0)),
       },
     },
   };
@@ -437,7 +451,7 @@ export function applyArtilleryShot(
   const targetSide: ArtillerySide = state.current === 'left' ? 'right' : 'left';
   const tanks = { left: { ...state.tanks.left }, right: { ...state.tanks.right } };
   const movedX = artilleryMovedX(state, state.current, shot.move);
-  const spentTraction = movedX !== state.tanks[state.current].x;
+  const spentTraction = shot.move !== 0 && state.traction[state.current] > 0;
   tanks[state.current].x = movedX;
   const terrain = simulated.projectiles.reduce(
     (current, projectile) => reshapeTerrain(current, projectile.impact, shot.payload),
@@ -481,7 +495,7 @@ export function applyArtilleryShot(
       coreAmmo,
       traction: {
         ...state.traction,
-        [state.current]: Math.max(0, state.traction[state.current] - Number(spentTraction)),
+        [state.current]: Math.max(0, state.traction[state.current] - (spentTraction ? ARTILLERY_DEFAULT_THRUST : 0)),
       },
       jetCharges: state.jetCharges,
       systemCharges: state.systemCharges,

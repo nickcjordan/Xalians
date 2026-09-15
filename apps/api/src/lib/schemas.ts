@@ -64,7 +64,8 @@ export const ArcadeCompleteBodySchema = z.discriminatedUnion('gameId', [
       type: z.literal('move'),
       direction: z.union([z.literal(-1), z.literal(1)]),
       mobility: z.enum(['drive', 'jet']).optional(),
-    })])).max(80),
+      thrust: z.number().positive().max(100).optional(),
+    })])).max(400),
   }),
   z.object({
     gameId: z.literal('sweep'), sessionId: ArcadeSessionSchema, seed: ArcadeSeedSchema,

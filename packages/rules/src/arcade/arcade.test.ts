@@ -2,6 +2,8 @@ import { describe, expect, it } from 'vitest';
 import {
   applyArtilleryShot,
   applyArtilleryMove,
+  ARTILLERY_MAX_DRIVE_FUEL,
+  ARTILLERY_MAX_JET_FUEL,
   ARTILLERY_MOVE_DISTANCE,
   ARTILLERY_MAP_WIDTHS,
   ARTILLERY_PAYLOADS,
@@ -127,7 +129,7 @@ describe('Arcade deterministic rules', () => {
     expect(right.state.rngState).not.toBe(initial.rngState);
   });
 
-  it('commits rig movement immediately and spends one drive charge', () => {
+  it('commits fuel-scaled rig movement immediately', () => {
     const initial = createArtilleryState('crawler-movement');
     const originalX = initial.tanks.left.x;
     const drivenX = artilleryMovedX(initial, 'left', 1);
@@ -137,19 +139,37 @@ describe('Arcade deterministic rules', () => {
 
     const first = applyArtilleryMove(initial, 1);
     expect(first.state.tanks.left.x).toBe(drivenX);
-    expect(first.state.traction.left).toBe(2);
+    expect(first.state.traction.left).toBe(75);
+    expect(first.fuelSpent).toBe(25);
     expect(first.state.turn).toBe(0);
 
     const second = applyArtilleryMove(first.state, -1);
     expect(second.state.tanks.left.x).toBeLessThan(first.state.tanks.left.x);
-    expect(second.state.traction.left).toBe(1);
+    expect(second.state.traction.left).toBe(50);
 
     const third = applyArtilleryMove(second.state, -1);
-    expect(third.state.traction.left).toBe(0);
+    expect(third.state.traction.left).toBe(25);
 
-    const fourth = applyArtilleryMove(third.state, 1);
-    expect(fourth.state.tanks.left.x).toBe(third.state.tanks.left.x);
+    const fourth = applyArtilleryMove(third.state, 1, 'drive', 25);
     expect(fourth.state.traction.left).toBe(0);
+    const exhausted = applyArtilleryMove(fourth.state, 1);
+    expect(exhausted.state.tanks.left.x).toBe(fourth.state.tanks.left.x);
+    expect(exhausted.state.traction.left).toBe(0);
+  });
+
+  it('supports fine movement pulses and clamps fuel to the remaining reserve', () => {
+    const initial = createArtilleryState('fine-thrust');
+    expect(initial.traction.left).toBe(ARTILLERY_MAX_DRIVE_FUEL);
+    expect(initial.jetCharges.left).toBe(ARTILLERY_MAX_JET_FUEL);
+    const nudge = applyArtilleryMove(initial, 1, 'drive', 1);
+    const committed = applyArtilleryMove(initial, 1, 'drive', 25);
+    expect(nudge.fuelSpent).toBe(1);
+    expect(nudge.distance).toBeGreaterThan(0);
+    expect(nudge.distance).toBeLessThan(committed.distance);
+    expect(nudge.state.traction.left).toBe(99);
+    const nearlyEmpty = { ...nudge.state, traction: { ...nudge.state.traction, left: 0.4 } };
+    expect(applyArtilleryMove(nearlyEmpty, 1, 'drive', 3).fuelSpent).toBe(0.4);
+    expect(applyArtilleryMove(nearlyEmpty, 1, 'drive', 3).state.traction.left).toBe(0);
   });
 
   it('neutralizes legacy creature-system actions in the cabinet simulation', () => {
@@ -176,9 +196,9 @@ describe('Arcade deterministic rules', () => {
     const blocked = { ...state, terrain };
     expect(artilleryMovedX(blocked, 'left', 1, 'drive')).toBe(blocked.tanks.left.x);
 
-    const landedX = artilleryMovedX(blocked, 'left', 1, 'jet');
+    const landedX = artilleryMovedX(blocked, 'left', 1, 'jet', ARTILLERY_MAX_JET_FUEL);
     expect(landedX).toBeGreaterThan(blocked.tanks.left.x + ARTILLERY_MOVE_DISTANCE);
-    const applied = applyArtilleryMove(blocked, 1, 'jet');
+    const applied = applyArtilleryMove(blocked, 1, 'jet', ARTILLERY_MAX_JET_FUEL);
     expect(applied.state.tanks.left.x).toBe(landedX);
     expect(applied.state.jetCharges.left).toBe(0);
     expect(applied.state.traction.left).toBe(blocked.traction.left);

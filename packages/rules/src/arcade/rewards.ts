@@ -27,7 +27,7 @@ const SWEEP_LEVELS = {
 } as const;
 
 function replayArtillery(completion: Extract<ArcadeCompletion, { gameId: 'artillery' }>): boolean {
-  if (completion.actions.length > 80) return false;
+  if (completion.actions.length > 400) return false;
   let state = createArtilleryState(completion.seed, 'bot', completion.difficulty ?? 'standard', {
     mapSize: completion.mapSize ?? 'compact',
     world: completion.world ?? 'stonera',
@@ -36,7 +36,7 @@ function replayArtillery(completion: Extract<ArcadeCompletion, { gameId: 'artill
   for (const action of completion.actions) {
     if (state.phase !== 'aiming' || state.current !== 'left') return false;
     if ('direction' in action) {
-      state = applyArtilleryMove(state, action.direction, action.mobility ?? 'drive').state;
+      state = applyArtilleryMove(state, action.direction, action.mobility ?? 'drive', action.thrust).state;
       continue;
     }
     state = applyArtilleryShot(state, action).state;

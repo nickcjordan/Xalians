@@ -12,7 +12,7 @@ describe('arcade completion schema', () => {
       creature: 'terragoyle',
       mapSize: 'wide',
       world: 'endessa',
-      actions: [{ type: 'move', direction: 1, mobility: 'jet' }, {
+      actions: [{ type: 'move', direction: 1, mobility: 'jet', thrust: 17.5 }, {
         angle: 47,
         power: 73,
         payload: 'cluster',
@@ -27,7 +27,7 @@ describe('arcade completion schema', () => {
     expect(parsed.creature).toBe('terragoyle');
     expect(parsed.mapSize).toBe('wide');
     expect(parsed.world).toBe('endessa');
-    expect(parsed.actions[0]).toEqual({ type: 'move', direction: 1, mobility: 'jet' });
+    expect(parsed.actions[0]).toEqual({ type: 'move', direction: 1, mobility: 'jet', thrust: 17.5 });
     expect(parsed.actions[1]).toEqual({
       angle: 47,
       power: 73,
