@@ -160,6 +160,11 @@ export function scanScene(scene, creature) {
 }
 
 export function scanReport(scene, creature, scan) {
+  const report = describeScanReport(scene, creature, scan);
+  return { ...report, strainCost: scan.energySpent ?? report.strainCost, stabilityCost: scan.stabilitySpent ?? (scan.mode === 'debrief' ? 1 : 0) };
+}
+
+function describeScanReport(scene, creature, scan) {
   if (scan.mode === 'blind') {
     return {
       outcome: 'blind',

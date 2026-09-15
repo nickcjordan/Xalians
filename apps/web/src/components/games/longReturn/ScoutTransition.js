@@ -9,11 +9,11 @@ import BiIcon from './BiIcon';
 import './scoutTransition.css';
 import SequenceStory, { trapSequenceFocus } from './SequenceStory';
 
-function scoutBeats(action) {
+export function scoutBeats(action) {
   if (action.type === 'scout-return') return [
-    { kind: 'return', icon: 'bi-arrow-return-left', text: `${action.scout.species} races back with the report.` },
-    { kind: 'energy', icon: 'bi-lightning-charge-fill', text: 'The return trip consumes another energy.' },
-    { kind: 'stability', icon: 'bi-building-fill-exclamation', text: 'Time passes. The annex loses stability.' },
+    { kind: 'return', icon: 'bi-arrow-return-left', text: `${action.scout.species} makes its way back with the report.` },
+    { kind: 'energy', icon: 'bi-lightning-charge-fill', text: action.energyBefore > action.energyAfter ? 'The return trip consumes another energy.' : 'The scout is already spent and reaches the crew with no energy in reserve.' },
+    { kind: 'stability', icon: 'bi-building-fill-exclamation', text: action.stabilityBefore > action.stabilityAfter ? 'Time passes. The annex loses stability.' : 'The annex has no stability left. The crew cannot linger.' },
     { kind: 'complete', icon: 'bi-check-lg', text: 'The report reaches the crew.' }
   ];
   const found = action.result.revealedIds.length;
