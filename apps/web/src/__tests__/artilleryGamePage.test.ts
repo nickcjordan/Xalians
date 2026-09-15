@@ -3,7 +3,7 @@ import { act, fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 
-import { ArtilleryBoard, ArtillerySetup, CommandMeter, artilleryAimFromDrag, artilleryBarrelEndpoint, artilleryFlightFrameIndex, artilleryImpactTerrainFrame, artilleryJetFlightY, artilleryMoveAnimationProgress } from '../pages/games/artilleryGamePage';
+import { ArtilleryBoard, ArtillerySetup, CommandMeter, artilleryAimFromDrag, artilleryBarrelEndpoint, artilleryCinematicCamera, artilleryFlightFrameIndex, artilleryImpactRevealProgress, artilleryImpactTerrainFrame, artilleryJetFlightY, artilleryMoveAnimationProgress } from '../pages/games/artilleryGamePage';
 
 class ResizeObserverStub {
   observe() {}
@@ -98,6 +98,24 @@ describe('Crater Command aim feedback', () => {
     expect(artilleryImpactTerrainFrame(before, after, 0.5)[1]).toBeLessThan(12);
     expect(artilleryImpactTerrainFrame(before, after, 0.5)[1]).toBeGreaterThan(7);
     expect(artilleryImpactTerrainFrame(before, after, 1)).toEqual(after);
+  });
+
+  it('holds the battlefield intact for the impact freeze before revealing damage', () => {
+    expect(artilleryImpactRevealProgress(0)).toBe(0);
+    expect(artilleryImpactRevealProgress(0.18)).toBe(0);
+    expect(artilleryImpactRevealProgress(0.5)).toBeGreaterThan(0.5);
+    expect(artilleryImpactRevealProgress(0.9)).toBe(1);
+  });
+
+  it('tracks cinematic shots vertically and returns to the full battlefield at rest', () => {
+    expect(artilleryCinematicCamera(360, false, null, 180, 52)).toBe('0 -38 360 148');
+    const flight = artilleryCinematicCamera(360, false, 'flight', 220, -90).split(' ').map(Number);
+    expect(flight[0]).toBeGreaterThan(0);
+    expect(flight[1]).toBeLessThan(-38);
+    expect(flight[2]).toBeLessThan(360);
+    const impact = artilleryCinematicCamera(360, false, 'impact', 300, 82).split(' ').map(Number);
+    expect(impact[2]).toBe(230);
+    expect(impact[3]).toBe(112);
   });
 
   it('offers explicit one-step corrections with a readable value and guidance', async () => {
@@ -242,6 +260,30 @@ describe('Crater Command aim feedback', () => {
       act(() => vi.advanceTimersByTime(500));
       expect(screen.queryByTestId('artillery-jet-trajectory')).not.toBeInTheDocument();
       expect(screen.getByRole('button', { name: /Fire Impact/i })).toBeEnabled();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it('moves from launch lock through impact into persistent battlefield aftermath', () => {
+    vi.useFakeTimers();
+    try {
+      render(createElement(ArtilleryBoard, {
+        seed: 'component-cinematic-impact',
+        mode: 'range',
+        difficulty: 'standard',
+        mapSize: 'standard',
+        world: 'stonera',
+        onStatus: vi.fn(),
+        onComplete: vi.fn(),
+        onRematch: vi.fn(),
+      }));
+      fireEvent.click(screen.getByRole('button', { name: /Fire Impact/i }));
+      expect(screen.getByTestId('artillery-launch-charge')).toBeInTheDocument();
+      expect(screen.getByRole('img', { name: /Two mobile range rigs/i }).getAttribute('viewBox')).not.toBe('0 -38 360 148');
+      act(() => vi.advanceTimersByTime(6_000));
+      expect(document.querySelector('.artillery-aftermath')).toBeInTheDocument();
+      expect(screen.getByRole('img', { name: /Two mobile range rigs/i })).toHaveAttribute('viewBox', '0 -38 360 148');
     } finally {
       vi.useRealTimers();
     }
