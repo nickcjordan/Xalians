@@ -92,12 +92,6 @@
   }
 }
 
-@media (min-width: 1024px) {
-  .artillery-field,
-  .artillery-command {
-    max-width: min(72rem, calc((100svh - 313px) * 2));
-  }
-}
 .el-psychic { --el: var(--color-el-psychic); }
 .el-ghost { --el: var(--color-el-ghost); }
 

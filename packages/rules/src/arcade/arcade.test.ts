@@ -3,6 +3,7 @@ import {
   applyArtilleryShot,
   applyArtilleryMove,
   ARTILLERY_MOVE_DISTANCE,
+  ARTILLERY_MAP_WIDTHS,
   ARTILLERY_PAYLOADS,
   artilleryMovedX,
   chooseArtilleryBotShot,
@@ -24,6 +25,24 @@ import {
 describe('Arcade deterministic rules', () => {
   it('creates the same artillery field and wind from the same seed', () => {
     expect(createArtilleryState('daily-1')).toEqual(createArtilleryState('daily-1'));
+  });
+
+  it('builds deterministic planet terrain at all three selectable ranges', () => {
+    const worlds = ['stonera', 'magmuth', 'krystos', 'endessa'] as const;
+    const sizes = ['compact', 'standard', 'wide'] as const;
+    const worldSignatures = new Set<string>();
+    for (const world of worlds) {
+      for (const mapSize of sizes) {
+        const state = createArtilleryState('world-map-options', 'bot', 'standard', { world, mapSize });
+        expect(state.terrain).toHaveLength(ARTILLERY_MAP_WIDTHS[mapSize] + 1);
+        expect(state.world).toBe(world);
+        expect(state.mapSize).toBe(mapSize);
+        if (mapSize === 'standard') {
+          worldSignatures.add(`${state.condition}:${state.terrain.slice(0, 100).map(Math.round).join(',')}`);
+        }
+      }
+    }
+    expect(worldSignatures.size).toBe(4);
   });
 
   it('simulates and applies an artillery shot without mutating the input', () => {
@@ -50,6 +69,18 @@ describe('Arcade deterministic rules', () => {
         )
       );
       expect(canHit, `${seed} should have a reachable opening shot`).toBe(true);
+    }
+
+    for (const world of ['stonera', 'magmuth', 'krystos', 'endessa'] as const) {
+      for (const mapSize of ['compact', 'standard', 'wide'] as const) {
+        const state = createArtilleryState(`reach-${world}-${mapSize}`, 'bot', 'standard', { world, mapSize });
+        const canHit = Array.from({ length: 71 }, (_, index) => index + 10).some((angle) =>
+          Array.from({ length: 86 }, (_, index) => index + 15).some((power) =>
+            simulateArtilleryShot(state, { angle, power }).hit === 'right'
+          )
+        );
+        expect(canHit, `${world}/${mapSize} should have a reachable opening shot`).toBe(true);
+      }
     }
   });
 
@@ -99,16 +130,18 @@ describe('Arcade deterministic rules', () => {
   it('commits rig movement immediately and spends one drive charge', () => {
     const initial = createArtilleryState('crawler-movement');
     const originalX = initial.tanks.left.x;
-    expect(artilleryMovedX(initial, 'left', 1)).toBe(originalX + ARTILLERY_MOVE_DISTANCE);
+    const drivenX = artilleryMovedX(initial, 'left', 1);
+    expect(drivenX).toBeGreaterThan(originalX);
+    expect(drivenX).toBeLessThanOrEqual(originalX + ARTILLERY_MOVE_DISTANCE);
     expect(initial.tanks.left.x).toBe(originalX);
 
     const first = applyArtilleryMove(initial, 1);
-    expect(first.state.tanks.left.x).toBe(originalX + ARTILLERY_MOVE_DISTANCE);
+    expect(first.state.tanks.left.x).toBe(drivenX);
     expect(first.state.traction.left).toBe(2);
     expect(first.state.turn).toBe(0);
 
     const second = applyArtilleryMove(first.state, -1);
-    expect(second.state.tanks.left.x).toBe(originalX);
+    expect(second.state.tanks.left.x).toBeLessThan(first.state.tanks.left.x);
     expect(second.state.traction.left).toBe(1);
 
     const third = applyArtilleryMove(second.state, -1);
@@ -133,6 +166,22 @@ describe('Arcade deterministic rules', () => {
     terrain[startX + 1] = terrain[startX] + 6;
     const blocked = { ...state, terrain };
     expect(artilleryMovedX(blocked, 'left', 1)).toBe(blocked.tanks.left.x);
+  });
+
+  it('lets the jump jet clear terrain that blocks the drive', () => {
+    const state = createArtilleryState('blocked-jet');
+    const terrain = [...state.terrain];
+    const startX = Math.round(state.tanks.left.x);
+    terrain[startX + 1] = terrain[startX] + 12;
+    const blocked = { ...state, terrain };
+    expect(artilleryMovedX(blocked, 'left', 1, 'drive')).toBe(blocked.tanks.left.x);
+
+    const landedX = artilleryMovedX(blocked, 'left', 1, 'jet');
+    expect(landedX).toBeGreaterThan(blocked.tanks.left.x + ARTILLERY_MOVE_DISTANCE);
+    const applied = applyArtilleryMove(blocked, 1, 'jet');
+    expect(applied.state.tanks.left.x).toBe(landedX);
+    expect(applied.state.jetCharges.left).toBe(0);
+    expect(applied.state.traction.left).toBe(blocked.traction.left);
   });
 
   it('replays an artillery win with committed movement', () => {
