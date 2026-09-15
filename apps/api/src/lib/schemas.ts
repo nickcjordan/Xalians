@@ -52,13 +52,19 @@ export const ArcadeCompleteBodySchema = z.discriminatedUnion('gameId', [
     gameId: z.literal('artillery'), sessionId: ArcadeSessionSchema, seed: ArcadeSeedSchema,
     difficulty: z.enum(['rookie', 'standard', 'expert']).optional(),
     creature: z.enum(['codazzo', 'terragoyle']).optional(),
+    mapSize: z.enum(['compact', 'standard', 'wide']).optional(),
+    world: z.enum(['stonera', 'magmuth', 'krystos', 'endessa']).optional(),
     actions: z.array(z.union([z.object({
       angle: z.number().min(10).max(80),
       power: z.number().min(15).max(100),
       payload: z.enum(['shell', 'barb', 'bore', 'cluster', 'bloom', 'lance']).optional(),
       move: z.union([z.literal(-1), z.literal(0), z.literal(1)]).optional(),
       system: z.enum(['none', 'anchor', 'lift']).optional(),
-    }), z.object({ type: z.literal('move'), direction: z.union([z.literal(-1), z.literal(1)]) })])).max(80),
+    }), z.object({
+      type: z.literal('move'),
+      direction: z.union([z.literal(-1), z.literal(1)]),
+      mobility: z.enum(['drive', 'jet']).optional(),
+    })])).max(80),
   }),
   z.object({
     gameId: z.literal('sweep'), sessionId: ArcadeSessionSchema, seed: ArcadeSeedSchema,

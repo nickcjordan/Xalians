@@ -3,7 +3,7 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 
-import { ArtilleryBoard, CommandMeter, artilleryAimFromDrag, artilleryBarrelEndpoint, artilleryFlightFrameIndex, artilleryImpactTerrainFrame } from '../pages/games/artilleryGamePage';
+import { ArtilleryBoard, ArtillerySetup, CommandMeter, artilleryAimFromDrag, artilleryBarrelEndpoint, artilleryFlightFrameIndex, artilleryImpactTerrainFrame, artilleryMoveAnimationProgress } from '../pages/games/artilleryGamePage';
 
 class ResizeObserverStub {
   observe() {}
@@ -76,6 +76,14 @@ describe('Crater Command aim feedback', () => {
     expect(artilleryFlightFrameIndex(5, 10, 1)).toBe(4);
   });
 
+  it('keeps a moved rig at its committed launch position after movement ends', () => {
+    expect(artilleryMoveAnimationProgress('move', 0, 1)).toBe(0);
+    expect(artilleryMoveAnimationProgress('move', 0.5, 1)).toBe(0.5);
+    expect(artilleryMoveAnimationProgress('charge', 0, 1)).toBe(1);
+    expect(artilleryMoveAnimationProgress('flight', 0.4, 1)).toBe(1);
+    expect(artilleryMoveAnimationProgress('impact', 0.9, 1)).toBe(1);
+  });
+
   it('excavates terrain progressively and lands on the exact resulting crater', () => {
     const before = [12, 12, 12];
     const after = [12, 7, 12];
@@ -102,6 +110,25 @@ describe('Crater Command aim feedback', () => {
     expect(onChange).toHaveBeenNthCalledWith(2, 44);
   });
 
+  it('makes world, range, mode, and difficulty explicit setup choices', async () => {
+    const onWorld = vi.fn();
+    const onMapSize = vi.fn();
+    const onStart = vi.fn();
+    render(createElement(ArtillerySetup, {
+      mode: 'bot', difficulty: 'standard', mapSize: 'standard', world: 'stonera',
+      onMode: vi.fn(), onDifficulty: vi.fn(), onMapSize, onWorld, onStart,
+    }));
+
+    expect(screen.getByRole('heading', { name: /Configure Crater Command/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Stonera.*Cratered ridges/i })).toHaveAttribute('aria-pressed', 'true');
+    await userEvent.click(screen.getByRole('button', { name: /Endessa.*Rolling glass dunes/i }));
+    await userEvent.click(screen.getByRole('button', { name: /Wide.*440 units/i }));
+    await userEvent.click(screen.getByRole('button', { name: /Start match/i }));
+    expect(onWorld).toHaveBeenCalledWith('endessa');
+    expect(onMapSize).toHaveBeenCalledWith('wide');
+    expect(onStart).toHaveBeenCalledOnce();
+  });
+
   it('mirrors barrel arrow adjustments for the right-side rig', async () => {
     const onChange = vi.fn();
     render(createElement(CommandMeter, {
@@ -120,6 +147,8 @@ describe('Crater Command aim feedback', () => {
       seed: 'component-actions',
       mode: 'bot',
       difficulty: 'standard',
+      mapSize: 'standard',
+      world: 'stonera',
       onStatus: vi.fn(),
       onComplete: vi.fn(),
       onRematch: vi.fn(),
@@ -140,13 +169,15 @@ describe('Crater Command aim feedback', () => {
       seed: 'component-preview',
       mode: 'bot',
       difficulty: 'standard',
+      mapSize: 'standard',
+      world: 'stonera',
       onStatus,
       onComplete: vi.fn(),
       onRematch: vi.fn(),
     }));
 
     await userEvent.click(screen.getByRole('button', { name: /Advance/i }));
-    expect(screen.getByText('2 moves left')).toBeInTheDocument();
+    expect(screen.getByText(/Drive 2 · Jet 1/i)).toBeInTheDocument();
     expect(screen.queryByTestId('artillery-move-preview')).not.toBeInTheDocument();
     expect(onStatus).toHaveBeenCalledWith(expect.stringMatching(/Advancing/i));
   });
