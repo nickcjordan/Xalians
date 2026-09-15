@@ -21,6 +21,14 @@ Statuses progress independently: identified → implementing → technically ver
 
 ### Live findings
 
+### September 15 — later-scene causal results
+
+- [x] Correct phasing breach stability prose: the release strains; no displaced door segments are invented.
+- [x] Explain confirmed environmental effort through the surroundings (airless exposure, immersion, cold/heat), only when energy was actually spent.
+- [x] Credit support when its score crosses a passage threshold; narrate extra supporter work when it spends energy.
+- [x] 160 tests and bundle gates pass; seven-scene replay reaches deep extraction with 14 salvage and 2 stability. Reviewed final-scene result screenshot and replaced abstract medium terminology with physical description.
+- [ ] Continue reviewing whether later encounters and recovery scenes communicate their causes as clearly as crossings; player acceptance remains open.
+
 ### September 15 follow-up — method interpretation audit
 
 - [x] Audit every available method across all fourteen routes: traits and fallback moves must not both be described as a generic workable fit.

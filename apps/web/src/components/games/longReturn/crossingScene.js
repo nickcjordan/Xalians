@@ -112,9 +112,24 @@ export function crossingScene({ route, lead, support, method, result, companionH
   const effort = result.leadStrain > 0
     ? `${name} ${EFFORTS[route.id]}. By the time the work is done, the effort has taken its toll.`
     : `${name} carries the movement through steadily, emerging with strength still in reserve.`;
-  const supportEffort = result.supportStrain > 0 ? ` The effort has worn on ${support.species}, too.` : '';
+  const alone = result.rawMethodScore - route.difficulty;
+  const supportDifference = alone < 0 && result.margin >= 0
+    ? ` With ${support.species} coordinating the others, ${name} can complete the passage instead of forcing a way through.`
+    : alone < 14 && result.margin >= 14
+      ? ` ${support.species} keeps the others moving with ${name}; the crossing itself no longer demands an exhausting push.` : '';
+  const supportEffort = result.supportStrain > 0 ? ` ${support.species} has to take over part of the work to keep the passage moving. The effort has worn on ${support.species}, too.` : '';
+  const exposure = result.leadStrain > 0 ? (result.environment?.notes || []).map(note => {
+    if (note.includes('without breathing')) return `There is no breath to take along this part of the route; ${name} must keep going until it reaches air.`;
+    if (note.includes('cannot safely remain')) return route.environment.medium === 'vacuum'
+      ? `There is no air here, and ${name} cannot linger safely in the exposed space. Every moment spent bringing the others across wears it down.`
+      : route.environment.medium === 'liquid' ? `${name} is out of its element beneath the surface. Holding on until the others follow takes more out of it than the crossing alone.`
+        : `${name} struggles outside the surroundings it needs, pushing on until the crew is through.`;
+    if (note.includes('temperature band')) return `${route.environment.temperatureC < 0 ? 'The cold' : 'The heat'} is more than ${name} can comfortably endure, wearing it down even while the passage advances.`;
+    if (note.includes('exposed to')) return `The ${route.environment.element} exposure bears particularly hard on ${name}, making the work more demanding.`;
+    return '';
+  }).filter(Boolean).join(' ') : '';
   const stability = result.pressure > 0
-    ? ` ${SHIFTS[route.id]}` : '';
+    ? ` ${route.id === 'breach' && method.key === 'phasing' ? 'The old release strains as it opens the iris. Its vibration travels through the failing wall.' : SHIFTS[route.id]}` : '';
   const salvage = result.salvage > 0
     ? (['harvest', 'dive', 'align', 'closure', 'stabilize', 'blackbox'].includes(route.id)
       ? ' The recovered material joins the haul they must carry out.'
@@ -122,5 +137,5 @@ export function crossingScene({ route, lead, support, method, result, companionH
   const arrival = route.id === 'breach' && method.key === 'phasing'
     ? 'From inside the iris, the release finally answers. The door opens for the rest of the crew, admitting them into the gallery.'
     : passage[1];
-  return [passage[0], `${action}${danger ? ` ${danger}` : ''}`, `${effort}${supportEffort}${stability}${companionHelp ? ` ${companionHelp}` : ''}`, `${arrival}${salvage}`];
+  return [passage[0], `${action}${danger ? ` ${danger}` : ''}${supportDifference}`, `${effort}${exposure ? ` ${exposure}` : ''}${supportEffort}${stability}${companionHelp ? ` ${companionHelp}` : ''}`, `${arrival}${salvage}`];
 }
