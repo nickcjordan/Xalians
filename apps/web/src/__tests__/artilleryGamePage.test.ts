@@ -1,5 +1,5 @@
 import { createElement } from 'react';
-import { render, screen } from '@testing-library/react';
+import { act, fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 
@@ -159,6 +159,8 @@ describe('Crater Command aim feedback', () => {
       expect(screen.getByRole('button', { name: new RegExp(`^${payload}\\b`, 'i') })).toBeEnabled();
     }
     expect(screen.getByRole('button', { name: /Fire Impact/i })).toBeEnabled();
+    expect(screen.getByText(/Gravity 0\.86× · wind 1\.0×/i)).toBeInTheDocument();
+    expect(screen.getByText(/Hold to move · ramps while held/i)).toBeInTheDocument();
     expect(screen.getByText('Impact round')).toBeInTheDocument();
     expect(screen.getByRole('img', { name: /Two mobile range rigs on Stonera/i })).toHaveAttribute('viewBox', '0 -38 360 148');
     expect(screen.getByRole('button', { name: /Enable artillery audio/i })).toBeInTheDocument();
@@ -178,9 +180,37 @@ describe('Crater Command aim feedback', () => {
       onRematch: vi.fn(),
     }));
 
-    await userEvent.click(screen.getByRole('button', { name: /Advance/i }));
-    expect(screen.getByText(/Drive 2 · Jet 1/i)).toBeInTheDocument();
+    const drive = screen.getByRole('button', { name: /Hold to drive forward/i });
+    fireEvent.pointerDown(drive, { pointerId: 1, pointerType: 'mouse', isPrimary: true, button: 0 });
+    fireEvent.pointerUp(drive, { pointerId: 1, pointerType: 'mouse', isPrimary: true, button: 0 });
+    expect(screen.getByText('99%')).toBeInTheDocument();
     expect(screen.queryByTestId('artillery-move-preview')).not.toBeInTheDocument();
-    expect(onStatus).toHaveBeenCalledWith(expect.stringMatching(/Advancing/i));
+    expect(onStatus).toHaveBeenCalledWith(expect.stringMatching(/Drive engaged/i));
+  });
+
+  it('spends progressively more mobility fuel while thrust is held', () => {
+    vi.useFakeTimers();
+    try {
+      render(createElement(ArtilleryBoard, {
+        seed: 'component-held-thrust',
+        mode: 'bot',
+        difficulty: 'standard',
+        mapSize: 'standard',
+        world: 'stonera',
+        onStatus: vi.fn(),
+        onComplete: vi.fn(),
+        onRematch: vi.fn(),
+      }));
+      const drive = screen.getByRole('button', { name: /Hold to drive forward/i });
+      fireEvent.pointerDown(drive, { pointerId: 2, pointerType: 'mouse', isPrimary: true, button: 0 });
+      act(() => vi.advanceTimersByTime(960));
+      fireEvent.pointerUp(drive, { pointerId: 2, pointerType: 'mouse', isPrimary: true, button: 0 });
+      const remaining = Number(screen.getAllByText(/%$/)[0].textContent?.replace('%', ''));
+      expect(remaining).toBeLessThan(88);
+      expect(remaining).toBeGreaterThan(70);
+      expect(screen.getByRole('button', { name: /Fire Impact/i })).toBeEnabled();
+    } finally {
+      vi.useRealTimers();
+    }
   });
 });
