@@ -1,6 +1,7 @@
 import { hashSeed, nextRandom } from './random.ts';
 
 export type ArtillerySide = 'left' | 'right';
+export type ArtilleryCreature = 'codazzo' | 'terragoyle';
 export type ArtilleryMode = 'bot' | 'local' | 'range' | 'challenge';
 export type ArtilleryPhase = 'aiming' | 'finished';
 export type ArtilleryPayload = 'shell' | 'barb' | 'bore' | 'cluster' | 'bloom' | 'lance';
@@ -18,6 +19,8 @@ export type ArtilleryShot = {
   move?: ArtilleryMove;
   system?: ArtillerySystem;
 };
+export type ArtilleryMoveAction = { type: 'move'; direction: Exclude<ArtilleryMove, 0> };
+export type ArtilleryAction = ArtilleryShot | ArtilleryMoveAction;
 export type ArtilleryProjectileOutcome = {
   path: ArtilleryPoint[];
   impact: ArtilleryPoint | null;
@@ -48,6 +51,7 @@ export type ArtilleryState = {
   difficulty: ArtilleryDifficulty;
   terrain: number[];
   tanks: Record<ArtillerySide, ArtilleryTank>;
+  creatures: Record<ArtillerySide, ArtilleryCreature>;
   payloads: Record<ArtillerySide, ArtilleryPayloadInventory>;
   coreAmmo: Record<ArtillerySide, number>;
   traction: Record<ArtillerySide, number>;
@@ -131,6 +135,7 @@ export function createArtilleryState(
   seed: string,
   mode: ArtilleryMode = 'bot',
   difficulty: ArtilleryDifficulty = 'standard',
+  playerCreature: ArtilleryCreature = 'codazzo',
 ): ArtilleryState {
   const built = buildTerrain(seed);
   const windDraw = nextRandom(built.rngState);
@@ -144,6 +149,10 @@ export function createArtilleryState(
     tanks: {
       left: { side: 'left', x: 9, integrity: ARTILLERY_MAX_INTEGRITY },
       right: { side: 'right', x: 91, integrity: ARTILLERY_MAX_INTEGRITY },
+    },
+    creatures: {
+      left: playerCreature,
+      right: playerCreature === 'codazzo' ? 'terragoyle' : 'codazzo',
     },
     payloads: {
       left: mode === 'challenge' ? { barb: 1, bore: 1, cluster: 1, bloom: 0, lance: 1 } : { ...PAYLOAD_STOCK },
@@ -187,7 +196,7 @@ function availableShot(state: ArtilleryState, input: ArtilleryShot): Required<Ar
   const payload = specialAvailable && (shot.payload !== 'shell' || shellAvailable)
     ? shot.payload
     : shellAvailable ? 'shell' : firstSpecial ?? 'shell';
-  const expectedSystem: ArtillerySystem = state.current === 'left' ? 'anchor' : 'lift';
+  const expectedSystem: ArtillerySystem = state.creatures[state.current] === 'codazzo' ? 'anchor' : 'lift';
   const system = shot.system === expectedSystem && state.systemCharges[state.current] > 0 ? shot.system : 'none';
   const move = state.traction[state.current] <= 0 || system === 'anchor' ? 0 : shot.move;
   return { ...shot, payload, move, system };
@@ -207,6 +216,31 @@ export function artilleryMovedX(state: ArtilleryState, side: ArtillerySide, move
     reached = candidate;
   }
   return Math.round(reached * 10) / 10;
+}
+
+export function applyArtilleryMove(
+  state: ArtilleryState,
+  move: ArtilleryMove,
+): { state: ArtilleryState; distance: number } {
+  if (state.phase !== 'aiming') throw new Error('The artillery match is already finished.');
+  if (move === 0 || state.traction[state.current] <= 0) return { state, distance: 0 };
+  const destination = artilleryMovedX(state, state.current, move);
+  const distance = Math.round(Math.abs(destination - state.tanks[state.current].x) * 10) / 10;
+  if (distance === 0) return { state, distance: 0 };
+  return {
+    distance,
+    state: {
+      ...state,
+      tanks: {
+        ...state.tanks,
+        [state.current]: { ...state.tanks[state.current], x: destination },
+      },
+      traction: {
+        ...state.traction,
+        [state.current]: state.traction[state.current] - 1,
+      },
+    },
+  };
 }
 
 function damageAtDistance(payload: ArtilleryPayload, distance: number, directHit: boolean): number {
@@ -330,7 +364,7 @@ export function applyArtilleryShot(
   const newGround = terrainHeight(terrain, tanks[targetSide].x);
   const terrainShift = Math.round((newGround - oldGround) * 10) / 10;
   const rawFallDamage = terrainShift < -3 ? Math.min(24, Math.round((-terrainShift - 3) * 4)) : 0;
-  const fallDamage = targetSide === 'right' ? Math.ceil(rawFallDamage / 2) : rawFallDamage;
+  const fallDamage = state.creatures[targetSide] === 'terragoyle' ? Math.ceil(rawFallDamage / 2) : rawFallDamage;
   const pressureMultiplier = Math.min(1.6, 1 + Math.max(0, state.turn - 9) * 0.12);
   const rawDamage = Math.min(ARTILLERY_MAX_INTEGRITY, Math.round((simulated.blastDamage + fallDamage) * pressureMultiplier));
   const guardAbsorbed = Math.min(state.guard[targetSide], rawDamage);
@@ -357,9 +391,9 @@ export function applyArtilleryShot(
   if (shot.payload !== 'shell') payloads[state.current][shot.payload] -= 1;
   const coreAmmo = { ...state.coreAmmo };
   if (shot.payload === 'shell' && coreAmmo[state.current] > 0) coreAmmo[state.current] -= 1;
-  const completedLeftTurns = state.current === 'left' ? Math.floor(state.turn / 2) + 1 : Math.floor(state.turn / 2);
-  if (state.current === 'left' && state.mode !== 'range' && state.mode !== 'challenge' && completedLeftTurns % 3 === 0) {
-    payloads.left.barb = Math.min(PAYLOAD_STOCK.barb, payloads.left.barb + 1);
+  const completedCreatureTurns = Math.floor(state.turn / 2) + 1;
+  if (state.creatures[state.current] === 'codazzo' && state.mode !== 'range' && state.mode !== 'challenge' && completedCreatureTurns % 3 === 0) {
+    payloads[state.current].barb = Math.min(PAYLOAD_STOCK.barb, payloads[state.current].barb + 1);
   }
   return {
     outcome,
@@ -433,11 +467,14 @@ export function chooseArtilleryBotShot(state: ArtilleryState): ArtilleryShot {
   const fallback = state.botPrevious?.shot ?? { angle: 44, power: 70 };
   const planned = solution && solution.score > 0 ? solution : fallback;
   const errorSign = draw.value < 0.5 ? -1 : 1;
+  const system: ArtillerySystem = state.systemCharges.right > 0 && state.tanks.right.integrity <= 58 && draw.value > 0.35
+    ? state.creatures.right === 'codazzo' ? 'anchor' : 'lift'
+    : 'none';
   return normalizedShot({
     angle: planned.angle + errorSign * profile.angleError,
     power: planned.power + (0.5 - draw.value) * 2 * profile.powerError,
     payload,
-    move,
-    system: state.systemCharges.right > 0 && state.tanks.right.integrity <= 58 && draw.value > 0.35 ? 'lift' : 'none',
+    move: system === 'anchor' ? 0 : move,
+    system,
   });
 }

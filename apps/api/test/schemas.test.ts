@@ -9,7 +9,8 @@ describe('arcade completion schema', () => {
       sessionId: 'session-12345678',
       seed: 'daily-artillery',
       difficulty: 'rookie',
-      actions: [{
+      creature: 'terragoyle',
+      actions: [{ type: 'move', direction: 1 }, {
         angle: 47,
         power: 73,
         payload: 'cluster',
@@ -21,7 +22,9 @@ describe('arcade completion schema', () => {
     expect(parsed.gameId).toBe('artillery');
     if (parsed.gameId !== 'artillery') throw new Error('Expected artillery completion');
     expect(parsed.difficulty).toBe('rookie');
-    expect(parsed.actions[0]).toEqual({
+    expect(parsed.creature).toBe('terragoyle');
+    expect(parsed.actions[0]).toEqual({ type: 'move', direction: 1 });
+    expect(parsed.actions[1]).toEqual({
       angle: 47,
       power: 73,
       payload: 'cluster',
