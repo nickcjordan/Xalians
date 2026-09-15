@@ -6,68 +6,68 @@ Every number here is an observation for the tuning session, not a target.
 
 ## Roster-wide
 
-Total records: 6200.
+Total records: 6400.
 
 ### Build (archetype) share, observed vs authored weights
 
 | archetype | observed share | expected share |
 | --- | --- | --- |
-| berserker | 2.6% | 2.7% |
-| bulwark | 12.4% | 12.0% |
-| juggernaut | 9.6% | 9.8% |
-| predator | 10.0% | 10.4% |
-| prowler | 12.5% | 12.4% |
-| rogue | 1.9% | 1.8% |
-| runner | 4.7% | 4.6% |
-| sage | 7.4% | 7.6% |
-| seeker | 3.2% | 3.0% |
-| skirmisher | 13.1% | 12.9% |
-| sovereign | 2.8% | 2.6% |
-| stalwart | 5.3% | 5.5% |
-| survivor | 10.7% | 10.3% |
-| vanguard | 1.8% | 1.8% |
-| virtuoso | 2.2% | 2.5% |
+| berserker | 2.5% | 2.7% |
+| bulwark | 13.4% | 12.9% |
+| juggernaut | 9.3% | 9.5% |
+| predator | 9.6% | 10.0% |
+| prowler | 12.1% | 12.0% |
+| rogue | 1.8% | 1.8% |
+| runner | 4.5% | 4.5% |
+| sage | 7.1% | 7.4% |
+| seeker | 3.5% | 3.3% |
+| skirmisher | 13.2% | 13.1% |
+| sovereign | 2.7% | 2.5% |
+| stalwart | 6.1% | 6.3% |
+| survivor | 10.3% | 9.9% |
+| vanguard | 1.7% | 1.8% |
+| virtuoso | 2.1% | 2.4% |
 
 ### Secondary affinity
 
-Observed share with a secondary: 25.5% (target 25%). Share of secondaries at or above strength 50: 49.6% (of 1580 with a secondary).
+Observed share with a secondary: 25.3% (target 25%). Share of secondaries at or above strength 50: 49.8% (of 1622 with a secondary).
 
 Strength histogram, deciles 1-10 through 91-99:
 
 | 1-10 | 11-20 | 21-30 | 31-40 | 41-50 | 51-60 | 61-70 | 71-80 | 81-90 | 91-99 |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 175 | 151 | 170 | 163 | 157 | 165 | 159 | 165 | 150 | 125 |
+| 178 | 156 | 176 | 166 | 160 | 169 | 165 | 169 | 151 | 132 |
 
 ### Finish, observed vs odds
 
 | finish | observed | expected |
 | --- | --- | --- |
-| standard | 6046 | 6027.9 |
+| standard | 6237 | 6222.4 |
 | eclipse | 1 | 1.6 |
-| prismatic | 14 | 15.5 |
-| gleam | 139 | 155.0 |
+| prismatic | 15 | 16.0 |
+| gleam | 147 | 160.0 |
 
 ### Trait count distribution, roster-wide
 
-0: 0 (0.0%), 1: 966 (15.6%), 2: 2256 (36.4%), 3: 2002 (32.3%), 4: 803 (13.0%), 5+: 173 (2.8%)
+0: 0 (0.0%), 1: 966 (15.1%), 2: 2314 (36.2%), 3: 2091 (32.7%), 4: 848 (13.3%), 5+: 181 (2.8%)
 
 ### Action mix across rolled abilities
 
 | action | count | share |
 | --- | --- | --- |
-| crush | 2268 | 14.7% |
-| shove | 2101 | 13.6% |
-| strike | 2038 | 13.2% |
-| ward | 1445 | 9.4% |
-| snare | 1237 | 8.0% |
-| drain | 988 | 6.4% |
-| rake | 925 | 6.0% |
-| burst | 832 | 5.4% |
-| lash | 675 | 4.4% |
-| terrorize | 667 | 4.3% |
-| hurl | 549 | 3.6% |
-| ambush | 516 | 3.3% |
-| mend | 422 | 2.7% |
+| shove | 2301 | 14.4% |
+| crush | 2268 | 14.2% |
+| strike | 2038 | 12.8% |
+| ward | 1492 | 9.4% |
+| snare | 1361 | 8.5% |
+| drain | 988 | 6.2% |
+| rake | 925 | 5.8% |
+| burst | 832 | 5.2% |
+| hurl | 687 | 4.3% |
+| lash | 675 | 4.2% |
+| terrorize | 667 | 4.2% |
+| ambush | 516 | 3.2% |
+| mend | 422 | 2.6% |
 | spray | 311 | 2.0% |
 | cloud | 270 | 1.7% |
 | beam | 189 | 1.2% |
@@ -76,24 +76,24 @@ Strength histogram, deciles 1-10 through 91-99:
 
 | medium | count | share |
 | --- | --- | --- |
-| sand | 1845 | 12.0% |
-| psychic | 1508 | 9.8% |
-| plant | 1362 | 8.8% |
-| water | 1111 | 7.2% |
-| ghost | 1074 | 7.0% |
-| fire | 1032 | 6.7% |
-| rock | 1025 | 6.6% |
-| metal | 1024 | 6.6% |
-| chemical | 1017 | 6.6% |
-| dark | 1006 | 6.5% |
-| ice | 987 | 6.4% |
-| light | 966 | 6.3% |
-| air | 920 | 6.0% |
-| electric | 556 | 3.6% |
+| sand | 1845 | 11.6% |
+| psychic | 1508 | 9.5% |
+| plant | 1362 | 8.5% |
+| water | 1111 | 7.0% |
+| ghost | 1074 | 6.7% |
+| metal | 1042 | 6.5% |
+| fire | 1032 | 6.5% |
+| rock | 1025 | 6.4% |
+| electric | 1018 | 6.4% |
+| chemical | 1017 | 6.4% |
+| dark | 1006 | 6.3% |
+| ice | 987 | 6.2% |
+| light | 977 | 6.1% |
+| air | 938 | 5.9% |
 
-Share of rolled abilities using the secondary medium: 10.2% (of 15433 rolled abilities).
+Share of rolled abilities using the secondary medium: 10.1% (of 15942 rolled abilities).
 
-Mean favored-vs-unfavored attribute band-position lift, averaged across species: 17.4 points (0-100 scale).
+Mean favored-vs-unfavored attribute band-position lift, averaged across species: 17.3 points (0-100 scale).
 
 ## Per species
 
@@ -1033,6 +1033,50 @@ Observed trait count mean: 2.06 (authored expected count: 2.00). Distribution: 0
 Ability name diversity: 0.54 (714 abilities rolled).
 
 Size mean: height 110.3 cm (band position 0.51), weight 71.1 kg (band position 0.50).
+
+### Shuntara (`shuntara`), n = 200
+
+Attributes (mean, band position 0-1):
+
+| attribute | mean | band position |
+| --- | --- | --- |
+| strength | 51.9 | 0.50 |
+| vitality | 65.0 | 0.59 |
+| endurance | 71.6 | 0.53 |
+| agility | 49.3 | 0.52 |
+| reflex | 66.8 | 0.51 |
+| intelligence | 57.9 | 0.54 |
+| willpower | 60.0 | 0.55 |
+| instinct | 69.5 | 0.52 |
+| charisma | 33.6 | 0.48 |
+| resilience | 72.6 | 0.61 |
+
+Favored mean band position: 0.66. Unfavored: 0.50. Lift: 15.3 points.
+
+Build shares (observed vs authored weight):
+
+| archetype | observed | authored |
+| --- | --- | --- |
+| bulwark | 45.5% | 40.0% |
+| stalwart | 28.5% | 30.0% |
+| skirmisher | 15.0% | 18.0% |
+| seeker | 11.0% | 12.0% |
+
+Trait landed rate vs authored percent:
+
+| trait | authored % | observed % |
+| --- | --- | --- |
+| insulated | 100.0 | 100.0% |
+| protective | 100.0 | 100.0% |
+| anchored | 45.0 | 42.0% |
+| perceptive | 35.0 | 38.0% |
+| hardened | 20.0 | 21.5% |
+
+Observed trait count mean: 3.02 (authored expected count: 3.00). Distribution: 0: 0 (0.0%), 1: 0 (0.0%), 2: 58 (29.0%), 3: 89 (44.5%), 4: 45 (22.5%), 5+: 8 (4.0%)
+
+Ability name diversity: 0.39 (709 abilities rolled).
+
+Size mean: height 62.6 cm (band position 0.50), weight 79.9 kg (band position 0.50).
 
 ### Smokat (`smokat`), n = 200
 
