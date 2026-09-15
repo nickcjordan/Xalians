@@ -21,6 +21,16 @@ Statuses progress independently: identified → implementing → technically ver
 
 ### Live findings
 
+### September 15 — delayed scout report continuity
+
+- [x] Reports retain stability spent waiting as well as scouting energy, attached to the scout source rather than a new notification panel. Trip costs are explicitly separate from encounter costs.
+- [x] Scan state records actual capped energy/stability changes; report generation retains compatibility with earlier checkpoints. A spent scout is not credited with spending energy it did not have.
+- [x] Return choreography reflects depleted reserves rather than claiming a nonexistent decrement.
+- [x] Dedicated browser replay covers non-relay scouting, physical return, persistent receipt, crossing and checkpoint resource continuity. 169 tests pass.
+- [ ] Player understanding of delayed reports and complete-mission rhythm remains unproven.
+
+Previous continuation: progress (companion farewell, settlement and mobile ending layout). Current continuation: progress (persistent scout-trip costs and actual-change narration).
+
 ### September 15 — returning from the expedition
 
 - [x] Temporary companions now receive a farewell in the existing ending narrative, without implying ownership or inventing an intervention when they never helped.

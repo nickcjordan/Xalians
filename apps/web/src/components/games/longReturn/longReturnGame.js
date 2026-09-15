@@ -926,7 +926,7 @@ function LongReturnGame() {
     playGameSound('commit', soundEnabled);
     setWizardDirection('forward');
     const scanned = scanScene(scene, scout);
-    const result = { ...scanned, mode: 'scan', returned: !!scanned.relay };
+    const result = { ...scanned, mode: 'scan', returned: !!scanned.relay, energySpent: cap((strain[scout.id] || 0) + 1) - (strain[scout.id] || 0), stabilitySpent: 0 };
     setScoutId(scout.id);
     setScan(result);
     setStrain((current) => ({ ...current, [scout.id]: cap((current[scout.id] || 0) + 1) }));
@@ -956,7 +956,9 @@ function LongReturnGame() {
   const recoverScout = () => {
     if (!scanScout || !scan || scan.returned) return;
     const hazards = scan.hazards.map((hazard) => hazard.sensed ? { ...hazard, revealed: true } : hazard);
-    setScan({ ...scan, mode: 'debrief', returned: true, hazards, revealedIds: hazards.filter((hazard) => hazard.revealed).map((hazard) => hazard.id) });
+    setScan({ ...scan, mode: 'debrief', returned: true, hazards, revealedIds: hazards.filter((hazard) => hazard.revealed).map((hazard) => hazard.id),
+      energySpent: (scan.energySpent ?? 1) + cap((strain[scanScout.id] || 0) + 1) - (strain[scanScout.id] || 0),
+      stabilitySpent: (scan.stabilitySpent ?? 0) + Math.min(MAX_INSTABILITY, pressure + 1) - pressure });
     setStrain((current) => ({ ...current, [scanScout.id]: cap((current[scanScout.id] || 0) + 1) }));
     setPressure((current) => Math.min(MAX_INSTABILITY, current + 1));
     cueChanges({ energy: { [scanScout.id]: 1 }, stability: 1 });
@@ -1480,7 +1482,7 @@ function LongReturnGame() {
 
           {phase === 'scan-result' && report && (guidanceLevel === 'simple' ? (
             <div className={`lr-simple-decision lr-simple-report is-${report.outcome}`}>
-              <div className="lr-report-source">{scanScout && <CreaturePortrait creature={scanScout} />}<strong>{scanScout ? scanScout.species : 'Crew report'}</strong><span>{report.channel || (scan.returned ? 'Report delivered' : 'Awaiting return')}</span><small>{report.strainCost} energy spent</small></div>
+              <div className="lr-report-source">{scanScout && <CreaturePortrait creature={scanScout} />}<strong>{scanScout ? scanScout.species : 'Crew report'}</strong><span>{report.channel || (scan.returned ? 'Report delivered' : 'Awaiting return')}</span><small className="lr-scout-trip-receipt" title="Scouting and reporting only. Any encounter costs are recorded in its own result."><BiIcon cls="bi bi-lightning-charge-fill" /> {report.strainCost} energy scouting{report.stabilityCost > 0 && <><br /><BiIcon cls="bi bi-building" /> {report.stabilityCost} stability waiting</>}</small></div>
               <div className="lr-report-content">
               <div className="lr-simple-report-result"><BiIcon cls={report.revealed.length ? 'bi-shield-exclamation' : report.outcome === 'blind' ? 'bi-eye-slash' : 'bi-check-circle'} /><div><span>Scout result</span><h3>{report.title}</h3></div></div>
               <p className="lr-simple-story">{report.narrative}</p>
@@ -1501,7 +1503,7 @@ function LongReturnGame() {
               <p className="lr-report-narrative">{report.narrative}</p>
               <div className="lr-report-readouts">
                 <div><span>Scout</span><strong>{scanScout ? scanScout.species : 'None committed'}</strong></div>
-                <div><span>Energy spent</span><strong>−{report.strainCost}</strong></div>
+                <div><span>Scouting &amp; reporting</span><strong>−{report.strainCost} energy</strong>{report.stabilityCost > 0 && <small>−{report.stabilityCost} stability waiting</small>}</div>
                 <div><span>Relay</span><strong>{report.channel || (report.outcome === 'blind' ? 'Not attempted' : 'Failed')}</strong></div>
                 <div><span>Actionable hazards</span><strong>{report.revealed.length} / {scene.hazards.length}</strong></div>
               </div>
