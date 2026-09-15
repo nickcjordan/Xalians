@@ -10,6 +10,24 @@ export function approachExplanation(method) {
   }
   return 'An improvised approach';
 }
+export function planApproachExplanation(plan) {
+  const parts = [approachExplanation(plan.method)];
+  const alone = plan.leadScore - plan.difficulty;
+  if (alone < 0 && plan.margin >= 0) parts.push(`${plan.support.species} closes the gap`);
+  else if (alone < 14 && plan.margin >= 14) parts.push(`${plan.support.species} eases the effort`);
+  if (plan.naturalReaction && plan.baseLeadStrain + plan.environment.strain > 0) {
+    const reactions = {
+      energy: { high: 'Energetic pace', low: 'Patient pace' },
+      boldness: { high: 'Bold response', low: 'Cautious response' },
+      curiosity: { high: 'Curious approach', low: 'Focused approach' },
+      aggression: { high: 'Forceful response', low: 'Gentle response' },
+      sociability: { high: 'Social response', low: 'Independent approach' }
+    };
+    const reaction = plan.route?.reaction;
+    parts.push(`${reactions[reaction?.axis]?.[reaction?.direction] || 'Matching temperament'} saves 1 energy`);
+  }
+  return parts.join(' · ');
+}
 export function methodIdentity(method) {
   if (!method) return { source: 'Choose a method', action: '', limited: false };
   const action = method.ability ? method.label.split(' — ').slice(1).join(' — ') || method.label : method.label;

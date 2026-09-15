@@ -75,6 +75,10 @@ try {
     await capture('companion');
     await page.getByRole('button', { name: 'Review scout report', exact: true }).click();
     await capture('report');
+    await page.getByRole('button', { name: /Choose a route/i }).click();
+    await page.locator('.lr-board-pick').first().click();
+    assert(await page.locator('.lr-lead-ally-saving').count(), 'Companion energy saving must remain attributable when choosing a lead');
+    await capture('companion-leads');
     assert.deepEqual(errors, []);
     console.log(`${width}px: scout, route, custom crew, result, repairs, ending, encounter, companion, report checked`);
     await context.close();
