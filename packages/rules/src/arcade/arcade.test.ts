@@ -36,7 +36,7 @@ describe('Arcade deterministic rules', () => {
     expect(state).toEqual(before);
   });
 
-  it('always offers a shot that can reach the opposing crawler', () => {
+  it('always offers a shot that can reach the opposing range rig', () => {
     const seeds = [
       '2026-09-13:artillery:v1',
       ...Array.from({ length: 50 }, (_, index) => `artillery-reach-${index}`),
@@ -74,9 +74,12 @@ describe('Arcade deterministic rules', () => {
     const shell = applyArtilleryShot(state, { angle: 32, power: 54, payload: 'shell' });
     const barb = applyArtilleryShot(state, { angle: 32, power: 54, payload: 'barb' });
     const bore = applyArtilleryShot(state, { angle: 32, power: 54, payload: 'bore' });
-    const impactX = Math.round(shell.outcome.impact!.x);
+    const shellImpactX = Math.round(shell.outcome.impact!.x);
+    const boreImpactX = Math.round(bore.outcome.impact!.x);
+    const shellDepth = state.terrain[shellImpactX] - shell.state.terrain[shellImpactX];
+    const boreDepth = state.terrain[boreImpactX] - bore.state.terrain[boreImpactX];
 
-    expect(bore.state.terrain[impactX]).toBeLessThan(shell.state.terrain[impactX]);
+    expect(boreDepth).toBeGreaterThan(shellDepth);
     expect(shell.outcome.projectiles).toHaveLength(1);
     expect(barb.outcome.projectiles).toHaveLength(3);
     expect(barb.state.terrain).not.toEqual(shell.state.terrain);
@@ -93,7 +96,7 @@ describe('Arcade deterministic rules', () => {
     expect(right.state.rngState).not.toBe(initial.rngState);
   });
 
-  it('commits crawler movement immediately and spends one drive charge', () => {
+  it('commits rig movement immediately and spends one drive charge', () => {
     const initial = createArtilleryState('crawler-movement');
     const originalX = initial.tanks.left.x;
     expect(artilleryMovedX(initial, 'left', 1)).toBe(originalX + ARTILLERY_MOVE_DISTANCE);
@@ -116,26 +119,26 @@ describe('Arcade deterministic rules', () => {
     expect(fourth.state.traction.left).toBe(0);
   });
 
-  it('assigns the chosen player creature and its distinct system', () => {
-    const terragoyle = createArtilleryState('chosen-creature', 'bot', 'standard', 'terragoyle');
-    expect(terragoyle.creatures).toEqual({ left: 'terragoyle', right: 'codazzo' });
-    const lifted = applyArtilleryShot(terragoyle, { angle: 10, power: 15, system: 'lift' });
-    expect(lifted.state.guard.left).toBe(18);
-    expect(lifted.state.systemCharges.left).toBe(1);
+  it('neutralizes legacy creature-system actions in the cabinet simulation', () => {
+    const initial = createArtilleryState('legacy-system');
+    const applied = applyArtilleryShot(initial, { angle: 10, power: 15, system: 'lift' });
+    expect(applied.state.guard.left).toBe(0);
+    expect(applied.state.systemCharges.left).toBe(initial.systemCharges.left);
   });
 
-  it('lets crater walls block a planned crawler route', () => {
-    const state = createArtilleryState('blocked-crawler');
+  it('lets crater walls block a planned rig route', () => {
+    const state = createArtilleryState('blocked-rig');
     const terrain = [...state.terrain];
-    terrain[10] = terrain[9] + 6;
+    const startX = Math.round(state.tanks.left.x);
+    terrain[startX + 1] = terrain[startX] + 6;
     const blocked = { ...state, terrain };
     expect(artilleryMovedX(blocked, 'left', 1)).toBe(blocked.tanks.left.x);
   });
 
-  it('replays an artillery win with committed movement and a chosen creature', () => {
+  it('replays an artillery win with committed movement', () => {
     const seed = '2026-09-13:artillery:v1';
     const actions: ArtilleryAction[] = [{ type: 'move', direction: 1 }];
-    let state = createArtilleryState(seed, 'bot', 'rookie', 'terragoyle');
+    let state = createArtilleryState(seed, 'bot', 'rookie');
     state = applyArtilleryMove(state, 1).state;
 
     while (state.phase === 'aiming' && state.turn < 30) {
@@ -157,8 +160,8 @@ describe('Arcade deterministic rules', () => {
     }
 
     expect(state.winner).toBe('left');
-    expect(verifyArcadeCompletion({ gameId: 'artillery', seed, difficulty: 'rookie', creature: 'terragoyle', actions })).toBe(true);
-    expect(verifyArcadeCompletion({ gameId: 'artillery', seed, difficulty: 'rookie', creature: 'terragoyle', actions: actions.slice(0, -1) })).toBe(false);
+    expect(verifyArcadeCompletion({ gameId: 'artillery', seed, difficulty: 'rookie', actions })).toBe(true);
+    expect(verifyArcadeCompletion({ gameId: 'artillery', seed, difficulty: 'rookie', actions: actions.slice(0, -1) })).toBe(false);
   });
 
   it('gives all six payloads a distinct deterministic role', () => {
@@ -170,6 +173,16 @@ describe('Arcade deterministic rules', () => {
     const bloom = applyArtilleryShot(state, { angle: 22, power: 46, payload: 'bloom' });
     const impactX = Math.round(bloom.outcome.impact!.x);
     expect(bloom.state.terrain[impactX]).toBeGreaterThan(state.terrain[impactX]);
+  });
+
+  it('keeps scatter and fragment patterns separated through impact', () => {
+    const state = createArtilleryState('diverging-patterns');
+    for (const payload of ['barb', 'cluster'] as const) {
+      const outcome = simulateArtilleryShot(state, { angle: 42, power: 62, payload });
+      const impacts = outcome.projectiles.flatMap((projectile) => projectile.impact ? [projectile.impact.x] : []);
+      expect(impacts).toHaveLength(outcome.projectiles.length);
+      expect(Math.max(...impacts) - Math.min(...impacts)).toBeGreaterThan(payload === 'barb' ? 20 : 35);
+    }
   });
 
   it('applies blast falloff and direct-hit bonus to 100-point hulls', () => {
@@ -195,46 +208,6 @@ describe('Arcade deterministic rules', () => {
     expect(Math.max(...thin.path.map((point) => point.y))).toBeGreaterThan(Math.max(...heavy.path.map((point) => point.y)));
   });
 
-  it('turns creature systems into limited, observable defenses', () => {
-    const initial = createArtilleryState('creature-systems');
-    initial.tanks.left.integrity = 50;
-    const anchored = applyArtilleryShot(initial, { angle: 10, power: 15, system: 'anchor', move: 1 });
-    expect(anchored.state.tanks.left.integrity).toBe(62);
-    expect(anchored.state.tanks.left.x).toBe(initial.tanks.left.x);
-    expect(anchored.state.guard.left).toBe(22);
-    expect(anchored.state.systemCharges.left).toBe(1);
-
-    let reply;
-    for (let angle = 10; angle <= 80 && !reply; angle += 1) {
-      for (let power = 15; power <= 100; power += 1) {
-        const outcome = simulateArtilleryShot(anchored.state, { angle, power });
-        if (outcome.damage) {
-          reply = applyArtilleryShot(anchored.state, { angle, power });
-          break;
-        }
-      }
-    }
-    expect(reply).toBeDefined();
-    expect(reply!.outcome.guardAbsorbed).toBeGreaterThan(0);
-    expect(reply!.state.guard.left).toBe(0);
-  });
-
-  it('gives Terragoyle a distinct lift defense and Codazzo a repeating barb growth cycle', () => {
-    const initial = createArtilleryState('species-systems');
-    const rightTurn = { ...initial, current: 'right' as const };
-    const lifted = applyArtilleryShot(rightTurn, { angle: 10, power: 15, system: 'lift' });
-    expect(lifted.state.guard.right).toBe(18);
-    expect(lifted.state.systemCharges.right).toBe(1);
-
-    let state = createArtilleryState('barb-regrowth');
-    state.payloads.left.barb = 0;
-    for (let volley = 0; volley < 3; volley += 1) {
-      state = applyArtilleryShot(state, { angle: 10, power: 15 }).state;
-      state = applyArtilleryShot(state, { angle: 10, power: 15 }).state;
-    }
-    expect(state.payloads.left.barb).toBe(1);
-  });
-
   it('separates bot difficulty by bounded aiming error without changing the shared physics', () => {
     const rookie = createArtilleryState('bot-profiles', 'bot', 'rookie');
     rookie.current = 'right';
@@ -257,7 +230,7 @@ describe('Arcade deterministic rules', () => {
     const outcome = simulateArtilleryShot(state, shot);
     expect(shot.payload).toBe('bloom');
     expect(outcome.impact).not.toBeNull();
-    expect(Math.abs(outcome.impact!.x - (state.tanks.right.x - 10))).toBeLessThan(5);
+    expect(Math.abs(outcome.impact!.x - (state.tanks.right.x - 18))).toBeLessThan(5);
   });
 
   it('raises damage pressure predictably in a duel that runs long', () => {
@@ -279,7 +252,7 @@ describe('Arcade deterministic rules', () => {
     expect(pressured.outcome.damage).toBeGreaterThan(normal.outcome.damage);
   });
 
-  it('keeps range practice on the player crew and ends after six calibration shots', () => {
+  it('keeps range practice on the player rig and ends after six calibration shots', () => {
     let state = createArtilleryState('practice-range', 'range');
     for (let shot = 0; shot < 6 && state.phase === 'aiming'; shot += 1) {
       state = applyArtilleryShot(state, { angle: 10, power: 15 }).state;

@@ -3,7 +3,7 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 
-import { ArtilleryBoard, CommandMeter, CreatureDeployment, artilleryAimFromDrag, artilleryBarrelEndpoint, artilleryFlightFrameIndex, artilleryImpactTerrainFrame } from '../pages/games/artilleryGamePage';
+import { ArtilleryBoard, CommandMeter, artilleryAimFromDrag, artilleryBarrelEndpoint, artilleryFlightFrameIndex, artilleryImpactTerrainFrame } from '../pages/games/artilleryGamePage';
 
 class ResizeObserverStub {
   observe() {}
@@ -35,7 +35,7 @@ describe('Crater Command aim feedback', () => {
     expect(low.x).toBeGreaterThan(high.x);
   });
 
-  it('mirrors the barrel direction for the right crawler', () => {
+  it('mirrors the barrel direction for the right rig', () => {
     const left = artilleryBarrelEndpoint(10, 40, 'left', 45);
     const right = artilleryBarrelEndpoint(90, 40, 'right', 45);
 
@@ -86,22 +86,6 @@ describe('Crater Command aim feedback', () => {
     expect(artilleryImpactTerrainFrame(before, after, 1)).toEqual(after);
   });
 
-  it('makes creature selection a dedicated deployment decision', async () => {
-    const onSelect = vi.fn();
-    const onDeploy = vi.fn();
-    render(createElement(CreatureDeployment, {
-      selected: 'codazzo', mode: 'bot', difficulty: 'standard', onSelect, onDeploy,
-    }));
-
-    expect(screen.getByRole('heading', { name: /choose who commands your crawler/i })).toBeInTheDocument();
-    expect(screen.getByRole('radio', { name: /Terragoyle/i })).toHaveAttribute('aria-checked', 'false');
-    expect(screen.getByText(/locked for this battle/i)).toBeInTheDocument();
-    await userEvent.click(screen.getByRole('radio', { name: /Terragoyle/i }));
-    await userEvent.click(screen.getByRole('button', { name: /Deploy Codazzo/i }));
-    expect(onSelect).toHaveBeenCalledWith('terragoyle');
-    expect(onDeploy).toHaveBeenCalledOnce();
-  });
-
   it('offers explicit one-step corrections with a readable value and guidance', async () => {
     const onChange = vi.fn();
     render(createElement(CommandMeter, {
@@ -118,7 +102,7 @@ describe('Crater Command aim feedback', () => {
     expect(onChange).toHaveBeenNthCalledWith(2, 44);
   });
 
-  it('mirrors barrel arrow adjustments for the right-side crawler', async () => {
+  it('mirrors barrel arrow adjustments for the right-side rig', async () => {
     const onChange = vi.fn();
     render(createElement(CommandMeter, {
       label: 'Barrel', value: 45, suffix: '°', min: 10, max: 80,
@@ -136,19 +120,18 @@ describe('Crater Command aim feedback', () => {
       seed: 'component-actions',
       mode: 'bot',
       difficulty: 'standard',
-      playerCreature: 'codazzo',
       onStatus: vi.fn(),
       onComplete: vi.fn(),
       onRematch: vi.fn(),
     }));
 
     expect(screen.getByRole('img', { name: /drag up and outward/i })).toBeInTheDocument();
-    for (const payload of ['Core', 'Fan', 'Bore', 'Cluster', 'Bloom', 'Lance']) {
+    for (const payload of ['Impact', 'Scatter', 'Breach', 'Fragment', 'Barrier', 'Lance']) {
       expect(screen.getByRole('button', { name: new RegExp(`^${payload}\\b`, 'i') })).toBeEnabled();
     }
-    expect(screen.getByRole('button', { name: /Fire Core/i })).toBeEnabled();
-    expect(screen.getByRole('button', { name: /Arm Root Carapace/i })).toBeEnabled();
-    expect(screen.getByText(/Repairs 12 hull now/i)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Fire Impact/i })).toBeEnabled();
+    expect(screen.getByText(/Selected weapon/i)).toBeInTheDocument();
+    expect(screen.queryByText(/Codazzo|Terragoyle|creature ability/i)).not.toBeInTheDocument();
   });
 
   it('commits movement immediately instead of previewing a firing position', async () => {
@@ -157,7 +140,6 @@ describe('Crater Command aim feedback', () => {
       seed: 'component-preview',
       mode: 'bot',
       difficulty: 'standard',
-      playerCreature: 'codazzo',
       onStatus,
       onComplete: vi.fn(),
       onRematch: vi.fn(),
