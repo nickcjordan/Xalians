@@ -5,7 +5,7 @@ try {
   const page = await browser.newPage({ viewport: { width: 1280, height: 900 }, reducedMotion: 'reduce' });
   const errors = [];
   page.on('pageerror', error => errors.push(error.message));
-  await page.goto('http://127.0.0.1:4173/long-return');
+  await page.goto(`${process.env.LR_BASE_URL || 'http://127.0.0.1:4173'}/long-return`);
   await page.getByRole('button', { name: /Seal crew/i }).click();
   await page.locator('.lr-simple-scouts > button').filter({ hasText: 'Chromocat' }).click();
   await page.getByRole('button', { name: /^Send Chromocat/ }).click();

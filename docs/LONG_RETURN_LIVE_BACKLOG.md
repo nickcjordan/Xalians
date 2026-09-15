@@ -21,6 +21,23 @@ Statuses progress independently: identified → implementing → technically ver
 
 ### Live findings
 
+### September 15 — published release review and acceptance boundary
+
+Deployment `34987496761` completed successfully for main commit `46d4705bb0e3a5dcda940247605288c7d1a3270a` (PR #289). The published `https://xalians.com/long-return` passed both the physical-return/contact-report replay and a seven-scene run with 14 salvage and 2 stability. Static asset HTTP failures are now checked alongside JavaScript errors. Replays accept `LR_BASE_URL` so deployment validation does not silently test localhost.
+
+| Required outcome | Inspected evidence | Still unproven |
+| --- | --- | --- |
+| Interaction clarity | Local keyboard/back/commit/checkpoint tests; published full run and delayed-report branch | Whether players predict each click without hesitation |
+| Immediate trade-offs | Shared route comparison; depletion/uncertainty tests; rendered later-scene plans | Whether the full set of choices reads at a glance |
+| Creature-driven choices | Lead/method provenance, support/temperament attribution, companion and helper tests | Whether choosing different creatures feels meaningful |
+| Persistent causal results | Persistent sequence controls; crossing/report/encounter/recovery and ending replays | Whether the narrative explains causes naturally and is satisfying |
+| Consistency across the mission | Seven-scene published completion, local alternate-response extraction, responsive and guidance-mode replays | Not every combinatorial playthrough has been manually inspected; overall player experience is not accepted |
+| Preserved advanced detail | Guided/Standard/Expert manual assignment and recovery replays | Player preference for information depth |
+
+This is a player-validation checkpoint, not completion or a reason to manufacture more changes. No new product defect was found in this published replay. The next necessary acceptance evidence is a current player run identifying any first hesitation or unexplained consequence. Independent concrete findings may still be addressed; no claim of exhaustive bug-freedom or human acceptance is made.
+
+Previous continuation: progress (contact/report chronology, PR #289 merged). Current continuation: progress (published runtime/asset verification and explicit acceptance audit).
+
 ### September 15 — breaking contact is not report delivery
 
 - [x] Retreat/mark options distinguish breaking contact from delivering intelligence. Non-relay descriptions no longer promise the crew has already heard a warning before the separate return action.
