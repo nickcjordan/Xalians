@@ -21,6 +21,17 @@ Statuses progress independently: identified → implementing → technically ver
 
 ### Live findings
 
+### September 15 — full phone mission and depleted previews
+
+- [x] Parameterized mission replay viewport and captured every selected plan, not just route/result pages. Seven-scene 390×667 run reached deep retrieval with 14 salvage and 2 stability.
+- [x] Final-scene inspection exposed impossible “spend 9 energy” previews for nearly spent creatures. Route, lead and alternate-technique previews now cap actual loss by each assigned creature's reserves, retain demand in analysis and expose exhaustion.
+- [x] Selected plans now retain available-energy data, so their exhaustion warning is not lost when substituting the chosen technique.
+- [x] Ally assistance still follows the existing rule, but no longer claims to preserve actual energy when the lead is exhausted either way.
+- [x] Repeated full phone mission and short-phone normal/reduced controls pass; 170 tests and production build/bundle gates pass. No numerical gameplay changes.
+- [ ] Full player-experience acceptance remains unproven.
+
+Previous continuation: progress (mobile crossing control, PR #287 merged). Current continuation: progress (full-mission evidence and depletion-preview correction discovered in the final scene).
+
 ### September 15 — phone crossing controls and entry position
 
 - [x] Phone lead selection keeps the crossing commitment visible with the selected creature named. Advanced customization stays outside the persistent area; critical crossing warnings remain attached to commitment.
