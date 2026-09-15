@@ -4,7 +4,7 @@ Owner: the agent maintaining the Long Return worktree. Update this file during i
 
 ## Active goal — full-mission UX (2026-09-11)
 
-Bring The Long Return to a human-validated, coherent full-mission UX. Preserve decision-based exploration and advanced detail mode. After implementing the September 13 narrative feedback, the persistent task goal is blocked on renewed player validation, not complete; this file records evidence, not a substitute stopping condition.
+Bring The Long Return to a human-validated, coherent full-mission UX. Preserve decision-based exploration and advanced detail mode. Player acceptance remains unproven, but independent implementation and auditing continue; this file records evidence, not a substitute stopping condition. The task is not blocked merely because human validation is pending.
 
 ### Outcome register
 
@@ -20,6 +20,16 @@ Bring The Long Return to a human-validated, coherent full-mission UX. Preserve d
 Statuses progress independently: identified → implementing → technically verified → UX reviewed → player validated. A historical checked implementation item does not mean the corresponding player outcome is accepted. No goal completion from tests alone, a fixed loop count, or an exhausted task batch.
 
 ### Live findings
+
+### September 15 — keyboard and guidance replay
+
+- [x] Replayed Guided, Standard and Expert with manual route, lead, support and method selection through crossing and field recovery. All passed.
+- [x] Fixed the focused wizard header announcing the same decision for both route and lead views. It now names route selection, lead selection or custom planning accurately without adding visible clutter.
+- [x] Updated the keyboard replay for the split flow: Enter to select/back/reselect, command retention, focus staying on a selected lead, explicit commitment, modal focus restoration and checkpoint resume all pass.
+- [x] 165 engine/component tests and production build/bundle budgets pass.
+- [ ] Complete player experience acceptance remains pending; keyboard automation verifies behavior, not perceived clarity or enjoyment.
+
+Previous turn: verified server availability and opened the playtest. This continuation: progress through guidance evidence, keyboard-flow regression coverage and an accessibility correction.
 
 ### September 15 — healing versus crossing techniques
 
