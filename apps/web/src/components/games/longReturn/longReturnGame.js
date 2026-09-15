@@ -30,6 +30,7 @@ import './arrivalResult.css';
 import './expeditionComposition.css';
 import './crossingWorkspace.css';
 import './expeditionSetup.css';
+import './essentialLegibility.css';
 import MethodIdentity from './MethodIdentity';
 import { nativeRemains } from './nativePresence';
 import SceneStage from './SceneStage';

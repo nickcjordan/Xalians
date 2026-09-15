@@ -21,6 +21,16 @@ Statuses progress independently: identified → implementing → technically ver
 
 ### Live findings
 
+### September 15 — measured essential-label legibility
+
+- [x] Rendered audit found 8–9px resource identities, outcome labels and command instructions across several screens. Essential labels now have a 12px floor; action instructions use 14px.
+- [x] Replayed and visually inspected the change. Fixed mobile name clipping exposed by larger text with compact body type and responsive cell spacing, not a smaller font.
+- [x] Added rendered-font and resource-name clipping regressions to responsive replay. Optional `LR_AUDIT_TYPE=1` records remaining microtype for future review.
+- [x] 390/768/1280 replay, Guided/Standard/Expert manual flows, 169 tests and production bundle checks pass. Desktop crossing remains reachable without scrolling.
+- [ ] Human comfort and full-mission acceptance remain unproven; a font threshold is not acceptance.
+
+Previous continuation: progress (delayed report receipt, PR #285 merged). Current continuation: progress (measured legibility correction and replay-driven mobile refinement).
+
 ### September 15 — delayed scout report continuity
 
 - [x] Reports retain stability spent waiting as well as scouting energy, attached to the scout source rather than a new notification panel. Trip costs are explicitly separate from encounter costs.
