@@ -21,6 +21,16 @@ Statuses progress independently: identified → implementing → technically ver
 
 ### Live findings
 
+### September 15 — encounter readiness attribution
+
+- [x] Group encounter preview, animation and resolution share one actor selection that excludes spent creatures. Solo encounters retain their actual scout.
+- [x] Cover every scene's strongest-defender replacement and exhausted-group boundary in dedicated actor tests.
+- [x] Responsive replay caught a prior shared-energy row pushing Cross now below 900px desktop height. Integrate attribution into the existing cost column; replay now passes at 390/768/1280px.
+- [x] 163 tests and production bundle gates pass. Encounter/companion/recovery/ending browser flow replayed; player acceptance still open.
+- [ ] Continue audit of helper identity and encounter narration where treatment and surprise costs involve different creatures.
+
+Previous goal turn: progress (focused recovery implementation, PR #277 now merged). Current turn: progress (readiness bug fixed plus discovered layout regression corrected). No external blocker asserted.
+
 ### September 15 — focused recovery outcome
 
 - [x] Give resupply, bracing and relay construction a short persistent scene naming performer and sacrifice; retain exact exchange and optional breakdown.
