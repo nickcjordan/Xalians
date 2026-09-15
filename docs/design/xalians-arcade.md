@@ -133,6 +133,11 @@ legible and lore-compatible without requiring a bespoke roster creature or attac
   rack, plain-language weapon roles, and one dominant fire action.
 - [x] Reorder the mobile action so Fire follows the weapon rack and use a wide-range
   follow camera rather than shrinking the entire simulation to an unreadable strip.
+- [x] Expand the battlefield viewport through the full legal projectile ceiling so
+  maximum-height shots remain visible, and remove the filled midground silhouette that
+  could be mistaken for a liquid surface.
+- [x] Consolidate the command deck into a two-bank rig cockpit: firing and mobility
+  instruments above a compact ordnance bus, with audio relocated into the screen bezel.
 - [x] Give firing a charge, recoil, visible projectile/trail, impact shake, damage number,
   terrain interpolation, and a delayed result callout that does not hide the explosion.
 - [x] Keep the HUD integrity bars tied to the same animated damage value as the rig.
