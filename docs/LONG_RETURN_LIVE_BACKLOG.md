@@ -21,6 +21,15 @@ Statuses progress independently: identified → implementing → technically ver
 
 ### Live findings
 
+### September 15 — focused recovery outcome
+
+- [x] Give resupply, bracing and relay construction a short persistent scene naming performer and sacrifice; retain exact exchange and optional breakdown.
+- [x] Keep completed repair as the focused view rather than restoring the entire crossing above it. Review crossing is reversible and spends nothing.
+- [x] 161 tests and build/bundle gates pass. Recovery replay at 390/768/1280px verifies focus, cancel/confirm, review toggle, matching receipt, checkpoint and no duplicate cost; desktop screenshot inspected.
+- [ ] Continue audit of encounter-specific costs and narration, especially scout/helper attribution; no human acceptance claimed.
+
+Previous continuation: progress (later crossing narrative fixes and full replay). This continuation: progress (persistent focused recovery result and verification). PR #276 merged; this recovery follow-up is separate.
+
 ### September 15 — later-scene causal results
 
 - [x] Correct phasing breach stability prose: the release strains; no displaced door segments are invented.
