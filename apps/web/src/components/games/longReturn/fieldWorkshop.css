@@ -149,6 +149,7 @@ details.lr-result-explanation ul { padding: 0 24px 20px 42px; }
 .lr-field-receipt summary { cursor: pointer; padding: 5px 0; }
 .lr-field-receipt details p { font-size: 15px; }
 .lr-field-receipt h4:focus-visible { outline: 2px solid var(--g-phosphor); outline-offset: 5px; }
+.lr-mode-simple .lr-simple-result:has(.lr-field-receipt:not(.is-reviewing-crossing)) .lr-arrival-grid { display:none; }
 @keyframes lr-field-preview { 50% { opacity: .3; } }
 @keyframes lr-field-restored { from { opacity: .3; } to { opacity: 1; } }
 @media(max-width:650px) { .lr-field-exchange { grid-template-columns: 1fr; gap: 10px; } .lr-field-exchange > svg { transform: rotate(90deg); justify-self: center; } .lr-field-payment { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; } .lr-field-payment > div { margin: 0; } }

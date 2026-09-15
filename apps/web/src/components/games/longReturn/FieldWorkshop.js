@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { fieldOptions } from './fieldOperations';
+import { fieldOptions, fieldWorkStory } from './fieldOperations';
 import { MAX_STRAIN } from './longReturnData';
 import BiIcon from './BiIcon';
 import FieldExchange from './FieldExchange';
@@ -7,6 +7,7 @@ import FieldExchange from './FieldExchange';
 export default function FieldWorkshop({ crew, strain, pressure, salvage, commands, used, receipt, onChoose }) {
   const [selected, setSelected] = useState(null);
   const [expanded, setExpanded] = useState(false);
+  const [reviewingCrossing, setReviewingCrossing] = useState(false);
   const summaryRef = useRef(null);
   const showRepairs = value => {
     setExpanded(value);
@@ -16,7 +17,7 @@ export default function FieldWorkshop({ crew, strain, pressure, salvage, command
     });
   };
   const receiptRef = useRef(null);
-  useEffect(() => { if (receipt) receiptRef.current?.focus(); }, [receipt]);
+  useEffect(() => { if (receipt) { receiptRef.current?.focus(); receiptRef.current?.closest('.lr-simple-result')?.scrollIntoView?.({ block:'start', behavior:'instant' }); } }, [receipt]);
   const options = fieldOptions({ crew, strain, pressure, salvage, commands, used });
   const choice = options.find(option => option.id === selected);
   const renderOption = option => <button type="button" key={option.id} disabled={!!option.disabled} aria-pressed={selected === option.id} title={option.reason} onClick={() => setSelected(option.id)}>
@@ -27,8 +28,10 @@ export default function FieldWorkshop({ crew, strain, pressure, salvage, command
     {option.disabled && <small>{option.disabled}</small>}
   </button>;
   const unavailable = options.filter(option => option.disabled);
-  if (receipt) return <section className="lr-field-receipt" aria-label="Field work complete">
+  if (receipt) return <section className={`lr-field-receipt${reviewingCrossing ? ' is-reviewing-crossing' : ''}`} aria-label="Field work complete">
+    <button type="button" className="lr-lead-back" aria-expanded={reviewingCrossing} onClick={() => setReviewingCrossing(!reviewingCrossing)}>{reviewingCrossing ? 'Back to repair result' : '← Review crossing'}</button>
     <h4 ref={receiptRef} tabIndex={-1}><BiIcon cls="bi-check-circle" />{receipt.title} · complete</h4>
+    <p className="lr-field-work-story">{fieldWorkStory(receipt)}</p>
     <FieldExchange option={receipt} salvageBefore={salvage + receipt.cost} energyBefore={MAX_STRAIN - (strain[receipt.creature.id] || 0) + receipt.energy} settled />
     <details><summary>How the repair worked</summary><p>{receipt.result}</p></details>
   </section>;

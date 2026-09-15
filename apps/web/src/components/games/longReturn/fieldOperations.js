@@ -1,5 +1,13 @@
 import { MAX_STRAIN, MAX_INSTABILITY } from './longReturnData';
 
+export function fieldWorkStory(option) {
+  const name = option.creature.species;
+  if (option.kind === 'recover') return `The crew opens part of the recovered haul and sets aside supplies for ${name}. After a brief stop, ${name} is ready to shoulder more of the journey; those supplies will not be coming out as salvage.`;
+  if (option.kind === 'brace') return `${name} fits recovered supports against the annex's failing framework and holds them until they settle. The structure is steadier when the crew moves on, but the work has drawn on ${name}'s remaining strength.`;
+  if (option.kind === 'command') return `${name} sorts signal parts from the haul and builds a small field relay. Its answering signal gives command another chance to guide the crew through a difficult reaction; assembling it has taken effort as well as parts.`;
+  return option.result;
+}
+
 // Field work happens once between crossings. It cannot undo forced extraction.
 export function fieldOptions({ crew, strain, pressure, salvage, commands = 2, used = false }) {
   if (used || pressure >= MAX_INSTABILITY || crew.filter(c => (strain[c.id] || 0) < MAX_STRAIN).length < 2) return [];
