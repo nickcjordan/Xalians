@@ -15,6 +15,7 @@ import RouteTradeoff from './RouteTradeoff';
 import RouteComparison from './RouteComparison';
 import LeadChoices from './LeadChoices';
 import EncounterChoices from './EncounterChoices';
+import { encounterActor } from './encounterActor';
 import EncounterAftermath from './EncounterAftermath';
 import ExtractionChoice from './ExtractionChoice';
 import ExpeditionReserves from './ExpeditionReserves';
@@ -958,12 +959,11 @@ function LongReturnGame() {
 
   const resolveEncounter = (option) => {
     if (!encounterState || !option || !encounterCreature) return;
-    let affected = encounterState.scout;
+    const affected = encounterActor(scene, crew, strain, encounterState.scout);
     if (encounterState.mode === 'scout') {
       const added = option.scoutStrain || 0;
       if (added && affected) setStrain((current) => ({ ...current, [affected.id]: cap((current[affected.id] || 0) + added) }));
     } else if (option.crewStrain) {
-      affected = [...crew].sort((a, b) => scoutProfile(scene, b).hold - scoutProfile(scene, a).hold)[0];
       if (affected) setStrain((current) => ({ ...current, [affected.id]: cap((current[affected.id] || 0) + option.crewStrain) }));
     }
     if (option.instability) setPressure((current) => Math.min(MAX_INSTABILITY, current + option.instability));
@@ -1351,9 +1351,9 @@ function LongReturnGame() {
                   <small>{encounterState.outlook.channel ? `Crew contact available through ${encounterState.outlook.channel}.` : 'No remote crew contact. Getting help requires a physical return.'}</small>
                 </div>}
                 {encounterState.mode === 'group' && <div className="lr-encounter-posture"><strong>{encounterState.informed ? 'The crew arrives prepared' : 'The native acts before the crew can organize'}</strong><span>{encounterState.informed ? 'The scout’s warning prevents a surprise energy cost.' : 'The most defensive crew member will absorb the first consequence.'}</span></div>}
-                {guidanceLevel === 'simple' ? <EncounterChoices options={activeEncounterOptions} actor={encounterState.scout || [...crew].sort((a, b) => scoutProfile(scene, b).hold - scoutProfile(scene, a).hold)[0]} selectedId={encounterOptionId} onSelect={setEncounterOptionId} /> : <div className="lr-encounter-options">
+                {guidanceLevel === 'simple' ? <EncounterChoices options={activeEncounterOptions} actor={encounterActor(scene, crew, strain, encounterState.scout)} selectedId={encounterOptionId} onSelect={setEncounterOptionId} /> : <div className="lr-encounter-options">
                   {activeEncounterOptions.map((option) => {
-                    const affectedCreature = encounterState.scout || [...crew].sort((a, b) => scoutProfile(scene, b).hold - scoutProfile(scene, a).hold)[0];
+                    const affectedCreature = encounterActor(scene, crew, strain, encounterState.scout);
                     const strainCost = option.scoutStrain || option.crewStrain || 0;
                     const instabilityCost = option.instability || 0;
                     const presentation = encounterChoicePresentation(option);
