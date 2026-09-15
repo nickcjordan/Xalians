@@ -1,4 +1,5 @@
 .lr-route-board { --board-rule:#44483c; border:1px solid var(--board-rule); background:#151810; margin:20px 0; }
+.lr-route-board .lr-board-exhaustion { color:#f0c56b; }
 .lr-board-row { display:grid; grid-template-columns:140px repeat(2,minmax(0,1fr)); }
 .lr-board-row + .lr-board-row { border-top:1px solid var(--board-rule); }
 .lr-board-row > div { min-width:0; padding:18px 22px; }

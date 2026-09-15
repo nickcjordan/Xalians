@@ -37,7 +37,7 @@ test('does not disclose unknown hazard severity in the lead chooser', () => {
 });
 
 test('attributes shared effort to the actual lead and supporter, including companion saving', () => {
-  const shared = { ...plan, knownLeadStrain: 2, baseSupportStrain: 1 };
+  const shared = { ...plan, leadEnergy: 3, knownLeadStrain: 2, baseSupportStrain: 1 };
   expect(markup(shared)).toContain('Energy shared: Scout 2 · Helper 1');
   expect(markup(shared, { ready: true })).toContain('Energy shared: Scout 1 · Helper 1');
   expect(markup()).not.toContain('Energy shared:');

@@ -12,7 +12,7 @@ import { readCheckpoint, writeCheckpoint, clearCheckpoint } from './expeditionSa
 import { crossingNarrative } from './crossingNarrative';
 import { crossingCosts } from './crossingCosts';
 import RouteTradeoff from './RouteTradeoff';
-import RouteComparison from './RouteComparison';
+import RouteComparison, { comparisonCosts } from './RouteComparison';
 import LeadChoices from './LeadChoices';
 import EncounterChoices from './EncounterChoices';
 import { encounterActor } from './encounterActor';
@@ -317,7 +317,8 @@ function safestPlanForRoute(route, crew, strain, spentAbilities, scan, preferred
         const knownLeadStrain = Math.max(0, forecast.baseLeadStrain + forecast.environment.strain - (forecast.naturalReaction ? 1 : 0));
         const knownPressure = route.pressure + (forecast.naturalReaction ? 0 : 1);
         const risk = knownLeadStrain * 18 + forecast.baseSupportStrain * 12 + knownPressure * 8 + forecast.unresolvedHazards.length * 14;
-        plans.push({ ...forecast, route, lead, support, method, knownLeadStrain, knownPressure, risk });
+        plans.push({ ...forecast, route, lead, support, method, knownLeadStrain, knownPressure, risk,
+          leadEnergy: MAX_STRAIN - (strain[lead.id] || 0), supportEnergy: MAX_STRAIN - (strain[support.id] || 0) });
       });
     });
   });
@@ -1063,8 +1064,10 @@ function LongReturnGame() {
     let result = resolveScene({ scene, route, lead: actingLead, support: actingSupport, method: actingMethod, scan, useCommand, leadLoad: strain[actingLead.id] || 0, supportLoad: strain[actingSupport.id] || 0 });
     let companionHelp = null;
     if (companion && companion.ready && result.leadStrain > 0) {
+      const available = MAX_STRAIN - (strain[actingLead.id] || 0);
+      const savedEnergy = Math.min(available, result.leadStrain) - Math.min(available, result.leadStrain - 1);
       result = { ...result, leadStrain: result.leadStrain - 1 };
-      companionHelp = `${companion.creature.species} braces the crossing and preserves 1 energy.`;
+      companionHelp = savedEnergy > 0 ? `${companion.creature.species} braces the crossing and preserves 1 energy.` : `${companion.creature.species} braces the crossing, but the effort still uses ${actingLead.species}'s last energy.`;
       setCompanion((current) => ({ ...current, ready: false }));
     }
     const nextPressure = Math.min(MAX_PRESSURE, pressure + result.pressure);
@@ -1559,7 +1562,7 @@ function LongReturnGame() {
                   <button type="button" className="lr-lead-back" onClick={() => { setWizardDirection('back'); setChoosingLead(false); }}>← Change route</button>
                   <div className="lr-simple-plan-head"><div><span>2 · Choose who leads · all three cross together</span><h3>{route.title}</h3></div></div>
                   <LeadChoices plans={leadChoices.map(plan => plan.lead.id === suggestedPlan.lead.id ? suggestedPlan : applyCommandPreview(plan))} companion={companion} selectedId={suggestedPlan.lead.id} onSelect={leadId => setSimpleLeadChoice({ sceneId: scene.id, routeId: route.id, leadId })} />
-                  {methodChoices.length > 1 && <details className="lr-method-alternatives"><summary>Try another technique</summary><div aria-label="Compare crossing techniques">{methodChoices.map(plan => <button type="button" key={plan.method.id} aria-pressed={plan.method.id === suggestedPlan.method.id} onClick={event => { const picker = event.currentTarget.closest('details'); setSimpleLeadChoice({ sceneId: scene.id, routeId: route.id, leadId: plan.lead.id, methodId: plan.method.id }); picker.open = false; picker.querySelector('summary').focus(); }}><MethodIdentity method={plan.method} /><span>{Math.max(0, plan.knownLeadStrain - (companion?.ready && !plan.nativeRisk && !plan.unresolvedHazards.length && plan.knownLeadStrain > 0 ? 1 : 0)) + plan.baseSupportStrain} energy{plan.nativeRisk || plan.unresolvedHazards.length ? ' + ?' : ''}<small>{plan.method.abilityId ? 'Spends this ability' : 'Keeps your abilities'}</small></span></button>)}</div></details>}
+                  {methodChoices.length > 1 && <details className="lr-method-alternatives"><summary>Try another technique</summary><div aria-label="Compare crossing techniques">{methodChoices.map(plan => <button type="button" key={plan.method.id} aria-pressed={plan.method.id === suggestedPlan.method.id} onClick={event => { const picker = event.currentTarget.closest('details'); setSimpleLeadChoice({ sceneId: scene.id, routeId: route.id, leadId: plan.lead.id, methodId: plan.method.id }); picker.open = false; picker.querySelector('summary').focus(); }}><MethodIdentity method={plan.method} /><span>{comparisonCosts(plan, companion).energy} energy{plan.nativeRisk || plan.unresolvedHazards.length ? ' + ?' : ''}<small>{plan.method.abilityId ? 'Spends this ability' : 'Keeps your abilities'}</small></span></button>)}</div></details>}
                   <details className="lr-plan-roles"><summary>See crew roles</summary><div className="lr-simple-plan-crew" aria-label="Every creature crosses; each has a different role">
                     <span className="is-lead"><BiIcon cls="bi bi-play-fill" /><small>Lead acts</small><strong>{suggestedPlan.lead.species}</strong><em>{suggestedPlan.method.label}</em></span>
                     <BiIcon cls="bi bi-arrow-right" />
