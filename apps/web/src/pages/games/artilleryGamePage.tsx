@@ -66,6 +66,12 @@ type CombatStats = {
   terrainShift: number;
   payloads: ArtilleryPayload[];
 };
+type AftermathMark = {
+  id: string;
+  x: number;
+  payload: ArtilleryPayload;
+  createdTurn: number;
+};
 
 const RANGE_RIGS = {
   left: { name: 'Range Rig A', shortName: 'Rig A' },
@@ -117,6 +123,7 @@ const PAYLOAD_META: Record<ArtilleryPayload, {
 
 const BARREL_LENGTH = 4.2;
 const ARTILLERY_SKY_TOP = -38;
+const ARTILLERY_SCENE_TOP = -190;
 const ARTILLERY_VIEW_HEIGHT = ARTILLERY_HEIGHT - ARTILLERY_SKY_TOP;
 const RANGE_STARS = [
   [7, 9, 0.16], [14, 16, 0.1], [22, 7, 0.12], [31, 13, 0.08], [38, 5, 0.14],
@@ -198,6 +205,36 @@ export function artilleryJetFlightY(launchY: number, landingY: number, fuelSpent
   return launchY + (landingY - launchY) * progress - Math.sin(progress * Math.PI) * 42;
 }
 
+export function artilleryImpactRevealProgress(progress: number): number {
+  const delayed = Math.max(0, Math.min(1, (progress - 0.18) / 0.72));
+  return 1 - Math.pow(1 - delayed, 3);
+}
+
+export function artilleryCinematicCamera(
+  fieldWidth: number,
+  narrow: boolean,
+  phase: NonNullable<AnimatedShot>['phase'] | null,
+  focusX: number,
+  focusY: number,
+): string {
+  if (!phase || phase === 'move') {
+    const width = narrow ? Math.min(fieldWidth, Math.max(190, fieldWidth * 0.58)) : fieldWidth;
+    const x = Math.max(0, Math.min(fieldWidth - width, focusX - width / 2));
+    return `${Math.round(x * 100) / 100} ${ARTILLERY_SKY_TOP} ${Math.round(width * 100) / 100} ${ARTILLERY_VIEW_HEIGHT}`;
+  }
+
+  const width = phase === 'charge'
+    ? narrow ? Math.min(fieldWidth, 190) : Math.min(fieldWidth, Math.max(220, fieldWidth * 0.7))
+    : phase === 'impact'
+      ? narrow ? Math.min(fieldWidth, 175) : Math.min(fieldWidth, 230)
+      : narrow ? Math.min(fieldWidth, 190) : Math.min(fieldWidth, 260);
+  const height = phase === 'impact' ? 112 : phase === 'charge' ? 122 : 118;
+  const x = Math.max(0, Math.min(fieldWidth - width, focusX - width / 2));
+  const idealY = focusY - height * (phase === 'flight' ? 0.48 : 0.58);
+  const y = Math.max(ARTILLERY_SCENE_TOP, Math.min(ARTILLERY_HEIGHT - height, idealY));
+  return `${Math.round(x * 100) / 100} ${Math.round(y * 100) / 100} ${Math.round(width * 100) / 100} ${height}`;
+}
+
 export function CommandMeter({ label, value, suffix = '', min, max, disabled, guidance, decreaseKey, increaseKey, compact = false, kind = 'power', side = 'left', onChange }: {
   label: string;
   value: number;
@@ -277,6 +314,7 @@ export function ArtilleryBoard({ seed, mode, difficulty, mapSize, world, onStatu
   const [settledAim, setSettledAim] = React.useState<Record<'left' | 'right', number>>({ left: 45, right: 45 });
   const [animated, setAnimated] = React.useState<AnimatedShot>(null);
   const [movement, setMovement] = React.useState<ActiveThrust>(null);
+  const [aftermath, setAftermath] = React.useState<AftermathMark[]>([]);
   const [shotCallout, setShotCallout] = React.useState<string | null>(null);
   const [handoffPending, setHandoffPending] = React.useState(false);
   const [coachVisible, setCoachVisible] = React.useState(true);
@@ -361,7 +399,7 @@ export function ArtilleryBoard({ seed, mode, difficulty, mapSize, world, onStatu
 
     const frameState = (phase: NonNullable<AnimatedShot>['phase'], progress: number) => {
       setAnimated({ outcome: applied.outcome, progress, phase, shooter: state.current, shot: resolvedShot, terrainAfter: applied.state.terrain });
-      if (phase === 'impact' && progress >= 0.72) setShotCallout(result);
+      if (phase === 'impact' && progress >= 0.62) setShotCallout(result);
     };
     const runPhase = (phase: NonNullable<AnimatedShot>['phase'], frames: number, delay: number, done: () => void) => {
       if (reduced) {
@@ -384,6 +422,18 @@ export function ArtilleryBoard({ seed, mode, difficulty, mapSize, world, onStatu
       pendingTimers.current.push(window.setTimeout(() => {
         setAnimated(null);
         setShotCallout(null);
+        const impactMarks = applied.outcome.projectiles.flatMap((projectile, index) => projectile.impact ? [{
+          id: `${applied.state.turn}-${index}-${projectile.impact.x.toFixed(1)}`,
+          x: projectile.impact.x,
+          payload: applied.outcome.payload,
+          createdTurn: applied.state.turn,
+        }] : []);
+        if (impactMarks.length) {
+          setAftermath((current) => [
+            ...current.filter((mark) => applied.state.turn - mark.createdTurn < 4),
+            ...impactMarks,
+          ].slice(-8));
+        }
         setStats((current) => {
           const side = current[state.current];
           return {
@@ -407,21 +457,21 @@ export function ArtilleryBoard({ seed, mode, difficulty, mapSize, world, onStatu
           : mode === 'bot' && state.current === 'left'
             ? `${nextRig} is taking aim.`
             : `${nextRig} has command. Wind ${windLabel}.`);
-      }, reduced ? 1 : 260));
+      }, reduced ? 1 : 380));
     };
 
     const impact = () => {
       sound.play(applied.outcome.hit ? 'hit' : 'impact', applied.outcome.payload);
-      runPhase('impact', 26, 24, finish);
+      runPhase('impact', 36, 26, finish);
     };
     const flight = () => {
       sound.play('launch', resolvedShot.payload);
       onStatus(`${firingRig.name} fires ${payloadName}.`);
-      runPhase('flight', Math.max(58, Math.min(96, longestPath)), 20, impact);
+      runPhase('flight', Math.max(72, Math.min(126, longestPath)), 22, impact);
     };
     const charge = () => {
       onStatus(`${firingRig.name} charges ${payloadName}.`);
-      runPhase('charge', 14, 24, flight);
+      runPhase('charge', 18, 26, flight);
     };
     if (resolvedShot.move !== 0) runPhase('move', 72, 20, charge);
     else charge();
@@ -474,7 +524,7 @@ export function ArtilleryBoard({ seed, mode, difficulty, mapSize, world, onStatu
 
   const displayTerrain = React.useMemo(
     () => animated?.phase === 'impact'
-      ? artilleryImpactTerrainFrame(state.terrain, animated.terrainAfter, animated.progress)
+      ? artilleryImpactTerrainFrame(state.terrain, animated.terrainAfter, artilleryImpactRevealProgress(animated.progress))
       : state.terrain,
     [animated, state.terrain],
   );
@@ -500,14 +550,17 @@ export function ArtilleryBoard({ seed, mode, difficulty, mapSize, world, onStatu
     ? animated.outcome.projectiles.flatMap((projectile) => projectile.impact ? [projectile.impact] : [])
     : [];
   const cameraViewBox = React.useMemo(() => {
-    if (!narrowScreen) return `0 ${ARTILLERY_SKY_TOP} ${fieldWidth} ${ARTILLERY_VIEW_HEIGHT}`;
-    const focusX = animatedProjectiles.length
-      ? animatedProjectiles[Math.floor(animatedProjectiles.length / 2)].point.x
-      : (state.tanks.left.x + state.tanks.right.x) / 2;
-    const width = Math.min(fieldWidth, Math.max(190, fieldWidth * 0.58));
-    const x = Math.max(0, Math.min(fieldWidth - width, focusX - width / 2));
-    return `${x} ${ARTILLERY_SKY_TOP} ${width} ${ARTILLERY_VIEW_HEIGHT}`;
-  }, [animatedProjectiles, fieldWidth, narrowScreen, state.tanks.left.x, state.tanks.right.x]);
+    const projectileFocus = animatedProjectiles.length
+      ? animatedProjectiles.reduce((total, projectile) => ({
+          x: total.x + projectile.point.x / animatedProjectiles.length,
+          y: total.y + (ARTILLERY_HEIGHT - projectile.point.y) / animatedProjectiles.length,
+        }), { x: 0, y: 0 })
+      : null;
+    const shooter = animated ? state.tanks[animated.shooter] : null;
+    const focusX = projectileFocus?.x ?? shooter?.x ?? (state.tanks.left.x + state.tanks.right.x) / 2;
+    const focusY = projectileFocus?.y ?? (shooter ? ARTILLERY_HEIGHT - terrainHeight(displayTerrain, shooter.x) : 52);
+    return artilleryCinematicCamera(fieldWidth, narrowScreen, animated?.phase ?? null, focusX, focusY);
+  }, [animated, animatedProjectiles, displayTerrain, fieldWidth, narrowScreen, state.tanks]);
   const aimOutcome = React.useMemo(
     () => canFire ? simulateArtilleryShot(state, { angle, power, payload, move: 0, system: 'none' }) : null,
     [angle, canFire, payload, power, state],
@@ -518,8 +571,9 @@ export function ArtilleryBoard({ seed, mode, difficulty, mapSize, world, onStatu
   const activePayload = animated?.outcome.payload ?? payload;
   const activePayloadMeta = PAYLOAD_META[activePayload];
   const impactMoment = animated?.phase === 'impact';
+  const impactReveal = impactMoment ? artilleryImpactRevealProgress(animated.progress) : 0;
   const shotShake = impactMoment && !window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
-    ? Math.sin((animated?.progress ?? 0) * Math.PI * 8) * (activePayload === 'bore' ? 0.7 : 0.45) * (1 - (animated?.progress ?? 0))
+    ? Math.sin(impactReveal * Math.PI * 10) * (activePayload === 'bore' ? 1.15 : 0.8) * (1 - impactReveal)
     : 0;
 
   const payloadRemaining = (side: ArtillerySide, choice: ArtilleryPayload) =>
@@ -550,7 +604,7 @@ export function ArtilleryBoard({ seed, mode, difficulty, mapSize, world, onStatu
     if (!impactMoment || !animated) return state.tanks[side].integrity;
     const targetSide: ArtillerySide = animated.shooter === 'left' ? 'right' : 'left';
     if (targetSide !== side) return state.tanks[side].integrity;
-    return Math.max(0, state.tanks[side].integrity - animated.outcome.damage * animated.progress);
+    return Math.max(0, state.tanks[side].integrity - animated.outcome.damage * impactReveal);
   };
 
   const aimAtPointer = React.useCallback((clientX: number, clientY: number) => {
@@ -795,13 +849,13 @@ export function ArtilleryBoard({ seed, mode, difficulty, mapSize, world, onStatu
     const recoiling = firing && !window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
       ? Math.sin(firingProgress * Math.PI) * (side === 'left' ? -0.7 : 0.7)
       : 0;
-    const takingDamage = !!impactMoment && animated?.outcome.hit === side;
+    const takingDamage = !!impactMoment && impactReveal > 0 && animated?.outcome.hit === side;
     const damageJolt = takingDamage && !window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
       ? (side === 'left' ? -0.45 : 0.45)
       : 0;
     const impactTarget = animated?.shooter === 'left' ? 'right' : 'left';
     const displayedIntegrity = impactMoment && impactTarget === side
-      ? Math.max(0, value.integrity - (animated?.outcome.damage ?? 0) * (animated?.progress ?? 0))
+      ? Math.max(0, value.integrity - (animated?.outcome.damage ?? 0) * impactReveal)
       : value.integrity;
     return (
       <g
@@ -893,7 +947,7 @@ export function ArtilleryBoard({ seed, mode, difficulty, mapSize, world, onStatu
 
   return (
     <div className="artillery-layout grid w-full min-w-0 gap-2 overflow-x-clip">
-      <section aria-label="Artillery field" className="artillery-field artillery-viewport relative mx-auto w-full self-start overflow-hidden border-2 border-edge-strong bg-s0 shadow-panel">
+      <section aria-label="Artillery field" className={`artillery-field artillery-viewport relative mx-auto w-full self-start overflow-hidden border-2 border-edge-strong bg-s0 shadow-panel ${animated ? `artillery-cinematic-${animated.phase}` : ''}`}>
         <div className="pointer-events-none absolute inset-x-2 top-2 z-10 grid grid-cols-[minmax(0,1fr)_7.25rem_minmax(0,1fr)] items-start gap-1 sm:grid-cols-[minmax(0,1fr)_9.5rem_minmax(0,1fr)] sm:gap-2">
           <div className="min-w-0 border border-edge-strong bg-s0/90 p-1.5">
             <div className="flex items-center justify-between gap-1 font-legend text-small uppercase tracking-legend"><span><i className="not-italic sm:hidden">A</i><i className="hidden not-italic sm:inline">{crewAt('left').name}</i></span><span>{Math.round(displayedHull('left'))}</span></div>
@@ -980,9 +1034,13 @@ export function ArtilleryBoard({ seed, mode, difficulty, mapSize, world, onStatu
           onPointerCancel={cancelDirectAim}
           onLostPointerCapture={cancelDirectAim}
         >
-          <rect y={ARTILLERY_SKY_TOP} width={fieldWidth} height={ARTILLERY_VIEW_HEIGHT} className="fill-s0" />
-          <image href={worldMeta.image} x="0" y={ARTILLERY_SKY_TOP} width={fieldWidth} height={ARTILLERY_VIEW_HEIGHT} preserveAspectRatio="xMidYMid slice" opacity="0.42" aria-hidden />
-          <rect y={ARTILLERY_SKY_TOP} width={fieldWidth} height={ARTILLERY_VIEW_HEIGHT} className="fill-s0 opacity-55" />
+          <rect y={ARTILLERY_SCENE_TOP} width={fieldWidth} height={ARTILLERY_HEIGHT - ARTILLERY_SCENE_TOP} className="fill-s0" />
+          <image href={worldMeta.image} x="0" y={ARTILLERY_SCENE_TOP} width={fieldWidth} height={ARTILLERY_HEIGHT - ARTILLERY_SCENE_TOP} preserveAspectRatio="xMidYMid slice" opacity="0.42" aria-hidden />
+          <rect y={ARTILLERY_SCENE_TOP} width={fieldWidth} height={ARTILLERY_HEIGHT - ARTILLERY_SCENE_TOP} className="fill-s0 opacity-55" />
+          <g aria-hidden className={`${worldMeta.elementClass} opacity-20`}>
+            <ellipse cx={fieldWidth * 0.18} cy={ARTILLERY_SCENE_TOP + 46} rx={fieldWidth * 0.26} ry="18" className="fill-el opacity-15" />
+            <ellipse cx={fieldWidth * 0.82} cy={ARTILLERY_SCENE_TOP + 112} rx={fieldWidth * 0.34} ry="24" className="fill-el opacity-10" />
+          </g>
           {RANGE_STARS.map(([x, y, radius], index) => <circle key={index} cx={x * (fieldWidth / 100)} cy={ARTILLERY_SKY_TOP + y * 1.8} r={radius} className="fill-ink-2 opacity-60" />)}
           {[0.25, 0.5, 0.75].map((ratio) => {
             const x = fieldWidth * ratio;
@@ -994,9 +1052,31 @@ export function ArtilleryBoard({ seed, mode, difficulty, mapSize, world, onStatu
             </g>
           )})}
           <g transform={`translate(${shotShake} 0)`}>
+          {animated?.phase === 'flight' && animated.progress < 0.08 && (
+            <rect
+              x="0"
+              y={ARTILLERY_SCENE_TOP}
+              width={fieldWidth}
+              height={ARTILLERY_HEIGHT - ARTILLERY_SCENE_TOP}
+              className={`${activePayloadMeta.elementClass} fill-el pointer-events-none`}
+              opacity={Math.max(0, 0.24 * (1 - animated.progress / 0.08))}
+              aria-hidden
+            />
+          )}
           <path d={terrainPath} className="fill-s2 stroke-ink-2" strokeWidth="0.42" />
           <path d={terrainPath} className={`${worldMeta.elementClass} fill-el opacity-15`} />
           {terrainContours.map((contour, index) => <path key={index} d={contour} className="fill-none stroke-ink-4 opacity-40" strokeWidth="0.22" />)}
+          {aftermath.map((mark) => {
+            const age = Math.max(0, state.turn - mark.createdTurn);
+            const y = ARTILLERY_HEIGHT - terrainHeight(displayTerrain, mark.x);
+            return (
+              <g key={mark.id} className={`${PAYLOAD_META[mark.payload].elementClass} artillery-aftermath`} aria-hidden style={{ opacity: Math.max(0.2, 0.72 - age * 0.14) }}>
+                <ellipse cx={mark.x} cy={y + 0.4} rx="3.8" ry="0.9" className="fill-black opacity-50" />
+                <path d={`M ${mark.x - 1.4} ${y} q -1.2 -4 0.8 -7 q 2 -3 0.2 -6`} className="fill-none stroke-ink-3 artillery-smoke-wisp" strokeWidth="1.1" strokeLinecap="round" />
+                <path d={`M ${mark.x + 1.1} ${y} q 1.8 -3 -0.2 -6 q -1.5 -2 0.8 -5`} className="fill-none stroke-el artillery-smoke-wisp artillery-smoke-wisp-delay" strokeWidth="0.7" strokeLinecap="round" />
+              </g>
+            );
+          })}
           {aimPreviews.some((preview) => preview.length > 1) && (
             <g className={activePayloadMeta.elementClass} data-testid="artillery-aim-preview">
               {aimPreviews.map((preview, index) => preview.length > 1 && (
@@ -1037,9 +1117,28 @@ export function ArtilleryBoard({ seed, mode, difficulty, mapSize, world, onStatu
             </g>
           )}
           {tank('left')}{tank('right')}
+          {animated?.phase === 'charge' && (() => {
+            const shooter = state.tanks[animated.shooter];
+            const y = ARTILLERY_HEIGHT - terrainHeight(displayTerrain, shooter.x) - 4.5;
+            const pulse = 2.5 + animated.progress * 5.5;
+            return (
+              <g className={activePayloadMeta.elementClass} aria-hidden data-testid="artillery-launch-charge">
+                <circle cx={shooter.x} cy={y} r={pulse} className="fill-none stroke-el opacity-60" strokeWidth="0.35" strokeDasharray="1.1 0.8" />
+                <circle cx={shooter.x} cy={y} r={Math.max(0.8, pulse * 0.52)} className="fill-el opacity-15" />
+                {[0, 90, 180, 270].map((degrees) => {
+                  const radians = degrees * Math.PI / 180;
+                  return <line key={degrees} x1={shooter.x + Math.cos(radians) * (pulse + 1.5)} y1={y + Math.sin(radians) * (pulse + 1.5)} x2={shooter.x + Math.cos(radians) * (pulse + 4)} y2={y + Math.sin(radians) * (pulse + 4)} className="stroke-el opacity-70" strokeWidth="0.4" />;
+                })}
+              </g>
+            );
+          })()}
           {animatedProjectiles.map((projectile, index) => (
             <g key={index} className={activePayloadMeta.elementClass}>
-              {projectile.path.length > 1 && <polyline points={projectile.path.map((point) => `${point.x},${ARTILLERY_HEIGHT - point.y}`).join(' ')} className="fill-none stroke-el opacity-50" strokeWidth={activePayload === 'bore' ? 0.45 : 0.28} strokeDasharray={activePayload === 'barb' ? '0.6 0.8' : '1 0.7'} />}
+              {projectile.path.length > 1 && <polyline points={projectile.path.map((point) => `${point.x},${ARTILLERY_HEIGHT - point.y}`).join(' ')} className="fill-none stroke-el opacity-55" strokeWidth={activePayload === 'bore' ? 0.65 : 0.4} strokeDasharray={activePayload === 'barb' ? '0.6 0.8' : '1 0.7'} />}
+              {animated?.phase === 'flight' && [1, 2, 3].map((trail) => {
+                const prior = projectile.path[Math.max(0, projectile.path.length - 1 - trail * 2)] ?? projectile.point;
+                return <circle key={trail} cx={prior.x} cy={ARTILLERY_HEIGHT - prior.y} r={Math.max(0.22, 0.85 - trail * 0.18)} className="fill-el" style={{ opacity: 0.42 - trail * 0.09 }} />;
+              })}
               {activePayload === 'barb' || activePayload === 'cluster' ? (
                 <g>
                   <circle cx={projectile.point.x} cy={ARTILLERY_HEIGHT - projectile.point.y} r="1.65" className="fill-none stroke-el opacity-25" strokeWidth="0.24" />
@@ -1068,10 +1167,10 @@ export function ArtilleryBoard({ seed, mode, difficulty, mapSize, world, onStatu
           {impactFrames.map((impact, index) => {
             const rules = ARTILLERY_PAYLOAD_RULES[activePayload];
             const progress = animated?.progress ?? 0;
-            const shockwaveRadius = rules.blastRadius * (0.22 + progress * 0.78);
-            const terrainRadius = rules.craterRadius * Math.min(1, progress * 1.35);
-            const flashOpacity = Math.max(0.04, 0.34 * (1 - progress));
-            const rayOpacity = Math.max(0, 0.75 * (1 - progress * 1.4));
+            const shockwaveRadius = rules.blastRadius * (0.12 + impactReveal * 0.88);
+            const terrainRadius = rules.craterRadius * impactReveal;
+            const flashOpacity = progress < 0.18 ? 0.82 : Math.max(0.04, 0.46 * (1 - impactReveal));
+            const rayOpacity = progress < 0.18 ? 0.92 : Math.max(0, 0.85 * (1 - impactReveal * 1.25));
             return (
               <g key={index} className={activePayloadMeta.elementClass} aria-hidden>
                 {activePayload === 'bore' && <line x1={impact.x} y1={ARTILLERY_HEIGHT - impact.y - ARTILLERY_PAYLOAD_RULES.bore.penetration} x2={impact.x} y2={ARTILLERY_HEIGHT - impact.y} className="stroke-el opacity-80" strokeWidth="0.65" strokeDasharray="0.5 0.35" />}
@@ -1100,16 +1199,22 @@ export function ArtilleryBoard({ seed, mode, difficulty, mapSize, world, onStatu
                   const outer = rules.craterRadius * (index % 2 ? 0.82 : 0.68);
                   return <line key={degrees} x1={impact.x + Math.cos(radians) * inner} y1={ARTILLERY_HEIGHT - impact.y + Math.sin(radians) * inner} x2={impact.x + Math.cos(radians) * outer} y2={ARTILLERY_HEIGHT - impact.y + Math.sin(radians) * outer} className="stroke-el" strokeWidth="0.34" style={{ opacity: rayOpacity }} />;
                 })}
+                {impactReveal > 0 && Array.from({ length: 10 }, (_, debris) => {
+                  const radians = (-160 + debris * 32) * Math.PI / 180;
+                  const distance = rules.craterRadius * (0.4 + impactReveal * (0.8 + (debris % 3) * 0.3));
+                  const lift = Math.sin(impactReveal * Math.PI) * (5 + debris % 4);
+                  return <rect key={debris} x={impact.x + Math.cos(radians) * distance} y={ARTILLERY_HEIGHT - impact.y + Math.sin(radians) * distance - lift} width="0.6" height="0.6" className={debris % 2 ? 'fill-el' : 'fill-ink-2'} opacity={Math.max(0, 0.8 - impactReveal * 0.45)} transform={`rotate(${debris * 29} ${impact.x} ${ARTILLERY_HEIGHT - impact.y})`} />;
+                })}
               </g>
             );
           })}
-          {impactMoment && animated && animated.outcome.damage > 0 && (() => {
+          {impactMoment && impactReveal > 0.08 && animated && animated.outcome.damage > 0 && (() => {
             const targetSide: ArtillerySide = animated.shooter === 'left' ? 'right' : 'left';
             const target = state.tanks[targetSide];
             const targetY = ARTILLERY_HEIGHT - terrainHeight(displayTerrain, target.x) - 8;
             return (
               <g className={targetSide === 'left' ? 'el-fire' : 'el-water'} aria-hidden>
-                <text x={target.x} y={targetY} textAnchor="middle" className="fill-el font-mono" fontSize="2.2" fontWeight="700">−{animated.outcome.damage}</text>
+                <text x={target.x} y={targetY - Math.sin(impactReveal * Math.PI) * 5} textAnchor="middle" className="fill-el font-mono" fontSize="2.2" fontWeight="700" opacity={Math.min(1, impactReveal * 2)}>−{animated.outcome.damage}</text>
                 {animated.outcome.guardAbsorbed > 0 && <text x={target.x} y={targetY + 2} textAnchor="middle" className="fill-ink-2 font-mono" fontSize="1">GUARD {animated.outcome.guardAbsorbed}</text>}
               </g>
             );
