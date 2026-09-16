@@ -102,13 +102,16 @@ describe('Crater Command aim feedback', () => {
 
   it('holds the battlefield intact for the impact freeze before revealing damage', () => {
     expect(artilleryImpactRevealProgress(0)).toBe(0);
-    expect(artilleryImpactRevealProgress(0.18)).toBe(0);
-    expect(artilleryImpactRevealProgress(0.5)).toBeGreaterThan(0.5);
-    expect(artilleryImpactRevealProgress(0.9)).toBe(1);
+    expect(artilleryImpactRevealProgress(0.16)).toBe(0);
+    expect(artilleryImpactRevealProgress(0.18)).toBeLessThan(0.01);
+    expect(artilleryImpactRevealProgress(0.45)).toBeGreaterThan(0.5);
+    expect(artilleryImpactRevealProgress(0.7)).toBe(1);
   });
 
   it('tracks cinematic shots vertically and returns to the full battlefield at rest', () => {
     expect(artilleryCinematicCamera(360, false, null, 180, 52)).toBe('0 -38 360 148');
+    expect(artilleryCinematicCamera(360, false, 'charge', 90, 72, 0)).toBe('0 -38 360 148');
+    expect(artilleryCinematicCamera(360, false, 'charge', 90, 72, 0.45)).not.toBe('0 -38 360 148');
     const flight = artilleryCinematicCamera(360, false, 'flight', 220, -90).split(' ').map(Number);
     expect(flight[0]).toBeGreaterThan(0);
     expect(flight[1]).toBeLessThan(-38);
@@ -116,6 +119,8 @@ describe('Crater Command aim feedback', () => {
     const impact = artilleryCinematicCamera(360, false, 'impact', 300, 82).split(' ').map(Number);
     expect(impact[2]).toBe(230);
     expect(impact[3]).toBe(112);
+    expect(artilleryCinematicCamera(360, false, 'settle', 300, 82, 0.2)).toBe(artilleryCinematicCamera(360, false, 'impact', 300, 82));
+    expect(artilleryCinematicCamera(360, false, 'settle', 300, 82, 1)).toBe('0 -38 360 148');
   });
 
   it('offers explicit one-step corrections with a readable value and guidance', async () => {
@@ -280,8 +285,12 @@ describe('Crater Command aim feedback', () => {
       }));
       fireEvent.click(screen.getByRole('button', { name: /Fire Impact/i }));
       expect(screen.getByTestId('artillery-launch-charge')).toBeInTheDocument();
+      expect(screen.getByRole('img', { name: /Two mobile range rigs/i })).toHaveAttribute('viewBox', '0 -38 360 148');
+      act(() => vi.advanceTimersByTime(500));
       expect(screen.getByRole('img', { name: /Two mobile range rigs/i }).getAttribute('viewBox')).not.toBe('0 -38 360 148');
-      act(() => vi.advanceTimersByTime(6_000));
+      act(() => vi.advanceTimersByTime(5_000));
+      expect(screen.getByRole('button', { name: /Fire Impact/i })).toBeDisabled();
+      act(() => vi.advanceTimersByTime(4_000));
       expect(document.querySelector('.artillery-aftermath')).toBeInTheDocument();
       expect(screen.getByRole('img', { name: /Two mobile range rigs/i })).toHaveAttribute('viewBox', '0 -38 360 148');
     } finally {
