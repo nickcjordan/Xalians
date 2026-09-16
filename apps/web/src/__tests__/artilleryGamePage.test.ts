@@ -3,7 +3,7 @@ import { act, fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 
-import { ArtilleryBoard, ArtillerySetup, CommandMeter, artilleryAimFromDrag, artilleryBarrelEndpoint, artilleryCinematicCamera, artilleryFlightFrameIndex, artilleryImpactRevealProgress, artilleryImpactTerrainFrame, artilleryImpactVisualState, artilleryJetFlightY, artilleryLaunchVisualState, artilleryMoveAnimationProgress } from '../pages/games/artilleryGamePage';
+import { ArtilleryBoard, ArtillerySetup, CommandMeter, artilleryAimFromDrag, artilleryBarrelEndpoint, artilleryCinematicCamera, artilleryFlightDurationMs, artilleryFlightFrameIndex, artilleryImpactRevealProgress, artilleryImpactTerrainFrame, artilleryImpactVisualState, artilleryJetFlightY, artilleryLaunchVisualState, artilleryMoveAnimationProgress, artilleryTerrainSlopeDegrees } from '../pages/games/artilleryGamePage';
 
 class ResizeObserverStub {
   observe() {}
@@ -74,6 +74,18 @@ describe('Crater Command aim feedback', () => {
     expect(artilleryFlightFrameIndex(5, 10, 0.5)).toBe(4);
     expect(artilleryFlightFrameIndex(10, 10, 0.5)).toBe(4);
     expect(artilleryFlightFrameIndex(5, 10, 1)).toBe(4);
+  });
+
+  it('makes low-gravity flights visibly floatier than heavy-gravity flights', () => {
+    expect(artilleryFlightDurationMs(50, 0.86, 'shell')).toBeGreaterThan(artilleryFlightDurationMs(50, 1.16, 'shell'));
+    expect(artilleryFlightDurationMs(50, 0.86, 'shell')).toBeGreaterThan(3_000);
+    expect(artilleryFlightDurationMs(50, 1.16, 'lance')).toBeLessThan(artilleryFlightDurationMs(50, 1.16, 'bloom'));
+  });
+
+  it('aligns aftermath art to the terrain tangent while clamping extreme cliffs', () => {
+    expect(artilleryTerrainSlopeDegrees([10, 10, 10, 10, 10], 2)).toBeCloseTo(0);
+    expect(artilleryTerrainSlopeDegrees([4, 7, 10, 13, 16], 2)).toBeLessThan(0);
+    expect(Math.abs(artilleryTerrainSlopeDegrees([0, 100, 0], 1))).toBeLessThanOrEqual(52);
   });
 
   it('keeps a moved rig at its committed launch position after movement ends', () => {
