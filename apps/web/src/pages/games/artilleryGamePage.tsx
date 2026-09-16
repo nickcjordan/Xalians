@@ -189,6 +189,10 @@ export function artilleryFlightSample(path: readonly { x: number; y: number }[],
   return { point, path: [...path.slice(0, lower + 1), ...(fraction > 0 ? [point] : [])], arrived: position >= last };
 }
 
+export function artilleryFlightTrail(path: readonly { x: number; y: number }[]) {
+  return path.slice(-12);
+}
+
 export function artilleryProjectileImpactState(
   pathLength: number,
   longestPath: number,
@@ -359,19 +363,19 @@ function PersistentPayloadAftermath({ mark, y, slope, age, visibility = 1 }: { m
   </g>;
   if (mark.payload === 'lance') return <g className={common} opacity={opacity} aria-hidden>
     <g transform={surfaceTransform}>
-      <ellipse cx={mark.x} cy={y + 0.25} rx="3.6" ry="0.9" className="fill-black opacity-55" />
+      <path d={`M ${mark.x - 3.4} ${y + 0.4} l 2 -0.7 1.4 0.4 2 -0.8 1.4 0.6 -1.7 0.9 -2.2 -0.1 -1.2 0.5 Z`} className="fill-black opacity-55" />
       <path d={`M ${mark.x} ${y + 0.2} V ${y - 9}`} className="fill-none stroke-el" strokeWidth="0.7" strokeLinecap="round" />
     </g>
     <path d={`M ${mark.x - 1.2} ${y - 1} Q ${mark.x - 2.2} ${y - 5} ${mark.x - 0.4} ${y - 9} M ${mark.x + 1} ${y - 0.5} Q ${mark.x + 2.2} ${y - 4} ${mark.x + 0.7} ${y - 7}`} className="fill-none stroke-el artillery-smoke-wisp" strokeWidth="0.55" strokeLinecap="round" />
   </g>;
   if (mark.payload === 'barb') return <g className={common} opacity={opacity} aria-hidden>
     <g transform={surfaceTransform}>
-      <ellipse cx={mark.x} cy={y + 0.35} rx="4.6" ry="0.9" className="fill-black opacity-45" />
+      <path d={`M ${mark.x - 4.6} ${y + 0.4} l 2.1 -0.9 1.7 0.5 2 -0.8 2.6 0.8 -1.9 0.7 -3 0.1 -1.8 0.5 Z`} className="fill-black opacity-45" />
       <path d={`M ${mark.x - 2.5} ${y} l -1.1 -5 l 2.3 3 M ${mark.x} ${y} l 0.4 -6 l 1.1 3.3 M ${mark.x + 2.4} ${y} l 1.8 -4.5`} className="fill-none stroke-el opacity-60" strokeWidth="0.55" />
     </g>
   </g>;
   if (mark.payload === 'bore') return <g className={common} opacity={opacity} aria-hidden>
-    <ellipse transform={surfaceTransform} cx={mark.x} cy={y + 0.55} rx="6.4" ry="1.5" className="fill-black opacity-65 stroke-el" strokeWidth="0.25" />
+    <path transform={surfaceTransform} d={`M ${mark.x - 6} ${y + 0.4} l 2.5 -1 1.4 0.5 2.1 -1.3 1.9 1.2 2.2 -0.5 2.1 1.2 -2.7 0.8 -2 0.1 -1.7 0.8 -2.2 -0.7 -2.4 0.5 Z`} className="fill-black opacity-65 stroke-el" strokeWidth="0.25" />
     <g className="artillery-smoke-cloud" filter="url(#artillery-smoke-soft)">
       <circle cx={mark.x - 0.8} cy={y - 3.5} r="2.2" className="fill-ink-3 opacity-30" />
       <circle cx={mark.x + 0.9} cy={y - 7} r="2.9" className="fill-el opacity-22" />
@@ -381,7 +385,7 @@ function PersistentPayloadAftermath({ mark, y, slope, age, visibility = 1 }: { m
   const emberCount = mark.payload === 'cluster' ? 5 : 2;
   return <g className={common} opacity={opacity} aria-hidden>
     <g transform={surfaceTransform}>
-      <ellipse cx={mark.x} cy={y + 0.4} rx={mark.payload === 'cluster' ? 6.4 : 6.2} ry="1.15" className="fill-black opacity-55" />
+      <path d={`M ${mark.x - 6.2} ${y + 0.3} l 2.3 -1 2.2 0.6 1.6 -1.1 1.8 0.9 2.1 -0.5 2.2 1 -2.4 1 -2.3 -0.1 -2.1 0.8 -2.4 -0.6 -2 0.6 Z`} className="fill-black opacity-55" />
       {Array.from({ length: emberCount }, (_, index) => <circle key={index} cx={mark.x + (index - (emberCount - 1) / 2) * 1.7} cy={y - 0.25 - (index % 2) * 0.5} r="0.38" className="fill-el artillery-ember" />)}
     </g>
     <g className="artillery-smoke-cloud" filter="url(#artillery-smoke-soft)">
@@ -416,7 +420,7 @@ function PayloadImpactArt({ payload, x, y, slope, progress, reveal, visual, inde
 
   if (payload === 'bloom') return <g className={PAYLOAD_META[payload].elementClass} aria-hidden data-testid="artillery-impact-bloom">
     <g transform={surfaceTransform}>
-      <ellipse cx={x} cy={y + 0.5} rx={radius * (0.7 + grow * 0.5)} ry={1 + grow} className="fill-el" opacity={visual.dustOpacity * 0.22} />
+      <path d={`M ${x - radius * 1.1} ${y + 0.6} l ${radius * 0.34} ${-1.1 * grow} ${radius * 0.28} ${0.5 * grow} ${radius * 0.37} ${-1.5 * grow} ${radius * 0.31} ${1.2 * grow} ${radius * 0.3} ${0.4 * grow} -${radius * 0.5} ${1 + grow} -${radius * 0.9} 0 Z`} className="fill-el" opacity={visual.dustOpacity * 0.22} />
       {[[-1, -7], [0, -11], [1, -7]].map(([offset, height], plate) => {
         const center = x + offset * radius * 0.25;
         const raised = grow * Math.abs(height);
@@ -431,7 +435,7 @@ function PayloadImpactArt({ payload, x, y, slope, progress, reveal, visual, inde
     <g transform={surfaceTransform}>
       <path d={`M ${x} ${y + 3} L ${x - 0.7 * blast} ${y - 26 * grow} L ${x + 0.7 * blast} ${y - 26 * grow} Z`} className="fill-el" opacity={blast * 0.68} />
       <path d={`M ${x} ${y + 2} V ${y - 31 * grow}`} className="stroke-el" strokeWidth="0.5" opacity={blast} />
-      {[1, 2, 3].map((ring) => <ellipse key={ring} cx={x} cy={y - ring * 2.2} rx={ring * 2.1 * grow} ry={ring * 0.65 * grow} className="fill-none stroke-el" strokeWidth="0.25" opacity={blast * (0.72 - ring * 0.14)} />)}
+      {[-1, 1].map((direction) => <path key={direction} d={`M ${x + direction * 0.8} ${y - 5 * grow} l ${direction * (2 + 2 * grow)} ${-4 * grow} M ${x + direction * 0.5} ${y - 14 * grow} l ${direction * (1.3 + grow)} ${-5 * grow}`} className="fill-none stroke-el" strokeWidth="0.38" opacity={blast * 0.65} />)}
     </g>
     <path d={`M ${x - 1.2} ${y} Q ${x - 2.6} ${y - 5 - smoke * 8} ${x - 0.5} ${y - 10 - smoke * 9} M ${x + 1} ${y} Q ${x + 2.5} ${y - 4 - smoke * 7} ${x + 0.8} ${y - 8 - smoke * 8}`} className="fill-none stroke-el" strokeWidth="0.48" opacity={visual.smokeOpacity * 0.35} />
   </g>;
@@ -439,7 +443,7 @@ function PayloadImpactArt({ payload, x, y, slope, progress, reveal, visual, inde
   if (payload === 'bore') return <g className={PAYLOAD_META[payload].elementClass} aria-hidden data-testid="artillery-impact-bore">
     <g transform={surfaceTransform}>
       <path d={`M ${x} ${y + 4} V ${y - ARTILLERY_PAYLOAD_RULES.bore.penetration - 8 * grow}`} className="stroke-el" strokeWidth="0.8" strokeDasharray="0.8 0.45" opacity={blast * 0.85} />
-      {[1, 2, 3].map((ring) => <ellipse key={ring} cx={x} cy={y} rx={radius * ring * 0.36} ry={radius * ring * 0.13} className="fill-none stroke-el" strokeWidth="0.3" opacity={blast * (0.8 - ring * 0.16)} />)}
+      {[-1, 1].map((direction) => <path key={direction} d={`M ${x + direction * radius * 0.15} ${y + 0.4} l ${direction * radius * 0.38 * grow} ${-1.1 * grow} ${direction * radius * 0.25 * grow} ${1.8 * grow} M ${x + direction * radius * 0.25} ${y + 1} l ${direction * radius * 0.48 * grow} ${2.4 * grow}`} className="fill-none stroke-el" strokeWidth="0.32" opacity={blast * 0.68} />)}
       {[0, 1, 2, 3, 4, 5].map((piece) => { const direction = piece % 2 ? 1 : -1; return <path key={piece} d={`M ${x} ${y - 2} l ${direction * (2 + piece * 0.7) * grow} ${-5 - (piece % 3) * 3 * grow} l ${direction * 1.1} 1.5`} className="fill-none stroke-el" strokeWidth="0.55" opacity={blast * 0.75} />; })}
     </g>
     <ellipse cx={x} cy={y - smoke * 8} rx={2 + smoke * 4.5} ry={2 + smoke * 5.5} className="fill-ink-3" opacity={visual.smokeOpacity * 0.28} filter="url(#artillery-smoke-soft)" />
@@ -449,7 +453,7 @@ function PayloadImpactArt({ payload, x, y, slope, progress, reveal, visual, inde
     <g transform={surfaceTransform}>
       {[-1, 0, 1].map((direction) => <path key={direction} d={`M ${x} ${y + 1} Q ${x + direction * radius * 0.55} ${y - radius * 0.4} ${x + direction * radius * (0.85 + grow * 0.4)} ${y - radius * (0.65 + grow * 0.55)} l ${-direction * 1.6} 0.4`} className="fill-none stroke-el" strokeWidth="0.68" opacity={blast * 0.88} />)}
       {[0, 1, 2, 3, 4, 5].map((piece) => { const radians = (-150 + piece * 60) * Math.PI / 180; return <path key={piece} d={`M ${x + Math.cos(radians) * radius * grow} ${y + Math.sin(radians) * radius * grow} l ${Math.cos(radians) * 2} ${Math.sin(radians) * 2} l ${-Math.sin(radians)} ${Math.cos(radians)}`} className="fill-el stroke-el" strokeWidth="0.22" opacity={blast * 0.72} />; })}
-      <ellipse cx={x} cy={y} rx={radius * 1.15} ry={1.1 + smoke * 1.6} className="fill-ink-3" opacity={visual.dustOpacity * 0.2} />
+      <path d={`M ${x - radius * 0.85} ${y + 0.4} l ${radius * 0.4} ${-1.3 * grow} ${radius * 0.43} ${0.6 * grow} ${radius * 0.52} ${-1.2 * grow} ${radius * 0.34} ${1.6 * grow} -${radius * 0.8} ${1 + smoke} Z`} className="fill-ink-3" opacity={visual.dustOpacity * 0.2} />
     </g>
   </g>;
 
@@ -462,18 +466,22 @@ function PayloadImpactArt({ payload, x, y, slope, progress, reveal, visual, inde
 
   return <g className={PAYLOAD_META[payload].elementClass} aria-hidden data-testid="artillery-impact-shell">
     <g opacity={blast * (progress < 0.16 ? 0.94 : 0.7)}>
-      <circle cx={x} cy={y} r={radius * 0.64} className="fill-el" />
-      {[0, 52, 111, 173, 231, 298].map((degrees, lobe) => { const radians = degrees * Math.PI / 180; return <circle key={degrees} cx={x + Math.cos(radians) * radius * (0.24 + (lobe % 3) * 0.035)} cy={y + Math.sin(radians) * radius * (0.24 + (lobe % 3) * 0.035)} r={radius * (0.34 + (lobe % 2) * 0.09)} className="fill-el" opacity={0.68 + (lobe % 3) * 0.09} />; })}
-      <ellipse cx={x - radius * 0.08} cy={y - radius * 0.12} rx={radius * 0.42} ry={radius * 0.3} className="fill-s0" opacity={0.28 * blast} />
+      <path d={`M ${x - radius * 0.62} ${y + 0.8} Q ${x - radius * 0.72} ${y - radius * 0.3} ${x - radius * 0.28} ${y - radius * 0.52} Q ${x - radius * 0.12} ${y - radius * 0.9} ${x + radius * 0.06} ${y - radius * 0.65} Q ${x + radius * 0.45} ${y - radius * 0.72} ${x + radius * 0.65} ${y - radius * 0.22} L ${x + radius * 0.58} ${y + 0.8} Z`} className="fill-el" />
+      <path d={`M ${x - radius * 0.25} ${y - 0.2} Q ${x - radius * 0.12} ${y - radius * 0.5} ${x + radius * 0.15} ${y - radius * 0.7} Q ${x + radius * 0.28} ${y - radius * 0.3} ${x + radius * 0.3} ${y - 0.1} Z`} className="fill-s0" opacity={0.34 * blast} />
     </g>
-    <circle cx={x} cy={y} r={rules.blastRadius * (0.12 + reveal * 0.88)} className="fill-none stroke-el" strokeWidth="0.24" strokeDasharray="0.75 0.48" opacity={blast * 0.56} />
-    {star(radius * 0.82, blast * 0.74)}
+    <g transform={surfaceTransform} data-testid="artillery-impact-ground-shock">
+      <path d={`M ${x - radius * (0.38 + reveal * 0.85)} ${y + 0.25} q ${radius * 0.2} ${-1.5 * grow} ${radius * 0.37} ${-0.45 * grow} M ${x + radius * (0.38 + reveal * 0.85)} ${y + 0.25} q ${-radius * 0.2} ${-1.5 * grow} ${-radius * 0.37} ${-0.45 * grow}`} className="fill-none stroke-el" strokeWidth="0.48" strokeLinecap="round" opacity={blast * 0.76} />
+      {[-1, 1].map((direction) => <path key={direction} d={`M ${x + direction * radius * 0.55} ${y - 0.7 * grow} l ${direction * radius * 0.28 * grow} ${-1.7 * grow} M ${x + direction * radius * 0.82} ${y + 0.3} l ${direction * radius * 0.23 * grow} ${0.9 * grow}`} className="fill-none stroke-el" strokeWidth="0.34" opacity={blast * 0.62} />)}
+    </g>
+    {[-2, -1, 0, 1, 2].map((piece) => <path key={piece} d={`M ${x + piece * radius * 0.17} ${y - radius * 0.28} l ${piece * radius * 0.1 * grow} ${-radius * (0.25 + (2 - Math.abs(piece)) * 0.07) * grow}`} className="stroke-el" strokeWidth={piece === 0 ? 0.52 : 0.32} strokeLinecap="round" opacity={blast * (0.65 - Math.abs(piece) * 0.1)} />)}
     <g opacity={visual.smokeOpacity} filter="url(#artillery-smoke-soft)">
       <circle cx={x - 1.4 - smoke * 2.8} cy={y - 1.4 - smoke * 10.5} r={1.3 + smoke * 4.8} className="fill-ink-3 opacity-30" />
       <circle cx={x + 1.7 + smoke * 1.9} cy={y - 2.6 - smoke * 12.5} r={1.1 + smoke * 5.2} className="fill-el opacity-20" />
       <circle cx={x + Math.sin(smoke * Math.PI * 2) * 3.2} cy={y - 4.2 - smoke * 13.5} r={0.9 + smoke * 4.1} className="fill-ink-2 opacity-25" />
     </g>
-    <ellipse transform={surfaceTransform} cx={x} cy={y + 0.5} rx={rules.craterRadius * (0.62 + smoke * 0.95)} ry={0.7 + smoke * 1.8} className="fill-el" opacity={visual.dustOpacity * 0.2} />
+    <g transform={surfaceTransform}>
+      {[-1, 1].map((direction) => <path key={direction} d={`M ${x + direction * radius * 0.3} ${y + 0.3} q ${direction * radius * (0.45 + smoke * 0.32)} ${-1.2 - smoke * 1.8} ${direction * radius * (0.8 + smoke * 0.42)} ${0.2 + smoke} l ${-direction * radius * 0.37} ${1.1 + smoke} Z`} className="fill-el" opacity={visual.dustOpacity * 0.2} />)}
+    </g>
   </g>;
 }
 
@@ -1496,8 +1504,9 @@ export function ArtilleryBoard({ seed, mode, difficulty, mapSize, world, onStatu
             if (projectile.arrived) return null;
             const priorPoint = projectile.path[Math.max(0, projectile.path.length - 2)] ?? projectile.point;
             const rotation = Math.atan2(-(projectile.point.y - priorPoint.y), projectile.point.x - priorPoint.x) * 180 / Math.PI;
+            const trail = artilleryFlightTrail(projectile.path);
             return <g key={index} className={activePayloadMeta.elementClass}>
-              {projectile.path.length > 1 && <polyline points={projectile.path.map((point) => `${point.x},${ARTILLERY_HEIGHT - point.y}`).join(' ')} className="fill-none stroke-el opacity-55" strokeWidth={activePayload === 'bore' ? 0.65 : 0.4} strokeDasharray={activePayload === 'barb' ? '0.6 0.8' : '1 0.7'} />}
+              {trail.length > 1 && <polyline points={trail.map((point) => `${point.x},${ARTILLERY_HEIGHT - point.y}`).join(' ')} className="fill-none stroke-el opacity-55" strokeWidth={activePayload === 'bore' ? 0.65 : 0.4} strokeDasharray={activePayload === 'barb' ? '0.6 0.8' : '1 0.7'} />}
               {[1, 2, 3].map((trail) => {
                 const prior = projectile.path[Math.max(0, projectile.path.length - 1 - trail * 2)] ?? projectile.point;
                 return <circle key={trail} cx={prior.x} cy={ARTILLERY_HEIGHT - prior.y} r={Math.max(0.22, 0.85 - trail * 0.18)} className="fill-el" style={{ opacity: 0.42 - trail * 0.09 }} />;
