@@ -458,6 +458,22 @@ function reshapeTerrain(terrain: readonly number[], impact: ArtilleryPoint | nul
   });
 }
 
+export function artilleryTerrainImpactStages(
+  terrain: readonly number[],
+  projectiles: readonly ArtilleryProjectileOutcome[],
+  payload: ArtilleryPayload,
+): Array<{ projectileIndex: number; terrain: number[] }> {
+  let current = [...terrain];
+  return projectiles
+    .map((projectile, projectileIndex) => ({ projectile, projectileIndex }))
+    .filter(({ projectile }) => projectile.impact !== null)
+    .sort((a, b) => a.projectile.path.length - b.projectile.path.length || a.projectileIndex - b.projectileIndex)
+    .map(({ projectile, projectileIndex }) => {
+      current = reshapeTerrain(current, projectile.impact, payload);
+      return { projectileIndex, terrain: current };
+    });
+}
+
 export function applyArtilleryShot(
   state: ArtilleryState,
   input: ArtilleryShot,
@@ -470,10 +486,8 @@ export function applyArtilleryShot(
   const movedX = artilleryMovedX(state, state.current, shot.move);
   const spentTraction = shot.move !== 0 && state.traction[state.current] > 0;
   tanks[state.current].x = movedX;
-  const terrain = simulated.projectiles.reduce(
-    (current, projectile) => reshapeTerrain(current, projectile.impact, shot.payload),
-    state.terrain,
-  );
+  const impactStages = artilleryTerrainImpactStages(state.terrain, simulated.projectiles, shot.payload);
+  const terrain = impactStages.at(-1)?.terrain ?? [...state.terrain];
   const oldGround = terrainHeight(state.terrain, tanks[targetSide].x);
   const newGround = terrainHeight(terrain, tanks[targetSide].x);
   const terrainShift = Math.round((newGround - oldGround) * 10) / 10;
