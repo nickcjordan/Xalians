@@ -9,6 +9,7 @@ import {
   ARTILLERY_MAP_WIDTHS,
   ARTILLERY_PAYLOADS,
   artilleryMovedX,
+  artilleryTerrainImpactStages,
   chooseArtilleryBotShot,
   applyRelayMove,
   applySweepAction,
@@ -277,6 +278,19 @@ describe('Arcade deterministic rules', () => {
       expect(impacts).toHaveLength(outcome.projectiles.length);
       expect(Math.max(...impacts) - Math.min(...impacts)).toBeGreaterThan(payload === 'barb' ? 20 : 35);
     }
+  });
+
+  it('resolves volley terrain in landing order and reaches the same final battlefield', () => {
+    const state = createArtilleryState('staggered-terrain', 'range', 'standard', { mapSize: 'standard', world: 'stonera' });
+    const shot = { angle: 42, power: 62, payload: 'cluster' as const };
+    const outcome = simulateArtilleryShot(state, shot);
+    const stages = artilleryTerrainImpactStages(state.terrain, outcome.projectiles, shot.payload);
+    expect(stages).toHaveLength(5);
+    expect(stages.map((stage) => outcome.projectiles[stage.projectileIndex].path.length)).toEqual(
+      [...stages.map((stage) => outcome.projectiles[stage.projectileIndex].path.length)].sort((a, b) => a - b),
+    );
+    expect(stages[0].terrain).not.toEqual(state.terrain);
+    expect(stages.at(-1)?.terrain).toEqual(applyArtilleryShot(state, shot).state.terrain);
   });
 
   it('applies blast falloff and direct-hit bonus to 100-point hulls', () => {

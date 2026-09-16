@@ -2,8 +2,9 @@ import { createElement } from 'react';
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
+import { createArtilleryState, simulateArtilleryShot } from '@xalians/rules/arcade';
 
-import { ArtilleryBoard, ArtillerySetup, CommandMeter, artilleryAimFromDrag, artilleryBarrelEndpoint, artilleryCinematicCamera, artilleryFlightDurationMs, artilleryFlightFrameIndex, artilleryImpactRevealProgress, artilleryImpactTerrainFrame, artilleryImpactVisualState, artilleryJetFlightY, artilleryLaunchVisualState, artilleryMoveAnimationProgress, artilleryTerrainSlopeDegrees } from '../pages/games/artilleryGamePage';
+import { ArtilleryBoard, ArtillerySetup, CommandMeter, artilleryAimFromDrag, artilleryBarrelEndpoint, artilleryCinematicCamera, artilleryFlightDurationMs, artilleryFlightSample, artilleryImpactRevealProgress, artilleryImpactVisualState, artilleryJetFlightY, artilleryLaunchVisualState, artilleryMoveAnimationProgress, artilleryProjectileImpactState, artilleryTerrainSlopeDegrees } from '../pages/games/artilleryGamePage';
 
 class ResizeObserverStub {
   observe() {}
@@ -70,10 +71,22 @@ describe('Crater Command aim feedback', () => {
     expect(artilleryAimFromDrag(100, 300, 'left', 200, 340, 600)).toBeNull();
   });
 
-  it('advances every fan projectile on the same physics tick', () => {
-    expect(artilleryFlightFrameIndex(5, 10, 0.5)).toBe(4);
-    expect(artilleryFlightFrameIndex(10, 10, 0.5)).toBe(4);
-    expect(artilleryFlightFrameIndex(5, 10, 1)).toBe(4);
+  it('interpolates between simulation samples instead of snapping on redraws', () => {
+    const path = [{ x: 0, y: 0 }, { x: 10, y: 10 }, { x: 20, y: 0 }];
+    expect(artilleryFlightSample(path, 3, 0.25).point).toEqual({ x: 5, y: 5 });
+    expect(artilleryFlightSample(path, 3, 0.5).point).toEqual({ x: 10, y: 10 });
+    expect(artilleryFlightSample(path, 3, 0.75).point).toEqual({ x: 15, y: 5 });
+    expect(artilleryFlightSample(path, 3, 1).arrived).toBe(true);
+  });
+
+  it('starts the first detonation during flight while later projectiles remain airborne', () => {
+    const duration = 3_600;
+    expect(artilleryProjectileImpactState(23, 54, duration, 'flight', 0.4)).toBeNull();
+    const early = artilleryProjectileImpactState(23, 54, duration, 'flight', 0.5);
+    expect(early?.phase).toBe('impact');
+    expect(early?.progress).toBeGreaterThan(0);
+    expect(artilleryProjectileImpactState(54, 54, duration, 'flight', 0.5)).toBeNull();
+    expect(artilleryProjectileImpactState(54, 54, duration, 'impact', 0)?.phase).toBe('impact');
   });
 
   it('makes low-gravity flights visibly floatier than heavy-gravity flights', () => {
@@ -100,16 +113,6 @@ describe('Crater Command aim feedback', () => {
     expect(artilleryJetFlightY(80, 65, 0, 100)).toBe(80);
     expect(artilleryJetFlightY(80, 65, 50, 100)).toBeLessThan(31);
     expect(artilleryJetFlightY(80, 65, 100, 100)).toBeCloseTo(65);
-  });
-
-  it('excavates terrain progressively and lands on the exact resulting crater', () => {
-    const before = [12, 12, 12];
-    const after = [12, 7, 12];
-
-    expect(artilleryImpactTerrainFrame(before, after, 0)).toEqual(before);
-    expect(artilleryImpactTerrainFrame(before, after, 0.5)[1]).toBeLessThan(12);
-    expect(artilleryImpactTerrainFrame(before, after, 0.5)[1]).toBeGreaterThan(7);
-    expect(artilleryImpactTerrainFrame(before, after, 1)).toEqual(after);
   });
 
   it('holds the battlefield intact for the impact freeze before revealing damage', () => {
@@ -327,6 +330,40 @@ describe('Crater Command aim feedback', () => {
       act(() => vi.advanceTimersByTime(4_000));
       expect(document.querySelector('.artillery-aftermath')).toBeInTheDocument();
       expect(screen.getByRole('img', { name: /Two mobile range rigs/i })).toHaveAttribute('viewBox', '0 -38 360 148');
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it('detonates and reshapes terrain for an early Starfall round while later rounds still fly', () => {
+    vi.useFakeTimers();
+    try {
+      const seed = 'component-staggered-impacts';
+      const state = createArtilleryState(seed, 'range', 'standard', { mapSize: 'standard', world: 'stonera' });
+      const shot = simulateArtilleryShot(state, { angle: 42, power: 62, payload: 'cluster' });
+      const longest = Math.max(...shot.projectiles.map((projectile) => projectile.path.length));
+      const first = Math.min(...shot.projectiles.map((projectile) => projectile.path.length));
+      const duration = artilleryFlightDurationMs(longest, 0.86, 'cluster');
+      render(createElement(ArtilleryBoard, {
+        seed,
+        mode: 'range',
+        difficulty: 'standard',
+        mapSize: 'standard',
+        world: 'stonera',
+        onStatus: vi.fn(),
+        onComplete: vi.fn(),
+        onRematch: vi.fn(),
+      }));
+      fireEvent.change(screen.getByRole('slider', { name: /Barrel/i }), { target: { value: '42' } });
+      fireEvent.change(screen.getByRole('slider', { name: /Power/i }), { target: { value: '62' } });
+      fireEvent.click(screen.getByRole('button', { name: /^Starfall/i }));
+      const ground = screen.getByRole('img', { name: /Two mobile range rigs/i }).querySelector('path.fill-s2');
+      const before = ground?.getAttribute('d');
+      fireEvent.click(screen.getByRole('button', { name: /Fire Starfall/i }));
+      act(() => vi.advanceTimersByTime(900 + Math.ceil(duration * (first - 1) / (longest - 1)) + 480));
+      expect(screen.getAllByTestId('artillery-impact-cluster')).toHaveLength(1);
+      expect(screen.getAllByTestId('artillery-projectile-cluster').length).toBeGreaterThan(0);
+      expect(ground?.getAttribute('d')).not.toBe(before);
     } finally {
       vi.useRealTimers();
     }
