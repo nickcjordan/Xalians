@@ -253,6 +253,20 @@ describe('Arcade deterministic rules', () => {
     const bloom = applyArtilleryShot(state, { angle: 22, power: 46, payload: 'bloom' });
     const impactX = Math.round(bloom.outcome.impact!.x);
     expect(bloom.state.terrain[impactX]).toBeGreaterThan(state.terrain[impactX]);
+    expect(bloom.state.terrain[impactX] - state.terrain[impactX]).toBeGreaterThan(15);
+  });
+
+  it('matches each destructive payload with a consequential terrain profile', () => {
+    const state = createArtilleryState('terrain-signatures', 'range', 'standard', { mapSize: 'standard', world: 'stonera' });
+    const excavation = (payload: 'shell' | 'barb' | 'bore' | 'cluster' | 'lance') => {
+      const applied = applyArtilleryShot(state, { angle: 28, power: 42, payload });
+      return Math.max(...state.terrain.map((height, index) => height - applied.state.terrain[index]));
+    };
+    expect(excavation('shell')).toBeGreaterThan(9);
+    expect(excavation('bore')).toBeGreaterThan(11);
+    expect(excavation('lance')).toBeGreaterThan(4);
+    expect(excavation('barb')).toBeGreaterThan(3);
+    expect(excavation('cluster')).toBeGreaterThan(3);
   });
 
   it('keeps scatter and fragment patterns separated through impact', () => {
