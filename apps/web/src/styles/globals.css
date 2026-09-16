@@ -80,6 +80,7 @@
 		inset 0 0 0 1px var(--color-s0),
 		inset 0 0 28px color-mix(in srgb, black 62%, transparent),
 		0 var(--thickness-tile) 0 var(--color-ink-4);
+	transition: box-shadow 520ms cubic-bezier(.22, .61, .36, 1), border-color 520ms ease;
 }
 
 .artillery-viewport::after {

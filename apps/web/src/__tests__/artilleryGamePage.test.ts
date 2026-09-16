@@ -3,7 +3,7 @@ import { act, fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 
-import { ArtilleryBoard, ArtillerySetup, CommandMeter, artilleryAimFromDrag, artilleryBarrelEndpoint, artilleryCinematicCamera, artilleryFlightFrameIndex, artilleryImpactRevealProgress, artilleryImpactTerrainFrame, artilleryJetFlightY, artilleryMoveAnimationProgress } from '../pages/games/artilleryGamePage';
+import { ArtilleryBoard, ArtillerySetup, CommandMeter, artilleryAimFromDrag, artilleryBarrelEndpoint, artilleryCinematicCamera, artilleryFlightFrameIndex, artilleryImpactRevealProgress, artilleryImpactTerrainFrame, artilleryImpactVisualState, artilleryJetFlightY, artilleryLaunchVisualState, artilleryMoveAnimationProgress } from '../pages/games/artilleryGamePage';
 
 class ResizeObserverStub {
   observe() {}
@@ -108,10 +108,32 @@ describe('Crater Command aim feedback', () => {
     expect(artilleryImpactRevealProgress(0.7)).toBe(1);
   });
 
+  it('carries launch energy and recoil continuously into the opening flight frames', () => {
+    const charged = artilleryLaunchVisualState('charge', 1);
+    const released = artilleryLaunchVisualState('flight', 0);
+    expect(released.opacity).toBe(charged.opacity);
+    expect(released.expansion).toBe(charged.expansion);
+    expect(released.recoil).toBe(charged.recoil);
+    expect(artilleryLaunchVisualState('flight', 0.14).opacity).toBe(0);
+  });
+
+  it('grows impact smoke before the blast ends and preserves it across the settle boundary', () => {
+    const impactEnd = artilleryImpactVisualState('impact', 1);
+    const settleStart = artilleryImpactVisualState('settle', 0);
+    expect(impactEnd.blastOpacity).toBe(0);
+    expect(settleStart.smokeAge).toBeCloseTo(impactEnd.smokeAge, 2);
+    expect(settleStart.smokeOpacity).toBe(impactEnd.smokeOpacity);
+    expect(settleStart.dustOpacity).toBe(impactEnd.dustOpacity);
+    expect(artilleryImpactVisualState('settle', 1).smokeOpacity).toBeGreaterThan(0);
+  });
+
   it('tracks cinematic shots vertically and returns to the full battlefield at rest', () => {
     expect(artilleryCinematicCamera(360, false, null, 180, 52)).toBe('0 -38 360 148');
     expect(artilleryCinematicCamera(360, false, 'charge', 90, 72, 0)).toBe('0 -38 360 148');
     expect(artilleryCinematicCamera(360, false, 'charge', 90, 72, 0.45)).not.toBe('0 -38 360 148');
+    const chargeEnd = artilleryCinematicCamera(360, false, 'charge', 90, 72, 1, 90, 72);
+    const flightStart = artilleryCinematicCamera(360, false, 'flight', 90, 72, 0, 90, 72);
+    expect(flightStart).toBe(chargeEnd);
     const flight = artilleryCinematicCamera(360, false, 'flight', 220, -90).split(' ').map(Number);
     expect(flight[0]).toBeGreaterThan(0);
     expect(flight[1]).toBeLessThan(-38);
