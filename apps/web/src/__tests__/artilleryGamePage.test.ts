@@ -4,7 +4,7 @@ import userEvent from '@testing-library/user-event';
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 import { createArtilleryState, simulateArtilleryShot } from '@xalians/rules/arcade';
 
-import { ArtilleryBoard, ArtillerySetup, CommandMeter, artilleryAimFromDrag, artilleryBarrelEndpoint, artilleryCinematicCamera, artilleryFlightDurationMs, artilleryFlightSample, artilleryImpactRevealProgress, artilleryImpactVisualState, artilleryJetFlightY, artilleryLaunchVisualState, artilleryMoveAnimationProgress, artilleryProjectileImpactState, artilleryTerrainSlopeDegrees } from '../pages/games/artilleryGamePage';
+import { ArtilleryBoard, ArtillerySetup, CommandMeter, artilleryAimFromDrag, artilleryBarrelEndpoint, artilleryCinematicCamera, artilleryFlightDurationMs, artilleryFlightSample, artilleryFlightTrail, artilleryImpactRevealProgress, artilleryImpactVisualState, artilleryJetFlightY, artilleryLaunchVisualState, artilleryMoveAnimationProgress, artilleryProjectileImpactState, artilleryTerrainSlopeDegrees } from '../pages/games/artilleryGamePage';
 
 class ResizeObserverStub {
   observe() {}
@@ -77,6 +77,12 @@ describe('Crater Command aim feedback', () => {
     expect(artilleryFlightSample(path, 3, 0.5).point).toEqual({ x: 10, y: 10 });
     expect(artilleryFlightSample(path, 3, 0.75).point).toEqual({ x: 15, y: 5 });
     expect(artilleryFlightSample(path, 3, 1).arrived).toBe(true);
+  });
+
+  it('shows only a short projectile tail instead of tracing the whole ballistic arc', () => {
+    const path = Array.from({ length: 50 }, (_, x) => ({ x, y: x }));
+    expect(artilleryFlightTrail(path)).toHaveLength(12);
+    expect(artilleryFlightTrail(path)[0]).toEqual({ x: 38, y: 38 });
   });
 
   it('starts the first detonation during flight while later projectiles remain airborne', () => {
@@ -330,6 +336,34 @@ describe('Crater Command aim feedback', () => {
       act(() => vi.advanceTimersByTime(4_000));
       expect(document.querySelector('.artillery-aftermath')).toBeInTheDocument();
       expect(screen.getByRole('img', { name: /Two mobile range rigs/i })).toHaveAttribute('viewBox', '0 -38 360 148');
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it('keeps Comet impact art grounded instead of drawing orbital rings', () => {
+    vi.useFakeTimers();
+    try {
+      const seed = 'component-grounded-comet';
+      const state = createArtilleryState(seed, 'range', 'standard', { mapSize: 'standard', world: 'stonera' });
+      const shot = simulateArtilleryShot(state, { angle: 45, power: 70, payload: 'shell' });
+      const duration = artilleryFlightDurationMs(shot.projectiles[0].path.length, 0.86, 'shell');
+      render(createElement(ArtilleryBoard, {
+        seed,
+        mode: 'range',
+        difficulty: 'standard',
+        mapSize: 'standard',
+        world: 'stonera',
+        onStatus: vi.fn(),
+        onComplete: vi.fn(),
+        onRematch: vi.fn(),
+      }));
+      fireEvent.click(screen.getByRole('button', { name: /Fire Comet/i }));
+      act(() => vi.advanceTimersByTime(900 + duration + 320));
+      const impact = screen.getByTestId('artillery-impact-shell');
+      expect(impact.querySelector('[data-testid="artillery-impact-ground-shock"]')).toBeInTheDocument();
+      expect(impact.querySelector('ellipse, circle[stroke-dasharray]')).toBeNull();
+      expect(impact.querySelectorAll('path').length).toBeGreaterThan(4);
     } finally {
       vi.useRealTimers();
     }
