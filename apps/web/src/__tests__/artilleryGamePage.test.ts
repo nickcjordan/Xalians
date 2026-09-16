@@ -206,13 +206,13 @@ describe('Crater Command aim feedback', () => {
     }));
 
     expect(screen.getByRole('img', { name: /drag up and outward/i })).toBeInTheDocument();
-    for (const payload of ['Impact', 'Scatter', 'Breach', 'Fragment', 'Barrier', 'Lance']) {
+    for (const payload of ['Comet', 'Razor', 'Drill', 'Starfall', 'Rampart', 'Sunspike']) {
       expect(screen.getByRole('button', { name: new RegExp(`^${payload}\\b`, 'i') })).toBeEnabled();
     }
-    expect(screen.getByRole('button', { name: /Fire Impact/i })).toBeEnabled();
+    expect(screen.getByRole('button', { name: /Fire Comet/i })).toBeEnabled();
     expect(screen.getByText(/Gravity 0\.86× · wind 1\.0×/i)).toBeInTheDocument();
     expect(screen.getByText(/Drive crawls · jet leaps/i)).toBeInTheDocument();
-    expect(screen.getByText('Impact round')).toBeInTheDocument();
+    expect(screen.getByText('Comet shell')).toBeInTheDocument();
     expect(screen.getByRole('img', { name: /Two mobile range rigs on Stonera/i })).toHaveAttribute('viewBox', '0 -38 360 148');
     expect(screen.getByRole('button', { name: /Enable artillery audio/i })).toBeInTheDocument();
     expect(screen.queryByText(/Codazzo|Terragoyle|creature ability/i)).not.toBeInTheDocument();
@@ -259,7 +259,7 @@ describe('Crater Command aim feedback', () => {
       const remaining = Number(screen.getAllByText(/%$/)[0].textContent?.replace('%', ''));
       expect(remaining).toBeLessThan(88);
       expect(remaining).toBeGreaterThan(70);
-      expect(screen.getByRole('button', { name: /Fire Impact/i })).toBeEnabled();
+      expect(screen.getByRole('button', { name: /Fire Comet/i })).toBeEnabled();
     } finally {
       vi.useRealTimers();
     }
@@ -283,10 +283,10 @@ describe('Crater Command aim feedback', () => {
       act(() => vi.advanceTimersByTime(800));
       expect(screen.getByTestId('artillery-jet-trajectory')).toBeInTheDocument();
       fireEvent.pointerUp(jet, { pointerId: 3, pointerType: 'mouse', isPrimary: true, button: 0 });
-      expect(screen.getByRole('button', { name: /Fire Impact/i })).toBeDisabled();
+      expect(screen.getByRole('button', { name: /Fire Comet/i })).toBeDisabled();
       act(() => vi.advanceTimersByTime(500));
       expect(screen.queryByTestId('artillery-jet-trajectory')).not.toBeInTheDocument();
-      expect(screen.getByRole('button', { name: /Fire Impact/i })).toBeEnabled();
+      expect(screen.getByRole('button', { name: /Fire Comet/i })).toBeEnabled();
     } finally {
       vi.useRealTimers();
     }
@@ -305,13 +305,13 @@ describe('Crater Command aim feedback', () => {
         onComplete: vi.fn(),
         onRematch: vi.fn(),
       }));
-      fireEvent.click(screen.getByRole('button', { name: /Fire Impact/i }));
+      fireEvent.click(screen.getByRole('button', { name: /Fire Comet/i }));
       expect(screen.getByTestId('artillery-launch-charge')).toBeInTheDocument();
       expect(screen.getByRole('img', { name: /Two mobile range rigs/i })).toHaveAttribute('viewBox', '0 -38 360 148');
       act(() => vi.advanceTimersByTime(500));
       expect(screen.getByRole('img', { name: /Two mobile range rigs/i }).getAttribute('viewBox')).not.toBe('0 -38 360 148');
       act(() => vi.advanceTimersByTime(5_000));
-      expect(screen.getByRole('button', { name: /Fire Impact/i })).toBeDisabled();
+      expect(screen.getByRole('button', { name: /Fire Comet/i })).toBeDisabled();
       act(() => vi.advanceTimersByTime(4_000));
       expect(document.querySelector('.artillery-aftermath')).toBeInTheDocument();
       expect(screen.getByRole('img', { name: /Two mobile range rigs/i })).toHaveAttribute('viewBox', '0 -38 360 148');
