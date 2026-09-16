@@ -121,13 +121,45 @@
 	animation-delay: -1.35s;
 }
 
+.artillery-smoke-cloud {
+	animation: artillery-smoke-breathe 3.4s ease-in-out infinite alternate;
+	transform-box: fill-box;
+	transform-origin: bottom center;
+}
+
+.artillery-ordnance-card {
+	transition: transform 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
+}
+
+.artillery-ordnance-card:hover:not(:disabled),
+.artillery-ordnance-card[aria-pressed="true"] {
+	transform: translateY(-1px);
+	box-shadow: inset 0 0 14px color-mix(in srgb, var(--el, var(--color-viable-hi)) 12%, transparent);
+}
+
+.artillery-ember {
+	animation: artillery-ember-pulse 1.35s ease-in-out infinite alternate;
+}
+
 @keyframes artillery-smoke-drift {
 	from { opacity: .18; transform: translate3d(-.5px, 0, 0) scale(.9); }
 	to { opacity: .5; transform: translate3d(.7px, -1.4px, 0) scale(1.08); }
 }
 
+@keyframes artillery-ember-pulse {
+	from { opacity: .25; transform: translateY(0) scale(.8); }
+	to { opacity: .8; transform: translateY(-.8px) scale(1.15); }
+}
+
+@keyframes artillery-smoke-breathe {
+	from { opacity: .62; transform: translate3d(-.35px, .3px, 0) scale(.94, .9); }
+	to { opacity: .92; transform: translate3d(.65px, -1px, 0) scale(1.08, 1.13); }
+}
+
 @media (prefers-reduced-motion: reduce) {
-	.artillery-smoke-wisp { animation: none; }
+	.artillery-smoke-wisp,
+	.artillery-smoke-cloud,
+	.artillery-ember { animation: none; }
 }
 
 .cockpit-console {

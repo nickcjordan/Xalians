@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "measuredAt": "Crater Command cinematic camera, synchronized impact, and battlefield aftermath pass",
+    "measuredAt": "Crater Command distinct ordnance art, projectile silhouettes, payload impacts, and persistent aftermath",
     "measuredOn": "2026-09-15",
     "policy": "Initial limits and route limits are the measured production output after removing the developer styleguide, rounded up with approximately five percent headroom. Update a limit only with measured evidence and review."
   },
@@ -23,7 +23,7 @@
     "reclamationPage": { "javascript": { "raw": 1162000, "gzip": 343000 }, "stylesheets": { "raw": 163000, "gzip": 28000 } },
     "longReturnPage": { "javascript": { "raw": 317000, "gzip": 97000 }, "stylesheets": { "raw": 280000, "gzip": 50000 } },
     "arcadePage": { "javascript": { "raw": 16000, "gzip": 7500 }, "stylesheets": { "raw": 0, "gzip": 0 } },
-    "artilleryGamePage": { "javascript": { "raw": 80000, "gzip": 27600 }, "stylesheets": { "raw": 0, "gzip": 0 } },
+    "artilleryGamePage": { "javascript": { "raw": 91000, "gzip": 30600 }, "stylesheets": { "raw": 0, "gzip": 0 } },
     "solitaireGamePage": { "javascript": { "raw": 22700, "gzip": 10100 }, "stylesheets": { "raw": 0, "gzip": 0 } },
     "hazardSweepGamePage": { "javascript": { "raw": 17200, "gzip": 8400 }, "stylesheets": { "raw": 0, "gzip": 0 } },
     "relayMergeGamePage": { "javascript": { "raw": 17400, "gzip": 8700 }, "stylesheets": { "raw": 0, "gzip": 0 } },
