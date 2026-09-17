@@ -3,7 +3,6 @@
 .lr-mode-simple .lr-wizard-phase-scout .lr-simple-scouts > button:not(.is-selected) { grid-template-columns: 80px minmax(0,1fr); min-height: 100px; }
 .lr-mode-simple .lr-wizard-phase-scout .lr-simple-scouts > button .lr-portrait { min-height: 100px; }
 .lr-mode-simple .lr-wizard-phase-scout .lr-simple-scouts > button .lr-scout-card-copy { grid-template-columns: minmax(0,1fr) 120px; }
-.lr-mode-simple .lr-wizard-phase-scout .lr-scout-relay { display: none; }
 .lr-scout-quick { display: flex; flex-wrap: wrap; gap: 8px 18px; margin-top: 8px; font: 400 14px/1.5 var(--g-font-body); color: var(--g-ink); }
 .lr-scout-quick > span { display: inline-flex; align-items: center; gap: 5px; }
 .lr-mode-simple .lr-simple-plan { padding: 16px; margin-top: 12px; background: none; border: 0; box-shadow: none; border-top: 1px solid #485040; }
