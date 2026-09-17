@@ -372,7 +372,7 @@ describe('Long Return Simple mode', () => {
     expect(findButton(container, /leave with full salvage/i)).toBeTruthy();
     click(container, /leave with full salvage/i);
     expect(container.textContent).toContain('Deep Retrieval Complete');
-    expect(container.textContent).toMatch(/Deep retrieval.*exhausted its last opportunity/i);
+    expect(container.textContent).toMatch(/Deep retrieval.*extraction lift carries the crew clear/i);
     expect(container.textContent).toContain('ObjectiveSECURED');
     expect(container.querySelector('.lr-mission-journal').textContent).toContain('7 crossings');
   });

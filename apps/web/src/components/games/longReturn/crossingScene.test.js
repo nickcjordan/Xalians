@@ -42,6 +42,14 @@ test('both machinery passages arrive at the next door and show how their consequ
   expect(resolve(underdeck)[3]).not.toContain('sensor lights up');
 });
 
+test('both Index recoveries identify the record without confusing it with loose salvage', () => {
+  const [plates, backup] = MISSION.scenes[4].routes;
+  expect(resolve(plates)[3]).toContain('surviving record of the plague research');
+  expect(resolve(plates)[3]).toContain('bring home');
+  expect(resolve(backup)[3]).toContain('sealed backup');
+  expect(resolve(backup)[3]).toContain('Nemesis Index');
+});
+
 test('remote retrieval never describes the lead diving, and support effort follows resolution', () => {
   const route = MISSION.scenes[5].routes[1];
   const paragraphs = resolve(route, { supportStrain: 1 }, route.methods[1]);
