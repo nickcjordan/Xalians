@@ -336,6 +336,7 @@ describe('Crater Command aim feedback', () => {
       act(() => vi.advanceTimersByTime(4_000));
       expect(document.querySelector('.artillery-aftermath')).toBeInTheDocument();
       expect(document.querySelector('.artillery-aftermath .artillery-ember')).toBeNull();
+      expect(document.querySelector('.artillery-aftermath .artillery-smoke-cloud, .artillery-aftermath .artillery-smoke-wisp')).toBeNull();
       expect(screen.getByRole('img', { name: /Two mobile range rigs/i })).toHaveAttribute('viewBox', '0 -38 360 148');
     } finally {
       vi.useRealTimers();
@@ -397,6 +398,10 @@ describe('Crater Command aim feedback', () => {
       fireEvent.click(screen.getByRole('button', { name: /Fire Starfall/i }));
       act(() => vi.advanceTimersByTime(900 + Math.ceil(duration * (first - 1) / (longest - 1)) + 480));
       expect(screen.getAllByTestId('artillery-impact-cluster')).toHaveLength(1);
+      const impact = screen.getByTestId('artillery-impact-cluster');
+      expect(impact.querySelector('g[transform^="rotate("]')).toBeInTheDocument();
+      expect(impact.querySelectorAll('circle')).toHaveLength(1);
+      expect(impact.querySelectorAll('path').length).toBeGreaterThan(5);
       expect(screen.getAllByTestId('artillery-projectile-cluster').length).toBeGreaterThan(0);
       expect(ground?.getAttribute('d')).not.toBe(before);
     } finally {
