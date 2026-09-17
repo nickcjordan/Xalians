@@ -82,6 +82,8 @@ try {
         if (await alternate.count()) await click(alternate);
         await page.screenshot({ path: `${output}/${step}-alternate-lead.png`, fullPage: true });
       }
+    }
+    if (await page.locator('.lr-simple-plan').count()) {
       if (process.env.LR_COMMANDS === '1') { const command=page.locator('.lr-simple-override input'); if(await command.count()) await command.check(); }
       await page.screenshot({ path: `${output}/${step}-plan.png` });
       events.push({ type: 'plan', text: await page.locator('.lr-simple-plan').innerText() });

@@ -78,7 +78,7 @@ describe('expedition location, not creature performance', () => {
     expect(returned).toContain('data-map-creature="helper" data-location="entry"');
     const reunited = renderToStaticMarkup(<ExpeditionSchematic scene={MISSION.scenes[1]} crew={crew} scout={crew[0]} helperId="helper" companion={{species:'Xylum'}} allyWithScout position={{crew:'entry',scout:'survey',encounter:true}} />);
     expect(reunited).toContain('translate(297px, 148px)');
-    expect(reunited).toContain('data-map-ally="true" data-location="survey" transform="translate(320 173)"');
+    expect(reunited).toContain('data-map-ally="true" data-location="survey" transform="translate(320 123)"');
   });
   it('previewing a different route does not relocate the crew from a resolved encounter', () => {
     const props = {scene:MISSION.scenes[2], crew:[{id:'lead',species:'Graviclaw'}], position:{crew:'crossing',encounter:true}};
