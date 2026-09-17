@@ -2,9 +2,9 @@ import { createElement } from 'react';
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
-import { ARTILLERY_HEIGHT, createArtilleryState, simulateArtilleryShot, terrainHeight } from '@xalians/rules/arcade';
+import { ARTILLERY_HEIGHT, applyArtilleryShot, artilleryNominalReach, chooseArtilleryBotShot, createArtilleryState, simulateArtilleryShot, terrainHeight } from '@xalians/rules/arcade';
 
-import { ArtilleryBoard, ArtillerySetup, CommandMeter, artilleryAimFromDrag, artilleryBarrelEndpoint, artilleryCinematicCamera, artilleryFlightDurationMs, artilleryFlightSample, artilleryFlightTrail, artilleryImpactRevealProgress, artilleryImpactVisualState, artilleryJetFlightY, artilleryLaunchVisualState, artilleryMoveAnimationProgress, artilleryNextSortieTip, artilleryProjectileImpactState, artilleryShotVerdict, artilleryTerrainSlopeDegrees } from '../pages/games/artilleryGamePage';
+import { ArtilleryBoard, ArtillerySetup, CommandMeter, artilleryAimFromDrag, artilleryBarrelEndpoint, artilleryCinematicCamera, artilleryCloseLaunchHits, artilleryFlightDurationMs, artilleryFlightSample, artilleryFlightTrail, artilleryImpactRevealProgress, artilleryImpactVisualState, artilleryJetFlightY, artilleryLaunchVisualState, artilleryMoveAnimationProgress, artilleryNextSortieTip, artilleryProjectileImpactState, artilleryShelfRisk, artilleryShotVerdict, artilleryTerrainSlopeDegrees } from '../pages/games/artilleryGamePage';
 
 class ResizeObserverStub {
   observe() {}
@@ -33,6 +33,44 @@ describe('Crater Command aim feedback', () => {
     expect(artilleryNextSortieTip({ mode: 'bot', difficulty: 'standard', won: false, accuracy: 75, specialRounds: 0 })).toMatch(/Drill.*Rampart/i);
     expect(artilleryNextSortieTip({ mode: 'bot', difficulty: 'rookie', won: true, accuracy: 75, specialRounds: 2 })).toMatch(/Standard/i);
     expect(artilleryNextSortieTip({ mode: 'range', difficulty: 'standard', won: true, accuracy: 80, specialRounds: 2 })).toMatch(/damage record/i);
+    expect(artilleryNextSortieTip({ mode: 'bot', difficulty: 'standard', won: false, accuracy: 14, specialRounds: 3, closeBlocks: 3 })).toMatch(/firing line.*jet clear/i);
+    expect(artilleryNextSortieTip({ mode: 'bot', difficulty: 'standard', won: false, accuracy: 38, specialRounds: 5, shelfBlocks: 2 })).toMatch(/intervening shelves.*loft/i);
+  });
+  it('warns about a near ridge only when a long-range shot is intercepted near the launcher', () => {
+    const state = createArtilleryState('near-ridge-warning');
+    const shooterX = state.tanks.left.x;
+    const ground = terrainHeight(state.terrain, shooterX);
+    const terrain = state.terrain.map((height, x) => x >= shooterX + 6 && x <= shooterX + 26 ? Math.max(height, ground + 32) : height);
+    const blocked = { ...state, terrain };
+    const shot = { angle: 45, power: 85, payload: 'shell' as const };
+    const outcome = simulateArtilleryShot(blocked, shot);
+    const freeRange = artilleryNominalReach(blocked, shot).far;
+    expect(freeRange).toBeGreaterThan(48);
+    expect(artilleryCloseLaunchHits(outcome, shooterX, 'left', freeRange)).toBe(1);
+    expect(artilleryCloseLaunchHits(outcome, shooterX, 'left', 20)).toBe(0);
+    const level = { ...state, terrain: state.terrain.map(() => ground) };
+    expect(artilleryCloseLaunchHits(simulateArtilleryShot(level, shot), shooterX, 'left', artilleryNominalReach(level, shot).far)).toBe(0);
+  });
+  it('distinguishes an intervening shelf from inadequate free-flight range', () => {
+    let state = createArtilleryState('artillery:92be30c9-d34b-4258-8fa9-232cf2c69ecb', 'bot', 'standard', { world: 'stonera', mapSize: 'standard' });
+    const played = [
+      { angle: 45, power: 76, payload: 'shell' as const },
+      { angle: 45, power: 76, payload: 'bore' as const },
+      { angle: 45, power: 50, payload: 'lance' as const },
+      { angle: 45, power: 28, payload: 'bloom' as const },
+      { angle: 45, power: 77, payload: 'cluster' as const },
+    ];
+    for (const shot of played) {
+      state = applyArtilleryShot(state, shot).state;
+      state = applyArtilleryShot(state, chooseArtilleryBotShot(state)).state;
+    }
+    const shot = { angle: 45, power: 77, payload: 'bore' as const };
+    const outcome = simulateArtilleryShot(state, shot);
+    const freeRange = artilleryNominalReach(state, shot);
+    expect(outcome.damage).toBe(0);
+    expect(artilleryShelfRisk(outcome, state.tanks.left.x, state.tanks.right.x, freeRange)).toBe(true);
+    expect(artilleryShelfRisk(outcome, state.tanks.left.x, state.tanks.right.x, { near: 100, far: 100 })).toBe(false);
+    expect(artilleryShotVerdict(outcome, state.tanks.left.x, state.tanks.right.x, 100, true).title).toBe('Ridge intercepted');
   });
   it('draws the barrel tip at the physics projectile origin', () => {
     const state = createArtilleryState('muzzle-visual');
@@ -168,6 +206,7 @@ describe('Crater Command aim feedback', () => {
 
   it('tracks cinematic shots vertically and returns to the full battlefield at rest', () => {
     expect(artilleryCinematicCamera(360, false, null, 180, 52)).toBe('0 -38 360 148');
+    expect(artilleryCinematicCamera(360, false, null, 180, 52, 1, 180, 52, 3)).toBe('0 -10 360 120');
     expect(artilleryCinematicCamera(360, false, 'charge', 90, 72, 0)).toBe('0 -38 360 148');
     expect(artilleryCinematicCamera(360, false, 'charge', 90, 72, 0.45)).not.toBe('0 -38 360 148');
     const chargeEnd = artilleryCinematicCamera(360, false, 'charge', 90, 72, 1, 90, 72);
@@ -245,6 +284,7 @@ describe('Crater Command aim feedback', () => {
 
     expect(screen.getByRole('heading', { name: /Choose your battlefield/i })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /Stonera.*Cratered ridges/i })).toHaveAttribute('aria-pressed', 'true');
+    expect(screen.getByText(/Estimates the first shot, then corrects from impact/i)).toBeInTheDocument();
     await userEvent.click(screen.getByRole('button', { name: /Endessa.*Rolling glass dunes/i }));
     await userEvent.click(screen.getByRole('button', { name: /Wide.*440 units/i }));
     await userEvent.click(screen.getByRole('button', { name: /Start match/i }));
@@ -266,7 +306,7 @@ describe('Crater Command aim feedback', () => {
     expect(onChange).toHaveBeenNthCalledWith(2, 46);
   });
 
-  it('keeps every tactical action in the game surface instead of a detached form', () => {
+  it('keeps the weapon rack one action away without pushing the battlefield off screen', async () => {
     render(createElement(ArtilleryBoard, {
       seed: 'component-actions',
       mode: 'bot',
@@ -279,13 +319,18 @@ describe('Crater Command aim feedback', () => {
     }));
 
     expect(screen.getByRole('img', { name: /drag up and outward/i })).toBeInTheDocument();
+    const openRack = screen.getByRole('button', { name: 'Open weapon rack' });
+    expect(openRack).toHaveAttribute('aria-expanded', 'false');
+    await userEvent.click(openRack);
     for (const payload of ['Comet', 'Razor', 'Drill', 'Starfall', 'Rampart', 'Sunspike']) {
       expect(screen.getByRole('button', { name: new RegExp(`^${payload}\\b`, 'i') })).toBeEnabled();
     }
-    expect(screen.getByRole('button', { name: /Fire Comet/i })).toBeEnabled();
+    await userEvent.click(screen.getByRole('button', { name: /^Razor 2/i }));
+    expect(screen.getByRole('button', { name: 'Open weapon rack' })).toHaveAttribute('aria-expanded', 'false');
+    expect(screen.getByRole('button', { name: /Fire Razor/i })).toBeEnabled();
     expect(screen.getByText(/Gravity 0\.86× · wind 1\.0×/i)).toBeInTheDocument();
     expect(screen.getByText(/Drive goes farther · jet clears walls/i)).toBeInTheDocument();
-    expect(screen.getByText('Comet shell')).toBeInTheDocument();
+    expect(screen.getByText(/Ordnance/i)).toBeInTheDocument();
     expect(screen.getByRole('img', { name: /Two mobile range rigs on Stonera/i })).toHaveAttribute('viewBox', '0 -38 360 148');
     expect(screen.getByRole('button', { name: /Enable artillery audio/i })).toBeInTheDocument();
     expect(screen.queryByText(/Codazzo|Terragoyle|creature ability/i)).not.toBeInTheDocument();
@@ -478,6 +523,7 @@ describe('Crater Command aim feedback', () => {
       }));
       fireEvent.change(screen.getByRole('slider', { name: /Barrel/i }), { target: { value: '42' } });
       fireEvent.change(screen.getByRole('slider', { name: /Power/i }), { target: { value: '62' } });
+      fireEvent.click(screen.getByRole('button', { name: 'Open weapon rack' }));
       fireEvent.click(screen.getByRole('button', { name: /^Starfall/i }));
       const ground = screen.getByRole('img', { name: /Two mobile range rigs/i }).querySelector('path.fill-s2');
       const before = ground?.getAttribute('d');

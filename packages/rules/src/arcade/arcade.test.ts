@@ -528,6 +528,27 @@ describe('Arcade deterministic rules', () => {
     expect(simulateArtilleryShot(expert, expertShot).path.length).toBeGreaterThan(2);
   });
 
+  it('makes a Standard rival range from its last shot instead of instantly choosing a distant perfect solution', () => {
+    const state = createArtilleryState('bounded-bot', 'bot', 'standard');
+    state.current = 'right';
+    state.botPrevious = { miss: 25, shot: { angle: 30, power: 55, payload: 'shell' } };
+    const shot = chooseArtilleryBotShot(state);
+    expect(Math.abs(shot.angle - state.botPrevious.shot.angle)).toBeLessThanOrEqual(11);
+    expect(Math.abs(shot.power - state.botPrevious.shot.power)).toBeLessThanOrEqual(18);
+    expect(shot.power).toBeGreaterThan(55);
+    expect(chooseArtilleryBotShot(state)).toEqual(shot);
+  });
+
+  it('opens a Standard duel with a surveyed range rather than an exact target solve', () => {
+    const initial = createArtilleryState('artillery:f8aad53d-0059-4d27-9127-712c942d3f3f', 'bot', 'standard', { world: 'stonera', mapSize: 'standard' });
+    const afterPlayer = applyArtilleryShot(initial, { angle: 45, power: 71, payload: 'shell' }).state;
+    const botShot = chooseArtilleryBotShot(afterPlayer);
+    const outcome = applyArtilleryShot(afterPlayer, botShot).outcome;
+    expect(botShot.payload).toBe('shell');
+    expect(outcome.impact).not.toBeNull();
+    expect(outcome.damage).toBe(0);
+  });
+
   it('fortifies only when a nearby shot leaves the bot in lethal danger', () => {
     const state = createArtilleryState('bot-cover', 'bot', 'standard');
     state.current = 'right';
