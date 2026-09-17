@@ -117,12 +117,12 @@ const PAYLOAD_META: Record<ArtilleryPayload, {
   rackHint: string;
   elementClass: string;
 }> = {
-  shell: { label: 'Comet shell', shortLabel: 'Comet', detail: 'Volatile core · rolling shockwave · unlimited', purpose: 'A heavy all-purpose blast with a molten wake', rackHint: 'Core blast', elementClass: 'el-fire' },
-  barb: { label: 'Razor fan', shortLabel: 'Razor', detail: 'Three splitting flechettes · 2 charges', purpose: 'Carves three diverging impact lines', rackHint: '3 split darts', elementClass: 'el-rock' },
-  bore: { label: 'Grav drill', shortLabel: 'Drill', detail: 'Burrows before a subterranean rupture · 2 charges', purpose: 'Punches under ridges and collapses ground', rackHint: 'Buried burst', elementClass: 'el-sand' },
-  cluster: { label: 'Starfall canister', shortLabel: 'Starfall', detail: 'Five cascading microbursts · 1 charge', purpose: 'Paints a wide shelf with chained detonations', rackHint: '5 nova drops', elementClass: 'el-chemical' },
-  bloom: { label: 'Rampart forge', shortLabel: 'Rampart', detail: `Wall ahead grants ${ARTILLERY_RAMPART_GUARD} guard until you move or take a hit · 1 charge`, purpose: 'Raises terrain and blocks the next incoming blast', rackHint: 'Cover + guard', elementClass: 'el-plant' },
-  lance: { label: 'Sunspike', shortLabel: 'Sunspike', detail: 'Hypervelocity light spear · 1 charge', purpose: 'Punches a precise target with a searing line', rackHint: 'Fast piercer', elementClass: 'el-light' },
+  shell: { label: 'Comet shell', shortLabel: 'Comet', detail: 'Heavy all-purpose blast · unlimited', purpose: 'Reliable hull damage near a well-ranged impact', rackHint: 'Core blast', elementClass: 'el-fire' },
+  barb: { label: 'Razor fan', shortLabel: 'Razor', detail: 'Three splitting flechettes · broad ranging · 2 charges', purpose: 'Covers uncertainty with three separate blast points', rackHint: 'Broad spread', elementClass: 'el-rock' },
+  bore: { label: 'Grav drill', shortLabel: 'Drill', detail: 'Buried shock and deep ground collapse · 2 charges', purpose: 'Damages the rig above a buried impact and drops its footing', rackHint: 'Ground shock', elementClass: 'el-sand' },
+  cluster: { label: 'Starfall canister', shortLabel: 'Starfall', detail: 'Five wider microbursts · 1 charge', purpose: 'Blankets uncertain range and tears up a broad shelf', rackHint: 'Wide barrage', elementClass: 'el-chemical' },
+  bloom: { label: 'Rampart forge', shortLabel: 'Rampart', detail: `Wall ahead grants ${ARTILLERY_RAMPART_GUARD} guard until you move or take a hit. Fire a high arc over close walls · 1 charge`, purpose: 'Raises terrain and blocks the next incoming blast', rackHint: 'Cover + guard', elementClass: 'el-plant' },
+  lance: { label: 'Sunspike', shortLabel: 'Sunspike', detail: 'Precise light spear · pierces half of guard · 1 charge', purpose: 'Finishes an exposed rig or cuts through protective guard', rackHint: 'Guard piercer', elementClass: 'el-light' },
 };
 
 export function artilleryShotVerdict(outcome: ArtilleryOutcome, shooterX: number, targetX: number, targetIntegrity = ARTILLERY_MAX_INTEGRITY): ShotVerdict {
@@ -132,8 +132,8 @@ export function artilleryShotVerdict(outcome: ArtilleryOutcome, shooterX: number
   };
   if (outcome.damage > 0) return {
     title: `${Math.min(outcome.damage, targetIntegrity)} hull damage`,
-    detail: [outcome.directHit ? 'Direct hit' : outcome.fallDamage > 0 ? 'Blast and ground collapse' : 'Blast hit',
-      outcome.guardAbsorbed > 0 ? `${outcome.guardAbsorbed} absorbed by cover` : null,
+    detail: [outcome.directHit ? 'Direct hit' : outcome.fallDamage > 0 ? 'Blast and ground collapse' : outcome.payload === 'bore' ? 'Buried shock hit' : 'Blast hit',
+      outcome.guardAbsorbed > 0 ? `${outcome.guardAbsorbed} absorbed by ${outcome.payload === 'lance' ? 'pierced guard' : 'cover'}` : null,
       outcome.damage >= targetIntegrity ? 'Rig disabled' : null].filter(Boolean).join(' · '),
   };
   if (outcome.guardAbsorbed > 0) return {
@@ -143,7 +143,7 @@ export function artilleryShotVerdict(outcome: ArtilleryOutcome, shooterX: number
   if (outcome.outOfBounds) return { title: 'Out of range', detail: 'Shot left the sector without landing' };
   if (!outcome.impact) return { title: 'No impact', detail: 'Shot did not reach the ground' };
   if (Math.abs(outcome.impact.x - shooterX) < 8) return {
-    title: 'Muzzle blocked', detail: 'Nearby ridge intercepted the shot · drive or jump-jet clear',
+    title: 'Muzzle blocked', detail: 'Nearby ridge intercepted the shot · raise the barrel or jump-jet clear',
   };
   const direction = targetX > shooterX ? 1 : -1;
   const shortBy = (targetX - outcome.impact.x) * direction;
@@ -937,6 +937,14 @@ export function ArtilleryBoard({ seed, mode, difficulty, mapSize, world, onStatu
   ), [displayTerrain]);
   const canOperate = !animated && !handoffPending && state.phase === 'aiming' && (mode !== 'bot' || state.current === 'left');
   const canFire = canOperate && !movement;
+  const rigX = state.tanks[state.current].x;
+  const driveBlockedAhead = artilleryMovedX(state, state.current, 1, 'drive', 8) === rigX;
+  const driveBlockedBehind = artilleryMovedX(state, state.current, -1, 'drive', 8) === rigX;
+  const mobilityHint = driveBlockedAhead && driveBlockedBehind && state.jetCharges[state.current] > 0
+    ? 'Trapped by terrain · jet out'
+    : driveBlockedAhead && state.jetCharges[state.current] > 0
+      ? 'Ridge ahead · jet clears it'
+      : 'Drive goes farther · jet clears walls';
   const animatedProjectiles = React.useMemo(() => animated?.outcome.projectiles.map((projectile) => {
     const longestPath = Math.max(...animated.outcome.projectiles.map((candidate) => candidate.path.length));
     const flightProgress = animated.phase === 'flight' ? animated.progress : animated.phase === 'impact' || animated.phase === 'settle' ? 1 : 0;
@@ -1001,12 +1009,17 @@ export function ArtilleryBoard({ seed, mode, difficulty, mapSize, world, onStatu
   const nextSortie = resultAccuracy < 50
     ? 'Next sortie: calibrate on the Practice Range.'
     : 'Next sortie: change weapons, world, or difficulty.';
-  const targetDistance = Math.round(Math.abs(state.tanks.left.x - state.tanks.right.x));
+  // Field instruments report a coarse estimate. Exact numeric matching would
+  // turn unobstructed shots into a solved target preview instead of ranging.
+  const targetDistance = Math.round(Math.abs(state.tanks.left.x - state.tanks.right.x) / 10) * 10;
   const nominalReach = artilleryNominalReach(state, { angle, power, payload });
+  const reachReadout = nominalReach.near === nominalReach.far
+    ? String(Math.round(nominalReach.near / 10) * 10)
+    : `${Math.round(nominalReach.near / 10) * 10}–${Math.round(nominalReach.far / 10) * 10}`;
   const angleGuidance = angle < 35 ? 'Low, flatter arc' : angle < 60 ? 'Balanced arc' : 'High arc for ridges';
   const powerGuidance = narrowScreen
     ? power < 45 ? 'Shorter range' : power < 75 ? 'Medium range' : 'Longer range'
-    : `Free air ~${nominalReach.near === nominalReach.far ? nominalReach.near : `${nominalReach.near}–${nominalReach.far}`}u · rival ${targetDistance}u`;
+    : `Open air ~${reachReadout}u · rival ~${targetDistance}u`;
   const windAssists = state.wind !== 0 && (state.current === 'left' ? state.wind > 0 : state.wind < 0);
   const windLabel = state.wind === 0
     ? 'Still air'
@@ -1021,7 +1034,8 @@ export function ArtilleryBoard({ seed, mode, difficulty, mapSize, world, onStatu
   const displayedGuard = (side: ArtillerySide) => {
     if (!resolutionMoment || !animated) return state.guard[side];
     if (side === animated.shooter) return Math.max(state.guard[side], animated.outcome.coverGranted * impactReveal);
-    return Math.max(0, state.guard[side] - animated.outcome.guardAbsorbed * impactReveal);
+    return animated.outcome.damage + animated.outcome.guardAbsorbed > 0
+      ? state.guard[side] * (1 - impactReveal) : state.guard[side];
   };
   const [cameraX, , cameraWidth] = cameraViewBox.split(' ').map(Number);
   const panoramaGroundY = (x: number) => 78 - terrainHeight(displayTerrain, x) * 0.9;
@@ -1101,7 +1115,9 @@ export function ArtilleryBoard({ seed, mode, difficulty, mapSize, world, onStatu
       onStatus(mobility === 'drive' ? 'Drive blocked by a ridge or sector limit. Try the jump jet.' : 'Jump jet reached the sector limit. Reverse thrust.');
       return false;
     }
-    if (mode === 'bot' && current.current === 'left') actions.current.push({ type: 'move', direction, mobility, thrust: applied.fuelSpent });
+    // Record the requested pulse. The rules derive the smaller actual fuel cost
+    // when a ridge or sector edge stops the rig early.
+    if (mode === 'bot' && current.current === 'left') actions.current.push({ type: 'move', direction, mobility, thrust });
     stateRef.current = applied.state;
     setState(applied.state);
     return true;
@@ -1426,8 +1442,8 @@ export function ArtilleryBoard({ seed, mode, difficulty, mapSize, world, onStatu
             <Button type="button" size="xs" variant="ghost" className="h-7 p-0 font-mono text-xs" aria-label="View Rig B" aria-pressed={mobileFocus === 'right'} onClick={() => setMobileFocus('right')}>B</Button>
           </div>
           <div className="flex items-center justify-between gap-1 border-t border-edge px-1 pt-1 font-mono text-xs uppercase text-ink-2" data-testid="artillery-rangefinder">
-            <span>Rival {targetDistance}u</span>
-            <span className="text-right">Air ~{nominalReach.near === nominalReach.far ? nominalReach.near : `${nominalReach.near}–${nominalReach.far}`}u</span>
+            <span>Rival ~{targetDistance}u</span>
+            <span className="text-right">Air ~{reachReadout}u</span>
           </div>
         </div>}
         {coachVisible && canFire && <div className="artillery-coach pointer-events-none absolute inset-x-0 bottom-2 z-10 px-8 text-center">
@@ -1670,7 +1686,7 @@ export function ArtilleryBoard({ seed, mode, difficulty, mapSize, world, onStatu
           <>
             <div className="grid grid-cols-[minmax(0,1fr)_3.6rem_3.6rem] gap-1.5 sm:hidden" data-testid="artillery-mobile-actions">
               <Button type="button" variant="ghost" className="min-h-14 min-w-0 border-2 border-viable-lo bg-viable-tint px-2 text-left text-viable-hi" disabled={!canFire} aria-label={`Launch selected ${PAYLOAD_META[payload].shortLabel}, angle ${angle} degrees, power ${power}`} onClick={() => animateShot({ angle, power, payload, move: 0, system: 'none' })}>
-                <span className="flex min-w-0 items-center gap-1.5"><PayloadGlyph payload={payload} className="h-7 w-8 shrink-0" /><span className="min-w-0 truncate font-legend text-body uppercase">Fire {PAYLOAD_META[payload].shortLabel}</span></span>
+                <span className="flex min-w-0 items-center gap-1.5"><PayloadGlyph payload={payload} className="h-7 w-8 shrink-0" /><span className="flex min-w-0 flex-col"><span className="truncate font-legend text-body uppercase">Fire {PAYLOAD_META[payload].shortLabel}</span><span className="truncate font-mono text-[10px] uppercase tracking-wide text-ink-2">{PAYLOAD_META[payload].rackHint}</span></span></span>
               </Button>
               <Button type="button" variant="ghost" className="min-h-14 border border-edge-strong bg-s0 p-0 font-mono text-[10px]" aria-label="Choose weapon" aria-expanded={mobilePanel === 'weapons'} onClick={() => setMobilePanel((current) => current === 'weapons' ? 'none' : 'weapons')}>LOAD</Button>
               <Button type="button" variant="ghost" className="min-h-14 border border-edge-strong bg-s0 p-0 font-mono text-[10px]" aria-label="Show mobility controls" aria-expanded={mobilePanel === 'mobility'} onClick={() => setMobilePanel((current) => current === 'mobility' ? 'none' : 'mobility')}>MOVE</Button>
@@ -1686,7 +1702,7 @@ export function ArtilleryBoard({ seed, mode, difficulty, mapSize, world, onStatu
               <div className={`cockpit-instrument cockpit-mobility order-first min-w-0 content-start gap-1.5 border border-edge-strong p-2 sm:order-none ${mobilePanel === 'mobility' ? 'grid' : 'hidden sm:grid'}`} role="group" aria-label="Mobility thrusters">
                 <span className="flex items-center justify-between gap-2 type-legend">
                   <span>Thrust</span>
-                  <span className="font-body text-[11px] normal-case tracking-normal text-ink-3">Drive crawls · jet leaps</span>
+                  <span className="font-body text-[11px] normal-case tracking-normal text-ink-3">{mobilityHint}</span>
                 </span>
                 {(['drive', 'jet'] as const).map((choice) => {
                   const fuel = choice === 'drive' ? state.traction[state.current] : state.jetCharges[state.current];

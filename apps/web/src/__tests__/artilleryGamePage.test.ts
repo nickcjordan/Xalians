@@ -199,7 +199,7 @@ describe('Crater Command aim feedback', () => {
     });
     expect(artilleryShotVerdict({ ...baseline, damage: 0, guardAbsorbed: 17 }, 50, 310).title).toBe('Cover held');
     expect(artilleryShotVerdict({ ...baseline, impact: { x: 54, y: 25 } }, 50, 310)).toEqual({
-      title: 'Muzzle blocked', detail: 'Nearby ridge intercepted the shot · drive or jump-jet clear',
+      title: 'Muzzle blocked', detail: 'Nearby ridge intercepted the shot · raise the barrel or jump-jet clear',
     });
     expect(artilleryShotVerdict({ ...baseline, damage: 69, directHit: true }, 50, 310, 46)).toEqual({
       title: '46 hull damage', detail: 'Direct hit · Rig disabled',
@@ -278,7 +278,7 @@ describe('Crater Command aim feedback', () => {
     }
     expect(screen.getByRole('button', { name: /Fire Comet/i })).toBeEnabled();
     expect(screen.getByText(/Gravity 0\.86× · wind 1\.0×/i)).toBeInTheDocument();
-    expect(screen.getByText(/Drive crawls · jet leaps/i)).toBeInTheDocument();
+    expect(screen.getByText(/Drive goes farther · jet clears walls/i)).toBeInTheDocument();
     expect(screen.getByText('Comet shell')).toBeInTheDocument();
     expect(screen.getByRole('img', { name: /Two mobile range rigs on Stonera/i })).toHaveAttribute('viewBox', '0 -38 360 148');
     expect(screen.getByRole('button', { name: /Enable artillery audio/i })).toBeInTheDocument();
@@ -302,7 +302,7 @@ describe('Crater Command aim feedback', () => {
       expect(screen.getByRole('region', { name: 'Artillery field' }).parentElement).toHaveAttribute('data-artillery-seed', 'mobile-command');
       expect(screen.getByRole('button', { name: /Launch selected Comet/i })).toBeEnabled();
       expect(screen.getByTestId('artillery-mobile-overview')).toBeInTheDocument();
-      expect(screen.getByTestId('artillery-rangefinder')).toHaveTextContent('Rival 246u');
+      expect(screen.getByTestId('artillery-rangefinder')).toHaveTextContent('Rival ~250u');
       expect(screen.getByTestId('artillery-nominal-reach-marker')).toBeInTheDocument();
       expect(screen.getByTestId('artillery-mobile-overview')).toHaveAttribute('viewBox', '0 0 440 78');
       expect(screen.getByRole('img', { name: /Two mobile range rigs/i }).getAttribute('viewBox')?.split(' ')[2]).not.toBe('440');

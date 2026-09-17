@@ -210,3 +210,85 @@ so plainly. A run should not claim completion just because tests pass.
   feel of a long physical press on a phone. Test that directly on hardware, then
   address any discontinuity between thrust and descent. Bot cover timing and
   limited-weapon value remain the next combat-decision bottlenecks.
+
+### 2026-09-17: terrain recovery, opponent tactics, weapon roles, and match pacing
+
+- Starting build: `6c1f770` on `origin/main`. Baseline direct play included a
+  six-shot Magmuth/Wide Practice Range run and an interrupted Endessa/Wide/
+  Standard bot duel. The Practice Range showed Comet at 45/90 doing 41 damage,
+  Razor at the same aim doing 24, Drill near the indicated range barely hurting
+  the rival, Starfall missing, Rampart granting 24 guard, and Sunspike finishing.
+  Endessa demonstrated how free-air distance could match the rival while an
+  intervening ridge still shielded the rig.
+- Diagnosis and hypothesis: drive spent a full thrust even if stopped by a
+  ridge; the jet covered more open ground than driving; Drill's buried center
+  weakened its own blast; Starfall and Razor had too few useful near-hit aim
+  combinations; the bot's cover response was tied to hull rather than threat;
+  and close Rampart placement could trap a low firing arc. Giving each weapon
+  a clearer tactical job, making movement cost match distance, and making
+  bot defense depend on actual danger should create more consequential turns.
+  We kept the artillery physics, limited stock, and terrain obstruction instead
+  of adding an exact landing preview.
+- Changes: driving now covers more clear ground per fuel, while the jet trades
+  efficiency for vaulting; blocked or edge-limited movement consumes only
+  proportional fuel. Drill shock reaches the rig above a buried impact, Razor
+  and Starfall have wider useful coverage, and Sunspike pierces half of guard.
+  Starfall's combined blast plus collapse is capped so wide coverage is not
+  also the biggest opening spike. Hull damage is paced separately from full
+  terrain deformation so cover and recovery have time to matter. Bot Rampart
+  requires a credible recent threat and can place cover at several distances;
+  bot movement avoids blocked retreats and does not discard active guard.
+  A miss no longer consumes guard. The guard display now animates to zero on a
+  hit, including a Sunspike hit that bypasses some protection.
+- Additional experience changes from play: the rangefinder now models muzzle
+  and rival elevation but reports coarse ten-unit estimates, so it helps with
+  the scale of a shot without revealing an exact landing. Mobile Fire shows
+  the armed weapon's role. The phone field is 50dvh, bringing Fire and both aim
+  controls into the first 390x844 viewport; the aiming hint sits below the
+  tactical range readout. Rampart text and blocked-muzzle feedback explain
+  that a high arc can clear a close friendly wall without spending fuel or
+  losing guard. The artillery route budget rose from 98/33 KB to 101/34 KB
+  raw/gzip for the additional game logic and cockpit copy.
+- Complete local phone play: Stonera/Wide/Rookie, 390x844, seed
+  `artillery:9deb8df0-351a-41d7-b9ed-657def5e4628`. Four player shots and
+  seven total shots ended 71-0, grade S, 75% accuracy, three weapon types.
+  The opening Comet dealt 57, Razor missed despite a broad nominal envelope,
+  the rival forged 24 guard, Sunspike pierced 12 and dealt 42, and a final
+  Comet dealt the remaining hull. This caught the guard display and miss
+  persistence defects; the fixes were subsequently replayed in rules tests.
+- Complete local desktop play: Krystos/Standard/Standard, seed
+  `artillery:b140544c-8fe8-4bd8-8483-848f13259574`. The first Comet dealt
+  43; the rival Starfall dealt 69 before the combined-damage cap. At 31 hull,
+  Rampart forged 24 guard. The bot's Sunspike missed, and cover correctly
+  persisted. A low Comet struck our nearby wall; raising the barrel to 67
+  degrees cleared it and dealt 40. The rival built its own Rampart; a later
+  Drill broke that defense and finished the match at 31-0 after 11 total
+  shots. The Starfall cap and revised wall guidance were applied after this
+  match, so its 69-point hit is regression evidence, not a post-fix result.
+- Deterministic before/after on 100 default fields: damaging aim-grid cells
+  changed from Comet 4.10%, Razor 5.79%, Drill 3.18%, Starfall 8.86%, Rampart
+  1.74%, and Sunspike 1.75% to 4.10%, 7.53%, 4.73%, 14.10%, 1.74%, and 1.75%.
+  This measures solution coverage, not human accuracy. Twelve seeded fields
+  in each of 12 planet/map combinations all retained at least one damaging
+  Comet solution. A deliberately coarse, no-trajectory-search player proxy
+  finished 28/30 Rookie, 26/30 Standard, and 10/30 Expert games after the
+  final changes, averaging 5.0, 5.2, and 3.8 player shots respectively.
+  Those are algorithmic probes, not human win rates; the lower Expert mean
+  includes early defeats. A fully optimized synthetic player still wins
+  99/99/66 percent, which shows how much precision changes the challenge.
+- Scorecard after local replay: agency/controls **3/4** (movement cost and
+  mobile aim are clearer, but a physical long press remains untested); combat
+  decisions **3/4** (wall, guard, pierce, high arc, and movement have real
+  tradeoffs); shot causality **3/4** (cover and damage now agree, but complex
+  multi-impact art should still be inspected on hardware); spatial readability
+  **3/4** (range and controls fit a phone); bot fairness **2/4** (the final
+  Starfall cap needs a post-release human rematch); mobile quality **3/4**;
+  cohesion/replay **2/4** (the cockpit and result still feel more utilitarian
+  than the artillery spectacle). No horizontal overflow was observed in the
+  390x844 local viewport.
+- Verification before release: full workspace suite passed (1,733 tests),
+  web and rules typechecks passed, the production build and revised artillery
+  bundle budget passed, and `git diff --check` found no whitespace errors.
+  Live smoke verification is recorded after deployment. Next bottleneck: watch the final
+  Standard bot pacing on production, then improve the tactile cockpit and
+  post-match reason to replay without adding cosmetic-only features.
