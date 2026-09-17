@@ -43,6 +43,7 @@ export type ArtilleryOutcome = {
   directHit: boolean;
   terrainShift: number;
   guardAbsorbed: number;
+  coverGranted: number;
   pressureMultiplier: number;
   outOfBounds: boolean;
   payload: ArtilleryPayload;
@@ -79,6 +80,7 @@ export const ARTILLERY_HEIGHT = 110;
 export const ARTILLERY_MAX_INTEGRITY = 100;
 export const ARTILLERY_MAX_DRIVE_FUEL = 100;
 export const ARTILLERY_MAX_JET_FUEL = 100;
+export const ARTILLERY_RAMPART_GUARD = 24;
 export const ARTILLERY_MAX_TRACTION = ARTILLERY_MAX_DRIVE_FUEL;
 export const ARTILLERY_MAX_JET_CHARGES = ARTILLERY_MAX_JET_FUEL;
 export const ARTILLERY_MOVE_DISTANCE = 22;
@@ -301,6 +303,9 @@ export function applyArtilleryMove(
   if (move === 0 || fuelSpent <= 0) return { state, distance: 0, fuelSpent: 0 };
   const destination = artilleryMovedX(state, state.current, move, mobility, fuelSpent);
   const distance = Math.round(Math.abs(destination - state.tanks[state.current].x) * 10) / 10;
+  // Pressing into an impassable ridge or sector edge is not a successful move.
+  // Do not silently drain fuel while the rig cannot advance.
+  if (distance === 0) return { state, distance: 0, fuelSpent: 0 };
   return {
     distance,
     fuelSpent,
@@ -318,6 +323,7 @@ export function applyArtilleryMove(
         ...state.jetCharges,
         [state.current]: Math.max(0, state.jetCharges[state.current] - (mobility === 'jet' ? fuelSpent : 0)),
       },
+      guard: { ...state.guard, [state.current]: 0 },
     },
   };
 }
@@ -426,6 +432,7 @@ export function simulateArtilleryShot(state: ArtilleryState, input: ArtillerySho
     directHit: projectiles.some((projectile) => projectile.directHit),
     terrainShift: 0,
     guardAbsorbed: 0,
+    coverGranted: 0,
     pressureMultiplier: 1,
     outOfBounds: projectiles.every((projectile) => projectile.outOfBounds),
     payload: shot.payload,
@@ -497,7 +504,12 @@ export function applyArtilleryShot(
   const rawDamage = Math.min(ARTILLERY_MAX_INTEGRITY, Math.round((simulated.blastDamage + fallDamage) * pressureMultiplier));
   const guardAbsorbed = Math.min(state.guard[targetSide], rawDamage);
   const damage = rawDamage - guardAbsorbed;
-  const outcome: ArtilleryOutcome = { ...simulated, damage, fallDamage, terrainShift, guardAbsorbed, pressureMultiplier };
+  const forwardCover = simulated.impact &&
+    (state.current === 'left' ? 1 : -1) * (simulated.impact.x - movedX);
+  const coverGranted = shot.payload === 'bloom' && forwardCover !== null && forwardCover >= 3 && forwardCover <= 42
+    ? ARTILLERY_RAMPART_GUARD
+    : 0;
+  const outcome: ArtilleryOutcome = { ...simulated, damage, fallDamage, terrainShift, guardAbsorbed, coverGranted, pressureMultiplier };
   if (damage) tanks[targetSide].integrity = Math.max(0, tanks[targetSide].integrity - damage);
   if (state.mode === 'range') tanks.right.integrity = ARTILLERY_MAX_INTEGRITY;
   const rangeFinished = state.mode === 'range' && state.turn + 1 >= 6;
@@ -530,7 +542,7 @@ export function applyArtilleryShot(
       },
       jetCharges: state.jetCharges,
       systemCharges: state.systemCharges,
-      guard: { ...state.guard, [targetSide]: 0 },
+      guard: { ...state.guard, [targetSide]: 0, [state.current]: Math.max(spentTraction ? 0 : state.guard[state.current], coverGranted) },
       current: winner || state.mode === 'range' || state.mode === 'challenge' ? state.current : targetSide,
       wind: windChanges ? Math.round((nextWind.value * 2 - 1) * 8) : state.wind,
       condition: state.condition,
@@ -548,9 +560,9 @@ export function chooseArtilleryBotShot(state: ArtilleryState): ArtilleryShot {
   if (state.current !== 'right') throw new Error('The bot only controls the right tank.');
   const draw = nextRandom(state.rngState ^ (state.turn + 1));
   const profile = {
-    rookie: { angleError: 3.4, powerError: 8, specialChance: 0.2 },
-    standard: { angleError: 1.2, powerError: 3.2, specialChance: 0.48 },
-    expert: { angleError: 0.55, powerError: 1.4, specialChance: 0.78 },
+    rookie: { angleError: 4.2, powerError: 9, specialChance: 0.18 },
+    standard: { angleError: 2.3, powerError: 5.8, specialChance: 0.36 },
+    expert: { angleError: 0.65, powerError: 1.6, specialChance: 0.72 },
   }[state.difficulty];
   const threatened = state.lastImpact && Math.abs(state.lastImpact.x - state.tanks.right.x) <= 14;
   const move: ArtilleryMove = threatened && state.traction.right > 0
@@ -561,7 +573,7 @@ export function chooseArtilleryBotShot(state: ArtilleryState): ArtilleryShot {
   const fortifying = !!threatened && state.tanks.right.integrity <= 60 && state.payloads.right.bloom > 0;
   const payload: ArtilleryPayload = fortifying
     ? 'bloom'
-    : usesSpecial && miss <= 5 && state.payloads.right.lance > 0
+    : usesSpecial && miss <= 5 && state.turn >= (state.difficulty === 'expert' ? 4 : 8) && state.payloads.right.lance > 0
     ? 'lance'
     : usesSpecial && state.payloads.right.barb > 0
       ? 'barb'
@@ -581,10 +593,12 @@ export function chooseArtilleryBotShot(state: ArtilleryState): ArtilleryShot {
   }
   const fallback = state.botPrevious?.shot ?? { angle: 44, power: 70 };
   const planned = solution && solution.score > 0 ? solution : fallback;
-  const errorSign = draw.value < 0.5 ? -1 : 1;
+  const aimDraw = nextRandom(draw.state);
+  // Defensive construction should be deliberate even when offensive aim is imperfect.
+  const calibration = fortifying ? 0.3 : state.botPrevious ? 1 : state.difficulty === 'expert' ? 1 : 1.45;
   return normalizedShot({
-    angle: planned.angle + errorSign * profile.angleError,
-    power: planned.power + (0.5 - draw.value) * 2 * profile.powerError,
+    angle: planned.angle + (draw.value * 2 - 1) * profile.angleError * calibration,
+    power: planned.power + (aimDraw.value * 2 - 1) * profile.powerError * calibration,
     payload,
     move,
     system: 'none',
