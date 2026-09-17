@@ -1,64 +1,45 @@
-# Generation and economy: open threads
+# Platform economy and lifecycle: handoff brief
 
-A handoff brief, written 2026-09-11 so a fresh agent can continue the design conversation with Nick without rereading the whole repo. It is a companion to `docs/design/xalian-generation-system.md`, which is the design of record. Read that first; this file only carries the state of the conversation, the rulings, and the questions still open.
+Updated 2026-09-17. This brief is the entry point for a new agent and needs no prior conversation. **Read this file first, then `xalian-generation-system.md`**, the current platform design of record. For immutable creature genesis and lore, use the sources named in that document. Older platform-vision and generation proposals contain superseded ideas; do not treat their old "ratified" labels as newer decisions.
 
-## Read these first
+## What is settled in direction
 
-- `docs/design/xalian-generation-system.md`, the proposal itself, revised three times on 2026-09-11. Not ratified.
-- `docs/design/xalians-platform-vision-and-economy.md`, the ratified platform vision, including the funnel and the token economy direction. Two of its ratified lines have been reopened; see below.
-- `docs/design/xalian-creature-system-redesign.md`, the ratified creature record.
-- `packages/content/json/planets.json`, the fourteen planet histories, which are where every mechanism in this design gets its lore.
-- `CLAUDE.md`, sections "Creature system: levers, not stone" and "Lore and world canon".
+- The creature has immutable generated genesis, portable completed game-specific development and verified history, owner-specific relationship and unfinished training state, and separate account economy state. No universal XP, levels, power scalar, or cross-game development mapping at launch. Development is a bounded sidegrade that remains active when a creature changes owners; unfinished or ready-but-uncommitted work does not transfer.
+- Games are free to remain local prototypes. Do not extract engines or impose replay, receipt, or economy integration while Nick is iterating gameplay. Only an explicit Nick-requested cutover begins that work. A reward-bearing version must then deterministically replay server-side from a pinned snapshot, seed, rules/content version, and commands. The game emits registered facts, never reward amounts. Completed losses may reward; abandoned or unresolved sessions do not. Ordinary game results cannot involuntarily change permanent creature custody or capability.
+- One unique, account-bound Scrambler Token is earned through visible qualification, not bought with credits or randomly dropped per match. The first guided qualification gives one standard token in total, with effort broadly comparable to later renewable cycles. A token's hidden entropy is fixed at issuance; planet and generation policy are selected at redemption. It can be saved indefinitely. The qualified free path must work even if only one game is integrated.
+- Credits are a separate, fungible, potentially purchasable currency. One balance is shown, with source-aware ledger entries internally. Purchased credits may pay the modest Generator activation fee or optional access and cosmetics, but cannot directly buy qualification credit, bypass accomplishments, buy a named species, strengthen creatures, unlock attunement, or create an exclusive or fastest progress path. Paid arcade sessions may give real but modest, transparent, capped progress through verified play. Repetition controls apply to reward policy, not factual receipts. Credits and tokens never transfer between players.
+- Generation consumes one token and a predictable credit fee atomically. The account chooses an attuned planet; that planet determines the native pool and primary element; species are initially selected uniformly. There is no hidden holdings-based duplicate tilt, paid reroll, species targeting, token grade ladder, or Generator mode in the initial policy. All canonical planets are visible, but Generator attunement opens through permanent, free, staged discovery routes. Later worlds are alternatives, not power upgrades.
+- Beginners receive fully owned, common-band starter creatures, provisionally choosing three exact individuals from one fixed slate of five. Any permitted trio must work for the introduction. An atomic transaction cannot leave an account below its protected playable-roster floor, provisionally three. This replaces a per-starter unlock counter. Core creature storage is unlimited and never sold.
+- Player trades are direct creature-for-creature exchanges, including bundles, with no gifts or currency sweeteners initially. Public listings do not lock creatures. An owner-controlled formal offer holds its offered creatures, stabilizing completed development until the atomic, final trade. Both parties approve the exact bundle. Completed development and verified history transfer; nicknames, relationship state, unfinished training, and account cosmetics do not. No broad creature-revision system is prescribed.
+- Release is a custody transition to a creature's homeworld in a personal reserve inside the shared authored galaxy, not deletion. The player can select one currently open permanent project contribution before release or release as a reserve-only resident. Old residents cannot become fresh permanent contributions to future projects. Restoration consists of finishable authored composition projects with multiple valid solutions. It is separate from creature development. Some milestones offer alternate routes to planet attunement, never the only route. NPC surrender instead gives a modest fixed credit payout, with no token or restoration progress. True destruction is exceptional, not an ordinary resource sink.
+- Internal creature history persists; public provenance is privacy-aware. Closed accounts leave creatures in dormant administrative custody rather than releasing or deleting them. Account-bound purchases do not travel on creatures. Multi-account abuse is reduced through economy rules and verified play, with separate account-integrity review if needed.
 
-## The shape of the system, in short
+## Provisional or explicitly deferred
 
-Canon splits generation into two machines, and that split is the whole design. Kozrak's Mercurius Machine prints Scrambler Tokens, each holding a random encrypted genome, so a token is a seed. A planet-bound Xalian Generator expresses a genome as life adapted to its own world, so the Generator decides the species pool and the element. A player never buys a creature. A player buys a genome and chooses where to run it.
+- Three-of-five starters, floor three, the initial accessible planet set, and exact campaign path remain subject to first-game playtests.
+- The actual Scrambler accomplishment catalog, thresholds, credit amounts, reward windows, and game development entries wait for integrated game evidence. A cycle cannot demand games that are not available for free at the time.
+- Limited event missions may later add authored projects or alternate access, without exclusive competitive power or mandatory event-only access.
+- Reversible reserve assignments are optional and may be omitted if they become chores or UI burden. If built, moving a creature loses its previous active benefit; assignments never substitute for new permanent project contributions.
+- Generator modes, higher token grades, site-specific generation, explicit duplicate protection, mechanical squad cohesion, universal environmental conditioning, development-aware restoration, and transferable paid items are deferred. Do not build their scaffolding simply because an older proposal described them.
+- Paid-credit storefront, refund, legal, and retention details need dedicated review before monetization launches.
 
-Rarity is a stack of conditions rather than a number on a species: which Generators you can reach, what mode that Generator is in, which site you run at, how depleted your own holdings are, and how many attempts you can afford. No species record ever gains a rarity field.
+## What is implemented today, not the future rule
 
-Development never raises raw attributes. It changes what a creature can do, where it fits, and what it is worth to another player.
+The current signed-in generation API gives owned creatures for free and can accept an exact species. Current release deletes a registry record. The Arcade verifies submitted wins and currently turns accumulated numeric credits into tokens. No general trade, starter draft, attunement, restoration reserve, or game-specific development platform exists. These mismatches are expected until explicit cutover and must not be mistaken for approved policy. Nick is the only current user and authorized clearing in-scope prototype creature and economy records **when needed at cutover**, not immediately. Identify exact data before any reset; do not touch unrelated code, content, or lore.
 
-## Settled so far
+## How to work from here
 
-These came from Nick directly on 2026-09-10 and 2026-09-11. Treat them as current rulings, subject to the levers-not-stone rule.
+1. Read `xalian-generation-system.md` after this brief. Use it as the current design of record for platform lifecycle, economy, generation targeting, and game integration. Use ratified creature and lore sources for immutable genesis and canon.
+2. Distinguish agreed direction, provisional defaults, deferred possibilities, and implemented behavior in every recommendation. Earlier documents are historical evidence, not a vote that overrides Nick's newer rulings.
+3. In discussion, bring one consequential design question at a time. Explain a concrete tension and give a recommendation. Explicit Nick agreement changes the working design; a speculative suggestion does not.
+4. During gameplay work, preserve local iteration. Never extract or rewrite a game's engine for the platform until Nick explicitly asks for cutover. If an observed game creates friction with a platform rule, report the example and smallest proposed adjustment.
+5. Keep design changes in repo docs, with this brief and the design of record reconciled together. Do not invent exact registries or percentages before the corresponding game or restoration content exists. American English; no em dash in new prose, docs, code comments, commits, or pull request text.
+6. Ground mechanics in the existing planet and Generator lore. Preserve lore and immutable genesis authority while updating platform rules.
 
-1. **No species is intentionally rare.** Species are content, not loot. All thirty should be reachable by every player. A per-species rarity or weight field is off the table.
-2. **The ratified "common-tier species weights only" clause for the free lever is unimplementable and is withdrawn.** The showroom constrains the quality of the expression, not which species appears. That shipped in PR #209 as a generator profile behind a visible toggle, which is exploratory rather than enforcement.
-3. **The ratified premium tier that let a player buy a named species is withdrawn.** Nick's reason: a collection loses its spine when the creature you want is a purchase, the way you cannot buy a Charizard.
-4. **Paying never buys power.** This one is older and still stands. Price buys constraint over the roll and nothing else.
-5. **Duplicates are never fused into one stronger creature.** It contradicts the premise that each creature is a unique individual a player owns and carries between games.
-6. **Trading unwanted creatures to Kozrak as arena fodder, in exchange for a better token, is Nick's idea and he likes it.** It must be a net loss in raw tokens or it becomes a currency press.
-7. **Acclimation is demoted.** Drifting a creature's tolerance toward a world it survives on reads as a cheat code, because tolerance is stated as physiology.
-8. **Release is a token faucet, not a sink.** The sinks are generation, development, Kozrak's cut as a transaction tax, arena stakes, and vanity.
+## Next design and implementation questions
 
-## Open threads
-
-Each of these needs Nick, and each has a current recommendation in the proposal doc. Do not treat a recommendation as settled.
-
-**1. Which development axis, and whether more than one.** The proposal offers three that avoid experience bars and evolution: specialization by use, where a creature trades breadth for depth at constant total force; squad cohesion, which lives on the group and cannot be bought or transferred; and provenance, where the record accrues history and nothing about capability changes. Nick asked specifically for something that adds depth to squad building. Dormant signature abilities that awaken through play are a fourth option already in the proposal and would change current behavior, since the generator grants signatures at birth today.
-
-**2. Whether world restoration is per player or shared.** The proposal recommends personal restoration inside an authored galaxy, and section 5b argues why a single shared meter fails at both small and large populations. Nick's instinct was the same, that a combined effort feels weird, but he has not ruled. This decision shapes the product more than any other item here.
-
-**3. What a higher-grade token actually does.** The proposal suggests a spread token, where the Generator prints several candidates and the player keeps one, and an attuned token, which forces a Generator into an uncommon mode. Neither names a species. The starter spread in the ratified funnel is precedent for the first.
-
-**4. Whether Generator modes are global or per player.** Global makes the world feel shared and lets the fiction move everyone at once. Per player stops one group of players from deciding what another group can collect. A middle reading is slow global state with per-player standing deciding what you can reach inside it.
-
-**5. How release and the Kozrak levy are priced against each other.** The proposal wants release to pay by how much the world needs the creature, and the levy to pay better but cost standing and advance nothing. The exchange rates are unset.
-
-**6. What the restoration tilt's numbers are.** The tilt weights a player's draws toward the species that player holds fewest of, which is this design's version of a pity system. The halving factor and the floor are unset.
-
-## Also open, filed separately
-
-- Issue #197, the constrained showroom profile. Shipped behind a toggle; real enforcement and the species-weight half remain open there.
-- Issue #210, the word "showroom" now naming both the unowned state of a record and the constrained generator profile.
-
-## How to work on this
-
-- Every ruling in the creature system is a tuned lever, not a law. Report friction in the moment with the concrete case and the smallest fix. New evidence reopens a ruling. Taste does not.
-- Discussion is not consent. Only an explicit sign-off from Nick ratifies anything. Re-present pending items after a tangent.
-- Apply your recommendation rather than leaving an open question hanging, record it, and report it as overridable.
-- Ask design questions in prose, one at a time, with full context. No multiple-choice menus.
-- American English, and never an em-dash, in prose, docs, code comments, commit messages, and pull request text.
-- Every mechanism must come from the existing lore rather than being bolted onto it. The fourteen planet histories are long and specific, and almost every mechanism in this design was already sitting in them.
-- Design docs live in this repo under `docs/design/`, flat. Never write a design or plan file outside the repo.
-- Present content inline in chat rather than telling Nick to open a file.
+- Which integrated game will be the first permanent reward source, and what natural result facts does it already produce after gameplay stabilizes?
+- What free first-cycle and repeat-cycle qualifications are complete and interesting with that actual game set?
+- Which starting worlds and starter slate make every chosen trio viable without premium rolls?
+- What are the first authored restoration projects and visible permanent rewards, and is the optional assignment layer worth building at all?
+- What credit fees and payouts feel fair before any purchase mechanism is considered?
