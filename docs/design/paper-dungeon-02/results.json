@@ -1,0 +1,434 @@
+{
+  "note": "Scripted paper fixture; not human playtest or final balance. Seeds 1..200; three policies, same healer-free squad. Teaching demonstration policy knows the published behavior families but never reads chosen hidden orders.",
+  "planned": {
+    "runs": 200,
+    "wins": 200,
+    "knockoutRuns": 2,
+    "exhaustionEvents": 0,
+    "unfinishedAtRoundLimit": 0
+  },
+  "noControl": {
+    "runs": 200,
+    "wins": 200,
+    "knockoutRuns": 53,
+    "exhaustionEvents": 0,
+    "unfinishedAtRoundLimit": 0
+  },
+  "spam": {
+    "runs": 200,
+    "wins": 175,
+    "knockoutRuns": 153,
+    "exhaustionEvents": 0,
+    "unfinishedAtRoundLimit": 2
+  },
+  "sample": {
+    "seed": 1,
+    "mode": "planned",
+    "victory": true,
+    "revivalRemaining": 1,
+    "summary": [
+      {
+        "room": 1,
+        "rounds": 2,
+        "won": true,
+        "hp": {
+          "H": 56,
+          "C": 56,
+          "A": 31,
+          "G": 64
+        }
+      },
+      {
+        "room": 2,
+        "rounds": 2,
+        "won": true,
+        "hp": {
+          "H": 50,
+          "A": 31,
+          "G": 64,
+          "C": 53
+        }
+      },
+      {
+        "room": 3,
+        "rounds": 2,
+        "won": true,
+        "hp": {
+          "C": 53,
+          "H": 50,
+          "A": 31,
+          "G": 57
+        }
+      },
+      {
+        "room": 4,
+        "rounds": 5,
+        "won": true,
+        "hp": {
+          "G": 54,
+          "C": 38,
+          "A": 38,
+          "H": 46
+        }
+      }
+    ],
+    "metrics": {
+      "blocked": 4,
+      "retargets": 8,
+      "exhausted": 0,
+      "knockouts": 0,
+      "chargeReleased": 1,
+      "bossCharges": 2,
+      "bossReleases": 1,
+      "bossInterrupts": 1
+    }
+  },
+  "adverse": {
+    "seed": 32,
+    "mode": "planned",
+    "victory": true,
+    "revivalRemaining": 1,
+    "summary": [
+      {
+        "room": 1,
+        "rounds": 2,
+        "won": true,
+        "hp": {
+          "C": 56,
+          "A": 38,
+          "H": 56,
+          "G": 57
+        }
+      },
+      {
+        "room": 2,
+        "rounds": 2,
+        "won": true,
+        "hp": {
+          "C": 56,
+          "H": 56,
+          "G": 37,
+          "A": 32
+        }
+      },
+      {
+        "room": 3,
+        "rounds": 2,
+        "won": true,
+        "hp": {
+          "H": 56,
+          "C": 49,
+          "A": 32,
+          "G": 37
+        }
+      },
+      {
+        "room": 4,
+        "rounds": 6,
+        "won": true,
+        "hp": {
+          "C": 56,
+          "G": 0,
+          "A": 35,
+          "H": 56
+        }
+      }
+    ],
+    "metrics": {
+      "blocked": 4,
+      "retargets": 6,
+      "exhausted": 0,
+      "knockouts": 1,
+      "chargeReleased": 1,
+      "bossCharges": 2,
+      "bossReleases": 1,
+      "bossInterrupts": 1
+    }
+  },
+  "templates": {
+    "graviclaw": {
+      "hp": 64,
+      "speed": 40,
+      "moves": [
+        {
+          "name": "Pincer strike",
+          "damage": 8,
+          "range": "melee",
+          "kind": "hit"
+        },
+        {
+          "name": "Claw compression",
+          "damage": 10,
+          "range": "melee",
+          "kind": "hit"
+        },
+        {
+          "name": "Shell shove",
+          "damage": 6,
+          "range": "melee",
+          "kind": "hit"
+        },
+        {
+          "name": "Point of No Return",
+          "damage": 0,
+          "range": "ranged",
+          "kind": "snare"
+        }
+      ],
+      "element": "dark"
+    },
+    "avilily": {
+      "hp": 38,
+      "speed": 80,
+      "moves": [
+        {
+          "name": "Beak strike",
+          "damage": 6,
+          "range": "melee",
+          "kind": "hit"
+        },
+        {
+          "name": "Talon rake",
+          "damage": 8,
+          "range": "melee",
+          "kind": "hit"
+        },
+        {
+          "name": "Saliva spray",
+          "damage": 5,
+          "range": "ranged",
+          "kind": "hit"
+        },
+        {
+          "name": "Blossoming Ambuscade",
+          "damage": 0,
+          "range": "melee",
+          "kind": "snare"
+        }
+      ],
+      "element": "plant"
+    },
+    "crystorn": {
+      "hp": 56,
+      "speed": 35,
+      "moves": [
+        {
+          "name": "Horn beam",
+          "damage": 8,
+          "range": "ranged",
+          "kind": "hit"
+        },
+        {
+          "name": "Fist strike",
+          "damage": 7,
+          "range": "melee",
+          "kind": "hit"
+        },
+        {
+          "name": "Light spray",
+          "damage": 6,
+          "range": "ranged",
+          "kind": "hit"
+        },
+        {
+          "name": "Coronet of the Twin Suns",
+          "damage": 16,
+          "range": "ranged",
+          "kind": "hit"
+        }
+      ],
+      "element": "light"
+    },
+    "hippochamp": {
+      "hp": 56,
+      "speed": 55,
+      "moves": [
+        {
+          "name": "Water stream",
+          "damage": 8,
+          "range": "ranged",
+          "kind": "hit"
+        },
+        {
+          "name": "Hoof strike",
+          "damage": 7,
+          "range": "melee",
+          "kind": "hit"
+        },
+        {
+          "name": "Tail lash",
+          "damage": 6,
+          "range": "melee",
+          "kind": "hit"
+        },
+        {
+          "name": "Hydrostatic Lance",
+          "damage": 16,
+          "range": "ranged",
+          "kind": "hit"
+        }
+      ],
+      "element": "water"
+    },
+    "crawler": {
+      "hp": 22,
+      "speed": 60,
+      "element": "sand",
+      "enemy": true,
+      "moves": [
+        {
+          "name": "Tool strike",
+          "damage": 7,
+          "range": "melee",
+          "kind": "hit"
+        }
+      ]
+    },
+    "drone": {
+      "hp": 24,
+      "speed": 50,
+      "element": "light",
+      "enemy": true,
+      "moves": [
+        {
+          "name": "Security beam",
+          "damage": 7,
+          "range": "ranged",
+          "kind": "hit"
+        }
+      ]
+    },
+    "shield": {
+      "hp": 30,
+      "speed": 45,
+      "element": "sand",
+      "enemy": true,
+      "moves": [
+        {
+          "name": "Ram",
+          "damage": 6,
+          "range": "melee",
+          "kind": "hit"
+        },
+        {
+          "name": "Shield cycle",
+          "damage": 0,
+          "range": "self",
+          "kind": "ward"
+        }
+      ]
+    },
+    "discharge": {
+      "hp": 48,
+      "speed": 65,
+      "element": "electric",
+      "enemy": true,
+      "moves": [
+        {
+          "name": "Contact strike",
+          "damage": 7,
+          "range": "melee",
+          "kind": "hit"
+        },
+        {
+          "name": "Capacitor rush",
+          "damage": 16,
+          "range": "melee",
+          "kind": "charge"
+        }
+      ]
+    },
+    "guardian": {
+      "hp": 110,
+      "speed": 65,
+      "element": "electric",
+      "enemy": true,
+      "moves": [
+        {
+          "name": "Clamp strike",
+          "damage": 7,
+          "range": "melee",
+          "kind": "hit"
+        },
+        {
+          "name": "Core surge",
+          "damage": 18,
+          "range": "melee",
+          "kind": "charge"
+        }
+      ]
+    }
+  },
+  "rooms": [
+    {
+      "name": "1. Service entrance",
+      "enemies": [
+        [
+          "crawler",
+          "M1",
+          22
+        ],
+        [
+          "crawler",
+          "M2",
+          22
+        ]
+      ]
+    },
+    {
+      "name": "2. Security checkpoint",
+      "enemies": [
+        [
+          "crawler",
+          "M3",
+          22
+        ],
+        [
+          "drone",
+          "D2",
+          24
+        ],
+        [
+          "shield",
+          "S2",
+          30
+        ]
+      ]
+    },
+    {
+      "name": "3. Power chamber",
+      "enemies": [
+        [
+          "discharge",
+          "V3",
+          48
+        ],
+        [
+          "crawler",
+          "M4",
+          22
+        ]
+      ]
+    },
+    {
+      "name": "4. Control chamber",
+      "enemies": [
+        [
+          "guardian",
+          "B4",
+          110
+        ],
+        [
+          "crawler",
+          "M5",
+          22
+        ],
+        [
+          "drone",
+          "D4",
+          24
+        ]
+      ]
+    }
+  ]
+}

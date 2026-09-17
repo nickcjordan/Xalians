@@ -1,0 +1,2 @@
+# Artifact fingerprints cover exact bytes on every checkout platform.
+*/generator.mjs -text

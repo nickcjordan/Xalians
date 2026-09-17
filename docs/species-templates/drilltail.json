@@ -1,4 +1,5 @@
 {
+  "schemaVersion": "4.0.0",
   "key": "drilltail",
   "name": "Drilltail",
   "nameOrigin": "A direct compound naming the drill at the end of its tail.",
@@ -176,15 +177,213 @@
     "tail",
     "pincers"
   ],
-  "signatureAbility": {
-    "name": "Wildcatter Auger",
-    "instrument": "tail",
-    "action": "strike",
-    "medium": "sand",
-    "intensity": [
-      30,
-      80
+  "signature": {
+    "kind": "action",
+    "key": "drilltail-defining"
+  },
+  "actions": [
+    {
+      "key": "drilltail-defining",
+      "activation": {
+        "operation": "discrete"
+      },
+      "delivery": {
+        "mode": "contact",
+        "approach": "stationary"
+      },
+      "targeting": {
+        "relation": "other",
+        "subjects": [
+          "creature",
+          "object"
+        ]
+      },
+      "effects": [
+        {
+          "kind": "harm",
+          "recipient": "target",
+          "mechanism": "impact",
+          "emphasis": "primary",
+          "onset": "instant",
+          "persistence": "resolved",
+          "likelihood": "consistent"
+        }
+      ],
+      "description": "The Drilltail runs a shaft beneath its quarry and comes up under it drill first.",
+      "name": "Wildcatter Auger",
+      "instrument": "tail",
+      "medium": "sand",
+      "intensity": [
+        30,
+        80
+      ],
+      "timing": {
+        "preparation": "brief",
+        "recovery": "brief"
+      },
+      "spatial": {
+        "selectivity": "selective",
+        "range": "contact"
+      }
+    }
+  ],
+  "passives": [],
+  "actionPool": {
+    "count": [
+      2,
+      3
     ],
-    "description": "The Drilltail runs a shaft beneath its quarry and comes up under it drill first."
+    "sets": [
+      {
+        "key": "default",
+        "weight": 1,
+        "options": [
+          {
+            "key": "tail-strike",
+            "pattern": "strike",
+            "instrument": "tail",
+            "media": [
+              "sand",
+              "water",
+              "rock",
+              "ghost"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "tail-lash",
+            "pattern": "lash",
+            "instrument": "tail",
+            "media": [
+              "sand",
+              "water",
+              "rock",
+              "ghost"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "tail-crush",
+            "pattern": "crush",
+            "instrument": "tail",
+            "media": [
+              "sand",
+              "water",
+              "rock",
+              "ghost"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "tail-shove",
+            "pattern": "shove",
+            "instrument": "tail",
+            "media": [
+              "sand",
+              "water",
+              "rock",
+              "ghost"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "tail-snare",
+            "pattern": "snare",
+            "instrument": "tail",
+            "media": [
+              "sand",
+              "water",
+              "rock",
+              "ghost"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "tail-hurl",
+            "pattern": "hurl",
+            "instrument": "tail",
+            "media": [
+              "sand",
+              "water",
+              "rock",
+              "ghost"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "pincers-strike",
+            "pattern": "strike",
+            "instrument": "pincers",
+            "media": [
+              "sand",
+              "water",
+              "rock",
+              "ghost"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "pincers-crush",
+            "pattern": "crush",
+            "instrument": "pincers",
+            "media": [
+              "sand",
+              "water",
+              "rock",
+              "ghost"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "pincers-snare",
+            "pattern": "snare",
+            "instrument": "pincers",
+            "media": [
+              "sand",
+              "water",
+              "rock",
+              "ghost"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "pincers-shove",
+            "pattern": "shove",
+            "instrument": "pincers",
+            "media": [
+              "sand",
+              "water",
+              "rock",
+              "ghost"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "pincers-ward",
+            "pattern": "ward",
+            "instrument": "pincers",
+            "media": [
+              "sand",
+              "water",
+              "rock",
+              "ghost"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "pincers-hurl",
+            "pattern": "hurl",
+            "instrument": "pincers",
+            "media": [
+              "sand",
+              "water",
+              "rock",
+              "ghost"
+            ],
+            "weight": 1
+          }
+        ]
+      }
+    ]
   }
 }

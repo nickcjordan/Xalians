@@ -1,3 +1,6 @@
+import patternData from '@xalians/content/abilityPatterns.json';
+import { AbilityPatternSchema, validateAbilityPool } from '@xalians/content/schema';
+const abilityPatterns = new Map(patternData.patterns.map(p => { const parsed = AbilityPatternSchema.parse(p); return [parsed.key, parsed] as const; }));
 /*
 	The Xalian generator: expands a seed into a full creature record from a ratified
 	species template.
@@ -36,7 +39,6 @@ import {
 	HEFT_BANDS,
 	HEFT_MATCH_WEIGHTS,
 	SECONDARY_MEDIUM_SHARE,
-	CONDUIT_ACTIONS_BY_MEDIUM,
 	TEMPERAMENT_ATTRIBUTE_PULL,
 	TEMPERAMENT_JITTER,
 	TEMPERAMENT_TILTS,
@@ -67,7 +69,7 @@ import type {
 type RecordArchetype = XalianRecord['archetype'];
 type RecordElement = XalianRecord['element'];
 type RecordPhysiology = XalianRecord['physiology'];
-type RecordAbility = XalianRecord['abilities'][number];
+type RecordAbility = XalianRecord['actions'][number];
 
 // ---------------------------------------------------------------------------
 // helpers
@@ -354,24 +356,6 @@ function rollFinish(rng: Rng, profile: GeneratorProfile): Finish {
 	return profile === 'showroom' ? 'standard' : result;
 }
 
-function instrumentRow(registries: Registries, instrument: InstrumentKey): ActionKey[] {
-	const table = registries.instrumentActions || {};
-	return Array.isArray(table[instrument]) ? table[instrument] : [];
-}
-
-function allowedActions(registries: Registries, template: SpeciesTemplate, instrument: InstrumentKey, medium: ElementKey): ActionKey[] {
-	const row = instrumentRow(registries, instrument).slice();
-	const conduits = template.conduits || {};
-	if (conduits[instrument] === medium) {
-		(CONDUIT_ACTIONS_BY_MEDIUM[medium] || []).forEach((a) => {
-			if (!row.includes(a)) {
-				row.push(a);
-			}
-		});
-	}
-	return row;
-}
-
 /*
 	Catalog entry shape (scripts/bundleAbilityCatalog.js): a bare name when the entry is
 	untagged and of ordinary heft, [name, tags] when it is tagged and of ordinary heft,
@@ -417,72 +401,73 @@ function drawName(rng: Rng, entries: CatalogEntry[], wanted: number): string {
 	})) as string;
 }
 
+// Compiled once for frozen canonical templates. Custom editable templates are checked
+// afresh; neither path evaluates a completed creature or retries invalid draws.
+const preparedPools = new WeakMap<SpeciesTemplate, WeakMap<AbilityCatalog, ReturnType<typeof compilePool>>>();
+function compilePool(template: SpeciesTemplate, catalog: AbilityCatalog) {
+  validateAbilityPool(template.actionPool, abilityPatterns, template.instruments, [template.element, ...ELEMENT_ADJACENCY[template.element]], [...template.actions,...template.passives].find(a=>a.key===template.signature.key)!);
+  const guaranteed = [...template.actions, ...template.passives];
+  const reserved = new Set(guaranteed.map(a => a.name.toLowerCase()));
+  for (const capability of guaranteed) {
+    if (!template.instruments.includes(capability.instrument)) throw new Error('Undeclared guaranteed instrument');
+    if (![template.element, ...ELEMENT_ADJACENCY[template.element]].includes(capability.medium)) throw new Error('Unsupported guaranteed medium');
+  }
+  return template.actionPool.sets.map(set => ({ ...set, options: set.options.map(option => {
+    const pattern = abilityPatterns.get(option.pattern)!;
+    const variants = option.media.map(medium => {
+      const key = template.key + '-standard-' + set.key + '-' + option.key + '-' + medium;
+      if (guaranteed.some(a => a.key === key)) throw new Error('Standard option key collides with guaranteed capability');
+      const names = nameCandidates(catalog, medium, pattern.nameFamily, option.instrument, reserved);
+      if (new Set([...names.owned, ...names.neutral].map(e => entryName(e).toLowerCase())).size < template.actionPool.count[1]) {
+        throw new Error('Insufficient distinct names for ability option: ' + template.key + '/' + option.key + '/' + medium);
+      }
+      return { medium, names };
+    });
+    return { ...option, pattern, variants };
+  }) }));
+}
+export function prepareAbilityPool(template: SpeciesTemplate, catalog: AbilityCatalog) {
+  if (!Object.isFrozen(template) || !Object.isFrozen(catalog)) return compilePool(template, catalog);
+  let byCatalog = preparedPools.get(template);
+  if (!byCatalog) { byCatalog = new WeakMap(); preparedPools.set(template, byCatalog); }
+  let compiled = byCatalog.get(catalog);
+  if (!compiled) { compiled = compilePool(template, catalog); byCatalog.set(catalog, compiled); }
+  return compiled;
+}
 function rollAbilities(
-	rng: Rng,
-	template: SpeciesTemplate,
-	element: RecordElement,
-	secondary: ElementKey | null,
-	registries: Registries,
-	catalog: AbilityCatalog,
+  rng: Rng, template: SpeciesTemplate, element: RecordElement,
+  secondary: ElementKey | null, registries: Registries, catalog: AbilityCatalog,
 ): RecordAbility[] {
-	const signatureSrc = template.signatureAbility || ({} as SpeciesTemplate['signatureAbility']);
-	const sigBand = band(signatureSrc.intensity, [60, 90]);
-	const signature: RecordAbility = {
-		name: signatureSrc.name || 'Signature',
-		signature: true,
-		instrument: signatureSrc.instrument || 'body',
-		action: signatureSrc.action || 'strike',
-		medium: signatureSrc.medium || element.primary,
-		intensity: rollInBand(rng, sigBand),
-	};
-	if (signatureSrc.description) {
-		signature.description = signatureSrc.description;
-	}
-
-	const abilities: RecordAbility[] = [signature];
-	const usedNames = new Set<string>([signature.name.toLowerCase()]);
-	const usedActions = new Set<string>([signature.action]);
-	const instruments: InstrumentKey[] = Array.isArray(template.instruments) && template.instruments.length > 0 ? template.instruments : ['body'];
-	const count = rng.range(ROLLED_ABILITY_COUNT[0], ROLLED_ABILITY_COUNT[1]);
-
-	let attempts = 0;
-	while (abilities.length < count + 1 && attempts < 40) {
-		attempts += 1;
-		const instrument = rng.pick(instruments);
-		const medium = secondary && rng.chance(SECONDARY_MEDIUM_SHARE) ? secondary : element.primary;
-		const allowed = allowedActions(registries, template, instrument, medium);
-		if (allowed.length === 0) {
-			continue;
-		}
-		// prefer an action this creature does not already have, so its act list has range
-		const fresh = allowed.filter((a) => !usedActions.has(a));
-		const action = rng.pick(fresh.length > 0 ? fresh : allowed);
-		const { owned, neutral } = nameCandidates(catalog, medium, action, instrument, usedNames);
-		// intensity rolls before the name so the name can be drawn to match it
-		const intensity = rollInBand(rng, ROLLED_INTENSITY_BAND);
-		const wanted = targetHeft(intensity);
-		// owned names carry the element's texture; the neutral pool is the fallback the
-		// catalog notes reserve for thin cells
-		let name: string;
-		if (owned.length > 0 && (neutral.length === 0 || rng.chance(0.8))) {
-			name = drawName(rng, owned, wanted);
-		} else if (neutral.length > 0) {
-			name = drawName(rng, neutral, wanted);
-		} else {
-			continue;
-		}
-		usedNames.add(name.toLowerCase());
-		usedActions.add(action);
-		abilities.push({
-			name,
-			signature: false,
-			instrument,
-			action,
-			medium,
-			intensity,
-		});
-	}
-	return abilities;
+  const sets = prepareAbilityPool(template, catalog);
+  const abilities: RecordAbility[] = template.actions.map(a=>({...structuredClone(a),intensity:rollInBand(rng,a.intensity)}));
+  const set = rng.weighted(sets.map(s => [s, s.weight]))!;
+  const count = rng.range(template.actionPool.count[0], template.actionPool.count[1]);
+  const candidates = set.options.filter(o => o.variants.some(v => v.medium === element.primary || v.medium === secondary));
+  const usedKeys = new Set<string>();
+  const usedNames = new Set([...template.actions, ...template.passives].map(a => a.name.toLowerCase()));
+  for (let i = 0; i < count; i += 1) {
+    const available = candidates.filter(o => !usedKeys.has(o.key));
+    const preferSecondary = secondary && rng.chance(SECONDARY_MEDIUM_SHARE);
+    const wantedMedium = preferSecondary ? secondary : element.primary;
+    const preferred = available.filter(o => o.variants.some(v => v.medium === wantedMedium));
+    const choice = rng.weighted((preferred.length ? preferred : available).map(o => [o, o.weight]))!;
+    usedKeys.add(choice.key);
+    const variant = choice.variants.find(v => v.medium === wantedMedium) || choice.variants.find(v => v.medium === element.primary || v.medium === secondary)!;
+    const intensity = rollInBand(rng, ROLLED_INTENSITY_BAND);
+    const owned = variant.names.owned.filter(e => !usedNames.has(entryName(e).toLowerCase()));
+    const neutral = variant.names.neutral.filter(e => !usedNames.has(entryName(e).toLowerCase()));
+    const entries = owned.length && (!neutral.length || rng.chance(0.8)) ? owned : neutral;
+    const name = drawName(rng, entries, targetHeft(intensity));
+    usedNames.add(name.toLowerCase());
+    const pattern = choice.pattern;
+    abilities.push({
+      key: template.key + '-standard-' + set.key + '-' + choice.key + '-' + variant.medium,
+      name, instrument: choice.instrument, medium: variant.medium, intensity,
+      activation: structuredClone(pattern.activation), timing: structuredClone(pattern.timing), spatial: structuredClone(pattern.spatial), delivery: structuredClone(pattern.delivery),
+      targeting: structuredClone(pattern.targeting), effects: structuredClone(pattern.effects), description: pattern.description,
+    });
+  }
+  return abilities;
 }
 
 function rollTemperament(rng: Rng, attributes: Record<AttributeKey, number>, archetype: RecordArchetype, traits: string[]) {
@@ -573,7 +558,9 @@ export function generateXalian({ template, seed, origin, serial, generatedAt, re
 		traits,
 		temperament,
 		appearance: { finish },
-		abilities,
+		actions: abilities,
+		passives: template.passives.map(a=>({...structuredClone(a),intensity:rollInBand(root.fork('passive:'+a.key),a.intensity)})),
+		signature: {...template.signature},
 	};
 }
 

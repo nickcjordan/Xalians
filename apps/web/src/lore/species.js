@@ -1,3 +1,4 @@
+import { definingAbility } from '@xalians/content/ability-compatibility';
 // SpeciesView: builds a unified view from a ratified template
 // (speciesRecords.json) when one exists, or from the legacy species.json
 // stub otherwise. Also resolves registry vocabularies to display names.
@@ -124,11 +125,13 @@ function buildPhysiology(physiology) {
 function buildSignature(signatureAbility) {
 	if (!signatureAbility) return undefined;
 	const instrument = lookupInstrument(signatureAbility.instrument);
-	const action = registries.actions.get(signatureAbility.action);
+	const action = { name: signatureAbility.effects.map(e => e.kind).join(", ") };
 	return {
 		name: signatureAbility.name,
+		activation: signatureAbility.activation.operation,
 		instrument: instrument ? instrument.name : signatureAbility.instrument,
-		action: action ? action.name : signatureAbility.action,
+		action: action.name,
+		delivery: signatureAbility.delivery.mode,
 		medium: signatureAbility.medium,
 		intensity: signatureAbility.intensity,
 		description: signatureAbility.description,
@@ -159,7 +162,8 @@ function buildTemplateView(species, template) {
 			capabilities: buildCapabilities(template.physiology.capabilities),
 			senses: buildSenses(template.physiology.senses),
 			instruments: buildInstruments(template.instruments),
-			signature: buildSignature(template.signatureAbility),
+			signature: buildSignature(definingAbility(template)),
+			abilities: [buildSignature(definingAbility(template))],
 		},
 	};
 }

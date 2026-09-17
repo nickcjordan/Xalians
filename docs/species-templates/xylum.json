@@ -1,4 +1,5 @@
 {
+  "schemaVersion": "4.0.0",
   "key": "xylum",
   "name": "Xylum",
   "nameOrigin": "A stylization of xylem, the plant tissue that transports water and minerals, matching its rooted body and underground feeding.",
@@ -176,15 +177,203 @@
     "roots",
     "tendrils"
   ],
-  "signatureAbility": {
-    "name": "Deeproot Reclamation",
-    "instrument": "roots",
-    "action": "drain",
-    "medium": "plant",
-    "intensity": [
-      35,
-      80
+  "signature": {
+    "kind": "action",
+    "key": "xylum-defining"
+  },
+  "actions": [
+    {
+      "key": "xylum-defining",
+      "activation": {
+        "operation": "ongoing"
+      },
+      "delivery": {
+        "mode": "contact",
+        "approach": "stationary"
+      },
+      "targeting": {
+        "relation": "other",
+        "subjects": [
+          "creature",
+          "environment"
+        ]
+      },
+      "effects": [
+        {
+          "kind": "transfer",
+          "from": "target",
+          "to": "self",
+          "resource": "energy",
+          "recipient": "target",
+          "emphasis": "primary",
+          "onset": "instant",
+          "persistence": "sustained",
+          "likelihood": "consistent"
+        }
+      ],
+      "description": "Xylum sinks its buried limbs deeper and draws the ground's stored power up through them, taking with it whatever stands rooted or pinned in the soil above.",
+      "name": "Deeproot Reclamation",
+      "instrument": "roots",
+      "medium": "plant",
+      "intensity": [
+        35,
+        80
+      ],
+      "timing": {
+        "preparation": "brief",
+        "recovery": "brief"
+      },
+      "spatial": {
+        "selectivity": "selective",
+        "range": "contact"
+      }
+    }
+  ],
+  "passives": [],
+  "actionPool": {
+    "count": [
+      2,
+      3
     ],
-    "description": "Xylum sinks its buried limbs deeper and draws the ground's stored power up through them, taking with it whatever stands rooted or pinned in the soil above."
+    "sets": [
+      {
+        "key": "default",
+        "weight": 1,
+        "options": [
+          {
+            "key": "roots-snare",
+            "pattern": "snare",
+            "instrument": "roots",
+            "media": [
+              "plant",
+              "water",
+              "chemical",
+              "psychic"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "roots-strike",
+            "pattern": "strike",
+            "instrument": "roots",
+            "media": [
+              "plant",
+              "water",
+              "chemical",
+              "psychic"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "roots-shove",
+            "pattern": "shove",
+            "instrument": "roots",
+            "media": [
+              "plant",
+              "water",
+              "chemical",
+              "psychic"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "roots-drain",
+            "pattern": "drain",
+            "instrument": "roots",
+            "media": [
+              "plant",
+              "water",
+              "chemical",
+              "psychic"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "roots-ward",
+            "pattern": "ward",
+            "instrument": "roots",
+            "media": [
+              "plant",
+              "water",
+              "chemical",
+              "psychic"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "tendrils-lash",
+            "pattern": "lash",
+            "instrument": "tendrils",
+            "media": [
+              "plant",
+              "water",
+              "chemical",
+              "psychic"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "tendrils-snare",
+            "pattern": "snare",
+            "instrument": "tendrils",
+            "media": [
+              "plant",
+              "water",
+              "chemical",
+              "psychic"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "tendrils-crush",
+            "pattern": "crush",
+            "instrument": "tendrils",
+            "media": [
+              "plant",
+              "water",
+              "chemical",
+              "psychic"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "tendrils-drain",
+            "pattern": "drain",
+            "instrument": "tendrils",
+            "media": [
+              "plant",
+              "water",
+              "chemical",
+              "psychic"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "tendrils-shove",
+            "pattern": "shove",
+            "instrument": "tendrils",
+            "media": [
+              "plant",
+              "water",
+              "chemical",
+              "psychic"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "tendrils-strike",
+            "pattern": "strike",
+            "instrument": "tendrils",
+            "media": [
+              "plant",
+              "water",
+              "chemical",
+              "psychic"
+            ],
+            "weight": 1
+          }
+        ]
+      }
+    ]
   }
 }

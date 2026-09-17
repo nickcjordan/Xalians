@@ -1,4 +1,5 @@
 {
+  "schemaVersion": "4.0.0",
   "key": "codazzo",
   "name": "Codazzo",
   "nameOrigin": "Derived from the Italian coda, tail, naming the creature's exposed tail weapon and defining silhouette.",
@@ -178,15 +179,261 @@
     "tail",
     "claws"
   ],
-  "signatureAbility": {
-    "name": "Buried Quiver",
-    "instrument": "spines",
-    "action": "hurl",
-    "medium": "rock",
-    "intensity": [
-      30,
-      78
+  "signature": {
+    "kind": "action",
+    "key": "codazzo-defining"
+  },
+  "actions": [
+    {
+      "key": "codazzo-defining",
+      "activation": {
+        "operation": "discrete"
+      },
+      "delivery": {
+        "mode": "projectile",
+        "approach": "stationary"
+      },
+      "targeting": {
+        "relation": "other",
+        "subjects": [
+          "creature",
+          "object"
+        ]
+      },
+      "effects": [
+        {
+          "kind": "harm",
+          "recipient": "target",
+          "mechanism": "impact",
+          "emphasis": "primary",
+          "onset": "instant",
+          "persistence": "resolved",
+          "likelihood": "consistent"
+        }
+      ],
+      "description": "The Codazzo sinks its body into the ground until only the tail stands clear, then fires barbs at whatever comes near and grows them back.",
+      "name": "Buried Quiver",
+      "instrument": "spines",
+      "medium": "rock",
+      "intensity": [
+        30,
+        78
+      ],
+      "timing": {
+        "preparation": "brief",
+        "recovery": "brief"
+      },
+      "spatial": {
+        "selectivity": "selective",
+        "range": "medium"
+      }
+    }
+  ],
+  "passives": [],
+  "actionPool": {
+    "count": [
+      2,
+      3
     ],
-    "description": "The Codazzo sinks its body into the ground until only the tail stands clear, then fires barbs at whatever comes near and grows them back."
+    "sets": [
+      {
+        "key": "default",
+        "weight": 1,
+        "options": [
+          {
+            "key": "spines-strike",
+            "pattern": "strike",
+            "instrument": "spines",
+            "media": [
+              "rock",
+              "metal",
+              "sand",
+              "fire"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "spines-rake",
+            "pattern": "rake",
+            "instrument": "spines",
+            "media": [
+              "rock",
+              "metal",
+              "sand",
+              "fire"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "spines-ward",
+            "pattern": "ward",
+            "instrument": "spines",
+            "media": [
+              "rock",
+              "metal",
+              "sand",
+              "fire"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "spines-hurl",
+            "pattern": "hurl",
+            "instrument": "spines",
+            "media": [
+              "rock",
+              "metal",
+              "sand",
+              "fire"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "spines-burst",
+            "pattern": "burst",
+            "instrument": "spines",
+            "media": [
+              "rock",
+              "metal",
+              "sand",
+              "fire"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "tail-strike",
+            "pattern": "strike",
+            "instrument": "tail",
+            "media": [
+              "rock",
+              "metal",
+              "sand",
+              "fire"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "tail-lash",
+            "pattern": "lash",
+            "instrument": "tail",
+            "media": [
+              "rock",
+              "metal",
+              "sand",
+              "fire"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "tail-crush",
+            "pattern": "crush",
+            "instrument": "tail",
+            "media": [
+              "rock",
+              "metal",
+              "sand",
+              "fire"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "tail-shove",
+            "pattern": "shove",
+            "instrument": "tail",
+            "media": [
+              "rock",
+              "metal",
+              "sand",
+              "fire"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "tail-snare",
+            "pattern": "snare",
+            "instrument": "tail",
+            "media": [
+              "rock",
+              "metal",
+              "sand",
+              "fire"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "tail-hurl",
+            "pattern": "hurl",
+            "instrument": "tail",
+            "media": [
+              "rock",
+              "metal",
+              "sand",
+              "fire"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "claws-strike",
+            "pattern": "strike",
+            "instrument": "claws",
+            "media": [
+              "rock",
+              "metal",
+              "sand",
+              "fire"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "claws-rake",
+            "pattern": "rake",
+            "instrument": "claws",
+            "media": [
+              "rock",
+              "metal",
+              "sand",
+              "fire"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "claws-crush",
+            "pattern": "crush",
+            "instrument": "claws",
+            "media": [
+              "rock",
+              "metal",
+              "sand",
+              "fire"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "claws-shove",
+            "pattern": "shove",
+            "instrument": "claws",
+            "media": [
+              "rock",
+              "metal",
+              "sand",
+              "fire"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "claws-ambush",
+            "pattern": "ambush",
+            "instrument": "claws",
+            "media": [
+              "rock",
+              "metal",
+              "sand",
+              "fire"
+            ],
+            "weight": 1
+          }
+        ]
+      }
+    ]
   }
 }

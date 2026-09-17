@@ -1,0 +1,304 @@
+{
+  "actions": [
+    {
+      "key": "fireball",
+      "name": "Fireball",
+      "instrument": "breath",
+      "medium": "fire",
+      "intensity": [
+        40,
+        70
+      ],
+      "activation": {
+        "operation": "discrete"
+      },
+      "timing": {
+        "preparation": "brief",
+        "recovery": "brief"
+      },
+      "delivery": {
+        "mode": "projectile",
+        "approach": "stationary"
+      },
+      "spatial": {
+        "range": "medium",
+        "selectivity": "indiscriminate",
+        "area": {
+          "shape": "radial",
+          "extent": "small",
+          "anchor": "impact"
+        }
+      },
+      "targeting": {
+        "relation": "other",
+        "subjects": [
+          "creature",
+          "object"
+        ]
+      },
+      "description": "Hypothetical design-test fixture, not canon.",
+      "effects": [
+        {
+          "recipient": "area",
+          "emphasis": "primary",
+          "onset": "instant",
+          "persistence": "resolved",
+          "likelihood": "consistent",
+          "kind": "harm",
+          "mechanism": "elemental"
+        },
+        {
+          "recipient": "area",
+          "emphasis": "secondary",
+          "onset": "instant",
+          "persistence": "lingering",
+          "likelihood": "occasional",
+          "kind": "status",
+          "status": "burning",
+          "duration": "brief",
+          "removable": [
+            "cooling",
+            "smothering"
+          ],
+          "compatibility": {
+            "composition": [
+              "flesh",
+              "plant"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "key": "repair-film",
+      "name": "Example",
+      "instrument": "secretion",
+      "medium": "chemical",
+      "intensity": [
+        40,
+        70
+      ],
+      "activation": {
+        "operation": "discrete"
+      },
+      "timing": {
+        "preparation": "brief",
+        "recovery": "brief"
+      },
+      "delivery": {
+        "mode": "contact",
+        "approach": "stationary"
+      },
+      "spatial": {
+        "range": "contact",
+        "selectivity": "selective"
+      },
+      "targeting": {
+        "relation": "other",
+        "subjects": [
+          "creature"
+        ],
+        "compatibility": {
+          "composition": [
+            "flesh"
+          ]
+        }
+      },
+      "description": "Hypothetical design-test fixture, not canon.",
+      "effects": [
+        {
+          "recipient": "target",
+          "emphasis": "primary",
+          "onset": "instant",
+          "persistence": "lingering",
+          "likelihood": "consistent",
+          "kind": "status",
+          "status": "mending",
+          "duration": "prolonged",
+          "removable": [
+            "cleansing"
+          ]
+        },
+        {
+          "recipient": "target",
+          "emphasis": "secondary",
+          "onset": "gradual",
+          "persistence": "lingering",
+          "likelihood": "consistent",
+          "kind": "status",
+          "status": "shielded",
+          "duration": "brief",
+          "removable": [
+            "cleansing"
+          ]
+        }
+      ]
+    },
+    {
+      "key": "cooling-jet",
+      "name": "Example",
+      "instrument": "breath",
+      "medium": "water",
+      "intensity": [
+        40,
+        70
+      ],
+      "activation": {
+        "operation": "discrete"
+      },
+      "timing": {
+        "preparation": "brief",
+        "recovery": "brief"
+      },
+      "delivery": {
+        "mode": "stream",
+        "approach": "stationary"
+      },
+      "spatial": {
+        "range": "medium",
+        "selectivity": "indiscriminate"
+      },
+      "targeting": {
+        "relation": "other",
+        "subjects": [
+          "creature",
+          "object"
+        ]
+      },
+      "description": "Hypothetical design-test fixture, not canon.",
+      "effects": [
+        {
+          "recipient": "target",
+          "emphasis": "primary",
+          "onset": "instant",
+          "persistence": "resolved",
+          "likelihood": "consistent",
+          "kind": "harm",
+          "mechanism": "impact"
+        },
+        {
+          "recipient": "target",
+          "emphasis": "secondary",
+          "onset": "instant",
+          "persistence": "resolved",
+          "likelihood": "consistent",
+          "kind": "remove",
+          "methods": [
+            "cooling"
+          ]
+        }
+      ]
+    }
+  ],
+  "passives": [
+    {
+      "key": "guardian-field",
+      "name": "Example",
+      "instrument": "aura",
+      "medium": "light",
+      "intensity": [
+        40,
+        70
+      ],
+      "activation": {
+        "operation": "ongoing"
+      },
+      "delivery": {
+        "mode": "field",
+        "approach": "stationary"
+      },
+      "spatial": {
+        "selectivity": "indiscriminate",
+        "area": {
+          "shape": "radial",
+          "extent": "small",
+          "anchor": "creature"
+        }
+      },
+      "targeting": {
+        "relation": "self-or-other",
+        "subjects": [
+          "creature"
+        ]
+      },
+      "description": "Hypothetical design-test fixture, not canon.",
+      "effects": [
+        {
+          "recipient": "area",
+          "emphasis": "primary",
+          "onset": "instant",
+          "persistence": "sustained",
+          "likelihood": "consistent",
+          "kind": "status",
+          "status": "shielded",
+          "removable": [
+            "disrupting"
+          ]
+        }
+      ]
+    },
+    {
+      "key": "shock-reflex",
+      "name": "Example",
+      "instrument": "hide",
+      "medium": "electric",
+      "intensity": [
+        40,
+        70
+      ],
+      "activation": {
+        "operation": "discrete",
+        "trigger": "contact"
+      },
+      "timing": {
+        "preparation": "immediate",
+        "recovery": "brief"
+      },
+      "delivery": {
+        "mode": "contact",
+        "approach": "stationary"
+      },
+      "spatial": {
+        "range": "contact",
+        "selectivity": "indiscriminate"
+      },
+      "targeting": {
+        "relation": "other",
+        "subjects": [
+          "creature",
+          "object"
+        ]
+      },
+      "description": "Hypothetical design-test fixture, not canon.",
+      "effects": [
+        {
+          "recipient": "instigator",
+          "emphasis": "primary",
+          "onset": "instant",
+          "persistence": "resolved",
+          "likelihood": "consistent",
+          "kind": "harm",
+          "mechanism": "elemental"
+        },
+        {
+          "recipient": "instigator",
+          "emphasis": "secondary",
+          "onset": "instant",
+          "persistence": "lingering",
+          "likelihood": "occasional",
+          "kind": "status",
+          "status": "stunned",
+          "duration": "brief",
+          "removable": [
+            "stabilizing"
+          ],
+          "compatibility": {
+            "subjects": [
+              "creature"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

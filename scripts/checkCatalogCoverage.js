@@ -98,6 +98,7 @@ function computeCoverage() {
 	const speciesRecords = loadJson('speciesRecords.json');
 	const registries = loadJson('registries.json');
 	const catalog = loadJson('abilityCatalog.json');
+	const patterns = new Map(loadJson('abilityPatterns.json').patterns.map(p => [p.key, p]));
 	const { ELEMENT_ADJACENCY, CONDUIT_ACTIONS_BY_MEDIUM } = loadConstants();
 
 	// cache: cell key -> { medium, action, instrument, names, validCount }. Valid names for
@@ -120,17 +121,11 @@ function computeCoverage() {
 	}
 
 	function actionsForInstrumentMedium(template, instrument, medium) {
-		const table = registries.instrumentActions || {};
-		const row = (Array.isArray(table[instrument]) ? table[instrument] : []).slice();
-		const conduits = template.conduits || {};
-		if (conduits[instrument] === medium) {
-			(CONDUIT_ACTIONS_BY_MEDIUM[medium] || []).forEach((a) => {
-				if (!row.includes(a)) {
-					row.push(a);
-				}
-			});
-		}
-		return row;
+		return [...new Set(template.actionPool.sets.flatMap(s => s.options).filter(a => a.instrument === instrument && a.media.includes(medium)).map(a => {
+			const pattern = patterns.get(a.pattern);
+			if (!pattern) throw new Error('Unknown ability pattern: ' + a.pattern);
+			return pattern.nameFamily;
+		}))];
 	}
 
 	const speciesReports = speciesRecords.records.map((template) => {

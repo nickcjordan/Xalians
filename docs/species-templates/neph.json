@@ -1,4 +1,5 @@
 {
+  "schemaVersion": "4.0.0",
   "key": "neph",
   "name": "Neph",
   "nameOrigin": "A clipping of the Greek nephos, cloud, for the colossal creature that lives and feeds in Saiphus's atmosphere.",
@@ -172,15 +173,221 @@
   "conduits": {
     "vents": "air"
   },
-  "signatureAbility": {
-    "name": "Benthane Coldwind",
-    "instrument": "vents",
-    "action": "spray",
-    "medium": "ice",
-    "intensity": [
-      35,
-      80
+  "signature": {
+    "kind": "action",
+    "key": "neph-defining"
+  },
+  "actions": [
+    {
+      "key": "neph-defining",
+      "activation": {
+        "operation": "discrete"
+      },
+      "delivery": {
+        "mode": "stream",
+        "approach": "stationary"
+      },
+      "targeting": {
+        "relation": "other",
+        "subjects": [
+          "creature",
+          "object"
+        ]
+      },
+      "effects": [
+        {
+          "kind": "harm",
+          "recipient": "area",
+          "mechanism": "elemental",
+          "emphasis": "primary",
+          "onset": "instant",
+          "persistence": "resolved",
+          "likelihood": "consistent"
+        }
+      ],
+      "description": "The Neph forces the coolant gas banked in its tentacles out through their open ends, washing everything before it in a freezing white plume.",
+      "name": "Benthane Coldwind",
+      "instrument": "vents",
+      "medium": "ice",
+      "intensity": [
+        35,
+        80
+      ],
+      "timing": {
+        "preparation": "brief",
+        "recovery": "brief"
+      },
+      "spatial": {
+        "selectivity": "indiscriminate",
+        "range": "short",
+        "area": {
+          "shape": "cone",
+          "extent": "medium",
+          "anchor": "creature"
+        }
+      }
+    }
+  ],
+  "passives": [],
+  "actionPool": {
+    "count": [
+      2,
+      3
     ],
-    "description": "The Neph forces the coolant gas banked in its tentacles out through their open ends, washing everything before it in a freezing white plume."
+    "sets": [
+      {
+        "key": "default",
+        "weight": 1,
+        "options": [
+          {
+            "key": "tendrils-lash",
+            "pattern": "lash",
+            "instrument": "tendrils",
+            "media": [
+              "air",
+              "electric",
+              "water",
+              "ice"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "tendrils-snare",
+            "pattern": "snare",
+            "instrument": "tendrils",
+            "media": [
+              "air",
+              "electric",
+              "water",
+              "ice"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "tendrils-crush",
+            "pattern": "crush",
+            "instrument": "tendrils",
+            "media": [
+              "air",
+              "electric",
+              "water",
+              "ice"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "tendrils-drain",
+            "pattern": "drain",
+            "instrument": "tendrils",
+            "media": [
+              "air",
+              "electric",
+              "water",
+              "ice"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "tendrils-shove",
+            "pattern": "shove",
+            "instrument": "tendrils",
+            "media": [
+              "air",
+              "electric",
+              "water",
+              "ice"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "tendrils-strike",
+            "pattern": "strike",
+            "instrument": "tendrils",
+            "media": [
+              "air",
+              "electric",
+              "water",
+              "ice"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "vents-spray",
+            "pattern": "spray",
+            "instrument": "vents",
+            "media": [
+              "air",
+              "electric",
+              "water",
+              "ice"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "vents-cloud",
+            "pattern": "cloud",
+            "instrument": "vents",
+            "media": [
+              "air",
+              "electric",
+              "water",
+              "ice"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "vents-burst",
+            "pattern": "burst",
+            "instrument": "vents",
+            "media": [
+              "air",
+              "electric",
+              "water",
+              "ice"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "vents-ward",
+            "pattern": "ward",
+            "instrument": "vents",
+            "media": [
+              "air",
+              "electric",
+              "water",
+              "ice"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "vents-shove",
+            "pattern": "shove",
+            "instrument": "vents",
+            "media": [
+              "air"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "vents-hurl",
+            "pattern": "hurl",
+            "instrument": "vents",
+            "media": [
+              "air"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "vents-lash",
+            "pattern": "lash",
+            "instrument": "vents",
+            "media": [
+              "air"
+            ],
+            "weight": 1
+          }
+        ]
+      }
+    ]
   }
 }

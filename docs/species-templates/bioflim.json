@@ -1,4 +1,5 @@
 {
+  "schemaVersion": "4.0.0",
   "key": "bioflim",
   "name": "Bioflim",
   "nameOrigin": "A stylized transposition of biofilm, evoking the regenerating slime layer that continually forms its protective surface.",
@@ -174,15 +175,256 @@
     "secretion",
     "pseudopods"
   ],
-  "signatureAbility": {
-    "name": "Everforming Carapace",
-    "instrument": "secretion",
-    "action": "ward",
-    "medium": "chemical",
-    "intensity": [
-      40,
-      85
+  "signature": {
+    "kind": "passive",
+    "key": "bioflim-defining"
+  },
+  "actions": [],
+  "passives": [
+    {
+      "key": "bioflim-defining",
+      "activation": {
+        "operation": "ongoing"
+      },
+      "delivery": {
+        "mode": "self",
+        "approach": "stationary"
+      },
+      "targeting": {
+        "relation": "self",
+        "subjects": [
+          "creature"
+        ]
+      },
+      "effects": [
+        {
+          "kind": "protect",
+          "recipient": "self",
+          "method": "barrier",
+          "against": "harm",
+          "emphasis": "primary",
+          "onset": "instant",
+          "persistence": "sustained",
+          "likelihood": "consistent"
+        }
+      ],
+      "description": "The slime beneath floods over the broken plates and hardens into new shell faster than the acid can take it away.",
+      "name": "Everforming Carapace",
+      "instrument": "secretion",
+      "medium": "chemical",
+      "intensity": [
+        40,
+        85
+      ],
+      "spatial": {
+        "selectivity": "selective"
+      }
+    }
+  ],
+  "actionPool": {
+    "count": [
+      2,
+      3
     ],
-    "description": "The slime beneath floods over the broken plates and hardens into new shell faster than the acid can take it away."
+    "sets": [
+      {
+        "key": "default",
+        "weight": 1,
+        "options": [
+          {
+            "key": "shell-ward",
+            "pattern": "ward",
+            "instrument": "shell",
+            "media": [
+              "chemical",
+              "fire",
+              "metal",
+              "water"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "shell-shove",
+            "pattern": "shove",
+            "instrument": "shell",
+            "media": [
+              "chemical",
+              "fire",
+              "metal",
+              "water"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "shell-crush",
+            "pattern": "crush",
+            "instrument": "shell",
+            "media": [
+              "chemical",
+              "fire",
+              "metal",
+              "water"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "secretion-spray",
+            "pattern": "spray",
+            "instrument": "secretion",
+            "media": [
+              "chemical",
+              "fire",
+              "metal",
+              "water"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "secretion-cloud",
+            "pattern": "cloud",
+            "instrument": "secretion",
+            "media": [
+              "chemical",
+              "fire",
+              "metal",
+              "water"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "secretion-burst",
+            "pattern": "burst",
+            "instrument": "secretion",
+            "media": [
+              "chemical",
+              "fire",
+              "metal",
+              "water"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "secretion-drain",
+            "pattern": "drain",
+            "instrument": "secretion",
+            "media": [
+              "chemical",
+              "fire",
+              "metal",
+              "water"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "secretion-snare",
+            "pattern": "snare",
+            "instrument": "secretion",
+            "media": [
+              "chemical",
+              "fire",
+              "metal",
+              "water"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "secretion-ward",
+            "pattern": "ward",
+            "instrument": "secretion",
+            "media": [
+              "chemical",
+              "fire",
+              "metal",
+              "water"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "secretion-mend",
+            "pattern": "mend",
+            "instrument": "secretion",
+            "media": [
+              "chemical",
+              "fire",
+              "metal",
+              "water"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "pseudopods-strike",
+            "pattern": "strike",
+            "instrument": "pseudopods",
+            "media": [
+              "chemical",
+              "fire",
+              "metal",
+              "water"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "pseudopods-crush",
+            "pattern": "crush",
+            "instrument": "pseudopods",
+            "media": [
+              "chemical",
+              "fire",
+              "metal",
+              "water"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "pseudopods-shove",
+            "pattern": "shove",
+            "instrument": "pseudopods",
+            "media": [
+              "chemical",
+              "fire",
+              "metal",
+              "water"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "pseudopods-snare",
+            "pattern": "snare",
+            "instrument": "pseudopods",
+            "media": [
+              "chemical",
+              "fire",
+              "metal",
+              "water"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "pseudopods-lash",
+            "pattern": "lash",
+            "instrument": "pseudopods",
+            "media": [
+              "chemical",
+              "fire",
+              "metal",
+              "water"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "pseudopods-drain",
+            "pattern": "drain",
+            "instrument": "pseudopods",
+            "media": [
+              "chemical",
+              "fire",
+              "metal",
+              "water"
+            ],
+            "weight": 1
+          }
+        ]
+      }
+    ]
   }
 }

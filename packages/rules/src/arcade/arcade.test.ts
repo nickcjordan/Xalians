@@ -9,6 +9,7 @@ import {
   ARTILLERY_MAP_WIDTHS,
   ARTILLERY_PAYLOADS,
   artilleryMovedX,
+  artilleryTerrainImpactStages,
   chooseArtilleryBotShot,
   applyRelayMove,
   applySweepAction,
@@ -253,6 +254,20 @@ describe('Arcade deterministic rules', () => {
     const bloom = applyArtilleryShot(state, { angle: 22, power: 46, payload: 'bloom' });
     const impactX = Math.round(bloom.outcome.impact!.x);
     expect(bloom.state.terrain[impactX]).toBeGreaterThan(state.terrain[impactX]);
+    expect(bloom.state.terrain[impactX] - state.terrain[impactX]).toBeGreaterThan(15);
+  });
+
+  it('matches each destructive payload with a consequential terrain profile', () => {
+    const state = createArtilleryState('terrain-signatures', 'range', 'standard', { mapSize: 'standard', world: 'stonera' });
+    const excavation = (payload: 'shell' | 'barb' | 'bore' | 'cluster' | 'lance') => {
+      const applied = applyArtilleryShot(state, { angle: 28, power: 42, payload });
+      return Math.max(...state.terrain.map((height, index) => height - applied.state.terrain[index]));
+    };
+    expect(excavation('shell')).toBeGreaterThan(9);
+    expect(excavation('bore')).toBeGreaterThan(11);
+    expect(excavation('lance')).toBeGreaterThan(4);
+    expect(excavation('barb')).toBeGreaterThan(3);
+    expect(excavation('cluster')).toBeGreaterThan(3);
   });
 
   it('keeps scatter and fragment patterns separated through impact', () => {
@@ -263,6 +278,19 @@ describe('Arcade deterministic rules', () => {
       expect(impacts).toHaveLength(outcome.projectiles.length);
       expect(Math.max(...impacts) - Math.min(...impacts)).toBeGreaterThan(payload === 'barb' ? 20 : 35);
     }
+  });
+
+  it('resolves volley terrain in landing order and reaches the same final battlefield', () => {
+    const state = createArtilleryState('staggered-terrain', 'range', 'standard', { mapSize: 'standard', world: 'stonera' });
+    const shot = { angle: 42, power: 62, payload: 'cluster' as const };
+    const outcome = simulateArtilleryShot(state, shot);
+    const stages = artilleryTerrainImpactStages(state.terrain, outcome.projectiles, shot.payload);
+    expect(stages).toHaveLength(5);
+    expect(stages.map((stage) => outcome.projectiles[stage.projectileIndex].path.length)).toEqual(
+      [...stages.map((stage) => outcome.projectiles[stage.projectileIndex].path.length)].sort((a, b) => a - b),
+    );
+    expect(stages[0].terrain).not.toEqual(state.terrain);
+    expect(stages.at(-1)?.terrain).toEqual(applyArtilleryShot(state, shot).state.terrain);
   });
 
   it('applies blast falloff and direct-hit bonus to 100-point hulls', () => {

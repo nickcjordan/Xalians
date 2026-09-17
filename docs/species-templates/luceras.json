@@ -1,4 +1,5 @@
 {
+  "schemaVersion": "4.0.0",
   "key": "luceras",
   "name": "Luceras",
   "nameOrigin": "A stylized blend of Latin lepus, hare, and Greek keras, horn, matching its long-eared bounding frame and paired ram-like horns.",
@@ -171,15 +172,201 @@
     "horns",
     "body"
   ],
-  "signatureAbility": {
-    "name": "The Long Fall of Saiphus",
-    "instrument": "horns",
-    "action": "shove",
-    "medium": "air",
-    "intensity": [
-      45,
-      90
+  "signature": {
+    "kind": "action",
+    "key": "luceras-defining"
+  },
+  "actions": [
+    {
+      "key": "luceras-defining",
+      "activation": {
+        "operation": "discrete"
+      },
+      "delivery": {
+        "mode": "contact",
+        "approach": "stationary"
+      },
+      "targeting": {
+        "relation": "other",
+        "subjects": [
+          "creature",
+          "object"
+        ]
+      },
+      "effects": [
+        {
+          "kind": "displace",
+          "recipient": "target",
+          "direction": "away",
+          "emphasis": "primary",
+          "onset": "instant",
+          "persistence": "resolved",
+          "likelihood": "consistent"
+        }
+      ],
+      "description": "The Luceras leaps until it seems to fly, then comes missiling down horns first on its enemy like a battering ram.",
+      "name": "The Long Fall of Saiphus",
+      "instrument": "horns",
+      "medium": "air",
+      "intensity": [
+        45,
+        90
+      ],
+      "timing": {
+        "preparation": "brief",
+        "recovery": "brief"
+      },
+      "spatial": {
+        "selectivity": "selective",
+        "range": "contact"
+      }
+    }
+  ],
+  "passives": [],
+  "actionPool": {
+    "count": [
+      2,
+      3
     ],
-    "description": "The Luceras leaps until it seems to fly, then comes missiling down horns first on its enemy like a battering ram."
+    "sets": [
+      {
+        "key": "default",
+        "weight": 1,
+        "options": [
+          {
+            "key": "horns-strike",
+            "pattern": "strike",
+            "instrument": "horns",
+            "media": [
+              "air",
+              "electric",
+              "water",
+              "ice"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "horns-shove",
+            "pattern": "shove",
+            "instrument": "horns",
+            "media": [
+              "air",
+              "electric",
+              "water",
+              "ice"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "horns-crush",
+            "pattern": "crush",
+            "instrument": "horns",
+            "media": [
+              "air",
+              "electric",
+              "water",
+              "ice"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "horns-ward",
+            "pattern": "ward",
+            "instrument": "horns",
+            "media": [
+              "air",
+              "electric",
+              "water",
+              "ice"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "horns-terrorize",
+            "pattern": "terrorize",
+            "instrument": "horns",
+            "media": [
+              "air",
+              "electric",
+              "water",
+              "ice"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "body-strike",
+            "pattern": "strike",
+            "instrument": "body",
+            "media": [
+              "air",
+              "electric",
+              "water",
+              "ice"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "body-crush",
+            "pattern": "crush",
+            "instrument": "body",
+            "media": [
+              "air",
+              "electric",
+              "water",
+              "ice"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "body-shove",
+            "pattern": "shove",
+            "instrument": "body",
+            "media": [
+              "air",
+              "electric",
+              "water",
+              "ice"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "body-ward",
+            "pattern": "ward",
+            "instrument": "body",
+            "media": [
+              "air",
+              "electric",
+              "water",
+              "ice"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "body-burst",
+            "pattern": "burst",
+            "instrument": "body",
+            "media": [
+              "air",
+              "electric",
+              "water",
+              "ice"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "body-terrorize",
+            "pattern": "terrorize",
+            "instrument": "body",
+            "media": [
+              "air",
+              "electric",
+              "water",
+              "ice"
+            ],
+            "weight": 1
+          }
+        ]
+      }
+    ]
   }
 }

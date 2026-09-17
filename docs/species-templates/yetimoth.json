@@ -1,4 +1,5 @@
 {
+  "schemaVersion": "4.0.0",
   "key": "yetimoth",
   "name": "Yetimoth",
   "nameOrigin": "A fusion of yeti and mammoth, matching its hulking white-furred ape body and mammoth head.",
@@ -179,15 +180,278 @@
     "hide": "ice",
     "fists": "ice"
   },
-  "signatureAbility": {
-    "name": "Mantle of Unyielding Winter",
-    "instrument": "hide",
-    "action": "ward",
-    "medium": "ice",
-    "intensity": [
-      45,
-      85
+  "signature": {
+    "kind": "action",
+    "key": "yetimoth-defining"
+  },
+  "actions": [
+    {
+      "key": "yetimoth-defining",
+      "activation": {
+        "operation": "ongoing"
+      },
+      "delivery": {
+        "mode": "self",
+        "approach": "stationary"
+      },
+      "targeting": {
+        "relation": "self",
+        "subjects": [
+          "creature"
+        ]
+      },
+      "effects": [
+        {
+          "kind": "protect",
+          "recipient": "self",
+          "method": "barrier",
+          "against": "harm",
+          "emphasis": "primary",
+          "onset": "instant",
+          "persistence": "sustained",
+          "likelihood": "consistent"
+        }
+      ],
+      "description": "The Yetimoth draws thick sheets of frost out of nothing and layers them over its own pelt until the blows of its opponents stop reaching it.",
+      "name": "Mantle of Unyielding Winter",
+      "instrument": "hide",
+      "medium": "ice",
+      "intensity": [
+        45,
+        85
+      ],
+      "timing": {
+        "preparation": "brief",
+        "recovery": "brief"
+      },
+      "spatial": {
+        "selectivity": "selective"
+      }
+    }
+  ],
+  "passives": [],
+  "actionPool": {
+    "count": [
+      2,
+      3
     ],
-    "description": "The Yetimoth draws thick sheets of frost out of nothing and layers them over its own pelt until the blows of its opponents stop reaching it."
+    "sets": [
+      {
+        "key": "default",
+        "weight": 1,
+        "options": [
+          {
+            "key": "fists-strike",
+            "pattern": "strike",
+            "instrument": "fists",
+            "media": [
+              "ice",
+              "metal",
+              "water",
+              "dark"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "fists-crush",
+            "pattern": "crush",
+            "instrument": "fists",
+            "media": [
+              "ice",
+              "metal",
+              "water",
+              "dark"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "fists-shove",
+            "pattern": "shove",
+            "instrument": "fists",
+            "media": [
+              "ice",
+              "metal",
+              "water",
+              "dark"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "fists-snare",
+            "pattern": "snare",
+            "instrument": "fists",
+            "media": [
+              "ice"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "fists-ward",
+            "pattern": "ward",
+            "instrument": "fists",
+            "media": [
+              "ice"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "fists-spray",
+            "pattern": "spray",
+            "instrument": "fists",
+            "media": [
+              "ice"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "fists-burst",
+            "pattern": "burst",
+            "instrument": "fists",
+            "media": [
+              "ice"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "fists-mend",
+            "pattern": "mend",
+            "instrument": "fists",
+            "media": [
+              "ice"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "tusks-strike",
+            "pattern": "strike",
+            "instrument": "tusks",
+            "media": [
+              "ice",
+              "metal",
+              "water",
+              "dark"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "tusks-shove",
+            "pattern": "shove",
+            "instrument": "tusks",
+            "media": [
+              "ice",
+              "metal",
+              "water",
+              "dark"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "tusks-rake",
+            "pattern": "rake",
+            "instrument": "tusks",
+            "media": [
+              "ice",
+              "metal",
+              "water",
+              "dark"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "tusks-crush",
+            "pattern": "crush",
+            "instrument": "tusks",
+            "media": [
+              "ice",
+              "metal",
+              "water",
+              "dark"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "tusks-terrorize",
+            "pattern": "terrorize",
+            "instrument": "tusks",
+            "media": [
+              "ice",
+              "metal",
+              "water",
+              "dark"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "hide-ward",
+            "pattern": "ward",
+            "instrument": "hide",
+            "media": [
+              "ice",
+              "metal",
+              "water",
+              "dark"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "hide-shove",
+            "pattern": "shove",
+            "instrument": "hide",
+            "media": [
+              "ice",
+              "metal",
+              "water",
+              "dark"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "hide-snare",
+            "pattern": "snare",
+            "instrument": "hide",
+            "media": [
+              "ice"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "hide-spray",
+            "pattern": "spray",
+            "instrument": "hide",
+            "media": [
+              "ice"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "hide-burst",
+            "pattern": "burst",
+            "instrument": "hide",
+            "media": [
+              "ice"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "hide-crush",
+            "pattern": "crush",
+            "instrument": "hide",
+            "media": [
+              "ice"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "hide-mend",
+            "pattern": "mend",
+            "instrument": "hide",
+            "media": [
+              "ice"
+            ],
+            "weight": 1
+          }
+        ]
+      }
+    ]
   }
 }

@@ -108,12 +108,12 @@ export const ARTILLERY_PAYLOAD_RULES: Record<ArtilleryPayload, {
   gravityMultiplier: number;
   terrainBuild: number;
 }> = {
-  shell: { blastRadius: 8, craterRadius: 7.5, craterDepth: 0.72, projectileCount: 1, penetration: 0, baseDamage: 38, directBonus: 8, speedMultiplier: 1, gravityMultiplier: 1, terrainBuild: 0 },
-  barb: { blastRadius: 5, craterRadius: 4.6, craterDepth: 0.36, projectileCount: 3, penetration: 0, baseDamage: 20, directBonus: 4, speedMultiplier: 1, gravityMultiplier: 1, terrainBuild: 0 },
-  bore: { blastRadius: 9.2, craterRadius: 6.4, craterDepth: 1.18, projectileCount: 1, penetration: 7.2, baseDamage: 44, directBonus: 6, speedMultiplier: 0.96, gravityMultiplier: 1, terrainBuild: 0 },
-  cluster: { blastRadius: 4.8, craterRadius: 5, craterDepth: 0.46, projectileCount: 5, penetration: 0, baseDamage: 14, directBonus: 2, speedMultiplier: 0.98, gravityMultiplier: 1.04, terrainBuild: 0 },
-  bloom: { blastRadius: 5.5, craterRadius: 9, craterDepth: 0, projectileCount: 1, penetration: 0, baseDamage: 12, directBonus: 3, speedMultiplier: 0.9, gravityMultiplier: 1.08, terrainBuild: 0.72 },
-  lance: { blastRadius: 4, craterRadius: 3.8, craterDepth: 0.52, projectileCount: 1, penetration: 0, baseDamage: 52, directBonus: 12, speedMultiplier: 1.22, gravityMultiplier: 0.78, terrainBuild: 0 },
+  shell: { blastRadius: 10.5, craterRadius: 10.5, craterDepth: 0.96, projectileCount: 1, penetration: 0, baseDamage: 38, directBonus: 8, speedMultiplier: 1, gravityMultiplier: 1, terrainBuild: 0 },
+  barb: { blastRadius: 5.5, craterRadius: 6.2, craterDepth: 0.54, projectileCount: 3, penetration: 0, baseDamage: 20, directBonus: 4, speedMultiplier: 1, gravityMultiplier: 1, terrainBuild: 0 },
+  bore: { blastRadius: 10.5, craterRadius: 8.8, craterDepth: 1.48, projectileCount: 1, penetration: 7.2, baseDamage: 44, directBonus: 6, speedMultiplier: 0.96, gravityMultiplier: 1, terrainBuild: 0 },
+  cluster: { blastRadius: 5.8, craterRadius: 6.5, craterDepth: 0.62, projectileCount: 5, penetration: 0, baseDamage: 14, directBonus: 2, speedMultiplier: 0.98, gravityMultiplier: 1.04, terrainBuild: 0 },
+  bloom: { blastRadius: 5.5, craterRadius: 15.5, craterDepth: 0, projectileCount: 1, penetration: 0, baseDamage: 12, directBonus: 3, speedMultiplier: 0.9, gravityMultiplier: 1.08, terrainBuild: 1.24 },
+  lance: { blastRadius: 4.6, craterRadius: 5.2, craterDepth: 1.06, projectileCount: 1, penetration: 0, baseDamage: 52, directBonus: 12, speedMultiplier: 1.22, gravityMultiplier: 0.78, terrainBuild: 0 },
 };
 
 const ARTILLERY_SPEED_SCALE = 0.3;
@@ -438,10 +438,40 @@ function reshapeTerrain(terrain: readonly number[], impact: ArtilleryPoint | nul
   return terrain.map((height, x) => {
     const distance = Math.abs(x - impact.x);
     if (distance >= rules.craterRadius) return height;
-    const curve = Math.sqrt(rules.craterRadius * rules.craterRadius - distance * distance);
-    if (rules.terrainBuild) return Math.min(72, height + curve * rules.terrainBuild);
-    return Math.max(2, height - curve * rules.craterDepth);
+    const normalized = distance / rules.craterRadius;
+    if (rules.terrainBuild) {
+      // Rampart is a broad, steep-sided fieldwork rather than a cosmetic bump.
+      // The shallow power keeps the shoulders useful as cover while the crown
+      // remains tall enough to block direct fire.
+      const wall = Math.pow(1 - normalized, 0.58) * rules.craterRadius;
+      return Math.min(76, height + wall * rules.terrainBuild);
+    }
+    const bowl = Math.sqrt(1 - normalized * normalized) * rules.craterRadius;
+    const profile = payload === 'bore'
+      ? 0.72 + 0.28 * Math.pow(1 - normalized, 2)
+      : payload === 'lance'
+        ? Math.pow(1 - normalized, 1.45)
+        : payload === 'barb'
+          ? 0.74 + 0.26 * (1 - normalized)
+          : 1;
+    return Math.max(2, height - bowl * rules.craterDepth * profile);
   });
+}
+
+export function artilleryTerrainImpactStages(
+  terrain: readonly number[],
+  projectiles: readonly ArtilleryProjectileOutcome[],
+  payload: ArtilleryPayload,
+): Array<{ projectileIndex: number; terrain: number[] }> {
+  let current = [...terrain];
+  return projectiles
+    .map((projectile, projectileIndex) => ({ projectile, projectileIndex }))
+    .filter(({ projectile }) => projectile.impact !== null)
+    .sort((a, b) => a.projectile.path.length - b.projectile.path.length || a.projectileIndex - b.projectileIndex)
+    .map(({ projectile, projectileIndex }) => {
+      current = reshapeTerrain(current, projectile.impact, payload);
+      return { projectileIndex, terrain: current };
+    });
 }
 
 export function applyArtilleryShot(
@@ -456,10 +486,8 @@ export function applyArtilleryShot(
   const movedX = artilleryMovedX(state, state.current, shot.move);
   const spentTraction = shot.move !== 0 && state.traction[state.current] > 0;
   tanks[state.current].x = movedX;
-  const terrain = simulated.projectiles.reduce(
-    (current, projectile) => reshapeTerrain(current, projectile.impact, shot.payload),
-    state.terrain,
-  );
+  const impactStages = artilleryTerrainImpactStages(state.terrain, simulated.projectiles, shot.payload);
+  const terrain = impactStages.at(-1)?.terrain ?? [...state.terrain];
   const oldGround = terrainHeight(state.terrain, tanks[targetSide].x);
   const newGround = terrainHeight(terrain, tanks[targetSide].x);
   const terrainShift = Math.round((newGround - oldGround) * 10) / 10;

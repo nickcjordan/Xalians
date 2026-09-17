@@ -31,6 +31,30 @@
       "title": "The machine keeps printing",
       "alt": "Small circuit chips emerge from a precision machine onto a tray lit by warm task lights.",
       "caption": "The Mercurius Machine prints Scrambler Tokens: encrypted genomes that allow Generators to create plague-immune Xalians."
+    },
+    "algael": {
+      "src": "assets/img/lore/details/algael-768.webp",
+      "small": "assets/img/lore/details/algael-768.webp",
+      "thumbnail": "assets/img/lore/details/algael-384.webp",
+      "title": "Poseidas's healing resource",
+      "alt": "Dense blue-green gel fills a broad transparent vessel beside sealed transport containers and processing pipes.",
+      "caption": "Algael forms from decomposed algae in Poseidas's oceans. Its healing properties made it one of the galaxy's most valuable medical commodities."
+    },
+    "nightcap": {
+      "src": "assets/img/lore/details/nightcap-768.webp",
+      "small": "assets/img/lore/details/nightcap-768.webp",
+      "thumbnail": "assets/img/lore/details/nightcap-384.webp",
+      "title": "The substance behind the journey",
+      "alt": "Thick dark oil flows from a spout into a metal vessel beside rugged shipping canisters.",
+      "caption": "Endessa's Nightcap induces stasis for sub-light travel. Also called Spacer's Tea, it forms from compressed deposits of Bacillota Requiem."
+    },
+    "qed": {
+      "src": "assets/img/lore/details/qed-768.webp",
+      "small": "assets/img/lore/details/qed-768.webp",
+      "thumbnail": "assets/img/lore/details/qed-384.webp",
+      "title": "A link between worlds",
+      "alt": "Two matching circuit chips rest in separate test cradles; crimson lightning forks over mountains outside the workshop.",
+      "caption": "Chips entangled through Zolton's bloodstorms became QEDs, linking distant worlds and giving APEX its reach across the galaxy."
     }
   },
   "entries": {
@@ -38,14 +62,21 @@
     "wraithix": "wraithix",
     "stellaris-superstructure": "stellaris-superstructure",
     "mercurius-machine": "mercurius-machine",
-    "scrambler-token": "mercurius-machine"
+    "scrambler-token": "mercurius-machine",
+    "algael": "algael",
+    "nightcap": "nightcap",
+    "spacers-tea": "nightcap",
+    "qed": "qed"
   },
   "beats": {
     "vallerii-and-tachyon-drive": "tachyon-drive-core",
     "before-the-vallerii": "wraithix",
-    "kozrak-and-tournament": "mercurius-machine"
+    "kozrak-and-tournament": "mercurius-machine",
+    "apex-accords": "qed"
   },
   "paragraphs": {
-    "luminax:9": "stellaris-superstructure"
+    "luminax:9": "stellaris-superstructure",
+    "poseidas:6": "algael",
+    "endessa:3": "nightcap"
   }
 }

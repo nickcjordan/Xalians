@@ -47,6 +47,7 @@ write('encyclopedia.json', read(path.join(docs, 'encyclopedia', 'encyclopedia.js
 write('chronicle.json', read(path.join(docs, 'encyclopedia', 'chronicle.json')));
 const registriesSrc = read(path.join(docs, 'species-templates', 'registries.json'));
 write('registries.json', registriesSrc);
+write('abilityPatterns.json', read(path.join(docs, 'ability-catalog', 'ability-patterns.json')));
 
 // ---- registriesConst.ts: literal `as const` key arrays for every closed registry list ----
 function keyArray(name, entries) {
@@ -124,6 +125,10 @@ const records = [];
 for (const key of ratified.species) {
   const record = read(path.join(templates, `${key}.json`));
   if (record.key !== key) throw new Error(`template ${key}.json carries key ${record.key}`);
+  const { SpeciesTemplateSchema, AbilityPatternSchema, validateAbilityPool } = require('../packages/content/src/schema/index.ts');
+  SpeciesTemplateSchema.parse(record);
+  const patterns = read(path.join(docs, 'ability-catalog', 'ability-patterns.json')).patterns;
+  validateAbilityPool(record.actionPool, new Map(patterns.map(p => [p.key, AbilityPatternSchema.parse(p)])), record.instruments, [record.element, ...require('../packages/rules/src/generator/constants.ts').ELEMENT_ADJACENCY[record.element]], [...record.actions,...record.passives].find(a=>a.key===record.signature.key));
   records.push(record);
 }
 write('speciesRecords.json', { version: ratified.version, note: ratified.note, records });

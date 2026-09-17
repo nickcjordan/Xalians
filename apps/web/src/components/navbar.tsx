@@ -24,6 +24,7 @@ const NAV_LINKS = [
 	{ href: '/duel', label: 'Duel' },
 	{ href: '/reclamation', label: 'Reclamation' },
 	{ href: '/long-return', label: 'Expedition' },
+	{ href: '/powerworks', label: 'Powerworks' },
 	{ href: '/arcade', label: 'Arcade' },
 ];
 
