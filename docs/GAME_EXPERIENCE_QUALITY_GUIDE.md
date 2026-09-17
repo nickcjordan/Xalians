@@ -417,6 +417,12 @@ The schematic and narrated action must agree with the chosen route and method. S
 
 ## How to update this guide
 
+### Trial: arrival follows the account rather than repeating it
+
+After a persistent field record, lead with where the crew has arrived and the settled consequences. Keep the complete crossing deliberately available for rereading instead of repeating every paragraph before the next decision. Focus the new arrival region, not the scene header already seen. The spatial map remains accessible above; do not add another artwork strip just to separate stages.
+
+Receipts count actual resource differences, not effort beyond an empty reserve. Keep the detailed effort calculation in its existing disclosure and preserve the distinction between the historical receipt and current reserves after repairs. Verification includes keyboard rereading without replaying costs, old checkpoint narration, desktop continuation visibility and a full phone mission. This remains an implementation trial until players validate the handoff.
+
 For each meaningful change, add or update a decision record:
 
 ```text

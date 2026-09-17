@@ -52,7 +52,23 @@ try {
     if (await page.locator('.lr-board-pick').count()) await page.locator('.lr-board-pick').first().click();
     await page.getByRole('button', { name: /Cross now/ }).click();
     await page.getByRole('button', { name: /Continue to result/ }).click();
+    assert(await page.locator('[data-arrival-focus]').evaluate(el=>document.activeElement===el), 'Arrival receives focus rather than repeating the scene header');
+    if (width === 1280) {
+      const continueAction = await page.getByRole('button', {name:'Continue mission',exact:true}).boundingBox();
+      assert(continueAction.y >= 60 && continueAction.y + continueAction.height <= 900, 'Desktop arrival keeps continuation visible');
+    }
     await capture('result');
+    const account = page.locator('.lr-crossing-account');
+    assert.equal(await account.getAttribute('open'), null, 'Arrival does not repeat the complete field record by default');
+    assert.equal(await page.locator('.lr-crossing-prose > p').count(), 1, 'Arrival keeps the physical outcome visible');
+    const arrivalResources = await page.locator('.lr-wizard-resources').innerText();
+    await account.locator('summary').focus();
+    await page.keyboard.press('Enter');
+    assert.equal(await account.locator('p').count(), 4, 'Full causal story remains available');
+    assert(await account.locator('p').first().isVisible());
+    await page.keyboard.press('Enter');
+    assert.equal(await account.getAttribute('open'), null);
+    assert.equal(await page.locator('.lr-wizard-resources').innerText(), arrivalResources, 'Rereading never replays costs');
     const beforeAnalysis = await page.locator('.lr-wizard-resources').innerText();
     const explanation = page.locator('.lr-result-explanation');
     await explanation.locator('summary').click();

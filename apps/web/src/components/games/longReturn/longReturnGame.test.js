@@ -305,7 +305,9 @@ describe('Long Return Simple mode', () => {
     expect(writeCheckpoint(saved)).toBe(true);
     renderGame();
     click(container, /resume expedition/i);
-    expect(container.querySelectorAll('.lr-crossing-prose p')).toHaveLength(4);
+    expect(container.querySelectorAll('.lr-crossing-prose > p')).toHaveLength(1);
+    expect(container.querySelectorAll('.lr-crossing-account p')).toHaveLength(4);
+    expect(container.querySelector('.lr-crossing-account').open).toBe(false);
     expect(container.querySelector('.lr-crossing-prose').textContent).toContain('a side channel built to carry cooling water');
     expect(readCheckpoint().strain).toEqual(saved.strain);
     expect(readCheckpoint().pressure).toBe(saved.pressure);
@@ -345,7 +347,8 @@ describe('Long Return Simple mode', () => {
     expect(writeCheckpoint(saved)).toBe(true);
     renderGame();
     click(container, /resume expedition/i);
-    expect(container.querySelectorAll('.lr-crossing-prose p')).toHaveLength(4);
+    expect(container.querySelectorAll('.lr-crossing-prose > p')).toHaveLength(1);
+    expect(container.querySelectorAll('.lr-crossing-account p')).toHaveLength(4);
     expect(container.querySelector('.lr-crossing-prose').textContent).toContain('beam');
     expect(container.querySelector('.lr-result-ability')).toBeTruthy();
     expect(readCheckpoint().spentAbilities).toEqual(saved.spentAbilities);
@@ -590,7 +593,7 @@ describe('Long Return Simple mode', () => {
     expect(document.activeElement).toBe(findButton(container, /skip to outcome/i));
     click(container, /skip to outcome/i);
     click(container, /continue to result/i);
-    expect(document.activeElement).toBe(container.querySelector('[data-wizard-focus]'));
+    expect(document.activeElement).toBe(container.querySelector('[data-arrival-focus]'));
   });
 
   test('compares known costs with unknown costs in matching resource lanes', () => {
