@@ -44,7 +44,7 @@ Effect kinds: harm, restore, protect, enhance, suppress, restrain, displace, tra
 
 ## Statuses and removal
 
-The shared status catalog contains 26 conditions: burning, overheated, chilled, corroding, poisoned, slowed, restrained, pinned, frozen, buried, blinded, deafened, disoriented, frightened, entranced, sedated, stunned, mending, shielded, reinforced, resistant, stimulated, focused, concealed, revealed, marked. Descriptive families organize meaning without imposing game rules. Applicability remains explicit in targeting/effect compatibility and the condition definition.
+The shared status catalog contains 26 conditions: burning, overheated, chilled, corroding, poisoned, slowed, restrained, pinned, frozen, buried, blinded, deafened, disoriented, frightened, entranced, sedated, stunned, mending, shielded, reinforced, resistant, stimulated, focused, concealed, revealed, marked. Every entry includes a display name, definition, applicability guidance, and a boundary from nearby conditions. Descriptive families organize meaning without imposing game rules. Applicability text is authoring guidance, not executable runtime conditions. The eight removal methods also have shared names and definitions in REMOVAL_CATALOG. Applicability remains explicit in targeting/effect compatibility and the condition definition.
 
 A status effect declares `status` and `removable` methods. Resistant also requires `exposure`; stimulated requires `function`. Functions are reactions/mobility/force/perception/composure/recovery. Exposure is impact/cutting/piercing/compression or an existing element. Statuses require sustained or lingering persistence. Current recipient statuses live in encounter state, never the permanent creature record.
 
@@ -70,4 +70,4 @@ Games define distances, probabilities, costs, event scheduling, stacking, durati
 
 All 32 species retain signature names, prose, instruments, media, and intensity bands. Bioflim's automatic carapace renewal is now a passive signature; Hippochamp's unbroken stream is ongoing. Existing standard option permissions remain intact. Newly required categorical values are documented [migration authoring decisions](schema-4-migration.md), not newly discovered source facts.
 
-Schemas 1–3 remain readable through preserved historical definitions. The archives generation-0.3.0-1 and generation-0.4.0-1 are immutable. Current generation uses generation-0.5.0-3; see [release manifests and replay](generation-releases.md).
+Schemas 1–3 remain readable through preserved historical definitions. The archives generation-0.3.0-1 and generation-0.4.0-1 are immutable. Current generation uses generation-0.5.0-4; see [release manifests and replay](generation-releases.md).

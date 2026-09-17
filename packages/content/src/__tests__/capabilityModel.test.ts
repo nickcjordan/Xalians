@@ -1,12 +1,35 @@
 import { expect, test } from 'vitest';
 import { ActionTemplateSchema, PassiveTemplateSchema } from '../schema/ability.ts';
-import { matchingStatuses, STATUS_CATALOG, STATUS_KEYS } from '../schema/status.ts';
+import { matchingStatuses, STATUS_CATALOG, STATUS_KEYS, STATUS_FAMILIES, REMOVAL_CATALOG, RemovalMethodSchema } from '../schema/status.ts';
 import examples from './fixtures/capabilities.json';
 
 test('the five worked examples conform to the action/passive contract', () => {
   examples.actions.forEach(a => expect(ActionTemplateSchema.safeParse(a).success).toBe(true));
   examples.passives.forEach(a => expect(PassiveTemplateSchema.safeParse(a).success).toBe(true));
   expect(Object.keys(STATUS_CATALOG)).toEqual([...STATUS_KEYS]);
+});
+
+test('every status has complete authoring guidance and each removal method has one definition', () => {
+  for (const status of Object.values(STATUS_CATALOG)) {
+    expect(status.name.length).toBeGreaterThan(0);
+    expect(status.applicability.length).toBeGreaterThan(0);
+    expect(status.boundary.length).toBeGreaterThan(0);
+    expect(status.families.every(f => STATUS_FAMILIES.includes(f))).toBe(true);
+  }
+  expect(Object.keys(REMOVAL_CATALOG)).toEqual(RemovalMethodSchema.options);
+});
+
+test('all status keys can be represented, with parameters restricted to the statuses that need them', () => {
+  const fire = examples.actions[0];
+  for (const status of STATUS_KEYS) {
+    const effect = {...fire.effects[1], status,
+      ...(status === 'resistant' ? {exposure:'fire'} : {}),
+      ...(status === 'stimulated' ? {function:'mobility'} : {}),
+    };
+    expect(ActionTemplateSchema.safeParse({...fire,effects:[fire.effects[0],effect]}).success).toBe(true);
+    if (status !== 'resistant') expect(ActionTemplateSchema.safeParse({...fire,effects:[fire.effects[0],{...effect,exposure:'fire'}]}).success).toBe(false);
+    if (status !== 'stimulated') expect(ActionTemplateSchema.safeParse({...fire,effects:[fire.effects[0],{...effect,function:'mobility'}]}).success).toBe(false);
+  }
 });
 test('cooling removes all and only compatible applications, without relying on status name', () => {
   const statuses = [

@@ -59,3 +59,5 @@ Current release generation-0.5.0-1 uses generator 0.5.0 and schema 4.0.0. It sep
 Integration release generation-0.5.0-2 includes ratified Shuntara from main. Generator/schema versions remain 0.5.0/4.0.0; the release ID pins the changed content. The earlier 31-species archive remains immutable.
 
 Release generation-0.5.0-3 tightens authoring validation: effect subject restrictions inherit capability compatibility; compatibility cannot add targeting subjects; self-only targeting must admit a creature and cannot transfer resources to itself. Existing templates and generated capability facts are unchanged. All prior archives remain intact.
+
+Release generation-0.5.0-4 completes status applicability/boundary metadata and shared removal-method definitions. It introduces no new powers or game behavior. See ability-redesign-completion.md for the completion audit and deferred game work.
