@@ -6,10 +6,19 @@ Owner: the agent maintaining the Long Return worktree. Update this file during i
 
 ### September 17: compact scouting choices
 
+Published in PR #355, deployment 35285363948. Hosted three-scene phone replay passed after deployment.
+
 - Phone review found the scouting options still spent too much vertical space on separate identity, role and Select sections. Replaced them with compact, stable-height rows, fixed-size token portraits and an explicit selection mark. Awareness, reporting and trip cost remain visible together; encounter outlook appears only where relevant. Role detail stays in the cost disclosure. Selection remains reversible and never spends resources; Send remains the distinct action.
 - Removed the retired row styles rather than layering another responsive override. Used the repository UI skill's existing Button, token typography and semantic color classes. Paint review caught the Button icon selector shrinking creature art; the shared image now uses the equivalent `size-full` utility so it is correctly distinguished from an icon. Removed three unused icon mappings to stay within the existing bundle budget.
 - Verified stable selection height, loaded artwork size, keyboard selection and unchanged reserves at 390, 768 and 1280 pixels. Replayed physical scout return, four communication paths, checkpoint continuity, roster swaps and a complete seven-scene phone expedition: deep extraction, 14 salvage, 2 stability and the temporary ally. These are implementation checks, not player acceptance of the compact presentation.
 - Next review: the persistent field record on a small phone, especially whether its map and latest story beat stay spatially related without excessive scrolling. Keep the schematic language and preserve rereading.
+
+### September 17: reading space beside the schematic
+
+- The next rendered audit found only 80 pixels of story-reading space on a 390 by 667 phone. The fixed field record reserved unused top padding and repeated the sector overview, while three playback controls wrapped into a tall footer. This was a real comprehension obstacle despite the previous 900-pixel-height checks passing.
+- Reclaimed the unused overlay padding. During phone playback, show the local room, positions and crew key without repeating the global sector overview, next-room footer or lasting-change strip. Those remain in normal decision/result maps; the causal story and arrival still explain lasting effects. Desktop keeps the overview. Kept full-size prose, persistent rereading and visible continuation.
+- Playback controls now share one stable row, with the single final continuation spanning the footer. Added small-phone minimum reading-space assertions for both playback and the persistent account, alongside pause, stepping, map and no-auto-dismissal tests. Seven-scene 390 by 667 replay reached deep extraction with the ally, 14 salvage and 2 stability. Full web suite: 1,280 tests. Typecheck, production build and unchanged bundle budgets pass.
+- Further review: map contact and ally labels in later rooms, and whether the account remains clearly connected to each decision without depending on the field-record headline. These technical checks do not establish player acceptance.
 
 Bring The Long Return to a human-validated, coherent full-mission UX. Preserve decision-based exploration and advanced detail mode. Player acceptance remains unproven, but independent implementation and auditing continue; this file records evidence, not a substitute stopping condition. The task is not blocked merely because human validation is pending.
 

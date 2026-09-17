@@ -55,6 +55,6 @@ export default function EncounterResolutionTransition({ action, onComplete, soun
       {action.affected && energyCost > 0 && <ReserveMeter kind="energy" label={`${action.affected.species} energy`} max={MAX_STRAIN} before={action.energyBefore} after={action.energyAfter} eventAt={energyAt} index={index} />}
       <ReserveMeter kind="stability" label="Annex stability" max={MAX_INSTABILITY} before={action.stabilityBefore} after={action.stabilityAfter} eventAt={stabilityAt} index={index} />
     </>}>
-    <SequenceStory events={events} index={index} paused={paused} onPause={() => setPaused(!paused)} onNext={() => { setPaused(true); setIndex(Math.min(events.length - 1, index + 1)); }} action={<button ref={buttonRef} type="button" onClick={advance}>{final ? 'See encounter result' : 'Skip to outcome'} <BiIcon cls="bi bi-arrow-right" /></button>} />
+    <SequenceStory events={events} index={index} paused={paused} onPause={() => setPaused(!paused)} onNext={() => { setPaused(true); setIndex(Math.min(events.length - 1, index + 1)); }} action={<button className="inline-flex min-h-11 items-center justify-center gap-1 px-2 whitespace-normal" ref={buttonRef} type="button" onClick={advance}>{final ? 'See encounter result' : 'Skip to outcome'} <BiIcon cls="bi bi-arrow-right" /></button>} />
   </FieldRecord>;
 }
