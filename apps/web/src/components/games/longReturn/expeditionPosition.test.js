@@ -1,18 +1,33 @@
 import { describe, expect, it } from 'vitest';
 import React from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
-import { expeditionPosition, MAP_ROUTES } from './expeditionPosition';
+import { expeditionPosition, MAP_ROUTES, nativeMapState } from './expeditionPosition';
 import ExpeditionSchematic from './ExpeditionSchematic';
 import { MISSION } from './longReturnData';
 import { MAP_PLACES } from './mapPlaces';
 
 describe('expedition location, not creature performance', () => {
+  it('distinguishes passing a trapped native from freeing it or gaining an ally', () => {
+    expect(nativeMapState(null)).toBe('contact');
+    expect(nativeMapState({resolution:'unresolved'})).toBe('contact');
+    expect(nativeMapState({resolution:'detour'})).toBe('contact');
+    expect(nativeMapState({id:'pin-rig',resolution:'cleared'})).toBe('bypassed');
+    expect(nativeMapState({id:'release',resolution:'cleared'})).toBeNull();
+    expect(nativeMapState({companion:true,resolution:'befriended'})).toBeNull();
+    const html = renderToStaticMarkup(<ExpeditionSchematic scene={MISSION.scenes[2]} native={{species:'Hypnopet'}} nativeState="bypassed" position={{crew:'exit'}} />);
+    expect(html).toContain('data-map-native="true" data-state="bypassed"');
+    expect(html).toContain('Hypnopet: still trapped');
+    expect(html).toContain('Hypnopet · Still trapped');
+    expect(html).not.toContain('>Contact</text>');
+  });
   const scout = { id: 'scout' };
   it('route and lead selection never move the crew', () => {
     expect(expeditionPosition({ phase: 'assign' }).crew).toBe('entry');
+    expect(expeditionPosition({ phase: 'assign', encounterMode: 'group', resolution: 'cleared' })).toMatchObject({crew:'crossing', encounter:true});
+    expect(expeditionPosition({ phase: 'assign', encounterMode: 'group', resolution: 'detour' }).crew).toBe('entry');
   });
   it('sending a report is not physical return', () => {
-    expect(expeditionPosition({ phase: 'scan-result', scout, scan: { mode: 'scan', relay: true, returned: true } })).toEqual({ crew: 'entry', scout: 'survey', signal: true });
+    expect(expeditionPosition({ phase: 'scan-result', scout, scan: { mode: 'scan', relay: true, returned: true } })).toEqual({ crew: 'entry', scout: 'survey', signal: true, encounter: false });
     expect(expeditionPosition({ phase: 'assign', scout, scan: { mode: 'debrief', returned: true } }).scout).toBe(null);
   });
   it('physical return reunites markers only at its final beat', () => {
@@ -61,6 +76,15 @@ describe('expedition location, not creature performance', () => {
     expect(html).toContain('data-map-creature="reserve" data-location="entry"');
     const returned = renderToStaticMarkup(<ExpeditionSchematic scene={MISSION.scenes[1]} crew={crew} scout={crew[0]} helperId="helper" position={{ crew: 'entry', scout: 'entry' }} />);
     expect(returned).toContain('data-map-creature="helper" data-location="entry"');
+    const reunited = renderToStaticMarkup(<ExpeditionSchematic scene={MISSION.scenes[1]} crew={crew} scout={crew[0]} helperId="helper" companion={{species:'Xylum'}} allyWithScout position={{crew:'entry',scout:'survey',encounter:true}} />);
+    expect(reunited).toContain('translate(297px, 148px)');
+    expect(reunited).toContain('data-map-ally="true" data-location="survey" transform="translate(320 173)"');
+  });
+  it('previewing a different route does not relocate the crew from a resolved encounter', () => {
+    const props = {scene:MISSION.scenes[2], crew:[{id:'lead',species:'Graviclaw'}], position:{crew:'crossing',encounter:true}};
+    for (const routeId of ['decode','breach']) {
+      expect(renderToStaticMarkup(<ExpeditionSchematic {...props} routeId={routeId} preview />)).toContain('translate(281px, 48px)');
+    }
   });
   it('does not leak undiscovered contacts or hazard names', () => {
     const scene = MISSION.scenes[1];

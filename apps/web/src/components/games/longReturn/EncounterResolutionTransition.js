@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import ExpeditionSchematic from './ExpeditionSchematic';
 import FieldRecord from './FieldRecord';
-import { expeditionPosition } from './expeditionPosition';
+import { expeditionPosition, nativeMapState } from './expeditionPosition';
 import { beatDuration } from './beatTiming';
 import { MAX_INSTABILITY, MAX_STRAIN } from './longReturnData';
 import { buildEncounterResolutionSequence, encounterEventIndex } from './encounterSequence';
@@ -51,7 +51,7 @@ export default function EncounterResolutionTransition({ action, onComplete, soun
   useEffect(() => { playGameSound(eventSounds[current.kind] || 'select', soundEnabled); }, [current.kind, soundEnabled]);
 
   const advance = () => final ? onComplete() : setIndex(events.length - 1);
-  return <FieldRecord scene={action.scene} title={action.option.label} label="Encounter response in progress" map={<ExpeditionSchematic scene={action.scene} crew={action.crew} scout={action.scout} helperId={action.option.helperId} companion={action.fieldCompanion?.creature.id !== action.native.id ? action.fieldCompanion : null} allyWithScout={outcome && action.option.companion && action.encounterMode === 'scout'} position={expeditionPosition({ actionType: action.type, encounterMode: action.encounterMode, resolution: outcome ? action.option.resolution : null })} routeId={action.route?.id} native={outcome && action.option.resolution === 'cleared' && !action.option.companion ? null : action.native} nativeState={outcome && action.option.companion ? 'ally' : 'contact'} runFlags={action.runFlags} />} resources={<>
+  return <FieldRecord scene={action.scene} title={action.option.label} label="Encounter response in progress" map={<ExpeditionSchematic scene={action.scene} crew={action.crew} scout={action.scout} helperId={action.option.helperId} companion={action.fieldCompanion?.creature.id !== action.native.id ? action.fieldCompanion : null} allyWithScout={outcome && action.option.companion && action.encounterMode === 'scout'} position={expeditionPosition({ actionType: action.type, encounterMode: action.encounterMode, resolution: outcome ? action.option.resolution : null })} routeId={action.route?.id} native={outcome && !action.option.companion && !nativeMapState(action.option) ? null : action.native} nativeState={outcome ? action.option.companion ? 'ally' : nativeMapState(action.option) : 'contact'} runFlags={action.runFlags} />} resources={<>
       {action.affected && energyCost > 0 && <ReserveMeter kind="energy" label={`${action.affected.species} energy`} max={MAX_STRAIN} before={action.energyBefore} after={action.energyAfter} eventAt={energyAt} index={index} />}
       <ReserveMeter kind="stability" label="Annex stability" max={MAX_INSTABILITY} before={action.stabilityBefore} after={action.stabilityAfter} eventAt={stabilityAt} index={index} />
     </>}>

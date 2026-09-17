@@ -1,17 +1,25 @@
 // Presentation only. Positions describe mission phases, not simulated movement.
+export function nativeMapState(resolution) {
+  if (!resolution || ['unresolved', 'detour'].includes(resolution.resolution)) return 'contact';
+  return resolution.id === 'pin-rig' ? 'bypassed' : null;
+}
+
+const location = (crew, scout = null, signal = false, encounter = false) => ({ crew, scout, signal, encounter });
+
 export function expeditionPosition({ phase, scout, scan, encounterMode, resolution, beat, actionType }) {
-  if (actionType === 'scout-return') return { crew: 'entry', scout: beat === 'complete' ? 'entry' : 'survey', signal: false };
-  if (actionType === 'scout') return { crew: 'entry', scout: 'survey', signal: beat === 'signal' || (beat === 'encounter' && scan?.relay) };
-  if (actionType === 'crossing') return { crew: beat === 'complete' ? 'exit' : 'crossing', scout: null, signal: false };
+  if (actionType === 'scout-return') return location('entry', beat === 'complete' ? 'entry' : 'survey', false, !!encounterMode);
+  if (actionType === 'scout') return location('entry', 'survey', beat === 'signal' || !!(beat === 'encounter' && scan?.relay));
+  if (actionType === 'crossing') return location(beat === 'complete' ? 'exit' : 'crossing');
   if (actionType === 'encounter' || actionType === 'encounter-response' || phase === 'encounter') {
     const retreat = resolution === 'detour';
     return encounterMode === 'scout'
-      ? { crew: 'entry', scout: retreat ? 'entry' : 'survey', signal: false }
-      : { crew: retreat ? 'entry' : 'crossing', scout: null, signal: false };
+      ? location('entry', retreat ? 'entry' : 'survey', false, true)
+      : location(retreat ? 'entry' : 'crossing', null, false, true);
   }
-  if (phase === 'result') return { crew: 'exit', scout: null, signal: false };
+  if (phase === 'result') return location('exit');
+  if (encounterMode === 'group' && resolution && resolution !== 'detour') return location('crossing', null, false, true);
   const ahead = scout && scan?.mode === 'scan';
-  return { crew: 'entry', scout: ahead ? 'survey' : null, signal: !!(ahead && scan?.relay) };
+  return location('entry', ahead ? 'survey' : null, !!(ahead && scan?.relay), !!encounterMode);
 }
 
 export const MAP_ROUTES = {

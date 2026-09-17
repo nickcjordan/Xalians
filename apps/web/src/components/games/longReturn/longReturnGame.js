@@ -38,7 +38,7 @@ import ArrivalStory from './ArrivalStory';
 import { crossingReceipt } from './crossingReceipt';
 import { scoutCommunication, reportDeliveryLabel } from './scoutCommunication';
 import ScoutChoices from './ScoutChoices';
-import { expeditionPosition } from './expeditionPosition';
+import { expeditionPosition, nativeMapState } from './expeditionPosition';
 import { BRIEFING_ART, sceneArtFor } from './sceneArt';
 import { playGameSound, readSoundEnabled, writeSoundEnabled } from './gameAudio';
 import { encounterChoicePresentation } from './encounterPresentation';
@@ -749,8 +749,8 @@ function LongReturnGame() {
   }, []);
 
   const crew = useMemo(() => selectedCrew.map((id) => CREATURES.find((entry) => entry.id === id)).filter(Boolean), [selectedCrew]);
-  const allyWithScout = encounterState?.mode === 'scout' && !!encounterResolution?.companion;
-  const displayedAction = useMemo(() => actionTransition && ({ ...actionTransition, crew, crewStrain: strain, runFlags, fieldCompanion: companion, helperId: encounterResolution?.helperId, allyWithScout }), [actionTransition, crew, strain, runFlags, companion, encounterResolution?.helperId, allyWithScout]);
+  const encounterMode = encounterState?.mode || encounterResolution?.encounterMode;
+  const allyWithScout = encounterMode === 'scout' && !!encounterResolution?.companion;
   const standingCrewCount = crew.filter((member) => (strain[member.id] || 0) < MAX_STRAIN).length;
   const missionCannotContinue = pressure >= MAX_PRESSURE || standingCrewCount < 2;
   const failureReason = pressure >= MAX_PRESSURE ? 'Annex stability reached zero.' : 'Fewer than two creatures have energy left to lead and support another crossing.';
@@ -771,6 +771,8 @@ function LongReturnGame() {
   const scanScout = crew.find((entry) => entry.id === scoutId);
   const report = scene && scan ? scanReport(scene, scanScout, scan) : null;
   const encounterCreature = scene && scene.encounter ? CREATURES.find((entry) => entry.id === scene.encounter.creatureId) : null;
+  const knownNativeState = encounterResolution ? nativeMapState(encounterResolution) : null;
+  const displayedAction = useMemo(() => actionTransition && ({ ...actionTransition, crew, crewStrain: strain, runFlags, fieldCompanion: companion, helperId: encounterResolution?.helperId, encounterMode, allyWithScout, knownNative: knownNativeState ? encounterCreature : null, knownNativeState }), [actionTransition, crew, strain, runFlags, companion, encounterResolution?.helperId, encounterMode, allyWithScout, knownNativeState, encounterCreature]);
   const activeEncounterOptions = encounterState && !encounterState.result
     ? encounterOptions(scene, encounterState.scout, crew, encounterState.mode, encounterState.informed, strain)
     : [];
@@ -979,7 +981,7 @@ function LongReturnGame() {
       energy: affected ? { before: MAX_STRAIN - (strain[affected.id] || 0), after: MAX_STRAIN - cap((strain[affected.id] || 0) + energyCost) } : null,
       stability: { before: MAX_INSTABILITY - pressure, after: MAX_INSTABILITY - Math.min(MAX_INSTABILITY, pressure + (option.instability || 0)) }
     };
-    const result = { ...option, affected, narrative, resources };
+    const result = { ...option, affected, narrative, resources, encounterMode: encounterState.mode };
     const actor = helper || affected || crew[0];
     playGameSound('commit', soundEnabled);
     setActionTransition({
@@ -1000,6 +1002,7 @@ function LongReturnGame() {
   const continueEncounter = () => {
     if (!encounterState || !encounterState.result) return;
     if (encounterState.result.resolution === 'detour') { setRouteId(null); setPendingRouteId(null); }
+    setChoosingLead(encounterState.postPhase === 'assign' && encounterState.result.resolution !== 'detour' && !!routeId);
     setWizardDirection('forward'); setPhase(encounterState.postPhase || 'assign');
     setEncounterState(null); setEncounterOptionId(null);
   };
@@ -1311,7 +1314,7 @@ function LongReturnGame() {
             {scene.objective && <span className="lr-objective-badge">PRIMARY OBJECTIVE</span>}
             {scene.optional && <span className="lr-optional-badge">OPTIONAL DEPTH</span>}
           </div>}
-          <ExpeditionSchematic scene={scene} crew={crew} scout={scanScout} helperId={encounterResolution?.helperId} companion={companion} allyWithScout={allyWithScout} position={expeditionPosition({ phase, scout: scanScout, scan, encounterMode: encounterState?.mode, resolution: encounterResolution?.resolution })} routeId={routeId || pendingRouteId || routeVisualId} native={phase === 'encounter' && !encounterResolution || encounterResolution?.resolution === 'unresolved' || encounterResolution?.resolution === 'detour' ? encounterCreature : null} preview={phase === 'assign' && !!(routeId || pendingRouteId || routeVisualId)} runFlags={runFlags} compact reserves={guidanceLevel === 'simple' ? { strain, pressure } : undefined} />
+          <ExpeditionSchematic scene={scene} crew={crew} scout={scanScout} helperId={encounterResolution?.helperId} companion={companion} allyWithScout={allyWithScout} position={expeditionPosition({ phase, scout: scanScout, scan, encounterMode, resolution: encounterResolution?.resolution })} routeId={routeId || pendingRouteId || routeVisualId} native={phase === 'encounter' && !encounterResolution || knownNativeState ? encounterCreature : null} nativeState={knownNativeState} preview={phase === 'assign' && !!(routeId || pendingRouteId || routeVisualId)} runFlags={runFlags} compact reserves={guidanceLevel === 'simple' ? { strain, pressure } : undefined} />
           </div>
           {guidanceLevel === 'simple' && <CurrentAction key={`${phase}-${sceneIndex}-${encounterState && encounterState.result ? 'resolved' : 'active'}-${routeId || 'none'}`} {...currentAction} onHelp={openMechanics} />}
           <p className="lr-scene-copy">{scene.description}</p>
