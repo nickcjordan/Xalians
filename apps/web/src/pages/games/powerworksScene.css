@@ -1329,6 +1329,19 @@
 .pw-theater.boss-defeat .pw-action-banner strong {
   font-size: 24px;
 }
+@media (max-width: 600px) {
+  .pw-theater.boss-defeat .pw-action-banner {
+    padding: 8px 12px;
+  }
+  .pw-theater.boss-defeat .pw-action-banner small,
+  .pw-theater.boss-defeat .pw-action-banner strong {
+    display: block;
+    margin-left: 0;
+  }
+  .pw-theater.boss-defeat .pw-action-banner strong {
+    font-size: 20px;
+  }
+}
 .pw-theater.signature-action
   .pw-scene-unit:not(.performing):not(.receiving)
   .pw-actor-art {
