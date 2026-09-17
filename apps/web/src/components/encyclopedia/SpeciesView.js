@@ -120,12 +120,14 @@ function Signature({ signature }) {
     if (!signature) return null;
     return (
         <Card variant="panel" className="p-4">
-            <p className="type-legend m-0">Signature</p>
+            <p className="type-legend m-0">Signature ability</p>
             <p className="type-heading m-0 text-[19px]">{signature.name}</p>
             <SpecPlate
                 entries={[
                     { key: 'Instrument', value: signature.instrument },
-                    { key: 'Action', value: signature.action },
+                    { key: 'Activation', value: signature.activation },
+                    { key: 'Delivery', value: signature.delivery },
+                    { key: 'Effects', value: signature.action },
                     { key: 'Medium', value: signature.medium },
                     { key: 'Intensity', value: bandText(signature.intensity) },
                 ]}
@@ -256,7 +258,7 @@ export default function SpeciesView() {
                     <div className="max-sm:order-1 max-sm:max-w-[320px]">
                         <XalianImage colored speciesName={view.name} primaryType={view.element} moreClasses="w-full" />
                     </div>
-                    {isTemplate && <div className="max-sm:order-3"><Signature signature={view.record.signature} /></div>}
+                    {isTemplate && <div className="max-sm:order-3">{view.record.abilities.map(ability => <Signature key={ability.name} signature={ability} />)}</div>}
                 </div>
 
                 <div className="flex min-w-0 flex-col gap-4 max-sm:order-2">

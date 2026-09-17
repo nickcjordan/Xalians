@@ -14,7 +14,7 @@ import { randomBytes } from 'node:crypto';
 import { ApiError, withApi } from '../lib/api.ts';
 import { GenerateRegistryXalianBodySchema } from '../lib/schemas.ts';
 import { generateXalian, getSpeciesTemplate, getSpeciesTemplates } from '@xalians/rules/generator';
-import { XalianRecordSchema } from '@xalians/content/schema';
+import { XalianRecordV4Schema } from '@xalians/content/schema';
 import * as registryRepo from '../repositories/registry.ts';
 import * as log from '../lib/log.ts';
 
@@ -46,13 +46,13 @@ export const handler = withApi(
     // packages/rules); this parse is a guard against drift between the two packages, not
     // a substitute for that coverage. A failure here is a server bug, not a client error,
     // so it is logged with the zod issue path and surfaces as a 500.
-    const parsed = XalianRecordSchema.safeParse(generated);
+    const parsed = XalianRecordV4Schema.safeParse(generated);
     if (!parsed.success) {
       log.error('generateRegistryXalian: generated record failed schema validation', {
         requestId,
         issues: parsed.error.issues.map((issue) => issue.path.join('.')),
       });
-      throw new Error('Generated record did not match XalianRecordSchema');
+      throw new Error('Generated record did not match XalianRecordV4Schema');
     }
     const record = parsed.data;
 

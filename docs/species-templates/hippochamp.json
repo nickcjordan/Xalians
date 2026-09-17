@@ -1,4 +1,5 @@
 {
+  "schemaVersion": "4.0.0",
   "key": "hippochamp",
   "name": "Hippochamp",
   "nameOrigin": "A shortening of hippocamp, whose Greek roots evoke horse and sea monster, matching its horse body and seahorse head.",
@@ -182,15 +183,269 @@
   "conduits": {
     "trunk": "water"
   },
-  "signatureAbility": {
-    "name": "Hydrostatic Lance",
-    "instrument": "trunk",
-    "action": "spray",
-    "medium": "water",
-    "intensity": [
-      35,
-      80
+  "signature": {
+    "kind": "action",
+    "key": "hippochamp-defining"
+  },
+  "actions": [
+    {
+      "key": "hippochamp-defining",
+      "activation": {
+        "operation": "ongoing"
+      },
+      "delivery": {
+        "mode": "stream",
+        "approach": "stationary"
+      },
+      "targeting": {
+        "relation": "other",
+        "subjects": [
+          "creature",
+          "object"
+        ]
+      },
+      "effects": [
+        {
+          "kind": "harm",
+          "recipient": "area",
+          "mechanism": "elemental",
+          "emphasis": "primary",
+          "onset": "instant",
+          "persistence": "sustained",
+          "likelihood": "consistent"
+        }
+      ],
+      "description": "The long snout holds one unbroken high-pressure stream on a fire or a threat for as long as the pressure lasts.",
+      "name": "Hydrostatic Lance",
+      "instrument": "trunk",
+      "medium": "water",
+      "intensity": [
+        35,
+        80
+      ],
+      "timing": {
+        "preparation": "brief",
+        "recovery": "brief"
+      },
+      "spatial": {
+        "selectivity": "indiscriminate",
+        "range": "short",
+        "area": {
+          "shape": "cone",
+          "extent": "medium",
+          "anchor": "creature"
+        }
+      }
+    }
+  ],
+  "passives": [],
+  "actionPool": {
+    "count": [
+      2,
+      3
     ],
-    "description": "The long snout holds one unbroken high-pressure stream on a fire or a threat for as long as the pressure lasts."
+    "sets": [
+      {
+        "key": "default",
+        "weight": 1,
+        "options": [
+          {
+            "key": "trunk-lash",
+            "pattern": "lash",
+            "instrument": "trunk",
+            "media": [
+              "water",
+              "ice",
+              "plant",
+              "chemical"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "trunk-snare",
+            "pattern": "snare",
+            "instrument": "trunk",
+            "media": [
+              "water",
+              "ice",
+              "plant",
+              "chemical"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "trunk-shove",
+            "pattern": "shove",
+            "instrument": "trunk",
+            "media": [
+              "water",
+              "ice",
+              "plant",
+              "chemical"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "trunk-spray",
+            "pattern": "spray",
+            "instrument": "trunk",
+            "media": [
+              "water",
+              "ice",
+              "plant",
+              "chemical"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "trunk-strike",
+            "pattern": "strike",
+            "instrument": "trunk",
+            "media": [
+              "water",
+              "ice",
+              "plant",
+              "chemical"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "trunk-burst",
+            "pattern": "burst",
+            "instrument": "trunk",
+            "media": [
+              "water"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "trunk-cloud",
+            "pattern": "cloud",
+            "instrument": "trunk",
+            "media": [
+              "water"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "trunk-mend",
+            "pattern": "mend",
+            "instrument": "trunk",
+            "media": [
+              "water"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "hooves-strike",
+            "pattern": "strike",
+            "instrument": "hooves",
+            "media": [
+              "water",
+              "ice",
+              "plant",
+              "chemical"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "hooves-crush",
+            "pattern": "crush",
+            "instrument": "hooves",
+            "media": [
+              "water",
+              "ice",
+              "plant",
+              "chemical"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "hooves-shove",
+            "pattern": "shove",
+            "instrument": "hooves",
+            "media": [
+              "water",
+              "ice",
+              "plant",
+              "chemical"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "tail-strike",
+            "pattern": "strike",
+            "instrument": "tail",
+            "media": [
+              "water",
+              "ice",
+              "plant",
+              "chemical"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "tail-lash",
+            "pattern": "lash",
+            "instrument": "tail",
+            "media": [
+              "water",
+              "ice",
+              "plant",
+              "chemical"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "tail-crush",
+            "pattern": "crush",
+            "instrument": "tail",
+            "media": [
+              "water",
+              "ice",
+              "plant",
+              "chemical"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "tail-shove",
+            "pattern": "shove",
+            "instrument": "tail",
+            "media": [
+              "water",
+              "ice",
+              "plant",
+              "chemical"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "tail-snare",
+            "pattern": "snare",
+            "instrument": "tail",
+            "media": [
+              "water",
+              "ice",
+              "plant",
+              "chemical"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "tail-hurl",
+            "pattern": "hurl",
+            "instrument": "tail",
+            "media": [
+              "water",
+              "ice",
+              "plant",
+              "chemical"
+            ],
+            "weight": 1
+          }
+        ]
+      }
+    ]
   }
 }

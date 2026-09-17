@@ -1,3 +1,4 @@
+import {recordActions} from '@xalians/content/ability-compatibility';
 import { describe, test, it, expect } from 'vitest';
 import type { XalianRecord } from '@xalians/content/schema';
 import {
@@ -370,7 +371,7 @@ describe('the round: Deploy, Resolve, Judge', () => {
 		const hard = makeRecord('hard', { ...soft, traits: { guaranteed: ['armored'], rolled: [] } });
 		const soft2 = { ...soft, traits: { guaranteed: [], rolled: [] } };
 		const softState = oneWorldRound(bigStriker, soft2, 'round-armor');
-		const hardState = oneWorldRound(bigStriker, { ...hard, abilities: soft.abilities, attributes: soft.attributes, traits: ['armored'] }, 'round-armor');
+		const hardState = oneWorldRound(bigStriker, { ...hard, abilities: recordActions(soft), attributes: soft.attributes, traits: ['armored'] }, 'round-armor');
 		const softBlow = (softState.resolutionLog as any[]).find((e: any) => e.type === 'attack' && e.recordId === 'A_0');
 		const hardBlow = (hardState.resolutionLog as any[]).find((e: any) => e.type === 'attack' && e.recordId === 'A_0');
 		expect(hardBlow.power).toBeLessThan(softBlow.power);

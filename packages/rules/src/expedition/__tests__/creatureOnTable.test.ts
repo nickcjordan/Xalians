@@ -1,3 +1,4 @@
+import {recordActions} from '@xalians/content/ability-compatibility';
 import { describe, test, it, expect } from 'vitest';
 import type { XalianRecord } from '@xalians/content/schema';
 import {
@@ -364,7 +365,7 @@ describe('prepare', () => {
 		expect(view.id).toBe(r.id);
 		expect(view.hold).toBeGreaterThan(0);
 		expect(view.armored).toBe(true);
-		expect(view.acts.length).toBe(r.abilities.length);
+		expect(view.acts.length).toBe(recordActions(r).length);
 		expect(view.favoredAct).toBeTruthy();
 		expect(view.conduct).toBeTruthy();
 		// the base redesign's four roles travel on the prepared view

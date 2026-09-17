@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Link } from 'react-router';
 import { Copy, Library } from 'lucide-react';
 import { toast } from 'sonner';
-import type { XalianRecord } from '@xalians/content/schema';
+import type { StoredXalianRecord as XalianRecord } from '@xalians/content/schema';
 import { speciesDisplayName } from '@xalians/rules/generator';
 
 import XalianNavbar from '../components/navbar';

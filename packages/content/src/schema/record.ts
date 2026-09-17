@@ -4,6 +4,8 @@
 // Records describe nature, never game mechanics (no HP, no cooldowns) -- every field here
 // is a fact about the creature, and every game derives its own stats from it.
 import { z } from 'zod';
+import { ActionSchema, PassiveSchema, SignatureSchema, checkSignature } from './ability.ts';
+import { AbilitySchema as StructuredAbilitySchema, LegacyStructuredAbilitySchema } from './legacyAbility.ts';
 import {
   ActionKeySchema,
   AnatomyKeySchema,
@@ -94,9 +96,10 @@ export type Chirality = z.infer<typeof ChiralitySchema>;
 
 const ProvenanceSchema = z.object({
   seed: z.string().min(1),
-  // Pins the entire content-table snapshot (registries, name catalogs, odds); frozen
-  // forever once a record exists, so this is a free-form version string, not an enum.
+  // Algorithm version; releaseId resolves the archived code AND content snapshot.
   generatorVersion: z.string().min(1),
+  // Absent on historical records and experimental generation with custom tables.
+  releaseId: z.string().regex(/^[a-z0-9][a-z0-9._-]*$/).optional(),
   schemaVersion: z.string().min(1),
   generatedAt: z.string().datetime({ offset: true }),
   origin: z.string().min(1), // planet key the generator ran on
@@ -214,7 +217,7 @@ const AppearanceSchema = z
   // from breaking validation, per the optional-field contract.
   .passthrough();
 
-export const XalianRecordSchema = z.object({
+const LegacyRecordSchema = z.object({
   id: z.string().regex(/^xal_/, 'record id must start with "xal_"'),
   species: z.string().min(1),
   provenance: ProvenanceSchema,
@@ -236,4 +239,30 @@ export const XalianRecordSchema = z.object({
     }),
 });
 
-export type XalianRecord = z.infer<typeof XalianRecordSchema>;
+export const XalianRecordV2Schema = LegacyRecordSchema.extend({
+  abilities: z.array(LegacyStructuredAbilitySchema).min(1).refine(
+    abilities => new Set(abilities.map(a => a.key)).size === abilities.length,
+    'ability keys must be unique',
+  ),
+}).superRefine((record, ctx) => {
+  if (record.provenance.schemaVersion !== '2.0.0') ctx.addIssue({ code: 'custom', path: ['provenance', 'schemaVersion'], message: 'structured abilities require schemaVersion 2.0.0' });
+});
+export const XalianRecordV3Schema = LegacyRecordSchema.extend({
+  abilities: z.array(StructuredAbilitySchema).min(1).superRefine((abilities, ctx) => {
+    if (abilities.filter(a => a.role === 'signature').length !== 1) ctx.addIssue({code:'custom', message:'exactly one signature ability is required'});
+    if (new Set(abilities.map(a => a.key)).size !== abilities.length) ctx.addIssue({code:'custom', message:'ability keys must be unique'});
+  }),
+}).superRefine((record, ctx) => {
+  if (record.provenance.schemaVersion !== '3.0.0') ctx.addIssue({code:'custom', message:'signature/pool records require schemaVersion 3.0.0'});
+});
+// Old persisted records remain readable. They are never silently reinterpreted as v2.
+export const LegacyXalianRecordSchema = LegacyRecordSchema.superRefine((record, ctx) => {
+  if (record.provenance.schemaVersion !== '1.0.0') ctx.addIssue({ code: 'custom', message: 'legacy abilities require schemaVersion 1.0.0' });
+});
+export const XalianRecordV4Schema=LegacyRecordSchema.omit({abilities:true}).extend({
+ signature:SignatureSchema,actions:z.array(ActionSchema),passives:z.array(PassiveSchema),
+}).superRefine((r,c)=>{checkSignature(r,c);if(r.provenance.schemaVersion!=='4.0.0')c.addIssue({code:'custom',message:'Actions/passives require schema 4.0.0'});});
+export const XalianRecordSchema = z.union([XalianRecordV4Schema, XalianRecordV3Schema, XalianRecordV2Schema, LegacyXalianRecordSchema]);
+export type XalianRecord = z.infer<typeof XalianRecordV4Schema>;
+
+export type StoredXalianRecord = z.infer<typeof XalianRecordSchema>;

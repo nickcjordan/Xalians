@@ -1,4 +1,5 @@
 {
+  "schemaVersion": "4.0.0",
   "key": "akinza",
   "name": "Akinza",
   "nameOrigin": "A compressed blend of Norwegian kanin, rabbit, and German Katze, cat, reflecting its feline frame and oversized rabbit-like ears.",
@@ -173,15 +174,189 @@
     "claws",
     "jaws"
   ],
-  "signatureAbility": {
-    "name": "Silence of the Long Night",
-    "instrument": "claws",
-    "action": "ambush",
-    "medium": "ice",
-    "intensity": [
-      30,
-      80
+  "signature": {
+    "kind": "action",
+    "key": "akinza-defining"
+  },
+  "actions": [
+    {
+      "key": "akinza-defining",
+      "activation": {
+        "operation": "discrete"
+      },
+      "delivery": {
+        "mode": "contact",
+        "approach": "closing"
+      },
+      "targeting": {
+        "relation": "other",
+        "subjects": [
+          "creature",
+          "object"
+        ]
+      },
+      "effects": [
+        {
+          "kind": "harm",
+          "recipient": "target",
+          "mechanism": "impact",
+          "emphasis": "primary",
+          "onset": "instant",
+          "persistence": "resolved",
+          "likelihood": "consistent"
+        }
+      ],
+      "description": "The Akinza crosses open snow without sound or track and is on its target before it has been seen.",
+      "name": "Silence of the Long Night",
+      "instrument": "claws",
+      "medium": "ice",
+      "intensity": [
+        30,
+        80
+      ],
+      "timing": {
+        "preparation": "brief",
+        "recovery": "brief"
+      },
+      "spatial": {
+        "selectivity": "selective",
+        "range": "contact"
+      }
+    }
+  ],
+  "passives": [],
+  "actionPool": {
+    "count": [
+      2,
+      3
     ],
-    "description": "The Akinza crosses open snow without sound or track and is on its target before it has been seen."
+    "sets": [
+      {
+        "key": "default",
+        "weight": 1,
+        "options": [
+          {
+            "key": "claws-strike",
+            "pattern": "strike",
+            "instrument": "claws",
+            "media": [
+              "ice",
+              "metal",
+              "water",
+              "dark"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "claws-rake",
+            "pattern": "rake",
+            "instrument": "claws",
+            "media": [
+              "ice",
+              "metal",
+              "water",
+              "dark"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "claws-crush",
+            "pattern": "crush",
+            "instrument": "claws",
+            "media": [
+              "ice",
+              "metal",
+              "water",
+              "dark"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "claws-shove",
+            "pattern": "shove",
+            "instrument": "claws",
+            "media": [
+              "ice",
+              "metal",
+              "water",
+              "dark"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "claws-ambush",
+            "pattern": "ambush",
+            "instrument": "claws",
+            "media": [
+              "ice",
+              "metal",
+              "water",
+              "dark"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "jaws-strike",
+            "pattern": "strike",
+            "instrument": "jaws",
+            "media": [
+              "ice",
+              "metal",
+              "water",
+              "dark"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "jaws-crush",
+            "pattern": "crush",
+            "instrument": "jaws",
+            "media": [
+              "ice",
+              "metal",
+              "water",
+              "dark"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "jaws-rake",
+            "pattern": "rake",
+            "instrument": "jaws",
+            "media": [
+              "ice",
+              "metal",
+              "water",
+              "dark"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "jaws-drain",
+            "pattern": "drain",
+            "instrument": "jaws",
+            "media": [
+              "ice",
+              "metal",
+              "water",
+              "dark"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "jaws-snare",
+            "pattern": "snare",
+            "instrument": "jaws",
+            "media": [
+              "ice",
+              "metal",
+              "water",
+              "dark"
+            ],
+            "weight": 1
+          }
+        ]
+      }
+    ]
   }
 }

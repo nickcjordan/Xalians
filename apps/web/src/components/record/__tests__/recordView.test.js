@@ -52,7 +52,7 @@ describe('RecordView', () => {
 			'Affinity',
 			'Traits',
 			'Appearance',
-			'Abilities',
+			'Actions',
 			'Temperament',
 		]);
 	});

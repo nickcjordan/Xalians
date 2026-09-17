@@ -177,15 +177,130 @@
     "spinnerets",
     "hide"
   ],
-  "signatureAbility": {
-    "name": "Arcweave",
-    "instrument": "spinnerets",
-    "action": "ward",
-    "medium": "electric",
-    "intensity": [
-      35,
-      80
+  "schemaVersion": "4.0.0",
+  "signature": {
+    "kind": "action",
+    "key": "shuntara-defining"
+  },
+  "actions": [
+    {
+      "key": "shuntara-defining",
+      "activation": {
+        "operation": "ongoing"
+      },
+      "delivery": {
+        "mode": "contact",
+        "approach": "stationary"
+      },
+      "targeting": {
+        "relation": "self-or-other",
+        "subjects": [
+          "creature"
+        ]
+      },
+      "effects": [
+        {
+          "kind": "protect",
+          "recipient": "target",
+          "method": "barrier",
+          "against": "harm",
+          "emphasis": "primary",
+          "onset": "instant",
+          "persistence": "sustained",
+          "likelihood": "consistent"
+        }
+      ],
+      "description": "The Shuntara circles itself or another creature with a taut filament lattice that catches an incoming force and spreads the load across many paths while its working current closes through the creature's insulated body.",
+      "name": "Arcweave",
+      "instrument": "spinnerets",
+      "medium": "electric",
+      "intensity": [
+        35,
+        80
+      ],
+      "timing": {
+        "preparation": "brief",
+        "recovery": "brief"
+      },
+      "spatial": {
+        "range": "contact",
+        "selectivity": "selective"
+      }
+    }
+  ],
+  "passives": [],
+  "actionPool": {
+    "count": [
+      2,
+      3
     ],
-    "description": "The Shuntara circles itself or another creature with a taut filament lattice that catches an incoming force and spreads the load across many paths while its working current closes through the creature's insulated body."
+    "sets": [
+      {
+        "key": "default",
+        "weight": 1,
+        "options": [
+          {
+            "key": "spinnerets-snare",
+            "pattern": "snare",
+            "instrument": "spinnerets",
+            "media": [
+              "electric",
+              "light",
+              "air",
+              "metal"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "spinnerets-ward",
+            "pattern": "ward",
+            "instrument": "spinnerets",
+            "media": [
+              "electric",
+              "light",
+              "air",
+              "metal"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "spinnerets-hurl",
+            "pattern": "hurl",
+            "instrument": "spinnerets",
+            "media": [
+              "electric",
+              "light",
+              "air",
+              "metal"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "hide-ward",
+            "pattern": "ward",
+            "instrument": "hide",
+            "media": [
+              "electric",
+              "light",
+              "air",
+              "metal"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "hide-shove",
+            "pattern": "shove",
+            "instrument": "hide",
+            "media": [
+              "electric",
+              "light",
+              "air",
+              "metal"
+            ],
+            "weight": 1
+          }
+        ]
+      }
+    ]
   }
 }

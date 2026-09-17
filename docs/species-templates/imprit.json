@@ -1,4 +1,5 @@
 {
+  "schemaVersion": "4.0.0",
   "key": "imprit",
   "name": "Imprit",
   "nameOrigin": "A compression of imp and sprite, matching its small demonic appearance and supernatural, erratic fire behavior.",
@@ -180,15 +181,302 @@
   "conduits": {
     "secretion": "fire"
   },
-  "signatureAbility": {
-    "name": "Ecstasy of the Deep Shafts",
-    "instrument": "secretion",
-    "action": "cloud",
-    "medium": "fire",
-    "intensity": [
-      35,
-      82
+  "signature": {
+    "kind": "action",
+    "key": "imprit-defining"
+  },
+  "actions": [
+    {
+      "key": "imprit-defining",
+      "activation": {
+        "operation": "discrete"
+      },
+      "delivery": {
+        "mode": "field",
+        "approach": "stationary"
+      },
+      "targeting": {
+        "relation": "other",
+        "subjects": [
+          "creature",
+          "object"
+        ]
+      },
+      "effects": [
+        {
+          "kind": "harm",
+          "recipient": "area",
+          "mechanism": "elemental",
+          "emphasis": "primary",
+          "onset": "instant",
+          "persistence": "lingering",
+          "duration": "brief",
+          "likelihood": "consistent"
+        }
+      ],
+      "description": "The Imprit wrings its flammable oils out across everything within reach and lets its own burning body set them alight.",
+      "name": "Ecstasy of the Deep Shafts",
+      "instrument": "secretion",
+      "medium": "fire",
+      "intensity": [
+        35,
+        82
+      ],
+      "timing": {
+        "preparation": "brief",
+        "recovery": "brief"
+      },
+      "spatial": {
+        "selectivity": "indiscriminate",
+        "area": {
+          "shape": "radial",
+          "extent": "medium",
+          "anchor": "creature"
+        }
+      }
+    }
+  ],
+  "passives": [],
+  "actionPool": {
+    "count": [
+      2,
+      3
     ],
-    "description": "The Imprit wrings its flammable oils out across everything within reach and lets its own burning body set them alight."
+    "sets": [
+      {
+        "key": "default",
+        "weight": 1,
+        "options": [
+          {
+            "key": "tail-strike",
+            "pattern": "strike",
+            "instrument": "tail",
+            "media": [
+              "fire",
+              "rock",
+              "chemical",
+              "metal"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "tail-lash",
+            "pattern": "lash",
+            "instrument": "tail",
+            "media": [
+              "fire",
+              "rock",
+              "chemical",
+              "metal"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "tail-crush",
+            "pattern": "crush",
+            "instrument": "tail",
+            "media": [
+              "fire",
+              "rock",
+              "chemical",
+              "metal"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "tail-shove",
+            "pattern": "shove",
+            "instrument": "tail",
+            "media": [
+              "fire",
+              "rock",
+              "chemical",
+              "metal"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "tail-snare",
+            "pattern": "snare",
+            "instrument": "tail",
+            "media": [
+              "fire",
+              "rock",
+              "chemical",
+              "metal"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "tail-hurl",
+            "pattern": "hurl",
+            "instrument": "tail",
+            "media": [
+              "fire",
+              "rock",
+              "chemical",
+              "metal"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "fists-strike",
+            "pattern": "strike",
+            "instrument": "fists",
+            "media": [
+              "fire",
+              "rock",
+              "chemical",
+              "metal"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "fists-crush",
+            "pattern": "crush",
+            "instrument": "fists",
+            "media": [
+              "fire",
+              "rock",
+              "chemical",
+              "metal"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "fists-shove",
+            "pattern": "shove",
+            "instrument": "fists",
+            "media": [
+              "fire",
+              "rock",
+              "chemical",
+              "metal"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "secretion-spray",
+            "pattern": "spray",
+            "instrument": "secretion",
+            "media": [
+              "fire",
+              "rock",
+              "chemical",
+              "metal"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "secretion-cloud",
+            "pattern": "cloud",
+            "instrument": "secretion",
+            "media": [
+              "fire",
+              "rock",
+              "chemical",
+              "metal"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "secretion-burst",
+            "pattern": "burst",
+            "instrument": "secretion",
+            "media": [
+              "fire",
+              "rock",
+              "chemical",
+              "metal"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "secretion-drain",
+            "pattern": "drain",
+            "instrument": "secretion",
+            "media": [
+              "fire",
+              "rock",
+              "chemical",
+              "metal"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "secretion-snare",
+            "pattern": "snare",
+            "instrument": "secretion",
+            "media": [
+              "fire",
+              "rock",
+              "chemical",
+              "metal"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "secretion-ward",
+            "pattern": "ward",
+            "instrument": "secretion",
+            "media": [
+              "fire",
+              "rock",
+              "chemical",
+              "metal"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "secretion-mend",
+            "pattern": "mend",
+            "instrument": "secretion",
+            "media": [
+              "fire",
+              "rock",
+              "chemical",
+              "metal"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "secretion-strike",
+            "pattern": "strike",
+            "instrument": "secretion",
+            "media": [
+              "fire"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "secretion-beam",
+            "pattern": "beam",
+            "instrument": "secretion",
+            "media": [
+              "fire"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "secretion-hurl",
+            "pattern": "hurl",
+            "instrument": "secretion",
+            "media": [
+              "fire"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "secretion-lash",
+            "pattern": "lash",
+            "instrument": "secretion",
+            "media": [
+              "fire"
+            ],
+            "weight": 1
+          }
+        ]
+      }
+    ]
   }
 }

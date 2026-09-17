@@ -127,7 +127,7 @@ export const RegistriesSchema = z.object({
   senses: z.array(RegistryEntrySchema),
   anatomy: z.array(RegistryEntrySchema),
   channels: z.array(RegistryEntrySchema),
-  actions: z.array(RegistryEntrySchema).length(16),
+  actions: z.array(RegistryEntrySchema).min(1),
   // instrument key -> the action keys that instrument can perform (the allowed-actions
   // matrix). Values are validated against ActionKeySchema; keys are validated against the
   // instrument union by the test suite (z.record can't express "exactly these keys" here

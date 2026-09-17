@@ -1,4 +1,5 @@
 {
+  "schemaVersion": "4.0.0",
   "key": "tizzie",
   "name": "Tizzie",
   "nameOrigin": "A playful respelling of tizzy, a state of agitation or confusion, matching its spiral display and psychic disorientation.",
@@ -182,15 +183,296 @@
   "conduits": {
     "gaze": "psychic"
   },
-  "signatureAbility": {
-    "name": "Spiral of Perfect Attention",
-    "instrument": "gaze",
-    "action": "snare",
-    "medium": "psychic",
-    "intensity": [
-      35,
-      80
+  "signature": {
+    "kind": "action",
+    "key": "tizzie-defining"
+  },
+  "actions": [
+    {
+      "key": "tizzie-defining",
+      "activation": {
+        "operation": "ongoing"
+      },
+      "delivery": {
+        "mode": "signal",
+        "approach": "stationary"
+      },
+      "targeting": {
+        "relation": "other",
+        "subjects": [
+          "creature"
+        ],
+        "compatibility": {
+          "reception": "visual"
+        }
+      },
+      "effects": [
+        {
+          "kind": "restrain",
+          "recipient": "target",
+          "faculty": "attention",
+          "emphasis": "primary",
+          "onset": "instant",
+          "persistence": "sustained",
+          "likelihood": "consistent"
+        }
+      ],
+      "description": "It turns the disc of its tail until the eyes are the only thing worth looking at, and whatever meets them stops where it stands.",
+      "name": "Spiral of Perfect Attention",
+      "instrument": "gaze",
+      "medium": "psychic",
+      "intensity": [
+        35,
+        80
+      ],
+      "timing": {
+        "preparation": "brief",
+        "recovery": "brief"
+      },
+      "spatial": {
+        "selectivity": "selective",
+        "range": "short"
+      }
+    }
+  ],
+  "passives": [],
+  "actionPool": {
+    "count": [
+      2,
+      3
     ],
-    "description": "It turns the disc of its tail until the eyes are the only thing worth looking at, and whatever meets them stops where it stands."
+    "sets": [
+      {
+        "key": "default",
+        "weight": 1,
+        "options": [
+          {
+            "key": "lure-ambush",
+            "pattern": "ambush",
+            "instrument": "lure",
+            "media": [
+              "psychic",
+              "ghost",
+              "light",
+              "dark"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "lure-beam",
+            "pattern": "beam",
+            "instrument": "lure",
+            "media": [
+              "psychic",
+              "ghost",
+              "light",
+              "dark"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "lure-snare",
+            "pattern": "snare",
+            "instrument": "lure",
+            "media": [
+              "psychic",
+              "ghost",
+              "light",
+              "dark"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "gaze-terrorize",
+            "pattern": "terrorize",
+            "instrument": "gaze",
+            "media": [
+              "psychic",
+              "ghost",
+              "light",
+              "dark"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "gaze-snare",
+            "pattern": "snare",
+            "instrument": "gaze",
+            "media": [
+              "psychic",
+              "ghost",
+              "light",
+              "dark"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "gaze-drain",
+            "pattern": "drain",
+            "instrument": "gaze",
+            "media": [
+              "psychic",
+              "ghost",
+              "light",
+              "dark"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "gaze-beam",
+            "pattern": "beam",
+            "instrument": "gaze",
+            "media": [
+              "psychic",
+              "ghost",
+              "light",
+              "dark"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "gaze-burst",
+            "pattern": "burst",
+            "instrument": "gaze",
+            "media": [
+              "psychic"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "gaze-ward",
+            "pattern": "ward",
+            "instrument": "gaze",
+            "media": [
+              "psychic"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "gaze-mend",
+            "pattern": "mend",
+            "instrument": "gaze",
+            "media": [
+              "psychic"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "gaze-shove",
+            "pattern": "shove",
+            "instrument": "gaze",
+            "media": [
+              "psychic"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "gaze-hurl",
+            "pattern": "hurl",
+            "instrument": "gaze",
+            "media": [
+              "psychic"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "mind-snare",
+            "pattern": "snare",
+            "instrument": "mind",
+            "media": [
+              "psychic",
+              "ghost",
+              "light",
+              "dark"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "mind-shove",
+            "pattern": "shove",
+            "instrument": "mind",
+            "media": [
+              "psychic",
+              "ghost",
+              "light",
+              "dark"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "mind-hurl",
+            "pattern": "hurl",
+            "instrument": "mind",
+            "media": [
+              "psychic",
+              "ghost",
+              "light",
+              "dark"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "mind-crush",
+            "pattern": "crush",
+            "instrument": "mind",
+            "media": [
+              "psychic",
+              "ghost",
+              "light",
+              "dark"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "mind-drain",
+            "pattern": "drain",
+            "instrument": "mind",
+            "media": [
+              "psychic",
+              "ghost",
+              "light",
+              "dark"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "mind-ward",
+            "pattern": "ward",
+            "instrument": "mind",
+            "media": [
+              "psychic",
+              "ghost",
+              "light",
+              "dark"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "mind-terrorize",
+            "pattern": "terrorize",
+            "instrument": "mind",
+            "media": [
+              "psychic",
+              "ghost",
+              "light",
+              "dark"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "mind-mend",
+            "pattern": "mend",
+            "instrument": "mind",
+            "media": [
+              "psychic",
+              "ghost",
+              "light",
+              "dark"
+            ],
+            "weight": 1
+          }
+        ]
+      }
+    ]
   }
 }

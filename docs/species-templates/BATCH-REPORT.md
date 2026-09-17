@@ -1,6 +1,6 @@
 # Batch report
 
-Generator version: 0.2.0. Seed: `batch-2026-09-07`. N per species: 200. Deterministic sample.
+Generator version: 0.5.0. Seed: `batch-2026-09-07`. N per species: 200. Deterministic sample.
 
 Every number here is an observation for the tuning session, not a target.
 
@@ -12,88 +12,88 @@ Total records: 6400.
 
 | archetype | observed share | expected share |
 | --- | --- | --- |
-| berserker | 2.5% | 2.7% |
-| bulwark | 13.4% | 12.9% |
-| juggernaut | 9.3% | 9.5% |
-| predator | 9.6% | 10.0% |
-| prowler | 12.1% | 12.0% |
-| rogue | 1.8% | 1.8% |
-| runner | 4.5% | 4.5% |
-| sage | 7.1% | 7.4% |
-| seeker | 3.5% | 3.3% |
-| skirmisher | 13.2% | 13.1% |
-| sovereign | 2.7% | 2.5% |
-| stalwart | 6.1% | 6.3% |
-| survivor | 10.3% | 9.9% |
-| vanguard | 1.7% | 1.8% |
-| virtuoso | 2.1% | 2.4% |
+| berserker | 2.9% | 2.7% |
+| bulwark | 13.0% | 12.9% |
+| juggernaut | 10.0% | 9.5% |
+| predator | 10.3% | 10.0% |
+| prowler | 11.9% | 12.0% |
+| rogue | 1.6% | 1.8% |
+| runner | 4.2% | 4.5% |
+| sage | 7.4% | 7.4% |
+| seeker | 3.2% | 3.3% |
+| skirmisher | 13.1% | 13.1% |
+| sovereign | 2.6% | 2.5% |
+| stalwart | 5.9% | 6.3% |
+| survivor | 10.1% | 9.9% |
+| vanguard | 1.6% | 1.8% |
+| virtuoso | 2.2% | 2.4% |
 
 ### Secondary affinity
 
-Observed share with a secondary: 25.3% (target 25%). Share of secondaries at or above strength 50: 49.8% (of 1622 with a secondary).
+Observed share with a secondary: 25.0% (target 25%). Share of secondaries at or above strength 50: 51.8% (of 1603 with a secondary).
 
 Strength histogram, deciles 1-10 through 91-99:
 
 | 1-10 | 11-20 | 21-30 | 31-40 | 41-50 | 51-60 | 61-70 | 71-80 | 81-90 | 91-99 |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 178 | 156 | 176 | 166 | 160 | 169 | 165 | 169 | 151 | 132 |
+| 154 | 150 | 162 | 166 | 149 | 153 | 172 | 176 | 164 | 157 |
 
 ### Finish, observed vs odds
 
 | finish | observed | expected |
 | --- | --- | --- |
-| standard | 6237 | 6222.4 |
+| standard | 6250 | 6222.4 |
 | eclipse | 1 | 1.6 |
-| prismatic | 15 | 16.0 |
-| gleam | 147 | 160.0 |
+| prismatic | 13 | 16.0 |
+| gleam | 136 | 160.0 |
 
 ### Trait count distribution, roster-wide
 
-0: 0 (0.0%), 1: 966 (15.1%), 2: 2314 (36.2%), 3: 2091 (32.7%), 4: 848 (13.3%), 5+: 181 (2.8%)
+0: 0 (0.0%), 1: 946 (14.8%), 2: 2371 (37.0%), 3: 2076 (32.4%), 4: 835 (13.0%), 5+: 172 (2.7%)
 
 ### Action mix across rolled abilities
 
 | action | count | share |
 | --- | --- | --- |
-| shove | 2301 | 14.4% |
-| crush | 2268 | 14.2% |
-| strike | 2038 | 12.8% |
-| ward | 1492 | 9.4% |
-| snare | 1361 | 8.5% |
-| drain | 988 | 6.2% |
-| rake | 925 | 5.8% |
-| burst | 832 | 5.2% |
-| hurl | 687 | 4.3% |
-| lash | 675 | 4.2% |
-| terrorize | 667 | 4.2% |
-| ambush | 516 | 3.2% |
-| mend | 422 | 2.6% |
-| spray | 311 | 2.0% |
-| cloud | 270 | 1.7% |
-| beam | 189 | 1.2% |
+| strike | 2016 | 12.7% |
+| crush | 1876 | 11.8% |
+| shove | 1847 | 11.6% |
+| ward | 1563 | 9.8% |
+| snare | 1543 | 9.7% |
+| drain | 1059 | 6.7% |
+| rake | 956 | 6.0% |
+| burst | 903 | 5.7% |
+| hurl | 793 | 5.0% |
+| terrorize | 644 | 4.1% |
+| lash | 625 | 3.9% |
+| ambush | 508 | 3.2% |
+| mend | 502 | 3.2% |
+| spray | 487 | 3.1% |
+| cloud | 348 | 2.2% |
+| beam | 226 | 1.4% |
 
 ### Medium mix across rolled abilities
 
 | medium | count | share |
 | --- | --- | --- |
-| sand | 1845 | 11.6% |
-| psychic | 1508 | 9.5% |
-| plant | 1362 | 8.5% |
-| water | 1111 | 7.0% |
-| ghost | 1074 | 6.7% |
-| metal | 1042 | 6.5% |
-| fire | 1032 | 6.5% |
-| rock | 1025 | 6.4% |
-| electric | 1018 | 6.4% |
-| chemical | 1017 | 6.4% |
-| dark | 1006 | 6.3% |
+| sand | 1796 | 11.3% |
+| psychic | 1520 | 9.6% |
+| plant | 1353 | 8.5% |
+| water | 1127 | 7.1% |
+| metal | 1101 | 6.9% |
+| ghost | 1082 | 6.8% |
+| electric | 1026 | 6.5% |
+| dark | 1025 | 6.4% |
+| chemical | 1015 | 6.4% |
+| fire | 1011 | 6.4% |
 | ice | 987 | 6.2% |
-| light | 977 | 6.1% |
-| air | 938 | 5.9% |
+| rock | 974 | 6.1% |
+| light | 950 | 6.0% |
+| air | 929 | 5.8% |
 
-Share of rolled abilities using the secondary medium: 10.1% (of 15942 rolled abilities).
+Share of rolled abilities using the secondary medium: 10.1% (of 15896 rolled abilities).
 
-Mean favored-vs-unfavored attribute band-position lift, averaged across species: 17.3 points (0-100 scale).
+Mean favored-vs-unfavored attribute band-position lift, averaged across species: 17.9 points (0-100 scale).
 
 ## Per species
 
@@ -104,25 +104,25 @@ Attributes (mean, band position 0-1):
 | attribute | mean | band position |
 | --- | --- | --- |
 | strength | 42.3 | 0.49 |
-| vitality | 41.1 | 0.50 |
-| endurance | 52.0 | 0.48 |
-| agility | 79.9 | 0.64 |
-| reflex | 77.0 | 0.61 |
-| intelligence | 47.9 | 0.52 |
-| willpower | 43.0 | 0.52 |
-| instinct | 74.2 | 0.60 |
-| charisma | 27.7 | 0.51 |
-| resilience | 36.8 | 0.51 |
+| vitality | 40.2 | 0.46 |
+| endurance | 52.4 | 0.50 |
+| agility | 79.8 | 0.64 |
+| reflex | 76.7 | 0.60 |
+| intelligence | 47.8 | 0.51 |
+| willpower | 42.6 | 0.50 |
+| instinct | 75.1 | 0.63 |
+| charisma | 26.7 | 0.47 |
+| resilience | 36.3 | 0.49 |
 
-Favored mean band position: 0.67. Unfavored: 0.51. Lift: 16.0 points.
+Favored mean band position: 0.69. Unfavored: 0.49. Lift: 19.9 points.
 
 Build shares (observed vs authored weight):
 
 | archetype | observed | authored |
 | --- | --- | --- |
-| prowler | 46.0% | 45.0% |
-| skirmisher | 31.5% | 30.0% |
-| predator | 22.5% | 25.0% |
+| prowler | 40.5% | 45.0% |
+| skirmisher | 33.0% | 30.0% |
+| predator | 26.5% | 25.0% |
 
 Trait landed rate vs authored percent:
 
@@ -130,16 +130,16 @@ Trait landed rate vs authored percent:
 | --- | --- | --- |
 | stealthy | 100.0 | 100.0% |
 | nocturnal | 100.0 | 100.0% |
-| solitary | 35.0 | 31.5% |
-| perceptive | 25.0 | 24.0% |
-| territorial | 25.0 | 29.0% |
-| hardened | 15.0 | 15.0% |
+| solitary | 35.0 | 32.5% |
+| perceptive | 25.0 | 25.5% |
+| territorial | 25.0 | 27.5% |
+| hardened | 15.0 | 13.5% |
 
-Observed trait count mean: 3.00 (authored expected count: 3.00). Distribution: 0: 0 (0.0%), 1: 0 (0.0%), 2: 64 (32.0%), 3: 85 (42.5%), 4: 40 (20.0%), 5+: 11 (5.5%)
+Observed trait count mean: 2.99 (authored expected count: 3.00). Distribution: 0: 0 (0.0%), 1: 0 (0.0%), 2: 59 (29.5%), 3: 92 (46.0%), 4: 41 (20.5%), 5+: 8 (4.0%)
 
-Ability name diversity: 0.57 (707 abilities rolled).
+Ability name diversity: 0.61 (704 abilities rolled).
 
-Size mean: height 147.0 cm (band position 0.49), weight 60.7 kg (band position 0.49).
+Size mean: height 146.7 cm (band position 0.48), weight 60.2 kg (band position 0.47).
 
 ### Avilily (`avilily`), n = 200
 
@@ -147,27 +147,27 @@ Attributes (mean, band position 0-1):
 
 | attribute | mean | band position |
 | --- | --- | --- |
-| strength | 19.0 | 0.50 |
-| vitality | 28.5 | 0.47 |
-| endurance | 39.0 | 0.50 |
-| agility | 75.9 | 0.60 |
-| reflex | 71.7 | 0.62 |
-| intelligence | 30.5 | 0.47 |
-| willpower | 34.8 | 0.49 |
-| instinct | 61.9 | 0.59 |
+| strength | 18.6 | 0.48 |
+| vitality | 28.6 | 0.48 |
+| endurance | 39.4 | 0.52 |
+| agility | 77.6 | 0.68 |
+| reflex | 71.9 | 0.63 |
+| intelligence | 30.9 | 0.50 |
+| willpower | 35.0 | 0.50 |
+| instinct | 61.8 | 0.59 |
 | charisma | 42.0 | 0.48 |
-| resilience | 20.6 | 0.48 |
+| resilience | 21.1 | 0.51 |
 
-Favored mean band position: 0.66. Unfavored: 0.49. Lift: 17.6 points.
+Favored mean band position: 0.68. Unfavored: 0.50. Lift: 18.4 points.
 
 Build shares (observed vs authored weight):
 
 | archetype | observed | authored |
 | --- | --- | --- |
-| skirmisher | 42.5% | 45.0% |
-| prowler | 25.5% | 25.0% |
-| predator | 19.5% | 20.0% |
-| runner | 12.5% | 10.0% |
+| skirmisher | 44.5% | 45.0% |
+| prowler | 30.5% | 25.0% |
+| predator | 15.5% | 20.0% |
+| runner | 9.5% | 10.0% |
 
 Trait landed rate vs authored percent:
 
@@ -175,16 +175,16 @@ Trait landed rate vs authored percent:
 | --- | --- | --- |
 | toxic | 100.0 | 100.0% |
 | territorial | 100.0 | 100.0% |
-| pack-bonded | 40.0 | 37.5% |
-| stealthy | 30.0 | 29.5% |
-| resistant | 18.0 | 15.0% |
+| pack-bonded | 40.0 | 33.0% |
+| stealthy | 30.0 | 25.0% |
+| resistant | 18.0 | 20.0% |
 | perceptive | 12.0 | 12.0% |
 
-Observed trait count mean: 2.94 (authored expected count: 3.00). Distribution: 0: 0 (0.0%), 1: 0 (0.0%), 2: 65 (32.5%), 3: 90 (45.0%), 4: 38 (19.0%), 5+: 7 (3.5%)
+Observed trait count mean: 2.90 (authored expected count: 3.00). Distribution: 0: 0 (0.0%), 1: 0 (0.0%), 2: 71 (35.5%), 3: 90 (45.0%), 4: 28 (14.0%), 5+: 11 (5.5%)
 
-Ability name diversity: 0.58 (705 abilities rolled).
+Ability name diversity: 0.60 (695 abilities rolled).
 
-Size mean: height 48.0 cm (band position 0.50), weight 8.0 kg (band position 0.50).
+Size mean: height 47.7 cm (band position 0.48), weight 7.9 kg (band position 0.48).
 
 ### Bioflim (`bioflim`), n = 200
 
@@ -192,27 +192,27 @@ Attributes (mean, band position 0-1):
 
 | attribute | mean | band position |
 | --- | --- | --- |
-| strength | 55.9 | 0.55 |
-| vitality | 72.3 | 0.61 |
-| endurance | 65.9 | 0.54 |
-| agility | 12.3 | 0.49 |
-| reflex | 17.1 | 0.47 |
-| intelligence | 25.2 | 0.51 |
+| strength | 56.1 | 0.56 |
+| vitality | 72.7 | 0.63 |
+| endurance | 65.5 | 0.53 |
+| agility | 12.4 | 0.49 |
+| reflex | 17.5 | 0.50 |
+| intelligence | 24.2 | 0.46 |
 | willpower | 50.8 | 0.54 |
-| instinct | 39.7 | 0.49 |
-| charisma | 12.2 | 0.48 |
-| resilience | 88.1 | 0.65 |
+| instinct | 40.3 | 0.51 |
+| charisma | 12.3 | 0.49 |
+| resilience | 88.8 | 0.69 |
 
-Favored mean band position: 0.66. Unfavored: 0.50. Lift: 16.5 points.
+Favored mean band position: 0.69. Unfavored: 0.50. Lift: 19.2 points.
 
 Build shares (observed vs authored weight):
 
 | archetype | observed | authored |
 | --- | --- | --- |
-| bulwark | 53.5% | 50.0% |
-| juggernaut | 25.5% | 25.0% |
-| stalwart | 11.0% | 15.0% |
-| survivor | 10.0% | 10.0% |
+| bulwark | 53.0% | 50.0% |
+| juggernaut | 26.0% | 25.0% |
+| stalwart | 14.5% | 15.0% |
+| survivor | 6.5% | 10.0% |
 
 Trait landed rate vs authored percent:
 
@@ -220,16 +220,16 @@ Trait landed rate vs authored percent:
 | --- | --- | --- |
 | armored | 100.0 | 100.0% |
 | regenerative | 100.0 | 100.0% |
-| toxic | 40.0 | 40.0% |
-| resistant | 25.0 | 28.0% |
-| volatile | 20.0 | 18.0% |
-| solitary | 15.0 | 19.5% |
+| toxic | 40.0 | 41.0% |
+| resistant | 25.0 | 30.5% |
+| volatile | 20.0 | 15.5% |
+| solitary | 15.0 | 13.5% |
 
-Observed trait count mean: 3.06 (authored expected count: 3.00). Distribution: 0: 0 (0.0%), 1: 0 (0.0%), 2: 58 (29.0%), 3: 85 (42.5%), 4: 45 (22.5%), 5+: 12 (6.0%)
+Observed trait count mean: 3.00 (authored expected count: 3.00). Distribution: 0: 0 (0.0%), 1: 0 (0.0%), 2: 60 (30.0%), 3: 84 (42.0%), 4: 51 (25.5%), 5+: 5 (2.5%)
 
-Ability name diversity: 0.59 (709 abilities rolled).
+Ability name diversity: 0.63 (703 abilities rolled).
 
-Size mean: height 215.1 cm (band position 0.50), weight 412.3 kg (band position 0.51).
+Size mean: height 215.1 cm (band position 0.50), weight 414.2 kg (band position 0.52).
 
 ### Chromocat (`chromocat`), n = 200
 
@@ -237,44 +237,44 @@ Attributes (mean, band position 0-1):
 
 | attribute | mean | band position |
 | --- | --- | --- |
-| strength | 50.5 | 0.48 |
-| vitality | 46.6 | 0.51 |
+| strength | 51.1 | 0.50 |
+| vitality | 45.9 | 0.48 |
 | endurance | 53.0 | 0.52 |
-| agility | 90.2 | 0.64 |
-| reflex | 87.0 | 0.62 |
-| intelligence | 42.2 | 0.56 |
-| willpower | 46.6 | 0.51 |
-| instinct | 70.3 | 0.56 |
+| agility | 90.1 | 0.64 |
+| reflex | 86.7 | 0.61 |
+| intelligence | 41.9 | 0.54 |
+| willpower | 46.0 | 0.48 |
+| instinct | 70.9 | 0.59 |
 | charisma | 42.1 | 0.48 |
-| resilience | 32.0 | 0.50 |
+| resilience | 32.5 | 0.52 |
 
-Favored mean band position: 0.66. Unfavored: 0.51. Lift: 15.8 points.
+Favored mean band position: 0.67. Unfavored: 0.50. Lift: 16.6 points.
 
 Build shares (observed vs authored weight):
 
 | archetype | observed | authored |
 | --- | --- | --- |
-| skirmisher | 46.5% | 52.0% |
-| prowler | 27.0% | 24.0% |
-| predator | 17.0% | 18.0% |
-| runner | 9.5% | 6.0% |
+| skirmisher | 54.0% | 52.0% |
+| prowler | 18.5% | 24.0% |
+| predator | 19.5% | 18.0% |
+| runner | 8.0% | 6.0% |
 
 Trait landed rate vs authored percent:
 
 | trait | authored % | observed % |
 | --- | --- | --- |
 | luminous | 100.0 | 100.0% |
-| slippery | 38.0 | 42.0% |
-| resistant | 26.0 | 32.0% |
-| perceptive | 13.0 | 14.0% |
-| solitary | 15.0 | 15.0% |
-| pack-bonded | 8.0 | 4.5% |
+| slippery | 38.0 | 40.5% |
+| resistant | 26.0 | 26.0% |
+| perceptive | 13.0 | 11.5% |
+| solitary | 15.0 | 14.5% |
+| pack-bonded | 8.0 | 9.5% |
 
-Observed trait count mean: 2.08 (authored expected count: 2.00). Distribution: 0: 0 (0.0%), 1: 54 (27.0%), 2: 90 (45.0%), 3: 43 (21.5%), 4: 13 (6.5%), 5+: 0 (0.0%)
+Observed trait count mean: 2.02 (authored expected count: 2.00). Distribution: 0: 0 (0.0%), 1: 56 (28.0%), 2: 97 (48.5%), 3: 36 (18.0%), 4: 9 (4.5%), 5+: 2 (1.0%)
 
-Ability name diversity: 0.59 (698 abilities rolled).
+Ability name diversity: 0.62 (696 abilities rolled).
 
-Size mean: height 92.4 cm (band position 0.50), weight 74.8 kg (band position 0.49).
+Size mean: height 92.8 cm (band position 0.51), weight 75.1 kg (band position 0.50).
 
 ### Codazzo (`codazzo`), n = 200
 
@@ -282,44 +282,44 @@ Attributes (mean, band position 0-1):
 
 | attribute | mean | band position |
 | --- | --- | --- |
-| strength | 39.3 | 0.46 |
+| strength | 40.5 | 0.53 |
 | vitality | 51.5 | 0.58 |
-| endurance | 58.1 | 0.57 |
-| agility | 57.5 | 0.63 |
-| reflex | 62.1 | 0.55 |
-| intelligence | 33.7 | 0.51 |
-| willpower | 39.6 | 0.48 |
+| endurance | 57.0 | 0.52 |
+| agility | 57.2 | 0.61 |
+| reflex | 62.8 | 0.58 |
+| intelligence | 33.6 | 0.51 |
+| willpower | 40.0 | 0.50 |
 | instinct | 69.0 | 0.61 |
-| charisma | 24.3 | 0.47 |
-| resilience | 45.4 | 0.52 |
+| charisma | 24.9 | 0.50 |
+| resilience | 45.1 | 0.50 |
 
-Favored mean band position: 0.68. Unfavored: 0.50. Lift: 18.1 points.
+Favored mean band position: 0.68. Unfavored: 0.51. Lift: 16.6 points.
 
 Build shares (observed vs authored weight):
 
 | archetype | observed | authored |
 | --- | --- | --- |
-| prowler | 40.0% | 40.0% |
-| survivor | 24.5% | 25.0% |
-| skirmisher | 18.5% | 20.0% |
-| predator | 17.0% | 15.0% |
+| prowler | 36.0% | 40.0% |
+| survivor | 24.0% | 25.0% |
+| skirmisher | 24.5% | 20.0% |
+| predator | 15.5% | 15.0% |
 
 Trait landed rate vs authored percent:
 
 | trait | authored % | observed % |
 | --- | --- | --- |
 | regenerative | 100.0 | 100.0% |
-| stealthy | 35.0 | 30.0% |
-| solitary | 30.0 | 32.0% |
-| volatile | 20.0 | 15.5% |
+| stealthy | 35.0 | 37.5% |
+| solitary | 30.0 | 30.0% |
+| volatile | 20.0 | 26.5% |
 | insulated | 10.0 | 9.0% |
-| perceptive | 5.0 | 4.5% |
+| perceptive | 5.0 | 5.0% |
 
-Observed trait count mean: 1.91 (authored expected count: 2.00). Distribution: 0: 0 (0.0%), 1: 67 (33.5%), 2: 91 (45.5%), 3: 35 (17.5%), 4: 7 (3.5%), 5+: 0 (0.0%)
+Observed trait count mean: 2.08 (authored expected count: 2.00). Distribution: 0: 0 (0.0%), 1: 64 (32.0%), 2: 74 (37.0%), 3: 47 (23.5%), 4: 12 (6.0%), 5+: 3 (1.5%)
 
-Ability name diversity: 0.53 (706 abilities rolled).
+Ability name diversity: 0.55 (702 abilities rolled).
 
-Size mean: height 70.5 cm (band position 0.52), weight 25.2 kg (band position 0.52).
+Size mean: height 69.5 cm (band position 0.48), weight 24.9 kg (band position 0.49).
 
 ### Crystorn (`crystorn`), n = 200
 
@@ -327,43 +327,43 @@ Attributes (mean, band position 0-1):
 
 | attribute | mean | band position |
 | --- | --- | --- |
-| strength | 67.0 | 0.52 |
-| vitality | 74.4 | 0.57 |
-| endurance | 70.6 | 0.53 |
-| agility | 22.5 | 0.52 |
-| reflex | 31.2 | 0.51 |
-| intelligence | 58.1 | 0.57 |
-| willpower | 77.8 | 0.61 |
-| instinct | 51.0 | 0.50 |
-| charisma | 48.3 | 0.53 |
-| resilience | 70.6 | 0.57 |
+| strength | 67.3 | 0.54 |
+| vitality | 74.2 | 0.57 |
+| endurance | 70.8 | 0.53 |
+| agility | 21.5 | 0.48 |
+| reflex | 31.0 | 0.50 |
+| intelligence | 58.2 | 0.57 |
+| willpower | 78.7 | 0.64 |
+| instinct | 50.6 | 0.48 |
+| charisma | 47.9 | 0.52 |
+| resilience | 70.8 | 0.58 |
 
-Favored mean band position: 0.66. Unfavored: 0.51. Lift: 15.1 points.
+Favored mean band position: 0.68. Unfavored: 0.51. Lift: 16.8 points.
 
 Build shares (observed vs authored weight):
 
 | archetype | observed | authored |
 | --- | --- | --- |
-| sage | 46.0% | 46.0% |
-| bulwark | 26.5% | 24.0% |
-| stalwart | 15.0% | 18.0% |
-| survivor | 12.5% | 12.0% |
+| sage | 47.0% | 46.0% |
+| bulwark | 27.0% | 24.0% |
+| stalwart | 15.5% | 18.0% |
+| survivor | 10.5% | 12.0% |
 
 Trait landed rate vs authored percent:
 
 | trait | authored % | observed % |
 | --- | --- | --- |
 | luminous | 100.0 | 100.0% |
-| solitary | 40.0 | 43.0% |
-| reflective | 25.0 | 24.0% |
-| resistant | 20.0 | 22.5% |
-| mind-sealed | 15.0 | 15.5% |
+| solitary | 40.0 | 39.0% |
+| reflective | 25.0 | 23.0% |
+| resistant | 20.0 | 20.0% |
+| mind-sealed | 15.0 | 19.5% |
 
-Observed trait count mean: 2.05 (authored expected count: 2.00). Distribution: 0: 0 (0.0%), 1: 58 (29.0%), 2: 85 (42.5%), 3: 47 (23.5%), 4: 9 (4.5%), 5+: 1 (0.5%)
+Observed trait count mean: 2.02 (authored expected count: 2.00). Distribution: 0: 0 (0.0%), 1: 67 (33.5%), 2: 76 (38.0%), 3: 44 (22.0%), 4: 13 (6.5%), 5+: 0 (0.0%)
 
-Ability name diversity: 0.53 (695 abilities rolled).
+Ability name diversity: 0.56 (691 abilities rolled).
 
-Size mean: height 176.9 cm (band position 0.48), weight 357.0 kg (band position 0.47).
+Size mean: height 177.7 cm (band position 0.51), weight 360.9 kg (band position 0.51).
 
 ### Drilltail (`drilltail`), n = 200
 
@@ -371,26 +371,26 @@ Attributes (mean, band position 0-1):
 
 | attribute | mean | band position |
 | --- | --- | --- |
-| strength | 46.9 | 0.52 |
-| vitality | 40.0 | 0.50 |
-| endurance | 57.2 | 0.53 |
-| agility | 66.4 | 0.60 |
-| reflex | 69.3 | 0.57 |
-| intelligence | 29.5 | 0.53 |
-| willpower | 35.2 | 0.51 |
-| instinct | 74.1 | 0.62 |
-| charisma | 20.6 | 0.48 |
-| resilience | 55.4 | 0.45 |
+| strength | 46.2 | 0.49 |
+| vitality | 40.3 | 0.52 |
+| endurance | 57.0 | 0.52 |
+| agility | 66.0 | 0.58 |
+| reflex | 70.3 | 0.61 |
+| intelligence | 29.6 | 0.53 |
+| willpower | 35.3 | 0.52 |
+| instinct | 74.7 | 0.64 |
+| charisma | 20.5 | 0.47 |
+| resilience | 56.7 | 0.51 |
 
-Favored mean band position: 0.66. Unfavored: 0.50. Lift: 16.1 points.
+Favored mean band position: 0.69. Unfavored: 0.50. Lift: 19.2 points.
 
 Build shares (observed vs authored weight):
 
 | archetype | observed | authored |
 | --- | --- | --- |
-| prowler | 42.5% | 40.0% |
-| predator | 29.0% | 30.0% |
-| skirmisher | 16.5% | 20.0% |
+| prowler | 41.0% | 40.0% |
+| predator | 29.5% | 30.0% |
+| skirmisher | 17.5% | 20.0% |
 | survivor | 12.0% | 10.0% |
 
 Trait landed rate vs authored percent:
@@ -400,15 +400,15 @@ Trait landed rate vs authored percent:
 | armored | 100.0 | 100.0% |
 | stealthy | 100.0 | 100.0% |
 | slippery | 35.0 | 36.5% |
-| hardened | 25.0 | 25.0% |
-| solitary | 20.0 | 25.5% |
-| perceptive | 20.0 | 21.0% |
+| hardened | 25.0 | 24.5% |
+| solitary | 20.0 | 27.0% |
+| perceptive | 20.0 | 20.0% |
 
-Observed trait count mean: 3.08 (authored expected count: 3.00). Distribution: 0: 0 (0.0%), 1: 0 (0.0%), 2: 60 (30.0%), 3: 83 (41.5%), 4: 40 (20.0%), 5+: 17 (8.5%)
+Observed trait count mean: 3.08 (authored expected count: 3.00). Distribution: 0: 0 (0.0%), 1: 0 (0.0%), 2: 56 (28.0%), 3: 87 (43.5%), 4: 42 (21.0%), 5+: 15 (7.5%)
 
-Ability name diversity: 0.53 (702 abilities rolled).
+Ability name diversity: 0.56 (703 abilities rolled).
 
-Size mean: height 71.4 cm (band position 0.55), weight 31.6 kg (band position 0.53).
+Size mean: height 70.4 cm (band position 0.51), weight 31.2 kg (band position 0.51).
 
 ### Dromeus (`dromeus`), n = 200
 
@@ -416,42 +416,42 @@ Attributes (mean, band position 0-1):
 
 | attribute | mean | band position |
 | --- | --- | --- |
-| strength | 48.3 | 0.51 |
-| vitality | 44.9 | 0.50 |
+| strength | 47.5 | 0.47 |
+| vitality | 45.4 | 0.52 |
 | endurance | 68.4 | 0.58 |
-| agility | 85.9 | 0.63 |
-| reflex | 80.4 | 0.65 |
-| intelligence | 30.1 | 0.45 |
-| willpower | 40.1 | 0.50 |
+| agility | 85.0 | 0.59 |
+| reflex | 79.3 | 0.61 |
+| intelligence | 31.3 | 0.52 |
+| willpower | 39.5 | 0.48 |
 | instinct | 74.5 | 0.57 |
 | charisma | 35.2 | 0.51 |
-| resilience | 36.9 | 0.49 |
+| resilience | 37.2 | 0.51 |
 
-Favored mean band position: 0.70. Unfavored: 0.50. Lift: 19.7 points.
+Favored mean band position: 0.68. Unfavored: 0.50. Lift: 18.0 points.
 
 Build shares (observed vs authored weight):
 
 | archetype | observed | authored |
 | --- | --- | --- |
-| runner | 41.0% | 45.0% |
-| predator | 30.0% | 30.0% |
-| skirmisher | 29.0% | 25.0% |
+| runner | 38.0% | 45.0% |
+| predator | 35.0% | 30.0% |
+| skirmisher | 27.0% | 25.0% |
 
 Trait landed rate vs authored percent:
 
 | trait | authored % | observed % |
 | --- | --- | --- |
 | ramming | 100.0 | 100.0% |
-| hardened | 35.0 | 36.5% |
-| pack-bonded | 30.0 | 31.5% |
-| resistant | 20.0 | 14.0% |
-| perceptive | 15.0 | 14.5% |
+| hardened | 35.0 | 38.0% |
+| pack-bonded | 30.0 | 26.0% |
+| resistant | 20.0 | 21.0% |
+| perceptive | 15.0 | 18.0% |
 
-Observed trait count mean: 1.97 (authored expected count: 2.00). Distribution: 0: 0 (0.0%), 1: 60 (30.0%), 2: 96 (48.0%), 3: 36 (18.0%), 4: 7 (3.5%), 5+: 1 (0.5%)
+Observed trait count mean: 2.03 (authored expected count: 2.00). Distribution: 0: 0 (0.0%), 1: 59 (29.5%), 2: 88 (44.0%), 3: 41 (20.5%), 4: 12 (6.0%), 5+: 0 (0.0%)
 
 Ability name diversity: 0.52 (699 abilities rolled).
 
-Size mean: height 100.7 cm (band position 0.53), weight 47.6 kg (band position 0.53).
+Size mean: height 99.8 cm (band position 0.49), weight 46.8 kg (band position 0.49).
 
 ### Ectoghoul (`ectoghoul`), n = 200
 
@@ -459,27 +459,27 @@ Attributes (mean, band position 0-1):
 
 | attribute | mean | band position |
 | --- | --- | --- |
-| strength | 16.4 | 0.49 |
-| vitality | 29.5 | 0.47 |
-| endurance | 47.8 | 0.51 |
-| agility | 76.3 | 0.58 |
-| reflex | 72.5 | 0.65 |
-| intelligence | 41.0 | 0.50 |
-| willpower | 47.2 | 0.49 |
-| instinct | 58.9 | 0.56 |
-| charisma | 55.3 | 0.55 |
-| resilience | 25.4 | 0.52 |
+| strength | 16.5 | 0.50 |
+| vitality | 30.0 | 0.50 |
+| endurance | 48.3 | 0.53 |
+| agility | 76.2 | 0.58 |
+| reflex | 71.5 | 0.61 |
+| intelligence | 41.5 | 0.52 |
+| willpower | 47.8 | 0.51 |
+| instinct | 60.3 | 0.61 |
+| charisma | 54.8 | 0.53 |
+| resilience | 25.0 | 0.50 |
 
-Favored mean band position: 0.66. Unfavored: 0.50. Lift: 15.9 points.
+Favored mean band position: 0.68. Unfavored: 0.50. Lift: 17.6 points.
 
 Build shares (observed vs authored weight):
 
 | archetype | observed | authored |
 | --- | --- | --- |
-| prowler | 27.5% | 35.0% |
-| rogue | 33.5% | 30.0% |
-| skirmisher | 24.5% | 20.0% |
-| predator | 14.5% | 15.0% |
+| prowler | 36.5% | 35.0% |
+| rogue | 29.0% | 30.0% |
+| skirmisher | 18.5% | 20.0% |
+| predator | 16.0% | 15.0% |
 
 Trait landed rate vs authored percent:
 
@@ -487,16 +487,16 @@ Trait landed rate vs authored percent:
 | --- | --- | --- |
 | phasing | 100.0 | 100.0% |
 | menacing | 100.0 | 100.0% |
-| solitary | 35.0 | 38.0% |
-| stealthy | 30.0 | 35.0% |
-| slippery | 20.0 | 23.5% |
-| resistant | 15.0 | 18.0% |
+| solitary | 35.0 | 36.0% |
+| stealthy | 30.0 | 29.0% |
+| slippery | 20.0 | 22.0% |
+| resistant | 15.0 | 22.5% |
 
-Observed trait count mean: 3.15 (authored expected count: 3.00). Distribution: 0: 0 (0.0%), 1: 0 (0.0%), 2: 57 (28.5%), 3: 77 (38.5%), 4: 48 (24.0%), 5+: 18 (9.0%)
+Observed trait count mean: 3.10 (authored expected count: 3.00). Distribution: 0: 0 (0.0%), 1: 0 (0.0%), 2: 54 (27.0%), 3: 84 (42.0%), 4: 51 (25.5%), 5+: 11 (5.5%)
 
-Ability name diversity: 0.52 (694 abilities rolled).
+Ability name diversity: 0.57 (694 abilities rolled).
 
-Size mean: height 92.4 cm (band position 0.49), weight 0.3 kg (band position 0.48).
+Size mean: height 92.4 cm (band position 0.49), weight 0.3 kg (band position 0.50).
 
 ### Figzy (`figzy`), n = 200
 
@@ -504,27 +504,27 @@ Attributes (mean, band position 0-1):
 
 | attribute | mean | band position |
 | --- | --- | --- |
-| strength | 21.9 | 0.50 |
-| vitality | 36.5 | 0.50 |
-| endurance | 42.6 | 0.50 |
-| agility | 69.0 | 0.52 |
-| reflex | 65.1 | 0.54 |
-| intelligence | 74.8 | 0.65 |
-| willpower | 70.2 | 0.61 |
-| instinct | 58.9 | 0.56 |
-| charisma | 53.9 | 0.50 |
-| resilience | 29.0 | 0.50 |
+| strength | 21.0 | 0.45 |
+| vitality | 36.8 | 0.51 |
+| endurance | 42.4 | 0.49 |
+| agility | 69.1 | 0.52 |
+| reflex | 64.4 | 0.52 |
+| intelligence | 75.1 | 0.66 |
+| willpower | 69.5 | 0.58 |
+| instinct | 58.2 | 0.53 |
+| charisma | 55.0 | 0.54 |
+| resilience | 28.6 | 0.48 |
 
-Favored mean band position: 0.67. Unfavored: 0.50. Lift: 17.0 points.
+Favored mean band position: 0.67. Unfavored: 0.49. Lift: 18.0 points.
 
 Build shares (observed vs authored weight):
 
 | archetype | observed | authored |
 | --- | --- | --- |
-| sage | 51.0% | 50.0% |
-| seeker | 20.0% | 20.0% |
-| virtuoso | 11.0% | 15.0% |
-| skirmisher | 18.0% | 15.0% |
+| sage | 54.5% | 50.0% |
+| seeker | 18.5% | 20.0% |
+| virtuoso | 17.5% | 15.0% |
+| skirmisher | 9.5% | 15.0% |
 
 Trait landed rate vs authored percent:
 
@@ -532,16 +532,16 @@ Trait landed rate vs authored percent:
 | --- | --- | --- |
 | telekinetic | 100.0 | 100.0% |
 | protective | 100.0 | 100.0% |
-| perceptive | 45.0 | 47.0% |
-| mind-sealed | 30.0 | 35.0% |
-| hypnotic | 15.0 | 14.0% |
-| foresighted | 10.0 | 13.0% |
+| perceptive | 45.0 | 40.5% |
+| mind-sealed | 30.0 | 28.5% |
+| hypnotic | 15.0 | 19.0% |
+| foresighted | 10.0 | 8.5% |
 
-Observed trait count mean: 3.09 (authored expected count: 3.00). Distribution: 0: 0 (0.0%), 1: 0 (0.0%), 2: 52 (26.0%), 3: 93 (46.5%), 4: 41 (20.5%), 5+: 14 (7.0%)
+Observed trait count mean: 2.96 (authored expected count: 3.00). Distribution: 0: 0 (0.0%), 1: 0 (0.0%), 2: 62 (31.0%), 3: 92 (46.0%), 4: 37 (18.5%), 5+: 9 (4.5%)
 
-Ability name diversity: 0.59 (689 abilities rolled).
+Ability name diversity: 0.61 (697 abilities rolled).
 
-Size mean: height 109.6 cm (band position 0.49), weight 42.9 kg (band position 0.49).
+Size mean: height 109.9 cm (band position 0.50), weight 42.8 kg (band position 0.49).
 
 ### Foromeer (`foromeer`), n = 200
 
@@ -549,27 +549,27 @@ Attributes (mean, band position 0-1):
 
 | attribute | mean | band position |
 | --- | --- | --- |
-| strength | 70.4 | 0.67 |
-| vitality | 53.2 | 0.56 |
-| endurance | 70.7 | 0.58 |
-| agility | 38.4 | 0.52 |
-| reflex | 35.5 | 0.53 |
-| intelligence | 31.5 | 0.47 |
-| willpower | 50.3 | 0.47 |
-| instinct | 44.7 | 0.48 |
-| charisma | 23.8 | 0.52 |
-| resilience | 64.1 | 0.55 |
+| strength | 70.3 | 0.67 |
+| vitality | 53.0 | 0.55 |
+| endurance | 71.9 | 0.63 |
+| agility | 37.5 | 0.48 |
+| reflex | 34.4 | 0.47 |
+| intelligence | 31.8 | 0.49 |
+| willpower | 50.7 | 0.49 |
+| instinct | 44.4 | 0.47 |
+| charisma | 23.5 | 0.50 |
+| resilience | 64.4 | 0.56 |
 
-Favored mean band position: 0.67. Unfavored: 0.50. Lift: 17.3 points.
+Favored mean band position: 0.69. Unfavored: 0.49. Lift: 20.2 points.
 
 Build shares (observed vs authored weight):
 
 | archetype | observed | authored |
 | --- | --- | --- |
-| berserker | 39.0% | 40.0% |
-| juggernaut | 26.5% | 30.0% |
-| survivor | 24.0% | 20.0% |
-| vanguard | 10.5% | 10.0% |
+| berserker | 40.0% | 40.0% |
+| juggernaut | 32.5% | 30.0% |
+| survivor | 18.5% | 20.0% |
+| vanguard | 9.0% | 10.0% |
 
 Trait landed rate vs authored percent:
 
@@ -577,16 +577,16 @@ Trait landed rate vs authored percent:
 | --- | --- | --- |
 | armored | 100.0 | 100.0% |
 | ramming | 100.0 | 100.0% |
-| hardened | 35.0 | 31.0% |
-| regenerative | 30.0 | 23.0% |
-| perceptive | 20.0 | 19.5% |
-| solitary | 15.0 | 20.0% |
+| hardened | 35.0 | 36.0% |
+| regenerative | 30.0 | 30.5% |
+| perceptive | 20.0 | 17.0% |
+| solitary | 15.0 | 16.0% |
 
-Observed trait count mean: 2.94 (authored expected count: 3.00). Distribution: 0: 0 (0.0%), 1: 0 (0.0%), 2: 70 (35.0%), 3: 80 (40.0%), 4: 44 (22.0%), 5+: 6 (3.0%)
+Observed trait count mean: 3.00 (authored expected count: 3.00). Distribution: 0: 0 (0.0%), 1: 0 (0.0%), 2: 59 (29.5%), 3: 94 (47.0%), 4: 36 (18.0%), 5+: 11 (5.5%)
 
-Ability name diversity: 0.49 (690 abilities rolled).
+Ability name diversity: 0.52 (701 abilities rolled).
 
-Size mean: height 197.2 cm (band position 0.49), weight 96.7 kg (band position 0.49).
+Size mean: height 197.9 cm (band position 0.51), weight 97.1 kg (band position 0.50).
 
 ### Frackworm (`frackworm`), n = 200
 
@@ -594,16 +594,16 @@ Attributes (mean, band position 0-1):
 
 | attribute | mean | band position |
 | --- | --- | --- |
-| strength | 83.9 | 0.63 |
-| vitality | 79.6 | 0.58 |
-| endurance | 84.2 | 0.55 |
+| strength | 83.7 | 0.62 |
+| vitality | 79.1 | 0.56 |
+| endurance | 84.8 | 0.58 |
 | agility | 15.6 | 0.48 |
-| reflex | 18.9 | 0.50 |
-| intelligence | 20.7 | 0.54 |
+| reflex | 19.2 | 0.51 |
+| intelligence | 19.4 | 0.46 |
 | willpower | 46.4 | 0.50 |
-| instinct | 56.6 | 0.51 |
-| charisma | 15.0 | 0.50 |
-| resilience | 68.8 | 0.60 |
+| instinct | 56.2 | 0.49 |
+| charisma | 15.7 | 0.55 |
+| resilience | 69.5 | 0.63 |
 
 Favored mean band position: 0.68. Unfavored: 0.50. Lift: 17.7 points.
 
@@ -612,26 +612,26 @@ Build shares (observed vs authored weight):
 | archetype | observed | authored |
 | --- | --- | --- |
 | juggernaut | 46.0% | 45.0% |
-| survivor | 23.5% | 25.0% |
-| berserker | 17.5% | 18.0% |
-| bulwark | 13.0% | 12.0% |
+| survivor | 25.0% | 25.0% |
+| berserker | 19.0% | 18.0% |
+| bulwark | 10.0% | 12.0% |
 
 Trait landed rate vs authored percent:
 
 | trait | authored % | observed % |
 | --- | --- | --- |
 | armored | 100.0 | 100.0% |
-| anchored | 30.0 | 36.0% |
-| ramming | 25.0 | 26.0% |
-| hardened | 20.0 | 18.5% |
-| solitary | 15.0 | 14.0% |
+| anchored | 30.0 | 31.5% |
+| ramming | 25.0 | 24.5% |
+| hardened | 20.0 | 21.5% |
+| solitary | 15.0 | 12.0% |
 | pack-bonded | 10.0 | 9.0% |
 
-Observed trait count mean: 2.04 (authored expected count: 2.00). Distribution: 0: 0 (0.0%), 1: 61 (30.5%), 2: 79 (39.5%), 3: 52 (26.0%), 4: 8 (4.0%), 5+: 0 (0.0%)
+Observed trait count mean: 1.99 (authored expected count: 2.00). Distribution: 0: 0 (0.0%), 1: 63 (31.5%), 2: 88 (44.0%), 3: 39 (19.5%), 4: 9 (4.5%), 5+: 1 (0.5%)
 
-Ability name diversity: 0.60 (708 abilities rolled).
+Ability name diversity: 0.59 (703 abilities rolled).
 
-Size mean: height 1197.4 cm (band position 0.50), weight 3181.2 kg (band position 0.49).
+Size mean: height 1212.6 cm (band position 0.52), weight 3211.5 kg (band position 0.51).
 
 ### Graviclaw (`graviclaw`), n = 200
 
@@ -639,27 +639,27 @@ Attributes (mean, band position 0-1):
 
 | attribute | mean | band position |
 | --- | --- | --- |
-| strength | 84.2 | 0.57 |
-| vitality | 69.0 | 0.56 |
-| endurance | 62.5 | 0.50 |
-| agility | 19.8 | 0.49 |
-| reflex | 38.0 | 0.52 |
-| intelligence | 37.0 | 0.48 |
-| willpower | 58.3 | 0.53 |
-| instinct | 68.7 | 0.55 |
-| charisma | 27.6 | 0.50 |
-| resilience | 86.4 | 0.66 |
+| strength | 85.2 | 0.61 |
+| vitality | 68.8 | 0.55 |
+| endurance | 63.2 | 0.53 |
+| agility | 19.6 | 0.48 |
+| reflex | 38.7 | 0.55 |
+| intelligence | 38.1 | 0.52 |
+| willpower | 57.5 | 0.50 |
+| instinct | 68.3 | 0.53 |
+| charisma | 27.3 | 0.49 |
+| resilience | 86.1 | 0.64 |
 
-Favored mean band position: 0.69. Unfavored: 0.50. Lift: 19.1 points.
+Favored mean band position: 0.69. Unfavored: 0.50. Lift: 18.9 points.
 
 Build shares (observed vs authored weight):
 
 | archetype | observed | authored |
 | --- | --- | --- |
-| juggernaut | 41.0% | 45.0% |
-| bulwark | 33.5% | 25.0% |
-| predator | 14.5% | 20.0% |
-| stalwart | 11.0% | 10.0% |
+| juggernaut | 48.5% | 45.0% |
+| bulwark | 24.0% | 25.0% |
+| predator | 22.0% | 20.0% |
+| stalwart | 5.5% | 10.0% |
 
 Trait landed rate vs authored percent:
 
@@ -667,16 +667,16 @@ Trait landed rate vs authored percent:
 | --- | --- | --- |
 | armored | 100.0 | 100.0% |
 | anchored | 100.0 | 100.0% |
-| grappling | 36.0 | 40.5% |
-| solitary | 26.0 | 31.5% |
-| telekinetic | 22.0 | 19.0% |
-| stealthy | 16.0 | 18.0% |
+| grappling | 36.0 | 35.5% |
+| solitary | 26.0 | 28.0% |
+| telekinetic | 22.0 | 22.5% |
+| stealthy | 16.0 | 16.0% |
 
-Observed trait count mean: 3.09 (authored expected count: 3.00). Distribution: 0: 0 (0.0%), 1: 0 (0.0%), 2: 48 (24.0%), 3: 95 (47.5%), 4: 48 (24.0%), 5+: 9 (4.5%)
+Observed trait count mean: 3.02 (authored expected count: 3.00). Distribution: 0: 0 (0.0%), 1: 0 (0.0%), 2: 61 (30.5%), 3: 84 (42.0%), 4: 45 (22.5%), 5+: 10 (5.0%)
 
-Ability name diversity: 0.59 (696 abilities rolled).
+Ability name diversity: 0.60 (698 abilities rolled).
 
-Size mean: height 191.2 cm (band position 0.52), weight 222.0 kg (band position 0.53).
+Size mean: height 189.1 cm (band position 0.48), weight 219.4 kg (band position 0.49).
 
 ### Hippochamp (`hippochamp`), n = 200
 
@@ -684,43 +684,43 @@ Attributes (mean, band position 0-1):
 
 | attribute | mean | band position |
 | --- | --- | --- |
-| strength | 55.2 | 0.51 |
-| vitality | 63.5 | 0.67 |
-| endurance | 78.3 | 0.58 |
+| strength | 55.6 | 0.53 |
+| vitality | 62.7 | 0.63 |
+| endurance | 79.6 | 0.64 |
 | agility | 50.3 | 0.51 |
-| reflex | 54.3 | 0.46 |
-| intelligence | 44.4 | 0.47 |
-| willpower | 60.4 | 0.52 |
-| instinct | 55.4 | 0.52 |
-| charisma | 39.9 | 0.49 |
-| resilience | 56.0 | 0.55 |
+| reflex | 54.8 | 0.49 |
+| intelligence | 45.3 | 0.51 |
+| willpower | 60.2 | 0.51 |
+| instinct | 55.9 | 0.54 |
+| charisma | 40.1 | 0.51 |
+| resilience | 55.6 | 0.53 |
 
-Favored mean band position: 0.69. Unfavored: 0.49. Lift: 20.6 points.
+Favored mean band position: 0.67. Unfavored: 0.51. Lift: 16.3 points.
 
 Build shares (observed vs authored weight):
 
 | archetype | observed | authored |
 | --- | --- | --- |
-| survivor | 50.0% | 40.0% |
-| bulwark | 21.5% | 25.0% |
-| vanguard | 13.5% | 20.0% |
-| runner | 15.0% | 15.0% |
+| survivor | 45.0% | 40.0% |
+| bulwark | 19.5% | 25.0% |
+| vanguard | 20.0% | 20.0% |
+| runner | 15.5% | 15.0% |
 
 Trait landed rate vs authored percent:
 
 | trait | authored % | observed % |
 | --- | --- | --- |
 | protective | 100.0 | 100.0% |
-| territorial | 35.0 | 39.0% |
-| pack-bonded | 25.0 | 24.5% |
-| hardened | 22.0 | 25.5% |
-| resistant | 18.0 | 15.0% |
+| territorial | 35.0 | 43.5% |
+| pack-bonded | 25.0 | 27.5% |
+| hardened | 22.0 | 23.0% |
+| resistant | 18.0 | 19.5% |
 
-Observed trait count mean: 2.04 (authored expected count: 2.00). Distribution: 0: 0 (0.0%), 1: 63 (31.5%), 2: 84 (42.0%), 3: 39 (19.5%), 4: 10 (5.0%), 5+: 4 (2.0%)
+Observed trait count mean: 2.13 (authored expected count: 2.00). Distribution: 0: 0 (0.0%), 1: 45 (22.5%), 2: 95 (47.5%), 3: 48 (24.0%), 4: 12 (6.0%), 5+: 0 (0.0%)
 
-Ability name diversity: 0.55 (710 abilities rolled).
+Ability name diversity: 0.57 (696 abilities rolled).
 
-Size mean: height 130.0 cm (band position 0.50), weight 143.1 kg (band position 0.51).
+Size mean: height 130.8 cm (band position 0.53), weight 144.1 kg (band position 0.54).
 
 ### Hypnopet (`hypnopet`), n = 200
 
@@ -728,596 +728,16 @@ Attributes (mean, band position 0-1):
 
 | attribute | mean | band position |
 | --- | --- | --- |
-| strength | 16.3 | 0.52 |
-| vitality | 34.9 | 0.50 |
+| strength | 16.0 | 0.50 |
+| vitality | 35.3 | 0.51 |
 | endurance | 39.5 | 0.47 |
-| agility | 57.0 | 0.52 |
-| reflex | 51.0 | 0.50 |
-| intelligence | 69.1 | 0.62 |
-| willpower | 75.4 | 0.62 |
-| instinct | 62.2 | 0.55 |
-| charisma | 76.5 | 0.59 |
-| resilience | 24.0 | 0.53 |
-
-Favored mean band position: 0.67. Unfavored: 0.51. Lift: 15.5 points.
-
-Build shares (observed vs authored weight):
-
-| archetype | observed | authored |
-| --- | --- | --- |
-| sovereign | 42.5% | 38.0% |
-| sage | 27.5% | 30.0% |
-| virtuoso | 20.5% | 22.0% |
-| seeker | 9.5% | 10.0% |
-
-Trait landed rate vs authored percent:
-
-| trait | authored % | observed % |
-| --- | --- | --- |
-| healing | 100.0 | 100.0% |
-| hypnotic | 100.0 | 100.0% |
-| luminous | 40.0 | 41.0% |
-| regenerative | 30.0 | 27.5% |
-| protective | 20.0 | 23.0% |
-| perceptive | 10.0 | 11.5% |
-
-Observed trait count mean: 3.03 (authored expected count: 3.00). Distribution: 0: 0 (0.0%), 1: 0 (0.0%), 2: 64 (32.0%), 3: 79 (39.5%), 4: 45 (22.5%), 5+: 12 (6.0%)
-
-Ability name diversity: 0.57 (689 abilities rolled).
-
-Size mean: height 36.4 cm (band position 0.54), weight 12.7 kg (band position 0.53).
-
-### Imprit (`imprit`), n = 200
-
-Attributes (mean, band position 0-1):
-
-| attribute | mean | band position |
-| --- | --- | --- |
-| strength | 37.4 | 0.52 |
-| vitality | 43.2 | 0.51 |
-| endurance | 50.4 | 0.52 |
-| agility | 77.7 | 0.58 |
-| reflex | 75.0 | 0.55 |
-| intelligence | 71.8 | 0.55 |
-| willpower | 32.6 | 0.48 |
-| instinct | 62.1 | 0.60 |
-| charisma | 41.7 | 0.53 |
-| resilience | 45.6 | 0.53 |
-
-Favored mean band position: 0.68. Unfavored: 0.50. Lift: 17.5 points.
-
-Build shares (observed vs authored weight):
-
-| archetype | observed | authored |
-| --- | --- | --- |
-| prowler | 36.5% | 34.0% |
-| seeker | 25.5% | 26.0% |
-| skirmisher | 22.0% | 22.0% |
-| rogue | 16.0% | 18.0% |
-
-Trait landed rate vs authored percent:
-
-| trait | authored % | observed % |
-| --- | --- | --- |
-| hardened | 100.0 | 100.0% |
-| solitary | 30.0 | 28.5% |
-| luminous | 30.0 | 26.5% |
-| slippery | 20.0 | 15.0% |
-| volatile | 15.0 | 16.5% |
-| nocturnal | 5.0 | 3.0% |
-
-Observed trait count mean: 1.90 (authored expected count: 2.00). Distribution: 0: 0 (0.0%), 1: 80 (40.0%), 2: 66 (33.0%), 3: 50 (25.0%), 4: 3 (1.5%), 5+: 1 (0.5%)
-
-Ability name diversity: 0.52 (705 abilities rolled).
-
-Size mean: height 85.8 cm (band position 0.53), weight 39.5 kg (band position 0.53).
-
-### Kosanos (`kosanos`), n = 200
-
-Attributes (mean, band position 0-1):
-
-| attribute | mean | band position |
-| --- | --- | --- |
-| strength | 81.9 | 0.60 |
-| vitality | 73.3 | 0.57 |
-| endurance | 76.4 | 0.57 |
-| agility | 20.4 | 0.53 |
-| reflex | 25.4 | 0.46 |
-| intelligence | 28.2 | 0.51 |
-| willpower | 49.9 | 0.50 |
-| instinct | 51.7 | 0.48 |
-| charisma | 22.4 | 0.49 |
-| resilience | 70.1 | 0.61 |
-
-Favored mean band position: 0.65. Unfavored: 0.50. Lift: 15.2 points.
-
-Build shares (observed vs authored weight):
-
-| archetype | observed | authored |
-| --- | --- | --- |
-| juggernaut | 42.5% | 40.0% |
-| survivor | 26.5% | 25.0% |
-| bulwark | 19.0% | 20.0% |
-| berserker | 12.0% | 15.0% |
-
-Trait landed rate vs authored percent:
-
-| trait | authored % | observed % |
-| --- | --- | --- |
-| anchored | 100.0 | 100.0% |
-| pack-bonded | 35.0 | 32.5% |
-| resistant | 25.0 | 20.5% |
-| territorial | 20.0 | 23.5% |
-| regenerative | 10.0 | 15.0% |
-| perceptive | 10.0 | 14.5% |
-
-Observed trait count mean: 2.06 (authored expected count: 2.00). Distribution: 0: 0 (0.0%), 1: 56 (28.0%), 2: 88 (44.0%), 3: 45 (22.5%), 4: 10 (5.0%), 5+: 1 (0.5%)
-
-Ability name diversity: 0.56 (693 abilities rolled).
-
-Size mean: height 237.6 cm (band position 0.50), weight 375.1 kg (band position 0.50).
-
-### Luceras (`luceras`), n = 200
-
-Attributes (mean, band position 0-1):
-
-| attribute | mean | band position |
-| --- | --- | --- |
-| strength | 48.5 | 0.52 |
-| vitality | 40.8 | 0.54 |
-| endurance | 56.6 | 0.58 |
-| agility | 82.9 | 0.64 |
-| reflex | 76.5 | 0.58 |
-| intelligence | 35.3 | 0.51 |
-| willpower | 44.9 | 0.50 |
-| instinct | 65.5 | 0.53 |
-| charisma | 40.1 | 0.50 |
-| resilience | 37.9 | 0.49 |
-
-Favored mean band position: 0.68. Unfavored: 0.51. Lift: 17.2 points.
-
-Build shares (observed vs authored weight):
-
-| archetype | observed | authored |
-| --- | --- | --- |
-| skirmisher | 33.5% | 40.0% |
-| runner | 30.5% | 27.0% |
-| prowler | 18.5% | 18.0% |
-| vanguard | 17.5% | 15.0% |
-
-Trait landed rate vs authored percent:
-
-| trait | authored % | observed % |
-| --- | --- | --- |
-| ramming | 100.0 | 100.0% |
-| pack-bonded | 35.0 | 41.0% |
-| slippery | 30.0 | 35.0% |
-| resistant | 20.0 | 18.5% |
-| perceptive | 15.0 | 17.5% |
-
-Observed trait count mean: 2.12 (authored expected count: 2.00). Distribution: 0: 0 (0.0%), 1: 54 (27.0%), 2: 84 (42.0%), 3: 47 (23.5%), 4: 14 (7.0%), 5+: 1 (0.5%)
-
-Ability name diversity: 0.53 (689 abilities rolled).
-
-Size mean: height 56.5 cm (band position 0.47), weight 12.8 kg (band position 0.48).
-
-### Neph (`neph`), n = 200
-
-Attributes (mean, band position 0-1):
-
-| attribute | mean | band position |
-| --- | --- | --- |
-| strength | 43.0 | 0.52 |
-| vitality | 70.9 | 0.64 |
-| endurance | 69.3 | 0.57 |
-| agility | 19.9 | 0.50 |
-| reflex | 19.6 | 0.48 |
-| intelligence | 17.9 | 0.53 |
-| willpower | 35.0 | 0.50 |
-| instinct | 48.7 | 0.55 |
-| charisma | 30.7 | 0.54 |
-| resilience | 24.9 | 0.50 |
-
-Favored mean band position: 0.68. Unfavored: 0.49. Lift: 19.1 points.
-
-Build shares (observed vs authored weight):
-
-| archetype | observed | authored |
-| --- | --- | --- |
-| survivor | 48.5% | 45.0% |
-| bulwark | 22.5% | 25.0% |
-| sage | 16.5% | 20.0% |
-| seeker | 12.5% | 10.0% |
-
-Trait landed rate vs authored percent:
-
-| trait | authored % | observed % |
-| --- | --- | --- |
-| volatile | 100.0 | 100.0% |
-| pack-bonded | 45.0 | 45.5% |
-| slippery | 30.0 | 30.0% |
-| resistant | 25.0 | 26.5% |
-
-Observed trait count mean: 2.02 (authored expected count: 2.00). Distribution: 0: 0 (0.0%), 1: 61 (30.5%), 2: 83 (41.5%), 3: 47 (23.5%), 4: 9 (4.5%), 5+: 0 (0.0%)
-
-Ability name diversity: 0.61 (702 abilities rolled).
-
-Size mean: height 498.5 cm (band position 0.49), weight 59.3 kg (band position 0.49).
-
-### Newtapede (`newtapede`), n = 200
-
-Attributes (mean, band position 0-1):
-
-| attribute | mean | band position |
-| --- | --- | --- |
-| strength | 34.5 | 0.47 |
-| vitality | 45.7 | 0.53 |
-| endurance | 69.4 | 0.57 |
-| agility | 71.3 | 0.65 |
-| reflex | 59.3 | 0.57 |
-| intelligence | 34.2 | 0.46 |
-| willpower | 40.1 | 0.51 |
-| instinct | 55.0 | 0.50 |
-| charisma | 24.6 | 0.48 |
-| resilience | 24.8 | 0.49 |
-
-Favored mean band position: 0.66. Unfavored: 0.49. Lift: 17.5 points.
-
-Build shares (observed vs authored weight):
-
-| archetype | observed | authored |
-| --- | --- | --- |
-| runner | 37.0% | 40.0% |
-| skirmisher | 40.5% | 30.0% |
-| survivor | 15.5% | 20.0% |
-| prowler | 7.0% | 10.0% |
-
-Trait landed rate vs authored percent:
-
-| trait | authored % | observed % |
-| --- | --- | --- |
-| grappling | 100.0 | 100.0% |
-| regenerative | 30.0 | 26.5% |
-| slippery | 25.0 | 25.0% |
-| hardened | 18.0 | 17.5% |
-| resistant | 14.0 | 21.0% |
-| pack-bonded | 13.0 | 17.5% |
-
-Observed trait count mean: 2.08 (authored expected count: 2.00). Distribution: 0: 0 (0.0%), 1: 55 (27.5%), 2: 91 (45.5%), 3: 42 (21.0%), 4: 9 (4.5%), 5+: 3 (1.5%)
-
-Ability name diversity: 0.49 (694 abilities rolled).
-
-Size mean: height 202.8 cm (band position 0.55), weight 95.1 kg (band position 0.56).
-
-### Scalatto (`scalatto`), n = 200
-
-Attributes (mean, band position 0-1):
-
-| attribute | mean | band position |
-| --- | --- | --- |
-| strength | 58.4 | 0.54 |
-| vitality | 65.4 | 0.62 |
-| endurance | 63.4 | 0.53 |
-| agility | 37.4 | 0.50 |
-| reflex | 42.2 | 0.49 |
-| intelligence | 33.0 | 0.52 |
-| willpower | 52.4 | 0.49 |
-| instinct | 52.4 | 0.49 |
-| charisma | 28.3 | 0.53 |
-| resilience | 86.3 | 0.65 |
-
-Favored mean band position: 0.68. Unfavored: 0.50. Lift: 17.8 points.
-
-Build shares (observed vs authored weight):
-
-| archetype | observed | authored |
-| --- | --- | --- |
-| bulwark | 49.0% | 46.0% |
-| juggernaut | 19.5% | 24.0% |
-| survivor | 18.5% | 18.0% |
-| stalwart | 13.0% | 12.0% |
-
-Trait landed rate vs authored percent:
-
-| trait | authored % | observed % |
-| --- | --- | --- |
-| armored | 100.0 | 100.0% |
-| ramming | 30.0 | 32.5% |
-| nocturnal | 25.0 | 28.5% |
-| hardened | 20.0 | 24.5% |
-| solitary | 15.0 | 11.5% |
-| perceptive | 10.0 | 9.5% |
-
-Observed trait count mean: 2.06 (authored expected count: 2.00). Distribution: 0: 0 (0.0%), 1: 60 (30.0%), 2: 77 (38.5%), 3: 53 (26.5%), 4: 10 (5.0%), 5+: 0 (0.0%)
-
-Ability name diversity: 0.54 (714 abilities rolled).
-
-Size mean: height 110.3 cm (band position 0.51), weight 71.1 kg (band position 0.50).
-
-### Shuntara (`shuntara`), n = 200
-
-Attributes (mean, band position 0-1):
-
-| attribute | mean | band position |
-| --- | --- | --- |
-| strength | 51.9 | 0.50 |
-| vitality | 65.0 | 0.59 |
-| endurance | 71.6 | 0.53 |
-| agility | 49.3 | 0.52 |
-| reflex | 66.8 | 0.51 |
-| intelligence | 57.9 | 0.54 |
-| willpower | 60.0 | 0.55 |
-| instinct | 69.5 | 0.52 |
-| charisma | 33.6 | 0.48 |
-| resilience | 72.6 | 0.61 |
-
-Favored mean band position: 0.66. Unfavored: 0.50. Lift: 15.3 points.
-
-Build shares (observed vs authored weight):
-
-| archetype | observed | authored |
-| --- | --- | --- |
-| bulwark | 45.5% | 40.0% |
-| stalwart | 28.5% | 30.0% |
-| skirmisher | 15.0% | 18.0% |
-| seeker | 11.0% | 12.0% |
-
-Trait landed rate vs authored percent:
-
-| trait | authored % | observed % |
-| --- | --- | --- |
-| insulated | 100.0 | 100.0% |
-| protective | 100.0 | 100.0% |
-| anchored | 45.0 | 42.0% |
-| perceptive | 35.0 | 38.0% |
-| hardened | 20.0 | 21.5% |
-
-Observed trait count mean: 3.02 (authored expected count: 3.00). Distribution: 0: 0 (0.0%), 1: 0 (0.0%), 2: 58 (29.0%), 3: 89 (44.5%), 4: 45 (22.5%), 5+: 8 (4.0%)
-
-Ability name diversity: 0.39 (709 abilities rolled).
-
-Size mean: height 62.6 cm (band position 0.50), weight 79.9 kg (band position 0.50).
-
-### Smokat (`smokat`), n = 200
-
-Attributes (mean, band position 0-1):
-
-| attribute | mean | band position |
-| --- | --- | --- |
-| strength | 57.8 | 0.51 |
-| vitality | 37.1 | 0.48 |
-| endurance | 47.6 | 0.50 |
-| agility | 72.8 | 0.66 |
-| reflex | 71.3 | 0.60 |
-| intelligence | 56.8 | 0.47 |
-| willpower | 47.6 | 0.50 |
-| instinct | 65.8 | 0.61 |
-| charisma | 39.2 | 0.57 |
-| resilience | 32.6 | 0.51 |
-
-Favored mean band position: 0.69. Unfavored: 0.51. Lift: 18.2 points.
-
-Build shares (observed vs authored weight):
-
-| archetype | observed | authored |
-| --- | --- | --- |
-| prowler | 40.5% | 40.0% |
-| skirmisher | 21.0% | 30.0% |
-| predator | 30.5% | 22.0% |
-| rogue | 8.0% | 8.0% |
-
-Trait landed rate vs authored percent:
-
-| trait | authored % | observed % |
-| --- | --- | --- |
-| phasing | 100.0 | 100.0% |
-| stealthy | 100.0 | 100.0% |
-| slippery | 35.0 | 40.0% |
-| solitary | 30.0 | 28.0% |
-| nocturnal | 20.0 | 20.0% |
-| perceptive | 15.0 | 17.5% |
-
-Observed trait count mean: 3.06 (authored expected count: 3.00). Distribution: 0: 0 (0.0%), 1: 0 (0.0%), 2: 59 (29.5%), 3: 81 (40.5%), 4: 50 (25.0%), 5+: 10 (5.0%)
-
-Ability name diversity: 0.47 (694 abilities rolled).
-
-Size mean: height 167.6 cm (band position 0.50), weight 1.8 kg (band position 0.51).
-
-### Sonalloy (`sonalloy`), n = 200
-
-Attributes (mean, band position 0-1):
-
-| attribute | mean | band position |
-| --- | --- | --- |
-| strength | 48.1 | 0.51 |
-| vitality | 65.5 | 0.52 |
-| endurance | 69.0 | 0.54 |
-| agility | 37.9 | 0.49 |
-| reflex | 44.2 | 0.46 |
-| intelligence | 73.3 | 0.56 |
-| willpower | 73.2 | 0.63 |
-| instinct | 54.5 | 0.48 |
-| charisma | 36.0 | 0.50 |
-| resilience | 77.7 | 0.60 |
-
-Favored mean band position: 0.68. Unfavored: 0.49. Lift: 18.5 points.
-
-Build shares (observed vs authored weight):
-
-| archetype | observed | authored |
-| --- | --- | --- |
-| sage | 39.5% | 40.0% |
-| stalwart | 33.5% | 30.0% |
-| bulwark | 19.0% | 20.0% |
-| survivor | 8.0% | 10.0% |
-
-Trait landed rate vs authored percent:
-
-| trait | authored % | observed % |
-| --- | --- | --- |
-| regenerative | 100.0 | 100.0% |
-| healing | 100.0 | 100.0% |
-| hardened | 55.0 | 57.0% |
-| protective | 30.0 | 26.0% |
-| anchored | 15.0 | 14.0% |
-
-Observed trait count mean: 2.97 (authored expected count: 3.00). Distribution: 0: 0 (0.0%), 1: 0 (0.0%), 2: 56 (28.0%), 3: 98 (49.0%), 4: 42 (21.0%), 5+: 4 (2.0%)
-
-Ability name diversity: 0.56 (689 abilities rolled).
-
-Size mean: height 85.3 cm (band position 0.51), weight 289.2 kg (band position 0.49).
-
-### Terragoyle (`terragoyle`), n = 200
-
-Attributes (mean, band position 0-1):
-
-| attribute | mean | band position |
-| --- | --- | --- |
-| strength | 71.1 | 0.56 |
-| vitality | 73.9 | 0.60 |
-| endurance | 66.4 | 0.50 |
-| agility | 30.6 | 0.53 |
-| reflex | 36.6 | 0.58 |
-| intelligence | 34.8 | 0.49 |
-| willpower | 66.6 | 0.50 |
-| instinct | 57.7 | 0.55 |
-| charisma | 29.7 | 0.49 |
-| resilience | 82.7 | 0.63 |
-
-Favored mean band position: 0.67. Unfavored: 0.51. Lift: 16.0 points.
-
-Build shares (observed vs authored weight):
-
-| archetype | observed | authored |
-| --- | --- | --- |
-| bulwark | 45.0% | 45.0% |
-| stalwart | 21.5% | 25.0% |
-| juggernaut | 22.0% | 20.0% |
-| predator | 11.5% | 10.0% |
-
-Trait landed rate vs authored percent:
-
-| trait | authored % | observed % |
-| --- | --- | --- |
-| telekinetic | 100.0 | 100.0% |
-| territorial | 100.0 | 100.0% |
-| dormant | 40.0 | 34.0% |
-| anchored | 20.0 | 20.0% |
-| perceptive | 20.0 | 17.0% |
-| insulated | 20.0 | 21.5% |
-
-Observed trait count mean: 2.92 (authored expected count: 3.00). Distribution: 0: 0 (0.0%), 1: 0 (0.0%), 2: 65 (32.5%), 3: 90 (45.0%), 4: 40 (20.0%), 5+: 5 (2.5%)
-
-Ability name diversity: 0.50 (705 abilities rolled).
-
-Size mean: height 169.0 cm (band position 0.54), weight 371.3 kg (band position 0.55).
-
-### Vespersyn (`vespersyn`), n = 200
-
-Attributes (mean, band position 0-1):
-
-| attribute | mean | band position |
-| --- | --- | --- |
-| strength | 24.4 | 0.47 |
-| vitality | 35.1 | 0.51 |
-| endurance | 42.7 | 0.51 |
-| agility | 69.1 | 0.56 |
-| reflex | 63.6 | 0.54 |
-| intelligence | 59.6 | 0.58 |
-| willpower | 75.0 | 0.60 |
-| instinct | 52.5 | 0.50 |
-| charisma | 38.2 | 0.53 |
-| resilience | 29.9 | 0.50 |
-
-Favored mean band position: 0.67. Unfavored: 0.49. Lift: 17.9 points.
-
-Build shares (observed vs authored weight):
-
-| archetype | observed | authored |
-| --- | --- | --- |
-| sage | 38.5% | 42.0% |
-| skirmisher | 28.5% | 24.0% |
-| sovereign | 18.5% | 18.0% |
-| seeker | 14.5% | 16.0% |
-
-Trait landed rate vs authored percent:
-
-| trait | authored % | observed % |
-| --- | --- | --- |
-| commanding | 100.0 | 100.0% |
-| nocturnal | 30.0 | 31.0% |
-| solitary | 26.0 | 29.5% |
-| stealthy | 22.0 | 27.0% |
-| slippery | 12.0 | 7.0% |
-| perceptive | 10.0 | 6.0% |
-
-Observed trait count mean: 2.00 (authored expected count: 2.00). Distribution: 0: 0 (0.0%), 1: 65 (32.5%), 2: 81 (40.5%), 3: 43 (21.5%), 4: 10 (5.0%), 5+: 1 (0.5%)
-
-Ability name diversity: 0.64 (699 abilities rolled).
-
-Size mean: height 75.6 cm (band position 0.52), weight 12.2 kg (band position 0.53).
-
-### Thirstaserp (`thirstaserp`), n = 200
-
-Attributes (mean, band position 0-1):
-
-| attribute | mean | band position |
-| --- | --- | --- |
-| strength | 54.9 | 0.50 |
-| vitality | 50.3 | 0.52 |
-| endurance | 55.9 | 0.54 |
-| agility | 61.1 | 0.55 |
-| reflex | 72.7 | 0.63 |
-| intelligence | 27.4 | 0.50 |
-| willpower | 45.3 | 0.52 |
-| instinct | 78.1 | 0.65 |
-| charisma | 40.0 | 0.50 |
-| resilience | 45.6 | 0.53 |
-
-Favored mean band position: 0.69. Unfavored: 0.51. Lift: 18.2 points.
-
-Build shares (observed vs authored weight):
-
-| archetype | observed | authored |
-| --- | --- | --- |
-| predator | 41.5% | 50.0% |
-| prowler | 26.5% | 25.0% |
-| skirmisher | 20.0% | 15.0% |
-| survivor | 12.0% | 10.0% |
-
-Trait landed rate vs authored percent:
-
-| trait | authored % | observed % |
-| --- | --- | --- |
-| toxic | 100.0 | 100.0% |
-| stealthy | 100.0 | 100.0% |
-| hypnotic | 35.0 | 33.0% |
-| menacing | 25.0 | 29.0% |
-| solitary | 25.0 | 30.0% |
-| hardened | 15.0 | 16.5% |
-
-Observed trait count mean: 3.08 (authored expected count: 3.00). Distribution: 0: 0 (0.0%), 1: 0 (0.0%), 2: 54 (27.0%), 3: 85 (42.5%), 4: 52 (26.0%), 5+: 9 (4.5%)
-
-Ability name diversity: 0.57 (694 abilities rolled).
-
-Size mean: height 221.3 cm (band position 0.52), weight 121.6 kg (band position 0.53).
-
-### Tizzie (`tizzie`), n = 200
-
-Attributes (mean, band position 0-1):
-
-| attribute | mean | band position |
-| --- | --- | --- |
-| strength | 19.9 | 0.55 |
-| vitality | 30.6 | 0.53 |
-| endurance | 35.1 | 0.51 |
-| agility | 69.1 | 0.52 |
-| reflex | 63.2 | 0.53 |
-| intelligence | 58.1 | 0.57 |
-| willpower | 65.4 | 0.55 |
-| instinct | 58.4 | 0.53 |
-| charisma | 72.5 | 0.58 |
-| resilience | 24.7 | 0.49 |
+| agility | 56.9 | 0.52 |
+| reflex | 50.8 | 0.49 |
+| intelligence | 68.1 | 0.57 |
+| willpower | 75.3 | 0.61 |
+| instinct | 61.5 | 0.52 |
+| charisma | 76.8 | 0.60 |
+| resilience | 23.3 | 0.49 |
 
 Favored mean band position: 0.66. Unfavored: 0.50. Lift: 16.0 points.
 
@@ -1325,10 +745,590 @@ Build shares (observed vs authored weight):
 
 | archetype | observed | authored |
 | --- | --- | --- |
+| sovereign | 42.0% | 38.0% |
+| sage | 30.0% | 30.0% |
+| virtuoso | 17.0% | 22.0% |
+| seeker | 11.0% | 10.0% |
+
+Trait landed rate vs authored percent:
+
+| trait | authored % | observed % |
+| --- | --- | --- |
+| healing | 100.0 | 100.0% |
+| hypnotic | 100.0 | 100.0% |
+| luminous | 40.0 | 37.5% |
+| regenerative | 30.0 | 29.0% |
+| protective | 20.0 | 18.5% |
+| perceptive | 10.0 | 7.5% |
+
+Observed trait count mean: 2.92 (authored expected count: 3.00). Distribution: 0: 0 (0.0%), 1: 0 (0.0%), 2: 72 (36.0%), 3: 78 (39.0%), 4: 44 (22.0%), 5+: 6 (3.0%)
+
+Ability name diversity: 0.59 (702 abilities rolled).
+
+Size mean: height 36.3 cm (band position 0.52), weight 12.7 kg (band position 0.52).
+
+### Imprit (`imprit`), n = 200
+
+Attributes (mean, band position 0-1):
+
+| attribute | mean | band position |
+| --- | --- | --- |
+| strength | 36.6 | 0.48 |
+| vitality | 42.9 | 0.50 |
+| endurance | 50.3 | 0.51 |
+| agility | 77.3 | 0.57 |
+| reflex | 75.5 | 0.58 |
+| intelligence | 71.6 | 0.53 |
+| willpower | 33.0 | 0.50 |
+| instinct | 62.4 | 0.62 |
+| charisma | 41.5 | 0.52 |
+| resilience | 45.1 | 0.50 |
+
+Favored mean band position: 0.67. Unfavored: 0.50. Lift: 16.8 points.
+
+Build shares (observed vs authored weight):
+
+| archetype | observed | authored |
+| --- | --- | --- |
+| prowler | 41.0% | 34.0% |
+| seeker | 25.0% | 26.0% |
+| skirmisher | 20.0% | 22.0% |
+| rogue | 14.0% | 18.0% |
+
+Trait landed rate vs authored percent:
+
+| trait | authored % | observed % |
+| --- | --- | --- |
+| hardened | 100.0 | 100.0% |
+| solitary | 30.0 | 28.0% |
+| luminous | 30.0 | 22.0% |
+| slippery | 20.0 | 19.5% |
+| volatile | 15.0 | 13.0% |
+| nocturnal | 5.0 | 4.0% |
+
+Observed trait count mean: 1.86 (authored expected count: 2.00). Distribution: 0: 0 (0.0%), 1: 78 (39.0%), 2: 79 (39.5%), 3: 36 (18.0%), 4: 6 (3.0%), 5+: 1 (0.5%)
+
+Ability name diversity: 0.53 (685 abilities rolled).
+
+Size mean: height 86.3 cm (band position 0.55), weight 40.1 kg (band position 0.56).
+
+### Kosanos (`kosanos`), n = 200
+
+Attributes (mean, band position 0-1):
+
+| attribute | mean | band position |
+| --- | --- | --- |
+| strength | 81.5 | 0.58 |
+| vitality | 73.3 | 0.56 |
+| endurance | 77.0 | 0.60 |
+| agility | 20.1 | 0.51 |
+| reflex | 26.1 | 0.50 |
+| intelligence | 28.4 | 0.52 |
+| willpower | 50.3 | 0.51 |
+| instinct | 51.8 | 0.49 |
+| charisma | 21.9 | 0.46 |
+| resilience | 69.8 | 0.59 |
+
+Favored mean band position: 0.68. Unfavored: 0.50. Lift: 18.9 points.
+
+Build shares (observed vs authored weight):
+
+| archetype | observed | authored |
+| --- | --- | --- |
+| juggernaut | 35.0% | 40.0% |
+| survivor | 26.5% | 25.0% |
+| bulwark | 16.0% | 20.0% |
+| berserker | 22.5% | 15.0% |
+
+Trait landed rate vs authored percent:
+
+| trait | authored % | observed % |
+| --- | --- | --- |
+| anchored | 100.0 | 100.0% |
+| pack-bonded | 35.0 | 28.5% |
+| resistant | 25.0 | 31.0% |
+| territorial | 20.0 | 19.0% |
+| regenerative | 10.0 | 12.5% |
+| perceptive | 10.0 | 11.5% |
+
+Observed trait count mean: 2.02 (authored expected count: 2.00). Distribution: 0: 0 (0.0%), 1: 61 (30.5%), 2: 84 (42.0%), 3: 44 (22.0%), 4: 11 (5.5%), 5+: 0 (0.0%)
+
+Ability name diversity: 0.58 (695 abilities rolled).
+
+Size mean: height 239.6 cm (band position 0.54), weight 378.8 kg (band position 0.53).
+
+### Luceras (`luceras`), n = 200
+
+Attributes (mean, band position 0-1):
+
+| attribute | mean | band position |
+| --- | --- | --- |
+| strength | 48.0 | 0.50 |
+| vitality | 40.8 | 0.54 |
+| endurance | 55.9 | 0.54 |
+| agility | 82.9 | 0.65 |
+| reflex | 76.0 | 0.55 |
+| intelligence | 34.4 | 0.47 |
+| willpower | 44.9 | 0.49 |
+| instinct | 65.9 | 0.54 |
+| charisma | 40.1 | 0.50 |
+| resilience | 37.5 | 0.47 |
+
+Favored mean band position: 0.67. Unfavored: 0.49. Lift: 17.8 points.
+
+Build shares (observed vs authored weight):
+
+| archetype | observed | authored |
+| --- | --- | --- |
+| skirmisher | 45.5% | 40.0% |
+| runner | 20.5% | 27.0% |
+| prowler | 17.0% | 18.0% |
+| vanguard | 17.0% | 15.0% |
+
+Trait landed rate vs authored percent:
+
+| trait | authored % | observed % |
+| --- | --- | --- |
+| ramming | 100.0 | 100.0% |
+| pack-bonded | 35.0 | 39.0% |
+| slippery | 30.0 | 38.0% |
+| resistant | 20.0 | 20.0% |
+| perceptive | 15.0 | 12.5% |
+
+Observed trait count mean: 2.10 (authored expected count: 2.00). Distribution: 0: 0 (0.0%), 1: 51 (25.5%), 2: 90 (45.0%), 3: 48 (24.0%), 4: 11 (5.5%), 5+: 0 (0.0%)
+
+Ability name diversity: 0.55 (703 abilities rolled).
+
+Size mean: height 56.4 cm (band position 0.47), weight 12.7 kg (band position 0.47).
+
+### Neph (`neph`), n = 200
+
+Attributes (mean, band position 0-1):
+
+| attribute | mean | band position |
+| --- | --- | --- |
+| strength | 43.3 | 0.53 |
+| vitality | 70.4 | 0.62 |
+| endurance | 69.1 | 0.57 |
+| agility | 19.2 | 0.46 |
+| reflex | 19.0 | 0.45 |
+| intelligence | 18.4 | 0.56 |
+| willpower | 36.1 | 0.55 |
+| instinct | 48.4 | 0.54 |
+| charisma | 30.0 | 0.50 |
+| resilience | 25.3 | 0.52 |
+
+Favored mean band position: 0.67. Unfavored: 0.49. Lift: 18.2 points.
+
+Build shares (observed vs authored weight):
+
+| archetype | observed | authored |
+| --- | --- | --- |
+| survivor | 46.0% | 45.0% |
+| bulwark | 23.0% | 25.0% |
+| sage | 22.0% | 20.0% |
+| seeker | 9.0% | 10.0% |
+
+Trait landed rate vs authored percent:
+
+| trait | authored % | observed % |
+| --- | --- | --- |
+| volatile | 100.0 | 100.0% |
+| pack-bonded | 45.0 | 44.0% |
+| slippery | 30.0 | 29.5% |
+| resistant | 25.0 | 25.0% |
+
+Observed trait count mean: 1.99 (authored expected count: 2.00). Distribution: 0: 0 (0.0%), 1: 58 (29.0%), 2: 96 (48.0%), 3: 37 (18.5%), 4: 9 (4.5%), 5+: 0 (0.0%)
+
+Ability name diversity: 0.62 (699 abilities rolled).
+
+Size mean: height 510.3 cm (band position 0.54), weight 61.9 kg (band position 0.53).
+
+### Newtapede (`newtapede`), n = 200
+
+Attributes (mean, band position 0-1):
+
+| attribute | mean | band position |
+| --- | --- | --- |
+| strength | 34.6 | 0.48 |
+| vitality | 45.4 | 0.52 |
+| endurance | 69.9 | 0.60 |
+| agility | 70.9 | 0.64 |
+| reflex | 59.1 | 0.56 |
+| intelligence | 35.1 | 0.50 |
+| willpower | 38.5 | 0.43 |
+| instinct | 55.2 | 0.51 |
+| charisma | 24.9 | 0.49 |
+| resilience | 25.1 | 0.50 |
+
+Favored mean band position: 0.67. Unfavored: 0.49. Lift: 18.8 points.
+
+Build shares (observed vs authored weight):
+
+| archetype | observed | authored |
+| --- | --- | --- |
+| runner | 42.5% | 40.0% |
+| skirmisher | 24.5% | 30.0% |
+| survivor | 24.5% | 20.0% |
+| prowler | 8.5% | 10.0% |
+
+Trait landed rate vs authored percent:
+
+| trait | authored % | observed % |
+| --- | --- | --- |
+| grappling | 100.0 | 100.0% |
+| regenerative | 30.0 | 32.5% |
+| slippery | 25.0 | 28.5% |
+| hardened | 18.0 | 18.0% |
+| resistant | 14.0 | 13.5% |
+| pack-bonded | 13.0 | 18.0% |
+
+Observed trait count mean: 2.10 (authored expected count: 2.00). Distribution: 0: 0 (0.0%), 1: 57 (28.5%), 2: 84 (42.0%), 3: 44 (22.0%), 4: 11 (5.5%), 5+: 4 (2.0%)
+
+Ability name diversity: 0.51 (702 abilities rolled).
+
+Size mean: height 200.9 cm (band position 0.51), weight 92.6 kg (band position 0.50).
+
+### Scalatto (`scalatto`), n = 200
+
+Attributes (mean, band position 0-1):
+
+| attribute | mean | band position |
+| --- | --- | --- |
+| strength | 58.9 | 0.56 |
+| vitality | 65.1 | 0.60 |
+| endurance | 63.0 | 0.52 |
+| agility | 37.5 | 0.50 |
+| reflex | 42.9 | 0.52 |
+| intelligence | 32.8 | 0.51 |
+| willpower | 52.7 | 0.51 |
+| instinct | 53.3 | 0.53 |
+| charisma | 27.1 | 0.48 |
+| resilience | 86.1 | 0.64 |
+
+Favored mean band position: 0.68. Unfavored: 0.50. Lift: 17.6 points.
+
+Build shares (observed vs authored weight):
+
+| archetype | observed | authored |
+| --- | --- | --- |
+| bulwark | 48.5% | 46.0% |
+| juggernaut | 27.5% | 24.0% |
+| survivor | 15.0% | 18.0% |
+| stalwart | 9.0% | 12.0% |
+
+Trait landed rate vs authored percent:
+
+| trait | authored % | observed % |
+| --- | --- | --- |
+| armored | 100.0 | 100.0% |
+| ramming | 30.0 | 30.5% |
+| nocturnal | 25.0 | 26.5% |
+| hardened | 20.0 | 17.0% |
+| solitary | 15.0 | 11.5% |
+| perceptive | 10.0 | 9.0% |
+
+Observed trait count mean: 1.95 (authored expected count: 2.00). Distribution: 0: 0 (0.0%), 1: 64 (32.0%), 2: 93 (46.5%), 3: 34 (17.0%), 4: 8 (4.0%), 5+: 1 (0.5%)
+
+Ability name diversity: 0.58 (684 abilities rolled).
+
+Size mean: height 109.5 cm (band position 0.48), weight 70.8 kg (band position 0.49).
+
+### Shuntara (`shuntara`), n = 200
+
+Attributes (mean, band position 0-1):
+
+| attribute | mean | band position |
+| --- | --- | --- |
+| strength | 52.7 | 0.53 |
+| vitality | 64.3 | 0.56 |
+| endurance | 72.0 | 0.55 |
+| agility | 49.8 | 0.54 |
+| reflex | 68.2 | 0.57 |
+| intelligence | 57.9 | 0.54 |
+| willpower | 59.9 | 0.54 |
+| instinct | 68.2 | 0.46 |
+| charisma | 34.2 | 0.51 |
+| resilience | 72.8 | 0.62 |
+
+Favored mean band position: 0.67. Unfavored: 0.51. Lift: 16.6 points.
+
+Build shares (observed vs authored weight):
+
+| archetype | observed | authored |
+| --- | --- | --- |
+| bulwark | 39.5% | 40.0% |
+| stalwart | 30.0% | 30.0% |
+| skirmisher | 19.0% | 18.0% |
+| seeker | 11.5% | 12.0% |
+
+Trait landed rate vs authored percent:
+
+| trait | authored % | observed % |
+| --- | --- | --- |
+| insulated | 100.0 | 100.0% |
+| protective | 100.0 | 100.0% |
+| anchored | 45.0 | 49.0% |
+| perceptive | 35.0 | 36.5% |
+| hardened | 20.0 | 17.0% |
+
+Observed trait count mean: 3.02 (authored expected count: 3.00). Distribution: 0: 0 (0.0%), 1: 0 (0.0%), 2: 59 (29.5%), 3: 87 (43.5%), 4: 44 (22.0%), 5+: 10 (5.0%)
+
+Ability name diversity: 0.48 (705 abilities rolled).
+
+Size mean: height 62.9 cm (band position 0.52), weight 80.1 kg (band position 0.50).
+
+### Smokat (`smokat`), n = 200
+
+Attributes (mean, band position 0-1):
+
+| attribute | mean | band position |
+| --- | --- | --- |
+| strength | 57.3 | 0.49 |
+| vitality | 36.4 | 0.45 |
+| endurance | 47.9 | 0.51 |
+| agility | 71.2 | 0.60 |
+| reflex | 71.4 | 0.61 |
+| intelligence | 58.4 | 0.54 |
+| willpower | 47.5 | 0.50 |
+| instinct | 65.8 | 0.61 |
+| charisma | 38.4 | 0.53 |
+| resilience | 32.9 | 0.52 |
+
+Favored mean band position: 0.68. Unfavored: 0.50. Lift: 18.0 points.
+
+Build shares (observed vs authored weight):
+
+| archetype | observed | authored |
+| --- | --- | --- |
+| prowler | 35.0% | 40.0% |
+| skirmisher | 31.0% | 30.0% |
+| predator | 25.5% | 22.0% |
+| rogue | 8.5% | 8.0% |
+
+Trait landed rate vs authored percent:
+
+| trait | authored % | observed % |
+| --- | --- | --- |
+| phasing | 100.0 | 100.0% |
+| stealthy | 100.0 | 100.0% |
+| slippery | 35.0 | 36.0% |
+| solitary | 30.0 | 28.5% |
+| nocturnal | 20.0 | 20.5% |
+| perceptive | 15.0 | 15.0% |
+
+Observed trait count mean: 3.00 (authored expected count: 3.00). Distribution: 0: 0 (0.0%), 1: 0 (0.0%), 2: 64 (32.0%), 3: 80 (40.0%), 4: 48 (24.0%), 5+: 8 (4.0%)
+
+Ability name diversity: 0.52 (687 abilities rolled).
+
+Size mean: height 166.7 cm (band position 0.48), weight 1.7 kg (band position 0.47).
+
+### Sonalloy (`sonalloy`), n = 200
+
+Attributes (mean, band position 0-1):
+
+| attribute | mean | band position |
+| --- | --- | --- |
+| strength | 48.0 | 0.50 |
+| vitality | 66.2 | 0.55 |
+| endurance | 67.9 | 0.49 |
+| agility | 38.3 | 0.51 |
+| reflex | 44.6 | 0.48 |
+| intelligence | 74.0 | 0.58 |
+| willpower | 72.5 | 0.60 |
+| instinct | 55.1 | 0.50 |
+| charisma | 36.4 | 0.52 |
+| resilience | 78.7 | 0.64 |
+
+Favored mean band position: 0.67. Unfavored: 0.51. Lift: 16.8 points.
+
+Build shares (observed vs authored weight):
+
+| archetype | observed | authored |
+| --- | --- | --- |
+| sage | 36.5% | 40.0% |
+| stalwart | 32.5% | 30.0% |
+| bulwark | 25.5% | 20.0% |
+| survivor | 5.5% | 10.0% |
+
+Trait landed rate vs authored percent:
+
+| trait | authored % | observed % |
+| --- | --- | --- |
+| regenerative | 100.0 | 100.0% |
+| healing | 100.0 | 100.0% |
+| hardened | 55.0 | 53.0% |
+| protective | 30.0 | 25.5% |
+| anchored | 15.0 | 14.0% |
+
+Observed trait count mean: 2.92 (authored expected count: 3.00). Distribution: 0: 0 (0.0%), 1: 0 (0.0%), 2: 61 (30.5%), 3: 98 (49.0%), 4: 36 (18.0%), 5+: 5 (2.5%)
+
+Ability name diversity: 0.58 (693 abilities rolled).
+
+Size mean: height 84.3 cm (band position 0.47), weight 286.9 kg (band position 0.48).
+
+### Terragoyle (`terragoyle`), n = 200
+
+Attributes (mean, band position 0-1):
+
+| attribute | mean | band position |
+| --- | --- | --- |
+| strength | 70.5 | 0.53 |
+| vitality | 73.9 | 0.60 |
+| endurance | 67.1 | 0.53 |
+| agility | 29.6 | 0.48 |
+| reflex | 35.7 | 0.54 |
+| intelligence | 34.8 | 0.49 |
+| willpower | 67.0 | 0.52 |
+| instinct | 57.1 | 0.53 |
+| charisma | 30.0 | 0.50 |
+| resilience | 83.0 | 0.65 |
+
+Favored mean band position: 0.69. Unfavored: 0.50. Lift: 19.3 points.
+
+Build shares (observed vs authored weight):
+
+| archetype | observed | authored |
+| --- | --- | --- |
+| bulwark | 46.5% | 45.0% |
+| stalwart | 21.5% | 25.0% |
+| juggernaut | 20.0% | 20.0% |
+| predator | 12.0% | 10.0% |
+
+Trait landed rate vs authored percent:
+
+| trait | authored % | observed % |
+| --- | --- | --- |
+| telekinetic | 100.0 | 100.0% |
+| territorial | 100.0 | 100.0% |
+| dormant | 40.0 | 44.5% |
+| anchored | 20.0 | 16.5% |
+| perceptive | 20.0 | 17.0% |
+| insulated | 20.0 | 20.0% |
+
+Observed trait count mean: 2.98 (authored expected count: 3.00). Distribution: 0: 0 (0.0%), 1: 0 (0.0%), 2: 64 (32.0%), 3: 87 (43.5%), 4: 39 (19.5%), 5+: 10 (5.0%)
+
+Ability name diversity: 0.50 (678 abilities rolled).
+
+Size mean: height 168.2 cm (band position 0.52), weight 366.2 kg (band position 0.51).
+
+### Vespersyn (`vespersyn`), n = 200
+
+Attributes (mean, band position 0-1):
+
+| attribute | mean | band position |
+| --- | --- | --- |
+| strength | 25.8 | 0.54 |
+| vitality | 34.5 | 0.48 |
+| endurance | 43.2 | 0.53 |
+| agility | 67.5 | 0.50 |
+| reflex | 63.4 | 0.54 |
+| intelligence | 59.8 | 0.59 |
+| willpower | 75.4 | 0.62 |
+| instinct | 53.0 | 0.52 |
+| charisma | 38.2 | 0.53 |
+| resilience | 29.8 | 0.49 |
+
+Favored mean band position: 0.68. Unfavored: 0.50. Lift: 18.4 points.
+
+Build shares (observed vs authored weight):
+
+| archetype | observed | authored |
+| --- | --- | --- |
+| sage | 37.5% | 42.0% |
+| skirmisher | 26.5% | 24.0% |
+| sovereign | 20.0% | 18.0% |
+| seeker | 16.0% | 16.0% |
+
+Trait landed rate vs authored percent:
+
+| trait | authored % | observed % |
+| --- | --- | --- |
+| commanding | 100.0 | 100.0% |
+| nocturnal | 30.0 | 31.5% |
+| solitary | 26.0 | 28.0% |
+| stealthy | 22.0 | 25.0% |
+| slippery | 12.0 | 10.5% |
+| perceptive | 10.0 | 14.0% |
+
+Observed trait count mean: 2.09 (authored expected count: 2.00). Distribution: 0: 0 (0.0%), 1: 56 (28.0%), 2: 89 (44.5%), 3: 36 (18.0%), 4: 19 (9.5%), 5+: 0 (0.0%)
+
+Ability name diversity: 0.61 (687 abilities rolled).
+
+Size mean: height 74.8 cm (band position 0.49), weight 12.1 kg (band position 0.51).
+
+### Thirstaserp (`thirstaserp`), n = 200
+
+Attributes (mean, band position 0-1):
+
+| attribute | mean | band position |
+| --- | --- | --- |
+| strength | 55.7 | 0.54 |
+| vitality | 50.4 | 0.52 |
+| endurance | 55.7 | 0.54 |
+| agility | 60.4 | 0.52 |
+| reflex | 72.8 | 0.64 |
+| intelligence | 27.6 | 0.51 |
+| willpower | 44.8 | 0.49 |
+| instinct | 77.4 | 0.62 |
+| charisma | 40.7 | 0.54 |
+| resilience | 45.3 | 0.51 |
+
+Favored mean band position: 0.67. Unfavored: 0.51. Lift: 16.1 points.
+
+Build shares (observed vs authored weight):
+
+| archetype | observed | authored |
+| --- | --- | --- |
+| predator | 52.5% | 50.0% |
+| prowler | 20.5% | 25.0% |
+| skirmisher | 13.0% | 15.0% |
+| survivor | 14.0% | 10.0% |
+
+Trait landed rate vs authored percent:
+
+| trait | authored % | observed % |
+| --- | --- | --- |
+| toxic | 100.0 | 100.0% |
+| stealthy | 100.0 | 100.0% |
+| hypnotic | 35.0 | 31.5% |
+| menacing | 25.0 | 25.5% |
+| solitary | 25.0 | 23.5% |
+| hardened | 15.0 | 19.0% |
+
+Observed trait count mean: 3.00 (authored expected count: 3.00). Distribution: 0: 0 (0.0%), 1: 0 (0.0%), 2: 62 (31.0%), 3: 89 (44.5%), 4: 38 (19.0%), 5+: 11 (5.5%)
+
+Ability name diversity: 0.59 (701 abilities rolled).
+
+Size mean: height 220.0 cm (band position 0.50), weight 120.4 kg (band position 0.51).
+
+### Tizzie (`tizzie`), n = 200
+
+Attributes (mean, band position 0-1):
+
+| attribute | mean | band position |
+| --- | --- | --- |
+| strength | 18.4 | 0.47 |
+| vitality | 30.3 | 0.52 |
+| endurance | 35.0 | 0.50 |
+| agility | 70.4 | 0.57 |
+| reflex | 62.5 | 0.50 |
+| intelligence | 58.9 | 0.60 |
+| willpower | 65.7 | 0.56 |
+| instinct | 59.5 | 0.58 |
+| charisma | 72.5 | 0.58 |
+| resilience | 25.6 | 0.53 |
+
+Favored mean band position: 0.69. Unfavored: 0.50. Lift: 18.2 points.
+
+Build shares (observed vs authored weight):
+
+| archetype | observed | authored |
+| --- | --- | --- |
 | virtuoso | 37.0% | 40.0% |
-| sovereign | 24.5% | 25.0% |
-| prowler | 16.0% | 15.0% |
-| skirmisher | 13.5% | 12.0% |
+| sovereign | 22.5% | 25.0% |
+| prowler | 19.5% | 15.0% |
+| skirmisher | 12.0% | 12.0% |
 | sage | 9.0% | 8.0% |
 
 Trait landed rate vs authored percent:
@@ -1336,16 +1336,16 @@ Trait landed rate vs authored percent:
 | trait | authored % | observed % |
 | --- | --- | --- |
 | hypnotic | 100.0 | 100.0% |
-| perceptive | 45.0 | 45.5% |
-| healing | 35.0 | 36.0% |
-| pack-bonded | 15.0 | 19.0% |
+| perceptive | 45.0 | 49.0% |
+| healing | 35.0 | 33.0% |
+| pack-bonded | 15.0 | 16.0% |
 | foresighted | 5.0 | 4.5% |
 
-Observed trait count mean: 2.05 (authored expected count: 2.00). Distribution: 0: 0 (0.0%), 1: 51 (25.5%), 2: 96 (48.0%), 3: 46 (23.0%), 4: 6 (3.0%), 5+: 1 (0.5%)
+Observed trait count mean: 2.02 (authored expected count: 2.00). Distribution: 0: 0 (0.0%), 1: 56 (28.0%), 2: 90 (45.0%), 3: 47 (23.5%), 4: 7 (3.5%), 5+: 0 (0.0%)
 
-Ability name diversity: 0.55 (683 abilities rolled).
+Ability name diversity: 0.59 (693 abilities rolled).
 
-Size mean: height 87.6 cm (band position 0.50), weight 13.0 kg (band position 0.50).
+Size mean: height 87.4 cm (band position 0.49), weight 13.0 kg (band position 0.51).
 
 ### Venemist (`venemist`), n = 200
 
@@ -1353,27 +1353,27 @@ Attributes (mean, band position 0-1):
 
 | attribute | mean | band position |
 | --- | --- | --- |
-| strength | 40.5 | 0.53 |
-| vitality | 52.1 | 0.55 |
-| endurance | 77.4 | 0.59 |
-| agility | 57.2 | 0.53 |
-| reflex | 58.8 | 0.60 |
-| intelligence | 35.4 | 0.52 |
-| willpower | 46.0 | 0.48 |
-| instinct | 70.2 | 0.61 |
-| charisma | 30.1 | 0.50 |
-| resilience | 51.2 | 0.51 |
+| strength | 40.9 | 0.54 |
+| vitality | 52.6 | 0.57 |
+| endurance | 75.9 | 0.53 |
+| agility | 57.6 | 0.55 |
+| reflex | 58.7 | 0.60 |
+| intelligence | 35.0 | 0.50 |
+| willpower | 46.9 | 0.52 |
+| instinct | 70.0 | 0.60 |
+| charisma | 29.7 | 0.49 |
+| resilience | 51.0 | 0.50 |
 
-Favored mean band position: 0.67. Unfavored: 0.51. Lift: 16.2 points.
+Favored mean band position: 0.68. Unfavored: 0.50. Lift: 18.0 points.
 
 Build shares (observed vs authored weight):
 
 | archetype | observed | authored |
 | --- | --- | --- |
-| predator | 43.0% | 46.0% |
-| survivor | 21.5% | 24.0% |
-| prowler | 23.5% | 18.0% |
-| berserker | 12.0% | 12.0% |
+| predator | 44.0% | 46.0% |
+| survivor | 24.5% | 24.0% |
+| prowler | 21.0% | 18.0% |
+| berserker | 10.5% | 12.0% |
 
 Trait landed rate vs authored percent:
 
@@ -1381,16 +1381,16 @@ Trait landed rate vs authored percent:
 | --- | --- | --- |
 | toxic | 100.0 | 100.0% |
 | resistant | 40.0 | 38.0% |
-| volatile | 20.0 | 24.0% |
-| solitary | 20.0 | 22.0% |
+| volatile | 20.0 | 22.0% |
+| solitary | 20.0 | 29.5% |
 | stealthy | 12.0 | 13.0% |
-| perceptive | 8.0 | 8.5% |
+| perceptive | 8.0 | 9.0% |
 
-Observed trait count mean: 2.06 (authored expected count: 2.00). Distribution: 0: 0 (0.0%), 1: 57 (28.5%), 2: 91 (45.5%), 3: 37 (18.5%), 4: 14 (7.0%), 5+: 1 (0.5%)
+Observed trait count mean: 2.12 (authored expected count: 2.00). Distribution: 0: 0 (0.0%), 1: 52 (26.0%), 2: 86 (43.0%), 3: 49 (24.5%), 4: 13 (6.5%), 5+: 0 (0.0%)
 
-Ability name diversity: 0.59 (694 abilities rolled).
+Ability name diversity: 0.62 (710 abilities rolled).
 
-Size mean: height 107.4 cm (band position 0.50), weight 51.9 kg (band position 0.50).
+Size mean: height 108.0 cm (band position 0.52), weight 52.5 kg (band position 0.52).
 
 ### Voltish (`voltish`), n = 200
 
@@ -1398,44 +1398,44 @@ Attributes (mean, band position 0-1):
 
 | attribute | mean | band position |
 | --- | --- | --- |
-| strength | 66.0 | 0.55 |
+| strength | 66.3 | 0.56 |
 | vitality | 60.1 | 0.51 |
-| endurance | 79.9 | 0.50 |
-| agility | 49.9 | 0.50 |
-| reflex | 55.1 | 0.51 |
-| intelligence | 34.8 | 0.49 |
-| willpower | 55.4 | 0.52 |
-| instinct | 60.8 | 0.54 |
-| charisma | 39.8 | 0.49 |
-| resilience | 67.2 | 0.61 |
+| endurance | 80.3 | 0.52 |
+| agility | 50.5 | 0.53 |
+| reflex | 56.0 | 0.55 |
+| intelligence | 35.5 | 0.53 |
+| willpower | 55.3 | 0.51 |
+| instinct | 61.1 | 0.56 |
+| charisma | 39.4 | 0.47 |
+| resilience | 67.7 | 0.63 |
 
-Favored mean band position: 0.66. Unfavored: 0.49. Lift: 17.5 points.
+Favored mean band position: 0.68. Unfavored: 0.50. Lift: 17.9 points.
 
 Build shares (observed vs authored weight):
 
 | archetype | observed | authored |
 | --- | --- | --- |
-| juggernaut | 40.5% | 40.0% |
-| stalwart | 30.5% | 25.0% |
-| predator | 18.0% | 20.0% |
-| prowler | 11.0% | 15.0% |
+| juggernaut | 45.0% | 40.0% |
+| stalwart | 24.5% | 25.0% |
+| predator | 15.0% | 20.0% |
+| prowler | 15.5% | 15.0% |
 
 Trait landed rate vs authored percent:
 
 | trait | authored % | observed % |
 | --- | --- | --- |
 | insulated | 100.0 | 100.0% |
-| volatile | 30.0 | 28.0% |
+| volatile | 30.0 | 32.5% |
 | solitary | 22.0 | 23.0% |
 | hardened | 20.0 | 22.0% |
-| menacing | 18.0 | 19.5% |
-| perceptive | 10.0 | 8.0% |
+| menacing | 18.0 | 17.0% |
+| perceptive | 10.0 | 10.5% |
 
-Observed trait count mean: 2.00 (authored expected count: 2.00). Distribution: 0: 0 (0.0%), 1: 64 (32.0%), 2: 87 (43.5%), 3: 35 (17.5%), 4: 12 (6.0%), 5+: 2 (1.0%)
+Observed trait count mean: 2.05 (authored expected count: 2.00). Distribution: 0: 0 (0.0%), 1: 59 (29.5%), 2: 89 (44.5%), 3: 37 (18.5%), 4: 13 (6.5%), 5+: 2 (1.0%)
 
-Ability name diversity: 0.50 (703 abilities rolled).
+Ability name diversity: 0.53 (706 abilities rolled).
 
-Size mean: height 214.2 cm (band position 0.54), weight 126.4 kg (band position 0.54).
+Size mean: height 211.6 cm (band position 0.48), weight 124.1 kg (band position 0.48).
 
 ### Xylum (`xylum`), n = 200
 
@@ -1443,27 +1443,27 @@ Attributes (mean, band position 0-1):
 
 | attribute | mean | band position |
 | --- | --- | --- |
-| strength | 67.7 | 0.51 |
-| vitality | 75.8 | 0.63 |
-| endurance | 67.5 | 0.50 |
-| agility | 16.4 | 0.49 |
-| reflex | 24.6 | 0.48 |
-| intelligence | 33.9 | 0.55 |
-| willpower | 57.2 | 0.49 |
-| instinct | 52.5 | 0.50 |
-| charisma | 20.1 | 0.50 |
-| resilience | 65.3 | 0.61 |
+| strength | 67.6 | 0.50 |
+| vitality | 75.7 | 0.63 |
+| endurance | 68.4 | 0.54 |
+| agility | 17.4 | 0.55 |
+| reflex | 25.1 | 0.51 |
+| intelligence | 33.1 | 0.52 |
+| willpower | 58.5 | 0.54 |
+| instinct | 52.2 | 0.49 |
+| charisma | 19.8 | 0.49 |
+| resilience | 65.1 | 0.60 |
 
-Favored mean band position: 0.69. Unfavored: 0.49. Lift: 19.7 points.
+Favored mean band position: 0.67. Unfavored: 0.50. Lift: 17.0 points.
 
 Build shares (observed vs authored weight):
 
 | archetype | observed | authored |
 | --- | --- | --- |
-| bulwark | 44.5% | 46.0% |
-| survivor | 23.5% | 24.0% |
-| stalwart | 13.5% | 18.0% |
-| seeker | 18.5% | 12.0% |
+| bulwark | 48.5% | 46.0% |
+| survivor | 24.5% | 24.0% |
+| stalwart | 15.0% | 18.0% |
+| seeker | 12.0% | 12.0% |
 
 Trait landed rate vs authored percent:
 
@@ -1471,16 +1471,16 @@ Trait landed rate vs authored percent:
 | --- | --- | --- |
 | anchored | 100.0 | 100.0% |
 | regenerative | 100.0 | 100.0% |
-| solitary | 30.0 | 28.0% |
-| grappling | 30.0 | 32.5% |
-| territorial | 22.0 | 18.0% |
-| resistant | 18.0 | 21.0% |
+| solitary | 30.0 | 32.5% |
+| grappling | 30.0 | 30.5% |
+| territorial | 22.0 | 28.0% |
+| resistant | 18.0 | 20.5% |
 
-Observed trait count mean: 3.00 (authored expected count: 3.00). Distribution: 0: 0 (0.0%), 1: 0 (0.0%), 2: 63 (31.5%), 3: 88 (44.0%), 4: 37 (18.5%), 5+: 12 (6.0%)
+Observed trait count mean: 3.12 (authored expected count: 3.00). Distribution: 0: 0 (0.0%), 1: 0 (0.0%), 2: 53 (26.5%), 3: 91 (45.5%), 4: 37 (18.5%), 5+: 19 (9.5%)
 
-Ability name diversity: 0.54 (684 abilities rolled).
+Ability name diversity: 0.55 (693 abilities rolled).
 
-Size mean: height 321.3 cm (band position 0.51), weight 251.2 kg (band position 0.51).
+Size mean: height 316.2 cm (band position 0.48), weight 250.2 kg (band position 0.50).
 
 ### Yetimoth (`yetimoth`), n = 200
 
@@ -1488,27 +1488,27 @@ Attributes (mean, band position 0-1):
 
 | attribute | mean | band position |
 | --- | --- | --- |
-| strength | 83.8 | 0.59 |
-| vitality | 76.8 | 0.59 |
-| endurance | 70.0 | 0.50 |
-| agility | 21.1 | 0.51 |
+| strength | 83.6 | 0.58 |
+| vitality | 76.5 | 0.58 |
+| endurance | 70.4 | 0.52 |
+| agility | 20.9 | 0.49 |
 | reflex | 24.9 | 0.49 |
-| intelligence | 39.2 | 0.46 |
-| willpower | 65.8 | 0.54 |
+| intelligence | 40.2 | 0.51 |
+| willpower | 65.7 | 0.53 |
 | instinct | 50.0 | 0.50 |
-| charisma | 45.1 | 0.51 |
-| resilience | 82.8 | 0.64 |
+| charisma | 44.4 | 0.47 |
+| resilience | 83.9 | 0.70 |
 
-Favored mean band position: 0.67. Unfavored: 0.50. Lift: 17.5 points.
+Favored mean band position: 0.69. Unfavored: 0.50. Lift: 19.1 points.
 
 Build shares (observed vs authored weight):
 
 | archetype | observed | authored |
 | --- | --- | --- |
-| juggernaut | 33.5% | 36.0% |
-| bulwark | 37.0% | 34.0% |
-| stalwart | 16.5% | 18.0% |
-| vanguard | 13.0% | 12.0% |
+| juggernaut | 38.0% | 36.0% |
+| bulwark | 36.0% | 34.0% |
+| stalwart | 22.0% | 18.0% |
+| vanguard | 4.0% | 12.0% |
 
 Trait landed rate vs authored percent:
 
@@ -1516,13 +1516,13 @@ Trait landed rate vs authored percent:
 | --- | --- | --- |
 | armored | 100.0 | 100.0% |
 | territorial | 100.0 | 100.0% |
-| pack-bonded | 35.0 | 33.5% |
-| menacing | 25.0 | 27.0% |
-| anchored | 20.0 | 21.0% |
-| hardened | 20.0 | 23.5% |
+| pack-bonded | 35.0 | 33.0% |
+| menacing | 25.0 | 30.5% |
+| anchored | 20.0 | 19.5% |
+| hardened | 20.0 | 20.0% |
 
-Observed trait count mean: 3.05 (authored expected count: 3.00). Distribution: 0: 0 (0.0%), 1: 0 (0.0%), 2: 52 (26.0%), 3: 96 (48.0%), 4: 42 (21.0%), 5+: 10 (5.0%)
+Observed trait count mean: 3.03 (authored expected count: 3.00). Distribution: 0: 0 (0.0%), 1: 0 (0.0%), 2: 56 (28.0%), 3: 92 (46.0%), 4: 43 (21.5%), 5+: 9 (4.5%)
 
-Ability name diversity: 0.59 (694 abilities rolled).
+Ability name diversity: 0.59 (691 abilities rolled).
 
-Size mean: height 231.4 cm (band position 0.53), weight 405.3 kg (band position 0.54).
+Size mean: height 229.6 cm (band position 0.49), weight 399.4 kg (band position 0.50).

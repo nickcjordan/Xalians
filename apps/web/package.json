@@ -48,7 +48,8 @@
     "build-deploy": "npm run build && aws s3 sync build s3://xalians.com --delete",
     "deploy": "aws s3 sync build s3://xalians.com --delete",
     "test": "vitest",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "prebuild": "node ../../scripts/generationRelease.cjs check"
   },
   "browserslist": {
     "production": [

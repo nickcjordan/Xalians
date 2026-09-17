@@ -1,3 +1,5 @@
+import {recordActions, type DisplayAbility} from '@xalians/content/ability-compatibility';
+import { historicalCategory, isSignatureAbility } from '@xalians/content/ability-compatibility';
 /*
 	Expedition - the creature on the table.
 
@@ -384,8 +386,8 @@ export function magnitudeOf(intensity: number, governingAttrValue: number | unde
 	return Math.max(1, Math.round(raw));
 }
 
-function abilitiesOf(record: XalianRecord | null | undefined): XalianRecord['abilities'] {
-	return Array.isArray(record && record.abilities) ? (record as XalianRecord).abilities : [];
+function abilitiesOf(record: XalianRecord | null | undefined): DisplayAbility[] {
+	return record ? recordActions(record) : [];
 }
 
 /*
@@ -398,20 +400,20 @@ export function buildActs(record: XalianRecord, strainMult: number, magnitudeSca
 	// downstream reading of an act's magnitude is already in the game's own units
 	const scale = typeof magnitudeScale === 'number' ? magnitudeScale : MAGNITUDE_SCALE;
 	return abilitiesOf(record).map((ability) => {
-		const governingAttribute = getGoverningAttributeForAction(ability.action);
+		const governingAttribute = getGoverningAttributeForAction(historicalCategory(ability));
 		const attrs = (record && record.attributes) as unknown as Record<string, number> || {};
 		const attrValue = governingAttribute ? attrs[governingAttribute] : undefined;
 		const printed = magnitudeOf(ability.intensity, attrValue);
 		return {
 			name: ability.name,
-			action: ability.action,
-			class: getActClass(ability.action) as ActClass | null,
+			action: historicalCategory(ability),
+			class: getActClass(historicalCategory(ability)) as ActClass | null,
 			// the printed magnitude the record would carry on a plate, before strain and
 			// before the game's own rescale, kept for the dossier
 			printedMagnitude: printed,
 			magnitude: round1(Math.max(0, printed * strainMult * scale)),
 			instrument: ability.instrument,
-			signature: !!ability.signature,
+			signature: isSignatureAbility(ability),
 		};
 	});
 }
@@ -539,7 +541,7 @@ export function naturalRoleOf(record: XalianRecord): Role {
 	const archetypeKey = record && record.archetype && record.archetype.key
 		? String(record.archetype.key).toLowerCase()
 		: null;
-	const abilityActions = abilitiesOf(record).map((a) => a.action);
+	const abilityActions = abilitiesOf(record).map((a) => historicalCategory(a));
 
 	const presenceDefault = archetypeKey
 		? (PRESENCE_BY_ARCHETYPE as Record<string, Role>)[archetypeKey]

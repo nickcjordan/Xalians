@@ -152,7 +152,21 @@ function readText(p, label) {
   if (!p || !fs.existsSync(p)) { fail('file.missing', label + ' not found: ' + p); return ''; }
   return fs.readFileSync(p, 'utf8');
 }
-const T = readJson(jsonPath, 'template');
+const rawTemplate = readJson(jsonPath, 'template');
+const { SpeciesTemplateSchema } = require('../../../packages/content/src/schema/speciesTemplate.ts');
+const { historicalTemplateView } = require('../../../packages/content/src/abilityCompatibility.ts');
+if (rawTemplate) {
+  const shape = SpeciesTemplateSchema.safeParse(rawTemplate);
+  if (!shape.success) shape.error.issues.forEach(issue => fail('schema.' + issue.path.join('.'), issue.message));
+}
+if (rawTemplate?.actionPool) {
+  try {
+    const { AbilityPatternSchema, validateAbilityPool } = require('../../../packages/content/src/schema/ability.ts');
+    const patterns = JSON.parse(fs.readFileSync(path.join(CATALOG, 'ability-patterns.json'), 'utf8'));
+    validateAbilityPool(rawTemplate.actionPool, new Map(patterns.patterns.map(p => [p.key, AbilityPatternSchema.parse(p)])), rawTemplate.instruments, [rawTemplate.element, ...(ELEMENTS[rawTemplate.element]?.secondaries || [])], [...rawTemplate.actions,...rawTemplate.passives].find(a=>a.key===rawTemplate.signature.key));
+  } catch (error) { fail('abilityPool', error.message); }
+}
+const T = rawTemplate ? historicalTemplateView(rawTemplate) : null;
 const MD = readText(mdPath, 'walkthrough');
 
 // Encyclopedia entry: --enc points at a standalone draft file (used for a
@@ -423,7 +437,7 @@ if (T) {
 
   // signature
   const SG = T.signatureAbility || {};
-  if (!T.signatureAbility) fail('signature', 'signatureAbility missing');
+  if (T.signatureAbility) {
   if (typeof SG.name !== 'string' || !SG.name.trim()) fail('signature.name', 'signature name missing');
   else {
     if (/-/.test(SG.name)) fail('signature.name.hyphen', 'signature name contains a hyphen');
@@ -451,7 +465,7 @@ if (T) {
     if (ANATOMY.includes(SG.instrument) && anatomyOk && !P.anatomy.includes(SG.instrument)) warn('signature.instrument.anatomy', 'signature instrument "' + SG.instrument + '" is outside the species anatomy (allowed by rule 4; justify)');
     if (!I.includes(SG.instrument)) warn('signature.instrument.list', 'signature instrument "' + SG.instrument + '" is not in the species instrument list (allowed by rule 4; justify)');
   }
-  const sigActOk = checkEnum('signature.action', SG.action, ACTIONS, 'signature action');
+  const sigActOk = SG.action ? checkEnum('signature.action', SG.action, ACTIONS, 'historical name family') : false;
   if (sigInstOk && sigActOk && typeof SG.medium === 'string' && !allowedFor(SG.instrument, SG.medium).includes(SG.action)) warn('signature.action.matrix', 'signature action "' + SG.action + '" is outside the physical row for ' + SG.instrument + ' [' + ALLOWED[SG.instrument].join(', ') + ']' + (MEDIUM_ACTIONS[SG.medium] && MEDIUM_ACTIONS[SG.medium].includes(SG.action) ? ' but inside the ' + SG.medium + ' medium row: declare ' + SG.instrument + ' as a ' + SG.medium + ' conduit if the sources show it' : ' and outside the ' + SG.medium + ' medium row (rule 4 exception; justify)'));
   if (checkEnum('signature.medium', SG.medium, Object.keys(ELEMENTS), 'signature medium') && elementOk) {
     const cover = [T.element, ...ELEMENTS[T.element].secondaries];
@@ -490,6 +504,8 @@ if (T) {
       } else warn('signature.reserved', 'ledger mentions this species and a signature at ' + r.where + '; read it: ' + r.line.slice(0, 160));
     }
   }
+}
+
 }
 
 // ---------- encyclopedia ----------

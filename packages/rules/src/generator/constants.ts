@@ -27,8 +27,8 @@ import type {
 // heft so a heavy roll gets a heavy name. Records from 0.1.0 do not reproduce under
 // 0.2.0, which is exactly what pinning the version is for. Bump when any table below
 // moves.
-export const GENERATOR_VERSION = '0.2.0';
-export const SCHEMA_VERSION = '1.0.0';
+export const GENERATOR_VERSION = '0.5.0';
+export const SCHEMA_VERSION = '4.0.0';
 
 export const ATTRIBUTE_KEYS: AttributeKey[] = [
 	'strength', 'vitality', 'endurance', 'agility', 'reflex',

@@ -1,4 +1,5 @@
 {
+  "schemaVersion": "4.0.0",
   "key": "foromeer",
   "name": "Foromeer",
   "nameOrigin": "A blend of Italian foro, hole, and meerkat, matching an upright creature whose drill hands bore through material for excavation.",
@@ -175,15 +176,141 @@
     "spurs",
     "shell"
   ],
-  "signatureAbility": {
-    "name": "Vein Breaker",
-    "instrument": "spurs",
-    "action": "strike",
-    "medium": "metal",
-    "intensity": [
-      45,
-      85
+  "signature": {
+    "kind": "action",
+    "key": "foromeer-defining"
+  },
+  "actions": [
+    {
+      "key": "foromeer-defining",
+      "activation": {
+        "operation": "discrete"
+      },
+      "delivery": {
+        "mode": "contact",
+        "approach": "stationary"
+      },
+      "targeting": {
+        "relation": "other",
+        "subjects": [
+          "creature",
+          "object"
+        ]
+      },
+      "effects": [
+        {
+          "kind": "harm",
+          "recipient": "target",
+          "mechanism": "impact",
+          "emphasis": "primary",
+          "onset": "instant",
+          "persistence": "resolved",
+          "likelihood": "consistent"
+        }
+      ],
+      "description": "The Foromeer sets its drill hands against whatever stands in front of it and bores through.",
+      "name": "Vein Breaker",
+      "instrument": "spurs",
+      "medium": "metal",
+      "intensity": [
+        45,
+        85
+      ],
+      "timing": {
+        "preparation": "brief",
+        "recovery": "brief"
+      },
+      "spatial": {
+        "selectivity": "selective",
+        "range": "contact"
+      }
+    }
+  ],
+  "passives": [],
+  "actionPool": {
+    "count": [
+      2,
+      3
     ],
-    "description": "The Foromeer sets its drill hands against whatever stands in front of it and bores through."
+    "sets": [
+      {
+        "key": "default",
+        "weight": 1,
+        "options": [
+          {
+            "key": "spurs-strike",
+            "pattern": "strike",
+            "instrument": "spurs",
+            "media": [
+              "metal",
+              "electric",
+              "fire",
+              "ghost"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "spurs-rake",
+            "pattern": "rake",
+            "instrument": "spurs",
+            "media": [
+              "metal",
+              "electric",
+              "fire",
+              "ghost"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "spurs-ambush",
+            "pattern": "ambush",
+            "instrument": "spurs",
+            "media": [
+              "metal",
+              "electric",
+              "fire",
+              "ghost"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "shell-ward",
+            "pattern": "ward",
+            "instrument": "shell",
+            "media": [
+              "metal",
+              "electric",
+              "fire",
+              "ghost"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "shell-shove",
+            "pattern": "shove",
+            "instrument": "shell",
+            "media": [
+              "metal",
+              "electric",
+              "fire",
+              "ghost"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "shell-crush",
+            "pattern": "crush",
+            "instrument": "shell",
+            "media": [
+              "metal",
+              "electric",
+              "fire",
+              "ghost"
+            ],
+            "weight": 1
+          }
+        ]
+      }
+    ]
   }
 }

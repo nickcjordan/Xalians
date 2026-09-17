@@ -1,4 +1,5 @@
 {
+  "schemaVersion": "4.0.0",
   "key": "vespersyn",
   "name": "Vespersyn",
   "nameOrigin": "A blend of the Latin vesper, evening, and Greek syn, together, reflecting a creature of perpetual night that moves its familiars as one unit.",
@@ -172,15 +173,206 @@
     "swarm",
     "claws"
   ],
-  "signatureAbility": {
-    "name": "Unbidden Legion",
-    "instrument": "swarm",
-    "action": "cloud",
-    "medium": "dark",
-    "intensity": [
-      30,
-      80
+  "signature": {
+    "kind": "action",
+    "key": "vespersyn-defining"
+  },
+  "actions": [
+    {
+      "key": "vespersyn-defining",
+      "activation": {
+        "operation": "discrete"
+      },
+      "delivery": {
+        "mode": "field",
+        "approach": "stationary"
+      },
+      "targeting": {
+        "relation": "other",
+        "subjects": [
+          "creature",
+          "object"
+        ]
+      },
+      "effects": [
+        {
+          "kind": "harm",
+          "recipient": "area",
+          "mechanism": "piercing",
+          "emphasis": "primary",
+          "onset": "instant",
+          "persistence": "lingering",
+          "duration": "brief",
+          "likelihood": "consistent"
+        }
+      ],
+      "description": "It calls up a wheeling cloud of small toothed familiars and sets them on a single target as one mind, and a familiar that is broken thins away.",
+      "name": "Unbidden Legion",
+      "instrument": "swarm",
+      "medium": "dark",
+      "intensity": [
+        30,
+        80
+      ],
+      "timing": {
+        "preparation": "brief",
+        "recovery": "brief"
+      },
+      "spatial": {
+        "selectivity": "indiscriminate",
+        "area": {
+          "shape": "radial",
+          "extent": "medium",
+          "anchor": "creature"
+        }
+      }
+    }
+  ],
+  "passives": [],
+  "actionPool": {
+    "count": [
+      2,
+      3
     ],
-    "description": "It calls up a wheeling cloud of small toothed familiars and sets them on a single target as one mind, and a familiar that is broken thins away."
+    "sets": [
+      {
+        "key": "default",
+        "weight": 1,
+        "options": [
+          {
+            "key": "swarm-cloud",
+            "pattern": "cloud",
+            "instrument": "swarm",
+            "media": [
+              "dark",
+              "ghost",
+              "psychic",
+              "ice"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "swarm-strike",
+            "pattern": "strike",
+            "instrument": "swarm",
+            "media": [
+              "dark",
+              "ghost",
+              "psychic",
+              "ice"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "swarm-drain",
+            "pattern": "drain",
+            "instrument": "swarm",
+            "media": [
+              "dark",
+              "ghost",
+              "psychic",
+              "ice"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "swarm-snare",
+            "pattern": "snare",
+            "instrument": "swarm",
+            "media": [
+              "dark",
+              "ghost",
+              "psychic",
+              "ice"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "swarm-rake",
+            "pattern": "rake",
+            "instrument": "swarm",
+            "media": [
+              "dark",
+              "ghost",
+              "psychic",
+              "ice"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "swarm-terrorize",
+            "pattern": "terrorize",
+            "instrument": "swarm",
+            "media": [
+              "dark",
+              "ghost",
+              "psychic",
+              "ice"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "claws-strike",
+            "pattern": "strike",
+            "instrument": "claws",
+            "media": [
+              "dark",
+              "ghost",
+              "psychic",
+              "ice"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "claws-rake",
+            "pattern": "rake",
+            "instrument": "claws",
+            "media": [
+              "dark",
+              "ghost",
+              "psychic",
+              "ice"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "claws-crush",
+            "pattern": "crush",
+            "instrument": "claws",
+            "media": [
+              "dark",
+              "ghost",
+              "psychic",
+              "ice"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "claws-shove",
+            "pattern": "shove",
+            "instrument": "claws",
+            "media": [
+              "dark",
+              "ghost",
+              "psychic",
+              "ice"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "claws-ambush",
+            "pattern": "ambush",
+            "instrument": "claws",
+            "media": [
+              "dark",
+              "ghost",
+              "psychic",
+              "ice"
+            ],
+            "weight": 1
+          }
+        ]
+      }
+    ]
   }
 }

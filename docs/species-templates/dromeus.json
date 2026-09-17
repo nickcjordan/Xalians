@@ -1,4 +1,5 @@
 {
+  "schemaVersion": "4.0.0",
   "key": "dromeus",
   "name": "Dromeus",
   "nameOrigin": "From the Greek dromeus, runner, reflecting the creature's defining ground speed and running launch.",
@@ -178,15 +179,225 @@
     "claws",
     "wings"
   ],
-  "signatureAbility": {
-    "name": "Ashfall Stoop",
-    "instrument": "fangs",
-    "action": "ambush",
-    "medium": "fire",
-    "intensity": [
-      45,
-      80
+  "signature": {
+    "kind": "action",
+    "key": "dromeus-defining"
+  },
+  "actions": [
+    {
+      "key": "dromeus-defining",
+      "activation": {
+        "operation": "discrete"
+      },
+      "delivery": {
+        "mode": "contact",
+        "approach": "closing"
+      },
+      "targeting": {
+        "relation": "other",
+        "subjects": [
+          "creature",
+          "object"
+        ]
+      },
+      "effects": [
+        {
+          "kind": "harm",
+          "recipient": "target",
+          "mechanism": "impact",
+          "emphasis": "primary",
+          "onset": "instant",
+          "persistence": "resolved",
+          "likelihood": "consistent"
+        }
+      ],
+      "description": "The Dromeus runs its target down, spreads its wings for the few seconds it can stay aloft, and closes the last of the distance with its teeth.",
+      "name": "Ashfall Stoop",
+      "instrument": "fangs",
+      "medium": "fire",
+      "intensity": [
+        45,
+        80
+      ],
+      "timing": {
+        "preparation": "brief",
+        "recovery": "brief"
+      },
+      "spatial": {
+        "selectivity": "selective",
+        "range": "contact"
+      }
+    }
+  ],
+  "passives": [],
+  "actionPool": {
+    "count": [
+      2,
+      3
     ],
-    "description": "The Dromeus runs its target down, spreads its wings for the few seconds it can stay aloft, and closes the last of the distance with its teeth."
+    "sets": [
+      {
+        "key": "default",
+        "weight": 1,
+        "options": [
+          {
+            "key": "fangs-strike",
+            "pattern": "strike",
+            "instrument": "fangs",
+            "media": [
+              "fire",
+              "rock",
+              "chemical",
+              "metal"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "fangs-drain",
+            "pattern": "drain",
+            "instrument": "fangs",
+            "media": [
+              "fire",
+              "rock",
+              "chemical",
+              "metal"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "fangs-ambush",
+            "pattern": "ambush",
+            "instrument": "fangs",
+            "media": [
+              "fire",
+              "rock",
+              "chemical",
+              "metal"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "claws-strike",
+            "pattern": "strike",
+            "instrument": "claws",
+            "media": [
+              "fire",
+              "rock",
+              "chemical",
+              "metal"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "claws-rake",
+            "pattern": "rake",
+            "instrument": "claws",
+            "media": [
+              "fire",
+              "rock",
+              "chemical",
+              "metal"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "claws-crush",
+            "pattern": "crush",
+            "instrument": "claws",
+            "media": [
+              "fire",
+              "rock",
+              "chemical",
+              "metal"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "claws-shove",
+            "pattern": "shove",
+            "instrument": "claws",
+            "media": [
+              "fire",
+              "rock",
+              "chemical",
+              "metal"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "claws-ambush",
+            "pattern": "ambush",
+            "instrument": "claws",
+            "media": [
+              "fire",
+              "rock",
+              "chemical",
+              "metal"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "wings-strike",
+            "pattern": "strike",
+            "instrument": "wings",
+            "media": [
+              "fire",
+              "rock",
+              "chemical",
+              "metal"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "wings-lash",
+            "pattern": "lash",
+            "instrument": "wings",
+            "media": [
+              "fire",
+              "rock",
+              "chemical",
+              "metal"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "wings-shove",
+            "pattern": "shove",
+            "instrument": "wings",
+            "media": [
+              "fire",
+              "rock",
+              "chemical",
+              "metal"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "wings-hurl",
+            "pattern": "hurl",
+            "instrument": "wings",
+            "media": [
+              "fire",
+              "rock",
+              "chemical",
+              "metal"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "wings-ward",
+            "pattern": "ward",
+            "instrument": "wings",
+            "media": [
+              "fire",
+              "rock",
+              "chemical",
+              "metal"
+            ],
+            "weight": 1
+          }
+        ]
+      }
+    ]
   }
 }

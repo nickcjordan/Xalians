@@ -1,4 +1,5 @@
 {
+  "schemaVersion": "4.0.0",
   "key": "avilily",
   "name": "Avilily",
   "nameOrigin": "A blend of avian and lily, joining its small bird body to its flower-like plumage and blooming beak.",
@@ -177,15 +178,261 @@
     "secretion",
     "talons"
   ],
-  "signatureAbility": {
-    "name": "Blossoming Ambuscade",
-    "instrument": "secretion",
-    "action": "snare",
-    "medium": "plant",
-    "intensity": [
-      35,
-      70
+  "signature": {
+    "kind": "action",
+    "key": "avilily-defining"
+  },
+  "actions": [
+    {
+      "key": "avilily-defining",
+      "activation": {
+        "operation": "ongoing"
+      },
+      "delivery": {
+        "mode": "contact",
+        "approach": "stationary"
+      },
+      "targeting": {
+        "relation": "other",
+        "subjects": [
+          "creature",
+          "object"
+        ]
+      },
+      "effects": [
+        {
+          "kind": "restrain",
+          "recipient": "target",
+          "faculty": "movement",
+          "emphasis": "primary",
+          "onset": "instant",
+          "persistence": "sustained",
+          "likelihood": "consistent"
+        }
+      ],
+      "description": "The Avilily opens its beak into a false bloom and coats what comes to feed in a syrup that stops it where it stands.",
+      "name": "Blossoming Ambuscade",
+      "instrument": "secretion",
+      "medium": "plant",
+      "intensity": [
+        35,
+        70
+      ],
+      "timing": {
+        "preparation": "brief",
+        "recovery": "brief"
+      },
+      "spatial": {
+        "selectivity": "selective",
+        "range": "contact"
+      }
+    }
+  ],
+  "passives": [],
+  "actionPool": {
+    "count": [
+      2,
+      3
     ],
-    "description": "The Avilily opens its beak into a false bloom and coats what comes to feed in a syrup that stops it where it stands."
+    "sets": [
+      {
+        "key": "default",
+        "weight": 1,
+        "options": [
+          {
+            "key": "beak-strike",
+            "pattern": "strike",
+            "instrument": "beak",
+            "media": [
+              "plant",
+              "water",
+              "chemical",
+              "psychic"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "beak-crush",
+            "pattern": "crush",
+            "instrument": "beak",
+            "media": [
+              "plant",
+              "water",
+              "chemical",
+              "psychic"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "beak-rake",
+            "pattern": "rake",
+            "instrument": "beak",
+            "media": [
+              "plant",
+              "water",
+              "chemical",
+              "psychic"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "beak-drain",
+            "pattern": "drain",
+            "instrument": "beak",
+            "media": [
+              "plant",
+              "water",
+              "chemical",
+              "psychic"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "beak-ambush",
+            "pattern": "ambush",
+            "instrument": "beak",
+            "media": [
+              "plant",
+              "water",
+              "chemical",
+              "psychic"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "secretion-spray",
+            "pattern": "spray",
+            "instrument": "secretion",
+            "media": [
+              "plant",
+              "water",
+              "chemical",
+              "psychic"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "secretion-cloud",
+            "pattern": "cloud",
+            "instrument": "secretion",
+            "media": [
+              "plant",
+              "water",
+              "chemical",
+              "psychic"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "secretion-burst",
+            "pattern": "burst",
+            "instrument": "secretion",
+            "media": [
+              "plant",
+              "water",
+              "chemical",
+              "psychic"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "secretion-drain",
+            "pattern": "drain",
+            "instrument": "secretion",
+            "media": [
+              "plant",
+              "water",
+              "chemical",
+              "psychic"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "secretion-snare",
+            "pattern": "snare",
+            "instrument": "secretion",
+            "media": [
+              "plant",
+              "water",
+              "chemical",
+              "psychic"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "secretion-ward",
+            "pattern": "ward",
+            "instrument": "secretion",
+            "media": [
+              "plant",
+              "water",
+              "chemical",
+              "psychic"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "secretion-mend",
+            "pattern": "mend",
+            "instrument": "secretion",
+            "media": [
+              "plant",
+              "water",
+              "chemical",
+              "psychic"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "talons-strike",
+            "pattern": "strike",
+            "instrument": "talons",
+            "media": [
+              "plant",
+              "water",
+              "chemical",
+              "psychic"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "talons-rake",
+            "pattern": "rake",
+            "instrument": "talons",
+            "media": [
+              "plant",
+              "water",
+              "chemical",
+              "psychic"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "talons-crush",
+            "pattern": "crush",
+            "instrument": "talons",
+            "media": [
+              "plant",
+              "water",
+              "chemical",
+              "psychic"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "talons-snare",
+            "pattern": "snare",
+            "instrument": "talons",
+            "media": [
+              "plant",
+              "water",
+              "chemical",
+              "psychic"
+            ],
+            "weight": 1
+          }
+        ]
+      }
+    ]
   }
 }
