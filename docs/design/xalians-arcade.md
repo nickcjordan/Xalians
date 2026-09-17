@@ -53,7 +53,7 @@ faucet.
 
 1. **Crater Command** — turn-based artillery against a ranging bot or a second local
    player; seeded destructible terrain, angle, power, wind, projectile arc, craters, and
-   three-hit integrity.
+   100-point rig integrity.
 2. **Archive Patience** — Klondike solitaire with draw-one/draw-three, click and drag
    movement, undo, hints, autocomplete, resumable seeded deals, and local records.
 3. **Hazard Sweep** — Minesweeper rules with safe first reveal, three board sizes,
@@ -69,7 +69,7 @@ Arcade to prove the product loop.
 
 ## Crater Command cabinet redesign
 
-Status: implemented as trial mechanics, 2026-09-14
+Status: implemented and in an ongoing quality loop, 2026-09-17
 
 Crater Command is an in-world Arcade cabinet, not a literal squad deployment. That
 distinction keeps the creature roster coherent: players operate two standardized,
@@ -80,18 +80,18 @@ The cabinet preserves the familiar artillery center—angle, power, a readable a
 and destructible terrain—while moving the encounter to a much larger range and giving
 each weapon a distinct mechanical job:
 
-- The unlimited **Impact round** is the dependable ranging baseline.
-- Two **Scatter volleys** launch three genuinely diverging rounds to cover uncertain
+- The unlimited **Comet shell** is the dependable ranging baseline.
+- Two **Razor fans** launch three genuinely diverging rounds to cover uncertain
   ranges, with lower damage per projectile.
-- Two **Breach charges** penetrate before detonating, opening the deepest craters and
+- Two **Grav drills** penetrate before detonating, opening the deepest craters and
   attacking protected positions from below.
-- One **Fragment burst** splits into five submunitions to saturate a broad shelf.
-- One **Barrier projector** adds terrain instead of removing it, creating fresh cover.
-- One **Kinetic lance** trades blast tolerance for speed and precise direct-hit damage.
-- Each rig has three drive charges. Repositioning commits immediately, spans a meaningful
-  distance, and plays as a deliberate traversal animation before control returns.
-- Each rig also carries one jump-jet charge. It trades scarce fuel for a longer airborne
-  move that can clear the crater walls and sharp shelves that stop the ground drive.
+- One **Starfall canister** splits into five submunitions to saturate a broad shelf.
+- One **Rampart forge** adds terrain instead of removing it, creating cover and guard
+  that absorbs the next hit until the rig moves.
+- One **Sunspike** trades blast tolerance for speed and precise direct-hit damage.
+- Each rig has separate drive and jump-jet fuel budgets. Holding thrust commits
+  movement in small increments; driving follows terrain while the jet clears crater
+  walls and sharp shelves. An impossible move does not drain fuel.
 - Wind remains fixed for both shots in a volley so the opponent receives the same
   condition and players can make an informed correction from their own previous shot.
 
@@ -127,12 +127,12 @@ legible and lore-compatible without requiring a bespoke roster creature or attac
 - [x] Make drive actions immediate, visibly animated, terrain-following, and long enough
   to read as traversal rather than a position jump.
 - [x] Add a separately budgeted, animated jump jet that clears terrain-blocked routes;
-  blocked drive attempts still commit and spend their charge.
+  blocked movement no longer spends fuel when the rig cannot advance.
 - [x] Preserve direct drag aiming, sliders, and one-step barrel/power corrections.
 - [x] Replace abstract or unexplained control cards with an aim deck, drive deck, weapon
   rack, plain-language weapon roles, and one dominant fire action.
-- [x] Reorder the mobile action so Fire follows the weapon rack and use a wide-range
-  follow camera rather than shrinking the entire simulation to an unreadable strip.
+- [x] Keep Fire, LOAD, and MOVE together above a contextual mobile control panel and use
+  a rig-focused camera with a range overview rather than shrinking the whole field.
 - [x] Expand the battlefield viewport through the full legal projectile ceiling so
   maximum-height shots remain visible, and remove the filled midground silhouette that
   could be mistaken for a liquid surface.
@@ -192,3 +192,8 @@ games, complete each on desktop or phone, retain local records, and—when signe
 valid completion advance the shared daily meter and convert earned credits into the
 existing Scrambler Token balance without allowing a duplicate claim. Old Training and
 Physics links resolve cleanly into the new experience.
+
+This definition covers the initial Arcade release, not the ongoing quality of any game.
+Crater Command's iterative quality process lives in
+[`../quality/crater-command-loop.md`](../quality/crater-command-loop.md); a checked feature
+here is not evidence that its play experience is finished.

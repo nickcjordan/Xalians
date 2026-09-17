@@ -62,3 +62,9 @@ Live browser verification: complete seed-1 expedition through all four sectors a
 Validation: 1,229 web tests and 357 rules tests passed. One existing asynchronous portrait test timed out during concurrent initial checks; it passed alone and in the subsequent full suite. Added coverage for order review/clearing, restore/corrupt saves, visual event metadata and charge-target privacy. Combat rules and version-1 save format remain compatible. The production build now includes a dedicated Powerworks route budget; shared icon chunk extraction required measured adjustments of two existing gzip budgets (artillery 30,733 bytes and hazard sweep 8,411 bytes), with approximately 5% headroom.
 
 Limits: authored art remains prototype art; testing is an expert browser pass, not first-time human usability research. Outcome panels scroll on short phones while the battle planning loop remains visible. Future canonical moves, balance, and content depth remain separate backlog work.
+
+### Move-card hierarchy follow-up
+
+The initial icon conversion still gave every detail similar visual weight. Move cards now use three consistent regions: name/delivery identity, a fixed primary-effect column for comparison, and a bottom resource strip. Repeated elemental badges were removed because the selected companion already supplies that context. Signatures use a category label and restrained gold treatment; selection changes the resource-strip state as well as the border. Spent and blocked moves retain readable explanations. Replaced the superseded card CSS rather than layering a second card system over it.
+
+Checked normal/signature/control moves, long names, selection, and the complete planning layout at 1280×720, 390×844, and 375×667. Short phones use compact enemy presentation to preserve both targets and the full command loop. The same resource segment appears in the symbol key. This is a hierarchy correction, not a claim that visual design is permanently finished.

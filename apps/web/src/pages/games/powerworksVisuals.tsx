@@ -12,6 +12,7 @@ import {
   Mountain,
   Crown,
   RotateCcw,
+  Check,
 } from "lucide-react";
 import type { Move, Unit } from "@xalians/rules/dungeon";
 import graviclaw from "../../svg/species/graviclaw.svg?url";
@@ -91,40 +92,84 @@ export function moveDescription(move: Move) {
       : `${move.damage} base power.`
   }${move.kind === "fallback" ? " Costs 2 health in recoil." : ""}`;
 }
-export function MoveStats({ move, id }: { move: Move; id?: string }) {
+export function MoveCardContent({
+  move,
+  signature,
+  uses,
+  limit,
+  selected,
+  blocked,
+  id,
+}: {
+  move: Move;
+  signature: boolean;
+  uses: number | null;
+  limit: number;
+  selected: boolean;
+  blocked: boolean;
+  id: string;
+}) {
   const Range = move.range === "ranged" ? Crosshair : Swords;
+  const control = move.kind === "snare";
   return (
-    <span className="pw-move-stats" id={id} aria-label={moveDescription(move)}>
-      <span title={move.range === "ranged" ? "Ranged attack" : "Melee attack"}>
-        <Range aria-hidden="true" />
+    <>
+      <span className="pw-card-identity">
+        <span className="pw-card-category" aria-hidden="true">
+          <Range />
+          {signature && (
+            <>
+              <Crown />
+              Signature
+            </>
+          )}
+        </span>
+        <strong>{move.name}</strong>
       </span>
       <span
-        title={
-          move.kind === "snare"
-            ? "Restraint: one action opportunity"
-            : move.kind === "ward"
-            ? "Protection"
-            : "Base attack power"
-        }
+        className={`pw-card-effect ${control ? "control" : ""}`}
+        title={moveDescription(move)}
+        aria-hidden="true"
       >
-        {move.kind === "snare" ? (
-          <Link2 aria-hidden="true" />
-        ) : move.kind === "ward" ? (
-          <Shield aria-hidden="true" />
-        ) : (
-          <PowerIcon />
-        )}
-        <b aria-hidden="true">
-          {move.kind === "snare" ? 1 : move.kind === "ward" ? "½" : move.damage}
-        </b>
+        {control ? <Link2 /> : <PowerIcon />}
+        <b>{control ? 1 : move.damage}</b>
+        {control && <small>action</small>}
       </span>
-      {move.kind === "fallback" && (
-        <span title="2 health recoil">
-          <RotateCcw aria-hidden="true" />
-          <b aria-hidden="true">−2</b>
+      <span className="pw-card-resource" aria-hidden="true">
+        <span className="pw-card-state">
+          {blocked ? (
+            <>
+              <Link2 />
+              Restrained
+            </>
+          ) : uses === 0 ? (
+            "Exhausted"
+          ) : selected ? (
+            <>
+              <Check />
+              Selected
+            </>
+          ) : (
+            "Uses"
+          )}
         </span>
-      )}
-    </span>
+        <span className="pw-card-charges">
+          {uses === null
+            ? "∞"
+            : Array.from({ length: limit }, (_, n) => (
+                <i key={n} className={n < uses ? "full" : ""} />
+              ))}
+        </span>
+        {move.kind === "fallback" && (
+          <span className="pw-card-recoil">
+            <RotateCcw />
+            −2 HP
+          </span>
+        )}
+      </span>
+      <span className="pw-sr" id={id}>
+        {moveDescription(move)}
+      </span>
+    </>
   );
 }
 export function Portrait({ u, small = false }: { u: Unit; small?: boolean }) {
