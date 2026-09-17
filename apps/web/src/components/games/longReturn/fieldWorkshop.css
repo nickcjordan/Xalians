@@ -67,24 +67,10 @@ details.lr-result-explanation ul { padding: 0 24px 20px 42px; }
 .lr-checkpoint-indicator.is-warning i { color: var(--g-hazard); }
 .lr-turning-point { font-style: normal; }
 @keyframes lr-recovery-glow { 50% { opacity: .4; filter: brightness(1.7); } }
-/* Narrative nodes need legible labels, including at desktop scale. */
-.lr-simple-scouts > button > .lr-scout-card-copy { grid-template-columns: minmax(150px,.7fr) minmax(0,2.4fr) 90px; }
-.lr-scout-card-head > small { font-size: 11px; line-height: 1.4; }
-.lr-scout-action { font-size: 13px; }
-@media (max-width: 1150px) {
-  .lr-simple-scouts > button > .lr-scout-card-copy { grid-template-columns: 1fr; }
-  .lr-scout-card-head, .lr-scout-action { grid-column: auto; grid-row: auto; }
-  .lr-scout-action { min-height: 44px; }
-}
 @media (max-width: 650px) {
   .lr-resume-card { flex-wrap: wrap; gap: 12px; padding: 18px; }
   .lr-resume-card > div { flex-basis: calc(100% - 50px); }
   .lr-resume-card > button { width: 100%; }
-  .lr-simple-scouts > button { grid-template-columns: 88px minmax(0,1fr); }
-  .lr-simple-scouts > button > .lr-scout-card-copy { display: contents; }
-  .lr-simple-scouts .lr-portrait { grid-column: 1; grid-row: 1; min-height: 110px; height: 100%; }
-  .lr-scout-card-head { grid-column: 2; grid-row: 1; }
-  .lr-scout-action { grid-column: 1 / -1; grid-row: 3; }
   .lr-workshop-options { grid-template-columns: 1fr; }
   .lr-workshop-confirm { flex-direction: column; align-items: stretch; }
   .lr-workshop > summary { flex-wrap: wrap; }

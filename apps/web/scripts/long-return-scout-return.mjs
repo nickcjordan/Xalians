@@ -7,7 +7,7 @@ try {
   page.on('pageerror', error => errors.push(error.message));
   await page.goto(`${process.env.LR_BASE_URL || 'http://127.0.0.1:4173'}/long-return`);
   await page.getByRole('button', { name: /Seal crew/i }).click();
-  await page.locator('.lr-simple-scouts > button').filter({ hasText: 'Chromocat' }).click();
+  await page.locator('[data-scout-options] > button').filter({ hasText: 'Chromocat' }).click();
   await page.getByRole('button', { name: /^Send Chromocat/ }).click();
   await page.getByRole('button', { name: 'Check scout status', exact: true }).click();
   assert.match(await page.locator('.lr-scout-trip-receipt').innerText(), /1 energy scouting/);
@@ -24,7 +24,7 @@ try {
   assert.equal(await page.locator('[data-expedition-reserves]').innerText(), resources);
   await page.getByRole('button', { name: 'Continue mission', exact: true }).click();
   await page.getByRole('button', { name: /^Enter / }).click();
-  await page.locator('.lr-simple-scouts > button').filter({ hasText: 'Hippochamp' }).click();
+  await page.locator('[data-scout-options] > button').filter({ hasText: 'Hippochamp' }).click();
   await page.getByRole('button', { name: /^Send Hippochamp/ }).click();
   await page.getByRole('button', { name: 'Respond to encounter', exact: true }).click();
   await page.locator('.lr-encounter-options > button').filter({ hasText: 'Break contact' }).click();

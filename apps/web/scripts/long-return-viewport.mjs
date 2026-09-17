@@ -28,6 +28,18 @@ try {
     await capture('setup');
     await page.getByRole('button', { name: /Seal Crew/ }).click();
     assert.equal(await page.locator('.lr-wizard-chrome').evaluate(el => document.activeElement === el), true, 'Phase focus must land on visible chrome');
+    const scoutChoices = page.locator('[data-scout-choice]');
+    await page.waitForFunction(() => [...document.querySelectorAll('[data-scout-choice] > span:first-child > div svg path')].length === 3 && [...document.querySelectorAll('[data-scout-choice] > span:first-child > div svg path')].every(path => path.getAttribute('d').length > 500));
+    const choiceHeights = await scoutChoices.evaluateAll(elements => elements.map(el => el.getBoundingClientRect().height));
+    assert(choiceHeights.every(height => height <= 160), 'Scout choices stay compact without hiding alternatives');
+    const artWidths = await page.locator('[data-scout-choice] > span:first-child > div svg').evaluateAll(elements => elements.map(el => el.getBoundingClientRect().width));
+    assert(artWidths.every(width => width >= 48), 'Button icon sizing must not shrink creature art');
+    const beforeScoutSelection = await page.locator('[data-expedition-reserves]').innerText();
+    await scoutChoices.last().focus();
+    await page.keyboard.press('Enter');
+    assert.equal(await scoutChoices.last().getAttribute('aria-pressed'), 'true');
+    assert.equal(await page.locator('[data-expedition-reserves]').innerText(), beforeScoutSelection, 'Selecting a scout spends nothing');
+    assert.deepEqual(await scoutChoices.evaluateAll(elements => elements.map(el => el.getBoundingClientRect().height)), choiceHeights, 'Selection must not change choice height');
     assert.equal(await page.getByRole('button', { name: 'Game rules', exact: true }).count(), 1);
     await capture('scout');
     assert.equal(await page.locator('[data-expedition-map] [data-expedition-reserves]').count(), 1, 'Resources belong to the spatial crew key');
@@ -96,7 +108,7 @@ try {
     await page.getByRole('button', { name: /Continue to result/ }).click();
     await page.getByRole('button', { name: 'Continue mission', exact: true }).click();
     await page.getByRole('button', { name: /^Enter / }).click();
-    await page.locator('.lr-simple-scouts > button').first().click();
+    await page.locator('[data-scout-options] > button').first().click();
     await page.getByRole('button', { name: /^Send / }).click();
     await page.getByRole('button', { name: 'Respond to encounter', exact: true }).click();
     await capture('encounter');

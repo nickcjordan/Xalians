@@ -82,7 +82,7 @@ export default function XalianImage({
 			<XalianSVG
 				name={speciesName}
 				variant={variant}
-				className="block h-full w-full"
+				className="block size-full"
 				style={artStyle}
 			/>
 		</div>

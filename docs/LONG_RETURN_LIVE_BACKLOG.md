@@ -4,6 +4,13 @@ Owner: the agent maintaining the Long Return worktree. Update this file during i
 
 ## Active goal — full-mission UX (2026-09-11)
 
+### September 17: compact scouting choices
+
+- Phone review found the scouting options still spent too much vertical space on separate identity, role and Select sections. Replaced them with compact, stable-height rows, fixed-size token portraits and an explicit selection mark. Awareness, reporting and trip cost remain visible together; encounter outlook appears only where relevant. Role detail stays in the cost disclosure. Selection remains reversible and never spends resources; Send remains the distinct action.
+- Removed the retired row styles rather than layering another responsive override. Used the repository UI skill's existing Button, token typography and semantic color classes. Paint review caught the Button icon selector shrinking creature art; the shared image now uses the equivalent `size-full` utility so it is correctly distinguished from an icon. Removed three unused icon mappings to stay within the existing bundle budget.
+- Verified stable selection height, loaded artwork size, keyboard selection and unchanged reserves at 390, 768 and 1280 pixels. Replayed physical scout return, four communication paths, checkpoint continuity, roster swaps and a complete seven-scene phone expedition: deep extraction, 14 salvage, 2 stability and the temporary ally. These are implementation checks, not player acceptance of the compact presentation.
+- Next review: the persistent field record on a small phone, especially whether its map and latest story beat stay spatially related without excessive scrolling. Keep the schematic language and preserve rereading.
+
 Bring The Long Return to a human-validated, coherent full-mission UX. Preserve decision-based exploration and advanced detail mode. Player acceptance remains unproven, but independent implementation and auditing continue; this file records evidence, not a substitute stopping condition. The task is not blocked merely because human validation is pending.
 
 ### Outcome register

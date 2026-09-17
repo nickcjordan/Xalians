@@ -38,7 +38,7 @@ function finishScoutTransition(container) {
 }
 
 function selectRecommendedScout(container) {
-  clickElement(container.querySelector('.lr-simple-scouts .is-recommended'));
+  clickElement(container.querySelector('[data-scout-options] [data-recommended]'));
   click(container, /^send /i);
   finishScoutTransition(container);
 }
@@ -75,7 +75,7 @@ function choosePreferredRoute(container) {
 function playRecommendedScene(container) {
   const enterButton = findButton(container, /^enter /i);
   if (enterButton) clickElement(enterButton);
-  const recommendedScout = container.querySelector('.lr-simple-scouts .is-recommended');
+  const recommendedScout = container.querySelector('[data-scout-options] [data-recommended]');
   if (recommendedScout) { clickElement(recommendedScout); click(container, /^send /i); finishScoutTransition(container); }
   else click(container, /stay together|keep the crew together/i);
   if (container.querySelector('.lr-field-encounter')) {
@@ -317,16 +317,16 @@ describe('Long Return Simple mode', () => {
   test('reload during a crossing restores the preceding checkpoint without duplicating costs', () => {
     renderGame();
     click(container, /seal crew/i);
-    clickElement(container.querySelector('.lr-simple-scouts .is-recommended'));
+    clickElement(container.querySelector('[data-scout-options] [data-recommended]'));
     click(container, /^send /i);
     expect(container.querySelector('[aria-label="Scouting in progress"]')).toBeTruthy();
     expect(readCheckpoint().phase).toBe('scout');
     unmountGame();
     renderGame();
     click(container, /resume expedition/i);
-    expect(container.querySelector('.lr-simple-scouts')).toBeTruthy();
+    expect(container.querySelector('[data-scout-options]')).toBeTruthy();
     expect(readCheckpoint().strain['graviclaw-213']).toBe(0);
-    clickElement(container.querySelector('.lr-simple-scouts .is-recommended'));
+    clickElement(container.querySelector('[data-scout-options] [data-recommended]'));
     click(container, /^send /i);
     expect(container.querySelector('.lr-simple-status-crew').textContent).toContain('5/6 energy');
   });
@@ -443,7 +443,7 @@ describe('Long Return Simple mode', () => {
   test('moves from the recommended scout to the simplified report', () => {
     renderGame();
     click(container, /seal crew/i);
-    clickElement(container.querySelector('.lr-simple-scouts .is-recommended'));
+    clickElement(container.querySelector('[data-scout-options] [data-recommended]'));
     expect(container.querySelector('[aria-label="Scouting in progress"]')).toBeNull();
     expect(findButton(container, /^send /i).disabled).toBe(false);
     click(container, /^send /i);
@@ -576,7 +576,7 @@ describe('Long Return Simple mode', () => {
     renderGame();
     click(container, /seal crew/i);
     expect(document.activeElement).toBe(container.querySelector('[data-wizard-focus]'));
-    clickElement(container.querySelector('.lr-simple-scouts .is-recommended'));
+    clickElement(container.querySelector('[data-scout-options] [data-recommended]'));
     click(container, /^send /i);
     expect(document.activeElement).toBe(findButton(container, /skip to outcome/i));
     act(() => container.querySelector('[role="dialog"]').dispatchEvent(new KeyboardEvent('keydown', { key: 'Tab', bubbles: true })));
@@ -603,20 +603,20 @@ describe('Long Return Simple mode', () => {
     click(container, /seal crew/i);
     expect(container.textContent).toMatch(/GraviclawReady · 6\/6 energy/i);
     expect(container.textContent).toMatch(/Annex stabilityStable · 10\/10/i);
-    expect(container.querySelectorAll('.lr-simple-scouts > button')).toHaveLength(3);
+    expect(container.querySelectorAll('[data-scout-options] > button')).toHaveLength(3);
     expect(container.querySelector('.lr-signal-gauge')).toBeNull();
     expect(container.querySelector('.lr-scout-visuals')).toBeNull();
     expect(container.querySelector('.lr-projection-legend')).toBeNull();
     expect(container.querySelector('.lr-scout-impact')).toBeNull();
     expect(container.querySelector('.lr-scout-storyline')).toBeNull();
     expect(container.querySelector('.lr-scout-relay')).toBeNull();
-    expect(container.querySelectorAll('.lr-scout-quick')).toHaveLength(3);
-    expect(container.querySelector('.lr-simple-scouts .is-recommended .lr-scout-quick').textContent).toMatch(/Strong awareness.*Reports remotely.*1 energy/i);
-    const returningScouts = [...container.querySelectorAll('.lr-scout-quick')].filter((summary) => summary.textContent.includes('Must return'));
+    expect(container.querySelectorAll('[data-scout-summary]')).toHaveLength(3);
+    expect(container.querySelector('[data-scout-options] [data-recommended] [data-scout-summary]').textContent).toMatch(/Strong awareness.*Reports remotely.*1 energy/i);
+    const returningScouts = [...container.querySelectorAll('[data-scout-summary]')].filter((summary) => summary.textContent.includes('Must return'));
     expect(returningScouts).toHaveLength(2);
     expect(returningScouts.every((summary) => summary.textContent.includes('2 energy · 1 stability'))).toBe(true);
     expect(container.textContent).toContain('How scouting costs work');
-    expect(container.querySelectorAll('.lr-simple-scouts .lr-projection-track')).toHaveLength(0);
+    expect(container.querySelectorAll('[data-scout-options] .lr-projection-track')).toHaveLength(0);
     expect(container.textContent).not.toMatch(/The scan costs|Ready 0\/6 → Ready/);
     selectRecommendedScout(container);
     if (findButton(container, /choose a route/i)) click(container, /choose a route/i);
@@ -653,7 +653,7 @@ describe('Long Return Simple mode', () => {
     expect(container.querySelector('.lr-memory-effects')).toBeNull();
     expect(container.querySelector('.lr-memory-card')).toBeNull();
     click(container, /^enter /i);
-    expect(container.querySelector('.lr-simple-scouts')).toBeTruthy();
+    expect(container.querySelector('[data-scout-options]')).toBeTruthy();
   });
 
   test('keeps prior choices available in an optional compact expedition log', () => {

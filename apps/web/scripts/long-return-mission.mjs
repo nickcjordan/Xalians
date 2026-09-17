@@ -52,9 +52,9 @@ try {
     const click = async locator => { events.push({ type: 'choice', text: await locator.innerText() }); await locator.click(); };
     if (await page.locator('.lr-end-card').count()) { events.push({ type: 'ending', text: await page.locator('.lr-end-card').innerText() }); break; }
     if (await page.locator('.lr-transition-beat').count()) { await click(page.locator('.lr-transition-beat > button')); continue; }
-    if (await page.locator('.lr-simple-scouts').count()) {
-      if (process.env.LR_NO_SCOUT === '1' || !await page.locator('.lr-simple-scouts > button').count()) { await click(page.getByRole('button', { name: /Stay together/ })); continue; }
-      await click(page.locator('.lr-simple-scouts > button').first());
+    if (await page.locator('[data-scout-options]').count()) {
+      if (process.env.LR_NO_SCOUT === '1' || !await page.locator('[data-scout-options] > button').count()) { await click(page.getByRole('button', { name: /Stay together/ })); continue; }
+      await click(page.locator('[data-scout-options] > button').first());
       await click(page.getByRole('button', { name: /^Send / })); continue;
     }
     if (await page.locator('.lr-field-encounter:not(.is-resolved)').count()) {
