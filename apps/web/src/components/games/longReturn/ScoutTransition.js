@@ -58,7 +58,7 @@ export default function ScoutTransition({ action, onComplete, soundEnabled = tru
   const stabilityBefore = action.stabilityBefore ?? MAX_INSTABILITY;
   const stabilityAfter = action.stabilityAfter ?? stabilityBefore;
   const skip = () => final ? onComplete() : setIndex(beats.length - 1);
-  return <FieldRecord scene={action.scene} title={returning ? 'The scout returns' : 'Scouting ahead'} label={returning ? 'Scout returning' : 'Scouting in progress'} map={<ExpeditionSchematic scene={action.scene} crew={action.crew} scout={action.scout} position={expeditionPosition({ actionType: action.type, beat: beat.kind, scan: action.result })} native={action.encounter && index >= nativeAt ? action.encounter : null} runFlags={action.runFlags} />} resources={<>
+  return <FieldRecord scene={action.scene} title={returning ? 'The scout returns' : 'Scouting ahead'} label={returning ? 'Scout returning' : 'Scouting in progress'} map={<ExpeditionSchematic scene={action.scene} crew={action.crew} scout={action.scout} helperId={action.helperId} companion={action.fieldCompanion} position={expeditionPosition({ actionType: action.type, beat: beat.kind, scan: action.result })} native={action.encounter && index >= nativeAt ? action.encounter : null} runFlags={action.runFlags} />} resources={<>
       <FieldReserve kind="energy" label={`${action.scout.species} energy`} max={MAX_STRAIN} before={energyBefore} after={energyAfter} active={index >= energyAt} />
       {returning && <FieldReserve kind="stability" label="Annex stability" max={MAX_INSTABILITY} before={stabilityBefore} after={stabilityAfter} active={index >= stabilityAt} />}
     </>}>

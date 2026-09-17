@@ -6,7 +6,7 @@ import { visibleWorldFlags } from './routeVisuals';
 
 const positions = { entry: [74, 98], survey: [225, 98], crossing: [304, 48], exit: [526, 98] };
 
-export default function ExpeditionSchematic({ scene, crew = [], scout, position = { crew: 'entry' }, routeId, native, nativeState, companion, runFlags = [], compact = false, preview = false }) {
+export default function ExpeditionSchematic({ scene, crew = [], scout, helperId, position = { crew: 'entry' }, routeId, native, nativeState, companion, runFlags = [], compact = false, preview = false }) {
   const sceneIndex = Math.max(0, MISSION.scenes.findIndex(item => item.id === scene.id));
   const routeIndex = scene.routes.findIndex(route => route.id === routeId);
   const currentLane = routeIndex === 1 ? 148 : 48;
@@ -16,7 +16,8 @@ export default function ExpeditionSchematic({ scene, crew = [], scout, position 
   const contactLane = scene.encounter?.routeId === scene.routes[1]?.id ? 148 : 48;
   const location = position.crew === 'exit' ? 'Crew across' : position.scout === 'survey' ? 'Scout ahead · crew waiting' : position.crew === 'crossing' ? 'Crew on the crossing' : 'Crew at the entrance';
   const tokens = crew.map((member, i) => {
-    const place = member.id === scout?.id && position.scout ? position.scout : position.crew;
+    const accompaniesScout = member.id === scout?.id || member.id === helperId;
+    const place = accompaniesScout && position.scout ? position.scout : position.crew;
     const point = [...(positions[place] || positions.entry)];
     if (place === 'crossing') point[1] = currentLane;
     if (place === 'survey' && contact) { point[0] = 320; point[1] = contactLane; }
