@@ -10,6 +10,7 @@ try {
   const page = await context.newPage();
   const events = [], errors = [];
   let crossed = 0;
+  let previousMapScene = '', previousMapExit = '';
   const responses = {};
   page.on('pageerror', error => errors.push(error.message));
   page.on('response', response => {
@@ -33,6 +34,21 @@ try {
       continue;
     }
     await page.screenshot({ path: `${output}/${step}-view.png`, fullPage: true });
+    const map = page.locator('.lr-shell [data-expedition-map]');
+    if (await map.count()) {
+      const mapScene = await map.getAttribute('data-map-scene');
+      const entrance = await map.locator('[data-map-threshold="entry"]').textContent();
+      if (previousMapScene && previousMapScene !== mapScene) assert.equal(entrance, previousMapExit, 'Map arrival carries into the next room');
+      previousMapScene = mapScene;
+      previousMapExit = await map.locator('[data-map-threshold="exit"]').textContent();
+      assert.equal(await map.locator('[data-map-landmark]').count(), 1, 'Every room has stationary terrain');
+      const clipped = await map.locator('[data-map-threshold]').evaluateAll(nodes => nodes.some(node => { const box = node.getBBox(); return box.x < 0 || box.x + box.width > 600 || box.y + box.height > 200; }));
+      assert(!clipped, 'Named thresholds fit the schematic');
+      const ally = map.locator('[data-map-ally]');
+      if (await ally.count() && mapScene !== 'turbine-hall' && (await ally.locator('title').textContent()).startsWith('Xylum:')) {
+        assert.equal(await ally.getAttribute('data-location'), await map.getAttribute('data-crew-position'), 'Established ally stays with crew, not a solo scout');
+      }
+    }
     const click = async locator => { events.push({ type: 'choice', text: await locator.innerText() }); await locator.click(); };
     if (await page.locator('.lr-end-card').count()) { events.push({ type: 'ending', text: await page.locator('.lr-end-card').innerText() }); break; }
     if (await page.locator('.lr-transition-beat').count()) { await click(page.locator('.lr-transition-beat > button')); continue; }
