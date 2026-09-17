@@ -22,9 +22,12 @@ test('reading back pauses playback, while reaching the bottom does not toggle it
     render(true);
     act(() => scroller.dispatchEvent(new Event('scroll', { bubbles: true })));
     expect(onPause).toHaveBeenCalledTimes(1);
+    act(() => container.querySelector('footer button').click());
+    expect(scroller.scrollTop).toBe(1000);
+    expect(onPause).toHaveBeenCalledTimes(2);
     render(false, 2);
     act(() => scroller.dispatchEvent(new Event('scroll', { bubbles: true })));
-    expect(onPause).toHaveBeenCalledTimes(1);
+    expect(onPause).toHaveBeenCalledTimes(2);
   } finally {
     act(() => root.unmount());
     container.remove();
