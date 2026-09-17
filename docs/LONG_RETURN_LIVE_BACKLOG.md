@@ -21,6 +21,12 @@ Statuses progress independently: identified → implementing → technically ver
 
 ### Live findings
 
+### September 17: decision fit after the schematic
+
+- The broader viewport audit caught a desktop regression: the taller spatial header pushed Cross now below the viewport even though all lead choices fit. This was a layout failure, not a need for smaller type or hidden alternatives.
+- On desktop the commitment control now shares the decision-heading row above the full-width lead comparison. Back remains at the start, and advanced controls remain secondary. Phone layout keeps its existing reachable commitment order.
+- The viewport replay now passes at 390, 768 and 1280 pixels across scouting, lead selection, customization, results, repairs, endings, encounters, companions and report review. All 1,266 web tests, typecheck, production build and bundle budgets pass. This corrects the observed clipping; it does not establish first-time comprehension.
+
 ### September 17: schematic field records and causal follow-through
 
 - Shipped the approved schematic direction in PRs #343 and #345: labeled crew markers, connected route branches, a seven-sector overview, report signals, native contact and limited ally positions. Removed character-performance stages from scouting, crossing and encounter playback. Helper and scout remain distinct from the waiting crew. Hosted three-scene replay passed after deployment 35274707916.

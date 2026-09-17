@@ -1545,12 +1545,12 @@ function LongReturnGame() {
 
 
               {route && choosingLead && guidanceLevel === 'simple' && !simpleCustomizing && suggestedPlan && (
-                <div className="lr-simple-plan" tabIndex={-1} aria-label={`${route.title} · Choose who leads`}>
-                  <button type="button" className="lr-lead-back" onClick={() => { setWizardDirection('back'); setChoosingLead(false); }}>← Change route</button>
-                  <div className="lr-simple-plan-head"><div><span>2 · Choose who leads · all three cross together</span><h3>{route.title}</h3></div></div>
-                  <LeadChoices plans={leadChoices.map(plan => plan.lead.id === suggestedPlan.lead.id ? suggestedPlan : applyCommandPreview(plan))} companion={companion} selectedId={suggestedPlan.lead.id} onSelect={leadId => setSimpleLeadChoice({ sceneId: scene.id, routeId: route.id, leadId })} />
-                  {methodChoices.length > 1 && <details className="lr-method-alternatives"><summary>Try another technique</summary><div aria-label="Compare crossing techniques">{methodChoices.map(plan => <button type="button" key={plan.method.id} aria-pressed={plan.method.id === suggestedPlan.method.id} onClick={event => { const picker = event.currentTarget.closest('details'); setSimpleLeadChoice({ sceneId: scene.id, routeId: route.id, leadId: plan.lead.id, methodId: plan.method.id }); picker.open = false; picker.querySelector('summary').focus(); }}><MethodIdentity method={plan.method} /><span>{comparisonCosts(plan, companion).energy} energy{plan.nativeRisk || plan.unresolvedHazards.length ? ' + ?' : ''}<small>{plan.method.abilityId ? 'Spends this ability' : 'Keeps your abilities'}</small></span></button>)}</div></details>}
-                  <details className="lr-plan-roles"><summary>See crew roles</summary><div className="lr-simple-plan-crew" aria-label="Every creature crosses; each has a different role">
+                <div className="lr-simple-plan lg:grid! lg:grid-cols-[minmax(0,1fr)_auto]! lg:items-start! lg:gap-x-6!" tabIndex={-1} aria-label={`${route.title} · Choose who leads`}>
+                  <button type="button" className="lr-lead-back lg:col-span-2! lg:row-start-1! lg:justify-self-start!" onClick={() => { setWizardDirection('back'); setChoosingLead(false); }}>← Change route</button>
+                  <div className="lr-simple-plan-head lg:col-start-1! lg:row-start-2!"><div><span>2 · Choose who leads · all three cross together</span><h3>{route.title}</h3></div></div>
+                  <div className="lg:col-span-2! lg:row-start-3!"><LeadChoices plans={leadChoices.map(plan => plan.lead.id === suggestedPlan.lead.id ? suggestedPlan : applyCommandPreview(plan))} companion={companion} selectedId={suggestedPlan.lead.id} onSelect={leadId => setSimpleLeadChoice({ sceneId: scene.id, routeId: route.id, leadId })} /></div>
+                  {methodChoices.length > 1 && <details className="lr-method-alternatives lg:col-span-2!"><summary>Try another technique</summary><div aria-label="Compare crossing techniques">{methodChoices.map(plan => <button type="button" key={plan.method.id} aria-pressed={plan.method.id === suggestedPlan.method.id} onClick={event => { const picker = event.currentTarget.closest('details'); setSimpleLeadChoice({ sceneId: scene.id, routeId: route.id, leadId: plan.lead.id, methodId: plan.method.id }); picker.open = false; picker.querySelector('summary').focus(); }}><MethodIdentity method={plan.method} /><span>{comparisonCosts(plan, companion).energy} energy{plan.nativeRisk || plan.unresolvedHazards.length ? ' + ?' : ''}<small>{plan.method.abilityId ? 'Spends this ability' : 'Keeps your abilities'}</small></span></button>)}</div></details>}
+                  <details className="lr-plan-roles lg:col-span-2!"><summary>See crew roles</summary><div className="lr-simple-plan-crew" aria-label="Every creature crosses; each has a different role">
                     <span className="is-lead"><BiIcon cls="bi bi-play-fill" /><small>Lead acts</small><strong>{suggestedPlan.lead.species}</strong><em>{suggestedPlan.method.label}</em></span>
                     <BiIcon cls="bi bi-arrow-right" />
                     <span className="is-support"><BiIcon cls="bi bi-shield-fill-check" /><small>Support changes the attempt</small><strong>{suggestedPlan.support.species}</strong><em>{supportRoleForPlan(suggestedPlan)}</em></span>
@@ -1558,13 +1558,13 @@ function LongReturnGame() {
                     {(() => { const planReserve = crew.find((member) => member.id !== suggestedPlan.lead.id && member.id !== suggestedPlan.support.id); return <span className="is-reserve"><BiIcon cls="bi bi-people-fill" /><small>Reserve still crosses</small><strong>{planReserve ? planReserve.species : 'Remaining crew'}</strong><em>No crossing energy spent</em></span>; })()}
                   </div>
                   <p>{suggestedPlan.method.label} balances effort and crossing strength for {suggestedPlan.lead.species}. {suggestedPlan.support.species} adds {suggestedPlan.supportBonus} support, producing team score {suggestedPlan.teamScore} against target {suggestedPlan.difficulty}: {suggestedPlan.label}.</p></details>
-                  {!suggestedPlan.naturalReaction && commands > 0 && <label className="lr-simple-override"><input type="checkbox" checked={useCommand} onChange={(event) => setUseCommand(event.target.checked)} /><span>Use 1 command to preserve 1 annex stability</span></label>}
-                  <div className="lr-simple-plan-actions">
+                  {!suggestedPlan.naturalReaction && commands > 0 && <label className="lr-simple-override lg:col-span-2!"><input type="checkbox" checked={useCommand} onChange={(event) => setUseCommand(event.target.checked)} /><span>Use 1 command to preserve 1 annex stability</span></label>}
+                  <div className="lr-simple-plan-actions lg:col-start-2! lg:row-start-2! lg:mt-0! lg:border-0! lg:pt-0! lg:max-w-sm!">
                     {crossingWarning && <p className="lr-crossing-warning" role="status"><TriangleAlert aria-hidden="true" /><span><strong>{crossingWarning.label}</strong><small>{crossingWarning.detail}</small></span></p>}
                     <span className="lr-commit-identity"><strong>{route.title}</strong><small>{suggestedPlan.lead.species} leads · all three cross</small></span>
                     <button type="button" className="g-btn g-btn--primary lr-cross-now" onClick={() => commit(suggestedPlan)}><BiIcon cls="bi bi-play-fill" /> Cross now<small>{suggestedPlan.lead.species} leads</small></button>
                   </div>
-                  <button type="button" className="lr-simple-secondary lr-customize-plan" onClick={() => setSimpleCustomizing(true)}><BiIcon cls="bi bi-sliders" /> Advanced: customize crew plan</button>
+                  <button type="button" className="lr-simple-secondary lr-customize-plan lg:col-span-2! lg:justify-self-end! lg:w-auto! lg:inline-flex! lg:items-center! lg:gap-2!" onClick={() => setSimpleCustomizing(true)}><BiIcon cls="bi bi-sliders" /> Advanced: customize crew plan</button>
                 </div>
               )}
 
