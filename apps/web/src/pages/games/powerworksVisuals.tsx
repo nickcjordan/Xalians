@@ -68,6 +68,65 @@ export function MoveIcon({
       : Swords;
   return <Icon aria-hidden="true" />;
 }
+export function PowerIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d="m12 2 2.4 5.8L21 5l-2.8 6.2L23 15l-6.7.8L16 23l-4.8-5-5.7 4 1-7L1 12l6-2-1-7 6 4z" />
+    </svg>
+  );
+}
+export function moveDescription(move: Move) {
+  return `${move.range === "ranged" ? "Ranged attack" : "Melee attack"}. ${
+    move.kind === "snare"
+      ? "Restrains melee through one action opportunity."
+      : move.kind === "ward"
+      ? "Shields against incoming damage."
+      : `${move.damage} base power.`
+  }${move.kind === "fallback" ? " Costs 2 health in recoil." : ""}`;
+}
+export function MoveStats({ move, id }: { move: Move; id?: string }) {
+  const Range = move.range === "ranged" ? Crosshair : Swords;
+  return (
+    <span className="pw-move-stats" id={id} aria-label={moveDescription(move)}>
+      <span title={move.range === "ranged" ? "Ranged attack" : "Melee attack"}>
+        <Range aria-hidden="true" />
+      </span>
+      <span
+        title={
+          move.kind === "snare"
+            ? "Restraint: one action opportunity"
+            : move.kind === "ward"
+            ? "Protection"
+            : "Base attack power"
+        }
+      >
+        {move.kind === "snare" ? (
+          <Link2 aria-hidden="true" />
+        ) : move.kind === "ward" ? (
+          <Shield aria-hidden="true" />
+        ) : (
+          <PowerIcon />
+        )}
+        <b aria-hidden="true">
+          {move.kind === "snare" ? 1 : move.kind === "ward" ? "½" : move.damage}
+        </b>
+      </span>
+      {move.kind === "fallback" && (
+        <span title="2 health recoil">
+          <RotateCcw aria-hidden="true" />
+          <b aria-hidden="true">−2</b>
+        </span>
+      )}
+    </span>
+  );
+}
 export function Portrait({ u, small = false }: { u: Unit; small?: boolean }) {
   return (
     <span
