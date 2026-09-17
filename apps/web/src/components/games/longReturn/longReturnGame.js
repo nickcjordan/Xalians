@@ -760,7 +760,8 @@ function LongReturnGame() {
   }, []);
 
   const crew = useMemo(() => selectedCrew.map((id) => CREATURES.find((entry) => entry.id === id)).filter(Boolean), [selectedCrew]);
-  const displayedAction = useMemo(() => actionTransition && ({ ...actionTransition, crew, crewStrain: strain, runFlags, fieldCompanion: companion, helperId: encounterResolution?.helperId }), [actionTransition, crew, strain, runFlags, companion, encounterResolution?.helperId]);
+  const allyWithScout = encounterState?.mode === 'scout' && !!encounterResolution?.companion;
+  const displayedAction = useMemo(() => actionTransition && ({ ...actionTransition, crew, crewStrain: strain, runFlags, fieldCompanion: companion, helperId: encounterResolution?.helperId, allyWithScout }), [actionTransition, crew, strain, runFlags, companion, encounterResolution?.helperId, allyWithScout]);
   const standingCrewCount = crew.filter((member) => (strain[member.id] || 0) < MAX_STRAIN).length;
   const missionCannotContinue = pressure >= MAX_PRESSURE || standingCrewCount < 2;
   const failureReason = pressure >= MAX_PRESSURE ? 'Annex stability reached zero.' : 'Fewer than two creatures have energy left to lead and support another crossing.';
@@ -1321,7 +1322,7 @@ function LongReturnGame() {
             {scene.objective && <span className="lr-objective-badge">PRIMARY OBJECTIVE</span>}
             {scene.optional && <span className="lr-optional-badge">OPTIONAL DEPTH</span>}
           </div>}
-          <ExpeditionSchematic scene={scene} crew={crew} scout={scanScout} helperId={encounterResolution?.helperId} companion={companion} position={expeditionPosition({ phase, scout: scanScout, scan, encounterMode: encounterState?.mode, resolution: encounterResolution?.resolution })} routeId={routeId || pendingRouteId || routeVisualId} native={phase === 'encounter' && !encounterResolution || encounterResolution?.resolution === 'unresolved' || encounterResolution?.resolution === 'detour' ? encounterCreature : null} preview={phase === 'assign' && !!(routeId || pendingRouteId || routeVisualId)} runFlags={runFlags} compact />
+          <ExpeditionSchematic scene={scene} crew={crew} scout={scanScout} helperId={encounterResolution?.helperId} companion={companion} allyWithScout={allyWithScout} position={expeditionPosition({ phase, scout: scanScout, scan, encounterMode: encounterState?.mode, resolution: encounterResolution?.resolution })} routeId={routeId || pendingRouteId || routeVisualId} native={phase === 'encounter' && !encounterResolution || encounterResolution?.resolution === 'unresolved' || encounterResolution?.resolution === 'detour' ? encounterCreature : null} preview={phase === 'assign' && !!(routeId || pendingRouteId || routeVisualId)} runFlags={runFlags} compact />
           </div>
           {guidanceLevel === 'simple' && <CurrentAction key={`${phase}-${sceneIndex}-${encounterState && encounterState.result ? 'resolved' : 'active'}-${routeId || 'none'}`} {...currentAction} onHelp={openMechanics} />}
           <p className="lr-scene-copy">{scene.description}</p>

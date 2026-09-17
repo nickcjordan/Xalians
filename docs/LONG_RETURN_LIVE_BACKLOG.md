@@ -21,6 +21,16 @@ Statuses progress independently: identified → implementing → technically ver
 
 ### Live findings
 
+### September 17: the map names places, not just progress
+
+- The spatial audit found all seven rooms shared generic Entrance and Far side labels. The schematic now names each threshold, with every arrival matching the following scene's entrance, from the outer seal through the archive and optional depths to the surface lift.
+- Added restrained stationary geometry for floodwater, turbine housings, a sealed door, broken hull, archive plates, a reservoir and concentric rings. These are terrain diagrams, not creature performances or a scaled floor plan. The existing route, contact and crew markers retain their state and hidden-information boundaries.
+- A rendered later-room check found the ally silently following a solo scout. Established allies now stay with the waiting crew; a native just recruited by the scout stays beside it until physical reunion or the crossing. Added explicit position regressions and full-mission assertions for existing allies. Fixed empty SVG marker titles uncovered by the new render test.
+- Verification: 196 game tests and 1,273 web tests, typecheck, production build, seven-scene desktop/phone missions, three-width decision/result replay and physical-return/contact/checkpoint checks passed. Full-mission replay now checks threshold continuity and SVG label bounds in every room. Normal-motion pause/stepping/persistence passed at all three widths. Final route gzip is 97.8 kB versus the 96.8 kB merged baseline; consolidated geometry and documented a targeted 1 kB route allowance. No initial bundle allowance changed. This is implementation evidence, not player acceptance of the diagram.
+- The previous arrival handoff is published in PR #351, deployment 35279037759. Hosted three-scene replay, actual arrival focus/continuation bounds, and a full normal-speed seven-scene local mission passed after that merge.
+
+Follow-up observation from the phone replay: the scout report still prints a raw communication label such as "display" below the creature name. Audit whether the report and its preceding field record convey the actual reporting behavior consistently without adding another explanatory block.
+
 ### September 17: from field record to arrival
 
 - The full four-paragraph crossing story repeated immediately after its persistent field record. Arrival now leads with the physical destination and settled receipt; the complete account remains in a keyboard-accessible "Read the crossing again" disclosure. Old checkpoints without stored paragraphs retain their narrative fallback.
