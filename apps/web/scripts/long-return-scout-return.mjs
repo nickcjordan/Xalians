@@ -18,10 +18,10 @@ try {
   await page.locator('.lr-board-pick').first().click();
   await page.getByRole('button', { name: /Cross now/ }).click();
   await page.getByRole('button', { name: /Continue to result/ }).click();
-  const resources = await page.locator('.lr-wizard-resources').innerText();
+  const resources = await page.locator('[data-expedition-reserves]').innerText();
   await page.reload();
   await page.getByRole('button', { name: /Resume expedition/i }).click();
-  assert.equal(await page.locator('.lr-wizard-resources').innerText(), resources);
+  assert.equal(await page.locator('[data-expedition-reserves]').innerText(), resources);
   await page.getByRole('button', { name: 'Continue mission', exact: true }).click();
   await page.getByRole('button', { name: /^Enter / }).click();
   await page.locator('.lr-simple-scouts > button').filter({ hasText: 'Hippochamp' }).click();

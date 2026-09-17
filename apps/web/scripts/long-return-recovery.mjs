@@ -20,14 +20,14 @@ try {
     const workshop = page.locator('.lr-workshop');
     await workshop.locator(':scope > summary').click();
     const recovery = workshop.locator('.lr-workshop-options button:not([disabled])').filter({ hasText: 'Resupply' }).first();
-    const before = await page.locator('.lr-wizard-resources').innerText();
+    const before = await page.locator('[data-expedition-reserves]').innerText();
     assert(!(await page.locator('.lr-arrival-grid').isVisible()), 'Repairs replace the story rather than append to it');
     await workshop.getByRole('button', { name: /Keep all .* salvage and return/ }).click();
     assert(await page.locator('.lr-arrival-grid').isVisible(), 'Keeping haul restores the result');
-    assert.equal(await page.locator('.lr-wizard-resources').innerText(), before);
+    assert.equal(await page.locator('[data-expedition-reserves]').innerText(), before);
     await workshop.locator(':scope > summary').click();
     await recovery.click();
-    assert.equal(await page.locator('.lr-wizard-resources').innerText(), before);
+    assert.equal(await page.locator('[data-expedition-reserves]').innerText(), before);
     await page.getByRole('button', { name: 'Cancel repair' }).click();
     assert.equal(await page.locator('.lr-field-exchange').count(), 0);
     await recovery.click();

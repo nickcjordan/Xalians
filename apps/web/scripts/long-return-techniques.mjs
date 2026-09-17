@@ -13,24 +13,25 @@ try {
     await page.getByRole('button',{name:/Seal crew/i}).click();
     await page.getByRole('button',{name:/Stay together/}).click();
     await page.locator('.lr-board-pick').first().click();
-    const before=await page.locator('.lr-wizard-resources').innerText();
+    const before=await page.locator('[data-expedition-reserves]').innerText();
     await page.locator('.lr-method-alternatives > summary').click();
     await page.locator('.lr-method-alternatives button').filter({hasText:ability?'Spends this ability':'Keeps your abilities'}).first().click();
-    assert.equal(await page.locator('.lr-wizard-resources').innerText(),before);
+    assert.equal(await page.locator('[data-expedition-reserves]').innerText(),before);
     await page.screenshot({path:`${output}/${ability?'ability':'movement'}-choice.png`,fullPage:true});
     await page.getByRole('button',{name:/Cross now/}).click();
-    const actor=page.locator('.lr-action-creature.is-lead');
-    const initial=await actor.evaluate(el=>getComputedStyle(el).transform);
-    await page.waitForTimeout(450);
-    const moving=await actor.evaluate(el=>getComputedStyle(el).transform);
-    assert.notEqual(initial,moving,'Performer must actually move');
-    await page.screenshot({path:`${output}/${ability?'ability':'movement'}-motion.png`});
-    await page.getByRole('button',{name:/Continue to result/}).waitFor({timeout:30000});
-    if(ability) assert.match(await page.locator('.lr-sequence-story').innerText(),/spent for the rest of the expedition/i);
+    const map=page.locator('[data-field-record] [data-expedition-map]');
+    await page.getByRole('button',{name:'Pause story',exact:true}).click();
+    assert.equal(await map.locator('[data-map-creature][data-location="crossing"]').count(),3,'The committed crossing places the entire crew on the route');
+    assert.equal(await page.locator('.lr-action-creature').count(),0,'No creature-performance animation remains');
+    await page.screenshot({path:`${output}/${ability?'ability':'movement'}-crossing.png`});
+    await page.getByRole('button',{name:'Resume story',exact:true}).click();
+    await page.getByRole('button',{name:/Continue to result/}).waitFor({timeout:120000});
+    assert.equal(await map.locator('[data-map-creature][data-location="exit"]').count(),3,'The completed account leaves all three at the destination');
+    if(ability) assert.match(await page.locator('.lr-sequence-story').innerText(),/unavailable for the rest of this expedition/i);
     await page.getByRole('button',{name:/Continue to result/}).click();
     assert.equal(await page.locator('.lr-result-ability').count(),ability?1:0);
     assert.deepEqual(errors,[]);
     await context.close();
   }
-  console.log('Reusable and one-use technique selection, actual motion and persistent ability receipt passed.');
+  console.log('Reusable and one-use technique selection, schematic crossing/arrival and persistent ability receipt passed.');
 } finally {await browser.close();}

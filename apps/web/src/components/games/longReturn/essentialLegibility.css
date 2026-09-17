@@ -1,5 +1,4 @@
 /* Labels that carry a choice, a resource identity or an outcome are not decorative microtype. */
-.lr-shell .lr-wizard-resources small,
 .lr-shell .lr-wizard-progress span,
 .lr-shell .lr-wizard-topline small,
 .lr-shell .lr-wizard-objective small,
@@ -37,17 +36,5 @@
 }
 
 .lr-shell .lr-wizard-progress li:not(.is-current):not(.is-complete) { color: #a8b5a8; }
-.lr-shell .lr-wizard-resources small {
-  font-family: var(--g-font-body);
-  font-weight: 600;
-  text-transform: none;
-  letter-spacing: normal;
-  white-space: normal;
-  overflow-wrap: anywhere;
-  text-overflow: clip;
-}
+
 .lr-shell .lr-simple-override span { font-family: var(--g-font-body); text-transform: none; }
-@media (max-width: 720px) {
-  .lr-shell .lr-wizard-resources > span { min-width: 0; flex: 1; padding-inline: 5px; }
-  .lr-shell .lr-wizard-resources .lr-reserve-warning { white-space: normal; font-size: 12px; }
-}

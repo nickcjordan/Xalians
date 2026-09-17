@@ -16,7 +16,7 @@ try {
     await page.locator('.lr-wizard-view').evaluate(async element => {
       await Promise.all(element.getAnimations({ subtree: true }).filter(animation => animation.effect.getTiming().iterations !== Infinity).map(animation => animation.finished.catch(() => {})));
     });
-    const resources = await page.locator('.lr-wizard-resources').innerText();
+    const resources = await page.locator('[data-expedition-reserves]').innerText();
     assert(await page.locator('.lr-simple-plan').evaluate(el => el === document.activeElement), 'Phone lead substep receives focus');
     const back = await page.getByRole('button', { name: /Change route/ }).boundingBox();
     assert(back.y >= 56 && back.y + back.height <= 667, 'The local back action stays visible on entry');
@@ -31,7 +31,7 @@ try {
       await page.locator('.lr-lead-options button').filter({ has: page.getByText(species, { exact: true }) }).click();
       assert.match(await cross.innerText(), new RegExp(`${species} leads`));
       await visibleCommit();
-      assert.equal(await page.locator('.lr-wizard-resources').innerText(), resources);
+      assert.equal(await page.locator('[data-expedition-reserves]').innerText(), resources);
     }
     await page.screenshot({ path: `${output}/${reducedMotion}-selected.png` });
     await page.getByRole('button', { name: /Change route/ }).click();

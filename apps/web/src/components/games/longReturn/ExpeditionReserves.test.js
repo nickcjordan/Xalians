@@ -7,8 +7,21 @@ const crew = [{ id: 'a', species: 'Graviclaw' }];
 test.each([[0, null], [3, 'Weakened'], [5, "Can't scout"], [6, "Can't act"]])('energy load %i explains role limits without relying on color', (load, warning) => {
   const { container } = render(<ExpeditionReserves crew={crew} strain={{ a: load }} pressure={0} />);
   if (warning) expect(screen.getByText(warning)).toBeTruthy();
-  else expect(container.querySelector('.lr-reserve-warning')).toBeNull();
+  else expect(container.querySelector('[data-reserve-warning]')).toBeNull();
   expect(screen.getByRole('group', { name: new RegExp(`Graviclaw: ${6 - load} of 6 energy`) })).toBeTruthy();
+});
+
+test('resource identities form the same numbered key as the map', () => {
+  const members = [...crew, {id:'b',species:'Hippochamp'}, {id:'c',species:'Chromocat'}];
+  const { container } = render(<ExpeditionReserves crew={members} strain={{b:2}} pressure={3} />);
+  const keys = container.querySelectorAll('[data-reserve-creature]');
+  expect(keys).toHaveLength(3);
+  keys.forEach((key, index) => {
+    expect(key.querySelector('[aria-hidden]').textContent).toBe(String(index + 1));
+    expect(key.querySelector('small').textContent).toBe(members[index].species);
+  });
+  expect(screen.getByRole('group', {name:'Hippochamp: 4 of 6 energy'})).toBeTruthy();
+  expect(screen.getByRole('group', {name:'Annex stability: 7 of 10'})).toBeTruthy();
 });
 test('recovery removes the role warning and imminent instability is explicit', () => {
   const { rerender } = render(<ExpeditionReserves crew={crew} strain={{ a: 5 }} pressure={9} />);

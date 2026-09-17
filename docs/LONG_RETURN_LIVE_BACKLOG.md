@@ -21,6 +21,15 @@ Statuses progress independently: identified → implementing → technically ver
 
 ### Live findings
 
+### September 17: resources become part of the map key
+
+- Removed the separate Simple header resource strip. The schematic's numbered crew key now also shows each creature's actual energy, with site stability alongside it. This replaces the duplicate crew-name list rather than adding another panel. Critical, spent and weakened restrictions remain visible in words; names never split mid-word.
+- Removed the redundant next-room footer on the combined map, since the destination is already labeled in the diagram. The first objective now names that same turbine hall in everyday language. Existing story paragraphs, scout details and advanced guidance remain available.
+- Header actions now have at least 44-pixel touch targets. Retired resource-strip CSS was deleted instead of layering mobile overrides. The new key uses design tokens and keeps the numbered relationship to the map accessible.
+- Verification: 201 game tests / 1,278 web tests, typecheck and production build/budgets; desktop/tablet/phone screenshots and overflow checks; seven-scene phone extraction with temporary ally and depleted crew. Keyboard selection, checkpoint resume, repairs, roster swaps, physical returns and all detailed guidance modes passed. New viewport checks require intact creature names, one resource key inside the map, no duplicate header strip and touch-sized tools.
+- Expanded replay uncovered obsolete QA assumptions: checkpoint result focus still expected the old header, and the technique script still required the removed creature-performance animation. The scripts now check the intended arrival focus and whole-crew schematic crossing/arrival instead. Those test corrections do not change gameplay.
+- The default phone scout view is shorter and no longer breaks names, but still involves substantial scrolling through choices. This is a concrete remaining layout finding, not a claim that the phone experience is complete or player-accepted.
+
 ### September 17: a finding is not yet a delivered report
 
 - The scout record counted only delivered hazards, so a scout that detected danger without a working signal was incorrectly described as finding nothing. It now distinguishes noticing something from reporting it. The waiting crew does not learn the hazard name or details until a real return or relay.

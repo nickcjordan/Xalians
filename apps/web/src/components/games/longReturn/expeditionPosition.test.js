@@ -70,6 +70,16 @@ describe('expedition location, not creature performance', () => {
     scene.hazards.forEach(hazard => expect(html).not.toContain(hazard.label));
     expect(html).not.toContain('lr-scout-performer');
   });
+  it('can combine the numbered crew key with actual reserves without repeating names', () => {
+    const crew = [{id:'lead',species:'Hippochamp'}, {id:'support',species:'Graviclaw'}];
+    const html = renderToStaticMarkup(<ExpeditionSchematic scene={MISSION.scenes[0]} crew={crew} reserves={{strain:{lead:5,support:6},pressure:9}} />);
+    expect(html).toContain('data-expedition-reserves');
+    expect(html).toContain('Hippochamp: 1 of 6 energy');
+    expect(html).toContain('Graviclaw: 0 of 6 energy');
+    expect(html).toContain('Collapse near');
+    expect(html.match(/>Hippochamp</g)).toHaveLength(1);
+    expect(html.match(/>Graviclaw</g)).toHaveLength(1);
+  });
   it('an existing ally does not silently accompany a solo scout', () => {
     const props = {scene:MISSION.scenes[3], companion:{species:'Xylum'}, position:{crew:'entry',scout:'survey'}};
     expect(renderToStaticMarkup(<ExpeditionSchematic {...props} />)).toContain('data-map-ally="true" data-location="entry"');

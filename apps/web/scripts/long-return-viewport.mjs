@@ -15,9 +15,11 @@ try {
       await page.screenshot({ path: `${output}/${width}-${name}.png`, fullPage: true });
       const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
       assert(overflow <= 1, `${width}/${name}: horizontal overflow ${overflow}px`);
-      const smallEssentialLabels = await page.locator('.lr-wizard-resources small, .lr-wizard-progress span, .lr-simple-override span, .lr-end-stats > div > span, .lr-end-crew .lr-meter-label strong').evaluateAll(elements => elements.filter(el => el.checkVisibility() && parseFloat(getComputedStyle(el).fontSize) < 12).map(el => el.textContent));
+      const smallEssentialLabels = await page.locator('[data-expedition-reserves] small, .lr-wizard-progress span, .lr-simple-override span, .lr-end-stats > div > span, .lr-end-crew .lr-meter-label strong').evaluateAll(elements => elements.filter(el => el.checkVisibility() && parseFloat(getComputedStyle(el).fontSize) < 12).map(el => el.textContent));
       assert.deepEqual(smallEssentialLabels, [], `${width}/${name}: essential labels below 12px`);
-      const clippedResourceNames = await page.locator('.lr-wizard-resources small').evaluateAll(elements => elements.filter(el => el.checkVisibility() && el.scrollWidth > el.clientWidth + 1).map(el => el.textContent));
+      const clippedResourceNames = await page.locator('[data-expedition-reserves] small').evaluateAll(elements => elements.filter(el => el.checkVisibility() && el.scrollWidth > el.clientWidth + 1).map(el => el.textContent));
+      const wrappedResourceNames = await page.locator('[data-reserve-creature] small').evaluateAll(elements => elements.filter(el => el.checkVisibility() && el.getBoundingClientRect().height > parseFloat(getComputedStyle(el).lineHeight) * 1.2).map(el => el.textContent));
+      assert.deepEqual(wrappedResourceNames, [], 'Creature names remain intact in the map key');
       assert.deepEqual(clippedResourceNames, [], `${width}/${name}: resource names must remain readable`);
       if (process.env.LR_AUDIT_TYPE) await writeFile(`${output}/${width}-${name}-type.json`, JSON.stringify(await page.locator('.lr-shell *').evaluateAll(elements => elements.filter(el => el.checkVisibility() && [...el.childNodes].some(node => node.nodeType === Node.TEXT_NODE && node.textContent.trim()) && parseFloat(getComputedStyle(el).fontSize) < 12).map(el => ({ selector: el.className || el.tagName, text: el.textContent.trim().slice(0, 100), size: getComputedStyle(el).fontSize, color: getComputedStyle(el).color }))), null, 2));
       if (name === 'encounter') await writeFile(`${output}/${width}-encounter-layout.json`, JSON.stringify(await page.locator('.lr-field-encounter, .lr-field-encounter *').evaluateAll(elements => elements.flatMap(el => ['', '::before', '::after'].map(pseudo => { const style = getComputedStyle(el, pseudo); return { cls: el.className, pseudo, content: style.content, border: style.borderLeft, shadow: style.boxShadow, background: style.backgroundImage, width: style.width, height: style.height, position: style.position }; })).filter(el => (!el.border.startsWith('0px') || el.shadow !== 'none' || el.background !== 'none' || el.pseudo && el.content !== 'none') && el.content !== 'normal')), null, 2));
@@ -28,6 +30,10 @@ try {
     assert.equal(await page.locator('.lr-wizard-chrome').evaluate(el => document.activeElement === el), true, 'Phase focus must land on visible chrome');
     assert.equal(await page.getByRole('button', { name: 'Game rules', exact: true }).count(), 1);
     await capture('scout');
+    assert.equal(await page.locator('[data-expedition-map] [data-expedition-reserves]').count(), 1, 'Resources belong to the spatial crew key');
+    assert.equal(await page.locator('.lr-wizard-chrome [data-expedition-reserves]').count(), 0, 'No duplicate header resource strip');
+    const smallTools = await page.locator('.lr-wizard-tools > button').evaluateAll(elements => elements.filter(el => { const bounds=el.getBoundingClientRect(); return bounds.width < 44 || bounds.height < 44; }).map(el => el.getAttribute('aria-label')));
+    assert.deepEqual(smallTools, [], 'Header actions retain touch-sized targets');
     await page.getByRole('button', { name: /Stay together/ }).click();
     await page.locator('.lr-board-pick').first().click();
     await capture('route');
@@ -61,15 +67,15 @@ try {
     const account = page.locator('.lr-crossing-account');
     assert.equal(await account.getAttribute('open'), null, 'Arrival does not repeat the complete field record by default');
     assert.equal(await page.locator('.lr-crossing-prose > p').count(), 1, 'Arrival keeps the physical outcome visible');
-    const arrivalResources = await page.locator('.lr-wizard-resources').innerText();
+    const arrivalResources = await page.locator('[data-expedition-reserves]').innerText();
     await account.locator('summary').focus();
     await page.keyboard.press('Enter');
     assert.equal(await account.locator('p').count(), 4, 'Full causal story remains available');
     assert(await account.locator('p').first().isVisible());
     await page.keyboard.press('Enter');
     assert.equal(await account.getAttribute('open'), null);
-    assert.equal(await page.locator('.lr-wizard-resources').innerText(), arrivalResources, 'Rereading never replays costs');
-    const beforeAnalysis = await page.locator('.lr-wizard-resources').innerText();
+    assert.equal(await page.locator('[data-expedition-reserves]').innerText(), arrivalResources, 'Rereading never replays costs');
+    const beforeAnalysis = await page.locator('[data-expedition-reserves]').innerText();
     const explanation = page.locator('.lr-result-explanation');
     await explanation.locator('summary').click();
     assert(await explanation.locator('.lr-cost-sources').first().isVisible(), 'Actual cost sources remain available');
@@ -77,7 +83,7 @@ try {
     await explanation.locator('summary').focus();
     await page.keyboard.press('Enter');
     assert.equal(await explanation.getAttribute('open'), null);
-    assert.equal(await page.locator('.lr-wizard-resources').innerText(), beforeAnalysis, 'Inspecting the receipt does not spend resources');
+    assert.equal(await page.locator('[data-expedition-reserves]').innerText(), beforeAnalysis, 'Inspecting the receipt does not spend resources');
     const workshop = page.locator('.lr-workshop > summary');
     if (await workshop.count()) { await workshop.click(); await capture('repairs'); await workshop.click(); }
     await page.getByRole('button', { name: 'Abort mission', exact: true }).click();
