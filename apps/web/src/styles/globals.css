@@ -137,18 +137,9 @@
 	box-shadow: inset 0 0 14px color-mix(in srgb, var(--el, var(--color-viable-hi)) 12%, transparent);
 }
 
-.artillery-ember {
-	animation: artillery-ember-pulse 1.35s ease-in-out infinite alternate;
-}
-
 @keyframes artillery-smoke-drift {
 	from { opacity: .18; transform: translate3d(-.5px, 0, 0) scale(.9); }
 	to { opacity: .5; transform: translate3d(.7px, -1.4px, 0) scale(1.08); }
-}
-
-@keyframes artillery-ember-pulse {
-	from { opacity: .25; transform: translateY(0) scale(.8); }
-	to { opacity: .8; transform: translateY(-.8px) scale(1.15); }
 }
 
 @keyframes artillery-smoke-breathe {
@@ -158,8 +149,7 @@
 
 @media (prefers-reduced-motion: reduce) {
 	.artillery-smoke-wisp,
-	.artillery-smoke-cloud,
-	.artillery-ember { animation: none; }
+	.artillery-smoke-cloud { animation: none; }
 }
 
 .cockpit-console {
