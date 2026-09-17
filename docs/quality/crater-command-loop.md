@@ -187,3 +187,26 @@ so plainly. A run should not claim completion just because tests pass.
   a distinct tactical choice. Also examine Standard bot's predictable immediate
   Rampart response and whether limited weapons feel worth their ammo when a basic
   Comet can do most jobs. Capture exact seeds for each future live playtest.
+
+### 2026-09-17: mobility and phone setup follow-through
+
+- Starting build: deployed `d96c2db`. A 390x844 production check confirmed the
+  new range display and a real Comet shot with an approximately 30-unit shortfall
+  verdict; the bot then took its turn. The check also exposed overlapping
+  Rookie/Standard/Expert labels in the phone setup.
+- Mobility audit: the rules already let a jet cross a ridge that stops a drive,
+  but the held-jet visual used a sine curve that returned the rig to ground at
+  full fuel before the player released the button. That undercut the intended
+  high trajectory, especially when using the jet to leave a crater.
+- Change: sustained jet thrust now continues rising, bounded above the field,
+  until release initiates the existing descent. The flight path is independent
+  of the terrain under the rig. The difficulty control uses phone-specific
+  spacing and type size so all three choices fit without overlap.
+- Validation: added a realistic bowl-shaped crater scenario proving a 25-fuel
+  jet burst crosses the lip while a 25-fuel drive does not. A flight-shape test
+  now checks that the rig remains airborne even when held thrust exhausts fuel.
+  Inspected the revised setup and mobility panel at 390x844 in the local browser.
+- Remaining limitation: this validates the rule and visual curve, but not the
+  feel of a long physical press on a phone. Test that directly on hardware, then
+  address any discontinuity between thrust and descent. Bot cover timing and
+  limited-weapon value remain the next combat-decision bottlenecks.

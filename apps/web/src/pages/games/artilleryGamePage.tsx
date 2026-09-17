@@ -277,9 +277,11 @@ export function artilleryMoveAnimationProgress(
   return clamped * clamped * (3 - 2 * clamped);
 }
 
-export function artilleryJetFlightY(launchY: number, landingY: number, fuelSpent: number, startFuel: number): number {
+export function artilleryJetFlightY(launchY: number, fuelSpent: number, startFuel: number): number {
   const progress = Math.max(0, Math.min(1, fuelSpent / Math.max(1, startFuel)));
-  return launchY + (landingY - launchY) * progress - Math.sin(progress * Math.PI) * 42;
+  // Holding the jet keeps producing lift. The old sine arc descended back to
+  // ground at full throttle even before the pilot released the control.
+  return Math.max(7, launchY - 50 * (1 - Math.exp(-3.2 * progress)));
 }
 
 export function artilleryImpactRevealProgress(progress: number): number {
@@ -1128,7 +1130,7 @@ export function ArtilleryBoard({ seed, mode, difficulty, mapSize, world, onStatu
     const landing = { ...active, phase: 'landing' as const, landingProgress: 0 };
     movementRef.current = landing;
     setMovement(landing);
-    onStatus(`Jet thrust cut · coasting to landing with ${Math.round(remaining)}% fuel.`);
+    onStatus(`Jet thrust cut · descending with ${Math.round(remaining)}% fuel.`);
     const tick = () => {
       frame += 1;
       const progress = Math.min(1, frame / frames);
@@ -1204,13 +1206,11 @@ export function ArtilleryBoard({ seed, mode, difficulty, mapSize, world, onStatu
       setMovement((value) => {
         if (!value || value.phase !== 'thrust') return value;
         const fuelAfterMove = mobility === 'jet' ? afterMove.jetCharges[active.side] : afterMove.traction[active.side];
-        const landingX = afterMove.tanks[active.side].x;
-        const landingY = ARTILLERY_HEIGHT - terrainHeight(afterMove.terrain, landingX) - 1.5;
         const next = {
           ...value,
           pulse: value.pulse + 1,
           flightY: mobility === 'jet'
-            ? artilleryJetFlightY(value.launchY, landingY, value.startFuel - fuelAfterMove, value.startFuel)
+            ? artilleryJetFlightY(value.launchY, value.startFuel - fuelAfterMove, value.startFuel)
             : value.flightY,
         };
         movementRef.current = next;
@@ -1840,7 +1840,7 @@ export function ArtillerySetup({ mode, difficulty, mapSize, world, onMode, onDif
           {mode === 'bot' && (
             <div className="mt-1 grid grid-cols-3 gap-2" role="group" aria-label="Bot difficulty">
               {(['rookie', 'standard', 'expert'] as const).map((choice) => (
-                <Button key={choice} type="button" size="sm" variant={difficulty === choice ? 'outline' : 'ghost'} aria-pressed={difficulty === choice} onClick={() => onDifficulty(choice)}>{choice}</Button>
+                <Button key={choice} type="button" size="sm" variant={difficulty === choice ? 'outline' : 'ghost'} className="min-w-0 px-1 text-xs tracking-normal sm:px-4 sm:text-legend sm:tracking-legend" aria-pressed={difficulty === choice} onClick={() => onDifficulty(choice)}>{choice}</Button>
               ))}
             </div>
           )}
