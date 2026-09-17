@@ -484,9 +484,12 @@ describe('Long Return Simple mode', () => {
     expect(container.querySelector('.lr-companion-promise').textContent).toContain('Prevents the lead’s next 1 energy loss while crossing');
     expect(container.textContent).toContain('The native chooses to follow');
     expect(container.querySelector('[data-expedition-map]').textContent).toContain('Ally');
+    expect(container.querySelector('[data-map-ally]').getAttribute('data-location')).toBe('survey');
     click(container, /review scout report/i);
+    expect(container.querySelector('[data-map-ally]').getAttribute('data-location')).toBe('survey');
     if (findButton(container, /choose a route/i)) click(container, /choose a route/i);
     expect(container.querySelector('[data-expedition-map] [data-map-ally]')).toBeTruthy();
+    expect(container.querySelector('[data-map-ally]').getAttribute('data-location')).toBe('survey');
     expect(container.querySelector('[data-expedition-map]').textContent).toMatch(/xylum · ally/i);
   });
 
@@ -514,6 +517,15 @@ describe('Long Return Simple mode', () => {
     click(container, /choose response/i);
     expect(container.textContent).toContain('Unexpected crew encounter');
     expect(container.textContent).toContain('The native acts before the crew can organize');
+    clickElement(container.querySelector('.lr-encounter-options .is-recommended'));
+    clickElement(container.querySelector('.lr-encounter-commit-bar button'));
+    click(container, /skip to outcome/i);
+    click(container, /see encounter result/i);
+    click(container, /plan the crossing/i);
+    expect(container.querySelector('.lr-route-board')).toBeNull();
+    expect(container.querySelector('.lr-simple-plan-head').textContent).toMatch(/maintenance underdeck/i);
+    expect(findButton(container, /cross now/i)).toBeTruthy();
+    expect(container.querySelector('[data-expedition-map]').getAttribute('data-crew-position')).toBe('crossing');
   });
 
   test('preserves the advanced scouting interface in Expert mode', () => {

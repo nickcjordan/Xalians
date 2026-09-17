@@ -4,6 +4,15 @@ Owner: the agent maintaining the Long Return worktree. Update this file during i
 
 ## Active goal — full-mission UX (2026-09-11)
 
+### September 17: encounter map continuity
+
+- The next replay exposed a real report-handoff bug: a newly recruited companion moved back to the waiting crew when temporary encounter state cleared. Persisted the encounter context through report review and preparation. Scout, called helper and companion now stay at the contact site until the physical return or crossing, not merely until the player reads another panel.
+- Passing the trapped Hypnopet was incorrectly drawn as removing it. The same diamond now remains as a neutral, labeled trapped native in the response, preparation, crossing record and arrival. Departed natives disappear; unresolved contacts remain; undiscovered natives stay hidden. Removed the redundant inline Contact label that crowded the destination, keeping identity in the existing map key.
+- Whole-crew encounter resolution no longer sends the player around route selection again. It returns to the chosen route's crew plan. The crew stays at the encounter site while reviewing or changing the preview, rather than jumping back to the entrance.
+- Added real-UI replays for remote reporting, direct healing and fetching a helper, across three scouts at 390 by 667 and 1280 by 900. They verify recruitment, report handoff, physical reunion, hidden contact boundaries, bypass and crossing. An additional unresolved-contact replay confirms that the native stays in its territory during report return and the other crossing. Seven-scene phone replay reached deep extraction with 14 salvage, 2 stability and the ally. Desktop and phone encounter record screenshots reviewed. All 1,282 web tests, typecheck and production build checks pass; normal-speed reading controls passed at four viewport sizes, and all advanced guidance modes and responsive decision/result checks passed. These checks do not establish player acceptance.
+- Bundle accounting: this continuity work adds about 0.1 kB beyond the prior 98 kB compressed route ceiling after removing unused icon aliases and consolidating position construction. Allowed 250 additional bytes for this lazy game route only. No initial-page, stylesheet or other route ceiling changed.
+- Next independent review: whether the visible encounter and arrival prose matches these persistent positions across the remaining retreat and unresolved-contact branches, without reintroducing performed creature animation.
+
 ### September 17: compact scouting choices
 
 Published in PR #355, deployment 35285363948. Hosted three-scene phone replay passed after deployment.
