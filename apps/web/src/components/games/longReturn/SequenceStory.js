@@ -20,6 +20,10 @@ export default function SequenceStory({ events, index, paused, onPause, onNext, 
   const scrollRef = useRef(null);
   const follows = useRef(true);
   const final = index === events.length - 1;
+  const followLatest = () => {
+    follows.current = true;
+    if (scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+  };
   useEffect(() => {
     const el = scrollRef.current;
     if (el && follows.current) el.scrollTop = el.scrollHeight;
@@ -39,7 +43,7 @@ export default function SequenceStory({ events, index, paused, onPause, onNext, 
       </ol>
     </div>
     {(!final || action) && <footer>
-      {!final && <><button type="button" aria-pressed={paused} onClick={onPause}>{paused ? 'Resume story' : 'Pause story'}</button><button type="button" onClick={onNext}>Next event →</button></>}
+      {!final && <><button type="button" aria-pressed={paused} onClick={() => { if (paused) followLatest(); onPause(); }}>{paused ? 'Resume story' : 'Pause story'}</button><button type="button" onClick={() => { followLatest(); onNext(); }}>Next event →</button></>}
       {action}
     </footer>}
   </section>;

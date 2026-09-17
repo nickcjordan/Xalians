@@ -21,6 +21,13 @@ Statuses progress independently: identified → implementing → technically ver
 
 ### Live findings
 
+### September 17 — full normal-speed replay and resuming the story
+
+- Completed seven scenes without skipping action sequences at normal motion: 17 sequences spanning roughly 2–12 seconds each; Index secured, 14 salvage, 2 stability, temporary ally. No detected flow or asset errors. This verifies completion and control behavior, not subjective pacing acceptance.
+- Follow-up review found Resume could leave the reader at an old scroll position while playback restarted. Resume and Next now rejoin the latest beat, covered by the read-back regression and documented in the quality guide.
+- PR #324 deployed successfully in run 35229615314 at main 03f47d4. Published two-scene replay passed with story orientation visible. The additional resume-position correction remains a separate incremental change.
+- 178 game tests and production build passed. Player interpretation of the revised narrative remains pending.
+
 ### September 17 — narrative reading time and read-back control
 
 - Normal-speed audit found the inherited 2.4-second ceiling and 65ms-per-word estimate still applied to expanded story sentences. Longer beats now receive a bounded reading allowance; very short resource ticks remain brisk. Persistent text, skip and manual stepping remain available.
