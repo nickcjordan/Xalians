@@ -86,6 +86,8 @@ function playRecommendedScene(container) {
   if (findButton(container, /choose a route/i)) click(container, /choose a route/i);
   choosePreferredRoute(container);
   click(container, /cross now/i);
+  if (findButton(container, /skip to outcome/i)) click(container, /skip to outcome/i);
+  if (findButton(container, /continue to result/i)) click(container, /continue to result/i);
   expect(container.textContent).toContain('Crossing complete');
 }
 
@@ -158,7 +160,7 @@ describe('Long Return Simple mode', () => {
     expect(document.activeElement).toBe(container.querySelector('[data-wizard-focus]'));
     expect(container.querySelector('.lr-route-board')).toBeNull();
     expect(findButton(container, /next: review crew/i)).toBeUndefined();
-    expect(container.querySelector('.lr-action-curtain')).toBeNull();
+    expect(container.querySelector('[data-field-record]')).toBeNull();
     expect(container.querySelector('.lr-plan-roles').open).toBe(false);
     click(container, /cross now/i);
     expect(container.querySelector('[aria-label="Crossing in progress"]')).toBeTruthy();
@@ -174,7 +176,7 @@ describe('Long Return Simple mode', () => {
     clickElement(alternative);
     expect(container.querySelector('.lr-route-board')).toBe(board);
     expect(container.querySelector('.lr-commit-identity').textContent).toContain(`${species} leads`);
-    expect(container.querySelector('.lr-action-curtain')).toBeNull();
+    expect(container.querySelector('[data-field-record]')).toBeNull();
     expect(container.querySelector('.lr-lead-options button[aria-pressed="true"] strong').textContent).toBe(species);
     click(container, /cross now/i);
     expect(container.querySelector('[aria-label="Crossing in progress"]').textContent).toContain(species);
@@ -211,11 +213,13 @@ describe('Long Return Simple mode', () => {
     expect(findButton(container, /use this plan/i)).toBeUndefined();
     click(container, /cross now/i);
     expect(container.querySelector('[role="dialog"][aria-label="Crossing in progress"]')).toBeTruthy();
-    expect(container.querySelector('.lr-action-resources').textContent).toMatch(/Crew energy.*Stability.*Salvage/i);
+    expect(container.querySelector('[data-field-record] [data-expedition-map][data-crew-position="crossing"]')).toBeTruthy();
+    expect(container.querySelectorAll('[data-field-record] [data-map-creature][data-location="crossing"]')).toHaveLength(3);
     click(container, /skip to outcome/i);
     expect(container.querySelector('.lr-sequence-story').textContent).toMatch(/What happened/i);
+    expect(container.querySelectorAll('[data-field-record] [data-map-creature][data-location="exit"]')).toHaveLength(3);
     click(container, /continue to result/i);
-    expect(container.querySelector('.lr-action-curtain')).toBeNull();
+    expect(container.querySelector('[data-field-record]')).toBeNull();
     expect(container.textContent).toContain('Crossing complete');
     expect(container.querySelectorAll('.lr-result-changes .lr-projection-track').length).toBeGreaterThan(0);
     expect(container.querySelector('.lr-arrival-grid .lr-arrival-story')).toBeTruthy();
@@ -441,9 +445,9 @@ describe('Long Return Simple mode', () => {
     expect(findButton(container, /^send /i).disabled).toBe(false);
     click(container, /^send /i);
     expect(container.querySelector('[aria-label="Scouting in progress"]')).toBeTruthy();
-    expect(container.querySelector('.lr-scout-meter.is-energy').getAttribute('aria-label')).toContain('5 of 6');
+    expect(container.querySelector('[data-field-reserve="energy"]').getAttribute('aria-label')).toContain('5 of 6');
     click(container, /skip to outcome/i);
-    expect(container.querySelector('.lr-scout-meter.is-energy').getAttribute('aria-label')).toContain('5 of 6');
+    expect(container.querySelector('[data-field-reserve="energy"]').getAttribute('aria-label')).toContain('5 of 6');
     click(container, /review scout report/i);
     expect(container.textContent).toContain('Scout result');
     expect(container.querySelector('.lr-action-feedback')).toBeNull();
@@ -476,10 +480,11 @@ describe('Long Return Simple mode', () => {
     expect(container.querySelector('.lr-companion-promise').textContent).toContain('1assist ready');
     expect(container.querySelector('.lr-companion-promise').textContent).toContain('Prevents the lead’s next 1 energy loss while crossing');
     expect(container.textContent).toContain('The native chooses to follow');
-    expect(container.querySelector('.lr-scene-stage__companion')).toBeTruthy();
+    expect(container.querySelector('[data-expedition-map]').textContent).toContain('Ally');
     click(container, /review scout report/i);
     if (findButton(container, /choose a route/i)) click(container, /choose a route/i);
-    expect(container.querySelector('.lr-route-map__encounter').textContent).toMatch(/xylum joined the crew/i);
+    expect(container.querySelector('[data-expedition-map] [data-map-ally]')).toBeTruthy();
+    expect(container.querySelector('[data-expedition-map]').textContent).toMatch(/xylum · ally/i);
   });
 
   test('route review is reversible and native contact only starts when crossing is committed', () => {
@@ -500,7 +505,7 @@ describe('Long Return Simple mode', () => {
       expect(container.querySelector('.lr-field-encounter')).toBeNull();
     click(container, /cross now/i);
     expect(container.querySelector('[role="dialog"][aria-label="Encounter discovered"]')).toBeTruthy();
-    expect(container.querySelector('.lr-action-curtain').textContent).toMatch(/emerges from the annex.*response next/i);
+    expect(container.querySelector('[data-field-record] [data-expedition-map][data-crew-position="crossing"]')).toBeTruthy();
     click(container, /skip to outcome/i);
     expect(container.querySelector('.lr-sequence-story').textContent).toMatch(/The next move belongs to the crew/i);
     click(container, /choose response/i);

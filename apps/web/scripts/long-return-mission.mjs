@@ -23,7 +23,7 @@ try {
   }
   await page.getByRole('button', { name: /Seal Crew/ }).click();
   for (let step = 0; step < 100; step++) {
-    const dialog = page.locator('.lr-action-curtain,.lr-scout-curtain,.lr-encounter-curtain');
+    const dialog = page.locator('[data-field-record]');
     if (await dialog.count()) {
       const started = Date.now();
       await dialog.getByRole('button', { name: /Continue to result|Review scout report|Check scout status|Respond to encounter|See encounter result|Choose response/ }).waitFor({ timeout: 120000 });
