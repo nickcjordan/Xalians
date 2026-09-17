@@ -84,7 +84,15 @@ function boot() {
   };
 }
 
-type Panel = "guide" | "record" | "inspect" | "restart" | null;
+type Panel =
+  | "guide"
+  | "record"
+  | "inspect"
+  | "restart"
+  | "initiative"
+  | "route"
+  | "extract"
+  | null;
 
 function eventLabel(frame: Frame) {
   const e = frame.event;
@@ -103,6 +111,21 @@ function eventLabel(frame: Frame) {
   )[e.kind];
 }
 
+function groupRecord(log: string[]) {
+  const groups: { title: string; events: string[] }[] = [];
+  for (const text of log) {
+    if (/^Encounter \d.*Round/i.test(text))
+      groups.push({ title: text.replace(/^Encounter/, "Sector"), events: [] });
+    else if (/^Entered /.test(text))
+      groups.push({ title: text.replace(/^Entered /, ""), events: [] });
+    else {
+      if (!groups.length) groups.push({ title: "Expedition", events: [] });
+      groups[groups.length - 1].events.push(text);
+    }
+  }
+  return groups.reverse();
+}
+
 export default function PowerworksPage() {
   const [initial] = useState(boot);
 
@@ -114,6 +137,9 @@ export default function PowerworksPage() {
     initial.state.team.find((u) => u.hp > 0)?.id || "G"
   );
 
+  const [playbackOrders, setPlaybackOrders] = useState<Record<string, Order>>(
+    {}
+  );
   const [plans, setPlans] = useState<Record<string, Order>>({}),
     [pending, setPending] = useState<number | null>(null),
     [hoverTarget, setHoverTarget] = useState<string | null>(null);
@@ -317,6 +343,7 @@ export default function PowerworksPage() {
       setTurnOrder(initiative(run.team, run.enemies, run.round));
       setRun(result.state);
       setHistory((h) => [...h, { kind: "round", orders }]);
+      setPlaybackOrders(orders);
       setLastFrames(result.frames);
       setFrames(result.frames);
       setFrameIndex(0);
@@ -332,10 +359,11 @@ export default function PowerworksPage() {
   }
 
   function fresh(seed: number) {
-    setRun(createRun(seed));
+    const next = createRun(seed);
+    setRun(next);
     setHistory([]);
     setStarted(true);
-    setSelected("G");
+    setSelected(next.team[0].id);
     setPlans({});
     setPending(null);
     setFrames([]);
@@ -363,6 +391,29 @@ export default function PowerworksPage() {
     }${u.ward ? " · shielded" : ""}`;
   }
 
+  function actionCaption(current: Frame) {
+    const e = current.event;
+    if (!e) return current.text;
+    const units = [...current.team, ...current.enemies];
+    const target = units.find((u) => u.id === e.targetId);
+    const name = target ? labelFor(target) : "The target";
+    if (e.kind === "hit")
+      return `${name} takes ${e.amount} damage.${
+        target?.hp === 0 ? " Knocked out." : ""
+      }`;
+    if (e.kind === "snare")
+      return `${name} cannot use melee at its next opportunity.`;
+    if (e.kind === "ward")
+      return "Incoming damage is halved until the next opportunity.";
+    if (e.kind === "charge")
+      return "Preparing a melee release for the next opportunity.";
+    if (e.kind === "blocked") return "Restraint prevented the action.";
+    if (e.kind === "redirect")
+      return `The original target fell. The move redirects to ${name}.`;
+    if (e.kind === "round") return "Orders resolve from fastest to slowest.";
+    return current.text;
+  }
+
   function affected(u: Unit) {
     return (
       frame?.event?.targetId === u.id ||
@@ -381,7 +432,12 @@ export default function PowerworksPage() {
       : "Squad extracted";
 
   return (
-    <main className={`pw ${started ? "in-run" : ""}`} id="main">
+    <main
+      className={`pw ${started ? "in-run" : ""} room-${run.room} ${
+        planning ? "is-planning" : ""
+      } ${move ? "is-targeting" : ""}`}
+      id="main"
+    >
       <header className="pw-top">
         <Link to="/" className="pw-brand">
           <ArrowLeft size={16} />
@@ -466,25 +522,59 @@ export default function PowerworksPage() {
             </div>
             <nav aria-label="Dungeon progress">
               {ROOMS.map((r, i) => (
-                <span
+                <button
+                  onClick={() => setPanel("route")}
                   key={r.name}
                   className={
-                    i === run.room ? "current" : i < run.room ? "cleared" : ""
+                    run.phase === "won" || i < run.room
+                      ? "cleared"
+                      : i === run.room
+                      ? "current"
+                      : ""
                   }
-                  aria-current={i === run.room ? "step" : undefined}
+                  aria-current={
+                    i === run.room && run.phase !== "won" ? "step" : undefined
+                  }
+                  aria-label={`${r.name.replace(/^\d\. /, "")}: ${
+                    i < run.room || run.phase === "won"
+                      ? "cleared"
+                      : i === run.room
+                      ? "current sector"
+                      : "ahead"
+                  }`}
                   title={r.name}
                 >
-                  {i < run.room ? <Check /> : i + 1}
-                </span>
+                  {i < run.room || run.phase === "won" ? <Check /> : i + 1}
+                </button>
               ))}
             </nav>
-            <span className="pw-round">
-              {busy
-                ? `Round ${playRound} · Resolving`
-                : run.phase === "planning"
-                ? `Round ${run.round}`
-                : "Encounter complete"}
-            </span>
+            <button
+              className="pw-round"
+              aria-label={
+                run.phase === "planning" || busy
+                  ? "View turn order"
+                  : "View expedition route"
+              }
+              onClick={() =>
+                setPanel(
+                  run.phase === "planning" || busy ? "initiative" : "route"
+                )
+              }
+            >
+              <span>
+                {busy
+                  ? `Round ${playRound} · Resolving`
+                  : run.phase === "planning"
+                  ? `Round ${run.round}`
+                  : run.phase === "camp"
+                  ? "Encounter complete"
+                  : "Expedition complete"}
+              </span>
+              <small>
+                {run.phase === "planning" || busy ? "Turn order" : "Route"}
+              </small>
+              <ChevronRight />
+            </button>
           </div>
 
           <div className="pw-battle-shell">
@@ -570,28 +660,34 @@ export default function PowerworksPage() {
                             <h2>{labelFor(u)}</h2>
                             <Health u={u} estimate={estimate} />
 
-                            <span className="pw-preview">
-                              {move && u.hp > 0
-                                ? previewText(u)
-                                : u.hp <= 0
-                                ? "Defeated"
-                                : u.species === "drone"
-                                ? "Ranged defense"
-                                : u.species === "shield"
-                                ? "Armored defense"
-                                : u.species === "guardian"
-                                ? "Central guardian"
-                                : "Melee defense"}
+                            <span
+                              className={`pw-preview ${
+                                move && active && matchup(active, u) > 1
+                                  ? "strong"
+                                  : ""
+                              }`}
+                            >
+                              {move && u.hp > 0 ? (
+                                <>
+                                  {move.kind === "snare" ? (
+                                    <Link2 />
+                                  ) : (
+                                    <PowerIcon />
+                                  )}
+                                  <span>{previewText(u)}</span>
+                                </>
+                              ) : u.hp <= 0 ? (
+                                <>
+                                  <X />
+                                  <span>Defeated</span>
+                                </>
+                              ) : null}
                             </span>
                           </button>
 
                           <div className="pw-statuses">
                             <StatusBadges u={u} />
-                            {!u.charge &&
-                              !u.snared &&
-                              !u.ward &&
-                              !u.recovery &&
-                              u.hp > 0 &&
+                            {u.hp > 0 &&
                               queued.map((p) => (
                                 <span
                                   key={p.id}
@@ -607,44 +703,33 @@ export default function PowerworksPage() {
                       );
                     })}
                   </div>
-                  <p className="pw-stage-hint">
-                    {busy
-                      ? ""
-                      : move
-                      ? "Choose a highlighted enemy. Previews assume its current defenses."
-                      : roomCopy[run.room]}
-                  </p>
-                </section>
-
-                <section
-                  className="pw-initiative"
-                  aria-label="Public action order"
-                >
-                  <span>
-                    <ChevronRight />
-                    ACTION ORDER
-                  </span>
-                  <div>
-                    {initiativeUnits.map((u, i) => (
-                      <React.Fragment key={u.id}>
-                        <button
-                          className={`${u.enemy ? "enemy" : ""} ${
-                            frame?.event?.actorId === u.id ? "current" : ""
-                          } ${selected === u.id ? "selected" : ""}`}
-                          onClick={() =>
-                            u.enemy || busy ? inspectUnit(u.id) : select(u)
-                          }
-                          aria-label={`${i + 1}. ${u.name}, speed ${u.speed}`}
-                          title={`${u.name} · Speed ${u.speed}`}
-                        >
-                          <Portrait u={u} small />
-                          <small>{u.speed}</small>
-                        </button>
-                        {i < initiativeUnits.length - 1 && (
-                          <ChevronRight className="pw-order-arrow" />
-                        )}
-                      </React.Fragment>
-                    ))}
+                  <div
+                    className={`pw-stage-caption ${move ? "targeting" : ""}`}
+                  >
+                    {busy ? (
+                      <>
+                        <Play />
+                        Round {playRound} in motion
+                      </>
+                    ) : move && active ? (
+                      <>
+                        <Portrait u={active} small />
+                        <strong>{move.name}</strong>
+                        <ArrowRight />
+                        <span>Choose a target</span>
+                      </>
+                    ) : enemies.some((u) => u.charge && u.hp > 0) ? (
+                      <>
+                        <Zap />
+                        <strong>Charge detected</strong>
+                        <span>A melee release is coming.</span>
+                      </>
+                    ) : (
+                      <>
+                        <span className="pw-location-dot" />
+                        {roomCopy[run.room]}
+                      </>
+                    )}
                   </div>
                 </section>
 
@@ -655,38 +740,63 @@ export default function PowerworksPage() {
                   {busy ? (
                     <>
                       <div className="pw-action-story" aria-live="polite">
-                        <span className="pw-event-icon">
-                          {frame.event?.kind === "blocked" ? (
-                            <Shield />
-                          ) : frame.event?.kind === "charge" ? (
-                            <Zap />
-                          ) : frame.event?.kind === "snare" ? (
-                            <Link2 />
-                          ) : (
-                            <Swords />
-                          )}
-                        </span>
-                        <div>
-                          <strong>
-                            {frame.event?.actorId
-                              ? [...team, ...enemies].find(
+                        <div className="pw-action-duet">
+                          {frame.event?.actorId && (
+                            <Portrait
+                              u={
+                                [...team, ...enemies].find(
                                   (u) => u.id === frame.event?.actorId
-                                )?.name
+                                )!
+                              }
+                            />
+                          )}
+                          <span
+                            className={`pw-impact ${
+                              frame.event?.kind || "result"
+                            }`}
+                          >
+                            {frame.event?.kind === "hit" ? (
+                              <>
+                                <PowerIcon />
+                                <b>−{frame.event.amount}</b>
+                              </>
+                            ) : frame.event?.kind === "snare" ? (
+                              <Link2 />
+                            ) : frame.event?.kind === "charge" ? (
+                              <Zap />
+                            ) : frame.event?.kind === "ward" ? (
+                              <Shield />
+                            ) : frame.event?.kind === "blocked" ? (
+                              <X />
+                            ) : (
+                              <ArrowRight />
+                            )}
+                          </span>
+                          {frame.event?.targetId &&
+                            frame.event.targetId !== frame.event.actorId && (
+                              <Portrait
+                                u={
+                                  [...team, ...enemies].find(
+                                    (u) => u.id === frame.event?.targetId
+                                  )!
+                                }
+                              />
+                            )}
+                        </div>
+                        <div className="pw-action-copy">
+                          <span className="pw-eyebrow">
+                            {frame.event?.actorId
+                              ? labelFor(
+                                  [...team, ...enemies].find(
+                                    (u) => u.id === frame.event?.actorId
+                                  )!
+                                )
                               : `Round ${playRound}`}
-                            {frame.event?.targetId &&
-                              frame.event?.actorId !== frame.event.targetId && (
-                                <>
-                                  {" "}
-                                  <ArrowRight />{" "}
-                                  {
-                                    [...team, ...enemies].find(
-                                      (u) => u.id === frame.event?.targetId
-                                    )?.name
-                                  }
-                                </>
-                              )}
+                          </span>
+                          <strong>
+                            {frame.event?.moveName || eventLabel(frame)}
                           </strong>
-                          <p>{frame.text}</p>
+                          <p>{actionCaption(frame)}</p>
                         </div>
                       </div>
                       <div className="pw-playback-controls">
@@ -735,64 +845,36 @@ export default function PowerworksPage() {
                           <Portrait u={active} small />
                           <div>
                             <span>
-                              {plans[active.id]
-                                ? "EDIT ORDER"
-                                : "PLAN YOUR SQUAD"}
+                              <ElementIcon element={active.element} />
+                              {active.element}
                             </span>
                             <h2>{active.name}</h2>
-                            {plans[active.id] && (
-                              <small className="pw-existing-order">
-                                {moveAt(active, plans[active.id].move).name} →{" "}
-                                {labelFor(
-                                  run.enemies.find(
-                                    (e) => e.id === plans[active.id].target
-                                  )!
-                                )}
-                              </small>
-                            )}
                           </div>
                         </div>
-                        <p
-                          className="pw-step"
-                          title={
-                            plans[active.id]
-                              ? `${
-                                  moveAt(active, plans[active.id].move).name
-                                } → ${labelFor(
-                                  run.enemies.find(
-                                    (e) => e.id === plans[active.id].target
-                                  )!
-                                )}`
-                              : undefined
-                          }
-                        >
-                          <span className="done">1 Creature</span>
-                          <ChevronRight />
-                          <span
-                            className={pending === null ? "current" : "done"}
+                        <span className="pw-command-prompt">
+                          {plans[active.id]
+                            ? "Change this order"
+                            : pending !== null
+                            ? "Select a target above"
+                            : "Choose a move"}
+                        </span>
+                        <div className="pw-command-tools">
+                          <button
+                            className="pw-symbol-help"
+                            aria-label="Explain move symbols"
+                            onClick={() => setPanel("guide")}
                           >
-                            2 Move
-                          </span>
-                          <ChevronRight />
-                          <span className={pending !== null ? "current" : ""}>
-                            3 Target
-                          </span>
-                        </p>
-                        <button
-                          className="pw-symbol-help"
-                          aria-label="Explain move symbols"
-                          onClick={() => setPanel("guide")}
-                        >
-                          <Info />
-                        </button>
-                        <button
-                          className="pw-clear"
-                          disabled={!plans[active.id] && pending === null}
-                          onClick={clearOrder}
-                        >
-                          <X />
-                          Clear <span>order</span>
-                        </button>
+                            <Info />
+                          </button>
+                          <button
+                            className="pw-clear"
+                            disabled={!plans[active.id] && pending === null}
+                            onClick={clearOrder}
+                          >
+                            <X />
+                            Clear <span>order</span>
+                          </button>
+                        </div>
                       </div>
 
                       <div className="pw-moves">
@@ -866,7 +948,7 @@ export default function PowerworksPage() {
 
                 <section className="pw-squad" aria-label="Your squad">
                   {team.map((u) => {
-                    const order = plans[u.id],
+                    const order = (busy ? playbackOrders : plans)[u.id],
                       target = enemies.find((e) => e.id === order?.target),
                       selectedUnit = active?.id === u.id && planning;
                     return (
@@ -919,18 +1001,34 @@ export default function PowerworksPage() {
                           <span className="pw-queued" id={`order-${u.id}`}>
                             {u.hp <= 0 ? (
                               "Knocked out"
+                            ) : busy && order ? (
+                              <>
+                                <span className="pw-order-move">
+                                  {moveAt(u, order.move).name}
+                                </span>
+                                <span className="pw-order-target">
+                                  {frame.event?.actorId === u.id
+                                    ? "Acting now"
+                                    : frames
+                                        .slice(0, frameIndex)
+                                        .some(
+                                          (f) =>
+                                            f.event?.actorId === u.id &&
+                                            f.event.kind !== "redirect"
+                                        )
+                                    ? "Acted"
+                                    : "Waiting"}
+                                </span>
+                              </>
                             ) : order && target ? (
                               <>
-                                <MoveIcon
-                                  move={moveAt(u, order.move)}
-                                  signature={order.move === 3}
-                                />
-                                <ArrowRight />
-                                <Portrait u={target} small />
-                                <span>{labelFor(target)}</span>
-                                <span className="pw-sr">
-                                  {" "}
-                                  using {moveAt(u, order.move).name}
+                                <span className="pw-order-move">
+                                  {moveAt(u, order.move).name}
+                                </span>
+                                <span className="pw-order-target">
+                                  <ArrowRight />
+                                  <Portrait u={target} small />
+                                  {labelFor(target)}
                                 </span>
                               </>
                             ) : !legalMoves(u).length ? (
@@ -941,12 +1039,14 @@ export default function PowerworksPage() {
                             ) : selectedUnit ? (
                               <>
                                 <Crosshair />
-                                Choose a move
+                                {pending !== null
+                                  ? "Choose a target"
+                                  : "Choose a move"}
                               </>
                             ) : busy ? (
                               ""
                             ) : (
-                              <>Choose companion</>
+                              <>Needs an order</>
                             )}
                           </span>
                         </button>
@@ -968,122 +1068,166 @@ export default function PowerworksPage() {
                 </section>
 
                 <footer className="pw-commit">
-                  <div className="pw-readiness">
-                    <div>
-                      {living.map((u) => (
-                        <span
-                          key={u.id}
-                          className={
-                            plans[u.id] || !legalMoves(u).length ? "filled" : ""
-                          }
-                        >
-                          {plans[u.id] || !legalMoves(u).length ? (
-                            <Check />
-                          ) : null}
-                        </span>
-                      ))}
-                    </div>
+                  <div className="pw-readiness" aria-live="polite">
+                    <span
+                      className={`pw-order-count ${
+                        ready === living.length ? "complete" : ""
+                      }`}
+                    >
+                      {busy ? (
+                        <Play />
+                      ) : ready === living.length ? (
+                        <Check />
+                      ) : (
+                        <>
+                          {ready}
+                          <small>/{living.length}</small>
+                        </>
+                      )}
+                    </span>
                     <p>
                       {busy
-                        ? "Orders resolving"
+                        ? "Resolving your orders"
                         : ready === living.length
-                        ? "All orders ready"
-                        : `${living.length - ready} ${
-                            living.length - ready === 1
-                              ? "companion needs"
-                              : "companions need"
-                          } an order`}
+                        ? "Squad ready"
+                        : "Plan your squad"}
                       <small>
                         {busy
-                          ? "Watch the highlighted actor and target."
+                          ? "Pause to inspect any action."
                           : ready === living.length
-                          ? "Select a companion to review or change its order."
-                          : pending !== null
-                          ? "Select an enemy above to assign the move."
-                          : "Creature → move → enemy. Orders resolve together."}
+                          ? "Review the orders below each companion."
+                          : `${living.length - ready} ${
+                              living.length - ready === 1 ? "order" : "orders"
+                            } remaining`}
                       </small>
                     </p>
                   </div>
-                  <button
-                    className="pw-primary"
-                    disabled={!planning || ready !== living.length}
-                    onClick={commit}
-                  >
-                    Commit round <ArrowRight />
-                  </button>
+                  {busy ? (
+                    <span className="pw-resolving-state">
+                      <span />
+                      Round {playRound} · {paused ? "Paused" : "Playing"}
+                    </span>
+                  ) : (
+                    <>
+                      <button
+                        className="pw-primary"
+                        disabled={!planning || ready !== living.length}
+                        onClick={commit}
+                      >
+                        Commit round <ArrowRight />
+                      </button>
+                    </>
+                  )}
                 </footer>
               </>
             ) : (
               <section className={`pw-outcome ${run.phase}`}>
-                <div className="pw-outcome-heading">
-                  {run.phase === "won" ? (
-                    <Trophy />
-                  ) : run.phase === "camp" ? (
-                    <Shield />
-                  ) : run.phase === "lost" ? (
-                    <Heart />
-                  ) : (
-                    <ArrowLeft />
+                <div className="pw-outcome-body">
+                  <div className="pw-outcome-heading">
+                    {run.phase === "won" ? (
+                      <Trophy />
+                    ) : run.phase === "camp" ? (
+                      <Shield />
+                    ) : run.phase === "lost" ? (
+                      <Heart />
+                    ) : (
+                      <ArrowLeft />
+                    )}
+                    <p className="pw-eyebrow">
+                      {run.phase === "camp"
+                        ? "A MOMENT TO REGROUP"
+                        : "EXPEDITION REPORT"}
+                    </p>
+                    <h2>{phaseTitle}</h2>
+                    <p>
+                      {run.phase === "camp"
+                        ? "Carry your squad forward. Move uses refresh; wounds remain."
+                        : run.phase === "won"
+                        ? "The defense network falls silent. Your squad made it through."
+                        : run.phase === "lost"
+                        ? "Your squad could not continue. A fresh attempt restores everyone."
+                        : "The squad leaves with its earned practice XP."}
+                    </p>
+                  </div>
+                  {run.phase === "camp" && run.team.some((u) => u.hp === 0) && (
+                    <p className="pw-recovery-notice">
+                      <Heart />
+                      {run.team
+                        .filter((u) => u.hp === 0)
+                        .map((u) => u.name)
+                        .join(" and ")}{" "}
+                      {run.team.filter((u) => u.hp === 0).length === 1
+                        ? "is"
+                        : "are"}{" "}
+                      knocked out.{" "}
+                      {run.revival
+                        ? "Use your remaining revival below before continuing."
+                        : "No revival remains."}
+                    </p>
                   )}
-                  <p className="pw-eyebrow">
-                    {run.phase === "camp"
-                      ? "A MOMENT TO REGROUP"
-                      : "EXPEDITION REPORT"}
-                  </p>
-                  <h2>{phaseTitle}</h2>
-                  <p>
-                    {run.phase === "camp"
-                      ? "Carry your squad forward. Move uses refresh; wounds remain."
-                      : run.phase === "won"
-                      ? "The defense network falls silent. Your squad made it through."
-                      : run.phase === "lost"
-                      ? "Your squad could not continue. A fresh attempt restores everyone."
-                      : "The squad leaves with its earned practice XP."}
-                  </p>
-                </div>
-                <div className="pw-camp-squad">
-                  {run.team.map((u) => (
-                    <div
-                      key={u.id}
-                      className={`el-${u.element} ${u.hp <= 0 ? "down" : ""}`}
-                    >
-                      <Portrait u={u} />
-                      <h3>{u.name}</h3>
-                      <Health u={u} />
-                      {u.hp === 0 ? (
-                        <button
-                          disabled={!run.revival || run.phase !== "camp"}
-                          onClick={() => apply({ kind: "revive", id: u.id })}
-                        >
-                          <Heart />{" "}
-                          {run.revival && run.phase === "camp"
-                            ? `Revive · ${Math.ceil(u.max / 2)} HP`
-                            : "Knocked out"}
-                        </button>
-                      ) : (
-                        <span>
-                          {u.hp === u.max
-                            ? "Healthy"
-                            : `${u.max - u.hp} HP missing`}
-                        </span>
-                      )}
-                    </div>
-                  ))}
-                </div>
-                <div className="pw-camp-stats">
-                  <span>
-                    <Crown />
-                    <strong>{run.xp}</strong> practice XP / companion
-                  </span>
-                  <span>
-                    <Heart />
-                    <strong>{run.revival}</strong> emergency revival left
-                  </span>
-                  {run.room === 2 && run.phase === "camp" && (
-                    <span className="pw-station">
-                      <Zap />
-                      Ahead: +10 HP to standing companions
+                  <div className="pw-camp-stats">
+                    <span>
+                      <Crown />
+                      <strong>{run.xp}</strong> practice XP / companion
                     </span>
+                    <span>
+                      <Heart />
+                      <strong>{run.revival}</strong>{" "}
+                      {run.phase === "camp"
+                        ? "emergency revival left"
+                        : "unused revival"}
+                    </span>
+                    {run.room === 2 && run.phase === "camp" && (
+                      <span className="pw-station">
+                        <Zap />
+                        Ahead: +10 HP to standing companions
+                      </span>
+                    )}
+                  </div>
+                  <div className="pw-camp-squad">
+                    {run.team.map((u) => (
+                      <div
+                        key={u.id}
+                        className={`el-${u.element} ${u.hp <= 0 ? "down" : ""}`}
+                      >
+                        <Portrait u={u} />
+                        <h3>{u.name}</h3>
+                        <Health u={u} />
+                        {u.hp === 0 ? (
+                          <button
+                            disabled={!run.revival || run.phase !== "camp"}
+                            aria-label={
+                              run.revival && run.phase === "camp"
+                                ? `Revive ${u.name} to ${Math.ceil(
+                                    u.max / 2
+                                  )} health`
+                                : undefined
+                            }
+                            onClick={() => apply({ kind: "revive", id: u.id })}
+                          >
+                            <Heart />{" "}
+                            {run.revival && run.phase === "camp"
+                              ? `Revive · ${Math.ceil(u.max / 2)} HP`
+                              : "Knocked out"}
+                          </button>
+                        ) : (
+                          <span>
+                            {u.hp === u.max
+                              ? "Healthy"
+                              : `${u.max - u.hp} HP missing`}
+                          </span>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                  {run.phase === "camp" && (
+                    <div className="pw-next-sector">
+                      <span className="pw-eyebrow">Next destination</span>
+                      <strong>
+                        {ROOMS[run.room + 1].name.replace(/^\d\. /, "")}
+                      </strong>
+                      <p>{roomCopy[run.room + 1]}</p>
+                    </div>
                   )}
                 </div>
                 <div className="pw-outcome-actions">
@@ -1096,7 +1240,7 @@ export default function PowerworksPage() {
                         Enter {ROOMS[run.room + 1].name.replace(/^\d\. /, "")}{" "}
                         <ArrowRight />
                       </button>
-                      <button onClick={() => apply({ kind: "retreat" })}>
+                      <button onClick={() => setPanel("extract")}>
                         Extract with {run.xp} XP
                       </button>
                     </>
@@ -1157,9 +1301,17 @@ export default function PowerworksPage() {
               ? "Field guide"
               : panel === "record"
               ? "Combat record"
+              : panel === "initiative"
+              ? "Turn order"
+              : panel === "route"
+              ? "Expedition route"
+              : panel === "extract"
+              ? "Leave the facility?"
               : panel === "restart"
               ? "Restart expedition?"
-              : inspect?.name}
+              : inspect
+              ? labelFor(inspect)
+              : ""}
           </h2>
           <button
             autoFocus
@@ -1170,6 +1322,104 @@ export default function PowerworksPage() {
           </button>
         </header>
 
+        {panel === "route" && (
+          <>
+            <p>
+              Four sectors to the central guardian. Health carries forward; move
+              uses refresh at each encounter.
+            </p>
+            <ol className="pw-route-list">
+              {ROOMS.map((r, i) => (
+                <li
+                  key={r.name}
+                  className={
+                    i < run.room || run.phase === "won"
+                      ? "cleared"
+                      : i === run.room
+                      ? "current"
+                      : ""
+                  }
+                >
+                  <span>
+                    {i < run.room || run.phase === "won" ? <Check /> : i + 1}
+                  </span>
+                  <div>
+                    <strong>{r.name.replace(/^\d\. /, "")}</strong>
+                    <p>{roomCopy[i]}</p>
+                    <small>
+                      {i < run.room || run.phase === "won"
+                        ? "Secured"
+                        : i === run.room
+                        ? "You are here"
+                        : "Ahead"}
+                    </small>
+                  </div>
+                </li>
+              ))}
+            </ol>
+            <div className="pw-camp-stats">
+              <span>
+                <Crown />
+                <strong>{run.xp}</strong> practice XP
+              </span>
+              <span>
+                <Heart />
+                <strong>{run.revival}</strong> revival kit
+              </span>
+            </div>
+          </>
+        )}
+        {panel === "initiative" && (
+          <>
+            <p>
+              Fastest acts first. This sequence shows speed, not hidden enemy
+              decisions.
+            </p>
+            <ol className="pw-turn-list">
+              {initiativeUnits.map((u, i) => (
+                <li
+                  key={u.id}
+                  className={`${u.enemy ? "enemy" : "ally"} ${
+                    frame?.event?.actorId === u.id ? "current" : ""
+                  }`}
+                >
+                  <span>{i + 1}</span>
+                  <Portrait u={u} small />
+                  <div>
+                    <strong>{labelFor(u)}</strong>
+                    <small>{u.enemy ? "Facility defense" : "Your squad"}</small>
+                  </div>
+                  <span className="pw-speed">
+                    <ChevronRight />
+                    {u.speed}
+                    <small>speed</small>
+                  </span>
+                </li>
+              ))}
+            </ol>
+          </>
+        )}
+        {panel === "extract" && (
+          <>
+            <p>
+              Your expedition ends here. You keep {run.xp} practice XP;
+              continuing later will start a new run.
+            </p>
+            <div className="pw-outcome-actions">
+              <button className="pw-primary" onClick={() => setPanel(null)}>
+                Stay with the squad
+              </button>
+              <button
+                onClick={() => {
+                  apply({ kind: "retreat" });
+                  setPanel(null);
+                }}
+              >
+                Extract now
+              </button>
+            </div>
+          </>
+        )}
         {panel === "guide" && (
           <>
             <div className="pw-symbol-key" aria-label="Move symbol key">
@@ -1254,10 +1504,10 @@ export default function PowerworksPage() {
                   Finite move uses
                 </h3>
                 <p>
-                  Filled pips are remaining uses. Three per secondary, one per
-                  signature, refreshed each encounter. Desperate strike deals 3
-                  neutral damage with 2 recoil after all damaging moves are
-                  exhausted.
+                  Filled segments are remaining uses. Three per secondary, one
+                  per signature, refreshed each encounter. Desperate strike
+                  deals 3 neutral damage with 2 recoil after all damaging moves
+                  are exhausted.
                 </p>
               </section>
               <section>
@@ -1296,21 +1546,44 @@ export default function PowerworksPage() {
         {panel === "record" && (
           <>
             <p>
-              Most recent events first. You can follow the battle without
-              keeping this panel open.
+              Latest round first. Actions within each round follow their
+              execution order.
             </p>
-            <div role="log" aria-label="Combat record">
-              {run.log
-                .slice()
-                .reverse()
-                .map((text, i) => (
-                  <p
-                    key={i}
-                    className={/^Encounter \d/.test(text) ? "round-label" : ""}
-                  >
-                    {text}
+            <div
+              role="log"
+              aria-label="Combat record"
+              className="pw-record-groups"
+            >
+              {groupRecord(run.log).map((group, i) =>
+                group.events.length === 0 ? (
+                  <p className="pw-record-arrival" key={`${group.title}-${i}`}>
+                    Entered {group.title}
                   </p>
-                ))}
+                ) : (
+                  <details key={`${group.title}-${i}`} open={i === 0}>
+                    <summary>
+                      {group.title}
+                      <span>{group.events.length} events</span>
+                    </summary>
+                    <ol>
+                      {group.events.map((text, j) => (
+                        <li
+                          key={j}
+                          className={
+                            /Knocked out|stopped by restraint|CLEARED|DEFEAT|VICTORY/.test(
+                              text
+                            )
+                              ? "record-important"
+                              : ""
+                          }
+                        >
+                          {text}
+                        </li>
+                      ))}
+                    </ol>
+                  </details>
+                )
+              )}
             </div>
           </>
         )}
@@ -1340,26 +1613,55 @@ export default function PowerworksPage() {
                 selected target is hidden.
               </p>
             )}
+            {!!inspect.snared && (
+              <p className="pw-warning">
+                <Link2 />
+                Restrained: melee is blocked at the next opportunity. Ranged
+                actions remain available.
+              </p>
+            )}
+            {inspect.ward && (
+              <p className="pw-warning">
+                <Shield />
+                Guarded: incoming damage is halved until its next opportunity.
+              </p>
+            )}
+            {!!inspect.recovery && (
+              <p className="pw-warning">
+                <RotateCcw />
+                Recovering: it cannot start another charge at its next
+                opportunity.
+              </p>
+            )}
             <div className="pw-inspect-moves">
               {inspect.moves.map((m, i) => (
-                <section key={m.name}>
-                  <MoveIcon move={m} signature={!inspect.enemy && i === 3} />
-                  <div>
-                    <h3>{m.name}</h3>
-                    <p>
-                      {m.kind === "snare"
-                        ? "Blocks melee through the next opportunity."
-                        : m.kind === "ward"
-                        ? "Halves incoming damage until its next opportunity."
-                        : `${m.damage} base damage · ${m.range}${
-                            m.kind === "charge"
-                              ? " · requires charging first"
-                              : ""
-                          }`}
-                      {!inspect.enemy && ` · ${inspect.uses[i]} uses remaining`}
-                    </p>
+                <div key={m.name}>
+                  <div
+                    className={`pw-move-card ${
+                      !inspect.enemy && i === 3 ? "signature" : ""
+                    } el-${inspect.element}`}
+                  >
+                    <MoveCardContent
+                      move={m}
+                      signature={!inspect.enemy && i === 3}
+                      uses={inspect.enemy ? null : inspect.uses[i]}
+                      limit={i === 3 ? 1 : 3}
+                      selected={false}
+                      blocked={!!inspect.snared && m.range === "melee"}
+                      id={`inspect-move-${i}`}
+                    />
                   </div>
-                </section>
+                  {m.kind === "snare" ? (
+                    <p>
+                      Stops melee through the next opportunity. Ranged moves
+                      still work.
+                    </p>
+                  ) : m.kind === "ward" ? (
+                    <p>Halves incoming damage until its next opportunity.</p>
+                  ) : m.kind === "charge" ? (
+                    <p>Charges first, then releases at its next opportunity.</p>
+                  ) : null}
+                </div>
               ))}
             </div>
             {inspect.enemy && move && active && (
