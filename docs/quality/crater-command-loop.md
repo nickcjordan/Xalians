@@ -329,3 +329,24 @@ so plainly. A run should not claim completion just because tests pass.
   whether the cockpit materials and result spectacle feel distinctive enough
   across multiple real devices. This pass improved replay friction but does
   not claim that visual cohesion is solved.
+
+### 2026-09-17: phone result fold regression
+
+- Starting build: deployed `25b8aab`. A six-shot live 390x844 Practice Range
+  check showed the new result actions worked but began below the viewport:
+  Run range again ended at y891 and Change battlefield at y947. This was a
+  discoverability failure caused by preserving the full-height battle camera
+  after the final shot.
+- Change: after the final animation settles, the phone battlefield eases from
+  its active 50dvh height to 38dvh while keeping the final terrain and rigs
+  visible. The result card has slightly tighter phone padding. Active combat
+  height and controls are unchanged.
+- Local replay: Stonera/Standard/Practice Range, 390x844, seed
+  `artillery:06463418-23df-4aa2-bb84-5d2c62afe972`. The six-shot result
+  scored 39 damage and grade C. The final field measured 321px high, Run
+  range again ended at y786, and Change battlefield at y842, both inside the
+  844px phone viewport. Visual inspection confirmed both buttons, result
+  advice, terrain, and rigs remain visible together without scrolling.
+- Next check: confirm these positions and the height transition on the live
+  release. Shorter phones may still require scrolling, but active play retains
+  the larger camera.
