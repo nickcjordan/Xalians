@@ -1,0 +1,100 @@
+{
+  "tool": "built-in image_gen",
+  "rule": "No Xalian creatures, people, recognizable Earth animals or resolved depictions of lore mysteries. Interpretive machinery and environments only. Display at most 480x320; serve 384/768 WebP; no enlargement.",
+  "images": [
+    {
+      "key": "tachyon-drive-core",
+      "prompt": "Use case: stylized-concept. Create a 1536x1024 original illustration for the Xalians science-fiction lore encyclopedia. Cinematic environmental painting, believable weathered materials, restrained painterly texture, atmospheric depth, readable silhouettes, sober rich color and restrained light. Must read clearly when displayed at 480x320. No text, lettering, logos, borders, diagrams, people, humanoids, characters, animals, recognizable Earth fauna, bioengineered Xalians, ghosts or creature silhouettes. This is an interpretive illustration, not a technical blueprint. Subject: The Tachyon Drive Core, the engine of Vallerii interstellar expansion, an engine whose radiation ultimately sterilized the spacefaring civilization. View into an empty starship engineering compartment dominated by a massive suspended industrial drive core, nested irregular metal housings around a cold blue-white luminous central chamber. Heavy coolant conduits, heat-darkened shielding, layered service gantries, worn precision engineering. Intimate machinery scale, no exterior planet landscape. Make the engine the unmistakable subject. The surrounding compartment is dim and quiet, the alluring blue glow has an ominous mood. No holographic screens, no schematic symbols, no generic magic portal. Physical layout is invented, avoid suggesting specific canonical mechanisms beyond the supplied lore.",
+      "source": "C:/Users/njord/.codex/generated_images/01a0a2d1-ad91-7e72-8ea7-e7ed72f8ba6a/exec-e9d18a25-8ff5-4ee2-8044-9f2fe8c492a9.png",
+      "loreSources": [
+        "encyclopedia: tachyon-drive-core",
+        "tour: vallerii-and-tachyon-drive",
+        "planetRecords: saiphus history 2"
+      ],
+      "files": [
+        "apps/web/public/assets/img/lore/details/tachyon-drive-core-768.webp",
+        "apps/web/public/assets/img/lore/details/tachyon-drive-core-384.webp"
+      ]
+    },
+    {
+      "key": "wraithix",
+      "prompt": "Use case: stylized-concept. Create a 1536x1024 original illustration for the Xalians science-fiction lore encyclopedia. Cinematic environmental painting, believable weathered materials, restrained painterly texture, atmospheric depth, readable silhouettes, sober rich color and restrained light. Must read clearly when displayed at 480x320. No text, lettering, logos, borders, diagrams, people, humanoids, characters, animals, recognizable Earth fauna, bioengineered Xalians, ghosts or creature silhouettes. This is an interpretive illustration, not a technical blueprint. Subject: the derelict fleet discovered deep in the Wraithix System, ancient unregistered spacecraft and satellites whose recovered manifests led scavengers to Shadharam IV. Quiet exterior space scene, two or three vast broken geometrical spacecraft with unfamiliar asymmetrical modular engineering, eroded dark bronze and pale mineral-metal hulls, enormous gaps and exposed internal structural ribs, drifting debris with stillness and absence. Foreground cropped angular satellite fragments frame the distant abandoned fleet. Sparse stars, restrained dusty violet and cold reflected light. This is a physical ship graveyard predating the Vallerii, not literal spectral ghost ships. No glowing ghosts, no skulls, bones, tentacles, wings, biological forms or recognizable creatures. No inventing the builders' identity, cause of destruction, or moon weapon. Strong bold composition, machinery silhouettes remain legible in a small illustration.",
+      "source": "C:/Users/njord/.codex/generated_images/01a0a2d1-ad91-7e72-8ea7-e7ed72f8ba6a/exec-c1e8d40d-7981-438f-ab3f-fd6eee7d8f0e.png",
+      "loreSources": [
+        "encyclopedia: wraithix",
+        "planetRecords: phantiri history",
+        "tour: before-the-vallerii"
+      ],
+      "files": [
+        "apps/web/public/assets/img/lore/details/wraithix-768.webp",
+        "apps/web/public/assets/img/lore/details/wraithix-384.webp"
+      ]
+    },
+    {
+      "key": "stellaris-superstructure",
+      "prompt": "Use case: stylized-concept. Create a 1536x1024 original illustration for the Xalians science-fiction lore encyclopedia. Cinematic environmental painting, believable weathered materials, restrained painterly texture, atmospheric depth, readable silhouettes, sober rich color and restrained light. Must read clearly when displayed at 480x320. No text, lettering, logos, borders, diagrams, people, humanoids, characters, animals, recognizable Earth fauna, bioengineered Xalians, ghosts or creature silhouettes. This is an interpretive illustration, not a technical blueprint. Subject: Stellaris Superstructure in its energy-harvesting role, a Dyson sphere built around one of Luminax's two stars. Show the exterior curvature of a colossal spherical shell of close-packed articulated solar collector panels around a brilliant star, with several structural gaps letting sunlight reveal the enclosed star. Angular dark-gold reflective panels and large mechanical ribs wrap around the curvature, receding to astronomical scale. A second small distant sun shines separately in the black of space. Composition centered on the spherical engineered structure, with a near collector edge giving scale; luminous amber, near-black graphite, soft copper reflections. This is peaceful solar infrastructure, before its deterioration. No firing beam, battle, explosions or planet surface. Do not portray a simple ring in place of the Dyson sphere. No workers or craft with occupants.",
+      "source": "C:/Users/njord/.codex/generated_images/01a0a2d1-ad91-7e72-8ea7-e7ed72f8ba6a/exec-95878525-4d80-4943-add2-7415d55430d1.png",
+      "loreSources": [
+        "encyclopedia: stellaris-superstructure",
+        "planetRecords: luminax history 8\u201310"
+      ],
+      "files": [
+        "apps/web/public/assets/img/lore/details/stellaris-superstructure-768.webp",
+        "apps/web/public/assets/img/lore/details/stellaris-superstructure-384.webp"
+      ]
+    },
+    {
+      "key": "mercurius-machine",
+      "prompt": "Use case: stylized-concept. Create a 1536x1024 original illustration for the Xalians science-fiction lore encyclopedia. Cinematic environmental painting, believable weathered materials, restrained painterly texture, atmospheric depth, readable silhouettes, sober rich color and restrained light. Must read clearly when displayed at 480x320. No text, lettering, logos, borders, diagrams, people, humanoids, characters, animals, recognizable Earth fauna, bioengineered Xalians, ghosts or creature silhouettes. This is an interpretive illustration, not a technical blueprint. Subject: the Mercurius Machine on Valleron, the unique machine controlled by King Kozrak that prints Scrambler Tokens containing encrypted randomized genomes, allowing Generators to create plague-immune Xalians. An intimate close environmental view of a sophisticated industrial chip-printing apparatus in a quiet secured chamber. Dominant dark brushed-metal precision housing with layered ceramic modules and a recessed illuminated manufacturing slot; a few small rectangular circuit chips emerge onto a short tray, each with subtle complex metallic traces. Warm amber task light on chips, muted cool illumination within machinery, tactile aged surfaces, restrained craftsmanship. The chips are the focal point, modest and materially valuable rather than magic coins. Background recedes to indistinct structural wall panels. No throne, king, workers, hands, bodies, embryos, creature samples, faces, biological silhouettes, holographic DNA helix, currency symbols or text. Do not portray this as a machine directly producing animals. Machinery shape is an interpretation, not a claim of a canonical technical design.",
+      "source": "C:/Users/njord/.codex/generated_images/01a0a2d1-ad91-7e72-8ea7-e7ed72f8ba6a/exec-0b831c77-05fc-4ffa-8bdf-5c12a85413f4.png",
+      "loreSources": [
+        "encyclopedia: mercurius-machine, scrambler-token",
+        "tour: kozrak-and-tournament"
+      ],
+      "files": [
+        "apps/web/public/assets/img/lore/details/mercurius-machine-768.webp",
+        "apps/web/public/assets/img/lore/details/mercurius-machine-384.webp"
+      ]
+    },
+    {
+      "key": "algael",
+      "prompt": "Use case: stylized-concept. Original 1536x1024 illustration for Xalians lore encyclopedia. Cinematic science-fiction painting, believable materials, restrained painterly texture, strong focal point readable at 480x320, quiet atmospheric light. No text, labels, logos, symbols, people, hands, animals, Earth-like fauna, Xalian creatures, bodies, ghosts or biological silhouettes. Machinery and container designs are interpretive, not technical canon. Subject ALGAEL: blue-green gel-like healing substance made from decomposed ocean algae on Poseidas. Close environmental still life in an empty industrial medical-processing facility: a squat broad transparent thick-walled vessel visibly filled with dense translucent blue-green gel, soft folds and suspended fine particulate texture, with a sealed metal transport vessel nearby and blurred extraction pipework behind. The gel itself is the focal point, unmistakably viscous rather than water or crystal. Teal material, brushed dark metal, soft white task lighting, restrained warm reflections. Suggest a valuable medical commodity without medicine labels, crosses, syringes, patients, limbs or floating specimens. Not magical luminous slime. No ocean vista.",
+      "source": "C:/Users/njord/.codex/generated_images/01a0a2d1-ad91-7e72-8ea7-e7ed72f8ba6a/exec-50e43cc3-c9f6-4833-93c4-9e7db9703479.png",
+      "loreSources": [
+        "encyclopedia: algael",
+        "planetRecords: poseidas history 6\u20137"
+      ],
+      "files": [
+        "apps/web/public/assets/img/lore/details/algael-768.webp",
+        "apps/web/public/assets/img/lore/details/algael-384.webp"
+      ]
+    },
+    {
+      "key": "nightcap",
+      "prompt": "Use case: stylized-concept. Original 1536x1024 illustration for Xalians lore encyclopedia. Cinematic science-fiction painting, believable materials, restrained painterly texture, strong focal point readable at 480x320, quiet atmospheric light. No text, labels, logos, symbols, people, hands, animals, Earth-like fauna, Xalian creatures, bodies, ghosts or biological silhouettes. Machinery and container designs are interpretive, not technical canon. Subject NIGHTCAP, also called Spacer's Tea: thick viscous oil extracted from compressed ancient microbial deposits on Endessa, used to induce stasis for sub-light interstellar journeys. Show a quiet unoccupied cargo handling alcove aboard a worn utilitarian spacecraft. Foreground an industrial sampling spout lets a short thick glossy ribbon of very dark green-black oil descend into a broad metal receptacle, with sealed rugged shipping canisters nearby. Oil catches sparse amber task lighting; otherwise dark slate steel, chipped paint and subtle mineral dust. The oil and transport containers are the story, not a landscape. Nightcap must look dense, oily and materially distinct from translucent blue-green medicinal gel. No steaming tea, mugs, tea leaves, living microbes, sleeping people, stasis occupants, skeletons, secret discoveries or magical effects. No technical claims beyond oil being stored for transport.",
+      "source": "C:/Users/njord/.codex/generated_images/01a0a2d1-ad91-7e72-8ea7-e7ed72f8ba6a/exec-89de6569-ae1a-4801-b9cd-9c12feb3c5ca.png",
+      "loreSources": [
+        "encyclopedia: nightcap, spacers-tea",
+        "planetRecords: endessa history 3\u20134"
+      ],
+      "files": [
+        "apps/web/public/assets/img/lore/details/nightcap-768.webp",
+        "apps/web/public/assets/img/lore/details/nightcap-384.webp"
+      ]
+    },
+    {
+      "key": "qed",
+      "prompt": "Use case: stylized-concept. Original 1536x1024 illustration for Xalians lore encyclopedia. Cinematic science-fiction painting, believable materials, restrained painterly texture, strong focal point readable at 480x320, quiet atmospheric light. No text, labels, logos, symbols, people, hands, animals, Earth-like fauna, Xalian creatures, bodies, ghosts or biological silhouettes. Machinery and container designs are interpretive, not technical canon. Subject QED, Quantum Entanglement Device: specially engineered computer chips paired by controlled exposure to opposite ends of a bloodstorm lightning sprite on Zolton; paired devices enable instantaneous communications across interstellar distances. Show two small matching engineered chips seated separately in rugged ceramic-and-metal test cradles in an unoccupied storm research workshop. Their dark ceramic substrates have intricate silver circuit traces and tiny muted red status lights, each visibly an electronic component. Focus on the paired chips and precision contacts, clear symmetrical visual relationship, not magic. In soft background through a small reinforced window: distant metal-rich mountain ridge and a few angular dark-crimson lightning forks, never jellyfish-shaped. Cool gunmetal and ceramic ivory, faint crimson reflections. Depict finished devices being tested after exposure, not a technical diagram of the entanglement procedure; no beam connecting the chips, glowing magical tether or holographic network. No full landscape panorama, no tentacles, no electrical jellyfish, no symbols or text.",
+      "source": "C:/Users/njord/.codex/generated_images/01a0a2d1-ad91-7e72-8ea7-e7ed72f8ba6a/exec-746ac369-ad5a-46ec-802f-27a247339bc4.png",
+      "loreSources": [
+        "encyclopedia: qed",
+        "planetRecords: zolton history",
+        "tour: apex-accords"
+      ],
+      "files": [
+        "apps/web/public/assets/img/lore/details/qed-768.webp",
+        "apps/web/public/assets/img/lore/details/qed-384.webp"
+      ]
+    }
+  ]
+}

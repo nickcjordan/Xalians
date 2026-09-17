@@ -1,0 +1,254 @@
+{
+  "magmuth": [
+    {
+      "src": "assets/img/planets/art/magmuth-landscape.webp",
+      "small": "assets/img/planets/art/magmuth-landscape-768.webp",
+      "thumbnail": "assets/img/planets/art/magmuth-landscape-384.webp",
+      "title": "The Obsidian Islands",
+      "alt": "Black volcanic-glass islands break a glowing lava sea beneath banks of ash and crimson smoke.",
+      "caption": "Magmuth's transient islands cool from lava, then disappear as eruptions renew the crust."
+    },
+    {
+      "src": "assets/img/planets/art/magmuth-detail.webp",
+      "small": "assets/img/planets/art/magmuth-detail-768.webp",
+      "thumbnail": "assets/img/planets/art/magmuth-detail-384.webp",
+      "title": "The Fissure Forges",
+      "alt": "Ash-covered gantries and extraction pipes span a basalt fissure glowing with magma.",
+      "caption": "The old forges draw on Magmuth's fissures and fuel-bearing gases."
+    }
+  ],
+  "poseidas": [
+    {
+      "src": "assets/img/planets/art/poseidas-landscape.webp",
+      "small": "assets/img/planets/art/poseidas-landscape-768.webp",
+      "thumbnail": "assets/img/planets/art/poseidas-landscape-384.webp",
+      "title": "The storm ocean",
+      "alt": "Blue storm swells engulf a tiny pale island; distant hydro-processing structures stand beneath a vast cyclone.",
+      "caption": "Little dry ground remains above Poseidas's storm-racked global ocean."
+    },
+    {
+      "src": "assets/img/planets/art/poseidas-detail.webp",
+      "small": "assets/img/planets/art/poseidas-detail-768.webp",
+      "thumbnail": "assets/img/planets/art/poseidas-detail-384.webp",
+      "title": "The deep cities",
+      "alt": "Illuminated underwater structures and algae-processing rigs follow a submerged ridge into blue depths.",
+      "caption": "Poseidas's cities moved deeper to escape the surface storms and death tides."
+    }
+  ],
+  "grimedes": [
+    {
+      "src": "assets/img/planets/art/grimedes-landscape.webp",
+      "small": "assets/img/planets/art/grimedes-landscape-768.webp",
+      "thumbnail": "assets/img/planets/art/grimedes-landscape-384.webp",
+      "title": "The lightless undergrowth",
+      "alt": "Pitch-black stalks and broad wet leaves cover a flat, foggy plain beneath a faint red horizon.",
+      "caption": "Grimedes's vegetation gathers the scarce light of its dying brown dwarf."
+    },
+    {
+      "src": "assets/img/planets/art/grimedes-detail.webp",
+      "small": "assets/img/planets/art/grimedes-detail-768.webp",
+      "thumbnail": "assets/img/planets/art/grimedes-detail-384.webp",
+      "title": "Black-site observatories",
+      "alt": "A weathered telescope dish and low research buildings stand among black vegetation and mist.",
+      "caption": "The observatories on Grimedes were built to study the black hole and the space beyond Xalia."
+    }
+  ],
+  "luminax": [
+    {
+      "src": "assets/img/planets/art/luminax-landscape.webp",
+      "small": "assets/img/planets/art/luminax-landscape-768.webp",
+      "thumbnail": "assets/img/planets/art/luminax-landscape-384.webp",
+      "title": "The prismatic solarscape",
+      "alt": "Pale crystalline vegetation and immense silver solar grids surround scorched ground under twin suns.",
+      "caption": "Luminax's sunward face holds prismatic oases, solar farms and the scars of ION-9."
+    },
+    {
+      "src": "assets/img/planets/art/luminax-detail.webp",
+      "small": "assets/img/planets/art/luminax-detail-768.webp",
+      "thumbnail": "assets/img/planets/art/luminax-detail-384.webp",
+      "title": "At the edge of the blast zone",
+      "alt": "Translucent leaves scatter rainbow light beside blackened soil and damaged solar panels.",
+      "caption": "Crystalline leaves filter the relentless light; ION-9's misfires scar the land around them."
+    }
+  ],
+  "floria": [
+    {
+      "src": "assets/img/planets/art/floria-landscape.webp",
+      "small": "assets/img/planets/art/floria-landscape-768.webp",
+      "thumbnail": "assets/img/planets/art/floria-landscape-384.webp",
+      "title": "The World Trees",
+      "alt": "Immense tree crowns rise through clouds, joined by road-sized branches and enormous leaves.",
+      "caption": "The World Trees absorbed Floria's oceans and sheltered its forests from the old annual deluge."
+    },
+    {
+      "src": "assets/img/planets/art/floria-detail.webp",
+      "small": "assets/img/planets/art/floria-detail-768.webp",
+      "thumbnail": "assets/img/planets/art/floria-detail-384.webp",
+      "title": "The underforests",
+      "alt": "Giant buttress roots arch over a shadowed marsh filled with fungi and dense undergrowth.",
+      "caption": "Below the canopy, Floria's roots, wetlands and fungal thickets support an untamed ecosystem."
+    }
+  ],
+  "zolton": [
+    {
+      "src": "assets/img/planets/art/zolton-landscape.webp",
+      "small": "assets/img/planets/art/zolton-landscape-768.webp",
+      "thumbnail": "assets/img/planets/art/zolton-landscape-384.webp",
+      "title": "The lightning canyons",
+      "alt": "Metallic mountain spires channel branching lightning into cold, gas-filled canyons.",
+      "caption": "Zolton's metallic peaks conduct its storms into fleeting rivers of electricity."
+    },
+    {
+      "src": "assets/img/planets/art/zolton-detail.webp",
+      "small": "assets/img/planets/art/zolton-detail-768.webp",
+      "thumbnail": "assets/img/planets/art/zolton-detail-384.webp",
+      "title": "Bloodstorm manufactory",
+      "alt": "Industrial collectors stand on a frozen ridge beneath fine crimson lightning-sprite filaments.",
+      "caption": "Bloodstorm sprites made the manufacture of Quantum Entanglement Devices possible."
+    }
+  ],
+  "phantiri": [
+    {
+      "src": "assets/img/planets/art/phantiri-landscape.webp",
+      "small": "assets/img/planets/art/phantiri-landscape-768.webp",
+      "thumbnail": "assets/img/planets/art/phantiri-landscape-384.webp",
+      "title": "The Dreadscape",
+      "alt": "Fog veils dark coastal cliffs of compressed fossil-rich strata above still, tar-like basins.",
+      "caption": "Centuries of the Generator's failed attempts at organic life reshaped Phantiri's surface."
+    },
+    {
+      "src": "assets/img/planets/art/phantiri-detail.webp",
+      "small": "assets/img/planets/art/phantiri-detail-768.webp",
+      "thumbnail": "assets/img/planets/art/phantiri-detail-384.webp",
+      "title": "A Dreadscape basin",
+      "alt": "A still black inlet lies between layered banks of fragmented organic remains and windless fog.",
+      "caption": "The Dreadscape's compressed remains drain into dark basins beneath the persistent fog."
+    }
+  ],
+  "stonera": [
+    {
+      "src": "assets/img/planets/art/stonera-landscape.webp",
+      "small": "assets/img/planets/art/stonera-landscape-768.webp",
+      "thumbnail": "assets/img/planets/art/stonera-landscape-384.webp",
+      "title": "The Chasm",
+      "alt": "A vast terraced planetary wound descends to a silvery sea beneath suspended rocky ejecta.",
+      "caption": "The Terracannon exposed Stonera's liquid-metal ocean; a strip-mine now spirals into the Chasm."
+    },
+    {
+      "src": "assets/img/planets/art/stonera-detail.webp",
+      "small": "assets/img/planets/art/stonera-detail-768.webp",
+      "thumbnail": "assets/img/planets/art/stonera-detail-384.webp",
+      "title": "The Jorian impact fields",
+      "alt": "Dusty grey craters, fractured ridges and a mine entrance lie beneath static discharges and meteor trails.",
+      "caption": "The Jorian Belt repeatedly bombards Stonera, leaving valuable minerals and unstable ground."
+    }
+  ],
+  "drainov": [
+    {
+      "src": "assets/img/planets/art/drainov-landscape.webp",
+      "small": "assets/img/planets/art/drainov-landscape-768.webp",
+      "thumbnail": "assets/img/planets/art/drainov-landscape-384.webp",
+      "title": "The acid swamps",
+      "alt": "Corroded factories and pipeways sink into steaming green-brown wetlands beneath poisonous smog.",
+      "caption": "Drainov's ruined industry subsides into acid swamps as refuse continues to fall from orbit."
+    },
+    {
+      "src": "assets/img/planets/art/drainov-detail.webp",
+      "small": "assets/img/planets/art/drainov-detail-768.webp",
+      "thumbnail": "assets/img/planets/art/drainov-detail-384.webp",
+      "title": "Carbide-1",
+      "alt": "Ruptured tanks and sagging feedstock pipes vent green-grey fumes over corroded refinery walkways.",
+      "caption": "The Carbide-1 catastrophe poisoned a world; abandoned automated plants continued the destruction."
+    }
+  ],
+  "saiphus": [
+    {
+      "src": "assets/img/planets/art/saiphus-landscape.webp",
+      "small": "assets/img/planets/art/saiphus-landscape-768.webp",
+      "thumbnail": "assets/img/planets/art/saiphus-landscape-384.webp",
+      "title": "The floating archipelago",
+      "alt": "Grassy islands and a distant city float above layers of rose-lit clouds and darker storms.",
+      "caption": "Saiphus's buoyant islands occupy a narrow habitable band above its crushing depths."
+    },
+    {
+      "src": "assets/img/planets/art/saiphus-detail.webp",
+      "small": "assets/img/planets/art/saiphus-detail-768.webp",
+      "thumbnail": "assets/img/planets/art/saiphus-detail-384.webp",
+      "title": "The Benthane refineries",
+      "alt": "Gas compression tanks and pipework occupy a grassy floating island above a rose-lit cloud abyss.",
+      "caption": "Saiphus's compression plants refine Benthane into coolants vital to interstellar travel."
+    }
+  ],
+  "telypso": [
+    {
+      "src": "assets/img/planets/art/telypso-landscape.webp",
+      "small": "assets/img/planets/art/telypso-landscape-768.webp",
+      "thumbnail": "assets/img/planets/art/telypso-landscape-384.webp",
+      "title": "The fungal forests",
+      "alt": "Towering iridescent mushrooms and pitcher plants surround a shimmering river in fluorescent mist.",
+      "caption": "Telypso's forests shift and pulse with the psychic state of the world around them."
+    },
+    {
+      "src": "assets/img/planets/art/telypso-detail.webp",
+      "small": "assets/img/planets/art/telypso-detail-768.webp",
+      "thumbnail": "assets/img/planets/art/telypso-detail-384.webp",
+      "title": "The quicksilver rivers",
+      "alt": "Iridescent river water rises in suspended bubbles beside glasslike plants and alien fungi.",
+      "caption": "On Telypso, even flowing water and falling rain need not obey familiar physics."
+    }
+  ],
+  "krystos": [
+    {
+      "src": "assets/img/planets/art/krystos-landscape.webp",
+      "small": "assets/img/planets/art/krystos-landscape-768.webp",
+      "thumbnail": "assets/img/planets/art/krystos-landscape-384.webp",
+      "title": "The frozen estates",
+      "alt": "Ruined ornamental estates emerge from windblown snow beside a frozen ocean and distant ice peaks.",
+      "caption": "The Thousand Families' island retreats lie frozen beneath Krystos's enduring impact winter."
+    },
+    {
+      "src": "assets/img/planets/art/krystos-detail.webp",
+      "small": "assets/img/planets/art/krystos-detail-768.webp",
+      "thumbnail": "assets/img/planets/art/krystos-detail-384.webp",
+      "title": "The techno-catacombs",
+      "alt": "Frosted computing cabinets and dense cable bundles recede through a cold mountain tunnel.",
+      "caption": "APEX used Krystos's cold to house the computing infrastructure that produced the Nemesis Plague."
+    }
+  ],
+  "veridium": [
+    {
+      "src": "assets/img/planets/art/veridium-landscape.webp",
+      "small": "assets/img/planets/art/veridium-landscape-768.webp",
+      "thumbnail": "assets/img/planets/art/veridium-landscape-384.webp",
+      "title": "The factory world",
+      "alt": "Factory trenches and furnace districts spread beyond silver vegetation and liquid-metal channels.",
+      "caption": "Veridium's vast industrial landscape is quieter now, with only part of its old capacity in use."
+    },
+    {
+      "src": "assets/img/planets/art/veridium-detail.webp",
+      "small": "assets/img/planets/art/veridium-detail-768.webp",
+      "thumbnail": "assets/img/planets/art/veridium-detail-384.webp",
+      "title": "The drone scrapfields",
+      "alt": "Ancient broken machines and a partly dismantled starship lie beneath distant shipyard cranes.",
+      "caption": "Old robotic wreckage and the ships lost in the End Wars feed Veridium's salvage economy."
+    }
+  ],
+  "endessa": [
+    {
+      "src": "assets/img/planets/art/endessa-landscape.webp",
+      "small": "assets/img/planets/art/endessa-landscape-768.webp",
+      "thumbnail": "assets/img/planets/art/endessa-landscape-384.webp",
+      "title": "The glass dunes",
+      "alt": "Sweeping glass-sand dunes reveal dark substrate and buried structures beneath two suns.",
+      "caption": "Endessa's desert formed from the shattered glass of its bombarded ocean floor."
+    },
+    {
+      "src": "assets/img/planets/art/endessa-detail.webp",
+      "small": "assets/img/planets/art/endessa-detail-768.webp",
+      "thumbnail": "assets/img/planets/art/endessa-detail-384.webp",
+      "title": "The Nightcap wells",
+      "alt": "Drilling rigs and pipes descend through a dry cavern to pools of thick green-black oil.",
+      "caption": "Beneath the dunes, the Nightcap wells still supply the stasis oil used for sub-light travel."
+    }
+  ]
+}

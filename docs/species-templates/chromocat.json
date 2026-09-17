@@ -1,4 +1,5 @@
 {
+  "schemaVersion": "4.0.0",
   "key": "chromocat",
   "name": "Chromocat",
   "nameOrigin": "A fusion of chroma, color or light, and cat, reflecting its photonic feline nature beneath an ordinarily albino coat.",
@@ -179,15 +180,224 @@
   "conduits": {
     "blades": "light"
   },
-  "signatureAbility": {
-    "name": "Harvest at the Speed of Light",
-    "instrument": "blades",
-    "action": "rake",
-    "medium": "light",
-    "intensity": [
-      45,
-      88
+  "signature": {
+    "kind": "action",
+    "key": "chromocat-defining"
+  },
+  "actions": [
+    {
+      "key": "chromocat-defining",
+      "activation": {
+        "operation": "discrete"
+      },
+      "delivery": {
+        "mode": "contact",
+        "approach": "closing"
+      },
+      "targeting": {
+        "relation": "other",
+        "subjects": [
+          "creature",
+          "object"
+        ]
+      },
+      "effects": [
+        {
+          "kind": "harm",
+          "recipient": "area",
+          "mechanism": "cutting",
+          "emphasis": "primary",
+          "onset": "instant",
+          "persistence": "resolved",
+          "likelihood": "consistent"
+        }
+      ],
+      "description": "The Chromocat crosses the ground to its target in its photonic state and opens it with a barrage of rapid cuts from its ionized sickles.",
+      "name": "Harvest at the Speed of Light",
+      "instrument": "blades",
+      "medium": "light",
+      "intensity": [
+        45,
+        88
+      ],
+      "timing": {
+        "preparation": "brief",
+        "recovery": "brief"
+      },
+      "spatial": {
+        "selectivity": "selective",
+        "range": "contact",
+        "area": {
+          "shape": "sweep",
+          "extent": "small",
+          "anchor": "creature"
+        }
+      }
+    }
+  ],
+  "passives": [],
+  "actionPool": {
+    "count": [
+      2,
+      3
     ],
-    "description": "The Chromocat crosses the ground to its target in its photonic state and opens it with a barrage of rapid cuts from its ionized sickles."
+    "sets": [
+      {
+        "key": "default",
+        "weight": 1,
+        "options": [
+          {
+            "key": "blades-strike",
+            "pattern": "strike",
+            "instrument": "blades",
+            "media": [
+              "light",
+              "fire",
+              "electric",
+              "psychic"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "blades-rake",
+            "pattern": "rake",
+            "instrument": "blades",
+            "media": [
+              "light",
+              "fire",
+              "electric",
+              "psychic"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "blades-lash",
+            "pattern": "lash",
+            "instrument": "blades",
+            "media": [
+              "light",
+              "fire",
+              "electric",
+              "psychic"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "blades-beam",
+            "pattern": "beam",
+            "instrument": "blades",
+            "media": [
+              "light"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "blades-burst",
+            "pattern": "burst",
+            "instrument": "blades",
+            "media": [
+              "light"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "blades-ward",
+            "pattern": "ward",
+            "instrument": "blades",
+            "media": [
+              "light"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "blades-mend",
+            "pattern": "mend",
+            "instrument": "blades",
+            "media": [
+              "light"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "blades-terrorize",
+            "pattern": "terrorize",
+            "instrument": "blades",
+            "media": [
+              "light"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "blades-spray",
+            "pattern": "spray",
+            "instrument": "blades",
+            "media": [
+              "light"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "claws-strike",
+            "pattern": "strike",
+            "instrument": "claws",
+            "media": [
+              "light",
+              "fire",
+              "electric",
+              "psychic"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "claws-rake",
+            "pattern": "rake",
+            "instrument": "claws",
+            "media": [
+              "light",
+              "fire",
+              "electric",
+              "psychic"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "claws-crush",
+            "pattern": "crush",
+            "instrument": "claws",
+            "media": [
+              "light",
+              "fire",
+              "electric",
+              "psychic"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "claws-shove",
+            "pattern": "shove",
+            "instrument": "claws",
+            "media": [
+              "light",
+              "fire",
+              "electric",
+              "psychic"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "claws-ambush",
+            "pattern": "ambush",
+            "instrument": "claws",
+            "media": [
+              "light",
+              "fire",
+              "electric",
+              "psychic"
+            ],
+            "weight": 1
+          }
+        ]
+      }
+    ]
   }
 }

@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+const { historicalTemplateView } = require('../packages/content/src/abilityCompatibility.ts');
 /*
  * Deterministic roster inventory for creature expansion planning.
  *
@@ -62,14 +63,13 @@ function render() {
   lines.push('## Current creature index');
   lines.push('');
   table(lines,
-    ['Species', 'Element / world', 'Body', '50+ capability ceiling', 'Special senses', 'Required traits', 'Lead archetype', 'Signature'],
+    ['Species', 'Element / world', 'Body', '50+ capability ceiling', 'Special senses', 'Required traits', 'Lead archetype', 'Signature ability'],
     records.map((record) => {
       const p = record.physiology;
       const strongCaps = Object.entries(p.capabilities).filter(([, band]) => band[1] >= 50).map(([key]) => key);
       const requiredTraits = Object.entries(record.traits.pool).filter(([, percent]) => percent === 100).map(([key]) => key);
       const lead = Object.entries(record.archetypeWeights).sort((a, b) => b[1] - a[1])[0];
       const special = p.senses.special || [];
-      const signature = record.signatureAbility;
       return [
         `${record.name} (${record.key})`,
         `${record.element} / ${planetByKey.get(record.homePlanet)?.name || record.homePlanet}`,
@@ -78,7 +78,7 @@ function render() {
         special.join(', ') || 'none',
         requiredTraits.join(', ') || 'none',
         `${lead[0]} ${lead[1]}%`,
-        `${signature.instrument} / ${signature.action} / ${signature.medium}`,
+        [...record.actions,...record.passives].filter(a=>a.key===record.signature.key).map(a => `${a.instrument} / ${a.delivery.mode} / ${a.effects.map(e => e.kind).join('+')} / ${a.medium}`).join('; ') || 'none',
       ];
     }),
   );
@@ -149,10 +149,21 @@ function render() {
   });
   table(lines, ['Attribute', 'Mean species midpoint', 'Lowest species midpoint', 'Highest species midpoint'], attributeRows);
 
+  lines.push('## Ability effect and delivery coverage', '', 'Counts are species with at least one signature ability using the value. Standard pool patterns are permissions, not guaranteed outcomes.', '');
+  for (const [label, extract] of [
+    ['Effect', a => a.effects.map(e => e.kind)],
+    ['Delivery', a => [a.delivery.mode]],
+    ['Target relation', a => [a.targeting.relation]],
+    ['Activation', a => [a.activation.operation]],
+  ]) {
+    const tally = new Map();
+    for (const t of records) for (const value of new Set([...t.actions,...t.passives].filter(a=>a.key===t.signature.key).flatMap(extract))) tally.set(value, (tally.get(value) || 0) + 1);
+    table(lines, [label, 'Species'], [...tally].sort().map(([k,v]) => [k, String(v)]));
+  }
   lines.push('## Ability identity coverage');
   lines.push('');
-  const signatureActions = counts(registries.actions.map((x) => x.key), records.map((r) => r.signatureAbility.action));
-  table(lines, ['Signature action', 'Species'], signatureActions.map((row) => [row.key, String(row.count)]));
+  const signatureActions = counts(registries.actions.map((x) => x.key), records.map((r) => historicalTemplateView(r).signatureAbility?.action));
+  table(lines, ['Historical name family', 'Species'], signatureActions.map((row) => [row.key, String(row.count)]));
   const instrumentUniverse = [...registries.anatomy, ...registries.channels].map((x) => x.key);
   const instrumentRows = counts(instrumentUniverse, records.flatMap((record) => record.instruments));
   table(lines, ['Available instrument', 'Species'], instrumentRows.map((row) => [row.key, String(row.count)]));
@@ -186,7 +197,7 @@ function render() {
   lines.push(`5. **Available but unused instruments/channels:** ${unusedInstruments.length ? unusedInstruments.join(', ') : 'none'}. Select only when the body or ability demands one.`);
   lines.push('6. **Intentional non-target:** `vacuum` is valid ambient tolerance but not a breathing target; a creature that does not breathe uses an empty list.');
   lines.push('7. **Distribution checks:** review low archetype exposure, trait landed share, capability centers, and attribute centers through generated batches before calling any of them balance problems.');
-  lines.push('8. **Collision checks:** every proposed signature must add a distinct instrument/action/medium identity and retain adequate catalog-name reachability.');
+  lines.push('8. **Collision checks:** every proposed defining ability must add a coherent instrument/delivery/effect/medium identity and retain adequate catalog-name reachability.');
   lines.push('');
   return `${lines.join('\n')}\n`;
 }

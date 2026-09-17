@@ -8,7 +8,7 @@ function LongReturnPage() {
   return (
     <div className="g-console lr-console" data-terminal="field">
       <XalianNavbar />
-      <div className="g-shell">
+      <div className="g-shell lr-brand-banner">
         <header className="g-masthead">
           <div className="g-masthead-heading">
             <p className="g-kicker">Field terminal</p>

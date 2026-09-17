@@ -1,4 +1,5 @@
 {
+  "schemaVersion": "4.0.0",
   "key": "thirstaserp",
   "name": "Thirstaserp",
   "nameOrigin": "A fusion of thirst and serpent, naming its snake-like body and the venom that drains a victim's water.",
@@ -176,15 +177,239 @@
     "rattle",
     "secretion"
   ],
-  "signatureAbility": {
-    "name": "Thirst of the Endless Sea",
-    "instrument": "jaws",
-    "action": "drain",
-    "medium": "sand",
-    "intensity": [
-      55,
-      85
+  "signature": {
+    "kind": "action",
+    "key": "thirstaserp-defining"
+  },
+  "actions": [
+    {
+      "key": "thirstaserp-defining",
+      "activation": {
+        "operation": "ongoing"
+      },
+      "delivery": {
+        "mode": "contact",
+        "approach": "stationary"
+      },
+      "targeting": {
+        "relation": "other",
+        "subjects": [
+          "creature",
+          "object"
+        ]
+      },
+      "effects": [
+        {
+          "kind": "transfer",
+          "from": "target",
+          "to": "self",
+          "resource": "water",
+          "recipient": "target",
+          "emphasis": "primary",
+          "onset": "instant",
+          "persistence": "sustained",
+          "likelihood": "consistent"
+        }
+      ],
+      "description": "It buries its fangs and drains the water out of what it has bitten.",
+      "name": "Thirst of the Endless Sea",
+      "instrument": "jaws",
+      "medium": "sand",
+      "intensity": [
+        55,
+        85
+      ],
+      "timing": {
+        "preparation": "brief",
+        "recovery": "brief"
+      },
+      "spatial": {
+        "selectivity": "selective",
+        "range": "contact"
+      }
+    }
+  ],
+  "passives": [],
+  "actionPool": {
+    "count": [
+      2,
+      3
     ],
-    "description": "It buries its fangs and drains the water out of what it has bitten."
+    "sets": [
+      {
+        "key": "default",
+        "weight": 1,
+        "options": [
+          {
+            "key": "jaws-strike",
+            "pattern": "strike",
+            "instrument": "jaws",
+            "media": [
+              "sand",
+              "water",
+              "rock",
+              "ghost"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "jaws-crush",
+            "pattern": "crush",
+            "instrument": "jaws",
+            "media": [
+              "sand",
+              "water",
+              "rock",
+              "ghost"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "jaws-rake",
+            "pattern": "rake",
+            "instrument": "jaws",
+            "media": [
+              "sand",
+              "water",
+              "rock",
+              "ghost"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "jaws-drain",
+            "pattern": "drain",
+            "instrument": "jaws",
+            "media": [
+              "sand",
+              "water",
+              "rock",
+              "ghost"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "jaws-snare",
+            "pattern": "snare",
+            "instrument": "jaws",
+            "media": [
+              "sand",
+              "water",
+              "rock",
+              "ghost"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "rattle-ward",
+            "pattern": "ward",
+            "instrument": "rattle",
+            "media": [
+              "sand",
+              "water",
+              "rock",
+              "ghost"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "rattle-terrorize",
+            "pattern": "terrorize",
+            "instrument": "rattle",
+            "media": [
+              "sand",
+              "water",
+              "rock",
+              "ghost"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "secretion-spray",
+            "pattern": "spray",
+            "instrument": "secretion",
+            "media": [
+              "sand",
+              "water",
+              "rock",
+              "ghost"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "secretion-cloud",
+            "pattern": "cloud",
+            "instrument": "secretion",
+            "media": [
+              "sand",
+              "water",
+              "rock",
+              "ghost"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "secretion-burst",
+            "pattern": "burst",
+            "instrument": "secretion",
+            "media": [
+              "sand",
+              "water",
+              "rock",
+              "ghost"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "secretion-drain",
+            "pattern": "drain",
+            "instrument": "secretion",
+            "media": [
+              "sand",
+              "water",
+              "rock",
+              "ghost"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "secretion-snare",
+            "pattern": "snare",
+            "instrument": "secretion",
+            "media": [
+              "sand",
+              "water",
+              "rock",
+              "ghost"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "secretion-ward",
+            "pattern": "ward",
+            "instrument": "secretion",
+            "media": [
+              "sand",
+              "water",
+              "rock",
+              "ghost"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "secretion-mend",
+            "pattern": "mend",
+            "instrument": "secretion",
+            "media": [
+              "sand",
+              "water",
+              "rock",
+              "ghost"
+            ],
+            "weight": 1
+          }
+        ]
+      }
+    ]
   }
 }

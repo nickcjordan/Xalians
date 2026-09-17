@@ -1,6 +1,8 @@
+import {recordCapabilities, recordActions, recordPassives, type DisplayAbility} from '@xalians/content/ability-compatibility';
+import { isSignatureAbility } from '@xalians/content/ability-compatibility';
 import * as React from 'react';
 import { Link } from 'react-router';
-import type { XalianRecord } from '@xalians/content/schema';
+import type { StoredXalianRecord as XalianRecord } from '@xalians/content/schema';
 import { getSpeciesTemplate, speciesDisplayName } from '@xalians/rules/generator';
 import { gradeWithBundledCalibration } from '@xalians/rules/generator/grade';
 
@@ -59,26 +61,30 @@ function bodyValue(value: React.ReactNode) {
 	return <span className="font-body normal-case tracking-normal text-ink">{value}</span>;
 }
 
-function Ability({ ability }: { ability: XalianRecord['abilities'][number] }) {
+function Ability({ ability }: { ability: DisplayAbility }) {
 	const instrument = instrumentTerm(ability.instrument);
-	const action = actionTerm(ability.action);
+	const action = 'effects' in ability ? { name: ability.effects.map(e => e.kind === 'status' ? e.status : e.kind === 'remove' && 'methods' in e ? `removal (${e.methods.join(', ')})` : e.kind).join(', '), nature: ability.description } : actionTerm(ability.action);
 	const medium = elementTerm(ability.medium);
 	return (
 		<li className="border-b border-edge py-4 first:pt-0 last:border-b-0 last:pb-0">
 			<div className="flex flex-wrap items-baseline gap-x-3 gap-y-2">
 				<h4 className="type-subhead m-0">{ability.name}</h4>
-				{ability.signature && <Badge variant="ok">Signature</Badge>}
+				{isSignatureAbility(ability) && <Badge variant="ok">Signature</Badge>}
 				<span className="type-data ml-auto text-small text-ink-2" title={`Intensity ${ability.intensity} of 100`}>
 					{intensityBand(ability.intensity)} <span className="text-ink-3">{ability.intensity}</span>
 				</span>
 			</div>
 			<p className="mt-2 mb-0 font-body text-small text-ink-2">
+				{'delivery' in ability && <>{('operation' in ability.activation ? ability.activation.operation : ability.activation.mode)} · {ability.delivery.mode}: </>}
 				<span title={action.nature}>{action.name}</span>
 				{' with its '}
 				<span title={instrument.nature}>{instrument.name.toLowerCase()}</span>
 				{', through '}
 				<span title={medium.nature}>{medium.name.toLowerCase()}</span>.
 			</p>
+			{'spatial' in ability && <p className="mt-2 mb-0 font-body text-small text-ink-2">
+				{[ability.spatial.range && `Range: ${ability.spatial.range}`, ability.spatial.area && `Area: ${ability.spatial.area.extent} ${ability.spatial.area.shape}`, ability.timing && `Preparation: ${ability.timing.preparation}; recovery: ${ability.timing.recovery}`].filter(Boolean).join(' · ')}
+			</p>}
 			{ability.description ? <p className="measure mt-2 mb-0 font-body text-body text-ink">{ability.description}</p> : null}
 		</li>
 	);
@@ -120,7 +126,7 @@ function RecordView({ record, kicker = 'Record', recordLink }: RecordViewProps) 
 	const strongestCapability = CAPABILITY_ORDER
 		.map((key) => ({ key, value: physiology.capabilities[key as keyof typeof physiology.capabilities] }))
 		.sort((a, b) => b.value - a.value)[0];
-	const signatureAbility = record.abilities.find((ability) => ability.signature) || record.abilities[0];
+	const signatureAbility = recordCapabilities(record).find((ability) => isSignatureAbility(ability));
 	const distinction = template ? gradeWithBundledCalibration(record, template).percentile : null;
 	const roundedDistinction = distinction == null ? null : Math.round(distinction);
 
@@ -374,15 +380,16 @@ function RecordView({ record, kicker = 'Record', recordLink }: RecordViewProps) 
 				</p>
 			</Layer>
 
-			<Layer title="Abilities">
+			<Layer title="Actions">
 				<Card variant="panel">
 					<ul className="m-0 flex list-none flex-col p-0">
-						{record.abilities.map((ability) => <Ability key={ability.name} ability={ability} />)}
+						{recordActions(record).map((ability) => <Ability key={ability.name} ability={ability} />)}
 					</ul>
 				</Card>
 			</Layer>
 
-			<Layer title="Temperament">
+			{recordPassives(record).length > 0 && <Layer title="Passive effects"><Card variant="panel"><ul className="m-0 list-none p-0">{recordPassives(record).map(ability => <Ability key={ability.name} ability={ability} />)}</ul></Card></Layer>}
+      <Layer title="Temperament">
 				<Card variant="panel" className="max-w-3xl p-4 md:p-6">
 					{TEMPERAMENT_ORDER.map((key) => {
 						const term = temperamentTerm(key);

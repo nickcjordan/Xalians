@@ -1,5 +1,5 @@
 import * as React from 'react';
-import type { TradeOffer, XalianRecord } from '@xalians/content/schema';
+import type { TradeOffer, StoredXalianRecord as XalianRecord } from '@xalians/content/schema';
 import { speciesDisplayName } from '@xalians/rules/generator';
 import { ArrowRightLeft, Copy } from 'lucide-react';
 import { Link } from 'react-router';

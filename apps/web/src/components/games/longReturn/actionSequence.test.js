@@ -21,6 +21,18 @@ test('encounter sequence reveals the native before returning control', () => {
   expect(events[1].message).toContain('Xylum');
 });
 
+test('one-use expenditure follows the actual ability action and remains explicit', () => {
+  const events = buildActionSequence({ type: 'crossing', lead: creature('lead','Chromocat'), method: { label:'Corona Line — Cut a path', ability:{name:'Corona Line',instrument:'light-organs'} }, result:{ abilityId:'beam', unseenHazards:[], crewChanges:[], instabilityChange:{added:0},salvage:0,impactLabel:'Done' } });
+  expect(events.map(event=>event.kind)).toEqual(['move','ability','complete']);
+  expect(events[0].message).toContain('light organs');
+  expect(events[1].message).toContain('rest of the expedition');
+});
+
+test('a costly support intervention is visible even when the crew still forces passage', () => {
+  const events=buildActionSequence({type:'crossing',lead:creature('lead','Graviclaw'),support:creature('support','Hippochamp'),method:{label:'Climb'},result:{supportStrain:1,supportHelp:null,unseenHazards:[],crewChanges:[],instabilityChange:{added:0},salvage:0,impactLabel:'Forced passage'}});
+  expect(events[1]).toMatchObject({kind:'support',actorId:'support'});
+});
+
 test('credits crew support and a field companion as separate performers', () => {
   const lead = creature('lead', 'Chromocat');
   const support = creature('support', 'Hippochamp');

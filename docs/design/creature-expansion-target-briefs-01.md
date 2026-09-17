@@ -4,19 +4,19 @@
 
 These are proposed design targets, not creature concepts and not ratified species. They identify what a future creature should accomplish before it receives a name, complete anatomy, appearance, measurements, prose, or a finalized ability.
 
-Target 1 was completed by Sonalloy, ratified as species 00031 on 2026-09-11. Target 2 is now the active brief; its current-routing direction was revised after review to exclude entanglement and external storms as moveset prerequisites.
+Target 1 was completed by Sonalloy, ratified as species 00031 on 2026-09-11. Target 2 was completed by Shuntara, ratified as species 00032 on 2026-09-15 after its current-routing direction was revised to exclude entanglement and external storms as moveset prerequisites. Target 3 is now the active brief.
 
 The ranking applies the [expansion framework](./xalian-creature-expansion-framework.md) to the current [coverage ledger](./CREATURE-EXPANSION-COVERAGE.md). It favors a coherent cluster of needs over the raw number of empty registry cells.
 
 ## Recommended sequence
 
-| Rank | Target | Primary reason | Coherent coverage gain | Main risk |
-| --- | --- | --- | --- | --- |
-| 1 | Veridium / Metal | Metal has only one species | Primary metal body, enduring lifespan, restorative identity, high manipulation | Turning material into automatic armor or making a machine instead of a creature |
-| 2 | Zolton / Electric | Electric has only one species | Non-storage electrical identity, protective routing, possible canyon-navigation sense | Repeating Voltish with a different silhouette or making ambient lightning a prerequisite |
-| 3 | Poseidas / Water | The deep-ocean lane is absent | Piscine body plan, echolocation, pressure specialization, unused crush signature | Becoming a generic Earth fish or duplicating Newtapede's underwater control |
+| Rank | Target | Status | Primary reason | Coherent coverage gain | Main risk |
+| --- | --- | --- | --- | --- | --- |
+| 1 | Veridium / Metal | Completed by Sonalloy | Metal had only one species | Primary metal body, enduring lifespan, restorative identity, high manipulation | Turning material into automatic armor or making a machine instead of a creature |
+| 2 | Zolton / Electric | Completed by Shuntara | Electric had only one species | Non-storage electrical identity, protective routing, grounded multiped silhouette | Repeating Voltish with a different silhouette or making ambient lightning a prerequisite |
+| 3 | Poseidas / Water | Active | The deep-ocean lane is absent | Piscine body plan, echolocation, pressure specialization, unused crush signature | Becoming a generic Earth fish or duplicating Newtapede's underwater control |
 
-This order is not a power ranking. It is the order in which the target briefs currently provide the most information and coverage per new species.
+This order is not a power ranking. It records the sequence in which the target briefs provided the most coherent information and coverage per new species. The coverage ledger is regenerated after ratification; the remaining structural queue is re-evaluated before another target is promoted.
 
 ## Target 1: Veridium metallurgical restorer
 

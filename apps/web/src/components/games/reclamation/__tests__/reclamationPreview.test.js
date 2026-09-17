@@ -5,8 +5,9 @@ import { buildExpeditionPool } from '@xalians/rules/expedition/roster';
 import { ROSTER_SIZE, ROLE } from '@xalians/rules/expedition/expeditionInterpretation';
 import {
 	flattenBoard, siteHoldTotal, instinctSentence, conductClause, attributeLanes,
-	ghostPlanFor, pickAttackTargetPreview, threatsFor, threatSentence, livingHold,
+	prepareWithCompanions, ghostPlanFor, pickAttackTargetPreview, threatsFor, threatSentence, livingHold,
 } from '../reclamationPreview';
+import { formatHold } from '../reclamationNarration';
 import { prepare } from '@xalians/rules/expedition/creatureOnTable';
 
 const SEED = 'preview-test';
@@ -140,11 +141,12 @@ describe('ghostPlanFor', () => {
 		if (plan.targetRecordId) {
 			// the number printed is the engine's own arithmetic, not a second copy of it
 			const target = flattenBoard(view).find((u) => u.recordId === plan.targetRecordId);
-			const prepared = prepare(striker, site, site.world, view.players.A.sentCount, { rules: view.rules });
+			// Include the same companion/bolster context as the displayed deployment.
+			const prepared = prepareWithCompanions(view, striker, site, view.players.A.sentCount, 'A', striker.id);
 			const amount = attackPowerAgainst(
 				{ rules: view.rules }, { record: striker }, prepared, { record: target.record },
 			);
-			const expected = amount >= livingHold(target) ? 'downs' : `takes ${amount}`;
+			const expected = amount >= livingHold(target) ? 'downs' : `takes ${formatHold(amount)}`;
 			expect(plan.lines[0].startsWith(expected.replace(/\.0$/, ''))).toBe(true);
 		}
 	});

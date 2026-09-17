@@ -1,3 +1,4 @@
+import {recordCapabilities, recordActions, recordPassives, type DisplayAbility} from '@xalians/content/ability-compatibility';
 // Tier: chrome. The signed-in user's own Xalians: the registry records
 // generated under their name, as tiles that open the full record, each with a
 // release key (this is the user's own collection, so removal lives here;
@@ -10,7 +11,7 @@ import * as React from 'react';
 import { Link } from 'react-router';
 import { Hub } from 'aws-amplify/utils';
 import { Trash2 } from 'lucide-react';
-import type { TradeOffer, XalianRecord } from '@xalians/content/schema';
+import type { TradeOffer, StoredXalianRecord as XalianRecord } from '@xalians/content/schema';
 import { speciesDisplayName } from '@xalians/rules/generator';
 
 import XalianNavbar from '../components/navbar';
@@ -95,7 +96,7 @@ function UserAccountPage() {
 				archetypeTerm(record.archetype.key).name,
 				...Object.keys(record.element.affinities).map((key) => elementTerm(key).name),
 				...record.traits.map((key) => traitTerm(key).name),
-				...record.abilities.map((ability) => ability.name),
+				...recordCapabilities(record).map((ability) => ability.name),
 			]
 				.join(' ')
 				.toLowerCase();

@@ -1,10 +1,32 @@
 # Xalians Game Experience Quality Guide
 
 Status: Living standard  
-Last updated: 2026-09-10  
+Last updated: 2026-09-15
 First reference implementation: The Long Return
 
 ## Why this guide exists
+
+### Essential labels are not decorative microtype — 2026-09-15
+
+Resource identities, costs, current-step labels and outcomes must remain readable without zooming. The Long Return's technical baseline is 12px for compact essential labels and 14px for action instructions; this is a project floor, not a claim of accessibility certification or player acceptance. Prefer compact body type over shrinking monospaced names. Verify names do not truncate, critical warnings wrap, and larger labels do not hide commitment controls. The responsive replay checks rendered sizes and clipping; visual review must still judge hierarchy and comfort.
+
+### Narrative, not explanatory clutter — 2026-09-13
+
+Player-approved direction: the adventure is worth reading; the interface should not require decoding. Introduce unfamiliar objects through the crew's physical experience before naming their mechanical significance. A crossing scene should connect setting, chosen action, interruption and arrival. Keep numeric accounting in the adjacent receipt and calculations in a deliberate disclosure. Do not repeat the same event as a story paragraph, diagnosis banner and consequence notification. Narrative must follow resolved state, respect the selected technique, and neither reveal untaken routes nor invent injuries, losses or rewards. Implementation remains a trial pending player validation; longer readable prose is not a license for unrelated explanation.
+
+### Current Long Return trials — 2026-09-11
+
+These patterns have implementation/browser evidence, **not player acceptance**. Track their acceptance in `LONG_RETURN_LIVE_BACKLOG.md` under the active full-mission goal.
+
+- **Exchange continuity:** repair previews and receipts share the same resource comparison, including the worker's effort. Commitment settles the preview instead of replacing it with unrelated prose.
+- **One decision surface:** opening field repairs replaces the arrival story temporarily. Explicit back/keep-haul controls restore the result without spending; only the named spend action commits. Unaffordable choices remain available through a disclosure.
+- **Event versus current state:** a crossing receipt is historical. Repairing the crew must not make that receipt appear to describe current reserves. Label historical state, retain the settled repair exchange, and keep current reserves in the mission header.
+- **Concrete companion benefit:** show a single automatic assist and the energy it preserves. When a forecast includes the saving, attribute it beside that cost, not only in analysis.
+- **Stakes before commitment:** optional depth names the current salvage exposed to forced extraction and the possible additional haul. The preview and ending use the same settlement calculation. Do not style the risky choice as recommended merely because it advances the game.
+- **Compact receipts, complete explanations:** keep actual losses, gains, remaining reserves and spent tools visible. Put repeated source arithmetic in a deliberate disclosure without hiding the causal story. Do not depict unbounded salvage as a partly filled capacity bar.
+- **Replacement is not unavailability:** a full roster can expose a reversible replacement view instead of disabling all alternatives. Keep the incoming creature visible, name the outgoing choice, offer cancellation, and mutate the roster only at the replacement click. Hide unrelated launch controls during that choice.
+
+Passing tests establishes behavior, not comprehension. Keep first-time understanding and enjoyment open until supported by player evidence.
 
 This is the shared vocabulary and quality bar for Xalians games. It records what terms mean, which design decisions we have made, how to judge whether an experience is working, and which questions remain open.
 
@@ -64,6 +86,28 @@ Every principle or feature in this guide should use one status:
 
 ## Established standards
 
+### Trial: composition before notifications
+
+One view tells one story. Use a scene or character as its visual anchor, group related consequences into one receipt, and place the next decision at the end of that composition. Do not build the default view by stacking independently framed notices.
+
+- A crossing result pairs arrival/story with the resource receipt; future consequences belong with the story and repairs with the next decision.
+- A scout report pairs its source creature with route intelligence. An encounter pairs the native situation with comparable responses; its outcome identifies the creature and lasting effects.
+- Use borders to separate groups, not to frame every sentence. Preserve visible selection and focus treatments on actual controls.
+- Do not repeat a hazard as narrative, warning banner, and analysis heading. Keep the explanation once, with deeper causes available on demand.
+- Results show settled resources and the amount spent, not a perpetually blinking preview of something that already happened.
+- Informational dialogs and advanced analysis may be dense. That does not justify a notification stack in Simple mode.
+- Apply this to setup, scouting, reporting, route/crew choice, encounters, arrival, recovery, and extraction. Validate each composition visually, not just whether its controls pass tests.
+
+### Trial: one shared route comparison surface
+
+Route choices now share one board rather than independent cards: routes across the top, energy and stability costs in common rows, and salvage beneath a dividing line. Selection highlights the whole route column. This makes the exchange visible without requiring the player to remember and translate two separate summaries.
+
+- Use the same units and icon sizes across alternatives.
+- Put uncertainty in the affected cost cell; an unknown total is not zero and has no invented range or probability.
+- Keep crew formulas and causes under “Why these costs?”; do not replace the comparison with explanatory paragraphs.
+- Preserve selection → review → commitment and a visible way back.
+- Validation still needed: can a new player describe the trade-off at a glance, before expanding analysis?
+
 ### 1. One dominant decision at a time
 
 Simple mode presents one current decision, its viable options, and one obvious next action. Information unrelated to that decision is hidden, collapsed, or moved to a secondary surface.
@@ -76,6 +120,10 @@ Pass conditions:
 - Metrics that do not change are omitted unless their absence could mislead.
 
 ### 2. Selection and commitment are different actions
+
+**Flow simplification trial (2026-09-10):** selection must not masquerade as navigation or disclosure. Scout cards keep a stable compact summary when selected. Route selection keeps the comparison mounted and retains keyboard focus; its suggested crew and one “Cross now” action share the same screen. Custom crew building is optional, not a mandatory approval gate. Skipping scouting goes directly to crossing choices. Encounter commit buttons name the selected response. Real scout reports, encounter outcomes, and crossing results remain deliberate stopping points because something has actually happened.
+
+Test for redundant gates: if the next screen only repeats the selected option and offers another approval button, merge it into the decision screen. Buttons that reveal details must be separate from selection. Do not auto-scroll or replay a page transition when only the selected option changes.
 
 Selection is reversible preparation. Commitment begins the fictional action and applies consequences. The interface must never make the player guess which kind of click they are making.
 
@@ -332,8 +380,8 @@ Avoid “Did you understand?” People often answer yes even when their model is
 | World consequences persist into affected scenes | Trial | Coolant bypass, dormant machinery, awakened security, and recovered protocol now alter scene presentation as well as rules |
 | A restrained procedural sound language accompanies state changes | Trial | Selection, commitment, travel, signal, hazard, resource loss, reward, contact, and completion have distinct cues and a persistent mute control |
 | Creature capability is expressed through motion and effects | Trial | Crossing tools and scout postures now use different behavioral animation vocabularies while preserving canonical registry art |
-| Simple mode is a staged mission workspace, not a scrolling dossier | Trial | A persistent scene header and six-step rail keep the current decision, resources, and next action in one viewport; full-detail modes remain unchanged |
-| Choosing a scout and deploying that scout are separate actions | Trial | Compact candidates support comparison, while a fixed action bar makes the irreversible action explicit and keeps “stay together” visible |
+| Simple mode is a staged mission workspace, not a scrolling dossier | Trial | A persistent scene header and four-stage rail keep scout, report, crossing and result legible; desktop route comparison and commitment share one workspace, while mobile uses natural flow |
+| Choosing a scout and deploying that scout are separate actions | Trial | Compact candidates support comparison, while a local action row makes deployment explicit and keeps “stay together” available without covering content |
 | Continuous motion is the default; stepped motion is reserved for tiny ambient signals | Established | Large stepped transitions and simultaneous smooth scrolling read as jitter instead of retro technology; causal beats remain staged without dropping visual frames |
 | Encounter responses show action → immediate cost → aftermath before prose | Trial | A live Scene 2 pass made assist, report, and confront readable as different strategic exchanges; the pattern still needs validation across other archetypes |
 | Encounter response selection is reversible until a separate confirmation | Established | Matches scout and route grammar and prevents a comparison click from performing an irreversible field action |
@@ -343,6 +391,14 @@ Avoid “Did you understand?” People often answer yes even when their model is
 
 ## Known gaps
 
+### Creature identity and opportunity-cost trial
+
+The selected crossing plan uses one compact source → action cue, derived from the actual capability, trait or ability instrument/medium. Source-strength words describe the input, never a success probability. Optional technique comparison exposes reusable movement versus one-use ability expenditure without requiring the detailed crew editor. A spent ability must appear in both the committed sequence and persistent receipt; it is a mission resource, not just a decorative move name.
+
+When either compared route uses a one-use tool, show that opportunity cost in the same shared comparison as energy, stability and salvage. Recommendation badges must not erase different future consequences or different consumable abilities; an unresolved candidate is not provably superior merely because its known costs are lower. Show no badge in those cases, without adding a “no recommendation” banner.
+
+Foreground terrain and performer trajectories should agree with the chosen route/method. Swimming, flight, climbing, burrowing, bursts and phasing use different motion; tool methods remain planted while their effects operate. Beat changes must retain the performer's endpoint, not snap it back. Native withdrawal leaves the native present. See `LONG_RETURN_DECISION_MATRIX.md` for the scene arc, interpretation boundaries and coverage evidence. These are trials pending human validation, not proof that the game is fun.
+
 - Route paths are distinct by lane and action, but later rooms still need human validation for spatial legibility.
 - Canonical silhouettes now perform distinct motions, but authored pose variants remain a future art direction rather than a requirement.
 - Procedural sound cues are implemented as a trial; loudness, repetition, and emotional fit need human listening feedback.
@@ -351,7 +407,7 @@ Avoid “Did you understand?” People often answer yes even when their model is
 - Mission difficulty modes currently change explanation depth, not the underlying rules; terminology should continue to distinguish guidance from difficulty.
 - Loading, missing-art, and low-performance fallback behavior needs an intentional visual design.
 - The new Simple-mode density rule needs fresh-player validation across all seven scenes, especially encounters with several meaningful consequences.
-- The staged Simple workspace needs unfamiliar-player validation at laptop and phone sizes, including keyboard focus order and whether the six-step vocabulary matches the player's mental model.
+- The staged Simple workspace needs unfamiliar-player validation at laptop and phone sizes, including keyboard focus order and whether the four-stage vocabulary matches the player's mental model.
 
 ## How to update this guide
 
@@ -377,5 +433,12 @@ Move a Trial to Established only when evidence shows that players understand and
 - `docs/LONG_RETURN_EXPERIENCE.md` — implementation history, balance hypotheses, and validation notes.
 - `docs/LONG_RETURN_ART_DIRECTION.md` — artwork system and runtime composition.
 - `docs/LONG_RETURN_GENERATION_MANIFEST.md` — exact prompts and generated environment assets.
-- `my-app/src/components/games/longReturn/sceneArt.js` — scene-to-art mapping.
-- `my-app/src/components/games/longReturn/actionSequence.js` — ordered committed-action beats.
+- `apps/web/src/components/games/longReturn/sceneArt.js` — scene-to-art mapping.
+- `apps/web/src/components/games/longReturn/actionSequence.js` — ordered committed-action beats.
+# Action-story persistence (September 14)
+
+## Approachable choices (September 15)
+
+Simple mode makes meaningful alternatives understandable rather than hiding them. Route and lead decisions occupy separate views; a visible back control preserves preparation, while Cross now alone executes it. Lead alternatives use the same sequence: physical approach, relevant strength, resource/one-use sacrifice. Raw anatomy and element provenance belong in optional analysis. Recommendations should not consume an irreplaceable tool merely to increase an already sufficient crossing score. Short directional motion communicates navigation, with reduced-motion support and focus moving to the new view.
+
+Action narration is part of the scene, not a toast notification. Reveal events cumulatively next to the artwork, retain earlier lines at full readability, and let the player pause or advance at their own pace. Never dismiss an important consequence on a timer. Skip reveals the entire account; Continue leaves it. Auto-follow must stop when the player scrolls back to read. Reduced motion reveals the complete account immediately without bypassing acknowledgement. Keep calculations in the existing result details rather than layering another recap banner over the scene.

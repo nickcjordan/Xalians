@@ -1,8 +1,21 @@
 import { CREATURES } from './longReturnData';
-import { fieldOptions, performFieldOperation } from './fieldOperations';
+import { fieldOptions, performFieldOperation, fieldWorkStory } from './fieldOperations';
 
 const crew = CREATURES.slice(0, 3);
 const state = (overrides = {}) => ({ crew, strain: { [crew[0].id]: 3 }, pressure: 5, salvage: 5, used: false, ...overrides });
+
+test('every field action has a persistent physical account tied to its performer and sacrifice', () => {
+  const options = fieldOptions(state({ commands: 1 }));
+  expect(new Set(options.map(option => option.kind))).toEqual(new Set(['recover', 'brace', 'command']));
+  options.forEach(option => {
+    const story = fieldWorkStory(option);
+    expect(story).toContain(option.creature.species);
+    expect(story).not.toMatch(/undefined|NaN/);
+    if (option.kind === 'recover') expect(story).toContain('will not be coming out as salvage');
+    if (option.kind === 'brace') expect(story).toContain('remaining strength');
+    if (option.kind === 'command') expect(story).toContain('effort as well as parts');
+  });
+});
 
 test('recovery spends loot, restores energy, and prevents a second field action', () => {
   const next = performFieldOperation(state(), `recover-${crew[0].id}`);

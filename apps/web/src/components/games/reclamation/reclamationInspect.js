@@ -1,3 +1,5 @@
+import {recordCapabilities, recordActions, recordPassives} from '@xalians/content/ability-compatibility';
+import { isSignatureAbility } from '@xalians/content/ability-compatibility';
 import React from 'react';
 import { prepare } from '@xalians/rules/expedition/creatureOnTable';
 import {
@@ -83,7 +85,7 @@ function ReclamationInspect({ record, site, frame, rules, onClose }) {
 	const facts = speciesFacts(record);
 	const traits = prepared.traitKeywords;
 	const secondary = Object.keys(record.element.affinities || {}).find((k) => k !== el);
-	const signature = (record.abilities || []).find((a) => a.signature);
+	const signature = (recordCapabilities(record) || []).find((a) => isSignatureAbility(a));
 	const finish = record.appearance && record.appearance.finish && record.appearance.finish !== 'standard' ? record.appearance.finish : null;
 
 	return (

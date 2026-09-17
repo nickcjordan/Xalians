@@ -2,7 +2,7 @@
 // userAccountPage.tsx: the same tile grid over GET /xalians?ownerId=, opening
 // the same record view, with no release control.
 import * as React from 'react';
-import type { XalianRecord } from '@xalians/content/schema';
+import type { StoredXalianRecord as XalianRecord } from '@xalians/content/schema';
 import { speciesDisplayName } from '@xalians/rules/generator';
 import { ArrowRightLeft, Copy } from 'lucide-react';
 import { Link } from 'react-router';

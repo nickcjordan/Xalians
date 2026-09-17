@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { toast } from 'sonner';
-import type { XalianRecord } from '@xalians/content/schema';
+import type { StoredXalianRecord as XalianRecord } from '@xalians/content/schema';
 import { speciesDisplayName } from '@xalians/rules/generator';
 
 import * as dbApi from '../utils/dbApi';

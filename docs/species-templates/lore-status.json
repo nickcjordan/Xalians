@@ -217,6 +217,13 @@
       "fields": "ratified",
       "traits": "ratified",
       "note": "ratified 2026-09-11 as species 00031 after completed identity, record, trait, naming, and art review"
+    },
+    "shuntara": {
+      "description": "source",
+      "appearance": "ratified",
+      "fields": "ratified",
+      "traits": "ratified",
+      "note": "ratified 2026-09-15 as species 00032 after completed identity, record, trait, naming, portable-moveset, and art review"
     }
   }
 }

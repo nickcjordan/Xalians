@@ -1,3 +1,4 @@
+import { AbilityTemplateSchema } from '@xalians/content/schema';
 import { describe, it, expect } from 'vitest';
 import { getEntries, getEntry, getWorlds, getSpeciesList } from '../index';
 import { chronicleData, registriesData, templateRecordsByKey } from '../loaders';
@@ -104,14 +105,10 @@ describe('lore integrity', () => {
 			for (const key of record.instruments) {
 				expect(instrumentKeys.has(key), `instrument ${key}`).toBe(true);
 			}
-			expect(
-				instrumentKeys.has(record.signatureAbility.instrument),
-				`signature instrument ${record.signatureAbility.instrument}`
-			).toBe(true);
-			expect(
-				registriesData.actions.some((a) => a.key === record.signatureAbility.action),
-				`signature action ${record.signatureAbility.action}`
-			).toBe(true);
+			for (const ability of record.actions) {
+				expect(AbilityTemplateSchema.safeParse(ability).success).toBe(true);
+				expect(instrumentKeys.has(ability.instrument)).toBe(true);
+			}
 
 			for (const [field, value] of Object.entries(record.physiology)) {
 				if (field === 'composition') {

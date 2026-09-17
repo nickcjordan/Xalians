@@ -742,5 +742,29 @@
       "canFly": false,
       "attackRange": "low"
     }
+  },
+  {
+    "name": "Shuntara",
+    "id": "00032",
+    "type": "Electric",
+    "planet": "Zolton",
+    "height": "25 in / 63 cm",
+    "weight": "176 lbs / 80 kg",
+    "description": "A low eight-legged creature with thick insulating hide, the Shuntara spins internally produced conductive filament from terminal spinnerets on its raised abdomen into charged lattices that brace creatures, bridge broken current routes, and turn incoming force aside without depending on a storm or conductive ground.",
+    "statRatings": {
+      "healthRating": "",
+      "standardAttackRating": "",
+      "specialAttackRating": "",
+      "standardDefenseRating": "",
+      "specialDefenseRating": "",
+      "speedRating": "",
+      "evasionRating": "",
+      "staminaRating": "",
+      "recoveryRating": ""
+    },
+    "traits": {
+      "canFly": false,
+      "attackRange": "low"
+    }
   }
 ]

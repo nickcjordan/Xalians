@@ -1,4 +1,5 @@
 {
+  "schemaVersion": "4.0.0",
   "key": "newtapede",
   "name": "Newtapede",
   "nameOrigin": "A fusion of newt and centipede, matching its amphibious body and sixteen-legged segmented form.",
@@ -180,15 +181,189 @@
     "coils",
     "body"
   ],
-  "signatureAbility": {
-    "name": "Sixteenfold Undertow",
-    "instrument": "coils",
-    "action": "snare",
-    "medium": "water",
-    "intensity": [
-      30,
-      70
+  "signature": {
+    "kind": "action",
+    "key": "newtapede-defining"
+  },
+  "actions": [
+    {
+      "key": "newtapede-defining",
+      "activation": {
+        "operation": "ongoing"
+      },
+      "delivery": {
+        "mode": "contact",
+        "approach": "stationary"
+      },
+      "targeting": {
+        "relation": "other",
+        "subjects": [
+          "creature",
+          "object"
+        ]
+      },
+      "effects": [
+        {
+          "kind": "restrain",
+          "recipient": "target",
+          "faculty": "movement",
+          "emphasis": "primary",
+          "onset": "instant",
+          "persistence": "sustained",
+          "likelihood": "consistent"
+        }
+      ],
+      "description": "The Newtapede wraps its whole segmented length around a swimmer and holds it under.",
+      "name": "Sixteenfold Undertow",
+      "instrument": "coils",
+      "medium": "water",
+      "intensity": [
+        30,
+        70
+      ],
+      "timing": {
+        "preparation": "brief",
+        "recovery": "brief"
+      },
+      "spatial": {
+        "selectivity": "selective",
+        "range": "contact"
+      }
+    }
+  ],
+  "passives": [],
+  "actionPool": {
+    "count": [
+      2,
+      3
     ],
-    "description": "The Newtapede wraps its whole segmented length around a swimmer and holds it under."
+    "sets": [
+      {
+        "key": "default",
+        "weight": 1,
+        "options": [
+          {
+            "key": "coils-crush",
+            "pattern": "crush",
+            "instrument": "coils",
+            "media": [
+              "water",
+              "ice",
+              "plant",
+              "chemical"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "coils-snare",
+            "pattern": "snare",
+            "instrument": "coils",
+            "media": [
+              "water",
+              "ice",
+              "plant",
+              "chemical"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "coils-shove",
+            "pattern": "shove",
+            "instrument": "coils",
+            "media": [
+              "water",
+              "ice",
+              "plant",
+              "chemical"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "coils-ward",
+            "pattern": "ward",
+            "instrument": "coils",
+            "media": [
+              "water",
+              "ice",
+              "plant",
+              "chemical"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "body-strike",
+            "pattern": "strike",
+            "instrument": "body",
+            "media": [
+              "water",
+              "ice",
+              "plant",
+              "chemical"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "body-crush",
+            "pattern": "crush",
+            "instrument": "body",
+            "media": [
+              "water",
+              "ice",
+              "plant",
+              "chemical"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "body-shove",
+            "pattern": "shove",
+            "instrument": "body",
+            "media": [
+              "water",
+              "ice",
+              "plant",
+              "chemical"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "body-ward",
+            "pattern": "ward",
+            "instrument": "body",
+            "media": [
+              "water",
+              "ice",
+              "plant",
+              "chemical"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "body-burst",
+            "pattern": "burst",
+            "instrument": "body",
+            "media": [
+              "water",
+              "ice",
+              "plant",
+              "chemical"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "body-terrorize",
+            "pattern": "terrorize",
+            "instrument": "body",
+            "media": [
+              "water",
+              "ice",
+              "plant",
+              "chemical"
+            ],
+            "weight": 1
+          }
+        ]
+      }
+    ]
   }
 }

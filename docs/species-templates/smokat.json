@@ -1,4 +1,5 @@
 {
+  "schemaVersion": "4.0.0",
   "key": "smokat",
   "name": "Smokat",
   "nameOrigin": "A fusion of smoke and cat, naming its feline silhouette and ability to atomize into smoke.",
@@ -172,15 +173,179 @@
     "claws",
     "jaws"
   ],
-  "signatureAbility": {
-    "name": "The Scattering Pounce",
-    "instrument": "claws",
-    "action": "ambush",
-    "medium": "ghost",
-    "intensity": [
-      35,
-      85
+  "signature": {
+    "kind": "action",
+    "key": "smokat-defining"
+  },
+  "actions": [
+    {
+      "key": "smokat-defining",
+      "activation": {
+        "operation": "discrete"
+      },
+      "delivery": {
+        "mode": "contact",
+        "approach": "closing"
+      },
+      "targeting": {
+        "relation": "other",
+        "subjects": [
+          "creature",
+          "object"
+        ]
+      },
+      "effects": [
+        {
+          "kind": "harm",
+          "recipient": "target",
+          "mechanism": "impact",
+          "emphasis": "primary",
+          "onset": "instant",
+          "persistence": "resolved",
+          "likelihood": "consistent"
+        }
+      ],
+      "description": "It comes apart into smoke mid-stride, crosses the ground as haze, and is whole again with its claws already closing.",
+      "name": "The Scattering Pounce",
+      "instrument": "claws",
+      "medium": "ghost",
+      "intensity": [
+        35,
+        85
+      ],
+      "timing": {
+        "preparation": "brief",
+        "recovery": "brief"
+      },
+      "spatial": {
+        "selectivity": "selective",
+        "range": "contact"
+      }
+    }
+  ],
+  "passives": [],
+  "actionPool": {
+    "count": [
+      2,
+      3
     ],
-    "description": "It comes apart into smoke mid-stride, crosses the ground as haze, and is whole again with its claws already closing."
+    "sets": [
+      {
+        "key": "default",
+        "weight": 1,
+        "options": [
+          {
+            "key": "claws-strike",
+            "pattern": "strike",
+            "instrument": "claws",
+            "media": [
+              "ghost",
+              "dark",
+              "psychic"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "claws-rake",
+            "pattern": "rake",
+            "instrument": "claws",
+            "media": [
+              "ghost",
+              "dark",
+              "psychic"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "claws-crush",
+            "pattern": "crush",
+            "instrument": "claws",
+            "media": [
+              "ghost",
+              "dark",
+              "psychic"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "claws-shove",
+            "pattern": "shove",
+            "instrument": "claws",
+            "media": [
+              "ghost",
+              "dark",
+              "psychic"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "claws-ambush",
+            "pattern": "ambush",
+            "instrument": "claws",
+            "media": [
+              "ghost",
+              "dark",
+              "psychic"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "jaws-strike",
+            "pattern": "strike",
+            "instrument": "jaws",
+            "media": [
+              "ghost",
+              "dark",
+              "psychic"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "jaws-crush",
+            "pattern": "crush",
+            "instrument": "jaws",
+            "media": [
+              "ghost",
+              "dark",
+              "psychic"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "jaws-rake",
+            "pattern": "rake",
+            "instrument": "jaws",
+            "media": [
+              "ghost",
+              "dark",
+              "psychic"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "jaws-drain",
+            "pattern": "drain",
+            "instrument": "jaws",
+            "media": [
+              "ghost",
+              "dark",
+              "psychic"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "jaws-snare",
+            "pattern": "snare",
+            "instrument": "jaws",
+            "media": [
+              "ghost",
+              "dark",
+              "psychic"
+            ],
+            "weight": 1
+          }
+        ]
+      }
+    ]
   }
 }

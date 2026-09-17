@@ -3,8 +3,8 @@
 // itself. A template is the fixed facts + rollable bands a species defines; an individual
 // XalianRecord (see record.ts) is one roll within these bands.
 import { z } from 'zod';
+import { AbilityPoolSchema, ActionTemplateSchema, PassiveTemplateSchema, SignatureSchema, checkSignature } from './ability.ts';
 import {
-  ActionKeySchema,
   AnatomyKeySchema,
   ArchetypeKeySchema,
   BodyPlanKeySchema,
@@ -125,16 +125,8 @@ const TraitPoolSchema = z
     }
   });
 
-const SignatureAbilityTemplateSchema = z.object({
-  name: z.string().min(1),
-  instrument: InstrumentKeySchema,
-  action: ActionKeySchema,
-  medium: ElementKeySchema,
-  intensity: range(z.number().min(1).max(100)),
-  description: z.string().min(1),
-});
-
-export const SpeciesTemplateSchema = z.object({
+export const SpeciesTemplateSchema = z.strictObject({
+  schemaVersion: z.literal('4.0.0'),
   key: z.string().min(1),
   name: z.string().min(1),
   nameOrigin: z.string().min(1),
@@ -163,12 +155,13 @@ export const SpeciesTemplateSchema = z.object({
     pool: TraitPoolSchema,
   }),
   instruments: z.array(InstrumentKeySchema).min(1),
-  signatureAbility: SignatureAbilityTemplateSchema,
-  // A species may declare an instrument as a conduit for an element, unlocking that
-  // element's medium row of actions through it (ratified 2026-09-02; see
-  // xalian-creature-system-redesign.md:321). Optional: most species declare none.
+  signature: SignatureSchema,
+  actions: z.array(ActionTemplateSchema),
+  passives: z.array(PassiveTemplateSchema),
+  actionPool: AbilityPoolSchema,
+  // Source-supported elemental channels; permissions are explicit in abilityPool.
   conduits: z.partialRecord(InstrumentKeySchema, ElementKeySchema).optional(),
-});
+}).superRefine(checkSignature);
 
 export const SpeciesRecordsBundleSchema = z.object({
   version: z.string().min(1),

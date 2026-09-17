@@ -8,6 +8,7 @@
     "./package.json": "./package.json",
     "./mock/*.json": "./json/mock/*.json",
     "./*.json": "./json/*.json",
+    "./ability-compatibility": "./src/abilityCompatibility.ts",
     "./schema": "./src/schema/index.ts"
   },
   "scripts": {

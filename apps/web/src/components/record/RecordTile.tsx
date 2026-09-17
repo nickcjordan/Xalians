@@ -1,5 +1,7 @@
+import {recordCapabilities, recordActions, recordPassives, type DisplayAbility} from '@xalians/content/ability-compatibility';
+import { isSignatureAbility } from '@xalians/content/ability-compatibility';
 import * as React from 'react';
-import type { XalianRecord } from '@xalians/content/schema';
+import type { StoredXalianRecord as XalianRecord } from '@xalians/content/schema';
 import { speciesDisplayName } from '@xalians/rules/generator';
 import { Check, Plus } from 'lucide-react';
 
@@ -34,7 +36,7 @@ function RecordTile({ record, onOpen, action, comparison }: RecordTileProps) {
 	const name = speciesDisplayName(record.species);
 	const finish = record.appearance.finish;
 	const archetype = archetypeTerm(record.archetype.key).name;
-	const signatureAbility = record.abilities.find((ability) => ability.signature) || record.abilities[0];
+	const signatureAbility = recordCapabilities(record).find((ability) => isSignatureAbility(ability)) || recordCapabilities(record)[0];
 
 	return (
 		<div className={`el-${element} relative`}>

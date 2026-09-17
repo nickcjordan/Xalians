@@ -1,0 +1,306 @@
+{
+  "key": "shuntara",
+  "name": "Shuntara",
+  "nameOrigin": "Built from shunt, an alternate path used to divert current around part of a circuit, with a softened ending that turns the functional root into a creature name.",
+  "element": "electric",
+  "homePlanet": "zolton",
+  "generatorPlanets": [
+    "zolton"
+  ],
+  "lore": {
+    "description": "A low eight-legged creature with thick insulating hide, the Shuntara spins internally produced conductive filament from terminal spinnerets on its raised abdomen into charged lattices that brace creatures, bridge broken current routes, and turn incoming force aside without depending on a storm or conductive ground.",
+    "appearance": [
+      "A low shield-shaped body carried by eight plainly separated jointed legs",
+      "Matte black insulating hide surrounding a white face and ventral field",
+      "A blunt wedge-shaped head set close to the ground beneath a three-lobed swept crest",
+      "Two simple dark eyes spaced across the white front of the head",
+      "Single-piece rounded gripping pads that brace against metal, stone, and ordinary ground",
+      "A raised pointed abdomen marked by two pale angular current paths",
+      "Three terminal spinneret openings at the abdomen tip release filament that brightens under current"
+    ],
+    "origin": "The Zolton Generator produced Shuntaras to spin temporary bypass networks across broken conductors and shield workers and structures while dangerous current was redirected around a damaged section.",
+    "habitat": "They favor canyon walls, spire bases, and abandoned grid routes where broken conductors provide both climbing paths and useful work, but they avoid the planet's black-lightning dead zones.",
+    "feeding": "They consume the organic matter available in sheltered canyons and take mineral salts from conductor surfaces, using both to replenish the conductive filament stored within the body.",
+    "behavior": "A Shuntara tests a route through its feet, anchors its body, raises its abdomen, and runs filament from its terminal spinnerets between stable points until the strands form a closed lattice. When something nearby is threatened, it casts and tensions the same filament around the target so an impact is caught across many paths instead of one.",
+    "company": "Shuntaras usually maintain their own spans. Several may tolerate one another around a major break, but each builds and powers a separate lattice rather than acting as a synchronized group."
+  },
+  "physiology": {
+    "corporeality": "corporeal",
+    "composition": {
+      "primary": "flesh"
+    },
+    "bodyPlan": "multiped",
+    "anatomy": [
+      "jaws",
+      "spinnerets",
+      "hide",
+      "crest"
+    ],
+    "covering": "hide",
+    "size": {
+      "heightCm": [
+        50,
+        75
+      ],
+      "weightKg": [
+        55,
+        105
+      ]
+    },
+    "lifespan": "standard",
+    "genome": {
+      "chirality": "rolled"
+    },
+    "diet": "omnivore",
+    "communication": [
+      "vibration",
+      "display"
+    ],
+    "breathes": [
+      "gas"
+    ],
+    "environmentalTolerance": {
+      "ambientMedia": [
+        "gas"
+      ],
+      "temperatureC": {
+        "min": -50,
+        "max": 30
+      }
+    },
+    "capabilities": {
+      "flight": [
+        0,
+        0
+      ],
+      "swim": [
+        0,
+        8
+      ],
+      "burrow": [
+        12,
+        32
+      ],
+      "climb": [
+        65,
+        90
+      ],
+      "sprint": [
+        35,
+        60
+      ],
+      "leap": [
+        5,
+        18
+      ],
+      "manipulation": [
+        20,
+        40
+      ]
+    },
+    "senses": {
+      "sight": [
+        35,
+        58
+      ],
+      "hearing": [
+        50,
+        72
+      ],
+      "smell": [
+        15,
+        35
+      ],
+      "special": [
+        "electroreception"
+      ]
+    }
+  },
+  "archetypeWeights": {
+    "bulwark": 40,
+    "stalwart": 30,
+    "skirmisher": 18,
+    "seeker": 12
+  },
+  "attributes": {
+    "strength": [
+      42,
+      62
+    ],
+    "vitality": [
+      52,
+      74
+    ],
+    "endurance": [
+      60,
+      82
+    ],
+    "agility": [
+      38,
+      60
+    ],
+    "reflex": [
+      55,
+      78
+    ],
+    "intelligence": [
+      46,
+      68
+    ],
+    "willpower": [
+      48,
+      70
+    ],
+    "instinct": [
+      58,
+      80
+    ],
+    "charisma": [
+      24,
+      44
+    ],
+    "resilience": [
+      58,
+      82
+    ]
+  },
+  "traits": {
+    "pool": {
+      "insulated": 100,
+      "protective": 100,
+      "anchored": 45,
+      "perceptive": 35,
+      "hardened": 20
+    }
+  },
+  "instruments": [
+    "spinnerets",
+    "hide"
+  ],
+  "schemaVersion": "4.0.0",
+  "signature": {
+    "kind": "action",
+    "key": "shuntara-defining"
+  },
+  "actions": [
+    {
+      "key": "shuntara-defining",
+      "activation": {
+        "operation": "ongoing"
+      },
+      "delivery": {
+        "mode": "contact",
+        "approach": "stationary"
+      },
+      "targeting": {
+        "relation": "self-or-other",
+        "subjects": [
+          "creature"
+        ]
+      },
+      "effects": [
+        {
+          "kind": "protect",
+          "recipient": "target",
+          "method": "barrier",
+          "against": "harm",
+          "emphasis": "primary",
+          "onset": "instant",
+          "persistence": "sustained",
+          "likelihood": "consistent"
+        }
+      ],
+      "description": "The Shuntara circles itself or another creature with a taut filament lattice that catches an incoming force and spreads the load across many paths while its working current closes through the creature's insulated body.",
+      "name": "Arcweave",
+      "instrument": "spinnerets",
+      "medium": "electric",
+      "intensity": [
+        35,
+        80
+      ],
+      "timing": {
+        "preparation": "brief",
+        "recovery": "brief"
+      },
+      "spatial": {
+        "range": "contact",
+        "selectivity": "selective"
+      }
+    }
+  ],
+  "passives": [],
+  "actionPool": {
+    "count": [
+      2,
+      3
+    ],
+    "sets": [
+      {
+        "key": "default",
+        "weight": 1,
+        "options": [
+          {
+            "key": "spinnerets-snare",
+            "pattern": "snare",
+            "instrument": "spinnerets",
+            "media": [
+              "electric",
+              "light",
+              "air",
+              "metal"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "spinnerets-ward",
+            "pattern": "ward",
+            "instrument": "spinnerets",
+            "media": [
+              "electric",
+              "light",
+              "air",
+              "metal"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "spinnerets-hurl",
+            "pattern": "hurl",
+            "instrument": "spinnerets",
+            "media": [
+              "electric",
+              "light",
+              "air",
+              "metal"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "hide-ward",
+            "pattern": "ward",
+            "instrument": "hide",
+            "media": [
+              "electric",
+              "light",
+              "air",
+              "metal"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "hide-shove",
+            "pattern": "shove",
+            "instrument": "hide",
+            "media": [
+              "electric",
+              "light",
+              "air",
+              "metal"
+            ],
+            "weight": 1
+          }
+        ]
+      }
+    ]
+  }
+}

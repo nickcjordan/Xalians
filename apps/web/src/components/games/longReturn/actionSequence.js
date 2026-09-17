@@ -9,8 +9,12 @@ export function buildActionSequence(action) {
     ];
   }
 
-  const events = [beat('move', `${action.lead.species} uses ${action.method.label.toLowerCase()}.`, { actorId: action.lead.id })];
-  if (action.result.supportHelp) events.push(beat('support', action.result.supportHelp, { actorId: action.support.id }));
+  const movement = action.method.ability
+    ? `${action.lead.species} channels ${action.method.ability.name} through its ${action.method.ability.instrument.replaceAll('-', ' ')}.`
+    : `${action.lead.species} uses ${action.method.label.toLowerCase()}.`;
+  const events = [beat('move', movement, { actorId: action.lead.id })];
+  if (action.result.abilityId) events.push(beat('ability', `${action.method.ability?.name || 'This ability'} is spent for the rest of the expedition.`, { actorId: action.lead.id, abilityId: action.result.abilityId }));
+  if (action.result.supportHelp || action.result.supportStrain > 0) events.push(beat('support', action.result.supportHelp || `${action.support.species} steps in to keep the crew moving.`, { actorId: action.support.id }));
   action.result.unseenHazards.forEach((hazard) => events.push(beat('hazard', `${hazard.label} strikes during the crossing.`, { hazardId: hazard.id })));
   if (action.result.companionHelp) events.push(beat('companion', action.result.companionHelp, { actorId: action.companion && action.companion.id }));
   action.result.crewChanges.filter((change) => change.added > 0).forEach((change) => events.push(beat('energy', `${change.creature.species} spends ${change.added} energy.`, {

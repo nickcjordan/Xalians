@@ -1,4 +1,5 @@
 {
+  "schemaVersion": "4.0.0",
   "key": "crystorn",
   "name": "Crystorn",
   "nameOrigin": "A compression of crystal and horn, naming the paired head gems through which it releases stored light.",
@@ -175,15 +176,201 @@
   "conduits": {
     "horns": "light"
   },
-  "signatureAbility": {
-    "name": "Coronet of the Twin Suns",
-    "instrument": "horns",
-    "action": "beam",
-    "medium": "light",
-    "intensity": [
-      55,
-      92
+  "signature": {
+    "kind": "action",
+    "key": "crystorn-defining"
+  },
+  "actions": [
+    {
+      "key": "crystorn-defining",
+      "activation": {
+        "operation": "discrete"
+      },
+      "delivery": {
+        "mode": "stream",
+        "approach": "stationary"
+      },
+      "targeting": {
+        "relation": "other",
+        "subjects": [
+          "creature",
+          "object"
+        ]
+      },
+      "effects": [
+        {
+          "kind": "harm",
+          "recipient": "target",
+          "mechanism": "elemental",
+          "emphasis": "primary",
+          "onset": "instant",
+          "persistence": "resolved",
+          "likelihood": "consistent"
+        }
+      ],
+      "description": "The Crystorn holds still until its crystal horns release the light they carry in one narrow line.",
+      "name": "Coronet of the Twin Suns",
+      "instrument": "horns",
+      "medium": "light",
+      "intensity": [
+        55,
+        92
+      ],
+      "timing": {
+        "preparation": "brief",
+        "recovery": "brief"
+      },
+      "spatial": {
+        "selectivity": "indiscriminate",
+        "range": "medium"
+      }
+    }
+  ],
+  "passives": [],
+  "actionPool": {
+    "count": [
+      2,
+      3
     ],
-    "description": "The Crystorn holds still until its crystal horns release the light they carry in one narrow line."
+    "sets": [
+      {
+        "key": "default",
+        "weight": 1,
+        "options": [
+          {
+            "key": "horns-strike",
+            "pattern": "strike",
+            "instrument": "horns",
+            "media": [
+              "light",
+              "fire",
+              "electric",
+              "psychic"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "horns-shove",
+            "pattern": "shove",
+            "instrument": "horns",
+            "media": [
+              "light",
+              "fire",
+              "electric",
+              "psychic"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "horns-crush",
+            "pattern": "crush",
+            "instrument": "horns",
+            "media": [
+              "light",
+              "fire",
+              "electric",
+              "psychic"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "horns-ward",
+            "pattern": "ward",
+            "instrument": "horns",
+            "media": [
+              "light",
+              "fire",
+              "electric",
+              "psychic"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "horns-terrorize",
+            "pattern": "terrorize",
+            "instrument": "horns",
+            "media": [
+              "light",
+              "fire",
+              "electric",
+              "psychic"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "horns-beam",
+            "pattern": "beam",
+            "instrument": "horns",
+            "media": [
+              "light"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "horns-burst",
+            "pattern": "burst",
+            "instrument": "horns",
+            "media": [
+              "light"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "horns-mend",
+            "pattern": "mend",
+            "instrument": "horns",
+            "media": [
+              "light"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "horns-spray",
+            "pattern": "spray",
+            "instrument": "horns",
+            "media": [
+              "light"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "fists-strike",
+            "pattern": "strike",
+            "instrument": "fists",
+            "media": [
+              "light",
+              "fire",
+              "electric",
+              "psychic"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "fists-crush",
+            "pattern": "crush",
+            "instrument": "fists",
+            "media": [
+              "light",
+              "fire",
+              "electric",
+              "psychic"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "fists-shove",
+            "pattern": "shove",
+            "instrument": "fists",
+            "media": [
+              "light",
+              "fire",
+              "electric",
+              "psychic"
+            ],
+            "weight": 1
+          }
+        ]
+      }
+    ]
   }
 }

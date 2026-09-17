@@ -1,3 +1,7 @@
+> Release provenance: see [immutable generation releases](generation-releases.md) for `releaseId`, archived inputs, and replay.
+
+> Ability schema update: the current actions, passives, signature, delivery, and effect contract is [Creature capabilities: schema 4](xalian-ability-model.md). It supersedes action/signature structure in this document.
+
 # The Xalian Creature Data Structure — Handoff Reference
 
 Purpose: a self-contained description of the ratified Xalians creature data system, written so a fresh conversation can brainstorm new games on top of it without any prior session context. Everything here is ratified design as of 2026-09-01 unless marked in-progress. The authoritative long-form design doc is `docs/design/xalian-creature-system-redesign.md`; this file is the condensed consumer-facing view.
@@ -6,13 +10,13 @@ Purpose: a self-contained description of the ratified Xalians creature data syst
 
 **Creatures describe nature; games derive rules.** A Xalian's record contains zero game mechanics — no HP, no damage, no cooldowns. It is a rich, structured description of what the creature IS: its body, senses, elemental identity, personality tilt, and what it can do in narrative terms. Every game (the Duel tactics game, or any new one) writes its own **derivation layer** that reads the record and computes that game's stats from it. Two games can read the same creature completely differently, and balance problems are always fixed in a game's derivation layer, never by editing records.
 
-**Records are immutable and deterministic.** A creature is generated once from a random 128-bit seed plus a pinned `generatorVersion`, and the full expanded record is stored forever. The same seed + version always reproduces the same creature (verifiable), and new generator versions only affect new generations — existing creatures never change under their owners. Lore framing: seeds are the encrypted genomes inside Scrambler Tokens, printed by the Mercurius Machine and won in arena tournaments; a planet's Xalian Generator expands the token into a living creature. (The project's old NFT framing is dead; this is a conventional registry/API, and the word "mint" is banned — it's "generate.")
+**Records are immutable and deterministic.** A creature is generated once from a random 128-bit seed plus a pinned `releaseId` (the complete code/content snapshot), and the full expanded record is stored forever. The same release and complete original inputs reproduce the same creature (verifiable), and new generator versions only affect new generations — existing creatures never change under their owners. Lore framing: seeds are the encrypted genomes inside Scrambler Tokens, printed by the Mercurius Machine and won in arena tournaments; a planet's Xalian Generator expands the token into a living creature. (The project's old NFT framing is dead; this is a conventional registry/API, and the word "mint" is banned — it's "generate.")
 
 **Species are templates; individuals are rolls.** Each species defines fixed facts (anatomy, body plan, lifespan, its trait pool with per-trait percents, its signature ability, stat/size bands) and every individual rolls within those bands. Every value in a record describes THIS individual, not the species average.
 
 ## 2. The record
 
-Six layers in generation order, most-permanent first. Worked example (Graviclaw, the pilot species — a dark-element armored crab-like predator from Grimedes):
+Six layers in generation order, most-permanent first. Historical schema-1 worked example (new records use the schema-4 capability model and release provenance linked above) (Graviclaw, the pilot species — a dark-element armored crab-like predator from Grimedes):
 
 ```jsonc
 {
@@ -21,7 +25,7 @@ Six layers in generation order, most-permanent first. Worked example (Graviclaw,
 
   "provenance": {
     "seed": "7f3a9c...",              // 128-bit Scrambler Token genome
-    "generatorVersion": "1.0.0",      // pins the ENTIRE content-table snapshot; frozen forever
+    "generatorVersion": "1.0.0",      // illustrative historical version; no certified release archive
     "schemaVersion": "1.0.0",
     "generatedAt": "2026-09-14T...",
     "origin": "grimedes",             // which planet's Generator expanded the token
@@ -89,7 +93,7 @@ Six layers in generation order, most-permanent first. Worked example (Graviclaw,
 
 **Optional-field contract.** Absent means "not applicable," never null, never empty string. Unknown fields and unknown registry keys are ignorable — games must not break on vocabulary additions.
 
-**generatorVersion pins everything.** No field is ever resolved against "current" vocabulary; the version names an exact frozen snapshot of every content table (registries, name catalogs, odds). Unmodeled dimensions are "not modeled," never "unlimited."
+**releaseId pins the complete generation snapshot.** No historical replay field is resolved against "current" vocabulary; the release names the exact archived code and content tables (registries, species, patterns, name catalogs, odds). See [generation releases](generation-releases.md) for the implemented archive and replay contract. Older records without an archived release remain readable but are not automatically replayable. Unmodeled dimensions are "not modeled," never "unlimited."
 
 ## 4. The registry (what ships alongside the schema)
 
@@ -107,7 +111,7 @@ Every controlled vocabulary is machine-readable registry data — key + display 
 
 The pattern (worked partially for the Duel game, phase 2):
 
-1. **Read the registries for the pinned generatorVersion**, build your interpretation tables, ignore unknown keys.
+1. **Read the registries for the pinned generation release**, build your interpretation tables, ignore unknown keys.
 2. **Derive your stats from the record.** Examples of the intended texture: HP from vitality+resilience; movement class from capabilities thresholds (flight ≥ 60 = airborne, swim bands = aquatic tiers); action legality from anatomy + the allowed-actions matrix; accuracy/initiative from reflex/instinct/senses; drowning = breathes is non-empty AND submerged in a medium not in breathes; hazard pricing from ambientMedia + temperature bands + typed exposure through the element matrix; AI/behavior color from temperament (never power from temperament — that's a hard rule); social/recruitment/shop flavor from charisma and communication channels.
 3. **Abilities are your verbs.** Each ability gives you instrument (what body part or channel does it), action (one of 16 mechanical archetypes — you decide what "snare" means in your game), medium (element for typing), intensity (1–100 magnitude), and a unique-feeling name. The signature ability may additionally get bespoke per-game behavior keyed to its name, but must always have a sane baseline reading through the plain grammar.
 4. **Never write to records.** A separate append-only history layer (deferred) will let games report milestones; games may write events but can never depend on reading them.
