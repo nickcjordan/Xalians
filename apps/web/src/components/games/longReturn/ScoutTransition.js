@@ -63,6 +63,6 @@ export default function ScoutTransition({ action, onComplete, soundEnabled = tru
       <FieldReserve kind="energy" label={`${action.scout.species} energy`} max={MAX_STRAIN} before={energyBefore} after={energyAfter} active={index >= energyAt} />
       {returning && <FieldReserve kind="stability" label="Annex stability" max={MAX_INSTABILITY} before={stabilityBefore} after={stabilityAfter} active={index >= stabilityAt} />}
     </>}>
-    <SequenceStory events={beats} index={index} paused={paused} onPause={() => setPaused(!paused)} onNext={() => { setPaused(true); setIndex(Math.min(beats.length - 1, index + 1)); }} action={<button ref={buttonRef} type="button" onClick={skip}>{final ? action.encounter ? 'Respond to encounter' : !returning && !action.result.relay ? 'Check scout status' : 'Review scout report' : 'Skip to outcome'} <BiIcon cls="bi bi-arrow-right" /></button>} />
+    <SequenceStory events={beats} index={index} paused={paused} onPause={() => setPaused(!paused)} onNext={() => { setPaused(true); setIndex(Math.min(beats.length - 1, index + 1)); }} action={<button className="inline-flex min-h-11 items-center justify-center gap-1 px-2 whitespace-normal" ref={buttonRef} type="button" onClick={skip}>{final ? action.encounter ? 'Respond to encounter' : !returning && !action.result.relay ? 'Check scout status' : 'Review scout report' : 'Skip to outcome'} <BiIcon cls="bi bi-arrow-right" /></button>} />
   </FieldRecord>;
 }

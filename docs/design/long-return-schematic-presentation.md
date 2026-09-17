@@ -16,6 +16,7 @@ The player reads an expedition, not a low-budget animated film. A schematic prov
 - Known site changes persist. Undiscovered native creatures and hazard names do not appear merely because they exist in content data.
 - Named thresholds connect neighboring scenes: a room's destination is the next room's starting point. Stationary terrain outlines distinguish water, machinery, doors and other established obstacles without depicting an action or inventing a surveyed building layout. Accessible map descriptions name the same physical relationship.
 - Static art supports the account without competing with it. The story stays until the player continues. Pause, next, and skip control reading only; they never replay the gameplay action.
+- On a small phone, the reading view keeps the local diagram and crew key but omits repeated sector and lasting-change summaries. The normal expedition map retains them. Test short phone heights, not only narrow widths: playback and the persistent account need usable reading space while continuation stays visible.
 - Only brief marker state transitions are allowed. No ambient loops, gait animation, or cinematic camera movement. Reduced motion resolves directly to a still frame.
 
 ## Verification checklist

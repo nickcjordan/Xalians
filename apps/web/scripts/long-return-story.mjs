@@ -5,8 +5,8 @@ const output = 'C:/Users/njord/AppData/Local/Temp/long-return-story';
 await mkdir(output, { recursive: true });
 const browser = await chromium.launch({ executablePath: 'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe', headless: true });
 try {
-  for (const width of [390, 768, 1280]) {
-    const context = await browser.newContext({ viewport: { width, height: 900 } });
+  for (const [width, height] of [[390, 667], [390, 900], [768, 900], [1280, 900]]) {
+    const context = await browser.newContext({ viewport: { width, height } });
     const page = await context.newPage(); const errors = [];
     page.on('pageerror', error => errors.push(error.message));
     const checkStory = async name => {
@@ -15,6 +15,8 @@ try {
       await story.getByRole('button', { name: 'Pause story', exact: true }).click();
       const first = await story.locator('li').first().innerText();
       const count = await story.locator('li').count();
+      const reading = await story.locator('.lr-sequence-story-scroll').boundingBox();
+      assert(reading.height >= 160, 'Playback must leave usable reading space on small phones');
       await page.waitForTimeout(3000);
       assert.equal(await story.locator('li').count(), count, 'Pause holds the story');
       await story.getByRole('button', { name: /Next event/ }).click();
@@ -25,7 +27,10 @@ try {
       await page.waitForTimeout(2500);
       assert(await story.isVisible(), 'No automatic dismissal');
       const panel = await story.boundingBox();
-      assert(panel.x >= 0 && panel.x + panel.width <= width + 1 && panel.y >= 52 && panel.y + panel.height <= 900);
+      assert(panel.x >= 0 && panel.x + panel.width <= width + 1 && panel.y >= 52 && panel.y + panel.height <= height);
+      const finalReading = await story.locator('.lr-sequence-story-scroll').boundingBox();
+      await page.screenshot({ path: `${output}/${width}-${height}-${name}.png` });
+      assert(finalReading.height >= 200, `${name}: persistent account has only ${finalReading.height}px of reading space`);
       const map = page.locator('[data-field-record] [data-expedition-map]');
       assert.equal(await map.locator('[data-map-creature]').count(), 3, 'Map retains all crew identities');
       const drawing = await map.locator('svg').boundingBox();
@@ -34,8 +39,9 @@ try {
       assert.equal(await story.getByRole('button', { name: 'Pause story', exact: true }).count(), 0, 'Finished stories have no dead playback controls');
       const next = page.locator('[role="dialog"] button').last();
       const button = await next.boundingBox();
-      assert(button.y + button.height <= 900, 'Continue stays visible');
-      await page.screenshot({ path: `${output}/${width}-${name}.png` });
+      assert(button.y + button.height <= height, 'Continue stays visible');
+      assert.equal(await map.locator('[data-site-overview]').first().isVisible(), width >= 720, 'Reading view omits repeated sector overview only on phones');
+      await page.screenshot({ path: `${output}/${width}-${height}-${name}.png` });
       await next.click();
     };
     await page.goto('http://127.0.0.1:4173/long-return');
@@ -53,7 +59,7 @@ try {
     await page.locator('.lr-encounter-commit-bar button').click();
     await checkStory('encounter');
     assert.deepEqual(errors, []);
-    console.log(`${width}px: crossing, scout, encounter persistence, pause, stepping and bounds passed`);
+    console.log(`${width}x${height}: crossing, scout, encounter persistence, pause, stepping and reading space passed`);
     await context.close();
   }
 } finally { await browser.close(); }

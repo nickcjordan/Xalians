@@ -30,7 +30,7 @@ export default function SequenceStory({ events, index, paused, onPause, onNext, 
     const el = scrollRef.current;
     if (el && follows.current) el.scrollTop = el.scrollHeight;
   }, [index]);
-  return <section className="lr-sequence-story" aria-label="Action story">
+  return <section className="lr-sequence-story p-3 md:p-5" aria-label="Action story">
     <header><span>{final ? 'What happened' : 'The scene unfolds'}</span><small>{index + 1} / {events.length}</small></header>
     <div className="lr-sequence-story-scroll" ref={scrollRef} tabIndex={0} aria-label="Read the action story" onScroll={event => {
       const el = event.currentTarget;
@@ -44,8 +44,8 @@ export default function SequenceStory({ events, index, paused, onPause, onNext, 
         </li>)}
       </ol>
     </div>
-    {(!final || action) && <footer>
-      {!final && <><button type="button" aria-pressed={paused} onClick={() => { if (paused) followLatest(); onPause(); }}>{paused ? 'Resume story' : 'Pause story'}</button><button type="button" onClick={() => { followLatest(); onNext(); }}>Next event →</button></>}
+    {(!final || action) && <footer className={`grid gap-2 ${final ? 'grid-cols-1' : 'grid-cols-3'}`}>
+      {!final && <><button className="inline-flex min-h-11 items-center justify-center gap-1 px-2 whitespace-normal" type="button" aria-pressed={paused} onClick={() => { if (paused) followLatest(); onPause(); }}>{paused ? 'Resume story' : 'Pause story'}</button><button className="inline-flex min-h-11 items-center justify-center gap-1 px-2 whitespace-normal" type="button" onClick={() => { followLatest(); onNext(); }}>Next event →</button></>}
       {action}
     </footer>}
   </section>;

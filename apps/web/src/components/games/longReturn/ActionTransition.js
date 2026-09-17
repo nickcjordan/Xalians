@@ -66,6 +66,6 @@ export default function ActionTransition({ action, onComplete, soundEnabled = tr
     <div className="basis-full text-body">Salvage carried: <strong>{index < salvageAt ? result.salvageAfter - result.salvage : result.salvageAfter}</strong></div>
     {action.crew?.map(creature => <CreatureStatus key={creature.id} creature={creature} change={crewChanges.find(change => change.creature.id === creature.id)} events={events} index={index} strain={action.crewStrain?.[creature.id]} />)}
   </>}>
-    <SequenceStory events={events} index={index} paused={paused} onPause={() => setPaused(!paused)} onNext={() => { setPaused(true); setIndex(Math.min(events.length - 1, index + 1)); }} action={<button ref={closeButtonRef} type="button" onClick={skip}>{final ? encounter ? 'Choose response' : 'Continue to result' : 'Skip to outcome'} <BiIcon cls="bi bi-arrow-right" /></button>} />
+    <SequenceStory events={events} index={index} paused={paused} onPause={() => setPaused(!paused)} onNext={() => { setPaused(true); setIndex(Math.min(events.length - 1, index + 1)); }} action={<button className="inline-flex min-h-11 items-center justify-center gap-1 px-2 whitespace-normal" ref={closeButtonRef} type="button" onClick={skip}>{final ? encounter ? 'Choose response' : 'Continue to result' : 'Skip to outcome'} <BiIcon cls="bi bi-arrow-right" /></button>} />
   </FieldRecord>;
 }
