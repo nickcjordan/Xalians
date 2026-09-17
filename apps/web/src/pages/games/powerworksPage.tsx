@@ -48,6 +48,9 @@ import {
   Machine,
   ElementIcon,
   MoveIcon,
+  MoveStats,
+  PowerIcon,
+  moveDescription,
   StatusBadges,
   Health,
   shortName,
@@ -776,6 +779,13 @@ export default function PowerworksPage() {
                           </span>
                         </p>
                         <button
+                          className="pw-symbol-help"
+                          aria-label="Explain move symbols"
+                          onClick={() => setPanel("guide")}
+                        >
+                          <Info />
+                        </button>
+                        <button
                           className="pw-clear"
                           disabled={!plans[active.id] && pending === null}
                           onClick={clearOrder}
@@ -812,6 +822,8 @@ export default function PowerworksPage() {
                                     : ", blocked by restraint"
                                   : ""
                               }`}
+                              aria-describedby={`move-stats-${active.id}-${i}`}
+                              title={moveDescription(m)}
                               aria-pressed={pending === i}
                               disabled={!legal}
                               className={`${pending === i ? "chosen" : ""} ${
@@ -834,21 +846,25 @@ export default function PowerworksPage() {
                               }}
                             >
                               <span className="pw-move-symbol">
-                                <MoveIcon move={m} signature={i === 3} />
+                                {i === 3 || m.kind === "snare" ? (
+                                  <MoveIcon move={m} signature={i === 3} />
+                                ) : (
+                                  <ElementIcon element={active.element} />
+                                )}
                               </span>
                               <span className="pw-move-copy">
                                 <strong>{m.name}</strong>
-                                <small>
-                                  {!legal
-                                    ? active.uses[i] === 0
+                                <MoveStats
+                                  move={m}
+                                  id={`move-stats-${active.id}-${i}`}
+                                />
+                                {!legal && (
+                                  <small>
+                                    {active.uses[i] === 0
                                       ? "Exhausted · refreshes next fight"
-                                      : "Restrained · melee unavailable"
-                                    : m.kind === "snare"
-                                    ? "Restrain · 1 opportunity"
-                                    : `${m.damage} power · ${m.range}${
-                                        i === -1 ? " · 2 recoil" : ""
-                                      }`}
-                                </small>
+                                      : "Restrained · melee unavailable"}
+                                  </small>
+                                )}
                               </span>
                               <span className="pw-use-pips" aria-hidden="true">
                                 {i === -1
@@ -1179,6 +1195,29 @@ export default function PowerworksPage() {
 
         {panel === "guide" && (
           <>
+            <div className="pw-symbol-key" aria-label="Move symbol key">
+              <span>
+                <Swords /> Melee attack
+              </span>
+              <span>
+                <Crosshair /> Ranged attack
+              </span>
+              <span>
+                <PowerIcon /> Base power
+              </span>
+              <span>
+                <Link2 /> Restraint opportunities
+              </span>
+              <span>
+                <Crown /> Signature move
+              </span>
+              <span>
+                <RotateCcw /> Health recoil
+              </span>
+              <span>
+                <i className="pw-key-pip" /> Remaining uses
+              </span>
+            </div>
             <div className="pw-guide-steps">
               <span>
                 <Portrait u={run.team[0]} small />

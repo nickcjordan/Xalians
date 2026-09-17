@@ -74,4 +74,20 @@ describe("Powerworks player flow", () => {
     expect(hippo).toHaveAccessibleDescription("Choose a move");
     expect(screen.getByRole("button", { name: "Commit round" })).toBeDisabled();
   });
+  it("explains visual move stats without repeating power and range text on cards", () => {
+    mount();
+    fireEvent.click(screen.getByRole("button", { name: "Enter the facility" }));
+    const attack = screen.getByRole("button", { name: /Water stream,/ });
+    expect(attack).toHaveAccessibleDescription("Ranged attack. 8 base power.");
+    expect(attack).not.toHaveTextContent(/power|ranged/);
+    fireEvent.click(
+      screen.getByRole("button", { name: "Explain move symbols" })
+    );
+    expect(screen.getByLabelText("Move symbol key")).toHaveTextContent(
+      "Base power"
+    );
+    expect(screen.getByLabelText("Move symbol key")).toHaveTextContent(
+      "Melee attack"
+    );
+  });
 });
