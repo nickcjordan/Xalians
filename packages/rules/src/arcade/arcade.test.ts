@@ -160,11 +160,12 @@ describe('Arcade deterministic rules', () => {
     expect(second.state.traction.left).toBe(50);
 
     const third = applyArtilleryMove(second.state, -1);
-    expect(third.state.traction.left).toBe(25);
+    expect(third.distance).toBe(0);
+    expect(third.state.traction.left).toBe(50);
 
     const fourth = applyArtilleryMove(third.state, 1, 'drive', 25);
-    expect(fourth.state.traction.left).toBe(0);
-    const exhausted = applyArtilleryMove(fourth.state, 1);
+    expect(fourth.state.traction.left).toBe(25);
+    const exhausted = applyArtilleryMove({ ...fourth.state, traction: { ...fourth.state.traction, left: 0 } }, 1);
     expect(exhausted.state.tanks.left.x).toBe(fourth.state.tanks.left.x);
     expect(exhausted.state.traction.left).toBe(0);
   });
@@ -255,6 +256,56 @@ describe('Arcade deterministic rules', () => {
     const impactX = Math.round(bloom.outcome.impact!.x);
     expect(bloom.state.terrain[impactX]).toBeGreaterThan(state.terrain[impactX]);
     expect(bloom.state.terrain[impactX] - state.terrain[impactX]).toBeGreaterThan(15);
+  });
+
+  it('makes a forward Rampart protect the next incoming shot, then spends its guard', () => {
+    const state = createArtilleryState('rampart-defense');
+    let coverShot: { angle: number; power: number; payload: 'bloom' } | null = null;
+    for (let angle = 10; angle <= 70 && !coverShot; angle += 2) {
+      for (let power = 15; power <= 80; power += 2) {
+        const impact = simulateArtilleryShot(state, { angle, power, payload: 'bloom' }).impact;
+        if (impact && impact.x - state.tanks.left.x >= 8 && impact.x - state.tanks.left.x <= 28) {
+          coverShot = { angle, power, payload: 'bloom' };
+          break;
+        }
+      }
+    }
+    expect(coverShot).not.toBeNull();
+    if (!coverShot) return;
+    const fortified = applyArtilleryShot(state, coverShot);
+    expect(fortified.outcome.coverGranted).toBe(24);
+    expect(fortified.state.guard.left).toBe(24);
+    const displaced = applyArtilleryMove({ ...fortified.state, current: 'left' }, 1, 'jet', 2);
+    expect(displaced.distance).toBeGreaterThan(0);
+    expect(displaced.state.guard.left).toBe(0);
+
+    let incoming: { angle: number; power: number } | null = null;
+    for (let angle = 16; angle <= 76 && !incoming; angle += 3) {
+      for (let power = 20; power <= 100; power += 2) {
+        const candidate = { angle, power };
+        if (simulateArtilleryShot(fortified.state, candidate).damage > 0) {
+          incoming = candidate;
+          break;
+        }
+      }
+    }
+    expect(incoming).not.toBeNull();
+    if (!incoming) return;
+    const defended = applyArtilleryShot(fortified.state, incoming);
+    const exposed = applyArtilleryShot({ ...fortified.state, guard: { ...fortified.state.guard, left: 0 } }, incoming);
+    expect(defended.outcome.guardAbsorbed).toBeGreaterThan(0);
+    expect(defended.outcome.damage).toBeLessThan(exposed.outcome.damage);
+    expect(defended.state.tanks.left.integrity).toBeGreaterThan(exposed.state.tanks.left.integrity);
+    expect(defended.state.guard.left).toBe(0);
+  });
+
+  it('does not consume mobility fuel when the rig cannot leave the sector', () => {
+    const state = createArtilleryState('mobility-limit');
+    state.tanks.left.x = 4;
+    const blocked = applyArtilleryMove(state, -1, 'drive', 3);
+    expect(blocked.distance).toBe(0);
+    expect(blocked.fuelSpent).toBe(0);
+    expect(blocked.state).toBe(state);
   });
 
   it('matches each destructive payload with a consequential terrain profile', () => {

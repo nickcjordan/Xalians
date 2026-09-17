@@ -4,7 +4,7 @@ import userEvent from '@testing-library/user-event';
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 import { createArtilleryState, simulateArtilleryShot } from '@xalians/rules/arcade';
 
-import { ArtilleryBoard, ArtillerySetup, CommandMeter, artilleryAimFromDrag, artilleryBarrelEndpoint, artilleryCinematicCamera, artilleryFlightDurationMs, artilleryFlightSample, artilleryFlightTrail, artilleryImpactRevealProgress, artilleryImpactVisualState, artilleryJetFlightY, artilleryLaunchVisualState, artilleryMoveAnimationProgress, artilleryProjectileImpactState, artilleryTerrainSlopeDegrees } from '../pages/games/artilleryGamePage';
+import { ArtilleryBoard, ArtillerySetup, CommandMeter, artilleryAimFromDrag, artilleryBarrelEndpoint, artilleryCinematicCamera, artilleryFlightDurationMs, artilleryFlightSample, artilleryFlightTrail, artilleryImpactRevealProgress, artilleryImpactVisualState, artilleryJetFlightY, artilleryLaunchVisualState, artilleryMoveAnimationProgress, artilleryProjectileImpactState, artilleryShotVerdict, artilleryTerrainSlopeDegrees } from '../pages/games/artilleryGamePage';
 
 class ResizeObserverStub {
   observe() {}
@@ -166,6 +166,28 @@ describe('Crater Command aim feedback', () => {
     expect(artilleryCinematicCamera(360, false, 'settle', 300, 82, 1)).toBe('0 -38 360 148');
   });
 
+  it('gives a phone a readable local battlefield and tracks either rig', () => {
+    const left = artilleryCinematicCamera(440, true, null, 60, 55, 1, 60, 55, 0.8).split(' ').map(Number);
+    const right = artilleryCinematicCamera(440, true, null, 380, 55, 1, 380, 55, 0.8).split(' ').map(Number);
+    expect(left[2]).toBeLessThan(140);
+    expect(left[2] / left[3]).toBeCloseTo(0.8);
+    expect(right[0]).toBeGreaterThan(left[0] + 200);
+  });
+
+  it('names a shot result while it resolves instead of leaving an unexplained marker', () => {
+    const state = createArtilleryState('shot-verdict');
+    const baseline = simulateArtilleryShot(state, { angle: 45, power: 70 });
+    expect(artilleryShotVerdict({ ...baseline, damage: 18, guardAbsorbed: 6, directHit: true }, 50, 310)).toEqual({
+      title: '18 hull damage',
+      detail: 'Direct hit · 6 absorbed by cover',
+    });
+    expect(artilleryShotVerdict({ ...baseline, coverGranted: 24 }, 50, 310)).toEqual({
+      title: 'Cover forged',
+      detail: '24 guard until you move or take a hit',
+    });
+    expect(artilleryShotVerdict({ ...baseline, damage: 0, guardAbsorbed: 17 }, 50, 310).title).toBe('Cover held');
+  });
+
   it('offers explicit one-step corrections with a readable value and guidance', async () => {
     const onChange = vi.fn();
     render(createElement(CommandMeter, {
@@ -237,6 +259,35 @@ describe('Crater Command aim feedback', () => {
     expect(screen.getByRole('img', { name: /Two mobile range rigs on Stonera/i })).toHaveAttribute('viewBox', '0 -38 360 148');
     expect(screen.getByRole('button', { name: /Enable artillery audio/i })).toBeInTheDocument();
     expect(screen.queryByText(/Codazzo|Terragoyle|creature ability/i)).not.toBeInTheDocument();
+  });
+
+  it('keeps fire, weapon selection, and mobility reachable below a phone battlefield', async () => {
+    const original = window.matchMedia;
+    window.matchMedia = vi.fn().mockImplementation((query: string) => ({
+      matches: query.includes('max-width: 600px'),
+      media: query,
+      addEventListener: vi.fn(),
+      removeEventListener: vi.fn(),
+    }));
+    try {
+      render(createElement(ArtilleryBoard, {
+        seed: 'mobile-command', mode: 'bot', difficulty: 'standard', mapSize: 'wide', world: 'stonera',
+        onStatus: vi.fn(), onComplete: vi.fn(), onRematch: vi.fn(),
+      }));
+      expect(screen.getByTestId('artillery-mobile-actions')).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /Launch selected Comet/i })).toBeEnabled();
+      expect(screen.getByTestId('artillery-mobile-overview')).toBeInTheDocument();
+      await userEvent.click(screen.getByRole('button', { name: 'View Rig B' }));
+      expect(screen.getByRole('button', { name: 'View Rig B' })).toHaveAttribute('aria-pressed', 'true');
+      await userEvent.click(screen.getByRole('button', { name: 'Choose weapon' }));
+      expect(screen.getByRole('group', { name: 'Choose a weapon' })).toHaveClass('grid');
+      await userEvent.click(screen.getByRole('button', { name: /^Razor 2/i }));
+      expect(screen.getByRole('button', { name: /Launch selected Razor/i })).toBeEnabled();
+      await userEvent.click(screen.getByRole('button', { name: 'Show mobility controls' }));
+      expect(screen.getByRole('group', { name: 'Mobility thrusters' })).toHaveClass('grid');
+    } finally {
+      window.matchMedia = original;
+    }
   });
 
   it('commits movement immediately instead of previewing a firing position', async () => {
