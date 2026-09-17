@@ -51,6 +51,7 @@ Boss-introduction timing and player-knockout treatment in the reference were not
 | Recovery gave decoration and XP priority over injured companions. | Compact recovery header, squad before rewards, knocked-out companions first, shorter banner on short phones. |
 | Secondary result actions stacked into an oversized phone footer. | Two-column secondary actions with one full-width primary action. |
 | Result artwork overflowed horizontally at intermediate desktop widths. | Match the artwork expansion to actual content padding. |
+| Live verification at 892x1190 showed figures floating above their shadows. | Anchor creature masks and enemy SVGs to the bottom of their stage area; replayed phone combat and checked the tall scene again. |
 | Knocked-out characters could retain a charge or protective effect. | Suppress active effects for defeated units; fade them in the result scene too. |
 | Exhaustion recoil was absent from the concise event caption. | Show recoil on the attacker and explain it in the caption. |
 | Opening inspection before impact could reveal HP, then rewind it on close. | Persist a revealed impact across pause/resume; added a regression test. |
@@ -82,3 +83,5 @@ Generation prompt:
 The next visual quality ceiling is the character asset pipeline: canonical silhouettes and geometric machines do not have articulated poses or the material detail of the environment. Separate sector paintings and authored sound would also improve identity. These are explicit follow-up opportunities, not prerequisites silently added to the current UX release. They should be judged alongside actual first-time player feedback before more mechanics are layered on.
 
 Release evidence is recorded on issue 331 after deployment verification.
+
+PR 337 deployed successfully as commit `4f94a05`. A fresh four-sector run on the production CDN origin reached victory with 60 practice XP; normal playback, later fights, phone boss/results, combat record, and reload were verified without browser errors. The user's xalians.com checkpoint remained at sector 2, round 1, with HP 49/31/64/56 for Crystorn/Avilily/Graviclaw/Hippochamp. The final live tall-window check led to the additional grounding correction above.
