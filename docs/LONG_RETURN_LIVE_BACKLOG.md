@@ -21,6 +21,25 @@ Statuses progress independently: identified → implementing → technically ver
 
 ### Live findings
 
+### September 17 — full normal-speed replay and resuming the story
+
+- Completed seven scenes without skipping action sequences at normal motion: 17 sequences spanning roughly 2–12 seconds each; Index secured, 14 salvage, 2 stability, temporary ally. No detected flow or asset errors. This verifies completion and control behavior, not subjective pacing acceptance.
+- Follow-up review found Resume could leave the reader at an old scroll position while playback restarted. Resume and Next now rejoin the latest beat, covered by the read-back regression and documented in the quality guide.
+- PR #324 deployed successfully in run 35229615314 at main 03f47d4. Published two-scene replay passed with story orientation visible. The additional resume-position correction remains a separate incremental change.
+- 178 game tests and production build passed. Player interpretation of the revised narrative remains pending.
+
+### September 17 — narrative reading time and read-back control
+
+- Normal-speed audit found the inherited 2.4-second ceiling and 65ms-per-word estimate still applied to expanded story sentences. Longer beats now receive a bounded reading allowance; very short resource ticks remain brisk. Persistent text, skip and manual stepping remain available.
+- Scrolling back through earlier beats now pauses playback rather than only stopping automatic scrolling. Reaching the bottom does not silently resume; the existing Resume control does that.
+- Verified normal-speed two-scene replay (five sequences, approximately 3–12 seconds each), timing/read-back regressions, and production build. Reading pace is an adjustable starting point, not a claim about every player's reading speed or final immersion acceptance.
+
+### September 17 — the record becomes something to bring home
+
+- Continued narrative audit through the objective and ending. Scene five now identifies the Index as the surviving plague-research record, with visible plates and a sealed backup, not just unexplained equipment.
+- Both retrieval stories turn reaching the archive into carrying its record home. Deep retrieval ends with the extraction lift and recovered record rather than an unsupported claim that every opportunity was exhausted. No reward or failure rule changed.
+- Verification: 177 game tests, production build/budgets, and a complete seven-scene reduced-motion replay with temporary ally, 14 banked salvage and 2 stability. Inspected the ending render. Normal-speed narrative pacing and player immersion remain unaccepted.
+
 ### September 17 — follow-through: machinery hall to archive door
 
 - The next continuity audit found the scene-two consequence still presented as an abstract signal/code. Its crossing now physically reaches the same door introduced in scene three: a sensor tightens its locking ring, or copied wall symbols match its controls.

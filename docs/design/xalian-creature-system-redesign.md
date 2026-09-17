@@ -1,5 +1,7 @@
 > Ability schema update: the current actions, passives, signature, delivery, and effect contract is [Creature capabilities: schema 4](xalian-ability-model.md). It supersedes action/signature structure in this document.
 
+> Platform lifecycle update: this document remains authoritative for immutable genesis, species templates, and generation data. For post-generation development, receipts, currency, trading, release, and restoration, read `generation-economy-open-threads.md` then `xalian-generation-system.md`. Those later platform decisions supersede older statements here that games can never consume mutable creature state.
+
 # Xalian Creature System Redesign
 
 > **Current status (2026-09-10):** The species-template format, all 30 current species records, their appearance lists, five presentation fields, and trait pools are ratified. This document preserves the design history, so early draft examples remain below but are not current data. For implementation, the authoritative sources are `packages/content/src/schema/speciesTemplate.ts`, `docs/species-templates/REGISTRY-DEFINITIONS.md`, `docs/species-templates/RULINGS.md`, `docs/species-templates/RATIFIED.json`, and the ratified JSON templates. The remaining work is consumer development and measured balance tuning, not completion of the existing creature records.

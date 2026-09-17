@@ -14,12 +14,16 @@ export function trapSequenceFocus(event) {
   }
 }
 
-// The scene can move on; the words never expire. Reading back pauses following,
-// not the underlying resolved action. Only the parent's Continue dismisses it.
+// Reading back pauses playback, never the already-resolved gameplay action.
+// Only the parent's Continue dismisses this persistent account.
 export default function SequenceStory({ events, index, paused, onPause, onNext, action }) {
   const scrollRef = useRef(null);
   const follows = useRef(true);
   const final = index === events.length - 1;
+  const followLatest = () => {
+    follows.current = true;
+    if (scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+  };
   useEffect(() => {
     const el = scrollRef.current;
     if (el && follows.current) el.scrollTop = el.scrollHeight;
@@ -29,6 +33,7 @@ export default function SequenceStory({ events, index, paused, onPause, onNext, 
     <div className="lr-sequence-story-scroll" ref={scrollRef} tabIndex={0} aria-label="Read the action story" onScroll={event => {
       const el = event.currentTarget;
       follows.current = el.scrollHeight - el.scrollTop - el.clientHeight < 36;
+      if (!follows.current && !paused && !final) onPause();
     }}>
       <ol aria-live="polite" aria-relevant="additions" aria-atomic="false">
         {events.slice(0, index + 1).map((entry, position) => <li key={`${position}-${entry.kind}`} className={`is-${entry.kind}`}>
@@ -38,7 +43,7 @@ export default function SequenceStory({ events, index, paused, onPause, onNext, 
       </ol>
     </div>
     {(!final || action) && <footer>
-      {!final && <><button type="button" aria-pressed={paused} onClick={onPause}>{paused ? 'Resume story' : 'Pause story'}</button><button type="button" onClick={onNext}>Next event →</button></>}
+      {!final && <><button type="button" aria-pressed={paused} onClick={() => { if (paused) followLatest(); onPause(); }}>{paused ? 'Resume story' : 'Pause story'}</button><button type="button" onClick={() => { followLatest(); onNext(); }}>Next event →</button></>}
       {action}
     </footer>}
   </section>;

@@ -1,5 +1,7 @@
 # Xalians Arcade
 
+> Platform policy update: this document describes the current Arcade product and implemented reward loop. Its daily credit cap, automatic credit-to-token conversion, win-only reward rule, and blanket replay requirement for new modules are not the approved future economy or a mandate for local game prototypes. For future integration, read `generation-economy-open-threads.md` then `xalian-generation-system.md`. Change the Arcade reward loop only at an explicit implementation cutover.
+
 Status: initial release implemented, authorized 2026-09-13
 
 ## Product thesis
