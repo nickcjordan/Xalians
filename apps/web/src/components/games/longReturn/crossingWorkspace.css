@@ -11,23 +11,33 @@
 .lr-mode-simple .lr-wizard-topline h1 { font-size: 28px; }
 .lr-mode-simple .lr-wizard-progress { grid-template-columns: repeat(4,minmax(0,1fr)); align-self: end; }
 .lr-mode-simple .lr-wizard-tools > button,.lr-mode-simple .lr-wizard-tools > span { height: 40px; }
-.lr-crossing-workspace { display: grid; grid-template-columns: minmax(0,1.65fr) minmax(280px,1fr); gap: 16px 24px; align-items: start; }
+.lr-crossing-workspace { display: grid; grid-template-columns: minmax(0,1fr); gap: 16px 24px; align-items: start; }
 .lr-crossing-workspace > .lr-route-board { grid-column: 1; grid-row: 1; margin: 0; }
 .lr-crossing-workspace > .lr-terrain-details { grid-column: 1; grid-row: 2; }
-.lr-crossing-workspace > .lr-simple-plan,.lr-crossing-empty { grid-column: 2; grid-row: 1 / span 2; }
-.lr-mode-simple .lr-crossing-workspace > .lr-simple-plan { margin: 0; padding: 0 0 0 20px; border: 0; border-left: 1px solid #485040; }
+.lr-crossing-workspace > .lr-simple-plan,.lr-crossing-empty { grid-column: 1; grid-row: 1; }
+.lr-mode-simple .lr-crossing-workspace > .lr-simple-plan { margin: 0; padding: 0; border: 0; }
 .lr-crossing-workspace .lr-simple-plan-head { padding: 0; align-items: flex-start; }
 .lr-crossing-workspace .lr-simple-plan-head h3 { font: 700 21px/1.3 var(--g-font-body); letter-spacing: 0; text-transform: none; }
 .lr-crossing-workspace .lr-simple-plan-head > svg { display: none; }
 .lr-mode-simple .lr-crossing-workspace .lr-simple-plan-actions { position: static; left: auto; bottom: auto; width: 100%; transform: none !important; padding: 14px 0 0; display: flex; flex-direction: column; align-items: stretch; background: none; }
 .lr-crossing-workspace .lr-simple-plan-actions .lr-cross-now { margin: 0; order: -1; flex-wrap: wrap; min-height: 52px; }
 .lr-crossing-workspace .lr-commit-identity { display: none; }
+.lr-mode-simple .lr-crossing-workspace > .lr-simple-plan { display:flex; flex-direction:column; }
+.lr-crossing-workspace .lr-plan-roles { order:2; }
+.lr-crossing-workspace .lr-simple-plan-actions { order:1; }
+.lr-mode-simple:has(.lr-lead-options) .lr-wizard-objective { display:none; }
+.lr-crossing-workspace .lr-customize-plan { order:2; align-self:flex-end; width:auto; min-height:0; padding:6px; font-size:12px; }
+.lr-mode-simple .lr-wizard-view.is-forward > .lr-crossing-workspace { animation:lr-lead-forward .24s ease-out both; }
+.lr-mode-simple .lr-wizard-view.is-back > .lr-crossing-workspace { animation:lr-lead-back .24s ease-out both; }
+@keyframes lr-lead-forward { from { opacity:0; transform:translateX(18px); } to { opacity:1; transform:none; } }
+@keyframes lr-lead-back { from { opacity:0; transform:translateX(-18px); } to { opacity:1; transform:none; } }
+@media(prefers-reduced-motion:reduce) { .lr-mode-simple .lr-wizard-view > .lr-crossing-workspace { animation:none!important; } }
 .lr-crossing-workspace .lr-simple-plan-crew { display: flex; flex-direction: column; }
 .lr-crossing-workspace .lr-simple-plan-crew > svg { display: none; }
 .lr-crossing-workspace .lr-simple-plan-crew > span { width: 100%; }
 .lr-crossing-workspace .lr-plan-roles p { font-size: 14px; line-height: 1.5; }
-.lr-crossing-workspace .lr-lead-options-list > button { grid-template-columns: 40px minmax(0,1fr) 18px; gap: 8px; }
-.lr-crossing-workspace .lr-lead-option-cost { grid-column: 2; display:flex; flex-wrap:wrap; gap:5px 12px; }
+.lr-crossing-workspace .lr-lead-options-list > button { grid-template-columns: 64px minmax(0,1fr) minmax(180px,.8fr) 20px; gap: 12px; padding:14px; }
+.lr-crossing-workspace .lr-lead-option-cost { grid-column: 3; display:flex; flex-wrap:wrap; gap:5px 12px; }
 .lr-crossing-workspace .lr-lead-option-cost small { width:100%; }
 .lr-crossing-workspace .lr-lead-option-portrait { height: 48px; }
 .lr-crossing-workspace .lr-lead-option-portrait svg,.lr-crossing-workspace .lr-lead-option-portrait img { max-width: 40px; max-height: 48px; }
@@ -59,12 +69,26 @@
 .lr-crossing-empty p { font-size: 16px; line-height: 1.5; color: var(--g-ink-mid); }
 @media(max-width:900px) {
   .lr-crossing-workspace { grid-template-columns: minmax(0,1fr); gap: 14px; }
-  .lr-crossing-workspace > .lr-simple-plan { grid-column: 1; grid-row: 2; }
+  .lr-crossing-workspace > .lr-simple-plan { grid-column: 1; grid-row: 1; }
   .lr-crossing-workspace > .lr-terrain-details { grid-row: 3; }
   .lr-crossing-empty { display: none; }
-  .lr-mode-simple .lr-crossing-workspace > .lr-simple-plan { padding: 16px 0 0; border: 0; border-top: 1px solid #485040; }
+  .lr-mode-simple .lr-crossing-workspace > .lr-simple-plan { padding:0; border:0; }
 }
 @media(max-width:650px) {
+  .lr-crossing-workspace .lr-simple-plan { scroll-margin-top:80px; }
+  .lr-mode-simple .lr-wizard-view:has(.lr-lead-options) { overflow:clip; }
+  .lr-mode-simple .lr-wizard-view:has(.lr-lead-options) .lr-wizard-chrome { position:static; }
+  .lr-mode-simple .lr-crossing-workspace .lr-simple-plan-actions {
+    position:sticky; bottom:0; z-index:10;
+    padding:10px 0 max(10px, env(safe-area-inset-bottom));
+    background:var(--g-hull-lo, #1d211b);
+    box-shadow:0 -10px 16px var(--g-hull-lo, #1d211b);
+  }
+  .lr-crossing-workspace .lr-lead-options button,
+  .lr-crossing-workspace details,
+  .lr-crossing-workspace .lr-simple-override { scroll-margin-block:80px 160px; }
+  .lr-crossing-workspace .lr-lead-options-list > button { grid-template-columns:48px minmax(0,1fr) 20px; }
+  .lr-crossing-workspace .lr-lead-option-cost { grid-column:2; }
   .lr-mode-simple .lr-wizard-chrome { grid-template-columns: minmax(0,1fr); }
   .lr-mode-simple .lr-wizard-topline h1 { font-size: 24px; }
   .lr-crossing-workspace .lr-board-row { grid-template-columns: repeat(2,minmax(0,1fr)); }

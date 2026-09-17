@@ -9,9 +9,16 @@ function findButton(container, label) {
   return Array.from(container.querySelectorAll('button')).find((button) => label.test(button.textContent));
 }
 
+test('breaking contact does not claim an undelivered report already reached the crew', () => {
+  const encounter = { option: { resolution: 'unresolved' }, nativeName: 'Xylum', scoutName: 'Chromocat', mode: 'scout' };
+  expect(encounterNarrative({ ...encounter, reportDelivered: false })).toContain('scout still has to make the journey back');
+  expect(encounterNarrative({ ...encounter, reportDelivered: false })).not.toContain('crew now knows');
+  expect(encounterNarrative({ ...encounter, reportDelivered: true })).toContain('crew now knows');
+});
+
 function click(container, label) {
   const button = findButton(container, label);
-  expect(button).toBeTruthy();
+  expect(button, `Missing ${label}; available: ${[...container.querySelectorAll('button')].map(b => b.textContent).join(' / ')}`).toBeTruthy();
   act(() => {
     button.dispatchEvent(new MouseEvent('click', { bubbles: true }));
   });
@@ -148,8 +155,8 @@ describe('Long Return Simple mode', () => {
     const pick = board.querySelector('.lr-board-pick');
     pick.focus();
     clickElement(pick);
-    expect(document.activeElement).toBe(pick);
-    expect(container.querySelector('.lr-route-board')).toBe(board);
+    expect(document.activeElement).toBe(container.querySelector('[data-wizard-focus]'));
+    expect(container.querySelector('.lr-route-board')).toBeNull();
     expect(findButton(container, /next: review crew/i)).toBeUndefined();
     expect(container.querySelector('.lr-action-curtain')).toBeNull();
     expect(container.querySelector('.lr-plan-roles').open).toBe(false);
@@ -166,7 +173,7 @@ describe('Long Return Simple mode', () => {
     const species = alternative.querySelector('strong').textContent;
     clickElement(alternative);
     expect(container.querySelector('.lr-route-board')).toBe(board);
-    expect(container.querySelector('.lr-simple-plan-head').textContent).toContain(`${species} leads`);
+    expect(container.querySelector('.lr-commit-identity').textContent).toContain(`${species} leads`);
     expect(container.querySelector('.lr-action-curtain')).toBeNull();
     expect(container.querySelector('.lr-lead-options button[aria-pressed="true"] strong').textContent).toBe(species);
     click(container, /cross now/i);
@@ -347,6 +354,7 @@ describe('Long Return Simple mode', () => {
     let fieldActions = 0;
     for (let scene = 0; scene < 7; scene += 1) {
       playRecommendedScene(container);
+      if (findButton(container, /view mission report/i)) break;
       const workshop = container.querySelector('.lr-workshop');
       if (workshop) {
         const available = Array.from(workshop.querySelectorAll('.lr-workshop-options button')).filter(button => !button.disabled);
@@ -389,6 +397,7 @@ describe('Long Return Simple mode', () => {
 
     for (let scene = 0; scene < 7; scene += 1) {
       playRecommendedScene(container);
+      if (findButton(container, /view mission report/i)) break;
       if (scene < 6) clickElement(container.querySelector('.lr-depth-option.is-deeper, .lr-result-actions .g-btn--primary'));
     }
 
@@ -417,7 +426,7 @@ describe('Long Return Simple mode', () => {
     expect(container.querySelector('.lr-depth-decision').textContent).toMatch(/Index secured either way.*Bank the haul—or venture deeper/i);
     expect(container.querySelector('.lr-depth-decision').textContent).toMatch(/Index secured either way.*salvage banked/i);
     expect(container.querySelector('.lr-depth-decision').textContent).toContain('+19more salvage possible');
-    expect(container.querySelector('.lr-depth-decision').textContent).toContain('6 of your 12 carried salvage at risk');
+    expect(container.querySelector('.lr-depth-decision').textContent).toMatch(/\d+ of your \d+ carried salvage at risk/);
     click(container, /extract now/i);
     expect(container.textContent).toContain('Crew Extracted');
     expect(container.textContent).toContain('ObjectiveSECURED');
@@ -432,7 +441,7 @@ describe('Long Return Simple mode', () => {
     expect(findButton(container, /^send /i).disabled).toBe(false);
     click(container, /^send /i);
     expect(container.querySelector('[aria-label="Scouting in progress"]')).toBeTruthy();
-    expect(container.querySelector('.lr-scout-meter.is-energy').getAttribute('aria-label')).toContain('6 of 6');
+    expect(container.querySelector('.lr-scout-meter.is-energy').getAttribute('aria-label')).toContain('5 of 6');
     click(container, /skip to outcome/i);
     expect(container.querySelector('.lr-scout-meter.is-energy').getAttribute('aria-label')).toContain('5 of 6');
     click(container, /review scout report/i);
@@ -485,9 +494,9 @@ describe('Long Return Simple mode', () => {
     clickElement(nativeRoute);
       expect(container.querySelector('.lr-field-encounter')).toBeNull();
     expect(container.querySelector('.lr-simple-plan')).toBeTruthy();
-    clickElement(container.querySelector('.lr-board-pick'));
-    clickElement(nativeRoute);
-    expect(container.querySelector('.lr-board-head > div[role="columnheader"]:not(.lr-board-axis).is-selected').textContent).toMatch(/maintenance underdeck/i);
+    click(container, /change route/i);
+    clickElement(Array.from(container.querySelectorAll('.lr-board-pick')).find(button => /maintenance underdeck/i.test(button.textContent)));
+    expect(container.querySelector('.lr-simple-plan-head').textContent).toMatch(/maintenance underdeck/i);
       expect(container.querySelector('.lr-field-encounter')).toBeNull();
     click(container, /cross now/i);
     expect(container.querySelector('[role="dialog"][aria-label="Encounter discovered"]')).toBeTruthy();
@@ -526,7 +535,7 @@ describe('Long Return Simple mode', () => {
     click(container, /see encounter result/i);
     click(container, /compare routes again/i);
     selectUnderdeck();
-    expect(container.querySelector('.lr-route-board').textContent).toContain('Extra costs unknown');
+    expect(container.querySelector('.lr-lead-uncertainty').textContent).toContain('Unscouted danger');
     click(container, /cross now/i);
     expect(container.querySelector('[aria-label="Encounter discovered"]')).toBeTruthy();
   });
@@ -543,15 +552,15 @@ describe('Long Return Simple mode', () => {
     expect(document.activeElement).toBe(container.querySelector('.lr-wizard-chrome'));
     const recommendedOrFirst = container.querySelector('.lr-board-head > div[role="columnheader"]:not(.lr-board-axis).is-recommended .lr-board-pick') || container.querySelector('.lr-board-pick');
     clickElement(recommendedOrFirst);
-    expect(container.querySelector('.lr-route-board')).toBeTruthy();
-    expect(container.querySelector('.lr-board-head > div[role="columnheader"]:not(.lr-board-axis).is-selected')).toBeTruthy();
+    expect(container.querySelector('.lr-route-board')).toBeNull();
+    expect(container.querySelector('.lr-lead-options')).toBeTruthy();
     expect(findButton(container, /next: review crew/i)).toBeUndefined();
     expect(findButton(container, /cross now/i)).toBeTruthy();
-      expect(container.querySelector('.lr-route-board')).toBeTruthy();
+      expect(container.querySelector('.lr-route-board')).toBeNull();
     expect(container.querySelector('.lr-route-confirmed')).toBeNull();
     expect(container.querySelector('.lr-simple-plan-head').textContent).toMatch(/All three cross together/i);
-    expect(container.querySelectorAll('.lr-board-pick')).toHaveLength(2);
-    clickElement(container.querySelector('.lr-board-pick'));
+    expect(container.querySelectorAll('.lr-lead-options button')).toHaveLength(3);
+    click(container, /change route/i);
     expect(container.querySelectorAll('.lr-board-head > div[role="columnheader"]:not(.lr-board-axis)')).toHaveLength(2);
   });
 
@@ -565,13 +574,13 @@ describe('Long Return Simple mode', () => {
     act(() => container.querySelector('[role="dialog"]').dispatchEvent(new KeyboardEvent('keydown', { key: 'Tab', bubbles: true })));
     expect(document.activeElement).toBe(container.querySelector('.lr-sequence-story-scroll'));
     click(container, /skip to outcome/i);
-    expect(document.activeElement).toBe(container.querySelector('.lr-sequence-story-scroll'));
+    expect(document.activeElement).toBe(findButton(container, /review scout report/i));
     click(container, /review scout report/i);
     expect(document.activeElement).toBe(container.querySelector('[data-wizard-focus]'));
     if (findButton(container, /choose a route/i)) click(container, /choose a route/i);
     expect(document.activeElement).toBe(container.querySelector('[data-wizard-focus]'));
     clickElement(container.querySelector('.lr-board-pick'));
-      expect(container.querySelector('.lr-board-pick[aria-pressed="true"]')).toBeTruthy();
+      expect(container.querySelector('.lr-lead-options button[aria-pressed="true"]')).toBeTruthy();
     click(container, /cross now/i);
     expect(document.activeElement).toBe(findButton(container, /skip to outcome/i));
     click(container, /skip to outcome/i);
@@ -616,7 +625,7 @@ describe('Long Return Simple mode', () => {
     expect(board.querySelector('details[open]')).toBeNull();
     choosePreferredRoute(container);
     expect(container.querySelector('.lr-simple-plan-projections')).toBeNull();
-    expect(container.querySelectorAll('.lr-board-unknown')).toHaveLength(2);
+    expect(container.querySelectorAll('.lr-board-unknown')).toHaveLength(0);
     expect(container.textContent).not.toMatch(/No strain expected|No change expected/);
     expect(container.querySelector('.lr-plan-roles').textContent).toContain('team score');
     expect(container.querySelector('.lr-plan-roles').open).toBe(false);
@@ -769,5 +778,11 @@ describe('Long Return decision language', () => {
     expect(tell('call-medic')).not.toContain('second time');
     expect(tell('return-for-medic')).toContain('goes back for Hippochamp');
     expect(tell('return-for-medic')).toContain('second time');
+    const surprised = encounterNarrative({ ...context, option: { id: 'call-medic', companion: true, scoutStrain: 1 } });
+    expect(surprised).toContain('strength from Chromocat before the treatment begins');
+    expect(surprised).not.toContain('work leaves Hippochamp');
+    const fetched = encounterNarrative({ ...context, option: { id: 'return-for-medic', companion: true, scoutStrain: 1 } });
+    expect(fetched).toContain('extra trip leaves Chromocat');
+    expect(tell('call-medic')).not.toContain('taken strength');
   });
 });

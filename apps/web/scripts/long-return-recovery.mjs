@@ -39,6 +39,11 @@ try {
     assert.equal(await page.locator('.lr-field-receipt [role="img"]').getAttribute('aria-label'), preview);
     assert(await page.locator('.lr-field-receipt h4').evaluate(el => el === document.activeElement), 'Focus follows completed repair');
     assert.equal(await page.locator('.lr-field-receipt .lr-field-pips > i').first().evaluate(el => getComputedStyle(el).animationName), 'none');
+    assert.equal(await page.locator('.lr-arrival-grid').isVisible(), false, 'Repair stays the focused result');
+    await page.getByRole('button', { name: '← Review crossing', exact: true }).click();
+    assert(await page.locator('.lr-arrival-grid').isVisible(), 'Previous crossing stays accessible');
+    await page.getByRole('button', { name: 'Back to repair result', exact: true }).click();
+    assert.equal(await page.locator('.lr-arrival-grid').isVisible(), false);
     await page.screenshot({ path: `${output}/${width}-receipt.png`, fullPage: true });
     await page.reload();
     await page.getByRole('button', { name: /Resume expedition/ }).click();

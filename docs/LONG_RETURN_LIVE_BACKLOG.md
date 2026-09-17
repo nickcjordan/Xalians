@@ -4,7 +4,7 @@ Owner: the agent maintaining the Long Return worktree. Update this file during i
 
 ## Active goal — full-mission UX (2026-09-11)
 
-Bring The Long Return to a human-validated, coherent full-mission UX. Preserve decision-based exploration and advanced detail mode. After implementing the September 13 narrative feedback, the persistent task goal is blocked on renewed player validation, not complete; this file records evidence, not a substitute stopping condition.
+Bring The Long Return to a human-validated, coherent full-mission UX. Preserve decision-based exploration and advanced detail mode. Player acceptance remains unproven, but independent implementation and auditing continue; this file records evidence, not a substitute stopping condition. The task is not blocked merely because human validation is pending.
 
 ### Outcome register
 
@@ -20,6 +20,175 @@ Bring The Long Return to a human-validated, coherent full-mission UX. Preserve d
 Statuses progress independently: identified → implementing → technically verified → UX reviewed → player validated. A historical checked implementation item does not mean the corresponding player outcome is accepted. No goal completion from tests alone, a fixed loop count, or an exhausted task batch.
 
 ### Live findings
+
+### September 15 — player feedback: scouting needs a causal story
+
+- Reopened from the player's published screenshot: five isolated statements separated energy from departure, duplicated report delivery, and retained dead playback controls after completion.
+- Replaced scout narration with titled departure/search/communication beats, adding contact only when encountered. Actual energy and stability costs sit beside the trip that caused them. Physical return retains its separate delivery boundary.
+- Scout continuation now sits with story controls; completed stories remove pause/step controls instead of disabling them. Earlier beats remain readable, and continuation remains explicit.
+- Verification: 172 game tests, production build/budgets, physical-return/contact/checkpoint replay passed. Responsive persistent-story replay covers crossing, scouting and encounter controls. Player acceptance remains open.
+
+### September 15 — published release review and acceptance boundary
+
+Deployment `34987496761` completed successfully for main commit `46d4705bb0e3a5dcda940247605288c7d1a3270a` (PR #289). The published `https://xalians.com/long-return` passed both the physical-return/contact-report replay and a seven-scene run with 14 salvage and 2 stability. Static asset HTTP failures are now checked alongside JavaScript errors. Replays accept `LR_BASE_URL` so deployment validation does not silently test localhost.
+
+| Required outcome | Inspected evidence | Still unproven |
+| --- | --- | --- |
+| Interaction clarity | Local keyboard/back/commit/checkpoint tests; published full run and delayed-report branch | Whether players predict each click without hesitation |
+| Immediate trade-offs | Shared route comparison; depletion/uncertainty tests; rendered later-scene plans | Whether the full set of choices reads at a glance |
+| Creature-driven choices | Lead/method provenance, support/temperament attribution, companion and helper tests | Whether choosing different creatures feels meaningful |
+| Persistent causal results | Persistent sequence controls; crossing/report/encounter/recovery and ending replays | Whether the narrative explains causes naturally and is satisfying |
+| Consistency across the mission | Seven-scene published completion, local alternate-response extraction, responsive and guidance-mode replays | Not every combinatorial playthrough has been manually inspected; overall player experience is not accepted |
+| Preserved advanced detail | Guided/Standard/Expert manual assignment and recovery replays | Player preference for information depth |
+
+This is a player-validation checkpoint, not completion or a reason to manufacture more changes. No new product defect was found in this published replay. The next necessary acceptance evidence is a current player run identifying any first hesitation or unexplained consequence. Independent concrete findings may still be addressed; no claim of exhaustive bug-freedom or human acceptance is made.
+
+Previous continuation: progress (contact/report chronology, PR #289 merged). Current continuation: progress (published runtime/asset verification and explicit acceptance audit).
+
+### September 15 — breaking contact is not report delivery
+
+- [x] Retreat/mark options distinguish breaking contact from delivering intelligence. Non-relay descriptions no longer promise the crew has already heard a warning before the separate return action.
+- [x] Encounter aftermath names the native's continued presence, not a return that has not occurred. Narrative branches on actual report delivery; relay-capable scouts retain immediate communication.
+- [x] Browser replay uses Hippochamp's non-relay channel in the turbine hall to verify retreat, pending report, paid return and persistent trip receipt. Chromocat's display channel in that room correctly takes the immediate-report branch.
+- [x] A full alternate-response mission reached forced extraction after six crossings with the Index and 4 salvage retained; no flow errors. 171 tests and production bundle checks pass.
+- [ ] Player interpretation and full-mission acceptance remain unproven.
+
+Previous continuation: progress (depleted preview correction, PR #288 merged). Current continuation: progress (encounter/report chronology correction and branch replay).
+
+### September 15 — full phone mission and depleted previews
+
+- [x] Parameterized mission replay viewport and captured every selected plan, not just route/result pages. Seven-scene 390×667 run reached deep retrieval with 14 salvage and 2 stability.
+- [x] Final-scene inspection exposed impossible “spend 9 energy” previews for nearly spent creatures. Route, lead and alternate-technique previews now cap actual loss by each assigned creature's reserves, retain demand in analysis and expose exhaustion.
+- [x] Selected plans now retain available-energy data, so their exhaustion warning is not lost when substituting the chosen technique.
+- [x] Ally assistance still follows the existing rule, but no longer claims to preserve actual energy when the lead is exhausted either way.
+- [x] Repeated full phone mission and short-phone normal/reduced controls pass; 170 tests and production build/bundle gates pass. No numerical gameplay changes.
+- [ ] Full player-experience acceptance remains unproven.
+
+Previous continuation: progress (mobile crossing control, PR #287 merged). Current continuation: progress (full-mission evidence and depletion-preview correction discovered in the final scene).
+
+### September 15 — phone crossing controls and entry position
+
+- [x] Phone lead selection keeps the crossing commitment visible with the selected creature named. Advanced customization stays outside the persistent area; critical crossing warnings remain attached to commitment.
+- [x] Visual replay revealed that the scene header consumed most of a short phone viewport on entry. The lead substep now scrolls/focuses its local route/back section, preserving one transition without a second animated scroll.
+- [x] Dedicated 390×667 browser replay covers normal/reduced motion, entry focus, visible back control, all lead changes, no-cost reselection, route back, and crossing. Full 390/768/1280 replay and desktop keyboard flow pass.
+- [ ] Human judgment of the revised phone flow remains pending; technical reachability does not establish comfort.
+
+Previous continuation: progress (essential label sizes, PR #286 merged). Current continuation: progress (persistent mobile commitment and replay-driven entry-position refinement).
+
+### September 15 — measured essential-label legibility
+
+- [x] Rendered audit found 8–9px resource identities, outcome labels and command instructions across several screens. Essential labels now have a 12px floor; action instructions use 14px.
+- [x] Replayed and visually inspected the change. Fixed mobile name clipping exposed by larger text with compact body type and responsive cell spacing, not a smaller font.
+- [x] Added rendered-font and resource-name clipping regressions to responsive replay. Optional `LR_AUDIT_TYPE=1` records remaining microtype for future review.
+- [x] 390/768/1280 replay, Guided/Standard/Expert manual flows, 169 tests and production bundle checks pass. Desktop crossing remains reachable without scrolling.
+- [ ] Human comfort and full-mission acceptance remain unproven; a font threshold is not acceptance.
+
+Previous continuation: progress (delayed report receipt, PR #285 merged). Current continuation: progress (measured legibility correction and replay-driven mobile refinement).
+
+### September 15 — delayed scout report continuity
+
+- [x] Reports retain stability spent waiting as well as scouting energy, attached to the scout source rather than a new notification panel. Trip costs are explicitly separate from encounter costs.
+- [x] Scan state records actual capped energy/stability changes; report generation retains compatibility with earlier checkpoints. A spent scout is not credited with spending energy it did not have.
+- [x] Return choreography reflects depleted reserves rather than claiming a nonexistent decrement.
+- [x] Dedicated browser replay covers non-relay scouting, physical return, persistent receipt, crossing and checkpoint resource continuity. 169 tests pass.
+- [ ] Player understanding of delayed reports and complete-mission rhythm remains unproven.
+
+Previous continuation: progress (companion farewell, settlement and mobile ending layout). Current continuation: progress (persistent scout-trip costs and actual-change narration).
+
+### September 15 — returning from the expedition
+
+- [x] Temporary companions now receive a farewell in the existing ending narrative, without implying ownership or inventing an intervention when they never helped.
+- [x] When salvage is lost, the banked amount shows carried minus left-behind loot in the same settlement cell; no extra alert panel.
+- [x] Phone replay exposed a generic 200px portrait minimum inflating every end-crew card. Scoped compact sizing removes the empty space and lets condition text wrap rather than truncate.
+- [x] Extended 390/768/1280 replays through companion recruitment to withdrawal and settlement. Added a mobile card-height regression assertion and inspected the resulting phone image.
+- [x] 168 tests pass. Full experience acceptance remains unproven.
+
+Previous continuation: progress (companion/support cost attribution, PR #283 merged). Current continuation: progress (ending continuity, visible settlement and a replay-discovered mobile layout fix).
+
+### September 15 — assistance belongs beside the decision
+
+- [x] Route and lead energy previews now identify confirmed companion savings and the expenditure of its one intervention. Unknown, free and already-assisted cases do not promise a discount.
+- [x] Visual replay found weak-skill/low-cost combinations still unexplained. Lead descriptions now identify the supporter when it raises the outcome tier, and the specific temperament response when it reduces energy use. Raw skill descriptions remain truthful; no balance changes.
+- [x] Extended the 390/768/1280 browser replay through companion recruitment, report and lead selection; verified the saving remains attributable. Inspected the rendered desktop layout; crossing action remains visible.
+- [x] 167 tests pass. Player acceptance remains unproven.
+
+Previous continuation: progress (keyboard flow correction, PR #282 merged). Current continuation: progress (companion cost attribution and support/temperament causality found through visual replay).
+
+### September 15 — keyboard and guidance replay
+
+- [x] Replayed Guided, Standard and Expert with manual route, lead, support and method selection through crossing and field recovery. All passed.
+- [x] Fixed the focused wizard header announcing the same decision for both route and lead views. It now names route selection, lead selection or custom planning accurately without adding visible clutter.
+- [x] Updated the keyboard replay for the split flow: Enter to select/back/reselect, command retention, focus staying on a selected lead, explicit commitment, modal focus restoration and checkpoint resume all pass.
+- [x] 165 engine/component tests and production build/bundle budgets pass.
+- [x] Browser mission replays reached both exhausted-crew emergency extraction (6 scenes, Index retained) and deep retrieval (7 scenes, 14 salvage, 2 stability). These verify terminal flow continuity, not human enjoyment.
+- [ ] Complete player experience acceptance remains pending; keyboard automation verifies behavior, not perceived clarity or enjoyment.
+
+Previous turn: verified server availability and opened the playtest. This continuation: progress through guidance evidence, keyboard-flow regression coverage and an accessibility correction.
+
+### September 15 — healing versus crossing techniques
+
+- [x] Audited the current medic roster: every mending creature also has innate healing. Treatment remains available independently of crossing techniques; no numerical rule change justified.
+- [x] Encounter detail now calls direct treatment innate healing, not a one-use ability. Regression test flags future mending-only creatures for an explicit rule decision.
+- [x] Rescue narration distinguishes surprise before treatment from the scout's extra trip fetching a medic; the healer is not incorrectly charged in prose.
+- [x] 165 tests and responsive encounter/companion flow plus build/bundle checks pass.
+- [ ] Broader human validation of the route/lead flow and complete mission remains unproven. Continue independent UX auditing, not acceptance-by-test-count.
+
+Previous continuation: progress (explicit helper identity, PR #280 merged). Current continuation: progress (rule audit and causal narration correction, with no speculative balance change).
+
+### September 15 — explicit helper identity
+
+- [x] Bind group aid, direct scout treatment, remote medic call and physical return to an explicit helper ID, never a substring in the button label.
+- [x] Exclude spent medics from aid options using the engine's readiness rule; previews no longer offer unavailable helpers.
+- [x] 164 tests, responsive encounter/companion flow and production bundle checks pass. Renamed-label identity, exhausted medic group and direct scout treatment covered.
+- [ ] Audit whether spent one-use mending techniques should affect encounter treatment availability independently of innate healing; inspect existing rule contract before changing gameplay.
+
+Previous turn: progress (available defender selection and layout fix, PR #279 merged). Current continuation: progress (helper identity and availability correction). Full player acceptance remains unproven; goal stays active.
+
+### September 15 — encounter readiness attribution
+
+- [x] Group encounter preview, animation and resolution share one actor selection that excludes spent creatures. Solo encounters retain their actual scout.
+- [x] Cover every scene's strongest-defender replacement and exhausted-group boundary in dedicated actor tests.
+- [x] Responsive replay caught a prior shared-energy row pushing Cross now below 900px desktop height. Integrate attribution into the existing cost column; replay now passes at 390/768/1280px.
+- [x] 163 tests and production bundle gates pass. Encounter/companion/recovery/ending browser flow replayed; player acceptance still open.
+- [ ] Continue audit of helper identity and encounter narration where treatment and surprise costs involve different creatures.
+
+Previous goal turn: progress (focused recovery implementation, PR #277 now merged). Current turn: progress (readiness bug fixed plus discovered layout regression corrected). No external blocker asserted.
+
+### September 15 — focused recovery outcome
+
+- [x] Give resupply, bracing and relay construction a short persistent scene naming performer and sacrifice; retain exact exchange and optional breakdown.
+- [x] Keep completed repair as the focused view rather than restoring the entire crossing above it. Review crossing is reversible and spends nothing.
+- [x] 161 tests and build/bundle gates pass. Recovery replay at 390/768/1280px verifies focus, cancel/confirm, review toggle, matching receipt, checkpoint and no duplicate cost; desktop screenshot inspected.
+- [ ] Continue audit of encounter-specific costs and narration, especially scout/helper attribution; no human acceptance claimed.
+
+Previous continuation: progress (later crossing narrative fixes and full replay). This continuation: progress (persistent focused recovery result and verification). PR #276 merged; this recovery follow-up is separate.
+
+### September 15 — later-scene causal results
+
+- [x] Correct phasing breach stability prose: the release strains; no displaced door segments are invented.
+- [x] Explain confirmed environmental effort through the surroundings (airless exposure, immersion, cold/heat), only when energy was actually spent.
+- [x] Credit support when its score crosses a passage threshold; narrate extra supporter work when it spends energy.
+- [x] 160 tests and bundle gates pass; seven-scene replay reaches deep extraction with 14 salvage and 2 stability. Reviewed final-scene result screenshot and replaced abstract medium terminology with physical description.
+- [ ] Continue reviewing whether later encounters and recovery scenes communicate their causes as clearly as crossings; player acceptance remains open.
+
+### September 15 follow-up — method interpretation audit
+
+- [x] Audit every available method across all fourteen routes: traits and fallback moves must not both be described as a generic workable fit.
+- [x] Describe source strength as a skill, not a guaranteed route outcome; final cost also depends on support, environment and reaction.
+- [x] Attribute shared energy to lead and supporter when support spends energy, using the same companion-adjusted forecast.
+- [x] 159 game tests, production bundle gates, and 390/768/1280px route/lead/reselect/ability/crossing checks pass.
+- [ ] Next audit: test causal storytelling for support effort and environment changes in later-scene results, not only first-scene route choices.
+
+Previous goal turn: progress (implemented and deployed two-step lead choice). This continuation: progress (corrected misleading method interpretation and attribution). Human acceptance remains unproven; no player-input blocker is asserted.
+
+### September 15 — approachable lead selection
+
+- [x] Separate route comparison from a visible three-lead choice; short directional transition and explicit Change route preserve the selected approach without spending resources.
+- [x] Present approach, capability fit, and sacrifice in consistent rows. Hide anatomy/element provenance in optional technique details, not the primary choice.
+- [x] Prefer reusable methods at equal ranked known cost before rewarding surplus crossing score. Intake current now suggests Hippochamp rather than needlessly spending Graviclaw's ability.
+- [x] Selected ability overrides are reflected in the lead card. Companion savings and spent warnings use the same forecast as the route comparison.
+- [x] Check phone/tablet/desktop flow, advanced detour, persistent transitions, and a seven-scene deep extraction (14 salvage, 2 stability). Automated evidence: `long-return-leads.mjs`, `long-return-viewport.mjs`, `long-return-mission.mjs`, and game tests.
+- [ ] Player acceptance of approach clarity remains open; no claim that the overall experience is complete.
 
 ### September 14 — persistent action storytelling
 

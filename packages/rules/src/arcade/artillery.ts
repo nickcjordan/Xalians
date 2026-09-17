@@ -3,12 +3,15 @@ import { hashSeed, nextRandom } from './random.ts';
 export type ArtillerySide = 'left' | 'right';
 export type ArtilleryCreature = 'codazzo' | 'terragoyle';
 export type ArtilleryMode = 'bot' | 'local' | 'range' | 'challenge';
+export type ArtilleryMapSize = 'compact' | 'standard' | 'wide';
+export type ArtilleryWorld = 'stonera' | 'magmuth' | 'krystos' | 'endessa';
+export type ArtilleryMobility = 'drive' | 'jet';
 export type ArtilleryPhase = 'aiming' | 'finished';
 export type ArtilleryPayload = 'shell' | 'barb' | 'bore' | 'cluster' | 'bloom' | 'lance';
 export type ArtillerySpecialPayload = Exclude<ArtilleryPayload, 'shell'>;
 export type ArtilleryMove = -1 | 0 | 1;
 export type ArtillerySystem = 'none' | 'anchor' | 'lift';
-export type ArtilleryCondition = 'standard' | 'heavy-gravity' | 'thin-air' | 'spore-gust';
+export type ArtilleryCondition = 'standard' | 'heavy-gravity' | 'thin-air' | 'dust-gust';
 export type ArtilleryDifficulty = 'rookie' | 'standard' | 'expert';
 export type ArtilleryPoint = { x: number; y: number };
 export type ArtilleryTank = { side: ArtillerySide; x: number; integrity: number };
@@ -19,7 +22,7 @@ export type ArtilleryShot = {
   move?: ArtilleryMove;
   system?: ArtillerySystem;
 };
-export type ArtilleryMoveAction = { type: 'move'; direction: Exclude<ArtilleryMove, 0> };
+export type ArtilleryMoveAction = { type: 'move'; direction: Exclude<ArtilleryMove, 0>; mobility?: ArtilleryMobility; thrust?: number };
 export type ArtilleryAction = ArtilleryShot | ArtilleryMoveAction;
 export type ArtilleryProjectileOutcome = {
   path: ArtilleryPoint[];
@@ -49,12 +52,15 @@ export type ArtilleryState = {
   seed: string;
   mode: ArtilleryMode;
   difficulty: ArtilleryDifficulty;
+  mapSize: ArtilleryMapSize;
+  world: ArtilleryWorld;
   terrain: number[];
   tanks: Record<ArtillerySide, ArtilleryTank>;
   creatures: Record<ArtillerySide, ArtilleryCreature>;
   payloads: Record<ArtillerySide, ArtilleryPayloadInventory>;
   coreAmmo: Record<ArtillerySide, number>;
   traction: Record<ArtillerySide, number>;
+  jetCharges: Record<ArtillerySide, number>;
   systemCharges: Record<ArtillerySide, number>;
   guard: Record<ArtillerySide, number>;
   current: ArtillerySide;
@@ -71,15 +77,24 @@ export type ArtilleryState = {
 export const ARTILLERY_WIDTH = 300;
 export const ARTILLERY_HEIGHT = 110;
 export const ARTILLERY_MAX_INTEGRITY = 100;
-export const ARTILLERY_MAX_TRACTION = 3;
+export const ARTILLERY_MAX_DRIVE_FUEL = 100;
+export const ARTILLERY_MAX_JET_FUEL = 100;
+export const ARTILLERY_MAX_TRACTION = ARTILLERY_MAX_DRIVE_FUEL;
+export const ARTILLERY_MAX_JET_CHARGES = ARTILLERY_MAX_JET_FUEL;
 export const ARTILLERY_MOVE_DISTANCE = 22;
+export const ARTILLERY_DEFAULT_THRUST = 25;
+export const ARTILLERY_MAP_WIDTHS: Record<ArtilleryMapSize, number> = {
+  compact: 300,
+  standard: 360,
+  wide: 440,
+};
 export const ARTILLERY_PAYLOADS: ArtilleryPayload[] = ['shell', 'barb', 'bore', 'cluster', 'bloom', 'lance'];
 export const ARTILLERY_SPECIAL_PAYLOADS: ArtillerySpecialPayload[] = ['barb', 'bore', 'cluster', 'bloom', 'lance'];
 export const ARTILLERY_CONDITIONS: Record<ArtilleryCondition, { gravity: number; wind: number }> = {
   standard: { gravity: 1, wind: 1 },
   'heavy-gravity': { gravity: 1.16, wind: 0.9 },
   'thin-air': { gravity: 0.86, wind: 1 },
-  'spore-gust': { gravity: 1, wind: 1.4 },
+  'dust-gust': { gravity: 1, wind: 1.4 },
 };
 export const ARTILLERY_PAYLOAD_RULES: Record<ArtilleryPayload, {
   blastRadius: number;
@@ -93,40 +108,70 @@ export const ARTILLERY_PAYLOAD_RULES: Record<ArtilleryPayload, {
   gravityMultiplier: number;
   terrainBuild: number;
 }> = {
-  shell: { blastRadius: 8, craterRadius: 7.5, craterDepth: 0.72, projectileCount: 1, penetration: 0, baseDamage: 38, directBonus: 8, speedMultiplier: 1, gravityMultiplier: 1, terrainBuild: 0 },
-  barb: { blastRadius: 5, craterRadius: 4.6, craterDepth: 0.36, projectileCount: 3, penetration: 0, baseDamage: 20, directBonus: 4, speedMultiplier: 1, gravityMultiplier: 1, terrainBuild: 0 },
-  bore: { blastRadius: 9.2, craterRadius: 6.4, craterDepth: 1.18, projectileCount: 1, penetration: 7.2, baseDamage: 44, directBonus: 6, speedMultiplier: 0.96, gravityMultiplier: 1, terrainBuild: 0 },
-  cluster: { blastRadius: 4.8, craterRadius: 5, craterDepth: 0.46, projectileCount: 5, penetration: 0, baseDamage: 14, directBonus: 2, speedMultiplier: 0.98, gravityMultiplier: 1.04, terrainBuild: 0 },
-  bloom: { blastRadius: 5.5, craterRadius: 9, craterDepth: 0, projectileCount: 1, penetration: 0, baseDamage: 12, directBonus: 3, speedMultiplier: 0.9, gravityMultiplier: 1.08, terrainBuild: 0.72 },
-  lance: { blastRadius: 4, craterRadius: 3.8, craterDepth: 0.52, projectileCount: 1, penetration: 0, baseDamage: 52, directBonus: 12, speedMultiplier: 1.22, gravityMultiplier: 0.78, terrainBuild: 0 },
+  shell: { blastRadius: 10.5, craterRadius: 10.5, craterDepth: 0.96, projectileCount: 1, penetration: 0, baseDamage: 38, directBonus: 8, speedMultiplier: 1, gravityMultiplier: 1, terrainBuild: 0 },
+  barb: { blastRadius: 5.5, craterRadius: 6.2, craterDepth: 0.54, projectileCount: 3, penetration: 0, baseDamage: 20, directBonus: 4, speedMultiplier: 1, gravityMultiplier: 1, terrainBuild: 0 },
+  bore: { blastRadius: 10.5, craterRadius: 8.8, craterDepth: 1.48, projectileCount: 1, penetration: 7.2, baseDamage: 44, directBonus: 6, speedMultiplier: 0.96, gravityMultiplier: 1, terrainBuild: 0 },
+  cluster: { blastRadius: 5.8, craterRadius: 6.5, craterDepth: 0.62, projectileCount: 5, penetration: 0, baseDamage: 14, directBonus: 2, speedMultiplier: 0.98, gravityMultiplier: 1.04, terrainBuild: 0 },
+  bloom: { blastRadius: 5.5, craterRadius: 15.5, craterDepth: 0, projectileCount: 1, penetration: 0, baseDamage: 12, directBonus: 3, speedMultiplier: 0.9, gravityMultiplier: 1.08, terrainBuild: 1.24 },
+  lance: { blastRadius: 4.6, craterRadius: 5.2, craterDepth: 1.06, projectileCount: 1, penetration: 0, baseDamage: 52, directBonus: 12, speedMultiplier: 1.22, gravityMultiplier: 0.78, terrainBuild: 0 },
 };
 
 const ARTILLERY_SPEED_SCALE = 0.3;
 const PAYLOAD_STOCK: ArtilleryPayloadInventory = { barb: 2, bore: 2, cluster: 1, bloom: 1, lance: 1 };
 
-function buildTerrain(seed: string): { terrain: number[]; rngState: number } {
-  let rngState = hashSeed(`${seed}:terrain`);
+const WORLD_CONDITIONS: Record<ArtilleryWorld, ArtilleryCondition> = {
+  stonera: 'thin-air',
+  magmuth: 'heavy-gravity',
+  krystos: 'standard',
+  endessa: 'dust-gust',
+};
+
+function buildTerrain(seed: string, world: ArtilleryWorld, width: number): { terrain: number[]; rngState: number } {
+  let rngState = hashSeed(`${seed}:${world}:terrain`);
   const anchors: number[] = [];
-  for (let index = 0; index < 17; index += 1) {
+  const anchorCount = Math.max(17, Math.round(width / 20));
+  for (let index = 0; index < anchorCount; index += 1) {
     const draw = nextRandom(rngState);
     rngState = draw.state;
-    anchors.push(20 + draw.value * 30);
+    const height = world === 'magmuth'
+      ? 18 + draw.value * 46
+      : world === 'krystos'
+        ? 24 + draw.value * 28
+        : world === 'endessa'
+          ? 20 + draw.value * 18
+          : 18 + draw.value * 34;
+    anchors.push(height);
   }
-  const terrain = Array.from({ length: ARTILLERY_WIDTH + 1 }, (_, x) => {
-    const position = (x / ARTILLERY_WIDTH) * (anchors.length - 1);
+  const terrain = Array.from({ length: width + 1 }, (_, x) => {
+    const position = (x / width) * (anchors.length - 1);
     const a = Math.floor(position);
     const b = Math.min(anchors.length - 1, a + 1);
     const t = position - a;
-    const eased = t * t * (3 - 2 * t);
-    return anchors[a] * (1 - eased) + anchors[b] * eased;
+    const eased = world === 'magmuth' ? t : t * t * (3 - 2 * t);
+    const base = anchors[a] * (1 - eased) + anchors[b] * eased;
+    if (world === 'endessa') return base + Math.sin(x / 12) * 3.8;
+    if (world === 'krystos') return base + Math.max(0, Math.sin(x / 8)) * 4;
+    if (world === 'stonera') {
+      const craterPhase = Math.abs((x % 74) - 37);
+      return base - Math.max(0, 9 - craterPhase) * 0.7;
+    }
+    return base;
   });
+  // Both rigs deploy on a readable launch shelf. Planet quirks begin outside
+  // that shelf so a crater lip never makes the opening shot physically hidden.
+  for (const ratio of [0.22, 0.78]) {
+    const center = Math.round(width * ratio);
+    const height = terrain[center];
+    for (let offset = -7; offset <= 7; offset += 1) terrain[center + offset] = height;
+  }
   return { terrain, rngState };
 }
 
 export function terrainHeight(terrain: readonly number[], x: number): number {
-  const clamped = Math.max(0, Math.min(ARTILLERY_WIDTH, x));
+  const width = terrain.length - 1;
+  const clamped = Math.max(0, Math.min(width, x));
   const left = Math.floor(clamped);
-  const right = Math.min(ARTILLERY_WIDTH, left + 1);
+  const right = Math.min(width, left + 1);
   const t = clamped - left;
   return terrain[left] * (1 - t) + terrain[right] * t;
 }
@@ -135,20 +180,24 @@ export function createArtilleryState(
   seed: string,
   mode: ArtilleryMode = 'bot',
   difficulty: ArtilleryDifficulty = 'standard',
-  playerCreature: ArtilleryCreature = 'codazzo',
+  setup: ArtilleryCreature | Partial<{ mapSize: ArtilleryMapSize; world: ArtilleryWorld; playerCreature: ArtilleryCreature }> = 'codazzo',
 ): ArtilleryState {
-  const built = buildTerrain(seed);
+  const playerCreature = typeof setup === 'string' ? setup : setup.playerCreature ?? 'codazzo';
+  const mapSize = typeof setup === 'string' ? 'compact' : setup.mapSize ?? 'compact';
+  const world = typeof setup === 'string' ? 'stonera' : setup.world ?? 'stonera';
+  const width = ARTILLERY_MAP_WIDTHS[mapSize];
+  const built = buildTerrain(seed, world, width);
   const windDraw = nextRandom(built.rngState);
-  const conditionDraw = nextRandom(windDraw.state);
-  const conditions: ArtilleryCondition[] = ['standard', 'heavy-gravity', 'thin-air', 'spore-gust'];
   return {
     seed,
     mode,
     difficulty,
+    mapSize,
+    world,
     terrain: built.terrain,
     tanks: {
-      left: { side: 'left', x: 70, integrity: ARTILLERY_MAX_INTEGRITY },
-      right: { side: 'right', x: 230, integrity: ARTILLERY_MAX_INTEGRITY },
+      left: { side: 'left', x: Math.round(width * 0.22), integrity: ARTILLERY_MAX_INTEGRITY },
+      right: { side: 'right', x: Math.round(width * 0.78), integrity: ARTILLERY_MAX_INTEGRITY },
     },
     creatures: {
       left: playerCreature,
@@ -160,17 +209,18 @@ export function createArtilleryState(
     },
     coreAmmo: { left: mode === 'challenge' ? 1 : -1, right: -1 },
     traction: { left: ARTILLERY_MAX_TRACTION, right: ARTILLERY_MAX_TRACTION },
+    jetCharges: { left: ARTILLERY_MAX_JET_CHARGES, right: ARTILLERY_MAX_JET_CHARGES },
     systemCharges: { left: 2, right: 2 },
     guard: { left: 0, right: 0 },
     current: 'left',
     wind: Math.round((windDraw.value * 2 - 1) * 8),
-    condition: conditions[Math.floor(conditionDraw.value * conditions.length)],
+    condition: WORLD_CONDITIONS[world],
     turn: 0,
     phase: 'aiming',
     winner: null,
     botPrevious: null,
     lastImpact: null,
-    rngState: conditionDraw.state,
+    rngState: windDraw.state,
   };
 }
 
@@ -201,12 +251,34 @@ function availableShot(state: ArtilleryState, input: ArtilleryShot): Required<Ar
   return { ...shot, payload, move, system };
 }
 
-export function artilleryMovedX(state: ArtilleryState, side: ArtillerySide, move: ArtilleryMove): number {
-  if (!move || state.traction[side] <= 0) return state.tanks[side].x;
+export function artilleryMoveDistance(
+  state: ArtilleryState,
+  mobility: ArtilleryMobility = 'drive',
+  thrust = ARTILLERY_DEFAULT_THRUST,
+): number {
+  const width = state.terrain.length - 1;
+  const scaledDrive = ARTILLERY_MOVE_DISTANCE * (width / ARTILLERY_WIDTH);
+  const fuelScale = Math.max(0, Math.min(ARTILLERY_MAX_DRIVE_FUEL, thrust)) / ARTILLERY_DEFAULT_THRUST;
+  return Math.round(scaledDrive * (mobility === 'jet' ? 1.25 : 1) * fuelScale * 100) / 100;
+}
+
+export function artilleryMovedX(
+  state: ArtilleryState,
+  side: ArtillerySide,
+  move: ArtilleryMove,
+  mobility: ArtilleryMobility = 'drive',
+  thrust = ARTILLERY_DEFAULT_THRUST,
+): number {
+  const available = mobility === 'jet' ? state.jetCharges[side] : state.traction[side];
+  if (!move || available <= 0) return state.tanks[side].x;
+  const fuel = Math.min(available, Math.max(0, thrust));
+  if (fuel <= 0) return state.tanks[side].x;
+  const width = state.terrain.length - 1;
   const direction = side === 'left' ? move : -move;
-  const minimum = side === 'left' ? 4 : ARTILLERY_WIDTH / 2 + 4;
-  const maximum = side === 'left' ? ARTILLERY_WIDTH / 2 - 4 : ARTILLERY_WIDTH - 4;
-  const target = Math.max(minimum, Math.min(maximum, state.tanks[side].x + direction * ARTILLERY_MOVE_DISTANCE));
+  const minimum = side === 'left' ? 4 : width / 2 + 4;
+  const maximum = side === 'left' ? width / 2 - 4 : width - 4;
+  const target = Math.max(minimum, Math.min(maximum, state.tanks[side].x + direction * artilleryMoveDistance(state, mobility, fuel)));
+  if (mobility === 'jet') return Math.round(target * 10) / 10;
   let reached = state.tanks[side].x;
   const steps = Math.ceil(Math.abs(target - reached));
   for (let step = 1; step <= steps; step += 1) {
@@ -220,14 +292,18 @@ export function artilleryMovedX(state: ArtilleryState, side: ArtillerySide, move
 export function applyArtilleryMove(
   state: ArtilleryState,
   move: ArtilleryMove,
-): { state: ArtilleryState; distance: number } {
+  mobility: ArtilleryMobility = 'drive',
+  thrust = ARTILLERY_DEFAULT_THRUST,
+): { state: ArtilleryState; distance: number; fuelSpent: number } {
   if (state.phase !== 'aiming') throw new Error('The artillery match is already finished.');
-  if (move === 0 || state.traction[state.current] <= 0) return { state, distance: 0 };
-  const destination = artilleryMovedX(state, state.current, move);
+  const available = mobility === 'jet' ? state.jetCharges[state.current] : state.traction[state.current];
+  const fuelSpent = Math.min(available, Math.max(0, thrust));
+  if (move === 0 || fuelSpent <= 0) return { state, distance: 0, fuelSpent: 0 };
+  const destination = artilleryMovedX(state, state.current, move, mobility, fuelSpent);
   const distance = Math.round(Math.abs(destination - state.tanks[state.current].x) * 10) / 10;
-  if (distance === 0) return { state, distance: 0 };
   return {
     distance,
+    fuelSpent,
     state: {
       ...state,
       tanks: {
@@ -236,7 +312,11 @@ export function applyArtilleryMove(
       },
       traction: {
         ...state.traction,
-        [state.current]: state.traction[state.current] - 1,
+        [state.current]: Math.max(0, state.traction[state.current] - (mobility === 'drive' ? fuelSpent : 0)),
+      },
+      jetCharges: {
+        ...state.jetCharges,
+        [state.current]: Math.max(0, state.jetCharges[state.current] - (mobility === 'jet' ? fuelSpent : 0)),
       },
     },
   };
@@ -261,7 +341,8 @@ function simulateProjectile(
   const target = state.tanks[targetSide];
   const direction = state.current === 'left' ? 1 : -1;
   const radians = ((shot.angle + angleOffset) * Math.PI) / 180;
-  const speed = shot.power * ARTILLERY_SPEED_SCALE * rules.speedMultiplier * speedOffset;
+  const rangeScale = Math.sqrt((state.terrain.length - 1) / ARTILLERY_WIDTH);
+  const speed = shot.power * ARTILLERY_SPEED_SCALE * rangeScale * rules.speedMultiplier * speedOffset;
   let x = shooterX + direction * 1.8;
   let y = terrainHeight(state.terrain, shooterX) + 3.2;
   let vx = Math.cos(radians) * speed * direction;
@@ -282,7 +363,11 @@ function simulateProjectile(
       path.push(impact);
       return { path, impact, hit: targetSide, damage: damageAtDistance(shot.payload, 0, true), directHit: true, outOfBounds: false };
     }
-    if (x < -10 || x > ARTILLERY_WIDTH + 10 || y > ARTILLERY_HEIGHT + 35) {
+    const width = state.terrain.length - 1;
+    // The visible viewport is a camera, not the edge of the simulation. High
+    // shots can leave the top of the screen and must keep flying until gravity
+    // brings them back down. Horizontal range remains the only escape boundary.
+    if (x < -10 || x > width + 10) {
       return { path, impact: null, hit: null, damage: 0, directHit: false, outOfBounds: true };
     }
     if (y <= terrainHeight(state.terrain, x)) {
@@ -353,10 +438,40 @@ function reshapeTerrain(terrain: readonly number[], impact: ArtilleryPoint | nul
   return terrain.map((height, x) => {
     const distance = Math.abs(x - impact.x);
     if (distance >= rules.craterRadius) return height;
-    const curve = Math.sqrt(rules.craterRadius * rules.craterRadius - distance * distance);
-    if (rules.terrainBuild) return Math.min(72, height + curve * rules.terrainBuild);
-    return Math.max(2, height - curve * rules.craterDepth);
+    const normalized = distance / rules.craterRadius;
+    if (rules.terrainBuild) {
+      // Rampart is a broad, steep-sided fieldwork rather than a cosmetic bump.
+      // The shallow power keeps the shoulders useful as cover while the crown
+      // remains tall enough to block direct fire.
+      const wall = Math.pow(1 - normalized, 0.58) * rules.craterRadius;
+      return Math.min(76, height + wall * rules.terrainBuild);
+    }
+    const bowl = Math.sqrt(1 - normalized * normalized) * rules.craterRadius;
+    const profile = payload === 'bore'
+      ? 0.72 + 0.28 * Math.pow(1 - normalized, 2)
+      : payload === 'lance'
+        ? Math.pow(1 - normalized, 1.45)
+        : payload === 'barb'
+          ? 0.74 + 0.26 * (1 - normalized)
+          : 1;
+    return Math.max(2, height - bowl * rules.craterDepth * profile);
   });
+}
+
+export function artilleryTerrainImpactStages(
+  terrain: readonly number[],
+  projectiles: readonly ArtilleryProjectileOutcome[],
+  payload: ArtilleryPayload,
+): Array<{ projectileIndex: number; terrain: number[] }> {
+  let current = [...terrain];
+  return projectiles
+    .map((projectile, projectileIndex) => ({ projectile, projectileIndex }))
+    .filter(({ projectile }) => projectile.impact !== null)
+    .sort((a, b) => a.projectile.path.length - b.projectile.path.length || a.projectileIndex - b.projectileIndex)
+    .map(({ projectile, projectileIndex }) => {
+      current = reshapeTerrain(current, projectile.impact, payload);
+      return { projectileIndex, terrain: current };
+    });
 }
 
 export function applyArtilleryShot(
@@ -369,12 +484,10 @@ export function applyArtilleryShot(
   const targetSide: ArtillerySide = state.current === 'left' ? 'right' : 'left';
   const tanks = { left: { ...state.tanks.left }, right: { ...state.tanks.right } };
   const movedX = artilleryMovedX(state, state.current, shot.move);
-  const spentTraction = movedX !== state.tanks[state.current].x;
+  const spentTraction = shot.move !== 0 && state.traction[state.current] > 0;
   tanks[state.current].x = movedX;
-  const terrain = simulated.projectiles.reduce(
-    (current, projectile) => reshapeTerrain(current, projectile.impact, shot.payload),
-    state.terrain,
-  );
+  const impactStages = artilleryTerrainImpactStages(state.terrain, simulated.projectiles, shot.payload);
+  const terrain = impactStages.at(-1)?.terrain ?? [...state.terrain];
   const oldGround = terrainHeight(state.terrain, tanks[targetSide].x);
   const newGround = terrainHeight(terrain, tanks[targetSide].x);
   const terrainShift = Math.round((newGround - oldGround) * 10) / 10;
@@ -394,9 +507,7 @@ export function applyArtilleryShot(
     : tanks[targetSide].integrity === 0 || rangeFinished ? state.current : null;
   const windChanges = (state.current === 'right' || state.mode === 'range' || state.mode === 'challenge') && !winner;
   const nextWind = windChanges ? nextRandom(state.rngState) : { value: 0.5, state: state.rngState };
-  const nextConditionDraw = windChanges ? nextRandom(nextWind.state) : { value: 0, state: nextWind.state };
-  const conditions: ArtilleryCondition[] = ['standard', 'heavy-gravity', 'thin-air', 'spore-gust'];
-  const impactX = outcome.impact?.x ?? (state.current === 'left' ? ARTILLERY_WIDTH + 8 : -8);
+  const impactX = outcome.impact?.x ?? (state.current === 'left' ? state.terrain.length + 7 : -8);
   const miss = impactX - state.tanks[targetSide].x;
   const payloads = {
     left: { ...state.payloads.left },
@@ -415,19 +526,20 @@ export function applyArtilleryShot(
       coreAmmo,
       traction: {
         ...state.traction,
-        [state.current]: Math.max(0, state.traction[state.current] - Number(spentTraction)),
+        [state.current]: Math.max(0, state.traction[state.current] - (spentTraction ? ARTILLERY_DEFAULT_THRUST : 0)),
       },
+      jetCharges: state.jetCharges,
       systemCharges: state.systemCharges,
       guard: { ...state.guard, [targetSide]: 0 },
       current: winner || state.mode === 'range' || state.mode === 'challenge' ? state.current : targetSide,
       wind: windChanges ? Math.round((nextWind.value * 2 - 1) * 8) : state.wind,
-      condition: windChanges ? conditions[Math.floor(nextConditionDraw.value * conditions.length)] : state.condition,
+      condition: state.condition,
       turn: state.turn + 1,
       phase: winner ? 'finished' : 'aiming',
       winner,
       botPrevious: state.current === 'right' ? { miss, shot } : state.botPrevious,
       lastImpact: outcome.impact ? { x: outcome.impact.x, shooter: state.current } : state.lastImpact,
-      rngState: nextConditionDraw.state,
+      rngState: nextWind.state,
     },
   };
 }

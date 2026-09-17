@@ -963,6 +963,21 @@
       ]
     },
     {
+      "key": "shuntara",
+      "title": "Shuntara",
+      "category": "xalians",
+      "definition": "The Shuntara is a low eight-legged Xalian generated on Zolton to spin temporary bypass networks and protective charged lattices. It braces on rounded gripping pads, raises the terminal spinnerets on its pointed abdomen, and divides impacts or dangerous current across many connected filament paths without requiring a storm or conductive ground.",
+      "pronunciation": {
+        "respelling": "shun-TAR-uh",
+        "ipa": "ʃʌnˈtɑːrə"
+      },
+      "related": [
+        "voltish",
+        "xalians",
+        "zolton"
+      ]
+    },
+    {
       "key": "smokat",
       "title": "Smokat",
       "category": "xalians",

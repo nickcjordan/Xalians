@@ -4,9 +4,14 @@ import './routeComparison.css';
 
 export function comparisonCosts(plan, companion) {
   const uncertain = !!(plan.unresolvedHazards.length || plan.nativeRisk);
-  const saved = companion?.ready && !uncertain && plan.knownLeadStrain > 0 ? 1 : 0;
-  return { energy: Math.max(0, plan.knownLeadStrain - saved) + plan.baseSupportStrain,
-    stability: plan.knownPressure, salvage: plan.route.salvage, uncertain, saved };
+  const assisted = !!(companion?.ready && !uncertain && plan.knownLeadStrain > 0);
+  const requiredLead = Math.max(0, plan.knownLeadStrain - (assisted ? 1 : 0));
+  const lead = Math.min(plan.leadEnergy ?? Infinity, requiredLead);
+  const support = Math.min(plan.supportEnergy ?? Infinity, plan.baseSupportStrain);
+  const saved = Math.min(plan.leadEnergy ?? Infinity, plan.knownLeadStrain) - lead;
+  return { energy: lead + support, lead, support, requiredEnergy: requiredLead + plan.baseSupportStrain,
+    stability: plan.knownPressure, salvage: plan.route.salvage, uncertain, saved, assisted,
+    exhaustsLead: plan.leadEnergy !== undefined && requiredLead >= plan.leadEnergy };
 }
 
 // A single table makes the row labels, token sizes and uncertainty grammar shared.
@@ -35,7 +40,8 @@ export default function RouteComparison({ plans, selectedId, onSelect, onPreview
         const unknown = key !== 'salvage' && values[index].uncertain;
         return <div key={plan.route.id} role="cell" className={`lr-board-value${selectedId === plan.route.id ? ' is-selected' : ''}`} aria-label={`${plan.route.title}: ${value} ${key}${unknown ? ' known, plus unknown extra cost' : ''}`}>
           <div className="lr-board-amount">{(!unknown || value > 0) && <b>{value}</b>}<span className="lr-board-token-run" aria-hidden="true">{Array.from({ length: value }, (_, i) => <Icon key={i} />)}</span>{unknown && <span className="lr-board-unknown" title={`${value} known cost. The scout has not established the extra cost; it may affect energy, stability, or both.`}>{value > 0 ? '+ ?' : '?'}</span>}{value === 0 && !unknown && <Check aria-label="None spent" />}</div>
-          <small>{key === 'energy' && values[index].saved > 0 ? `${companion.creature.species} saves 1 energy` : unknown ? value > 0 ? 'known cost + unknown extra' : 'total unknown' : key === 'salvage' ? 'salvage' : value === 0 ? 'none spent' : 'fixed cost'}</small>
+          <small>{key === 'energy' && values[index].saved > 0 ? `${companion.creature.species} saves 1 · uses its one help` : unknown ? value > 0 ? 'known cost + unknown extra' : 'total unknown' : key === 'salvage' ? 'salvage' : value === 0 ? 'none spent' : 'fixed cost'}</small>
+          {key === 'energy' && values[index].exhaustsLead && <small className="lr-board-exhaustion">{plan.lead.species} has no energy left afterward{values[index].assisted ? ' · even with ally help' : ''}</small>}
         </div>;
       })}
     </div>)}
@@ -50,8 +56,8 @@ export default function RouteComparison({ plans, selectedId, onSelect, onPreview
     <div className="lr-board-row lr-board-footer" role="row">
       <div className="lr-board-axis" role="rowheader">Your route</div>
       {plans.map((plan, index) => <div role="cell" key={plan.route.id} className={selectedId === plan.route.id ? 'is-selected' : ''}>
-        <button type="button" className="lr-board-select" aria-label={`${selectedId === plan.route.id ? 'Selected' : 'Select'}: ${plan.route.title}`} aria-pressed={selectedId === plan.route.id} onClick={() => onSelect(plan.route.id)}>{selectedId === plan.route.id ? <><Check />Selected</> : <>Select route<ArrowRight /></>}</button>
-        <details className="lr-board-analysis"><summary>Why these costs?</summary><p>{plan.route.description}</p><p>{plan.lead.species} leads with {plan.method.label}; {plan.support.species} supports. Crew score {plan.teamScore} against target {plan.difficulty}.</p>{values[index].saved > 0 && <p>{companion.creature.species} preserves 1 lead energy.</p>}<p>{values[index].uncertain ? 'The displayed cost is the known part. An unresolved hazard or native encounter can add energy or stability costs.' : 'These costs include the chosen crew, method, and known conditions.'}</p>{plan.route.consequence && <p><strong>{plan.route.consequence.label}:</strong> {plan.route.consequence.future}</p>}</details>
+        <button type="button" className="lr-board-select" aria-label={`Choose crew for: ${plan.route.title}`} aria-pressed={selectedId === plan.route.id} onClick={() => onSelect(plan.route.id)}>Choose who leads<ArrowRight /></button>
+        <details className="lr-board-analysis"><summary>Why these costs?</summary><p>{plan.route.description}</p><p>{plan.lead.species} leads with {plan.method.label}; {plan.support.species} supports. Crew score {plan.teamScore} against target {plan.difficulty}.</p>{values[index].saved > 0 && <p>{companion.creature.species} preserves 1 lead energy.</p>}{values[index].requiredEnergy > values[index].energy && <p>The effort demands {values[index].requiredEnergy} energy, but only {values[index].energy} can be spent from the assigned creatures' reserves. The lead is exhausted, not prevented from crossing.</p>}<p>{values[index].uncertain ? 'The displayed cost is the known part. An unresolved hazard or native encounter can add energy or stability costs.' : 'These costs include the chosen crew, method, and known conditions.'}</p>{plan.route.consequence && <p><strong>{plan.route.consequence.label}:</strong> {plan.route.consequence.future}</p>}</details>
       </div>)}
     </div>
   </div>;

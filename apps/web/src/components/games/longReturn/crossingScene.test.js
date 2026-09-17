@@ -46,7 +46,21 @@ test('non-destructive methods do not claim dismantling and arrival does not prom
   const breach = MISSION.scenes[2].routes[1];
   expect(resolve(breach, {}, breach.methods[2])[3]).toContain('release finally answers');
   expect(resolve(breach, {}, breach.methods[2])[3]).not.toContain('displaced segments');
+  const pressured = resolve(breach, { pressure: 2 }, breach.methods[2]).join(' ');
+  expect(pressured).toContain('old release strains');
+  expect(pressured).not.toMatch(/displaced iris|displaced segments/);
   const conduit = MISSION.scenes[3].routes[1];
   expect(resolve(conduit, {}, conduit.methods[2]).join(' ')).not.toMatch(/disassembles|brace gives way/);
   expect(resolve(MISSION.scenes[5].routes[0], { pressure: 10 }).join(' ')).not.toContain('still a choice');
+});
+
+test('confirmed environment and decisive support explain effort without numeric analysis', () => {
+  const route = MISSION.scenes[5].routes[1];
+  const result = { leadStrain: 2, rawMethodScore: route.difficulty - 2, margin: 4, environment: { strain: 1, notes: ['must cross the liquid without breathing'] } };
+  const story = resolve(route, result).join(' ');
+  expect(story).toContain('no breath to take');
+  expect(story).toContain('Graviclaw coordinating the others');
+  expect(story).not.toMatch(/support points|team score/);
+  expect(resolve(route, { ...result, leadStrain: 0 }).join(' ')).not.toContain('no breath to take');
+  expect(resolve(route, { ...result, rawMethodScore: route.difficulty + 20 }).join(' ')).not.toContain('instead of forcing');
 });

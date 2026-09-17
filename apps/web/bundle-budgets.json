@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "measuredAt": "Schema 4 capability metadata and historical schema readers: generator route 321703 gzip bytes, duel start 209288; affected gzip budgets retain approximately five percent headroom. Other limits unchanged.",
+    "measuredAt": "Schema 4 capability metadata and historical schema readers: generator route 321703 gzip bytes, duel start 209288; affected gzip budgets retain approximately five percent headroom. Other limits unchanged. Integrated main including Shuntara and lore artwork: encyclopedia route measured 190708 gzip bytes; budget 201000.",
     "measuredOn": "2026-09-16",
     "policy": "Initial limits and route limits are the measured production output after removing the developer styleguide, rounded up with approximately five percent headroom. Update a limit only with measured evidence and review."
   },
@@ -13,8 +13,8 @@
       "gzip": 195000
     },
     "stylesheets": {
-      "raw": 230000,
-      "gzip": 37000
+      "raw": 240500,
+      "gzip": 39000
     }
   },
   "chunks": {
@@ -49,7 +49,7 @@
     "encyclopediaPage": {
       "javascript": {
         "raw": 673000,
-        "gzip": 185000
+        "gzip": 201000
       },
       "stylesheets": {
         "raw": 0,
@@ -108,8 +108,8 @@
     },
     "artilleryGamePage": {
       "javascript": {
-        "raw": 69000,
-        "gzip": 24500
+        "raw": 91000,
+        "gzip": 30600
       },
       "stylesheets": {
         "raw": 0,

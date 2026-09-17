@@ -68,6 +68,6 @@ Games define distances, probabilities, costs, event scheduling, stacking, durati
 
 ## Migration and replay
 
-All 31 species retain signature names, prose, instruments, media, and intensity bands. Bioflim's automatic carapace renewal is now a passive signature; Hippochamp's unbroken stream is ongoing. Existing standard option permissions remain intact. Newly required categorical values are documented [migration authoring decisions](schema-4-migration.md), not newly discovered source facts.
+All 32 species retain signature names, prose, instruments, media, and intensity bands. Bioflim's automatic carapace renewal is now a passive signature; Hippochamp's unbroken stream is ongoing. Existing standard option permissions remain intact. Newly required categorical values are documented [migration authoring decisions](schema-4-migration.md), not newly discovered source facts.
 
-Schemas 1–3 remain readable through preserved historical definitions. The archives generation-0.3.0-1 and generation-0.4.0-1 are immutable. Current generation uses generation-0.5.0-1; see [release manifests and replay](generation-releases.md).
+Schemas 1–3 remain readable through preserved historical definitions. The archives generation-0.3.0-1 and generation-0.4.0-1 are immutable. Current generation uses generation-0.5.0-2; see [release manifests and replay](generation-releases.md).

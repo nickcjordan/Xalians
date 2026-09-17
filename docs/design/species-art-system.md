@@ -38,3 +38,22 @@ The token is not a mechanically thickened portrait. Fine interior illustration s
 5. Inspect the token at 35px and 64px on a DPR 1 browser, including any surface that adds a stroke or shadow.
 
 No JavaScript registry edit is required. The asset maps are generated from the two directories at build time, and an unknown or incomplete species receives a visible fallback instead of disappearing silently.
+
+## Concept-art refinement protocol
+
+Treat the approved creature record as the design source and generated images as proposals. Do not rewrite anatomy or lore merely to explain an accidental render. If an image suggests a genuinely stronger design, state the proposed change explicitly and approve it as a design decision before the record changes.
+
+For each refinement pass:
+
+1. Name one approved image as the baseline and name the exact regions allowed to change.
+2. Restate invariants before editing: appendage count, attachment points, functional-organ source, unsupported pose, major markings, palette, and background.
+3. Prefer one class of change per pass. If an edit changes an unrelated region, discard it and return to the last approved baseline instead of stacking repairs on the contaminated output.
+4. Trace anatomy rather than counting visible tips. Every load-bearing limb must form one unambiguous path from body attachment through its joints to its own contact surface; every emitted substance must have a visible source and a credible route into the action.
+5. Inspect negative space as anatomy. Contrasting pigmentation and interior gaps must not make adjacent limbs appear fused, crossed, detached, or exchanged. Simplify the marking before adding outline detail.
+6. Judge character features as part of the whole silhouette. A crest, marking, or nonfunctional flourish must have a deliberate base and direction, remain distinct from ears or working organs, and leave room for the functional anatomy already present.
+7. Use familiar associations as a readability aid, not the complete concept. A creature may read as spider-like or bird-like while retaining species-specific posture, anatomy, markings, and purpose.
+8. Scope visual references to the rendering language being borrowed. Do not let another creature's anatomy, segmentation, surface treatment, or proportions enter merely because its silhouette style was referenced.
+9. Check the image at portrait size, 64px, and 35px. Replace fine hair, reflection streaks, tiny markings, and narrow gaps with broader masses that survive reduction.
+10. Label every displayed result as `evaluate`, `intermediate`, or `discarded`. Background corrections and other repair outputs remain intermediate until their invariants have been rechecked. Present exactly one image as the evaluation target at the end of a pass.
+
+Before art approval, perform one final lore check against the record and one final visual trace of every repeated part. Record any intentional anatomy change in the proposal's art-consistency section, then derive the compact token from the approved portrait rather than from an earlier concept.

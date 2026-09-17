@@ -3352,6 +3352,8 @@
   font: 700 1.05rem/1 var(--g-font-mono);
 }
 
+.lr-end-haul-loss { color: var(--g-ink); font-size: 14px; line-height: 1.4; }
+
 .lr-end-crew {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -3362,6 +3364,9 @@
 .lr-end-crew .lr-crew-member {
   pointer-events: none;
 }
+
+.lr-end-crew .lr-portrait--compact { min-height: 92px; height: 100%; }
+.lr-end-crew .lr-member-detail { white-space: normal; line-height: 1.4; }
 
 .lr-end-actions {
   display: flex;

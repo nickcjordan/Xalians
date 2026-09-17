@@ -5,13 +5,17 @@ const output = process.env.LR_QA_OUTPUT || 'C:/Users/njord/AppData/Local/Temp/lo
 await mkdir(output, { recursive: true });
 const browser = await chromium.launch({ executablePath: 'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe', headless: true });
 try {
-  const context = await browser.newContext({ viewport: { width: 1280, height: 900 }, reducedMotion: process.env.LR_REDUCED === '1' ? 'reduce' : 'no-preference' });
+  const viewport = { width: Number(process.env.LR_WIDTH || 1280), height: Number(process.env.LR_HEIGHT || 900) };
+  const context = await browser.newContext({ viewport, reducedMotion: process.env.LR_REDUCED === '1' ? 'reduce' : 'no-preference' });
   const page = await context.newPage();
   const events = [], errors = [];
   let crossed = 0;
   const responses = {};
   page.on('pageerror', error => errors.push(error.message));
-  await page.goto('http://127.0.0.1:4173/long-return');
+  page.on('response', response => {
+    if (response.status() >= 400 && ['image', 'stylesheet', 'script', 'font'].includes(response.request().resourceType())) errors.push(`Asset ${response.status()}: ${response.url()}`);
+  });
+  await page.goto(`${process.env.LR_BASE_URL || 'http://127.0.0.1:4173'}/long-return`);
   if (process.env.LR_SWAP) {
     const [incoming, outgoing] = process.env.LR_SWAP.split(':');
     await page.locator(`[data-creature-id="${incoming}"]`).click();
@@ -25,7 +29,7 @@ try {
       await dialog.getByRole('button', { name: /Continue to result|Review scout report|Check scout status|Respond to encounter|See encounter result|Choose response/ }).waitFor({ timeout: 30000 });
       events.push({ type: 'animation', elapsed: Date.now()-started, text: await dialog.innerText() });
       await page.screenshot({ path: `${output}/${step}-animation.png` });
-      await dialog.getByRole('button').click();
+      await dialog.locator(':scope > button').click();
       continue;
     }
     await page.screenshot({ path: `${output}/${step}-view.png`, fullPage: true });
@@ -52,12 +56,17 @@ try {
       const leastRisk = page.locator('.lr-board-head [data-lowest-risk="true"] .lr-board-pick');
       await click(prescribed !== undefined ? page.locator('.lr-board-pick').nth(Number(prescribed)) : process.env.LR_ROUTE_POLICY === 'recommended-risk' ? await recommended.count() ? recommended.first() : leastRisk.first() : process.env.LR_CONSERVE === '1' && await leastRisk.count() ? leastRisk.first() : await recommended.count() ? recommended.first() : await confirmed.count() ? confirmed.first() : page.locator('.lr-board-pick').first());
       if (process.env.LR_ALTERNATE === '1') {
-        await page.locator('.lr-lead-options > summary').click();
         const alternate = page.locator('.lr-lead-options button[aria-pressed="false"]').first();
         if (await alternate.count()) await click(alternate);
         await page.screenshot({ path: `${output}/${step}-alternate-lead.png`, fullPage: true });
       }
       if (process.env.LR_COMMANDS === '1') { const command=page.locator('.lr-simple-override input'); if(await command.count()) await command.check(); }
+      await page.screenshot({ path: `${output}/${step}-plan.png` });
+      events.push({ type: 'plan', text: await page.locator('.lr-simple-plan').innerText() });
+      if (viewport.width <= 650) {
+        const action = await page.getByRole('button', { name: /Cross now/ }).boundingBox();
+        assert(action.y >= 0 && action.y + action.height <= viewport.height, 'Later-scene phone commit must remain visible');
+      }
       await click(page.getByRole('button', { name: /Cross now/ })); continue;
     }
     if (await page.locator('.lr-simple-result').count()) {
@@ -72,7 +81,7 @@ try {
           assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), 'Extraction choice overflow');
           assert(await page.locator('.lr-haul-risk').isVisible());
         }
-        await page.setViewportSize({ width: 1280, height: 900 });
+        await page.setViewportSize(viewport);
       }
       if (process.env.LR_EXTRACT === '1' && await extract.count()) { await click(extract.first()); continue; }
       const workshop = page.locator('.lr-workshop');

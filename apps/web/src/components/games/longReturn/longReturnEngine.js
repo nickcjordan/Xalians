@@ -70,10 +70,10 @@ export function encounterOutlook(scene, creature) {
   };
 }
 
-export function encounterOptions(scene, scout, crew, mode = 'scout', informed = false) {
+export function encounterOptions(scene, scout, crew, mode = 'scout', informed = false, strain = {}) {
   if (!scene.encounter) return [];
   const outlook = scout ? encounterOutlook(scene, scout) : null;
-  const medic = crew.find((member) => member.traits.includes('healing') || member.abilities.some((ability) => ability.action === 'mend'));
+  const medic = crew.find((member) => readinessState(strain[member.id]).id !== 'spent' && (member.traits.includes('healing') || member.abilities.some((ability) => ability.action === 'mend')));
   const baseSurprise = mode === 'group' && !informed ? 1 : outlook ? outlook.surpriseStrain : 0;
   const archetype = scene.encounter.archetype || 'injured';
 
@@ -86,7 +86,7 @@ export function encounterOptions(scene, scout, crew, mode = 'scout', informed = 
     const canSignal = outlook && (outlook.contact >= 62 || outlook.channel);
     return [
       ...(canSignal ? [{ id: 'signal-space', label: 'Signal peaceful intent', summary: 'Show that the scout wants passage, not its shelter.', scoutStrain: baseSurprise, instability: 0, companion: false, resolution: 'cleared', recommended: true }] : []),
-      { id: 'withdraw', label: 'Withdraw and report', summary: 'Leave its boundary intact and return with a warning for the crew.', scoutStrain: baseSurprise + (outlook && outlook.stealth >= 62 ? 0 : 1), instability: 0, companion: false, resolution: 'unresolved', recommended: !canSignal },
+      { id: 'withdraw', label: 'Break contact', summary: outlook?.channel ? 'Leave its boundary intact and relay a warning to the crew.' : 'Leave its boundary intact. The scout must still return to deliver the warning.', scoutStrain: baseSurprise + (outlook && outlook.stealth >= 62 ? 0 : 1), instability: 0, companion: false, resolution: 'unresolved', recommended: !canSignal },
       { id: 'challenge', label: 'Challenge its claim', summary: 'Force the native out alone. A defensive scout fares better than a quiet one.', scoutStrain: baseSurprise + (outlook && outlook.hold >= 62 ? 1 : 2), instability: 2, companion: false, resolution: 'cleared' }
     ];
   }
@@ -100,30 +100,30 @@ export function encounterOptions(scene, scout, crew, mode = 'scout', informed = 
     const precise = outlook && (outlook.contact >= 62 || outlook.detect >= 72);
     return [
       { id: 'release', label: 'Release it from the arms', summary: 'Use empathy or careful observation to stop its panic without calling the crew.', scoutStrain: baseSurprise + (precise ? 0 : 1), instability: precise ? 0 : 1, companion: false, resolution: 'cleared', recommended: precise },
-      { id: 'mark', label: 'Mark the safe controls and return', summary: 'Do not intervene alone. Give the full crew what it needs to approach safely.', scoutStrain: baseSurprise, instability: 0, companion: false, resolution: 'unresolved', recommended: !precise },
+      { id: 'mark', label: 'Mark the safe controls and withdraw', summary: outlook?.channel ? 'Do not intervene alone. Relay the safe approach to the crew.' : 'Do not intervene alone. The scout must return to explain the safe approach.', scoutStrain: baseSurprise, instability: 0, companion: false, resolution: 'unresolved', recommended: !precise },
       { id: 'force-arms', label: 'Force the arms apart', summary: 'Resolve the trap through strength. It works, but the rig records the intrusion.', scoutStrain: baseSurprise + (outlook && outlook.hold >= 62 ? 1 : 2), instability: 2, companion: false, resolution: 'cleared' }
     ];
   }
 
   if (mode === 'group') {
     const options = [];
-    if (medic) options.push({ id: 'aid', label: `${medic.species} treats the injury`, summary: 'Help the native and attempt a temporary field bond.', crewStrain: baseSurprise, instability: informed ? 0 : 1, companion: true, resolution: 'befriended', recommended: true });
+    if (medic) options.push({ id: 'aid', helperId: medic.id, label: `${medic.species} treats the injury`, summary: 'Help the native and attempt a temporary field bond.', crewStrain: baseSurprise, instability: informed ? 0 : 1, companion: true, resolution: 'befriended', recommended: true });
     options.push({ id: 'drive-off', label: 'Drive it out of the underdeck', summary: 'Open the route by force. The crew stays together, but the annex hears it.', crewStrain: baseSurprise + 1, instability: 2, companion: false, resolution: 'cleared' });
     options.push({ id: 'detour', label: 'Back out and take the catwalk', summary: 'Avoid contact and reconsider the other route.', crewStrain: baseSurprise, instability: informed ? 0 : 1, companion: false, resolution: 'detour' });
     return options;
   }
 
-  const directMedic = scout && (scout.traits.includes('healing') || scout.abilities.some((ability) => ability.action === 'mend'));
+  const directMedic = scout && readinessState(strain[scout.id]).id !== 'spent' && (scout.traits.includes('healing') || scout.abilities.some((ability) => ability.action === 'mend'));
   const options = [];
   if (directMedic) {
-    options.push({ id: 'aid', label: 'Treat the injury', summary: 'Use the scout’s healing ability to establish trust without calling the crew.', scoutStrain: baseSurprise, instability: 0, companion: true, resolution: 'befriended', recommended: true });
+    options.push({ id: 'aid', helperId: scout.id, label: 'Treat the injury', summary: scout.traits.includes('healing') ? 'Use the scout’s innate healing to establish trust. Its one-use crossing techniques stay available.' : 'Use the scout’s mending expertise to establish trust without calling the crew.', scoutStrain: baseSurprise, instability: 0, companion: true, resolution: 'befriended', recommended: true });
   } else if (medic && outlook && outlook.channel) {
-    options.push({ id: 'call-medic', label: `Call ${medic.species} to help`, summary: `Use ${outlook.channel} to summon help. The delay destabilizes the annex, but may earn an ally.`, scoutStrain: baseSurprise, instability: 1, companion: true, resolution: 'befriended', recommended: true });
+    options.push({ id: 'call-medic', helperId: medic.id, label: `Call ${medic.species} to help`, summary: `Use ${outlook.channel} to summon help. The delay destabilizes the annex, but may earn an ally.`, scoutStrain: baseSurprise, instability: 1, companion: true, resolution: 'befriended', recommended: true });
   } else if (medic) {
-    options.push({ id: 'return-for-medic', label: `Return for ${medic.species}`, summary: 'Leave and physically guide the medic back. Safe, but tiring and slow.', scoutStrain: baseSurprise + 1, instability: 1, companion: true, resolution: 'befriended', recommended: true });
+    options.push({ id: 'return-for-medic', helperId: medic.id, label: `Return for ${medic.species}`, summary: 'Leave and physically guide the medic back. Safe, but tiring and slow.', scoutStrain: baseSurprise + 1, instability: 1, companion: true, resolution: 'befriended', recommended: true });
   }
   const escapeCost = baseSurprise + (outlook && outlook.stealth >= 62 ? 0 : 1);
-  options.push({ id: 'withdraw', label: 'Withdraw and report', summary: 'Preserve the encounter for the full crew. The route remains occupied.', scoutStrain: escapeCost, instability: 0, companion: false, resolution: 'unresolved' });
+  options.push({ id: 'withdraw', label: 'Break contact', summary: outlook?.channel ? 'Relay a warning and leave the encounter for the full crew. The route remains occupied.' : 'Leave the encounter for the full crew. The scout must still return to report; the route remains occupied.', scoutStrain: escapeCost, instability: 0, companion: false, resolution: 'unresolved' });
   const holdCost = baseSurprise + (outlook && outlook.hold >= 62 ? 1 : 2);
   options.push({ id: 'hold', label: 'Hold ground and drive it away', summary: 'Resolve the encounter alone through force and presence.', scoutStrain: holdCost, instability: outlook && outlook.hold >= 62 ? 1 : 2, companion: false, resolution: 'cleared' });
   return options;
@@ -160,6 +160,11 @@ export function scanScene(scene, creature) {
 }
 
 export function scanReport(scene, creature, scan) {
+  const report = describeScanReport(scene, creature, scan);
+  return { ...report, strainCost: scan.energySpent ?? report.strainCost, stabilityCost: scan.stabilitySpent ?? (scan.mode === 'debrief' ? 1 : 0) };
+}
+
+function describeScanReport(scene, creature, scan) {
   if (scan.mode === 'blind') {
     return {
       outcome: 'blind',

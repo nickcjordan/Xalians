@@ -239,6 +239,10 @@ describe('Long Return prototype engine', () => {
     expect(report.outcome).toBe('revealed');
     expect(report.channel).toBe('physical return');
     expect(report.strainCost).toBe(2);
+    expect(report.stabilityCost).toBe(1);
+    const depleted = scanReport(scene, scout, { ...returned, energySpent: 1, stabilitySpent: 0 });
+    expect(depleted.strainCost).toBe(1);
+    expect(depleted.stabilityCost).toBe(0);
   });
 
   test('every scene explains the immediate objective, survey focus, and route destination', () => {

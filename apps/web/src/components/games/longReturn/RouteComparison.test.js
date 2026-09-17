@@ -3,6 +3,12 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import RouteComparison, { comparisonCosts } from './RouteComparison';
 
 const base = { route: { id: 'a', title: 'Gantry', salvage: 1 }, lead: { species: 'Lead' }, support: { species: 'Support' }, method: { label: 'Climb' }, knownLeadStrain: 1, baseSupportStrain: 0, knownPressure: 1, unresolvedHazards: [], risk: 1 };
+
+test('depleted previews distinguish actual loss from effort demand and do not invent ally savings', () => {
+  const depleted = { ...base, knownLeadStrain: 8, baseSupportStrain: 1, leadEnergy: 2, supportEnergy: 1 };
+  expect(comparisonCosts(depleted)).toMatchObject({ energy: 3, lead: 2, support: 1, requiredEnergy: 9, exhaustsLead: true });
+  expect(comparisonCosts(depleted, { ready: true })).toMatchObject({ energy: 3, saved: 0, assisted: true, requiredEnergy: 8, exhaustsLead: true });
+});
 function board(hazard) {
   const root = document.createElement('div');
   root.innerHTML = renderToStaticMarkup(<RouteComparison plans={[base, { ...base, route: { id: 'b', title: 'Intake', salvage: 2 }, knownLeadStrain: 0, knownPressure: 0, unresolvedHazards: [hazard] }]} onSelect={() => {}} onPreview={() => {}} />);
@@ -32,7 +38,7 @@ test('the shared energy row includes support and a confirmed companion saving', 
 test('confirmed ally savings are explained at the energy value, not only in analysis', () => {
   const root = document.createElement('div');
   root.innerHTML = renderToStaticMarkup(<RouteComparison plans={[base]} companion={{ ready: true, creature: { species: 'Xylum' } }} onSelect={() => {}} onPreview={() => {}} />);
-  expect(root.querySelector('.is-energy [role="cell"] small').textContent).toBe('Xylum saves 1 energy');
+  expect(root.querySelector('.is-energy [role="cell"] small').textContent).toBe('Xylum saves 1 · uses its one help');
 });
 
 test('one-use costs share a comparison row only when a plan uses an ability', () => {

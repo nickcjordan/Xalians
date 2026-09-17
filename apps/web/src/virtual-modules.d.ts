@@ -3,7 +3,8 @@ declare module 'virtual:xalians-home-data' {
 		key: string;
 		name: string;
 		element: string;
-		planetImage: string;
+		image: string;
+		imageAlt: string;
 	};
 
 	export type HomeSpecies = {

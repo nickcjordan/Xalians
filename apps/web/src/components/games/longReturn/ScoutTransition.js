@@ -9,22 +9,20 @@ import BiIcon from './BiIcon';
 import './scoutTransition.css';
 import SequenceStory, { trapSequenceFocus } from './SequenceStory';
 
-function scoutBeats(action) {
+export function scoutBeats(action) {
+  const energy = Math.max(0, action.energyBefore - action.energyAfter);
+  const stability = Math.max(0, (action.stabilityBefore ?? 0) - (action.stabilityAfter ?? 0));
+  const costs = [energy > 0 && { kind: 'energy', text: `−${energy} energy · ${action.energyAfter} left` }, stability > 0 && { kind: 'stability', text: `−${stability} stability · ${action.stabilityAfter} left` }].filter(Boolean);
   if (action.type === 'scout-return') return [
-    { kind: 'return', icon: 'bi-arrow-return-left', text: `${action.scout.species} races back with the report.` },
-    { kind: 'energy', icon: 'bi-lightning-charge-fill', text: 'The return trip consumes another energy.' },
-    { kind: 'stability', icon: 'bi-building-fill-exclamation', text: 'Time passes. The annex loses stability.' },
-    { kind: 'complete', icon: 'bi-check-lg', text: 'The report reaches the crew.' }
+    { kind: 'return', title: 'Back to the crew', icon: 'bi-arrow-return-left', text: `${action.scout.species} retraces the route to deliver the report in person. ${energy ? 'The return trip consumes another energy.' : 'The scout is already spent.'} ${stability ? 'While the crew waits, the annex deteriorates.' : ''}`, costs },
+    { kind: 'complete', title: 'Now you can plan', icon: 'bi-check-lg', text: 'Together again, the crew compares the scout’s findings. Review the report before choosing a crossing.' }
   ];
   const found = action.result.revealedIds.length;
   return [
-    { kind: 'depart', icon: 'bi-arrow-right', text: `${action.scout.species} leaves the crew and moves ahead.` },
-    { kind: 'observe', icon: 'bi-eye-fill', text: found ? `${found} danger signature${found === 1 ? '' : 's'} detected.` : 'The scout searches the route.' },
-    { kind: action.result.relay ? 'signal' : 'silence', icon: action.result.relay ? 'bi-broadcast-pin' : 'bi-broadcast', text: action.result.relay ? `${action.profile.channel} carries the report back.` : 'No signal reaches the crew.' },
-    { kind: 'energy', icon: 'bi-lightning-charge-fill', text: 'Scouting consumes one energy.' },
-    action.encounter
-      ? { kind: 'encounter', icon: 'bi-exclamation-diamond-fill', text: `${action.encounter.species} intercepts the scout.` }
-      : { kind: 'complete', icon: action.result.relay ? 'bi-check-lg' : 'bi-hourglass-split', text: action.result.relay ? 'Actionable intelligence received.' : 'The scout must return physically.' }
+    { kind: 'depart', title: 'Scouting begins', icon: 'bi-arrow-right', text: `${action.scout.species} moves ahead alone, spending energy to search for a way through.`, costs },
+    { kind: 'observe', title: found ? 'Danger spotted' : 'Searching ahead', icon: 'bi-eye-fill', text: found ? `The scout picks out ${found === 1 ? 'a hidden danger' : `${found} hidden dangers`} along the crossing. Those findings can guide your route choice.` : 'The scout studies the crossing, but uncovers no hidden dangers. That does not mean the way is safe.' },
+    { kind: action.result.relay ? 'signal' : 'silence', title: action.result.relay ? 'The crew receives the report' : 'Out of contact', icon: action.result.relay ? 'bi-broadcast-pin' : 'bi-broadcast', text: action.result.relay ? `${action.profile.channel === 'vibration' ? `${action.scout.species} sends vibrations through the structure, carrying its findings to the waiting crew.` : `${action.scout.species} uses ${action.profile.channel} to send its findings to the waiting crew.`} No return trip is needed to deliver them.` : 'The scout cannot send a message from here. Its findings stay out of reach until it returns to the crew.' },
+    ...(action.encounter ? [{ kind: 'encounter', title: 'An unexpected meeting', icon: 'bi-exclamation-diamond-fill', text: `${action.encounter.species} intercepts the scout. Decide how to handle the encounter before moving on.` }] : [])
   ];
 }
 
@@ -48,8 +46,8 @@ export default function ScoutTransition({ action, onComplete, soundEnabled = tru
   const final = index === beats.length - 1;
   const art = sceneArtFor(action.scene);
   const returning = action.type === 'scout-return';
-  const energyAt = beats.findIndex((entry) => entry.kind === 'energy');
-  const stabilityAt = beats.findIndex((entry) => entry.kind === 'stability');
+  const energyAt = 0;
+  const stabilityAt = 0;
   const nativeAt = beats.findIndex((entry) => entry.kind === 'encounter');
 
   useEffect(() => {
@@ -65,6 +63,7 @@ export default function ScoutTransition({ action, onComplete, soundEnabled = tru
     return () => window.clearTimeout(timer);
   }, [index, beat.kind, beats.length, final, paused]);
   useEffect(() => { playGameSound(beat.kind, soundEnabled); }, [beat.kind, soundEnabled]);
+  useEffect(() => { if (final) buttonRef.current?.focus({ preventScroll: true }); }, [final]);
 
   const energyBefore = action.energyBefore;
   const energyAfter = action.energyAfter;
@@ -88,7 +87,6 @@ export default function ScoutTransition({ action, onComplete, soundEnabled = tru
       <Meter kind="energy" before={energyBefore} after={energyAfter} active={index >= energyAt} />
       {returning && <Meter kind="stability" before={stabilityBefore} after={stabilityAfter} active={index >= stabilityAt} />}
     </div>
-    <SequenceStory events={beats} index={index} paused={paused} onPause={() => setPaused(!paused)} onNext={() => { setPaused(true); setIndex(Math.min(beats.length - 1, index + 1)); }} />
-    <button ref={buttonRef} type="button" onClick={skip}>{final ? action.encounter ? 'Respond to encounter' : !returning && !action.result.relay ? 'Check scout status' : 'Review scout report' : 'Skip to outcome'} <BiIcon cls="bi bi-arrow-right" /></button>
+    <SequenceStory events={beats} index={index} paused={paused} onPause={() => setPaused(!paused)} onNext={() => { setPaused(true); setIndex(Math.min(beats.length - 1, index + 1)); }} action={<button ref={buttonRef} type="button" onClick={skip}>{final ? action.encounter ? 'Respond to encounter' : !returning && !action.result.relay ? 'Check scout status' : 'Review scout report' : 'Skip to outcome'} <BiIcon cls="bi bi-arrow-right" /></button>} />
   </div>;
 }

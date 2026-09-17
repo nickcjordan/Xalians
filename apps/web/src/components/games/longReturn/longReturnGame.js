@@ -12,13 +12,14 @@ import { readCheckpoint, writeCheckpoint, clearCheckpoint } from './expeditionSa
 import { crossingNarrative } from './crossingNarrative';
 import { crossingCosts } from './crossingCosts';
 import RouteTradeoff from './RouteTradeoff';
-import RouteComparison from './RouteComparison';
+import RouteComparison, { comparisonCosts } from './RouteComparison';
 import LeadChoices from './LeadChoices';
 import EncounterChoices from './EncounterChoices';
+import { encounterActor } from './encounterActor';
 import EncounterAftermath from './EncounterAftermath';
 import ExtractionChoice from './ExtractionChoice';
 import ExpeditionReserves from './ExpeditionReserves';
-import { bankedSalvage } from './extractionOutcome';
+import { bankedSalvage, companionFarewell } from './extractionOutcome';
 import { planStakes } from './planStakes';
 import './routeTradeoff.css';
 import ActionTransition from './ActionTransition';
@@ -29,6 +30,7 @@ import './arrivalResult.css';
 import './expeditionComposition.css';
 import './crossingWorkspace.css';
 import './expeditionSetup.css';
+import './essentialLegibility.css';
 import MethodIdentity from './MethodIdentity';
 import { nativeRemains } from './nativePresence';
 import SceneStage from './SceneStage';
@@ -281,10 +283,13 @@ function wizardIndexFor(phase, routeId) {
   return 0;
 }
 
-function SimpleWizardChrome({ scene, sceneIndex, crew, strain, pressure, salvage, phase, routeId, soundEnabled, journalCount, journalButtonRef, onToggleSound, onJournal, onHelp }) {
+function SimpleWizardChrome({ scene, sceneIndex, crew, strain, pressure, salvage, phase, routeId, choosingLead, simpleCustomizing, soundEnabled, journalCount, journalButtonRef, onToggleSound, onJournal, onHelp }) {
   const active = wizardIndexFor(phase, routeId);
   const art = sceneArtFor(scene);
-  return <header className="lr-wizard-chrome" tabIndex={-1} data-wizard-focus aria-label={`${scene.title} · ${phase === 'assign' ? 'Choose a crossing' : phase === 'scan-result' ? 'Scout report' : phase}`} style={{ '--wizard-art': `url(${art.src})`, '--wizard-accent': art.accent }}>
+  const decision = phase === 'assign'
+    ? simpleCustomizing ? 'Customize crew plan' : choosingLead ? 'Choose who leads' : 'Choose a route'
+    : phase === 'scan-result' ? 'Scout report' : phase;
+  return <header className="lr-wizard-chrome" tabIndex={-1} data-wizard-focus aria-label={`${scene.title} · ${decision}`} style={{ '--wizard-art': `url(${art.src})`, '--wizard-accent': art.accent }}>
     <div className="lr-wizard-topline">
       <div><small>Scene {sceneIndex + 1} of {MISSION.scenes.length} · {scene.deck}</small><h1>{scene.title}</h1></div>
       <div className="lr-wizard-tools">
@@ -311,12 +316,13 @@ function safestPlanForRoute(route, crew, strain, spentAbilities, scan, preferred
         const forecast = decisionForecast({ route, lead, support, method, scan, leadLoad: strain[lead.id] || 0, supportLoad: strain[support.id] || 0 });
         const knownLeadStrain = Math.max(0, forecast.baseLeadStrain + forecast.environment.strain - (forecast.naturalReaction ? 1 : 0));
         const knownPressure = route.pressure + (forecast.naturalReaction ? 0 : 1);
-        const risk = knownLeadStrain * 18 + forecast.baseSupportStrain * 12 + knownPressure * 8 + forecast.unresolvedHazards.length * 14 - Math.min(30, forecast.margin) * .15;
-        plans.push({ ...forecast, route, lead, support, method, knownLeadStrain, knownPressure, risk });
+        const risk = knownLeadStrain * 18 + forecast.baseSupportStrain * 12 + knownPressure * 8 + forecast.unresolvedHazards.length * 14;
+        plans.push({ ...forecast, route, lead, support, method, knownLeadStrain, knownPressure, risk,
+          leadEnergy: MAX_STRAIN - (strain[lead.id] || 0), supportEnergy: MAX_STRAIN - (strain[support.id] || 0) });
       });
     });
   });
-  return plans.sort((a, b) => a.risk - b.risk || b.margin - a.margin)[0] || null;
+  return plans.sort((a, b) => a.risk - b.risk || Number(Boolean(a.method.abilityId)) - Number(Boolean(b.method.abilityId)) || b.margin - a.margin)[0] || null;
 }
 
 export function routeAdvantage(plan, plans) {
@@ -397,7 +403,7 @@ export function supportRoleForPlan(plan) {
   return 'Backup role · no energy projected';
 }
 
-export function encounterNarrative({ archetype, option, nativeName, actorName, scoutName, mode = 'group', helperName }) {
+export function encounterNarrative({ archetype, option, nativeName, actorName, scoutName, mode = 'group', helperName, reportDelivered = true }) {
   const actor = actorName || 'The crew';
   const scout = scoutName || actor;
   const medic = helperName || 'the medic';
@@ -408,12 +414,18 @@ export function encounterNarrative({ archetype, option, nativeName, actorName, s
   const aidDeparture = mode === 'scout' && option.id === 'aid'
     ? `When ${scout} draws back, ${nativeName} follows. It keeps a little distance, but no longer stands in the way.`
     : `When the rescuers draw back, ${nativeName} comes with them. It keeps a little distance, but no longer stands in their way.`;
-  const rescueCost = `${option.scoutStrain || option.crewStrain ? ` The work leaves ${scoutName || actor} with less strength for the next passage.` : ''}${option.instability ? ' The annex does not wait for the rescue; while the crew works, the old machinery continues straining its failing supports.' : ''}`;
+  const rescueEffort = option.scoutStrain || option.crewStrain
+    ? option.id === 'return-for-medic' ? ` Making the extra trip leaves ${scoutName || actor} with less strength for the next passage.`
+      : archetype === 'injured' ? ` The first contact has already taken strength from ${scoutName || actor} before the treatment begins.`
+        : ` The work leaves ${scoutName || actor} with less strength for the next passage.` : '';
+  const rescueCost = `${rescueEffort}${option.instability ? ' The annex does not wait for the rescue; while the crew works, the old machinery continues straining its failing supports.' : ''}`;
   if (option.companion) return archetype === 'trapped'
     ? `The crew makes space between the moving authentication arms. For a moment, ${nativeName} stays where it is, as though the opening might close again. Then it slips clear, and the panicked signal begins to fade.${rescueCost}\n\nWhen the crew moves on, ${nativeName} follows at a cautious distance. This time, nothing is holding it here. It has chosen their company.`
     : `${aidArrival}, giving ${nativeName} room to watch as help reaches its injury. The roots gripping the machinery begin to loosen. What looked like an obstacle was a frightened creature with nowhere safe to go.${rescueCost}\n\n${aidDeparture}`;
   if (option.resolution === 'detour') return `The crew stops short of ${nativeName}'s position. Rather than press closer, they retrace their approach, leaving the space between them open.\n\nBack at the junction, the other passage is still there to consider. Behind them, ${nativeName} remains where they found it; nothing has forced it to leave.`;
-  if (option.resolution === 'unresolved') return `${scoutName || actor} breaks contact and retraces the approach, carrying the warning back rather than trying to settle the encounter alone.\n\nThe crew now knows where ${nativeName} is waiting. The route has not been cleared; approaching it will mean facing that presence together.`;
+  if (option.resolution === 'unresolved') return reportDelivered
+    ? `${scoutName || actor} breaks contact and sends a warning rather than trying to settle the encounter alone.\n\nThe crew now knows where ${nativeName} is waiting. The route has not been cleared; approaching it will mean facing that presence together.`
+    : `${scoutName || actor} backs out of ${nativeName}'s reach without trying to settle the encounter alone. The native holds its ground.\n\nThere is space to retreat now, but no signal can reach the waiting crew. The scout still has to make the journey back before they can hear the warning.`;
   if (archetype === 'territorial') {
     if (option.id === 'distract') return `${actor} creates a disturbance away from the conduit mouth. ${nativeName} turns toward it, then moves out to investigate, leaving its sheltered passage unguarded.\n\nThe diversion has opened a way through, but the noise has carried into the old annex. The machinery around the crew no longer feels quite so still.`;
     if (option.id === 'challenge') return `${actor} holds position instead of retreating from the conduit mouth. ${nativeName} answers the challenge, but cannot keep the approach closed. The confrontation drives it back into the hull.\n\nThe passage is open now. ${actor} has paid for that space in effort, and the disturbance has reached the surrounding structure.`;
@@ -709,6 +721,8 @@ function LongReturnGame() {
   const closeMechanics = () => { setMechanicsOpen(false); requestAnimationFrame(() => rulesTriggerRef.current?.isConnected && rulesTriggerRef.current.focus()); };
   const [memoryOpen, setMemoryOpen] = useState(false);
   const [simpleCustomizing, setSimpleCustomizing] = useState(false);
+  const [choosingLead, setChoosingLead] = useState(false);
+  React.useEffect(() => { if (phase !== 'assign') setChoosingLead(false); }, [phase]);
   const [simpleLeadChoice, setSimpleLeadChoice] = useState(null);
   const [encounterState, setEncounterState] = useState(null);
   const [encounterOptionId, setEncounterOptionId] = useState(null);
@@ -783,7 +797,7 @@ function LongReturnGame() {
   const report = scene && scan ? scanReport(scene, scanScout, scan) : null;
   const encounterCreature = scene && scene.encounter ? CREATURES.find((entry) => entry.id === scene.encounter.creatureId) : null;
   const activeEncounterOptions = encounterState && !encounterState.result
-    ? encounterOptions(scene, encounterState.scout, crew, encounterState.mode, encounterState.informed)
+    ? encounterOptions(scene, encounterState.scout, crew, encounterState.mode, encounterState.informed, strain)
     : [];
   const currentAction = phase === 'transition'
     ? { stage: `Scene ${sceneIndex + 1} of ${MISSION.scenes.length} · Arrival`, title: 'See what your last choice changed', hint: 'This beat connects the previous result to the situation now in front of the crew.', icon: 'bi-arrow-down-right-circle', resolved: true }
@@ -805,13 +819,16 @@ function LongReturnGame() {
     if (!started || status !== 'playing' || !sceneRef.current || actionTransition) return;
     const root = sceneRef.current;
     let target = root;
-    // The Simple workspace owns its context header. Always return to the top of
-    // that workspace when a phase changes so the player sees both where they
-    // are and what changed; advanced layouts retain their focused deep-link.
+    const phoneLead = guidanceLevel === 'simple' && choosingLead && !simpleCustomizing && window.matchMedia?.('(max-width: 650px)').matches
+      ? root.querySelector('.lr-simple-plan') : null;
+    // New phases start at their context header. On phones, the lead substep
+    // starts at its own route/back heading, not the already-seen scene header.
+    // Advanced layouts retain their focused deep-link.
     if (guidanceLevel !== 'simple') {
       if (phase === 'assign') target = root.querySelector('.lr-crossing-flow') || root.querySelector('.lr-current-action') || root;
       else target = root.querySelector('.lr-scene-stage') || root.querySelector('.lr-current-action') || root;
     }
+    if (phoneLead) target = phoneLead;
     // Align the new phase before its entrance animation. Smooth scrolling and
     // panel motion running together read as camera shake, especially at
     // fractional display scaling.
@@ -827,12 +844,12 @@ function LongReturnGame() {
     // the next Tab lands on the first relevant control, not an old control that
     // has disappeared with the previous step.
     if (guidanceLevel === 'simple') {
-      const focusTarget = root.querySelector('[data-wizard-focus]');
+      const focusTarget = phoneLead || root.querySelector('[data-wizard-focus]');
       if (focusTarget && typeof focusTarget.focus === 'function') {
         focusTarget.focus({ preventScroll: true });
       }
     }
-  }, [started, status, guidanceLevel, phase, sceneIndex, guidanceLevel === 'simple' ? null : routeId, simpleCustomizing, encounterState && encounterState.result, actionTransition]);
+  }, [started, status, guidanceLevel, phase, sceneIndex, choosingLead, guidanceLevel === 'simple' ? null : routeId, simpleCustomizing, encounterState && encounterState.result, actionTransition]);
   const methodForecasts = useMemo(() => lead && route ? methods.map((entry) => ({
     method: entry,
     ...decisionForecast({ route, lead, support, method: entry, scan, leadLoad: strain[lead.id] || 0, supportLoad: support ? strain[support.id] || 0 : 0 })
@@ -916,7 +933,7 @@ function LongReturnGame() {
     playGameSound('commit', soundEnabled);
     setWizardDirection('forward');
     const scanned = scanScene(scene, scout);
-    const result = { ...scanned, mode: 'scan', returned: !!scanned.relay };
+    const result = { ...scanned, mode: 'scan', returned: !!scanned.relay, energySpent: cap((strain[scout.id] || 0) + 1) - (strain[scout.id] || 0), stabilitySpent: 0 };
     setScoutId(scout.id);
     setScan(result);
     setStrain((current) => ({ ...current, [scout.id]: cap((current[scout.id] || 0) + 1) }));
@@ -946,7 +963,9 @@ function LongReturnGame() {
   const recoverScout = () => {
     if (!scanScout || !scan || scan.returned) return;
     const hazards = scan.hazards.map((hazard) => hazard.sensed ? { ...hazard, revealed: true } : hazard);
-    setScan({ ...scan, mode: 'debrief', returned: true, hazards, revealedIds: hazards.filter((hazard) => hazard.revealed).map((hazard) => hazard.id) });
+    setScan({ ...scan, mode: 'debrief', returned: true, hazards, revealedIds: hazards.filter((hazard) => hazard.revealed).map((hazard) => hazard.id),
+      energySpent: (scan.energySpent ?? 1) + cap((strain[scanScout.id] || 0) + 1) - (strain[scanScout.id] || 0),
+      stabilitySpent: (scan.stabilitySpent ?? 0) + Math.min(MAX_INSTABILITY, pressure + 1) - pressure });
     setStrain((current) => ({ ...current, [scanScout.id]: cap((current[scanScout.id] || 0) + 1) }));
     setPressure((current) => Math.min(MAX_INSTABILITY, current + 1));
     cueChanges({ energy: { [scanScout.id]: 1 }, stability: 1 });
@@ -956,19 +975,18 @@ function LongReturnGame() {
 
   const resolveEncounter = (option) => {
     if (!encounterState || !option || !encounterCreature) return;
-    let affected = encounterState.scout;
+    const affected = encounterActor(scene, crew, strain, encounterState.scout);
     if (encounterState.mode === 'scout') {
       const added = option.scoutStrain || 0;
       if (added && affected) setStrain((current) => ({ ...current, [affected.id]: cap((current[affected.id] || 0) + added) }));
     } else if (option.crewStrain) {
-      affected = [...crew].sort((a, b) => scoutProfile(scene, b).hold - scoutProfile(scene, a).hold)[0];
       if (affected) setStrain((current) => ({ ...current, [affected.id]: cap((current[affected.id] || 0) + option.crewStrain) }));
     }
     if (option.instability) setPressure((current) => Math.min(MAX_INSTABILITY, current + option.instability));
     cueChanges({ energy: affected && (option.scoutStrain || option.crewStrain) ? { [affected.id]: option.scoutStrain || option.crewStrain } : {}, stability: option.instability || 0 });
     if (option.companion) setCompanion({ creature: encounterCreature, ready: true, benefit: scene.encounter.companionBenefit });
     const archetype = scene.encounter.archetype || 'injured';
-    const helper = option.companion ? crew.find((member) => option.label.includes(member.species)) : null;
+    const helper = option.helperId ? crew.find((member) => member.id === option.helperId) : null;
     const narrative = encounterNarrative({
       archetype,
       option,
@@ -976,6 +994,7 @@ function LongReturnGame() {
       actorName: affected ? affected.species : null,
       mode: encounterState.mode,
       helperName: helper?.species,
+      reportDelivered: encounterState.mode !== 'scout' || !!scan?.returned,
       scoutName: encounterState.scout ? encounterState.scout.species : null
     });
     const energyCost = option.scoutStrain || option.crewStrain || 0;
@@ -1016,12 +1035,15 @@ function LongReturnGame() {
   };
 
   const changeRoute = () => {
+    setChoosingLead(false);
     setWizardDirection('back');
     setRouteId(null); setPendingRouteId(routeId); setRouteVisualId(routeId); setLeadId(null); setSupportId(null); setMethodId(null); setUseCommand(false); setSimpleCustomizing(false);
   };
 
   const previewSimpleRoute = (id) => {
     chooseRoute(id);
+    setWizardDirection('forward');
+    setChoosingLead(true);
   };
 
   const chooseLead = (id) => {
@@ -1045,8 +1067,10 @@ function LongReturnGame() {
     let result = resolveScene({ scene, route, lead: actingLead, support: actingSupport, method: actingMethod, scan, useCommand, leadLoad: strain[actingLead.id] || 0, supportLoad: strain[actingSupport.id] || 0 });
     let companionHelp = null;
     if (companion && companion.ready && result.leadStrain > 0) {
+      const available = MAX_STRAIN - (strain[actingLead.id] || 0);
+      const savedEnergy = Math.min(available, result.leadStrain) - Math.min(available, result.leadStrain - 1);
       result = { ...result, leadStrain: result.leadStrain - 1 };
-      companionHelp = `${companion.creature.species} braces the crossing and preserves 1 energy.`;
+      companionHelp = savedEnergy > 0 ? `${companion.creature.species} braces the crossing and preserves 1 energy.` : `${companion.creature.species} braces the crossing, but the effort still uses ${actingLead.species}'s last energy.`;
       setCompanion((current) => ({ ...current, ready: false }));
     }
     const nextPressure = Math.min(MAX_PRESSURE, pressure + result.pressure);
@@ -1225,10 +1249,10 @@ function LongReturnGame() {
           <div className="lr-end-seal"><BiIcon cls={`bi ${outcome.icon}`} /></div>
           <span className="lr-end-outcome">{outcome.label}</span>
           <h1 className="g-title">{outcome.title}</h1>
-          <p className="lr-end-copy">{outcome.copy}</p>
+          <p className="lr-end-copy">{outcome.copy}{companion ? ` ${companionFarewell(companion)}` : ''}</p>
           <div className="lr-end-stats">
             <div><span>Objective</span><strong>{objectiveReached ? 'SECURED' : 'LOST'}</strong></div>
-            <div><span>Salvage banked</span><strong>{banked} · {banked >= 20 ? 'Exceptional haul' : banked >= 10 ? 'Strong haul' : banked > 0 ? 'Light haul' : 'None'}</strong></div>
+            <div><span>Salvage banked</span><strong>{banked} · {banked >= 20 ? 'Exceptional haul' : banked >= 10 ? 'Strong haul' : banked > 0 ? 'Light haul' : 'None'}</strong>{salvage > banked && <small className="lr-end-haul-loss">{salvage} carried − {salvage - banked} left behind</small>}</div>
             <div><span>Annex stability</span><strong>{MAX_INSTABILITY - pressure} / {MAX_INSTABILITY}</strong></div>
             <div><span>Scenes crossed</span><strong>{sceneIndex + (phase === 'result' ? 1 : 0)} / {MISSION.scenes.length}</strong></div>
           </div>
@@ -1253,7 +1277,7 @@ function LongReturnGame() {
   const crossingsToIndex = Math.max(0, MISSION.scenes.findIndex(entry => entry.objective) - sceneIndex);
   const optionalScenesRemaining = MISSION.scenes.slice(sceneIndex + 1).filter((entry) => entry.optional);
   const optionalSalvagePotential = optionalScenesRemaining.reduce((total, entry) => total + Math.max(...entry.routes.map((entryRoute) => entryRoute.salvage)), 0);
-  const wizardViewKey = `${scene.id}-${phase}`;
+  const wizardViewKey = `${scene.id}-${phase}-${phase === 'assign' ? choosingLead ? 'lead' : 'route' : ''}`;
   return (
     <main className={`lr-shell lr-play-shell lr-mode-${guidanceLevel}${simpleCustomizing ? ' lr-is-customizing' : ''}`}>
       {actionTransition && (actionTransition.type === 'scout' || actionTransition.type === 'scout-return'
@@ -1302,7 +1326,7 @@ function LongReturnGame() {
         </aside>
 
         <section key={guidanceLevel === 'simple' ? wizardViewKey : scene.id} className={`lr-scene g-panel g-panel--bolted lr-wizard-view is-${wizardDirection} lr-wizard-phase-${phase}${phase === 'assign' && routeId ? ' is-plan' : ''}`} ref={sceneRef}>
-          {guidanceLevel === 'simple' && <SimpleWizardChrome scene={scene} sceneIndex={sceneIndex} crew={crew} strain={strain} pressure={pressure} salvage={salvage} phase={phase} routeId={routeId} soundEnabled={soundEnabled} journalCount={journal.length} journalButtonRef={memoryTriggerRef} onJournal={() => setMemoryOpen(true)} onToggleSound={() => { const next = !soundEnabled; setSoundEnabled(next); writeSoundEnabled(next); playGameSound('select', next); }} onHelp={openMechanics} />}
+          {guidanceLevel === 'simple' && <SimpleWizardChrome scene={scene} sceneIndex={sceneIndex} crew={crew} strain={strain} pressure={pressure} salvage={salvage} phase={phase} routeId={routeId} choosingLead={choosingLead} simpleCustomizing={simpleCustomizing} soundEnabled={soundEnabled} journalCount={journal.length} journalButtonRef={memoryTriggerRef} onJournal={() => setMemoryOpen(true)} onToggleSound={() => { const next = !soundEnabled; setSoundEnabled(next); writeSoundEnabled(next); playGameSound('select', next); }} onHelp={openMechanics} />}
           <div className="lr-scene-heading">
             <div><p className="g-kicker">{scene.deck} / Scene {sceneIndex + 1} of {MISSION.scenes.length}</p><h2 className="g-h2">{scene.title}</h2></div>
             {scene.objective && <span className="lr-objective-badge">PRIMARY OBJECTIVE</span>}
@@ -1346,9 +1370,9 @@ function LongReturnGame() {
                   <small>{encounterState.outlook.channel ? `Crew contact available through ${encounterState.outlook.channel}.` : 'No remote crew contact. Getting help requires a physical return.'}</small>
                 </div>}
                 {encounterState.mode === 'group' && <div className="lr-encounter-posture"><strong>{encounterState.informed ? 'The crew arrives prepared' : 'The native acts before the crew can organize'}</strong><span>{encounterState.informed ? 'The scout’s warning prevents a surprise energy cost.' : 'The most defensive crew member will absorb the first consequence.'}</span></div>}
-                {guidanceLevel === 'simple' ? <EncounterChoices options={activeEncounterOptions} actor={encounterState.scout || [...crew].sort((a, b) => scoutProfile(scene, b).hold - scoutProfile(scene, a).hold)[0]} selectedId={encounterOptionId} onSelect={setEncounterOptionId} /> : <div className="lr-encounter-options">
+                {guidanceLevel === 'simple' ? <EncounterChoices options={activeEncounterOptions} actor={encounterActor(scene, crew, strain, encounterState.scout)} selectedId={encounterOptionId} onSelect={setEncounterOptionId} /> : <div className="lr-encounter-options">
                   {activeEncounterOptions.map((option) => {
-                    const affectedCreature = encounterState.scout || [...crew].sort((a, b) => scoutProfile(scene, b).hold - scoutProfile(scene, a).hold)[0];
+                    const affectedCreature = encounterActor(scene, crew, strain, encounterState.scout);
                     const strainCost = option.scoutStrain || option.crewStrain || 0;
                     const instabilityCost = option.instability || 0;
                     const presentation = encounterChoicePresentation(option);
@@ -1383,7 +1407,7 @@ function LongReturnGame() {
                 </div>}
               </> : <>
                 <div className="lr-encounter-resolution-grid"><div className="lr-report-source"><CreaturePortrait creature={encounterCreature} /><strong>{encounterCreature.species}</strong><span>{encounterState.result.companion ? 'Temporary field ally' : 'Encounter resolved'}</span></div><div>
-                <div className="lr-encounter-result-head"><BiIcon cls={`bi ${encounterState.result.companion ? 'bi-person-check-fill' : encounterState.result.resolution === 'detour' ? 'bi-arrow-return-right' : 'bi-shield-check'}`} /><div><span>Encounter resolved</span><h3>{encounterState.result.companion ? 'The native chooses to follow' : encounterState.result.resolution === 'unresolved' ? 'The scout returns with a warning' : encounterState.result.resolution === 'detour' ? 'The crew avoids contact' : 'The route is clear'}</h3></div></div>
+                <div className="lr-encounter-result-head"><BiIcon cls={`bi ${encounterState.result.companion ? 'bi-person-check-fill' : encounterState.result.resolution === 'detour' ? 'bi-arrow-return-right' : 'bi-shield-check'}`} /><div><span>Encounter resolved</span><h3>{encounterState.result.companion ? 'The native chooses to follow' : encounterState.result.resolution === 'unresolved' ? 'Contact broken; the native remains' : encounterState.result.resolution === 'detour' ? 'The crew avoids contact' : 'The route is clear'}</h3></div></div>
                 <div className="lr-encounter-prose">{encounterState.result.narrative.split('\n\n').map((paragraph, index) => <p className="lr-simple-story" key={index}>{paragraph}</p>)}</div>
                 {guidanceLevel === 'simple' ? <EncounterAftermath result={encounterState.result} native={encounterCreature} /> : <div className="lr-encounter-impact">
                   {(encounterState.result.scoutStrain || encounterState.result.crewStrain) > 0 ? <span><BiIcon cls="bi bi-lightning-charge-fill" /><strong>Energy spent</strong> −{encounterState.result.scoutStrain || encounterState.result.crewStrain}</span> : <span className="is-good"><BiIcon cls="bi bi-check-circle" /><strong>No energy spent</strong></span>}
@@ -1468,7 +1492,7 @@ function LongReturnGame() {
 
           {phase === 'scan-result' && report && (guidanceLevel === 'simple' ? (
             <div className={`lr-simple-decision lr-simple-report is-${report.outcome}`}>
-              <div className="lr-report-source">{scanScout && <CreaturePortrait creature={scanScout} />}<strong>{scanScout ? scanScout.species : 'Crew report'}</strong><span>{report.channel || (scan.returned ? 'Report delivered' : 'Awaiting return')}</span><small>{report.strainCost} energy spent</small></div>
+              <div className="lr-report-source">{scanScout && <CreaturePortrait creature={scanScout} />}<strong>{scanScout ? scanScout.species : 'Crew report'}</strong><span>{report.channel || (scan.returned ? 'Report delivered' : 'Awaiting return')}</span><small className="lr-scout-trip-receipt" title="Scouting and reporting only. Any encounter costs are recorded in its own result."><BiIcon cls="bi bi-lightning-charge-fill" /> {report.strainCost} energy scouting{report.stabilityCost > 0 && <><br /><BiIcon cls="bi bi-building" /> {report.stabilityCost} stability waiting</>}</small></div>
               <div className="lr-report-content">
               <div className="lr-simple-report-result"><BiIcon cls={report.revealed.length ? 'bi-shield-exclamation' : report.outcome === 'blind' ? 'bi-eye-slash' : 'bi-check-circle'} /><div><span>Scout result</span><h3>{report.title}</h3></div></div>
               <p className="lr-simple-story">{report.narrative}</p>
@@ -1489,7 +1513,7 @@ function LongReturnGame() {
               <p className="lr-report-narrative">{report.narrative}</p>
               <div className="lr-report-readouts">
                 <div><span>Scout</span><strong>{scanScout ? scanScout.species : 'None committed'}</strong></div>
-                <div><span>Energy spent</span><strong>−{report.strainCost}</strong></div>
+                <div><span>Scouting &amp; reporting</span><strong>−{report.strainCost} energy</strong>{report.stabilityCost > 0 && <small>−{report.stabilityCost} stability waiting</small>}</div>
                 <div><span>Relay</span><strong>{report.channel || (report.outcome === 'blind' ? 'Not attempted' : 'Failed')}</strong></div>
                 <div><span>Actionable hazards</span><strong>{report.revealed.length} / {scene.hazards.length}</strong></div>
               </div>
@@ -1528,20 +1552,20 @@ function LongReturnGame() {
                 </div>
                 {scan.revealedIds.length > 0 && <div className="lr-scan-strip"><BiIcon cls="bi-broadcast-pin" /><span>{scan.revealedIds.length} hazard signature relayed to command.</span></div>}
               </>}
-              {(guidanceLevel === 'simple' ? !simpleCustomizing : !route) && <details className="lr-terrain-details"><summary><BiIcon cls="bi bi-map" /> Explore the terrain</summary><RouteMap scene={scene} activeRouteId={routeVisualId || pendingRouteId} runFlags={runFlags} encounterStatus={encounterResolution ? { ...encounterResolution, label: encounterResolution.companion ? `${encounterCreature.species} joined the crew` : encounterResolution.resolution === 'unresolved' ? `${encounterCreature.species} remains in the route` : encounterResolution.resolution === 'detour' ? 'Crew withdrew from contact' : 'Native passage cleared' } : null} /></details>}
-              {guidanceLevel === 'simple' && simpleCustomizing ? null : guidanceLevel === 'simple' ? <>
+              {(guidanceLevel === 'simple' ? !simpleCustomizing && !choosingLead : !route) && <details className="lr-terrain-details"><summary><BiIcon cls="bi bi-map" /> Explore the terrain</summary><RouteMap scene={scene} activeRouteId={routeVisualId || pendingRouteId} runFlags={runFlags} encounterStatus={encounterResolution ? { ...encounterResolution, label: encounterResolution.companion ? `${encounterCreature.species} joined the crew` : encounterResolution.resolution === 'unresolved' ? `${encounterCreature.species} remains in the route` : encounterResolution.resolution === 'detour' ? 'Crew withdrew from contact' : 'Native passage cleared' } : null} /></details>}
+              {guidanceLevel === 'simple' && (simpleCustomizing || choosingLead) ? null : guidanceLevel === 'simple' ? <>
                 <RouteComparison plans={simpleRoutePlans.map((plan) => useCommand && plan.route.id === routeId && !plan.naturalReaction ? { ...plan, knownPressure: Math.max(0, plan.knownPressure - 1) } : plan)} selectedId={routeId} onSelect={previewSimpleRoute} onPreview={setRouteVisualId} companion={companion} recommendation={routeRecommendation} />
               </> : <div className="lr-route-grid">
                 {scene.routes.map((entry) => <RouteCard key={entry.id} route={entry} selected={routeId === entry.id} onSelect={() => chooseRoute(entry.id)} onPreview={() => setRouteVisualId(entry.id)} onPreviewEnd={() => setRouteVisualId(routeId)} scan={scan} />)}
               </div>}
 
-              {guidanceLevel === 'simple' && !simpleCustomizing && !route && <aside className="lr-crossing-empty" style={{ backgroundImage: `linear-gradient(0deg,#111710 5%,transparent),url(${sceneArtFor(scene).src})` }}><div><BiIcon cls="bi bi-signpost-split" /><h3>Choose your route</h3><p>Then cross with the suggested crew—or try another lead.</p></div></aside>}
 
-              {route && guidanceLevel === 'simple' && !simpleCustomizing && suggestedPlan && (
-                <div className="lr-simple-plan">
-                  <div className="lr-simple-plan-head"><BiIcon cls="bi bi-people" /><div><span>All three cross together</span><h3>{suggestedPlan.lead.species} leads</h3><MethodIdentity method={suggestedPlan.method} /></div></div>
-                  <LeadChoices plans={leadChoices.map(applyCommandPreview)} companion={companion} selectedId={suggestedPlan.lead.id} onSelect={leadId => setSimpleLeadChoice({ sceneId: scene.id, routeId: route.id, leadId })} />
-                  {methodChoices.length > 1 && <details className="lr-method-alternatives"><summary>Try another technique</summary><div aria-label="Compare crossing techniques">{methodChoices.map(plan => <button type="button" key={plan.method.id} aria-pressed={plan.method.id === suggestedPlan.method.id} onClick={event => { const picker = event.currentTarget.closest('details'); setSimpleLeadChoice({ sceneId: scene.id, routeId: route.id, leadId: plan.lead.id, methodId: plan.method.id }); picker.open = false; picker.querySelector('summary').focus(); }}><MethodIdentity method={plan.method} /><span>{Math.max(0, plan.knownLeadStrain - (companion?.ready && !plan.nativeRisk && !plan.unresolvedHazards.length && plan.knownLeadStrain > 0 ? 1 : 0)) + plan.baseSupportStrain} energy{plan.nativeRisk || plan.unresolvedHazards.length ? ' + ?' : ''}<small>{plan.method.abilityId ? 'Spends this ability' : 'Keeps your abilities'}</small></span></button>)}</div></details>}
+              {route && choosingLead && guidanceLevel === 'simple' && !simpleCustomizing && suggestedPlan && (
+                <div className="lr-simple-plan" tabIndex={-1} aria-label={`${route.title} · Choose who leads`}>
+                  <button type="button" className="lr-lead-back" onClick={() => { setWizardDirection('back'); setChoosingLead(false); }}>← Change route</button>
+                  <div className="lr-simple-plan-head"><div><span>2 · Choose who leads · all three cross together</span><h3>{route.title}</h3></div></div>
+                  <LeadChoices plans={leadChoices.map(plan => plan.lead.id === suggestedPlan.lead.id ? suggestedPlan : applyCommandPreview(plan))} companion={companion} selectedId={suggestedPlan.lead.id} onSelect={leadId => setSimpleLeadChoice({ sceneId: scene.id, routeId: route.id, leadId })} />
+                  {methodChoices.length > 1 && <details className="lr-method-alternatives"><summary>Try another technique</summary><div aria-label="Compare crossing techniques">{methodChoices.map(plan => <button type="button" key={plan.method.id} aria-pressed={plan.method.id === suggestedPlan.method.id} onClick={event => { const picker = event.currentTarget.closest('details'); setSimpleLeadChoice({ sceneId: scene.id, routeId: route.id, leadId: plan.lead.id, methodId: plan.method.id }); picker.open = false; picker.querySelector('summary').focus(); }}><MethodIdentity method={plan.method} /><span>{comparisonCosts(plan, companion).energy} energy{plan.nativeRisk || plan.unresolvedHazards.length ? ' + ?' : ''}<small>{plan.method.abilityId ? 'Spends this ability' : 'Keeps your abilities'}</small></span></button>)}</div></details>}
                   <details className="lr-plan-roles"><summary>See crew roles</summary><div className="lr-simple-plan-crew" aria-label="Every creature crosses; each has a different role">
                     <span className="is-lead"><BiIcon cls="bi bi-play-fill" /><small>Lead acts</small><strong>{suggestedPlan.lead.species}</strong><em>{suggestedPlan.method.label}</em></span>
                     <BiIcon cls="bi bi-arrow-right" />
@@ -1554,9 +1578,9 @@ function LongReturnGame() {
                   <div className="lr-simple-plan-actions">
                     {crossingWarning && <p className="lr-crossing-warning" role="status"><TriangleAlert aria-hidden="true" /><span><strong>{crossingWarning.label}</strong><small>{crossingWarning.detail}</small></span></p>}
                     <span className="lr-commit-identity"><strong>{route.title}</strong><small>{suggestedPlan.lead.species} leads · all three cross</small></span>
-                    <button type="button" className="lr-simple-secondary lr-customize-plan" onClick={() => setSimpleCustomizing(true)}><BiIcon cls="bi bi-sliders" /> Advanced: customize crew plan</button>
-                    <button type="button" className="g-btn g-btn--primary lr-cross-now" onClick={() => commit(suggestedPlan)}><BiIcon cls="bi bi-play-fill" /> Cross now<small>Take action · costs apply</small></button>
+                    <button type="button" className="g-btn g-btn--primary lr-cross-now" onClick={() => commit(suggestedPlan)}><BiIcon cls="bi bi-play-fill" /> Cross now<small>{suggestedPlan.lead.species} leads</small></button>
                   </div>
+                  <button type="button" className="lr-simple-secondary lr-customize-plan" onClick={() => setSimpleCustomizing(true)}><BiIcon cls="bi bi-sliders" /> Advanced: customize crew plan</button>
                 </div>
               )}
 

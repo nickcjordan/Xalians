@@ -1,0 +1,53 @@
+/* Labels that carry a choice, a resource identity or an outcome are not decorative microtype. */
+.lr-shell .lr-wizard-resources small,
+.lr-shell .lr-wizard-progress span,
+.lr-shell .lr-wizard-topline small,
+.lr-shell .lr-wizard-objective small,
+.lr-shell .lr-simple-plan-head > div > span,
+.lr-shell .lr-end-outcome,
+.lr-shell .lr-end-stats > div > span,
+.lr-shell .lr-member-role,
+.lr-shell .lr-member-detail,
+.lr-shell .lr-meter-label,
+.lr-shell .lr-meter-label strong,
+.lr-shell .lr-role-picker > div > span,
+.lr-shell .lr-role-picker > div > span b,
+.lr-shell .lr-support-select button small,
+.lr-shell .lr-guidance-selector button > span,
+.lr-shell .lr-guidance-selector button em,
+.lr-shell .lr-simple-report-result span,
+.lr-shell .lr-simple-finding > span,
+.lr-shell .lr-encounter-commit-bar small {
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.lr-shell .lr-simple-override span,
+.lr-shell .lr-assignment-guidance strong,
+.lr-shell .lr-encounter-commit-bar strong,
+.lr-shell .lr-scout-commit-bar .lr-simple-secondary strong {
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.lr-shell .lr-customize-plan,
+.lr-shell .lr-scout-commit-bar .lr-simple-secondary small {
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.lr-shell .lr-wizard-progress li:not(.is-current):not(.is-complete) { color: #a8b5a8; }
+.lr-shell .lr-wizard-resources small {
+  font-family: var(--g-font-body);
+  font-weight: 600;
+  text-transform: none;
+  letter-spacing: normal;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  text-overflow: clip;
+}
+.lr-shell .lr-simple-override span { font-family: var(--g-font-body); text-transform: none; }
+@media (max-width: 720px) {
+  .lr-shell .lr-wizard-resources > span { min-width: 0; flex: 1; padding-inline: 5px; }
+  .lr-shell .lr-wizard-resources .lr-reserve-warning { white-space: normal; font-size: 12px; }
+}

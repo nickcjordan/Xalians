@@ -90,14 +90,22 @@ each weapon a distinct mechanical job:
 - One **Kinetic lance** trades blast tolerance for speed and precise direct-hit damage.
 - Each rig has three drive charges. Repositioning commits immediately, spans a meaningful
   distance, and plays as a deliberate traversal animation before control returns.
+- Each rig also carries one jump-jet charge. It trades scarce fuel for a longer airborne
+  move that can clear the crater walls and sharp shelves that stop the ground drive.
 - Wind remains fixed for both shots in a volley so the opponent receives the same
   condition and players can make an informed correction from their own previous shot.
 
-The simulated field is three times wider than the original implementation. Rigs begin
-far apart and their limited drive budget cannot reach the outside simulation boundary,
-so an edge never becomes a trap during ordinary play. The camera keeps the full long
-range visible on desktop and follows projectile travel without collapsing back to the
-old close-quarters scale on narrow screens.
+The pre-match console offers 300-, 360-, and 440-unit fields. Rigs begin far apart and
+their limited mobility budget cannot reach the outside simulation boundary, so an edge
+never becomes a trap during ordinary play. The camera keeps the full long range visible
+on desktop and follows projectile travel without collapsing back to the old close-quarters
+scale on narrow screens.
+
+Four canon planets act as complete battlefield presets: Stonera's low-gravity cratered
+ridges, Magmuth's heavy-gravity obsidian crags, Krystos's sharp frozen shelves, and
+Endessa's wind-amplifying dunes. The selected world changes terrain generation, ballistic
+conditions, environmental art, and briefing language while keeping the reusable weapon
+system independent of a specific creature species.
 
 The weapon framework follows reusable artillery dimensions—delivery, projectile pattern,
 impact behavior, terrain interaction, precision, and scarcity—rather than binding every
@@ -108,17 +116,28 @@ legible and lore-compatible without requiring a bespoke roster creature or attac
 
 - [x] Separate the cabinet fiction from the player's owned creature squad.
 - [x] Replace creature crews and one-off species powers with neutral autonomous rigs.
-- [x] Expand the field from 100 to 300 simulation units and rebalance launch velocity,
-  terrain scale, blast radii, penetration, and construction against that range.
+- [x] Add an explicit pre-match setup for match type, bot difficulty, 300/360/440-unit
+  map size, and planetary battlefield.
+- [x] Add four planet-specific deterministic terrain profiles, ballistic conditions,
+  environmental backdrops, and plain-language setup previews.
+- [x] Expand the field to selectable long-range scales and rebalance launch velocity,
+  terrain scale, blast radii, penetration, and construction against those ranges.
 - [x] Keep normal movement away from reachable outer boundaries and preserve opposing
   halves so a rig cannot trap or overlap its rival.
 - [x] Make drive actions immediate, visibly animated, terrain-following, and long enough
   to read as traversal rather than a position jump.
+- [x] Add a separately budgeted, animated jump jet that clears terrain-blocked routes;
+  blocked drive attempts still commit and spend their charge.
 - [x] Preserve direct drag aiming, sliders, and one-step barrel/power corrections.
 - [x] Replace abstract or unexplained control cards with an aim deck, drive deck, weapon
   rack, plain-language weapon roles, and one dominant fire action.
 - [x] Reorder the mobile action so Fire follows the weapon rack and use a wide-range
   follow camera rather than shrinking the entire simulation to an unreadable strip.
+- [x] Expand the battlefield viewport through the full legal projectile ceiling so
+  maximum-height shots remain visible, and remove the filled midground silhouette that
+  could be mistaken for a liquid surface.
+- [x] Consolidate the command deck into a two-bank rig cockpit: firing and mobility
+  instruments above a compact ordnance bus, with audio relocated into the screen bezel.
 - [x] Give firing a charge, recoil, visible projectile/trail, impact shake, damage number,
   terrain interpolation, and a delayed result callout that does not hide the explosion.
 - [x] Keep the HUD integrity bars tied to the same animated damage value as the rig.
@@ -128,6 +147,8 @@ legible and lore-compatible without requiring a bespoke roster creature or attac
   terrain construction, and precision direct-hit pressure.
 - [x] Keep wind stable through a volley, remove prior-shot result overlays on the next
   turn, and retain bot movement/fortification behavior at the new scale.
+- [x] Keep a moved rig at its committed firing position through charge, flight, impact,
+  and state settlement so movement and projectile origins never visually desynchronize.
 - [x] Validate reachable opening shots across seeded fields, all six deterministic weapon
   roles, responsive presentation, touch-style drag aiming, movement, and impact pacing.
 

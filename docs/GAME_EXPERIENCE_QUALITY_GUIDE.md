@@ -1,10 +1,14 @@
 # Xalians Game Experience Quality Guide
 
 Status: Living standard  
-Last updated: 2026-09-13
+Last updated: 2026-09-15
 First reference implementation: The Long Return
 
 ## Why this guide exists
+
+### Essential labels are not decorative microtype — 2026-09-15
+
+Resource identities, costs, current-step labels and outcomes must remain readable without zooming. The Long Return's technical baseline is 12px for compact essential labels and 14px for action instructions; this is a project floor, not a claim of accessibility certification or player acceptance. Prefer compact body type over shrinking monospaced names. Verify names do not truncate, critical warnings wrap, and larger labels do not hide commitment controls. The responsive replay checks rendered sizes and clipping; visual review must still judge hierarchy and comfort.
 
 ### Narrative, not explanatory clutter — 2026-09-13
 
@@ -432,5 +436,9 @@ Move a Trial to Established only when evidence shows that players understand and
 - `apps/web/src/components/games/longReturn/sceneArt.js` — scene-to-art mapping.
 - `apps/web/src/components/games/longReturn/actionSequence.js` — ordered committed-action beats.
 # Action-story persistence (September 14)
+
+## Approachable choices (September 15)
+
+Simple mode makes meaningful alternatives understandable rather than hiding them. Route and lead decisions occupy separate views; a visible back control preserves preparation, while Cross now alone executes it. Lead alternatives use the same sequence: physical approach, relevant strength, resource/one-use sacrifice. Raw anatomy and element provenance belong in optional analysis. Recommendations should not consume an irreplaceable tool merely to increase an already sufficient crossing score. Short directional motion communicates navigation, with reduced-motion support and focus moving to the new view.
 
 Action narration is part of the scene, not a toast notification. Reveal events cumulatively next to the artwork, retain earlier lines at full readability, and let the player pause or advance at their own pace. Never dismiss an important consequence on a timer. Skip reveals the entire account; Continue leaves it. Auto-follow must stop when the player scrolls back to read. Reduced motion reveals the complete account immediately without bypassing acknowledgement. Keep calculations in the existing result details rather than layering another recap banner over the scene.

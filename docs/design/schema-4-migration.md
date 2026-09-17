@@ -25,3 +25,5 @@ This migration preserves existing capability identity and pool permissions. Requ
 No new status powers are assigned to existing species solely from names or elements. The five executable hypothetical examples exercise new status/removal features without becoming species canon.
 
 Migration utility: `scripts/migrateActionModel.js`. Historical schema 3 migration skips schema 4 templates. Archived releases are untouched.
+
+Integration with current main adds ratified Shuntara as the 32nd species. Arcweave remains its guaranteed action, with ongoing contact delivery to itself or another creature, selective targeting, and sustained barrier protection. This represents the authored taut filament lattice around a recipient; it does not reinterpret that lattice as an indiscriminate radial aura. Existing pool permissions are retained. Release generation-0.5.0-2 captures this integration; generation-0.5.0-1 remains intact.

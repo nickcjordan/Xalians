@@ -91,4 +91,4 @@ Water medium alone does not grant cooling or removal. A scalding jet or other wa
 
 ## Implementation verification
 
-The five worked examples now have executable schema fixtures and tests. Schemas, all 31 templates, generation preparation, authoring guidance, and record displays use the coordinated model. Historical records retain their original schemas and archived replay. See [migration decisions](schema-4-migration.md) for newly authored categorical defaults. Game-specific event scheduling, balance, and status behavior remain game implementation work.
+The five worked examples now have executable schema fixtures and tests. Schemas, all 32 templates, generation preparation, authoring guidance, and record displays use the coordinated model. Historical records retain their original schemas and archived replay. See [migration decisions](schema-4-migration.md) for newly authored categorical defaults. Game-specific event scheduling, balance, and status behavior remain game implementation work.
