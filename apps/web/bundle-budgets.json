@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "measuredAt": "Schema 4 capability metadata and historical schema readers: generator route 321703 gzip bytes, duel start 209288; affected gzip budgets retain approximately five percent headroom. Other limits unchanged. Integrated main including Shuntara and lore artwork: encyclopedia route measured 190708 gzip bytes; budget 201000.",
+    "measuredAt": "Schema 4 capability metadata and historical schema readers: generator route 321703 gzip bytes, duel start 209288; affected gzip budgets retain approximately five percent headroom. Other limits unchanged. Integrated main including Shuntara and lore artwork: encyclopedia route measured 190708 gzip bytes; budget 201000. Powerworks visual UX adds shared icon chunks: artillery 30733 gzip bytes, hazard sweep 8411; retain five percent headroom. Powerworks route measured 45500 raw/16500 gzip JS and 30400 raw/7300 gzip CSS; separately budgeted.",
     "measuredOn": "2026-09-16",
     "policy": "Initial limits and route limits are the measured production output after removing the developer styleguide, rounded up with approximately five percent headroom. Update a limit only with measured evidence and review."
   },
@@ -110,6 +110,7 @@
       "javascript": {
         "raw": 98000,
         "gzip": 33000
+
       },
       "stylesheets": {
         "raw": 0,
@@ -129,7 +130,7 @@
     "hazardSweepGamePage": {
       "javascript": {
         "raw": 17200,
-        "gzip": 8400
+        "gzip": 8900
       },
       "stylesheets": {
         "raw": 0,
@@ -194,6 +195,16 @@
       "stylesheets": {
         "raw": 0,
         "gzip": 0
+      }
+    },
+    "powerworksPage": {
+      "javascript": {
+        "raw": 49000,
+        "gzip": 17500
+      },
+      "stylesheets": {
+        "raw": 33000,
+        "gzip": 8000
       }
     }
   },
