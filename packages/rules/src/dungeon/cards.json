@@ -1,0 +1,288 @@
+{
+  "templates": {
+    "graviclaw": {
+      "hp": 64,
+      "speed": 40,
+      "moves": [
+        {
+          "name": "Pincer strike",
+          "damage": 8,
+          "range": "melee",
+          "kind": "hit"
+        },
+        {
+          "name": "Claw compression",
+          "damage": 10,
+          "range": "melee",
+          "kind": "hit"
+        },
+        {
+          "name": "Shell shove",
+          "damage": 6,
+          "range": "melee",
+          "kind": "hit"
+        },
+        {
+          "name": "Point of No Return",
+          "damage": 0,
+          "range": "ranged",
+          "kind": "snare"
+        }
+      ],
+      "element": "dark"
+    },
+    "avilily": {
+      "hp": 38,
+      "speed": 80,
+      "moves": [
+        {
+          "name": "Beak strike",
+          "damage": 6,
+          "range": "melee",
+          "kind": "hit"
+        },
+        {
+          "name": "Talon rake",
+          "damage": 8,
+          "range": "melee",
+          "kind": "hit"
+        },
+        {
+          "name": "Saliva spray",
+          "damage": 5,
+          "range": "ranged",
+          "kind": "hit"
+        },
+        {
+          "name": "Blossoming Ambuscade",
+          "damage": 0,
+          "range": "melee",
+          "kind": "snare"
+        }
+      ],
+      "element": "plant"
+    },
+    "crystorn": {
+      "hp": 56,
+      "speed": 35,
+      "moves": [
+        {
+          "name": "Horn beam",
+          "damage": 8,
+          "range": "ranged",
+          "kind": "hit"
+        },
+        {
+          "name": "Fist strike",
+          "damage": 7,
+          "range": "melee",
+          "kind": "hit"
+        },
+        {
+          "name": "Light spray",
+          "damage": 6,
+          "range": "ranged",
+          "kind": "hit"
+        },
+        {
+          "name": "Coronet of the Twin Suns",
+          "damage": 16,
+          "range": "ranged",
+          "kind": "hit"
+        }
+      ],
+      "element": "light"
+    },
+    "hippochamp": {
+      "hp": 56,
+      "speed": 55,
+      "moves": [
+        {
+          "name": "Water stream",
+          "damage": 8,
+          "range": "ranged",
+          "kind": "hit"
+        },
+        {
+          "name": "Hoof strike",
+          "damage": 7,
+          "range": "melee",
+          "kind": "hit"
+        },
+        {
+          "name": "Tail lash",
+          "damage": 6,
+          "range": "melee",
+          "kind": "hit"
+        },
+        {
+          "name": "Hydrostatic Lance",
+          "damage": 16,
+          "range": "ranged",
+          "kind": "hit"
+        }
+      ],
+      "element": "water"
+    },
+    "crawler": {
+      "hp": 22,
+      "speed": 60,
+      "element": "sand",
+      "enemy": true,
+      "moves": [
+        {
+          "name": "Tool strike",
+          "damage": 7,
+          "range": "melee",
+          "kind": "hit"
+        }
+      ]
+    },
+    "drone": {
+      "hp": 24,
+      "speed": 50,
+      "element": "light",
+      "enemy": true,
+      "moves": [
+        {
+          "name": "Security beam",
+          "damage": 7,
+          "range": "ranged",
+          "kind": "hit"
+        }
+      ]
+    },
+    "shield": {
+      "hp": 30,
+      "speed": 45,
+      "element": "sand",
+      "enemy": true,
+      "moves": [
+        {
+          "name": "Ram",
+          "damage": 6,
+          "range": "melee",
+          "kind": "hit"
+        },
+        {
+          "name": "Shield cycle",
+          "damage": 0,
+          "range": "self",
+          "kind": "ward"
+        }
+      ]
+    },
+    "discharge": {
+      "hp": 48,
+      "speed": 65,
+      "element": "electric",
+      "enemy": true,
+      "moves": [
+        {
+          "name": "Contact strike",
+          "damage": 7,
+          "range": "melee",
+          "kind": "hit"
+        },
+        {
+          "name": "Capacitor rush",
+          "damage": 16,
+          "range": "melee",
+          "kind": "charge"
+        }
+      ]
+    },
+    "guardian": {
+      "hp": 110,
+      "speed": 65,
+      "element": "electric",
+      "enemy": true,
+      "moves": [
+        {
+          "name": "Clamp strike",
+          "damage": 7,
+          "range": "melee",
+          "kind": "hit"
+        },
+        {
+          "name": "Core surge",
+          "damage": 18,
+          "range": "melee",
+          "kind": "charge"
+        }
+      ]
+    }
+  },
+  "rooms": [
+    {
+      "name": "1. Service entrance",
+      "enemies": [
+        [
+          "crawler",
+          "M1",
+          22
+        ],
+        [
+          "crawler",
+          "M2",
+          22
+        ]
+      ]
+    },
+    {
+      "name": "2. Security checkpoint",
+      "enemies": [
+        [
+          "crawler",
+          "M3",
+          22
+        ],
+        [
+          "drone",
+          "D2",
+          24
+        ],
+        [
+          "shield",
+          "S2",
+          30
+        ]
+      ]
+    },
+    {
+      "name": "3. Power chamber",
+      "enemies": [
+        [
+          "discharge",
+          "V3",
+          48
+        ],
+        [
+          "crawler",
+          "M4",
+          22
+        ]
+      ]
+    },
+    {
+      "name": "4. Control chamber",
+      "enemies": [
+        [
+          "guardian",
+          "B4",
+          110
+        ],
+        [
+          "crawler",
+          "M5",
+          22
+        ],
+        [
+          "drone",
+          "D4",
+          24
+        ]
+      ]
+    }
+  ]
+}
