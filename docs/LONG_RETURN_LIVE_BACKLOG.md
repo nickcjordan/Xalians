@@ -21,6 +21,12 @@ Statuses progress independently: identified → implementing → technically ver
 
 ### Live findings
 
+### September 17 — narrative reading time and read-back control
+
+- Normal-speed audit found the inherited 2.4-second ceiling and 65ms-per-word estimate still applied to expanded story sentences. Longer beats now receive a bounded reading allowance; very short resource ticks remain brisk. Persistent text, skip and manual stepping remain available.
+- Scrolling back through earlier beats now pauses playback rather than only stopping automatic scrolling. Reaching the bottom does not silently resume; the existing Resume control does that.
+- Verified normal-speed two-scene replay (five sequences, approximately 3–12 seconds each), timing/read-back regressions, and production build. Reading pace is an adjustable starting point, not a claim about every player's reading speed or final immersion acceptance.
+
 ### September 17 — the record becomes something to bring home
 
 - Continued narrative audit through the objective and ending. Scene five now identifies the Index as the surviving plague-research record, with visible plates and a sealed backup, not just unexplained equipment.
