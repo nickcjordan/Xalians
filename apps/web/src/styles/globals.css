@@ -80,6 +80,13 @@
 		/* Keep both aim meters and Fire in the first phone viewport while
 		   leaving the battlefield tall enough to follow high arcs. */
 		height: clamp(300px, 50dvh, 500px);
+		transition: height 520ms cubic-bezier(.22, .61, .36, 1);
+	}
+
+	.artillery-field-finished {
+		/* The shot has settled; keep the final scene while exposing both
+		   replay choices without another phone scroll. */
+		height: clamp(280px, 38dvh, 380px);
 	}
 
 	.artillery-field > svg {

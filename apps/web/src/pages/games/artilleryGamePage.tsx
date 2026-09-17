@@ -1423,7 +1423,7 @@ export function ArtilleryBoard({ seed, mode, difficulty, mapSize, world, onStatu
 
   return (
     <div className="artillery-layout grid w-full min-w-0 gap-2 overflow-x-clip" data-artillery-seed={seed}>
-      <section aria-label="Artillery field" className={`artillery-field artillery-viewport relative mx-auto w-full self-start overflow-hidden border-2 border-edge-strong bg-s0 shadow-panel ${animated ? `artillery-cinematic-${animated.phase}` : ''}`}>
+      <section aria-label="Artillery field" className={`artillery-field artillery-viewport relative mx-auto w-full self-start overflow-hidden border-2 border-edge-strong bg-s0 shadow-panel ${state.phase === 'finished' ? 'artillery-field-finished' : ''} ${animated ? `artillery-cinematic-${animated.phase}` : ''}`}>
         <div className="pointer-events-none absolute inset-x-2 top-2 z-10 grid grid-cols-[minmax(0,1fr)_7.25rem_minmax(0,1fr)] items-start gap-1 sm:grid-cols-[minmax(0,1fr)_9.5rem_minmax(0,1fr)] sm:gap-2">
           <div className="min-w-0 border border-edge-strong bg-s0/90 p-1.5">
             <div className="flex items-center justify-between gap-1 font-legend text-small uppercase tracking-legend"><span><i className="not-italic sm:hidden">A</i><i className="hidden not-italic sm:inline">{crewAt('left').name}</i></span><span>{Math.round(displayedHull('left'))}</span></div>
@@ -1683,7 +1683,7 @@ export function ArtilleryBoard({ seed, mode, difficulty, mapSize, world, onStatu
 
       <section aria-label="Command deck" className={`artillery-command cockpit-console mx-auto grid w-full min-w-0 border-2 border-edge-strong bg-s1 lg:grid-cols-[minmax(0,1fr)_auto] ${shortLandscape ? 'gap-1 p-1' : 'gap-1.5 p-1.5'}`}>
         {state.phase === 'finished' ? (
-          <div className={`border p-4 lg:col-span-2 ${mode === 'bot' && state.winner === 'right' ? 'border-plague-lo bg-plague-tint' : 'border-viable-lo bg-viable-tint'}`}>
+          <div className={`border p-3 sm:p-4 lg:col-span-2 ${mode === 'bot' && state.winner === 'right' ? 'border-plague-lo bg-plague-tint' : 'border-viable-lo bg-viable-tint'}`}>
             <div className="flex items-start justify-between gap-4">
               <div>
                 <p className="type-legend m-0">{mode === 'range' ? 'Calibration complete' : mode === 'challenge' ? state.winner === 'left' ? 'Trial cleared' : 'Trial failed' : mode === 'local' ? 'Range secured' : state.winner === 'left' ? 'Contract cleared' : 'Battery disabled'}</p>
