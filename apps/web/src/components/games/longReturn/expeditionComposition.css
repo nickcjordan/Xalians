@@ -7,10 +7,6 @@
 .lr-mode-simple .lr-simple-question h3 { font-size: clamp(23px,2.3vw,30px); text-transform: none; letter-spacing: 0; }
 .lr-mode-simple .lr-field-sign { border: 0; background: none; margin: 0 0 12px; padding: 0; }
 .lr-mode-simple .lr-field-sign summary { padding: 6px 0; }
-.lr-mode-simple .lr-simple-scouts { gap: 0; border-top: 1px solid #485040; }
-.lr-mode-simple .lr-simple-scouts > button { border: 0; border-bottom: 1px solid #485040; box-shadow: none; background: transparent; }
-.lr-mode-simple .lr-wizard-phase-scout .lr-simple-scouts > button.is-selected { border: 0; border-bottom: 1px solid #485040; box-shadow: inset 4px 0 #8ad5a8; background: #273329; }
-.lr-mode-simple .lr-simple-scouts .lr-scout-action { border: 0; background: none; }
 .lr-mode-simple .lr-scout-commit-bar, .lr-mode-simple .lr-encounter-commit-bar { border: 0; border-top: 1px solid #485040; box-shadow: none; }
 .lr-mode-simple .lr-simple-report { display: grid; grid-template-columns: 180px minmax(0,1fr); gap: 28px; max-width: none; }
 .lr-report-source { display: flex; flex-direction: column; gap: 8px; padding-right: 22px; border-right: 1px solid #485040; font-size: 15px; }

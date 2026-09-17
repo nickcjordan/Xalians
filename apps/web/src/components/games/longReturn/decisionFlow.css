@@ -1,10 +1,4 @@
 /* Selection changes a state, never the amount of information in a card. */
-.lr-mode-simple .lr-wizard-phase-scout .lr-simple-scouts > button,
-.lr-mode-simple .lr-wizard-phase-scout .lr-simple-scouts > button:not(.is-selected) { grid-template-columns: 80px minmax(0,1fr); min-height: 100px; }
-.lr-mode-simple .lr-wizard-phase-scout .lr-simple-scouts > button .lr-portrait { min-height: 100px; }
-.lr-mode-simple .lr-wizard-phase-scout .lr-simple-scouts > button .lr-scout-card-copy { grid-template-columns: minmax(0,1fr) 120px; }
-.lr-scout-quick { display: flex; flex-wrap: wrap; gap: 8px 18px; margin-top: 8px; font: 400 14px/1.5 var(--g-font-body); color: var(--g-ink); }
-.lr-scout-quick > span { display: inline-flex; align-items: center; gap: 5px; }
 .lr-mode-simple .lr-simple-plan { padding: 16px; margin-top: 12px; background: none; border: 0; box-shadow: none; border-top: 1px solid #485040; }
 .lr-mode-simple .lr-simple-plan-head { background: none; border: 0; }
 .lr-mode-simple .lr-simple-plan-head h3 { font-size: 19px; }
@@ -21,4 +15,3 @@
 .lr-mode-simple .lr-board-row > div { padding-top: 12px; padding-bottom: 12px; }
 .lr-mode-simple .lr-route-map { min-height: 165px; }
 @media(max-width:800px) { .lr-mode-simple .lr-simple-plan .lr-simple-plan-actions { position: static; transform: none !important; width: 100%; margin-top: 16px; } .lr-mode-simple .lr-simple-plan { padding-bottom: 16px; } }
-@media(max-width:600px) { .lr-scout-quick { flex-direction: column; gap: 4px; } }

@@ -37,6 +37,7 @@ import ExpeditionSchematic from './ExpeditionSchematic';
 import ArrivalStory from './ArrivalStory';
 import { crossingReceipt } from './crossingReceipt';
 import { scoutCommunication, reportDeliveryLabel } from './scoutCommunication';
+import ScoutChoices from './ScoutChoices';
 import { expeditionPosition } from './expeditionPosition';
 import { BRIEFING_ART, sceneArtFor } from './sceneArt';
 import { playGameSound, readSoundEnabled, writeSoundEnabled } from './gameAudio';
@@ -129,8 +130,6 @@ function ProjectionTrack({ value, added, max, label, kind, settled = false }) {
     </span>
   );
 }
-
-const scoutRoleIcon = (role) => role === 'Quiet scout' ? 'bi-eye-slash-fill' : role === 'Defensive scout' ? 'bi-shield-fill' : 'bi-chat-dots-fill';
 
 function CurrentAction({ stage, title, hint, icon, resolved = false, onHelp }) {
   return (
@@ -1403,26 +1402,9 @@ function LongReturnGame() {
 
           {phase === 'scout' && (guidanceLevel === 'simple' ? (
             <div className="lr-simple-decision">
-              <div className="lr-simple-question"><span>Choose a scout</span><h3>Who should scout—or should the crew stay together?</h3></div>
+              <h3 className="mb-3 type-heading">Who scouts ahead?</h3>
               {scene.encounterHint && <details className="lr-field-sign"><summary><BiIcon cls="bi bi-binoculars-fill" /><span>Native trace detected</span><small>Contact is possible</small><BiIcon cls="bi bi-chevron-down" /></summary><p>{scene.encounterHint}</p></details>}
-              <div className="lr-simple-scouts">
-                {simpleScoutOptions.map((option, index) => {
-                  const selected = scoutId === option.member.id;
-                  return <button type="button" key={option.member.id} className={`${index === 0 ? 'is-recommended' : ''}${selected ? ' is-selected' : ''}`} aria-pressed={selected} onClick={() => { playGameSound('select', soundEnabled); setScoutId(option.member.id); }}>
-                    <CreaturePortrait creature={option.member} compact />
-                    <span className="lr-scout-card-copy">
-                      <span className="lr-scout-card-head">
-                        {index === 0 && <em>Recommended</em>}
-                        <strong>{option.member.species}</strong>
-                        <small><BiIcon cls={scoutRoleIcon(option.profile.role)} /> {option.profile.role}</small>
-                        <span className="lr-scout-quick"><span><BiIcon cls="bi bi-binoculars" /> {option.profile.detect >= 80 ? 'Excellent' : option.profile.detect >= 65 ? 'Strong' : 'Limited'} awareness</span><span><BiIcon cls={option.preview.relay ? 'bi bi-broadcast' : 'bi bi-arrow-return-left'} /> {option.preview.relay ? 'Reports remotely' : 'Must return'}</span><span><BiIcon cls="bi bi-lightning-charge-fill" /> {option.preview.relay ? '1 energy' : '2 energy · 1 stability'}</span></span>
-                        {option.outlook && <span className="lr-scout-contact"><BiIcon cls="bi-exclamation-diamond" /><span><small>If a native appears</small><strong>{option.outlook.label}</strong></span></span>}
-                      </span>
-                      <b className="lr-scout-action">{selected ? <><BiIcon cls="bi bi-check-circle-fill" /> Selected</> : <>Select <BiIcon cls="bi bi-arrow-right" /></>}</b>
-                    </span>
-                  </button>;
-                })}
-              </div>
+              <ScoutChoices options={simpleScoutOptions} selectedId={scoutId} onSelect={id => { playGameSound('select', soundEnabled); setScoutId(id); }} />
               <div className="lr-scout-commit-bar">
                 <button type="button" className="lr-simple-secondary" onClick={proceedBlind}><BiIcon cls="bi bi-people-fill" /><span><strong>Stay together</strong><small>No energy spent · danger stays hidden</small></span></button>
                 <button type="button" className="g-btn g-btn--primary" disabled={!selectedScoutOption} onClick={() => selectedScoutOption && performScanFor(selectedScoutOption.member)}>{selectedScoutOption ? <>Send {selectedScoutOption.member.species} <BiIcon cls="bi bi-arrow-right" /></> : <>Select a scout <BiIcon cls="bi bi-lock-fill" /></>}</button>

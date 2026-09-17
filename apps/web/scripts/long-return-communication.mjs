@@ -31,7 +31,7 @@ try {
       await page.getByRole('button', { name: 'Continue mission', exact: true }).click();
       await page.getByRole('button', { name: /^Enter / }).click();
     }
-    await page.locator('.lr-simple-scouts > button').filter({ hasText: scenario.scout }).click();
+    await page.locator('[data-scout-options] > button').filter({ hasText: scenario.scout }).click();
     await page.getByRole('button', { name: `Send ${scenario.scout}`, exact: false }).click();
     const record = page.locator('[data-field-record]');
     await record.getByRole('button', { name: /Review scout report|Check scout status|Respond to encounter/ }).waitFor();

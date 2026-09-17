@@ -26,7 +26,7 @@ try {
   assert(await dialog.evaluate(el => el.contains(document.activeElement)), 'Dialog must retain keyboard focus');
   await page.keyboard.press('Escape');
   await page.waitForFunction(() => document.activeElement?.getAttribute('aria-label') === 'Game rules');
-  await page.locator('.lr-simple-scouts > button').first().click();
+  await page.locator('[data-scout-options] > button').first().click();
   assert.equal(await resources(), initial, 'Selecting scout is not an action');
   await page.getByRole('button', { name: /Stay together/ }).click();
   const route = page.locator('.lr-board-pick').first();

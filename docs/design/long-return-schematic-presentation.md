@@ -10,6 +10,7 @@ The player reads an expedition, not a low-budget animated film. A schematic prov
 - Numbered dots retain crew identity. The scout can separate from the waiting crew. A dashed report connection means communication, not a physical return.
 - In the Simple decision view, the numbered key also carries crew energy and site stability. Do not repeat a separate crew-status strip above the map. Low-reserve role restrictions remain explicit, and names stay intact on narrow screens.
 - Selecting a route highlights a preview path without moving a creature. Only committed actions change locations.
+- Scout rows are preparation choices, not expanding panels or immediate actions. Keep awareness, report delivery and its trip cost visible together; show contact risk when relevant. Selection changes the check mark, not row height. A separate Send control commits the choice.
 - Crossing ends with all three crew dots across, including the reserve. A contact is a diamond, not an animated opponent. An ally remains distinct from the three controllable crew members.
 - Sector nodes locate the current room and the Index. Circular deeper nodes are optional. This is topology, not a scaled building survey or a new tactical movement system.
 - Known site changes persist. Undiscovered native creatures and hazard names do not appear merely because they exist in content data.

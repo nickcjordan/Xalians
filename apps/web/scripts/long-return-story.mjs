@@ -46,7 +46,7 @@ try {
     await checkStory('crossing');
     await page.getByRole('button', { name: 'Continue mission', exact: true }).click();
     await page.getByRole('button', { name: /^Enter / }).click();
-    await page.locator('.lr-simple-scouts > button').first().click();
+    await page.locator('[data-scout-options] > button').first().click();
     await page.getByRole('button', { name: /^Send / }).click();
     await checkStory('scout');
     await page.locator('.lr-encounter-options > .is-recommended').click();
