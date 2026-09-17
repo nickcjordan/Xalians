@@ -1,35 +1,25 @@
 export function buildEncounterResolutionSequence(action) {
   const option = action.option;
-  const actor = action.actor ? action.actor.species : 'The crew';
-  const affected = action.affected ? action.affected.species : actor;
-  const energy = option.scoutStrain || option.crewStrain || 0;
-  const stability = option.instability || 0;
-  const responseMessage = option.companion
-    ? `${actor} moves to aid ${action.native.species}.`
-    : option.resolution === 'unresolved'
-      ? `${actor} breaks contact and prepares a warning.`
-      : option.resolution === 'detour'
-        ? `${actor} signals the crew to withdraw.`
-        : `${actor} acts to open the passage.`;
-  const events = [
-    { kind: 'response', message: responseMessage, actorId: action.actor && action.actor.id }
+  const actor = action.actor?.species || 'The crew';
+  const affected = action.affected?.species || actor;
+  const paragraphs = action.result?.narrative?.split('\n\n').filter(Boolean);
+  const energy = Math.max(0, action.energyBefore - action.energyAfter);
+  const stability = Math.max(0, action.stabilityBefore - action.stabilityAfter);
+  const costs = [];
+  if (energy > 0) costs.push({ kind: 'energy', creatureId: action.affected?.id, amount: energy, text: `${affected}: −${energy} energy` });
+  if (stability > 0) costs.push({ kind: 'stability', amount: stability, text: `Annex: −${stability} stability` });
+  const outcome = option.companion ? 'companion' : option.resolution === 'unresolved' ? 'warning' : option.resolution === 'detour' ? 'detour' : 'clear';
+  const titles = { companion: 'An unexpected companion', warning: 'The route is still occupied', detour: 'Back at the junction', clear: 'Room to pass' };
+  const aftermath = option.companion ? `${action.native.species} chooses to follow the expedition.`
+    : option.resolution === 'unresolved' ? `${action.native.species} remains in the route.`
+      : option.resolution === 'detour' ? 'The crew withdraws to choose another route.'
+        : `${action.native.species} no longer blocks the passage.`;
+  return [
+    { kind: 'response', title: option.label, icon: 'bi-people', message: paragraphs?.[0] || `${actor} approaches ${action.native.species}.`, actorId: action.actor?.id, costs },
+    { kind: outcome, title: titles[outcome], icon: option.companion ? 'bi-person-check-fill' : 'bi-signpost-2-fill', message: paragraphs?.slice(1).join('\n\n') || aftermath }
   ];
-  if (energy) events.push({ kind: 'energy', message: `${affected} spends ${energy} energy.`, actorId: action.affected && action.affected.id, amount: energy });
-  if (stability) events.push({ kind: 'stability', message: `The response consumes ${stability} annex stability.`, amount: stability });
-  if (!energy && !stability) events.push({ kind: 'preserve', message: 'The crew preserves its energy and annex stability.' });
-  events.push({
-    kind: option.companion ? 'companion' : option.resolution === 'unresolved' ? 'warning' : option.resolution === 'detour' ? 'detour' : 'clear',
-    message: option.companion
-      ? `${action.native.species} chooses to follow the expedition.`
-      : option.resolution === 'unresolved'
-        ? `${action.native.species} remains in the route.`
-        : option.resolution === 'detour'
-          ? 'The crew withdraws to choose another route.'
-          : `${action.native.species} yields the passage.`
-  });
-  return events;
 }
 
 export function encounterEventIndex(events, kind) {
-  return events.findIndex((event) => event.kind === kind);
+  return events.findIndex(event => event.kind === kind || event.costs?.some(cost => cost.kind === kind));
 }
