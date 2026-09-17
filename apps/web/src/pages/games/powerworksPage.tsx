@@ -48,7 +48,7 @@ import {
   Machine,
   ElementIcon,
   MoveIcon,
-  MoveStats,
+  MoveCardContent,
   PowerIcon,
   moveDescription,
   StatusBadges,
@@ -826,9 +826,11 @@ export default function PowerworksPage() {
                               title={moveDescription(m)}
                               aria-pressed={pending === i}
                               disabled={!legal}
-                              className={`${pending === i ? "chosen" : ""} ${
-                                i === 3 ? "signature" : ""
-                              } el-${active.element}`}
+                              className={`pw-move-card ${
+                                pending === i ? "chosen" : ""
+                              } ${i === 3 ? "signature" : ""} el-${
+                                active.element
+                              }`}
                               onClick={(e) => {
                                 setPending(i);
                                 setHoverTarget(null);
@@ -845,40 +847,15 @@ export default function PowerworksPage() {
                                   );
                               }}
                             >
-                              <span className="pw-move-symbol">
-                                {i === 3 || m.kind === "snare" ? (
-                                  <MoveIcon move={m} signature={i === 3} />
-                                ) : (
-                                  <ElementIcon element={active.element} />
-                                )}
-                              </span>
-                              <span className="pw-move-copy">
-                                <strong>{m.name}</strong>
-                                <MoveStats
-                                  move={m}
-                                  id={`move-stats-${active.id}-${i}`}
-                                />
-                                {!legal && (
-                                  <small>
-                                    {active.uses[i] === 0
-                                      ? "Exhausted · refreshes next fight"
-                                      : "Restrained · melee unavailable"}
-                                  </small>
-                                )}
-                              </span>
-                              <span className="pw-use-pips" aria-hidden="true">
-                                {i === -1
-                                  ? "∞"
-                                  : Array.from({ length: limit }, (_, n) => (
-                                      <i
-                                        key={n}
-                                        className={
-                                          n < active.uses[i] ? "full" : ""
-                                        }
-                                      />
-                                    ))}
-                                {i === 3 && <Crown />}
-                              </span>
+                              <MoveCardContent
+                                move={m}
+                                signature={i === 3}
+                                uses={i === -1 ? null : active.uses[i]}
+                                limit={limit}
+                                selected={pending === i}
+                                blocked={!legal && active.uses[i] > 0}
+                                id={`move-stats-${active.id}-${i}`}
+                              />
                             </button>
                           );
                         })}

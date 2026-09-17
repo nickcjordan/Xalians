@@ -79,7 +79,9 @@ describe("Powerworks player flow", () => {
     fireEvent.click(screen.getByRole("button", { name: "Enter the facility" }));
     const attack = screen.getByRole("button", { name: /Water stream,/ });
     expect(attack).toHaveAccessibleDescription("Ranged attack. 8 base power.");
-    expect(attack).not.toHaveTextContent(/power|ranged/);
+    expect(attack.querySelector(".pw-card-identity")).not.toHaveTextContent(
+      /power|ranged/
+    );
     fireEvent.click(
       screen.getByRole("button", { name: "Explain move symbols" })
     );
