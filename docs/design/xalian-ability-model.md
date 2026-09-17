@@ -38,7 +38,7 @@ Physiology and traits describe baseline properties. Actions describe deliberate 
 
 Self-only effects and creature-centered radial fields omit remote range. Cones and sweeps can retain range for outward distance. Absent area means no area footprint. Area may include the direct recipient; each effect applies once per eligible recipient. Do not duplicate the same ongoing function as both a direct effect and a status.
 
-Every effect declares recipient (target/self/area/instigator), emphasis (primary/secondary), onset (instant/gradual), persistence (resolved/sustained/lingering), and likelihood (consistent/likely/occasional). Lingering requires duration brief/prolonged; other persistence omits duration. Sustained requires ongoing operation. Instigator means the participant causing the declared trigger. Per-effect compatibility may narrow capability targeting, never broaden it.
+Every effect declares recipient (target/self/area/instigator), emphasis (primary/secondary), onset (instant/gradual), persistence (resolved/sustained/lingering), and likelihood (consistent/likely/occasional). Lingering requires duration brief/prolonged; other persistence omits duration. Sustained requires ongoing operation. Instigator means the participant causing the declared trigger. Per-effect compatibility may narrow capability targeting, never broaden it. Subject restrictions inherit the capability compatibility boundary when present. Self-only targeting must admit a creature; resource transfers require distinct participants.
 
 Effect kinds: harm, restore, protect, enhance, suppress, restrain, displace, transfer, reveal, status, remove. Each has a typed payload rather than arbitrary rules text. Resolved repair remains repaired; ending a process does not undo completed changes. No condition scripts, custom event expressions, optional passive suppression, or separate resource counters are introduced.
 
@@ -70,4 +70,4 @@ Games define distances, probabilities, costs, event scheduling, stacking, durati
 
 All 32 species retain signature names, prose, instruments, media, and intensity bands. Bioflim's automatic carapace renewal is now a passive signature; Hippochamp's unbroken stream is ongoing. Existing standard option permissions remain intact. Newly required categorical values are documented [migration authoring decisions](schema-4-migration.md), not newly discovered source facts.
 
-Schemas 1–3 remain readable through preserved historical definitions. The archives generation-0.3.0-1 and generation-0.4.0-1 are immutable. Current generation uses generation-0.5.0-2; see [release manifests and replay](generation-releases.md).
+Schemas 1–3 remain readable through preserved historical definitions. The archives generation-0.3.0-1 and generation-0.4.0-1 are immutable. Current generation uses generation-0.5.0-3; see [release manifests and replay](generation-releases.md).

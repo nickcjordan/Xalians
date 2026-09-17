@@ -41,3 +41,27 @@ test('lingering needs duration; sustained needs ongoing operation; status parame
   expect(ActionTemplateSchema.safeParse({...fire,effects:[fire.effects[0],{...status,persistence:'sustained'}]}).success).toBe(false);
   expect(ActionTemplateSchema.safeParse({...fire,effects:[fire.effects[0],{...fire.effects[1],status:'resistant'}]}).success).toBe(false);
 });
+
+test('effect subjects inherit the narrower capability compatibility boundary', () => {
+  const original = examples.actions[0];
+  const fire = {...original,targeting:{...original.targeting,compatibility:{subjects:['creature']}}};
+  const effects = fire.effects.map(e => ({...e, compatibility:{subjects:['object']}}));
+  expect(ActionTemplateSchema.safeParse({...fire,effects}).success).toBe(false);
+  expect(ActionTemplateSchema.safeParse(fire).success).toBe(true);
+});
+
+test('capability compatibility cannot add subjects outside its targeting', () => {
+  const fire = examples.actions[0];
+  const targeting = {...fire.targeting, subjects:['creature'], compatibility:{subjects:['object']}};
+  expect(ActionTemplateSchema.safeParse({...fire,targeting}).success).toBe(false);
+});
+
+test('self-only targeting must admit a creature and cannot transfer to itself', () => {
+  const repair = examples.actions[1];
+  const self = {...repair, spatial:{selectivity:'selective'}, delivery:{mode:'self',approach:'stationary'}, targeting:{relation:'self',subjects:['creature']}};
+  expect(ActionTemplateSchema.safeParse(self).success).toBe(true);
+  expect(ActionTemplateSchema.safeParse({...self,targeting:{relation:'self',subjects:['object']}}).success).toBe(false);
+  const effect = {kind:'transfer',from:'target',to:'self',resource:'energy',recipient:'self',emphasis:'primary',onset:'instant',persistence:'resolved',likelihood:'consistent'};
+  expect(ActionTemplateSchema.safeParse({...self,effects:[effect]}).success).toBe(false);
+  expect(ActionTemplateSchema.safeParse({...self,spatial:{range:'contact',selectivity:'selective'},delivery:{mode:'contact',approach:'stationary'},targeting:{relation:'other',subjects:['creature']},effects:[effect]}).success).toBe(true);
+});
