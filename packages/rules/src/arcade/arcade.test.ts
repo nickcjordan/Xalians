@@ -247,6 +247,23 @@ describe('Arcade deterministic rules', () => {
     expect(applied.state.traction.left).toBe(blocked.traction.left);
   });
 
+  it('lets a short jet burst escape a realistic crater lip that stops the drive', () => {
+    const state = createArtilleryState('crater-escape');
+    const center = state.tanks.left.x;
+    const radius = 12;
+    const terrain = state.terrain.map((_, x) => {
+      const offset = Math.abs(x - center);
+      return offset < radius ? 55 - 22 * Math.sqrt(1 - (offset / radius) ** 2) : 55;
+    });
+    const crater = { ...state, terrain };
+    const driven = applyArtilleryMove(crater, 1, 'drive', 25);
+    const jetted = applyArtilleryMove(crater, 1, 'jet', 25);
+    expect(driven.state.tanks.left.x).toBeLessThan(center + radius);
+    expect(jetted.state.tanks.left.x).toBeGreaterThan(center + radius);
+    expect(jetted.state.jetCharges.left).toBe(75);
+    expect(jetted.state.traction.left).toBe(100);
+  });
+
   it('replays an artillery win with committed movement', () => {
     const seed = '2026-09-13:artillery:v1';
     const actions: ArtilleryAction[] = [{ type: 'move', direction: 1 }];

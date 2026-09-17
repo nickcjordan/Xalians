@@ -125,10 +125,12 @@ describe('Crater Command aim feedback', () => {
     expect(artilleryMoveAnimationProgress('impact', 0.9, 1)).toBe(1);
   });
 
-  it('flies jump jets on a high arc instead of following the terrain', () => {
-    expect(artilleryJetFlightY(80, 65, 0, 100)).toBe(80);
-    expect(artilleryJetFlightY(80, 65, 50, 100)).toBeLessThan(31);
-    expect(artilleryJetFlightY(80, 65, 100, 100)).toBeCloseTo(65);
+  it('keeps the jet airborne throughout held thrust, including at empty fuel', () => {
+    expect(artilleryJetFlightY(80, 0, 100)).toBe(80);
+    const halfway = artilleryJetFlightY(80, 50, 100);
+    expect(halfway).toBeLessThan(45);
+    expect(artilleryJetFlightY(80, 100, 100)).toBeLessThan(halfway);
+    expect(artilleryJetFlightY(80, 150, 100)).toBe(artilleryJetFlightY(80, 100, 100));
   });
 
   it('holds the battlefield intact for the impact freeze before revealing damage', () => {
