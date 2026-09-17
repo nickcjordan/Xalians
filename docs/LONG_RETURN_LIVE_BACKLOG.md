@@ -13,6 +13,8 @@ Owner: the agent maintaining the Long Return worktree. Update this file during i
 - Bundle accounting: this continuity work adds about 0.1 kB beyond the prior 98 kB compressed route ceiling after removing unused icon aliases and consolidating position construction. Allowed 250 additional bytes for this lazy game route only. No initial-page, stylesheet or other route ceiling changed.
 - Next independent review: whether the visible encounter and arrival prose matches these persistent positions across the remaining retreat and unresolved-contact branches, without reintroducing performed creature animation.
 
+Follow-through: PR #357 merged and deployed in run 35288327366. The additional whole-crew replay found an ally marker touching the lower route label. It now sits on the inward side of either route, with a browser geometry assertion against both route labels. The general mission runner also assumed that every encounter returned to route selection; it now accepts the direct crew-plan handoff. A no-scout seven-scene run exercised injured, trapped and territorial whole-crew encounters through forced extraction with the Index retained. Full 1,282-test rerun, typecheck, production budgets and the eight continuity cases pass; desktop and phone paint reviewed. The next audit should examine whether spatial previews communicate the crew's approach as clearly as their current position, not add more explanatory banners.
+
 ### September 17: compact scouting choices
 
 Published in PR #355, deployment 35285363948. Hosted three-scene phone replay passed after deployment.

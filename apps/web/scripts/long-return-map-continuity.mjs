@@ -14,6 +14,16 @@ try {
     page.on('pageerror', error => errors.push(error.message));
     const map = () => page.locator('[data-field-record] [data-expedition-map]');
     const currentMap = () => page.locator('.lr-shell [data-expedition-map]');
+    const checkAllyClearance = async target => {
+      const clear = await target.evaluate(element => {
+        const marker = element.querySelector('[data-map-ally] path')?.getBoundingClientRect();
+        return !marker || [...element.querySelectorAll('[data-map-route] text')].every(label => {
+          const box = label.getBoundingClientRect();
+          return marker.right <= box.left || marker.left >= box.right || marker.bottom <= box.top || marker.top >= box.bottom;
+        });
+      });
+      assert(clear, 'Ally marker must not overlap route labels');
+    };
     const chooseRoute = async index => page.locator('.lr-board-pick').nth(index).click();
     const arrive = async () => {
       await page.getByRole('button', { name: /Cross now/ }).click();
@@ -60,6 +70,7 @@ try {
       continue;
     }
     assert.equal(await map().locator('[data-map-ally]').getAttribute('data-location'), 'survey');
+    await checkAllyClearance(map());
     await page.getByRole('button', { name: 'See encounter result', exact: true }).click();
     assert.equal(await currentMap().locator('[data-map-ally]').getAttribute('data-location'), 'survey');
     await page.getByRole('button', { name: 'Review scout report', exact: true }).click();
@@ -74,6 +85,7 @@ try {
     await page.getByRole('button', { name: /Choose a route/i }).click();
     assert.equal(await currentMap().locator('[data-map-ally]').getAttribute('data-location'), scout === 'Chromocat' ? 'survey' : 'entry');
     await chooseRoute(0);
+    await checkAllyClearance(currentMap());
     await page.screenshot({ path: `${output}/${width}-${scout}-plan.png`, fullPage: true });
     await arrive();
     assert.equal(await currentMap().locator('[data-map-ally]').getAttribute('data-location'), 'exit');
