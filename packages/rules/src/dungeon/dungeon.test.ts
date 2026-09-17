@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   command,
+  initiative,
   createRun,
   legalMoves,
   moveAt,
@@ -169,5 +170,20 @@ describe("Powerworks battle rules", () => {
       }
       expect(["won", "lost"]).toContain(s.phase);
     }
+  });
+  it("exposes public initiative and damage events without revealing a charging target", () => {
+    const s = boss();
+    const order = initiative(s.team, s.enemies, s.round);
+    expect(order.map((u) => u.speed)).toEqual(
+      order.map((u) => u.speed).sort((a, b) => b - a)
+    );
+    const result = resolveRound(s, orders(s));
+    const hit = result.frames.find((f) => f.event?.kind === "hit")!;
+    expect(hit.event?.actorId).toBeTruthy();
+    expect(hit.event?.targetId).toBeTruthy();
+    expect(hit.event?.amount).toBeGreaterThan(0);
+    const charge = result.frames.find((f) => f.event?.kind === "charge")!;
+    expect(charge.event?.actorId).toBe("B4");
+    expect(charge.event).not.toHaveProperty("targetId");
   });
 });
