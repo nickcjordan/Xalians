@@ -196,7 +196,7 @@ export const MISSION = {
       id: 'turbine-hall', title: 'Blind Turbine Hall', trackLabel: 'Turbine Hall', deck: 'ACCESS 02',
       description: 'Frozen turbines fill a chamber with blind corners and intermittent motion.',
       arrival: 'The access seal opens onto a forest of frozen turbine housings. Somewhere in the dark, one mechanism completes a slow, silent turn.',
-      goal: 'Cross the dormant machinery without letting a waking turbine divide the crew.',
+      goal: 'Get everyone across the machinery hall to the sealed archive door.',
       destination: 'the sealed Archive Vestibule beyond the turbine bank',
       surveyFocus: 'the turbine housings, catwalk joints, and maintenance underdeck',
       relayChannels: ['vibration', 'display', 'telepathic'],

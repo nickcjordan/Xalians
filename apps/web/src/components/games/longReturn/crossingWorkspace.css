@@ -12,8 +12,9 @@
 .lr-mode-simple .lr-wizard-progress { grid-template-columns: repeat(4,minmax(0,1fr)); align-self: end; }
 .lr-mode-simple .lr-wizard-tools > button,.lr-mode-simple .lr-wizard-tools > span { height: 40px; }
 .lr-crossing-workspace { display: grid; grid-template-columns: minmax(0,1fr); gap: 16px 24px; align-items: start; }
-.lr-crossing-workspace > .lr-route-board { grid-column: 1; grid-row: 1; margin: 0; }
-.lr-crossing-workspace > .lr-terrain-details { grid-column: 1; grid-row: 2; }
+.lr-crossing-workspace > .lr-route-orientation { grid-column:1; grid-row:1; margin:0; font-weight:400; }
+.lr-crossing-workspace > .lr-route-board { grid-column: 1; grid-row: 2; margin: 0; }
+.lr-crossing-workspace > .lr-terrain-details { grid-column: 1; grid-row: 3; }
 .lr-crossing-workspace > .lr-simple-plan,.lr-crossing-empty { grid-column: 1; grid-row: 1; }
 .lr-mode-simple .lr-crossing-workspace > .lr-simple-plan { margin: 0; padding: 0; border: 0; }
 .lr-crossing-workspace .lr-simple-plan-head { padding: 0; align-items: flex-start; }

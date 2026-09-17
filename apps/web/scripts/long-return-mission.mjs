@@ -29,7 +29,7 @@ try {
       await dialog.getByRole('button', { name: /Continue to result|Review scout report|Check scout status|Respond to encounter|See encounter result|Choose response/ }).waitFor({ timeout: 30000 });
       events.push({ type: 'animation', elapsed: Date.now()-started, text: await dialog.innerText() });
       await page.screenshot({ path: `${output}/${step}-animation.png` });
-      await dialog.locator(':scope > button').click();
+      await dialog.getByRole('button', { name: /Continue to result|Review scout report|Check scout status|Respond to encounter|See encounter result|Choose response/ }).click();
       continue;
     }
     await page.screenshot({ path: `${output}/${step}-view.png`, fullPage: true });
@@ -50,6 +50,12 @@ try {
     if (await page.locator('.lr-field-encounter.is-resolved').count()) { await click(page.locator('.lr-field-encounter .g-btn--primary')); continue; }
     if (await page.locator('.lr-simple-report').count()) { await click(page.locator('.lr-simple-report .g-btn--primary')); continue; }
     if (await page.locator('.lr-route-board').count()) {
+      const orientation = page.locator('.lr-route-orientation');
+      assert(await orientation.isVisible(), 'Scene context stays visible while choosing');
+      const storyBox = await orientation.boundingBox();
+      const boardBox = await page.locator('.lr-route-board').boundingBox();
+      assert(storyBox.y + storyBox.height <= boardBox.y, 'Story precedes comparison');
+      assert.equal(await page.locator('.lr-route-setting').count(), 2, 'Both routes explain their physical approach');
       const recommended = page.locator('.lr-board-head .is-recommended .lr-board-pick');
       const confirmed = page.locator('.lr-board-pick').filter({ hasText: 'Costs confirmed' });
       const prescribed = process.env.LR_ROUTES?.split(',')[crossed];
