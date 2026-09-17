@@ -8,6 +8,7 @@ import { playGameSound } from './gameAudio';
 import BiIcon from './BiIcon';
 import FieldReserve from './FieldReserve';
 import SequenceStory from './SequenceStory';
+import { scoutCommunication } from './scoutCommunication';
 
 export function scoutBeats(action) {
   const energy = Math.max(0, action.energyBefore - action.energyAfter);
@@ -17,11 +18,11 @@ export function scoutBeats(action) {
     { kind: 'return', title: 'Back to the crew', icon: 'bi-arrow-return-left', text: `${action.scout.species} retraces the route to deliver the report in person. ${energy ? 'The return trip consumes another energy.' : 'The scout is already spent.'} ${stability ? 'While the crew waits, the annex deteriorates.' : ''}`, costs },
     { kind: 'complete', title: 'Now you can plan', icon: 'bi-check-lg', text: 'Together again, the crew compares the scout’s findings. Review the report before choosing a crossing.' }
   ];
-  const found = action.result.revealedIds.length;
+  const found = action.result.hazards?.filter(hazard => hazard.sensed).length ?? ((action.result.trappedCount || 0) + action.result.revealedIds.length);
   return [
     { kind: 'depart', title: 'Scouting begins', icon: 'bi-arrow-right', text: `${action.scout.species} moves ahead alone, spending energy to search for a way through.`, costs },
-    { kind: 'observe', title: found ? 'Danger spotted' : 'Searching ahead', icon: 'bi-eye-fill', text: found ? `The scout picks out ${found === 1 ? 'a hidden danger' : `${found} hidden dangers`} along the crossing. Those findings can guide your route choice.` : 'The scout studies the crossing, but uncovers no hidden dangers. That does not mean the way is safe.' },
-    { kind: action.result.relay ? 'signal' : 'silence', title: action.result.relay ? 'The crew receives the report' : 'Out of contact', icon: action.result.relay ? 'bi-broadcast-pin' : 'bi-broadcast', text: action.result.relay ? `${action.profile.channel === 'vibration' ? `${action.scout.species} sends vibrations through the structure, carrying its findings to the waiting crew.` : `${action.scout.species} uses ${action.profile.channel} to send its findings to the waiting crew.`} No return trip is needed to deliver them.` : 'The scout cannot send a message from here. Its findings stay out of reach until it returns to the crew.' },
+    { kind: 'observe', title: found ? action.result.relay ? 'Danger spotted' : 'Something ahead' : 'Searching ahead', icon: 'bi-eye-fill', text: found ? action.result.relay ? `The scout picks out ${found === 1 ? 'a hidden danger' : `${found} hidden dangers`} along the crossing. Those findings can guide your route choice.` : `Something catches ${action.scout.species}'s attention along the crossing. The waiting crew has not heard what it found.` : 'The scout studies the crossing, but uncovers no hidden dangers. That does not mean the way is safe.' },
+    { kind: action.result.relay ? 'signal' : 'silence', title: action.result.relay ? 'The crew receives the report' : 'Out of contact', icon: action.result.relay ? 'bi-broadcast-pin' : 'bi-broadcast', text: action.result.relay ? `${action.scout.species} ${scoutCommunication(action.profile.channel).action}. No return trip is needed to deliver the report.` : 'The scout cannot send a message from here. Its findings stay out of reach until it returns to the crew.' },
     ...(action.encounter ? [{ kind: 'encounter', title: 'An unexpected meeting', icon: 'bi-exclamation-diamond-fill', text: `${action.encounter.species} intercepts the scout. Decide how to handle the encounter before moving on.` }] : [])
   ];
 }

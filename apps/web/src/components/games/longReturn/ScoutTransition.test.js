@@ -1,4 +1,6 @@
 import { scoutBeats } from './ScoutTransition';
+import { CREATURES, MISSION } from './longReturnData';
+import { scanScene, scanReport } from './longReturnEngine';
 
 test('return narration agrees with actual energy and stability changes', () => {
   const action = { type: 'scout-return', scout: { species: 'Chromocat' }, energyBefore: 5, energyAfter: 4, stabilityBefore: 10, stabilityAfter: 9 };
@@ -7,6 +9,25 @@ test('return narration agrees with actual energy and stability changes', () => {
   expect(exhausted).toContain('already spent');
   expect(exhausted).not.toContain('consumes another energy');
   expect(exhausted).not.toContain('loses stability');
+});
+
+test('sensed but unreported danger is not narrated as a fruitless search', () => {
+  const scene = MISSION.scenes[1];
+  const scout = CREATURES.find(member => member.species === 'Ectoghoul');
+  const result = scanScene(scene, scout);
+  expect(result.relay).toBe(false);
+  expect(result.revealedIds).toEqual([]);
+  expect(result.trappedCount).toBeGreaterThan(0);
+  const beats = scoutBeats({type:'scout',scout,result,profile:{channel:null},energyBefore:6,energyAfter:5});
+  expect(beats[1].title).toBe('Something ahead');
+  expect(beats[1].text).not.toContain('uncovers no hidden dangers');
+  expect(beats[2].kind).toBe('silence');
+  expect(scanReport(scene,scout,result).outcome).toBe('trapped');
+  const account = JSON.stringify(beats);
+  scene.hazards.forEach(hazard => {
+    expect(account).not.toContain(hazard.label);
+    expect(account).not.toContain(hazard.detail);
+  });
 });
 
 test('scouting binds expenditure to departure and delivery to communication', () => {

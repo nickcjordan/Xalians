@@ -21,6 +21,14 @@ Statuses progress independently: identified → implementing → technically ver
 
 ### Live findings
 
+### September 17: a finding is not yet a delivered report
+
+- The scout record counted only delivered hazards, so a scout that detected danger without a working signal was incorrectly described as finding nothing. It now distinguishes noticing something from reporting it. The waiting crew does not learn the hazard name or details until a real return or relay.
+- Replaced raw communication labels in the Simple report and field account with registry-grounded behavior: vibrations through the structure, visible gestures, calls, or shared images and impressions. Telepathy is not spoken language. No communication capability, rule or cost changed.
+- Removed an obsolete, CSS-hidden trip diagram and its unused gauge/styles from each Simple scout card. The visible compact choice remains unchanged, optional cost detail stays available, and tests now assert the visible summary rather than invisible duplicate markup.
+- Verification: 1,276 web tests, typecheck and production build/budgets; seven-scene extraction with 14 salvage, 2 stability and a temporary ally; desktop/tablet/phone selection and result checks; normal-motion story controls at all three widths; physical return, checkpoint continuity and Guided/Standard/Expert flows. New browser coverage checks vibration, visual and telepathic delivery plus sensed-but-unreported danger, including map separation, lack of a false report line, and hazard disclosure only after return.
+- Screenshot review confirmed the field record remains a schematic and persistent story, not a creature-performance animation. Remaining concrete presentation finding: the phone header wraps Hippochamp's name across a single trailing letter, and places substantial status content before the next choice. Revisit that compact header without shrinking map labels or hiding decision context.
+
 ### September 17: the map names places, not just progress
 
 - The spatial audit found all seven rooms shared generic Entrance and Far side labels. The schematic now names each threshold, with every arrival matching the following scene's entrance, from the outer seal through the archive and optional depths to the surface lift.

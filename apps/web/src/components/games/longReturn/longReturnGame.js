@@ -37,6 +37,7 @@ import { nativeRemains } from './nativePresence';
 import ExpeditionSchematic from './ExpeditionSchematic';
 import ArrivalStory from './ArrivalStory';
 import { crossingReceipt } from './crossingReceipt';
+import { scoutCommunication, reportDeliveryLabel } from './scoutCommunication';
 import { expeditionPosition } from './expeditionPosition';
 import { BRIEFING_ART, sceneArtFor } from './sceneArt';
 import { playGameSound, readSoundEnabled, writeSoundEnabled } from './gameAudio';
@@ -126,15 +127,6 @@ function ProjectionTrack({ value, added, max, label, kind, settled = false }) {
         const restored = added < 0 && index >= current && index < after;
         return <i key={index} className={restored ? 'is-current is-restored' : filled ? 'is-current' : projected ? 'is-projected' : ''} aria-hidden="true" />;
       })}
-    </span>
-  );
-}
-
-function SignalGauge({ value, label }) {
-  const filled = Math.max(1, Math.min(5, Math.ceil(value / 20)));
-  return (
-    <span className="lr-signal-gauge" aria-label={`${label}: ${filled} of 5`}>
-      {Array.from({ length: 5 }, (_, index) => <BiIcon key={index} cls={index < filled ? 'bi-eye-fill is-filled' : 'bi-eye'} aria-hidden="true" />)}
     </span>
   );
 }
@@ -1428,30 +1420,6 @@ function LongReturnGame() {
                         <span className="lr-scout-quick"><span><BiIcon cls="bi bi-binoculars" /> {option.profile.detect >= 80 ? 'Excellent' : option.profile.detect >= 65 ? 'Strong' : 'Limited'} awareness</span><span><BiIcon cls={option.preview.relay ? 'bi bi-broadcast' : 'bi bi-arrow-return-left'} /> {option.preview.relay ? 'Reports remotely' : 'Must return'}</span><span><BiIcon cls="bi bi-lightning-charge-fill" /> {option.preview.relay ? '1 energy' : '2 energy · 1 stability'}</span></span>
                         {option.outlook && <span className="lr-scout-contact"><BiIcon cls="bi-exclamation-diamond" /><span><small>If a native appears</small><strong>{option.outlook.label}</strong></span></span>}
                       </span>
-                      <span className={`lr-scout-relay ${option.preview.relay ? 'is-good' : 'is-warning'}`} aria-label={`${option.member.species} has ${option.profile.detect >= 80 ? 'excellent' : option.profile.detect >= 65 ? 'strong' : 'limited'} awareness and spends 1 energy scouting; ${option.preview.relay ? `its ${option.profile.channel} communication reaches the crew and the report arrives without a return trip` : 'it has no compatible relay, so it returns physically and spends 1 additional energy while the annex loses 1 stability'}`}>
-                        <small>Likely trip</small>
-                        <span className="lr-scout-storyline">
-                          <span className="lr-scout-story-step is-discovery">
-                            <BiIcon cls="bi bi-binoculars-fill" />
-                            <span><small>Scout for danger</small><b>{option.profile.detect >= 80 ? 'Excellent awareness' : option.profile.detect >= 65 ? 'Strong awareness' : 'Limited awareness'}</b></span>
-                            <SignalGauge value={option.profile.detect} label={`${option.member.species} scouting awareness`} />
-                            <em className="is-energy"><BiIcon cls="bi bi-lightning-charge-fill" /> Uses 1 energy</em>
-                          </span>
-                          <BiIcon cls="bi-chevron-right" aria-hidden="true" />
-                          <span className="lr-scout-story-step is-communication">
-                            <BiIcon cls={option.preview.relay ? 'bi-broadcast-pin' : 'bi-broadcast'} />
-                            <span><small>Communication</small><b>{option.preview.relay ? `${labelCase(option.profile.channel)} connects` : 'No compatible relay'}</b></span>
-                          </span>
-                          <BiIcon cls="bi-chevron-right" aria-hidden="true" />
-                          <span className="lr-scout-story-step is-followup">
-                            <BiIcon cls={option.preview.relay ? 'bi-check-circle-fill' : 'bi-arrow-return-left'} />
-                            <span><small>{option.preview.relay ? 'Follow-up' : 'Must return'}</small><b>{option.preview.relay ? 'Report reaches crew' : 'Returns to crew'}</b></span>
-                            {option.preview.relay
-                              ? <em className="is-safe"><BiIcon cls="bi bi-shield-check" /> No return needed</em>
-                              : <span className="lr-return-cost"><em className="is-energy"><BiIcon cls="bi bi-lightning-charge-fill" /> Uses 1 more energy</em><em className="is-stability"><BiIcon cls="bi bi-building" /> Loses 1 stability</em></span>}
-                          </span>
-                        </span>
-                      </span>
                       <b className="lr-scout-action">{selected ? <><BiIcon cls="bi bi-check-circle-fill" /> Selected</> : <>Select <BiIcon cls="bi bi-arrow-right" /></>}</b>
                     </span>
                   </button>;
@@ -1461,7 +1429,7 @@ function LongReturnGame() {
                 <button type="button" className="lr-simple-secondary" onClick={proceedBlind}><BiIcon cls="bi bi-people-fill" /><span><strong>Stay together</strong><small>No energy spent · danger stays hidden</small></span></button>
                 <button type="button" className="g-btn g-btn--primary" disabled={!selectedScoutOption} onClick={() => selectedScoutOption && performScanFor(selectedScoutOption.member)}>{selectedScoutOption ? <>Send {selectedScoutOption.member.species} <BiIcon cls="bi bi-arrow-right" /></> : <>Select a scout <BiIcon cls="bi bi-lock-fill" /></>}</button>
               </div>
-              <details className="lr-plan-analysis"><summary>How scouting costs work</summary><p>Scouting spends 1 energy. A creature that can report remotely needs no return trip; otherwise returning spends 1 more energy and the delay costs 1 stability. An encounter can add costs.</p>{simpleScoutOptions.map((option) => <p key={option.member.id}><strong>{option.member.species}:</strong> {option.profile.channel || 'No compatible channel'} · {option.outlook?.label || option.profile.role}.</p>)}</details>
+              <details className="lr-plan-analysis"><summary>How scouting costs work</summary><p>Scouting spends 1 energy. A creature that can report remotely needs no return trip; otherwise returning spends 1 more energy and the delay costs 1 stability. An encounter can add costs.</p>{simpleScoutOptions.map((option) => <p key={option.member.id}><strong>{option.member.species}:</strong> {option.profile.channel ? scoutCommunication(option.profile.channel).label : 'No signal reaches the crew'} · {option.outlook?.label || option.profile.role}.</p>)}</details>
             </div>
           ) : (
             <div className="lr-phase-panel">
@@ -1483,7 +1451,7 @@ function LongReturnGame() {
 
           {phase === 'scan-result' && report && (guidanceLevel === 'simple' ? (
             <div className={`lr-simple-decision lr-simple-report is-${report.outcome}`}>
-              <div className="lr-report-source">{scanScout && <CreaturePortrait creature={scanScout} />}<strong>{scanScout ? scanScout.species : 'Crew report'}</strong><span>{report.channel || (scan.returned ? 'Report delivered' : 'Awaiting return')}</span><small className="lr-scout-trip-receipt" title="Scouting and reporting only. Any encounter costs are recorded in its own result."><BiIcon cls="bi bi-lightning-charge-fill" /> {report.strainCost} energy scouting{report.stabilityCost > 0 && <><br /><BiIcon cls="bi bi-building" /> {report.stabilityCost} stability waiting</>}</small></div>
+              <div className="lr-report-source">{scanScout && <CreaturePortrait creature={scanScout} />}<strong>{scanScout ? scanScout.species : 'Crew report'}</strong><span>{reportDeliveryLabel(report)}</span><small className="lr-scout-trip-receipt" title="Scouting and reporting only. Any encounter costs are recorded in its own result."><BiIcon cls="bi bi-lightning-charge-fill" /> {report.strainCost} energy scouting{report.stabilityCost > 0 && <><br /><BiIcon cls="bi bi-building" /> {report.stabilityCost} stability waiting</>}</small></div>
               <div className="lr-report-content">
               <div className="lr-simple-report-result"><BiIcon cls={report.revealed.length ? 'bi-shield-exclamation' : report.outcome === 'blind' ? 'bi-eye-slash' : 'bi-check-circle'} /><div><span>Scout result</span><h3>{report.title}</h3></div></div>
               <p className="lr-simple-story">{report.narrative}</p>
