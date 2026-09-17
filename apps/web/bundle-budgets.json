@@ -108,8 +108,8 @@
     },
     "artilleryGamePage": {
       "javascript": {
-        "raw": 102000,
-        "gzip": 34000
+        "raw": 106000,
+        "gzip": 35500
       },
       "stylesheets": {
         "raw": 0,

@@ -1,10 +1,14 @@
 # Xalians Game Experience Quality Guide
 
 Status: Living standard  
-Last updated: 2026-09-15
+Last updated: 2026-09-17
 First reference implementation: The Long Return
 
 ## Why this guide exists
+
+### Spatial instruments, not creature performances: September 17, 2026
+
+The Long Return now follows the [schematic presentation contract](design/long-return-schematic-presentation.md). This supersedes earlier creature-performance examples for this game. Use stable, labeled crew markers and connected spaces to show where the party is, who scouts ahead, how reports travel, and when everyone reaches the far side. A route preview must not masquerade as movement. Prose and static art carry the physical story; the schematic carries location and known state. Do not animate a creature swimming, fighting, or walking as a substitute for a professionally authored character animation. Keep the complete account until explicit continuation. Implementation evidence is not player acceptance.
 
 ### Essential labels are not decorative microtype — 2026-09-15
 

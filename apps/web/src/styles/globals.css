@@ -75,6 +75,19 @@
   max-width: 72rem;
 }
 
+@media (min-width: 601px) and (max-height: 820px) {
+	.artillery-field {
+		/* Leave the complete command deck in a laptop viewport while keeping
+		   the battlefield larger than the instrument tray. */
+		height: clamp(355px, calc(100dvh - 335px), 470px);
+	}
+
+	.artillery-field > svg {
+		height: 100% !important;
+		width: 100%;
+	}
+}
+
 @media (max-width: 600px) {
 	.artillery-field {
 		/* Keep both aim meters and Fire in the first phone viewport while

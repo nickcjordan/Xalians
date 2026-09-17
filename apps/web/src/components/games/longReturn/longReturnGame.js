@@ -34,8 +34,8 @@ import './expeditionSetup.css';
 import './essentialLegibility.css';
 import MethodIdentity from './MethodIdentity';
 import { nativeRemains } from './nativePresence';
-import SceneStage from './SceneStage';
-import RouteMap from './RouteMap';
+import ExpeditionSchematic from './ExpeditionSchematic';
+import { expeditionPosition } from './expeditionPosition';
 import { BRIEFING_ART, sceneArtFor } from './sceneArt';
 import { playGameSound, readSoundEnabled, writeSoundEnabled } from './gameAudio';
 import { encounterChoicePresentation } from './encounterPresentation';
@@ -268,30 +268,13 @@ function SimpleRunStatus({ crew, strain, pressure, objectiveReached, companion, 
   );
 }
 
-const WIZARD_STEPS = [
-  { label: 'Scout', icon: 'bi-binoculars' },
-  { label: 'Report', icon: 'bi-broadcast-pin' },
-  { label: 'Crossing', icon: 'bi-signpost-split' },
-  { label: 'Result', icon: 'bi-clipboard-check' }
-];
-
-function wizardIndexFor(phase, routeId) {
-  if (phase === 'transition') return -1;
-  if (phase === 'scout' || phase === 'encounter') return 0;
-  if (phase === 'scan-result') return 1;
-  if (phase === 'assign') return 2;
-  if (phase === 'result') return 3;
-  return 0;
-}
-
 function SimpleWizardChrome({ scene, sceneIndex, crew, strain, pressure, salvage, phase, routeId, choosingLead, simpleCustomizing, soundEnabled, journalCount, journalButtonRef, onToggleSound, onJournal, onHelp }) {
-  const active = wizardIndexFor(phase, routeId);
   const art = sceneArtFor(scene);
   const decision = phase === 'assign'
     ? simpleCustomizing ? 'Customize crew plan' : choosingLead ? 'Choose who leads' : 'Choose a route'
     : phase === 'scan-result' ? 'Scout report' : phase;
-  return <header className="lr-wizard-chrome" tabIndex={-1} data-wizard-focus aria-label={`${scene.title} · ${decision}`} style={{ '--wizard-art': `url(${art.src})`, '--wizard-accent': art.accent }}>
-    <div className="lr-wizard-topline">
+  return <header className="lr-wizard-chrome" tabIndex={-1} data-wizard-focus aria-label={`${scene.title} · ${decision}`} style={{ '--wizard-art': `url(${art.src})`, '--wizard-accent': art.accent, position: 'relative', margin: 0, alignContent: 'start' }}>
+    <div className="lr-wizard-topline" style={{ flexWrap: 'wrap' }}>
       <div><small>Scene {sceneIndex + 1} of {MISSION.scenes.length} · {scene.deck}</small><h1>{scene.title}</h1></div>
       <div className="lr-wizard-tools">
         <span className="is-salvage" title="Salvage carried"><BiIcon cls="bi bi-box-seam" /><b>{salvage}</b></span>
@@ -302,9 +285,6 @@ function SimpleWizardChrome({ scene, sceneIndex, crew, strain, pressure, salvage
     </div>
     <div className="lr-wizard-objective"><BiIcon cls="bi bi-crosshair" /><span><small>{phase === 'result' ? 'Reached' : 'Current objective'}</small><strong>{phase === 'result' ? scene.destination : scene.goal}</strong></span></div>
     <ExpeditionReserves crew={crew} strain={strain} pressure={pressure} />
-    <ol className="lr-wizard-progress" aria-label="Expedition decision steps">
-      {WIZARD_STEPS.map((step, index) => <li key={step.label} className={`${index === active ? 'is-current' : ''}${index < active ? ' is-complete' : ''}`} aria-current={index === active ? 'step' : undefined}><BiIcon cls={`bi ${index < active ? 'bi-check-lg' : step.icon}`} /><span>{step.label}</span></li>)}
-    </ol>
   </header>;
 }
 
@@ -778,6 +758,7 @@ function LongReturnGame() {
   }, []);
 
   const crew = useMemo(() => selectedCrew.map((id) => CREATURES.find((entry) => entry.id === id)).filter(Boolean), [selectedCrew]);
+  const displayedAction = useMemo(() => actionTransition && ({ ...actionTransition, crew, runFlags, fieldCompanion: companion, helperId: encounterResolution?.helperId }), [actionTransition, crew, runFlags, companion, encounterResolution?.helperId]);
   const standingCrewCount = crew.filter((member) => (strain[member.id] || 0) < MAX_STRAIN).length;
   const missionCannotContinue = pressure >= MAX_PRESSURE || standingCrewCount < 2;
   const failureReason = pressure >= MAX_PRESSURE ? 'Annex stability reached zero.' : 'Fewer than two creatures have energy left to lead and support another crossing.';
@@ -1007,7 +988,7 @@ function LongReturnGame() {
     const actor = helper || affected || crew[0];
     playGameSound('commit', soundEnabled);
     setActionTransition({
-      type: 'encounter-response', scene, native: encounterCreature, actor,
+      type: 'encounter-response', scene, native: encounterCreature, actor, encounterMode: encounterState.mode, scout: encounterState.scout, route,
       witness: affected && actor && affected.id !== actor.id ? affected : null,
       affected, option, result, presentation: encounterChoicePresentation(option),
       energyBefore: affected ? MAX_STRAIN - (strain[affected.id] || 0) : MAX_STRAIN,
@@ -1282,10 +1263,10 @@ function LongReturnGame() {
   return (
     <main className={`lr-shell lr-play-shell lr-mode-${guidanceLevel}${simpleCustomizing ? ' lr-is-customizing' : ''}`}>
       {actionTransition && (actionTransition.type === 'scout' || actionTransition.type === 'scout-return'
-        ? <ScoutTransition action={actionTransition} soundEnabled={soundEnabled} onComplete={() => setActionTransition(null)} />
+        ? <ScoutTransition action={displayedAction} soundEnabled={soundEnabled} onComplete={() => setActionTransition(null)} />
         : actionTransition.type === 'encounter-response'
-          ? <EncounterResolutionTransition action={actionTransition} soundEnabled={soundEnabled} onComplete={() => setActionTransition(null)} />
-        : <ActionTransition action={actionTransition} soundEnabled={soundEnabled} onComplete={() => setActionTransition(null)} />)}
+          ? <EncounterResolutionTransition action={displayedAction} soundEnabled={soundEnabled} onComplete={() => setActionTransition(null)} />
+        : <ActionTransition action={displayedAction} soundEnabled={soundEnabled} onComplete={() => setActionTransition(null)} />)}
       <header className="lr-mission-head">
         <div><p className="g-kicker">{MISSION.location}</p><h1>{MISSION.title}</h1></div>
         <div className="lr-head-readouts">
@@ -1327,13 +1308,15 @@ function LongReturnGame() {
         </aside>
 
         <section key={guidanceLevel === 'simple' ? wizardViewKey : scene.id} className={`lr-scene g-panel g-panel--bolted lr-wizard-view is-${wizardDirection} lr-wizard-phase-${phase}${phase === 'assign' && routeId ? ' is-plan' : ''}`} ref={sceneRef}>
+          <div className={guidanceLevel === 'simple' ? 'grid min-w-0 gap-3 lg:grid-cols-2' : ''}>
           {guidanceLevel === 'simple' && <SimpleWizardChrome scene={scene} sceneIndex={sceneIndex} crew={crew} strain={strain} pressure={pressure} salvage={salvage} phase={phase} routeId={routeId} choosingLead={choosingLead} simpleCustomizing={simpleCustomizing} soundEnabled={soundEnabled} journalCount={journal.length} journalButtonRef={memoryTriggerRef} onJournal={() => setMemoryOpen(true)} onToggleSound={() => { const next = !soundEnabled; setSoundEnabled(next); writeSoundEnabled(next); playGameSound('select', next); }} onHelp={openMechanics} />}
-          <div className="lr-scene-heading">
+          {guidanceLevel !== 'simple' && <div className="lr-scene-heading">
             <div><p className="g-kicker">{scene.deck} / Scene {sceneIndex + 1} of {MISSION.scenes.length}</p><h2 className="g-h2">{scene.title}</h2></div>
             {scene.objective && <span className="lr-objective-badge">PRIMARY OBJECTIVE</span>}
             {scene.optional && <span className="lr-optional-badge">OPTIONAL DEPTH</span>}
+          </div>}
+          <ExpeditionSchematic scene={scene} crew={crew} scout={scanScout} helperId={encounterResolution?.helperId} companion={companion} position={expeditionPosition({ phase, scout: scanScout, scan, encounterMode: encounterState?.mode, resolution: encounterResolution?.resolution })} routeId={routeId || pendingRouteId || routeVisualId} native={phase === 'encounter' && !encounterResolution || encounterResolution?.resolution === 'unresolved' || encounterResolution?.resolution === 'detour' ? encounterCreature : null} preview={phase === 'assign' && !!(routeId || pendingRouteId || routeVisualId)} runFlags={runFlags} compact />
           </div>
-          <SceneStage scene={scene} phase={phase} crew={crew} scout={scanScout} encounter={phase === 'encounter' ? encounterCreature : null} companion={companion} runFlags={runFlags} />
           {guidanceLevel === 'simple' && <CurrentAction key={`${phase}-${sceneIndex}-${encounterState && encounterState.result ? 'resolved' : 'active'}-${routeId || 'none'}`} {...currentAction} onHelp={openMechanics} />}
           <p className="lr-scene-copy">{scene.description}</p>
           <div className="lr-scene-orientation">
@@ -1553,7 +1536,6 @@ function LongReturnGame() {
                 </div>
                 {scan.revealedIds.length > 0 && <div className="lr-scan-strip"><BiIcon cls="bi-broadcast-pin" /><span>{scan.revealedIds.length} hazard signature relayed to command.</span></div>}
               </>}
-              {(guidanceLevel === 'simple' ? !simpleCustomizing && !choosingLead : !route) && <details className="lr-terrain-details"><summary><BiIcon cls="bi bi-map" /> Explore the terrain</summary><RouteMap scene={scene} activeRouteId={routeVisualId || pendingRouteId} runFlags={runFlags} encounterStatus={encounterResolution ? { ...encounterResolution, label: encounterResolution.companion ? `${encounterCreature.species} joined the crew` : encounterResolution.resolution === 'unresolved' ? `${encounterCreature.species} remains in the route` : encounterResolution.resolution === 'detour' ? 'Crew withdrew from contact' : 'Native passage cleared' } : null} /></details>}
               {guidanceLevel === 'simple' && (simpleCustomizing || choosingLead) ? null : guidanceLevel === 'simple' ? <>
                 <p className="lr-route-orientation">{sceneOrientation(scene, runFlags)}</p>
                 <RouteComparison plans={simpleRoutePlans.map((plan) => useCommand && plan.route.id === routeId && !plan.naturalReaction ? { ...plan, knownPressure: Math.max(0, plan.knownPressure - 1) } : plan)} selectedId={routeId} onSelect={previewSimpleRoute} onPreview={setRouteVisualId} companion={companion} recommendation={routeRecommendation} />
