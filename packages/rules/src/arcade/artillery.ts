@@ -636,9 +636,9 @@ export function chooseArtilleryBotShot(state: ArtilleryState): ArtilleryShot {
   if (state.current !== 'right') throw new Error('The bot only controls the right tank.');
   const draw = nextRandom(state.rngState ^ (state.turn + 1));
   const profile = {
-    rookie: { angleError: 4.2, powerError: 9, specialChance: 0.18 },
-    standard: { angleError: 2.3, powerError: 5.8, specialChance: 0.36 },
-    expert: { angleError: 0.65, powerError: 1.6, specialChance: 0.72 },
+    rookie: { angleError: 4.2, powerError: 9, specialChance: 0.18, angleCorrection: 7, powerCorrection: 10 },
+    standard: { angleError: 2.3, powerError: 5.8, specialChance: 0.36, angleCorrection: 8, powerCorrection: 12 },
+    expert: { angleError: 0.65, powerError: 1.6, specialChance: 0.72, angleCorrection: 60, powerCorrection: 80 },
   }[state.difficulty];
   const recentMiss = state.lastImpact?.shooter === 'left'
     ? Math.abs(state.lastImpact.x - state.tanks.right.x) : Infinity;
@@ -651,6 +651,11 @@ export function chooseArtilleryBotShot(state: ArtilleryState): ArtilleryShot {
     && Math.abs(artilleryMovedX(state, 'right', retreat) - state.tanks.right.x) >= 3 ? retreat : 0;
   const miss = Math.abs(state.botPrevious?.miss ?? 99);
   const targetX = state.tanks.left.x;
+  const firstRangingShot = state.botPrevious === null && state.difficulty !== 'expert';
+  const surveyDraw = nextRandom(nextRandom(draw.state).state);
+  const surveySpread = state.difficulty === 'rookie' ? { near: 24, far: 52 } : { near: 16, far: 38 };
+  const surveyedX = targetX + (surveyDraw.value < 0.5 ? -1 : 1)
+    * (surveySpread.near + Math.abs(surveyDraw.value - 0.5) * 2 * (surveySpread.far - surveySpread.near));
   const targetCrater = Math.max(terrainHeight(state.terrain, targetX - 8), terrainHeight(state.terrain, targetX + 8))
     - terrainHeight(state.terrain, targetX);
   const special: ArtillerySpecialPayload | null = state.guard.left > 0 && state.payloads.right.lance > 0 ? 'lance'
@@ -663,13 +668,26 @@ export function chooseArtilleryBotShot(state: ArtilleryState): ArtilleryShot {
   type Solution = { angle: number; power: number; score: number; damage: number; payload: ArtilleryPayload };
   const best = (payload: ArtilleryPayload): Solution => {
     let solution: Solution = { angle: 44, power: 70, score: -Infinity, damage: 0, payload };
+    const previous = state.botPrevious?.shot;
+    const lostRange = miss > 80 || move !== 0;
+    const angleCorrection = profile.angleCorrection + (lostRange ? 7 : 0);
+    const powerCorrection = profile.powerCorrection + (lostRange ? 8 : 0);
     for (let angle = 16; angle <= 76; angle += 3) {
+      if (previous && Math.abs(angle - previous.angle) > angleCorrection) continue;
       for (let power = 20; power <= 100; power += 2) {
+        if (previous && Math.abs(power - previous.power) > powerCorrection) continue;
         const outcome = simulateArtilleryShot(state, { angle, power, payload, move });
         const guard = payload === 'lance' ? Math.ceil(state.guard.left / 2) : state.guard.left;
         const pressure = Math.min(1.6, 1 + Math.max(0, state.turn - 9) * 0.12);
         const damage = Math.max(0, Math.round(outcome.damage * pressure * ARTILLERY_HULL_DAMAGE_SCALE) - guard);
-        const score = damage * 100 - power - Math.abs(angle - 45) * 0.1;
+        const landingError = outcome.impact ? Math.abs(outcome.impact.x - targetX) : state.terrain.length;
+        const surveyedError = Math.min(...outcome.projectiles.map((projectile) => projectile.impact
+          ? Math.abs(projectile.impact.x - surveyedX) : state.terrain.length));
+        const score = firstRangingShot
+          ? -surveyedError * 10 - power * 0.1
+          : damage > 0
+          ? damage * 100 - power - Math.abs(angle - 45) * 0.1
+          : -landingError * 10 - power * 0.1;
         if (score > solution.score) solution = { angle, power, score, damage, payload };
       }
     }
@@ -681,8 +699,10 @@ export function chooseArtilleryBotShot(state: ArtilleryState): ArtilleryShot {
     : special === 'barb' && miss > 9 ? 16
       : special === 'bore' && targetCrater > 5 ? 17
         : special === 'lance' && state.guard.left > 0 ? 15 : 4;
-  let solution = specialized && specialized.damage > 0 && specialized.score + roleBonus * 100 > core.score
-    ? specialized : core;
+  let solution = firstRangingShot
+    ? specialized ?? core
+    : specialized && specialized.damage > 0 && specialized.score + roleBonus * 100 > core.score
+      ? specialized : core;
   // Rampart spends the attack turn. Use it to survive a credible next hit,
   // never as an automatic response to crossing an arbitrary hull threshold.
   const critical = state.tanks.right.integrity <= 28;
@@ -704,8 +724,7 @@ export function chooseArtilleryBotShot(state: ArtilleryState): ArtilleryShot {
     }
     if (cover) solution = cover;
   }
-  const fallback = state.botPrevious?.shot ?? { angle: 44, power: 70 };
-  const planned = solution.score > 0 ? solution : fallback;
+  const planned = solution;
   const aimDraw = nextRandom(draw.state);
   // Defensive construction should be deliberate even when offensive aim is imperfect.
   const calibration = solution.payload === 'bloom' ? 0.3 : state.botPrevious ? 1 : state.difficulty === 'expert' ? 1 : 1.45;

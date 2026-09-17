@@ -350,3 +350,74 @@ so plainly. A run should not claim completion just because tests pass.
 - Next check: confirm these positions and the height transition on the live
   release. Shorter phones may still require scrolling, but active play retains
   the larger camera.
+
+### 2026-09-17: fairer ranging, terrain causality, and a compact command deck
+
+- Starting build: `d020e9b` on `origin/main`. Physical-device input testing was
+  set aside at Nick's request. This pass used local browser play at 1280x720,
+  1280x900, and 390x844, plus seeded rule replays.
+- Baseline full duel: Krystos/Standard/Standard, seed
+  `artillery:2374aba7-932b-4630-84fd-8851f786e92b`, ended 0-77 after
+  14 shots. The player's air range repeatedly looked close to the 200-unit
+  rival distance, but late shots landed only 3 to 12 units ahead of the
+  launcher after cratering its position. The result reported 23 damage and
+  14% accuracy, then incorrectly advised matching air range. A second local
+  Standard opening on Stonera, seed
+  `artillery:f8aad53d-0059-4d27-9127-712c942d3f3f`, let the rival's first
+  global trajectory solve deal 57 damage.
+- Hypothesis: near-launch and intervening-shelf warnings can explain a blocked
+  firing line without giving away the landing point. An opponent that makes a
+  surveyed first shot and bounded follow-up corrections should feel like it is
+  playing the same ranging game as the player. A collapsible loadout and a
+  shorter camera only on low-height desktop viewports should keep the entire
+  active command surface visible without shrinking the phone field.
+- Changes: Rookie and Standard now aim their opening at an uncertain surveyed
+  location, then constrain angle and power corrections around their previous
+  shot. Expert retains its ballistic solver. A no-hit candidate now favors a
+  closer impact rather than repeating a stale fallback. The setup explains
+  those difficulty roles. The cockpit warns when a long-range shot catches a
+  ridge near the muzzle or, when air range matches, an intervening shelf. It
+  does not show an exact landing marker and does not warn on deliberately
+  short Rampart placement. Impact verdicts and next-sortie advice distinguish
+  shelf interception from inadequate power. The desktop rack folds into an
+  armed-weapon strip with a Load weapon action. A viewport-height-specific
+  field and matching camera frame expose the full deck at 1280x720; the
+  phone field stays at its previous combat height. Aiming once dismisses the
+  introductory field hint, so it no longer covers phone combat.
+- Post-change direct play: Stonera/Standard/Standard, seed
+  `artillery:92be30c9-d34b-4258-8fa9-232cf2c69ecb`, ended 0-54 after
+  16 shots. The rival's first two replies missed. The player dealt 46 total
+  damage with Comet, Drill, and Starfall; Rampart absorbed 24 from a later
+  hit. The player still struggled to reach a rival in a deep shelf, which
+  exposed the missing *intervening* ridge diagnosis. A deterministic replay
+  of that exact battle found an aimed Drill with free range 202 units and a
+  202-unit rival distance striking terrain 32 units short. The new shelf
+  warning and verdict cover that case. This replay validates causality; the
+  final shelf text was not present during the original browser match.
+- Bot diagnostics: in 100 seeded Stonera opening replies after a default
+  player shot, Rookie damaging openings fell from 27 to 13 and Standard from
+  37 to 33; Expert stayed at 95. On the observed 57-damage Stonera opener,
+  Standard now lands a surveyed round clear of the rig for zero damage.
+  Across 30 fields, the coarse, no-exact-search player proxy still won
+  29/30 Rookie, 25/30 Standard, and 10/30 Expert matches. These probes are
+  not human win rates. The 100-field weapon solution space is unchanged.
+- Layout check: at 1280x720 the battlefield, aim meters, Fire, mobility,
+  armed weapon, and Load weapon all fit in one viewport without cropping
+  either rig. At 390x844 the active field remained 422px tall, Fire ended at
+  y617, the power slider ended at y776, and document width stayed 390px.
+  The phone hint cleared after the first power adjustment. No physical phone
+  press was attempted in this pass.
+- Scorecard: agency and controls **3/4**, combat decisions **3/4**, shot
+  causality **3/4**, spatial readability **3/4**, bot fairness **2/4** pending
+  more human matches across worlds, mobile quality **3/4** from viewport
+  checks only, and cohesion/replay **2/4**. Standard is less prescient, but
+  late pressure and target-in-crater fights still need observation.
+- Verification: 1,746 workspace tests, rules and web typechecks, production
+  build, and bundle budgets passed. The artillery route now measures about
+  104.9 KB raw and 35.0 KB gzip; its budget was raised to 106/35.5 KB for
+  the connected gameplay and cockpit changes. Live release verification is
+  recorded after deployment.
+- Next bottleneck: watch whether repeated high-arc corrections and late
+  damage pressure make crater duels exciting or merely long and swingy. Test
+  shelf warnings in live play and revisit the weapon-load surface if the
+  extra action slows combat more than it improves spatial focus.

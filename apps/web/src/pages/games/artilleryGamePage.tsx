@@ -67,6 +67,8 @@ type CombatStats = {
   hits: number;
   damage: number;
   directHits: number;
+  closeBlocks: number;
+  shelfBlocks: number;
   terrainShift: number;
   payloads: ArtilleryPayload[];
 };
@@ -78,13 +80,33 @@ type AftermathMark = {
 };
 type ShotVerdict = { title: string; detail: string };
 
-export function artilleryNextSortieTip({ mode, difficulty, won, accuracy, specialRounds }: {
+export function artilleryCloseLaunchHits(outcome: ArtilleryOutcome, shooterX: number, side: ArtillerySide, freeRange: number): number {
+  if (outcome.payload === 'bloom' || freeRange < 48) return 0;
+  const forward = side === 'left' ? 1 : -1;
+  return outcome.projectiles.filter(({ impact }) => impact && forward * (impact.x - shooterX) >= 0 && forward * (impact.x - shooterX) <= 24).length;
+}
+
+export function artilleryShelfRisk(outcome: ArtilleryOutcome, shooterX: number, targetX: number, freeRange: { near: number; far: number }): boolean {
+  if (outcome.payload === 'bloom' || outcome.damage > 0 || outcome.outOfBounds) return false;
+  const forward = targetX > shooterX ? 1 : -1;
+  const targetDistance = Math.abs(targetX - shooterX);
+  if (targetDistance < 50 || freeRange.far < targetDistance - 12 || freeRange.near > targetDistance + 32) return false;
+  return outcome.projectiles.every(({ impact }) => impact
+    && forward * (impact.x - shooterX) > 24
+    && forward * (targetX - impact.x) >= 18);
+}
+
+export function artilleryNextSortieTip({ mode, difficulty, won, accuracy, specialRounds, closeBlocks = 0, shelfBlocks = 0 }: {
   mode: ArtilleryMode;
   difficulty: ArtilleryDifficulty;
   won: boolean;
   accuracy: number;
   specialRounds: number;
+  closeBlocks?: number;
+  shelfBlocks?: number;
 }): string {
+  if (closeBlocks >= 2) return 'Your firing line caught the near ridge. Jet clear of the lip or blast an exit before adjusting range.';
+  if (shelfBlocks >= 2) return 'Air range reached the rival, but intervening shelves caught your shots. Loft the barrel or breach the ridge.';
   if (mode === 'range') return accuracy < 50
     ? 'Match the coarse air range to the rival, then correct from each impact.'
     : 'Try a different weapon sequence or planet and beat this damage record.';
@@ -147,7 +169,7 @@ const PAYLOAD_META: Record<ArtilleryPayload, {
   lance: { label: 'Sunspike', shortLabel: 'Sunspike', detail: 'Precise light spear · pierces half of guard · 1 charge', purpose: 'Finishes an exposed rig or cuts through protective guard', rackHint: 'Guard piercer', elementClass: 'el-light' },
 };
 
-export function artilleryShotVerdict(outcome: ArtilleryOutcome, shooterX: number, targetX: number, targetIntegrity = ARTILLERY_MAX_INTEGRITY): ShotVerdict {
+export function artilleryShotVerdict(outcome: ArtilleryOutcome, shooterX: number, targetX: number, targetIntegrity = ARTILLERY_MAX_INTEGRITY, shelfBlocked = false): ShotVerdict {
   if (outcome.coverGranted > 0) return {
     title: 'Cover forged',
     detail: `${outcome.coverGranted} guard until you move or take a hit`,
@@ -167,6 +189,7 @@ export function artilleryShotVerdict(outcome: ArtilleryOutcome, shooterX: number
   if (Math.abs(outcome.impact.x - shooterX) < 8) return {
     title: 'Muzzle blocked', detail: 'Nearby ridge intercepted the shot · raise the barrel or jump-jet clear',
   };
+  if (shelfBlocked) return { title: 'Ridge intercepted', detail: 'Air range reached the rival, but terrain stopped the round · loft the barrel' };
   const direction = targetX > shooterX ? 1 : -1;
   const shortBy = (targetX - outcome.impact.x) * direction;
   const radius = ARTILLERY_PAYLOAD_RULES[outcome.payload].blastRadius;
@@ -558,10 +581,10 @@ export function artilleryCinematicCamera(
     height,
   });
   const mobileWidth = (height: number) => Math.min(fieldWidth, Math.max(72, height * viewportAspect));
-  const homeHeight = narrow ? 136 : ARTILLERY_VIEW_HEIGHT;
+  const homeHeight = narrow ? 136 : Math.min(ARTILLERY_VIEW_HEIGHT, Math.max(120, fieldWidth / viewportAspect));
   const homeWidth = narrow ? mobileWidth(homeHeight) : fieldWidth;
   const home = frame(homeWidth, homeHeight, narrow ? focusX : fieldWidth / 2, narrow ? focusY : ARTILLERY_SKY_TOP + ARTILLERY_VIEW_HEIGHT * 0.58);
-  if (!narrow) home.y = ARTILLERY_SKY_TOP;
+  if (!narrow) home.y = ARTILLERY_HEIGHT - homeHeight;
   if (!phase || phase === 'move') {
     return `${Math.round(home.x * 100) / 100} ${home.y} ${Math.round(home.width * 100) / 100} ${home.height}`;
   }
@@ -688,9 +711,10 @@ export function ArtilleryBoard({ seed, mode, difficulty, mapSize, world, onStatu
   const [fieldAspect, setFieldAspect] = React.useState(0.8);
   const [mobileFocus, setMobileFocus] = React.useState<ArtillerySide>('left');
   const [mobilePanel, setMobilePanel] = React.useState<'none' | 'weapons' | 'mobility'>('none');
+  const [desktopArsenalOpen, setDesktopArsenalOpen] = React.useState(false);
   const [stats, setStats] = React.useState<Record<ArtillerySide, CombatStats>>({
-    left: { shots: 0, hits: 0, damage: 0, directHits: 0, terrainShift: 0, payloads: [] },
-    right: { shots: 0, hits: 0, damage: 0, directHits: 0, terrainShift: 0, payloads: [] },
+    left: { shots: 0, hits: 0, damage: 0, directHits: 0, closeBlocks: 0, shelfBlocks: 0, terrainShift: 0, payloads: [] },
+    right: { shots: 0, hits: 0, damage: 0, directHits: 0, closeBlocks: 0, shelfBlocks: 0, terrainShift: 0, payloads: [] },
   });
   const [rangeBest, setRangeBest] = React.useState(() => {
     try { return Number(globalThis.localStorage?.getItem('xalians.arcade.artillery.rangeBest')) || 0; } catch { return 0; }
@@ -716,7 +740,9 @@ export function ArtilleryBoard({ seed, mode, difficulty, mapSize, world, onStatu
   React.useEffect(() => { stateRef.current = state; }, [state]);
   React.useEffect(() => { movementRef.current = movement; }, [movement]);
   React.useEffect(() => { setMobileFocus(state.current); }, [state.current]);
-  React.useEffect(() => { if (state.turn > 0) setCoachVisible(false); }, [state.turn]);
+  React.useEffect(() => {
+    if (state.turn > 0 || angle !== 45 || power !== 70) setCoachVisible(false);
+  }, [angle, power, state.turn]);
 
   React.useEffect(() => () => {
     pendingTimers.current.forEach(window.clearTimeout);
@@ -773,7 +799,10 @@ export function ArtilleryBoard({ seed, mode, difficulty, mapSize, world, onStatu
     const targetSide: ArtillerySide = state.current === 'left' ? 'right' : 'left';
     const target = state.tanks[targetSide];
     const payloadName = PAYLOAD_META[applied.outcome.payload].label;
-    const verdict = artilleryShotVerdict(applied.outcome, state.tanks[state.current].x, target.x, target.integrity);
+    const shotReach = artilleryNominalReach(state, resolvedShot);
+    const closeBlocked = artilleryCloseLaunchHits(applied.outcome, state.tanks[state.current].x, state.current, shotReach.far) > 0;
+    const shelfBlocked = artilleryShelfRisk(applied.outcome, state.tanks[state.current].x, target.x, shotReach);
+    const verdict = artilleryShotVerdict(applied.outcome, state.tanks[state.current].x, target.x, target.integrity, shelfBlocked);
     const result = `${verdict.title}. ${verdict.detail}.`;
 
     let soundedImpacts = 0;
@@ -834,6 +863,8 @@ export function ArtilleryBoard({ seed, mode, difficulty, mapSize, world, onStatu
               hits: side.hits + Number(applied.outcome.damage > 0),
               damage: side.damage + (mode === 'range' ? applied.outcome.damage : Math.min(applied.outcome.damage, target.integrity)),
               directHits: side.directHits + Number(applied.outcome.directHit),
+              closeBlocks: side.closeBlocks + Number(closeBlocked),
+              shelfBlocks: side.shelfBlocks + Number(shelfBlocked),
               terrainShift: side.terrainShift + Math.abs(applied.outcome.terrainShift),
               payloads: side.payloads.includes(applied.outcome.payload) ? side.payloads : [...side.payloads, applied.outcome.payload],
             },
@@ -993,9 +1024,12 @@ export function ArtilleryBoard({ seed, mode, difficulty, mapSize, world, onStatu
     () => canFire ? simulateArtilleryShot(state, { angle, power, payload, move: 0, system: 'none' }) : null,
     [angle, canFire, payload, power, state],
   );
+  const nominalReach = artilleryNominalReach(state, { angle, power, payload });
   const aimPreviews = aimOutcome?.projectiles.map((projectile) =>
     projectile.path.slice(0, Math.min(14, Math.max(8, projectile.path.length - 7)))
   ) ?? [];
+  const closeLaunchHits = aimOutcome ? artilleryCloseLaunchHits(aimOutcome, rigX, state.current, nominalReach.far) : 0;
+  const shelfRisk = aimOutcome ? artilleryShelfRisk(aimOutcome, rigX, state.tanks[state.current === 'left' ? 'right' : 'left'].x, nominalReach) : false;
   const activePayload = animated?.outcome.payload ?? payload;
   const activePayloadMeta = PAYLOAD_META[activePayload];
   const launchVisual = artilleryLaunchVisualState(animated?.phase ?? null, animated?.progress ?? 0);
@@ -1030,18 +1064,17 @@ export function ArtilleryBoard({ seed, mode, difficulty, mapSize, world, onStatu
         : state.turn >= 10 ? 'C' : 'D';
   const resultSpecialsSpent = (mode === 'challenge' ? 4 : 7) - Object.values(state.payloads[resultSide]).reduce((total, remaining) => total + remaining, 0);
   const nextSortie = artilleryNextSortieTip({ mode, difficulty, won: state.winner === resultSide,
-    accuracy: resultAccuracy, specialRounds: resultSpecialsSpent });
+    accuracy: resultAccuracy, specialRounds: resultSpecialsSpent, closeBlocks: resultStats.closeBlocks, shelfBlocks: resultStats.shelfBlocks });
   // Field instruments report a coarse estimate. Exact numeric matching would
   // turn unobstructed shots into a solved target preview instead of ranging.
   const targetDistance = Math.round(Math.abs(state.tanks.left.x - state.tanks.right.x) / 10) * 10;
-  const nominalReach = artilleryNominalReach(state, { angle, power, payload });
   const reachReadout = nominalReach.near === nominalReach.far
     ? String(Math.round(nominalReach.near / 10) * 10)
     : `${Math.round(nominalReach.near / 10) * 10}–${Math.round(nominalReach.far / 10) * 10}`;
   const angleGuidance = angle < 35 ? 'Low, flatter arc' : angle < 60 ? 'Balanced arc' : 'High arc for ridges';
   const powerGuidance = narrowScreen
-    ? power < 45 ? 'Shorter range' : power < 75 ? 'Medium range' : 'Longer range'
-    : `Open air ~${reachReadout}u · rival ~${targetDistance}u`;
+    ? closeLaunchHits > 0 ? 'Near ridge catches fire' : shelfRisk ? 'Ridge before rival' : power < 45 ? 'Shorter range' : power < 75 ? 'Medium range' : 'Longer range'
+    : closeLaunchHits > 0 ? 'Near ridge catches fire · jet clear' : shelfRisk ? 'Intervening ridge · loft arc' : `Open air ~${reachReadout}u · rival ~${targetDistance}u`;
   const windAssists = state.wind !== 0 && (state.current === 'left' ? state.wind > 0 : state.wind < 0);
   const windLabel = state.wind === 0
     ? 'Still air'
@@ -1468,10 +1501,13 @@ export function ArtilleryBoard({ seed, mode, difficulty, mapSize, world, onStatu
             <span className="text-right">Air ~{reachReadout}u</span>
           </div>
         </div>}
-        {coachVisible && canFire && <div className="artillery-coach pointer-events-none absolute inset-x-0 bottom-2 z-10 px-8 text-center">
-          <span className="inline-block border border-edge-strong bg-s0/90 px-3 py-1.5 font-body text-small text-ink-2">
-            {state.turn === 0 && angle === 45 && power === 70
-              ? 'Drag up and outward · direction sets arc · distance sets power'
+        {canFire && (coachVisible || closeLaunchHits > 0 || shelfRisk) && <div className="artillery-coach pointer-events-none absolute inset-x-0 bottom-2 z-10 px-8 text-center">
+          <span className={`inline-block border px-3 py-1.5 font-body text-small ${closeLaunchHits > 0 || shelfRisk ? 'border-plague bg-s0/95 text-ink' : 'border-edge-strong bg-s0/90 text-ink-2'}`}>
+            {closeLaunchHits > 0
+              ? `${closeLaunchHits === aimOutcome?.projectiles.length ? 'Firing line blocked' : 'Part of salvo blocked'} · Jet clear or reshape the lip`
+              : shelfRisk ? 'Ridge before rival · Loft the barrel or breach the shelf'
+              : state.turn === 0 && angle === 45 && power === 70
+              ? narrowScreen ? 'Drag to aim · Fire to launch' : 'Drag up and outward · direction sets arc · distance sets power'
               : 'Drag the field or use the aim sliders · then Fire'}
           </span>
         </div>}
@@ -1526,7 +1562,7 @@ export function ArtilleryBoard({ seed, mode, difficulty, mapSize, world, onStatu
         <svg
           ref={fieldRef}
           viewBox={cameraViewBox}
-          className={`block h-full w-full touch-none sm:h-auto ${canFire ? 'cursor-crosshair' : ''}`}
+          className={`block h-full w-full touch-none ${canFire ? 'cursor-crosshair' : ''}`}
           role="img"
           aria-label={`Two mobile range rigs on ${worldMeta.name}. Drag up and outward anywhere on the battlefield; direction sets angle and distance sets power.`}
           onPointerDown={beginDirectAim}
@@ -1702,7 +1738,7 @@ export function ArtilleryBoard({ seed, mode, difficulty, mapSize, world, onStatu
             </div>
             <p className="mt-3 mb-2 font-body text-small text-ink-2"><span className="type-micro text-viable-hi">Next sortie</span> · {nextSortie}</p>
             {(mode === 'range' || mode === 'challenge') && <p className="mb-2 font-body text-tiny text-ink-3">{mode === 'range' ? 'Practice records no Arcade Credits.' : 'The five-round trial records no Arcade Credits.'}</p>}
-            <p className="mb-3 font-body text-tiny text-ink-3">{resultStats.directHits} direct · {resultSpecialsSpent} special rounds · {resultStats.terrainShift.toFixed(1)} terrain shift{mode === 'range' ? ` · best ${Math.max(rangeBest, resultStats.damage)}` : ''}</p>
+            <p className="mb-3 font-body text-tiny text-ink-3">{resultStats.directHits} direct · {resultStats.closeBlocks} near blocks · {resultStats.shelfBlocks} shelf blocks · {resultSpecialsSpent} special rounds · {resultStats.terrainShift.toFixed(1)} terrain shift{mode === 'range' ? ` · best ${Math.max(rangeBest, resultStats.damage)}` : ''}</p>
             <div className="grid gap-2 sm:grid-cols-2">
               {onQuickRematch && <Button type="button" className="min-h-12 w-full" onClick={onQuickRematch}>{mode === 'range' ? 'Run range again' : mode === 'challenge' ? 'Retry trial' : 'Rematch'}</Button>}
               <Button type="button" variant="ghost" className="min-h-12 w-full border border-edge-strong" onClick={onRematch}>Change battlefield</Button>
@@ -1790,13 +1826,15 @@ export function ArtilleryBoard({ seed, mode, difficulty, mapSize, world, onStatu
               </Button>
             </div>
 
-            <div className={`cockpit-instrument order-1 min-w-0 gap-1.5 border border-edge-strong p-2 sm:order-none lg:col-span-2 ${mobilePanel === 'weapons' ? 'grid' : 'hidden sm:grid'}`} role="group" aria-label="Choose a weapon">
+            <div className={`cockpit-instrument order-1 min-w-0 gap-1.5 border border-edge-strong p-1.5 sm:order-none lg:col-span-2 ${mobilePanel === 'weapons' ? 'grid' : 'hidden sm:grid'}`} role="group" aria-label="Choose a weapon">
               <div className="grid min-w-0 gap-1.5">
-                <span className="flex items-center justify-between gap-2 type-legend">
-                  <span>Ordnance</span>
-                  <span className="hidden truncate font-body text-small normal-case tracking-normal text-ink-2 sm:inline">{PAYLOAD_META[payload].purpose}</span>
-                </span>
-                <div className="grid grid-cols-2 gap-1 sm:grid-cols-3 lg:grid-cols-6">
+                <div className="flex min-w-0 items-center gap-2">
+                  <PayloadGlyph payload={payload} className="hidden h-7 w-9 shrink-0 overflow-visible sm:block" />
+                  <span className="type-legend shrink-0">Ordnance <b className="ml-1 text-viable-hi">{PAYLOAD_META[payload].shortLabel} {Number.isFinite(payloadRemaining(state.current, payload)) ? payloadRemaining(state.current, payload) : '∞'}</b></span>
+                  <span className="hidden min-w-0 flex-1 truncate font-body text-small text-ink-2 sm:block">{PAYLOAD_META[payload].purpose}</span>
+                  <Button type="button" size="sm" variant="ghost" className="hidden h-9 shrink-0 border border-edge-strong bg-s0 px-3 font-legend text-small uppercase text-ink sm:inline-flex" aria-expanded={desktopArsenalOpen} aria-label={desktopArsenalOpen ? 'Close weapon rack' : 'Open weapon rack'} onClick={() => setDesktopArsenalOpen((open) => !open)}>{desktopArsenalOpen ? 'Close rack' : 'Load weapon'}</Button>
+                </div>
+                {(mobilePanel === 'weapons' || desktopArsenalOpen) && <div className="grid grid-cols-2 gap-1 sm:grid-cols-3 lg:grid-cols-6">
                 {ARTILLERY_PAYLOADS.map((choice, index) => {
                   const remaining = payloadRemaining(state.current, choice);
                   const unavailable = remaining <= 0;
@@ -1814,6 +1852,7 @@ export function ArtilleryBoard({ seed, mode, difficulty, mapSize, world, onStatu
                         sound.play('select');
                         setPayload(choice);
                         setMobilePanel('none');
+                        setDesktopArsenalOpen(false);
                         onStatus(`${PAYLOAD_META[choice].label} selected. ${PAYLOAD_META[choice].detail}.`);
                       }}
                     >
@@ -1824,8 +1863,8 @@ export function ArtilleryBoard({ seed, mode, difficulty, mapSize, world, onStatu
                     </Button>
                   );
                 })}
-                </div>
-                <div className="flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1 border border-edge bg-s0 px-2 py-1.5 lg:hidden">
+                </div>}
+                {(mobilePanel === 'weapons' || desktopArsenalOpen) && <div className="flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1 border border-edge bg-s0 px-2 py-1.5 lg:hidden">
                   <strong className="font-legend text-small uppercase tracking-legend text-ink">{PAYLOAD_META[payload].label}</strong>
                   <span className="font-body text-small text-ink-3">{PAYLOAD_META[payload].detail}</span>
                   <span className="ml-auto flex flex-wrap gap-1 font-mono text-[10px] uppercase text-ink-3">
@@ -1833,7 +1872,7 @@ export function ArtilleryBoard({ seed, mode, difficulty, mapSize, world, onStatu
                     <span>· {ARTILLERY_PAYLOAD_RULES[payload].projectileCount}×</span>
                     <span>· Terrain {payload === 'bloom' ? 'build' : payload === 'bore' ? 'deep' : 'blast'}</span>
                   </span>
-                </div>
+                </div>}
               </div>
             </div>
           </>
@@ -1880,10 +1919,13 @@ export function ArtillerySetup({ mode, difficulty, mapSize, world, onMode, onDif
             ))}
           </div>
           {mode === 'bot' && (
-            <div className="mt-1 grid grid-cols-3 gap-2" role="group" aria-label="Bot difficulty">
-              {(['rookie', 'standard', 'expert'] as const).map((choice) => (
-                <Button key={choice} type="button" size="sm" variant={difficulty === choice ? 'outline' : 'ghost'} className="min-w-0 px-1 text-xs tracking-normal sm:px-4 sm:text-legend sm:tracking-legend" aria-pressed={difficulty === choice} onClick={() => onDifficulty(choice)}>{choice}</Button>
-              ))}
+            <div className="mt-1 grid gap-1.5">
+              <div className="grid grid-cols-3 gap-2" role="group" aria-label="Bot difficulty">
+                {(['rookie', 'standard', 'expert'] as const).map((choice) => (
+                  <Button key={choice} type="button" size="sm" variant={difficulty === choice ? 'outline' : 'ghost'} className="min-w-0 px-1 text-xs tracking-normal sm:px-4 sm:text-legend sm:tracking-legend" aria-pressed={difficulty === choice} onClick={() => onDifficulty(choice)}>{choice}</Button>
+                ))}
+              </div>
+              <p className="m-0 font-body text-small text-ink-3">{difficulty === 'rookie' ? 'Loose first range and slow corrections.' : difficulty === 'standard' ? 'Estimates the first shot, then corrects from impact.' : 'Ballistic computer with little aim error.'}</p>
             </div>
           )}
         </fieldset>
