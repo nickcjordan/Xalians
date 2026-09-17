@@ -311,6 +311,8 @@
 .pw-enemy {
   width: 250px;
   max-width: 30%;
+  align-self: center;
+  height: min(100%, 400px);
   display: flex;
   flex-direction: column;
   position: relative;
@@ -1873,6 +1875,8 @@
   }
   .pw-enemy {
     max-width: 33%;
+    align-self: stretch;
+    height: auto;
     width: 135px;
     border-radius: 8px;
     padding: 2px 5px 0;
@@ -2781,11 +2785,11 @@
 }
 .pw .pw-move-card {
   grid-template-columns: minmax(0, 1fr) 46px;
-  height: 82px;
+  height: 92px;
 }
 .pw-command {
-  height: 146px;
-  min-height: 146px;
+  height: 156px;
+  min-height: 156px;
 }
 .pw-card-category {
   letter-spacing: 0;
@@ -2825,8 +2829,8 @@
     min-height: 35px;
   }
   .pw-command {
-    height: 221px;
-    min-height: 221px;
+    height: 241px;
+    min-height: 241px;
     padding: 8px;
   }
   .pw-command-head {
@@ -2834,7 +2838,7 @@
     margin-bottom: 7px;
   }
   .pw .pw-move-card {
-    height: 77px;
+    height: 87px;
     grid-template-rows: 1fr 20px;
   }
   .pw-card-effect {
