@@ -9,9 +9,11 @@ import {
   ArrowRight,
   Shield,
   Zap,
+  CornerUpRight,
+  Ban,
 } from "lucide-react";
+import { actionPresentation } from "./powerworksPresentation";
 import {
-  ROOMS,
   damagePreview,
   matchup,
   type Frame,
@@ -152,12 +154,13 @@ export function PowerworksScene({
   const action = actor?.moves.find((m) => m.name === event?.moveName);
   const melee =
     action?.range === "melee" || event?.moveName === "Desperate strike";
-  const signature =
-    !!actor && !actor.enemy && actor.moves[3]?.name === event?.moveName;
+  const presentation = actionPresentation(frame);
+  const { signature, knockout, bossDefeat } = presentation;
   const point = (u: Unit) => ({
     x:
-      (u.enemy ? 17 : 12) +
-      ((u.enemy ? enemies : team).indexOf(u) * (u.enemy ? 66 : 76)) /
+      (u.enemy ? (enemies.length === 2 ? 30 : 20) : 14) +
+      ((u.enemy ? enemies : team).indexOf(u) *
+        (u.enemy ? (enemies.length === 2 ? 40 : 60) : 72)) /
         Math.max(1, (u.enemy ? enemies : team).length - 1),
     y: u.enemy ? 29 : 75,
   });
@@ -175,16 +178,23 @@ export function PowerworksScene({
       ? enemies.find((u) => u.id === targetId && u.hp > 0)
       : null;
   const aimPoint = aiming ? position(aiming) : null;
+  const queuedTarget =
+    planning && !move && active && plans[active.id]
+      ? enemies.find((u) => u.id === plans[active.id].target && u.hp > 0)
+      : null;
+  const queuedPoint = queuedTarget ? position(queuedTarget) : null;
   const phase = event?.kind || "idle";
   const style = {
-    "--action-time": `${1800 / speed}ms`,
-    "--impact-delay": `${500 / speed}ms`,
+    "--action-time": `${presentation.impactDelay / 0.28 / speed}ms`,
+    "--impact-delay": `${presentation.impactDelay / speed}ms`,
   } as React.CSSProperties;
   return (
     <section
       className={`pw-theater sector-${room} ${frame ? "playing" : "planning"} ${
         paused ? "paused" : ""
-      } ${arriving ? "arriving" : ""} ${signature ? "signature-action" : ""}`}
+      } ${arriving ? "arriving" : ""} ${signature ? "signature-action" : ""} ${
+        knockout && impact ? "knockout-action" : ""
+      } ${bossDefeat && impact ? "boss-defeat" : ""}`}
       aria-label="Battlefield"
       style={style}
       data-impact={impact}
@@ -194,6 +204,44 @@ export function PowerworksScene({
       <div className="pw-room-prop" aria-hidden="true">
         {room === 1 ? <Shield /> : room >= 2 ? <Zap /> : null}
       </div>
+      {frame &&
+        (signature ||
+          phase === "blocked" ||
+          phase === "redirect" ||
+          (bossDefeat && impact)) && (
+          <div
+            className={`pw-action-banner ${phase}`}
+            key={`banner-${frameIndex}`}
+          >
+            {bossDefeat && impact ? (
+              <Crown />
+            ) : phase === "blocked" ? (
+              <Ban />
+            ) : phase === "redirect" ? (
+              <CornerUpRight />
+            ) : (
+              <Crown />
+            )}
+            <div>
+              <small>
+                {bossDefeat && impact
+                  ? "Defense disabled"
+                  : phase === "blocked"
+                  ? "Stopped by restraint"
+                  : phase === "redirect"
+                  ? "Target changed"
+                  : `${actor?.name} · Signature`}
+              </small>
+              <strong>
+                {bossDefeat && impact
+                  ? "The guardian falls"
+                  : phase === "redirect"
+                  ? `Now targeting ${recipient ? labelFor(recipient) : ""}`
+                  : event?.moveName || "Cannot act"}
+              </strong>
+            </div>
+          </div>
+        )}
       <div className="pw-scene-heading">
         <span>{sectorStory[room].place}</span>
         {room === 3 && (
@@ -215,6 +263,12 @@ export function PowerworksScene({
         aria-hidden="true"
         key={`path-${frameIndex}`}
       >
+        {queuedPoint && source && (
+          <path
+            className="pw-queued-path"
+            d={`M${source.x} ${source.y} Q50 45 ${queuedPoint.x} ${queuedPoint.y}`}
+          />
+        )}
         {aimPoint && source && (
           <path
             className="pw-aim-path"
@@ -229,9 +283,9 @@ export function PowerworksScene({
           ["hit", "snare", "redirect"].includes(event.kind) && (
             <>
               <path
-                className={`pw-flight ${melee ? "contact" : "projectile"} ${
-                  event.kind
-                }`}
+                className={`pw-flight ${
+                  melee && event.kind !== "redirect" ? "contact" : "projectile"
+                } ${event.kind}`}
                 pathLength="1"
                 d={`M${source.x} ${source.y} Q${
                   (source.x + destination.x) / 2
@@ -285,7 +339,9 @@ export function PowerworksScene({
               u.hp > 0 && u.charge ? "charged" : ""
             } ${u.hp > 0 && u.snared ? "restrained" : ""} ${
               u.hp > 0 && u.ward ? "protected" : ""
-            } ${aiming?.id === u.id ? "aimed" : ""}`}
+            } ${
+              aiming?.id === u.id || queuedTarget?.id === u.id ? "aimed" : ""
+            } ${receiving && knockout && impact ? "just-fallen" : ""}`}
             style={
               {
                 left: `${pos.x}%`,
@@ -323,6 +379,11 @@ export function PowerworksScene({
               onBlur={() => onHover(null)}
             >
               <span className="pw-ground" />
+              {!u.enemy && (
+                <span className="pw-squad-number" aria-hidden="true">
+                  {team.indexOf(u) + 1}
+                </span>
+              )}
               <span className="pw-actor-art" key={`${u.id}-${frameIndex}`}>
                 <Portrait u={u} />
               </span>
@@ -345,12 +406,14 @@ export function PowerworksScene({
                 <Crosshair className="pw-scene-reticle" />
               )}
               {(recoil ||
-                (receiving && impact) ||
+                (receiving && impact && phase !== "redirect") ||
                 (acting && ["charge", "blocked"].includes(phase))) && (
                 <span
                   key={`float-${frameIndex}`}
                   className={`pw-scene-float ${phase}`}
                 >
+                  {phase === "blocked" && <Ban aria-hidden="true" />}
+                  {phase === "redirect" && <CornerUpRight aria-hidden="true" />}
                   {recoil
                     ? "−2"
                     : phase === "hit"
@@ -386,16 +449,34 @@ export function PowerworksScene({
             </div>
             <div className="pw-scene-status">
               <StatusBadges u={u} />
-              {queued.length > 0 && (
-                <span
-                  className="pw-scene-orders"
-                  title={queued.map((p) => p.name).join(", ")}
-                >
-                  <Check />
-                  {queued.length} queued
-                </span>
-              )}
             </div>
+            {planning && queued.length > 0 && (
+              <div className="pw-target-orders">
+                {queued.map((p) => (
+                  <button
+                    key={p.id}
+                    className={`pw-order-link ${
+                      active?.id === p.id ? "active" : ""
+                    }`}
+                    aria-label={`Edit ${p.name}'s order targeting ${labelFor(
+                      u
+                    )}`}
+                    onClick={(e) => onSelect(p, e.detail === 0)}
+                  >
+                    <span>{team.indexOf(p) + 1}</span>
+                    <Portrait u={p} small />
+                  </button>
+                ))}
+              </div>
+            )}
+            {planning && !u.enemy && plans[u.id]?.target && (
+              <span className="pw-planned-destination">
+                <ArrowRight />
+                {labelFor(
+                  enemies.find((e) => e.id === plans[u.id].target) || u
+                )}
+              </span>
+            )}
             {planning && move && u.enemy && u.hp > 0 && (
               <span
                 className={`pw-scene-preview ${

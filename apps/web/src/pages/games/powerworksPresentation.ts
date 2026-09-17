@@ -1,6 +1,38 @@
 import { useEffect, useRef, useState } from "react";
 import type { Frame } from "@xalians/rules/dungeon";
 
+export function actionPresentation(frame?: Frame) {
+  const event = frame?.event;
+  const units = [...(frame?.team || []), ...(frame?.enemies || [])];
+  const actor = units.find((u) => u.id === event?.actorId);
+  const target = units.find((u) => u.id === event?.targetId);
+  const delivered = !!event && ["hit", "snare", "ward"].includes(event.kind);
+  const signature =
+    delivered &&
+    !!actor &&
+    !actor.enemy &&
+    actor.moves[3]?.name === event?.moveName;
+  const knockout = event?.kind === "hit" && target?.hp === 0;
+  const bossDefeat = knockout && target?.species === "guardian";
+  const impactDelay = signature ? 680 : event?.kind === "charge" ? 600 : 360;
+  const duration = bossDefeat
+    ? 2800
+    : knockout
+    ? 2000
+    : signature
+    ? 1800
+    : event?.kind === "charge"
+    ? 1650
+    : event?.kind === "blocked"
+    ? 1400
+    : event?.kind === "redirect"
+    ? 900
+    : actor
+    ? 1150
+    : 700;
+  return { signature, knockout, bossDefeat, impactDelay, duration };
+}
+
 // Presentation only. The rules still produce the same complete round and save.
 export function useBattlePresentation(
   frame: Frame | undefined,
@@ -18,13 +50,10 @@ export function useBattlePresentation(
   const key = `${index}:${frame?.text || ""}`;
   const animated = !!frame?.event?.actorId;
   const impact = reducedMotion || paused || !animated || landed === key;
+  const presentation = actionPresentation(frame);
   const frameDuration = reducedMotion
-    ? 1200
-    : !animated
-    ? 800
-    : frame?.event?.kind === "redirect"
-    ? 1100
-    : 1900;
+    ? Math.max(1200, presentation.duration)
+    : presentation.duration;
   useEffect(() => {
     const media = window.matchMedia?.("(prefers-reduced-motion: reduce)");
     const change = () => setReducedMotion(media?.matches ?? false);
@@ -38,9 +67,12 @@ export function useBattlePresentation(
       setLanded(key);
       return;
     }
-    const timer = window.setTimeout(() => setLanded(key), 500 / speed);
+    const timer = window.setTimeout(
+      () => setLanded(key),
+      presentation.impactDelay / speed
+    );
     return () => clearTimeout(timer);
-  }, [key, speed, paused, reducedMotion, animated]);
+  }, [key, speed, paused, reducedMotion, animated, presentation.impactDelay]);
   useEffect(() => {
     const audio = context.current;
     if (!sound || !impact || !frame?.event || !audio || paused) return;
