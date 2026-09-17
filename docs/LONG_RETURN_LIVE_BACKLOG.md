@@ -21,6 +21,12 @@ Statuses progress independently: identified → implementing → technically ver
 
 ### Live findings
 
+### September 17 — the record becomes something to bring home
+
+- Continued narrative audit through the objective and ending. Scene five now identifies the Index as the surviving plague-research record, with visible plates and a sealed backup, not just unexplained equipment.
+- Both retrieval stories turn reaching the archive into carrying its record home. Deep retrieval ends with the extraction lift and recovered record rather than an unsupported claim that every opportunity was exhausted. No reward or failure rule changed.
+- Verification: 177 game tests, production build/budgets, and a complete seven-scene reduced-motion replay with temporary ally, 14 banked salvage and 2 stability. Inspected the ending render. Normal-speed narrative pacing and player immersion remain unaccepted.
+
 ### September 17 — follow-through: machinery hall to archive door
 
 - The next continuity audit found the scene-two consequence still presented as an abstract signal/code. Its crossing now physically reaches the same door introduced in scene three: a sensor tightens its locking ring, or copied wall symbols match its controls.
