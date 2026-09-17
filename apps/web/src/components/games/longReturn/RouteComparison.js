@@ -1,6 +1,7 @@
 import React from 'react';
 import { Zap, Building2, Package, Check, ArrowRight, HelpCircle, ShieldCheck, Hourglass } from 'lucide-react';
 import './routeComparison.css';
+import { routeSetting } from './sceneOrientation';
 
 export function comparisonCosts(plan, companion) {
   const uncertain = !!(plan.unresolvedHazards.length || plan.nativeRisk);
@@ -28,6 +29,7 @@ export default function RouteComparison({ plans, selectedId, onSelect, onPreview
       {plans.map((plan, index) => <div key={plan.route.id} role="columnheader" data-lowest-risk={plan.risk === lowestRisk ? 'true' : undefined} className={`${selectedId === plan.route.id ? 'is-selected' : ''}${recommendation?.plan.route.id === plan.route.id ? ' is-recommended' : ''}`}>
         <button type="button" className="lr-board-pick" aria-pressed={selectedId === plan.route.id} onClick={() => onSelect(plan.route.id)} onMouseEnter={() => onPreview(plan.route.id)} onFocus={() => onPreview(plan.route.id)}>
           <strong>{plan.route.title}</strong>
+          <span className="lr-route-setting">{routeSetting[plan.route.id] || plan.route.description}</span>
           <span className={values[index].uncertain ? 'is-uncertain' : 'is-known'}>{values[index].uncertain ? <HelpCircle /> : <ShieldCheck />}{values[index].uncertain ? 'Extra costs unknown' : 'Costs confirmed'}</span>
           {recommendation?.plan.route.id === plan.route.id && <em title={recommendation.reason}>Recommended</em>}
         </button>

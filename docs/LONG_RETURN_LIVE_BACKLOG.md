@@ -21,6 +21,13 @@ Statuses progress independently: identified → implementing → technically ver
 
 ### Live findings
 
+### September 17 — player feedback: places must connect, not just costs
+
+- The player could compare scene-two costs but could not picture either passage or understand why the crew needed to cross. The route view had hidden both scene orientation and physical descriptions behind earlier steps/disclosures.
+- Arrival and route selection now share a short physical orientation for all seven scenes. Scene two recalls only the actual entrance consequence: quiet walkway crossing or the cleared drainage channel. Its goal names the far archive door.
+- All fourteen route headers describe the physical approach in everyday language, without adding hidden danger spoilers or changing costs. The comparison remains shared; the story precedes it rather than becoming another notification.
+- Verified 174 tests and production build; first-two-scene replays across both entrance routes and a 390px phone. A rendered review caught and fixed grid ordering that initially put context below the table; browser regression now enforces story-before-choice placement. Human narrative acceptance remains open.
+
 ### September 15 — player feedback: scouting needs a causal story
 
 - Reopened from the player's published screenshot: five isolated statements separated energy from departure, duplicated report delivery, and retained dead playback controls after completion.

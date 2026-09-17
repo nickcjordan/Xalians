@@ -13,6 +13,7 @@ import { crossingNarrative } from './crossingNarrative';
 import { crossingCosts } from './crossingCosts';
 import RouteTradeoff from './RouteTradeoff';
 import RouteComparison, { comparisonCosts } from './RouteComparison';
+import { sceneOrientation } from './sceneOrientation';
 import LeadChoices from './LeadChoices';
 import EncounterChoices from './EncounterChoices';
 import { encounterActor } from './encounterActor';
@@ -1343,7 +1344,7 @@ function LongReturnGame() {
           {phase === 'transition' && transition && (
             <div className="lr-transition-beat">
               <div className="lr-transition-route"><span>{transition.from}</span><BiIcon cls="bi-arrow-right" /><strong>{transition.to}</strong></div>
-              <p>{scene.arrival || scene.description}</p>
+              <p>{sceneOrientation(scene, runFlags)}</p>
               {transition.reaction && <blockquote><BiIcon cls="bi-chat-quote" /> “{transition.reaction}”</blockquote>}
               {transition.consequence && <div className="lr-memory-card">
                 <BiIcon cls="bi-diagram-3-fill" />
@@ -1554,6 +1555,7 @@ function LongReturnGame() {
               </>}
               {(guidanceLevel === 'simple' ? !simpleCustomizing && !choosingLead : !route) && <details className="lr-terrain-details"><summary><BiIcon cls="bi bi-map" /> Explore the terrain</summary><RouteMap scene={scene} activeRouteId={routeVisualId || pendingRouteId} runFlags={runFlags} encounterStatus={encounterResolution ? { ...encounterResolution, label: encounterResolution.companion ? `${encounterCreature.species} joined the crew` : encounterResolution.resolution === 'unresolved' ? `${encounterCreature.species} remains in the route` : encounterResolution.resolution === 'detour' ? 'Crew withdrew from contact' : 'Native passage cleared' } : null} /></details>}
               {guidanceLevel === 'simple' && (simpleCustomizing || choosingLead) ? null : guidanceLevel === 'simple' ? <>
+                <p className="lr-route-orientation">{sceneOrientation(scene, runFlags)}</p>
                 <RouteComparison plans={simpleRoutePlans.map((plan) => useCommand && plan.route.id === routeId && !plan.naturalReaction ? { ...plan, knownPressure: Math.max(0, plan.knownPressure - 1) } : plan)} selectedId={routeId} onSelect={previewSimpleRoute} onPreview={setRouteVisualId} companion={companion} recommendation={routeRecommendation} />
               </> : <div className="lr-route-grid">
                 {scene.routes.map((entry) => <RouteCard key={entry.id} route={entry} selected={routeId === entry.id} onSelect={() => chooseRoute(entry.id)} onPreview={() => setRouteVisualId(entry.id)} onPreviewEnd={() => setRouteVisualId(routeId)} scan={scan} />)}
