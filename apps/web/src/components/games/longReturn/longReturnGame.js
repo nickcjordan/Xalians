@@ -758,7 +758,7 @@ function LongReturnGame() {
   }, []);
 
   const crew = useMemo(() => selectedCrew.map((id) => CREATURES.find((entry) => entry.id === id)).filter(Boolean), [selectedCrew]);
-  const displayedAction = useMemo(() => actionTransition && ({ ...actionTransition, crew, runFlags, fieldCompanion: companion, helperId: encounterResolution?.helperId }), [actionTransition, crew, runFlags, companion, encounterResolution?.helperId]);
+  const displayedAction = useMemo(() => actionTransition && ({ ...actionTransition, crew, crewStrain: strain, runFlags, fieldCompanion: companion, helperId: encounterResolution?.helperId }), [actionTransition, crew, strain, runFlags, companion, encounterResolution?.helperId]);
   const standingCrewCount = crew.filter((member) => (strain[member.id] || 0) < MAX_STRAIN).length;
   const missionCannotContinue = pressure >= MAX_PRESSURE || standingCrewCount < 2;
   const failureReason = pressure >= MAX_PRESSURE ? 'Annex stability reached zero.' : 'Fewer than two creatures have energy left to lead and support another crossing.';

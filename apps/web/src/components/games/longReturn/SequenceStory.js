@@ -2,6 +2,8 @@ import React, { useEffect, useRef } from 'react';
 import './sequenceStory.css';
 import BiIcon from './BiIcon';
 
+const costIcons = { energy: 'bi-lightning-charge-fill', stability: 'bi-building', salvage: 'bi-box-seam', ability: 'bi-hourglass-split' };
+
 export function trapSequenceFocus(event) {
   if (event.key !== 'Tab') return;
   const targets = [...event.currentTarget.querySelectorAll('button:not(:disabled), [tabindex="0"]')];
@@ -38,7 +40,7 @@ export default function SequenceStory({ events, index, paused, onPause, onNext, 
       <ol aria-live="polite" aria-relevant="additions" aria-atomic="false">
         {events.slice(0, index + 1).map((entry, position) => <li key={`${position}-${entry.kind}`} className={`is-${entry.kind}`}>
           <span aria-hidden="true">{entry.title ? <BiIcon cls={`bi ${entry.icon}`} /> : String(position + 1).padStart(2, '0')}</span>
-          {entry.title ? <div className="lr-story-beat"><h3>{entry.title}</h3><p>{entry.message || entry.text}</p>{entry.costs?.length > 0 && <div className="lr-story-costs">{entry.costs.map(cost => <span key={cost.kind} className={`is-${cost.kind}`}><BiIcon cls={`bi ${cost.kind === 'energy' ? 'bi-lightning-charge-fill' : 'bi-building'}`} /> {cost.text}</span>)}</div>}</div> : <p>{entry.message || entry.text}</p>}
+          {entry.title ? <div className="lr-story-beat"><h3>{entry.title}</h3><p>{entry.message || entry.text}</p>{entry.costs?.length > 0 && <div className="lr-story-costs">{entry.costs.map(cost => <span key={`${cost.kind}-${cost.creatureId || ''}`} className={`is-${cost.kind} inline-flex items-center gap-1`}><BiIcon cls={`bi ${costIcons[cost.kind] || 'bi-info-circle'}`} className="shrink-0" /> {cost.text}</span>)}</div>}</div> : <p>{entry.message || entry.text}</p>}
         </li>)}
       </ol>
     </div>

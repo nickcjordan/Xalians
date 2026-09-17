@@ -21,6 +21,16 @@ Statuses progress independently: identified → implementing → technically ver
 
 ### Live findings
 
+### September 17: schematic field records and causal follow-through
+
+- Shipped the approved schematic direction in PRs #343 and #345: labeled crew markers, connected route branches, a seven-sector overview, report signals, native contact and limited ally positions. Removed character-performance stages from scouting, crossing and encounter playback. Helper and scout remain distinct from the waiting crew. Hosted three-scene replay passed after deployment 35274707916.
+- The next audit found crossing and encounter playback still presented isolated accounting events even though their resolved results already had authored stories. The field record now uses those same resolved paragraphs, with energy, structural loss, spent tools and salvage attached to the appropriate part of the account. Scouting retains the same causal pattern. No rules, rewards or hidden-information boundaries changed.
+- Corrected an accounting mismatch: record annotations now show the actual capped resource difference, not a nominal cost larger than the available reserve. Crew support and companion contributions remain attributed; one-use tools remain explicitly unavailable afterward.
+- Verification: 1,266 web tests on the refreshed main baseline, typecheck, production build and bundle budgets. Browser replay passed persistent story, pause, manual stepping and continuation at 390, 768 and 1280 pixels. Seven-scene phone and normal-speed desktop runs reached deep extraction with 14 salvage, 2 stability and a temporary ally. The normal-speed run retained all 17 records for explicit continuation, with reveal times of approximately 5 to 27 seconds. A separate six-crossing run reached forced extraction with the Index, exercising depletion rather than only success. Physical scout return, checkpoint continuity, non-relay contact and all three detailed guidance modes passed.
+- Visual review found unsupported icon names and detached cost icons; corrected those before final replay. A further reserve audit found a nonacting creature displayed as fully rested because only lead/support changes were supplied. It now retains its actual current energy, with regression coverage before and after the record. These findings are implementation evidence, not player acceptance of the new spatial model or narrative pace.
+
+Remaining review priorities: whether map positions make upcoming choices self-evident to a new player; whether long story beats remain comfortable on small screens; whether result review repeats more than it needs after a complete field record. Keep advanced detail available without rebuilding the notification stack.
+
 ### September 17 — full normal-speed replay and resuming the story
 
 - Completed seven scenes without skipping action sequences at normal motion: 17 sequences spanning roughly 2–12 seconds each; Index secured, 14 salvage, 2 stability, temporary ally. No detected flow or asset errors. This verifies completion and control behavior, not subjective pacing acceptance.

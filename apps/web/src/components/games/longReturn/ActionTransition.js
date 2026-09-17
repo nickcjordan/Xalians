@@ -14,10 +14,10 @@ function PipMeter({ kind, label, max, before, after, eventAt, index }) {
   return <FieldReserve kind={kind} label={label} max={max} before={before} after={after} active={index >= eventAt} />;
 }
 
-function CreatureStatus({ creature, change, events, index, role }) {
+function CreatureStatus({ creature, change, events, index, strain = 0 }) {
   const eventAt = eventIndexFor(events, 'energy', creature.id);
-  const before = MAX_STRAIN - (change ? change.before : 0);
-  const after = MAX_STRAIN - (change ? change.after : 0);
+  const before = MAX_STRAIN - (change ? change.before : strain);
+  const after = MAX_STRAIN - (change ? change.after : strain);
   return <PipMeter kind="energy" label={`${creature.species} energy`} max={MAX_STRAIN} before={before} after={after} eventAt={eventAt} index={index} />;
 }
 
@@ -64,7 +64,7 @@ export default function ActionTransition({ action, onComplete, soundEnabled = tr
   return <FieldRecord scene={action.scene} title={encounter ? 'Something moves ahead' : action.route.title} label={encounter ? 'Encounter discovered' : 'Crossing in progress'} map={<ExpeditionSchematic scene={action.scene} crew={action.crew} companion={action.fieldCompanion || action.companion} routeId={action.route?.id} position={expeditionPosition({ actionType: action.type, beat: current.kind })} native={nativeVisible ? action.encounter : null} runFlags={final ? action.runFlags : action.runFlags?.filter(flag => flag !== action.route?.consequence?.id)} />} resources={!encounter && <>
     <PipMeter kind="stability" label="Annex stability" max={MAX_INSTABILITY} before={MAX_INSTABILITY - result.instabilityChange.before} after={MAX_INSTABILITY - result.instabilityChange.after} eventAt={stabilityAt} index={index} />
     <div className="basis-full text-body">Salvage carried: <strong>{index < salvageAt ? result.salvageAfter - result.salvage : result.salvageAfter}</strong></div>
-    {action.crew?.map(creature => <CreatureStatus key={creature.id} creature={creature} change={crewChanges.find(change => change.creature.id === creature.id)} events={events} index={index} role={creature.id === action.lead.id ? 'lead' : 'crew'} />)}
+    {action.crew?.map(creature => <CreatureStatus key={creature.id} creature={creature} change={crewChanges.find(change => change.creature.id === creature.id)} events={events} index={index} strain={action.crewStrain?.[creature.id]} />)}
   </>}>
     <SequenceStory events={events} index={index} paused={paused} onPause={() => setPaused(!paused)} onNext={() => { setPaused(true); setIndex(Math.min(events.length - 1, index + 1)); }} action={<button ref={closeButtonRef} type="button" onClick={skip}>{final ? encounter ? 'Choose response' : 'Continue to result' : 'Skip to outcome'} <BiIcon cls="bi bi-arrow-right" /></button>} />
   </FieldRecord>;

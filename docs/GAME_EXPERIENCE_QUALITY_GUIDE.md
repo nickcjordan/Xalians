@@ -10,6 +10,8 @@ First reference implementation: The Long Return
 
 The Long Return now follows the [schematic presentation contract](design/long-return-schematic-presentation.md). This supersedes earlier creature-performance examples for this game. Use stable, labeled crew markers and connected spaces to show where the party is, who scouts ahead, how reports travel, and when everyone reaches the far side. A route preview must not masquerade as movement. Prose and static art carry the physical story; the schematic carries location and known state. Do not animate a creature swimming, fighting, or walking as a substitute for a professionally authored character animation. Keep the complete account until explicit continuation. Implementation evidence is not player acceptance.
 
+The field record and subsequent result must share the same resolved story. Attach resource changes to the passage, effort, rescue or arrival that causes them; do not insert a second sequence of accounting notifications between story events. Show actual reserve loss after clamping, not a demanded cost larger than what remained. A spent one-use ability stays explicit beside its use, and salvage appears with recovery. Keep native contact unresolved until the response is chosen. A new ally appears only when the response concludes.
+
 ### Essential labels are not decorative microtype — 2026-09-15
 
 Resource identities, costs, current-step labels and outcomes must remain readable without zooming. The Long Return's technical baseline is 12px for compact essential labels and 14px for action instructions; this is a project floor, not a claim of accessibility certification or player acceptance. Prefer compact body type over shrinking monospaced names. Verify names do not truncate, critical warnings wrap, and larger labels do not hide commitment controls. The responsive replay checks rendered sizes and clipping; visual review must still judge hierarchy and comfort.
@@ -379,11 +381,11 @@ Avoid “Did you understand?” People often answer yes even when their model is
 | Native creatures may become limited mission companions | Trial | Promising motivation for aid-based encounter choices; balance still needs playtesting |
 | Salvage can be banked or spent on field recovery | Trial | Creates a reason for salvage and a push-your-luck trade-off |
 | Committed actions resolve as ordered visual beats | Trial | Makes cause and effect visible; duration and repetition need continued testing |
-| Scene plates plus canonical SVG creatures form the visual system | Trial | Live browser pass confirmed clear location and performer layers; more scene props remain useful |
+| Static scene plates plus a schematic form the play presentation | Trial | Connected spaces and labeled markers replace performed creature animation; prose supplies the physical action |
 | Route paths are live overlays on environment plates | Trial | Hover/focus and selection trace upper, lower, center, or edge paths without leaking hidden costs |
 | World consequences persist into affected scenes | Trial | Coolant bypass, dormant machinery, awakened security, and recovered protocol now alter scene presentation as well as rules |
 | A restrained procedural sound language accompanies state changes | Trial | Selection, commitment, travel, signal, hazard, resource loss, reward, contact, and completion have distinct cues and a persistent mute control |
-| Creature capability is expressed through motion and effects | Trial | Crossing tools and scout postures now use different behavioral animation vocabularies while preserving canonical registry art |
+| Creature capability is expressed through performed motion and effects | Retired | Replaced by narrative cause, named methods and schematic state; improvised character performances did not meet the player's quality direction |
 | Simple mode is a staged mission workspace, not a scrolling dossier | Trial | A persistent scene header and four-stage rail keep scout, report, crossing and result legible; desktop route comparison and commitment share one workspace, while mobile uses natural flow |
 | Choosing a scout and deploying that scout are separate actions | Trial | Compact candidates support comparison, while a local action row makes deployment explicit and keeps “stay together” available without covering content |
 | Continuous motion is the default; stepped motion is reserved for tiny ambient signals | Established | Large stepped transitions and simultaneous smooth scrolling read as jitter instead of retro technology; causal beats remain staged without dropping visual frames |
@@ -401,10 +403,10 @@ The selected crossing plan uses one compact source → action cue, derived from 
 
 When either compared route uses a one-use tool, show that opportunity cost in the same shared comparison as energy, stability and salvage. Recommendation badges must not erase different future consequences or different consumable abilities; an unresolved candidate is not provably superior merely because its known costs are lower. Show no badge in those cases, without adding a “no recommendation” banner.
 
-Foreground terrain and performer trajectories should agree with the chosen route/method. Swimming, flight, climbing, burrowing, bursts and phasing use different motion; tool methods remain planted while their effects operate. Beat changes must retain the performer's endpoint, not snap it back. Native withdrawal leaves the native present. See `LONG_RETURN_DECISION_MATRIX.md` for the scene arc, interpretation boundaries and coverage evidence. These are trials pending human validation, not proof that the game is fun.
+The schematic and narrated action must agree with the chosen route and method. Swimming, flight, climbing, burrowing and phasing need accurate prose, not separate improvised character animation. Stable markers identify the scout, helper, waiting crew, native and ally. Native withdrawal leaves the native present. See `LONG_RETURN_DECISION_MATRIX.md` for the scene arc, interpretation boundaries and coverage evidence. These are trials pending human validation, not proof that the game is fun.
 
 - Route paths are distinct by lane and action, but later rooms still need human validation for spatial legibility.
-- Canonical silhouettes now perform distinct motions, but authored pose variants remain a future art direction rather than a requirement.
+- Canonical silhouettes remain useful in creature selection. Field action uses schematic markers; authored pose animation is not a requirement for this direction.
 - Procedural sound cues are implemented as a trial; loudness, repetition, and emotional fit need human listening feedback.
 - Transition pacing has automated coverage and one browser-agent path; repeated human validation across later rooms remains necessary.
 - The current recommendation model needs evidence from players who deliberately choose alternatives.

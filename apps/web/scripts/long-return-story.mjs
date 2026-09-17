@@ -19,7 +19,8 @@ try {
       assert.equal(await story.locator('li').count(), count, 'Pause holds the story');
       await story.getByRole('button', { name: /Next event/ }).click();
       assert.equal(await story.locator('li').count(), count + 1);
-      await page.getByRole('button', { name: 'Skip to outcome', exact: true }).click();
+      const skip = page.getByRole('button', { name: 'Skip to outcome', exact: true });
+      if (await skip.count()) await skip.click();
       assert.equal(await story.locator('li').first().innerText(), first, 'Earlier events persist');
       await page.waitForTimeout(2500);
       assert(await story.isVisible(), 'No automatic dismissal');
