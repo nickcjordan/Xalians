@@ -12,8 +12,6 @@
 .lr-result-changes { grid-column: 2; grid-row: 1 / span 3; }
 .lr-simple-result > .lr-arrival-next { grid-column: 1; grid-row: 2; flex-direction: column; gap: 16px; margin-top: 0; }
 .lr-simple-result > .lr-result-actions,.lr-simple-result > .lr-depth-decision { grid-column: 1; grid-row: 3; }
-.lr-arrival-art { height: 130px; background-size: cover; background-position: center; display: flex; align-items: end; padding: 16px; margin-bottom: 18px; border-radius: 4px; }
-.lr-arrival-art span { color: #fff; font-size: 14px; }
 .lr-mode-simple .lr-arrival-story .lr-simple-result-head { gap: 12px; }
 .lr-mode-simple .lr-arrival-story .lr-simple-result-head > svg { width: 26px; height: 26px; padding: 0; border: 0; background: none; }
 .lr-mode-simple .lr-arrival-story .lr-simple-result-head h3 { font-size: 25px; text-transform: none; letter-spacing: 0; margin: 6px 0; }
@@ -51,7 +49,7 @@
 .lr-arrival-next .lr-workshop[open] { width: 100%; }
 .lr-mode-simple .lr-arrival-grid .lr-projection-track.is-annex i.is-current { background: #80c99e; border-color: #9cdab4; }
 .lr-mode-simple .lr-arrival-grid .lr-result-changes article.lr-result-salvage { border-bottom: 0; }
-@media(max-width:700px) { .lr-mode-simple .lr-simple-result { display: flex; flex-direction: column; gap: 18px; } .lr-result-changes { width: 100%; } .lr-arrival-next { flex-direction: column; } .lr-arrival-art { height: 120px; } }
+@media(max-width:700px) { .lr-mode-simple .lr-simple-result { display: flex; flex-direction: column; gap: 18px; } .lr-result-changes { width: 100%; } .lr-arrival-next { flex-direction: column; } }
 
 /* A deliberate recovery workspace, not another long panel appended to the receipt. */
 .lr-mode-simple .lr-simple-result:has(.lr-workshop[open]) { display: block; }

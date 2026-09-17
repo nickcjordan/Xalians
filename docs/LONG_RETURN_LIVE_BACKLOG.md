@@ -21,6 +21,15 @@ Statuses progress independently: identified → implementing → technically ver
 
 ### Live findings
 
+### September 17: from field record to arrival
+
+- The full four-paragraph crossing story repeated immediately after its persistent field record. Arrival now leads with the physical destination and settled receipt; the complete account remains in a keyboard-accessible "Read the crossing again" disclosure. Old checkpoints without stored paragraphs retain their narrative fallback.
+- Rendered review caught another handoff problem: continuation landed on the already-seen header and map. It now focuses the arrival region, with the map still available above. Removed the repeated artwork strip rather than reducing text size. Desktop continuation fits the actual 900px viewport; phone reading remains natural flow.
+- Result receipts, resource-change cues, detailed readouts and new journal entries now report actual reserve loss, including depletion caps. Underlying effort calculations remain available separately. A clean result no longer claims that nothing was spent when a one-use ability was consumed.
+- Verification: 193 game tests and 1,270 web tests on the final full rerun, typecheck, production build and bundle budgets. A shared lazy-portrait test exceeded its one-second wait during the concurrent first run; the unchanged full rerun passed. Responsive result, rereading, keyboard focus and unchanged-resource checks passed at 390, 768 and 1280 pixels. Seven-scene phone replay reached deep extraction with 14 salvage, 2 stability and the temporary ally. All detailed guidance flows and normal-motion story controls passed. This verifies the handoff and accounting, not player acceptance of narrative pacing.
+
+Next review: spatial orientation and narrative comprehension across later rooms, including whether the compact room diagram communicates the approach without relying on route terminology. No expansion into performed creature animation.
+
 ### September 17: decision fit after the schematic
 
 - The broader viewport audit caught a desktop regression: the taller spatial header pushed Cross now below the viewport even though all lead choices fit. This was a layout failure, not a need for smaller type or hidden alternatives.

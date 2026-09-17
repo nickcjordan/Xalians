@@ -35,6 +35,8 @@ import './essentialLegibility.css';
 import MethodIdentity from './MethodIdentity';
 import { nativeRemains } from './nativePresence';
 import ExpeditionSchematic from './ExpeditionSchematic';
+import ArrivalStory from './ArrivalStory';
+import { crossingReceipt } from './crossingReceipt';
 import { expeditionPosition } from './expeditionPosition';
 import { BRIEFING_ART, sceneArtFor } from './sceneArt';
 import { playGameSound, readSoundEnabled, writeSoundEnabled } from './gameAudio';
@@ -774,6 +776,7 @@ function LongReturnGame() {
   const resultMethod = phase === 'result' && lead && route
     ? lastResult?.resolvedMethod || methodOptions(lead, route, []).find(entry => entry.id === methodId)
     : null;
+  const resultReceipt = crossingReceipt(lastResult);
   const reserve = leadId && supportId ? crew.find((entry) => entry.id !== leadId && entry.id !== supportId) : null;
   const scanScout = crew.find((entry) => entry.id === scoutId);
   const report = scene && scan ? scanReport(scene, scanScout, scan) : null;
@@ -803,6 +806,7 @@ function LongReturnGame() {
     let target = root;
     const phoneLead = guidanceLevel === 'simple' && choosingLead && !simpleCustomizing && window.matchMedia?.('(max-width: 650px)').matches
       ? root.querySelector('.lr-simple-plan') : null;
+    const arrival = guidanceLevel === 'simple' && phase === 'result' ? root.querySelector('[data-arrival-focus]') : null;
     // New phases start at their context header. On phones, the lead substep
     // starts at its own route/back heading, not the already-seen scene header.
     // Advanced layouts retain their focused deep-link.
@@ -811,6 +815,7 @@ function LongReturnGame() {
       else target = root.querySelector('.lr-scene-stage') || root.querySelector('.lr-current-action') || root;
     }
     if (phoneLead) target = phoneLead;
+    if (arrival) target = arrival;
     // Align the new phase before its entrance animation. Smooth scrolling and
     // panel motion running together read as camera shake, especially at
     // fractional display scaling.
@@ -826,7 +831,7 @@ function LongReturnGame() {
     // the next Tab lands on the first relevant control, not an old control that
     // has disappeared with the previous step.
     if (guidanceLevel === 'simple') {
-      const focusTarget = phoneLead || root.querySelector('[data-wizard-focus]');
+      const focusTarget = arrival || phoneLead || root.querySelector('[data-wizard-focus]');
       if (focusTarget && typeof focusTarget.focus === 'function') {
         focusTarget.focus({ preventScroll: true });
       }
@@ -1097,13 +1102,14 @@ function LongReturnGame() {
     setPressure(nextPressure);
     setStrain(nextStrain);
     setSalvage((current) => current + result.salvage);
-    cueChanges({ energy: { [actingLead.id]: result.leadStrain, [actingSupport.id]: result.supportStrain }, stability: result.pressure, salvage: result.salvage });
+    const settled = crossingReceipt(result);
+    cueChanges({ energy: Object.fromEntries(settled.crew.map(change => [change.creature.id, change.added])), stability: settled.stability.added, salvage: result.salvage });
     setObjectiveReached(reached);
     if (result.abilityId) setSpentAbilities((current) => [...current, result.abilityId]);
     if (useCommand && !result.naturalReaction) setCommands((current) => Math.max(0, current - 1));
     if (route.consequence) setRunFlags((current) => current.includes(route.consequence.id) ? current : [...current, route.consequence.id]);
     setLastResult(result);
-    setJournal(current => [...current, { id: scene.id, scene: scene.title, route: route.title, story: result.story, lead: actingLead.species, energy: totalStrain, stability: result.pressure, salvage: result.salvage }]);
+    setJournal(current => [...current, { id: scene.id, scene: scene.title, route: route.title, story: result.story, lead: actingLead.species, energy: settled.energy, stability: settled.stability.added, salvage: result.salvage }]);
     setPhase('result');
     setSimpleCustomizing(false);
     setLog((current) => [{ title: `${scene.deck} / ${route.title}`, text: `${result.impactLabel}: ${result.story}` }, ...current].slice(0, 8));
@@ -1683,13 +1689,14 @@ function LongReturnGame() {
           <MissionMemoryModal open={memoryOpen} onClose={() => { setMemoryOpen(false); requestAnimationFrame(() => memoryTriggerRef.current && memoryTriggerRef.current.focus()); }} entries={journal} runFlags={runFlags} companion={companion} salvage={salvage} pressure={pressure} objectiveReached={objectiveReached} />
 
           {phase === 'result' && lastResult && (guidanceLevel === 'simple' ? (
-            <div className={`lr-simple-decision lr-simple-result${objectiveReached && !missionCannotContinue && sceneIndex < MISSION.scenes.length - 1 ? ' has-depth-decision' : ''}`}>
+            <div data-arrival-focus tabIndex={-1} role="region" aria-label={`${route.title}: crossing complete`} className={`lr-simple-decision lr-simple-result scroll-mt-20 focus-visible:outline-2 focus-visible:outline-viable${objectiveReached && !missionCannotContinue && sceneIndex < MISSION.scenes.length - 1 ? ' has-depth-decision' : ''}`}>
 <div className="lr-arrival-grid"><div className="lr-arrival-story">
-<div className="lr-arrival-art" style={{ backgroundImage: `linear-gradient(0deg, rgba(8,14,14,.95), transparent), url(${sceneArtFor(scene).src})` }}><span>Crossed · {route.title}</span></div>
-              <div className={`lr-simple-result-head is-${lastResult.impactQuality}`}><BiIcon cls={`bi ${lastResult.impactQuality === 'clean' ? 'bi-check-circle-fill' : 'bi-exclamation-triangle-fill'}`} /><div><span>Crossing complete · {lastResult.impactLabel}</span><h3>{lastResult.impactQuality === 'clean' ? 'The plan worked without a cost' : lastResult.impactQuality === 'costly' ? 'The crew crossed, but paid for it' : 'A hard-won crossing'}</h3></div></div>
-              <div className="lr-crossing-prose">{(lastResult.paragraphs || (lead && support && resultMethod ? crossingNarrative({ route, lead, support, method: resultMethod, result: lastResult, companionHelp: lastResult.companionHelp }).paragraphs : null) || [lastResult.story]).map((paragraph, index) => <p className="lr-simple-story" key={index}>{paragraph}</p>)}</div>
+<p className="font-body text-small text-ink-2">Crossed: {route.title}</p>
+              <div className={`lr-simple-result-head is-${lastResult.impactQuality}`}><BiIcon cls={`bi ${lastResult.impactQuality === 'clean' ? 'bi-check-circle-fill' : 'bi-exclamation-triangle-fill'}`} /><div><span>Crossing complete · {lastResult.impactLabel}</span><h3>{lastResult.impactQuality === 'clean' ? 'The crew is through' : lastResult.impactQuality === 'costly' ? 'The crew crossed, but paid for it' : 'A hard-won crossing'}</h3></div></div>
+              <ArrivalStory key={scene.id} paragraphs={lastResult.paragraphs || (lead && support && resultMethod ? crossingNarrative({ route, lead, support, method: resultMethod, result: lastResult, companionHelp: lastResult.companionHelp }).paragraphs : null) || [lastResult.story]} />
               <details className="lr-result-explanation"><summary>Why this happened · cost breakdown</summary>
                 <p>{lastResult.turningPoint || lastResult.reaction}</p>
+                {(resultReceipt.crew.some((change, index) => change.added < lastResult.crewChanges[index].added) || resultReceipt.stability.added < lastResult.instabilityChange.added) && <p>The effort below exceeded the reserves remaining. The receipt counts only the energy and stability actually lost before reaching zero.</p>}
                 {lastResult.consequence && <p><strong>{lastResult.consequence.label}:</strong> {lastResult.consequence.future}</p>}
                 <ul>{lastResult.causes.map((cause) => <li key={cause}>{cause}</li>)}</ul>
                 <div className="lr-receipt-breakdown">{[
@@ -1699,9 +1706,9 @@ function LongReturnGame() {
                 ].filter(([key]) => lastResult.costSources?.[key]?.length).map(([key, label]) => <section key={key}><h4>{label}</h4><CostSources entries={lastResult.costSources[key]} /></section>)}</div>
               </details>
 </div><section className="lr-result-changes"><span>{fieldReceipt ? 'Crossing receipt · before repair' : 'Crossing receipt'}</span><div>
-                {lastResult.crewChanges.filter((change) => change.added > 0).map((change) => <article key={change.creature.id} className="is-warning"><span><BiIcon cls="bi bi-lightning-charge-fill" /><strong>{change.creature.species} energy</strong><b>−{change.added}</b></span><ProjectionTrack settled value={change.after} added={0} max={MAX_STRAIN} label={`${change.creature.species} energy`} kind="strain" /><small>{MAX_STRAIN - change.after} / {MAX_STRAIN} energy remaining</small></article>)}
-                {lastResult.instabilityChange.added > 0 && <article className="is-warning"><span><BiIcon cls="bi bi-building" /><strong>Annex stability</strong><b>−{lastResult.instabilityChange.added}</b></span><ProjectionTrack settled value={lastResult.instabilityChange.after} added={0} max={MAX_INSTABILITY} label="Annex stability" kind="annex" /><small>{MAX_INSTABILITY - lastResult.instabilityChange.after} / {MAX_INSTABILITY} stability remaining</small></article>}
-                {!lastResult.crewChanges.some((change) => change.added > 0) && !lastResult.instabilityChange.added && <article className="is-good lr-result-no-cost"><BiIcon cls="bi bi-check-circle-fill" /><strong>No energy or stability cost</strong></article>}
+                {resultReceipt.crew.filter((change) => change.added > 0).map((change) => <article key={change.creature.id} className="is-warning"><span><BiIcon cls="bi bi-lightning-charge-fill" /><strong>{change.creature.species} energy</strong><b>−{change.added}</b></span><ProjectionTrack settled value={change.after} added={0} max={MAX_STRAIN} label={`${change.creature.species} energy`} kind="strain" /><small>{MAX_STRAIN - change.after} / {MAX_STRAIN} energy remaining</small></article>)}
+                {resultReceipt.stability.added > 0 && <article className="is-warning"><span><BiIcon cls="bi bi-building" /><strong>Annex stability</strong><b>−{resultReceipt.stability.added}</b></span><ProjectionTrack settled value={resultReceipt.stability.after} added={0} max={MAX_INSTABILITY} label="Annex stability" kind="annex" /><small>{MAX_INSTABILITY - resultReceipt.stability.after} / {MAX_INSTABILITY} stability remaining</small></article>}
+                {!resultReceipt.energy && !resultReceipt.stability.added && <article className="is-good lr-result-no-cost"><BiIcon cls="bi bi-check-circle-fill" /><strong>No energy or stability cost</strong></article>}
                 <article className="lr-result-salvage"><span><BiIcon cls="bi bi-box-seam" /><strong>Salvage recovered</strong><b>+{lastResult.salvage}</b></span><small>{salvage + (fieldReceipt?.cost || 0)} carried on arrival</small></article>
                 {lastResult.abilityId && <article className="lr-result-ability"><span><BiIcon cls="bi-hourglass-split" /><strong>{crew.flatMap(member => member.abilities).find(ability => ability.id === lastResult.abilityId)?.name || 'Ability'} spent</strong></span><small>Unavailable for the rest of this expedition</small></article>}
               </div></section></div>
@@ -1727,9 +1734,9 @@ function LongReturnGame() {
               <h3>{lastResult.summary}</h3>
               <p className="lr-creature-reaction"><BiIcon cls="bi-chat-quote" /> {lastResult.reaction}</p>
               <div className="lr-result-grid">
-                <div><span>Lead energy</span><strong>−{lastResult.leadStrain}</strong><small>{lead.species}</small></div>
-                <div><span>Support energy</span><strong>−{lastResult.supportStrain}</strong><small>{support.species}</small></div>
-                <div><span>Annex stability</span><strong>−{lastResult.pressure}</strong><small>external safety reserve</small></div>
+                <div><span>Lead energy</span><strong>−{resultReceipt.crew[0].added}</strong><small>{lead.species}</small></div>
+                <div><span>Support energy</span><strong>−{resultReceipt.crew[1].added}</strong><small>{support.species}</small></div>
+                <div><span>Annex stability</span><strong>−{resultReceipt.stability.added}</strong><small>external safety reserve</small></div>
                 <div><span>Salvage</span><strong>+{lastResult.salvage}</strong><small>bank on extraction</small></div>
               </div>
               {lastResult.unseenHazards.length > 0 && <div className="lr-result-note lr-result-note--danger"><BiIcon cls="bi bi-exclamation-triangle-fill" /><span><strong>Unseen fallout:</strong> {lastResult.unseenHazards.map((hazard) => hazard.label).join(', ')}.</span></div>}
