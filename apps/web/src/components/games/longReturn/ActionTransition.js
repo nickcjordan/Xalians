@@ -1,37 +1,24 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import XalianImage from '../../xalianImage';
+import ExpeditionSchematic from './ExpeditionSchematic';
+import FieldRecord from './FieldRecord';
+import { expeditionPosition } from './expeditionPosition';
 import { beatDuration } from './beatTiming';
 import { MAX_INSTABILITY, MAX_STRAIN } from './longReturnData';
 import { buildActionSequence, eventIndexFor } from './actionSequence';
-import { sceneArtFor } from './sceneArt';
-import { methodPerformance } from './performanceVisuals';
 import { playGameSound } from './gameAudio';
 import BiIcon from './BiIcon';
-import './actionTransition.css';
-import CrossingTerrain from './CrossingTerrain';
-import './crossingChoreography.css';
-import SequenceStory, { trapSequenceFocus } from './SequenceStory';
-const icons = { ability: 'bi-hourglass-split', move: 'bi-arrow-right', hazard: 'bi-lightning-charge-fill', support: 'bi-people-fill', companion: 'bi-person-check-fill', energy: 'bi-lightning-charge-fill', stability: 'bi-building-fill-exclamation', salvage: 'bi-box-seam', complete: 'bi-check-lg', encounter: 'bi-exclamation-diamond-fill', decision: 'bi-signpost-split-fill' };
+import FieldReserve from './FieldReserve';
+import SequenceStory from './SequenceStory';
 
 function PipMeter({ kind, label, max, before, after, eventAt, index }) {
-  return <div className={`lr-sequence-meter is-${kind}`} aria-label={`${label}: ${index < eventAt ? before : after} of ${max}`}>
-    <span><BiIcon cls={`bi ${kind === 'energy' ? 'bi-lightning-charge-fill' : 'bi-building'}`} /> {label}</span>
-    <div aria-hidden="true">{Array.from({ length: max }, (_, pip) => {
-      const lost = pip >= after && pip < before;
-      const state = !lost ? pip < after ? 'is-full' : 'is-empty' : index < eventAt ? 'is-full' : index === eventAt ? 'is-draining' : 'is-empty';
-      return <i className={state} key={pip} />;
-    })}</div>
-  </div>;
+  return <FieldReserve kind={kind} label={label} max={max} before={before} after={after} active={index >= eventAt} />;
 }
 
 function CreatureStatus({ creature, change, events, index, role }) {
   const eventAt = eventIndexFor(events, 'energy', creature.id);
   const before = MAX_STRAIN - (change ? change.before : 0);
   const after = MAX_STRAIN - (change ? change.after : 0);
-  return <div className={`lr-sequence-creature-status is-${role}${eventAt === index ? ' is-losing-energy' : ''}`}>
-    <strong>{creature.species}</strong><small>{role}</small>
-    <PipMeter kind="energy" label="Energy" max={MAX_STRAIN} before={before} after={after} eventAt={eventAt} index={index} />
-  </div>;
+  return <PipMeter kind="energy" label={`${creature.species} energy`} max={MAX_STRAIN} before={before} after={after} eventAt={eventAt} index={index} />;
 }
 
 export default function ActionTransition({ action, onComplete, soundEnabled = true }) {
@@ -74,34 +61,11 @@ export default function ActionTransition({ action, onComplete, soundEnabled = tr
   const crewChanges = result ? result.crewChanges : [];
   const nativeVisible = encounter && index >= encounterAt;
   const skip = () => final ? onComplete() : setIndex(events.length - 1);
-  const art = sceneArtFor(action.scene);
-  const performance = methodPerformance(action.method);
-
-  return <div className={`lr-action-curtain has-story event-${current.kind} is-${art.tone} performance-${performance.id}`} style={{ '--action-accent': art.accent }} role="dialog" aria-modal="true" aria-label={encounter ? 'Encounter discovered' : 'Crossing in progress'} onKeyDown={trapSequenceFocus}>
-    <div className="lr-action-art" style={{ backgroundImage: `url(${art.src})` }} />
-    <div className="lr-action-vignette" />
-    {encounter
-      ? <p className="lr-sequence-a11y">{action.encounter.species} emerges from the annex. Choose the crew’s response next.</p>
-      : <div className="lr-action-resources lr-sequence-a11y">Crew energy {result.leadStrain + result.supportStrain}. Stability {result.pressure}. Salvage {result.salvage}.</div>}
-    <header className="lr-sequence-title"><span>{action.scene.deck}</span><h2>{encounter ? 'Something moves ahead' : action.route.title}</h2><p>{encounter ? action.route ? 'The crossing is interrupted' : `${action.lead.species} scouts alone` : action.method.label}</p></header>
-
-    {!encounter && <aside className={`lr-sequence-annex${stabilityAt === index ? ' is-taking-hit' : ''}`}><PipMeter kind="stability" label="Annex stability" max={MAX_INSTABILITY} before={MAX_INSTABILITY - result.instabilityChange.before} after={MAX_INSTABILITY - result.instabilityChange.after} eventAt={stabilityAt} index={index} /></aside>}
-    {!encounter && <div className={`lr-sequence-salvage${salvageAt === index ? ' is-collecting' : ''}`} aria-label={`${index < salvageAt ? result.salvageAfter - result.salvage : result.salvageAfter} salvage carried`}><BiIcon cls="bi bi-box-seam" /><strong>{index < salvageAt ? result.salvageAfter - result.salvage : result.salvageAfter}</strong></div>}
-
-    <div className={`lr-action-stage${index > 0 ? ' is-settled' : ''}`} aria-hidden="true">
-      {!encounter ? <CrossingTerrain route={action.route} resolved={index > 0} /> : <div className="lr-action-path"><i /><i /><i /><i /><i /></div>}
-      <div className={`lr-action-creature is-lead${current.kind === 'move' && current.actorId === action.lead.id ? ' is-performing' : ''}${current.kind === 'hazard' ? ' is-hit' : ''}`}><XalianImage variant="token" speciesName={action.lead.species} primaryType={action.lead.element.primary} fill="#080a08" stroke="#cbf7dc" strokeWidth="1" unPadded moreClasses="lr-action-silhouette" /></div>
-      {action.support && <div className={`lr-action-creature is-support${current.kind === 'support' ? ' is-performing' : ''}`}><XalianImage variant="token" speciesName={action.support.species} primaryType={action.support.element.primary} fill="#080a08" stroke="#c6d8d1" strokeWidth="1" unPadded moreClasses="lr-action-silhouette" /></div>}
-      {action.reserve && <div className="lr-action-creature is-reserve"><XalianImage variant="token" speciesName={action.reserve.species} primaryType={action.reserve.element.primary} fill="#080a08" stroke="#91a29b" strokeWidth="1" unPadded moreClasses="lr-action-silhouette" /></div>}
-      {action.companion && <div className={`lr-action-creature is-companion${current.kind === 'companion' ? ' is-performing' : ''}`}><XalianImage variant="token" speciesName={action.companion.species} primaryType={action.companion.element.primary} fill="#060806" stroke="#74ffb0" strokeWidth="1.2" unPadded moreClasses="lr-action-silhouette" /></div>}
-      {encounter && <div className={`lr-action-creature is-native${nativeVisible ? ' is-visible' : ''}`}><XalianImage variant="token" speciesName={action.encounter.species} primaryType={action.encounter.element.primary} fill="#050705" stroke="#f2d25e" strokeWidth="1.4" unPadded moreClasses="lr-action-silhouette" /></div>}
-      {(current.kind === 'hazard' || current.kind === 'encounter' || current.kind === 'complete') && <div className="lr-action-impact" key={`${index}-${current.kind}`}><BiIcon cls={`bi ${icons[current.kind]}`} /></div>}
-      {!encounter && current.kind === 'move' && <div className={`lr-performance-effect is-${performance.id}`} key={performance.id}><BiIcon cls={`bi ${performance.icon}`} /></div>}
-    </div>
-
-    {!encounter && <div className="lr-sequence-crew"><CreatureStatus creature={action.lead} change={crewChanges.find((change) => change.creature.id === action.lead.id)} events={events} index={index} role="lead" />{action.support && <CreatureStatus creature={action.support} change={crewChanges.find((change) => change.creature.id === action.support.id)} events={events} index={index} role="support" />}{action.reserve && <CreatureStatus creature={action.reserve} change={crewChanges.find((change) => change.creature.id === action.reserve.id)} events={events} index={index} role="reserve · crosses safely" />}</div>}
-
-    <SequenceStory events={events} index={index} paused={paused} onPause={() => setPaused(!paused)} onNext={() => { setPaused(true); setIndex(Math.min(events.length - 1, index + 1)); }} />
-    <button ref={closeButtonRef} type="button" onClick={skip}>{final ? encounter ? 'Choose response' : 'Continue to result' : 'Skip to outcome'} <BiIcon cls="bi bi-arrow-right" /></button>
-  </div>;
+  return <FieldRecord scene={action.scene} title={encounter ? 'Something moves ahead' : action.route.title} label={encounter ? 'Encounter discovered' : 'Crossing in progress'} map={<ExpeditionSchematic scene={action.scene} crew={action.crew} companion={action.companion} routeId={action.route?.id} position={expeditionPosition({ actionType: action.type, beat: current.kind })} native={nativeVisible ? action.encounter : null} runFlags={final ? action.runFlags : action.runFlags?.filter(flag => flag !== action.route?.consequence?.id)} />} resources={!encounter && <>
+    <PipMeter kind="stability" label="Annex stability" max={MAX_INSTABILITY} before={MAX_INSTABILITY - result.instabilityChange.before} after={MAX_INSTABILITY - result.instabilityChange.after} eventAt={stabilityAt} index={index} />
+    <div className="basis-full text-body">Salvage carried: <strong>{index < salvageAt ? result.salvageAfter - result.salvage : result.salvageAfter}</strong></div>
+    {action.crew?.map(creature => <CreatureStatus key={creature.id} creature={creature} change={crewChanges.find(change => change.creature.id === creature.id)} events={events} index={index} role={creature.id === action.lead.id ? 'lead' : 'crew'} />)}
+  </>}>
+    <SequenceStory events={events} index={index} paused={paused} onPause={() => setPaused(!paused)} onNext={() => { setPaused(true); setIndex(Math.min(events.length - 1, index + 1)); }} action={<button ref={closeButtonRef} type="button" onClick={skip}>{final ? encounter ? 'Choose response' : 'Continue to result' : 'Skip to outcome'} <BiIcon cls="bi bi-arrow-right" /></button>} />
+  </FieldRecord>;
 }

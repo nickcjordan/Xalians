@@ -25,6 +25,11 @@ try {
       assert(await story.isVisible(), 'No automatic dismissal');
       const panel = await story.boundingBox();
       assert(panel.x >= 0 && panel.x + panel.width <= width + 1 && panel.y >= 52 && panel.y + panel.height <= 900);
+      const map = page.locator('[data-field-record] [data-expedition-map]');
+      assert.equal(await map.locator('[data-map-creature]').count(), 3, 'Map retains all crew identities');
+      const drawing = await map.locator('svg').boundingBox();
+      assert(drawing.width > 300 && drawing.height > 100, 'Schematic is a readable diagram, not an icon');
+      assert.equal(await page.locator('.lr-scout-performer,.lr-action-creature,.lr-encounter-sequence-creature').count(), 0, 'No creature-performance stage remains');
       assert.equal(await story.getByRole('button', { name: 'Pause story', exact: true }).count(), 0, 'Finished stories have no dead playback controls');
       const next = page.locator('[role="dialog"] button').last();
       const button = await next.boundingBox();
