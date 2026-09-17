@@ -8,6 +8,16 @@ test('every scene and route has physical orientation without relying on analysis
   }
 });
 
+test('the next door carries forward the actual discovery rather than both alternatives', () => {
+  const scene = MISSION.scenes[2];
+  const codes = sceneOrientation(scene, ['maintenance-codes']);
+  const alert = sceneOrientation(scene, ['security-pulse']);
+  expect(codes).toContain('markings you copied');
+  expect(codes).not.toContain('tightened');
+  expect(alert).toContain('locking ring has tightened');
+  expect(alert).not.toContain('markings you copied');
+});
+
 test('the turbine hall remembers only the entrance actually taken', () => {
   const scene = MISSION.scenes[1];
   const flooded = sceneOrientation(scene, ['coolant-bypass']);
@@ -18,7 +28,7 @@ test('the turbine hall remembers only the entrance actually taken', () => {
   expect(quiet).not.toContain('channel');
   for (const text of [quiet, flooded]) {
     expect(text).toContain('sealed door');
-    expect(text).toContain('Both paths');
+    expect(text).toContain('Two passages lead there');
   }
   expect(routeSetting.catwalk).toContain('above the machines');
   expect(routeSetting.underdeck).toContain('beneath the machines');

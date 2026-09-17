@@ -34,6 +34,14 @@ test('known danger is anticipated, not rediscovered; costs and salvage are condi
   expect(resolve(MISSION.scenes[0].routes[0]).join(' ')).not.toMatch(/brine|bypass/);
 });
 
+test('both machinery passages arrive at the next door and show how their consequence arises', () => {
+  const [catwalk, underdeck] = MISSION.scenes[1].routes;
+  expect(resolve(catwalk)[3]).toContain('locking ring draws tight');
+  expect(resolve(catwalk)[3]).not.toContain('copies');
+  expect(resolve(underdeck)[3]).toContain('same shapes appear on the door');
+  expect(resolve(underdeck)[3]).not.toContain('sensor lights up');
+});
+
 test('remote retrieval never describes the lead diving, and support effort follows resolution', () => {
   const route = MISSION.scenes[5].routes[1];
   const paragraphs = resolve(route, { supportStrain: 1 }, route.methods[1]);
