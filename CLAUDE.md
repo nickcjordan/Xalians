@@ -2,6 +2,10 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Current platform decisions
+
+Before making platform, generation-economy, creature-lifecycle, trading, restoration, development, or permanent game-integration decisions, read `docs/design/generation-economy-open-threads.md` first and `docs/design/xalian-generation-system.md` second. The latter is the current platform design of record. Older economy passages in this file and `docs/design/xalians-platform-vision-and-economy.md` describe history or present code, not the newly agreed future policy where they conflict. Read the root `AGENTS.md` for the concise session bootstrap and the explicit rule against extracting a local game's engine before Nick requests cutover.
+
 ## Project
 
 Xalians is a creature-generation / collection game. A Node.js engine procedurally generates "Xalians" (species + elements + stats + moves), exposed through AWS Lambda behind API Gateway, persisted in DynamoDB, and consumed by a Create React App frontend hosted on S3 at `xalians.com`.

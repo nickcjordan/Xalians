@@ -2,6 +2,8 @@
 
 > Ability schema update: the current actions, passives, signature, delivery, and effect contract is [Creature capabilities: schema 4](xalian-ability-model.md). It supersedes action/signature structure in this document.
 
+> Platform lifecycle update: immutable genesis remains the creature-data contract here, but the former rule in section 5 that games can never read post-generation state is superseded for explicitly integrated games. Current platform direction permits versioned, bounded, game-specific completed development in a game's session snapshot. Read `generation-economy-open-threads.md` and `xalian-generation-system.md` before making progression or history-consumer decisions.
+
 # The Xalian Creature Data Structure — Handoff Reference
 
 Purpose: a self-contained description of the ratified Xalians creature data system, written so a fresh conversation can brainstorm new games on top of it without any prior session context. Everything here is ratified design as of 2026-09-01 unless marked in-progress. The authoritative long-form design doc is `docs/design/xalian-creature-system-redesign.md`; this file is the condensed consumer-facing view.
@@ -114,7 +116,7 @@ The pattern (worked partially for the Duel game, phase 2):
 1. **Read the registries for the pinned generation release**, build your interpretation tables, ignore unknown keys.
 2. **Derive your stats from the record.** Examples of the intended texture: HP from vitality+resilience; movement class from capabilities thresholds (flight ≥ 60 = airborne, swim bands = aquatic tiers); action legality from anatomy + the allowed-actions matrix; accuracy/initiative from reflex/instinct/senses; drowning = breathes is non-empty AND submerged in a medium not in breathes; hazard pricing from ambientMedia + temperature bands + typed exposure through the element matrix; AI/behavior color from temperament (never power from temperament — that's a hard rule); social/recruitment/shop flavor from charisma and communication channels.
 3. **Abilities are your verbs.** Each ability gives you instrument (what body part or channel does it), action (one of 16 mechanical archetypes — you decide what "snare" means in your game), medium (element for typing), intensity (1–100 magnitude), and a unique-feeling name. The signature ability may additionally get bespoke per-game behavior keyed to its name, but must always have a sane baseline reading through the plain grammar.
-4. **Never write to records.** A separate append-only history layer (deferred) will let games report milestones; games may write events but can never depend on reading them.
+4. **Never write to immutable genesis.** An integrated game may consume its own active, bounded development entries from a pinned session snapshot. Factual history is retained separately and is not a raw mechanics API. See `xalian-generation-system.md` for the current platform contract; local prototypes are not required to integrate it yet.
 
 ## 6. World context (one paragraph)
 

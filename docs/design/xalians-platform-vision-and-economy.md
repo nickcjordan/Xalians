@@ -1,5 +1,7 @@
 # Xalians Platform Vision, Progression, and Economy
 
+> Historical design record. Its economy, starter, progression, trade, release, and generation-access rules have been revisited. Read `generation-economy-open-threads.md` and then `xalian-generation-system.md` for current platform direction. The older **[ratified]** labels below mean accepted at that time, not precedence over Nick's later decisions. Keep this document for rationale and historical context, not as the active economy specification.
+
 Status: consolidated output of the 2026-09-01 brainstorm session between Nick and Claude. Items are marked **[ratified]** (explicit sign-off from Nick in session) or **[recommended]** (Claude's recommendation, directionally accepted but not hard-ratified). This doc is downstream of the ratified creature data system; where they touch, that system wins. Companion docs: `xalian-creature-system-redesign.md` (master creature system), `xalian-creature-data-structure.md` (condensed record reference).
 
 ## Context
