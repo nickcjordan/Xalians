@@ -1,3 +1,5 @@
+import {recordCapabilities,recordActions} from '@xalians/content/ability-compatibility';
+import { historicalCategory, isDefiningAbility } from '@xalians/content/schema';
 /*
 	Batch report and grade-calibration tool for the Xalian creature generator (WP4,
 	docs/design/xalian-creature-system-hardening.md). Generates a deterministic batch
@@ -218,7 +220,7 @@ function speciesStats(template: SpeciesTemplate, records: XalianRecord[]): Speci
 	});
 
 	// ability name diversity
-	const abilityNames = records.flatMap((r) => r.abilities.map((a) => a.name.toLowerCase()));
+	const abilityNames = records.flatMap((r) => recordCapabilities(r).map((a) => a.name.toLowerCase()));
 	const diversity = abilityNames.length > 0 ? new Set(abilityNames).size / abilityNames.length : 0;
 
 	// size mean and band position
@@ -343,7 +345,7 @@ function rosterStats(templates: SpeciesTemplate[], perSpecies: Map<string, Xalia
 	});
 
 	// action mix, medium mix, secondary-medium share across rolled (non-signature) abilities
-	const rolled = allRecords.flatMap((r) => r.abilities.filter((a) => !a.signature).map((a) => ({
+	const rolled = allRecords.flatMap((r) => recordCapabilities(r).filter((a) => !isDefiningAbility(a)).map((a) => ({
 		...a,
 		species: r.species,
 		secondary: Object.keys(r.element.affinities).find((k) => k !== r.element.primary),
@@ -352,7 +354,7 @@ function rosterStats(templates: SpeciesTemplate[], perSpecies: Map<string, Xalia
 	const mediumCounts = new Map<string, number>();
 	let secondaryMediumUses = 0;
 	rolled.forEach((a) => {
-		actionCounts.set(a.action, (actionCounts.get(a.action) || 0) + 1);
+		actionCounts.set(historicalCategory(a), (actionCounts.get(historicalCategory(a)) || 0) + 1);
 		mediumCounts.set(a.medium, (mediumCounts.get(a.medium) || 0) + 1);
 		if (a.secondary && a.medium === a.secondary) {
 			secondaryMediumUses += 1;

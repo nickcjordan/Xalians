@@ -1,4 +1,5 @@
 {
+  "schemaVersion": "4.0.0",
   "key": "graviclaw",
   "name": "Graviclaw",
   "nameOrigin": "A compression of gravity and claw, naming the force it controls and the massive pincer where that force terminates.",
@@ -179,15 +180,204 @@
   "conduits": {
     "pincers": "dark"
   },
-  "signatureAbility": {
-    "name": "Point of No Return",
-    "instrument": "pincers",
-    "action": "snare",
-    "medium": "dark",
-    "intensity": [
-      55,
-      85
+  "signature": {
+    "kind": "action",
+    "key": "graviclaw-defining"
+  },
+  "actions": [
+    {
+      "key": "graviclaw-defining",
+      "activation": {
+        "operation": "ongoing"
+      },
+      "delivery": {
+        "mode": "contact",
+        "approach": "stationary"
+      },
+      "targeting": {
+        "relation": "other",
+        "subjects": [
+          "creature",
+          "object"
+        ]
+      },
+      "effects": [
+        {
+          "kind": "restrain",
+          "recipient": "target",
+          "faculty": "movement",
+          "emphasis": "primary",
+          "onset": "instant",
+          "persistence": "sustained",
+          "likelihood": "consistent"
+        }
+      ],
+      "description": "It opens a claw beneath the water and collapses the gravitational waves inside it until nothing within reach can swim away from the closing grip.",
+      "name": "Point of No Return",
+      "instrument": "pincers",
+      "medium": "dark",
+      "intensity": [
+        55,
+        85
+      ],
+      "timing": {
+        "preparation": "brief",
+        "recovery": "brief"
+      },
+      "spatial": {
+        "selectivity": "selective",
+        "range": "contact"
+      }
+    }
+  ],
+  "passives": [],
+  "actionPool": {
+    "count": [
+      2,
+      3
     ],
-    "description": "It opens a claw beneath the water and collapses the gravitational waves inside it until nothing within reach can swim away from the closing grip."
+    "sets": [
+      {
+        "key": "default",
+        "weight": 1,
+        "options": [
+          {
+            "key": "pincers-strike",
+            "pattern": "strike",
+            "instrument": "pincers",
+            "media": [
+              "dark",
+              "ghost",
+              "psychic",
+              "ice"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "pincers-crush",
+            "pattern": "crush",
+            "instrument": "pincers",
+            "media": [
+              "dark",
+              "ghost",
+              "psychic",
+              "ice"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "pincers-snare",
+            "pattern": "snare",
+            "instrument": "pincers",
+            "media": [
+              "dark",
+              "ghost",
+              "psychic",
+              "ice"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "pincers-shove",
+            "pattern": "shove",
+            "instrument": "pincers",
+            "media": [
+              "dark",
+              "ghost",
+              "psychic",
+              "ice"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "pincers-ward",
+            "pattern": "ward",
+            "instrument": "pincers",
+            "media": [
+              "dark",
+              "ghost",
+              "psychic",
+              "ice"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "pincers-hurl",
+            "pattern": "hurl",
+            "instrument": "pincers",
+            "media": [
+              "dark",
+              "ghost",
+              "psychic",
+              "ice"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "pincers-drain",
+            "pattern": "drain",
+            "instrument": "pincers",
+            "media": [
+              "dark"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "pincers-burst",
+            "pattern": "burst",
+            "instrument": "pincers",
+            "media": [
+              "dark"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "pincers-terrorize",
+            "pattern": "terrorize",
+            "instrument": "pincers",
+            "media": [
+              "dark"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "shell-ward",
+            "pattern": "ward",
+            "instrument": "shell",
+            "media": [
+              "dark",
+              "ghost",
+              "psychic",
+              "ice"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "shell-shove",
+            "pattern": "shove",
+            "instrument": "shell",
+            "media": [
+              "dark",
+              "ghost",
+              "psychic",
+              "ice"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "shell-crush",
+            "pattern": "crush",
+            "instrument": "shell",
+            "media": [
+              "dark",
+              "ghost",
+              "psychic",
+              "ice"
+            ],
+            "weight": 1
+          }
+        ]
+      }
+    ]
   }
 }

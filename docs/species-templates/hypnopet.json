@@ -1,4 +1,5 @@
 {
+  "schemaVersion": "4.0.0",
   "key": "hypnopet",
   "name": "Hypnopet",
   "nameOrigin": "A compound of hypnosis and pet, reflecting its trance-producing horn and origin as a therapeutic service animal.",
@@ -180,15 +181,260 @@
   "conduits": {
     "crest": "psychic"
   },
-  "signatureAbility": {
-    "name": "Psychedelic Reverie",
-    "instrument": "crest",
-    "action": "snare",
-    "medium": "psychic",
-    "intensity": [
-      35,
-      70
+  "signature": {
+    "kind": "action",
+    "key": "hypnopet-defining"
+  },
+  "actions": [
+    {
+      "key": "hypnopet-defining",
+      "activation": {
+        "operation": "ongoing"
+      },
+      "delivery": {
+        "mode": "signal",
+        "approach": "stationary"
+      },
+      "targeting": {
+        "relation": "other",
+        "subjects": [
+          "creature"
+        ],
+        "compatibility": {
+          "reception": "visual"
+        }
+      },
+      "effects": [
+        {
+          "kind": "restrain",
+          "recipient": "target",
+          "faculty": "attention",
+          "emphasis": "primary",
+          "onset": "instant",
+          "persistence": "sustained",
+          "likelihood": "consistent"
+        }
+      ],
+      "description": "Its horn pulses and swirls through shifting color until whatever watches it stops moving and stands quiet in the trance.",
+      "name": "Psychedelic Reverie",
+      "instrument": "crest",
+      "medium": "psychic",
+      "intensity": [
+        35,
+        70
+      ],
+      "timing": {
+        "preparation": "brief",
+        "recovery": "brief"
+      },
+      "spatial": {
+        "selectivity": "selective",
+        "range": "short"
+      }
+    }
+  ],
+  "passives": [],
+  "actionPool": {
+    "count": [
+      2,
+      3
     ],
-    "description": "Its horn pulses and swirls through shifting color until whatever watches it stops moving and stands quiet in the trance."
+    "sets": [
+      {
+        "key": "default",
+        "weight": 1,
+        "options": [
+          {
+            "key": "crest-beam",
+            "pattern": "beam",
+            "instrument": "crest",
+            "media": [
+              "psychic",
+              "ghost",
+              "light",
+              "dark"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "crest-burst",
+            "pattern": "burst",
+            "instrument": "crest",
+            "media": [
+              "psychic",
+              "ghost",
+              "light",
+              "dark"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "crest-terrorize",
+            "pattern": "terrorize",
+            "instrument": "crest",
+            "media": [
+              "psychic",
+              "ghost",
+              "light",
+              "dark"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "crest-ward",
+            "pattern": "ward",
+            "instrument": "crest",
+            "media": [
+              "psychic",
+              "ghost",
+              "light",
+              "dark"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "crest-snare",
+            "pattern": "snare",
+            "instrument": "crest",
+            "media": [
+              "psychic"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "crest-mend",
+            "pattern": "mend",
+            "instrument": "crest",
+            "media": [
+              "psychic"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "crest-drain",
+            "pattern": "drain",
+            "instrument": "crest",
+            "media": [
+              "psychic"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "crest-shove",
+            "pattern": "shove",
+            "instrument": "crest",
+            "media": [
+              "psychic"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "crest-hurl",
+            "pattern": "hurl",
+            "instrument": "crest",
+            "media": [
+              "psychic"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "mind-snare",
+            "pattern": "snare",
+            "instrument": "mind",
+            "media": [
+              "psychic",
+              "ghost",
+              "light",
+              "dark"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "mind-shove",
+            "pattern": "shove",
+            "instrument": "mind",
+            "media": [
+              "psychic",
+              "ghost",
+              "light",
+              "dark"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "mind-hurl",
+            "pattern": "hurl",
+            "instrument": "mind",
+            "media": [
+              "psychic",
+              "ghost",
+              "light",
+              "dark"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "mind-crush",
+            "pattern": "crush",
+            "instrument": "mind",
+            "media": [
+              "psychic",
+              "ghost",
+              "light",
+              "dark"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "mind-drain",
+            "pattern": "drain",
+            "instrument": "mind",
+            "media": [
+              "psychic",
+              "ghost",
+              "light",
+              "dark"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "mind-ward",
+            "pattern": "ward",
+            "instrument": "mind",
+            "media": [
+              "psychic",
+              "ghost",
+              "light",
+              "dark"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "mind-terrorize",
+            "pattern": "terrorize",
+            "instrument": "mind",
+            "media": [
+              "psychic",
+              "ghost",
+              "light",
+              "dark"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "mind-mend",
+            "pattern": "mend",
+            "instrument": "mind",
+            "media": [
+              "psychic",
+              "ghost",
+              "light",
+              "dark"
+            ],
+            "weight": 1
+          }
+        ]
+      }
+    ]
   }
 }

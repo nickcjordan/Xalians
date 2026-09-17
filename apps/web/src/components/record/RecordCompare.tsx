@@ -1,5 +1,7 @@
+import {recordCapabilities, recordActions, recordPassives, type DisplayAbility} from '@xalians/content/ability-compatibility';
+import { isSignatureAbility } from '@xalians/content/ability-compatibility';
 import * as React from 'react';
-import type { XalianRecord } from '@xalians/content/schema';
+import type { StoredXalianRecord as XalianRecord } from '@xalians/content/schema';
 import { getSpeciesTemplate, speciesDisplayName } from '@xalians/rules/generator';
 import { gradeWithBundledCalibration } from '@xalians/rules/generator/grade';
 
@@ -31,7 +33,7 @@ type RecordSummary = {
 	strongestAttributes: Array<{ name: string; value: number }>;
 	strongestCapability: { name: string; value: number };
 	leadingTemperament: { name: string; value: number };
-	signature: XalianRecord['abilities'][number] | undefined;
+	signature: DisplayAbility | undefined;
 	percentile: number | null;
 };
 
@@ -54,7 +56,7 @@ function summarize(record: XalianRecord): RecordSummary {
 		leadingTemperament: TEMPERAMENT_ORDER
 			.map((key) => ({ name: temperamentTerm(key).name, value: record.temperament[key as keyof XalianRecord['temperament']] }))
 			.sort((a, b) => b.value - a.value)[0],
-		signature: record.abilities.find((ability) => ability.signature) || record.abilities[0],
+		signature: recordCapabilities(record).find((ability) => isSignatureAbility(ability)) || recordCapabilities(record)[0],
 		percentile: template ? gradeWithBundledCalibration(record, template).percentile : null,
 	};
 }

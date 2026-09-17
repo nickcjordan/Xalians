@@ -1,4 +1,5 @@
 {
+  "schemaVersion": "4.0.0",
   "key": "frackworm",
   "name": "Frackworm",
   "nameOrigin": "A compound of fracking, the pressure-fracturing process it performs, and worm, its body form.",
@@ -179,15 +180,281 @@
   "conduits": {
     "vents": "sand"
   },
-  "signatureAbility": {
-    "name": "Fracture the Seam",
-    "instrument": "vents",
-    "action": "spray",
-    "medium": "sand",
-    "intensity": [
-      45,
-      85
+  "signature": {
+    "kind": "action",
+    "key": "frackworm-defining"
+  },
+  "actions": [
+    {
+      "key": "frackworm-defining",
+      "activation": {
+        "operation": "discrete"
+      },
+      "delivery": {
+        "mode": "stream",
+        "approach": "stationary"
+      },
+      "targeting": {
+        "relation": "other",
+        "subjects": [
+          "creature",
+          "object"
+        ]
+      },
+      "effects": [
+        {
+          "kind": "harm",
+          "recipient": "area",
+          "mechanism": "elemental",
+          "emphasis": "primary",
+          "onset": "instant",
+          "persistence": "resolved",
+          "likelihood": "consistent"
+        }
+      ],
+      "description": "The Frackworm sets its ringed head against a seam of the old ocean-floor substrate and drives its pressurized slurry in until the substrate fractures and the Nightcap runs.",
+      "name": "Fracture the Seam",
+      "instrument": "vents",
+      "medium": "sand",
+      "intensity": [
+        45,
+        85
+      ],
+      "timing": {
+        "preparation": "brief",
+        "recovery": "brief"
+      },
+      "spatial": {
+        "selectivity": "indiscriminate",
+        "range": "short",
+        "area": {
+          "shape": "cone",
+          "extent": "medium",
+          "anchor": "creature"
+        }
+      }
+    }
+  ],
+  "passives": [],
+  "actionPool": {
+    "count": [
+      2,
+      3
     ],
-    "description": "The Frackworm sets its ringed head against a seam of the old ocean-floor substrate and drives its pressurized slurry in until the substrate fractures and the Nightcap runs."
+    "sets": [
+      {
+        "key": "default",
+        "weight": 1,
+        "options": [
+          {
+            "key": "jaws-strike",
+            "pattern": "strike",
+            "instrument": "jaws",
+            "media": [
+              "sand",
+              "water",
+              "rock",
+              "ghost"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "jaws-crush",
+            "pattern": "crush",
+            "instrument": "jaws",
+            "media": [
+              "sand",
+              "water",
+              "rock",
+              "ghost"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "jaws-rake",
+            "pattern": "rake",
+            "instrument": "jaws",
+            "media": [
+              "sand",
+              "water",
+              "rock",
+              "ghost"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "jaws-drain",
+            "pattern": "drain",
+            "instrument": "jaws",
+            "media": [
+              "sand",
+              "water",
+              "rock",
+              "ghost"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "jaws-snare",
+            "pattern": "snare",
+            "instrument": "jaws",
+            "media": [
+              "sand",
+              "water",
+              "rock",
+              "ghost"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "vents-spray",
+            "pattern": "spray",
+            "instrument": "vents",
+            "media": [
+              "sand",
+              "water",
+              "rock",
+              "ghost"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "vents-cloud",
+            "pattern": "cloud",
+            "instrument": "vents",
+            "media": [
+              "sand",
+              "water",
+              "rock",
+              "ghost"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "vents-burst",
+            "pattern": "burst",
+            "instrument": "vents",
+            "media": [
+              "sand",
+              "water",
+              "rock",
+              "ghost"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "vents-ward",
+            "pattern": "ward",
+            "instrument": "vents",
+            "media": [
+              "sand",
+              "water",
+              "rock",
+              "ghost"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "vents-drain",
+            "pattern": "drain",
+            "instrument": "vents",
+            "media": [
+              "sand"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "vents-snare",
+            "pattern": "snare",
+            "instrument": "vents",
+            "media": [
+              "sand"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "vents-rake",
+            "pattern": "rake",
+            "instrument": "vents",
+            "media": [
+              "sand"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "body-strike",
+            "pattern": "strike",
+            "instrument": "body",
+            "media": [
+              "sand",
+              "water",
+              "rock",
+              "ghost"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "body-crush",
+            "pattern": "crush",
+            "instrument": "body",
+            "media": [
+              "sand",
+              "water",
+              "rock",
+              "ghost"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "body-shove",
+            "pattern": "shove",
+            "instrument": "body",
+            "media": [
+              "sand",
+              "water",
+              "rock",
+              "ghost"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "body-ward",
+            "pattern": "ward",
+            "instrument": "body",
+            "media": [
+              "sand",
+              "water",
+              "rock",
+              "ghost"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "body-burst",
+            "pattern": "burst",
+            "instrument": "body",
+            "media": [
+              "sand",
+              "water",
+              "rock",
+              "ghost"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "body-terrorize",
+            "pattern": "terrorize",
+            "instrument": "body",
+            "media": [
+              "sand",
+              "water",
+              "rock",
+              "ghost"
+            ],
+            "weight": 1
+          }
+        ]
+      }
+    ]
   }
 }

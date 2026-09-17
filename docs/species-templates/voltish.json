@@ -1,4 +1,5 @@
 {
+  "schemaVersion": "4.0.0",
   "key": "voltish",
   "name": "Voltish",
   "nameOrigin": "Built from volt, the measure associated with electricity, with a softened ending that turns it into a creature name.",
@@ -182,15 +183,306 @@
   "conduits": {
     "claws": "electric"
   },
-  "signatureAbility": {
-    "name": "Stormbank Discharge",
-    "instrument": "claws",
-    "action": "strike",
-    "medium": "electric",
-    "intensity": [
-      30,
-      85
+  "signature": {
+    "kind": "action",
+    "key": "voltish-defining"
+  },
+  "actions": [
+    {
+      "key": "voltish-defining",
+      "activation": {
+        "operation": "discrete"
+      },
+      "delivery": {
+        "mode": "contact",
+        "approach": "stationary"
+      },
+      "targeting": {
+        "relation": "other",
+        "subjects": [
+          "creature",
+          "object"
+        ]
+      },
+      "effects": [
+        {
+          "kind": "harm",
+          "recipient": "target",
+          "mechanism": "impact",
+          "emphasis": "primary",
+          "onset": "instant",
+          "persistence": "resolved",
+          "likelihood": "consistent"
+        }
+      ],
+      "description": "The Voltish drives the charge it has stored from its surroundings through its alloy claws into whatever they touch.",
+      "name": "Stormbank Discharge",
+      "instrument": "claws",
+      "medium": "electric",
+      "intensity": [
+        30,
+        85
+      ],
+      "timing": {
+        "preparation": "brief",
+        "recovery": "brief"
+      },
+      "spatial": {
+        "selectivity": "selective",
+        "range": "contact"
+      }
+    }
+  ],
+  "passives": [],
+  "actionPool": {
+    "count": [
+      2,
+      3
     ],
-    "description": "The Voltish drives the charge it has stored from its surroundings through its alloy claws into whatever they touch."
+    "sets": [
+      {
+        "key": "default",
+        "weight": 1,
+        "options": [
+          {
+            "key": "claws-strike",
+            "pattern": "strike",
+            "instrument": "claws",
+            "media": [
+              "electric",
+              "light",
+              "air",
+              "metal"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "claws-rake",
+            "pattern": "rake",
+            "instrument": "claws",
+            "media": [
+              "electric",
+              "light",
+              "air",
+              "metal"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "claws-crush",
+            "pattern": "crush",
+            "instrument": "claws",
+            "media": [
+              "electric",
+              "light",
+              "air",
+              "metal"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "claws-shove",
+            "pattern": "shove",
+            "instrument": "claws",
+            "media": [
+              "electric",
+              "light",
+              "air",
+              "metal"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "claws-ambush",
+            "pattern": "ambush",
+            "instrument": "claws",
+            "media": [
+              "electric",
+              "light",
+              "air",
+              "metal"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "claws-beam",
+            "pattern": "beam",
+            "instrument": "claws",
+            "media": [
+              "electric"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "claws-burst",
+            "pattern": "burst",
+            "instrument": "claws",
+            "media": [
+              "electric"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "claws-lash",
+            "pattern": "lash",
+            "instrument": "claws",
+            "media": [
+              "electric"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "claws-snare",
+            "pattern": "snare",
+            "instrument": "claws",
+            "media": [
+              "electric"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "claws-spray",
+            "pattern": "spray",
+            "instrument": "claws",
+            "media": [
+              "electric"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "jaws-strike",
+            "pattern": "strike",
+            "instrument": "jaws",
+            "media": [
+              "electric",
+              "light",
+              "air",
+              "metal"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "jaws-crush",
+            "pattern": "crush",
+            "instrument": "jaws",
+            "media": [
+              "electric",
+              "light",
+              "air",
+              "metal"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "jaws-rake",
+            "pattern": "rake",
+            "instrument": "jaws",
+            "media": [
+              "electric",
+              "light",
+              "air",
+              "metal"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "jaws-drain",
+            "pattern": "drain",
+            "instrument": "jaws",
+            "media": [
+              "electric",
+              "light",
+              "air",
+              "metal"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "jaws-snare",
+            "pattern": "snare",
+            "instrument": "jaws",
+            "media": [
+              "electric",
+              "light",
+              "air",
+              "metal"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "tail-strike",
+            "pattern": "strike",
+            "instrument": "tail",
+            "media": [
+              "electric",
+              "light",
+              "air",
+              "metal"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "tail-lash",
+            "pattern": "lash",
+            "instrument": "tail",
+            "media": [
+              "electric",
+              "light",
+              "air",
+              "metal"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "tail-crush",
+            "pattern": "crush",
+            "instrument": "tail",
+            "media": [
+              "electric",
+              "light",
+              "air",
+              "metal"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "tail-shove",
+            "pattern": "shove",
+            "instrument": "tail",
+            "media": [
+              "electric",
+              "light",
+              "air",
+              "metal"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "tail-snare",
+            "pattern": "snare",
+            "instrument": "tail",
+            "media": [
+              "electric",
+              "light",
+              "air",
+              "metal"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "tail-hurl",
+            "pattern": "hurl",
+            "instrument": "tail",
+            "media": [
+              "electric",
+              "light",
+              "air",
+              "metal"
+            ],
+            "weight": 1
+          }
+        ]
+      }
+    ]
   }
 }

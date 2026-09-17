@@ -1,3 +1,5 @@
+import {recordActions} from '@xalians/content/ability-compatibility';
+import { isSignatureAbility } from '@xalians/content/ability-compatibility';
 /*
 	Rarity grade (Decision 11, docs/design/xalian-creature-system-hardening.md WP4): an
 	information-theoretic score over one generated record, turned into a percentile
@@ -26,12 +28,13 @@
 	table, so a change here should be paired with a recalibration
 	(devtools/simulateGenerator.ts --calibrate) before the new numbers mean anything.
 */
+import type { StoredXalianRecord as XalianRecord } from '@xalians/content/schema';
 import { ATTRIBUTE_KEYS, FINISH_ODDS } from './constants.ts';
 // the checked-in calibration table is validated JSON, not a typed structure this package
 // owns; cast at the boundary (a zod schema for it lives in packages/content/src/schema,
 // branch content/schemas, landing separately)
 import bundledCalibrationJson from '@xalians/content/gradeCalibration.json';
-import type { Band, SpeciesTemplate, TraitKey, XalianRecord } from './types.ts';
+import type { Band, SpeciesTemplate, TraitKey } from './types.ts';
 
 export interface GradeCalibration {
 	generatorVersion?: string;
@@ -179,7 +182,7 @@ function sizeScore(record: XalianRecord, template: SpeciesTemplate): number {
 }
 
 function abilitiesScore(record: XalianRecord): number {
-	const rolled = (record.abilities || []).filter((a) => !a.signature);
+	const rolled = recordActions(record).filter((a) => ('role' in a ? a.role === 'standard' : 'origin' in a ? a.origin === 'generated' : !isSignatureAbility(a)));
 	if (rolled.length === 0) {
 		return 0;
 	}
@@ -247,5 +250,5 @@ export function gradeRecord(record: XalianRecord, template: SpeciesTemplate, cal
 }
 
 export function gradeWithBundledCalibration(record: XalianRecord, template: SpeciesTemplate): GradeResult {
-	return gradeRecord(record, template, bundledCalibration);
+	return gradeRecord(record, template, record.provenance.generatorVersion === bundledCalibration.generatorVersion ? bundledCalibration : null);
 }

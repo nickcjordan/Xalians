@@ -34,6 +34,7 @@ const BUNDLED_FILES = [
   'plates.json',
   'speciesRecords.json',
   'abilityCatalog.json',
+  'abilityPatterns.json',
 ];
 
 // registriesConst.ts is TypeScript, not JSON, and is committed under packages/content/src/

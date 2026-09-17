@@ -15,3 +15,8 @@ export * from './user.ts';
 export * from './lore.ts';
 export * from './legacy.ts';
 export * from './trade.ts';
+
+export * from './ability.ts';
+export * from '../abilityCompatibility.ts';
+
+export * from './status.ts';

@@ -1,4 +1,5 @@
 {
+  "schemaVersion": "4.0.0",
   "key": "figzy",
   "name": "Figzy",
   "nameOrigin": "A playful, whimsical coinage chosen to fit the creature's mischievous spirit rather than describe a literal body part.",
@@ -182,15 +183,277 @@
     "mind": "psychic",
     "fists": "psychic"
   },
-  "signatureAbility": {
-    "name": "Small Hands of the Psychosphere",
-    "instrument": "mind",
-    "action": "burst",
-    "medium": "psychic",
-    "intensity": [
-      35,
-      85
+  "signature": {
+    "kind": "action",
+    "key": "figzy-defining"
+  },
+  "actions": [
+    {
+      "key": "figzy-defining",
+      "activation": {
+        "operation": "discrete"
+      },
+      "delivery": {
+        "mode": "pulse",
+        "approach": "stationary"
+      },
+      "targeting": {
+        "relation": "other",
+        "subjects": [
+          "creature",
+          "object"
+        ]
+      },
+      "effects": [
+        {
+          "kind": "harm",
+          "recipient": "area",
+          "mechanism": "elemental",
+          "emphasis": "primary",
+          "onset": "instant",
+          "persistence": "resolved",
+          "likelihood": "consistent"
+        }
+      ],
+      "description": "The Figzy raises both hands and the force it has been holding back leaves them all at once.",
+      "name": "Small Hands of the Psychosphere",
+      "instrument": "mind",
+      "medium": "psychic",
+      "intensity": [
+        35,
+        85
+      ],
+      "timing": {
+        "preparation": "brief",
+        "recovery": "brief"
+      },
+      "spatial": {
+        "selectivity": "indiscriminate",
+        "area": {
+          "shape": "radial",
+          "extent": "medium",
+          "anchor": "creature"
+        }
+      }
+    }
+  ],
+  "passives": [],
+  "actionPool": {
+    "count": [
+      2,
+      3
     ],
-    "description": "The Figzy raises both hands and the force it has been holding back leaves them all at once."
+    "sets": [
+      {
+        "key": "default",
+        "weight": 1,
+        "options": [
+          {
+            "key": "mind-snare",
+            "pattern": "snare",
+            "instrument": "mind",
+            "media": [
+              "psychic",
+              "ghost",
+              "light",
+              "dark"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "mind-shove",
+            "pattern": "shove",
+            "instrument": "mind",
+            "media": [
+              "psychic",
+              "ghost",
+              "light",
+              "dark"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "mind-hurl",
+            "pattern": "hurl",
+            "instrument": "mind",
+            "media": [
+              "psychic",
+              "ghost",
+              "light",
+              "dark"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "mind-crush",
+            "pattern": "crush",
+            "instrument": "mind",
+            "media": [
+              "psychic",
+              "ghost",
+              "light",
+              "dark"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "mind-drain",
+            "pattern": "drain",
+            "instrument": "mind",
+            "media": [
+              "psychic",
+              "ghost",
+              "light",
+              "dark"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "mind-ward",
+            "pattern": "ward",
+            "instrument": "mind",
+            "media": [
+              "psychic",
+              "ghost",
+              "light",
+              "dark"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "mind-terrorize",
+            "pattern": "terrorize",
+            "instrument": "mind",
+            "media": [
+              "psychic",
+              "ghost",
+              "light",
+              "dark"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "mind-mend",
+            "pattern": "mend",
+            "instrument": "mind",
+            "media": [
+              "psychic",
+              "ghost",
+              "light",
+              "dark"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "mind-burst",
+            "pattern": "burst",
+            "instrument": "mind",
+            "media": [
+              "psychic"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "fists-strike",
+            "pattern": "strike",
+            "instrument": "fists",
+            "media": [
+              "psychic",
+              "ghost",
+              "light",
+              "dark"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "fists-crush",
+            "pattern": "crush",
+            "instrument": "fists",
+            "media": [
+              "psychic",
+              "ghost",
+              "light",
+              "dark"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "fists-shove",
+            "pattern": "shove",
+            "instrument": "fists",
+            "media": [
+              "psychic",
+              "ghost",
+              "light",
+              "dark"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "fists-burst",
+            "pattern": "burst",
+            "instrument": "fists",
+            "media": [
+              "psychic"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "fists-snare",
+            "pattern": "snare",
+            "instrument": "fists",
+            "media": [
+              "psychic"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "fists-terrorize",
+            "pattern": "terrorize",
+            "instrument": "fists",
+            "media": [
+              "psychic"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "fists-ward",
+            "pattern": "ward",
+            "instrument": "fists",
+            "media": [
+              "psychic"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "fists-mend",
+            "pattern": "mend",
+            "instrument": "fists",
+            "media": [
+              "psychic"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "fists-drain",
+            "pattern": "drain",
+            "instrument": "fists",
+            "media": [
+              "psychic"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "fists-hurl",
+            "pattern": "hurl",
+            "instrument": "fists",
+            "media": [
+              "psychic"
+            ],
+            "weight": 1
+          }
+        ]
+      }
+    ]
   }
 }

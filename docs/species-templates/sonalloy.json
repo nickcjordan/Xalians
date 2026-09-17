@@ -1,4 +1,5 @@
 {
+  "schemaVersion": "4.0.0",
   "key": "sonalloy",
   "name": "Sonalloy",
   "nameOrigin": "A fusion of sonic and alloy, naming the vibrations it uses to locate damage and the living metal it works into the repair.",
@@ -173,18 +174,353 @@
     "tendrils",
     "secretion"
   ],
-  "signatureAbility": {
-    "name": "Ruin Made Whole",
-    "instrument": "secretion",
-    "action": "mend",
-    "medium": "metal",
-    "intensity": [
-      40,
-      80
-    ],
-    "description": "The Sonalloy floods a wound or fracture with living alloy, then draws the support lattice tight with its tendrils while its pincers hold the damaged body still."
-  },
   "conduits": {
     "secretion": "metal"
+  },
+  "signature": {
+    "kind": "action",
+    "key": "sonalloy-defining"
+  },
+  "actions": [
+    {
+      "key": "sonalloy-defining",
+      "activation": {
+        "operation": "ongoing"
+      },
+      "delivery": {
+        "mode": "contact",
+        "approach": "stationary"
+      },
+      "targeting": {
+        "relation": "other",
+        "subjects": [
+          "creature",
+          "object"
+        ],
+        "compatibility": {
+          "corporeality": [
+            "corporeal"
+          ],
+          "composition": [
+            "metal"
+          ]
+        }
+      },
+      "effects": [
+        {
+          "kind": "restore",
+          "recipient": "target",
+          "aspect": "integrity",
+          "emphasis": "primary",
+          "onset": "instant",
+          "persistence": "sustained",
+          "likelihood": "consistent"
+        }
+      ],
+      "description": "The Sonalloy floods a wound or fracture with living alloy, then draws the support lattice tight with its tendrils while its pincers hold the damaged body still.",
+      "name": "Ruin Made Whole",
+      "instrument": "secretion",
+      "medium": "metal",
+      "intensity": [
+        40,
+        80
+      ],
+      "timing": {
+        "preparation": "brief",
+        "recovery": "brief"
+      },
+      "spatial": {
+        "selectivity": "selective",
+        "range": "contact"
+      }
+    }
+  ],
+  "passives": [],
+  "actionPool": {
+    "count": [
+      2,
+      3
+    ],
+    "sets": [
+      {
+        "key": "default",
+        "weight": 1,
+        "options": [
+          {
+            "key": "pincers-strike",
+            "pattern": "strike",
+            "instrument": "pincers",
+            "media": [
+              "metal",
+              "electric",
+              "fire",
+              "ghost"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "pincers-crush",
+            "pattern": "crush",
+            "instrument": "pincers",
+            "media": [
+              "metal",
+              "electric",
+              "fire",
+              "ghost"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "pincers-snare",
+            "pattern": "snare",
+            "instrument": "pincers",
+            "media": [
+              "metal",
+              "electric",
+              "fire",
+              "ghost"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "pincers-shove",
+            "pattern": "shove",
+            "instrument": "pincers",
+            "media": [
+              "metal",
+              "electric",
+              "fire",
+              "ghost"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "pincers-ward",
+            "pattern": "ward",
+            "instrument": "pincers",
+            "media": [
+              "metal",
+              "electric",
+              "fire",
+              "ghost"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "pincers-hurl",
+            "pattern": "hurl",
+            "instrument": "pincers",
+            "media": [
+              "metal",
+              "electric",
+              "fire",
+              "ghost"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "tendrils-lash",
+            "pattern": "lash",
+            "instrument": "tendrils",
+            "media": [
+              "metal",
+              "electric",
+              "fire",
+              "ghost"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "tendrils-snare",
+            "pattern": "snare",
+            "instrument": "tendrils",
+            "media": [
+              "metal",
+              "electric",
+              "fire",
+              "ghost"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "tendrils-crush",
+            "pattern": "crush",
+            "instrument": "tendrils",
+            "media": [
+              "metal",
+              "electric",
+              "fire",
+              "ghost"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "tendrils-drain",
+            "pattern": "drain",
+            "instrument": "tendrils",
+            "media": [
+              "metal",
+              "electric",
+              "fire",
+              "ghost"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "tendrils-shove",
+            "pattern": "shove",
+            "instrument": "tendrils",
+            "media": [
+              "metal",
+              "electric",
+              "fire",
+              "ghost"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "tendrils-strike",
+            "pattern": "strike",
+            "instrument": "tendrils",
+            "media": [
+              "metal",
+              "electric",
+              "fire",
+              "ghost"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "secretion-spray",
+            "pattern": "spray",
+            "instrument": "secretion",
+            "media": [
+              "metal",
+              "electric",
+              "fire",
+              "ghost"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "secretion-cloud",
+            "pattern": "cloud",
+            "instrument": "secretion",
+            "media": [
+              "metal",
+              "electric",
+              "fire",
+              "ghost"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "secretion-burst",
+            "pattern": "burst",
+            "instrument": "secretion",
+            "media": [
+              "metal",
+              "electric",
+              "fire",
+              "ghost"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "secretion-drain",
+            "pattern": "drain",
+            "instrument": "secretion",
+            "media": [
+              "metal",
+              "electric",
+              "fire",
+              "ghost"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "secretion-snare",
+            "pattern": "snare",
+            "instrument": "secretion",
+            "media": [
+              "metal",
+              "electric",
+              "fire",
+              "ghost"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "secretion-ward",
+            "pattern": "ward",
+            "instrument": "secretion",
+            "media": [
+              "metal",
+              "electric",
+              "fire",
+              "ghost"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "secretion-mend",
+            "pattern": "mend",
+            "instrument": "secretion",
+            "media": [
+              "metal",
+              "electric",
+              "fire",
+              "ghost"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "secretion-strike",
+            "pattern": "strike",
+            "instrument": "secretion",
+            "media": [
+              "metal"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "secretion-hurl",
+            "pattern": "hurl",
+            "instrument": "secretion",
+            "media": [
+              "metal"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "secretion-beam",
+            "pattern": "beam",
+            "instrument": "secretion",
+            "media": [
+              "metal"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "secretion-crush",
+            "pattern": "crush",
+            "instrument": "secretion",
+            "media": [
+              "metal"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "secretion-rake",
+            "pattern": "rake",
+            "instrument": "secretion",
+            "media": [
+              "metal"
+            ],
+            "weight": 1
+          }
+        ]
+      }
+    ]
   }
 }

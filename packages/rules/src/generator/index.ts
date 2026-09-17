@@ -1,3 +1,4 @@
+import release from './currentRelease.json';
 /*
 	Generator public API, bound to the bundled data (speciesRecords.json, registries.json,
 	abilityCatalog.json, all read from the @xalians/content workspace package). Games
@@ -9,7 +10,7 @@ import speciesRecordsJson from '@xalians/content/speciesRecords.json';
 import registriesJson from '@xalians/content/registries.json';
 import catalogJson from '@xalians/content/abilityCatalog.json';
 import { SpeciesRecordsBundleSchema } from '@xalians/content/schema';
-import { generateXalian as generateWithTables, generateBatch as generateBatchWithTables } from './generate.ts';
+import { generateXalian as generateWithTables, generateBatch as generateBatchWithTables, prepareAbilityPool } from './generate.ts';
 import type { AbilityCatalog, GenerateBatchOptions, GenerateOptions, Registries, SpeciesTemplate, XalianRecord } from './types.ts';
 
 export { GENERATOR_VERSION, SCHEMA_VERSION } from './constants.ts';
@@ -26,11 +27,20 @@ const speciesRecords = SpeciesRecordsBundleSchema.parse(speciesRecordsJson);
 const registries = registriesJson as unknown as Registries;
 const catalog = catalogJson as unknown as AbilityCatalog;
 
+function deepFreeze<T>(value: T): T {
+  if (value && typeof value === 'object') { Object.freeze(value); Object.values(value).forEach(deepFreeze); }
+  return value;
+}
+export const GENERATION_RELEASE_ID = release.releaseId;
 const TEMPLATES: SpeciesTemplate[] = Array.isArray(speciesRecords.records) ? speciesRecords.records : [];
+deepFreeze(TEMPLATES);
+deepFreeze(registries);
+deepFreeze(catalog);
+TEMPLATES.forEach(t => prepareAbilityPool(t, catalog));
 const TEMPLATES_BY_KEY = new Map(TEMPLATES.map((t) => [t.key, t]));
 
 export function getSpeciesTemplates(): SpeciesTemplate[] {
-	return TEMPLATES;
+	return [...TEMPLATES];
 }
 
 export function getSpeciesTemplate(key: string): SpeciesTemplate | undefined {
@@ -52,7 +62,9 @@ export function generateXalian(speciesKey: string | SpeciesTemplate, seed: strin
 	if (!template) {
 		throw new Error(`generateXalian: unknown species "${speciesKey}"`);
 	}
-	return generateWithTables({ template, seed, registries, catalog, ...options });
+	const record = generateWithTables({ template, seed, registries, catalog, ...options });
+	if (TEMPLATES_BY_KEY.get(template.key) === template) record.provenance.releaseId = GENERATION_RELEASE_ID;
+	return record;
 }
 
 /*
@@ -60,7 +72,7 @@ export function generateXalian(speciesKey: string | SpeciesTemplate, seed: strin
 	options: { templates (subset), generatedAt }
 */
 export function generateBatch(count: number, seed: string | number, options: GenerateBatchOptions = {}): XalianRecord[] {
-	return generateBatchWithTables({
+	const records = generateBatchWithTables({
 		templates: options.templates || TEMPLATES,
 		seed,
 		count,
@@ -68,5 +80,10 @@ export function generateBatch(count: number, seed: string | number, options: Gen
 		catalog,
 		generatedAt: options.generatedAt,
 		profile: options.profile,
+	});
+	const selected = options.templates || TEMPLATES;
+	return records.map((record, i) => {
+		if (TEMPLATES_BY_KEY.get(selected[i % selected.length].key) === selected[i % selected.length]) record.provenance.releaseId = GENERATION_RELEASE_ID;
+		return record;
 	});
 }

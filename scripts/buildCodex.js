@@ -398,8 +398,8 @@ function build() {
 				.map(([key]) => lower(resolveName(registries.traits, key, `species ${t.key} trait`)));
 
 			let signature = null;
-			if (t.signatureAbility) {
-				const sig = t.signatureAbility;
+			if (t.signature) {
+				const sig = [...t.actions,...t.passives].find(a=>a.key===t.signature.key);
 				signature = { name: sig.name, description: sig.description };
 			}
 

@@ -1,4 +1,5 @@
 {
+  "schemaVersion": "4.0.0",
   "key": "kosanos",
   "name": "Kosanos",
   "nameOrigin": "A joining of Polish kosa, scythe, and nos, nose, naming the broad cutting blade at the end of its long trunk.",
@@ -178,15 +179,230 @@
     "trunk",
     "jaws"
   ],
-  "signatureAbility": {
-    "name": "Understory Reaping",
-    "instrument": "blades",
-    "action": "rake",
-    "medium": "plant",
-    "intensity": [
-      45,
-      80
+  "signature": {
+    "kind": "action",
+    "key": "kosanos-defining"
+  },
+  "actions": [
+    {
+      "key": "kosanos-defining",
+      "activation": {
+        "operation": "discrete"
+      },
+      "delivery": {
+        "mode": "contact",
+        "approach": "stationary"
+      },
+      "targeting": {
+        "relation": "other",
+        "subjects": [
+          "creature",
+          "object"
+        ]
+      },
+      "effects": [
+        {
+          "kind": "harm",
+          "recipient": "area",
+          "mechanism": "cutting",
+          "emphasis": "primary",
+          "onset": "instant",
+          "persistence": "resolved",
+          "likelihood": "consistent"
+        }
+      ],
+      "description": "The Kosanos swings its trunk in a long low arc and opens a lane through everything standing in it.",
+      "name": "Understory Reaping",
+      "instrument": "blades",
+      "medium": "plant",
+      "intensity": [
+        45,
+        80
+      ],
+      "timing": {
+        "preparation": "brief",
+        "recovery": "brief"
+      },
+      "spatial": {
+        "selectivity": "selective",
+        "range": "contact",
+        "area": {
+          "shape": "sweep",
+          "extent": "small",
+          "anchor": "creature"
+        }
+      }
+    }
+  ],
+  "passives": [],
+  "actionPool": {
+    "count": [
+      2,
+      3
     ],
-    "description": "The Kosanos swings its trunk in a long low arc and opens a lane through everything standing in it."
+    "sets": [
+      {
+        "key": "default",
+        "weight": 1,
+        "options": [
+          {
+            "key": "blades-strike",
+            "pattern": "strike",
+            "instrument": "blades",
+            "media": [
+              "plant",
+              "water",
+              "chemical",
+              "psychic"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "blades-rake",
+            "pattern": "rake",
+            "instrument": "blades",
+            "media": [
+              "plant",
+              "water",
+              "chemical",
+              "psychic"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "blades-lash",
+            "pattern": "lash",
+            "instrument": "blades",
+            "media": [
+              "plant",
+              "water",
+              "chemical",
+              "psychic"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "trunk-lash",
+            "pattern": "lash",
+            "instrument": "trunk",
+            "media": [
+              "plant",
+              "water",
+              "chemical",
+              "psychic"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "trunk-snare",
+            "pattern": "snare",
+            "instrument": "trunk",
+            "media": [
+              "plant",
+              "water",
+              "chemical",
+              "psychic"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "trunk-shove",
+            "pattern": "shove",
+            "instrument": "trunk",
+            "media": [
+              "plant",
+              "water",
+              "chemical",
+              "psychic"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "trunk-spray",
+            "pattern": "spray",
+            "instrument": "trunk",
+            "media": [
+              "plant",
+              "water",
+              "chemical",
+              "psychic"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "trunk-strike",
+            "pattern": "strike",
+            "instrument": "trunk",
+            "media": [
+              "plant",
+              "water",
+              "chemical",
+              "psychic"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "jaws-strike",
+            "pattern": "strike",
+            "instrument": "jaws",
+            "media": [
+              "plant",
+              "water",
+              "chemical",
+              "psychic"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "jaws-crush",
+            "pattern": "crush",
+            "instrument": "jaws",
+            "media": [
+              "plant",
+              "water",
+              "chemical",
+              "psychic"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "jaws-rake",
+            "pattern": "rake",
+            "instrument": "jaws",
+            "media": [
+              "plant",
+              "water",
+              "chemical",
+              "psychic"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "jaws-drain",
+            "pattern": "drain",
+            "instrument": "jaws",
+            "media": [
+              "plant",
+              "water",
+              "chemical",
+              "psychic"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "jaws-snare",
+            "pattern": "snare",
+            "instrument": "jaws",
+            "media": [
+              "plant",
+              "water",
+              "chemical",
+              "psychic"
+            ],
+            "weight": 1
+          }
+        ]
+      }
+    ]
   }
 }

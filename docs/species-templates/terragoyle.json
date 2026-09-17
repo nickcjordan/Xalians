@@ -1,4 +1,5 @@
 {
+  "schemaVersion": "4.0.0",
   "key": "terragoyle",
   "name": "Terragoyle",
   "nameOrigin": "A fusion of terra and gargoyle, matching a stone-moving, horned bat-like guardian that waits in a statue-like state.",
@@ -181,15 +182,279 @@
   "conduits": {
     "tail": "rock"
   },
-  "signatureAbility": {
-    "name": "Perimeter of Standing Stones",
-    "instrument": "tail",
-    "action": "hurl",
-    "medium": "rock",
-    "intensity": [
-      45,
-      85
+  "signature": {
+    "kind": "action",
+    "key": "terragoyle-defining"
+  },
+  "actions": [
+    {
+      "key": "terragoyle-defining",
+      "activation": {
+        "operation": "discrete"
+      },
+      "delivery": {
+        "mode": "projectile",
+        "approach": "stationary"
+      },
+      "targeting": {
+        "relation": "other",
+        "subjects": [
+          "creature",
+          "object"
+        ]
+      },
+      "effects": [
+        {
+          "kind": "harm",
+          "recipient": "target",
+          "mechanism": "impact",
+          "emphasis": "primary",
+          "onset": "instant",
+          "persistence": "resolved",
+          "likelihood": "consistent"
+        }
+      ],
+      "description": "It wakes from its statue-like state, rises above the Chasm, and drops the boulders its tail holds aloft onto what crossed the rim.",
+      "name": "Perimeter of Standing Stones",
+      "instrument": "tail",
+      "medium": "rock",
+      "intensity": [
+        45,
+        85
+      ],
+      "timing": {
+        "preparation": "brief",
+        "recovery": "brief"
+      },
+      "spatial": {
+        "selectivity": "selective",
+        "range": "medium"
+      }
+    }
+  ],
+  "passives": [],
+  "actionPool": {
+    "count": [
+      2,
+      3
     ],
-    "description": "It wakes from its statue-like state, rises above the Chasm, and drops the boulders its tail holds aloft onto what crossed the rim."
+    "sets": [
+      {
+        "key": "default",
+        "weight": 1,
+        "options": [
+          {
+            "key": "tail-strike",
+            "pattern": "strike",
+            "instrument": "tail",
+            "media": [
+              "rock",
+              "metal",
+              "sand",
+              "fire"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "tail-lash",
+            "pattern": "lash",
+            "instrument": "tail",
+            "media": [
+              "rock",
+              "metal",
+              "sand",
+              "fire"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "tail-crush",
+            "pattern": "crush",
+            "instrument": "tail",
+            "media": [
+              "rock",
+              "metal",
+              "sand",
+              "fire"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "tail-shove",
+            "pattern": "shove",
+            "instrument": "tail",
+            "media": [
+              "rock",
+              "metal",
+              "sand",
+              "fire"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "tail-snare",
+            "pattern": "snare",
+            "instrument": "tail",
+            "media": [
+              "rock",
+              "metal",
+              "sand",
+              "fire"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "tail-hurl",
+            "pattern": "hurl",
+            "instrument": "tail",
+            "media": [
+              "rock",
+              "metal",
+              "sand",
+              "fire"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "tail-ward",
+            "pattern": "ward",
+            "instrument": "tail",
+            "media": [
+              "rock"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "tail-burst",
+            "pattern": "burst",
+            "instrument": "tail",
+            "media": [
+              "rock"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "wings-strike",
+            "pattern": "strike",
+            "instrument": "wings",
+            "media": [
+              "rock",
+              "metal",
+              "sand",
+              "fire"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "wings-lash",
+            "pattern": "lash",
+            "instrument": "wings",
+            "media": [
+              "rock",
+              "metal",
+              "sand",
+              "fire"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "wings-shove",
+            "pattern": "shove",
+            "instrument": "wings",
+            "media": [
+              "rock",
+              "metal",
+              "sand",
+              "fire"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "wings-hurl",
+            "pattern": "hurl",
+            "instrument": "wings",
+            "media": [
+              "rock",
+              "metal",
+              "sand",
+              "fire"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "wings-ward",
+            "pattern": "ward",
+            "instrument": "wings",
+            "media": [
+              "rock",
+              "metal",
+              "sand",
+              "fire"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "horns-strike",
+            "pattern": "strike",
+            "instrument": "horns",
+            "media": [
+              "rock",
+              "metal",
+              "sand",
+              "fire"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "horns-shove",
+            "pattern": "shove",
+            "instrument": "horns",
+            "media": [
+              "rock",
+              "metal",
+              "sand",
+              "fire"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "horns-crush",
+            "pattern": "crush",
+            "instrument": "horns",
+            "media": [
+              "rock",
+              "metal",
+              "sand",
+              "fire"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "horns-ward",
+            "pattern": "ward",
+            "instrument": "horns",
+            "media": [
+              "rock",
+              "metal",
+              "sand",
+              "fire"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "horns-terrorize",
+            "pattern": "terrorize",
+            "instrument": "horns",
+            "media": [
+              "rock",
+              "metal",
+              "sand",
+              "fire"
+            ],
+            "weight": 1
+          }
+        ]
+      }
+    ]
   }
 }

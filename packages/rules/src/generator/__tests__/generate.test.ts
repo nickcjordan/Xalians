@@ -1,3 +1,5 @@
+import {recordCapabilities} from '@xalians/content/ability-compatibility';
+import { historicalCategory, isDefiningAbility, definingAbility } from '@xalians/content/schema';
 import { describe, test, expect } from 'vitest';
 import { generateXalian, generateBatch, getSpeciesTemplates, speciesDisplayName, GENERATOR_VERSION } from '../index.ts';
 // test fixtures index the bundled JSON directly by rolled string keys (medium, action,
@@ -167,33 +169,34 @@ describe('generator: every ratified species honors the record contract', () => {
 	test('abilities: signature first, then 2 or 3 rolled; intensities 1 to 100; names unique per creature', () => {
 		batch.forEach((r) => {
 			const t = getTemplate(r.species);
-			expect(r.abilities.length).toBeGreaterThanOrEqual(3);
-			expect(r.abilities.length).toBeLessThanOrEqual(4);
-			const sig = r.abilities[0];
-			expect(sig.signature).toBe(true);
-			expect(sig.name).toBe(t.signatureAbility.name);
-			expect(sig.instrument).toBe(t.signatureAbility.instrument);
-			expect(sig.action).toBe(t.signatureAbility.action);
-			expect(sig.medium).toBe(t.signatureAbility.medium);
-			expect(sig.description).toBe(t.signatureAbility.description);
-			expect(r.abilities.filter((a) => a.signature).length).toBe(1);
-			r.abilities.forEach((a) => {
+			expect(recordCapabilities(r).length).toBeGreaterThanOrEqual(3);
+			expect(recordCapabilities(r).length).toBeLessThanOrEqual(4);
+			const sig = recordCapabilities(r).find(a=>isDefiningAbility(a))!;
+			expect(isDefiningAbility(sig)).toBe(true);
+			expect(sig.name).toBe(definingAbility(t).name);
+			expect(sig.instrument).toBe(definingAbility(t).instrument);
+			expect(sig.effects).toEqual(definingAbility(t).effects);
+			expect(sig.delivery).toEqual(definingAbility(t).delivery);
+			expect(sig.medium).toBe(definingAbility(t).medium);
+			expect(sig.description).toBe(definingAbility(t).description);
+			expect(recordCapabilities(r).filter((a) => isDefiningAbility(a)).length).toBe(1);
+			recordCapabilities(r).forEach((a) => {
 				expect(a.intensity).toBeGreaterThanOrEqual(1);
 				expect(a.intensity).toBeLessThanOrEqual(100);
 			});
-			expect(new Set(r.abilities.map((a) => a.name.toLowerCase())).size).toBe(r.abilities.length);
+			expect(new Set(recordCapabilities(r).map((a) => a.name.toLowerCase())).size).toBe(recordCapabilities(r).length);
 		});
 	});
 
 	test('rolled abilities: instrument from the species, action allowed for that instrument (or its conduit), medium covered, name from the catalog', () => {
 		batch.forEach((r) => {
 			const t = getTemplate(r.species);
-			r.abilities.filter((a) => !a.signature).forEach((a) => {
+			recordCapabilities(r).filter((a) => !isDefiningAbility(a)).forEach((a) => {
 				expect(t.instruments).toContain(a.instrument);
 				expect(Object.keys(r.element.affinities)).toContain(a.medium);
 				const row = registries.instrumentActions[a.instrument] || [];
 				const conduit = t.conduits && t.conduits[a.instrument] === a.medium ? (CONDUITS[a.medium] || []) : [];
-				expect([...row, ...conduit]).toContain(a.action);
+				expect([...row, ...conduit]).toContain(historicalCategory(a));
 				expect(names.has(a.name.toLowerCase())).toBe(true);
 			});
 		});
@@ -204,10 +207,10 @@ describe('generator: every ratified species honors the record contract', () => {
 		// action, else the neutral pool); the same string may carry different tags elsewhere
 		const findEntry = (list: any, name: string) => (list || []).find((e: any) => (Array.isArray(e) ? e[0] : e).toLowerCase() === name);
 		batch.forEach((r) => {
-			r.abilities.filter((a) => !a.signature).forEach((a) => {
+			recordCapabilities(r).filter((a) => !isDefiningAbility(a)).forEach((a) => {
 				const name = a.name.toLowerCase();
-				const owned = findEntry(catalog.elements[a.medium] && catalog.elements[a.medium][a.action], name);
-				const neutral = findEntry(catalog.neutral[a.action], name);
+				const owned = findEntry(catalog.elements[a.medium] && catalog.elements[a.medium][historicalCategory(a)], name);
+				const neutral = findEntry(catalog.neutral[historicalCategory(a)], name);
 				// [name, tags, heft] entries may carry an empty tag list; empty means untagged
 				const permits = (e: any) => e !== undefined && (!Array.isArray(e) || e[1].length === 0 || e[1].includes(a.instrument));
 				expect(permits(owned) || permits(neutral)).toBe(true);
@@ -381,7 +384,7 @@ describe('generator: names are drawn toward the rolled intensity', () => {
 		const heavy: number[] = [];
 		const light: number[] = [];
 		rolls.forEach((r) => {
-			r.abilities.filter((a) => !a.signature).forEach((a) => {
+			recordCapabilities(r).filter((a) => !isDefiningAbility(a)).forEach((a) => {
 				const h = heftIndex.get(a.name.toLowerCase());
 				if (h === undefined) {
 					return;
@@ -479,6 +482,6 @@ describe('generator: showroom profile', () => {
 		expect(showroom.species).toBe(full.species);
 		expect(showroom.attributes).toEqual(full.attributes);
 		expect(showroom.physiology).toEqual(full.physiology);
-		expect(showroom.abilities).toEqual(full.abilities);
+		expect(recordCapabilities(showroom)).toEqual(recordCapabilities(full));
 	});
 });

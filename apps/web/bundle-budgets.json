@@ -1,43 +1,213 @@
 {
   "_meta": {
-    "measuredAt": "Crater Command finished-game pass with authored battlefield, feedback, controls, and synthesized audio",
-    "measuredOn": "2026-09-13",
+    "measuredAt": "Schema 4 capability metadata and historical schema readers: generator route 321703 gzip bytes, duel start 209288; affected gzip budgets retain approximately five percent headroom. Other limits unchanged.",
+    "measuredOn": "2026-09-16",
     "policy": "Initial limits and route limits are the measured production output after removing the developer styleguide, rounded up with approximately five percent headroom. Update a limit only with measured evidence and review."
   },
   "forbiddenProductionEntries": [
     "styleGuidePage"
   ],
   "initial": {
-    "javascript": { "raw": 622000, "gzip": 195000 },
-    "stylesheets": { "raw": 230000, "gzip": 37000 }
+    "javascript": {
+      "raw": 622000,
+      "gzip": 195000
+    },
+    "stylesheets": {
+      "raw": 230000,
+      "gzip": 37000
+    }
   },
   "chunks": {
-    "vendor-auth": { "javascript": { "raw": 132000, "gzip": 38000 } }
+    "vendor-auth": {
+      "javascript": {
+        "raw": 132000,
+        "gzip": 38000
+      }
+    }
   },
   "routes": {
-    "home": { "javascript": { "raw": 113000, "gzip": 45000 }, "stylesheets": { "raw": 0, "gzip": 0 } },
-    "generatorPage": { "javascript": { "raw": 1100000, "gzip": 319000 }, "stylesheets": { "raw": 0, "gzip": 0 } },
-    "encyclopediaPage": { "javascript": { "raw": 600000, "gzip": 184000 }, "stylesheets": { "raw": 0, "gzip": 0 } },
-    "duelStartPage": { "javascript": { "raw": 795000, "gzip": 207000 }, "stylesheets": { "raw": 0, "gzip": 0 } },
-    "duelPlaygroundPage": { "javascript": { "raw": 1247000, "gzip": 358000 }, "stylesheets": { "raw": 96000, "gzip": 20000 } },
-    "reclamationPage": { "javascript": { "raw": 1162000, "gzip": 343000 }, "stylesheets": { "raw": 163000, "gzip": 28000 } },
-    "longReturnPage": { "javascript": { "raw": 317000, "gzip": 97000 }, "stylesheets": { "raw": 280000, "gzip": 50000 } },
-    "arcadePage": { "javascript": { "raw": 16000, "gzip": 7500 }, "stylesheets": { "raw": 0, "gzip": 0 } },
-    "artilleryGamePage": { "javascript": { "raw": 69000, "gzip": 24500 }, "stylesheets": { "raw": 0, "gzip": 0 } },
-    "solitaireGamePage": { "javascript": { "raw": 22700, "gzip": 10100 }, "stylesheets": { "raw": 0, "gzip": 0 } },
-    "hazardSweepGamePage": { "javascript": { "raw": 17200, "gzip": 8400 }, "stylesheets": { "raw": 0, "gzip": 0 } },
-    "relayMergeGamePage": { "javascript": { "raw": 17400, "gzip": 8700 }, "stylesheets": { "raw": 0, "gzip": 0 } },
-    "arcadeMatchGamePage": { "javascript": { "raw": 27500, "gzip": 10800 }, "stylesheets": { "raw": 0, "gzip": 0 } },
-    "userAccountPage": { "javascript": { "raw": 1117000, "gzip": 324000 }, "stylesheets": { "raw": 0, "gzip": 0 } },
-    "userDetailsPage": { "javascript": { "raw": 1059000, "gzip": 302000 }, "stylesheets": { "raw": 0, "gzip": 0 } },
-    "notFoundPage": { "javascript": { "raw": 1000, "gzip": 1000 }, "stylesheets": { "raw": 0, "gzip": 0 } },
-    "devErrorPage": { "javascript": { "raw": 1000, "gzip": 1000 }, "stylesheets": { "raw": 0, "gzip": 0 } }
+    "home": {
+      "javascript": {
+        "raw": 113000,
+        "gzip": 45000
+      },
+      "stylesheets": {
+        "raw": 0,
+        "gzip": 0
+      }
+    },
+    "generatorPage": {
+      "javascript": {
+        "raw": 1192000,
+        "gzip": 338000
+      },
+      "stylesheets": {
+        "raw": 0,
+        "gzip": 0
+      }
+    },
+    "encyclopediaPage": {
+      "javascript": {
+        "raw": 673000,
+        "gzip": 185000
+      },
+      "stylesheets": {
+        "raw": 0,
+        "gzip": 0
+      }
+    },
+    "duelStartPage": {
+      "javascript": {
+        "raw": 871000,
+        "gzip": 220000
+      },
+      "stylesheets": {
+        "raw": 0,
+        "gzip": 0
+      }
+    },
+    "duelPlaygroundPage": {
+      "javascript": {
+        "raw": 1327000,
+        "gzip": 358000
+      },
+      "stylesheets": {
+        "raw": 96000,
+        "gzip": 20000
+      }
+    },
+    "reclamationPage": {
+      "javascript": {
+        "raw": 1239000,
+        "gzip": 343000
+      },
+      "stylesheets": {
+        "raw": 163000,
+        "gzip": 28000
+      }
+    },
+    "longReturnPage": {
+      "javascript": {
+        "raw": 317000,
+        "gzip": 97000
+      },
+      "stylesheets": {
+        "raw": 280000,
+        "gzip": 50000
+      }
+    },
+    "arcadePage": {
+      "javascript": {
+        "raw": 16000,
+        "gzip": 7500
+      },
+      "stylesheets": {
+        "raw": 0,
+        "gzip": 0
+      }
+    },
+    "artilleryGamePage": {
+      "javascript": {
+        "raw": 69000,
+        "gzip": 24500
+      },
+      "stylesheets": {
+        "raw": 0,
+        "gzip": 0
+      }
+    },
+    "solitaireGamePage": {
+      "javascript": {
+        "raw": 22700,
+        "gzip": 10100
+      },
+      "stylesheets": {
+        "raw": 0,
+        "gzip": 0
+      }
+    },
+    "hazardSweepGamePage": {
+      "javascript": {
+        "raw": 17200,
+        "gzip": 8400
+      },
+      "stylesheets": {
+        "raw": 0,
+        "gzip": 0
+      }
+    },
+    "relayMergeGamePage": {
+      "javascript": {
+        "raw": 17400,
+        "gzip": 8700
+      },
+      "stylesheets": {
+        "raw": 0,
+        "gzip": 0
+      }
+    },
+    "arcadeMatchGamePage": {
+      "javascript": {
+        "raw": 27500,
+        "gzip": 10800
+      },
+      "stylesheets": {
+        "raw": 0,
+        "gzip": 0
+      }
+    },
+    "userAccountPage": {
+      "javascript": {
+        "raw": 1233000,
+        "gzip": 347000
+      },
+      "stylesheets": {
+        "raw": 0,
+        "gzip": 0
+      }
+    },
+    "userDetailsPage": {
+      "javascript": {
+        "raw": 1153000,
+        "gzip": 318000
+      },
+      "stylesheets": {
+        "raw": 0,
+        "gzip": 0
+      }
+    },
+    "notFoundPage": {
+      "javascript": {
+        "raw": 1000,
+        "gzip": 1000
+      },
+      "stylesheets": {
+        "raw": 0,
+        "gzip": 0
+      }
+    },
+    "devErrorPage": {
+      "javascript": {
+        "raw": 1000,
+        "gzip": 1000
+      },
+      "stylesheets": {
+        "raw": 0,
+        "gzip": 0
+      }
+    }
   },
   "nestedRoutes": {
     "duelPage": {
       "parent": "duelStartPage",
-      "javascript": { "raw": 790000, "gzip": 269000 },
-      "stylesheets": { "raw": 84000, "gzip": 17000 }
+      "javascript": {
+        "raw": 790000,
+        "gzip": 269000
+      },
+      "stylesheets": {
+        "raw": 84000,
+        "gzip": 17000
+      }
     }
   }
 }

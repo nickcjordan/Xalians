@@ -1,4 +1,5 @@
 {
+  "schemaVersion": "4.0.0",
   "key": "ectoghoul",
   "name": "Ectoghoul",
   "nameOrigin": "A compound of ecto, evoking ectoplasm, and ghoul, matching its spectral body and delight in terror.",
@@ -171,15 +172,181 @@
     "voice",
     "secretion"
   ],
-  "signatureAbility": {
-    "name": "Rictus of the Dreadscape",
-    "instrument": "voice",
-    "action": "terrorize",
-    "medium": "ghost",
-    "intensity": [
-      45,
-      85
+  "signature": {
+    "kind": "action",
+    "key": "ectoghoul-defining"
+  },
+  "actions": [
+    {
+      "key": "ectoghoul-defining",
+      "activation": {
+        "operation": "discrete"
+      },
+      "delivery": {
+        "mode": "signal",
+        "approach": "stationary"
+      },
+      "targeting": {
+        "relation": "other",
+        "subjects": [
+          "creature"
+        ],
+        "compatibility": {
+          "reception": "auditory"
+        }
+      },
+      "effects": [
+        {
+          "kind": "suppress",
+          "recipient": "target",
+          "aspect": "composure",
+          "emphasis": "primary",
+          "onset": "instant",
+          "persistence": "resolved",
+          "likelihood": "consistent"
+        }
+      ],
+      "description": "The mist tightens into a grinning skull and lets out a cackle that reaches its target wherever it goes.",
+      "name": "Rictus of the Dreadscape",
+      "instrument": "voice",
+      "medium": "ghost",
+      "intensity": [
+        45,
+        85
+      ],
+      "timing": {
+        "preparation": "brief",
+        "recovery": "brief"
+      },
+      "spatial": {
+        "selectivity": "selective",
+        "range": "short"
+      }
+    }
+  ],
+  "passives": [],
+  "actionPool": {
+    "count": [
+      2,
+      3
     ],
-    "description": "The mist tightens into a grinning skull and lets out a cackle that reaches its target wherever it goes."
+    "sets": [
+      {
+        "key": "default",
+        "weight": 1,
+        "options": [
+          {
+            "key": "voice-terrorize",
+            "pattern": "terrorize",
+            "instrument": "voice",
+            "media": [
+              "ghost",
+              "dark",
+              "psychic"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "voice-ward",
+            "pattern": "ward",
+            "instrument": "voice",
+            "media": [
+              "ghost",
+              "dark",
+              "psychic"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "voice-burst",
+            "pattern": "burst",
+            "instrument": "voice",
+            "media": [
+              "ghost",
+              "dark",
+              "psychic"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "secretion-spray",
+            "pattern": "spray",
+            "instrument": "secretion",
+            "media": [
+              "ghost",
+              "dark",
+              "psychic"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "secretion-cloud",
+            "pattern": "cloud",
+            "instrument": "secretion",
+            "media": [
+              "ghost",
+              "dark",
+              "psychic"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "secretion-burst",
+            "pattern": "burst",
+            "instrument": "secretion",
+            "media": [
+              "ghost",
+              "dark",
+              "psychic"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "secretion-drain",
+            "pattern": "drain",
+            "instrument": "secretion",
+            "media": [
+              "ghost",
+              "dark",
+              "psychic"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "secretion-snare",
+            "pattern": "snare",
+            "instrument": "secretion",
+            "media": [
+              "ghost",
+              "dark",
+              "psychic"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "secretion-ward",
+            "pattern": "ward",
+            "instrument": "secretion",
+            "media": [
+              "ghost",
+              "dark",
+              "psychic"
+            ],
+            "weight": 1
+          },
+          {
+            "key": "secretion-mend",
+            "pattern": "mend",
+            "instrument": "secretion",
+            "media": [
+              "ghost",
+              "dark",
+              "psychic"
+            ],
+            "weight": 1
+          }
+        ]
+      }
+    ]
   }
 }
