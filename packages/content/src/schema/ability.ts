@@ -49,18 +49,22 @@ function check(value:any, ctx:z.RefinementCtx) {
   if((centered || value.targeting.relation==='self') && value.spatial.range) issue('Self-only and body-centered capabilities have no remote range');
   if(!centered && value.targeting.relation!=='self' && !value.spatial.range) issue('External delivery requires range');
   if(value.delivery.mode==='self' && value.targeting.relation!=='self') issue('Self delivery requires self targeting');
+  const subjects=value.targeting.compatibility?.subjects ?? value.targeting.subjects;
+  if(subjects.some((s:string)=>!value.targeting.subjects.includes(s))) issue('Capability compatibility cannot broaden targeting subjects');
+  if(value.targeting.relation==='self' && !subjects.includes('creature')) issue('Self targeting must admit a creature');
   for(const e of value.effects) {
     if(e.recipient==='instigator' && !value.activation.trigger) issue('Instigator requires a trigger');
     if(e.recipient==='area' && !value.spatial.area) issue('Area recipient requires an area');
     if(e.persistence==='lingering' ? !e.duration : !!e.duration) issue('Duration is required only for lingering effects');
     if(e.persistence==='sustained' && value.activation.operation!=='ongoing') issue('Sustained effects require ongoing operation');
     if(e.kind==='transfer' && e.from===e.to) issue('Transfer endpoints must differ');
+    if(e.kind==='transfer' && value.targeting.relation==='self') issue('Self-only targeting resolves transfer endpoints to the same creature');
     if(e.kind==='status') {
       if(e.persistence==='resolved') issue('Statuses require sustained or lingering persistence');
       if((e.status==='resistant') !== !!e.exposure) issue('Only resistant requires exposure');
       if((e.status==='stimulated') !== !!e.function) issue('Only stimulated requires function');
     }
-    if(e.compatibility?.subjects?.some((s:string)=>!value.targeting.subjects.includes(s))) issue('Effect subjects cannot broaden targeting');
+    if(e.compatibility?.subjects?.some((s:string)=>!subjects.includes(s))) issue('Effect subjects cannot broaden targeting');
     for(const k of ['composition','corporeality'] as const) {
       const parent=value.targeting.compatibility?.[k];
       if(parent && e.compatibility?.[k]?.some((v:string)=>!parent.includes(v))) issue('Effect compatibility cannot broaden targeting');
