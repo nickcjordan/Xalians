@@ -62,14 +62,14 @@ describe("Powerworks player flow", () => {
     mount();
     fireEvent.click(screen.getByRole("button", { name: "Enter the facility" }));
     fireEvent.click(screen.getByRole("button", { name: /Water stream, / }));
-    expect(screen.getAllByText("12 est. damage · strong")).toHaveLength(2);
+    expect(screen.getAllByText("12 estimated · strong")).toHaveLength(2);
     fireEvent.click(
       screen.getByRole("button", { name: "Target Maintenance crawler M2" })
     );
     const hippo = screen.getByRole("button", { name: "Select Hippochamp" });
-    expect(hippo).toHaveAccessibleDescription(/Crawler 2.*Water stream/);
+    expect(hippo).toHaveAccessibleDescription(/Water stream.*Crawler 2/);
     fireEvent.click(hippo);
-    expect(screen.getByText("Water stream → Crawler 2")).toBeInTheDocument();
+    expect(hippo).toHaveAttribute("title", "Water stream → Crawler 2");
     fireEvent.click(screen.getByRole("button", { name: /Clear/ }));
     expect(hippo).toHaveAccessibleDescription("Choose a move");
     expect(screen.getByRole("button", { name: "Commit round" })).toBeDisabled();
@@ -91,5 +91,21 @@ describe("Powerworks player flow", () => {
     expect(screen.getByLabelText("Move symbol key")).toHaveTextContent(
       "Melee attack"
     );
+  });
+  it("separates public initiative from hidden decisions and makes the route discoverable", () => {
+    mount();
+    fireEvent.click(screen.getByRole("button", { name: "Enter the facility" }));
+    fireEvent.click(screen.getByRole("button", { name: "View turn order" }));
+    const list = screen.getByRole("list");
+    expect(list).toHaveTextContent(/1AvililyYour squad80speed/);
+    expect(list).not.toHaveTextContent(/Tool strike|target/i);
+    fireEvent.click(screen.getByRole("button", { name: "Close panel" }));
+    fireEvent.click(
+      screen.getByRole("button", { name: "Service entrance: current sector" })
+    );
+    expect(
+      screen.getByRole("heading", { name: "Expedition route" })
+    ).toBeInTheDocument();
+    expect(screen.getByText("You are here")).toBeInTheDocument();
   });
 });

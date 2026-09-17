@@ -111,6 +111,7 @@ export function MoveCardContent({
 }) {
   const Range = move.range === "ranged" ? Crosshair : Swords;
   const control = move.kind === "snare";
+  const ward = move.kind === "ward";
   return (
     <>
       <span className="pw-card-identity">
@@ -130,9 +131,10 @@ export function MoveCardContent({
         title={moveDescription(move)}
         aria-hidden="true"
       >
-        {control ? <Link2 /> : <PowerIcon />}
-        <b>{control ? 1 : move.damage}</b>
+        {control ? <Link2 /> : ward ? <Shield /> : <PowerIcon />}
+        <b>{control ? 1 : ward ? "½" : move.damage}</b>
         {control && <small>action</small>}
+        {ward && <small>damage</small>}
       </span>
       <span className="pw-card-resource" aria-hidden="true">
         <span className="pw-card-state">

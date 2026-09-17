@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "measuredAt": "Schema 4 capability metadata and historical schema readers: generator route 321703 gzip bytes, duel start 209288; affected gzip budgets retain approximately five percent headroom. Other limits unchanged. Integrated main including Shuntara and lore artwork: encyclopedia route measured 190708 gzip bytes; budget 201000. Powerworks visual UX adds shared icon chunks: artillery 30733 gzip bytes, hazard sweep 8411; retain five percent headroom. Powerworks route measured 45500 raw/16500 gzip JS and 30400 raw/7300 gzip CSS; separately budgeted.",
+    "measuredAt": "Schema 4 capability metadata and historical schema readers: generator route 321703 gzip bytes, duel start 209288; affected gzip budgets retain approximately five percent headroom. Other limits unchanged. Integrated main including Shuntara and lore artwork: encyclopedia route measured 190708 gzip bytes; budget 201000. Powerworks visual UX adds shared icon chunks: artillery 30733 gzip bytes, hazard sweep 8411; retain five percent headroom. Powerworks route measured 45500 raw/16500 gzip JS and 30400 raw/7300 gzip CSS; separately budgeted. Whole-experience Powerworks redesign adds route/turn-order panels, grouped records and shared inspect cards. Final local build approximately 52800 raw/18200 gzip JS and 40101 raw/approximately 9100 gzip CSS; route limits retain measured headroom.",
     "measuredOn": "2026-09-16",
     "policy": "Initial limits and route limits are the measured production output after removing the developer styleguide, rounded up with approximately five percent headroom. Update a limit only with measured evidence and review."
   },
@@ -110,7 +110,6 @@
       "javascript": {
         "raw": 98000,
         "gzip": 33000
-
       },
       "stylesheets": {
         "raw": 0,
@@ -199,12 +198,12 @@
     },
     "powerworksPage": {
       "javascript": {
-        "raw": 49000,
-        "gzip": 17500
+        "raw": 55000,
+        "gzip": 19000
       },
       "stylesheets": {
-        "raw": 33000,
-        "gzip": 8000
+        "raw": 42000,
+        "gzip": 9600
       }
     }
   },
