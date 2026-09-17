@@ -1,0 +1,1199 @@
+/* A theatrical battle space. Layout positions never change combat rules. */
+.pw-theater {
+  position: relative;
+  flex: 1;
+  min-height: 330px;
+  isolation: isolate;
+  container-type: size;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-bottom: 0;
+  border-radius: 14px 14px 0 0;
+  background: #142c32;
+}
+.pw-environment,
+.pw-brief-backdrop,
+.pw-outcome-landscape {
+  background-image: linear-gradient(0deg, #0b1b25aa, #0b1b2520 60%, #0b1b2599),
+    url("/assets/powerworks/turbine-hall.webp");
+  background-size: cover;
+  background-position: center 61%;
+}
+.pw-environment {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+}
+.sector-0 .pw-environment {
+  background-position: 25% 72%;
+  filter: saturate(0.7);
+}
+.sector-1 .pw-environment {
+  filter: saturate(0.65) hue-rotate(12deg);
+  background-position: 75% 65%;
+}
+.sector-2 .pw-environment {
+  filter: saturate(0.95);
+  background-position: center 45%;
+}
+.sector-3 .pw-environment {
+  filter: saturate(0.9) sepia(0.15);
+  background-position: center 30%;
+}
+.pw-theater:after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  box-shadow: inset 0 0 100px #08141dcc;
+}
+.pw-room-prop {
+  position: absolute;
+  left: 50%;
+  top: 3%;
+  transform: translateX(-50%);
+  opacity: 0.4;
+  color: #eac780;
+}
+.pw-room-prop svg {
+  width: 28px;
+  height: 28px;
+}
+.pw-scene-heading {
+  position: absolute;
+  top: 12px;
+  left: 18px;
+  right: 18px;
+  display: flex;
+  justify-content: space-between;
+  color: #dedbc9;
+  font-size: 12px;
+  text-shadow: 0 2px 5px #000;
+  pointer-events: none;
+}
+.pw-scene-heading strong {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  color: #f3d690;
+}
+.pw-scene-unit {
+  position: absolute;
+  transform: translateX(-50%);
+  width: 19%;
+  max-width: 180px;
+  height: 33%;
+  z-index: 2;
+  text-align: center;
+}
+.pw-scene-unit.defender {
+  height: 36%;
+}
+.pw-scene-unit.guardian {
+  width: 27%;
+  max-width: 230px;
+}
+.pw .pw-scene-character {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: calc(100% - 36px);
+  padding: 0;
+  background: transparent;
+  border: 0;
+  overflow: visible;
+  border-radius: 50%;
+}
+.pw .pw-scene-character:hover:not(:disabled) {
+  background: transparent;
+}
+.pw-scene-character .pw-actor-art {
+  position: absolute;
+  inset: 0 8% 5%;
+  display: block;
+  filter: drop-shadow(0 4px 1px #07101e);
+  transform-origin: 50% 90%;
+}
+.pw-scene-character .pw-machine {
+  max-height: none;
+}
+.pw-scene-unit.guardian .pw-actor-art {
+  inset: -22% -8% 0;
+}
+.pw-ground {
+  position: absolute;
+  left: 14%;
+  right: 14%;
+  bottom: 0;
+  height: 17%;
+  border-radius: 50%;
+  background: #0009;
+  border: 2px solid transparent;
+  box-shadow: 0 2px 7px #0007;
+}
+.pw-scene-unit.selected .pw-ground {
+  border-color: #d8edac;
+  background: #b4dc8133;
+  box-shadow: 0 0 13px #d8edac44;
+}
+.pw-scene-unit.aimed .pw-ground {
+  border-color: #f0d596;
+  background: #f0d59633;
+}
+.pw-unit-plaque {
+  position: relative;
+  min-height: 36px;
+  padding: 2px 7px 4px;
+  background: #0c2028e8;
+  border-radius: 5px;
+  box-shadow: 0 3px 10px #0003;
+}
+.pw-unit-plaque > div:first-child {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+.pw-unit-plaque strong {
+  font-size: 13px;
+  line-height: 1.2;
+  font-family: var(--font-legend);
+}
+.pw-unit-plaque > div > svg {
+  width: 12px;
+  height: 12px;
+  color: var(--accent);
+}
+.pw .pw-unit-plaque button {
+  padding: 3px;
+  border: 0;
+  background: transparent;
+  margin-left: auto;
+  min-width: 24px;
+  min-height: 24px;
+}
+.pw-unit-plaque button svg {
+  width: 14px;
+  height: 14px;
+}
+.pw-unit-plaque .pw-health {
+  gap: 5px;
+}
+.pw-unit-plaque .pw-hp-label,
+.pw-unit-plaque .pw-hp-label small {
+  font-size: 12px;
+}
+.pw-unit-plaque .pw-hp-label em {
+  display: none;
+}
+.pw-scene-unit.ally .pw-hp-label small {
+  display: none;
+}
+.pw-scene-unit.ally .pw-health-track {
+  height: 4px;
+}
+.pw-scene-status {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 2px;
+  position: relative;
+  margin-top: 3px;
+}
+.pw-scene-status:empty {
+  display: none;
+}
+.pw-scene-status .pw-status-badge {
+  font-size: 12px;
+  padding: 2px 4px;
+  box-shadow: 0 2px 5px #0005;
+}
+.pw-scene-orders {
+  display: inline-flex;
+  gap: 3px;
+  align-items: center;
+  padding: 1px 4px;
+  background: #203c32;
+  border-radius: 3px;
+  font-size: 12px;
+  color: #d8edac;
+}
+.pw-scene-orders svg {
+  width: 12px;
+  height: 12px;
+}
+.pw-scene-preview {
+  display: flex;
+  gap: 3px;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  font-size: 12px;
+  line-height: 1.15;
+  margin: 3px -7px 0;
+  padding: 4px;
+  border-radius: 4px;
+  background: #152931f5;
+  color: #d4dcd8;
+}
+.pw-scene-preview.strong {
+  background: #304229;
+  color: #e8f5c3;
+}
+.pw-scene-preview svg {
+  width: 12px;
+  height: 12px;
+}
+.pw-scene-reticle {
+  position: absolute;
+  top: 6%;
+  right: 0;
+  color: #fff0bc;
+  width: 23px !important;
+  height: 23px !important;
+}
+.pw-scene-unit.fallen .pw-actor-art {
+  opacity: 0.26;
+  filter: grayscale(1);
+  transform: rotate(12deg) translateY(8px);
+}
+.pw-scene-unit.fallen .pw-ground {
+  opacity: 0.3;
+}
+.pw-scene-unit.fallen .pw-unit-plaque {
+  opacity: 0.65;
+}
+.pw-binding {
+  position: absolute;
+  inset: 12% 8% 0;
+  border: 3px solid #cab0e5;
+  border-radius: 50%;
+  transform: rotate(-13deg);
+  box-shadow: inset 0 0 15px #be83e266;
+  pointer-events: none;
+}
+.pw-binding:after {
+  content: "";
+  position: absolute;
+  inset: 6px -8px;
+  border: 2px dashed #cab0e5;
+  border-radius: 50%;
+  transform: rotate(32deg);
+}
+.pw-binding svg {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  color: #ead7fc;
+  background: #3b254d;
+  border-radius: 50%;
+}
+.pw-barrier {
+  position: absolute;
+  inset: -4% 0 -4%;
+  border: 2px solid #b2e2f6;
+  border-radius: 45% 45% 50% 50%;
+  background: linear-gradient(120deg, #99dcf633, transparent);
+  box-shadow: 0 0 15px #6ec9e655;
+  pointer-events: none;
+}
+.pw-barrier svg {
+  color: #b2e2f6;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+}
+.pw-charge-aura {
+  position: absolute;
+  inset: -12% -8%;
+  border-radius: 50%;
+  background: radial-gradient(
+    ellipse,
+    transparent 25%,
+    #f6cf7355 55%,
+    transparent 70%
+  );
+  pointer-events: none;
+}
+.pw-charge-aura svg {
+  position: absolute;
+  right: 12%;
+  top: 2%;
+  color: #ffe7a6;
+  width: 30px;
+  height: 30px;
+}
+.pw-scene-unit.charged .pw-ground {
+  background: #f1c55266;
+  border-color: #ebc869;
+}
+.pw .pw-action-path {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 8;
+  overflow: visible;
+}
+.pw-action-path path {
+  fill: none;
+  vector-effect: non-scaling-stroke;
+}
+.pw-aim-path {
+  stroke: #e2ecc8;
+  stroke-width: 2px;
+  stroke-dasharray: 4 7;
+  opacity: 0.6;
+}
+.pw-flight {
+  stroke: var(--accent);
+  stroke-width: 8px;
+  stroke-linecap: round;
+  filter: drop-shadow(0 0 4px var(--accent));
+  stroke-dasharray: 0.12 1;
+  animation: pw-projectile var(--action-time) ease-out both;
+}
+.pw-flight.snare {
+  stroke: #d2b2ef;
+  stroke-width: 4px;
+  stroke-dasharray: 0.3 1;
+}
+.pw-flight.redirect {
+  stroke-dasharray: 0.04 0.04;
+  stroke-width: 2px;
+  opacity: 0.55;
+  animation: none;
+}
+.pw-flight.contact {
+  opacity: 0;
+  animation: none;
+}
+.pw-impact-ring {
+  stroke: var(--accent);
+  stroke-width: 0.5;
+  fill: none;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: pw-impact var(--action-time) ease-out both;
+}
+.pw-impact-ring.snare {
+  stroke: #d2b2ef;
+  stroke-dasharray: 2 1;
+}
+.pw-scene-unit.performing {
+  z-index: 9;
+}
+.pw-scene-unit.performing .pw-ground {
+  border-color: #f0dfab;
+  box-shadow: 0 0 18px #f0dfab66;
+}
+.pw-theater[data-action="hit"] .pw-scene-unit.performing.melee .pw-actor-art,
+.pw-theater[data-action="snare"] .pw-scene-unit.performing.melee .pw-actor-art {
+  animation: pw-lunge var(--action-time) ease-in-out both;
+}
+.pw-theater[data-action="hit"] .pw-scene-unit.performing.ranged .pw-actor-art,
+.pw-theater[data-action="snare"]
+  .pw-scene-unit.performing.ranged
+  .pw-actor-art {
+  animation: pw-cast var(--action-time) ease-out both;
+}
+.pw-theater[data-action="charge"] .pw-scene-unit.performing .pw-actor-art {
+  animation: pw-gather var(--action-time) ease-out both;
+}
+.pw-theater[data-action="hit"] .pw-scene-unit.receiving .pw-actor-art {
+  animation: pw-recoil 380ms ease-out both;
+}
+.pw-scene-float {
+  position: absolute;
+  z-index: 12;
+  top: 6%;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 4px 9px;
+  border-radius: 6px;
+  background: #10232bf2;
+  border: 1px solid #e5d6ac;
+  font-size: 23px;
+  color: #ffe2a7;
+  font-weight: 700;
+  line-height: 1.05;
+  white-space: nowrap;
+  box-shadow: 0 4px 12px #0008;
+  animation: pw-feedback 350ms ease-out both;
+}
+.pw-scene-float:not(.hit) {
+  font-size: 14px;
+}
+.pw-scene-float small {
+  display: block;
+  font-size: 12px;
+  color: #efd9d0;
+  margin-top: 4px;
+}
+.pw-scene-direction {
+  position: absolute;
+  top: 47%;
+  left: 8px;
+  right: 8px;
+  min-height: 27px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 7px;
+  color: #d8e5d4;
+  font-size: 14px;
+  line-height: 1.2;
+  pointer-events: none;
+  text-shadow: 0 2px 3px #000;
+}
+.pw-scene-direction.targeting {
+  color: #f7efc6;
+}
+.pw-scene-direction > span:last-child {
+  max-width: 420px;
+}
+.pw-scene-direction svg {
+  width: 16px;
+  height: 16px;
+}
+.pw-arrival {
+  position: absolute;
+  z-index: 10;
+  left: 0;
+  right: 0;
+  top: 43%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    #10232be8 25%,
+    #10232be8 75%,
+    transparent
+  );
+  padding: 12px;
+  pointer-events: none;
+  animation: pw-arrival 1800ms ease-out both;
+}
+.pw-arrival span {
+  font-size: 12px;
+  color: #d2d1aa;
+}
+.pw-arrival strong {
+  font-size: 26px;
+  font-family: var(--font-legend);
+}
+.pw-theater.arriving .pw-scene-direction {
+  opacity: 0;
+}
+.pw-theater.arriving .pw-scene-unit.ally .pw-actor-art {
+  animation: pw-walk-in 800ms ease-out both;
+}
+.pw-theater.signature-action {
+  box-shadow: inset 0 0 60px #d1b26a33;
+}
+.pw-theater.paused *,
+.pw-theater.paused *:after {
+  animation-play-state: paused !important;
+}
+.pw-theater.paused .pw-actor-art,
+.pw-theater.paused .pw-scene-float {
+  animation: none !important;
+}
+.pw-theater.paused .pw-flight,
+.pw-theater.paused .pw-impact-ring {
+  display: none;
+}
+@keyframes pw-projectile {
+  0%,
+  9% {
+    stroke-dashoffset: 1;
+    opacity: 0;
+  }
+  12% {
+    opacity: 1;
+  }
+  29% {
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+  38%,
+  100% {
+    stroke-dashoffset: -0.2;
+    opacity: 0;
+  }
+}
+@keyframes pw-impact {
+  0%,
+  25% {
+    opacity: 0;
+    transform: scale(0.4);
+  }
+  29% {
+    opacity: 1;
+    transform: scale(0.7);
+  }
+  48%,
+  100% {
+    opacity: 0;
+    transform: scale(1.7);
+  }
+}
+@keyframes pw-lunge {
+  0% {
+    transform: translate(0, 0);
+  }
+  12% {
+    transform: translate(0, 8px) scale(0.94);
+  }
+  27%,
+  34% {
+    transform: translate(var(--travel-x), var(--travel-y)) scale(1.12);
+  }
+  65%,
+  100% {
+    transform: translate(0, 0);
+  }
+}
+@keyframes pw-cast {
+  0% {
+    transform: scale(1);
+  }
+  14% {
+    transform: translateY(5px) scale(0.94);
+  }
+  28% {
+    transform: translateY(-8px) scale(1.08);
+    filter: drop-shadow(0 0 14px var(--accent));
+  }
+  55%,
+  100% {
+    transform: scale(1);
+  }
+}
+@keyframes pw-gather {
+  0% {
+    filter: brightness(1);
+  }
+  35% {
+    transform: scale(1.08);
+    filter: brightness(1.6) drop-shadow(0 0 15px #f8d989);
+  }
+  100% {
+    filter: brightness(1);
+  }
+}
+@keyframes pw-recoil {
+  0% {
+    transform: translateX(0);
+    filter: brightness(2);
+  }
+  30% {
+    transform: translateX(9px) rotate(5deg);
+  }
+  65% {
+    transform: translateX(-5px);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+@keyframes pw-feedback {
+  from {
+    opacity: 0;
+    margin-top: 10px;
+  }
+  to {
+    opacity: 1;
+    margin-top: 0;
+  }
+}
+@keyframes pw-arrival {
+  0% {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  15%,
+  75% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+  }
+}
+@keyframes pw-walk-in {
+  from {
+    opacity: 0;
+    transform: translate(-30px, 20px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.pw-trail {
+  position: relative;
+  display: flex;
+  width: 100%;
+  max-width: 880px;
+  gap: 8px;
+  align-items: flex-start;
+}
+.pw-trail > div {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  color: #9eb0ad;
+  text-align: center;
+}
+.pw-trail > div:not(:nth-child(4)):after {
+  content: "";
+  height: 1px;
+  width: calc(100% - 30px);
+  background: #75877866;
+  position: absolute;
+  top: 16px;
+  left: calc(50% + 20px);
+}
+.pw-trail > div > span {
+  width: 34px;
+  height: 34px;
+  border: 1px solid #758778;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: #13282e;
+  font-size: 12px;
+}
+.pw-trail strong {
+  font-size: 12px;
+  line-height: 1.2;
+  font-weight: 500;
+}
+.pw-trail .here {
+  color: #e3eec5;
+}
+.pw-trail .here > span {
+  background: #d8edac;
+  color: #1b302c;
+  border-color: #d8edac;
+}
+.pw-trail .passed > span {
+  color: #cde5ae;
+  border-color: #afc78f;
+}
+.pw .pw-trail > button {
+  padding: 7px;
+  align-self: center;
+  background: transparent;
+  border: 0;
+}
+.pw .pw-squad {
+  height: 90px;
+  min-height: 90px;
+}
+.pw .pw-squad .pw-select {
+  gap: 6px;
+}
+.pw .pw-companion-top {
+  height: 20px;
+}
+.pw .pw-companion-top strong {
+  font-size: 13px;
+}
+.pw .pw-queued {
+  flex: 1;
+  min-height: 36px;
+  font-size: 12px;
+}
+.pw .pw-squad-status {
+  display: none;
+}
+.pw .pw-action-duet {
+  display: none;
+}
+.pw .pw-command.resolving {
+  height: 130px;
+  min-height: 130px;
+}
+.pw .pw-action-story {
+  min-height: 52px;
+  justify-content: center;
+  text-align: center;
+}
+.pw .pw-action-copy p {
+  font-size: 14px;
+}
+.pw .pw-briefing {
+  position: relative;
+  isolation: isolate;
+  max-width: 1440px;
+  min-height: calc(100svh - 40px);
+  padding: 65px 55px 32px;
+  grid-template-columns: 1fr 1fr;
+}
+.pw-brief-backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  opacity: 0.5;
+  mask-image: linear-gradient(90deg, transparent, #000 60%);
+}
+.pw .pw-brief-scene {
+  background: transparent;
+  border: 0;
+}
+.pw .pw-brief-scene:before,
+.pw .pw-brief-scene:after {
+  display: none;
+}
+.pw-briefing > .pw-trail {
+  grid-column: 1 / -1;
+  justify-self: center;
+}
+.pw .pw-brief-roster {
+  border-top: 1px solid var(--line);
+  background: #11262ce8;
+  border-radius: 9px;
+  padding: 18px;
+}
+.pw-outcome {
+  position: relative;
+}
+.pw-outcome-landscape {
+  min-height: 170px;
+  width: calc(100% + var(--outcome-inset) + var(--outcome-inset));
+  margin: -30px calc(-1 * var(--outcome-inset)) 0;
+  position: relative;
+  flex-shrink: 0;
+  background-position: center 40%;
+}
+.pw-travel-squad {
+  position: absolute;
+  bottom: 16px;
+  left: 20%;
+  right: 20%;
+  height: 105px;
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+}
+.pw-travel-squad .pw-portrait {
+  max-width: 100px;
+  filter: drop-shadow(0 6px 4px #000);
+  animation: pw-walk-in 700ms ease-out both;
+}
+.pw-outcome.won .pw-outcome-landscape {
+  filter: saturate(0.6);
+}
+.pw-outcome.lost .pw-outcome-landscape {
+  filter: saturate(0.25) brightness(0.6);
+}
+.pw-reward-reveal {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  color: #e6d397;
+  animation: pw-feedback 600ms ease-out both;
+}
+.pw-reward-reveal > svg {
+  width: 34px;
+  height: 34px;
+}
+.pw-reward-reveal strong {
+  font-size: 34px;
+  line-height: 1;
+  margin-right: 10px;
+}
+.pw-reward-reveal span {
+  font-size: 14px;
+  color: #c5d5c5;
+}
+.pw-outcome .pw-camp-stats {
+  margin-top: -10px;
+}
+@media (max-width: 850px) {
+  .pw-scene-unit {
+    width: 21%;
+  }
+  .pw-unit-plaque {
+    padding: 2px 4px 3px;
+  }
+  .pw-unit-plaque > div > svg {
+    display: none;
+  }
+  .pw-scene-unit.ally .pw-unit-plaque button {
+    display: none;
+  }
+  .pw .pw-companion-top strong {
+    font-size: 12px;
+  }
+}
+@media (max-width: 600px) {
+  .pw-theater {
+    flex: none;
+    min-height: 340px;
+    height: 340px;
+    container-type: size;
+  }
+  .pw-scene-unit {
+    width: 23%;
+    max-width: none;
+    height: 33%;
+  }
+  .pw-scene-unit.defender {
+    height: 33%;
+    width: 28%;
+  }
+  .pw-scene-unit.guardian {
+    width: 30%;
+  }
+  .pw-scene-heading {
+    font-size: 12px;
+    top: 8px;
+    left: 10px;
+    right: 10px;
+  }
+  .pw-scene-heading > span {
+    max-width: 58%;
+  }
+  .pw-scene-heading strong {
+    font-size: 12px;
+  }
+  .pw-scene-heading strong svg {
+    display: none;
+  }
+  .pw-unit-plaque strong {
+    font-size: 12px;
+  }
+  .pw-unit-plaque {
+    min-height: 35px;
+  }
+  .pw-unit-plaque .pw-health {
+    flex-direction: row;
+  }
+  .pw-unit-plaque .pw-health-track {
+    height: 4px;
+  }
+  .pw-unit-plaque .pw-hp-label small {
+    display: none;
+  }
+  .pw-scene-status .pw-status-badge {
+    font-size: 12px;
+    padding: 1px 3px;
+    gap: 2px;
+    white-space: normal;
+  }
+  .pw-scene-status .pw-status-badge svg {
+    display: none;
+  }
+  .pw-scene-orders {
+    font-size: 12px;
+  }
+  .pw-scene-preview {
+    margin: 2px -4px 0;
+    font-size: 12px;
+    min-height: 30px;
+  }
+  .pw-scene-preview svg {
+    display: none;
+  }
+  .pw-scene-direction {
+    top: 49%;
+    font-size: 14px;
+    flex-wrap: wrap;
+    gap: 3px 5px;
+    max-width: 100%;
+  }
+  .pw-scene-direction:not(.targeting) {
+    font-size: 12px;
+  }
+  .pw-scene-direction strong {
+    max-width: 185px;
+  }
+  .pw-scene-direction > span:last-child {
+    max-width: 300px;
+  }
+  .pw .pw-squad {
+    height: 109px;
+    min-height: 109px;
+    padding: 6px 2px;
+    gap: 4px;
+  }
+  .pw .pw-squad .pw-select {
+    gap: 4px;
+  }
+  .pw .pw-queued {
+    min-height: 61px;
+    line-height: 1.2;
+  }
+  .pw .pw-squad-info {
+    display: none;
+  }
+  .pw .pw-command.resolving {
+    height: 165px;
+    min-height: 165px;
+    gap: 12px;
+  }
+  .pw .pw-action-story {
+    min-height: 75px;
+  }
+  .pw .pw-action-copy > strong {
+    font-size: 18px;
+  }
+  .pw .pw-playback-controls button {
+    font-size: 12px;
+    min-height: 36px;
+  }
+  .pw .pw-playback-controls button:last-child {
+    font-size: 0;
+  }
+  .pw .pw-briefing {
+    padding: 30px 20px;
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+  .pw-brief-backdrop {
+    opacity: 0.65;
+    mask-image: linear-gradient(0deg, #000, transparent 90%);
+  }
+  .pw-briefing .pw-trail {
+    grid-column: 1;
+  }
+  .pw .pw-brief-scene {
+    min-height: 170px;
+  }
+  .pw .pw-brief-roster {
+    grid-template-columns: 1fr 1fr;
+    padding: 12px;
+  }
+  .pw-trail {
+    gap: 3px;
+  }
+  .pw-trail strong {
+    font-size: 12px;
+  }
+  .pw-trail > div > span {
+    width: 30px;
+    height: 30px;
+  }
+  .pw-trail > div:not(:nth-child(4)):after {
+    top: 15px;
+  }
+  .pw-outcome-landscape {
+    min-height: 135px;
+    width: calc(100% + 24px);
+    margin: -22px -12px 0;
+  }
+  .pw-travel-squad {
+    height: 80px;
+    left: 10%;
+    right: 10%;
+    gap: 7px;
+  }
+  .pw-reward-reveal {
+    gap: 9px;
+  }
+  .pw-reward-reveal span {
+    display: block;
+    font-size: 12px;
+  }
+  .pw-outcome > .pw-outcome-body {
+    gap: 17px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pw-theater *,
+  .pw-theater *:after,
+  .pw-travel-squad *,
+  .pw-reward-reveal {
+    animation: none !important;
+    transition: none !important;
+  }
+  .pw-flight,
+  .pw-impact-ring,
+  .pw-arrival {
+    display: none;
+  }
+}
+
+/* Keep guidance outside the target plaques, including three-enemy encounters. */
+.pw-theater:has(.pw-scene-direction.targeting) .pw-scene-heading {
+  visibility: hidden;
+}
+.pw-scene-direction.targeting {
+  top: 6px;
+  bottom: auto;
+}
+.pw button.pw-active-identity {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  text-align: left;
+}
+@media (max-width: 600px) {
+  .pw-scene-direction.targeting {
+    top: 4px;
+    font-size: 12px;
+    min-height: 28px;
+  }
+  .pw-theater.playing .pw-scene-direction {
+    display: none;
+  }
+}
+
+/* Recovery prioritizes the squad before celebration and the next destination. */
+.pw-outcome.camp .pw-outcome-body {
+  gap: 14px;
+}
+.pw-outcome.camp .pw-outcome-landscape {
+  order: 0;
+  min-height: 100px;
+}
+.pw-outcome.camp .pw-travel-squad {
+  height: 78px;
+  bottom: 7px;
+}
+.pw-outcome.camp .pw-outcome-heading {
+  order: 1;
+}
+.pw-outcome.camp .pw-outcome-heading > svg,
+.pw-outcome.camp .pw-trail {
+  display: none;
+}
+.pw-outcome.camp .pw-outcome-heading h2 {
+  font-size: 24px;
+}
+.pw-outcome.camp .pw-recovery-notice {
+  order: 2;
+}
+.pw-outcome.camp .pw-camp-squad {
+  order: 3;
+}
+.pw-outcome.camp .pw-reward-reveal {
+  order: 4;
+}
+.pw-outcome.camp .pw-camp-stats {
+  order: 5;
+  margin: 0;
+}
+.pw-outcome.camp .pw-next-sector {
+  order: 6;
+}
+.pw-outcome.camp .pw-reward-reveal > svg {
+  width: 24px;
+  height: 24px;
+}
+.pw-outcome.camp .pw-reward-reveal strong {
+  font-size: 26px;
+}
+@media (max-width: 600px) {
+  .pw-outcome.camp .pw-outcome-heading > p:last-child {
+    font-size: 14px;
+  }
+  .pw-outcome.camp .pw-camp-squad {
+    gap: 7px;
+  }
+  .pw-outcome.camp .pw-camp-squad > div {
+    padding: 8px;
+  }
+  .pw-outcome.camp .pw-camp-squad > div > .pw-portrait {
+    height: 46px;
+  }
+  .pw-outcome.camp .pw-camp-squad h3 {
+    margin: 2px 0;
+  }
+  .pw-outcome.camp .pw-camp-stats {
+    gap: 5px;
+  }
+  .pw-outcome.camp .pw-camp-stats > span {
+    padding: 3px 5px;
+  }
+}
+
+.pw-scene-unit.ally {
+  top: 57%;
+}
+.pw-scene-unit.defender {
+  top: 12%;
+}
+@media (max-width: 600px) {
+  .pw-scene-unit.ally {
+    top: 61%;
+  }
+}
+
+@media (max-width: 600px) {
+  .pw-scene-unit.guardian .pw-actor-art {
+    inset: -22% -4% 0;
+  }
+}
+
+.pw-outcome-body {
+  --outcome-inset: clamp(16px, 4vw, 60px);
+}
+.pw-trail .here.passed > span {
+  color: #1b302c;
+}
+.pw-travel-squad > span {
+  display: flex;
+  justify-content: center;
+  flex: 1;
+  max-width: 100px;
+  min-width: 0;
+}
+.pw-travel-squad > .down {
+  opacity: 0.35;
+  transform: rotate(12deg);
+}
+.pw-travel-squad > .down .pw-portrait {
+  animation: none;
+}
+@media (max-width: 600px) {
+  .pw-outcome-body {
+    --outcome-inset: 12px;
+  }
+}
+
+@media (max-width: 600px) {
+  .pw-outcome > .pw-outcome-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+  .pw-outcome > .pw-outcome-actions > .pw-primary {
+    grid-column: 1 / -1;
+  }
+  .pw-outcome > .pw-outcome-actions > button {
+    font-size: 12px;
+    padding: 8px 6px;
+    min-height: 38px;
+  }
+  .pw-outcome.camp .pw-camp-squad > div {
+    gap: 4px;
+  }
+}
+@media (max-width: 600px) and (max-height: 720px) {
+  .pw-outcome.camp .pw-outcome-landscape {
+    min-height: 60px;
+  }
+  .pw-outcome.camp .pw-travel-squad {
+    height: 52px;
+    bottom: 2px;
+  }
+  .pw-outcome.camp .pw-outcome-heading > .pw-eyebrow {
+    display: none;
+  }
+}
+
+.pw-theater[data-action="ward"] .pw-scene-unit.performing .pw-actor-art {
+  animation: pw-cast var(--action-time) ease-out both;
+}

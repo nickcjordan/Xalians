@@ -1,0 +1,432 @@
+// Tier: immersive. A shared stage for the squad and the facility defenses.
+import React, { useEffect, useState } from "react";
+import {
+  Check,
+  Crosshair,
+  Info,
+  Link2,
+  Crown,
+  ArrowRight,
+  Shield,
+  Zap,
+} from "lucide-react";
+import {
+  ROOMS,
+  damagePreview,
+  matchup,
+  type Frame,
+  type Move,
+  type Order,
+  type Unit,
+} from "@xalians/rules/dungeon";
+import {
+  ElementIcon,
+  Health,
+  Portrait,
+  StatusBadges,
+  PowerIcon,
+} from "./powerworksVisuals";
+
+export const sectorStory = [
+  {
+    name: "Service entrance",
+    place: "Through the outer gates",
+    text: "Your squad slips into the service tunnels. Maintenance claws scrape across the floor ahead.",
+    icon: "01",
+  },
+  {
+    name: "Security checkpoint",
+    place: "Past the first defenses",
+    text: "The passage narrows. A drone rises behind the armored patrol guarding the checkpoint.",
+    icon: "02",
+  },
+  {
+    name: "Power chamber",
+    place: "Into the turbine hall",
+    text: "Dormant turbines begin to turn. A capacitor draws power from the machinery around it.",
+    icon: "03",
+  },
+  {
+    name: "Control chamber",
+    place: "At the heart of the facility",
+    text: "The guardian wakes beneath the reactor. Your squad has reached the source of the defenses.",
+    icon: "04",
+  },
+];
+
+export function ExpeditionTrail({
+  room,
+  completed = false,
+  onInspect,
+}: {
+  room: number;
+  completed?: boolean;
+  onInspect?: () => void;
+}) {
+  return (
+    <div className="pw-trail" aria-label="Expedition progress">
+      {sectorStory.map((sector, i) => (
+        <div
+          key={sector.name}
+          className={`${i < room || completed ? "passed" : ""} ${
+            i === room ? "here" : ""
+          }`}
+        >
+          <span>
+            {i < room || completed ? (
+              <Check />
+            ) : i === 3 ? (
+              <Crown />
+            ) : (
+              sector.icon
+            )}
+          </span>
+          <strong>{sector.name}</strong>
+        </div>
+      ))}
+      {onInspect && (
+        <button onClick={onInspect} aria-label="Inspect expedition route">
+          <Info />
+        </button>
+      )}
+    </div>
+  );
+}
+
+export function PowerworksScene({
+  team,
+  enemies,
+  frame,
+  frameIndex,
+  room,
+  active,
+  move,
+  plans,
+  targetId,
+  planning,
+  impact,
+  paused,
+  speed,
+  reducedMotion,
+  labelFor,
+  previewText,
+  onTarget,
+  onSelect,
+  onInspect,
+  onHover,
+}: {
+  team: Unit[];
+  enemies: Unit[];
+  frame?: Frame;
+  frameIndex: number;
+  room: number;
+  active?: Unit;
+  move: Move | null;
+  plans: Record<string, Order>;
+  targetId?: string | null;
+  planning: boolean;
+  impact: boolean;
+  paused: boolean;
+  speed: number;
+  reducedMotion: boolean;
+  labelFor: (u: Unit) => string;
+  previewText: (u: Unit) => string;
+  onTarget: (id: string, keyboard: boolean) => void;
+  onSelect: (u: Unit, keyboard: boolean) => void;
+  onInspect: (id: string) => void;
+  onHover: (id: string | null) => void;
+}) {
+  const [arriving, setArriving] = useState(true);
+  useEffect(() => {
+    setArriving(true);
+    const timer = setTimeout(
+      () => setArriving(false),
+      reducedMotion ? 0 : 1800
+    );
+    return () => clearTimeout(timer);
+  }, [room, reducedMotion]);
+  const all = [...team, ...enemies],
+    event = frame?.event;
+  const actor = all.find((u) => u.id === event?.actorId);
+  const recipient = all.find((u) => u.id === event?.targetId);
+  const action = actor?.moves.find((m) => m.name === event?.moveName);
+  const melee =
+    action?.range === "melee" || event?.moveName === "Desperate strike";
+  const signature =
+    !!actor && !actor.enemy && actor.moves[3]?.name === event?.moveName;
+  const point = (u: Unit) => ({
+    x:
+      (u.enemy ? 17 : 12) +
+      ((u.enemy ? enemies : team).indexOf(u) * (u.enemy ? 66 : 76)) /
+        Math.max(1, (u.enemy ? enemies : team).length - 1),
+    y: u.enemy ? 29 : 75,
+  });
+  // Center a lone defender rather than leaving it in the first slot.
+  const position = (u: Unit) =>
+    u.enemy && enemies.length === 1 ? { x: 50, y: 29 } : point(u);
+  const source = actor
+    ? position(actor)
+    : active
+    ? position(team.find((u) => u.id === active.id) || team[0])
+    : null;
+  const destination = recipient ? position(recipient) : null;
+  const aiming =
+    planning && move && targetId
+      ? enemies.find((u) => u.id === targetId && u.hp > 0)
+      : null;
+  const aimPoint = aiming ? position(aiming) : null;
+  const phase = event?.kind || "idle";
+  const style = {
+    "--action-time": `${1800 / speed}ms`,
+    "--impact-delay": `${500 / speed}ms`,
+  } as React.CSSProperties;
+  return (
+    <section
+      className={`pw-theater sector-${room} ${frame ? "playing" : "planning"} ${
+        paused ? "paused" : ""
+      } ${arriving ? "arriving" : ""} ${signature ? "signature-action" : ""}`}
+      aria-label="Battlefield"
+      style={style}
+      data-impact={impact}
+      data-action={phase}
+    >
+      <div className="pw-environment" aria-hidden="true" />
+      <div className="pw-room-prop" aria-hidden="true">
+        {room === 1 ? <Shield /> : room >= 2 ? <Zap /> : null}
+      </div>
+      <div className="pw-scene-heading">
+        <span>{sectorStory[room].place}</span>
+        {room === 3 && (
+          <strong>
+            <Crown /> Central guardian
+          </strong>
+        )}
+      </div>
+      {arriving && (
+        <div className="pw-arrival" aria-hidden="true">
+          <span>Sector {room + 1} / 4</span>
+          <strong>{sectorStory[room].name}</strong>
+        </div>
+      )}
+      <svg
+        className={`pw-action-path ${actor ? `el-${actor.element}` : ""}`}
+        viewBox="0 0 100 100"
+        preserveAspectRatio="none"
+        aria-hidden="true"
+        key={`path-${frameIndex}`}
+      >
+        {aimPoint && source && (
+          <path
+            className="pw-aim-path"
+            d={`M${source.x} ${source.y} Q50 45 ${aimPoint.x} ${aimPoint.y}`}
+          />
+        )}
+        {actor &&
+          recipient &&
+          source &&
+          destination &&
+          event &&
+          ["hit", "snare", "redirect"].includes(event.kind) && (
+            <>
+              <path
+                className={`pw-flight ${melee ? "contact" : "projectile"} ${
+                  event.kind
+                }`}
+                pathLength="1"
+                d={`M${source.x} ${source.y} Q${
+                  (source.x + destination.x) / 2
+                } ${(source.y + destination.y) / 2 - 12} ${destination.x} ${
+                  destination.y
+                }`}
+              />
+              <ellipse
+                className={`pw-impact-ring ${event.kind}`}
+                cx={destination.x}
+                cy={destination.y}
+                rx="5"
+                ry="8"
+              />
+            </>
+          )}
+      </svg>
+      {all.map((u) => {
+        const pos = position(u),
+          acting = actor?.id === u.id,
+          receiving = recipient?.id === u.id;
+        const selected = planning && active?.id === u.id;
+        const queued = Object.entries(plans)
+          .filter(([, q]) => q.target === u.id)
+          .map(([id]) => team.find((p) => p.id === id)!);
+        const estimate =
+          planning &&
+          move &&
+          active &&
+          u.enemy &&
+          u.hp > 0 &&
+          ["hit", "fallback"].includes(move.kind)
+            ? damagePreview(active, move, u)
+            : 0;
+        const recoil =
+          acting &&
+          phase === "hit" &&
+          event?.moveName === "Desperate strike" &&
+          impact;
+        const beforeKnockout = receiving && !impact;
+        return (
+          <div
+            key={u.id}
+            className={`pw-scene-unit el-${u.element} ${
+              u.enemy ? "defender" : "ally"
+            } ${u.species === "guardian" ? "guardian" : ""} ${
+              selected ? "selected" : ""
+            } ${acting ? `performing ${melee ? "melee" : "ranged"}` : ""} ${
+              receiving && impact ? "receiving" : ""
+            } ${u.hp <= 0 && !beforeKnockout ? "fallen" : ""} ${
+              u.hp > 0 && u.charge ? "charged" : ""
+            } ${u.hp > 0 && u.snared ? "restrained" : ""} ${
+              u.hp > 0 && u.ward ? "protected" : ""
+            } ${aiming?.id === u.id ? "aimed" : ""}`}
+            style={
+              {
+                left: `${pos.x}%`,
+
+                "--travel-x": `${
+                  source && destination ? destination.x - source.x : 0
+                }cqw`,
+                "--travel-y": `${
+                  source && destination ? (destination.y - source.y) * 0.95 : 0
+                }cqh`,
+              } as React.CSSProperties
+            }
+          >
+            <button
+              className={`pw-scene-character ${u.enemy ? "pw-target" : ""} ${
+                planning && move && u.enemy && u.hp > 0 ? "valid-target" : ""
+              }`}
+              aria-label={
+                u.enemy
+                  ? `Target ${u.name} ${u.id}`
+                  : `Plan ${u.name} on battlefield`
+              }
+              aria-pressed={!u.enemy ? selected : undefined}
+              disabled={!planning || u.hp <= 0}
+              onClick={(e) =>
+                u.enemy
+                  ? move
+                    ? onTarget(u.id, e.detail === 0)
+                    : onInspect(u.id)
+                  : onSelect(u, e.detail === 0)
+              }
+              onMouseEnter={() => u.enemy && onHover(u.id)}
+              onMouseLeave={() => onHover(null)}
+              onFocus={() => u.enemy && onHover(u.id)}
+              onBlur={() => onHover(null)}
+            >
+              <span className="pw-ground" />
+              <span className="pw-actor-art" key={`${u.id}-${frameIndex}`}>
+                <Portrait u={u} />
+              </span>
+              {u.hp > 0 && u.snared > 0 && (
+                <span className="pw-binding" aria-hidden="true">
+                  <Link2 />
+                </span>
+              )}
+              {u.hp > 0 && u.ward && (
+                <span className="pw-barrier" aria-hidden="true">
+                  <Shield />
+                </span>
+              )}
+              {u.hp > 0 && u.charge && (
+                <span className="pw-charge-aura" aria-hidden="true">
+                  <Zap />
+                </span>
+              )}
+              {u.enemy && planning && move && u.hp > 0 && (
+                <Crosshair className="pw-scene-reticle" />
+              )}
+              {(recoil ||
+                (receiving && impact) ||
+                (acting && ["charge", "blocked"].includes(phase))) && (
+                <span
+                  key={`float-${frameIndex}`}
+                  className={`pw-scene-float ${phase}`}
+                >
+                  {recoil
+                    ? "−2"
+                    : phase === "hit"
+                    ? `−${event?.amount}`
+                    : phase === "snare"
+                    ? "Restrained"
+                    : phase === "ward"
+                    ? "Guarded"
+                    : phase === "charge"
+                    ? "Charging"
+                    : phase === "blocked"
+                    ? "Blocked"
+                    : "Redirected"}
+                  {recoil && <small>Recoil</small>}
+                  {phase === "hit" && u.hp === 0 && <small>Knocked out</small>}
+                </span>
+              )}
+            </button>
+            <div className="pw-unit-plaque">
+              <div>
+                <ElementIcon element={u.element} />
+                <strong>{labelFor(u)}</strong>
+                <button
+                  aria-label={`Inspect ${u.name}${
+                    u.enemy ? ` ${u.id}` : " on battlefield"
+                  }`}
+                  onClick={() => onInspect(u.id)}
+                >
+                  <Info />
+                </button>
+              </div>
+              <Health u={u} estimate={estimate} />
+            </div>
+            <div className="pw-scene-status">
+              <StatusBadges u={u} />
+              {queued.length > 0 && (
+                <span
+                  className="pw-scene-orders"
+                  title={queued.map((p) => p.name).join(", ")}
+                >
+                  <Check />
+                  {queued.length} queued
+                </span>
+              )}
+            </div>
+            {planning && move && u.enemy && u.hp > 0 && (
+              <span
+                className={`pw-scene-preview ${
+                  active && matchup(active, u) > 1 ? "strong" : ""
+                }`}
+              >
+                {move.kind === "snare" ? <Link2 /> : <PowerIcon />}
+                {previewText(u)}
+              </span>
+            )}
+          </div>
+        );
+      })}
+      {planning && (move || enemies.some((u) => u.charge && u.hp > 0)) && (
+        <div className="pw-scene-direction targeting">
+          {move ? (
+            <>
+              <Crosshair />
+              <strong>{move.name}</strong>
+              <ArrowRight />
+              <span>Choose an enemy</span>
+            </>
+          ) : (
+            <>
+              <Zap />
+              <strong>Charged defense</strong>
+              <span>A melee release is coming</span>
+            </>
+          )}
+        </div>
+      )}
+    </section>
+  );
+}

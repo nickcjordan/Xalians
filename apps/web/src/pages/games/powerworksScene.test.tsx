@@ -1,0 +1,137 @@
+import React from "react";
+import { cleanup, render, screen, fireEvent } from "@testing-library/react";
+import { afterEach, describe, expect, it, vi } from "vitest";
+import { createRun, type Frame } from "@xalians/rules/dungeon";
+import { PowerworksScene } from "./powerworksScene";
+
+afterEach(cleanup);
+
+function scene(frame?: Frame) {
+  const run = createRun(1);
+  const onInspect = vi.fn();
+  const props = {
+    team: frame?.team || run.team,
+    enemies: frame?.enemies || run.enemies,
+    frame,
+    frameIndex: 1,
+    room: 0,
+    active: run.team[0],
+    move: null,
+    plans: {},
+    planning: !frame,
+    impact: true,
+    paused: true,
+    speed: 1,
+    reducedMotion: true,
+    labelFor: (u: { name: string }) => u.name,
+    previewText: () => "",
+    onTarget: vi.fn(),
+    onSelect: vi.fn(),
+    onInspect,
+    onHover: vi.fn(),
+  };
+  render(<PowerworksScene {...props} />);
+  return { run, onInspect };
+}
+
+describe("shared battlefield", () => {
+  it("shows exhaustion recoil on the attacker as well as damage on the target", () => {
+    const run = createRun(1);
+    const actor = run.team.find((u) => u.id === "H")!;
+    actor.hp -= 2;
+    actor.uses = [0, 0, 0, 0];
+    run.enemies[0].hp -= 3;
+    scene({
+      team: run.team,
+      enemies: run.enemies,
+      text: "Desperate strike.",
+      event: {
+        kind: "hit",
+        actorId: "H",
+        targetId: run.enemies[0].id,
+        moveName: "Desperate strike",
+        amount: 3,
+      },
+    });
+    expect(
+      screen.getByRole("button", { name: "Plan Hippochamp on battlefield" })
+    ).toHaveTextContent("Recoil");
+    expect(
+      screen.getByRole("button", {
+        name: `Target ${run.enemies[0].name} ${run.enemies[0].id}`,
+      })
+    ).toHaveTextContent("−3");
+  });
+
+  it("lets players inspect a companion separately from selecting it", () => {
+    const { run, onInspect } = scene();
+    const unit = run.team[0];
+    expect(
+      screen.getByRole("button", { name: `Plan ${unit.name} on battlefield` })
+    ).toBeEnabled();
+    fireEvent.click(
+      screen.getByRole("button", {
+        name: `Inspect ${unit.name} on battlefield`,
+      })
+    );
+    expect(onInspect).toHaveBeenCalledWith(unit.id);
+  });
+
+  it("attaches knockout feedback and health to the affected enemy", () => {
+    const run = createRun(1);
+    run.enemies[0].hp = 0;
+    scene({
+      team: run.team,
+      enemies: run.enemies,
+      text: "The crawler falls.",
+      event: {
+        kind: "hit",
+        actorId: "H",
+        targetId: run.enemies[0].id,
+        moveName: "Water stream",
+        amount: 12,
+      },
+    });
+    const enemy = screen.getByRole("button", {
+      name: `Target ${run.enemies[0].name} ${run.enemies[0].id}`,
+    });
+    expect(enemy).toBeDisabled();
+    expect(enemy).toHaveTextContent("Knocked out");
+    expect(enemy.closest(".pw-scene-unit")).toHaveClass("fallen", "receiving");
+  });
+
+  it("shows a charge without revealing its hidden target", () => {
+    const run = createRun(1);
+    run.enemies[0].charge = run.team[0].id;
+    const { container } = render(
+      <PowerworksScene
+        team={run.team}
+        enemies={run.enemies}
+        frame={{
+          team: run.team,
+          enemies: run.enemies,
+          text: "Charging.",
+          event: { kind: "charge", actorId: run.enemies[0].id },
+        }}
+        frameIndex={1}
+        room={0}
+        move={null}
+        plans={{}}
+        planning={false}
+        impact
+        paused
+        speed={1}
+        reducedMotion
+        labelFor={(u) => u.name}
+        previewText={() => ""}
+        onTarget={() => {}}
+        onSelect={() => {}}
+        onInspect={() => {}}
+        onHover={() => {}}
+      />
+    );
+    expect(screen.getByText("Charged")).toBeInTheDocument();
+    expect(container.querySelector(".pw-flight")).toBeNull();
+    expect(container.querySelector(".receiving")).toBeNull();
+  });
+});
