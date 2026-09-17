@@ -292,3 +292,40 @@ so plainly. A run should not claim completion just because tests pass.
   Live smoke verification is recorded after deployment. Next bottleneck: watch the final
   Standard bot pacing on production, then improve the tactile cockpit and
   post-match reason to replay without adding cosmetic-only features.
+
+### 2026-09-17: immediate rematch and result-specific next sortie
+
+- Starting build: merged `f22f7a7`. Production phone and desktop smoke checks
+  showed the new cockpit readouts and an actual Practice Range projectile with
+  no runtime errors or horizontal overflow. The after-action panel still sent
+  every player back through setup, even when they wanted the same match again,
+  and its advice did not reflect the fight just completed.
+- Hypothesis: a same-settings rematch should turn the result into another run
+  without bypassing seed/session reset or reward verification. A next-sortie
+  instruction based on mode, accuracy, win/loss, unused special rounds, and
+  difficulty should give a more relevant reason to try again. The separate
+  Change battlefield action must remain available.
+- Changes: the result panel now offers an immediate Rematch, Run range again,
+  or Retry trial action alongside Change battlefield. The quick action creates
+  a fresh seed and session while retaining the chosen world, size, mode, and
+  difficulty. Result guidance distinguishes poor ranging, unused special
+  ammunition after a loss, a successful Rookie or Standard win, Practice Range,
+  local play, and the five-shot trial. The artillery raw route budget increased
+  by 1 KB to accommodate this post-match flow; gzip remains under 34 KB.
+- Local replay: Stonera/Standard/Practice Range, seed
+  `artillery:d5781d6a-caf6-4efd-97bf-11ac5a598834`, scored 128 damage in
+  six shots, grade S, 67% accuracy. The after-action panel recommended a new
+  weapon sequence or planet, showed both result actions, and noted that
+  Practice Range awards no credits. Run range again immediately started a
+  second Stonera/Standard/Practice Range match with new seed
+  `artillery:8e5e2ce4-70f1-4df8-9c47-27f9b428e84b`, without returning to
+  setup. The prior best of 139 remained a separate local record.
+- Verification: the next-sortie decision has targeted tests for poor accuracy,
+  unused specials, Rookie victory, and Practice Range. The full workspace suite
+  passed (1,742 tests), web typecheck passed, and the production bundle check
+  passed with the revised cap. The final build and live deployment check are
+  recorded when this follow-up release completes.
+- Remaining: physically test sustained drive and jet on a phone, and inspect
+  whether the cockpit materials and result spectacle feel distinctive enough
+  across multiple real devices. This pass improved replay friction but does
+  not claim that visual cohesion is solved.

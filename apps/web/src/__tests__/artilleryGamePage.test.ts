@@ -4,7 +4,7 @@ import userEvent from '@testing-library/user-event';
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 import { ARTILLERY_HEIGHT, createArtilleryState, simulateArtilleryShot, terrainHeight } from '@xalians/rules/arcade';
 
-import { ArtilleryBoard, ArtillerySetup, CommandMeter, artilleryAimFromDrag, artilleryBarrelEndpoint, artilleryCinematicCamera, artilleryFlightDurationMs, artilleryFlightSample, artilleryFlightTrail, artilleryImpactRevealProgress, artilleryImpactVisualState, artilleryJetFlightY, artilleryLaunchVisualState, artilleryMoveAnimationProgress, artilleryProjectileImpactState, artilleryShotVerdict, artilleryTerrainSlopeDegrees } from '../pages/games/artilleryGamePage';
+import { ArtilleryBoard, ArtillerySetup, CommandMeter, artilleryAimFromDrag, artilleryBarrelEndpoint, artilleryCinematicCamera, artilleryFlightDurationMs, artilleryFlightSample, artilleryFlightTrail, artilleryImpactRevealProgress, artilleryImpactVisualState, artilleryJetFlightY, artilleryLaunchVisualState, artilleryMoveAnimationProgress, artilleryNextSortieTip, artilleryProjectileImpactState, artilleryShotVerdict, artilleryTerrainSlopeDegrees } from '../pages/games/artilleryGamePage';
 
 class ResizeObserverStub {
   observe() {}
@@ -28,6 +28,12 @@ beforeAll(() => {
 afterAll(() => vi.unstubAllGlobals());
 
 describe('Crater Command aim feedback', () => {
+  it('recommends a next sortie from the actual match result', () => {
+    expect(artilleryNextSortieTip({ mode: 'bot', difficulty: 'standard', won: false, accuracy: 25, specialRounds: 1 })).toMatch(/air range/i);
+    expect(artilleryNextSortieTip({ mode: 'bot', difficulty: 'standard', won: false, accuracy: 75, specialRounds: 0 })).toMatch(/Drill.*Rampart/i);
+    expect(artilleryNextSortieTip({ mode: 'bot', difficulty: 'rookie', won: true, accuracy: 75, specialRounds: 2 })).toMatch(/Standard/i);
+    expect(artilleryNextSortieTip({ mode: 'range', difficulty: 'standard', won: true, accuracy: 80, specialRounds: 2 })).toMatch(/damage record/i);
+  });
   it('draws the barrel tip at the physics projectile origin', () => {
     const state = createArtilleryState('muzzle-visual');
     const x = state.tanks.left.x;
