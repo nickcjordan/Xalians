@@ -115,8 +115,15 @@
   filter: drop-shadow(0 4px 1px #07101e);
   transform-origin: 50% 90%;
 }
-.pw-scene-character .pw-machine {
-  max-height: none;
+.pw-scene-character .pw-portrait {
+  align-items: flex-end;
+}
+.pw-scene-character .pw-creature-art {
+  mask-position: center bottom;
+}
+.pw-scene-character svg.pw-machine {
+  height: auto;
+  max-height: 100%;
 }
 .pw-scene-unit.guardian .pw-actor-art {
   inset: -22% -8% 0;
