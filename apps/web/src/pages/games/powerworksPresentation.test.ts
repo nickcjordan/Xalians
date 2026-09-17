@@ -1,7 +1,11 @@
 import { act, cleanup, renderHook } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { Frame } from "@xalians/rules/dungeon";
-import { useBattlePresentation } from "./powerworksPresentation";
+import {
+  actionPresentation,
+  useBattlePresentation,
+} from "./powerworksPresentation";
+import { createRun } from "@xalians/rules/dungeon";
 
 const hit: Frame = {
   team: [],
@@ -21,13 +25,55 @@ afterEach(() => {
 });
 
 describe("battle presentation timing", () => {
+  it("reserves time for signatures, knockouts and the guardian without slowing routine hits", () => {
+    const run = createRun(1);
+    const actor = run.team.find((u) => u.id === "H")!;
+    const frame: Frame = {
+      ...hit,
+      team: run.team,
+      enemies: run.enemies,
+      event: {
+        kind: "hit",
+        actorId: actor.id,
+        targetId: run.enemies[0].id,
+        moveName: actor.moves[0].name,
+      },
+    };
+    const routine = actionPresentation(frame);
+    const signature = actionPresentation({
+      ...frame,
+      event: { ...frame.event!, moveName: actor.moves[3].name },
+    });
+    expect(signature.signature).toBe(true);
+    expect(signature.duration).toBeGreaterThan(routine.duration);
+    expect(signature.impactDelay).toBeGreaterThan(routine.impactDelay);
+    run.enemies[0].hp = 0;
+    const knockout = actionPresentation(frame);
+    expect(knockout.knockout).toBe(true);
+    expect(knockout.duration).toBeGreaterThan(signature.duration);
+    run.enemies[0].species = "guardian";
+    expect(actionPresentation(frame).duration).toBeGreaterThan(
+      knockout.duration
+    );
+    expect(actionPresentation(frame).bossDefeat).toBe(true);
+    expect(
+      actionPresentation({
+        ...frame,
+        event: {
+          ...frame.event!,
+          kind: "redirect",
+          moveName: actor.moves[3].name,
+        },
+      }).signature
+    ).toBe(false);
+  });
   it("holds consequences until impact and resets for the next action", () => {
     const { result, rerender } = renderHook(
       ({ frame, index }) => useBattlePresentation(frame, index, 1, false),
       { initialProps: { frame: hit, index: 1 } }
     );
     expect(result.current.impact).toBe(false);
-    act(() => vi.advanceTimersByTime(499));
+    act(() => vi.advanceTimersByTime(359));
     expect(result.current.impact).toBe(false);
     act(() => vi.advanceTimersByTime(1));
     expect(result.current.impact).toBe(true);
@@ -39,7 +85,7 @@ describe("battle presentation timing", () => {
     const { result } = renderHook(() =>
       useBattlePresentation(hit, 1, 2, false)
     );
-    act(() => vi.advanceTimersByTime(249));
+    act(() => vi.advanceTimersByTime(179));
     expect(result.current.impact).toBe(false);
     act(() => vi.advanceTimersByTime(1));
     expect(result.current.impact).toBe(true);

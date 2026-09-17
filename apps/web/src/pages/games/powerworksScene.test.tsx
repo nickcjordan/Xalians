@@ -6,7 +6,10 @@ import { PowerworksScene } from "./powerworksScene";
 
 afterEach(cleanup);
 
-function scene(frame?: Frame) {
+function scene(
+  frame?: Frame,
+  overrides: Partial<React.ComponentProps<typeof PowerworksScene>> = {}
+) {
   const run = createRun(1);
   const onInspect = vi.fn();
   const props = {
@@ -30,11 +33,56 @@ function scene(frame?: Frame) {
     onInspect,
     onHover: vi.fn(),
   };
-  render(<PowerworksScene {...props} />);
+  render(<PowerworksScene {...props} {...overrides} />);
   return { run, onInspect };
 }
 
 describe("shared battlefield", () => {
+  it("links each queued attacker to its target and lets that order be edited", () => {
+    const run = createRun(1);
+    const onSelect = vi.fn();
+    const unit = run.team[0];
+    const target = run.enemies[0];
+    scene(undefined, {
+      plans: { [unit.id]: { move: 0, target: target.id } },
+      onSelect,
+    });
+    const edit = screen.getByRole("button", {
+      name: `Edit ${unit.name}'s order targeting ${target.name}`,
+    });
+    expect(edit.closest(".pw-scene-unit")).toHaveClass("defender");
+    fireEvent.click(edit);
+    expect(onSelect).toHaveBeenCalledWith(
+      expect.objectContaining({ id: unit.id }),
+      true
+    );
+  });
+
+  it("calls out a redirected melee attack without playing it as another signature", () => {
+    const run = createRun(1);
+    const actor = run.team.find((u) => u.id === "A")!;
+    scene({
+      team: run.team,
+      enemies: run.enemies,
+      text: "Target changed.",
+      event: {
+        kind: "redirect",
+        actorId: actor.id,
+        targetId: run.enemies[1].id,
+        moveName: actor.moves[3].name,
+      },
+    });
+    expect(screen.getByText("Target changed")).toBeInTheDocument();
+    expect(
+      screen.getByText(`Now targeting ${run.enemies[1].name}`)
+    ).toBeInTheDocument();
+    expect(document.querySelector(".pw-flight.redirect")).not.toHaveClass(
+      "contact"
+    );
+    expect(document.querySelector(".pw-theater")).not.toHaveClass(
+      "signature-action"
+    );
+  });
   it("shows exhaustion recoil on the attacker as well as damage on the target", () => {
     const run = createRun(1);
     const actor = run.team.find((u) => u.id === "H")!;

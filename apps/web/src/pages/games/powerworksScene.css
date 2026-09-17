@@ -4,6 +4,7 @@
   flex: 1;
   min-height: 330px;
   isolation: isolate;
+  scroll-margin-top: 12px;
   container-type: size;
   overflow: hidden;
   border: 1px solid var(--line);
@@ -82,17 +83,17 @@
   position: absolute;
   transform: translateX(-50%);
   width: 19%;
-  max-width: 180px;
-  height: 33%;
+  max-width: 220px;
+  height: 37%;
   z-index: 2;
   text-align: center;
 }
 .pw-scene-unit.defender {
-  height: 36%;
+  height: 39%;
 }
 .pw-scene-unit.guardian {
   width: 27%;
-  max-width: 230px;
+  max-width: 290px;
 }
 .pw .pw-scene-character {
   position: relative;
@@ -117,13 +118,6 @@
 }
 .pw-scene-character .pw-portrait {
   align-items: flex-end;
-}
-.pw-scene-character .pw-creature-art {
-  mask-position: center bottom;
-}
-.pw-scene-character svg.pw-machine {
-  height: auto;
-  max-height: 100%;
 }
 .pw-scene-unit.guardian .pw-actor-art {
   inset: -22% -8% 0;
@@ -215,20 +209,6 @@
   font-size: 12px;
   padding: 2px 4px;
   box-shadow: 0 2px 5px #0005;
-}
-.pw-scene-orders {
-  display: inline-flex;
-  gap: 3px;
-  align-items: center;
-  padding: 1px 4px;
-  background: #203c32;
-  border-radius: 3px;
-  font-size: 12px;
-  color: #d8edac;
-}
-.pw-scene-orders svg {
-  width: 12px;
-  height: 12px;
 }
 .pw-scene-preview {
   display: flex;
@@ -903,9 +883,6 @@
   .pw-scene-status .pw-status-badge svg {
     display: none;
   }
-  .pw-scene-orders {
-    font-size: 12px;
-  }
   .pw-scene-preview {
     margin: 2px -4px 0;
     font-size: 12px;
@@ -1128,10 +1105,10 @@
 }
 
 .pw-scene-unit.ally {
-  top: 57%;
+  top: 54%;
 }
 .pw-scene-unit.defender {
-  top: 12%;
+  top: 8%;
 }
 @media (max-width: 600px) {
   .pw-scene-unit.ally {
@@ -1203,4 +1180,253 @@
 
 .pw-theater[data-action="ward"] .pw-scene-unit.performing .pw-actor-art {
   animation: pw-cast var(--action-time) ease-out both;
+}
+
+/* Bound the composition by width, so tall windows do not pull the teams apart. */
+.pw-painted-art {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center bottom;
+}
+.pw-scene-character .pw-actor-art {
+  inset: -6% 0 5%;
+}
+.pw-scene-character .species-avilily {
+  transform: translateY(-8px) rotate(-4deg);
+}
+.pw-scene-character .species-drone {
+  transform: translateY(-10px);
+}
+.pw-scene-unit.guardian .pw-actor-art {
+  inset: -18% -12% 0;
+}
+.pw-scene-unit.selected .pw-painted-art {
+  filter: drop-shadow(0 0 4px #d8edac66);
+}
+.pw-scene-unit.fallen .pw-portrait {
+  transform: none;
+}
+@media (min-width: 601px) {
+  .pw.in-run {
+    height: 100svh;
+  }
+  .pw-battle-shell {
+    max-width: 1320px;
+  }
+  .pw.in-run > .pw-room-bar {
+    margin-top: auto;
+  }
+  .pw-battle-shell:has(.pw-theater) {
+    flex: 0 1 auto;
+    height: min(calc(100svh - 96px), calc(clamp(390px, 60vw, 620px) + 290px));
+    margin-bottom: auto;
+  }
+}
+.pw-squad-number {
+  position: absolute;
+  bottom: 3px;
+  left: 5%;
+  width: 24px;
+  height: 24px;
+  display: grid;
+  place-items: center;
+  color: var(--ink);
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  font-size: 12px;
+}
+.pw .pw-order-link {
+  padding: 0 3px;
+  gap: 2px;
+  min-width: 36px;
+  min-height: 30px;
+  border-radius: 4px;
+  font-size: 12px;
+  background: var(--panel);
+}
+.pw-order-link .pw-portrait.small {
+  width: 20px;
+  height: 24px;
+}
+.pw-target-orders {
+  display: flex;
+  gap: 2px;
+  justify-content: center;
+  margin-top: 3px;
+}
+.pw .pw-order-link.active {
+  border-color: var(--lime);
+}
+.pw-planned-destination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  color: var(--lime);
+  background: var(--panel);
+}
+.pw-planned-destination svg {
+  width: 12px;
+  height: 12px;
+}
+.pw-queued-path {
+  stroke: var(--lime);
+  stroke-width: 2;
+  stroke-dasharray: 5 4;
+  opacity: 0.65;
+}
+.pw-action-banner {
+  position: absolute;
+  bottom: 2px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 12;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 5px 16px;
+  max-width: calc(100% - 24px);
+  width: max-content;
+  background: var(--panel);
+  border-bottom: 2px solid var(--lime);
+  pointer-events: none;
+  box-shadow: 0 5px 20px #08141d88;
+}
+.pw-action-banner small {
+  display: inline;
+  font-size: 12px;
+  color: var(--muted);
+}
+.pw-action-banner strong {
+  display: inline;
+  margin-left: 8px;
+  font: 600 16px/1.2 var(--font-legend);
+}
+.pw-action-banner.blocked {
+  border-color: var(--danger);
+}
+.pw-theater:has(.pw-action-banner) .pw-scene-heading {
+  visibility: hidden;
+}
+.pw-theater[data-action="blocked"] .performing .pw-actor-art {
+  animation: pw-stopped 480ms ease-out both;
+}
+.pw-theater .pw-scene-unit.just-fallen .pw-actor-art {
+  animation: pw-collapse 650ms ease-out both;
+}
+.pw-theater.boss-defeat .pw-environment {
+  filter: saturate(0.3) brightness(0.7);
+  transition: filter 1s;
+}
+.pw-theater.boss-defeat .pw-action-banner {
+  top: 43%;
+  bottom: auto;
+  padding: 14px 25px;
+}
+.pw-theater.boss-defeat .pw-action-banner strong {
+  font-size: 24px;
+}
+.pw-theater.signature-action
+  .pw-scene-unit:not(.performing):not(.receiving)
+  .pw-actor-art {
+  opacity: 0.6;
+}
+.pw-theater.signature-action .performing .pw-ground {
+  box-shadow: 0 0 32px var(--accent);
+}
+@keyframes pw-stopped {
+  25% {
+    transform: translateY(-6px) rotate(-4deg);
+  }
+  55% {
+    transform: translateY(3px) rotate(3deg);
+  }
+  100% {
+    transform: none;
+  }
+}
+@keyframes pw-collapse {
+  0% {
+    opacity: 1;
+    transform: none;
+    filter: brightness(1.6);
+  }
+  35% {
+    opacity: 0.7;
+    transform: translateY(5px) rotate(7deg);
+  }
+  100% {
+    opacity: 0.26;
+    transform: translateY(8px) rotate(12deg);
+    filter: grayscale(1);
+  }
+}
+@media (max-width: 600px) {
+  .pw-scene-unit.ally {
+    top: 59%;
+    height: 30%;
+  }
+  .pw-scene-unit.defender {
+    top: 11%;
+  }
+  .pw-scene-status {
+    gap: 2px;
+  }
+  .pw .pw-order-link {
+    min-height: 24px;
+    min-width: 25px;
+    padding: 0 2px;
+  }
+  .pw-order-link .pw-portrait.small {
+    display: none;
+  }
+  .pw-squad-number {
+    width: 20px;
+    height: 20px;
+    left: 0;
+  }
+  .pw-planned-destination {
+    font-size: 12px;
+  }
+  .pw-action-banner {
+    padding: 4px 9px;
+  }
+  .pw-action-banner strong {
+    font-size: 14px;
+  }
+}
+.pw-theater.playing .pw-scene-unit.ally {
+  top: 51%;
+}
+.pw-theater.paused .pw-flight.redirect {
+  display: block;
+}
+.pw-theater[data-action="redirect"] .receiving .pw-ground {
+  border-color: var(--lime);
+}
+@media (min-width: 601px) and (max-height: 760px) {
+  .pw-theater {
+    min-height: 322px;
+  }
+}
+@media (max-width: 600px) {
+  .pw-theater.playing .pw-scene-unit.ally {
+    top: 53%;
+  }
+  .pw-action-banner small {
+    font-size: 12px;
+  }
+  .pw-action-banner strong {
+    font-size: 12px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pw-theater .pw-scene-unit .pw-actor-art,
+  .pw-theater .pw-environment {
+    animation: none !important;
+    transition: none !important;
+  }
 }

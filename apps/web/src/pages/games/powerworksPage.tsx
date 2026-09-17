@@ -48,7 +48,6 @@ import {
 
 import {
   Portrait,
-  Machine,
   ElementIcon,
   MoveIcon,
   MoveCardContent,
@@ -264,7 +263,10 @@ export default function PowerworksPage() {
     setPanel("inspect");
   }
 
-  function revealControls(selector: string) {
+  function revealControls(
+    selector: string,
+    block: ScrollLogicalPosition = "center"
+  ) {
     if (window.innerWidth > 600) return;
     requestAnimationFrame(() => {
       const element = document.querySelector<HTMLElement>(selector);
@@ -275,7 +277,7 @@ export default function PowerworksPage() {
         (bounds.top < 0 || bounds.bottom > window.innerHeight - 75)
       )
         element.scrollIntoView({
-          block: "center",
+          block,
           behavior: reducedMotion ? "instant" : "smooth",
         });
     });
@@ -358,8 +360,10 @@ export default function PowerworksPage() {
       setHoverTarget(null);
       setError("");
       setNotice(action.kind === "revive" ? "Companion revived." : "");
-      if (action.kind === "advance")
+      if (action.kind === "advance") {
         setSelected(next.team.find((u) => u.hp > 0)?.id || "G");
+        revealControls(".pw-theater", "start");
+      }
     } catch (e) {
       setError((e as Error).message);
     }
@@ -386,6 +390,7 @@ export default function PowerworksPage() {
       setHoverTarget(null);
       setError("");
       setNotice("Orders committed. Resolving the round.");
+      revealControls(".pw-theater", "start");
     } catch (e) {
       setError((e as Error).message);
     }
@@ -544,7 +549,11 @@ export default function PowerworksPage() {
             </small>
           </div>
           <div className="pw-brief-scene">
-            <Machine species="guardian" />
+            <img
+              className="pw-machine pw-painted-art"
+              src="/assets/powerworks/guardian.webp"
+              alt=""
+            />
             <span>CENTRAL GUARDIAN / ONLINE</span>
           </div>
           <ExpeditionTrail room={0} />
@@ -1167,6 +1176,7 @@ export default function PowerworksPage() {
                         setFrames(lastFrames);
                         setFrameIndex(0);
                         setPaused(false);
+                        revealControls(".pw-theater", "start");
                       }}
                     >
                       Replay last round <Play />
