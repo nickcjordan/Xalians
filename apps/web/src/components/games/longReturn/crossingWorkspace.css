@@ -1,7 +1,5 @@
 /* Owns the compact Simple crossing workspace. Expert assignment is untouched. */
-.lr-wizard-resources > span.is-critical, .lr-wizard-resources > span.is-spent { color: #f1be88; }
-.lr-wizard-resources .lr-reserve-warning { grid-column: 1 / -1; font: 600 11px/1.4 var(--g-font-body); color: #f1be88; white-space: nowrap; }
-.lr-wizard-resources > .is-worn .lr-reserve-warning { color: #c7cad0; }
+
 .lr-console:has(.lr-play-shell) .lr-brand-banner { display: none; }
 .lr-console .lr-play-shell.lr-mode-simple { padding-top: 16px; }
 .lr-mode-simple .lr-game-grid { grid-template-columns: minmax(0,1120px); }

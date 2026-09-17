@@ -154,7 +154,7 @@ export const MISSION = {
       id: 'service-throat', title: 'Flooded Service Throat', trackLabel: 'Flooded Entry', deck: 'ACCESS 01',
       description: 'Black water turns beneath a collapsed maintenance gantry. The annex begins on the far side.',
       arrival: 'The exterior seal grinds shut behind the crew. Ahead, black water and a broken gantry are the only ways into the annex.',
-      goal: 'Move all three crew members from the exterior access seal to the intact annex corridor.',
+      goal: 'Get everyone across the flood to the turbine hall.',
       destination: 'the Blind Turbine Hall on the far side of the flood',
       surveyFocus: 'the waterline, hanging gantry, and intake channel',
       relayChannels: ['vibration', 'telepathic'],

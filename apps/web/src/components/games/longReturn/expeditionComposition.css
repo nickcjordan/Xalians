@@ -2,7 +2,7 @@
    Borders separate groups; they are not announcement frames around every fact. */
 .lr-mode-simple .lr-wizard-chrome { box-shadow: none; }
 .lr-mode-simple .lr-wizard-objective { border: 0; background: none; padding: 8px 0; }
-.lr-mode-simple .lr-wizard-resources > span { border: 0; border-right: 1px solid #394238; background: none; }
+
 .lr-mode-simple .lr-simple-question { border: 0; padding-bottom: 14px; }
 .lr-mode-simple .lr-simple-question h3 { font-size: clamp(23px,2.3vw,30px); text-transform: none; letter-spacing: 0; }
 .lr-mode-simple .lr-field-sign { border: 0; background: none; margin: 0 0 12px; padding: 0; }

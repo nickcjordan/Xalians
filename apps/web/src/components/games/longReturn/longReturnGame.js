@@ -19,7 +19,6 @@ import EncounterChoices from './EncounterChoices';
 import { encounterActor } from './encounterActor';
 import EncounterAftermath from './EncounterAftermath';
 import ExtractionChoice from './ExtractionChoice';
-import ExpeditionReserves from './ExpeditionReserves';
 import { bankedSalvage, companionFarewell } from './extractionOutcome';
 import { planStakes } from './planStakes';
 import './routeTradeoff.css';
@@ -262,7 +261,7 @@ function SimpleRunStatus({ crew, strain, pressure, objectiveReached, companion, 
   );
 }
 
-function SimpleWizardChrome({ scene, sceneIndex, crew, strain, pressure, salvage, phase, routeId, choosingLead, simpleCustomizing, soundEnabled, journalCount, journalButtonRef, onToggleSound, onJournal, onHelp }) {
+function SimpleWizardChrome({ scene, sceneIndex, salvage, phase, choosingLead, simpleCustomizing, soundEnabled, journalCount, journalButtonRef, onToggleSound, onJournal, onHelp }) {
   const art = sceneArtFor(scene);
   const decision = phase === 'assign'
     ? simpleCustomizing ? 'Customize crew plan' : choosingLead ? 'Choose who leads' : 'Choose a route'
@@ -270,7 +269,7 @@ function SimpleWizardChrome({ scene, sceneIndex, crew, strain, pressure, salvage
   return <header className="lr-wizard-chrome" tabIndex={-1} data-wizard-focus aria-label={`${scene.title} · ${decision}`} style={{ '--wizard-art': `url(${art.src})`, '--wizard-accent': art.accent, position: 'relative', margin: 0, alignContent: 'start' }}>
     <div className="lr-wizard-topline" style={{ flexWrap: 'wrap' }}>
       <div><small>Scene {sceneIndex + 1} of {MISSION.scenes.length} · {scene.deck}</small><h1>{scene.title}</h1></div>
-      <div className="lr-wizard-tools">
+      <div className="lr-wizard-tools [&>button]:min-h-11! [&>button]:min-w-11!">
         <span className="is-salvage" title="Salvage carried"><BiIcon cls="bi bi-box-seam" /><b>{salvage}</b></span>
         <button type="button" ref={journalButtonRef} onClick={onJournal} title="Review choices and lasting changes" aria-label={`Expedition log, ${journalCount} ${journalCount === 1 ? 'crossing' : 'crossings'} recorded`}><BiIcon cls="bi bi-journal-text" /><span>Log{journalCount ? ` · ${journalCount}` : ''}</span></button>
         <button type="button" aria-label="Expedition sound" aria-pressed={soundEnabled} title={soundEnabled ? 'Mute expedition sounds' : 'Enable expedition sounds'} onClick={onToggleSound}><BiIcon cls={`bi ${soundEnabled ? 'bi-volume-up-fill' : 'bi-volume-mute-fill'}`} /><span>Sound</span></button>
@@ -278,7 +277,6 @@ function SimpleWizardChrome({ scene, sceneIndex, crew, strain, pressure, salvage
       </div>
     </div>
     <div className="lr-wizard-objective"><BiIcon cls="bi bi-crosshair" /><span><small>{phase === 'result' ? 'Reached' : 'Current objective'}</small><strong>{phase === 'result' ? scene.destination : scene.goal}</strong></span></div>
-    <ExpeditionReserves crew={crew} strain={strain} pressure={pressure} />
   </header>;
 }
 
@@ -1314,7 +1312,7 @@ function LongReturnGame() {
             {scene.objective && <span className="lr-objective-badge">PRIMARY OBJECTIVE</span>}
             {scene.optional && <span className="lr-optional-badge">OPTIONAL DEPTH</span>}
           </div>}
-          <ExpeditionSchematic scene={scene} crew={crew} scout={scanScout} helperId={encounterResolution?.helperId} companion={companion} allyWithScout={allyWithScout} position={expeditionPosition({ phase, scout: scanScout, scan, encounterMode: encounterState?.mode, resolution: encounterResolution?.resolution })} routeId={routeId || pendingRouteId || routeVisualId} native={phase === 'encounter' && !encounterResolution || encounterResolution?.resolution === 'unresolved' || encounterResolution?.resolution === 'detour' ? encounterCreature : null} preview={phase === 'assign' && !!(routeId || pendingRouteId || routeVisualId)} runFlags={runFlags} compact />
+          <ExpeditionSchematic scene={scene} crew={crew} scout={scanScout} helperId={encounterResolution?.helperId} companion={companion} allyWithScout={allyWithScout} position={expeditionPosition({ phase, scout: scanScout, scan, encounterMode: encounterState?.mode, resolution: encounterResolution?.resolution })} routeId={routeId || pendingRouteId || routeVisualId} native={phase === 'encounter' && !encounterResolution || encounterResolution?.resolution === 'unresolved' || encounterResolution?.resolution === 'detour' ? encounterCreature : null} preview={phase === 'assign' && !!(routeId || pendingRouteId || routeVisualId)} runFlags={runFlags} compact reserves={guidanceLevel === 'simple' ? { strain, pressure } : undefined} />
           </div>
           {guidanceLevel === 'simple' && <CurrentAction key={`${phase}-${sceneIndex}-${encounterState && encounterState.result ? 'resolved' : 'active'}-${routeId || 'none'}`} {...currentAction} onHelp={openMechanics} />}
           <p className="lr-scene-copy">{scene.description}</p>

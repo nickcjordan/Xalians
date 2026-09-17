@@ -15,7 +15,7 @@ try {
   await page.locator('.lr-setup-settings').getByRole('button', { name: /Simple/ }).click();
   await page.locator('.lr-setup-settings > summary').click();
   await page.getByRole('button', { name: /Seal crew/i }).click();
-  const resources = () => page.locator('.lr-wizard-resources').innerText();
+  const resources = () => page.locator('[data-expedition-reserves]').innerText();
   const initial = await resources();
   const rules = page.getByRole('button', { name: 'Game rules', exact: true });
   await rules.focus();
@@ -55,7 +55,7 @@ try {
   await page.getByRole('button', { name: /Resume expedition/i }).click();
   assert.equal(await resources(), after, 'Resuming preserves the settled resource transaction');
   assert(await page.locator('.lr-simple-result').count());
-  assert.equal(await page.locator('.lr-wizard-chrome').evaluate(el => document.activeElement === el), true);
+  assert.equal(await page.locator('[data-arrival-focus]').evaluate(el => document.activeElement === el), true, 'Resuming a completed crossing returns to its arrival, not the old header');
   assert.deepEqual(errors, []);
   console.log('Keyboard rules dialog, reversible choices, command retention, actual crossing and checkpoint resume passed.');
   await context.close();

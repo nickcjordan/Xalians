@@ -113,8 +113,8 @@ try {
         const choices = workshop.locator('.lr-workshop-options button:not([disabled])');
         if (await choices.count()) {
           let repair = await brace.count() && await brace.isEnabled() ? brace : choices.first();
-          if (process.env.LR_CONSERVE === '1' && Number(await page.locator('.lr-wizard-resources .is-stability b').innerText()) > 3) {
-            const crew = await page.locator('.lr-wizard-resources > span:not(.is-stability)').evaluateAll(elements => elements.map(el=>({name:el.querySelector('small').textContent,energy:Number(el.querySelector('b').textContent)})).sort((a,b)=>a.energy-b.energy));
+          if (process.env.LR_CONSERVE === '1' && Number(await page.locator('[data-expedition-reserves] [data-reserve-stability] b').innerText()) > 3) {
+            const crew = await page.locator('[data-expedition-reserves] [data-reserve-creature]').evaluateAll(elements => elements.map(el=>({name:el.querySelector('small').textContent,energy:Number(el.querySelector('b').textContent)})).sort((a,b)=>a.energy-b.energy));
             for (const member of crew) { const recover=choices.filter({hasText:`Resupply ${member.name}`}); if(await recover.count()) { repair=recover.first(); break; } }
           }
           await click(repair);

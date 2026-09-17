@@ -30,7 +30,7 @@ try {
     await page.waitForFunction(() => document.activeElement?.dataset.creatureId === 'ectoghoul-117');
     assert.deepEqual((await selected()).sort(), ['ectoghoul-117', 'chromocat-088', 'hippochamp-041'].sort());
     await page.getByRole('button', { name: /Seal Crew/ }).click();
-    const names = await page.locator('.lr-wizard-resources small').allTextContents();
+    const names = await page.locator('[data-expedition-reserves] small').allTextContents();
     assert(names.includes('Ectoghoul') && !names.includes('Graviclaw'));
     assert.deepEqual(errors, []);
     await context.close();

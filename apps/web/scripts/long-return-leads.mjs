@@ -12,7 +12,7 @@ try {
   await page.getByRole('button',{name:/Seal Crew/}).click();
   await page.getByRole('button',{name:/Stay together/}).click();
   assert.equal(await page.locator('.lr-lead-options').count(),0);
-  const before=await page.locator('.lr-wizard-resources').innerText();
+  const before=await page.locator('[data-expedition-reserves]').innerText();
   await page.screenshot({path:`${output}/${width}-route.png`,fullPage:true});
   await page.getByRole('button',{name:'Choose crew for: Ride the intake current',exact:true}).click();
   assert.equal(await page.locator('.lr-route-board').count(),0);
@@ -29,7 +29,7 @@ try {
   await page.getByRole('button',{name:'← Change route',exact:true}).click();
   await page.getByRole('button',{name:'Choose crew for: Ride the intake current',exact:true}).click();
   assert.match(await page.locator('.lr-lead-options button[aria-pressed=true]').innerText(),/Chromocat/);
-  assert.equal(await page.locator('.lr-wizard-resources').innerText(),before);
+  assert.equal(await page.locator('[data-expedition-reserves]').innerText(),before);
   await page.screenshot({path:`${output}/${width}-lead.png`,fullPage:true});
   assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),'No horizontal overflow');
   await page.locator('.lr-lead-options button').filter({has:page.getByText('Hippochamp',{exact:true})}).click();
