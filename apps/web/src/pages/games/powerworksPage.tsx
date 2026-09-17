@@ -380,7 +380,7 @@ export default function PowerworksPage() {
         ? "Melee blocked · ranged still works"
         : "Block next melee action";
     const factor = move.kind === "fallback" ? 1 : matchup(active, u);
-    return `${damagePreview(active, move, u)} est. damage · ${
+    return `${damagePreview(active, move, u)} estimated · ${
       factor === 0
         ? "immune"
         : factor > 1
@@ -1095,7 +1095,7 @@ export default function PowerworksPage() {
                         {busy
                           ? "Pause to inspect any action."
                           : ready === living.length
-                          ? "Review the orders below each companion."
+                          ? "Review or edit orders."
                           : `${living.length - ready} ${
                               living.length - ready === 1 ? "order" : "orders"
                             } remaining`}

@@ -69,7 +69,7 @@ The initial icon conversion still gave every detail similar visual weight. Move 
 
 Checked normal/signature/control moves, long names, selection, and the complete planning layout at 1280×720, 390×844, and 375×667. Short phones use compact enemy presentation to preserve both targets and the full command loop. The same resource segment appears in the symbol key. This is a hierarchy correction, not a claim that visual design is permanently finished.
 
-## Whole-experience redesign — 2026-09-17
+## Whole-experience redesign: 2026-09-17
 
 The user's move-card examples were evidence of a wider design problem, not a request to stop at the cards. This pass reassesses the complete Powerworks journey. The design rules are: give each surface one primary decision; use stable locations for comparison; show information where it affects a choice; put optional detail behind a clear control; preserve the player's context through transitions; and test the combined interface at human viewport sizes.
 
@@ -84,9 +84,11 @@ The user's move-card examples were evidence of a wider design problem, not a req
 | Route | Progress nodes open a route overview explaining completed/current/upcoming sectors and expedition resources. Between battles the header opens this overview instead of an irrelevant combat order. |
 | Inspection | Uses the same move-card vocabulary as planning, including a meaningful shield effect rather than a zero-damage display. Active effects have explicit touch-readable explanations. |
 | Record | Rounds are grouped newest first, but actions within a round remain in execution order. Empty arrival groups are simple separators rather than expandable empty records. |
-| Recovery/results | Resource totals and pre-boss restoration are brought forward. Downed companions receive an explicit recovery notice. Details scroll separately from fixed continue/extract/replay actions; extraction explains that the run ends and can be cancelled. |
+| Recovery/results | Resource totals and pre-boss restoration are brought forward. Downed companions receive an explicit recovery notice. Details scroll separately from fixed continue/extract/replay actions; extraction explains that the run ends and can be canceled. |
 | Responsive/accessibility | Desktop, phone and short-phone layouts were evaluated as complete screens. Modal centering, dark scrollbars, larger inspection hit areas, accessible route labels and descriptions, keyboard behavior and reduced-motion support are retained. |
 
 Validation: a fresh browser entry followed by a complete four-sector seed-1 expedition through victory, including a knockout; desktop 1280×720, phone 390×844 and short phone 375×667. Inspected selected/fully queued states, stepped playback, public order, protection details, grouped records, camp, extraction cancellation and the final report. The live pass found and fixed modal placement, enemy-art sizing, context duplication, queued-order disappearance during playback, and recovery actions falling below the viewport. Full web suite: 1,238 tests passed. TypeScript and production build/bundle checks passed; this broader view layer has a measured Powerworks-only budget increase. Combat rules, enemy decisions, rewards and saved command histories are unchanged.
 
 The standard for later changes is the quality of the full player journey, not whether a cited element has been added. Prototype art and real first-time-player feedback remain appropriate future work; this review does not claim that every UX choice is final.
+
+Final readability review: essential labels now have a 12px floor, action instructions use 14px, and compact phones scroll the battle area with a sticky commit control instead of reducing names and orders to microtype. Powerworks uses the shared body and heading font families.

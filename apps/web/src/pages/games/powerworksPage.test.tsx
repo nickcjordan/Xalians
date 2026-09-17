@@ -62,7 +62,7 @@ describe("Powerworks player flow", () => {
     mount();
     fireEvent.click(screen.getByRole("button", { name: "Enter the facility" }));
     fireEvent.click(screen.getByRole("button", { name: /Water stream, / }));
-    expect(screen.getAllByText("12 est. damage · strong")).toHaveLength(2);
+    expect(screen.getAllByText("12 estimated · strong")).toHaveLength(2);
     fireEvent.click(
       screen.getByRole("button", { name: "Target Maintenance crawler M2" })
     );

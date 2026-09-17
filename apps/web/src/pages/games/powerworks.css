@@ -12,7 +12,7 @@
   --room-glow: #467b72;
   color: var(--ink);
   background: #09191e;
-  font: 14px/1.4 Inter, ui-sans-serif, system-ui, sans-serif;
+  font: 14px/1.4 var(--font-body);
   min-height: 100svh;
   isolation: isolate;
 }
@@ -132,14 +132,14 @@
   align-items: center;
   gap: 9px;
   font-weight: 750;
-  font-size: 11px;
+  font-size: 12px;
   letter-spacing: 2px;
 }
 .pw-brand svg {
   width: 14px;
 }
 .pw-game-name {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 650;
   letter-spacing: 1.3px;
   color: #b4c8c3;
@@ -147,7 +147,7 @@
 .pw-game-name > span {
   margin-left: 12px;
   font-weight: 400;
-  font-size: 10px;
+  font-size: 12px;
   letter-spacing: 0;
   color: #849b97;
 }
@@ -180,7 +180,7 @@
   gap: 14px;
 }
 .pw-eyebrow {
-  font-size: 10px;
+  font-size: 12px;
   letter-spacing: 1.6px;
   text-transform: uppercase;
   font-weight: 600;
@@ -204,7 +204,7 @@
   place-items: center;
   border: 1px solid #476065;
   border-radius: 50%;
-  font-size: 11px;
+  font-size: 12px;
   color: #8aa5a4;
 }
 .pw-room-bar nav > button + button:before {
@@ -331,7 +331,7 @@
   align-items: center;
   gap: 6px;
   color: var(--accent);
-  font-size: 11px;
+  font-size: 12px;
   text-transform: capitalize;
 }
 .pw-element svg {
@@ -469,12 +469,12 @@
   font-variant-numeric: tabular-nums;
 }
 .pw-hp-label small {
-  font-size: 10px;
+  font-size: 12px;
   color: #9eb1b1;
   font-weight: 400;
 }
 .pw-hp-label em {
-  font-size: 10px;
+  font-size: 12px;
   font-style: normal;
   color: #ecd398;
   margin-left: 5px;
@@ -485,7 +485,7 @@
   justify-content: center;
   gap: 5px;
   min-height: 27px;
-  font-size: 11px;
+  font-size: 12px;
   line-height: 1.2;
   color: #b1c4bd;
 }
@@ -512,7 +512,7 @@
   align-items: center;
   gap: 4px;
   white-space: nowrap;
-  font-size: 10px;
+  font-size: 12px;
   line-height: 1.2;
   padding: 3px 6px;
   border: 1px solid #78999266;
@@ -566,7 +566,7 @@
   min-height: 34px;
   padding: 6px 12px;
   z-index: 1;
-  font-size: 11px;
+  font-size: 12px;
   color: #a9c0b9;
   text-align: center;
   line-height: 1.3;
@@ -660,7 +660,7 @@
   display: flex;
   align-items: center;
   gap: 4px;
-  font-size: 9px;
+  font-size: 12px;
   text-transform: capitalize;
   color: #b0c4bd;
 }
@@ -691,7 +691,7 @@
 .pw .pw-clear {
   padding: 6px 8px;
   background: transparent;
-  font-size: 11px;
+  font-size: 12px;
 }
 .pw-clear svg {
   width: 12px;
@@ -733,7 +733,7 @@
   align-items: center;
   gap: 4px;
   color: #a2bdbb;
-  font-size: 8px;
+  font-size: 12px;
   letter-spacing: 0.7px;
   text-transform: uppercase;
   min-height: 12px;
@@ -769,7 +769,7 @@
   line-height: 1;
 }
 .pw-card-effect small {
-  font-size: 8px;
+  font-size: 12px;
   text-align: center;
   color: #a9c4b9;
 }
@@ -779,7 +779,7 @@
   align-items: center;
   gap: 7px;
   border-top: 1px solid #52707b44;
-  font-size: 9px;
+  font-size: 12px;
   color: #9db6b1;
 }
 .pw-card-state {
@@ -893,7 +893,7 @@
   font-size: 12px;
   font-weight: 600;
   overflow: hidden;
-  text-overflow: ellipsis;
+  text-overflow: clip;
 }
 .pw-companion-top svg {
   height: 13px;
@@ -940,7 +940,7 @@
   font-size: 12px;
 }
 .pw-companion .pw-hp-label small {
-  font-size: 10px;
+  font-size: 12px;
 }
 .pw-queued {
   display: flex;
@@ -950,7 +950,7 @@
   gap: 0;
   min-height: 35px;
   border-top: 1px solid var(--line);
-  font-size: 11px;
+  font-size: 12px;
   line-height: 1.25;
   color: #95b0a8;
   text-align: left;
@@ -965,15 +965,14 @@
   font-weight: 600;
   color: #d7e6da;
   max-width: 100%;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  white-space: normal;
+  overflow: visible;
 }
 .pw-order-target {
   display: flex;
   align-items: center;
   gap: 4px;
-  font-size: 10px;
+  font-size: 12px;
 }
 .pw-order-target > svg {
   height: 11px;
@@ -1005,7 +1004,7 @@
   pointer-events: none;
 }
 .pw-squad-status .pw-status-badge {
-  font-size: 8px;
+  font-size: 12px;
   padding: 2px 3px;
 }
 .pw-squad-status .pw-status-badge svg {
@@ -1102,7 +1101,7 @@
 }
 .pw-readiness small {
   display: block;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 400;
   color: #99afa5;
 }
@@ -1163,7 +1162,7 @@
 }
 .pw-action-copy .pw-eyebrow {
   display: block;
-  font-size: 9px;
+  font-size: 12px;
 }
 .pw-action-copy > strong {
   display: block;
@@ -1172,7 +1171,7 @@
   color: #e6ecd0;
 }
 .pw-action-copy p {
-  font-size: 11px;
+  font-size: 12px;
   color: #a4bbb0;
   margin-top: 3px;
   line-height: 1.4;
@@ -1182,7 +1181,7 @@
   align-items: center;
   justify-content: center;
   gap: 6px;
-  font-size: 11px;
+  font-size: 12px;
 }
 .pw-playback-controls > span {
   color: #8ca49d;
@@ -1191,7 +1190,7 @@
 }
 .pw .pw-playback-controls button {
   padding: 5px 8px;
-  font-size: 11px;
+  font-size: 12px;
   background: #132930;
 }
 .pw-playback-controls svg {
@@ -1272,11 +1271,11 @@
   flex: none;
 }
 .pw-camp-squad > div > span:last-child {
-  font-size: 11px;
+  font-size: 12px;
   color: #a9c0b3;
 }
 .pw-camp-squad button {
-  font-size: 11px;
+  font-size: 12px;
   padding: 6px 8px;
 }
 .pw-camp-squad button:disabled {
@@ -1325,7 +1324,7 @@
   font-size: 12px;
 }
 .pw-outcome > small {
-  font-size: 11px;
+  font-size: 12px;
   color: #809e95;
 }
 .pw-briefing {
@@ -1369,7 +1368,7 @@
 }
 .pw-briefing small {
   display: block;
-  font-size: 11px;
+  font-size: 12px;
   color: #829e93;
   margin-top: 14px;
 }
@@ -1392,7 +1391,7 @@
   max-height: none;
 }
 .pw-brief-scene > span {
-  font-size: 9px;
+  font-size: 12px;
   letter-spacing: 1.5px;
   color: #b0b894;
   margin-top: 8px;
@@ -1423,7 +1422,7 @@
 .pw-brief-roster > div > span:last-child {
   display: flex;
   gap: 5px;
-  font-size: 11px;
+  font-size: 12px;
   align-self: start;
   text-transform: capitalize;
   color: #9ab6a9;
@@ -1508,7 +1507,7 @@
   align-items: center;
   flex-direction: column;
   gap: 8px;
-  font-size: 11px;
+  font-size: 12px;
 }
 .pw-guide-steps > span > svg {
   width: 24px;
@@ -1543,12 +1542,12 @@
   gap: 15px;
   border-top: 1px solid var(--line);
   padding-top: 15px;
-  font-size: 11px;
+  font-size: 12px;
   color: #8fa99b;
 }
 .pw-run-details button {
   margin-left: auto;
-  font-size: 11px;
+  font-size: 12px;
 }
 .pw-dialog [role="log"] > p {
   border-bottom: 1px solid var(--line);
@@ -1639,7 +1638,7 @@
   border-color: #dbe8b5;
 }
 .pw-turn-list li > span:first-child {
-  font-size: 11px;
+  font-size: 12px;
   color: #91a496;
   width: 12px;
 }
@@ -1656,7 +1655,7 @@
   font-weight: 600;
 }
 .pw-turn-list small {
-  font-size: 10px;
+  font-size: 12px;
   color: #94aca1;
 }
 .pw-turn-list .pw-speed {
@@ -1751,7 +1750,7 @@
     font-size: 12px;
   }
   .pw-order-target {
-    font-size: 11px;
+    font-size: 12px;
   }
 }
 @media (max-width: 850px) {
@@ -1772,7 +1771,7 @@
     width: 10px;
   }
   .pw-command-prompt {
-    font-size: 11px;
+    font-size: 12px;
   }
   .pw-squad {
     gap: 6px;
@@ -1788,7 +1787,7 @@
     padding: 7px;
   }
   .pw-companion-top strong {
-    font-size: 11px;
+    font-size: 12px;
   }
   .pw-card-identity strong {
     font-size: 12px;
@@ -1809,13 +1808,13 @@
     display: none;
   }
   .pw-brand {
-    font-size: 10px;
+    font-size: 12px;
   }
   .pw-tools {
     gap: 4px;
   }
   .pw .pw-tools button {
-    font-size: 11px;
+    font-size: 12px;
     padding: 6px;
   }
   .pw-room-bar {
@@ -1828,7 +1827,7 @@
     margin-top: 3px;
   }
   .pw-room-bar .pw-eyebrow {
-    font-size: 8px;
+    font-size: 12px;
     letter-spacing: 1px;
   }
   .pw-room-bar nav {
@@ -1839,7 +1838,7 @@
   .pw-room-bar nav > button {
     width: 19px;
     height: 19px;
-    font-size: 9px;
+    font-size: 12px;
   }
   .pw-room-bar nav > button + button:before {
     right: 19px;
@@ -1850,7 +1849,7 @@
     height: 10px;
   }
   .pw .pw-round {
-    font-size: 10px;
+    font-size: 12px;
     padding: 4px 5px;
     gap: 1px;
   }
@@ -1882,7 +1881,7 @@
     height: 23px;
   }
   .pw-element {
-    font-size: 9px;
+    font-size: 12px;
     gap: 3px;
   }
   .pw-element svg {
@@ -1913,16 +1912,16 @@
     width: 100%;
   }
   .pw-enemy .pw-hp-label {
-    font-size: 10px;
+    font-size: 12px;
   }
   .pw-enemy .pw-hp-label small {
-    font-size: 9px;
+    font-size: 12px;
   }
   .pw-enemy .pw-hp-label em {
     display: none;
   }
   .pw-preview {
-    font-size: 9px;
+    font-size: 12px;
     min-height: 25px;
     line-height: 1.25;
     gap: 3px;
@@ -1936,7 +1935,7 @@
     gap: 2px;
   }
   .pw-status-badge {
-    font-size: 8px;
+    font-size: 12px;
     padding: 2px 3px;
     gap: 2px;
   }
@@ -1950,17 +1949,17 @@
   }
   .pw-stage-caption {
     min-height: 28px;
-    font-size: 10px;
+    font-size: 12px;
     padding: 4px 6px;
     gap: 5px;
   }
   .pw-stage-caption:not(.targeting) {
-    font-size: 9px;
+    font-size: 12px;
   }
   .pw-stage-caption strong {
     max-width: 155px;
     overflow: hidden;
-    text-overflow: ellipsis;
+    text-overflow: clip;
     white-space: nowrap;
   }
   .pw-reticle {
@@ -1988,7 +1987,7 @@
     font-size: 13px;
   }
   .pw-active-identity > div > span {
-    font-size: 8px;
+    font-size: 12px;
   }
   .pw-command-prompt {
     display: none;
@@ -1998,7 +1997,7 @@
   }
   .pw .pw-clear {
     padding: 5px;
-    font-size: 10px;
+    font-size: 12px;
   }
   .pw-clear > span {
     display: none;
@@ -2021,7 +2020,7 @@
     font-size: 12px;
   }
   .pw-card-category {
-    font-size: 7px;
+    font-size: 12px;
     gap: 3px;
     min-height: 11px;
   }
@@ -2040,10 +2039,10 @@
     height: 10px;
   }
   .pw-card-effect small {
-    font-size: 7px;
+    font-size: 12px;
   }
   .pw-card-resource {
-    font-size: 8px;
+    font-size: 12px;
     gap: 3px;
   }
   .pw-card-charges i {
@@ -2078,7 +2077,7 @@
     display: none;
   }
   .pw-companion-top strong {
-    font-size: 10px;
+    font-size: 12px;
   }
   .pw-ready-check {
     display: block !important;
@@ -2117,33 +2116,33 @@
   }
   .pw-companion .pw-hp-label {
     text-align: center;
-    font-size: 10px;
+    font-size: 12px;
     line-height: 1;
   }
   .pw-companion .pw-hp-label small {
-    font-size: 8px;
+    font-size: 12px;
   }
   .pw-queued {
     min-height: 39px;
     align-items: center;
     justify-content: center;
-    font-size: 9px;
+    font-size: 12px;
     text-align: center;
     padding-top: 3px;
     line-height: 1.15;
   }
   .pw-order-move {
     white-space: normal;
-    font-size: 9px;
+    font-size: 12px;
     line-height: 1.1;
     display: -webkit-box;
-    -webkit-line-clamp: 2;
+    -webkit-line-clamp: unset;
     -webkit-box-orient: vertical;
     overflow: hidden;
     min-height: 10px;
   }
   .pw-order-target {
-    font-size: 8px;
+    font-size: 12px;
     gap: 2px;
   }
   .pw .pw-order-target .small {
@@ -2168,7 +2167,7 @@
     bottom: 41px;
   }
   .pw-squad-status .pw-status-badge {
-    font-size: 7px;
+    font-size: 12px;
     padding: 1px 2px;
   }
   .pw-squad-status .pw-status-badge svg {
@@ -2186,16 +2185,16 @@
     min-width: 34px;
   }
   .pw-order-count small {
-    font-size: 11px;
+    font-size: 12px;
   }
   .pw-readiness {
     gap: 5px;
   }
   .pw-readiness p {
-    font-size: 11px;
+    font-size: 12px;
   }
   .pw-readiness small {
-    font-size: 9px;
+    font-size: 12px;
     max-width: 190px;
     line-height: 1.2;
   }
@@ -2229,23 +2228,23 @@
     font-size: 16px;
   }
   .pw-action-copy .pw-eyebrow {
-    font-size: 8px;
+    font-size: 12px;
   }
   .pw-action-copy p {
-    font-size: 10px;
+    font-size: 12px;
     margin: 4px auto 0;
     max-width: 320px;
   }
   .pw-playback-controls {
     gap: 4px;
-    font-size: 10px;
+    font-size: 12px;
   }
   .pw-playback-controls > span {
     margin-right: 2px;
   }
   .pw .pw-playback-controls button {
     padding: 6px;
-    font-size: 10px;
+    font-size: 12px;
     gap: 3px;
   }
   .pw-playback-controls svg {
@@ -2291,13 +2290,13 @@
     font-size: 12px;
   }
   .pw-camp-squad > div > span:last-child {
-    font-size: 10px;
+    font-size: 12px;
   }
   .pw-camp-stats {
     gap: 6px;
   }
   .pw-camp-stats > span {
-    font-size: 10px;
+    font-size: 12px;
     padding: 8px;
     gap: 4px;
   }
@@ -2308,13 +2307,13 @@
     gap: 7px;
   }
   .pw-outcome-actions > button {
-    font-size: 11px;
+    font-size: 12px;
   }
   .pw-outcome-actions > .pw-primary {
     flex-basis: 100%;
   }
   .pw-outcome > small {
-    font-size: 9px;
+    font-size: 12px;
     text-align: center;
   }
   .pw-briefing {
@@ -2351,7 +2350,7 @@
     font-size: 12px;
   }
   .pw-brief-roster > div > span:last-child {
-    font-size: 10px;
+    font-size: 12px;
   }
   .pw-dialog {
     padding: 18px;
@@ -2368,7 +2367,7 @@
     gap: 12px;
   }
   .pw-symbol-key > span {
-    font-size: 11px;
+    font-size: 12px;
     gap: 7px;
   }
   .pw-guide-grid {
@@ -2376,7 +2375,7 @@
     gap: 20px;
   }
   .pw-guide-steps > span {
-    font-size: 10px;
+    font-size: 12px;
   }
   .pw-inspect-hero {
     gap: 15px;
@@ -2396,7 +2395,7 @@
     flex: none;
   }
   .pw-inspect-hero p {
-    font-size: 11px;
+    font-size: 12px;
     margin: 7px 0;
   }
   .pw-inspect-moves > section {
@@ -2406,7 +2405,7 @@
     font-size: 13px;
   }
   .pw-inspect-moves p {
-    font-size: 11px;
+    font-size: 12px;
   }
 }
 @media (max-width: 600px) and (max-height: 730px) {
@@ -2446,16 +2445,16 @@
   .pw-stage-caption {
     min-height: 22px;
     padding: 3px;
-    font-size: 9px;
+    font-size: 12px;
   }
   .pw-stage-caption:not(.targeting) {
-    font-size: 8px;
+    font-size: 12px;
   }
   .pw-enemy-top {
     height: 20px;
   }
   .pw-enemy h2 {
-    font-size: 11px;
+    font-size: 12px;
     margin-bottom: 3px;
   }
   .pw-enemy .pw-figure {
@@ -2466,7 +2465,7 @@
   }
   .pw-preview {
     min-height: 23px;
-    font-size: 8px;
+    font-size: 12px;
   }
   .pw-action-story {
     min-height: 112px;
@@ -2503,7 +2502,7 @@
   background: #476065;
 }
 .pw-round small {
-  font-size: 10px;
+  font-size: 12px;
   color: #96aea1;
   border-left: 1px solid var(--line);
   padding-left: 7px;
@@ -2539,7 +2538,7 @@
   display: grid;
   place-items: center;
   flex-shrink: 0;
-  font-size: 11px;
+  font-size: 12px;
 }
 .pw-route-list strong {
   font-size: 15px;
@@ -2549,7 +2548,7 @@
   margin: 4px 0 6px;
 }
 .pw-route-list small {
-  font-size: 10px;
+  font-size: 12px;
   color: #bbd2a7;
 }
 .pw-next-sector {
@@ -2588,7 +2587,7 @@
     font-size: 16px;
   }
   .pw-next-sector p {
-    font-size: 11px;
+    font-size: 12px;
   }
 }
 
@@ -2602,7 +2601,7 @@
   height: 92px;
 }
 .pw-inspect-moves > div > p {
-  font-size: 11px;
+  font-size: 12px;
   margin: 6px 4px 8px;
   color: #a8c0b2;
 }
@@ -2631,7 +2630,7 @@
   content: "−";
 }
 .pw-record-groups summary > span {
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 400;
   color: #91aa9c;
   margin-left: auto;
@@ -2658,7 +2657,7 @@
     font-size: 12px;
   }
   .pw-record-groups li {
-    font-size: 11px;
+    font-size: 12px;
   }
 }
 
@@ -2721,7 +2720,7 @@
     flex-basis: 100%;
   }
   .pw-outcome > small {
-    font-size: 9px;
+    font-size: 12px;
     padding-bottom: 8px;
   }
 }
@@ -2730,7 +2729,7 @@
   list-style: decimal;
 }
 .pw-record-arrival {
-  font-size: 10px !important;
+  font-size: 12px !important;
   text-transform: uppercase;
   letter-spacing: 1px;
   color: #8aa897 !important;
@@ -2761,4 +2760,145 @@
 }
 .pw-recovery-notice svg {
   margin-right: 6px;
+}
+
+/* Readable planning takes precedence over squeezing the board into a short viewport. */
+.pw h1,
+.pw h2,
+.pw h3,
+.pw button {
+  font-family: var(--font-legend);
+}
+.pw-command-prompt,
+.pw-stage-caption.targeting,
+.pw-readiness p,
+.pw-commit > .pw-primary,
+.pw-outcome-actions > button {
+  font-size: 14px;
+}
+.pw-card-effect {
+  min-width: 40px;
+}
+.pw .pw-move-card {
+  grid-template-columns: minmax(0, 1fr) 46px;
+  height: 82px;
+}
+.pw-command {
+  height: 146px;
+  min-height: 146px;
+}
+.pw-card-category {
+  letter-spacing: 0;
+}
+.pw-order-move {
+  white-space: normal;
+  overflow: visible;
+}
+.pw-order-target {
+  flex-wrap: wrap;
+}
+.pw-stage-caption strong {
+  overflow: visible;
+  white-space: normal;
+}
+@media (max-width: 600px) {
+  .pw.in-run {
+    height: auto;
+    min-height: 100svh;
+    overflow: visible;
+  }
+  .pw-battle-shell {
+    flex: none;
+    min-height: calc(100svh - 98px);
+  }
+  .pw-stage {
+    min-height: 174px;
+    flex: 1;
+  }
+  .pw-enemy h2 {
+    min-height: 29px;
+  }
+  .pw-preview {
+    min-height: 34px;
+  }
+  .pw-stage-caption {
+    min-height: 35px;
+  }
+  .pw-command {
+    height: 221px;
+    min-height: 221px;
+    padding: 8px;
+  }
+  .pw-command-head {
+    height: 35px;
+    margin-bottom: 7px;
+  }
+  .pw .pw-move-card {
+    height: 77px;
+    grid-template-rows: 1fr 20px;
+  }
+  .pw-card-effect {
+    padding-left: 4px;
+  }
+  .pw-card-identity {
+    gap: 1px;
+  }
+  .pw-squad {
+    height: 167px;
+    min-height: 167px;
+    padding: 7px 2px;
+  }
+  .pw-companion-top {
+    height: 20px;
+  }
+  .pw-companion-top strong {
+    overflow: visible;
+  }
+  .pw-queued {
+    min-height: 60px;
+    line-height: 1.2;
+  }
+  .pw-order-move {
+    display: block;
+    line-height: 1.15;
+  }
+  .pw-order-target {
+    justify-content: center;
+    gap: 2px;
+  }
+  .pw-order-target > svg {
+    display: none;
+  }
+  .pw .pw-order-target .small {
+    display: none;
+  }
+  .pw-squad-status {
+    bottom: 64px;
+    left: 0;
+  }
+  .pw-squad-status .pw-status-badge {
+    white-space: normal;
+  }
+  .pw-commit {
+    position: sticky;
+    bottom: 0;
+    z-index: 5;
+    height: 64px;
+    min-height: 64px;
+    padding: 8px 4px;
+    background: #09191ef5;
+    border-top: 1px solid var(--line);
+  }
+  .pw-readiness small {
+    max-width: 150px;
+  }
+  .pw-action-story {
+    min-height: 150px;
+  }
+  .pw-action-copy p {
+    font-size: 14px;
+  }
+  .pw-outcome {
+    max-height: calc(100svh - 98px);
+  }
 }
