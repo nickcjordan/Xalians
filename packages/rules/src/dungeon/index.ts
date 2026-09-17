@@ -39,13 +39,47 @@ export type Run = {
   xp: number;
   log: string[];
 };
-export type Frame = { team: Unit[]; enemies: Unit[]; text: string };
+export type BattleEvent = {
+  kind:
+    | "round"
+    | "hit"
+    | "snare"
+    | "ward"
+    | "charge"
+    | "blocked"
+    | "redirect"
+    | "result";
+  actorId?: string;
+  targetId?: string;
+  amount?: number;
+  moveName?: string;
+};
+export type Frame = {
+  team: Unit[];
+  enemies: Unit[];
+  text: string;
+  event?: BattleEvent;
+};
 export type Command =
   | { kind: "round"; orders: Record<string, Order> }
   | { kind: "advance" }
   | { kind: "revive"; id: string }
   | { kind: "retreat" };
 export const ROOMS = cards.rooms;
+// Public initiative only. This never reads or exposes committed enemy orders.
+export function initiative(
+  team: Unit[],
+  enemies: Unit[],
+  round: number
+): Unit[] {
+  const all = [...team, ...enemies].filter((u) => u.hp > 0);
+  const tie = [...all].sort((a, b) => a.id.localeCompare(b.id));
+  const shift = (round - 1) % (tie.length || 1);
+  const priority = [...tie.slice(shift), ...tie.slice(0, shift)];
+  return [...all].sort(
+    (a, b) => b.speed - a.speed || priority.indexOf(a) - priority.indexOf(b)
+  );
+}
 const names: Record<string, string> = {
   graviclaw: "Graviclaw",
   avilily: "Avilily",
@@ -197,18 +231,17 @@ export function resolveRound(
   }
   const s = clone(previous);
   const frames: Frame[] = [];
-  const emit = (text: string) => {
+  const emit = (text: string, event?: BattleEvent) => {
     s.log.push(text);
-    frames.push({ text, team: clone(s.team), enemies: clone(s.enemies) });
+    frames.push({
+      text,
+      team: clone(s.team),
+      enemies: clone(s.enemies),
+      event,
+    });
   };
-  emit(`Encounter ${s.room + 1} · Round ${s.round}`);
-  const all = [...standing(s.team), ...standing(s.enemies)];
-  const tie = [...all].sort((a, b) => a.id.localeCompare(b.id));
-  const shift = (s.round - 1) % tie.length;
-  const priority = [...tie.slice(shift), ...tie.slice(0, shift)];
-  const sequence = [...all].sort(
-    (a, b) => b.speed - a.speed || priority.indexOf(a) - priority.indexOf(b)
-  );
+  emit(`Encounter ${s.room + 1} · Round ${s.round}`, { kind: "round" });
+  const sequence = initiative(s.team, s.enemies, s.round);
   for (const u of sequence) {
     if (!standing(s.team).length || !standing(s.enemies).length) break;
     if (u.hp <= 0) continue;
@@ -216,7 +249,11 @@ export function resolveRound(
     const restrained = u.snared > 0;
     u.ward = false;
     if (u.recovery) u.recovery--;
-    if (q.move === -2) emit(`${u.name} cannot act while restrained.`);
+    if (q.move === -2)
+      emit(`${u.name} cannot act while restrained.`, {
+        kind: "blocked",
+        actorId: u.id,
+      });
     else {
       const m = moveAt(u, q.move);
       const release = m.kind === "charge" && !!u.charge;
@@ -230,7 +267,8 @@ export function resolveRound(
             release
               ? " Charge dispersed; recovery begins."
               : " No move use spent."
-          }`
+          }`,
+          { kind: "blocked", actorId: u.id, moveName: m.name }
         );
       } else {
         const targets = u.enemy ? s.team : s.enemies;
@@ -243,7 +281,13 @@ export function resolveRound(
           ).find((t) => t.hp > 0);
           if (target)
             emit(
-              `${u.name} redirects ${m.name} to ${target.name} (${target.id}).`
+              `${u.name} redirects ${m.name} to ${target.name} (${target.id}).`,
+              {
+                kind: "redirect",
+                actorId: u.id,
+                targetId: target.id,
+                moveName: m.name,
+              }
             );
         }
         if (target) {
@@ -251,17 +295,25 @@ export function resolveRound(
           if (m.kind === "ward") {
             u.ward = true;
             emit(
-              `${u.name} activates its shield: incoming damage halved until its next opportunity.`
+              `${u.name} activates its shield: incoming damage halved until its next opportunity.`,
+              { kind: "ward", actorId: u.id, targetId: u.id, moveName: m.name }
             );
           } else if (m.kind === "snare") {
             target.snared = 1;
             emit(
-              `${u.name} uses ${m.name}: ${target.name} restrained through its next opportunity.`
+              `${u.name} uses ${m.name}: ${target.name} restrained through its next opportunity.`,
+              {
+                kind: "snare",
+                actorId: u.id,
+                targetId: target.id,
+                moveName: m.name,
+              }
             );
           } else if (m.kind === "charge" && !release) {
             u.charge = target.id;
             emit(
-              `${u.name} begins ${m.name}. A powerful melee release is coming at its next opportunity.`
+              `${u.name} begins ${m.name}. A powerful melee release is coming at its next opportunity.`,
+              { kind: "charge", actorId: u.id, moveName: m.name }
             );
           } else {
             const damage = damagePreview(u, m, target);
@@ -276,7 +328,14 @@ export function resolveRound(
                 target.id
               }): ${damage} damage.${target.hp === 0 ? " Knocked out." : ""}${
                 m.kind === "fallback" ? " Attacker takes 2 recoil damage." : ""
-              }`
+              }`,
+              {
+                kind: "hit",
+                actorId: u.id,
+                targetId: target.id,
+                amount: damage,
+                moveName: m.name,
+              }
             );
           }
         }

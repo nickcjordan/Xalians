@@ -1,18 +1,30 @@
 import React, { useEffect, useRef, useState } from "react";
+
 import { Link } from "react-router";
+
 import {
   ArrowLeft,
   ArrowRight,
+  BookOpen,
+  ScrollText,
+  Check,
+  X,
+  Play,
+  Pause,
+  SkipForward,
+  RotateCcw,
+  Heart,
   Shield,
   Zap,
+  Link2,
   Crosshair,
-  RotateCcw,
+  Swords,
+  Trophy,
+  Info,
   ChevronRight,
-  BookOpen,
-  Activity,
-  Check,
-  Heart,
+  Crown,
 } from "lucide-react";
+
 import {
   createRun,
   command,
@@ -21,6 +33,8 @@ import {
   legalMoves,
   moveAt,
   damagePreview,
+  matchup,
+  initiative,
   ROOMS,
   type Run,
   type Unit,
@@ -28,162 +42,128 @@ import {
   type Command,
   type Frame,
 } from "@xalians/rules/dungeon";
-import graviclaw from "../../svg/species/graviclaw.svg?url";
-import avilily from "../../svg/species/avilily.svg?url";
-import crystorn from "../../svg/species/crystorn.svg?url";
-import hippochamp from "../../svg/species/hippochamp.svg?url";
+
+import {
+  Portrait,
+  Machine,
+  ElementIcon,
+  MoveIcon,
+  MoveStats,
+  PowerIcon,
+  moveDescription,
+  StatusBadges,
+  Health,
+  shortName,
+} from "./powerworksVisuals";
+
 import "./powerworks.css";
 
-const portraits: Record<string, string> = {
-  graviclaw,
-  avilily,
-  crystorn,
-  hippochamp,
-};
 const SAVE_KEY = "xalians.powerworks.v1";
+
 const roomCopy = [
-  "Cold machinery stirs as your squad crosses the service threshold.",
-  "The checkpoint wakes. Beam emitters cover the armored maintenance units.",
+  "Enter the service tunnels. The maintenance network is still awake.",
+  "Breach the checkpoint. Ranged drones cover the armored units.",
   "Stored energy hums beneath the floor. Watch for a charging capacitor.",
-  "The guardian is online. Disrupt its charge, but prepare for it to rebuild.",
+  "Silence the guardian. Interrupting a charge buys time, but it will rebuild.",
 ];
+
 function boot() {
   try {
-    const saved = localStorage.getItem(SAVE_KEY);
-    if (saved) return { ...restoreRun(saved), started: true };
+    const raw = localStorage.getItem(SAVE_KEY);
+    if (raw) return { ...restoreRun(raw), started: true };
   } catch {
-    /* A stale or unavailable save must not prevent a new run. */
+    /* Fall back safely if storage is corrupt or unavailable. */
   }
-  const seed = Number(
+  const n = Number(
     new URLSearchParams(window.location.search).get("seed") || 1
   );
   return {
-    state: createRun(Number.isFinite(seed) ? seed : 1),
+    state: createRun(Number.isFinite(n) ? n : 1),
     history: [] as Command[],
     started: false,
   };
 }
-function Machine({ species }: { species: string }) {
+
+type Panel = "guide" | "record" | "inspect" | "restart" | null;
+
+function eventLabel(frame: Frame) {
+  const e = frame.event;
+  if (!e) return "Encounter complete";
   return (
-    <svg
-      viewBox="0 0 180 130"
-      className={`pw-machine pw-machine-${species}`}
-      aria-hidden="true"
-    >
-      <ellipse
-        cx="90"
-        cy="119"
-        rx="59"
-        ry="6"
-        fill="currentColor"
-        opacity=".12"
-      />
-      {species === "drone" ? (
-        <>
-          <path d="M12 60 54 44 68 67 50 80ZM168 60 126 44 112 67 130 80Z" />
-          <path d="M64 43 90 29 116 43 116 83 90 99 64 83Z" />
-          <circle cx="90" cy="64" r="13" className="pw-core" />
-          <path d="M90 29V15M81 15H99M79 99 73 113M101 99 107 113" />
-        </>
-      ) : (
-        <>
-          <path d="M48 72 27 83 18 109M132 72 153 83 162 109M61 92 45 108 45 117M119 92 135 108 135 117" />
-          <path
-            d={
-              species === "guardian"
-                ? "M47 36 69 17 112 17 134 36 126 91 108 109 72 109 54 91Z"
-                : "M50 55 69 37 111 37 130 55 124 88 109 102 71 102 56 88Z"
-            }
-          />
-          {species === "shield" ? (
-            <path
-              d="M90 42 116 54 112 82 90 98 68 82 64 54Z"
-              className="pw-core"
-            />
-          ) : (
-            <circle
-              cx="90"
-              cy="68"
-              r={species === "guardian" ? 23 : 15}
-              className="pw-core"
-            />
-          )}
-          {(species === "guardian" || species === "discharge") && (
-            <path d="m95 43-15 26h14l-9 24 23-32H94Z" className="pw-bolt" />
-          )}
-          <path d="M61 45 42 28 32 40M119 45 138 28 148 40" />
-        </>
-      )}
-    </svg>
-  );
-}
-function status(u: Unit) {
-  if (u.hp <= 0) return "OFFLINE";
-  const effects = [
-    u.charge ? "CHARGED — RELEASE NEXT" : "",
-    u.recovery ? "RECOVERING" : "",
-    u.snared ? "RESTRAINED" : "",
-    u.ward ? "SHIELDED · ½ DAMAGE" : "",
-  ].filter(Boolean);
-  return (
-    effects.join(" / ") ||
-    (u.species === "drone"
-      ? "RANGED ATTACKER"
-      : u.species === "shield"
-      ? "SELF-PROTECTION"
-      : "MELEE ATTACKER")
-  );
-}
-function Health({ u }: { u: Unit }) {
-  return (
-    <div className="pw-health">
-      <div>
-        <span>{u.hp === 0 ? "Knocked out" : "Health"}</span>
-        <strong>
-          {u.hp}
-          <small> / {u.max}</small>
-        </strong>
-      </div>
-      <meter min="0" max={u.max} value={u.hp} aria-label={`${u.name} health`} />
-    </div>
-  );
+    {
+      hit: `−${e.amount}`,
+      snare: "Restrained",
+      ward: "Shield up",
+      charge: "Charging",
+      blocked: "Blocked",
+      redirect: "Redirected",
+      round: "Round begins",
+      result: "Complete",
+    } as const
+  )[e.kind];
 }
 
 export default function PowerworksPage() {
   const [initial] = useState(boot);
-  const [run, setRun] = useState<Run>(initial.state);
-  const [history, setHistory] = useState<Command[]>(initial.history);
-  const [started, setStarted] = useState(initial.started);
+
+  const [run, setRun] = useState<Run>(initial.state),
+    [history, setHistory] = useState<Command[]>(initial.history),
+    [started, setStarted] = useState(initial.started);
+
   const [selected, setSelected] = useState(
     initial.state.team.find((u) => u.hp > 0)?.id || "G"
   );
-  const [plans, setPlans] = useState<Record<string, Order>>({});
-  const [pendingMove, setPendingMove] = useState<number | null>(null);
-  const [playback, setPlayback] = useState<Frame[]>([]);
-  const [frameIndex, setFrameIndex] = useState(0);
-  const [error, setError] = useState("");
-  const [restart, setRestart] = useState(false);
-  const [rules, setRules] = useState(false);
-  const [saveFailed, setSaveFailed] = useState(false);
-  const heading = useRef<HTMLHeadingElement>(null);
-  const restartDialog = useRef<HTMLDialogElement>(null);
-  useEffect(() => {
-    if (restart) restartDialog.current?.showModal();
-  }, [restart]);
-  const busy = playback.length > 0;
-  const frame = playback[frameIndex];
-  const team = frame?.team ?? run.team,
+
+  const [plans, setPlans] = useState<Record<string, Order>>({}),
+    [pending, setPending] = useState<number | null>(null),
+    [hoverTarget, setHoverTarget] = useState<string | null>(null);
+
+  const [frames, setFrames] = useState<Frame[]>([]),
+    [frameIndex, setFrameIndex] = useState(0),
+    [paused, setPaused] = useState(false),
+    [speed, setSpeed] = useState(1);
+
+  const [playRound, setPlayRound] = useState(run.round),
+    [turnOrder, setTurnOrder] = useState<Unit[]>([]),
+    [lastFrames, setLastFrames] = useState<Frame[]>([]);
+
+  const [panel, setPanel] = useState<Panel>(null),
+    [inspectId, setInspectId] = useState<string | null>(null),
+    [error, setError] = useState(""),
+    [notice, setNotice] = useState(""),
+    [saveFailed, setSaveFailed] = useState(false);
+
+  const dialog = useRef<HTMLDialogElement>(null),
+    moveButtons = useRef<Array<HTMLButtonElement | null>>([]);
+
+  const busy = frames.length > 0,
+    frame = frames[frameIndex],
+    team = frame?.team ?? run.team,
     enemies = frame?.enemies ?? run.enemies;
+
+  const planning = started && run.phase === "planning" && !busy;
+
   const active =
     run.team.find((u) => u.id === selected && u.hp > 0) ??
     run.team.find((u) => u.hp > 0);
-  const chosenMove =
-    active && pendingMove !== null ? moveAt(active, pendingMove) : null;
-  const living = run.team.filter((u) => u.hp > 0);
-  const ready = living.filter(
-    (u) => plans[u.id] || !legalMoves(u).length
-  ).length;
-  const planning = started && run.phase === "planning" && !busy;
+
+  const move = active && pending !== null ? moveAt(active, pending) : null;
+
+  const living = run.team.filter((u) => u.hp > 0),
+    ready = living.filter((u) => plans[u.id] || !legalMoves(u).length).length;
+
+  const chosenTarget =
+    hoverTarget ?? (active ? plans[active.id]?.target : null);
+
+  const initiativeUnits = busy
+    ? turnOrder
+    : initiative(run.team, run.enemies, run.round);
+
+  const inspect = [...team, ...enemies].find((u) => u.id === inspectId);
+
+  const roomName = ROOMS[run.room].name.replace(/^\d\. /, "");
+
+  const available = active ? legalMoves(active) : [];
 
   useEffect(() => {
     if (!started) return;
@@ -197,616 +177,1251 @@ export default function PowerworksPage() {
       setSaveFailed(true);
     }
   }, [history, run.seed, started]);
+
   useEffect(() => {
-    if (!busy) return;
-    const timer = window.setTimeout(() => {
-      if (frameIndex + 1 < playback.length) setFrameIndex((i) => i + 1);
-      else {
-        setPlayback([]);
-        setFrameIndex(0);
-      }
-    }, 1200);
+    if (panel && !dialog.current?.open) dialog.current?.showModal();
+    else if (!panel && dialog.current?.open) dialog.current.close();
+  }, [panel]);
+
+  useEffect(() => {
+    if (!busy || paused || panel) return;
+    const timer = window.setTimeout(() => nextFrame(), 1500 / speed);
     return () => clearTimeout(timer);
-  }, [busy, frameIndex, playback]);
+  }, [busy, frameIndex, paused, speed, panel]);
+
   useEffect(() => {
-    if (!busy) heading.current?.focus();
-  }, [run.phase, run.room, busy]);
+    const key = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && !panel) {
+        setPending(null);
+        setHoverTarget(null);
+      }
+    };
+    window.addEventListener("keydown", key);
+    return () => window.removeEventListener("keydown", key);
+  }, [panel]);
+
+  useEffect(() => {
+    const old = document.title;
+    document.title = "Powerworks · Xalians";
+    return () => {
+      document.title = old;
+    };
+  }, []);
+
+  function nextFrame() {
+    if (frameIndex + 1 < frames.length) setFrameIndex((i) => i + 1);
+    else finishPlayback();
+  }
+
+  function finishPlayback() {
+    setFrames([]);
+    setFrameIndex(0);
+    setPaused(false);
+  }
+
+  function inspectUnit(id: string) {
+    setInspectId(id);
+    setPanel("inspect");
+  }
+
+  function select(u: Unit, keyboard = false) {
+    if (!planning || u.hp <= 0) return;
+    setSelected(u.id);
+    setPending(plans[u.id]?.move ?? null);
+    setHoverTarget(null);
+    setNotice(
+      `Planning ${u.name}${
+        plans[u.id] ? ". Existing order can be changed." : ". Choose a move."
+      }`
+    );
+    if (keyboard)
+      requestAnimationFrame(() =>
+        moveButtons.current.find((b) => b && !b.disabled)?.focus()
+      );
+  }
+
+  function labelFor(u: Unit) {
+    const peers = run.enemies.filter((e) => e.species === u.species);
+    return (
+      shortName(u) +
+      (u.enemy && peers.length > 1
+        ? ` ${peers.findIndex((e) => e.id === u.id) + 1}`
+        : "")
+    );
+  }
+  function assign(id: string, keyboard = false) {
+    if (!planning || !active || pending === null) return;
+    const next = { ...plans, [active.id]: { move: pending, target: id } };
+    setPlans(next);
+    setHoverTarget(null);
+    const nextUnit = living.find((u) => !next[u.id] && legalMoves(u).length);
+    setNotice(
+      `${active.name} assigned to ${
+        run.enemies.find((u) => u.id === id)?.name
+      }. ${
+        nextUnit
+          ? `Now planning ${nextUnit.name}.`
+          : "All orders ready. Review or commit."
+      }`
+    );
+    setPending(null);
+    if (nextUnit) setSelected(nextUnit.id);
+    if (keyboard)
+      requestAnimationFrame(() => {
+        if (nextUnit)
+          moveButtons.current.find((b) => b && !b.disabled)?.focus();
+        else
+          document
+            .querySelector<HTMLButtonElement>(".pw-commit .pw-primary")
+            ?.focus();
+      });
+  }
+
+  function clearOrder() {
+    if (!active) return;
+    setPlans((p) => {
+      const n = { ...p };
+      delete n[active.id];
+      return n;
+    });
+    setPending(null);
+    setHoverTarget(null);
+    setNotice(`${active.name}'s order cleared.`);
+  }
 
   function apply(action: Command) {
     try {
-      setRun(command(run, action));
+      const next = command(run, action);
+      setRun(next);
       setHistory((h) => [...h, action]);
       setPlans({});
-      setPendingMove(null);
+      setPending(null);
+      setHoverTarget(null);
       setError("");
+      setNotice(action.kind === "revive" ? "Companion revived." : "");
+      if (action.kind === "advance")
+        setSelected(next.team.find((u) => u.hp > 0)?.id || "G");
     } catch (e) {
       setError((e as Error).message);
     }
   }
-  function target(id: string) {
-    if (!active || pendingMove === null || !planning) return;
-    const next = { ...plans, [active.id]: { move: pendingMove, target: id } };
-    setPlans(next);
-    setPendingMove(null);
-    const unplanned = living.find((u) => !next[u.id] && legalMoves(u).length);
-    if (unplanned) setSelected(unplanned.id);
-  }
+
   function commit() {
     const orders = { ...plans };
-    for (const u of living)
+    living.forEach((u) => {
       if (!legalMoves(u).length) orders[u.id] = { move: -2, target: "" };
+    });
     try {
       const result = resolveRound(run, orders);
+      setPlayRound(run.round);
+      setTurnOrder(initiative(run.team, run.enemies, run.round));
       setRun(result.state);
       setHistory((h) => [...h, { kind: "round", orders }]);
+      setLastFrames(result.frames);
+      setFrames(result.frames);
+      setFrameIndex(0);
+      setPaused(false);
+      setPending(null);
       setPlans({});
-      setPendingMove(null);
+      setHoverTarget(null);
       setError("");
-      if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-        setPlayback(result.frames);
-        setFrameIndex(0);
-      }
+      setNotice("Orders committed. Resolving the round.");
     } catch (e) {
       setError((e as Error).message);
     }
   }
+
   function fresh(seed: number) {
     setRun(createRun(seed));
     setHistory([]);
-    setPlans({});
-    setPendingMove(null);
-    setPlayback([]);
-    setRestart(false);
     setStarted(true);
     setSelected("G");
+    setPlans({});
+    setPending(null);
+    setFrames([]);
+    setLastFrames([]);
+    setPanel(null);
     setError("");
+    setNotice("New expedition ready.");
   }
 
+  function previewText(u: Unit) {
+    if (!move || !active) return "";
+    if (move.kind === "snare")
+      return u.moves.some((m) => m.range === "ranged")
+        ? "Melee blocked · ranged still works"
+        : "Block next melee action";
+    const factor = move.kind === "fallback" ? 1 : matchup(active, u);
+    return `${damagePreview(active, move, u)} est. damage · ${
+      factor === 0
+        ? "immune"
+        : factor > 1
+        ? "strong"
+        : factor < 1
+        ? "resisted"
+        : "neutral"
+    }${u.ward ? " · shielded" : ""}`;
+  }
+
+  function affected(u: Unit) {
+    return (
+      frame?.event?.targetId === u.id ||
+      (frame?.event?.actorId === u.id &&
+        ["blocked", "charge"].includes(frame.event.kind))
+    );
+  }
+
+  const phaseTitle =
+    run.phase === "camp"
+      ? "Sector secured"
+      : run.phase === "won"
+      ? "Powerworks silenced"
+      : run.phase === "lost"
+      ? "Expedition ended"
+      : "Squad extracted";
+
   return (
-    <main className="pw" id="main">
+    <main className={`pw ${started ? "in-run" : ""}`} id="main">
       <header className="pw-top">
-        <Link to="/" className="pw-back">
-          <ArrowLeft size={16} /> XALIANS
+        <Link to="/" className="pw-brand">
+          <ArrowLeft size={16} />
+          <span>XALIANS</span>
         </Link>
-        <span className="pw-top-label">
-          DUNGEON FIELD TEST <span className="pw-dot" />
-        </span>
-        <button onClick={() => setRules((v) => !v)} aria-expanded={rules}>
-          <BookOpen size={16} /> Field guide
-        </button>
-      </header>
-      <div className="pw-shell">
-        <div className="pw-title">
-          <div>
-            <p className="pw-kicker">
-              EXPEDITION 001 / AUTOMATED DEFENSE NETWORK
-            </p>
-            <h1>The Dormant Powerworks</h1>
-            <p>Four companions. A sleeping facility. One way through.</p>
-          </div>
-          <span className="pw-prototype">PLAYABLE PROTOTYPE</span>
+        <div className="pw-game-name">
+          THE DORMANT POWERWORKS <span>Prototype</span>
         </div>
-        {rules && (
-          <section className="pw-guide">
-            <h2>Field guide</h2>
+        <div className="pw-tools">
+          <button aria-label="Field guide" onClick={() => setPanel("guide")}>
+            <BookOpen />
+            <span>Guide</span>
+          </button>
+          {started && (
+            <button
+              aria-label="Combat record"
+              onClick={() => setPanel("record")}
+            >
+              <ScrollText />
+              <span>Record</span>
+            </button>
+          )}
+        </div>
+      </header>
+
+      {!started ? (
+        <section className="pw-briefing">
+          <div>
+            <p className="pw-eyebrow">A SQUAD EXPEDITION</p>
+            <h1>
+              The Dormant
+              <br />
+              Powerworks
+            </h1>
+            <p>The facility has been abandoned. Its defenses haven’t.</p>
             <p>
-              Choose a companion, choose its move, then select an enemy. Commit
-              once every standing companion has an order. All actions resolve
-              fastest first; enemy orders stay hidden.
+              Lead four companions through four encounters. Plan their moves
+              together, read the enemy’s behavior, and reach the central
+              guardian.
             </p>
-            <div className="pw-guide-grid">
-              <p>
-                <strong>Restraint ≠ stun</strong>
-                <br />
-                Melee is blocked through the next opportunity. Ranged actions
-                work. Blocked moves keep their uses.
-              </p>
-              <p>
-                <strong>Commit carefully</strong>
-                <br />
-                If a target falls, the same move redirects to the next living
-                enemy in row order. Damage previews reflect current defenses,
-                which can change.
-              </p>
-              <p>
-                <strong>Limited moves</strong>
-                <br />
-                Three uses per secondary, one per signature, refreshed each
-                encounter. After all damaging moves run out, Desperate strike
-                deals 3 neutral damage with 2 recoil.
-              </p>
-              <p>
-                <strong>Survive the run</strong>
-                <br />
-                Health and knockouts carry forward. One half-health revival
-                between fights. A station before the boss restores 10 HP to
-                standing companions.
-              </p>
-              <p>
-                <strong>Read the charge</strong>
-                <br />
-                Charge → melee release → ordinary recovery attack. Restraint
-                stops the release, but the enemy can charge again after
-                recovery.
-              </p>
-              <p>
-                <strong>Practice expedition</strong>
-                <br />
-                Temporary cards and numbers. XP is a run score, not an account
-                reward. No tokens are awarded. This browser saves your run after
-                each round.
-              </p>
+            <div className="pw-brief-facts">
+              <span>
+                <Shield />4 encounters
+              </span>
+              <span>
+                <Heart />1 revival
+              </span>
+              <span>
+                <Crown />1 guardian
+              </span>
             </div>
-          </section>
-        )}
-        {!started ? (
-          <section className="pw-briefing">
-            <div>
-              <p className="pw-kicker">MISSION BRIEFING</p>
-              <h2>Wake the wrong machines.</h2>
-              <p>
-                Cross the service entrance, breach the checkpoint, and shut down
-                the central guardian. Your squad’s health carries from one
-                battle to the next.
-              </p>
-              <div className="pw-brief-stats">
+            <button className="pw-primary" onClick={() => setStarted(true)}>
+              Enter the facility <ArrowRight />
+            </button>
+            <small>
+              Practice expedition · No account or real rewards required
+            </small>
+          </div>
+          <div className="pw-brief-scene">
+            <Machine species="guardian" />
+            <span>CENTRAL GUARDIAN / ONLINE</span>
+          </div>
+          <div className="pw-brief-roster">
+            {run.team.map((u) => (
+              <div key={u.id} className={`el-${u.element}`}>
+                <Portrait u={u} />
+                <strong>{u.name}</strong>
                 <span>
-                  <strong>4</strong> encounters
-                </span>
-                <span>
-                  <strong>4</strong> companions
-                </span>
-                <span>
-                  <strong>1</strong> emergency revival
+                  <ElementIcon element={u.element} />
+                  {u.element}
                 </span>
               </div>
-              <button className="pw-primary" onClick={() => setStarted(true)}>
-                Enter the facility <ArrowRight size={18} />
-              </button>
-              <p className="pw-fine">
-                No account needed · Local practice rewards · Progress saved in
-                this browser
-              </p>
+            ))}
+          </div>
+        </section>
+      ) : (
+        <>
+          <div className="pw-room-bar">
+            <div>
+              <span className="pw-eyebrow">SECTOR {run.room + 1}/4</span>
+              <h1>{roomName}</h1>
             </div>
-            <div className="pw-brief-art">
-              <Machine species="guardian" />
-              <span>CORE GUARDIAN / STATUS UNKNOWN</span>
-            </div>
-            <div className="pw-roster-preview">
-              {run.team.map((u) => (
-                <div key={u.id}>
-                  <img src={portraits[u.species]} alt="" />
-                  <strong>{u.name}</strong>
-                  <span>
-                    {u.element} · {u.max} HP
-                  </span>
-                </div>
-              ))}
-            </div>
-          </section>
-        ) : (
-          <>
-            <nav className="pw-route" aria-label="Dungeon progress">
-              {ROOMS.map((room, i) => (
-                <div
-                  key={room.name}
+            <nav aria-label="Dungeon progress">
+              {ROOMS.map((r, i) => (
+                <span
+                  key={r.name}
                   className={
-                    i === run.room ? "current" : i < run.room ? "complete" : ""
+                    i === run.room ? "current" : i < run.room ? "cleared" : ""
                   }
                   aria-current={i === run.room ? "step" : undefined}
+                  title={r.name}
                 >
-                  <span>
-                    {i < run.room ? <Check size={14} /> : `0${i + 1}`}
-                  </span>
-                  {room.name.replace(/^\d\. /, "")}
-                  <ChevronRight size={14} />
-                </div>
+                  {i < run.room ? <Check /> : i + 1}
+                </span>
               ))}
             </nav>
-            <div className="pw-layout">
-              <div className="pw-main">
-                <section className="pw-arena" aria-label="Battlefield">
-                  <div className="pw-room-head">
-                    <div>
-                      <p className="pw-kicker">
-                        SECTOR 0{run.room + 1} ·{" "}
-                        {busy
-                          ? "RESOLVING"
-                          : run.phase === "planning"
-                          ? `ROUND ${run.round}`
-                          : "ENCOUNTER COMPLETE"}
-                      </p>
-                      <h2 ref={heading} tabIndex={-1}>
-                        {ROOMS[run.room].name.replace(/^\d\. /, "")}
-                      </h2>
-                      <p>{roomCopy[run.room]}</p>
-                    </div>
-                    <span className="pw-round-icon">
-                      <Zap />
-                    </span>
-                  </div>
-                  <div className="pw-side-label">
-                    <span>FACILITY DEFENSES</span>
-                    <span>
-                      {chosenMove ? "SELECT A TARGET BELOW" : "ORDERS HIDDEN"}
-                    </span>
-                  </div>
-                  <div className="pw-enemies">
-                    {enemies.map((u) => (
-                      <button
-                        key={u.id}
-                        className={`pw-enemy ${u.hp <= 0 ? "pw-down" : ""} ${
-                          u.charge ? "pw-charging" : ""
-                        } ${chosenMove && u.hp > 0 ? "pw-targetable" : ""}`}
-                        onClick={() => target(u.id)}
-                        disabled={!planning || !chosenMove || u.hp <= 0}
-                        aria-label={`Target ${u.name} ${u.id}`}
-                      >
-                        <div className="pw-unit-top">
-                          <span>
-                            {u.element.toUpperCase()} / {u.id}
-                          </span>
-                          <span>SPD {u.speed}</span>
-                        </div>
-                        <Machine species={u.species} />
-                        <h3>{u.name}</h3>
-                        <div className="pw-status">{status(u)}</div>
-                        <Health u={u} />
-                        {chosenMove && u.hp > 0 && (
-                          <span className="pw-damage">
-                            {chosenMove.kind === "snare"
-                              ? "Restrain melee · 1 opportunity"
-                              : `${damagePreview(
-                                  active!,
-                                  chosenMove,
-                                  u
-                                )} damage now`}{" "}
-                            <Crosshair size={14} />
-                          </span>
-                        )}
-                      </button>
-                    ))}
-                  </div>
-                  <div className="pw-divider">
-                    <span /> <Shield size={17} /> <span />
-                  </div>
-                  <div className="pw-side-label">
-                    <span>YOUR SQUAD</span>
-                    <span>FASTEST ACTION FIRST</span>
-                  </div>
-                  <div className="pw-squad">
-                    {team.map((u) => (
-                      <button
-                        key={u.id}
-                        onClick={() => {
-                          setSelected(u.id);
-                          setPendingMove(plans[u.id]?.move ?? null);
-                        }}
-                        disabled={!planning || u.hp <= 0}
-                        aria-pressed={active?.id === u.id}
-                        className={`pw-companion ${
-                          active?.id === u.id && planning ? "pw-selected" : ""
-                        } ${u.hp <= 0 ? "pw-down" : ""}`}
-                      >
-                        <div className="pw-unit-top">
-                          <span>{u.element}</span>
-                          <span>SPD {u.speed}</span>
-                        </div>
-                        <img src={portraits[u.species]} alt="" />
-                        <h3>{u.name}</h3>
-                        <Health u={u} />
-                        <span className="pw-order">
-                          {u.hp <= 0
-                            ? "Knocked out"
-                            : u.snared
-                            ? "Restrained · ranged only"
-                            : plans[u.id]
-                            ? `${moveAt(u, plans[u.id].move).name} → ${
-                                plans[u.id].target
-                              }`
-                            : planning
-                            ? "Choose an order"
-                            : "Standing by"}
-                        </span>
-                      </button>
-                    ))}
-                  </div>
-                </section>
-                {busy ? (
-                  <section className="pw-command pw-playback">
-                    <Activity size={20} />
-                    <p aria-live="polite">{frame.text}</p>
-                    <button
-                      onClick={() => {
-                        setPlayback([]);
-                        setFrameIndex(0);
-                      }}
-                    >
-                      Show round result
-                    </button>
-                  </section>
-                ) : run.phase === "planning" && active ? (
-                  <section className="pw-command">
-                    <div className="pw-command-head">
-                      <div>
-                        <p className="pw-kicker">
-                          {pendingMove === null
-                            ? "01 / CHOOSE MOVE"
-                            : "02 / CHOOSE TARGET"}
-                        </p>
-                        <h2>
-                          {active.name}
-                          <span> · {active.element}</span>
-                        </h2>
-                      </div>
-                      <span>
-                        {ready}/{living.length} orders ready
-                      </span>
-                    </div>
-                    <div className="pw-moves">
-                      {[
-                        ...active.moves.map((_, i) => i),
-                        ...(legalMoves(active).includes(-1) ? [-1] : []),
-                      ].map((i) => {
-                        const m = moveAt(active, i),
-                          legal = legalMoves(active).includes(i);
-                        return (
-                          <button
-                            key={i}
-                            onClick={() => setPendingMove(i)}
-                            disabled={!legal}
-                            aria-pressed={pendingMove === i}
-                          >
-                            <span className="pw-move-kind">
-                              {i === 3
-                                ? "SIGNATURE"
-                                : i === -1
-                                ? "LAST RESORT"
-                                : m.range.toUpperCase()}
-                              <span>
-                                {i === -1
-                                  ? "∞"
-                                  : `${active.uses[i]}/${i === 3 ? 1 : 3}`}
-                              </span>
+            <span className="pw-round">
+              {busy
+                ? `Round ${playRound} · Resolving`
+                : run.phase === "planning"
+                ? `Round ${run.round}`
+                : "Encounter complete"}
+            </span>
+          </div>
+
+          <div className="pw-battle-shell">
+            {run.phase === "planning" || busy ? (
+              <>
+                <section className="pw-stage" aria-label="Enemy battlefield">
+                  <div className="pw-enemy-row">
+                    {enemies.map((u) => {
+                      const estimate =
+                        move &&
+                        active &&
+                        u.hp > 0 &&
+                        ["hit", "fallback"].includes(move.kind)
+                          ? damagePreview(active, move, u)
+                          : 0;
+
+                      const queued = Object.entries(plans)
+                        .filter(([, q]) => q.target === u.id)
+                        .map(([id]) => run.team.find((p) => p.id === id)!);
+
+                      return (
+                        <div
+                          key={u.id}
+                          className={`pw-enemy el-${u.element} ${
+                            u.species === "guardian" ? "boss" : ""
+                          } ${u.hp <= 0 ? "down" : ""} ${
+                            u.charge ? "charged" : ""
+                          } ${u.snared ? "snared" : ""} ${
+                            u.ward ? "warded" : ""
+                          } ${chosenTarget === u.id ? "assigned-target" : ""} ${
+                            frame?.event?.actorId === u.id ? "acting" : ""
+                          } ${affected(u) ? "affected" : ""}`}
+                        >
+                          <div className="pw-enemy-top">
+                            <span
+                              className="pw-element"
+                              title={`${u.element} element`}
+                            >
+                              <ElementIcon element={u.element} />
+                              <span>{u.element}</span>
                             </span>
-                            <strong>{m.name}</strong>
-                            <small>
-                              {m.kind === "snare"
-                                ? "Block melee · 1 opportunity"
-                                : `${m.damage} base damage · ${m.range}`}
-                            </small>
-                            {!legal && (
-                              <small>
-                                {active.uses[i] === 0
-                                  ? "Exhausted this encounter"
-                                  : "Blocked by restraint"}
-                              </small>
-                            )}
-                          </button>
-                        );
-                      })}
-                    </div>
-                    {chosenMove && (
-                      <div
-                        className="pw-quick-targets"
-                        aria-label="Choose target"
-                      >
-                        {run.enemies
-                          .filter((u) => u.hp > 0)
-                          .map((u) => (
-                            <button key={u.id} onClick={() => target(u.id)}>
-                              <Crosshair size={14} />
-                              <span>
-                                {u.name} ({u.id})
-                                <small>
-                                  {chosenMove.kind === "snare"
-                                    ? u.species === "drone"
-                                      ? "Ranged attack still works"
-                                      : "Block next melee opportunity"
-                                    : `${damagePreview(
-                                        active!,
-                                        chosenMove,
-                                        u
-                                      )} damage · ${u.hp} HP remaining`}
-                                </small>
-                              </span>
+                            <button
+                              className="pw-info"
+                              aria-label={`Inspect ${u.name} ${u.id}`}
+                              onClick={() => inspectUnit(u.id)}
+                            >
+                              <Info />
                             </button>
-                          ))}
-                      </div>
-                    )}
-                    <div className="pw-commit">
-                      <p>
-                        {pendingMove !== null
-                          ? "Choose a target here or on the battlefield."
-                          : ready === living.length
-                          ? "All orders ready. You can revise them before committing."
-                          : "Select a move, then an enemy. Plan for every standing companion."}
-                      </p>
-                      <button
-                        className="pw-primary"
-                        disabled={ready !== living.length}
-                        onClick={commit}
-                      >
-                        Commit round <ArrowRight size={17} />
-                      </button>
-                    </div>
-                  </section>
-                ) : (
-                  <section className="pw-command pw-result">
-                    <p className="pw-kicker">
-                      {run.phase === "camp"
-                        ? "A MOMENT TO REGROUP"
-                        : "EXPEDITION REPORT"}
-                    </p>
-                    <h2>
-                      {run.phase === "camp"
-                        ? "Sector secured."
-                        : run.phase === "won"
-                        ? "Powerworks silenced."
-                        : run.phase === "lost"
-                        ? "The squad has fallen."
-                        : "Safely extracted."}
-                    </h2>
-                    <p>
-                      {run.phase === "camp"
-                        ? "Health carries forward. All move uses will refresh in the next encounter."
-                        : `${run.xp} practice XP earned per companion. No account rewards have been issued.`}
-                    </p>
-                    {run.phase === "camp" && (
-                      <>
-                        <div className="pw-revive">
-                          {run.team
-                            .filter((u) => u.hp === 0)
-                            .map((u) => (
-                              <button
-                                key={u.id}
-                                disabled={!run.revival}
-                                onClick={() =>
-                                  apply({ kind: "revive", id: u.id })
-                                }
-                              >
-                                <Heart size={16} /> Revive {u.name} ·{" "}
-                                {Math.ceil(u.max / 2)} HP
-                              </button>
-                            ))}
-                        </div>
-                        {run.room === 2 && (
-                          <p className="pw-aid">
-                            Recovery station ahead: +10 HP to each standing
-                            companion.
-                          </p>
-                        )}
-                        <div className="pw-result-actions">
+                          </div>
+
                           <button
-                            className="pw-primary"
-                            onClick={() => apply({ kind: "advance" })}
+                            className={`pw-target ${
+                              planning && move && u.hp > 0 ? "valid-target" : ""
+                            }`}
+                            aria-label={`Target ${u.name} ${u.id}`}
+                            disabled={!planning || u.hp <= 0}
+                            onClick={(e) =>
+                              move
+                                ? assign(u.id, e.detail === 0)
+                                : inspectUnit(u.id)
+                            }
+                            onMouseEnter={() => setHoverTarget(u.id)}
+                            onMouseLeave={() => setHoverTarget(null)}
+                            onFocus={() => setHoverTarget(u.id)}
+                            onBlur={() => setHoverTarget(null)}
                           >
-                            Enter{" "}
-                            {ROOMS[run.room + 1].name.replace(/^\d\. /, "")}{" "}
-                            <ArrowRight size={16} />
+                            <div className="pw-figure">
+                              <Portrait u={u} />
+                              {planning && move && u.hp > 0 && (
+                                <Crosshair className="pw-reticle" />
+                              )}
+                              {affected(u) && (
+                                <span
+                                  key={`${frameIndex}-${u.id}`}
+                                  className={`pw-float ${frame.event?.kind}`}
+                                  role="status"
+                                >
+                                  {eventLabel(frame)}
+                                </span>
+                              )}
+                            </div>
+
+                            <h2>{labelFor(u)}</h2>
+                            <Health u={u} estimate={estimate} />
+
+                            <span className="pw-preview">
+                              {move && u.hp > 0
+                                ? previewText(u)
+                                : u.hp <= 0
+                                ? "Defeated"
+                                : u.species === "drone"
+                                ? "Ranged defense"
+                                : u.species === "shield"
+                                ? "Armored defense"
+                                : u.species === "guardian"
+                                ? "Central guardian"
+                                : "Melee defense"}
+                            </span>
                           </button>
-                          <button onClick={() => apply({ kind: "retreat" })}>
-                            Extract with {run.xp} XP
-                          </button>
+
+                          <div className="pw-statuses">
+                            <StatusBadges u={u} />
+                            {!u.charge &&
+                              !u.snared &&
+                              !u.ward &&
+                              !u.recovery &&
+                              u.hp > 0 &&
+                              queued.map((p) => (
+                                <span
+                                  key={p.id}
+                                  className="pw-target-marker"
+                                  title={`${p.name} has an order targeting this enemy`}
+                                >
+                                  <Portrait u={p} small />
+                                  <Check />
+                                </span>
+                              ))}
+                          </div>
                         </div>
-                      </>
-                    )}
-                    {run.phase !== "camp" && (
-                      <button
-                        className="pw-primary"
-                        onClick={() => fresh((run.seed + 1) >>> 0)}
-                      >
-                        Start another expedition <ArrowRight size={16} />
-                      </button>
-                    )}
-                  </section>
-                )}
-                {error && (
-                  <p role="alert" className="pw-error">
-                    {error}
-                  </p>
-                )}
-              </div>
-              <aside className="pw-sidebar">
-                <section className="pw-run-info">
-                  <p className="pw-kicker">EXPEDITION STATUS</p>
-                  <div>
-                    <span>Practice XP / companion</span>
-                    <strong>{busy ? "…" : run.xp}</strong>
+                      );
+                    })}
                   </div>
-                  <div>
-                    <span>Emergency revival</span>
-                    <strong>{run.revival} / 1</strong>
-                  </div>
-                  <div>
-                    <span>Run seed</span>
-                    <strong>{run.seed}</strong>
-                  </div>
-                  <p>
-                    {saveFailed
-                      ? "Browser storage unavailable. Keep this tab open."
-                      : "Progress saved on this browser."}
+                  <p className="pw-stage-hint">
+                    {busy
+                      ? ""
+                      : move
+                      ? "Choose a highlighted enemy. Previews assume its current defenses."
+                      : roomCopy[run.room]}
                   </p>
                 </section>
-                <details className="pw-intel">
-                  <summary>Enemy field notes</summary>
-                  {run.enemies.map((u) => (
-                    <div key={u.id}>
-                      <strong>
-                        {u.name} ({u.id})
-                      </strong>
-                      {u.moves.map((m) => (
-                        <p key={m.name}>
-                          {m.name}:{" "}
-                          {m.kind === "ward"
-                            ? "halves damage until next opportunity"
-                            : `${m.damage} base damage · ${m.range}${
-                                m.kind === "charge"
-                                  ? " · requires a charge action first"
-                                  : ""
-                              }`}
-                        </p>
-                      ))}
-                    </div>
-                  ))}
-                </details>
-                <section className="pw-log">
-                  <h2>
-                    <Activity size={16} /> Combat record
-                  </h2>
-                  <div role="log" aria-label="Combat record">
-                    {(busy
-                      ? playback.slice(0, frameIndex + 1).map((f) => f.text)
-                      : run.log
-                    )
-                      .slice(-45)
-                      .reverse()
-                      .map((line, i) => (
-                        <p
-                          key={`${i}-${line}`}
-                          className={
-                            line.startsWith("Encounter ") ? "pw-log-round" : ""
+
+                <section
+                  className="pw-initiative"
+                  aria-label="Public action order"
+                >
+                  <span>
+                    <ChevronRight />
+                    ACTION ORDER
+                  </span>
+                  <div>
+                    {initiativeUnits.map((u, i) => (
+                      <React.Fragment key={u.id}>
+                        <button
+                          className={`${u.enemy ? "enemy" : ""} ${
+                            frame?.event?.actorId === u.id ? "current" : ""
+                          } ${selected === u.id ? "selected" : ""}`}
+                          onClick={() =>
+                            u.enemy || busy ? inspectUnit(u.id) : select(u)
+                          }
+                          aria-label={`${i + 1}. ${u.name}, speed ${u.speed}`}
+                          title={`${u.name} · Speed ${u.speed}`}
+                        >
+                          <Portrait u={u} small />
+                          <small>{u.speed}</small>
+                        </button>
+                        {i < initiativeUnits.length - 1 && (
+                          <ChevronRight className="pw-order-arrow" />
+                        )}
+                      </React.Fragment>
+                    ))}
+                  </div>
+                </section>
+
+                <section
+                  className={`pw-command ${busy ? "resolving" : ""}`}
+                  aria-label={busy ? "Round playback" : "Move selection"}
+                >
+                  {busy ? (
+                    <>
+                      <div className="pw-action-story" aria-live="polite">
+                        <span className="pw-event-icon">
+                          {frame.event?.kind === "blocked" ? (
+                            <Shield />
+                          ) : frame.event?.kind === "charge" ? (
+                            <Zap />
+                          ) : frame.event?.kind === "snare" ? (
+                            <Link2 />
+                          ) : (
+                            <Swords />
+                          )}
+                        </span>
+                        <div>
+                          <strong>
+                            {frame.event?.actorId
+                              ? [...team, ...enemies].find(
+                                  (u) => u.id === frame.event?.actorId
+                                )?.name
+                              : `Round ${playRound}`}
+                            {frame.event?.targetId &&
+                              frame.event?.actorId !== frame.event.targetId && (
+                                <>
+                                  {" "}
+                                  <ArrowRight />{" "}
+                                  {
+                                    [...team, ...enemies].find(
+                                      (u) => u.id === frame.event?.targetId
+                                    )?.name
+                                  }
+                                </>
+                              )}
+                          </strong>
+                          <p>{frame.text}</p>
+                        </div>
+                      </div>
+                      <div className="pw-playback-controls">
+                        <span>
+                          {frameIndex + 1} / {frames.length}
+                        </span>
+                        <button
+                          onClick={() => setPaused((v) => !v)}
+                          aria-label={
+                            paused ? "Resume playback" : "Pause playback"
                           }
                         >
-                          {line}
+                          {paused ? <Play /> : <Pause />}
+                          {paused ? "Resume" : "Pause"}
+                        </button>
+                        <button
+                          onClick={() => {
+                            setPaused(true);
+                            nextFrame();
+                          }}
+                          aria-label="Next action"
+                        >
+                          <ChevronRight />
+                          Next
+                        </button>
+                        <button
+                          onClick={() =>
+                            setSpeed((s) => (s === 1 ? 2 : s === 2 ? 0.5 : 1))
+                          }
+                          aria-label={`Playback speed ${speed}x`}
+                        >
+                          {speed}×
+                        </button>
+                        <button onClick={finishPlayback}>
+                          Show round result <SkipForward />
+                        </button>
+                      </div>
+                    </>
+                  ) : active ? (
+                    <>
+                      <div className="pw-command-head">
+                        <div
+                          className={`pw-active-identity el-${active.element}`}
+                          key={active.id}
+                        >
+                          <Portrait u={active} small />
+                          <div>
+                            <span>
+                              {plans[active.id]
+                                ? "EDIT ORDER"
+                                : "PLAN YOUR SQUAD"}
+                            </span>
+                            <h2>{active.name}</h2>
+                            {plans[active.id] && (
+                              <small className="pw-existing-order">
+                                {moveAt(active, plans[active.id].move).name} →{" "}
+                                {labelFor(
+                                  run.enemies.find(
+                                    (e) => e.id === plans[active.id].target
+                                  )!
+                                )}
+                              </small>
+                            )}
+                          </div>
+                        </div>
+                        <p
+                          className="pw-step"
+                          title={
+                            plans[active.id]
+                              ? `${
+                                  moveAt(active, plans[active.id].move).name
+                                } → ${labelFor(
+                                  run.enemies.find(
+                                    (e) => e.id === plans[active.id].target
+                                  )!
+                                )}`
+                              : undefined
+                          }
+                        >
+                          <span className="done">1 Creature</span>
+                          <ChevronRight />
+                          <span
+                            className={pending === null ? "current" : "done"}
+                          >
+                            2 Move
+                          </span>
+                          <ChevronRight />
+                          <span className={pending !== null ? "current" : ""}>
+                            3 Target
+                          </span>
                         </p>
-                      ))}
-                  </div>
+                        <button
+                          className="pw-symbol-help"
+                          aria-label="Explain move symbols"
+                          onClick={() => setPanel("guide")}
+                        >
+                          <Info />
+                        </button>
+                        <button
+                          className="pw-clear"
+                          disabled={!plans[active.id] && pending === null}
+                          onClick={clearOrder}
+                        >
+                          <X />
+                          Clear <span>order</span>
+                        </button>
+                      </div>
+
+                      <div className="pw-moves">
+                        {[
+                          ...active.moves.map((_, i) => i),
+                          ...(available.includes(-1) ? [-1] : []),
+                        ].map((i, k) => {
+                          const m = moveAt(active, i),
+                            legal = available.includes(i),
+                            limit = i === 3 ? 1 : 3;
+                          return (
+                            <button
+                              key={i}
+                              ref={(el) => {
+                                moveButtons.current[k] = el;
+                              }}
+                              aria-label={`${m.name}${
+                                i === 3 ? ", signature" : ""
+                              }, ${
+                                i === -1
+                                  ? "unlimited"
+                                  : `${active.uses[i]} of ${limit} uses`
+                              }${
+                                !legal
+                                  ? active.uses[i] === 0
+                                    ? ", exhausted"
+                                    : ", blocked by restraint"
+                                  : ""
+                              }`}
+                              aria-describedby={`move-stats-${active.id}-${i}`}
+                              title={moveDescription(m)}
+                              aria-pressed={pending === i}
+                              disabled={!legal}
+                              className={`${pending === i ? "chosen" : ""} ${
+                                i === 3 ? "signature" : ""
+                              } el-${active.element}`}
+                              onClick={(e) => {
+                                setPending(i);
+                                setHoverTarget(null);
+                                setNotice(
+                                  `${m.name} selected. Choose an enemy.`
+                                );
+                                if (e.detail === 0)
+                                  requestAnimationFrame(() =>
+                                    document
+                                      .querySelector<HTMLButtonElement>(
+                                        ".pw-target:not(:disabled)"
+                                      )
+                                      ?.focus()
+                                  );
+                              }}
+                            >
+                              <span className="pw-move-symbol">
+                                {i === 3 || m.kind === "snare" ? (
+                                  <MoveIcon move={m} signature={i === 3} />
+                                ) : (
+                                  <ElementIcon element={active.element} />
+                                )}
+                              </span>
+                              <span className="pw-move-copy">
+                                <strong>{m.name}</strong>
+                                <MoveStats
+                                  move={m}
+                                  id={`move-stats-${active.id}-${i}`}
+                                />
+                                {!legal && (
+                                  <small>
+                                    {active.uses[i] === 0
+                                      ? "Exhausted · refreshes next fight"
+                                      : "Restrained · melee unavailable"}
+                                  </small>
+                                )}
+                              </span>
+                              <span className="pw-use-pips" aria-hidden="true">
+                                {i === -1
+                                  ? "∞"
+                                  : Array.from({ length: limit }, (_, n) => (
+                                      <i
+                                        key={n}
+                                        className={
+                                          n < active.uses[i] ? "full" : ""
+                                        }
+                                      />
+                                    ))}
+                                {i === 3 && <Crown />}
+                              </span>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </>
+                  ) : null}
                 </section>
-                <button
-                  className="pw-reset"
-                  onClick={() => setRestart(true)}
-                  disabled={busy}
-                >
-                  <RotateCcw size={14} /> Restart expedition
-                </button>
-              </aside>
+
+                <section className="pw-squad" aria-label="Your squad">
+                  {team.map((u) => {
+                    const order = plans[u.id],
+                      target = enemies.find((e) => e.id === order?.target),
+                      selectedUnit = active?.id === u.id && planning;
+                    return (
+                      <div
+                        key={u.id}
+                        className={`pw-companion el-${u.element} ${
+                          selectedUnit ? "selected" : ""
+                        } ${order ? "ready" : ""} ${u.hp <= 0 ? "down" : ""} ${
+                          frame?.event?.actorId === u.id ? "acting" : ""
+                        } ${affected(u) ? "affected" : ""}`}
+                      >
+                        <button
+                          className="pw-select"
+                          aria-label={`Select ${u.name}`}
+                          aria-describedby={`order-${u.id}`}
+                          title={
+                            order && target
+                              ? `${moveAt(u, order.move).name} → ${labelFor(
+                                  target
+                                )}`
+                              : undefined
+                          }
+                          aria-pressed={selectedUnit}
+                          disabled={!planning || u.hp <= 0}
+                          onClick={(e) => select(u, e.detail === 0)}
+                        >
+                          <span className="pw-companion-top">
+                            <ElementIcon element={u.element} />
+                            <strong>{u.name}</strong>
+                            {order ? (
+                              <Check className="pw-ready-check" />
+                            ) : (
+                              <span className="pw-unassigned" />
+                            )}
+                          </span>
+                          <div className="pw-companion-body">
+                            <div className="pw-figure">
+                              <Portrait u={u} />
+                              {affected(u) && (
+                                <span
+                                  key={`${frameIndex}-${u.id}`}
+                                  className={`pw-float ${frame.event?.kind}`}
+                                >
+                                  {eventLabel(frame)}
+                                </span>
+                              )}
+                            </div>
+                            <Health u={u} />
+                          </div>
+                          <span className="pw-queued" id={`order-${u.id}`}>
+                            {u.hp <= 0 ? (
+                              "Knocked out"
+                            ) : order && target ? (
+                              <>
+                                <MoveIcon
+                                  move={moveAt(u, order.move)}
+                                  signature={order.move === 3}
+                                />
+                                <ArrowRight />
+                                <Portrait u={target} small />
+                                <span>{labelFor(target)}</span>
+                                <span className="pw-sr">
+                                  {" "}
+                                  using {moveAt(u, order.move).name}
+                                </span>
+                              </>
+                            ) : !legalMoves(u).length ? (
+                              <>
+                                <Link2 />
+                                Cannot act
+                              </>
+                            ) : selectedUnit ? (
+                              <>
+                                <Crosshair />
+                                Choose a move
+                              </>
+                            ) : busy ? (
+                              ""
+                            ) : (
+                              <>Choose companion</>
+                            )}
+                          </span>
+                        </button>
+
+                        <button
+                          className="pw-squad-info"
+                          aria-label={`Inspect ${u.name}`}
+                          onClick={() => inspectUnit(u.id)}
+                        >
+                          <Info />
+                        </button>
+
+                        <div className="pw-squad-status">
+                          <StatusBadges u={u} />
+                        </div>
+                      </div>
+                    );
+                  })}
+                </section>
+
+                <footer className="pw-commit">
+                  <div className="pw-readiness">
+                    <div>
+                      {living.map((u) => (
+                        <span
+                          key={u.id}
+                          className={
+                            plans[u.id] || !legalMoves(u).length ? "filled" : ""
+                          }
+                        >
+                          {plans[u.id] || !legalMoves(u).length ? (
+                            <Check />
+                          ) : null}
+                        </span>
+                      ))}
+                    </div>
+                    <p>
+                      {busy
+                        ? "Orders resolving"
+                        : ready === living.length
+                        ? "All orders ready"
+                        : `${living.length - ready} ${
+                            living.length - ready === 1
+                              ? "companion needs"
+                              : "companions need"
+                          } an order`}
+                      <small>
+                        {busy
+                          ? "Watch the highlighted actor and target."
+                          : ready === living.length
+                          ? "Select a companion to review or change its order."
+                          : pending !== null
+                          ? "Select an enemy above to assign the move."
+                          : "Creature → move → enemy. Orders resolve together."}
+                      </small>
+                    </p>
+                  </div>
+                  <button
+                    className="pw-primary"
+                    disabled={!planning || ready !== living.length}
+                    onClick={commit}
+                  >
+                    Commit round <ArrowRight />
+                  </button>
+                </footer>
+              </>
+            ) : (
+              <section className={`pw-outcome ${run.phase}`}>
+                <div className="pw-outcome-heading">
+                  {run.phase === "won" ? (
+                    <Trophy />
+                  ) : run.phase === "camp" ? (
+                    <Shield />
+                  ) : run.phase === "lost" ? (
+                    <Heart />
+                  ) : (
+                    <ArrowLeft />
+                  )}
+                  <p className="pw-eyebrow">
+                    {run.phase === "camp"
+                      ? "A MOMENT TO REGROUP"
+                      : "EXPEDITION REPORT"}
+                  </p>
+                  <h2>{phaseTitle}</h2>
+                  <p>
+                    {run.phase === "camp"
+                      ? "Carry your squad forward. Move uses refresh; wounds remain."
+                      : run.phase === "won"
+                      ? "The defense network falls silent. Your squad made it through."
+                      : run.phase === "lost"
+                      ? "Your squad could not continue. A fresh attempt restores everyone."
+                      : "The squad leaves with its earned practice XP."}
+                  </p>
+                </div>
+                <div className="pw-camp-squad">
+                  {run.team.map((u) => (
+                    <div
+                      key={u.id}
+                      className={`el-${u.element} ${u.hp <= 0 ? "down" : ""}`}
+                    >
+                      <Portrait u={u} />
+                      <h3>{u.name}</h3>
+                      <Health u={u} />
+                      {u.hp === 0 ? (
+                        <button
+                          disabled={!run.revival || run.phase !== "camp"}
+                          onClick={() => apply({ kind: "revive", id: u.id })}
+                        >
+                          <Heart />{" "}
+                          {run.revival && run.phase === "camp"
+                            ? `Revive · ${Math.ceil(u.max / 2)} HP`
+                            : "Knocked out"}
+                        </button>
+                      ) : (
+                        <span>
+                          {u.hp === u.max
+                            ? "Healthy"
+                            : `${u.max - u.hp} HP missing`}
+                        </span>
+                      )}
+                    </div>
+                  ))}
+                </div>
+                <div className="pw-camp-stats">
+                  <span>
+                    <Crown />
+                    <strong>{run.xp}</strong> practice XP / companion
+                  </span>
+                  <span>
+                    <Heart />
+                    <strong>{run.revival}</strong> emergency revival left
+                  </span>
+                  {run.room === 2 && run.phase === "camp" && (
+                    <span className="pw-station">
+                      <Zap />
+                      Ahead: +10 HP to standing companions
+                    </span>
+                  )}
+                </div>
+                <div className="pw-outcome-actions">
+                  {run.phase === "camp" ? (
+                    <>
+                      <button
+                        className="pw-primary"
+                        onClick={() => apply({ kind: "advance" })}
+                      >
+                        Enter {ROOMS[run.room + 1].name.replace(/^\d\. /, "")}{" "}
+                        <ArrowRight />
+                      </button>
+                      <button onClick={() => apply({ kind: "retreat" })}>
+                        Extract with {run.xp} XP
+                      </button>
+                    </>
+                  ) : (
+                    <button
+                      className="pw-primary"
+                      onClick={() => fresh((run.seed + 1) >>> 0)}
+                    >
+                      Start another expedition <ArrowRight />
+                    </button>
+                  )}
+                  {lastFrames.length > 0 && (
+                    <button
+                      onClick={() => {
+                        setFrames(lastFrames);
+                        setFrameIndex(0);
+                        setPaused(false);
+                      }}
+                    >
+                      Replay last round <Play />
+                    </button>
+                  )}
+                </div>
+                <small>
+                  Practice rewards only. No tokens or account rewards are
+                  issued.
+                </small>
+              </section>
+            )}
+          </div>
+        </>
+      )}
+
+      <div className="pw-sr" aria-live="polite">
+        {notice}
+      </div>
+      {error && (
+        <p className="pw-error" role="alert">
+          {error}
+        </p>
+      )}
+      {saveFailed && (
+        <p className="pw-error" role="status">
+          Browser storage unavailable. Keep this tab open to retain the run.
+        </p>
+      )}
+
+      <dialog
+        ref={dialog}
+        className="pw-dialog"
+        onCancel={() => setPanel(null)}
+        onClose={() => setPanel(null)}
+        aria-labelledby="pw-dialog-title"
+      >
+        <header>
+          <h2 id="pw-dialog-title">
+            {panel === "guide"
+              ? "Field guide"
+              : panel === "record"
+              ? "Combat record"
+              : panel === "restart"
+              ? "Restart expedition?"
+              : inspect?.name}
+          </h2>
+          <button
+            autoFocus
+            aria-label="Close panel"
+            onClick={() => setPanel(null)}
+          >
+            <X />
+          </button>
+        </header>
+
+        {panel === "guide" && (
+          <>
+            <div className="pw-symbol-key" aria-label="Move symbol key">
+              <span>
+                <Swords /> Melee attack
+              </span>
+              <span>
+                <Crosshair /> Ranged attack
+              </span>
+              <span>
+                <PowerIcon /> Base power
+              </span>
+              <span>
+                <Link2 /> Restraint opportunities
+              </span>
+              <span>
+                <Crown /> Signature move
+              </span>
+              <span>
+                <RotateCcw /> Health recoil
+              </span>
+              <span>
+                <i className="pw-key-pip" /> Remaining uses
+              </span>
+            </div>
+            <div className="pw-guide-steps">
+              <span>
+                <Portrait u={run.team[0]} small />
+                Choose a creature
+              </span>
+              <ChevronRight />
+              <span>
+                <Swords />
+                Choose a move
+              </span>
+              <ChevronRight />
+              <span>
+                <Crosshair />
+                Choose an enemy
+              </span>
+            </div>
+            <p>
+              Plan one order for each standing companion, then commit the round.
+              Tap any queued creature to edit its move or target. Escape leaves
+              target selection; Clear removes its order.
+            </p>
+            <div className="pw-guide-grid">
+              <section>
+                <h3>
+                  <Link2 />
+                  Restraint is not stun
+                </h3>
+                <p>
+                  Melee is blocked through the next opportunity. Ranged moves
+                  still work. Blocked moves keep their uses.
+                </p>
+              </section>
+              <section>
+                <h3>
+                  <Zap />
+                  Read the charge
+                </h3>
+                <p>
+                  Charge → melee release → ordinary recovery attack. Stopping
+                  the release buys time; the enemy can charge again.
+                </p>
+              </section>
+              <section>
+                <h3>
+                  <Crosshair />
+                  Targets can change
+                </h3>
+                <p>
+                  If a target falls, the same move redirects to the next living
+                  enemy in its row. Previews use current defenses; hidden
+                  actions may change the result.
+                </p>
+              </section>
+              <section>
+                <h3>
+                  <Crown />
+                  Finite move uses
+                </h3>
+                <p>
+                  Filled pips are remaining uses. Three per secondary, one per
+                  signature, refreshed each encounter. Desperate strike deals 3
+                  neutral damage with 2 recoil after all damaging moves are
+                  exhausted.
+                </p>
+              </section>
+              <section>
+                <h3>
+                  <Heart />
+                  Survive the dungeon
+                </h3>
+                <p>
+                  Health and knockouts persist. One half-health revival between
+                  battles. A pre-boss station restores 10 HP to standing
+                  companions. A full wipe ends the run.
+                </p>
+              </section>
+              <section>
+                <h3>
+                  <Shield />
+                  Practice expedition
+                </h3>
+                <p>
+                  Temporary moves and numbers. XP is a run score, not an account
+                  reward. No tokens are granted. Your last resolved round is
+                  saved in this browser; unfinished orders are not saved.
+                </p>
+              </section>
+            </div>
+            <div className="pw-run-details">
+              Seed {run.seed} · {run.xp} practice XP · {run.revival} revival
+              left
+              <button onClick={() => setPanel("restart")}>
+                Restart expedition <RotateCcw />
+              </button>
             </div>
           </>
         )}
-        <footer className="pw-footer">
-          POWERWORKS / DESIGN BUILD 01{" "}
-          <span>Dedicated dungeon enemies · Temporary combat cards</span>
-        </footer>
-      </div>
-      {restart && (
-        <dialog
-          ref={restartDialog}
-          onCancel={() => setRestart(false)}
-          aria-labelledby="restart-title"
-          className="pw-modal"
-        >
-          <h2 id="restart-title">Restart this expedition?</h2>
-          <p>
-            Your current run will be replaced. The same seed gives you a
-            repeatable starting point.
-          </p>
-          <button autoFocus onClick={() => setRestart(false)}>
-            Keep playing
-          </button>
-          <button onClick={() => fresh(run.seed)}>Restart same seed</button>
-        </dialog>
-      )}
+
+        {panel === "record" && (
+          <>
+            <p>
+              Most recent events first. You can follow the battle without
+              keeping this panel open.
+            </p>
+            <div role="log" aria-label="Combat record">
+              {run.log
+                .slice()
+                .reverse()
+                .map((text, i) => (
+                  <p
+                    key={i}
+                    className={/^Encounter \d/.test(text) ? "round-label" : ""}
+                  >
+                    {text}
+                  </p>
+                ))}
+            </div>
+          </>
+        )}
+
+        {panel === "inspect" && inspect && (
+          <>
+            <div className={`pw-inspect-hero el-${inspect.element}`}>
+              <Portrait u={inspect} />
+              <div>
+                <span className="pw-element">
+                  <ElementIcon element={inspect.element} />
+                  {inspect.element}
+                </span>
+                <Health u={inspect} />
+                <p>
+                  Speed {inspect.speed} ·{" "}
+                  {inspect.enemy ? "Facility defense" : "Your companion"}
+                </p>
+                <div className="pw-statuses">
+                  <StatusBadges u={inspect} />
+                </div>
+              </div>
+            </div>
+            {inspect.charge && (
+              <p className="pw-warning">
+                <Zap />A melee release is coming at its next opportunity. The
+                selected target is hidden.
+              </p>
+            )}
+            <div className="pw-inspect-moves">
+              {inspect.moves.map((m, i) => (
+                <section key={m.name}>
+                  <MoveIcon move={m} signature={!inspect.enemy && i === 3} />
+                  <div>
+                    <h3>{m.name}</h3>
+                    <p>
+                      {m.kind === "snare"
+                        ? "Blocks melee through the next opportunity."
+                        : m.kind === "ward"
+                        ? "Halves incoming damage until its next opportunity."
+                        : `${m.damage} base damage · ${m.range}${
+                            m.kind === "charge"
+                              ? " · requires charging first"
+                              : ""
+                          }`}
+                      {!inspect.enemy && ` · ${inspect.uses[i]} uses remaining`}
+                    </p>
+                  </div>
+                </section>
+              ))}
+            </div>
+            {inspect.enemy && move && active && (
+              <p className="pw-breakdown">
+                {move.kind === "snare"
+                  ? previewText(inspect)
+                  : `${move.damage} base × ${
+                      move.kind === "fallback" ? 1 : matchup(active, inspect)
+                    } element${
+                      inspect.ward ? " × 0.5 shield" : ""
+                    } = ${damagePreview(
+                      active,
+                      move,
+                      inspect
+                    )} estimated damage. Current defenses only.`}
+              </p>
+            )}
+            <p>
+              Actions resolve in the public speed order. Enemy moves and targets
+              are not revealed before execution.
+            </p>
+          </>
+        )}
+
+        {panel === "restart" && (
+          <>
+            <p>
+              This replaces your current run. The same seed gives a repeatable
+              starting point.
+            </p>
+            <div className="pw-outcome-actions">
+              <button onClick={() => setPanel(null)}>Keep playing</button>
+              <button className="pw-primary" onClick={() => fresh(run.seed)}>
+                Restart same seed
+              </button>
+            </div>
+          </>
+        )}
+      </dialog>
     </main>
   );
 }
