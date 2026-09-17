@@ -3,10 +3,10 @@
 const PASSAGES = {
   gantry: ['The far doorway is visible through the suspension frame, but whole sections of the walkway hang below it. Beneath the remaining spans, black water turns slowly around the fallen metal.', 'One by one, the crew reaches the far landing. Behind them, the old turbine bank remains asleep.'],
   intake: ['The current disappears beneath the broken gantry. Beyond the hanging wreckage there is a strip of open water, just wide enough to reach the steps on the other side.', 'The crew emerges together at the far steps. Their wake draws frozen debris out of a narrow opening in the wall. Water begins flowing through it: an old coolant bypass, a side channel built to carry cooling water around the machinery. As the blockage washes away, it clears frozen fill from the maintenance passage ahead.'],
-  catwalk: ['The upper catwalk threads between enormous turbine housings. The far end appears and disappears behind the machinery; the crew will have to keep moving once the crossing begins.', 'The last crew member clears the turbine bank. A light travels along the catwalk wiring and vanishes into the security wing: the crossing has sent an authentication signal ahead of them.'],
-  underdeck: ['Below the turbines, a service passage runs between insulated pipes and frozen fill. Faded marks on the wall are the only guide through its branching ducts.', 'At the far end, a strip of maintenance notation has survived beneath the frost. The crew copies it before leaving: part of the sequence the archive door will expect from a service crew.'],
-  decode: ['The authentication arms unfold around the sealed iris. Their reader waits for an identity from a world that no longer exists, repeating the beginning of an unfinished sequence.', 'The arms pause. Then the iris separates, exposing the gallery beyond. The crew takes the opening before the rig can ask another question.'],
-  breach: ['A fracture runs along the oldest segment of the iris door. The locking collar still holds, but this seam offers a way through without answering the authentication rig.', 'The opening is finally wide enough. The crew passes into the gallery, leaving the displaced segments of the iris behind.'],
+  catwalk: ['The narrow walkway hangs above machines taller than the crew. Between their rounded casings, the sealed archive door comes in and out of view. There is little room to stop or turn back.', 'The last crew member steps off the walkway beside the archive door. Underfoot, a sensor lights up. Its glow runs along a wire toward the door, where a locking ring draws tight with a heavy click. The crew has reached the other side, but alerted the lock ahead.'],
+  underdeck: ['The repair passage runs beneath the great machines, close enough to hear metal shifting overhead. Pipes crowd the walls. Faded arrows lead through the frost toward the archive door.', 'The passage rises beside the archive door. Just before the exit, the crew finds a row of symbols beneath the frost and copies them. The same shapes appear on the door’s controls: instructions left for the workers who once came this way.'],
+  decode: ['Metal arms unfold around the circular door, their lights moving over the waiting crew. Its overlapping plates remain shut. The old controls repeat a pattern, waiting for the right answer before they will let anyone through.', 'The arms pause. The plates slide apart like a shutter, revealing the broken gallery beyond. The crew slips through together while the opening holds.'],
+  breach: ['A crack splits one of the door’s overlapping plates. A heavy ring holds the plates shut, but the damaged edge offers somewhere to work—a way through without answering the old controls.', 'The opening is finally wide enough. The crew passes into the gallery, leaving the displaced segments of the iris behind.'],
   'outer-hull': ['The gallery opens onto the stars. Loose fragments hang beyond the broken centerline, and the archive-side seal waits across a stretch of exposed hull.', 'The crew gathers at the archive-side seal. For a moment the stars remain visible behind them; then the intact doorway frames the path onward.'],
   conduit: ['The conduit mouth offers shelter from the broken hull. Inside, braces divide the passage into cramped sections, with no room for the crew to turn around together.', 'Beyond the final brace, the passage opens beside the archive. The crew comes through in sequence, back together after the narrow passage.'],
   stabilize: ['Readable plates hang inside the failing stasis field. Each flicker shifts their positions in the cradle; the crew must hold the chamber steady long enough to recover the record.', 'The plates are clear of the field. What was an unreachable archive is now a record the crew can carry: the Nemesis Index, and the reason they came here.'],
@@ -51,20 +51,20 @@ const MOTIONS = {
 
 const SPECIFIC_MOTIONS = {
   'intake:snare': 'takes hold of the crew and tows them beneath the wreckage',
-  'decode:snare': 'moves the authentication arms remotely, working through the waiting sequence',
+  'decode:snare': 'moves the door’s control arms from a distance, putting them through the opening sequence',
   'blackbox:snare': 'takes hold of the blackbox and pulls against its catches',
   'conduit:snare': 'draws the crew through the narrow passage in sequence',
   'dive:snare': 'reaches for the submerged cell from the rim',
   'align:snare': 'holds the rings against one another until their openings line up',
   'decode:beam': 'feeds a controlled beam into the optical reader',
-  'underdeck:phasing': 'passes through the service bulkhead to open the way beyond',
+  'underdeck:phasing': 'passes through the solid partition to open the way for the others',
   'outer-hull:phasing': 'follows the intact inner skin across the broken gallery',
   'dive:swim': 'dives through the charged layer toward the submerged cell',
-  'underdeck:intelligence': 'follows the maintenance diagram through the branching ducts',
+  'underdeck:intelligence': 'traces the faded wall diagram, choosing the passages that lead to the far door',
   'stabilize:intelligence': 'rebuilds the index cradle beneath the wavering field',
   'conduit:manipulation': 'disassembles the conduit braces to make room for the crew',
   'harvest:manipulation': 'bleeds the collector valves, waiting between releases',
-  'align:manipulation': 'resets the core governors to bring the rings into alignment',
+  'align:manipulation': 'adjusts the machine’s controls until the turning rings line up',
   'blackbox:manipulation': 'releases the live catches around the blackbox'
 };
 

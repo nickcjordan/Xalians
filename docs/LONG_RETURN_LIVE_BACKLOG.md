@@ -21,6 +21,13 @@ Statuses progress independently: identified → implementing → technically ver
 
 ### Live findings
 
+### September 17 — follow-through: machinery hall to archive door
+
+- The next continuity audit found the scene-two consequence still presented as an abstract signal/code. Its crossing now physically reaches the same door introduced in scene three: a sensor tightens its locking ring, or copied wall symbols match its controls.
+- Scene-three arrival and decision orientation recall only the route actually taken. Simple arrival no longer repeats this as a separate memory notification; advanced consequence detail remains available.
+- Replaced several control-system terms in selected-method narration with visible acts, keeping actor/method and existing mechanics intact. Simplified the door objective to its actual destination.
+- Verification: 176 tests, production build/budgets; three-scene underdeck replay and seven-scene reduced-motion run (14 salvage, 2 stability, temporary ally). Inspected the scene-three arrival render. These prove functional continuity, not that the prose is human-accepted or that normal-speed pacing is satisfying.
+
 ### September 17 — player feedback: places must connect, not just costs
 
 - The player could compare scene-two costs but could not picture either passage or understand why the crew needed to cross. The route view had hidden both scene orientation and physical descriptions behind earlier steps/disclosures.

@@ -1346,7 +1346,7 @@ function LongReturnGame() {
               <div className="lr-transition-route"><span>{transition.from}</span><BiIcon cls="bi-arrow-right" /><strong>{transition.to}</strong></div>
               <p>{sceneOrientation(scene, runFlags)}</p>
               {transition.reaction && <blockquote><BiIcon cls="bi-chat-quote" /> “{transition.reaction}”</blockquote>}
-              {transition.consequence && <div className="lr-memory-card">
+              {transition.consequence && guidanceLevel !== 'simple' && <div className="lr-memory-card">
                 <BiIcon cls="bi-diagram-3-fill" />
                 <div><span>Your earlier route matters here</span><strong>{transition.consequence.label}</strong><p>{transition.consequence.detail}</p></div>
               </div>}

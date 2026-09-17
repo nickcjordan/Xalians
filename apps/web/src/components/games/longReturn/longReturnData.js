@@ -248,7 +248,7 @@ export const MISSION = {
       id: 'archive-vestibule', title: 'Archive Vestibule', trackLabel: 'Vestibule', deck: 'SECURITY 01',
       description: 'A sealed iris door waits behind a forest of dead authentication arms.',
       arrival: 'The turbine noise dies behind the crew. A many-armed authentication rig unfolds from the wall and asks for credentials that vanished centuries ago.',
-      goal: 'Open the archive iris while preserving enough crew strength for the containment wing.',
+      goal: 'Open the sealed door and bring the whole crew into the gallery beyond.',
       destination: 'the Null Gallery inside archive security',
       surveyFocus: 'the authentication arms, iris seam, and dormant security field',
       relayChannels: ['vocal', 'display', 'telepathic'],

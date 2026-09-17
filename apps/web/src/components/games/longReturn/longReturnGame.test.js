@@ -639,9 +639,10 @@ describe('Long Return Simple mode', () => {
     expect(container.querySelector('.lr-crossing-prose').textContent).toContain('maintenance passage ahead');
     expect(container.querySelector('.lr-consequence-preview')).toBeNull();
     click(container, /continue mission/i);
-    expect(container.querySelector('.lr-transition-beat').textContent).toMatch(/Your earlier route matters here/i);
+    expect(container.querySelector('.lr-transition-beat').textContent).toMatch(/side channel your crossing cleared/i);
+    expect(container.querySelector('.lr-transition-beat .lr-memory-card')).toBeNull();
     expect(container.querySelector('.lr-memory-effects')).toBeNull();
-    expect(container.querySelector('.lr-memory-card')).toBeTruthy();
+    expect(container.querySelector('.lr-memory-card')).toBeNull();
     click(container, /^enter /i);
     expect(container.querySelector('.lr-simple-scouts')).toBeTruthy();
   });

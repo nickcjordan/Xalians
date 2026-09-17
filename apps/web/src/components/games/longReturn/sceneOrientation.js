@@ -7,11 +7,18 @@ export function sceneOrientation(scene, flags = []) {
       : flags.includes('quiet-entry')
         ? 'Beyond the broken walkway, the crew steps into a vast machinery hall. Your quiet crossing has left the great machines still—for now.'
         : 'Beyond the flooded entrance lies a vast machinery hall, its great machines crusted with ice.';
-    return `${entry} Across the room, a sealed door leads toward the archive. Both paths below take you there.`;
+    return `${entry} Across the room, a sealed door leads toward the archive. Two passages lead there: one above the machines, one beneath them.`;
+  }
+  if (scene.id === 'archive-vestibule') {
+    const memory = flags.includes('maintenance-codes')
+      ? 'The markings you copied beneath the machines match symbols on its controls—a starting point for opening it.'
+      : flags.includes('security-pulse')
+        ? 'The signal sent by your crossing has reached it first: its locking ring has tightened around the plates.'
+        : 'Its old controls are still waiting for someone who knows how to open it.';
+    return `The crew reaches the door at the far end of the machinery hall. Overlapping metal plates close it like a shutter. ${memory} Beyond it lies the way to the archive.`;
   }
   return {
     'service-throat': 'Black water fills the entrance corridor. Across the flood, steps lead into the machinery hall—the first stretch of your journey to the lost archive. A broken walkway hangs above the water; below it, a current slips through the wreckage.',
-    'archive-vestibule': 'The machinery hall ends at a sealed circular door. Overlapping metal plates block the way deeper into the archive. You can persuade its old controls to open it, or force a crack between the plates.',
     'null-gallery': 'Beyond the door, the corridor has been torn open to space. The archive entrance waits across the gap. An exposed strip of hull leads straight there; an enclosed service tunnel bends around the damage.',
     'nemesis-index': 'At last, the crew reaches the record they came for. Archive plates hang in a flickering field, with a sealed backup at their center. Recover the record intact or pull out the backup—either lets you leave with the mission’s prize.',
     'core-reservoir': 'With the Index secured, you have chosen to venture deeper. A pool of charged liquid fills the next chamber. More salvage lies here, but every recovery spends reserves you may need to get home.',
