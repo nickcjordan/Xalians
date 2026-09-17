@@ -335,6 +335,7 @@ describe('Crater Command aim feedback', () => {
       expect(screen.getByRole('button', { name: /Fire Comet/i })).toBeDisabled();
       act(() => vi.advanceTimersByTime(4_000));
       expect(document.querySelector('.artillery-aftermath')).toBeInTheDocument();
+      expect(document.querySelector('.artillery-aftermath .artillery-ember')).toBeNull();
       expect(screen.getByRole('img', { name: /Two mobile range rigs/i })).toHaveAttribute('viewBox', '0 -38 360 148');
     } finally {
       vi.useRealTimers();

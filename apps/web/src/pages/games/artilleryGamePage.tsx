@@ -382,11 +382,9 @@ function PersistentPayloadAftermath({ mark, y, slope, age, visibility = 1 }: { m
       <circle cx={mark.x - 0.5} cy={y - 11} r="3.3" className="fill-ink-3 opacity-20" />
     </g>
   </g>;
-  const emberCount = mark.payload === 'cluster' ? 5 : 2;
   return <g className={common} opacity={opacity} aria-hidden>
     <g transform={surfaceTransform}>
       <path d={`M ${mark.x - 6.2} ${y + 0.3} l 2.3 -1 2.2 0.6 1.6 -1.1 1.8 0.9 2.1 -0.5 2.2 1 -2.4 1 -2.3 -0.1 -2.1 0.8 -2.4 -0.6 -2 0.6 Z`} className="fill-black opacity-55" />
-      {Array.from({ length: emberCount }, (_, index) => <circle key={index} cx={mark.x + (index - (emberCount - 1) / 2) * 1.7} cy={y - 0.25 - (index % 2) * 0.5} r="0.38" className="fill-el artillery-ember" />)}
     </g>
     <g className="artillery-smoke-cloud" filter="url(#artillery-smoke-soft)">
       <circle cx={mark.x - 1.2} cy={y - 3.4} r={mark.payload === 'cluster' ? 2.8 : 2.4} className="fill-ink-3 opacity-32" />
