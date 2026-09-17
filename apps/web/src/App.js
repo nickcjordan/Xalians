@@ -60,6 +60,7 @@ const ReclamationPage = lazy(() => import('./pages/games/reclamationPage'));
 const DuelPlaygroundPage = lazy(() => import('./pages/games/duelPlaygroundPage'));
 const EncyclopediaPage = lazy(() => import('./pages/encyclopediaPage'));
 const LongReturnPage = lazy(() => import('./pages/games/longReturnPage'));
+const PowerworksPage = lazy(() => import('./pages/games/powerworksPage'));
 const NotFoundPage = lazy(() => import('./pages/system/notFoundPage'));
 const DevErrorPage = lazy(() => import('./pages/system/devErrorPage'));
 
@@ -133,6 +134,7 @@ export function AppRoutes() {
           <Route path="/duel" element={<DuelStartPage />} />
           <Route path="/reclamation" element={<ReclamationPage />} />
           <Route path="/long-return" element={<LongReturnPage />} />
+          <Route path="/powerworks" element={<PowerworksPage />} />
           <Route path="/account" element={<UserAccountPage />} />
           <Route path="/arcade" element={<ArcadePage />} />
           <Route path="/arcade/artillery" element={<ArtilleryGamePage />} />
