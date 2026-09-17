@@ -78,6 +78,28 @@ type AftermathMark = {
 };
 type ShotVerdict = { title: string; detail: string };
 
+export function artilleryNextSortieTip({ mode, difficulty, won, accuracy, specialRounds }: {
+  mode: ArtilleryMode;
+  difficulty: ArtilleryDifficulty;
+  won: boolean;
+  accuracy: number;
+  specialRounds: number;
+}): string {
+  if (mode === 'range') return accuracy < 50
+    ? 'Match the coarse air range to the rival, then correct from each impact.'
+    : 'Try a different weapon sequence or planet and beat this damage record.';
+  if (mode === 'challenge') return won
+    ? 'Try the five-round magazine on a planet with different gravity.'
+    : 'Use a spread round to find range, then commit the precise strike.';
+  if (mode === 'local') return 'Play from the other seat, or change worlds to alter both arcs.';
+  if (accuracy < 50) return 'Match the coarse air range first, then correct from the impact.';
+  if (!won && specialRounds === 0) return 'Try Drill against sheltered ground or Rampart before the next incoming hit.';
+  if (!won) return 'Rematch this field and use a high arc when a ridge or wall blocks the muzzle.';
+  if (difficulty === 'rookie') return 'Try Standard for a rival that uses more of its arsenal.';
+  if (difficulty === 'standard') return 'Try Expert, or change planets to relearn the firing arc.';
+  return 'Change planets or ranges and build a new firing solution.';
+}
+
 const RANGE_RIGS = {
   left: { name: 'Range Rig A', shortName: 'Rig A' },
   right: { name: 'Range Rig B', shortName: 'Rig B' },
@@ -640,7 +662,7 @@ export function CommandMeter({ label, value, suffix = '', min, max, disabled, gu
   );
 }
 
-export function ArtilleryBoard({ seed, mode, difficulty, mapSize, world, onStatus, onComplete, onRematch }: {
+export function ArtilleryBoard({ seed, mode, difficulty, mapSize, world, onStatus, onComplete, onRematch, onQuickRematch }: {
   seed: string;
   mode: ArtilleryMode;
   difficulty: ArtilleryDifficulty;
@@ -649,6 +671,7 @@ export function ArtilleryBoard({ seed, mode, difficulty, mapSize, world, onStatu
   onStatus: (status: string) => void;
   onComplete: (result: { score: number; actions: ArtilleryAction[] }) => void;
   onRematch: () => void;
+  onQuickRematch?: () => void;
 }) {
   const [state, setState] = React.useState<ArtilleryState>(() => createArtilleryState(seed, mode, difficulty, { mapSize, world }));
   const [angle, setAngle] = React.useState(45);
@@ -1006,9 +1029,8 @@ export function ArtilleryBoard({ seed, mode, difficulty, mapSize, world, onStatu
         ? state.turn <= 7 && resultAccuracy >= 50 ? 'S' : state.turn <= 11 ? 'A' : 'B'
         : state.turn >= 10 ? 'C' : 'D';
   const resultSpecialsSpent = (mode === 'challenge' ? 4 : 7) - Object.values(state.payloads[resultSide]).reduce((total, remaining) => total + remaining, 0);
-  const nextSortie = resultAccuracy < 50
-    ? 'Next sortie: calibrate on the Practice Range.'
-    : 'Next sortie: change weapons, world, or difficulty.';
+  const nextSortie = artilleryNextSortieTip({ mode, difficulty, won: state.winner === resultSide,
+    accuracy: resultAccuracy, specialRounds: resultSpecialsSpent });
   // Field instruments report a coarse estimate. Exact numeric matching would
   // turn unobstructed shots into a solved target preview instead of ranging.
   const targetDistance = Math.round(Math.abs(state.tanks.left.x - state.tanks.right.x) / 10) * 10;
@@ -1678,9 +1700,13 @@ export function ArtilleryBoard({ seed, mode, difficulty, mapSize, world, onStatu
               <span><b className="block type-data">{state.tanks[resultSide].integrity}</b><small className="type-micro">hull</small></span>
               <span><b className="block type-data">{resultStats.payloads.length}</b><small className="type-micro">weapons</small></span>
             </div>
-            <p className="mt-3 mb-3 font-body text-small text-ink-2">{mode === 'range' ? 'Practice records no Arcade Credits. Use it to learn wind, atmosphere, and every weapon system.' : mode === 'challenge' ? 'The trial records no Arcade Credits. Clear it by choosing five complementary weapons instead of repeating one solution.' : nextSortie}</p>
+            <p className="mt-3 mb-2 font-body text-small text-ink-2"><span className="type-micro text-viable-hi">Next sortie</span> · {nextSortie}</p>
+            {(mode === 'range' || mode === 'challenge') && <p className="mb-2 font-body text-tiny text-ink-3">{mode === 'range' ? 'Practice records no Arcade Credits.' : 'The five-round trial records no Arcade Credits.'}</p>}
             <p className="mb-3 font-body text-tiny text-ink-3">{resultStats.directHits} direct · {resultSpecialsSpent} special rounds · {resultStats.terrainShift.toFixed(1)} terrain shift{mode === 'range' ? ` · best ${Math.max(rangeBest, resultStats.damage)}` : ''}</p>
-            <Button type="button" className="w-full" onClick={onRematch}>Choose next battlefield</Button>
+            <div className="grid gap-2 sm:grid-cols-2">
+              {onQuickRematch && <Button type="button" className="min-h-12 w-full" onClick={onQuickRematch}>{mode === 'range' ? 'Run range again' : mode === 'challenge' ? 'Retry trial' : 'Rematch'}</Button>}
+              <Button type="button" variant="ghost" className="min-h-12 w-full border border-edge-strong" onClick={onRematch}>Change battlefield</Button>
+            </div>
           </div>
         ) : (
           <>
@@ -1953,6 +1979,7 @@ export default function ArtilleryGamePage() {
           onStatus={setStatus}
           onComplete={complete}
           onRematch={openSetup}
+          onQuickRematch={startGame}
         />
       )}
     </ArcadeGameShell>
