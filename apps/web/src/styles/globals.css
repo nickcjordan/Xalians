@@ -77,7 +77,9 @@
 
 @media (max-width: 600px) {
 	.artillery-field {
-		height: clamp(300px, 54dvh, 520px);
+		/* Keep both aim meters and Fire in the first phone viewport while
+		   leaving the battlefield tall enough to follow high arcs. */
+		height: clamp(300px, 50dvh, 500px);
 	}
 
 	.artillery-field > svg {
@@ -86,7 +88,7 @@
 	}
 
 	.artillery-coach {
-		top: 10.75rem;
+		top: 12.75rem;
 		bottom: auto;
 	}
 

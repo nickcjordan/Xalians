@@ -10,6 +10,7 @@ import {
   ARTILLERY_MOVE_DISTANCE,
   ARTILLERY_MAP_WIDTHS,
   ARTILLERY_PAYLOADS,
+  artilleryMoveDistance,
   artilleryMovedX,
   artilleryNominalReach,
   artilleryTerrainImpactStages,
@@ -62,6 +63,22 @@ describe('Arcade deterministic rules', () => {
     const spread = artilleryNominalReach(thin, { angle: 45, power: 70, payload: 'cluster' });
     expect(spread.near).toBeLessThan(spread.far);
     expect(thin.tanks.right.x - thin.tanks.left.x).toBe(246);
+  });
+
+  it('calibrates free flight to muzzle and rival elevation while leaving ridges unknown', () => {
+    const initial = createArtilleryState('rangefinder-elevation');
+    const level = { ...initial, terrain: initial.terrain.map(() => 40), wind: 0 };
+    const shot = { angle: 45, power: 80, payload: 'shell' as const };
+    const reach = artilleryNominalReach(level, shot).near;
+    const surfaceImpact = simulateArtilleryShot(level, shot).impact;
+    expect(surfaceImpact).not.toBeNull();
+    expect(Math.abs(reach - (surfaceImpact!.x - level.tanks.left.x))).toBeLessThan(6);
+
+    const targetX = Math.round(level.tanks.right.x);
+    const high = { ...level, terrain: level.terrain.map((height, x) => Math.abs(x - targetX) <= 3 ? height + 10 : height) };
+    const low = { ...level, terrain: level.terrain.map((height, x) => Math.abs(x - targetX) <= 3 ? height - 10 : height) };
+    expect(artilleryNominalReach(low, shot).near).toBeGreaterThan(reach);
+    expect(artilleryNominalReach(high, shot).near).toBeLessThan(reach);
   });
 
   it('simulates and applies an artillery shot without mutating the input', () => {
@@ -181,20 +198,21 @@ describe('Arcade deterministic rules', () => {
 
     const first = applyArtilleryMove(initial, 1);
     expect(first.state.tanks.left.x).toBe(drivenX);
-    expect(first.state.traction.left).toBe(75);
-    expect(first.fuelSpent).toBe(25);
+    expect(first.fuelSpent).toBeGreaterThan(0);
+    expect(first.fuelSpent).toBeLessThan(25);
+    expect(first.state.traction.left).toBeCloseTo(100 - first.fuelSpent);
     expect(first.state.turn).toBe(0);
 
     const second = applyArtilleryMove(first.state, -1);
     expect(second.state.tanks.left.x).toBeLessThan(first.state.tanks.left.x);
-    expect(second.state.traction.left).toBe(50);
+    expect(second.state.traction.left).toBeCloseTo(first.state.traction.left - second.fuelSpent);
 
     const third = applyArtilleryMove(second.state, -1);
     expect(third.distance).toBe(0);
-    expect(third.state.traction.left).toBe(50);
+    expect(third.state.traction.left).toBe(second.state.traction.left);
 
     const fourth = applyArtilleryMove(third.state, 1, 'drive', 25);
-    expect(fourth.state.traction.left).toBe(25);
+    expect(fourth.state.traction.left).toBeCloseTo(third.state.traction.left - fourth.fuelSpent);
     const exhausted = applyArtilleryMove({ ...fourth.state, traction: { ...fourth.state.traction, left: 0 } }, 1);
     expect(exhausted.state.tanks.left.x).toBe(fourth.state.tanks.left.x);
     expect(exhausted.state.traction.left).toBe(0);
@@ -258,17 +276,22 @@ describe('Arcade deterministic rules', () => {
     const crater = { ...state, terrain };
     const driven = applyArtilleryMove(crater, 1, 'drive', 25);
     const jetted = applyArtilleryMove(crater, 1, 'jet', 25);
+    expect(artilleryMoveDistance(crater, 'drive', 25)).toBeGreaterThan(artilleryMoveDistance(crater, 'jet', 25));
     expect(driven.state.tanks.left.x).toBeLessThan(center + radius);
+    expect(driven.fuelSpent).toBeLessThan(25);
     expect(jetted.state.tanks.left.x).toBeGreaterThan(center + radius);
     expect(jetted.state.jetCharges.left).toBe(75);
     expect(jetted.state.traction.left).toBe(100);
   });
 
   it('replays an artillery win with committed movement', () => {
-    const seed = '2026-09-13:artillery:v1';
-    const actions: ArtilleryAction[] = [{ type: 'move', direction: 1 }];
+    const seed = 'crater-escape';
+    const actions: ArtilleryAction[] = [{ type: 'move', direction: 1, mobility: 'drive', thrust: 25 }];
     let state = createArtilleryState(seed, 'bot', 'rookie');
-    state = applyArtilleryMove(state, 1).state;
+    const openingMove = applyArtilleryMove(state, 1, 'drive', 25);
+    expect(openingMove.fuelSpent).toBeGreaterThan(0);
+    expect(openingMove.fuelSpent).toBeLessThan(25);
+    state = openingMove.state;
 
     while (state.phase === 'aiming' && state.turn < 30) {
       let shot;
@@ -305,6 +328,81 @@ describe('Arcade deterministic rules', () => {
     expect(bloom.state.terrain[impactX] - state.terrain[impactX]).toBeGreaterThan(15);
   });
 
+  it('makes a buried drill hit the rig above its cavity and buckle its footing', () => {
+    const state = createArtilleryState('buried-shock');
+    let shot: { angle: number; power: number; payload: 'bore' } | null = null;
+    for (let angle = 16; angle <= 76 && !shot; angle += 2) {
+      for (let power = 20; power <= 100; power += 1) {
+        const candidate = { angle, power, payload: 'bore' as const };
+        const outcome = simulateArtilleryShot(state, candidate);
+        const offset = Math.abs((outcome.impact?.x ?? -100) - state.tanks.right.x);
+        if (!outcome.directHit && offset >= 3 && offset <= 6 && outcome.damage >= 25) {
+          shot = candidate;
+          break;
+        }
+      }
+    }
+    expect(shot).not.toBeNull();
+    if (!shot) return;
+    const strike = applyArtilleryShot(state, shot);
+    expect(strike.outcome.blastDamage).toBeGreaterThanOrEqual(25);
+    expect(strike.outcome.fallDamage).toBeGreaterThan(0);
+    expect(strike.outcome.damage).toBeGreaterThan(strike.outcome.blastDamage);
+  });
+
+  it('gives Starfall damaging coverage where a Comet at the same aim misses', () => {
+    const state = createArtilleryState('starfall-coverage');
+    let uniqueHit = false;
+    for (let angle = 16; angle <= 76 && !uniqueHit; angle += 2) {
+      for (let power = 20; power <= 100; power += 2) {
+        const shell = simulateArtilleryShot(state, { angle, power, payload: 'shell' });
+        const starfall = simulateArtilleryShot(state, { angle, power, payload: 'cluster' });
+        if (shell.damage === 0 && starfall.damage >= 18) {
+          uniqueHit = true;
+          break;
+        }
+      }
+    }
+    expect(uniqueHit).toBe(true);
+  });
+
+  it('caps Starfall hull damage across both microbursts and terrain collapse', () => {
+    const state = createArtilleryState('starfall-combined-damage');
+    let hardest: { angle: number; power: number; damage: number } | null = null;
+    for (let angle = 16; angle <= 76; angle += 3) {
+      for (let power = 20; power <= 100; power += 2) {
+        const damage = simulateArtilleryShot(state, { angle, power, payload: 'cluster' }).damage;
+        if (!hardest || damage > hardest.damage) hardest = { angle, power, damage };
+      }
+    }
+    expect(hardest!.damage).toBeGreaterThan(50);
+    const volley = applyArtilleryShot(state, { angle: hardest!.angle, power: hardest!.power, payload: 'cluster' });
+    expect(volley.outcome.damage).toBeLessThanOrEqual(49);
+    expect(volley.outcome.damage).toBeGreaterThan(0);
+  });
+
+  it('lets Sunspike bypass half of an active guard', () => {
+    const state = createArtilleryState('guard-piercer');
+    state.guard.right = 24;
+    let shot: { angle: number; power: number; payload: 'lance' } | null = null;
+    for (let angle = 16; angle <= 76 && !shot; angle += 2) {
+      for (let power = 20; power <= 100; power += 2) {
+        const candidate = { angle, power, payload: 'lance' as const };
+        if (simulateArtilleryShot(state, candidate).damage > 24) {
+          shot = candidate;
+          break;
+        }
+      }
+    }
+    expect(shot).not.toBeNull();
+    if (!shot) return;
+    const pierced = applyArtilleryShot(state, shot);
+    const unguarded = applyArtilleryShot({ ...state, guard: { ...state.guard, right: 0 } }, shot);
+    expect(pierced.outcome.guardAbsorbed).toBe(12);
+    expect(unguarded.outcome.damage - pierced.outcome.damage).toBe(12);
+    expect(pierced.state.guard.right).toBe(0);
+  });
+
   it('makes a forward Rampart protect the next incoming shot, then spends its guard', () => {
     const state = createArtilleryState('rampart-defense');
     let coverShot: { angle: number; power: number; payload: 'bloom' } | null = null;
@@ -322,6 +420,9 @@ describe('Arcade deterministic rules', () => {
     const fortified = applyArtilleryShot(state, coverShot);
     expect(fortified.outcome.coverGranted).toBe(24);
     expect(fortified.state.guard.left).toBe(24);
+    const miss = applyArtilleryShot(fortified.state, { angle: 10, power: 15 });
+    expect(miss.outcome.damage).toBe(0);
+    expect(miss.state.guard.left).toBe(24);
     const displaced = applyArtilleryMove({ ...fortified.state, current: 'left' }, 1, 'jet', 2);
     expect(displaced.distance).toBeGreaterThan(0);
     expect(displaced.state.guard.left).toBe(0);
@@ -427,16 +528,32 @@ describe('Arcade deterministic rules', () => {
     expect(simulateArtilleryShot(expert, expertShot).path.length).toBeGreaterThan(2);
   });
 
-  it('lets a threatened bot spend a bloom to grow cover instead of chasing damage', () => {
+  it('fortifies only when a nearby shot leaves the bot in lethal danger', () => {
     const state = createArtilleryState('bot-cover', 'bot', 'standard');
     state.current = 'right';
     state.tanks.right.integrity = 50;
     state.lastImpact = { x: state.tanks.right.x - 2, shooter: 'left' };
+    expect(chooseArtilleryBotShot(state).payload).not.toBe('bloom');
+    state.tanks.right.integrity = 25;
     const shot = chooseArtilleryBotShot(state);
     const outcome = simulateArtilleryShot(state, shot);
     expect(shot.payload).toBe('bloom');
     expect(outcome.impact).not.toBeNull();
-    expect(Math.abs(outcome.impact!.x - (state.tanks.right.x - 18))).toBeLessThan(5);
+    const movedX = artilleryMovedX(state, 'right', shot.move ?? 0);
+    expect(movedX - outcome.impact!.x).toBeGreaterThanOrEqual(6);
+    expect(movedX - outcome.impact!.x).toBeLessThanOrEqual(34);
+  });
+
+  it('does not retreat into a blocked ridge or sacrifice an active guard', () => {
+    const state = createArtilleryState('bot-retreat', 'bot', 'standard');
+    state.current = 'right';
+    state.lastImpact = { x: state.tanks.right.x - 2, shooter: 'left' };
+    const x = state.tanks.right.x;
+    const terrain = [...state.terrain];
+    terrain[x + 1] = terrain[x] + 12;
+    const blocked = { ...state, terrain };
+    expect(chooseArtilleryBotShot(blocked).move).toBe(0);
+    expect(chooseArtilleryBotShot({ ...state, guard: { ...state.guard, right: 24 } }).move).toBe(0);
   });
 
   it('raises damage pressure predictably in a duel that runs long', () => {
