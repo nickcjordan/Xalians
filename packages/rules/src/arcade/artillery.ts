@@ -85,6 +85,8 @@ export const ARTILLERY_MAX_TRACTION = ARTILLERY_MAX_DRIVE_FUEL;
 export const ARTILLERY_MAX_JET_CHARGES = ARTILLERY_MAX_JET_FUEL;
 export const ARTILLERY_MOVE_DISTANCE = 22;
 export const ARTILLERY_DEFAULT_THRUST = 25;
+export const ARTILLERY_BARREL_LENGTH = 4.2;
+export const ARTILLERY_MUZZLE_BASE_HEIGHT = 4.2;
 export const ARTILLERY_MAP_WIDTHS: Record<ArtilleryMapSize, number> = {
   compact: 300,
   standard: 360,
@@ -349,8 +351,11 @@ function simulateProjectile(
   const radians = ((shot.angle + angleOffset) * Math.PI) / 180;
   const rangeScale = Math.sqrt((state.terrain.length - 1) / ARTILLERY_WIDTH);
   const speed = shot.power * ARTILLERY_SPEED_SCALE * rangeScale * rules.speedMultiplier * speedOffset;
-  let x = shooterX + direction * 1.8;
-  let y = terrainHeight(state.terrain, shooterX) + 3.2;
+  // Spawn at the visible muzzle. A lower origin made shots collide with a
+  // crater lip immediately even while the rendered barrel cleared the ridge.
+  let x = shooterX + direction * Math.cos(radians) * ARTILLERY_BARREL_LENGTH;
+  let y = terrainHeight(state.terrain, shooterX) + ARTILLERY_MUZZLE_BASE_HEIGHT
+    + Math.sin(radians) * ARTILLERY_BARREL_LENGTH;
   let vx = Math.cos(radians) * speed * direction;
   let vy = Math.sin(radians) * speed;
   const dt = 0.075;
@@ -406,6 +411,27 @@ function projectileProfiles(payload: ArtilleryPayload): Array<{ angle: number; s
     { angle: 9, speed: 1.2 },
   ];
   return [{ angle: 0, speed: 1 }];
+}
+
+// A cockpit rangefinder, not a shot preview: this is the free-flight distance
+// over level ground. Ridges, height differences and collision still decide the
+// actual landing point, so the player must read the field and correct fire.
+export function artilleryNominalReach(state: ArtilleryState, shot: ArtilleryShot): { near: number; far: number } {
+  const payload = shot.payload ?? 'shell';
+  const rules = ARTILLERY_PAYLOAD_RULES[payload];
+  const condition = ARTILLERY_CONDITIONS[state.condition];
+  const direction = state.current === 'left' ? 1 : -1;
+  const speed = Math.max(15, Math.min(100, shot.power)) * ARTILLERY_SPEED_SCALE
+    * Math.sqrt((state.terrain.length - 1) / ARTILLERY_WIDTH) * rules.speedMultiplier;
+  const gravity = 3.7 * rules.gravityMultiplier * condition.gravity;
+  const ranges = projectileProfiles(payload).map((profile) => {
+    const radians = (Math.max(10, Math.min(80, shot.angle)) + profile.angle) * Math.PI / 180;
+    const velocity = speed * profile.speed;
+    const flightTime = Math.max(0, 2 * Math.sin(radians) * velocity / gravity);
+    const windDrift = direction * state.wind * condition.wind * 0.018 * flightTime * flightTime / 2;
+    return Math.max(0, Math.cos(radians) * velocity * flightTime + windDrift);
+  });
+  return { near: Math.round(Math.min(...ranges)), far: Math.round(Math.max(...ranges)) };
 }
 
 export function simulateArtilleryShot(state: ArtilleryState, input: ArtilleryShot): ArtilleryOutcome {

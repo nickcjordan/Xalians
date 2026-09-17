@@ -117,3 +117,73 @@ so plainly. A run should not claim completion just because tests pass.
 - Decision: establish the repeatable loop before further isolated polish changes.
 - Next run: play a full Wide-map phone duel and a desktop duel on a different planet,
   score the dimensions, then implement the highest-impact connected improvement set.
+
+### 2026-09-17 — range comprehension and muzzle causality
+
+- Starting build: `6412b17` on `origin/main`. The first random practice seeds were not
+  exposed by the UI, so those human-style runs are not exactly replayable. This pass
+  adds a non-visual `data-artillery-seed` to the board for future records.
+- Played: Stonera/Wide/Rookie at 390×844 (one interrupted baseline, then complete
+  five-shot 100–0 and seven-shot 59–0 wins); Magmuth/Standard/
+  Standard bot at 1280×800 (complete 13-shot 67–0 win, then a complete 17-shot
+  15–0 win). Used Comet, Drill, Starfall, Sunspike and Razor, and observed bot
+  Rampart cover, a drive reposition, misses, direct hits, terrain collapse and a
+  target sheltered in a deep crater. The final phone match after muzzle alignment
+  used seed `artillery:591cb5ce-2da8-403f-a152-9f05db184220`; earlier random
+  practice seeds were not captured, so this is not a controlled A/B comparison.
+- Baseline diagnosis: on Wide phone maps the target was off-screen and the tiny
+  overview did not convey the shot distance. The first interrupted play reached
+  volley 7 with both rigs at 100 hull. On desktop, Fire and much of the rack were
+  below the 800px fold; Magmuth's default 70-power shot landed about 120 units
+  short. The first complete desktop duel needed 13 shots and finished at 43%
+  accuracy. A shot from a crater later appeared to clear the lip visually but
+  collided beside the rig because physics spawned below the rendered muzzle.
+- Hypothesis: a rough free-flight rangefinder plus an always-visible tactical panorama
+  would let players make an informed first estimate while preserving uncertainty
+  from terrain, wind, and weapon spread. Keeping the desktop Fire control and rack
+  in the first viewport would remove unnecessary scrolling. Aligning the physical
+  origin with the muzzle would make close ridge collisions visually truthful.
+  Rejected an exact landing preview because it would remove the ranging game.
+- Changes: added planet/weapon/wind-aware nominal reach (not terrain prediction),
+  mobile target and reach readings with a tactical panorama and transient
+  impact markers, approximate miss distance, a desktop reach readout in the Power
+  meter, a first-row Fire control and compact rack, shorter phone setup, capped
+  finishing damage feedback, a next-sortie prompt, and shared muzzle
+  geometry between rules and rendering. Nearby blocked shots now say so explicitly.
+- Observed after: on the first complete Wide phone duel, a ~20-unit long miss led
+  to a three-power correction and a direct hit; a subsequent rival drive changed
+  the target distance and the duel ended in five shots. A later phone first shot
+  used the rangefinder and dealt 41 damage, then Rampart absorbed 24 from the
+  next hit. In a desktop replay the rangefinder helped a 90-power Magmuth opening
+  shot hit directly, but a crater demanded a steeper arc to finish; the last shot
+  displayed 14 hull lost against 14 remaining rather than uncapped overkill.
+  Different random seeds and choices mean these are play observations, not a
+  measured win-rate improvement.
+- Final phone regression: on the recorded Wide seed, a 52°/77-power Comet cleared
+  the launch terrain and damaged the rival for 35; later shots accounted for
+  wind, a rival drive, and a Rampart guard. The match ended in seven total shots,
+  59 hull remaining, 75% accuracy, with no horizontal overflow at 390×844
+  (`scrollWidth` 375). The finishing feedback reported exactly 28 remaining hull.
+- Scorecard after this pass: agency/controls **3/4** (aim and Fire are reachable,
+  but mobility still needs a full tactical test); combat decisions **2/4** (terrain,
+  cover, weapon spread and wind matter, though Standard repeatedly chooses cover);
+  shot causality **3/4** (miss distance, capped damage and muzzle origin agree with
+  action; animation continuity was not re-audited); spatial readability **3/4**
+  (mobile focus + panorama work, but tiny markers remain); bot fairness **2/4**
+  (the two Standard matches were very different); mobile quality **3/4** (field and
+  controls usable at 390×844); cohesion/replay **2/4** (next-sortie guidance helps,
+  but the cockpit and post-match payoff still feel restrained).
+- Deterministic evaluator before/after muzzle alignment: Comet damaging solutions
+  3.73%→4.10%, Razor 5.31%→5.79%, Drill 2.86%→3.18%, Starfall 7.97%→8.86%,
+  Rampart 1.60%→1.74%, Sunspike 1.63%→1.75%. Synthetic-player wins changed from
+  99/96/71% to 99/100/85% versus Rookie/Standard/Expert. This is not a human
+  win rate; watch Expert challenge after deployment.
+- Verification: the full workspace suite passed (1,723 tests), web and rules
+  typechecks passed, and the production build passed its existing artillery
+  route budget after consolidating the always-visible radar and removing
+  redundant turn-by-turn coaching. Live deployment verification is recorded
+  separately after the release completes.
+- Next bottleneck: verify drive/jet escape from a crater and make terrain recovery
+  a distinct tactical choice. Also examine Standard bot's predictable immediate
+  Rampart response and whether limited weapons feel worth their ammo when a basic
+  Comet can do most jobs. Capture exact seeds for each future live playtest.
