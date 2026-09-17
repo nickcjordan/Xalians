@@ -2,6 +2,7 @@
 import * as React from 'react';
 import {
   ARTILLERY_HEIGHT,
+  ARTILLERY_BARREL_LENGTH,
   ARTILLERY_CONDITIONS,
   ARTILLERY_MAP_WIDTHS,
   ARTILLERY_MAX_INTEGRITY,
@@ -12,6 +13,7 @@ import {
   applyArtilleryMove,
   applyArtilleryShot,
   artilleryMovedX,
+  artilleryNominalReach,
   chooseArtilleryBotShot,
   createArtilleryState,
   simulateArtilleryShot,
@@ -123,15 +125,16 @@ const PAYLOAD_META: Record<ArtilleryPayload, {
   lance: { label: 'Sunspike', shortLabel: 'Sunspike', detail: 'Hypervelocity light spear · 1 charge', purpose: 'Punches a precise target with a searing line', rackHint: 'Fast piercer', elementClass: 'el-light' },
 };
 
-export function artilleryShotVerdict(outcome: ArtilleryOutcome, shooterX: number, targetX: number): ShotVerdict {
+export function artilleryShotVerdict(outcome: ArtilleryOutcome, shooterX: number, targetX: number, targetIntegrity = ARTILLERY_MAX_INTEGRITY): ShotVerdict {
   if (outcome.coverGranted > 0) return {
     title: 'Cover forged',
     detail: `${outcome.coverGranted} guard until you move or take a hit`,
   };
   if (outcome.damage > 0) return {
-    title: `${outcome.damage} hull damage`,
+    title: `${Math.min(outcome.damage, targetIntegrity)} hull damage`,
     detail: [outcome.directHit ? 'Direct hit' : outcome.fallDamage > 0 ? 'Blast and ground collapse' : 'Blast hit',
-      outcome.guardAbsorbed > 0 ? `${outcome.guardAbsorbed} absorbed by cover` : null].filter(Boolean).join(' · '),
+      outcome.guardAbsorbed > 0 ? `${outcome.guardAbsorbed} absorbed by cover` : null,
+      outcome.damage >= targetIntegrity ? 'Rig disabled' : null].filter(Boolean).join(' · '),
   };
   if (outcome.guardAbsorbed > 0) return {
     title: 'Cover held',
@@ -139,15 +142,18 @@ export function artilleryShotVerdict(outcome: ArtilleryOutcome, shooterX: number
   };
   if (outcome.outOfBounds) return { title: 'Out of range', detail: 'Shot left the sector without landing' };
   if (!outcome.impact) return { title: 'No impact', detail: 'Shot did not reach the ground' };
+  if (Math.abs(outcome.impact.x - shooterX) < 8) return {
+    title: 'Muzzle blocked', detail: 'Nearby ridge intercepted the shot · drive or jump-jet clear',
+  };
   const direction = targetX > shooterX ? 1 : -1;
   const shortBy = (targetX - outcome.impact.x) * direction;
   const radius = ARTILLERY_PAYLOAD_RULES[outcome.payload].blastRadius;
-  if (shortBy > radius) return { title: 'Landed short', detail: 'Terrain stopped the shot before the rival' };
-  if (shortBy < -radius) return { title: 'Landed long', detail: 'Impact passed beyond the rival' };
+  const gap = Math.round(Math.abs(shortBy) / 10) * 10;
+  if (shortBy > radius) return { title: 'Landed short', detail: `About ${gap} units short · clear the ridge or add power` };
+  if (shortBy < -radius) return { title: 'Landed long', detail: `About ${gap} units long · ease power or lower the arc` };
   return { title: 'Ridge shielded rig', detail: 'Terrain absorbed the blast' };
 }
 
-const BARREL_LENGTH = 4.2;
 const ARTILLERY_SKY_TOP = -38;
 const ARTILLERY_SCENE_TOP = -190;
 const ARTILLERY_VIEW_HEIGHT = ARTILLERY_HEIGHT - ARTILLERY_SKY_TOP;
@@ -166,8 +172,8 @@ export function artilleryBarrelEndpoint(
   const radians = (angle * Math.PI) / 180;
   const direction = side === 'left' ? 1 : -1;
   return {
-    x: x + Math.cos(radians) * BARREL_LENGTH * direction,
-    y: y - Math.sin(radians) * BARREL_LENGTH,
+    x: x + Math.cos(radians) * ARTILLERY_BARREL_LENGTH * direction,
+    y: y - Math.sin(radians) * ARTILLERY_BARREL_LENGTH,
   };
 }
 
@@ -616,7 +622,7 @@ export function CommandMeter({ label, value, suffix = '', min, max, disabled, gu
           className="col-span-2 mt-1 h-5 w-full cursor-pointer accent-[var(--color-viable-hi)] disabled:cursor-not-allowed disabled:opacity-40"
           style={kind === 'angle' && side === 'left' ? { direction: 'rtl' } : undefined}
         />
-        <span className="hidden max-w-full truncate font-body text-small text-ink-3 min-[380px]:block">{guidance}</span>
+        <span className="col-span-2 hidden max-w-full truncate font-body text-small text-ink-3 min-[380px]:block">{guidance}</span>
       </label>
       <Button
         type="button"
@@ -685,6 +691,7 @@ export function ArtilleryBoard({ seed, mode, difficulty, mapSize, world, onStatu
   React.useEffect(() => { stateRef.current = state; }, [state]);
   React.useEffect(() => { movementRef.current = movement; }, [movement]);
   React.useEffect(() => { setMobileFocus(state.current); }, [state.current]);
+  React.useEffect(() => { if (state.turn > 0) setCoachVisible(false); }, [state.turn]);
 
   React.useEffect(() => () => {
     pendingTimers.current.forEach(window.clearTimeout);
@@ -741,7 +748,7 @@ export function ArtilleryBoard({ seed, mode, difficulty, mapSize, world, onStatu
     const targetSide: ArtillerySide = state.current === 'left' ? 'right' : 'left';
     const target = state.tanks[targetSide];
     const payloadName = PAYLOAD_META[applied.outcome.payload].label;
-    const verdict = artilleryShotVerdict(applied.outcome, state.tanks[state.current].x, target.x);
+    const verdict = artilleryShotVerdict(applied.outcome, state.tanks[state.current].x, target.x, target.integrity);
     const result = `${verdict.title}. ${verdict.detail}.`;
 
     let soundedImpacts = 0;
@@ -978,9 +985,6 @@ export function ArtilleryBoard({ seed, mode, difficulty, mapSize, world, onStatu
   const payloadRemaining = (side: ArtillerySide, choice: ArtilleryPayload) =>
     choice === 'shell' ? (state.coreAmmo[side] < 0 ? Number.POSITIVE_INFINITY : state.coreAmmo[side]) : state.payloads[side][choice];
 
-  const botThreatened = !!state.lastImpact && Math.abs(state.lastImpact.x - state.tanks.right.x) <= 14 && state.traction.right > 0;
-  const botFortifying = botThreatened && state.tanks.right.integrity <= 60 && state.payloads.right.bloom > 0;
-  const botIntent = botFortifying ? 'Growing crater cover' : botThreatened ? 'Evasive reposition' : state.botPrevious ? 'Correcting range' : 'Measuring range';
   const resultSide = mode === 'bot' || mode === 'range' || mode === 'challenge' ? 'left' : state.winner ?? 'left';
   const resultStats = stats[resultSide];
   const resultAccuracy = resultStats.shots ? Math.round(resultStats.hits / resultStats.shots * 100) : 0;
@@ -992,8 +996,15 @@ export function ArtilleryBoard({ seed, mode, difficulty, mapSize, world, onStatu
         ? state.turn <= 7 && resultAccuracy >= 50 ? 'S' : state.turn <= 11 ? 'A' : 'B'
         : state.turn >= 10 ? 'C' : 'D';
   const resultSpecialsSpent = (mode === 'challenge' ? 4 : 7) - Object.values(state.payloads[resultSide]).reduce((total, remaining) => total + remaining, 0);
+  const nextSortie = resultAccuracy < 50
+    ? 'Next sortie: calibrate on the Practice Range.'
+    : 'Next sortie: change weapons, world, or difficulty.';
+  const targetDistance = Math.round(Math.abs(state.tanks.left.x - state.tanks.right.x));
+  const nominalReach = artilleryNominalReach(state, { angle, power, payload });
   const angleGuidance = angle < 35 ? 'Low, flatter arc' : angle < 60 ? 'Balanced arc' : 'High arc for ridges';
-  const powerGuidance = power < 45 ? 'Shorter range' : power < 75 ? 'Medium range' : 'Longer range';
+  const powerGuidance = narrowScreen
+    ? power < 45 ? 'Shorter range' : power < 75 ? 'Medium range' : 'Longer range'
+    : `Free air ~${nominalReach.near === nominalReach.far ? nominalReach.near : `${nominalReach.near}–${nominalReach.far}`}u · rival ${targetDistance}u`;
   const windAssists = state.wind !== 0 && (state.current === 'left' ? state.wind > 0 : state.wind < 0);
   const windLabel = state.wind === 0
     ? 'Still air'
@@ -1011,7 +1022,10 @@ export function ArtilleryBoard({ seed, mode, difficulty, mapSize, world, onStatu
     return Math.max(0, state.guard[side] - animated.outcome.guardAbsorbed * impactReveal);
   };
   const [cameraX, , cameraWidth] = cameraViewBox.split(' ').map(Number);
-  const overviewTerrain = displayTerrain.filter((_, x) => x % 4 === 0).map((height, index) => `${index * 4},${22 - height * 0.22}`).join(' ');
+  const panoramaGroundY = (x: number) => 78 - terrainHeight(displayTerrain, x) * 0.9;
+  const panoramaTerrainPath = `M 0 78 ${displayTerrain.filter((_, x) => x % 2 === 0).map((height, index) => `L ${index * 2} ${78 - height * 0.9}`).join(' ')} L ${fieldWidth} 78 Z`;
+  const reachX = state.tanks[state.current].x + (state.current === 'left' ? 1 : -1) * (nominalReach.near + nominalReach.far) / 2;
+  const reachMarkerX = Math.max(0, Math.min(fieldWidth, reachX));
 
   const aimAtPointer = React.useCallback((clientX: number, clientY: number) => {
     const field = fieldRef.current;
@@ -1370,7 +1384,7 @@ export function ArtilleryBoard({ seed, mode, difficulty, mapSize, world, onStatu
   };
 
   return (
-    <div className="artillery-layout grid w-full min-w-0 gap-2 overflow-x-clip">
+    <div className="artillery-layout grid w-full min-w-0 gap-2 overflow-x-clip" data-artillery-seed={seed}>
       <section aria-label="Artillery field" className={`artillery-field artillery-viewport relative mx-auto w-full self-start overflow-hidden border-2 border-edge-strong bg-s0 shadow-panel ${animated ? `artillery-cinematic-${animated.phase}` : ''}`}>
         <div className="pointer-events-none absolute inset-x-2 top-2 z-10 grid grid-cols-[minmax(0,1fr)_7.25rem_minmax(0,1fr)] items-start gap-1 sm:grid-cols-[minmax(0,1fr)_9.5rem_minmax(0,1fr)] sm:gap-2">
           <div className="min-w-0 border border-edge-strong bg-s0/90 p-1.5">
@@ -1393,24 +1407,34 @@ export function ArtilleryBoard({ seed, mode, difficulty, mapSize, world, onStatu
             {displayedGuard('right') > 0 && <span className="block font-mono text-[10px] text-viable-hi">COVER {Math.round(displayedGuard('right'))}</span>}
           </div>
         </div>
-        {narrowScreen && <div className="artillery-overview absolute inset-x-2 top-[5rem] z-10 grid grid-cols-[2.5rem_minmax(0,1fr)_2.5rem] items-center gap-1 border border-edge-strong bg-s0/90 p-1 sm:hidden" aria-label="Battlefield overview">
-          <Button type="button" size="xs" variant="ghost" className="h-7 p-0 font-mono text-[11px]" aria-label="View Rig A" aria-pressed={mobileFocus === 'left'} onClick={() => setMobileFocus('left')}>A</Button>
-          <svg viewBox={`0 0 ${fieldWidth} 24`} preserveAspectRatio="none" className="h-7 w-full" aria-hidden data-testid="artillery-mobile-overview">
-            <rect x={cameraX} y="0" width={cameraWidth} height="24" className="fill-viable-hi opacity-15" />
-            <polyline points={overviewTerrain} className="fill-none stroke-ink-3" strokeWidth="1.1" />
-            {(['left', 'right'] as const).map((side) => <circle key={side} cx={state.tanks[side].x} cy={19 - terrainHeight(displayTerrain, state.tanks[side].x) * 0.22} r="3.6" className={`${side === 'left' ? 'el-fire' : 'el-water'} fill-el`} />)}
-          </svg>
-          <Button type="button" size="xs" variant="ghost" className="h-7 p-0 font-mono text-[11px]" aria-label="View Rig B" aria-pressed={mobileFocus === 'right'} onClick={() => setMobileFocus('right')}>B</Button>
+        {narrowScreen && <div className="artillery-overview absolute inset-x-2 top-[5rem] z-10 grid gap-1 border border-edge-strong bg-s0/90 p-1 sm:hidden" aria-label="Battlefield overview">
+          <div className="grid grid-cols-[2.5rem_minmax(0,1fr)_2.5rem] items-center gap-1">
+            <Button type="button" size="xs" variant="ghost" className="h-7 p-0 font-mono text-xs" aria-label="View Rig A" aria-pressed={mobileFocus === 'left'} onClick={() => setMobileFocus('left')}>A</Button>
+            <svg viewBox={`0 0 ${fieldWidth} 78`} preserveAspectRatio="none" className="h-16 w-full" aria-hidden data-testid="artillery-mobile-overview">
+              <rect x={cameraX} y="0" width={cameraWidth} height="78" className="fill-viable-hi opacity-15" />
+              <path d={panoramaTerrainPath} className="fill-s2 stroke-ink-2" strokeWidth="1.1" />
+              {canFire && <g data-testid="artillery-nominal-reach-marker">
+                <line x1={reachMarkerX} y1="5" x2={reachMarkerX} y2={panoramaGroundY(reachMarkerX)} className="stroke-viable-hi opacity-80" strokeWidth="1.2" strokeDasharray="2 1" />
+                <path d={`M ${reachMarkerX - 4} 4 L ${reachMarkerX + 4} 4 L ${reachMarkerX} 10 Z`} className="fill-viable-hi" />
+              </g>}
+              {(['left', 'right'] as const).map((side) => <g key={side} className={side === 'left' ? 'el-fire' : 'el-water'}>
+                <circle cx={state.tanks[side].x} cy={panoramaGroundY(state.tanks[side].x) - 4} r="5.5" className="fill-el" />
+                <text x={state.tanks[side].x} y={panoramaGroundY(state.tanks[side].x) - 12} textAnchor="middle" className="fill-el font-mono" fontSize="9" fontWeight="700">{side === 'left' ? 'A' : 'B'}</text>
+              </g>)}
+              {impactFrames.map((frame) => <circle key={frame.index} cx={frame.impact.x} cy={panoramaGroundY(frame.impact.x) - 3} r="7" className="el-chemical fill-none stroke-el" strokeWidth="2" />)}
+            </svg>
+            <Button type="button" size="xs" variant="ghost" className="h-7 p-0 font-mono text-xs" aria-label="View Rig B" aria-pressed={mobileFocus === 'right'} onClick={() => setMobileFocus('right')}>B</Button>
+          </div>
+          <div className="flex items-center justify-between gap-1 border-t border-edge px-1 pt-1 font-mono text-xs uppercase text-ink-2" data-testid="artillery-rangefinder">
+            <span>Rival {targetDistance}u</span>
+            <span className="text-right">Air ~{nominalReach.near === nominalReach.far ? nominalReach.near : `${nominalReach.near}–${nominalReach.far}`}u</span>
+          </div>
         </div>}
-        {coachVisible && !shotCallout && <div className="artillery-coach pointer-events-none absolute inset-x-0 bottom-2 z-10 px-8 text-center">
+        {coachVisible && canFire && <div className="artillery-coach pointer-events-none absolute inset-x-0 bottom-2 z-10 px-8 text-center">
           <span className="inline-block border border-edge-strong bg-s0/90 px-3 py-1.5 font-body text-small text-ink-2">
-            {canFire
-              ? state.turn === 0 && angle === 45 && power === 70
-                ? '1 · Drag up and outward: direction sets arc · distance sets power'
-                : state.turn === 0
-                  ? '2 · Choose a weapon · then Fire'
-                  : 'Drag the field or use the aim sliders'
-              : movement ? 'Range rig relocating' : animated ? animated.phase === 'move' ? 'Range rig relocating' : animated.phase === 'charge' ? 'Weapon charging' : animated.phase === 'flight' ? impactFrames.length ? 'Impacts · rounds still in flight' : 'Projectile in flight' : 'Impact' : mode === 'bot' && state.current === 'right' ? `${crewAt('right').name}: ${botIntent}` : ''}
+            {state.turn === 0 && angle === 45 && power === 70
+              ? 'Drag up and outward · direction sets arc · distance sets power'
+              : 'Drag the field or use the aim sliders · then Fire'}
           </span>
         </div>}
         {shotCallout && (
@@ -1610,7 +1634,7 @@ export function ArtilleryBoard({ seed, mode, difficulty, mapSize, world, onStatu
             const labelOpacity = animated.phase === 'settle' ? Math.max(0, 1 - animated.progress / 0.38) : Math.min(1, impactReveal * 2);
             return (
               <g className={targetSide === 'left' ? 'el-fire' : 'el-water'} aria-hidden>
-                <text x={target.x} y={targetY - Math.sin(Math.min(1, impactReveal) * Math.PI) * 5 - (animated.phase === 'settle' ? animated.progress * 2 : 0)} textAnchor="middle" className="fill-el font-mono" fontSize="2.2" fontWeight="700" opacity={labelOpacity}>−{animated.outcome.damage}</text>
+                <text x={target.x} y={targetY - Math.sin(Math.min(1, impactReveal) * Math.PI) * 5 - (animated.phase === 'settle' ? animated.progress * 2 : 0)} textAnchor="middle" className="fill-el font-mono" fontSize="2.2" fontWeight="700" opacity={labelOpacity}>−{Math.min(animated.outcome.damage, target.integrity)}</text>
                 {animated.outcome.guardAbsorbed > 0 && <text x={target.x} y={targetY + 2} textAnchor="middle" className="fill-ink-2 font-mono" fontSize="1" opacity={labelOpacity}>GUARD {animated.outcome.guardAbsorbed}</text>}
               </g>
             );
@@ -1638,9 +1662,9 @@ export function ArtilleryBoard({ seed, mode, difficulty, mapSize, world, onStatu
               <span><b className="block type-data">{state.tanks[resultSide].integrity}</b><small className="type-micro">hull</small></span>
               <span><b className="block type-data">{resultStats.payloads.length}</b><small className="type-micro">weapons</small></span>
             </div>
-            <p className="mt-3 mb-3 font-body text-small text-ink-2">{mode === 'range' ? 'Practice records no Arcade Credits. Use it to learn wind, atmosphere, and every weapon system.' : mode === 'challenge' ? 'The trial records no Arcade Credits. Clear it by choosing five complementary weapons instead of repeating one solution.' : `${crewAt(state.winner!).name} held the crater range with disciplined ranging and field control.`}</p>
+            <p className="mt-3 mb-3 font-body text-small text-ink-2">{mode === 'range' ? 'Practice records no Arcade Credits. Use it to learn wind, atmosphere, and every weapon system.' : mode === 'challenge' ? 'The trial records no Arcade Credits. Clear it by choosing five complementary weapons instead of repeating one solution.' : nextSortie}</p>
             <p className="mb-3 font-body text-tiny text-ink-3">{resultStats.directHits} direct · {resultSpecialsSpent} special rounds · {resultStats.terrainShift.toFixed(1)} terrain shift{mode === 'range' ? ` · best ${Math.max(rangeBest, resultStats.damage)}` : ''}</p>
-            <Button type="button" className="w-full" onClick={onRematch}>Run a fresh sector</Button>
+            <Button type="button" className="w-full" onClick={onRematch}>Choose next battlefield</Button>
           </div>
         ) : (
           <>
@@ -1651,7 +1675,7 @@ export function ArtilleryBoard({ seed, mode, difficulty, mapSize, world, onStatu
               <Button type="button" variant="ghost" className="min-h-14 border border-edge-strong bg-s0 p-0 font-mono text-[10px]" aria-label="Choose weapon" aria-expanded={mobilePanel === 'weapons'} onClick={() => setMobilePanel((current) => current === 'weapons' ? 'none' : 'weapons')}>LOAD</Button>
               <Button type="button" variant="ghost" className="min-h-14 border border-edge-strong bg-s0 p-0 font-mono text-[10px]" aria-label="Show mobility controls" aria-expanded={mobilePanel === 'mobility'} onClick={() => setMobilePanel((current) => current === 'mobility' ? 'none' : 'mobility')}>MOVE</Button>
             </div>
-            <div className={`artillery-command-top order-2 grid min-w-0 gap-1.5 sm:order-none lg:col-span-2 ${shortLandscape ? '' : 'md:grid-cols-[minmax(0,1.55fr)_minmax(17rem,0.45fr)]'}`}>
+            <div className={`artillery-command-top order-2 grid min-w-0 gap-1.5 sm:order-none lg:col-span-2 ${shortLandscape ? '' : 'md:grid-cols-[minmax(0,1.55fr)_minmax(17rem,0.45fr)] lg:grid-cols-[minmax(0,1fr)_16rem_14rem]'}`}>
               <div className="cockpit-instrument grid min-w-0 border border-edge-strong p-1.5" aria-label="Aim the cannon">
                 <div className="grid min-w-0 gap-1.5 sm:grid-cols-2">
                   <CommandMeter label="Barrel" value={angle} suffix="°" min={10} max={80} disabled={!canFire} guidance={angleGuidance} decreaseKey="S" increaseKey="W" compact={shortLandscape || narrowScreen} kind="angle" side={state.current} onChange={setAngle} />
@@ -1704,9 +1728,27 @@ export function ArtilleryBoard({ seed, mode, difficulty, mapSize, world, onStatu
                   );
                 })}
               </div>
+              <Button
+                type="button"
+                size="lg"
+                variant="ghost"
+                className="hidden min-h-20 min-w-0 overflow-hidden border-2 border-viable-lo bg-viable-tint p-2 shadow-panel sm:flex lg:h-full"
+                disabled={!canFire}
+                aria-label={`Fire ${PAYLOAD_META[payload].shortLabel}, angle ${angle} degrees, power ${power}`}
+                onClick={() => animateShot({ angle, power, payload, move: 0, system: 'none' })}
+              >
+                <span className="grid w-full grid-cols-[3rem_minmax(0,1fr)] items-center gap-2" aria-hidden>
+                  <span className="grid size-12 place-items-center rounded-full border-2 border-viable-lo bg-s0 text-viable-hi"><PayloadGlyph payload={payload} className="h-8 w-10 overflow-visible" /></span>
+                  <span className="min-w-0 text-left">
+                    <span className="block font-mono text-[10px] uppercase tracking-[0.18em] text-ink-3">Weapon armed</span>
+                    <span className="block font-legend text-body leading-tight uppercase tracking-legend text-viable-hi">Fire {PAYLOAD_META[payload].shortLabel}</span>
+                    <span className="block font-mono text-[11px] text-ink-2">A{angle}° · P{power}</span>
+                  </span>
+                </span>
+              </Button>
             </div>
 
-            <div className={`cockpit-instrument order-1 min-w-0 gap-1.5 border border-edge-strong p-2 sm:order-none lg:col-span-2 lg:grid-cols-[minmax(0,1fr)_15rem] ${mobilePanel === 'weapons' ? 'grid' : 'hidden sm:grid'}`} role="group" aria-label="Choose a weapon">
+            <div className={`cockpit-instrument order-1 min-w-0 gap-1.5 border border-edge-strong p-2 sm:order-none lg:col-span-2 ${mobilePanel === 'weapons' ? 'grid' : 'hidden sm:grid'}`} role="group" aria-label="Choose a weapon">
               <div className="grid min-w-0 gap-1.5">
                 <span className="flex items-center justify-between gap-2 type-legend">
                   <span>Ordnance</span>
@@ -1725,7 +1767,7 @@ export function ArtilleryBoard({ seed, mode, difficulty, mapSize, world, onStatu
                       variant="ghost"
                       disabled={!canFire || unavailable}
                       aria-pressed={selected}
-                      className={`artillery-ordnance-card h-16 min-w-0 flex-col gap-0 border px-1.5 ${selected ? 'border-viable-lo bg-viable-tint text-viable-hi' : 'border-edge bg-s0'}`}
+                      className={`artillery-ordnance-card h-16 min-w-0 flex-col gap-0 border px-1.5 lg:h-14 ${selected ? 'border-viable-lo bg-viable-tint text-viable-hi' : 'border-edge bg-s0'}`}
                       onClick={() => {
                         sound.play('select');
                         setPayload(choice);
@@ -1741,7 +1783,7 @@ export function ArtilleryBoard({ seed, mode, difficulty, mapSize, world, onStatu
                   );
                 })}
                 </div>
-                <div className="flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1 border border-edge bg-s0 px-2 py-1.5">
+                <div className="flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1 border border-edge bg-s0 px-2 py-1.5 lg:hidden">
                   <strong className="font-legend text-small uppercase tracking-legend text-ink">{PAYLOAD_META[payload].label}</strong>
                   <span className="font-body text-small text-ink-3">{PAYLOAD_META[payload].detail}</span>
                   <span className="ml-auto flex flex-wrap gap-1 font-mono text-[10px] uppercase text-ink-3">
@@ -1751,24 +1793,6 @@ export function ArtilleryBoard({ seed, mode, difficulty, mapSize, world, onStatu
                   </span>
                 </div>
               </div>
-              <Button
-                type="button"
-                size="lg"
-                variant="ghost"
-                className="hidden min-h-20 min-w-0 overflow-hidden border-2 border-edge-strong bg-s0 p-2 shadow-panel sm:flex lg:order-last lg:h-full"
-                disabled={!canFire}
-                aria-label={`Fire ${PAYLOAD_META[payload].shortLabel}, angle ${angle} degrees, power ${power}`}
-                onClick={() => animateShot({ angle, power, payload, move: 0, system: 'none' })}
-              >
-                <span className="grid w-full grid-cols-[3rem_minmax(0,1fr)] items-center gap-2" aria-hidden>
-                  <span className="grid size-12 place-items-center rounded-full border-2 border-viable-lo bg-viable-tint text-viable-hi"><PayloadGlyph payload={payload} className="h-8 w-10 overflow-visible" /></span>
-                  <span className="min-w-0 text-left">
-                    <span className="block font-mono text-[10px] uppercase tracking-[0.18em] text-ink-3">Weapon armed</span>
-                    <span className="block truncate font-legend text-heading uppercase tracking-legend text-viable-hi">Fire {PAYLOAD_META[payload].shortLabel}</span>
-                    <span className="block font-mono text-[11px] text-ink-2">A{angle}° · P{power}</span>
-                  </span>
-                </span>
-              </Button>
             </div>
           </>
         )}
@@ -1798,16 +1822,16 @@ export function ArtillerySetup({ mode, difficulty, mapSize, world, onMode, onDif
     <section className="mx-auto grid w-full max-w-6xl gap-3 border border-edge-strong bg-s1 p-4" aria-labelledby="crater-setup-title">
       <div>
         <p className="type-micro m-0 text-ink-3">New match</p>
-        <h2 id="crater-setup-title" className="type-heading mt-1 mb-2">Configure Crater Command</h2>
-        <p className="m-0 max-w-3xl font-body text-body text-ink-2">Choose a world and range. Each planet changes the terrain profile and projectile physics; the controls and weapon rack stay consistent.</p>
+        <h2 id="crater-setup-title" className="type-heading mt-1 mb-2">Choose your battlefield</h2>
+        <p className="m-0 max-w-3xl font-body text-body text-ink-2">Pick a world, range, and match. Each planet changes the terrain and physics.</p>
       </div>
 
       <div className="grid gap-3 lg:grid-cols-[1fr_1fr]">
         <fieldset className="grid gap-2 border border-edge p-3">
           <legend className="type-legend px-1">Match type</legend>
-          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+          <div className="grid grid-cols-2 gap-2">
             {modeMeta.map((choice) => (
-              <Button key={choice.value} type="button" variant="ghost" aria-pressed={mode === choice.value} className={`min-h-14 flex-col items-start gap-0.5 whitespace-normal border px-3 text-left ${mode === choice.value ? 'border-viable-lo bg-viable-tint text-viable-hi' : 'border-edge bg-s0'}`} onClick={() => onMode(choice.value)}>
+              <Button key={choice.value} type="button" variant="ghost" aria-pressed={mode === choice.value} className={`h-auto min-h-20 flex-col items-start justify-start gap-0.5 whitespace-normal border px-2 py-2 text-left sm:min-h-14 sm:px-3 ${mode === choice.value ? 'border-viable-lo bg-viable-tint text-viable-hi' : 'border-edge bg-s0'}`} onClick={() => onMode(choice.value)}>
                 <span className="text-small">{choice.label}</span>
                 <span className="font-body text-small normal-case tracking-normal opacity-75">{choice.detail}</span>
               </Button>
@@ -1852,8 +1876,8 @@ export function ArtillerySetup({ mode, difficulty, mapSize, world, onMode, onDif
         </div>
       </fieldset>
 
-      <div className="grid items-center gap-3 border-t border-edge pt-4 sm:grid-cols-[1fr_auto]">
-        <p className="m-0 font-body text-body text-ink-2"><strong className="text-ink">{WORLD_META[world].name}</strong> · {MAP_META[mapSize].label} · {modeMeta.find((choice) => choice.value === mode)?.label}{mode === 'bot' ? ` · ${difficulty}` : ''}</p>
+      <div className="sticky bottom-2 z-20 grid items-center gap-2 border border-edge-strong bg-s1 p-2 shadow-panel sm:static sm:grid-cols-[1fr_auto] sm:gap-3 sm:border-0 sm:border-t sm:border-edge sm:bg-transparent sm:p-0 sm:pt-4 sm:shadow-none">
+        <p className="m-0 truncate font-body text-small text-ink-2 sm:text-body"><strong className="text-ink">{WORLD_META[world].name}</strong> · {MAP_META[mapSize].label} · {modeMeta.find((choice) => choice.value === mode)?.label}{mode === 'bot' ? ` · ${difficulty}` : ''}</p>
         <Button type="button" size="lg" className="min-h-14 px-8 text-heading" onClick={onStart}>Start match</Button>
       </div>
     </section>

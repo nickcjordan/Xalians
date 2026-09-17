@@ -3,12 +3,15 @@ import {
   applyArtilleryShot,
   applyArtilleryMove,
   ARTILLERY_HEIGHT,
+  ARTILLERY_BARREL_LENGTH,
+  ARTILLERY_MUZZLE_BASE_HEIGHT,
   ARTILLERY_MAX_DRIVE_FUEL,
   ARTILLERY_MAX_JET_FUEL,
   ARTILLERY_MOVE_DISTANCE,
   ARTILLERY_MAP_WIDTHS,
   ARTILLERY_PAYLOADS,
   artilleryMovedX,
+  artilleryNominalReach,
   artilleryTerrainImpactStages,
   chooseArtilleryBotShot,
   applyRelayMove,
@@ -49,6 +52,18 @@ describe('Arcade deterministic rules', () => {
     expect(worldSignatures.size).toBe(4);
   });
 
+  it('reports a useful free-flight range without revealing terrain impact', () => {
+    const thin = createArtilleryState('rangefinder', 'bot', 'standard', { world: 'stonera', mapSize: 'wide' });
+    const heavy = createArtilleryState('rangefinder', 'bot', 'standard', { world: 'magmuth', mapSize: 'wide' });
+    const middle = artilleryNominalReach(thin, { angle: 45, power: 70, payload: 'shell' });
+    expect(middle.near).toBe(middle.far);
+    expect(artilleryNominalReach(thin, { angle: 45, power: 90, payload: 'shell' }).near).toBeGreaterThan(middle.near);
+    expect(artilleryNominalReach(heavy, { angle: 45, power: 70, payload: 'shell' }).near).toBeLessThan(middle.near);
+    const spread = artilleryNominalReach(thin, { angle: 45, power: 70, payload: 'cluster' });
+    expect(spread.near).toBeLessThan(spread.far);
+    expect(thin.tanks.right.x - thin.tanks.left.x).toBe(246);
+  });
+
   it('simulates and applies an artillery shot without mutating the input', () => {
     const state = createArtilleryState('shot');
     const before = structuredClone(state);
@@ -67,6 +82,21 @@ describe('Arcade deterministic rules', () => {
     expect(Math.max(...projectile.path.map((point) => point.y))).toBeGreaterThan(ARTILLERY_HEIGHT + 35);
     expect(projectile.outOfBounds).toBe(false);
     expect(projectile.impact).not.toBeNull();
+  });
+
+  it('launches from the drawn muzzle above a nearby crater lip', () => {
+    const state = createArtilleryState('muzzle-clearance');
+    const shooterX = state.tanks.left.x;
+    const ground = state.terrain[shooterX];
+    const terrain = [...state.terrain];
+    for (let x = shooterX + 1; x <= shooterX + 5; x += 1) terrain[x] = ground + 5;
+    const shot = { angle: 52, power: 77, payload: 'shell' as const };
+    const outcome = simulateArtilleryShot({ ...state, terrain }, shot);
+    const origin = outcome.path[0];
+    const radians = shot.angle * Math.PI / 180;
+    expect(origin.x).toBeCloseTo(shooterX + Math.cos(radians) * ARTILLERY_BARREL_LENGTH);
+    expect(origin.y).toBeCloseTo(ground + ARTILLERY_MUZZLE_BASE_HEIGHT + Math.sin(radians) * ARTILLERY_BARREL_LENGTH);
+    expect(outcome.impact?.x ?? terrain.length).toBeGreaterThan(shooterX + 8);
   });
 
   it('always offers a shot that can reach the opposing range rig', () => {

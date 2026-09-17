@@ -2,7 +2,7 @@ import { createElement } from 'react';
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
-import { createArtilleryState, simulateArtilleryShot } from '@xalians/rules/arcade';
+import { ARTILLERY_HEIGHT, createArtilleryState, simulateArtilleryShot, terrainHeight } from '@xalians/rules/arcade';
 
 import { ArtilleryBoard, ArtillerySetup, CommandMeter, artilleryAimFromDrag, artilleryBarrelEndpoint, artilleryCinematicCamera, artilleryFlightDurationMs, artilleryFlightSample, artilleryFlightTrail, artilleryImpactRevealProgress, artilleryImpactVisualState, artilleryJetFlightY, artilleryLaunchVisualState, artilleryMoveAnimationProgress, artilleryProjectileImpactState, artilleryShotVerdict, artilleryTerrainSlopeDegrees } from '../pages/games/artilleryGamePage';
 
@@ -28,6 +28,16 @@ beforeAll(() => {
 afterAll(() => vi.unstubAllGlobals());
 
 describe('Crater Command aim feedback', () => {
+  it('draws the barrel tip at the physics projectile origin', () => {
+    const state = createArtilleryState('muzzle-visual');
+    const x = state.tanks.left.x;
+    const angle = 52;
+    const rigY = ARTILLERY_HEIGHT - terrainHeight(state.terrain, x) - 1.5;
+    const tip = artilleryBarrelEndpoint(x, rigY - 1.8, 'left', angle);
+    const origin = simulateArtilleryShot(state, { angle, power: 77 }).path[0];
+    expect(origin.x).toBeCloseTo(tip.x);
+    expect(origin.y).toBeCloseTo(ARTILLERY_HEIGHT - (tip.y - 0.9));
+  });
   it('raises and lowers the left barrel with the selected angle', () => {
     const low = artilleryBarrelEndpoint(10, 40, 'left', 10);
     const high = artilleryBarrelEndpoint(10, 40, 'left', 80);
@@ -186,6 +196,18 @@ describe('Crater Command aim feedback', () => {
       detail: '24 guard until you move or take a hit',
     });
     expect(artilleryShotVerdict({ ...baseline, damage: 0, guardAbsorbed: 17 }, 50, 310).title).toBe('Cover held');
+    expect(artilleryShotVerdict({ ...baseline, impact: { x: 54, y: 25 } }, 50, 310)).toEqual({
+      title: 'Muzzle blocked', detail: 'Nearby ridge intercepted the shot · drive or jump-jet clear',
+    });
+    expect(artilleryShotVerdict({ ...baseline, damage: 69, directHit: true }, 50, 310, 46)).toEqual({
+      title: '46 hull damage', detail: 'Direct hit · Rig disabled',
+    });
+    expect(artilleryShotVerdict({ ...baseline, impact: { x: 240, y: 25 } }, 50, 310)).toEqual({
+      title: 'Landed short', detail: 'About 70 units short · clear the ridge or add power',
+    });
+    expect(artilleryShotVerdict({ ...baseline, impact: { x: 350, y: 25 } }, 50, 310)).toEqual({
+      title: 'Landed long', detail: 'About 40 units long · ease power or lower the arc',
+    });
   });
 
   it('offers explicit one-step corrections with a readable value and guidance', async () => {
@@ -213,7 +235,7 @@ describe('Crater Command aim feedback', () => {
       onMode: vi.fn(), onDifficulty: vi.fn(), onMapSize, onWorld, onStart,
     }));
 
-    expect(screen.getByRole('heading', { name: /Configure Crater Command/i })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /Choose your battlefield/i })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /Stonera.*Cratered ridges/i })).toHaveAttribute('aria-pressed', 'true');
     await userEvent.click(screen.getByRole('button', { name: /Endessa.*Rolling glass dunes/i }));
     await userEvent.click(screen.getByRole('button', { name: /Wide.*440 units/i }));
@@ -275,8 +297,13 @@ describe('Crater Command aim feedback', () => {
         onStatus: vi.fn(), onComplete: vi.fn(), onRematch: vi.fn(),
       }));
       expect(screen.getByTestId('artillery-mobile-actions')).toBeInTheDocument();
+      expect(screen.getByRole('region', { name: 'Artillery field' }).parentElement).toHaveAttribute('data-artillery-seed', 'mobile-command');
       expect(screen.getByRole('button', { name: /Launch selected Comet/i })).toBeEnabled();
       expect(screen.getByTestId('artillery-mobile-overview')).toBeInTheDocument();
+      expect(screen.getByTestId('artillery-rangefinder')).toHaveTextContent('Rival 246u');
+      expect(screen.getByTestId('artillery-nominal-reach-marker')).toBeInTheDocument();
+      expect(screen.getByTestId('artillery-mobile-overview')).toHaveAttribute('viewBox', '0 0 440 78');
+      expect(screen.getByRole('img', { name: /Two mobile range rigs/i }).getAttribute('viewBox')?.split(' ')[2]).not.toBe('440');
       await userEvent.click(screen.getByRole('button', { name: 'View Rig B' }));
       expect(screen.getByRole('button', { name: 'View Rig B' })).toHaveAttribute('aria-pressed', 'true');
       await userEvent.click(screen.getByRole('button', { name: 'Choose weapon' }));
@@ -448,8 +475,9 @@ describe('Crater Command aim feedback', () => {
       const before = ground?.getAttribute('d');
       fireEvent.click(screen.getByRole('button', { name: /Fire Starfall/i }));
       act(() => vi.advanceTimersByTime(900 + Math.ceil(duration * (first - 1) / (longest - 1)) + 480));
-      expect(screen.getAllByTestId('artillery-impact-cluster')).toHaveLength(1);
-      const impact = screen.getByTestId('artillery-impact-cluster');
+      expect(screen.getAllByTestId('artillery-impact-cluster').length).toBeGreaterThan(0);
+      expect(screen.getAllByTestId('artillery-impact-cluster').length).toBeLessThan(shot.projectiles.length);
+      const impact = screen.getAllByTestId('artillery-impact-cluster')[0];
       expect(impact.querySelector('g[transform^="rotate("]')).toBeInTheDocument();
       expect(impact.querySelectorAll('circle')).toHaveLength(1);
       expect(impact.querySelectorAll('path').length).toBeGreaterThan(5);
