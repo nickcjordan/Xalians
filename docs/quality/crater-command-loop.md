@@ -421,3 +421,39 @@ so plainly. A run should not claim completion just because tests pass.
   damage pressure make crater duels exciting or merely long and swingy. Test
   shelf warnings in live play and revisit the weapon-load surface if the
   extra action slows combat more than it improves spatial focus.
+
+### 2026-09-17: always-visible ordnance and steady wind
+
+- Starting build: deployed `29372e0`. Nick found that hiding the weapon rack
+  behind Load weapon added an unnecessary click to a frequent combat choice.
+  The local 390x844 first pass put all six weapons in one row, but the names
+  and roles truncated too heavily to guide a choice.
+- Change: all six weapon cards remain visible during combat on desktop and
+  phone. Selecting a card directly arms it and keeps the rack in place after
+  a shot; no Load weapon control or reveal panel remains. The cards show
+  remaining rounds and short tactical roles, while the Fire control reflects
+  the armed weapon. On phones, a two-row, three-column rack keeps names and
+  roles readable. The active phone field uses 45dvh instead of 50dvh and the
+  Fire/MOVE row is slightly shorter, so the visible choices do not bury the
+  aim meters. The rack itself does not change rules, ammo counts, or rewards.
+- Follow-up: Nick pointed out that wind changed after a volley, undermining
+  learned shot corrections. The opening wind now stays fixed for the entire
+  match in bot, local, range, and challenge modes. The random stream still
+  advances for rival behavior, and setup now states the fixed-wind rule.
+- Local browser check: at 1280x720, all six cards, the battlefield, aim,
+  mobility, and Fire fit in the viewport. At 390x844, six names and roles
+  were fully visible, the power slider ended at about y842, and document
+  width remained within the viewport. At 320x700, every weapon name and role
+  still fit without horizontal overflow, though the aim controls require
+  vertical scrolling. A direct tap selected Razor, updated
+  Fire Razor, and kept the rack visible; after firing, Razor ammunition fell
+  from two to one and all cards remained available. In a separate local
+  range match, wind remained 5 left after both a Comet and Razor shot. No
+  browser errors were observed. Physical-device testing remains deferred
+  at Nick's request.
+- Verification: 1,772 workspace tests, web and rules typechecks, and the
+  production build passed after both changes. The route measured about
+  103.2 KB raw and 34.7 KB gzip. Generated shared
+  CSS exceeded its prior raw budget by 44 bytes, so the measured cap rose
+  from 240.5 KB to 241.0 KB; gzip remained under its existing cap. Live
+  release verification follows deployment.

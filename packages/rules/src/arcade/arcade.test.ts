@@ -178,14 +178,18 @@ describe('Arcade deterministic rules', () => {
     expect(bore.outcome.path.at(-1)!.y).toBeLessThan(bore.outcome.path.at(-2)!.y);
   });
 
-  it('holds wind through a volley so the reply preserves ranging information', () => {
-    const initial = createArtilleryState('stable-volley');
-    const left = applyArtilleryShot(initial, { angle: 45, power: 62 });
-    expect(left.state.wind).toBe(initial.wind);
-    expect(left.state.rngState).toBe(initial.rngState);
-
-    const right = applyArtilleryShot(left.state, { angle: 45, power: 62 });
-    expect(right.state.rngState).not.toBe(initial.rngState);
+  it('keeps the opening wind for every turn in each artillery mode', () => {
+    for (const mode of ['bot', 'local', 'range', 'challenge'] as const) {
+      const initial = createArtilleryState(`stable-wind-${mode}`, mode);
+      let current = initial;
+      for (let turn = 0; turn < 3; turn += 1) {
+        current = applyArtilleryShot(current, { angle: 75, power: 20 }).state;
+        expect(current.wind).toBe(initial.wind);
+      }
+      if (mode === 'bot' || mode === 'range' || mode === 'challenge') {
+        expect(current.rngState).not.toBe(initial.rngState);
+      }
+    }
   });
 
   it('commits fuel-scaled rig movement immediately', () => {
