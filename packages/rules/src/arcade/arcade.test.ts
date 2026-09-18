@@ -510,6 +510,22 @@ describe('Arcade deterministic rules', () => {
     expect(pierced.state.guard.right).toBe(0);
   });
 
+  it('keeps the default Sunspike shot inside Stonera maps with a near-Comet arc', () => {
+    for (const mapSize of ['compact', 'standard', 'wide'] as const) {
+      for (const seed of ['sunspike-a', 'sunspike-b', 'sunspike-c']) {
+        const state = createArtilleryState(seed, 'range', 'standard', { mapSize, world: 'stonera' });
+        const shot = { angle: 45, power: 70 };
+        const cometReach = artilleryNominalReach(state, { ...shot, payload: 'shell' }).near;
+        const sunspikeReach = artilleryNominalReach(state, { ...shot, payload: 'lance' }).near;
+        const outcome = simulateArtilleryShot(state, { ...shot, payload: 'lance' });
+        expect(sunspikeReach).toBeGreaterThan(cometReach);
+        expect(sunspikeReach).toBeLessThan(cometReach * 1.2);
+        expect(outcome.outOfBounds).toBe(false);
+        expect(outcome.impact).not.toBeNull();
+      }
+    }
+  });
+
   it('makes a forward Rampart protect the next incoming shot, then spends its guard', () => {
     const state = createArtilleryState('rampart-defense');
     let coverShot: { angle: number; power: number; payload: 'bloom' } | null = null;

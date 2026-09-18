@@ -166,7 +166,7 @@ const PAYLOAD_META: Record<ArtilleryPayload, {
   bore: { label: 'Grav drill', shortLabel: 'Drill', detail: 'Buried shock and deep ground collapse · 2 charges', purpose: 'Damages the rig above a buried impact and drops its footing', rackHint: 'Ground shock', elementClass: 'el-sand' },
   cluster: { label: 'Starfall canister', shortLabel: 'Starfall', detail: 'Five wider microbursts · 1 charge', purpose: 'Blankets uncertain range and tears up a broad shelf', rackHint: 'Wide barrage', elementClass: 'el-chemical' },
   bloom: { label: 'Rampart forge', shortLabel: 'Rampart', detail: `Wall ahead grants ${ARTILLERY_RAMPART_GUARD} guard until you move or take a hit. Fire a high arc over close walls · 1 charge`, purpose: 'Raises terrain and blocks the next incoming blast', rackHint: 'Cover + guard', elementClass: 'el-plant' },
-  lance: { label: 'Sunspike', shortLabel: 'Sunspike', detail: 'Precise light spear · pierces half of guard · 1 charge', purpose: 'Finishes an exposed rig or cuts through protective guard', rackHint: 'Guard piercer', elementClass: 'el-light' },
+  lance: { label: 'Sunspike', shortLabel: 'Sunspike', detail: 'Fast, narrow light spear · near-Comet arc · pierces half of guard · 1 charge', purpose: 'Finishes an exposed rig or cuts through protective guard', rackHint: 'Guard piercer', elementClass: 'el-light' },
   skip: { label: 'Skipjack', shortLabel: 'Skipjack', detail: 'Ricochets once off the ground before bursting · 2 charges', purpose: 'Hops over the first ridge and strikes beyond it', rackHint: 'Ground bounce', elementClass: 'el-electric' },
   mole: { label: 'Mole mine', shortLabel: 'Mole', detail: 'Tunnels 27 units after landing, then erupts · 2 charges', purpose: 'Sneaks under a defensive lip to hit behind cover', rackHint: 'Tunnel + erupt', elementClass: 'el-sand' },
   tractor: { label: 'Tractor knot', shortLabel: 'Tractor', detail: 'Pulls a nearby rig up to 15 units toward impact · 1 charge', purpose: 'Drags a rival off its perch or into a crater', rackHint: 'Rig pull', elementClass: 'el-chemical' },
@@ -1202,9 +1202,11 @@ export function ArtilleryBoard({ seed, mode, difficulty, mapSize, world, onStatu
     ? String(Math.round(nominalReach.near / 10) * 10)
     : `${Math.round(nominalReach.near / 10) * 10}–${Math.round(nominalReach.far / 10) * 10}`;
   const angleGuidance = angle < 35 ? 'Low, flatter arc' : angle < 60 ? 'Balanced arc' : 'High arc for ridges';
-  const powerGuidance = narrowScreen
-    ? closeLaunchHits > 0 ? 'Near ridge catches fire' : shelfRisk ? 'Ridge before rival' : power < 45 ? 'Shorter range' : power < 75 ? 'Medium range' : 'Longer range'
-    : closeLaunchHits > 0 ? 'Near ridge catches fire · jet clear' : shelfRisk ? 'Intervening ridge · loft arc' : `Open air ~${reachReadout}u · rival ~${targetDistance}u`;
+  const powerGuidance = aimOutcome?.outOfBounds
+    ? 'Beyond sector · lower power'
+    : narrowScreen
+      ? closeLaunchHits > 0 ? 'Near ridge catches fire' : shelfRisk ? 'Ridge before rival' : power < 45 ? 'Shorter range' : power < 75 ? 'Medium range' : 'Longer range'
+      : closeLaunchHits > 0 ? 'Near ridge catches fire · jet clear' : shelfRisk ? 'Intervening ridge · loft arc' : `Open air ~${reachReadout}u · rival ~${targetDistance}u`;
   const windAssists = state.wind !== 0 && (state.current === 'left' ? state.wind > 0 : state.wind < 0);
   const windLabel = state.wind === 0
     ? 'Still air'
@@ -1633,10 +1635,11 @@ export function ArtilleryBoard({ seed, mode, difficulty, mapSize, world, onStatu
             <span className="text-right">Air ~{reachReadout}u</span>
           </div>
         </div>}
-        {canFire && (coachVisible || closeLaunchHits > 0 || shelfRisk) && <div className="artillery-coach pointer-events-none absolute inset-x-0 bottom-2 z-10 px-8 text-center">
-          <span className={`inline-block border px-3 py-1.5 font-body text-small ${closeLaunchHits > 0 || shelfRisk ? 'border-plague bg-s0/95 text-ink' : 'border-edge-strong bg-s0/90 text-ink-2'}`}>
+        {canFire && (coachVisible || closeLaunchHits > 0 || shelfRisk || aimOutcome?.outOfBounds) && <div className="artillery-coach pointer-events-none absolute inset-x-0 bottom-2 z-10 px-8 text-center">
+          <span className={`inline-block border px-3 py-1.5 font-body text-small ${closeLaunchHits > 0 || shelfRisk || aimOutcome?.outOfBounds ? 'border-plague bg-s0/95 text-ink' : 'border-edge-strong bg-s0/90 text-ink-2'}`}>
             {closeLaunchHits > 0
               ? `${closeLaunchHits === aimOutcome?.projectiles.length ? 'Firing line blocked' : 'Part of salvo blocked'} · Jet clear or reshape the lip`
+              : aimOutcome?.outOfBounds ? 'Shot leaves sector · lower power'
               : shelfRisk ? 'Ridge before rival · Loft the barrel or breach the shelf'
               : state.turn === 0 && angle === 45 && power === 70
               ? narrowScreen ? 'Drag to aim · Fire to launch' : 'Drag up and outward · direction sets arc · distance sets power'

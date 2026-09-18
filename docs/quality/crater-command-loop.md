@@ -550,3 +550,27 @@ so plainly. A run should not claim completion just because tests pass.
   typechecks and the production build. The first full web run hit an unrelated
   authored-portrait lazy-load timeout; the complete rerun passed. Physical-
   device testing remains deferred.
+
+### 2026-09-18: Sunspike range correction
+
+- Nick reported that Sunspike repeatedly flew off-screen. Live reproduction
+  on the Standard Stonera practice range showed its default 45-degree,
+  70-power shot estimated about 330 units toward a rival about 200 units away.
+  Its 1.22 launch-speed multiplier and 0.78 gravity multiplier compounded
+  into almost double Comet's reach. The single charge was spent on a shot
+  that crossed the sector edge.
+- Sunspike now has 1.05 launch speed and normal projectile gravity. It keeps
+  its faster visual flight, narrow blast, direct-hit damage, and half-guard
+  bypass while following a near-Comet aiming arc. Its description says this
+  explicitly. A shot that the simulation knows will leave the sector now
+  displays a lower-power warning at the power control and on the battlefield,
+  including above Fire on a phone-sized viewport.
+- Focused rules tests cover the default shot on Compact, Standard, and Wide
+  Stonera maps across three seeds and retain the guard-piercing check.
+  Component tests cover the warning, description, and a landed Sunspike
+  volley. In local browser play, the default shot estimated about 210 units
+  toward a 200-unit rival, stayed in view, and hit terrain. The 390-pixel
+  viewport showed the over-range warning in the battlefield at power 100.
+  All 375 rules and 1,354 web tests passed, along with both typechecks and the
+  production build. The first full web run hit an unrelated authored-portrait
+  lazy-load timeout while tests ran concurrently; the complete rerun passed.
