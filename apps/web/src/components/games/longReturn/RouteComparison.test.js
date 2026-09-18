@@ -41,6 +41,12 @@ test('requested analysis spans both routes and remains separate from selecting a
   fireEvent.click(buttons[0]);
   expect(view.container.querySelector('#route-analysis-a').closest('tr').hidden).toBe(true);
   expect(onSelect).not.toHaveBeenCalled();
+  expect(view.container.querySelectorAll('.lr-board-pick')).toHaveLength(2);
+  expect(view.container.querySelector('.lr-board-footer .lr-board-pick')).toBeNull();
+  expect(view.container.querySelectorAll('.lr-board-next')).toHaveLength(2);
+  fireEvent.click(view.container.querySelectorAll('.lr-board-pick')[1]);
+  expect(onSelect).toHaveBeenCalledTimes(1);
+  expect(onSelect).toHaveBeenCalledWith('b');
   view.unmount();
 });
 

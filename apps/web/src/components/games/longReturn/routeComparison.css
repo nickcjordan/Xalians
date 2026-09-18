@@ -3,3 +3,4 @@
 .lr-route-board .is-stability { --board-color:#82d39d; }
 .lr-route-board .is-salvage { --board-color:#f1cb58; }
 .lr-route-board .lr-board-amount,.lr-route-board .lr-board-axis svg { color:var(--board-color); }
+.lr-route-board .lr-board-next { display:inline-flex; align-items:center; gap:5px; padding-top:3px; border-top:1px solid currentColor; }

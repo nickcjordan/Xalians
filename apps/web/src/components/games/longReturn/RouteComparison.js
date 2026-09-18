@@ -55,11 +55,12 @@ export default function RouteComparison({ scene, plans, selectedId, onSelect, on
     <TableHeader className="top-14 z-20 bg-s0 [@media(min-height:40rem)]:sticky lg:static"><TableRow className={`${rowClass} lr-board-head`}>
       <TableHead className={axisClass} scope="col">Choose your crossing</TableHead>
       {plans.map((plan, index) => <TableHead key={plan.route.id} role="columnheader" scope="col" data-route-preview={plan.route.id} data-lowest-risk={plan.risk === lowestRisk ? 'true' : undefined} className={`${cellClass} ${selectedId === plan.route.id ? 'is-selected' : ''}${recommendation?.plan.route.id === plan.route.id ? ' is-recommended' : ''}`}>
-        <Button variant="ghost" type="button" className="lr-board-pick h-auto min-h-11 w-full flex-col items-start justify-start gap-2 p-0 has-[>svg]:px-0 text-left font-body text-body normal-case tracking-normal whitespace-normal text-ink" aria-pressed={selectedId === plan.route.id} onClick={() => onSelect(plan.route.id)}>
+        <Button variant="ghost" type="button" className="lr-board-pick h-auto min-h-11 w-full flex-col items-start justify-start gap-2 p-0 has-[>svg]:px-0 text-left font-body text-body normal-case tracking-normal whitespace-normal text-ink" aria-label={`Choose crew for: ${plan.route.title}`} aria-pressed={selectedId === plan.route.id} onClick={() => onSelect(plan.route.id)}>
           <strong className="text-body md:text-subhead">{plan.route.title}</strong>
           <RoutePathCue scene={scene} routeId={plan.route.id} index={index} />
           <span className={`flex items-center gap-1 text-small ${values[index].uncertain ? 'text-caution' : 'text-ink-2'}`}>{values[index].uncertain ? <HelpCircle /> : <ShieldCheck />}{values[index].uncertain ? 'Extra costs unknown' : 'Costs confirmed'}</span>
           {recommendation?.plan.route.id === plan.route.id && <em className="text-small text-ink-2" title={recommendation.reason}>Recommended</em>}
+          <span className="lr-board-next text-small font-bold text-viable">Choose lead <ArrowRight className="size-4" /></span>
         </Button>
       </TableHead>)}
     </TableRow></TableHeader>
@@ -84,10 +85,9 @@ export default function RouteComparison({ scene, plans, selectedId, onSelect, on
       {plans.map(plan => <TableCell role="cell" key={plan.route.id} data-route-preview={plan.route.id} className={`${cellClass} ${selectedId === plan.route.id ? 'is-selected' : ''}`}><strong>{consequencePreview(plan.route)}</strong></TableCell>)}
     </TableRow>}
     <TableRow className={`${rowClass} lr-board-footer`}>
-      <TableHead className={axisClass} role="rowheader" scope="row">Your route</TableHead>
+      <TableHead className={axisClass} role="rowheader" scope="row">More detail</TableHead>
       {plans.map((plan, index) => <TableCell role="cell" key={plan.route.id} data-route-preview={plan.route.id} className={`${cellClass} ${selectedId === plan.route.id ? 'is-selected' : ''}`}>
-        <Button variant="outline" type="button" className="lr-board-select h-auto min-h-11 w-full gap-1 px-1 py-2 has-[>svg]:px-1 font-body text-body normal-case tracking-normal whitespace-normal" aria-label={`Choose crew for: ${plan.route.title}`} aria-pressed={selectedId === plan.route.id} onClick={() => onSelect(plan.route.id)}>Choose lead<ArrowRight /></Button>
-        <Button variant="ghost" type="button" className="lr-board-analysis mt-2 h-auto min-h-11 w-full px-0 py-2 has-[>svg]:px-0 font-body text-body normal-case tracking-normal whitespace-normal" aria-label={`Why these costs: ${plan.route.title}`} aria-expanded={analysisId === plan.route.id} aria-controls={`route-analysis-${plan.route.id}`} onClick={() => setAnalysisId(analysisId === plan.route.id ? null : plan.route.id)}>Why these costs?<ArrowRight className={analysisId === plan.route.id ? 'rotate-90' : ''} /></Button>
+        <Button variant="ghost" type="button" className="lr-board-analysis h-auto min-h-11 w-full px-0 py-2 has-[>svg]:px-0 font-body text-body normal-case tracking-normal whitespace-normal" aria-label={`Why these costs: ${plan.route.title}`} aria-expanded={analysisId === plan.route.id} aria-controls={`route-analysis-${plan.route.id}`} onClick={() => setAnalysisId(analysisId === plan.route.id ? null : plan.route.id)}>Why these costs?<ArrowRight className={analysisId === plan.route.id ? 'rotate-90' : ''} /></Button>
       </TableCell>)}
     </TableRow>
     {plans.map((plan, index) => <TableRow key={plan.route.id} hidden={analysisId !== plan.route.id} className={rowClass}>

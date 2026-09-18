@@ -74,7 +74,7 @@ try {
     assert.equal(await analysis.isVisible(),false);
     await page.evaluate(() => window.scrollTo({top:0,behavior:'instant'}));
     await page.screenshot({path:`${output}/${width}-preview.png`,fullPage:true});
-    const go = other.locator('.lr-board-select');
+    const go = page.locator('.lr-board-head [data-route-preview="intake"] .lr-board-pick');
     await go.focus();
     await verify('intake');
     await go.press('Enter');
