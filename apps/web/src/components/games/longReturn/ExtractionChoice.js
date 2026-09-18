@@ -1,10 +1,10 @@
 // Tier: immersive. Compare a secured haul with optional exploration, not two promised payouts.
 import React from 'react';
-import { ArrowRight, Package, ShieldCheck, Route } from 'lucide-react';
+import { ArrowRight, Building2, Package, Route, ShieldCheck, Zap } from 'lucide-react';
 import { Button } from '../../ui/button';
 import { bankedSalvage } from './extractionOutcome';
 
-export default function ExtractionChoice({ salvage, potential, remaining = 1, nextScene, onExtract, onContinue }) {
+export default function ExtractionChoice({ salvage, potential, remaining = 1, nextScene, stability, readyCrew, onExtract, onContinue }) {
   const retained = bankedSalvage('failed', true, salvage);
   const risk = salvage - retained;
   return <section data-tier="immersive" className="lr-depth-decision lr-extraction-choice font-body text-body" aria-labelledby="lr-depth-title">
@@ -23,6 +23,10 @@ export default function ExtractionChoice({ salvage, potential, remaining = 1, ne
         <h5 className="m-0 type-subhead normal-case tracking-normal">Continue into {nextScene.title}</h5>
         <div className="flex items-center gap-2"><Package className="size-5" /><span>Up to <strong data-depth-potential className="font-data text-heading tabular-nums">+{potential}</strong> more salvage</span></div>
         <p data-depth-distance className="m-0 flex items-center gap-2 text-small text-ink-2"><Route className="size-4" />Across {remaining} optional {remaining === 1 ? 'crossing' : 'crossings'}, not guaranteed.</p>
+        {(stability <= remaining * 2 || readyCrew <= 2) && <div data-depth-reserves className="flex flex-wrap gap-x-4 gap-y-1 text-small text-caution" aria-label="Reserves for the optional crossings">
+          {stability <= remaining * 2 && <span className="inline-flex items-center gap-1"><Building2 className="size-4" /><strong>{stability}</strong> stability left</span>}
+          {readyCrew <= 2 && <span className="inline-flex items-center gap-1"><Zap className="size-4" /><strong>{readyCrew}</strong> crew able to act</span>}
+        </div>}
         <div className="lr-haul-risk text-small text-ink-2">
           <span>If forced out with your current haul: </span><span className="whitespace-nowrap">keep {retained}</span>{risk > 0 && <> · <span className="whitespace-nowrap text-caution">lose <b>{risk}</b></span></>}</div>
         <Button variant="outline" className="lr-depth-option is-deeper mt-auto h-auto min-h-11 w-full justify-between py-2 text-body normal-case tracking-normal whitespace-normal text-left" onClick={onContinue}>Go deeper<ArrowRight className="size-4" /></Button>

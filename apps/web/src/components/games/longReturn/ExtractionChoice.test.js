@@ -43,6 +43,16 @@ test.each([1, 2])('the optional haul is a ceiling across %i remaining crossings,
   expect(container.querySelector('details').open).toBe(false);
 });
 
+test('a thin reserve is shown beside the deeper option, without a separate warning banner', () => {
+  const { container, rerender } = render(<ExtractionChoice salvage={4} potential={19} remaining={2} stability={3} readyCrew={2} nextScene={{ title: 'Core Reservoir' }} />);
+  const reserves = container.querySelector('[data-depth-explore] [data-depth-reserves]');
+  expect(reserves.textContent).toContain('3 stability left');
+  expect(reserves.textContent).toContain('2 crew able to act');
+  expect(container.querySelector('[data-depth-extract] [data-depth-reserves]')).toBeNull();
+  rerender(<ExtractionChoice salvage={4} potential={19} remaining={2} stability={8} readyCrew={3} nextScene={{ title: 'Core Reservoir' }} />);
+  expect(container.querySelector('[data-depth-reserves]')).toBeNull();
+});
+
 test('reading an offer or its rule is not an implicit commitment', () => {
   const onExtract = vi.fn(), onContinue = vi.fn();
   const { container } = render(<ExtractionChoice salvage={5} potential={19} remaining={2} nextScene={{ title: 'Core Reservoir' }} onExtract={onExtract} onContinue={onContinue} />);

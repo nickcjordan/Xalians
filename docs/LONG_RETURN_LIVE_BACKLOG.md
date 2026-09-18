@@ -4,6 +4,11 @@ Owner: the agent maintaining the Long Return worktree. Update this file during i
 
 ## Active goal — full-mission UX (2026-09-11)
 
+### September 18: the optional-depth fork keeps the actual reserve in view
+
+- A full-mission replay with deliberate energy conservation reached the seventh crossing with healthy crew energy but exhausted the annex's last stability. The final lead screen correctly warned of forced extraction, yet the earlier optional-depth fork emphasized a possible salvage ceiling without locating the thin structural reserve beside the decision to go deeper. The fork now shows a small, cause-aligned stability or ready-crew cue only when that reserve is thin relative to the crossings remaining. It promises no unknown cost or safe outcome. The redundant generic “next stakes” strip is removed when the leave/deeper choice is already present, while the pre-Index and terminal states retain their guidance.
+- Published-path audits reached two distinct forced endings: no-scout play lost stability after five crossings; scouting with energy-conserving field work reached the lift after seven crossings but lost the last stability. A fresh local seven-room replay passed, and the 390-pixel depth choices after scenes five and six were paint-reviewed with three and one stability remaining. All 1,332 web tests, typecheck, production build and unchanged bundle budgets passed. This clarifies the risk at the decision; it does not establish human acceptance or claim those two particular policies complete a full deep retrieval.
+
 ### September 18: route costs name the creature they assume
 
 - The shared route comparison projected each approach using a specific suggested lead, support and technique, but named none of them until the player clicked through to lead selection. The fixed-cost caption also implied the amount belonged to the route regardless of who led. Each Simple route header now shows the projected lead with the same numbered crew marker used on the site map; the button says Pick lead and its accessible name states the preview assumption. Generic “fixed cost” captions are removed while physical cost causes, uncertainty, ally savings and on-demand analysis remain. Changing a lead, returning to routes and choosing again updates the named projection without spending resources. Detailed modes are unchanged.
