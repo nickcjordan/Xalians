@@ -13,6 +13,8 @@ Owner: the agent maintaining the Long Return worktree. Update this file during i
 - Bundle accounting: measured lazy route JavaScript grows about 0.9 kB raw / 0.3 kB compressed to 316.2 kB raw / 99.5 kB compressed. Restored this route's documented approximately five percent allowance rather than repeatedly raising the ceiling by a few bytes. Initial JavaScript and other routes' limits are unchanged.
 - Next review: later-room schematic branches still share the same upper/lower topology even when the choice describes approaching a center or edge. Check whether stationary geometry and route labels communicate the actual alternatives without inventing a literal floor plan or performing creature animation.
 
+Follow-through: PR #363 merged and deployed. Normal-motion screenshot review then identified the report caption touching the quiet-path marker. Separated those cues and added a rendered bounding-box regression to the four-size story replay. This is a layout correction, not a change to reporting or crew movement. The main schematic is now selected explicitly in the replay so decorative nested SVG icons do not make its size assertion ambiguous.
+
 ### September 17: compact story, map and route comparison
 
 - Consolidated route orientation into the scene header beside the schematic. The illustrative scene paragraph remains intact; the duplicate objective and repeated route geography no longer precede the comparison. Each route's physical approach remains in its cost analysis. Other decision views and advanced modes keep their current context.

@@ -57,12 +57,12 @@ export default function ExpeditionSchematic({ scene, crew = [], scout, helperId,
         return <g key={route.id} data-map-route={route.id}>
           <path d={`M130 98 H164 V${y} H438 V98 H470`} fill="none" stroke={selected ? 'var(--color-viable)' : 'var(--color-edge-strong)'} strokeWidth={selected ? 3 : 2} strokeDasharray={selected && preview ? '5 5' : undefined} />
           {selected && <path data-map-direction={route.id} d={`M400 ${y - 6} l6 6 -6 6`} fill="none" stroke="var(--color-viable)" strokeWidth="2" />}
-          {change && <g data-map-effect={change.flag} transform={`translate(184 ${y - 12})`} style={{color:changeColor}}><title>{change.detail}</title><rect x="-3" y="-3" width="30" height="30" fill="var(--color-s0)" /><BiIcon cls={change.icon} className="size-6!" /></g>}
+          {change && <g data-map-effect={change.flag} transform={`translate(216 ${y - 12})`} style={{color:changeColor}}><title>{change.detail}</title><rect x="-3" y="-3" width="30" height="30" fill="var(--color-s0)" /><BiIcon cls={change.icon} className="size-6!" /></g>}
           <text x="300" y={i === 0 ? 26 : 179} textAnchor="middle" fill={change ? changeColor : selected ? 'var(--color-ink)' : 'var(--color-ink-2)'} className="text-small">{change?.mapLabel || MAP_ROUTES[route.id] || route.title}</text>
         </g>;
       })}
       {position.scout === 'survey' && <path d="M130 98 H222" fill="none" stroke="var(--color-edge-strong)" strokeDasharray="3 5" />}
-      {position.signal && <g><path d={`M${signalFrom[0]} ${signalFrom[1] - 15} Q160 40 94 76`} fill="none" stroke="var(--color-viable)" strokeDasharray="4 4" /><text x="164" y="65" textAnchor="middle" fill="var(--color-viable)" className="text-small">Report ↙</text></g>}
+      {position.signal && <g><path d={`M${signalFrom[0]} ${signalFrom[1] - 15} Q160 40 94 76`} fill="none" stroke="var(--color-viable)" strokeDasharray="4 4" /><text data-map-signal x="164" y="65" textAnchor="middle" fill="var(--color-viable)" className="text-small">Report ↙</text></g>}
       {tokens.map(({ member, number, point, place }) => <g key={member.id} data-map-creature={member.id} data-location={place} style={{ transform: `translate(${point[0]}px, ${point[1]}px)` }} className="transition-transform duration-200 motion-reduce:transition-none">
         <title>{`${member.species}: ${place === 'survey' ? 'scouting ahead' : place === 'exit' ? 'across with the crew' : place}`}</title>
         <circle r="12" fill="var(--color-viable)" stroke="var(--color-s0)" strokeWidth="2" />
