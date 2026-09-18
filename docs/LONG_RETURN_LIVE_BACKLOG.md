@@ -4,6 +4,11 @@ Owner: the agent maintaining the Long Return worktree. Update this file during i
 
 ## Active goal — full-mission UX (2026-09-11)
 
+### September 18: reservoir retrieval keeps the lead in the right place
+
+- A seven-room replay exposed a new location mismatch in the sixth crossing: the electric-vulnerability sentence said Hippochamp moved “toward the far side,” but the objective was to free a storage cell and bring it back to the rim. That same route also offers a remote snare method, so even “through the water” would be false for some leads. Electric exposure now follows the chosen room's actual geometry: flooded wreckage at the intake, the submerged cell at the reservoir, or collector machinery from the rim. No method, cost or hazard rule changed.
+- The next replay caught a related temperature template saying “the passage advances” while the crew was retrieving that cell from a stationary housing. Cold and heat now describe what they do to a creature's movements without inventing a corridor. Route-wide susceptibility and temperature tests plus a targeted rim-side snare test cover the wording. All 1,315 web tests, typecheck, production build and bundle budgets passed. The rebuilt phone preview completed seven crossings through emergency extraction, and its reservoir account was checked against the unchanged energy and stability receipt. Player comprehension remains open.
+
 ### September 18: environmental weakness reads as part of the place
 
 - The live intake report still said “electric exposure bears particularly hard,” a diagnosis rather than something a player can picture. The account now translates susceptibility to electric, psychic, chemical, metal, ice, dark and light surroundings into short physical details tied to the relevant passage. A second read caught a repeated “pull” and “charge” in the intake paragraph; those were tightened while preserving the distinction between the lead's energy cost and the unseen hazard's structural damage.

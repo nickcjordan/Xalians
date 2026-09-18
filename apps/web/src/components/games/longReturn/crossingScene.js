@@ -111,9 +111,11 @@ const EFFORTS = {
 
 function elementalExposure(route, name) {
   switch (route.environment.element) {
-    case 'electric': return route.environment.medium === 'liquid'
-      ? `Charge catches ${name} through the water, making each move toward the far side harder.`
-      : `Charge flickers across the old machinery, forcing ${name} to break contact and find another hold.`;
+    case 'electric': return route.id === 'intake'
+      ? `Charge snaps through the flooded wreckage, making it harder for ${name} to keep the crew's way open.`
+      : route.id === 'dive'
+        ? `Charge flickers around the submerged cell, forcing ${name} to work in short, careful reaches.`
+        : `Charge flickers across the old machinery, forcing ${name} to break contact and find another hold.`;
     case 'psychic': return `The lock's repeating signal presses into ${name}'s thoughts, making the sequence harder to hold.`;
     case 'chemical': return `A sharp trace from the damaged archive catches ${name} each time it returns to the work.`;
     case 'metal': return `The old metal fights ${name} at each point of contact, slowing its work.`;
@@ -146,7 +148,9 @@ export function crossingScene({ route, lead, support, method, result, companionH
       ? `There is no air here, and ${name} cannot linger safely in the exposed space. Every moment spent bringing the others across wears it down.`
       : route.environment.medium === 'liquid' ? `${name} is out of its element beneath the surface. Holding on until the others follow takes more out of it than the crossing alone.`
         : `${name} struggles outside the surroundings it needs, pushing on until the crew is through.`;
-    if (note.includes('temperature band')) return `${route.environment.temperatureC < 0 ? 'The cold' : 'The heat'} is more than ${name} can comfortably endure, wearing it down even while the passage advances.`;
+    if (note.includes('temperature band')) return route.environment.temperatureC < 0
+      ? `The cold stiffens ${name}'s movements; each new effort comes more slowly than the last.`
+      : `The heat bears down on ${name}; each new effort comes more slowly than the last.`;
     if (note.includes('exposed to')) return elementalExposure(route, name);
     return '';
   }).filter(Boolean).join(' ') : '';
