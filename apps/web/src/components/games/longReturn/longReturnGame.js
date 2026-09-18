@@ -259,7 +259,7 @@ function SimpleRunStatus({ crew, strain, pressure, objectiveReached, companion, 
   );
 }
 
-function SimpleWizardChrome({ scene, sceneIndex, salvage, phase, choosingLead, simpleCustomizing, soundEnabled, journalCount, journalButtonRef, onToggleSound, onJournal, onHelp }) {
+function SimpleWizardChrome({ scene, sceneIndex, salvage, phase, choosingLead, simpleCustomizing, soundEnabled, journalCount, journalButtonRef, onToggleSound, onJournal, onHelp, runFlags }) {
   const art = sceneArtFor(scene);
   const decision = phase === 'assign'
     ? simpleCustomizing ? 'Customize crew plan' : choosingLead ? 'Choose who leads' : 'Choose a route'
@@ -274,7 +274,9 @@ function SimpleWizardChrome({ scene, sceneIndex, salvage, phase, choosingLead, s
         <button type="button" aria-label="Game rules" onClick={onHelp}><BiIcon cls="bi bi-question-circle" /><span>Rules</span></button>
       </div>
     </div>
-    <div className="lr-wizard-objective"><BiIcon cls="bi bi-crosshair" /><span><small>{phase === 'result' ? 'Reached' : 'Current objective'}</small><strong>{phase === 'result' ? scene.destination : scene.goal}</strong></span></div>
+    {phase === 'assign' && !choosingLead && !simpleCustomizing
+      ? <p className="lr-route-orientation col-span-full m-0 max-w-[62ch] px-4 pb-4 font-body text-body leading-relaxed text-ink">{sceneOrientation(scene, runFlags)}</p>
+      : <div className="lr-wizard-objective"><BiIcon cls="bi bi-crosshair" /><span><small>{phase === 'result' ? 'Reached' : 'Current objective'}</small><strong>{phase === 'result' ? scene.destination : scene.goal}</strong></span></div>}
   </header>;
 }
 
@@ -1306,9 +1308,9 @@ function LongReturnGame() {
           </div>
         </aside>
 
-        <section key={guidanceLevel === 'simple' ? wizardViewKey : scene.id} className={`lr-scene g-panel g-panel--bolted lr-wizard-view is-${wizardDirection} lr-wizard-phase-${phase}${phase === 'assign' && routeId ? ' is-plan' : ''}`} ref={sceneRef}>
+        <section key={guidanceLevel === 'simple' ? wizardViewKey : scene.id} className={`lr-scene g-panel g-panel--bolted lr-wizard-view overflow-clip is-${wizardDirection} lr-wizard-phase-${phase}${phase === 'assign' && routeId ? ' is-plan' : ''}`} ref={sceneRef}>
           <div className={guidanceLevel === 'simple' ? 'grid min-w-0 gap-3 lg:grid-cols-2' : ''}>
-          {guidanceLevel === 'simple' && <SimpleWizardChrome scene={scene} sceneIndex={sceneIndex} crew={crew} strain={strain} pressure={pressure} salvage={salvage} phase={phase} routeId={routeId} choosingLead={choosingLead} simpleCustomizing={simpleCustomizing} soundEnabled={soundEnabled} journalCount={journal.length} journalButtonRef={memoryTriggerRef} onJournal={() => setMemoryOpen(true)} onToggleSound={() => { const next = !soundEnabled; setSoundEnabled(next); writeSoundEnabled(next); playGameSound('select', next); }} onHelp={openMechanics} />}
+          {guidanceLevel === 'simple' && <SimpleWizardChrome scene={scene} sceneIndex={sceneIndex} crew={crew} strain={strain} pressure={pressure} salvage={salvage} phase={phase} routeId={routeId} choosingLead={choosingLead} simpleCustomizing={simpleCustomizing} soundEnabled={soundEnabled} journalCount={journal.length} journalButtonRef={memoryTriggerRef} onJournal={() => setMemoryOpen(true)} onToggleSound={() => { const next = !soundEnabled; setSoundEnabled(next); writeSoundEnabled(next); playGameSound('select', next); }} onHelp={openMechanics} runFlags={runFlags} />}
           {guidanceLevel !== 'simple' && <div className="lr-scene-heading">
             <div><p className="g-kicker">{scene.deck} / Scene {sceneIndex + 1} of {MISSION.scenes.length}</p><h2 className="g-h2">{scene.title}</h2></div>
             {scene.objective && <span className="lr-objective-badge">PRIMARY OBJECTIVE</span>}
@@ -1484,7 +1486,7 @@ function LongReturnGame() {
           ))}
 
           {phase === 'assign' && scan && (
-            <div className={`lr-phase-panel${guidanceLevel === 'simple' && !simpleCustomizing ? ' lr-crossing-workspace' : ''}`}>
+            <div className={`lr-phase-panel [&>[data-slot=table-container]]:overflow-visible ${guidanceLevel === 'simple' && !simpleCustomizing ? 'lr-crossing-workspace' : ''}`}>
               {guidanceLevel === 'simple' ? <>
               </> : <>
                 <div className="lr-phase-intro"><span className="lr-step-number">03</span><div><h3>Choose the way through</h3><p>Compare the two routes, then assign the crossing crew.</p></div></div>
@@ -1495,7 +1497,6 @@ function LongReturnGame() {
                 {scan.revealedIds.length > 0 && <div className="lr-scan-strip"><BiIcon cls="bi-broadcast-pin" /><span>{scan.revealedIds.length} hazard signature relayed to command.</span></div>}
               </>}
               {guidanceLevel === 'simple' && (simpleCustomizing || choosingLead) ? null : guidanceLevel === 'simple' ? <>
-                <p className="lr-route-orientation">{sceneOrientation(scene, runFlags)}</p>
                 <RouteComparison plans={simpleRoutePlans.map((plan) => useCommand && plan.route.id === routeId && !plan.naturalReaction ? { ...plan, knownPressure: Math.max(0, plan.knownPressure - 1) } : plan)} selectedId={routeId} onSelect={previewSimpleRoute} onPreview={setRouteVisualId} companion={companion} recommendation={routeRecommendation} />
               </> : <div className="lr-route-grid">
                 {scene.routes.map((entry) => <RouteCard key={entry.id} route={entry} selected={routeId === entry.id} onSelect={() => chooseRoute(entry.id)} onPreview={() => setRouteVisualId(entry.id)} onPreviewEnd={() => setRouteVisualId(routeId)} scan={scan} />)}

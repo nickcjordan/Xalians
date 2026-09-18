@@ -63,12 +63,12 @@ function enterSimpleRouteChoice(container, { scan = true } = {}) {
   if (scan) expect(container.textContent).toContain('Scout result');
   if (findButton(container, /wait for .* to return/i)) { click(container, /wait for .* to return/i); finishScoutTransition(container); }
   if (findButton(container, /choose a route/i)) click(container, /choose a route/i);
-  expect(container.querySelectorAll('.lr-board-head > div[role="columnheader"]:not(.lr-board-axis)')).toHaveLength(2);
+  expect(container.querySelectorAll('.lr-board-head > th[role="columnheader"]:not(.lr-board-axis)')).toHaveLength(2);
 }
 
 function choosePreferredRoute(container) {
-  const recommended = container.querySelector('.lr-board-head > div[role="columnheader"]:not(.lr-board-axis).is-recommended .lr-board-pick');
-  const lowestRisk = container.querySelector('.lr-board-head > div[role="columnheader"]:not(.lr-board-axis)[data-lowest-risk="true"] .lr-board-pick');
+  const recommended = container.querySelector('.lr-board-head > th[role="columnheader"]:not(.lr-board-axis).is-recommended .lr-board-pick');
+  const lowestRisk = container.querySelector('.lr-board-head > th[role="columnheader"]:not(.lr-board-axis)[data-lowest-risk="true"] .lr-board-pick');
   clickElement(recommended || lowestRisk || container.querySelector('.lr-board-pick'));
 }
 
@@ -238,7 +238,7 @@ describe('Long Return Simple mode', () => {
   test('supports skipping the scan and opening the detailed plan builder', () => {
     renderGame();
     enterSimpleRouteChoice(container, { scan: false });
-    clickElement(container.querySelector('.lr-board-head > div[role="columnheader"]:not(.lr-board-axis):not(.is-recommended) .lr-board-pick'));
+    clickElement(container.querySelector('.lr-board-head > th[role="columnheader"]:not(.lr-board-axis):not(.is-recommended) .lr-board-pick'));
       click(container, /customize crew plan/i);
     expect(container.textContent).toContain('Crew assignment');
     expect(container.textContent).toContain('Pick a lead, support, and method');
@@ -387,7 +387,7 @@ describe('Long Return Simple mode', () => {
   test('resolves a manually customized Simple plan and returns to the clean result view', () => {
     renderGame();
     enterSimpleRouteChoice(container, { scan: false });
-    clickElement(container.querySelector('.lr-board-head > div[role="columnheader"]:not(.lr-board-axis):not(.is-recommended) .lr-board-pick'));
+    clickElement(container.querySelector('.lr-board-head > th[role="columnheader"]:not(.lr-board-axis):not(.is-recommended) .lr-board-pick'));
       click(container, /customize crew plan/i);
     clickElement(Array.from(container.querySelectorAll('.lr-crew-member')).find((button) => /Hippochamp/.test(button.textContent)));
     clickElement(Array.from(container.querySelectorAll('button')).find((button) => /Assign Chromocat as support/.test(button.getAttribute('aria-label') || '')));
@@ -570,7 +570,7 @@ describe('Long Return Simple mode', () => {
     if (findButton(container, /choose a route/i)) click(container, /choose a route/i);
     expect(container.querySelector('.lr-current-action').textContent).toMatch(/Step 2 of 3.*Choose one route/i);
     expect(document.activeElement).toBe(container.querySelector('.lr-wizard-chrome'));
-    const recommendedOrFirst = container.querySelector('.lr-board-head > div[role="columnheader"]:not(.lr-board-axis).is-recommended .lr-board-pick') || container.querySelector('.lr-board-pick');
+    const recommendedOrFirst = container.querySelector('.lr-board-head > th[role="columnheader"]:not(.lr-board-axis).is-recommended .lr-board-pick') || container.querySelector('.lr-board-pick');
     clickElement(recommendedOrFirst);
     expect(container.querySelector('.lr-route-board')).toBeNull();
     expect(container.querySelector('.lr-lead-options')).toBeTruthy();
@@ -581,7 +581,7 @@ describe('Long Return Simple mode', () => {
     expect(container.querySelector('.lr-simple-plan-head').textContent).toMatch(/All three cross together/i);
     expect(container.querySelectorAll('.lr-lead-options button')).toHaveLength(3);
     click(container, /change route/i);
-    expect(container.querySelectorAll('.lr-board-head > div[role="columnheader"]:not(.lr-board-axis)')).toHaveLength(2);
+    expect(container.querySelectorAll('.lr-board-head > th[role="columnheader"]:not(.lr-board-axis)')).toHaveLength(2);
   });
 
   test('moves keyboard focus through each Simple wizard stage and enacted action', () => {

@@ -10,8 +10,6 @@
 .lr-mode-simple .lr-wizard-progress { grid-template-columns: repeat(4,minmax(0,1fr)); align-self: end; }
 .lr-mode-simple .lr-wizard-tools > button,.lr-mode-simple .lr-wizard-tools > span { height: 40px; }
 .lr-crossing-workspace { display: grid; grid-template-columns: minmax(0,1fr); gap: 16px 24px; align-items: start; }
-.lr-crossing-workspace > .lr-route-orientation { grid-column:1; grid-row:1; margin:0; font-weight:400; }
-.lr-crossing-workspace > .lr-route-board { grid-column: 1; grid-row: 2; margin: 0; }
 .lr-crossing-workspace > .lr-terrain-details { grid-column: 1; grid-row: 3; }
 .lr-crossing-workspace > .lr-simple-plan,.lr-crossing-empty { grid-column: 1; grid-row: 1; }
 .lr-mode-simple .lr-crossing-workspace > .lr-simple-plan { margin: 0; padding: 0; border: 0; }
@@ -40,25 +38,11 @@
 .lr-crossing-workspace .lr-lead-option-cost small { width:100%; }
 .lr-crossing-workspace .lr-lead-option-portrait { height: 48px; }
 .lr-crossing-workspace .lr-lead-option-portrait svg,.lr-crossing-workspace .lr-lead-option-portrait img { max-width: 40px; max-height: 48px; }
-.lr-crossing-workspace .lr-board-row { grid-template-columns: 112px repeat(2,minmax(0,1fr)); min-height: 0; }
-.lr-crossing-workspace .lr-board-axis { flex-direction: row; align-items: center; gap: 7px; }
-.lr-crossing-workspace .lr-board-axis > small { display: none; }
-.lr-crossing-workspace .lr-board-axis strong { font-size: 14px; }
 .lr-crossing-warning { display: flex; gap: 10px; align-items: start; color: #f3c46d; margin: 0; }
 .lr-crossing-warning span { display: grid; gap: 5px; }
 .lr-crossing-warning strong { font-size: 15px; line-height: 1.4; }
 .lr-crossing-warning small { font-size: 13px; }
 .lr-crossing-workspace .lr-simple-plan-actions:has(.lr-crossing-warning) .lr-cross-now { order: 0; }
-.lr-crossing-workspace .lr-board-row > div { padding: 10px 12px; }
-.lr-crossing-workspace .lr-board-pick { min-height: 92px; gap: 10px; }
-.lr-crossing-workspace .lr-board-pick > strong { font-size: 19px; }
-.lr-crossing-workspace .lr-board-value { min-height: 70px; }
-.lr-mode-simple .lr-crossing-workspace .lr-board-value { min-height: 0; }
-.lr-crossing-workspace .lr-board-token-run { display: none; }
-.lr-crossing-workspace .lr-board-amount > b { font-size: 27px; }
-.lr-crossing-workspace .lr-board-future small { display: none; }
-.lr-crossing-workspace .lr-board-future strong { font-size: 14px; }
-.lr-crossing-workspace .lr-board-analysis { margin-top: 8px; }
 .lr-terrain-details > summary { cursor: pointer; padding: 10px 0; color: var(--g-ink-mid); font-size: 15px; display: flex; align-items: center; gap: 8px; }
 .lr-terrain-details > summary::before { content: '›'; }
 .lr-terrain-details[open] > summary::before { transform: rotate(90deg); }
@@ -90,7 +74,4 @@
   .lr-crossing-workspace .lr-lead-option-cost { grid-column:2; }
   .lr-mode-simple .lr-wizard-chrome { grid-template-columns: minmax(0,1fr); }
   .lr-mode-simple .lr-wizard-topline h1 { font-size: 24px; }
-  .lr-crossing-workspace .lr-board-row { grid-template-columns: repeat(2,minmax(0,1fr)); }
-  .lr-crossing-workspace .lr-board-row > .lr-board-axis { padding: 7px 10px; }
-  .lr-crossing-workspace .lr-board-pick > strong { font-size: 17px; }
 }
