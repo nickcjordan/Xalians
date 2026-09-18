@@ -4,6 +4,11 @@ Owner: the agent maintaining the Long Return worktree. Update this file during i
 
 ## Active goal — full-mission UX (2026-09-11)
 
+### September 18: route comparison is the next phone decision
+
+- A 320-by-568 replay measured the first route action 809–861 pixels below the viewport after the player chose to compare routes. The map and full orientation had been read already, but the transition repeated them before exposing the actual choices. Simple mode now scrolls and keyboard-focuses the comparison table when route selection begins or is reopened. It does not commit a route or move the crew.
+- Scroll review showed that focusing the table alone detached it from the room. A compact table caption now keeps the scene name and immediate objective directly over both approaches on phones; the full map and story remain immediately above for inspection. On the first scene, the route action now begins about 65 pixels from the viewport top. The browser replay checks the context, route action and keyboard focus in every reached room. The 320-pixel comparison and scene-two variation were paint-reviewed. A 390-pixel six-crossing extraction and 1280-pixel three-scene run passed, alongside all 1,307 web tests, typecheck, production build and bundle budgets. Whether the comparison itself feels intuitive remains a player judgment.
+
 ### September 18: entering a known room reaches the next choice
 
 - At 320 by 568, the first scouting choice in each room sat below the full scene header and schematic. That context is valuable in the opening room, but the arrival beat already supplies it for later rooms. Entering scenes two through seven in Simple mode now scrolls and focuses the scouting decision on narrow phones; the stationary schematic remains immediately above for review. The opening scene still begins at its location and objective rather than skipping the first introduction.

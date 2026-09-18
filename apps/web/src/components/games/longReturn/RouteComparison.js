@@ -50,7 +50,8 @@ export default function RouteComparison({ scene, plans, selectedId, onSelect, on
   const rows = [{ key: 'energy', label: 'Spend energy', Icon: Zap },
     { key: 'stability', label: 'Lose stability', Icon: Building2 },
     { key: 'salvage', label: 'Bring back', Icon: Package }];
-  return <Table data-tier="immersive" className="lr-route-board scroll-mt-14 table-fixed border border-edge-strong bg-s0 font-body text-small" role="table" aria-label="Compare route costs and rewards" onPointerMove={previewColumn} onPointerLeave={restorePreview} onFocus={previewColumn} onBlur={event => { if (!event.currentTarget.contains(event.relatedTarget)) onPreview?.(selectedId || null); }}>
+  return <Table data-tier="immersive" className="lr-route-board scroll-mt-14 table-fixed border border-edge-strong bg-s0 font-body text-small" role="table" tabIndex={-1} aria-label="Compare route costs and rewards" onPointerMove={previewColumn} onPointerLeave={restorePreview} onFocus={previewColumn} onBlur={event => { if (!event.currentTarget.contains(event.relatedTarget)) onPreview?.(selectedId || null); }}>
+    {scene && <caption className="lr-board-context"><span>{scene.title}</span><strong>{scene.goal}</strong></caption>}
     <colgroup><col className="w-20 md:w-28" />{plans.map(plan => <col key={plan.route.id} />)}</colgroup>
     <TableHeader className="top-14 z-20 bg-s0 [@media(min-height:40rem)]:sticky lg:static"><TableRow className={`${rowClass} lr-board-head`}>
       <TableHead className={axisClass} scope="col">Choose your crossing</TableHead>

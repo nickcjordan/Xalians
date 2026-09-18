@@ -179,6 +179,16 @@ try {
       await click(page.locator('.lr-simple-report .g-btn--primary')); continue;
     }
     if (await page.locator('.lr-route-board').count()) {
+      if (viewport.width <= 390) {
+        const firstRoute = await page.locator('.lr-board-pick').first().boundingBox();
+        const context = page.locator('.lr-board-context');
+        const contextBox = await context.boundingBox();
+        events.push({ type: 'route-viewport', scene: crossed + 1, top: firstRoute?.y, height: viewport.height });
+        assert(contextBox.y >= 48 && contextBox.y < firstRoute.y, `The phone route comparison keeps the room and objective above its choices: ${JSON.stringify({ context: contextBox.y, choice: firstRoute.y })}`);
+        assert(firstRoute.y >= 56 && firstRoute.y < viewport.height, 'The phone opens route comparison with both route choices visible');
+        assert(await page.locator('.lr-route-board').evaluate(node => document.activeElement === node), 'Keyboard focus follows the phone into route comparison');
+        await page.screenshot({ path: `${output}/route-viewport-${crossed}.png` });
+      }
       assert(!(await map.locator('[data-expedition-reserves]').innerText()).includes("Can't scout"), 'Crossing choices do not show a scouting restriction');
       const sharedObstacle = ['archive-vestibule', 'nemesis-index', 'generator-spine'].includes(await map.getAttribute('data-map-scene'));
       assert.equal(await page.locator('[data-route-path-cue]').count(), sharedObstacle ? 0 : 2, 'Physical alternatives retain path cues; shared obstacles do not invent corridors');

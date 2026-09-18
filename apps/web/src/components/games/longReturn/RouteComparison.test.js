@@ -8,6 +8,7 @@ const base = { route: { id: 'a', title: 'Gantry', salvage: 1 }, lead: { species:
 
 test('the next-room comparison states a benefit, while the story term stays in requested analysis', () => {
   const view = render(<RouteComparison scene={MISSION.scenes[0]} plans={MISSION.scenes[0].routes.map(route => ({...base,route}))} />);
+  expect(view.container.querySelector('.lr-board-context').textContent).toContain('Get everyone across the flood to the turbine hall.');
   const cues = view.container.querySelectorAll('[data-route-path-cue]');
   expect(cues).toHaveLength(2);
   expect(cues[0].querySelectorAll('path')).toHaveLength(3);
