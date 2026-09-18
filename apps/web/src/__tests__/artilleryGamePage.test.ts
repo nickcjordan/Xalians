@@ -2,7 +2,7 @@ import { createElement } from 'react';
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
-import { ARTILLERY_HEIGHT, applyArtilleryShot, artilleryNominalReach, chooseArtilleryBotShot, createArtilleryState, simulateArtilleryShot, terrainHeight } from '@xalians/rules/arcade';
+import { ARTILLERY_HEIGHT, artilleryNominalReach, createArtilleryState, simulateArtilleryShot, terrainHeight } from '@xalians/rules/arcade';
 
 import { ArtilleryBoard, ArtillerySetup, CommandMeter, artilleryAimFromDrag, artilleryBarrelEndpoint, artilleryCinematicCamera, artilleryCloseLaunchHits, artilleryFlightDurationMs, artilleryFlightSample, artilleryFlightTrail, artilleryImpactRevealProgress, artilleryImpactVisualState, artilleryJetFlightY, artilleryLaunchVisualState, artilleryMoveAnimationProgress, artilleryNextSortieTip, artilleryProjectileImpactState, artilleryShelfRisk, artilleryShotVerdict, artilleryTerrainSlopeDegrees } from '../pages/games/artilleryGamePage';
 
@@ -52,22 +52,13 @@ describe('Crater Command aim feedback', () => {
     expect(artilleryCloseLaunchHits(simulateArtilleryShot(level, shot), shooterX, 'left', artilleryNominalReach(level, shot).far)).toBe(0);
   });
   it('distinguishes an intervening shelf from inadequate free-flight range', () => {
-    let state = createArtilleryState('artillery:92be30c9-d34b-4258-8fa9-232cf2c69ecb', 'bot', 'standard', { world: 'stonera', mapSize: 'standard' });
-    const played = [
-      { angle: 45, power: 76, payload: 'shell' as const },
-      { angle: 45, power: 76, payload: 'bore' as const },
-      { angle: 45, power: 50, payload: 'lance' as const },
-      { angle: 45, power: 28, payload: 'bloom' as const },
-      { angle: 45, power: 77, payload: 'cluster' as const },
-    ];
-    for (const shot of played) {
-      state = applyArtilleryShot(state, shot).state;
-      state = applyArtilleryShot(state, chooseArtilleryBotShot(state)).state;
-    }
-    const shot = { angle: 45, power: 77, payload: 'bore' as const };
-    const outcome = simulateArtilleryShot(state, shot);
-    const freeRange = artilleryNominalReach(state, shot);
-    expect(outcome.damage).toBe(0);
+    const state = createArtilleryState('shelf-risk', 'bot', 'standard', { world: 'stonera', mapSize: 'standard' });
+    const distance = state.tanks.right.x - state.tanks.left.x;
+    const impact = { x: state.tanks.left.x + distance * 0.64, y: 40 };
+    const simulated = simulateArtilleryShot(state, { angle: 45, power: 77, payload: 'bore' });
+    const outcome = { ...simulated, damage: 0, outOfBounds: false, impact,
+      projectiles: [{ ...simulated.projectiles[0], impact, outOfBounds: false }] };
+    const freeRange = { near: distance - 20, far: distance + 20 };
     expect(artilleryShelfRisk(outcome, state.tanks.left.x, state.tanks.right.x, freeRange)).toBe(true);
     expect(artilleryShelfRisk(outcome, state.tanks.left.x, state.tanks.right.x, { near: 100, far: 100 })).toBe(false);
     expect(artilleryShotVerdict(outcome, state.tanks.left.x, state.tanks.right.x, 100, true).title).toBe('Ridge intercepted');
@@ -177,12 +168,12 @@ describe('Crater Command aim feedback', () => {
     expect(artilleryJetFlightY(80, 150, 100)).toBe(artilleryJetFlightY(80, 100, 100));
   });
 
-  it('holds the battlefield intact for the impact freeze before revealing damage', () => {
+  it('excavates rapidly with the blast instead of easing the ground down afterward', () => {
     expect(artilleryImpactRevealProgress(0)).toBe(0);
-    expect(artilleryImpactRevealProgress(0.16)).toBe(0);
-    expect(artilleryImpactRevealProgress(0.18)).toBeLessThan(0.01);
-    expect(artilleryImpactRevealProgress(0.45)).toBeGreaterThan(0.5);
-    expect(artilleryImpactRevealProgress(0.7)).toBe(1);
+    expect(artilleryImpactRevealProgress(0.03)).toBe(0);
+    expect(artilleryImpactRevealProgress(0.12)).toBeGreaterThan(0.6);
+    expect(artilleryImpactRevealProgress(0.34)).toBeGreaterThan(0.99);
+    expect(artilleryImpactRevealProgress(0.45)).toBe(1);
   });
 
   it('carries launch energy and recoil continuously into the opening flight frames', () => {
@@ -492,8 +483,13 @@ describe('Crater Command aim feedback', () => {
         onComplete: vi.fn(),
         onRematch: vi.fn(),
       }));
+      const ground = screen.getByRole('img', { name: /Two mobile range rigs/i }).querySelector('path.fill-s2');
+      const intactTerrain = ground?.getAttribute('d');
       fireEvent.click(screen.getByRole('button', { name: /Fire Comet/i }));
       act(() => vi.advanceTimersByTime(900 + duration + 320));
+      expect(ground?.getAttribute('d')).not.toBe(intactTerrain);
+      expect(Number(screen.getByTestId('artillery-excavation-burst').getAttribute('data-origin-y')))
+        .toBeCloseTo(ARTILLERY_HEIGHT - terrainHeight(state.terrain, shot.impact!.x), 3);
       const impact = screen.getByTestId('artillery-impact-shell');
       expect(impact.querySelector('[data-testid="artillery-impact-ground-shock"]')).toBeInTheDocument();
       expect(impact.querySelector('ellipse, circle[stroke-dasharray]')).toBeNull();

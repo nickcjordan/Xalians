@@ -113,12 +113,12 @@ export const ARTILLERY_PAYLOAD_RULES: Record<ArtilleryPayload, {
   gravityMultiplier: number;
   terrainBuild: number;
 }> = {
-  shell: { blastRadius: 10.5, craterRadius: 10.5, craterDepth: 0.96, projectileCount: 1, penetration: 0, baseDamage: 38, directBonus: 8, speedMultiplier: 1, gravityMultiplier: 1, terrainBuild: 0 },
-  barb: { blastRadius: 7, craterRadius: 6.2, craterDepth: 0.54, projectileCount: 3, penetration: 0, baseDamage: 28, directBonus: 4, speedMultiplier: 1, gravityMultiplier: 1, terrainBuild: 0 },
-  bore: { blastRadius: 10.5, craterRadius: 8.8, craterDepth: 1.48, projectileCount: 1, penetration: 7.2, baseDamage: 44, directBonus: 6, speedMultiplier: 0.96, gravityMultiplier: 1, terrainBuild: 0 },
-  cluster: { blastRadius: 9.5, craterRadius: 7, craterDepth: 0.72, projectileCount: 5, penetration: 0, baseDamage: 26, directBonus: 3, speedMultiplier: 0.98, gravityMultiplier: 1.04, terrainBuild: 0 },
+  shell: { blastRadius: 10.5, craterRadius: 16, craterDepth: 1.02, projectileCount: 1, penetration: 0, baseDamage: 38, directBonus: 8, speedMultiplier: 1, gravityMultiplier: 1, terrainBuild: 0 },
+  barb: { blastRadius: 7, craterRadius: 8, craterDepth: 0.76, projectileCount: 3, penetration: 0, baseDamage: 28, directBonus: 4, speedMultiplier: 1, gravityMultiplier: 1, terrainBuild: 0 },
+  bore: { blastRadius: 10.5, craterRadius: 11.5, craterDepth: 1.42, projectileCount: 1, penetration: 7.2, baseDamage: 44, directBonus: 6, speedMultiplier: 0.96, gravityMultiplier: 1, terrainBuild: 0 },
+  cluster: { blastRadius: 9.5, craterRadius: 8.5, craterDepth: 0.88, projectileCount: 5, penetration: 0, baseDamage: 26, directBonus: 3, speedMultiplier: 0.98, gravityMultiplier: 1.04, terrainBuild: 0 },
   bloom: { blastRadius: 5.5, craterRadius: 15.5, craterDepth: 0, projectileCount: 1, penetration: 0, baseDamage: 12, directBonus: 3, speedMultiplier: 0.9, gravityMultiplier: 1.08, terrainBuild: 1.24 },
-  lance: { blastRadius: 4.6, craterRadius: 5.2, craterDepth: 1.06, projectileCount: 1, penetration: 0, baseDamage: 52, directBonus: 12, speedMultiplier: 1.22, gravityMultiplier: 0.78, terrainBuild: 0 },
+  lance: { blastRadius: 4.6, craterRadius: 5.8, craterDepth: 1.3, projectileCount: 1, penetration: 0, baseDamage: 52, directBonus: 12, speedMultiplier: 1.22, gravityMultiplier: 0.78, terrainBuild: 0 },
 };
 
 const ARTILLERY_SPEED_SCALE = 0.3;
@@ -502,6 +502,7 @@ export function simulateArtilleryShot(state: ArtilleryState, input: ArtillerySho
 function reshapeTerrain(terrain: readonly number[], impact: ArtilleryPoint | null, payload: ArtilleryPayload): number[] {
   if (!impact) return [...terrain];
   const rules = ARTILLERY_PAYLOAD_RULES[payload];
+  const surface = Math.min(impact.y + rules.penetration, terrainHeight(terrain, impact.x));
   return terrain.map((height, x) => {
     const distance = Math.abs(x - impact.x);
     if (distance >= rules.craterRadius) return height;
@@ -513,15 +514,15 @@ function reshapeTerrain(terrain: readonly number[], impact: ArtilleryPoint | nul
       const wall = Math.pow(1 - normalized, 0.58) * rules.craterRadius;
       return Math.min(76, height + wall * rules.terrainBuild);
     }
-    const bowl = Math.sqrt(1 - normalized * normalized) * rules.craterRadius;
-    const profile = payload === 'bore'
-      ? 0.72 + 0.28 * Math.pow(1 - normalized, 2)
-      : payload === 'lance'
-        ? Math.pow(1 - normalized, 1.45)
-        : payload === 'barb'
-          ? 0.74 + 0.26 * (1 - normalized)
-          : 1;
-    return Math.max(2, height - bowl * rules.craterDepth * profile);
+    // Excavate toward one blast-centered cavity. Subtracting a bowl from each
+    // existing height merely lowers the old ridge silhouette like loose snow.
+    // A shared floor removes the material inside the blast, including the
+    // uphill face, while leaving ground outside the radius untouched.
+    const cavity = Math.sqrt(1 - normalized * normalized) * rules.craterRadius * rules.craterDepth;
+    const fracture = (Math.sin((x - impact.x) * 1.83) * 0.58 + Math.sin((x - impact.x) * 0.71) * 0.42)
+      * (1 - normalized) * Math.min(1.25, rules.craterRadius * 0.08);
+    const floor = surface - rules.penetration - cavity + fracture;
+    return Math.max(2, Math.min(height, floor));
   });
 }
 
