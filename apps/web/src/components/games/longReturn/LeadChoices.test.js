@@ -6,6 +6,13 @@ vi.mock('../../xalianImage', () => ({ default: () => <span /> }));
 const plan = { lead: { id: 'lead', species: 'Scout', element: { primary: 'Water' } }, support: { species: 'Helper' }, method: { label: 'Swim' }, leadEnergy: 1, knownLeadStrain: 1, baseSupportStrain: 0, knownPressure: 1, unresolvedHazards: [] };
 const markup = (entry = plan, companion) => renderToStaticMarkup(<LeadChoices plans={[{ route: { salvage: 1 }, ...entry }]} companion={companion} selectedId="lead" onSelect={() => {}} />);
 
+test('low energy is explained where it actually weakens the chosen lead', () => {
+  expect(markup({...plan, readiness:{lead:{scorePenalty:4}}})).toContain('Weakened by low energy');
+  expect(markup({...plan, readiness:{lead:{scorePenalty:0}}})).not.toContain('Weakened by low energy');
+  expect(markup({...plan, readiness:{support:{scorePenalty:4}}})).not.toContain('Weakened by low energy');
+  expect(markup({...plan, readiness:{lead:{scorePenalty:9}}})).not.toContain("Can't scout");
+});
+
 test('warns when a chosen lead would spend its last energy', () => {
   expect(markup()).toContain('No lead energy left afterward');
   expect(markup({ ...plan, leadEnergy: 2 })).not.toContain('No lead energy left afterward');

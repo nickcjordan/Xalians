@@ -4,6 +4,14 @@ Owner: the agent maintaining the Long Return worktree. Update this file during i
 
 ## Active goal — full-mission UX (2026-09-11)
 
+### September 17: condition information belongs to the decision
+
+- Replaced the map key's repeated scouting restriction with the universal Last energy condition, retained Can't act for spent creatures, and removed the nonurgent Weakened label from that persistent key. Conditions stay beside their creature on phones. Actual reserves and detailed readiness descriptions remain available.
+- Scouting now names unavailable crew and its two-energy threshold at the choice itself. If nobody qualifies, No scout available replaces the invitation to select one, the impossible disabled selection button disappears, and Stay together is the sole primary action. This does not spend resources or change scouting rules.
+- Lead choices explain an actual low-energy performance penalty beside the proposed action. A support-only penalty does not mislabel the lead. Existing method, ability, cost and last-energy consequences remain intact.
+- Verification: 1,287 web tests, typecheck, build and unchanged budgets; seven-scene phone and desktop runs with all fourteen previews reached deep extraction with 14 salvage, 2 stability and the ally. Guided, Standard and Expert flows passed. A separate, explicitly synthetic checkpoint replay tests all-three-at-one-energy at 320, 390 and 1280 pixels, checks the sole viable action, inline conditions, unchanged reserves and lead penalties. Reviewed actual phone/desktop screenshots; corrected concatenated primary-button text found during that review. Checkpoint fixtures do not claim naturally played trajectory coverage.
+- Player understanding remains unvalidated. Continue reviewing spatial/story continuity and meaningful choices; this is not acceptance of the whole experience.
+
 ### September 17: different approaches are not always different corridors
 
 - The later-room audit found a spatial contradiction: the door, Index and rings used the same two-corridor drawing as the flooded crossing, implying the crew could walk around obstacles that both choices actually address. Those rooms now show one passage and a stationary target outline for the selected intervention. The door distinguishes unlocking from forcing its seam; the archive distinguishes preserving the chamber from taking its container; the rings distinguish alignment from timing the opening. The other four rooms retain their genuine alternative routes.

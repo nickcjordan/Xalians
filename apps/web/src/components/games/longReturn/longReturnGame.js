@@ -849,6 +849,7 @@ function LongReturnGame() {
     })
     .sort((a, b) => b.score - a.score) : [], [scene, crew, strain]);
   const selectedScoutOption = simpleScoutOptions.find((entry) => entry.member.id === scoutId) || null;
+  const unavailableScouts = crew.filter(member => (strain[member.id] || 0) >= MAX_STRAIN - 1);
   const simpleRoutePlans = useMemo(() => scene && scan ? scene.routes.map((entry) => {
     const preferredLead = simpleLeadChoice?.sceneId === scene.id && simpleLeadChoice?.routeId === entry.id ? simpleLeadChoice.leadId : null;
     const plan = safestPlanForRoute(entry, crew, strain, spentAbilities, scan, preferredLead, preferredLead ? simpleLeadChoice.methodId : null);
@@ -1407,12 +1408,12 @@ function LongReturnGame() {
 
           {phase === 'scout' && (guidanceLevel === 'simple' ? (
             <div className="lr-simple-decision">
-              <h3 className="mb-3 type-heading">Who scouts ahead?</h3>
+              <h3 className="mb-3 type-heading">{simpleScoutOptions.length ? 'Who scouts ahead?' : 'No scout available'}</h3>
               {scene.encounterHint && <details className="lr-field-sign"><summary><BiIcon cls="bi bi-binoculars-fill" /><span>Native trace detected</span><small>Contact is possible</small><BiIcon cls="bi bi-chevron-down" /></summary><p>{scene.encounterHint}</p></details>}
-              <ScoutChoices options={simpleScoutOptions} selectedId={scoutId} onSelect={id => { playGameSound('select', soundEnabled); setScoutId(id); }} />
+              <ScoutChoices options={simpleScoutOptions} unavailable={unavailableScouts} selectedId={scoutId} onSelect={id => { playGameSound('select', soundEnabled); setScoutId(id); }} />
               <div className="lr-scout-commit-bar">
-                <button type="button" className="lr-simple-secondary" onClick={proceedBlind}><BiIcon cls="bi bi-people-fill" /><span><strong>Stay together</strong><small>No energy spent · danger stays hidden</small></span></button>
-                <button type="button" className="g-btn g-btn--primary" disabled={!selectedScoutOption} onClick={() => selectedScoutOption && performScanFor(selectedScoutOption.member)}>{selectedScoutOption ? <>Send {selectedScoutOption.member.species} <BiIcon cls="bi bi-arrow-right" /></> : <>Select a scout <BiIcon cls="bi bi-lock-fill" /></>}</button>
+                <button type="button" className={simpleScoutOptions.length ? 'lr-simple-secondary' : 'g-btn g-btn--primary'} onClick={proceedBlind}><BiIcon cls="bi bi-people-fill" /><span><strong className="block">Stay together</strong><small className="block">No energy spent · danger stays hidden</small></span></button>
+                {simpleScoutOptions.length > 0 && <button type="button" className="g-btn g-btn--primary" disabled={!selectedScoutOption} onClick={() => selectedScoutOption && performScanFor(selectedScoutOption.member)}>{selectedScoutOption ? <>Send {selectedScoutOption.member.species} <BiIcon cls="bi bi-arrow-right" /></> : <>Select a scout <BiIcon cls="bi bi-lock-fill" /></>}</button>}
               </div>
               <details className="lr-plan-analysis"><summary>How scouting costs work</summary><p>Scouting spends 1 energy. A creature that can report remotely needs no return trip; otherwise returning spends 1 more energy and the delay costs 1 stability. An encounter can add costs.</p>{simpleScoutOptions.map((option) => <p key={option.member.id}><strong>{option.member.species}:</strong> {option.profile.channel ? scoutCommunication(option.profile.channel).label : 'No signal reaches the crew'} · {option.outlook?.label || option.profile.role}.</p>)}</details>
             </div>

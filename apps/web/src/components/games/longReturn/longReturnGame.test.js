@@ -147,6 +147,30 @@ describe('Long Return Simple mode', () => {
     });
   }
 
+  test('a depleted but viable crew can stay together without a dead scout-selection gate', () => {
+    renderGame();
+    click(container, /seal crew/i);
+    const saved = readCheckpoint();
+    saved.strain = Object.fromEntries(saved.selectedCrew.map(id => [id, 5]));
+    unmountGame();
+    expect(writeCheckpoint(saved)).toBe(true);
+    renderGame();
+    click(container, /resume expedition/i);
+    expect(container.textContent).toContain('No scout available');
+    expect(container.querySelector('[data-scout-unavailable]').textContent).toContain('2 energy needed to scout');
+    expect(findButton(container, /select a scout/i)).toBeUndefined();
+    const stay = findButton(container, /stay together/i);
+    expect(stay.disabled).toBe(false);
+    expect(stay.classList.contains('g-btn--primary')).toBe(true);
+    const reserves = container.querySelector('[data-expedition-reserves]').textContent;
+    expect(reserves).not.toContain("Can't scout");
+    clickElement(stay);
+    expect(container.querySelector('.lr-route-board')).toBeTruthy();
+    expect(container.querySelector('[data-expedition-reserves]').textContent).toBe(reserves);
+    choosePreferredRoute(container);
+    expect(container.querySelectorAll('[data-lead-readiness]')).toHaveLength(3);
+  });
+
   test('keeps route selection in place and commits without a second approval screen', () => {
     renderGame();
     click(container, /seal crew/i);

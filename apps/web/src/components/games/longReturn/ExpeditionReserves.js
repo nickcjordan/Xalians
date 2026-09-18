@@ -14,9 +14,9 @@ export default function ExpeditionReserves({ crew, strain, pressure }) {
     {crew.map((member, index) => {
       const load = strain[member.id] || 0;
       const state = readinessState(load);
-      const warning = state.id === 'spent' ? "Can't act" : state.id === 'critical' ? "Can't scout" : state.id === 'worn' ? 'Weakened' : null;
-      return <span key={member.id} data-reserve-creature={member.id} className={`flex flex-wrap items-center gap-1 ${state.id === 'spent' || state.id === 'critical' ? 'text-caution' : ''}`} title={state.detail} role="group" aria-label={`${member.species}: ${MAX_STRAIN - load} of ${MAX_STRAIN} energy${warning ? `, ${warning}` : ''}`}>
-        <span className="text-viable" aria-hidden="true">{index + 1}</span><small className="whitespace-nowrap text-small">{member.species}</small><BiIcon cls="bi-lightning-charge-fill" className="size-3.5" /><b className="text-body tabular-nums">{MAX_STRAIN - load}</b>{warning && <em data-reserve-warning className="basis-full text-small not-italic">{warning}</em>}
+      const warning = state.id === 'spent' ? "Can't act" : state.id === 'critical' ? 'Last energy' : null;
+      return <span key={member.id} data-reserve-creature={member.id} className={`inline-flex items-center gap-1 whitespace-nowrap ${state.id === 'spent' || state.id === 'critical' ? 'text-caution' : ''}`} title={state.detail} role="group" aria-label={`${member.species}: ${MAX_STRAIN - load} of ${MAX_STRAIN} energy${warning ? `, ${warning}` : ''}`}>
+        <span className="text-viable" aria-hidden="true">{index + 1}</span><small className="text-small">{member.species}</small><BiIcon cls="bi-lightning-charge-fill" className="size-3.5" /><b className="text-body tabular-nums">{MAX_STRAIN - load}</b>{warning && <em data-reserve-warning className="text-small not-italic">{warning}</em>}
       </span>;
     })}
   </div>;
