@@ -35,8 +35,10 @@ test('the turbine hall remembers only the entrance actually taken', () => {
 });
 
 test('the optional rooms continue from the archive fork and reservoir junction', () => {
-  expect(sceneOrientation(MISSION.scenes[5])).toContain('archive junction');
-  expect(sceneOrientation(MISSION.scenes[5])).toContain('descends the service stair');
+  expect(sceneOrientation(MISSION.scenes[5])).toContain('At the extraction fork');
+  expect(sceneOrientation(MISSION.scenes[5])).toContain('A service stair descends');
+  expect(sceneOrientation(MISSION.scenes[5])).not.toContain('crew descends');
   expect(sceneOrientation(MISSION.scenes[6])).toContain('reservoir junction');
-  expect(sceneOrientation(MISSION.scenes[6])).toContain('dry passage');
+  expect(sceneOrientation(MISSION.scenes[6])).toContain('dry approach');
+  expect(sceneOrientation(MISSION.scenes[6])).not.toContain('crew follows');
 });

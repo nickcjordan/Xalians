@@ -4,6 +4,12 @@ Owner: the agent maintaining the Long Return worktree. Update this file during i
 
 ## Active goal — full-mission UX (2026-09-11)
 
+### September 17: arrival prose describes the map's current threshold
+
+- Hosted phone replay after PR #369 revealed a mismatch at the optional depth: the map still placed the crew at the extraction fork while the arrival paragraph said they had already descended to the reservoir. The next optional room similarly put the map at the spine approach while the prose described travel into the chamber as complete.
+- The arrival paragraphs now name the crew's visible threshold and describe the stair or final chamber as ahead. The preceding result still narrates how the crew reaches each threshold. No route geometry, resource rule or choice changes.
+- Local phone paint review confirms both optional arrival paragraphs now match the named map entry. A seven-crossing replay, 1,299 web tests, typecheck, production build and diff check pass. Recheck the hosted path after deployment. Human comprehension of the full handoff remains open.
+
 ### September 17: the later rooms have physical handoffs
 
 - The scene-four arrival now brings the crew through the archive-side airlock, so the following scene's lit Index chamber does not appear abruptly after the exposed hull. The sheltered route also ends at that visible threshold.
