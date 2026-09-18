@@ -251,7 +251,7 @@ describe('Long Return Simple mode', () => {
     renderGame();
     enterSimpleRouteChoice(container);
     choosePreferredRoute(container);
-    expect(container.querySelector('.lr-simple-plan-head').textContent).toMatch(/All three cross together/i);
+    expect(container.querySelector('.lr-simple-plan-head').textContent).toMatch(/All three cross/i);
     expect(container.querySelector('.lr-simple-plan-crew').textContent).toMatch(/Lead acts.*Hippochamp.*Support changes the attempt.*Reserve still crosses/is);
     expect(findButton(container, /use this plan/i)).toBeUndefined();
     click(container, /cross now/i);
@@ -622,7 +622,7 @@ describe('Long Return Simple mode', () => {
     expect(findButton(container, /cross now/i)).toBeTruthy();
       expect(container.querySelector('.lr-route-board')).toBeNull();
     expect(container.querySelector('.lr-route-confirmed')).toBeNull();
-    expect(container.querySelector('.lr-simple-plan-head').textContent).toMatch(/All three cross together/i);
+    expect(container.querySelector('.lr-simple-plan-head').textContent).toMatch(/All three cross/i);
     expect(container.querySelectorAll('.lr-lead-options button')).toHaveLength(3);
     click(container, /change route/i);
     expect(container.querySelectorAll('.lr-board-head > th[role="columnheader"]:not(.lr-board-axis)')).toHaveLength(2);

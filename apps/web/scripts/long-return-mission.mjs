@@ -156,8 +156,13 @@ try {
       await page.screenshot({ path: `${output}/${step}-plan.png` });
       events.push({ type: 'plan', text: await page.locator('.lr-simple-plan').innerText() });
       if (viewport.width <= 650) {
+        const leadChoices = page.locator('.lr-lead-options-list > button');
+        const lastLead = await leadChoices.last().boundingBox();
+        const actionBeforeScroll = await page.getByRole('button', { name: /Cross now/ }).boundingBox();
+        assert(lastLead.y + lastLead.height + 8 <= actionBeforeScroll.y, `Scene ${crossed + 1}: commitment must follow every lead choice`);
+        await page.getByRole('button', { name: /Cross now/ }).evaluate(element => element.scrollIntoView({ block: 'center', behavior: 'instant' }));
         const action = await page.getByRole('button', { name: /Cross now/ }).boundingBox();
-        assert(action.y >= 0 && action.y + action.height <= viewport.height, 'Later-scene phone commit must remain visible');
+        assert(action.y >= 0 && action.y + action.height <= viewport.height, 'Phone commit must be reachable after the alternatives');
       }
       await click(page.getByRole('button', { name: /Cross now/ })); continue;
     }

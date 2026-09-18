@@ -43,9 +43,9 @@ test('does not disclose unknown hazard severity in the lead chooser', () => {
     .toBe(markup({ ...plan, unresolvedHazards: [{ strain: 1 }] }));
 });
 
-test('attributes shared effort to the actual lead and supporter, including companion saving', () => {
+test('keeps the primary comparison focused on total cost rather than repeating the energy split', () => {
   const shared = { ...plan, leadEnergy: 3, knownLeadStrain: 2, baseSupportStrain: 1 };
-  expect(markup(shared)).toContain('Energy shared: Scout 2 · Helper 1');
-  expect(markup(shared, { ready: true })).toContain('Energy shared: Scout 1 · Helper 1');
-  expect(markup()).not.toContain('Energy shared:');
+  expect(markup(shared)).toContain('Spend 3 energy');
+  expect(markup(shared)).not.toContain('Energy shared:');
+  expect(markup(shared, { ready: true })).toContain('Spend 2 energy');
 });
