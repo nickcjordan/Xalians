@@ -4,6 +4,11 @@ Owner: the agent maintaining the Long Return worktree. Update this file during i
 
 ## Active goal — full-mission UX (2026-09-11)
 
+### September 18: the full deep retrieval remains naturally reachable
+
+- The latest two unprescribed full-mission policies ended in emergency extraction for different reasons, so a broad “seven-room replay passed” would be misleading. A separate published phone replay intentionally chose intake → underdeck → decode → shielded conduit → stabilize → rim harvest → realign, scouted the passages, and conserved crew energy through field work. It completed all seven crossings with the Index, 17 banked salvage and 2 stability left. No checkpoint injection, hidden state edit, forced result, or rule change was used. This establishes a reachable natural win, not a win rate or a recommendation that every player should take those options.
+- The mission runner now optionally asserts a deep or forced ending and an exact banked haul, so the successful path can serve as a repeatable regression instead of an unexamined screenshot. A contrasting energy-conserving route using the backup box and closing interval reached all seven rooms but forced extraction at zero stability, showing that route and recovery decisions can matter. The accepted human experience of discovering those differences remains open.
+
 ### September 18: low stability connects directly to field repair
 
 - The optional-depth fork now shows a thin stability reserve, but a player with salvage still had to infer that the separate repair disclosure above could improve it before choosing. When a brace is affordable and unused, the low-reserve cue now offers a small “Repair before choosing” action inside the deeper option. It opens the existing field workshop as a reversible view, without choosing a route, consuming salvage, or promising that a repair guarantees success. If the crew cannot brace, the salvage is insufficient, or field work is already used, the action is absent. The existing once-per-crossing repair and ending rules are unchanged.

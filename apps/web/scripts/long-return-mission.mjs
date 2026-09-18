@@ -361,6 +361,10 @@ try {
     assert.equal(await endingParagraphs.count(), hasFarewell ? 2 : 1, 'Mission outcome and companion farewell occupy separate story paragraphs');
   }
   if (expectedBanked !== undefined) assert(events.find(event => event.type === 'ending')?.text.includes(`SALVAGE BANKED\n${expectedBanked}`), 'Voluntary extraction banks exactly the offered haul');
+  const endingText = events.find(event => event.type === 'ending')?.text || '';
+  if (process.env.LR_EXPECT_ENDING === 'deep') assert.match(endingText, /DEEP RETRIEVAL COMPLETE/, 'A naturally played route completes the deep retrieval');
+  if (process.env.LR_EXPECT_ENDING === 'forced') assert.match(endingText, /FORCED EXTRACTION/, 'A naturally played route reaches emergency extraction');
+  if (process.env.LR_EXPECT_SALVAGE) assert(endingText.includes(`SALVAGE BANKED\n${process.env.LR_EXPECT_SALVAGE}`), 'The resulting banked haul matches the selected path');
   for (const expected of process.env.LR_EXPECT_MAP_EFFECTS?.split(',') || []) assert(observedEffects.has(expected), `Mission reached earned map effect: ${expected}`);
   await writeFile(`${output}/run.json`, JSON.stringify(events,null,2));
   console.log(JSON.stringify({ crossed, clicks: events.filter(e=>e.type==='choice').length, animations: events.filter(e=>e.type==='animation').map(e=>e.elapsed), ending: events.find(e=>e.type==='ending')?.text || 'Requested scene milestone reached' }, null,2));
