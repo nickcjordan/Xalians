@@ -91,7 +91,7 @@
     },
     "longReturnPage": {
       "javascript": {
-        "raw": 333000,
+        "raw": 334000,
         "gzip": 105000
       },
       "stylesheets": {

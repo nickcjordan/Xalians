@@ -157,6 +157,7 @@ export const MISSION = {
       goal: 'Get everyone across the flood to the turbine hall.',
       destination: 'the Blind Turbine Hall on the far side of the flood',
       surveyFocus: 'the waterline, hanging gantry, and intake channel',
+      surveyOpening: 'follows the flood’s edge, checking the bridge supports and the dark current below',
       relayChannels: ['vibration', 'telepathic'],
       hazards: [
         { id: 'conductive-brine', label: 'Conductive brine', detail: 'The flood carries a dormant Electric charge.', sense: 'smell', threshold: 58, special: 'electroreception', strain: 2, pressure: 2 }
@@ -199,6 +200,7 @@ export const MISSION = {
       goal: 'Get everyone across the machinery hall to the sealed archive door.',
       destination: 'the sealed Archive Vestibule beyond the turbine bank',
       surveyFocus: 'the turbine housings, catwalk joints, and maintenance underdeck',
+      surveyOpening: 'moves between the silent turbine housings, checking for motion above and below',
       relayChannels: ['vibration', 'display', 'telepathic'],
       encounterHint: 'Fresh root scoring on the underdeck suggests another Xalian may be sheltering inside the machinery.',
       encounter: {
@@ -253,6 +255,7 @@ export const MISSION = {
       goal: 'Open the sealed door and bring the whole crew into the gallery beyond.',
       destination: 'the Null Gallery inside archive security',
       surveyFocus: 'the authentication arms, iris seam, and dormant security field',
+      surveyOpening: 'studies the sealed door from the edge of the rig’s reach',
       relayChannels: ['vocal', 'display', 'telepathic'],
       encounterHint: 'A small psychic distress pattern is repeating from inside the authentication rig.',
       encounter: {
@@ -304,6 +307,7 @@ export const MISSION = {
       goal: 'Reach the primary archive chamber without losing a crew member to the broken hull.',
       destination: 'the Nemesis Index chamber at the end of the security wing',
       surveyFocus: 'the exposed centerline, inner conduit, and drifting containment residue',
+      surveyOpening: 'follows the gallery’s inner wall, watching loose fragments drift toward the broken hull',
       relayChannels: ['display', 'telepathic'],
       encounterHint: 'Fresh scoring around the conduit mouth marks the boundary of a territorial void-dweller.',
       encounter: {
@@ -342,6 +346,7 @@ export const MISSION = {
       goal: 'Secure the Nemesis Index—the mission succeeds if this record leaves the annex.',
       destination: 'the extraction fork, with optional access to the deeper Core Reservoir',
       surveyFocus: 'the stasis membrane, blackbox cradle, and contaminant layer',
+      surveyOpening: 'threads between the floating archive plates to find what holds the Index in place',
       relayChannels: ['vocal', 'display', 'vibration', 'telepathic'],
       hazards: [
         { id: 'plague-dust', label: 'Dormant plague dust', detail: 'Opening the field will disturb a sealed contaminant layer.', sense: 'smell', threshold: 64, special: 'psychic', strain: 2, pressure: 1 }
@@ -371,6 +376,7 @@ export const MISSION = {
       goal: 'Recover optional Generator charge without sacrificing the secured Index or the remaining crew.',
       destination: 'the final Generator Spine or the extraction route',
       surveyFocus: 'the charged surface, collector valves, and submerged storage cells',
+      surveyOpening: 'traces the reservoir rim, looking from the charged surface to the cell held below it',
       relayChannels: ['vibration', 'telepathic'],
       hazards: [
         { id: 'charge-bloom', label: 'Charge bloom', detail: 'The reservoir discharges when its surface is broken.', sense: 'hearing', threshold: 68, special: 'electroreception', strain: 2, pressure: 2 }
@@ -400,6 +406,7 @@ export const MISSION = {
       goal: 'Take the final recovery prize and reach the extraction lift before the annex loses all stability.',
       destination: 'the surface extraction lift—this is the last crossing',
       surveyFocus: 'the closing rings, control core, and exposed memory spindle',
+      surveyOpening: 'waits beside the turning rings, counting how long the gap stays open',
       relayChannels: ['display', 'telepathic'],
       hazards: [
         { id: 'ring-closure', label: 'Asymmetric ring closure', detail: 'The inner ring locks three seconds before the outer assembly.', sense: 'sight', threshold: 76, special: 'foresight', strain: 2, pressure: 2 }
