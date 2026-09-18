@@ -188,8 +188,11 @@ describe('Arcade deterministic rules', () => {
     expect(shell[50]).toBeCloseTo(40 - 16 * 1.02, 3);
     expect(shell[42]).toBeLessThan(terrain[42] - 15);
     expect(shell[58]).toBeLessThan(terrain[58] - 8);
+    expect(shell[42]).toBeGreaterThan(shell[58]);
     expect(shell[33]).toBe(terrain[33]);
     expect(shell[67]).toBe(terrain[67]);
+    expect(Math.abs(shell[35] - shell[34])).toBeLessThan(2);
+    expect(Math.abs(shell[66] - shell[65])).toBeLessThan(2);
 
     const directHit = artilleryTerrainImpactStages(terrain, [{ ...projectile, impact: { x: 50, y: 41.5 } }], 'shell')[0].terrain;
     expect(directHit[50]).toBeCloseTo(shell[50], 3);
