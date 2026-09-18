@@ -22,6 +22,7 @@
 .lr-mode-simple .lr-report-content > .g-btn { position: static; transform: none; width: auto; margin-top: 12px; }
 .lr-mode-simple .lr-route-board { margin-top: 0; }
 .lr-mode-simple .lr-field-encounter { border: 0; background: none; box-shadow: none; padding: 0; }
+@media(max-width:650px) { .lr-mode-simple .lr-field-encounter { scroll-margin-top: 90px; } }
 .lr-mode-simple .lr-field-encounter.is-resolved { box-shadow: none; }
 .lr-mode-simple .lr-encounter-resolution-grid { display: grid; grid-template-columns: 180px minmax(0,1fr); gap: 28px; }
 .lr-mode-simple .lr-encounter-result-head > svg { display: none; }

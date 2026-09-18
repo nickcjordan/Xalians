@@ -73,7 +73,7 @@ try {
     const map = page.locator('.lr-shell [data-expedition-map]');
     if (await map.count()) {
       const mapScene = await map.getAttribute('data-map-scene');
-      if (viewport.width < 720) assert.equal(await map.locator('[data-map-route-caption]').count(), 2, 'Phone schematic names both approaches outside the scaled drawing');
+      if (viewport.width < 720) assert.equal(await map.locator('[data-map-route-caption]').count(), await map.getAttribute('data-map-local') === 'true' ? 0 : 2, 'Phone decision maps name both approaches; focused encounter maps omit redundant route captions');
       const mapDrawing = await map.locator(':scope > svg').boundingBox();
       assert(mapDrawing.height >= 70, `The room drawing must retain its own height, not inherit an icon rule: ${mapDrawing.height}`);
       const entrance = await map.locator('[data-map-threshold="entry"]').textContent();
@@ -131,6 +131,12 @@ try {
       const situation = page.locator('.lr-encounter-situation');
       assert.equal(await situation.count(), 1, 'Simple encounters put contact and communication context beside the response');
       assert(!(await situation.innerText()).includes('through display'), 'Player-facing contact context does not expose registry channel names');
+      if (viewport.width <= 390) {
+        const firstResponse = await page.locator('.lr-encounter-options > button').first().boundingBox();
+        assert(firstResponse.y >= 0 && firstResponse.y < viewport.height, 'The encounter opens with its first actual response in the phone viewport');
+        assert(await page.locator('.lr-field-encounter').evaluate(node => document.activeElement === node), 'Keyboard focus follows the phone into the encounter response');
+        await page.screenshot({ path: `${output}/encounter-viewport-${crossed}.png` });
+      }
       const prescribedResponse = process.env.LR_ENCOUNTER_PICK !== undefined && !responses[crossed];
       await click(prescribedResponse ? page.locator('.lr-encounter-options > button').nth(Number(process.env.LR_ENCOUNTER_PICK)) : page.locator('.lr-encounter-options > .is-recommended'));
       responses[crossed] = (responses[crossed] || 0) + 1;

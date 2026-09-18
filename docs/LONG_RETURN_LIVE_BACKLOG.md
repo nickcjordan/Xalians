@@ -4,6 +4,12 @@ Owner: the agent maintaining the Long Return worktree. Update this file during i
 
 ## Active goal — full-mission UX (2026-09-11)
 
+### September 18: put the encounter response in the first phone viewport
+
+- The 320-pixel scout encounter still began below a full scene objective and full campaign map. The first response was more than a screen below the top, so the player reached contact without seeing an action. During Simple encounter decisions, the map now keeps the local stations, crew/native/ally positions, known hazard, reserves and the room endpoints, while omitting the already-labeled seven-sector strip and route captions. The encounter itself supplies the temporary objective; the original scene objective and full map return at route planning. Guided, Standard and Expert presentation is unchanged.
+- When an encounter becomes actionable on a narrow phone, the wizard scrolls and focuses its labeled response region. Its first choice is visible in the viewport with the native and encounter situation; the map remains directly above for review. Resolving the encounter returns to the normal result position. This is a local phase change, not another modal or cinematic animation.
+- Verification: 1,307 web tests, typecheck, production build and bundle budgets passed. A 320-by-568 scout encounter and a 390-by-667 unscouted whole-crew encounter each reached three crossings. The browser replay asserts first-response visibility and keyboard focus at the active encounter, and checks scout versus whole-crew ally positions after resolution. The 320-pixel actual viewport capture was paint-reviewed. Whether a player prefers this focus handoff remains a human judgment.
+
 ### September 18: encounter choices inherit the scout's point of view
 
 - A phone replay reached the Xylum response with a detached posture block. It used a registry word ("display") and asked the player to relate "likely to notice it first" to separate cost/outcome rows. Simple mode now places two short situation facts directly before the response choices: who spotted whom, and whether the crew can receive a signal. Surprise explicitly names its extra energy cost. The fuller original posture account remains in Guided, Standard and Expert modes.

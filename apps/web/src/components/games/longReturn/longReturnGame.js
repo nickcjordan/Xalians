@@ -286,7 +286,7 @@ function SimpleWizardChrome({ scene, sceneIndex, salvage, phase, choosingLead, s
         <button type="button" aria-label="Game rules" onClick={onHelp}><BiIcon cls="bi bi-question-circle" /><span>Rules</span></button>
       </div>
     </div>
-    {phase === 'assign' && !choosingLead && !simpleCustomizing
+    {phase === 'encounter' ? null : phase === 'assign' && !choosingLead && !simpleCustomizing
       ? <p className="lr-route-orientation col-span-full m-0 max-w-[62ch] px-4 pb-4 font-body text-body leading-relaxed text-ink">{sceneOrientation(scene, runFlags)}</p>
       : <div className="lr-wizard-objective"><BiIcon cls="bi bi-crosshair" /><span><small>{phase === 'result' ? 'Reached' : 'Current objective'}</small><strong>{phase === 'result' ? scene.destination : scene.goal}</strong></span></div>}
   </header>;
@@ -814,6 +814,8 @@ function LongReturnGame() {
     let target = root;
     const phoneLead = guidanceLevel === 'simple' && choosingLead && !simpleCustomizing && window.matchMedia?.('(max-width: 650px)').matches
       ? root.querySelector('.lr-simple-plan') : null;
+    const phoneEncounter = guidanceLevel === 'simple' && phase === 'encounter' && !encounterState?.result && window.matchMedia?.('(max-width: 650px)').matches
+      ? root.querySelector('.lr-field-encounter:not(.is-resolved)') : null;
     const arrival = guidanceLevel === 'simple' && phase === 'result' ? root.querySelector('[data-arrival-focus]') : null;
     // New phases start at their context header. On phones, the lead substep
     // starts at its own route/back heading, not the already-seen scene header.
@@ -823,6 +825,7 @@ function LongReturnGame() {
       else target = root.querySelector('.lr-current-action') || root;
     }
     if (phoneLead) target = phoneLead;
+    if (phoneEncounter) target = phoneEncounter;
     if (arrival) target = arrival;
     // Align the new phase before its entrance animation. Smooth scrolling and
     // panel motion running together read as camera shake, especially at
@@ -839,7 +842,7 @@ function LongReturnGame() {
     // the next Tab lands on the first relevant control, not an old control that
     // has disappeared with the previous step.
     if (guidanceLevel === 'simple') {
-      const focusTarget = arrival || phoneLead || root.querySelector('[data-wizard-focus]');
+      const focusTarget = arrival || phoneLead || phoneEncounter || root.querySelector('[data-wizard-focus]');
       if (focusTarget && typeof focusTarget.focus === 'function') {
         focusTarget.focus({ preventScroll: true });
       }
@@ -1335,7 +1338,7 @@ function LongReturnGame() {
             {scene.objective && <span className="lr-objective-badge">PRIMARY OBJECTIVE</span>}
             {scene.optional && <span className="lr-optional-badge">OPTIONAL DEPTH</span>}
           </div>}
-          <ExpeditionSchematic scene={scene} crew={crew} scout={scanScout} helperId={encounterResolution?.helperId} companion={companion} allyWithScout={allyWithScout} position={expeditionPosition({ phase, scout: scanScout, scan, encounterMode, resolution: encounterResolution?.resolution })} routeId={mapRouteId} revealedIds={scan?.revealedIds} native={phase === 'encounter' && !encounterResolution || knownNativeState ? encounterCreature : null} nativeState={knownNativeState} preview={phase === 'assign' && !!mapRouteId} runFlags={runFlags} compact reserves={guidanceLevel === 'simple' ? { strain, pressure } : undefined} />
+          <ExpeditionSchematic scene={scene} crew={crew} scout={scanScout} helperId={encounterResolution?.helperId} companion={companion} allyWithScout={allyWithScout} position={expeditionPosition({ phase, scout: scanScout, scan, encounterMode, resolution: encounterResolution?.resolution })} routeId={mapRouteId} revealedIds={scan?.revealedIds} native={phase === 'encounter' && !encounterResolution || knownNativeState ? encounterCreature : null} nativeState={knownNativeState} preview={phase === 'assign' && !!mapRouteId} runFlags={runFlags} compact localOnly={guidanceLevel === 'simple' && phase === 'encounter'} reserves={guidanceLevel === 'simple' ? { strain, pressure } : undefined} />
           </div>
           {guidanceLevel === 'simple' && <CurrentAction key={`${phase}-${sceneIndex}-${encounterState && encounterState.result ? 'resolved' : 'active'}-${routeId || 'none'}`} {...currentAction} onHelp={openMechanics} />}
           <p className="lr-scene-copy">{scene.description}</p>
@@ -1362,7 +1365,7 @@ function LongReturnGame() {
           )}
 
           {phase === 'encounter' && encounterState && encounterCreature && (
-            <div className={`lr-field-encounter${encounterState.result ? ' is-resolved' : ''}`}>
+            <div className={`lr-field-encounter${encounterState.result ? ' is-resolved' : ''}`} tabIndex={encounterState.result ? undefined : -1} role={encounterState.result ? undefined : 'region'} aria-label={encounterState.result ? undefined : 'Encounter response'}>
               {!encounterState.result ? <>
                 <div className="lr-encounter-heading">
                   <CreaturePortrait creature={encounterCreature} compact />

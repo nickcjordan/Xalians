@@ -149,6 +149,19 @@ describe('expedition location, not creature performance', () => {
     expect(reported).toContain(scene.hazards[0].detail);
     expect(reported).not.toContain('data-map-hazard-route="gantry"');
   });
+  it('keeps physical positions but drops repeated campaign context during a local encounter', () => {
+    const scene = MISSION.scenes[1];
+    const scout = { id: 'scout', species: 'Chromocat' };
+    const html = renderToStaticMarkup(<ExpeditionSchematic scene={scene} crew={[scout]} scout={scout} native={{ species: 'Xylum' }} position={{ crew: 'entry', scout: 'survey', encounter: true }} revealedIds={[scene.hazards[0].id]} localOnly />);
+    expect(html).toContain('data-map-local="true"');
+    expect(html).toContain('data-map-creature="scout" data-location="survey"');
+    expect(html).toContain('data-map-native="true"');
+    expect(html).toContain('data-map-known-hazard');
+    expect(html).toContain('Turbine hall');
+    expect(html).toContain('Archive door');
+    expect(html).not.toContain('data-site-overview');
+    expect(html).not.toContain('data-map-route-caption');
+  });
   it('can combine the numbered crew key with actual reserves without repeating names', () => {
     const crew = [{id:'lead',species:'Hippochamp'}, {id:'support',species:'Graviclaw'}];
     const html = renderToStaticMarkup(<ExpeditionSchematic scene={MISSION.scenes[0]} crew={crew} reserves={{strain:{lead:5,support:6},pressure:9}} />);
