@@ -83,7 +83,8 @@ test('elemental vulnerability is pictured in the passage rather than announced a
   for (const scene of MISSION.scenes) for (const route of scene.routes) {
     const text = resolve(route, { leadStrain: 1, environment: { notes: ['is highly exposed to the element'] } })[2];
     const clue = route.id === 'intake' ? 'Charge snaps through the flooded wreckage'
-      : route.id === 'dive' ? 'Charge flickers around the submerged cell' : expected[route.environment.element];
+      : route.id === 'dive' ? 'Charge flickers around the submerged cell'
+        : route.id === 'harvest' ? 'Charge flickers across the collector valves' : expected[route.environment.element];
     expect(text, `${scene.id}/${route.id}`).toContain(clue);
     expect(text).not.toContain('exposure bears particularly hard');
   }
@@ -96,6 +97,40 @@ test('a rim-side retrieval never describes electric exposure as crossing a chann
   expect(paragraphs[1]).toContain('from the rim');
   expect(paragraphs[2]).toContain('around the submerged cell');
   expect(paragraphs[2]).not.toMatch(/through the water|toward the far side/);
+});
+
+test('reservoir resistance faces the charge at the rim, not an invented contaminant', () => {
+  const route = MISSION.scenes[5].routes[0];
+  const method = route.methods.find(entry => entry.key === 'resistant');
+  expect(method.label).toBe('Work at the charged rim');
+  const account = resolve(route, { leadStrain: 1 }, method).join(' ');
+  expect(account).toContain('holds position at the charged rim');
+  expect(account).not.toContain('contaminated rim');
+});
+
+test('reservoir wear distinguishes draining charge from an unexpected discharge', () => {
+  const scene = MISSION.scenes[5];
+  const effort = resolve(scene.routes[0], { leadStrain: 2, pressure: 3, reactionControlled: false, unseenHazards: scene.hazards })[2];
+  expect(effort).toContain('counterweights pull against the old pipework');
+  expect(effort).toContain('discharge kicks through the collector assembly');
+});
+
+test('vacuum effort describes work at the rings without inventing another crossing', () => {
+  const route = MISSION.scenes[6].routes[0];
+  const effort = resolve(route, { leadStrain: 1, supportStrain: 1, environment: { notes: ['cannot safely remain'] } })[2];
+  expect(effort).toContain('must keep working until the crew can get clear');
+  expect(effort).not.toContain('bringing the others across');
+  expect(effort).not.toContain('passage moving');
+});
+
+test('support can help a stationary recovery without inventing a moving passage', () => {
+  const route = MISSION.scenes[5].routes[0];
+  const action = resolve(route, { rawMethodScore: 78, margin: 16 })[1];
+  expect(action).toContain('helps hold the work together');
+  expect(action).not.toContain('keeps the others moving');
+  expect(action).not.toContain('crossing itself');
+  const costly = resolve(route, { rawMethodScore: 78, margin: 16, leadStrain: 3 })[1];
+  expect(costly).not.toContain('without an exhausting push');
 });
 
 test('temperature cost describes effort without inventing a passage through a stationary work site', () => {
