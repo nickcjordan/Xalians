@@ -4,6 +4,12 @@ Owner: the agent maintaining the Long Return worktree. Update this file during i
 
 ## Active goal — full-mission UX (2026-09-11)
 
+### September 18: field contact uses the schematic, not implied creature motion
+
+- A whole-crew, no-scout replay found the field record claiming every native “emerges ahead.” That contradicted the actual scenes: Xylum shelters by a broken bearing, Hypnopet is trapped in the lock, and Ectoghoul guards a conduit. Each now has a brief, situation-specific crew-contact beat. The player still chooses the response; no attack or outcome is pre-decided.
+- The contact map now stops the crew before the obstacle, rather than placing their markers inside the door before the encounter. The trapped Hypnopet marker sits within the lock itself. Field records use a larger, stationary schematic on phones, with a concise crew/scout/native key and a dotted scout trace; they do not animate creature bodies or turn the scene art into a faux film. The causal written account remains adjacent and persistent.
+- Verification: all 1,319 web tests, typecheck, build and bundle budgets; a reduced-motion 390-by-667 no-scout replay through Xylum and Hypnopet; and a normal-motion four-room replay through all three whole-crew native contacts. The Hypnopet contact record was visually checked on a phone. Human assessment of map legibility and story rhythm remains open.
+
 ### September 18: the arrival shows when the annex can no longer hold
 
 - A seven-room phone render reached one stability after the reservoir, then zero at the extraction lift. Both arrival receipts originally used the same calm cyan loss numbers, and the forced-evacuation explanation sat below the receipt. The existing result composition now carries the urgency: at one or two stability, the stability row is amber and says near collapse; at zero it turns red and names forced extraction. The result's existing status line changes to “Annex failing · evacuate now” or “Crew spent · evacuate now” when the mission cannot continue. No extra banner, rule change or delayed confirmation was added.

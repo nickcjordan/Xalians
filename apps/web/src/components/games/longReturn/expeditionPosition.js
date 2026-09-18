@@ -10,7 +10,8 @@ export function expeditionPosition({ phase, scout, scan, encounterMode, resoluti
   if (actionType === 'scout-return') return location('entry', beat === 'complete' ? 'entry' : 'survey');
   if (actionType === 'scout') return location('entry', 'survey', beat === 'signal' || !!(beat === 'encounter' && scan?.relay), beat === 'encounter');
   if (actionType === 'crossing') return location(beat === 'complete' ? 'exit' : 'crossing');
-  if (actionType === 'encounter' || actionType === 'encounter-response' || phase === 'encounter') {
+  if (actionType === 'encounter') return location('approach', null, false, beat !== 'move');
+  if (actionType === 'encounter-response' || phase === 'encounter') {
     const retreat = resolution === 'detour';
     const contact = !resolution || resolution === 'unresolved';
     return encounterMode === 'scout'
