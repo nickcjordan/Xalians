@@ -1710,13 +1710,13 @@ function LongReturnGame() {
               </div></section></div>
 <div className="lr-arrival-next">
               {fieldWorkshop}
-              <div className={`lr-next-stakes${missionCannotContinue ? ' is-critical' : ''}`}>
+              {(!objectiveReached || missionCannotContinue || sceneIndex === MISSION.scenes.length - 1) && <div className={`lr-next-stakes${missionCannotContinue ? ' is-critical' : ''}`}>
                 <BiIcon cls={`bi ${objectiveReached ? 'bi-check-circle' : 'bi-compass'}`} />
-                <div><strong>{missionCannotContinue ? 'The expedition cannot continue' : sceneIndex === MISSION.scenes.length - 1 ? 'The final crossing is behind you.' : objectiveReached ? 'The Index is yours. Everything deeper is optional.' : `${crossingsToIndex} ${crossingsToIndex === 1 ? 'crossing' : 'crossings'} to the Index`}</strong>
-                  <span>{missionCannotContinue ? `${failureReason} Forced extraction ends this run.` : sceneIndex === MISSION.scenes.length - 1 ? `Leave the annex to bank ${salvage} salvage and complete the deep retrieval.` : objectiveReached ? `Extract to bank ${salvage} salvage, or risk the remaining crew energy and ${MAX_INSTABILITY - pressure} stability for more.` : `${MAX_INSTABILITY - pressure} stability remains. Recover if needed, then press toward the archive.`}</span></div>
-              </div>
+                <div><strong>{missionCannotContinue ? 'The expedition cannot continue' : sceneIndex === MISSION.scenes.length - 1 ? 'The final crossing is behind you.' : `${crossingsToIndex} ${crossingsToIndex === 1 ? 'crossing' : 'crossings'} to the Index`}</strong>
+                  <span>{missionCannotContinue ? `${failureReason} Forced extraction ends this run.` : sceneIndex === MISSION.scenes.length - 1 ? `Leave the annex to bank ${salvage} salvage and complete the deep retrieval.` : `${MAX_INSTABILITY - pressure} stability remains. Recover if needed, then press toward the archive.`}</span></div>
+              </div>}
 </div>
-              {!missionCannotContinue && objectiveReached && sceneIndex < MISSION.scenes.length - 1 ? <ExtractionChoice salvage={salvage} potential={optionalSalvagePotential} remaining={optionalScenesRemaining.length} nextScene={MISSION.scenes[sceneIndex + 1]} onExtract={extract} onContinue={continueRun} /> : <div className="lr-action-row lr-result-actions">
+              {!missionCannotContinue && objectiveReached && sceneIndex < MISSION.scenes.length - 1 ? <ExtractionChoice salvage={salvage} potential={optionalSalvagePotential} remaining={optionalScenesRemaining.length} nextScene={MISSION.scenes[sceneIndex + 1]} stability={MAX_INSTABILITY - pressure} readyCrew={standingCrewCount} onExtract={extract} onContinue={continueRun} /> : <div className="lr-action-row lr-result-actions">
                 {!missionCannotContinue && !objectiveReached && <button type="button" className="g-btn g-btn--danger" aria-label="Abort mission" aria-describedby={salvage > 0 ? 'lr-abort-cost' : undefined} onClick={extract}>Abort mission{salvage > 0 && <small id="lr-abort-cost">Leave {salvage} salvage behind</small>}</button>}
                 <button type="button" className="g-btn g-btn--primary" onClick={continueRun}>{missionCannotContinue ? 'View mission report' : sceneIndex === MISSION.scenes.length - 1 ? 'Leave with full salvage' : 'Continue mission'} <BiIcon cls="bi bi-arrow-right" /></button>
               </div>}
