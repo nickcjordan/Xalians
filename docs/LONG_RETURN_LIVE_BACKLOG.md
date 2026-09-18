@@ -4,6 +4,11 @@ Owner: the agent maintaining the Long Return worktree. Update this file during i
 
 ## Active goal — full-mission UX (2026-09-11)
 
+### September 18: the scout rejoins the crew before the next action
+
+- A remote-reporting scout remained visibly ahead on the route map, but the next crossing record placed all three crew members at the approach without an account of their reunion. The crossing story now locates the waiting scout at a room-specific landmark and has the crew catch up before the lead acts. Route preview remains planning, so merely picking a route does not move anyone; scouts who returned physically do not perform a second reunion. This does not add a resource cost or change scouting/encounter rules. An energetic creature's scene-intro reaction now turns its attention to the next threshold instead of claiming it physically went there while the map shows the crew together.
+- The follow-up map replay uncovered a separate state loss: the completed action record showed the trapped Hypnopet marker but omitted “Still trapped” from its key after the crew pinned the rig and passed. The record key now retains that outcome, matching the ordinary room map and the unresolved native state. Route-wide story and map component tests cover the reunion and trapped-state distinction. The 390- and 1280-pixel location replay passed remote relay, physical returns, a withdrawn encounter, and bypassing the trapped native; the remote-scout record was visually checked. Local production build and bundle budgets passed. Player interpretation remains open.
+
 ### September 18: the crossing result locates the whole crew
 
 - The phone wizard focuses directly on the result after a crossing, leaving the room map above the viewport. The account and receipt said what happened but did not immediately show where the crew ended up. The Simple result now includes a small, stationary arrival trace between its headline and story: the chosen route, the actual room entrance and exit, all three crew markers together at the far threshold, and a separate diamond when a temporary ally is present. It uses the same place names as the room schematic and does not simulate creature movement. Advanced view and crossing rules are unchanged.

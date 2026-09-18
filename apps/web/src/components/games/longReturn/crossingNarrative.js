@@ -45,7 +45,7 @@ const STORIES = {
   }
 };
 
-export function crossingNarrative({ route, lead, support, method, result, companionHelp }) {
+export function crossingNarrative({ scene, route, lead, support, method, result, companionHelp, scoutAhead }) {
   const stories = route.outcomes || STORIES[route.id];
   const story = (stories && (stories[result.quality] || stories.rough) || `${lead.species} brings the crew through ${route.title.toLowerCase()}.`)
     .replace(/The lead/g, lead.species).replace(/the lead/g, lead.species);
@@ -69,6 +69,6 @@ export function crossingNarrative({ route, lead, support, method, result, compan
   else if (result.naturalReaction && (result.margin < 14 || result.environment.strain > 0 || result.unseenHazards.some(hazard => hazard.strain > 0))) turningPoint = `${lead.species}'s ${style} approach suited the crossing, preserving 1 energy.`;
   else if (result.margin < 0) turningPoint = `${lead.species} and ${support.species} forced a passage. This method was a difficult fit for the route.`;
   else turningPoint = `${lead.species} put ${method.label.toLowerCase()} to work; ${support.species} backed up the crossing.`;
-  const paragraphs = crossingScene({ route, lead, support, method, result, companionHelp });
+  const paragraphs = crossingScene({ scene, route, lead, support, method, result, companionHelp, scoutAhead });
   return { story: paragraphs ? paragraphs.join('\n\n') : story, paragraphs, turningPoint, supportHelp };
 }

@@ -53,6 +53,8 @@ describe('expedition location, not creature performance', () => {
     expect(html).toContain('Hypnopet: still trapped');
     expect(html).toContain('Hypnopet · Still trapped');
     expect(html).not.toContain('>Contact</text>');
+    const record = renderToStaticMarkup(<ExpeditionSchematic scene={MISSION.scenes[2]} native={{species:'Hypnopet'}} nativeState="bypassed" position={{crew:'crossing'}} readingRecord />);
+    expect(record).toContain('Hypnopet · Still trapped');
   });
   const scout = { id: 'scout' };
   it('route and lead selection never move the crew', () => {

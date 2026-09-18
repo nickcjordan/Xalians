@@ -25,9 +25,17 @@ try {
       assert(clear, 'Ally marker must not overlap route labels');
     };
     const chooseRoute = async index => page.locator('.lr-board-pick').nth(index).click();
-    const arrive = async () => {
+    const arrive = async (expectScoutReunion = false) => {
       await page.getByRole('button', { name: /Cross now/ }).click();
-      await page.getByRole('button', { name: 'Continue to result', exact: true }).click();
+      const continueToResult = page.getByRole('button', { name: 'Continue to result', exact: true });
+      await continueToResult.waitFor();
+      if (expectScoutReunion) {
+        assert.match(await page.locator('[data-field-record]').innerText(), new RegExp(`${scout} waits .*The crew catches up; all three are together`), 'A remote scout reunites in the crossing account before the crew acts');
+        await page.screenshot({ path: `${output}/${width}-${scout}-reunion.png` });
+      } else {
+        assert.doesNotMatch(await page.locator('[data-field-record]').innerText(), /The crew catches up; all three are together/, 'A crew already together does not perform a second reunion');
+      }
+      await continueToResult.click();
     };
     const enter = async () => {
       await page.getByRole('button', { name: 'Continue mission', exact: true }).click();
@@ -87,7 +95,7 @@ try {
     await chooseRoute(0);
     await checkAllyClearance(currentMap());
     await page.screenshot({ path: `${output}/${width}-${scout}-plan.png`, fullPage: true });
-    await arrive();
+    await arrive(scout === 'Chromocat');
     assert.equal(await currentMap().locator('[data-map-ally]').getAttribute('data-location'), 'exit');
     assert.equal(await currentMap().locator('[data-map-creature][data-location="exit"]').count(), 3);
     if (scout === 'Chromocat') {

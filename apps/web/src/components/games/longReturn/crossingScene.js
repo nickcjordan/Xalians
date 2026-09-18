@@ -109,6 +109,16 @@ const EFFORTS = {
   closure: 'pushes through the narrowing interval until the spindle is beyond the rings'
 };
 
+const SCOUT_MEETING_POINTS = {
+  'service-throat': 'at the edge of the flood',
+  'turbine-hall': 'beside the first machine housing',
+  'archive-vestibule': 'before the sealed archive door',
+  'null-gallery': 'at the break in the gallery',
+  'nemesis-index': 'at the archive chamber entrance',
+  'core-reservoir': 'at the reservoir rim',
+  'generator-spine': 'at the first ring platform'
+};
+
 function elementalExposure(route, name) {
   switch (route.environment.element) {
     case 'electric': return route.id === 'intake'
@@ -126,7 +136,7 @@ function elementalExposure(route, name) {
   }
 }
 
-export function crossingScene({ route, lead, support, method, result, companionHelp }) {
+export function crossingScene({ scene, route, lead, support, method, result, companionHelp, scoutAhead }) {
   const passage = PASSAGES[route.id];
   if (!passage) return null;
   const name = lead.species;
@@ -167,5 +177,6 @@ export function crossingScene({ route, lead, support, method, result, companionH
   const arrival = route.id === 'breach' && method.key === 'phasing'
     ? 'From inside the iris, the release finally answers. The door opens for the rest of the crew, admitting them into the gallery.'
     : passage[1];
-  return [passage[0], `${action}${danger ? ` ${danger}` : ''}${supportDifference}`, `${effort}${exposure ? ` ${exposure}` : ''}${supportEffort}${stability}${companionHelp ? ` ${companionHelp}` : ''}`, `${arrival}${salvage}${NEXT_THRESHOLDS[route.id] || ''}`];
+  const reunion = scoutAhead ? ` ${scoutAhead.species} waits ${SCOUT_MEETING_POINTS[scene?.id] || 'a short way ahead'}. The crew catches up; all three are together before the next move.` : '';
+  return [`${passage[0]}${reunion}`, `${action}${danger ? ` ${danger}` : ''}${supportDifference}`, `${effort}${exposure ? ` ${exposure}` : ''}${supportEffort}${stability}${companionHelp ? ` ${companionHelp}` : ''}`, `${arrival}${salvage}${NEXT_THRESHOLDS[route.id] || ''}`];
 }
