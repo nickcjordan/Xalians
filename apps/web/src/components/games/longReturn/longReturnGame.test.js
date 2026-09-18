@@ -559,7 +559,7 @@ describe('Long Return Simple mode', () => {
     expect(container.querySelector('[role="dialog"][aria-label="Encounter discovered"]')).toBeTruthy();
     expect(container.querySelector('[data-field-record] [data-expedition-map][data-crew-position="approach"]')).toBeTruthy();
     click(container, /skip to outcome/i);
-    expect(container.querySelector('.lr-sequence-story').textContent).toMatch(/Choose how to approach the native before continuing/i);
+    expect(container.querySelector('.lr-sequence-story').textContent).toMatch(/Choose how the crew responds before continuing/i);
     click(container, /choose response/i);
     expect(container.textContent).toContain('Unexpected crew encounter');
     expect(container.querySelector('.lr-encounter-situation').textContent).toContain('Crew caught unaware · +1 energy to respond');
