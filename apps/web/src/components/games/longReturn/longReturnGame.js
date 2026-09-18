@@ -33,6 +33,7 @@ import './essentialLegibility.css';
 import MethodIdentity from './MethodIdentity';
 import { nativeRemains } from './nativePresence';
 import ExpeditionSchematic from './ExpeditionSchematic';
+import ExpeditionEndingTrail from './ExpeditionEndingTrail';
 import ArrivalStory from './ArrivalStory';
 import { crossingReceipt } from './crossingReceipt';
 import { scoutCommunication, reportDeliveryLabel } from './scoutCommunication';
@@ -1234,6 +1235,7 @@ function LongReturnGame() {
           <span className="lr-end-outcome">{outcome.label}</span>
           <h1 className="g-title">{outcome.title}</h1>
           <p className="lr-end-copy">{outcome.copy}{companion ? ` ${companionFarewell(companion)}` : ''}</p>
+          <ExpeditionEndingTrail entries={journal} objectiveReached={objectiveReached} />
           <div className="lr-end-stats">
             <div><span>Objective</span><strong>{objectiveReached ? 'SECURED' : 'LOST'}</strong></div>
             <div><span>Salvage banked</span><strong>{banked} · {banked >= 20 ? 'Exceptional haul' : banked >= 10 ? 'Strong haul' : banked > 0 ? 'Light haul' : 'None'}</strong>{salvage > banked && <small className="lr-end-haul-loss">{salvage} carried − {salvage - banked} left behind</small>}</div>

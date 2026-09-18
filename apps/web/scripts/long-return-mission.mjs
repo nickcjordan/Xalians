@@ -38,6 +38,9 @@ try {
     const map = page.locator('.lr-shell [data-expedition-map]');
     if (await map.count()) {
       const mapScene = await map.getAttribute('data-map-scene');
+      if (viewport.width < 720) assert.equal(await map.locator('[data-map-route-caption]').count(), 2, 'Phone schematic names both approaches outside the scaled drawing');
+      const mapDrawing = await map.locator(':scope > svg').boundingBox();
+      assert(mapDrawing.height >= 70, `The room drawing must retain its own height, not inherit an icon rule: ${mapDrawing.height}`);
       const entrance = await map.locator('[data-map-threshold="entry"]').textContent();
       if (previousMapScene && previousMapScene !== mapScene) assert.equal(entrance, previousMapExit, 'Map arrival carries into the next room');
       previousMapScene = mapScene;
@@ -57,8 +60,8 @@ try {
         assert(expected, `Recognized earned map effect: ${id}`);
         assert.equal(await path.getAttribute('data-map-route'), expected[0]);
         assert.equal(await path.locator(':scope > text').textContent(), expected[1]);
-        const icon = await effect.locator('svg').evaluate(node => { const box = node.getBoundingClientRect(); return {width:box.width,height:box.height,cssWidth:getComputedStyle(node).width,cssHeight:getComputedStyle(node).height}; });
-        assert(icon.cssWidth === '24px' && icon.cssHeight === '24px' && icon.width >= 8 && icon.height >= 8, `Effect icon keeps its viewport and visible artwork: ${id} ${JSON.stringify(icon)}`);
+        const mark = await effect.locator('[data-map-effect-symbol]').evaluate(node => { const box = node.getBoundingClientRect(); const root = node.ownerSVGElement?.getBoundingClientRect(); const ctm = node.getScreenCTM(); return {width:box.width,height:box.height,r:node.getAttribute('r'),computedR:getComputedStyle(node).r,rootWidth:root?.width,rootHeight:root?.height,scale:ctm?.a,svgBox:node.getBBox().width}; });
+        assert(mark.width >= 12 && mark.height >= 12, `Earned effect remains a visible map mark: ${id} ${JSON.stringify(mark)}`);
         assert.equal(await map.getByLabel('Lasting site changes').filter({hasText:expected[2]}).count(), 0, 'Applied route effects are not repeated in the status footer');
         if (!observedEffects.has(id)) await map.screenshot({ path: `${output}/map-${id}.png` });
         observedEffects.add(id);
@@ -69,7 +72,13 @@ try {
       }
     }
     const click = async locator => { events.push({ type: 'choice', text: await locator.innerText() }); await locator.click(); };
-    if (await page.locator('.lr-end-card').count()) { events.push({ type: 'ending', text: await page.locator('.lr-end-card').innerText() }); break; }
+    if (await page.locator('.lr-end-card').count()) {
+      const trail = page.locator('[data-ending-trail]');
+      assert.equal(await trail.locator('[data-ending-sector]').count(), 7, 'The ending traces the whole site');
+      assert.equal(await trail.locator('[data-ending-sector][data-visited="true"]').count(), crossed, 'The ending marks only crossings the crew actually completed');
+      if (crossed) assert(await trail.locator('[data-ending-memory]').isVisible(), 'The ending remembers the last resolved crossing');
+      events.push({ type: 'ending', text: await page.locator('.lr-end-card').innerText() }); break;
+    }
     if (await page.locator('.lr-transition-beat').count()) { await click(page.locator('.lr-transition-beat > button')); continue; }
     if (await page.locator('[data-scout-options]').count()) {
       const energy = await map.locator('[data-reserve-creature]').evaluateAll(nodes => nodes.map(node => Number(node.querySelector('b').textContent)));

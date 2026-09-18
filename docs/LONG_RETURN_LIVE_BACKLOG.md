@@ -4,6 +4,13 @@ Owner: the agent maintaining the Long Return worktree. Update this file during i
 
 ## Active goal — full-mission UX (2026-09-11)
 
+### September 17: the field record remains a schematic, and the ending remembers the route
+
+- Removed interpolated crew-token travel in the field record. The dots now change between named stations as still frames while the cumulative account supplies the action; a report connection appears only when communication occurs. This keeps the presentation in the approved diagram-and-prose language, not an improvised creature performance.
+- Paint review at 390 by 667 exposed oversized route labels crowding the phone action schematic. Restored the intended small diagram type, kept route names in the phone decision comparison, and moved entry and destination names into a readable compact caption. A 320-pixel replay then exposed an inherited icon rule collapsing the actual room drawing to 16 pixels tall; the schematic now owns its height and the browser replay asserts the drawing's geometry. Earned path effects use a stationary code-art mark with a readable phone route caption instead of relying on tiny nested icons. Desktop maps keep the path labels; crew positions do not change.
+- The extraction report now shows the seven-sector route actually traveled and the resolved arrival from the last chosen lead and route. The full journal remains available. This addresses the previous gap where only generic totals were visible at the finish; human judgment of whether the ending feels earned remains open.
+- Verification: 320-pixel voluntary Index exit (5 of 7 crossings), desktop deeper forced exit (6 of 7), and normal-motion scout, crossing and encounter reading controls at 390, 768 and 1280 pixels passed. Actual phone/desktop map, record and ending PNGs reviewed. The final web suite passed 1,297 tests; typecheck, production build/bundle budgets, and diff check passed. The mission replay now checks map geometry, earned mark visibility, and the ending's visited-sector count. No gameplay math, hidden-information rule, or platform reward changed. Player comprehension remains unvalidated.
+
 ### September 17: the Index exit is a choice about the remaining journey
 
 - Rendered review found the optional-depth offer presented +19 salvage beside the next room's name without saying it covered both remaining crossings. It looked comparable to already-carried salvage, although one was guaranteed on departure and the other was a journey-wide ceiling. The offer now says Up to, names the remaining optional crossing count, and separates returning to the surface from continuing into the next room.
