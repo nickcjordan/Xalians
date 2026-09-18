@@ -4,6 +4,11 @@ Owner: the agent maintaining the Long Return worktree. Update this file during i
 
 ## Active goal — full-mission UX (2026-09-11)
 
+### September 18: opening schematic points to the first choice
+
+- The first room deliberately opens at the site and objective rather than auto-skipping that introduction, but at 320 by 568 the scout options begin below the first viewport. The map's existing caption now offers a compact, touch-sized Scout choices jump on phones. It moves only the viewport and keyboard focus; it does not select a creature, spend energy or add a confirmation gate. The seven-sector schematic remains in place, and desktop retains its plain Site schematic caption.
+- The first render wrapped the longer cue onto another line, pushing more of the map out of view. The shorter label fits beside Crew at Outer seal at 320 pixels and was paint-reviewed before and after the jump. The browser replay checks cue visibility, touch size, destination visibility and focus. A component test checks that jumping does not start scouting. All 1,308 web tests, typecheck, production build and bundle budgets passed. Player comfort with the opening rhythm remains unverified.
+
 ### September 18: route comparison is the next phone decision
 
 - A 320-by-568 replay measured the first route action 809–861 pixels below the viewport after the player chose to compare routes. The map and full orientation had been read already, but the transition repeated them before exposing the actual choices. Simple mode now scrolls and keyboard-focuses the comparison table when route selection begins or is reopened. It does not commit a route or move the crew.

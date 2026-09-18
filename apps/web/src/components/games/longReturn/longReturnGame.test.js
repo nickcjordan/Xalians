@@ -628,6 +628,18 @@ describe('Long Return Simple mode', () => {
     expect(container.querySelectorAll('.lr-board-head > th[role="columnheader"]:not(.lr-board-axis)')).toHaveLength(2);
   });
 
+  test('opening-room map cue moves to scout choices without sending a creature', () => {
+    renderGame();
+    click(container, /seal crew/i);
+    const jump = findButton(container, /scout choices/i);
+    expect(jump).toBeTruthy();
+    clickElement(jump);
+    expect(document.activeElement).toBe(container.querySelector('.lr-simple-decision'));
+    expect(container.querySelector('.lr-wizard-phase-scout')).toBeTruthy();
+    expect(container.querySelector('[data-scout-options]')).toBeTruthy();
+    expect(container.querySelector('[data-field-record]')).toBeNull();
+  });
+
   test('moves keyboard focus through each Simple wizard stage and enacted action', () => {
     renderGame();
     click(container, /seal crew/i);

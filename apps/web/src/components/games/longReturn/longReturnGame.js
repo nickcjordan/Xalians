@@ -858,6 +858,11 @@ function LongReturnGame() {
       }
     }
   }, [started, status, guidanceLevel, phase, sceneIndex, choosingLead, guidanceLevel === 'simple' ? null : routeId, simpleCustomizing, encounterState && encounterState.result, actionTransition]);
+  const focusScoutChoices = () => {
+    const target = sceneRef.current?.querySelector('.lr-simple-decision');
+    if (typeof target?.scrollIntoView === 'function') target.scrollIntoView({ behavior: 'auto', block: 'start' });
+    target?.focus({ preventScroll: true });
+  };
   const methodForecasts = useMemo(() => lead && route ? methods.map((entry) => ({
     method: entry,
     ...decisionForecast({ route, lead, support, method: entry, scan, leadLoad: strain[lead.id] || 0, supportLoad: support ? strain[support.id] || 0 : 0 })
@@ -1348,7 +1353,7 @@ function LongReturnGame() {
             {scene.objective && <span className="lr-objective-badge">PRIMARY OBJECTIVE</span>}
             {scene.optional && <span className="lr-optional-badge">OPTIONAL DEPTH</span>}
           </div>}
-          <ExpeditionSchematic scene={scene} crew={crew} scout={scanScout} helperId={encounterResolution?.helperId} companion={companion} allyWithScout={allyWithScout} position={expeditionPosition({ phase, scout: scanScout, scan, encounterMode, resolution: encounterResolution?.resolution })} routeId={mapRouteId} revealedIds={scan?.revealedIds} native={phase === 'encounter' && !encounterResolution || knownNativeState ? encounterCreature : null} nativeState={knownNativeState} preview={phase === 'assign' && !!mapRouteId} runFlags={runFlags} compact localOnly={guidanceLevel === 'simple' && phase === 'encounter'} reserves={guidanceLevel === 'simple' ? { strain, pressure } : undefined} />
+          <ExpeditionSchematic scene={scene} crew={crew} scout={scanScout} helperId={encounterResolution?.helperId} companion={companion} allyWithScout={allyWithScout} position={expeditionPosition({ phase, scout: scanScout, scan, encounterMode, resolution: encounterResolution?.resolution })} routeId={mapRouteId} revealedIds={scan?.revealedIds} native={phase === 'encounter' && !encounterResolution || knownNativeState ? encounterCreature : null} nativeState={knownNativeState} preview={phase === 'assign' && !!mapRouteId} runFlags={runFlags} compact localOnly={guidanceLevel === 'simple' && phase === 'encounter'} reserves={guidanceLevel === 'simple' ? { strain, pressure } : undefined} onNextDecision={guidanceLevel === 'simple' && phase === 'scout' && sceneIndex === 0 ? focusScoutChoices : undefined} />
           </div>
           {guidanceLevel === 'simple' && <CurrentAction key={`${phase}-${sceneIndex}-${encounterState && encounterState.result ? 'resolved' : 'active'}-${routeId || 'none'}`} {...currentAction} onHelp={openMechanics} />}
           <p className="lr-scene-copy">{scene.description}</p>
