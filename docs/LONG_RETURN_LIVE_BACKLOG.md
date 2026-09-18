@@ -4,6 +4,11 @@ Owner: the agent maintaining the Long Return worktree. Update this file during i
 
 ## Active goal — full-mission UX (2026-09-11)
 
+### September 18: improvised leads still act in the room we chose
+
+- An alternate three-room phone replay reached the archive lock with Hippochamp leading via “Careful advance.” The account merely said it “takes the lead through the passage,” even though the crew was trying to open a locked iris. Every route's fallback now names a conservative action grounded in its actual obstacle; it does not grant an unlisted swim, flight, or special tool. Cost-free late recoveries likewise finish the work rather than “carry movement through” a stationary machine. Rules, resource costs, map positions, and detailed analysis are unchanged.
+- A route-wide fallback regression covers all fourteen passages and targeted checks cover the lock, charged retrieval, and stationary late work. The rebuilt 390-pixel alternate replay confirmed the fracture action and its resolved support/stability effects; a separate seven-scene 390-pixel replay still completed deep retrieval with 17 salvage and 2 stability. All 1,341 web tests, typecheck, build, and bundle gates passed. The lazy Long Return raw bundle allowance rose only 1 kB (338→339 kB) for fourteen authored fallback actions; gzip and initial-route limits are unchanged. Human assessment of whether every improvised action is vivid enough remains open.
+
 ### September 18: late-room account follows the actual work and its cost
 
 - A scene-by-scene read of the naturally won published mission caught three physical-story mismatches that the route and receipt tests did not: the reservoir's charged collector rim was called “contaminated”; its routine valve strain and unexpected discharge used nearly the same shudder image; and a stationary effort to align the final rings said the lead wore down “bringing the others across.” Support prose also spoke of “keeping the passage moving” in these stationary recoveries. The authored reservoir method and action now name the charged rim and collector valves. Ordinary draining pulls on the counterweights; a hidden discharge rattles the mountings. Vacuum effort and support no longer invent a moving corridor where the crew is working at machinery.

@@ -56,6 +56,25 @@ const MOTIONS = {
   manipulation: 'works the old controls into position'
 };
 
+// A lead without a listed specialty still attempts the selected task. Describe
+// careful, observable work here; never grant an absent movement capability.
+const CAREFUL_MOTIONS = {
+  gantry: 'tests the surviving beams and guides the crew along the frame',
+  intake: 'uses the hanging wreckage for handholds as the current carries the crew beneath it',
+  catwalk: 'watches the turbine turn and moves the crew across in short stages',
+  underdeck: 'follows the faded service arrows through the cramped passage',
+  decode: 'tries the surviving door controls one sequence at a time',
+  breach: 'works at the old fracture until the iris begins to give',
+  'outer-hull': 'searches for each next hold along the exposed span',
+  conduit: 'eases the crew past one tight brace at a time',
+  stabilize: 'steadies the nearest plates while the crew gathers the record',
+  blackbox: 'works each catch in turn until the backup begins to loosen',
+  harvest: 'watches the collector valves and works between releases',
+  dive: 'judges the cell from the rim and guides a careful retrieval beneath the charged surface',
+  align: 'watches the turning gaps and adjusts the accessible controls a little at a time',
+  closure: 'waits for the widest opening and reaches for the exposed spindle'
+};
+
 const SPECIFIC_MOTIONS = {
   'intake:snare': 'takes hold of the crew and tows them beneath the wreckage',
   'decode:snare': 'moves the door’s control arms from a distance, putting them through the opening sequence',
@@ -144,10 +163,13 @@ export function crossingScene({ scene, route, lead, support, method, result, com
   const name = lead.species;
   const unseen = new Set(result.unseenHazards.map(hazard => hazard.id));
   const danger = (route.hazardIds || []).map(id => HAZARDS[id]?.[unseen.has(id) ? 0 : 1]).filter(Boolean).join(' ');
-  const action = `${name} ${SPECIFIC_MOTIONS[`${route.id}:${method.key}`] || MOTIONS[method.key] || 'takes the lead through the passage'}, with ${support.species} backing the effort.`;
+  const motion = method.kind === 'fallback' ? CAREFUL_MOTIONS[route.id] : SPECIFIC_MOTIONS[`${route.id}:${method.key}`] || MOTIONS[method.key];
+  const action = `${name} ${motion || 'works through the obstacle carefully'}, with ${support.species} backing the effort.`;
   const effort = result.leadStrain > 0
     ? `${name} ${EFFORTS[route.id]}.`
-    : `${name} carries the movement through steadily, emerging with strength still in reserve.`;
+    : ['stabilize', 'blackbox', 'harvest', 'dive', 'align', 'closure'].includes(route.id)
+      ? `${name} finishes the work steadily, with strength still in reserve.`
+      : `${name} carries the movement through steadily, emerging with strength still in reserve.`;
   const alone = result.rawMethodScore - route.difficulty;
   const supportDifference = alone < 0 && result.margin >= 0
     ? ` With ${support.species} coordinating the others, ${name} can finish without forcing the work alone.`

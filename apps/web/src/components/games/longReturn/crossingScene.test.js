@@ -65,6 +65,28 @@ test('both Index recoveries identify the record without confusing it with loose 
   expect(resolve(backup)[3]).toContain('Nemesis Index');
 });
 
+test('careful advance describes the selected physical obstacle without inventing a specialty', () => {
+  const fallback = { kind: 'fallback', key: 'instinct', label: 'Careful advance' };
+  for (const scene of MISSION.scenes) for (const route of scene.routes) {
+    const action = resolve(route, {}, fallback)[1];
+    expect(action, `${scene.id}/${route.id}`).toContain('Hippochamp');
+    expect(action).toContain('Graviclaw');
+    expect(action).not.toContain('takes the lead through the passage');
+    expect(action).not.toContain('works through the obstacle carefully');
+  }
+  expect(resolve(MISSION.scenes[2].routes[1], {}, fallback)[1]).toContain('works at the old fracture');
+  expect(resolve(MISSION.scenes[5].routes[1], {}, fallback)[1]).toContain('from the rim');
+  expect(resolve(MISSION.scenes[5].routes[1], {}, fallback)[1]).not.toMatch(/Hippochamp (?:swims|dives)/);
+});
+
+test('a cost-free stationary recovery is not narrated as movement through a passage', () => {
+  for (const scene of MISSION.scenes.slice(4)) for (const route of scene.routes) {
+    const effort = resolve(route)[2];
+    expect(effort, `${scene.id}/${route.id}`).toContain('finishes the work steadily');
+    expect(effort).not.toContain('carries the movement through');
+  }
+});
+
 test('costly crossings use the chosen passage for their effort instead of repeating a generic cost announcement', () => {
   for (const scene of MISSION.scenes) for (const route of scene.routes) {
     const effort = resolve(route, { leadStrain: 1 })[2];
