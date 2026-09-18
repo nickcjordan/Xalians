@@ -88,7 +88,7 @@ function playRecommendedScene(container) {
   click(container, /cross now/i);
   if (findButton(container, /skip to outcome/i)) click(container, /skip to outcome/i);
   if (findButton(container, /continue to result/i)) click(container, /continue to result/i);
-  expect(container.textContent).toContain('Crossing complete');
+  expect(container.querySelector('.lr-simple-result-head').textContent).toMatch(/Crossing complete|evacuate now/i);
 }
 
 describe('Long Return Simple mode', () => {
@@ -452,6 +452,7 @@ describe('Long Return Simple mode', () => {
     }
 
     expect(findButton(container, /view mission report/i)).toBeTruthy();
+    expect(container.querySelector('.lr-simple-result-head').textContent).toMatch(/evacuate now/i);
     click(container, /view mission report/i);
     expect(container.textContent).toContain('Forced Extraction');
     expect(container.textContent).toContain('ObjectiveSECURED');

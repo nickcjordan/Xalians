@@ -4,6 +4,11 @@ Owner: the agent maintaining the Long Return worktree. Update this file during i
 
 ## Active goal — full-mission UX (2026-09-11)
 
+### September 18: the arrival shows when the annex can no longer hold
+
+- A seven-room phone render reached one stability after the reservoir, then zero at the extraction lift. Both arrival receipts originally used the same calm cyan loss numbers, and the forced-evacuation explanation sat below the receipt. The existing result composition now carries the urgency: at one or two stability, the stability row is amber and says near collapse; at zero it turns red and names forced extraction. The result's existing status line changes to “Annex failing · evacuate now” or “Crew spent · evacuate now” when the mission cannot continue. No extra banner, rule change or delayed confirmation was added.
+- The first paint review caught that the legacy hazard token resolves to green, so the low-stability cue now uses the actual amber lamp token; the second 390-pixel render shows amber at one stability and red at zero. A seven-room phone replay reaches forced extraction and checks the terminal headline and receipt, while the existing early-extraction path remains available. CI then caught an older test helper assuming every result says “Crossing complete”; it now accepts the evacuation status and explicitly checks it at the terminal result. The targeted file and all 1,316 web tests, typecheck, production build and bundle budgets passed after that correction. Player judgment of whether the warning feels timely remains open.
+
 ### September 18: a native encounter begins as a situation, not an attack
 
 - The seven-room scout record repeated “intercepts the scout” for Xylum, Hypnopet and Ectoghoul, despite their different situations. The field record now gives each a short first-contact scene: Xylum is hurt beside the cracked bearing, Hypnopet is caught in the lock, and Ectoghoul holds its shelter. These beats establish why the scout must respond without claiming any creature attacked or predetermining the response. The fuller encounter description remains at the actual choice.

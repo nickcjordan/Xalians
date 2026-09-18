@@ -15,6 +15,8 @@
 .lr-mode-simple .lr-arrival-story .lr-simple-result-head { gap: 12px; }
 .lr-mode-simple .lr-arrival-story .lr-simple-result-head > svg { width: 26px; height: 26px; padding: 0; border: 0; background: none; }
 .lr-mode-simple .lr-arrival-story .lr-simple-result-head h3 { font-size: 25px; text-transform: none; letter-spacing: 0; margin: 6px 0; }
+.lr-mode-simple .lr-arrival-story .lr-simple-result-head.is-critical > svg,
+.lr-mode-simple .lr-arrival-story .lr-simple-result-head.is-critical span { color: var(--g-lamp-red); }
 .lr-mode-simple .lr-arrival-story .lr-simple-story { font-size: 16px; line-height: 1.6; margin: 14px 0 8px; }
 .lr-mode-simple .lr-crossing-prose .lr-simple-story { font-size: 17px; line-height: 1.75; margin: 0 0 16px; max-width: 65ch; color: var(--g-ink); }
 .lr-crossing-prose { margin-top: 18px; }
@@ -32,6 +34,12 @@
 .lr-mode-simple .lr-arrival-grid .lr-result-changes article strong { text-transform: none; font-size: 15px; }
 .lr-mode-simple .lr-arrival-grid .lr-result-changes article b { font-size: 24px; }
 .lr-mode-simple .lr-arrival-grid .lr-result-changes article:not(.lr-result-salvage) b { color: #9dd5e5; }
+.lr-mode-simple .lr-arrival-grid .lr-result-changes article.is-low { border-left: 2px solid var(--g-lamp-amber); padding-left: 10px; }
+.lr-mode-simple .lr-arrival-grid .lr-result-changes article.is-low b,
+.lr-mode-simple .lr-arrival-grid .lr-result-changes article.is-low > small { color: var(--g-lamp-amber); }
+.lr-mode-simple .lr-arrival-grid .lr-result-changes article.is-critical { border-left-color: var(--g-lamp-red); background: rgba(228, 72, 60, .07); }
+.lr-mode-simple .lr-arrival-grid .lr-result-changes article.is-critical b,
+.lr-mode-simple .lr-arrival-grid .lr-result-changes article.is-critical > small { color: var(--g-lamp-red); }
 .lr-mode-simple .lr-arrival-grid .lr-result-changes article.lr-result-salvage b { color: #f2cf73; }
 .lr-mode-simple .lr-arrival-grid .lr-result-changes article small { font-size: 13px; }
 .lr-mode-simple .lr-arrival-grid .lr-result-changes article > small { margin: 0; letter-spacing: 0; font-family: var(--g-font-body); }
