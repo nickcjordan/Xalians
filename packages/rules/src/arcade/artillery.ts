@@ -503,6 +503,9 @@ function reshapeTerrain(terrain: readonly number[], impact: ArtilleryPoint | nul
   if (!impact) return [...terrain];
   const rules = ARTILLERY_PAYLOAD_RULES[payload];
   const surface = Math.min(impact.y + rules.penetration, terrainHeight(terrain, impact.x));
+  const localGrade = Math.max(-0.9, Math.min(0.9,
+    (terrainHeight(terrain, impact.x + 3) - terrainHeight(terrain, impact.x - 3)) / 6,
+  ));
   return terrain.map((height, x) => {
     const distance = Math.abs(x - impact.x);
     if (distance >= rules.craterRadius) return height;
@@ -516,13 +519,17 @@ function reshapeTerrain(terrain: readonly number[], impact: ArtilleryPoint | nul
     }
     // Excavate toward one blast-centered cavity. Subtracting a bowl from each
     // existing height merely lowers the old ridge silhouette like loose snow.
-    // A shared floor removes the material inside the blast, including the
-    // uphill face, while leaving ground outside the radius untouched.
+    // A common tangent plane cuts away the material inside the blast while
+    // following the slope, instead of carving a flat-bottomed mine shaft.
     const cavity = Math.sqrt(1 - normalized * normalized) * rules.craterRadius * rules.craterDepth;
     const fracture = (Math.sin((x - impact.x) * 1.83) * 0.58 + Math.sin((x - impact.x) * 0.71) * 0.42)
       * (1 - normalized) * Math.min(1.25, rules.craterRadius * 0.08);
-    const floor = surface - rules.penetration - cavity + fracture;
-    return Math.max(2, Math.min(height, floor));
+    const floor = surface + localGrade * (x - impact.x) - rules.penetration - cavity + fracture;
+    // The cavity cuts through the old ridge, but its outer rim must meet the
+    // untouched slope continuously instead of ending in a vertical wall.
+    const rim = Math.max(0, Math.min(1, (1 - normalized) / 0.42));
+    const rimBlend = rim * rim * (3 - 2 * rim);
+    return Math.max(2, height - Math.max(0, height - floor) * rimBlend);
   });
 }
 

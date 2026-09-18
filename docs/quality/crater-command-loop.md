@@ -488,5 +488,9 @@ so plainly. A run should not claim completion just because tests pass.
   One unrelated authored-portrait lazy-load test timed out on the first full
   web run, then passed alone and in the complete rerun. Rules and web
   typechecks passed. The production build and bundle budgets passed; the
-  artillery route measured 104.5 KB raw and 35.1 KB gzip. Live release
-  verification follows deployment.
+  artillery route measured 104.5 KB raw and 35.1 KB gzip. The first release
+  deployed successfully, but live play exposed a steep, nearly vertical
+  crater wall on a sloped Stonera ridge. A follow-up shapes the cavity along
+  the local ground grade and blends its outer rim into the untouched slope.
+  A second local play check showed the crater following the hillside without
+  reverting to the old sliding-terrain effect.
