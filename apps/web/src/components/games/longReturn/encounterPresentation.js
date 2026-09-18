@@ -16,7 +16,7 @@ export const encounterChoicePresentation = (option) => {
   const outcome = option.companion
     ? { label: 'Possible ally', icon: 'bi-person-plus-fill', tone: 'reward' }
     : option.resolution === 'unresolved'
-      ? { label: 'Danger remains', icon: 'bi-exclamation-diamond-fill', tone: 'warning' }
+      ? { label: 'Route still occupied', icon: 'bi-exclamation-diamond-fill', tone: 'warning' }
       : option.resolution === 'detour'
         ? { label: 'Choose another route', icon: 'bi-signpost-split-fill', tone: 'warning' }
         : { label: 'Passage opens', icon: 'bi-unlock-fill', tone: 'clear' };

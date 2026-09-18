@@ -21,7 +21,7 @@
 .lr-mode-simple .lr-report-content .lr-simple-finding strong { font-size: 17px; }
 .lr-mode-simple .lr-report-content > .g-btn { position: static; transform: none; width: auto; margin-top: 12px; }
 .lr-mode-simple .lr-route-board { margin-top: 0; }
-.lr-mode-simple .lr-field-encounter { border: 0; background: none; padding: 0; }
+.lr-mode-simple .lr-field-encounter { border: 0; background: none; box-shadow: none; padding: 0; }
 .lr-mode-simple .lr-field-encounter.is-resolved { box-shadow: none; }
 .lr-mode-simple .lr-encounter-resolution-grid { display: grid; grid-template-columns: 180px minmax(0,1fr); gap: 28px; }
 .lr-mode-simple .lr-encounter-result-head > svg { display: none; }
@@ -31,10 +31,9 @@
 @media(max-width:650px) { .lr-mode-simple .lr-encounter-resolution-grid { grid-template-columns: 1fr; } }
 .lr-mode-simple .lr-encounter-heading { border: 0; background: none; padding: 0; margin-bottom: 12px; }
 .lr-mode-simple .lr-encounter-heading h3 { font-size: 27px; text-transform: none; letter-spacing: 0; }
-.lr-mode-simple .lr-encounter-posture { background: none; border: 0; padding: 0 0 18px; margin: 0; display: flex; gap: 8px; flex-wrap: wrap; }
-.lr-mode-simple .lr-encounter-posture strong { font-size: 15px; }
-.lr-mode-simple .lr-encounter-posture { box-shadow: none; }
-.lr-mode-simple .lr-encounter-posture span, .lr-mode-simple .lr-encounter-posture small { font-size: 14px; }
+.lr-encounter-situation { display: flex; flex-wrap: wrap; gap: 8px 18px; margin: 4px 0 16px; padding: 0 0 14px; border-bottom: 1px solid var(--color-edge-strong); color: var(--color-ink-2); font: 500 14px/1.35 var(--g-font-body); }
+.lr-encounter-situation span { display: inline-flex; align-items: baseline; gap: 7px; }
+.lr-encounter-situation .bi { color: var(--color-viable); flex: none; }
 .lr-mode-simple .lr-encounter-options { gap: 0; border-top: 1px solid #485040; }
 .lr-mode-simple .lr-encounter-options > button { box-shadow: none; border: 0; border-bottom: 1px solid #485040; border-right: 1px solid #485040; background: transparent; }
 .lr-mode-simple .lr-encounter-options > button.is-selected { box-shadow: inset 0 3px #8ad5a8; background: #273329; }

@@ -4,6 +4,12 @@ Owner: the agent maintaining the Long Return worktree. Update this file during i
 
 ## Active goal — full-mission UX (2026-09-11)
 
+### September 18: encounter choices inherit the scout's point of view
+
+- A phone replay reached the Xylum response with a detached posture block. It used a registry word ("display") and asked the player to relate "likely to notice it first" to separate cost/outcome rows. Simple mode now places two short situation facts directly before the response choices: who spotted whom, and whether the crew can receive a signal. Surprise explicitly names its extra energy cost. The fuller original posture account remains in Guided, Standard and Expert modes.
+- An unresolved response now says the route is still occupied, rather than the vague "danger remains." At 320 pixels, a known-hazard exclamation appended to a route caption wrapped onto a line by itself; the physical marker and map legend already carry that information, so the duplicate caption symbol was removed. The simple encounter's inherited vertical alert border was also removed after rendered review.
+- Verification: 1,306 web tests, typecheck, production build and bundle budgets passed. Reviewed 390- and 320-pixel scout encounter captures and a 390-pixel unscouted whole-crew encounter. Both three-scene replay paths reached the next room. The replay now asserts a player-language encounter situation; its ally-position check was corrected to distinguish scout and whole-crew encounters. Whether a new player finds the trade-off immediate remains open.
+
 ### September 18: reported danger belongs in the field account and on the route
 
 - A scout's field record still called a sensed hazard only "a hidden danger," forcing the player to wait for a later report to learn what the scout actually discovered. The account now identifies the physical clue and affected approach when communication reaches the crew. A scout without a relay does not reveal that information until returning in person. This preserves the information rule while keeping discovery in the causal story rather than adding a separate notification.
