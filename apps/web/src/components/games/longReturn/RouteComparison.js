@@ -6,6 +6,22 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '.
 import './routeComparison.css';
 import { routeSetting } from './sceneOrientation';
 import { consequencePreview } from './routeVisuals';
+import { SHARED_PASSAGES } from './mapPlaces';
+
+// The room map is above the phone comparison. Keep its two physical paths
+// recognizable in the headings without pinning a second full map over costs.
+function RoutePathCue({ scene, routeId, index }) {
+  if (!scene || SHARED_PASSAGES[scene.id]) return null;
+  const upper = 'M5 10 H20 V3 H75 V10 H95';
+  const lower = 'M5 10 H20 V17 H75 V10 H95';
+  return <svg data-route-path-cue={routeId} aria-hidden="true" viewBox="0 0 100 20" className="lr-board-path-cue block size-auto h-5 w-full max-w-28" fill="none">
+    <path d={upper} stroke="var(--color-edge-strong)" strokeWidth="2" />
+    <path d={lower} stroke="var(--color-edge-strong)" strokeWidth="2" />
+    <path d={index === 0 ? upper : lower} stroke="var(--color-viable)" strokeWidth="2.5" />
+    <circle cx="5" cy="10" r="3" fill="var(--color-ink)" />
+    <circle cx="95" cy="10" r="3" fill="var(--color-ink)" />
+  </svg>;
+}
 
 export function comparisonCosts(plan, companion) {
   const uncertain = !!(plan.unresolvedHazards.length || plan.nativeRisk);
@@ -24,7 +40,7 @@ export function comparisonCosts(plan, companion) {
 const cellClass = 'border-l border-edge-strong p-2 md:p-3 whitespace-normal align-top [&.is-selected]:bg-caution-tint';
 const axisClass = 'lr-board-axis p-2 md:p-3 text-left text-small font-normal text-ink-2 whitespace-normal';
 const rowClass = 'lr-board-row border-edge-strong hover:bg-transparent';
-export default function RouteComparison({ plans, selectedId, onSelect, onPreview, companion, recommendation }) {
+export default function RouteComparison({ scene, plans, selectedId, onSelect, onPreview, companion, recommendation }) {
   const [analysisId, setAnalysisId] = useState(null);
   const focusedRoute = board => board.querySelector(':focus')?.closest('[data-route-preview]')?.dataset.routePreview;
   const previewColumn = event => onPreview?.(event.target.closest('[data-route-preview]')?.dataset.routePreview || focusedRoute(event.currentTarget) || selectedId || null);
@@ -39,8 +55,9 @@ export default function RouteComparison({ plans, selectedId, onSelect, onPreview
     <TableHeader className="top-14 z-20 bg-s0 [@media(min-height:40rem)]:sticky lg:static"><TableRow className={`${rowClass} lr-board-head`}>
       <TableHead className={axisClass} scope="col">Choose your crossing</TableHead>
       {plans.map((plan, index) => <TableHead key={plan.route.id} role="columnheader" scope="col" data-route-preview={plan.route.id} data-lowest-risk={plan.risk === lowestRisk ? 'true' : undefined} className={`${cellClass} ${selectedId === plan.route.id ? 'is-selected' : ''}${recommendation?.plan.route.id === plan.route.id ? ' is-recommended' : ''}`}>
-        <Button variant="ghost" type="button" className="lr-board-pick h-auto min-h-11 w-full flex-col items-start justify-start gap-2 p-0 text-left font-body text-body normal-case tracking-normal whitespace-normal text-ink" aria-pressed={selectedId === plan.route.id} onClick={() => onSelect(plan.route.id)}>
+        <Button variant="ghost" type="button" className="lr-board-pick h-auto min-h-11 w-full flex-col items-start justify-start gap-2 p-0 has-[>svg]:px-0 text-left font-body text-body normal-case tracking-normal whitespace-normal text-ink" aria-pressed={selectedId === plan.route.id} onClick={() => onSelect(plan.route.id)}>
           <strong className="text-body md:text-subhead">{plan.route.title}</strong>
+          <RoutePathCue scene={scene} routeId={plan.route.id} index={index} />
           <span className={`flex items-center gap-1 text-small ${values[index].uncertain ? 'text-caution' : 'text-ink-2'}`}>{values[index].uncertain ? <HelpCircle /> : <ShieldCheck />}{values[index].uncertain ? 'Extra costs unknown' : 'Costs confirmed'}</span>
           {recommendation?.plan.route.id === plan.route.id && <em className="text-small text-ink-2" title={recommendation.reason}>Recommended</em>}
         </Button>
