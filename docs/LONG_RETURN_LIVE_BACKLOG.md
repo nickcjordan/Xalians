@@ -4,6 +4,12 @@ Owner: the agent maintaining the Long Return worktree. Update this file during i
 
 ## Active goal — full-mission UX (2026-09-11)
 
+### September 17: the later rooms have physical handoffs
+
+- The scene-four arrival now brings the crew through the archive-side airlock, so the following scene's lit Index chamber does not appear abruptly after the exposed hull. The sheltered route also ends at that visible threshold.
+- Both Index recoveries now end at the extraction fork after the optional salvage is secured. The marked route climbs home; the service stair leads into the optional depth. Choosing depth opens with the crew taking that stair, and both reservoir recoveries lead back to a dry junction before the Generator Spine. The final room begins with the crew following that passage. This changes narration and map description, not route costs or player decisions.
+- Full seven-crossing phone replay and alternate Index-route replay passed; 1,299 web tests, typecheck, production build and diff checks passed. The blackbox result render was inspected. The schematic remains an instrument diagram, with stationary crew markers and no performed swimming or fighting. Whether a player can now picture every handoff is still a human-validation question.
+
 ### September 17: the field record remains a schematic, and the ending remembers the route
 
 - Removed interpolated crew-token travel in the field record. The dots now change between named stations as still frames while the cumulative account supplies the action; a report connection appears only when communication occurs. This keeps the presentation in the approved diagram-and-prose language, not an improvised creature performance.
