@@ -503,6 +503,50 @@ describe('Crater Command aim feedback', () => {
     }
   });
 
+  it('shows Foam Tide reshaping the ground and leaving foam, not a generic smoke mark', () => {
+    vi.useFakeTimers();
+    try {
+      render(createElement(ArtilleryBoard, {
+        seed: 'component-foam', mode: 'range', difficulty: 'standard', mapSize: 'standard', world: 'stonera',
+        onStatus: vi.fn(), onComplete: vi.fn(), onRematch: vi.fn(),
+      }));
+      const ground = screen.getByRole('img', { name: /Two mobile range rigs/i }).querySelector('path.fill-s2');
+      const before = ground?.getAttribute('d');
+      fireEvent.click(screen.getByRole('button', { name: /^Foam 2/i }));
+      fireEvent.click(screen.getByRole('button', { name: /Fire Foam/i }));
+      act(() => vi.advanceTimersByTime(11_000));
+      expect(ground?.getAttribute('d')).not.toBe(before);
+      expect(screen.getByRole('button', { name: /^Foam 1/i })).toBeEnabled();
+      const mark = document.querySelector('.artillery-aftermath.el-water');
+      expect(mark).toBeInTheDocument();
+      expect(mark?.querySelector('path.stroke-el')).toBeInTheDocument();
+      expect(mark?.querySelector('[filter="url(#artillery-smoke-soft)"]')).toBeNull();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it.each([
+    ['Mole', 'el-sand'],
+    ['Tractor', 'el-chemical'],
+  ])('keeps the %s aftermath artwork visible after the shot', (weapon, elementClass) => {
+    vi.useFakeTimers();
+    try {
+      render(createElement(ArtilleryBoard, {
+        seed: `component-${weapon.toLowerCase()}-aftermath`, mode: 'range', difficulty: 'standard', mapSize: 'standard', world: 'stonera',
+        onStatus: vi.fn(), onComplete: vi.fn(), onRematch: vi.fn(),
+      }));
+      fireEvent.click(screen.getByRole('button', { name: new RegExp(`^${weapon} [12]`, 'i') }));
+      fireEvent.click(screen.getByRole('button', { name: new RegExp(`Fire ${weapon}`, 'i') }));
+      act(() => vi.advanceTimersByTime(11_000));
+      const mark = document.querySelector(`.artillery-aftermath.${elementClass}`);
+      expect(mark).toBeInTheDocument();
+      expect(mark?.querySelector('[filter="url(#artillery-smoke-soft)"]')).toBeNull();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
   it('detonates and reshapes terrain for an early Starfall round while later rounds still fly', () => {
     vi.useFakeTimers();
     try {

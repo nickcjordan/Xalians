@@ -170,7 +170,7 @@ const PAYLOAD_META: Record<ArtilleryPayload, {
   skip: { label: 'Skipjack', shortLabel: 'Skipjack', detail: 'Ricochets once off the ground before bursting · 2 charges', purpose: 'Hops over the first ridge and strikes beyond it', rackHint: 'Ground bounce', elementClass: 'el-electric' },
   mole: { label: 'Mole mine', shortLabel: 'Mole', detail: 'Tunnels 27 units after landing, then erupts · 2 charges', purpose: 'Sneaks under a defensive lip to hit behind cover', rackHint: 'Tunnel + erupt', elementClass: 'el-sand' },
   tractor: { label: 'Tractor knot', shortLabel: 'Tractor', detail: 'Pulls a nearby rig up to 15 units toward impact · 1 charge', purpose: 'Drags a rival off its perch or into a crater', rackHint: 'Rig pull', elementClass: 'el-chemical' },
-  foam: { label: 'Foam tide', shortLabel: 'Foam', detail: 'Flows into low ground and hardens · 2 charges', purpose: 'Fills a crater so a trapped rig can drive out', rackHint: 'Ground repair', elementClass: 'el-water' },
+  foam: { label: 'Foam tide', shortLabel: 'Foam', detail: 'Spreads 48 units, fills low ground, then hardens · 2 charges', purpose: 'Fills craters and lays a traversable pad', rackHint: 'Ground repair', elementClass: 'el-water' },
 };
 
 export function artilleryShotVerdict(outcome: ArtilleryOutcome, shooterX: number, targetX: number, targetIntegrity = ARTILLERY_MAX_INTEGRITY, shelfBlocked = false): ShotVerdict {
@@ -184,8 +184,8 @@ export function artilleryShotVerdict(outcome: ArtilleryOutcome, shooterX: number
   };
   if (outcome.payload === 'foam' && outcome.impact) return {
     title: 'Foam set', detail: outcome.damage > 0
-      ? `${Math.min(outcome.damage, targetIntegrity)} hull damage · low ground filled`
-      : 'Low ground filled and hardened for the next move',
+      ? `${Math.min(outcome.damage, targetIntegrity)} hull damage · ground coated`
+      : 'Ground coated and low spots filled for the next move',
   };
   if (outcome.damage > 0) return {
     title: `${Math.min(outcome.damage, targetIntegrity)} hull damage`,
@@ -465,7 +465,7 @@ function ProjectileArt({ payload, x, y, rotation }: { payload: ArtilleryPayload;
   );
 }
 
-function PersistentPayloadAftermath({ mark, y, slope, age, visibility = 1 }: { mark: AftermathMark; y: number; slope: number; age: number; visibility?: number }) {
+function PersistentPayloadAftermath({ mark, y, slope, terrain, age, visibility = 1 }: { mark: AftermathMark; y: number; slope: number; terrain: readonly number[]; age: number; visibility?: number }) {
   const fade = Math.max(0.2, 0.78 - age * 0.14);
   const common = `${PAYLOAD_META[mark.payload].elementClass} artillery-aftermath`;
   const opacity = fade * Math.max(0, Math.min(1, visibility));
@@ -497,6 +497,29 @@ function PersistentPayloadAftermath({ mark, y, slope, age, visibility = 1 }: { m
       <circle cx={mark.x - 0.5} cy={y - 11} r="3.3" className="fill-ink-3 opacity-20" />
     </g>
   </g>;
+  if (mark.payload === 'foam') {
+    const surfaceY = (x: number) => ARTILLERY_HEIGHT - terrainHeight(terrain, x);
+    const line = Array.from({ length: 21 }, (_, index) => {
+      const x = mark.x - 20 + index * 2;
+      return `${index === 0 ? 'M' : 'L'} ${x} ${surfaceY(x) - 0.65}`;
+    }).join(' ');
+    return <g className={common} opacity={opacity} aria-hidden>
+      <path d={line} className="fill-none stroke-el" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" opacity="0.22" />
+      <path d={line} className="fill-none stroke-el" strokeWidth="0.75" strokeLinecap="round" strokeLinejoin="round" opacity="0.9" />
+      {[-13, -7, 1, 8, 15].map((offset, index) => {
+        const x = mark.x + offset;
+        return <circle key={offset} cx={x} cy={surfaceY(x) - 1.1 - (index % 2) * 0.55} r={index % 2 ? 0.75 : 0.5} className="fill-el" />;
+      })}
+    </g>;
+  }
+  if (mark.payload === 'tractor') return <g className={common} opacity={opacity} aria-hidden>
+    <circle cx={mark.x} cy={y - 0.6} r="2.5" className="fill-none stroke-el" strokeWidth="0.45" />
+    <circle cx={mark.x} cy={y - 0.6} r="0.55" className="fill-el" />
+  </g>;
+  if (mark.payload === 'mole') return <g className={common} opacity={opacity} aria-hidden>
+    <path d={`M ${mark.x - 6} ${y + 0.2} q 3 -2 6 -0.7 q 3 -1.3 6 0.7`} className="fill-none stroke-el" strokeWidth="0.5" />
+    <path d={`M ${mark.x - 1} ${y - 1} l -0.8 -3 M ${mark.x + 1.5} ${y - 0.5} l 1 -3`} className="stroke-el" strokeWidth="0.4" />
+  </g>;
   return <g className={common} opacity={opacity} aria-hidden>
     <g transform={surfaceTransform}>
       <path d={`M ${mark.x - 6.2} ${y + 0.3} l 2.3 -1 2.2 0.6 1.6 -1.1 1.8 0.9 2.1 -0.5 2.2 1 -2.4 1 -2.3 -0.1 -2.1 0.8 -2.4 -0.6 -2 0.6 Z`} className="fill-black opacity-55" />
@@ -507,18 +530,6 @@ function PersistentPayloadAftermath({ mark, y, slope, age, visibility = 1 }: { m
       <circle cx={mark.x - 0.4} cy={y - 10.6} r={mark.payload === 'cluster' ? 3.8 : 3.4} className="fill-ink-3 opacity-22" />
       <circle cx={mark.x + 1.8} cy={y - 13.2} r="2.5" className="fill-el opacity-15" />
     </g>
-  </g>;
-  if (mark.payload === 'foam') return <g className={common} opacity={opacity} aria-hidden>
-    <path d={`M ${mark.x - 9} ${y} Q ${mark.x - 5} ${y - 2} ${mark.x} ${y - 1.4} Q ${mark.x + 5} ${y - 2} ${mark.x + 9} ${y}`} className="fill-none stroke-el" strokeWidth="1.1" />
-    <circle cx={mark.x - 3} cy={y - 2.1} r="0.75" className="fill-el" /><circle cx={mark.x + 4} cy={y - 1.8} r="0.65" className="fill-el" />
-  </g>;
-  if (mark.payload === 'tractor') return <g className={common} opacity={opacity} aria-hidden>
-    <circle cx={mark.x} cy={y - 0.6} r="2.5" className="fill-none stroke-el" strokeWidth="0.45" />
-    <circle cx={mark.x} cy={y - 0.6} r="0.55" className="fill-el" />
-  </g>;
-  if (mark.payload === 'mole') return <g className={common} opacity={opacity} aria-hidden>
-    <path d={`M ${mark.x - 6} ${y + 0.2} q 3 -2 6 -0.7 q 3 -1.3 6 0.7`} className="fill-none stroke-el" strokeWidth="0.5" />
-    <path d={`M ${mark.x - 1} ${y - 1} l -0.8 -3 M ${mark.x + 1.5} ${y - 0.5} l 1 -3`} className="stroke-el" strokeWidth="0.4" />
   </g>;
 }
 
@@ -1733,7 +1744,7 @@ export function ArtilleryBoard({ seed, mode, difficulty, mapSize, world, onStatu
             const age = Math.max(0, state.turn - mark.createdTurn);
             const y = ARTILLERY_HEIGHT - terrainHeight(displayTerrain, mark.x);
             const slope = artilleryTerrainSlopeDegrees(displayTerrain, mark.x);
-            return <PersistentPayloadAftermath key={mark.id} mark={mark} y={y} slope={slope} age={age} />;
+            return <PersistentPayloadAftermath key={mark.id} mark={mark} y={y} slope={slope} terrain={displayTerrain} age={age} />;
           })}
           {aimPreviews.some((preview) => preview.length > 1) && (
             <g className={activePayloadMeta.elementClass} data-testid="artillery-aim-preview">
@@ -1824,7 +1835,7 @@ export function ArtilleryBoard({ seed, mode, difficulty, mapSize, world, onStatu
             return <React.Fragment key={frame.index}>
               {frame.phase === 'impact' && <ExcavationBurst payload={activePayload} x={frame.impact.x} y={detonationY} progress={frame.progress} visual={frame.visual} />}
               <PayloadImpactArt payload={activePayload} x={frame.impact.x} y={detonationY} groundY={groundY} slope={slope} progress={frame.progress} reveal={frame.reveal} visual={frame.visual} index={frame.index} />
-              <PersistentPayloadAftermath mark={liveMark} y={groundY} slope={groundSlope} age={0} visibility={transition} />
+              <PersistentPayloadAftermath mark={liveMark} y={groundY} slope={groundSlope} terrain={displayTerrain} age={0} visibility={transition} />
             </React.Fragment>;
           })}
           {resolutionMoment && impactReveal > 0.08 && animated && animated.outcome.damage > 0 && (() => {
