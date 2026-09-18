@@ -4,6 +4,11 @@ Owner: the agent maintaining the Long Return worktree. Update this file during i
 
 ## Active goal — full-mission UX (2026-09-11)
 
+### September 18: route costs name the creature they assume
+
+- The shared route comparison projected each approach using a specific suggested lead, support and technique, but named none of them until the player clicked through to lead selection. The fixed-cost caption also implied the amount belonged to the route regardless of who led. Each Simple route header now shows the projected lead with the same numbered crew marker used on the site map; the button says Pick lead and its accessible name states the preview assumption. Generic “fixed cost” captions are removed while physical cost causes, uncertainty, ally savings and on-demand analysis remain. Changing a lead, returning to routes and choosing again updates the named projection without spending resources. Detailed modes are unchanged.
+- Rendered 320×568 and 390×667 full-phone missions and a 1280×900 two-scene replay. The first energy comparison remains in the initial 320-pixel route viewport. The 390 and desktop screenshots show the projected lead beside each route and the corresponding numbered creature on the map. Route/lead/back tests at 390, 768 and 1280 verify the named projection follows the player's changed lead; a full-mission check verifies the route opens with the creature whose costs were previewed. One legacy QA script needed its resource comparison normalized across the parent map and compact inset; the state itself was unchanged. Player judgment of whether this makes the forecast's assumption sufficiently obvious remains open.
+
 ### September 18: a route shows when its known cost ends the expedition
 
 - The depleted-crew route comparison showed that a lead would run out of energy, but did not connect that loss to the mission's failure rule. The Simple shared comparison now attaches a compact forced-extraction cue to the energy or stability cell that *causes* a known ending; it adds no new banner or row. A route without a known forced ending stays unmarked, and concealed costs are not assigned a fabricated amount. The player can still change the lead and see a different plan before committing. Advanced presentation and resolution rules are unchanged.

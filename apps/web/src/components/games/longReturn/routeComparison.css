@@ -4,6 +4,8 @@
 .lr-route-board .is-salvage { --board-color:#f1cb58; }
 .lr-route-board .lr-board-amount,.lr-route-board .lr-board-axis svg { color:var(--board-color); }
 .lr-route-board .lr-board-next { display:inline-flex; align-items:center; gap:5px; padding-top:3px; border-top:1px solid currentColor; }
+.lr-board-plan-lead { display:inline-flex; align-items:center; gap:5px; color:var(--color-ink-2); font-size:14px; line-height:1.3; }
+.lr-board-plan-lead b { display:inline-flex; flex:none; align-items:center; justify-content:center; width:19px; height:19px; border-radius:50%; background:var(--color-viable); color:var(--color-viable-ink); font-size:11px; }
 .lr-board-route-tag { display:none; }
 .lr-board-context { display:none; }
 @media(max-width:650px) {
