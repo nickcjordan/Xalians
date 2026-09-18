@@ -822,6 +822,8 @@ function LongReturnGame() {
     // one should reveal the next choice rather than replay the same map above it.
     const phoneScout = guidanceLevel === 'simple' && sceneIndex > 0 && phase === 'scout' && window.matchMedia?.('(max-width: 650px)').matches
       ? root.querySelector('.lr-simple-decision') : null;
+    const phoneRoutes = guidanceLevel === 'simple' && phase === 'assign' && !routeId && window.matchMedia?.('(max-width: 650px)').matches
+      ? root.querySelector('.lr-route-board') : null;
     const arrival = guidanceLevel === 'simple' && phase === 'result' ? root.querySelector('[data-arrival-focus]') : null;
     // New phases start at their context header. On phones, the lead substep
     // starts at its own route/back heading, not the already-seen scene header.
@@ -833,6 +835,7 @@ function LongReturnGame() {
     if (phoneLead) target = phoneLead;
     if (phoneOutcome) target = phoneOutcome;
     if (phoneScout) target = phoneScout;
+    if (phoneRoutes) target = phoneRoutes;
     if (arrival) target = arrival;
     // Align the new phase before its entrance animation. Smooth scrolling and
     // panel motion running together read as camera shake, especially at
@@ -849,7 +852,7 @@ function LongReturnGame() {
     // the next Tab lands on the first relevant control, not an old control that
     // has disappeared with the previous step.
     if (guidanceLevel === 'simple') {
-      const focusTarget = arrival || phoneLead || phoneOutcome || phoneScout || root.querySelector('[data-wizard-focus]');
+      const focusTarget = arrival || phoneLead || phoneOutcome || phoneScout || phoneRoutes || root.querySelector('[data-wizard-focus]');
       if (focusTarget && typeof focusTarget.focus === 'function') {
         focusTarget.focus({ preventScroll: true });
       }
