@@ -4,6 +4,11 @@ Owner: the agent maintaining the Long Return worktree. Update this file during i
 
 ## Active goal — full-mission UX (2026-09-11)
 
+### September 18: one clear action per route
+
+- The route title and a second button below the shared cost table both advanced to lead selection. That made the title a hidden action and the lower button a duplicate. Each route now has one visible Choose lead affordance attached to its title; the footer is analysis only. The click still opens the reversible lead step and never crosses or spends resources. Hover and keyboard focus still preview the corresponding physical path on the schematic.
+- The requested Why these costs control remains separate and noncommittal. A component test checks that reading analysis never selects a route and that each route has exactly one direct action. Five-width route/keyboard preview, 390/768/1280 lead flow, four reduced/normal-motion phone-control runs, and a seven-scene 390-pixel mission passed. All 1,300 web tests, typecheck, production build and bundle budgets passed. The 390-pixel comparison was paint-reviewed. Whether the next step now feels obvious to a new player remains a human question.
+
 ### September 18: read the completed field record as a chapter
 
 - A hosted short-phone capture of the completed scouting record opened at its last beat, cutting off the beginning of What happened. The rewind control made recovery possible but treated the story's opening as an exception. The completed account now returns to its first beat; a small Continue reading cue appears only while more of the account is below.
