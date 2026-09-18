@@ -41,3 +41,20 @@ test('scouting binds expenditure to departure and delivery to communication', ()
   expect(isolated[2].text).toContain('until it returns');
   expect(isolated[3].kind).toBe('encounter');
 });
+
+test('the reported warning names its cause and the affected route, but silence never leaks it', () => {
+  const scene = MISSION.scenes[0];
+  const hazard = scene.hazards[0];
+  const scout = { species: 'Chromocat' };
+  const result = { relay: true, hazards: [{ ...hazard, sensed: true, revealed: true }], revealedIds: [hazard.id] };
+  const action = { type: 'scout', scene, scout, result, profile: { channel: 'vibration' }, energyBefore: 6, energyAfter: 5 };
+  const beats = scoutBeats(action);
+  expect(beats[1].text).not.toContain(hazard.detail);
+  expect(beats[2].text).toContain(hazard.detail);
+  expect(beats[2].text).toContain('ride the intake current');
+  const isolated = scoutBeats({ ...action, result: { ...result, relay: false, revealedIds: [] } });
+  expect(JSON.stringify(isolated)).not.toContain(hazard.detail);
+  const returned = scoutBeats({ ...action, type: 'scout-return', result: { ...result, relay: false }, stabilityBefore: 10, stabilityAfter: 9 });
+  expect(returned[0].text).not.toContain(hazard.detail);
+  expect(returned[1].text).toContain(hazard.detail);
+});

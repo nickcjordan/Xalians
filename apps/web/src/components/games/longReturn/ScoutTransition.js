@@ -14,15 +14,20 @@ export function scoutBeats(action) {
   const energy = Math.max(0, action.energyBefore - action.energyAfter);
   const stability = Math.max(0, (action.stabilityBefore ?? 0) - (action.stabilityAfter ?? 0));
   const costs = [energy > 0 && { kind: 'energy', text: `−${energy} energy · ${action.energyAfter} left` }, stability > 0 && { kind: 'stability', text: `−${stability} stability · ${action.stabilityAfter} left` }].filter(Boolean);
+  const reported = action.result?.hazards?.filter(hazard => hazard.sensed && (action.result.relay || action.type === 'scout-return')) || [];
+  const warning = reported.map(hazard => {
+    const routes = action.scene?.routes?.filter(route => route.hazardIds.includes(hazard.id)) || [];
+    return `${hazard.detail || `${hazard.label} lies ahead.`}${routes.length ? ` The warning concerns ${routes.map(route => route.title.toLowerCase()).join(' and ')}.` : ''}`;
+  }).join(' ');
   if (action.type === 'scout-return') return [
     { kind: 'return', title: 'Back to the crew', icon: 'bi-arrow-return-left', text: `${action.scout.species} retraces the route to deliver the report in person. ${energy ? 'The return trip consumes another energy.' : 'The scout is already spent.'} ${stability ? 'While the crew waits, the annex deteriorates.' : ''}`, costs },
-    { kind: 'complete', title: 'Now you can plan', icon: 'bi-check-lg', text: 'Together again, the crew compares the scout’s findings. Review the report before choosing a crossing.' }
+    { kind: 'complete', title: reported.length ? 'The warning reaches the crew' : 'Now you can plan', icon: 'bi-check-lg', text: warning || 'Together again, the crew compares the scout’s findings. Review the report before choosing a crossing.' }
   ];
   const found = action.result.hazards?.filter(hazard => hazard.sensed).length ?? ((action.result.trappedCount || 0) + action.result.revealedIds.length);
   return [
     { kind: 'depart', title: 'Scouting begins', icon: 'bi-arrow-right', text: `${action.scout.species} moves ahead alone, spending energy to search for a way through.`, costs },
     { kind: 'observe', title: found ? action.result.relay ? 'Danger spotted' : 'Something ahead' : 'Searching ahead', icon: 'bi-eye-fill', text: found ? action.result.relay ? `The scout picks out ${found === 1 ? 'a hidden danger' : `${found} hidden dangers`} along the crossing. Those findings can guide your route choice.` : `Something catches ${action.scout.species}'s attention along the crossing. The waiting crew has not heard what it found.` : 'The scout studies the crossing, but uncovers no hidden dangers. That does not mean the way is safe.' },
-    { kind: action.result.relay ? 'signal' : 'silence', title: action.result.relay ? 'The crew receives the report' : 'Out of contact', icon: action.result.relay ? 'bi-broadcast-pin' : 'bi-broadcast', text: action.result.relay ? `${action.scout.species} ${scoutCommunication(action.profile.channel).action}. No return trip is needed to deliver the report.` : 'The scout cannot send a message from here. Its findings stay out of reach until it returns to the crew.' },
+    { kind: action.result.relay ? 'signal' : 'silence', title: action.result.relay ? 'The crew receives the report' : 'Out of contact', icon: action.result.relay ? 'bi-broadcast-pin' : 'bi-broadcast', text: action.result.relay ? `${action.scout.species} ${scoutCommunication(action.profile.channel).action} ${warning || 'There is no specific warning to pass back.'} No return trip is needed.` : 'The scout cannot send a message from here. Its findings stay out of reach until it returns to the crew.' },
     ...(action.encounter ? [{ kind: 'encounter', title: 'An unexpected meeting', icon: 'bi-exclamation-diamond-fill', text: `${action.encounter.species} intercepts the scout. Decide how to handle the encounter before moving on.` }] : [])
   ];
 }
@@ -59,7 +64,8 @@ export default function ScoutTransition({ action, onComplete, soundEnabled = tru
   const stabilityBefore = action.stabilityBefore ?? MAX_INSTABILITY;
   const stabilityAfter = action.stabilityAfter ?? stabilityBefore;
   const skip = () => final ? onComplete() : setIndex(beats.length - 1);
-  return <FieldRecord scene={action.scene} title={returning ? 'The scout returns' : 'Scouting ahead'} label={returning ? 'Scout returning' : 'Scouting in progress'} map={<ExpeditionSchematic scene={action.scene} crew={action.crew} scout={action.scout} helperId={action.helperId} companion={action.fieldCompanion} allyWithScout={action.allyWithScout} readingRecord position={expeditionPosition({ actionType: action.type, beat: beat.kind, scan: action.result, encounterMode: action.encounterMode })} native={action.encounter && index >= nativeAt ? action.encounter : action.knownNative} nativeState={action.knownNativeState} runFlags={action.runFlags} />} resources={<>
+  const revealedIds = returning ? final ? action.result?.hazards?.filter(hazard => hazard.sensed).map(hazard => hazard.id) : [] : action.result?.relay && index >= 2 ? action.result.revealedIds : [];
+  return <FieldRecord scene={action.scene} title={returning ? 'The scout returns' : 'Scouting ahead'} label={returning ? 'Scout returning' : 'Scouting in progress'} map={<ExpeditionSchematic scene={action.scene} crew={action.crew} scout={action.scout} helperId={action.helperId} companion={action.fieldCompanion} allyWithScout={action.allyWithScout} readingRecord position={expeditionPosition({ actionType: action.type, beat: beat.kind, scan: action.result, encounterMode: action.encounterMode })} revealedIds={revealedIds} native={action.encounter && index >= nativeAt ? action.encounter : action.knownNative} nativeState={action.knownNativeState} runFlags={action.runFlags} />} resources={<>
       <FieldReserve kind="energy" label={`${action.scout.species} energy`} max={MAX_STRAIN} before={energyBefore} after={energyAfter} active={index >= energyAt} />
       {returning && <FieldReserve kind="stability" label="Annex stability" max={MAX_INSTABILITY} before={stabilityBefore} after={stabilityAfter} active={index >= stabilityAt} />}
     </>}>

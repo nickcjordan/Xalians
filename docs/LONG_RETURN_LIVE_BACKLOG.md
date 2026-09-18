@@ -4,6 +4,12 @@ Owner: the agent maintaining the Long Return worktree. Update this file during i
 
 ## Active goal — full-mission UX (2026-09-11)
 
+### September 18: reported danger belongs in the field account and on the route
+
+- A scout's field record still called a sensed hazard only "a hidden danger," forcing the player to wait for a later report to learn what the scout actually discovered. The account now identifies the physical clue and affected approach when communication reaches the crew. A scout without a relay does not reveal that information until returning in person. This preserves the information rule while keeping discovery in the causal story rather than adding a separate notification.
+- The stationary site schematic now marks reported hazards on the actual affected route with a small warning symbol. The same mark persists through route planning, crossing and encounter records. Undiscovered hazards never appear. A phone replay exposed a related map-state error: after Xylum joined, the location still said there was contact ahead. Resolved encounters now release that state; the ally and helper remain visibly ahead with the scout until the group regathers.
+- Verification: 1,303 web tests, typecheck, production build and bundle budgets passed. A 390-by-667 reduced-motion replay covered three crossings, a remote warning, scout encounter, ally recruitment and route selection; its field record and resolved-encounter screenshots were paint-reviewed. A contrasting no-scout phone run reached a six-crossing forced extraction. The browser replay now checks that a new ally is no longer labeled as an active contact. Player comprehension remains unvalidated.
+
 ### September 18: route-specific arrival headlines
 
 - The Simple result opened with a generic severity headline even when the field record had just told a specific arrival. The result now promotes the first sentence of the selected route's authored arrival into its headline, followed by the remaining arrival prose without repeating that sentence. The severity label and resource receipt remain distinct, and Read the crossing again still contains the full account.
