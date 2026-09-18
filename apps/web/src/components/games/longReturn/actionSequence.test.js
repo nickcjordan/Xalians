@@ -37,6 +37,12 @@ test('each whole-crew contact matches the physical situation on the map', () => 
   }
 });
 
+test('a lone-scout contact never labels that approach as a crew move', () => {
+  const events = buildActionSequence({ type: 'encounter', lead: creature('scout', 'Chromocat'), route: null, encounter: creature('native', 'Xylum') });
+  expect(events[0].title).toBe('The scout goes ahead');
+  expect(events[2].message).toContain('lone scout');
+});
+
 test('one-use expenditure follows the actual ability action and remains explicit', () => {
   const events = buildActionSequence({ type: 'crossing', lead: creature('lead','Chromocat'), method: { label:'Corona Line — Cut a path', ability:{name:'Corona Line',instrument:'light-organs'} }, result:{ abilityId:'beam', unseenHazards:[], crewChanges:[], instabilityChange:{added:0},salvage:0,impactLabel:'Done' } });
   expect(events.map(event=>event.kind)).toEqual(['move','method','effort','complete']);
@@ -87,7 +93,21 @@ test('all route methods preserve the resolved scene and keep its arrival last', 
     const events = buildActionSequence({ type:'crossing',route,lead,support,method,result });
     expect(events.map(event=>event.message)).toEqual(result.paragraphs);
     expect(events.every(event=>event.title && event.icon)).toBe(true);
+    expect(events[0].title, `${scene.id}/${route.id}`).not.toBe('Into the passage');
+    expect(events[1].title, `${scene.id}/${route.id}`).not.toBe('Making a way through');
+    expect(events[3].title, `${scene.id}/${route.id}`).not.toBe('The crew regroups');
     expect(events.at(-1).kind).toBe('complete');
     expect(eventIndexFor(events,'salvage')).toBe(events.length-1);
   }
+});
+
+test('stationary recovery is headed as work and arrival, not an imagined walk', () => {
+  const lead = creature('lead', 'Hippochamp');
+  const support = creature('support', 'Graviclaw');
+  const scene = MISSION.scenes[5];
+  const route = scene.routes[0];
+  const result = { unseenHazards: [], crewChanges: [], instabilityChange: { before: 0, after: 0 }, salvage: 6, salvageAfter: 6,
+    paragraphs: crossingScene({ scene, route, lead, support, method: route.methods[0], result: { margin: 20, leadStrain: 0, supportStrain: 0, pressure: 0, salvage: 6, unseenHazards: [] } }) };
+  const events = buildActionSequence({ type: 'crossing', scene, route, lead, support, method: route.methods[0], result });
+  expect(events.map(event => event.title)).toEqual(['At the charged reservoir', 'Working the collector valves', 'The effort holds', 'Charge secured']);
 });

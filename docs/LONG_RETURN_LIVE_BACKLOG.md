@@ -4,6 +4,11 @@ Owner: the agent maintaining the Long Return worktree. Update this file during i
 
 ## Active goal — full-mission UX (2026-09-11)
 
+### September 18: field records follow the kind of action, not a generic crossing
+
+- A fresh seven-room phone read showed an otherwise coherent reservoir story under the generic headings “Into the passage,” “Making a way through,” and “The crew regroups.” Those cues were false for opening a lock, steadying the Index, harvesting charge, and aligning machinery. The four-beat field account now uses route-specific place/action/arrival headings across all fourteen choices. The cost beat stays shared because its annotated receipt can contain energy, structural wear, and tool expenditure in any route. A whole-crew native contact now asks for a response plainly; a lone-scout contact is not headed as if the whole crew had moved.
+- Replayed a rebuilt 390-pixel seven-room deep retrieval through the archive, reservoir, and final rings, and a contrasting three-room route through the door fracture. The first run still banked 17 salvage with 2 stability; the second showed the correct door action and headings. Phone screenshots of the reservoir and ring records were reviewed. All 1,343 tests, typecheck, production build, and bundle gates passed. This is a presentation change only: no outcomes, cost rules, map position, or detailed mode were altered. Authored beat titles increase the lazy game route's raw allowance 339→341 kB and gzip allowance 106→107 kB; initial-route budgets are unchanged. Human assessment of story rhythm and spatial legibility remains open.
+
 ### September 18: improvised leads still act in the room we chose
 
 - An alternate three-room phone replay reached the archive lock with Hippochamp leading via “Careful advance.” The account merely said it “takes the lead through the passage,” even though the crew was trying to open a locked iris. Every route's fallback now names a conservative action grounded in its actual obstacle; it does not grant an unlisted swim, flight, or special tool. Cost-free late recoveries likewise finish the work rather than “carry movement through” a stationary machine. Rules, resource costs, map positions, and detailed analysis are unchanged.
