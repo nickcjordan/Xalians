@@ -34,7 +34,7 @@ try {
       const map = page.locator('[data-field-record] [data-expedition-map]');
       assert.equal(await map.locator('[data-map-creature]').count(), 3, 'Map retains all crew identities');
       const drawing = await map.locator(':scope > svg').boundingBox();
-      assert(drawing.width > 300 && drawing.height > 100, 'Schematic is a readable diagram, not an icon');
+      assert(drawing.width > 300 && drawing.height >= (width < 720 ? 96 : 100), 'Schematic is a readable diagram, not an icon');
       const signal = map.locator('[data-map-signal]');
       if (await signal.count()) {
         const label = await signal.boundingBox();

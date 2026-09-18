@@ -23,7 +23,9 @@ The player reads an expedition, not a low-budget animated film. A schematic prov
 - Distinguish different routes from different interventions at one obstacle. The archive door, Index chamber and final rings share a passage; preview highlights the lock/seam, archive/container or rings/opening being acted upon. Do not draw two bypass corridors where the story offers two ways to handle the same place. Actual crew/contact positions remain on the shared passage regardless of the intervention being previewed.
 - Static art supports the account without competing with it. The story stays until the player continues. Pause, next, and skip control reading only; they never replay the gameplay action.
 - On a small phone, the reading view keeps the local diagram and crew key but omits repeated sector and lasting-change summaries. The normal expedition map retains them. Test short phone heights, not only narrow widths: playback and the persistent account need usable reading space while continuation stays visible.
-- Only brief marker state transitions are allowed. No ambient loops, gait animation, or cinematic camera movement. Reduced motion resolves directly to a still frame.
+- Field-record markers redraw at the next named station between story beats; they do not interpolate a creature journey across the room. No ambient loops, gait animation, or cinematic camera movement. Reduced motion resolves directly to a still frame.
+- In the compact field record, the map names the current physical state and separates threshold names from the small phone drawing. At phone width, route names live in the decision comparison instead of shrinking into unreadable text inside any schematic; desktop diagrams retain those labels.
+- The mission report traces visited sectors with the same numbered diagram language and recalls the resolved arrival from the final chosen crossing. The full account remains in the journal; the report must not substitute the obstacle's opening description for what the crew actually achieved.
 
 ## Verification checklist
 
