@@ -20,21 +20,25 @@ try {
     const originalPositions = await positions();
     const board = page.locator('.lr-route-board');
     assert.equal(await board.evaluate(node => node.tagName), 'TABLE');
+    const cues = await board.locator('[data-route-path-cue]').evaluateAll(nodes => nodes.map(node => ({width:node.getBoundingClientRect().width, active:node.querySelectorAll('path')[2]?.getAttribute('d')})));
+    assert.equal(cues.length, 2, 'Both physical route headings keep a compact link to the room schematic');
+    assert(cues.every(cue => cue.width >= 60), 'Route traces must remain legible, not inherit the button icon size');
+    assert.notEqual(cues[0].active, cues[1].active, 'The two alternatives highlight different paths');
     assert.equal(await page.locator('.lr-route-orientation').count(), 1, 'One scene introduction, not a repeated objective and story');
     for (const row of ['.is-energy','.is-stability','.is-salvage']) {
       const bounds = await board.locator(`${row} > *`).evaluateAll(nodes => nodes.map(node => node.getBoundingClientRect().toJSON()));
       assert.equal(bounds.length, 3);
       assert(bounds.every(rect => Math.abs(rect.y - bounds[0].y) < 1), 'Both routes share the metric axis even on a phone');
     }
-    if (width === 390) {
-      await page.screenshot({path:`${output}/390-route-entry.png`});
+    if (width === 390 || width === 320) {
+      await page.screenshot({path:`${output}/${width}-route-entry.png`});
       const height = await board.evaluate(node => node.getBoundingClientRect().height);
-      assert(height < 640, `Opening comparison should be one phone viewport, not a scrolling dossier: ${height}`);
+      if (width === 390) assert(height < 640, `Opening comparison should be one phone viewport, not a scrolling dossier: ${height}`);
       await board.evaluate(node => node.scrollIntoView({block:'start',behavior:'instant'}));
       const head = await board.locator('thead').boundingBox();
       const energy = await board.locator('.is-energy').boundingBox();
       assert(head.y + head.height <= energy.y + 1, 'Sticky headings must not hide the first cost row');
-      await page.screenshot({path:`${output}/390-comparison.png`});
+      await page.screenshot({path:`${output}/${width}-comparison.png`});
     }
     const verify = async id => {
       await page.waitForFunction(route => document.querySelector('.lr-shell [data-expedition-map]')?.dataset.previewRoute === route, id, {timeout:5000});

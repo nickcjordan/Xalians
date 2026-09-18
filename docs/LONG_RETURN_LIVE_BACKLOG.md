@@ -4,12 +4,19 @@ Owner: the agent maintaining the Long Return worktree. Update this file during i
 
 ## Active goal — full-mission UX (2026-09-11)
 
+### September 17: physical route headings retain their map shape
+
+- A phone route comparison could show the shared cost rows while its room schematic had already scrolled away. The route headings now carry a thin trace of the same upper or lower physical branch. This stays with the sticky headings during cost comparison and does not repeat the full map, crew key, or story. Rooms where both choices work on one obstacle show no split-path trace; inventing a second corridor there would be false geography.
+- The first implementation was browser-reviewed at 390 pixels and found to be worse: the shared Button's SVG sizing reduced each trace to an icon and its automatic icon padding made route titles wrap. Corrected both, then reviewed 320- and 390-pixel rendered comparisons. The traces are legible, headings still fit the 390-pixel comparison-height budget, and the cost rows stay aligned. Unit and browser checks require distinct physical traces and no invented split for shared obstacles.
+- Verification: 1,300 web tests, production build and bundle budgets, five-width route/keyboard replay, and a six-crossing 390-by-667 map-review mission passed. Human assessment of whether the small cue actually helps spatial comprehension remains open.
+
 ### September 17: one intentional visual language for field actions
 
 - The current field record already uses discrete schematic positions and a persistent causal account, but the source still included two unused movie-like layers that animated creature silhouettes and route effects. Removed those dead components, their styles, and their unused presentation metadata. The art-direction guide now describes the actual plate, portrait, map, and written-account responsibilities and explicitly avoids performed creature motion without a real animation production pipeline.
 - Added a transition regression that requires the live field record to contain the expedition schematic and crew tokens, not the retired performer stage. This cleanup does not alter game rules, action pacing, or the currently rendered map. The mobile route comparison remains a separate observed composition issue: the room map is above the cost table, so its preview leaves the viewport when the player reaches lower rows. A full pinned map has already failed phone review; this needs a compact, tested decision composition, not another overlay.
 - A short-phone replay also revealed that the complete action account opened at its latest beat with its beginning offscreen. Added an in-context "Read from start" control only when earlier beats are above the scroll position. It pauses playback if needed, returns to the first beat, and keeps keyboard focus in the account. The causal stack and final Continue action remain in place.
 - Verification: 1,299 web tests, typecheck, production build and bundle budgets passed. Reduced-motion phone mission replays at 320-by-568 and 390-by-667 reached a six-crossing exhaustion ending without browser errors; the 390-pixel replay exercised the new control and confirmed its scroll position and keyboard focus. Paint review found the first beat readable on return and a wrapped header at 320 pixels; the narrow label was shortened and reviewed again. Normal-speed crossing, scout and encounter records passed at 390-by-667, 390-by-900, 768-by-900 and 1280-by-900. Five-width route preview and keyboard checks passed. Human judgment of the schematic and narrative remains open.
+- PR #375 merged and deployed; the hosted 390-by-667 mission replay exercised the reading control and reached the same six-crossing ending without browser errors.
 
 ### September 17: retired performer animation code stays retired
 

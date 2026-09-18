@@ -7,11 +7,22 @@ import { MISSION } from './longReturnData';
 const base = { route: { id: 'a', title: 'Gantry', salvage: 1 }, lead: { species: 'Lead' }, support: { species: 'Support' }, method: { label: 'Climb' }, knownLeadStrain: 1, baseSupportStrain: 0, knownPressure: 1, unresolvedHazards: [], risk: 1 };
 
 test('the next-room comparison states a benefit, while the story term stays in requested analysis', () => {
-  const view = render(<RouteComparison plans={MISSION.scenes[0].routes.map(route => ({...base,route}))} />);
+  const view = render(<RouteComparison scene={MISSION.scenes[0]} plans={MISSION.scenes[0].routes.map(route => ({...base,route}))} />);
+  const cues = view.container.querySelectorAll('[data-route-path-cue]');
+  expect(cues).toHaveLength(2);
+  expect(cues[0].querySelectorAll('path')).toHaveLength(3);
+  expect(cues[0].querySelectorAll('path')[2].getAttribute('d')).not.toBe(cues[1].querySelectorAll('path')[2].getAttribute('d'));
   expect(view.container.querySelector('.lr-board-future').textContent).toContain('Easier lower passage');
   expect(view.container.querySelector('.lr-board-future').textContent).not.toContain('Coolant bypass');
   fireEvent.click(view.container.querySelectorAll('.lr-board-analysis')[1]);
   expect(view.container.querySelector('#route-analysis-intake').textContent).toContain('Coolant bypass opened');
+  view.unmount();
+});
+
+test('shared obstacles keep one passage rather than inventing two route corridors', () => {
+  const scene = MISSION.scenes[2];
+  const view = render(<RouteComparison scene={scene} plans={scene.routes.map(route => ({ ...base, route }))} />);
+  expect(view.container.querySelectorAll('[data-route-path-cue]')).toHaveLength(0);
   view.unmount();
 });
 

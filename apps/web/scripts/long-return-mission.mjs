@@ -114,6 +114,8 @@ try {
     if (await page.locator('.lr-simple-report').count()) { await click(page.locator('.lr-simple-report .g-btn--primary')); continue; }
     if (await page.locator('.lr-route-board').count()) {
       assert(!(await map.locator('[data-expedition-reserves]').innerText()).includes("Can't scout"), 'Crossing choices do not show a scouting restriction');
+      const sharedObstacle = ['archive-vestibule', 'nemesis-index', 'generator-spine'].includes(await map.getAttribute('data-map-scene'));
+      assert.equal(await page.locator('[data-route-path-cue]').count(), sharedObstacle ? 0 : 2, 'Physical alternatives retain path cues; shared obstacles do not invent corridors');
       const orientation = page.locator('.lr-route-orientation');
       assert(await orientation.isVisible(), 'Scene context stays visible while choosing');
       const storyBox = await orientation.boundingBox();
