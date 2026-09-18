@@ -4,6 +4,11 @@ Owner: the agent maintaining the Long Return worktree. Update this file during i
 
 ## Active goal — full-mission UX (2026-09-11)
 
+### September 17: retired performer animation code stays retired
+
+- The live field record uses a stationary schematic and cumulative account. Import tracing showed the old creature-performance terrain component and four movie-style animation stylesheets were no longer loaded anywhere; one test was their only remaining consumer. Removed those obsolete files and the unused curtain layout rules from the still-loaded story stylesheet. The route provenance test now checks actual schematic place and route labels instead of the retired terrain map.
+- This removes source code, not a runtime feature or asset. A seven-crossing phone replay still reaches the same ending. Normal-speed crossing, scouting and encounter records passed pause, stepping, persistence and reading-space checks at 390-by-667, 390-by-900, 768-by-900 and 1280-by-900; the phone record was paint-reviewed. All 1,300 web tests, typecheck, production build and bundle budgets, and diff check pass. The user still needs to judge whether the schematic makes the action understandable.
+
 ### September 17: forced extraction is a retreat, not a teleport
 
 - A hosted no-scout run took an alternate route through the exposed hull and blackbox. It reached zero stability at the Index, then the ending abruptly claimed unnamed emergency systems pulled the crew out. That did not follow the game's physical-journey presentation.
