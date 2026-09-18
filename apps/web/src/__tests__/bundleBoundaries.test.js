@@ -11,7 +11,14 @@ function sourceFiles(dir) {
 	});
 }
 
-describe('production bundle boundaries', () => {
+describe('production loading boundaries', () => {
+	it('does not gate production builds on fixed asset-size thresholds', () => {
+		const packageJson = JSON.parse(fs.readFileSync(path.join(SRC_DIR, '..', 'package.json'), 'utf8'));
+		expect(packageJson.scripts.build).not.toContain('check:bundle');
+		expect(packageJson.scripts).not.toHaveProperty('check:bundle');
+		expect(fs.existsSync(path.join(SRC_DIR, '..', 'bundle-budgets.json'))).toBe(false);
+	});
+
 	it('keeps the Amplify root configurator out of feature modules', () => {
 		const barrelImport = /^\s*import\s+(?:[^'\"]+\s+from\s+)?['\"]aws-amplify['\"];?/m;
 		const offenders = sourceFiles(SRC_DIR)
@@ -31,11 +38,9 @@ describe('production bundle boundaries', () => {
 
 	it('keeps the live Duel board behind the setup-state boundary', () => {
 		const setup = fs.readFileSync(path.join(SRC_DIR, 'pages', 'games', 'duelStartPage.tsx'), 'utf8');
-		const budgets = JSON.parse(fs.readFileSync(path.join(SRC_DIR, '..', 'bundle-budgets.json'), 'utf8'));
 
 		expect(setup).toContain("const DuelPage = React.lazy(() => import('./duelPage'));");
 		expect(setup).not.toMatch(/^import\s+DuelPage\s+from\s+['"]\.\/duelPage['"];?/m);
-		expect(budgets.nestedRoutes.duelPage.parent).toBe('duelStartPage');
 	});
 
 	it('omits the developer style guide from production builds', () => {

@@ -104,7 +104,7 @@ export default defineConfig(({ mode }) => ({
 	build: {
 		// CI and `npm run deploy` sync `build/` to S3. Keep CRA's directory.
 		outDir: 'build',
-		// The checked-in manifest is consumed by scripts/checkBundleBudgets.cjs.
+		// Keep a manifest for inspecting emitted route assets when diagnosing loading.
 		// Vite places it under build/.vite/, alongside no user-facing assets.
 		manifest: true,
 		rollupOptions: {

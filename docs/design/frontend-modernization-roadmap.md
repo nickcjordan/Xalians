@@ -283,6 +283,8 @@ Router modernization and authentication integration coverage, which provide stro
 
 ### 7. Developer-only styleguide and enforceable bundle budgets — Complete
 
+**Superseded 2026-09-18:** The fixed JavaScript/CSS size budgets and build-failing checker described below were removed at the owner's direction. They were an implementation decision, not a browser or hosting requirement, and led to story copy being shortened to satisfy an arbitrary number. The production styleguide exclusion and lazy route boundaries remain; emitted asset sizes may still be reviewed as performance diagnostics. The paragraphs below document the historical work, not the current release gate.
+
 **Scope**
 
 Keep developer references out of player-facing production graphs where practical and introduce reproducible JavaScript/CSS budgets checked in CI. Treat large game routes individually rather than hiding them behind one aggregate threshold.

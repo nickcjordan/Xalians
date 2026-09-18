@@ -40,7 +40,7 @@ server replay validation, the Arcade reward cap, and the original visual identit
    issue is design-sensitive, such as camera framing or weapon behavior.
 5. **Implement, then replay.** Change code and tests together. Re-run deterministic
    simulations, relevant component tests, full workspace tests, typechecks, production
-   build, and bundle budgets. Play the exact baseline scenarios again on both sizes;
+   build. Review emitted asset sizes if loading regresses, without a fixed size gate. Play the exact baseline scenarios again on both sizes;
    inspect unintended effects on other weapons and worlds. Keep the change only if it
    improves the target experience without causing a more serious regression.
 6. **Release and verify.** Use a focused PR, wait for CI, deploy through the existing

@@ -404,19 +404,19 @@ export function encounterNarrative({ archetype, option, nativeName, actorName, s
     ? option.id === 'return-for-medic' ? ` Making the extra trip leaves ${scoutName || actor} with less strength for the next passage.`
       : archetype === 'injured' ? ` The first contact has already taken strength from ${scoutName || actor} before the treatment begins.`
         : ` The work leaves ${scoutName || actor} with less strength for the next passage.` : '';
-  const rescueCost = `${rescueEffort}${option.instability ? ' While the crew works, the old machinery strains its failing supports.' : ''}`;
+  const rescueCost = `${rescueEffort}${option.instability ? ' The annex does not wait for the rescue; while the crew works, the old machinery continues straining its failing supports.' : ''}`;
   const markedApproach = mode === 'group' && priorResponseId === 'mark'
-    ? 'The scout’s marks guide the approach. ' : '';
+    ? 'The scout’s marks guide the crew past the blind side of the rig. ' : '';
   if (option.companion) return archetype === 'trapped'
-    ? `${markedApproach}The crew opens a gap between the moving arms. ${nativeName} hesitates, then slips free; its panicked signal fades.${rescueCost}\n\nAs the crew moves on, ${nativeName} follows at a cautious distance. Nothing holds it here now.`
-    : `${aidArrival}. ${nativeName} watches as help reaches its injury. The roots gripping the machinery loosen. What looked like an obstacle was a frightened creature with nowhere safe to go.${rescueCost}\n\n${aidDeparture}`;
-  if (option.resolution === 'detour') return `The crew stops short of ${nativeName} and retraces its steps.\n\nBack at the junction, the other passage remains open. ${nativeName} still holds this one.`;
+    ? `${markedApproach}The crew makes space between the moving authentication arms. For a moment, ${nativeName} stays where it is, as though the opening might close again. Then it slips clear, and the panicked signal begins to fade.${rescueCost}\n\nWhen the crew moves on, ${nativeName} follows at a cautious distance. This time, nothing is holding it here. It has chosen their company.`
+    : `${aidArrival}, giving ${nativeName} room to watch as help reaches its injury. The roots gripping the machinery begin to loosen. What looked like an obstacle was a frightened creature with nowhere safe to go.${rescueCost}\n\n${aidDeparture}`;
+  if (option.resolution === 'detour') return `The crew stops short of ${nativeName}'s position. Rather than press closer, they retrace their approach, leaving the space between them open.\n\nBack at the junction, the other passage is still there to consider. Behind them, ${nativeName} remains where they found it; nothing has forced it to leave.`;
   if (option.resolution === 'unresolved') return reportDelivered
     ? option.id === 'mark'
-      ? `${scout} watches the arms cycle, then marks the controls that stop them. ${nativeName} remains trapped.\n\nThe crew receives the marks. It can approach without surprise, but must still face ${nativeName}.`
+      ? `${scout} stays at the edge of the rig, watching the authentication arms sweep across the lock. Each pass briefly exposes the controls that can stop them. The scout marks a safe approach on the housing, then withdraws; ${nativeName} is still trapped.\n\nThe marks reach the crew with the report. They can approach without being caught off guard, but must still decide what to do with ${nativeName}.`
       : `${scoutName || actor} breaks contact and sends a warning rather than trying to settle the encounter alone.\n\nThe crew now knows where ${nativeName} is waiting. The route has not been cleared; approaching it will mean facing that presence together.`
     : option.id === 'mark'
-      ? `${scout} watches the arms cycle, then marks the controls that stop them. ${nativeName} remains trapped.\n\nNo signal reaches the crew. The scout must bring the marks back in person.`
+      ? `${scout} stays at the edge of the rig, watching the authentication arms sweep across the lock. Each pass briefly exposes the controls that can stop them. The scout marks a safe approach on the housing, then withdraws; ${nativeName} is still trapped.\n\nNo signal can reach the waiting crew. The scout must make the journey back before anyone else can use the marked approach.`
       : `${scoutName || actor} backs out of ${nativeName}'s reach without trying to settle the encounter alone. The native holds its ground.\n\nThere is space to retreat now, but no signal can reach the waiting crew. The scout still has to make the journey back before they can hear the warning.`;
   if (archetype === 'territorial') {
     if (option.id === 'distract') return `${actor} creates a disturbance away from the conduit mouth. ${nativeName} turns toward it, then moves out to investigate, leaving its sheltered passage unguarded.\n\nThe diversion has opened a way through, but the noise has carried into the old annex. The machinery around the crew no longer feels quite so still.`;
@@ -424,8 +424,8 @@ export function encounterNarrative({ archetype, option, nativeName, actorName, s
     return `${actor} establishes a boundary rather than closing the distance. ${nativeName} watches the space between them, then eases away from the conduit mouth.\n\nIt withdraws into the hull without surrendering its shelter. There is room to pass because the crew has left it room to retreat.`;
   }
   if (archetype === 'trapped') {
-    if (option.id === 'pin-rig') return `${markedApproach}${actor} pins the moving arms, giving the crew room to pass. ${nativeName} remains trapped inside the rig.\n\nThe path to the door is clear, but the door remains shut. ${nativeName}'s panicked signal continues.`;
-    if (option.id === 'force-arms') return `${actor} wrenches the arms apart. ${nativeName} slips free before the rig can close.\n\nIts panicked signal fades into a side duct. At the damaged controls, a different signal takes its place: the rig has recorded the intrusion.`;
+    if (option.id === 'pin-rig') return `${markedApproach}${actor} pins the moving arms long enough to give the crew room to work past them. ${nativeName} is still caught inside the rig; the opening is for the expedition, not an escape from the trap.\n\nThe way to the door is clear now, but the door itself still stands shut. ${nativeName}'s panicked signal continues from inside the rig.`;
+    if (option.id === 'force-arms') return `${actor} wrenches the authentication arms apart. The trapped ${nativeName} slips through the opening before the rig can close around it again.\n\nIts panicked signal fades into a side duct. At the damaged controls, a different signal takes its place: the rig has recorded the intrusion.`;
     return `${markedApproach}${actor} steadies the encounter until the authentication arms pause. ${nativeName} hesitates, then slips out of their reach and disappears into a side duct.\n\nThe panicked signal fades from the lock. With the trapped creature clear, the rig is no longer answering its distress.`;
   }
   return `${actor} holds the approach, forcing space around the cracked turbine bearing. ${nativeName} loosens its grip and retreats deeper into the machinery rather than hold the passage against that pressure.\n\nThe way is open, but the creature has not joined the crew. It remains somewhere behind the housings as the expedition prepares to move on.`;
