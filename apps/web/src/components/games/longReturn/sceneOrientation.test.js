@@ -33,3 +33,10 @@ test('the turbine hall remembers only the entrance actually taken', () => {
   expect(routeSetting.catwalk).toContain('above the machines');
   expect(routeSetting.underdeck).toContain('beneath the machines');
 });
+
+test('the optional rooms continue from the archive fork and reservoir junction', () => {
+  expect(sceneOrientation(MISSION.scenes[5])).toContain('archive junction');
+  expect(sceneOrientation(MISSION.scenes[5])).toContain('descends the service stair');
+  expect(sceneOrientation(MISSION.scenes[6])).toContain('reservoir junction');
+  expect(sceneOrientation(MISSION.scenes[6])).toContain('dry passage');
+});

@@ -50,6 +50,26 @@ test('both Index recoveries identify the record without confusing it with loose 
   expect(resolve(backup)[3]).toContain('Nemesis Index');
 });
 
+test('the later crossings leave the crew at the same physical thresholds used by the next rooms', () => {
+  const [hull, conduit] = MISSION.scenes[3].routes;
+  expect(resolve(hull)[3]).toContain('airlock admits them one at a time');
+  expect(resolve(hull)[3]).toContain('wavering light spills from the archive');
+  expect(resolve(conduit)[3]).toContain('Wavering light spills across its threshold');
+
+  for (const route of MISSION.scenes[4].routes) {
+    const arrival = resolve(route)[3];
+    expect(arrival).toContain('junction');
+    expect(arrival).toContain('return route');
+    expect(arrival).toContain('service stair');
+    expect(arrival).not.toContain('the crew chooses to descend');
+  }
+  for (const route of MISSION.scenes[5].routes) {
+    const arrival = resolve(route)[3];
+    expect(arrival).toContain('junction with the return route');
+    expect(arrival).toContain('Generator Spine');
+  }
+});
+
 test('remote retrieval never describes the lead diving, and support effort follows resolution', () => {
   const route = MISSION.scenes[5].routes[1];
   const paragraphs = resolve(route, { supportStrain: 1 }, route.methods[1]);

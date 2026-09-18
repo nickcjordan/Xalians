@@ -21,8 +21,8 @@ export function sceneOrientation(scene, flags = []) {
     'service-throat': 'Black water fills the entrance corridor. Across the flood, steps lead into the machinery hall—the first stretch of your journey to the lost archive. A broken walkway hangs above the water; below it, a current slips through the wreckage.',
     'null-gallery': 'Beyond the door, the corridor has been torn open to space. The archive entrance waits across the gap. An exposed strip of hull leads straight there; an enclosed service tunnel bends around the damage.',
     'nemesis-index': 'Beyond the broken gallery, thin record plates hang in a flickering field of light. This is the Nemesis Index—the surviving record of the plague research done here, and the reason you came. A sealed backup sits at its center. Save the plates or take the backup; either puts the record in your crew’s keeping.',
-    'core-reservoir': 'With the Index secured, you have chosen to venture deeper. A pool of charged liquid fills the next chamber. More salvage lies here, but every recovery spends reserves you may need to get home.',
-    'generator-spine': 'Beyond the reservoir, huge rings turn around the last machine. The extraction lift waits on the far side. Recover the whole control core by stopping the rings, or take the smaller spindle between their turns and get out.'
+    'core-reservoir': 'At the archive junction, the crew turns away from the marked return route and descends the service stair. It ends at a pool of charged liquid. More salvage lies here, but every recovery spends reserves the crew may need to get home.',
+    'generator-spine': 'From the reservoir junction, the crew follows a dry passage into the last chamber. Huge rings turn around a view of the white planet below. The extraction lift waits on the far side. Stop the rings for the whole control core, or take the smaller spindle between their turns and get out.'
   }[scene.id] || scene.arrival || scene.description;
 }
 
