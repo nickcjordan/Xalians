@@ -77,8 +77,10 @@ describe('expedition location, not creature performance', () => {
     expect(html).toContain('data-map-native="true" data-state="contact" transform="translate(320 98)"');
     expect(html).toContain('◇</b> Hypnopet');
   });
-  it('all crew arrive together, including the reserve', () => {
-    expect(expeditionPosition({ actionType: 'crossing', beat: 'move' }).crew).toBe('crossing');
+  it('a committed crossing advances in diagram states, then all crew arrive together', () => {
+    expect(expeditionPosition({ actionType: 'crossing', beat: 'move' }).crew).toBe('approach');
+    expect(expeditionPosition({ actionType: 'crossing', beat: 'method' }).crew).toBe('crossing');
+    expect(expeditionPosition({ actionType: 'crossing', beat: 'effort' }).crew).toBe('crossing');
     expect(expeditionPosition({ actionType: 'crossing', beat: 'complete' }).crew).toBe('exit');
     expect(expeditionPosition({ phase: 'result' }).crew).toBe('exit');
   });

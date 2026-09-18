@@ -299,7 +299,7 @@ function safestPlanForRoute(route, crew, strain, spentAbilities, scan, preferred
     standing.filter((member) => member.id !== lead.id).forEach((support) => {
       methodOptions(lead, route, spentAbilities).filter(method => !preferredMethodId || method.id === preferredMethodId).forEach((method) => {
         const forecast = decisionForecast({ route, lead, support, method, scan, leadLoad: strain[lead.id] || 0, supportLoad: strain[support.id] || 0 });
-        const knownLeadStrain = Math.max(0, forecast.baseLeadStrain + forecast.environment.strain - (forecast.naturalReaction ? 1 : 0));
+        const knownLeadStrain = Math.max(0, forecast.baseLeadStrain + forecast.environment.strain - (forecast.naturalReaction ? 1 : 0)) + (route.sustainedWork || 0);
         const knownPressure = route.pressure + (forecast.naturalReaction ? 0 : 1);
         const risk = knownLeadStrain * 18 + forecast.baseSupportStrain * 12 + knownPressure * 8 + forecast.unresolvedHazards.length * 14;
         plans.push({ ...forecast, route, lead, support, method, knownLeadStrain, knownPressure, risk,
@@ -1649,7 +1649,7 @@ function LongReturnGame() {
                           <div className="lr-outcome-head"><span>Known forecast</span><strong>{selectedForecast.label}</strong><b>{signed(selectedForecast.margin)} margin</b></div>
                           <div className="lr-outcome-signals">
                             <div><BiIcon cls="bi bi-check2-circle" /><span>Passage</span><strong>{selectedForecast.margin >= 0 ? 'Clear' : 'Forced'}</strong></div>
-                            <div><BiIcon cls="bi bi-lightning-charge-fill" /><span>Known energy cost</span><strong>−{Math.max(0, selectedForecast.baseLeadStrain + selectedForecast.baseSupportStrain + selectedForecast.environment.strain - (selectedForecast.naturalReaction ? 1 : 0))}</strong></div>
+                            <div><BiIcon cls="bi bi-lightning-charge-fill" /><span>Known energy cost</span><strong>−{Math.max(0, selectedForecast.baseLeadStrain + selectedForecast.baseSupportStrain + selectedForecast.environment.strain - (selectedForecast.naturalReaction ? 1 : 0)) + (route.sustainedWork || 0)}</strong></div>
                             <div><BiIcon cls="bi bi-building" /><span>Stability cost</span><strong>−{route.pressure + (!selectedForecast.naturalReaction && !useCommand ? 1 : 0)}</strong></div>
                             <div className={selectedForecast.unresolvedHazards.length ? 'is-unknown' : ''}><BiIcon cls="bi bi-question-diamond" /><span>Hidden risks</span><strong>{selectedForecast.unresolvedHazards.length || 'None'}</strong></div>
                           </div>

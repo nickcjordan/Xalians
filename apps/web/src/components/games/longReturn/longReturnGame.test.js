@@ -256,8 +256,8 @@ describe('Long Return Simple mode', () => {
     expect(findButton(container, /use this plan/i)).toBeUndefined();
     click(container, /cross now/i);
     expect(container.querySelector('[role="dialog"][aria-label="Crossing in progress"]')).toBeTruthy();
-    expect(container.querySelector('[data-field-record] [data-expedition-map][data-crew-position="crossing"]')).toBeTruthy();
-    expect(container.querySelectorAll('[data-field-record] [data-map-creature][data-location="crossing"]')).toHaveLength(3);
+    expect(container.querySelector('[data-field-record] [data-expedition-map][data-crew-position="approach"]')).toBeTruthy();
+    expect(container.querySelectorAll('[data-field-record] [data-map-creature][data-location="approach"]')).toHaveLength(3);
     click(container, /skip to outcome/i);
     expect(container.querySelector('.lr-sequence-story').textContent).toMatch(/What happened/i);
     expect(container.querySelectorAll('[data-field-record] [data-map-creature][data-location="exit"]')).toHaveLength(3);

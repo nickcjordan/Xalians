@@ -4,6 +4,12 @@ Owner: the agent maintaining the Long Return worktree. Update this file during i
 
 ## Active goal — full-mission UX (2026-09-11)
 
+### September 18: archive preservation is a real choice, and the field diagram advances by stations
+
+- The published phone comparison made the archive's careful-preservation route apparently superior on every immediate resource axis: zero known energy, less structural loss, and more salvage. The backup route's different one-use tool was not a clear reason to choose it. Preserving every readable plate now requires two units of sustained lead work, even when the crossing technique is otherwise effortless. Pulling the sealed backup remains quick but damages the chamber. The route comparison places the physical cause beside its energy number, and the crossing receipt itemizes it. The result still follows the original hazard and companion rules.
+- The field record's crossing diagram now begins with the crew at the approach station, moves its markers to the obstacle when the technique begins, and puts all three at the destination only on arrival. These are discrete instrument states, not simulated character locomotion; the prose remains the account of what they actually did. An action test checks the stations at successive beats.
+- Verification: the rebuilt 390-by-667 archive comparison showed preservation at 2 known energy / 1 stability / 5 salvage versus backup at 0 / 3 / 3 for the tested crew. Two otherwise-matched seven-room phone runs both completed deep retrieval; preservation banked 15 salvage, backup banked 12. Unit and route-receipt tests cover the added work. Player judgment of whether the diagram and exchange now read naturally remains open.
+
 ### September 18: the reservoir choice has a visible reason to stay at the rim
 
 - The published seven-scene phone comparison offered the same unknown hazard and known stability cost on both reservoir routes, while diving cost less known energy and paid three more salvage. For that crew, the rim route was visibly dominated even though its lower source difficulty counted as a strategic advantage in a data-only audit. Working the valves from the rim now causes no base structural disturbance; diving retains its two-point disturbance. The hidden charge-bloom hazard and all other costs remain unchanged.

@@ -9,7 +9,9 @@ const location = (crew, scout = null, signal = false, encounter = false) => ({ c
 export function expeditionPosition({ phase, scout, scan, encounterMode, resolution, beat, actionType }) {
   if (actionType === 'scout-return') return location('entry', beat === 'complete' ? 'entry' : 'survey');
   if (actionType === 'scout') return location('entry', 'survey', beat === 'signal' || !!(beat === 'encounter' && scan?.relay), beat === 'encounter');
-  if (actionType === 'crossing') return location(beat === 'complete' ? 'exit' : 'crossing');
+  // Switch between diagram stations as the account advances. Never interpolate
+  // a creature through the room as if this were a literal animated scene.
+  if (actionType === 'crossing') return location(beat === 'complete' ? 'exit' : beat === 'move' ? 'approach' : 'crossing');
   if (actionType === 'encounter') return location('approach', null, false, beat !== 'move');
   if (actionType === 'encounter-response' || phase === 'encounter') {
     const retreat = resolution === 'detour';

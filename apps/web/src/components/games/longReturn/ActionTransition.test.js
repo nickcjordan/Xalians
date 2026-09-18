@@ -16,6 +16,7 @@ test('causal story advances, keeps both creatures costs, and never dismisses its
   const first = document.querySelector('.lr-sequence-story li');
   expect(document.querySelector('[data-field-record] [data-expedition-map]')).toBeTruthy();
   expect(document.querySelectorAll('[data-field-record] [data-map-creature]')).toHaveLength(3);
+  expect(document.querySelector('[data-field-record] [data-expedition-map]').getAttribute('data-crew-position')).toBe('approach');
   expect(document.querySelector('[data-field-record] .lr-scene-stage')).toBeNull();
   expect(screen.getByLabelText(`${reserve.species} energy: 3 of 6`)).toBeTruthy();
   expect(screen.getByLabelText(`${lead.species} energy: 6 of 6`)).toBeTruthy();
@@ -24,6 +25,7 @@ test('causal story advances, keeps both creatures costs, and never dismisses its
   expect(document.querySelectorAll('.lr-sequence-story li')).toHaveLength(1);
   fireEvent.click(screen.getByRole('button', { name: /Next event/ }));
   expect(document.querySelectorAll('.lr-sequence-story li')).toHaveLength(2);
+  expect(document.querySelector('[data-field-record] [data-expedition-map]').getAttribute('data-crew-position')).toBe('crossing');
   expect(document.querySelector('.lr-sequence-story li')).toBe(first);
   fireEvent.click(screen.getByRole('button', { name: 'Resume story' }));
   for (let i = 0; i < 10; i++) act(() => vi.advanceTimersByTime(2500));
