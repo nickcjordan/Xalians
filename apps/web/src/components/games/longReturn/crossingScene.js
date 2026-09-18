@@ -51,7 +51,7 @@ const MOTIONS = {
   ambush: 'commits in a sudden burst before the interval closes',
   spray: 'displaces the charged surface to reach beneath it',
   anchored: 'braces against the turning machinery',
-  resistant: 'holds position inside the contaminated rim',
+  resistant: 'holds position at the charged rim',
   intelligence: 'studies the surviving sequence and begins putting it back together',
   manipulation: 'works the old controls into position'
 };
@@ -86,7 +86,7 @@ const SHIFTS = {
   conduit: 'The long passage leaves its old braces under a new, uneven load.',
   stabilize: 'The faltering field sends another disturbance through the chamber’s failing systems.',
   blackbox: 'Without the blackbox in place, the cradle gives way and the chamber begins to fold behind them.',
-  harvest: 'The collector assembly shudders as its stored charge is drawn away.',
+  harvest: 'As the stored charge drains, the valves’ counterweights pull against the old pipework.',
   dive: 'The disturbed reservoir sends a tremor through the surrounding structure.',
   align: 'The changing alignment puts a fresh load through the spine’s aging supports.',
   closure: 'The rings close behind the passage, shaking the old assembly.'
@@ -125,6 +125,8 @@ function elementalExposure(route, name) {
       ? `Charge snaps through the flooded wreckage, making it harder for ${name} to keep the crew's way open.`
       : route.id === 'dive'
         ? `Charge flickers around the submerged cell, forcing ${name} to work in short, careful reaches.`
+      : route.id === 'harvest'
+        ? `Charge flickers across the collector valves, forcing ${name} to break contact and find another hold.`
         : `Charge flickers across the old machinery, forcing ${name} to break contact and find another hold.`;
     case 'psychic': return `The lock's repeating signal presses into ${name}'s thoughts, making the sequence harder to hold.`;
     case 'chemical': return `A sharp trace from the damaged archive catches ${name} each time it returns to the work.`;
@@ -148,14 +150,14 @@ export function crossingScene({ scene, route, lead, support, method, result, com
     : `${name} carries the movement through steadily, emerging with strength still in reserve.`;
   const alone = result.rawMethodScore - route.difficulty;
   const supportDifference = alone < 0 && result.margin >= 0
-    ? ` With ${support.species} coordinating the others, ${name} can complete the passage instead of forcing a way through.`
-    : alone < 14 && result.margin >= 14
-      ? ` ${support.species} keeps the others moving with ${name}; the crossing itself no longer demands an exhausting push.` : '';
-  const supportEffort = result.supportStrain > 0 ? ` ${support.species} has to take over part of the work to keep the passage moving. The effort has worn on ${support.species}, too.` : '';
+    ? ` With ${support.species} coordinating the others, ${name} can finish without forcing the work alone.`
+    : alone < 14 && result.margin >= 14 && result.leadStrain === 0
+      ? ` ${support.species} helps hold the work together; they can finish without an exhausting push.` : '';
+  const supportEffort = result.supportStrain > 0 ? ` ${support.species} has to take over part of the work before the crew can finish. The effort has worn on ${support.species}, too.` : '';
   const exposure = result.leadStrain > 0 ? (result.environment?.notes || []).map(note => {
     if (note.includes('without breathing')) return `There is no breath to take along this part of the route; ${name} must keep going until it reaches air.`;
     if (note.includes('cannot safely remain')) return route.environment.medium === 'vacuum'
-      ? `There is no air here, and ${name} cannot linger safely in the exposed space. Every moment spent bringing the others across wears it down.`
+      ? `There is no air here. ${name} must keep working until the crew can get clear, with no safe chance to stop.`
       : route.environment.medium === 'liquid' ? `${name} is out of its element beneath the surface. Holding on until the others follow takes more out of it than the crossing alone.`
         : `${name} struggles outside the surroundings it needs, pushing on until the crew is through.`;
     if (note.includes('temperature band')) return route.environment.temperatureC < 0

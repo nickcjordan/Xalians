@@ -388,7 +388,7 @@ export const MISSION = {
           methods: [
             { kind: 'action', key: 'ward', attribute: 'resilience', label: 'Screen each discharge' },
             { kind: 'attribute', key: 'manipulation', secondary: 'intelligence', label: 'Bleed the collector valves' },
-            { kind: 'trait', key: 'resistant', attribute: 'resilience', label: 'Work inside the contaminated rim' }
+            { kind: 'trait', key: 'resistant', attribute: 'resilience', label: 'Work at the charged rim' }
           ] },
         { id: 'dive', title: 'Dive for the intact cell', description: 'The richest cell is below the charged liquid surface.', difficulty: 80, pressure: 2, salvage: 9,
           environment: { medium: 'liquid', temperatureC: -8, element: 'electric' }, hazardIds: ['charge-bloom'],
