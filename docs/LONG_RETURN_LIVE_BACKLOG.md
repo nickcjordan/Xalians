@@ -4,6 +4,12 @@ Owner: the agent maintaining the Long Return worktree. Update this file during i
 
 ## Active goal — full-mission UX (2026-09-11)
 
+### September 18: read the completed field record as a chapter
+
+- A hosted short-phone capture of the completed scouting record opened at its last beat, cutting off the beginning of What happened. The rewind control made recovery possible but treated the story's opening as an exception. The completed account now returns to its first beat; a small Continue reading cue appears only while more of the account is below.
+- A 320-by-568 render exposed the deeper issue: the schematic and action footer left a tiny nested prose viewport. On phones the field record now uses one natural scroll, from room schematic through the full causal account to the continuation action. Desktop retains its two-column map/account layout and internal story scroll. During playback the account can still follow the current beat; after completion it is ready to read from the start.
+- The browser replay now checks that phone records have no inner scroll pane, that the continuation action follows the final beat, and that a short-phone scout account starts at the beginning with a working reading cue. Reviewed top and bottom screenshots at 320 and 390 pixels and a desktop record at 1280 pixels. Reduced-motion phone runs reached six- and seven-crossing endings; a normal-speed 390-pixel seven-scene run completed without browser errors. All 1,300 web tests, typecheck, production build and bundle budgets passed. Whether the rhythm feels like a story to a player remains open.
+
 ### September 17: the phone lead choice is a decision, not a hidden default
 
 - A 390-by-667 replay showed only one full lead and part of the next while the crossing action occupied the bottom of the phone. The player could commit without seeing the third alternative. The choice cards now show the creature's approach and known energy/stability side by side, with a compact portrait and selected state. An action shared by all leads is not repeated in each phone card; creature-specific skill, ally contribution, limited tool use, and exhaustion warnings remain. The detailed lead/support energy split lives in See crew roles, not in every card.

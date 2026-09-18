@@ -28,4 +28,8 @@
 @media(max-width:760px) {
   .lr-sequence-story li > p { font-size:16px; line-height:1.6; }
 }
+@media(max-width:767px) {
+  [data-field-record] .lr-sequence-story { min-height:auto; }
+  [data-field-record] .lr-sequence-story-scroll { overflow:visible; flex:none; scrollbar-gutter:auto; }
+}
 @media(prefers-reduced-motion:reduce) { .lr-sequence-story li { animation:none; } }

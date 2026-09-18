@@ -22,27 +22,70 @@ export default function SequenceStory({ events, index, paused, onPause, onNext, 
   const scrollRef = useRef(null);
   const follows = useRef(true);
   const [canReadEarlier, setCanReadEarlier] = useState(false);
+  const [canReadLater, setCanReadLater] = useState(false);
   const final = index === events.length - 1;
+  const readingScroller = () => {
+    const record = scrollRef.current?.closest('[data-field-record]');
+    return record && window.matchMedia?.('(max-width: 767px)').matches ? record : scrollRef.current;
+  };
+  const handleScroll = el => {
+    follows.current = el.scrollHeight - el.scrollTop - el.clientHeight < 36;
+    setCanReadEarlier(el.scrollTop > 8);
+    setCanReadLater(el.scrollHeight - el.scrollTop - el.clientHeight > 8);
+    if (!follows.current && !paused && !final) onPause();
+  };
   const followLatest = () => {
     follows.current = true;
-    if (scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
-    setCanReadEarlier((scrollRef.current?.scrollTop || 0) > 8);
+    const el = readingScroller();
+    if (el) el.scrollTop = el.scrollHeight;
+    setCanReadEarlier((el?.scrollTop || 0) > 8);
+  };
+  const readNext = () => {
+    const el = readingScroller();
+    el.scrollTop += Math.max(100, el.clientHeight - 48);
+    scrollRef.current.focus({ preventScroll: true });
+    setCanReadEarlier(el.scrollTop > 8);
+    setCanReadLater(el.scrollHeight - el.scrollTop - el.clientHeight > 8);
+  };
+  const readFromStart = () => {
+    if (!paused && !final) onPause();
+    follows.current = false;
+    const el = readingScroller();
+    el.scrollTop = 0;
+    scrollRef.current.focus({ preventScroll: true });
+    setCanReadEarlier(false);
+    setCanReadLater(el.scrollHeight - el.clientHeight > 8);
   };
   useEffect(() => {
-    const el = scrollRef.current;
-    if (el && follows.current) {
+    const el = readingScroller();
+    if (el && final) {
+      el.scrollTop = 0;
+      follows.current = false;
+      setCanReadEarlier(false);
+      setCanReadLater(el.scrollHeight - el.clientHeight > 8);
+    } else if (el && follows.current) {
       el.scrollTop = el.scrollHeight;
       setCanReadEarlier(el.scrollTop > 8);
+      setCanReadLater(false);
     }
-  }, [index]);
+  }, [index, final]);
+  useEffect(() => {
+    const record = scrollRef.current?.closest('[data-field-record]');
+    if (!record || !window.matchMedia?.('(max-width: 767px)').matches) return undefined;
+    const onRecordScroll = () => handleScroll(record);
+    record.addEventListener('scroll', onRecordScroll, { passive: true });
+    return () => record.removeEventListener('scroll', onRecordScroll);
+  }, [paused, final, onPause]);
   return <section className="lr-sequence-story p-3 md:p-5" aria-label="Action story">
-    <header><span>{final ? 'What happened' : 'The scene unfolds'}</span><div className="lr-story-navigation">{canReadEarlier && <button type="button" aria-label="Read from start" onClick={() => { if (!paused && !final) onPause(); follows.current = false; scrollRef.current.scrollTop = 0; scrollRef.current.focus({ preventScroll: true }); setCanReadEarlier(false); }}>↑ <span className="lr-story-nav-long">Read from start</span><span className="lr-story-nav-short">Start</span></button>}<small>{index + 1} / {events.length}</small></div></header>
-    <div className="lr-sequence-story-scroll" ref={scrollRef} tabIndex={0} aria-label="Read the action story" onScroll={event => {
-      const el = event.currentTarget;
-      follows.current = el.scrollHeight - el.scrollTop - el.clientHeight < 36;
-      setCanReadEarlier(el.scrollTop > 8);
-      if (!follows.current && !paused && !final) onPause();
-    }}>
+    <header>
+      <span>{final ? 'What happened' : 'The scene unfolds'}</span>
+      <div className="lr-story-navigation">
+        {final && canReadLater && <button type="button" aria-label="Continue reading the action" onClick={readNext}><span className="lr-story-nav-long">Continue reading</span><span className="lr-story-nav-short">More</span> ↓</button>}
+        {canReadEarlier && (!final || !canReadLater) && <button type="button" aria-label="Read from start" onClick={readFromStart}>↑ <span className="lr-story-nav-long">Read from start</span><span className="lr-story-nav-short">Start</span></button>}
+        <small>{index + 1} / {events.length}</small>
+      </div>
+    </header>
+    <div className="lr-sequence-story-scroll" ref={scrollRef} tabIndex={0} aria-label="Read the action story" onScroll={event => { if (readingScroller() === event.currentTarget) handleScroll(event.currentTarget); }}>
       <ol aria-live="polite" aria-relevant="additions" aria-atomic="false">
         {events.slice(0, index + 1).map((entry, position) => <li key={`${position}-${entry.kind}`} className={`is-${entry.kind}`}>
           <span aria-hidden="true">{entry.title ? <BiIcon cls={`bi ${entry.icon}`} /> : String(position + 1).padStart(2, '0')}</span>
