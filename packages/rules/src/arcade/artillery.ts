@@ -124,7 +124,7 @@ export const ARTILLERY_PAYLOAD_RULES: Record<ArtilleryPayload, {
   skip: { blastRadius: 8, craterRadius: 10, craterDepth: 0.92, projectileCount: 1, penetration: 0, baseDamage: 34, directBonus: 7, speedMultiplier: 0.95, gravityMultiplier: 1, terrainBuild: 0 },
   mole: { blastRadius: 9, craterRadius: 11, craterDepth: 1.1, projectileCount: 1, penetration: 0, baseDamage: 31, directBonus: 5, speedMultiplier: 0.98, gravityMultiplier: 1, terrainBuild: 0 },
   tractor: { blastRadius: 26, craterRadius: 3.5, craterDepth: 0.25, projectileCount: 1, penetration: 0, baseDamage: 12, directBonus: 5, speedMultiplier: 0.92, gravityMultiplier: 0.92, terrainBuild: 0 },
-  foam: { blastRadius: 5, craterRadius: 20, craterDepth: 0, projectileCount: 1, penetration: 0, baseDamage: 8, directBonus: 2, speedMultiplier: 0.94, gravityMultiplier: 1.04, terrainBuild: 0.8 },
+  foam: { blastRadius: 5, craterRadius: 24, craterDepth: 0, projectileCount: 1, penetration: 0, baseDamage: 8, directBonus: 2, speedMultiplier: 0.94, gravityMultiplier: 1.04, terrainBuild: 0.8 },
 };
 
 const ARTILLERY_SPEED_SCALE = 0.3;
@@ -553,9 +553,17 @@ function reshapeTerrain(terrain: readonly number[], impact: ArtilleryPoint | nul
     return terrain.map((height, x) => {
       const distance = Math.abs(x - impact.x);
       if (distance >= rules.craterRadius) return height;
+      const normalized = distance / rules.craterRadius;
       const rim = left + (right - left) * (x - impact.x + rules.craterRadius) / (2 * rules.craterRadius);
-      const fill = Math.max(0, rim - height + 3) * Math.pow(1 - distance / rules.craterRadius, 0.8);
-      return Math.min(76, height + fill);
+      // Foam bridges the surrounding grade and leaves a shallow hardened pad
+      // even on intact ground. A full-strength center fills actual blast pits;
+      // the eased outer edge joins the existing surface without a vertical lip.
+      const target = rim + 7 * (1 - normalized * normalized);
+      const edge = Math.min(1, Math.max(0, (1 - normalized) / 0.32));
+      const blend = edge * edge * (3 - 2 * edge);
+      const bridgeFill = Math.max(0, target - height) * blend;
+      const surfaceCoat = 7 * Math.pow(1 - normalized, 2);
+      return Math.min(76, height + Math.max(bridgeFill, surfaceCoat));
     });
   }
   return terrain.map((height, x) => {

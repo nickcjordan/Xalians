@@ -526,3 +526,27 @@ so plainly. A run should not claim completion just because tests pass.
   gate in a concurrent PR, so this change does not restore that policy. All
   373 rules and 1,345 web tests passed, along with both typechecks. The final
   production build and release checks follow deployment.
+
+### 2026-09-18: Foam Tide validation and repair
+
+- Nick reported that Foam Tide appeared to do nothing. The first arsenal pass
+  tested a synthetic pit but did not fire foam in a browser. On intact ground,
+  the original rule often barely moved the surface. An unconditional generic
+  aftermath return also hid the dedicated foam, Mole Mine, and Tractor Knot
+  aftermath artwork.
+- Foam now bridges the surrounding grade across a 48-unit footprint, adds a
+  shallow surface coat even without a pit, and eases into untouched ground.
+  The hardened residue follows the actual terrain profile rather than drawing
+  a straight stripe across slopes. The weapon description states both uses.
+- Rules checks now cover intact terrain, a real Comet crater followed by a
+  re-aimed foam volley, and a steep pit that becomes driveable after foam.
+  Component checks verify the terrain changes, a foam-specific lingering mark,
+  and the Mole Mine and Tractor Knot marks that were previously unreachable.
+  In local browser play on Stonera, one foam shot changed 45 terrain samples
+  across x=206 to x=250 with a peak rise of about 11.8 units; the blue residue
+  followed the new ground silhouette. The browser check was on intact sloped
+  terrain, while crater recovery was verified through the actual two-shot
+  rules flow. All 374 rules and 1,349 web tests passed, along with both
+  typechecks and the production build. The first full web run hit an unrelated
+  authored-portrait lazy-load timeout; the complete rerun passed. Physical-
+  device testing remains deferred.

@@ -394,7 +394,45 @@ describe('Arcade deterministic rules', () => {
     const projectile = { path: [foamImpact], impact: foamImpact, hit: null, damage: 0, directHit: false, outOfBounds: false };
     const foamed = artilleryTerrainImpactStages(cratered.terrain, [projectile], 'foam')[0].terrain;
     expect(foamed[165]).toBeGreaterThan(cratered.terrain[165] + 12);
-    expect(foamed[145]).toBe(cratered.terrain[145]);
+    expect(foamed[145] - cratered.terrain[145]).toBeLessThan(1);
+  });
+
+  it('makes a visible foam pad on intact ground and fills a real Comet crater', () => {
+    const state = createArtilleryState('foam-regression', 'range', 'standard', { mapSize: 'standard' });
+    const shell = simulateArtilleryShot(state, { angle: 42, power: 57, payload: 'shell' });
+    expect(shell.impact).not.toBeNull();
+    const impact = shell.impact!;
+    const projectile = { path: [impact], impact, hit: null, damage: 0, directHit: false, outOfBounds: false };
+    const intact = artilleryTerrainImpactStages(state.terrain, [projectile], 'foam')[0].terrain;
+    const center = Math.round(impact.x);
+    expect(intact[center] - state.terrain[center]).toBeGreaterThanOrEqual(6);
+    expect(intact[center - 25]).toBe(state.terrain[center - 25]);
+    expect(intact[center + 25]).toBe(state.terrain[center + 25]);
+
+    const crater = artilleryTerrainImpactStages(state.terrain, shell.projectiles, 'shell')[0].terrain;
+    const filled = artilleryTerrainImpactStages(crater, [projectile], 'foam')[0].terrain;
+    expect(filled[center] - crater[center]).toBeGreaterThan(15);
+    expect(filled[center]).toBeGreaterThan(state.terrain[center]);
+
+    const shellTurn = applyArtilleryShot(state, { angle: 42, power: 57, payload: 'shell' });
+    const foamAim = Array.from({ length: 36 }, (_, index) => index * 2 + 10)
+      .flatMap((angle) => Array.from({ length: 86 }, (_, index) => ({ angle, power: index + 15, payload: 'foam' as const })))
+      .map((shot) => ({ shot, miss: Math.abs((simulateArtilleryShot(shellTurn.state, shot).impact?.x ?? -1000) - impact.x) }))
+      .sort((left, right) => left.miss - right.miss)[0];
+    expect(foamAim.miss).toBeLessThan(2);
+    const foamTurn = applyArtilleryShot(shellTurn.state, foamAim.shot);
+    expect(foamTurn.state.terrain[center] - shellTurn.state.terrain[center]).toBeGreaterThan(12);
+    expect(foamTurn.state.payloads.left.foam).toBe(shellTurn.state.payloads.left.foam - 1);
+
+    const trapped = {
+      ...state,
+      terrain: state.terrain.map((height, x) => height - Math.max(0, 18 - 4 * Math.abs(x - 120))),
+      tanks: { ...state.tanks, left: { ...state.tanks.left, x: 120 } },
+    };
+    expect(artilleryMovedX(trapped, 'left', 1, 'drive', 8)).toBe(120);
+    const rescueImpact = { x: 120, y: terrainHeight(trapped.terrain, 120) };
+    const repaired = artilleryTerrainImpactStages(trapped.terrain, [{ ...projectile, path: [rescueImpact], impact: rescueImpact }], 'foam')[0].terrain;
+    expect(artilleryMovedX({ ...trapped, terrain: repaired }, 'left', 1, 'drive', 8)).toBeGreaterThan(120);
   });
 
   it('makes a buried drill hit the rig above its cavity and buckle its footing', () => {
