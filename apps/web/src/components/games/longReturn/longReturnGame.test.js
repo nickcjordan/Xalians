@@ -266,6 +266,7 @@ describe('Long Return Simple mode', () => {
     expect(container.textContent).toContain('Crossing complete');
     expect(container.querySelectorAll('.lr-result-changes .lr-projection-track').length).toBeGreaterThan(0);
     expect(container.querySelector('.lr-arrival-grid .lr-arrival-story')).toBeTruthy();
+    expect(container.querySelector('[data-arrival-trace]').getAttribute('aria-label')).toContain('from Outer seal to Turbine hall');
     expect(container.querySelector('.lr-arrival-grid .lr-result-changes')).toBeTruthy();
     expect(container.querySelector('.lr-simple-result .lr-simple-surprise')).toBeNull();
     expect(container.querySelector('.lr-result-changes .lr-projection-track').getAttribute('aria-label')).toContain('remaining');
