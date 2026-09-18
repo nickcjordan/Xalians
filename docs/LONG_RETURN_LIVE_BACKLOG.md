@@ -4,10 +4,15 @@ Owner: the agent maintaining the Long Return worktree. Update this file during i
 
 ## Active goal — full-mission UX (2026-09-11)
 
+### September 18: environmental weakness reads as part of the place
+
+- The live intake report still said “electric exposure bears particularly hard,” a diagnosis rather than something a player can picture. The account now translates susceptibility to electric, psychic, chemical, metal, ice, dark and light surroundings into short physical details tied to the relevant passage. A second read caught a repeated “pull” and “charge” in the intake paragraph; those were tightened while preserving the distinction between the lead's energy cost and the unseen hazard's structural damage.
+- A route-wide test covers all fourteen approaches with an environmental vulnerability and checks that no generic exposure announcement returns. All 1,313 web tests, typecheck, production build and bundle budgets passed. A rebuilt isolated phone preview replayed the intake and three-scene sequence; the final intake report was read alongside its unchanged energy/stability receipt. Player response to the prose remains open.
+
 ### September 18: effort is shown by the passage, not a repeated announcement
 
 - The seven-room account audit found the same “By the time the work is done, the effort has taken its toll” sentence after almost every costly crossing. The route-specific exertion already describes what the lead is physically doing, and the adjacent energy receipt shows the cost. Removed the generic repetition without changing resource accounting, exposure, hazard or arrival events. A local three-scene phone replay of the rebuilt preview confirmed that each account now moves directly from the lead's action to its actual environmental and structural consequences; the running 4173 preview was an older build, so verification used an isolated 4180 preview.
-- All 1,312 web tests, typecheck, production build and bundle budgets passed. A route-wide test guards against restoring the generic announcement. Whether this reads naturally to a player remains open.
+- All 1,312 web tests, typecheck, production build and bundle budgets passed. A route-wide test guards against restoring the generic announcement. PR #390 merged and its frontend deployment succeeded; the published intake report was checked after rollout. Whether this reads naturally to a player remains open.
 
 ### September 18: the crossing account names the source of structural damage
 

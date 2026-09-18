@@ -26,7 +26,7 @@ test('brine appears during the action and the bypass is introduced through the p
   const paragraphs = resolve(scene.routes[1], { unseenHazards: scene.hazards, leadStrain: 2, pressure: 2, salvage: 2 });
   expect(paragraphs[1]).toContain('A blue flash');
   expect(paragraphs[2]).toContain('shudder');
-  expect(paragraphs[2]).toContain('charge jumps into submerged cabling');
+  expect(paragraphs[2]).toContain('surge races into submerged cabling');
   expect(paragraphs[2]).not.toContain('flood tugs at the loosened wreckage');
   expect(paragraphs[3]).toContain('Their wake draws frozen debris');
   expect(paragraphs[3]).toContain('a side channel built to carry cooling water');
@@ -65,11 +65,26 @@ test('costly crossings use the chosen passage for their effort instead of repeat
   }
 });
 
+test('elemental vulnerability is pictured in the passage rather than announced as a stat', () => {
+  const expected = {
+    electric: 'Charge catches Hippochamp through the water', psychic: "lock's repeating signal presses",
+    chemical: 'sharp trace from the damaged archive', metal: 'old metal fights Hippochamp',
+    ice: 'Frost grips the passage', dark: 'broken hull', light: 'Light flashes through the turning rings'
+  };
+  for (const scene of MISSION.scenes) for (const route of scene.routes) {
+    const text = resolve(route, { leadStrain: 1, environment: { notes: ['is highly exposed to the element'] } })[2];
+    const clue = route.environment.element === 'electric' && route.environment.medium !== 'liquid'
+      ? 'Charge flickers across the old machinery' : expected[route.environment.element];
+    expect(text, `${scene.id}/${route.id}`).toContain(clue);
+    expect(text).not.toContain('exposure bears particularly hard');
+  }
+});
+
 test('stability prose distinguishes ordinary route wear from an unseen hazard and uncontrolled reaction', () => {
   const intake = MISSION.scenes[0].routes[1];
   const hazard = MISSION.scenes[0].hazards[0];
   const unseen = resolve(intake, { pressure: 2, reactionControlled: true, unseenHazards: [hazard] })[2];
-  expect(unseen).toContain('charge jumps into submerged cabling');
+  expect(unseen).toContain('surge races into submerged cabling');
   expect(unseen).not.toContain('flood tugs');
   const uncontrolled = resolve(intake, { pressure: 1, reactionControlled: false })[2];
   expect(uncontrolled).toContain('flood tugs at the loosened wreckage');

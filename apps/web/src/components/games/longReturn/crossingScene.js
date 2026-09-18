@@ -25,7 +25,7 @@ const NEXT_THRESHOLDS = {
 };
 
 const HAZARDS = {
-  'conductive-brine': ['A blue flash travels through the flood. The brine carries an electrical charge, and the crew is already in its path.', 'The crew watches for the charge moving through the brine and works around the danger the scout identified.', 'The charge jumps into submerged cabling. A shudder runs through the old intake wall.'],
+  'conductive-brine': ['A blue flash travels through the flood. The brine carries an electrical charge, and the crew is already in its path.', 'The crew watches for the charge moving through the brine and works around the danger the scout identified.', 'A surge races into submerged cabling. A shudder runs through the old intake wall.'],
   'servo-cycle': ['One of the apparently dormant turbines begins its silent turn. The safe interval is closing sooner than the crew expected.', 'The crew follows the rotation the scout marked, anticipating the turbine rather than discovering it in motion.', 'The unexpected rotation jolts its mountings and shakes the hall.'],
   countermeasure: ['The lock answers with an interrogation pattern instead of an opening signal. Its obsolete questions press into the crew’s thoughts while the arms continue their work.', 'The crew recognizes the lock’s interrogation pattern from the report and prepares for it before answering the rig.', 'The false response drives the arms against their frame, shaking the door’s old mountings.'],
   'void-shear': ['Loose fragments begin sliding toward the outer hull. The pull changes across the centerline, catching the crew where the crossing had seemed straight.', 'The drifting fragments reveal the changing pull the scout warned about. The crew adjusts its passage before reaching the shear.', 'The sliding debris strikes a hull seam, shifting the already exposed structure.'],
@@ -109,6 +109,21 @@ const EFFORTS = {
   closure: 'pushes through the narrowing interval until the spindle is beyond the rings'
 };
 
+function elementalExposure(route, name) {
+  switch (route.environment.element) {
+    case 'electric': return route.environment.medium === 'liquid'
+      ? `Charge catches ${name} through the water, making each move toward the far side harder.`
+      : `Charge flickers across the old machinery, forcing ${name} to break contact and find another hold.`;
+    case 'psychic': return `The lock's repeating signal presses into ${name}'s thoughts, making the sequence harder to hold.`;
+    case 'chemical': return `A sharp trace from the damaged archive catches ${name} each time it returns to the work.`;
+    case 'metal': return `The old metal fights ${name} at each point of contact, slowing its work.`;
+    case 'ice': return `Frost grips the passage under ${name}, turning each move into a careful effort.`;
+    case 'dark': return `Beyond the broken hull, ${name} struggles to judge the next hold in the dark.`;
+    case 'light': return `Light flashes through the turning rings, breaking ${name}'s view of the gap again and again.`;
+    default: return '';
+  }
+}
+
 export function crossingScene({ route, lead, support, method, result, companionHelp }) {
   const passage = PASSAGES[route.id];
   if (!passage) return null;
@@ -132,7 +147,7 @@ export function crossingScene({ route, lead, support, method, result, companionH
       : route.environment.medium === 'liquid' ? `${name} is out of its element beneath the surface. Holding on until the others follow takes more out of it than the crossing alone.`
         : `${name} struggles outside the surroundings it needs, pushing on until the crew is through.`;
     if (note.includes('temperature band')) return `${route.environment.temperatureC < 0 ? 'The cold' : 'The heat'} is more than ${name} can comfortably endure, wearing it down even while the passage advances.`;
-    if (note.includes('exposed to')) return `The ${route.environment.element} exposure bears particularly hard on ${name}, making the work more demanding.`;
+    if (note.includes('exposed to')) return elementalExposure(route, name);
     return '';
   }).filter(Boolean).join(' ') : '';
   const routeWear = route.pressure > 0 || result.reactionControlled === false
