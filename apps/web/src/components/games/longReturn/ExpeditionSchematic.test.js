@@ -34,6 +34,19 @@ test('the decision map names approaches on phones, while the reading record leav
   expect(container.querySelector('[data-expedition-map]').getAttribute('data-map-record')).toBe('true');
 });
 
+test('the compact choice inset reuses the room geometry without repeating campaign chrome', () => {
+  const scene = MISSION.scenes[0];
+  const { container } = render(<ExpeditionSchematic scene={scene} crew={CREATURES.slice(0, 3)} routeId={scene.routes[1].id} preview decisionInset />);
+  const inset = container.querySelector('[data-route-schematic]');
+  expect(inset).toBeTruthy();
+  expect(inset.hasAttribute('data-expedition-map')).toBe(false);
+  expect(inset.querySelectorAll('[data-map-connection="route"]')).toHaveLength(2);
+  expect(inset.querySelector('[data-map-route="intake"] [data-map-direction]')).toBeTruthy();
+  expect(inset.querySelector('[data-site-overview]')).toBeNull();
+  expect(inset.querySelector('[data-map-route-caption]')).toBeNull();
+  expect(inset.querySelector('[data-expedition-reserves]')).toBeNull();
+});
+
 test('the field record uses a fixed scouting trace and reveals contact only at contact', () => {
   const crew = CREATURES.slice(0, 3);
   const scene = MISSION.scenes[2];

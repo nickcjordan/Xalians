@@ -70,10 +70,12 @@ try {
       continue;
     }
     await page.screenshot({ path: `${output}/${step}-view.png`, fullPage: true });
-    const map = page.locator('.lr-shell [data-expedition-map]');
+    const parentMap = page.locator('.lr-shell [data-expedition-map]');
+    const insetMap = page.locator('.lr-route-board [data-route-schematic]');
+    const map = await insetMap.isVisible() ? insetMap : parentMap;
     if (await map.count()) {
       const mapScene = await map.getAttribute('data-map-scene');
-      if (viewport.width < 720) assert.equal(await map.locator('[data-map-route-caption]').count(), await map.getAttribute('data-map-local') === 'true' ? 0 : 2, 'Phone decision maps name both approaches; focused encounter maps omit redundant route captions');
+      if (viewport.width < 720) assert.equal(await map.locator('[data-map-route-caption]').count(), await map.getAttribute('data-map-local') === 'true' || await map.getAttribute('data-route-schematic') === 'true' ? 0 : 2, 'Phone inset and encounter maps omit route captions repeated by the active choice');
       const mapDrawing = await map.locator(':scope > svg').boundingBox();
       assert(mapDrawing.height >= 70, `The room drawing must retain its own height, not inherit an icon rule: ${mapDrawing.height}`);
       const entrance = await map.locator('[data-map-threshold="entry"]').textContent();
@@ -198,12 +200,19 @@ try {
         events.push({ type: 'route-viewport', scene: crossed + 1, top: firstRoute?.y, height: viewport.height });
         assert(contextBox.y >= 48 && contextBox.y < firstRoute.y, `The phone route comparison keeps the room and objective above its choices: ${JSON.stringify({ context: contextBox.y, choice: firstRoute.y })}`);
         assert(firstRoute.y >= 56 && firstRoute.y < viewport.height, 'The phone opens route comparison with both route choices visible');
+        assert(await insetMap.isVisible(), 'The active choice keeps the room schematic beside its costs');
+        assert(!(await parentMap.isVisible()), 'The previous context map is not repeated above the phone comparison');
+        assert.deepEqual(await insetMap.locator('[data-map-choice-tag]').evaluateAll(nodes => nodes.map(node => node.getAttribute('data-map-choice-tag'))), ['A', 'B']);
+        assert.deepEqual(await page.locator('.lr-board-route-tag').evaluateAll(nodes => nodes.map(node => node.textContent)), ['A', 'B']);
+        const firstCost = await page.locator('.lr-route-board .is-energy').boundingBox();
+        assert(firstCost.y < viewport.height, 'The first cost comparison remains in the initial phone viewport with the schematic');
         assert(await page.locator('.lr-route-board').evaluate(node => document.activeElement === node), 'Keyboard focus follows the phone into route comparison');
         await page.screenshot({ path: `${output}/route-viewport-${crossed}.png` });
       }
-      assert(!(await map.locator('[data-expedition-reserves]').innerText()).includes("Can't scout"), 'Crossing choices do not show a scouting restriction');
+      assert(!(await parentMap.locator('[data-expedition-reserves]').innerText()).includes("Can't scout"), 'Crossing choices do not show a scouting restriction');
       const sharedObstacle = ['archive-vestibule', 'nemesis-index', 'generator-spine'].includes(await map.getAttribute('data-map-scene'));
-      assert.equal(await page.locator('[data-route-path-cue]').count(), sharedObstacle ? 0 : 2, 'Physical alternatives retain path cues; shared obstacles do not invent corridors');
+      assert.equal(await map.locator('[data-map-connection="intervention"]').count(), sharedObstacle ? 2 : 0, 'Shared obstacles use intervention outlines, not invented corridors');
+      assert.equal(await map.locator('[data-map-connection="route"]').count(), sharedObstacle ? 0 : 2, 'Physical alternatives share the actual room diagram');
       const orientation = page.locator('.lr-route-orientation');
       assert(await orientation.isVisible(), 'Scene context stays visible while choosing');
       const storyBox = await orientation.boundingBox();
@@ -212,14 +221,14 @@ try {
       assert.equal(await page.locator('.lr-route-setting').count(), 2, 'Both routes explain their physical approach');
       if (process.env.LR_REVIEW_MAPS === '1') {
         const locations = await map.locator('[data-map-creature]').evaluateAll(nodes => nodes.map(node => node.style.transform));
-        const reserves = await map.locator('[data-expedition-reserves]').innerText();
+        const reserves = await parentMap.locator('[data-expedition-reserves]').innerText();
         const shared = ['archive-vestibule','nemesis-index','generator-spine'].includes(await map.getAttribute('data-map-scene'));
         for (const choice of await page.locator('.lr-board-pick').all()) {
           const route = await choice.locator('..').getAttribute('data-route-preview');
           await choice.focus();
-          await page.waitForFunction(id => document.querySelector('.lr-shell [data-expedition-map]')?.dataset.previewRoute === id, route);
+          await page.waitForFunction(id => document.querySelector('.lr-route-board [data-route-schematic]')?.dataset.previewRoute === id, route);
           assert.deepEqual(await map.locator('[data-map-creature]').evaluateAll(nodes => nodes.map(node => node.style.transform)), locations, 'Changing the intervention does not move the crew');
-          assert.equal(await map.locator('[data-expedition-reserves]').innerText(), reserves);
+          assert.equal(await parentMap.locator('[data-expedition-reserves]').innerText(), reserves);
           assert.equal(await map.locator('[data-map-shared-passage]').count(), shared ? 1 : 0);
           assert.equal(await map.locator('[data-map-target]').count(), shared ? 1 : 0);
           if (shared) assert.equal(await map.locator('[data-map-target]').getAttribute('data-map-target'), route);
@@ -229,7 +238,7 @@ try {
         }
       }
       const recommended = page.locator('.lr-board-head .is-recommended .lr-board-pick');
-      const confirmed = page.locator('.lr-board-pick').filter({ hasText: 'Costs confirmed' });
+      const confirmed = page.locator('.lr-board-pick').filter({ has: page.locator('[title="Costs are confirmed"]') });
       const prescribed = process.env.LR_ROUTES?.split(',')[crossed];
       const leastRisk = page.locator('.lr-board-head [data-lowest-risk="true"] .lr-board-pick');
       await click(prescribed !== undefined ? page.locator('.lr-board-pick').nth(Number(prescribed)) : process.env.LR_ROUTE_POLICY === 'recommended-risk' ? await recommended.count() ? recommended.first() : leastRisk.first() : process.env.LR_CONSERVE === '1' && await leastRisk.count() ? leastRisk.first() : await recommended.count() ? recommended.first() : await confirmed.count() ? confirmed.first() : page.locator('.lr-board-pick').first());
