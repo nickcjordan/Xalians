@@ -449,6 +449,7 @@ export function resolveScene({ scene, route, lead, support, method, scan, useCom
   const reactionControlled = naturalReaction || useCommand;
   if (!reactionControlled) pressure += 1;
   if (naturalReaction && leadStrain > 0) leadStrain -= 1;
+  leadStrain += route.sustainedWork || 0;
 
   const quality = margin >= 14 ? 'clean' : margin >= 0 ? 'costly' : margin >= -14 ? 'rough' : 'critical';
   return {

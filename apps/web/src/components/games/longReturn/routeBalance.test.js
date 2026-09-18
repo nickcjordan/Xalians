@@ -26,7 +26,7 @@ test('different crew and route policies produce distinct expedition costs', () =
             const args = { scene, route, lead, support, method, scan: { revealedIds: intel === 'mapped' ? scene.hazards.map(h => h.id) : [] }, useCommand: false, leadLoad: strain[lead.id] || 0, supportLoad: strain[support.id] || 0 };
             const result = resolveScene(args);
             const forecast = decisionForecast(args);
-            const knownEnergy = Math.max(0, forecast.baseLeadStrain + forecast.environment.strain - (forecast.naturalReaction ? 1 : 0));
+            const knownEnergy = Math.max(0, forecast.baseLeadStrain + forecast.environment.strain - (forecast.naturalReaction ? 1 : 0)) + (route.sustainedWork || 0);
             const cost = knownEnergy + forecast.baseSupportStrain + (route.pressure + (forecast.naturalReaction ? 0 : 1)) * 2;
             expect(Number.isFinite(cost)).toBe(true);
             choices.push({ route, lead, support, result, cost });

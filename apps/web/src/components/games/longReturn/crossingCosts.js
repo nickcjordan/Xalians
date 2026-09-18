@@ -13,6 +13,7 @@ export function crossingCosts(route, result, companionHelp) {
   const gross = energy.reduce((sum, entry) => sum + entry.amount, 0);
   add(energy, 'Instinct suited the route', result.naturalReaction && gross > 0 ? -1 : 0);
   add(energy, 'Companion helped', companionHelp ? -1 : 0);
+  add(energy, 'Careful plate recovery', route.sustainedWork || 0);
   add(stability, 'Route disturbance', route.pressure);
   add(stability, 'Off-plan reaction', result.reactionControlled ? 0 : 1);
   return { energy, support: result.supportStrain ? [{ label: 'Support intervention', amount: result.supportStrain }] : [], stability };

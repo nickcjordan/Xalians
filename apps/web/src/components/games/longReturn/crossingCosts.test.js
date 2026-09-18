@@ -14,3 +14,19 @@ test('receipt contributions reconcile with the engine across every route and cre
     }
   }
 });
+
+test('careful archive recovery has a visible effort cost that a quick backup pull avoids', () => {
+  const scene = MISSION.scenes.find(entry => entry.id === 'nemesis-index');
+  const stabilize = scene.routes.find(route => route.id === 'stabilize');
+  const blackbox = scene.routes.find(route => route.id === 'blackbox');
+  expect(stabilize.sustainedWork).toBe(2);
+  expect(blackbox.sustainedWork || 0).toBe(0);
+  const lead = CREATURES.find(entry => entry.species === 'Graviclaw');
+  const support = CREATURES.find(entry => entry.species === 'Hippochamp');
+  for (const route of [stabilize, blackbox]) {
+    const method = methodOptions(lead, route, [])[0];
+    const result = resolveScene({ scene, route, lead, support, method, scan: { revealedIds: scene.hazards.map(hazard => hazard.id) }, useCommand: false });
+    const costs = crossingCosts(route, result);
+    expect(costs.energy.find(entry => entry.label === 'Careful plate recovery')?.amount || 0).toBe(route.sustainedWork || 0);
+  }
+});

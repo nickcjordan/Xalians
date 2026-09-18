@@ -40,6 +40,16 @@ export function comparisonCosts(plan, companion) {
 const cellClass = 'border-l border-edge-strong p-2 md:p-3 whitespace-normal align-top [&.is-selected]:bg-caution-tint';
 const axisClass = 'lr-board-axis p-2 md:p-3 text-left text-small font-normal text-ink-2 whitespace-normal';
 const rowClass = 'lr-board-row border-edge-strong hover:bg-transparent';
+function costCaption(plan, key, value, unknown, saved, companion) {
+  if (key === 'salvage') return 'salvage';
+  if (key === 'energy' && plan.route.sustainedWork) return 'Careful plate recovery';
+  if (key === 'energy' && saved > 0) return `${companion.creature.species} saves 1 · uses its one help`;
+  if (unknown) return value > 0 ? 'known cost + unknown extra' : 'total unknown';
+  if (value === 0) return 'none spent';
+  if (key === 'stability' && plan.route.id === 'stabilize') return 'Wavering field';
+  if (key === 'stability' && plan.route.id === 'blackbox') return 'Cradle gives way';
+  return 'fixed cost';
+}
 export default function RouteComparison({ scene, plans, selectedId, onSelect, onPreview, companion, recommendation }) {
   const [analysisId, setAnalysisId] = useState(null);
   const focusedRoute = board => board.querySelector(':focus')?.closest('[data-route-preview]')?.dataset.routePreview;
@@ -72,7 +82,7 @@ export default function RouteComparison({ scene, plans, selectedId, onSelect, on
         const unknown = key !== 'salvage' && values[index].uncertain;
         return <TableCell key={plan.route.id} role="cell" data-route-preview={plan.route.id} className={`${cellClass} lr-board-value ${selectedId === plan.route.id ? 'is-selected' : ''}`} aria-label={`${plan.route.title}: ${value} ${key}${unknown ? ' known, plus unknown extra cost' : ''}`}>
           <div className="lr-board-amount mb-1 flex flex-wrap items-center gap-2 text-heading">{(!unknown || value > 0) && <b>{value}</b>}{unknown && <span className="lr-board-unknown border border-dashed border-current px-2" title={`${value} known cost. The scout has not established the extra cost; it may affect energy, stability, or both.`}>{value > 0 ? '+ ?' : '?'}</span>}{value === 0 && !unknown && <Check className="size-4" aria-label="None spent" />}</div>
-          <small className="block text-small text-ink-2">{key === 'energy' && values[index].saved > 0 ? `${companion.creature.species} saves 1 · uses its one help` : unknown ? value > 0 ? 'known cost + unknown extra' : 'total unknown' : key === 'salvage' ? 'salvage' : value === 0 ? 'none spent' : 'fixed cost'}</small>
+          <small className="block text-small text-ink-2">{costCaption(plan, key, value, unknown, values[index].saved, companion)}</small>
           {key === 'energy' && values[index].exhaustsLead && <small className="lr-board-exhaustion block text-small text-caution">{plan.lead.species} has no energy left afterward{values[index].assisted ? ' · even with ally help' : ''}</small>}
         </TableCell>;
       })}

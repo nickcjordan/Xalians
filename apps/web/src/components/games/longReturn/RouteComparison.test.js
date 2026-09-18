@@ -107,6 +107,23 @@ test('confirmed ally savings are explained at the energy value, not only in anal
   expect(root.querySelector('.is-energy [role="cell"] small').textContent).toBe('Xylum saves 1 · uses its one help');
 });
 
+test('the archive comparison ties its energy cost to the physical recovery work', () => {
+  const scene = MISSION.scenes.find(entry => entry.id === 'nemesis-index');
+  const [stabilize, blackbox] = scene.routes;
+  const plans = [
+    { ...base, route: stabilize, knownLeadStrain: 2, knownPressure: 1 },
+    { ...base, route: blackbox, knownLeadStrain: 0, knownPressure: 3 }
+  ];
+  const root = document.createElement('div');
+  root.innerHTML = renderToStaticMarkup(<RouteComparison scene={scene} plans={plans} />);
+  const energy = root.querySelectorAll('.is-energy [role="cell"]');
+  expect(energy[0].textContent).toContain('2Careful plate recovery');
+  expect(energy[1].textContent).toContain('none spent');
+  expect(Array.from(root.querySelectorAll('.is-stability [role="cell"] .lr-board-amount'), cell => cell.textContent)).toEqual(['1', '3']);
+  expect(Array.from(root.querySelectorAll('.is-stability [role="cell"] small'), cell => cell.textContent)).toEqual(['Wavering field', 'Cradle gives way']);
+  expect(Array.from(root.querySelectorAll('.is-salvage [role="cell"] .lr-board-amount'), cell => cell.textContent)).toEqual(['5', '3']);
+});
+
 test('one-use costs share a comparison row only when a plan uses an ability', () => {
   const root=document.createElement('div');
   root.innerHTML=renderToStaticMarkup(<RouteComparison plans={[base,{...base,route:{id:'b'},method:{abilityId:'beam',ability:{name:'Corona Line'}}}]} onSelect={()=>{}} onPreview={()=>{}} />);

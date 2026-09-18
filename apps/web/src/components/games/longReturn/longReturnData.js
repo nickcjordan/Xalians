@@ -352,7 +352,7 @@ export const MISSION = {
         { id: 'plague-dust', label: 'Dormant plague dust', detail: 'Opening the field will disturb a sealed contaminant layer.', sense: 'smell', threshold: 64, special: 'psychic', strain: 2, pressure: 1 }
       ],
       routes: [
-        { id: 'stabilize', title: 'Stabilize the archive', description: 'Preserve the chamber and recover every readable index plate.', difficulty: 76, pressure: 1, salvage: 5,
+        { id: 'stabilize', title: 'Stabilize the archive', description: 'Preserve the chamber and recover every readable index plate.', difficulty: 76, pressure: 1, sustainedWork: 2, salvage: 5,
           environment: { medium: 'gas', temperatureC: -5, element: 'chemical' }, hazardIds: ['plague-dust'],
           reaction: { axis: 'aggression', direction: 'low', label: 'A gentle lead avoids rupturing the stasis membrane.' },
           methods: [
