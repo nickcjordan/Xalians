@@ -67,16 +67,33 @@ test('costly crossings use the chosen passage for their effort instead of repeat
 
 test('elemental vulnerability is pictured in the passage rather than announced as a stat', () => {
   const expected = {
-    electric: 'Charge catches Hippochamp through the water', psychic: "lock's repeating signal presses",
+    electric: 'Charge flickers across the old machinery', psychic: "lock's repeating signal presses",
     chemical: 'sharp trace from the damaged archive', metal: 'old metal fights Hippochamp',
     ice: 'Frost grips the passage', dark: 'broken hull', light: 'Light flashes through the turning rings'
   };
   for (const scene of MISSION.scenes) for (const route of scene.routes) {
     const text = resolve(route, { leadStrain: 1, environment: { notes: ['is highly exposed to the element'] } })[2];
-    const clue = route.environment.element === 'electric' && route.environment.medium !== 'liquid'
-      ? 'Charge flickers across the old machinery' : expected[route.environment.element];
+    const clue = route.id === 'intake' ? 'Charge snaps through the flooded wreckage'
+      : route.id === 'dive' ? 'Charge flickers around the submerged cell' : expected[route.environment.element];
     expect(text, `${scene.id}/${route.id}`).toContain(clue);
     expect(text).not.toContain('exposure bears particularly hard');
+  }
+});
+
+test('a rim-side retrieval never describes electric exposure as crossing a channel or entering the water', () => {
+  const route = MISSION.scenes[5].routes[1];
+  const snare = route.methods.find(method => method.key === 'snare');
+  const paragraphs = resolve(route, { leadStrain: 1, environment: { notes: ['is highly exposed to Electric'] } }, snare);
+  expect(paragraphs[1]).toContain('from the rim');
+  expect(paragraphs[2]).toContain('around the submerged cell');
+  expect(paragraphs[2]).not.toMatch(/through the water|toward the far side/);
+});
+
+test('temperature cost describes effort without inventing a passage through a stationary work site', () => {
+  for (const scene of MISSION.scenes) for (const route of scene.routes) {
+    const text = resolve(route, { leadStrain: 1, environment: { notes: ['operates outside its normal temperature band'] } })[2];
+    expect(text, `${scene.id}/${route.id}`).toContain(route.environment.temperatureC < 0 ? 'The cold stiffens' : 'The heat bears down');
+    expect(text).not.toContain('passage advances');
   }
 });
 
