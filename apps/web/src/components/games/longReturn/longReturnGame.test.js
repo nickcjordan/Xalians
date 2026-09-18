@@ -123,6 +123,18 @@ describe('Long Return Simple mode', () => {
     expect(collapsed.copy).toContain('Annex stability reached zero.');
     expect(collapsed.label).toContain('Objective lost');
   });
+
+  test('voluntary extraction follows the return route from the place actually reached', () => {
+    const indexExit = missionOutcomePresentation('extracted', true, 5, undefined, 'nemesis-index');
+    expect(indexExit.copy).toContain('At the extraction fork');
+    expect(indexExit.copy).toContain('stair into the lower annex falls behind them');
+    expect(indexExit.copy).toContain('5 salvage intact');
+    const reservoirExit = missionOutcomePresentation('extracted', true, 9, undefined, 'core-reservoir');
+    expect(reservoirExit.copy).toContain('junction beyond the reservoir');
+    expect(reservoirExit.copy).toContain('Generator Spine untouched');
+    expect(reservoirExit.copy).toContain('9 salvage intact');
+    expect(reservoirExit.copy).not.toContain('unopened depths');
+  });
   let container;
   let root;
 
@@ -462,7 +474,7 @@ describe('Long Return Simple mode', () => {
     click(container, /extract now/i);
     expect(container.textContent).toContain('Crew Extracted');
     expect(container.textContent).toContain('ObjectiveSECURED');
-    expect(container.textContent).toMatch(/Voluntary extraction.*unopened depths remain/i);
+    expect(container.textContent).toMatch(/Voluntary extraction.*At the extraction fork.*stair into the lower annex falls behind them/i);
   });
 
   test('moves from the recommended scout to the simplified report', () => {

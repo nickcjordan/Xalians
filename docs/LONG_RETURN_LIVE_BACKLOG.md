@@ -4,11 +4,16 @@ Owner: the agent maintaining the Long Return worktree. Update this file during i
 
 ## Active goal — full-mission UX (2026-09-11)
 
+### September 17: voluntary extraction remembers where the crew turned back
+
+- Ending audit found that leaving after the reservoir still said the depths were unopened, although the crew had completed one optional crossing. The voluntary-extraction account now follows the marked return route from the actual exit point: the Index fork or the junction beyond the reservoir. It names the lower area left unexplored without erasing the area already visited. The secured Index and banked salvage are unchanged.
+- Local phone runs reached voluntary extraction after five and six crossings. Both ending accounts named the correct return point and banked their actual haul; the six-crossing ending was paint-reviewed. All 1,300 web tests, typecheck, production build and bundle budgets, and diff check pass. Player judgment of whether the ending feels earned remains open.
+
 ### September 17: arrival prose describes the map's current threshold
 
 - Hosted phone replay after PR #369 revealed a mismatch at the optional depth: the map still placed the crew at the extraction fork while the arrival paragraph said they had already descended to the reservoir. The next optional room similarly put the map at the spine approach while the prose described travel into the chamber as complete.
 - The arrival paragraphs now name the crew's visible threshold and describe the stair or final chamber as ahead. The preceding result still narrates how the crew reaches each threshold. No route geometry, resource rule or choice changes.
-- Local phone paint review confirms both optional arrival paragraphs now match the named map entry. A seven-crossing replay, 1,299 web tests, typecheck, production build and diff check pass. Recheck the hosted path after deployment. Human comprehension of the full handoff remains open.
+- Local and hosted phone paint review confirms both optional arrival paragraphs now match the named map entry. A hosted seven-crossing replay, 1,299 web tests, typecheck, production build and diff check pass. PR #370 merged and deployed. Human comprehension of the full handoff remains open.
 
 ### September 17: the later rooms have physical handoffs
 
