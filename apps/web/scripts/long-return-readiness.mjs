@@ -18,7 +18,7 @@ try {
       const key = 'xalians.long-return.checkpoint.v1';
       const envelope = JSON.parse(localStorage.getItem(key));
       const run = JSON.parse(envelope.payload);
-      run.strain = Object.fromEntries(run.selectedCrew.map(id => [id, 5]));
+      run.strain = Object.fromEntries(run.selectedCrew.map((id, index) => [id, index === 2 ? 6 : 5]));
       envelope.payload = JSON.stringify(run);
       let hash = 2166136261;
       for (let i = 0; i < envelope.payload.length; i++) hash = Math.imul(hash ^ envelope.payload.charCodeAt(i), 16777619);
@@ -34,7 +34,7 @@ try {
     assert(await stay.isEnabled());
     assert(await stay.evaluate(node => node.classList.contains('g-btn--primary')));
     const reserves = page.locator('.lr-shell [data-expedition-reserves]');
-    const before = await reserves.innerText();
+    const before = (await reserves.innerText()).replace(/\s+/g, '');
     for (const member of await reserves.locator('[data-reserve-creature]').all()) {
       const name = await member.locator('small').boundingBox();
       const warning = await member.locator('[data-reserve-warning]').boundingBox();
@@ -44,9 +44,11 @@ try {
     await page.screenshot({ path: `${output}/${width}-no-scout.png`, fullPage: true });
     await stay.click();
     await page.locator('.lr-route-board').waitFor();
-    assert.equal(await reserves.innerText(), before, 'Staying together spends nothing');
+    assert.equal((await reserves.innerText()).replace(/\s+/g, ''), before, 'Staying together spends nothing');
+    assert.equal(await page.locator('.lr-route-board .lr-board-ending').count(), 1, 'Only the route whose known energy cost forces extraction is marked');
+    await page.screenshot({ path: `${output}/${width}-route-stakes.png` });
     await page.locator('.lr-board-pick').first().click();
-    assert.equal(await page.locator('[data-lead-readiness]').count(), 3);
+    assert.equal(await page.locator('[data-lead-readiness]').count(), 2);
     assert(!((await reserves.innerText()).includes("Can't scout")), 'Role restriction does not follow player into crossing');
     await page.getByRole('button', { name: /Cross now/ }).scrollIntoViewIfNeeded();
     await page.screenshot({ path: `${output}/${width}-leads.png` });

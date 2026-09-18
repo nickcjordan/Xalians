@@ -1,6 +1,6 @@
 // Tier: immersive. A shared comparison keeps both paths beside the same cost axis.
 import React, { useState } from 'react';
-import { Zap, Building2, Package, Check, ArrowRight, HelpCircle, ShieldCheck, Hourglass } from 'lucide-react';
+import { Zap, Building2, Package, Check, ArrowRight, HelpCircle, ShieldCheck, Hourglass, TriangleAlert } from 'lucide-react';
 import { Button } from '../../ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../../ui/table';
 import './routeComparison.css';
@@ -34,7 +34,7 @@ function costCaption(plan, key, value, unknown, saved, companion) {
   if (key === 'stability' && plan.route.id === 'blackbox') return 'Cradle gives way';
   return 'fixed cost';
 }
-export default function RouteComparison({ scene, plans, selectedId, onSelect, onPreview, companion, recommendation, map }) {
+export default function RouteComparison({ scene, plans, selectedId, onSelect, onPreview, companion, recommendation, map, stakes = [] }) {
   const [analysisId, setAnalysisId] = useState(null);
   const focusedRoute = board => board.querySelector(':focus')?.closest('[data-route-preview]')?.dataset.routePreview;
   const previewColumn = event => onPreview?.(event.target.closest('[data-route-preview]')?.dataset.routePreview || focusedRoute(event.currentTarget) || selectedId || null);
@@ -66,7 +66,9 @@ export default function RouteComparison({ scene, plans, selectedId, onSelect, on
         return <TableCell key={plan.route.id} role="cell" data-route-preview={plan.route.id} className={`${cellClass} lr-board-value ${selectedId === plan.route.id ? 'is-selected' : ''}`} aria-label={`${plan.route.title}: ${value} ${key}${unknown ? ' known, plus unknown extra cost' : ''}`}>
           <div className="lr-board-amount mb-1 flex flex-wrap items-center gap-2 text-heading">{(!unknown || value > 0) && <b>{value}</b>}{unknown && <span className="lr-board-unknown border border-dashed border-current px-2" title={`${value} known cost. The scout has not established the extra cost; it may affect energy, stability, or both.`}>{value > 0 ? '+ ?' : '?'}</span>}{value === 0 && !unknown && <Check className="size-4" aria-label="None spent" />}</div>
           <small className="block text-small text-ink-2">{costCaption(plan, key, value, unknown, values[index].saved, companion)}</small>
-          {key === 'energy' && values[index].exhaustsLead && <small className="lr-board-exhaustion block text-small text-caution">{plan.lead.species} has no energy left afterward{values[index].assisted ? ' · even with ally help' : ''}</small>}
+          {stakes[index]?.kind === key
+            ? <small className="lr-board-ending inline-flex items-start gap-1 text-small text-caution" title={stakes[index].detail}><TriangleAlert className="mt-0.5 size-4 shrink-0" aria-hidden="true" />Forced extraction afterward</small>
+            : key === 'energy' && values[index].exhaustsLead && <small className="lr-board-exhaustion block text-small text-caution">{plan.lead.species} has no energy left afterward{values[index].assisted ? ' · even with ally help' : ''}</small>}
         </TableCell>;
       })}
     </TableRow>)}
