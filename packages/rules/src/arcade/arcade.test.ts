@@ -178,6 +178,25 @@ describe('Arcade deterministic rules', () => {
     expect(bore.outcome.path.at(-1)!.y).toBeLessThan(bore.outcome.path.at(-2)!.y);
   });
 
+  it('excavates a blast-centered cavity on both faces of a slope', () => {
+    const terrain = Array.from({ length: 101 }, (_, x) => x <= 50 ? 40 + (50 - x) * 0.6 : 40 - (x - 50) * 0.35);
+    const projectile = {
+      path: [{ x: 50, y: 40 }], impact: { x: 50, y: 40 }, hit: null,
+      damage: 0, directHit: false, outOfBounds: false,
+    };
+    const shell = artilleryTerrainImpactStages(terrain, [projectile], 'shell')[0].terrain;
+    expect(shell[50]).toBeCloseTo(40 - 16 * 1.02, 3);
+    expect(shell[42]).toBeLessThan(terrain[42] - 15);
+    expect(shell[58]).toBeLessThan(terrain[58] - 8);
+    expect(shell[33]).toBe(terrain[33]);
+    expect(shell[67]).toBe(terrain[67]);
+
+    const directHit = artilleryTerrainImpactStages(terrain, [{ ...projectile, impact: { x: 50, y: 41.5 } }], 'shell')[0].terrain;
+    expect(directHit[50]).toBeCloseTo(shell[50], 3);
+    const drill = artilleryTerrainImpactStages(terrain, [{ ...projectile, impact: { x: 50, y: 32.8 } }], 'bore')[0].terrain;
+    expect(drill[50]).toBeLessThan(shell[50]);
+  });
+
   it('keeps the opening wind for every turn in each artillery mode', () => {
     for (const mode of ['bot', 'local', 'range', 'challenge'] as const) {
       const initial = createArtilleryState(`stable-wind-${mode}`, mode);

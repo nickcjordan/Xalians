@@ -330,8 +330,9 @@ export function artilleryJetFlightY(launchY: number, fuelSpent: number, startFue
 }
 
 export function artilleryImpactRevealProgress(progress: number): number {
-  const delayed = Math.max(0, Math.min(1, (progress - 0.16) / 0.54));
-  return delayed * delayed * (3 - 2 * delayed);
+  // The ground is removed by the blast front, not slowly slumped afterward.
+  const blast = Math.max(0, Math.min(1, (progress - 0.035) / 0.3));
+  return 1 - Math.pow(1 - blast, 3);
 }
 
 const cinematicEase = (value: number) => {
@@ -361,10 +362,10 @@ export function artilleryImpactVisualState(phase: NonNullable<AnimatedShot>['pha
   }
   if (phase === 'impact') {
     return {
-      blastOpacity: 1 - cinematicEase((progress - 0.56) / 0.44),
-      smokeAge: Math.max(0, Math.min(0.56, (progress - 0.18) / 1.46)),
-      smokeOpacity: cinematicEase((progress - 0.18) / 0.28),
-      dustOpacity: cinematicEase((progress - 0.22) / 0.32),
+      blastOpacity: 1 - cinematicEase((progress - 0.28) / 0.42),
+      smokeAge: Math.max(0, Math.min(0.56, (progress - 0.13) / 1.55)),
+      smokeOpacity: cinematicEase((progress - 0.13) / 0.3),
+      dustOpacity: cinematicEase((progress - 0.08) / 0.26),
     };
   }
   const settleEase = cinematicEase(progress);
@@ -474,10 +475,64 @@ function PersistentPayloadAftermath({ mark, y, slope, age, visibility = 1 }: { m
   </g>;
 }
 
-function PayloadImpactArt({ payload, x, y, slope, progress, reveal, visual, index }: {
+function ExcavationBurst({ payload, x, y, progress, visual }: {
   payload: ArtilleryPayload;
   x: number;
   y: number;
+  progress: number;
+  visual: ReturnType<typeof artilleryImpactVisualState>;
+}) {
+  if (payload === 'bloom') return null;
+  const size = ARTILLERY_PAYLOAD_RULES[payload].craterRadius * (payload === 'lance' ? 0.72 : payload === 'bore' ? 0.84 : 1);
+  const expansion = cinematicEase(progress / 0.22);
+  const radius = size * (0.13 + expansion * 0.85);
+  const flash = 1 - cinematicEase(progress / 0.15);
+  const fire = 1 - cinematicEase((progress - 0.18) / 0.28);
+  const smoke = cinematicEase((progress - 0.13) / 0.22) * (1 - cinematicEase((progress - 0.54) / 0.36));
+  const fragments = Math.min(1, progress / 0.74);
+  const fragmentOpacity = 1 - cinematicEase((progress - 0.48) / 0.25);
+  const blast = visual.blastOpacity;
+  const firePockets = [
+    { dx: -0.47, dy: -0.08, size: 0.47 },
+    { dx: -0.22, dy: -0.48, size: 0.48 },
+    { dx: 0.24, dy: -0.57, size: 0.43 },
+    { dx: 0.53, dy: -0.16, size: 0.43 },
+    { dx: 0.18, dy: 0.16, size: 0.55 },
+    { dx: -0.34, dy: 0.25, size: 0.46 },
+  ];
+  return <g className={PAYLOAD_META[payload].elementClass} aria-hidden data-testid="artillery-excavation-burst" data-origin-y={y}>
+    <g opacity={fire * 0.49} filter="url(#artillery-smoke-soft)">
+      {firePockets.map((pocket, index) => <circle key={index} cx={x + pocket.dx * radius} cy={y + pocket.dy * radius} r={pocket.size * radius * 1.12} className="fill-el" />)}
+    </g>
+    <g opacity={fire * 0.34}>
+      {firePockets.map((pocket, index) => <circle key={index} cx={x + pocket.dx * radius} cy={y + pocket.dy * radius} r={pocket.size * radius * 0.82} className="fill-el" />)}
+    </g>
+    <circle cx={x} cy={y - radius * 0.18} r={radius * 0.41} className="fill-ink" opacity={flash * 0.94} filter="url(#artillery-smoke-soft)" />
+    <g opacity={smoke * 0.62} filter="url(#artillery-smoke-soft)">
+      {[-1, 0, 1].map((side) => <circle key={side} cx={x + side * radius * (0.46 + progress * 0.42)} cy={y - radius * (0.12 + progress * (side === 0 ? 0.7 : 0.38))} r={radius * (side === 0 ? 0.6 : 0.48)} className="fill-black" />)}
+    </g>
+    <g>
+      <circle cx={x} cy={y} r={radius * (0.5 + cinematicEase(progress / 0.2) * 0.68)} className="fill-none stroke-ink" strokeWidth="0.5" opacity={blast * (1 - cinematicEase(progress / 0.22)) * 0.64} />
+      {[-1, -0.78, -0.56, -0.33, -0.1, 0.16, 0.4, 0.63, 0.84, 1].map((spread, piece) => {
+        const shardX = x + spread * size * (0.13 + fragments * 1.42);
+        const shardY = y - size * (1.22 + (piece % 3) * 0.2) * 4 * fragments * (1 - fragments);
+        const shard = 0.55 + (piece % 3) * 0.24;
+        return <path
+          key={piece}
+          d={`M ${shardX - shard} ${shardY + shard * 0.45} L ${shardX + shard * 0.18} ${shardY - shard} L ${shardX + shard} ${shardY + shard * 0.6} Z`}
+          className={piece % 3 === 0 ? 'fill-el' : 'fill-ink-2'}
+          opacity={fragmentOpacity * (piece % 3 === 0 ? 0.86 : 0.72)}
+        />;
+      })}
+    </g>
+  </g>;
+}
+
+function PayloadImpactArt({ payload, x, y, groundY, slope, progress, reveal, visual, index }: {
+  payload: ArtilleryPayload;
+  x: number;
+  y: number;
+  groundY: number;
   slope: number;
   progress: number;
   reveal: number;
@@ -508,7 +563,7 @@ function PayloadImpactArt({ payload, x, y, slope, progress, reveal, visual, inde
       <path d={`M ${x} ${y + 2} V ${y - 31 * grow}`} className="stroke-el" strokeWidth="0.5" opacity={blast} />
       {[-1, 1].map((direction) => <path key={direction} d={`M ${x + direction * 0.8} ${y - 5 * grow} l ${direction * (2 + 2 * grow)} ${-4 * grow} M ${x + direction * 0.5} ${y - 14 * grow} l ${direction * (1.3 + grow)} ${-5 * grow}`} className="fill-none stroke-el" strokeWidth="0.38" opacity={blast * 0.65} />)}
     </g>
-    <path d={`M ${x - 1.2} ${y} Q ${x - 2.6} ${y - 5 - smoke * 8} ${x - 0.5} ${y - 10 - smoke * 9} M ${x + 1} ${y} Q ${x + 2.5} ${y - 4 - smoke * 7} ${x + 0.8} ${y - 8 - smoke * 8}`} className="fill-none stroke-el" strokeWidth="0.48" opacity={visual.smokeOpacity * 0.35} />
+    <path d={`M ${x - 1.2} ${groundY} Q ${x - 2.6} ${groundY - 5 - smoke * 8} ${x - 0.5} ${groundY - 10 - smoke * 9} M ${x + 1} ${groundY} Q ${x + 2.5} ${groundY - 4 - smoke * 7} ${x + 0.8} ${groundY - 8 - smoke * 8}`} className="fill-none stroke-el" strokeWidth="0.48" opacity={visual.smokeOpacity * 0.35} />
   </g>;
 
   if (payload === 'bore') return <g className={PAYLOAD_META[payload].elementClass} aria-hidden data-testid="artillery-impact-bore">
@@ -517,7 +572,7 @@ function PayloadImpactArt({ payload, x, y, slope, progress, reveal, visual, inde
       {[-1, 1].map((direction) => <path key={direction} d={`M ${x + direction * radius * 0.15} ${y + 0.4} l ${direction * radius * 0.38 * grow} ${-1.1 * grow} ${direction * radius * 0.25 * grow} ${1.8 * grow} M ${x + direction * radius * 0.25} ${y + 1} l ${direction * radius * 0.48 * grow} ${2.4 * grow}`} className="fill-none stroke-el" strokeWidth="0.32" opacity={blast * 0.68} />)}
       {[0, 1, 2, 3, 4, 5].map((piece) => { const direction = piece % 2 ? 1 : -1; return <path key={piece} d={`M ${x} ${y - 2} l ${direction * (2 + piece * 0.7) * grow} ${-5 - (piece % 3) * 3 * grow} l ${direction * 1.1} 1.5`} className="fill-none stroke-el" strokeWidth="0.55" opacity={blast * 0.75} />; })}
     </g>
-    <ellipse cx={x} cy={y - smoke * 8} rx={2 + smoke * 4.5} ry={2 + smoke * 5.5} className="fill-ink-3" opacity={visual.smokeOpacity * 0.28} filter="url(#artillery-smoke-soft)" />
+    <ellipse cx={x} cy={groundY - smoke * 8} rx={2 + smoke * 4.5} ry={2 + smoke * 5.5} className="fill-ink-3" opacity={visual.smokeOpacity * 0.28} filter="url(#artillery-smoke-soft)" />
   </g>;
 
   if (payload === 'barb') return <g className={PAYLOAD_META[payload].elementClass} aria-hidden data-testid="artillery-impact-barb">
@@ -534,23 +589,18 @@ function PayloadImpactArt({ payload, x, y, slope, progress, reveal, visual, inde
       {[-1, 1].map((direction) => <path key={direction} d={`M ${x + direction * radius * 0.28} ${y + 0.25} Q ${x + direction * radius * 0.72} ${y - 2 * grow} ${x + direction * radius * (0.9 + grow * 0.2)} ${y + 0.5}`} className="fill-none stroke-el" strokeWidth="0.44" opacity={blast * 0.72} />)}
       {[-148, -118, -90, -62, -32].map((degrees, piece) => { const radians = (degrees + (index % 3 - 1) * 5) * Math.PI / 180; const distance = radius * (0.36 + grow * (0.4 + (piece % 2) * 0.16)); const dx = Math.cos(radians); const dy = Math.sin(radians); return <path key={degrees} d={`M ${x + dx * distance} ${y + dy * distance} l ${dx * (1.2 + grow)} ${dy * (1.2 + grow)}`} className="fill-none stroke-el" strokeWidth="0.45" strokeLinecap="round" opacity={blast * 0.74} />; })}
     </g>
-    <circle cx={x - smoke * 2} cy={y - 2 - smoke * 9} r={1.2 + smoke * 3.4} className="fill-el" opacity={visual.smokeOpacity * 0.18} filter="url(#artillery-smoke-soft)" />
+    <circle cx={x - smoke * 2} cy={groundY - 2 - smoke * 9} r={1.2 + smoke * 3.4} className="fill-el" opacity={visual.smokeOpacity * 0.18} filter="url(#artillery-smoke-soft)" />
   </g>;
 
   return <g className={PAYLOAD_META[payload].elementClass} aria-hidden data-testid="artillery-impact-shell">
-    <g opacity={blast * (progress < 0.16 ? 0.94 : 0.7)}>
-      <path d={`M ${x - radius * 0.62} ${y + 0.8} Q ${x - radius * 0.72} ${y - radius * 0.3} ${x - radius * 0.28} ${y - radius * 0.52} Q ${x - radius * 0.12} ${y - radius * 0.9} ${x + radius * 0.06} ${y - radius * 0.65} Q ${x + radius * 0.45} ${y - radius * 0.72} ${x + radius * 0.65} ${y - radius * 0.22} L ${x + radius * 0.58} ${y + 0.8} Z`} className="fill-el" />
-      <path d={`M ${x - radius * 0.25} ${y - 0.2} Q ${x - radius * 0.12} ${y - radius * 0.5} ${x + radius * 0.15} ${y - radius * 0.7} Q ${x + radius * 0.28} ${y - radius * 0.3} ${x + radius * 0.3} ${y - 0.1} Z`} className="fill-s0" opacity={0.34 * blast} />
-    </g>
-    <g transform={surfaceTransform} data-testid="artillery-impact-ground-shock">
-      <path d={`M ${x - radius * (0.38 + reveal * 0.85)} ${y + 0.25} q ${radius * 0.2} ${-1.5 * grow} ${radius * 0.37} ${-0.45 * grow} M ${x + radius * (0.38 + reveal * 0.85)} ${y + 0.25} q ${-radius * 0.2} ${-1.5 * grow} ${-radius * 0.37} ${-0.45 * grow}`} className="fill-none stroke-el" strokeWidth="0.48" strokeLinecap="round" opacity={blast * 0.76} />
+    <g data-testid="artillery-impact-ground-shock">
       {[-1, 1].map((direction) => <path key={direction} d={`M ${x + direction * radius * 0.55} ${y - 0.7 * grow} l ${direction * radius * 0.28 * grow} ${-1.7 * grow} M ${x + direction * radius * 0.82} ${y + 0.3} l ${direction * radius * 0.23 * grow} ${0.9 * grow}`} className="fill-none stroke-el" strokeWidth="0.34" opacity={blast * 0.62} />)}
     </g>
     {[-2, -1, 0, 1, 2].map((piece) => <path key={piece} d={`M ${x + piece * radius * 0.17} ${y - radius * 0.28} l ${piece * radius * 0.1 * grow} ${-radius * (0.25 + (2 - Math.abs(piece)) * 0.07) * grow}`} className="stroke-el" strokeWidth={piece === 0 ? 0.52 : 0.32} strokeLinecap="round" opacity={blast * (0.65 - Math.abs(piece) * 0.1)} />)}
     <g opacity={visual.smokeOpacity} filter="url(#artillery-smoke-soft)">
-      <circle cx={x - 1.4 - smoke * 2.8} cy={y - 1.4 - smoke * 10.5} r={1.3 + smoke * 4.8} className="fill-ink-3 opacity-30" />
-      <circle cx={x + 1.7 + smoke * 1.9} cy={y - 2.6 - smoke * 12.5} r={1.1 + smoke * 5.2} className="fill-el opacity-20" />
-      <circle cx={x + smoke * 2.2} cy={y - 4.2 - smoke * 13.5} r={0.9 + smoke * 4.1} className="fill-ink-2 opacity-25" />
+      <circle cx={x - 1.4 - smoke * 2.8} cy={groundY - 1.4 - smoke * 10.5} r={1.3 + smoke * 4.8} className="fill-ink-3 opacity-30" />
+      <circle cx={x + 1.7 + smoke * 1.9} cy={groundY - 2.6 - smoke * 12.5} r={1.1 + smoke * 5.2} className="fill-el opacity-20" />
+      <circle cx={x + smoke * 2.2} cy={groundY - 4.2 - smoke * 13.5} r={0.9 + smoke * 4.1} className="fill-ink-2 opacity-25" />
     </g>
     <g transform={surfaceTransform}>
       {[-1, 1].map((direction) => <path key={direction} d={`M ${x + direction * radius * 0.3} ${y + 0.3} q ${direction * radius * (0.45 + smoke * 0.32)} ${-1.2 - smoke * 1.8} ${direction * radius * (0.8 + smoke * 0.42)} ${0.2 + smoke} l ${-direction * radius * 0.37} ${1.1 + smoke} Z`} className="fill-el" opacity={visual.dustOpacity * 0.2} />)}
@@ -1045,7 +1095,7 @@ export function ArtilleryBoard({ seed, mode, difficulty, mapSize, world, onStatu
   })() : 0;
   const newestImpact = [...impactFrames].reverse().find((frame) => frame.phase === 'impact');
   const shotShake = newestImpact && !window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
-    ? Math.sin(newestImpact.reveal * Math.PI * 10) * (activePayload === 'bore' ? 1.15 : 0.8) * (1 - newestImpact.reveal)
+    ? Math.sin(Math.min(1, newestImpact.progress / 0.18) * Math.PI) * (activePayload === 'bore' ? 1.15 : 0.8)
     : 0;
 
   const payloadRemaining = (side: ArtillerySide, choice: ArtilleryPayload) =>
@@ -1686,9 +1736,13 @@ export function ArtilleryBoard({ seed, mode, difficulty, mapSize, world, onStatu
             </g>;
           })}
           {impactFrames.map((frame) => {
-            const surfaceY = ARTILLERY_HEIGHT - terrainHeight(displayTerrain, frame.impact.x);
-            const slope = artilleryTerrainSlopeDegrees(displayTerrain, frame.impact.x);
-            const transition = cinematicEase((frame.reveal - 0.42) / 0.4);
+            const stageIndex = terrainStages.findIndex((stage) => stage.projectileIndex === frame.index);
+            const preImpactTerrain = stageIndex > 0 ? terrainStages[stageIndex - 1].terrain : state.terrain;
+            const detonationY = ARTILLERY_HEIGHT - terrainHeight(preImpactTerrain, frame.impact.x);
+            const groundY = ARTILLERY_HEIGHT - terrainHeight(displayTerrain, frame.impact.x);
+            const slope = artilleryTerrainSlopeDegrees(preImpactTerrain, frame.impact.x);
+            const groundSlope = artilleryTerrainSlopeDegrees(displayTerrain, frame.impact.x);
+            const transition = frame.phase === 'settle' ? 1 : cinematicEase((frame.progress - 0.45) / 0.3);
             const liveMark: AftermathMark = {
               id: `active-${frame.index}`,
               x: frame.impact.x,
@@ -1696,8 +1750,9 @@ export function ArtilleryBoard({ seed, mode, difficulty, mapSize, world, onStatu
               createdTurn: state.turn,
             };
             return <React.Fragment key={frame.index}>
-              <PayloadImpactArt payload={activePayload} x={frame.impact.x} y={surfaceY} slope={slope} progress={frame.progress} reveal={frame.reveal} visual={frame.visual} index={frame.index} />
-              <PersistentPayloadAftermath mark={liveMark} y={surfaceY} slope={slope} age={0} visibility={transition} />
+              {frame.phase === 'impact' && <ExcavationBurst payload={activePayload} x={frame.impact.x} y={detonationY} progress={frame.progress} visual={frame.visual} />}
+              <PayloadImpactArt payload={activePayload} x={frame.impact.x} y={detonationY} groundY={groundY} slope={slope} progress={frame.progress} reveal={frame.reveal} visual={frame.visual} index={frame.index} />
+              <PersistentPayloadAftermath mark={liveMark} y={groundY} slope={groundSlope} age={0} visibility={transition} />
             </React.Fragment>;
           })}
           {resolutionMoment && impactReveal > 0.08 && animated && animated.outcome.damage > 0 && (() => {

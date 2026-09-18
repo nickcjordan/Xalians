@@ -457,3 +457,36 @@ so plainly. A run should not claim completion just because tests pass.
   CSS exceeded its prior raw budget by 44 bytes, so the measured cap rose
   from 240.5 KB to 241.0 KB; gzip remained under its existing cap. Live
   release verification follows deployment.
+
+### 2026-09-18: impact excavation and blast causality
+
+- Starting build: `2560823` on `origin/main`. The focused local play check used
+  the Stonera Standard practice range at 1280x720 with Comet shots. The old
+  result kept much of the hillside silhouette and lowered it over the impact
+  phase, so the terrain read as sliding dirt rather than material removed by
+  a detonation. The impact art also followed the ground downward.
+- Hypothesis: a crater cut toward one blast center, opened during the flash,
+  should read as excavation. A detonation fixed at its contact point, with
+  ejected fragments and smoke settling at the new floor, should make the
+  explosion and remaining hole feel like one event. An unacceptable regression
+  would be a shifted impact on a slope or a later round detonating at the
+  first round's terrain height.
+- Changes: destructive payloads now use a blast-centered cavity with a wider
+  footprint and a lightly fractured floor. The drill cuts deeper; Rampart
+  still builds cover. Ground removal begins almost immediately and finishes
+  in the opening third of the impact phase. The impact art uses each round's
+  pre-impact surface, while smoke and aftermath use the excavated surface.
+  Layered fire, a brief pressure ring, ejected fragments, and rising smoke
+  replace the prior shallow impact puff. The older ground-shock line was
+  removed after it appeared to slash through the fireball on steep terrain.
+- Local paint check: sampled frames through impact and aftermath for repeated
+  Comet shots. The first pass exposed a spiky star-shaped burst, which was
+  replaced with uneven fire pockets. The final check showed a distinct cavity
+  below the fireball and a darkening cloud over the new floor. This checks
+  individual frames and sequence order, not every animation frame or device.
+- Verification: 54 content, 371 rules, 70 API, and 1,341 web tests passed.
+  One unrelated authored-portrait lazy-load test timed out on the first full
+  web run, then passed alone and in the complete rerun. Rules and web
+  typechecks passed. The production build and bundle budgets passed; the
+  artillery route measured 104.5 KB raw and 35.1 KB gzip. Live release
+  verification follows deployment.
