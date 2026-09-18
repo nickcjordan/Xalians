@@ -2,6 +2,11 @@
 
 Owner: the agent maintaining the Long Return worktree. Update this file during implementation, not just at handoff.
 
+## September 18: map movement becomes the field-action beat
+
+- Field records now bring the site map to the center of the screen whenever crew, scout, signal, contact, ally, discovery, or lasting route state changes. Numbered creature markers travel between stations and the changed location receives a brief focus ring. The first scout departure and crossing approach travel from the entry station instead of appearing instantly at their first recorded point. The story remains in place underneath and resumes prominence after the map beat; this is an instrument animation, not a literal creature-movement scene.
+- The focused map uses the current story-beat title as context and temporarily hides the resource strip so movement is the visual priority. Reduced-motion settings show the final state without the animated takeover. Tests cover state changes, first departure and reduced motion. Local production-preview replays passed the first scene at phone and desktop sizes with movement assertions, and a reduced-motion phone replay reached the forced-extraction report after six crossings. Human judgment of whether the timing and prominence feel right remains open.
+
 ## Active goal — full-mission UX (2026-09-11)
 
 ### September 18: remove arbitrary bundle gates and restore story quality
