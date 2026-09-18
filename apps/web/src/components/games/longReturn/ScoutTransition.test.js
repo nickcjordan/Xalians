@@ -81,6 +81,17 @@ test('a relayed warning reads as a connected account and names the relevant choi
   expect(noHazardReport).toContain('has the findings without waiting for the scout to return.');
 });
 
+test('every room gives the scout a physical task instead of a generic crossing search', () => {
+  for (const scene of MISSION.scenes) {
+    const beats = scoutBeats({ type: 'scout', scene, scout: { species: 'Chromocat' }, result: { hazards: [], revealedIds: [], relay: true }, profile: { channel: 'display' }, energyBefore: 6, energyAfter: 5 });
+    expect(scene.surveyOpening).toBeTruthy();
+    expect(beats[0].text).toBe(`Chromocat ${scene.surveyOpening}.`);
+    expect(beats[0].costs).toEqual([{ kind: 'energy', text: '−1 energy · 5 left' }]);
+    expect(beats[1].text).toContain('The way may still hold danger.');
+    expect(beats[1].text).not.toContain('studies the crossing');
+  }
+});
+
 test('each scout encounter opens with its physical situation instead of implying an attack', () => {
   const clues = { 'underdeck-xylum': 'hurt Xylum', 'vestibule-hypnopet': 'between the lock’s moving arms', 'gallery-ectoghoul': 'shielded conduit' };
   for (const scene of MISSION.scenes.filter(entry => entry.encounter)) {

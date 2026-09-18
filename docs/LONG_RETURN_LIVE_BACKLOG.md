@@ -4,6 +4,11 @@ Owner: the agent maintaining the Long Return worktree. Update this file during i
 
 ## Active goal — full-mission UX (2026-09-11)
 
+### September 18: scouting belongs to the room the crew is actually in
+
+- The seven-room published replay showed the same generic “search for a way through” departure in the flooded access, archive chamber, reservoir retrieval and extraction rings. Each room now has a short physical scouting opening grounded in its own terrain. The no-clue beat stops calling every objective a “crossing”; it gives no false assurance that the path is safe. The energy annotation still sits on the scouting action, and sensed-but-unreported clues and native contact remain subject to the original information rules.
+- A first seven-room replay caught “beyond the rig’s moving arms” at the archive door, which implied the scout had passed the locked obstacle before finding its trapped native. The opening now keeps the scout at the edge of the rig’s reach. The seven authored openings add roughly 0.7 kB to the lazy Long Return route, so its raw route budget rises 1 kB (333→334 kB) while initial and gzip budgets remain unchanged. All 1,321 web tests, typecheck, production build and bundle budgets passed. A rebuilt 390-by-667 seven-room replay covered every opening and temporary ally; a normal-speed 1280-pixel three-room replay covered the door contact and manual story handoff. The revised door record was checked beside its map. Player judgment of whether these openings make the rooms easier to picture remains open.
+
 ### September 18: field map symbols identify the actual party
 
 - A phone render after the contact-map fix showed numbered crew dots and an unexplained green diamond beside the trapped Hypnopet. The field record now pairs each number with its creature’s name, marks a separated scout as ahead, and distinguishes a native contact (outline diamond) from a temporary ally (solid diamond). The key stays on the map, so the written account is not interrupted by another explanatory panel.
