@@ -1,10 +1,12 @@
 import { CREATURES, MISSION } from './longReturnData';
 import { methodOptions } from './longReturnEngine';
 import { methodIdentity, approachExplanation } from './methodProvenance';
-import { TERRAIN } from './CrossingTerrain';
-test('all fourteen routes have terrain and every available method retains its real source', () => {
+import { MAP_PLACES } from './mapPlaces';
+import { MAP_ROUTES } from './expeditionPosition';
+test('all fourteen routes have schematic labels and every available method retains its real source', () => {
   MISSION.scenes.forEach(scene => scene.routes.forEach(route => {
-    expect(TERRAIN[route.id]).toBeTruthy();
+    expect(MAP_PLACES[scene.id]?.landmark).toBeTruthy();
+    expect(MAP_ROUTES[route.id]).toBeTruthy();
     CREATURES.forEach(creature => methodOptions(creature, route).forEach(method => {
       const identity = methodIdentity(method);
       expect(identity.action).toBeTruthy();
