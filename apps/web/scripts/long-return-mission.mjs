@@ -289,7 +289,8 @@ try {
       }
       const arrivalDetail = page.locator('.lr-crossing-prose > p');
       assert(!/^(The crew is through|The crew crossed, but paid for it|A hard-won crossing)$/.test(arrivalHeading), 'Result names the selected passage instead of a generic verdict');
-      if (await arrivalDetail.count()) assert(!(await arrivalDetail.innerText()).startsWith(arrivalHeading), 'Arrival paragraph does not repeat its headline');
+      assert.equal(await arrivalDetail.count(), 3, 'The settled result keeps action, consequence, and arrival visible');
+      assert(!(await arrivalDetail.last().innerText()).startsWith(arrivalHeading), 'Arrival paragraph does not repeat its headline');
       await page.locator('.lr-simple-result').evaluate(node => node.scrollIntoView({ block: 'start', behavior: 'instant' }));
       await page.screenshot({ path: `${output}/result-${crossed + 1}.png` });
       crossed++;
