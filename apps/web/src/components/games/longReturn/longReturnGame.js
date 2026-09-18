@@ -818,6 +818,10 @@ function LongReturnGame() {
       ? phase === 'encounter' ? root.querySelector('.lr-field-encounter')
         : phase === 'scan-result' ? root.querySelector('.lr-simple-report') : null
       : null;
+    // The arrival beat has already introduced later rooms. On a phone, entering
+    // one should reveal the next choice rather than replay the same map above it.
+    const phoneScout = guidanceLevel === 'simple' && sceneIndex > 0 && phase === 'scout' && window.matchMedia?.('(max-width: 650px)').matches
+      ? root.querySelector('.lr-simple-decision') : null;
     const arrival = guidanceLevel === 'simple' && phase === 'result' ? root.querySelector('[data-arrival-focus]') : null;
     // New phases start at their context header. On phones, the lead substep
     // starts at its own route/back heading, not the already-seen scene header.
@@ -828,6 +832,7 @@ function LongReturnGame() {
     }
     if (phoneLead) target = phoneLead;
     if (phoneOutcome) target = phoneOutcome;
+    if (phoneScout) target = phoneScout;
     if (arrival) target = arrival;
     // Align the new phase before its entrance animation. Smooth scrolling and
     // panel motion running together read as camera shake, especially at
@@ -844,7 +849,7 @@ function LongReturnGame() {
     // the next Tab lands on the first relevant control, not an old control that
     // has disappeared with the previous step.
     if (guidanceLevel === 'simple') {
-      const focusTarget = arrival || phoneLead || phoneOutcome || root.querySelector('[data-wizard-focus]');
+      const focusTarget = arrival || phoneLead || phoneOutcome || phoneScout || root.querySelector('[data-wizard-focus]');
       if (focusTarget && typeof focusTarget.focus === 'function') {
         focusTarget.focus({ preventScroll: true });
       }
@@ -1431,7 +1436,7 @@ function LongReturnGame() {
           )}
 
           {phase === 'scout' && (guidanceLevel === 'simple' ? (
-            <div className="lr-simple-decision">
+            <div className="lr-simple-decision" tabIndex={-1} role="region" aria-label="Scouting decision">
               <h3 className="mb-3 type-heading">{simpleScoutOptions.length ? 'Who scouts ahead?' : 'No scout available'}</h3>
               {scene.encounterHint && <details className="lr-field-sign"><summary><BiIcon cls="bi bi-binoculars-fill" /><span>Native trace detected</span><small>Contact is possible</small><BiIcon cls="bi bi-chevron-down" /></summary><p>{scene.encounterHint}</p></details>}
               <ScoutChoices options={simpleScoutOptions} unavailable={unavailableScouts} selectedId={scoutId} onSelect={id => { playGameSound('select', soundEnabled); setScoutId(id); }} />

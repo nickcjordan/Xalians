@@ -116,6 +116,17 @@ try {
     }
     if (await page.locator('.lr-transition-beat').count()) { await click(page.locator('.lr-transition-beat > button')); continue; }
     if (await page.locator('[data-scout-options]').count()) {
+      if (viewport.width <= 390) {
+        const firstChoice = await page.locator('[data-scout-options] > button').first().boundingBox();
+        events.push({ type: 'scout-viewport', scene: crossed + 1, top: firstChoice?.y, height: viewport.height });
+        if (crossed > 0 && firstChoice) {
+          const heading = await page.locator('.lr-simple-decision h3').first().boundingBox();
+          assert(heading.y >= 56 && heading.y < viewport.height, 'The later-room scout heading clears the phone navigation bar');
+          assert(firstChoice.y >= 0 && firstChoice.y < viewport.height, 'After arrival, the next phone scout choice is visible without revisiting the map');
+          assert(await page.locator('.lr-simple-decision').evaluate(node => document.activeElement === node), 'Keyboard focus moves from arrival to the new phone decision');
+        }
+        await page.screenshot({ path: `${output}/scout-viewport-${crossed}.png` });
+      }
       const energy = await map.locator('[data-reserve-creature]').evaluateAll(nodes => nodes.map(node => Number(node.querySelector('b').textContent)));
       if (energy.some(value => value < 2)) assert(await page.locator('[data-scout-unavailable]').isVisible(), 'Scouting explains absent low-energy candidates');
       if (energy.every(value => value < 2)) {
