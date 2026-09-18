@@ -200,6 +200,11 @@ try {
   }
   assert(events.some(e=>e.type===(process.env.LR_LIMIT_SCENES?'milestone':'ending')), 'Required endpoint not reached');
   assert.deepEqual(errors, []);
+  if (!process.env.LR_LIMIT_SCENES) {
+    const endingParagraphs = page.locator('.lr-end-story > p');
+    const hasFarewell = (events.find(event => event.type === 'ending')?.text || '').includes('pauses beside the crew one last time');
+    assert.equal(await endingParagraphs.count(), hasFarewell ? 2 : 1, 'Mission outcome and companion farewell occupy separate story paragraphs');
+  }
   if (expectedBanked !== undefined) assert(events.find(event => event.type === 'ending')?.text.includes(`SALVAGE BANKED\n${expectedBanked}`), 'Voluntary extraction banks exactly the offered haul');
   for (const expected of process.env.LR_EXPECT_MAP_EFFECTS?.split(',') || []) assert(observedEffects.has(expected), `Mission reached earned map effect: ${expected}`);
   await writeFile(`${output}/run.json`, JSON.stringify(events,null,2));

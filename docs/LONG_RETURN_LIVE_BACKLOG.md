@@ -4,6 +4,11 @@ Owner: the agent maintaining the Long Return worktree. Update this file during i
 
 ## Active goal — full-mission UX (2026-09-11)
 
+### September 17: the companion's goodbye is its own moment
+
+- Rendered ending review found the resolved mission and Xylum's departure run together as one long paragraph. The end card now gives the farewell a separate prose paragraph in the same story region, with no new banner, modal or stat panel. The companion still leaves after the mission and does not become owned.
+- The full-mission browser replay now checks that an ending with a companion has two story paragraphs and an ending without one has one. Five-crossing phone runs covered both states; the companion ending was paint-reviewed. All 1,300 web tests, typecheck, production build and bundle budgets, and diff check pass. Emotional impact still needs player evidence.
+
 ### September 17: voluntary extraction remembers where the crew turned back
 
 - Ending audit found that leaving after the reservoir still said the depths were unopened, although the crew had completed one optional crossing. The voluntary-extraction account now follows the marked return route from the actual exit point: the Index fork or the junction beyond the reservoir. It names the lower area left unexplored without erasing the area already visited. The secured Index and banked salvage are unchanged.
