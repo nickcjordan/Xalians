@@ -16,6 +16,20 @@ test('breaking contact does not claim an undelivered report already reached the 
   expect(encounterNarrative({ ...encounter, reportDelivered: true })).toContain('crew now knows');
 });
 
+test('marking the rig visibly earns the crew a prepared approach after the scout returns', () => {
+  const scout = { archetype: 'trapped', option: { id: 'mark', resolution: 'unresolved' }, nativeName: 'Hypnopet', scoutName: 'Graviclaw', mode: 'scout' };
+  const beforeReturn = encounterNarrative({ ...scout, reportDelivered: false });
+  expect(beforeReturn).toContain('marks the controls');
+  expect(beforeReturn).toContain('must bring the marks back in person');
+  expect(beforeReturn).not.toContain('crew receives');
+  const relayed = encounterNarrative({ ...scout, reportDelivered: true });
+  expect(relayed).toContain('crew receives the marks');
+  expect(relayed).toContain('must still face Hypnopet');
+  const group = { archetype: 'trapped', option: { id: 'free-native', resolution: 'cleared' }, nativeName: 'Hypnopet', actorName: 'Hippochamp', mode: 'group' };
+  expect(encounterNarrative({ ...group, priorResponseId: 'mark' })).toContain('scout’s marks guide the approach');
+  expect(encounterNarrative(group)).not.toContain('scout’s marks');
+});
+
 function click(container, label) {
   const button = findButton(container, label);
   expect(button, `Missing ${label}; available: ${[...container.querySelectorAll('button')].map(b => b.textContent).join(' / ')}`).toBeTruthy();
@@ -847,7 +861,7 @@ describe('Long Return decision language', () => {
     const injured = encounterNarrative({ archetype: 'injured', option: { companion: true }, nativeName: 'Xylum' });
     const trapped = encounterNarrative({ archetype: 'trapped', option: { companion: true }, nativeName: 'Hypnopet' });
     expect(injured).toContain('cracked bearing');
-    expect(trapped).toContain('authentication arms');
+    expect(trapped).toContain('moving arms');
     expect(trapped).not.toMatch(/injury|roots/);
     for (const text of [injured, trapped]) {
       expect(text.split('\n\n')).toHaveLength(2);
@@ -858,13 +872,13 @@ describe('Long Return decision language', () => {
   test('withdrawal and detour leave the native present rather than claiming clearance', () => {
     const base = { archetype: 'injured', nativeName: 'Xylum', scoutName: 'Chromocat' };
     expect(encounterNarrative({ ...base, option: { resolution: 'unresolved' } })).toContain('route has not been cleared');
-    expect(encounterNarrative({ ...base, option: { resolution: 'detour' } })).toContain('remains where they found it');
+    expect(encounterNarrative({ ...base, option: { resolution: 'detour' } })).toContain('still holds this one');
   });
 
   test('pinning the rig gives access to the door without claiming a crossing or rescue', () => {
     const story = encounterNarrative({ archetype: 'trapped', option: { id: 'pin-rig', resolution: 'cleared' }, nativeName: 'Hypnopet', actorName: 'Graviclaw' });
-    expect(story).toContain('Hypnopet is still caught');
-    expect(story).toContain('door itself still stands shut');
+    expect(story).toContain('Hypnopet remains trapped');
+    expect(story).toContain('door remains shut');
     expect(story).not.toMatch(/They have passed|escapes|recorded the intrusion|signal fades/);
   });
 

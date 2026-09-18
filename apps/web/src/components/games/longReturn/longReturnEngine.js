@@ -100,7 +100,7 @@ export function encounterOptions(scene, scout, crew, mode = 'scout', informed = 
     const precise = outlook && (outlook.contact >= 62 || outlook.detect >= 72);
     return [
       { id: 'release', label: 'Release it from the arms', summary: 'Use empathy or careful observation to stop its panic without calling the crew.', scoutStrain: baseSurprise + (precise ? 0 : 1), instability: precise ? 0 : 1, companion: false, resolution: 'cleared', recommended: precise },
-      { id: 'mark', label: 'Mark the safe controls and withdraw', summary: outlook?.channel ? 'Do not intervene alone. Relay the safe approach to the crew.' : 'Do not intervene alone. The scout must return to explain the safe approach.', scoutStrain: baseSurprise, instability: 0, companion: false, resolution: 'unresolved', recommended: !precise },
+      { id: 'mark', label: 'Mark the safe controls and withdraw', summary: outlook?.channel ? 'Leave the native trapped, but relay the marked controls so the crew avoids surprise.' : 'Leave the native trapped. Return with the marked controls so the crew avoids surprise.', scoutStrain: baseSurprise, instability: 0, companion: false, resolution: 'unresolved', recommended: !precise },
       { id: 'force-arms', label: 'Force the arms apart', summary: 'Resolve the trap through strength. It works, but the rig records the intrusion.', scoutStrain: baseSurprise + (outlook && outlook.hold >= 62 ? 1 : 2), instability: 2, companion: false, resolution: 'cleared' }
     ];
   }

@@ -15,6 +15,8 @@ export const encounterChoicePresentation = (option) => {
           : { label: 'Confront', icon: 'bi-shield-fill-exclamation', tone: 'confront' };
   const outcome = option.companion
     ? { label: 'Possible ally', icon: 'bi-person-plus-fill', tone: 'reward' }
+    : id === 'mark'
+      ? { label: 'Crew gains safe approach', icon: 'bi-eye-fill', tone: 'clear' }
     : option.resolution === 'unresolved'
       ? { label: 'Route still occupied', icon: 'bi-exclamation-diamond-fill', tone: 'warning' }
       : option.resolution === 'detour'

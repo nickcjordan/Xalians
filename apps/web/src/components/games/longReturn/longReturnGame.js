@@ -389,7 +389,7 @@ export function supportRoleForPlan(plan) {
   return 'Backup role · no energy projected';
 }
 
-export function encounterNarrative({ archetype, option, nativeName, actorName, scoutName, mode = 'group', helperName, reportDelivered = true }) {
+export function encounterNarrative({ archetype, option, nativeName, actorName, scoutName, mode = 'group', helperName, reportDelivered = true, priorResponseId }) {
   const actor = actorName || 'The crew';
   const scout = scoutName || actor;
   const medic = helperName || 'the medic';
@@ -404,23 +404,29 @@ export function encounterNarrative({ archetype, option, nativeName, actorName, s
     ? option.id === 'return-for-medic' ? ` Making the extra trip leaves ${scoutName || actor} with less strength for the next passage.`
       : archetype === 'injured' ? ` The first contact has already taken strength from ${scoutName || actor} before the treatment begins.`
         : ` The work leaves ${scoutName || actor} with less strength for the next passage.` : '';
-  const rescueCost = `${rescueEffort}${option.instability ? ' The annex does not wait for the rescue; while the crew works, the old machinery continues straining its failing supports.' : ''}`;
+  const rescueCost = `${rescueEffort}${option.instability ? ' While the crew works, the old machinery strains its failing supports.' : ''}`;
+  const markedApproach = mode === 'group' && priorResponseId === 'mark'
+    ? 'The scout’s marks guide the approach. ' : '';
   if (option.companion) return archetype === 'trapped'
-    ? `The crew makes space between the moving authentication arms. For a moment, ${nativeName} stays where it is, as though the opening might close again. Then it slips clear, and the panicked signal begins to fade.${rescueCost}\n\nWhen the crew moves on, ${nativeName} follows at a cautious distance. This time, nothing is holding it here. It has chosen their company.`
-    : `${aidArrival}, giving ${nativeName} room to watch as help reaches its injury. The roots gripping the machinery begin to loosen. What looked like an obstacle was a frightened creature with nowhere safe to go.${rescueCost}\n\n${aidDeparture}`;
-  if (option.resolution === 'detour') return `The crew stops short of ${nativeName}'s position. Rather than press closer, they retrace their approach, leaving the space between them open.\n\nBack at the junction, the other passage is still there to consider. Behind them, ${nativeName} remains where they found it; nothing has forced it to leave.`;
+    ? `${markedApproach}The crew opens a gap between the moving arms. ${nativeName} hesitates, then slips free; its panicked signal fades.${rescueCost}\n\nAs the crew moves on, ${nativeName} follows at a cautious distance. Nothing holds it here now.`
+    : `${aidArrival}. ${nativeName} watches as help reaches its injury. The roots gripping the machinery loosen. What looked like an obstacle was a frightened creature with nowhere safe to go.${rescueCost}\n\n${aidDeparture}`;
+  if (option.resolution === 'detour') return `The crew stops short of ${nativeName} and retraces its steps.\n\nBack at the junction, the other passage remains open. ${nativeName} still holds this one.`;
   if (option.resolution === 'unresolved') return reportDelivered
-    ? `${scoutName || actor} breaks contact and sends a warning rather than trying to settle the encounter alone.\n\nThe crew now knows where ${nativeName} is waiting. The route has not been cleared; approaching it will mean facing that presence together.`
-    : `${scoutName || actor} backs out of ${nativeName}'s reach without trying to settle the encounter alone. The native holds its ground.\n\nThere is space to retreat now, but no signal can reach the waiting crew. The scout still has to make the journey back before they can hear the warning.`;
+    ? option.id === 'mark'
+      ? `${scout} watches the arms cycle, then marks the controls that stop them. ${nativeName} remains trapped.\n\nThe crew receives the marks. It can approach without surprise, but must still face ${nativeName}.`
+      : `${scoutName || actor} breaks contact and sends a warning rather than trying to settle the encounter alone.\n\nThe crew now knows where ${nativeName} is waiting. The route has not been cleared; approaching it will mean facing that presence together.`
+    : option.id === 'mark'
+      ? `${scout} watches the arms cycle, then marks the controls that stop them. ${nativeName} remains trapped.\n\nNo signal reaches the crew. The scout must bring the marks back in person.`
+      : `${scoutName || actor} backs out of ${nativeName}'s reach without trying to settle the encounter alone. The native holds its ground.\n\nThere is space to retreat now, but no signal can reach the waiting crew. The scout still has to make the journey back before they can hear the warning.`;
   if (archetype === 'territorial') {
     if (option.id === 'distract') return `${actor} creates a disturbance away from the conduit mouth. ${nativeName} turns toward it, then moves out to investigate, leaving its sheltered passage unguarded.\n\nThe diversion has opened a way through, but the noise has carried into the old annex. The machinery around the crew no longer feels quite so still.`;
     if (option.id === 'challenge') return `${actor} holds position instead of retreating from the conduit mouth. ${nativeName} answers the challenge, but cannot keep the approach closed. The confrontation drives it back into the hull.\n\nThe passage is open now. ${actor} has paid for that space in effort, and the disturbance has reached the surrounding structure.`;
     return `${actor} establishes a boundary rather than closing the distance. ${nativeName} watches the space between them, then eases away from the conduit mouth.\n\nIt withdraws into the hull without surrendering its shelter. There is room to pass because the crew has left it room to retreat.`;
   }
   if (archetype === 'trapped') {
-    if (option.id === 'pin-rig') return `${actor} pins the moving arms long enough to give the crew room to work past them. ${nativeName} is still caught inside the rig; the opening is for the expedition, not an escape from the trap.\n\nThe way to the door is clear now, but the door itself still stands shut. ${nativeName}'s panicked signal continues from inside the rig.`;
-    if (option.id === 'force-arms') return `${actor} wrenches the authentication arms apart. The trapped ${nativeName} slips through the opening before the rig can close around it again.\n\nIts panicked signal fades into a side duct. At the damaged controls, a different signal takes its place: the rig has recorded the intrusion.`;
-    return `${actor} steadies the encounter until the authentication arms pause. ${nativeName} hesitates, then slips out of their reach and disappears into a side duct.\n\nThe panicked signal fades from the lock. With the trapped creature clear, the rig is no longer answering its distress.`;
+    if (option.id === 'pin-rig') return `${markedApproach}${actor} pins the moving arms, giving the crew room to pass. ${nativeName} remains trapped inside the rig.\n\nThe path to the door is clear, but the door remains shut. ${nativeName}'s panicked signal continues.`;
+    if (option.id === 'force-arms') return `${actor} wrenches the arms apart. ${nativeName} slips free before the rig can close.\n\nIts panicked signal fades into a side duct. At the damaged controls, a different signal takes its place: the rig has recorded the intrusion.`;
+    return `${markedApproach}${actor} steadies the encounter until the authentication arms pause. ${nativeName} hesitates, then slips out of their reach and disappears into a side duct.\n\nThe panicked signal fades from the lock. With the trapped creature clear, the rig is no longer answering its distress.`;
   }
   return `${actor} holds the approach, forcing space around the cracked turbine bearing. ${nativeName} loosens its grip and retreats deeper into the machinery rather than hold the passage against that pressure.\n\nThe way is open, but the creature has not joined the crew. It remains somewhere behind the housings as the expedition prepares to move on.`;
 }
@@ -787,6 +793,9 @@ function LongReturnGame() {
   const arrivalHeadline = arrivalRecap(arrivalParagraphs || []).headline;
   const reserve = leadId && supportId ? crew.find((entry) => entry.id !== leadId && entry.id !== supportId) : null;
   const scanScout = crew.find((entry) => entry.id === scoutId);
+  const scoutNeedsRescue = !!scanScout && (strain[scanScout.id] || 0) >= MAX_STRAIN;
+  const scoutReturnEnergy = scoutNeedsRescue ? 0 : 1;
+  const scoutReturnStability = Math.min(1, MAX_INSTABILITY - pressure);
   const report = scene && scan ? scanReport(scene, scanScout, scan) : null;
   const encounterCreature = scene && scene.encounter ? CREATURES.find((entry) => entry.id === scene.encounter.creatureId) : null;
   const knownNativeState = encounterResolution ? nativeMapState(encounterResolution) : null;
@@ -979,15 +988,20 @@ function LongReturnGame() {
 
   const recoverScout = () => {
     if (!scanScout || !scan || scan.returned) return;
+    const returningSpent = (strain[scanScout.id] || 0) >= MAX_STRAIN;
+    const energyLost = Math.min(1, MAX_STRAIN - (strain[scanScout.id] || 0));
+    const stabilityLost = Math.min(1, MAX_INSTABILITY - pressure);
     const hazards = scan.hazards.map((hazard) => hazard.sensed ? { ...hazard, revealed: true } : hazard);
     setScan({ ...scan, mode: 'debrief', returned: true, hazards, revealedIds: hazards.filter((hazard) => hazard.revealed).map((hazard) => hazard.id),
-      energySpent: (scan.energySpent ?? 1) + cap((strain[scanScout.id] || 0) + 1) - (strain[scanScout.id] || 0),
-      stabilitySpent: (scan.stabilitySpent ?? 0) + Math.min(MAX_INSTABILITY, pressure + 1) - pressure });
+      energySpent: (scan.energySpent ?? 1) + energyLost,
+      stabilitySpent: (scan.stabilitySpent ?? 0) + stabilityLost });
     setStrain((current) => ({ ...current, [scanScout.id]: cap((current[scanScout.id] || 0) + 1) }));
     setPressure((current) => Math.min(MAX_INSTABILITY, current + 1));
-    cueChanges({ energy: { [scanScout.id]: 1 }, stability: 1 });
+    cueChanges({ energy: energyLost ? { [scanScout.id]: energyLost } : {}, stability: stabilityLost });
     setActionTransition({ type: 'scout-return', scene, scout: scanScout, result: scan, profile: scoutProfile(scene, scanScout), energyBefore: MAX_STRAIN - (strain[scanScout.id] || 0), energyAfter: MAX_STRAIN - cap((strain[scanScout.id] || 0) + 1), stabilityBefore: MAX_INSTABILITY - pressure, stabilityAfter: MAX_INSTABILITY - Math.min(MAX_INSTABILITY, pressure + 1) });
-    setLog((current) => [{ title: `${scene.deck} / SCOUT RETURN`, text: `${scanScout.species} returned physically to deliver its report. The delay consumed energy and annex stability.` }, ...current].slice(0, 8));
+    setLog((current) => [{ title: `${scene.deck} / SCOUT RETURN`, text: returningSpent
+      ? `The crew retrieved a spent ${scanScout.species} and brought back its findings. The delay cost ${stabilityLost} annex stability.`
+      : `${scanScout.species} returned physically to deliver its report. The delay cost ${energyLost} energy and ${stabilityLost} annex stability.` }, ...current].slice(0, 8));
   };
 
   const resolveEncounter = (option) => {
@@ -1012,7 +1026,8 @@ function LongReturnGame() {
       mode: encounterState.mode,
       helperName: helper?.species,
       reportDelivered: encounterState.mode !== 'scout' || !!scan?.returned,
-      scoutName: encounterState.scout ? encounterState.scout.species : null
+      scoutName: encounterState.scout ? encounterState.scout.species : null,
+      priorResponseId: encounterState.mode === 'group' ? encounterResolution?.id : null
     });
     const energyCost = option.scoutStrain || option.crewStrain || 0;
     const resources = {
@@ -1392,7 +1407,7 @@ function LongReturnGame() {
                   <CreaturePortrait creature={encounterCreature} compact />
                   <div><span>{encounterState.mode === 'scout' ? 'Scout encounter' : encounterState.informed ? 'Prepared crew encounter' : 'Unexpected crew encounter'}</span><h3>{scene.encounter.title}</h3><p>{scene.encounter.description}</p></div>
                 </div>
-                {guidanceLevel === 'simple' && <EncounterSituation mode={encounterState.mode} scout={encounterState.scout} native={encounterCreature} outlook={encounterState.outlook} informed={encounterState.informed} />}
+                {guidanceLevel === 'simple' && <EncounterSituation mode={encounterState.mode} scout={encounterState.scout} native={encounterCreature} outlook={encounterState.outlook} informed={encounterState.informed} priorResponseId={encounterResolution?.id} />}
                 {guidanceLevel !== 'simple' && encounterState.mode === 'scout' && encounterState.outlook && <div className={`lr-encounter-posture is-${encounterState.outlook.posture}`}>
                   <strong>{encounterState.outlook.label}</strong>
                   <span>{encounterState.outlook.posture === 'scout-first' ? `${encounterState.scout.species} sees the native before being cornered.` : encounterState.outlook.posture === 'native-first' ? `The native catches ${encounterState.scout.species} out of position. The surprise costs 1 extra energy.` : `${encounterState.scout.species} and the native notice one another at the same moment.`}</span>
@@ -1489,7 +1504,7 @@ function LongReturnGame() {
                 {report.revealed.length ? report.revealed.map((hazard) => <strong key={hazard.id}><BiIcon cls="bi-exclamation-triangle-fill" /> {hazard.label}</strong>) : <strong><BiIcon cls="bi-question-circle" /> No route danger was confirmed</strong>}
                 <p>{report.decision}</p>
               </div>
-              {!scan.returned && scan.mode !== 'blind' ? <button type="button" className="g-btn g-btn--primary" onClick={recoverScout}>Wait for {scanScout.species} to return <span>−1 energy · −1 stability</span> <BiIcon cls="bi bi-arrow-right" /></button> : <button type="button" className="g-btn g-btn--primary" onClick={advanceToRoutes}>Choose a route <BiIcon cls="bi bi-arrow-right" /></button>}
+              {!scan.returned && scan.mode !== 'blind' ? <button type="button" className="g-btn g-btn--primary" onClick={recoverScout}>{scoutNeedsRescue ? `Retrieve ${scanScout.species}` : `Wait for ${scanScout.species} to return`} <span>{scoutReturnEnergy ? `−${scoutReturnEnergy} energy · ` : ''}−{scoutReturnStability} stability</span> <BiIcon cls="bi bi-arrow-right" /></button> : <button type="button" className="g-btn g-btn--primary" onClick={advanceToRoutes}>Choose a route <BiIcon cls="bi bi-arrow-right" /></button>}
               </div>
             </div>
           ) : (
@@ -1522,7 +1537,7 @@ function LongReturnGame() {
                 <div><span>How this changes your decision</span><p>{report.decision}</p></div>
               </div>
               <div className="lr-action-row">
-                {!scan.returned && scan.mode !== 'blind' ? <button type="button" className="g-btn g-btn--primary" onClick={recoverScout}>Wait for scout return · −1 energy / −1 stability</button> : <button type="button" className="g-btn g-btn--primary" onClick={advanceToRoutes}>
+                {!scan.returned && scan.mode !== 'blind' ? <button type="button" className="g-btn g-btn--primary" onClick={recoverScout}>{scoutNeedsRescue ? 'Retrieve spent scout' : 'Wait for scout return'} · −{scoutReturnEnergy} energy / −{scoutReturnStability} stability</button> : <button type="button" className="g-btn g-btn--primary" onClick={advanceToRoutes}>
                   {report.outcome === 'blind' ? 'Accept Unknowns & Compare Routes' : 'Acknowledge Report & Compare Routes'} <BiIcon cls="bi bi-arrow-right" />
                 </button>}
               </div>

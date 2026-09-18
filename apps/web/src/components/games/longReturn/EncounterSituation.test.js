@@ -16,10 +16,12 @@ test('a scout encounter connects who saw whom with reporting, using player langu
 test('surprise and lack of a relay are visible beside the decision', () => {
   const html = renderToStaticMarkup(<EncounterSituation mode="scout" scout={scout} native={native} outlook={{ posture: 'native-first', channel: null }} />);
   expect(html).toContain('Xylum spots Chromocat first · +1 energy to respond');
-  expect(html).toContain('Chromocat must return to tell the crew');
+  expect(html).toContain('Chromocat must return—or be retrieved');
+  expect(html).toContain('up to 1 energy spent, 1 stability lost');
 });
 
 test('whole-crew contact distinguishes an advance warning from surprise', () => {
   expect(renderToStaticMarkup(<EncounterSituation mode="group" informed />)).toContain('Crew warned before contact');
+  expect(renderToStaticMarkup(<EncounterSituation mode="group" informed priorResponseId="mark" />)).toContain('Controls marked · crew avoids surprise');
   expect(renderToStaticMarkup(<EncounterSituation mode="group" informed={false} />)).toContain('Crew caught unaware · +1 energy to respond');
 });
