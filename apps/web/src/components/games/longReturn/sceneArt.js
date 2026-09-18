@@ -13,13 +13,3 @@ export const SCENE_ART = {
 };
 
 export const sceneArtFor = (scene) => SCENE_ART[scene && scene.id] || SCENE_ART['service-throat'];
-
-export const PHASE_PRESENTATION = {
-  transition: { label: 'Entering sector', icon: 'bi-door-open' },
-  scout: { label: 'Survey window', icon: 'bi-radar' },
-  'scan-result': { label: 'Signal acquired', icon: 'bi-broadcast-pin' },
-  route: { label: 'Route plotting', icon: 'bi-signpost-split' },
-  assign: { label: 'Crew staging', icon: 'bi-people' },
-  encounter: { label: 'Native contact', icon: 'bi-exclamation-diamond' },
-  result: { label: 'Crossing complete', icon: 'bi-check2-circle' }
-};

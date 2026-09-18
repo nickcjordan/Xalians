@@ -817,7 +817,7 @@ function LongReturnGame() {
     // Advanced layouts retain their focused deep-link.
     if (guidanceLevel !== 'simple') {
       if (phase === 'assign') target = root.querySelector('.lr-crossing-flow') || root.querySelector('.lr-current-action') || root;
-      else target = root.querySelector('.lr-scene-stage') || root.querySelector('.lr-current-action') || root;
+      else target = root.querySelector('.lr-current-action') || root;
     }
     if (phoneLead) target = phoneLead;
     if (arrival) target = arrival;

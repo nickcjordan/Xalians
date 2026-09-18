@@ -2,9 +2,9 @@
 
 Artwork decisions should be evaluated against the shared experience standards in [`GAME_EXPERIENCE_QUALITY_GUIDE.md`](./GAME_EXPERIENCE_QUALITY_GUIDE.md). This file remains the production-specific art reference.
 
-## Current action-transition prototype
+## Current visual language
 
-The crossing transition combines a generated environment plate with registry-backed Xalian SVG art. This separation is intentional: generative art establishes place, light, weather, and material; canonical species art preserves the creature the player selected.
+The game combines generated environment plates, registry-backed Xalian portraits, and a deliberately schematic site map. The plate establishes place, light, weather, and material. The portrait establishes creature identity. The diagram establishes where the crew, scout, contact, routes, and destination are. None of these assets pretends to perform the creature's physical action.
 
 The first plate is `my-app/public/assets/img/games/long-return/flooded-service-throat.webp`. It was produced with the built-in image-generation tool and then cropped, darkened, resized to 1600×900, and encoded as WebP for the game. The local pipeline was found at `C:/dev/src/xalians-art`; its current production scripts are specialized around Xalian silhouette generation and tracing rather than environment plates.
 
@@ -12,27 +12,26 @@ Final environment prompt:
 
 > Use case: stylized-concept. Asset type: 16:9 game action-transition environment plate. The flooded service throat inside an abandoned alien industrial research annex, seen at creature eye level as a dangerous route is crossed. Black water rushes through a collapsed maintenance chamber; a broken hanging gantry rises above an intake tunnel under twisted wreckage; distant archive lights show through mist. Environment only, no creatures or people. Cinematic science-fiction concept art with graphic inked shapes and restrained painterly texture, grounded industrial realism, compatible with bold black creature silhouettes overlaid later. Wide establishing shot with a strong foreground-to-background path and dark open foreground/center for creature silhouettes. Tense low-key lighting, cold cyan reflections, sickly amber emergency lights, deep charcoal shadows, drifting vapor and subtle sparks. Corroded metal, wet concrete, cable bundles, rippling contaminated water, old warning paint without readable lettering. No UI, readable text, logos, watermark, border, or clean spaceship corridor.
 
-The transition is an event, not a spinner. A committed crossing is compiled into ordered visual beats: movement, hidden hazard, companion intervention, per-creature energy loss, structural damage, salvage collection, and arrival. Creature silhouettes move in the room; the matching HUD pips drain during their causal beat; stability shakes the environment; salvage moves into the carried counter. The last frame persists until the player continues, while a skip-to-outcome control accelerates rather than dismisses the sequence. Background scrolling and focus are contained, and reduced-motion players receive the same final state immediately.
+The transition is a readable account, not a spinner or a low-budget animated film. A committed action reveals ordered, causal story beats beside the site schematic. A creature token occupies a discrete known position; it does not swim, climb, or fight on screen. Resource changes appear with the beat that caused them. The complete account persists until the player continues, and the player can pause, advance, or skip to that outcome. Reduced-motion players receive the complete account immediately.
 
-Scout actions have their own composition rather than reusing a result banner: a crew-origin marker, dotted travel line, canonical moving silhouette, sense/communication pulse, native reveal when applicable, and an energy HUD whose pip drains only on the energy beat. A failed remote signal ends with the scout still away; the later physical return reverses the movement and adds the stability meter to the action HUD.
+Scout actions use the same grammar: the crew stays at its threshold, a scout token occupies a survey position, a signal line appears only if the report can travel remotely, and a native marker appears only after contact. A failed remote signal leaves the scout away. A later return moves its token back to the crew and shows the resulting resource change. These are state changes on a map, not staged creature performances.
 
 ## Artwork system, not a pile of illustrations
 
-The next art work should be layered so one asset can support multiple outcomes:
+Future art should add atmosphere and legibility without replacing the player's imagination with crude motion:
 
-1. **Scene plates** — one neutral establishing plate per chamber. Route-specific lighting, masks, fog, current, sparks, and camera motion create variants without generating every branch as a separate painting.
-2. **Route overlays** — gantry, underdeck, shaft, membrane, machinery, and salvage props as transparent foreground/midground layers. These make route choice visually concrete before commitment.
-3. **Canonical creature performers** — keep registry-backed SVG silhouettes for identity. Add a small pose vocabulary per locomotion/capability (climb, swim, fly, brace, investigate, communicate), generated or hand-authored under the existing silhouette pipeline.
-4. **Encounter reveals** — native silhouette first, then element glow and posture. The art should communicate territorial, trapped, injured, or curious before the player reads a paragraph.
-5. **Consequences on the world** — persistent visual damage, restored braces, opened bypasses, drained water, and recovered salvage disappearing from later plates. Mission memory should be visible in the room.
-6. **Resource motion language** — energy peels away from the acting creature, stability fractures through the environment, salvage lifts from the scene into the carried-loot counter. The same colors and shapes must be used in previews, transitions, and results.
-7. **Scout point of view** — short close crops, sensor cones, vibration rings, scent trails, or telepathic pulses derived from the creature's actual senses and communication mode. This turns creature data into visual verbs.
-8. **Mission arc art** — arrival/extraction bookends and a changing exterior silhouette of the annex. These provide emotional pacing without interrupting every small decision.
-9. **Journal artifacts** — compact postcards assembled from the scene plate, chosen route, lead silhouette, and consequence stamp. These reward replay without inventing permanent creature ownership.
+1. **Scene plates**: one neutral establishing plate per chamber, reused behind decisions and records. Keep important map and text contrast independent of the painting.
+2. **Schematic landmarks**: authored shapes for water, machinery, doors, exposed hull, reservoir, and rings. They should explain route relationships, not claim to be a scaled floor plan.
+3. **Canonical creature identity**: registry-backed SVG portraits in decisions and numbered tokens on the map. Do not animate portraits as performers without a production-quality animation system and explicit art budget.
+4. **Encounter state**: a distinct native marker for discovered contact, bypassed native, or recruited ally. Never show undiscovered creatures in a preview.
+5. **Consequences on the site**: stationary marks on the exact affected route once the engine has applied an earned change. The story explains the physical cause; the map preserves the memory.
+6. **Resource change**: energy, stability, and salvage use their own colors and shapes. During a record, change the appropriate meter at its causal beat; do not add screen shake or material flying between panels.
+7. **Mission arc art**: arrival and extraction bookends can set tone without interrupting every decision.
+8. **Journal artifacts**: compact scene, route, crew, and consequence compositions can reward replay without inventing permanent ownership.
 
 ## Recommended production order
 
-Finish the seven neutral scene plates first, then create the reusable effect/prop overlays, then add capability-specific creature poses. Avoid generating bespoke full compositions for every route and crew combination: that would be expensive, inconsistent, and hard to keep synchronized with game state. The strongest system is procedural composition of authored layers, with generation feeding the layer library.
+The seven neutral plates exist. Next, improve the diagram's authored landmarks and the continuity between a chosen route, its record, and the next room. Add a new image only when it communicates a place or event better than the current plate and schematic. Do not start a pose or performed-animation pipeline as a shortcut to game feel. Bespoke full compositions for every route and crew combination would be expensive, inconsistent, and difficult to synchronize with state.
 
 ## Generated environment library
 
@@ -53,4 +52,4 @@ The precise generation prompts are represented by the scene-specific subjects ab
 
 ## Current runtime composition
 
-`sceneArt.js` is the single mapping between mission data and visual identity. `SceneStage` reuses each plate across arrival, scouting, signal report, planning, encounter, and resolved states through scan sweeps, signal pings, canonical SVG performers, encounter silhouettes, CRT scanlines, and phase-specific captions. `ActionTransition` uses the same mapping for the committed action and adds room-specific motion cues. This keeps visuals synchronized with state while avoiding a bespoke illustration for every branch.
+`sceneArt.js` maps mission spaces to environment plates. `ExpeditionSchematic` and `mapPlaces.js` own site position and route geography. `FieldRecord` frames the action, while `SequenceStory` and the action-specific transition components reveal the causal written account and resource changes. The same map state carries into planning and the arrival result. This division preserves spatial continuity without claiming to depict a literal, fully animated crossing.

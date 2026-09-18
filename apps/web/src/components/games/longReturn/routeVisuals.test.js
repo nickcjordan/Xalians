@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'vitest';
 import { MISSION } from './longReturnData';
 import { applyMissionMemory } from './longReturnEngine';
-import { ROUTE_VISUALS, routeVisualFor, visibleWorldFlags, routeMemory, consequencePreview } from './routeVisuals';
+import { visibleWorldFlags, routeMemory, consequencePreview } from './routeVisuals';
 
 describe('Long Return route visualization', () => {
   test('future choices name the affected approach and whether it becomes easier or harder', () => {
@@ -25,17 +25,6 @@ describe('Long Return route visualization', () => {
       expect(routeMemory(scene.routes.find(route => route.id !== routeId), [flag])).toBeNull();
     }
   });
-  test('maps every route to a visual path and action icon', () => {
-    const routes = MISSION.scenes.flatMap((scene) => scene.routes);
-    expect(Object.keys(ROUTE_VISUALS)).toHaveLength(routes.length);
-    routes.forEach((route) => {
-      const visual = routeVisualFor(route);
-      expect(visual.verb).toBeTruthy();
-      expect(['upper', 'lower', 'center', 'edge']).toContain(visual.lane);
-      expect(visual.icon).toMatch(/^bi-/);
-    });
-  });
-
   test('shows only consequences relevant to the current scene', () => {
     const first = MISSION.scenes[0];
     const second = MISSION.scenes[1];

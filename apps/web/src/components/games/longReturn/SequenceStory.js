@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import './sequenceStory.css';
 import BiIcon from './BiIcon';
 
@@ -21,20 +21,26 @@ export function trapSequenceFocus(event) {
 export default function SequenceStory({ events, index, paused, onPause, onNext, action }) {
   const scrollRef = useRef(null);
   const follows = useRef(true);
+  const [canReadEarlier, setCanReadEarlier] = useState(false);
   const final = index === events.length - 1;
   const followLatest = () => {
     follows.current = true;
     if (scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    setCanReadEarlier((scrollRef.current?.scrollTop || 0) > 8);
   };
   useEffect(() => {
     const el = scrollRef.current;
-    if (el && follows.current) el.scrollTop = el.scrollHeight;
+    if (el && follows.current) {
+      el.scrollTop = el.scrollHeight;
+      setCanReadEarlier(el.scrollTop > 8);
+    }
   }, [index]);
   return <section className="lr-sequence-story p-3 md:p-5" aria-label="Action story">
-    <header><span>{final ? 'What happened' : 'The scene unfolds'}</span><small>{index + 1} / {events.length}</small></header>
+    <header><span>{final ? 'What happened' : 'The scene unfolds'}</span><div className="lr-story-navigation">{canReadEarlier && <button type="button" aria-label="Read from start" onClick={() => { if (!paused && !final) onPause(); follows.current = false; scrollRef.current.scrollTop = 0; scrollRef.current.focus({ preventScroll: true }); setCanReadEarlier(false); }}>↑ <span className="lr-story-nav-long">Read from start</span><span className="lr-story-nav-short">Start</span></button>}<small>{index + 1} / {events.length}</small></div></header>
     <div className="lr-sequence-story-scroll" ref={scrollRef} tabIndex={0} aria-label="Read the action story" onScroll={event => {
       const el = event.currentTarget;
       follows.current = el.scrollHeight - el.scrollTop - el.clientHeight < 36;
+      setCanReadEarlier(el.scrollTop > 8);
       if (!follows.current && !paused && !final) onPause();
     }}>
       <ol aria-live="polite" aria-relevant="additions" aria-atomic="false">

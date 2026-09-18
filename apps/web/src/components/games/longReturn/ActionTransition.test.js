@@ -14,6 +14,9 @@ test('causal story advances, keeps both creatures costs, and never dismisses its
     crewChanges: [lead, support].map(creature => ({ creature, added: 1, before: 0, after: 1 })), instabilityChange: { before: 0, after: 1, added: 1 }
   } }} />);
   const first = document.querySelector('.lr-sequence-story li');
+  expect(document.querySelector('[data-field-record] [data-expedition-map]')).toBeTruthy();
+  expect(document.querySelectorAll('[data-field-record] [data-map-creature]')).toHaveLength(3);
+  expect(document.querySelector('[data-field-record] .lr-scene-stage')).toBeNull();
   expect(screen.getByLabelText(`${reserve.species} energy: 3 of 6`)).toBeTruthy();
   expect(screen.getByLabelText(`${lead.species} energy: 6 of 6`)).toBeTruthy();
   fireEvent.click(screen.getByRole('button', { name: 'Pause story' }));

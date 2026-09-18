@@ -46,7 +46,6 @@
 .lr-terrain-details > summary { cursor: pointer; padding: 10px 0; color: var(--g-ink-mid); font-size: 15px; display: flex; align-items: center; gap: 8px; }
 .lr-terrain-details > summary::before { content: '›'; }
 .lr-terrain-details[open] > summary::before { transform: rotate(90deg); }
-.lr-terrain-details[open] .lr-route-map { margin-top: 10px; }
 .lr-crossing-empty { min-height: 350px; display: flex; align-items: end; padding: 24px; background-size: cover; background-position: center; border: 1px solid #394438; }
 .lr-crossing-empty h3 { font-size: 22px; margin: 10px 0; }
 .lr-crossing-empty p { font-size: 16px; line-height: 1.5; color: var(--g-ink-mid); }
