@@ -11,7 +11,7 @@ const positions = { entry: [74, 98], survey: [225, 98], crossing: [304, 48], exi
 const changeLabel = (change, route) => change?.mapLabel || MAP_ROUTES[route.id] || route.title;
 const effectMarks = { 'quiet-entry': '○', 'coolant-bypass': '≈', 'maintenance-codes': '⌁', 'security-pulse': '!' };
 
-export default function ExpeditionSchematic({ scene, crew = [], scout, helperId, position = { crew: 'entry' }, routeId, revealedIds = [], native, nativeState, companion, allyWithScout = false, runFlags = [], compact = false, localOnly = false, readingRecord = false, preview = false, reserves }) {
+export default function ExpeditionSchematic({ scene, crew = [], scout, helperId, position = { crew: 'entry' }, routeId, revealedIds = [], native, nativeState, companion, allyWithScout = false, runFlags = [], compact = false, localOnly = false, readingRecord = false, preview = false, reserves, onNextDecision }) {
   const sceneIndex = Math.max(0, MISSION.scenes.findIndex(item => item.id === scene.id));
   const routeIndex = scene.routes.findIndex(route => route.id === routeId);
   const changes = scene.routes.map(route => routeMemory(route, runFlags));
@@ -39,7 +39,7 @@ export default function ExpeditionSchematic({ scene, crew = [], scout, helperId,
   const allyPoint = allyPlace === 'survey' && (contact || position.encounter) ? [320, contactLane] : positions[allyPlace] || positions.entry;
   const allyLane = allyPlace === 'crossing' ? currentLane : allyPoint[1];
   return <figure data-tier="immersive" data-expedition-map data-map-scene={scene.id} data-map-local={localOnly ? 'true' : undefined} data-preview-route={preview ? routeId : undefined} data-crew-position={position.crew} className="m-0 min-w-0 border-y border-edge bg-s0 text-ink">
-    <figcaption className="flex flex-wrap items-center justify-between gap-2 px-4 pt-3 text-small font-body"><strong>{location}</strong><span className="text-ink-2">{preview ? `Preview: ${MAP_ROUTES[routeId] || scene.routes[routeIndex]?.title}` : 'Site schematic'}</span></figcaption>
+    <figcaption className="flex flex-wrap items-center justify-between gap-2 px-4 pt-3 text-small font-body"><strong>{location}</strong>{onNextDecision && <button type="button" className="lr-map-next md:hidden" onClick={onNextDecision}>Scout choices <span aria-hidden="true">↓</span></button>}<span className={`text-ink-2${onNextDecision ? ' hidden md:inline' : ''}`}>{preview ? `Preview: ${MAP_ROUTES[routeId] || scene.routes[routeIndex]?.title}` : 'Site schematic'}</span></figcaption>
     {!localOnly && <div data-site-overview className="flex items-center gap-1 px-4 pt-3" aria-label={`Site position: ${scene.trackLabel}, sector ${sceneIndex + 1} of ${MISSION.scenes.length}`}>
       {MISSION.scenes.map((item, i) => <React.Fragment key={item.id}>
         {i > 0 && <span aria-hidden="true" className={`h-px flex-1 ${i <= sceneIndex ? 'bg-viable' : 'bg-edge-strong'}`} />}

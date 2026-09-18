@@ -2,6 +2,9 @@
    Borders separate groups; they are not announcement frames around every fact. */
 .lr-mode-simple .lr-wizard-chrome { box-shadow: none; }
 .lr-mode-simple .lr-wizard-objective { border: 0; background: none; padding: 8px 0; }
+.lr-mode-simple .lr-map-next { min-height: 44px; padding: 0 2px; border: 0; background: none; color: var(--color-viable); font: 700 14px/1.2 var(--g-font-body); text-decoration: underline; text-underline-offset: 3px; white-space: nowrap; }
+.lr-mode-simple .lr-map-next span { margin-left: 4px; }
+.lr-mode-simple .lr-map-next:focus-visible { outline: 2px solid var(--color-viable); outline-offset: 3px; }
 
 .lr-mode-simple .lr-simple-question { border: 0; padding-bottom: 14px; }
 .lr-mode-simple .lr-simple-question h3 { font-size: clamp(23px,2.3vw,30px); text-transform: none; letter-spacing: 0; }

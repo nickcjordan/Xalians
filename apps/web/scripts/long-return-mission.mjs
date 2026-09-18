@@ -116,9 +116,21 @@ try {
     }
     if (await page.locator('.lr-transition-beat').count()) { await click(page.locator('.lr-transition-beat > button')); continue; }
     if (await page.locator('[data-scout-options]').count()) {
+      if (viewport.width >= 768 && crossed === 0) assert.equal(await page.getByRole('button', { name: /scout choices/i }).count(), 0, 'The desktop map retains its original caption rather than a phone jump control');
       if (viewport.width <= 390) {
         const firstChoice = await page.locator('[data-scout-options] > button').first().boundingBox();
         events.push({ type: 'scout-viewport', scene: crossed + 1, top: firstChoice?.y, height: viewport.height });
+        if (crossed === 0) {
+          const jump = page.getByRole('button', { name: /scout choices/i });
+          const cue = await jump.boundingBox();
+          assert(cue.y >= 0 && cue.y < viewport.height, 'The opening site map visibly offers a way to reach the first scout choice');
+          assert(cue.height >= 44, 'The opening map cue has a touch-sized target');
+          await page.screenshot({ path: `${output}/scout-opening-viewport.png` });
+          await jump.click();
+          const arrived = await page.locator('[data-scout-options] > button').first().boundingBox();
+          assert(arrived.y >= 0 && arrived.y < viewport.height, 'The map cue lands on the first choice without performing the scouting action');
+          assert(await page.locator('.lr-simple-decision').evaluate(node => document.activeElement === node), 'The map cue moves keyboard focus to the scout choice');
+        }
         if (crossed > 0 && firstChoice) {
           const heading = await page.locator('.lr-simple-decision h3').first().boundingBox();
           assert(heading.y >= 56 && heading.y < viewport.height, 'The later-room scout heading clears the phone navigation bar');
