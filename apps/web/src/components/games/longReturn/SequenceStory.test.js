@@ -30,6 +30,15 @@ test('reading back pauses playback, while reaching the bottom does not toggle it
     expect(scroller.scrollTop).toBe(1000);
     expect(onPause).toHaveBeenCalledTimes(2);
     render(false, 2);
+    expect(scroller.scrollTop).toBe(0);
+    expect(container.querySelector('[aria-label="Continue reading the action"]')).toBeTruthy();
+    act(() => container.querySelector('[aria-label="Continue reading the action"]').click());
+    expect(scroller.scrollTop).toBeGreaterThan(0);
+    scroller.scrollTop = 800;
+    act(() => scroller.dispatchEvent(new Event('scroll', { bubbles: true })));
+    expect(container.querySelector('[aria-label="Read from start"]')).toBeTruthy();
+    act(() => container.querySelector('[aria-label="Read from start"]').click());
+    expect(scroller.scrollTop).toBe(0);
     act(() => scroller.dispatchEvent(new Event('scroll', { bubbles: true })));
     expect(onPause).toHaveBeenCalledTimes(2);
   } finally {

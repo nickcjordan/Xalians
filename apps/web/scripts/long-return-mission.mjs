@@ -31,9 +31,26 @@ try {
       await dialog.getByRole('button', { name: /Continue to result|Review scout report|Check scout status|Respond to encounter|See encounter result|Choose response/ }).waitFor({ timeout: 120000 });
       events.push({ type: 'animation', elapsed: Date.now()-started, text: await dialog.innerText() });
       await page.screenshot({ path: `${output}/${step}-animation.png` });
+      if (viewport.width < 768) {
+        const readingLayout = await dialog.evaluate(node => {
+          const story = node.querySelector('.lr-sequence-story-scroll');
+          const lastBeat = story.querySelector('li:last-child');
+          const footer = node.querySelector('.lr-sequence-story footer');
+          return { innerOverflow: getComputedStyle(story).overflowY, lastBeatBottom: lastBeat.getBoundingClientRect().bottom, footerTop: footer.getBoundingClientRect().top };
+        });
+        assert.equal(readingLayout.innerOverflow, 'visible', 'Phone field record uses one natural page scroll');
+        assert(readingLayout.footerTop >= readingLayout.lastBeatBottom, 'Continue action follows the entire account rather than covering it');
+      }
       if (viewport.width === 390 && !events.some(event => event.type === 'read-start')) {
         const readStart = dialog.getByRole('button', { name: /Read from start/ });
-        if (viewport.height <= 700 && step === 1) assert.equal(await readStart.count(), 1, 'Short-phone scout account reveals the way back to its opening beat');
+        if (viewport.height <= 700 && step === 1) {
+          assert.equal(await dialog.evaluate(node => node.scrollTop), 0, 'Completed short-phone scout account begins with its opening beat');
+          assert.equal(await readStart.count(), 0, 'No rewind control is needed when the account starts at the beginning');
+          const continueReading = dialog.getByRole('button', { name: /Continue reading the action/ });
+          assert.equal(await continueReading.count(), 1, 'Short-phone account signals that more story follows');
+          await continueReading.click();
+          assert(await dialog.evaluate(node => node.scrollTop > 0), 'Reading cue moves to the next part of the account');
+        }
         if (await readStart.count()) {
           await readStart.click();
           const scroller = dialog.locator('.lr-sequence-story-scroll');
@@ -43,7 +60,13 @@ try {
           await page.screenshot({ path: `${output}/read-from-start.png` });
         }
       }
-      await dialog.getByRole('button', { name: /Continue to result|Review scout report|Check scout status|Respond to encounter|See encounter result|Choose response/ }).click();
+      const continueAction = dialog.getByRole('button', { name: /Continue to result|Review scout report|Check scout status|Respond to encounter|See encounter result|Choose response/ });
+      if (viewport.width < 768 && !events.some(event => event.type === 'record-end')) {
+        await continueAction.evaluate(element => element.scrollIntoView({ block: 'end', behavior: 'instant' }));
+        await page.screenshot({ path: `${output}/record-end.png` });
+        events.push({ type: 'record-end' });
+      }
+      await continueAction.click();
       continue;
     }
     await page.screenshot({ path: `${output}/${step}-view.png`, fullPage: true });
