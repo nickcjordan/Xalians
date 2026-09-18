@@ -4,6 +4,11 @@ Owner: the agent maintaining the Long Return worktree. Update this file during i
 
 ## Active goal — full-mission UX (2026-09-11)
 
+### September 18: the crossing account names the source of structural damage
+
+- A no-scout intake crossing spent two annex stability solely because the crew met conductive brine, but the account blamed the flood wake. That made the physical story contradict the receipt. The crossing account now distinguishes the route's ordinary wear from extra damage caused by each unseen hazard. The brine jumps into submerged cabling and shakes the intake wall; the other six hazards have their own physical consequences. When both route and hazard contribute, the account names both in sequence. Scouting and resolution rules, resource amounts, and hidden information are unchanged.
+- Replayed three no-scout crossings through brine, a turbine servo and the lock countermeasure at 390 by 667. Their field records now match their damage sources and unchanged numeric receipts. Tests cover route-only, hazard-only, combined wear and all seven stability hazards. All 1,311 web tests, typecheck and production build passed. Human acceptance of the account's clarity and rhythm remains open.
+
 ### September 18: the scout's signal and warning form one readable cause
 
 - A seven-room alternate-response replay exposed a joined sentence in the field account: a visual signal ended with “from the entrance” and immediately ran into “One turbine...” without punctuation. The warning also said it “concerns race the upper catwalk,” treating a button label as a noun. The delivery now ends as a sentence and links the discovered condition to the choice it actually affects: “That warning matters if the crew chooses to race the upper catwalk.” The same phrasing works when a danger affects both approaches.

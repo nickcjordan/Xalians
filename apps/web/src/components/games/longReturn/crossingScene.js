@@ -25,13 +25,13 @@ const NEXT_THRESHOLDS = {
 };
 
 const HAZARDS = {
-  'conductive-brine': ['A blue flash travels through the flood. The brine carries an electrical charge, and the crew is already in its path.', 'The crew watches for the charge moving through the brine and works around the danger the scout identified.'],
-  'servo-cycle': ['One of the apparently dormant turbines begins its silent turn. The safe interval is closing sooner than the crew expected.', 'The crew follows the rotation the scout marked, anticipating the turbine rather than discovering it in motion.'],
-  countermeasure: ['The lock answers with an interrogation pattern instead of an opening signal. Its obsolete questions press into the crew’s thoughts while the arms continue their work.', 'The crew recognizes the lock’s interrogation pattern from the report and prepares for it before answering the rig.'],
-  'void-shear': ['Loose fragments begin sliding toward the outer hull. The pull changes across the centerline, catching the crew where the crossing had seemed straight.', 'The drifting fragments reveal the changing pull the scout warned about. The crew adjusts its passage before reaching the shear.'],
-  'plague-dust': ['A sealed layer breaks open around the field. Fine contaminant dust lifts into the space where the crew is working.', 'The crew approaches the sealed contaminant layer with the scout’s warning in mind, keeping its disturbance under control.'],
-  'charge-bloom': ['The disturbed reservoir releases a sudden bloom of charge. Light spreads across the surface toward the collection point.', 'The crew anticipates the surface discharge described in the report and works around its cycle.'],
-  'ring-closure': ['The inner ring closes ahead of the outer assembly. The opening is disappearing in the wrong order.', 'The crew accounts for the inner ring closing early, using the timing the scout identified.']
+  'conductive-brine': ['A blue flash travels through the flood. The brine carries an electrical charge, and the crew is already in its path.', 'The crew watches for the charge moving through the brine and works around the danger the scout identified.', 'The charge jumps into submerged cabling. A shudder runs through the old intake wall.'],
+  'servo-cycle': ['One of the apparently dormant turbines begins its silent turn. The safe interval is closing sooner than the crew expected.', 'The crew follows the rotation the scout marked, anticipating the turbine rather than discovering it in motion.', 'The unexpected rotation jolts its mountings and shakes the hall.'],
+  countermeasure: ['The lock answers with an interrogation pattern instead of an opening signal. Its obsolete questions press into the crew’s thoughts while the arms continue their work.', 'The crew recognizes the lock’s interrogation pattern from the report and prepares for it before answering the rig.', 'The false response drives the arms against their frame, shaking the door’s old mountings.'],
+  'void-shear': ['Loose fragments begin sliding toward the outer hull. The pull changes across the centerline, catching the crew where the crossing had seemed straight.', 'The drifting fragments reveal the changing pull the scout warned about. The crew adjusts its passage before reaching the shear.', 'The sliding debris strikes a hull seam, shifting the already exposed structure.'],
+  'plague-dust': ['A sealed layer breaks open around the field. Fine contaminant dust lifts into the space where the crew is working.', 'The crew approaches the sealed contaminant layer with the scout’s warning in mind, keeping its disturbance under control.', 'The failing containment frame shudders as the dust escapes, pulling on the archive’s old supports.'],
+  'charge-bloom': ['The disturbed reservoir releases a sudden bloom of charge. Light spreads across the surface toward the collection point.', 'The crew anticipates the surface discharge described in the report and works around its cycle.', 'The discharge kicks through the collector assembly, rattling its mountings.'],
+  'ring-closure': ['The inner ring closes ahead of the outer assembly. The opening is disappearing in the wrong order.', 'The crew accounts for the inner ring closing early, using the timing the scout identified.', 'The uneven closure slams a new load into the spine’s old bearings.']
 };
 
 const MOTIONS = {
@@ -135,8 +135,12 @@ export function crossingScene({ route, lead, support, method, result, companionH
     if (note.includes('exposed to')) return `The ${route.environment.element} exposure bears particularly hard on ${name}, making the work more demanding.`;
     return '';
   }).filter(Boolean).join(' ') : '';
-  const stability = result.pressure > 0
-    ? ` ${route.id === 'breach' && method.key === 'phasing' ? 'The old release strains as it opens the iris. Its vibration travels through the failing wall.' : SHIFTS[route.id]}` : '';
+  const routeWear = route.pressure > 0 || result.reactionControlled === false
+    ? route.id === 'breach' && method.key === 'phasing' ? 'The old release strains as it opens the iris. Its vibration travels through the failing wall.' : SHIFTS[route.id]
+    : '';
+  const hazardWear = result.unseenHazards.filter(hazard => hazard.pressure > 0).map(hazard => HAZARDS[hazard.id]?.[2]).filter(Boolean).join(' ');
+  const wear = result.pressure > 0 ? [routeWear, hazardWear].filter(Boolean).join(' ') : '';
+  const stability = wear ? ` ${wear}` : '';
   const salvage = result.salvage > 0
     ? (['harvest', 'dive', 'align', 'closure', 'stabilize', 'blackbox'].includes(route.id)
       ? ' The recovered material joins the haul they must carry out.'

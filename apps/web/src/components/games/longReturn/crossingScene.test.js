@@ -26,6 +26,8 @@ test('brine appears during the action and the bypass is introduced through the p
   const paragraphs = resolve(scene.routes[1], { unseenHazards: scene.hazards, leadStrain: 2, pressure: 2, salvage: 2 });
   expect(paragraphs[1]).toContain('A blue flash');
   expect(paragraphs[2]).toContain('shudder');
+  expect(paragraphs[2]).toContain('charge jumps into submerged cabling');
+  expect(paragraphs[2]).not.toContain('flood tugs at the loosened wreckage');
   expect(paragraphs[3]).toContain('Their wake draws frozen debris');
   expect(paragraphs[3]).toContain('a side channel built to carry cooling water');
   expect(paragraphs[3]).toContain('usable components');
@@ -52,6 +54,36 @@ test('both Index recoveries identify the record without confusing it with loose 
   expect(resolve(plates)[3]).toContain('bring home');
   expect(resolve(backup)[3]).toContain('sealed backup');
   expect(resolve(backup)[3]).toContain('Nemesis Index');
+});
+
+test('stability prose distinguishes ordinary route wear from an unseen hazard and uncontrolled reaction', () => {
+  const intake = MISSION.scenes[0].routes[1];
+  const hazard = MISSION.scenes[0].hazards[0];
+  const unseen = resolve(intake, { pressure: 2, reactionControlled: true, unseenHazards: [hazard] })[2];
+  expect(unseen).toContain('charge jumps into submerged cabling');
+  expect(unseen).not.toContain('flood tugs');
+  const uncontrolled = resolve(intake, { pressure: 1, reactionControlled: false })[2];
+  expect(uncontrolled).toContain('flood tugs at the loosened wreckage');
+  expect(uncontrolled).not.toContain('submerged cabling');
+
+  const catwalk = MISSION.scenes[1].routes[0];
+  const mixed = resolve(catwalk, { pressure: 2, reactionControlled: true, unseenHazards: [MISSION.scenes[1].hazards[0]] })[2];
+  expect(mixed).toContain('waking machinery sends a tremor');
+  expect(mixed).toContain('unexpected rotation jolts its mountings');
+});
+
+test('every unseen stability hazard has a physical consequence on its affected routes', () => {
+  const consequence = {
+    'conductive-brine': 'submerged cabling', 'servo-cycle': 'rotation jolts', countermeasure: 'arms against their frame',
+    'void-shear': 'debris strikes a hull seam', 'plague-dust': 'containment frame shudders',
+    'charge-bloom': 'discharge kicks through', 'ring-closure': 'closure slams a new load'
+  };
+  for (const scene of MISSION.scenes) for (const hazard of scene.hazards) {
+    for (const route of scene.routes.filter(entry => entry.hazardIds.includes(hazard.id))) {
+      const text = resolve(route, { pressure: route.pressure + hazard.pressure, reactionControlled: true, unseenHazards: [hazard] })[2];
+      expect(text, `${scene.id}/${route.id}/${hazard.id}`).toContain(consequence[hazard.id]);
+    }
+  }
 });
 
 test('the later crossings leave the crew at the same physical thresholds used by the next rooms', () => {
