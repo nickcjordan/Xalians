@@ -14,6 +14,7 @@ import {
   artilleryMovedX,
   artilleryNominalReach,
   artilleryTerrainImpactStages,
+  terrainHeight,
   chooseArtilleryBotShot,
   applyRelayMove,
   applySweepAction,
@@ -342,16 +343,58 @@ describe('Arcade deterministic rules', () => {
     expect(verifyArcadeCompletion({ gameId: 'artillery', seed, difficulty: 'rookie', actions: actions.slice(0, -1) })).toBe(false);
   });
 
-  it('gives all six payloads a distinct deterministic role', () => {
+  it('gives the expanded arsenal distinct deterministic roles', () => {
     const state = createArtilleryState('complete-arsenal');
     const outcomes = ARTILLERY_PAYLOADS.map((payload) => simulateArtilleryShot(state, { angle: 38, power: 72, payload }));
-    expect(outcomes.map((outcome) => outcome.projectiles.length)).toEqual([1, 3, 1, 5, 1, 1]);
+    expect(outcomes.map((outcome) => outcome.projectiles.length)).toEqual([1, 3, 1, 5, 1, 1, 1, 1, 1, 1]);
     expect(new Set(outcomes.map((outcome) => outcome.path.length)).size).toBeGreaterThan(2);
 
     const bloom = applyArtilleryShot(state, { angle: 22, power: 46, payload: 'bloom' });
     const impactX = Math.round(bloom.outcome.impact!.x);
     expect(bloom.state.terrain[impactX]).toBeGreaterThan(state.terrain[impactX]);
     expect(bloom.state.terrain[impactX] - state.terrain[impactX]).toBeGreaterThan(15);
+  });
+
+  it('lets Skipjack bounce once and Mole travel underground before their final impacts', () => {
+    const state = createArtilleryState('new-trajectory-weapons', 'range', 'standard', { mapSize: 'standard' });
+    const skip = simulateArtilleryShot(state, { angle: 38, power: 66, payload: 'skip' }).projectiles[0];
+    const mole = simulateArtilleryShot(state, { angle: 38, power: 66, payload: 'mole' }).projectiles[0];
+    expect(skip.impact).not.toBeNull();
+    const firstContact = skip.path.findIndex((point, index) => index > 0 && point.y <= terrainHeight(state.terrain, point.x) + 1);
+    expect(firstContact).toBeGreaterThan(0);
+    expect(skip.path.slice(firstContact + 1).some((point) => point.y > terrainHeight(state.terrain, point.x) + 2)).toBe(true);
+    expect(mole.entry).toBeDefined();
+    expect(mole.impact!.x - mole.entry!.x).toBeCloseTo(27);
+    const shellReach = artilleryNominalReach(state, { angle: 38, power: 66, payload: 'shell' });
+    const moleReach = artilleryNominalReach(state, { angle: 38, power: 66, payload: 'mole' });
+    const skipReach = artilleryNominalReach(state, { angle: 38, power: 66, payload: 'skip' });
+    expect(moleReach.near).toBeGreaterThan(shellReach.near);
+    expect(skipReach.far - skipReach.near).toBe(40);
+    expect(mole.path.some((point) => point.x > mole.entry!.x + 10 && point.y < terrainHeight(state.terrain, point.x))).toBe(true);
+    const mined = applyArtilleryShot(state, { angle: 38, power: 66, payload: 'mole' });
+    const middle = Math.round((mole.entry!.x + mole.impact!.x) / 2);
+    expect(mined.state.terrain[middle]).toBeLessThan(state.terrain[middle]);
+  });
+
+  it('pulls a nearby rig with Tractor Knot and fills low ground with Foam Tide', () => {
+    const state = createArtilleryState('new-terrain-weapons', 'range', 'standard', { mapSize: 'standard' });
+    const candidate = Array.from({ length: 71 }, (_, index) => index + 10).flatMap((angle) =>
+      Array.from({ length: 86 }, (_, index) => index + 15).map((power) => ({ angle, power })))
+      .find((shot) => {
+        const impact = simulateArtilleryShot(state, { ...shot, payload: 'tractor' }).impact;
+        return impact && Math.abs(impact.x - state.tanks.right.x) > 5 && Math.abs(impact.x - state.tanks.right.x) < 25;
+      });
+    expect(candidate).toBeDefined();
+    const pulled = applyArtilleryShot(state, { ...candidate!, payload: 'tractor' });
+    expect(Math.abs(pulled.outcome.rigDisplacement)).toBeGreaterThan(0);
+    expect(pulled.state.tanks.right.x).toBeCloseTo(state.tanks.right.x + pulled.outcome.rigDisplacement);
+
+    const cratered = { ...state, terrain: state.terrain.map((height, x) => height - Math.max(0, 18 - Math.abs(x - 165))) };
+    const foamImpact = { x: 165, y: terrainHeight(cratered.terrain, 165) };
+    const projectile = { path: [foamImpact], impact: foamImpact, hit: null, damage: 0, directHit: false, outOfBounds: false };
+    const foamed = artilleryTerrainImpactStages(cratered.terrain, [projectile], 'foam')[0].terrain;
+    expect(foamed[165]).toBeGreaterThan(cratered.terrain[165] + 12);
+    expect(foamed[145]).toBe(cratered.terrain[145]);
   });
 
   it('makes a buried drill hit the rig above its cavity and buckle its footing', () => {

@@ -167,12 +167,25 @@ const PAYLOAD_META: Record<ArtilleryPayload, {
   cluster: { label: 'Starfall canister', shortLabel: 'Starfall', detail: 'Five wider microbursts · 1 charge', purpose: 'Blankets uncertain range and tears up a broad shelf', rackHint: 'Wide barrage', elementClass: 'el-chemical' },
   bloom: { label: 'Rampart forge', shortLabel: 'Rampart', detail: `Wall ahead grants ${ARTILLERY_RAMPART_GUARD} guard until you move or take a hit. Fire a high arc over close walls · 1 charge`, purpose: 'Raises terrain and blocks the next incoming blast', rackHint: 'Cover + guard', elementClass: 'el-plant' },
   lance: { label: 'Sunspike', shortLabel: 'Sunspike', detail: 'Precise light spear · pierces half of guard · 1 charge', purpose: 'Finishes an exposed rig or cuts through protective guard', rackHint: 'Guard piercer', elementClass: 'el-light' },
+  skip: { label: 'Skipjack', shortLabel: 'Skipjack', detail: 'Ricochets once off the ground before bursting · 2 charges', purpose: 'Hops over the first ridge and strikes beyond it', rackHint: 'Ground bounce', elementClass: 'el-electric' },
+  mole: { label: 'Mole mine', shortLabel: 'Mole', detail: 'Tunnels 27 units after landing, then erupts · 2 charges', purpose: 'Sneaks under a defensive lip to hit behind cover', rackHint: 'Tunnel + erupt', elementClass: 'el-sand' },
+  tractor: { label: 'Tractor knot', shortLabel: 'Tractor', detail: 'Pulls a nearby rig up to 15 units toward impact · 1 charge', purpose: 'Drags a rival off its perch or into a crater', rackHint: 'Rig pull', elementClass: 'el-chemical' },
+  foam: { label: 'Foam tide', shortLabel: 'Foam', detail: 'Flows into low ground and hardens · 2 charges', purpose: 'Fills a crater so a trapped rig can drive out', rackHint: 'Ground repair', elementClass: 'el-water' },
 };
 
 export function artilleryShotVerdict(outcome: ArtilleryOutcome, shooterX: number, targetX: number, targetIntegrity = ARTILLERY_MAX_INTEGRITY, shelfBlocked = false): ShotVerdict {
   if (outcome.coverGranted > 0) return {
     title: 'Cover forged',
     detail: `${outcome.coverGranted} guard until you move or take a hit`,
+  };
+  if (outcome.rigDisplacement !== 0) return {
+    title: `Rig pulled ${Math.round(Math.abs(outcome.rigDisplacement))} units`,
+    detail: outcome.damage > 0 ? `${Math.min(outcome.damage, targetIntegrity)} hull damage · footing displaced` : 'Footing displaced toward the impact',
+  };
+  if (outcome.payload === 'foam' && outcome.impact) return {
+    title: 'Foam set', detail: outcome.damage > 0
+      ? `${Math.min(outcome.damage, targetIntegrity)} hull damage · low ground filled`
+      : 'Low ground filled and hardened for the next move',
   };
   if (outcome.damage > 0) return {
     title: `${Math.min(outcome.damage, targetIntegrity)} hull damage`,
@@ -298,6 +311,10 @@ export function artilleryFlightDurationMs(pathLength: number, gravity: number, p
     cluster: 1.06,
     bloom: 1.1,
     lance: 0.82,
+    skip: 1.1,
+    mole: 1.18,
+    tractor: 1.08,
+    foam: 1.08,
   };
   const simulatedTravel = Math.max(2_400, Math.min(5_200, pathLength * 60));
   return Math.round(simulatedTravel * payloadPace[payload] / Math.sqrt(Math.max(0.55, gravity)));
@@ -393,6 +410,20 @@ function PayloadGlyph({ payload, className = '' }: { payload: ArtilleryPayload; 
   </> : payload === 'bloom' ? <>
     <path d="M2 13 L5 5 L9 2 L13 5 L16 13 L12 10 L9 13 L6 10 Z" className="fill-el stroke-black" strokeWidth="0.8" />
     <path d="M5 5 L9 8 L13 5 M9 2 V13" className="fill-none stroke-ink-2" strokeWidth="0.7" />
+  </> : payload === 'skip' ? <>
+    <circle cx="12" cy="5" r="2.4" className="fill-el stroke-black" strokeWidth="0.7" />
+    <path d="M2 13 Q5 6 8 12 Q11 16 15 10" className="fill-none stroke-el" strokeWidth="1" />
+  </> : payload === 'mole' ? <>
+    <path d="M2 9 L9 3 L16 9 L9 13 Z" className="fill-el stroke-black" strokeWidth="0.8" />
+    <path d="M3 13 Q8 8 15 13 M9 3 V12" className="fill-none stroke-ink-2" strokeWidth="0.7" />
+  </> : payload === 'tractor' ? <>
+    <circle cx="9" cy="8" r="5" className="fill-none stroke-el" strokeWidth="1.2" />
+    <path d="M2 8 H8 M16 8 H10 M9 2 V7 M9 14 V9" className="stroke-el" strokeWidth="1" />
+    <circle cx="9" cy="8" r="1.2" className="fill-el" />
+  </> : payload === 'foam' ? <>
+    <path d="M1 11 Q4 8 7 11 Q10 14 13 10 Q15 8 17 10" className="fill-none stroke-el" strokeWidth="1.3" />
+    <circle cx="6" cy="6" r="2.1" className="fill-el stroke-black" strokeWidth="0.5" />
+    <circle cx="12" cy="4" r="1.5" className="fill-el stroke-black" strokeWidth="0.5" />
   </> : <>
     <path d="M1 9 L13 3 L10 7 L17 8 L10 10 L13 14 Z" className="fill-el stroke-black" strokeWidth="0.75" />
     <path d="M2 9 H14" className="stroke-ink-2" strokeWidth="0.75" />
@@ -426,6 +457,10 @@ function ProjectileArt({ payload, x, y, rotation }: { payload: ArtilleryPayload;
         <path d="M-3.2 0 L1.3 -0.72 L2.5 0 L1.3 0.72 Z" className="fill-el stroke-black" strokeWidth="0.2" />
         <path d="M-4.2 0 H1.4" className="stroke-el opacity-55" strokeWidth="0.4" />
       </>}
+      {payload === 'skip' && <><circle r="1.25" className="fill-el stroke-black" strokeWidth="0.25" /><path d="M-2.4 0 H-1.2" className="stroke-el" strokeWidth="0.5" /></>}
+      {payload === 'mole' && <path d="M-1.8 0 L0 -1.4 L1.8 0 L0 1.4 Z M-1.1 0 H1.2" className="fill-el stroke-black" strokeWidth="0.25" />}
+      {payload === 'tractor' && <><circle r="1.4" className="fill-none stroke-el" strokeWidth="0.45" /><circle r="0.55" className="fill-el" /></>}
+      {payload === 'foam' && <><circle r="1.3" className="fill-el stroke-black" strokeWidth="0.24" /><circle cx="-1.5" cy="-1.3" r="0.55" className="fill-el opacity-65" /></>}
     </g>
   );
 }
@@ -473,6 +508,18 @@ function PersistentPayloadAftermath({ mark, y, slope, age, visibility = 1 }: { m
       <circle cx={mark.x + 1.8} cy={y - 13.2} r="2.5" className="fill-el opacity-15" />
     </g>
   </g>;
+  if (mark.payload === 'foam') return <g className={common} opacity={opacity} aria-hidden>
+    <path d={`M ${mark.x - 9} ${y} Q ${mark.x - 5} ${y - 2} ${mark.x} ${y - 1.4} Q ${mark.x + 5} ${y - 2} ${mark.x + 9} ${y}`} className="fill-none stroke-el" strokeWidth="1.1" />
+    <circle cx={mark.x - 3} cy={y - 2.1} r="0.75" className="fill-el" /><circle cx={mark.x + 4} cy={y - 1.8} r="0.65" className="fill-el" />
+  </g>;
+  if (mark.payload === 'tractor') return <g className={common} opacity={opacity} aria-hidden>
+    <circle cx={mark.x} cy={y - 0.6} r="2.5" className="fill-none stroke-el" strokeWidth="0.45" />
+    <circle cx={mark.x} cy={y - 0.6} r="0.55" className="fill-el" />
+  </g>;
+  if (mark.payload === 'mole') return <g className={common} opacity={opacity} aria-hidden>
+    <path d={`M ${mark.x - 6} ${y + 0.2} q 3 -2 6 -0.7 q 3 -1.3 6 0.7`} className="fill-none stroke-el" strokeWidth="0.5" />
+    <path d={`M ${mark.x - 1} ${y - 1} l -0.8 -3 M ${mark.x + 1.5} ${y - 0.5} l 1 -3`} className="stroke-el" strokeWidth="0.4" />
+  </g>;
 }
 
 function ExcavationBurst({ payload, x, y, progress, visual }: {
@@ -482,7 +529,7 @@ function ExcavationBurst({ payload, x, y, progress, visual }: {
   progress: number;
   visual: ReturnType<typeof artilleryImpactVisualState>;
 }) {
-  if (payload === 'bloom') return null;
+  if (payload === 'bloom' || payload === 'foam' || payload === 'tractor') return null;
   const size = ARTILLERY_PAYLOAD_RULES[payload].craterRadius * (payload === 'lance' ? 0.72 : payload === 'bore' ? 0.84 : 1);
   const expansion = cinematicEase(progress / 0.22);
   const radius = size * (0.13 + expansion * 0.85);
@@ -555,6 +602,26 @@ function PayloadImpactArt({ payload, x, y, groundY, slope, progress, reveal, vis
       })}
       {[-1, 1].map((direction) => <path key={direction} d={`M ${x + direction * radius * 0.42} ${y - grow * 1.5} Q ${x + direction * radius * 0.72} ${y - grow * 2.6} ${x + direction * radius * 0.9} ${y + 0.4}`} className="fill-none stroke-el" strokeWidth="0.42" opacity={visual.dustOpacity * 0.58} />)}
     </g>
+  </g>;
+  if (payload === 'foam') return <g className={PAYLOAD_META[payload].elementClass} aria-hidden data-testid="artillery-impact-foam">
+    {[0, -1, 1, -2, 2].map((offset) => <g key={offset} opacity={blast * (1 - Math.abs(offset) * 0.12)}>
+      <circle cx={x + offset * radius * 0.39} cy={groundY - grow * (2.4 + (2 - Math.abs(offset)) * 1.1)} r={grow * (2.1 + (2 - Math.abs(offset)) * 0.8)} className="fill-el opacity-35" />
+      <circle cx={x + offset * radius * 0.39} cy={groundY - grow * (3 + (2 - Math.abs(offset)) * 1.1)} r={grow * 0.65} className="fill-ink opacity-65" />
+    </g>)}
+    <path d={`M ${x - radius} ${groundY} Q ${x} ${groundY - grow * 4} ${x + radius} ${groundY}`} className="fill-none stroke-el" strokeWidth="0.8" opacity={blast * 0.85} />
+  </g>;
+  if (payload === 'tractor') return <g className={PAYLOAD_META[payload].elementClass} aria-hidden data-testid="artillery-impact-tractor">
+    {[0.3, 0.65, 1].map((scale) => <circle key={scale} cx={x} cy={y} r={radius * scale * (1.18 - grow * 0.68)} className="fill-none stroke-el" strokeWidth="0.5" opacity={blast * (0.8 - scale * 0.2)} />)}
+    {Array.from({ length: 8 }, (_, piece) => { const theta = piece * Math.PI / 4; return <path key={piece} d={`M ${x + Math.cos(theta) * radius * 1.1} ${y + Math.sin(theta) * radius * 1.1} L ${x + Math.cos(theta) * radius * (0.6 - grow * 0.3)} ${y + Math.sin(theta) * radius * (0.6 - grow * 0.3)}`} className="stroke-el" strokeWidth="0.45" opacity={blast * 0.76} />; })}
+    <circle cx={x} cy={y} r={1 + grow * 1.3} className="fill-el" opacity={blast * 0.7} />
+  </g>;
+  if (payload === 'mole') return <g className={PAYLOAD_META[payload].elementClass} aria-hidden data-testid="artillery-impact-mole">
+    <path d={`M ${x - radius * 0.8} ${groundY} Q ${x - radius * 0.3} ${groundY - grow * 5} ${x} ${groundY - grow * 14} Q ${x + radius * 0.3} ${groundY - grow * 5} ${x + radius * 0.8} ${groundY}`} className="fill-el opacity-35 stroke-el" strokeWidth="0.45" opacity={blast} />
+    {[-2, -1, 0, 1, 2].map((piece) => <path key={piece} d={`M ${x + piece * 1.8} ${y - grow * 2} l ${piece * grow * 2.2} ${-grow * (7 - Math.abs(piece))}`} className="stroke-el" strokeWidth="0.5" opacity={blast * 0.75} />)}
+  </g>;
+  if (payload === 'skip') return <g className={PAYLOAD_META[payload].elementClass} aria-hidden data-testid="artillery-impact-skip">
+    <ellipse cx={x} cy={y} rx={radius * grow} ry={radius * grow * 0.48} className="fill-none stroke-el" strokeWidth="0.8" opacity={blast * 0.7} />
+    {[-1, 1].map((side) => <path key={side} d={`M ${x + side * radius * 0.3} ${y - grow * 2} q ${side * radius * 0.4} ${-grow * 5} ${side * radius * 0.7} ${-grow * 9}`} className="fill-none stroke-el" strokeWidth="0.7" opacity={blast * 0.7} />)}
   </g>;
 
   if (payload === 'lance') return <g className={PAYLOAD_META[payload].elementClass} aria-hidden data-testid="artillery-impact-lance">
@@ -747,6 +814,7 @@ export function ArtilleryBoard({ seed, mode, difficulty, mapSize, world, onStatu
   onQuickRematch?: () => void;
 }) {
   const [state, setState] = React.useState<ArtilleryState>(() => createArtilleryState(seed, mode, difficulty, { mapSize, world }));
+  const initialPayloadStock = React.useRef(state.payloads);
   const [angle, setAngle] = React.useState(45);
   const [power, setPower] = React.useState(70);
   const [payload, setPayload] = React.useState<ArtilleryPayload>('shell');
@@ -778,6 +846,7 @@ export function ArtilleryBoard({ seed, mode, difficulty, mapSize, world, onStatu
   const thrustTimer = React.useRef<number | null>(null);
   const movementRef = React.useRef<ActiveThrust>(null);
   const fieldRef = React.useRef<SVGSVGElement>(null);
+  const weaponRailRef = React.useRef<HTMLDivElement>(null);
   const activePointer = React.useRef<number | null>(null);
   const dragOrigin = React.useRef<{ x: number; y: number } | null>(null);
   const [dragGuide, setDragGuide] = React.useState<{ start: { x: number; y: number }; end: { x: number; y: number } } | null>(null);
@@ -1111,7 +1180,8 @@ export function ArtilleryBoard({ seed, mode, difficulty, mapSize, world, onStatu
       : mode === 'local' || state.winner === 'left'
         ? state.turn <= 7 && resultAccuracy >= 50 ? 'S' : state.turn <= 11 ? 'A' : 'B'
         : state.turn >= 10 ? 'C' : 'D';
-  const resultSpecialsSpent = (mode === 'challenge' ? 4 : 7) - Object.values(state.payloads[resultSide]).reduce((total, remaining) => total + remaining, 0);
+  const resultSpecialsSpent = Object.values(initialPayloadStock.current[resultSide]).reduce((total, remaining) => total + remaining, 0)
+    - Object.values(state.payloads[resultSide]).reduce((total, remaining) => total + remaining, 0);
   const nextSortie = artilleryNextSortieTip({ mode, difficulty, won: state.winner === resultSide,
     accuracy: resultAccuracy, specialRounds: resultSpecialsSpent, closeBlocks: resultStats.closeBlocks, shelfBlocks: resultStats.shelfBlocks });
   // Field instruments report a coarse estimate. Exact numeric matching would
@@ -1380,9 +1450,12 @@ export function ArtilleryBoard({ seed, mode, difficulty, mapSize, world, onStatu
     const animatedMove = animated?.shooter === side ? animated.shot.move : 0;
     const movementTargetX = artilleryMovedX(state, side, animatedMove);
     const animatedMoveEase = artilleryMoveAnimationProgress(animated?.phase ?? null, animated?.progress ?? 0, animatedMove);
-    const displayX = animatedMove !== 0
+    const movedX = animatedMove !== 0
         ? value.x + (movementTargetX - value.x) * animatedMoveEase
         : value.x;
+    const impactTarget = animated?.shooter === 'left' ? 'right' : 'left';
+    const pull = animated && impactTarget === side ? animated.outcome.rigDisplacement * impactReveal : 0;
+    const displayX = movedX + pull;
     const driving = movement?.side === side && movement.mobility === 'drive';
     const strideProgress = driving ? movement.pulse / 5 : animated?.phase === 'move' && animatedMove !== 0 ? animated.progress : 0;
     const stride = Math.sin(strideProgress * Math.PI * 10) * 0.65;
@@ -1406,7 +1479,6 @@ export function ArtilleryBoard({ seed, mode, difficulty, mapSize, world, onStatu
       ? Math.sin((animated?.phase === 'impact' ? animated.progress : 1) * Math.PI * 6) * (1 - (animated?.phase === 'settle' ? animated.progress : impactReveal) * 0.85) * (side === 'left' ? -0.45 : 0.45)
       : 0;
     const damageEffectOpacity = animated?.phase === 'settle' ? Math.max(0, 1 - animated.progress / 0.36) : Math.min(1, impactReveal * 2.4);
-    const impactTarget = animated?.shooter === 'left' ? 'right' : 'left';
     const displayedIntegrity = resolutionMoment && impactTarget === side
       ? Math.max(0, value.integrity - (animated?.outcome.damage ?? 0) * impactReveal)
       : value.integrity;
@@ -1504,7 +1576,7 @@ export function ArtilleryBoard({ seed, mode, difficulty, mapSize, world, onStatu
   };
 
   return (
-    <div className="artillery-layout grid w-full min-w-0 gap-2 overflow-x-clip" data-artillery-seed={seed}>
+    <div className="artillery-layout grid w-full min-w-0 gap-2 overflow-x-hidden" data-artillery-seed={seed}>
       <section aria-label="Artillery field" className={`artillery-field artillery-viewport relative mx-auto w-full self-start overflow-hidden border-2 border-edge-strong bg-s0 shadow-panel ${state.phase === 'finished' ? 'artillery-field-finished' : ''} ${animated ? `artillery-cinematic-${animated.phase}` : ''}`}>
         <div className="pointer-events-none absolute inset-x-2 top-2 z-10 grid grid-cols-[minmax(0,1fr)_7.25rem_minmax(0,1fr)] items-start gap-1 sm:grid-cols-[minmax(0,1fr)_9.5rem_minmax(0,1fr)] sm:gap-2">
           <div className="min-w-0 border border-edge-strong bg-s0/90 p-1.5">
@@ -1611,7 +1683,7 @@ export function ArtilleryBoard({ seed, mode, difficulty, mapSize, world, onStatu
         <svg
           ref={fieldRef}
           viewBox={cameraViewBox}
-          className={`block h-full w-full touch-none ${canFire ? 'cursor-crosshair' : ''}`}
+          className={`block h-full w-full touch-none overflow-hidden ${canFire ? 'cursor-crosshair' : ''}`}
           role="img"
           aria-label={`Two mobile range rigs on ${worldMeta.name}. Drag up and outward anywhere on the battlefield; direction sets angle and distance sets power.`}
           onPointerDown={beginDirectAim}
@@ -1869,7 +1941,7 @@ export function ArtilleryBoard({ seed, mode, difficulty, mapSize, world, onStatu
                 onClick={() => animateShot({ angle, power, payload, move: 0, system: 'none' })}
               >
                 <span className="grid w-full grid-cols-[3rem_minmax(0,1fr)] items-center gap-2" aria-hidden>
-                  <span className="grid size-12 place-items-center rounded-full border-2 border-viable-lo bg-s0 text-viable-hi"><PayloadGlyph payload={payload} className="h-8 w-10 overflow-visible" /></span>
+                  <span className="grid size-12 place-items-center rounded-full border-2 border-viable-lo bg-s0 text-viable-hi"><PayloadGlyph payload={payload} className="size-9 overflow-visible" /></span>
                   <span className="min-w-0 text-left">
                     <span className="block font-mono text-[10px] uppercase tracking-[0.18em] text-ink-3">Weapon armed</span>
                     <span className="block font-legend text-body leading-tight uppercase tracking-legend text-viable-hi">Fire {PAYLOAD_META[payload].shortLabel}</span>
@@ -1879,9 +1951,23 @@ export function ArtilleryBoard({ seed, mode, difficulty, mapSize, world, onStatu
               </Button>
             </div>
 
-            <div className="cockpit-instrument order-1 grid min-w-0 border border-edge-strong p-1 sm:order-none sm:p-1.5 lg:col-span-2" role="group" aria-label="Choose a weapon">
-              <div className="grid min-w-0">
-                <div className="grid grid-cols-3 gap-1 sm:grid-cols-6">
+            <div className="cockpit-instrument order-1 grid min-w-0 gap-1.5 border border-edge-strong p-2 sm:order-none lg:col-span-2" role="group" aria-label="Choose a weapon">
+              <div className="flex items-center justify-between gap-2 border-b border-edge pb-1">
+                <span className="type-legend">Ordnance deck <span className="font-mono text-[10px] text-ink-3">/ {ARTILLERY_PAYLOADS.length} weapons</span></span>
+                <span className="flex items-center gap-1">
+                  <span className="mr-1 hidden font-body text-[11px] text-ink-3 sm:inline">Swipe or page</span>
+                  {([-1, 1] as const).map((direction) => <Button key={direction} type="button" size="xs" variant="ghost" className="h-7 w-7 min-w-0 border border-edge-strong bg-s0 p-0 text-small" aria-label={`Browse weapons ${direction < 0 ? 'left' : 'right'}`} onClick={() => weaponRailRef.current?.scrollBy({ left: direction * weaponRailRef.current.clientWidth * 0.75, behavior: 'smooth' })}>{direction < 0 ? '‹' : '›'}</Button>)}
+                </span>
+              </div>
+              <div className="flex min-w-0 items-center gap-2 border-l-2 border-viable-hi bg-s0 px-2 py-1.5" data-testid="artillery-selected-weapon">
+                <PayloadGlyph payload={payload} className="h-8 w-9 shrink-0 overflow-visible" />
+                <div className="min-w-0 flex-1">
+                  <p className="m-0 font-legend text-small uppercase tracking-legend text-ink">{PAYLOAD_META[payload].label} <span className="font-mono text-[11px] text-viable-hi">{Number.isFinite(payloadRemaining(state.current, payload)) ? `${payloadRemaining(state.current, payload)} left` : 'unlimited'}</span></p>
+                  <p className="m-0 font-body text-small text-ink-2">{PAYLOAD_META[payload].purpose} · {PAYLOAD_META[payload].detail}</p>
+                </div>
+              </div>
+              <div ref={weaponRailRef} className="min-w-0 snap-x overflow-x-auto overscroll-x-contain pb-1" data-testid="artillery-weapon-rail">
+                <div className="flex w-max gap-1.5 pr-4">
                 {ARTILLERY_PAYLOADS.map((choice, index) => {
                   const remaining = payloadRemaining(state.current, choice);
                   const unavailable = remaining <= 0;
@@ -1895,19 +1981,19 @@ export function ArtilleryBoard({ seed, mode, difficulty, mapSize, world, onStatu
                       disabled={!canFire || unavailable}
                       aria-pressed={selected}
                       title={`${PAYLOAD_META[choice].label}: ${PAYLOAD_META[choice].purpose}. ${PAYLOAD_META[choice].detail}`}
-                      className={`artillery-ordnance-card h-12 min-w-0 flex-col gap-0 border px-1.5 sm:h-16 lg:h-14 ${selected ? 'border-viable-lo bg-viable-tint text-viable-hi' : 'border-edge bg-s0'}`}
+                      className={`artillery-ordnance-card h-[4.5rem] w-[7.4rem] shrink-0 snap-start flex-col gap-0 border px-1.5 sm:w-[8.5rem] ${selected ? 'border-viable-lo bg-viable-tint text-viable-hi' : 'border-edge bg-s0'}`}
                       onClick={() => {
                         sound.play('select');
                         setPayload(choice);
                         onStatus(`${PAYLOAD_META[choice].label} selected. ${PAYLOAD_META[choice].detail}.`);
                       }}
                     >
-                      <PayloadGlyph payload={choice} className="h-4 w-7 shrink-0 overflow-visible sm:h-6 sm:w-9" />
+                      <PayloadGlyph payload={choice} className="size-7 shrink-0 overflow-visible" />
                       <span className="min-w-0 max-w-full text-center">
-                        <span className="block max-w-full truncate text-[11px] tracking-normal sm:text-xs">{PAYLOAD_META[choice].shortLabel} {Number.isFinite(remaining) ? remaining : '∞'}</span>
-                        <span className="block max-w-full truncate font-body text-[10px] normal-case tracking-normal opacity-70 sm:text-[11px]">{PAYLOAD_META[choice].rackHint}</span>
+                        <span className="block max-w-full truncate text-xs tracking-normal">{PAYLOAD_META[choice].shortLabel} {Number.isFinite(remaining) ? remaining : '∞'}</span>
+                        <span className="block max-w-full truncate font-body text-[11px] normal-case tracking-normal opacity-70">{PAYLOAD_META[choice].rackHint}</span>
                       </span>
-                      <kbd className="sr-only">{index + 1}</kbd>
+                      {index < 9 && <kbd className="sr-only">{index + 1}</kbd>}
                     </Button>
                   );
                 })}
@@ -2008,6 +2094,13 @@ export function ArtillerySetup({ mode, difficulty, mapSize, world, onMode, onDif
 }
 
 export default function ArtilleryGamePage() {
+  React.useEffect(() => {
+    // The camera renders a wider SVG world than the phone viewport. Clip its
+    // off-camera geometry at the document edge while the game is mounted.
+    const previous = document.documentElement.style.overflowX;
+    document.documentElement.style.overflowX = 'hidden';
+    return () => { document.documentElement.style.overflowX = previous; };
+  }, []);
   const [mode, setMode] = React.useState<ArtilleryMode>('bot');
   const [difficulty, setDifficulty] = React.useState<ArtilleryDifficulty>('standard');
   const [mapSize, setMapSize] = React.useState<ArtilleryMapSize>('standard');

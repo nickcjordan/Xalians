@@ -1,5 +1,5 @@
 export type ArtillerySoundCue = 'select' | 'launch' | 'impact' | 'hit' | 'win' | 'loss';
-export type ArtillerySoundPayload = 'shell' | 'barb' | 'bore' | 'cluster' | 'bloom' | 'lance';
+export type ArtillerySoundPayload = 'shell' | 'barb' | 'bore' | 'cluster' | 'bloom' | 'lance' | 'skip' | 'mole' | 'tractor' | 'foam';
 
 const STORAGE_KEY = 'xalians.arcade.artillery.sound';
 
@@ -67,7 +67,7 @@ export function createArtillerySound(storage: Storage | undefined = globalThis.l
       if (cue === 'select') tone(420, 0.055, 0.025, 0, 'square');
       if (cue === 'launch') {
         noise(payload === 'barb' || payload === 'cluster' ? 0.11 : 0.18, 0.035);
-        const launchPitch = payload === 'bore' ? 72 : payload === 'barb' ? 170 : payload === 'lance' ? 360 : payload === 'bloom' ? 125 : 105;
+        const launchPitch = payload === 'bore' || payload === 'mole' ? 72 : payload === 'barb' ? 170 : payload === 'lance' ? 360 : payload === 'tractor' ? 290 : payload === 'foam' ? 185 : payload === 'skip' ? 230 : payload === 'bloom' ? 125 : 105;
         tone(launchPitch, payload === 'bore' ? 0.32 : 0.2, 0.07, 0, payload === 'bloom' ? 'triangle' : 'sawtooth');
         if (payload === 'barb') {
           tone(310, 0.12, 0.025, 0.045, 'triangle');
@@ -75,12 +75,16 @@ export function createArtillerySound(storage: Storage | undefined = globalThis.l
         }
         if (payload === 'cluster') [240, 290, 340].forEach((frequency, index) => tone(frequency, 0.09, 0.018, index * 0.035, 'square'));
         if (payload === 'lance') tone(620, 0.1, 0.035, 0.02, 'sine');
+        if (payload === 'tractor') tone(440, 0.24, 0.035, 0.05, 'sine');
+        if (payload === 'skip') tone(360, 0.11, 0.028, 0.1, 'triangle');
       }
       if (cue === 'impact' || cue === 'hit') {
         noise(cue === 'hit' ? 0.32 : 0.22, cue === 'hit' ? 0.09 : 0.055);
         tone(payload === 'bore' ? 48 : 64, cue === 'hit' ? 0.42 : 0.28, cue === 'hit' ? 0.1 : 0.065, 0, 'sawtooth');
         if (payload === 'bore') tone(135, 0.38, 0.035, 0.06, 'triangle');
         if (payload === 'bloom') [120, 155, 190].forEach((frequency, index) => tone(frequency, 0.22, 0.025, index * 0.04, 'triangle'));
+        if (payload === 'foam') [210, 260, 320].forEach((frequency, index) => tone(frequency, 0.28, 0.018, index * 0.045, 'sine'));
+        if (payload === 'tractor') [360, 260, 170].forEach((frequency, index) => tone(frequency, 0.27, 0.025, index * 0.04, 'sine'));
       }
       if (cue === 'win') [262, 330, 392, 523].forEach((frequency, index) => tone(frequency, 0.18, 0.045, index * 0.09, 'triangle'));
       if (cue === 'loss') [180, 145, 110].forEach((frequency, index) => tone(frequency, 0.24, 0.04, index * 0.12, 'sawtooth'));
