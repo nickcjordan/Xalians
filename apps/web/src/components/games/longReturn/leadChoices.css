@@ -1,5 +1,4 @@
 .lr-lead-options { margin: 12px 0; }
-.lr-lead-shared-cost { grid-column:2 / -1; font-size:13px; color:#a8ced6; }
 .lr-lead-back { align-self:flex-start; background:none; border:0; color:#a1e3ba; padding:8px 0 18px; cursor:pointer; font:inherit; }
 .lr-lead-uncertainty { font-size:14px; color:#e6ca7b; margin:10px 0; }
 .lr-lead-option-cost small { display:flex; gap:6px; align-items:center; }

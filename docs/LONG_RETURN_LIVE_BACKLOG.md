@@ -4,6 +4,12 @@ Owner: the agent maintaining the Long Return worktree. Update this file during i
 
 ## Active goal — full-mission UX (2026-09-11)
 
+### September 17: the phone lead choice is a decision, not a hidden default
+
+- A 390-by-667 replay showed only one full lead and part of the next while the crossing action occupied the bottom of the phone. The player could commit without seeing the third alternative. The choice cards now show the creature's approach and known energy/stability side by side, with a compact portrait and selected state. An action shared by all leads is not repeated in each phone card; creature-specific skill, ally contribution, limited tool use, and exhaustion warnings remain. The detailed lead/support energy split lives in See crew roles, not in every card.
+- The action now follows all three lead choices in document order. Optional technique, command and crew-role details follow the action, so they no longer separate a decision from its verb. On narrow phones the action scrolls naturally rather than covering a choice. The route back action remains local and selections remain reversible until Cross now.
+- Browser review caught two defects during iteration: an accidentally removed cost variable crashed render, and a temporary ally made the third card extend under the old fixed action. Both were corrected. Four 390/320-pixel, reduced/normal-motion interaction replays checked all three leads, back/reselect, the detailed cost split and a completed crossing. Seven-scene 390-pixel and six-scene 320-pixel missions checked every reached lead/action ordering and extraction. Desktop/tablet/phone lead replays, 1,300 web tests, typecheck, production build and bundle budgets passed. Screenshots were reviewed; whether a new player finds the choice intuitive still requires human evidence.
+
 ### September 17: physical route headings retain their map shape
 
 - A phone route comparison could show the shared cost rows while its room schematic had already scrolled away. The route headings now carry a thin trace of the same upper or lower physical branch. This stays with the sticky headings during cost comparison and does not repeat the full map, crew key, or story. Rooms where both choices work on one obstacle show no split-path trace; inventing a second corridor there would be false geography.
