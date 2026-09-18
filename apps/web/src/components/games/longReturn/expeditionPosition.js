@@ -6,8 +6,10 @@ export function nativeMapState(resolution) {
 
 const location = (crew, scout = null, signal = false, encounter = false) => ({ crew, scout, signal, encounter });
 
-export function expeditionPosition({ phase, scout, scan, encounterMode, resolution, beat, actionType }) {
-  if (actionType === 'scout-return') return location('entry', beat === 'complete' ? 'entry' : 'survey');
+export function expeditionPosition({ phase, scout, scan, encounterMode, resolution, beat, actionType, scoutNeedsRescue = false }) {
+  if (actionType === 'scout-return') return scoutNeedsRescue
+    ? location(beat === 'complete' ? 'entry' : 'survey', beat === 'complete' ? 'entry' : 'survey')
+    : location('entry', beat === 'complete' ? 'entry' : 'survey');
   if (actionType === 'scout') return location('entry', 'survey', beat === 'signal' || !!(beat === 'encounter' && scan?.relay), beat === 'encounter');
   // Switch between diagram stations as the account advances. Never interpolate
   // a creature through the room as if this were a literal animated scene.

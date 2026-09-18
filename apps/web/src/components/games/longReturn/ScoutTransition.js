@@ -22,7 +22,9 @@ export function scoutBeats(action) {
   }).filter(Boolean).join(' ');
   const warning = `${clues}${routeGuidance ? ` ${routeGuidance}` : ''}`;
   if (action.type === 'scout-return') return [
-    { kind: 'return', title: 'Back to the crew', icon: 'bi-arrow-return-left', text: `${action.scout.species} retraces the route to deliver the report in person. ${energy ? 'The return trip consumes another energy.' : 'The scout is already spent.'} ${stability ? 'While the crew waits, the annex deteriorates.' : ''}`, costs },
+    { kind: 'return', title: action.energyBefore === 0 ? 'Bring the scout back' : 'Back to the crew', icon: 'bi-arrow-return-left', text: action.energyBefore === 0
+      ? `The scout is spent and cannot return alone. The crew follows ${action.scout.species}'s trail and brings it back.${stability ? ' The delay costs annex stability.' : ''}`
+      : `${action.scout.species} retraces the route to deliver the report in person. ${energy ? 'The return trip consumes another energy.' : ''} ${stability ? 'While the crew waits, the annex deteriorates.' : ''}`, costs },
     { kind: 'complete', title: reported.length ? 'The warning reaches the crew' : 'Now you can plan', icon: 'bi-check-lg', text: warning || 'Together again, the crew compares the scout’s findings. Review the report before choosing a crossing.' }
   ];
   const found = action.result.hazards?.filter(hazard => hazard.sensed).length ?? ((action.result.trappedCount || 0) + action.result.revealedIds.length);
@@ -67,7 +69,7 @@ export default function ScoutTransition({ action, onComplete, soundEnabled = tru
   const stabilityAfter = action.stabilityAfter ?? stabilityBefore;
   const skip = () => final ? onComplete() : setIndex(beats.length - 1);
   const revealedIds = returning ? final ? action.result?.hazards?.filter(hazard => hazard.sensed).map(hazard => hazard.id) : [] : action.result?.relay && index >= 2 ? action.result.revealedIds : [];
-  return <FieldRecord scene={action.scene} title={returning ? 'The scout returns' : 'Scouting ahead'} label={returning ? 'Scout returning' : 'Scouting in progress'} map={<ExpeditionSchematic scene={action.scene} crew={action.crew} scout={action.scout} helperId={action.helperId} companion={action.fieldCompanion} allyWithScout={action.allyWithScout} readingRecord position={expeditionPosition({ actionType: action.type, beat: beat.kind, scan: action.result, encounterMode: action.encounterMode })} revealedIds={revealedIds} native={action.encounter && index >= nativeAt ? action.encounter : action.knownNative} nativeState={action.knownNativeState} runFlags={action.runFlags} />} resources={<>
+  return <FieldRecord scene={action.scene} title={returning ? action.energyBefore === 0 ? 'Retrieve the scout' : 'The scout returns' : 'Scouting ahead'} label={returning ? action.energyBefore === 0 ? 'Crew retrieving scout' : 'Scout returning' : 'Scouting in progress'} map={<ExpeditionSchematic scene={action.scene} crew={action.crew} scout={action.scout} helperId={action.helperId} companion={action.fieldCompanion} allyWithScout={action.allyWithScout} readingRecord position={expeditionPosition({ actionType: action.type, beat: beat.kind, scan: action.result, encounterMode: action.encounterMode, scoutNeedsRescue: returning && action.energyBefore === 0 })} revealedIds={revealedIds} native={action.encounter && index >= nativeAt ? action.encounter : action.knownNative} nativeState={action.knownNativeState} runFlags={action.runFlags} />} resources={<>
       <FieldReserve kind="energy" label={`${action.scout.species} energy`} max={MAX_STRAIN} before={energyBefore} after={energyAfter} active={index >= energyAt} />
       {returning && <FieldReserve kind="stability" label="Annex stability" max={MAX_INSTABILITY} before={stabilityBefore} after={stabilityAfter} active={index >= stabilityAt} />}
     </>}>

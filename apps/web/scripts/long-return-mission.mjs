@@ -149,7 +149,9 @@ try {
         assert(await page.getByRole('button', {name:/Stay together/}).evaluate(node => node.classList.contains('g-btn--primary')));
       }
       if (process.env.LR_NO_SCOUT === '1' || !await page.locator('[data-scout-options] > button').count()) { await click(page.getByRole('button', { name: /Stay together/ })); continue; }
-      await click(page.locator('[data-scout-options] > button').first());
+      const scoutPick = Number(process.env.LR_SCOUT_PICKS?.split(',')[crossed] ?? process.env.LR_SCOUT_PICK ?? 0);
+      assert(scoutPick >= 0 && scoutPick < await page.locator('[data-scout-options] > button').count(), `Scout choice ${scoutPick} is available`);
+      await click(page.locator('[data-scout-options] > button').nth(scoutPick));
       await click(page.getByRole('button', { name: /^Send / })); continue;
     }
     if (await page.locator('.lr-field-encounter:not(.is-resolved)').count()) {
@@ -160,7 +162,7 @@ try {
         const firstResponse = await page.locator('.lr-encounter-options > button').first().boundingBox();
         assert(firstResponse.y >= 0 && firstResponse.y < viewport.height, 'The encounter opens with its first actual response in the phone viewport');
         assert(await page.locator('.lr-field-encounter').evaluate(node => document.activeElement === node), 'Keyboard focus follows the phone into the encounter response');
-        await page.screenshot({ path: `${output}/encounter-viewport-${crossed}.png` });
+        await page.screenshot({ path: `${output}/encounter-viewport-${crossed}-${responses[crossed] || 0}.png` });
       }
       const prescribedResponse = process.env.LR_ENCOUNTER_PICK !== undefined && !responses[crossed];
       await click(prescribedResponse ? page.locator('.lr-encounter-options > button').nth(Number(process.env.LR_ENCOUNTER_PICK)) : page.locator('.lr-encounter-options > .is-recommended'));

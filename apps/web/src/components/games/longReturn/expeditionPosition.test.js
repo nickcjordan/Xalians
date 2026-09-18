@@ -69,6 +69,8 @@ describe('expedition location, not creature performance', () => {
   it('physical return reunites markers only at its final beat', () => {
     expect(expeditionPosition({ actionType: 'scout-return', beat: 'return' }).scout).toBe('survey');
     expect(expeditionPosition({ actionType: 'scout-return', beat: 'complete' }).scout).toBe('entry');
+    expect(expeditionPosition({ actionType: 'scout-return', beat: 'return', scoutNeedsRescue: true })).toMatchObject({ crew: 'survey', scout: 'survey' });
+    expect(expeditionPosition({ actionType: 'scout-return', beat: 'complete', scoutNeedsRescue: true })).toMatchObject({ crew: 'entry', scout: 'entry' });
   });
   it('whole-crew contact stops before the obstacle and places a trapped native inside it', () => {
     expect(expeditionPosition({ actionType:'encounter', beat:'move' })).toMatchObject({crew:'approach',encounter:false});
