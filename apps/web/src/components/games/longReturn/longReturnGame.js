@@ -814,8 +814,10 @@ function LongReturnGame() {
     let target = root;
     const phoneLead = guidanceLevel === 'simple' && choosingLead && !simpleCustomizing && window.matchMedia?.('(max-width: 650px)').matches
       ? root.querySelector('.lr-simple-plan') : null;
-    const phoneEncounter = guidanceLevel === 'simple' && phase === 'encounter' && !encounterState?.result && window.matchMedia?.('(max-width: 650px)').matches
-      ? root.querySelector('.lr-field-encounter:not(.is-resolved)') : null;
+    const phoneOutcome = guidanceLevel === 'simple' && window.matchMedia?.('(max-width: 650px)').matches
+      ? phase === 'encounter' ? root.querySelector('.lr-field-encounter')
+        : phase === 'scan-result' ? root.querySelector('.lr-simple-report') : null
+      : null;
     const arrival = guidanceLevel === 'simple' && phase === 'result' ? root.querySelector('[data-arrival-focus]') : null;
     // New phases start at their context header. On phones, the lead substep
     // starts at its own route/back heading, not the already-seen scene header.
@@ -825,7 +827,7 @@ function LongReturnGame() {
       else target = root.querySelector('.lr-current-action') || root;
     }
     if (phoneLead) target = phoneLead;
-    if (phoneEncounter) target = phoneEncounter;
+    if (phoneOutcome) target = phoneOutcome;
     if (arrival) target = arrival;
     // Align the new phase before its entrance animation. Smooth scrolling and
     // panel motion running together read as camera shake, especially at
@@ -842,7 +844,7 @@ function LongReturnGame() {
     // the next Tab lands on the first relevant control, not an old control that
     // has disappeared with the previous step.
     if (guidanceLevel === 'simple') {
-      const focusTarget = arrival || phoneLead || phoneEncounter || root.querySelector('[data-wizard-focus]');
+      const focusTarget = arrival || phoneLead || phoneOutcome || root.querySelector('[data-wizard-focus]');
       if (focusTarget && typeof focusTarget.focus === 'function') {
         focusTarget.focus({ preventScroll: true });
       }
@@ -1365,7 +1367,7 @@ function LongReturnGame() {
           )}
 
           {phase === 'encounter' && encounterState && encounterCreature && (
-            <div className={`lr-field-encounter${encounterState.result ? ' is-resolved' : ''}`} tabIndex={encounterState.result ? undefined : -1} role={encounterState.result ? undefined : 'region'} aria-label={encounterState.result ? undefined : 'Encounter response'}>
+            <div className={`lr-field-encounter${encounterState.result ? ' is-resolved' : ''}`} tabIndex={-1} role="region" aria-label={encounterState.result ? 'Encounter outcome' : 'Encounter response'}>
               {!encounterState.result ? <>
                 <div className="lr-encounter-heading">
                   <CreaturePortrait creature={encounterCreature} compact />
@@ -1458,7 +1460,7 @@ function LongReturnGame() {
           ))}
 
           {phase === 'scan-result' && report && (guidanceLevel === 'simple' ? (
-            <div className={`lr-simple-decision lr-simple-report is-${report.outcome}`}>
+            <div className={`lr-simple-decision lr-simple-report is-${report.outcome}`} tabIndex={-1} role="region" aria-label="Scout report">
               <div className="lr-report-source">{scanScout && <CreaturePortrait creature={scanScout} />}<strong>{scanScout ? scanScout.species : 'Crew report'}</strong><span>{reportDeliveryLabel(report)}</span><small className="lr-scout-trip-receipt" title="Scouting and reporting only. Any encounter costs are recorded in its own result."><BiIcon cls="bi bi-lightning-charge-fill" /> {report.strainCost} energy scouting{report.stabilityCost > 0 && <><br /><BiIcon cls="bi bi-building" /> {report.stabilityCost} stability waiting</>}</small></div>
               <div className="lr-report-content">
               <div className="lr-simple-report-result"><BiIcon cls={report.revealed.length ? 'bi-shield-exclamation' : report.outcome === 'blind' ? 'bi-eye-slash' : 'bi-check-circle'} /><div><span>Scout result</span><h3>{report.title}</h3></div></div>

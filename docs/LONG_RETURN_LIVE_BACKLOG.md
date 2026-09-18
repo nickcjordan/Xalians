@@ -4,6 +4,11 @@ Owner: the agent maintaining the Long Return worktree. Update this file during i
 
 ## Active goal — full-mission UX (2026-09-11)
 
+### September 18: the next chapter begins where the player is looking
+
+- Phone playthroughs exposed a transition gap after the field record: an encounter resolution or scout report appeared below the scene map, but the wizard returned to its top chrome. The player could miss the immediate consequence of the action they had just taken. Simple mode now scrolls to and keyboard-focuses the labeled outcome or report region on phones, matching the existing crossing-result handoff. The map stays immediately above for deliberate review; desktop and advanced modes keep their prior behavior.
+- The replay now checks the actual phone viewport and focus at the resolved encounter and scout report, not merely the existence of those panels. A 390-by-667 three-scene scout run, 320-by-568 three-scene scout run and 390-by-667 three-scene no-scout run passed. The encounter-outcome and scout-report viewport captures were paint-reviewed. All 1,307 web tests, typecheck, production build and bundle budgets passed. Human preference for this handoff remains open.
+
 ### September 18: put the encounter response in the first phone viewport
 
 - The 320-pixel scout encounter still began below a full scene objective and full campaign map. The first response was more than a screen below the top, so the player reached contact without seeing an action. During Simple encounter decisions, the map now keeps the local stations, crew/native/ally positions, known hazard, reserves and the room endpoints, while omitting the already-labeled seven-sector strip and route captions. The encounter itself supplies the temporary objective; the original scene objective and full map return at route planning. Guided, Standard and Expert presentation is unchanged.
