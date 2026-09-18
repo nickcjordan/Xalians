@@ -9,6 +9,15 @@ const options = [
   { member: { id: 'b', species: 'Chromocat', element: { primary: 'light' } }, profile: { detect: 85 }, preview: { relay: false } },
 ];
 
+test('unavailable scouts are explained at the choice without fake disabled selection controls', () => {
+  const {rerender} = render(<ScoutChoices options={[options[0]]} unavailable={[options[1].member]} onSelect={() => {}} />);
+  expect(screen.getByText(/cannot scout/).textContent).toContain('Chromocat cannot scout. At least 2 energy is needed.');
+  expect(screen.queryByRole('button', {name:/Select Chromocat/})).toBeNull();
+  rerender(<ScoutChoices options={[]} unavailable={options.map(option => option.member)} onSelect={() => {}} />);
+  expect(screen.getByText('Everyone has less than the 2 energy needed to scout.')).toBeTruthy();
+  expect(screen.queryAllByRole('button')).toHaveLength(0);
+});
+
 test('recommendation does not imply selection and selection only prepares an action', () => {
   const select = vi.fn();
   const { rerender, container } = render(<ScoutChoices options={options} selectedId={null} onSelect={select} />);

@@ -5,7 +5,7 @@ import XalianImage from '../../xalianImage';
 import * as svgUtil from '../../../utils/svgUtil';
 import BiIcon from './BiIcon';
 
-export default function ScoutChoices({ options, selectedId, onSelect }) {
+export default function ScoutChoices({ options, selectedId, onSelect, unavailable = [] }) {
   return <div data-tier="immersive" data-scout-options className="grid gap-2" role="group" aria-label="Choose a scout">
     {options.map((option, index) => {
       const { member, profile, preview, outlook } = option;
@@ -26,5 +26,8 @@ export default function ScoutChoices({ options, selectedId, onSelect }) {
         <BiIcon cls={selected ? 'bi-check-circle-fill' : 'bi-circle'} className={`size-4 ${selected ? 'text-viable' : 'text-ink-2'}`} />
       </Button>;
     })}
+    {unavailable.length > 0 && <p data-scout-unavailable className="m-0 py-2 font-body text-small text-ink-2">
+      {options.length > 0 ? <><strong>{unavailable.map(member => member.species).join(', ')}</strong> cannot scout. At least 2 energy is needed.</> : 'Everyone has less than the 2 energy needed to scout.'}
+    </p>}
   </div>;
 }

@@ -71,6 +71,13 @@ try {
     if (await page.locator('.lr-end-card').count()) { events.push({ type: 'ending', text: await page.locator('.lr-end-card').innerText() }); break; }
     if (await page.locator('.lr-transition-beat').count()) { await click(page.locator('.lr-transition-beat > button')); continue; }
     if (await page.locator('[data-scout-options]').count()) {
+      const energy = await map.locator('[data-reserve-creature]').evaluateAll(nodes => nodes.map(node => Number(node.querySelector('b').textContent)));
+      if (energy.some(value => value < 2)) assert(await page.locator('[data-scout-unavailable]').isVisible(), 'Scouting explains absent low-energy candidates');
+      if (energy.every(value => value < 2)) {
+        assert.equal(await page.getByRole('button', {name:/Select a scout/}).count(), 0, 'No impossible scout-selection action');
+        assert(await page.getByRole('button', {name:/Stay together/}).isEnabled());
+        assert(await page.getByRole('button', {name:/Stay together/}).evaluate(node => node.classList.contains('g-btn--primary')));
+      }
       if (process.env.LR_NO_SCOUT === '1' || !await page.locator('[data-scout-options] > button').count()) { await click(page.getByRole('button', { name: /Stay together/ })); continue; }
       await click(page.locator('[data-scout-options] > button').first());
       await click(page.getByRole('button', { name: /^Send / })); continue;
@@ -84,6 +91,7 @@ try {
     if (await page.locator('.lr-field-encounter.is-resolved').count()) { await click(page.locator('.lr-field-encounter .g-btn--primary')); continue; }
     if (await page.locator('.lr-simple-report').count()) { await click(page.locator('.lr-simple-report .g-btn--primary')); continue; }
     if (await page.locator('.lr-route-board').count()) {
+      assert(!(await map.locator('[data-expedition-reserves]').innerText()).includes("Can't scout"), 'Crossing choices do not show a scouting restriction');
       const orientation = page.locator('.lr-route-orientation');
       assert(await orientation.isVisible(), 'Scene context stays visible while choosing');
       const storyBox = await orientation.boundingBox();
