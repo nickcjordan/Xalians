@@ -1,5 +1,6 @@
 import { crossingScene } from './crossingScene';
 import { MISSION } from './longReturnData';
+import { arrivalRecap } from './ArrivalStory';
 
 const resolve = (route, changes = {}, method = route.methods[0]) => crossingScene({
   route, lead: { species: 'Hippochamp' }, support: { species: 'Graviclaw' }, method,
@@ -14,6 +15,9 @@ test('all fourteen routes tell a complete scene for each supported method', () =
     expect(paragraphs.join(' ')).not.toMatch(/undefined|support points|route target|cost breakdown/);
     expect(paragraphs[1]).toContain('Hippochamp');
     expect(paragraphs[1]).toContain('Graviclaw');
+    const recap = arrivalRecap(paragraphs);
+    expect(recap.headline.length).toBeGreaterThan(15);
+    expect(paragraphs[3]).toBe(`${recap.headline}${recap.detail ? ` ${recap.detail}` : ''}`);
   }
 });
 

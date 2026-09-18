@@ -190,6 +190,12 @@ try {
       await click(page.getByRole('button', { name: /Cross now/ })); continue;
     }
     if (await page.locator('.lr-simple-result').count()) {
+      const arrivalHeading = await page.locator('.lr-simple-result-head h3').innerText();
+      const arrivalDetail = page.locator('.lr-crossing-prose > p');
+      assert(!/^(The crew is through|The crew crossed, but paid for it|A hard-won crossing)$/.test(arrivalHeading), 'Result names the selected passage instead of a generic verdict');
+      if (await arrivalDetail.count()) assert(!(await arrivalDetail.innerText()).startsWith(arrivalHeading), 'Arrival paragraph does not repeat its headline');
+      await page.locator('.lr-simple-result').evaluate(node => node.scrollIntoView({ block: 'start', behavior: 'instant' }));
+      await page.screenshot({ path: `${output}/result-${crossed + 1}.png` });
       crossed++;
       if (Number(process.env.LR_LIMIT_SCENES) === crossed) { events.push({type:'milestone',text:await page.locator('.lr-simple-result').innerText()}); break; }
       const extract = page.locator('.lr-depth-option.is-extract');
