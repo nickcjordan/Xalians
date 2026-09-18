@@ -1,6 +1,14 @@
 import { CREATURES, MISSION } from './longReturnData';
 import { methodOptions, resolveScene, applyMissionMemory, decisionForecast } from './longReturnEngine';
 
+test('the reservoir offers structural safety at the rim against a larger submerged haul', () => {
+  const scene = MISSION.scenes.find(entry => entry.id === 'core-reservoir');
+  const [rim, dive] = scene.routes;
+  expect(rim.pressure).toBeLessThan(dive.pressure);
+  expect(rim.salvage).toBeLessThan(dive.salvage);
+  expect(rim.hazardIds).toEqual(dive.hazardIds);
+});
+
 // Controlled crossing-only baseline: mapped versus blind intelligence; no
 // scouting expense, encounters or repairs. These are not player win rates.
 test('different crew and route policies produce distinct expedition costs', () => {

@@ -382,7 +382,7 @@ export const MISSION = {
         { id: 'charge-bloom', label: 'Charge bloom', detail: 'The reservoir discharges when its surface is broken.', sense: 'hearing', threshold: 68, special: 'electroreception', strain: 2, pressure: 2 }
       ],
       routes: [
-        { id: 'harvest', title: 'Harvest the surface charge', description: 'Work from the rim and bleed the reservoir slowly.', difficulty: 74, pressure: 1, salvage: 6,
+        { id: 'harvest', title: 'Harvest the surface charge', description: 'Work from the rim and bleed the reservoir slowly.', difficulty: 74, pressure: 0, salvage: 6,
           environment: { medium: 'gas', temperatureC: -8, element: 'electric' }, hazardIds: ['charge-bloom'],
           reaction: { axis: 'energy', direction: 'low', label: 'A patient lead waits between discharge cycles.' },
           methods: [

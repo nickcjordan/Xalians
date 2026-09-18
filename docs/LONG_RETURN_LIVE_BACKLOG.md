@@ -4,6 +4,11 @@ Owner: the agent maintaining the Long Return worktree. Update this file during i
 
 ## Active goal — full-mission UX (2026-09-11)
 
+### September 18: the reservoir choice has a visible reason to stay at the rim
+
+- The published seven-scene phone comparison offered the same unknown hazard and known stability cost on both reservoir routes, while diving cost less known energy and paid three more salvage. For that crew, the rim route was visibly dominated even though its lower source difficulty counted as a strategic advantage in a data-only audit. Working the valves from the rim now causes no base structural disturbance; diving retains its two-point disturbance. The hidden charge-bloom hazard and all other costs remain unchanged.
+- The rebuilt 390-pixel comparison shows a concrete exchange: the rim plan spends 2 known energy, loses 1 known stability and offers 6 salvage; the dive spends 1, loses 2 and offers 9. Both still show the unresolved extra risk without inventing a range. A paired seven-room replay kept the same earlier routes and final-ring choice, changing only rim versus dive: the dive ended in forced extraction with half its haul left behind; the rim finished a deep retrieval with 14 banked salvage. A rule test locks the structural-safety-versus-haul distinction. All 1,322 web tests, typecheck, production build and bundle budgets passed; player judgment of whether the exchange reads immediately remains open.
+
 ### September 18: scouting belongs to the room the crew is actually in
 
 - The seven-room published replay showed the same generic “search for a way through” departure in the flooded access, archive chamber, reservoir retrieval and extraction rings. Each room now has a short physical scouting opening grounded in its own terrain. The no-clue beat stops calling every objective a “crossing”; it gives no false assurance that the path is safe. The energy annotation still sits on the scouting action, and sensed-but-unreported clues and native contact remain subject to the original information rules.
