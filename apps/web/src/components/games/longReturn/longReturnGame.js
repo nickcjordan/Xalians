@@ -68,8 +68,11 @@ export const missionOutcomePresentation = (status, objectiveReached, salvage, fa
     return { tone: 'secure', icon: 'bi-shield-check', label: 'Voluntary extraction', title: 'Crew Extracted', copy: `${departure} They reach the surface with the Nemesis Index and ${salvage} salvage intact.` };
   }
   if (status === 'aborted') return { tone: 'withdrawn', icon: 'bi-arrow-return-left', label: 'Voluntary withdrawal', title: 'Mission Aborted', copy: 'The crew turns back before the annex can trap them. Every creature returns, but the Nemesis Index remains below the ice and no salvage is banked.' };
-  if (objectiveReached) return { tone: 'scarred', icon: 'bi-exclamation-octagon', label: 'Emergency extraction · Index retained', title: 'Forced Extraction', copy: `${failureReason} Emergency systems pull the crew out with the Nemesis Index, but only half of the carried salvage survives the retreat.` };
-  return { tone: 'failed', icon: 'bi-exclamation-octagon', label: 'Emergency extraction · Objective lost', title: 'Forced Extraction', copy: `${failureReason} Emergency extraction saves the crew; the objective and carried salvage stay behind.` };
+  const retreat = lastSceneId === 'generator-spine'
+    ? 'The crew reaches the extraction lift and rides clear of the failing annex.'
+    : 'The crew abandons the route ahead and retraces the passages it opened toward the surface.';
+  if (objectiveReached) return { tone: 'scarred', icon: 'bi-exclamation-octagon', label: 'Emergency extraction · Index retained', title: 'Forced Extraction', copy: `${failureReason} ${retreat} They keep the Nemesis Index close, but half of the carried salvage must be left behind so everyone can get out.` };
+  return { tone: 'failed', icon: 'bi-exclamation-octagon', label: 'Emergency extraction · Objective lost', title: 'Forced Extraction', copy: `${failureReason} ${retreat} Every creature gets out, but the Index remains beyond their reach and all carried salvage is left behind.` };
 };
 
 const creatureReaction = (creature, quality, route) => {

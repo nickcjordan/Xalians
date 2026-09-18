@@ -4,6 +4,12 @@ Owner: the agent maintaining the Long Return worktree. Update this file during i
 
 ## Active goal — full-mission UX (2026-09-11)
 
+### September 17: forced extraction is a retreat, not a teleport
+
+- A hosted no-scout run took an alternate route through the exposed hull and blackbox. It reached zero stability at the Index, then the ending abruptly claimed unnamed emergency systems pulled the crew out. That did not follow the game's physical-journey presentation.
+- The forced outcome now follows the previously opened passages toward the surface, with the Index retained or left behind according to the existing rule and the same salvage loss. If the final crossing has already reached the extraction lift, the crew uses that lift instead. The stability rule describes supports beginning to fail at zero, making immediate evacuation coherent without claiming the entire structure has already collapsed.
+- Outcome tests cover crew exhaustion, pre-Index collapse and final-lift collapse. A no-scout alternate-route phone run forced retreat at the Index after five crossings; a contrasting seven-crossing run failed at the lift. Both rendered correct Index retention and half-haul settlement, and the final-lift ending was paint-reviewed. All 1,300 web tests, typecheck, production build and bundle budgets, and diff check pass. The pre-Index branch is covered by outcome tests, not a separate browser trajectory. Human acceptance of the retreat story remains open.
+
 ### September 17: the companion's goodbye is its own moment
 
 - Rendered ending review found the resolved mission and Xylum's departure run together as one long paragraph. The end card now gives the farewell a separate prose paragraph in the same story region, with no new banner, modal or stat panel. The companion still leaves after the mission and does not become owned.

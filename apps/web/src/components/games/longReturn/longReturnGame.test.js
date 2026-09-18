@@ -118,10 +118,17 @@ describe('Long Return Simple mode', () => {
     const depleted = missionOutcomePresentation('failed', true, 4, 'Crew energy is depleted.');
     expect(depleted.copy).toContain('Crew energy is depleted.');
     expect(depleted.copy).toContain('half of the carried salvage');
+    expect(depleted.copy).toContain('retraces the passages it opened');
+    expect(depleted.copy).not.toContain('Emergency systems pull');
     expect(depleted.label).toContain('Index retained');
     const collapsed = missionOutcomePresentation('failed', false, 0, 'Annex stability reached zero.');
     expect(collapsed.copy).toContain('Annex stability reached zero.');
+    expect(collapsed.copy).toContain('Index remains beyond their reach');
+    expect(collapsed.copy).toContain('all carried salvage is left behind');
     expect(collapsed.label).toContain('Objective lost');
+    const finalCrossing = missionOutcomePresentation('failed', true, 9, 'Annex stability reached zero.', 'generator-spine');
+    expect(finalCrossing.copy).toContain('reaches the extraction lift');
+    expect(finalCrossing.copy).not.toContain('route ahead');
   });
 
   test('voluntary extraction follows the return route from the place actually reached', () => {
