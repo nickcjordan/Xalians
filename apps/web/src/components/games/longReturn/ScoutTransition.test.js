@@ -58,3 +58,21 @@ test('the reported warning names its cause and the affected route, but silence n
   expect(returned[0].text).not.toContain(hazard.detail);
   expect(returned[1].text).toContain(hazard.detail);
 });
+
+test('a relayed warning reads as a connected account and names the relevant choices naturally', () => {
+  const scene = MISSION.scenes[1];
+  const hazard = scene.hazards[0];
+  const action = { type: 'scout', scene, scout: { species: 'Chromocat' }, result: { relay: true, hazards: [{ ...hazard, sensed: true }], revealedIds: [hazard.id] }, profile: { channel: 'display' }, energyBefore: 6, energyAfter: 5 };
+  const report = scoutBeats(action)[2].text;
+  expect(report).toContain(`from the entrance. ${hazard.detail}`);
+  expect(report).toContain('chooses to race the upper catwalk.');
+  expect(report).not.toContain('concerns race');
+
+  const archive = MISSION.scenes[4];
+  const archiveHazard = archive.hazards[0];
+  const archiveReport = scoutBeats({ ...action, scene: archive, result: { ...action.result, hazards: [{ ...archiveHazard, sensed: true }] } })[2].text;
+  expect(archiveReport).toContain('chooses to stabilize the archive or pull the archive blackbox.');
+  const noHazardReport = scoutBeats({ ...action, result: { ...action.result, hazards: [] } })[2].text;
+  expect(noHazardReport).toContain('There is no specific warning to pass back.');
+  expect(noHazardReport).toContain('has the findings without waiting for the scout to return.');
+});

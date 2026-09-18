@@ -4,6 +4,11 @@ Owner: the agent maintaining the Long Return worktree. Update this file during i
 
 ## Active goal — full-mission UX (2026-09-11)
 
+### September 18: the scout's signal and warning form one readable cause
+
+- A seven-room alternate-response replay exposed a joined sentence in the field account: a visual signal ended with “from the entrance” and immediately ran into “One turbine...” without punctuation. The warning also said it “concerns race the upper catwalk,” treating a button label as a noun. The delivery now ends as a sentence and links the discovered condition to the choice it actually affects: “That warning matters if the crew chooses to race the upper catwalk.” The same phrasing works when a danger affects both approaches.
+- The account now makes the communication benefit explicit: the crew can use the relayed findings without waiting for a return to deliver them. An unrelayed finding still stays unknown until the scout returns; no hazard identity, game cost or encounter rule changed. Tests cover visual relay, two affected routes, no specific warning, and silence. A three-scene alternate-response replay and a seven-crossing resource-conserving replay passed; their rendered field-record text was inspected across the reached hazards. All 1,309 web tests, typecheck, production build and bundle budgets passed. Human assessment of the story's naturalness remains open.
+
 ### September 18: opening schematic points to the first choice
 
 - The first room deliberately opens at the site and objective rather than auto-skipping that introduction, but at 320 by 568 the scout options begin below the first viewport. The map's existing caption now offers a compact, touch-sized Scout choices jump on phones. It moves only the viewport and keyboard focus; it does not select a creature, spend energy or add a confirmation gate. The seven-sector schematic remains in place, and desktop retains its plain Site schematic caption.
