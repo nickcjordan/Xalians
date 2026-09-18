@@ -11,7 +11,6 @@ import { performFieldOperation } from './fieldOperations';
 import { readCheckpoint, writeCheckpoint, clearCheckpoint } from './expeditionSave';
 import { crossingNarrative } from './crossingNarrative';
 import { crossingCosts } from './crossingCosts';
-import RouteTradeoff from './RouteTradeoff';
 import RouteComparison, { comparisonCosts } from './RouteComparison';
 import { sceneOrientation } from './sceneOrientation';
 import LeadChoices from './LeadChoices';
@@ -757,6 +756,7 @@ function LongReturnGame() {
   const baseScene = MISSION.scenes[sceneIndex];
   const scene = useMemo(() => applyMissionMemory(baseScene, runFlags), [baseScene, runFlags]);
   const route = scene && scene.routes.find((entry) => entry.id === routeId);
+  const mapRouteId = (phase === 'assign' && !choosingLead && !simpleCustomizing ? routeVisualId : null) || routeId || pendingRouteId || routeVisualId;
   const lead = crew.find((entry) => entry.id === leadId);
   const support = crew.find((entry) => entry.id === supportId);
   const methods = useMemo(() => lead && route ? methodOptions(lead, route, spentAbilities) : [], [lead, route, spentAbilities]);
@@ -1314,7 +1314,7 @@ function LongReturnGame() {
             {scene.objective && <span className="lr-objective-badge">PRIMARY OBJECTIVE</span>}
             {scene.optional && <span className="lr-optional-badge">OPTIONAL DEPTH</span>}
           </div>}
-          <ExpeditionSchematic scene={scene} crew={crew} scout={scanScout} helperId={encounterResolution?.helperId} companion={companion} allyWithScout={allyWithScout} position={expeditionPosition({ phase, scout: scanScout, scan, encounterMode, resolution: encounterResolution?.resolution })} routeId={routeId || pendingRouteId || routeVisualId} native={phase === 'encounter' && !encounterResolution || knownNativeState ? encounterCreature : null} nativeState={knownNativeState} preview={phase === 'assign' && !!(routeId || pendingRouteId || routeVisualId)} runFlags={runFlags} compact reserves={guidanceLevel === 'simple' ? { strain, pressure } : undefined} />
+          <ExpeditionSchematic scene={scene} crew={crew} scout={scanScout} helperId={encounterResolution?.helperId} companion={companion} allyWithScout={allyWithScout} position={expeditionPosition({ phase, scout: scanScout, scan, encounterMode, resolution: encounterResolution?.resolution })} routeId={mapRouteId} native={phase === 'encounter' && !encounterResolution || knownNativeState ? encounterCreature : null} nativeState={knownNativeState} preview={phase === 'assign' && !!mapRouteId} runFlags={runFlags} compact reserves={guidanceLevel === 'simple' ? { strain, pressure } : undefined} />
           </div>
           {guidanceLevel === 'simple' && <CurrentAction key={`${phase}-${sceneIndex}-${encounterState && encounterState.result ? 'resolved' : 'active'}-${routeId || 'none'}`} {...currentAction} onHelp={openMechanics} />}
           <p className="lr-scene-copy">{scene.description}</p>

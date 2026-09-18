@@ -1,8 +1,26 @@
 import React from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
+import { render, fireEvent } from '@testing-library/react';
 import RouteComparison, { comparisonCosts } from './RouteComparison';
 
 const base = { route: { id: 'a', title: 'Gantry', salvage: 1 }, lead: { species: 'Lead' }, support: { species: 'Support' }, method: { label: 'Climb' }, knownLeadStrain: 1, baseSupportStrain: 0, knownPressure: 1, unresolvedHazards: [], risk: 1 };
+
+test('cost cells and analysis controls preview their column without selecting it', () => {
+  const onPreview = vi.fn();
+  const onSelect = vi.fn();
+  const view = render(<RouteComparison plans={[base, {...base,route:{...base.route,id:'b'}}]} selectedId="a" onPreview={onPreview} onSelect={onSelect} />);
+  fireEvent.pointerMove(view.container.querySelector('.is-energy [data-route-preview="b"]'));
+  expect(onPreview).toHaveBeenLastCalledWith('b');
+  fireEvent.focus(view.container.querySelector('.lr-board-footer [data-route-preview="b"] summary'));
+  expect(onPreview).toHaveBeenLastCalledWith('b');
+  fireEvent.blur(view.container.querySelector('.lr-board-footer [data-route-preview="b"] summary'), {relatedTarget:null});
+  expect(onPreview).toHaveBeenLastCalledWith('a');
+  expect(onSelect).not.toHaveBeenCalled();
+  view.container.querySelector('.lr-board-footer [data-route-preview="b"] summary').focus();
+  fireEvent.pointerLeave(view.container.querySelector('.lr-route-board'));
+  expect(onPreview).toHaveBeenLastCalledWith('b');
+  view.unmount();
+});
 
 test('depleted previews distinguish actual loss from effort demand and do not invent ally savings', () => {
   const depleted = { ...base, knownLeadStrain: 8, baseSupportStrain: 1, leadEnergy: 2, supportEnergy: 1 };

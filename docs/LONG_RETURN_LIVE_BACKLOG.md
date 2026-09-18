@@ -4,6 +4,15 @@ Owner: the agent maintaining the Long Return worktree. Update this file during i
 
 ## Active goal — full-mission UX (2026-09-11)
 
+### September 17: route preview follows attention, not commitment
+
+- The map updated only when a route heading was hovered or focused. Cost cells, the lower action and analysis controls did not preview their route. After returning from lead selection, the previous selected route also overrode the route being examined. This broke the connection between the shared comparison and the spatial diagram.
+- The comparison now previews the column under deliberate pointer movement or keyboard focus. Leaving it restores the focused or selected route. The schematic names the preview and points toward the destination; it retains the actual crew positions and does not change selection, reserves, or hidden information.
+- Browser replay caught scrolling a focused control into view triggering a stale pointer preview. Using deliberate pointer movement rather than incidental pointer entry prevents that conflict. Tests cover every comparison row, keyboard analysis, Back, selection preservation and unchanged marker coordinates at phone, tablet and desktop sizes. All fourteen routes have a named preview and direction cue.
+- Removed the unused former RouteTradeoff component and its six obsolete rendering tests, plus unused icon aliases. The live RouteComparison and its known/unknown cost, companion and depletion tests remain; advanced views are unchanged. Existing styles still used by the advanced crossing flow remain. No bundle allowance increased.
+- Verification: 1,278 web tests, typecheck and production build/budgets; seven-scene short-phone extraction with 14 salvage, 2 stability and the ally; the eight encounter continuity cases and three-width preview replay. Responsive decision/results and Guided, Standard and Expert modes passed. Desktop and phone setup/route PNGs reviewed. Implementation evidence does not establish player acceptance.
+- Remaining observed presentation issue: on a phone, the map sits well above the lower comparison rows. This pass fixes correctness of the connection, not the amount of scrolling required to see both. Review that composition without adding a floating corner map or duplicating the comparison.
+
 ### September 17: encounter map continuity
 
 - The next replay exposed a real report-handoff bug: a newly recruited companion moved back to the waiting crew when temporary encounter state cleared. Persisted the encounter context through report review and preparation. Scout, called helper and companion now stay at the contact site until the physical return or crossing, not merely until the player reads another panel.

@@ -608,6 +608,25 @@ describe('Long Return Simple mode', () => {
     expect(document.activeElement).toBe(container.querySelector('[data-arrival-focus]'));
   });
 
+  test('reviewing the other route after changing back previews it without moving or spending', () => {
+    renderGame();
+    click(container, /seal crew/i);
+    click(container, /stay together/i);
+    clickElement(container.querySelector('.lr-board-pick'));
+    click(container, /change route/i);
+    const before = container.querySelector('[data-expedition-reserves]').textContent;
+    const other = container.querySelector('.is-energy [data-route-preview="intake"]');
+    act(() => other.dispatchEvent(new MouseEvent('pointermove', {bubbles:true})));
+    const map = container.querySelector('[data-expedition-map]');
+    expect(map.getAttribute('data-preview-route')).toBe('intake');
+    expect(map.textContent).toContain('Preview: Flooded passage');
+    expect(map.querySelector('[data-map-direction="intake"]')).toBeTruthy();
+    expect(map.querySelectorAll('[data-map-creature][data-location="entry"]')).toHaveLength(3);
+    expect(container.querySelector('[data-expedition-reserves]').textContent).toBe(before);
+    expect(container.querySelector('.lr-route-board')).toBeTruthy();
+    expect(container.querySelector('.lr-board-pick[aria-pressed="true"]').textContent).toMatch(/hanging gantry/i);
+  });
+
   test('compares known costs with unknown costs in matching resource lanes', () => {
     renderGame();
     expect(container.querySelectorAll('.lr-element-mark svg')).toHaveLength(6);
