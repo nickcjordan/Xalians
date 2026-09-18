@@ -2,9 +2,18 @@ import { crossingScene } from './crossingScene';
 import { MISSION } from './longReturnData';
 import { arrivalRecap } from './ArrivalStory';
 
-const resolve = (route, changes = {}, method = route.methods[0]) => crossingScene({
+const resolve = (route, changes = {}, method = route.methods[0], context = {}) => crossingScene({
   route, lead: { species: 'Hippochamp' }, support: { species: 'Graviclaw' }, method,
-  result: { margin: 20, leadStrain: 0, supportStrain: 0, pressure: 0, salvage: 0, unseenHazards: [], ...changes }
+  result: { margin: 20, leadStrain: 0, supportStrain: 0, pressure: 0, salvage: 0, unseenHazards: [], ...changes }, ...context
+});
+
+test('a remote scout is physically reunited with the crew before crossing, in every room', () => {
+  for (const scene of MISSION.scenes) for (const route of scene.routes) {
+    const [opening] = resolve(route, {}, undefined, { scene, scoutAhead: { species: 'Chromocat' } });
+    expect(opening, `${scene.id}/${route.id}`).toMatch(/Chromocat waits .*\. The crew catches up; all three are together before the next move\./);
+    expect(opening).not.toMatch(/undefined|a short way ahead/);
+    expect(resolve(route)[0]).not.toContain('crew catches up');
+  }
 });
 
 test('all fourteen routes tell a complete scene for each supported method', () => {

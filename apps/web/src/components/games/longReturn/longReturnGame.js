@@ -80,7 +80,7 @@ export const missionOutcomePresentation = (status, objectiveReached, salvage, fa
 const creatureReaction = (creature, quality, route) => {
   if (quality === 'clean') {
     if (creature.temperament.sociability >= 70) return `${creature.species} checks every crew member before looking ahead.`;
-    if (creature.temperament.energy >= 75) return `${creature.species} is already testing the next threshold.`;
+    if (creature.temperament.energy >= 75) return `${creature.species} turns its attention to the next threshold.`;
     return `${creature.species} pauses at the far side and studies what changed.`;
   }
   if (creature.temperament.boldness >= 70) return `${creature.species} shakes off the crossing and refuses to yield the lead.`;
@@ -1105,7 +1105,8 @@ function LongReturnGame() {
       ...result.unseenHazards.map((hazard) => `${hazard.label} was not identified before the crew entered the route.`),
       companionHelp
     ].filter(Boolean);
-    const narrative = crossingNarrative({ route, lead: actingLead, support: actingSupport, method: actingMethod, result, companionHelp });
+    const scoutAhead = scan.mode === 'scan' && scan.relay ? scanScout : null;
+    const narrative = crossingNarrative({ scene, route, lead: actingLead, support: actingSupport, method: actingMethod, result, companionHelp, scoutAhead });
     result = {
       ...result,
       companionHelp,
