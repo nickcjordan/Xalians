@@ -256,6 +256,15 @@ try {
     }
     if (await page.locator('.lr-simple-result').count()) {
       const arrivalHeading = await page.locator('.lr-simple-result-head h3').innerText();
+      const stabilityLeft = Number(await map.locator('[data-reserve-stability] b').innerText());
+      if (stabilityLeft === 0) {
+        assert.match(await page.locator('.lr-simple-result-head').innerText(), /evacuate now/i, 'Zero stability changes the arrival status before the player scrolls to the ending');
+        const criticalReceipt = page.locator('.lr-result-changes article.is-critical');
+        assert.equal(await criticalReceipt.count(), 1, 'The depleted stability meter is visually distinct inside the existing receipt');
+        assert.match(await criticalReceipt.innerText(), /forced extraction/i, 'The critical meter names the immediate consequence');
+      } else if (stabilityLeft <= 2 && await page.locator('.lr-result-changes article').filter({ hasText: 'Annex stability' }).count()) {
+        assert.equal(await page.locator('.lr-result-changes article.is-low').count(), 1, 'Near-collapse stability is distinguished before depletion');
+      }
       const arrivalDetail = page.locator('.lr-crossing-prose > p');
       assert(!/^(The crew is through|The crew crossed, but paid for it|A hard-won crossing)$/.test(arrivalHeading), 'Result names the selected passage instead of a generic verdict');
       if (await arrivalDetail.count()) assert(!(await arrivalDetail.innerText()).startsWith(arrivalHeading), 'Arrival paragraph does not repeat its headline');

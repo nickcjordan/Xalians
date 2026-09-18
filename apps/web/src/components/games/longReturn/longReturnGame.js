@@ -1292,6 +1292,7 @@ function LongReturnGame() {
   const leadReactionMatch = lead && route ? reactionMatches(lead, route.reaction) : null;
   const assignment = assignmentStatus({ route, lead, support, method });
   const canCommit = assignment.ready;
+  const arrivalStability = resultReceipt ? MAX_INSTABILITY - resultReceipt.stability.after : MAX_INSTABILITY - pressure;
   const fieldWorkshop = phase === 'result' && !missionCannotContinue && sceneIndex < MISSION.scenes.length - 1
     ? <FieldWorkshop key={scene.id} crew={crew} strain={strain} pressure={pressure} salvage={salvage} commands={commands} used={!!fieldReceipt} receipt={fieldReceipt} onChoose={doFieldWork} /> : null;
   const crossingsToIndex = Math.max(0, MISSION.scenes.findIndex(entry => entry.objective) - sceneIndex);
@@ -1684,7 +1685,7 @@ function LongReturnGame() {
             <div data-arrival-focus tabIndex={-1} role="region" aria-label={`${route.title}: crossing complete`} className={`lr-simple-decision lr-simple-result scroll-mt-20 focus-visible:outline-2 focus-visible:outline-viable${objectiveReached && !missionCannotContinue && sceneIndex < MISSION.scenes.length - 1 ? ' has-depth-decision' : ''}`}>
 <div className="lr-arrival-grid"><div className="lr-arrival-story">
 <p className="font-body text-small text-ink-2">Crossed: {route.title}</p>
-              <div className={`lr-simple-result-head is-${lastResult.impactQuality}`}><BiIcon cls={`bi ${lastResult.impactQuality === 'clean' ? 'bi-check-circle-fill' : 'bi-exclamation-triangle-fill'}`} /><div><span>Crossing complete · {lastResult.impactLabel}</span><h3>{arrivalHeadline || 'The crew is through'}</h3></div></div>
+              <div className={`lr-simple-result-head is-${lastResult.impactQuality}${missionCannotContinue ? ' is-critical' : ''}`}><BiIcon cls={`bi ${lastResult.impactQuality === 'clean' && !missionCannotContinue ? 'bi-check-circle-fill' : 'bi-exclamation-triangle-fill'}`} /><div><span>{missionCannotContinue ? pressure >= MAX_PRESSURE ? 'Annex failing · evacuate now' : 'Crew spent · evacuate now' : `Crossing complete · ${lastResult.impactLabel}`}</span><h3>{arrivalHeadline || 'The crew is through'}</h3></div></div>
               <ArrivalStory key={scene.id} paragraphs={arrivalParagraphs} recap />
               <details className="lr-result-explanation"><summary>Why this happened · cost breakdown</summary>
                 <p>{lastResult.turningPoint || lastResult.reaction}</p>
@@ -1699,7 +1700,7 @@ function LongReturnGame() {
               </details>
 </div><section className="lr-result-changes"><span>{fieldReceipt ? 'Crossing receipt · before repair' : 'Crossing receipt'}</span><div>
                 {resultReceipt.crew.filter((change) => change.added > 0).map((change) => <article key={change.creature.id} className="is-warning"><span><BiIcon cls="bi bi-lightning-charge-fill" /><strong>{change.creature.species} energy</strong><b>−{change.added}</b></span><ProjectionTrack settled value={change.after} added={0} max={MAX_STRAIN} label={`${change.creature.species} energy`} kind="strain" /><small>{MAX_STRAIN - change.after} / {MAX_STRAIN} energy remaining</small></article>)}
-                {resultReceipt.stability.added > 0 && <article className="is-warning"><span><BiIcon cls="bi bi-building" /><strong>Annex stability</strong><b>−{resultReceipt.stability.added}</b></span><ProjectionTrack settled value={resultReceipt.stability.after} added={0} max={MAX_INSTABILITY} label="Annex stability" kind="annex" /><small>{MAX_INSTABILITY - resultReceipt.stability.after} / {MAX_INSTABILITY} stability remaining</small></article>}
+                {resultReceipt.stability.added > 0 && <article className={`is-warning${arrivalStability <= 2 ? ' is-low' : ''}${arrivalStability === 0 ? ' is-critical' : ''}`}><span><BiIcon cls="bi bi-building" /><strong>Annex stability</strong><b>−{resultReceipt.stability.added}</b></span><ProjectionTrack settled value={resultReceipt.stability.after} added={0} max={MAX_INSTABILITY} label="Annex stability" kind="annex" /><small>{arrivalStability} / {MAX_INSTABILITY} stability remaining{arrivalStability === 0 ? ' · forced extraction' : arrivalStability <= 2 ? ' · near collapse' : ''}</small></article>}
                 {!resultReceipt.energy && !resultReceipt.stability.added && <article className="is-good lr-result-no-cost"><BiIcon cls="bi bi-check-circle-fill" /><strong>No energy or stability cost</strong></article>}
                 <article className="lr-result-salvage"><span><BiIcon cls="bi bi-box-seam" /><strong>Salvage recovered</strong><b>+{lastResult.salvage}</b></span><small>{salvage + (fieldReceipt?.cost || 0)} carried on arrival</small></article>
                 {lastResult.abilityId && <article className="lr-result-ability"><span><BiIcon cls="bi-hourglass-split" /><strong>{crew.flatMap(member => member.abilities).find(ability => ability.id === lastResult.abilityId)?.name || 'Ability'} spent</strong></span><small>Unavailable for the rest of this expedition</small></article>}
