@@ -27,6 +27,7 @@ try {
       assert(bounds.every(rect => Math.abs(rect.y - bounds[0].y) < 1), 'Both routes share the metric axis even on a phone');
     }
     if (width === 390) {
+      await page.screenshot({path:`${output}/390-route-entry.png`});
       const height = await board.evaluate(node => node.getBoundingClientRect().height);
       assert(height < 640, `Opening comparison should be one phone viewport, not a scrolling dossier: ${height}`);
       await board.evaluate(node => node.scrollIntoView({block:'start',behavior:'instant'}));

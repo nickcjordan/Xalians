@@ -31,6 +31,18 @@ try {
       await dialog.getByRole('button', { name: /Continue to result|Review scout report|Check scout status|Respond to encounter|See encounter result|Choose response/ }).waitFor({ timeout: 120000 });
       events.push({ type: 'animation', elapsed: Date.now()-started, text: await dialog.innerText() });
       await page.screenshot({ path: `${output}/${step}-animation.png` });
+      if (viewport.width === 390 && !events.some(event => event.type === 'read-start')) {
+        const readStart = dialog.getByRole('button', { name: /Read from start/ });
+        if (viewport.height <= 700 && step === 1) assert.equal(await readStart.count(), 1, 'Short-phone scout account reveals the way back to its opening beat');
+        if (await readStart.count()) {
+          await readStart.click();
+          const scroller = dialog.locator('.lr-sequence-story-scroll');
+          assert.equal(await scroller.evaluate(node => node.scrollTop), 0, 'Finished account can be read from its opening beat');
+          assert.equal(await scroller.evaluate(node => document.activeElement === node), true, 'Reading starts with keyboard focus in the account');
+          events.push({ type: 'read-start' });
+          await page.screenshot({ path: `${output}/read-from-start.png` });
+        }
+      }
       await dialog.getByRole('button', { name: /Continue to result|Review scout report|Check scout status|Respond to encounter|See encounter result|Choose response/ }).click();
       continue;
     }

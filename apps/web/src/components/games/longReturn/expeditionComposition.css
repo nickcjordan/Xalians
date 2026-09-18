@@ -20,7 +20,6 @@
 .lr-mode-simple .lr-report-content .lr-simple-finding { border: 0; border-top: 1px solid #485040; background: none; padding: 18px 0; margin: 16px 0; }
 .lr-mode-simple .lr-report-content .lr-simple-finding strong { font-size: 17px; }
 .lr-mode-simple .lr-report-content > .g-btn { position: static; transform: none; width: auto; margin-top: 12px; }
-.lr-mode-simple .lr-route-map { margin: 0; border-bottom: 0; min-height: 170px; }
 .lr-mode-simple .lr-route-board { margin-top: 0; }
 .lr-mode-simple .lr-field-encounter { border: 0; background: none; padding: 0; }
 .lr-mode-simple .lr-field-encounter.is-resolved { box-shadow: none; }
@@ -61,11 +60,6 @@
 @media(max-width:650px) { .lr-mode-simple .lr-simple-report { grid-template-columns: 1fr; gap: 16px; } .lr-report-source { display: grid; grid-template-columns: 80px 1fr; border-right: 0; padding: 0; } .lr-report-source .lr-portrait { min-height: 85px; grid-row: span 3; margin: 0; } }
 @media(max-width:800px) {
   .lr-mode-simple.lr-is-customizing .lr-ability-ledger { display: none; }
-  .lr-mode-simple .lr-route-map__origin { display: none; }
-  .lr-mode-simple .lr-route-map__destination { top: auto; bottom: 14px; left: 14px; right: 14px; text-align: center; font-size: 11px; }
-  .lr-mode-simple .lr-route-map__path:not(.is-active) { display: none; }
-  .lr-mode-simple .lr-route-map__path.is-active { top: 18px; height: 70px; left: 12px; right: 12px; transform: none; }
-  .lr-mode-simple .lr-route-map__path > span { left: 0; right: 0; max-width: none; justify-content: center; flex-wrap: wrap; }
   .lr-mode-simple .lr-wizard-topline { flex-wrap: wrap; gap: 12px; }
   .lr-mode-simple .lr-wizard-topline > div:first-child { width: 100%; }
   .lr-mode-simple.lr-is-customizing .lr-game-grid { display: flex; flex-direction: column; width: 100%; }
