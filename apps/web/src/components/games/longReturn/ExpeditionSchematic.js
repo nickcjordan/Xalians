@@ -33,8 +33,8 @@ export default function ExpeditionSchematic({ scene, crew = [], scout, helperId,
   const allyPlace = allyWithScout && position.scout ? position.scout : position.crew;
   const allyPoint = allyPlace === 'survey' && (contact || position.encounter) ? [320, contactLane] : positions[allyPlace] || positions.entry;
   const allyLane = allyPlace === 'crossing' ? currentLane : allyPoint[1];
-  return <figure data-tier="immersive" data-expedition-map data-map-scene={scene.id} data-crew-position={position.crew} className="m-0 min-w-0 border-y border-edge bg-s0 text-ink">
-    <figcaption className="flex flex-wrap items-center justify-between gap-2 px-4 pt-3 text-small font-body"><strong>{location}</strong><span className="text-ink-2">{preview ? 'Route preview · crew has not moved' : 'Site schematic'}</span></figcaption>
+  return <figure data-tier="immersive" data-expedition-map data-map-scene={scene.id} data-preview-route={preview ? routeId : undefined} data-crew-position={position.crew} className="m-0 min-w-0 border-y border-edge bg-s0 text-ink">
+    <figcaption className="flex flex-wrap items-center justify-between gap-2 px-4 pt-3 text-small font-body"><strong>{location}</strong><span className="text-ink-2">{preview ? `Preview: ${MAP_ROUTES[routeId] || scene.routes[routeIndex]?.title}` : 'Site schematic'}</span></figcaption>
     <div data-site-overview className="flex items-center gap-1 px-4 pt-3" aria-label={`Site position: ${scene.trackLabel}, sector ${sceneIndex + 1} of ${MISSION.scenes.length}`}>
       {MISSION.scenes.map((item, i) => <React.Fragment key={item.id}>
         {i > 0 && <span aria-hidden="true" className={`h-px flex-1 ${i <= sceneIndex ? 'bg-viable' : 'bg-edge-strong'}`} />}
@@ -52,6 +52,7 @@ export default function ExpeditionSchematic({ scene, crew = [], scout, helperId,
         const selected = route.id === routeId;
         return <g key={route.id} data-map-route={route.id}>
           <path d={`M130 98 H164 V${y} H438 V98 H470`} fill="none" stroke={selected ? 'var(--color-viable)' : 'var(--color-edge-strong)'} strokeWidth={selected ? 3 : 2} strokeDasharray={selected && preview ? '5 5' : undefined} />
+          {selected && <path data-map-direction={route.id} d={`M400 ${y - 6} l6 6 -6 6`} fill="none" stroke="var(--color-viable)" strokeWidth="2" />}
           <text x="300" y={i === 0 ? 26 : 179} textAnchor="middle" fill={selected ? 'var(--color-ink)' : 'var(--color-ink-2)'} className="text-small">{MAP_ROUTES[route.id] || route.title}</text>
         </g>;
       })}

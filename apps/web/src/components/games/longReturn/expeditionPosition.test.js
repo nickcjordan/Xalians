@@ -46,6 +46,13 @@ describe('expedition location, not creature performance', () => {
   });
   it('every route has an everyday spatial label', () => {
     MISSION.scenes.flatMap(scene => scene.routes).forEach(route => expect(MAP_ROUTES[route.id]).toBeTruthy());
+    for (const scene of MISSION.scenes) for (const route of scene.routes) {
+      const html = renderToStaticMarkup(<ExpeditionSchematic scene={scene} routeId={route.id} preview />);
+      expect(html).toContain(`Preview: ${MAP_ROUTES[route.id]}`);
+      expect(html).toContain(`data-map-direction="${route.id}"`);
+      expect(html).toContain('stroke-dasharray="5 5"');
+      expect(html).toContain('data-crew-position="entry"');
+    }
   });
   it('each arrival threshold becomes the next scene entrance', () => {
     MISSION.scenes.forEach((scene, index) => {
