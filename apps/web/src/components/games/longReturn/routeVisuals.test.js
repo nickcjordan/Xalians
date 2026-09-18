@@ -1,9 +1,30 @@
 import { describe, expect, test } from 'vitest';
 import { MISSION } from './longReturnData';
 import { applyMissionMemory } from './longReturnEngine';
-import { ROUTE_VISUALS, routeVisualFor, visibleWorldFlags } from './routeVisuals';
+import { ROUTE_VISUALS, routeVisualFor, visibleWorldFlags, routeMemory, consequencePreview } from './routeVisuals';
 
 describe('Long Return route visualization', () => {
+  test('future choices name the affected approach and whether it becomes easier or harder', () => {
+    expect(MISSION.scenes[0].routes.map(consequencePreview)).toEqual(['Easier upper walkway', 'Easier lower passage']);
+    expect(MISSION.scenes[1].routes.map(consequencePreview)).toEqual(['Door harder to force', 'Door easier to unlock']);
+  });
+
+  test('a route remembers only a known consequence actually applied by the engine', () => {
+    const effects = [
+      ['quiet-entry', 1, 'catwalk', -5, 'Quiet upper walkway'],
+      ['coolant-bypass', 1, 'underdeck', -4, 'Drained lower passage'],
+      ['maintenance-codes', 2, 'decode', -6, 'Controls with a code'],
+      ['security-pulse', 2, 'breach', 5, 'Tightened door seam']
+    ];
+    for (const [flag, sceneIndex, routeId, difficulty, mapLabel] of effects) {
+      const scene = applyMissionMemory(MISSION.scenes[sceneIndex], [flag]);
+      const route = scene.routes.find(route => route.id === routeId);
+      expect(routeMemory(route, [flag])).toMatchObject({flag,difficulty,mapLabel});
+      expect(routeMemory(route, [])).toBeNull();
+      expect(routeMemory(MISSION.scenes[sceneIndex].routes.find(route => route.id === routeId), [flag])).toBeNull();
+      expect(routeMemory(scene.routes.find(route => route.id !== routeId), [flag])).toBeNull();
+    }
+  });
   test('maps every route to a visual path and action icon', () => {
     const routes = MISSION.scenes.flatMap((scene) => scene.routes);
     expect(Object.keys(ROUTE_VISUALS)).toHaveLength(routes.length);

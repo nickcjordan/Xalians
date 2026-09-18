@@ -33,7 +33,7 @@ try {
       assert(finalReading.height >= 200, `${name}: persistent account has only ${finalReading.height}px of reading space`);
       const map = page.locator('[data-field-record] [data-expedition-map]');
       assert.equal(await map.locator('[data-map-creature]').count(), 3, 'Map retains all crew identities');
-      const drawing = await map.locator('svg').boundingBox();
+      const drawing = await map.locator(':scope > svg').boundingBox();
       assert(drawing.width > 300 && drawing.height > 100, 'Schematic is a readable diagram, not an icon');
       assert.equal(await page.locator('.lr-scout-performer,.lr-action-creature,.lr-encounter-sequence-creature').count(), 0, 'No creature-performance stage remains');
       assert.equal(await story.getByRole('button', { name: 'Pause story', exact: true }).count(), 0, 'Finished stories have no dead playback controls');
