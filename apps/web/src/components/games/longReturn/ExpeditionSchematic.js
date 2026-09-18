@@ -11,11 +11,12 @@ const positions = { entry: [74, 98], survey: [225, 98], crossing: [304, 48], exi
 const changeLabel = (change, route) => change?.mapLabel || MAP_ROUTES[route.id] || route.title;
 const effectMarks = { 'quiet-entry': '○', 'coolant-bypass': '≈', 'maintenance-codes': '⌁', 'security-pulse': '!' };
 
-export default function ExpeditionSchematic({ scene, crew = [], scout, helperId, position = { crew: 'entry' }, routeId, native, nativeState, companion, allyWithScout = false, runFlags = [], compact = false, readingRecord = false, preview = false, reserves }) {
+export default function ExpeditionSchematic({ scene, crew = [], scout, helperId, position = { crew: 'entry' }, routeId, revealedIds = [], native, nativeState, companion, allyWithScout = false, runFlags = [], compact = false, readingRecord = false, preview = false, reserves }) {
   const sceneIndex = Math.max(0, MISSION.scenes.findIndex(item => item.id === scene.id));
   const routeIndex = scene.routes.findIndex(route => route.id === routeId);
   const changes = scene.routes.map(route => routeMemory(route, runFlags));
   const flags = visibleWorldFlags(scene, runFlags).filter(flag => !changes.some(change => change?.flag === flag.id));
+  const knownHazards = scene.hazards.filter(hazard => revealedIds.includes(hazard.id));
   const place = MAP_PLACES[scene.id] || { entry: ['Entrance'], exit: ['Far side'], description: '' };
   const passage = SHARED_PASSAGES[scene.id];
   const ally = nativeState === 'ally' ? native : companion?.creature || companion;
@@ -46,7 +47,7 @@ export default function ExpeditionSchematic({ scene, crew = [], scout, helperId,
       </React.Fragment>)}
     </div>
     <div data-site-overview className="flex justify-between px-4 pt-1 text-small text-ink-2"><span>{scene.trackLabel}</span><span>{sceneIndex < 4 || (sceneIndex === 4 && position.crew !== 'exit') ? '◎ Recover the Index' : '◎ Index reached'}</span></div>
-    <svg viewBox="0 0 600 200" preserveAspectRatio={readingRecord ? 'xMidYMid slice' : 'xMidYMid meet'} style={{ width: '100%', height: 'auto', maxHeight: readingRecord ? undefined : compact ? 160 : 240 }} className={readingRecord ? 'block max-md:h-24!' : 'block'} role="img" aria-label={`${location}. ${place.description} ${changes.filter(Boolean).map(change => change.detail).join(' ')} ${tokens.map(token => `${token.member.species}: ${token.place === 'survey' ? 'scouting ahead' : token.place === 'exit' ? place.exit.join(' ') : token.place === 'entry' ? place.entry.join(' ') : token.place}`).join('. ')}. ${scene.routes.map(route => MAP_ROUTES[route.id] || route.title).join(' or ')} lead to ${place.exit.join(' ')}.`}>
+    <svg viewBox="0 0 600 200" preserveAspectRatio={readingRecord ? 'xMidYMid slice' : 'xMidYMid meet'} style={{ width: '100%', height: 'auto', maxHeight: readingRecord ? undefined : compact ? 160 : 240 }} className={readingRecord ? 'block max-md:h-24!' : 'block'} role="img" aria-label={`${location}. ${place.description} ${changes.filter(Boolean).map(change => change.detail).join(' ')} ${tokens.map(token => `${token.member.species}: ${token.place === 'survey' ? 'scouting ahead' : token.place === 'exit' ? place.exit.join(' ') : token.place === 'entry' ? place.entry.join(' ') : token.place}`).join('. ')}. ${knownHazards.map(hazard => `${hazard.label} on ${scene.routes.filter(route => route.hazardIds.includes(hazard.id)).map(route => MAP_ROUTES[route.id] || route.title).join(' and ')}`).join('. ')}. ${scene.routes.map(route => MAP_ROUTES[route.id] || route.title).join(' or ')} lead to ${place.exit.join(' ')}.`}>
       <rect x="18" y="64" width="112" height="68" rx="6" fill="var(--color-s1)" stroke="var(--color-edge-strong)" />
       <rect x="470" y="64" width="112" height="68" rx="6" fill="var(--color-s1)" stroke="var(--color-edge-strong)" />
       {[['entry', 74], ['exit', 526]].map(([side, x]) => <text key={side} data-map-threshold={side} x={x} y="158" textAnchor="middle" fill="var(--color-ink-2)" className="hidden text-small md:block">{place[side].map((line, index) => <tspan key={line} x={x} dy={index ? 25 : 0}>{line}</tspan>)}</text>)}
@@ -62,6 +63,7 @@ export default function ExpeditionSchematic({ scene, crew = [], scout, helperId,
           {selected && passage && <path data-map-target={route.id} d={passage.targets[route.id]} fill="none" stroke="var(--color-viable)" strokeWidth="3" />}
           {selected && <path data-map-direction={route.id} d={`M${passage ? 440 : 400} ${(passage ? 98 : y) - 6} l6 6 -6 6`} fill="none" stroke="var(--color-viable)" strokeWidth="2" />}
           {change && <g data-map-effect={change.flag} transform={`translate(216 ${y - 12})`}><title>{change.detail}</title><circle data-map-effect-symbol cx="13" cy="13" r="16" fill="var(--color-s0)" stroke={changeColor} strokeWidth="2" /><text x="13" y="21" textAnchor="middle" fill={changeColor} className="type-heading">{effectMarks[change.flag] || '•'}</text></g>}
+          {knownHazards.filter(hazard => route.hazardIds.includes(hazard.id)).map(hazard => <g key={hazard.id} data-map-known-hazard={hazard.id} data-map-hazard-route={route.id} transform={`translate(418 ${y})`}><title>{`${hazard.label}: ${hazard.detail}`}</title><circle r="12" fill="var(--color-s0)" stroke="var(--color-caution)" strokeWidth="2" /><text y="5" textAnchor="middle" fill="var(--color-caution)" className="text-small">!</text></g>)}
           <text data-map-route-label x="300" y={i === 0 ? 26 : 179} textAnchor="middle" fill={change ? changeColor : selected ? 'var(--color-ink)' : 'var(--color-ink-2)'} className="hidden text-small md:block">{change?.mapLabel || MAP_ROUTES[route.id] || route.title}</text>
         </g>;
       })}
@@ -76,9 +78,9 @@ export default function ExpeditionSchematic({ scene, crew = [], scout, helperId,
       {ally && <g data-map-ally data-location={allyPlace} transform={`translate(${allyPoint[0]} ${allyLane + (allyLane === 148 ? -25 : 25)})`}><title>{`${ally.species}: ${allyPlace === 'survey' ? 'beside the scout' : 'with the crew'}`}</title><path d="M0 -8 L8 0 L0 8 L-8 0 Z" fill="var(--color-viable)" /></g>}
     </svg>
     <div className="flex justify-between gap-3 px-4 text-small text-ink-2 md:hidden"><span>{place.entry.join(' ')}</span><span className="text-right">→ {place.exit.join(' ')}</span></div>
-    {!readingRecord && <div className="flex justify-between gap-3 px-4 pt-2 text-small text-ink-2 md:hidden" aria-label="Approaches on the diagram">{scene.routes.map((route, index) => <span key={route.id} data-map-route-caption={route.id} className={index ? 'text-right' : ''}>{changeLabel(changes[index], route)}</span>)}</div>}
+    {!readingRecord && <div className="flex justify-between gap-3 px-4 pt-2 text-small text-ink-2 md:hidden" aria-label="Approaches on the diagram">{scene.routes.map((route, index) => <span key={route.id} data-map-route-caption={route.id} className={index ? 'text-right' : ''}>{changeLabel(changes[index], route)}{knownHazards.some(hazard => route.hazardIds.includes(hazard.id)) ? ' · !' : ''}</span>)}</div>}
     {reserves && <ExpeditionReserves crew={crew} strain={reserves.strain} pressure={reserves.pressure} />}
-    {(!reserves || contact || ally) && <div className="flex flex-wrap gap-x-4 gap-y-1 px-4 pb-3 text-small text-ink-2">{!reserves && tokens.map(({member, number}) => <span key={member.id}><b className="text-viable">{number}</b> {member.species}</span>)}{contact && <span>◇ {contact.species}{nativeState === 'bypassed' ? ' · Still trapped' : ''}</span>}{ally && <span>◆ {ally.species} · Ally</span>}{!reserves && <span data-site-next className="ml-auto">→ {MISSION.scenes[sceneIndex + 1]?.trackLabel || 'Extraction'}</span>}</div>}
+    {(!reserves || contact || ally || knownHazards.length > 0) && <div className="flex flex-wrap gap-x-4 gap-y-1 px-4 pb-3 text-small text-ink-2">{!reserves && tokens.map(({member, number}) => <span key={member.id}><b className="text-viable">{number}</b> {member.species}</span>)}{contact && <span>◇ {contact.species}{nativeState === 'bypassed' ? ' · Still trapped' : ''}</span>}{ally && <span>◆ {ally.species} · Ally</span>}{knownHazards.length > 0 && <span className="text-caution">! Known danger</span>}{!reserves && <span data-site-next className="ml-auto">→ {MISSION.scenes[sceneIndex + 1]?.trackLabel || 'Extraction'}</span>}</div>}
     {flags.length > 0 && <div data-site-overview className="flex flex-wrap gap-3 border-t border-edge px-4 py-2 text-small text-ink-2" aria-label="Lasting site changes">{flags.map(flag => <span key={flag.id}>↳ {flag.label}</span>)}</div>}
   </figure>;
 }

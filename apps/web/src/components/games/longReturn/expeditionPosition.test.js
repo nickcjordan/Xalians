@@ -57,7 +57,7 @@ describe('expedition location, not creature performance', () => {
   const scout = { id: 'scout' };
   it('route and lead selection never move the crew', () => {
     expect(expeditionPosition({ phase: 'assign' }).crew).toBe('entry');
-    expect(expeditionPosition({ phase: 'assign', encounterMode: 'group', resolution: 'cleared' })).toMatchObject({crew:'crossing', encounter:true});
+    expect(expeditionPosition({ phase: 'assign', encounterMode: 'group', resolution: 'cleared' })).toMatchObject({crew:'crossing', encounter:false});
     expect(expeditionPosition({ phase: 'assign', encounterMode: 'group', resolution: 'detour' }).crew).toBe('entry');
   });
   it('sending a report is not physical return', () => {
@@ -77,6 +77,10 @@ describe('expedition location, not creature performance', () => {
     expect(expeditionPosition({ phase: 'encounter', encounterMode: 'scout' })).toMatchObject({ crew: 'entry', scout: 'survey' });
     expect(expeditionPosition({ phase: 'encounter', encounterMode: 'crew' })).toMatchObject({ crew: 'crossing', scout: null });
     expect(expeditionPosition({ actionType: 'encounter-response', encounterMode: 'crew', resolution: 'detour' }).crew).toBe('entry');
+    expect(expeditionPosition({ actionType: 'scout', beat: 'encounter', scan: { relay: true } })).toMatchObject({ crew: 'entry', scout: 'survey', signal: true, encounter: true });
+    expect(expeditionPosition({ phase: 'encounter', encounterMode: 'scout', resolution: 'befriended' })).toMatchObject({ crew: 'entry', scout: 'survey', encounter: false });
+    expect(expeditionPosition({ phase: 'encounter', encounterMode: 'scout', resolution: 'unresolved' }).encounter).toBe(true);
+    expect(expeditionPosition({ actionType: 'scout-return', encounterMode: 'scout', beat: 'complete' }).encounter).toBe(false);
   });
   it('every route has an everyday spatial label', () => {
     MISSION.scenes.flatMap(scene => scene.routes).forEach(route => expect(MAP_ROUTES[route.id]).toBeTruthy());
@@ -134,6 +138,16 @@ describe('expedition location, not creature performance', () => {
     expect(html).not.toContain(scene.encounter.title);
     scene.hazards.forEach(hazard => expect(html).not.toContain(hazard.label));
     expect(html).not.toContain('lr-scout-performer');
+  });
+  it('marks only reported danger on its physical route', () => {
+    const scene = MISSION.scenes[0];
+    const hidden = renderToStaticMarkup(<ExpeditionSchematic scene={scene} revealedIds={[]} />);
+    expect(hidden).not.toContain('data-map-known-hazard');
+    const reported = renderToStaticMarkup(<ExpeditionSchematic scene={scene} revealedIds={['conductive-brine']} />);
+    expect(reported).toContain('data-map-known-hazard="conductive-brine" data-map-hazard-route="intake"');
+    expect(reported).toContain('! Known danger');
+    expect(reported).toContain(scene.hazards[0].detail);
+    expect(reported).not.toContain('data-map-hazard-route="gantry"');
   });
   it('can combine the numbered crew key with actual reserves without repeating names', () => {
     const crew = [{id:'lead',species:'Hippochamp'}, {id:'support',species:'Graviclaw'}];

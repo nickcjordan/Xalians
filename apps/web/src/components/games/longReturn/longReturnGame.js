@@ -1001,7 +1001,7 @@ function LongReturnGame() {
     const actor = helper || affected || crew[0];
     playGameSound('commit', soundEnabled);
     setActionTransition({
-      type: 'encounter-response', scene, native: encounterCreature, actor, encounterMode: encounterState.mode, scout: encounterState.scout, route,
+      type: 'encounter-response', scene, native: encounterCreature, actor, encounterMode: encounterState.mode, scout: encounterState.scout, route, revealedIds: scan?.revealedIds,
       witness: affected && actor && affected.id !== actor.id ? affected : null,
       affected, option, result, presentation: encounterChoicePresentation(option),
       energyBefore: affected ? MAX_STRAIN - (strain[affected.id] || 0) : MAX_STRAIN,
@@ -1054,7 +1054,7 @@ function LongReturnGame() {
     playGameSound('commit', soundEnabled);
     setWizardDirection('forward');
     if (scene.encounter && scene.encounter.routeId === route.id && nativeRemains(encounterResolution)) {
-      setActionTransition({ type: 'encounter', scene, route, lead: actingLead, support: actingSupport, encounter: encounterCreature });
+      setActionTransition({ type: 'encounter', scene, route, lead: actingLead, support: actingSupport, encounter: encounterCreature, revealedIds: scan.revealedIds });
       setEncounterOptionId(null);
       setEncounterState({ mode: 'group', scout: null, informed: !!encounterResolution, postPhase: 'assign', result: null });
       setPhase('encounter');
@@ -1105,7 +1105,7 @@ function LongReturnGame() {
       salvageAfter: salvage + result.salvage
     };
 
-    setActionTransition({ type: 'crossing', scene, route, lead: actingLead, support: actingSupport, reserve: crew.find((member) => member.id !== actingLead.id && member.id !== actingSupport.id), method: actingMethod, result, companion: companionHelp && companion ? companion.creature : null });
+    setActionTransition({ type: 'crossing', scene, route, lead: actingLead, support: actingSupport, reserve: crew.find((member) => member.id !== actingLead.id && member.id !== actingSupport.id), method: actingMethod, result, companion: companionHelp && companion ? companion.creature : null, revealedIds: scan.revealedIds });
 
     setLeadId(actingLead.id); setSupportId(actingSupport.id); setMethodId(actingMethod.id);
     setPressure(nextPressure);
@@ -1334,7 +1334,7 @@ function LongReturnGame() {
             {scene.objective && <span className="lr-objective-badge">PRIMARY OBJECTIVE</span>}
             {scene.optional && <span className="lr-optional-badge">OPTIONAL DEPTH</span>}
           </div>}
-          <ExpeditionSchematic scene={scene} crew={crew} scout={scanScout} helperId={encounterResolution?.helperId} companion={companion} allyWithScout={allyWithScout} position={expeditionPosition({ phase, scout: scanScout, scan, encounterMode, resolution: encounterResolution?.resolution })} routeId={mapRouteId} native={phase === 'encounter' && !encounterResolution || knownNativeState ? encounterCreature : null} nativeState={knownNativeState} preview={phase === 'assign' && !!mapRouteId} runFlags={runFlags} compact reserves={guidanceLevel === 'simple' ? { strain, pressure } : undefined} />
+          <ExpeditionSchematic scene={scene} crew={crew} scout={scanScout} helperId={encounterResolution?.helperId} companion={companion} allyWithScout={allyWithScout} position={expeditionPosition({ phase, scout: scanScout, scan, encounterMode, resolution: encounterResolution?.resolution })} routeId={mapRouteId} revealedIds={scan?.revealedIds} native={phase === 'encounter' && !encounterResolution || knownNativeState ? encounterCreature : null} nativeState={knownNativeState} preview={phase === 'assign' && !!mapRouteId} runFlags={runFlags} compact reserves={guidanceLevel === 'simple' ? { strain, pressure } : undefined} />
           </div>
           {guidanceLevel === 'simple' && <CurrentAction key={`${phase}-${sceneIndex}-${encounterState && encounterState.result ? 'resolved' : 'active'}-${routeId || 'none'}`} {...currentAction} onHelp={openMechanics} />}
           <p className="lr-scene-copy">{scene.description}</p>

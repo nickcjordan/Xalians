@@ -133,7 +133,13 @@ try {
       responses[crossed] = (responses[crossed] || 0) + 1;
       await click(page.locator('.lr-encounter-commit-bar button')); continue;
     }
-    if (await page.locator('.lr-field-encounter.is-resolved').count()) { await click(page.locator('.lr-field-encounter .g-btn--primary')); continue; }
+    if (await page.locator('.lr-field-encounter.is-resolved').count()) {
+      if (await map.locator('[data-map-ally]').count() && await map.getAttribute('data-map-scene') === 'turbine-hall') {
+        assert(!(await map.locator('figcaption').innerText()).includes('Contact ahead'), 'A newly joined ally is no longer presented as an active hostile contact');
+        assert.equal(await map.locator('[data-map-ally]').getAttribute('data-location'), 'survey', 'The new ally remains with the scout and helper ahead of the waiting crew');
+      }
+      await click(page.locator('.lr-field-encounter .g-btn--primary')); continue;
+    }
     if (await page.locator('.lr-simple-report').count()) { await click(page.locator('.lr-simple-report .g-btn--primary')); continue; }
     if (await page.locator('.lr-route-board').count()) {
       assert(!(await map.locator('[data-expedition-reserves]').innerText()).includes("Can't scout"), 'Crossing choices do not show a scouting restriction');
