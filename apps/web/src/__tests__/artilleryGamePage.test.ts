@@ -311,9 +311,13 @@ describe('Crater Command aim feedback', () => {
 
     expect(screen.getByRole('img', { name: /drag up and outward/i })).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: /Open weapon rack|Load weapon/i })).not.toBeInTheDocument();
-    for (const payload of ['Comet', 'Razor', 'Drill', 'Starfall', 'Rampart', 'Sunspike']) {
+    for (const payload of ['Comet', 'Razor', 'Drill', 'Starfall', 'Rampart', 'Sunspike', 'Skipjack', 'Mole', 'Tractor', 'Foam']) {
       expect(screen.getByRole('button', { name: new RegExp(`^${payload}\\b`, 'i') })).toBeEnabled();
     }
+    expect(screen.getByTestId('artillery-weapon-rail')).toHaveClass('overflow-x-auto');
+    await userEvent.click(screen.getByRole('button', { name: /^Tractor 1/i }));
+    expect(screen.getByTestId('artillery-selected-weapon')).toHaveTextContent('Pulls a nearby rig up to 15 units');
+    expect(screen.getByRole('button', { name: /Fire Tractor/i })).toBeEnabled();
     await userEvent.click(screen.getByRole('button', { name: /^Razor 2/i }));
     expect(screen.getByRole('button', { name: /^Razor 2/i })).toHaveAttribute('aria-pressed', 'true');
     expect(screen.getByRole('button', { name: /^Sunspike/i })).toBeVisible();

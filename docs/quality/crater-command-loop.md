@@ -494,3 +494,35 @@ so plainly. A run should not claim completion just because tests pass.
   the local ground grade and blends its outer rim into the untouched slope.
   A second local play check showed the crater following the hillside without
   reverting to the old sliding-terrain effect.
+
+### 2026-09-18: expanded ordnance deck
+
+- Nick clarified that the next pass should add weapons, not replace the six
+  already present. The original six remain. Four more rounds introduce new
+  tactical actions: Skipjack rebounds once from terrain, Mole Mine travels
+  underground before erupting, Tractor Knot pulls a nearby rig toward impact,
+  and Foam Tide fills low ground. Each has its own finite stock, trajectory or
+  terrain behavior, glyph, projectile, impact treatment, aftermath, and audio.
+  The five-shot Ordnance Trial retains its deliberately limited original
+  magazine; the expanded selection is available in the other match modes.
+- The six-column rack did not scale to ten weapons. The new ordnance deck is
+  a horizontally browsable, directly selectable strip on desktop and phone.
+  Page arrows complement swiping for mouse users.
+  It shows silhouettes, names, tactical hints, and stock without a load step.
+  An armed-weapon readout above the strip gives the complete purpose and
+  behavior. The firing control updates immediately when a round is selected.
+- A 390-pixel browser pass found the off-camera SVG world producing a document
+  scrollbar and button styling shrinking the weapon glyphs. The game clips
+  the wider scene at the document edge while mounted and keeps horizontal
+  motion inside the weapon strip. Glyph sizing now survives the shared button
+  rule. A phone-sized Mole Mine shot selected, launched, resolved, and spent
+  one charge in local play. This is browser viewport validation, not a
+  physical-device test.
+- Focused rules tests cover bounce and underground travel, trench carving,
+  rig displacement, and crater filling. The artillery component tests cover
+  direct selection of every weapon and the readable armed-weapon detail.
+  The route grew from about 104.5 KB raw / 35.1 KB gzip to about 114.1 KB raw
+  / 37.6 KB gzip in the local pre-merge build. Main removed the fixed bundle
+  gate in a concurrent PR, so this change does not restore that policy. All
+  373 rules and 1,345 web tests passed, along with both typechecks. The final
+  production build and release checks follow deployment.
