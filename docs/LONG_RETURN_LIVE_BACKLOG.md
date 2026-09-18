@@ -4,6 +4,12 @@ Owner: the agent maintaining the Long Return worktree. Update this file during i
 
 ## Active goal — full-mission UX (2026-09-11)
 
+### September 18: route-specific arrival headlines
+
+- The Simple result opened with a generic severity headline even when the field record had just told a specific arrival. The result now promotes the first sentence of the selected route's authored arrival into its headline, followed by the remaining arrival prose without repeating that sentence. The severity label and resource receipt remain distinct, and Read the crossing again still contains the full account.
+- A route-wide check exposed an isolated "The arms pause" headline. The door, catwalk, conduit, iris, Index plate and blackbox arrivals were tightened where necessary so their opening sentences stand alone and name the physical outcome. This edits narrative content only, not costs, hazards, route choices or map positions.
+- The browser replay asserts that each reached result uses a specific headline and does not repeat it in the paragraph. A seven-scene phone mission and an alternate three-scene decode route passed; the first, third and final result screens were paint-reviewed. The component tests cover every route and supported method, including the full-account disclosure. Human judgment of the scene handoffs remains open.
+
 ### September 18: one clear action per route
 
 - The route title and a second button below the shared cost table both advanced to lead selection. That made the title a hidden action and the lower button a duplicate. Each route now has one visible Choose lead affordance attached to its title; the footer is analysis only. The click still opens the reversible lead step and never crosses or spends resources. Hover and keyboard focus still preview the corresponding physical path on the schematic.

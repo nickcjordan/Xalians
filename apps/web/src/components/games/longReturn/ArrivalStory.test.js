@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, screen, fireEvent, cleanup } from '@testing-library/react';
-import ArrivalStory from './ArrivalStory';
+import ArrivalStory, { arrivalRecap } from './ArrivalStory';
 
 afterEach(cleanup);
 
@@ -21,4 +21,12 @@ test('a legacy one-paragraph account remains visible without an empty disclosure
   const { container } = render(<ArrivalStory paragraphs={['The crew reaches the door.']} />);
   expect(screen.getByText('The crew reaches the door.')).toBeTruthy();
   expect(container.querySelector('details')).toBeNull();
+});
+
+test('result recap promotes the authored arrival and does not repeat its opening sentence', () => {
+  const paragraphs = ['The crew enters the flood.', 'The crew reaches the far steps. The bypass opens ahead.'];
+  expect(arrivalRecap(paragraphs)).toEqual({ headline: 'The crew reaches the far steps.', detail: 'The bypass opens ahead.' });
+  const { container } = render(<ArrivalStory paragraphs={paragraphs} recap />);
+  expect(container.querySelector('.lr-crossing-prose > p').textContent).toBe('The bypass opens ahead.');
+  expect([...container.querySelectorAll('details p')].map(p => p.textContent)).toEqual(paragraphs);
 });

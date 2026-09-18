@@ -34,7 +34,7 @@ import MethodIdentity from './MethodIdentity';
 import { nativeRemains } from './nativePresence';
 import ExpeditionSchematic from './ExpeditionSchematic';
 import ExpeditionEndingTrail from './ExpeditionEndingTrail';
-import ArrivalStory from './ArrivalStory';
+import ArrivalStory, { arrivalRecap } from './ArrivalStory';
 import { crossingReceipt } from './crossingReceipt';
 import { scoutCommunication, reportDeliveryLabel } from './scoutCommunication';
 import ScoutChoices from './ScoutChoices';
@@ -780,6 +780,8 @@ function LongReturnGame() {
     ? lastResult?.resolvedMethod || methodOptions(lead, route, []).find(entry => entry.id === methodId)
     : null;
   const resultReceipt = crossingReceipt(lastResult);
+  const arrivalParagraphs = lastResult && (lastResult.paragraphs || (lead && support && resultMethod ? crossingNarrative({ route, lead, support, method: resultMethod, result: lastResult, companionHelp: lastResult.companionHelp }).paragraphs : null) || [lastResult.story]);
+  const arrivalHeadline = arrivalRecap(arrivalParagraphs || []).headline;
   const reserve = leadId && supportId ? crew.find((entry) => entry.id !== leadId && entry.id !== supportId) : null;
   const scanScout = crew.find((entry) => entry.id === scoutId);
   const report = scene && scan ? scanReport(scene, scanScout, scan) : null;
@@ -1662,8 +1664,8 @@ function LongReturnGame() {
             <div data-arrival-focus tabIndex={-1} role="region" aria-label={`${route.title}: crossing complete`} className={`lr-simple-decision lr-simple-result scroll-mt-20 focus-visible:outline-2 focus-visible:outline-viable${objectiveReached && !missionCannotContinue && sceneIndex < MISSION.scenes.length - 1 ? ' has-depth-decision' : ''}`}>
 <div className="lr-arrival-grid"><div className="lr-arrival-story">
 <p className="font-body text-small text-ink-2">Crossed: {route.title}</p>
-              <div className={`lr-simple-result-head is-${lastResult.impactQuality}`}><BiIcon cls={`bi ${lastResult.impactQuality === 'clean' ? 'bi-check-circle-fill' : 'bi-exclamation-triangle-fill'}`} /><div><span>Crossing complete · {lastResult.impactLabel}</span><h3>{lastResult.impactQuality === 'clean' ? 'The crew is through' : lastResult.impactQuality === 'costly' ? 'The crew crossed, but paid for it' : 'A hard-won crossing'}</h3></div></div>
-              <ArrivalStory key={scene.id} paragraphs={lastResult.paragraphs || (lead && support && resultMethod ? crossingNarrative({ route, lead, support, method: resultMethod, result: lastResult, companionHelp: lastResult.companionHelp }).paragraphs : null) || [lastResult.story]} />
+              <div className={`lr-simple-result-head is-${lastResult.impactQuality}`}><BiIcon cls={`bi ${lastResult.impactQuality === 'clean' ? 'bi-check-circle-fill' : 'bi-exclamation-triangle-fill'}`} /><div><span>Crossing complete · {lastResult.impactLabel}</span><h3>{arrivalHeadline || 'The crew is through'}</h3></div></div>
+              <ArrivalStory key={scene.id} paragraphs={arrivalParagraphs} recap />
               <details className="lr-result-explanation"><summary>Why this happened · cost breakdown</summary>
                 <p>{lastResult.turningPoint || lastResult.reaction}</p>
                 {(resultReceipt.crew.some((change, index) => change.added < lastResult.crewChanges[index].added) || resultReceipt.stability.added < lastResult.instabilityChange.added) && <p>The effort below exceeded the reserves remaining. The receipt counts only the energy and stability actually lost before reaching zero.</p>}
