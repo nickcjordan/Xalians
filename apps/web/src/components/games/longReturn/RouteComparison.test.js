@@ -109,6 +109,15 @@ test('confirmed ally savings are explained at the energy value, not only in anal
   root.innerHTML = renderToStaticMarkup(<RouteComparison plans={[base]} companion={{ ready: true, creature: { species: 'Xylum' } }} onSelect={() => {}} onPreview={() => {}} />);
   expect(root.querySelector('.is-energy [role="cell"] small').textContent).toBe('Xylum saves 1 · uses its one help');
 });
+test('a known forced ending attaches to its cause in one route column, not a new warning panel', () => {
+  const root = document.createElement('div');
+  root.innerHTML = renderToStaticMarkup(<RouteComparison plans={[base, {...base, route:{id:'b',title:'Intake',salvage:2}}]} stakes={[{kind:'energy', detail:'Only one crew member can act afterward.'}, null]} />);
+  const energy = root.querySelectorAll('.is-energy [role="cell"]');
+  expect(energy[0].querySelector('.lr-board-ending').textContent).toBe('Forced extraction afterward');
+  expect(energy[1].querySelector('.lr-board-ending')).toBeNull();
+  expect(root.querySelectorAll('.lr-board-ending')).toHaveLength(1);
+  expect(root.querySelectorAll('tr:not([hidden])')).toHaveLength(5);
+});
 
 test('the archive comparison ties its energy cost to the physical recovery work', () => {
   const scene = MISSION.scenes.find(entry => entry.id === 'nemesis-index');

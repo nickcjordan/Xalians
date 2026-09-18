@@ -897,6 +897,7 @@ function LongReturnGame() {
     return plan && { ...plan, nativeRisk: suggestedPlan.nativeRisk };
   }).filter(Boolean) : [];
   const applyCommandPreview = plan => useCommand && !plan.naturalReaction ? { ...plan, knownPressure: Math.max(0, plan.knownPressure - 1) } : plan;
+  const comparisonPlans = simpleRoutePlans.map(plan => plan.route.id === routeId ? applyCommandPreview(plan) : plan);
   const crossingWarning = planStakes(suggestedPlan && applyCommandPreview(suggestedPlan), crew, strain, pressure, companion);
   const leadChoices = useMemo(() => route && scan ? crew.map(member => {
     const plan = safestPlanForRoute(route, crew, strain, spentAbilities, scan, member.id);
@@ -1538,7 +1539,7 @@ function LongReturnGame() {
                 {scan.revealedIds.length > 0 && <div className="lr-scan-strip"><BiIcon cls="bi-broadcast-pin" /><span>{scan.revealedIds.length} hazard signature relayed to command.</span></div>}
               </>}
               {guidanceLevel === 'simple' && (simpleCustomizing || choosingLead) ? null : guidanceLevel === 'simple' ? <>
-                <RouteComparison scene={scene} plans={simpleRoutePlans.map((plan) => useCommand && plan.route.id === routeId && !plan.naturalReaction ? { ...plan, knownPressure: Math.max(0, plan.knownPressure - 1) } : plan)} selectedId={routeId} onSelect={previewSimpleRoute} onPreview={setRouteVisualId} companion={companion} recommendation={routeRecommendation} map={<ExpeditionSchematic scene={scene} crew={crew} scout={scanScout} helperId={encounterResolution?.helperId} companion={companion} allyWithScout={allyWithScout} position={expeditionPosition({ phase, scout: scanScout, scan, encounterMode, resolution: encounterResolution?.resolution })} routeId={mapRouteId} revealedIds={scan?.revealedIds} native={knownNativeState ? encounterCreature : null} nativeState={knownNativeState} preview={!!mapRouteId} runFlags={runFlags} compact decisionInset />} />
+                <RouteComparison scene={scene} plans={comparisonPlans} stakes={comparisonPlans.map(plan => planStakes(plan, crew, strain, pressure, companion))} selectedId={routeId} onSelect={previewSimpleRoute} onPreview={setRouteVisualId} companion={companion} recommendation={routeRecommendation} map={<ExpeditionSchematic scene={scene} crew={crew} scout={scanScout} helperId={encounterResolution?.helperId} companion={companion} allyWithScout={allyWithScout} position={expeditionPosition({ phase, scout: scanScout, scan, encounterMode, resolution: encounterResolution?.resolution })} routeId={mapRouteId} revealedIds={scan?.revealedIds} native={knownNativeState ? encounterCreature : null} nativeState={knownNativeState} preview={!!mapRouteId} runFlags={runFlags} compact decisionInset />} />
               </> : <div className="lr-route-grid">
                 {scene.routes.map((entry) => <RouteCard key={entry.id} route={entry} selected={routeId === entry.id} onSelect={() => chooseRoute(entry.id)} onPreview={() => setRouteVisualId(entry.id)} onPreviewEnd={() => setRouteVisualId(routeId)} scan={scan} />)}
               </div>}
