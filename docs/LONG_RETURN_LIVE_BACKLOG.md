@@ -4,6 +4,11 @@ Owner: the agent maintaining the Long Return worktree. Update this file during i
 
 ## Active goal — full-mission UX (2026-09-11)
 
+### September 18: field map symbols identify the actual party
+
+- A phone render after the contact-map fix showed numbered crew dots and an unexplained green diamond beside the trapped Hypnopet. The field record now pairs each number with its creature’s name, marks a separated scout as ahead, and distinguishes a native contact (outline diamond) from a temporary ally (solid diamond). The key stays on the map, so the written account is not interrupted by another explanatory panel.
+- A reduced-motion three-room no-scout replay reached the Xylum and Hypnopet records; the final Hypnopet phone render was inspected with both native symbols visible. CI caught an old geography test requiring the room description in the map's accessible name. Restored that description and trimmed only redundant labeling to stay within the page bundle budget. All 1,320 web tests, typecheck, production build and bundle budgets passed after the correction. Component tests cover crew, scout, contact and ally keys. Human judgment of whether the symbols read naturally remains open.
+
 ### September 18: field contact uses the schematic, not implied creature motion
 
 - A whole-crew, no-scout replay found the field record claiming every native “emerges ahead.” That contradicted the actual scenes: Xylum shelters by a broken bearing, Hypnopet is trapped in the lock, and Ectoghoul guards a conduit. Each now has a brief, situation-specific crew-contact beat. The player still chooses the response; no attack or outcome is pre-decided.
