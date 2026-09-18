@@ -325,7 +325,18 @@ try {
       }
       const workshop = page.locator('.lr-workshop');
       if (await workshop.count()) {
-        await workshop.locator(':scope > summary').click();
+        if (process.env.LR_REPAIR_FROM_DEPTH === '1' && crossed === 5) {
+          const repairLink = page.getByRole('button', { name: 'Repair before choosing' });
+          assert.equal(await repairLink.count(), 1, 'Thin stability offers a direct, noncommittal way to inspect repairs');
+          const reservesBefore = await map.locator('[data-expedition-reserves]').innerText();
+          await click(repairLink);
+          assert(await workshop.getAttribute('open') !== null, 'The depth action opens the repair workspace');
+          assert.equal(await map.locator('[data-expedition-reserves]').innerText(), reservesBefore, 'Opening repair spends nothing');
+          const repairHeading = await workshop.locator('h4').boundingBox();
+          assert(repairHeading.y >= 0 && repairHeading.y < viewport.height, 'Repair choices replace the depth fork in the current viewport');
+          await page.screenshot({ path: `${output}/depth-repair-open.png` });
+        }
+        if (await workshop.getAttribute('open') === null) await workshop.locator(':scope > summary').click();
         const brace = workshop.locator('.lr-workshop-options button:not([disabled])').filter({ hasText: 'Brace the annex' }).first();
         const choices = workshop.locator('.lr-workshop-options button:not([disabled])');
         if (await choices.count()) {

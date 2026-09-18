@@ -7,7 +7,7 @@ import { applyMissionMemory, assignmentStatus, decisionForecast, encounterOption
 import './longReturn.css';
 import './fieldWorkshop.css';
 import FieldWorkshop, { MissionJournal } from './FieldWorkshop';
-import { performFieldOperation } from './fieldOperations';
+import { fieldOptions, performFieldOperation } from './fieldOperations';
 import { readCheckpoint, writeCheckpoint, clearCheckpoint } from './expeditionSave';
 import { crossingNarrative } from './crossingNarrative';
 import { crossingCosts } from './crossingCosts';
@@ -720,6 +720,7 @@ function LongReturnGame() {
   const [motionCue, setMotionCue] = useState(null);
   const [journal, setJournal] = useState([]);
   const [fieldReceipt, setFieldReceipt] = useState(null);
+  const [repairOpenRequest, setRepairOpenRequest] = useState(0);
   const motionTimerRef = React.useRef(null);
 
   React.useEffect(() => {
@@ -1297,7 +1298,8 @@ function LongReturnGame() {
   const canCommit = assignment.ready;
   const arrivalStability = resultReceipt ? MAX_INSTABILITY - resultReceipt.stability.after : MAX_INSTABILITY - pressure;
   const fieldWorkshop = phase === 'result' && !missionCannotContinue && sceneIndex < MISSION.scenes.length - 1
-    ? <FieldWorkshop key={scene.id} crew={crew} strain={strain} pressure={pressure} salvage={salvage} commands={commands} used={!!fieldReceipt} receipt={fieldReceipt} onChoose={doFieldWork} /> : null;
+    ? <FieldWorkshop key={scene.id} crew={crew} strain={strain} pressure={pressure} salvage={salvage} commands={commands} used={!!fieldReceipt} receipt={fieldReceipt} openRequest={repairOpenRequest} onChoose={doFieldWork} /> : null;
+  const canBrace = phase === 'result' && fieldOptions({ crew, strain, pressure, salvage, commands, used: !!fieldReceipt }).some(option => option.kind === 'brace' && !option.disabled);
   const crossingsToIndex = Math.max(0, MISSION.scenes.findIndex(entry => entry.objective) - sceneIndex);
   const optionalScenesRemaining = MISSION.scenes.slice(sceneIndex + 1).filter((entry) => entry.optional);
   const optionalSalvagePotential = optionalScenesRemaining.reduce((total, entry) => total + Math.max(...entry.routes.map((entryRoute) => entryRoute.salvage)), 0);
@@ -1716,7 +1718,7 @@ function LongReturnGame() {
                   <span>{missionCannotContinue ? `${failureReason} Forced extraction ends this run.` : sceneIndex === MISSION.scenes.length - 1 ? `Leave the annex to bank ${salvage} salvage and complete the deep retrieval.` : `${MAX_INSTABILITY - pressure} stability remains. Recover if needed, then press toward the archive.`}</span></div>
               </div>}
 </div>
-              {!missionCannotContinue && objectiveReached && sceneIndex < MISSION.scenes.length - 1 ? <ExtractionChoice salvage={salvage} potential={optionalSalvagePotential} remaining={optionalScenesRemaining.length} nextScene={MISSION.scenes[sceneIndex + 1]} stability={MAX_INSTABILITY - pressure} readyCrew={standingCrewCount} onExtract={extract} onContinue={continueRun} /> : <div className="lr-action-row lr-result-actions">
+              {!missionCannotContinue && objectiveReached && sceneIndex < MISSION.scenes.length - 1 ? <ExtractionChoice salvage={salvage} potential={optionalSalvagePotential} remaining={optionalScenesRemaining.length} nextScene={MISSION.scenes[sceneIndex + 1]} stability={MAX_INSTABILITY - pressure} readyCrew={standingCrewCount} canRepair={canBrace} onRepair={() => setRepairOpenRequest(value => value + 1)} onExtract={extract} onContinue={continueRun} /> : <div className="lr-action-row lr-result-actions">
                 {!missionCannotContinue && !objectiveReached && <button type="button" className="g-btn g-btn--danger" aria-label="Abort mission" aria-describedby={salvage > 0 ? 'lr-abort-cost' : undefined} onClick={extract}>Abort mission{salvage > 0 && <small id="lr-abort-cost">Leave {salvage} salvage behind</small>}</button>}
                 <button type="button" className="g-btn g-btn--primary" onClick={continueRun}>{missionCannotContinue ? 'View mission report' : sceneIndex === MISSION.scenes.length - 1 ? 'Leave with full salvage' : 'Continue mission'} <BiIcon cls="bi bi-arrow-right" /></button>
               </div>}

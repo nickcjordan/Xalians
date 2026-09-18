@@ -1,10 +1,10 @@
 // Tier: immersive. Compare a secured haul with optional exploration, not two promised payouts.
 import React from 'react';
-import { ArrowRight, Building2, Package, Route, ShieldCheck, Zap } from 'lucide-react';
+import { ArrowRight, Building2, Package, Route, ShieldCheck, Wrench, Zap } from 'lucide-react';
 import { Button } from '../../ui/button';
 import { bankedSalvage } from './extractionOutcome';
 
-export default function ExtractionChoice({ salvage, potential, remaining = 1, nextScene, stability, readyCrew, onExtract, onContinue }) {
+export default function ExtractionChoice({ salvage, potential, remaining = 1, nextScene, stability, readyCrew, canRepair = false, onRepair, onExtract, onContinue }) {
   const retained = bankedSalvage('failed', true, salvage);
   const risk = salvage - retained;
   return <section data-tier="immersive" className="lr-depth-decision lr-extraction-choice font-body text-body" aria-labelledby="lr-depth-title">
@@ -27,6 +27,7 @@ export default function ExtractionChoice({ salvage, potential, remaining = 1, ne
           {stability <= remaining * 2 && <span className="inline-flex items-center gap-1"><Building2 className="size-4" /><strong>{stability}</strong> stability left</span>}
           {readyCrew <= 2 && <span className="inline-flex items-center gap-1"><Zap className="size-4" /><strong>{readyCrew}</strong> crew able to act</span>}
         </div>}
+        {canRepair && stability <= remaining * 2 && <button type="button" className="inline-flex min-h-11 items-center gap-2 self-start text-small text-viable underline underline-offset-4" onClick={onRepair}><Wrench className="size-4" />Repair before choosing</button>}
         <div className="lr-haul-risk text-small text-ink-2">
           <span>If forced out with your current haul: </span><span className="whitespace-nowrap">keep {retained}</span>{risk > 0 && <> · <span className="whitespace-nowrap text-caution">lose <b>{risk}</b></span></>}</div>
         <Button variant="outline" className="lr-depth-option is-deeper mt-auto h-auto min-h-11 w-full justify-between py-2 text-body normal-case tracking-normal whitespace-normal text-left" onClick={onContinue}>Go deeper<ArrowRight className="size-4" /></Button>

@@ -53,6 +53,16 @@ test('a thin reserve is shown beside the deeper option, without a separate warni
   expect(container.querySelector('[data-depth-reserves]')).toBeNull();
 });
 
+test('available repair is a separate reversible action, never an implicit deeper commitment', () => {
+  const onRepair = vi.fn(), onContinue = vi.fn();
+  const { container, rerender } = render(<ExtractionChoice salvage={4} potential={19} remaining={2} stability={3} readyCrew={3} canRepair onRepair={onRepair} onContinue={onContinue} nextScene={{ title: 'Core Reservoir' }} />);
+  fireEvent.click(screen.getByRole('button', { name: 'Repair before choosing' }));
+  expect(onRepair).toHaveBeenCalledTimes(1);
+  expect(onContinue).not.toHaveBeenCalled();
+  rerender(<ExtractionChoice salvage={1} potential={19} remaining={2} stability={3} readyCrew={3} canRepair={false} onRepair={onRepair} onContinue={onContinue} nextScene={{ title: 'Core Reservoir' }} />);
+  expect(container.querySelector('[data-depth-explore] button:not(.lr-depth-option)')).toBeNull();
+});
+
 test('reading an offer or its rule is not an implicit commitment', () => {
   const onExtract = vi.fn(), onContinue = vi.fn();
   const { container } = render(<ExtractionChoice salvage={5} potential={19} remaining={2} nextScene={{ title: 'Core Reservoir' }} onExtract={onExtract} onContinue={onContinue} />);
