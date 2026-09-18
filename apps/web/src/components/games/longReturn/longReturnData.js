@@ -145,7 +145,7 @@ export const MISSION = {
   briefing: 'The annex has been without power for two centuries. Old emergency systems are waking in the wrong order. Reach the archive, secure its plague research, and decide how much of the deeper Generator spine you are willing to salvage on the way out.',
   dangerClock: {
     label: 'Annex stability',
-    failure: 'At 0 stability, the annex collapses and forces extraction.',
+    failure: 'At 0 stability, the supports begin to fail and the crew must extract.',
     cause: 'Noise, delays, awakened machinery, and destructive actions destabilize the annex.'
   },
   objectiveScene: 4,
