@@ -2,8 +2,18 @@ import React from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { render, fireEvent } from '@testing-library/react';
 import RouteComparison, { comparisonCosts } from './RouteComparison';
+import { MISSION } from './longReturnData';
 
 const base = { route: { id: 'a', title: 'Gantry', salvage: 1 }, lead: { species: 'Lead' }, support: { species: 'Support' }, method: { label: 'Climb' }, knownLeadStrain: 1, baseSupportStrain: 0, knownPressure: 1, unresolvedHazards: [], risk: 1 };
+
+test('the next-room comparison states a benefit, while the story term stays in requested analysis', () => {
+  const view = render(<RouteComparison plans={MISSION.scenes[0].routes.map(route => ({...base,route}))} />);
+  expect(view.container.querySelector('.lr-board-future').textContent).toContain('Easier lower passage');
+  expect(view.container.querySelector('.lr-board-future').textContent).not.toContain('Coolant bypass');
+  fireEvent.click(view.container.querySelectorAll('.lr-board-analysis')[1]);
+  expect(view.container.querySelector('#route-analysis-intake').textContent).toContain('Coolant bypass opened');
+  view.unmount();
+});
 
 test('requested analysis spans both routes and remains separate from selecting a lead', () => {
   const onSelect = vi.fn();

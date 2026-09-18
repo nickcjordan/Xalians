@@ -8,7 +8,7 @@ try {
   const viewport = { width: Number(process.env.LR_WIDTH || 1280), height: Number(process.env.LR_HEIGHT || 900) };
   const context = await browser.newContext({ viewport, reducedMotion: process.env.LR_REDUCED === '1' ? 'reduce' : 'no-preference' });
   const page = await context.newPage();
-  const events = [], errors = [];
+  const events = [], errors = [], observedEffects = new Set();
   let crossed = 0;
   let previousMapScene = '', previousMapExit = '';
   const responses = {};
@@ -44,6 +44,24 @@ try {
       assert.equal(await map.locator('[data-map-landmark]').count(), 1, 'Every room has stationary terrain');
       const clipped = await map.locator('[data-map-threshold]').evaluateAll(nodes => nodes.some(node => { const box = node.getBBox(); return box.x < 0 || box.x + box.width > 600 || box.y + box.height > 200; }));
       assert(!clipped, 'Named thresholds fit the schematic');
+      for (const effect of await map.locator('[data-map-effect]').all()) {
+        const id = await effect.getAttribute('data-map-effect');
+        const path = effect.locator('..');
+        const expected = {
+          'quiet-entry': ['catwalk', 'Quiet upper walkway', 'Machinery dormant'],
+          'coolant-bypass': ['underdeck', 'Drained lower passage', 'Underdeck drained'],
+          'maintenance-codes': ['decode', 'Controls with a code', 'Protocol recovered'],
+          'security-pulse': ['breach', 'Tightened door seam', 'Security awake'],
+        }[id];
+        assert(expected, `Recognized earned map effect: ${id}`);
+        assert.equal(await path.getAttribute('data-map-route'), expected[0]);
+        assert.equal(await path.locator(':scope > text').textContent(), expected[1]);
+        const icon = await effect.locator('svg').evaluate(node => { const box = node.getBoundingClientRect(); return {width:box.width,height:box.height,cssWidth:getComputedStyle(node).width,cssHeight:getComputedStyle(node).height}; });
+        assert(icon.cssWidth === '24px' && icon.cssHeight === '24px' && icon.width >= 8 && icon.height >= 8, `Effect icon keeps its viewport and visible artwork: ${id} ${JSON.stringify(icon)}`);
+        assert.equal(await map.getByLabel('Lasting site changes').filter({hasText:expected[2]}).count(), 0, 'Applied route effects are not repeated in the status footer');
+        if (!observedEffects.has(id)) await map.screenshot({ path: `${output}/map-${id}.png` });
+        observedEffects.add(id);
+      }
       const ally = map.locator('[data-map-ally]');
       if (await ally.count() && mapScene !== 'turbine-hall' && (await ally.locator('title').textContent()).startsWith('Xylum:')) {
         assert.equal(await ally.getAttribute('data-location'), await map.getAttribute('data-crew-position'), 'Established ally stays with crew, not a solo scout');
@@ -129,6 +147,7 @@ try {
   }
   assert(events.some(e=>e.type===(process.env.LR_LIMIT_SCENES?'milestone':'ending')), 'Required endpoint not reached');
   assert.deepEqual(errors, []);
+  for (const expected of process.env.LR_EXPECT_MAP_EFFECTS?.split(',') || []) assert(observedEffects.has(expected), `Mission reached earned map effect: ${expected}`);
   await writeFile(`${output}/run.json`, JSON.stringify(events,null,2));
   console.log(JSON.stringify({ crossed, clicks: events.filter(e=>e.type==='choice').length, animations: events.filter(e=>e.type==='animation').map(e=>e.elapsed), ending: events.find(e=>e.type==='ending')?.text || 'Requested scene milestone reached' }, null,2));
   await context.close();

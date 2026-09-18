@@ -5,6 +5,7 @@ import { Button } from '../../ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../../ui/table';
 import './routeComparison.css';
 import { routeSetting } from './sceneOrientation';
+import { consequencePreview } from './routeVisuals';
 
 export function comparisonCosts(plan, companion) {
   const uncertain = !!(plan.unresolvedHazards.length || plan.nativeRisk);
@@ -62,8 +63,8 @@ export default function RouteComparison({ plans, selectedId, onSelect, onPreview
       {plans.map(plan => <TableCell role="cell" key={plan.route.id} data-route-preview={plan.route.id} className={`${cellClass} ${selectedId === plan.route.id ? 'is-selected' : ''}`}>{plan.method.abilityId ? <><strong>Uses {plan.method.ability?.name || 'ability'}</strong><small className="block text-small text-ink-2">Unavailable afterward</small></> : <strong>All kept</strong>}</TableCell>)}
     </TableRow>}
     {plans.some(plan => plan.route.consequence) && <TableRow className={`${rowClass} lr-board-future`}>
-      <TableHead className={axisClass} role="rowheader" scope="row"><ArrowRight className="mb-1 size-5" /><strong>Next sector</strong></TableHead>
-      {plans.map(plan => <TableCell role="cell" key={plan.route.id} data-route-preview={plan.route.id} className={`${cellClass} ${selectedId === plan.route.id ? 'is-selected' : ''}`}><strong>{plan.route.consequence?.label || 'No lasting change'}</strong></TableCell>)}
+      <TableHead className={axisClass} role="rowheader" scope="row"><ArrowRight className="mb-1 size-5" /><strong>Next room</strong></TableHead>
+      {plans.map(plan => <TableCell role="cell" key={plan.route.id} data-route-preview={plan.route.id} className={`${cellClass} ${selectedId === plan.route.id ? 'is-selected' : ''}`}><strong>{consequencePreview(plan.route)}</strong></TableCell>)}
     </TableRow>}
     <TableRow className={`${rowClass} lr-board-footer`}>
       <TableHead className={axisClass} role="rowheader" scope="row">Your route</TableHead>

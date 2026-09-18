@@ -18,11 +18,19 @@ export const ROUTE_VISUALS = {
 export const routeVisualFor = (route) => ROUTE_VISUALS[route?.id] || { icon: 'bi-arrow-right', lane: 'center', verb: route?.title || 'Cross the route' };
 
 export const WORLD_FLAGS = {
-  'quiet-entry': { icon: 'bi-moon-stars', label: 'Machinery dormant', className: 'is-quiet-entry' },
-  'coolant-bypass': { icon: 'bi-water', label: 'Underdeck drained', className: 'is-coolant-bypass' },
-  'security-pulse': { icon: 'bi-broadcast', label: 'Security awake', className: 'is-security-pulse' },
-  'maintenance-codes': { icon: 'bi-key', label: 'Protocol recovered', className: 'is-maintenance-codes' }
+  'quiet-entry': { icon: 'bi-moon-stars', label: 'Machinery dormant', className: 'is-quiet-entry', preview: 'Easier upper walkway', mapLabel: 'Quiet upper walkway' },
+  'coolant-bypass': { icon: 'bi-water', label: 'Underdeck drained', className: 'is-coolant-bypass', preview: 'Easier lower passage', mapLabel: 'Drained lower passage' },
+  'security-pulse': { icon: 'bi-broadcast', label: 'Security awake', className: 'is-security-pulse', preview: 'Door harder to force', mapLabel: 'Tightened door seam' },
+  'maintenance-codes': { icon: 'bi-key', label: 'Protocol recovered', className: 'is-maintenance-codes', preview: 'Door easier to unlock', mapLabel: 'Controls with a code' }
 };
+
+export const consequencePreview = route => WORLD_FLAGS[route.consequence?.id]?.preview || route.consequence?.future || route.consequence?.label || 'No lasting change';
+
+// Only an earned effect already applied to this route can change its diagram.
+export function routeMemory(route, runFlags = []) {
+  const effect = route.activeEffects?.find(effect => runFlags.includes(effect.flag) && WORLD_FLAGS[effect.flag]?.mapLabel);
+  return effect ? { ...WORLD_FLAGS[effect.flag], ...effect } : null;
+}
 
 export function visibleWorldFlags(scene, runFlags = []) {
   const relevant = new Set();

@@ -2,17 +2,19 @@
 import React from 'react';
 import { MISSION } from './longReturnData';
 import { MAP_ROUTES } from './expeditionPosition';
-import { visibleWorldFlags } from './routeVisuals';
+import { visibleWorldFlags, routeMemory } from './routeVisuals';
 import { MAP_PLACES } from './mapPlaces';
 import MapLandmark from './MapLandmark';
 import ExpeditionReserves from './ExpeditionReserves';
+import BiIcon from './BiIcon';
 
 const positions = { entry: [74, 98], survey: [225, 98], crossing: [304, 48], exit: [526, 98] };
 
 export default function ExpeditionSchematic({ scene, crew = [], scout, helperId, position = { crew: 'entry' }, routeId, native, nativeState, companion, allyWithScout = false, runFlags = [], compact = false, preview = false, reserves }) {
   const sceneIndex = Math.max(0, MISSION.scenes.findIndex(item => item.id === scene.id));
   const routeIndex = scene.routes.findIndex(route => route.id === routeId);
-  const flags = visibleWorldFlags(scene, runFlags);
+  const changes = scene.routes.map(route => routeMemory(route, runFlags));
+  const flags = visibleWorldFlags(scene, runFlags).filter(flag => !changes.some(change => change?.flag === flag.id));
   const place = MAP_PLACES[scene.id] || { entry: ['Entrance'], exit: ['Far side'], description: '' };
   const ally = nativeState === 'ally' ? native : companion?.creature || companion;
   const contact = nativeState === 'ally' ? null : native;
@@ -42,7 +44,7 @@ export default function ExpeditionSchematic({ scene, crew = [], scout, helperId,
       </React.Fragment>)}
     </div>
     <div data-site-overview className="flex justify-between px-4 pt-1 text-small text-ink-2"><span>{scene.trackLabel}</span><span>{sceneIndex < 4 || (sceneIndex === 4 && position.crew !== 'exit') ? '◎ Recover the Index' : '◎ Index reached'}</span></div>
-    <svg viewBox="0 0 600 200" style={{ width: '100%', height: 'auto', maxHeight: compact ? 160 : 240 }} className="block [&_text]:text-heading!" role="img" aria-label={`${location}. ${place.description} ${tokens.map(token => `${token.member.species}: ${token.place === 'survey' ? 'scouting ahead' : token.place === 'exit' ? place.exit.join(' ') : token.place === 'entry' ? place.entry.join(' ') : token.place}`).join('. ')}. ${scene.routes.map(route => MAP_ROUTES[route.id] || route.title).join(' or ')} lead to ${place.exit.join(' ')}.`}>
+    <svg viewBox="0 0 600 200" style={{ width: '100%', height: 'auto', maxHeight: compact ? 160 : 240 }} className="block [&_text]:text-heading!" role="img" aria-label={`${location}. ${place.description} ${changes.filter(Boolean).map(change => change.detail).join(' ')} ${tokens.map(token => `${token.member.species}: ${token.place === 'survey' ? 'scouting ahead' : token.place === 'exit' ? place.exit.join(' ') : token.place === 'entry' ? place.entry.join(' ') : token.place}`).join('. ')}. ${scene.routes.map(route => MAP_ROUTES[route.id] || route.title).join(' or ')} lead to ${place.exit.join(' ')}.`}>
       <rect x="18" y="64" width="112" height="68" rx="6" fill="var(--color-s1)" stroke="var(--color-edge-strong)" />
       <rect x="470" y="64" width="112" height="68" rx="6" fill="var(--color-s1)" stroke="var(--color-edge-strong)" />
       {[['entry', 74], ['exit', 526]].map(([side, x]) => <text key={side} data-map-threshold={side} x={x} y="158" textAnchor="middle" fill="var(--color-ink-2)" className="text-small">{place[side].map((line, index) => <tspan key={line} x={x} dy={index ? 25 : 0}>{line}</tspan>)}</text>)}
@@ -50,10 +52,13 @@ export default function ExpeditionSchematic({ scene, crew = [], scout, helperId,
       {scene.routes.map((route, i) => {
         const y = i === 0 ? 48 : 148;
         const selected = route.id === routeId;
+        const change = changes[i];
+        const changeColor = change?.difficulty > 0 ? 'var(--color-caution)' : 'var(--color-ink)';
         return <g key={route.id} data-map-route={route.id}>
           <path d={`M130 98 H164 V${y} H438 V98 H470`} fill="none" stroke={selected ? 'var(--color-viable)' : 'var(--color-edge-strong)'} strokeWidth={selected ? 3 : 2} strokeDasharray={selected && preview ? '5 5' : undefined} />
           {selected && <path data-map-direction={route.id} d={`M400 ${y - 6} l6 6 -6 6`} fill="none" stroke="var(--color-viable)" strokeWidth="2" />}
-          <text x="300" y={i === 0 ? 26 : 179} textAnchor="middle" fill={selected ? 'var(--color-ink)' : 'var(--color-ink-2)'} className="text-small">{MAP_ROUTES[route.id] || route.title}</text>
+          {change && <g data-map-effect={change.flag} transform={`translate(184 ${y - 12})`} style={{color:changeColor}}><title>{change.detail}</title><rect x="-3" y="-3" width="30" height="30" fill="var(--color-s0)" /><BiIcon cls={change.icon} className="size-6!" /></g>}
+          <text x="300" y={i === 0 ? 26 : 179} textAnchor="middle" fill={change ? changeColor : selected ? 'var(--color-ink)' : 'var(--color-ink-2)'} className="text-small">{change?.mapLabel || MAP_ROUTES[route.id] || route.title}</text>
         </g>;
       })}
       {position.scout === 'survey' && <path d="M130 98 H222" fill="none" stroke="var(--color-edge-strong)" strokeDasharray="3 5" />}

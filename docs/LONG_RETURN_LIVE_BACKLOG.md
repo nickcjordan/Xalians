@@ -4,6 +4,15 @@ Owner: the agent maintaining the Long Return worktree. Update this file during i
 
 ## Active goal — full-mission UX (2026-09-11)
 
+### September 17: earned consequences attach to their paths
+
+- The comparison's technical event names still required the player to infer why they mattered. Its Next room row now names the exchange directly: easier upper walkway versus easier lower passage, and a door harder to force versus easier to unlock. The original event and its explanation remain in deliberate route analysis.
+- On entering the affected room, the schematic changes that path's label to the earned physical state and places a small stationary marker on it. Dormant machinery, drained passage, recovered access code and tightened door seam are associated with the route they actually modify. This replaces the duplicate lasting-change footer for applied effects; newly created effects can still appear at their source. Narrative, mechanics and costs are unchanged.
+- Regressions require both the earned run flag and the engine's applied route effect. Raw content cannot expose an unearned state. Browser replays traverse both route families through scene three at 390-by-667 and 1280-by-900, checking all four effects on their correct paths, no duplicate summaries, visible icon geometry and no browser exceptions. Reviewed actual phone and desktop PNGs. The phone pass exposed an inherited SVG-size rule; map markers now retain their intended viewport. Test geometry distinguishes the icon viewport from the smaller intrinsic ink bounds.
+- Verification: 1,283 web tests, typecheck, production build and budgets; five-width route preview/keyboard checks; seven-scene short-phone extraction with a companion, 14 salvage and 2 stability. No human comprehension or enjoyment outcome is marked accepted.
+- Bundle accounting: measured lazy route JavaScript grows about 0.9 kB raw / 0.3 kB compressed to 316.2 kB raw / 99.5 kB compressed. Restored this route's documented approximately five percent allowance rather than repeatedly raising the ceiling by a few bytes. Initial JavaScript and other routes' limits are unchanged.
+- Next review: later-room schematic branches still share the same upper/lower topology even when the choice describes approaching a center or edge. Check whether stationary geometry and route labels communicate the actual alternatives without inventing a literal floor plan or performing creature animation.
+
 ### September 17: compact story, map and route comparison
 
 - Consolidated route orientation into the scene header beside the schematic. The illustrative scene paragraph remains intact; the duplicate objective and repeated route geography no longer precede the comparison. Each route's physical approach remains in its cost analysis. Other decision views and advanced modes keep their current context.

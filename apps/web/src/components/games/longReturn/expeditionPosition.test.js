@@ -5,8 +5,22 @@ import { expeditionPosition, MAP_ROUTES, nativeMapState } from './expeditionPosi
 import ExpeditionSchematic from './ExpeditionSchematic';
 import { MISSION } from './longReturnData';
 import { MAP_PLACES } from './mapPlaces';
+import { applyMissionMemory } from './longReturnEngine';
 
 describe('expedition location, not creature performance', () => {
+  it('attaches earned changes to the affected path rather than a second status strip', () => {
+    for (const [index, flag, route, label] of [[1,'quiet-entry','catwalk','Quiet upper walkway'], [1,'coolant-bypass','underdeck','Drained lower passage'], [2,'security-pulse','breach','Tightened door seam'], [2,'maintenance-codes','decode','Controls with a code']]) {
+      const scene = applyMissionMemory(MISSION.scenes[index], [flag]);
+      const root = document.createElement('div');
+      root.innerHTML = renderToStaticMarkup(<ExpeditionSchematic scene={scene} runFlags={[flag]} />);
+      expect(root.querySelector(`[data-map-route="${route}"] [data-map-effect="${flag}"]`)).not.toBeNull();
+      expect(root.querySelector(`[data-map-route="${route}"] > text`).textContent).toBe(label);
+      expect(root.querySelector('[aria-label="Lasting site changes"]')).toBeNull();
+      root.innerHTML = renderToStaticMarkup(<ExpeditionSchematic scene={scene} runFlags={[]} />);
+      expect(root.querySelector('[data-map-effect]')).toBeNull();
+      expect(root.innerHTML).not.toContain(label);
+    }
+  });
   it('distinguishes passing a trapped native from freeing it or gaining an ally', () => {
     expect(nativeMapState(null)).toBe('contact');
     expect(nativeMapState({resolution:'unresolved'})).toBe('contact');
