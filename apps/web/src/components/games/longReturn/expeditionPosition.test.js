@@ -75,7 +75,7 @@ describe('expedition location, not creature performance', () => {
     const html = renderToStaticMarkup(<ExpeditionSchematic scene={scene} routeId="decode" crew={[{id:'lead',species:'Graviclaw'}]} native={{species:'Hypnopet'}} position={{crew:'approach',encounter:true}} readingRecord />);
     expect(html).toContain('data-map-creature="lead" data-location="approach" style="transform:translate(202px, 98px)"');
     expect(html).toContain('data-map-native="true" data-state="contact" transform="translate(320 98)"');
-    expect(html).toContain('Native contact');
+    expect(html).toContain('◇</b> Hypnopet');
   });
   it('all crew arrive together, including the reserve', () => {
     expect(expeditionPosition({ actionType: 'crossing', beat: 'move' }).crew).toBe('crossing');

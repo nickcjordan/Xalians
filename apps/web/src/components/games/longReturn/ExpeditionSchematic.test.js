@@ -30,7 +30,7 @@ test('the decision map names approaches on phones, while the reading record leav
   expect(container.querySelectorAll('[data-map-route-caption]')).toHaveLength(2);
   rerender(<ExpeditionSchematic scene={MISSION.scenes[0]} crew={crew} readingRecord />);
   expect(container.querySelectorAll('[data-map-route-caption]')).toHaveLength(0);
-  expect(container.querySelector('[data-map-key]').textContent).toContain('Crew');
+  expect(container.querySelector('[data-map-key]').textContent).toContain(crew[0].species);
   expect(container.querySelector('[data-expedition-map]').getAttribute('data-map-record')).toBe('true');
 });
 
@@ -41,8 +41,15 @@ test('the field record uses a fixed scouting trace and reveals contact only at c
   const { container, rerender } = render(<ExpeditionSchematic scene={scene} crew={crew} scout={scout} readingRecord position={{ crew: 'entry', scout: 'survey' }} />);
   expect(container.querySelector('[data-map-scout-path]')).toBeTruthy();
   expect(container.querySelector('[data-map-native]')).toBeNull();
-  expect(container.querySelector('[data-map-key]').textContent).toContain('Scout ahead');
+  expect(container.querySelector('[data-map-key]').textContent).toContain(`${scout.species} · ahead`);
   rerender(<ExpeditionSchematic scene={scene} crew={crew} scout={scout} readingRecord position={{ crew: 'entry', scout: 'survey', encounter: true }} native={{ species: 'Hypnopet' }} />);
   expect(container.querySelector('[data-map-native]')).toBeTruthy();
-  expect(container.querySelector('[data-map-key]').textContent).toContain('Native contact');
+  expect(container.querySelector('[data-map-key]').textContent).toContain('◇ Hypnopet');
+});
+
+test('an accompanying native has its own key, distinct from crew and contact', () => {
+  const scene = MISSION.scenes[2];
+  const { container } = render(<ExpeditionSchematic scene={scene} crew={CREATURES.slice(0, 3)} companion={{ species: 'Xylum' }} native={{ species: 'Hypnopet' }} readingRecord />);
+  expect(container.querySelector('[data-map-key]').textContent).toContain('◇ Hypnopet');
+  expect(container.querySelector('[data-map-key]').textContent).toContain('◆ Xylum · ally');
 });
