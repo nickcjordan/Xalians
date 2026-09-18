@@ -37,7 +37,7 @@ The Duel setup is chrome while the board is immersive, so the board module is no
 - `cssBoundaries.test.js` prevents the three route files from returning to `index.html` or gaining undocumented importers.
 - The same guard prevents any compatibility link from returning to `index.html`, locks `immersive.css` to the six documented game entry modules, and enforces its cascade order.
 - `designSystem.test.js` continues to enforce the raw-hex ceilings after the files move.
-- `bundle-budgets.json` measures initial CSS and each route's emitted CSS graph. A new route stylesheet therefore needs an explicit, reviewed budget change.
+- Vite reports emitted CSS sizes during a build. Review loading and duplication when a route changes, without treating a fixed byte threshold as a reason to compromise the experience.
 - Do not call a stylesheet globally shared merely because it currently contains mixed selectors. Prove each selector's consumers, delete dead blocks, and then choose the narrowest stable owner.
 
 ## First selector-audit slice

@@ -12,4 +12,4 @@ Its import order is `tokens.css` then `system.css`; the final element defaults n
 - `duel-playground.css`: imported after `duel.css` by the Duel affordance reference only.
 - `reclamation.css`: imported by Reclamation only.
 
-The retired Training Grounds prototypes have been replaced by the v4 Arcade routes, which use colocated Tailwind styling and no legacy stylesheet. The files that remain here are legacy because their immersive redesigns have not been commissioned. Do not add unrelated page rules here. When a route is modernized, move reusable primitives into the shared design system, keep genuinely route-specific styling with the route, and tighten `bundle-budgets.json` from measured output.
+The retired Training Grounds prototypes have been replaced by the v4 Arcade routes, which use colocated Tailwind styling and no legacy stylesheet. The files that remain here are legacy because their immersive redesigns have not been commissioned. Do not add unrelated page rules here. When a route is modernized, move reusable primitives into the shared design system and keep genuinely route-specific styling with the route.

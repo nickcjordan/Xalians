@@ -23,7 +23,7 @@ export function scoutBeats(action) {
   const warning = `${clues}${routeGuidance ? ` ${routeGuidance}` : ''}`;
   if (action.type === 'scout-return') return [
     { kind: 'return', title: action.energyBefore === 0 ? 'Bring the scout back' : 'Back to the crew', icon: 'bi-arrow-return-left', text: action.energyBefore === 0
-      ? `The scout is spent and cannot return alone. The crew follows ${action.scout.species}'s trail and brings it back.${stability ? ' The delay costs annex stability.' : ''}`
+      ? `The scout is spent and cannot make the return trip alone. The crew follows ${action.scout.species}'s trail through the passage and brings it back with the report.${stability ? ' While they search and return together, the annex loses another stability.' : ''}`
       : `${action.scout.species} retraces the route to deliver the report in person. ${energy ? 'The return trip consumes another energy.' : ''} ${stability ? 'While the crew waits, the annex deteriorates.' : ''}`, costs },
     { kind: 'complete', title: reported.length ? 'The warning reaches the crew' : 'Now you can plan', icon: 'bi-check-lg', text: warning || 'Together again, the crew compares the scout’s findings. Review the report before choosing a crossing.' }
   ];
