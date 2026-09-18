@@ -36,6 +36,7 @@ import { nativeRemains } from './nativePresence';
 import ExpeditionSchematic from './ExpeditionSchematic';
 import ExpeditionEndingTrail from './ExpeditionEndingTrail';
 import ArrivalStory, { arrivalRecap } from './ArrivalStory';
+import ArrivalTrace from './ArrivalTrace';
 import { crossingReceipt } from './crossingReceipt';
 import { scoutCommunication, reportDeliveryLabel } from './scoutCommunication';
 import ScoutChoices from './ScoutChoices';
@@ -1682,10 +1683,10 @@ function LongReturnGame() {
           <MissionMemoryModal open={memoryOpen} onClose={() => { setMemoryOpen(false); requestAnimationFrame(() => memoryTriggerRef.current && memoryTriggerRef.current.focus()); }} entries={journal} runFlags={runFlags} companion={companion} salvage={salvage} pressure={pressure} objectiveReached={objectiveReached} />
 
           {phase === 'result' && lastResult && (guidanceLevel === 'simple' ? (
-            <div data-arrival-focus tabIndex={-1} role="region" aria-label={`${route.title}: crossing complete`} className={`lr-simple-decision lr-simple-result scroll-mt-20 focus-visible:outline-2 focus-visible:outline-viable${objectiveReached && !missionCannotContinue && sceneIndex < MISSION.scenes.length - 1 ? ' has-depth-decision' : ''}`}>
+            <div data-arrival-focus tabIndex={-1} role="region" aria-label={`${route.title}: crossing complete`} className={`lr-simple-decision lr-simple-result scroll-mt-14 focus-visible:outline-2 focus-visible:outline-viable${objectiveReached && !missionCannotContinue && sceneIndex < MISSION.scenes.length - 1 ? ' has-depth-decision' : ''}`}>
 <div className="lr-arrival-grid"><div className="lr-arrival-story">
-<p className="font-body text-small text-ink-2">Crossed: {route.title}</p>
               <div className={`lr-simple-result-head is-${lastResult.impactQuality}${missionCannotContinue ? ' is-critical' : ''}`}><BiIcon cls={`bi ${lastResult.impactQuality === 'clean' && !missionCannotContinue ? 'bi-check-circle-fill' : 'bi-exclamation-triangle-fill'}`} /><div><span>{missionCannotContinue ? pressure >= MAX_PRESSURE ? 'Annex failing · evacuate now' : 'Crew spent · evacuate now' : `Crossing complete · ${lastResult.impactLabel}`}</span><h3>{arrivalHeadline || 'The crew is through'}</h3></div></div>
+              <ArrivalTrace scene={scene} route={route} crew={crew} companion={companion} />
               <ArrivalStory key={scene.id} paragraphs={arrivalParagraphs} recap />
               <details className="lr-result-explanation"><summary>Why this happened · cost breakdown</summary>
                 <p>{lastResult.turningPoint || lastResult.reaction}</p>

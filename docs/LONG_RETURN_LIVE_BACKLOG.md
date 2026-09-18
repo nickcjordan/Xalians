@@ -4,6 +4,11 @@ Owner: the agent maintaining the Long Return worktree. Update this file during i
 
 ## Active goal — full-mission UX (2026-09-11)
 
+### September 18: the crossing result locates the whole crew
+
+- The phone wizard focuses directly on the result after a crossing, leaving the room map above the viewport. The account and receipt said what happened but did not immediately show where the crew ended up. The Simple result now includes a small, stationary arrival trace between its headline and story: the chosen route, the actual room entrance and exit, all three crew markers together at the far threshold, and a separate diamond when a temporary ally is present. It uses the same place names as the room schematic and does not simulate creature movement. Advanced view and crossing rules are unchanged.
+- A route-wide component test covers all fourteen entrances and exits, the three crew markers, and the companion distinction. The browser replay checks the trace against each room map at every result. Reduced-motion phone runs at 320×568 and 390×667, a seven-scene deep-retrieval run, a no-scout forced-extraction run, and a 1280×900 desktop run passed locally. The local lazy-route build grew just beyond its 335 kB raw ceiling, so its raw and gzip allowances rise by 1 kB; initial-route budgets remain unchanged. Player judgment of whether the trace closes the location gap remains open.
+
 ### September 18: the room diagram stays with the route choice
 
 - On a phone, the wizard previously scrolled straight to the cost table after the player chose to compare routes. The actual site schematic was above the viewport, leaving only two generic miniature path cues in the column headings. Those cues could not show the sealed door and other shared obstacles accurately. The Simple phone comparison now carries a compact instance of the same room schematic directly above its two columns; A/B station marks join each visible route on the diagram to its column. The earlier full context map is hidden only in this phone decision, so the choice does not stack two maps. Desktop retains the full map beside the workspace; advanced presentation is unchanged.

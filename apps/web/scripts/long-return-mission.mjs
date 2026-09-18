@@ -265,6 +265,14 @@ try {
     }
     if (await page.locator('.lr-simple-result').count()) {
       const arrivalHeading = await page.locator('.lr-simple-result-head h3').innerText();
+      const arrivalTrace = page.locator('[data-arrival-trace]');
+      assert.equal(await arrivalTrace.count(), 1, 'The settled result includes one physical arrival trace');
+      const origin = (await map.locator('[data-map-threshold="entry"] tspan').allTextContents()).join(' ');
+      const destination = (await map.locator('[data-map-threshold="exit"] tspan').allTextContents()).join(' ');
+      const traceAccount = await arrivalTrace.getAttribute('aria-label');
+      assert(traceAccount.includes(`from ${origin} to ${destination}`), 'The arrival trace uses the same thresholds as the room map');
+      assert.equal(await arrivalTrace.locator('.lr-arrival-trace-party b:not(.is-ally)').count(), 3, 'All three crew members reach the destination together');
+      if (viewport.width < 768) assert((await arrivalTrace.boundingBox()).y < viewport.height, 'The arrival station is visible with the result headline on a phone');
       const stabilityLeft = Number(await map.locator('[data-reserve-stability] b').innerText());
       if (stabilityLeft === 0) {
         assert.match(await page.locator('.lr-simple-result-head').innerText(), /evacuate now/i, 'Zero stability changes the arrival status before the player scrolls to the ending');
