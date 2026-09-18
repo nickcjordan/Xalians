@@ -80,3 +80,19 @@ test('a relayed warning reads as a connected account and names the relevant choi
   expect(noHazardReport).toContain('There is no specific warning to pass back.');
   expect(noHazardReport).toContain('has the findings without waiting for the scout to return.');
 });
+
+test('each scout encounter opens with its physical situation instead of implying an attack', () => {
+  const clues = { 'underdeck-xylum': 'hurt Xylum', 'vestibule-hypnopet': 'between the lock’s moving arms', 'gallery-ectoghoul': 'shielded conduit' };
+  for (const scene of MISSION.scenes.filter(entry => entry.encounter)) {
+    const native = CREATURES.find(entry => entry.id === scene.encounter.creatureId);
+    const beats = scoutBeats({
+      type: 'scout', scene, scout: { species: 'Chromocat' }, encounter: native,
+      result: { hazards: [], revealedIds: [], relay: true }, profile: { channel: 'display' }, energyBefore: 6, energyAfter: 5
+    });
+    const contact = beats.at(-1);
+    expect(contact.kind).toBe('encounter');
+    expect(contact.text).toBe(scene.encounter.firstContact);
+    expect(contact.text).toContain(clues[scene.encounter.id]);
+    expect(contact.text).not.toContain('intercepts the scout');
+  }
+});

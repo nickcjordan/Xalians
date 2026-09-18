@@ -4,6 +4,11 @@ Owner: the agent maintaining the Long Return worktree. Update this file during i
 
 ## Active goal — full-mission UX (2026-09-11)
 
+### September 18: a native encounter begins as a situation, not an attack
+
+- The seven-room scout record repeated “intercepts the scout” for Xylum, Hypnopet and Ectoghoul, despite their different situations. The field record now gives each a short first-contact scene: Xylum is hurt beside the cracked bearing, Hypnopet is caught in the lock, and Ectoghoul holds its shelter. These beats establish why the scout must respond without claiming any creature attacked or predetermining the response. The fuller encounter description remains at the actual choice.
+- All 1,316 web tests, typecheck, production build and bundle budgets passed. A seven-room phone replay reached extraction and rendered all three distinct opening beats; tests require every authored encounter to use its own first-contact text. Player response to the tone and pacing remains open.
+
 ### September 18: the scout finds a real clue before sending it
 
 - A three-room replay showed a remote-reporting scout's field record opening with “Danger spotted” and “hidden danger,” postponing the actual physical clue until the next communication beat. The same clue now appears at the moment the scout sees it; the following beat shows how the signal carries it to the crew and which choice it affects. The schematic still marks the hazard only once the signal is sent. A scout unable to relay still cannot reveal a specific hazard until physically returning, preserving the information rule.

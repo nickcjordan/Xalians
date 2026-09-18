@@ -204,6 +204,7 @@ export const MISSION = {
       encounter: {
         id: 'underdeck-xylum', creatureId: 'xylum-064', routeId: 'underdeck',
         title: 'Stranded Xylum', disposition: 'injured and defensive',
+        firstContact: 'Roots tighten around a cracked bearing beneath the turbines. A hurt Xylum watches the scout from its shelter.',
         description: 'A Xylum survivor has rooted itself around a cracked turbine bearing. It is hurt, frightened, and blocking the maintenance underdeck.',
         concealment: 62, threat: 72,
         companionBenefit: 'Once this mission, Xylum can brace a crossing and preserve 1 crew energy.'
@@ -256,6 +257,7 @@ export const MISSION = {
       encounter: {
         id: 'vestibule-hypnopet', creatureId: 'hypnopet-019', routeId: 'decode', archetype: 'trapped',
         title: 'Trapped Signal-Mimic', disposition: 'confused and entangled',
+        firstContact: 'A Hypnopet strains between the lock’s moving arms. Its frightened signals make the mechanism lurch.',
         description: 'A feral Hypnopet is caught between the rig’s moving authentication arms. Its panic is feeding false commands into the lock.',
         concealment: 68, threat: 48
       },
@@ -305,6 +307,7 @@ export const MISSION = {
       encounter: {
         id: 'gallery-ectoghoul', creatureId: 'ectoghoul-117', routeId: 'conduit', archetype: 'territorial',
         title: 'Territorial Ectoghoul', disposition: 'watchful and defensive',
+        firstContact: 'An Ectoghoul holds the entrance to the shielded conduit. It watches the scout approach without giving ground.',
         description: 'A native Ectoghoul has claimed the shielded conduit as shelter. It wants distance, not prey, but it will defend the only pressurized route.',
         concealment: 74, threat: 70
       },
