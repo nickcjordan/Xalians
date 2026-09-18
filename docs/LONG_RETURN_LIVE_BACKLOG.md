@@ -4,6 +4,11 @@ Owner: the agent maintaining the Long Return worktree. Update this file during i
 
 ## Active goal — full-mission UX (2026-09-11)
 
+### September 18: entering a known room reaches the next choice
+
+- At 320 by 568, the first scouting choice in each room sat below the full scene header and schematic. That context is valuable in the opening room, but the arrival beat already supplies it for later rooms. Entering scenes two through seven in Simple mode now scrolls and focuses the scouting decision on narrow phones; the stationary schematic remains immediately above for review. The opening scene still begins at its location and objective rather than skipping the first introduction.
+- Render review caught the heading slipping behind the fixed app navigation after the first scroll adjustment. Giving the decision the same top clearance as the existing report and encounter regions keeps the question and first creature card together in view. In the 320-pixel replay the first choice moved from below the 568-pixel viewport to 128 pixels from its top in later rooms. The replay checks both heading clearance and first-choice visibility, plus keyboard focus. A 320-pixel three-room path, 390-pixel six-crossing extraction and 1280-pixel three-room path passed, as did all 1,307 web tests, typecheck, production build and bundle budgets. The opening-room choice remains below the first viewport; whether that introductory pacing is comfortable remains a separate player question.
+
 ### September 18: the next chapter begins where the player is looking
 
 - Phone playthroughs exposed a transition gap after the field record: an encounter resolution or scout report appeared below the scene map, but the wizard returned to its top chrome. The player could miss the immediate consequence of the action they had just taken. Simple mode now scrolls to and keyboard-focuses the labeled outcome or report region on phones, matching the existing crossing-result handoff. The map stays immediately above for deliberate review; desktop and advanced modes keep their prior behavior.

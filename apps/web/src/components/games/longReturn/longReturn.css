@@ -3004,6 +3004,7 @@
 
 .lr-simple-plan { margin-top: 16px; padding: 20px; background: var(--g-hull-lo); border: 1px solid var(--g-phosphor); box-shadow: inset 4px 0 0 var(--g-phosphor); }
 .lr-simple-plan,
+.lr-simple-decision,
 .lr-simple-report,
 .lr-simple-result,
 .lr-field-encounter { scroll-margin-top: 82px; }
