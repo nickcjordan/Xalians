@@ -143,6 +143,13 @@ try {
       await click(page.locator('.lr-encounter-commit-bar button')); continue;
     }
     if (await page.locator('.lr-field-encounter.is-resolved').count()) {
+      if (viewport.width <= 390) {
+        const outcome = page.locator('.lr-field-encounter.is-resolved');
+        const heading = await outcome.locator('.lr-encounter-result-head').boundingBox();
+        assert(heading.y >= 0 && heading.y < viewport.height, 'The resolved encounter story opens in the phone viewport');
+        assert(await outcome.evaluate(node => document.activeElement === node), 'Keyboard focus follows the phone to the resolved encounter story');
+        await page.screenshot({ path: `${output}/encounter-outcome-viewport-${crossed}.png` });
+      }
       if (await map.locator('[data-map-ally]').count() && await map.getAttribute('data-map-scene') === 'turbine-hall') {
         assert(!(await map.locator('figcaption').innerText()).includes('Contact ahead'), 'A newly joined ally is no longer presented as an active hostile contact');
         const scoutEncounter = await map.locator('[data-map-creature][data-location="survey"]').count() > 0;
@@ -150,7 +157,16 @@ try {
       }
       await click(page.locator('.lr-field-encounter .g-btn--primary')); continue;
     }
-    if (await page.locator('.lr-simple-report').count()) { await click(page.locator('.lr-simple-report .g-btn--primary')); continue; }
+    if (await page.locator('.lr-simple-report').count()) {
+      if (viewport.width <= 390) {
+        const report = page.locator('.lr-simple-report');
+        const heading = await report.locator('.lr-simple-report-result').boundingBox();
+        assert(heading.y >= 0 && heading.y < viewport.height, 'The scout report opens in the phone viewport');
+        assert(await report.evaluate(node => document.activeElement === node), 'Keyboard focus follows the phone to the scout report');
+        await page.screenshot({ path: `${output}/scout-report-viewport-${crossed}.png` });
+      }
+      await click(page.locator('.lr-simple-report .g-btn--primary')); continue;
+    }
     if (await page.locator('.lr-route-board').count()) {
       assert(!(await map.locator('[data-expedition-reserves]').innerText()).includes("Can't scout"), 'Crossing choices do not show a scouting restriction');
       const sharedObstacle = ['archive-vestibule', 'nemesis-index', 'generator-spine'].includes(await map.getAttribute('data-map-scene'));
