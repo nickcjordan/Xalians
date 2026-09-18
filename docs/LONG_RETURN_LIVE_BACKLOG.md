@@ -4,6 +4,15 @@ Owner: the agent maintaining the Long Return worktree. Update this file during i
 
 ## Active goal — full-mission UX (2026-09-11)
 
+### September 17: compact story, map and route comparison
+
+- Consolidated route orientation into the scene header beside the schematic. The illustrative scene paragraph remains intact; the duplicate objective and repeated route geography no longer precede the comparison. Each route's physical approach remains in its cost analysis. Other decision views and advanced modes keep their current context.
+- Replaced the comparison's div grid with the shared semantic Table and Button components. Metric labels remain beside both routes on phones rather than becoming a separate full-width row each time. Costs, unknown totals, one-use sacrifices and lasting consequences remain comparable. Route headings stay visible on tall phone/tablet screens; short landscape screens scroll normally. The opening comparison fits within 640 pixels at 390 pixels wide, versus the previous roughly 880-pixel board.
+- Tested and rejected keeping the full map pinned: it occupied too much of a short phone and obscured the comparison. Keeping the route headings instead leaves the diagram as the spatial introduction without turning it into an obstructive overlay. Browser testing also caught a sticky-heading overlap caused by the Table's scroll wrapper; corrected the wrapper and added a geometry assertion so the first cost row cannot be covered.
+- Verification: 1,279 web tests, typecheck, build/budgets, five-width preview/keyboard/Back checks including 320 pixels and landscape; seven-scene 390-by-667 replay to deep extraction with 14 salvage, 2 stability and an ally. Responsive decision/results, Guided, Standard and Expert replays, and normal-motion story controls at four viewport sizes passed. Desktop and phone game/setup images reviewed. Human comprehension remains unproven.
+- Removed obsolete comparison layout rules instead of layering new CSS overrides. Shared components and full-width requested analysis add about 1.0 kB compressed route JavaScript; generated utility CSS adds about 2.5 kB raw globally, while removed legacy rules save 5.3 kB raw and 0.95 kB compressed route CSS. Budget changes record these measurements; no initial JavaScript or other game allowance changed.
+- Follow-through: deliberate route analysis was still squeezed into a narrow phone column. Each route now opens its explanation across the full comparison width, with one account open at a time. The disclosure preserves route selection and does not cross or spend. Its controls remain in their respective columns; no modal or extra approval step was added.
+
 ### September 17: route preview follows attention, not commitment
 
 - The map updated only when a route heading was hovered or focused. Cost cells, the lower action and analysis controls did not preview their route. After returning from lead selection, the previous selected route also overrode the route being examined. This broke the connection between the shared comparison and the spatial diagram.

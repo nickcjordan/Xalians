@@ -5,18 +5,36 @@ import RouteComparison, { comparisonCosts } from './RouteComparison';
 
 const base = { route: { id: 'a', title: 'Gantry', salvage: 1 }, lead: { species: 'Lead' }, support: { species: 'Support' }, method: { label: 'Climb' }, knownLeadStrain: 1, baseSupportStrain: 0, knownPressure: 1, unresolvedHazards: [], risk: 1 };
 
+test('requested analysis spans both routes and remains separate from selecting a lead', () => {
+  const onSelect = vi.fn();
+  const view = render(<RouteComparison plans={[base, {...base, route:{id:'b',title:'Intake',salvage:2}}]} onSelect={onSelect} />);
+  const buttons = view.container.querySelectorAll('.lr-board-analysis');
+  fireEvent.click(buttons[1]);
+  const panel = view.container.querySelector('#route-analysis-b');
+  expect(panel.closest('tr').hidden).toBe(false);
+  expect(panel.closest('td').colSpan).toBe(3);
+  expect(buttons[1].getAttribute('aria-expanded')).toBe('true');
+  fireEvent.click(buttons[0]);
+  expect(panel.closest('tr').hidden).toBe(true);
+  expect(buttons[1].getAttribute('aria-expanded')).toBe('false');
+  fireEvent.click(buttons[0]);
+  expect(view.container.querySelector('#route-analysis-a').closest('tr').hidden).toBe(true);
+  expect(onSelect).not.toHaveBeenCalled();
+  view.unmount();
+});
+
 test('cost cells and analysis controls preview their column without selecting it', () => {
   const onPreview = vi.fn();
   const onSelect = vi.fn();
   const view = render(<RouteComparison plans={[base, {...base,route:{...base.route,id:'b'}}]} selectedId="a" onPreview={onPreview} onSelect={onSelect} />);
   fireEvent.pointerMove(view.container.querySelector('.is-energy [data-route-preview="b"]'));
   expect(onPreview).toHaveBeenLastCalledWith('b');
-  fireEvent.focus(view.container.querySelector('.lr-board-footer [data-route-preview="b"] summary'));
+  fireEvent.focus(view.container.querySelector('.lr-board-footer [data-route-preview="b"] .lr-board-analysis'));
   expect(onPreview).toHaveBeenLastCalledWith('b');
-  fireEvent.blur(view.container.querySelector('.lr-board-footer [data-route-preview="b"] summary'), {relatedTarget:null});
+  fireEvent.blur(view.container.querySelector('.lr-board-footer [data-route-preview="b"] .lr-board-analysis'), {relatedTarget:null});
   expect(onPreview).toHaveBeenLastCalledWith('a');
   expect(onSelect).not.toHaveBeenCalled();
-  view.container.querySelector('.lr-board-footer [data-route-preview="b"] summary').focus();
+  view.container.querySelector('.lr-board-footer [data-route-preview="b"] .lr-board-analysis').focus();
   fireEvent.pointerLeave(view.container.querySelector('.lr-route-board'));
   expect(onPreview).toHaveBeenLastCalledWith('b');
   view.unmount();
@@ -41,8 +59,10 @@ test('unknown costs occupy the same shared rows without presenting zero as the t
     expect(cells[1].querySelector('.lr-board-amount').textContent).toBe('?');
     expect(cells[1].textContent).toContain('total unknown');
   }
-  expect(root.querySelectorAll('.is-salvage .lr-board-token-run svg')).toHaveLength(3);
-  expect(root.querySelectorAll('.lr-board-analysis[open]')).toHaveLength(0);
+  expect(Array.from(root.querySelectorAll('.is-salvage .lr-board-amount'), cell => cell.textContent)).toEqual(['1', '2']);
+  expect(root.querySelector('table.lr-route-board')).not.toBeNull();
+  expect(root.querySelectorAll('th[scope="row"]')).toHaveLength(4);
+  expect(root.querySelectorAll('.lr-board-analysis[aria-expanded="true"]')).toHaveLength(0);
 });
 test('the board does not expose hidden identities, amounts, or damage ranges', () => {
   expect(board({ id: 'secret-a', strain: 99, pressure: 0 }).innerHTML)

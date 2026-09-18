@@ -11,7 +11,5 @@
 .lr-mode-simple .lr-simple-plan-actions .lr-cross-now { margin-left: auto; }
 .lr-commit-identity { display: grid; gap: 4px; text-align: left; font-size: 14px; }
 .lr-commit-identity small { color: var(--g-ink-mid); }
-.lr-mode-simple .lr-board-row { min-height: 72px; }
-.lr-mode-simple .lr-board-row > div { padding-top: 12px; padding-bottom: 12px; }
 .lr-mode-simple .lr-route-map { min-height: 165px; }
 @media(max-width:800px) { .lr-mode-simple .lr-simple-plan .lr-simple-plan-actions { position: static; transform: none !important; width: 100%; margin-top: 16px; } .lr-mode-simple .lr-simple-plan { padding-bottom: 16px; } }
