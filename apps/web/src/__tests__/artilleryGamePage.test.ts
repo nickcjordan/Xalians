@@ -330,6 +330,36 @@ describe('Crater Command aim feedback', () => {
     expect(screen.queryByText(/Codazzo|Terragoyle|creature ability/i)).not.toBeInTheDocument();
   });
 
+  it('explains Sunspike range and warns before a shot leaves the sector', () => {
+    render(createElement(ArtilleryBoard, {
+      seed: 'component-sunspike-range', mode: 'range', difficulty: 'standard', mapSize: 'standard', world: 'stonera',
+      onStatus: vi.fn(), onComplete: vi.fn(), onRematch: vi.fn(),
+    }));
+    fireEvent.click(screen.getByRole('button', { name: /^Sunspike 1/i }));
+    expect(screen.getByTestId('artillery-selected-weapon')).toHaveTextContent('near-Comet arc');
+    expect(screen.queryByText(/Beyond sector · lower power/i)).not.toBeInTheDocument();
+    fireEvent.change(screen.getByRole('slider', { name: /Power/i }), { target: { value: '100' } });
+    expect(screen.getByText('Beyond sector · lower power')).toBeInTheDocument();
+    expect(screen.getByText('Shot leaves sector · lower power')).toBeInTheDocument();
+  });
+
+  it('lands a default Sunspike volley instead of losing its only charge off-screen', () => {
+    vi.useFakeTimers();
+    try {
+      render(createElement(ArtilleryBoard, {
+        seed: 'component-sunspike-default', mode: 'range', difficulty: 'standard', mapSize: 'standard', world: 'stonera',
+        onStatus: vi.fn(), onComplete: vi.fn(), onRematch: vi.fn(),
+      }));
+      fireEvent.click(screen.getByRole('button', { name: /^Sunspike 1/i }));
+      fireEvent.click(screen.getByRole('button', { name: /Fire Sunspike/i }));
+      act(() => vi.advanceTimersByTime(11_000));
+      expect(screen.getByRole('button', { name: /^Sunspike 0/i })).toBeDisabled();
+      expect(document.querySelector('.artillery-aftermath.el-light')).toBeInTheDocument();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
   it('keeps fire, weapon selection, and mobility reachable below a phone battlefield', async () => {
     const original = window.matchMedia;
     window.matchMedia = vi.fn().mockImplementation((query: string) => ({

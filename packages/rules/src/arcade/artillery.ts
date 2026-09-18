@@ -120,7 +120,7 @@ export const ARTILLERY_PAYLOAD_RULES: Record<ArtilleryPayload, {
   bore: { blastRadius: 10.5, craterRadius: 11.5, craterDepth: 1.42, projectileCount: 1, penetration: 7.2, baseDamage: 44, directBonus: 6, speedMultiplier: 0.96, gravityMultiplier: 1, terrainBuild: 0 },
   cluster: { blastRadius: 9.5, craterRadius: 8.5, craterDepth: 0.88, projectileCount: 5, penetration: 0, baseDamage: 26, directBonus: 3, speedMultiplier: 0.98, gravityMultiplier: 1.04, terrainBuild: 0 },
   bloom: { blastRadius: 5.5, craterRadius: 15.5, craterDepth: 0, projectileCount: 1, penetration: 0, baseDamage: 12, directBonus: 3, speedMultiplier: 0.9, gravityMultiplier: 1.08, terrainBuild: 1.24 },
-  lance: { blastRadius: 4.6, craterRadius: 5.8, craterDepth: 1.3, projectileCount: 1, penetration: 0, baseDamage: 52, directBonus: 12, speedMultiplier: 1.22, gravityMultiplier: 0.78, terrainBuild: 0 },
+  lance: { blastRadius: 4.6, craterRadius: 5.8, craterDepth: 1.3, projectileCount: 1, penetration: 0, baseDamage: 52, directBonus: 12, speedMultiplier: 1.05, gravityMultiplier: 1, terrainBuild: 0 },
   skip: { blastRadius: 8, craterRadius: 10, craterDepth: 0.92, projectileCount: 1, penetration: 0, baseDamage: 34, directBonus: 7, speedMultiplier: 0.95, gravityMultiplier: 1, terrainBuild: 0 },
   mole: { blastRadius: 9, craterRadius: 11, craterDepth: 1.1, projectileCount: 1, penetration: 0, baseDamage: 31, directBonus: 5, speedMultiplier: 0.98, gravityMultiplier: 1, terrainBuild: 0 },
   tractor: { blastRadius: 26, craterRadius: 3.5, craterDepth: 0.25, projectileCount: 1, penetration: 0, baseDamage: 12, directBonus: 5, speedMultiplier: 0.92, gravityMultiplier: 0.92, terrainBuild: 0 },
