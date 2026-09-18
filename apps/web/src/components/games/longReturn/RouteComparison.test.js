@@ -109,6 +109,16 @@ test('confirmed ally savings are explained at the energy value, not only in anal
   root.innerHTML = renderToStaticMarkup(<RouteComparison plans={[base]} companion={{ ready: true, creature: { species: 'Xylum' } }} onSelect={() => {}} onPreview={() => {}} />);
   expect(root.querySelector('.is-energy [role="cell"] small').textContent).toBe('Xylum saves 1 · uses its one help');
 });
+
+test('each projected column identifies the lead whose plan produced its numbers', () => {
+  const crew = [{ id: 'a', species: 'Graviclaw' }, { id: 'b', species: 'Chromocat' }, { id: 'c', species: 'Hippochamp' }];
+  const plans = [{ ...base, lead: crew[1] }, { ...base, route: { id: 'b', title: 'Intake', salvage: 2 }, lead: crew[2] }];
+  const root = document.createElement('div');
+  root.innerHTML = renderToStaticMarkup(<RouteComparison plans={plans} crew={crew} />);
+  expect(Array.from(root.querySelectorAll('.lr-board-plan-lead'), node => node.textContent)).toEqual(['2Chromocat leads', '3Hippochamp leads']);
+  expect(root.querySelectorAll('.lr-board-pick')[0].getAttribute('aria-label')).toContain('Preview: Chromocat leads');
+  expect(root.querySelector('.is-energy').textContent).not.toContain('fixed cost');
+});
 test('a known forced ending attaches to its cause in one route column, not a new warning panel', () => {
   const root = document.createElement('div');
   root.innerHTML = renderToStaticMarkup(<RouteComparison plans={[base, {...base, route:{id:'b',title:'Intake',salvage:2}}]} stakes={[{kind:'energy', detail:'Only one crew member can act afterward.'}, null]} />);

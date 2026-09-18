@@ -219,6 +219,8 @@ try {
       const boardBox = await page.locator('.lr-route-board').boundingBox();
       assert(storyBox.y + storyBox.height <= boardBox.y, 'Story precedes comparison');
       assert.equal(await page.locator('.lr-route-setting').count(), 2, 'Both routes explain their physical approach');
+      assert.equal(await page.locator('.lr-board-plan-lead').count(), 2, 'Every forecast identifies its assumed lead before route selection');
+      assert.equal(await page.locator('.lr-board-plan-lead b').count(), 2, 'Projected leads use the same crew numbers as the map');
       if (process.env.LR_REVIEW_MAPS === '1') {
         const locations = await map.locator('[data-map-creature]').evaluateAll(nodes => nodes.map(node => node.style.transform));
         const reserves = await parentMap.locator('[data-expedition-reserves]').innerText();
@@ -241,7 +243,10 @@ try {
       const confirmed = page.locator('.lr-board-pick').filter({ has: page.locator('[title="Costs are confirmed"]') });
       const prescribed = process.env.LR_ROUTES?.split(',')[crossed];
       const leastRisk = page.locator('.lr-board-head [data-lowest-risk="true"] .lr-board-pick');
-      await click(prescribed !== undefined ? page.locator('.lr-board-pick').nth(Number(prescribed)) : process.env.LR_ROUTE_POLICY === 'recommended-risk' ? await recommended.count() ? recommended.first() : leastRisk.first() : process.env.LR_CONSERVE === '1' && await leastRisk.count() ? leastRisk.first() : await recommended.count() ? recommended.first() : await confirmed.count() ? confirmed.first() : page.locator('.lr-board-pick').first());
+      const routeChoice = prescribed !== undefined ? page.locator('.lr-board-pick').nth(Number(prescribed)) : process.env.LR_ROUTE_POLICY === 'recommended-risk' ? await recommended.count() ? recommended.first() : leastRisk.first() : process.env.LR_CONSERVE === '1' && await leastRisk.count() ? leastRisk.first() : await recommended.count() ? recommended.first() : await confirmed.count() ? confirmed.first() : page.locator('.lr-board-pick').first();
+      const previewLead = (await routeChoice.locator('.lr-board-plan-lead').innerText()).replace(/^\d+\s*/, '').replace(/\s+leads$/, '');
+      await click(routeChoice);
+      assert((await page.locator('.lr-lead-options-list > button[aria-pressed="true"]').innerText()).includes(previewLead), 'The chosen route opens with the lead whose projected costs the player saw');
       if (process.env.LR_ALTERNATE === '1') {
         const alternate = page.locator('.lr-lead-options button[aria-pressed="false"]').first();
         if (await alternate.count()) await click(alternate);
