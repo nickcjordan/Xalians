@@ -710,8 +710,7 @@ export function ArtilleryBoard({ seed, mode, difficulty, mapSize, world, onStatu
   const [narrowScreen, setNarrowScreen] = React.useState(false);
   const [fieldAspect, setFieldAspect] = React.useState(0.8);
   const [mobileFocus, setMobileFocus] = React.useState<ArtillerySide>('left');
-  const [mobilePanel, setMobilePanel] = React.useState<'none' | 'weapons' | 'mobility'>('none');
-  const [desktopArsenalOpen, setDesktopArsenalOpen] = React.useState(false);
+  const [mobilePanel, setMobilePanel] = React.useState<'none' | 'mobility'>('none');
   const [stats, setStats] = React.useState<Record<ArtillerySide, CombatStats>>({
     left: { shots: 0, hits: 0, damage: 0, directHits: 0, closeBlocks: 0, shelfBlocks: 0, terrainShift: 0, payloads: [] },
     right: { shots: 0, hits: 0, damage: 0, directHits: 0, closeBlocks: 0, shelfBlocks: 0, terrainShift: 0, payloads: [] },
@@ -1746,12 +1745,11 @@ export function ArtilleryBoard({ seed, mode, difficulty, mapSize, world, onStatu
           </div>
         ) : (
           <>
-            <div className="grid grid-cols-[minmax(0,1fr)_3.6rem_3.6rem] gap-1.5 sm:hidden" data-testid="artillery-mobile-actions">
-              <Button type="button" variant="ghost" className="min-h-14 min-w-0 border-2 border-viable-lo bg-viable-tint px-2 text-left text-viable-hi" disabled={!canFire} aria-label={`Launch selected ${PAYLOAD_META[payload].shortLabel}, angle ${angle} degrees, power ${power}`} onClick={() => animateShot({ angle, power, payload, move: 0, system: 'none' })}>
+            <div className="grid grid-cols-[minmax(0,1fr)_3.6rem] gap-1.5 sm:hidden" data-testid="artillery-mobile-actions">
+              <Button type="button" variant="ghost" className="min-h-12 min-w-0 border-2 border-viable-lo bg-viable-tint px-2 text-left text-viable-hi" disabled={!canFire} aria-label={`Launch selected ${PAYLOAD_META[payload].shortLabel}, angle ${angle} degrees, power ${power}`} onClick={() => animateShot({ angle, power, payload, move: 0, system: 'none' })}>
                 <span className="flex min-w-0 items-center gap-1.5"><PayloadGlyph payload={payload} className="h-7 w-8 shrink-0" /><span className="flex min-w-0 flex-col"><span className="truncate font-legend text-body uppercase">Fire {PAYLOAD_META[payload].shortLabel}</span><span className="truncate font-mono text-[10px] uppercase tracking-wide text-ink-2">{PAYLOAD_META[payload].rackHint}</span></span></span>
               </Button>
-              <Button type="button" variant="ghost" className="min-h-14 border border-edge-strong bg-s0 p-0 font-mono text-[10px]" aria-label="Choose weapon" aria-expanded={mobilePanel === 'weapons'} onClick={() => setMobilePanel((current) => current === 'weapons' ? 'none' : 'weapons')}>LOAD</Button>
-              <Button type="button" variant="ghost" className="min-h-14 border border-edge-strong bg-s0 p-0 font-mono text-[10px]" aria-label="Show mobility controls" aria-expanded={mobilePanel === 'mobility'} onClick={() => setMobilePanel((current) => current === 'mobility' ? 'none' : 'mobility')}>MOVE</Button>
+              <Button type="button" variant="ghost" className="min-h-12 border border-edge-strong bg-s0 p-0 font-mono text-[10px]" aria-label="Show mobility controls" aria-expanded={mobilePanel === 'mobility'} onClick={() => setMobilePanel((current) => current === 'mobility' ? 'none' : 'mobility')}>MOVE</Button>
             </div>
             <div className={`artillery-command-top order-2 grid min-w-0 gap-1.5 sm:order-none lg:col-span-2 ${shortLandscape ? '' : 'md:grid-cols-[minmax(0,1.55fr)_minmax(17rem,0.45fr)] lg:grid-cols-[minmax(0,1fr)_16rem_14rem]'}`}>
               <div className="cockpit-instrument grid min-w-0 border border-edge-strong p-1.5" aria-label="Aim the cannon">
@@ -1826,15 +1824,9 @@ export function ArtilleryBoard({ seed, mode, difficulty, mapSize, world, onStatu
               </Button>
             </div>
 
-            <div className={`cockpit-instrument order-1 min-w-0 gap-1.5 border border-edge-strong p-1.5 sm:order-none lg:col-span-2 ${mobilePanel === 'weapons' ? 'grid' : 'hidden sm:grid'}`} role="group" aria-label="Choose a weapon">
-              <div className="grid min-w-0 gap-1.5">
-                <div className="flex min-w-0 items-center gap-2">
-                  <PayloadGlyph payload={payload} className="hidden h-7 w-9 shrink-0 overflow-visible sm:block" />
-                  <span className="type-legend shrink-0">Ordnance <b className="ml-1 text-viable-hi">{PAYLOAD_META[payload].shortLabel} {Number.isFinite(payloadRemaining(state.current, payload)) ? payloadRemaining(state.current, payload) : '∞'}</b></span>
-                  <span className="hidden min-w-0 flex-1 truncate font-body text-small text-ink-2 sm:block">{PAYLOAD_META[payload].purpose}</span>
-                  <Button type="button" size="sm" variant="ghost" className="hidden h-9 shrink-0 border border-edge-strong bg-s0 px-3 font-legend text-small uppercase text-ink sm:inline-flex" aria-expanded={desktopArsenalOpen} aria-label={desktopArsenalOpen ? 'Close weapon rack' : 'Open weapon rack'} onClick={() => setDesktopArsenalOpen((open) => !open)}>{desktopArsenalOpen ? 'Close rack' : 'Load weapon'}</Button>
-                </div>
-                {(mobilePanel === 'weapons' || desktopArsenalOpen) && <div className="grid grid-cols-2 gap-1 sm:grid-cols-3 lg:grid-cols-6">
+            <div className="cockpit-instrument order-1 grid min-w-0 border border-edge-strong p-1 sm:order-none sm:p-1.5 lg:col-span-2" role="group" aria-label="Choose a weapon">
+              <div className="grid min-w-0">
+                <div className="grid grid-cols-3 gap-1 sm:grid-cols-6">
                 {ARTILLERY_PAYLOADS.map((choice, index) => {
                   const remaining = payloadRemaining(state.current, choice);
                   const unavailable = remaining <= 0;
@@ -1843,36 +1835,28 @@ export function ArtilleryBoard({ seed, mode, difficulty, mapSize, world, onStatu
                     <Button
                       key={choice}
                       type="button"
-                      size="sm"
+                      size="xs"
                       variant="ghost"
                       disabled={!canFire || unavailable}
                       aria-pressed={selected}
-                      className={`artillery-ordnance-card h-16 min-w-0 flex-col gap-0 border px-1.5 lg:h-14 ${selected ? 'border-viable-lo bg-viable-tint text-viable-hi' : 'border-edge bg-s0'}`}
+                      title={`${PAYLOAD_META[choice].label}: ${PAYLOAD_META[choice].purpose}. ${PAYLOAD_META[choice].detail}`}
+                      className={`artillery-ordnance-card h-12 min-w-0 flex-col gap-0 border px-1.5 sm:h-16 lg:h-14 ${selected ? 'border-viable-lo bg-viable-tint text-viable-hi' : 'border-edge bg-s0'}`}
                       onClick={() => {
                         sound.play('select');
                         setPayload(choice);
-                        setMobilePanel('none');
-                        setDesktopArsenalOpen(false);
                         onStatus(`${PAYLOAD_META[choice].label} selected. ${PAYLOAD_META[choice].detail}.`);
                       }}
                     >
-                      <PayloadGlyph payload={choice} className="h-6 w-9 overflow-visible" />
-                      <span className="max-w-full truncate text-[11px]">{PAYLOAD_META[choice].shortLabel} {Number.isFinite(remaining) ? remaining : '∞'}</span>
-                      <span className="max-w-full truncate font-body text-[11px] normal-case tracking-normal opacity-70">{PAYLOAD_META[choice].rackHint}</span>
+                      <PayloadGlyph payload={choice} className="h-4 w-7 shrink-0 overflow-visible sm:h-6 sm:w-9" />
+                      <span className="min-w-0 max-w-full text-center">
+                        <span className="block max-w-full truncate text-[11px] tracking-normal sm:text-xs">{PAYLOAD_META[choice].shortLabel} {Number.isFinite(remaining) ? remaining : '∞'}</span>
+                        <span className="block max-w-full truncate font-body text-[10px] normal-case tracking-normal opacity-70 sm:text-[11px]">{PAYLOAD_META[choice].rackHint}</span>
+                      </span>
                       <kbd className="sr-only">{index + 1}</kbd>
                     </Button>
                   );
                 })}
-                </div>}
-                {(mobilePanel === 'weapons' || desktopArsenalOpen) && <div className="flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1 border border-edge bg-s0 px-2 py-1.5 lg:hidden">
-                  <strong className="font-legend text-small uppercase tracking-legend text-ink">{PAYLOAD_META[payload].label}</strong>
-                  <span className="font-body text-small text-ink-3">{PAYLOAD_META[payload].detail}</span>
-                  <span className="ml-auto flex flex-wrap gap-1 font-mono text-[10px] uppercase text-ink-3">
-                    <span>Arc {payload === 'lance' ? 'flat' : payload === 'bore' ? 'heavy' : 'ballistic'}</span>
-                    <span>· {ARTILLERY_PAYLOAD_RULES[payload].projectileCount}×</span>
-                    <span>· Terrain {payload === 'bloom' ? 'build' : payload === 'bore' ? 'deep' : 'blast'}</span>
-                  </span>
-                </div>}
+                </div>
               </div>
             </div>
           </>
@@ -1904,7 +1888,7 @@ export function ArtillerySetup({ mode, difficulty, mapSize, world, onMode, onDif
       <div>
         <p className="type-micro m-0 text-ink-3">New match</p>
         <h2 id="crater-setup-title" className="type-heading mt-1 mb-2">Choose your battlefield</h2>
-        <p className="m-0 max-w-3xl font-body text-body text-ink-2">Pick a world, range, and match. Each planet changes the terrain and physics.</p>
+        <p className="m-0 max-w-3xl font-body text-body text-ink-2">Pick a world, range, and match. Each planet changes the terrain and physics. Wind stays fixed for the match.</p>
       </div>
 
       <div className="grid gap-3 lg:grid-cols-[1fr_1fr]">

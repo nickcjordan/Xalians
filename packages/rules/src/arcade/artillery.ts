@@ -587,8 +587,10 @@ export function applyArtilleryShot(
   const winner = challengeFinished
     ? tanks.right.integrity === 0 ? 'left' : 'right'
     : tanks[targetSide].integrity === 0 || rangeFinished ? state.current : null;
-  const windChanges = (state.current === 'right' || state.mode === 'range' || state.mode === 'challenge') && !winner;
-  const nextWind = windChanges ? nextRandom(state.rngState) : { value: 0.5, state: state.rngState };
+  // Keep the opening wind for the whole match so impact corrections remain
+  // useful. Continue advancing the random stream for rival behavior.
+  const advanceRandom = (state.current === 'right' || state.mode === 'range' || state.mode === 'challenge') && !winner;
+  const nextRngState = advanceRandom ? nextRandom(state.rngState).state : state.rngState;
   const impactX = outcome.impact?.x ?? (state.current === 'left' ? state.terrain.length + 7 : -8);
   const miss = impactX - state.tanks[targetSide].x;
   const payloads = {
@@ -620,14 +622,14 @@ export function applyArtilleryShot(
         [state.current]: Math.max(tractionSpent ? 0 : state.guard[state.current], coverGranted),
       },
       current: winner || state.mode === 'range' || state.mode === 'challenge' ? state.current : targetSide,
-      wind: windChanges ? Math.round((nextWind.value * 2 - 1) * 8) : state.wind,
+      wind: state.wind,
       condition: state.condition,
       turn: state.turn + 1,
       phase: winner ? 'finished' : 'aiming',
       winner,
       botPrevious: state.current === 'right' ? { miss, shot } : state.botPrevious,
       lastImpact: outcome.impact ? { x: outcome.impact.x, shooter: state.current } : state.lastImpact,
-      rngState: nextWind.state,
+      rngState: nextRngState,
     },
   };
 }

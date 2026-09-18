@@ -306,7 +306,7 @@ describe('Crater Command aim feedback', () => {
     expect(onChange).toHaveBeenNthCalledWith(2, 46);
   });
 
-  it('keeps the weapon rack one action away without pushing the battlefield off screen', async () => {
+  it('keeps every weapon visible for one-click selection', async () => {
     render(createElement(ArtilleryBoard, {
       seed: 'component-actions',
       mode: 'bot',
@@ -319,18 +319,17 @@ describe('Crater Command aim feedback', () => {
     }));
 
     expect(screen.getByRole('img', { name: /drag up and outward/i })).toBeInTheDocument();
-    const openRack = screen.getByRole('button', { name: 'Open weapon rack' });
-    expect(openRack).toHaveAttribute('aria-expanded', 'false');
-    await userEvent.click(openRack);
+    expect(screen.queryByRole('button', { name: /Open weapon rack|Load weapon/i })).not.toBeInTheDocument();
     for (const payload of ['Comet', 'Razor', 'Drill', 'Starfall', 'Rampart', 'Sunspike']) {
       expect(screen.getByRole('button', { name: new RegExp(`^${payload}\\b`, 'i') })).toBeEnabled();
     }
     await userEvent.click(screen.getByRole('button', { name: /^Razor 2/i }));
-    expect(screen.getByRole('button', { name: 'Open weapon rack' })).toHaveAttribute('aria-expanded', 'false');
+    expect(screen.getByRole('button', { name: /^Razor 2/i })).toHaveAttribute('aria-pressed', 'true');
+    expect(screen.getByRole('button', { name: /^Sunspike/i })).toBeVisible();
     expect(screen.getByRole('button', { name: /Fire Razor/i })).toBeEnabled();
     expect(screen.getByText(/Gravity 0\.86× · wind 1\.0×/i)).toBeInTheDocument();
     expect(screen.getByText(/Drive goes farther · jet clears walls/i)).toBeInTheDocument();
-    expect(screen.getByText(/Ordnance/i)).toBeInTheDocument();
+    expect(screen.getByRole('group', { name: 'Choose a weapon' })).toBeInTheDocument();
     expect(screen.getByRole('img', { name: /Two mobile range rigs on Stonera/i })).toHaveAttribute('viewBox', '0 -38 360 148');
     expect(screen.getByRole('button', { name: /Enable artillery audio/i })).toBeInTheDocument();
     expect(screen.queryByText(/Codazzo|Terragoyle|creature ability/i)).not.toBeInTheDocument();
@@ -359,10 +358,12 @@ describe('Crater Command aim feedback', () => {
       expect(screen.getByRole('img', { name: /Two mobile range rigs/i }).getAttribute('viewBox')?.split(' ')[2]).not.toBe('440');
       await userEvent.click(screen.getByRole('button', { name: 'View Rig B' }));
       expect(screen.getByRole('button', { name: 'View Rig B' })).toHaveAttribute('aria-pressed', 'true');
-      await userEvent.click(screen.getByRole('button', { name: 'Choose weapon' }));
       expect(screen.getByRole('group', { name: 'Choose a weapon' })).toHaveClass('grid');
+      expect(screen.queryByRole('button', { name: 'Choose weapon' })).not.toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /^Sunspike/i })).toBeVisible();
       await userEvent.click(screen.getByRole('button', { name: /^Razor 2/i }));
       expect(screen.getByRole('button', { name: /Launch selected Razor/i })).toBeEnabled();
+      expect(screen.getByRole('button', { name: /^Comet/i })).toBeVisible();
       await userEvent.click(screen.getByRole('button', { name: 'Show mobility controls' }));
       expect(screen.getByRole('group', { name: 'Mobility thrusters' })).toHaveClass('grid');
     } finally {
@@ -523,7 +524,6 @@ describe('Crater Command aim feedback', () => {
       }));
       fireEvent.change(screen.getByRole('slider', { name: /Barrel/i }), { target: { value: '42' } });
       fireEvent.change(screen.getByRole('slider', { name: /Power/i }), { target: { value: '62' } });
-      fireEvent.click(screen.getByRole('button', { name: 'Open weapon rack' }));
       fireEvent.click(screen.getByRole('button', { name: /^Starfall/i }));
       const ground = screen.getByRole('img', { name: /Two mobile range rigs/i }).querySelector('path.fill-s2');
       const before = ground?.getAttribute('d');

@@ -92,7 +92,7 @@
 	.artillery-field {
 		/* Keep both aim meters and Fire in the first phone viewport while
 		   leaving the battlefield tall enough to follow high arcs. */
-		height: clamp(300px, 50dvh, 500px);
+		height: clamp(300px, 45dvh, 480px);
 		transition: height 520ms cubic-bezier(.22, .61, .36, 1);
 	}
 
