@@ -102,6 +102,7 @@ try {
       await page.getByRole('button', { name: 'See encounter result', exact: true }).waitFor();
       assert.equal(await map().locator('[data-map-native]').getAttribute('data-state'), 'bypassed');
       assert.match(await map().innerText(), /Hypnopet · Still trapped/);
+      assert.match(await page.locator('[data-field-record]').innerText(), /door itself still stands shut/);
       await page.screenshot({ path: `${output}/${width}-bypassed-record.png` });
       await page.getByRole('button', { name: 'See encounter result', exact: true }).click();
       await page.getByRole('button', { name: 'Plan the crossing', exact: true }).click();

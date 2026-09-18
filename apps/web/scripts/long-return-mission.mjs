@@ -90,6 +90,24 @@ try {
       const boardBox = await page.locator('.lr-route-board').boundingBox();
       assert(storyBox.y + storyBox.height <= boardBox.y, 'Story precedes comparison');
       assert.equal(await page.locator('.lr-route-setting').count(), 2, 'Both routes explain their physical approach');
+      if (process.env.LR_REVIEW_MAPS === '1') {
+        const locations = await map.locator('[data-map-creature]').evaluateAll(nodes => nodes.map(node => node.style.transform));
+        const reserves = await map.locator('[data-expedition-reserves]').innerText();
+        const shared = ['archive-vestibule','nemesis-index','generator-spine'].includes(await map.getAttribute('data-map-scene'));
+        for (const choice of await page.locator('.lr-board-pick').all()) {
+          const route = await choice.locator('..').getAttribute('data-route-preview');
+          await choice.focus();
+          await page.waitForFunction(id => document.querySelector('.lr-shell [data-expedition-map]')?.dataset.previewRoute === id, route);
+          assert.deepEqual(await map.locator('[data-map-creature]').evaluateAll(nodes => nodes.map(node => node.style.transform)), locations, 'Changing the intervention does not move the crew');
+          assert.equal(await map.locator('[data-expedition-reserves]').innerText(), reserves);
+          assert.equal(await map.locator('[data-map-shared-passage]').count(), shared ? 1 : 0);
+          assert.equal(await map.locator('[data-map-target]').count(), shared ? 1 : 0);
+          if (shared) assert.equal(await map.locator('[data-map-target]').getAttribute('data-map-target'), route);
+          await map.evaluate(node => window.scrollBy({top:node.getBoundingClientRect().top - 64,behavior:'instant'}));
+          await map.screenshot({path:`${output}/approach-${route}.png`});
+          assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), 'Map review has no horizontal overflow');
+        }
+      }
       const recommended = page.locator('.lr-board-head .is-recommended .lr-board-pick');
       const confirmed = page.locator('.lr-board-pick').filter({ hasText: 'Costs confirmed' });
       const prescribed = process.env.LR_ROUTES?.split(',')[crossed];

@@ -803,11 +803,11 @@ describe('Long Return decision language', () => {
     expect(encounterNarrative({ ...base, option: { resolution: 'detour' } })).toContain('remains where they found it');
   });
 
-  test('pinning the rig permits passage but does not claim a rescue or security intrusion', () => {
+  test('pinning the rig gives access to the door without claiming a crossing or rescue', () => {
     const story = encounterNarrative({ archetype: 'trapped', option: { id: 'pin-rig', resolution: 'cleared' }, nativeName: 'Hypnopet', actorName: 'Graviclaw' });
     expect(story).toContain('Hypnopet is still caught');
-    expect(story).toContain('without freeing the creature');
-    expect(story).not.toMatch(/escapes|recorded the intrusion|signal fades/);
+    expect(story).toContain('door itself still stands shut');
+    expect(story).not.toMatch(/They have passed|escapes|recorded the intrusion|signal fades/);
   });
 
   test('solo aid, calling help and fetching help have distinct journeys', () => {
