@@ -4,6 +4,11 @@ Owner: the agent maintaining the Long Return worktree. Update this file during i
 
 ## Active goal — full-mission UX (2026-09-11)
 
+### September 18: the result keeps the physical cause in its visible story
+
+- The naturally successful seven-room phone replay revealed that the sixth and seventh result screens showed only arrival: collector valves settling or the recovered core reaching the lift. The action that spent Hippochamp's energy and shook the annex remained hidden under “Read the crossing again,” so the adjacent receipt could feel detached from the story. The Simple result now keeps the authored action and consequence paragraphs visible before arrival; the room-establishing paragraph remains in the optional complete account, and the arrival headline is not duplicated. This is narrative presentation only—no crossing cost, path or save data changes. The same treatment applies across all seven scenes and both routes, including restored older results.
+- The 390-pixel winning path was replayed against a local production build through all seven rooms, with the sixth and seventh results paint-reviewed. Their visible prose now names the creature's work, environmental difficulty, support and structural response before the receipt. The first two results were also checked at 320 and 1280 pixels. All 1,335 web tests, typecheck, build and unchanged bundle budgets passed. The richer result intentionally gives the story reading space; decision screens stay in the compact wizard. Human judgment of pacing and whether the full causal account feels natural is still open.
+
 ### September 18: the full deep retrieval remains naturally reachable
 
 - The latest two unprescribed full-mission policies ended in emergency extraction for different reasons, so a broad “seven-room replay passed” would be misleading. A separate published phone replay intentionally chose intake → underdeck → decode → shielded conduit → stabilize → rim harvest → realign, scouted the passages, and conserved crew energy through field work. It completed all seven crossings with the Index, 17 banked salvage and 2 stability left. No checkpoint injection, hidden state edit, forced result, or rule change was used. This establishes a reachable natural win, not a win rate or a recommendation that every player should take those options.
