@@ -4,10 +4,30 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { expeditionPosition, MAP_ROUTES, nativeMapState } from './expeditionPosition';
 import ExpeditionSchematic from './ExpeditionSchematic';
 import { MISSION } from './longReturnData';
-import { MAP_PLACES } from './mapPlaces';
+import { MAP_PLACES, SHARED_PASSAGES } from './mapPlaces';
 import { applyMissionMemory } from './longReturnEngine';
 
 describe('expedition location, not creature performance', () => {
+  it('shows intervention choices at the same obstacle, not fictional bypass corridors', () => {
+    for (const scene of MISSION.scenes) {
+      for (const route of scene.routes) {
+        const root = document.createElement('div');
+        root.innerHTML = renderToStaticMarkup(<ExpeditionSchematic scene={scene} routeId={route.id} preview crew={[{id:'lead',species:'Lead'}]} position={{crew:'crossing'}} />);
+        if (SHARED_PASSAGES[scene.id]) {
+          expect(root.querySelector('[data-map-shared-passage]')).not.toBeNull();
+          expect(root.querySelectorAll('[data-map-connection="intervention"]')).toHaveLength(2);
+          expect(root.querySelectorAll('[data-map-connection="route"]')).toHaveLength(0);
+          expect(root.querySelectorAll('[data-map-target]')).toHaveLength(1);
+          expect(root.querySelector('[data-map-target]').getAttribute('data-map-target')).toBe(route.id);
+          expect(root.querySelector('[data-map-creature]').style.transform).toBe('translate(281px, 98px)');
+        } else {
+          expect(root.querySelector('[data-map-shared-passage]')).toBeNull();
+          expect(root.querySelectorAll('[data-map-connection="route"]')).toHaveLength(2);
+          expect(root.querySelector('[data-map-target]')).toBeNull();
+        }
+      }
+    }
+  });
   it('attaches earned changes to the affected path rather than a second status strip', () => {
     for (const [index, flag, route, label] of [[1,'quiet-entry','catwalk','Quiet upper walkway'], [1,'coolant-bypass','underdeck','Drained lower passage'], [2,'security-pulse','breach','Tightened door seam'], [2,'maintenance-codes','decode','Controls with a code']]) {
       const scene = applyMissionMemory(MISSION.scenes[index], [flag]);
@@ -104,7 +124,7 @@ describe('expedition location, not creature performance', () => {
   it('previewing a different route does not relocate the crew from a resolved encounter', () => {
     const props = {scene:MISSION.scenes[2], crew:[{id:'lead',species:'Graviclaw'}], position:{crew:'crossing',encounter:true}};
     for (const routeId of ['decode','breach']) {
-      expect(renderToStaticMarkup(<ExpeditionSchematic {...props} routeId={routeId} preview />)).toContain('translate(281px, 48px)');
+      expect(renderToStaticMarkup(<ExpeditionSchematic {...props} routeId={routeId} preview />)).toContain('translate(281px, 98px)');
     }
   });
   it('does not leak undiscovered contacts or hazard names', () => {

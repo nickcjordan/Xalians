@@ -24,7 +24,7 @@ export function expeditionPosition({ phase, scout, scan, encounterMode, resoluti
 
 export const MAP_ROUTES = {
   gantry: 'Suspended bridge', intake: 'Flooded passage', catwalk: 'Above the machinery', underdeck: 'Below the machinery',
-  decode: 'Sealed doorway', breach: 'Crack in the door', 'outer-hull': 'Outside the hull', conduit: 'Sheltered tunnel',
-  stabilize: 'Archive chamber', blackbox: 'Index container', harvest: 'Reservoir rim', dive: 'Below the surface',
-  align: 'Between the rings', closure: 'Closing passage'
+  decode: 'Unlock the door', breach: 'Force the seam', 'outer-hull': 'Outside the hull', conduit: 'Sheltered tunnel',
+  stabilize: 'Preserve the archive', blackbox: 'Take the container', harvest: 'Reservoir rim', dive: 'Below the surface',
+  align: 'Align the rings', closure: 'Time the opening'
 };

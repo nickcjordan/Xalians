@@ -4,6 +4,14 @@ Owner: the agent maintaining the Long Return worktree. Update this file during i
 
 ## Active goal — full-mission UX (2026-09-11)
 
+### September 17: different approaches are not always different corridors
+
+- The later-room audit found a spatial contradiction: the door, Index and rings used the same two-corridor drawing as the flooded crossing, implying the crew could walk around obstacles that both choices actually address. Those rooms now show one passage and a stationary target outline for the selected intervention. The door distinguishes unlocking from forcing its seam; the archive distinguishes preserving the chamber from taking its container; the rings distinguish alignment from timing the opening. The other four rooms retain their genuine alternative routes.
+- Crew and contact markers share the obstacle's location in these rooms. Changing preview highlights the intervention but does not move anyone, spend reserves, reveal a native or resolve the action. Named thresholds, prior-choice effects and the persistent record remain connected. No creature performance or new gameplay rule was added.
+- Encounter screenshot review found another causal mismatch: pinning the rig said the crew had already passed the obstacle while the door crossing was still pending. Its account now describes access to a still-closed door, with Hypnopet's distress continuing inside the rig. The story remains distinct from rescue and from the later crossing.
+- Verification: 1,284 web tests, typecheck and production build/budgets. Seven-room phone and desktop runs previewed all fourteen approaches and reached deep extraction with 14 salvage, 2 stability and the ally. Eight contact/recruitment/return/bypass cases and four-size normal-motion story checks passed. Actual phone/desktop map, encounter and setup PNGs reviewed. Added assertions for shared passages, selected intervention, stationary crew during preview, unchanged reserves and the unfinished door crossing. Lazy route JavaScript remains within the existing limit at about 99.8 kB compressed; no budget raised.
+- Next observed issue: low-energy crew keys repeat role-specific warnings such as Cannot scout after the scouting decision has finished. Review whether the current decision needs that restriction, while preserving visible exhaustion and the consequences relevant to the action being chosen. Player understanding and enjoyment remain unvalidated; this pass records implementation evidence only.
+
 ### September 17: earned consequences attach to their paths
 
 - The comparison's technical event names still required the player to infer why they mattered. Its Next room row now names the exchange directly: easier upper walkway versus easier lower passage, and a door harder to force versus easier to unlock. The original event and its explanation remain in deliberate route analysis.

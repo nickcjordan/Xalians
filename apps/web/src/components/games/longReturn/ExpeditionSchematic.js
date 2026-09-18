@@ -3,7 +3,7 @@ import React from 'react';
 import { MISSION } from './longReturnData';
 import { MAP_ROUTES } from './expeditionPosition';
 import { visibleWorldFlags, routeMemory } from './routeVisuals';
-import { MAP_PLACES } from './mapPlaces';
+import { MAP_PLACES, SHARED_PASSAGES } from './mapPlaces';
 import MapLandmark from './MapLandmark';
 import ExpeditionReserves from './ExpeditionReserves';
 import BiIcon from './BiIcon';
@@ -16,12 +16,13 @@ export default function ExpeditionSchematic({ scene, crew = [], scout, helperId,
   const changes = scene.routes.map(route => routeMemory(route, runFlags));
   const flags = visibleWorldFlags(scene, runFlags).filter(flag => !changes.some(change => change?.flag === flag.id));
   const place = MAP_PLACES[scene.id] || { entry: ['Entrance'], exit: ['Far side'], description: '' };
+  const passage = SHARED_PASSAGES[scene.id];
   const ally = nativeState === 'ally' ? native : companion?.creature || companion;
   const contact = nativeState === 'ally' ? null : native;
   const contactLabel = nativeState === 'bypassed' ? 'Still trapped' : 'Contact';
-  const contactLane = scene.encounter?.routeId === scene.routes[1]?.id ? 148 : 48;
-  const currentLane = position.encounter ? contactLane : routeIndex === 1 ? 148 : 48;
-  const location = position.crew === 'exit' ? `Crew at ${place.exit.join(' ')}` : position.scout === 'survey' ? 'Scout ahead · crew waiting' : position.crew === 'crossing' ? 'Crew on the crossing' : `Crew at ${place.entry.join(' ')}`;
+  const contactLane = passage ? 98 : scene.encounter?.routeId === scene.routes[1]?.id ? 148 : 48;
+  const currentLane = passage ? 98 : position.encounter ? contactLane : routeIndex === 1 ? 148 : 48;
+  const location = position.crew === 'exit' ? `Crew at ${place.exit.join(' ')}` : position.scout === 'survey' ? 'Scout ahead · crew waiting' : position.crew === 'crossing' ? passage?.location || 'Crew on the crossing' : `Crew at ${place.entry.join(' ')}`;
   const tokens = crew.map((member, i) => {
     const accompaniesScout = member.id === scout?.id || member.id === helperId;
     const place = accompaniesScout && position.scout ? position.scout : position.crew;
@@ -48,6 +49,7 @@ export default function ExpeditionSchematic({ scene, crew = [], scout, helperId,
       <rect x="18" y="64" width="112" height="68" rx="6" fill="var(--color-s1)" stroke="var(--color-edge-strong)" />
       <rect x="470" y="64" width="112" height="68" rx="6" fill="var(--color-s1)" stroke="var(--color-edge-strong)" />
       {[['entry', 74], ['exit', 526]].map(([side, x]) => <text key={side} data-map-threshold={side} x={x} y="158" textAnchor="middle" fill="var(--color-ink-2)" className="text-small">{place[side].map((line, index) => <tspan key={line} x={x} dy={index ? 25 : 0}>{line}</tspan>)}</text>)}
+      {passage && <path data-map-shared-passage d="M130 98 H260 M380 98 H470" fill="none" stroke={routeId ? 'var(--color-viable)' : 'var(--color-edge-strong)'} strokeWidth={routeId ? 3 : 2} strokeDasharray={routeId && preview ? '5 5' : undefined} />}
       <MapLandmark kind={place.landmark} />
       {scene.routes.map((route, i) => {
         const y = i === 0 ? 48 : 148;
@@ -55,8 +57,9 @@ export default function ExpeditionSchematic({ scene, crew = [], scout, helperId,
         const change = changes[i];
         const changeColor = change?.difficulty > 0 ? 'var(--color-caution)' : 'var(--color-ink)';
         return <g key={route.id} data-map-route={route.id}>
-          <path d={`M130 98 H164 V${y} H438 V98 H470`} fill="none" stroke={selected ? 'var(--color-viable)' : 'var(--color-edge-strong)'} strokeWidth={selected ? 3 : 2} strokeDasharray={selected && preview ? '5 5' : undefined} />
-          {selected && <path data-map-direction={route.id} d={`M400 ${y - 6} l6 6 -6 6`} fill="none" stroke="var(--color-viable)" strokeWidth="2" />}
+          <path data-map-connection={passage ? 'intervention' : 'route'} d={passage ? `M216 ${y} H320 V${i === 0 ? 66 : 130}` : `M130 98 H164 V${y} H438 V98 H470`} fill="none" stroke={selected ? 'var(--color-viable)' : 'var(--color-edge-strong)'} strokeWidth={selected ? 3 : 2} strokeDasharray={selected && preview ? '5 5' : undefined} />
+          {selected && passage && <path data-map-target={route.id} d={passage.targets[route.id]} fill="none" stroke="var(--color-viable)" strokeWidth="3" />}
+          {selected && <path data-map-direction={route.id} d={`M${passage ? 440 : 400} ${(passage ? 98 : y) - 6} l6 6 -6 6`} fill="none" stroke="var(--color-viable)" strokeWidth="2" />}
           {change && <g data-map-effect={change.flag} transform={`translate(216 ${y - 12})`} style={{color:changeColor}}><title>{change.detail}</title><rect x="-3" y="-3" width="30" height="30" fill="var(--color-s0)" /><BiIcon cls={change.icon} className="size-6!" /></g>}
           <text x="300" y={i === 0 ? 26 : 179} textAnchor="middle" fill={change ? changeColor : selected ? 'var(--color-ink)' : 'var(--color-ink-2)'} className="text-small">{change?.mapLabel || MAP_ROUTES[route.id] || route.title}</text>
         </g>;
@@ -68,7 +71,7 @@ export default function ExpeditionSchematic({ scene, crew = [], scout, helperId,
         <circle r="12" fill="var(--color-viable)" stroke="var(--color-s0)" strokeWidth="2" />
         <text textAnchor="middle" y="5" fill="var(--color-viable-ink)" className="text-small">{number}</text>
       </g>)}
-      {contact && <g data-map-native data-state={nativeState || 'contact'} transform={`translate(370 ${scene.encounter?.routeId === scene.routes[1]?.id ? 148 : 48})`}><title>{`${contact.species}: ${contactLabel.toLowerCase()}`}</title><path d="M0 -11 L11 0 L0 11 L-11 0 Z" fill="var(--color-s0)" stroke={nativeState === 'bypassed' ? 'var(--color-ink-2)' : 'var(--color-caution)'} strokeWidth="2" /></g>}
+      {contact && <g data-map-native data-state={nativeState || 'contact'} transform={`translate(${passage ? 394 : 370} ${contactLane})`}><title>{`${contact.species}: ${contactLabel.toLowerCase()}`}</title><path d="M0 -11 L11 0 L0 11 L-11 0 Z" fill="var(--color-s0)" stroke={nativeState === 'bypassed' ? 'var(--color-ink-2)' : 'var(--color-caution)'} strokeWidth="2" /></g>}
       {ally && <g data-map-ally data-location={allyPlace} transform={`translate(${allyPoint[0]} ${allyLane + (allyLane === 148 ? -25 : 25)})`}><title>{`${ally.species}: ${allyPlace === 'survey' ? 'beside the scout' : 'with the crew'}`}</title><path d="M0 -8 L8 0 L0 8 L-8 0 Z" fill="var(--color-viable)" /></g>}
     </svg>
     {reserves && <ExpeditionReserves crew={crew} strain={reserves.strain} pressure={reserves.pressure} />}
