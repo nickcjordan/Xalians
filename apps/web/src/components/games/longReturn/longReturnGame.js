@@ -57,9 +57,16 @@ const GUIDANCE_LEVELS = [
 const cap = (value) => Math.max(0, Math.min(MAX_STRAIN, value));
 const labelCase = (value = '') => value ? `${value.charAt(0).toUpperCase()}${value.slice(1)}` : '';
 
-export const missionOutcomePresentation = (status, objectiveReached, salvage, failureReason = 'The annex is no longer stable enough to cross.') => {
+export const missionOutcomePresentation = (status, objectiveReached, salvage, failureReason = 'The annex is no longer stable enough to cross.', lastSceneId) => {
   if (status === 'complete') return { tone: 'triumph', icon: 'bi-stars', label: 'Deep retrieval', title: 'Deep Retrieval Complete', copy: `The extraction lift carries the crew clear of the annex. The machinery they crossed falls away beneath them; the Nemesis Index comes with them. The record that waited below the ice is safe, along with ${salvage} salvage recovered on the journey.` };
-  if (status === 'extracted') return { tone: 'secure', icon: 'bi-shield-check', label: 'Voluntary extraction', title: 'Crew Extracted', copy: `The commander calls the return while the route is still theirs. The Nemesis Index and ${salvage} salvage leave intact; the unopened depths remain a story for another expedition.` };
+  if (status === 'extracted') {
+    const departure = lastSceneId === 'nemesis-index'
+      ? 'At the extraction fork, the crew takes the marked route home. The stair into the lower annex falls behind them.'
+      : lastSceneId === 'core-reservoir'
+        ? 'At the junction beyond the reservoir, the crew turns onto the marked route home. They leave the Generator Spine untouched.'
+        : 'The crew follows the marked return route to the surface.';
+    return { tone: 'secure', icon: 'bi-shield-check', label: 'Voluntary extraction', title: 'Crew Extracted', copy: `${departure} They reach the surface with the Nemesis Index and ${salvage} salvage intact.` };
+  }
   if (status === 'aborted') return { tone: 'withdrawn', icon: 'bi-arrow-return-left', label: 'Voluntary withdrawal', title: 'Mission Aborted', copy: 'The crew turns back before the annex can trap them. Every creature returns, but the Nemesis Index remains below the ice and no salvage is banked.' };
   if (objectiveReached) return { tone: 'scarred', icon: 'bi-exclamation-octagon', label: 'Emergency extraction · Index retained', title: 'Forced Extraction', copy: `${failureReason} Emergency systems pull the crew out with the Nemesis Index, but only half of the carried salvage survives the retreat.` };
   return { tone: 'failed', icon: 'bi-exclamation-octagon', label: 'Emergency extraction · Objective lost', title: 'Forced Extraction', copy: `${failureReason} Emergency extraction saves the crew; the objective and carried salvage stay behind.` };
@@ -1226,7 +1233,7 @@ function LongReturnGame() {
   if (status !== 'playing') {
     const success = status === 'complete' || status === 'extracted';
     const banked = bankedSalvage(status, objectiveReached, salvage);
-    const outcome = missionOutcomePresentation(status, objectiveReached, banked, failureReason);
+    const outcome = missionOutcomePresentation(status, objectiveReached, banked, failureReason, scene.id);
     return (
       <main className="lr-shell lr-end-shell">
         <section className={`g-panel g-panel--bolted lr-end-card lr-end-card--${outcome.tone}${success ? ' lr-end-card--success' : ''}`} style={{ '--end-art': `url(${sceneArtFor(scene).src})` }}>
