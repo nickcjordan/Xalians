@@ -117,7 +117,7 @@ export function crossingScene({ route, lead, support, method, result, companionH
   const danger = (route.hazardIds || []).map(id => HAZARDS[id]?.[unseen.has(id) ? 0 : 1]).filter(Boolean).join(' ');
   const action = `${name} ${SPECIFIC_MOTIONS[`${route.id}:${method.key}`] || MOTIONS[method.key] || 'takes the lead through the passage'}, with ${support.species} backing the effort.`;
   const effort = result.leadStrain > 0
-    ? `${name} ${EFFORTS[route.id]}. By the time the work is done, the effort has taken its toll.`
+    ? `${name} ${EFFORTS[route.id]}.`
     : `${name} carries the movement through steadily, emerging with strength still in reserve.`;
   const alone = result.rawMethodScore - route.difficulty;
   const supportDifference = alone < 0 && result.margin >= 0

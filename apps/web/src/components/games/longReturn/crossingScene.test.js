@@ -56,6 +56,15 @@ test('both Index recoveries identify the record without confusing it with loose 
   expect(resolve(backup)[3]).toContain('Nemesis Index');
 });
 
+test('costly crossings use the chosen passage for their effort instead of repeating a generic cost announcement', () => {
+  for (const scene of MISSION.scenes) for (const route of scene.routes) {
+    const effort = resolve(route, { leadStrain: 1 })[2];
+    expect(effort, `${scene.id}/${route.id}`).toContain('Hippochamp');
+    expect(effort).not.toContain('By the time the work is done');
+    expect(effort).not.toContain('effort has taken its toll');
+  }
+});
+
 test('stability prose distinguishes ordinary route wear from an unseen hazard and uncontrolled reaction', () => {
   const intake = MISSION.scenes[0].routes[1];
   const hazard = MISSION.scenes[0].hazards[0];

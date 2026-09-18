@@ -4,10 +4,15 @@ Owner: the agent maintaining the Long Return worktree. Update this file during i
 
 ## Active goal — full-mission UX (2026-09-11)
 
+### September 18: effort is shown by the passage, not a repeated announcement
+
+- The seven-room account audit found the same “By the time the work is done, the effort has taken its toll” sentence after almost every costly crossing. The route-specific exertion already describes what the lead is physically doing, and the adjacent energy receipt shows the cost. Removed the generic repetition without changing resource accounting, exposure, hazard or arrival events. A local three-scene phone replay of the rebuilt preview confirmed that each account now moves directly from the lead's action to its actual environmental and structural consequences; the running 4173 preview was an older build, so verification used an isolated 4180 preview.
+- All 1,312 web tests, typecheck, production build and bundle budgets passed. A route-wide test guards against restoring the generic announcement. Whether this reads naturally to a player remains open.
+
 ### September 18: the crossing account names the source of structural damage
 
 - A no-scout intake crossing spent two annex stability solely because the crew met conductive brine, but the account blamed the flood wake. That made the physical story contradict the receipt. The crossing account now distinguishes the route's ordinary wear from extra damage caused by each unseen hazard. The brine jumps into submerged cabling and shakes the intake wall; the other six hazards have their own physical consequences. When both route and hazard contribute, the account names both in sequence. Scouting and resolution rules, resource amounts, and hidden information are unchanged.
-- Replayed three no-scout crossings through brine, a turbine servo and the lock countermeasure at 390 by 667. Their field records now match their damage sources and unchanged numeric receipts. Tests cover route-only, hazard-only, combined wear and all seven stability hazards. All 1,311 web tests, typecheck and production build passed. Human acceptance of the account's clarity and rhythm remains open.
+- Replayed three no-scout crossings through brine, a turbine servo and the lock countermeasure at 390 by 667. Their field records now match their damage sources and unchanged numeric receipts. Tests cover route-only, hazard-only, combined wear and all seven stability hazards. All 1,311 web tests, typecheck and production build passed. PR #389 merged and its frontend deployment succeeded; the published site passed a brine-only crossing replay with the corrected account. Human acceptance of the account's clarity and rhythm remains open.
 
 ### September 18: the scout's signal and warning form one readable cause
 
