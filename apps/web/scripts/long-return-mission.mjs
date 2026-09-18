@@ -27,6 +27,28 @@ try {
   for (let step = 0; step < 100; step++) {
     const dialog = page.locator('[data-field-record]');
     if (await dialog.count()) {
+      if (process.env.LR_MAP_FOCUS === '1' && process.env.LR_REDUCED !== '1') {
+        const spotlight = dialog.locator('[data-map-focus="active"]');
+        await spotlight.waitFor({ timeout: 1500 });
+        const box = await spotlight.boundingBox();
+        const style = await spotlight.evaluate(node => ({position: getComputedStyle(node).position, inset: getComputedStyle(node).inset, className: node.className}));
+        assert(box.width >= viewport.width * .9 && box.height >= viewport.height * .9, `A map change takes over the action viewport: ${JSON.stringify({ box, viewport, style })}`);
+        assert(await spotlight.locator('[data-map-attention]').count(), 'The changed map station is called out');
+        await page.waitForTimeout(350);
+        await page.screenshot({ path: `${output}/${step}-map-focus.png` });
+        if (await dialog.locator('h2').textContent() === 'Cross the hanging gantry') {
+          const marker = dialog.locator('[data-map-creature]').first();
+          await dialog.locator('[data-expedition-map][data-crew-position="crossing"]').waitFor({ timeout: 15000 });
+          const positionX = () => marker.evaluate(node => new DOMMatrixReadOnly(getComputedStyle(node).transform).m41);
+          const firstX = await positionX();
+          await page.waitForTimeout(350);
+          const movingX = await positionX();
+          await page.screenshot({ path: `${output}/${step}-map-moving.png` });
+          await page.waitForTimeout(750);
+          const arrivedX = await positionX();
+          assert(movingX > firstX + 4 && arrivedX > movingX + 4, `The crew marker travels to its new station: ${JSON.stringify({ firstX, movingX, arrivedX })}`);
+        }
+      }
       const started = Date.now();
       await dialog.getByRole('button', { name: /Continue to result|Review scout report|Check scout status|Respond to encounter|See encounter result|Choose response/ }).waitFor({ timeout: 120000 });
       events.push({ type: 'animation', elapsed: Date.now()-started, text: await dialog.innerText() });

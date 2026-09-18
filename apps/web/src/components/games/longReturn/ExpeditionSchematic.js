@@ -11,7 +11,7 @@ const positions = { entry: [74, 98], survey: [225, 98], approach: [225, 98], cro
 const changeLabel = (change, route) => change?.mapLabel || MAP_ROUTES[route.id] || route.title;
 const effectMarks = { 'quiet-entry': '○', 'coolant-bypass': '≈', 'maintenance-codes': '⌁', 'security-pulse': '!' };
 
-export default function ExpeditionSchematic({ scene, crew = [], scout, helperId, position = { crew: 'entry' }, routeId, revealedIds = [], native, nativeState, companion, allyWithScout = false, runFlags = [], compact = false, localOnly = false, readingRecord = false, decisionInset = false, preview = false, reserves, onNextDecision, className = '' }) {
+export default function ExpeditionSchematic({ scene, crew = [], scout, helperId, position = { crew: 'entry' }, routeId, revealedIds = [], native, nativeState, companion, allyWithScout = false, runFlags = [], compact = false, localOnly = false, readingRecord = false, decisionInset = false, preview = false, reserves, onNextDecision, attentionTarget, attentionKey, initialTravel = false, className = '' }) {
   const sceneIndex = Math.max(0, MISSION.scenes.findIndex(item => item.id === scene.id));
   const routeIndex = scene.routes.findIndex(route => route.id === routeId);
   const changes = scene.routes.map(route => routeMemory(route, runFlags));
@@ -38,6 +38,11 @@ export default function ExpeditionSchematic({ scene, crew = [], scout, helperId,
   const allyPlace = allyWithScout && position.scout ? position.scout : position.crew;
   const allyPoint = allyPlace === 'survey' && (contact || position.encounter) ? [320, contactLane] : positions[allyPlace] || positions.entry;
   const allyLane = allyPlace === 'crossing' ? currentLane : allyPoint[1];
+  const attentionPoint = attentionTarget === 'native' && contact ? [scene.encounter?.archetype === 'trapped' ? 320 : passage ? 394 : 370, contactLane]
+    : attentionTarget === 'ally' && ally ? [allyPoint[0], allyLane + (allyLane === 148 ? -25 : 25)]
+      : attentionTarget === 'signal' ? signalFrom
+        : attentionTarget === 'scout' ? tokens.find(token => token.member.id === scout?.id)?.point
+          : tokens.find(token => token.member.id !== scout?.id)?.point || tokens[0]?.point;
   return <figure data-tier="immersive" data-expedition-map={decisionInset ? undefined : true} data-route-schematic={decisionInset ? true : undefined} data-map-scene={scene.id} data-map-local={localOnly ? 'true' : undefined} data-map-record={readingRecord ? 'true' : undefined} data-preview-route={preview ? routeId : undefined} data-crew-position={position.crew} className={`m-0 min-w-0 border-y border-edge bg-s0 text-ink ${className}`}>
     <figcaption className="flex flex-wrap items-center justify-between gap-2 px-4 pt-3 text-small font-body"><strong>{location}</strong>{onNextDecision && <button type="button" className="lr-map-next md:hidden" onClick={onNextDecision}>Scout choices <span aria-hidden="true">↓</span></button>}<span className={`text-ink-2${onNextDecision ? ' hidden md:inline' : ''}`}>{preview ? `Preview: ${MAP_ROUTES[routeId] || scene.routes[routeIndex]?.title}` : 'Site map'}</span></figcaption>
     {!localOnly && !decisionInset && <div data-site-overview className="flex items-center gap-1 px-4 pt-3" aria-label={`Site position: ${scene.trackLabel}, sector ${sceneIndex + 1} of ${MISSION.scenes.length}`}>
@@ -70,7 +75,8 @@ export default function ExpeditionSchematic({ scene, crew = [], scout, helperId,
       })}
       {position.scout === 'survey' && <path data-map-scout-path d="M130 98 H222" fill="none" stroke="var(--color-viable)" strokeWidth="3" strokeDasharray="3 5" />}
       {position.signal && <g><path d={`M${signalFrom[0]} ${signalFrom[1] - 15} Q160 40 94 76`} fill="none" stroke="var(--color-viable)" strokeDasharray="4 4" /><text data-map-signal x="164" y="65" textAnchor="middle" fill="var(--color-viable)" className="text-small">Report ↙</text></g>}
-      {tokens.map(({ member, number, point, place }) => <g key={member.id} data-map-creature={member.id} data-location={place} style={{ transform: `translate(${point[0]}px, ${point[1]}px)` }}>
+      {attentionKey && attentionPoint && <circle key={attentionKey} data-map-attention cx={attentionPoint[0]} cy={attentionPoint[1]} r="19" fill="none" stroke="var(--color-viable)" strokeWidth="3" className="lr-map-attention-ring" />}
+      {tokens.map(({ member, number, point, place }) => <g key={member.id} data-map-creature={member.id} data-location={place} className={readingRecord ? `lr-map-token${initialTravel && (attentionTarget !== 'scout' || member.id === scout?.id) ? ' lr-map-token-depart' : ''}` : undefined} style={initialTravel ? { transform: `translate(${point[0]}px, ${point[1]}px)`, '--map-start-x': `${positions.entry[0] + (number - 2) * 23}px`, '--map-start-y': `${positions.entry[1]}px`, '--map-end-x': `${point[0]}px`, '--map-end-y': `${point[1]}px` } : { transform: `translate(${point[0]}px, ${point[1]}px)` }}>
         <title>{`${member.species}: ${place === 'survey' ? 'scouting ahead' : place === 'exit' ? 'across with the crew' : place}`}</title>
         <circle r="12" fill="var(--color-viable)" stroke="var(--color-s0)" strokeWidth="2" />
         <text textAnchor="middle" y="5" fill="var(--color-viable-ink)" className="text-small">{number}</text>
