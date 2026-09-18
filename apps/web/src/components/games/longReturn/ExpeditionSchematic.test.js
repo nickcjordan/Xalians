@@ -30,4 +30,19 @@ test('the decision map names approaches on phones, while the reading record leav
   expect(container.querySelectorAll('[data-map-route-caption]')).toHaveLength(2);
   rerender(<ExpeditionSchematic scene={MISSION.scenes[0]} crew={crew} readingRecord />);
   expect(container.querySelectorAll('[data-map-route-caption]')).toHaveLength(0);
+  expect(container.querySelector('[data-map-key]').textContent).toContain('Crew');
+  expect(container.querySelector('[data-expedition-map]').getAttribute('data-map-record')).toBe('true');
+});
+
+test('the field record uses a fixed scouting trace and reveals contact only at contact', () => {
+  const crew = CREATURES.slice(0, 3);
+  const scene = MISSION.scenes[2];
+  const scout = crew[0];
+  const { container, rerender } = render(<ExpeditionSchematic scene={scene} crew={crew} scout={scout} readingRecord position={{ crew: 'entry', scout: 'survey' }} />);
+  expect(container.querySelector('[data-map-scout-path]')).toBeTruthy();
+  expect(container.querySelector('[data-map-native]')).toBeNull();
+  expect(container.querySelector('[data-map-key]').textContent).toContain('Scout ahead');
+  rerender(<ExpeditionSchematic scene={scene} crew={crew} scout={scout} readingRecord position={{ crew: 'entry', scout: 'survey', encounter: true }} native={{ species: 'Hypnopet' }} />);
+  expect(container.querySelector('[data-map-native]')).toBeTruthy();
+  expect(container.querySelector('[data-map-key]').textContent).toContain('Native contact');
 });

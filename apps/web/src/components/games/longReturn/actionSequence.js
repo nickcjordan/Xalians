@@ -6,7 +6,7 @@ export function buildActionSequence(action) {
   if (action.type === 'encounter') {
     return [
       beat('move', 'The crew approaches', 'bi-signpost-2-fill', action.route ? `${action.lead.species} follows the chosen passage, with the rest of the crew close behind.` : `${action.lead.species} scouts ahead alone.`, { actorId: action.lead.id }),
-      beat('encounter', 'Something is in the way', 'bi-eye', `${action.encounter.species} emerges ahead. The crew stops before moving closer.`, { creatureId: action.encounter.id }),
+      beat('encounter', 'Contact ahead', 'bi-eye', action.scene?.encounter?.crewContact || `${action.encounter.species} is ahead of the crew. They stop before moving closer.`, { creatureId: action.encounter.id }),
       beat('decision', 'A way through, not a crossing yet', 'bi-signpost-2-fill', 'Choose how to approach the native before continuing along this route.')
     ];
   }

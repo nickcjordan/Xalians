@@ -26,6 +26,17 @@ test('encounter sequence reveals the native before returning control', () => {
   expect(events[1].message).toContain('Xylum');
 });
 
+test('each whole-crew contact matches the physical situation on the map', () => {
+  const clues = { 'underdeck-xylum': 'cracked bearing', 'vestibule-hypnopet': 'trapped between the lock’s moving arms', 'gallery-ectoghoul': 'shielded conduit' };
+  for (const scene of MISSION.scenes.filter(entry => entry.encounter)) {
+    const route = scene.routes.find(entry => entry.id === scene.encounter.routeId);
+    const events = buildActionSequence({ type: 'encounter', scene, route, lead: creature('lead', 'Graviclaw'), encounter: creature(scene.encounter.creatureId, scene.encounter.title) });
+    expect(events[1].message).toBe(scene.encounter.crewContact);
+    expect(events[1].message).toContain(clues[scene.encounter.id]);
+    expect(events[1].message).not.toContain('emerges ahead');
+  }
+});
+
 test('one-use expenditure follows the actual ability action and remains explicit', () => {
   const events = buildActionSequence({ type: 'crossing', lead: creature('lead','Chromocat'), method: { label:'Corona Line — Cut a path', ability:{name:'Corona Line',instrument:'light-organs'} }, result:{ abilityId:'beam', unseenHazards:[], crewChanges:[], instabilityChange:{added:0},salvage:0,impactLabel:'Done' } });
   expect(events.map(event=>event.kind)).toEqual(['move','method','effort','complete']);

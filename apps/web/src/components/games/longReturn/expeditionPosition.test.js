@@ -68,6 +68,15 @@ describe('expedition location, not creature performance', () => {
     expect(expeditionPosition({ actionType: 'scout-return', beat: 'return' }).scout).toBe('survey');
     expect(expeditionPosition({ actionType: 'scout-return', beat: 'complete' }).scout).toBe('entry');
   });
+  it('whole-crew contact stops before the obstacle and places a trapped native inside it', () => {
+    expect(expeditionPosition({ actionType:'encounter', beat:'move' })).toMatchObject({crew:'approach',encounter:false});
+    expect(expeditionPosition({ actionType:'encounter', beat:'encounter' })).toMatchObject({crew:'approach',encounter:true});
+    const scene = MISSION.scenes[2];
+    const html = renderToStaticMarkup(<ExpeditionSchematic scene={scene} routeId="decode" crew={[{id:'lead',species:'Graviclaw'}]} native={{species:'Hypnopet'}} position={{crew:'approach',encounter:true}} readingRecord />);
+    expect(html).toContain('data-map-creature="lead" data-location="approach" style="transform:translate(202px, 98px)"');
+    expect(html).toContain('data-map-native="true" data-state="contact" transform="translate(320 98)"');
+    expect(html).toContain('Native contact');
+  });
   it('all crew arrive together, including the reserve', () => {
     expect(expeditionPosition({ actionType: 'crossing', beat: 'move' }).crew).toBe('crossing');
     expect(expeditionPosition({ actionType: 'crossing', beat: 'complete' }).crew).toBe('exit');
