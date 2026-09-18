@@ -3258,9 +3258,10 @@
 .lr-end-card--scarred .lr-end-seal { color:#efb74d; }.lr-end-card--withdrawn .lr-end-seal { color:#b9b59f; }
 .lr-end-card--triumph::before { filter:saturate(.95) brightness(.58); }.lr-end-card--failed::before { filter:saturate(.3) brightness(.25); }
 
+.lr-end-story { display:grid; gap:12px; margin:17px auto 24px; }
 .lr-end-copy {
   max-width: 60ch;
-  margin: 17px auto 24px;
+  margin: 0 auto;
   color: var(--g-ink-mid);
   line-height: 1.6;
 }

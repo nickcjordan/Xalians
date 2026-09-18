@@ -1241,7 +1241,10 @@ function LongReturnGame() {
           <div className="lr-end-seal"><BiIcon cls={`bi ${outcome.icon}`} /></div>
           <span className="lr-end-outcome">{outcome.label}</span>
           <h1 className="g-title">{outcome.title}</h1>
-          <p className="lr-end-copy">{outcome.copy}{companion ? ` ${companionFarewell(companion)}` : ''}</p>
+          <div className="lr-end-story">
+            <p className="lr-end-copy">{outcome.copy}</p>
+            {companion && <p className="lr-end-copy">{companionFarewell(companion)}</p>}
+          </div>
           <ExpeditionEndingTrail entries={journal} objectiveReached={objectiveReached} />
           <div className="lr-end-stats">
             <div><span>Objective</span><strong>{objectiveReached ? 'SECURED' : 'LOST'}</strong></div>
