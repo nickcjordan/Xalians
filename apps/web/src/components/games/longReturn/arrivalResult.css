@@ -67,20 +67,6 @@
 
 .lr-simple-result.has-depth-decision .lr-next-stakes { display: none; }
 .lr-mode-simple .lr-simple-result > .lr-extraction-choice { grid-column: 1 / -1; }
-.lr-extraction-choice .lr-depth-heading > span { display: flex; gap: 8px; align-items: center; color: var(--g-phosphor); font-size: 14px; }
-.lr-extraction-choice .lr-depth-options { padding-top: 0 !important; }
-.lr-extraction-choice .lr-depth-option { display: flex !important; flex-direction: column; align-items: stretch; gap: 12px; color: var(--g-ink); border: 1px solid var(--g-seam); background: var(--g-hull-lo); font-family: var(--g-font-body); text-transform: none; letter-spacing: 0; }
-.lr-extraction-choice .lr-depth-option:hover, .lr-extraction-choice .lr-depth-option:focus-visible { border-color: var(--g-phosphor); }
-.lr-extraction-choice .lr-depth-option > strong { font-size: 19px; }
-.lr-extraction-choice .lr-depth-option > .lr-extraction-offer { display: flex; align-items: baseline; gap: 8px; color: #f1cf74; }
-.lr-extraction-offer > b { font-size: 30px; line-height: 1; }
-.lr-extraction-offer > span { font-size: 15px; }
-.lr-extraction-choice .lr-depth-option > small { display: flex; align-items: center; gap: 6px; text-transform: none; font: 500 14px/1.4 var(--g-font-body); color: var(--g-ink-mid); }
-.lr-extraction-choice .lr-depth-option > .lr-haul-risk { color: #f1cf74; }
-.lr-extraction-choice .lr-depth-option > em { display: flex; justify-content: space-between; gap: 8px; font: 600 14px/1.4 var(--g-font-body); margin-top: auto; padding-top: 10px; border-top: 1px solid var(--g-seam); color: var(--g-phosphor); }
-.lr-emergency-rule { display: flex; align-items: flex-start; gap: 8px; color: var(--g-ink-mid); font-size: 14px; line-height: 1.45; margin-bottom: 0; }
-.lr-emergency-rule > svg { flex: none; }
-.lr-emergency-rule small { display: block; font-size: 13px; }
 .lr-result-actions .g-btn--danger:has(#lr-abort-cost) { display: flex; flex-direction: column; gap: 4px; }
 #lr-abort-cost { font: 500 12px/1.4 var(--g-font-body); text-transform: none; letter-spacing: 0; }
 .lr-receipt-breakdown { display: grid; gap: 12px; margin: 12px 0; }

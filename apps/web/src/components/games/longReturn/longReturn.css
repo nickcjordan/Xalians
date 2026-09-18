@@ -3214,16 +3214,7 @@
 
 .lr-depth-decision { margin-top:22px; padding:18px; border:1px solid rgba(116,255,176,.42); background:linear-gradient(135deg,rgba(116,255,176,.07),rgba(217,164,16,.035)); }
 .lr-mode-simple .lr-simple-result.has-depth-decision{padding-bottom:145px}
-.lr-depth-heading { display:grid; gap:4px; margin-bottom:14px; }
-.lr-depth-heading > span { color:var(--g-phosphor); font:800 10px var(--g-font-mono); text-transform:uppercase; letter-spacing:.08em; }
-.lr-depth-heading h4 { margin:0; color:var(--g-ink); font:700 clamp(19px,2.3vw,27px)/1.15 var(--g-font-stencil); text-transform:uppercase; letter-spacing:.025em; }
-.lr-depth-options { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; }
-.lr-depth-option { display:grid!important; grid-template-columns:30px minmax(0,1fr) 18px; gap:10px; align-items:center; min-height:96px; padding:16px!important; text-align:left; }
-.lr-depth-option > i:first-child { color:var(--g-phosphor); font-size:24px; }.lr-depth-option.is-deeper > i:first-child { color:var(--g-hazard); }
-.lr-depth-option > span { display:grid; gap:3px; }.lr-depth-option small { color:var(--g-ink-low); font:800 9px var(--g-font-mono); text-transform:uppercase; }.lr-depth-option strong { color:var(--g-ink); font-size:18px; }.lr-depth-option em { color:var(--g-ink-mid); font:600 12px/1.4 var(--g-font-mono); font-style:normal; text-transform:none; letter-spacing:0; }.lr-depth-option em b { color:var(--g-hazard); }
-.lr-depth-reserve { display:flex; flex-wrap:wrap; gap:6px; margin-top:10px; }
-.lr-depth-reserve span { display:flex; align-items:center; gap:5px; padding:6px 8px; color:var(--g-ink-mid); border:1px solid var(--g-seam); background:var(--g-hull-lo); font:700 10px var(--g-font-mono); text-transform:uppercase; }.lr-depth-reserve i { color:#79d7ff; }.lr-depth-reserve span:first-child i { color:#84dba4; }
-@media(max-width:650px){.lr-depth-options{grid-template-columns:1fr}.lr-depth-decision{padding:14px}.lr-depth-option{min-height:84px}.lr-mode-simple .lr-simple-result.has-depth-decision{padding-bottom:220px}}
+@media(max-width:650px){.lr-depth-decision{padding:14px}.lr-mode-simple .lr-simple-result.has-depth-decision{padding-bottom:220px}}
 @media(max-width:520px){.lr-wizard-topline{gap:8px}.lr-wizard-topline>div:first-child{min-width:0}.lr-wizard-topline h1{font-size:21px;line-height:1.05}.lr-wizard-tools{flex:none;gap:3px}.lr-wizard-tools>span,.lr-wizard-tools>button{min-width:36px;width:36px;padding:4px}.lr-wizard-tools .is-salvage{width:40px}}
 
 /* End screen */
