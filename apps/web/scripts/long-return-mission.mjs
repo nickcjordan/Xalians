@@ -10,6 +10,7 @@ try {
   const page = await context.newPage();
   const events = [], errors = [], observedEffects = new Set();
   let crossed = 0;
+  let expectedBanked;
   let previousMapScene = '', previousMapExit = '';
   const responses = {};
   page.on('pageerror', error => errors.push(error.message));
@@ -141,17 +142,34 @@ try {
       crossed++;
       if (Number(process.env.LR_LIMIT_SCENES) === crossed) { events.push({type:'milestone',text:await page.locator('.lr-simple-result').innerText()}); break; }
       const extract = page.locator('.lr-depth-option.is-extract');
+      if (await extract.count()) {
+        assert((await page.locator('[data-depth-distance]').innerText()).includes(`Across ${7 - crossed} optional`), 'Potential haul names all remaining crossings');
+        assert((await page.locator('[data-depth-potential]').locator('..').innerText()).startsWith('Up to'), 'Remaining haul is a ceiling, not a promised payout');
+        const reserves = await map.locator('[data-expedition-reserves]').innerText();
+        await page.locator('[data-depth-explore] h5').click();
+        assert(await extract.isVisible(), 'Reading the offer does not enter the next room');
+        assert.equal(await map.locator('[data-expedition-reserves]').innerText(), reserves);
+      }
       if (process.env.LR_REVIEW_DEPTH === '1' && await extract.count()) {
-        for (const width of [1280, 768, 390]) {
-          await page.setViewportSize({ width, height: 900 });
+        for (const width of [1280, 768, 390, 320]) {
+          await page.setViewportSize({ width, height: width < 500 ? 667 : 900 });
           await page.locator('.lr-extraction-choice').scrollIntoViewIfNeeded();
           await page.screenshot({ path: `${output}/depth-${crossed}-${width}.png`, fullPage: true });
           assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), 'Extraction choice overflow');
           assert(await page.locator('.lr-haul-risk').isVisible());
+          await page.locator('.lr-extraction-choice').screenshot({ path: `${output}/choice-${crossed}-${width}.png` });
+          const disclosure = page.locator('.lr-extraction-choice summary');
+          await disclosure.focus();
+          await page.keyboard.press('Enter');
+          assert(await page.locator('.lr-extraction-choice details').getAttribute('open') !== null, 'Keyboard opens the rule without committing');
+          await page.keyboard.press('Enter');
         }
         await page.setViewportSize(viewport);
       }
-      if (process.env.LR_EXTRACT === '1' && await extract.count()) { await click(extract.first()); continue; }
+      if ((process.env.LR_EXTRACT === '1' || Number(process.env.LR_EXTRACT_AT) === crossed) && await extract.count()) {
+        expectedBanked = Number(await page.locator('[data-banked-offer]').innerText());
+        await click(extract.first()); continue;
+      }
       const workshop = page.locator('.lr-workshop');
       if (await workshop.count()) {
         await workshop.locator(':scope > summary').click();
@@ -173,6 +191,7 @@ try {
   }
   assert(events.some(e=>e.type===(process.env.LR_LIMIT_SCENES?'milestone':'ending')), 'Required endpoint not reached');
   assert.deepEqual(errors, []);
+  if (expectedBanked !== undefined) assert(events.find(event => event.type === 'ending')?.text.includes(`SALVAGE BANKED\n${expectedBanked}`), 'Voluntary extraction banks exactly the offered haul');
   for (const expected of process.env.LR_EXPECT_MAP_EFFECTS?.split(',') || []) assert(observedEffects.has(expected), `Mission reached earned map effect: ${expected}`);
   await writeFile(`${output}/run.json`, JSON.stringify(events,null,2));
   console.log(JSON.stringify({ crossed, clicks: events.filter(e=>e.type==='choice').length, animations: events.filter(e=>e.type==='animation').map(e=>e.elapsed), ending: events.find(e=>e.type==='ending')?.text || 'Requested scene milestone reached' }, null,2));

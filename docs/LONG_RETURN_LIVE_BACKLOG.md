@@ -4,6 +4,14 @@ Owner: the agent maintaining the Long Return worktree. Update this file during i
 
 ## Active goal — full-mission UX (2026-09-11)
 
+### September 17: the Index exit is a choice about the remaining journey
+
+- Rendered review found the optional-depth offer presented +19 salvage beside the next room's name without saying it covered both remaining crossings. It looked comparable to already-carried salvage, although one was guaranteed on departure and the other was a journey-wide ceiling. The offer now says Up to, names the remaining optional crossing count, and separates returning to the surface from continuing into the next room.
+- Extract now and Go deeper are explicit buttons below readable offers. Reading the heading or potential reward does not commit the choice; no extra approval gate was added. The Index remains secured either way, the current haul is named once, and forced-out retention/loss uses the existing settlement calculation. Zero loss is not drawn as a warning. The full rule, rounding, repairs and the option to leave after another crossing are in a deliberate disclosure.
+- Used the UI guide's Button, token type and spacing. Removed the superseded extraction-card rules instead of layering new legacy overrides. Mechanics, route payouts, future hazard secrecy and advanced mode are unchanged.
+- Verification: 1,290 web tests, typecheck, production build and unchanged bundle budgets. Actual phone/desktop choice and setup PNGs reviewed. Browser checks at 320, 390, 768 and 1280 pixels exercise both exit points, keyboard disclosure, no commitment from reading, and no resource change. Voluntary exits after five and six crossings bank exactly the offered 3 and 9 salvage. A deeper run reaches all seven rooms with 14 banked; a contrasting run loses stability and retains 9 of 18 through emergency extraction. These are sampled trajectories, not exhaustive balance or player-comprehension evidence.
+- Follow-up: continue reviewing how expedition history and the ending communicate the chosen path, rather than assuming aggregate totals alone establish a satisfying conclusion. Human acceptance remains open.
+
 ### September 17: condition information belongs to the decision
 
 - Replaced the map key's repeated scouting restriction with the universal Last energy condition, retained Can't act for spent creatures, and removed the nonurgent Weakened label from that persistent key. Conditions stay beside their creature on phones. Actual reserves and detailed readiness descriptions remain available.

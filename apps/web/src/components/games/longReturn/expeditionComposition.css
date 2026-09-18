@@ -55,7 +55,6 @@
 .lr-end-shell .lr-end-stats > div { border: 0; border-right: 1px solid #485040; background: none; }
 .lr-mode-simple .lr-assignment-board .lr-assignment-head { box-shadow: none; background: none; }
 .lr-mode-simple .lr-depth-decision { background: none; border: 0; padding: 18px 0 0; }
-.lr-mode-simple .lr-depth-reserve { display: none; }
 .lr-mode-simple .lr-field-receipt { background: none; border: 0; box-shadow: none; }
 .lr-mode-simple .lr-workshop-bank { border: 0; background: none; }
 .lr-mode-simple .lr-workshop-options > button { box-shadow: none; }

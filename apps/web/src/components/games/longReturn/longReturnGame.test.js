@@ -454,10 +454,11 @@ describe('Long Return Simple mode', () => {
       playRecommendedScene(container);
       if (scene < 4) clickElement(container.querySelector('.lr-result-actions .g-btn--primary'));
     }
-    expect(container.querySelector('.lr-depth-decision').textContent).toMatch(/Index secured either way.*Bank the haul—or venture deeper/i);
+    expect(container.querySelector('.lr-depth-decision').textContent).toMatch(/Index secured either way.*Leave now or explore deeper/i);
     expect(container.querySelector('.lr-depth-decision').textContent).toMatch(/Index secured either way.*salvage banked/i);
-    expect(container.querySelector('.lr-depth-decision').textContent).toContain('+19more salvage possible');
-    expect(container.querySelector('.lr-depth-decision').textContent).toMatch(/\d+ of your \d+ carried salvage at risk/);
+    expect(container.querySelector('.lr-depth-decision').textContent).toContain('Up to +19 more salvage');
+    expect(container.querySelector('[data-depth-distance]').textContent).toContain('Across 2 optional crossings');
+    expect(container.querySelector('.lr-haul-risk').textContent).toMatch(/keep \d+ · lose \d+/);
     click(container, /extract now/i);
     expect(container.textContent).toContain('Crew Extracted');
     expect(container.textContent).toContain('ObjectiveSECURED');
