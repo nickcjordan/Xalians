@@ -15,6 +15,7 @@ import RouteComparison, { comparisonCosts } from './RouteComparison';
 import { sceneOrientation } from './sceneOrientation';
 import LeadChoices from './LeadChoices';
 import EncounterChoices from './EncounterChoices';
+import EncounterSituation from './EncounterSituation';
 import { encounterActor } from './encounterActor';
 import EncounterAftermath from './EncounterAftermath';
 import ExtractionChoice from './ExtractionChoice';
@@ -1367,12 +1368,13 @@ function LongReturnGame() {
                   <CreaturePortrait creature={encounterCreature} compact />
                   <div><span>{encounterState.mode === 'scout' ? 'Scout encounter' : encounterState.informed ? 'Prepared crew encounter' : 'Unexpected crew encounter'}</span><h3>{scene.encounter.title}</h3><p>{scene.encounter.description}</p></div>
                 </div>
-                {encounterState.mode === 'scout' && encounterState.outlook && <div className={`lr-encounter-posture is-${encounterState.outlook.posture}`}>
+                {guidanceLevel === 'simple' && <EncounterSituation mode={encounterState.mode} scout={encounterState.scout} native={encounterCreature} outlook={encounterState.outlook} informed={encounterState.informed} />}
+                {guidanceLevel !== 'simple' && encounterState.mode === 'scout' && encounterState.outlook && <div className={`lr-encounter-posture is-${encounterState.outlook.posture}`}>
                   <strong>{encounterState.outlook.label}</strong>
                   <span>{encounterState.outlook.posture === 'scout-first' ? `${encounterState.scout.species} sees the native before being cornered.` : encounterState.outlook.posture === 'native-first' ? `The native catches ${encounterState.scout.species} out of position. The surprise costs 1 extra energy.` : `${encounterState.scout.species} and the native notice one another at the same moment.`}</span>
                   <small>{encounterState.outlook.channel ? `Crew contact available through ${encounterState.outlook.channel}.` : 'No remote crew contact. Getting help requires a physical return.'}</small>
                 </div>}
-                {encounterState.mode === 'group' && <div className="lr-encounter-posture"><strong>{encounterState.informed ? 'The crew arrives prepared' : 'The native acts before the crew can organize'}</strong><span>{encounterState.informed ? 'The scout’s warning prevents a surprise energy cost.' : 'The most defensive crew member will absorb the first consequence.'}</span></div>}
+                {guidanceLevel !== 'simple' && encounterState.mode === 'group' && <div className="lr-encounter-posture"><strong>{encounterState.informed ? 'The crew arrives prepared' : 'The native acts before the crew can organize'}</strong><span>{encounterState.informed ? 'The scout’s warning prevents a surprise energy cost.' : 'The most defensive crew member will absorb the first consequence.'}</span></div>}
                 {guidanceLevel === 'simple' ? <EncounterChoices options={activeEncounterOptions} actor={encounterActor(scene, crew, strain, encounterState.scout)} selectedId={encounterOptionId} onSelect={setEncounterOptionId} /> : <div className="lr-encounter-options">
                   {activeEncounterOptions.map((option) => {
                     const affectedCreature = encounterActor(scene, crew, strain, encounterState.scout);

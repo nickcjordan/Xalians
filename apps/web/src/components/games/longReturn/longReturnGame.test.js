@@ -510,7 +510,7 @@ describe('Long Return Simple mode', () => {
     click(container, /^enter /i);
     selectRecommendedScout(container);
     expect(container.textContent).toContain('Stranded Xylum');
-    expect(container.textContent).toMatch(/crew contact|physical return/i);
+    expect(container.querySelector('.lr-encounter-situation').textContent).toMatch(/visual signals reach the crew|must return to tell the crew/i);
     expect(container.querySelectorAll('.lr-encounter-choice-board .lr-response-outcome')).toHaveLength(3);
     expect(container.querySelector('.lr-encounter-options .is-recommended').textContent).toMatch(/call Hippochamp.*1 stability.*possible ally/i);
     expect(container.textContent).not.toMatch(/Ready → Ready|Stable → Stable/);
@@ -560,7 +560,7 @@ describe('Long Return Simple mode', () => {
     expect(container.querySelector('.lr-sequence-story').textContent).toMatch(/Choose how to approach the native before continuing/i);
     click(container, /choose response/i);
     expect(container.textContent).toContain('Unexpected crew encounter');
-    expect(container.textContent).toContain('The native acts before the crew can organize');
+    expect(container.querySelector('.lr-encounter-situation').textContent).toContain('Crew caught unaware · +1 energy to respond');
     clickElement(container.querySelector('.lr-encounter-options .is-recommended'));
     clickElement(container.querySelector('.lr-encounter-commit-bar button'));
     click(container, /skip to outcome/i);

@@ -4,7 +4,7 @@ import { encounterChoicePresentation } from './encounterPresentation';
 
 test('every authored encounter response has a concise action and aftermath identity', () => {
   const validActions = ['Assist', 'Communicate', 'Report', 'Avoid', 'Confront'];
-  const validOutcomes = ['Possible ally', 'Danger remains', 'Choose another route', 'Passage opens'];
+  const validOutcomes = ['Possible ally', 'Route still occupied', 'Choose another route', 'Passage opens'];
   MISSION.scenes.filter((scene) => scene.encounter).forEach((scene) => {
     ['scout', 'group'].forEach((mode) => {
       const options = encounterOptions(scene, CREATURES[0], CREATURES, mode, mode === 'group');

@@ -128,6 +128,9 @@ try {
       await click(page.getByRole('button', { name: /^Send / })); continue;
     }
     if (await page.locator('.lr-field-encounter:not(.is-resolved)').count()) {
+      const situation = page.locator('.lr-encounter-situation');
+      assert.equal(await situation.count(), 1, 'Simple encounters put contact and communication context beside the response');
+      assert(!(await situation.innerText()).includes('through display'), 'Player-facing contact context does not expose registry channel names');
       const prescribedResponse = process.env.LR_ENCOUNTER_PICK !== undefined && !responses[crossed];
       await click(prescribedResponse ? page.locator('.lr-encounter-options > button').nth(Number(process.env.LR_ENCOUNTER_PICK)) : page.locator('.lr-encounter-options > .is-recommended'));
       responses[crossed] = (responses[crossed] || 0) + 1;
@@ -136,7 +139,8 @@ try {
     if (await page.locator('.lr-field-encounter.is-resolved').count()) {
       if (await map.locator('[data-map-ally]').count() && await map.getAttribute('data-map-scene') === 'turbine-hall') {
         assert(!(await map.locator('figcaption').innerText()).includes('Contact ahead'), 'A newly joined ally is no longer presented as an active hostile contact');
-        assert.equal(await map.locator('[data-map-ally]').getAttribute('data-location'), 'survey', 'The new ally remains with the scout and helper ahead of the waiting crew');
+        const scoutEncounter = await map.locator('[data-map-creature][data-location="survey"]').count() > 0;
+        assert.equal(await map.locator('[data-map-ally]').getAttribute('data-location'), scoutEncounter ? 'survey' : 'crossing', 'The new ally stays where the encounter took place');
       }
       await click(page.locator('.lr-field-encounter .g-btn--primary')); continue;
     }
