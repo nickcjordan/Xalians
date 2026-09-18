@@ -35,6 +35,14 @@ try {
       assert.equal(await map.locator('[data-map-creature]').count(), 3, 'Map retains all crew identities');
       const drawing = await map.locator(':scope > svg').boundingBox();
       assert(drawing.width > 300 && drawing.height > 100, 'Schematic is a readable diagram, not an icon');
+      const signal = map.locator('[data-map-signal]');
+      if (await signal.count()) {
+        const label = await signal.boundingBox();
+        for (const effect of await map.locator('[data-map-effect]').all()) {
+          const marker = await effect.boundingBox();
+          assert(marker.x >= label.x + label.width || marker.x + marker.width <= label.x || marker.y >= label.y + label.height || marker.y + marker.height <= label.y, 'Report label and earned path marker must not overlap');
+        }
+      }
       assert.equal(await page.locator('.lr-scout-performer,.lr-action-creature,.lr-encounter-sequence-creature').count(), 0, 'No creature-performance stage remains');
       assert.equal(await story.getByRole('button', { name: 'Pause story', exact: true }).count(), 0, 'Finished stories have no dead playback controls');
       const next = page.locator('[role="dialog"] button').last();
