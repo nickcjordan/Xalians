@@ -4,11 +4,12 @@ import { MAX_STRAIN } from './longReturnData';
 import BiIcon from './BiIcon';
 import FieldExchange from './FieldExchange';
 
-export default function FieldWorkshop({ crew, strain, pressure, salvage, commands, used, receipt, onChoose }) {
+export default function FieldWorkshop({ crew, strain, pressure, salvage, commands, used, receipt, openRequest = 0, onChoose }) {
   const [selected, setSelected] = useState(null);
   const [expanded, setExpanded] = useState(false);
   const [reviewingCrossing, setReviewingCrossing] = useState(false);
   const summaryRef = useRef(null);
+  const lastOpenRequest = useRef(openRequest);
   const showRepairs = value => {
     setExpanded(value);
     requestAnimationFrame(() => {
@@ -17,6 +18,12 @@ export default function FieldWorkshop({ crew, strain, pressure, salvage, command
     });
   };
   const receiptRef = useRef(null);
+  useEffect(() => {
+    if (openRequest !== lastOpenRequest.current) {
+      lastOpenRequest.current = openRequest;
+      showRepairs(true);
+    }
+  }, [openRequest]);
   useEffect(() => { if (receipt) { receiptRef.current?.focus(); receiptRef.current?.closest('.lr-simple-result')?.scrollIntoView?.({ block:'start', behavior:'instant' }); } }, [receipt]);
   const options = fieldOptions({ crew, strain, pressure, salvage, commands, used });
   const choice = options.find(option => option.id === selected);

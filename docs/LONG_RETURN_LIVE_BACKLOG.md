@@ -4,6 +4,11 @@ Owner: the agent maintaining the Long Return worktree. Update this file during i
 
 ## Active goal — full-mission UX (2026-09-11)
 
+### September 18: low stability connects directly to field repair
+
+- The optional-depth fork now shows a thin stability reserve, but a player with salvage still had to infer that the separate repair disclosure above could improve it before choosing. When a brace is affordable and unused, the low-reserve cue now offers a small “Repair before choosing” action inside the deeper option. It opens the existing field workshop as a reversible view, without choosing a route, consuming salvage, or promising that a repair guarantees success. If the crew cannot brace, the salvage is insufficient, or field work is already used, the action is absent. The existing once-per-crossing repair and ending rules are unchanged.
+- The new browser path opens that workspace from the depth fork and asserts resources are untouched, choices are in view, and play can still complete. A 390-pixel full-mission replay showed the repair choices in the current viewport after the tap; the 1280-pixel replay did likewise. The lazy game route grew 419 bytes over its 337 kB raw allowance, so that one route-only raw limit rises 1 kB; gzip and initial-route allowances remain unchanged. All 1,334 web tests, typecheck, local production build and bundle gates passed. Human interpretation remains open.
+
 ### September 18: the optional-depth fork keeps the actual reserve in view
 
 - A full-mission replay with deliberate energy conservation reached the seventh crossing with healthy crew energy but exhausted the annex's last stability. The final lead screen correctly warned of forced extraction, yet the earlier optional-depth fork emphasized a possible salvage ceiling without locating the thin structural reserve beside the decision to go deeper. The fork now shows a small, cause-aligned stability or ready-crew cue only when that reserve is thin relative to the crossings remaining. It promises no unknown cost or safe outcome. The redundant generic “next stakes” strip is removed when the leave/deeper choice is already present, while the pre-Index and terminal states retain their guidance.

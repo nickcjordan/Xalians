@@ -51,3 +51,13 @@ test('unaffordable repairs cannot open a spend confirmation', () => {
   buttons.forEach(button => { expect(button.disabled).toBe(true); fireEvent.click(button); });
   expect(container.querySelector('.lr-workshop-confirm')).toBeNull();
 });
+
+test('a depth-choice request opens repair choices without selecting or spending', () => {
+  const onChoose = vi.fn();
+  const { container, rerender } = render(<FieldWorkshop {...initial} openRequest={0} onChoose={onChoose} />);
+  expect(container.querySelector('.lr-workshop').open).toBe(false);
+  rerender(<FieldWorkshop {...initial} openRequest={1} onChoose={onChoose} />);
+  expect(container.querySelector('.lr-workshop').open).toBe(true);
+  expect(container.querySelectorAll('.lr-workshop-options button:not([disabled])').length).toBeGreaterThan(0);
+  expect(onChoose).not.toHaveBeenCalled();
+});
