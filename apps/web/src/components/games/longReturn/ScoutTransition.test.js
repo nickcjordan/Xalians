@@ -49,8 +49,9 @@ test('the reported warning names its cause and the affected route, but silence n
   const result = { relay: true, hazards: [{ ...hazard, sensed: true, revealed: true }], revealedIds: [hazard.id] };
   const action = { type: 'scout', scene, scout, result, profile: { channel: 'vibration' }, energyBefore: 6, energyAfter: 5 };
   const beats = scoutBeats(action);
-  expect(beats[1].text).not.toContain(hazard.detail);
-  expect(beats[2].text).toContain(hazard.detail);
+  expect(beats[1].title).toBe('The scout finds a clue');
+  expect(beats[1].text).toContain(hazard.detail);
+  expect(beats[2].text).not.toContain(hazard.detail);
   expect(beats[2].text).toContain('ride the intake current');
   const isolated = scoutBeats({ ...action, result: { ...result, relay: false, revealedIds: [] } });
   expect(JSON.stringify(isolated)).not.toContain(hazard.detail);
@@ -63,8 +64,11 @@ test('a relayed warning reads as a connected account and names the relevant choi
   const scene = MISSION.scenes[1];
   const hazard = scene.hazards[0];
   const action = { type: 'scout', scene, scout: { species: 'Chromocat' }, result: { relay: true, hazards: [{ ...hazard, sensed: true }], revealedIds: [hazard.id] }, profile: { channel: 'display' }, energyBefore: 6, energyAfter: 5 };
-  const report = scoutBeats(action)[2].text;
-  expect(report).toContain(`from the entrance. ${hazard.detail}`);
+  const beats = scoutBeats(action);
+  const report = beats[2].text;
+  expect(beats[1].text).toBe(hazard.detail);
+  expect(report).toContain('from the entrance. That warning matters');
+  expect(report).not.toContain(hazard.detail);
   expect(report).toContain('chooses to race the upper catwalk.');
   expect(report).not.toContain('concerns race');
 

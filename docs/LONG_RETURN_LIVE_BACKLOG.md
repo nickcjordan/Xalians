@@ -4,6 +4,11 @@ Owner: the agent maintaining the Long Return worktree. Update this file during i
 
 ## Active goal — full-mission UX (2026-09-11)
 
+### September 18: the scout finds a real clue before sending it
+
+- A three-room replay showed a remote-reporting scout's field record opening with “Danger spotted” and “hidden danger,” postponing the actual physical clue until the next communication beat. The same clue now appears at the moment the scout sees it; the following beat shows how the signal carries it to the crew and which choice it affects. The schematic still marks the hazard only once the signal is sent. A scout unable to relay still cannot reveal a specific hazard until physically returning, preserving the information rule.
+- All 1,315 web tests, typecheck, production build and bundle budgets passed. Tests distinguish the observation and communication beats, plus the unreported/physical-return boundary. An isolated three-scene phone replay showed the turbine's forty-second rotation in the discovery beat; vibration, telepathy, display and no-relay browser paths passed with their map positions and delivery states. Player reception of this pacing is open.
+
 ### September 18: reservoir retrieval keeps the lead in the right place
 
 - A seven-room replay exposed a new location mismatch in the sixth crossing: the electric-vulnerability sentence said Hippochamp moved “toward the far side,” but the objective was to free a storage cell and bring it back to the rim. That same route also offers a remote snare method, so even “through the water” would be false for some leads. Electric exposure now follows the chosen room's actual geometry: flooded wreckage at the intake, the submerged cell at the reservoir, or collector machinery from the rim. No method, cost or hazard rule changed.
