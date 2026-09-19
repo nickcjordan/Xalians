@@ -17,6 +17,10 @@ import { IdentityRow } from "@/components/system/identity"
 import { ErrorBoundary } from "@/components/system/status"
 import { SiteFooter } from "@/components/system/site-footer"
 import { Term } from "@/components/system/term"
+import { Fold, FoldGroup } from "@/components/system/fold"
+import { IndexRow, IndexList } from "@/components/system/index-row"
+import { Station, StationRow } from "@/components/system/station-row"
+import { TileGrid, Tile, TileArt, TileMeta } from "@/components/system/record"
 
 /**
  * Brief B ("patterns") sections for /styleguide (docs/DESIGN_SYSTEM.md
@@ -129,6 +133,25 @@ function DataTableDemo() {
       onSelectedChange={setSelected}
       rowLink={(r) => `/encyclopedia/species/${r.id}`}
     />
+  )
+}
+
+function StationRowDemo() {
+  const [era, setEra] = React.useState<string | null>(null)
+  const stations: { key: string | null; name: string }[] = [
+    { key: null, name: "All" },
+    { key: "unbirth", name: "The Age of Unbirth" },
+    { key: "end-wars", name: "The End Wars" },
+  ]
+  return (
+    <StationRow value={era} onChange={setEra} aria-label="Filter by era">
+      {stations.map((s) => (
+        <Station key={s.key ?? "all"} to={undefined} active={era === s.key} onClick={() => setEra(s.key)}>
+          {s.name}
+        </Station>
+      ))}
+      <Station disabled count="soon">World timeline</Station>
+    </StationRow>
   )
 }
 
@@ -416,6 +439,86 @@ const SECTIONS: { id: string; label: string; node: React.ReactNode }[] = [
           </Term>{" "}
           in the 84th percentile.
         </p>
+      </>
+    ),
+  },
+  {
+    id: "fold",
+    label: "Fold",
+    node: (
+      <>
+        <SectionHead title="Fold" />
+        <p className="text-body text-ink-2">
+          One collapsible for the whole site: a level 0 surface, a legend label, an optional count at the right, the
+          chevron, content padded on the 4px scale. Folds never nest.
+        </p>
+        <FoldGroup className="mt-6 max-w-2xl">
+          <Fold label="Cross references" count="3">
+            <p className="m-0 font-body text-small text-ink-2">Three entries name this record.</p>
+          </Fold>
+          <Fold label="For builders" defaultOpen>
+            <p className="m-0 font-body text-small text-ink-2">The machine data behind this record, flat, not nested inside another fold.</p>
+          </Fold>
+        </FoldGroup>
+      </>
+    ),
+  },
+  {
+    id: "index-row",
+    label: "Index row",
+    node: (
+      <>
+        <SectionHead title="Index row" />
+        <p className="text-body text-ink-2">
+          The one row for a list of records: a narrow leading column, a subhead title, one line of copy, a meta
+          column at the right in the data face, and a chevron when the row is a link.
+        </p>
+        <IndexList className="mt-6 max-w-2xl">
+          <IndexRow to="/encyclopedia/worlds" leading="01" title="Worlds" copy="Every world, with its history, terrain and native species." meta="14 worlds" />
+          <IndexRow to="/encyclopedia/species" leading="02" title="Bestiary" copy="Every species, with appearance, habitat, behavior and signature ability." meta="32 species" />
+          <IndexRow title="Not a link" copy="A row without `to` renders as a div, no chevron." />
+        </IndexList>
+      </>
+    ),
+  },
+  {
+    id: "station-row",
+    label: "Station row",
+    node: (
+      <>
+        <SectionHead title="Station row" />
+        <p className="text-body text-ink-2">
+          The pressed-segment row used by the era scrubber, the Bestiary element filter, and the Index category
+          filter. Wraps from `sm`; scrolls with a right-edge mask under it; left/right arrow keys move focus while a
+          station has it. A disabled station (an unlit era on the world timeline) shows in ink-3 and cannot be pressed.
+        </p>
+        <div className="mt-6 max-w-2xl">
+          <StationRowDemo />
+        </div>
+      </>
+    ),
+  },
+  {
+    id: "tile-grid",
+    label: "Tile grid",
+    node: (
+      <>
+        <SectionHead title="Tile grid" />
+        <p className="text-body text-ink-2">
+          One auto-fill grid for every tile catalogue on the site: species, worlds, and any future tile list. `min`
+          sets the tile's minimum width (default 10.5rem); the phone layout is two-up.
+        </p>
+        <TileGrid className="mt-6">
+          {SPECIES_ROWS.map((s) => (
+            <Tile key={s.id} className={`el-${s.element}`}>
+              <TileArt />
+              <TileMeta>
+                <span className="type-subhead block text-base">{s.name}</span>
+                <span className="type-data mt-1 block text-small text-ink-3">{s.world}</span>
+              </TileMeta>
+            </Tile>
+          ))}
+        </TileGrid>
       </>
     ),
   },

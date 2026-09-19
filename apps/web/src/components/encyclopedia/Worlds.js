@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router';
 import * as lore from '../../lore';
 import planetArtwork from '@xalians/content/planetArtwork.json';
-import { Tile, TileArt, TileMeta } from '@/components/system/record';
+import { Tile, TileArt, TileMeta, TileGrid } from '@/components/system/record';
 import { usePageTitle } from '@/components/system/head';
 import { Badge } from '@/components/ui/badge';
 
@@ -24,7 +24,7 @@ export default function Worlds() {
     const worlds = lore.getWorlds();
 
     return (
-        <div className="grid grid-cols-2 gap-3 gap-y-4 sm:grid-cols-4 sm:gap-4 sm:gap-y-5 lg:grid-cols-7">
+        <TileGrid>
             {worlds.map((world) => (
                 <Tile as={Link} key={world.key} to={lore.routeFor('world', world.key)} className={`el-${world.element}`}>
                     <TileArt>
@@ -49,6 +49,6 @@ export default function Worlds() {
                     </TileMeta>
                 </Tile>
             ))}
-        </div>
+        </TileGrid>
     );
 }

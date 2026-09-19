@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { NavLink, Link, useLocation } from 'react-router';
+import { Link, useLocation } from 'react-router';
 import * as lore from '../../lore';
 import { isRead } from './trail';
 import LoreSearch from './LoreSearch';
@@ -8,7 +8,10 @@ import TrailStrip from './TrailStrip';
 import BackToTop from './BackToTop';
 import { Shell, Masthead } from '@/components/system/masthead';
 import { Badge } from '@/components/ui/badge';
-import { tabTriggerClass } from '@/components/ui/tabs';
+import { Station, StationRow } from '@/components/system/station-row';
+import {
+    Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbLink, BreadcrumbPage, BreadcrumbSeparator,
+} from '@/components/ui/breadcrumb';
 
 function sectionSubtitle(to) {
     switch (to) {
@@ -79,13 +82,13 @@ function resolveMasthead(pathname) {
         }
         const part = lore.getStoryPart(key);
         if (!part) {
-            return { kicker: 'The story', title: 'Not found', back: { label: 'Back to The Story', to: '/encyclopedia/story' } };
+            return { kicker: 'The story', title: 'Not found' };
         }
         return {
             kicker: 'The story',
             title: part.era.name,
             subtitle: `Part ${part.order} of ${lore.getStory().parts.length}`,
-            back: { label: 'Back to The Story', to: '/encyclopedia/story' },
+            crumb: { section: 'The Story', sectionTo: '/encyclopedia/story', title: part.era.name },
         };
     }
 
@@ -95,14 +98,14 @@ function resolveMasthead(pathname) {
         }
         const world = lore.getWorld(key);
         if (!world) {
-            return { kicker: 'World record', title: 'Not found', back: { label: 'Back to Worlds', to: '/encyclopedia/worlds' } };
+            return { kicker: 'World record', title: 'Not found' };
         }
         return {
             kicker: 'World record',
             title: world.name,
             subtitle: pronunciationSubtitle((lore.getEntry(world.key) || {}).pronunciation),
             chips: [elementChip('el', world.element)],
-            back: { label: 'Back to Worlds', to: '/encyclopedia/worlds' },
+            crumb: { section: 'Worlds', sectionTo: '/encyclopedia/worlds', title: world.name },
         };
     }
 
@@ -112,7 +115,7 @@ function resolveMasthead(pathname) {
         }
         const view = lore.getSpecies(key);
         if (!view) {
-            return { kicker: 'Species record', title: 'Not found', back: { label: 'Back to Bestiary', to: '/encyclopedia/species' } };
+            return { kicker: 'Species record', title: 'Not found' };
         }
         const worldName = view.planet ? view.planet.name : view.homePlanet;
         return {
@@ -124,7 +127,7 @@ function resolveMasthead(pathname) {
                 { key: 'world', label: worldName, to: lore.routeFor('world', view.homePlanet), className: `el-${view.element}`, outline: true },
             ],
             badge: reviewedBadge('species', key),
-            back: { label: 'Back to Bestiary', to: '/encyclopedia/species' },
+            crumb: { section: 'Bestiary', sectionTo: '/encyclopedia/species', title: view.name },
         };
     }
 
@@ -138,7 +141,7 @@ function resolveMasthead(pathname) {
         }
         const entry = lore.getEntry(key);
         if (!entry) {
-            return { kicker: 'Index', title: 'Not found', back: { label: 'Back to Index', to: '/encyclopedia/index' } };
+            return { kicker: 'Index', title: 'Not found' };
         }
         const era = entry.category === 'history' ? lore.getEraForEntry(key) : null;
         const chips = [];
@@ -150,7 +153,7 @@ function resolveMasthead(pathname) {
             subtitle: pronunciationSubtitle(entry.pronunciation),
             chips,
             badge: reviewedBadge('entry', key),
-            back: { label: 'Back to Index', to: '/encyclopedia/index' },
+            crumb: { section: 'Index', sectionTo: '/encyclopedia/index', title: entry.title },
         };
     }
 
@@ -165,12 +168,38 @@ function MastheadChip({ chip }) {
     return <span className={chip.className}>{badge}</span>;
 }
 
+/** Encyclopedia / <Section> / <Record>, shown above the masthead on record routes only. */
+function EncyclopediaBreadcrumb({ crumb }) {
+    if (!crumb) return null;
+    return (
+        <Breadcrumb className="pt-6">
+            <BreadcrumbList>
+                <BreadcrumbItem>
+                    <BreadcrumbLink asChild>
+                        <Link to="/encyclopedia">Encyclopedia</Link>
+                    </BreadcrumbLink>
+                </BreadcrumbItem>
+                <BreadcrumbSeparator />
+                <BreadcrumbItem>
+                    <BreadcrumbLink asChild>
+                        <Link to={crumb.sectionTo}>{crumb.section}</Link>
+                    </BreadcrumbLink>
+                </BreadcrumbItem>
+                <BreadcrumbSeparator />
+                <BreadcrumbItem>
+                    <BreadcrumbPage>{crumb.title}</BreadcrumbPage>
+                </BreadcrumbItem>
+            </BreadcrumbList>
+        </Breadcrumb>
+    );
+}
+
 /**
  * Core frame (docs/DESIGN_SYSTEM.md section 2): navbar (rendered by the
- * page), then Masthead -- kicker, title, chips and subtitle resolved from
- * the address by resolveMasthead, search on the right -- then section
- * navigation as router tabs, with a "Back to <section>" link at the tabs
- * row's right end on a record page. No forward action lives here; the
+ * page), a breadcrumb above the masthead on record routes only, then
+ * Masthead -- kicker, title, chips and subtitle resolved from the address by
+ * resolveMasthead, search on the right on every route -- then section
+ * navigation as a station row. No forward action lives here; the
  * Encyclopedia is reference, not a workflow.
  */
 export default function EncyclopediaShell({ children }) {
@@ -183,13 +212,11 @@ export default function EncyclopediaShell({ children }) {
     })();
 
     const chips = masthead.chips || [];
-    // The Index page runs its own search box (tied to its category/alphabet
-    // filters); the masthead search would be a second search field on the
-    // same screen, so it steps aside there rather than duplicating it.
-    const hideAsideSearch = location.pathname === '/encyclopedia/index';
 
     return (
         <Shell className="overflow-x-clip">
+            <EncyclopediaBreadcrumb crumb={masthead.crumb} />
+
             <Masthead
                 kicker={masthead.kicker}
                 title={masthead.title}
@@ -198,30 +225,20 @@ export default function EncyclopediaShell({ children }) {
                     {masthead.badge}
                 </>}
                 subtitle={masthead.subtitle}
-                aside={!hideAsideSearch ? <LoreSearch key={location.pathname} /> : null}
+                aside={<LoreSearch key={location.pathname} />}
             />
 
-            <nav
-                className="mb-5 flex flex-wrap gap-0.5 max-sm:flex-nowrap max-sm:overflow-x-auto max-sm:[mask-image:linear-gradient(to_right,black_calc(100%-40px),transparent)]"
-                aria-label="Encyclopedia sections"
-            >
+            <StationRow value={activeSection ? activeSection.to : null} onChange={() => {}} aria-label="Encyclopedia sections" className="mb-5">
                 {SECTIONS.map((s) => (
-                    <NavLink
+                    <Station
                         key={s.to}
                         to={s.to}
-                        end={s.exact}
-                        className={tabTriggerClass}
-                        aria-current={s === activeSection ? 'page' : undefined}
+                        active={s === activeSection}
                     >
                         {s.label}
-                    </NavLink>
+                    </Station>
                 ))}
-                {masthead.back && (
-                    <Link to={masthead.back.to} className="ml-auto self-center whitespace-nowrap text-ink underline decoration-ink-3 underline-offset-4 hover:decoration-ink max-sm:hidden">
-                        &laquo; {masthead.back.label}
-                    </Link>
-                )}
-            </nav>
+            </StationRow>
 
             <div className="min-h-[40vh]">{children}</div>
 
