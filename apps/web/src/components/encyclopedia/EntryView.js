@@ -165,6 +165,14 @@ export default function EntryView() {
                 </div>
 
                 <div className="flex min-w-0 flex-col gap-8">
+                    {entry.article && entry.article.length > 0 && (
+                        <section className="flex flex-col gap-4">
+                            {entry.article.map((paragraph, i) => (
+                                <Prose key={i} text={paragraph} except={key} />
+                            ))}
+                        </section>
+                    )}
+
                     {story.length > 0 && (
                         <section>
                             <SectionHead title="In the Story" />

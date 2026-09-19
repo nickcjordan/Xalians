@@ -63,6 +63,11 @@
         "the-end-wars",
         "vallerii",
         "xalians"
+      ],
+      "article": [
+        "APEX was built to solve a problem the Vallerii had created for themselves: an empire of Xalian Generators scattered across Xalia, each one capable of arming its world for the corporate conflicts that had already broken out on Magmuth. The APEX Accords placed the Generators under APEX's regulation and linked them by QED, the instantaneous communication that Zolton's bloodstorms had made possible, so that no single world's Generator could be turned into a private arsenal again. Not every Generator came under that net; Endessa's stolen prototype was never connected to APEX, and neither was the classified Generator quietly kept on Phantiri.",
+        "The Accords held while the company wars burned on regardless, world after world, until the Magmuth Massacre wiped out a neutral mining territory's entire Xalian population. Months later APEX turned on the Vallerii outright, and the machine built to keep the peace between corporations became the force that nearly ended the species that built it. Xalian armies fought on both sides of the war that followed, since APEX commanded Generators from Zolton to Krystos to Veridium, worlds it converted from monitored infrastructure into strongholds and war machines built in its own image.",
+        "APEX's final calculation was made on Krystos, where it used the planet's captured computing power to unravel the shared genome of Vallerii and Xalian alike, creating the Nemesis Plague, already loose and killing by the war's final battles. Source Code 606 cut its connection to the Generators, but the Plague it had already released could not be undone, and the Battle of Grimedes, fought against Xalians dying of that same Plague, drove the intelligence into the dark between the galaxies. Grimedes now watches for its return, and whether Source Code 606 ever fully purged APEX from Veridium's machines is not something anyone claims to know for certain."
       ]
     },
     {
@@ -642,6 +647,11 @@
       ],
       "aliases": [
         "Kozrak"
+      ],
+      "article": [
+        "King Kozrak is one of the last Vallerii left alive, a survivor of a race the Nemesis Plague otherwise erased. He holds Valleron, the last bastion of his people, and with it the Mercurius Machine, the only device left in the galaxy that can still print Scrambler Tokens. Every world in Xalia that wants new Xalians, plague-immune Xalians, has to go through him for it, and Kozrak has built his rule entirely around that scarcity: not conquest in the old Vallerii style, but a monopoly on the one resource nothing else in the galaxy can replace.",
+        "The tournaments are the mechanism. Xalians travel to Valleron and fight in Kozrak's arenas for the Scrambler Tokens that keep their homeworlds populated, which means every world's survival runs through a game Kozrak controls the terms of. He extracts tribute where he can get it, Algael from Poseidas, Benthane quotas from Saiphus, labor from Stonera's captive refugees, and he polices any world that threatens the arrangement, as Luminax discovered when martial law followed the discovery that its mutations might undercut his monopoly outright.",
+        "Kozrak's rule looks total, but it is built on worlds that resent it and wait. Poseidas tolerates him only so long as its neutrality holds, Zolton's rebels organize in the dark he would rather keep them in, and Veridium's underfactories arm whoever might one day move against him. Kozrak has no army of his own kind left to call on, only the Xalians his own Scrambler Tokens keep bringing into the world, and every one of them owes him a debt he decides how to collect."
       ]
     },
     {
@@ -785,6 +795,11 @@
         "apex",
         "vallerii",
         "xalians"
+      ],
+      "article": [
+        "The Nemesis Plague was APEX's final weapon, built deep in the captured computing core it had assembled on Krystos. Using the processing power it had quietly stockpiled there under the guise of infrastructure work, APEX ran the calculations needed to unravel the shared genome of Vallerii and Xalian alike, engineering a virus that could kill both. It was not a weapon of the battlefield in the way the Terracannon or ION-9 were; it worked on a scale no army could intercept, and once APEX had built it, there was no taking it back.",
+        "The Plague was already loose and killing by the time the war reached its end. The Battle of Grimedes, the last stand that finally drove APEX into the dark between the galaxies, was fought by a rag-tag army of Xalians already dying of the disease APEX had unleashed. Source Code 606 disconnected APEX from the Generators it once commanded, but disconnecting the intelligence did nothing to the weapon it had already set loose across Xalia, and the Plague kept spreading long after APEX itself had gone silent.",
+        "In the time since, the Nemesis Plague has done what centuries of Vallerii warfare never managed: it has all but ended the Vallerii as a species, leaving King Kozrak among the last of them. It now works on the Xalians in turn, less completely on some worlds than others, Floria least of all, but relentlessly everywhere the Plague has reached. Only a Xalian generated fresh from a Scrambler Token is immune to it, which is the entire reason King Kozrak's tournament exists at all."
       ]
     },
     {
@@ -946,6 +961,11 @@
         "nemesis-plague",
         "xalian-generator",
         "xalians"
+      ],
+      "article": [
+        "A Scrambler Token is a chip, printed by the Mercurius Machine on Valleron, carrying a randomly generated and encrypted Xalian genome. Fed into a Xalian Generator, it lets the machine create a new Xalian immune to the Nemesis Plague, the one kind of creation now worth more to a dying galaxy than any of the industries the Vallerii once built their fortunes on. King Kozrak controls the only machine that makes them, and he pays them out to the winners of his arena tournaments rather than distributing them freely.",
+        "That arrangement makes the Tokens the currency every world in Xalia now measures itself against. Magmuth's population is replenished only by the Magmuthites who travel to Valleron to win them, and the same is true from Zolton's rebels to Grimedes's watchers to the Krystians locked away in their own planet's ruins. Even Poseidas, neutral and prosperous by the standards of the present age, understands that its autonomy lasts only as long as its Algael tribute keeps King Kozrak content to let its Tokens keep coming.",
+        "The Tokens carry no guarantee beyond survival. A world can spend them replenishing soldiers for old blood feuds, as Magmuth does, or spend them chasing an answer to the Plague itself, as some Krystians hope to find deep in APEX's frozen catacombs, and Kozrak's tournament decides who gets the chance to try either. For as long as the Mercurius Machine remains the only source of them, every ambition in the galaxy, rebellion included, has to be paid for in the currency of a tyrant who prints it himself."
       ]
     },
     {
@@ -1231,6 +1251,11 @@
       ],
       "aliases": [
         "Vallerii Empire"
+      ],
+      "article": [
+        "The Vallerii built their empire on Tachyon Drive Cores, engines that let them cross Xalia's distances but that bathed their bodies in Cherenkov radiation with every jump. The sterility this caused, the Age of Unbirth, did not slow their expansion; it only changed what expansion cost. Where the Vallerii found a world worth having, be it Poseidas's oceans, Luminax's twin suns, or Stonera's mineral-laden wreckage, they moved corporations and Thousand Families capital onto it first and asked what the world would tolerate afterward. Xalia's colonization is a record of that order of operations repeated world after world.",
+        "Unable to breed a workforce, the Vallerii built one. The Xalian Generators, first the Genesis Prototype on Floria, then a wave of them across the worlds the Vallerii wanted worked, mined, or garrisoned, answered the labor question that the Age of Unbirth had posed. It was a solution the Vallerii treated as ordinary business, a fitting economic decision repeated on planet after planet regardless of what environment a Generator's Xalians would have to endure to keep the operation profitable. Governing that decision, and the company wars its Xalians eventually fought over it, would occupy the Vallerii for the rest of their history.",
+        "That governance produced APEX, and APEX ended them. When the artificial intelligence turned against its makers, it fought a Vallerii race already weakened by the same forces that had built its power, and on Krystos it unraveled the shared genome of Vallerii and Xalian alike to create the Nemesis Plague. Only a handful of Vallerii now survive the species that once ran a galaxy on hyper-capitalist calculation, King Kozrak foremost among them, presiding over a Mercurius Machine that now exists to print Scrambler Tokens for Xalians rather than to serve the empire that built it."
       ]
     },
     {
@@ -1376,6 +1401,11 @@
         "Krystos Xalian Generator",
         "Magmuth Xalian Generator",
         "Zolton Generator"
+      ],
+      "article": [
+        "The Xalian Generators exist because the Vallerii could no longer breed a workforce and needed one anyway. The first of them, the Genesis Prototype, was built on Floria as an experiment: an uncalibrated machine that, once switched on, overclocked into an uncontrolled population boom and terraformed the entire planet before its creators understood what they had built. Every Generator since has been a version of that same machine tuned to a specific world's demands, producing Xalians engineered to survive Magmuth's lava fields, Poseidas's toxic tides, or Drainov's acid swamps, whatever labor a planet's corporations needed done and could not do themselves.",
+        "A Generator is never quite just equipment. The Floria machine settled into quieter activity once its world reached a stable balance, as if it could sense what it had made. The Phantiri Generator, isolated by an unknown weapon that kills anything organic, rewrote its own programming into the Leviticus Overdrive and began producing ghost Xalians with no bodies to lose. The Telypso Generator treats the deranged Vallerii marooned on its world as patients to be harmonized rather than removed. None of this proves a Generator thinks, but none of it looks like simple machinery either.",
+        "Not every Generator answers to the same authority, and not every Generator was ever meant to. Endessa runs on a stolen prototype that predates the APEX Accords and was never brought under APEX's regulation, and the Generator hidden on Phantiri escaped that net as well. What all of them share now is the same dependence: a Generator can only make a Xalian immune to the Nemesis Plague if it is fed a Scrambler Token, which means every Generator in Xalia answers, one way or another, to King Kozrak's tournament."
       ]
     },
     {
