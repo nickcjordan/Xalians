@@ -334,6 +334,15 @@ export const DEFAULT_RULES: Rules = {
 	// Pass 8: the two rules read off the record (types.ts)
 	pinning: PINNING,
 	reachFirst: REACH_FIRST,
+	/*
+		Pass 9. The two numbers that set how many creatures can meet at a world. The game
+		offers WORLDS_PER_FRAME x FRAMES_PER_MATCH worlds and a budget of `sendable` sends,
+		so sends per world is the ratio that decides whether stacking is ever affordable.
+		Measured at the shipped settings it is 9.32 sends over 9 worlds, 1.04 per world,
+		which forces one creature against one at 62 percent of contested worlds.
+	*/
+	sendable: SENDABLE,
+	worldsPerFrame: WORLDS_PER_FRAME,
 };
 
 // merges a caller's partial rules over the defaults, so a batch only names what it moves
@@ -386,6 +395,9 @@ function normalizeRules(rules: RulesInput | null | undefined): Rules {
 		// Pass 8
 		pinning: r.pinning !== undefined ? !!r.pinning : DEFAULT_RULES.pinning,
 		reachFirst: r.reachFirst !== undefined ? !!r.reachFirst : DEFAULT_RULES.reachFirst,
+		// Pass 9
+		sendable: num(r.sendable, DEFAULT_RULES.sendable),
+		worldsPerFrame: num(r.worldsPerFrame, DEFAULT_RULES.worldsPerFrame),
 	};
 }
 
@@ -608,7 +620,8 @@ function withRecomputedHolds(state: MatchState): MatchState {
 // level, so a match that never trails plays exactly as it did before this lever shipped.
 function sendableCapFor(state: MatchState, player: Seat): number {
 	const bonus = (state.trailingBonus && state.trailingBonus[player]) || 0;
-	return SENDABLE + bonus;
+	// pass 9: the send budget is a lever, so the sends-per-world ratio can be swept
+	return rulesOf(state).sendable + bonus;
 }
 
 /*

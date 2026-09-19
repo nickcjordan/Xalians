@@ -375,6 +375,51 @@ By the standing rule that a rule whose removal changes nothing measurable is cos
 | 41 | Reach-first ordering ships OFF: it moves nothing measurable and changes nothing a player can see | 85% | this section |
 | 42 | The Clash gets its next dimension from crowding worlds, not from more rules inside a lone exchange | 70% (inference from the two negative results; untested) | this section |
 
+## Pass 9: the Clash's real ceiling was the send budget (2026-09-18)
+
+Three passes tried to make the Clash matter by changing what happens inside it, and all three hit the same wall: 62 percent of contested worlds were one creature against one, so there was usually nothing for a Clash rule to be about. Pass 9 measured the cause, and it is arithmetic rather than scoring.
+
+**The measurement.** A Proving offers nine worlds (three frames of three). At `SENDABLE` 10 the bot spent a mean of **9.31 sends**, which is **1.04 sends per world**. Stacking two creatures anywhere meant abandoning another world outright, so the bot almost never did it, and no rule inside the Clash could have changed that.
+
+It was never that stacking is bad. Measured at 600 matches on seed 7:
+
+| World | Win rate | n |
+|---|---|---|
+| one creature against one | 49.0% +/- 1.4 | 5146 |
+| **two against one** | **74.7% +/- 2.6** | 1094 |
+| three against one | 73.5% +/- 12.4 | 49 |
+
+The payoff for committing a second creature was always enormous. The budget simply could not pay for it.
+
+**The sweep.** The magnitude scale moves with the budget, because more creatures meeting means more attacks landing:
+
+| Setting | 1v1 share | Downs per match (3 seeds) | Flips (3 seeds) |
+|---|---|---|---|
+| sendable 10, scale 3.0 (pass 5) | 62.7% | 4.53 / 4.33 / 4.46 | 26.5 / 25.8 / 24.5% |
+| **sendable 11, scale 2.7 (shipped)** | **56.2%** | **4.85 / 4.64 / 4.80** | **26.1 / 26.9 / 24.5%** |
+| sendable 12, scale 2.8 | 44.5% | 5.61 / 5.42 / 5.62 (over band) | 25.8 / 26.9 / 25.7% |
+| sendable 12, scale 2.4 | 44.5% | 5.05 / 4.88 / 5.03 | 23.1 / 25.1 / 23.7% (under band) |
+
+12 crowds worlds far harder but cannot hold the downs band and the flip band together at any scale tried, because crowding a world makes any single exchange matter less to its total: the flip rate falls as the crowd rises. **11 is the setting where both bands hold on three seeds and the crowd still improves.**
+
+**The gain.** Comeback from a contested round 1 rose from 30.8 / 32.0 / 35.1 to **32.7 / 34.0 / 35.4 percent**, comfortably inside its band on all three seeds, and 1v1 worlds fell by six points.
+
+**The cost, recorded rather than hidden.** A bigger budget narrows the naive-policy margin. The pass-early policy sat 21.5 / 19.4 / 17.8 points under the proctor's mirror at `SENDABLE` 10 and sits **13.1 / 13.1 / 14.5** under it at 11. The eight-point bar still clears on every seed with room, but the direction is the one to watch: a budget generous enough that spending it all is nearly automatic would make the deploy decisions decorative. This is the reason 12 would need more than a downs fix before it could ship.
+
+**No UI change was needed.** The bench reads `sendableCap` off the public state, so the table now says "11 sends left" with eleven pips, verified by paint.
+
+| # | Assumption / Decision | Confidence | Supporting Evidence |
+|---|---|---|---|
+| 43 | `SENDABLE` is 11 and `MAGNITUDE_SCALE` is 2.7, as a pair: the send budget sets how many creatures can meet at a world and the scale keeps downs in band once they do | 85% (three-seed sweeps at 600 matches; both bands hold and comeback improves) | this section |
+| 44 | The sends-per-world ratio, not any rule inside the Clash, is what decides whether creatures meet. Nine worlds against a budget near nine sends forces one against one | 90% (1.04 sends per world at the old setting; a second creature takes a world from 49.0 to 74.7 percent) | this section |
+| 45 | The send budget is a rules lever (`sendable`), so the ratio can be swept without editing the interpretation layer | 90% | `expeditionRules.sendableCapFor` |
+| 46 | The naive-policy margin is the constraint on raising the budget further, not the downs band | 80% (pass-early closes from 21.5 to 13.1 points between 10 and 11) | this section |
+
+### Pass 9 open items
+
+- **1v1 is still 56 percent of contested worlds.** 12 sends would take it to 44.5 but costs the flip band and half the naive margin. The other half of the ratio is the frame: three worlds per round against three rounds. A narrower frame (two worlds per round) would raise sends-per-world without touching the budget, and `worldsPerFrame` is now a lever, but it moves the clinch and the whole match arc, so it is a design change rather than a tuning one.
+- The four borrowed effect kinds still read as plain attacks; pass 8 measured that giving them rules does not pay while worlds are thin, and worlds are now less thin, so this is worth re-testing after the next crowding move.
+
 ### Pass 8 open items
 
 - **Make creatures meet.** 62 percent of contested worlds are one against one, which is the ceiling every Clash rule has hit. The bot spreads because spreading is right under its own scoring; whether the rules should reward committing to a world (and how, without a gift) is the question.

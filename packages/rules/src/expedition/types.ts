@@ -103,6 +103,8 @@ export interface Rules {
 	stakeTiming: StakeTiming;
 	pinning: boolean;
 	reachFirst: boolean;
+	sendable: number;
+	worldsPerFrame: number;
 }
 
 /*
