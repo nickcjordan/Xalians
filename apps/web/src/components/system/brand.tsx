@@ -101,4 +101,7 @@ function BrandLockup({
   )
 }
 
-export { HelixMark, HelixSpinner, BrandLockup }
+// HelixPaths is exported so the home splash's intro animation can draw the
+// same geometry inside its own <svg> (it needs a decorative, untitled mark it
+// can animate) without duplicating the path data.
+export { HelixMark, HelixSpinner, BrandLockup, HelixPaths }
