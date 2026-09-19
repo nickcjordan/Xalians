@@ -308,6 +308,48 @@ So both gauges pass 5 recorded as regressions were measurement artifacts, and th
 | 32 | A gauge that compares two rates must be read against the interval of their difference. The trap flag is fixed accordingly | 95% (the old flag fired on about half of all runs by construction) | `expeditionValidation.ts` stake readings |
 | 33 | The comeback gauge is split at a deficit of three worlds: contested (the band applies) and swept (not safeguarded, by ruling) | 85% (29.1 +/- 1.4 against 8.0 +/- 1.8 pooled; the ruling predates this pass) | `expeditionValidation.SWEPT_ROUND_DEFICIT` |
 
+## Pass 7: the game reads the record as it is (2026-09-18)
+
+The brief's first open item, and the largest gap between what a creature is and what the game could see. Until this pass every question the game asked of a record's capabilities went through `historicalCategory`, which projects a schema 4 action back onto one of sixteen legacy action keys from its first effect and its delivery mode. That projection is lossy in a way the game then could not recover.
+
+**What was being thrown away**, measured over the seed-7 pool of 400 records and 1384 actions:
+
+| Effect kind | Actions | What the game did with it |
+|---|---|---|
+| harm | 771 | an attack (correct) |
+| restrain | 171 | became `snare`, read as plain damage |
+| protect | 140 | a shield (correct) |
+| displace | 128 | became `shove`, read as plain damage |
+| transfer | 84 | became `drain`, read as plain damage |
+| suppress | 49 | became `terrorize`, read as plain damage |
+| restore | 41 | a mend (correct) |
+
+**431 actions, 31 percent of the pool's repertoire, were read as something they are not.** `spatial.range` was not read at all, though 251 actions reach past contact. Area footprint was read only through the three legacy keys `burst`, `spray` and `cloud`, so an action with a real `spatial.area` but another key was silently a single-target strike.
+
+**What pass 7 built.** One module, `packages/rules/src/expedition/recordReading.ts`, is now the only place the game asks anything of a record's capabilities, so that when the platform-side redesign finishes, one file moves. It reads the record's own fields: the primary effect says what an action does, `spatial.area` whether it lands on one recipient or many, `spatial.range` how far it reaches, `delivery` how it gets there, `targeting.relation` whom it may touch. The three `historicalCategory` call sites in `creatureOnTable.ts` are gone, and the sweep test that used to ask whether an act's key was one of three now asks whether the record gave it an area.
+
+**Where each effect kind lands, and why.** harm, transfer, restrain, suppress and displace all read as attacks: at a sealed world with one Clash and no movement between worlds, restraining or pushing or draining a creature has no expression the table can distinguish from the harm it does in the exchange, and reading it as an attack is a true reading rather than a guess. protect reads as a shield, restore as a mend. Everything else is **unsupported by name**: enhance, reveal, status and remove have no table rule, so an action carrying one is dropped from the creature's acts and the dossier says so in words. A creature whose every action is unsupported is **not fieldable**: `send` refuses it and the bench says why, which is the ruling that a creature with a capability a game does not support is explicitly unavailable rather than misread.
+
+**On current content nothing is lost:** 400 records, **0 unfieldable creatures, 0 unsupported actions**. The path exists for the day a release produces an effect family this game has no rule for.
+
+**What changed on the table.** Reach is visible for the first time: 46.8 percent of creatures have a best action that reaches past contact (108 short, 79 medium). The role census moved because area is now read honestly rather than through three keys: sweeps 158 and strikes 110 against the old split, with shields 71 and bolsters 61. The dossier prints each act's real footprint under the role ("reaches every creature here, from where it stands"; "one creature, contact range").
+
+**Measured, three seeds, 200 matches.** The reading is a truthfulness change rather than a tuning one, and the gauges hold: downs per match 4.58 / 4.20 / 4.42 (band 3 to 5), resolution changes the leader at 27.6 / 24.8 / 25.2 percent (band 25 to 40, seed 13 marginally under), comeback from a contested round 1 at 33.6 / 35.3 / 28.7 percent. Every role stays inside the 40 to 60 keeper win band (shield 46.0, bolster 46.4, sweep 51.4, strike 52.3) despite the sweep population rising from 1407 to 2199 dealt.
+
+| # | Assumption / Decision | Confidence | Supporting Evidence |
+|---|---|---|---|
+| 34 | The game reads schema 4 directly through one adapter, `recordReading.ts`; `historicalCategory` is no longer called anywhere in the game | 90% (the projection mis-read 31 percent of the pool's actions) | `recordReading.ts`; `creatureOnTable.ts` |
+| 35 | restrain, displace, transfer and suppress read as attacks at a sealed world, since the table cannot distinguish them from the harm they do in the exchange. enhance, reveal, status and remove are unsupported by name | 75% (a true reading rather than a guess, but the weakest of the mappings; restrain is the first candidate for a rule of its own) | this section |
+| 36 | A creature with no action this table can express is not fieldable: `send` refuses it and the dossier says why, rather than giving it a silent minimum strike | 90% (Nick's ruling; 0 of 400 records are affected today) | `creatureOnTable.isFieldable`; `expeditionRules.send` |
+| 37 | An act sweeps because the record gives it an area footprint, not because its legacy key was burst, spray or cloud | 85% (roles stay on one bar after the census shift) | `creatureOnTable.blowActOf` |
+| 38 | Which attribute powers an attack is read from `delivery.mode` (contact is strength, everything else intelligence) rather than from a table of sixteen keys | 85% (pass 2's attribute jobs unchanged in effect, read from the record instead of a projection) | `recordReading.governingAttributeFor` |
+
+### Pass 7 open items
+
+- **Restrain, displace, transfer and suppress deserve rules of their own.** They read as attacks today, which is honest but flat: 432 actions carry them and none of them does anything a plain attack does not. Restrain is the most promising (a creature that cannot act this Clash) and transfer the second (the drain in the lever pool). This is where the Clash gets a second dimension.
+- **Reach is read but unused.** 46.8 percent of creatures reach past contact and nothing in the rules asks. A reach rule (who can strike whom at a crowded world, or who strikes first) is the other half of the same opportunity.
+- **Passives are read and reported but carry no rule.** 13 on 400 records, all protect, so the cost is near zero today.
+
 ### Pass 6 open items
 
 - Nothing about the stake. It works; the next comeback question is whether the game wants a SECOND chosen risk for variety, not whether this one is broken.

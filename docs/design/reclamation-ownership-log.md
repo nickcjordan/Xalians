@@ -2,7 +2,7 @@
 
 Status: the running state of the game under ownership (brief: `reclamation-ownership-brief.md`). This file is the resume point. Any reset reads this first and continues at the weakest thing named below, never from scratch. Each pass appends its own section; the standing state at the top is rewritten in place.
 
-## Standing state (after pass 6, 2026-09-18)
+## Standing state (after pass 7, 2026-09-18)
 
 ### Gauges, proctor mirror
 
@@ -10,39 +10,51 @@ Pass 6 changed no rule. It re-read two gauges with enough statistical power to s
 
 | Gauge | Band | Reading | Verdict |
 |---|---|---|---|
-| Resolution changes the leader at contested worlds | 25 to 40 | 25.6 / 27.6 / 25.4 (seeds 7, 13, 21) | met, pass 5 |
-| Downs per match | 3 to 5 | 4.25 / 4.44 / 4.16 | met, pass 5 |
+| Resolution changes the leader at contested worlds | 25 to 40 | 27.6 / 24.8 / 25.2 (seeds 7, 13, 21, after pass 7) | met, seed 13 marginally under |
+| Downs per match | 3 to 5 | 4.58 / 4.20 / 4.42 (after pass 7) | met |
 | **Comeback from a CONTESTED round 1** (trailing by one or two worlds) | 30 to 40 | **30.8 / 32.0 / 35.1**; pooled 29.1 +/- 1.4 | **met on three seeds** |
 | Comeback from a SWEPT round 1 (trailing by three) | not safeguarded, by ruling | 7 to 12 percent; pooled 8.0 +/- 1.8 | working as ruled |
 | Comeback, both populations averaged | (the old single gauge) | 25.9 / 27.1 / 30.7; pooled 25.2 +/- 1.2 | reported, superseded by the split |
 | **Stake: staked world against the staker's unstaked worlds** | variance-neutral | **-0.6 +/- 3.0 points** (pooled, n=1619) | **variance-neutral, as designed** |
 | Naive-policy regret (best naive against the mirror) | 8 or more points under | passEarly 25.5 against 50.0 | met with room |
 | Option spread (near-best per decision) | 3 to 5 | 2.85, dominant 32.5% | just under |
-| Every role inside 40 to 60 keeper win rate | 40 to 60 | shield 45.6, bolster 47.5, sweep 50.6, strike 52.7 | met |
+| Every role inside 40 to 60 keeper win rate | 40 to 60 | shield 46.0, bolster 46.4, sweep 51.4, strike 52.3 | met (pass 7 census) |
 
 **The lesson pass 6 paid for, and the rule that now applies to every gauge:** a gauge that compares two rates must be read against the interval of their difference, and a gauge that averages two populations must say which one it is about. The stake's trap flag compared two point estimates bare, so it fired on about half of all runs by construction, and the comeback gauge averaged a case the design protects with a case it deliberately abandons. Between them they cost three rules changes that measured nothing before the measurement was done properly. Before any future gauge is called a failure, pool it and put an interval on it.
 
-### What the game does not read of the record (inventory, pass 5)
+### What the game reads of the record (pass 7 onward)
 
-The game reads schema 4 through `packages/content/src/abilityCompatibility.ts`, which projects each action onto one of sixteen legacy keys. Measured over the seed-7 pool of 400 records (32 species, release generation-0.5.0-4, schema 4.0.0):
+Since pass 7 the game reads schema 4 directly through **one adapter**, `packages/rules/src/expedition/recordReading.ts`. That file is the seam: every question the game asks of a record's capabilities is answered there and nowhere else, so when the platform-side redesign finishes, one file moves. `historicalCategory` is no longer called anywhere in the game.
 
-- **`historicalCategory` throws zero times** on the current content. The "cannot be fielded here" path the brief requires is therefore not yet exercised by real content, but it must exist before any new effect family ships.
-- **1384 actions carry seven effect kinds**: harm 771, restrain 171, protect 140, displace 128, transfer 84, suppress 49, restore 41. The game gives distinct meaning only to harm (attack), protect (shield) and restore (bolster). **Restrain, displace, transfer and suppress, 432 actions or 31% of the pool's repertoire, read as plain damage or as nothing.**
-- **`spatial.range` is entirely unread**: 883 actions are contact-only, 159 short, 92 medium, 250 self or none. Reach exists in the data already and is the second dimension the brief asks about.
-- **Area footprint is read only as the sweep or strike split**: 226 radial-medium, 124 sweep-small, 85 cone-medium, 949 none. Shape and extent are discarded.
-- **Passives are ignored**, but there are only 13 on 400 records, all `protect`, so the cost of ignoring them today is near zero. This is the cheapest of the record-reading gaps and the last to matter.
-- **Delivery mode is read only through the legacy key**: contact 883, field 155, stream 113, signal 74, pulse 71, projectile 64, self 24.
+What it reads, and where each effect kind lands (measured over the seed-7 pool, 400 records, 1384 actions):
+
+| Effect kind | Actions | Table reading |
+|---|---|---|
+| harm | 771 | attack; an area footprint makes it a sweep |
+| restrain | 171 | attack (no separate rule yet) |
+| protect | 140 | shield |
+| displace | 128 | attack (no separate rule yet) |
+| transfer | 84 | attack (no separate rule yet) |
+| suppress | 49 | attack (no separate rule yet) |
+| restore | 41 | mend |
+| enhance, reveal, status, remove | 0 today | **unsupported by name**; the act is dropped and the dossier says why |
+
+- **`spatial.range` is read**: 46.8 percent of creatures have a best action reaching past contact (212 contact, 108 short, 79 medium). Nothing in the rules uses the distance yet; that is open item 1.
+- **`spatial.area` decides strike against sweep**, so an act sweeps because the record gave it an area, not because its legacy key was one of three.
+- **`delivery.mode` decides which attribute powers an attack** (contact is strength, everything else intelligence), which is pass 2's attribute jobs read from the record instead of inferred.
+- **Unavailability is real**: a creature with no usable action cannot be sent and the dossier prints the reason. On current content **0 of 400 records are unfieldable and 0 actions are unsupported**, so the path costs nothing today and is the safety for the day a release produces an effect family this game has no rule for.
+- **Passives are read and reported but carry no table rule.** 13 on 400 records, all `protect`.
 
 ### Open items, ranked (resume here)
 
-1. **Read the record as it is now.** The single largest gap between what a creature is and what the game sees. Replace the legacy projection at its three call sites in `creatureOnTable.ts` with a reading of effects, range and area; give restrain, displace, transfer and suppress one legible table meaning each, or mark the creature unavailable. Reach is the most promising unused signal, and now that the Clash decides worlds a second dimension on it has something to bite on. The inventory is below.
-2. **Intelligence and charisma read negative within presences** (charisma -15.2, intelligence -9.7). Lever: what `rateForDraft` and the bot's role value count. Read it pooled before treating it as a failure.
-3. **Fire is a dead element and dromeus a dead species** in the draft. Same caution: confirm at pooled batch size first.
+1. **Give the four borrowed effect kinds rules of their own, and use reach.** These are one opportunity. 432 actions carry restrain, displace, transfer or suppress and all four read as plain attacks, which is honest but flat; 46.8 percent of creatures reach past contact and no rule asks. Restrain (a creature that cannot act this Clash) and transfer (the lever pool's drain) are the two most promising, and reach is the natural second dimension the brief asked about. This is where the Clash stops being one number per creature.
+2. **Intelligence and charisma read negative within presences** (charisma -15.2, intelligence -9.7). Lever: what `rateForDraft` and the bot's role value count. **Read it pooled before treating it as a failure** (pass 6's lesson).
+3. **Fire is a dead element and dromeus a dead species** in the draft. Same caution.
 4. **Bolster recovery and the instinct lanes still move nothing under ablation.** Each earns its place or goes.
-5. **No human has played a full Proving** under the current rules. Notes and telemetry hooks exist, are verified rendering at both widths, and are empty.
+5. **No human has played a full Proving** under the current rules. Notes and telemetry hooks exist, verified rendering at both widths, and are empty.
 6. **Hot-seat** is unbuilt and is the cheapest validation instrument the game can have.
 7. **Affordance and comprehension are unmeasured.** The prediction-protocol harness does not exist.
-8. **A second chosen risk**, for variety rather than repair: the stake works, but it is the only risk on the table. Only worth doing after the record reading, which may supply one naturally.
+8. **A second chosen risk**, for variety rather than repair. Open item 1 may supply one naturally.
 
 ### Findings from the headless check (pass 5, recorded not fixed)
 
@@ -54,7 +66,7 @@ The check plays a whole Proving in both views at 1440 and 390 and all four confi
 
 ### Verification run each pass
 
-1. `npm test` at the root (1826 tests across the three workspaces).
+1. `npm test` at the root (1911 tests across the three workspaces).
 2. `npm run typecheck -w packages/rules`.
 3. The validation tool on seeds 7, 13 and 21.
 4. `npm run build -w apps/web` (enforces the bundle budgets).
@@ -100,3 +112,17 @@ The single place the game's reading of a creature is decided:
 **Shipped:** the two gauge fixes, `SWEPT_ROUND_DEFICIT` as the split, and both failed levers kept at settings that change nothing with their measurements recorded so they are not rebuilt. No rule of the game moved.
 
 **Verified:** 1826 tests green across three workspaces (one new behavioral test for `stakeTiming`, one extended for its validation), typecheck clean, build inside budgets, validation report regenerated, and the headless Proving green in all four configurations (both views at 1440 and 390, zero console errors, no overflow).
+
+### Pass 7 (2026-09-18): the game reads the record as it is
+
+**Weakest thing:** the game read every capability through `historicalCategory`, a projection onto sixteen legacy action keys that mis-read 431 of the pool's 1384 actions (31 percent) and discarded `spatial.range` entirely.
+
+**Built:** `packages/rules/src/expedition/recordReading.ts`, the one seam. Primary effect says what an action does, `spatial.area` whether it lands on one recipient or many, `spatial.range` how far it reaches, `delivery` which attribute powers it, `targeting.relation` whom it may touch. All three `historicalCategory` call sites in `creatureOnTable.ts` are gone.
+
+**The ruling implemented:** an effect kind this table has no rule for makes its action unusable BY NAME, and a creature with no usable action is not fieldable: `send` refuses it and the dossier prints the reason. Never a silent strike. On current content 0 of 400 records are unfieldable and 0 actions unsupported, so it costs nothing today and is the safety for tomorrow.
+
+**What the table gained:** reach is visible for the first time (46.8 percent of creatures reach past contact), area is read honestly rather than through three legacy keys (sweeps 158, strikes 110, shields 71, bolsters 61), and the dossier prints each act's real footprint under the role.
+
+**Measured:** a truthfulness change, not a tuning one, and the gauges hold. Downs 4.58 / 4.20 / 4.42, flips 27.6 / 24.8 / 25.2 percent, contested comeback 33.6 / 35.3 / 28.7 percent, every role inside the 40 to 60 band despite the sweep population rising from 1407 to 2199 dealt.
+
+**Verified:** 1911 tests green across three workspaces (15 new, pinning the reading itself so a platform-side field change fails in one place), typecheck clean, build inside budgets, validation report regenerated, headless Proving green in all four configurations, and the dossier's new rows checked by paint (which caught one contradictory sentence, "reaches every creature here, upon itself", fixed to "from where it stands").
