@@ -7,6 +7,13 @@
  *   npm run wt              # report only, deletes nothing (the default)
  *   npm run wt -- --prune   # report, then say what --yes would delete
  *   npm run wt -- --prune --yes
+ *   npm run wt -- new <slug> [branch]   # cut a fresh worktree off origin/main
+ *
+ * `new` is the only sanctioned way to start work in this repo. This checkout
+ * stays on main and is reference only; every change is made in a sibling
+ * worktree cut from a just-fetched origin/main. A 769-commit-stale checkout
+ * once made a whole verified redesign worthless, which is why this is a
+ * command and not a habit.
  *
  * A directory that a stale dev server is still running out of cannot be
  * deleted on Windows, which is what actually blocked this cleanup for days.
@@ -43,7 +50,100 @@ const KEEP = new Set([
 /** A tree bigger than this is never deleted without --force. */
 const MAX_DELETE_BYTES = 2 * 1024 * 1024 * 1024;
 
-const args = new Set(process.argv.slice(2));
+const argv = process.argv.slice(2);
+
+/**
+ * `npm run wt -- new <slug> [branch]`: cut a fresh worktree for new work.
+ *
+ * Always branches from a just-fetched origin/main, never from whatever this
+ * checkout happens to be sitting on, and always lands as a sibling directory
+ * rather than inside the repo: a worktree nested under the repo shows up as
+ * untracked in every future status, and its deep node_modules paths defeat
+ * Windows deletion.
+ */
+function createWorktree(rawArgv) {
+	const rest = rawArgv.filter((a) => !a.startsWith("--"));
+	const slug = rest[1];
+	if (!slug) {
+		console.error("Usage: npm run wt -- new <slug> [branch-name]");
+		process.exit(1);
+	}
+	if (!/^[a-z0-9][a-z0-9._-]*$/i.test(slug)) {
+		console.error(`Refusing: "${slug}" is not a safe directory suffix.`);
+		process.exit(1);
+	}
+	const branch = rest[2] || slug;
+
+	const root = path.resolve(
+		execFileSync("git", ["rev-parse", "--show-toplevel"], { encoding: "utf8" }).trim()
+	);
+	const git = (...a) => execFileSync("git", a, { cwd: root, encoding: "utf8" }).trim();
+
+	// The reference checkout must not be carrying work of its own.
+	const dirty = git("status", "--porcelain");
+	if (dirty) {
+		console.error(
+			"Refusing: this checkout has uncommitted changes.\n" +
+				dirty.split("\n").slice(0, 10).join("\n") +
+				"\n\nThis checkout is reference only. Commit or discard, then retry."
+		);
+		process.exit(1);
+	}
+
+	const dest = path.join(path.dirname(root), `${path.basename(root).toLowerCase()}-${slug}`);
+	if (fs.existsSync(dest)) {
+		console.error(`Refusing: ${dest} already exists.`);
+		process.exit(1);
+	}
+
+	// Freshness is the whole point: fetch, then branch from the remote ref
+	// itself so a stale local main cannot be inherited by accident.
+	console.log("Fetching origin...");
+	execFileSync("git", ["fetch", "origin", "--prune"], { cwd: root, stdio: "inherit" });
+
+	const base = "origin/main";
+	const baseSha = git("rev-parse", "--short", base);
+
+	const exists = (ref) => {
+		try {
+			git("rev-parse", "--verify", "--quiet", ref);
+			return true;
+		} catch {
+			return false;
+		}
+	};
+	if (exists(`refs/heads/${branch}`)) {
+		console.error(
+			`Refusing: branch "${branch}" already exists locally.` +
+				" Pick another name, or check out the worktree that holds it."
+		);
+		process.exit(1);
+	}
+
+	execFileSync("git", ["worktree", "add", "-b", branch, dest, base], {
+		cwd: root,
+		stdio: "inherit",
+	});
+
+	// Keep the reference checkout level with the remote so a plain `git log`
+	// here is never misleading.
+	try {
+		execFileSync("git", ["merge", "--ff-only", base], { cwd: root, stdio: "ignore" });
+	} catch {
+		/* a diverged reference checkout is reported by the guard hook, not here */
+	}
+
+	console.log(`
+Worktree ready: ${dest}`);
+	console.log(`Branch "${branch}" off ${base} (${baseSha}).`);
+	console.log(`
+  cd ${dest}`);
+	process.exit(0);
+}
+
+if (argv[0] === "new") createWorktree(argv);
+
+const args = new Set(argv);
 const PRUNE = args.has("--prune");
 const YES = args.has("--yes");
 const FORCE = args.has("--force");
