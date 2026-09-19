@@ -12,7 +12,7 @@ import {
 	BOLSTER_FLOOR, ARMORED_REDUCTION, SHIELD_CAP, WILLFUL_THRESHOLD, KEEN_INSTINCT,
 	DULL_INSTINCT, SWIFT_SPEED, BOLSTER_RECOVERY,
 	HIDDEN_SEND_COST, HIDDEN_POWER, STAKE_ENABLED,
-	STAKE_SITE_VALUE, STAKE_BOTH_VALUE, DRAFT_POOL_SIZE, DRAFT_DISTINCT_SPECIES,
+	STAKE_SITE_VALUE, STAKE_BOTH_VALUE, DRAFT_POOL_SIZE, DRAFT_DISTINCT_SPECIES, CLAIM_COUNTING,
 } from '../expeditionInterpretation.ts';
 import type { MatchState, World } from '../types.ts';
 
@@ -301,11 +301,11 @@ describe('Deploy phase: send/pass/alternation', () => {
 describe('the round: Deploy, Resolve, Judge', () => {
 	// two creatures, one per side, at one site, then both handlers pass. The second pass
 	// resolves and judges (docs/design/reclamation-base-redesign.md assumption 1).
-	function oneWorldRound(recordA: any, recordB: any, seed: any = 'round-seed', siteIndex: any = 0) {
+	function oneWorldRound(recordA: any, recordB: any, seed: any = 'round-seed', siteIndex: any = 0, rules: any = undefined) {
 		const worlds = makeWorlds();
 		const rosterA = makeRoster('A').map((r: any, i: any) => (i === 0 ? { ...recordA, id: 'A_0' } : r));
 		const rosterB = makeRoster('B').map((r: any, i: any) => (i === 0 ? { ...recordB, id: 'B_0' } : r));
-		let state = createMatch({ rosterA, rosterB, worlds, seed });
+		let state = createMatch({ rosterA, rosterB, worlds, seed, rules });
 		const frame = currentFrame(state);
 		state = send(state, state.turn!, state.turn! === 'A' ? 'A_0' : 'B_0', frame.sites[siteIndex].id)!;
 		state = send(state, state.turn!, state.turn! === 'A' ? 'A_0' : 'B_0', frame.sites[siteIndex].id)!;
@@ -332,7 +332,11 @@ describe('the round: Deploy, Resolve, Judge', () => {
 			abilities: [{ name: 'Tap', signature: false, instrument: 'fists', action: 'strike', medium: 'fire', intensity: 5 }],
 			attributes: { strength: 1, vitality: 99, endurance: 99, agility: 50, reflex: 50, intelligence: 50, willpower: 50, instinct: 50, charisma: 50, resilience: 99 },
 		});
-		const state = oneWorldRound(striker, tanky, 'round-subtract');
+		// the rule under test is "hit but standing is hurt", so the magnitude scale is
+		// pinned here rather than inherited: pass 5 raised the shipped scale to 3.0, at
+		// which this striker downs even a 99-vitality target in one blow and the test would
+		// be measuring the constant instead of the rule.
+		const state = oneWorldRound(striker, tanky, 'round-subtract', 0, { magnitudeScale: 1.1 });
 		const blow = (state.resolutionLog as any[]).find((e: any) => e.type === 'attack' && e.recordId === 'A_0');
 		expect(blow).toBeTruthy();
 		expect(blow.outcome).toBe('hurt');
@@ -967,7 +971,10 @@ describe('judging and match end', () => {
 		const worlds = makeWorlds();
 		const rosterA = makeRoster('A', () => strongA());
 		const rosterB = makeRoster('B', () => weakB());
-		let state = createMatch({ rosterA, rosterB, worlds, seed: 'loki-cost-seed' });
+		// the Loki line pays out on a creature that LOST its world and is still standing, so
+		// the magnitude scale is pinned: at pass 5's shipped 3.0 this weak creature is
+		// downed instead of returned, and the test would measure the constant, not the rule.
+		let state = createMatch({ rosterA, rosterB, worlds, seed: 'loki-cost-seed', rules: { magnitudeScale: 1.1 } });
 		let frame = currentFrame(state);
 		const siteId = frame.sites[0].id;
 		const idA = state.players.A.roster[0].id;
@@ -1013,7 +1020,9 @@ describe('judging and match end', () => {
 		const worlds = makeWorlds();
 		const rosterA = makeRoster('A', () => strongA());
 		const rosterB = makeRoster('B', () => weakB());
-		let state = createMatch({ rosterA, rosterB, worlds, seed: 'loki-public-seed' });
+		// needs a creature that lost its world and is still standing to have a returned id
+		// to expose at all, so the magnitude scale is pinned as in the Loki cost test above.
+		let state = createMatch({ rosterA, rosterB, worlds, seed: 'loki-public-seed', rules: { magnitudeScale: 1.1 } });
 		const frame = currentFrame(state);
 		const siteId = frame.sites[0].id;
 		const idA = state.players.A.roster[0].id;
@@ -1271,6 +1280,8 @@ describe('rules ablation switches', () => {
 			stake: STAKE_ENABLED,
 			draftPoolSize: DRAFT_POOL_SIZE,
 			draftDistinctSpecies: DRAFT_DISTINCT_SPECIES,
+			// Pass 5: how the Ruling counts a standing creature
+			claimCounting: CLAIM_COUNTING,
 		});
 		// assumption 20 cut the catch-up send, so the shipped default is zero
 		expect(state.rules.trailingBonus).toBe(0);
@@ -1282,6 +1293,16 @@ describe('rules ablation switches', () => {
 		expect(state.rules.hiddenSends).toBe(false);
 		expect(state.rules.lokiLine).toBe(true);
 		expect(state.rules.trailingBonus).toBe(ROSTER_TRAILING_BONUS);
+	});
+
+	// Pass 5: claimCounting decides what a STANDING creature contributes at the Ruling.
+	// Shipped setting is 'current' (the hold it has left); 'standing' counts the whole claim
+	// it arrived with, so damage short of a down moves nothing.
+	it('claimCounting accepts only its two settings and defaults to current', () => {
+		expect(matchWithRules({ claimCounting: 'standing' }).rules.claimCounting).toBe('standing');
+		expect(matchWithRules({ claimCounting: 'current' }).rules.claimCounting).toBe('current');
+		// anything else falls back rather than corrupting the Ruling's arithmetic
+		expect(matchWithRules({ claimCounting: 'nonsense' } as any).rules.claimCounting).toBe(CLAIM_COUNTING);
 	});
 
 	it('exposes the rules object through getPublicState so the bot can respect it', () => {
@@ -1493,6 +1514,32 @@ describe('Pass 2: the attribute rules', () => {
 		expect(hurtAnswer.power).toBeCloseTo(Math.round(fullAnswer.power * factor * 10) / 10, 5);
 	});
 
+	// Pass 5. Under the shipped 'current' counting a creature contributes the hold it has
+	// left, so damage short of a down still moves the world; under 'standing' it contributes
+	// the whole claim it arrived with until it is downed. The Ruling's own arithmetic is the
+	// only thing that differs, so the same deployment is judged both ways.
+	test('claimCounting standing ignores damage short of a down at the Ruling (pass 5)', () => {
+		const seed = 'claim-counting-seed';
+		const current = deployAt([slowStriker], [midStriker], seed, { claimCounting: 'current', magnitudeScale: 1.1 });
+		const standing = deployAt([slowStriker], [midStriker], seed, { claimCounting: 'standing', magnitudeScale: 1.1 });
+
+		const resultOf = (state: any) => {
+			const judged = (state.resolutionLog as any[]).find((e: any) => e.type === 'judge');
+			return Object.values(judged.siteResults).find((r: any) => r.entries.A.length > 0 || r.entries.B.length > 0) as any;
+		};
+		const c = resultOf(current);
+		const s = resultOf(standing);
+
+		// both creatures took a blow and both survived it at this scale, so 'current' counts
+		// less than the claim on each side and 'standing' counts the claim itself
+		const claimA = c.entries.A.reduce((sum: number, e: any) => sum + e.fullHold, 0);
+		const claimB = c.entries.B.reduce((sum: number, e: any) => sum + e.fullHold, 0);
+		expect(c.holdA).toBeLessThan(claimA);
+		expect(c.holdB).toBeLessThan(claimB);
+		expect(s.holdA).toBeCloseTo(claimA, 5);
+		expect(s.holdB).toBeCloseTo(claimB, 5);
+	});
+
 	test('a bolster recovers half the damage its allies took, logged before the judge (assumption 19)', () => {
 		const bolsterer = (id: any) => makeRecord(id, {
 			archetype: { key: 'sage', favors: [] },
@@ -1543,9 +1590,12 @@ describe('Pass 2: the attribute rules', () => {
 		const tough = (id: any) => midStriker(id, { attributes: { vitality: 99, endurance: 99, resilience: 99, agility: 10, reflex: 10 } });
 		const frail = (id: any) => midStriker(id, { attributes: { vitality: 1, endurance: 1, resilience: 1, agility: 10, reflex: 10 } });
 
+		// the lane only discriminates while there is an enemy this creature CANNOT down, so
+		// the magnitude scale is pinned: at pass 5's shipped 3.0 a strength-100 smash downs
+		// the 99-vitality target too and both candidates become downable.
 		const seed = 'keen-instinct-seed';
-		const on = deployAt([keen], [tough, frail], seed);
-		const off = deployAt([keen], [tough, frail], seed, { instinctLanes: false });
+		const on = deployAt([keen], [tough, frail], seed, { magnitudeScale: 1.1 });
+		const off = deployAt([keen], [tough, frail], seed, { instinctLanes: false, magnitudeScale: 1.1 });
 		expect(attacksOf(on, 'A_0')[0].target).toBe('B_1');
 		expect(attacksOf(off, 'A_0')[0].target).toBe('B_0');
 	});
