@@ -261,7 +261,18 @@ class ReclamationPage extends React.Component {
 		const { poolA, poolB, frames } = buildDraftPools(seed, draftOptionsFromRules(DEFAULT_RULES));
 		clearMatch();
 		this.draftUsedAuto = false;
-		this.setState({ seed, draft: { poolA, poolB, frames, keepIds: [] }, resume: null, saved: null, match: null });
+		/*
+			PASS 23. `side` is which handler is keeping right now, and `keptA` holds the first
+			handler's twelve while the second makes their own. In solo play the draft never
+			leaves side A: the rival keeps by its habit, as it always has. In hot-seat the
+			second person drafts their own squad, with a cover between the two so neither sees
+			the other's pool.
+		*/
+		this.setState({
+			seed,
+			draft: { poolA, poolB, frames, keepIds: [], side: 'A', keptA: null, covered: false },
+			resume: null, saved: null, match: null,
+		});
 	};
 
 	toggleKeep = (recordId) => {
@@ -278,14 +289,42 @@ class ReclamationPage extends React.Component {
 		this.setState((prev) => ({ draft: { ...prev.draft, keepIds: ids.slice(0, ROSTER_SIZE) } }));
 	};
 
+	// the pool the handler currently keeping is choosing from
+	draftPool = (draft) => (draft.side === 'B' ? draft.poolB : draft.poolA);
+
+	// hot-seat: the first handler is done, cover the screen before the second one looks
+	handOverDraft = () => {
+		this.setState((prev) => ({
+			draft: { ...prev.draft, keptA: prev.draft.keepIds.slice(), covered: true },
+		}));
+	};
+
+	// the second handler has the keyboard: open their own pool with an empty keep
+	takeDraftHandoff = () => {
+		this.setState((prev) => ({
+			draft: { ...prev.draft, side: 'B', keepIds: [], covered: false },
+		}));
+	};
+
 	confirmDraft = () => {
 		const { draft, seed, rivalId, mode } = this.state;
-		if (!draft || !validateKeep(draft.poolA, draft.keepIds)) {
+		if (!draft || !validateKeep(this.draftPool(draft), draft.keepIds)) {
+			return;
+		}
+		/*
+			PASS 23. In hot-seat the first handler's confirm hands the keyboard over rather than
+			starting the Proving: the second person drafts their own twelve from their own pool.
+			The cover between them matters for the same reason it does in Deploy - a squad seen
+			in advance is information the game does not mean either handler to have.
+		*/
+		if (readHotSeat() && draft.side === 'A') {
+			this.handOverDraft();
 			return;
 		}
 		const rival = rivalById(rivalId);
-		const rosterA = draft.keepIds.map((id) => draft.poolA.find((r) => r.id === id));
-		const keepB = botDraft(draft.poolB, draft.frames, rival);
+		const keptAIds = draft.side === 'B' ? draft.keptA : draft.keepIds;
+		const rosterA = keptAIds.map((id) => draft.poolA.find((r) => r.id === id));
+		const keepB = draft.side === 'B' ? draft.keepIds : botDraft(draft.poolB, draft.frames, rival);
 		const rosterB = keepB.map((id) => draft.poolB.find((r) => r.id === id));
 		const match = createMatch({ rosterA, rosterB, worlds: getWorlds(), seed });
 		this.telemetry.beginMatch({
@@ -367,15 +406,41 @@ class ReclamationPage extends React.Component {
 							<span className="rec-masthead-rival" data-masthead-rival>against the {rival.name}</span>
 							<span className="g-mono rec-masthead-seed">seed {seed}</span>
 						</header>
-						<ReclamationDraft
-							pool={draft.poolA}
-							frames={draft.frames}
-							keepIds={draft.keepIds}
-							onToggle={this.toggleKeep}
-							onKeepAll={this.keepAll}
-							onConfirm={this.confirmDraft}
-							rivalName={rival.name}
-						/>
+						{/*
+							PASS 23. Between the two drafts the pool is covered, for the same reason
+							the board is covered between turns: a squad seen in advance is
+							information the game does not mean either handler to have. Like the
+							Deploy cover, this REPLACES the pool rather than sitting over it.
+						*/}
+						{draft.covered ? (
+							<div className="g-panel rec-handoff-panel rec-draft-handoff" data-draft-handoff>
+								<div className="g-readout-unit">Hand the table over</div>
+								<h2 className="rec-handoff-who">Pass the keyboard to the second handler.</h2>
+								<p className="g-body rec-handoff-note">
+									The first handler has kept their twelve. The pool is covered so neither
+									squad is known to the other before the first world loads.
+								</p>
+								<button
+									type="button"
+									className="g-btn g-btn--primary rec-handoff-take"
+									onClick={this.takeDraftHandoff}
+									data-take-draft-handoff
+									autoFocus
+								>
+									I am the second handler
+								</button>
+							</div>
+						) : (
+							<ReclamationDraft
+								pool={this.draftPool(draft)}
+								frames={draft.frames}
+								keepIds={draft.keepIds}
+								onToggle={this.toggleKeep}
+								onKeepAll={this.keepAll}
+								onConfirm={this.confirmDraft}
+								rivalName={rival.name}
+							/>
+						)}
 					</div>
 				</div>
 			);
