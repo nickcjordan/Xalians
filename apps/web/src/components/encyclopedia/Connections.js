@@ -130,20 +130,26 @@ function ConnectionRow({ row, isPhone }) {
  * tour beats. Renders nothing when there are none.
  * Contract: docs/design/xalian-encyclopedia-ux-pass.md, batch 3 "Connections".
  */
-export default function Connections({ kind, recordKey, limit = 12 }) {
+export default function Connections({ kind, recordKey, limit = 12, bare = false }) {
     const isPhone = useIsPhone();
     const rows = lore.getConnections(kind, recordKey, { limit });
     if (rows.length === 0) return null;
+
+    const list = (
+        <ul className="m-0 flex flex-col px-4 py-2">
+            {rows.map((row) => (
+                <ConnectionRow key={`${row.kind}:${row.key}`} row={row} isPhone={isPhone} />
+            ))}
+        </ul>
+    );
+
+    if (bare) return list;
 
     return (
         <section className="mt-8">
             <SectionHead title="Connections" count={rows.length} />
             <Card variant="panel" className="p-0">
-                <ul className="m-0 flex flex-col px-4 py-2">
-                    {rows.map((row) => (
-                        <ConnectionRow key={`${row.kind}:${row.key}`} row={row} isPhone={isPhone} />
-                    ))}
-                </ul>
+                {list}
             </Card>
         </section>
     );
