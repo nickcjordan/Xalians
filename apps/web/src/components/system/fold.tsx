@@ -19,6 +19,7 @@ function Fold({
   className,
   label,
   count,
+  hint,
   defaultOpen = false,
   children,
   id,
@@ -26,6 +27,8 @@ function Fold({
 }: React.ComponentProps<"div"> & {
   label: React.ReactNode
   count?: React.ReactNode
+  /** One line under the label, in body type: a teaser for what the fold holds. */
+  hint?: React.ReactNode
   defaultOpen?: boolean
   id?: string
 }) {
@@ -38,9 +41,12 @@ function Fold({
     >
       <Accordion type="single" collapsible defaultValue={defaultOpen ? value : undefined}>
         <AccordionItem value={value} className="border-b-0">
-          <AccordionTrigger className="gap-3 rounded-none px-5 py-4 text-left no-underline hover:no-underline focus-visible:ring-2 focus-visible:ring-viable focus-visible:ring-offset-2 focus-visible:ring-offset-s0 [&>svg]:text-ink-3">
-            <span className="type-legend flex-1">{label}</span>
-            {count != null ? <span className="type-data text-small text-ink-2">{count}</span> : null}
+          <AccordionTrigger className="min-w-0 gap-3 rounded-none px-5 py-4 text-left no-underline hover:no-underline focus-visible:ring-2 focus-visible:ring-viable focus-visible:ring-offset-2 focus-visible:ring-offset-s0 [&>svg]:text-ink-3">
+            <span className="min-w-0 flex-1">
+              <span className="type-legend block">{label}</span>
+              {hint != null ? <span className="mt-1 block truncate font-body text-small text-ink-2">{hint}</span> : null}
+            </span>
+            {count != null ? <span className="type-data shrink-0 text-small text-ink-2">{count}</span> : null}
           </AccordionTrigger>
           <AccordionContent>
             <div className="px-5 pb-5">{children}</div>
