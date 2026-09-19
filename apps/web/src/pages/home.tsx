@@ -8,6 +8,7 @@ import XalianImage from '../components/xalianImage';
 import { species, worlds } from 'virtual:xalians-home-data';
 
 import { Shell } from '@/components/system/masthead';
+import { Tile, TileArt, TileMeta } from '@/components/system/record';
 import { usePageTitle } from '@/components/system/head';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -76,7 +77,7 @@ function Home() {
 	usePageTitle();
 
 	return (
-		<main className="min-h-screen bg-room text-ink font-body" data-tier="chrome">
+		<main id="main" className="min-h-screen bg-room text-ink font-body" data-tier="chrome">
 			<XalianNavbar />
 
 			<Shell className="pt-8 pb-16">
@@ -94,7 +95,7 @@ function Home() {
 							<Button asChild>
 								<Link to="/generator">Generate a Xalian</Link>
 							</Button>
-							<Button asChild variant="link">
+							<Button asChild variant="link" className="px-0">
 								<Link to="/encyclopedia/story">Read the story</Link>
 							</Button>
 						</div>
@@ -105,7 +106,7 @@ function Home() {
 						<p className="mt-1 mb-4 max-w-[62ch] font-body text-small text-ink-2">
 							Every Xalian is grown for one of them. Open a world for its history and its native species.
 						</p>
-						<div className="grid grid-cols-4 gap-2 sm:grid-cols-[repeat(auto-fill,minmax(112px,1fr))]">
+						<div className="grid grid-cols-4 gap-2 xl:grid-cols-7">
 							{worlds.map((world: any) => (
 								<Link
 									key={world.key}
@@ -139,18 +140,21 @@ function Home() {
 					<p className="mt-1 mb-4 max-w-[62ch] font-body text-small text-ink-2">
 						Species silhouettes from the record plates. Open one to read its record.
 					</p>
-					<div className="-mx-6 flex snap-x gap-2 overflow-x-auto px-6 [scrollbar-width:none] sm:mx-0 sm:grid sm:grid-cols-4 sm:gap-2 sm:overflow-visible sm:px-0 md:grid-cols-8">
+					<div className="-mx-6 flex snap-x gap-2 overflow-x-auto px-6 [scrollbar-width:none] max-sm:[mask-image:linear-gradient(to_right,black_calc(100%-40px),transparent)] sm:mx-0 sm:grid sm:grid-cols-4 sm:gap-2 sm:overflow-visible sm:px-0 md:grid-cols-8">
 						{featuredSpecies.map((s: any) => (
-							<Link
+							<Tile
+								as={Link}
 								key={s.id || s.name}
 								to={`/encyclopedia/species/${s.name.toLowerCase()}`}
-								className={`el-${s.type.toLowerCase()} mass-el flex w-[140px] shrink-0 snap-start flex-col items-center gap-2 overflow-hidden border border-edge bg-s1 pb-3 hover:border-edge-strong hover:bg-s2 focus-visible:outline-2 focus-visible:outline-ring sm:w-auto sm:shrink`}
+								className={`el-${s.type.toLowerCase()} w-[140px] shrink-0 snap-start sm:w-auto sm:shrink`}
 							>
-								<div className="aspect-square w-full bg-el">
+								<TileArt>
 									<XalianImage colored speciesName={s.name} primaryType={s.type} moreClasses="w-full" />
-								</div>
-								<span className="type-legend text-center text-ink">{s.name}</span>
-							</Link>
+								</TileArt>
+								<TileMeta>
+									<span className="type-legend block text-center text-ink">{s.name}</span>
+								</TileMeta>
+							</Tile>
 						))}
 					</div>
 				</section>

@@ -4,6 +4,7 @@ import * as lore from '../../lore';
 import planetArtwork from '@xalians/content/planetArtwork.json';
 import { Tile, TileArt, TileMeta } from '@/components/system/record';
 import { usePageTitle } from '@/components/system/head';
+import { Badge } from '@/components/ui/badge';
 
 function sentenceCase(text) {
     if (!text) return text;
@@ -23,7 +24,7 @@ export default function Worlds() {
     const worlds = lore.getWorlds();
 
     return (
-        <div className="grid grid-cols-2 gap-3 gap-y-4 sm:grid-cols-3 sm:gap-4 sm:gap-y-5 md:grid-cols-4 min-[1080px]:grid-cols-5 xl:grid-cols-6">
+        <div className="grid grid-cols-2 gap-3 gap-y-4 sm:grid-cols-4 sm:gap-4 sm:gap-y-5 lg:grid-cols-7">
             {worlds.map((world) => (
                 <Tile as={Link} key={world.key} to={lore.routeFor('world', world.key)} className={`el-${world.element}`}>
                     <TileArt>
@@ -41,6 +42,9 @@ export default function Worlds() {
                         <span className="type-subhead block text-base">{world.name}</span>
                         <span className="mt-1 line-clamp-2 block font-body text-small text-ink-2">
                             {sentenceCase(world.physical.terrainLabel)}
+                        </span>
+                        <span className={`el-${world.element} mt-2 inline-block`}>
+                            <Badge variant="chip">{world.element}</Badge>
                         </span>
                     </TileMeta>
                 </Tile>
