@@ -106,7 +106,7 @@ function Home() {
 						<p className="mt-1 mb-4 max-w-[62ch] font-body text-small text-ink-2">
 							Every Xalian is grown for one of them. Open a world for its history and its native species.
 						</p>
-						<div className="grid grid-cols-4 gap-2 xl:grid-cols-7">
+						<div className="grid grid-cols-2 gap-2 sm:grid-cols-7">
 							{worlds.map((world: any) => (
 								<Link
 									key={world.key}
