@@ -12,7 +12,7 @@ import {
 	BOLSTER_FLOOR, ARMORED_REDUCTION, SHIELD_CAP, WILLFUL_THRESHOLD, KEEN_INSTINCT,
 	DULL_INSTINCT, SWIFT_SPEED, BOLSTER_RECOVERY,
 	HIDDEN_SEND_COST, HIDDEN_POWER, STAKE_ENABLED,
-	STAKE_SITE_VALUE, STAKE_BOTH_VALUE, DRAFT_POOL_SIZE, DRAFT_DISTINCT_SPECIES, CLAIM_COUNTING, STAKE_TIMING,
+	STAKE_SITE_VALUE, STAKE_BOTH_VALUE, DRAFT_POOL_SIZE, DRAFT_DISTINCT_SPECIES, CLAIM_COUNTING, STAKE_TIMING, PINNING, REACH_FIRST, SENDABLE, WORLDS_PER_FRAME,
 } from '../expeditionInterpretation.ts';
 import type { MatchState, World } from '../types.ts';
 
@@ -1284,6 +1284,12 @@ describe('rules ablation switches', () => {
 			claimCounting: CLAIM_COUNTING,
 			// Pass 6: when during Deploy a stake may be declared
 			stakeTiming: STAKE_TIMING,
+			// Pass 8: the two rules read off the record
+			pinning: PINNING,
+			reachFirst: REACH_FIRST,
+			// Pass 9: the send budget and the frame width, the sends-per-world ratio
+			sendable: SENDABLE,
+			worldsPerFrame: WORLDS_PER_FRAME,
 		});
 		// assumption 20 cut the catch-up send, so the shipped default is zero
 		expect(state.rules.trailingBonus).toBe(0);
@@ -1339,6 +1345,9 @@ describe('rules ablation switches', () => {
 		// anything else falls back rather than corrupting the Ruling's arithmetic
 		expect(matchWithRules({ claimCounting: 'nonsense' } as any).rules.claimCounting).toBe(CLAIM_COUNTING);
 		expect(matchWithRules({ stakeTiming: 'any-turn' }).rules.stakeTiming).toBe('any-turn');
+		// pass 9: the send budget is a lever, since sends-per-world is what decides whether
+		// two creatures can ever afford to meet at one world
+		expect(matchWithRules({ sendable: 14 }).rules.sendable).toBe(14);
 		expect(matchWithRules({ stakeTiming: 'nope' } as any).rules.stakeTiming).toBe(STAKE_TIMING);
 	});
 

@@ -136,7 +136,7 @@ export default function EncyclopediaPage() {
     }, [location.pathname, location.hash]);
 
     return (
-        <main className="min-h-screen bg-room font-body text-ink" data-tier="chrome">
+        <main id="main" className="min-h-screen bg-room font-body text-ink" data-tier="chrome">
             <XalianNavbar />
             <EncyclopediaShell>
                 <Routes>

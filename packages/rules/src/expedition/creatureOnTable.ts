@@ -607,9 +607,16 @@ export function blowActOf(record: XalianRecord, acts: Act[], role: Role): Act | 
 	}
 	const attacking = acts.filter((a) => a.class !== (ACT_CLASS.SUPPORT as ActClass));
 	if (role === ROLE.SWEEP) {
-		// pass 7: an act sweeps because the record gives it an area footprint, not because
-		// its legacy key happened to be one of burst, spray or cloud
-		const sweeps = acts.filter((a) => a.area === true);
+		/*
+			pass 7: an act sweeps because the record gives it an area footprint, not because
+			its legacy key happened to be one of burst, spray or cloud.
+
+			It must also be an ATTACK. 104 of the pool's protect actions carry an area (a
+			barrier thrown over everyone standing here), and reading area alone picked those
+			as a creature's one blow, which made 13 of 268 attackers throw a shield as their
+			attack. The support filter is applied first so an area shield stays a shield.
+		*/
+		const sweeps = attacking.filter((a) => a.area === true);
 		if (sweeps.length > 0) {
 			return sweeps.reduce((best, a) => (!best || a.magnitude > best.magnitude ? a : best));
 		}
