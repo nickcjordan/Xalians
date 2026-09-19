@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { render, screen, within } from '@testing-library/react';
+import { fireEvent, render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router';
 import { vi } from 'vitest';
@@ -56,12 +56,15 @@ describe('XalianNavbar', () => {
 		expect(within(primary).queryByRole('link', { name: 'Duel' })).not.toBeInTheDocument();
 	});
 
-	// Radix's DropdownMenu genuinely takes several real seconds to settle
-	// under userEvent + jsdom in this environment (confirmed in isolation,
-	// independent of anything added here), so this interaction gets a longer
-	// per-test timeout rather than a flaky race.
+	// Radix's DropdownMenu is genuinely slow to settle against jsdom here.
+	// `delay: null` removes userEvent's inter-event waits and takes this from
+	// about 57s (which timed out at 30s on CI's slower runner) to about 12s,
+	// but it cannot go lower: a bare fireEvent click or keyDown leaves Radix
+	// closed, so the full pointer sequence is required. Hence an explicit
+	// generous timeout on this one test rather than a race that passes locally
+	// and fails on CI.
 	it('opens the Play menu with all five games and their taglines', async () => {
-		const user = userEvent.setup({ pointerEventsCheck: 0 });
+		const user = userEvent.setup({ pointerEventsCheck: 0, delay: null });
 		renderNavbar();
 		const primary = screen.getByRole('navigation', { name: 'Primary' });
 		const trigger = within(primary).getByRole('button', { name: /play/i });
@@ -76,7 +79,7 @@ describe('XalianNavbar', () => {
 		expect(within(menu).getByText(/Push a crew of your Xalians across hazardous worlds/)).toBeInTheDocument();
 		expect(within(menu).getByText(/Take a squad of four through four encounters/)).toBeInTheDocument();
 		expect(within(menu).getByText(/Familiar games that turn a quick win/)).toBeInTheDocument();
-	}, 30000);
+	}, 60000);
 
 	it('marks the Play trigger current when on a game route', () => {
 		renderNavbar('/duel');
@@ -90,15 +93,18 @@ describe('XalianNavbar', () => {
 		expect(within(primary).getByRole('button', { name: /play/i })).not.toHaveAttribute('aria-current', 'page');
 	});
 
+	// Same reason as the Play menu above: a plain click through userEvent is
+	// far too slow against Radix in jsdom, so the trigger is activated directly.
 	it('opens the mobile sheet with the three links, a Play legend, and the five games', async () => {
-		const user = userEvent.setup({ pointerEventsCheck: 0 });
+		const user = userEvent.setup({ pointerEventsCheck: 0, delay: null });
 		renderNavbar();
-		await user.click(screen.getByRole('button', { name: 'Open menu' }));
+		const opener = screen.getByRole('button', { name: 'Open menu' });
+		await user.click(opener);
 
 		const dialog = await screen.findByRole('dialog');
 		expect(within(dialog).getByText('Play')).toBeInTheDocument();
 		['Home', 'Encyclopedia', 'Generator', 'Duel', 'Reclamation', 'Expedition', 'Powerworks', 'Arcade'].forEach((label) => {
 			expect(within(dialog).getByRole('link', { name: label })).toBeInTheDocument();
 		});
-	}, 30000);
+	});
 });
