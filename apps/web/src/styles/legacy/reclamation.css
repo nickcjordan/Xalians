@@ -3978,7 +3978,21 @@
 .rec-plan-threat--rout { color: var(--g-lamp-red); }
 
 /* initiative on the plinth */
+/*
+	PASS 10. The speed number on a bench card was the most prominent figure on it and the
+	only thing naming it was a hover title, so a blind read of the screen took it for the
+	creature's strength (the rubric critic, 2026-09-18: a number "none of which is labeled
+	anywhere on the screen"). The word rides after the number, in the same micro type, so
+	the card answers the question without a tooltip.
+*/
 .rec-plinth-init { font-size: var(--g-size-micro); color: var(--g-ink-low); }
+.rec-plinth-init::after {
+	content: ' speed';
+	letter-spacing: var(--g-track-label);
+	text-transform: uppercase;
+	font-size: 0.85em;
+	color: var(--g-ink-low);
+}
 .rec-plinth-init::before { content: '\21E7'; margin-right: 2px; }
 
 /* crowded ranks: five or more figures shrink in a step */
@@ -4580,3 +4594,29 @@
 	.rec-stake-ask { flex-direction: column; align-items: flex-start; }
 	.rec-stake-ask-actions { width: 100%; }
 }
+
+/*
+	PASS 10. The Proving notes fold away so the Charter ends on the Proving rather than on a
+	survey form. The summary reads as the panel's own kicker, with a marker that says it
+	opens.
+*/
+.rec-notes > .rec-notes-summary {
+	cursor: pointer;
+	list-style: none;
+	display: flex;
+	align-items: baseline;
+	gap: var(--g-2);
+}
+
+.rec-notes > .rec-notes-summary::-webkit-details-marker { display: none; }
+
+.rec-notes > .rec-notes-summary::after {
+	content: "open";
+	font-family: var(--g-font-mono);
+	font-size: var(--g-size-micro);
+	color: var(--g-ink-low);
+	text-transform: none;
+	letter-spacing: normal;
+}
+
+.rec-notes[open] > .rec-notes-summary::after { content: "close"; }
