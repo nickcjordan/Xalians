@@ -49,7 +49,7 @@ Species entry (`species.json`), full description, two sentences:
 
 Legacy gauge values (relative only, never copied): height 35 in / 89 cm, weight 44 lbs / 20 kg, `specialAttackRating` and `speedRating` both high, all other ratings blank, `canFly` false, `attackRange` medium.
 
-Planet `data` block (Telypso): Terrain "Dense Flora, Rivers, Flourescent Mist", Gravity "0.90 x Earth", Temperature Low "7 °C / 44.6 °F", Temperature High "65 °C / 149 °F".
+Planet `data` block (Telypso): Terrain "Dense Flora, Rivers, Fluorescent Mist", Gravity "0.90 x Earth", Temperature Low "7 °C / 44.6 °F", Temperature High "65 °C / 149 °F".
 
 ## 2. Description status: `upgraded`
 
@@ -93,7 +93,7 @@ Environment-demanded traits: none. Telypso's history gives no environmental pres
 - `genome.chirality: rolled`. default; a flesh body has chiral chemistry.
 - `diet: omnivore`. the registry's fallback for a flesh body when the sources say nothing about feeding. Neither source shows it consuming, dissolving, draining, or grazing. `species` uses the word attack, which the registry rules is not evidence of feeding. Authored, per the stated fallback.
 - `communication: display, telepathic`. `display`: `species`: "It uses its tail to draw attention to its big, hypnotic eyes" is signaling to another creature by gesture and pattern. Note the registry's caveat that an effect aimed at a target is an ability, not communication; the hypnosis itself is the ability and lives in the signature, while the tail wave is the outward signal. `telepathic`: `planet`: "Still more began to claw at their ears, swearing that they could hear the thoughts of those around them" establishes the medium as native to the world, and `species`: "this creature can attack from within your mind" establishes that this species reaches another mind directly. Feeling and impression only, never words.
-- `breathes: [gas]`, `ambientMedia: [gas]`. an air-breathing land animal in "Dense Flora, Rivers, Flourescent Mist". `breathes` is a subset of `ambientMedia`. Authored in the sense that no sentence names breathing; it is the minimum honest reading of a furred land quadruped.
+- `breathes: [gas]`, `ambientMedia: [gas]`. an air-breathing land animal in "Dense Flora, Rivers, Fluorescent Mist". `breathes` is a subset of `ambientMedia`. Authored in the sense that no sentence names breathing; it is the minimum honest reading of a furred land quadruped.
 - `temperatureC: 12 to 42`. inside the planet data block's 7 °C to 65 °C. The narrower sub-band sits toward the warm-humid middle because the history describes "humid, smothering mists" and "Towering forests of mushrooms ascended from humid, smothering mists", a fungal-forest niche rather than either extreme. `planet` evidence only, as the registry permits for environment.
 - `capabilities.flight [0, 0]`. no wings in the art, not a `floating` or `swarm` plan, corporeal. Legacy `canFly` false agrees.
 - `capabilities.sprint [55, 80]`. legacy `speedRating` is high, the only speed gauge either source offers, and the art shows a light-limbed body in a spring. Upper bound above 60 is carried by the art's mid-spring pose plus the legacy gauge.
