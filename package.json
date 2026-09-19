@@ -20,6 +20,7 @@
     "replay:creature": "node scripts/generationRelease.cjs replay"
   },
   "devDependencies": {
+    "playwright-core": "^1.63.0",
     "react": "19.3.0",
     "react-dom": "19.3.0",
     "url": "^0.11.0"
