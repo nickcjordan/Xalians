@@ -31,6 +31,7 @@ import awsconfig from './aws-exports';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { Toaster } from '@/components/ui/sonner';
 import { ErrorBoundary } from '@/components/system/status';
+import { SiteFooter } from '@/components/system/site-footer';
 
 Amplify.configure(awsconfig);
 
@@ -105,6 +106,28 @@ function TradeRoute() {
   return <TradePage id={id} />;
 }
 
+// The footer reads as chrome (browse, configure, manage) so it stays off the
+// immersive tier's play surfaces (docs/DESIGN_SYSTEM.md section 1): the duel
+// board, a Reclamation match, Long Return, Powerworks, and an Arcade game in
+// progress. The Arcade hub itself is an index page, not play, so it keeps
+// the footer; only a specific game route (/arcade/<game>) hides it.
+const IMMERSIVE_PREFIXES = ['/duel', '/reclamation', '/long-return', '/powerworks'];
+
+function isImmersiveRoute(pathname) {
+  if (IMMERSIVE_PREFIXES.some((prefix) => pathname === prefix || pathname.startsWith(prefix + '/'))) {
+    return true;
+  }
+  return /^\/arcade\/[^/]+/.test(pathname);
+}
+
+function SiteFooterGate() {
+  const location = useLocation();
+  if (isImmersiveRoute(location.pathname)) {
+    return null;
+  }
+  return <SiteFooter />;
+}
+
 export function AppRoutes() {
   return (
     <Suspense fallback={<div>Loading...</div>}>
@@ -159,6 +182,7 @@ class App extends React.Component {
       <TooltipProvider>
         <Router>
           <AppRoutes />
+          <SiteFooterGate />
         </Router>
         <Toaster />
       </TooltipProvider>
