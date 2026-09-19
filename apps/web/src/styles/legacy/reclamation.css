@@ -4736,3 +4736,52 @@
 	color: inherit;
 	opacity: 0.75;
 }
+
+/*
+	PASS 21. THE HAND-OFF COVER, hot-seat only.
+
+	Two people at one screen cannot share hidden information, and hiding is not optional in
+	this game (16.8 percent of sends arrive hidden, and removing hiding moves the flip gauge
+	beyond noise). So the table is replaced by this between turns.
+
+	It is deliberately plain and deliberately tall: it must fill the viewport so the position
+	cannot be read around it, and it must look like the machine waiting rather than a modal
+	over a live board, because the board is genuinely not there.
+*/
+.rec-handoff {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 70vh;
+	padding: var(--g-4) var(--g-3);
+}
+
+.rec-handoff-panel {
+	max-width: 32rem;
+	padding: var(--g-5) var(--g-4);
+	text-align: center;
+}
+
+.rec-handoff-who {
+	font-family: var(--g-font-stencil);
+	font-size: var(--g-size-h3);
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+	margin: var(--g-3) 0 var(--g-2);
+}
+
+.rec-handoff-note {
+	margin: 0 auto var(--g-4);
+	max-width: 26rem;
+	opacity: 0.85;
+}
+
+.rec-handoff-take {
+	min-height: 2.75rem;
+	padding-inline: var(--g-4);
+}
+
+@media (max-width: 760px) {
+	.rec-handoff { min-height: 60vh; padding: var(--g-3) var(--g-2); }
+	.rec-handoff-panel { padding: var(--g-4) var(--g-3); }
+}

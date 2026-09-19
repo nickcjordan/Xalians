@@ -2,7 +2,7 @@
 
 Status: the running state of the game under ownership (brief: `reclamation-ownership-brief.md`). This file is the resume point. Any reset reads this first and continues at the weakest thing named below, never from scratch. Each pass appends its own section; the standing state at the top is rewritten in place.
 
-## Standing state (after pass 20, 2026-09-19)
+## Standing state (after pass 21, 2026-09-19)
 
 ### Gauges, proctor mirror
 
@@ -64,11 +64,19 @@ What it reads, and where each effect kind lands (measured over the seed-7 pool, 
 
 The seat the table is drawn for is now a value (`seatInPlay()`), not the constant `'A'` compiled into sixty-four readings. With no `hotSeat` prop it always returns `'A'`, so solo play is unchanged, and the hand-off can land without touching those call sites at the same time as everything else.
 
+Pass 21 built the cover and the seat routing. **It is not yet playable end to end**, and the exact state is below so the next pass starts from evidence rather than re-deriving it.
+
+**Works, checked by paint:** the cover is raised when the turn first changes seat, it names who should look, and while it is up **nothing about the position is in the document** - no bench, no worlds, no score. That was asserted and it holds.
+
+**Does not work yet:** the cover is raised **once** and not again on later seat changes, so a Proving stalls partway. Four fixes were made on inference and none moved it; the fifth (`you={YOU}` handed to the bench, so seat B's turn drew seat A's roster and B had no creature to arm and no control to press) was the real one and was found by instrumenting the table's state rather than reading the code. The remaining fault is in when `raiseHandoffIfDue` is called, not in what it does.
+
 Still to build, in the order they should go:
 
-1. **The hand-off screen.** Two people at one screen cannot share hidden information, and hiding is not optional: **16.8 percent of sends arrive hidden, and removing hiding moves the flip gauge +2.46 +/- 0.98, beyond noise.** So hot-seat cannot simply disable it, or it would validate a different game from the one being shipped. A screen that covers the board between turns is the standard answer and the only honest one here.
-2. **The second squad's draft.** The draft screen assumes one human keeper.
-3. **The Charter naming two people** rather than a rival from the ladder.
+1. **Re-raising the cover** on every seat change, not just the first. The diagnosis instrument for this is `.probe-stuck.mjs`'s shape: print phase, turn, cover, and the count of live controls each loop. Reading the lifecycle did not find the last bug; printing the state did.
+2. **The second squad's draft.** The draft screen assumes one human keeper, so seat B currently plays a squad drafted for seat A.
+3. **The Charter naming two people** rather than a rival from the ladder (`buildMatchReport` is still called with `YOU`).
+
+The hiding constraint that shapes all of this: **16.8 percent of sends arrive hidden, and removing hiding moves the flip gauge +2.46 +/- 0.98, beyond noise.** Hot-seat cannot simply reveal everything, or it would validate a different game from the one being shipped.
 
 ### Closed by measurement (do not reopen without new evidence)
 
@@ -420,3 +428,17 @@ In hot-seat it follows the seat to move during Deploy, and **holds still once De
 **The lesson worth keeping:** *when a feature is bigger than a pass, ship its prerequisite as a pass.* The alternative is a branch that grows for days with nothing landing, and the seat indirection is independently correct, independently testable, and provably inert in solo play. Say which quarter shipped rather than implying the feature did.
 
 **Verified:** 2040 tests green (five new), typecheck clean, build inside budgets, headless Proving green in all four configurations, solo play unchanged by construction and by test.
+
+### Pass 21 (2026-09-19): the hand-off cover, and five fixes to find one bug
+
+**Shipped: the cover, the seat routing, and an honest account of what is still broken.**
+
+The cover replaces the table rather than overlaying it. An overlay can be scrolled past or read around the edges of, and the whole value of the cover is that the person who should not be looking cannot see the position, so while a hand-off is up the table is **not rendered at all**. Checked by paint: bench, worlds and score are all absent from the document, and the cover names who should be looking and nothing else.
+
+**Seat routing:** `isYourDeployTurn`, the four engine actions (send, pass, stake, swift move), the ghost preview and the bench's `you` prop now read `seatInPlay()` instead of the constant `YOU`. Solo play is unchanged by construction and verified in all four headless configurations.
+
+**It is not playable end to end yet.** The cover is raised once and not on later seat changes, so a Proving stalls partway. That is recorded in the open items with the diagnosis instrument that found the last bug.
+
+**The lesson worth keeping, and it cost the most today:** *four fixes on inference moved nothing; one instrument found the bug in a minute.* I changed the componentDidUpdate guard, gave seat B its own squad, routed four engine calls, and moved the turn gates - all plausible, all inferred from reading, none of them the fault. The fault was `you={YOU}` handed to the bench, so seat B's turn drew seat A's roster and there was literally nothing on screen to press. What found it was printing the table's actual state each loop (phase, turn, cover, count of live controls) instead of reasoning about the lifecycle. **When two fixes in a row do not move a symptom, stop fixing and start printing.**
+
+**Verified:** 2040 tests green, build inside budgets, headless Proving green in all four configurations (solo play unaffected), the cover's no-leak property checked by paint.

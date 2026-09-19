@@ -179,6 +179,8 @@ class ReclamationMatch extends React.Component {
 			hoverRecordId: null, // the roster slot under the pointer: previewed on every site
 			hoverSiteId: null, // the site row under the pointer in the deploy panel
 			coached: readCoached(), // the first Proving's three steps, shown once
+			// PASS 21, hot-seat only: { seat } while the board is covered between two people
+			handoff: null,
 		};
 		/*
 			PASS 20. THE SEAT THE TABLE IS DRAWN FOR.
@@ -204,8 +206,24 @@ class ReclamationMatch extends React.Component {
 		// the seat the table was last drawn for, so the Clash and the Ruling stay with
 		// whoever just moved instead of flipping under a playback both people are reading
 		this.lastSeatInPlay = YOU;
+		// hot-seat: the seat whose board is currently uncovered. The first person does not
+		// need to be handed the keyboard they are already holding, so the opening seat counts
+		// as shown.
+		this.seatShown = props.initialMatch ? props.initialMatch.turn : YOU;
 		// your twelve in slot order, held for the whole expedition so the roster never reshuffles
 		this.squad = props.squad ? props.squad.slice() : props.initialMatch.players[YOU].roster.slice();
+		/*
+			PASS 21. In hot-seat the bench belongs to whichever person is moving, so each seat
+			needs its own slot order held for the whole Proving. `this.squad` is seat A's, kept
+			as it was so solo play is untouched; seat B's is taken from the match at the start
+			for the same reason - the roster shrinks as creatures are sent, and the bench must
+			not reshuffle under the player.
+
+			Without this the table drew seat B's turn with seat A's squad, so seat B had no
+			creature it could arm and no control to press: Deploy stalled with the turn on B and
+			nothing on screen to do. The paint check found that; reading the code did not.
+		*/
+		this.squadB = props.initialMatch.players[THEM].roster.slice();
 		// the rival handler: a named weight set over the bot (expeditionBot.RIVALS); the
 		// proctor is the bot as it always was
 		this.rival = rivalById(props.rivalId || DEFAULT_RIVAL_ID);
@@ -242,6 +260,22 @@ class ReclamationMatch extends React.Component {
 		this.exposeDebug();
 		if (prevState.match !== this.state.match && !this.state.playback && !this.state.judged) {
 			this.scheduleBotIfDue();
+		}
+		/*
+			PASS 21. Hot-seat's hand-off has to be raised on more occasions than the bot's turn
+			was scheduled on. The bot only ever needed waking when the match state changed
+			outside playback; a hand-off is also due when playback or the Ruling ENDS, because
+			the seat to move has usually changed by then and that update carried no match
+			change of its own. Without this the cover was raised once, for seat B, and the
+			Proving then stalled with neither person prompted - caught by the paint check
+			rather than by reading this code.
+		*/
+		if (this.hotSeat) {
+			const leftPlayback = prevState.playback && !this.state.playback;
+			const leftJudged = prevState.judged && !this.state.judged;
+			if (leftPlayback || leftJudged) {
+				this.raiseHandoffIfDue();
+			}
 		}
 		this.trackDecisionWindows(prevState, this.state);
 		this.trackHovers(prevState, this.state);
@@ -526,6 +560,16 @@ class ReclamationMatch extends React.Component {
 	// ------------------------------------------------------------------
 	scheduleBotIfDue = () => {
 		const { match } = this.state;
+		/*
+			PASS 21. In hot-seat there is no bot: the other seat is a person, so instead of
+			scheduling a turn we raise the hand-off and wait to be told the right person is
+			looking. Everything else about the turn is identical, which is the point of hot-seat
+			as a validation instrument: two people play the shipped game, not a variant.
+		*/
+		if (this.hotSeat) {
+			this.raiseHandoffIfDue();
+			return;
+		}
 		if (match.phase === 'deploy' && match.turn === THEM) {
 			if (this.botTimer) {
 				clearTimeout(this.botTimer);
@@ -533,6 +577,41 @@ class ReclamationMatch extends React.Component {
 			this.botBeatStartedAt = Date.now();
 			this.botTimer = setTimeout(this.runBotDeployTurn, BOT_DELAY_MS);
 		}
+	};
+
+	/*
+		THE HAND-OFF (pass 21). Two people at one screen cannot share hidden information, and
+		hiding is not optional: 16.8 percent of sends arrive hidden, and switching hiding off
+		moves the flip gauge +2.46 +/- 0.98, beyond noise. A hot-seat that revealed everything
+		would validate a different game from the one being shipped.
+
+		So the board is covered whenever the seat to move changes, and uncovered only when
+		someone presses through. The cover names who should be looking and says nothing else
+		about the position - not the score, not the worlds, not whose creatures are where -
+		because a cover that leaks is worse than no cover, the player having trusted it.
+
+		It is raised on a CHANGE of seat, not on every turn: a handler who sends twice in a row
+		(the engine allows it while the other has passed) is not handing anything over.
+	*/
+	raiseHandoffIfDue = () => {
+		const { match, handoff } = this.state;
+		if (match.phase !== 'deploy' || (match.turn !== 'A' && match.turn !== 'B')) {
+			return;
+		}
+		if (handoff) {
+			return; // already covered, waiting on a press
+		}
+		if (this.seatShown === match.turn) {
+			return; // same person still moving
+		}
+		this.setState({ handoff: { seat: match.turn }, armedRecordId: null, movingRecordId: null });
+	};
+
+	// the other person has the keyboard: uncover the board for their seat
+	takeHandoff = () => {
+		const { match } = this.state;
+		this.seatShown = match.turn === 'A' || match.turn === 'B' ? match.turn : this.seatShown;
+		this.setState({ handoff: null });
 	};
 
 	botRng = () => {
@@ -699,9 +778,17 @@ class ReclamationMatch extends React.Component {
 	// ------------------------------------------------------------------
 	// deploy — human
 	// ------------------------------------------------------------------
+	/*
+		"Is it the player's turn to deploy?" - the gate every control on the bench reads.
+
+		PASS 21: in hot-seat the player is whichever person is moving, so this asks about the
+		seat in play rather than about seat A. Solo play is unchanged because seatInPlay()
+		returns YOU with no hotSeat prop. Before this, seat B's turn drew a table with no armed
+		creature and no pass button, and Deploy stalled with nothing on screen to press.
+	*/
 	isYourDeployTurn() {
 		const { match } = this.state;
-		return match.phase === 'deploy' && match.turn === YOU && !this.state.playback;
+		return match.phase === 'deploy' && match.turn === this.seatInPlay() && !this.state.playback;
 	}
 
 	armRecord = (recordId) => {
@@ -743,7 +830,7 @@ class ReclamationMatch extends React.Component {
 		}
 		if (movingRecordId) {
 			const record = this.findRecordOnBoard(match, movingRecordId);
-			const next = moveSwift(match, YOU, movingRecordId, siteId);
+			const next = moveSwift(match, this.seatInPlay(), movingRecordId, siteId);
 			if (!next) {
 				this.notice('It cannot move there. It must be another world of the frame, and a swift creature moves only once a round.');
 				return;
@@ -780,7 +867,7 @@ class ReclamationMatch extends React.Component {
 			return;
 		}
 		const record = match.players[YOU].roster.find((r) => r.id === armedRecordId);
-		const next = send(match, YOU, armedRecordId, siteId);
+		const next = send(match, this.seatInPlay(), armedRecordId, siteId);
 		if (!next) {
 			this.notice('That send is not allowed right now.');
 			return;
@@ -837,7 +924,7 @@ class ReclamationMatch extends React.Component {
 				: 'It is not your turn to pass.');
 			return;
 		}
-		const next = pass(match, YOU);
+		const next = pass(match, this.seatInPlay());
 		if (!next) {
 			this.notice('You cannot pass right now.');
 			return;
@@ -884,7 +971,7 @@ class ReclamationMatch extends React.Component {
 		if (!pendingStakeSiteId) {
 			return;
 		}
-		const next = stakeWorld(match, YOU, pendingStakeSiteId);
+		const next = stakeWorld(match, this.seatInPlay(), pendingStakeSiteId);
 		if (!next) {
 			this.setState({ pendingStakeSiteId: null });
 			this.notice('That world cannot be staked now. A stake is once a Proving, and only before your first send of the round.');
@@ -1385,7 +1472,8 @@ class ReclamationMatch extends React.Component {
 			// the whole arithmetic of this send at this world: hold after strain and any
 			// bolster standing there, the role sentence, and what the role would do to the
 			// board as it stands (the base redesign's "Interface consequences")
-			const plan = ghostPlanFor(view, record, site, YOU, view.players[YOU].sentCount);
+			const seat = this.seatInPlay();
+			const plan = ghostPlanFor(view, record, site, seat, view.players[seat].sentCount);
 			const prepared = prepare(record, site, site.world, view.players[YOU].sentCount, { rules: view.rules });
 			const tolerance = (record.physiology && record.physiology.environmentalTolerance) || {};
 			ghosts[site.id] = {
@@ -1465,7 +1553,7 @@ class ReclamationMatch extends React.Component {
 		if (view.phase === 'matchEnd') {
 			return 'The Proving is over';
 		}
-		if (view.turn === YOU) {
+		if (view.turn === this.seatInPlay()) {
 			return 'Your move';
 		}
 		return 'The rival is deciding';
@@ -1476,7 +1564,7 @@ class ReclamationMatch extends React.Component {
 		const them = view.players[THEM];
 		const stillReachable = reachabilityLine(view, you, them);
 		const rivalBeat = !!this.rivalBeat() && view.phase === 'deploy' && !this.state.judged;
-		const yourTurn = view.turn === YOU && view.phase === 'deploy' && !this.state.playback && !this.state.judged && !rivalBeat;
+		const yourTurn = view.turn === this.seatInPlay() && view.phase === 'deploy' && !this.state.playback && !this.state.judged && !rivalBeat;
 		const waiting = (view.turn === THEM || rivalBeat) && view.phase === 'deploy' && !this.state.playback && !this.state.judged;
 		const deciding = waiting && !rivalBeat;
 		const turnLabel = this.turnText(view);
@@ -1608,6 +1696,41 @@ class ReclamationMatch extends React.Component {
 		);
 	}
 
+	/*
+		The cover between two people (pass 21). It says exactly three things: who should be
+		looking, that the other person should not be, and how to proceed. It deliberately does
+		NOT name the round, the score, the worlds in the frame, or anything else that would tell
+		the wrong reader about the position.
+
+		`data-handoff` is the harness's handle on it, and the seat is on the element so a check
+		can assert the cover is up for the right person.
+	*/
+	renderHandoff(handoff) {
+		const who = handoff.seat === 'A' ? 'the first handler' : 'the second handler';
+		const other = handoff.seat === 'A' ? 'second' : 'first';
+		return (
+			<div className="rec-match rec-handoff" data-handoff={handoff.seat}>
+				<div className="g-panel rec-handoff-panel">
+					<div className="g-readout-unit">Hand the table over</div>
+					<h2 className="rec-handoff-who">Pass the keyboard to {who}.</h2>
+					<p className="g-body rec-handoff-note">
+						The board is covered so the {other} handler cannot see what was sent hidden.
+						Press when the right person is looking.
+					</p>
+					<button
+						type="button"
+						className="g-btn g-btn--primary rec-handoff-take"
+						onClick={this.takeHandoff}
+						data-take-handoff
+						autoFocus
+					>
+						I am {who}
+					</button>
+				</div>
+			</div>
+		);
+	}
+
 	renderVerdictPanel() {
 		const { match } = this.state;
 		const report = buildMatchReport(match, YOU, this.recordsById);
@@ -1696,6 +1819,20 @@ class ReclamationMatch extends React.Component {
 			}
 		}
 
+		/*
+			PASS 21. THE HAND-OFF COVER REPLACES THE TABLE, it does not sit over it.
+
+			An overlay can be scrolled past, inspected, or read around the edges of, and the
+			whole value of the cover is that the person who should not be looking cannot see the
+			position. So while a hand-off is up the table is not rendered at all: nothing about
+			the score, the worlds, or whose creatures stand where reaches the document.
+
+			A cover that leaks is worse than no cover, because the player trusted it.
+		*/
+		if (this.state.handoff) {
+			return this.renderHandoff(this.state.handoff);
+		}
+
 		return (
 			<div className={`rec-match${simple ? ' rec-match--simple' : ' rec-match--advanced'}`}>
 				{this.renderStatusStrip(view)}
@@ -1766,8 +1903,8 @@ class ReclamationMatch extends React.Component {
 						{deployPanelOpen && (
 							<ReclamationBench
 								view={view}
-								you={YOU}
-								squad={this.squad}
+								you={this.seatInPlay()}
+								squad={this.hotSeat && this.seatInPlay() === THEM ? this.squadB : this.squad}
 								mode={simple ? 'simple' : 'advanced'}
 								armedRecordId={this.state.armedRecordId}
 								recommendation={rec}
