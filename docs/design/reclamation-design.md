@@ -131,6 +131,40 @@ Rewritten from the base redesign (`reclamation-base-redesign.md`, assumptions 1 
 
 The match ends when a handler holds five worlds, or after the third round; more worlds held wins the Charter. Equal worlds held: the handler with more creatures still unsent wins; then the one who passed first in the final round; then the non-starter of the final round.
 
+## How a Clash resolves, exactly (pass 11)
+
+Written because a fresh reader given the table's numbers and the rules above predicted 11 of 12 rulings correctly and said every miss was arithmetic ordering rather than strategy: "I can see who should win; I cannot see whether a 6.66 clears a 6.5." Five things below are exact in the engine and were never written down. This section is the worked trace it asked for, and it is also what a human player needs to check their own arithmetic.
+
+**The order, once and for all.**
+
+1. **Every attacker declares.** Its power against one particular target is computed in this order, and the order matters because each step multiplies the one before:
+   1. the printed power of its one attack (`intensity / 10 x (0.5 + governing attribute / 100)`, rounded, then times `magnitudeScale`),
+   2. times the striker's own strain (a half when strained, a quarter when severe),
+   3. times the element matchup of the attacker against that target,
+   4. **if the attacker is a sweep, times `sweepDiscount` (0.6)**,
+   5. **if the TARGET is armored, times (1 - `armoredReduction`), so three quarters**,
+   6. rounded to one decimal.
+   This is the number a shield sees. Note what is NOT in it: the attacker's own damage. An attacker declares what it meant to throw.
+2. **Shields cancel.** Each shielder at a world cancels, for its own side only, the single largest declared attack against that side, once per round, itself included. **A sweep counts, and it counts as the SUM of what it would do to that shielder's side**, not as its per-creature amount, so one sweep hitting three allies is a bigger thing to cancel than one strike on one ally. The fraction cancelled is scaled by the shielder's charisma (`0.5 + charisma/100`, capped at the whole attack); at the shipped `shieldCap` of 'half' the shielder then takes half of what it actually cancelled, and can be downed by it.
+3. **Attacks land, in this order:** unstrained creatures before strained ones; **within each of those two groups, by speed, higher first**; ties broken by which creature was sent earlier. (Strained creatures are ordered among themselves by speed, exactly as unstrained ones are; they simply all come after.)
+4. **As each attack lands** it is scaled one more time: **times the attacker's remaining hold over its full hold, as a plain ratio, measured at the moment it lands.** This is the "hurt attacks for less" rule and it is a simple proportion with no floor, so an attacker on a third of its hold throws a third of its power. It is applied AFTER armored, not before, because armored is part of the declaration and this is part of the landing.
+5. **A creature at zero or below is downed**, removed from the world, and out of the Proving. If it had not yet landed its own attack, that attack lapses. This is the whole of what speed is worth.
+6. **At the Ruling**, each bolster restores `bolsterRecovery` (half) of what attacks took from each ally at its world, scaled by the bolster's charisma. A bolster's own hold counts in that (it is an ally of itself).
+7. **The world goes to the side with the greater total of the holds still standing there**; equal totals give the world to the Court.
+
+**What menacing does and does not do.** Menacing redirects an attack that has *chosen* a target: if a strike's instinct picks the weakest creature on a side and a menacing companion stands there, the strike goes to the menacing one instead. **It does not redirect a sweep.** A sweep makes no pick at all; it lands separately on every other creature at the world, so there is nothing to draw away, and a menacing creature takes exactly the share it would have taken anyway. Menacing does not touch friendly fire either, and a sweep's damage to its own side is friendly fire.
+
+**The five that a second reader still could not settle**, answered from the engine:
+
+- **A bolster restores damage from any source, friendly fire included.** It reads the damage a creature has taken, not who dealt it, so a creature chipped by its own side's sweep is healed exactly as one hit by the enemy. The restore is capped at the damage actually taken, so it never pushes a creature past its full hold.
+- **A shield counts a sweep from its OWN side** among the attacks against its side, because a sweep's damage to that side is damage to that side however it arose. A shielder can therefore spend its one cancel on its own ally's sweep, and at a crowded world it often should.
+- **The shielder's half-share is taken in the shield step, before any attack lands.** A shielder downed by its own backlash has still cancelled what it cancelled; the cancel is settled at declaration, not at landing.
+- **Each shielder on a side cancels separately**, one attack each, largest first among what is still uncancelled. Two shielders cancel the two largest attacks against their side, not the same one twice.
+- **Nothing heals mid-Clash.** Bolster is a Ruling step only, so the remaining-over-full ratio in step 4 never sees a healed number.
+
+**A worked example.** A sweep of printed power 18, unstrained, against an armored enemy at a world:
+declared = 18 x 1 (no strain) x 1 (neutral matchup) x 0.6 (sweep) x 0.75 (target armored) = **8.1**. If that sweeper has since been hurt to 60 percent of its hold when the attack lands, what actually subtracts is 8.1 x 0.6 = **4.9**.
+
 ## The roles
 
 Every creature on the table is a hold and exactly one role, read from its record by `creatureOnTable.roleOf` (assumption 4 of the base redesign): the presence archetypes (survivor, bulwark, stalwart, sage) are presences, shield for bulwark and stalwart and bolster for survivor and sage unless the creature's abilities say otherwise (a ward ability without mend makes a shield, mend without ward a bolster); every other creature attacks, a sweep if it carries a sweep ability, else a strike.

@@ -2,7 +2,7 @@
 
 Status: the running state of the game under ownership (brief: `reclamation-ownership-brief.md`). This file is the resume point. Any reset reads this first and continues at the weakest thing named below, never from scratch. Each pass appends its own section; the standing state at the top is rewritten in place.
 
-## Standing state (after pass 10, 2026-09-18)
+## Standing state (after pass 11, 2026-09-18)
 
 ### Gauges, proctor mirror
 
@@ -14,7 +14,8 @@ Pass 6 changed no rule. It re-read two gauges with enough statistical power to s
 | Downs per match | 3 to 5 | 4.85 / 4.64 / 4.80 (after pass 9) | met |
 | Contested worlds that are one creature against one | lower is better | 56.2% (was 62.7%) | improved, pass 9 |
 | Naive margin (pass-early under the mirror) | 8 or more points | 13.1 / 13.1 / 14.5 (was 21.5 / 19.4 / 17.8) | met, **narrowing; the constraint on the send budget** |
-| **Affordance: comprehension by prediction** | beat deploy-totals-only | **11 of 12 (92%)**, 1 of 2 on flipped worlds | **first measurement, pass 10** |
+| **Affordance: comprehension by prediction** | beat deploy-totals-only | **12 of 12 (100%)**, 3 of 3 on flipped worlds (pass 11, with the resolution trace; was 92% and 1 of 2) | **met with room** |
+| Contested worlds where no attack lands at all | lower is better | 9.5 / 11.1 / 10.4 percent | measured pass 11, unjudged |
 | **Rubric critic score** | rising per pass | **64 / 100** (first blind score, pass 10) | lowest lines: reason to keep playing 4, mobile 5, numbers 5 |
 | **Comeback from a CONTESTED round 1** (trailing by one or two worlds) | 30 to 40 | **30.8 / 32.0 / 35.1**; pooled 29.1 +/- 1.4 | **met on three seeds** |
 | Comeback from a SWEPT round 1 (trailing by three) | not safeguarded, by ruling | 7 to 12 percent; pooled 8.0 +/- 1.8 | working as ruled |
@@ -51,13 +52,13 @@ What it reads, and where each effect kind lands (measured over the seed-7 pool, 
 
 ### Open items, ranked (resume here)
 
-1. **State the five resolution rules the rulebook does not.** A fresh reader predicting rulings from the table scored 92 percent, and every miss was arithmetic ordering rather than strategy: it could not tell whether hurt-scaling is a plain ratio, whether armored applies before or after it, whether a shield may cancel a sweep's splash, whether menacing redirects a sweep (it does not), or how strained creatures are ordered among themselves. It asked for **one worked resolution trace** with every multiplier in sequence, which pins all five at once and would serve a human player too. Cheapest high-value item on this list.
-2. **Give a losing player a reason to take the turn.** The rubric critic's lowest line (4 of 10): shut out on three worlds in round 3, nothing on screen offered a reason to keep playing the match. This is not a call for a gift; it is a call for the table to show what is still reachable (two of three still ties, a stake still unspent).
-3. **Mobile** (critic 5 of 10). Three empty world panels at roughly 600px each push the bench below the fold, so pick-and-place needs scrolling between the thing you pick and the thing you pick it for; the bench is a horizontal scroller showing 3.5 of 12 cards.
-4. **Worlds decided with no Clash at all.** In 5 of 12 sampled positions neither side could attack, so the world was decided at Deploy. A handler who sends two bolsters into a thin world wins it for free. Reported by the predictor, not yet measured.
-5. **Crowd worlds further, if it can be afforded.** 1v1 is 56 percent. 12 sends reaches 44.5 but costs the flip band and half the naive margin. `worldsPerFrame` is a lever; a narrower frame raises sends-per-world without touching the budget but moves the clinch and the match arc.
-6. **Intelligence and charisma read negative within presences.** Read it pooled before treating it as a failure.
-7. **Fire is a dead element and dromeus a dead species** in the draft. Same caution.
+1. **Give a losing player a reason to take the turn.** The rubric critic's lowest line (4 of 10): shut out on three worlds in round 3, nothing on screen offered a reason to keep playing the match. Not a call for a gift; a call for the table to show what is still reachable (two of three still ties, a stake still unspent, the clinch still two worlds away). The cheapest version is a sentence and a mark, not a rule.
+2. **Mobile** (critic 5 of 10). Three empty world panels at roughly 600px each push the bench below the fold, so pick-and-place needs scrolling between the thing you pick and the thing you pick it for; the bench is a horizontal scroller showing 3.5 of 12 cards. The critic's fix: collapse empty world panels to a compact row on phone and pin the bench as a bottom sheet.
+3. **One contested world in ten sees no attack at all** (9.5 to 11.1 percent on three seeds), because a side fielded only attackless presences. Whether that is a hole (a free world for two bolsters) or simply what a quiet world looks like is not yet judged. Measure the win rate of an all-presence send before deciding.
+4. **Crowd worlds further, if it can be afforded.** 1v1 is 56 percent. 12 sends reaches 44.5 but costs the flip band and half the naive margin. `worldsPerFrame` is a lever; a narrower frame raises sends-per-world without touching the budget but moves the clinch and the match arc.
+5. **Intelligence and charisma read negative within presences.** Read it pooled before treating it as a failure.
+6. **Fire is a dead element and dromeus a dead species** in the draft. Same caution.
+7. **The four borrowed effect kinds** still read as plain attacks. Pass 8 measured that rules for them do not pay while worlds are thin; worth re-testing now that worlds are less thin.
 8. **No human has played a full Proving.** The notes and telemetry are built, verified, and empty.
 9. **Hot-seat** is unbuilt and is the cheapest validation instrument the game can have.
 
@@ -172,3 +173,17 @@ The single place the game's reading of a creature is decided:
 **The finding that matters more than the score:** every miss was arithmetic ordering, never strategy. "I can see who should win; I cannot see whether a 6.66 clears a 6.5." Five resolution rules are exact in the engine and unstated in the rulebook, and one worked resolution trace would pin all five. That is open item 1.
 
 **Verified:** 1912 tests green, typecheck clean, build inside budgets, headless Proving green in all four configurations, and all three UI fixes checked by paint (the speed label renders as "61 SPEED", the resting line renders its promise, the Charter ends on NEW PROVING).
+
+### Pass 11 (2026-09-18): the resolution trace, and the affordance gauge at 100
+
+**Weakest thing:** five resolution rules exact in the engine and stated nowhere, which was every miss the pass-10 predictor made.
+
+**Written and pinned:** "How a Clash resolves, exactly" in the rulebook (the declared-power chain in order, the landing order, the hurt ratio, what a down costs, the Ruling, what menacing does and does not do, and a worked example), with `__tests__/resolutionOrder.test.ts` holding nine tests, one per sentence, so the prose fails a test rather than drifting.
+
+**Result: the affordance gauge went 92 percent to 100 percent**, and on the worlds where the Clash changed the leader (the ones a reader cannot get from the deploy totals) it went 1 of 2 to **3 of 3**. Measured with a second fresh reader on a different seed.
+
+**A second tier of five questions** came back from that reader and each was read out of the engine and added to the trace: a bolster heals friendly fire; a shield may cancel a friendly sweep; the shielder's half-share is paid at the cancel; shielders cancel separately; nothing heals mid-Clash. One of those exposed a fixture fault rather than an engine fault, which is the correct way round.
+
+**Also measured:** one contested world in ten (9.5 to 11.1 percent on three seeds) is decided with no attack landing at all, because a side fielded only presences. Now an open item with a number on it.
+
+**Verified:** 1921 tests green (nine new), typecheck clean, build inside budgets, headless Proving green in all four configurations.

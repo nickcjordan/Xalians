@@ -458,6 +458,45 @@ Each is a rule the engine answers precisely and the rulebook does not state. Non
 | 49 | The Proving notes fold away so the Charter ends on NEW PROVING; the instrument is kept | 85% (the critic's single cut) | `reclamationReport.js` |
 | 50 | Comprehension by prediction is a built gauge, scored at 92 percent on its first run | 85% (11 of 12, one batch, one reader) | `devtools/predictionPositions.ts` |
 
+## Pass 11: the resolution trace, and the affordance gauge at 100 (2026-09-18)
+
+Pass 10's top open item: a fresh reader predicting rulings from the table scored 92 percent and said every miss was arithmetic ordering rather than strategy. "I can see who should win; I cannot see whether a 6.66 clears a 6.5." Five resolution rules were exact in the engine and unstated anywhere.
+
+**Written:** "How a Clash resolves, exactly" in the rulebook. It states the declared-power chain in order (printed power, strain, matchup, sweep discount, armored quarter, rounded), the landing order (unstrained before strained, by speed within each group, sent-order ties), the hurt scaling as a plain remaining-over-full ratio with no floor applied AFTER armored, what a down costs, the Ruling's bolster step, and what menacing does and does not do. It ends with a worked example that multiplies one attack all the way through.
+
+**Pinned:** `__tests__/resolutionOrder.test.ts`, nine tests, one per sentence of that section. Prose drifts from code unless something holds them together; now the documentation fails a test rather than quietly becoming a lie.
+
+**Measured: the affordance gauge went 92 percent to 100 percent.** A second fresh reader, given the same table numbers and the new trace, on a different seed's twelve positions:
+
+| Run | Correct | On worlds where the Clash changed the leader |
+|---|---|---|
+| Pass 10, rules summary only | 11 of 12 (92%) | 1 of 2 |
+| **Pass 11, with the trace** | **12 of 12 (100%)** | **3 of 3** |
+
+The flipped worlds are the ones that matter: those are the worlds a reader cannot get from the deploy totals alone, and the trace took them from half to all.
+
+**The second reader found a second tier**, five more questions the first trace did not answer. Each was read out of the engine and added:
+
+- **A bolster restores damage from any source, friendly fire included.** It reads damage taken, not who dealt it.
+- **A shield counts a sweep from its own side** among the attacks against that side, so a shielder may spend its cancel on its own ally's sweep.
+- **The shielder's half-share is paid in the shield step**, before any attack lands; a shielder downed by its own backlash has still cancelled what it cancelled.
+- **Each shielder cancels separately**, largest first among what is uncancelled.
+- **Nothing heals mid-Clash**; bolster is a Ruling step only.
+
+One of those exposed a fixture fault rather than an engine fault: the first version of the friendly-fire test had the bolster downed by its own side's sweep, and a downed creature cannot be healed. The engine was right and the test was wrong, which is the correct way round.
+
+**Also measured, from pass 10's unprompted friction.** The predictor reported that in 5 of its 12 positions no Clash was possible at all, because a side had fielded only attackless presences. Over 400 matches on each of three seeds the real rate is **9.5 to 11.1 percent of contested worlds decided with no attack landing at all**. Its sample was unlucky, but one contested world in ten is still a Clash where nothing happens, and that is now an open item with a number on it.
+
+| # | Assumption / Decision | Confidence | Supporting Evidence |
+|---|---|---|---|
+| 51 | The Clash's resolution order is stated exactly in the rulebook and pinned by tests, one per sentence | 90% (the affordance gauge went 92 to 100 percent, and 1 of 2 to 3 of 3 on flipped worlds) | `reclamation-design.md`; `__tests__/resolutionOrder.test.ts` |
+| 52 | A bolster heals friendly fire; a shield may cancel a friendly sweep; backlash is paid at the cancel; shielders cancel separately; nothing heals mid-Clash | 90% (all five read out of the engine and pinned) | this section |
+
+### Pass 11 open items
+
+- **One contested world in ten sees no attack at all** (9.5 to 11.1 percent on three seeds), because a side fielded only presences. Whether that is a hole (a free world for two bolsters) or simply what a quiet world looks like is not yet judged.
+- The rubric critic's remaining low lines are untouched: a reason to keep playing (4 of 10) and mobile (5 of 10).
+
 ### Pass 10 open items
 
 - **Five resolution rules are exact in the engine and unstated in the rulebook** (the list above). The predictor asked for one worked resolution trace, printed as a log with every multiplier in sequence, which would pin all five at once. That is the next docs job and it would also serve a human player.
