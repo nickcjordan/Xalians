@@ -218,6 +218,13 @@ function average(array: any) {
 
 // rate + 95% binomial CI. Returns null when there are no trials so callers print "n/a"
 // rather than a misleading zero.
+/*
+	PASS 6. A deficit of this many worlds after round 1 counts as a round SWEPT rather than
+	a contest. Three of three is the whole frame, and the standing ruling is that a swept
+	round is not safeguarded; the comeback band is about the contested case.
+*/
+export const SWEPT_ROUND_DEFICIT = 3;
+
 export function rate(successes: any, trials: any) {
 	if (!trials) {
 		return null;
@@ -1020,6 +1027,10 @@ export function matchShapeOf(results: any) {
 	const locked: Dict = { 1: 0, 2: 0, 3: 0, never: 0 };
 	let comebackEligible = 0;
 	let comebackWins = 0;
+	let contestedEligible = 0;
+	let contestedWins = 0;
+	let sweptEligible = 0;
+	let sweptWins = 0;
 	let tiedAfterTwo = 0;
 	let thirdRoundChangedLeader = 0;
 
@@ -1033,8 +1044,26 @@ export function matchShapeOf(results: any) {
 		if (after1 && after1.A !== after1.B) {
 			comebackEligible++;
 			const trailer = after1.A < after1.B ? 'A' : 'B';
-			if (r.winner === trailer) {
+			const wonBack = r.winner === trailer;
+			if (wonBack) {
 				comebackWins++;
+			}
+			/*
+				PASS 6. The comeback rate averages two populations the design treats
+				differently, and reading them together hides both. Trailing by one or two
+				worlds is a contest the game should let a handler back into; trailing by
+				three is a round swept 3-0, and Nick's standing ruling is that it is not to
+				be safeguarded ("that means one of the players just totally sucked").
+				Pooled over five seeds at 1000 matches: contested 29.1 +/- 1.4 percent
+				against swept 8.0 +/- 1.8, averaging to the 25.2 that reads as a failed
+				gauge. The contested split is the number the 30 to 40 band is about.
+			*/
+			if (Math.abs(after1.A - after1.B) >= SWEPT_ROUND_DEFICIT) {
+				sweptEligible++;
+				if (wonBack) sweptWins++;
+			} else {
+				contestedEligible++;
+				if (wonBack) contestedWins++;
 			}
 		}
 		const after2 = r.scoreByRound[1];
@@ -1059,6 +1088,9 @@ export function matchShapeOf(results: any) {
 		decidedOnlyAtEnd: rate(decided.end, done.length),
 		lockedCounts: locked,
 		comebackRate: rate(comebackWins, comebackEligible),
+		// pass 6: the two populations the overall rate averages together
+		comebackFromContested: rate(contestedWins, contestedEligible),
+		comebackFromSwept: rate(sweptWins, sweptEligible),
 		tiedAfterRound2: rate(tiedAfterTwo, done.length),
 		thirdRoundChangedLeader: rate(thirdRoundChangedLeader, done.length),
 		downsPerMatch: average(done.map((r: any) => r.downs)),
@@ -1099,6 +1131,9 @@ export function sectionDecided({ matches, seed, pool, rules }: any) {
 		readings.push(`DECIDED EARLY: ${fmtPct(proctor.decidedAfterRound1)} of proctor mirrors are decided after round 1, above the fifty percent bar. Rounds two and three are largely dead time and the catch-up lever needs to move.`);
 	} else {
 		readings.push(`${fmtPct(proctor.decidedAfterRound1)} of proctor mirrors are decided after round 1, under the fifty percent bar; ${fmtPct(proctor.decidedOnlyAtEnd)} are settled only at the final judge.`);
+	}
+	if (proctor.comebackFromContested) {
+		readings.push(`Comeback split (pass 6): from a CONTESTED round 1 (trailing by one or two worlds) ${fmtPctCi(proctor.comebackFromContested)}, which is the population the 30 to 40 band is about; from a SWEPT round 1 (trailing by ${SWEPT_ROUND_DEFICIT}) ${fmtPctCi(proctor.comebackFromSwept)}, which is not safeguarded by ruling. The overall rate below averages the two.`);
 	}
 	if (proctor.comebackRate && proctor.comebackRate.p < 0.2) {
 		readings.push(`COMEBACK FLOOR: the comeback rate is ${fmtPct(proctor.comebackRate)}, below the one-in-five floor the principles doc sets. Trailing after round 1 is close to losing.`);
@@ -1594,11 +1629,30 @@ export function sectionStake({ matches, seed, pool, rules }: any) {
 	} else {
 		readings.push(`The stake is taken in ${fmtPct(usage)} of Provings, inside the 20 to 60 percent gauge, ${fmtPct(on.stake.trailingShare)} of them by the side behind on worlds.`);
 	}
+	/*
+		PASS 6. This reading compares two rates, so it must be read against the interval of
+		their DIFFERENCE or it reports noise as a finding. It used to compare the two point
+		estimates bare, and since a chosen risk is variance-neutral by design its two rates
+		sit on top of each other: the bare comparison then fired "TRAP" on about half of all
+		runs, purely on which way the noise fell. Pass 6 chased that flag through three
+		rules changes before pooling five seeds at 1000 matches (n=1619 staked worlds) and
+		measuring the difference at -0.6 +/- 3.0 points, which is no difference at all.
+
+		So the flag now fires only when the staked world is worse by more than the combined
+		interval, which is the point at which the stake would really be a trap.
+	*/
 	if (on.stake.stakedWinRate && on.stake.unstakedWinRate) {
-		if (on.stake.stakedWinRate.p < on.stake.unstakedWinRate.p) {
-			readings.push(`TRAP: the staker wins its staked world ${fmtPct(on.stake.stakedWinRate)} of the time against ${fmtPct(on.stake.unstakedWinRate)} on the same round's unstaked worlds. Doubling a world it wins less often is a trap; the flag is the safety and the threshold is the thing to move.`);
+		const staked = on.stake.stakedWinRate;
+		const unstaked = on.stake.unstakedWinRate;
+		const gap = staked.p - unstaked.p;
+		const gapHalfWidth = Math.sqrt(staked.halfWidth * staked.halfWidth + unstaked.halfWidth * unstaked.halfWidth);
+		const worseBeyondNoise = gap < 0 && Math.abs(gap) > gapHalfWidth;
+		if (worseBeyondNoise) {
+			readings.push(`TRAP: the staker wins its staked world ${fmtPct(staked)} of the time against ${fmtPct(unstaked)} on the same round's unstaked worlds, a gap of ${(gap * 100).toFixed(1)} points against an interval of +/- ${(gapHalfWidth * 100).toFixed(1)}. Doubling a world it wins measurably less often is a trap; the flag is the safety and the threshold is the thing to move.`);
+		} else if (Math.abs(gap) <= gapHalfWidth) {
+			readings.push(`The staker wins its staked world ${fmtPct(staked)} of the time against ${fmtPct(unstaked)} on the same round's unstaked worlds, a gap of ${(gap * 100).toFixed(1)} points inside the +/- ${(gapHalfWidth * 100).toFixed(1)} interval: the stake is variance-neutral, which is what a chosen risk should be.`);
 		} else {
-			readings.push(`The staker wins its staked world ${fmtPct(on.stake.stakedWinRate)} of the time against ${fmtPct(on.stake.unstakedWinRate)} on the same round's unstaked worlds, so the stake is picking worlds it can hold.`);
+			readings.push(`The staker wins its staked world ${fmtPct(staked)} of the time against ${fmtPct(unstaked)} on the same round's unstaked worlds, ahead by more than the interval, so the stake is picking worlds it can hold.`);
 		}
 	}
 	readings.push(`Comeback rate ${fmtPct(on.shape.comebackRate)} with the stake against ${fmtPct(off.shape.comebackRate)} without; decided after round 1 ${fmtPct(on.shape.decidedAfterRound1)} against ${fmtPct(off.shape.decidedAfterRound1)} (reported, not a gauge since pass 2 dropped it).`);

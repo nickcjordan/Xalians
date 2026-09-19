@@ -100,7 +100,26 @@ export interface Rules {
 	draftPoolSize: number;
 	draftDistinctSpecies: boolean;
 	claimCounting: ClaimCounting;
+	stakeTiming: StakeTiming;
 }
+
+/*
+	When during Deploy a handler may stake a world (pass 6).
+
+	- 'before-first-send': the stake must be declared before this handler's first send of
+	  the round, so it is a forecast about which world will suit the roster. This is the
+	  game through pass 5.
+	- 'any-turn': the stake may be declared on any of this handler's turns during Deploy,
+	  so it can be a read of a board that already has creatures on it.
+
+	Measured cause for the lever (docs/design/reclamation-ownership-log.md, pass 6): once
+	pass 5 gave the Clash enough weight to decide worlds, a deploy-time hold edge stopped
+	predicting who holds one, and the staker's win rate on its staked world fell from 61.7
+	percent to 47.4 while its unstaked worlds stayed at 50. A forecast made before any
+	creature stands is the thing that broke; a stake made later is a bet on a fight the
+	handler can see. Still once per Proving, still symmetric, still no gift.
+*/
+export type StakeTiming = 'before-first-send' | 'any-turn';
 
 /*
 	How the Ruling counts a standing creature's contribution to its world (pass 5).
