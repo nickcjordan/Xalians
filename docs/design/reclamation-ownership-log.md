@@ -2,7 +2,7 @@
 
 Status: the running state of the game under ownership (brief: `reclamation-ownership-brief.md`). This file is the resume point. Any reset reads this first and continues at the weakest thing named below, never from scratch. Each pass appends its own section; the standing state at the top is rewritten in place.
 
-## Standing state (after pass 11, 2026-09-18)
+## Standing state (after pass 12, 2026-09-18)
 
 ### Gauges, proctor mirror
 
@@ -52,15 +52,15 @@ What it reads, and where each effect kind lands (measured over the seed-7 pool, 
 
 ### Open items, ranked (resume here)
 
-1. **Give a losing player a reason to take the turn.** The rubric critic's lowest line (4 of 10): shut out on three worlds in round 3, nothing on screen offered a reason to keep playing the match. Not a call for a gift; a call for the table to show what is still reachable (two of three still ties, a stake still unspent, the clinch still two worlds away). The cheapest version is a sentence and a mark, not a rule.
-2. **Mobile** (critic 5 of 10). Three empty world panels at roughly 600px each push the bench below the fold, so pick-and-place needs scrolling between the thing you pick and the thing you pick it for; the bench is a horizontal scroller showing 3.5 of 12 cards. The critic's fix: collapse empty world panels to a compact row on phone and pin the bench as a bottom sheet.
-3. **One contested world in ten sees no attack at all** (9.5 to 11.1 percent on three seeds), because a side fielded only attackless presences. Whether that is a hole (a free world for two bolsters) or simply what a quiet world looks like is not yet judged. Measure the win rate of an all-presence send before deciding.
-4. **Crowd worlds further, if it can be afforded.** 1v1 is 56 percent. 12 sends reaches 44.5 but costs the flip band and half the naive margin. `worldsPerFrame` is a lever; a narrower frame raises sends-per-world without touching the budget but moves the clinch and the match arc.
-5. **Intelligence and charisma read negative within presences.** Read it pooled before treating it as a failure.
-6. **Fire is a dead element and dromeus a dead species** in the draft. Same caution.
-7. **The four borrowed effect kinds** still read as plain attacks. Pass 8 measured that rules for them do not pay while worlds are thin; worth re-testing now that worlds are less thin.
-8. **No human has played a full Proving.** The notes and telemetry are built, verified, and empty.
-9. **Hot-seat** is unbuilt and is the cheapest validation instrument the game can have.
+1. **Mobile** (critic 5 of 10, now the lowest untouched line). Three empty world panels at roughly 600px each push the bench below the fold, so pick-and-place means scrolling between the thing you pick and the thing you pick it for; the bench is a horizontal scroller showing 3.5 of 12 cards. The critic's own fix: collapse empty world panels to a compact row on phone and pin the bench as a bottom sheet.
+2. **One contested world in ten sees no attack at all** (9.5 to 11.1 percent on three seeds), because a side fielded only attackless presences. Measure the win rate of an all-presence send before judging whether it is a hole or simply a quiet world.
+3. **Crowd worlds further, if it can be afforded.** 1v1 is 56 percent. 12 sends reaches 44.5 but costs the flip band and half the naive margin. `worldsPerFrame` is a lever; a narrower frame raises sends-per-world without touching the budget but moves the clinch and the match arc.
+4. **Intelligence and charisma read negative within presences.** Read it pooled before treating it as a failure.
+5. **Fire is a dead element and dromeus a dead species** in the draft. Same caution.
+6. **The four borrowed effect kinds** still read as plain attacks. Worth re-testing now that worlds are less thin.
+7. **No human has played a full Proving.** The notes and telemetry are built, verified, and empty.
+8. **Hot-seat** is unbuilt and is the cheapest validation instrument the game can have.
+9. **Re-run the rubric critic.** It has not been scored since its 64 of 100, and three of its findings have been answered since (the resting promise, the speed label, the Charter's ending, and now a reason to keep playing).
 
 ### Findings from the headless check (pass 5, recorded not fixed)
 
@@ -187,3 +187,15 @@ The single place the game's reading of a creature is decided:
 **Also measured:** one contested world in ten (9.5 to 11.1 percent on three seeds) is decided with no attack landing at all, because a side fielded only presences. Now an open item with a number on it.
 
 **Verified:** 1921 tests green (nine new), typecheck clean, build inside budgets, headless Proving green in all four configurations.
+
+### Pass 12 (2026-09-18): what is still reachable
+
+**Weakest thing:** the rubric critic's lowest line, 4 of 10. A losing player had nothing on the screen telling them whether the Proving was still winnable.
+
+**Shipped:** one sentence in the status strip, and it is arithmetic rather than a gift. Worlds still to be ruled on against each side's distance from the clinch. It says what it would take when behind ("Still yours to take: 2 more of the 3 worlds left clinches the Charter"), says when the rival can no longer clinch, says plainly when the Charter is out of reach and that worlds still count toward the record, and says nothing when the Proving is live for both, because the score already speaks.
+
+**A bug caught by paint before it shipped:** the first version counted this round's worlds as still open after the Court had ruled on them, so it would have called an awarded world winnable and the out-of-reach case could never fire. Found by walking a whole Proving and reading the line at every Ruling.
+
+**Verified by paint on seed 21**, where the handler falls behind 3 to 4 into the last round and the line reads exactly as intended; six unit tests pin the four cases, the ruled-round boundary, and the silence at the end.
+
+**Verified:** 1927 tests green (six new), build inside budgets, headless Proving green in all four configurations.
