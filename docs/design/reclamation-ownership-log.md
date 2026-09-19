@@ -2,7 +2,7 @@
 
 Status: the running state of the game under ownership (brief: `reclamation-ownership-brief.md`). This file is the resume point. Any reset reads this first and continues at the weakest thing named below, never from scratch. Each pass appends its own section; the standing state at the top is rewritten in place.
 
-## Standing state (after pass 14, 2026-09-18)
+## Standing state (after pass 15, 2026-09-19)
 
 ### Gauges, proctor mirror
 
@@ -53,14 +53,17 @@ What it reads, and where each effect kind lands (measured over the seed-7 pool, 
 
 ### Open items, ranked (resume here)
 
-1. **Crowd worlds further, if it can be afforded.** 1v1 is 56 percent of contested worlds. 12 sends reaches 44.5 but cannot hold the flip band at any scale tried and closes the naive-policy margin from 21.5 to under 10 points. The other half of the ratio is the frame: `worldsPerFrame` is a lever, and a narrower frame raises sends-per-world without touching the budget, but it moves the clinch and the whole match arc, so it is a design change rather than a tuning one.
-2. **The status strip is the tallest block on a phone** at 250px, carrying six jobs (round, worlds, score, phase, turn, hint). Whether all six belong above the fold is open.
-3. **Intelligence and charisma read negative within presences** (charisma -15.2, intelligence -9.7). Lever: what `rateForDraft` and the bot's role value count. **Read it pooled before treating it as a failure** (pass 6's lesson).
-4. **Fire is a dead element and dromeus a dead species** in the draft. Same caution.
-5. **The four borrowed effect kinds** (restrain, displace, transfer, suppress) still read as plain attacks. Pass 8 measured that rules for them do not pay while worlds are thin; worth re-testing now that worlds are less thin.
-6. **Bolster recovery and the instinct lanes still move nothing under ablation.** Each earns its place or goes.
-7. **No human has played a full Proving.** The notes and telemetry are built, verified, and empty.
-8. **Hot-seat** is unbuilt and is the cheapest validation instrument the game can have.
+1. **The status strip is the tallest block on a phone** at 250px, carrying six jobs (round, worlds, score, phase, turn, hint). Whether all six belong above the fold is open.
+2. **Intelligence and charisma read negative within presences** (charisma -15.2, intelligence -9.7). Lever: what `rateForDraft` and the bot's role value count. **Read it pooled before treating it as a failure** (pass 6's lesson).
+3. **Fire is a dead element and dromeus a dead species** in the draft. Same caution.
+4. **The four borrowed effect kinds** (restrain, displace, transfer, suppress) still read as plain attacks. Pass 8 measured that rules for them do not pay while worlds are thin; worth re-testing now that worlds are less thin.
+5. **Bolster recovery and the instinct lanes still move nothing under ablation.** Each earns its place or goes.
+6. **No human has played a full Proving.** The notes and telemetry are built, verified, and empty.
+7. **Hot-seat** is unbuilt and is the cheapest validation instrument the game can have.
+
+### Closed by measurement (do not reopen without new evidence)
+
+- **Crowding worlds by narrowing the frame** (pass 15). `worldsPerFrame` 2 nearly halves the 1v1 share, 56 percent to 30, holding downs and flips in band on three seeds - the best crowding result measured - but it **fails the naive-policy bar**: pass-early sits 7.5 to 9.5 points under the mirror against a bar of eight, through it on seed 13. With two worlds a round, spreading evenly is the right answer, so deploy stops asking a question. A two-world round also ends level 51 percent of the time and swept 48, with nothing between, and the stake does not rescue it (0.10 stakes a match against 0.33 at width 3). A **wider** frame is worse on every axis. The full sweep is in the comment above `WORLDS_PER_FRAME`. 1v1 at 56 percent is therefore the accepted cost of a game whose deploy decisions matter, unless a later pass finds a per-world decision deeper than "how many do I send".
 
 ### Findings from the headless check (pass 5, recorded not fixed)
 
@@ -238,3 +241,25 @@ The reason is structural: a presence contributes its hold and nothing else, and 
 **The lesson worth keeping:** a blind reviewer is only as good as what it is shown. Two of its three highest-value fixes this round were artifacts of my own capture method. Check a finding against the live page before building on it.
 
 **Verified:** 1932 tests green (five new), build inside budgets, headless Proving green in all four configurations, both UI changes checked by paint.
+
+### Pass 15 (2026-09-19): the frame width, wired and then left alone
+
+**Shipped: the wiring, and a negative result.** `worldsPerFrame` had been a key in `DEFAULT_RULES` since pass 9 but nothing read it - `drawFrames` dealt from the module constant, and the clinch was a hard five in five places (the Ruling, the bot, the status pips, the reachability line, the validation). So the untried half of pass 9's sends-per-world ratio could not be measured at all. It can now: `clinchFor(worldsPerFrame, framesPerMatch)` derives the bar as a majority of the worlds on offer, which yields the shipped 5 of 9 unchanged and makes any other width a coherent game rather than a half-applied setting. Eight tests pin it (`frameWidth.test.ts`), one per place the width has to reach.
+
+**The measurement, 600 matches on seeds 7/13/21:**
+
+| frame | worlds | clinch | 1v1 | downs | flips | worst naive |
+|---|---|---|---|---|---|---|
+| 3 x 3, s11 (shipped) | 9 | 5 | 55.1-56.1% | 4.64-4.85 | 28.1-30.5% | 12.3-18.0 |
+| 2 x 3, s11 | 6 | 4 | 18.3-19.3% | 5.21-5.64 | 27.9-29.7% | - |
+| **2 x 3, s9** | 6 | 4 | **30.1-31.1%** | 4.27-4.52 | 29.0-30.5% | **7.5-9.5** |
+| 2 x 3, s8 | 6 | 4 | 42.4-44.2% | 3.63-3.77 | 26.4-30.1% | 4.5-12.5 |
+| 4 x 3, s14 | 12 | 7 | 68.7-69.4% | 5.60-5.63 | 29.5-30.3% | - |
+
+**Not shipped, for two measured reasons.** The naive-policy margin falls through its bar of eight points on seed 13, because with two worlds a round there is no allocation question left; and a two-world round can only be level (51 percent) or swept (48), so half of all rounds would say nothing about the score. The stake does not rescue it. Both readings are written into the comment above `WORLDS_PER_FRAME` with the sweep, so nobody rebuilds this.
+
+**Worth keeping from it:** a wider frame is unambiguously worse on every axis, which nobody had checked; and the narrow frame does make the last round matter more (91.8-92.7 percent of matches still live entering round 3, against 82.5-84.7 shipped), which is the one thing to come back for if a deeper per-world decision ever exists.
+
+**The lesson worth keeping:** *a lever nothing reads is not a lever.* This one sat in `DEFAULT_RULES` for six passes looking like an option, and four of those passes cited it as the untried alternative to a budget change. It was never testable. When a lever is recorded, the same pass should make something read it, or record that it does not.
+
+**Verified:** 1940 tests green (eight new), typecheck clean, build inside budgets, headless Proving green in all four configurations, and the derived clinch checked by paint (five pips a side, "First to 5", three worlds on the table).

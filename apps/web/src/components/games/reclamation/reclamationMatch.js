@@ -10,7 +10,7 @@ import {
 } from '@xalians/rules/expedition/expeditionRules';
 import { chooseSend, chooseStake, rivalById, DEFAULT_RIVAL_ID } from '@xalians/rules/expedition/expeditionBot';
 import { prepare, strainMultiplierFor } from '@xalians/rules/expedition/creatureOnTable';
-import { SENDABLE, SITES_TO_CLINCH, FRAMES_PER_MATCH } from '@xalians/rules/expedition/expeditionInterpretation';
+import { SENDABLE, clinchFor, FRAMES_PER_MATCH } from '@xalians/rules/expedition/expeditionInterpretation';
 import {
 	speciesLabel, formatHold, classifyEvent, narrateEvent, cueForEvent, narrateSwiftMove,
 	narrateSend, narratePass, narrateJudge, narrateMatchEnd, narrateStake, countWord,
@@ -82,8 +82,11 @@ export function reachabilityLine(view, you, them) {
 	if (worldsLeft <= 0) {
 		return null;
 	}
-	const yourNeed = SITES_TO_CLINCH - you.sitesWon;
-	const theirNeed = SITES_TO_CLINCH - them.sitesWon;
+	// PASS 15: the clinch is a majority of the worlds on offer, read off the live frame, so
+	// a narrower frame prints the bar it is actually playing to.
+	const toClinch = clinchFor(perRound, FRAMES_PER_MATCH);
+	const yourNeed = toClinch - you.sitesWon;
+	const theirNeed = toClinch - them.sitesWon;
 	const behind = you.sitesWon < them.sitesWon;
 
 	// already out of reach on worlds: the rival cannot be caught even by taking every one
@@ -1421,7 +1424,8 @@ class ReclamationMatch extends React.Component {
 			: view.phase === 'matchEnd' ? 'Charter'
 				: this.state.judged ? 'Ruling' : 'Deploy';
 		// a pip is keyed on whether it is lit, so lighting one remounts it and it pops
-		const pips = (n) => Array.from({ length: SITES_TO_CLINCH }).map((_, i) => (
+		const toClinch = clinchFor(view.frame.sites.length, FRAMES_PER_MATCH);
+		const pips = (n) => Array.from({ length: toClinch }).map((_, i) => (
 			<span className={`rec-pip${i < n ? ' rec-pip--lit' : ''}`} key={`${i}-${i < n ? 'lit' : 'dark'}`} />
 		));
 		const frameDots = Array.from({ length: FRAMES_PER_MATCH }).map((_, i) => (
@@ -1458,7 +1462,7 @@ class ReclamationMatch extends React.Component {
 					</p>
 				)}
 
-				<div className="rec-status-score" title={`First to ${SITES_TO_CLINCH} sites takes the Charter`}>
+				<div className="rec-status-score" title={`First to ${toClinch} sites takes the Charter`}>
 					<span className="rec-score rec-score--mine">
 						<span className="rec-score-label">You</span>
 						<span className="rec-pips">{pips(you.sitesWon)}</span>
