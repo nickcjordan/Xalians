@@ -8,9 +8,29 @@ import { useVisit, useResume } from './trail';
 import { SectionHead } from '@/components/system/masthead';
 import { usePageTitle } from '@/components/system/head';
 import { SpecPlate, RecordRow, EmptyState } from '@/components/system/record';
+import { Term } from '@/components/system/term';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from '@/components/ui/accordion';
+
+/**
+ * Definitions for internal vocabulary that reaches the visitor undefined
+ * (site audit issue #438). Registry fields quote
+ * docs/species-templates/REGISTRY-DEFINITIONS.md's own one-line field
+ * meaning where the doc states one; the rest are the ratified non-registry
+ * text. Kept identical to record/RecordView.tsx's TERM_DEFS.
+ */
+const TERM_DEFS = {
+    corporeality: 'Whether the creature has a physical body that occupies space and can be touched, struck, and held, or no persistent physical body at all.',
+    composition: 'What the body is made of at rest.',
+    bodyPlan: 'How the creature presents in the field and moves through it at rest.',
+    covering: 'The outer surface of the resting body.',
+    communication: 'Outward signaling to other creatures.',
+    ambientMedia: 'The phases of matter the creature can sustain activity in: atmosphere, liquid, or vacuum.',
+    lifespan: 'How long a working life this body has, from a season to something that never wears out.',
+    chirality: "Which molecular handedness this individual's genome rolled, or whether its body has none to roll.",
+    intensity: 'Strength of the ability on a scale of 100.',
+};
 
 function bandText(band) {
     if (!Array.isArray(band)) return '';
@@ -86,19 +106,19 @@ function TemplatePhysiology({ view }) {
     const chirality = p.genome && p.genome.chirality ? p.genome.chirality.name : '';
 
     const entries = [
-        { key: 'Corporeality', value: p.corporeality.name },
-        { key: 'Composition', value: composition },
-        { key: 'Body plan', value: p.bodyPlan.name },
-        { key: 'Covering', value: p.covering.name },
+        { key: <Term definition={TERM_DEFS.corporeality}>Corporeality</Term>, value: p.corporeality.name },
+        { key: <Term definition={TERM_DEFS.composition}>Composition</Term>, value: composition },
+        { key: <Term definition={TERM_DEFS.bodyPlan}>Body plan</Term>, value: p.bodyPlan.name },
+        { key: <Term definition={TERM_DEFS.covering}>Covering</Term>, value: p.covering.name },
         { key: 'Height', value: `${bandText(p.size.heightCm)} cm` },
         { key: 'Weight', value: `${bandText(p.size.weightKg)} kg` },
         { key: 'Diet', value: p.diet.name },
-        { key: 'Communication', value: communication },
+        { key: <Term definition={TERM_DEFS.communication}>Communication</Term>, value: communication },
         { key: 'Breathes', value: breathes || 'Not recorded' },
-        { key: 'Ambient media', value: ambientMedia || 'Not recorded' },
+        { key: <Term definition={TERM_DEFS.ambientMedia}>Ambient media</Term>, value: ambientMedia || 'Not recorded' },
         { key: 'Temperature band', value: temperature || 'Not recorded' },
         {
-            key: 'Lifespan',
+            key: <Term definition={TERM_DEFS.lifespan}>Lifespan</Term>,
             value: (
                 <>
                     {p.lifespan.name}
@@ -106,7 +126,7 @@ function TemplatePhysiology({ view }) {
                 </>
             ),
         },
-        { key: 'Chirality', value: chirality || 'Not recorded' },
+        { key: <Term definition={TERM_DEFS.chirality}>Chirality</Term>, value: chirality || 'Not recorded' },
     ].map((e) => ({ ...e, value: <span className="font-body normal-case tracking-normal text-ink">{e.value}</span> }));
 
     return <SpecPlate entries={entries} />;
@@ -145,7 +165,7 @@ function Signature({ signature }) {
                     { key: 'Delivery', value: signature.delivery },
                     { key: 'Effects', value: signature.action },
                     { key: 'Medium', value: signature.medium },
-                    { key: 'Intensity', value: bandText(signature.intensity) },
+                    { key: <Term definition={TERM_DEFS.intensity}>Intensity</Term>, value: bandText(signature.intensity) },
                 ]}
             />
             <p className="m-0 font-body text-small text-ink-2">{signature.description}</p>

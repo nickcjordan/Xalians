@@ -155,7 +155,13 @@ describe('RecordView', () => {
 		const record = { ...sampleGraviclaw, appearance: { ...sampleGraviclaw.appearance, finish: 'prismatic' } };
 		renderRecord(record);
 
-		expect(screen.getByText('Prismatic finish: this one came out of the Generator wearing it.')).toBeInTheDocument();
+		// "finish" is wrapped in a Term tooltip (issue #438), so the sentence spans
+		// several nodes. Match on the paragraph's whole text content instead of a
+		// single text node.
+		const sentence = screen
+			.getAllByText(/came out of the Generator wearing it/)
+			.map((el) => el.textContent.replace(/\s+/g, ' ').trim());
+		expect(sentence).toContain('Prismatic finish: this one came out of the Generator wearing it.');
 	});
 
 	it('glosses how to read an action line', () => {
