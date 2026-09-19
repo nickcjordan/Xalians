@@ -353,14 +353,24 @@
    The drift is measured in minutes: it should be almost subliminal, noticed
    only if you stop and watch. */
 .starfield {
-	position: absolute;
+	/* Fixed, not absolute: anchored to the element the stars scrolled up the
+	   page with the hero, which read as the sky sliding away. The sky should
+	   sit still behind the page and only its own slow drift should move, so
+	   the layer is pinned to the viewport and the content scrolls over it.
+	   The hero's own mask still confines it to the top band. */
+	position: fixed;
 	inset: 0;
+	z-index: -1;
 	overflow: hidden;
 	pointer-events: none;
-	/* The band fades out at the bottom so the stars never collide with the
-	   sections below; the hero sits on top of open space, not in a box. */
-	-webkit-mask-image: linear-gradient(to bottom, rgb(0 0 0) 55%, transparent 100%);
-	mask-image: linear-gradient(to bottom, rgb(0 0 0) 55%, transparent 100%);
+	/* Two masks, multiplied. The vertical gradient fades the sky out below the
+	   hero band. The second is driven by --starfield-fade, which the page sets
+	   from scroll position: the sky is only ever behind the hero, so once the
+	   hero has left the screen the layer is gone entirely rather than sitting
+	   behind the destination list and the footer. */
+	-webkit-mask-image: linear-gradient(to bottom, rgb(0 0 0) 0, rgb(0 0 0) 40vh, transparent 70vh);
+	mask-image: linear-gradient(to bottom, rgb(0 0 0) 0, rgb(0 0 0) 40vh, transparent 70vh);
+	opacity: var(--starfield-fade, 1);
 }
 
 .starfield::before,
@@ -378,12 +388,12 @@
 /* Near field: fewer, brighter, faster. */
 .starfield::before {
 	background-image:
-		radial-gradient(1.4px 1.4px at 12% 18%, rgba(255,255,255,0.85), transparent),
-		radial-gradient(1.6px 1.6px at 68% 12%, rgba(255,255,255,0.75), transparent),
-		radial-gradient(1.3px 1.3px at 84% 46%, rgba(255,255,255,0.8), transparent),
-		radial-gradient(1.5px 1.5px at 33% 62%, rgba(255,255,255,0.7), transparent),
-		radial-gradient(1.2px 1.2px at 52% 88%, rgba(255,255,255,0.75), transparent);
-	background-size: 420px 420px;
+		radial-gradient(2px 2px at 12% 18%, rgba(255,255,255,1), transparent),
+		radial-gradient(2.2px 2.2px at 68% 12%, rgba(255,255,255,0.95), transparent),
+		radial-gradient(1.9px 1.9px at 84% 46%, rgba(255,255,255,1), transparent),
+		radial-gradient(2.1px 2.1px at 33% 62%, rgba(255,255,255,0.9), transparent),
+		radial-gradient(1.8px 1.8px at 52% 88%, rgba(255,255,255,0.95), transparent);
+	background-size: 340px 340px;
 	animation: starfield-drift-near 240s linear infinite;
 }
 
@@ -391,13 +401,13 @@
    generic night sky. Kept low in opacity: colour is energy here, not decor. */
 .starfield::after {
 	background-image:
-		radial-gradient(1px 1px at 22% 32%, color-mix(in srgb, var(--color-viable-hi) 50%, transparent), transparent),
-		radial-gradient(1px 1px at 58% 72%, rgba(255,255,255,0.5), transparent),
-		radial-gradient(1.1px 1.1px at 88% 24%, color-mix(in srgb, var(--color-viable-hi) 42%, transparent), transparent),
-		radial-gradient(1px 1px at 40% 14%, rgba(255,255,255,0.45), transparent),
-		radial-gradient(1px 1px at 74% 58%, rgba(255,255,255,0.4), transparent),
-		radial-gradient(1px 1px at 8% 78%, color-mix(in srgb, var(--color-viable-hi) 38%, transparent), transparent);
-	background-size: 300px 300px;
+		radial-gradient(1.4px 1.4px at 22% 32%, color-mix(in srgb, var(--color-viable-hi) 80%, transparent), transparent),
+		radial-gradient(1.4px 1.4px at 58% 72%, rgba(255,255,255,0.8), transparent),
+		radial-gradient(1.5px 1.5px at 88% 24%, color-mix(in srgb, var(--color-viable-hi) 70%, transparent), transparent),
+		radial-gradient(1.4px 1.4px at 40% 14%, rgba(255,255,255,0.75), transparent),
+		radial-gradient(1.4px 1.4px at 74% 58%, rgba(255,255,255,0.7), transparent),
+		radial-gradient(1.4px 1.4px at 8% 78%, color-mix(in srgb, var(--color-viable-hi) 65%, transparent), transparent);
+	background-size: 240px 240px;
 	animation: starfield-drift-mid 380s linear infinite;
 }
 
@@ -405,20 +415,20 @@
    needs a third animation and ::before/::after are already spent. */
 .starfield > .starfield-far {
 	background-image:
-		radial-gradient(0.8px 0.8px at 16% 44%, rgba(255,255,255,0.35), transparent),
-		radial-gradient(0.8px 0.8px at 46% 24%, rgba(255,255,255,0.3), transparent),
-		radial-gradient(0.7px 0.7px at 78% 66%, rgba(255,255,255,0.32), transparent),
-		radial-gradient(0.8px 0.8px at 92% 8%, rgba(255,255,255,0.28), transparent),
-		radial-gradient(0.7px 0.7px at 62% 92%, rgba(255,255,255,0.3), transparent),
-		radial-gradient(0.8px 0.8px at 28% 76%, rgba(255,255,255,0.26), transparent);
-	background-size: 210px 210px;
+		radial-gradient(1.1px 1.1px at 16% 44%, rgba(255,255,255,0.6), transparent),
+		radial-gradient(1.1px 1.1px at 46% 24%, rgba(255,255,255,0.55), transparent),
+		radial-gradient(1px 1px at 78% 66%, rgba(255,255,255,0.58), transparent),
+		radial-gradient(1.1px 1.1px at 92% 8%, rgba(255,255,255,0.52), transparent),
+		radial-gradient(1px 1px at 62% 92%, rgba(255,255,255,0.55), transparent),
+		radial-gradient(1.1px 1.1px at 28% 76%, rgba(255,255,255,0.5), transparent);
+	background-size: 170px 170px;
 	animation: starfield-drift-far 560s linear infinite;
 }
 
 /* Each layer travels exactly one tile, so the loop is seamless. */
-@keyframes starfield-drift-near { to { transform: translate3d(-420px, 210px, 0); } }
-@keyframes starfield-drift-mid  { to { transform: translate3d(-300px, 150px, 0); } }
-@keyframes starfield-drift-far  { to { transform: translate3d(-210px, 105px, 0); } }
+@keyframes starfield-drift-near { to { transform: translate3d(-340px, 170px, 0); } }
+@keyframes starfield-drift-mid  { to { transform: translate3d(-240px, 120px, 0); } }
+@keyframes starfield-drift-far  { to { transform: translate3d(-170px, 85px, 0); } }
 
 @media (prefers-reduced-motion: reduce) {
 	*, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }

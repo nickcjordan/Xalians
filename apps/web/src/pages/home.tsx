@@ -5,6 +5,7 @@ import { Link } from 'react-router';
 import XalianNavbar from '../components/navbar';
 import XaliansLogoDnaAnimated from '../components/animations/xaliansLogoDnaAnimated';
 import XalianImage from '../components/xalianImage';
+import * as svgUtil from '../utils/svgUtil';
 import { species, worlds } from 'virtual:xalians-home-data';
 
 import { Shell } from '@/components/system/masthead';
@@ -12,7 +13,6 @@ import { Tile, TileArt, TileMeta } from '@/components/system/record';
 import { usePageTitle } from '@/components/system/head';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 
 // Nine: one for the hero plate and a full row of eight in the strip below.
 const FEATURED_SPECIES_COUNT = 9;
@@ -73,24 +73,69 @@ const DESTINATIONS = [
 	},
 ];
 
+/**
+ * The sky belongs to the hero. The starfield is fixed to the viewport so it
+ * holds still while the page scrolls over it (anchoring it to the hero made
+ * it slide away, which read as the sky moving). Fixed alone would leave it
+ * behind the destination list and the footer, so this fades it out over the
+ * first screen of scrolling: full strength at the top, gone by the time the
+ * hero has left. Written to a CSS variable rather than React state so
+ * scrolling never triggers a re-render.
+ */
+function useStarfieldFade() {
+	React.useEffect(() => {
+		const root = document.documentElement;
+		let frame = 0;
+		const apply = () => {
+			frame = 0;
+			// Fully faded once the hero band is off screen.
+			const span = Math.max(1, window.innerHeight * 0.6);
+			const fade = 1 - Math.min(1, window.scrollY / span);
+			root.style.setProperty('--starfield-fade', fade.toFixed(3));
+		};
+		const onScroll = () => {
+			if (!frame) frame = window.requestAnimationFrame(apply);
+		};
+		apply();
+		window.addEventListener('scroll', onScroll, { passive: true });
+		window.addEventListener('resize', onScroll, { passive: true });
+		return () => {
+			if (frame) window.cancelAnimationFrame(frame);
+			window.removeEventListener('scroll', onScroll);
+			window.removeEventListener('resize', onScroll);
+			// The variable is set on <html>, so it has to be cleaned up when the
+			// home page unmounts or every other route inherits the last value.
+			root.style.removeProperty('--starfield-fade');
+		};
+	}, []);
+}
+
 function Home() {
 	const [featuredSpecies] = React.useState(pickRandomSpecies);
 	// The hero plate shows the first of the picked pool, so the strip below
 	// never repeats it and both come from one draw.
 	const heroSpecies = featuredSpecies[0];
 	usePageTitle();
+	useStarfieldFade();
 
+	// No bg-room on main: the fixed starfield sits behind the page at z-index
+	// -1, and an opaque background here would paint straight over it.
+	// globals.css already gives body the room colour, so the surface is
+	// unchanged for every section that is not the hero.
 	return (
-		<main id="main" className="min-h-screen bg-room text-ink font-body" data-tier="chrome">
+		<main id="main" className="min-h-screen text-ink font-body" data-tier="chrome">
 			<XalianNavbar />
 
-			{/* The hero sits on open space. The starfield is scoped to this band
-			    and masked out at its foot, so the reading sections below stay on
-			    the flat hull surface and never carry moving scenery behind text. */}
-			<div className="relative isolate overflow-hidden">
-				<div className="starfield" aria-hidden="true">
-					<div className="starfield-far" />
-				</div>
+			{/* The sky is a sibling of the content, not a child of the hero: it is
+			    pinned to the viewport so it holds still while the page scrolls
+			    over it, and `isolate`/`overflow-hidden` on a wrapper would both
+			    break that. Its own mask keeps it to the top band, so the reading
+			    sections still sit on the flat hull surface. */}
+			<div className="starfield" aria-hidden="true">
+				<div className="starfield-far" />
+			</div>
+
+			<div className="relative">
 				<Shell className="relative pt-8 pb-10">
 					{/* Two columns only once there is room for both: the plate is the
 					    payoff the copy promises, so on a narrow window the words win
@@ -132,9 +177,14 @@ function Home() {
 									moreClasses="w-full"
 								/>
 							</div>
-							<div className="flex items-baseline justify-between gap-2 px-3 py-2.5">
+							<div className="flex items-center justify-between gap-2 px-3 py-2.5">
 								<span className="type-legend text-[13px] text-ink">{heroSpecies.name}</span>
-								<Badge variant="chip" className="text-[10px] uppercase">{heroSpecies.type}</Badge>
+								<span
+									className="flex size-6 shrink-0 items-center justify-center rounded-full bg-el ring-1 ring-edge-strong"
+									title={heroSpecies.type}
+								>
+									{svgUtil.getSpeciesTypeSymbol(heroSpecies.type, false, 14)}
+								</span>
 							</div>
 						</Link>
 					)}
@@ -172,14 +222,17 @@ function Home() {
 										decoding="async"
 										className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
 									/>
-									{/* The element chip rides on the art so the name below
-									    gets the tile's full width and stops truncating. */}
-									<Badge
-										variant="chip"
-										className="absolute top-1.5 left-1.5 text-[10px] uppercase"
+									{/* The element reads as its symbol, not its name: the
+									    symbol is the system's own mark for the element and
+									    survives at this size, where the word would have to
+									    shrink or truncate. The name is still carried for
+									    assistive tech by the title below. */}
+									<span
+										className="absolute top-1.5 left-1.5 flex size-6 items-center justify-center rounded-full bg-el ring-1 ring-edge-strong"
+										title={world.element}
 									>
-										{world.element}
-									</Badge>
+										{svgUtil.getSpeciesTypeSymbol(world.element, false, 14)}
+									</span>
 								</div>
 								<div className="flex min-w-0 flex-col gap-0.5 px-2.5 pt-2 pb-2.5">
 									<span className="type-legend text-[12px] text-ink">{world.name}</span>
