@@ -47,6 +47,24 @@ function readMode() {
 	}
 }
 
+/*
+	PASS 21. Hot-seat: two people sharing one screen, reached with `?hotseat=1`.
+
+	It is a URL flag rather than a button on the intro for now because the draft still assumes
+	one human keeper (the second handler currently plays the squad the draft built for the
+	first). That is the next piece of the feature, and a flag lets the hand-off be played and
+	checked before the draft is rebuilt around two people, rather than holding the whole thing
+	back behind its last quarter.
+*/
+function readHotSeat() {
+	try {
+		const flag = new URLSearchParams(window.location.search).get('hotseat');
+		return flag === '1' || flag === 'true';
+	} catch (e) {
+		return false;
+	}
+}
+
 function storeMode(mode) {
 	try {
 		window.localStorage.setItem(MODE_KEY, mode);
@@ -389,6 +407,7 @@ class ReclamationPage extends React.Component {
 							rivalId={rivalId}
 							seed={seed}
 							mode={mode}
+							hotSeat={readHotSeat()}
 							onEngineStep={this.onEngineStep}
 							onNewProving={this.newProving}
 							sound={this.sound}
