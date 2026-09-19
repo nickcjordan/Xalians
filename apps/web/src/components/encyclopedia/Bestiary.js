@@ -1,14 +1,15 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { Link } from 'react-router';
 import * as lore from '../../lore';
 import XalianImage from '../xalianImage';
 import { useReadMark } from './trail';
-import { Tile, TileArt, TileMeta, EmptyState } from '@/components/system/record';
+import { Tile, TileArt, TileMeta, TileGrid, EmptyState } from '@/components/system/record';
 import { usePageTitle } from '@/components/system/head';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
-import { centerInRail } from './railScroll';
+import { FilterBar } from '@/components/system/filters';
+import { Station, StationRow } from '@/components/system/station-row';
 
 const ELEMENTS = [
     'fire', 'water', 'dark', 'light', 'plant', 'electric', 'ghost', 'rock',
@@ -25,10 +26,9 @@ function BestiaryTile({ species: s }) {
             <TileMeta>
                 <span className="type-subhead block text-base">{s.name}</span>
                 <span className="type-data mt-1 block text-small text-ink-3">{s.planet ? s.planet.name : s.homePlanet}</span>
-                {(s.source !== 'template' || read) && (
+                {read && (
                     <div className="mt-2 flex gap-2">
-                        {s.source !== 'template' && <Badge variant="info">Pending record</Badge>}
-                        {read && <Badge variant="ok">Reviewed</Badge>}
+                        <Badge variant="ok">Reviewed</Badge>
                     </div>
                 )}
             </TileMeta>
@@ -46,18 +46,9 @@ export default function Bestiary() {
     const [element, setElement] = useState('all');
     const [world, setWorld] = useState('all');
     const [sort, setSort] = useState('name');
-    const elementRowRef = useRef(null);
 
     const worlds = lore.getWorlds();
     const species = lore.getSpeciesList();
-
-    // Keep the pressed element segment in view when the row scrolls on phones.
-    useEffect(() => {
-        const row = elementRowRef.current;
-        if (!row) return;
-        const pressed = row.querySelector('[aria-pressed="true"]');
-        centerInRail(row, pressed);
-    }, [element]);
 
     const list = useMemo(() => {
         let filtered = species;
@@ -75,23 +66,27 @@ export default function Bestiary() {
         return sorted;
     }, [species, element, world, sort]);
 
+    const active = element !== 'all' || world !== 'all' || sort !== 'name';
+
     return (
         <div>
-            <div
-                className="mb-4 flex max-sm:overflow-x-auto max-sm:[mask-image:linear-gradient(to_right,black_calc(100%-40px),transparent)]"
-                role="group"
-                aria-label="Filter by element"
-                ref={elementRowRef}
+            <FilterBar
+                className="mb-5"
+                active={active}
+                activeCount={(element !== 'all' ? 1 : 0) + (world !== 'all' ? 1 : 0)}
+                onClear={() => {
+                    setElement('all');
+                    setWorld('all');
+                    setSort('name');
+                }}
             >
-                <ToggleGroup type="single" value={element} onValueChange={(v) => v && setElement(v)} variant="outline" className="max-sm:flex-nowrap" aria-label="Element">
-                    <ToggleGroupItem value="all" className="max-sm:shrink-0">All</ToggleGroupItem>
+                <StationRow value={element} onChange={setElement} aria-label="Filter by element">
+                    <Station active={element === 'all'} onClick={() => setElement('all')}>All</Station>
                     {ELEMENTS.map((el) => (
-                        <ToggleGroupItem key={el} value={el} className="max-sm:shrink-0">{el}</ToggleGroupItem>
+                        <Station key={el} active={element === el} onClick={() => setElement(el)}>{el}</Station>
                     ))}
-                </ToggleGroup>
-            </div>
+                </StationRow>
 
-            <div className="mb-5 flex flex-wrap items-center gap-3 max-sm:flex-row max-sm:flex-wrap">
                 <Select value={world} onValueChange={setWorld}>
                     <SelectTrigger aria-label="Filter by world" className="min-w-[10rem] max-sm:flex-1 max-sm:basis-full">
                         <SelectValue placeholder="All worlds" />
@@ -111,15 +106,15 @@ export default function Bestiary() {
 
                 {/* The masthead already carries "Bestiary" and the total count; this
                     is the live filtered count, which does change, so it stays. */}
-                <p className="type-data m-0 ml-auto text-small text-ink-2 max-sm:ml-0 max-sm:basis-full">{list.length} of {species.length} specimens</p>
-            </div>
+                <p className="type-data m-0 ml-auto text-small text-ink-2 max-sm:ml-0 max-sm:basis-full">{list.length} of {species.length} species</p>
+            </FilterBar>
 
             {list.length === 0 ? (
-                <EmptyState legend="No results">No specimens match the current filter.</EmptyState>
+                <EmptyState legend="No results">No species match the current filter.</EmptyState>
             ) : (
-                <div className="grid grid-cols-2 gap-3 gap-y-4 sm:grid-cols-3 sm:gap-4 sm:gap-y-5 md:grid-cols-4 min-[1080px]:grid-cols-5 xl:grid-cols-6">
+                <TileGrid>
                     {list.map((s) => <BestiaryTile key={s.key} species={s} />)}
-                </div>
+                </TileGrid>
             )}
         </div>
     );

@@ -158,6 +158,31 @@ function Tile({
   )
 }
 
+/**
+ * The one auto-fill grid for a catalogue of tiles: species, worlds, and any
+ * future tile catalogue. `min` sets the tile's minimum width; the phone
+ * layout is a fixed two-up grid rather than the auto-fill, since a single
+ * `minmax` column collapses to one-per-row before it reaches phone widths.
+ */
+function TileGrid({
+  className,
+  min = "10.5rem",
+  style,
+  ...props
+}: React.ComponentProps<"div"> & { min?: string }) {
+  return (
+    <div
+      data-slot="tile-grid"
+      className={cn(
+        "grid grid-cols-2 gap-3 gap-y-4 sm:gap-4 sm:gap-y-5 sm:[grid-template-columns:repeat(auto-fill,minmax(var(--tile-min),1fr))]",
+        className
+      )}
+      style={{ "--tile-min": min, ...style } as React.CSSProperties}
+      {...props}
+    />
+  )
+}
+
 function TileArt({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
@@ -172,5 +197,5 @@ function TileMeta({ className, ...props }: React.ComponentProps<"div">) {
   return <div data-slot="tile-meta" className={cn("px-4 pb-4 pt-3", className)} {...props} />
 }
 
-export { SpecPlate, RecordRow, Meter, MoveSet, EmptyState, Tile, TileArt, TileMeta }
+export { SpecPlate, RecordRow, Meter, MoveSet, EmptyState, Tile, TileGrid, TileArt, TileMeta }
 export type { SpecEntry, Move }

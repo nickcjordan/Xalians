@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router';
-import { ChevronRight } from 'lucide-react';
 import * as lore from '../../lore';
 import GalaxyMap from './GalaxyMap';
 import EraScrubber from './EraScrubber';
 import { useResume } from './trail';
 import { SectionHead } from '@/components/system/masthead';
 import { usePageTitle } from '@/components/system/head';
+import { IndexRow, IndexList } from '@/components/system/index-row';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 
@@ -119,7 +119,7 @@ export default function ReadingRoom() {
 
 	return (
 		<div>
-			<p className="mb-6 max-w-[62ch] font-body text-body text-ink-2">
+			<p className="mb-6 max-w-[62ch] font-body text-lead text-ink-2">
 				Every record the Generator holds on the galaxy it serves is here: the worlds, the fauna printed for
 				them, the powers that ordered the printing, and the sequence of events that left Xalia as it is.
 				Nothing is dated. The archive knows only what came before what. Read it as one story from the first
@@ -130,29 +130,26 @@ export default function ReadingRoom() {
 
 			<section className="mb-8">
 				<SectionHead title="Galaxy of Xalia" />
-				<GalaxyMap era={era} />
-				<EraScrubber era={era} onChange={setEra} />
+				<div className="mx-auto max-w-[1000px]">
+					<GalaxyMap era={era} />
+					<div className="border border-t-0 border-edge bg-s1 p-4">
+						<EraScrubber era={era} onChange={setEra} />
+					</div>
+				</div>
 			</section>
 
 			{/* One row per reference section: name, copy, live count, chevron. */}
-			<Card variant="panel" className="p-0">
+			<IndexList>
 				{SECTIONS.map((section) => (
-					<Link
+					<IndexRow
 						key={section.to}
 						to={section.to}
-						className="flex min-h-[56px] flex-wrap items-center justify-between gap-x-4 gap-y-1 border-b border-edge px-4 py-2 no-underline last:border-b-0"
-					>
-						<div className="min-w-0 flex-[1_1_16rem]">
-							<span className="type-legend block">{section.label}</span>
-							<span className="block font-body text-small text-ink-2">{section.copy}</span>
-						</div>
-						<div className="flex shrink-0 items-center gap-2">
-							<span className="type-data whitespace-nowrap text-small text-ink-2">{section.count()}</span>
-							<ChevronRight aria-hidden="true" className="size-4 text-ink-3" />
-						</div>
-					</Link>
+						title={section.label}
+						copy={section.copy}
+						meta={section.count()}
+					/>
 				))}
-			</Card>
+			</IndexList>
 		</div>
 	);
 }

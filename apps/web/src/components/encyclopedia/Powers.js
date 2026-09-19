@@ -10,7 +10,7 @@ import { Badge } from '@/components/ui/badge';
 function EntryRecord({ entry }) {
     return (
         <RecordRow
-            className={`break-inside-avoid ${entry.element ? `el-${entry.element}` : ''}`}
+            className={entry.element ? `el-${entry.element}` : ''}
             term={
                 <Link to={lore.routeFor('entry', entry.key)} className="no-underline hover:underline">
                     {entry.title}
@@ -38,7 +38,7 @@ export default function Powers() {
                 {vallerii.length === 0 ? (
                     <EmptyState legend="No record">No record on file.</EmptyState>
                 ) : (
-                    <div className="columns-1 border-t border-edge lg:columns-2">
+                    <div className="grid grid-cols-1 border-t border-edge lg:grid-cols-2 lg:gap-x-6">
                         {vallerii.map((entry) => <EntryRecord key={entry.key} entry={entry} />)}
                     </div>
                 )}
@@ -49,7 +49,7 @@ export default function Powers() {
                 {factions.length === 0 ? (
                     <EmptyState legend="No record">No record on file.</EmptyState>
                 ) : (
-                    <div className="columns-1 border-t border-edge lg:columns-2">
+                    <div className="grid grid-cols-1 border-t border-edge lg:grid-cols-2 lg:gap-x-6">
                         {factions.map((entry) => <EntryRecord key={entry.key} entry={entry} />)}
                     </div>
                 )}
@@ -57,11 +57,11 @@ export default function Powers() {
 
             <section className="mt-8">
                 <SectionHead title="Xalian Peoples" count={`${peoples.length} record${peoples.length === 1 ? '' : 's'}`} />
-                <div className="columns-1 border-t border-edge lg:columns-2">
+                <div className="grid grid-cols-1 border-t border-edge lg:grid-cols-2 lg:gap-x-6">
                     {peoples.map((p) => (
                         <RecordRow
                             key={p.name}
-                            className={`break-inside-avoid ${p.planet ? `el-${p.planet.element}` : ''}`}
+                            className={p.planet ? `el-${p.planet.element}` : ''}
                             term={
                                 <div>
                                     <p className="m-0">{p.name}</p>
@@ -76,7 +76,7 @@ export default function Powers() {
                             {p.entry ? (
                                 <Prose text={p.entry.definition} except={p.entry.key} className="m-0 text-small text-ink-2" />
                             ) : (
-                                <p className="type-data m-0 text-small text-ink-3">
+                                <p className="m-0 font-body text-small text-ink-2">
                                     No entry on file; see {p.planet ? p.planet.name : 'their homeworld'}.
                                 </p>
                             )}
