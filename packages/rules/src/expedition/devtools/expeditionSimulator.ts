@@ -633,6 +633,10 @@ function runOneMatch(matchSeed: string, pool: XalianRecord[], rng: ReturnType<ty
 					uncontested,
 					empty,
 					margin,
+					// PASS 17: the margin the Deploy left, signed A-minus-B. `margin` above is
+					// the absolute gap at the RULING; this is the gap the bot's last send
+					// actually chose, which is what flip pricing is about.
+					marginAfterDeploy: before.marginAfterDeploy,
 					leaderAfterDeploy,
 					resolveMattered: !!leaderAfterDeploy && !!result.winner && leaderAfterDeploy !== result.winner,
 				});

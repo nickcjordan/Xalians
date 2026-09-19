@@ -40,6 +40,56 @@ import type {
 // worth of turning a site from losing (or tied) to winning, before the cost of the
 // creature spent on it
 export const FLIP_VALUE = 10;
+/*
+	PASS 17. How much of a flip's worth depends on the margin it clears by, rather than on
+	the fact that it clears.
+
+	worthAt used to return a flat FLIP_VALUE for any flip, so a lead of 0.1 hold and a lead
+	of 30 scored identically. Two things follow. The bot buys the CHEAPEST flip available,
+	because clearing zero earns full credit and every point beyond it costs holdCost; and a
+	flip gained cancels a flip lost exactly, which is why pass 16 could not price the swift
+	move's departure (see the note at stayValue).
+
+	Measured over 1800 matches on three seeds, by how thin the Deploy left a contested world,
+	whether the deploy-end leader still held it at the Ruling:
+
+		under 2 hold (a hair):  59.2% +/- 1.7  (n=3105)
+		2 to 5:                 65.4% +/- 1.5  (n=3671)
+		5 to 12:                78.7% +/- 1.1  (n=5372)
+		over 12:                89.7% +/- 2.0  (n=896)
+
+	A thirty-point spread the pricing was blind to, and the bot was buying the thin end of it
+	3105 times against 896 - not because thin flips are good but because they are cheap.
+
+	FLIP_SECURITY is how much of FLIP_VALUE is withheld until the flip is secure. At 0 the
+	flip is worth its full value the moment it clears (the old behaviour). At 1 a hair-thin
+	flip is worth nothing and only a flip clearing by FLIP_SECURE_MARGIN earns full value.
+
+	SWEPT at 2000 matches a cell over five seeds for the naive bar, and 600 matches on three
+	seeds for the game's shape:
+
+		security  naive margin   hair-thin leads   1v1        flips        downs
+		0 (old)   14.6 pts       23.6 to 23.9%     56.9-58.4  27.1-29.9%   4.65-4.76
+		0.25      22.1           20.4 to 21.2      56.0-57.6  29.2-31.2    4.52-4.65
+		0.5       21.3           19.1 to 20.9      54.9-56.0  31.0-31.4    4.43-4.56
+		0.625     22.1           -                 -          -            -
+		0.75      22.0           19.0 to 20.5      54.7-56.0  29.9-32.4    4.30-4.40
+
+	0.5 is shipped. The naive-policy margin goes from 14.6 points to 21.3, which is the gauge
+	that says the deploy decisions carry weight, and it restores the headroom pass 9 recorded
+	as shrinking when the send budget rose. Hair-thin leads fall by a fifth. All three match
+	gauges stay in band on all three seeds.
+
+	THE UNEXPECTED GAIN: 1v1 falls from 56.9 to 54.9 percent. Buying a SECURE flip means
+	sending a second creature to a world rather than the cheapest single creature that clears
+	zero, so better pricing crowds worlds on its own. Passes 5, 7, 8, 9 and 15 all attacked
+	the crowd gauge directly; two points of it were sitting in the bot's valuation the whole
+	time. Worth remembering: a gauge about the GAME can be held down by the BOT.
+*/
+export const FLIP_SECURITY = 0.5;
+// the margin, in hold, at which a flip counts as fully secure. Set from the measurement
+// above: the "clear" band starts at 5 and holds 78.7 percent of the time.
+export const FLIP_SECURE_MARGIN = 5;
 // worth of adding hold to a site already winning, scaled by how much of the lead it adds
 export const SECURE_VALUE = 3;
 // every own creature already at a site discounts sending another there (spread bias)
@@ -148,12 +198,22 @@ export const STAKE_EAGERNESS = 1;
 	The proctor mirror is unmoved across the whole sweep (48.9 to 49.5), so this changes how
 	well the move is used and not who wins.
 
-	FRICTION, recorded rather than buried: the remaining 1.4 points are not a tuning problem.
-	worthAt prices every flip at one constant, so a flip gained and a flip lost cancel and
-	the bot cannot see that the world it already holds is worth more than the world it
-	covets. Fixing that is a change to how worlds are priced everywhere - the send, the
-	hidden read and the stake all share worthAt - and two attempts to patch it inside the
-	swift move measured worse. See the note at stayValue in evaluateSwiftMoves.
+	PASS 17 UPDATE. The friction recorded here was that the remaining points were not a
+	tuning problem but a pricing one: worthAt priced every flip at one constant, so a flip
+	gained and a flip lost cancelled. Pass 17 fixed that (see FLIP_SECURITY) and re-swept this
+	gate. The whole curve moved up about five points - gate 0 now reaches 59.0 percent, which
+	was pass 16's CEILING under the old pricing - and 6 is still the right setting:
+
+		gate  0: swift 59.0%, 2.35 moves/match
+		gate  4: swift 61.3%, 1.51
+		gate  6: swift 62.5%, 1.03   (SHIPPED, unchanged)
+		gate  8: swift 63.6%, 0.49   (under once a match)
+		rule absent: swift 64.5%     (the ceiling)
+
+	The two fixes compound rather than overlap, and 8 still fails the "a rule the table sees"
+	standard. The gap at 6 is now 2.0 points, and the honest reading is that some of it is
+	irreducible: a move decided on the bot's own turn cannot know what the opponent sends
+	next, and no gate fixes that. See also the note at stayValue in evaluateSwiftMoves.
 */
 export const SWIFT_MOVE_GAIN = 6;
 /*
@@ -219,6 +279,8 @@ function weightsFor(rival: Rival | null | undefined): RivalWeights {
 		baitPass: w.baitPass ?? BAIT_PASS,
 		stakeEagerness: w.stakeEagerness ?? STAKE_EAGERNESS,
 		swiftMoveGain: w.swiftMoveGain ?? SWIFT_MOVE_GAIN,
+		flipSecurity: w.flipSecurity ?? FLIP_SECURITY,
+		flipSecureMargin: w.flipSecureMargin ?? FLIP_SECURE_MARGIN,
 	};
 }
 
@@ -364,13 +426,25 @@ export function readUnseen(publicState: PublicState, seat: Seat, weights: RivalW
 
 /*
 	The worth of putting `h` of hold and effect at a world whose margin (mine minus
-	theirs) is `m`: a flip is worth flipValue, a partial contest 2h / (1 - m), adding to a
-	lead secureValue * h / (m + h). One function so the send, the swift move and the
-	hidden read all price a world the same way.
+	theirs) is `m`: a flip is worth flipValue scaled by how securely it clears, a partial
+	contest 2h / (1 - m), adding to a lead secureValue * h / (m + h). One function so the
+	send, the swift move and the hidden read all price a world the same way.
+
+	PASS 17: the flip branch is no longer flat. A flip that clears by `over` hold is worth
+	flipValue * (1 - flipSecurity + flipSecurity * min(1, over / flipSecureMargin)), so at
+	flipSecurity 0 it is the old flat value and at 1 it is proportional to security up to the
+	margin where a lead measured 78.7 percent safe. See FLIP_SECURITY for the measurement.
 */
 function worthAt(h: number, m: number, weights: RivalWeights): number {
 	if (m <= 0) {
-		return h > -m ? weights.flipValue : (2 * h) / (1 - m);
+		if (h <= -m) {
+			return (2 * h) / (1 - m); // not enough to flip: a partial contest
+		}
+		// how far past the opposing margin this send clears
+		const over = h + m;
+		const margin = weights.flipSecureMargin > 0 ? weights.flipSecureMargin : 1;
+		const security = Math.min(1, over / margin);
+		return weights.flipValue * (1 - weights.flipSecurity + weights.flipSecurity * security);
 	}
 	return weights.secureValue * (h / (m + h));
 }
