@@ -70,16 +70,25 @@ function KeyValueList({
   )
 }
 
-type TimelineItemProps = React.ComponentProps<"li"> & { date: React.ReactNode; title: React.ReactNode }
+type TimelineItemProps = React.ComponentProps<"li"> & {
+  date: React.ReactNode
+  title: React.ReactNode
+  /** "sentence" sets the title as a sentence (body bold, sentence case) instead of a subhead label. */
+  titleAs?: "label" | "sentence"
+}
 
 /** One era on the vertical rail: a legend date, a subhead title, prose body. */
-function TimelineItem({ className, date, title, children, ...props }: TimelineItemProps) {
+function TimelineItem({ className, date, title, titleAs = "label", children, ...props }: TimelineItemProps) {
   return (
     <li data-slot="timeline-item" className={cn("relative pb-8 pl-6 last:pb-0", className)} {...props}>
       <span aria-hidden="true" className="absolute top-1.5 left-0 size-2.5 -translate-x-[3px] rounded-full bg-viable" />
       <span aria-hidden="true" className="absolute top-4 bottom-0 left-0 w-px bg-edge last:hidden" />
       <p className="type-legend m-0">{date}</p>
-      <h3 className="type-subhead mt-1 mb-2">{title}</h3>
+      {titleAs === "sentence" ? (
+        <p className="mt-1 mb-2 font-body text-body font-bold normal-case tracking-normal text-ink">{title}</p>
+      ) : (
+        <h3 className="type-subhead mt-1 mb-2">{title}</h3>
+      )}
       <div className="font-body text-body text-ink-2">{children}</div>
     </li>
   )
