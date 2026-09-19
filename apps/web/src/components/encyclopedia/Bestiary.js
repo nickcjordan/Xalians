@@ -4,6 +4,7 @@ import * as lore from '../../lore';
 import XalianImage from '../xalianImage';
 import { useReadMark } from './trail';
 import { Tile, TileArt, TileMeta, EmptyState } from '@/components/system/record';
+import { usePageTitle } from '@/components/system/head';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
@@ -42,6 +43,7 @@ function BestiaryTile({ species: s }) {
  * Contract: docs/design/xalian-encyclopedia-page.md §5 "Bestiary and species".
  */
 export default function Bestiary() {
+    usePageTitle('Bestiary');
     const [element, setElement] = useState('all');
     const [world, setWorld] = useState('all');
     const [sort, setSort] = useState('name');

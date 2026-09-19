@@ -39,6 +39,10 @@ export function emptyArcadeProgress(day = utcDay()): ArcadeLocalProgress {
   return { version: 1, credits: 0, day, earnedToday: 0, records: {} };
 }
 
+export function arcadeCreditsRemaining(earnedToday: number): number {
+  return Math.max(0, ARCADE_DAILY_CAP - earnedToday);
+}
+
 export function loadArcadeProgress(storage: Storage | undefined = globalThis.localStorage): ArcadeLocalProgress {
   if (!storage) return emptyArcadeProgress();
   try {
@@ -64,7 +68,7 @@ export function recordArcadeResult(
 ): ArcadeLocalProgress {
   const current = loadArcadeProgress(storage);
   const previous = current.records[gameId] ?? { played: 0, wins: 0 };
-  const remaining = Math.max(0, ARCADE_DAILY_CAP - current.earnedToday);
+  const remaining = arcadeCreditsRemaining(current.earnedToday);
   const earned = won ? Math.min(award, remaining) : 0;
   const record: ArcadeRecord = {
     played: previous.played + 1,

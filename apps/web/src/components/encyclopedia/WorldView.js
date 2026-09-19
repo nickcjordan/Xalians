@@ -8,6 +8,7 @@ import XalianImage from '../xalianImage';
 import Connections from './Connections';
 import { useVisit, useReadMark, markRead, useResume } from './trail';
 import { SectionHead } from '@/components/system/masthead';
+import { usePageTitle } from '@/components/system/head';
 import { SpecPlate, RecordRow, Tile, TileArt, TileMeta, EmptyState } from '@/components/system/record';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -160,6 +161,8 @@ export default function WorldView() {
     const { key } = useParams();
     const world = lore.getWorld(key);
     const isPhone = useIsPhone();
+
+    usePageTitle(world ? world.name : 'Not found');
 
     useVisit(
         world
