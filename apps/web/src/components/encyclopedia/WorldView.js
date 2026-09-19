@@ -42,11 +42,12 @@ function sentenceCase(text) {
 // place while the planet data block is mid-redesign (per contract). Terrain
 // reads in body face, sentence case (docs/DESIGN_SYSTEM.md common brief rule
 // 6); the rest are data-face values.
+const EARTH_GRAVITY_MS2 = 9.81;
+
 const PHYSICAL_DISPLAY_SET = [
     ['Terrain', (p) => sentenceCase(p.terrainLabel), false],
-    ['Size vs Earth', (p) => `${p.sizeVsEarth}x`, true],
-    ['Radius km', (p) => Number(p.radiusKm).toLocaleString('en-US'), true],
-    ['Gravity vs Earth', (p) => `${p.gravityVsEarth}x`, true],
+    ['Radius', (p) => `${Number(p.radiusKm).toLocaleString('en-US')} km`, true],
+    ['Surface gravity', (p) => `${(p.gravityVsEarth * EARTH_GRAVITY_MS2).toFixed(1)} m/s²`, true],
     ['Temperature range', (p) => `${p.temperatureC.low} to ${p.temperatureC.high} °C`, true],
 ];
 
