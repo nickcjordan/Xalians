@@ -23,6 +23,7 @@ Repository conventions, all of them enforced by hooks, tests or Nick:
 9. Never run `aws s3 sync` or `terraform apply`. CI deploys.
 10. Findings outside the current issue become new GitHub issues immediately, labeled with one of P1, P2, P3 plus a type plus an area, per `docs/BACKLOG.md`. Do not park them in chat.
 11. Every ratified creature-system rule is a tuned lever. If a fix forces something absurd, report the case and the smallest change in the PR body and stop on that item rather than working around it silently.
+12. The site speaks from inside the Xalia universe (Nick, 2026-09-18). No UI label, data label or prose may reference Earth or any other real-world place, with or without a disclaimer. Express physical figures absolutely: kilometers, m/s², °C. Units are conventions and are fine; named places are not. Lowercase "earth" meaning soil, and "rare earth metals", are ordinary English and stay.
 
 ## 3. Verification by paint
 
@@ -79,7 +80,7 @@ Wave 2 (six agents): #425 (RecordView.tsx Serial row only), #426 (arcadePage.tsx
 
 Wave 3 (six agents): #433 with #434 (navbar.tsx, App.js, new SiteFooter, deploy-frontend.yml, styleguide section), #432 (home.tsx), #435 (ReadingRoom.js, StoryContents.js, Story.js sidebar counter, EraScrubber.js caption, GalaxyMap.js legend), #436 (generatorPage.tsx, RecordView.tsx body), #437 (SpeciesView.js, WorldView.js folds, Bestiary.js), #439 (components/auth, utils/authUtil).
 
-Wave 4 (five agents): #438 (Term component, RecordView.tsx and SpeciesView.js labels, TrailStrip.js), #440 (RecordView.tsx layout, SpeciesView.js rail, Powers.js), #441 with #442 with #445 (home.tsx, Worlds.js, navbar Shell skip link), #443 (WorldView.js footnote), #444 (encyclopedia.json articles, EntryView.js; lore-voice skill then lore-factcheck).
+Wave 4 (five agents): #438 (Term component, RecordView.tsx and SpeciesView.js labels, TrailStrip.js), #440 (RecordView.tsx layout, SpeciesView.js rail, Powers.js), #441 with #442 with #445 (home.tsx, Worlds.js, navbar Shell skip link), #443 (WorldView.js stats rows, planets.json legacy Size and Gravity strings, a lore integrity test), #444 (encyclopedia.json articles, EntryView.js; lore-voice skill then lore-factcheck).
 
 Wave 5, orchestrator alone: re-run the verification script on every audited route against the deployed site, compare with the Wave 0 shots, confirm each issue auto-closed, and write the final report (section 8).
 
@@ -293,9 +294,15 @@ Test: for every species, no sentence (normalized to lowercase, punctuation strip
 - `Read the story` link on phones: remove the extra left padding so it aligns with the key above it.
 - Skip link: render `Skip to content` once in the navbar `Shell` as the first focusable element, targeting `#main`; ensure every chrome page's `main` carries `id="main"`; remove the per-page copy on the Arcade hub. #344 covers the legacy game entry routes separately; leave those alone.
 
-### #443 vs Earth
+### #443 No Earth anywhere
 
-`WorldView.js` stats block: one footnote line under the stats in `text-small text-ink-3`: `Earth-relative figures are a reader aid; the archive itself has no Earth.` Nothing else changes. This is the applied recommendation; Nick can override.
+Ruling from Nick (2026-09-18): Earth does not exist in the canon, and the site speaks from inside the universe, so the earlier footnote idea is withdrawn. Remove every reference.
+
+- `WorldView.js` `PHYSICAL_DISPLAY_SET` becomes four rows: `Terrain`; `Radius` with the value `<radiusKm> km` (thousands separator); `Surface gravity` with the value `gravityVsEarth × 9.81` rounded to one decimal and rendered `<n> m/s²`; `Temperature range` in `°C` (from #431). Drop the size ratio row; radius already carries size. Magmuth must read `24,719 km` and `12.3 m/s²`.
+- `packages/content/json/planets.json` carries legacy string fields `"Size": "3.88 x Earth"` and `"Gravity": "1.25 x Earth"` on all fourteen worlds. Grep the web app and scripts for readers of those fields; if nothing reads them, delete them; if something does, convert them to the same absolute strings. Check whether `docs/` holds the source copy and edit the source.
+- The numeric keys `sizeVsEarth` and `gravityVsEarth` in `planetRecords.json` are internal and may stay; the display must not print their names. Renaming them to `radiusRatio` and `surfaceGravityG` is welcome but not required.
+- Add to `lore.integrity.test.js`: no `\bEarth\b` in any content JSON string, and a source scan asserting no `\bEarth\b` in `apps/web/src` outside `__tests__`. Lowercase `earth` is allowed.
+- Verify by paint on `/encyclopedia/worlds/magmuth` at 1440 and 390.
 
 ### #444 Core entry articles
 
@@ -305,7 +312,7 @@ Six entries in `packages/content/json/encyclopedia.json`: `vallerii`, `apex`, `k
 
 1. Every acceptance criterion in the issue has a line of evidence (test name, screenshot path, a11y tree excerpt).
 2. Every string in section 5 for this issue appears verbatim in the diff, or the PR body explains why the source contradicted it.
-3. No em dash, no `lever`, no `pull` (as a noun), no `Ratified`, no `Trace`, no `BEAT` in visitor-facing text introduced or touched by the diff.
+3. No em dash, no `lever`, no `pull` (as a noun), no `Ratified`, no `Trace`, no `BEAT`, and no `Earth` or other real-world place in visitor-facing text introduced or touched by the diff.
 4. Screenshots at 1440 and 390 attached for visual changes; no horizontal overflow; no console errors; screenshot files above 20 KB.
 5. Tests added or updated as the issue requires; `npm test -- --run` green; typecheck green.
 6. No raw hex in chrome files; new components on the styleguide; `data-tier` present.
