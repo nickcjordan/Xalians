@@ -2,7 +2,7 @@
 
 Status: the running state of the game under ownership (brief: `reclamation-ownership-brief.md`). This file is the resume point. Any reset reads this first and continues at the weakest thing named below, never from scratch. Each pass appends its own section; the standing state at the top is rewritten in place.
 
-## Standing state (after pass 18, 2026-09-19)
+## Standing state (after pass 19, 2026-09-19)
 
 ### Gauges, proctor mirror
 
@@ -56,11 +56,14 @@ What it reads, and where each effect kind lands (measured over the seed-7 pool, 
 1. **The status strip is the tallest block on a phone** at 250px, carrying six jobs (round, worlds, score, phase, turn, hint). Whether all six belong above the fold is open.
 2. **Fire is a dead element and dromeus a dead species** in the draft. Read it pooled before treating it as a failure (pass 6's lesson), the way pass 16 read the attribute lanes.
 3. **Three of the four borrowed effect kinds** (displace, transfer, suppress) still read as plain attacks. Pass 18 gave `restrain` a rule that earns its place; the other three have no separate expression at a sealed world, so each needs its own case before it gets one.
-4. **Bolster recovery and the instinct lanes still move nothing under ablation.** Each earns its place or goes.
+4. **The generator's attribute ranges are not published anywhere the game can read.** Pass 19 found a threshold sitting below the floor of the attribute it cuts, and the only way to find it was to sample pools. A band the game defines against a generated attribute should be checkable against that attribute's real range.
 5. **No human has played a full Proving.** The notes and telemetry are built, verified, and empty.
 6. **Hot-seat** is unbuilt and is the cheapest validation instrument the game can have.
 
 ### Closed by measurement (do not reopen without new evidence)
+
+- **"Bolster recovery is inert"** (pass 19). It is not, and the log was wrong for several passes. Ablated with intervals on the difference, pooled over five seeds at 500 matches: removing it moves the flip gauge **+2.25 +/- 0.98** and doubling it moves it **-1.24 +/- 0.96**, both beyond noise and monotone. It fires 1.28 times a match for a mean 3.17 hold. The earlier verdict compared point estimates, which is pass 6's exact error.
+- **"The instinct lanes are inert"** (pass 19). Half true and the interesting half was false. Ablating the whole rule moves no match gauge, correctly - a down is a down whoever it lands on. But the DULL lane was empty: threshold 35 against a generator floor of 31 to 37 gave **five dull creatures in 609**. Moved to 50 the lane holds 21.6 percent of the pool and those creatures down **25.2 +/- 1.6** percent of what they land against conduct's 38.8, a thirteen-point penalty. See `DULL_INSTINCT`.
 
 - **Flat flip pricing** (pass 17). `worthAt` returned a flat `flipValue` for any flip, so a lead of 0.1 hold scored the same as a lead of 30, and the bot bought the cheapest flip that cleared zero: **3105 hair-thin leads against 896 comfortable ones**. Fixed with `FLIP_SECURITY = 0.5`, which withholds half a flip's worth until it clears by `FLIP_SECURE_MARGIN`. Naive-policy margin 14.6 to 21.3 points, hair-thin leads down a fifth, and 1v1 down two points as a side effect. The remaining swift-move gap (2.0 points at gate 6) is partly irreducible: a move decided on the bot's own turn cannot know what the opponent sends next.
 
@@ -365,3 +368,31 @@ The naive-policy margin, which is the gauge saying deploy decisions carry weight
 **The lesson worth keeping:** *a harness that cannot fail is not a check.* Four green lines looked like coverage of two modes and were coverage of one, for thirteen passes, and it took wanting to see a specific sentence on screen to notice. When a check takes a parameter, assert the parameter had an effect. This is the same shape as pass 14's fullPage screenshots: the instrument was lying and nothing about its output said so.
 
 **Verified:** 2034 tests green (five new), typecheck clean, build inside budgets, headless Proving green in all four configurations **with the mode now asserted**, and the pin sentence checked by paint.
+
+### Pass 19 (2026-09-19): two "inert" levers, one wrongly accused and one that could not fire
+
+**Both entries on the log's inert list were wrong, in different ways.** The standing caution (pass 6, pass 16) is to measure with an interval before calling something a failure, and applied here it overturned both.
+
+**Bolster recovery was never inert.** Ablated properly and pooled over five seeds at 500 matches: removing it moves the flip gauge **+2.25 +/- 0.98**, doubling it moves it **-1.24 +/- 0.96**. Both beyond noise, monotone, and in the direction the rule intends. It fires 1.28 times a match for a mean 3.17 hold. `BOLSTER_RECOVERY = 0.5` stays; the log entry was the error.
+
+**The instinct lanes: the dull lane was empty.** Switching `instinctLanes` off moves no match gauge (flips -0.14 +/- 0.97, comeback +0.49 +/- 2.97, 1v1 +0.08 +/- 1.03), which looked like a rule to delete. But the rule acts on targeting, and instinct reads +6.9 as an attribute - the strongest in the pool. Both could not be true.
+
+**The generator's instinct floor runs 31 to 37 depending on the pool, and `DULL_INSTINCT` was 35.** Across seven pools of 87: **five dull creatures in 609, 0.8 percent.** Nobody was in the lane, so ablating the rule was ablating an empty half of it.
+
+Moved to where creatures actually are (share of landed attacks that downed, three seeds, 500 matches):
+
+| threshold | pool share | keen | conduct | dull |
+|---|---|---|---|---|
+| <= 35 | 0.9% | 39.2% | 35.3% | 8.3% +/- 5.5 (n=96) |
+| <= 45 | 8.5% | 39.2% | 35.3% | 31.5% +/- 3.2 |
+| **<= 50 (shipped)** | **21.6%** | **39.2%** | **38.8%** | **25.2% +/- 1.6** |
+
+A thirteen-point penalty on a fifth of the pool, far beyond noise. The match gauges do not move at any threshold, which is correct rather than disappointing: this rule should change **who you draft**, not how a match feels.
+
+**It switched on UI that already existed and had never once rendered** - the half-closed eye glyph and the dossier's targeting line, both built passes ago for a lane no creature could enter. Verified by paint on seed 7, the first tried: *"Dull instinct: it hits whatever the enemy sent earliest."*
+
+**Friction reported** (CLAUDE.md, levers not stone): a threshold no creature can reach reads as tuned and is not. A new test pins both cuts inside the range creatures are generated in, so this cannot come back silently.
+
+**The lesson worth keeping:** *check the population of a band before concluding a rule about it does nothing.* Ablating a rule whose lane is empty looks exactly like ablating a rule that does not matter, and this one survived nine passes and an explicit "inert" verdict on that resemblance. Same family as pass 18's harness: the measurement was honest and the thing it measured was not what I thought.
+
+**Verified:** 2035 tests green (one new, one corrected), typecheck clean, build inside budgets, headless Proving green in all four configurations, the dull lane checked by paint.

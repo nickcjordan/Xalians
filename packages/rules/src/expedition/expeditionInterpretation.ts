@@ -165,7 +165,43 @@ export function presenceScaleOf(record: XalianRecord | null | undefined, rules?:
 	its archetype's conduct line as it always has.
 */
 export const KEEN_INSTINCT = 65;
-export const DULL_INSTINCT = 35;
+/*
+	PASS 19: DULL_INSTINCT 35 -> 50, because at 35 THE LANE WAS EMPTY.
+
+	The log carried "the instinct lanes move nothing under ablation" as an open item, and
+	switching `instinctLanes` off does indeed move no match gauge (flips -0.14 +/- 0.97,
+	comeback +0.49 +/- 2.97, 1v1 +0.08 +/- 1.03, pooled over five seeds at 500 matches). That
+	looked like a rule to delete. It was half a rule that could not fire.
+
+	The generator's instinct floor sits between 31 and 37 depending on the pool, and the dull
+	threshold was 35, so across seven pools of 87 creatures there were FIVE dull creatures in
+	609 - 0.8 percent. Nobody was in the lane. Measured by seed, the lowest instinct in a pool
+	was 37, 31, 37, 36, 35, 37, 31: a threshold of 35 is not a low setting, it is below the
+	floor.
+
+	Moved to where the creatures actually are, the rule works. Share of LANDED attacks that
+	downed, pooled over three seeds at 500 matches:
+
+		dull <= 35:  keen 39.2%, conduct 35.3%, dull 8.3% +/- 5.5  (n=96, the lane is empty)
+		dull <= 45:  keen 39.2%, conduct 35.3%, dull 31.5% +/- 3.2 (n=791, 8.5% of the pool)
+		dull <= 50:  keen 39.2%, conduct 38.8%, dull 25.2% +/- 1.6 (n=2782, 21.6% of the pool)
+
+	At 50 a dull creature downs 25.2 percent of what it lands against a conduct creature's
+	38.8: a thirteen-point penalty, far beyond noise, on a fifth of the pool. At 45 the gap is
+	inside its own interval. So 50 is the setting where the lane has both population and
+	effect.
+
+	The match gauges do not move at any threshold (every difference within noise at 2500
+	matches a side), which is correct rather than disappointing: a down is a down whoever it
+	lands on, so this rule should change WHO you draft and not how a match feels.
+
+	FRICTION REPORTED (CLAUDE.md, "levers not stone"): a threshold no creature can reach is a
+	setting that reads as tuned and is not. This one survived nine passes and an "inert"
+	verdict because ablating the whole rule and finding nothing looks the same as ablating an
+	empty half of it. Worth checking the POPULATION of any band before concluding a rule about
+	it does nothing. KEEN_INSTINCT 65 holds 35.6 percent of the pool and is fine.
+*/
+export const DULL_INSTINCT = 50;
 
 export type InstinctLane = 'keen' | 'conduct' | 'dull';
 
@@ -221,6 +257,19 @@ export const HURT_ATTACKS_LESS = true;
 	points behind the mirror at 0.5, 7.0 at 0.75 and 4.5 at 1.0, where the tool flags the
 	deploy decisions as possibly decorative. 0.5 is the largest setting that clears the
 	eight-point bar.
+*/
+/*
+	PASS 19: this is NOT inert, contrary to what the log recorded for several passes.
+
+	Ablated properly, with an interval on the difference and pooled over five seeds at 500
+	matches: removing it (bolsterRecovery 0) moves the flip gauge +2.25 +/- 0.98 and doubling
+	it (1.0) moves it -1.24 +/- 0.96. Both beyond noise, monotone, and in the direction the
+	rule intends - a creature that gets damage back is harder to flip a world away from. It
+	fires 1.28 times a match for a mean 3.17 hold.
+
+	The earlier "inert" reading compared point estimates without intervals, which is the exact
+	error pass 6 spent a whole pass on. 0.5 stays: it is the setting that puts the flip gauge
+	at 31.3 percent, mid-band.
 */
 export const BOLSTER_RECOVERY = 0.5;
 

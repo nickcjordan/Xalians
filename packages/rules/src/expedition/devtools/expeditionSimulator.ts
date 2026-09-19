@@ -590,6 +590,11 @@ function runOneMatch(matchSeed: string, pool: XalianRecord[], rng: ReturnType<ty
 				const sentInfo = sentThisRound[ev.recordId as string];
 				attackRecords.push({
 					frameIndex,
+					// PASS 19: who threw it. Without this an attack cannot be attributed back to
+					// its creature, so no question about an ATTACKER's attributes (which lane it
+					// targets from, how often it downs) can be asked of this record at all.
+					recordId: ev.recordId,
+					site: ev.site,
 					role: ev.role,
 					side: sentInfo ? sentInfo.side : null,
 					archetype: sentInfo && sentInfo.record.archetype ? sentInfo.record.archetype.key : null,
