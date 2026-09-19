@@ -112,8 +112,19 @@ export function reachabilityLine(view, you, them) {
 	return null;
 }
 
+/*
+	The two seats. `YOU` and `THEM` are the SOLO reading of the table: the person at the
+	keyboard holds A and the proctor holds B.
+
+	PASS 20 adds hot-seat, where two people share one screen, and the table must then show
+	whichever of them is currently to move. Rather than thread a seat through sixty-four call
+	sites, the component reads `this.you` / `this.them`, which are these constants in solo
+	play and the live seats in hot-seat. The constants stay as the default so every existing
+	reading of the table is unchanged when nobody is sharing the keyboard.
+*/
 const YOU = 'A';
 const THEM = 'B';
+const OTHER_SEAT = { A: 'B', B: 'A' };
 
 /*
 	ReclamationMatch — the whole table.
@@ -169,6 +180,30 @@ class ReclamationMatch extends React.Component {
 			hoverSiteId: null, // the site row under the pointer in the deploy panel
 			coached: readCoached(), // the first Proving's three steps, shown once
 		};
+		/*
+			PASS 20. THE SEAT THE TABLE IS DRAWN FOR.
+
+			Solo play has one reading: the person at the keyboard holds A and the proctor holds
+			B, which is what YOU and THEM have meant since the table was built. Hot-seat (two
+			people, one screen) needs the table to show whichever of them is to move, so the
+			seat becomes a value the component reads rather than a constant it is compiled
+			against.
+
+			`seatInPlay` is that value. With no `hotSeat` prop it is always YOU, so every one of
+			this component's readings is byte-identical to before; the indirection is here so
+			the hand-off screen can land in its own pass without touching sixty-four call sites
+			at the same time as the rest of the feature.
+
+			Hiding is why hot-seat needs a hand-off at all rather than just a flipped view:
+			16.8 percent of sends arrive hidden, and removing hiding moves the flip gauge
+			+2.46 +/- 0.98, beyond noise. A shared screen cannot keep a secret, so the two
+			people have to be separated by a screen that hides the board between turns, and
+			validating the game means validating it WITH hiding, not a variant without.
+		*/
+		this.hotSeat = !!props.hotSeat;
+		// the seat the table was last drawn for, so the Clash and the Ruling stay with
+		// whoever just moved instead of flipping under a playback both people are reading
+		this.lastSeatInPlay = YOU;
 		// your twelve in slot order, held for the whole expedition so the roster never reshuffles
 		this.squad = props.squad ? props.squad.slice() : props.initialMatch.players[YOU].roster.slice();
 		// the rival handler: a named weight set over the bot (expeditionBot.RIVALS); the
@@ -349,8 +384,30 @@ class ReclamationMatch extends React.Component {
 		if (judgedSnapshot) {
 			return judgedSnapshot;
 		}
-		return getPublicState(this.state.match, YOU);
+		return getPublicState(this.state.match, this.seatInPlay());
 	}
+
+	/*
+		PASS 20. Which seat the table is currently drawn for, and its opponent.
+
+		Solo: always YOU / THEM, unchanged. Hot-seat: the seat to move during Deploy, so each
+		person sees their own bench and their own hidden sends. Outside Deploy (the Clash, the
+		Ruling, the Charter) both people watch the same thing, so the view stays with whoever
+		was last to move rather than flipping under a playback they are both reading.
+	*/
+	seatInPlay = () => {
+		if (!this.hotSeat) {
+			return YOU;
+		}
+		const { match } = this.state;
+		if (match.phase === 'deploy' && (match.turn === 'A' || match.turn === 'B')) {
+			this.lastSeatInPlay = match.turn;
+			return match.turn;
+		}
+		return this.lastSeatInPlay;
+	};
+
+	seatOpponent = () => OTHER_SEAT[this.seatInPlay()];
 
 	/*
 		The pre-clash view with every effect of the events told so far applied: each
