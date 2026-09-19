@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Link, useParams } from 'react-router';
 import * as lore from '../../lore';
 import Prose from './Prose';
@@ -9,28 +9,12 @@ import Connections from './Connections';
 import { useVisit, useReadMark, markRead, useResume } from './trail';
 import { SectionHead } from '@/components/system/masthead';
 import { usePageTitle } from '@/components/system/head';
-import { SpecPlate, RecordRow, Tile, TileArt, TileMeta, EmptyState } from '@/components/system/record';
+import { SpecPlate, RecordRow, Tile, TileArt, TileMeta, TileGrid, EmptyState } from '@/components/system/record';
 import { Card } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from '@/components/ui/accordion';
-
-const PHONE_QUERY = '(max-width: 700px)';
-
-function useIsPhone() {
-    const [isPhone, setIsPhone] = useState(() => (
-        typeof window !== 'undefined' && window.matchMedia ? window.matchMedia(PHONE_QUERY).matches : false
-    ));
-    useEffect(() => {
-        if (typeof window === 'undefined' || !window.matchMedia) return undefined;
-        const mql = window.matchMedia(PHONE_QUERY);
-        const onChange = () => setIsPhone(mql.matches);
-        mql.addEventListener ? mql.addEventListener('change', onChange) : mql.addListener(onChange);
-        return () => {
-            mql.removeEventListener ? mql.removeEventListener('change', onChange) : mql.removeListener(onChange);
-        };
-    }, []);
-    return isPhone;
-}
+import { Fold, FoldGroup } from '@/components/system/fold';
+import { IndexList, IndexRow } from '@/components/system/index-row';
+import { Station, StationRow } from '@/components/system/station-row';
+import { ReadingLayout, ReadingRail, ReadingBlock } from '@/components/system/reading-layout';
 
 function sentenceCase(text) {
     if (!text) return text;
@@ -62,35 +46,9 @@ function chapterEraLabel(chapter, eraLabel) {
     return eraLabel || chapter.era;
 }
 
-/** One stop on the "In the story" rail: a tab link when the world has chapters or events in this era, plain dim text otherwise. */
-function ChronicleStation({ row }) {
-    const count = row.chapters.length;
-    const lit = count > 0 || row.events.length > 0;
-    const titleAttr = row.events.length > 0 ? row.events.map((e) => e.title).join(', ') : undefined;
-
-    if (!lit) {
-        return (
-            <span className="type-legend inline-flex items-center px-4 py-2 text-[13px] text-ink-3" aria-hidden="true">
-                {row.era.name}
-            </span>
-        );
-    }
-
-    return (
-        <Link
-            to={lore.routeFor('era', row.era.key)}
-            className="type-legend inline-flex items-center gap-2 border border-edge bg-s1 px-3 py-2 text-[12px] text-ink-2 no-underline hover:text-ink"
-            title={titleAttr}
-        >
-            {row.era.name}
-            {count > 0 && <span className="type-data text-[11px] text-ink-2">{count} ch</span>}
-        </Link>
-    );
-}
-
-/** One row in the sticky chapter rail. Reads its own read mark and reports clicks as a fallback read trigger. */
-function ChapterRailRow({ chapter, index, world, label, onFallbackRead }) {
-    const read = useReadMark('chapter', `${world.key}:${chapter.index}`);
+/** One row in the chapter rail. Reads its own read mark and reports clicks as a fallback read trigger. */
+function ChapterRailRow({ chapter, index, label, onFallbackRead }) {
+    const read = useReadMark('chapter', `${chapter.worldKey}:${chapter.index}`);
     const words = chapter.text.trim().split(/\s+/).slice(0, 8).join(' ');
 
     return (
@@ -103,7 +61,7 @@ function ChapterRailRow({ chapter, index, world, label, onFallbackRead }) {
             <span className="type-data shrink-0 text-[11px] text-ink-2">
                 {lore.chapterLabel(index).toUpperCase()}
             </span>
-            <Badge className="shrink-0">{label}</Badge>
+            <span className="type-legend shrink-0 text-[11px] text-ink-3">{label}</span>
             <span className="min-w-0 flex-[1_1_100%] overflow-hidden whitespace-nowrap text-ellipsis font-body text-small text-ink-2">
                 {words}&hellip;
             </span>
@@ -111,20 +69,24 @@ function ChapterRailRow({ chapter, index, world, label, onFallbackRead }) {
     );
 }
 
-/** The narrator's short lede placing the world in the story, with its Records consulted chips. Renders nothing when the writer has not reached this world yet. */
+/** The narrator's short lede placing the world in the story, with its Records consulted entries as links. */
 function WorldLede({ world }) {
     const lede = lore.getWorldLede(world.key);
     if (!lede) return null;
     return (
         <div className="flex flex-col gap-3">
-            <Prose text={lede.prose} />
+            <Prose text={lede.prose} className="text-lead text-ink-2" />
             {(lede.sources.length > 0 || lede.entries.length > 0) && (
                 <div className="flex flex-col gap-2">
                     <p className="type-legend m-0">Records consulted</p>
-                    <div className="flex flex-wrap gap-2">
+                    <div className="flex flex-wrap gap-x-4 gap-y-1">
                         {lede.entries.map((entry) => (
-                            <Link key={entry.key} to={lore.routeFor('entry', entry.key)}>
-                                <Badge variant="chip-outline">{entry.title}</Badge>
+                            <Link
+                                key={entry.key}
+                                to={lore.routeFor('entry', entry.key)}
+                                className="type-legend text-ink-2 no-underline hover:text-ink"
+                            >
+                                {entry.title}
                             </Link>
                         ))}
                     </div>
@@ -138,8 +100,8 @@ function WorldLede({ world }) {
  * Foot linking into The Story. With reading progress, it is "Continue the
  * story" pointing at the reader's furthest part. Without progress, it is
  * "This world in the story" pointing at the first era that names this world
- * -- the same lit test the In-the-story chips above use (getWorldTimeline in
- * lore/chronicle.js), read via getWorldFirstEra so the two never disagree.
+ * -- the same lit test the In-the-story stations above use (getWorldTimeline
+ * in lore/chronicle.js), read via getWorldFirstEra so the two never disagree.
  */
 function ContinueTheStory({ world }) {
     const resume = useResume();
@@ -148,26 +110,27 @@ function ContinueTheStory({ world }) {
     if (!target) return null;
     const label = resumeEra ? 'Continue the story' : 'This world in the story';
     return (
-        <div className="border-t border-edge pt-4">
-            <RecordRow className="border-b-0 py-0" term={label}>
-                <Link to={lore.routeFor('era', target.key)} className="text-ink underline decoration-ink-3 underline-offset-4 hover:decoration-ink">
-                    Part {target.order + 1}, {target.name}
-                </Link>
-            </RecordRow>
-        </div>
+        <IndexList>
+            <IndexRow
+                to={lore.routeFor('era', target.key)}
+                title={label}
+                meta={`Part ${target.order + 1}, ${target.name}`}
+            />
+        </IndexList>
     );
 }
 
 /**
- * WorldView: the survey record for one world -- plate, narrator's lede,
- * history chapters, native fauna, entries naming the world, then the
+ * WorldView: the survey record for one world -- identity strip (hero art,
+ * narrator's lede, physical facts, In the story stations), history chapters
+ * in the reading layout, native fauna, entries naming the world, then the
  * environmental report and Connections behind closed folds.
- * Contract: docs/design/xalian-encyclopedia-story-pass.md "Record pages".
+ * Contract: docs/design/encyclopedia-polish-plan-2026-09-19.md "Shape B" and
+ * "Shape C".
  */
 export default function WorldView() {
     const { key } = useParams();
     const world = lore.getWorld(key);
-    const isPhone = useIsPhone();
 
     usePageTitle(world ? world.name : 'Not found');
 
@@ -217,6 +180,9 @@ export default function WorldView() {
     const eraNameByKey = new Map(eras.map((e) => [e.key, e.name]));
     const timeline = lore.getWorldTimeline(world.key);
     const { physical, report } = world;
+    const lede = lore.getWorldLede(world.key);
+    const heroArt = planetArtwork[world.key][0];
+    const secondArt = planetArtwork[world.key][1];
 
     const handleFallbackRead = (chapterIndex) => () => {
         if (!hasIntersectionObserver) {
@@ -231,60 +197,69 @@ export default function WorldView() {
         value: mono ? format(physical) : <span className="font-body normal-case tracking-normal text-ink-2">{format(physical)}</span>,
     }));
 
-    function chapterList() {
-        return world.chapters.map((chapter, i) => {
-            const eraKey = chapterEraTag(chapter);
-            const label = chapterEraLabel(chapter, eraKey ? eraNameByKey.get(eraKey) : null);
-            return (
-                <li key={chapter.index}>
-                    <ChapterRailRow
-                        chapter={chapter}
-                        index={i}
-                        world={world}
-                        label={label}
-                        onFallbackRead={handleFallbackRead(chapter.index)}
-                    />
-                </li>
-            );
-        });
-    }
-
     return (
-        <article className={`el-${world.element}`}>
-            <div className="mb-6 grid max-w-[984px] grid-cols-1 gap-6 md:grid-cols-2">
-                <WorldArt art={planetArtwork[world.key][0]} hero />
-                <WorldArt art={planetArtwork[world.key][1]} />
-            </div>
-            <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(240px,360px)_minmax(0,1fr)]">
-                <div className="flex min-w-0 flex-col gap-4">
-                    <SpecPlate entries={factsEntries} />
-                </div>
+        <article className={`el-${world.element} flex flex-col gap-8`}>
+            <Card variant="panel" className="grid gap-6 md:grid-cols-[minmax(0,480px)_minmax(0,1fr)]">
+                <WorldArt art={heroArt} hero />
 
                 <div className="flex min-w-0 flex-col gap-5">
-                    <WorldLede world={world} />
+                    {lede && <WorldLede world={world} />}
+
+                    <SpecPlate columns={2} entries={factsEntries} />
 
                     <div className="flex flex-col items-start gap-2 border-t border-edge pt-4">
                         <span className="type-legend whitespace-nowrap">In the story</span>
-                        <nav className="min-w-0 flex flex-wrap gap-1" aria-label="In the story">
-                            {timeline.map((row) => (
-                                <ChronicleStation key={row.era.key} row={row} />
-                            ))}
-                        </nav>
+                        <StationRow value={null} onChange={() => {}} aria-label="In the story">
+                            {timeline.map((row) => {
+                                const count = row.chapters.length;
+                                const lit = count > 0 || row.events.length > 0;
+                                return (
+                                    <Station
+                                        key={row.era.key}
+                                        to={lit ? lore.routeFor('era', row.era.key) : undefined}
+                                        disabled={!lit}
+                                        count={count > 0 ? count : undefined}
+                                    >
+                                        {row.era.name}
+                                    </Station>
+                                );
+                            })}
+                        </StationRow>
                     </div>
                 </div>
-            </div>
+            </Card>
 
-            <div className="mt-6 flex flex-col gap-6">
-                <section className="min-w-0">
-                    <SectionHead title="History" />
-                    <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,20rem)]">
-                        <ol className="m-0 flex min-w-0 max-w-[68ch] list-none flex-col gap-6 p-0">
+            <section className="min-w-0">
+                <SectionHead title="History" count={`${world.chapters.length} chapters`} />
+                <ReadingLayout>
+                    <ReadingRail label={`Chapters (${world.chapters.length})`}>
+                        <ol className="m-0 flex list-none flex-col p-0">
                             {world.chapters.map((chapter, i) => {
                                 const eraKey = chapterEraTag(chapter);
                                 const label = chapterEraLabel(chapter, eraKey ? eraNameByKey.get(eraKey) : null);
                                 return (
-                                    <li
-                                        key={chapter.index}
+                                    <li key={chapter.index}>
+                                        <ChapterRailRow
+                                            chapter={{ ...chapter, worldKey: world.key }}
+                                            index={i}
+                                            label={label}
+                                            onFallbackRead={handleFallbackRead(chapter.index)}
+                                        />
+                                    </li>
+                                );
+                            })}
+                        </ol>
+                    </ReadingRail>
+
+                    {world.chapters.map((chapter, i) => {
+                        const eraKey = chapterEraTag(chapter);
+                        const label = chapterEraLabel(chapter, eraKey ? eraNameByKey.get(eraKey) : null);
+                        return (
+                            <ReadingBlock
+                                key={chapter.index}
+                                divided
+                                text={
+                                    <div
                                         id={`chapter-${chapter.index}`}
                                         data-chapter-index={chapter.index}
                                         ref={(el) => {
@@ -292,163 +267,119 @@ export default function WorldView() {
                                         }}
                                         className="scroll-mt-16"
                                     >
-                                        <div className="mb-2 flex items-baseline gap-3">
-                                            <span className="type-data text-ink-2">
-                                                {lore.chapterLabel(i).toUpperCase()}
-                                            </span>
-                                            {eraKey ? (
-                                                <Link to={lore.routeFor('era', eraKey)}>
-                                                    <Badge>{label}</Badge>
-                                                </Link>
-                                            ) : (
-                                                <Badge>{label}</Badge>
-                                            )}
-                                        </div>
+                                        <p className="type-data m-0 mb-2 text-ink-2">
+                                            {lore.chapterLabel(i).toUpperCase()}
+                                        </p>
                                         <Prose text={chapter.text} />
-                                    </li>
-                                );
-                            })}
-                        </ol>
+                                    </div>
+                                }
+                                margin={
+                                    <>
+                                        {eraKey ? (
+                                            <Link
+                                                to={lore.routeFor('era', eraKey)}
+                                                className="type-legend text-ink-2 no-underline hover:text-ink"
+                                            >
+                                                {label}
+                                            </Link>
+                                        ) : (
+                                            <span className="type-legend text-ink-3">{label}</span>
+                                        )}
+                                        {i === 1 && secondArt && <WorldArt art={secondArt} />}
+                                    </>
+                                }
+                            />
+                        );
+                    })}
+                </ReadingLayout>
+            </section>
 
-                        {isPhone ? (
-                            <Accordion type="single" collapsible className="min-w-0 lg:order-first">
-                                <AccordionItem value="chapters" className="border border-edge bg-s0 px-4">
-                                    <AccordionTrigger className="hover:no-underline">
-                                        <h3 className="type-legend m-0 text-ink-2">Chapters ({world.chapters.length})</h3>
-                                    </AccordionTrigger>
-                                    <AccordionContent>
-                                        <ol className="m-0 flex list-none flex-col p-0">{chapterList()}</ol>
-                                    </AccordionContent>
-                                </AccordionItem>
-                            </Accordion>
-                        ) : (
-                            <Card variant="recessed" className="min-w-0 p-4 pb-2 lg:sticky lg:top-6">
-                                <nav aria-label="Chapters">
-                                    <header className="mb-2 border-b border-edge pb-2">
-                                        <h3 className="type-heading m-0 text-[19px]">Chapters</h3>
-                                    </header>
-                                    <ol className="m-0 flex list-none flex-col p-0">{chapterList()}</ol>
-                                </nav>
-                            </Card>
-                        )}
+            {world.nativeSpecies.length > 0 && (
+                <section className="min-w-0">
+                    <SectionHead title="Native Fauna" count={`${world.nativeSpecies.length} species`} />
+                    <TileGrid>
+                        {world.nativeSpecies.map((s) => (
+                            <Tile as={Link} key={s.key} to={lore.routeFor('species', s.key)} className={`el-${s.element}`}>
+                                <TileArt>
+                                    <XalianImage
+                                        colored
+                                        speciesName={s.name}
+                                        primaryType={s.element}
+                                        moreClasses="w-full"
+                                    />
+                                </TileArt>
+                                <TileMeta>
+                                    <span className="type-subhead block text-base">{s.name}</span>
+                                </TileMeta>
+                            </Tile>
+                        ))}
+                    </TileGrid>
+                </section>
+            )}
+
+            {world.entries.length > 0 && (
+                <section className="min-w-0">
+                    <SectionHead title="Entries Naming This World" />
+                    <div className="grid grid-cols-1 border-t border-edge lg:grid-cols-2 lg:gap-x-6">
+                        {world.entries.map((entry) => (
+                            <RecordRow
+                                key={entry.key}
+                                className={entry.element ? `el-${entry.element}` : ''}
+                                term={
+                                    <Link to={lore.routeFor('entry', entry.key)} className="no-underline hover:underline">
+                                        {entry.title}
+                                    </Link>
+                                }
+                            >
+                                <Prose text={entry.definition} className="m-0 text-small text-ink-2" />
+                            </RecordRow>
+                        ))}
                     </div>
                 </section>
+            )}
 
-                {world.nativeSpecies.length > 0 && (
-                    <section className="min-w-0">
-                        <SectionHead title="Native Fauna" count={`${world.nativeSpecies.length} species`} />
-                        <div className="grid grid-cols-2 gap-3 gap-y-4 sm:grid-cols-3 sm:gap-4 sm:gap-y-5 md:grid-cols-4 min-[1080px]:grid-cols-5 xl:grid-cols-6">
-                            {world.nativeSpecies.map((s) => (
-                                <Tile as={Link} key={s.key} to={lore.routeFor('species', s.key)} className={`el-${s.element}`}>
-                                    <TileArt>
-                                        <XalianImage
-                                            colored
-                                            speciesName={s.name}
-                                            primaryType={s.element}
-                                            moreClasses="w-full"
-                                        />
-                                    </TileArt>
-                                    <TileMeta>
-                                        <span className="type-subhead block text-base">{s.name}</span>
-                                    </TileMeta>
-                                </Tile>
-                            ))}
-                        </div>
-                    </section>
-                )}
+            <ContinueTheStory world={world} />
 
-                {world.entries.length > 0 && (
-                    <section className="min-w-0">
-                        <SectionHead title="Entries Naming This World" />
-                        <Card variant="panel" className="p-0 px-4 py-2">
-                            {world.entries.map((entry) => (
-                                <RecordRow
-                                    key={entry.key}
-                                    className={entry.element ? `el-${entry.element}` : ''}
-                                    term={
-                                        <Link to={lore.routeFor('entry', entry.key)} className="no-underline hover:underline">
-                                            {entry.title}
-                                        </Link>
-                                    }
-                                >
-                                    <Prose text={entry.definition} className="m-0 text-small text-ink-2" />
-                                </RecordRow>
-                            ))}
-                        </Card>
-                    </section>
-                )}
-
-                <ContinueTheStory world={world} />
-
-                <Accordion type="single" collapsible className="flex flex-col gap-2">
-                    <AccordionItem value="cross-references" className="border border-edge bg-s1 px-5">
-                        <AccordionTrigger className="hover:no-underline">
-                            <span className="type-legend">Cross references</span>
-                            <span className="type-data ml-auto mr-2 text-small text-ink-2">{connectionsCount}</span>
-                        </AccordionTrigger>
-                        <AccordionContent>
-                            <Connections kind="world" recordKey={world.key} limit={12} />
-                        </AccordionContent>
-                    </AccordionItem>
-                    <AccordionItem value="for-builders" className="border border-edge bg-s1 px-5">
-                        <AccordionTrigger className="hover:no-underline">
-                            <span className="type-legend">For builders</span>
-                        </AccordionTrigger>
-                        <AccordionContent>
-                            <p className="mb-4 font-body text-small text-ink-2">
-                                Machine-readable data the Generator and the games use.
-                            </p>
-                            <Accordion type="single" collapsible>
-                                <AccordionItem value="survey-data" className="border-t border-edge">
-                                    <AccordionTrigger className="hover:no-underline">
-                                        <span className="type-legend">Survey data</span>
-                                    </AccordionTrigger>
-                                    <AccordionContent>
-                                        <Card variant="panel">
-                                            <p className="type-data m-0 mb-1 text-small text-ink">UNIT &nbsp;{report.unit}</p>
-                                            <p className="type-data m-0 mb-1 text-small text-ink">PROTOCOL &nbsp;{report.protocol}</p>
-                                            <p className="type-data m-0 mb-1 text-small text-ink-2">CYCLE &nbsp;{report.cycle}</p>
-
-                                            <p className="type-data m-0 mb-1 mt-3 text-[11px] uppercase text-ink-3">
-                                                TERRAIN &nbsp;{report.terrain.features.join(' / ')}
-                                            </p>
-                                            {report.terrain.notes && (
-                                                <p className="type-data m-0 mb-1 text-small text-ink-2">{report.terrain.notes}</p>
-                                            )}
-
-                                            <p className="type-data m-0 mb-1 mt-3 text-[11px] uppercase text-ink-3">MOBILITY</p>
-                                            {MOBILITY_ORDER.filter((k) => report.mobility[k]).map((k) => {
-                                                const m = report.mobility[k];
-                                                return (
-                                                    <p key={k} className="type-data m-0 mb-1 text-small text-ink">
-                                                        {k.toUpperCase()} &nbsp;{m.rating.toUpperCase()}
-                                                        {m.note && <span className="text-ink-2">: {m.note}</span>}
-                                                    </p>
-                                                );
-                                            })}
-
-                                            <p className="type-data m-0 mb-1 mt-3 text-[11px] uppercase text-ink-3">FAUNA</p>
-                                            {report.fauna.observations.map((obs, i) => (
-                                                <p key={i} className="type-data m-0 mb-1 text-small text-ink">{obs}</p>
-                                            ))}
-
-                                            <p className="type-data m-0 mb-1 mt-3 text-[11px] uppercase text-ink-3">
-                                                HAZARDS &nbsp;{report.hazards.join(' / ')}
-                                            </p>
-
-                                            <p className="type-data m-0 mb-1 mt-3 text-[11px] uppercase text-ink-3">
-                                                OUTPUT PRIORITIES &nbsp;{report.outputPriorities.join(' / ')}
-                                            </p>
-
-                                            <p className="type-data m-0 mt-3 text-[11px] uppercase text-ink-2">RECEIPT UNCONFIRMED, filed by hand: archivist</p>
-                                        </Card>
-                                    </AccordionContent>
-                                </AccordionItem>
-                            </Accordion>
-                        </AccordionContent>
-                    </AccordionItem>
-                </Accordion>
-            </div>
+            <FoldGroup>
+                <Fold label="Cross references" count={connectionsCount}>
+                    <Connections kind="world" recordKey={world.key} limit={12} bare />
+                </Fold>
+                <Fold label="For builders">
+                    <p className="mb-4 font-body text-small text-ink-2">
+                        Machine-readable data the Generator and the games use.
+                    </p>
+                    <SpecPlate
+                        columns={2}
+                        entries={[
+                            { key: 'Unit', value: report.unit },
+                            { key: 'Protocol', value: report.protocol },
+                            { key: 'Cycle', value: report.cycle },
+                            { key: 'Terrain', value: report.terrain.features.join(', ') },
+                            ...(report.terrain.notes ? [{ key: 'Terrain notes', value: report.terrain.notes, body: true }] : []),
+                            ...MOBILITY_ORDER.filter((k) => report.mobility[k]).map((k) => {
+                                const m = report.mobility[k];
+                                return {
+                                    key: k.charAt(0).toUpperCase() + k.slice(1),
+                                    value: m.note ? `${m.rating} (${m.note})` : m.rating,
+                                    body: true,
+                                };
+                            }),
+                            {
+                                key: 'Fauna',
+                                value: (
+                                    <ul className="m-0 flex list-none flex-col gap-1 p-0 font-body normal-case tracking-normal">
+                                        {report.fauna.observations.map((obs, i) => (
+                                            <li key={i}>{obs}</li>
+                                        ))}
+                                    </ul>
+                                ),
+                            },
+                            { key: 'Hazards', value: report.hazards.join(', ') },
+                            { key: 'Output priorities', value: report.outputPriorities.join(', ') },
+                        ]}
+                    />
+                </Fold>
+            </FoldGroup>
         </article>
     );
 }
