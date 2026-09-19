@@ -12,6 +12,7 @@ import { Shell, Masthead, SectionHead } from '@/components/system/masthead';
 import { HelixSpinner } from '@/components/system/brand';
 import { EmptyState } from '@/components/system/record';
 import { Callout } from '@/components/system/readouts';
+import { usePageTitle } from '@/components/system/head';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
@@ -20,6 +21,7 @@ function queryIds(value: string | null): string[] {
 }
 
 function TradeBuilderPage() {
+	usePageTitle('Propose a trade');
 	const navigate = useNavigate();
 	const [searchParams] = useSearchParams();
 	const initialRecipient = (searchParams.get('with') || '').toLowerCase();

@@ -16,6 +16,7 @@ import { HelixSpinner } from '@/components/system/brand';
 import { EmptyState } from '@/components/system/record';
 import { Callout } from '@/components/system/readouts';
 import { VisuallyHidden } from '@/components/system/a11y';
+import { usePageTitle } from '@/components/system/head';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
@@ -26,6 +27,7 @@ type TradePageProps = { id: string };
 const statusLabel = { open: 'Open', accepted: 'Accepted', cancelled: 'Cancelled', countered: 'Countered' } as const;
 
 function TradePage({ id }: TradePageProps) {
+	usePageTitle('Trade');
 	const [trade, setTrade] = React.useState<TradeOffer | null>(null);
 	const [records, setRecords] = React.useState<Record<string, XalianRecord>>({});
 	const [username, setUsername] = React.useState<string | null>(null);
