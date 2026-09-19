@@ -2,7 +2,7 @@
 
 Status: the running state of the game under ownership (brief: `reclamation-ownership-brief.md`). This file is the resume point. Any reset reads this first and continues at the weakest thing named below, never from scratch. Each pass appends its own section; the standing state at the top is rewritten in place.
 
-## Standing state (after pass 9, 2026-09-18)
+## Standing state (after pass 10, 2026-09-18)
 
 ### Gauges, proctor mirror
 
@@ -14,6 +14,8 @@ Pass 6 changed no rule. It re-read two gauges with enough statistical power to s
 | Downs per match | 3 to 5 | 4.85 / 4.64 / 4.80 (after pass 9) | met |
 | Contested worlds that are one creature against one | lower is better | 56.2% (was 62.7%) | improved, pass 9 |
 | Naive margin (pass-early under the mirror) | 8 or more points | 13.1 / 13.1 / 14.5 (was 21.5 / 19.4 / 17.8) | met, **narrowing; the constraint on the send budget** |
+| **Affordance: comprehension by prediction** | beat deploy-totals-only | **11 of 12 (92%)**, 1 of 2 on flipped worlds | **first measurement, pass 10** |
+| **Rubric critic score** | rising per pass | **64 / 100** (first blind score, pass 10) | lowest lines: reason to keep playing 4, mobile 5, numbers 5 |
 | **Comeback from a CONTESTED round 1** (trailing by one or two worlds) | 30 to 40 | **30.8 / 32.0 / 35.1**; pooled 29.1 +/- 1.4 | **met on three seeds** |
 | Comeback from a SWEPT round 1 (trailing by three) | not safeguarded, by ruling | 7 to 12 percent; pooled 8.0 +/- 1.8 | working as ruled |
 | Comeback, both populations averaged | (the old single gauge) | 25.9 / 27.1 / 30.7; pooled 25.2 +/- 1.2 | reported, superseded by the split |
@@ -49,14 +51,15 @@ What it reads, and where each effect kind lands (measured over the seed-7 pool, 
 
 ### Open items, ranked (resume here)
 
-1. **Crowd worlds further, if it can be afforded.** Pass 9 found that the sends-per-world ratio, not any rule inside the Clash, decides whether creatures meet: nine worlds against a budget near nine sends forced 1v1 at 62 percent. `SENDABLE` 11 brings that to 56.2 percent and both bands hold. 12 sends would bring it to 44.5 percent but cannot hold the flip band at any scale tried, and it closes the naive-policy margin from 21.5 to under 10 points. **The other half of the ratio is the frame**: three worlds per round against three rounds. `worldsPerFrame` is now a lever, and a narrower frame raises sends-per-world without touching the budget, but it moves the clinch and the whole match arc, so it is a design change rather than a tuning one.
-2. **Intelligence and charisma read negative within presences** (charisma -15.2, intelligence -9.7). Lever: what `rateForDraft` and the bot's role value count. **Read it pooled before treating it as a failure** (pass 6's lesson).
-3. **Fire is a dead element and dromeus a dead species** in the draft. Same caution.
-4. **The four borrowed effect kinds** (restrain, displace, transfer, suppress) still read as plain attacks. Pass 8 measured that rules for them do not pay while worlds are thin; worlds are now less thin, so this is worth re-testing after the next crowding move.
-5. **Bolster recovery and the instinct lanes still move nothing under ablation.** Each earns its place or goes.
-6. **No human has played a full Proving** under the current rules. Notes and telemetry hooks exist, verified rendering at both widths, and are empty.
-7. **Hot-seat** is unbuilt and is the cheapest validation instrument the game can have.
-8. **Affordance and comprehension are unmeasured.** The prediction-protocol harness does not exist.
+1. **State the five resolution rules the rulebook does not.** A fresh reader predicting rulings from the table scored 92 percent, and every miss was arithmetic ordering rather than strategy: it could not tell whether hurt-scaling is a plain ratio, whether armored applies before or after it, whether a shield may cancel a sweep's splash, whether menacing redirects a sweep (it does not), or how strained creatures are ordered among themselves. It asked for **one worked resolution trace** with every multiplier in sequence, which pins all five at once and would serve a human player too. Cheapest high-value item on this list.
+2. **Give a losing player a reason to take the turn.** The rubric critic's lowest line (4 of 10): shut out on three worlds in round 3, nothing on screen offered a reason to keep playing the match. This is not a call for a gift; it is a call for the table to show what is still reachable (two of three still ties, a stake still unspent).
+3. **Mobile** (critic 5 of 10). Three empty world panels at roughly 600px each push the bench below the fold, so pick-and-place needs scrolling between the thing you pick and the thing you pick it for; the bench is a horizontal scroller showing 3.5 of 12 cards.
+4. **Worlds decided with no Clash at all.** In 5 of 12 sampled positions neither side could attack, so the world was decided at Deploy. A handler who sends two bolsters into a thin world wins it for free. Reported by the predictor, not yet measured.
+5. **Crowd worlds further, if it can be afforded.** 1v1 is 56 percent. 12 sends reaches 44.5 but costs the flip band and half the naive margin. `worldsPerFrame` is a lever; a narrower frame raises sends-per-world without touching the budget but moves the clinch and the match arc.
+6. **Intelligence and charisma read negative within presences.** Read it pooled before treating it as a failure.
+7. **Fire is a dead element and dromeus a dead species** in the draft. Same caution.
+8. **No human has played a full Proving.** The notes and telemetry are built, verified, and empty.
+9. **Hot-seat** is unbuilt and is the cheapest validation instrument the game can have.
 
 ### Findings from the headless check (pass 5, recorded not fixed)
 
@@ -73,6 +76,7 @@ The check plays a whole Proving in both views at 1440 and 390 and all four confi
 3. The validation tool on seeds 7, 13 and 21.
 4. `npm run build -w apps/web` (enforces the bundle budgets).
 5. `npx vite preview --port 4173 --host 127.0.0.1` from `apps/web`, then `node apps/web/scripts/reclamation-proving.mjs` (added in pass 5; a whole Proving in both views at 1440 and 390, screenshots, overflow and console assertions).
+6. Every third pass: the rubric critic (a fresh agent, screenshots only, `game-validation-principles.md` section 4) and the affordance gauge (`node apps/web/scripts/runNode.cjs packages/rules/src/expedition/devtools/predictionPositions.ts --count=12 --seed=7`, then a fresh reader predicts and `--score=` scores it). Log both numbers.
 
 ### Where the seam is
 
@@ -154,3 +158,17 @@ The single place the game's reading of a creature is decided:
 **The cost, which is now the binding constraint:** a bigger budget narrows the naive-policy margin. Pass-early sat 21.5 / 19.4 / 17.8 points under the mirror at 10 sends and sits 13.1 / 13.1 / 14.5 at 11. The eight-point bar still clears with room, but this, not the downs band, is what stops the budget rising further.
 
 **Verified:** 1912 tests green, typecheck clean, build inside budgets, validation report regenerated, headless Proving green in all four configurations (now playing 11 sends), bench readout checked by paint.
+
+### Pass 10 (2026-09-18): what two fresh readers said
+
+**Weakest thing:** affordance and comprehension had never been measured, and five passes had gone into mechanics without the critic the brief asks for every third pass.
+
+**The rubric critic scored 64 of 100** from screenshots alone. Its lowest lines were a reason to keep playing (4), mobile (5), numbers earning their place (5) and glanceability (6).
+
+**Three of its findings were acted on, and one was a real bug.** The ghost preview does exist and is good (lifting a creature prints SEND HERE on every world with the hold it would have there, 9.3 / 9.3 / 6.9 on the seed-7 frame) but **the resting lead line that promises this was computed and never rendered**, because its condition required a creature to already be lifted. A player who had not yet lifted anything genuinely had nothing telling them the worlds would answer. Fixed. Also: the speed number on a bench card is now labeled on the card rather than only in a hover title, and the Proving notes fold away so the Charter ends on NEW PROVING instead of on a survey form.
+
+**The affordance gauge was built and reads 92 percent.** `devtools/predictionPositions.ts` photographs contested worlds at the end of Deploy as the table shows them, keeps the answers separately, and scores a reader. A fresh agent with the table's numbers and a one-page rulebook predicted **11 of 12 rulings correctly**. Its first real run found a bug in the harness itself (positions sliced to the count, answers not, so the key described worlds nobody was asked about), now fixed.
+
+**The finding that matters more than the score:** every miss was arithmetic ordering, never strategy. "I can see who should win; I cannot see whether a 6.66 clears a 6.5." Five resolution rules are exact in the engine and unstated in the rulebook, and one worked resolution trace would pin all five. That is open item 1.
+
+**Verified:** 1912 tests green, typecheck clean, build inside budgets, headless Proving green in all four configurations, and all three UI fixes checked by paint (the speed label renders as "61 SPEED", the resting line renders its promise, the Charter ends on NEW PROVING).

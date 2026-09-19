@@ -200,9 +200,17 @@ function ReclamationBench({
 		}
 	} else {
 		heading = 'Lift a creature';
+		/*
+			PASS 10. The resting line named the lamps but never promised what lifting does, so
+			a player who had not yet lifted a creature could not know the table would answer
+			"what happens if I do it" (the rubric critic, 2026-09-18, scored that question
+			the weakest of the four glanceable ones). The line now says the promise in the
+			order a player acts in: lift, and every world prints what this creature would
+			hold there and what it would do.
+		*/
 		lead = sendsLeft === 0
 			? `You have sent all ${SENDABLE} this Proving allows. The rest are your reserve.`
-			: 'The lamps under each say where it holds well. Point at one to read it on the worlds.';
+			: 'Lift one and every world prints what it would hold there and what it would do. The lamps under each say where it holds well.';
 	}
 
 	return (
@@ -263,8 +271,15 @@ function ReclamationBench({
 				)}
 			</header>
 			{/* the lead rides on its own line under the head: with a creature lifted it is the
-			    role sentence, the same one the plinth, the dossier and the ghost preview print */}
-			{(sendsLeft === 0 || step === 2 || movingRecordId) && (
+			    role sentence, the same one the plinth, the dossier and the ghost preview print.
+
+			    PASS 10: it is shown at rest too, whenever it is this handler's turn. The
+			    resting line is where the table promises what lifting does, and it used to be
+			    written and then never rendered, so a player who had not yet lifted anything
+			    had nothing telling them the worlds would answer "what happens if I do it".
+			    That is what the rubric critic scored the weakest of the four glance
+			    questions, judging the screen before any creature was lifted. */}
+			{(sendsLeft === 0 || step === 2 || movingRecordId || (yourTurn && !me.passed)) && (
 				<p className="rec-bench-lead g-body" data-bench-lead>{lead}</p>
 			)}
 			<div className="rec-plinths" role="list">

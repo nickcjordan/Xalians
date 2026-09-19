@@ -514,8 +514,18 @@ class ReclamationProvingNotes extends React.Component {
 			tension, obvious, earned, saved, exported, exportText, notesCount, telemetryCount,
 		} = this.state;
 		return (
-			<div className="g-panel rec-notes" data-notes>
-				<span className="g-kicker">Proving notes</span>
+			/*
+				PASS 10. The notes are a real instrument (game-validation-principles.md
+				section 3: the designer's own play as data, three questions after every
+				match) and they stay. What changed is that they no longer END the Charter:
+				the rubric critic, judging the screen blind, named this form as the single
+				thing to cut, because three placeholder text fields and an EXPORT NOTES
+				button were the last thing on screen after a loss, where the rematch hook
+				belongs. Folded away, open on a press, remembered by nothing: the Charter
+				closes on the Proving and the instrument is one click for whoever wants it.
+			*/
+			<details className="g-panel rec-notes" data-notes>
+				<summary className="g-kicker rec-notes-summary">Proving notes</summary>
 				<div className="rec-notes-row">
 					<label className="rec-notes-label" htmlFor="rec-notes-tension">Where was the moment of most tension?</label>
 					<input
@@ -597,7 +607,7 @@ class ReclamationProvingNotes extends React.Component {
 						onFocus={(e) => e.target.select()}
 					/>
 				)}
-			</div>
+			</details>
 		);
 	}
 }

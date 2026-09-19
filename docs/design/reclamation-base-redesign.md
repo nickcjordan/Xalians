@@ -415,6 +415,54 @@ The payoff for committing a second creature was always enormous. The budget simp
 | 45 | The send budget is a rules lever (`sendable`), so the ratio can be swept without editing the interpretation layer | 90% | `expeditionRules.sendableCapFor` |
 | 46 | The naive-policy margin is the constraint on raising the budget further, not the downs band | 80% (pass-early closes from 21.5 to 13.1 points between 10 and 11) | this section |
 
+## Pass 10: what two fresh readers said, and the affordance gauge (2026-09-18)
+
+The brief asks for a separate critic every third pass and for comprehension by prediction to be built and logged. Five passes had gone into mechanics without either. Pass 10 ran both, took the findings, and fixed what they found.
+
+### The rubric critic: 64 out of 100
+
+A fresh agent that had never seen the code scored the game from six screenshots against the rubric in `game-validation-principles.md` section 4. Its lowest lines: a reason to keep playing (4), mobile (5), numbers earning their place (5), glanceability (6). Its highest: the first five minutes (8), feedback (8), fiction and mechanics agreeing (8).
+
+Three of its findings were acted on, and one of them exposed a real bug.
+
+**"What happens if I do it" was the weakest of the four glance questions.** The critic reported that nothing on the resting screen told it what a send would produce. It was half wrong and half right, and the half it was right about was a bug. The ghost preview does exist and is good: lifting a creature prints SEND HERE on every world with the hold it would have there (9.3, 9.3, 6.9 on the three worlds of the seed-7 frame), a hold meter, the balance bar extending, and the environment scale. The critic never saw it because it judged static screenshots and never lifted anything. But **the resting lead line, which is where the table promises what lifting does, was written and then never rendered**: its condition required a creature to already be lifted. So a player who had not yet lifted anything genuinely had nothing telling them the worlds would answer. Fixed: the line shows on the handler's turn, and now reads "Lift one and every world prints what it would hold there and what it would do."
+
+**The most prominent number on a bench card was unlabeled.** A creature's speed reads as a large figure with an arrow glyph, named only in a hover title, so a blind read took it for strength. The word now rides after the number.
+
+**The Charter ended on a survey.** The critic's single cut was the Proving notes form: three placeholder fields and an EXPORT NOTES button as the last thing on screen after a loss, where a rematch hook belongs. The notes are a real instrument (`game-validation-principles.md` section 3) and they stay, but they are now folded into a single "Proving notes / open" row, so the Charter closes on NEW PROVING.
+
+### The affordance gauge: 92 percent
+
+Built this pass: `packages/rules/src/expedition/devtools/predictionPositions.ts`. It plays real Provings, photographs every contested world at the end of Deploy exactly as the table shows it, and keeps the Ruling's answer separately so a reader is never handed it. `--score=` scores a reader's predictions and prints the gauge.
+
+A fresh agent given twelve positions, the table's numbers and a one-page rulebook predicted **11 of 12 rulings correctly (92 percent)**, and 1 of the 2 worlds where the Clash changed the leader. That is the first measurement of this gauge and it is a good number: the instruments on the table carry enough for a reader to compute what will happen.
+
+**A bug in the harness, found by its first real run.** Positions were sliced to the requested count and answers were not, so the key described worlds nobody was asked about and three phantom misses were scored. Fixed, with the reason written at the slice.
+
+**What the predictor could not apply, which is the real finding.** Its misses were arithmetic ordering, never strategy: "I can see who should win; I cannot see whether a 6.66 clears a 6.5." Specifically it could not tell:
+
+- whether the hurt-attacks-less scaling is a plain remaining-over-full ratio or something gentler,
+- whether ARMORED's quarter applies before or after that scaling, and whether it applies to a sweep's splash,
+- whether a SHIELD counts a sweep's splash as one of the attacks it may cancel,
+- whether MENACING redirects a sweep or friendly fire (it does not: `applyMenacingRedirect` is only called on a strike's target pick),
+- how strained creatures are ordered among themselves.
+
+Each is a rule the engine answers precisely and the rulebook does not state. None is a code fault; all five are the rulebook's to fix, and they are recorded as the pass's open item rather than guessed at.
+
+**A friction the predictor reported, unprompted, and it is worth Nick's eye.** In 5 of 12 positions no meaningful Clash occurred, because one or both sides had fielded only attackless bolsters and shields. Those worlds are decided entirely at Deploy. Its words: "a handler who sends two bolsters into an empty world wins it for free, which may be a lever worth looking at."
+
+| # | Assumption / Decision | Confidence | Supporting Evidence |
+|---|---|---|---|
+| 47 | The resting bench line is shown on the handler's turn and promises what lifting does; it was previously computed and never rendered | 90% (the critic scored this the weakest glance question; the condition required a lift) | `reclamationBench.js` |
+| 48 | The speed number on a bench card is labeled on the card, not only in a hover title | 90% | `reclamation.css` `.rec-plinth-init::after` |
+| 49 | The Proving notes fold away so the Charter ends on NEW PROVING; the instrument is kept | 85% (the critic's single cut) | `reclamationReport.js` |
+| 50 | Comprehension by prediction is a built gauge, scored at 92 percent on its first run | 85% (11 of 12, one batch, one reader) | `devtools/predictionPositions.ts` |
+
+### Pass 10 open items
+
+- **Five resolution rules are exact in the engine and unstated in the rulebook** (the list above). The predictor asked for one worked resolution trace, printed as a log with every multiplier in sequence, which would pin all five at once. That is the next docs job and it would also serve a human player.
+- **Worlds decided with no Clash at all.** A side that fields only presences at an uncontested-in-practice world wins it without a fight. Reported by the predictor, not yet measured.
+
 ### Pass 9 open items
 
 - **1v1 is still 56 percent of contested worlds.** 12 sends would take it to 44.5 but costs the flip band and half the naive margin. The other half of the ratio is the frame: three worlds per round against three rounds. A narrower frame (two worlds per round) would raise sends-per-world without touching the budget, and `worldsPerFrame` is now a lever, but it moves the clinch and the whole match arc, so it is a design change rather than a tuning one.
