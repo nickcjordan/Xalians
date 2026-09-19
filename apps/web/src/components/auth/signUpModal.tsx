@@ -38,9 +38,10 @@ type SignUpModalProps = {
 	show: boolean;
 	onHide: () => void;
 	callback: (username: string, email: string, password: string) => void;
+	switchToSignIn?: () => void;
 };
 
-function SignUpModal({ show, onHide, callback }: SignUpModalProps) {
+function SignUpModal({ show, onHide, callback, switchToSignIn }: SignUpModalProps) {
 	const [isThinking, setIsThinking] = React.useState(false);
 
 	const form = useForm<SignUpValues>({
@@ -91,7 +92,7 @@ function SignUpModal({ show, onHide, callback }: SignUpModalProps) {
 								<FormItem>
 									<FormLabel>Username</FormLabel>
 									<FormControl>
-										<Input autoFocus placeholder="Username" {...field} />
+										<Input autoFocus autoComplete="username" placeholder="Username" {...field} />
 									</FormControl>
 									<FormDescription className="text-small text-ink-2">
 										Must be unique. Letters, numbers, hyphens and underscores.
@@ -107,7 +108,7 @@ function SignUpModal({ show, onHide, callback }: SignUpModalProps) {
 								<FormItem>
 									<FormLabel>Email address</FormLabel>
 									<FormControl>
-										<Input type="email" placeholder="Email address" {...field} />
+										<Input type="email" autoComplete="email" placeholder="Email address" {...field} />
 									</FormControl>
 									<FormMessage className="text-small text-plague-outline-ink" />
 								</FormItem>
@@ -120,8 +121,9 @@ function SignUpModal({ show, onHide, callback }: SignUpModalProps) {
 								<FormItem>
 									<FormLabel>Password</FormLabel>
 									<FormControl>
-										<Input type="password" placeholder="Password" {...field} />
+										<Input type="password" autoComplete="new-password" placeholder="Password" {...field} />
 									</FormControl>
+									<FormDescription className="text-small text-ink-2">At least 8 characters.</FormDescription>
 									<FormMessage className="text-small text-plague-outline-ink" />
 								</FormItem>
 							)}
@@ -133,7 +135,7 @@ function SignUpModal({ show, onHide, callback }: SignUpModalProps) {
 								<FormItem>
 									<FormLabel>Confirm password</FormLabel>
 									<FormControl>
-										<Input type="password" placeholder="Confirm password" {...field} />
+										<Input type="password" autoComplete="new-password" placeholder="Confirm password" {...field} />
 									</FormControl>
 									<FormMessage className="text-small text-plague-outline-ink" />
 								</FormItem>
@@ -141,11 +143,27 @@ function SignUpModal({ show, onHide, callback }: SignUpModalProps) {
 						/>
 					</form>
 				</Form>
-				<DialogFooter>
-					<Button variant="secondary" onClick={closeModal}>Cancel</Button>
-					<Button type="submit" form="signupForm" disabled={isThinking}>
-						{isThinking ? <HelixSpinner size="sm" /> : 'Create account'}
-					</Button>
+				<DialogFooter className="sm:justify-between">
+					<p className="text-small text-ink-2">
+						Already have an account?{' '}
+						<Button
+							type="button"
+							variant="link"
+							className="h-auto p-0 text-small"
+							onClick={() => {
+								closeModal();
+								switchToSignIn?.();
+							}}
+						>
+							Sign in.
+						</Button>
+					</p>
+					<div className="flex gap-2">
+						<Button variant="secondary" onClick={closeModal}>Cancel</Button>
+						<Button type="submit" form="signupForm" disabled={isThinking}>
+							{isThinking ? <HelixSpinner size="sm" /> : 'Create account'}
+						</Button>
+					</div>
 				</DialogFooter>
 			</DialogContent>
 		</Dialog>

@@ -1,9 +1,11 @@
 import {
+    confirmResetPassword as amplifyConfirmResetPassword,
     confirmSignUp as amplifyConfirmSignUp,
     fetchAuthSession,
     fetchUserAttributes,
     getCurrentUser,
     resendSignUpCode,
+    resetPassword as amplifyResetPassword,
     signIn as amplifySignIn,
     signOut as amplifySignOut,
     signUp as amplifySignUp,
@@ -79,5 +81,13 @@ export const confirmSignUp = (user, code) => amplifyConfirmSignUp({
 export const resendConfirmationCode = (user) => resendSignUpCode({ username: user });
 
 export const signIn = (user, pass) => amplifySignIn({ username: user, password: pass });
+
+export const resetPassword = (user) => amplifyResetPassword({ username: user });
+
+export const confirmResetPassword = (user, code, newPassword) => amplifyConfirmResetPassword({
+    username: user,
+    confirmationCode: code,
+    newPassword,
+});
 
 export const signOut = () => amplifySignOut().then(() => true);
