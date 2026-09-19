@@ -9,6 +9,7 @@ import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { Toggle } from '@/components/ui/toggle';
+import { centerInRail } from './railScroll';
 
 const ELEMENTS = [
     'fire', 'water', 'dark', 'light', 'plant', 'electric', 'ghost', 'rock',
@@ -57,9 +58,7 @@ export default function Bestiary() {
         const row = elementRowRef.current;
         if (!row) return;
         const pressed = row.querySelector('[aria-pressed="true"]');
-        if (pressed && pressed.scrollIntoView) {
-            pressed.scrollIntoView({ block: 'nearest', inline: 'nearest' });
-        }
+        centerInRail(row, pressed);
     }, [element]);
 
     const list = useMemo(() => {

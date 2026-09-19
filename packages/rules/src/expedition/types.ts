@@ -99,7 +99,22 @@ export interface Rules {
 	stake: boolean;
 	draftPoolSize: number;
 	draftDistinctSpecies: boolean;
+	claimCounting: ClaimCounting;
 }
+
+/*
+	How the Ruling counts a standing creature's contribution to its world (pass 5).
+
+	- 'current': the creature contributes the hold it has left, so every point of damage
+	  moves the world's margin. This is the game through pass 4b.
+	- 'standing': the creature contributes its whole claim while it stands and nothing once
+	  it is downed, so the Clash moves a world by whole creatures rather than by points.
+
+	Measured cause for the lever (docs/design/reclamation-ownership-log.md, pass 5): under
+	'current' the Clash extends the deploy leader as often as it erodes it, because both
+	sides subtract from the one number that also decides the world.
+*/
+export type ClaimCounting = 'current' | 'standing';
 
 // what a caller may pass to createMatch / rules-aware helpers: any subset of Rules, with
 // roles itself also partial. Devtools CLI flags (--rules=k=v;k=v) and rule-sweep tuples

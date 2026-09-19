@@ -230,6 +230,53 @@ What went with it: the bot's hide decision (`hideBias`, `concealmentValue`, `pri
 
 Validation seed 7, 200 matches, after the change (`reclamation-validation-report.md`): proctor mirror 46.5; greedy 0, always-stack 0, never-contest 0, random 2, pass-early 22, presence-first 28; the always-hidden row is gone because there is no policy to write. Decided after round 1 45, comeback 31.1, resolution changes the leader at 13.4 percent of contested worlds, downs per match 1.44. The read: proctor against no anticipation 74.0, against blind 87.0, sharp read against the even spread 41.5. Nothing here is a rules effect: the bot already sent every stealthy creature hidden, so the numbers move only by the seed's noise. Friction found while building (recorded as a lever consequence): with the flag derived, a stealthy creature has exactly one price, so under the `hidingPriced` ablation row (`hiddenSendCost` 2) a stealthy creature with one cap unit left is unsendable rather than sendable in the open; `sendableRoster` and `hasLegalSend` price it consistently so the harness is never handed an illegal send. At the shipped setting (cost 1) nothing differs.
 
+## Pass 5: the Clash is half the size of the gap it must cross (2026-09-18)
+
+First pass under the ownership brief (`reclamation-ownership-brief.md`). The weakest thing on every gauge was resolution changing the leader at 13 percent of contested worlds against a band of 25 to 40, with downs per match at 1.44 to 1.54 against a band of 3 to 5. Four passes had named the lever as `magnitudeScale` and the hold compression and every sweep had failed, so this pass measured the cause before designing anything.
+
+**The measurement.** Two probes over 200 matches on each of seeds 7, 13 and 21, at contested worlds. Deploy gap is the absolute hold margin at the end of Deploy; Clash swing is the absolute change in that margin by the Ruling.
+
+| Reading | Seed 7 | Seed 13 | Seed 21 |
+|---|---|---|---|
+| Median deploy gap | 4.6 | 4.7 | 5.0 |
+| Median Clash swing | 2.6 | 2.7 | 2.4 |
+| Clash swing exceeded the gap | 37.6% | 35.3% | 34.1% |
+| Contested worlds that are one creature against one | 61.9% | 61.4% | 62.5% |
+| Resolve mattered by crowd: 2 present / 3 / 4 or more | 14.9 / 16.0 / 22.1 | 14.4 / 17.4 / 17.0 | 13.1 / 17.1 / 19.7 |
+
+The Clash was moving a world by a median of 2.6 hold against a median gap of 4.6, so it could not even reach the gap at two worlds in three, and a flip additionally needs the swing to run the right way. The observed 13 percent was therefore the arithmetic ceiling of the design, not a badly chosen constant. On seed 7 the swing extended the deploy leader at 624 worlds and eroded it at 614, mean signed swing +0.09: **the Clash was directionless**, because both sides subtract from the one number that also decides the world, so the replies cancel and only the downs gauge responds to a larger scale. Ten percent of contested worlds saw the Clash move nothing at all.
+
+**The hypothesis that was wrong, kept as a lever.** The reading above says hold is doing two jobs at once, the claim and the health bar, so `claimCounting` was built to separate them: under `standing` a creature contributes the whole claim it arrived with while it stands and nothing once downed, so the Clash moves a world by whole creatures. It measured **worse**: flips fell to 4.7 to 5.9 percent on three seeds, because at 1.4 downs a match the quantum almost never fires. Raising the scale under `standing` recovers it only to 23.9 percent at scale 4.0 against 29.9 for `current` at the same scale. So the counting rule was never the fault, and hold doing double duty turns out to help the flip rate rather than hurt it, since every point of damage moves the world a little. The lever ships off, as an ablation row, so the next pass does not re-derive this.
+
+**What actually shipped: the scale, re-swept against the bot that exists now.** The pass-2 sweep that declared the flip gauge unreachable was run before pass 4 gave the proctor anticipation. The reading bot spreads its sends instead of stacking, which is what dropped downs from 2.8 to 1.44, and the sweep was never re-run against it. Re-swept at 200 and 600 matches on three seeds:
+
+| `magnitudeScale` | Downs per match | Flips at contested worlds | Verdict |
+|---|---|---|---|
+| 1.1 (shipped through pass 4b) | 1.44 to 1.54 | 12.1 to 13.0% | both bands unmet |
+| 2.5 | 3.71 to 3.82 | 24.8 to 24.9% | flips just under |
+| **3.0 (shipped)** | **4.16 to 4.44** | **25.4 to 27.6%** | **both bands met on three seeds** |
+| 3.5 | 4.57 to 4.89 | 26.9 to 29.3% | downs near the band ceiling |
+
+3.0 is the setting where both gauges clear with the most room on either side.
+
+**What it cost, recorded rather than hidden.** Comeback falls from 30.6 to 33.3 percent to 25.9 to 30.7 percent at 600 matches, because a bigger Clash lets a leader convert its lead into downs. No gift was added to the trailing side to cover it, per the standing ruling; the comeback avenue stays a chosen risk. Naive-policy regret is unaffected and still met with room (best naive 25.5 against a mirror of 50.0). Option spread is unchanged at 2.85. Every role stays inside the 40 to 60 keeper win band (shield 45.6, bolster 47.5, sweep 50.6, strike 52.7). Under ablation **the bolster role now carries weight**, having measured inert since pass 4, and so does the stake; hidden-first, bolster recovery and the instinct lanes remain the three rules the ablation cannot see.
+
+**Friction found while building (a lever consequence, reported not worked around).** The stake's edge threshold was tuned in pass 3 against a Clash that barely moved a world, and it does not survive a Clash that does. At the new scale the validation tool's own safety flag fires: the staker wins its staked world 47.4 percent of the time against 50.0 percent on the worlds it did not stake, where at scale 1.1 it won 61.7 against 48.7. Re-sweeping `STAKE_THRESHOLD_BEHIND` at 4.4, 5.5, 6.5 and 8.0 over 600 matches on three seeds gives a non-monotonic reading that traps on one seed and clears on two at every setting, which is noise around a true effect near zero. The honest conclusion is that a deploy-time hold edge no longer predicts who holds a world, so the stake has gone from a good bet to a coin flip. The threshold is therefore **left at 4.4** rather than moved on noise, and the stake's premise is an open item below. It is not a gift and not a broken rule; it is a chosen risk whose edge the Clash has eaten.
+
+| # | Assumption / Decision | Confidence | Supporting Evidence |
+|---|---|---|---|
+| 28 | `magnitudeScale` is 3.0: the only setting where downs per match and the resolution-mattered rate are both in band, on three seeds | 85% (200 and 600 match sweeps, seeds 7, 13, 21; the pass-2 reading that called the gauge unreachable was measured against a bot that no longer exists) | this section; `expeditionInterpretation.MAGNITUDE_SCALE` |
+| 29 | Hold keeps both its jobs: the Ruling counts the hold a creature has left, not the claim it arrived with. `claimCounting` ships `current`, with `standing` kept as an ablation row | 80% (`standing` measured at 4.7 to 5.9 percent flips against 25.4 to 27.6 for `current`) | this section; `types.ts` ClaimCounting |
+| 30 | The comeback band is allowed to go unmet rather than covered by a gift; the stake's threshold is left at 4.4 rather than moved on a non-monotonic reading | 75% (the no-gifts ruling; the sweep does not resolve at 600 matches on three seeds) | this section |
+
+### Pass 5 open items
+
+- **The stake's premise.** With a real Clash a deploy-time hold edge no longer predicts the world, so the stake is variance-neutral in the weakest sense: the staker no longer picks worlds it holds. Either the stake should read something the Clash cannot erase (the creatures already standing, rather than the roster's fit), or the comeback avenue should be a different chosen risk. This is the first thing to weigh next.
+- **Comeback at 25.9 to 30.7 percent**, under the 30 to 40 band on two seeds of three.
+- Whether menacing should merge into shield (a weaker cousin that draws rather than cancels).
+- Whether a bolsterer's own hold should count the grade lift (assumed yes: "itself included").
+- The v4 immersive brief for the match, after this pass.
+
 ## Open items
 
 - Whether menacing should merge into shield (a weaker cousin that draws rather than cancels).

@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import * as lore from '../../lore';
 import { tabTriggerClass } from '@/components/ui/tabs';
+import { centerInRail } from './railScroll';
 
 /**
  * A rail of stations under the galaxy map: "All" plus the seven eras.
@@ -36,9 +37,7 @@ export default function EraScrubber({ era, onChange }) {
 		if (!rail) return;
 		const buttons = rail.querySelectorAll('[data-slot="scrub-station"]');
 		const btn = buttons[Math.max(activeIndex, 0)];
-		if (btn && btn.scrollIntoView) {
-			btn.scrollIntoView({ block: 'nearest', inline: 'center' });
-		}
+		centerInRail(rail, btn);
 	}, [activeIndex]);
 
 	const focusStation = (index) => {

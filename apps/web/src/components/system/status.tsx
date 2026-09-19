@@ -44,26 +44,47 @@ function StatusBody({
   )
 }
 
-/** Registered as the router fallback and at `/404`. */
-function NotFoundPage({ path }: { path?: string }) {
+/**
+ * Registered as the router fallback and at `/404`. Also reused by
+ * `/user/:id` for an unknown account (overriding kicker, title, keys, and
+ * passing `body={null}` to drop the paragraph), so the requested address is
+ * always the caller's `path` prop rather than something this component
+ * reaches for itself.
+ */
+function NotFoundPage({
+  path,
+  kicker = "Not found",
+  title = "Nothing at this address",
+  body = "There is no record at this address. Check the link, or start from one of these.",
+  actions,
+}: {
+  path?: string
+  kicker?: React.ReactNode
+  title?: React.ReactNode
+  body?: React.ReactNode | null
+  actions?: React.ReactNode
+}) {
   const shownPath = path ?? (typeof window !== "undefined" ? window.location.pathname : "")
   return (
     <StatusFrame>
       <StatusBody
-        kicker="Not found"
-        title={<span className="type-data break-all normal-case tracking-normal">{shownPath}</span>}
+        kicker={kicker}
+        title={title}
         actions={
-          <>
-            <Button asChild>
-              <Link to="/">Go home</Link>
-            </Button>
-            <Button asChild variant="secondary">
-              <Link to="/encyclopedia">Open the encyclopedia</Link>
-            </Button>
-          </>
+          actions ?? (
+            <>
+              <Button asChild>
+                <Link to="/">Go home</Link>
+              </Button>
+              <Button asChild variant="secondary">
+                <Link to="/encyclopedia">Open the encyclopedia</Link>
+              </Button>
+            </>
+          )
         }
       >
-        <p className="font-body text-body text-ink-2">There is no record at this address.</p>
+        {body !== null ? <p className="font-body text-body text-ink-2">{body}</p> : null}
+        <p className="type-data mt-1 break-all text-small text-ink-3">{shownPath}</p>
       </StatusBody>
     </StatusFrame>
   )

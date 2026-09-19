@@ -56,6 +56,7 @@ import {
 	HOLD_CEILING,
 	MAGNITUDE_SCALE,
 	SWEEP_DISCOUNT,
+	CLAIM_COUNTING,
 	BOLSTER_FLOOR,
 	HIDDEN_FIRST,
 	ARMORED_REDUCTION,
@@ -82,7 +83,7 @@ import {
 import type {
 	Board, BoardEntry, Conduct, Frame, FrameSite, LogEvent, MatchState, PlayerState,
 	PreparedCreature, PublicBoardEntry, PublicPlayerView, PublicState, Role, Rules,
-	RulesInput, Seat, ShieldCap, World,
+	RulesInput, Seat, ShieldCap, World, ClaimCounting,
 } from './types.ts';
 
 // ---------------------------------------------------------------------------
@@ -323,6 +324,8 @@ export const DEFAULT_RULES: Rules = {
 	stake: STAKE_ENABLED,
 	draftPoolSize: DRAFT_POOL_SIZE,
 	draftDistinctSpecies: DRAFT_DISTINCT_SPECIES,
+	// Pass 5: what a standing creature contributes at the Ruling (types.ts ClaimCounting)
+	claimCounting: CLAIM_COUNTING as ClaimCounting,
 };
 
 // merges a caller's partial rules over the defaults, so a batch only names what it moves
@@ -366,6 +369,9 @@ function normalizeRules(rules: RulesInput | null | undefined): Rules {
 		draftPoolSize: num(r.draftPoolSize, DEFAULT_RULES.draftPoolSize),
 		draftDistinctSpecies: r.draftDistinctSpecies !== undefined
 			? !!r.draftDistinctSpecies : DEFAULT_RULES.draftDistinctSpecies,
+		// Pass 5
+		claimCounting: r.claimCounting === 'standing' || r.claimCounting === 'current'
+			? r.claimCounting : DEFAULT_RULES.claimCounting,
 	};
 }
 
@@ -1759,8 +1765,16 @@ function judge(state: MatchState): MatchState {
 		}) as unknown as PublicBoardEntry & { hold: number };
 		const entriesA = s.board[site.id].A.map(entryView);
 		const entriesB = s.board[site.id].B.map(entryView);
-		const holdA = entriesA.reduce((sum, e) => sum + e.hold, 0);
-		const holdB = entriesB.reduce((sum, e) => sum + e.hold, 0);
+		// Pass 5: what a standing creature contributes to the claim. Under 'current' it is
+		// the hold it has left, so every point of damage moves the world. Under 'standing'
+		// it is the whole claim it arrived with, so only being downed takes a creature's
+		// contribution off the world and the Clash moves worlds by whole creatures.
+		// Downed creatures are already off s.board, so both readings count only survivors.
+		const counted = (e: { hold: number; fullHold: number }) => (
+			rulesOf(s).claimCounting === 'standing' ? e.fullHold : e.hold
+		);
+		const holdA = round1(entriesA.reduce((sum, e) => sum + counted(e), 0));
+		const holdB = round1(entriesB.reduce((sum, e) => sum + counted(e), 0));
 		let winner: Seat | null = null;
 		if (holdA > holdB) {
 			winner = 'A';

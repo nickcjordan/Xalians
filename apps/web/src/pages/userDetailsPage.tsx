@@ -18,6 +18,7 @@ import { HelixSpinner } from '@/components/system/brand';
 import { EmptyState } from '@/components/system/record';
 import { VisuallyHidden } from '@/components/system/a11y';
 import { usePageTitle } from '@/components/system/head';
+import { NotFoundPage } from '@/components/system/status';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -31,24 +32,50 @@ function UserDetailsPage({ id }: UserDetailsPageProps) {
 	const [records, setRecords] = React.useState<XalianRecord[]>([]);
 	const [cursor, setCursor] = React.useState<string | undefined>();
 	const [message, setMessage] = React.useState<string | null>(null);
+	const [notFound, setNotFound] = React.useState(false);
+	const [resolved, setResolved] = React.useState(false);
 	const [isLoading, setIsLoading] = React.useState(false);
 	const [isLoadingMore, setIsLoadingMore] = React.useState(false);
 	const [openRecord, setOpenRecord] = React.useState<XalianRecord | null>(null);
 
 	React.useEffect(() => {
 		setIsLoading(true);
+		setNotFound(false);
+		setResolved(false);
+		setMessage(null);
 		dbApi
 			.callListPublicXalians(id)
 			.then((page: any) => {
 				setRecords(page.items);
 				setCursor(page.nextCursor);
 				setIsLoading(false);
+				setResolved(true);
 			})
-			.catch(() => {
-				setMessage("Could not load this account's Xalians. Please try again later.");
+			.catch((error: any) => {
 				setIsLoading(false);
+				if (error?.status === 404) {
+					setNotFound(true);
+				} else {
+					setMessage("Could not load this account's Xalians. Please try again later.");
+				}
 			});
 	}, [id]);
+
+	if (notFound) {
+		return (
+			<NotFoundPage
+				path={id}
+				kicker="Account"
+				title="No account by that name"
+				body={null}
+				actions={
+					<Button asChild>
+						<Link to="/">Go home</Link>
+					</Button>
+				}
+			/>
+		);
+	}
 
 	const loadMore = () => {
 		if (!cursor) return;
@@ -79,8 +106,14 @@ function UserDetailsPage({ id }: UserDetailsPageProps) {
 			<Shell className="pb-16">
 				<Masthead
 					kicker="Account"
-					title={id}
-					subtitle={records.length > 0 ? `${records.length} generated` : undefined}
+					title={resolved ? id : 'Account'}
+					subtitle={
+						resolved
+							? records.length > 0
+								? `${records.length} generated`
+								: undefined
+							: <span className="type-data break-all text-small text-ink-3">{id}</span>
+					}
 					aside={
 						<div className="flex w-full flex-col gap-3 sm:flex-row md:w-auto">
 							<Button variant="secondary" onClick={copyBinderLink}><Copy /> Copy binder link</Button>
