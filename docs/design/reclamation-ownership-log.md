@@ -2,7 +2,7 @@
 
 Status: the running state of the game under ownership (brief: `reclamation-ownership-brief.md`). This file is the resume point. Any reset reads this first and continues at the weakest thing named below, never from scratch. Each pass appends its own section; the standing state at the top is rewritten in place.
 
-## Standing state (after pass 21, 2026-09-19)
+## Standing state (after pass 22, 2026-09-19)
 
 ### Gauges, proctor mirror
 
@@ -64,30 +64,14 @@ What it reads, and where each effect kind lands (measured over the seed-7 pool, 
 
 The seat the table is drawn for is now a value (`seatInPlay()`), not the constant `'A'` compiled into sixty-four readings. With no `hotSeat` prop it always returns `'A'`, so solo play is unchanged, and the hand-off can land without touching those call sites at the same time as everything else.
 
-Pass 21 built the cover and the seat routing. **It is not yet playable end to end**, and the exact state is below so the next pass starts from evidence rather than re-deriving it.
+**Pass 22 made it playable.** A whole Proving now plays to the Charter with two people sharing one screen: 22 covers raised across both seats, no leak, no page errors. `apps/web/scripts/reclamation-hotseat.mjs` is the check, and it runs beside the solo one.
 
-**Works, checked by paint:** the cover is raised when the turn first changes seat, it names who should look, and while it is up **nothing about the position is in the document** - no bench, no worlds, no score. That was asserted and it holds.
+**What is left, and it is cosmetic rather than blocking:**
 
-**Does not work yet:** the cover is raised **once** and not again on later seat changes, so a Proving stalls partway. Four fixes were made on inference and none moved it; the fifth (`you={YOU}` handed to the bench, so seat B's turn drew seat A's roster and B had no creature to arm and no control to press) was the real one and was found by instrumenting the table's state rather than reading the code. The remaining fault is in when `raiseHandoffIfDue` is called, not in what it does.
+1. **The second squad's draft.** Seat B plays a squad drafted for seat A, so both people keep the same twelve. Playable, but not the game two people should get.
+2. **The Charter names a rival, not a person.** `buildMatchReport` is still called with `YOU`, and the narration still says "your" and "the rival's" rather than naming the two handlers.
 
-Still to build, in the order they should go:
-
-1. **Re-raising the cover** on every seat change, not just the first. The diagnosis instrument for this is `.probe-stuck.mjs`'s shape: print phase, turn, cover, and the count of live controls each loop. Reading the lifecycle did not find the last bug; printing the state did.
-2. **The second squad's draft.** The draft screen assumes one human keeper, so seat B currently plays a squad drafted for seat A.
-3. **The Charter naming two people** rather than a rival from the ladder (`buildMatchReport` is still called with `YOU`).
-
-The hiding constraint that shapes all of this: **16.8 percent of sends arrive hidden, and removing hiding moves the flip gauge +2.46 +/- 0.98, beyond noise.** Hot-seat cannot simply reveal everything, or it would validate a different game from the one being shipped.
-
-### Closed by measurement (do not reopen without new evidence)
-
-- **"Bolster recovery is inert"** (pass 19). It is not, and the log was wrong for several passes. Ablated with intervals on the difference, pooled over five seeds at 500 matches: removing it moves the flip gauge **+2.25 +/- 0.98** and doubling it moves it **-1.24 +/- 0.96**, both beyond noise and monotone. It fires 1.28 times a match for a mean 3.17 hold. The earlier verdict compared point estimates, which is pass 6's exact error.
-- **"The instinct lanes are inert"** (pass 19). Half true and the interesting half was false. Ablating the whole rule moves no match gauge, correctly - a down is a down whoever it lands on. But the DULL lane was empty: threshold 35 against a generator floor of 31 to 37 gave **five dull creatures in 609**. Moved to 50 the lane holds 21.6 percent of the pool and those creatures down **25.2 +/- 1.6** percent of what they land against conduct's 38.8, a thirteen-point penalty. See `DULL_INSTINCT`.
-
-- **Flat flip pricing** (pass 17). `worthAt` returned a flat `flipValue` for any flip, so a lead of 0.1 hold scored the same as a lead of 30, and the bot bought the cheapest flip that cleared zero: **3105 hair-thin leads against 896 comfortable ones**. Fixed with `FLIP_SECURITY = 0.5`, which withholds half a flip's worth until it clears by `FLIP_SECURE_MARGIN`. Naive-policy margin 14.6 to 21.3 points, hair-thin leads down a fifth, and 1v1 down two points as a side effect. The remaining swift-move gap (2.0 points at gate 6) is partly irreducible: a move decided on the bot's own turn cannot know what the opponent sends next.
-
-- **Intelligence and charisma reading negative within presences** (pass 16). The recorded -15.2 and -9.7 were small-sample artifacts. Pooled over **49,362 lane samples** on five seeds, charisma within presences reads **+0.2 +/- 2.0** and intelligence **-0.3 +/- 2.0**: both within noise. What pooling did find instead is real and was never in the item: **agility and reflex read -6.5 to -6.8 beyond noise**, because they are only speed while hold is the mean of vitality, resilience and endurance, and the generator spends a fixed budget. That led to the swift-move finding below.
-
-- **Crowding worlds by narrowing the frame** (pass 15). `worldsPerFrame` 2 nearly halves the 1v1 share, 56 percent to 30, holding downs and flips in band on three seeds - the best crowding result measured - but it **fails the naive-policy bar**: pass-early sits 7.5 to 9.5 points under the mirror against a bar of eight, through it on seed 13. With two worlds a round, spreading evenly is the right answer, so deploy stops asking a question. A two-world round also ends level 51 percent of the time and swept 48, with nothing between, and the stake does not rescue it (0.10 stakes a match against 0.33 at width 3). A **wider** frame is worse on every axis. The full sweep is in the comment above `WORLDS_PER_FRAME`. 1v1 at 56 percent is therefore the accepted cost of a game whose deploy decisions matter, unless a later pass finds a per-world decision deeper than "how many do I send".
+The constraint that shaped the design: **16.8 percent of sends arrive hidden, and removing hiding moves the flip gauge +2.46 +/- 0.98, beyond noise.** Hot-seat could not simply reveal everything, which is why there is a cover at all.
 
 ### Findings from the headless check (pass 5, recorded not fixed)
 
@@ -442,3 +426,17 @@ The cover replaces the table rather than overlaying it. An overlay can be scroll
 **The lesson worth keeping, and it cost the most today:** *four fixes on inference moved nothing; one instrument found the bug in a minute.* I changed the componentDidUpdate guard, gave seat B its own squad, routed four engine calls, and moved the turn gates - all plausible, all inferred from reading, none of them the fault. The fault was `you={YOU}` handed to the bench, so seat B's turn drew seat A's roster and there was literally nothing on screen to press. What found it was printing the table's actual state each loop (phase, turn, cover, count of live controls) instead of reasoning about the lifecycle. **When two fixes in a row do not move a symptom, stop fixing and start printing.**
 
 **Verified:** 2040 tests green, build inside budgets, headless Proving green in all four configurations (solo play unaffected), the cover's no-leak property checked by paint.
+
+### Pass 22 (2026-09-19): hot-seat plays
+
+**A human can now play a full Proving against another human.** That closes the log's oldest item, and it is the cheapest validation instrument the game has.
+
+**The bug pass 21 could not find was not in the cover.** Printing the table's state each loop found it in a minute: the cover was raised once, correctly, and then the Proving stalled with the turn on B, twelve armable creatures on screen, and every press rejected. A dozen guards and roster lookups still read the constant `YOU`, so on seat B's turn the table said "it is the rival's turn" to seat B itself, and looked up B's armed creature in A's roster. **The cover was fine; the seat could not act.**
+
+Twenty-one call sites moved from `YOU`/`THEM` to `seatInPlay()`/`seatOpponent()`: the action guards, the roster lookups, the stake and swift-move lists, the recommendation, the ghost preview, the status strip's score, and the bench's `you`. Solo play is unchanged because `seatInPlay()` returns `'A'` with no `hotSeat` prop, and that is verified rather than asserted.
+
+**Checked by paint, end to end:** 22 covers raised, both seats, nothing about the position in the document while a cover is up, and the Charter reached. Promoted to `reclamation-hotseat.mjs` so it runs every pass.
+
+**The lesson, now paid for twice:** *when two fixes in a row do not move a symptom, stop fixing and start printing.* Pass 21 spent five inferred fixes on the wrong component. Pass 22 spent one instrument and found it immediately. The instrument was six lines: phase, turn, cover, and the count of live controls, printed every loop.
+
+**Verified:** 2049 tests green (nine new), build inside budgets, headless Proving green in all four solo configurations, and a whole hot-seat Proving played to the Charter.
