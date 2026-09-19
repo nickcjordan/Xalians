@@ -474,6 +474,14 @@ function runOneMatch(matchSeed: string, pool: XalianRecord[], rng: ReturnType<ty
 				const marginBefore = fromSiteId ? siteMarginRaw(state, frame, fromSiteId) : 0;
 				const wasLosingBefore = handler === 'A' ? marginBefore < 0 : marginBefore > 0;
 
+				// where it stood before moving, so the Ruling can score the world it left
+				const movingRecordId = (action as { recordId: string }).recordId;
+				let movedFromSiteId: string | null = null;
+				frame.sites.forEach((s2: any) => {
+					if ((state.board[s2.id][handler] || []).some((e: any) => e.recordId === movingRecordId)) {
+						movedFromSiteId = s2.id;
+					}
+				});
 				const moved = moveSwift(state, handler, action.recordId, action.siteId);
 				if (!moved) {
 					error = `illegal swift move: ${JSON.stringify(action)} for ${handler}`;
@@ -485,7 +493,20 @@ function runOneMatch(matchSeed: string, pool: XalianRecord[], rng: ReturnType<ty
 
 				const marginAfter = siteMarginRaw(state, frame, action.siteId);
 				const isWinningAfter = handler === 'A' ? marginAfter > 0 : marginAfter < 0;
-				swiftMoveRecords.push({ handler, wasLosingBefore, isWinningAfter, flippedToWinning: wasLosingBefore && isWinningAfter });
+				/*
+					PASS 16. `isWinningAfter` reads the destination the instant the creature
+					lands, before the opponent has answered, and says nothing at all about the
+					world the creature LEFT. Measured that way the move looked like a triumph
+					(it flipped a losing destination 77.6 percent of the time) while the
+					creatures using it were losing six points of world win rate. So the round's
+					two site ids are kept here and scored at the Ruling instead, where both
+					worlds have settled.
+				*/
+				swiftMoveRecords.push({
+					handler, wasLosingBefore, isWinningAfter,
+					flippedToWinning: wasLosingBefore && isWinningAfter,
+					frameIndex, toSiteId: action.siteId, fromSiteId: movedFromSiteId,
+				});
 
 				deployEnd = deployEndSnapshot(state, frame);
 				logLengthBeforeResolve = state.resolutionLog.length;

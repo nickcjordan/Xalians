@@ -116,6 +116,47 @@ export const BAIT_PASS = 0;
 */
 export const STAKE_EAGERNESS = 1;
 /*
+	PASS 16. How much better than staying a swift move must look before the bot takes it.
+
+	Zero was the old behaviour: any move scoring a hair better than staying was taken. That
+	cost the creatures the rule applies to about six points of world win rate. Speed at or
+	above swiftSpeed won its world 53.9 percent with the rule live and 59.7 percent with
+	`swiftMove: false`, on 49k pooled sends over five seeds; speeds below it were untouched
+	either way, so the loss was the rule's own. Scored at the Ruling, the move won the world
+	it went TO 62.5 percent and the world it LEFT 41.2, and 37 percent of moves abandoned a
+	world the creature was holding alone. The cause is at the gate, not in the rule: the
+	margins it compares are a snapshot of the bot's own turn and Deploy is not over, so a
+	move decided on a hair is routinely invalidated by the opponent's next send, and the bot
+	has then paid at both worlds.
+
+	Swept at 400 matches a cell over five seeds (2000 matches a row), reading the world win
+	rate of the creatures eligible for the move against the ceiling of removing the rule
+	entirely, beside how often the move still fires (150 matches, seed 7):
+
+		gate  0: swift 53.4%, 3.61 moves/match   (the old behaviour)
+		gate  4: swift 56.7%, 2.27 moves/match
+		gate  6: swift 57.9%, 1.30 moves/match   (SHIPPED)
+		gate  8: swift 58.3%, 0.66 moves/match
+		gate 10: swift 59.0%, 0.26 moves/match
+		gate 14: swift 59.2%, 0.11 moves/match
+		rule absent:  swift 59.3%                (the ceiling)
+
+	The curve approaches the ceiling asymptotically by making the rule disappear, so the
+	highest number is not the best setting. 6 recovers 5.1 of the 6.5 available points while
+	the move still fires more than once a match, which is the same standard the SWIFT_SPEED
+	note applies: a rule that fires under once a match is one the table would rarely see.
+	The proctor mirror is unmoved across the whole sweep (48.9 to 49.5), so this changes how
+	well the move is used and not who wins.
+
+	FRICTION, recorded rather than buried: the remaining 1.4 points are not a tuning problem.
+	worthAt prices every flip at one constant, so a flip gained and a flip lost cancel and
+	the bot cannot see that the world it already holds is worth more than the world it
+	covets. Fixing that is a change to how worlds are priced everywhere - the send, the
+	hidden read and the stake all share worthAt - and two attempts to patch it inside the
+	swift move measured worse. See the note at stayValue in evaluateSwiftMoves.
+*/
+export const SWIFT_MOVE_GAIN = 6;
+/*
 	The edge, in hold units, a world must have over the round's average before this handler
 	stakes it. Set 2026-09-10 by a sweep at 200 matches, seed 7 (thresholds 2.6, 3.6, 4.4,
 	4.8, 5.2 against the STAKE_ROSTER_DEPTH reading): Provings staked 78, 49.5, 30, 22 and
@@ -177,6 +218,7 @@ function weightsFor(rival: Rival | null | undefined): RivalWeights {
 		nearWindow: w.nearWindow ?? NEAR_WINDOW,
 		baitPass: w.baitPass ?? BAIT_PASS,
 		stakeEagerness: w.stakeEagerness ?? STAKE_EAGERNESS,
+		swiftMoveGain: w.swiftMoveGain ?? SWIFT_MOVE_GAIN,
 	};
 }
 
@@ -413,9 +455,42 @@ function evaluateSwiftMoves(publicState: PublicState, handler: Seat, margins: Re
 		const fromHold = prepareAt(publicState, foundSiteId, foundEntry).hold
 			+ roleValueOf(publicState, foundEntry.record, siteFromPublic(publicState, foundSiteId) as FrameSite, foundEntry.sentIndex, handler);
 		const fromMargin = margins[foundSiteId];
-		// value of STAYING put, in the same units the send candidates use: a world currently
-		// flippable or securable is worth losing if this creature leaves, so "staying" is
-		// worth whatever it is currently contributing to that world's margin.
+		/*
+			The value of STAYING put, in the same units the send candidates use: a world
+			currently flippable or securable is worth losing if this creature leaves, so
+			"staying" is worth whatever it is currently contributing to that world's margin.
+
+			PASS 16 measured this and tried twice to fix it, and BOTH ATTEMPTS MADE IT WORSE.
+			Recorded here so the third attempt starts from the numbers rather than the theory.
+
+			THE FINDING. Pooled over 49k sends on five seeds, a creature eligible for the
+			swift move (speed at or above swiftSpeed 65) wins its world 53.9 percent of the
+			time with the rule on and 59.7 percent with `swiftMove: false`. Speeds under 65
+			are untouched (54.6 either way), so the loss is confined to the creatures the rule
+			applies to. Scored at the Ruling over 1500 matches, the move wins the world it
+			goes TO 62.5 percent and the world it LEFT 41.2 percent, and 37 percent of moves
+			leave a world the creature was holding alone, i.e. hand it over.
+
+			WHY THE OBVIOUS FIXES FAIL. `margins[siteId]` already includes this creature's own
+			hold while worthAt's `m` excludes it, which looks like the bug. But:
+			  - worthAt(fromHold, fromMargin - fromHold) prices the GAIN from standing there,
+			    and a held world has little gain left, so leaving got CHEAPER: swift creatures
+			    fell to 50.8 percent.
+			  - pricing "holding it alone" as flipValue is arithmetically right (leaving hands
+			    over exactly a flip) and still measured worse, because the DESTINATION flip is
+			    also priced at flipValue, so trading one flip for another nets to
+			    -holdCost * h either way and the move count went UP, 3.20 to 3.54 a match,
+			    with the abandoned world no better off (40.3 percent).
+			The real problem is that worthAt caps every flip at one constant, so a flip gained
+			and a flip lost cancel, and the bot cannot see that the world it holds is worth
+			more than the world it covets. That is a change to how worlds are priced
+			everywhere, not a patch to this function, and pricing is what the send, the hidden
+			read and the stake all share.
+
+			WHAT DOES WORK, measured: gating the move on a real margin of confidence. At
+			swiftMoveGain 8 swift creatures reach 58.0 percent against the 59.3 ceiling of
+			removing the rule, with the mirror unmoved at 50.1. See SWIFT_MOVE_GAIN.
+		*/
 		const stayValue = fromMargin <= 0
 			? (fromHold > -fromMargin ? weights.flipValue : (2 * fromHold) / (1 - fromMargin))
 			: weights.secureValue * (fromHold / fromMargin);
@@ -599,7 +674,17 @@ export function chooseSend(publicState: PublicState, ownRoster: XalianRecord[], 
 		moveMargins[s.id] = siteMargin(publicState, s.id, handler, weights, read);
 	});
 	const swiftMove = evaluateSwiftMoves(publicState, handler, moveMargins, weights);
-	if (swiftMove && swiftMove.net > 0 && swiftMove.moveValue > weights.minSendValue) {
+	/*
+		PASS 16. The gate used to be `net > 0`: any move that scored a hair better than
+		staying was taken. Measured on 49k pooled sends, that cost the creatures eligible for
+		it about six points of world win rate (speed 65-79 won its world 53.9 percent with
+		the rule on and 59.7 with it off; speeds under 65 did not move at all). The reason is
+		that the margins it compares are a snapshot of the bot's own turn, and Deploy is not
+		over - the opponent sends afterwards - so a move decided on a hair is routinely
+		invalidated by the next send, and the bot has paid for it at both worlds.
+		swiftMoveGain is the margin of confidence the move now has to clear.
+	*/
+	if (swiftMove && swiftMove.net > weights.swiftMoveGain && swiftMove.moveValue > weights.minSendValue) {
 		return { type: 'move', recordId: swiftMove.recordId, siteId: swiftMove.siteId, reason: 'swift-move' };
 	}
 
