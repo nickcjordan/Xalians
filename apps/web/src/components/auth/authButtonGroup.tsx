@@ -135,6 +135,7 @@ function AuthButtonGroup({ authAlertCallback, size = "default" }: AuthButtonGrou
 						show
 						callback={signUpCallback}
 						onHide={() => setSignupModalShow(false)}
+						switchToSignIn={() => setSignInModalShow(true)}
 					/>
 				)}
 
@@ -157,6 +158,7 @@ function AuthButtonGroup({ authAlertCallback, size = "default" }: AuthButtonGrou
 							setUsername(u || username);
 							setVerifyEmailModalShow(true);
 						}}
+						switchToSignUp={() => setSignupModalShow(true)}
 						username={username}
 						password={password}
 					/>

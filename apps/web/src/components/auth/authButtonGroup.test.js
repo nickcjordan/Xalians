@@ -12,7 +12,9 @@ vi.mock('../../utils/authUtil', () => ({
 	currentUser: vi.fn().mockResolvedValue(null),
 	buildAuthState: vi.fn(),
 	confirmSignUp: vi.fn(),
+	confirmResetPassword: vi.fn(),
 	resendConfirmationCode: vi.fn(),
+	resetPassword: vi.fn(),
 	signIn: vi.fn(),
 	signOut: vi.fn().mockResolvedValue(true),
 	signUp: vi.fn(),
@@ -131,5 +133,23 @@ describe('AuthButtonGroup', () => {
 		expect(await screen.findByRole('heading', { name: 'Verify email address' })).toBeInTheDocument();
 		expect(screen.getByLabelText('Username')).toHaveValue('nick-user');
 		expect(screen.getByLabelText('Email address')).toHaveValue('nick@example.com');
+	});
+
+	it('swaps from sign in to create account and back via the cross-links', async () => {
+		const user = userEvent.setup();
+		render(
+			<MemoryRouter>
+				<AuthButtonGroup authAlertCallback={vi.fn()} />
+			</MemoryRouter>
+		);
+
+		await user.click(screen.getByRole('button', { name: 'Sign in' }));
+		await screen.findByRole('heading', { name: 'Sign in' });
+
+		await user.click(screen.getByRole('button', { name: 'Create an account.' }));
+		expect(await screen.findByRole('heading', { name: 'Create a Xalians account' })).toBeInTheDocument();
+
+		await user.click(screen.getByRole('button', { name: 'Sign in.' }));
+		expect(await screen.findByRole('heading', { name: 'Sign in' })).toBeInTheDocument();
 	});
 });
