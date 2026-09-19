@@ -127,4 +127,60 @@ describe('RecordView', () => {
 		// the sample has communication: []
 		expect(screen.getByText('Mute')).toBeInTheDocument();
 	});
+
+	it('prints the seed on its own full-width row, kept to one line', () => {
+		const { container } = renderRecord();
+
+		const seedTerm = screen.getByText('Seed');
+		expect(seedTerm.tagName).toBe('DT');
+		const seedValue = seedTerm.nextElementSibling;
+		expect(seedValue.tagName).toBe('DD');
+		expect(seedValue).toHaveTextContent(sampleGraviclaw.provenance.seed);
+		expect(seedValue).toHaveAttribute('title', sampleGraviclaw.provenance.seed);
+		expect(seedValue.className).toMatch(/whitespace-nowrap/);
+		expect(seedValue.className).toMatch(/overflow-hidden/);
+		expect(seedValue.className).toMatch(/text-ellipsis/);
+		expect(seedValue.className).toMatch(/type-data/);
+		expect(container.querySelector('dd[title]')).not.toBeNull();
+	});
+
+	it('omits the finish sentence for a standard finish', () => {
+		// the sample record's finish is 'standard'
+		renderRecord();
+
+		expect(screen.queryByText('Standard finish.')).not.toBeInTheDocument();
+	});
+
+	it('states the finish sentence for a non-standard finish', () => {
+		const record = { ...sampleGraviclaw, appearance: { ...sampleGraviclaw.appearance, finish: 'prismatic' } };
+		renderRecord(record);
+
+		expect(screen.getByText('Prismatic finish: this one came out of the Generator wearing it.')).toBeInTheDocument();
+	});
+
+	it('glosses how to read an action line', () => {
+		renderRecord();
+
+		expect(screen.getByText(
+			'Each line reads: how it fires, how it reaches, what it does, with which part, through which element. The word and number at the right are its intensity on a scale of 100.'
+		)).toBeInTheDocument();
+	});
+
+	it('tells a signed-out or unowned viewer to sign in before it can be used elsewhere', () => {
+		renderRecord(sampleGraviclaw, { kicker: 'Unowned preview' });
+
+		expect(screen.getByText('Use it')).toBeInTheDocument();
+		expect(screen.getByText(/Sign in to keep this Xalian/)).toBeInTheDocument();
+		expect(screen.getByRole('link', { name: 'Duel' })).toHaveAttribute('href', '/duel');
+		expect(screen.getByRole('link', { name: 'Reclamation' })).toHaveAttribute('href', '/reclamation');
+		expect(screen.getByRole('link', { name: 'Expedition' })).toHaveAttribute('href', '/long-return');
+	});
+
+	it('tells an owner it can be fielded directly, with no sign-in prompt', () => {
+		renderRecord(sampleGraviclaw, { kicker: 'Yours' });
+
+		expect(screen.getByText('Use it')).toBeInTheDocument();
+		expect(screen.getByText(/^Field it in/)).toBeInTheDocument();
+		expect(screen.queryByText(/Sign in to keep this Xalian/)).not.toBeInTheDocument();
+	});
 });

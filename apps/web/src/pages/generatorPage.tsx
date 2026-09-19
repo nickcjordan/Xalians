@@ -45,11 +45,11 @@ const PROFILE_STORAGE_KEY = 'xalians.generatorProfile';
 const PROFILE_COPY: Record<GeneratorProfile, { label: string; summary: string }> = {
 	showroom: {
 		label: 'Commoner',
-		summary: 'Standard finish, one affinity, and no rare traits.',
+		summary: 'The everyday range: one element, a standard finish, common traits. What most Xalians are.',
 	},
 	full: {
 		label: 'Full spectrum',
-		summary: 'Every finish, affinity combination, and trait outcome is available.',
+		summary: 'The whole range: rare finishes, a second element, and rare traits can all turn up. Everything the Generator can print.',
 	},
 };
 
@@ -80,23 +80,41 @@ function GeneratorPage() {
 			? 'Print a commoner and save it directly to your collection.'
 			: 'Explore the full range of possible Xalians. Every creature you print is saved to your collection.'
 		: profile === 'showroom'
-		? 'Preview commoner Xalians without saving them. Sign in to make the next one yours.'
-		: 'Preview the full range of possible Xalians. Sign in to make the next one yours.';
+		? 'Preview everyday Xalians without saving them. Sign in to keep the next one.'
+		: 'Preview the full range of Xalians without saving them. Sign in to keep the next one.';
+
+	// The header key holds its "Printing" state for at least this long even when
+	// the API answers sooner, so the print never reads as instant.
+	const MIN_PRINT_MS = 600;
 
 	const generate = React.useCallback((asOwner: boolean, forProfile: GeneratorProfile) => {
 		setIsGenerating(true);
+		const startedAt = Date.now();
 		const request = asOwner
 			? dbApi.callGenerateXalian(undefined, forProfile)
 			: dbApi.callShowroomXalian(forProfile).then((result: any) => result.record);
+		const settle = (fn: () => void) => {
+			const elapsed = Date.now() - startedAt;
+			const remaining = MIN_PRINT_MS - elapsed;
+			if (remaining > 0) {
+				window.setTimeout(fn, remaining);
+			} else {
+				fn();
+			}
+		};
 		return request
 			.then((generated: XalianRecord) => {
-				setRecord(generated);
-				setMode(asOwner ? 'owned' : 'showroom');
-				setIsGenerating(false);
+				settle(() => {
+					setRecord(generated);
+					setMode(asOwner ? 'owned' : 'showroom');
+					setIsGenerating(false);
+				});
 			})
 			.catch(() => {
-				setIsGenerating(false);
-				toast.error('The Generator did not answer. Pull the lever again.');
+				settle(() => {
+					setIsGenerating(false);
+					toast.error('The Generator did not answer. Try again.');
+				});
 			});
 	}, []);
 
@@ -166,8 +184,12 @@ function GeneratorPage() {
 						title="Generator"
 						subtitle={generatorSubtitle}
 						aside={
-							<Button disabled={isGenerating} onClick={() => generate(signedIn, profile)}>
-								{record ? 'Generate another' : 'Generate a Xalian'}
+							<Button
+								disabled={isGenerating}
+								aria-busy={isGenerating}
+								onClick={() => generate(signedIn, profile)}
+							>
+								{isGenerating ? 'Printing' : record ? 'Generate another' : 'Generate a Xalian'}
 							</Button>
 						}
 					/>
@@ -176,8 +198,8 @@ function GeneratorPage() {
 						<div className="min-w-0">
 							<p className="type-legend m-0">Generation range</p>
 							<p className="measure mt-1 m-0 font-body text-small text-ink-2">
-								<strong className="text-ink">{profileCopy.label}:</strong> {profileCopy.summary} Your selection applies
-								to the next pull.
+								<strong className="text-ink">{profileCopy.label}:</strong> {profileCopy.summary} Applies to the next
+								Xalian you generate.
 							</p>
 						</div>
 						<ToggleGroup
@@ -210,9 +232,6 @@ function GeneratorPage() {
 								<Callout variant="viable" title="Kept" className="mb-6">
 									<p className="m-0">This one is yours. It is in the registry under your name.</p>
 									<div className="mt-3 flex flex-wrap gap-2">
-										<Button disabled={isGenerating} onClick={() => generate(true, profile)}>
-											Generate another
-										</Button>
 										<Button variant="secondary" asChild>
 											<Link to="/account">See your Xalians</Link>
 										</Button>
@@ -224,22 +243,14 @@ function GeneratorPage() {
 										The first creature is a preview, so it was not saved. Generate again and the next creature will be
 										written to your collection.
 									</p>
-									<div className="mt-3">
-										<Button disabled={isGenerating} onClick={() => generate(true, profile)}>
-											Generate yours
-										</Button>
-									</div>
 								</Callout>
 							) : (
 								<Callout variant="note" title="Not saved" className="mb-6">
 									<p className="m-0">
-										Previews cannot be kept. This one is real, and it is gone the moment the lever turns again. Sign in
-										and the Generator writes what it prints into the registry under your name.
+										Previews are not kept. This one disappears when you generate the next. Sign in and every Xalian the
+										Generator prints for you is written to the registry under your name.
 									</p>
-									<div className="mt-3 flex flex-wrap gap-2">
-										<Button disabled={isGenerating} onClick={() => generate(false, profile)}>
-											Generate another preview
-										</Button>
+									<div className="mt-3">
 										<Button variant="secondary" onClick={() => setSignInShow(true)}>
 											Sign in to generate
 										</Button>
@@ -247,7 +258,11 @@ function GeneratorPage() {
 								</Callout>
 							)}
 
-							<Card variant="glass">
+							<Card
+								key={record.id}
+								variant="glass"
+								className="animate-in fade-in duration-[240ms] ease-out motion-safe:slide-in-from-bottom-2 motion-reduce:duration-[120ms]"
+							>
 								<RecordView
 									record={record}
 									kicker={mode === 'owned' ? 'Yours' : 'Unowned preview'}
@@ -257,10 +272,7 @@ function GeneratorPage() {
 						</React.Fragment>
 					) : (
 						<EmptyState legend="No Xalian yet">
-							Pull the lever and the Generator prints one.
-							<div className="mt-3">
-								<Button onClick={() => generate(signedIn, profile)}>Generate a Xalian</Button>
-							</div>
+							Press Generate and the Generator prints one.
 						</EmptyState>
 					)}
 				</Shell>
