@@ -30,26 +30,44 @@ const DESTINATIONS = [
 		name: 'Generator',
 		copy: 'Print a new Xalian from a Scrambler Token and keep it to your account.',
 		to: '/generator',
+		linkText: 'Generate',
 	},
 	{
 		name: 'Encyclopedia',
 		copy: 'Every world, species, power and event on file, read as one story or by entry.',
 		to: '/encyclopedia',
+		linkText: 'Read',
 	},
+	{ groupLabel: 'Play' },
 	{
 		name: 'Duel',
 		copy: 'Squad tactics on an 8 by 8 board. Capture the flag or eliminate the team.',
 		to: '/duel',
+		linkText: 'Play',
 	},
 	{
 		name: 'Reclamation',
 		copy: 'Send creatures into three worlds a round and hold more of them than your rival.',
 		to: '/reclamation',
+		linkText: 'Play',
+	},
+	{
+		name: 'Expedition',
+		copy: 'Push a crew of your Xalians across hazardous worlds and bring them home.',
+		to: '/long-return',
+		linkText: 'Play',
+	},
+	{
+		name: 'Powerworks',
+		copy: 'Take a squad of four through four encounters inside a dormant Vallerii facility.',
+		to: '/powerworks',
+		linkText: 'Play',
 	},
 	{
 		name: 'Arcade',
 		copy: 'Familiar games that turn a quick win into progress toward another Xalian.',
 		to: '/arcade',
+		linkText: 'Play',
 	},
 ];
 
@@ -65,8 +83,10 @@ function Home() {
 				<section className="mb-12 grid gap-8 xl:grid-cols-[1.1fr_0.9fr] xl:items-center">
 					<div className="flex flex-col items-start gap-3">
 						<div className="max-sm:hidden"><XaliansLogoDnaAnimated /></div>
-						<p className="type-legend mt-2">Xalia</p>
 						<h1 className="type-display m-0">Creatures grown for dying worlds</h1>
+						<p className="mt-2 max-w-[62ch] font-body text-lead text-ink">
+							Xalians is a world of generated creatures. Generate one, read the world it comes from, and play it in the games.
+						</p>
 						<p className="mt-2 max-w-[62ch] font-body text-lead text-ink-2">
 							Xalians are bioengineered creatures the Vallerii Generators grow to survive the worst planets in the galaxy, no two genomes alike. King Kozrak&rsquo;s Mercurius Machine prints the Scrambler Tokens that make new ones, and pays them out to the winners of his arena tournaments.
 						</p>
@@ -80,7 +100,11 @@ function Home() {
 						</div>
 					</div>
 
-					<section data-tier="featured" aria-label="The worlds of Xalia">
+					<section data-tier="featured">
+						<h2 className="type-heading m-0">Fourteen worlds</h2>
+						<p className="mt-1 mb-4 max-w-[62ch] font-body text-small text-ink-2">
+							Every Xalian is grown for one of them. Open a world for its history and its native species.
+						</p>
 						<div className="grid grid-cols-4 gap-2 sm:grid-cols-[repeat(auto-fill,minmax(112px,1fr))]">
 							{worlds.map((world: any) => (
 								<Link
@@ -110,7 +134,11 @@ function Home() {
 					</section>
 				</section>
 
-				<section className="mb-12" data-tier="featured" aria-label="Featured Xalians">
+				<section className="mb-12" data-tier="featured">
+					<h2 className="type-heading m-0">From the bestiary</h2>
+					<p className="mt-1 mb-4 max-w-[62ch] font-body text-small text-ink-2">
+						Species silhouettes from the record plates. Open one to read its record.
+					</p>
 					<div className="-mx-6 flex snap-x gap-2 overflow-x-auto px-6 [scrollbar-width:none] sm:mx-0 sm:grid sm:grid-cols-4 sm:gap-2 sm:overflow-visible sm:px-0 md:grid-cols-8">
 						{featuredSpecies.map((s: any) => (
 							<Link
@@ -128,17 +156,23 @@ function Home() {
 				</section>
 
 				<section className="border-t border-edge">
-					{DESTINATIONS.map((d) => (
-						<Link
-							key={d.name}
-							to={d.to}
-							className="grid grid-cols-1 items-baseline gap-1 border-b border-edge py-3 md:grid-cols-[200px_1fr_auto] md:gap-4"
-						>
-							<span className="type-heading text-ink">{d.name}</span>
-							<span className="font-body text-small text-ink-2">{d.copy}</span>
-							<span className="justify-self-start font-body text-body text-ink underline decoration-ink-3 underline-offset-4 md:justify-self-end">Open</span>
-						</Link>
-					))}
+					{DESTINATIONS.map((d) =>
+						'groupLabel' in d ? (
+							<p key={d.groupLabel} className="type-legend mt-4 mb-1">
+								{d.groupLabel}
+							</p>
+						) : (
+							<Link
+								key={d.name}
+								to={d.to}
+								className="grid grid-cols-1 items-baseline gap-1 border-b border-edge py-3 md:grid-cols-[200px_1fr_auto] md:gap-4"
+							>
+								<span className="type-heading text-ink">{d.name}</span>
+								<span className="font-body text-small text-ink-2">{d.copy}</span>
+								<span className="justify-self-start font-body text-body text-ink underline decoration-ink-3 underline-offset-4 md:justify-self-end">{d.linkText}</span>
+							</Link>
+						)
+					)}
 				</section>
 			</Shell>
 		</main>

@@ -1,7 +1,7 @@
 import { AbilityTemplateSchema } from '@xalians/content/schema';
 import { describe, it, expect } from 'vitest';
 import { getEntries, getEntry, getWorlds, getSpeciesList } from '../index';
-import { chronicleData, registriesData, templateRecordsByKey } from '../loaders';
+import { chronicleData, encyclopediaData, planetRecordsData, registriesData, templateRecordsByKey } from '../loaders';
 
 // Content JSON prose fields scanned for punctuation the copy pass (issue
 // #431) removed. Any new field added to the lore bundle should be included
@@ -171,6 +171,28 @@ describe('lore copy conventions (issue #431)', () => {
 			for (const chapter of world.chapters) {
 				expect(chapter.text.includes(' – '), `world:${world.key}:${chapter.index}`).toBe(false);
 				expect(chapter.text.includes(' - '), `world:${world.key}:${chapter.index}`).toBe(false);
+			}
+		}
+	});
+
+	// Case-insensitive, and over every string in the content JSON rather than
+	// only the prose fields: the Telypso "Flourescent Mist" terrain label
+	// survived the first copy pass because the grep was case sensitive and the
+	// label is not prose. A typo guard that only reads paragraphs misses the
+	// short data labels a reader sees just as plainly.
+	it('none of the known typos appear anywhere in the content data, in any case', () => {
+		// Raw imported JSON, not the derived views: those carry cycles
+		// (a planet links its native species, which link back to the planet).
+		const sources = {
+			planetRecords: planetRecordsData,
+			chronicle: chronicleData,
+			encyclopedia: encyclopediaData,
+			speciesRecords: templateRecordsByKey,
+		};
+		for (const [name, data] of Object.entries(sources)) {
+			const raw = JSON.stringify(data).toLowerCase();
+			for (const typo of ['flourescent', 'rogueish', 'replate']) {
+				expect(raw.includes(typo), `${name} contains "${typo}"`).toBe(false);
 			}
 		}
 	});

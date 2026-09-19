@@ -90,7 +90,7 @@ function VerifyEmailModal({ show, onHide, callback, username, email }: VerifyEma
 								<FormItem>
 									<FormLabel>Username</FormLabel>
 									<FormControl>
-										<Input placeholder="Username" disabled={prefilled} {...field} />
+										<Input autoComplete="username" placeholder="Username" disabled={prefilled} {...field} />
 									</FormControl>
 									<FormMessage className="text-small text-plague-outline-ink" />
 								</FormItem>
@@ -100,7 +100,7 @@ function VerifyEmailModal({ show, onHide, callback, username, email }: VerifyEma
 							<FormItem>
 								<FormLabel>Email address</FormLabel>
 								<FormControl>
-									<Input type="email" value={email} disabled />
+									<Input type="email" autoComplete="email" value={email} disabled />
 								</FormControl>
 							</FormItem>
 						)}
@@ -111,7 +111,7 @@ function VerifyEmailModal({ show, onHide, callback, username, email }: VerifyEma
 								<FormItem>
 									<FormLabel>Verification code</FormLabel>
 									<FormControl>
-										<Input autoFocus placeholder="Verification code" {...field} />
+										<Input autoFocus autoComplete="one-time-code" placeholder="Verification code" {...field} />
 									</FormControl>
 									<FormDescription className="text-small text-ink-2">
 										You should have received an email with a verification code.
