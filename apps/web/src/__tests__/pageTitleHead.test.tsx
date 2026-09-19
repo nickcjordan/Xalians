@@ -59,4 +59,20 @@ describe('usePageTitle', () => {
 		unmount();
 		expect(getDescriptionMeta()).toBeNull();
 	});
+
+	it('clears the content attribute on unmount when the pre-existing tag had none', () => {
+		const meta = document.createElement('meta');
+		meta.setAttribute('name', 'description');
+		document.head.appendChild(meta);
+		expect(getDescriptionMeta()?.hasAttribute('content')).toBe(false);
+
+		const { unmount } = render(<Page title="Trade" description="Propose a trade." />);
+		expect(getDescriptionMeta()?.getAttribute('content')).toBe('Propose a trade.');
+
+		unmount();
+
+		const restored = getDescriptionMeta();
+		expect(restored).not.toBeNull();
+		expect(restored?.hasAttribute('content')).toBe(false);
+	});
 });
