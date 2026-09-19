@@ -526,6 +526,62 @@ export const ROSTER_SIZE = 12;
 	32.7 / 34.0 / 35.4 percent, comfortably inside its band on all three seeds.
 */
 export const SENDABLE = 11;
+/*
+	PASS 24. THE PER-ROUND SEND CAP, and why the game needed one.
+
+	`sendable` is a whole-Proving budget, and nothing makes a handler save any of it. Measured
+	over three seeds at 400 matches, the game gets LESS interesting as it goes: the mean count
+	of near-best options at a decision runs 3.9 in round one, 2.8 in round two, and 2.05 in
+	round three, where HALF of all decisions have one dominant answer (51.6 / 49.4 / 49.6
+	percent). The round that decides the Charter is the game's least interesting moment.
+
+	The cause is arithmetic rather than scoring. Round three opens with 4.8 creatures still in
+	hand but only 3.8 sends still affordable: the budget runs dry before the roster does, so
+	the last round spends dregs. Raising `sendable` makes it worse, not better - at 12 and 13
+	the round-three dominant share rises to 58 percent, because a bigger budget is simply spent
+	earlier and the last round arrives emptier still.
+
+	The obvious fix - budget that cannot all be spent at once - WAS BUILT AND MEASURED AND DOES
+	NOT WORK. ROUND_SEND_CAP is the most a handler may send in any one round, 0 being no cap,
+	and it is shipped OFF with its sweep recorded so this is not rebuilt.
+
+	Decision depth by round (mean near-best options / share with one dominant option), three
+	seeds at 400 matches:
+
+		no cap (SHIPPED):  r1 3.9/28%   r2 2.8/38%   r3 2.05/50%
+		cap 5:             r1 4.8/21%   r2 3.7/28%   r3 2.42/45%
+		cap 4:             r1 4.8/21%   r2 3.7/28%   r3 2.62/40%
+		cap 3:             r1 4.8/21%   r2 4.2/22%   r3 3.28/30%
+
+	Read alone that looks like a triumph: cap 3 nearly flattens the decay. But the same cells
+	measured against the match gauges show where the depth came from:
+
+		            downs   1v1     flips   sends/match
+		no cap      4.5     55%     31%     19.4
+		cap 5       3.5     64%     35%     16.7
+		cap 4       3.0     71%     35%     15.9
+		cap 3       1.9     87%     38%     13.1
+
+	THE CAP BUYS DECISIONS BY STARVING THE CLASH. At cap 3 downs fall to 1.9 against a band of
+	3 to 5 and 87 percent of contested worlds are one creature against one - the exact fault
+	passes 5 through 17 spent themselves fixing. The decisions are not better, there are simply
+	fewer sends, so more worlds go uncontested and a lone send at an empty world is "open"
+	only because nothing is there to answer it.
+
+	And the balance-safe cells give nothing back. Cap 6 with sendable 14 holds downs at 4.5,
+	flips at 34 and comeback in band, and round three gets WORSE: dominant 50 percent to 57.
+	Cap 7 with sendable 15 is the same. So there is no setting where this trade pays.
+
+	WHAT THE MEASUREMENT ACTUALLY POINTS AT. Round three opens with 4.8 creatures and 3.8
+	affordable sends and half its decisions have one answer, and neither more budget nor less
+	spending fixes that. The gap is that the game has one kind of decision - which creature at
+	which world - and by the last round there are few creatures and few live worlds, so the
+	product runs out. A second axis would not run out with the roster: 46.8 percent of
+	creatures have reach past contact and NOTHING IN THE RULES USES THE DISTANCE, and three
+	effect kinds (displace, transfer, suppress) still read as plain attacks. Those are open
+	items 3 and the reach note, and they are where the depth has to come from.
+*/
+export const ROUND_SEND_CAP = 0;
 export const FRAMES_PER_MATCH = 3;
 /*
 	PASS 15 (2026-09-19): the frame width, swept and left where it was. THE NEGATIVE RESULT.

@@ -8,6 +8,7 @@ import {
 } from '../expeditionRules.ts';
 import {
 	ROSTER_SIZE, SENDABLE, SITES_TO_CLINCH, WORLDS_PER_MATCH, FRAMES_PER_MATCH, WORLDS_PER_FRAME,
+	ROUND_SEND_CAP,
 	ROSTER_TRAILING_BONUS, ROLE, HOLD_FLOOR, HOLD_CEILING, MAGNITUDE_SCALE, SWEEP_DISCOUNT,
 	BOLSTER_FLOOR, ARMORED_REDUCTION, SHIELD_CAP, WILLFUL_THRESHOLD, KEEN_INSTINCT,
 	DULL_INSTINCT, SWIFT_SPEED, BOLSTER_RECOVERY,
@@ -1289,6 +1290,10 @@ describe('rules ablation switches', () => {
 			reachFirst: REACH_FIRST,
 			// Pass 9: the send budget and the frame width, the sends-per-world ratio
 			sendable: SENDABLE,
+			// Pass 24: the per-round cap, built and measured and shipped OFF (0). It bought
+			// decision depth by starving the Clash: at cap 3 downs fell to 1.9 and 87 percent
+			// of contested worlds were one against one. See ROUND_SEND_CAP for the sweep.
+			roundSendCap: ROUND_SEND_CAP,
 			worldsPerFrame: WORLDS_PER_FRAME,
 		});
 		// assumption 20 cut the catch-up send, so the shipped default is zero
