@@ -503,7 +503,26 @@ describe('every attribute a job (assumption 17)', () => {
 	test('the instinct lane is keen above the cut, dull below it, conduct in between', () => {
 		expect(instinctLaneOf(record({ attributes: { instinct: KEEN_INSTINCT } }))).toBe('keen');
 		expect(instinctLaneOf(record({ attributes: { instinct: DULL_INSTINCT } }))).toBe('dull');
-		expect(instinctLaneOf(record({ attributes: { instinct: 50 } }))).toBe('conduct');
+		// PASS 19 moved DULL_INSTINCT from 35 to 50 (at 35 the lane was empty: the generator's
+		// instinct floor is 31 to 37), and this line used to read a hard-coded 50 as the
+		// "in between" case, which the move turned into the dull cut itself. Take the midpoint
+		// of the two cuts instead, so the test follows the constants wherever they go.
+		const between = Math.floor((DULL_INSTINCT + KEEN_INSTINCT) / 2);
+		expect(between).toBeGreaterThan(DULL_INSTINCT);
+		expect(between).toBeLessThan(KEEN_INSTINCT);
+		expect(instinctLaneOf(record({ attributes: { instinct: between } }))).toBe('conduct');
 		expect(instinctLaneOf(record({ attributes: { instinct: 99 } }), { instinctLanes: false })).toBe('conduct');
+	});
+
+	/*
+		PASS 19. The lane must be REACHABLE, which is the fault that hid this rule for nine
+		passes: DULL_INSTINCT sat at 35 while the generator's instinct floor ran 31 to 37, so
+		five creatures in 609 were dull and ablating the rule looked like ablating nothing.
+	*/
+	test('both instinct cuts sit inside the range creatures are actually generated in', () => {
+		// the observed span across seven pools of 87 was 31 to 84
+		expect(DULL_INSTINCT).toBeGreaterThan(37);
+		expect(KEEN_INSTINCT).toBeLessThan(84);
+		expect(DULL_INSTINCT).toBeLessThan(KEEN_INSTINCT);
 	});
 });
