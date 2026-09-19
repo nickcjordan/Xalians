@@ -20,7 +20,25 @@ import { createTelemetry } from '../../components/games/reclamation/reclamationT
 
 const MODE_KEY = 'reclamation.mode';
 
+/*
+	The table's mode: simple by default, remembered per browser, and overridable by `?view=`
+	in the address.
+
+	PASS 18 found that the URL parameter did not exist. The headless whole-Proving check has
+	been opening `?view=simple` and `?view=advanced` since pass 5 and getting SIMPLE MODE BOTH
+	TIMES, so half of every pass's verification was a duplicate and the advanced table's own
+	panels (the log among them) had never been exercised by it. The parameter is read here so
+	the check tests what it says it tests, and so a link can name its mode.
+*/
 function readMode() {
+	try {
+		const fromUrl = new URLSearchParams(window.location.search).get('view');
+		if (fromUrl === 'advanced' || fromUrl === 'simple') {
+			return fromUrl;
+		}
+	} catch (e) {
+		// a malformed query string is not a reason to fail to open the table
+	}
 	try {
 		const stored = window.localStorage.getItem(MODE_KEY);
 		return stored === 'advanced' ? 'advanced' : 'simple';

@@ -2,7 +2,7 @@
 
 Status: the running state of the game under ownership (brief: `reclamation-ownership-brief.md`). This file is the resume point. Any reset reads this first and continues at the weakest thing named below, never from scratch. Each pass appends its own section; the standing state at the top is rewritten in place.
 
-## Standing state (after pass 17, 2026-09-19)
+## Standing state (after pass 18, 2026-09-19)
 
 ### Gauges, proctor mirror
 
@@ -55,7 +55,7 @@ What it reads, and where each effect kind lands (measured over the seed-7 pool, 
 
 1. **The status strip is the tallest block on a phone** at 250px, carrying six jobs (round, worlds, score, phase, turn, hint). Whether all six belong above the fold is open.
 2. **Fire is a dead element and dromeus a dead species** in the draft. Read it pooled before treating it as a failure (pass 6's lesson), the way pass 16 read the attribute lanes.
-3. **The four borrowed effect kinds** (restrain, displace, transfer, suppress) still read as plain attacks. Pass 8 measured that rules for them do not pay while worlds are thin; worth re-testing now that worlds are less thin.
+3. **Three of the four borrowed effect kinds** (displace, transfer, suppress) still read as plain attacks. Pass 18 gave `restrain` a rule that earns its place; the other three have no separate expression at a sealed world, so each needs its own case before it gets one.
 4. **Bolster recovery and the instinct lanes still move nothing under ablation.** Each earns its place or goes.
 5. **No human has played a full Proving.** The notes and telemetry are built, verified, and empty.
 6. **Hot-seat** is unbuilt and is the cheapest validation instrument the game can have.
@@ -75,6 +75,9 @@ The check plays a whole Proving in both views at 1440 and 390 and all four confi
 - **`?view=advanced` does not switch the view.** The masthead still lights SIMPLE when the URL asks for advanced, so the two views could only be told apart by clicking. The check drives both and they behave identically, which is itself the finding. Low cost, and it blocks per-view verification.
 - ~~**On 390 the three worlds stack to full height above the bench**~~ **Fixed in pass 13**: an empty world panel went from 386px to 176px and the bench-to-world distance from 1576px to 948px, so with a creature lifted all three worlds sit within roughly one phone screen. Guarded by the check.
 - **A dossier panel in the rail can intercept a press on a world**, which the check works around with a forced click. On a real screen that is a press that does nothing.
+
+
+**PASS 18 CORRECTION.** The headless check had been opening `?view=simple` and `?view=advanced` since pass 5, and the page never read a `view` parameter: **both halves ran simple mode**. Half of every pass's verification was a duplicate, and the advanced table's own panels (the resolution log among them) were never exercised by it. The page now reads `?view=`, and the check asserts the mode actually took before it plays, so this cannot silently return.
 
 ### Verification run each pass
 
@@ -340,3 +343,25 @@ The naive-policy margin, which is the gauge saying deploy decisions carry weight
 **The lesson worth keeping:** *price the quality of an outcome, not the fact of it.* A flat reward for "achieved the thing" makes a bot buy the cheapest version of the thing, and the cheapest version is the one the opponent undoes. Checking whether a reward has a gradient is worth doing wherever one exists.
 
 **Verified:** 2029 tests green (four new, one fixture corrected), typecheck clean, build inside budgets, headless Proving green in all four configurations.
+
+### Pass 18 (2026-09-19): restrain earns its rule, and the harness was testing one mode twice
+
+**Re-measured a shelved rule, and the conditions had changed.** Pass 8 built pinning (a restraining attack takes its target's swing), measured it inert and shipped it off, recording the reason precisely: it fired 280 times per 600 matches but took only 67 swings, because **76 percent of pins landed on a creature that had already swung**. That is an ordering problem, and pass 9's send budget plus pass 17's flip pricing have since taken 1v1 from 62.7 to 55.3 percent. More creatures sharing a world means more unspent swings when a pin lands. (Pass 5's lesson: a sweep's conclusion expires when the bot changes, and the bot has changed twice.)
+
+| | pass 8 | now |
+|---|---|---|
+| pins per 600 matches | 280 | 356 to 490 |
+| of those, took a swing | 24% | 23.9 to 31.6% |
+| Provings with a bite | 12.4% | 13.2 to 24.2% |
+
+**The number that decided it.** Pooled over five seeds at 600 matches, a creature whose attack restrains wins its world **57.5 percent with the rule off and 58.7 with it on: +1.20 +/- 0.91 points, beyond noise**, on 22,500 sends a side. Per seed: +1.24, +2.19, +0.99, +0.63, +0.92 - positive five times out of five, though no single seed resolves it alone, which is exactly the case pooling is for. And it costs nothing in shape: at 3000 matches a side, flips +0.0 +/- 0.9, comeback -0.3 +/- 2.7, 1v1 +0.0 +/- 0.9, downs 4.51 either way.
+
+**Shipped `PINNING = true`.** 171 of the pool's 1384 actions restrain, and until now that word on a card was decoration. `REACH_FIRST` stays off: ordering reachers first moved the bite rate 29.9 to 30.3 percent, inside the noise.
+
+**And the rule speaks.** A swing that vanishes without a sentence is how a table loses a player's trust, so both halves narrate: the pin that lands, and the swing it took. Verified by paint on the live page: *"Your Smokat restrains the rival's Akinza: the rival's Akinza does not swing this Clash."*
+
+**THE FINDING THAT MATTERS MORE.** Hunting that paint check turned up a fault in my own verification. The headless whole-Proving check has been opening `?view=simple` and `?view=advanced` since pass 5, and **the page never read a `view` parameter** - mode comes from `localStorage`, defaulting to simple. So both halves of the loop ran simple mode. Half of every pass's verification since pass 5 was a duplicate, and the advanced table's panels were never exercised. The page now reads `?view=`, and the check asserts the mode took before playing.
+
+**The lesson worth keeping:** *a harness that cannot fail is not a check.* Four green lines looked like coverage of two modes and were coverage of one, for thirteen passes, and it took wanting to see a specific sentence on screen to notice. When a check takes a parameter, assert the parameter had an effect. This is the same shape as pass 14's fullPage screenshots: the instrument was lying and nothing about its output said so.
+
+**Verified:** 2034 tests green (five new), typecheck clean, build inside budgets, headless Proving green in all four configurations **with the mode now asserted**, and the pin sentence checked by paint.

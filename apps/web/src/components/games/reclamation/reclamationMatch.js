@@ -1126,12 +1126,16 @@ class ReclamationMatch extends React.Component {
 			this.appendLogLines(narrateJudge(event, { siteNames, counted, you: YOU }));
 			return;
 		}
-		if (kind !== 'attack' && kind !== 'sweep' && kind !== 'shield' && kind !== 'recover') {
+		// PASS 18: `pin` joins the narrated kinds. A restraining attack takes its target's
+		// swing, and a swing that vanishes without a sentence is how a table loses a player's
+		// trust, so the cause is said out loud before the effect.
+		if (kind !== 'attack' && kind !== 'sweep' && kind !== 'shield' && kind !== 'recover' && kind !== 'pin') {
 			return;
 		}
 		const sided = (u) => (u.seat === YOU ? `your ${speciesLabel(u.record)}` : `the rival's ${speciesLabel(u.record)}`);
 		const actor = snap[event.recordId];
-		// a shield names the creature whose attack it cancelled; an attack names its target
+		// a shield names the creature whose attack it cancelled; an attack and a pin both
+		// name their target
 		const otherId = kind === 'shield' ? event.cancelled : event.target;
 		const other = otherId ? snap[otherId] : null;
 		const bolster = kind === 'recover' && event.bolster ? snap[event.bolster] : null;

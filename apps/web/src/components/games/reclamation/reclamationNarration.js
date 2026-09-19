@@ -18,8 +18,15 @@ import { speciesDisplayName, getSpeciesTemplate } from '@xalians/rules/generator
 		          cancelledAgainst }   - followed by one `attack` per victim
 		shield  { recordId, site, cancelled, amount }
 		recover { recordId, site, bolster, amount, remaining }  - the Ruling's first step
+		pin     { recordId, target, site }   - PASS 18: a restraining attack landed, and its
+		        target does not swing this Clash if it had not swung already
 
 	plus the structural 'judge' and 'swift-move' events.
+
+	PASS 18. An attack whose outcome is 'pinned' is one the pin took, and it gets its own
+	sentence rather than silence: a swing that simply disappears is the kind of thing that
+	makes a player distrust the table. The pin that caused it also speaks, so the cause is on
+	screen before the effect.
 
 	An attack whose outcome is 'cancelled' is narrated by the SHIELD event that cancelled
 	it ("Yetimoth shields: Voltish's attack of 4 is cancelled"), so narrateEvent returns
@@ -127,6 +134,16 @@ export function narrateEvent(event, ctx = {}) {
 		const under = ctx.bolsterName ? `under ${ctx.bolsterName}'s bolster` : 'under a bolster';
 		return `${actor} recovers ${formatHold(event.amount)} ${under}; stands at ${formatHold(event.remaining)}.`;
 	}
+	if (event.type === 'pin') {
+		/*
+			PASS 18 (assumption: pinning, expeditionInterpretation PINNING). A restraining
+			attack takes its target's swing for this Clash. The sentence says what happened and
+			what it costs, in that order, because the player is watching a creature they
+			expected to attack do nothing.
+		*/
+		const held = ctx.targetName || 'its target';
+		return `${actor} restrains ${held}: ${held} does not swing this Clash.`;
+	}
 	if (event.type === 'sweep') {
 		const where = ctx.worldName || ctx.siteName || 'the world';
 		const n = typeof event.hitCount === 'number' ? event.hitCount : 0;
@@ -150,6 +167,10 @@ export function narrateEvent(event, ctx = {}) {
 			return null;
 		case 'lapsed':
 			return `${actor}'s attack lapses, downed first.`;
+		case 'pinned':
+			// PASS 18: said by the victim, so the log reads in the order the table saw it -
+			// the pin lands, then the swing it took does not happen
+			return `${actor} is restrained, and does not swing.`;
 		case 'no-target':
 			return `${actor}${condition} finds no target.`;
 		default:
