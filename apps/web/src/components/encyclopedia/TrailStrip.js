@@ -30,7 +30,7 @@ const KIND_GLYPH = {
 	species: 'SPECIES',
 	era: 'ERA',
 	chapter: 'CHAPTER',
-	beat: 'BEAT',
+	beat: 'SECTION',
 };
 
 function routeForVisit(visit) {
@@ -51,7 +51,7 @@ export default function TrailStrip() {
 	const visible = isPhone ? trail.slice(0, PHONE_CHIP_LIMIT) : trail;
 	return (
 		<div className="mt-6 flex flex-wrap items-center gap-2 border-t border-edge-strong pt-3 max-sm:mt-4 max-sm:flex-nowrap max-sm:overflow-x-auto max-sm:pt-2">
-			<p className="type-legend m-0 shrink-0 max-sm:pt-0.5">Trace</p>
+			<p className="type-legend m-0 shrink-0 max-sm:pt-0.5">Recently viewed</p>
 			{visible.map((visit) => (
 				<Link
 					key={`${visit.kind}:${visit.key}`}

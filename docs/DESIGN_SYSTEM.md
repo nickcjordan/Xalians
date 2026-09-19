@@ -269,6 +269,7 @@ Everything the chrome tier may be built from, as of 2026-09-10. Each is on `/sty
 | `filters.tsx` | SearchField, FilterBar | Index pages; the bar folds into a Sheet under `sm` |
 | `data-table.tsx` | DataTable | Sortable, linkable, selectable rows on the Table primitive; never collapses into cards |
 | `identity.tsx` | IdentityRow | A person or account: Avatar, name, detail |
+| `term.tsx` | Term | Internal vocabulary defined inline: a focusable label with its definition in a Tooltip |
 
 Deliberately absent: Skeleton (section 6), Calendar and date pickers, Carousel, Resizable, Sidebar, Menubar, ContextMenu, NavigationMenu, InputOTP. Add one only when a page needs it, through step 2 of the build-ui skill.
 

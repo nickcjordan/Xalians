@@ -14,6 +14,7 @@ import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Collapsible, CollapsibleTrigger, CollapsibleContent } from '@/components/ui/collapsible';
 import { SpecPlate, Meter } from '@/components/system/record';
+import { Term } from '@/components/system/term';
 import {
 	ATTRIBUTE_ORDER, CAPABILITY_ORDER, TEMPERAMENT_ORDER,
 	attributeTerm, archetypeTerm, capabilityTerm, elementTerm, instrumentTerm,
@@ -48,7 +49,29 @@ type RecordViewProps = {
 	recordLink?: string;
 };
 
-function Layer({ title, children, className }: { title: string; children: React.ReactNode; className?: string }) {
+/**
+ * Definitions for internal vocabulary that reaches the visitor undefined
+ * (site audit issue #438). The registry fields quote
+ * docs/species-templates/REGISTRY-DEFINITIONS.md's own one-line field
+ * meaning where the doc states one; the rest are the ratified non-registry
+ * text.
+ */
+const TERM_DEFS = {
+	corporeality: 'Whether the creature has a physical body that occupies space and can be touched, struck, and held, or no persistent physical body at all.',
+	composition: 'What the body is made of at rest.',
+	bodyPlan: 'How the creature presents in the field and moves through it at rest.',
+	covering: 'The outer surface of the resting body.',
+	communication: 'Outward signaling to other creatures.',
+	ambientMedia: 'The phases of matter the creature can sustain activity in: atmosphere, liquid, or vacuum.',
+	lifespan: 'How long a working life this body has, from a season to something that never wears out.',
+	chirality: "Which molecular handedness this individual's genome rolled, or whether its body has none to roll.",
+	registryDistinction: 'How far this record sits from a typical print of its species, measured against calibrated generations. Not combat power.',
+	affinity: 'The element or elements the creature works through, and how much of each runs through this record.',
+	finish: 'The surface treatment this record was printed with. Most are standard.',
+	intensity: 'Strength of the ability on a scale of 100.',
+} as const;
+
+function Layer({ title, children, className }: { title: React.ReactNode; children: React.ReactNode; className?: string }) {
 	return (
 		<section className={className}>
 			<h3 className="type-heading mt-0 mb-4 text-[19px]">{title}</h3>
@@ -90,7 +113,7 @@ function Ability({ ability }: { ability: DisplayAbility }) {
 	);
 }
 
-function BriefCard({ label, value, caption }: { label: string; value: React.ReactNode; caption: React.ReactNode }) {
+function BriefCard({ label, value, caption }: { label: React.ReactNode; value: React.ReactNode; caption: React.ReactNode }) {
 	return (
 		<Card variant="recessed" className="gap-2 p-4">
 			<p className="type-legend m-0">{label}</p>
@@ -171,7 +194,11 @@ function RecordView({ record, kicker = 'Record', recordLink }: RecordViewProps) 
 								<Badge variant="chip-outline">{elementTerm(secondary).name} {affinities[secondary]}</Badge>
 							</span>
 						) : null}
-						{finish !== 'standard' ? <Badge variant="warn">{capitalize(finish)} finish</Badge> : null}
+						{finish !== 'standard' ? (
+							<Badge variant="warn">
+								{capitalize(finish)} <Term definition={TERM_DEFS.finish}>finish</Term>
+							</Badge>
+						) : null}
 						{speciesRoute ? (
 							<Link
 								to={speciesRoute}
@@ -250,7 +277,7 @@ function RecordView({ record, kicker = 'Record', recordLink }: RecordViewProps) 
 							: 'No signature ability recorded.'}
 					/>
 					<BriefCard
-						label="Registry distinction"
+						label={<Term definition={TERM_DEFS.registryDistinction}>Registry distinction</Term>}
 						value={roundedDistinction == null ? 'Uncalibrated' : `${ordinal(roundedDistinction)} percentile`}
 						caption="How unusual this record is among calibrated generations—not combat power."
 					/>
@@ -261,19 +288,19 @@ function RecordView({ record, kicker = 'Record', recordLink }: RecordViewProps) 
 				<SpecPlate
 					columns={2}
 					entries={[
-						{ key: 'Corporeality', value: bodyValue(physiologyTerm('corporeality', physiology.corporeality).name) },
-						{ key: 'Composition', value: bodyValue(composition) },
-						{ key: 'Body plan', value: bodyValue(physiologyTerm('bodyPlan', physiology.bodyPlan).name) },
-						{ key: 'Covering', value: bodyValue(physiologyTerm('covering', physiology.covering).name) },
+						{ key: <Term definition={TERM_DEFS.corporeality}>Corporeality</Term>, value: bodyValue(physiologyTerm('corporeality', physiology.corporeality).name) },
+						{ key: <Term definition={TERM_DEFS.composition}>Composition</Term>, value: bodyValue(composition) },
+						{ key: <Term definition={TERM_DEFS.bodyPlan}>Body plan</Term>, value: bodyValue(physiologyTerm('bodyPlan', physiology.bodyPlan).name) },
+						{ key: <Term definition={TERM_DEFS.covering}>Covering</Term>, value: bodyValue(physiologyTerm('covering', physiology.covering).name) },
 						{ key: 'Anatomy', value: bodyValue(physiology.anatomy.map((key) => instrumentTerm(key).name).join(', ')) },
 						{ key: 'Diet', value: bodyValue(physiologyTerm('diet', physiology.diet).name) },
 						{ key: 'Height', value: heightBoth(physiology.heightCm) },
 						{ key: 'Weight', value: weightBoth(physiology.weightKg) },
-						{ key: 'Lifespan', value: bodyValue(physiologyTerm('lifespan', physiology.lifespan).name) },
-						{ key: 'Chirality', value: bodyValue(physiologyTerm('chirality', physiology.genome.chirality).name) },
-						{ key: 'Communication', value: bodyValue(communication) },
+						{ key: <Term definition={TERM_DEFS.lifespan}>Lifespan</Term>, value: bodyValue(physiologyTerm('lifespan', physiology.lifespan).name) },
+						{ key: <Term definition={TERM_DEFS.chirality}>Chirality</Term>, value: bodyValue(physiologyTerm('chirality', physiology.genome.chirality).name) },
+						{ key: <Term definition={TERM_DEFS.communication}>Communication</Term>, value: bodyValue(communication) },
 						{ key: 'Breathes', value: bodyValue(breathes) },
-						{ key: 'Ambient media', value: bodyValue(tolerance.ambientMedia.map((key) => physiologyTerm('media', key).name).join(', ')) },
+						{ key: <Term definition={TERM_DEFS.ambientMedia}>Ambient media</Term>, value: bodyValue(tolerance.ambientMedia.map((key) => physiologyTerm('media', key).name).join(', ')) },
 						{ key: 'Temperature', value: `${tolerance.temperatureC.min} to ${tolerance.temperatureC.max} °C` },
 					]} />
 			</Layer>
@@ -325,7 +352,7 @@ function RecordView({ record, kicker = 'Record', recordLink }: RecordViewProps) 
 				</div>
 			</div>
 
-			<Layer title="Affinity">
+			<Layer title={<Term definition={TERM_DEFS.affinity}>Affinity</Term>}>
 				<div className="flex flex-wrap items-center gap-3">
 					<span className={`el-${element}`}><Badge variant="chip">{elementTerm(element).name} 100</Badge></span>
 					{secondary ? (
@@ -375,9 +402,11 @@ function RecordView({ record, kicker = 'Record', recordLink }: RecordViewProps) 
 					</ul>
 				) : null}
 				<p className="mt-3 mb-0 max-w-[62ch] font-body text-body text-ink">
-					{finish === 'standard'
-						? 'Standard finish.'
-						: `${capitalize(finish)} finish: this one came out of the Generator wearing it.`}
+					{finish === 'standard' ? (
+						<>Standard <Term definition={TERM_DEFS.finish}>finish</Term>.</>
+					) : (
+						<>{capitalize(finish)} <Term definition={TERM_DEFS.finish}>finish</Term>: this one came out of the Generator wearing it.</>
+					)}
 				</p>
 			</Layer>
 

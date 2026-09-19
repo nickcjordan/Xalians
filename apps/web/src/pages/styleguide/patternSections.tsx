@@ -15,6 +15,7 @@ import { SearchField, FilterBar } from "@/components/system/filters"
 import { DataTable, type Column } from "@/components/system/data-table"
 import { IdentityRow } from "@/components/system/identity"
 import { ErrorBoundary } from "@/components/system/status"
+import { Term } from "@/components/system/term"
 
 /**
  * Brief B ("patterns") sections for /styleguide (docs/DESIGN_SYSTEM.md
@@ -373,6 +374,31 @@ const SECTIONS: { id: string; label: string; node: React.ReactNode }[] = [
           <IdentityRow initials="NJ" name="Nick Jordan" detail="12 Xalians kept" />
           <IdentityRow initials="GU" name="Guest tamer" detail="Not signed in" />
         </div>
+      </>
+    ),
+  },
+  {
+    id: "term",
+    label: "Term",
+    node: (
+      <>
+        <SectionHead title="Term" />
+        <p className="text-body text-ink-2">
+          A registry label with its definition a tap or a focus away, for internal vocabulary that reaches the
+          visitor undefined. Dotted underline in ink-3; the definition renders in the shadcn Tooltip primitive at
+          text-small. Focusable and keyboard reachable: the tooltip opens on focus as well as on hover.
+        </p>
+        <p className="mt-6 font-body text-body text-ink-2">
+          This record&apos;s{" "}
+          <Term definition="Has a physical body that occupies space and can be touched, struck, and held.">
+            corporeality
+          </Term>{" "}
+          is corporeal, with a{" "}
+          <Term definition="How far this record sits from a typical print of its species, measured against calibrated generations. Not combat power.">
+            registry distinction
+          </Term>{" "}
+          in the 84th percentile.
+        </p>
       </>
     ),
   },
