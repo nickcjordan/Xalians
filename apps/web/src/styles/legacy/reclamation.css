@@ -4620,3 +4620,22 @@
 }
 
 .rec-notes[open] > .rec-notes-summary::after { content: "close"; }
+
+/*
+	PASS 12. What is still reachable, in the status strip. Three tones, and none of them
+	shouts: a player being told the Charter is still theirs to take does not need a fanfare,
+	and one being told it is gone does not need a scolding. The colour is the only thing
+	that differs, and it follows the side colours the rest of the table already uses.
+*/
+.rec-status-reach {
+	grid-column: 1 / -1;
+	margin: 0;
+	font-size: var(--g-size-micro);
+	color: var(--g-ink-mid);
+	border-left: 2px solid var(--g-rule);
+	padding-left: var(--g-2);
+}
+
+.rec-status-reach[data-still-reachable="behind"] { border-left-color: var(--g-team-one); color: var(--g-ink); }
+.rec-status-reach[data-still-reachable="won"] { border-left-color: var(--g-team-one); }
+.rec-status-reach[data-still-reachable="lost"] { border-left-color: var(--g-team-two); }

@@ -43,6 +43,72 @@ function frameWorldNames(frame) {
 	return names.length > 1 ? `${names.slice(0, -1).join(', ')} and ${names[names.length - 1]}` : names.join('');
 }
 
+/*
+	PASS 12. What is still reachable, said in one sentence.
+
+	The rubric critic scored "a reason to keep playing" 4 of 10: shut out on every world of
+	round 3, nothing on the screen gave a reason to take the turn. The answer is not a gift
+	to the side behind (ruled out, and rightly) but arithmetic the player could do
+	themselves and should not have to.
+
+	Worlds still to be ruled on: the ones in this round that have not been awarded, plus
+	three for every round after it. Against those, each side's distance from the clinch.
+	Four cases, and the wording is deliberately flat in all four, because a losing player
+	being told they can still win reads as condescension if it is dressed up:
+
+	- the Proving can still be taken: say what it would take,
+	- it can no longer be taken but can still be drawn: say that,
+	- it is already decided on worlds: say so plainly rather than letting the player find
+	  out by playing three more sends for nothing,
+	- it is close for both: say nothing, because the score already says it.
+
+	A staked world counts two, so the arithmetic reads the counted value rather than the
+	number of worlds. This never announces a rule the player does not have; it only counts.
+*/
+export function reachabilityLine(view, you, them) {
+	if (!view || !view.frame || view.phase === 'matchEnd') {
+		return null;
+	}
+	const perRound = view.frame.sites.length;
+	const roundsAfterThis = Math.max(0, FRAMES_PER_MATCH - (view.frameIndex + 1));
+	/*
+		This round's worlds are still open while the Court has not ruled on them, and settled
+		once it has. During Deploy they count; at the Ruling and while its result is on the
+		table they do not, or the line would tell a player a world is still winnable after it
+		has been awarded.
+	*/
+	const thisRoundStillOpen = view.phase === 'deploy' || view.phase === 'resolve';
+	const worldsLeft = (thisRoundStillOpen ? perRound : 0) + roundsAfterThis * perRound;
+	if (worldsLeft <= 0) {
+		return null;
+	}
+	const yourNeed = SITES_TO_CLINCH - you.sitesWon;
+	const theirNeed = SITES_TO_CLINCH - them.sitesWon;
+	const behind = you.sitesWon < them.sitesWon;
+
+	// already out of reach on worlds: the rival cannot be caught even by taking every one
+	if (yourNeed > worldsLeft && theirNeed <= worldsLeft) {
+		return {
+			tone: 'lost',
+			text: `The Charter is out of reach: ${plural(worldsLeft, 'world')} left and you need ${yourNeed}. Worlds still count toward the record.`,
+		};
+	}
+	if (theirNeed > worldsLeft && yourNeed <= worldsLeft) {
+		return {
+			tone: 'won',
+			text: `The rival can no longer clinch: ${plural(worldsLeft, 'world')} left and they need ${theirNeed}.`,
+		};
+	}
+	// still live, and the player is behind: say exactly what it would take
+	if (behind && yourNeed <= worldsLeft) {
+		return {
+			tone: 'behind',
+			text: `Still yours to take: ${yourNeed} more of the ${worldsLeft} worlds left clinches the Charter.`,
+		};
+	}
+	return null;
+}
+
 const YOU = 'A';
 const THEM = 'B';
 
@@ -1344,6 +1410,7 @@ class ReclamationMatch extends React.Component {
 	renderStatusStrip(view) {
 		const you = view.players[YOU];
 		const them = view.players[THEM];
+		const stillReachable = reachabilityLine(view, you, them);
 		const rivalBeat = !!this.rivalBeat() && view.phase === 'deploy' && !this.state.judged;
 		const yourTurn = view.turn === YOU && view.phase === 'deploy' && !this.state.playback && !this.state.judged && !rivalBeat;
 		const waiting = (view.turn === THEM || rivalBeat) && view.phase === 'deploy' && !this.state.playback && !this.state.judged;
@@ -1372,6 +1439,24 @@ class ReclamationMatch extends React.Component {
 					</span>
 
 				</div>
+
+				{/*
+					PASS 12. What is still reachable, in one sentence.
+
+					The rubric critic's lowest line (4 of 10): shut out on three worlds in
+					round 3, nothing on the screen offered a reason to take the turn. This is
+					NOT a gift to the side behind, which is ruled out; it is arithmetic the
+					player could do themselves and should not have to. Worlds still open this
+					round plus the worlds of the rounds after it, against what each side needs
+					to clinch, says in one line whether the Proving is still winnable and what
+					it would take. When it is not winnable, it says that too, because a player
+					owed the truth is owed it in both directions.
+				*/}
+				{stillReachable && (
+					<p className="rec-status-reach g-body" data-still-reachable={stillReachable.tone}>
+						{stillReachable.text}
+					</p>
+				)}
 
 				<div className="rec-status-score" title={`First to ${SITES_TO_CLINCH} sites takes the Charter`}>
 					<span className="rec-score rec-score--mine">

@@ -492,6 +492,32 @@ One of those exposed a fixture fault rather than an engine fault: the first vers
 | 51 | The Clash's resolution order is stated exactly in the rulebook and pinned by tests, one per sentence | 90% (the affordance gauge went 92 to 100 percent, and 1 of 2 to 3 of 3 on flipped worlds) | `reclamation-design.md`; `__tests__/resolutionOrder.test.ts` |
 | 52 | A bolster heals friendly fire; a shield may cancel a friendly sweep; backlash is paid at the cancel; shielders cancel separately; nothing heals mid-Clash | 90% (all five read out of the engine and pinned) | this section |
 
+## Pass 12: what is still reachable (2026-09-18)
+
+The rubric critic's lowest line, 4 of 10: "round 3 showed me 0 against 3.6, 7.7 and 2.4 with no stated reason to take the turn." A losing player had nothing on the screen telling them whether the Proving was still winnable.
+
+**What shipped is one sentence in the status strip, and it is arithmetic rather than a gift.** The no-gifts ruling forbids handing the trailing side anything; it does not forbid telling them what they already have. Worlds still to be ruled on (this round's, while the Court has not ruled on them, plus three for every round after) against each side's distance from the clinch. Four cases, three of which speak:
+
+- **Behind but live:** "Still yours to take: 2 more of the 3 worlds left clinches the Charter."
+- **The rival can no longer clinch:** said, because a player deserves to know they are safe.
+- **Out of reach:** "The Charter is out of reach: 3 worlds left and you need 4. Worlds still count toward the record." Said plainly rather than letting a player spend three more sends finding out, and it still names the reason to play the round out.
+- **Live for both:** nothing, because the score already says it and a line that appears when the score speaks is noise.
+
+The wording is flat in all four on purpose: a losing player told they can still win reads as condescension if it is dressed up.
+
+**A bug caught by paint before it shipped.** The first version counted this round's worlds as still open even after the Court had ruled on them, so it would have told a player a world was winnable after it was awarded, and the out-of-reach case could never fire at all. Found by walking a whole Proving and reading the line at each Ruling.
+
+**Verified by paint on seed 21**, where the handler falls behind 3 to 4 going into the last round and the line reads exactly as intended. Six unit tests pin the four cases, the ruled-round boundary, and the silence at the end of the Proving.
+
+| # | Assumption / Decision | Confidence | Supporting Evidence |
+|---|---|---|---|
+| 53 | The status strip says what is still reachable when it is not obvious from the score: what it would take when behind, that the rival cannot clinch, or that the Charter is gone. It is counting, never a rule or a gift | 85% (the critic's lowest line; the no-gifts ruling forbids handing anything over, not telling the truth) | `reclamationMatch.reachabilityLine`; `__tests__/reclamationReach.test.js` |
+
+### Pass 12 open items
+
+- **Mobile** is now the critic's lowest untouched line (5 of 10): three empty world panels at roughly 600px each push the bench below the fold, so pick-and-place means scrolling between the thing you pick and the thing you pick it for.
+- Whether the out-of-reach line should also offer to concede the Proving, rather than only saying the Charter is gone. Not built; a concession is a rule change and the line is not.
+
 ### Pass 11 open items
 
 - **One contested world in ten sees no attack at all** (9.5 to 11.1 percent on three seeds), because a side fielded only presences. Whether that is a hole (a free world for two bolsters) or simply what a quiet world looks like is not yet judged.
