@@ -6,6 +6,7 @@ import XalianImage from '../xalianImage';
 import Connections from './Connections';
 import { useVisit, useResume } from './trail';
 import { SectionHead } from '@/components/system/masthead';
+import { usePageTitle } from '@/components/system/head';
 import { SpecPlate, RecordRow, EmptyState } from '@/components/system/record';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -236,6 +237,7 @@ function LegacyRatings({ view }) {
 export default function SpeciesView() {
     const { key } = useParams();
     const view = lore.getSpecies(key);
+    usePageTitle(view ? view.name : 'Not found');
     useVisit(view
         ? { kind: 'species', key, name: view.name, element: view.element }
         : { kind: null, key: null });

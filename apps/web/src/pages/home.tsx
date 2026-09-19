@@ -8,6 +8,7 @@ import XalianImage from '../components/xalianImage';
 import { species, worlds } from 'virtual:xalians-home-data';
 
 import { Shell } from '@/components/system/masthead';
+import { usePageTitle } from '@/components/system/head';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -54,6 +55,7 @@ const DESTINATIONS = [
 
 function Home() {
 	const [featuredSpecies] = React.useState(pickRandomSpecies);
+	usePageTitle();
 
 	return (
 		<main className="min-h-screen bg-room text-ink font-body" data-tier="chrome">

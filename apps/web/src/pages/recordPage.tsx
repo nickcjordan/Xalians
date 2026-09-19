@@ -12,6 +12,7 @@ import * as dbApi from '../utils/dbApi';
 import { Shell, Masthead } from '@/components/system/masthead';
 import { HelixSpinner } from '@/components/system/brand';
 import { EmptyState } from '@/components/system/record';
+import { usePageTitle } from '@/components/system/head';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 
@@ -19,6 +20,8 @@ function RecordPage({ id }: { id: string }) {
 	const [record, setRecord] = React.useState<XalianRecord | null>(null);
 	const [isLoading, setIsLoading] = React.useState(true);
 	const [message, setMessage] = React.useState<string | null>(null);
+
+	usePageTitle(record ? `${speciesDisplayName(record.species)} record` : 'Xalian record');
 
 	React.useEffect(() => {
 		let cancelled = false;

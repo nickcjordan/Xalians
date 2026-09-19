@@ -3,6 +3,7 @@ import { Link } from 'react-router';
 import * as lore from '../../lore';
 import planetArtwork from '@xalians/content/planetArtwork.json';
 import { Tile, TileArt, TileMeta } from '@/components/system/record';
+import { usePageTitle } from '@/components/system/head';
 
 function sentenceCase(text) {
     if (!text) return text;
@@ -18,6 +19,7 @@ function sentenceCase(text) {
  * Contract: docs/design/xalian-encyclopedia-page.md §5 "Worlds and world".
  */
 export default function Worlds() {
+    usePageTitle('Worlds');
     const worlds = lore.getWorlds();
 
     return (
