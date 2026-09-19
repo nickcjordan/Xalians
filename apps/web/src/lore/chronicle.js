@@ -247,3 +247,14 @@ export function getWorldTimeline(worldKey) {
 		};
 	});
 }
+
+// getWorldFirstEra: the first era (in Part order) that names this world --
+// the same "lit" test the In-the-story chips use (chapters.length > 0 or
+// events.length > 0), read from getWorldTimeline so the chips and this stay
+// in lockstep. undefined for an unknown world, or a world absent from every
+// era (none exist among the ratified worlds as of this writing).
+export function getWorldFirstEra(worldKey) {
+	const timeline = getWorldTimeline(worldKey);
+	const row = timeline.find((r) => r.chapters.length > 0 || r.events.length > 0);
+	return row ? row.era : undefined;
+}

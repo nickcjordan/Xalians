@@ -44,16 +44,22 @@ function MeterRow({ name, band, maxBand }) {
     );
 }
 
-/** "Continue the story" foot: one row pointing at the reader's furthest part, or Part 1 when nothing is stored. */
-function ContinueTheStory() {
+/**
+ * Foot linking into The Story. With reading progress, it is "Continue the
+ * story" pointing at the reader's furthest part. Without progress, it is
+ * "This species in the story" pointing at the first era that names the
+ * species' home world -- resolved through lore.getWorldFirstEra, the same
+ * lit test the world page's In-the-story chips use.
+ */
+function ContinueTheStory({ homePlanet }) {
     const resume = useResume();
-    const eras = lore.getEras();
-    const era = resume ? lore.getEra(resume.eraKey) : null;
-    const target = era || eras[0];
+    const resumeEra = resume ? lore.getEra(resume.eraKey) : null;
+    const target = resumeEra || (homePlanet && lore.getWorldFirstEra(homePlanet)) || lore.getEras()[0];
     if (!target) return null;
+    const label = resumeEra ? 'Continue the story' : 'This species in the story';
     return (
         <div className="border-t border-edge pt-4">
-            <RecordRow className="border-b-0 py-0" term="Continue the story">
+            <RecordRow className="border-b-0 py-0" term={label}>
                 <Link to={lore.routeFor('era', target.key)} className="text-ink underline decoration-ink-3 underline-offset-4 hover:decoration-ink">
                     Part {target.order + 1}, {target.name}
                 </Link>
@@ -298,7 +304,7 @@ export default function SpeciesView() {
             </section>
 
             <div className="mt-8">
-                <ContinueTheStory />
+                <ContinueTheStory homePlanet={view.homePlanet} />
             </div>
 
             <Accordion type="single" collapsible className="mt-6 flex flex-col gap-2">
