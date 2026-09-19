@@ -479,12 +479,18 @@ const SECTIONS: { id: string; label: string; node: React.ReactNode }[] = [
         <SectionHead title="Index row" />
         <p className="text-body text-ink-2">
           The one row for a list of records: a narrow leading column, a subhead title, one line of copy, a meta
-          column at the right in the data face, and a chevron when the row is a link.
+          column at the right in the data face, and a chevron when the row is a link. When `leading` is left out the
+          row has no leading column at all -- the title sits flush left, as on the Reading Room's four rows and a
+          record's "Continue the story" foot.
         </p>
         <IndexList className="mt-6 max-w-2xl">
           <IndexRow to="/encyclopedia/worlds" leading="01" title="Worlds" copy="Every world, with its history, terrain and native species." meta="14 worlds" />
           <IndexRow to="/encyclopedia/species" leading="02" title="Bestiary" copy="Every species, with appearance, habitat, behavior and signature ability." meta="32 species" />
           <IndexRow title="Not a link" copy="A row without `to` renders as a div, no chevron." />
+        </IndexList>
+        <p className="mt-6 text-body text-ink-2">Without a leading column:</p>
+        <IndexList className="mt-2 max-w-2xl">
+          <IndexRow to="/encyclopedia/story/end-wars" title="Continue the story" meta="Part 4, The End Wars" />
         </IndexList>
       </>
     ),

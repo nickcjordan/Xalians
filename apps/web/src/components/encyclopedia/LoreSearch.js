@@ -131,7 +131,7 @@ export default function LoreSearch() {
                     {groups.length === 0 && <p className="m-0 font-body text-body text-ink-2">No record matches &ldquo;{trimmed}&rdquo;.</p>}
                     {groups.map((g) => (
                         <div key={g.kind} className="[&+&]:mt-3">
-                            <p className="type-legend m-0 mb-1 text-[10px] text-ink-3">{KIND_LABEL[g.kind]}</p>
+                            <p className="type-legend m-0 mb-1 text-ink-3">{KIND_LABEL[g.kind]}</p>
                             {g.hits.map((h) => {
                                 const index = flatHits.indexOf(h);
                                 const active = index === activeIndex;
@@ -142,12 +142,12 @@ export default function LoreSearch() {
                                         to={h.route}
                                         role="option"
                                         aria-selected={active}
-                                        className={`block px-1 py-1 text-ink no-underline outline-none ${active ? 'bg-s2' : ''}`}
+                                        className={`block px-1 py-1 no-underline outline-none ${active ? 'bg-s2' : ''}`}
                                         onMouseEnter={() => setActiveIndex(index)}
                                         onClick={() => { setOpen(false); setQuery(''); setActiveIndex(-1); }}
                                     >
-                                        <span className="font-semibold">{h.title}</span>
-                                        {h.snippet && <span className="text-[13px] opacity-75"> {h.snippet}</span>}
+                                        <span className="type-subhead block text-base">{h.title}</span>
+                                        {h.snippet && <span className="mt-0.5 block font-body text-small text-ink-2">{h.snippet}</span>}
                                     </Link>
                                 );
                             })}

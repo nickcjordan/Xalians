@@ -183,7 +183,7 @@ function Signature({ signature }) {
     return (
         <Card variant="panel" className="p-4">
             <p className="type-legend m-0">Signature ability</p>
-            <p className="type-subhead m-0 text-[19px]">{signature.name}</p>
+            <p className="type-subhead m-0">{signature.name}</p>
             <p className="m-0 font-body text-body text-ink">{signature.description}</p>
             <SpecPlate
                 columns={2}
@@ -285,7 +285,7 @@ function LegacyRatings({ view }) {
                 }))}
             />
             <p className="mt-4 max-w-[62ch] font-body text-small text-ink-2">
-                This species has not yet been migrated to the ratified record. Readouts arrive with its template.
+                This species does not yet have a full record. Readouts arrive with its template.
             </p>
         </section>
     );
@@ -389,7 +389,7 @@ export default function SpeciesView() {
                 </div>
 
                 <div className="flex min-w-0 flex-col gap-4">
-                    <Prose text={view.description} except={view.entry && view.entry.key} className="measure text-lead" />
+                    <Prose text={view.description} except={view.entry && view.entry.key} size="lead" />
                     <KeyFacts view={view} />
                 </div>
             </Card>

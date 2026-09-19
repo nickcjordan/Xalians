@@ -225,7 +225,7 @@ export default function GalaxyMap({ era = null, showEvents = true, compact = fal
 
 	return (
 		<div className="relative" data-tier="featured">
-			<p className="type-data m-0 mb-2 text-small text-ink-3 sm:hidden">Drag to pan the galaxy.</p>
+			<p className="m-0 mb-2 font-body text-small text-ink-2 sm:hidden">Drag to pan the galaxy.</p>
 			<Card variant="glass" className="p-4">
 				<div
 					ref={scrollRef}
@@ -306,11 +306,11 @@ export default function GalaxyMap({ era = null, showEvents = true, compact = fal
 					className={`el-${hoverState.world.element} pointer-events-none absolute z-40 w-[220px] max-w-[60vw] -translate-x-1/2 -translate-y-full border border-edge bg-s2 p-4 shadow-[inset_0_1px_0_var(--color-edge-hi)]`}
 					style={{ left: hoverState.left, top: hoverState.top - 18 }}
 				>
-					<span className="type-legend block text-[15px] text-ink">{hoverState.world.name}</span>
+					<span className="type-subhead block">{hoverState.world.name}</span>
 					<Badge variant="chip" className="mt-2">{hoverState.world.element}</Badge>
-					<span className="mt-1 block text-[13px] text-ink-2">{hoverState.world.physical && hoverState.world.physical.terrainLabel}</span>
-					<span className="mt-1 block text-[13px] text-ink-3">{hoverState.world.nativeSpecies.length} native species</span>
-					<span className="type-data mt-2 block text-[13px] text-ink-2">
+					<span className="mt-1 block font-body text-small text-ink-2">{hoverState.world.physical && hoverState.world.physical.terrainLabel}</span>
+					<span className="mt-1 block font-body text-small text-ink-3">{hoverState.world.nativeSpecies.length} native species</span>
+					<span className="mt-2 block font-body text-small text-ink-2">
 						{era && hoverState.lit !== false ? 'Read in this era' : 'Open survey record'}
 					</span>
 				</div>
@@ -325,7 +325,7 @@ export default function GalaxyMap({ era = null, showEvents = true, compact = fal
 						{hoverState.events.length > 1 ? `${hoverState.events.length} events` : 'Event'}
 					</span>
 					{hoverState.events.map((event) => (
-						<span className="mt-1 block text-[15px] text-ink" key={event.key}>
+						<span className="mt-1 block font-body text-body font-bold normal-case tracking-normal text-ink" key={event.key}>
 							{event.title}
 						</span>
 					))}
