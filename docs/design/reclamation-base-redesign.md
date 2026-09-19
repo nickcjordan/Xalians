@@ -513,6 +513,39 @@ The wording is flat in all four on purpose: a losing player told they can still 
 |---|---|---|---|
 | 53 | The status strip says what is still reachable when it is not obvious from the score: what it would take when behind, that the rival cannot clinch, or that the Charter is gone. It is counting, never a rule or a gift | 85% (the critic's lowest line; the no-gifts ruling forbids handing anything over, not telling the truth) | `reclamationMatch.reachabilityLine`; `__tests__/reclamationReach.test.js` |
 
+## Pass 13: the phone (2026-09-18)
+
+The rubric critic's lowest untouched line, 5 of 10, and its named worst thing: "the core act of the game, drag a creature to a world, requires scrolling between the thing you pick and the thing you pick it for."
+
+**Measured first, at 390 wide with nothing sent:**
+
+| Reading | Before | After |
+|---|---|---|
+| Page height | 2258px (2.7 screens) | **1644px (1.9)** |
+| A world panel, empty | 386px | **176px** |
+| Bench to the first world | **1576px** | **948px** |
+| Visible buttons under 32px tall | 16 | **0** |
+
+**What the 386px was.** The empty field was 264px of it: two ranks of 96px around a 72px midline, all of it holding room for creatures that were not there and saying "no one / UNCLAIMED / no one" three times over. An existing mobile rule tried to collapse it and lost on specificity to a desktop rule setting a 40px floor on each rank.
+
+**What shipped.** An empty world keeps its head, its tally and its ground line and gives up the room it was holding. The rules reach only `.rec-site-field--empty`, which the component sets only while both ranks are empty, so the moment anything stands at a world the panel is a panel again: with a creature lifted the panel grows back to 240px and the ghost preview renders at full size, which is verified rather than assumed. The world's head also became one row, with the stake button right-aligned instead of wrapping to a second line at 55px a world.
+
+**Tap targets.** The measurement turned up sixteen visible buttons under 32px tall, including every stake button at 21px and every dossier button at 26px. They get their height back through padding rather than type size, so the readouts around them are unchanged. Zero remain.
+
+**Guarded.** The headless check now asserts, at 390 only, that no empty world panel exceeds 260px and that no visible button is under 32px tall, so neither gain can quietly regress.
+
+**Verified by paint.** With a creature lifted, all three worlds and their SEND HERE buttons, holds (9.3, 9.3 and 6.9), meters and plan lines now sit within roughly one phone screen. That is the critic's complaint answered: the thing you pick and the thing you pick it for are in the same view.
+
+| # | Assumption / Decision | Confidence | Supporting Evidence |
+|---|---|---|---|
+| 54 | An empty world is short on a phone and grows back the moment a creature stands at it or is previewed there | 90% (386px to 176px; bench-to-world 1576px to 948px; the lifted panel measured at 240px with its ghost intact) | `reclamation.css` "AN EMPTY WORLD IS SHORT ON A PHONE" |
+| 55 | Every visible control is at least 32px tall at phone width, through padding rather than type size | 90% (sixteen under that before, zero after) | same block; guarded by `reclamation-proving.mjs` |
+
+### Pass 13 open items
+
+- The status strip is now the tallest single block on a phone at 250px. It carries the round, the worlds, the score, the phase, the turn and the hint; whether all six belong above the fold is the next question.
+- The bench remains a horizontal scroller showing about 3.5 of twelve cards. The critic wanted it pinned as a bottom sheet; that is a larger change than this pass took.
+
 ### Pass 12 open items
 
 - **Mobile** is now the critic's lowest untouched line (5 of 10): three empty world panels at roughly 600px each push the bench below the fold, so pick-and-place means scrolling between the thing you pick and the thing you pick it for.

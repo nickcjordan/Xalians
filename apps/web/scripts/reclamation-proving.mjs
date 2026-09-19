@@ -87,6 +87,29 @@ for (const view of ['simple', 'advanced']) {
 				assert(await page.locator(selector).count() > 0, `${label}: nothing on the table answers "${question}"`);
 			}
 
+			/*
+				PASS 13. The phone gains are guarded here so they cannot quietly regress.
+				Before pass 13, at 390 wide with nothing sent, three empty world panels stood
+				386px tall each and the gap between the bench and the first world was 1576px,
+				nearly two screens, which the rubric critic named the worst thing about the
+				phone experience. These two assertions are the floor under the fix.
+			*/
+			if (width === 390) {
+				const panels = await page.locator('[data-site-id]').evaluateAll(
+					(els) => els.map((el) => Math.round(el.getBoundingClientRect().height)),
+				);
+				const tallest = Math.max(0, ...panels);
+				assert(tallest <= 260, `${label}: an empty world panel is ${tallest}px tall on a phone`);
+
+				const tiny = await page.locator('button:visible').evaluateAll((els) => els
+					.map((el) => ({
+						name: (el.getAttribute('aria-label') || el.textContent || '').trim().slice(0, 40),
+						h: Math.round(el.getBoundingClientRect().height),
+					}))
+					.filter((b) => b.h > 0 && b.h < 32));
+				assert.deepEqual(tiny, [], `${label}: tap targets under 32px tall`);
+			}
+
 			let guard = 0;
 			let sends = 0;
 			while (guard < 220) {

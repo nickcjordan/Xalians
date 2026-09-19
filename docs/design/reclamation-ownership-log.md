@@ -2,7 +2,7 @@
 
 Status: the running state of the game under ownership (brief: `reclamation-ownership-brief.md`). This file is the resume point. Any reset reads this first and continues at the weakest thing named below, never from scratch. Each pass appends its own section; the standing state at the top is rewritten in place.
 
-## Standing state (after pass 12, 2026-09-18)
+## Standing state (after pass 13, 2026-09-18)
 
 ### Gauges, proctor mirror
 
@@ -52,22 +52,22 @@ What it reads, and where each effect kind lands (measured over the seed-7 pool, 
 
 ### Open items, ranked (resume here)
 
-1. **Mobile** (critic 5 of 10, now the lowest untouched line). Three empty world panels at roughly 600px each push the bench below the fold, so pick-and-place means scrolling between the thing you pick and the thing you pick it for; the bench is a horizontal scroller showing 3.5 of 12 cards. The critic's own fix: collapse empty world panels to a compact row on phone and pin the bench as a bottom sheet.
+1. **Re-run the rubric critic.** It has not been scored since 64 of 100, and five of its findings have been answered since: the resting promise, the speed label, the Charter's ending, a reason to keep playing, and the phone. The score is the gauge and it is stale. Run it before choosing the next target, because the next target should come from it.
 2. **One contested world in ten sees no attack at all** (9.5 to 11.1 percent on three seeds), because a side fielded only attackless presences. Measure the win rate of an all-presence send before judging whether it is a hole or simply a quiet world.
 3. **Crowd worlds further, if it can be afforded.** 1v1 is 56 percent. 12 sends reaches 44.5 but costs the flip band and half the naive margin. `worldsPerFrame` is a lever; a narrower frame raises sends-per-world without touching the budget but moves the clinch and the match arc.
-4. **Intelligence and charisma read negative within presences.** Read it pooled before treating it as a failure.
-5. **Fire is a dead element and dromeus a dead species** in the draft. Same caution.
-6. **The four borrowed effect kinds** still read as plain attacks. Worth re-testing now that worlds are less thin.
-7. **No human has played a full Proving.** The notes and telemetry are built, verified, and empty.
-8. **Hot-seat** is unbuilt and is the cheapest validation instrument the game can have.
-9. **Re-run the rubric critic.** It has not been scored since its 64 of 100, and three of its findings have been answered since (the resting promise, the speed label, the Charter's ending, and now a reason to keep playing).
+4. **The status strip is the tallest block on a phone** at 250px, carrying six jobs. Whether all six belong above the fold is open.
+5. **Intelligence and charisma read negative within presences.** Read it pooled before treating it as a failure.
+6. **Fire is a dead element and dromeus a dead species** in the draft. Same caution.
+7. **The four borrowed effect kinds** still read as plain attacks. Worth re-testing now that worlds are less thin.
+8. **No human has played a full Proving.** The notes and telemetry are built, verified, and empty.
+9. **Hot-seat** is unbuilt and is the cheapest validation instrument the game can have.
 
 ### Findings from the headless check (pass 5, recorded not fixed)
 
 The check plays a whole Proving in both views at 1440 and 390 and all four configurations pass with zero page errors, zero console errors and no horizontal overflow. Three things it surfaced that are not failures but are worth a pass:
 
 - **`?view=advanced` does not switch the view.** The masthead still lights SIMPLE when the URL asks for advanced, so the two views could only be told apart by clicking. The check drives both and they behave identically, which is itself the finding. Low cost, and it blocks per-view verification.
-- **On 390 the three worlds stack to full height above the bench**, so lifting a creature and then pressing a world is a long scroll in both directions. This is the open item the rulebook already carries ("on a phone the three sites stack above the deploy panel, so choosing means scrolling"); the check now has the screenshot that proves it.
+- ~~**On 390 the three worlds stack to full height above the bench**~~ **Fixed in pass 13**: an empty world panel went from 386px to 176px and the bench-to-world distance from 1576px to 948px, so with a creature lifted all three worlds sit within roughly one phone screen. Guarded by the check.
 - **A dossier panel in the rail can intercept a press on a world**, which the check works around with a forced click. On a real screen that is a press that does nothing.
 
 ### Verification run each pass
@@ -199,3 +199,17 @@ The single place the game's reading of a creature is decided:
 **Verified by paint on seed 21**, where the handler falls behind 3 to 4 into the last round and the line reads exactly as intended; six unit tests pin the four cases, the ruled-round boundary, and the silence at the end.
 
 **Verified:** 1927 tests green (six new), build inside budgets, headless Proving green in all four configurations.
+
+### Pass 13 (2026-09-18): the phone
+
+**Weakest thing:** the rubric critic's lowest untouched line (5 of 10) and its named worst thing, that pick-and-place required scrolling between the thing you pick and the thing you pick it for.
+
+**Measured at 390 wide with nothing sent:** page 2258px (2.7 screens), an empty world panel 386px, bench to first world **1576px**, and sixteen visible buttons under 32px tall.
+
+**The cause:** an empty field was 264px of the 386, two ranks of 96px around a 72px midline, holding room for creatures that were not there. An existing mobile rule tried to collapse it and lost on specificity to a desktop rule with a 40px floor per rank.
+
+**Shipped:** an empty world keeps its head, tally and ground line and gives up the rest; the head became one row with the stake button right-aligned; every small control got its height back through padding.
+
+**After:** page 1644px, panel 176px, bench to world **948px (down 40 percent)**, zero buttons under 32px. With a creature lifted the panel grows back to 240px with its ghost preview intact, verified by paint, so all three worlds and their SEND HERE buttons, holds and plans sit within about one screen.
+
+**Guarded:** the headless check now asserts at 390 that no empty world panel exceeds 260px and no visible button is under 32px, so neither gain can quietly regress.
