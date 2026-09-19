@@ -384,6 +384,18 @@ export const MIN_BLOW_MAGNITUDE = 1;
 // sites, drawn so no world repeats within a match (docs/design/reclamation-design.md,
 // "The Proving", 2026-09-04). SITES_TO_CLINCH counts worlds held: five of the nine.
 export const SITES_TO_CLINCH = 5;
+/*
+	PASS 15 (2026-09-19): the clinch is a majority of the worlds on offer, not the literal 5.
+
+	Every earlier pass read SITES_TO_CLINCH as a constant, which is right for the shipped
+	frame (5 of 9) but makes `worldsPerFrame` unmeasurable: a narrower frame offers fewer
+	worlds, and "first to five of six" is a different game from "first to five of nine".
+	clinchFor() derives the bar from the worlds a match actually offers, so the frame width
+	can be swept without hand-editing a second number, and the shipped 3 x 3 still yields 5.
+*/
+export function clinchFor(worldsPerFrame: number, framesPerMatch: number): number {
+	return Math.floor((worldsPerFrame * framesPerMatch) / 2) + 1;
+}
 export const ROSTER_SIZE = 12;
 /*
 	PASS 9 (2026-09-18): SENDABLE 10 -> 11, and why this number is the Clash's real ceiling.
@@ -427,6 +439,54 @@ export const ROSTER_SIZE = 12;
 */
 export const SENDABLE = 11;
 export const FRAMES_PER_MATCH = 3;
+/*
+	PASS 15 (2026-09-19): the frame width, swept and left where it was. THE NEGATIVE RESULT.
+
+	This was the untried half of pass 9's sends-per-world ratio. Pass 9 raised the budget as
+	far as it could (SENDABLE 11) and still left 56 percent of contested worlds one creature
+	against one; a narrower frame raises the same ratio from the other side, without
+	spending a larger budget. The wiring for it landed in this pass (drawFrames reads the
+	rules, clinchFor derives the bar), so the sweep below is now reproducible.
+
+	Swept at 600 matches on seeds 7/13/21, with the clinch derived as a majority of the
+	worlds on offer and the magnitude scale moved where the crowd changed:
+
+		3 x 3, sendable 11 (SHIPPED):  1v1 55.1 to 56.1%, downs 4.64 to 4.85, flips 28.1 to 30.5%
+		2 x 3, sendable 11:            1v1 18.3 to 19.3%, downs 5.21 to 5.64 (over the band)
+		2 x 3, sendable 9:             1v1 30.1 to 31.1%, downs 4.27 to 4.52, flips 29.0 to 30.5%
+		2 x 3, sendable 8:             1v1 42.4 to 44.2%, downs 3.63 to 3.77 (under the band)
+		4 x 3, sendable 14:            1v1 68.7 to 69.4%, downs 5.60 to 5.63 (over), comeback 20.8 to 29.3% (under)
+
+	The crowd gauge loves it: 2 x 3 at sendable 9 nearly halves the 1v1 share, 56 percent to
+	30, while downs and flips both stay in band on all three seeds. It is by far the best
+	crowding result any pass has measured. A WIDER frame is unambiguously worse on every
+	axis, which is worth knowing: it spreads the same roster over more worlds.
+
+	It is not shipped, for two measured reasons.
+
+	1. IT FAILS THE NAIVE-POLICY BAR, which is the one gauge that says the game asks a
+	   question. At 400 matches a side, "pass early" (deploy an even share, then stop
+	   thinking) sits 12.3 to 18.0 points under the proctor's mirror at the shipped width
+	   and only 7.5 to 9.5 points under it at 2 x 3 / sendable 9 - through the bar of eight
+	   on seed 13. With two worlds a round there is no allocation question left: spreading
+	   evenly IS the right answer, so the deploy decisions stop carrying their weight. Pass
+	   9 wrote down that a generous budget makes deploy decorative; a narrow frame does the
+	   same thing from the other direction, and harder.
+
+	2. A TWO-WORLD ROUND CAN ONLY BE LEVEL OR SWEPT. Measured: 51 percent of rounds end
+	   1-1 and 48 percent end 2-0, with nothing in between, against 10 percent level at the
+	   shipped width. Half of all rounds would say nothing about the score. The stake does
+	   not rescue it - the bot stakes 0.10 times a match at width 2 against 0.33 at width 3,
+	   because a stake among two worlds is transparent and easily answered - and level rounds
+	   stay at 51 percent with the stake off (51.8) or on (50.6).
+
+	Kept for the record: the narrow frame does make the last round matter more (91.8 to
+	92.7 percent of matches still live entering round 3, against 82.5 to 84.7 shipped). If
+	a later pass finds a way to keep an allocation question alive at two worlds - a deeper
+	per-world decision than "how many do I send" - this is the sweep to re-run, and the
+	lever is wired for it now. Re-read the note on SENDABLE first: both numbers move the
+	same ratio, and neither conclusion survives a change to the bot.
+*/
 export const WORLDS_PER_FRAME = 3;
 // distinct worlds a match draws from the fourteen
 export const WORLDS_PER_MATCH = FRAMES_PER_MATCH * WORLDS_PER_FRAME;

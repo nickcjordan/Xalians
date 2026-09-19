@@ -51,6 +51,7 @@ import {
 	WORLDS_PER_MATCH,
 	FRAMES_PER_MATCH,
 	WORLDS_PER_FRAME,
+	clinchFor,
 	SITES_TO_CLINCH,
 	HOLD_FLOOR,
 	HOLD_CEILING,
@@ -211,16 +212,18 @@ function worldFacts(world: World) {
 	table twice: a frame is { index, sites: [site with .world] }, and a site on the table
 	is the authored site plus the facts of the world it belongs to.
 */
-function drawFrames(worlds: World[], rngState: number): { frames: Frame[]; nextState: number } {
+function drawFrames(worlds: World[], rngState: number, worldsPerFrame: number): { frames: Frame[]; nextState: number } {
 	let state = rngState;
 	const { array: shuffledWorlds, nextState: afterShuffle } = shuffle(worlds, state);
 	state = afterShuffle;
-	const drawn = shuffledWorlds.slice(0, WORLDS_PER_MATCH);
+	// PASS 15: the frame width is a lever, so the draw is sized from the rules rather than
+	// from WORLDS_PER_FRAME. A frame narrower than the shipped three needs fewer worlds.
+	const drawn = shuffledWorlds.slice(0, FRAMES_PER_MATCH * worldsPerFrame);
 	const frames: Frame[] = [];
 	for (let f = 0; f < FRAMES_PER_MATCH; f++) {
 		const sites: FrameSite[] = [];
-		for (let w = 0; w < WORLDS_PER_FRAME; w++) {
-			const world = drawn[f * WORLDS_PER_FRAME + w];
+		for (let w = 0; w < worldsPerFrame; w++) {
+			const world = drawn[f * worldsPerFrame + w];
 			const { value: siteIndex, nextState } = nextInt(state, world.sites.length);
 			state = nextState;
 			sites.push({ ...world.sites[siteIndex], world: worldFacts(world) } as FrameSite);
@@ -416,7 +419,10 @@ export function createMatch({ rosterA, rosterB, worlds, seed, rules }: CreateMat
 
 	let rngState = createRngState(seed);
 
-	const { frames, nextState: afterFrames } = drawFrames(worlds, rngState);
+	// the rules decide the frame width, so they are normalized before the worlds are dealt
+	const normalized = normalizeRules(rules);
+
+	const { frames, nextState: afterFrames } = drawFrames(worlds, rngState, normalized.worldsPerFrame);
 	rngState = afterFrames;
 
 	const { value: starterRoll, nextState: afterStarter } = nextInt(rngState, 2);
@@ -443,7 +449,7 @@ export function createMatch({ rosterA, rosterB, worlds, seed, rules }: CreateMat
 	return {
 		seed,
 		rngState,
-		rules: normalizeRules(rules),
+		rules: normalized,
 		frames,
 		frameIndex: 0,
 		players: { A: playerState(rosterA), B: playerState(rosterB) },
@@ -1942,7 +1948,10 @@ function judge(state: MatchState): MatchState {
 	const sitesWonA = s.players.A.sitesWon;
 	const sitesWonB = s.players.B.sitesWon;
 
-	const clinched = sitesWonA >= SITES_TO_CLINCH || sitesWonB >= SITES_TO_CLINCH;
+	// PASS 15: the bar is a majority of the worlds this match offers, so a narrower frame
+	// clinches sooner rather than making the Charter unreachable.
+	const toClinch = clinchFor(rulesOf(s).worldsPerFrame, FRAMES_PER_MATCH);
+	const clinched = sitesWonA >= toClinch || sitesWonB >= toClinch;
 	const framesExhausted = s.frameIndex >= FRAMES_PER_MATCH - 1;
 
 	if (clinched || framesExhausted) {

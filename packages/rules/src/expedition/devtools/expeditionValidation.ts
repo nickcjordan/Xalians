@@ -1006,12 +1006,12 @@ export function decidedRoundOf(scoreByRound: any, winner: any) {
 	mathematically locked. Null when the match reached the end or the tiebreak without
 	anyone clinching.
 */
-export function lockedRoundOf(scoreByRound: any, winner: any) {
+export function lockedRoundOf(scoreByRound: any, winner: any, toClinch: number = SITES_TO_CLINCH) {
 	if (!winner) {
 		return null;
 	}
 	for (let i = 0; i < scoreByRound.length; i++) {
-		if (scoreByRound[i][winner] >= SITES_TO_CLINCH) {
+		if (scoreByRound[i][winner] >= toClinch) {
 			return i + 1;
 		}
 	}
@@ -1021,7 +1021,7 @@ export function lockedRoundOf(scoreByRound: any, winner: any) {
 // the whole match-shape block, computed from one batch of results. Section 3 prints this
 // in full for the proctor mirror and one summary row per rival; section 4 reuses it for
 // every ablation cell, which is why it lives in its own function.
-export function matchShapeOf(results: any) {
+export function matchShapeOf(results: any, toClinch: number = SITES_TO_CLINCH) {
 	const done = results.filter((r: any) => !r.error && r.winner);
 	const decided: Dict = { 1: 0, 2: 0, end: 0 };
 	const locked: Dict = { 1: 0, 2: 0, 3: 0, never: 0 };
@@ -1037,7 +1037,7 @@ export function matchShapeOf(results: any) {
 	done.forEach((r: any) => {
 		const d = decidedRoundOf(r.scoreByRound, r.winner);
 		decided[d === null ? 'end' : d]++;
-		const l = lockedRoundOf(r.scoreByRound, r.winner);
+		const l = lockedRoundOf(r.scoreByRound, r.winner, toClinch);
 		locked[l === null ? 'never' : l]++;
 
 		const after1 = r.scoreByRound[0];

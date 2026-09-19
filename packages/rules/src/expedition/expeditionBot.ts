@@ -27,7 +27,7 @@
 import type { XalianRecord } from '@xalians/content/schema';
 import { prepare, traitKeywordsOf, magnitudeAgainst, roleOf, round1 } from './creatureOnTable.ts';
 import {
-	ROLE, SENDABLE, SITES_TO_CLINCH, FRAMES_PER_MATCH, RETURNED_SEND_COST,
+	ROLE, SENDABLE, clinchFor, FRAMES_PER_MATCH, RETURNED_SEND_COST,
 	presenceScaleOf, instinctLaneOf,
 } from './expeditionInterpretation.ts';
 import type {
@@ -498,7 +498,13 @@ export function scoreSends(publicState: PublicState, ownRoster: XalianRecord[], 
 	// now would clinch the match for them (their potential to clinch is not enough: after
 	// a 2-1 first world almost anyone could, and treating that as an emergency emptied
 	// the roster on world two and left world three uncontested)
-	const mustHold = framesAfterThis === 0 || opp.sitesWon + sitesLosing >= SITES_TO_CLINCH;
+	// PASS 15: the clinch bar comes from the rules travelling in publicState, so the bot
+	// plays a narrower frame correctly instead of waiting for a five that never arrives.
+	const toClinch = clinchFor(
+		(publicState.rules && publicState.rules.worldsPerFrame) || frame.sites.length,
+		FRAMES_PER_MATCH,
+	);
+	const mustHold = framesAfterThis === 0 || opp.sitesWon + sitesLosing >= toClinch;
 
 	const myOnBoard = frame.sites.reduce((n, s) => n + (publicState.board[s.id][handler] || []).length, 0);
 	const evenShare = Math.floor((remainingSends + myOnBoard) / (framesAfterThis + 1));
