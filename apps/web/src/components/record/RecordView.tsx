@@ -239,12 +239,12 @@ function RecordView({ record, kicker = 'Record', recordLink }: RecordViewProps) 
 					/>
 					<BriefCard
 						label="Strongest aptitude"
-						value={strongestCapability ? capabilityTerm(strongestCapability.key).name : '—'}
+						value={strongestCapability ? capabilityTerm(strongestCapability.key).name : 'Not recorded'}
 						caption={strongestCapability ? `${strongestCapability.value} out of 100 in its natural capability record.` : 'No capability reading.'}
 					/>
 					<BriefCard
 						label="Signature ability"
-						value={signatureAbility ? signatureAbility.name : '—'}
+						value={signatureAbility ? signatureAbility.name : 'Not recorded'}
 						caption={signatureAbility
 							? `${intensityBand(signatureAbility.intensity)} expression through ${elementTerm(signatureAbility.medium).name.toLowerCase()}.`
 							: 'No signature ability recorded.'}
