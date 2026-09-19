@@ -391,6 +391,10 @@ const SECTIONS: { id: string; label: string; node: React.ReactNode }[] = [
         <TemplateFrame caption="SiteFooter">
           <SiteFooter />
         </TemplateFrame>
+      </>
+    ),
+  },
+  {
     id: "term",
     label: "Term",
     node: (
