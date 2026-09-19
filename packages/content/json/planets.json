@@ -277,7 +277,7 @@
         "planetImage": "assets/img/planets/gif/psychic_planet_gif.gif",
         "data": {
             "Type": "Psychic",
-            "Terrain": "Dense Flora, Rivers, Flourescent Mist",
+            "Terrain": "Dense Flora, Rivers, Fluorescent Mist",
             "Size": "2.49 x Earth",
             "Radius": "9,857 miles / 15,864 km",
             "Gravity": "0.90 x Earth",
