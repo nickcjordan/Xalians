@@ -3,6 +3,7 @@ import { Link } from 'react-router';
 import * as lore from '../../lore';
 import Prose from './Prose';
 import { SectionHead } from '@/components/system/masthead';
+import { usePageTitle } from '@/components/system/head';
 import { RecordRow, EmptyState } from '@/components/system/record';
 import { Badge } from '@/components/ui/badge';
 
@@ -27,6 +28,7 @@ function EntryRecord({ entry }) {
  * "Powers and peoples".
  */
 export default function Powers() {
+    usePageTitle('Powers');
     const { factions, vallerii, peoples } = lore.getPowers();
 
     return (
