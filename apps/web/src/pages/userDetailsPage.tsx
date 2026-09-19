@@ -31,6 +31,7 @@ function UserDetailsPage({ id }: UserDetailsPageProps) {
 	const [cursor, setCursor] = React.useState<string | undefined>();
 	const [message, setMessage] = React.useState<string | null>(null);
 	const [notFound, setNotFound] = React.useState(false);
+	const [resolved, setResolved] = React.useState(false);
 	const [isLoading, setIsLoading] = React.useState(false);
 	const [isLoadingMore, setIsLoadingMore] = React.useState(false);
 	const [openRecord, setOpenRecord] = React.useState<XalianRecord | null>(null);
@@ -38,6 +39,7 @@ function UserDetailsPage({ id }: UserDetailsPageProps) {
 	React.useEffect(() => {
 		setIsLoading(true);
 		setNotFound(false);
+		setResolved(false);
 		setMessage(null);
 		dbApi
 			.callListPublicXalians(id)
@@ -45,6 +47,7 @@ function UserDetailsPage({ id }: UserDetailsPageProps) {
 				setRecords(page.items);
 				setCursor(page.nextCursor);
 				setIsLoading(false);
+				setResolved(true);
 			})
 			.catch((error: any) => {
 				setIsLoading(false);
@@ -101,8 +104,14 @@ function UserDetailsPage({ id }: UserDetailsPageProps) {
 			<Shell className="pb-16">
 				<Masthead
 					kicker="Account"
-					title={id}
-					subtitle={records.length > 0 ? `${records.length} generated` : undefined}
+					title={resolved ? id : 'Account'}
+					subtitle={
+						resolved
+							? records.length > 0
+								? `${records.length} generated`
+								: undefined
+							: <span className="type-data break-all text-small text-ink-3">{id}</span>
+					}
 					aside={
 						<div className="flex w-full flex-col gap-3 sm:flex-row md:w-auto">
 							<Button variant="secondary" onClick={copyBinderLink}><Copy /> Copy binder link</Button>

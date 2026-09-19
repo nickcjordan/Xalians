@@ -50,6 +50,36 @@ describe('unknown account handling', () => {
 		expect(screen.queryByRole('heading', { name: 'No account by that name' })).not.toBeInTheDocument();
 	});
 
+	it('does not render the requested slug as the heading while the lookup is still loading', async () => {
+		let resolveLookup;
+		db.callListPublicXalians.mockReturnValue(
+			new Promise((resolve) => {
+				resolveLookup = resolve;
+			})
+		);
+
+		renderPage('does-not-exist');
+
+		expect(screen.getByRole('heading', { level: 1, name: 'Account' })).toBeInTheDocument();
+		expect(screen.queryByRole('heading', { level: 1, name: 'does-not-exist' })).not.toBeInTheDocument();
+		expect(screen.getByText('does-not-exist')).toBeInTheDocument();
+
+		resolveLookup({ items: [], nextCursor: undefined });
+		await waitFor(() => expect(screen.getByRole('heading', { level: 1, name: 'does-not-exist' })).toBeInTheDocument());
+	});
+
+	it('does not render the requested slug as the heading on a non-404 failure', async () => {
+		db.callListPublicXalians.mockRejectedValue(new Error('network down'));
+
+		renderPage('some-user');
+
+		await screen.findByText("Could not load this account's Xalians. Please try again later.");
+
+		expect(screen.getByRole('heading', { level: 1, name: 'Account' })).toBeInTheDocument();
+		expect(screen.queryByRole('heading', { level: 1, name: 'some-user' })).not.toBeInTheDocument();
+		expect(screen.getByText('some-user')).toBeInTheDocument();
+	});
+
 	it('loads the account collection normally when the lookup succeeds', async () => {
 		db.callListPublicXalians.mockResolvedValue({ items: [], nextCursor: undefined });
 
