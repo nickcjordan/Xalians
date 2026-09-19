@@ -104,6 +104,8 @@ export interface Rules {
 	pinning: boolean;
 	reachFirst: boolean;
 	sendable: number;
+	// Pass 24: the most a handler may send in one round; 0 means no per-round cap
+	roundSendCap: number;
 	worldsPerFrame: number;
 }
 

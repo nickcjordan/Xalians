@@ -46,6 +46,7 @@ import {
 import {
 	ROSTER_SIZE,
 	SENDABLE,
+	ROUND_SEND_CAP,
 	ROSTER_TRAILING_BONUS,
 	RETURNED_SEND_COST,
 	WORLDS_PER_MATCH,
@@ -345,6 +346,8 @@ export const DEFAULT_RULES: Rules = {
 		which forces one creature against one at 62 percent of contested worlds.
 	*/
 	sendable: SENDABLE,
+	// Pass 24: the most a handler may send in ONE round; 0 is no per-round cap
+	roundSendCap: ROUND_SEND_CAP,
 	worldsPerFrame: WORLDS_PER_FRAME,
 };
 
@@ -400,6 +403,7 @@ function normalizeRules(rules: RulesInput | null | undefined): Rules {
 		reachFirst: r.reachFirst !== undefined ? !!r.reachFirst : DEFAULT_RULES.reachFirst,
 		// Pass 9
 		sendable: num(r.sendable, DEFAULT_RULES.sendable),
+		roundSendCap: num(r.roundSendCap, DEFAULT_RULES.roundSendCap),
 		worldsPerFrame: num(r.worldsPerFrame, DEFAULT_RULES.worldsPerFrame),
 	};
 }
@@ -627,7 +631,24 @@ function withRecomputedHolds(state: MatchState): MatchState {
 function sendableCapFor(state: MatchState, player: Seat): number {
 	const bonus = (state.trailingBonus && state.trailingBonus[player]) || 0;
 	// pass 9: the send budget is a lever, so the sends-per-world ratio can be swept
-	return rulesOf(state).sendable + bonus;
+	const whole = rulesOf(state).sendable + bonus;
+	/*
+		PASS 24. The per-round cap (ROUND_SEND_CAP). `sendable` is a whole-Proving budget and
+		nothing made a handler save any of it, so round three opened with 4.8 creatures in hand
+		and 3.8 sends affordable and half its decisions had one dominant answer. A cap on what
+		one ROUND may spend leaves something for the last one.
+
+		It is expressed as a ceiling on the running total rather than a separate counter, so
+		every guard that already reads this cap (hasLegalSend, sendableRoster, the send itself,
+		the bot's remainingSends) obeys it without a second rule to keep in step.
+	*/
+	const perRound = rulesOf(state).roundSendCap;
+	if (!perRound || perRound <= 0) {
+		return whole;
+	}
+	const sentThisFrame = (state.sentThisFrame && state.sentThisFrame[player]) || 0;
+	const alreadySent = state.players[player].sentCount;
+	return Math.min(whole, alreadySent + Math.max(0, perRound - sentThisFrame));
 }
 
 /*
