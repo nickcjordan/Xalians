@@ -298,6 +298,38 @@ export const STAKE_ENABLED = true;
 export const STAKE_SITE_VALUE = 2;
 export const STAKE_BOTH_VALUE = 3;
 
+/*
+	PASS 6: WHEN the stake may be declared.
+
+	Pass 5 raised the magnitude scale so the Clash decides worlds, and that broke the
+	stake's premise rather than its price. Measured at 600 matches on seed 7: at the old
+	scale the staker held its staked world 61.7 percent of the time against 48.7 percent on
+	the worlds it did not stake, so the forecast was worth making; at the new scale it holds
+	47.4 against 50.0, so the forecast is worth nothing and the validation tool's own trap
+	flag fires. Re-sweeping the bot's edge threshold (4.4, 5.5, 6.5, 8.0 over 600 matches on
+	three seeds) was non-monotonic and did not resolve, which is the signature of an effect
+	near zero rather than a mistuned number.
+
+	'any-turn' was built on that reading and MEASURED WORSE: it traps on all three seeds
+	instead of two, because letting the stake be declared after sends turns the visible
+	margin into most of the edge, so the bot stakes worlds it is already winning. Stakes per
+	batch rose from 123 to 676 with 481 of them taken while ahead, held at 43.9 percent.
+	Raising STAKE_THRESHOLD_AHEAD to 12, 18 and effectively infinity lifted both the staked
+	and the unstaked rate together and never closed the gap.
+
+	The reason none of that worked: THERE WAS NOTHING TO FIX. Pooled over five seeds at 1000
+	matches (n=1619 staked worlds) the staker holds its staked world 50.0 +/- 2.4 percent
+	against 50.7 +/- 1.8 on its unstaked worlds, a difference of -0.6 +/- 3.0 points, which
+	is no difference at all. The stake is variance-neutral, exactly as pass 3 measured it and
+	exactly as a chosen risk should be. What was broken was the GAUGE: it compared two point
+	estimates with no interval, so it called "TRAP" on whichever way the noise fell, about
+	half the time. That is fixed in expeditionValidation.ts.
+
+	'any-turn' stays as a lever with its measurement recorded, so the next pass does not
+	rebuild it. The shipped setting is unchanged.
+*/
+export const STAKE_TIMING: 'before-first-send' | 'any-turn' = 'before-first-send';
+
 // Armored (the base, "Traits that remain"): blows against an armored creature are
 // reduced by this fraction.
 export const ARMORED_REDUCTION = 0.25;

@@ -12,7 +12,7 @@ import {
 	BOLSTER_FLOOR, ARMORED_REDUCTION, SHIELD_CAP, WILLFUL_THRESHOLD, KEEN_INSTINCT,
 	DULL_INSTINCT, SWIFT_SPEED, BOLSTER_RECOVERY,
 	HIDDEN_SEND_COST, HIDDEN_POWER, STAKE_ENABLED,
-	STAKE_SITE_VALUE, STAKE_BOTH_VALUE, DRAFT_POOL_SIZE, DRAFT_DISTINCT_SPECIES, CLAIM_COUNTING,
+	STAKE_SITE_VALUE, STAKE_BOTH_VALUE, DRAFT_POOL_SIZE, DRAFT_DISTINCT_SPECIES, CLAIM_COUNTING, STAKE_TIMING,
 } from '../expeditionInterpretation.ts';
 import type { MatchState, World } from '../types.ts';
 
@@ -1282,6 +1282,8 @@ describe('rules ablation switches', () => {
 			draftDistinctSpecies: DRAFT_DISTINCT_SPECIES,
 			// Pass 5: how the Ruling counts a standing creature
 			claimCounting: CLAIM_COUNTING,
+			// Pass 6: when during Deploy a stake may be declared
+			stakeTiming: STAKE_TIMING,
 		});
 		// assumption 20 cut the catch-up send, so the shipped default is zero
 		expect(state.rules.trailingBonus).toBe(0);
@@ -1298,11 +1300,46 @@ describe('rules ablation switches', () => {
 	// Pass 5: claimCounting decides what a STANDING creature contributes at the Ruling.
 	// Shipped setting is 'current' (the hold it has left); 'standing' counts the whole claim
 	// it arrived with, so damage short of a down moves nothing.
+	/*
+		Pass 6: stakeTiming decides WHEN a stake may be declared. Shipped setting is
+		'before-first-send' (a forecast made before any creature stands); 'any-turn' lets it
+		be declared on any turn of Deploy. 'any-turn' measured worse and is kept as a lever.
+	*/
+	it('stakeTiming before-first-send closes the stake once this handler has sent', () => {
+		const worlds = makeWorlds();
+		const rosterA = makeRoster('A');
+		const rosterB = makeRoster('B');
+		const base = { rosterA, rosterB, worlds, seed: 'stake-timing-seed' };
+
+		const closes = createMatch({ ...base, rules: { stakeTiming: 'before-first-send' } });
+		const opens = createMatch({ ...base, rules: { stakeTiming: 'any-turn' } });
+		const firstSend = (state: any) => {
+			const handler = state.turn;
+			const site = currentFrame(state).sites[0].id;
+			return { handler, next: send(state, handler, state.players[handler].roster[0].id, site)! };
+		};
+
+		// before any send both settings offer every world of the frame
+		const handler = closes.turn!;
+		expect(stakeableSiteIdsFor(closes, handler).length).toBe(3);
+		expect(stakeableSiteIdsFor(opens, handler).length).toBe(3);
+
+		// after this handler's own first send they part company
+		const a = firstSend(closes);
+		const b = firstSend(opens);
+		expect(stakeableSiteIdsFor(a.next, a.handler)).toEqual([]);
+		expect(stakeableSiteIdsFor(b.next, b.handler).length).toBe(3);
+		expect(stakeWorld(a.next, a.handler, currentFrame(a.next).sites[0].id)).toBeNull();
+		expect(stakeWorld(b.next, b.handler, currentFrame(b.next).sites[0].id)).not.toBeNull();
+	});
+
 	it('claimCounting accepts only its two settings and defaults to current', () => {
 		expect(matchWithRules({ claimCounting: 'standing' }).rules.claimCounting).toBe('standing');
 		expect(matchWithRules({ claimCounting: 'current' }).rules.claimCounting).toBe('current');
 		// anything else falls back rather than corrupting the Ruling's arithmetic
 		expect(matchWithRules({ claimCounting: 'nonsense' } as any).rules.claimCounting).toBe(CLAIM_COUNTING);
+		expect(matchWithRules({ stakeTiming: 'any-turn' }).rules.stakeTiming).toBe('any-turn');
+		expect(matchWithRules({ stakeTiming: 'nope' } as any).rules.stakeTiming).toBe(STAKE_TIMING);
 	});
 
 	it('exposes the rules object through getPublicState so the bot can respect it', () => {
