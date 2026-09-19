@@ -541,6 +541,38 @@ The rubric critic's lowest untouched line, 5 of 10, and its named worst thing: "
 | 54 | An empty world is short on a phone and grows back the moment a creature stands at it or is previewed there | 90% (386px to 176px; bench-to-world 1576px to 948px; the lifted panel measured at 240px with its ghost intact) | `reclamation.css` "AN EMPTY WORLD IS SHORT ON A PHONE" |
 | 55 | Every visible control is at least 32px tall at phone width, through padding rather than type size | 90% (sixteen under that before, zero after) | same block; guarded by `reclamation-proving.mjs` |
 
+## Pass 14: the quiet worlds are not a hole (2026-09-18)
+
+The prediction reader reported, unprompted, that in 5 of its 12 positions no Clash was possible at all because a side had fielded only attackless presences, and worried that "a handler who sends two bolsters into an empty world wins it for free, which may be a lever worth looking at." Pass 11 measured the rate (9.5 to 11.1 percent of contested worlds see no attack land). Pass 14 measures the thing that actually matters, which is whether it is a free win.
+
+**It is not. It is a worse bet**, over 400 matches on each of three seeds, counting every side at every contested world:
+
+| A side at a contested world | Wins it | n |
+|---|---|---|
+| fielding ONLY attackless presences | **41.9% +/- 1.5** | 4194 |
+| with at least one attacker | **53.0% +/- 1.2** | 6702 |
+
+Eleven points apart, far outside either interval. A presence contributes its hold and nothing else, and a world is decided on standing hold, so a side that brings no attacker can only ever win the worlds its hold alone was going to win, while giving the other side a free hand to remove that hold. The reader's intuition was that a fight nobody can lose is a fight worth taking; the arithmetic says the opposite, because the side that cannot attack also cannot stop being attacked.
+
+So a world with no Clash is not a hole. It is what a quiet world looks like, and the side that made it quiet paid for the quiet. **The open item is closed with a number rather than acted on**, which is the point of measuring before designing.
+
+**The rubric critic, scored a second time: 65 of 100** (from 64). The total barely moved, which is the honest reading of a pass series that has been fixing named faults rather than raising the whole: fiction and mechanics rose to 9, glanceability to 7, the first five minutes held at 8, and mobile FELL to 3 on a bug that turned out not to exist. Three of its findings were acted on this pass and two were disproved by checking.
+
+**Disproved: the "detached navbar" on mobile.** The critic called it the worst thing about the phone build, a navbar "torn loose, rendering in the middle of the page, slicing the STONERA world card in half." Checked live at 390 wide with a creature lifted, the navbar is `position: sticky; top: 0` and sits at y=0 with the worlds scrolling under it. **A fullPage screenshot re-renders sticky elements at each scroll band**, so the navbar appears a second time in the middle of a tall image. The screenshot was lying, not the page. The harness now takes a viewport capture beside every fullPage one, with a comment saying which to read for layout, so the next reviewer is not sent the same lie.
+
+**Disproved: the draft's "fifteen question-mark placeholders."** The draft cards carry the same creature silhouettes the bench does, verified by paint; the critic was reading a stale capture.
+
+**Acted on: the draft card's bare number.** The critic could not rank a card: "I cannot tell whether 26.9 is good, what Poseidas has to do with a draft whose rounds are Zolton/Stonera/Telypso." It is the creature's best hold of the nine worlds and the world it gets it at. The card now says `BEST 13.9 POSEIDAS`, and the nine lamps carry a title saying they are one lamp per world, one row per round, brighter for a better hold and brass-ringed on home ground.
+
+**Acted on: the Charter's way on.** It ended on a generic "New Proving" while the intro advertises a five-rival ladder. A win now offers the next rival up **by name**, with its habit under it, and the plain rematch beside it. A loss offers the rematch alone: climbing on a loss would be the ladder handing out rungs, and the ladder is the one thing here that should be earned.
+
+| # | Assumption / Decision | Confidence | Supporting Evidence |
+|---|---|---|---|
+| 57 | A win offers the next rung of the rival ladder by name; a loss does not | 85% (the critic's third-ranked fix; the ladder is climbed, never handed out) | `reclamationReport`; `__tests__/reclamationLadder.test.js` |
+| 58 | The draft card names what its number is (`BEST 13.9 POSEIDAS`) and its nine lamps say they are the nine worlds by round | 85% (a blind reader could not rank a card without it) | `reclamationDraft` |
+| 59 | A fullPage screenshot is not evidence about layout, because it re-renders sticky elements mid-image. The harness captures the viewport beside it | 95% (one such artifact cost a reviewer its lowest score of the run) | `reclamation-proving.mjs` |
+| 56 | A world where a side fields only presences is not a free win for that side: it wins 41.9 percent against 53.0 for a side with an attacker. No lever is needed | 90% (n=4194 against 6702, three seeds, 400 matches each) | this section |
+
 ### Pass 13 open items
 
 - The status strip is now the tallest single block on a phone at 250px. It carries the round, the worlds, the score, the phase, the turn and the hint; whether all six belong above the fold is the next question.

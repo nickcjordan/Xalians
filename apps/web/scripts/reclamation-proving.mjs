@@ -50,8 +50,22 @@ for (const view of ['simple', 'advanced']) {
 			if (message.type() === 'error') consoleErrors.push(message.text());
 		});
 
+		/*
+			PASS 14. A fullPage screenshot re-renders position:sticky elements at each scroll
+			band, so the site's sticky navbar appears a second time in the middle of the tall
+			image. A blind reviewer read that as a detached navbar slicing a world card in
+			half and called it the worst thing about the phone build; checked live, the
+			navbar sits correctly at y=0 with the worlds scrolling under it. The screenshot
+			was lying, not the page.
+
+			So the fullPage capture is kept, because it is the only way to see a whole
+			Proving screen at once, and a viewport capture is taken beside it. Anything
+			judging the layout should read the -view file; the fullPage file is for reading
+			content that runs past one screen.
+		*/
 		const shot = async (name) => {
 			await page.screenshot({ path: `${output}/${label}-${name}.png`, fullPage: true });
+			await page.screenshot({ path: `${output}/${label}-${name}-view.png` });
 			const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
 			assert(overflow <= 1, `${label}/${name}: horizontal overflow ${overflow}px`);
 		};

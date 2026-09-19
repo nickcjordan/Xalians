@@ -262,7 +262,15 @@ class ReclamationPage extends React.Component {
 		this.begin(this.state.seed);
 	};
 
-	newProving = () => {
+	/*
+		PASS 14. The Charter may now offer the next rival up the ladder by name, so a new
+		Proving can carry a rival with it. Called with nothing it is the old behaviour, a
+		fresh seed against whoever the handler last chose.
+	*/
+	newProving = (rivalId) => {
+		if (rivalId && rivalId !== this.state.rivalId) {
+			this.setRival(rivalId);
+		}
 		this.begin(Date.now() % 100000);
 	};
 
