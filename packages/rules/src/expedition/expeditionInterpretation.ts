@@ -350,8 +350,47 @@ export const STAKE_TIMING: 'before-first-send' | 'any-turn' = 'before-first-send
 	sentence: what strikes from a distance strikes first.
 
 	Both are rules flags so the ablation can price them.
+
+	PASS 18: PINNING IS SHIPPED ON, REACH FIRST STAYS OFF.
+
+	Pass 8 measured both inert and shipped both off, with the reason recorded precisely:
+	pinning fired 280 times per 600 matches but took only 67 swings, because 76 percent of
+	pins landed on a creature that had ALREADY swung, and only 12.4 percent of Provings
+	contained a pin that took a swing. That is an ordering problem, and the conditions have
+	moved twice since: pass 9 raised the send budget and pass 17's flip pricing crowds worlds
+	further, so 1v1 has gone 62.7 to 55.3 percent. More creatures sharing a world means more
+	unspent swings when a pin lands. (Pass 5's lesson: a sweep's conclusion expires when the
+	bot changes, and the bot has changed twice.)
+
+	Re-measured, 600 matches on three seeds:
+
+		pins per 600 matches      280 (pass 8)  ->  356 to 490
+		of those, took a swing    24%           ->  23.9 to 31.6%
+		Provings with a bite      12.4%         ->  13.2 to 24.2%
+
+	THE NUMBER THAT DECIDED IT. Pooled over five seeds at 600 matches, a creature whose attack
+	restrains wins its world 57.5 percent with the rule off and 58.7 percent with it on:
+	**+1.20 +/- 0.91 points, beyond noise**, on 22,500 sends a side. Per seed the difference is
+	+1.24, +2.19, +0.99, +0.63, +0.92 - positive five times out of five, though no single seed
+	resolves it alone, which is exactly the case pooling is for.
+
+	AND IT COSTS NOTHING IN SHAPE. At 3000 matches a side, every match gauge is within noise:
+	flips +0.0 +/- 0.9, comeback -0.3 +/- 2.7, 1v1 +0.0 +/- 0.9, downs 4.51 either way.
+
+	So this is a rule that makes a word on the card mean something for the creature carrying
+	it, without changing the game's shape. 171 of the pool's 1384 actions restrain; until now
+	that word was decoration, and reading it as a plain strike is the mildest form of the fault
+	the brief names (a creature must never be misread). It also makes landing first worth
+	something, which is a rule the game already asks the player to understand.
+
+	It is visible rather than constant: 0.56 pins land per Proving, 0.17 of them take a swing,
+	and 15.9 percent of Provings contain one. That is the honest size of it.
+
+	REACH FIRST stays off. Re-measured with pinning on, ordering reachers first moved the bite
+	rate from 29.9 to 30.3 percent and 23.9 to 24.9 on another seed - inside the noise, and it
+	buys nothing on its own. It remains an ablation row.
 */
-export const PINNING = false;
+export const PINNING = true;
 export const REACH_FIRST = false;
 
 // Armored (the base, "Traits that remain"): blows against an armored creature are

@@ -72,6 +72,18 @@ for (const view of ['simple', 'advanced']) {
 
 		try {
 			await page.goto(`${base}/reclamation?seed=${seed}&view=${view}`, { waitUntil: 'networkidle' });
+			/*
+				PASS 18. `?view=` was not read by the page until this pass, so this check had been
+				opening SIMPLE mode in both halves of its loop since pass 5 and calling one of them
+				advanced: half of every pass's verification was a duplicate, and the advanced
+				table's own panels (the resolution log among them) were never exercised here.
+				Assert the mode took, or the check quietly goes back to testing one thing twice.
+			*/
+			const modeNow = await page.evaluate(() => {
+				const pressed = document.querySelector('[data-mode-switch] [aria-pressed="true"]');
+				return pressed ? pressed.getAttribute('data-mode') : null;
+			});
+			assert.equal(modeNow, view, `${label}: asked for ${view} mode, the table is in ${modeNow}`);
 			// a resumed Proving from an earlier run would start this check mid-match
 			const discard = page.locator('[data-discard-match]');
 			if (await discard.count() && await discard.first().isVisible()) await discard.first().click();
