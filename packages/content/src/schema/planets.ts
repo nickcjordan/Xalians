@@ -1,8 +1,10 @@
-// Schemas for the two planet files: planets.json (legacy, still rendered by
-// apps/web/src/pages/planetPage.js) and planetRecords.json (the ratified structured
-// version, physical + Generator "report" + history). Both carry long-form authored prose
+// Schemas for the two planet files: planets.json (legacy; no current reader in apps/web,
+// kept only for its authored history prose and validated here) and planetRecords.json (the
+// ratified structured version, physical + Generator "report" + history, and the one
+// apps/web/src/lore/loaders.js actually imports). Both carry long-form authored prose
 // history paragraphs, which are validated structurally (array of non-empty strings), not
-// word by word.
+// word by word. The legacy "Size"/"Gravity" x-Earth string fields were removed (issue #443,
+// no Earth references in canon); radius and gravity are absolute values in planetRecords.json.
 import { z } from 'zod';
 import { LegacyElementNameSchema } from './typeEffectiveness.ts';
 import { ElementKeySchema } from './registries.ts';
@@ -12,9 +14,7 @@ import { ElementKeySchema } from './registries.ts';
 const LegacyPlanetDataSchema = z.object({
   Type: LegacyElementNameSchema,
   Terrain: z.string().min(1),
-  Size: z.string().min(1),
   Radius: z.string().min(1),
-  Gravity: z.string().min(1),
   'Temperature Low': z.string().min(1),
   'Temperature High': z.string().min(1),
 });

@@ -1,7 +1,22 @@
 import { AbilityTemplateSchema } from '@xalians/content/schema';
 import { describe, it, expect } from 'vitest';
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { getEntries, getEntry, getWorlds, getSpeciesList } from '../index';
-import { chronicleData, encyclopediaData, planetRecordsData, registriesData, templateRecordsByKey } from '../loaders';
+import {
+	chronicleData,
+	encyclopediaData,
+	planetRecordsData,
+	registriesData,
+	speciesData,
+	templateRecordsByKey,
+} from '../loaders';
+
+// Word-boundary, case-SENSITIVE: catches "Earth" the place but leaves ordinary
+// lowercase "earth" (soil) and "rare earth metals" alone, per the #443 ruling
+// that Earth does not exist in the Xalia canon.
+const EARTH_WORD = /\bEarth\b/;
 
 // Content JSON prose fields scanned for punctuation the copy pass (issue
 // #431) removed. Any new field added to the lore bundle should be included
@@ -195,6 +210,50 @@ describe('lore copy conventions (issue #431)', () => {
 				expect(raw.includes(typo), `${name} contains "${typo}"`).toBe(false);
 			}
 		}
+	});
+});
+
+describe('no Earth in universe (issue #443)', () => {
+	it('no content JSON string references Earth', () => {
+		// Raw imported JSON, not the derived views: those carry cycles (a planet
+		// links its native species, which link back to the planet), same as the
+		// typo scan above.
+		const sources = {
+			planetRecords: planetRecordsData,
+			chronicle: chronicleData,
+			encyclopedia: encyclopediaData,
+			species: speciesData,
+			speciesRecords: templateRecordsByKey,
+		};
+		for (const [name, data] of Object.entries(sources)) {
+			const raw = JSON.stringify(data);
+			expect(EARTH_WORD.test(raw), `${name} contains "Earth"`).toBe(false);
+		}
+	});
+
+	it('no source file under apps/web/src (outside __tests__) references Earth', () => {
+		const here = path.dirname(fileURLToPath(import.meta.url));
+		const srcRoot = path.resolve(here, '..', '..');
+		const offenders = [];
+
+		function walk(dir) {
+			for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+				if (entry.name === '__tests__') continue;
+				const full = path.join(dir, entry.name);
+				if (entry.isDirectory()) {
+					walk(full);
+					continue;
+				}
+				if (!/\.(js|jsx|ts|tsx)$/.test(entry.name)) continue;
+				const text = fs.readFileSync(full, 'utf8');
+				if (EARTH_WORD.test(text)) {
+					offenders.push(path.relative(srcRoot, full));
+				}
+			}
+		}
+
+		walk(srcRoot);
+		expect(offenders, offenders.join(', ')).toEqual([]);
 	});
 });
 
