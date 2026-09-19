@@ -162,7 +162,7 @@ Ordered by impact per unit of work. P1 items are bugs and one-line fixes; P2 ite
 18. **Desktop layout balance**: cap the reading width or run two columns for the lower half of the record, the species page and the Powers list so no page leaves a third of the width empty.
 19. **Grids**: fourteen worlds in seven columns on desktop, four at laptop width, two on phones, so no row is ragged. Show the element chip on the Worlds page cards as on home.
 20. **Silhouettes read as intentional**: a consistent plate frame, a world-tinted backdrop, and a caption on the home strip ("Silhouettes from the species record") so the style reads as a choice. If shaded art ever arrives, the home strip is the first place for it.
-21. **"Vs Earth" measurements**: either rename to a fictional baseline with a tooltip giving the Earth equivalent, or accept the break in fiction as a deliberate reader aid and say so in a footnote.
+21. **No Earth anywhere** (ruled by Nick 2026-09-18, replacing the footnote idea): the site speaks from inside the universe, so remove the Earth-relative rows and print absolute figures (radius in km, surface gravity in m/s²), strip the legacy "x Earth" strings from the planet data, and add a test that forbids the word.
 22. **Core-entity entries**: give Vallerii, APEX, King Kozrak, the Generators, Scrambler Tokens and the Nemesis Plague a real three-paragraph article above the excerpts.
 23. **Skip-to-content link** on every page, and mobile polish on home (align the story link with the button, add a scroll hint to the species strip).
 
