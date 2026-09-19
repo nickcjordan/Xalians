@@ -218,6 +218,15 @@ describe('no Earth in universe (issue #443)', () => {
 		// Raw imported JSON, not the derived views: those carry cycles (a planet
 		// links its native species, which link back to the planet), same as the
 		// typo scan above.
+		//
+		// The legacy packages/content/json/planets.json is deliberately absent.
+		// It still carries "3.88 x Earth" ratio strings, but nothing reads them:
+		// apps/web/src/lore/loaders.js imports planetRecords.json, and a grep for
+		// readers of those two keys across apps/web, scripts and packages returns
+		// nothing. The file is also inside the frozen generation release's hashed
+		// schema set, so editing it or its schema demands a new release ID for
+		// data no visitor can reach. The ruling is about what a visitor reads, so
+		// the scan covers the files that reach a page.
 		const sources = {
 			planetRecords: planetRecordsData,
 			chronicle: chronicleData,

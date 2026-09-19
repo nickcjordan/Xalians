@@ -6,7 +6,9 @@
         "data": {
             "Type": "Fire",
             "Terrain": "Jagged Molten Cliffs, Lava Pits",
+            "Size": "3.88 x Earth",
             "Radius": "15,360 miles / 24,719 km",
+            "Gravity": "1.25 x Earth",
             "Temperature Low": "65 °C / 149 °F",
             "Temperature High": "355 °C / 671 °F"
         },
@@ -28,7 +30,9 @@
         "data": {
             "Type": "Water",
             "Terrain": "Mostly Ocean, Scarce Sandy Islands",
+            "Size": "1.34 x Earth",
             "Radius": "5,305 miles / 8,537 km",
+            "Gravity": "1.7 x Earth",
             "Temperature Low": "5 °C / 41 °F",
             "Temperature High": "67 °C / 152.6 °F"
         },
@@ -54,7 +58,9 @@
         "data": {
             "Type": "Dark",
             "Terrain": "Flat Land, Thick Stalky Undergrowth, Ominous Haze",
+            "Size": "2.1 x Earth",
             "Radius": "8,313 miles / 13,379 km",
+            "Gravity": "0.90 x Earth",
             "Temperature Low": "-6 °C / 21.2 °F",
             "Temperature High": "93 °C / 199.4 °F"
         },
@@ -78,7 +84,9 @@
         "data": {
             "Type": "Light",
             "Terrain": "Patchy Grassland, Short Scattered Vegetation",
+            "Size": "0.84 x Earth",
             "Radius": "3,325 miles / 5,352 km",
+            "Gravity": "1.17 x Earth",
             "Temperature Low": "24.5 °C / 76.1 °F",
             "Temperature High": "122 °C / 251.6 °F"
         },
@@ -107,7 +115,9 @@
         "data": {
             "Type": "Plant",
             "Terrain": "Abundant Forests, Marshy Wetlands",
+            "Size": "8.17 x Earth",
             "Radius": "32,343 miles / 52,051 km",
+            "Gravity": "0.80 x Earth",
             "Temperature Low": "-4 °C / 24.8 °F",
             "Temperature High": "40 °C / 104 °F"
         },
@@ -132,7 +142,9 @@
         "data": {
             "Type": "Electric",
             "Terrain": "Mountainous, Metal Peaks, Frozen Canyons",
+            "Size": "0.62 x Earth",
             "Radius": "2,454 miles / 3,950 km",
+            "Gravity": "1.59 x Earth",
             "Temperature Low": "-71 °C / -95.8 °F",
             "Temperature High": "57 °C / 134.6 °F"
         },
@@ -158,7 +170,9 @@
         "data": {
             "Type": "Ghost",
             "Terrain": "Rocky Cliffs, Shallow Oceans, Thick Haze",
+            "Size": "7.92 x Earth",
             "Radius": "31,353 miles / 50,458 km",
+            "Gravity": "1.65 x Earth",
             "Temperature Low": "-58 °C / -72.4 °F",
             "Temperature High": "53 °C / 127.4 °F"
         },
@@ -187,7 +201,9 @@
         "data": {
             "Type": "Rock",
             "Terrain": "Deep Canyons, Rocky Craters, Gray Skies",
+            "Size": "8.78 x Earth",
             "Radius": "34,758 miles / 55,937 km",
+            "Gravity": "0.74 x Earth",
             "Temperature Low": "-28 °C / -18.4 °F",
             "Temperature High": "34 °C / 93.2 °F"
         },
@@ -211,7 +227,9 @@
         "data": {
             "Type": "Chemical",
             "Terrain": "Acid Swamps, Gaseous Smog, Toxic Atmosphere",
+            "Size": "0.49 x Earth",
             "Radius": "1,940 miles / 3,122 km",
+            "Gravity": "0.94 x Earth",
             "Temperature Low": "-24 °C / -11.2 °F",
             "Temperature High": "43 °C / 109.4 °F"
         },
@@ -234,7 +252,9 @@
         "data": {
             "Type": "Air",
             "Terrain": "Clusters of Rolling Plains, Canyons, Dense Fog",
+            "Size": "1.63 x Earth",
             "Radius": "6,453 miles / 10,385 km",
+            "Gravity": "0.36 x Earth",
             "Temperature Low": "-66 °C / -86.8 °F",
             "Temperature High": "58 °C / 136.4 °F"
         },
@@ -258,7 +278,9 @@
         "data": {
             "Type": "Psychic",
             "Terrain": "Dense Flora, Rivers, Fluorescent Mist",
+            "Size": "2.49 x Earth",
             "Radius": "9,857 miles / 15,864 km",
+            "Gravity": "0.90 x Earth",
             "Temperature Low": "7 °C / 44.6 °F",
             "Temperature High": "65 °C / 149 °F"
         },
@@ -280,7 +302,9 @@
         "data": {
             "Type": "Ice",
             "Terrain": "Snow Covered Permafrost, Frozen Tundra, Ice Crystal Peaks",
+            "Size": "1.82 x Earth",
             "Radius": "7,205 miles / 11,595 km",
+            "Gravity": "1.2 x Earth",
             "Temperature Low": "-122 °C / -187.6 °F",
             "Temperature High": "-10 °C / 14 °F"
         },
@@ -308,7 +332,9 @@
         "data": {
             "Type": "Metal",
             "Terrain": "Ore Filled Soil, Mineral Plated Vegetation, Liquid Metal Rivers",
+            "Size": "2.38 x Earth",
             "Radius": "9,422 miles / 15,163 km",
+            "Gravity": "1.83 x Earth",
             "Temperature Low": "-34 °C / -29.2 °F",
             "Temperature High": "36 °C / 96.8 °F"
         },
@@ -333,7 +359,9 @@
         "data": {
             "Type": "Sand",
             "Terrain": "Rolling Sand Dunes, Dust Storms",
+            "Size": "8.23 x Earth",
             "Radius": "32,581 miles / 52,433 km",
+            "Gravity": "0.70 x Earth",
             "Temperature Low": "-50 °C / -58 °F",
             "Temperature High": "173 °C / 343.4 °F"
         },
