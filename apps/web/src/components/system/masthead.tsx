@@ -64,9 +64,9 @@ function SectionHead({
   ...props
 }: React.ComponentProps<"div"> & { title: React.ReactNode; count?: React.ReactNode }) {
   return (
-    <div data-slot="section-head" className={cn("mb-4 flex items-baseline gap-3", className)} {...props}>
+    <div data-slot="section-head" className={cn("mb-4 flex flex-wrap items-baseline gap-x-3 gap-y-1", className)} {...props}>
       <h2 className="type-heading m-0">{title}</h2>
-      {count != null ? <span className="type-data text-small text-ink-2">{count}</span> : null}
+      {count != null ? <span className="type-data shrink-0 text-small text-ink-2">{count}</span> : null}
       {children}
     </div>
   )

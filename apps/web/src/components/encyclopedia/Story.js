@@ -233,9 +233,9 @@ function RecordsByWorld({ sections }) {
 			span="wide"
 			divided
 		>
-			<div className="flex flex-col items-start justify-between gap-2 sm:flex-row sm:items-baseline">
+			<div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-2">
 				<SectionHead title="From the records" count={`${totalParagraphs} paragraph${totalParagraphs === 1 ? '' : 's'}`} className="mb-0" />
-				<Button type="button" variant="ghost" size="sm" onClick={toggleAll}>
+				<Button type="button" variant="ghost" size="sm" className="ml-auto" onClick={toggleAll}>
 					{allOpen ? 'Collapse all' : 'Expand all'}
 				</Button>
 			</div>

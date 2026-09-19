@@ -2,7 +2,7 @@
 
 Status: the running state of the game under ownership (brief: `reclamation-ownership-brief.md`). This file is the resume point. Any reset reads this first and continues at the weakest thing named below, never from scratch. Each pass appends its own section; the standing state at the top is rewritten in place.
 
-## Standing state (after pass 23, 2026-09-19)
+## Standing state (after pass 24, 2026-09-19)
 
 ### Gauges, proctor mirror
 
@@ -53,12 +53,18 @@ What it reads, and where each effect kind lands (measured over the seed-7 pool, 
 
 ### Open items, ranked (resume here)
 
-1. **The status strip is the tallest block on a phone** at 250px, carrying six jobs (round, worlds, score, phase, turn, hint). Whether all six belong above the fold is open.
-2. **Fire is a dead element and dromeus a dead species** in the draft. Read it pooled before treating it as a failure (pass 6's lesson), the way pass 16 read the attribute lanes.
-3. **Three of the four borrowed effect kinds** (displace, transfer, suppress) still read as plain attacks. Pass 18 gave `restrain` a rule that earns its place; the other three have no separate expression at a sealed world, so each needs its own case before it gets one.
-4. **The generator's attribute ranges are not published anywhere the game can read.** Pass 19 found a threshold sitting below the floor of the attribute it cuts, and the only way to find it was to sample pools. A band the game defines against a generated attribute should be checkable against that attribute's real range.
-5. **No human has played a full Proving.** The notes and telemetry are built, verified, and empty.
-6. **Hot-seat, the remaining three quarters.** Pass 20 landed the seat indirection; what is left is the hand-off screen and its state, the second squad's draft, and a Charter that names two people instead of a rival. Scoped below.
+**Nick's steer, 2026-09-19: the priority is whether the game is mechanically deep and fun, not how two people play it.** This list is ordered against that. Hot-seat is built and playable and is no longer a priority.
+
+1. **The game has ONE kind of decision, and it runs out.** Measured in pass 24: near-best options per decision run 3.9 / 2.8 / 2.05 across the three rounds, and by round three **half of all decisions have one dominant answer**. The round that decides the Charter is the least interesting one. Neither more budget nor a per-round cap fixes it (both measured; see the `ROUND_SEND_CAP` note), because the single axis is "which creature at which world" and by the last round there are few of each. **A second axis is the work.** Two candidates are already read off the record and unused:
+   - **Reach.** `spatial.range` is read and 46.8 percent of creatures reach past contact, and **nothing in the rules uses the distance.** Pass 8's `reachFirst` measured inert, but that was ordering, not distance as a resource.
+   - **The three borrowed effect kinds.** displace, transfer and suppress, 261 actions between them, still read as plain attacks. `restrain` earned a real rule in pass 18 and it paid; these three have not been retried since worlds got crowded.
+2. **Option spread is 2.85 against a band of 3 to 5**, 32.5 percent dominant. Item 1 is the cause; this is the gauge that reads it.
+3. **The critic's engagement scores are the lowest on the sheet:** reason to keep playing 5, pace 6, numbers 6, style 6, against fiction 9 and first five minutes 8. Worth a fresh critic run once item 1 moves.
+4. **Fire is a dead element and dromeus a dead species** in the draft. Read it pooled before treating it as a failure (pass 6's lesson), the way pass 16 read the attribute lanes.
+5. **The generator's attribute ranges are not published anywhere the game can read.** Pass 19 found a threshold below the floor of the attribute it cuts, findable only by sampling pools.
+6. **The status strip is the tallest block on a phone** at 250px, carrying six jobs.
+7. **No human has played a full Proving.** The instrument now exists (hot-seat, passes 20 to 23); the play has not happened.
+8. **Hot-seat's Charter still names a rival, not two people.** Cosmetic, deprioritized by the steer above.
 
 ### Hot-seat: what pass 20 did and did not do
 
@@ -453,3 +459,28 @@ The staging: the first handler's confirm hands the keyboard over rather than sta
 **A vacuous assertion caught in the writing.** The first version read the first handler's pool *after* the confirm, when the draft had already moved on, so it came back empty and the overlap check compared against nothing: it would have passed however the pools were built. Reading the pool before the confirm makes it 15 against 15 and the assertion real. **An assertion that cannot fail is worth exactly as much as no assertion, and the way to tell is to look at the numbers it prints rather than the word PASS.**
 
 **Verified:** 2054 tests green (five new), build inside budgets, headless Proving green in all four solo configurations, hot-seat green end to end including the two-stage draft.
+
+### Pass 24 (2026-09-19): the depth gauge, read properly, and a fix that failed
+
+**Nick's steer redirected this pass:** the priority is whether the game is mechanically deep and fun, not hot-seat. Hot-seat was built as a validation instrument, a way to find out, and the question upstream of it is the one that matters.
+
+**Read for engagement rather than balance, the gauges say something specific.** Option spread was the only gauge below band, and split by round it is not a flat shortfall but a decay:
+
+| | round 1 | round 2 | round 3 |
+|---|---|---|---|
+| mean near-best options | 3.9 | 2.8 | **2.05** |
+| share with ONE dominant option | 28% | 38% | **50%** |
+
+Consistent on three seeds. **The round that decides the Charter is the game's least interesting moment.** That is the mechanical root of the critic's "reason to keep playing 5/10" and "pace 6/10", and a better statement of the problem than either score.
+
+**The cause is arithmetic:** round three opens with 4.8 creatures still in hand but only 3.8 sends still affordable. The budget runs dry before the roster does.
+
+**Two fixes measured, both failed.** More budget makes it *worse* (sendable 12 and 13 take the round-three dominant share from 50 to 58 percent: a bigger budget is spent earlier and the last round arrives emptier). A per-round cap, built as `ROUND_SEND_CAP` and shipped off, looks like a triumph on the depth gauge alone (cap 3: r3 3.28 options, 30 percent dominant) and is a disaster on every other: **downs 1.9 against a band of 3 to 5, and 87 percent of contested worlds one creature against one.** It buys decisions by starving the Clash, the exact fault passes 5 to 17 spent themselves fixing. The balance-safe cells give nothing back: cap 6 with sendable 14 holds every gauge in band and makes round three *worse* at 57 percent dominant.
+
+**What the measurement points at, and it is now open item 1.** The game has one kind of decision, and by the last round there are few creatures and few live worlds, so the product runs out. No budget setting fixes a single-axis problem. A second axis would not run out with the roster, and two are already in the record, read and unused: **reach** (46.8 percent of creatures reach past contact, nothing uses the distance) and the **three borrowed effect kinds** (261 actions reading as plain attacks).
+
+**A scare checked and dismissed, the fourth time this rule has paid.** The validation CLI flagged `passEarly` at 44.0 against a 47.0 mirror on one seed, a 3-point margin against a bar of 8, labelled "decorative decisions?". Pooled over five seeds at 800 matches a cell the margin is **10.00 +/- 2.16**: above the bar on the point estimate, interval straddling it. Not decorative; the flag fired on 300-match noise at +/- 6.9.
+
+**The lesson worth keeping:** *a gauge below band tells you less than the same gauge split by when it is read.* "Option spread 2.85 against a band of 3 to 5" sat on the sheet for many passes as a mild shortfall. Split by round it is a decay from 3.9 to 2.05 with the worst value at the climax, which is a different problem with a different fix, and the split cost one probe.
+
+**Verified:** 2059 tests green (five new), typecheck clean, build inside budgets, headless Proving green in all four configurations. The art-registry test flakes under the root runner on a `process.cwd()` path and passes 6 of 6 from its own workspace; unrelated to this pass.

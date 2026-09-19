@@ -543,9 +543,10 @@ const SECTIONS: { id: string; label: string; node: React.ReactNode }[] = [
       <>
         <SectionHead title="Reading layout" />
         <p className="text-body text-ink-2">
-          Shape C: a three-track grid for prose -- a sticky rail, 62ch text, and a marginalia column that is filled on
-          purpose. Used by a story part and a world&apos;s History. Under `lg` the rail collapses into a `Fold` above the
-          text and the margin renders above each block&apos;s text as a compact row.
+          Shape C: a sticky rail beside a column of reading blocks, each block carrying its own inner grid (62ch text,
+          a marginalia cell that is filled on purpose) so a block&apos;s margin can never drift into another block&apos;s
+          row. Used by a story part and a world&apos;s History. Under `lg` the rail collapses into a `Fold` above the
+          text and each block&apos;s margin renders above its text as a compact row.
         </p>
         <div className="mt-6 border border-edge bg-s0 p-4">
           <ReadingLayout>
