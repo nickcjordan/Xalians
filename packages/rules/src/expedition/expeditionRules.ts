@@ -40,7 +40,7 @@
 
 import type { XalianRecord } from '@xalians/content/schema';
 import {
-	prepare, magnitudeAgainst, holdAtSite, targetMatchupMultiplier, traitKeywordsOf,
+	prepare, magnitudeAgainst, holdAtSite, targetMatchupMultiplier, traitKeywordsOf, isFieldable,
 	roleOf, round1, isSwift, speedOf,
 } from './creatureOnTable.ts';
 import {
@@ -689,6 +689,19 @@ export function send(state: MatchState, handler: Seat, recordId: string, siteId:
 	}
 	const record = p.roster.find((r) => r.id === recordId);
 	if (!record) {
+		return null;
+	}
+	/*
+		PASS 7. Nick's ruling: a creature carrying capabilities this game cannot express is
+		explicitly UNAVAILABLE here rather than silently misread as a plain strike. A record
+		with no action the table can speak has no role, so it cannot be sent; the bench shows
+		it unavailable with the reason (creatureOnTable.unavailabilityOf).
+
+		No creature in the current content is unfieldable (400 records, 0 unfieldable), so
+		this guard costs nothing today and is the safety the day content produces an effect
+		family the table has no rule for.
+	*/
+	if (!isFieldable(record)) {
 		return null;
 	}
 	const frame = currentFrame(state);

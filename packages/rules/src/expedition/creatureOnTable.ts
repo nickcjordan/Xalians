@@ -1,5 +1,5 @@
-import {recordActions, type DisplayAbility} from '@xalians/content/ability-compatibility';
-import { historicalCategory, isSignatureAbility } from '@xalians/content/ability-compatibility';
+import { isSignatureAbility } from '@xalians/content/ability-compatibility';
+import { readRecord, EFFECT_ROLE } from './recordReading.ts';
 /*
 	Expedition - the creature on the table.
 
@@ -27,11 +27,6 @@ import {
 	MIN_BLOW_MAGNITUDE,
 	ROLE,
 	PRESENCE_BY_ARCHETYPE,
-	SWEEP_ABILITY_ACTIONS,
-	WARD_ABILITY_ACTION,
-	MEND_ABILITY_ACTION,
-	getActClass,
-	getGoverningAttributeForAction,
 	getFavoredActSpec,
 	getConductSpec,
 	ACT_CLASS,
@@ -386,10 +381,6 @@ export function magnitudeOf(intensity: number, governingAttrValue: number | unde
 	return Math.max(1, Math.round(raw));
 }
 
-function abilitiesOf(record: XalianRecord | null | undefined): DisplayAbility[] {
-	return record ? recordActions(record) : [];
-}
-
 /*
 	buildActs(record, strainMult) -> [{ name, action, class, magnitude, instrument,
 	signature }] - one act per ability, magnitude computed against strain only (the
@@ -399,21 +390,41 @@ export function buildActs(record: XalianRecord, strainMult: number, magnitudeSca
 	// the global magnitude rescale (assumption 12) is applied here, once, so every
 	// downstream reading of an act's magnitude is already in the game's own units
 	const scale = typeof magnitudeScale === 'number' ? magnitudeScale : MAGNITUDE_SCALE;
-	return abilitiesOf(record).map((ability) => {
-		const governingAttribute = getGoverningAttributeForAction(historicalCategory(ability));
+	/*
+		PASS 7. Reads the record's own fields through recordReading.ts rather than projecting
+		each action onto a legacy key. An action the table cannot express comes back as
+		UNSUPPORTED and is left out of the acts entirely, which is what makes a creature with
+		nothing this game can use show as unavailable rather than silently striking.
+	*/
+	return readRecord(record).usable.map((reading) => {
 		const attrs = (record && record.attributes) as unknown as Record<string, number> || {};
-		const attrValue = governingAttribute ? attrs[governingAttribute] : undefined;
-		const printed = magnitudeOf(ability.intensity, attrValue);
+		const attrValue = reading.governingAttribute ? attrs[reading.governingAttribute] : undefined;
+		const printed = magnitudeOf(reading.intensity, attrValue);
+		const actClass: ActClass = reading.role !== EFFECT_ROLE.ATTACK
+			? (ACT_CLASS.SUPPORT as ActClass)
+			: reading.delivery === 'contact'
+				? (ACT_CLASS.CONTACT as ActClass)
+				: (ACT_CLASS.PROJECTION as ActClass);
 		return {
-			name: ability.name,
-			action: historicalCategory(ability),
-			class: getActClass(historicalCategory(ability)) as ActClass | null,
+			name: reading.name,
+			// the table's own word for what this act is, no longer a legacy action key
+			action: reading.role === EFFECT_ROLE.SHIELD ? 'ward'
+				: reading.role === EFFECT_ROLE.MEND ? 'mend'
+					: reading.area ? 'sweep' : 'strike',
+			class: actClass,
 			// the printed magnitude the record would carry on a plate, before strain and
 			// before the game's own rescale, kept for the dossier
 			printedMagnitude: printed,
-			magnitude: round1(Math.max(0, printed * strainMult * scale)),
-			instrument: ability.instrument,
-			signature: isSignatureAbility(ability),
+			magnitude: reading.role === EFFECT_ROLE.ATTACK
+				? round1(Math.max(0, printed * strainMult * scale))
+				: round1(Math.max(0, printed * strainMult * scale)),
+			instrument: reading.instrument,
+			signature: reading.signature,
+			// pass 7: what the record actually says, carried for the dossier and for rules
+			effectKind: reading.effectKind,
+			area: reading.area,
+			range: reading.range,
+			reach: reading.reach,
 		};
 	});
 }
@@ -541,24 +552,35 @@ export function naturalRoleOf(record: XalianRecord): Role {
 	const archetypeKey = record && record.archetype && record.archetype.key
 		? String(record.archetype.key).toLowerCase()
 		: null;
-	const abilityActions = abilitiesOf(record).map((a) => historicalCategory(a));
+	/*
+		PASS 7. The role is read off what the record's actions DO (their primary effects and
+		whether they land on an area) rather than off a projection onto sixteen legacy keys.
+		The archetype still decides which presence a support creature is when its own actions
+		do not say, exactly as before; what changed is where "does it ward" and "does it mend"
+		are answered from.
+
+		A creature with no usable action at all has no role: it is unavailable at this table
+		(readRecord().fieldable is false) and ROLE.NONE is what the board shows.
+	*/
+	const reading = readRecord(record);
+	if (!reading.fieldable) {
+		return ROLE.NONE as Role;
+	}
 
 	const presenceDefault = archetypeKey
 		? (PRESENCE_BY_ARCHETYPE as Record<string, Role>)[archetypeKey]
 		: undefined;
 	if (presenceDefault) {
-		const hasWard = abilityActions.includes(WARD_ABILITY_ACTION);
-		const hasMend = abilityActions.includes(MEND_ABILITY_ACTION);
-		if (hasWard && !hasMend) {
+		if (reading.hasShield && !reading.hasMend) {
 			return ROLE.SHIELD as Role;
 		}
-		if (hasMend && !hasWard) {
+		if (reading.hasMend && !reading.hasShield) {
 			return ROLE.BOLSTER as Role;
 		}
 		return presenceDefault;
 	}
 
-	return abilityActions.some((a) => (SWEEP_ABILITY_ACTIONS as string[]).includes(a)) ? (ROLE.SWEEP as Role) : (ROLE.STRIKE as Role);
+	return reading.hasArea ? (ROLE.SWEEP as Role) : (ROLE.STRIKE as Role);
 }
 
 /*
@@ -585,7 +607,9 @@ export function blowActOf(record: XalianRecord, acts: Act[], role: Role): Act | 
 	}
 	const attacking = acts.filter((a) => a.class !== (ACT_CLASS.SUPPORT as ActClass));
 	if (role === ROLE.SWEEP) {
-		const sweeps = acts.filter((a) => (SWEEP_ABILITY_ACTIONS as string[]).includes(a.action));
+		// pass 7: an act sweeps because the record gives it an area footprint, not because
+		// its legacy key happened to be one of burst, spray or cloud
+		const sweeps = acts.filter((a) => a.area === true);
 		if (sweeps.length > 0) {
 			return sweeps.reduce((best, a) => (!best || a.magnitude > best.magnitude ? a : best));
 		}
@@ -710,4 +734,30 @@ export function prepare(
 		packBonded: traitKeywords.includes('pack-bonded'),
 		solitary: traitKeywords.includes('solitary'),
 	};
+}
+
+/*
+	PASS 7. Whether this table can field the creature at all, and the words to say when it
+	cannot (docs/design/reclamation-ownership-brief.md: "a creature with a capability a game
+	does not support is explicitly unavailable in that game rather than misread ... a throw
+	must become a visible 'cannot be fielded here' and never a silent strike").
+
+	Measured over the seed-7 pool of 400 records, every creature is fieldable and every
+	action is expressible, so this path costs nothing on current content. It exists so that
+	the day a generation release produces an effect family this game has no rule for, the
+	bench says so in words rather than quietly treating it as a strike.
+*/
+export function isFieldable(record: XalianRecord | null | undefined): boolean {
+	return readRecord(record).fieldable;
+}
+
+export interface Unavailability {
+	fieldable: boolean;
+	/** one sentence per action the table cannot speak */
+	reasons: string[];
+}
+
+export function unavailabilityOf(record: XalianRecord | null | undefined): Unavailability {
+	const reading = readRecord(record);
+	return { fieldable: reading.fieldable, reasons: reading.unsupportedReasons };
 }

@@ -173,6 +173,15 @@ export interface Act {
 	// 'hold' act, both lack a `fallback`/`instrument`/`signature` triple a real ability
 	// carries; `fallback: true` marks the former so callers can count how often it fires.
 	fallback?: boolean;
+	/*
+		Pass 7: what the record itself says about this act, carried through from
+		recordReading.ts so the dossier can print it and a later rule can read it without
+		going back to the record. Absent on the synthetic acts above.
+	*/
+	effectKind?: string;
+	area?: boolean;
+	range?: string | null;
+	reach?: number;
 }
 
 export interface Conduct {
