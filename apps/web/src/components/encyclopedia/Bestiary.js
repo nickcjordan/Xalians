@@ -1,11 +1,8 @@
 import React, { useMemo, useState } from 'react';
-import { Link } from 'react-router';
 import * as lore from '../../lore';
-import XalianImage from '../xalianImage';
-import { useReadMark } from './trail';
-import { Tile, TileArt, TileMeta, TileGrid, EmptyState } from '@/components/system/record';
+import SpeciesTile from './SpeciesTile';
+import { TileGrid, EmptyState } from '@/components/system/record';
 import { usePageTitle } from '@/components/system/head';
-import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { FilterBar } from '@/components/system/filters';
@@ -15,26 +12,6 @@ const ELEMENTS = [
     'fire', 'water', 'dark', 'light', 'plant', 'electric', 'ghost', 'rock',
     'chemical', 'air', 'psychic', 'ice', 'metal', 'sand',
 ];
-
-function BestiaryTile({ species: s }) {
-    const read = useReadMark('species', s.key);
-    return (
-        <Tile as={Link} to={lore.routeFor('species', s.key)} className={`el-${s.element}`}>
-            <TileArt>
-                <XalianImage colored speciesName={s.name} primaryType={s.element} moreClasses="w-full" />
-            </TileArt>
-            <TileMeta>
-                <span className="type-subhead block text-base">{s.name}</span>
-                <span className="type-data mt-1 block text-small text-ink-3">{s.planet ? s.planet.name : s.homePlanet}</span>
-                {read && (
-                    <div className="mt-2 flex gap-2">
-                        <Badge variant="ok">Reviewed</Badge>
-                    </div>
-                )}
-            </TileMeta>
-        </Tile>
-    );
-}
 
 /**
  * Bestiary: the catalogue of all 29 species, filterable by element and
@@ -113,7 +90,7 @@ export default function Bestiary() {
                 <EmptyState legend="No results">No species match the current filter.</EmptyState>
             ) : (
                 <TileGrid>
-                    {list.map((s) => <BestiaryTile key={s.key} species={s} />)}
+                    {list.map((s) => <SpeciesTile key={s.key} species={s} />)}
                 </TileGrid>
             )}
         </div>

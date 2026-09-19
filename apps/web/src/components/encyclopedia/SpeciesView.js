@@ -4,14 +4,16 @@ import * as lore from '../../lore';
 import Prose from './Prose';
 import XalianImage from '../xalianImage';
 import Connections from './Connections';
+import SpeciesTile from './SpeciesTile';
 import { useVisit, useResume } from './trail';
 import { SectionHead } from '@/components/system/masthead';
 import { usePageTitle } from '@/components/system/head';
-import { SpecPlate, RecordRow, EmptyState } from '@/components/system/record';
+import { SpecPlate, RecordRow, TileGrid, EmptyState } from '@/components/system/record';
 import { Term } from '@/components/system/term';
+import { Fold, FoldGroup } from '@/components/system/fold';
+import { IndexList, IndexRow } from '@/components/system/index-row';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from '@/components/ui/accordion';
 
 /**
  * Definitions for internal vocabulary that reaches the visitor undefined
@@ -50,6 +52,44 @@ function capitalize(text) {
     return text.charAt(0).toUpperCase() + text.slice(1);
 }
 
+function bodyValue(value) {
+    return <span className="font-body normal-case tracking-normal text-ink">{value}</span>;
+}
+
+/**
+ * Humanizes an ability field's raw registry value into visitor-facing
+ * prose, per the ratified vocabulary map for the six signature-ability
+ * fields (activation, delivery, effects/action, medium, instrument). Falls
+ * back to capitalizing the first letter for anything not in the map.
+ */
+const ABILITY_VALUE_MAP = {
+    ongoing: 'Ongoing',
+    discrete: 'Single act',
+    single: 'Single act',
+    contact: 'By contact',
+    projectile: 'Projectile',
+    area: 'Over an area',
+    restrain: 'Restrain',
+    ranged: 'At range',
+    self: 'On itself',
+    touch: 'By touch',
+    line: 'In a line',
+    burst: 'In a burst',
+};
+
+const ELEMENT_NAMES = new Set([
+    'fire', 'water', 'dark', 'light', 'plant', 'electric', 'ghost', 'rock',
+    'chemical', 'air', 'psychic', 'ice', 'metal', 'sand',
+]);
+
+function humanizeAbilityValue(value) {
+    if (!value) return value;
+    const key = String(value).toLowerCase();
+    if (ABILITY_VALUE_MAP[key]) return ABILITY_VALUE_MAP[key];
+    if (ELEMENT_NAMES.has(key)) return capitalize(key);
+    return capitalize(String(value));
+}
+
 function MeterRow({ name, band, maxBand }) {
     const ceiling = maxBand || 100;
     const fillPct = Math.min(100, Math.round((band[0] / ceiling) * 100));
@@ -78,13 +118,13 @@ function ContinueTheStory({ homePlanet }) {
     if (!target) return null;
     const label = resumeEra ? 'Continue the story' : 'This species in the story';
     return (
-        <div className="border-t border-edge pt-4">
-            <RecordRow className="border-b-0 py-0" term={label}>
-                <Link to={lore.routeFor('era', target.key)} className="text-ink underline decoration-ink-3 underline-offset-4 hover:decoration-ink">
-                    Part {target.order + 1}, {target.name}
-                </Link>
-            </RecordRow>
-        </div>
+        <IndexList>
+            <IndexRow
+                to={lore.routeFor('era', target.key)}
+                title={label}
+                meta={`Part ${target.order + 1}, ${target.name}`}
+            />
+        </IndexList>
     );
 }
 
@@ -93,99 +133,69 @@ function TemplatePhysiology({ view }) {
     const composition = [p.composition.primary.name, p.composition.secondary ? p.composition.secondary.name : null]
         .filter(Boolean)
         .join(' / ');
-    const communication = p.communication && p.communication.length > 0
-        ? p.communication.map((c) => c.name).join(', ')
-        : 'None recorded';
+    const breathes = p.breathes && p.breathes.length > 0 ? p.breathes.map((m) => m.name).join(', ') : null;
     const ambientMedia = p.environmentalTolerance && p.environmentalTolerance.ambientMedia
         ? p.environmentalTolerance.ambientMedia.map((m) => m.name).join(', ')
         : '';
     const temperature = p.environmentalTolerance && p.environmentalTolerance.temperatureC
         ? `${p.environmentalTolerance.temperatureC.min} to ${p.environmentalTolerance.temperatureC.max} °C`
         : '';
-    const breathes = p.breathes ? p.breathes.map((m) => m.name).join(', ') : ambientMedia;
     const chirality = p.genome && p.genome.chirality ? p.genome.chirality.name : '';
 
+    // Height, weight, diet, lifespan and communication already print in the
+    // identity strip's key-facts plate, so they are left out here on
+    // purpose -- nothing repeats between the strip and this plate.
     const entries = [
         { key: <Term definition={TERM_DEFS.corporeality}>Corporeality</Term>, value: p.corporeality.name },
         { key: <Term definition={TERM_DEFS.composition}>Composition</Term>, value: composition },
         { key: <Term definition={TERM_DEFS.bodyPlan}>Body plan</Term>, value: p.bodyPlan.name },
         { key: <Term definition={TERM_DEFS.covering}>Covering</Term>, value: p.covering.name },
-        { key: 'Height', value: `${bandText(p.size.heightCm)} cm` },
-        { key: 'Weight', value: `${bandText(p.size.weightKg)} kg` },
-        { key: 'Diet', value: p.diet.name },
-        { key: <Term definition={TERM_DEFS.communication}>Communication</Term>, value: communication },
-        { key: 'Breathes', value: breathes || 'Not recorded' },
+        { key: 'Breathes', value: breathes || (ambientMedia ? undefined : 'Not recorded') },
         { key: <Term definition={TERM_DEFS.ambientMedia}>Ambient media</Term>, value: ambientMedia || 'Not recorded' },
         { key: 'Temperature band', value: temperature || 'Not recorded' },
-        {
-            key: <Term definition={TERM_DEFS.lifespan}>Lifespan</Term>,
-            value: (
-                <>
-                    {p.lifespan.name}
-                    {p.lifespan.nature && <span className="mt-0.5 block font-body text-small text-ink-2">{p.lifespan.nature}</span>}
-                </>
-            ),
-        },
         { key: <Term definition={TERM_DEFS.chirality}>Chirality</Term>, value: chirality || 'Not recorded' },
-    ].map((e) => ({ ...e, value: <span className="font-body normal-case tracking-normal text-ink">{e.value}</span> }));
+    ].filter((e) => e.value !== undefined)
+        .map((e) => ({ ...e, value: bodyValue(e.value) }));
 
-    return <SpecPlate entries={entries} />;
+    return <SpecPlate columns={2} entries={entries} />;
 }
 
 function LegacyPhysiology({ view }) {
     const legacy = view.legacy;
     const entries = [
-        { key: 'Height', value: legacy.height },
-        { key: 'Weight', value: legacy.weight },
         { key: 'Attack range', value: legacy.traits.attackRange || 'Not recorded' },
         { key: 'Flight', value: legacy.traits.canFly ? 'Yes' : 'No' },
-    ].map((e) => ({ ...e, value: <span className="font-body normal-case tracking-normal text-ink">{e.value}</span> }));
-    return <SpecPlate entries={entries} />;
+    ].map((e) => ({ ...e, value: bodyValue(e.value) }));
+    return <SpecPlate columns={2} entries={entries} />;
 }
 
-const ABILITY_FIELD_GLOSSES = [
-    ['Instrument', 'The body part or channel the ability works through.'],
-    ['Activation', 'How it fires: a single discrete act, or ongoing while held.'],
-    ['Delivery', 'How it reaches its target: by contact, as a projectile, over an area.'],
-    ['Effects', 'What it does to the target.'],
-    ['Medium', 'The element it works through.'],
-    ['Intensity', 'Strength on a scale of 100. A species shows its range; one creature shows its number.'],
-];
+const ABILITY_FIELD_GLOSSES = {
+    Instrument: 'The body part or channel the ability works through.',
+    Activation: 'How it fires: a single discrete act, or ongoing while held.',
+    Delivery: 'How it reaches its target: by contact, as a projectile, over an area.',
+    Effects: 'What it does to the target.',
+    Medium: 'The element it works through.',
+    Intensity: 'Strength on a scale of 100. A species shows its range; one creature shows its number.',
+};
 
 function Signature({ signature }) {
     if (!signature) return null;
     return (
         <Card variant="panel" className="p-4">
             <p className="type-legend m-0">Signature ability</p>
-            <p className="type-heading m-0 text-[19px]">{signature.name}</p>
+            <p className="type-subhead m-0 text-[19px]">{signature.name}</p>
+            <p className="m-0 font-body text-body text-ink">{signature.description}</p>
             <SpecPlate
+                columns={2}
                 entries={[
-                    { key: 'Instrument', value: signature.instrument },
-                    { key: 'Activation', value: signature.activation },
-                    { key: 'Delivery', value: signature.delivery },
-                    { key: 'Effects', value: signature.action },
-                    { key: 'Medium', value: signature.medium },
-                    { key: <Term definition={TERM_DEFS.intensity}>Intensity</Term>, value: bandText(signature.intensity) },
+                    { key: <Term definition={ABILITY_FIELD_GLOSSES.Instrument}>Instrument</Term>, value: bodyValue(humanizeAbilityValue(signature.instrument)) },
+                    { key: <Term definition={ABILITY_FIELD_GLOSSES.Activation}>Activation</Term>, value: bodyValue(humanizeAbilityValue(signature.activation)) },
+                    { key: <Term definition={ABILITY_FIELD_GLOSSES.Delivery}>Delivery</Term>, value: bodyValue(humanizeAbilityValue(signature.delivery)) },
+                    { key: <Term definition={ABILITY_FIELD_GLOSSES.Effects}>Effects</Term>, value: bodyValue(humanizeAbilityValue(signature.action)) },
+                    { key: <Term definition={ABILITY_FIELD_GLOSSES.Medium}>Medium</Term>, value: bodyValue(humanizeAbilityValue(signature.medium)) },
+                    { key: <Term definition={ABILITY_FIELD_GLOSSES.Intensity}>Intensity</Term>, value: bodyValue(bandText(signature.intensity)) },
                 ]}
             />
-            <p className="m-0 font-body text-small text-ink-2">{signature.description}</p>
-            <Accordion type="single" collapsible>
-                <AccordionItem value="what-these-mean" className="border-t border-edge">
-                    <AccordionTrigger className="hover:no-underline">
-                        <span className="type-legend">What these mean</span>
-                    </AccordionTrigger>
-                    <AccordionContent>
-                        <dl className="m-0 flex flex-col gap-2">
-                            {ABILITY_FIELD_GLOSSES.map(([term, gloss]) => (
-                                <div key={term}>
-                                    <dt className="type-legend inline">{term}</dt>
-                                    <dd className="m-0 inline font-body text-small text-ink-2"> {gloss}</dd>
-                                </div>
-                            ))}
-                        </dl>
-                    </AccordionContent>
-                </AccordionItem>
-            </Accordion>
         </Card>
     );
 }
@@ -271,13 +281,75 @@ function LegacyRatings({ view }) {
             <SpecPlate
                 entries={ratings.map(([key, value]) => ({
                     key: humanize(key),
-                    value: <span className="font-body normal-case tracking-normal text-ink">{capitalize(value)}</span>,
+                    value: bodyValue(capitalize(value)),
                 }))}
             />
             <p className="mt-4 max-w-[62ch] font-body text-small text-ink-2">
                 This species has not yet been migrated to the ratified record. Readouts arrive with its template.
             </p>
         </section>
+    );
+}
+
+/** Two-column key-facts plate for the identity strip: home world, height,
+ * weight, diet, lifespan, communication for a template species; home world,
+ * height, weight, attack range and flight for a legacy stub. */
+function KeyFacts({ view }) {
+    if (view.source !== 'template') {
+        const legacy = view.legacy;
+        return (
+            <SpecPlate
+                columns={2}
+                entries={[
+                    {
+                        key: 'Home world',
+                        value: (
+                            <Link to={lore.routeFor('world', view.homePlanet)} className={`el-${view.element} font-body normal-case tracking-normal text-ink underline decoration-ink-3 underline-offset-4 hover:decoration-ink`}>
+                                {view.planet ? view.planet.name : view.homePlanet}
+                            </Link>
+                        ),
+                    },
+                    { key: 'Height', value: bodyValue(legacy.height) },
+                    { key: 'Weight', value: bodyValue(legacy.weight) },
+                    { key: 'Attack range', value: bodyValue(legacy.traits.attackRange || 'Not recorded') },
+                    { key: 'Flight', value: bodyValue(legacy.traits.canFly ? 'Yes' : 'No') },
+                ]}
+            />
+        );
+    }
+
+    const p = view.record.physiology;
+    const communication = p.communication && p.communication.length > 0
+        ? p.communication.map((c) => c.name).join(', ')
+        : 'None recorded';
+
+    return (
+        <SpecPlate
+            columns={2}
+            entries={[
+                {
+                    key: 'Home world',
+                    value: (
+                        <Link to={lore.routeFor('world', view.homePlanet)} className={`el-${view.element} font-body normal-case tracking-normal text-ink underline decoration-ink-3 underline-offset-4 hover:decoration-ink`}>
+                            {view.planet ? view.planet.name : view.homePlanet}
+                        </Link>
+                    ),
+                },
+                { key: 'Height', value: bodyValue(`${bandText(p.size.heightCm)} cm`) },
+                { key: 'Weight', value: bodyValue(`${bandText(p.size.weightKg)} kg`) },
+                { key: 'Diet', value: bodyValue(p.diet.name) },
+                {
+                    key: <Term definition={TERM_DEFS.lifespan}>Lifespan</Term>,
+                    value: bodyValue(
+                        <>
+                            {p.lifespan.name}
+                            {p.lifespan.nature && <span className="mt-0.5 block font-body text-small text-ink-2">{p.lifespan.nature}</span>}
+                        </>
+                    ),
+                },
+                { key: <Term definition={TERM_DEFS.communication}>Communication</Term>, value: bodyValue(communication) },
+            ]}
+        />
     );
 }
 
@@ -304,94 +376,76 @@ export default function SpeciesView() {
 
     const isTemplate = view.source === 'template';
     const connectionsCount = lore.getConnections('species', key, { limit: 12 }).length;
+    const worldName = view.planet ? view.planet.name : view.homePlanet;
+    const worldmates = view.planet && Array.isArray(view.planet.nativeSpecies)
+        ? view.planet.nativeSpecies.filter((s) => s.key !== key)
+        : [];
 
     return (
-        <article className={`el-${view.element}`}>
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-[minmax(240px,360px)_minmax(0,1fr)]">
-                <div className="flex min-w-0 flex-col gap-4 max-sm:contents">
-                    <div className="max-sm:order-1 max-sm:max-w-[320px]">
-                        <XalianImage colored speciesName={view.name} primaryType={view.element} moreClasses="w-full" />
-                    </div>
-                    {isTemplate && <div className="max-sm:order-3">{view.record.abilities.map(ability => <Signature key={ability.name} signature={ability} />)}</div>}
-                    <div className="max-sm:order-4">
-                        <SectionHead title="Physiology" />
-                        {isTemplate ? <TemplatePhysiology view={view} /> : <LegacyPhysiology view={view} />}
-                    </div>
+        <article className={`el-${view.element} flex flex-col gap-8`}>
+            <Card variant="panel" className="grid gap-6 md:grid-cols-[280px_minmax(0,1fr)]">
+                <div className="mx-auto w-full max-w-[280px] md:mx-0">
+                    <XalianImage colored speciesName={view.name} primaryType={view.element} moreClasses="w-full" />
                 </div>
 
-                <div className="flex min-w-0 flex-col gap-4 max-sm:order-2">
-                    <div className="flex flex-col gap-1">
-                        <h3 className="type-heading m-0 text-[19px]">In brief</h3>
-                        <Prose text={view.description} except={view.entry && view.entry.key} />
-                    </div>
+                <div className="flex min-w-0 flex-col gap-4">
+                    <Prose text={view.description} except={view.entry && view.entry.key} className="measure text-lead" />
+                    <KeyFacts view={view} />
+                </div>
+            </Card>
 
+            <div className="grid gap-8 lg:grid-cols-[minmax(0,62ch)_minmax(0,1fr)]">
+                <Card variant="panel" className="p-0 px-5">
                     {view.nameOrigin && (
-                        <div className="flex flex-col gap-1">
-                            <h3 className="type-heading m-0 text-[19px]">Name origin</h3>
-                            <p className="measure m-0 font-body text-body text-ink-2">{view.nameOrigin}</p>
-                        </div>
+                        <RecordRow term="Name origin">{view.nameOrigin}</RecordRow>
                     )}
 
                     {Array.isArray(view.appearance) && view.appearance.length > 0 && (
-                        <div className="flex flex-col gap-1">
-                            <h3 className="type-heading m-0 text-[19px]">Appearance</h3>
-                            <ul className="measure m-0 flex list-none flex-col gap-1 p-0 font-body text-body text-ink-2">
+                        <RecordRow term="Appearance">
+                            <ul className="m-0 flex list-none flex-col gap-1 p-0 font-body text-small text-ink-2">
                                 {view.appearance.map((quality) => (
                                     <li key={quality}>{quality}</li>
                                 ))}
                             </ul>
-                        </div>
+                        </RecordRow>
                     )}
 
                     {Array.isArray(view.fields) && view.fields.length > 0 && view.fields.map((field) => (
-                        <div key={field.key} className="flex flex-col gap-1">
-                            <h3 className="type-heading m-0 text-[19px]">{field.label}</h3>
-                            <p className="measure m-0 font-body text-body text-ink-2">{field.text}</p>
-                        </div>
+                        <RecordRow key={field.key} term={field.label}>{field.text}</RecordRow>
                     ))}
+                </Card>
+
+                <div className="flex min-w-0 flex-col gap-6">
+                    {isTemplate && view.record.abilities.map((ability) => <Signature key={ability.name} signature={ability} />)}
+                    <div>
+                        <SectionHead title="Physiology" />
+                        {isTemplate ? <TemplatePhysiology view={view} /> : <LegacyPhysiology view={view} />}
+                    </div>
                 </div>
             </div>
 
-            <div className="mt-8">
-                <ContinueTheStory homePlanet={view.homePlanet} />
-            </div>
+            {worldmates.length > 0 && (
+                <section>
+                    <SectionHead title={`Also from ${worldName}`} count={worldmates.length} />
+                    <TileGrid>
+                        {worldmates.map((s) => <SpeciesTile key={s.key} species={s} />)}
+                    </TileGrid>
+                </section>
+            )}
 
-            <Accordion type="single" collapsible className="mt-6 flex flex-col gap-2">
-                <AccordionItem value="cross-references" className="border border-edge bg-s1 px-5">
-                    <AccordionTrigger className="hover:no-underline">
-                        <span className="type-legend">Cross references</span>
-                        <span className="type-data ml-auto mr-2 text-small text-ink-2">{connectionsCount}</span>
-                    </AccordionTrigger>
-                    <AccordionContent>
-                        <Connections kind="species" recordKey={key} limit={12} />
-                    </AccordionContent>
-                </AccordionItem>
-                <AccordionItem value="for-builders" className="border border-edge bg-s1 px-5">
-                    <AccordionTrigger className="hover:no-underline">
-                        <span className="type-legend">For builders</span>
-                    </AccordionTrigger>
-                    <AccordionContent>
-                        <p className="mb-4 font-body text-small text-ink-2">
-                            Machine-readable data the Generator and the games use.
-                        </p>
-                        <Accordion type="single" collapsible>
-                            <AccordionItem value="record-data" className="border-t border-edge">
-                                <AccordionTrigger className="hover:no-underline">
-                                    <span className="type-legend">Record data</span>
-                                </AccordionTrigger>
-                                <AccordionContent>
-                                    <p className="mb-4">
-                                        <Badge variant={isTemplate ? 'ok' : 'info'}>
-                                            {isTemplate ? 'Record ratified' : 'Record pending migration'}
-                                        </Badge>
-                                    </p>
-                                    {isTemplate ? <GeneratorTemplate record={view.record} /> : <LegacyRatings view={view} />}
-                                </AccordionContent>
-                            </AccordionItem>
-                        </Accordion>
-                    </AccordionContent>
-                </AccordionItem>
-            </Accordion>
+            <ContinueTheStory homePlanet={view.homePlanet} />
+
+            <FoldGroup>
+                <Fold label="Cross references" count={connectionsCount}>
+                    <Connections kind="species" recordKey={key} limit={12} bare />
+                </Fold>
+                <Fold label="For builders">
+                    <p className="mb-4 font-body text-small text-ink-2">
+                        Machine-readable data the Generator and the games use.
+                    </p>
+                    {isTemplate ? <GeneratorTemplate record={view.record} /> : <LegacyRatings view={view} />}
+                </Fold>
+            </FoldGroup>
         </article>
     );
 }
