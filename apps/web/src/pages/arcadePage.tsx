@@ -5,7 +5,7 @@ import { Gauge, Trophy } from 'lucide-react';
 
 import XalianNavbar from '@/components/navbar';
 import { ARCADE_GAMES } from '@/arcade/catalog';
-import { ARCADE_DAILY_CAP, ARCADE_TOKEN_PRICE, loadArcadeProgress, syncArcadeProgressFromAttributes } from '@/arcade/progress';
+import { ARCADE_DAILY_CAP, ARCADE_TOKEN_PRICE, arcadeCreditsRemaining, loadArcadeProgress, syncArcadeProgressFromAttributes } from '@/arcade/progress';
 import { Shell, Masthead, SectionHead } from '@/components/system/masthead';
 import { SkipLink } from '@/components/system/a11y';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -14,17 +14,23 @@ import { Progress } from '@/components/ui/progress';
 
 export default function ArcadePage() {
   const [progress, setProgress] = React.useState(loadArcadeProgress);
+  const [signedIn, setSignedIn] = React.useState(false);
 
   React.useEffect(() => {
     let active = true;
     Promise.all([import('@/utils/authUtil'), import('@/utils/dbApi')])
-      .then(([auth, api]) => auth.currentUser().then((user) => user ? api.callGetUser() : null))
+      .then(([auth, api]) => auth.currentUser().then((user) => {
+        if (active) setSignedIn(!!user);
+        return user ? api.callGetUser() : null;
+      }))
       .then((account) => {
         if (active && account) setProgress(syncArcadeProgressFromAttributes(account.attributes));
       })
       .catch(() => undefined);
     return () => { active = false; };
   }, []);
+
+  const creditsRemaining = arcadeCreditsRemaining(progress.earnedToday);
   return (
     <main id="main" className="min-h-screen bg-room font-body text-ink" data-tier="chrome">
       <SkipLink />
@@ -43,11 +49,22 @@ export default function ArcadePage() {
             <p className="mt-2 mb-3 font-body text-body text-ink-2">
               Qualifying wins fill one shared daily meter. Every {ARCADE_TOKEN_PRICE} credits converts into a Scrambler Token for signed-in players.
             </p>
-            <Progress value={progress.earnedToday} aria-label="Arcade credits earned today" />
+            <Progress
+              value={progress.earnedToday}
+              aria-label="Arcade credits earned today"
+              aria-valuetext={`${progress.earnedToday} of ${ARCADE_DAILY_CAP} credits`}
+            />
           </div>
           <div className="flex items-center gap-3 border-l-0 border-edge md:border-l md:pl-6">
             <Gauge className="size-5" aria-hidden />
-            <div><span className="type-data text-heading">{progress.credits}</span><p className="type-legend m-0">Credits to token</p></div>
+            <div>
+              {creditsRemaining === 0 && signedIn ? (
+                <span className="type-data text-heading">Token ready</span>
+              ) : (
+                <span className="type-data text-heading">{creditsRemaining}</span>
+              )}
+              <p className="type-legend m-0">Credits to next token</p>
+            </div>
           </div>
         </Card>
 
