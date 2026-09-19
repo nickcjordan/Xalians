@@ -27,40 +27,14 @@ Repository conventions, all of them enforced by hooks, tests or Nick:
 
 ## 3. Verification by paint
 
-No visual PR is done until it has been looked at. The Chrome DevTools MCP profile is often locked by another session; the reliable path is playwright-core with the installed Chrome. Install once in a scratch directory (never in the repo):
+No visual PR is done until it has been looked at. The Chrome DevTools MCP profile is often locked by another session; the reliable path is the checked-in harness at `scripts/audit/verify.mjs`, which drives the installed Chrome through `playwright-core` (a root dev dependency; nothing to install). It loads each route at desktop (1440), laptop (1100) and phone (390, mobile emulation), records title, scroll position on load, horizontal overflow, crashes, console errors, failed requests, broken images, placeholder text, the word Earth and em dashes, saves full-page screenshots with `report.md` and `data.json`, and exits 1 on any crash, overflow or near-empty screenshot. `scripts/audit/README.md` has the options.
 
-```js
-// verify.mjs  (node verify.mjs http://localhost:3000/encyclopedia)
-import { chromium } from 'playwright-core';
-const url = process.argv[2];
-const browser = await chromium.launch({ executablePath: 'C:/Program Files/Google/Chrome/Application/chrome.exe' });
-for (const [name, ctx] of [
-  ['desktop', { viewport: { width: 1440, height: 900 } }],
-  ['laptop', { viewport: { width: 1100, height: 800 } }],
-  ['phone', { viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, deviceScaleFactor: 2 }],
-]) {
-  const context = await browser.newContext(ctx);
-  const page = await context.newPage();
-  const errors = [];
-  page.on('pageerror', (e) => errors.push(String(e)));
-  page.on('console', (m) => { if (m.type() === 'error') errors.push(m.text()); });
-  await page.goto(url, { waitUntil: 'networkidle' });
-  await page.waitForTimeout(1200);
-  const facts = await page.evaluate(() => ({
-    title: document.title,
-    scrollY: window.scrollY,
-    overflow: document.documentElement.scrollWidth > window.innerWidth,
-    h1: document.querySelector('h1')?.innerText,
-    height: document.documentElement.scrollHeight,
-  }));
-  await page.screenshot({ path: `shots/${name}-${url.replace(/[^a-z0-9]+/gi, '_')}.jpg`, fullPage: true, type: 'jpeg', quality: 60 });
-  console.log(name, JSON.stringify({ ...facts, errors }));
-  await context.close();
-}
-await browser.close();
+```
+node scripts/audit/verify.mjs --base http://localhost:3000 --routes /encyclopedia,/generator   # a PR's routes against the dev server
+node scripts/audit/verify.mjs --routes audited --out untracked/site-audit/after                 # the full audited set against www.xalians.com
 ```
 
-A screenshot under about 20 KB means the React tree crashed, not that the page is empty. Run the dev server from `apps/web` with `npm run dev` (port 3000). After a PR merges, re-run the same script against `https://www.xalians.com<route>` once the deploy lands (the bundle hash in the served index.html changes); the deployed site is what Nick judges.
+A screenshot under about 20 KB means the React tree crashed, not that the page is empty. Run the dev server from `apps/web` with `npm run dev` (port 3000). After a PR merges, re-run the harness against the deployed site once the deploy lands (the bundle hash in the served index.html changes); the deployed site is what Nick judges. Screenshots are evidence for the PR body, never committed.
 
 ## 4. Orchestration plan
 
@@ -72,7 +46,7 @@ Give each agent its own git worktree (`git worktree add C:/dev/src/xalians-audit
 
 Waves. Inside a wave the agents run in parallel and own disjoint files; the next wave starts after the previous wave's PRs have merged and main has been re-fetched.
 
-Wave 0, orchestrator alone: read this brief, the audit, `CLAUDE.md`, `docs/DESIGN_SYSTEM.md`, `docs/BACKLOG.md`. Confirm `npm test -- --run` passes on main. Set up the verification script and the run log. Run the verification script against the deployed site for `/`, `/generator`, `/encyclopedia`, `/encyclopedia/worlds/magmuth`, `/encyclopedia/species/graviclaw` and keep those shots as the "before" set.
+Wave 0, orchestrator alone: read this brief, the audit, `CLAUDE.md`, `docs/DESIGN_SYSTEM.md`, `docs/BACKLOG.md`. Confirm `npm test -- --run` passes on main in `apps/web`, `packages/content` and `packages/rules`. The harness, the run log (`untracked/site-audit-run.md`, from `scripts/audit/run-log.template.md`) and the "before" screenshots of the audited routes on the deployed site (`untracked/site-audit/before/`) were prepared on 2026-09-18; `docs/design/site-audit-kickoff-2026-09-18.md` says how to regenerate any of them if missing.
 
 Wave 1 (three agents, disjoint files): #423 (EraScrubber.js, Bestiary.js), #424 (status.tsx, notFoundPage.tsx, userDetailsPage.tsx), #430 (new hook in components/system plus one call per page; index.html).
 
