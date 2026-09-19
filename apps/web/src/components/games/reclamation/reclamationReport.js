@@ -2,6 +2,7 @@ import React from 'react';
 import { speciesLabel, formatHold, roleSentence } from './reclamationNarration';
 import { RoleGlyph } from './reclamationGlyphs';
 import { createTelemetry } from './reclamationTelemetry';
+import { RIVALS } from '@xalians/rules/expedition/expeditionBot';
 
 /*
 	Reclamation: the match report (docs/design/reclamation-play-enhancements.md, Pass 1,
@@ -622,6 +623,16 @@ export function ReclamationReport({
 		: report.reason === 'tiebreak'
 			? 'settled on the tiebreak'
 			: 'after the third frame';
+	/*
+		The next rung: RIVALS is in ladder order (weakest first, by measured win rate against
+		the proctor), so the next rival is simply the one after this handler's. Offered only
+		on a win, and only when there is one above.
+	*/
+	const rivalIndex = RIVALS.findIndex((r) => r.id === rivalId);
+	const nextRival = report.won && rivalIndex >= 0 && rivalIndex < RIVALS.length - 1
+		? RIVALS[rivalIndex + 1]
+		: null;
+
 	return (
 		<div className={`g-panel rec-report rec-rise ${report.won ? 'rec-report--won' : 'rec-report--lost'}`} data-report>
 			<span className="g-kicker">The Charter</span>
@@ -668,9 +679,39 @@ export function ReclamationReport({
 				storage={storage}
 			/>
 
-			<button type="button" className="g-btn g-btn--primary" onClick={onNewProving} data-new-proving>
-				New Proving
-			</button>
+			{/*
+				PASS 14. The Charter used to end on a generic "New Proving" while the intro
+				advertised a five-rival ladder that the ending forgot about. A blind reviewer
+				named that as one of its three highest-value fixes: "the end screen's generic
+				NEW PROVING ignores the five-rival ladder the intro page advertises."
+
+				So when the handler has just beaten a rival and there is a harder one above
+				it, the Charter offers that one BY NAME as the primary way on, with the plain
+				rematch beside it. A loss offers the rematch alone: climbing on a loss would
+				be the ladder handing out rungs, and the ladder is the one thing in this game
+				that should be earned.
+			*/}
+			<div className="rec-report-onward">
+				{nextRival && (
+					<button
+						type="button"
+						className="g-btn g-btn--primary"
+						onClick={() => onNewProving(nextRival.id)}
+						data-next-rival={nextRival.id}
+					>
+						Face the {nextRival.name}
+						<span className="rec-report-onward-note">{nextRival.tag}</span>
+					</button>
+				)}
+				<button
+					type="button"
+					className={`g-btn${nextRival ? '' : ' g-btn--primary'}`}
+					onClick={() => onNewProving()}
+					data-new-proving
+				>
+					{nextRival ? 'Another against this rival' : 'New Proving'}
+				</button>
+			</div>
 		</div>
 	);
 }

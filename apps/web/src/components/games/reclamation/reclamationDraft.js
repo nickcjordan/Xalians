@@ -57,7 +57,11 @@ function DraftCard({ record, frames, kept, onToggle }) {
 				<XalianImage variant="token" speciesName={record.species} primaryType={el} padding="0px" fill="black" filter={pieceShadowFilter(team.one, 44)} moreClasses="rec-plinth-art" />
 			</span>
 			<span className="rec-plinth-name">{speciesLabel(record)}</span>
-			<span className="rec-draft-lamps" aria-label="Hold across the nine worlds of the Proving">
+			{/* the nine lamps ARE the nine worlds, one row per round, in the order the frame
+			    loads them; the header above the grid names the rounds, so the rows line up
+			    with it. The legend says which is which, since the grid alone read as
+			    unexplained dots to a first-time reader. */}
+			<span className="rec-draft-lamps" aria-label="Hold across the nine worlds of the Proving, one row per round" title="One lamp per world, one row per round: brighter is a better hold there, a brass ring is its home ground">
 				{rows.map((row, r) => (
 					<span className="rec-draft-lamp-row" key={r}>
 						{row.map((w) => (
@@ -70,7 +74,17 @@ function DraftCard({ record, frames, kept, onToggle }) {
 					</span>
 				))}
 			</span>
-			<span className="rec-draft-best g-mono">{formatHold(bestRow.hold)} <span className="rec-draft-best-planet">{bestRow.planet}</span></span>
+			{/*
+				PASS 14. The number was printed bare, and a blind reviewer could not tell what
+				it was: "I cannot tell whether 26.9 is good, what Poseidas has to do with a
+				draft whose rounds are Zolton/Stonera/Telypso". It is this creature's BEST
+				hold of the nine worlds and the world it gets it at, which is the one number
+				that ranks a card against the others, so the card now says so.
+			*/}
+			<span className="rec-draft-best g-mono" title={`Its best of the nine worlds: ${formatHold(bestRow.hold)} at ${bestRow.planet}`}>
+				<span className="rec-draft-best-legend">best</span>
+				{formatHold(bestRow.hold)} <span className="rec-draft-best-planet">{bestRow.planet}</span>
+			</span>
 			{isStealthy && (
 				<span className="rec-draft-stealthy" title="Stealthy: arrives hidden">
 					<HiddenGlyph />

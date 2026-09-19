@@ -2,7 +2,7 @@
 
 Status: the running state of the game under ownership (brief: `reclamation-ownership-brief.md`). This file is the resume point. Any reset reads this first and continues at the weakest thing named below, never from scratch. Each pass appends its own section; the standing state at the top is rewritten in place.
 
-## Standing state (after pass 13, 2026-09-18)
+## Standing state (after pass 14, 2026-09-18)
 
 ### Gauges, proctor mirror
 
@@ -15,8 +15,9 @@ Pass 6 changed no rule. It re-read two gauges with enough statistical power to s
 | Contested worlds that are one creature against one | lower is better | 56.2% (was 62.7%) | improved, pass 9 |
 | Naive margin (pass-early under the mirror) | 8 or more points | 13.1 / 13.1 / 14.5 (was 21.5 / 19.4 / 17.8) | met, **narrowing; the constraint on the send budget** |
 | **Affordance: comprehension by prediction** | beat deploy-totals-only | **12 of 12 (100%)**, 3 of 3 on flipped worlds (pass 11, with the resolution trace; was 92% and 1 of 2) | **met with room** |
-| Contested worlds where no attack lands at all | lower is better | 9.5 / 11.1 / 10.4 percent | measured pass 11, unjudged |
-| **Rubric critic score** | rising per pass | **64 / 100** (first blind score, pass 10) | lowest lines: reason to keep playing 4, mobile 5, numbers 5 |
+| Contested worlds where no attack lands at all | reported only | 9.5 / 11.1 / 10.4 percent | **judged pass 14: not a hole** |
+| A side fielding only presences wins its world | reported only | 41.9% +/- 1.5 against 53.0% +/- 1.2 with an attacker | fielding no attacker is a worse bet, not a free win |
+| **Rubric critic score** | rising per pass | **65 / 100** (pass 14; was 64 at pass 10) | fiction 9, first five minutes 8, feedback 8, glanceability 7, craft 7; lowest: mobile 3 (on a bug that did not exist), reason to keep playing 5, numbers 6, style 6, pace 6 |
 | **Comeback from a CONTESTED round 1** (trailing by one or two worlds) | 30 to 40 | **30.8 / 32.0 / 35.1**; pooled 29.1 +/- 1.4 | **met on three seeds** |
 | Comeback from a SWEPT round 1 (trailing by three) | not safeguarded, by ruling | 7 to 12 percent; pooled 8.0 +/- 1.8 | working as ruled |
 | Comeback, both populations averaged | (the old single gauge) | 25.9 / 27.1 / 30.7; pooled 25.2 +/- 1.2 | reported, superseded by the split |
@@ -52,15 +53,14 @@ What it reads, and where each effect kind lands (measured over the seed-7 pool, 
 
 ### Open items, ranked (resume here)
 
-1. **Re-run the rubric critic.** It has not been scored since 64 of 100, and five of its findings have been answered since: the resting promise, the speed label, the Charter's ending, a reason to keep playing, and the phone. The score is the gauge and it is stale. Run it before choosing the next target, because the next target should come from it.
-2. **One contested world in ten sees no attack at all** (9.5 to 11.1 percent on three seeds), because a side fielded only attackless presences. Measure the win rate of an all-presence send before judging whether it is a hole or simply a quiet world.
-3. **Crowd worlds further, if it can be afforded.** 1v1 is 56 percent. 12 sends reaches 44.5 but costs the flip band and half the naive margin. `worldsPerFrame` is a lever; a narrower frame raises sends-per-world without touching the budget but moves the clinch and the match arc.
-4. **The status strip is the tallest block on a phone** at 250px, carrying six jobs. Whether all six belong above the fold is open.
-5. **Intelligence and charisma read negative within presences.** Read it pooled before treating it as a failure.
-6. **Fire is a dead element and dromeus a dead species** in the draft. Same caution.
-7. **The four borrowed effect kinds** still read as plain attacks. Worth re-testing now that worlds are less thin.
-8. **No human has played a full Proving.** The notes and telemetry are built, verified, and empty.
-9. **Hot-seat** is unbuilt and is the cheapest validation instrument the game can have.
+1. **Crowd worlds further, if it can be afforded.** 1v1 is 56 percent of contested worlds. 12 sends reaches 44.5 but cannot hold the flip band at any scale tried and closes the naive-policy margin from 21.5 to under 10 points. The other half of the ratio is the frame: `worldsPerFrame` is a lever, and a narrower frame raises sends-per-world without touching the budget, but it moves the clinch and the whole match arc, so it is a design change rather than a tuning one.
+2. **The status strip is the tallest block on a phone** at 250px, carrying six jobs (round, worlds, score, phase, turn, hint). Whether all six belong above the fold is open.
+3. **Intelligence and charisma read negative within presences** (charisma -15.2, intelligence -9.7). Lever: what `rateForDraft` and the bot's role value count. **Read it pooled before treating it as a failure** (pass 6's lesson).
+4. **Fire is a dead element and dromeus a dead species** in the draft. Same caution.
+5. **The four borrowed effect kinds** (restrain, displace, transfer, suppress) still read as plain attacks. Pass 8 measured that rules for them do not pay while worlds are thin; worth re-testing now that worlds are less thin.
+6. **Bolster recovery and the instinct lanes still move nothing under ablation.** Each earns its place or goes.
+7. **No human has played a full Proving.** The notes and telemetry are built, verified, and empty.
+8. **Hot-seat** is unbuilt and is the cheapest validation instrument the game can have.
 
 ### Findings from the headless check (pass 5, recorded not fixed)
 
@@ -213,3 +213,28 @@ The single place the game's reading of a creature is decided:
 **After:** page 1644px, panel 176px, bench to world **948px (down 40 percent)**, zero buttons under 32px. With a creature lifted the panel grows back to 240px with its ghost preview intact, verified by paint, so all three worlds and their SEND HERE buttons, holds and plans sit within about one screen.
 
 **Guarded:** the headless check now asserts at 390 that no empty world panel exceeds 260px and no visible button is under 32px, so neither gain can quietly regress.
+
+### Pass 14 (2026-09-18): the quiet worlds are not a hole
+
+**The open item:** the prediction reader worried that "a handler who sends two bolsters into an empty world wins it for free." Pass 11 measured how often a contested world sees no attack at all (9.5 to 11.1 percent). Pass 14 measured whether that is a free win.
+
+**It is the opposite.** Over 400 matches on each of three seeds, counting every side at every contested world: a side fielding **only attackless presences wins it 41.9 percent +/- 1.5** (n=4194), against **53.0 percent +/- 1.2** for a side with at least one attacker (n=6702). Eleven points apart, far outside either interval.
+
+The reason is structural: a presence contributes its hold and nothing else, and a world is decided on standing hold, so a side with no attacker can only win the worlds its hold alone would have won while giving the other side a free hand to remove that hold. The side that cannot attack also cannot stop being attacked.
+
+**Closed with a number rather than acted on**, which is the point of measuring before designing.
+
+### Pass 14 (2026-09-18): the quiet worlds, and the critic's second reading
+
+**Closed with a number:** a world where a side fields only attackless presences is not a free win. That side takes it **41.9 percent +/- 1.5** (n=4194) against **53.0 +/- 1.2** for a side with an attacker (n=6702), eleven points apart on three seeds. A presence contributes hold and nothing else, and the side that cannot attack also cannot stop being attacked. No lever needed.
+
+**The rubric critic, second reading: 65 of 100** (from 64). The total barely moved, which is honest for a run of passes that fixed named faults rather than raising the whole. Two of its findings were **disproved by checking**, and that is the more useful half:
+
+- **The "detached navbar" on mobile**, which it called the worst thing about the phone build and scored 3 of 10 for, does not exist. Checked live at 390 with a creature lifted, the navbar is sticky at y=0 with the worlds scrolling under it. A **fullPage screenshot re-renders sticky elements at each scroll band**, so it appears a second time mid-image. The screenshot was lying, not the page. The harness now takes a viewport capture beside every fullPage one.
+- **The draft's "fifteen question-mark placeholders"** are the same creature silhouettes the bench renders; the critic read a stale capture.
+
+**Acted on:** the draft card now says what its number is (`BEST 13.9 POSEIDAS`) and its nine lamps say they are the nine worlds by round; the Charter offers the next rival up the ladder **by name** on a win, with the plain rematch beside it, and nothing extra on a loss.
+
+**The lesson worth keeping:** a blind reviewer is only as good as what it is shown. Two of its three highest-value fixes this round were artifacts of my own capture method. Check a finding against the live page before building on it.
+
+**Verified:** 1932 tests green (five new), build inside budgets, headless Proving green in all four configurations, both UI changes checked by paint.
