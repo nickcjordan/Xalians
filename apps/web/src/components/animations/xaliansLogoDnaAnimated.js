@@ -146,7 +146,7 @@ class XaliansLogoDnaAnimated extends React.Component {
 				ref={this.containerRef}
 			>
 				{resting || !xPath ? (
-					<HelixMark className="h-[52px] sm:h-[84px]" title="Xalians" />
+					<HelixMark className="h-[52px] sm:h-[84px]" title="Xalians" aria-hidden="true" />
 				) : (
 					<svg className="helix block h-[52px] w-auto overflow-visible sm:h-[84px]" viewBox="-6 -6 144 173" aria-hidden="true">
 						<g transform={GROUP_TRANSFORM}>
@@ -166,8 +166,8 @@ class XaliansLogoDnaAnimated extends React.Component {
 						<line className="rung xlda-fade" style={{ opacity: 0 }} x1="39.41" y1="152.87" x2="91.03" y2="153.01" />
 					</svg>
 				)}
-				<span>
-					<span className="transition-opacity duration-3 ease-out" style={{ opacity: resting || !xPath ? 1 : 0 }} aria-hidden="true">X</span>ALIANS
+				<span aria-hidden="true">
+					<span className="transition-opacity duration-3 ease-out" style={{ opacity: resting || !xPath ? 1 : 0 }}>X</span>ALIANS
 				</span>
 			</a>
 		);
