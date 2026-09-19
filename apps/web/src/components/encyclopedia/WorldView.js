@@ -389,49 +389,61 @@ export default function WorldView() {
                             <Connections kind="world" recordKey={world.key} limit={12} />
                         </AccordionContent>
                     </AccordionItem>
-                    <AccordionItem value="generator-survey" className="border border-edge bg-s1 px-5">
+                    <AccordionItem value="for-builders" className="border border-edge bg-s1 px-5">
                         <AccordionTrigger className="hover:no-underline">
-                            <span className="type-legend">Generator survey</span>
+                            <span className="type-legend">For builders</span>
                         </AccordionTrigger>
                         <AccordionContent>
-                            <Card variant="panel">
-                                <p className="type-data m-0 mb-1 text-small text-ink">UNIT &nbsp;{report.unit}</p>
-                                <p className="type-data m-0 mb-1 text-small text-ink">PROTOCOL &nbsp;{report.protocol}</p>
-                                <p className="type-data m-0 mb-1 text-small text-ink-2">CYCLE &nbsp;{report.cycle}</p>
+                            <p className="mb-4 font-body text-small text-ink-2">
+                                Machine-readable data the Generator and the games use.
+                            </p>
+                            <Accordion type="single" collapsible>
+                                <AccordionItem value="survey-data" className="border-t border-edge">
+                                    <AccordionTrigger className="hover:no-underline">
+                                        <span className="type-legend">Survey data</span>
+                                    </AccordionTrigger>
+                                    <AccordionContent>
+                                        <Card variant="panel">
+                                            <p className="type-data m-0 mb-1 text-small text-ink">UNIT &nbsp;{report.unit}</p>
+                                            <p className="type-data m-0 mb-1 text-small text-ink">PROTOCOL &nbsp;{report.protocol}</p>
+                                            <p className="type-data m-0 mb-1 text-small text-ink-2">CYCLE &nbsp;{report.cycle}</p>
 
-                                <p className="type-data m-0 mb-1 mt-3 text-[11px] uppercase text-ink-3">
-                                    TERRAIN &nbsp;{report.terrain.features.join(' / ')}
-                                </p>
-                                {report.terrain.notes && (
-                                    <p className="type-data m-0 mb-1 text-small text-ink-2">{report.terrain.notes}</p>
-                                )}
+                                            <p className="type-data m-0 mb-1 mt-3 text-[11px] uppercase text-ink-3">
+                                                TERRAIN &nbsp;{report.terrain.features.join(' / ')}
+                                            </p>
+                                            {report.terrain.notes && (
+                                                <p className="type-data m-0 mb-1 text-small text-ink-2">{report.terrain.notes}</p>
+                                            )}
 
-                                <p className="type-data m-0 mb-1 mt-3 text-[11px] uppercase text-ink-3">MOBILITY</p>
-                                {MOBILITY_ORDER.filter((k) => report.mobility[k]).map((k) => {
-                                    const m = report.mobility[k];
-                                    return (
-                                        <p key={k} className="type-data m-0 mb-1 text-small text-ink">
-                                            {k.toUpperCase()} &nbsp;{m.rating.toUpperCase()}
-                                            {m.note && <span className="text-ink-2">: {m.note}</span>}
-                                        </p>
-                                    );
-                                })}
+                                            <p className="type-data m-0 mb-1 mt-3 text-[11px] uppercase text-ink-3">MOBILITY</p>
+                                            {MOBILITY_ORDER.filter((k) => report.mobility[k]).map((k) => {
+                                                const m = report.mobility[k];
+                                                return (
+                                                    <p key={k} className="type-data m-0 mb-1 text-small text-ink">
+                                                        {k.toUpperCase()} &nbsp;{m.rating.toUpperCase()}
+                                                        {m.note && <span className="text-ink-2">: {m.note}</span>}
+                                                    </p>
+                                                );
+                                            })}
 
-                                <p className="type-data m-0 mb-1 mt-3 text-[11px] uppercase text-ink-3">FAUNA</p>
-                                {report.fauna.observations.map((obs, i) => (
-                                    <p key={i} className="type-data m-0 mb-1 text-small text-ink">{obs}</p>
-                                ))}
+                                            <p className="type-data m-0 mb-1 mt-3 text-[11px] uppercase text-ink-3">FAUNA</p>
+                                            {report.fauna.observations.map((obs, i) => (
+                                                <p key={i} className="type-data m-0 mb-1 text-small text-ink">{obs}</p>
+                                            ))}
 
-                                <p className="type-data m-0 mb-1 mt-3 text-[11px] uppercase text-ink-3">
-                                    HAZARDS &nbsp;{report.hazards.join(' / ')}
-                                </p>
+                                            <p className="type-data m-0 mb-1 mt-3 text-[11px] uppercase text-ink-3">
+                                                HAZARDS &nbsp;{report.hazards.join(' / ')}
+                                            </p>
 
-                                <p className="type-data m-0 mb-1 mt-3 text-[11px] uppercase text-ink-3">
-                                    OUTPUT PRIORITIES &nbsp;{report.outputPriorities.join(' / ')}
-                                </p>
+                                            <p className="type-data m-0 mb-1 mt-3 text-[11px] uppercase text-ink-3">
+                                                OUTPUT PRIORITIES &nbsp;{report.outputPriorities.join(' / ')}
+                                            </p>
 
-                                <p className="type-data m-0 mt-3 text-[11px] uppercase text-ink-2">RECEIPT UNCONFIRMED, filed by hand: archivist</p>
-                            </Card>
+                                            <p className="type-data m-0 mt-3 text-[11px] uppercase text-ink-2">RECEIPT UNCONFIRMED, filed by hand: archivist</p>
+                                        </Card>
+                                    </AccordionContent>
+                                </AccordionItem>
+                            </Accordion>
                         </AccordionContent>
                     </AccordionItem>
                 </Accordion>
