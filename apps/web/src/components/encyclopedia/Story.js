@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { Link, useNavigate, useParams } from 'react-router';
+import { Link, useLocation, useNavigate, useParams } from 'react-router';
 import * as lore from '../../lore';
 import Prose from './Prose';
 import LoreArt from './LoreArt';
@@ -8,31 +8,14 @@ import StoryContents from './StoryContents';
 import { SectionHead } from '@/components/system/masthead';
 import { usePageTitle } from '@/components/system/head';
 import { EmptyState } from '@/components/system/record';
-import { Card } from '@/components/ui/card';
+import { ReadingLayout, ReadingRail, ReadingBlock } from '@/components/system/reading-layout';
+import { Fold, FoldGroup } from '@/components/system/fold';
+import { Timeline, TimelineItem } from '@/components/system/readouts';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from '@/components/ui/accordion';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 
-const PHONE_QUERY = '(max-width: 900px)';
-
-function useIsPhone() {
-	const [isPhone, setIsPhone] = useState(() => (
-		typeof window !== 'undefined' && window.matchMedia ? window.matchMedia(PHONE_QUERY).matches : false
-	));
-	useEffect(() => {
-		if (typeof window === 'undefined' || !window.matchMedia) return undefined;
-		const mql = window.matchMedia(PHONE_QUERY);
-		const onChange = () => setIsPhone(mql.matches);
-		mql.addEventListener ? mql.addEventListener('change', onChange) : mql.addListener(onChange);
-		return () => {
-			mql.removeEventListener ? mql.removeEventListener('change', onChange) : mql.removeListener(onChange);
-		};
-	}, []);
-	return isPhone;
-}
-
-/* ---- narrator: beats (moved from Tour.js) ------------------------------ */
+/* ---- records consulted (moved from Tour.js) ----------------------------- */
 
 // Dedupe chips by display name: a world and an entry that share a name (e.g.
 // a planet with its own index entry) render one chip, and the world link
@@ -53,15 +36,15 @@ function RecordsConsulted({ beat }) {
 	return (
 		<div className="flex flex-col gap-2">
 			<p className="type-legend m-0">Records consulted</p>
-			<div className="flex flex-wrap gap-2">
+			<div className="flex flex-wrap gap-2 lg:flex-col lg:items-start">
 				{worlds.map((world) => (
 					<Link key={world.key} to={lore.routeFor('world', world.key)} className={`el-${world.element}`}>
 						<Badge variant="chip-outline">{world.name}</Badge>
 					</Link>
 				))}
 				{entries.map((entry) => (
-					<Link key={entry.key} to={lore.routeFor('entry', entry.key)}>
-						<Badge variant="chip-outline">{entry.title}</Badge>
+					<Link key={entry.key} to={lore.routeFor('entry', entry.key)} className="text-ink-2 no-underline hover:text-ink">
+						<span className="type-legend">{entry.title}</span>
 					</Link>
 				))}
 			</div>
@@ -69,38 +52,52 @@ function RecordsConsulted({ beat }) {
 	);
 }
 
-function NarratorBeat({ beat, indexInPart, beatCount }) {
+function NarratorBeat({ beat }) {
 	useVisit({ kind: 'beat', key: beat.key, name: beat.title });
 	return (
-		<Card variant="panel" id={`beat-${beat.key}`} className="mb-8">
-			{beatCount > 1 && (
-				<p className="type-legend m-0">
-					Beat {indexInPart + 1} of {beatCount}
-				</p>
-			)}
-			<h2 className="type-heading m-0">{beat.title}</h2>
-			<Prose text={beat.prose} />
-			<LoreArt kind="beats" recordKey={beat.key} />
-			<RecordsConsulted beat={beat} />
-		</Card>
+		<ReadingBlock
+			margin={<RecordsConsulted beat={beat} />}
+			text={
+				<>
+					<SectionHead title={beat.title} />
+					<Prose text={beat.prose} />
+					<LoreArt kind="beats" recordKey={beat.key} />
+				</>
+			}
+		/>
 	);
 }
 
-/* ---- from the records: paragraphs (moved from Reader.js) --------------- */
+/* ---- from the records: paragraphs, grouped by world ---------------------- */
 
-function MarginNote({ world, index, read }) {
-	return (
-		<div className="flex flex-col items-start gap-1 pt-0.5 max-sm:flex-row max-sm:items-center max-sm:gap-3">
-			<Link to={lore.routeFor('world', world.key)} className={`el-${world.element} max-w-full`}>
-				<Badge variant="chip-outline">{world.name}</Badge>
-			</Link>
-			<span className="type-data text-[11px] text-ink-3">{lore.chapterLabel(index)}</span>
-			<span className={`inline-block size-1.5 rounded-full ${read ? 'bg-viable' : 'bg-edge-strong'}`} aria-hidden="true" />
-		</div>
-	);
+// Flattens every section's paragraphs and groups them by world, in order of
+// each world's first appearance -- the section heads (era-story "elsewhere
+// in the era" breaks) are dropped; a story part reads as one book grouped by
+// the record it comes from, not by the order the chronicle assembled it in.
+function groupParagraphsByWorld(sections) {
+	const order = [];
+	const byWorld = new Map();
+	for (const section of sections) {
+		for (const paragraph of section.paragraphs) {
+			const key = paragraph.world.key;
+			if (!byWorld.has(key)) {
+				byWorld.set(key, { world: paragraph.world, paragraphs: [] });
+				order.push(key);
+			}
+			byWorld.get(key).paragraphs.push(paragraph);
+		}
+	}
+	return order.map((key) => byWorld.get(key));
 }
 
-function StoryParagraph({ world, index, text }) {
+// First sentence of `text`, for a fold's hint line.
+function firstSentence(text) {
+	const trimmed = (text || '').trim();
+	const match = /^.*?[.!?](?=\s|$)/.exec(trimmed);
+	return match ? match[0] : trimmed;
+}
+
+function ParagraphRow({ world, index, text }) {
 	const read = useReadMark('chapter', `${world.key}:${index}`);
 	const ref = useRef(null);
 
@@ -122,34 +119,156 @@ function StoryParagraph({ world, index, text }) {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [world.key, index]);
 
+	// This row lives inside a Fold's content, not directly in ReadingLayout's
+	// grid, so it lays itself out with its own two-column grid mirroring the
+	// layout's proportions rather than ReadingBlock's `display: contents`
+	// (which only places its children onto an ancestor grid's own tracks).
 	return (
 		<div
 			ref={ref}
 			id={`chapter-${world.key}-${index}`}
 			data-story-paragraph="true"
-			className="grid grid-cols-[8rem_minmax(0,1fr)] items-start gap-4 border-t border-edge py-4 first:border-t-0 max-sm:grid-cols-1"
+			className="grid grid-cols-1 items-start gap-x-8 gap-y-2 border-t border-edge py-4 first:border-t-0 first:pt-0 lg:grid-cols-[minmax(0,1fr)_9rem]"
 		>
-			<MarginNote world={world} index={index} read={read} />
-			<div className="min-w-0">
+			<div className="order-2 min-w-0 lg:order-1">
 				<Prose text={text} className="m-0" />
 				<LoreArt kind="paragraphs" recordKey={`${world.key}:${index}`} />
+			</div>
+			<div className="order-1 flex items-center gap-2 lg:order-2 lg:justify-end">
+				<span className="type-data text-[11px] text-ink-3">{lore.chapterLabel(index)}</span>
+				<span className={`inline-block size-1.5 rounded-full ${read ? 'bg-viable' : 'bg-edge-strong'}`} aria-hidden="true" />
 			</div>
 		</div>
 	);
 }
 
-function RecordsSection({ section, showHead }) {
+function chapterHref(worldKey, index) {
+	return `chapter-${worldKey}-${index}`;
+}
+
+// Reads the initial set of world keys whose fold should be open on first
+// render, derived synchronously from window.location so the page's own
+// hash-scroll effect (encyclopediaPage.js) finds the target element the
+// first time it runs -- a fold that opens only after a later effect would
+// miss that first pass. Recognizes `#chapter-<world>-<index>` and
+// `?world=<key>`.
+function initialOpenWorldKeys(hash, search) {
+	const open = new Set();
+	if (hash) {
+		const id = hash.replace(/^#/, '');
+		const match = /^chapter-(.+)-(\d+)$/.exec(id);
+		if (match) open.add(match[1]);
+	}
+	if (search) {
+		const params = new URLSearchParams(search);
+		const world = params.get('world');
+		if (world) open.add(world);
+	}
+	return open;
+}
+
+function RecordsByWorld({ sections }) {
+	const location = useLocation();
+	const groups = useMemo(() => groupParagraphsByWorld(sections), [sections]);
+
+	const [openKeys, setOpenKeys] = useState(() => initialOpenWorldKeys(
+		typeof window !== 'undefined' ? window.location.hash : '',
+		typeof window !== 'undefined' ? window.location.search : ''
+	));
+	const [allOpen, setAllOpen] = useState(false);
+
+	const prevHash = useRef(location.hash);
+	useEffect(() => {
+		if (prevHash.current === location.hash) return;
+		prevHash.current = location.hash;
+		const match = /^#chapter-(.+)-(\d+)$/.exec(location.hash || '');
+		if (!match) return;
+		const worldKey = match[1];
+		const id = chapterHref(worldKey, match[2]);
+		setOpenKeys((prev) => {
+			if (prev.has(worldKey)) return prev;
+			const next = new Set(prev);
+			next.add(worldKey);
+			return next;
+		});
+		// Wait for the fold's open state to commit (and its content to mount)
+		// before scrolling to the paragraph -- reusing encyclopediaPage.js's
+		// own header-offset approach so the target does not land under the
+		// sticky rail/masthead.
+		requestAnimationFrame(() => {
+			requestAnimationFrame(() => {
+				const target = document.getElementById(id);
+				if (!target) return;
+				const styles = getComputedStyle(document.documentElement);
+				const gap = parseFloat(styles.getPropertyValue('--g-8')) || 0;
+				let pinnedHeight = 0;
+				document.querySelectorAll('.enc-header, .g-header, header').forEach((el) => {
+					const position = getComputedStyle(el).position;
+					if (position !== 'sticky' && position !== 'fixed') return;
+					const rect = el.getBoundingClientRect();
+					if (rect.top <= 0 && rect.bottom > 0) pinnedHeight = Math.max(pinnedHeight, rect.bottom);
+				});
+				const top = target.getBoundingClientRect().top + window.pageYOffset - (pinnedHeight + gap);
+				window.scrollTo(0, Math.max(0, top));
+			});
+		});
+	}, [location.hash]);
+
+	if (groups.length === 0) return null;
+
+	const totalParagraphs = groups.reduce((sum, g) => sum + g.paragraphs.length, 0);
+
+	function toggleAll() {
+		if (allOpen) {
+			setOpenKeys(new Set());
+			setAllOpen(false);
+		} else {
+			setOpenKeys(new Set(groups.map((g) => g.world.key)));
+			setAllOpen(true);
+		}
+	}
+
 	return (
-		<section className="[&+&]:mt-8">
-			{showHead && <p className="type-legend m-0 mb-3">{section.head || 'Elsewhere in the era'}</p>}
-			{section.paragraphs.map((p) => (
-				<StoryParagraph key={`${p.world.key}:${p.index}`} world={p.world} index={p.index} text={p.text} />
-			))}
-		</section>
+		<ReadingBlock
+			span="wide"
+			divided
+		>
+			<div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-2">
+				<SectionHead title="From the records" count={`${totalParagraphs} paragraph${totalParagraphs === 1 ? '' : 's'}`} className="mb-0" />
+				<Button type="button" variant="ghost" size="sm" className="ml-auto" onClick={toggleAll}>
+					{allOpen ? 'Collapse all' : 'Expand all'}
+				</Button>
+			</div>
+			<FoldGroup>
+				{groups.map((group) => {
+					const isOpen = openKeys.has(group.world.key);
+					return (
+						<Fold
+							key={group.world.key}
+							id={`records-${group.world.key}`}
+							defaultOpen={isOpen}
+							label={
+								<span className={`el-${group.world.element}`}>
+									<Badge variant="chip-outline">{group.world.name}</Badge>
+								</span>
+							}
+							count={`${group.paragraphs.length} chapter${group.paragraphs.length === 1 ? '' : 's'}`}
+							hint={firstSentence(group.paragraphs[0].text)}
+						>
+							<div className="flex flex-col">
+								{group.paragraphs.map((p) => (
+									<ParagraphRow key={`${p.world.key}:${p.index}`} world={p.world} index={p.index} text={p.text} />
+								))}
+							</div>
+						</Fold>
+					);
+				})}
+			</FoldGroup>
+		</ReadingBlock>
 	);
 }
 
-/* ---- fixed points: events (simplified from EraView.js) ----------------- */
+/* ---- fixed points: events ------------------------------------------------ */
 
 export function groupEvents(events) {
 	const groups = [];
@@ -170,75 +289,45 @@ export function groupEvents(events) {
 	return groups;
 }
 
-function EventAnchors({ anchors }) {
-	if (anchors.length === 0) return null;
+function WorldChips({ planets }) {
+	if (planets.length === 0) return null;
 	return (
-		<div className="mt-3 flex flex-col gap-3">
-			{anchors.map((anchor, i) => (
-				<div key={i}>
-					<Link
-						to={`${lore.routeFor('world', anchor.world.key)}#chapter-${anchor.world.key}-${anchor.index}`}
-						className="inline-block text-ink no-underline hover:underline"
-					>
-						{anchor.world.name} {lore.chapterLabel(anchor.index).toUpperCase()}
-					</Link>
-					<p className="type-data m-0 whitespace-normal break-words text-small text-ink-2">&ldquo;{anchor.quote}&rdquo;</p>
-				</div>
+		<span className="flex flex-wrap items-center gap-2">
+			{planets.map((planet) => (
+				<Link key={planet.key} to={lore.routeFor('world', planet.key)} className={`el-${planet.element}`}>
+					<Badge variant="chip-outline">{planet.name}</Badge>
+				</Link>
 			))}
-		</div>
+		</span>
 	);
 }
 
-function FixedPointCard({ event }) {
+function EventBody({ event }) {
 	return (
-		<Card variant="panel" id={`event-${event.key}`}>
-			<div className="flex flex-wrap items-baseline justify-between gap-3">
-				<h4 className="type-heading m-0 text-[19px]">{event.title}</h4>
-				{event.planets.length > 0 && (
-					<span className="flex flex-wrap gap-2">
-						{event.planets.map((planet) => (
-							<span key={planet.key} className={`el-${planet.element}`}>
-								<Badge variant="chip-outline">{planet.name}</Badge>
-							</span>
-						))}
-					</span>
-				)}
-			</div>
+		<>
 			{event.entry && (
-				<Link to={lore.routeFor('entry', event.entry.key)} className="my-3 inline-block text-ink underline decoration-ink-3 underline-offset-4 hover:decoration-ink">
-					Entry: {event.entry.title}
+				<Link to={lore.routeFor('entry', event.entry.key)} className="mb-2 inline-block text-ink-2 no-underline hover:text-ink">
+					<span className="type-legend">{event.entry.title}</span>
 				</Link>
 			)}
-			<EventAnchors anchors={event.anchors} />
-		</Card>
-	);
-}
-
-function ContemporaneousCard({ group }) {
-	return (
-		<Card variant="panel">
-			<p className="type-legend m-0">Contemporaneous, unordered</p>
-			{group.events.map((event) => (
-				<div id={`event-${event.key}`} key={event.key} className="[&+&]:mt-5 [&+&]:border-t [&+&]:border-edge [&+&]:pt-5">
-					<h4 className="type-heading m-0 text-[19px]">{event.title}</h4>
-					{event.planets.length > 0 && (
-						<div className="mt-3 flex flex-wrap gap-2">
-							{event.planets.map((planet) => (
-								<Link key={planet.key} to={lore.routeFor('world', planet.key)} className={`el-${planet.element}`}>
-									<Badge variant="chip-outline">{planet.name}</Badge>
-								</Link>
-							))}
-						</div>
-					)}
-					{event.entry && (
-						<Link to={lore.routeFor('entry', event.entry.key)} className="my-3 inline-block text-ink underline decoration-ink-3 underline-offset-4 hover:decoration-ink">
-							Entry: {event.entry.title}
-						</Link>
-					)}
-					<EventAnchors anchors={event.anchors} />
+			{event.anchors.length > 0 && (
+				<div className="flex flex-col gap-2">
+					{event.anchors.map((anchor, i) => (
+						<p key={i} className="m-0 font-body text-small text-ink-2">
+							<Link
+								to={`${lore.routeFor('world', anchor.world.key)}#chapter-${anchor.world.key}-${anchor.index}`}
+								className="text-ink-2 no-underline hover:text-ink"
+							>
+								<span className="type-legend">
+									{anchor.world.name}, {lore.chapterLabel(anchor.index)}
+								</span>
+							</Link>{' '}
+							&ldquo;{anchor.quote}&rdquo;
+						</p>
+					))}
 				</div>
-			))}
-		</Card>
+			)}
+		</>
 	);
 }
 
@@ -246,24 +335,37 @@ function FixedPoints({ fixedPoints }) {
 	const groups = useMemo(() => groupEvents(fixedPoints), [fixedPoints]);
 	if (groups.length === 0) return null;
 	return (
-		<section className="mt-8">
+		<ReadingBlock span="wide" divided>
 			<SectionHead title="Fixed points" count={fixedPoints.length} />
-			<div className="flex flex-col gap-4">
-				{groups.map((group, i) =>
-					group.kind === 'firm' ? (
-						<FixedPointCard key={group.events[0].key} event={group.events[0]} />
-					) : (
-						<ContemporaneousCard key={`group-${group.order}-${i}`} group={group} />
-					)
+			<Timeline>
+				{groups.map((group) =>
+					group.events.map((event) => (
+						<TimelineItem
+							key={event.key}
+							id={`event-${event.key}`}
+							titleAs="sentence"
+							date={
+								<span className="flex flex-wrap items-center gap-2">
+									{group.kind === 'contemporaneous' && group.events.length > 1 && (
+										<span className="type-legend text-ink-3">Around the same time</span>
+									)}
+									<WorldChips planets={event.planets} />
+								</span>
+							}
+							title={event.title}
+						>
+							<EventBody event={event} />
+						</TimelineItem>
+					))
 				)}
-			</div>
-		</section>
+			</Timeline>
+		</ReadingBlock>
 	);
 }
 
-/* ---- sticky part rail ---------------------------------------------------- */
+/* ---- part rail ------------------------------------------------------------ */
 
-function PartRailBody({ story, part }) {
+function PartRailBody({ story, part, progress }) {
 	return (
 		<>
 			<ol className="m-0 flex list-none flex-col p-0">
@@ -280,65 +382,7 @@ function PartRailBody({ story, part }) {
 					</li>
 				))}
 			</ol>
-			{part.worlds.length > 0 && (
-				<div className="mt-4 border-t border-edge pt-4">
-					<p className="type-legend m-0 mb-3">Worlds in this part</p>
-					<div className="flex flex-wrap gap-2">
-						{part.worlds.map((world) => (
-							<Link key={world.key} to={lore.routeFor('world', world.key)} className={`el-${world.element}`}>
-								<Badge variant="chip-outline">{world.name}</Badge>
-							</Link>
-						))}
-					</div>
-				</div>
-			)}
-			{part.fixedPoints.length > 0 && (
-				<div className="mt-4 border-t border-edge pt-4">
-					<p className="type-legend m-0 mb-3">Fixed points</p>
-					<ul className="m-0 flex flex-col gap-2 p-0 text-small">
-						{part.fixedPoints.map((event) => (
-							<li key={event.key}>
-								<a href={`#event-${event.key}`} className="text-ink underline decoration-ink-3 underline-offset-4 hover:decoration-ink">
-									{event.title}
-								</a>
-							</li>
-						))}
-					</ul>
-				</div>
-			)}
-		</>
-	);
-}
-
-function PartRail({ story, part, progress }) {
-	const isPhone = useIsPhone();
-
-	if (isPhone) {
-		return (
-			<Accordion type="single" collapsible className="mb-5">
-				<AccordionItem value="part-rail" className="border border-edge bg-s0 px-4">
-					<AccordionTrigger className="hover:no-underline">
-						<h3 className="type-legend m-0 text-ink-2">
-							Part {part.order} of {story.parts.length}
-						</h3>
-					</AccordionTrigger>
-					<AccordionContent>
-						{progress > 0 && (
-							<p className="type-data m-0 mb-3 text-[11px] text-ink-3">
-								{progress} / {part.sections.reduce((sum, s) => sum + s.paragraphs.length, 0)} read in this part
-							</p>
-						)}
-						<PartRailBody story={story} part={part} />
-					</AccordionContent>
-				</AccordionItem>
-			</Accordion>
-		);
-	}
-
-	return (
-		<nav className="sticky top-5 flex max-h-[calc(100vh-64px)] flex-col gap-4 overflow-y-auto pb-3" aria-label="Story parts">
-			<PartRailBody story={story} part={part} />
-			<p className="type-data m-0 border-t border-edge pt-4 text-[11px] leading-relaxed text-ink-3">
+			<p className="type-data m-0 mt-4 border-t border-edge pt-4 text-[11px] leading-relaxed text-ink-3">
 				Part {part.order} of {story.parts.length}
 				{progress > 0 && (
 					<>
@@ -347,7 +391,7 @@ function PartRail({ story, part, progress }) {
 					</>
 				)}
 			</p>
-		</nav>
+		</>
 	);
 }
 
@@ -439,15 +483,16 @@ function StoryPart() {
 		);
 	}
 
-	const beatCount = part.beats.length;
-
 	return (
 		<div>
-			<div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-[220px_minmax(0,1fr)]">
-				<PartRail story={story} part={part} progress={progress} />
-				<div className="min-w-0 max-w-[62ch]">
-					{part.plate && (
-						<figure className="m-0 mb-8 w-full max-w-[480px] border border-edge-strong bg-s0 p-2 shadow-float">
+			<ReadingLayout>
+				<ReadingRail label={`Part ${part.order} of ${story.parts.length}`}>
+					<PartRailBody story={story} part={part} progress={progress} />
+				</ReadingRail>
+
+				{part.plate && (
+					<ReadingBlock span="wide">
+						<figure className="m-0">
 							<img
 								src={part.plate.srcSmall}
 								width={768}
@@ -457,61 +502,56 @@ function StoryPart() {
 								decoding="async"
 								className="block h-auto w-full"
 							/>
-							<figcaption className="mx-0 mt-2 max-w-[70ch] px-2 text-left font-body text-small leading-relaxed text-ink-2">{part.plate.caption}</figcaption>
+							<figcaption className="border-b border-edge py-3 font-body text-small text-ink-2">{part.plate.caption}</figcaption>
 						</figure>
-					)}
-					<p className="mb-8 max-w-[62ch] font-body text-body text-ink-2">{part.era.definition}</p>
+					</ReadingBlock>
+				)}
 
-					{part.beats.map((beat, i) => (
-						<NarratorBeat key={beat.key} beat={beat} indexInPart={i} beatCount={beatCount} />
-					))}
+				<ReadingBlock text={<p className="m-0 font-body text-lead text-ink-2">{part.era.definition}</p>} />
 
-					{part.sections.length > 0 && (
+				{part.beats.map((beat) => (
+					<NarratorBeat key={beat.key} beat={beat} />
+				))}
+
+				<RecordsByWorld sections={part.sections} />
+
+				<FixedPoints fixedPoints={part.fixedPoints} />
+
+				<ReadingBlock
+					text={
 						<>
-							<hr className="m-0 mb-5 border-t border-edge" />
-							<p className="type-legend m-0 mb-6">From the records</p>
-							{part.sections.map((section, i) => (
-								<RecordsSection
-									key={`${part.era.key}-${i}`}
-									section={section}
-									showHead={!(part.sections.length === 1 && section.head === null)}
-								/>
-							))}
-						</>
-					)}
-
-					<FixedPoints fixedPoints={part.fixedPoints} />
-
-					<div className="mt-8 flex justify-between gap-4 max-sm:flex-col max-sm:items-stretch">
-						{part.prev ? (
-							<Button asChild variant="secondary">
-								<Link to={lore.routeFor('era', part.prev)}>
-									<ArrowLeft /> {lore.getStoryPart(part.prev).era.name}
-								</Link>
-							</Button>
-						) : (
-							<span />
-						)}
-						{part.next && (
-							<Button asChild>
-								<Link to={lore.routeFor('era', part.next)}>
-									Continue to Part {part.order + 1}: {lore.getStoryPart(part.next).era.name} <ArrowRight />
-								</Link>
-							</Button>
-						)}
-					</div>
-
-					{!part.next && (
-						<div className="mt-7 border-t border-edge pt-5 text-center">
-							<p className="type-legend m-0">End of the Story</p>
-							<div className="mt-4 flex justify-center gap-4">
-								<Button asChild variant="secondary"><Link to="/encyclopedia/species">The Bestiary</Link></Button>
-								<Button asChild variant="secondary"><Link to="/encyclopedia/worlds">The Worlds</Link></Button>
+							<div className="mt-4 flex justify-between gap-4 max-sm:flex-col max-sm:items-stretch">
+								{part.prev ? (
+									<Button asChild variant="secondary">
+										<Link to={lore.routeFor('era', part.prev)}>
+											<ArrowLeft /> {lore.getStoryPart(part.prev).era.name}
+										</Link>
+									</Button>
+								) : (
+									<span />
+								)}
+								{part.next && (
+									<Button asChild>
+										<Link to={lore.routeFor('era', part.next)}>
+											Continue to Part {part.order + 1}: {lore.getStoryPart(part.next).era.name} <ArrowRight />
+										</Link>
+									</Button>
+								)}
 							</div>
-						</div>
-					)}
-				</div>
-			</div>
+
+							{!part.next && (
+								<div className="mt-7 border-t border-edge pt-5 text-center">
+									<p className="type-legend m-0">End of the Story</p>
+									<div className="mt-4 flex justify-center gap-4">
+										<Button asChild variant="secondary"><Link to="/encyclopedia/species">The Bestiary</Link></Button>
+										<Button asChild variant="secondary"><Link to="/encyclopedia/worlds">The Worlds</Link></Button>
+									</div>
+								</div>
+							)}
+						</>
+					}
+				/>
+			</ReadingLayout>
 		</div>
 	);
 }

@@ -21,6 +21,7 @@ import { Fold, FoldGroup } from "@/components/system/fold"
 import { IndexRow, IndexList } from "@/components/system/index-row"
 import { Station, StationRow } from "@/components/system/station-row"
 import { TileGrid, Tile, TileArt, TileMeta } from "@/components/system/record"
+import { ReadingLayout, ReadingRail, ReadingBlock } from "@/components/system/reading-layout"
 
 /**
  * Brief B ("patterns") sections for /styleguide (docs/DESIGN_SYSTEM.md
@@ -344,6 +345,9 @@ const SECTIONS: { id: string; label: string; node: React.ReactNode }[] = [
           <TimelineItem date="Present day" title="The tournament loop">
             King Kozrak trades Scrambler Tokens for victories in his arena.
           </TimelineItem>
+          <TimelineItem date="Zolton" title="ECHELON and the Thousand Families bombard Zolton, blacking out galactic comms" titleAs="sentence">
+            A fixed-point title, already sentence case in the data: <code className="type-data">titleAs=&quot;sentence&quot;</code> sets it in body bold rather than the subhead label style above.
+          </TimelineItem>
         </Timeline>
 
         <p className="type-legend mt-8 mb-2">Callouts</p>
@@ -450,11 +454,15 @@ const SECTIONS: { id: string; label: string; node: React.ReactNode }[] = [
         <SectionHead title="Fold" />
         <p className="text-body text-ink-2">
           One collapsible for the whole site: a level 0 surface, a legend label, an optional count at the right, the
-          chevron, content padded on the 4px scale. Folds never nest.
+          chevron, content padded on the 4px scale. Folds never nest. A `hint` renders one truncated line under the
+          label, for a teaser of what the fold holds while it is closed.
         </p>
         <FoldGroup className="mt-6 max-w-2xl">
           <Fold label="Cross references" count="3">
             <p className="m-0 font-body text-small text-ink-2">Three entries name this record.</p>
+          </Fold>
+          <Fold label="Magmuth" hint="The volcanic hellworld of company wars and blood feuds, first among Kozrak's arenas." count="6 chapters">
+            <p className="m-0 font-body text-small text-ink-2">A closed fold with a hint: the first sentence of its content, so a reader can judge whether to open it.</p>
           </Fold>
           <Fold label="For builders" defaultOpen>
             <p className="m-0 font-body text-small text-ink-2">The machine data behind this record, flat, not nested inside another fold.</p>
@@ -519,6 +527,65 @@ const SECTIONS: { id: string; label: string; node: React.ReactNode }[] = [
             </Tile>
           ))}
         </TileGrid>
+      </>
+    ),
+  },
+  {
+    id: "reading-layout",
+    label: "Reading layout",
+    node: (
+      <>
+        <SectionHead title="Reading layout" />
+        <p className="text-body text-ink-2">
+          Shape C: a sticky rail beside a column of reading blocks, each block carrying its own inner grid (62ch text,
+          a marginalia cell that is filled on purpose) so a block&apos;s margin can never drift into another block&apos;s
+          row. Used by a story part and a world&apos;s History. Under `lg` the rail collapses into a `Fold` above the
+          text and each block&apos;s margin renders above its text as a compact row.
+        </p>
+        <div className="mt-6 border border-edge bg-s0 p-4">
+          <ReadingLayout>
+            <ReadingRail label="Part 4 of 7" hint="12 read">
+              <ol className="m-0 flex list-none flex-col gap-1 p-0">
+                <li className="type-legend border-l-2 border-l-transparent py-1.5 pl-3 text-ink-2">01 The Age of Unbirth</li>
+                <li className="type-legend border-l-2 border-l-viable py-1.5 pl-3 text-ink">02 The Age of Generators</li>
+                <li className="type-legend border-l-2 border-l-transparent py-1.5 pl-3 text-ink-2">03 The End Wars</li>
+              </ol>
+            </ReadingRail>
+            <ReadingBlock span="wide">
+              <p className="type-legend m-0 mb-2">From the records</p>
+            </ReadingBlock>
+            <ReadingBlock
+              divided
+              text={
+                <p className="m-0 font-body text-body text-ink-2">
+                  The Genesis Prototype, the first Generator ever built, ran wild across Floria and terraformed the
+                  world with city-sized World Trees before anyone could stop it.
+                </p>
+              }
+              margin={
+                <>
+                  <span className="el-plant"><Badge variant="chip-outline">Floria</Badge></span>
+                  <span className="type-data text-[11px] text-ink-3">Ch. 3</span>
+                </>
+              }
+            />
+            <ReadingBlock
+              divided
+              text={
+                <p className="m-0 font-body text-body text-ink-2">
+                  Kozrak keeps the Mercurius Machine under armed guard, printing Scrambler Tokens for the tournaments
+                  that fund his rule.
+                </p>
+              }
+              margin={
+                <>
+                  <span className="el-metal"><Badge variant="chip-outline">Veridium</Badge></span>
+                  <span className="type-data text-[11px] text-ink-3">Ch. 11</span>
+                </>
+              }
+            />
+          </ReadingLayout>
+        </div>
       </>
     ),
   },
