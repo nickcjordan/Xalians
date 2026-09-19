@@ -1,4 +1,5 @@
 import {recordCapabilities, recordActions, recordPassives} from '@xalians/content/ability-compatibility';
+import { readRecord } from '@xalians/rules/expedition/recordReading';
 import { isSignatureAbility } from '@xalians/content/ability-compatibility';
 import React from 'react';
 import { prepare } from '@xalians/rules/expedition/creatureOnTable';
@@ -86,6 +87,8 @@ function ReclamationInspect({ record, site, frame, rules, onClose }) {
 	const traits = prepared.traitKeywords;
 	const secondary = Object.keys(record.element.affinities || {}).find((k) => k !== el);
 	const signature = (recordCapabilities(record) || []).find((a) => isSignatureAbility(a));
+	// pass 7: what this table can and cannot speak of the record's own capabilities
+	const reading = readRecord(record);
 	const finish = record.appearance && record.appearance.finish && record.appearance.finish !== 'standard' ? record.appearance.finish : null;
 
 	return (
@@ -153,6 +156,39 @@ function ReclamationInspect({ record, site, frame, rules, onClose }) {
 						? `It throws ${prepared.blow.name} for ${formatHold(prepared.blowMagnitude)}, before the element matchup against whatever it meets. Hurt, it attacks for less, in proportion to the hold it has left.`
 						: 'It throws no attack at all; standing at the world is what it does.'}
 				</p>
+				{/*
+					Pass 7: the record's own reading of this creature's acts. Reach and the
+					area footprint come straight off the record (spatial.range, spatial.area)
+					rather than from a projection onto legacy action keys, and an act the
+					table cannot speak is named here rather than silently read as a strike.
+				*/}
+				{reading && reading.usable.length > 0 && (
+					<ul className="rec-inspect-acts" data-inspect-acts>
+						{reading.usable.map((act) => (
+							<li key={act.key} data-inspect-act={act.role}>
+								<span className="rec-inspect-act-name">{act.name}</span>
+								<span className="rec-inspect-act-fact">
+									{act.area ? 'reaches every creature here' : 'one creature'}
+									{/*
+										A capability anchored on the creature's own body has no remote
+										range by schema rule, so a null range means "from where it
+										stands", not "upon itself" - which would contradict an area
+										act that reaches everyone at the world.
+									*/}
+									{act.range ? ` · ${act.range} range` : ' · from where it stands'}
+								</span>
+							</li>
+						))}
+					</ul>
+				)}
+				{reading && reading.unsupportedReasons.length > 0 && (
+					<p className="g-body rec-inspect-unread" data-inspect-unread>
+						{reading.fieldable
+							? 'The frame cannot model everything this one does: '
+							: 'The frame cannot field this creature at all: '}
+						{reading.unsupportedReasons.join('; ')}.
+					</p>
+				)}
 				{signature && signature.description && (
 					<p className="g-body rec-inspect-signature">
 						<span className="rec-inspect-signature-name">{signature.name}.</span> {signature.description}

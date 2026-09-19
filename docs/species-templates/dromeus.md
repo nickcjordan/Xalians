@@ -45,7 +45,7 @@ Clause by clause in the upgraded text:
 
 - `A partially feathered ground bird with lizard features`: species, "Partially feathered ground birds with lizard features".
 - `built long in the leg and narrow in the skull`: art: long hind legs, narrow lizard-like skull. Descriptive of the art only, adds no fact.
-- `was designed by Magmuth's corporations`: planet, "These corporations designed all manner of Xalians to help extract the planet's metals, minerals, and gases – creatures capable of adapting to Magmuth's primeval conditions and bioengineered to survive in a world of heat, fire, lava, and ash."
+- `was designed by Magmuth's corporations`: planet, "These corporations designed all manner of Xalians to help extract the planet's metals, minerals, and gases: creatures capable of adapting to Magmuth's primeval conditions and bioengineered to survive in a world of heat, fire, lava, and ash."
 - `as a courier and outrider across the transient mineral islands`: the specific job is my inference from the species' one distinguishing quality, speed, set against planet, "the mineral laden islands that floated atop the planet's molten surface became lucrative mining zones". Flagged under Authored fields; it is the weakest clause in the upgrade.
 - `fast enough to cross a cooling lava flow before it opened underfoot`: planet, "The resulting lava flows form into temporary islands due to rapid cooling as the planet swings further out into orbit." Combined with species, "extremely quick".
 - `It is extremely quick and carries razor sharp teeth`: species, verbatim facts.

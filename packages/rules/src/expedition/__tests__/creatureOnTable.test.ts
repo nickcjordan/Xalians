@@ -123,7 +123,11 @@ describe('roleOf: every creature is a hold and one role (assumption 4)', () => {
 	test('blowActOf gives an area its area ability and a presence no blow at all', () => {
 		const area = record({ archetype: { key: 'predator' }, abilities: [strikeAbility, areaAbility] });
 		const acts = buildActs(area, 1, MAGNITUDE_SCALE);
-		expect(blowActOf(area, acts, ROLE.SWEEP)!.action).toBe('burst');
+		// pass 7: acts carry the table's own word and the record's own area flag, not a
+		// legacy action key, so a sweep is identified by what it does rather than by name
+		const sweep = blowActOf(area, acts, ROLE.SWEEP)!;
+		expect(sweep.action).toBe('sweep');
+		expect(sweep.area).toBe(true);
 		expect(blowActOf(area, acts, ROLE.SHIELD)).toBe(null);
 	});
 
@@ -326,7 +330,11 @@ describe('favoredAct', () => {
 		});
 		const acts = buildActs(r, 1);
 		const chosen = favoredAct(r, acts);
-		expect(chosen.action).toBe('beam');
+		// pass 7: both acts read as strikes at the table (neither has an area footprint);
+		// what tells them apart is the magnitude their intensity earns, so the virtuoso's
+		// "strongest overall" is asserted on the act it picked, by name
+		expect(chosen.name).toBe('Strong');
+		expect(chosen.action).toBe('strike');
 	});
 
 	test('falls back to hold when the archetype favors a specific action the creature lacks', () => {
