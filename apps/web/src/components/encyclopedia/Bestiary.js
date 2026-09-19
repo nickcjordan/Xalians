@@ -8,7 +8,6 @@ import { usePageTitle } from '@/components/system/head';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
-import { Toggle } from '@/components/ui/toggle';
 import { centerInRail } from './railScroll';
 
 const ELEMENTS = [
@@ -47,7 +46,6 @@ export default function Bestiary() {
     const [element, setElement] = useState('all');
     const [world, setWorld] = useState('all');
     const [sort, setSort] = useState('name');
-    const [ratifiedOnly, setRatifiedOnly] = useState(false);
     const elementRowRef = useRef(null);
 
     const worlds = lore.getWorlds();
@@ -65,7 +63,6 @@ export default function Bestiary() {
         let filtered = species;
         if (element !== 'all') filtered = filtered.filter((s) => s.element === element);
         if (world !== 'all') filtered = filtered.filter((s) => s.homePlanet === world);
-        if (ratifiedOnly) filtered = filtered.filter((s) => s.source === 'template');
         const sorted = [...filtered];
         if (sort === 'world') {
             sorted.sort((a, b) => {
@@ -76,7 +73,7 @@ export default function Bestiary() {
             sorted.sort((a, b) => a.name.localeCompare(b.name));
         }
         return sorted;
-    }, [species, element, world, sort, ratifiedOnly]);
+    }, [species, element, world, sort]);
 
     return (
         <div>
@@ -111,15 +108,6 @@ export default function Bestiary() {
                     <ToggleGroupItem value="name">Name</ToggleGroupItem>
                     <ToggleGroupItem value="world">World</ToggleGroupItem>
                 </ToggleGroup>
-
-                <Toggle
-                    pressed={ratifiedOnly}
-                    onPressedChange={setRatifiedOnly}
-                    variant="outline"
-                    className="whitespace-nowrap"
-                >
-                    Ratified
-                </Toggle>
 
                 {/* The masthead already carries "Bestiary" and the total count; this
                     is the live filtered count, which does change, so it stays. */}

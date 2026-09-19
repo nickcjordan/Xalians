@@ -123,6 +123,15 @@ function LegacyPhysiology({ view }) {
     return <SpecPlate columns={2} entries={entries} className="max-w-4xl" />;
 }
 
+const ABILITY_FIELD_GLOSSES = [
+    ['Instrument', 'The body part or channel the ability works through.'],
+    ['Activation', 'How it fires: a single discrete act, or ongoing while held.'],
+    ['Delivery', 'How it reaches its target: by contact, as a projectile, over an area.'],
+    ['Effects', 'What it does to the target.'],
+    ['Medium', 'The element it works through.'],
+    ['Intensity', 'Strength on a scale of 100. A species shows its range; one creature shows its number.'],
+];
+
 function Signature({ signature }) {
     if (!signature) return null;
     return (
@@ -140,6 +149,23 @@ function Signature({ signature }) {
                 ]}
             />
             <p className="m-0 font-body text-small text-ink-2">{signature.description}</p>
+            <Accordion type="single" collapsible>
+                <AccordionItem value="what-these-mean" className="border-t border-edge">
+                    <AccordionTrigger className="hover:no-underline">
+                        <span className="type-legend">What these mean</span>
+                    </AccordionTrigger>
+                    <AccordionContent>
+                        <dl className="m-0 flex flex-col gap-2">
+                            {ABILITY_FIELD_GLOSSES.map(([term, gloss]) => (
+                                <div key={term}>
+                                    <dt className="type-legend inline">{term}</dt>
+                                    <dd className="m-0 inline font-body text-small text-ink-2"> {gloss}</dd>
+                                </div>
+                            ))}
+                        </dl>
+                    </AccordionContent>
+                </AccordionItem>
+            </Accordion>
         </Card>
     );
 }
@@ -270,13 +296,17 @@ export default function SpeciesView() {
                 </div>
 
                 <div className="flex min-w-0 flex-col gap-4 max-sm:order-2">
+                    <div className="flex flex-col gap-1">
+                        <h3 className="type-heading m-0 text-[19px]">In brief</h3>
+                        <Prose text={view.description} except={view.entry && view.entry.key} />
+                    </div>
+
                     {view.nameOrigin && (
                         <div className="flex flex-col gap-1">
                             <h3 className="type-heading m-0 text-[19px]">Name origin</h3>
                             <p className="measure m-0 font-body text-body text-ink-2">{view.nameOrigin}</p>
                         </div>
                     )}
-                    <Prose text={view.description} except={view.entry && view.entry.key} />
 
                     {Array.isArray(view.appearance) && view.appearance.length > 0 && (
                         <div className="flex flex-col gap-1">
@@ -308,19 +338,6 @@ export default function SpeciesView() {
             </div>
 
             <Accordion type="single" collapsible className="mt-6 flex flex-col gap-2">
-                <AccordionItem value="generator-template" className="border border-edge bg-s1 px-5">
-                    <AccordionTrigger className="hover:no-underline">
-                        <span className="type-legend">Generator template</span>
-                    </AccordionTrigger>
-                    <AccordionContent>
-                        <p className="mb-4">
-                            <Badge variant={isTemplate ? 'ok' : 'info'}>
-                                {isTemplate ? 'Record ratified' : 'Record pending migration'}
-                            </Badge>
-                        </p>
-                        {isTemplate ? <GeneratorTemplate record={view.record} /> : <LegacyRatings view={view} />}
-                    </AccordionContent>
-                </AccordionItem>
                 <AccordionItem value="cross-references" className="border border-edge bg-s1 px-5">
                     <AccordionTrigger className="hover:no-underline">
                         <span className="type-legend">Cross references</span>
@@ -328,6 +345,31 @@ export default function SpeciesView() {
                     </AccordionTrigger>
                     <AccordionContent>
                         <Connections kind="species" recordKey={key} limit={12} />
+                    </AccordionContent>
+                </AccordionItem>
+                <AccordionItem value="for-builders" className="border border-edge bg-s1 px-5">
+                    <AccordionTrigger className="hover:no-underline">
+                        <span className="type-legend">For builders</span>
+                    </AccordionTrigger>
+                    <AccordionContent>
+                        <p className="mb-4 font-body text-small text-ink-2">
+                            Machine-readable data the Generator and the games use.
+                        </p>
+                        <Accordion type="single" collapsible>
+                            <AccordionItem value="record-data" className="border-t border-edge">
+                                <AccordionTrigger className="hover:no-underline">
+                                    <span className="type-legend">Record data</span>
+                                </AccordionTrigger>
+                                <AccordionContent>
+                                    <p className="mb-4">
+                                        <Badge variant={isTemplate ? 'ok' : 'info'}>
+                                            {isTemplate ? 'Record ratified' : 'Record pending migration'}
+                                        </Badge>
+                                    </p>
+                                    {isTemplate ? <GeneratorTemplate record={view.record} /> : <LegacyRatings view={view} />}
+                                </AccordionContent>
+                            </AccordionItem>
+                        </Accordion>
                     </AccordionContent>
                 </AccordionItem>
             </Accordion>
