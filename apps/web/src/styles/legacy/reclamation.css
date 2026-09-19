@@ -4639,3 +4639,61 @@
 .rec-status-reach[data-still-reachable="behind"] { border-left-color: var(--g-team-one); color: var(--g-ink); }
 .rec-status-reach[data-still-reachable="won"] { border-left-color: var(--g-team-one); }
 .rec-status-reach[data-still-reachable="lost"] { border-left-color: var(--g-team-two); }
+
+/* ---------------------------------------------------------------------------
+   PASS 13: AN EMPTY WORLD IS SHORT ON A PHONE
+
+   Measured before this rule, at 390 wide with nothing sent: the page ran 2258px
+   over an 844px viewport (2.7 screens) and the gap between the bench and the
+   first world was 1576px, nearly two full screens. The cause was three empty
+   world panels at 386px each: an empty field is 264px of it, two ranks at 96px
+   around a 72px midline, all of it saying "no one / UNCLAIMED / no one".
+
+   The rubric critic named this the worst thing about the phone experience: the
+   core act of the game, lift a creature and press a world, requires scrolling
+   between the thing you pick and the thing you pick it for.
+
+   So an empty world keeps its head, its tally and its ground line, and gives up
+   the room it was holding for creatures that are not there. The moment anything
+   stands at it, the panel is a panel again: these rules only reach
+   `.rec-site-field--empty`, which the component sets only while both ranks are
+   empty.
+   --------------------------------------------------------------------------- */
+
+@media (max-width: 760px) {
+	.rec-site-field--empty { min-height: 0; }
+	.rec-site-field--empty .rec-rank { min-height: 0; padding: 0; }
+	/* the edge bands still name whose ground is whose; the "no one" text goes */
+	.rec-site-field--empty .rec-rank-open { display: none; }
+	.rec-site-field--empty .rec-site-midline--empty { min-height: 0; flex: 0 0 auto; }
+	.rec-site-field--empty .rec-site-unclaimed { font-size: var(--g-size-micro); }
+	/* a previewed send fills the world again, so the ghost must not be squeezed */
+	.rec-site-field--empty .rec-ghost { padding: var(--g-1) var(--g-2); }
+
+	/*
+		The world's head wrapped its stake button onto a second line, which cost 55px on
+		every world whether or not a stake was ever going to be made. One row instead: the
+		number, the name and the stake sit together and the button keeps a tappable size.
+	*/
+	.rec-site-head {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: baseline;
+		gap: var(--g-1) var(--g-2);
+	}
+	.rec-site-head .rec-stake-btn { margin-left: auto; }
+
+	/*
+		Tap targets. Measured at 390 wide: sixteen visible buttons stood under 32px tall,
+		including every stake button (21px) and every dossier button (26px). A finger is not
+		a mouse pointer, so the small controls get their height back through padding rather
+		than through type size, which would break the readouts around them.
+	*/
+	.rec-stake-btn,
+	.rec-plinth-read,
+	[data-sound] {
+		min-height: 32px;
+		padding-top: var(--g-1);
+		padding-bottom: var(--g-1);
+	}
+}
