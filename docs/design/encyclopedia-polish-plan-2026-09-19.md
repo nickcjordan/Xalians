@@ -171,3 +171,11 @@ Nick decides; the plan proceeds on the assumption in each case.
 - Records folded by world on a story part (assumption 3). The alternative is the current always-open book at 15k px.
 - Tabs on record routes (assumption 4). The alternative is tabs only on catalogue routes with the breadcrumb carrying the way back; it would save 44px on records and lose the section switch.
 - The reading layout across the full 1440 shell (assumption 2). The alternative is a 1120px book width with the shell's whitespace at the right; it reads more like a book and less like the rest of the site.
+
+## What shipped (2026-09-19)
+
+All five PRs landed the same day, each built by a Sonnet implementer from this document, reviewed by paint at 1440 and 390 before merge, and deployed: #502 (Shape A and the shell: `Fold`, `IndexRow`, `StationRow`, `TileGrid`, breadcrumb, one search, the six catalogue routes, the Shuntara asset), #503 (the species record as Shape B, `SpeciesTile`, `Connections bare`), #504 (Shape C: `ReadingLayout`, the story part with records folded by world, the fixed-points timeline, `Fold hint`, `TimelineItem titleAs`), #505 (the world record as Shape B with History on Shape C, the survey fold flattened, the receipt line gone), #507 (the entry record as Shape B, `Prose size`, the `IndexRow` leading column, the vocabulary sweep over search, hover card, trail, map captions and connections).
+
+Levers taken as the plan assumed: records fold by world on a story part (Part 6 now measures about 6,250 px at 1440 with folds closed, against 14,773 before; the fixed-points timeline is what remains above the 5,000 target), tabs stay on record routes with the breadcrumb above the masthead, and the reading layout runs across the full shell. Each is reversible on a ruling.
+
+Found on the way: `ReadingBlock` first shipped as `display: contents`, which let a block's margin auto-place into the previous row and reordered blocks on the phone; it is now a real row with its own inner grid. Two agents working in one worktree reverted each other's edits (the lesson in DESIGN_SYSTEM section 14 holds); one agent per worktree from here on.
