@@ -29,7 +29,7 @@ export default function EntryHoverCard({ entryKey, children }) {
                 onOpenAutoFocus={(e) => e.preventDefault()}
             >
                 <p className="type-legend m-0">{entry.category}</p>
-                <p className="type-heading m-0 mt-1 text-[15px]">{entry.title}</p>
+                <p className="type-subhead m-0 mt-1">{entry.title}</p>
                 <p className="m-0 mt-1 font-body text-small text-ink-2">{entry.definition}</p>
             </PopoverContent>
         </Popover>

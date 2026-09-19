@@ -72,11 +72,11 @@ function ConnectionSample({ row }) {
     const excerptNode = markSubject(row.sample.excerpt, row.name);
 
     return (
-        <p className="type-data m-0 mt-2 pl-0 text-small text-ink-2">
+        <p className="m-0 mt-2 pl-0 font-body text-small text-ink-2">
             {route ? (
-                <Link to={route} className="text-ink-3 no-underline hover:text-edge-strong">{row.sample.label}</Link>
+                <Link to={route} className="type-legend text-ink-3 no-underline hover:text-edge-strong">{row.sample.label}</Link>
             ) : (
-                <span className="text-ink-3">{row.sample.label}</span>
+                <span className="type-legend text-ink-3">{row.sample.label}</span>
             )}
             {' '}
             <span className="text-ink-2">{excerptNode}</span>

@@ -29,9 +29,11 @@ type IndexRowProps = React.ComponentProps<"div"> & {
 }
 
 function IndexRow({ className, to, leading, title, copy, meta, ...props }: IndexRowProps) {
+  const hasLeading = leading != null
+
   const content = (
     <>
-      <div className="min-w-8 self-baseline type-data text-small text-ink-3">{leading}</div>
+      {hasLeading ? <div className="min-w-8 self-baseline type-data text-small text-ink-3">{leading}</div> : null}
       <div className="min-w-0">
         <div className="type-subhead text-base">{title}</div>
         {copy ? <div className="mt-1 font-body text-small text-ink-2">{copy}</div> : null}
@@ -46,7 +48,10 @@ function IndexRow({ className, to, leading, title, copy, meta, ...props }: Index
   )
 
   const rowClass = cn(
-    "grid min-h-11 grid-cols-[auto_minmax(0,1fr)_auto] items-baseline gap-x-4 gap-y-1 px-5 py-3 max-sm:grid-cols-[auto_minmax(0,1fr)]",
+    "grid min-h-11 items-baseline gap-x-4 gap-y-1 px-5 py-3",
+    hasLeading
+      ? "grid-cols-[auto_minmax(0,1fr)_auto] max-sm:grid-cols-[auto_minmax(0,1fr)]"
+      : "grid-cols-[minmax(0,1fr)_auto]",
     "max-sm:[&>*:last-child]:col-span-2 max-sm:[&>*:last-child]:justify-self-start",
     className
   )

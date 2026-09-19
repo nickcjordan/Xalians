@@ -37,7 +37,7 @@ function IndexRecord({ entry }) {
                 </div>
             }
         >
-            <Prose text={entry.definition} except={entry.key} className="m-0 text-small text-ink-2" />
+            <Prose text={entry.definition} except={entry.key} size="small" className="m-0 text-ink-2" />
         </RecordRow>
     );
 }
@@ -130,7 +130,7 @@ export default function Index() {
                             ) : (
                                 <span
                                     key={letter}
-                                    className="type-legend flex min-w-8 items-center justify-center text-[13px] text-ink-4 max-sm:h-9 max-sm:w-9 max-sm:shrink-0"
+                                    className="type-legend flex min-w-8 items-center justify-center text-ink-4 max-sm:h-9 max-sm:w-9 max-sm:shrink-0"
                                     aria-hidden="true"
                                 >
                                     {letter}
