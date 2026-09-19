@@ -72,7 +72,6 @@ function flattenWords(value) {
 			key,
 			title: `${planetNames.get(paragraph.planet) || paragraph.planet}, Ch. ${String(paragraph.index).padStart(2, '0')}`,
 			text: paragraph.summary,
-			aliases: planetNames.get(paragraph.planet) || paragraph.planet,
 			route: routeFor('paragraph', key),
 		});
 	}

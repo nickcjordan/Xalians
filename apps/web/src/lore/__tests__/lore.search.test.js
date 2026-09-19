@@ -2,13 +2,25 @@ import { describe, it, expect } from 'vitest';
 import { search } from '../index';
 
 describe('search', () => {
-	it('a title query ranks its world among the top results', () => {
+	it('a title query ranks its entry first', () => {
 		const results = search('Magmuth');
 		expect(results.length).toBeGreaterThan(0);
-		const worldResult = results.find((r) => r.kind === 'world');
-		expect(worldResult).toBeDefined();
-		expect(worldResult.key).toBe('magmuth');
-		expect(results.every((r) => r.key === 'magmuth' || r.kind !== 'world')).toBe(true);
+		expect(results[0].kind).toBe('world');
+		expect(results[0].key).toBe('magmuth');
+	});
+
+	it('a world-name query ranks the world document above every chapter', () => {
+		for (const worldName of ['Magmuth', 'Zolton']) {
+			const results = search(worldName);
+			const worldIndex = results.findIndex((r) => r.kind === 'world');
+			const paragraphIndices = results
+				.map((r, i) => (r.kind === 'paragraph' ? i : -1))
+				.filter((i) => i >= 0);
+			expect(worldIndex).toBeGreaterThanOrEqual(0);
+			for (const paragraphIndex of paragraphIndices) {
+				expect(worldIndex).toBeLessThan(paragraphIndex);
+			}
+		}
 	});
 
 	it('a history phrase finds its paragraph', () => {
