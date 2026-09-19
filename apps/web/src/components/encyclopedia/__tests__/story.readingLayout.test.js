@@ -77,3 +77,36 @@ describe('story part: records folded by world, deep links open on first render',
 		expect(document.getElementById(`chapter-magmuth-${group.index}`)).toBeNull();
 	});
 });
+
+describe('story part: the lede and every narrator beat render regardless of viewport', () => {
+	// jsdom has no matchMedia by default and computes no real layout, so this
+	// is exactly the "narrow width" case in practice: ReadingRail's phone
+	// branch (a `Fold`) and its desktop branch (a plain div) both mount
+	// unconditionally -- only CSS decides which one is visible -- so if a
+	// `ReadingBlock` regression ever hid or reordered a block instead of just
+	// changing its column, this test catches it with no matchMedia stub at
+	// all, the way an old/narrow browser would hit the same markup.
+	it('the era definition and every beat heading are in the document, in reading order, before "From the records"', () => {
+		const part = getStoryPart('end-wars');
+		renderPart('/encyclopedia/story/end-wars');
+
+		const lede = screen.getByText(part.era.definition);
+		expect(lede).toBeInTheDocument();
+
+		const beatHeadings = part.beats.map((beat) => screen.getByRole('heading', { name: beat.title, level: 2 }));
+		beatHeadings.forEach((h) => expect(h).toBeInTheDocument());
+
+		const fromTheRecords = screen.getByText('From the records');
+
+		// DOCUMENT_POSITION_FOLLOWING means "comes after" the node it is
+		// compared against -- i.e. lede/beats must precede "From the records".
+		const FOLLOWING = Node.DOCUMENT_POSITION_FOLLOWING;
+		expect(lede.compareDocumentPosition(fromTheRecords) & FOLLOWING).toBeTruthy();
+		let previous = lede;
+		for (const heading of beatHeadings) {
+			expect(previous.compareDocumentPosition(heading) & FOLLOWING).toBeTruthy();
+			previous = heading;
+		}
+		expect(previous.compareDocumentPosition(fromTheRecords) & FOLLOWING).toBeTruthy();
+	});
+});
