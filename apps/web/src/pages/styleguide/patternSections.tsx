@@ -15,6 +15,7 @@ import { SearchField, FilterBar } from "@/components/system/filters"
 import { DataTable, type Column } from "@/components/system/data-table"
 import { IdentityRow } from "@/components/system/identity"
 import { ErrorBoundary } from "@/components/system/status"
+import { SiteFooter } from "@/components/system/site-footer"
 import { Term } from "@/components/system/term"
 
 /**
@@ -378,6 +379,18 @@ const SECTIONS: { id: string; label: string; node: React.ReactNode }[] = [
     ),
   },
   {
+    id: "site-footer",
+    label: "Site footer",
+    node: (
+      <>
+        <SectionHead title="Site footer" />
+        <p className="text-body text-ink-2">
+          Rendered once from App.js below the routes, on every chrome page; hidden on the immersive game routes
+          (duel, Reclamation, Expedition, Powerworks, an Arcade game in progress). The Arcade hub itself keeps it.
+        </p>
+        <TemplateFrame caption="SiteFooter">
+          <SiteFooter />
+        </TemplateFrame>
     id: "term",
     label: "Term",
     node: (

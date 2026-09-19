@@ -147,7 +147,7 @@ function Tile({
   as,
   className,
   ...props
-}: React.ComponentProps<"a"> & { as?: React.ElementType }) {
+}: React.ComponentProps<"a"> & { as?: React.ElementType } & Record<string, unknown>) {
   const Comp = (as || "a") as React.ElementType
   return (
     <Comp

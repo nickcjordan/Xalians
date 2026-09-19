@@ -129,7 +129,7 @@ function TemplatePhysiology({ view }) {
         { key: <Term definition={TERM_DEFS.chirality}>Chirality</Term>, value: chirality || 'Not recorded' },
     ].map((e) => ({ ...e, value: <span className="font-body normal-case tracking-normal text-ink">{e.value}</span> }));
 
-    return <SpecPlate columns={2} entries={entries} className="max-w-4xl" />;
+    return <SpecPlate entries={entries} />;
 }
 
 function LegacyPhysiology({ view }) {
@@ -140,7 +140,7 @@ function LegacyPhysiology({ view }) {
         { key: 'Attack range', value: legacy.traits.attackRange || 'Not recorded' },
         { key: 'Flight', value: legacy.traits.canFly ? 'Yes' : 'No' },
     ].map((e) => ({ ...e, value: <span className="font-body normal-case tracking-normal text-ink">{e.value}</span> }));
-    return <SpecPlate columns={2} entries={entries} className="max-w-4xl" />;
+    return <SpecPlate entries={entries} />;
 }
 
 const ABILITY_FIELD_GLOSSES = [
@@ -313,6 +313,10 @@ export default function SpeciesView() {
                         <XalianImage colored speciesName={view.name} primaryType={view.element} moreClasses="w-full" />
                     </div>
                     {isTemplate && <div className="max-sm:order-3">{view.record.abilities.map(ability => <Signature key={ability.name} signature={ability} />)}</div>}
+                    <div className="max-sm:order-4">
+                        <SectionHead title="Physiology" />
+                        {isTemplate ? <TemplatePhysiology view={view} /> : <LegacyPhysiology view={view} />}
+                    </div>
                 </div>
 
                 <div className="flex min-w-0 flex-col gap-4 max-sm:order-2">
@@ -347,11 +351,6 @@ export default function SpeciesView() {
                     ))}
                 </div>
             </div>
-
-            <section className="mt-7">
-                <SectionHead title="Physiology" />
-                {isTemplate ? <TemplatePhysiology view={view} /> : <LegacyPhysiology view={view} />}
-            </section>
 
             <div className="mt-8">
                 <ContinueTheStory homePlanet={view.homePlanet} />

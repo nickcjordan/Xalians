@@ -10,7 +10,7 @@ import { Badge } from '@/components/ui/badge';
 function EntryRecord({ entry }) {
     return (
         <RecordRow
-            className={entry.element ? `el-${entry.element}` : ''}
+            className={`break-inside-avoid ${entry.element ? `el-${entry.element}` : ''}`}
             term={
                 <Link to={lore.routeFor('entry', entry.key)} className="no-underline hover:underline">
                     {entry.title}
@@ -38,7 +38,7 @@ export default function Powers() {
                 {vallerii.length === 0 ? (
                     <EmptyState legend="No record">No record on file.</EmptyState>
                 ) : (
-                    <div className="border-t border-edge">
+                    <div className="columns-1 border-t border-edge lg:columns-2">
                         {vallerii.map((entry) => <EntryRecord key={entry.key} entry={entry} />)}
                     </div>
                 )}
@@ -49,7 +49,7 @@ export default function Powers() {
                 {factions.length === 0 ? (
                     <EmptyState legend="No record">No record on file.</EmptyState>
                 ) : (
-                    <div className="border-t border-edge">
+                    <div className="columns-1 border-t border-edge lg:columns-2">
                         {factions.map((entry) => <EntryRecord key={entry.key} entry={entry} />)}
                     </div>
                 )}
@@ -57,11 +57,11 @@ export default function Powers() {
 
             <section className="mt-8">
                 <SectionHead title="Xalian Peoples" count={`${peoples.length} record${peoples.length === 1 ? '' : 's'}`} />
-                <div className="border-t border-edge">
+                <div className="columns-1 border-t border-edge lg:columns-2">
                     {peoples.map((p) => (
                         <RecordRow
                             key={p.name}
-                            className={p.planet ? `el-${p.planet.element}` : ''}
+                            className={`break-inside-avoid ${p.planet ? `el-${p.planet.element}` : ''}`}
                             term={
                                 <div>
                                     <p className="m-0">{p.name}</p>

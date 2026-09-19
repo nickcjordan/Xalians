@@ -7,7 +7,6 @@ import XalianNavbar from '@/components/navbar';
 import { ARCADE_GAMES } from '@/arcade/catalog';
 import { ARCADE_DAILY_CAP, ARCADE_TOKEN_PRICE, arcadeCreditsRemaining, loadArcadeProgress, syncArcadeProgressFromAttributes } from '@/arcade/progress';
 import { Shell, Masthead, SectionHead } from '@/components/system/masthead';
-import { SkipLink } from '@/components/system/a11y';
 import { usePageTitle } from '@/components/system/head';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -35,7 +34,6 @@ export default function ArcadePage() {
   const creditsRemaining = arcadeCreditsRemaining(progress.earnedToday);
   return (
     <main id="main" className="min-h-screen bg-room font-body text-ink" data-tier="chrome">
-      <SkipLink />
       <XalianNavbar />
       <Shell className="pb-16">
         <Masthead
