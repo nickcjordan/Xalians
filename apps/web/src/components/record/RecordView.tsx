@@ -110,6 +110,7 @@ function ordinal(value: number): string {
 }
 
 function RecordView({ record, kicker = 'Record', recordLink }: RecordViewProps) {
+	const isUnownedPreview = kicker === 'Unowned preview';
 	const template = getSpeciesTemplate(record.species);
 	const name = speciesDisplayName(record.species);
 	const element = record.element.primary;
@@ -200,7 +201,7 @@ function RecordView({ record, kicker = 'Record', recordLink }: RecordViewProps) 
 									? <Link to={originRoute} className="text-ink underline decoration-ink-3 underline-offset-4 hover:decoration-ink">{capitalize(originKey)}</Link>
 									: capitalize(originKey),
 							},
-							{ key: 'Serial', value: `No. ${record.provenance.serial.toLocaleString()}` },
+							...(isUnownedPreview ? [] : [{ key: 'Serial', value: `No. ${record.provenance.serial.toLocaleString()}` }]),
 							{ key: 'Generated', value: generatedOn(record.provenance.generatedAt) },
 							{ key: 'Seed', value: <span className="break-all">{record.provenance.seed}</span> },
 							{ key: 'Generator', value: `v${record.provenance.generatorVersion}` },

@@ -32,6 +32,7 @@ import { EmptyState } from '@/components/system/record';
 import { FilterBar, SearchField } from '@/components/system/filters';
 import { Callout } from '@/components/system/readouts';
 import { VisuallyHidden } from '@/components/system/a11y';
+import { usePageTitle } from '@/components/system/head';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -44,6 +45,7 @@ type CollectionSort = 'newest' | 'oldest' | 'species';
 type AccountView = 'collection' | 'trades';
 
 function UserAccountPage() {
+	usePageTitle('Your account');
 	const [loggedInUser, setLoggedInUser] = React.useState<AuthUser>(null);
 	const [records, setRecords] = React.useState<XalianRecord[]>([]);
 	const [cursor, setCursor] = React.useState<string | undefined>();

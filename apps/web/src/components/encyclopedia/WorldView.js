@@ -8,6 +8,7 @@ import XalianImage from '../xalianImage';
 import Connections from './Connections';
 import { useVisit, useReadMark, markRead, useResume } from './trail';
 import { SectionHead } from '@/components/system/masthead';
+import { usePageTitle } from '@/components/system/head';
 import { SpecPlate, RecordRow, Tile, TileArt, TileMeta, EmptyState } from '@/components/system/record';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -132,16 +133,22 @@ function WorldLede({ world }) {
     );
 }
 
-/** "Continue the story" foot: one row pointing at the reader's furthest part, or Part 1 when nothing is stored. */
-function ContinueTheStory() {
+/**
+ * Foot linking into The Story. With reading progress, it is "Continue the
+ * story" pointing at the reader's furthest part. Without progress, it is
+ * "This world in the story" pointing at the first era that names this world
+ * -- the same lit test the In-the-story chips above use (getWorldTimeline in
+ * lore/chronicle.js), read via getWorldFirstEra so the two never disagree.
+ */
+function ContinueTheStory({ world }) {
     const resume = useResume();
-    const eras = lore.getEras();
-    const era = resume ? lore.getEra(resume.eraKey) : null;
-    const target = era || eras[0];
+    const resumeEra = resume ? lore.getEra(resume.eraKey) : null;
+    const target = resumeEra || lore.getWorldFirstEra(world.key) || lore.getEras()[0];
     if (!target) return null;
+    const label = resumeEra ? 'Continue the story' : 'This world in the story';
     return (
         <div className="border-t border-edge pt-4">
-            <RecordRow className="border-b-0 py-0" term="Continue the story">
+            <RecordRow className="border-b-0 py-0" term={label}>
                 <Link to={lore.routeFor('era', target.key)} className="text-ink underline decoration-ink-3 underline-offset-4 hover:decoration-ink">
                     Part {target.order + 1}, {target.name}
                 </Link>
@@ -160,6 +167,8 @@ export default function WorldView() {
     const { key } = useParams();
     const world = lore.getWorld(key);
     const isPhone = useIsPhone();
+
+    usePageTitle(world ? world.name : 'Not found');
 
     useVisit(
         world
@@ -368,7 +377,7 @@ export default function WorldView() {
                     </section>
                 )}
 
-                <ContinueTheStory />
+                <ContinueTheStory world={world} />
 
                 <Accordion type="single" collapsible className="flex flex-col gap-2">
                     <AccordionItem value="cross-references" className="border border-edge bg-s1 px-5">

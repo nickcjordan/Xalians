@@ -15,6 +15,7 @@ export {
 	getEraFootprint,
 	getEraStory,
 	getWorldTimeline,
+	getWorldFirstEra,
 	getEventsForEntry,
 	getEraForEntry,
 	getEntryStory,
