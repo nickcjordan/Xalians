@@ -2,7 +2,7 @@
 
 Status: the running state of the game under ownership (brief: `reclamation-ownership-brief.md`). This file is the resume point. Any reset reads this first and continues at the weakest thing named below, never from scratch. Each pass appends its own section; the standing state at the top is rewritten in place.
 
-## Standing state (after pass 19, 2026-09-19)
+## Standing state (after pass 20, 2026-09-19)
 
 ### Gauges, proctor mirror
 
@@ -58,7 +58,17 @@ What it reads, and where each effect kind lands (measured over the seed-7 pool, 
 3. **Three of the four borrowed effect kinds** (displace, transfer, suppress) still read as plain attacks. Pass 18 gave `restrain` a rule that earns its place; the other three have no separate expression at a sealed world, so each needs its own case before it gets one.
 4. **The generator's attribute ranges are not published anywhere the game can read.** Pass 19 found a threshold sitting below the floor of the attribute it cuts, and the only way to find it was to sample pools. A band the game defines against a generated attribute should be checkable against that attribute's real range.
 5. **No human has played a full Proving.** The notes and telemetry are built, verified, and empty.
-6. **Hot-seat** is unbuilt and is the cheapest validation instrument the game can have.
+6. **Hot-seat, the remaining three quarters.** Pass 20 landed the seat indirection; what is left is the hand-off screen and its state, the second squad's draft, and a Charter that names two people instead of a rival. Scoped below.
+
+### Hot-seat: what pass 20 did and did not do
+
+The seat the table is drawn for is now a value (`seatInPlay()`), not the constant `'A'` compiled into sixty-four readings. With no `hotSeat` prop it always returns `'A'`, so solo play is unchanged, and the hand-off can land without touching those call sites at the same time as everything else.
+
+Still to build, in the order they should go:
+
+1. **The hand-off screen.** Two people at one screen cannot share hidden information, and hiding is not optional: **16.8 percent of sends arrive hidden, and removing hiding moves the flip gauge +2.46 +/- 0.98, beyond noise.** So hot-seat cannot simply disable it, or it would validate a different game from the one being shipped. A screen that covers the board between turns is the standard answer and the only honest one here.
+2. **The second squad's draft.** The draft screen assumes one human keeper.
+3. **The Charter naming two people** rather than a rival from the ladder.
 
 ### Closed by measurement (do not reopen without new evidence)
 
@@ -396,3 +406,17 @@ A thirteen-point penalty on a fifth of the pool, far beyond noise. The match gau
 **The lesson worth keeping:** *check the population of a band before concluding a rule about it does nothing.* Ablating a rule whose lane is empty looks exactly like ablating a rule that does not matter, and this one survived nine passes and an explicit "inert" verdict on that resemblance. Same family as pass 18's harness: the measurement was honest and the thing it measured was not what I thought.
 
 **Verified:** 2035 tests green (one new, one corrected), typecheck clean, build inside budgets, headless Proving green in all four configurations, the dull lane checked by paint.
+
+### Pass 20 (2026-09-19): the seat the table is drawn for
+
+**A prerequisite shipped on its own, deliberately.** The log's last two items are "no human has played a full Proving" and "hot-seat is unbuilt", and hot-seat is the instrument that fixes both. Scoping it honestly: the seat indirection (sixty-four call sites), a hand-off screen with its own state machine, hidden-send guards, a second squad's draft, and a Charter naming two people. That is more than one pass, and starting it and stopping mid-way would leave the table worse than not starting.
+
+So this pass ships the first quarter, complete and tested: **`seatInPlay()` replaces the hard-coded `'A'`** as the seat the table is drawn for. With no `hotSeat` prop it always returns `'A'`, which is the claim the new tests hold - sixty-four readings of the table move from a constant to an accessor and every one of them must still say A.
+
+In hot-seat it follows the seat to move during Deploy, and **holds still once Deploy is over**: the Clash and the Ruling are watched by both people at once, and flipping the view under a playback they are jointly reading would be worse than either choice.
+
+**Measured, because it decides the design of the next pass:** hiding cannot be switched off for hot-seat. **16.8 percent of sends arrive hidden, and `hiddenSends: false` moves the flip gauge +2.46 +/- 0.98, beyond noise** (five seeds, 500 matches). A variant without hiding is a different game, so validating this one means keeping it, which means two people need a screen between their turns rather than a shared view.
+
+**The lesson worth keeping:** *when a feature is bigger than a pass, ship its prerequisite as a pass.* The alternative is a branch that grows for days with nothing landing, and the seat indirection is independently correct, independently testable, and provably inert in solo play. Say which quarter shipped rather than implying the feature did.
+
+**Verified:** 2040 tests green (five new), typecheck clean, build inside budgets, headless Proving green in all four configurations, solo play unchanged by construction and by test.
