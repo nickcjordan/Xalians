@@ -1,11 +1,13 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const amplifyAuth = vi.hoisted(() => ({
+	confirmResetPassword: vi.fn(),
 	confirmSignUp: vi.fn(),
 	fetchAuthSession: vi.fn(),
 	fetchUserAttributes: vi.fn(),
 	getCurrentUser: vi.fn(),
 	resendSignUpCode: vi.fn(),
+	resetPassword: vi.fn(),
 	signIn: vi.fn(),
 	signOut: vi.fn(),
 	signUp: vi.fn(),
@@ -87,6 +89,18 @@ describe('Amplify 6 auth boundary', () => {
 		expect(amplifyAuth.confirmSignUp).toHaveBeenCalledWith({ username: 'nick-user', confirmationCode: '123456' });
 		expect(amplifyAuth.resendSignUpCode).toHaveBeenCalledWith({ username: 'nick-user' });
 		expect(amplifyAuth.signIn).toHaveBeenCalledWith({ username: 'nick-user', password: 'password' });
+	});
+
+	it('uses the Amplify 6 named input shapes for password reset', async () => {
+		await authUtil.resetPassword('nick-user');
+		await authUtil.confirmResetPassword('nick-user', '123456', 'newpassword');
+
+		expect(amplifyAuth.resetPassword).toHaveBeenCalledWith({ username: 'nick-user' });
+		expect(amplifyAuth.confirmResetPassword).toHaveBeenCalledWith({
+			username: 'nick-user',
+			confirmationCode: '123456',
+			newPassword: 'newpassword',
+		});
 	});
 
 	it('returns the current ID token for API authorization', async () => {
