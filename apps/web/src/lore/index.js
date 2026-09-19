@@ -35,6 +35,8 @@ export { linkify } from './linkify';
 
 export { routeFor } from './routeFor';
 
+export { chapterLabel } from './chapterLabel';
+
 export { getConnections } from './connections';
 
 export { getReader, getReaderPart } from './reader';

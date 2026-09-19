@@ -139,6 +139,22 @@ export const STAKE_VISIBLE_WEIGHT = 0.5;
 	so the edge is read off the best few holds rather than the roster mean.
 */
 export const STAKE_ROSTER_DEPTH = 5;
+/*
+	PASS 6. How much of a creature's Clash value (roleValueOf, the bot's own pricing of what
+	a role does to a world's margin) counts toward a world's stake edge, on top of its hold.
+
+	Built on the belief that the stake had stopped predicting worlds because it read hold
+	alone while pass 5 made the Clash decide them. Swept at 0 and 1 over 600 matches on
+	three seeds and it moved nothing that mattered: the staked-world rate went 47.4/55.4/50.3
+	to 45.1/55.3/49.3, inside the interval on every seed, while usage fell from 32.0/34.5/26.5
+	to 24.7/30.7/22.7 percent of Provings.
+
+	It moved nothing because there was nothing to move: pooled over five seeds at 1000
+	matches the stake is variance-neutral (50.0 +/- 2.4 against 50.7 +/- 1.8), and the
+	"trap" it was built to fix was a gauge comparing two point estimates with no interval.
+	Shipped at 0, which is the bot unchanged, with the sweep recorded so it is not redone.
+*/
+export const STAKE_CLASH_WEIGHT: number = 0;
 
 function otherSeat(seat: Seat): Seat {
 	return seat === 'A' ? 'B' : 'A';
@@ -671,11 +687,28 @@ export function chooseStake(publicState: PublicState, ownRoster: XalianRecord[],
 	const frame = publicState.frame;
 	const meanHoldAt: Record<string, number> = {};
 	frame.sites.forEach((site) => {
-		const holds = ownRoster
-			.map((record) => prepare(record, site, null, 0, { rules }).hold)
+		/*
+			PASS 6. What a creature is worth at a world is its hold PLUS what it does in the
+			Clash, and since pass 5 the second half decides worlds. Reading hold alone is
+			what made the stake a losing bet: at the pass-5 scale the staker held its staked
+			world 47.4 percent of the time while its unstaked worlds ran at 50. roleValueOf
+			is the bot's own pricing of a role's effect on a world's margin, in the same hold
+			units, so adding it costs nothing in units and buys the Clash's opinion.
+
+			STAKE_CLASH_WEIGHT is how much of that opinion the stake trusts. The creature is
+			not on the board, so sentIndex 0 stands in for it exactly as scoreSends does.
+		*/
+		const values = ownRoster
+			.map((record) => {
+				const view = prepare(record, site, null, 0, { rules });
+				const clash = STAKE_CLASH_WEIGHT === 0
+					? 0
+					: roleValueOf(publicState, record, site, 0, handler, view);
+				return view.hold + STAKE_CLASH_WEIGHT * clash;
+			})
 			.sort((a, b) => b - a)
 			.slice(0, STAKE_ROSTER_DEPTH);
-		meanHoldAt[site.id] = holds.reduce((a, b) => a + b, 0) / holds.length;
+		meanHoldAt[site.id] = values.reduce((a, b) => a + b, 0) / values.length;
 	});
 	const across = frame.sites.reduce((sum, site) => sum + meanHoldAt[site.id], 0) / frame.sites.length;
 
