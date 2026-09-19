@@ -6,6 +6,7 @@ import LoreArt from './LoreArt';
 import Connections from './Connections';
 import { useVisit, useResume } from './trail';
 import { SectionHead } from '@/components/system/masthead';
+import { usePageTitle } from '@/components/system/head';
 import { RecordRow, EmptyState } from '@/components/system/record';
 import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
@@ -137,6 +138,7 @@ function StoryEra({ row, entryTitle }) {
 export default function EntryView() {
     const { key } = useParams();
     const entry = lore.getEntry(key);
+    usePageTitle(entry ? entry.title : 'Not found');
     useVisit(entry
         ? { kind: 'entry', key, name: entry.title, element: entry.element }
         : { kind: null, key: null });

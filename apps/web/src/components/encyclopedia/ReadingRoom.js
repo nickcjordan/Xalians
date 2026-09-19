@@ -6,6 +6,7 @@ import EraScrubber from './EraScrubber';
 import StoryContents from './StoryContents';
 import { useResume } from './trail';
 import { SectionHead } from '@/components/system/masthead';
+import { usePageTitle } from '@/components/system/head';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 
@@ -80,6 +81,7 @@ function BeginOrResumeCard({ story }) {
  * the pass".
  */
 export default function ReadingRoom() {
+	usePageTitle('Reading Room');
 	const story = lore.getStory();
 	const queryEra = useQueryEra();
 	const [era, setEra] = useState(() => (queryEra ? queryEra : null));

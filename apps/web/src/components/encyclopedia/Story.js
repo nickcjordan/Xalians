@@ -6,6 +6,7 @@ import LoreArt from './LoreArt';
 import { useVisit, useReadMark, markRead, recordStoryPosition } from './trail';
 import StoryContents from './StoryContents';
 import { SectionHead } from '@/components/system/masthead';
+import { usePageTitle } from '@/components/system/head';
 import { EmptyState } from '@/components/system/record';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -347,6 +348,7 @@ function PartRail({ story, part, progress }) {
 /* ---- part page ------------------------------------------------------------ */
 
 function StoryContentsPage() {
+	usePageTitle('The Story');
 	const story = useMemo(() => lore.getStory(), []);
 	useVisit({ kind: 'story', key: 'story', name: story.title });
 	return (
@@ -364,6 +366,8 @@ function StoryPart() {
 	const navigate = useNavigate();
 	const story = useMemo(() => lore.getStory(), []);
 	const part = lore.getStoryPart(eraKey);
+
+	usePageTitle(part ? `Part ${part.order}: ${part.era.name}` : 'Not found');
 
 	const [progress, setProgress] = useState(0);
 

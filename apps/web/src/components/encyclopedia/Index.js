@@ -4,6 +4,7 @@ import * as lore from '../../lore';
 import Prose from './Prose';
 import { useReadMark } from './trail';
 import { RecordRow, EmptyState } from '@/components/system/record';
+import { usePageTitle } from '@/components/system/head';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -45,6 +46,7 @@ function IndexRecord({ entry }) {
  * Contract: docs/design/xalian-encyclopedia-page.md §5 "Index and entry".
  */
 export default function Index() {
+    usePageTitle('Index');
     const location = useLocation();
     const navigate = useNavigate();
     const initialQuery = useMemo(() => {

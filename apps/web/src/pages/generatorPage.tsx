@@ -16,6 +16,7 @@ import { HelixSpinner } from '@/components/system/brand';
 import { EmptyState } from '@/components/system/record';
 import { Callout } from '@/components/system/readouts';
 import { LiveRegion } from '@/components/system/a11y';
+import { usePageTitle } from '@/components/system/head';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
@@ -62,6 +63,7 @@ function readStoredProfile(): GeneratorProfile {
 }
 
 function GeneratorPage() {
+	usePageTitle('Generate a Xalian');
 	const [record, setRecord] = React.useState<XalianRecord | null>(null);
 	const [mode, setMode] = React.useState<Mode>('showroom');
 	const [isGenerating, setIsGenerating] = React.useState(true);
