@@ -15,7 +15,9 @@ export default function EraScrubber({ era, onChange }) {
 	const stations = [{ key: null, order: null, name: 'All', definition: null }, ...eras];
 	const activeIndex = stations.findIndex((s) => s.key === era);
 	const active = activeIndex >= 0 ? stations[activeIndex] : stations[0];
-	const definition = active.key === null ? null : active.definition;
+	const mapLegend =
+		'Fourteen worlds, colored by element. The dotted orbit is the Cybele system, the shattered family of worlds that left Stonera alone. Wraithix is the system that holds Phantiri and the derelict fleet found there.';
+	const definition = active.key === null ? mapLegend : active.definition;
 
 	// When an era is selected, spell out what the map is showing: which
 	// worlds light and which carry fixed events, with the counts for each.
@@ -87,6 +89,9 @@ export default function EraScrubber({ era, onChange }) {
 					{eventCount} events)
 				</p>
 			)}
+			<p className="m-0 mt-3 max-w-[62ch] font-body text-small text-ink-2">
+				Pick an era to light the worlds that appear in it.
+			</p>
 		</div>
 	);
 }
