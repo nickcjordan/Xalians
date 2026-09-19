@@ -14,9 +14,8 @@ export default function EraScrubber({ era, onChange }) {
 	const eras = lore.getEras();
 	const stations = [{ key: null, order: null, name: 'All', definition: null }, ...eras];
 	const activeIndex = stations.findIndex((s) => s.key === era);
-	const preface = 'Every record the Generator has on the galaxy it serves. Records are relative in time; no date survives.';
 	const active = activeIndex >= 0 ? stations[activeIndex] : stations[0];
-	const definition = active.key === null ? preface : active.definition;
+	const definition = active.key === null ? null : active.definition;
 
 	// When an era is selected, spell out what the map is showing: which
 	// worlds light and which carry fixed events, with the counts for each.

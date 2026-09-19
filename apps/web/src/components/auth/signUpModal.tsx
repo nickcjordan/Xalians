@@ -94,7 +94,7 @@ function SignUpModal({ show, onHide, callback }: SignUpModalProps) {
 										<Input autoFocus placeholder="Username" {...field} />
 									</FormControl>
 									<FormDescription className="text-small text-ink-2">
-										Must be unique — can contain letters, numbers, &apos;-&apos;, or &apos;_&apos;.
+										Must be unique. Letters, numbers, hyphens and underscores.
 									</FormDescription>
 									<FormMessage className="text-small text-plague-outline-ink" />
 								</FormItem>

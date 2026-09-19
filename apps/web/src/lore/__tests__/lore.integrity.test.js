@@ -3,6 +3,32 @@ import { describe, it, expect } from 'vitest';
 import { getEntries, getEntry, getWorlds, getSpeciesList } from '../index';
 import { chronicleData, registriesData, templateRecordsByKey } from '../loaders';
 
+// Content JSON prose fields scanned for punctuation the copy pass (issue
+// #431) removed. Any new field added to the lore bundle should be included
+// here so a stray em dash or spaced-hyphen dash cannot slip back in.
+function collectProseStrings() {
+	const strings = [];
+	for (const world of getWorlds()) {
+		for (const chapter of world.chapters) {
+			strings.push({ text: chapter.text, source: `world:${world.key}:${chapter.index}` });
+		}
+	}
+	for (const entry of getEntries()) {
+		if (entry.definition) {
+			strings.push({ text: entry.definition, source: `entry:${entry.key}` });
+		}
+	}
+	for (const era of chronicleData.eras) {
+		strings.push({ text: era.definition, source: `era:${era.key}` });
+	}
+	for (const species of getSpeciesList()) {
+		if (species.description) {
+			strings.push({ text: species.description, source: `species:${species.key}` });
+		}
+	}
+	return strings;
+}
+
 describe('lore integrity', () => {
 	it('every related key resolves', () => {
 		const entries = getEntries();
@@ -128,6 +154,23 @@ describe('lore integrity', () => {
 				for (const v of values) {
 					expect(physiologyKeySets[field].has(v), `physiology.${field} ${v}`).toBe(true);
 				}
+			}
+		}
+	});
+});
+
+describe('lore copy conventions (issue #431)', () => {
+	it('no em dash anywhere in content JSON prose fields', () => {
+		for (const { text, source } of collectProseStrings()) {
+			expect(text.includes('—'), source).toBe(false);
+		}
+	});
+
+	it('no spaced hyphen used as a dash in planet histories', () => {
+		for (const world of getWorlds()) {
+			for (const chapter of world.chapters) {
+				expect(chapter.text.includes(' – '), `world:${world.key}:${chapter.index}`).toBe(false);
+				expect(chapter.text.includes(' - '), `world:${world.key}:${chapter.index}`).toBe(false);
 			}
 		}
 	});

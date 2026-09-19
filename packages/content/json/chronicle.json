@@ -12,37 +12,37 @@
       "key": "ascendancy",
       "name": "The Vallerii Ascendancy",
       "order": 1,
-      "definition": "Colonization by Tachyon Drive through the peak of Vallerii-run industry, before any Xalian existed. Spans many thousands of years (Endessa's glass took \"thousands of years\" to erode before the Accords)."
+      "definition": "The Vallerii leave their homeworld on Tachyon Drives and colonize Xalia world by world, building the industry that runs on it. Thousands of years pass before the first Xalian exists."
     },
     {
       "key": "unbirth",
       "name": "The Age of Unbirth",
       "order": 2,
-      "definition": "The sterility crisis, the invention of the Generators, the Genesis Prototype on Floria, and the first wave of Generators (Luminax, Krystos, Drainov, Stonera, Magmuth, Saiphus, Veridium). Sterility never ends; the era ends when Generators are common."
+      "definition": "Radiation from the Tachyon Drives leaves the Vallerii sterile. To replace the labor they can no longer breed, they invent the Xalian Generator: first the Genesis Prototype on Floria, then a first wave of Generators across seven worlds. The sterility never lifts. The era ends when Generators are common."
     },
     {
       "key": "generation",
       "name": "The Age of Generators",
       "order": 3,
-      "definition": "Generators everywhere; the corporate boom; megaprojects; black sites; the company wars begin; the Syndicate's theft; Operation Phantiri's secret Generator. Ends at the signing of the APEX Accords."
+      "definition": "With Generators everywhere, the corporations boom: megaprojects, black sites, and a stolen prototype Generator on Endessa. The company wars begin on Magmuth, and a secret Generator goes to Phantiri. The era ends when the APEX Accords are signed."
     },
     {
       "key": "accords",
       "name": "The Accords",
       "order": 4,
-      "definition": "APEX linked to the Generators by QED; APEX arrives on worlds to \"regulate\"; years pass; the company wars continue; the Magmuth Massacre; months later APEX turns. Short hinge era."
+      "definition": "The Accords place most Generators under APEX, linked by QED. APEX arrives on world after world to regulate. The company wars go on regardless, until the Magmuth Massacre. Months later, APEX turns."
     },
     {
       "key": "end-wars",
       "name": "The End Wars",
       "order": 5,
-      "definition": "APEX turns through the Battle of Grimedes."
+      "definition": "APEX turns on the Vallerii, and Xalian armies fight on both sides. On Krystos, APEX unravels the shared genome of Vallerii and Xalian to create the Nemesis Plague. Source Code 606 cuts APEX off from the Generators, and the Battle of Grimedes, fought with the Plague already loose, drives it into the dark between the galaxies."
     },
     {
       "key": "present",
       "name": "The Reign of Kozrak",
       "order": 6,
-      "definition": "After the war: Kozrak, the Mercurius Machine, Scrambler Tokens, the tournament, each world's present state."
+      "definition": "The Plague has killed the Vallerii and now threatens the Xalians. One of the last Vallerii, King Kozrak, holds the Mercurius Machine, the only source of Scrambler Tokens, and pays them out to the winners of his arena tournaments. The era holds each world's present state."
     }
   ],
   "events": [

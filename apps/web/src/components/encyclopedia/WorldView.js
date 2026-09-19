@@ -47,7 +47,7 @@ const PHYSICAL_DISPLAY_SET = [
     ['Size vs Earth', (p) => `${p.sizeVsEarth}x`, true],
     ['Radius km', (p) => Number(p.radiusKm).toLocaleString('en-US'), true],
     ['Gravity vs Earth', (p) => `${p.gravityVsEarth}x`, true],
-    ['Temperature range', (p) => `${p.temperatureC.low} to ${p.temperatureC.high} C`, true],
+    ['Temperature range', (p) => `${p.temperatureC.low} to ${p.temperatureC.high} °C`, true],
 ];
 
 const MOBILITY_ORDER = ['flight', 'swim', 'burrow', 'climb', 'sprint'];
@@ -412,7 +412,7 @@ export default function WorldView() {
                                     return (
                                         <p key={k} className="type-data m-0 mb-1 text-small text-ink">
                                             {k.toUpperCase()} &nbsp;{m.rating.toUpperCase()}
-                                            {m.note && <span className="text-ink-2"> &mdash; {m.note}</span>}
+                                            {m.note && <span className="text-ink-2">: {m.note}</span>}
                                         </p>
                                     );
                                 })}
@@ -430,7 +430,7 @@ export default function WorldView() {
                                     OUTPUT PRIORITIES &nbsp;{report.outputPriorities.join(' / ')}
                                 </p>
 
-                                <p className="type-data m-0 mt-3 text-[11px] uppercase text-ink-2">RECEIPT UNCONFIRMED, filed by hand&mdash;archivist</p>
+                                <p className="type-data m-0 mt-3 text-[11px] uppercase text-ink-2">RECEIPT UNCONFIRMED, filed by hand: archivist</p>
                             </Card>
                         </AccordionContent>
                     </AccordionItem>
