@@ -344,6 +344,87 @@ The brief's first open item, and the largest gap between what a creature is and 
 | 37 | An act sweeps because the record gives it an area footprint, not because its legacy key was burst, spray or cloud | 85% (roles stay on one bar after the census shift) | `creatureOnTable.blowActOf` |
 | 38 | Which attribute powers an attack is read from `delivery.mode` (contact is strength, everything else intelligence) rather than from a table of sixteen keys | 85% (pass 2's attribute jobs unchanged in effect, read from the record instead of a projection) | `recordReading.governingAttributeFor` |
 
+## Pass 8: a real bug, and two rules that did not earn their place (2026-09-18)
+
+Pass 7 left one open item above the rest: 432 actions carrying restrain, displace, transfer or suppress all read as plain attacks, and `spatial.range` was read by nothing. Pass 8 built the two rules that opportunity suggested, measured them, and shipped neither. What it did ship is a correctness bug the measurement uncovered on the way.
+
+**The bug, found while measuring what a creature's one blow actually is.** Pass 7 made an act sweep because the record gives it an area rather than because its legacy key was one of three. That is right, but it was applied before the support filter, and **104 of the pool's protect actions carry an area footprint** (a barrier thrown over everyone standing at the world). Reading area alone picked one of those as the creature's one blow, so **13 of 268 attacking creatures were throwing a shield as their attack**. Fixed by filtering to attacks first; measured at 0 of 268, 0 of 256 and 0 of 252 on three seeds afterwards, with the pool's harm blows rising from 197 to 210. A regression test pins it.
+
+**The two rules, built and measured.**
+
+- **Pinning.** An attack whose primary effect is `restrain` stops its target landing its own attack this Clash. At a sealed world with one Clash, that is the only thing "restrained" can mean that the table can show, and it gives 11 percent of attacking creatures a reason to exist beyond their number.
+- **Reach first.** A creature whose attack reaches past contact lands before the contact-only creatures, whatever their speed. 18 percent of attackers reach, and `spatial.range` had been read since pass 7 and used by nothing.
+
+**Why neither shipped.** Measured at 600 matches on each of three seeds, every configuration sits inside every other's interval:
+
+| Configuration | Downs per match (7 / 13 / 21) | Flips (7 / 13 / 21) |
+|---|---|---|
+| both off (shipped) | 4.53 / 4.33 / 4.46 | 26.5 / 25.8 / 24.5% |
+| both on | 4.46 / 4.32 / 4.42 | 25.7 / 25.8 / 25.1% |
+
+Pinning fires but barely bites: over 600 matches it produced 280 pins and only **67 lost attacks**, because 76 percent of pins land on a creature that has already swung. Ordering pinners with the reachers (a pin that lands after its target swings is no pin) lifted that to 92, still under a third of pins. The structural reason is that **62 percent of contested worlds are one creature against one**, where a pin mostly takes a swing from a creature that was about to be downed anyway. Across 1200 matches only **12.4 percent of Provings contained a pin that actually took someone's swing**.
+
+By the standing rule that a rule whose removal changes nothing measurable is cost in the rulebook without weight, both are shipped OFF as ablation rows with their measurements recorded. The temptation to keep pinning because it was built and produces a visible event was the thing to resist: one in eight Provings is not enough presence to pay for a rule a player must learn.
+
+**What this says about the open item.** The four borrowed effect kinds do not become interesting by being given a rule each; they become interesting when creatures MEET, and at 62 percent one-against-one they mostly do not. The next attempt at the Clash should make worlds crowd rather than make a lone exchange more intricate.
+
+| # | Assumption / Decision | Confidence | Supporting Evidence |
+|---|---|---|---|
+| 39 | An act sweeps only if it is an ATTACK with an area footprint; an area shield stays a shield | 95% (13 of 268 attackers threw a shield as their attack before the fix, 0 of 268 after) | `creatureOnTable.blowActOf`; regression test in `recordReading.test.ts` |
+| 40 | Pinning (a restraining attack takes its target's swing) ships OFF: it moves nothing at 600 matches on three seeds and takes a swing in only 12.4 percent of Provings | 80% (the structural cause is that 62 percent of contested worlds are one against one) | this section |
+| 41 | Reach-first ordering ships OFF: it moves nothing measurable and changes nothing a player can see | 85% | this section |
+| 42 | The Clash gets its next dimension from crowding worlds, not from more rules inside a lone exchange | 70% (inference from the two negative results; untested) | this section |
+
+## Pass 9: the Clash's real ceiling was the send budget (2026-09-18)
+
+Three passes tried to make the Clash matter by changing what happens inside it, and all three hit the same wall: 62 percent of contested worlds were one creature against one, so there was usually nothing for a Clash rule to be about. Pass 9 measured the cause, and it is arithmetic rather than scoring.
+
+**The measurement.** A Proving offers nine worlds (three frames of three). At `SENDABLE` 10 the bot spent a mean of **9.31 sends**, which is **1.04 sends per world**. Stacking two creatures anywhere meant abandoning another world outright, so the bot almost never did it, and no rule inside the Clash could have changed that.
+
+It was never that stacking is bad. Measured at 600 matches on seed 7:
+
+| World | Win rate | n |
+|---|---|---|
+| one creature against one | 49.0% +/- 1.4 | 5146 |
+| **two against one** | **74.7% +/- 2.6** | 1094 |
+| three against one | 73.5% +/- 12.4 | 49 |
+
+The payoff for committing a second creature was always enormous. The budget simply could not pay for it.
+
+**The sweep.** The magnitude scale moves with the budget, because more creatures meeting means more attacks landing:
+
+| Setting | 1v1 share | Downs per match (3 seeds) | Flips (3 seeds) |
+|---|---|---|---|
+| sendable 10, scale 3.0 (pass 5) | 62.7% | 4.53 / 4.33 / 4.46 | 26.5 / 25.8 / 24.5% |
+| **sendable 11, scale 2.7 (shipped)** | **56.2%** | **4.85 / 4.64 / 4.80** | **26.1 / 26.9 / 24.5%** |
+| sendable 12, scale 2.8 | 44.5% | 5.61 / 5.42 / 5.62 (over band) | 25.8 / 26.9 / 25.7% |
+| sendable 12, scale 2.4 | 44.5% | 5.05 / 4.88 / 5.03 | 23.1 / 25.1 / 23.7% (under band) |
+
+12 crowds worlds far harder but cannot hold the downs band and the flip band together at any scale tried, because crowding a world makes any single exchange matter less to its total: the flip rate falls as the crowd rises. **11 is the setting where both bands hold on three seeds and the crowd still improves.**
+
+**The gain.** Comeback from a contested round 1 rose from 30.8 / 32.0 / 35.1 to **32.7 / 34.0 / 35.4 percent**, comfortably inside its band on all three seeds, and 1v1 worlds fell by six points.
+
+**The cost, recorded rather than hidden.** A bigger budget narrows the naive-policy margin. The pass-early policy sat 21.5 / 19.4 / 17.8 points under the proctor's mirror at `SENDABLE` 10 and sits **13.1 / 13.1 / 14.5** under it at 11. The eight-point bar still clears on every seed with room, but the direction is the one to watch: a budget generous enough that spending it all is nearly automatic would make the deploy decisions decorative. This is the reason 12 would need more than a downs fix before it could ship.
+
+**No UI change was needed.** The bench reads `sendableCap` off the public state, so the table now says "11 sends left" with eleven pips, verified by paint.
+
+| # | Assumption / Decision | Confidence | Supporting Evidence |
+|---|---|---|---|
+| 43 | `SENDABLE` is 11 and `MAGNITUDE_SCALE` is 2.7, as a pair: the send budget sets how many creatures can meet at a world and the scale keeps downs in band once they do | 85% (three-seed sweeps at 600 matches; both bands hold and comeback improves) | this section |
+| 44 | The sends-per-world ratio, not any rule inside the Clash, is what decides whether creatures meet. Nine worlds against a budget near nine sends forces one against one | 90% (1.04 sends per world at the old setting; a second creature takes a world from 49.0 to 74.7 percent) | this section |
+| 45 | The send budget is a rules lever (`sendable`), so the ratio can be swept without editing the interpretation layer | 90% | `expeditionRules.sendableCapFor` |
+| 46 | The naive-policy margin is the constraint on raising the budget further, not the downs band | 80% (pass-early closes from 21.5 to 13.1 points between 10 and 11) | this section |
+
+### Pass 9 open items
+
+- **1v1 is still 56 percent of contested worlds.** 12 sends would take it to 44.5 but costs the flip band and half the naive margin. The other half of the ratio is the frame: three worlds per round against three rounds. A narrower frame (two worlds per round) would raise sends-per-world without touching the budget, and `worldsPerFrame` is now a lever, but it moves the clinch and the whole match arc, so it is a design change rather than a tuning one.
+- The four borrowed effect kinds still read as plain attacks; pass 8 measured that giving them rules does not pay while worlds are thin, and worlds are now less thin, so this is worth re-testing after the next crowding move.
+
+### Pass 8 open items
+
+- **Make creatures meet.** 62 percent of contested worlds are one against one, which is the ceiling every Clash rule has hit. The bot spreads because spreading is right under its own scoring; whether the rules should reward committing to a world (and how, without a gift) is the question.
+- The four borrowed effect kinds still read as plain attacks. That is honest and is no longer the top item.
+
 ### Pass 7 open items
 
 - **Restrain, displace, transfer and suppress deserve rules of their own.** They read as attacks today, which is honest but flat: 432 actions carry them and none of them does anything a plain attack does not. Restrain is the most promising (a creature that cannot act this Clash) and transfer the second (the drain in the lever pool). This is where the Clash gets a second dimension.

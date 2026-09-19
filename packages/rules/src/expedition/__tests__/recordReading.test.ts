@@ -157,3 +157,27 @@ describe('readRecord: whether the table can field the creature', () => {
 		expect(reading.reach).toBe(REACH_BY_RANGE.medium);
 	});
 });
+
+/*
+	Pass 8 regression. Reading `spatial.area` to decide what sweeps is right, but it must be
+	applied to ATTACKS only: 104 of the pool's protect actions carry an area footprint (a
+	barrier thrown over everyone standing here), and reading area alone picked one of those
+	as the creature's one blow. Measured before the fix: 13 of 268 attacking creatures threw
+	a shield as their attack.
+*/
+describe(`pass 8: an area shield is never a creature's attack`, () => {
+	test('a protect action with an area footprint is a shield, not a sweep', () => {
+		const areaShield = readAction(action({
+			effect: { kind: 'protect', method: 'barrier', against: 'harm' },
+			spatial: {
+				selectivity: 'indiscriminate',
+				range: 'short',
+				area: { shape: 'radial', extent: 'medium', anchor: 'point' },
+			},
+		}));
+		expect(areaShield.role).toBe(EFFECT_ROLE.SHIELD);
+		expect(areaShield.area).toBe(true);
+		// it carries an area, so anything choosing a sweep by area alone would pick it
+		expect(areaShield.role).not.toBe(EFFECT_ROLE.ATTACK);
+	});
+});

@@ -86,13 +86,15 @@ export const SEVERE_STRAIN_MULTIPLIER = 0.25;
 		scale 3.0: downs 4.16 to 4.44, flips 25.4 to 27.6 percent (BOTH BANDS MET)
 		scale 3.5: downs 4.57 to 4.89, flips 26.9 to 29.3 percent (downs near the ceiling)
 
-	3.0 is the setting where both gauges clear with the most room on either side. The cost,
-	recorded as an open item rather than hidden: comeback falls from 30.6 to 33.3 percent to
-	25.9 to 30.7 percent, because a bigger Clash lets a leader convert its lead into downs.
-	No gift was added to the trailing side to cover it (Nick's ruling); the comeback avenue
-	stays a chosen risk and the stake's own reading is the open item below.
+	3.0 was the setting where both gauges cleared with the most room on either side.
+
+	LOWERED TO 2.7 IN PASS 9, paired with SENDABLE 11 (see below). Raising the send budget
+	puts more creatures at each world, so more attacks land per Proving and the scale has to
+	come down to keep downs per match inside 3 to 5. The pair is the setting, not either
+	number alone: at sendable 11 the scale 3.0 reads downs 4.98 to 5.19 (over the band on
+	one seed) and 2.7 reads 4.64 to 4.85 with flips still 24.5 to 26.9 percent.
 */
-export const MAGNITUDE_SCALE = 3.0;
+export const MAGNITUDE_SCALE = 2.7;
 
 /*
 	Pass 5 (2026-09-18): the lever that tested WHY the flip gauge was stuck, kept as an
@@ -330,6 +332,28 @@ export const STAKE_BOTH_VALUE = 3;
 */
 export const STAKE_TIMING: 'before-first-send' | 'any-turn' = 'before-first-send';
 
+/*
+	PASS 8: the Clash gets a second dimension, from fields pass 7 started reading.
+
+	PINNING. An attack whose primary effect is `restrain` stops its target from landing its
+	own attack this Clash. Before pass 8 the 171 restrain actions in the pool were plain
+	damage, because the projection turned them into `snare` and the game had no snare rule.
+	At a sealed world with one Clash, "restrained" can only mean one thing the table can
+	show: you do not get to swing. It makes speed matter (a pin only works if it lands
+	first) and gives 11 percent of attacking creatures a reason to exist beyond their
+	number.
+
+	REACH FIRST. A creature whose attack reaches past contact (spatial.range short, medium
+	or long) lands before the contact-only creatures at its world, whatever their speed.
+	`spatial.range` has been read since pass 7 and used by nothing; 18 percent of attacking
+	creatures reach. This is the "second dimension" the brief asked about, and it is one
+	sentence: what strikes from a distance strikes first.
+
+	Both are rules flags so the ablation can price them.
+*/
+export const PINNING = false;
+export const REACH_FIRST = false;
+
 // Armored (the base, "Traits that remain"): blows against an armored creature are
 // reduced by this fraction.
 export const ARMORED_REDUCTION = 0.25;
@@ -361,7 +385,47 @@ export const MIN_BLOW_MAGNITUDE = 1;
 // "The Proving", 2026-09-04). SITES_TO_CLINCH counts worlds held: five of the nine.
 export const SITES_TO_CLINCH = 5;
 export const ROSTER_SIZE = 12;
-export const SENDABLE = 10;
+/*
+	PASS 9 (2026-09-18): SENDABLE 10 -> 11, and why this number is the Clash's real ceiling.
+
+	Three passes tried to make the Clash matter by changing what happens inside it, and all
+	three hit the same wall: 62 percent of contested worlds were one creature against one,
+	so there was usually nothing for a Clash rule to be about. Pass 9 measured the cause and
+	it is arithmetic, not scoring.
+
+	A Proving offers WORLDS_PER_FRAME x FRAMES_PER_MATCH = 9 worlds. At SENDABLE 10 the bot
+	spent a mean of 9.31 sends, which is 1.04 sends per world. Stacking two creatures
+	anywhere therefore meant abandoning another world outright, so the bot almost never did
+	it, and no rule inside the Clash could have changed that.
+
+	It is not that stacking is bad. Measured at 600 matches, seed 7: a world held by one
+	creature against one is won 49.0 percent of the time; sending a SECOND creature takes it
+	to 74.7 percent. The payoff was always there and the budget could not pay for it.
+
+	Swept against the sends-per-world ratio (600 matches, three seeds), with the magnitude
+	scale moved with it because more meetings means more attacks landing:
+
+		sendable 10, scale 3.0 (pass 5): 1v1 62.7%, downs 4.53, flips 26.5%
+		sendable 11, scale 2.7 (SHIPPED): 1v1 56.2%, downs 4.64 to 4.85, flips 24.5 to 26.9%
+		sendable 12, scale 2.8:           1v1 44.5%, downs 5.42 to 5.62 (over the band)
+		sendable 12, scale 2.4:           1v1 44.5%, downs 4.88 to 5.05, flips 23.1 to 25.1%
+
+	12 crowds worlds far harder (1v1 down to 44.5 percent) but cannot hold the downs band
+	and the flip band at the same time at any scale tried: crowding a world makes any one
+	exchange matter less to its total, so the flip rate falls as the crowd rises. 11 is the
+	setting where both bands hold on three seeds and the crowd still improves.
+
+	THE COST, recorded rather than hidden: a bigger budget narrows the naive-policy margin.
+	The pass-early policy sat 21.5 / 19.4 / 17.8 points under the proctor's mirror at
+	SENDABLE 10 and sits 13.1 / 13.1 / 14.5 under it at 11. The bar is eight points and it
+	still clears on every seed with room, but the direction is the one to watch: a budget
+	generous enough that spending it all is nearly automatic would make deploy decisions
+	decorative. Do not raise this further without re-reading section 1 of the validation.
+
+	THE GAIN: comeback from a contested round 1 rose from 30.8 / 32.0 / 35.1 to
+	32.7 / 34.0 / 35.4 percent, comfortably inside its band on all three seeds.
+*/
+export const SENDABLE = 11;
 export const FRAMES_PER_MATCH = 3;
 export const WORLDS_PER_FRAME = 3;
 // distinct worlds a match draws from the fourteen

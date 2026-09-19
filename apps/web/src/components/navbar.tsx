@@ -3,7 +3,7 @@
 import * as React from 'react';
 import { NavLink, useLocation } from 'react-router';
 import { Hub } from 'aws-amplify/utils';
-import { Menu } from 'lucide-react';
+import { ChevronDown, Menu } from 'lucide-react';
 
 import AuthButtonGroup from './auth/authButtonGroup';
 import FadeAlert from './fadeAlert';
@@ -12,20 +12,27 @@ import * as authUtil from '../utils/authUtil';
 import { cn } from '@/lib/utils';
 import { Shell } from '@/components/system/masthead';
 import { BrandLockup } from '@/components/system/brand';
+import { SkipLink } from '@/components/system/a11y';
 import { Button } from '@/components/ui/button';
 import {
 	Sheet, SheetContent, SheetHeader, SheetTitle, SheetClose,
 } from '@/components/ui/sheet';
+import {
+	DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 const NAV_LINKS = [
 	{ href: '/', label: 'Home' },
 	{ href: '/encyclopedia', label: 'Encyclopedia' },
 	{ href: '/generator', label: 'Generator' },
-	{ href: '/duel', label: 'Duel' },
-	{ href: '/reclamation', label: 'Reclamation' },
-	{ href: '/long-return', label: 'Expedition' },
-	{ href: '/powerworks', label: 'Powerworks' },
-	{ href: '/arcade', label: 'Arcade' },
+];
+
+const PLAY_LINKS = [
+	{ href: '/duel', label: 'Duel', tagline: 'Squad tactics on an 8 by 8 board. Capture the flag or eliminate the team.' },
+	{ href: '/reclamation', label: 'Reclamation', tagline: 'Send creatures into three worlds a round and hold more of them than your rival.' },
+	{ href: '/long-return', label: 'Expedition', tagline: 'Push a crew of your Xalians across hazardous worlds and bring them home.' },
+	{ href: '/powerworks', label: 'Powerworks', tagline: 'Take a squad of four through four encounters inside a dormant Vallerii facility.' },
+	{ href: '/arcade', label: 'Arcade', tagline: 'Familiar games that turn a quick win into progress toward another Xalian.' },
 ];
 
 // The section links wear the tab underline mark without the tab "box":
@@ -38,6 +45,10 @@ function isActiveRoute(pathname: string, href: string) {
 		return pathname === '/';
 	}
 	return pathname === href || pathname.startsWith(href + '/');
+}
+
+function isActivePlayRoute(pathname: string) {
+	return PLAY_LINKS.some((link) => isActiveRoute(pathname, link.href));
 }
 
 type AuthState = { username: string; hasVerifiedEmail: boolean } | null;
@@ -109,6 +120,7 @@ function XalianNavbar({ authAlertCallback }: XalianNavbarProps) {
 
 	return (
 		<React.Fragment>
+			<SkipLink />
 			<header
 				id="navvy"
 				data-tier="chrome"
@@ -120,10 +132,10 @@ function XalianNavbar({ authAlertCallback }: XalianNavbarProps) {
 				<Shell className="flex min-h-14 items-center gap-6">
 					<BrandLockup />
 
-					{/* The bar needs about 1155px for seven links plus the two auth keys,
-					    which is between lg and xl, so the switch to the sheet is measured
-					    rather than named. Below it the whole bar overflowed the viewport. */}
-					<nav className="ml-2 hidden flex-1 items-center gap-5 min-[1180px]:flex" aria-label="Primary">
+					{/* The bar needs room for three links, the Play trigger and the two
+					    auth keys; below 900px the whole bar overflowed the viewport, so
+					    the switch to the sheet is measured rather than named. */}
+					<nav className="ml-2 hidden flex-1 items-center gap-5 min-[900px]:flex" aria-label="Primary">
 						{NAV_LINKS.map((link) => (
 							<NavLink
 								key={link.href}
@@ -135,9 +147,28 @@ function XalianNavbar({ authAlertCallback }: XalianNavbarProps) {
 								{link.label}
 							</NavLink>
 						))}
+						<DropdownMenu>
+							<DropdownMenuTrigger
+								className={cn(navLinkClass, 'gap-1')}
+								aria-current={isActivePlayRoute(location.pathname) ? 'page' : undefined}
+							>
+								Play
+								<ChevronDown className="size-3.5" aria-hidden="true" />
+							</DropdownMenuTrigger>
+							<DropdownMenuContent align="start" className="w-72">
+								{PLAY_LINKS.map((link) => (
+									<DropdownMenuItem key={link.href} asChild className="flex-col items-start gap-0.5 py-2">
+										<NavLink to={link.href}>
+											<span className="font-legend text-[13px] font-medium uppercase tracking-legend text-ink">{link.label}</span>
+											<span className="text-small text-ink-2">{link.tagline}</span>
+										</NavLink>
+									</DropdownMenuItem>
+								))}
+							</DropdownMenuContent>
+						</DropdownMenu>
 					</nav>
 
-					<div className="ml-auto hidden items-center gap-2 min-[1180px]:flex">
+					<div className="ml-auto hidden items-center gap-2 min-[900px]:flex">
 						<AuthButtonGroup size="sm" authAlertCallback={handleUserAuthAction} />
 					</div>
 
@@ -146,7 +177,7 @@ function XalianNavbar({ authAlertCallback }: XalianNavbarProps) {
 							variant="ghost"
 							size="icon"
 							aria-label="Open menu"
-							className="ml-auto min-[1180px]:hidden"
+							className="ml-auto min-[900px]:hidden"
 							onClick={() => setMenuOpen(true)}
 						>
 							<Menu />
@@ -163,6 +194,18 @@ function XalianNavbar({ authAlertCallback }: XalianNavbarProps) {
 										<NavLink
 											to={link.href}
 											end={link.href === '/'}
+											className="border-0 border-b border-edge bg-transparent px-1 py-3 font-legend text-[13px] font-medium uppercase tracking-legend text-ink-2 aria-[current=page]:text-viable-hi"
+											aria-current={isActiveRoute(location.pathname, link.href) ? 'page' : undefined}
+										>
+											{link.label}
+										</NavLink>
+									</SheetClose>
+								))}
+								<p className="type-legend mt-3 mb-1 px-1">Play</p>
+								{PLAY_LINKS.map((link) => (
+									<SheetClose asChild key={link.href}>
+										<NavLink
+											to={link.href}
 											className="border-0 border-b border-edge bg-transparent px-1 py-3 font-legend text-[13px] font-medium uppercase tracking-legend text-ink-2 aria-[current=page]:text-viable-hi"
 											aria-current={isActiveRoute(location.pathname, link.href) ? 'page' : undefined}
 										>

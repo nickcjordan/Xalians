@@ -101,6 +101,10 @@ export interface Rules {
 	draftDistinctSpecies: boolean;
 	claimCounting: ClaimCounting;
 	stakeTiming: StakeTiming;
+	pinning: boolean;
+	reachFirst: boolean;
+	sendable: number;
+	worldsPerFrame: number;
 }
 
 /*
@@ -120,6 +124,22 @@ export interface Rules {
 	handler can see. Still once per Proving, still symmetric, still no gift.
 */
 export type StakeTiming = 'before-first-send' | 'any-turn';
+
+/*
+	Pass 8, the two rules the pass 7 reading made possible.
+
+	- pinning: an attack whose primary effect is `restrain` PINS its target: the target's
+	  own attack does not land this Clash, if it had not landed already. 171 of the pool's
+	  1384 actions restrain and 11 percent of attacking creatures lead with one, and until
+	  pass 8 every one of them was a plain attack. Pinning is what restraint means at a
+	  world where nothing moves between worlds: you do not get to swing.
+	- reachFirst: a creature whose attack reaches past contact lands before the
+	  contact-only creatures at its world, whatever their speed. 18 percent of attackers
+	  reach, and `spatial.range` had been read since pass 7 and used by nothing.
+
+	Both ship behind these flags so the ablation can price them, per the standing rule that
+	every rule earns its place or goes.
+*/
 
 /*
 	How the Ruling counts a standing creature's contribution to its world (pass 5).

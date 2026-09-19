@@ -58,6 +58,8 @@ import {
 	SWEEP_DISCOUNT,
 	CLAIM_COUNTING,
 	STAKE_TIMING,
+	PINNING,
+	REACH_FIRST,
 	BOLSTER_FLOOR,
 	HIDDEN_FIRST,
 	ARMORED_REDUCTION,
@@ -329,6 +331,18 @@ export const DEFAULT_RULES: Rules = {
 	claimCounting: CLAIM_COUNTING as ClaimCounting,
 	// Pass 6: when during Deploy a stake may be declared (types.ts StakeTiming)
 	stakeTiming: STAKE_TIMING as StakeTiming,
+	// Pass 8: the two rules read off the record (types.ts)
+	pinning: PINNING,
+	reachFirst: REACH_FIRST,
+	/*
+		Pass 9. The two numbers that set how many creatures can meet at a world. The game
+		offers WORLDS_PER_FRAME x FRAMES_PER_MATCH worlds and a budget of `sendable` sends,
+		so sends per world is the ratio that decides whether stacking is ever affordable.
+		Measured at the shipped settings it is 9.32 sends over 9 worlds, 1.04 per world,
+		which forces one creature against one at 62 percent of contested worlds.
+	*/
+	sendable: SENDABLE,
+	worldsPerFrame: WORLDS_PER_FRAME,
 };
 
 // merges a caller's partial rules over the defaults, so a batch only names what it moves
@@ -378,6 +392,12 @@ function normalizeRules(rules: RulesInput | null | undefined): Rules {
 		// Pass 6
 		stakeTiming: r.stakeTiming === 'any-turn' || r.stakeTiming === 'before-first-send'
 			? r.stakeTiming : DEFAULT_RULES.stakeTiming,
+		// Pass 8
+		pinning: r.pinning !== undefined ? !!r.pinning : DEFAULT_RULES.pinning,
+		reachFirst: r.reachFirst !== undefined ? !!r.reachFirst : DEFAULT_RULES.reachFirst,
+		// Pass 9
+		sendable: num(r.sendable, DEFAULT_RULES.sendable),
+		worldsPerFrame: num(r.worldsPerFrame, DEFAULT_RULES.worldsPerFrame),
 	};
 }
 
@@ -600,7 +620,8 @@ function withRecomputedHolds(state: MatchState): MatchState {
 // level, so a match that never trails plays exactly as it did before this lever shipped.
 function sendableCapFor(state: MatchState, player: Seat): number {
 	const bonus = (state.trailingBonus && state.trailingBonus[player]) || 0;
-	return SENDABLE + bonus;
+	// pass 9: the send budget is a lever, so the sends-per-world ratio can be swept
+	return rulesOf(state).sendable + bonus;
 }
 
 /*
@@ -1249,6 +1270,8 @@ interface OrderMeta {
 	strained: boolean;
 	hidden: boolean;
 	wasHidden: boolean;
+	// pass 8: true when this creature's own attack reaches past contact (reachFirst)
+	reaches: boolean;
 }
 
 /*
@@ -1271,6 +1294,21 @@ function buildResolutionOrder(state: MatchState, entries: BoardEntry[]): OrderMe
 			strained: prepared.strainLevel !== 'none',
 			hidden: !!e.wasHidden,
 			wasHidden: !!e.wasHidden,
+			/*
+				pass 8: how far this creature's own attack reaches, off the record's
+				spatial.range (recordReading). 1 is contact, higher is short/medium/long.
+
+				A creature whose attack RESTRAINS also counts as reaching, whatever its
+				range: a pin that lands after its target has already swung is no pin at all,
+				and measured at 600 matches it was exactly that, 280 pins producing only 67
+				lost attacks. Ordering the pinners with the reachers is what gives the rule
+				its teeth, and it reads the same way on the table: the creature that takes
+				you off your feet gets there first.
+			*/
+			reaches: !!prepared.blow && (
+				(rules.reachFirst && (prepared.blow.reach || 0) > 1)
+				|| (rules.pinning && prepared.blow.effectKind === 'restrain')
+			),
 		};
 	});
 
@@ -1281,6 +1319,15 @@ function buildResolutionOrder(state: MatchState, entries: BoardEntry[]): OrderMe
 		}
 		if (x.strained !== y.strained) {
 			return x.strained ? 1 : -1;
+		}
+		/*
+			PASS 8, reachFirst: what strikes from a distance strikes first. A creature whose
+			attack reaches past contact lands before the contact-only creatures at its world,
+			whatever their speed, because it does not have to close. Ranked above speed and
+			below strain: a strained body is still last, since it can barely act at all.
+		*/
+		if (x.reaches !== y.reaches) {
+			return x.reaches ? -1 : 1;
 		}
 		if (y.speed !== x.speed) {
 			return y.speed - x.speed;
@@ -1356,6 +1403,9 @@ interface Declaration {
 	victims?: Array<{ victim: BoardEntry; amount: number }>;
 	amount: number;
 	cancelledAgainst: Partial<Record<Seat, { recordId: string; fraction: number }>>;
+	// pass 8: true when this creature's one attack has a restrain primary effect, so a
+	// landed strike pins its target for the rest of this Clash
+	restrains?: boolean;
 }
 
 /*
@@ -1407,6 +1457,8 @@ function resolveWorld(state: MatchState, site: FrameSite): void {
 				target: target || null,
 				amount: target ? round1(attackPowerAgainst(state, entry, prepared, target) * powerFactor) : 0,
 				cancelledAgainst: {},
+				// pass 8: the record's own primary effect for this creature's one attack
+				restrains: !!prepared.blow && prepared.blow.effectKind === 'restrain',
 			});
 			return;
 		}
@@ -1521,6 +1573,23 @@ function resolveWorld(state: MatchState, site: FrameSite): void {
 	});
 
 	// ---- 3. land ----
+	/*
+		PASS 8, pinning. An attack whose primary effect is `restrain` PINS its target: the
+		target does not land its own attack this Clash, if it had not landed already. 171 of
+		the pool's 1384 actions restrain and 11 percent of attacking creatures lead with one;
+		before pass 7 read the record they were all plain damage, and before pass 8 they were
+		damage with a name.
+
+		Why this and not something else: at a sealed world, with one Clash and no movement
+		between worlds, "restrained" has exactly one meaning the table can show, and it is
+		"you do not get to swing". It costs no new number on the plinth, it is one sentence,
+		and it makes landing first worth something beyond the hurt factor.
+
+		A pin does not stop a creature HOLDING its world, only attacking: a pinned creature
+		still counts its whole hold at the Ruling, which keeps the rule from being a second
+		way to remove a creature.
+	*/
+	const pinned = new Set<string>();
 	declarations.forEach((declaration) => {
 		const striker = findLiveEntry(state, declaration.entry.recordId);
 		if (!striker || striker.downed) {
@@ -1538,8 +1607,33 @@ function resolveWorld(state: MatchState, site: FrameSite): void {
 			});
 			return;
 		}
+		if (rules.pinning && pinned.has(declaration.entry.recordId)) {
+			logEvent(state, {
+				type: 'attack',
+				recordId: declaration.entry.recordId,
+				role: declaration.role,
+				site: site.id,
+				target: declaration.role === ROLE.STRIKE && declaration.target ? declaration.target.recordId : null,
+				power: 0,
+				remaining: null,
+				outcome: 'pinned',
+				hidden: declaration.hidden,
+				cancelled: false,
+			});
+			return;
+		}
 		if (declaration.role === ROLE.STRIKE) {
-			landStrike(state, site, declaration, hurtFactorOf(state, striker));
+			const landed = landStrike(state, site, declaration, hurtFactorOf(state, striker));
+			// a restraining strike that actually landed pins its target for this Clash
+			if (rules.pinning && landed && declaration.restrains && declaration.target) {
+				pinned.add(declaration.target.recordId);
+				logEvent(state, {
+					type: 'pin',
+					recordId: declaration.entry.recordId,
+					target: declaration.target.recordId,
+					site: site.id,
+				});
+			}
 			return;
 		}
 		landSweep(state, site, declaration, hurtFactorOf(state, striker));
@@ -1567,7 +1661,7 @@ function hurtFactorOf(state: MatchState, entry: BoardEntry): number {
 	return Math.max(0, Math.min(1, current / full));
 }
 
-function landStrike(state: MatchState, site: FrameSite, declaration: Declaration, hurtFactor = 1): void {
+function landStrike(state: MatchState, site: FrameSite, declaration: Declaration, hurtFactor = 1): boolean {
 	const base = {
 		type: 'attack',
 		recordId: declaration.entry.recordId,
@@ -1577,7 +1671,7 @@ function landStrike(state: MatchState, site: FrameSite, declaration: Declaration
 	};
 	if (!declaration.target) {
 		logEvent(state, { ...base, target: null, power: 0, remaining: null, outcome: 'no-target', cancelled: false });
-		return;
+		return false;
 	}
 	const targetSide = declaration.target.player;
 	const cut = declaration.cancelledAgainst[targetSide];
@@ -1593,19 +1687,21 @@ function landStrike(state: MatchState, site: FrameSite, declaration: Declaration
 			outcome: 'cancelled',
 			cancelled: true,
 		});
-		return;
+		return false;
 	}
 	const live = findLiveEntry(state, declaration.target.recordId);
 	if (!live || live.downed) {
 		logEvent(state, {
 			...base, target: declaration.target.recordId, power: 0, remaining: null, outcome: 'no-target', cancelled: false,
 		});
-		return;
+		return false;
 	}
 	const { remaining, outcome } = applyBlow(state, site, live, landing);
 	logEvent(state, {
 		...base, target: live.recordId, power: landing, remaining, outcome, cancelled: !!cut,
 	});
+	// pass 8: a strike that reached a standing creature is one that can pin it
+	return outcome !== 'downed';
 }
 
 function landSweep(state: MatchState, site: FrameSite, declaration: Declaration, hurtFactor = 1): void {

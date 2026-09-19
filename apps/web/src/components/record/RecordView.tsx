@@ -327,61 +327,65 @@ function RecordView({ record, kicker = 'Record', recordLink }: RecordViewProps) 
 				</div>
 			</div>
 
-			<Layer title="Affinity">
-				<div className="flex flex-wrap items-center gap-3">
-					<span className={`el-${element}`}><Badge variant="chip">{elementTerm(element).name} 100</Badge></span>
-					{secondary ? (
-						<span className={`el-${secondary}`}>
-							<Badge variant="chip">{elementTerm(secondary).name} {affinities[secondary]}</Badge>
-						</span>
-					) : null}
-				</div>
-				<p className="mt-3 mb-0 max-w-[62ch] font-body text-small text-ink-2">
-					{secondary
-						? `Primarily ${elementTerm(element).name.toLowerCase()}, with ${elementTerm(secondary).name.toLowerCase()} running through it at ${affinities[secondary]}.`
-						: `Wholly ${elementTerm(element).name.toLowerCase()}, with nothing else running through it.`}
-				</p>
-			</Layer>
-
-			<Layer title="Traits">
-				{record.traits.length === 0 ? (
-					<p className="m-0 max-w-[62ch] font-body text-body text-ink-2">Nothing beyond its species landed for this one.</p>
-				) : (
-					<React.Fragment>
-						<div className="flex flex-wrap gap-2">
-							{record.traits.map((key) => (
-								<Badge key={key} variant="chip-outline" title={traitTerm(key).nature}>{traitTerm(key).name}</Badge>
-							))}
+			<div className="grid gap-8 lg:grid-cols-2">
+				<div className="flex flex-col gap-8">
+					<Layer title="Affinity">
+						<div className="flex flex-wrap items-center gap-3">
+							<span className={`el-${element}`}><Badge variant="chip">{elementTerm(element).name} 100</Badge></span>
+							{secondary ? (
+								<span className={`el-${secondary}`}>
+									<Badge variant="chip">{elementTerm(secondary).name} {affinities[secondary]}</Badge>
+								</span>
+							) : null}
 						</div>
-						<Collapsible className="mt-4 max-w-3xl">
-							<CollapsibleTrigger>What these mean</CollapsibleTrigger>
-							<CollapsibleContent>
-								<dl className="m-0 grid gap-x-6 gap-y-2 sm:grid-cols-[minmax(8rem,12rem)_minmax(0,1fr)]">
-									{record.traits.map((key) => (
-										<React.Fragment key={key}>
-											<dt className="type-legend">{traitTerm(key).name}</dt>
-											<dd className="m-0 font-body text-small text-ink-2">{traitTerm(key).nature}</dd>
-										</React.Fragment>
-									))}
-								</dl>
-							</CollapsibleContent>
-						</Collapsible>
-					</React.Fragment>
-				)}
-			</Layer>
+						<p className="mt-3 mb-0 max-w-[62ch] font-body text-small text-ink-2">
+							{secondary
+								? `Primarily ${elementTerm(element).name.toLowerCase()}, with ${elementTerm(secondary).name.toLowerCase()} running through it at ${affinities[secondary]}.`
+								: `Wholly ${elementTerm(element).name.toLowerCase()}, with nothing else running through it.`}
+						</p>
+					</Layer>
 
-			<Layer title="Appearance">
-				{appearance.length > 0 ? (
-					<ul className="m-0 flex max-w-[62ch] list-none flex-col gap-1 p-0 font-body text-body text-ink-2">
-						{appearance.map((quality) => <li key={quality}>{quality}</li>)}
-					</ul>
-				) : null}
-				{finish !== 'standard' ? (
-					<p className="mt-3 mb-0 max-w-[62ch] font-body text-body text-ink">
-						{`${capitalize(finish)} finish: this one came out of the Generator wearing it.`}
-					</p>
-				) : null}
-			</Layer>
+					<Layer title="Traits">
+						{record.traits.length === 0 ? (
+							<p className="m-0 max-w-[62ch] font-body text-body text-ink-2">Nothing beyond its species landed for this one.</p>
+						) : (
+							<React.Fragment>
+								<div className="flex flex-wrap gap-2">
+									{record.traits.map((key) => (
+										<Badge key={key} variant="chip-outline" title={traitTerm(key).nature}>{traitTerm(key).name}</Badge>
+									))}
+								</div>
+								<Collapsible className="mt-4 max-w-3xl">
+									<CollapsibleTrigger>What these mean</CollapsibleTrigger>
+									<CollapsibleContent>
+										<dl className="m-0 grid gap-x-6 gap-y-2 sm:grid-cols-[minmax(8rem,12rem)_minmax(0,1fr)]">
+											{record.traits.map((key) => (
+												<React.Fragment key={key}>
+													<dt className="type-legend">{traitTerm(key).name}</dt>
+													<dd className="m-0 font-body text-small text-ink-2">{traitTerm(key).nature}</dd>
+												</React.Fragment>
+											))}
+										</dl>
+									</CollapsibleContent>
+								</Collapsible>
+							</React.Fragment>
+						)}
+					</Layer>
+				</div>
+
+				<Layer title="Appearance">
+					{appearance.length > 0 ? (
+						<ul className="m-0 flex max-w-[62ch] list-none flex-col gap-1 p-0 font-body text-body text-ink-2">
+							{appearance.map((quality) => <li key={quality}>{quality}</li>)}
+						</ul>
+					) : null}
+					{finish !== 'standard' ? (
+						<p className="mt-3 mb-0 max-w-[62ch] font-body text-body text-ink">
+							{`${capitalize(finish)} finish: this one came out of the Generator wearing it.`}
+						</p>
+					) : null}
+				</Layer>
+			</div>
 
 			<Layer title="Actions">
 				<p className="mb-4 max-w-[62ch] font-body text-small text-ink-2">
@@ -397,15 +401,17 @@ function RecordView({ record, kicker = 'Record', recordLink }: RecordViewProps) 
 
 			{recordPassives(record).length > 0 && <Layer title="Passive effects"><Card variant="panel"><ul className="m-0 list-none p-0">{recordPassives(record).map(ability => <Ability key={ability.name} ability={ability} />)}</ul></Card></Layer>}
       <Layer title="Temperament">
-				<Card variant="panel" className="max-w-3xl p-4 md:p-6">
-					{TEMPERAMENT_ORDER.map((key) => {
-						const term = temperamentTerm(key);
-						return (
-							<div key={key} title={term.nature}>
-								<Meter name={term.name} value={record.temperament[key as keyof XalianRecord['temperament']]} max={100} />
-							</div>
-						);
-					})}
+				<Card variant="panel" className="p-4 md:p-6">
+					<div className="grid gap-x-8 md:grid-cols-2">
+						{TEMPERAMENT_ORDER.map((key) => {
+							const term = temperamentTerm(key);
+							return (
+								<div key={key} title={term.nature}>
+									<Meter name={term.name} value={record.temperament[key as keyof XalianRecord['temperament']]} max={100} />
+								</div>
+							);
+						})}
+					</div>
 				</Card>
 			</Layer>
 
