@@ -130,7 +130,17 @@ function SiteFooterGate() {
 
 export function AppRoutes() {
   return (
-    <Suspense fallback={<div>Loading...</div>}>
+    // The footer is inside this Suspense boundary on purpose. It is a static
+    // import while every page is lazy, so rendering it as a sibling of the
+    // boundary painted the footer alone - against an otherwise empty page,
+    // under a stray "Loading..." - for as long as the page chunk took to
+    // arrive (measured at ~1.2s on a throttled connection). Suspending the
+    // whole document instead means the page and its chrome land in one frame.
+    //
+    // The fallback is deliberately empty rather than a spinner or a skeleton:
+    // the gap is short, and on a fast connection a flashed placeholder is more
+    // jarring than a brief hold on the previous frame.
+    <Suspense fallback={null}>
       <ErrorBoundary>
         <Routes>
           <Route path="/" element={<Home />} />
@@ -170,6 +180,7 @@ export function AppRoutes() {
           <Route path="/train/physics" element={<PreserveLocationRedirect to="/arcade/artillery" />} />
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
+        <SiteFooterGate />
       </ErrorBoundary>
     </Suspense>
   );
@@ -182,7 +193,6 @@ class App extends React.Component {
       <TooltipProvider>
         <Router>
           <AppRoutes />
-          <SiteFooterGate />
         </Router>
         <Toaster />
       </TooltipProvider>
