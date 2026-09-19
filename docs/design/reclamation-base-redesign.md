@@ -269,6 +269,50 @@ The Clash was moving a world by a median of 2.6 hold against a median gap of 4.6
 | 29 | Hold keeps both its jobs: the Ruling counts the hold a creature has left, not the claim it arrived with. `claimCounting` ships `current`, with `standing` kept as an ablation row | 80% (`standing` measured at 4.7 to 5.9 percent flips against 25.4 to 27.6 for `current`) | this section; `types.ts` ClaimCounting |
 | 30 | The comeback band is allowed to go unmet rather than covered by a gift; the stake's threshold is left at 4.4 rather than moved on a non-monotonic reading | 75% (the no-gifts ruling; the sweep does not resolve at 600 matches on three seeds) | this section |
 
+## Pass 6: the stake was never broken, the gauge was (2026-09-18)
+
+Pass 5 left the stake as the top open item: with the Clash deciding worlds, the staker appeared to hold its staked world 47.4 percent of the time against 50.0 on its unstaked worlds, and the validation tool flagged it a trap. This pass chased that reading through three rules changes before measuring it properly, and the answer is that there was nothing wrong with the stake.
+
+**Three attempts, all measuring nothing.**
+
+1. **Stake on any turn** (`stakeTiming` 'any-turn'), the obvious repair: a stake declared before any creature stands is a forecast about a roster's fit, and pass 5 made the fight a better predictor than the fit, so let a handler stake a world it can already see contested. It measured **worse**, trapping on three seeds instead of two. Letting the stake follow sends turns the visible margin into most of the edge, so the bot stakes worlds it is already winning: stakes per batch went from 123 to 676, with 481 taken while ahead and held at 43.9 percent.
+2. **Raising the ahead threshold** to 12, 18 and effectively infinity under 'any-turn'. It lifted the staked-world rate to about 52 percent, but the unstaked rate rose with it to about 54, so the gap never closed.
+3. **Making the edge read the Clash** (`STAKE_CLASH_WEIGHT`), adding the bot's own `roleValueOf` pricing to each world's stake edge so the stake would value what now decides worlds. Swept at 0 and 1 over 600 matches on three seeds: the staked-world rate moved 47.4/55.4/50.3 to 45.1/55.3/49.3, inside the interval on every seed, while usage fell from 32.0/34.5/26.5 to 24.7/30.7/22.7 percent of Provings.
+
+**What the measurement actually said.** Pooling five seeds at 1000 matches each, so the reading has power rather than a single batch's noise:
+
+| Reading | Rate | n |
+|---|---|---|
+| Staker holds its staked world | 50.0% +/- 2.4 | 1619 |
+| The same handlers hold their unstaked worlds | 50.7% +/- 1.8 | 3063 |
+| **Difference** | **-0.6 +/- 3.0 points, not significant** | |
+
+The stake is **variance-neutral**, which is exactly what pass 3 measured and exactly what a chosen risk should be. The 61.7 percent reading at the old magnitude scale was the outlier, not the baseline.
+
+**The real defect was in the tool.** The trap flag compared two point estimates with no interval (`stakedWinRate.p < unstakedWinRate.p`). Since the two rates sit on top of each other by design, that comparison fires on whichever way the noise falls, about half of all runs. At 600 matches the interval on the difference is +/- 8 to 10 points and the observed gaps are -2.6, +4.8 and -0.5. The flag now fires only when the staked world is worse by more than the combined interval, and otherwise says the stake is variance-neutral in so many words.
+
+**The same error was hiding a second gauge.** Comeback reads 25.2 +/- 1.2 percent pooled over five seeds at 1000 matches, genuinely under the 30 to 40 band. But it averages two populations the design treats in opposite ways:
+
+| Population | Comeback rate | n |
+|---|---|---|
+| Trailing by one or two worlds after round 1 (a contest) | **29.1% +/- 1.4** | 3937 |
+| Trailing by three, a round swept 3-0 | 8.0% +/- 1.8 | 873 |
+
+A swept round is the case Nick has already ruled is not to be safeguarded ("that means one of the players just totally sucked"). Reading the two together lets the case the design abandons drag down the case it protects. Split at the shipped settings, **comeback from a contested round 1 is 30.8, 32.0 and 35.1 percent on seeds 7, 13 and 21: inside the band on all three.** The overall rate is still reported; the split is what the band is about.
+
+So both gauges pass 5 recorded as regressions were measurement artifacts, and the game as pass 5 shipped it is sounder than pass 5 believed.
+
+| # | Assumption / Decision | Confidence | Supporting Evidence |
+|---|---|---|---|
+| 31 | The stake is variance-neutral and is left exactly as it is. `stakeTiming` ('any-turn') and `STAKE_CLASH_WEIGHT` ship at the settings that change nothing, kept as levers with their measurements recorded | 90% (pooled five seeds, 1000 matches, n=1619: -0.6 +/- 3.0 points) | this section |
+| 32 | A gauge that compares two rates must be read against the interval of their difference. The trap flag is fixed accordingly | 95% (the old flag fired on about half of all runs by construction) | `expeditionValidation.ts` stake readings |
+| 33 | The comeback gauge is split at a deficit of three worlds: contested (the band applies) and swept (not safeguarded, by ruling) | 85% (29.1 +/- 1.4 against 8.0 +/- 1.8 pooled; the ruling predates this pass) | `expeditionValidation.SWEPT_ROUND_DEFICIT` |
+
+### Pass 6 open items
+
+- Nothing about the stake. It works; the next comeback question is whether the game wants a SECOND chosen risk for variety, not whether this one is broken.
+- Every other gauge reading taken at 200 or 600 matches deserves the same interval discipline before it is called a failure. The draft's "dead species" and the per-role lane readings are the next candidates.
+
 ### Pass 5 open items
 
 - **The stake's premise.** With a real Clash a deploy-time hold edge no longer predicts the world, so the stake is variance-neutral in the weakest sense: the staker no longer picks worlds it holds. Either the stake should read something the Clash cannot erase (the creatures already standing, rather than the roster's fit), or the comeback avenue should be a different chosen risk. This is the first thing to weigh next.

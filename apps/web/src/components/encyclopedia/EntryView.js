@@ -106,7 +106,7 @@ function StoryEra({ row, entryTitle }) {
                         <Link to={lore.routeFor('world', excerpt.world.key)}>
                             <Badge variant="chip-outline">{excerpt.world.name}</Badge>
                         </Link>
-                        <span className="type-data text-small text-ink-2">Ch. {String(excerpt.index).padStart(2, '0')}</span>
+                        <span className="type-data text-small text-ink-2">{lore.chapterLabel(excerpt.index)}</span>
                     </div>
                     <p className="m-0 max-w-[62ch] font-body text-body text-ink">
                         {markName(excerptWindow(excerpt.text, entryTitle), entryTitle)}{' '}

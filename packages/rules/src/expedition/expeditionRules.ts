@@ -57,6 +57,7 @@ import {
 	MAGNITUDE_SCALE,
 	SWEEP_DISCOUNT,
 	CLAIM_COUNTING,
+	STAKE_TIMING,
 	BOLSTER_FLOOR,
 	HIDDEN_FIRST,
 	ARMORED_REDUCTION,
@@ -83,7 +84,7 @@ import {
 import type {
 	Board, BoardEntry, Conduct, Frame, FrameSite, LogEvent, MatchState, PlayerState,
 	PreparedCreature, PublicBoardEntry, PublicPlayerView, PublicState, Role, Rules,
-	RulesInput, Seat, ShieldCap, World, ClaimCounting,
+	RulesInput, Seat, ShieldCap, World, ClaimCounting, StakeTiming,
 } from './types.ts';
 
 // ---------------------------------------------------------------------------
@@ -326,6 +327,8 @@ export const DEFAULT_RULES: Rules = {
 	draftDistinctSpecies: DRAFT_DISTINCT_SPECIES,
 	// Pass 5: what a standing creature contributes at the Ruling (types.ts ClaimCounting)
 	claimCounting: CLAIM_COUNTING as ClaimCounting,
+	// Pass 6: when during Deploy a stake may be declared (types.ts StakeTiming)
+	stakeTiming: STAKE_TIMING as StakeTiming,
 };
 
 // merges a caller's partial rules over the defaults, so a batch only names what it moves
@@ -372,6 +375,9 @@ function normalizeRules(rules: RulesInput | null | undefined): Rules {
 		// Pass 5
 		claimCounting: r.claimCounting === 'standing' || r.claimCounting === 'current'
 			? r.claimCounting : DEFAULT_RULES.claimCounting,
+		// Pass 6
+		stakeTiming: r.stakeTiming === 'any-turn' || r.stakeTiming === 'before-first-send'
+			? r.stakeTiming : DEFAULT_RULES.stakeTiming,
 	};
 }
 
@@ -810,7 +816,11 @@ export function stakeWorld(state: MatchState, handler: Seat, siteId: string): Ma
 	if (!p || p.passed || p.stakeUsed) {
 		return null;
 	}
-	if (((state.sentThisFrame && state.sentThisFrame[handler]) || 0) > 0) {
+	// Pass 6: 'before-first-send' keeps the stake a forecast made before any creature
+	// stands; 'any-turn' lets it be a read of a board the handler can already see. The
+	// once-per-Proving limit and the symmetry are unchanged either way.
+	if (rules.stakeTiming === 'before-first-send'
+		&& ((state.sentThisFrame && state.sentThisFrame[handler]) || 0) > 0) {
 		return null;
 	}
 	const frame = currentFrame(state);
@@ -846,7 +856,8 @@ export function stakeableSiteIdsFor(state: MatchState, handler: Seat): string[] 
 	if (!p || p.passed || p.stakeUsed) {
 		return [];
 	}
-	if (((state.sentThisFrame && state.sentThisFrame[handler]) || 0) > 0) {
+	if (rulesOf(state).stakeTiming === 'before-first-send'
+		&& ((state.sentThisFrame && state.sentThisFrame[handler]) || 0) > 0) {
 		return [];
 	}
 	return currentFrame(state).sites.map((site) => site.id);
