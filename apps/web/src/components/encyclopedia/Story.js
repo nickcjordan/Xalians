@@ -323,9 +323,11 @@ function PartRail({ story, part, progress }) {
 						</h3>
 					</AccordionTrigger>
 					<AccordionContent>
-						<p className="type-data m-0 mb-3 text-[11px] text-ink-3">
-							{progress} / {part.sections.reduce((sum, s) => sum + s.paragraphs.length, 0)} read in this part
-						</p>
+						{progress > 0 && (
+							<p className="type-data m-0 mb-3 text-[11px] text-ink-3">
+								{progress} / {part.sections.reduce((sum, s) => sum + s.paragraphs.length, 0)} read in this part
+							</p>
+						)}
 						<PartRailBody story={story} part={part} />
 					</AccordionContent>
 				</AccordionItem>
@@ -338,8 +340,12 @@ function PartRail({ story, part, progress }) {
 			<PartRailBody story={story} part={part} />
 			<p className="type-data m-0 border-t border-edge pt-4 text-[11px] leading-relaxed text-ink-3">
 				Part {part.order} of {story.parts.length}
-				<br />
-				{progress} read
+				{progress > 0 && (
+					<>
+						<br />
+						{progress} read
+					</>
+				)}
 			</p>
 		</nav>
 	);

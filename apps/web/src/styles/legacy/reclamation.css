@@ -1811,6 +1811,48 @@
 
 .rec-inspect-trait-nature { color: var(--g-ink-mid); }
 
+/*
+	PASS 7. What the record itself says each act does, printed under the role: the reach and
+	the footprint come off spatial.range and spatial.area rather than a legacy action key.
+	Machine output, so mono and tabular like every other readout on the table.
+*/
+.rec-inspect-acts {
+	list-style: none;
+	margin: var(--g-2) 0 0;
+	padding: 0;
+	display: flex;
+	flex-direction: column;
+	gap: var(--g-1);
+}
+
+.rec-inspect-acts li {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: baseline;
+	gap: var(--g-2);
+	font-size: var(--g-size-micro);
+}
+
+.rec-inspect-act-name {
+	font-family: var(--g-font-stencil);
+	text-transform: uppercase;
+	letter-spacing: var(--g-track-label);
+	color: var(--g-ink);
+}
+
+.rec-inspect-act-fact {
+	font-family: var(--g-font-mono);
+	font-variant-numeric: tabular-nums;
+	color: var(--g-ink-low);
+}
+
+/* an act, or a whole creature, this table cannot speak: a warning, never silence */
+.rec-inspect-unread {
+	font-size: var(--g-size-micro) !important;
+	color: var(--g-hazard);
+	margin-top: var(--g-2);
+}
+
 .rec-inspect-signature {
 	font-size: var(--g-size-micro) !important;
 	color: var(--g-ink-mid);
