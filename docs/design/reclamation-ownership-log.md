@@ -2,7 +2,7 @@
 
 Status: the running state of the game under ownership (brief: `reclamation-ownership-brief.md`). This file is the resume point. Any reset reads this first and continues at the weakest thing named below, never from scratch. Each pass appends its own section; the standing state at the top is rewritten in place.
 
-## Standing state (after pass 7, 2026-09-18)
+## Standing state (after pass 8, 2026-09-18)
 
 ### Gauges, proctor mirror
 
@@ -47,14 +47,14 @@ What it reads, and where each effect kind lands (measured over the seed-7 pool, 
 
 ### Open items, ranked (resume here)
 
-1. **Give the four borrowed effect kinds rules of their own, and use reach.** These are one opportunity. 432 actions carry restrain, displace, transfer or suppress and all four read as plain attacks, which is honest but flat; 46.8 percent of creatures reach past contact and no rule asks. Restrain (a creature that cannot act this Clash) and transfer (the lever pool's drain) are the two most promising, and reach is the natural second dimension the brief asked about. This is where the Clash stops being one number per creature.
+1. **Make creatures meet.** 62 percent of contested worlds are one creature against one, and that is the ceiling every Clash rule has hit: pass 5 found the Clash could not reach the deploy gap, pass 8 found that pinning takes a swing in only 12.4 percent of Provings because there is usually no second creature for the rule to matter to. The bot spreads because spreading is correct under its own scoring. The question is whether the rules should reward committing several creatures to one world, and how, without handing anything to the side behind. **Everything else about the Clash is downstream of this.**
 2. **Intelligence and charisma read negative within presences** (charisma -15.2, intelligence -9.7). Lever: what `rateForDraft` and the bot's role value count. **Read it pooled before treating it as a failure** (pass 6's lesson).
 3. **Fire is a dead element and dromeus a dead species** in the draft. Same caution.
 4. **Bolster recovery and the instinct lanes still move nothing under ablation.** Each earns its place or goes.
 5. **No human has played a full Proving** under the current rules. Notes and telemetry hooks exist, verified rendering at both widths, and are empty.
 6. **Hot-seat** is unbuilt and is the cheapest validation instrument the game can have.
 7. **Affordance and comprehension are unmeasured.** The prediction-protocol harness does not exist.
-8. **A second chosen risk**, for variety rather than repair. Open item 1 may supply one naturally.
+8. **The four borrowed effect kinds** (restrain, displace, transfer, suppress) still read as plain attacks. Pass 8 measured that giving them rules of their own does not help while worlds are one against one, so this is downstream of item 1.
 
 ### Findings from the headless check (pass 5, recorded not fixed)
 
@@ -66,7 +66,7 @@ The check plays a whole Proving in both views at 1440 and 390 and all four confi
 
 ### Verification run each pass
 
-1. `npm test` at the root (1911 tests across the three workspaces).
+1. `npm test` at the root (1912 tests across the three workspaces).
 2. `npm run typecheck -w packages/rules`.
 3. The validation tool on seeds 7, 13 and 21.
 4. `npm run build -w apps/web` (enforces the bundle budgets).
@@ -126,3 +126,15 @@ The single place the game's reading of a creature is decided:
 **Measured:** a truthfulness change, not a tuning one, and the gauges hold. Downs 4.58 / 4.20 / 4.42, flips 27.6 / 24.8 / 25.2 percent, contested comeback 33.6 / 35.3 / 28.7 percent, every role inside the 40 to 60 band despite the sweep population rising from 1407 to 2199 dealt.
 
 **Verified:** 1911 tests green across three workspaces (15 new, pinning the reading itself so a platform-side field change fails in one place), typecheck clean, build inside budgets, validation report regenerated, headless Proving green in all four configurations, and the dossier's new rows checked by paint (which caught one contradictory sentence, "reaches every creature here, upon itself", fixed to "from where it stands").
+
+### Pass 8 (2026-09-18): a real bug, and two rules that did not earn their place
+
+**Weakest thing:** the four borrowed effect kinds reading as plain attacks, and `spatial.range` read but unused.
+
+**Shipped: a correctness fix.** Pass 7's "an act sweeps because the record gives it an area" was applied before the support filter, and 104 of the pool's protect actions carry an area (a barrier over everyone here). So **13 of 268 attacking creatures were throwing a shield as their attack.** Fixed, measured at 0 on three seeds, harm blows in the pool rising 197 to 210, regression test added.
+
+**Built and measured, then shipped OFF:** pinning (a restraining attack takes its target's swing) and reach-first ordering. At 600 matches on three seeds every configuration sits inside every other's interval. Pinning fires 280 times per 600 matches but produces only 67 lost attacks, because 76 percent of pins land on a creature that has already swung; ordering pinners first lifted that to 92, still under a third. Only **12.4 percent of Provings contain a pin that takes a swing**. By the standing rule, that is cost in the rulebook without weight, so both are ablation rows with their measurements recorded rather than shipped rules.
+
+**The finding that matters more than either rule:** the four effect kinds do not become interesting by getting a rule each. They become interesting when creatures MEET, and at **62 percent one creature against one** they mostly do not. That is now open item 1 and everything else about the Clash is downstream of it.
+
+**Verified:** 1912 tests green (one new regression test for the area-shield bug), typecheck clean, build inside budgets, validation report regenerated, headless Proving green in all four configurations.

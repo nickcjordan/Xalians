@@ -330,6 +330,28 @@ export const STAKE_BOTH_VALUE = 3;
 */
 export const STAKE_TIMING: 'before-first-send' | 'any-turn' = 'before-first-send';
 
+/*
+	PASS 8: the Clash gets a second dimension, from fields pass 7 started reading.
+
+	PINNING. An attack whose primary effect is `restrain` stops its target from landing its
+	own attack this Clash. Before pass 8 the 171 restrain actions in the pool were plain
+	damage, because the projection turned them into `snare` and the game had no snare rule.
+	At a sealed world with one Clash, "restrained" can only mean one thing the table can
+	show: you do not get to swing. It makes speed matter (a pin only works if it lands
+	first) and gives 11 percent of attacking creatures a reason to exist beyond their
+	number.
+
+	REACH FIRST. A creature whose attack reaches past contact (spatial.range short, medium
+	or long) lands before the contact-only creatures at its world, whatever their speed.
+	`spatial.range` has been read since pass 7 and used by nothing; 18 percent of attacking
+	creatures reach. This is the "second dimension" the brief asked about, and it is one
+	sentence: what strikes from a distance strikes first.
+
+	Both are rules flags so the ablation can price them.
+*/
+export const PINNING = false;
+export const REACH_FIRST = false;
+
 // Armored (the base, "Traits that remain"): blows against an armored creature are
 // reduced by this fraction.
 export const ARMORED_REDUCTION = 0.25;
