@@ -69,12 +69,52 @@ export const SEVERE_STRAIN_MULTIPLIER = 0.25;
 
 	Set 2026-09-09 by the sweep in docs/design/reclamation-base-redesign.md's Measurement
 	step 3 (200 matches, seed 7): 0.55 gave 2.0 routs per match, 0.8 gave 3.1, 1.1 gave
-	4.1, 1.5 gave 5.0, 2.0 gave 5.8. The gauge is 3 to 5 routs per match, so 1.1 sits in
-	the middle of the band. The companion gauge (resolution changes the leader at 25 to 40
-	percent of worlds) is NOT met at any setting: it reaches 23.5 percent only at 2.5,
-	where routs are already half again over the band.
+	4.1, 1.5 gave 5.0, 2.0 gave 5.8. The gauge is 3 to 5 routs per match, so 1.1 sat in
+	the middle of the band. That pass also recorded that the companion gauge (resolution
+	changes the leader at 25 to 40 percent of worlds) was unreachable at any setting,
+	reaching only 23.5 percent at 2.5 where routs ran half again over the band.
+
+	RAISED TO 3.0 IN PASS 5 (2026-09-18), and the "unreachable" reading above is retired as
+	a measurement of a bot that no longer exists. It was taken before pass 4 gave the
+	proctor anticipation. The reading bot spreads its sends instead of stacking, which
+	lowered downs from 2.8 to 1.44 and the flip rate to 13 percent, and the old sweep was
+	never re-run against it. Re-swept in pass 5 at 200 and 600 matches on seeds 7, 13 and
+	21, both gauges are met together at 3.0 and neither is met at 1.1:
+
+		scale 1.1: downs 1.44 to 1.54, flips 12.1 to 13.0 percent (both bands unmet)
+		scale 2.5: downs 3.71 to 3.82, flips 24.8 to 24.9 percent (flips just under)
+		scale 3.0: downs 4.16 to 4.44, flips 25.4 to 27.6 percent (BOTH BANDS MET)
+		scale 3.5: downs 4.57 to 4.89, flips 26.9 to 29.3 percent (downs near the ceiling)
+
+	3.0 is the setting where both gauges clear with the most room on either side. The cost,
+	recorded as an open item rather than hidden: comeback falls from 30.6 to 33.3 percent to
+	25.9 to 30.7 percent, because a bigger Clash lets a leader convert its lead into downs.
+	No gift was added to the trailing side to cover it (Nick's ruling); the comeback avenue
+	stays a chosen risk and the stake's own reading is the open item below.
 */
-export const MAGNITUDE_SCALE = 1.1;
+export const MAGNITUDE_SCALE = 3.0;
+
+/*
+	Pass 5 (2026-09-18): the lever that tested WHY the flip gauge was stuck, kept as an
+	ablation row because the answer it gave is worth keeping in the tool.
+
+	The pass-5 diagnosis was that the Clash is directionless: over 200 matches on seed 7 it
+	extended the deploy leader at 624 worlds and eroded it at 614, mean signed swing +0.09,
+	because both sides subtract from the one number that also decides the world. The median
+	Clash swing was 2.6 hold against a median deploy gap of 4.6, so the swing could not even
+	reach the gap at two worlds in three.
+
+	'standing' was built to separate those two jobs: a creature contributes the whole claim
+	it arrived with while it stands, and nothing once downed, so the Clash moves a world by
+	whole creatures. MEASURED WORSE and not shipped: flips fell to 4.7 to 5.9 percent on
+	three seeds, because at 1.4 downs a match the quantum almost never fires. Raising the
+	scale under 'standing' recovers it only to 23.9 percent at scale 4.0, against 29.9 for
+	'current' at the same scale. So the counting rule was never the fault; the size of the
+	Clash was, and hold doing double duty turns out to HELP the flip rate rather than hurt
+	it, since every point of damage moves the world a little. The lever stays so the next
+	pass does not re-derive this.
+*/
+export const CLAIM_COUNTING: 'current' | 'standing' = 'current';
 
 // A sweep removes this share of a strike's power, from every OTHER creature at the
 // world, both sides (assumption 5). The role was called "area" until Pass 2's vocabulary

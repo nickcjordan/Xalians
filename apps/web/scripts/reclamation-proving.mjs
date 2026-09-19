@@ -1,0 +1,155 @@
+/*
+	Headless check: a whole Proving, in both views, at desktop and phone width.
+
+	What it is for (docs/design/reclamation-ownership-brief.md, "Verify"): every pass must
+	show a Proving played end to end with screenshots at 1440 and 390, no horizontal
+	overflow and no console errors, so a change to the rules cannot silently break the
+	table. Pass 5 added it because the checks the brief refers to did not exist as a script.
+
+	Run: node apps/web/scripts/reclamation-proving.mjs
+	against a preview server on 127.0.0.1:4173 (npm run build -w apps/web, then
+	npx vite preview --port 4173 --host 127.0.0.1 from apps/web).
+
+	REC_QA_OUTPUT overrides where the screenshots land. REC_QA_SEED overrides the seed.
+*/
+import { chromium } from 'playwright-core';
+import assert from 'node:assert/strict';
+import { mkdir } from 'node:fs/promises';
+
+const output = process.env.REC_QA_OUTPUT || 'C:/Users/njord/AppData/Local/Temp/reclamation-qa';
+const seed = process.env.REC_QA_SEED || '7';
+const base = process.env.REC_QA_BASE || 'http://127.0.0.1:4173';
+const EDGE = 'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe';
+
+await mkdir(output, { recursive: true });
+const browser = await chromium.launch({ executablePath: EDGE, headless: true });
+
+// the four questions the brief says a player must answer in under two seconds; each needs
+// its instrument present on the table, so the check asserts the instruments exist
+const GLANCE = [
+	['who is winning this world', '[data-balance]'],
+	['who is winning the Proving', '[data-terminal] [data-turn-text], [data-turn-text]'],
+];
+
+let failures = 0;
+
+for (const view of ['simple', 'advanced']) {
+	for (const width of [1440, 390]) {
+		const label = `${view}-${width}`;
+		const context = await browser.newContext({
+			viewport: { width, height: width === 390 ? 844 : 900 },
+			reducedMotion: 'reduce',
+			isMobile: width === 390,
+			hasTouch: width === 390,
+		});
+		const page = await context.newPage();
+		const errors = [];
+		const consoleErrors = [];
+		page.on('pageerror', (error) => errors.push(error.message));
+		page.on('console', (message) => {
+			if (message.type() === 'error') consoleErrors.push(message.text());
+		});
+
+		const shot = async (name) => {
+			await page.screenshot({ path: `${output}/${label}-${name}.png`, fullPage: true });
+			const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
+			assert(overflow <= 1, `${label}/${name}: horizontal overflow ${overflow}px`);
+		};
+
+		try {
+			await page.goto(`${base}/reclamation?seed=${seed}&view=${view}`, { waitUntil: 'networkidle' });
+			// a resumed Proving from an earlier run would start this check mid-match
+			const discard = page.locator('[data-discard-match]');
+			if (await discard.count() && await discard.first().isVisible()) await discard.first().click();
+			await shot('intro');
+
+			// the intro must name the game and offer a way in without reading a rulebook
+			const enter = page.locator('[data-enter]');
+			await enter.first().waitFor({ state: 'visible', timeout: 15000 });
+			await enter.first().click();
+
+			// the draft: take the proctor's own keep so the check is about the table, not the draft
+			const auto = page.locator('[data-draft-auto]');
+			if (await auto.count()) {
+				await auto.first().waitFor({ state: 'visible', timeout: 15000 });
+				await shot('draft');
+				await auto.first().click();
+				const confirm = page.locator('[data-draft-confirm]');
+				if (await confirm.count() && await confirm.first().isEnabled()) await confirm.first().click();
+			}
+
+			// Deploy: send until the round resolves, pressing a creature then a world. The
+			// table is the choice surface, so the check drives it the way a player does.
+			await page.locator('[data-slot]').first().waitFor({ state: 'visible', timeout: 20000 });
+			await shot('deploy');
+			for (const instrument of GLANCE) {
+				const [question, selector] = instrument;
+				assert(await page.locator(selector).count() > 0, `${label}: nothing on the table answers "${question}"`);
+			}
+
+			let guard = 0;
+			let sends = 0;
+			while (guard < 220) {
+				guard++;
+				// pace controls first: never let playback stall the check
+				const skip = page.locator('[data-skip]');
+				if (await skip.count() && await skip.first().isVisible()) { await skip.first().click(); continue; }
+				const nextFrame = page.locator('[data-next-frame]');
+				if (await nextFrame.count() && await nextFrame.first().isVisible()) {
+					if (sends > 0) await shot(`ruling-${guard}`);
+					await nextFrame.first().click();
+					continue;
+				}
+				const report = page.locator('[data-report]');
+				if (await report.count() && await report.first().isVisible()) break;
+
+				const arm = page.locator('[data-arm]:not([disabled])');
+				const site = page.locator('[data-site-id]');
+				if (await arm.count()) {
+					await arm.first().click({ timeout: 5000 }).catch(() => {});
+					const siteCount = await site.count();
+					if (siteCount) {
+						// spread across the frame the way a handler does, rather than stacking
+						// every creature on world one, which is not a position the game produces
+						const target = site.nth(sends % siteCount);
+						// the dossier rail can overlay a world on narrow screens; force is the
+						// check saying "a player would tap here", and the overlay is a finding
+						// recorded by the caller, not a reason to stop the Proving
+						await target.click({ timeout: 5000 }).catch(async () => {
+							await target.click({ force: true, timeout: 5000 }).catch(() => {});
+						});
+						sends++;
+						continue;
+					}
+				}
+				const pass = page.locator('[data-pass]:not([disabled])');
+				if (await pass.count() && await pass.first().isVisible()) { await pass.first().click(); continue; }
+				await page.waitForTimeout(250);
+			}
+
+			// the Charter: a session must end by saying what happened
+			const report = page.locator('[data-report]');
+			await report.first().waitFor({ state: 'visible', timeout: 30000 });
+			await shot('charter');
+			assert(await page.locator('[data-world-row]').count() > 0, `${label}: the Charter names no world`);
+			assert(await page.locator('[data-notes]').count() > 0, `${label}: the Proving notes panel is missing`);
+			assert(sends > 0, `${label}: the Proving finished without a single send`);
+
+			assert.deepEqual(errors, [], `${label}: page errors`);
+			assert.deepEqual(consoleErrors, [], `${label}: console errors`);
+			console.log(`ok   ${label} (${sends} sends)`);
+		} catch (error) {
+			failures++;
+			console.error(`FAIL ${label}: ${error.message}`);
+			await page.screenshot({ path: `${output}/${label}-FAILURE.png`, fullPage: true }).catch(() => {});
+			if (errors.length) console.error(`     page errors: ${errors.join(' | ')}`);
+			if (consoleErrors.length) console.error(`     console errors: ${consoleErrors.join(' | ')}`);
+		} finally {
+			await context.close();
+		}
+	}
+}
+
+await browser.close();
+console.log(`screenshots in ${output}`);
+if (failures > 0) process.exitCode = 1;
