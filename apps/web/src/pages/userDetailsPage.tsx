@@ -17,6 +17,7 @@ import { Shell, Masthead } from '@/components/system/masthead';
 import { HelixSpinner } from '@/components/system/brand';
 import { EmptyState } from '@/components/system/record';
 import { VisuallyHidden } from '@/components/system/a11y';
+import { usePageTitle } from '@/components/system/head';
 import { NotFoundPage } from '@/components/system/status';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
@@ -27,6 +28,7 @@ type UserDetailsPageProps = {
 };
 
 function UserDetailsPage({ id }: UserDetailsPageProps) {
+	usePageTitle(id);
 	const [records, setRecords] = React.useState<XalianRecord[]>([]);
 	const [cursor, setCursor] = React.useState<string | undefined>();
 	const [message, setMessage] = React.useState<string | null>(null);

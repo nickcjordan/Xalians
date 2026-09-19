@@ -61,6 +61,7 @@ describe('GeneratorPage, signed out', () => {
 		expect(await screen.findByText('Unowned preview')).toBeInTheDocument();
 		expect(screen.getByRole('button', { name: 'Sign in to generate' })).toBeInTheDocument();
 		expect(screen.getByRole('heading', { level: 2, name: 'Graviclaw' })).toBeInTheDocument();
+		expect(document.title).toBe('Generate a Xalian · Xalians');
 	});
 
 	it('generates another showroom creature rather than one it would keep', async () => {

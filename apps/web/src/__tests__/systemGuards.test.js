@@ -42,7 +42,9 @@ const styleguideSource = () =>
 describe('every component is on /styleguide', () => {
 	// Mounted once in App.js for the whole site, so the style guide cannot
 	// render a second one; toast() calls prove it instead.
-	const APP_WIDE = ['components/ui/sonner.tsx'];
+	// head.ts is a document-title/meta-description side-effect hook (issue
+	// #430), not a rendered component, so it has no visual form to show.
+	const APP_WIDE = ['components/ui/sonner.tsx', 'components/system/head.ts'];
 	const components = [...walk(UI_DIR), ...walk(SYSTEM_DIR)]
 		.filter((f) => !/\.d\.ts$/.test(f))
 		.filter((f) => !APP_WIDE.includes(rel(f)));
