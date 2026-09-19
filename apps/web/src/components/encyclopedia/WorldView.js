@@ -47,7 +47,7 @@ const PHYSICAL_DISPLAY_SET = [
     ['Size vs Earth', (p) => `${p.sizeVsEarth}x`, true],
     ['Radius km', (p) => Number(p.radiusKm).toLocaleString('en-US'), true],
     ['Gravity vs Earth', (p) => `${p.gravityVsEarth}x`, true],
-    ['Temperature range', (p) => `${p.temperatureC.low} to ${p.temperatureC.high} C`, true],
+    ['Temperature range', (p) => `${p.temperatureC.low} to ${p.temperatureC.high} °C`, true],
 ];
 
 const MOBILITY_ORDER = ['flight', 'swim', 'burrow', 'climb', 'sprint'];
@@ -133,16 +133,22 @@ function WorldLede({ world }) {
     );
 }
 
-/** "Continue the story" foot: one row pointing at the reader's furthest part, or Part 1 when nothing is stored. */
-function ContinueTheStory() {
+/**
+ * Foot linking into The Story. With reading progress, it is "Continue the
+ * story" pointing at the reader's furthest part. Without progress, it is
+ * "This world in the story" pointing at the first era that names this world
+ * -- the same lit test the In-the-story chips above use (getWorldTimeline in
+ * lore/chronicle.js), read via getWorldFirstEra so the two never disagree.
+ */
+function ContinueTheStory({ world }) {
     const resume = useResume();
-    const eras = lore.getEras();
-    const era = resume ? lore.getEra(resume.eraKey) : null;
-    const target = era || eras[0];
+    const resumeEra = resume ? lore.getEra(resume.eraKey) : null;
+    const target = resumeEra || lore.getWorldFirstEra(world.key) || lore.getEras()[0];
     if (!target) return null;
+    const label = resumeEra ? 'Continue the story' : 'This world in the story';
     return (
         <div className="border-t border-edge pt-4">
-            <RecordRow className="border-b-0 py-0" term="Continue the story">
+            <RecordRow className="border-b-0 py-0" term={label}>
                 <Link to={lore.routeFor('era', target.key)} className="text-ink underline decoration-ink-3 underline-offset-4 hover:decoration-ink">
                     Part {target.order + 1}, {target.name}
                 </Link>
@@ -371,7 +377,7 @@ export default function WorldView() {
                     </section>
                 )}
 
-                <ContinueTheStory />
+                <ContinueTheStory world={world} />
 
                 <Accordion type="single" collapsible className="flex flex-col gap-2">
                     <AccordionItem value="cross-references" className="border border-edge bg-s1 px-5">
@@ -406,7 +412,7 @@ export default function WorldView() {
                                     return (
                                         <p key={k} className="type-data m-0 mb-1 text-small text-ink">
                                             {k.toUpperCase()} &nbsp;{m.rating.toUpperCase()}
-                                            {m.note && <span className="text-ink-2"> &mdash; {m.note}</span>}
+                                            {m.note && <span className="text-ink-2">: {m.note}</span>}
                                         </p>
                                     );
                                 })}
@@ -424,7 +430,7 @@ export default function WorldView() {
                                     OUTPUT PRIORITIES &nbsp;{report.outputPriorities.join(' / ')}
                                 </p>
 
-                                <p className="type-data m-0 mt-3 text-[11px] uppercase text-ink-2">RECEIPT UNCONFIRMED, filed by hand&mdash;archivist</p>
+                                <p className="type-data m-0 mt-3 text-[11px] uppercase text-ink-2">RECEIPT UNCONFIRMED, filed by hand: archivist</p>
                             </Card>
                         </AccordionContent>
                     </AccordionItem>

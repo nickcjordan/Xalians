@@ -93,12 +93,12 @@ Regenerate after adding lore: `node scripts/loreCoverage.js`. This file is a rep
 | Engineers | 1 | 1 | Zolton, Ch. 07: All it took was a little push. Engineers operating the planetary power grid had long noted strange occurrences… |
 | Erratic | 1 | 1 | Magmuth, Ch. 03: …ntire sections of the planet and suck the oxygen from the atmosphere. Erratic volcanic eruptions create pyroclastic flows that barrel through the a… |
 | Especially | 1 | 1 | Zolton, Ch. 02: …netosphere surrounding the planet made it an undesirable destination. Especially given the existing colonization of the far more valuable and slightly… |
-| Ever | 1 | 1 | Phantiri, Ch. 07: …e name “Phantiri” soon came to replace the name of the planet itself. Ever more dig sites continued to uncover stranger and stranger artifacts –… |
+| Ever | 1 | 1 | Phantiri, Ch. 07: …e name “Phantiri” soon came to replace the name of the planet itself. Ever more dig sites continued to uncover stranger and stranger artifacts:… |
 | Everything | 1 | 1 | Poseidas, Ch. 05: …ded in setting up resilient coastal shelters for at-risk communities. Everything was finally under control and according to plan. |
 | Expensive | 1 | 1 | Grimedes, Ch. 06: …s had long noted strange occurrences during their tenure on Grimedes. Expensive scientific equipment would mysteriously vanish, only to re-appear day… |
 | Feline | 1 | 1 | Species: Smokat: Feline shaped in normal form, this clever creature can instantly atomize int… |
 | Floria Saigill Combines | 1 | 1 | Luminax, Ch. 05: That is, until the invention of the Xalian Generators. Seeing the immense success of the Genesis Prototype on Floria, Saigill Combines’ cred |
-| Floria the Genesis Prototype | 1 | 1 | Floria, Ch. 05: The Genesis Prototype was just that, a prototype – untested and highly experimental. Being the first of its kind, the Vallerii had not yet l |
+| Floria the Genesis Prototype | 1 | 1 | Floria, Ch. 05: The Genesis Prototype was just that, a prototype, untested and highly experimental. Being the first of its kind, the Vallerii had not yet le |
 | Florian | 1 | 1 | Species: Avilily: …sts and explorers to trap insects, serving as mobile bug repellent on Florian ventures. Today, the sedative properties of their saliva have been en… |
 | Fortunately | 1 | 1 | Poseidas, Ch. 06: …rew members and emergency personnel were injured or thrown overboard. Fortunately, the algae was found to have lost all traces of its toxicity in stora… |
 | Four-legged | 1 | 1 | Species: Hippochamp: Four-legged creatures resembling a seahorse that patrol the various hydro-process… |
@@ -138,7 +138,7 @@ Regenerate after adding lore: `node scripts/loreCoverage.js`. This file is a rep
 | Originally | 1 | 1 | Endessa, Ch. 01: Originally designated as Kelpan-5 by the Vallerii, the world now known as Endess… |
 | Overpopulation | 1 | 1 | Drainov, Ch. 02: …ustrial powerbase beating at the heart of their colonization efforts. Overpopulation and rapid industrialization turned the once beautiful world into a ma… |
 | Partially | 1 | 1 | Species: Dromeus: Partially feathered ground birds with lizard features, these creatures are extr… |
-| Phantiri and Poseidas | 1 | 1 | Veridium, Ch. 03: …something far darker - the same threats rumored to have been found on Phantiri and Poseidas before such planets were condemned and rendered classified by ECHELON… |
+| Phantiri and Poseidas | 1 | 1 | Veridium, Ch. 03: …something far darker, the same threats rumored to have been found on Phantiri and Poseidas before such planets were condemned and rendered classified by ECHELON… |
 | Physics | 1 | 1 | Telypso, Ch. 04: …lanket the world in wonder also rendered its study nearly impossible. Physics on Telypso operated more like suggestions than immutable laws. Lakes… |
 | Poisons | 1 | 1 | Drainov, Ch. 02: …sprawling factoryscape mired by smog and other industrial pollutants. Poisons choked the air, chemicals seeped into the waterways, and the depths o… |
 | Poseidas Hippochamps | 1 | 1 | Species: Hippochamp: Four-legged creatures resembling a seahorse that patrol the various hydro-processing fleets on Poseidas, Hippochamps were designed as emerge |
@@ -151,7 +151,7 @@ Regenerate after adding lore: `node scripts/loreCoverage.js`. This file is a rep
 | Reverberating | 1 | 1 | Telypso, Ch. 08: …to Telypso’s sanctuaries, and the world now screams in psychic pain. Reverberating through its mushroom forests comes great waves of spiritual sorrow an… |
 | Reviving | 1 | 1 | Drainov, Ch. 06: …productive past that the Vallerii had lost during the Age of Unbirth. Reviving life on Drainov would therefore not only be a great achievement of sc… |
 | Rivers | 1 | 1 | Magmuth, Ch. 03: …rupt unexpectedly, causing it to rain bouts of flame and molten rock. Rivers of fire flash across the wastes with little to no warning, pools of h… |
-| Rogueish | 1 | 1 | Entry: Windsailor: Rogueish and rugged pilots who were once paid high sums to scour Saiphus for B… |
+| Roguish | 1 | 1 | Entry: Windsailor: Roguish and rugged pilots who were once paid high sums to scour Saiphus for B… |
 | Rumor | 1 | 1 | Grimedes, Ch. 04: …an increasing number of observatories and astrophysics laboratories. Rumor has it that many of these facilities were in fact black sites for cov… |
 | Saiphus Xalian | 1 | 1 | Saiphus, Ch. 10: Although the Vallerii have largely disappeared from the skies of Saiphus as a result of the galaxy-wide pandemic, the Xalians they left behi |
 | Saturated | 1 | 1 | Drainov, Ch. 04: …y grow more dire. The planet was entirely devoid of intelligent life. Saturated under toxic plumes of thick green smoke, various abandoned processing… |
@@ -208,7 +208,7 @@ Regenerate after adding lore: `node scripts/loreCoverage.js`. This file is a rep
 | Vying | 1 | 1 | Magmuth, Ch. 06: …ould only last for so long beneath the surface before it would erupt. Vying for control over ever larger shares of the planet’s natural resources… |
 | Was | 1 | 1 | Phantiri, Ch. 01: …infinite possibilities. Who could say what laid in the great unknown? Was there intelligent life beyond Vallerii space, or were the Vallerii tr… |
 | Were | 1 | 1 | Phantiri, Ch. 05: …at they would find on Shadharam IV would ask an even darker question. Were they its last? |
-| Whether | 1 | 1 | Floria, Ch. 11: …alaxy – creatures born from the first seeds of the Genesis Prototype. Whether true or not, one thing is certain, if Floria is to preserve the peace… |
+| Whether | 1 | 1 | Floria, Ch. 11: …galaxy: creatures born from the first seeds of the Genesis Prototype. Whether true or not, one thing is certain, if Floria is to preserve the peace… |
 | Widespread | 1 | 1 | Saiphus, Ch. 07: …of capital discipline, resulting in aggressive cost cutting measures. Widespread conflict broke out when ECHELON ended longstanding industry practices… |
 | Wildcatters | 1 | 1 | Species: Frackworm: …ntil the rock fractures and the Nightcap pools drain toward the well. Wildcatters who could afford one opened a well in days that a crew of Drilltails… |
 | Wiping | 1 | 1 | Luminax, Ch. 11: When the End Wars began, Luminax became an obvious target for APEX. Wiping out Luminax’s solar infrastructure would be a critical blow to the en… |

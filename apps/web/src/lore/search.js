@@ -72,7 +72,7 @@ function flattenWords(value) {
 			kind: 'paragraph',
 			key,
 			title: `${planetNames.get(paragraph.planet) || paragraph.planet}, ${chapterLabel(paragraph.index)}`,
-			text: [paragraph.summary, paragraph.planet].join(' '),
+			text: paragraph.summary,
 			route: routeFor('paragraph', key),
 		});
 	}
