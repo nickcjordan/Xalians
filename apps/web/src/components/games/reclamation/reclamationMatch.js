@@ -801,15 +801,15 @@ class ReclamationMatch extends React.Component {
 			this.notice('Deploy is over for this round. There is nothing left to send.');
 			return;
 		}
-		if (match.players[YOU].passed) {
+		if (match.players[this.seatInPlay()].passed) {
 			this.notice('You have passed. Passing is permanent for this round.');
 			return;
 		}
-		if (match.turn !== YOU) {
+		if (match.turn !== this.seatInPlay()) {
 			this.notice('It is the rival’s turn. Wait for it to move.');
 			return;
 		}
-		if (match.players[YOU].sentCount >= SENDABLE) {
+		if (match.players[this.seatInPlay()].sentCount >= SENDABLE) {
 			this.notice(`You have sent all ${SENDABLE} creatures a Proving allows. The rest are your reserve.`);
 			return;
 		}
@@ -862,11 +862,11 @@ class ReclamationMatch extends React.Component {
 			this.notice('Deploy is over for this round.');
 			return;
 		}
-		if (match.turn !== YOU) {
+		if (match.turn !== this.seatInPlay()) {
 			this.notice('It is the rival’s turn.');
 			return;
 		}
-		const record = match.players[YOU].roster.find((r) => r.id === armedRecordId);
+		const record = match.players[this.seatInPlay()].roster.find((r) => r.id === armedRecordId);
 		const next = send(match, this.seatInPlay(), armedRecordId, siteId);
 		if (!next) {
 			this.notice('That send is not allowed right now.');
@@ -919,7 +919,7 @@ class ReclamationMatch extends React.Component {
 	handlePass = () => {
 		const { match } = this.state;
 		if (!this.isYourDeployTurn()) {
-			this.notice(match.players[YOU].passed
+			this.notice(match.players[this.seatInPlay()].passed
 				? 'You have already passed. Passing is permanent for this round.'
 				: 'It is not your turn to pass.');
 			return;
@@ -954,7 +954,7 @@ class ReclamationMatch extends React.Component {
 			return;
 		}
 		const view = this.view();
-		const stakeable = (view.players[YOU].stakeableSiteIds) || [];
+		const stakeable = (view.players[this.seatInPlay()].stakeableSiteIds) || [];
 		if (!stakeable.includes(siteId)) {
 			this.notice('That world cannot be staked now. A stake is once a Proving, and only before your first send of the round.');
 			return;
@@ -998,7 +998,7 @@ class ReclamationMatch extends React.Component {
 	*/
 	beginMove = (recordId) => {
 		const view = this.view();
-		const movable = view.players[YOU].movableRecordIds || [];
+		const movable = view.players[this.seatInPlay()].movableRecordIds || [];
 		if (!movable.includes(recordId)) {
 			this.notice('That creature is not swift enough to move, or it has already moved this round.');
 			return;
@@ -1025,7 +1025,8 @@ class ReclamationMatch extends React.Component {
 		if (view.phase !== 'deploy' || this.state.playback || this.state.judged) {
 			return null;
 		}
-		return recommendSend(view, view.players[YOU].roster, YOU);
+		const seat = this.seatInPlay();
+		return recommendSend(view, view.players[seat].roster, seat);
 	}
 
 	// ------------------------------------------------------------------
@@ -1460,10 +1461,10 @@ class ReclamationMatch extends React.Component {
 	ghostsForArmed(view) {
 		const { armedRecordId, hoverRecordId } = this.state;
 		const id = armedRecordId || hoverRecordId;
-		if (!id || view.phase !== 'deploy' || view.turn !== YOU) {
+		if (!id || view.phase !== 'deploy' || view.turn !== this.seatInPlay()) {
 			return null;
 		}
-		const record = view.players[YOU].roster.find((r) => r.id === id);
+		const record = view.players[this.seatInPlay()].roster.find((r) => r.id === id);
 		if (!record) {
 			return null;
 		}
@@ -1474,7 +1475,7 @@ class ReclamationMatch extends React.Component {
 			// board as it stands (the base redesign's "Interface consequences")
 			const seat = this.seatInPlay();
 			const plan = ghostPlanFor(view, record, site, seat, view.players[seat].sentCount);
-			const prepared = prepare(record, site, site.world, view.players[YOU].sentCount, { rules: view.rules });
+			const prepared = prepare(record, site, site.world, view.players[this.seatInPlay()].sentCount, { rules: view.rules });
 			const tolerance = (record.physiology && record.physiology.environmentalTolerance) || {};
 			ghosts[site.id] = {
 				hold: plan.hold,
@@ -1512,7 +1513,7 @@ class ReclamationMatch extends React.Component {
 		if (this.state.judged) {
 			return 'The Court has ruled. Load the next frame when you are ready.';
 		}
-		if (view.turn !== YOU) {
+		if (view.turn !== this.seatInPlay()) {
 			return 'The rival is deciding. Press space to hurry it.';
 		}
 		if (movingRecordId) {
@@ -1520,13 +1521,13 @@ class ReclamationMatch extends React.Component {
 			return `Press another world to move ${record ? speciesLabel(record) : 'it'} there. It is swift, so this does not spend your turn.`;
 		}
 		if (armedRecordId) {
-			const record = view.players[YOU].roster.find((r) => r.id === armedRecordId);
+			const record = view.players[this.seatInPlay()].roster.find((r) => r.id === armedRecordId);
 			return `${speciesLabel(record)} is lifted. Press a world to send it there, or press it again to set it down.`;
 		}
-		if (view.players[YOU].passed) {
+		if (view.players[this.seatInPlay()].passed) {
 			return 'You have passed. Waiting on the rival.';
 		}
-		if ((view.players[YOU].stakeableSiteIds || []).length > 0) {
+		if ((view.players[this.seatInPlay()].stakeableSiteIds || []).length > 0) {
 			return 'Lift a creature from the bench, then press a world. Or stake a world, once this Proving, to make it count two. Or pass.';
 		}
 		return 'Lift a creature from the bench, then press a world. Or pass.';
@@ -1560,8 +1561,8 @@ class ReclamationMatch extends React.Component {
 	}
 
 	renderStatusStrip(view) {
-		const you = view.players[YOU];
-		const them = view.players[THEM];
+		const you = view.players[this.seatInPlay()];
+		const them = view.players[this.seatOpponent()];
 		const stillReachable = reachabilityLine(view, you, them);
 		const rivalBeat = !!this.rivalBeat() && view.phase === 'deploy' && !this.state.judged;
 		const yourTurn = view.turn === this.seatInPlay() && view.phase === 'deploy' && !this.state.playback && !this.state.judged && !rivalBeat;
@@ -1761,13 +1762,13 @@ class ReclamationMatch extends React.Component {
 		const holds = this.holdsForBoard(view);
 		const totals = this.totalsForBoard(view);
 		const ghosts = this.ghostsForArmed(view);
-		const me = view.players[YOU];
-		const them = view.players[THEM];
+		const me = view.players[this.seatInPlay()];
+		const them = view.players[this.seatOpponent()];
 		const deploying = view.phase === 'deploy' && !playback && !judged;
 		// sites accept a click for the whole of your deploy turn, not only when something is
 		// armed: the interface principle is that every click says why, and a site that
 		// silently ignores a click explains nothing.
-		const clickable = deploying && view.turn === YOU;
+		const clickable = deploying && view.turn === this.seatInPlay();
 
 		/*
 			The threat read (the base redesign's "Interface consequences"): each of your
@@ -1793,7 +1794,7 @@ class ReclamationMatch extends React.Component {
 		const holdingIds = [...me.holding, ...them.holding];
 		// assumption 20: your swift creatures that may still move this round, as the bench's
 		// move buttons. The engine's own list, so a button never offers an illegal move.
-		const movable = deploying && view.turn === YOU
+		const movable = deploying && view.turn === this.seatInPlay()
 			? (me.movableRecordIds || []).map((id) => ({ record: this.findRecordOnBoard(this.state.match, id) })).filter((m) => m.record)
 			: [];
 
@@ -1872,7 +1873,7 @@ class ReclamationMatch extends React.Component {
 							hoverSiteId={this.state.hoverSiteId}
 							advanced={!simple}
 							stakes={view.stakes}
-							stakeableSiteIds={deploying && view.turn === YOU ? (me.stakeableSiteIds || []) : []}
+							stakeableSiteIds={deploying && view.turn === this.seatInPlay() ? (me.stakeableSiteIds || []) : []}
 							pendingStakeSiteId={this.state.pendingStakeSiteId}
 							onStake={this.askStake}
 							onSiteClick={this.handleSiteClick}
