@@ -12,6 +12,7 @@ import * as authUtil from '../utils/authUtil';
 import { cn } from '@/lib/utils';
 import { Shell } from '@/components/system/masthead';
 import { BrandLockup } from '@/components/system/brand';
+import { SkipLink } from '@/components/system/a11y';
 import { Button } from '@/components/ui/button';
 import {
 	Sheet, SheetContent, SheetHeader, SheetTitle, SheetClose,
@@ -119,6 +120,7 @@ function XalianNavbar({ authAlertCallback }: XalianNavbarProps) {
 
 	return (
 		<React.Fragment>
+			<SkipLink />
 			<header
 				id="navvy"
 				data-tier="chrome"

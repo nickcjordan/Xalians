@@ -77,11 +77,11 @@ function TradePage({ id }: TradePageProps) {
 	};
 
 	if (loading) {
-		return <main className="min-h-screen bg-room text-ink"><XalianNavbar /><div className="flex justify-center py-24"><HelixSpinner /></div></main>;
+		return <main id="main" className="min-h-screen bg-room text-ink" data-tier="chrome"><XalianNavbar /><div className="flex justify-center py-24"><HelixSpinner /></div></main>;
 	}
 
 	if (!trade) {
-		return <main className="min-h-screen bg-room text-ink"><XalianNavbar /><Shell><EmptyState legend="Trade unavailable">{message || 'This trade offer was not found.'}</EmptyState></Shell></main>;
+		return <main id="main" className="min-h-screen bg-room text-ink" data-tier="chrome"><XalianNavbar /><Shell><EmptyState legend="Trade unavailable">{message || 'This trade offer was not found.'}</EmptyState></Shell></main>;
 	}
 
 	const offeredRecords = trade.offeredXalianIds.map((recordId) => records[recordId]).filter(Boolean);

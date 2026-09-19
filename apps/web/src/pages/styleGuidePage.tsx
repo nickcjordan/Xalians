@@ -178,7 +178,7 @@ function SampleForm() {
 
 function StyleGuidePage() {
     return (
-        <main className="min-h-screen bg-room text-ink font-body" data-tier="chrome">
+        <main id="main" className="min-h-screen bg-room text-ink font-body" data-tier="chrome">
             <XalianNavbar />
 
             <Shell>
