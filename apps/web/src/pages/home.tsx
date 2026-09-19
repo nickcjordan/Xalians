@@ -14,7 +14,8 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 
-const FEATURED_SPECIES_COUNT = 8;
+// Nine: one for the hero plate and a full row of eight in the strip below.
+const FEATURED_SPECIES_COUNT = 9;
 
 function pickRandomSpecies() {
 	const pool = [...species];
@@ -74,24 +75,37 @@ const DESTINATIONS = [
 
 function Home() {
 	const [featuredSpecies] = React.useState(pickRandomSpecies);
+	// The hero plate shows the first of the picked pool, so the strip below
+	// never repeats it and both come from one draw.
+	const heroSpecies = featuredSpecies[0];
 	usePageTitle();
 
 	return (
 		<main id="main" className="min-h-screen bg-room text-ink font-body" data-tier="chrome">
 			<XalianNavbar />
 
-			<Shell className="pt-8 pb-16">
-				<section className="mb-12 grid gap-8 xl:grid-cols-[1.1fr_0.9fr] xl:items-center">
-					<div className="flex flex-col items-start gap-3">
+			{/* The hero sits on open space. The starfield is scoped to this band
+			    and masked out at its foot, so the reading sections below stay on
+			    the flat hull surface and never carry moving scenery behind text. */}
+			<div className="relative isolate overflow-hidden">
+				<div className="starfield" aria-hidden="true">
+					<div className="starfield-far" />
+				</div>
+				<Shell className="relative pt-8 pb-10">
+					{/* Two columns only once there is room for both: the plate is the
+					    payoff the copy promises, so on a narrow window the words win
+					    and it drops out entirely rather than shrinking. */}
+					<div className="grid items-center gap-10 lg:grid-cols-[minmax(0,64ch)_minmax(0,1fr)]">
+					<div className="flex max-w-[64ch] flex-col items-start gap-3">
 						<div className="max-sm:hidden"><XaliansLogoDnaAnimated /></div>
 						<h1 className="type-display m-0">Creatures grown for dying worlds</h1>
-						<p className="mt-2 max-w-[62ch] font-body text-lead text-ink">
-							Xalians is a world of generated creatures. Generate one, read the world it comes from, and play it in the games.
+						<p className="mt-2 font-body text-lead text-ink">
+							Across fourteen worlds, the Nemesis Plague is still spreading. The Vallerii who built this galaxy are almost gone. What is left are the Xalians: creatures their Generators grew to live where nothing else could.
 						</p>
-						<p className="mt-2 max-w-[62ch] font-body text-lead text-ink-2">
-							Xalians are bioengineered creatures the Vallerii Generators grow to survive the worst planets in the galaxy, no two genomes alike. King Kozrak&rsquo;s Mercurius Machine prints the Scrambler Tokens that make new ones, and pays them out to the winners of his arena tournaments.
+						<p className="mt-2 font-body text-lead text-ink-2">
+							King Kozrak holds the only machine that still prints a Scrambler Token, the one key to a plague-immune Xalian. He pays them out to the winners of his arena, and a galaxy of creatures fights for the right to repopulate its own homeworld.
 						</p>
-						<div className="mt-3 flex flex-wrap items-center gap-5">
+						<div className="mt-4 flex flex-wrap items-center gap-5">
 							<Button asChild>
 								<Link to="/generator">Generate a Xalian</Link>
 							</Button>
@@ -101,38 +115,83 @@ function Home() {
 						</div>
 					</div>
 
-					<section data-tier="featured">
-						<h2 className="type-heading m-0">Fourteen worlds</h2>
-						<p className="mt-1 mb-4 max-w-[62ch] font-body text-small text-ink-2">
-							Every Xalian is grown for one of them. Open a world for its history and its native species.
-						</p>
-						<div className="grid grid-cols-2 gap-2 sm:grid-cols-7">
-							{worlds.map((world: any) => (
-								<Link
-									key={world.key}
-									to={`/encyclopedia/worlds/${world.key}`}
-									className={`el-${world.element} mass-el group flex flex-col items-start gap-1 overflow-hidden border border-edge bg-s1 pb-2 hover:border-edge-strong hover:bg-s2 focus-visible:outline-2 focus-visible:outline-ring`}
-								>
-									<div className="flex aspect-square w-full items-center justify-center bg-el/24">
-										<img
-											src={`/${world.image}`}
-											alt={world.imageAlt}
-											width={384}
-											height={256}
-											decoding="async"
-											className="h-full w-full object-cover"
-										/>
-									</div>
-									<span className="type-legend mt-2 max-w-full overflow-hidden px-2 text-[10px] whitespace-nowrap text-ellipsis text-ink sm:text-[11.5px]">
-										{world.name}
-									</span>
-									<Badge variant="chip" className="mx-2 hidden max-w-[calc(100%-1rem)] overflow-hidden text-[10px] text-ellipsis whitespace-nowrap sm:inline-flex">
+					{/* One specimen, picked per load from the same pool as the
+					    bestiary strip. It gives the hero's wide half something to
+					    hold, and shows a real creature before the copy has finished
+					    describing one. */}
+					{heroSpecies && (
+						<Link
+							to={`/encyclopedia/species/${heroSpecies.name.toLowerCase()}`}
+							className={`el-${heroSpecies.type.toLowerCase()} group mx-auto hidden w-full max-w-[340px] flex-col border border-edge bg-s1/80 backdrop-blur-[2px] hover:border-edge-strong focus-visible:outline-2 focus-visible:outline-ring lg:flex`}
+						>
+							<div className="bg-el/24 p-3">
+								<XalianImage
+									colored
+									speciesName={heroSpecies.name}
+									primaryType={heroSpecies.type}
+									moreClasses="w-full"
+								/>
+							</div>
+							<div className="flex items-baseline justify-between gap-2 px-3 py-2.5">
+								<span className="type-legend text-[13px] text-ink">{heroSpecies.name}</span>
+								<Badge variant="chip" className="text-[10px] uppercase">{heroSpecies.type}</Badge>
+							</div>
+						</Link>
+					)}
+					</div>
+				</Shell>
+			</div>
+
+			<Shell className="pt-2 pb-16">
+
+				{/* The worlds are the best art on the site, so they get the page's
+				    full width rather than a seven-column strip inside the hero's
+				    narrow column: at a wide viewport that strip squeezed each
+				    tile to about 80px and truncated half the names. The column
+				    count now steps with the viewport, so tiles grow as the
+				    window grows instead of shrinking. */}
+				<section className="mb-12" data-tier="featured">
+					<h2 className="type-heading m-0">Fourteen worlds</h2>
+					<p className="mt-1 mb-4 max-w-[62ch] font-body text-small text-ink-2">
+						Every Xalian is grown for one of them. Open a world for its history and its native species.
+					</p>
+					<div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5 xl:grid-cols-7">
+						{worlds.map((world: any) => (
+							<Link
+								key={world.key}
+								to={`/encyclopedia/worlds/${world.key}`}
+								className={`el-${world.element} mass-el group flex flex-col overflow-hidden border border-edge bg-s1 hover:border-edge-strong hover:bg-s2 focus-visible:outline-2 focus-visible:outline-ring`}
+							>
+								<div className="relative aspect-[4/3] w-full overflow-hidden bg-el/24">
+									<img
+										src={`/${world.image}`}
+										alt={world.imageAlt}
+										width={384}
+										height={256}
+										loading="lazy"
+										decoding="async"
+										className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+									/>
+									{/* The element chip rides on the art so the name below
+									    gets the tile's full width and stops truncating. */}
+									<Badge
+										variant="chip"
+										className="absolute top-1.5 left-1.5 text-[10px] uppercase"
+									>
 										{world.element}
 									</Badge>
-								</Link>
-							))}
-						</div>
-					</section>
+								</div>
+								<div className="flex min-w-0 flex-col gap-0.5 px-2.5 pt-2 pb-2.5">
+									<span className="type-legend text-[12px] text-ink">{world.name}</span>
+									{/* Two lines of real terrain, clamped: enough to make the
+									    world feel like somewhere without unbalancing the row. */}
+									<span className="font-body text-[11px] leading-snug text-ink-3 line-clamp-2">
+										{world.terrain}
+									</span>
+								</div>
+							</Link>
+						))}
+					</div>
 				</section>
 
 				<section className="mb-12" data-tier="featured">
@@ -141,7 +200,7 @@ function Home() {
 						Species silhouettes from the record plates. Open one to read its record.
 					</p>
 					<div className="-mx-6 flex snap-x gap-2 overflow-x-auto px-6 [scrollbar-width:none] max-sm:[mask-image:linear-gradient(to_right,black_calc(100%-40px),transparent)] sm:mx-0 sm:grid sm:grid-cols-4 sm:gap-2 sm:overflow-visible sm:px-0 md:grid-cols-8">
-						{featuredSpecies.map((s: any) => (
+						{featuredSpecies.slice(1).map((s: any) => (
 							<Tile
 								as={Link}
 								key={s.id || s.name}

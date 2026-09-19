@@ -342,9 +342,90 @@
 	20% { opacity: 1; }
 }
 
+/* The starfield behind the home hero. Deliberately CSS only: the original
+   splash used a particle library on a tiled PNG behind the whole page, which
+   cost a runtime dependency, ran a canvas forever, and sat under body copy.
+   This is three layered radial-gradient fields on a single element, drifting
+   slowly, scoped to the hero band so it never reaches the reading column.
+
+   Each layer is one repeating tile of hand-placed stars at a different size
+   and speed, so the parallax reads as depth rather than as a moving texture.
+   The drift is measured in minutes: it should be almost subliminal, noticed
+   only if you stop and watch. */
+.starfield {
+	position: absolute;
+	inset: 0;
+	overflow: hidden;
+	pointer-events: none;
+	/* The band fades out at the bottom so the stars never collide with the
+	   sections below; the hero sits on top of open space, not in a box. */
+	-webkit-mask-image: linear-gradient(to bottom, rgb(0 0 0) 55%, transparent 100%);
+	mask-image: linear-gradient(to bottom, rgb(0 0 0) 55%, transparent 100%);
+}
+
+.starfield::before,
+.starfield::after,
+.starfield > .starfield-far {
+	content: "";
+	position: absolute;
+	/* Twice the height, so a layer can translate a full tile and wrap without
+	   ever exposing an edge. */
+	inset: -50% -10%;
+	background-repeat: repeat;
+	will-change: transform;
+}
+
+/* Near field: fewer, brighter, faster. */
+.starfield::before {
+	background-image:
+		radial-gradient(1.4px 1.4px at 12% 18%, rgba(255,255,255,0.85), transparent),
+		radial-gradient(1.6px 1.6px at 68% 12%, rgba(255,255,255,0.75), transparent),
+		radial-gradient(1.3px 1.3px at 84% 46%, rgba(255,255,255,0.8), transparent),
+		radial-gradient(1.5px 1.5px at 33% 62%, rgba(255,255,255,0.7), transparent),
+		radial-gradient(1.2px 1.2px at 52% 88%, rgba(255,255,255,0.75), transparent);
+	background-size: 420px 420px;
+	animation: starfield-drift-near 240s linear infinite;
+}
+
+/* Mid field: the mint cast, so the hero reads as Xalian space and not as a
+   generic night sky. Kept low in opacity: colour is energy here, not decor. */
+.starfield::after {
+	background-image:
+		radial-gradient(1px 1px at 22% 32%, color-mix(in srgb, var(--color-viable-hi) 50%, transparent), transparent),
+		radial-gradient(1px 1px at 58% 72%, rgba(255,255,255,0.5), transparent),
+		radial-gradient(1.1px 1.1px at 88% 24%, color-mix(in srgb, var(--color-viable-hi) 42%, transparent), transparent),
+		radial-gradient(1px 1px at 40% 14%, rgba(255,255,255,0.45), transparent),
+		radial-gradient(1px 1px at 74% 58%, rgba(255,255,255,0.4), transparent),
+		radial-gradient(1px 1px at 8% 78%, color-mix(in srgb, var(--color-viable-hi) 38%, transparent), transparent);
+	background-size: 300px 300px;
+	animation: starfield-drift-mid 380s linear infinite;
+}
+
+/* Far field: dense, dim, slowest. The element exists because a third layer
+   needs a third animation and ::before/::after are already spent. */
+.starfield > .starfield-far {
+	background-image:
+		radial-gradient(0.8px 0.8px at 16% 44%, rgba(255,255,255,0.35), transparent),
+		radial-gradient(0.8px 0.8px at 46% 24%, rgba(255,255,255,0.3), transparent),
+		radial-gradient(0.7px 0.7px at 78% 66%, rgba(255,255,255,0.32), transparent),
+		radial-gradient(0.8px 0.8px at 92% 8%, rgba(255,255,255,0.28), transparent),
+		radial-gradient(0.7px 0.7px at 62% 92%, rgba(255,255,255,0.3), transparent),
+		radial-gradient(0.8px 0.8px at 28% 76%, rgba(255,255,255,0.26), transparent);
+	background-size: 210px 210px;
+	animation: starfield-drift-far 560s linear infinite;
+}
+
+/* Each layer travels exactly one tile, so the loop is seamless. */
+@keyframes starfield-drift-near { to { transform: translate3d(-420px, 210px, 0); } }
+@keyframes starfield-drift-mid  { to { transform: translate3d(-300px, 150px, 0); } }
+@keyframes starfield-drift-far  { to { transform: translate3d(-210px, 105px, 0); } }
+
 @media (prefers-reduced-motion: reduce) {
 	*, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
 	.helix-spinner .rung { animation: none; opacity: 0.7; }
+	/* The starfield is scenery, not information: hold it still rather than
+	   removing it, so a reduced-motion visitor still gets the same sky. */
+	.starfield::before, .starfield::after, .starfield > .starfield-far { animation: none; }
 }
 
 /* Tailwind's outline width/color utilities do not restore the outline style

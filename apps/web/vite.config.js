@@ -22,12 +22,19 @@ function homeSummaryData() {
 			const planetArtwork = JSON.parse(fs.readFileSync(path.join(contentDir, 'planetArtwork.json'), 'utf8'));
 			const speciesRecords = JSON.parse(fs.readFileSync(path.join(contentDir, 'species.json'), 'utf8'));
 
-			const worlds = planetRecords.map(({ key, name, element }) => {
+			const worlds = planetRecords.map(({ key, name, element, physical }) => {
 				const art = planetArtwork[key]?.[0];
 				if (!key || !name || !element || !art?.thumbnail || !art?.alt) {
 					throw new Error(`Home world summary is missing a required field: ${name || key || 'unknown world'}`);
 				}
-				return { key, name, element, image: art.thumbnail, imageAlt: art.alt };
+				// terrainLabel is what makes a world tile read as a place rather
+				// than a swatch ("Jagged Molten Cliffs, Lava Pits"). It is
+				// required: a world without one would render a blank subtitle.
+				const terrain = physical?.terrainLabel;
+				if (!terrain) {
+					throw new Error(`Home world summary is missing a terrain label: ${name}`);
+				}
+				return { key, name, element, terrain, image: art.thumbnail, imageAlt: art.alt };
 			});
 			const species = speciesRecords.map(({ id, name, type }) => {
 				if (!id || !name || !type) {

@@ -13,7 +13,7 @@ import { describe, expect, it, vi } from 'vitest';
 vi.mock('../../components/navbar', () => ({ default: () => null }));
 vi.mock('aws-amplify', () => ({ Amplify: { configure: vi.fn() } }));
 vi.mock('virtual:xalians-home-data', () => ({
-	worlds: [{ key: 'magmuth', name: 'Magmuth', element: 'fire', image: 'img.png', imageAlt: 'Magmuth' }],
+	worlds: [{ key: 'magmuth', name: 'Magmuth', element: 'fire', terrain: 'Jagged Molten Cliffs, Lava Pits', image: 'img.png', imageAlt: 'Magmuth' }],
 	species: [{ id: '00001', name: 'Graviclaw', type: 'Metal' }],
 }));
 
@@ -28,12 +28,13 @@ function renderHome() {
 }
 
 describe('Home (#432 orientation)', () => {
-	it('leads with a plain-language lede above the lore paragraph, and drops the Xalia eyebrow', () => {
+	it('leads with the in-world lede above the lore paragraph, and drops the Xalia eyebrow', () => {
 		renderHome();
 
 		expect(
-			screen.getByText('Xalians is a world of generated creatures. Generate one, read the world it comes from, and play it in the games.')
+			screen.getByText(/Across fourteen worlds, the Nemesis Plague is still spreading\./)
 		).toBeInTheDocument();
+		expect(screen.getByText(/King Kozrak holds the only machine that still prints a Scrambler Token/)).toBeInTheDocument();
 		expect(screen.getByRole('heading', { level: 1, name: 'Creatures grown for dying worlds' })).toBeInTheDocument();
 		expect(screen.queryByText('Xalia')).not.toBeInTheDocument();
 	});
@@ -43,6 +44,8 @@ describe('Home (#432 orientation)', () => {
 
 		expect(screen.getByRole('heading', { level: 2, name: 'Fourteen worlds' })).toBeInTheDocument();
 		expect(screen.getByText('Every Xalian is grown for one of them. Open a world for its history and its native species.')).toBeInTheDocument();
+		// The terrain line is the difference between a world tile and a swatch.
+		expect(screen.getByText('Jagged Molten Cliffs, Lava Pits')).toBeInTheDocument();
 
 		expect(screen.getByRole('heading', { level: 2, name: 'From the bestiary' })).toBeInTheDocument();
 		expect(screen.getByText('Species silhouettes from the record plates. Open one to read its record.')).toBeInTheDocument();
