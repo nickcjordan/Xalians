@@ -15,6 +15,7 @@ import { SearchField, FilterBar } from "@/components/system/filters"
 import { DataTable, type Column } from "@/components/system/data-table"
 import { IdentityRow } from "@/components/system/identity"
 import { ErrorBoundary } from "@/components/system/status"
+import { SiteFooter } from "@/components/system/site-footer"
 
 /**
  * Brief B ("patterns") sections for /styleguide (docs/DESIGN_SYSTEM.md
@@ -373,6 +374,22 @@ const SECTIONS: { id: string; label: string; node: React.ReactNode }[] = [
           <IdentityRow initials="NJ" name="Nick Jordan" detail="12 Xalians kept" />
           <IdentityRow initials="GU" name="Guest tamer" detail="Not signed in" />
         </div>
+      </>
+    ),
+  },
+  {
+    id: "site-footer",
+    label: "Site footer",
+    node: (
+      <>
+        <SectionHead title="Site footer" />
+        <p className="text-body text-ink-2">
+          Rendered once from App.js below the routes, on every chrome page; hidden on the immersive game routes
+          (duel, Reclamation, Expedition, Powerworks, an Arcade game in progress). The Arcade hub itself keeps it.
+        </p>
+        <TemplateFrame caption="SiteFooter">
+          <SiteFooter />
+        </TemplateFrame>
       </>
     ),
   },
