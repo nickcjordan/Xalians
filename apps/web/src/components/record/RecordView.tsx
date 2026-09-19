@@ -13,7 +13,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Collapsible, CollapsibleTrigger, CollapsibleContent } from '@/components/ui/collapsible';
-import { SpecPlate, Meter } from '@/components/system/record';
+import { SpecPlate, RecordRow, Meter } from '@/components/system/record';
 import {
 	ATTRIBUTE_ORDER, CAPABILITY_ORDER, TEMPERAMENT_ORDER,
 	attributeTerm, archetypeTerm, capabilityTerm, elementTerm, instrumentTerm,
@@ -98,15 +98,6 @@ function BriefCard({ label, value, caption }: { label: string; value: React.Reac
 			<p className="m-0 font-body text-small text-ink-2">{caption}</p>
 		</Card>
 	);
-}
-
-function ordinal(value: number): string {
-	const lastTwo = value % 100;
-	if (lastTwo >= 11 && lastTwo <= 13) return `${value}th`;
-	if (value % 10 === 1) return `${value}st`;
-	if (value % 10 === 2) return `${value}nd`;
-	if (value % 10 === 3) return `${value}rd`;
-	return `${value}th`;
 }
 
 function RecordView({ record, kicker = 'Record', recordLink }: RecordViewProps) {
@@ -203,9 +194,18 @@ function RecordView({ record, kicker = 'Record', recordLink }: RecordViewProps) 
 							},
 							...(isUnownedPreview ? [] : [{ key: 'Serial', value: `No. ${record.provenance.serial.toLocaleString()}` }]),
 							{ key: 'Generated', value: generatedOn(record.provenance.generatedAt) },
-							{ key: 'Seed', value: <span className="break-all">{record.provenance.seed}</span> },
 							{ key: 'Generator', value: `v${record.provenance.generatorVersion}` },
 						]} />
+
+					<dl className="m-0 grid grid-cols-[minmax(7rem,max-content)_minmax(0,1fr)] items-baseline gap-x-6 gap-y-2 lg:grid-cols-[minmax(9rem,max-content)_minmax(0,1fr)_minmax(9rem,max-content)_minmax(0,1fr)]">
+						<dt className="type-legend">Seed</dt>
+						<dd
+							className="col-span-1 m-0 min-w-0 overflow-hidden text-ellipsis whitespace-nowrap type-data text-small text-ink lg:col-span-3"
+							title={record.provenance.seed}
+						>
+							{record.provenance.seed}
+						</dd>
+					</dl>
 
 					{recordLink ? (
 						<div className="mt-1">
@@ -239,20 +239,22 @@ function RecordView({ record, kicker = 'Record', recordLink }: RecordViewProps) 
 					/>
 					<BriefCard
 						label="Strongest aptitude"
-						value={strongestCapability ? capabilityTerm(strongestCapability.key).name : '—'}
+						value={strongestCapability ? capabilityTerm(strongestCapability.key).name : 'Not recorded'}
 						caption={strongestCapability ? `${strongestCapability.value} out of 100 in its natural capability record.` : 'No capability reading.'}
 					/>
 					<BriefCard
 						label="Signature ability"
-						value={signatureAbility ? signatureAbility.name : '—'}
+						value={signatureAbility ? signatureAbility.name : 'Not recorded'}
 						caption={signatureAbility
 							? `${intensityBand(signatureAbility.intensity)} expression through ${elementTerm(signatureAbility.medium).name.toLowerCase()}.`
 							: 'No signature ability recorded.'}
 					/>
 					<BriefCard
 						label="Registry distinction"
-						value={roundedDistinction == null ? 'Uncalibrated' : `${ordinal(roundedDistinction)} percentile`}
-						caption="How unusual this record is among calibrated generations—not combat power."
+						value={roundedDistinction == null ? 'Uncalibrated' : `More distinctive than ${roundedDistinction}% of records`}
+						caption={roundedDistinction == null
+							? 'Not yet measured against calibrated records.'
+							: 'Distinction is how far this record sits from a typical print. It is not combat power.'}
 					/>
 				</div>
 			</section>
@@ -377,15 +379,19 @@ function RecordView({ record, kicker = 'Record', recordLink }: RecordViewProps) 
 							{appearance.map((quality) => <li key={quality}>{quality}</li>)}
 						</ul>
 					) : null}
-					<p className="mt-3 mb-0 max-w-[62ch] font-body text-body text-ink">
-						{finish === 'standard'
-							? 'Standard finish.'
-							: `${capitalize(finish)} finish: this one came out of the Generator wearing it.`}
-					</p>
+					{finish !== 'standard' ? (
+						<p className="mt-3 mb-0 max-w-[62ch] font-body text-body text-ink">
+							{`${capitalize(finish)} finish: this one came out of the Generator wearing it.`}
+						</p>
+					) : null}
 				</Layer>
 			</div>
 
 			<Layer title="Actions">
+				<p className="mb-4 max-w-[62ch] font-body text-small text-ink-2">
+					Each line reads: how it fires, how it reaches, what it does, with which part, through which element. The word
+					and number at the right are its intensity on a scale of 100.
+				</p>
 				<Card variant="panel">
 					<ul className="m-0 flex list-none flex-col p-0">
 						{recordActions(record).map((ability) => <Ability key={ability.name} ability={ability} />)}
@@ -408,6 +414,26 @@ function RecordView({ record, kicker = 'Record', recordLink }: RecordViewProps) 
 					</div>
 				</Card>
 			</Layer>
+
+			<RecordRow term="Use it">
+				{isUnownedPreview ? (
+					<React.Fragment>
+						Sign in to keep this Xalian, then field it in{' '}
+						<Link to="/duel" className="text-ink underline decoration-ink-3 underline-offset-4 hover:decoration-ink">Duel</Link>,{' '}
+						<Link to="/reclamation" className="text-ink underline decoration-ink-3 underline-offset-4 hover:decoration-ink">Reclamation</Link> and{' '}
+						<Link to="/long-return" className="text-ink underline decoration-ink-3 underline-offset-4 hover:decoration-ink">Expedition</Link>. Every game reads
+						the same record.
+					</React.Fragment>
+				) : (
+					<React.Fragment>
+						Field it in{' '}
+						<Link to="/duel" className="text-ink underline decoration-ink-3 underline-offset-4 hover:decoration-ink">Duel</Link>,{' '}
+						<Link to="/reclamation" className="text-ink underline decoration-ink-3 underline-offset-4 hover:decoration-ink">Reclamation</Link> and{' '}
+						<Link to="/long-return" className="text-ink underline decoration-ink-3 underline-offset-4 hover:decoration-ink">Expedition</Link>. Every game reads
+						the same record.
+					</React.Fragment>
+				)}
+			</RecordRow>
 		</article>
 	);
 }
