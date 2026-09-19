@@ -2,7 +2,7 @@
 
 Status: the running state of the game under ownership (brief: `reclamation-ownership-brief.md`). This file is the resume point. Any reset reads this first and continues at the weakest thing named below, never from scratch. Each pass appends its own section; the standing state at the top is rewritten in place.
 
-## Standing state (after pass 22, 2026-09-19)
+## Standing state (after pass 23, 2026-09-19)
 
 ### Gauges, proctor mirror
 
@@ -66,10 +66,11 @@ The seat the table is drawn for is now a value (`seatInPlay()`), not the constan
 
 **Pass 22 made it playable.** A whole Proving now plays to the Charter with two people sharing one screen: 22 covers raised across both seats, no leak, no page errors. `apps/web/scripts/reclamation-hotseat.mjs` is the check, and it runs beside the solo one.
 
+**Pass 23 gave the second person their own draft.** Both handlers now keep twelve from their own fifteen, with a cover between them, and the two pools share no creature. Checked by paint end to end.
+
 **What is left, and it is cosmetic rather than blocking:**
 
-1. **The second squad's draft.** Seat B plays a squad drafted for seat A, so both people keep the same twelve. Playable, but not the game two people should get.
-2. **The Charter names a rival, not a person.** `buildMatchReport` is still called with `YOU`, and the narration still says "your" and "the rival's" rather than naming the two handlers.
+1. **The Charter names a rival, not a person.** `buildMatchReport` is still called with `YOU`, and the narration still says "your" and "the rival's" rather than naming the two handlers.
 
 The constraint that shaped the design: **16.8 percent of sends arrive hidden, and removing hiding moves the flip gauge +2.46 +/- 0.98, beyond noise.** Hot-seat could not simply reveal everything, which is why there is a cover at all.
 
@@ -440,3 +441,15 @@ Twenty-one call sites moved from `YOU`/`THEM` to `seatInPlay()`/`seatOpponent()`
 **The lesson, now paid for twice:** *when two fixes in a row do not move a symptom, stop fixing and start printing.* Pass 21 spent five inferred fixes on the wrong component. Pass 22 spent one instrument and found it immediately. The instrument was six lines: phase, turn, cover, and the count of live controls, printed every loop.
 
 **Verified:** 2049 tests green (nine new), build inside budgets, headless Proving green in all four solo configurations, and a whole hot-seat Proving played to the Charter.
+
+### Pass 23 (2026-09-19): the second person drafts their own squad
+
+Hot-seat played, but both people kept the same twelve: seat B was handed the squad the draft built for seat A. Now each handler keeps their own twelve from their own fifteen, with a cover between them, for the same reason the board is covered between turns - **a squad seen in advance is information the game does not mean either handler to have.**
+
+The staging: the first handler's confirm hands the keyboard over rather than starting the Proving; their twelve is parked in `keptA` while the second person keeps from pool B; the confirm that follows builds both rosters. Solo play is untouched - it still drafts once and the rival still keeps by its habit.
+
+**Checked by paint:** the cover appears between the two drafts, the second handler's pool is **15 creatures with zero overlap** with the first handler's, their keep starts empty, and the Proving plays to the Charter with both human-chosen squads. Folded into `reclamation-hotseat.mjs` so it stays verified.
+
+**A vacuous assertion caught in the writing.** The first version read the first handler's pool *after* the confirm, when the draft had already moved on, so it came back empty and the overlap check compared against nothing: it would have passed however the pools were built. Reading the pool before the confirm makes it 15 against 15 and the assertion real. **An assertion that cannot fail is worth exactly as much as no assertion, and the way to tell is to look at the numbers it prints rather than the word PASS.**
+
+**Verified:** 2054 tests green (five new), build inside budgets, headless Proving green in all four solo configurations, hot-seat green end to end including the two-stage draft.

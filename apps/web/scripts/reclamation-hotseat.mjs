@@ -20,7 +20,8 @@
 	1. the cover is raised on EVERY seat change, not just the first,
 	2. both seats are covered over the Proving,
 	3. while a cover is up nothing about the position is in the document,
-	4. a whole Proving can be played to the Charter this way.
+	4. a whole Proving can be played to the Charter this way,
+	5. the draft is two-staged, with a cover between, and the two pools share no creature.
 */
 import { chromium } from 'playwright-core';
 import { mkdir } from 'node:fs/promises';
@@ -39,9 +40,32 @@ if (await d.count() && await d.first().isVisible()) await d.first().click();
 await page.locator('[data-enter]').first().click();
 const auto = page.locator('[data-draft-auto]');
 await auto.first().waitFor({ state: 'visible', timeout: 15000 });
+// the first handler's pool has to be read BEFORE the confirm: afterwards the draft has moved
+// on and the list comes back empty, which would make the overlap assertion below vacuous
+const poolA = await page.locator('[data-draft]').evaluateAll((els) => els.map((e) => e.getAttribute('data-draft')));
 await auto.first().click();
 const c = page.locator('[data-draft-confirm]');
 if (await c.count() && await c.first().isEnabled()) await c.first().click();
+
+/*
+	PASS 23. In hot-seat the draft is two-staged: the first handler keeps twelve, the pool is
+	covered, and the second handler keeps twelve from their OWN pool. A squad seen in advance
+	is information the game does not mean either handler to have, which is the same reason the
+	board is covered between turns.
+*/
+let draftCover = false;
+let poolB = [];
+const dh = page.locator('[data-draft-handoff]');
+if (await dh.count() && await dh.first().isVisible()) {
+	draftCover = true;
+	await page.locator('[data-take-draft-handoff]').first().click();
+	await page.locator('[data-draft-auto]').first().waitFor({ state: 'visible', timeout: 15000 });
+	poolB = await page.locator('[data-draft]').evaluateAll((els) => els.map((e) => e.getAttribute('data-draft')));
+	await page.locator('[data-draft-auto]').first().click();
+	const c2 = page.locator('[data-draft-confirm]');
+	if (await c2.count() && await c2.first().isEnabled()) await c2.first().click();
+}
+const sharedCreatures = poolA.filter((id) => poolB.includes(id)).length;
 
 let covers = 0; let leaked = null; const seats = new Set(); let reachedCharter = false;
 let guard = 0;
@@ -75,12 +99,14 @@ while (guard++ < 600) {
 	if (await pass.count() && await pass.first().isVisible()) { await pass.first().click(); continue; }
 	await page.waitForTimeout(120);
 }
+console.log(`draft: cover between the two ${draftCover}, pools ${poolA.length}/${poolB.length}, shared creatures ${sharedCreatures}`);
 console.log(`covers raised: ${covers}`);
 console.log(`seats covered for: ${[...seats].sort().join(', ') || 'none'}`);
 console.log(`leaked position while covered: ${leaked ? JSON.stringify(leaked) : 'no'}`);
 console.log(`reached the Charter: ${reachedCharter}`);
 if (errs.length) console.log(`PAGE ERRORS: ${errs.join(' | ')}`);
-const ok = covers >= 4 && !leaked && reachedCharter && seats.size === 2 && errs.length === 0;
+const ok = covers >= 4 && !leaked && reachedCharter && seats.size === 2 && errs.length === 0
+	&& draftCover && poolA.length > 0 && poolB.length > 0 && sharedCreatures === 0;
 console.log(ok ? 'PASS' : 'FAIL');
 if (!ok) process.exitCode = 1;
 await browser.close();
