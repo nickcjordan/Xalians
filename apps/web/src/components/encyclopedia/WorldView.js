@@ -99,7 +99,7 @@ function ChapterRailRow({ chapter, index, world, label, onFallbackRead }) {
         >
             <span className={`inline-block size-1.5 rounded-full ${read ? 'bg-viable' : 'bg-edge-strong'}`} aria-hidden="true" />
             <span className="type-data shrink-0 text-[11px] text-ink-2">
-                CH. {String(index + 1).padStart(2, '0')}
+                {lore.chapterLabel(index).toUpperCase()}
             </span>
             <Badge className="shrink-0">{label}</Badge>
             <span className="min-w-0 flex-[1_1_100%] overflow-hidden whitespace-nowrap text-ellipsis font-body text-small text-ink-2">
@@ -284,7 +284,7 @@ export default function WorldView() {
                                     >
                                         <div className="mb-2 flex items-baseline gap-3">
                                             <span className="type-data text-ink-2">
-                                                CH. {String(i + 1).padStart(2, '0')}
+                                                {lore.chapterLabel(i).toUpperCase()}
                                             </span>
                                             {eraKey ? (
                                                 <Link to={lore.routeFor('era', eraKey)}>

@@ -33,18 +33,32 @@ function useIsPhone() {
 
 /* ---- narrator: beats (moved from Tour.js) ------------------------------ */
 
+// Dedupe chips by display name: a world and an entry that share a name (e.g.
+// a planet with its own index entry) render one chip, and the world link
+// wins since it is the richer record.
+export function dedupeRecordsConsulted(worlds, entries) {
+	const seenNames = new Set(worlds.map((world) => world.name));
+	const uniqueEntries = entries.filter((entry) => {
+		if (seenNames.has(entry.title)) return false;
+		seenNames.add(entry.title);
+		return true;
+	});
+	return { worlds, entries: uniqueEntries };
+}
+
 function RecordsConsulted({ beat }) {
 	if (beat.worlds.length === 0 && beat.entries.length === 0) return null;
+	const { worlds, entries } = dedupeRecordsConsulted(beat.worlds, beat.entries);
 	return (
 		<div className="flex flex-col gap-2">
 			<p className="type-legend m-0">Records consulted</p>
 			<div className="flex flex-wrap gap-2">
-				{beat.worlds.map((world) => (
+				{worlds.map((world) => (
 					<Link key={world.key} to={lore.routeFor('world', world.key)} className={`el-${world.element}`}>
 						<Badge variant="chip-outline">{world.name}</Badge>
 					</Link>
 				))}
-				{beat.entries.map((entry) => (
+				{entries.map((entry) => (
 					<Link key={entry.key} to={lore.routeFor('entry', entry.key)}>
 						<Badge variant="chip-outline">{entry.title}</Badge>
 					</Link>
@@ -79,7 +93,7 @@ function MarginNote({ world, index, read }) {
 			<Link to={lore.routeFor('world', world.key)} className={`el-${world.element} max-w-full`}>
 				<Badge variant="chip-outline">{world.name}</Badge>
 			</Link>
-			<span className="type-data text-[11px] text-ink-3">Ch. {String(index).padStart(2, '0')}</span>
+			<span className="type-data text-[11px] text-ink-3">{lore.chapterLabel(index)}</span>
 			<span className={`inline-block size-1.5 rounded-full ${read ? 'bg-viable' : 'bg-edge-strong'}`} aria-hidden="true" />
 		</div>
 	);
@@ -136,7 +150,7 @@ function RecordsSection({ section, showHead }) {
 
 /* ---- fixed points: events (simplified from EraView.js) ----------------- */
 
-function groupEvents(events) {
+export function groupEvents(events) {
 	const groups = [];
 	let current = null;
 	for (const event of events) {
@@ -165,7 +179,7 @@ function EventAnchors({ anchors }) {
 						to={`${lore.routeFor('world', anchor.world.key)}#chapter-${anchor.world.key}-${anchor.index}`}
 						className="inline-block text-ink no-underline hover:underline"
 					>
-						{anchor.world.name} CH. {String(anchor.index).padStart(2, '0')}
+						{anchor.world.name} {lore.chapterLabel(anchor.index).toUpperCase()}
 					</Link>
 					<p className="type-data m-0 whitespace-normal break-words text-small text-ink-2">&ldquo;{anchor.quote}&rdquo;</p>
 				</div>
@@ -178,7 +192,7 @@ function FixedPointCard({ event }) {
 	return (
 		<Card variant="panel" id={`event-${event.key}`}>
 			<div className="flex flex-wrap items-baseline justify-between gap-3">
-				<span className="type-heading m-0 text-[19px]">{event.title}</span>
+				<h4 className="type-heading m-0 text-[19px]">{event.title}</h4>
 				{event.planets.length > 0 && (
 					<span className="flex flex-wrap gap-2">
 						{event.planets.map((planet) => (
@@ -232,7 +246,7 @@ function FixedPoints({ fixedPoints }) {
 	if (groups.length === 0) return null;
 	return (
 		<section className="mt-8">
-			<SectionHead title="Fixed points" count={groups.length} />
+			<SectionHead title="Fixed points" count={fixedPoints.length} />
 			<div className="flex flex-col gap-4">
 				{groups.map((group, i) =>
 					group.kind === 'firm' ? (
