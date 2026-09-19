@@ -411,6 +411,8 @@ export interface RivalWeights {
 	nearWindow: number;
 	baitPass: number;
 	stakeEagerness: number;
+	// Pass 16: how much better than staying a swift move must look before it is taken
+	swiftMoveGain: number;
 }
 
 export interface Rival {

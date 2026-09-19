@@ -2,7 +2,7 @@
 
 Status: the running state of the game under ownership (brief: `reclamation-ownership-brief.md`). This file is the resume point. Any reset reads this first and continues at the weakest thing named below, never from scratch. Each pass appends its own section; the standing state at the top is rewritten in place.
 
-## Standing state (after pass 15, 2026-09-19)
+## Standing state (after pass 16, 2026-09-19)
 
 ### Gauges, proctor mirror
 
@@ -54,14 +54,16 @@ What it reads, and where each effect kind lands (measured over the seed-7 pool, 
 ### Open items, ranked (resume here)
 
 1. **The status strip is the tallest block on a phone** at 250px, carrying six jobs (round, worlds, score, phase, turn, hint). Whether all six belong above the fold is open.
-2. **Intelligence and charisma read negative within presences** (charisma -15.2, intelligence -9.7). Lever: what `rateForDraft` and the bot's role value count. **Read it pooled before treating it as a failure** (pass 6's lesson).
-3. **Fire is a dead element and dromeus a dead species** in the draft. Same caution.
+2. **Fire is a dead element and dromeus a dead species** in the draft. Read it pooled before treating it as a failure (pass 6's lesson), the way pass 16 read the attribute lanes.
+3. **`worthAt` prices every flip at one constant**, so a flip gained and a flip lost cancel and the bot cannot see that a world it already holds is worth more than one it covets. Found by pass 16; it is the remaining 1.4 points of the swift-move gap and it touches the send, the hidden read and the stake, so it is a pricing change rather than a patch.
 4. **The four borrowed effect kinds** (restrain, displace, transfer, suppress) still read as plain attacks. Pass 8 measured that rules for them do not pay while worlds are thin; worth re-testing now that worlds are less thin.
 5. **Bolster recovery and the instinct lanes still move nothing under ablation.** Each earns its place or goes.
 6. **No human has played a full Proving.** The notes and telemetry are built, verified, and empty.
 7. **Hot-seat** is unbuilt and is the cheapest validation instrument the game can have.
 
 ### Closed by measurement (do not reopen without new evidence)
+
+- **Intelligence and charisma reading negative within presences** (pass 16). The recorded -15.2 and -9.7 were small-sample artifacts. Pooled over **49,362 lane samples** on five seeds, charisma within presences reads **+0.2 +/- 2.0** and intelligence **-0.3 +/- 2.0**: both within noise. What pooling did find instead is real and was never in the item: **agility and reflex read -6.5 to -6.8 beyond noise**, because they are only speed while hold is the mean of vitality, resilience and endurance, and the generator spends a fixed budget. That led to the swift-move finding below.
 
 - **Crowding worlds by narrowing the frame** (pass 15). `worldsPerFrame` 2 nearly halves the 1v1 share, 56 percent to 30, holding downs and flips in band on three seeds - the best crowding result measured - but it **fails the naive-policy bar**: pass-early sits 7.5 to 9.5 points under the mirror against a bar of eight, through it on seed 13. With two worlds a round, spreading evenly is the right answer, so deploy stops asking a question. A two-world round also ends level 51 percent of the time and swept 48, with nothing between, and the stake does not rescue it (0.10 stakes a match against 0.33 at width 3). A **wider** frame is worse on every axis. The full sweep is in the comment above `WORLDS_PER_FRAME`. 1v1 at 56 percent is therefore the accepted cost of a game whose deploy decisions matter, unless a later pass finds a per-world decision deeper than "how many do I send".
 
@@ -263,3 +265,41 @@ The reason is structural: a presence contributes its hold and nothing else, and 
 **The lesson worth keeping:** *a lever nothing reads is not a lever.* This one sat in `DEFAULT_RULES` for six passes looking like an option, and four of those passes cited it as the untried alternative to a budget change. It was never testable. When a lever is recorded, the same pass should make something read it, or record that it does not.
 
 **Verified:** 1940 tests green (eight new), typecheck clean, build inside budgets, headless Proving green in all four configurations, and the derived clinch checked by paint (five pips a side, "First to 5", three worlds on the table).
+
+### Pass 16 (2026-09-19): the swift move was costing its users six points
+
+**Started as "read the negative attribute lanes pooled", the standing caution from pass 6.** Two of the log's open items said intelligence and charisma read negative and should be measured before being treated as faults. Pooled over 49,362 lane samples on five seeds, both are **within noise** (charisma +0.2 +/- 2.0 within presences, intelligence -0.3 +/- 2.0). The recorded -15.2 was a small-sample artifact, and the item is closed.
+
+**What pooling found instead was a real fault nobody had named.** Agility and reflex read **-6.8 (strikes) and -6.5 (presences)**, beyond noise. They are *only* speed, and hold is the mean of vitality, resilience and endurance, so on a fixed attribute budget a fast creature is a fragile one. That is the creature system's design, not a bug. The question is whether what speed buys pays for it, and speed buys exactly one thing: the swift move.
+
+**It did not pay. It cost.** Ablating the rule:
+
+| | world win rate, rule on | rule off |
+|---|---|---|
+| speed under 50 | 51.0% | 51.7% |
+| speed 50-64 | 54.6% | 54.6% |
+| **speed 65-79** | **53.9%** | **59.7%** |
+| **speed 80+** | **52.2%** | **58.4%** |
+
+The loss is confined to exactly the creatures the rule applies to. Scored at the Ruling over 1500 matches, the move won the world it went **to** 62.5 percent and the world it **left** 41.2 percent, and instrumenting the decision showed **37 percent of moves abandon a world the creature was holding alone** - handing it over. The cause is the gate: `net > 0` took any move scoring a hair better than staying, against margins that are a snapshot of the bot's own turn, and Deploy is not over.
+
+**Shipped: `SWIFT_MOVE_GAIN = 6`,** a margin of confidence the move must clear, swept at 2000 matches a row:
+
+| gate | swift world win | moves/match |
+|---|---|---|
+| 0 (before) | 53.4% | 3.61 |
+| 4 | 56.7% | 2.27 |
+| **6 (shipped)** | **57.9%** | **1.30** |
+| 8 | 58.3% | 0.66 |
+| 10 | 59.0% | 0.26 |
+| rule absent | 59.3% | - |
+
+The curve approaches the ceiling by making the rule vanish, so the highest number is not the best setting. 6 recovers 5.1 of the 6.5 available points while the move still fires more than once a match. The mirror is unmoved (48.9 to 49.5), and flips, downs and comeback all stay in band on three seeds.
+
+**Two fixes measured worse and are recorded as such** at `stayValue`. `margins[siteId]` includes the creature's own hold while `worthAt`'s `m` excludes it, which looks like the bug; but pricing the gain from standing there made leaving *cheaper* (50.8 percent), and pricing "holding it alone" as a flip is arithmetically right and still worse, because the destination flip is priced at the same constant so the two cancel. **The real problem is that `worthAt` caps every flip at one number,** which is now open item 3.
+
+**A test was passing for the wrong reason.** `expeditionBot.test.ts` asserted the rule fires on a board of twenty-four identical creatures. On a symmetric board no relocation is worth anything, so it only ever passed because the old gate took near-ties. The fixture now has swift-and-fragile against slow-and-solid, which is the shape that gives a move somewhere better to be.
+
+**The lesson worth keeping:** *an attribute is only as good as what it buys.* The lane reading looked like a draft-balance problem and was really a bot bug two layers away, found only by asking what the attribute purchases and then ablating that. And a gauge that improves monotonically as a rule disappears is not telling you to delete the rule; it is telling you the rule is being used badly.
+
+**Verified:** 2025 tests green (four new, one fixture corrected), typecheck clean, build inside budgets, headless Proving green in all four configurations, all three match gauges in band on seeds 7/13/21.

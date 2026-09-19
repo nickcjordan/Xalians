@@ -382,17 +382,49 @@ describe('chooseSend: swift creatures move', () => {
 	function swiftRoster(prefix: any) {
 		const roster = [];
 		for (let i = 0; i < ROSTER_SIZE; i++) {
-			roster.push(makeRecord(`${prefix}_${i}`, { attributes: { agility: 90, reflex: 90 } }));
+			// swift and light, or slow and solid: a board where relocating can actually be
+			// worth more than standing still (see the note on the test below)
+			const swift = i % 2 === 0;
+			roster.push(makeRecord(`${prefix}_${i}`, {
+				attributes: swift
+					? { agility: 90, reflex: 90, vitality: 30, endurance: 30, resilience: 30 }
+					: { agility: 15, reflex: 15, vitality: 85, endurance: 85, resilience: 85 },
+			}));
 		}
 		return roster;
 	}
 
+	/*
+		PASS 16. This test asserts the rule fires at all, which is right, and it used to pass
+		on a board of TWENTY-FOUR IDENTICAL CREATURES. That worked only because the gate was
+		`net > 0`: on a symmetric board no relocation is worth anything, every comparison is a
+		near-tie, and a gate of "a hair better than staying" takes near-ties. That gate
+		measured as a six-point loss to the creatures using it (see SWIFT_MOVE_GAIN), and at
+		the shipped gain a symmetric board correctly produces no moves at all - there is
+		nothing to move toward.
+
+		So the roster is no longer uniform: half of each side is swift and fragile and half is
+		slow and hard to shift, which is the shape that gives a move somewhere better to be.
+		Several seeds are played, and the rule must fire across them.
+	*/
 	test('every move the bot proposes names one of its own movable creatures and is legal', () => {
+		const seeds = ['bot-swift-seed', 'bot-swift-seed-2', 'bot-swift-seed-3', 'bot-swift-seed-4'];
+		let proposalsAcrossSeeds = 0;
+		for (const swiftSeed of seeds) {
+			proposalsAcrossSeeds += runOneSwiftBoard(swiftSeed);
+		}
+		// an all-swift board is exactly the case the rule exists for, so it must fire
+		expect(proposalsAcrossSeeds).toBeGreaterThan(0);
+	});
+
+	// one all-swift match, returning how many moves the bot proposed; every proposal is
+	// checked for legality as it is made, which is the other half of this test's job
+	function runOneSwiftBoard(swiftSeed: string): number {
 		let state = createMatch({
 			rosterA: swiftRoster('A'), rosterB: swiftRoster('B'),
-			worlds: makeWorlds(), seed: 'bot-swift-seed',
+			worlds: makeWorlds(), seed: swiftSeed,
 		});
-		const rng = makeRng('bot-swift-rng');
+		const rng = makeRng(`bot-swift-rng-${swiftSeed}`);
 		let proposals = 0;
 		let guard = 0;
 		while (state.phase === 'deploy' && guard < 200) {
@@ -416,9 +448,8 @@ describe('chooseSend: swift creatures move', () => {
 				: pass(state, handler))!;
 			expect(state).not.toBeNull();
 		}
-		// an all-swift board is exactly the case the rule exists for, so it must fire
-		expect(proposals).toBeGreaterThan(0);
-	});
+		return proposals;
+	}
 
 	test('proposes no move at all under the swiftMove ablation', () => {
 		let state = createMatch({
