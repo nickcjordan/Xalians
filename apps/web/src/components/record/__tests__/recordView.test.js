@@ -11,10 +11,10 @@ import sampleGraviclaw from '../../../../../../docs/design/sample-record-gravicl
  * says about the creature, not how it is styled.
  */
 
-function renderRecord(record = sampleGraviclaw) {
+function renderRecord(record = sampleGraviclaw, props = {}) {
 	return render(
 		<MemoryRouter>
-			<RecordView record={record} />
+			<RecordView record={record} {...props} />
 		</MemoryRouter>
 	);
 }
@@ -34,6 +34,22 @@ describe('RecordView', () => {
 		expect(screen.getByText(sampleGraviclaw.provenance.seed)).toBeInTheDocument();
 		expect(screen.getByText('v' + sampleGraviclaw.provenance.generatorVersion)).toBeInTheDocument();
 		expect(screen.getByText('Grimedes')).toBeInTheDocument();
+		expect(screen.getByText('No. 1')).toBeInTheDocument();
+	});
+
+	it('omits the serial row for an unowned preview', () => {
+		renderRecord(sampleGraviclaw, { kicker: 'Unowned preview' });
+
+		expect(screen.getByText('Unowned preview')).toBeInTheDocument();
+		expect(screen.queryByText('Serial')).not.toBeInTheDocument();
+		expect(screen.queryByText(`No. ${sampleGraviclaw.provenance.serial}`)).not.toBeInTheDocument();
+	});
+
+	it('keeps the serial row for an owned record', () => {
+		renderRecord(sampleGraviclaw, { kicker: 'Yours' });
+
+		expect(screen.getByText('Yours')).toBeInTheDocument();
+		expect(screen.getByText('Serial')).toBeInTheDocument();
 		expect(screen.getByText('No. 1')).toBeInTheDocument();
 	});
 
