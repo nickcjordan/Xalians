@@ -2,7 +2,7 @@
 
 Status: the running state of the game under ownership (brief: `reclamation-ownership-brief.md`). This file is the resume point. Any reset reads this first and continues at the weakest thing named below, never from scratch. Each pass appends its own section; the standing state at the top is rewritten in place.
 
-## Standing state (after pass 8, 2026-09-18)
+## Standing state (after pass 9, 2026-09-18)
 
 ### Gauges, proctor mirror
 
@@ -10,8 +10,10 @@ Pass 6 changed no rule. It re-read two gauges with enough statistical power to s
 
 | Gauge | Band | Reading | Verdict |
 |---|---|---|---|
-| Resolution changes the leader at contested worlds | 25 to 40 | 27.6 / 24.8 / 25.2 (seeds 7, 13, 21, after pass 7) | met, seed 13 marginally under |
-| Downs per match | 3 to 5 | 4.58 / 4.20 / 4.42 (after pass 7) | met |
+| Resolution changes the leader at contested worlds | 25 to 40 | 26.1 / 26.9 / 24.5 (seeds 7, 13, 21, after pass 9) | met, seed 21 marginally under |
+| Downs per match | 3 to 5 | 4.85 / 4.64 / 4.80 (after pass 9) | met |
+| Contested worlds that are one creature against one | lower is better | 56.2% (was 62.7%) | improved, pass 9 |
+| Naive margin (pass-early under the mirror) | 8 or more points | 13.1 / 13.1 / 14.5 (was 21.5 / 19.4 / 17.8) | met, **narrowing; the constraint on the send budget** |
 | **Comeback from a CONTESTED round 1** (trailing by one or two worlds) | 30 to 40 | **30.8 / 32.0 / 35.1**; pooled 29.1 +/- 1.4 | **met on three seeds** |
 | Comeback from a SWEPT round 1 (trailing by three) | not safeguarded, by ruling | 7 to 12 percent; pooled 8.0 +/- 1.8 | working as ruled |
 | Comeback, both populations averaged | (the old single gauge) | 25.9 / 27.1 / 30.7; pooled 25.2 +/- 1.2 | reported, superseded by the split |
@@ -47,14 +49,14 @@ What it reads, and where each effect kind lands (measured over the seed-7 pool, 
 
 ### Open items, ranked (resume here)
 
-1. **Make creatures meet.** 62 percent of contested worlds are one creature against one, and that is the ceiling every Clash rule has hit: pass 5 found the Clash could not reach the deploy gap, pass 8 found that pinning takes a swing in only 12.4 percent of Provings because there is usually no second creature for the rule to matter to. The bot spreads because spreading is correct under its own scoring. The question is whether the rules should reward committing several creatures to one world, and how, without handing anything to the side behind. **Everything else about the Clash is downstream of this.**
+1. **Crowd worlds further, if it can be afforded.** Pass 9 found that the sends-per-world ratio, not any rule inside the Clash, decides whether creatures meet: nine worlds against a budget near nine sends forced 1v1 at 62 percent. `SENDABLE` 11 brings that to 56.2 percent and both bands hold. 12 sends would bring it to 44.5 percent but cannot hold the flip band at any scale tried, and it closes the naive-policy margin from 21.5 to under 10 points. **The other half of the ratio is the frame**: three worlds per round against three rounds. `worldsPerFrame` is now a lever, and a narrower frame raises sends-per-world without touching the budget, but it moves the clinch and the whole match arc, so it is a design change rather than a tuning one.
 2. **Intelligence and charisma read negative within presences** (charisma -15.2, intelligence -9.7). Lever: what `rateForDraft` and the bot's role value count. **Read it pooled before treating it as a failure** (pass 6's lesson).
 3. **Fire is a dead element and dromeus a dead species** in the draft. Same caution.
-4. **Bolster recovery and the instinct lanes still move nothing under ablation.** Each earns its place or goes.
-5. **No human has played a full Proving** under the current rules. Notes and telemetry hooks exist, verified rendering at both widths, and are empty.
-6. **Hot-seat** is unbuilt and is the cheapest validation instrument the game can have.
-7. **Affordance and comprehension are unmeasured.** The prediction-protocol harness does not exist.
-8. **The four borrowed effect kinds** (restrain, displace, transfer, suppress) still read as plain attacks. Pass 8 measured that giving them rules of their own does not help while worlds are one against one, so this is downstream of item 1.
+4. **The four borrowed effect kinds** (restrain, displace, transfer, suppress) still read as plain attacks. Pass 8 measured that rules for them do not pay while worlds are thin; worlds are now less thin, so this is worth re-testing after the next crowding move.
+5. **Bolster recovery and the instinct lanes still move nothing under ablation.** Each earns its place or goes.
+6. **No human has played a full Proving** under the current rules. Notes and telemetry hooks exist, verified rendering at both widths, and are empty.
+7. **Hot-seat** is unbuilt and is the cheapest validation instrument the game can have.
+8. **Affordance and comprehension are unmeasured.** The prediction-protocol harness does not exist.
 
 ### Findings from the headless check (pass 5, recorded not fixed)
 
@@ -138,3 +140,17 @@ The single place the game's reading of a creature is decided:
 **The finding that matters more than either rule:** the four effect kinds do not become interesting by getting a rule each. They become interesting when creatures MEET, and at **62 percent one creature against one** they mostly do not. That is now open item 1 and everything else about the Clash is downstream of it.
 
 **Verified:** 1912 tests green (one new regression test for the area-shield bug), typecheck clean, build inside budgets, validation report regenerated, headless Proving green in all four configurations.
+
+### Pass 9 (2026-09-18): the Clash's real ceiling was the send budget
+
+**Weakest thing:** 62 percent of contested worlds were one creature against one, the wall passes 5, 7 and 8 all hit.
+
+**The cause, measured:** a Proving offers nine worlds and the bot spent a mean of 9.31 sends, which is **1.04 sends per world**. Stacking anywhere meant abandoning a world outright. It was never that stacking is bad: a second creature takes a world from **49.0 to 74.7 percent**. The payoff was always there and the budget could not pay for it. No rule inside the Clash could have fixed this.
+
+**Shipped:** `SENDABLE` 10 to 11 with `MAGNITUDE_SCALE` 3.0 to 2.7, as a pair (more meetings means more attacks landing). 1v1 falls **62.7 to 56.2 percent**; downs 4.64 to 4.85 and flips 24.5 to 26.9 percent, both bands held on three seeds; **comeback from a contested round 1 rises to 32.7 / 34.0 / 35.4 percent**. The bench reads the cap off state, so the table says "11 sends left" with eleven pips and no UI change was needed.
+
+**Rejected with its numbers:** `sendable` 12 crowds far harder (1v1 44.5 percent) but cannot hold the downs band and the flip band together at any scale tried, because a crowded world makes any single exchange matter less to its total.
+
+**The cost, which is now the binding constraint:** a bigger budget narrows the naive-policy margin. Pass-early sat 21.5 / 19.4 / 17.8 points under the mirror at 10 sends and sits 13.1 / 13.1 / 14.5 at 11. The eight-point bar still clears with room, but this, not the downs band, is what stops the budget rising further.
+
+**Verified:** 1912 tests green, typecheck clean, build inside budgets, validation report regenerated, headless Proving green in all four configurations (now playing 11 sends), bench readout checked by paint.
