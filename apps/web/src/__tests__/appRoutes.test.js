@@ -24,7 +24,10 @@ vi.mock('../pages/games/reclamationPage', () => ({ default: () => <div>route:rec
 vi.mock('../pages/games/duelPlaygroundPage', () => ({ default: () => <div>route:duel-reference</div> }));
 vi.mock('../pages/encyclopediaPage', () => ({ default: () => <div>route:encyclopedia</div> }));
 vi.mock('../pages/games/longReturnPage', () => ({ default: () => <div>route:long-return</div> }));
-vi.mock('../pages/system/notFoundPage', () => ({ default: () => <div>route:not-found</div> }));
+vi.mock('../pages/system/notFoundPage', async () => {
+	const { NotFoundPage } = await vi.importActual('../components/system/status');
+	return { default: NotFoundPage };
+});
 vi.mock('../pages/system/devErrorPage', () => ({ default: () => <div>route:dev-error</div> }));
 
 import { AppRoutes } from '../App';
@@ -94,6 +97,7 @@ describe('application route contract', () => {
 
 	it('renders the not-found surface for an unknown address', async () => {
 		renderRoute('/missing/deep/link');
-		expect(await screen.findByText('route:not-found')).toBeInTheDocument();
+		expect(await screen.findByRole('heading', { name: 'Nothing at this address' })).toBeInTheDocument();
+		expect(screen.getByText('/missing/deep/link')).toBeInTheDocument();
 	});
 });
