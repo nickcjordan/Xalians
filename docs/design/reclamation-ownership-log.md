@@ -2,7 +2,7 @@
 
 Status: the running state of the game under ownership (brief: `reclamation-ownership-brief.md`). This file is the resume point. Any reset reads this first and continues at the weakest thing named below, never from scratch. Each pass appends its own section; the standing state at the top is rewritten in place.
 
-## Standing state (after pass 16, 2026-09-19)
+## Standing state (after pass 17, 2026-09-19)
 
 ### Gauges, proctor mirror
 
@@ -55,13 +55,14 @@ What it reads, and where each effect kind lands (measured over the seed-7 pool, 
 
 1. **The status strip is the tallest block on a phone** at 250px, carrying six jobs (round, worlds, score, phase, turn, hint). Whether all six belong above the fold is open.
 2. **Fire is a dead element and dromeus a dead species** in the draft. Read it pooled before treating it as a failure (pass 6's lesson), the way pass 16 read the attribute lanes.
-3. **`worthAt` prices every flip at one constant**, so a flip gained and a flip lost cancel and the bot cannot see that a world it already holds is worth more than one it covets. Found by pass 16; it is the remaining 1.4 points of the swift-move gap and it touches the send, the hidden read and the stake, so it is a pricing change rather than a patch.
-4. **The four borrowed effect kinds** (restrain, displace, transfer, suppress) still read as plain attacks. Pass 8 measured that rules for them do not pay while worlds are thin; worth re-testing now that worlds are less thin.
-5. **Bolster recovery and the instinct lanes still move nothing under ablation.** Each earns its place or goes.
-6. **No human has played a full Proving.** The notes and telemetry are built, verified, and empty.
-7. **Hot-seat** is unbuilt and is the cheapest validation instrument the game can have.
+3. **The four borrowed effect kinds** (restrain, displace, transfer, suppress) still read as plain attacks. Pass 8 measured that rules for them do not pay while worlds are thin; worth re-testing now that worlds are less thin.
+4. **Bolster recovery and the instinct lanes still move nothing under ablation.** Each earns its place or goes.
+5. **No human has played a full Proving.** The notes and telemetry are built, verified, and empty.
+6. **Hot-seat** is unbuilt and is the cheapest validation instrument the game can have.
 
 ### Closed by measurement (do not reopen without new evidence)
+
+- **Flat flip pricing** (pass 17). `worthAt` returned a flat `flipValue` for any flip, so a lead of 0.1 hold scored the same as a lead of 30, and the bot bought the cheapest flip that cleared zero: **3105 hair-thin leads against 896 comfortable ones**. Fixed with `FLIP_SECURITY = 0.5`, which withholds half a flip's worth until it clears by `FLIP_SECURE_MARGIN`. Naive-policy margin 14.6 to 21.3 points, hair-thin leads down a fifth, and 1v1 down two points as a side effect. The remaining swift-move gap (2.0 points at gate 6) is partly irreducible: a move decided on the bot's own turn cannot know what the opponent sends next.
 
 - **Intelligence and charisma reading negative within presences** (pass 16). The recorded -15.2 and -9.7 were small-sample artifacts. Pooled over **49,362 lane samples** on five seeds, charisma within presences reads **+0.2 +/- 2.0** and intelligence **-0.3 +/- 2.0**: both within noise. What pooling did find instead is real and was never in the item: **agility and reflex read -6.5 to -6.8 beyond noise**, because they are only speed while hold is the mean of vitality, resilience and endurance, and the generator spends a fixed budget. That led to the swift-move finding below.
 
@@ -303,3 +304,39 @@ The curve approaches the ceiling by making the rule vanish, so the highest numbe
 **The lesson worth keeping:** *an attribute is only as good as what it buys.* The lane reading looked like a draft-balance problem and was really a bot bug two layers away, found only by asking what the attribute purchases and then ablating that. And a gauge that improves monotonically as a rule disappears is not telling you to delete the rule; it is telling you the rule is being used badly.
 
 **Verified:** 2025 tests green (four new, one fixture corrected), typecheck clean, build inside budgets, headless Proving green in all four configurations, all three match gauges in band on seeds 7/13/21.
+
+### Pass 17 (2026-09-19): a flip is worth what it clears by
+
+**Took the open item pass 16 left behind.** `worthAt` priced every flip at a flat `flipValue` of 10, so a lead of 0.1 hold and a lead of 30 scored identically. Two consequences: the bot bought the **cheapest** flip available, because clearing zero earned full credit while every point beyond it cost `holdCost`; and a flip gained cancelled a flip lost exactly, which is why pass 16 could not price the swift move's departure.
+
+**Measured first.** Over 1800 matches on three seeds, whether the deploy-end leader still held the world at the Ruling, by how thin the Deploy left it:
+
+| deploy-end margin | leader still holds it | n |
+|---|---|---|
+| under 2 hold (a hair) | 59.2% +/- 1.7 | 3105 |
+| 2 to 5 | 65.4% +/- 1.5 | 3671 |
+| 5 to 12 | 78.7% +/- 1.1 | 5372 |
+| over 12 | 89.7% +/- 2.0 | 896 |
+
+A thirty-point spread the pricing was blind to, and the bot was buying the thin end of it **3105 times against 896** - not because thin flips are good but because they were cheap.
+
+**Shipped `FLIP_SECURITY = 0.5`:** a flip is worth `flipValue * (1 - security + security * min(1, over / margin))`, so half its value depends on how far past the deficit it clears.
+
+| flipSecurity | naive margin (bar 8) | hair-thin leads | 1v1 | flips | downs |
+|---|---|---|---|---|---|
+| 0 (old) | 14.6 pts | 23.6-23.9% | 56.9-58.4% | 27.1-29.9% | 4.65-4.76 |
+| 0.25 | 22.1 | 20.4-21.2% | 56.0-57.6% | 29.2-31.2% | 4.52-4.65 |
+| **0.5** | **21.3** | **19.1-20.9%** | **54.9-56.0%** | **31.0-31.4%** | **4.43-4.56** |
+| 0.75 | 22.0 | 19.0-20.5% | 54.7-56.0% | 29.9-32.4% | 4.30-4.40 |
+
+The naive-policy margin, which is the gauge saying deploy decisions carry weight, goes from **14.6 to 21.3 points** - restoring the headroom pass 9 recorded as shrinking when the send budget rose. All three match gauges stay in band on all three seeds.
+
+**The unexpected gain: 1v1 fell from 56.9 to 54.9 percent.** Buying a *secure* flip means sending a second creature rather than the cheapest single one that clears zero, so better pricing crowds worlds by itself. Passes 5, 7, 8, 9 and 15 all attacked the crowd gauge directly and two points of it were sitting in the bot's valuation the whole time. **A gauge about the game can be held down by the bot.**
+
+**The two fixes compound.** Re-swept pass 16's swift gate under the new pricing: the whole curve moved up about five points, and gate 0 now reaches 59.0 percent, which was pass 16's *ceiling* under flat pricing. Gate 6 stays correct (62.5 percent at 1.03 moves a match; gate 8 reaches 63.6 but drops under once a match).
+
+**A test fixture's worlds were the fault, not its creatures.** The swift-move test built nine *featureless* worlds with identical environments and no hazards, so every world is interchangeable and there is genuinely nowhere better to be: proposing no moves there is correct behaviour. It now uses the authored worlds. Pass 16 had tried making the *roster* asymmetric instead, which produced fewer moves, not more - recorded in the test so it is not tried a third time.
+
+**The lesson worth keeping:** *price the quality of an outcome, not the fact of it.* A flat reward for "achieved the thing" makes a bot buy the cheapest version of the thing, and the cheapest version is the one the opponent undoes. Checking whether a reward has a gradient is worth doing wherever one exists.
+
+**Verified:** 2029 tests green (four new, one fixture corrected), typecheck clean, build inside budgets, headless Proving green in all four configurations.

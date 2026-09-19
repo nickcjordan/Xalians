@@ -413,6 +413,9 @@ export interface RivalWeights {
 	stakeEagerness: number;
 	// Pass 16: how much better than staying a swift move must look before it is taken
 	swiftMoveGain: number;
+	// Pass 17: how much of a flip's worth depends on the margin it clears by
+	flipSecurity: number;
+	flipSecureMargin: number;
 }
 
 export interface Rival {

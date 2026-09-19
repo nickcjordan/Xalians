@@ -1,5 +1,6 @@
 import { describe, test, it, expect } from 'vitest';
 import type { XalianRecord } from '@xalians/content/schema';
+import { getWorlds } from '../sites.ts';
 import { createMatch, send, pass, getPublicState, createRngState, nextRandom, moveSwift } from '../expeditionRules.ts';
 import { chooseSend, chooseStake, scoreSends, roleValueOf, readUnseen, RIVALS, DEFAULT_RIVAL_ID, rivalById } from '../expeditionBot.ts';
 import { ROSTER_SIZE, SENDABLE } from '../expeditionInterpretation.ts';
@@ -382,33 +383,37 @@ describe('chooseSend: swift creatures move', () => {
 	function swiftRoster(prefix: any) {
 		const roster = [];
 		for (let i = 0; i < ROSTER_SIZE; i++) {
-			// swift and light, or slow and solid: a board where relocating can actually be
-			// worth more than standing still (see the note on the test below)
-			const swift = i % 2 === 0;
-			roster.push(makeRecord(`${prefix}_${i}`, {
-				attributes: swift
-					? { agility: 90, reflex: 90, vitality: 30, endurance: 30, resilience: 30 }
-					: { agility: 15, reflex: 15, vitality: 85, endurance: 85, resilience: 85 },
-			}));
+			roster.push(makeRecord(`${prefix}_${i}`, { attributes: { agility: 90, reflex: 90 } }));
 		}
 		return roster;
 	}
 
 	/*
-		PASS 16. This test asserts the rule fires at all, which is right, and it used to pass
-		on a board of TWENTY-FOUR IDENTICAL CREATURES. That worked only because the gate was
-		`net > 0`: on a symmetric board no relocation is worth anything, every comparison is a
-		near-tie, and a gate of "a hair better than staying" takes near-ties. That gate
-		measured as a six-point loss to the creatures using it (see SWIFT_MOVE_GAIN), and at
-		the shipped gain a symmetric board correctly produces no moves at all - there is
-		nothing to move toward.
+		PASS 16 and 17. This test asserts the swift move fires at all, which is right, but it
+		used to do so from ONE seed, and that only worked because the gate was `net > 0`: any
+		move scoring a hair better than staying was taken, about 3.6 times a match.
 
-		So the roster is no longer uniform: half of each side is swift and fragile and half is
-		slow and hard to shift, which is the shape that gives a move somewhere better to be.
-		Several seeds are played, and the rule must fire across them.
-	*/
-	test('every move the bot proposes names one of its own movable creatures and is legal', () => {
-		const seeds = ['bot-swift-seed', 'bot-swift-seed-2', 'bot-swift-seed-3', 'bot-swift-seed-4'];
+		Pass 16 gated the move on a real margin of confidence (it was costing the creatures
+		using it six points of world win rate) and pass 17 made a flip worth what it clears by
+		rather than merely that it clears. Together those make the move a considered one: about
+		once a match on real drafted rosters, and roughly one match in six on this uniform
+		fixture, where every creature is identical and so no relocation is worth much.
+
+		The fixture fault this exposed is the WORLDS, not the creatures. `makeWorlds` above
+		builds nine featureless worlds with identical environments and no hazards or terrain,
+		so every world is interchangeable and there is genuinely nowhere better for a creature
+		to be: a correctly gated bot should propose no moves there, and it does not. This test
+		therefore uses the authored worlds, which differ from one another, which is where a
+		relocation's value comes from and what the bot ships against. Making the ROSTER
+		asymmetric was tried first and produced fewer moves, not more.
+
+		If this ever goes quiet again, check the live rate before touching the gate:
+		`swiftMoveGain` and `flipSecurity` both move it, and a fixture producing none while
+		real rosters produce about one a match is a fixture fault rather than a regression.
+	*/	test('every move the bot proposes names one of its own movable creatures and is legal', () => {
+		const seeds = ['bot-swift-seed', 'bot-swift-seed-2', 'bot-swift-seed-3', 'bot-swift-seed-4',
+			'bot-swift-seed-5', 'bot-swift-seed-6', 'bot-swift-seed-7', 'bot-swift-seed-8',
+			'bot-swift-seed-9', 'bot-swift-seed-10', 'bot-swift-seed-11', 'bot-swift-seed-12'];
 		let proposalsAcrossSeeds = 0;
 		for (const swiftSeed of seeds) {
 			proposalsAcrossSeeds += runOneSwiftBoard(swiftSeed);
@@ -422,7 +427,8 @@ describe('chooseSend: swift creatures move', () => {
 	function runOneSwiftBoard(swiftSeed: string): number {
 		let state = createMatch({
 			rosterA: swiftRoster('A'), rosterB: swiftRoster('B'),
-			worlds: makeWorlds(), seed: swiftSeed,
+			// the AUTHORED worlds, not the flat fixture: see the note on the test
+			worlds: getWorlds(), seed: swiftSeed,
 		});
 		const rng = makeRng(`bot-swift-rng-${swiftSeed}`);
 		let proposals = 0;

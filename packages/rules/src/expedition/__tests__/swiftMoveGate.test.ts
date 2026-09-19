@@ -17,7 +17,7 @@ import { createMatch, send, getPublicState, currentFrame } from '../expeditionRu
 import { chooseSend, SWIFT_MOVE_GAIN } from '../expeditionBot.ts';
 import { SWIFT_SPEED } from '../expeditionInterpretation.ts';
 import { speedOf } from '../creatureOnTable.ts';
-import type { World, XalianRecord } from '../types.ts';
+import type { World } from '../types.ts';
 
 function makeWorlds(): World[] {
 	const planets = ['Magmuth', 'Poseidas', 'Grimedes', 'Luminax', 'Floria', 'Zolton',
@@ -34,7 +34,7 @@ function makeWorlds(): World[] {
 }
 
 let uid = 0;
-function record(over: any = {}): XalianRecord {
+function record(over: any = {}): any {
 	uid += 1;
 	const { attributes, ...rest } = over;
 	return {
@@ -107,10 +107,11 @@ describe('the swift move gate', () => {
 		// whichever seat holds that world alone, the bot must not walk its holder away
 		let guard = 0;
 		while (state.turn !== 'A' && state.phase === 'deploy' && guard++ < 4) {
-			const other = getPublicState(state, state.turn as any);
-			const act: any = chooseSend(other, state.players[state.turn as any].roster, state.turn as any, rng, null);
+			const seat: any = state.turn;
+			const other = getPublicState(state, seat);
+			const act: any = chooseSend(other, (state.players as any)[seat].roster, seat, rng, null);
 			if (act.type !== 'send') break;
-			state = send(state, state.turn as any, act.recordId, act.siteId) as any;
+			state = send(state, seat, act.recordId, act.siteId) as any;
 		}
 		if (state.turn === 'A') {
 			const view = getPublicState(state, 'A');
