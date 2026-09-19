@@ -51,6 +51,8 @@ proctor mirror, 200 matches
 
 **Reading.** DECIDED EARLY: 52.0% of proctor mirrors are decided after round 1, above the fifty percent bar. Rounds two and three are largely dead time and the catch-up lever needs to move.
 
+**Reading.** Comeback split (pass 6): from a CONTESTED round 1 (trailing by one or two worlds) 30.4% +/- 7.4, which is the population the 30 to 40 band is about; from a SWEPT round 1 (trailing by 3) 6.4% +/- 7.0, which is not safeguarded by ruling. The overall rate below averages the two.
+
 **Reading.** Comeback rate 24.6%, above the one-in-five floor; the third round changes the leader in 37.5% of matches.
 
 ## 4. Ablation
@@ -233,7 +235,7 @@ rival ladder, stake on against stake off
 
 **Reading.** The stake is taken in 31.5% of Provings, inside the 20 to 60 percent gauge, 90.8% of them by the side behind on worlds.
 
-**Reading.** The staker wins its staked world 55.4% of the time against 50.0% on the same round's unstaked worlds, so the stake is picking worlds it can hold.
+**Reading.** The staker wins its staked world 55.4% of the time against 50.0% on the same round's unstaked worlds, a gap of 5.4 points inside the +/- 14.9 interval: the stake is variance-neutral, which is what a chosen risk should be.
 
 **Reading.** Comeback rate 24.6% with the stake against 23.5% without; decided after round 1 52.0% against 54.0% (reported, not a gauge since pass 2 dropped it).
 
