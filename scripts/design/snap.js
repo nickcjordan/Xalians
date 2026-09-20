@@ -49,10 +49,12 @@ function findChrome() {
 			const errors = [];
 			page.on('pageerror', (e) => errors.push(String(e.message || e)));
 			page.on('console', (m) => { if (m.type() === 'error' && !/AuthClass - No current user/.test(m.text())) errors.push(m.text()); });
-			const name = (route === '/' ? 'home' : route.replace(/^\//, '').replace(/\//g, '_')) + '-' + v.tag;
+			const name = (route === '/' ? 'home' : route.replace(/^\//, '').replace(/\//g, '_').replace(/[?=&#:*"<>|]/g, '_')) + '-' + v.tag;
 			try {
 				await page.goto(base + route, { waitUntil: 'networkidle', timeout: 60000 });
 				await page.waitForTimeout(1200);
+				// Web fonts arrive after networkidle on a cold profile; a snapshot of the fallback face is not a check of the type.
+				await page.evaluate(() => (document.fonts && document.fonts.ready) || null).catch(() => null);
 				const metrics = await page.evaluate(() => ({
 					terminal: (document.querySelector('.g-console[data-terminal]') || document.querySelector('[data-terminal]'))?.getAttribute('data-terminal') || null,
 					scrollWidth: document.documentElement.scrollWidth,

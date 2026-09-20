@@ -142,6 +142,30 @@ function ParagraphRow({ world, index, text }) {
 	);
 }
 
+// Scrolls to an element that lives inside a fold which has just been asked
+// to open: waits two frames for the open state to commit and the content to
+// mount, then reuses encyclopediaPage.js's header-offset approach so the
+// target does not land under a sticky rail or masthead.
+function scrollToIdAfterOpen(id) {
+	requestAnimationFrame(() => {
+		requestAnimationFrame(() => {
+			const target = document.getElementById(id);
+			if (!target) return;
+			const styles = getComputedStyle(document.documentElement);
+			const gap = parseFloat(styles.getPropertyValue('--g-8')) || 0;
+			let pinnedHeight = 0;
+			document.querySelectorAll('.enc-header, .g-header, header').forEach((el) => {
+				const position = getComputedStyle(el).position;
+				if (position !== 'sticky' && position !== 'fixed') return;
+				const rect = el.getBoundingClientRect();
+				if (rect.top <= 0 && rect.bottom > 0) pinnedHeight = Math.max(pinnedHeight, rect.bottom);
+			});
+			const top = target.getBoundingClientRect().top + window.pageYOffset - (pinnedHeight + gap);
+			window.scrollTo(0, Math.max(0, top));
+		});
+	});
+}
+
 function chapterHref(worldKey, index) {
 	return `chapter-${worldKey}-${index}`;
 }
@@ -191,27 +215,7 @@ function RecordsByWorld({ sections }) {
 			next.add(worldKey);
 			return next;
 		});
-		// Wait for the fold's open state to commit (and its content to mount)
-		// before scrolling to the paragraph -- reusing encyclopediaPage.js's
-		// own header-offset approach so the target does not land under the
-		// sticky rail/masthead.
-		requestAnimationFrame(() => {
-			requestAnimationFrame(() => {
-				const target = document.getElementById(id);
-				if (!target) return;
-				const styles = getComputedStyle(document.documentElement);
-				const gap = parseFloat(styles.getPropertyValue('--g-8')) || 0;
-				let pinnedHeight = 0;
-				document.querySelectorAll('.enc-header, .g-header, header').forEach((el) => {
-					const position = getComputedStyle(el).position;
-					if (position !== 'sticky' && position !== 'fixed') return;
-					const rect = el.getBoundingClientRect();
-					if (rect.top <= 0 && rect.bottom > 0) pinnedHeight = Math.max(pinnedHeight, rect.bottom);
-				});
-				const top = target.getBoundingClientRect().top + window.pageYOffset - (pinnedHeight + gap);
-				window.scrollTo(0, Math.max(0, top));
-			});
-		});
+		scrollToIdAfterOpen(id);
 	}, [location.hash]);
 
 	if (groups.length === 0) return null;
@@ -331,12 +335,50 @@ function EventBody({ event }) {
 	);
 }
 
+// The event key named by a `#event-<key>` hash, when it belongs to this part.
+function hashEventKey(hash, eventKeys) {
+	const match = /^#?event-(.+)$/.exec((hash || '').replace(/^#/, ''));
+	return match && eventKeys.has(match[1]) ? match[1] : null;
+}
+
+/**
+ * Fixed points: the era's events as a timeline inside one Fold, closed by
+ * default like the records-by-world groups, so a part reads as the narrator's
+ * chapter first. A deep link to an event (`#event-<key>`, from the galaxy map
+ * pins, an entry page or a Connections sample) opens the fold on first render
+ * and on later hash changes.
+ */
 function FixedPoints({ fixedPoints }) {
 	const groups = useMemo(() => groupEvents(fixedPoints), [fixedPoints]);
+	const location = useLocation();
+	const eventKeys = useMemo(() => new Set(fixedPoints.map((event) => event.key)), [fixedPoints]);
+	const [open, setOpen] = useState(() => Boolean(hashEventKey(
+		typeof window !== 'undefined' ? window.location.hash : '',
+		eventKeys
+	)));
+	const prevHash = useRef(location.hash);
+	useEffect(() => {
+		if (prevHash.current === location.hash) return;
+		prevHash.current = location.hash;
+		const key = hashEventKey(location.hash, eventKeys);
+		if (!key) return;
+		setOpen(true);
+		scrollToIdAfterOpen(`event-${key}`);
+	}, [location.hash, eventKeys]);
+
 	if (groups.length === 0) return null;
+	const first = fixedPoints[0];
+	const hint = fixedPoints.length > 1 ? `${first.title}, and ${fixedPoints.length - 1} more` : first.title;
 	return (
 		<ReadingBlock span="wide" divided>
-			<SectionHead title="Fixed points" count={fixedPoints.length} />
+			<Fold
+				id="fixed-points"
+				label="Fixed points"
+				count={`${fixedPoints.length} event${fixedPoints.length === 1 ? '' : 's'}`}
+				hint={hint}
+				open={open}
+				onOpenChange={setOpen}
+			>
 			<Timeline>
 				{groups.map((group) =>
 					group.events.map((event) => (
@@ -359,6 +401,7 @@ function FixedPoints({ fixedPoints }) {
 					))
 				)}
 			</Timeline>
+			</Fold>
 		</ReadingBlock>
 	);
 }

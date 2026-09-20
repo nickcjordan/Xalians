@@ -57,7 +57,7 @@ export default function Bestiary() {
                     setSort('name');
                 }}
             >
-                <StationRow value={element} onChange={setElement} aria-label="Filter by element">
+                <StationRow value={element} onChange={setElement} aria-label="Filter by element" className="basis-full">
                     <Station active={element === 'all'} onClick={() => setElement('all')}>All</Station>
                     {ELEMENTS.map((el) => (
                         <Station key={el} active={element === el} onClick={() => setElement(el)}>{el}</Station>

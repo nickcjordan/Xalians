@@ -202,17 +202,30 @@ export default function EntryView() {
         <div className={`flex flex-col gap-8 ${scopeClass}`}>
             <Card
                 variant="panel"
-                className={hasArt ? 'grid gap-6 md:grid-cols-[minmax(0,400px)_minmax(0,1fr)]' : ''}
+                className={hasArt
+                    ? 'grid gap-6 md:grid-cols-[minmax(0,400px)_minmax(0,1fr)]'
+                    : 'grid gap-6 md:grid-cols-[minmax(0,62ch)_minmax(0,1fr)] md:items-start'}
             >
-                {hasArt && (
-                    <div className="min-w-0">
-                        <LoreArt kind="entries" recordKey={key} />
-                    </div>
+                {hasArt ? (
+                    <>
+                        <div className="min-w-0">
+                            <LoreArt kind="entries" recordKey={key} />
+                        </div>
+                        <div className="flex min-w-0 flex-col gap-4">
+                            <Prose text={entry.definition} except={key} size="lead" />
+                            <IdentityPlate entry={entry} story={story} />
+                        </div>
+                    </>
+                ) : (
+                    <>
+                        {/* Without art the definition takes the text track and the
+                            plate fills the second, so the strip never runs half empty. */}
+                        <Prose text={entry.definition} except={key} size="lead" className="m-0" />
+                        <div className="min-w-0">
+                            <IdentityPlate entry={entry} story={story} />
+                        </div>
+                    </>
                 )}
-                <div className="flex min-w-0 flex-col gap-4">
-                    <Prose text={entry.definition} except={key} size="lead" />
-                    <IdentityPlate entry={entry} story={story} />
-                </div>
             </Card>
 
             <div className={hasSecondTrack ? 'grid gap-8 lg:grid-cols-[minmax(0,62ch)_minmax(0,1fr)]' : ''}>

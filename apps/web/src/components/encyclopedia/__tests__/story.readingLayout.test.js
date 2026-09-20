@@ -110,3 +110,19 @@ describe('story part: the lede and every narrator beat render regardless of view
 		expect(previous.compareDocumentPosition(fromTheRecords) & FOLLOWING).toBeTruthy();
 	});
 });
+
+describe('story part: fixed points fold closed by default, open from an #event- deep link', () => {
+	it('with no hash the timeline is behind the fold, so no event item is in the document', () => {
+		const part = getStoryPart('end-wars');
+		renderPart('/encyclopedia/story/end-wars');
+		expect(screen.getByText('Fixed points')).toBeInTheDocument();
+		expect(document.getElementById(`event-${part.fixedPoints[0].key}`)).toBeNull();
+	});
+
+	it('an #event-<key> hash opens the fold on first render so the page\'s hash-scroll effect finds the item', () => {
+		const part = getStoryPart('end-wars');
+		const event = part.fixedPoints[part.fixedPoints.length - 1];
+		renderPart(`/encyclopedia/story/end-wars#event-${event.key}`);
+		expect(document.getElementById(`event-${event.key}`)).not.toBeNull();
+	});
+});
