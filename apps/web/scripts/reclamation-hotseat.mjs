@@ -25,6 +25,7 @@
 */
 import { chromium } from 'playwright-core';
 import { mkdir } from 'node:fs/promises';
+import { seenOn } from './lib/visible.mjs';
 const EDGE = process.env.REC_QA_EDGE || 'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe';
 const output = process.env.REC_QA_OUTPUT || 'C:/Users/njord/AppData/Local/Temp/reclamation-qa';
 const base = process.env.REC_QA_BASE || 'http://127.0.0.1:4173';
@@ -68,6 +69,7 @@ if (await dh.count() && await dh.first().isVisible()) {
 const sharedCreatures = poolA.filter((id) => poolB.includes(id)).length;
 
 let covers = 0; let leaked = null; const seats = new Set(); let reachedCharter = false;
+let panelsCheckedWhilePlaying = 0; let panelsSeenWhilePlaying = 0; let unseenPanels = [];
 let guard = 0;
 while (guard++ < 600) {
 	const cover = page.locator('[data-handoff]');
@@ -81,6 +83,39 @@ while (guard++ < 600) {
 		if (covers === 1) await page.screenshot({ path: `${output}/hotseat-handoff.png` }).catch(() => {});
 		await page.locator('[data-take-handoff]').first().click({ timeout: 4000 }).catch(() => {});
 		continue;
+	}
+	// pass 31: read the board's visibility while the match is actually being played
+	/*
+		Sampled once the board has settled. The panels fade in over 460ms plus a
+		per-panel stagger, so reading them on the first tick after they mount catches the
+		entrance and reports 0 of 3 on a perfectly healthy build - which is the same
+		"present but not yet readable" state the probe exists to catch, arriving at a
+		moment when it is correct rather than a fault. What matters is that the board is
+		readable while a handler is deciding, so the reading waits for that.
+	*/
+	if (panelsCheckedWhilePlaying === 0 && !(await page.locator('[data-handoff]').count())
+		&& await page.locator('[data-site-id]').count() >= 3) {
+		await page.waitForTimeout(1200);
+		const seen = await seenOn(page, '[data-site-id]');
+		const why = await page.evaluate(() => {
+			const el = document.querySelector('[data-site-id]');
+			if (!el) return null;
+			const out = [];
+			let n = el;
+			while (n && n.nodeType === 1) {
+				const cs = getComputedStyle(n);
+				const o = parseFloat(cs.opacity);
+				if (!Number.isNaN(o) && o < 1) {
+					out.push(`${String(n.className || n.tagName).split(' ')[0]}=${cs.opacity}`);
+				}
+				n = n.parentElement;
+			}
+			return out.join(' < ');
+		});
+		if (seen.some((r) => !r.seen)) console.log(`  [opacity chain] ${why}`);
+		panelsCheckedWhilePlaying = seen.length;
+		panelsSeenWhilePlaying = seen.filter((r) => r.seen).length;
+		unseenPanels = seen.filter((r) => !r.seen).map((r) => `${r.id}: ${r.reasons.join(', ')}`);
 	}
 	const skip = page.locator('[data-skip]');
 	if (await skip.count() && await skip.first().isVisible()) { await skip.first().click(); continue; }
@@ -105,7 +140,20 @@ console.log(`seats covered for: ${[...seats].sort().join(', ') || 'none'}`);
 console.log(`leaked position while covered: ${leaked ? JSON.stringify(leaked) : 'no'}`);
 console.log(`reached the Charter: ${reachedCharter}`);
 if (errs.length) console.log(`PAGE ERRORS: ${errs.join(' | ')}`);
+/*
+	PASS 31. As for the other checks: a cover that hides the position is only meaningful
+	if the position was visible to begin with. This one also passed with the whole board
+	at opacity 0.
+
+	Sampled DURING PLAY, not here. The first version read the panels after the loop
+	broke, which is at the Charter, where the board is legitimately on its way out; it
+	reported 0 of 3 seen on a healthy build. A probe that fires at a moment the thing it
+	watches is not meant to be there measures nothing and teaches me to ignore it.
+*/
+console.log(`world panels seen while playing: ${panelsSeenWhilePlaying} of ${panelsCheckedWhilePlaying}${unseenPanels.length ? ` (${unseenPanels.join(' | ')})` : ''}`);
+
 const ok = covers >= 4 && !leaked && reachedCharter && seats.size === 2 && errs.length === 0
+	&& panelsCheckedWhilePlaying >= 3 && unseenPanels.length === 0
 	&& draftCover && poolA.length > 0 && poolB.length > 0 && sharedCreatures === 0;
 console.log(ok ? 'PASS' : 'FAIL');
 if (!ok) process.exitCode = 1;

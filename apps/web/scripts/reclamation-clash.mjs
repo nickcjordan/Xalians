@@ -31,6 +31,7 @@
 import { chromium } from 'playwright-core';
 import assert from 'node:assert/strict';
 import { mkdir, writeFile } from 'node:fs/promises';
+import { seenOn } from './lib/visible.mjs';
 
 const output = process.env.REC_QA_OUTPUT || 'C:/Users/njord/AppData/Local/Temp/reclamation-motion';
 const base = process.env.REC_QA_BASE || 'http://127.0.0.1:4176';
@@ -140,6 +141,16 @@ const samples = [];
 let sawPlaying = false;
 for (let i = 0; i < 400; i++) {
 	const s = await probe();
+	/*
+		PASS 31. The panels must be SEEN at every step, not merely present.
+
+		This gauge watched the Clash from pass 28 and still missed that the ruling was
+		painted over a board at opacity zero, because it counted figures and classes
+		rather than asking whether anything was readable. The unseen count is recorded per
+		sample and asserted below.
+	*/
+	const seen = await seenOn(page, '[data-site-id]');
+	s.unseenPanels = seen.filter((r) => !r.seen).map((r) => `${r.id}: ${r.reasons.join(', ')}`);
 	samples.push(s);
 	if (s.playing) sawPlaying = true;
 	// paint check: capture the frame whenever an attack is being told, so a still image
@@ -201,6 +212,11 @@ const report = {
 	maxFigureTransformPx: Math.round(maxShift * 10) / 10,
 	shiftsByName,
 	events: [...new Set(samples.map((s) => s.event).filter(Boolean))],
+	// pass 31: any moment of the Clash or the Ruling where a world was not readable
+	unseenMoments: samples
+		.map((s, i) => ({ i, event: s.event, playing: s.playing, unseen: s.unseenPanels || [] }))
+		.filter((m) => m.unseen.length > 0)
+		.slice(0, 12),
 	flashTexts: [...new Set(samples.flatMap((s) => s.flashes.map((f) => f.text)).filter(Boolean))],
 	beats: [...new Set(samples.map((s) => s.beat).filter(Boolean))],
 	framesWithCamera: samples.filter((s) => s.playing && (s.sites || []).some((x) => x.clashing)).length,
@@ -225,6 +241,15 @@ const check = (ok, message) => {
 };
 
 check(report.pageErrors.length === 0, `page errors during the Clash: ${report.pageErrors.join(' | ')}`);
+
+/*
+	The assertion that pass 28's bug needed and nothing had: at no point during the
+	Clash or the Court's ruling may a world panel be present-but-unreadable. The bug it
+	exists for showed three panels at effective opacity 0.67, 0.89 and 0.98, mid-fade,
+	at the judge event.
+*/
+check(report.unseenMoments.length === 0,
+	`a world panel was present but not visible during the Clash: ${report.unseenMoments.map((m) => `${m.event || 'ruling'} -> ${m.unseen.join('; ')}`).join(' | ')}`);
 check(report.sends >= 6, `only ${report.sends} sends: the probe did not fill the frame, so it measured a quieter Clash than the game produces`);
 check(report.framesPlaying >= 20, `only ${report.framesPlaying} frames of playback sampled; the Clash was not watched`);
 

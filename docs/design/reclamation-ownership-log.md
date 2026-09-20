@@ -2,7 +2,7 @@
 
 Status: the running state of the game under ownership (brief: `reclamation-ownership-brief.md`). This file is the resume point. Any reset reads this first and continues at the weakest thing named below, never from scratch. Each pass appends its own section; the standing state at the top is rewritten in place.
 
-## Standing state (after pass 30, 2026-09-20)
+## Standing state (after pass 31, 2026-09-20)
 
 ### Gauges, proctor mirror
 
@@ -110,6 +110,34 @@ The single place the game's reading of a creature is decided:
 - `packages/rules/src/expedition/expeditionInterpretation.ts` holds every tunable as a named constant; `expeditionRules.DEFAULT_RULES` holds every ablation flag.
 
 ## Pass log
+
+### Pass 31 (2026-09-20): the checks were asking the wrong question
+
+**Weakest thing:** Nick asked whether the verification problem pass 30 admitted to had actually been fixed, or whether the results were still coming from the wrong layer. The honest answer was that pass 30 fixed one instance and left the class open.
+
+**The audit that settled it.** Set `.rec-site { opacity: 0 }`, which makes the entire game board invisible while leaving the DOM untouched, and re-ran everything:
+
+| | healthy build | board invisible |
+|---|---|---|
+| before this pass | 4 checks pass | **4 checks pass** |
+| after | 4 checks pass | **4 checks fail** |
+
+**All four headless checks passed with the whole board invisible.** Every assertion they made about the board was `count() > 0`, which is a question about the DOM. That is precisely why pass 28's blank-ruling bug survived four checks and 1541 unit tests: `querySelectorAll('[data-site-id]').length` was 3 throughout a screen a player would have called empty.
+
+**What shipped:** `apps/web/scripts/lib/visible.mjs`, one shared probe asking whether an element is actually seen. It walks the ancestor chain multiplying opacity, checks display/visibility/content-visibility, confirms the box is in the document, and hit-tests several points down the element so something drawn over it is caught. All four checks now gate on it.
+
+**Three faults in the probe itself, each caught by running it against a HEALTHY build.** A check that fails on a good build is worse than no check, because it teaches you to ignore it.
+
+1. **It called below-the-fold "not visible".** On a phone, worlds 2 and 3 sit under world 1 and are reached by scrolling; that is the known mobile layout problem, not a rendering fault. Being outside the document is now the fault; being outside the viewport is reported separately.
+2. **It called a sticky bar crossing a panel's middle "covered".** The judge bar pins across a tall world panel on a phone, and the panel above and below it is perfectly readable. It now samples five points and fails only when every one is behind something else.
+3. **It read the board mid-entrance and reported 0 of 3 on a healthy build.** The panels fade in over 460ms plus a stagger. The hot-seat check now waits for the board to settle, because the question is whether the board is readable while a handler is deciding.
+
+**A real finding kept, not fixed:** on a phone the judge bar does overlap the first world panel at the ruling. It is partial and the panel is readable around it, so it is recorded here rather than patched with padding that did not work (`.rec-table` padding-bottom was tried and had no effect, since the bar is sticky inside that element).
+
+**The rule this pass adds to the sheet:** every gauge is audited by breaking the thing it claims to measure and confirming it fails, AND by running it against a healthy build and confirming it passes. Pass 28 did the first half for the motion gauge. Doing only the first half produces a check that cries wolf; doing only the second produces a check that cannot fail.
+
+**Verification.** 1541 web tests green, all four headless checks green on the healthy build and all four red on an invisible board.
+
 
 ### Pass 30 (2026-09-20): a critic that can see the game, and two bugs it found
 
