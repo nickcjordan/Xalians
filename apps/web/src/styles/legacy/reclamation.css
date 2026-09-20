@@ -4943,6 +4943,35 @@
 	.rec-site-field--empty .rec-rank-open { display: none; }
 	.rec-site-field--empty .rec-site-midline--empty { min-height: 0; flex: 0 0 auto; }
 	.rec-site-field--empty .rec-site-unclaimed { font-size: var(--g-size-micro); }
+
+	/*
+		PASS 30, A BUG PASS 29 INTRODUCED.
+
+		Pass 13 collapsed the empty field to nothing on a phone because its whole body was
+		the single word "unclaimed": ranks at min-height 0 and no padding, with the RIVAL
+		and YOU edge bands absolutely positioned at the top and bottom of those zero-height
+		ranks. Pass 29 then put three lines of footing in that body, and the two bands came
+		down on top of the text. A blind critic saw a ~90px Magmuth card with its gold and
+		cyan tabs drawn over "0 of your 12 are at ease here" and called it a correctness
+		failure, which it is: overlapping text is not tight layout.
+
+		So an empty field with a footing in it keeps the room the bands need. The ranks
+		stay collapsed, which is what pass 13 was for; only the midline that actually holds
+		the text is given clearance, so the saving on a truly empty world is unchanged.
+	*/
+	/*
+		The bands are absolutely positioned inside their ranks, so the room they need has
+		to come from the RANKS, not from the midline: giving the midline padding (the first
+		attempt at this fix) moved the text down and the bands with it, and the geometric
+		probe still reported both bands intersecting the footing's rectangle. The ranks
+		keep just enough height to hold their own band, which is what they are for.
+	*/
+	.rec-site-field--empty:has(.rec-world-footing) .rec-rank { min-height: 18px; }
+	.rec-site-field--empty:has(.rec-world-footing) .rec-site-midline--empty {
+		min-height: 0;
+		padding: var(--g-2) var(--g-1);
+	}
+	.rec-site-field--empty .rec-world-footing { gap: 2px; }
 	/* a previewed send fills the world again, so the ghost must not be squeezed */
 	.rec-site-field--empty .rec-ghost { padding: var(--g-1) var(--g-2); }
 

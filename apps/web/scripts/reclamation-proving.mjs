@@ -154,6 +154,36 @@ for (const view of ['simple', 'advanced']) {
 				assert(/\d+ of your \d+/.test(text), `${label}: a world's footing does not count the squad: "${text}"`);
 			});
 
+			/*
+				PASS 30. The footing must not be written over.
+
+				Pass 13 collapsed the empty world panel to nothing on a phone because its whole
+				body was the word "unclaimed": ranks at zero height with the RIVAL and YOU
+				bands absolutely positioned inside them. Pass 29 put three lines of text in that
+				body and the two bands came down on top of it, which a blind critic caught and
+				called a correctness failure.
+
+				Nothing could have caught it, because no check compared two rectangles. This
+				one does: it is geometry, not a class name, so it fails for any future reason
+				the bands and the text end up in the same place.
+			*/
+			const collisions = await page.evaluate(() => {
+				const hits = (a, b) => !(a.right <= b.left || b.right <= a.left || a.bottom <= b.top || b.bottom <= a.top);
+				const found = [];
+				document.querySelectorAll('[data-site-id]').forEach((site) => {
+					const footing = site.querySelector('[data-world-footing]');
+					if (!footing) return;
+					const fr = footing.getBoundingClientRect();
+					site.querySelectorAll('.rec-rank-edge').forEach((edge) => {
+						if (hits(fr, edge.getBoundingClientRect())) {
+							found.push(`${site.getAttribute('data-site-id')} / ${edge.textContent.trim()}`);
+						}
+					});
+				});
+				return found;
+			});
+			assert.deepEqual(collisions, [], `${label}: a world's edge band is drawn over its footing text`);
+
 			let guard = 0;
 			let sends = 0;
 			while (guard < 220) {

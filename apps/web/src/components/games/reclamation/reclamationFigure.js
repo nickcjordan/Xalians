@@ -1,5 +1,5 @@
 import React from 'react';
-import { speciesLabel, formatHold, roleSentence } from './reclamationNarration';
+import { speciesLabel, formatHold, formatHoldShown, roleSentence } from './reclamationNarration';
 import { RoleGlyph } from './reclamationGlyphs';
 import XalianImage from '../../xalianImage';
 import XalianTypeSymbolBadge from '../duel/board/xalianTypeSymbolBadge';
@@ -214,7 +214,13 @@ function ReclamationFigure({
 						mine={mine}
 					/>
 				)}
-				{typeof hold === 'number' && <span className="rec-figure-hold">{formatHold(hold)}</span>}
+				{/*
+					pass 30: the number under a figure rounds. Up to six figures stand at a world
+					and the eye compares them against each other and against the margin band; the
+					tenth is noise at that size. The exact value is on the figure's own aria-label
+					and data-hold, and the inspector prints it in full.
+				*/}
+				{typeof hold === 'number' && <span className="rec-figure-hold" title={`hold ${formatHold(hold)}`}>{formatHoldShown(hold)}</span>}
 			</span>
 			{tags.length > 0 && (
 				<span className="rec-figure-tags">

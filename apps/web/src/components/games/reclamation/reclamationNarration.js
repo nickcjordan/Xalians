@@ -85,6 +85,27 @@ export function formatHold(value) {
 	So the flash rounds, and never to nothing: a blow that lands took something, so
 	anything above zero prints at least 1 rather than collapsing to "-0".
 */
+/*
+	PASS 30. A hold, as the Charter and the table print it.
+
+	Hold is fractional and the inspector must say so, because a handler comparing two
+	possible sends needs the tenth. Every OTHER surface is a readout, not a calculator: a
+	blind critic called the tenths "a precision the player can never act on" and the
+	Charter "a wall of fifteen decimals in one column", which is literally what it is -
+	three worlds times two sides plus every creature's own hold, each carrying a ".7" that
+	changes no decision.
+
+	So a displayed hold rounds. It differs from formatBlow in one way that matters: a hold
+	of zero is a real and important state (a creature is down, a side holds nothing), so
+	this prints "0" rather than clamping up to 1.
+*/
+export function formatHoldShown(value) {
+	if (typeof value !== 'number' || !isFinite(value)) {
+		return '?';
+	}
+	return String(Math.round(value));
+}
+
 export function formatBlow(value) {
 	if (typeof value !== 'number' || !isFinite(value)) {
 		return '?';
