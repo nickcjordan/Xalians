@@ -2,7 +2,7 @@
 
 Status: the running state of the game under ownership (brief: `reclamation-ownership-brief.md`). This file is the resume point. Any reset reads this first and continues at the weakest thing named below, never from scratch. Each pass appends its own section; the standing state at the top is rewritten in place.
 
-## Standing state (after pass 27, 2026-09-19)
+## Standing state (after pass 28, 2026-09-20)
 
 ### Gauges, proctor mirror
 
@@ -25,6 +25,9 @@ Pass 6 changed no rule. It re-read two gauges with enough statistical power to s
 | Naive-policy regret (best naive against the mirror) | 8 or more points under | passEarly 25.5 against 50.0 | met with room |
 | Option spread (near-best per decision) | 3 to 5 | 2.85, dominant 32.5% | just under |
 | Every role inside 40 to 60 keeper win rate | 40 to 60 | shield 46.0, bolster 46.4, sweep 51.4, strike 52.3 | met (pass 7 census) |
+| **Clash frames with a figure in motion** | 60 percent or more | **99%** (was 21% before pass 28) | **met**, `reclamation-clash.mjs` |
+| **Largest figure transform in a round** | 18px or more | **26px** (was 10px) | **met**; gutted, the gauge reads 4.7px and fails |
+| **Clash frames marking which world is clashing** | 60 percent or more | **95%**, all three worlds in turn (was 0%) | **met** |
 
 **The lesson pass 6 paid for, and the rule that now applies to every gauge:** a gauge that compares two rates must be read against the interval of their difference, and a gauge that averages two populations must say which one it is about. The stake's trap flag compared two point estimates bare, so it fired on about half of all runs by construction, and the comeback gauge averaged a case the design protects with a case it deliberately abandons. Between them they cost three rules changes that measured nothing before the measurement was done properly. Before any future gauge is called a failure, pool it and put an interval on it.
 
@@ -55,9 +58,9 @@ What it reads, and where each effect kind lands (measured over the seed-7 pool, 
 
 **Nick's steer, 2026-09-19: the priority is whether the game is mechanically deep and fun, not how two people play it.**
 
-1. **Pace scored 3 of 10, the lowest score any critic has given anything.** "This looks like paperwork: the play screen is three static rectangles plus a scrolling text log, and the hero verb on screen is PASS THIS ROUND - no visible motion, no sense of creatures doing anything to each other beyond a number shrinking." The mechanics are now deep (pass 25 doubled the decision space); **what the Clash looks like is the weakest thing left**, and it is not a gauge problem.
-2. **Reason to keep playing, 4 of 10.** "Three identical empty black rectangles labelled UNCLAIMED are the least motivating opening board possible." Each world needs a stake in its panel body - what claiming it does, what losing it costs - so the empty state sells the decision instead of describing the interface.
-3. **Decimals everywhere.** Hold is printed to tenths on every surface; the critic called it "a precision the player can never act on" and the Charter "a wall of fifteen decimals in one column". Round hold to whole numbers outside the inspector.
+1. **Reason to keep playing, 4 of 10.** "Three identical empty black rectangles labelled UNCLAIMED are the least motivating opening board possible." Each world needs a stake in its panel body - what claiming it does, what losing it costs - so the empty state sells the decision instead of describing the interface. **This is now the weakest thing left**, and it is about the board BEFORE anything happens, where pass 28 was about the board while it happens.
+2. **Decimals everywhere, the rest of it.** Pass 28 rounded the damage flash, which is the surface read fastest. Hold is still printed to tenths on the figure, the bench, the margin band and the Charter; the critic called the Charter "a wall of fifteen decimals in one column". The inspector keeps its tenths by design. Do the Charter next, then the figure.
+3. **Re-score the critic on captures that can see motion.** Pass 28 established that every capture set ever scored had `reducedMotion: 'reduce'` set and skipped the Clash. The pace score of 3 was given to still frames of an animation. Any re-score must use a capture set that watches a Clash, or it will keep measuring the harness rather than the game. This is the cheapest open item and it gates knowing whether pass 28 worked for a reader rather than for a gauge.
 4. **Advanced mode is Simple on a phone.** `advanced-390` differs from `simple-390` only by a temperature range: the log and the inspector, its two best features, are both absent at 390. Either give them a phone form or say the mode is desktop-only.
 5. **The first viewport on a phone is all chrome.** Breadcrumb, mode toggle, rival name, sound, round header, world chips, two score strips, phase badge, turn line and a three-line instruction, before any world panel.
 6. **The three borrowed effect kinds** (displace, transfer, suppress, 261 actions) still read as plain attacks. Act flip makes a creature's second act matter, which changes the case for these.
@@ -107,6 +110,55 @@ The single place the game's reading of a creature is decided:
 - `packages/rules/src/expedition/expeditionInterpretation.ts` holds every tunable as a named constant; `expeditionRules.DEFAULT_RULES` holds every ablation flag.
 
 ## Pass log
+
+### Pass 28 (2026-09-20): the Clash, made visible
+
+**Weakest thing:** pace, 3 of 10, the lowest score any critic has given anything. "This looks like paperwork: no visible motion, no sense of creatures doing anything to each other beyond a number shrinking." Nick's steer for this pass: creature animation is his pipeline and out of scope, so the work is everything around the creatures - camera, timing, world reactions, hit punctuation.
+
+**The first thing measured was the instrument, and it could not see the problem.** Every capture set a rubric critic has ever scored was taken with `reducedMotion: 'reduce'`, and `reclamation-proving.mjs` clicks `[data-skip]` on every loop iteration. **No automated check had ever watched a Clash play.** The critic was scoring still frames of an animation and the harness was skipping the animation entirely, so the complaint was about a thing nothing in the repo measured.
+
+**What a live Clash actually measured.** A new probe watched one at full motion on seed 7 and sampled the document 61 times across the round:
+
+| | before |
+|---|---|
+| frames where any figure was transformed | **13 of 61 (21%)** |
+| largest figure transform, whole round | **10px** (the lunge's own keyframe, on a 96px figure) |
+| figures that moved at all | 2 of 4 |
+| frames marking which world was clashing | **0** |
+| damage flash | `-6` and `-1.1` in the same round |
+
+So the complaint was right and its cause was threefold: 79 percent of the Clash was a still frame; the moving fifth moved a figure by ten pixels, which is a twitch rather than a blow; and with all three worlds equally lit the eye had nowhere to go, so whatever motion existed went unwatched.
+
+**What shipped.**
+
+1. **The camera.** The world currently clashing is lifted and rimmed in the accent; the other two desaturate and recede. This is the largest single change, because it is the one that tells the eye where to look before anything moves. The clashing world also carries a slow breathing wash, which is what fills the frames between engine steps that measured as a still image.
+2. **A blow that carries.** The lunge went from 10px to 26px with a scale into the blow and a recoil behind it; the jolt went from a 4px shake to a 14px knockback with rotation; a downed creature now falls 40px over 620ms instead of vanishing 16px in 420ms.
+3. **Hit punctuation.** A red ring is struck off the creature a blow lands on, so the moment of contact has a mark of its own and is not carried entirely by the number.
+4. **A round with a rhythm.** Every event used to be held for the same 700ms, so a downing read exactly like a shield cancelling nothing. `stepWeight()` now weights the step by what happened: a downing 1.9x, the Court's ruling 1.6x, a sweep 1.35x, a cancelled attack 0.7x. It is a lever with a test on it.
+5. **The flash rounds** (open item 3, the visible half). `formatBlow()` prints a whole number, because the flash is punctuation read in under half a second while the figure is still moving. It never rounds a landed blow to zero. The inspector keeps its tenths.
+
+**Result, same probe, same seed:**
+
+| | before | after |
+|---|---|---|
+| frames with a figure in motion | 21% | **99%** |
+| largest figure transform | 10px | **26px** |
+| figures that moved at all | 2 of 4 | **13 of 13** |
+| frames marking the clashing world | 0% | **95%, across all three worlds in turn** |
+| flash | `-1.1` | `-1`, `-11`, `+3` |
+
+**Three faults of my own, each caught by a different instrument.**
+
+- **The entrance animation owned `opacity` and `transform`, so the camera silently did nothing.** `.rec-site--enter` runs with `both` fill and its `to` state pins both properties for the life of the panel. A filling animation beats a plain declaration, so the camera's lift never applied at all and only the one world running a *different* animation let the recede through. **The gauge said the camera was firing on 100 percent of frames; a screenshot showed one waiting world dimmed and the other at full brightness.** Found by paint, fixed by giving the camera states their own animations.
+- **A waiting world may also be running the landing tint,** a second `animation` shorthand that replaces the camera's outright. The first fix made one world recede and left the one that had just been landed on untouched. Found by reading the computed style of all three panels instead of trusting the class list.
+- **The gauge could not fail.** It measured each figure's bounding rect between samples. When the animations were deliberately gutted back to their pre-pass-28 values as a falsification test, it reported **identical numbers** - 77.4px, 100 percent of frames - because a downed creature leaving the board reflows every figure beside it by 60 to 77px, which has nothing to do with whether anything is animating. It was about to be committed as the evidence for this entire pass. Displacement is now read off the computed transform matrix, which is the animation and only the animation; gutted, the gauge reports 4.7px against a floor of 18 and exits 1.
+
+**Also built:** `apps/web/scripts/reclamation-clash.mjs`, the fourth headless check, and the first that watches a Clash rather than skipping it. It asserts floors under the share of frames in motion, the largest figure transform, the camera's presence across more than one world, and that the flash carries no decimals. A Clash with no attack in it is a real position (every send landing unopposed), so the assertions about a blow only run when a blow happened, and the check says which kind of round it measured.
+
+**Reduced motion** covers every animation added, and keeps what is not motion: the clashing world keeps its accent rim and the waiting worlds keep their desaturation, so a player who asks for reduced motion still knows which world is being read. Verified by computed style at both widths, which caught the composed selectors outranking the override.
+
+**Verification.** 2094 tests green across all workspaces, typecheck clean, all four headless checks green at 1440 and 390, design-system guards green.
+
 
 ### Pass 5 (2026-09-18): make the Clash matter
 

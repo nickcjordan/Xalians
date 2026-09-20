@@ -183,6 +183,7 @@ function ReclamationWorld({
 	hiddenEnemyCount,
 	threats,
 	highlights,
+	clashSiteId,
 	arrival,
 	hoverSiteId,
 	previewRecordId,
@@ -194,6 +195,9 @@ function ReclamationWorld({
 }) {
 	const opponent = you === 'A' ? 'B' : 'A';
 	const hl = highlights || {};
+	// pass 28: while a world is clashing the other two recede, so the eye has somewhere
+	// to go. Only ever set during playback, and released at the Court's ruling.
+	const clashing = clashSiteId || null;
 	const arrivedIds = arrival ? arrival.ids : [];
 	const stakeable = new Set(stakeableSiteIds || []);
 
@@ -250,6 +254,17 @@ function ReclamationWorld({
 					}
 					if (pendingStakeSiteId === site.id) {
 						classes.push('rec-site--stake-pending');
+					}
+					/*
+						PASS 28. The clashing world, and the two that are waiting.
+
+						Measured: over 61 frames of a live Clash, nothing on the table said which
+						of the three worlds the current event belonged to. The panel now says it,
+						and the other two dim, so the round reads as three fights in sequence
+						rather than one undifferentiated wall of text.
+					*/
+					if (clashing) {
+						classes.push(clashing === site.id ? 'rec-site--clashing' : 'rec-site--waiting');
 					}
 
 					// the key is passed on the element itself, never inside the spread: React
