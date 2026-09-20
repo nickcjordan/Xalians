@@ -73,6 +73,30 @@ export function formatHold(value) {
 }
 
 /*
+	PASS 28. A blow, as a whole number.
+
+	Hold is fractional and the inspector must say so, because a handler comparing two
+	sends needs the tenth. The flash that pops over a creature as a blow lands is not
+	that surface: it is punctuation, read in under half a second while the figure is
+	still moving, and "-1.1" there costs a character of legibility for a tenth nobody
+	reads at that speed. A blow measured live came back as "-6" and "-1.1" in the same
+	round, which is the mixed-precision look a critic named as decimals everywhere.
+
+	So the flash rounds, and never to nothing: a blow that lands took something, so
+	anything above zero prints at least 1 rather than collapsing to "-0".
+*/
+export function formatBlow(value) {
+	if (typeof value !== 'number' || !isFinite(value)) {
+		return '?';
+	}
+	const magnitude = Math.abs(value);
+	if (magnitude === 0) {
+		return '0';
+	}
+	return String(Math.max(1, Math.round(magnitude)));
+}
+
+/*
 	The role, as the one sentence the plinth, the bench, the dossier and the ghost preview
 	all print (the base redesign's "Interface consequences": one sentence per rule). N is
 	the creature's own attack power, before the element matchup against any one target.

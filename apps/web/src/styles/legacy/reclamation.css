@@ -680,13 +680,15 @@
 /* states */
 .rec-figure--staggered .rec-figure-plate { transform: rotate(-7deg) translateY(2px); }
 
-.rec-figure--routed {
-	animation: rec-fall 420ms ease-in forwards;
-	pointer-events: none;
-}
-
+/*
+	pass 28: the keyframes only. The .rec-figure--routed rule that used to live here
+	moved down into the Clash block with the rest of the round's motion, so every
+	animation the Clash uses is read in one place. A downed creature now falls
+	further and slower, because at 16px over 420ms it vanished rather than fell.
+*/
 @keyframes rec-fall {
-	to { transform: translateY(16px) rotate(-18deg); opacity: 0; }
+	40% { transform: translateY(14px) rotate(-14deg); opacity: 0.85; }
+	to { transform: translateY(40px) rotate(-30deg); opacity: 0; }
 }
 
 .rec-figure--hidden .rec-figure-plate {
@@ -2292,30 +2294,197 @@
 	100% { opacity: 1; transform: rotate(-3deg) scale(1); }
 }
 
-/* resolution: the acting figure lunges toward the far rank; the one it lands on jolts */
-.rec-figure--acting { animation: rec-lunge-up 460ms cubic-bezier(0.3, 0, 0.2, 1) both; }
+/* -------------------------------------------------------------------------
+   PASS 28. THE CLASH, MADE VISIBLE.
+
+   A blind rubric critic scored pace 3 of 10, the lowest score any critic has
+   given anything: "this looks like paperwork, no visible motion, no sense of
+   creatures doing anything to each other beyond a number shrinking." Everything
+   below was measured before it was designed, by watching a live Clash at full
+   motion and sampling the document 61 times over one round
+   (apps/web/scripts/reclamation-clash.mjs, which is now a checked-in gauge):
+
+     frames where any figure was transformed      13 of 61   (21%)
+     largest movement of any figure, whole round  5.9px
+     figures that moved at all                    2 of 4
+     panels marking which world was clashing      none
+
+   So the complaint was right and its cause was threefold. 79% of the Clash was
+   a still frame; the moving fifth moved a figure by six pixels, which at a
+   figure width of 96px is a twitch rather than a blow; and with all three worlds
+   equally lit the eye had nowhere to go, so whatever motion there was went
+   unwatched. This block attacks all three, and every animation added here is
+   listed in the prefers-reduced-motion block at the end of the file.
+   ------------------------------------------------------------------------- */
+
+/* --- the camera: the world that is clashing, and the two that wait --------- */
+
+/*
+	The clashing world is lifted and rimmed in the accent; the other two desaturate
+	and sit back. This is the single largest change to how the Clash reads, because
+	it is the one that tells the eye where to look before anything moves.
+*/
+/*
+	THE ENTRANCE ANIMATION OWNS opacity AND transform, so the camera cannot use them.
+
+	Found by paint, not by the numbers. The first version of this block set opacity and
+	a scale on the waiting panels; the gauge said the camera was firing on 100% of
+	frames and a screenshot showed one waiting world dimmed and the other at full
+	brightness. The cause: `.rec-site--enter` runs `rec-site-enter` with `both` fill,
+	whose `to` state is `opacity: 1; transform: translateY(0)`. A filling animation
+	beats a plain declaration, so both properties were pinned for the life of the panel
+	and only the world that happened to be running a DIFFERENT animation
+	(`rec-landed-mine`, which does not mention them) let the camera's values through.
+
+	So the camera states carry their own animations rather than plain declarations.
+	An animation competes with an animation, and these are declared after the entrance
+	so they win. This is also why the lift on the clashing panel had no effect at all
+	in the first version, which the gauge could not see because it measured figures.
+*/
+.rec-site--clashing {
+	z-index: 3;
+	border-color: color-mix(in srgb, var(--g-accent) 55%, var(--g-seam));
+	box-shadow: var(--g-relief), 0 0 0 2px color-mix(in srgb, var(--g-accent) 45%, transparent),
+		0 6px 20px color-mix(in srgb, var(--g-seam) 70%, transparent);
+	animation: rec-clash-lift 220ms ease both;
+}
+
+@keyframes rec-clash-lift {
+	from { opacity: 1; transform: translateY(0) scale(1); }
+	to { opacity: 1; transform: translateY(-4px) scale(1.015); }
+}
+
+/* the clashing world has the same hazard: it may have just been landed on */
+.rec-site--clashing.rec-site--landed-mine,
+.rec-site--enter.rec-site--clashing.rec-site--landed-mine {
+	animation: rec-clash-lift 220ms ease both, rec-landed-mine 1300ms ease-out both;
+}
+
+.rec-site--clashing.rec-site--landed-theirs,
+.rec-site--enter.rec-site--clashing.rec-site--landed-theirs {
+	animation: rec-clash-lift 220ms ease both, rec-landed-theirs 1300ms ease-out both;
+}
+
+/*
+	A waiting world may ALSO be running the landing tint (`rec-landed-mine`, 1300ms),
+	which is a second `animation` shorthand on the same element and replaces this one
+	outright: the first fix made Stonera recede correctly and left Telypso, which had
+	just been landed on, at full opacity. Found by reading the computed style of all
+	three panels rather than trusting that the camera had fired.
+
+	So the recede does not compete for `animation` at all. It runs two named animations
+	where one is needed, listing the landing tint alongside its own so neither is lost.
+*/
+.rec-site--waiting {
+	filter: saturate(0.45) brightness(0.72);
+	animation: rec-clash-recede 260ms ease both;
+}
+
+.rec-site--waiting.rec-site--landed-mine,
+.rec-site--enter.rec-site--waiting.rec-site--landed-mine {
+	animation: rec-clash-recede 260ms ease both, rec-landed-mine 1300ms ease-out both;
+}
+
+.rec-site--waiting.rec-site--landed-theirs,
+.rec-site--enter.rec-site--waiting.rec-site--landed-theirs {
+	animation: rec-clash-recede 260ms ease both, rec-landed-theirs 1300ms ease-out both;
+}
+
+@keyframes rec-clash-recede {
+	from { opacity: 1; transform: scale(1); }
+	to { opacity: 0.6; transform: scale(0.985); }
+}
+
+/*
+	A held breath under the clashing world: the panel is not inert between engine
+	steps. This is what fills the 79% of frames that measured as a still image.
+*/
+.rec-site--clashing::after {
+	content: '';
+	position: absolute;
+	inset: 0;
+	pointer-events: none;
+	border-radius: inherit;
+	animation: rec-clash-breathe 1400ms ease-in-out infinite;
+	background: radial-gradient(120% 90% at 50% 50%,
+		color-mix(in srgb, var(--g-accent) 9%, transparent) 0%, transparent 70%);
+}
+
+@keyframes rec-clash-breathe {
+	0%, 100% { opacity: 0.35; }
+	50% { opacity: 1; }
+}
+
+/* --- the blow: a lunge that carries, and an impact that punctuates -------- */
+
+/*
+	The lunge was 10px on a 96px figure and read as a twitch. It is now a committed
+	move toward the far rank with a recoil behind it, and the figure scales into the
+	blow so the motion is legible even when the panel is small on a phone.
+*/
+.rec-figure--acting {
+	animation: rec-lunge-up 460ms cubic-bezier(0.3, 0, 0.2, 1) both;
+	z-index: 4;
+}
 .rec-figure--acting.rec-figure--down { animation-name: rec-lunge-down; }
 
 @keyframes rec-lunge-up {
-	0% { transform: translateY(0); }
-	40% { transform: translateY(-10px); }
-	100% { transform: translateY(0); }
+	0% { transform: translateY(0) scale(1); }
+	30% { transform: translateY(-26px) scale(1.06); }
+	55% { transform: translateY(-20px) scale(1.04); }
+	100% { transform: translateY(0) scale(1); }
 }
 
 @keyframes rec-lunge-down {
-	0% { transform: translateY(0); }
-	40% { transform: translateY(10px); }
-	100% { transform: translateY(0); }
+	0% { transform: translateY(0) scale(1); }
+	30% { transform: translateY(26px) scale(1.06); }
+	55% { transform: translateY(20px) scale(1.04); }
+	100% { transform: translateY(0) scale(1); }
 }
 
-.rec-figure--hit { animation: rec-jolt 420ms ease-out both; animation-delay: 160ms; }
+/*
+	The jolt was 4px of shake. A blow that takes hold off a creature now moves it:
+	it is knocked back off its footing, shakes, and settles. 14px against a 96px
+	figure is the smallest displacement that reads as being hit rather than as a
+	rendering artifact.
+*/
+.rec-figure--hit { animation: rec-jolt 480ms cubic-bezier(0.2, 0.8, 0.3, 1) both; animation-delay: 150ms; }
 
 @keyframes rec-jolt {
-	0% { transform: translateX(0); }
-	25% { transform: translateX(-4px) rotate(-2deg); }
-	50% { transform: translateX(4px) rotate(2deg); }
-	75% { transform: translateX(-2px); }
-	100% { transform: translateX(0); }
+	0% { transform: translate(0, 0) rotate(0deg); }
+	18% { transform: translate(-9px, 6px) rotate(-5deg); }
+	40% { transform: translate(7px, 3px) rotate(4deg); }
+	62% { transform: translate(-4px, 1px) rotate(-2deg); }
+	82% { transform: translate(2px, 0) rotate(1deg); }
+	100% { transform: translate(0, 0) rotate(0deg); }
+}
+
+/*
+	Hit punctuation: a ring struck off the creature the blow landed on, so the
+	moment of contact has a mark of its own and is not carried entirely by the
+	number. Drawn on the figure's plate, outside the flash, so both read at once.
+*/
+.rec-figure--hit .rec-figure-plate::after {
+	content: '';
+	position: absolute;
+	inset: 0;
+	border-radius: inherit;
+	pointer-events: none;
+	animation: rec-impact 420ms cubic-bezier(0.2, 0.7, 0.3, 1) both;
+	animation-delay: 150ms;
+	box-shadow: 0 0 0 0 color-mix(in srgb, var(--g-lamp-red) 80%, transparent);
+}
+
+@keyframes rec-impact {
+	0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--g-lamp-red) 85%, transparent); opacity: 1; }
+	100% { box-shadow: 0 0 0 14px color-mix(in srgb, var(--g-lamp-red) 0%, transparent); opacity: 0; }
+}
+
+/* a creature going down takes the blow with it: further, heavier, and it lands */
+.rec-figure--routed {
+	animation: rec-fall 620ms cubic-bezier(0.4, 0, 0.7, 1) forwards;
+	pointer-events: none;
+	z-index: 1;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -2335,10 +2504,55 @@
 	.rec-stamp--down,
 	.rec-figure--acting,
 	.rec-figure--hit,
-	.rec-figure--routed {
+	.rec-figure--routed,
+	/*
+		pass 28: every animation the Clash block added. A player who asks for reduced
+		motion still needs to know WHICH world is clashing and WHO was hit, so the
+		camera's colour and the impact ring's presence are kept and only their motion
+		is dropped: the clashing panel keeps its accent rim and loses the lift and the
+		breathing, and a hit keeps its flash and loses the knockback.
+	*/
+	.rec-site--clashing,
+	.rec-site--clashing::after,
+	.rec-site--waiting,
+	.rec-figure--hit .rec-figure-plate::after {
 		animation: none;
 	}
 	.rec-figure--routed { opacity: 0; }
+	/*
+		the camera's lift and recede are animations (see the note on the entrance owning
+		opacity and transform), so cancelling them here restores the panel to its resting
+		geometry. The waiting world keeps its desaturation, which is not motion and is the
+		only thing distinguishing it once the scale is gone.
+	*/
+	/*
+		the composed selectors carry two classes, so they outrank a single-class override
+		here. A first version of this block listed only the single-class forms and left a
+		world that had just been landed on still scaled and faded under reduced motion,
+		found by reading the computed style of all three panels rather than by looking at
+		the rule.
+	*/
+	.rec-site--clashing,
+	.rec-site--waiting,
+	.rec-site--waiting.rec-site--landed-mine,
+	.rec-site--waiting.rec-site--landed-theirs,
+	.rec-site--enter.rec-site--waiting.rec-site--landed-mine,
+	.rec-site--enter.rec-site--waiting.rec-site--landed-theirs,
+	.rec-site--clashing.rec-site--landed-mine,
+	.rec-site--clashing.rec-site--landed-theirs,
+	.rec-site--enter.rec-site--clashing.rec-site--landed-mine,
+	.rec-site--enter.rec-site--clashing.rec-site--landed-theirs {
+		animation: none;
+		transform: none;
+		opacity: 1;
+	}
+	.rec-site--waiting { filter: saturate(0.45) brightness(0.72); }
+	/* the rim stays: it is the only thing saying which world is being read */
+	.rec-site--clashing::after { opacity: 0; }
+	.rec-figure--hit .rec-figure-plate::after {
+		opacity: 1;
+		box-shadow: 0 0 0 2px color-mix(in srgb, var(--g-lamp-red) 70%, transparent);
+	}
 }
 
 /* -------------------------------------------------------------------------

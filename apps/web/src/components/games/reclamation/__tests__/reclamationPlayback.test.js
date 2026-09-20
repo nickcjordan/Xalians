@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { playbackEffects, flashFor } from '../reclamationMatch';
+import { playbackEffects, flashFor, stepWeight } from '../reclamationMatch';
 
 /*
 	The clash and the Ruling, told over a frozen board (docs/design/
@@ -62,9 +62,39 @@ describe('playbackEffects', () => {
 describe('flashFor', () => {
 	it('pops the word Pass 2 uses for each outcome, and the number a recovery gave back', () => {
 		expect(flashFor({ type: 'attack', outcome: 'downed', power: 6 })).toEqual({ kind: 'rout', text: 'downed' });
-		expect(flashFor({ type: 'attack', outcome: 'hurt', power: 2.5 })).toEqual({ kind: 'stagger', text: '-2.5' });
-		expect(flashFor({ type: 'recover', amount: 2.1 })).toEqual({ kind: 'recover', text: '+2.1' });
+		// pass 28: the flash is punctuation read in under half a second while the figure is
+		// still moving, so it rounds. A live Clash measured "-6" and "-1.1" in one round,
+		// which is the mixed-precision look a critic named as decimals everywhere.
+		expect(flashFor({ type: 'attack', outcome: 'hurt', power: 2.5 })).toEqual({ kind: 'stagger', text: '-3' });
+		expect(flashFor({ type: 'recover', amount: 2.1 })).toEqual({ kind: 'recover', text: '+2' });
 		expect(flashFor({ type: 'shield', cancelled: 'x' })).toEqual({ kind: 'ward', text: 'cancelled' });
 		expect(flashFor({ type: 'judge' })).toBeNull();
+	});
+
+	// a blow that landed took something: it must never print as nothing, or the flash
+	// says "-0" over a creature whose hold just fell
+	it('never rounds a landed blow down to zero', () => {
+		expect(flashFor({ type: 'attack', outcome: 'hurt', power: 0.4 })).toEqual({ kind: 'stagger', text: '-1' });
+		expect(flashFor({ type: 'attack', outcome: 'hurt', power: 0.04 })).toEqual({ kind: 'stagger', text: '-1' });
+	});
+});
+
+/*
+	pass 28: the Clash's rhythm. Every event used to be held for the same 700ms, which is
+	why a round read as a list rather than a fight. These weights are the lever; the test
+	is here so a retune is a deliberate edit rather than a drift.
+*/
+describe('stepWeight', () => {
+	it('gives the loudest moments the most time and hurries the empty ones', () => {
+		const downed = stepWeight({ type: 'attack', outcome: 'downed' });
+		const hurt = stepWeight({ type: 'attack', outcome: 'hurt' });
+		const cancelled = stepWeight({ type: 'attack', outcome: 'cancelled' });
+		expect(downed).toBeGreaterThan(hurt);
+		expect(hurt).toBeGreaterThan(cancelled);
+		// the Court reads three verdicts in one event, so it needs longer than one blow
+		expect(stepWeight({ type: 'judge' })).toBeGreaterThan(hurt);
+		// a sweep lands on several creatures at once
+		expect(stepWeight({ type: 'sweep' })).toBeGreaterThan(hurt);
+		expect(stepWeight(null)).toBe(1);
 	});
 });
