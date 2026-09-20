@@ -260,17 +260,21 @@ Everything the chrome tier may be built from, as of 2026-09-10. Each is on `/sty
 |---|---|---|
 | `masthead.tsx` | Shell, Masthead, SectionHead | The core frame of every page |
 | `brand.tsx` | HelixMark, HelixSpinner, BrandLockup | The mark, loading, the lockup |
-| `record.tsx` | SpecPlate, RecordRow, Meter, MoveSet, EmptyState, Tile, TileBar, TileArt, TileMeta | Records and catalog tiles |
+| `record.tsx` | SpecPlate, RecordRow, Meter, MoveSet, EmptyState, Tile, TileBar, TileArt, TileMeta, TileGrid | Records and catalog tiles; TileGrid is the one auto-fill grid every tile catalogue uses |
 | `layout.tsx` | IndexPage, RecordPage, FormPage, ResultsPage | The four page shapes: an index with filter bar and pagination, a record with plate and readouts, a single-column form with the keys pinned on the phone, a result with an outcome badge and stat tiles |
 | `status.tsx` | NotFoundPage, ErrorPage, OfflinePage, ErrorBoundary | The pages a site needs before it has content |
 | `a11y.tsx` | SkipLink, VisuallyHidden, LiveRegion | Section 15 |
 | `stepper.tsx` | Stepper, Step | Multi-step flows: squad, board, confirm |
-| `readouts.tsx` | StatTile, KeyValueList, Timeline, TimelineItem, Callout (`note`, `caution`, `plague`, `viable`), DataBlock | Numbers, facts, eras, asides, raw data |
+| `readouts.tsx` | StatTile, KeyValueList, Timeline, TimelineItem (`titleAs="sentence"` for titles that are sentences), Callout (`note`, `caution`, `plague`, `viable`), DataBlock | Numbers, facts, eras, asides, raw data |
 | `filters.tsx` | SearchField, FilterBar | Index pages; the bar folds into a Sheet under `sm` |
 | `data-table.tsx` | DataTable | Sortable, linkable, selectable rows on the Table primitive; never collapses into cards |
 | `identity.tsx` | IdentityRow | A person or account: Avatar, name, detail |
 | `site-footer.tsx` | SiteFooter | The site footer: brand lockup, Explore/Make/Play columns, build sha. Rendered once from App.js, hidden on immersive routes |
 | `term.tsx` | Term | Internal vocabulary defined inline: a focusable label with its definition in a Tooltip |
+| `fold.tsx` | Fold, FoldGroup | One collapsible on level 0 with a legend label, a count and a one-line hint; folds never nest (Encyclopedia polish, 2026-09-19) |
+| `index-row.tsx` | IndexRow, IndexList | A list of records on hairlines: leading number or kicker, title, one line of copy, meta at right, chevron when it links |
+| `station-row.tsx` | StationRow, Station | The pressed-segment row (era scrubber, category filters, section tabs, a world's timeline), with keyboard arrows and a disabled unlit state |
+| `reading-layout.tsx` | ReadingLayout, ReadingRail, ReadingBlock | Prose with a sticky navigation rail and a marginalia column; each block is its own row so margins stay beside their text; the rail becomes a Fold under `lg` |
 
 Deliberately absent: Skeleton (section 6), Calendar and date pickers, Carousel, Resizable, Sidebar, Menubar, ContextMenu, NavigationMenu, InputOTP. Add one only when a page needs it, through step 2 of the build-ui skill.
 
