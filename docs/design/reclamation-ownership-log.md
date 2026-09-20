@@ -2,7 +2,7 @@
 
 Status: the running state of the game under ownership (brief: `reclamation-ownership-brief.md`). This file is the resume point. Any reset reads this first and continues at the weakest thing named below, never from scratch. Each pass appends its own section; the standing state at the top is rewritten in place.
 
-## Standing state (after pass 24, 2026-09-19)
+## Standing state (after pass 25, 2026-09-19)
 
 ### Gauges, proctor mirror
 
@@ -53,18 +53,16 @@ What it reads, and where each effect kind lands (measured over the seed-7 pool, 
 
 ### Open items, ranked (resume here)
 
-**Nick's steer, 2026-09-19: the priority is whether the game is mechanically deep and fun, not how two people play it.** This list is ordered against that. Hot-seat is built and playable and is no longer a priority.
+**Nick's steer, 2026-09-19: the priority is whether the game is mechanically deep and fun, not how two people play it.** This list is ordered against that.
 
-1. **The game has ONE kind of decision, and it runs out.** Measured in pass 24: near-best options per decision run 3.9 / 2.8 / 2.05 across the three rounds, and by round three **half of all decisions have one dominant answer**. The round that decides the Charter is the least interesting one. Neither more budget nor a per-round cap fixes it (both measured; see the `ROUND_SEND_CAP` note), because the single axis is "which creature at which world" and by the last round there are few of each. **A second axis is the work.** Two candidates are already read off the record and unused:
-   - **Reach.** `spatial.range` is read and 46.8 percent of creatures reach past contact, and **nothing in the rules uses the distance.** Pass 8's `reachFirst` measured inert, but that was ordering, not distance as a resource.
-   - **The three borrowed effect kinds.** displace, transfer and suppress, 261 actions between them, still read as plain attacks. `restrain` earned a real rule in pass 18 and it paid; these three have not been retried since worlds got crowded.
-2. **Option spread is 2.85 against a band of 3 to 5**, 32.5 percent dominant. Item 1 is the cause; this is the gauge that reads it.
-3. **The critic's engagement scores are the lowest on the sheet:** reason to keep playing 5, pace 6, numbers 6, style 6, against fiction 9 and first five minutes 8. Worth a fresh critic run once item 1 moves.
-4. **Fire is a dead element and dromeus a dead species** in the draft. Read it pooled before treating it as a failure (pass 6's lesson), the way pass 16 read the attribute lanes.
-5. **The generator's attribute ranges are not published anywhere the game can read.** Pass 19 found a threshold below the floor of the attribute it cuts, findable only by sampling pools.
+1. **Decided after round 1 is 45 to 52 percent against a design band of under 35.** Half of all matches are effectively settled by the first Ruling. Pass 25 measured it with the canonical definition (the earliest round after which the winner led strictly and never fell behind again) and act flip did not move it: it fixed the decision DEPTH problem, not the match ARC one. This is now the weakest gauge on the sheet and the next thing to attack.
+2. **The critic's engagement scores:** reason to keep playing 5, pace 6, numbers 6, style 6, against fiction 9 and first five minutes 8. Worth a fresh critic run now that act flip has landed - the depth complaint should have moved.
+3. **The three borrowed effect kinds** (displace, transfer, suppress, 261 actions) still read as plain attacks. `restrain` earned a rule in pass 18 and paid; act flip now makes a creature's SECOND act matter, which changes the case for these.
+4. **Fire is a dead element and dromeus a dead species** in the draft. Read it pooled before treating it as a failure.
+5. **The generator's attribute ranges are not published anywhere the game can read.** Pass 19 found a threshold below the floor of the attribute it cuts.
 6. **The status strip is the tallest block on a phone** at 250px, carrying six jobs.
-7. **No human has played a full Proving.** The instrument now exists (hot-seat, passes 20 to 23); the play has not happened.
-8. **Hot-seat's Charter still names a rival, not two people.** Cosmetic, deprioritized by the steer above.
+7. **No human has played a full Proving.** The instrument exists (hot-seat, passes 20 to 23).
+8. **Act flip has no dossier line yet.** The picker says what each behaviour does on hover; the dossier does not yet list the acts a creature is carrying. Cosmetic.
 
 ### Hot-seat: what pass 20 did and did not do
 
@@ -484,3 +482,31 @@ Consistent on three seeds. **The round that decides the Charter is the game's le
 **The lesson worth keeping:** *a gauge below band tells you less than the same gauge split by when it is read.* "Option spread 2.85 against a band of 3 to 5" sat on the sheet for many passes as a mild shortfall. Split by round it is a decay from 3.9 to 2.05 with the worst value at the climax, which is a different problem with a different fix, and the split cost one probe.
 
 **Verified:** 2059 tests green (five new), typecheck clean, build inside budgets, headless Proving green in all four configurations. The art-registry test flakes under the root runner on a `process.cwd()` path and passes 6 of 6 from its own workspace; unrelated to this pass.
+
+### Pass 25 (2026-09-19): the second axis, found by exhausting the first
+
+**The problem, from pass 24:** the game had ONE kind of decision, which creature at which world, and it ran out. Near-best options per decision decayed 3.9 / 2.8 / 2.05 across the rounds, with half of round-three decisions having one dominant answer.
+
+**The design had already authorised two answers, and named the condition for each.** Both conditions measure as met:
+
+- Option spread worsened (pass 24; pass 2 measured 5.7 near-best and 14 percent dominant, so the game got shallower as it got balanced).
+- **Decided after round 1 is 47.5 / 50.7 / 48.5 percent against a band of under 35**, measured with the canonical definition.
+
+So neither of these was a taste call, and assumption 3's sealed worlds were held at 85 percent and explicitly tentative.
+
+**FIRST ANSWER, MEASURED AND SHIPPED OFF: cross-world projection.** A long-reach area act also catches the next world. Two findings. The lever pool's literal wording describes a creature this content cannot produce: **an area act never reaches past 2, and a reach-3 act is never an area** (joint distribution over 1519 acts: reach 0 x area 226, reach 1 x area 132, reach 2 x area 89, reach 3 x single 102, nothing above). Keyed to reach 1, where every area act projects, it fires hard - **sweep victims per match 10.2 to 14.4** - and moves no gauge at all. **Reach adds damage, and the decision is about which world to commit to.** A second axis has to change what a decision is ABOUT.
+
+**SECOND ANSWER, SHIPPED ON: act flip.** The handler chooses which of a creature's acts it uses, at send. The condition the lever pool names is "one blow per creature measures as too little expression", and measured: every creature has three or four usable acts, **72.3 percent can offer two or more genuinely different behaviours**, and the table was reading 1519 acts across five seeds and using 435 of them.
+
+| | round 1 | round 2 | round 3 |
+|---|---|---|---|
+| one locked act | 3.9 / 28% | 2.8 / 38% | **2.05 / 50%** |
+| act flip | **7.5 / 16%** | **5.0 / 24%** | **3.53 / 30%** |
+
+**Round three now offers more choice than round one used to.** It works because the axis does not deplete: the third creature of a spent roster still asks which of its behaviours the world needs. Every other gauge holds on five seeds, with `MAGNITUDE_SCALE` retuned 2.7 to 2.0 to pay for it (a handler who can choose picks an attacking behaviour more often, which took downs to 5.4-6.0 before the retune). And **the naive-policy margin was already failing on seed 55 at 5.1 points against a bar of eight** - act flip lifts it to 13.0, so this fixed a latent failure the three standard seeds were hiding.
+
+**The bug that only paint could find.** The choice was stored on the board entry and honoured by `prepare`, and then `recomputeHoldsAtSite` called `roleOfEntry` on every company change and wrote the natural role straight back over it. The picker registered the press, the send carried the choice, the engine tests passed, and **the board still showed the old role**. Reading the send path did not find it; printing the board entry after a real click did. Pinned by a test and by `reclamation-actflip.mjs`, which now runs beside the other two checks.
+
+**The lesson worth keeping:** *when one axis is exhausted, adding to it does nothing; the fix is a second axis that does not deplete with the first.* Budget, cap, and reach were all attempts to get more out of "which creature at which world" - more of it, less of it, further from it - and all three measured inert or harmful. What worked was a question that a spent roster can still ask.
+
+**Verified:** 2067 tests green (eight new), typecheck clean, build inside budgets, headless Proving green in all four configurations, hot-seat green end to end, and the picker checked by paint (chose strike, strike landed).

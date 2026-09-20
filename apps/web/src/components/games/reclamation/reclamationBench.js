@@ -6,8 +6,8 @@ import XalianImage from '../../xalianImage';
 import { pieceShadowFilter } from '../duel/board/duelPieceToken';
 import { team } from '../../../constants/designTokens';
 import { slotStateOf, siteHoldsFor } from './reclamationRoster';
-import { speciesLabel, formatHold, roleSentence } from './reclamationNarration';
-import { prepare, speedOf } from '@xalians/rules/expedition/creatureOnTable';
+import { speciesLabel, formatHold, roleSentence, roleWord } from './reclamationNarration';
+import { prepare, speedOf, flippableRolesOf } from '@xalians/rules/expedition/creatureOnTable';
 import { attributeLanes } from './reclamationPreview';
 import { SENDABLE, RETURNED_SEND_COST } from '@xalians/rules/expedition/expeditionInterpretation';
 
@@ -160,6 +160,10 @@ function ReclamationBench({
 	onPass,
 	onBeginMove,
 	rivalBeat,
+	// PASS 25, act flip: the behaviours the armed creature can take, and the chosen one
+	actFlip,
+	armedRole,
+	onChooseRole,
 }) {
 	const me = view.players[you];
 	const yourTurn = view.turn === you && view.phase === 'deploy';
@@ -270,6 +274,42 @@ function ReclamationBench({
 					</div>
 				)}
 			</header>
+
+			{/*
+				PASS 25, ACT FLIP. A creature has three or four usable acts and most can offer
+				two or more genuinely different behaviours; until this pass the table picked one
+				and discarded the rest, which is why the decision space ran out by round three
+				(2.05 near-best options, half of them with one dominant answer).
+
+				The picker only appears with a creature lifted and only when that creature has a
+				real choice, so it is never a control asking a question with one answer. The
+				natural behaviour is first and is what a player gets by pressing nothing.
+			*/}
+			{actFlip && armed && yourTurn && !me.passed && (() => {
+				const roles = flippableRolesOf(armed, view.rules);
+				if (roles.length < 2) {
+					return null;
+				}
+				const current = armedRole || roles[0];
+				return (
+					<div className="rec-bench-acts" data-act-picker={armed.id}>
+						<span className="rec-bench-acts-legend">{speciesLabel(armed)} can</span>
+						{roles.map((role) => (
+							<button
+								type="button"
+								key={role}
+								className={`g-btn rec-bench-act${role === current ? ' rec-bench-act--on' : ''}`}
+								aria-pressed={role === current}
+								data-act-role={role}
+								onClick={() => onChooseRole && onChooseRole(role)}
+								title={roleSentence(role)}
+							>
+								{roleWord(role)}
+							</button>
+						))}
+					</div>
+				);
+			})()}
 			{/* the lead rides on its own line under the head: with a creature lifted it is the
 			    role sentence, the same one the plinth, the dossier and the ghost preview print.
 

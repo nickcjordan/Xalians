@@ -25,7 +25,7 @@
 */
 
 import type { XalianRecord } from '@xalians/content/schema';
-import { prepare, traitKeywordsOf, magnitudeAgainst, roleOf, round1 } from './creatureOnTable.ts';
+import { prepare, traitKeywordsOf, magnitudeAgainst, roleOf, round1, flippableRolesOf } from './creatureOnTable.ts';
 import {
 	ROLE, SENDABLE, clinchFor, FRAMES_PER_MATCH, RETURNED_SEND_COST,
 	presenceScaleOf, instinctLaneOf,
@@ -672,11 +672,26 @@ export function scoreSends(publicState: PublicState, ownRoster: XalianRecord[], 
 		if (cost > capRemaining) {
 			return;
 		}
+		/*
+			PASS 25, ACT FLIP. The candidate space was (creature, site). With the lever on it is
+			(creature, site, ROLE), which is the third axis itself: the bot scores every
+			behaviour the record can support at every world and keeps the best, so the choice
+			is measured rather than asserted.
+
+			With the lever off this is a one-element list containing null, so the loop and the
+			numbers it produces are identical to before.
+		*/
+		const liveRules = rulesOf(publicState);
+		const roleChoices: (string | null)[] = liveRules && liveRules.actFlip
+			? flippableRolesOf(record, liveRules)
+			: [null];
 		frame.sites.forEach((site) => {
+		roleChoices.forEach((chosenRole) => {
 			const prepared = prepare(record, site, null, me.sentCount, {
 				rules: rulesOf(publicState),
 				bolstered: bolsterPresent(publicState, site.id, handler),
 				bolsterScale: bolsterScaleAt(publicState, site.id, handler),
+				chosenRole,
 			});
 			// what this send moves the world's margin by: its own hold, plus what its role
 			// is worth standing here (the base redesign's four roles)
@@ -701,7 +716,11 @@ export function scoreSends(publicState: PublicState, ownRoster: XalianRecord[], 
 			candidates.push({
 				record, site, prepared, margin: m, value, flips: m <= 0 && h > -m, cost,
 				roleValue, effect: h, role: prepared.role,
+				// pass 25: the role the handler would be choosing, carried so send() can apply
+				// it; null when the lever is off, which is every candidate before this pass
+				chosenRole,
 			});
+		});
 		});
 	});
 	candidates.sort((a, b) => b.value - a.value);
@@ -811,7 +830,9 @@ export function chooseSend(publicState: PublicState, ownRoster: XalianRecord[], 
 	*/
 	const hidden = traitsOf(pick.record).includes('stealthy') && (!publicState.rules || publicState.rules.hiddenSends !== false);
 
-	return { type: 'send', recordId: pick.record.id, siteId: pick.site.id, hidden };
+	// pass 25: the act-flip choice travels with the send, so the engine applies the same role
+	// the bot scored. Undefined when the lever is off, which is every send before this pass.
+	return { type: 'send', recordId: pick.record.id, siteId: pick.site.id, hidden, chosenRole: pick.chosenRole || null };
 }
 
 // --- the stake ------------------------------------------------------------------------

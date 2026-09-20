@@ -584,6 +584,46 @@ export function naturalRoleOf(record: XalianRecord): Role {
 }
 
 /*
+	flippableRolesOf(record, rules) -> the roles this record can actually support, natural
+	first.
+
+	PASS 25 (act flip). The handler may only choose a behaviour the creature's own actions can
+	produce: a creature with no protect action can never be a shield, whatever the player
+	presses. Measured over 435 creatures on five seeds, 72.3 percent support two or more, which
+	is the "too little expression" the lever pool's condition asks about.
+
+	The natural role is always first and always present, so the list doubles as "what would
+	happen if the handler chose nothing".
+*/
+export function flippableRolesOf(record: XalianRecord, rules?: Partial<Rules> | null): Role[] {
+	const reading = readRecord(record);
+	if (!reading.fieldable) {
+		return [];
+	}
+	const natural = naturalRoleOf(record);
+	const out: Role[] = [natural];
+	const add = (role: Role) => {
+		if (!out.includes(role)) {
+			out.push(role);
+		}
+	};
+	// an attacking action makes a blow role available; an area one makes the sweep available
+	if (reading.usable.some((a) => a.role === EFFECT_ROLE.ATTACK && !a.area)) {
+		add(ROLE.STRIKE as Role);
+	}
+	if (reading.usable.some((a) => a.role === EFFECT_ROLE.ATTACK && a.area)) {
+		add(ROLE.SWEEP as Role);
+	}
+	if (reading.hasShield) {
+		add(ROLE.SHIELD as Role);
+	}
+	if (reading.hasMend) {
+		add(ROLE.BOLSTER as Role);
+	}
+	return out;
+}
+
+/*
 	blowActOf(record, acts, role) -> one entry of `acts`, or a synthetic minimum strike.
 
 	A blow creature throws one blow: the magnitude of its favored ATTACKING ability
@@ -699,7 +739,24 @@ export function prepare(
 	const magnitudeScale = rules && typeof rules.magnitudeScale === 'number' ? rules.magnitudeScale : MAGNITUDE_SCALE;
 	const acts = buildActs(record, strainMult, magnitudeScale);
 	const traitKeywords = traitKeywordsOf(record);
-	const role = roleOf(record, rules);
+	/*
+		PASS 25, ACT FLIP. The role is normally derived from what the record's actions do. With
+		rules.actFlip on, the HANDLER may name one of the roles the record can actually support,
+		and that choice is honoured here - one place, so every reading of the creature (its
+		blow, its hold contribution, the preview, the bot's scoring) follows the same role and
+		none of them can disagree.
+
+		An illegal or absent choice falls back to the natural role rather than failing, so a
+		stale saved choice or a caller that does not know about the lever behaves exactly as
+		before.
+	*/
+	const natural = roleOf(record, rules);
+	const chosen = rules && (rules as Partial<Rules>).actFlip && opts.chosenRole
+		? opts.chosenRole
+		: null;
+	const role = chosen && flippableRolesOf(record, rules).includes(chosen as Role)
+		? (chosen as Role)
+		: natural;
 	const blow = blowActOf(record, acts, role);
 
 	return {

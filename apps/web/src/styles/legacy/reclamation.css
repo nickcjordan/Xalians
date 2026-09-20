@@ -4785,3 +4785,55 @@
 	.rec-handoff { min-height: 60vh; padding: var(--g-3) var(--g-2); }
 	.rec-handoff-panel { padding: var(--g-4) var(--g-3); }
 }
+
+/*
+	PASS 25. THE ACT PICKER (act flip).
+
+	A creature has three or four usable acts and most can offer two or more genuinely
+	different behaviours; until this pass the table derived one and discarded the rest, which
+	is why the decision space ran out by the last round. The picker is the second axis made
+	visible: lift a creature, and choose what it will be.
+
+	It reads as a row of small pressable chips rather than a modal, because it sits between
+	lifting and sending and must not interrupt that motion. Depth is thickness, per the design
+	system: the chosen one is solid, the others are flat.
+*/
+.rec-bench-acts {
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: var(--g-2);
+	padding: var(--g-2) var(--g-3);
+	border-top: 1px solid var(--g-line);
+}
+
+.rec-bench-acts-legend {
+	font-family: var(--g-font-stencil);
+	font-size: var(--g-size-tiny);
+	text-transform: uppercase;
+	letter-spacing: 0.06em;
+	opacity: 0.7;
+}
+
+.rec-bench-act {
+	min-height: 2rem;
+	padding-inline: var(--g-3);
+	font-size: var(--g-size-small);
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+}
+
+/* the chosen behaviour is the solid one: flat means read-only, thickness means pressable */
+.rec-bench-act--on {
+	box-shadow: inset 0 0 0 2px var(--g-el, currentColor);
+	opacity: 1;
+}
+
+.rec-bench-act:not(.rec-bench-act--on) {
+	opacity: 0.72;
+}
+
+@media (max-width: 760px) {
+	.rec-bench-acts { padding: var(--g-2); gap: var(--g-1); }
+	.rec-bench-act { min-height: 2.25rem; padding-inline: var(--g-2); }
+}

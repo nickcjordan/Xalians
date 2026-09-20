@@ -619,7 +619,8 @@ export function playMatch(options: any) {
 			if (action.type === 'send') {
 				const wasReturned = (state.players[handler].returned || []).includes(action.recordId);
 				const sentRecord = state.players[handler].roster.find((r: any) => r.id === action.recordId);
-				nextState = send(state, handler, action.recordId, action.siteId);
+				// pass 25: carry the act-flip choice, null when the lever is off
+				nextState = send(state, handler, action.recordId, action.siteId, false, (action as any).chosenRole || null);
 				if (nextState) {
 					sends++;
 					// concealment is derived by the engine since pass 4b, so the flag comes

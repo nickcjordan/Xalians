@@ -519,7 +519,8 @@ function runOneMatch(matchSeed: string, pool: XalianRecord[], rng: ReturnType<ty
 				// captured BEFORE send(), which clears the flag on the sent record
 				const wasReturned = (state.players[handler].returned || []).includes(action.recordId);
 				const record = state.players[handler].roster.find((r: any) => r.id === action.recordId) as XalianRecord;
-				nextState = send(state, handler, action.recordId, action.siteId);
+				// pass 25: carry the act-flip choice, null when the lever is off
+				nextState = send(state, handler, action.recordId, action.siteId, false, (action as any).chosenRole || null);
 				if (nextState) {
 					const site = frame.sites.find((s: any) => s.id === action.siteId) as FrameSite;
 					// concealment is the engine's to decide (pass 4b), so read the arriving

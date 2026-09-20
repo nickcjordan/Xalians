@@ -41,12 +41,15 @@
 import type { XalianRecord } from '@xalians/content/schema';
 import {
 	prepare, magnitudeAgainst, holdAtSite, targetMatchupMultiplier, traitKeywordsOf, isFieldable,
-	roleOf, round1, isSwift, speedOf,
+	roleOf, round1, isSwift, speedOf, flippableRolesOf,
 } from './creatureOnTable.ts';
 import {
 	ROSTER_SIZE,
 	SENDABLE,
 	ROUND_SEND_CAP,
+	ACT_FLIP,
+	PROJECTION_REACH,
+	PROJECTION_FALLOFF,
 	ROSTER_TRAILING_BONUS,
 	RETURNED_SEND_COST,
 	WORLDS_PER_MATCH,
@@ -348,6 +351,11 @@ export const DEFAULT_RULES: Rules = {
 	sendable: SENDABLE,
 	// Pass 24: the most a handler may send in ONE round; 0 is no per-round cap
 	roundSendCap: ROUND_SEND_CAP,
+	// Pass 25: cross-world projection, the base redesign's own lever pool entry
+	// Pass 25: the handler chooses a creature's act at send (lever pool: act flip)
+	actFlip: ACT_FLIP,
+	projectionReach: PROJECTION_REACH,
+	projectionFalloff: PROJECTION_FALLOFF,
 	worldsPerFrame: WORLDS_PER_FRAME,
 };
 
@@ -404,6 +412,9 @@ function normalizeRules(rules: RulesInput | null | undefined): Rules {
 		// Pass 9
 		sendable: num(r.sendable, DEFAULT_RULES.sendable),
 		roundSendCap: num(r.roundSendCap, DEFAULT_RULES.roundSendCap),
+		actFlip: r.actFlip !== undefined ? !!r.actFlip : DEFAULT_RULES.actFlip,
+		projectionReach: num(r.projectionReach, DEFAULT_RULES.projectionReach),
+		projectionFalloff: num(r.projectionFalloff, DEFAULT_RULES.projectionFalloff),
 		worldsPerFrame: num(r.worldsPerFrame, DEFAULT_RULES.worldsPerFrame),
 	};
 }
@@ -532,7 +543,25 @@ function siteCompanions(state: MatchState, site: FrameSite, player: Seat, exclud
 // the role a board entry actually plays under this match's rules (a role switched off by
 // rules.roles degrades, see creatureOnTable.roleOf)
 function roleOfEntry(state: MatchState, entry: BoardEntry): Role {
-	return roleOf(entry.record, rulesOf(state));
+	/*
+		PASS 25 (act flip). The role the HANDLER chose at send wins over the record's natural
+		one, while the lever is on and only for a role the record can support.
+
+		This function is why the first version of act flip failed its paint check: the choice
+		was stored on the entry and honoured by `prepare`, and then recomputeHoldsAtSite called
+		this on every company change and wrote the natural role straight back over it. The
+		picker registered the press, the send carried the choice, and the board still said
+		sweep. Found by printing the board entry after the send rather than by reading the
+		send path.
+	*/
+	const rules = rulesOf(state);
+	if (rules.actFlip && entry.chosenRole) {
+		const legal = flippableRolesOf(entry.record, rules);
+		if (legal.includes(entry.chosenRole as Role)) {
+			return entry.chosenRole as Role;
+		}
+	}
+	return roleOf(entry.record, rules);
 }
 
 /*
@@ -579,6 +608,13 @@ function holdOptionsFor(state: MatchState, entry: BoardEntry, site: FrameSite) {
 		bolstered: !!bolster,
 		bolsterScale: bolster ? bolster.scale : 1,
 		rules: rulesOf(state),
+		/*
+			PASS 25 (act flip). The role the handler named at send, carried on the board entry
+			and applied here, so EVERY reading of this creature for the rest of the round uses
+			the same role: its blow, its hold contribution, the board the player sees, and the
+			bot's own preview. One place, so they cannot disagree.
+		*/
+		chosenRole: entry.chosenRole || null,
 	};
 }
 
@@ -727,7 +763,7 @@ function isPlayersDeployTurn(state: MatchState, player: Seat): boolean {
 	will be dropped once nothing passes it. The rival learns that something was sent, not
 	which creature or where, until the Clash reveals it.
 */
-export function send(state: MatchState, handler: Seat, recordId: string, siteId: string, _hidden = false): MatchState | null {
+export function send(state: MatchState, handler: Seat, recordId: string, siteId: string, _hidden = false, chosenRole: string | null = null): MatchState | null {
 	if (!isPlayersDeployTurn(state, handler)) {
 		return null;
 	}
@@ -777,6 +813,12 @@ export function send(state: MatchState, handler: Seat, recordId: string, siteId:
 		hidden,
 		sentIndex,
 		downed: false,
+		/*
+			PASS 25 (act flip): the role the handler chose for this creature, honoured only
+			while rules.actFlip is on and only when the record can actually support it
+			(flippableRolesOf). Null is the natural role, which is every send before this pass.
+		*/
+		chosenRole: rulesOf(state).actFlip ? chosenRole || null : null,
 		// filled in by recomputeHoldsAtSite immediately below, and again whenever the
 		// company at this site changes
 		fullHold: 0,
@@ -1494,6 +1536,41 @@ function resolveWorld(state: MatchState, site: FrameSite): void {
 		const victims = present
 			.filter((e) => e.recordId !== entry.recordId)
 			.map((victim) => ({ victim, amount: round1(attackPowerAgainst(state, entry, prepared, victim) * powerFactor) }));
+		/*
+			PASS 25. CROSS-WORLD PROJECTION (the base redesign's lever pool: "one area act that
+			reaches one other world", brought back on the condition it names, both halves of
+			which now measure as failing - see PROJECTION_REACH).
+
+			A sweep whose record reaches at least rules.projectionReach also catches the NEXT
+			world in the frame, at rules.projectionFalloff of its power. Narrow on purpose:
+			- only a sweep, because an area act is what the lever pool authorises;
+			- only the next world, not any world, so the frame keeps an order that matters;
+			- only creatures whose record already says they reach that far, so this is read off
+			  the record rather than granted;
+			- at reduced power, so distance costs something and this is not simply a bigger
+			  sweep.
+
+			The sealed-world ruling (assumption 3) stands everywhere else: nothing MOVES between
+			worlds, holds are still counted where the creature stands, and a world is still won
+			by who holds it. What crosses is one cloud, once.
+		*/
+		const projectionReach = typeof rules.projectionReach === 'number' ? rules.projectionReach : 0;
+		if (projectionReach > 0 && (prepared.blow ? prepared.blow.reach || 0 : 0) >= projectionReach) {
+			const frame = currentFrame(state);
+			const index = frame.sites.findIndex((s) => s.id === site.id);
+			const next = index >= 0 ? frame.sites[index + 1] : null;
+			if (next) {
+				const falloff = typeof rules.projectionFalloff === 'number' ? rules.projectionFalloff : 0.5;
+				(['A', 'B'] as Seat[]).forEach((player) => {
+					state.board[next.id][player].filter(isAlive).forEach((victim) => {
+						victims.push({
+							victim,
+							amount: round1(attackPowerAgainst(state, entry, prepared, victim) * powerFactor * falloff),
+						});
+					});
+				});
+			}
+		}
 		declarations.push({
 			entry,
 			role: ROLE.SWEEP,

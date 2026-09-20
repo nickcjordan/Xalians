@@ -9,6 +9,7 @@ import {
 import {
 	ROSTER_SIZE, SENDABLE, SITES_TO_CLINCH, WORLDS_PER_MATCH, FRAMES_PER_MATCH, WORLDS_PER_FRAME,
 	ROUND_SEND_CAP,
+	PROJECTION_REACH, PROJECTION_FALLOFF, ACT_FLIP,
 	ROSTER_TRAILING_BONUS, ROLE, HOLD_FLOOR, HOLD_CEILING, MAGNITUDE_SCALE, SWEEP_DISCOUNT,
 	BOLSTER_FLOOR, ARMORED_REDUCTION, SHIELD_CAP, WILLFUL_THRESHOLD, KEEN_INSTINCT,
 	DULL_INSTINCT, SWIFT_SPEED, BOLSTER_RECOVERY,
@@ -1294,6 +1295,16 @@ describe('rules ablation switches', () => {
 			// decision depth by starving the Clash: at cap 3 downs fell to 1.9 and 87 percent
 			// of contested worlds were one against one. See ROUND_SEND_CAP for the sweep.
 			roundSendCap: ROUND_SEND_CAP,
+			// Pass 25: cross-world projection, the base redesign's own lever pool entry,
+			// built on the condition it names and shipped OFF. It fires hard (sweep victims
+			// 10.2 to 14.4 a match) and moves no gauge: reach adds damage across worlds and
+			// the decision is about which world to commit to. See PROJECTION_REACH.
+			// Pass 25: act flip, the second decision axis. Shipped ON: it takes round-three
+			// decision depth from 2.05 near-best options to 3.53 and the dominant share from
+			// 50 percent to 30, and unlike reach it does not deplete with the roster.
+			actFlip: ACT_FLIP,
+			projectionReach: PROJECTION_REACH,
+			projectionFalloff: PROJECTION_FALLOFF,
 			worldsPerFrame: WORLDS_PER_FRAME,
 		});
 		// assumption 20 cut the catch-up send, so the shipped default is zero
