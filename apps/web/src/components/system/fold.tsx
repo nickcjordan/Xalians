@@ -21,6 +21,8 @@ function Fold({
   count,
   hint,
   defaultOpen = false,
+  open,
+  onOpenChange,
   children,
   id,
   ...props
@@ -30,16 +32,26 @@ function Fold({
   /** One line under the label, in body type: a teaser for what the fold holds. */
   hint?: React.ReactNode
   defaultOpen?: boolean
+  /** Controlled form: pass `open` and `onOpenChange` when a deep link or an "expand all" key must drive the fold. */
+  open?: boolean
+  onOpenChange?: (open: boolean) => void
   id?: string
 }) {
   const value = id || "fold"
+  const controlled = open !== undefined
   return (
     <div
       data-slot="fold"
       className={cn("surface-0 border border-edge bg-s0", className)}
       {...props}
     >
-      <Accordion type="single" collapsible defaultValue={defaultOpen ? value : undefined}>
+      <Accordion
+        type="single"
+        collapsible
+        defaultValue={controlled ? undefined : defaultOpen ? value : undefined}
+        value={controlled ? (open ? value : "") : undefined}
+        onValueChange={controlled && onOpenChange ? (v: string) => onOpenChange(v === value) : undefined}
+      >
         <AccordionItem value={value} className="border-b-0">
           <AccordionTrigger className="min-w-0 gap-3 rounded-none px-5 py-4 text-left no-underline hover:no-underline focus-visible:ring-2 focus-visible:ring-viable focus-visible:ring-offset-2 focus-visible:ring-offset-s0 [&>svg]:text-ink-3">
             <span className="min-w-0 flex-1">
