@@ -2,7 +2,7 @@
 
 Status: the running state of the game under ownership (brief: `reclamation-ownership-brief.md`). This file is the resume point. Any reset reads this first and continues at the weakest thing named below, never from scratch. Each pass appends its own section; the standing state at the top is rewritten in place.
 
-## Standing state (after pass 25, 2026-09-19)
+## Standing state (after pass 26, 2026-09-19)
 
 ### Gauges, proctor mirror
 
@@ -53,16 +53,15 @@ What it reads, and where each effect kind lands (measured over the seed-7 pool, 
 
 ### Open items, ranked (resume here)
 
-**Nick's steer, 2026-09-19: the priority is whether the game is mechanically deep and fun, not how two people play it.** This list is ordered against that.
+**Nick's steer, 2026-09-19: the priority is whether the game is mechanically deep and fun, not how two people play it.**
 
-1. **Decided after round 1 is 45 to 52 percent against a design band of under 35.** Half of all matches are effectively settled by the first Ruling. Pass 25 measured it with the canonical definition (the earliest round after which the winner led strictly and never fell behind again) and act flip did not move it: it fixed the decision DEPTH problem, not the match ARC one. This is now the weakest gauge on the sheet and the next thing to attack.
-2. **The critic's engagement scores:** reason to keep playing 5, pace 6, numbers 6, style 6, against fiction 9 and first five minutes 8. Worth a fresh critic run now that act flip has landed - the depth complaint should have moved.
-3. **The three borrowed effect kinds** (displace, transfer, suppress, 261 actions) still read as plain attacks. `restrain` earned a rule in pass 18 and paid; act flip now makes a creature's SECOND act matter, which changes the case for these.
+1. **The critic's engagement scores are the weakest thing on the sheet:** reason to keep playing 5, pace 6, numbers 6, style 6, against fiction 9 and first five minutes 8. Passes 24 to 26 fixed the mechanical causes the critic could not name (the decision space doubled, the arc is measured live); **a fresh critic run is now the highest-value next move**, because the remaining engagement complaints are the ones no gauge on the sheet reads.
+2. **The three borrowed effect kinds** (displace, transfer, suppress, 261 actions) still read as plain attacks. Act flip now makes a creature's SECOND act matter, which changes the case for these: an act that only exists as "another attack" is worth less than one the handler would actually pick.
+3. **Act flip has no dossier line.** The picker names each behaviour and says what it does on hover; the dossier does not yet list the acts a creature carries. The axis is playable but under-explained.
 4. **Fire is a dead element and dromeus a dead species** in the draft. Read it pooled before treating it as a failure.
 5. **The generator's attribute ranges are not published anywhere the game can read.** Pass 19 found a threshold below the floor of the attribute it cuts.
 6. **The status strip is the tallest block on a phone** at 250px, carrying six jobs.
 7. **No human has played a full Proving.** The instrument exists (hot-seat, passes 20 to 23).
-8. **Act flip has no dossier line yet.** The picker says what each behaviour does on hover; the dossier does not yet list the acts a creature is carrying. Cosmetic.
 
 ### Hot-seat: what pass 20 did and did not do
 
@@ -510,3 +509,28 @@ So neither of these was a taste call, and assumption 3's sealed worlds were held
 **The lesson worth keeping:** *when one axis is exhausted, adding to it does nothing; the fix is a second axis that does not deplete with the first.* Budget, cap, and reach were all attempts to get more out of "which creature at which world" - more of it, less of it, further from it - and all three measured inert or harmful. What worked was a question that a spent roster can still ask.
 
 **Verified:** 2067 tests green (eight new), typecheck clean, build inside budgets, headless Proving green in all four configurations, hot-seat green end to end, and the picker checked by paint (chose strike, strike landed).
+
+### Pass 26 (2026-09-19): the band was measuring the wrong thing
+
+**The gauge I named the weakest thing three passes ago is not a fault.** "Matches decided after round 1 under 35 percent" is one of the fairness bands, and the reading was 45 to 52 percent. Attacking it was next on the list.
+
+**It has never been met, in any version of the game.** 47 percent at the base redesign, 49 in the validation report, 49.3 at this pass. A band no version has ever satisfied is more likely mis-specified than a fault that survived twenty-five passes, and that suspicion is what this pass tested rather than assumed.
+
+**What the statistic measures is lead continuity, not decidedness.** `decidedRoundOf` asks whether the winner ever surrendered the lead. **80.6 percent of round-one scores are 2-1**, so most matches are one world being held or traded, and "never fell behind or tied" is satisfied about half the time by construction. Two matches with the same final score and the same last-round drama read completely differently depending on whether a single tie occurred.
+
+**Two independent confirmations.** First, the thing a player actually feels is live, and it is:
+
+| | |
+|---|---|
+| already clinched before the last round began | **12.7%** |
+| both sides could still reach the clinch entering the last round | **77.8 / 80.8 / 79.0%** |
+| final margin one world or less | **45.9%** |
+| comeback from one world behind | **33.1%** (band 30 to 40: met) |
+
+Second, the metric is insensitive to what it claims to be about. **Quadrupling the catch-up aid drags it 49.3 to 40.1 percent while the comeback rate does not move at all (30.5 to 30.7)** and both-sides-live barely moves. So the aid changes lead continuity and helps nobody come back - which is independently why the trailing bonus stays at 0, per the standing rule against gifts to the losing side.
+
+**Shipped:** the band is withdrawn in the design doc with this evidence, `decidedRoundOf` carries the correction at its definition, `matchShapeOf` now reports `bothLiveEnteringLastRound` as the honest arc figure, and five tests pin the distinction so the two are never confused again.
+
+**The lesson worth keeping:** *a band no version of the game has ever met is a hypothesis about the band, not about the game.* Twenty-five passes read this number and treated it as an outstanding fault, including three of mine. The cheap check is to ask what the statistic would read on a game that was obviously fine - here, a 2-1 lead held to 6-3 counts as "decided after round 1", which is enough to see the band cannot be right.
+
+**Verified:** 2072 tests green (five new), typecheck clean, build inside budgets, headless Proving green in all four configurations.

@@ -60,6 +60,10 @@ All of the following live in `expeditionInterpretation.js` and `creatureOnTable.
 
 Fairness bands (from `game-validation-principles.md`): every species kept between 30 and 90 percent of the times dealt; every species and every archetype wins its world between 40 and 60 percent of the time; no naive policy above 30 percent against the proctor; matches decided after round 1 under 35 percent; comeback rate 30 to 40 percent.
 
+**PASS 26 CORRECTION to the "decided after round 1" band.** That band is withdrawn. The statistic behind it measures LEAD CONTINUITY (did the winner ever surrender the lead), not whether the outcome was in doubt, and it has read 47 to 52 percent in every version of the game ever measured - 47 here, 49 in the validation report, 49.3 at pass 26 - which is a mis-specified band rather than a fault surviving twenty-five passes. With 80.6 percent of round-one scores at 2-1, "never fell behind or tied" is satisfied about half the time by construction. It is also insensitive to the thing it claims to be about: quadrupling the catch-up aid drags it 49.3 to 40.1 percent while the comeback rate does not move at all (30.5 to 30.7).
+
+The replacement, and the game's reading on it: **both sides still able to reach the clinch entering the last round, 77.8 / 80.8 / 79.0 percent** on three seeds at 500 matches (`matchShapeOf().bothLiveEnteringLastRound`). Only 12.7 percent of matches are already clinched before the last round begins, and 45.9 percent finish within one world. The arc is live; the old gauge could not see it.
+
 ## The lever pool
 
 Cut from the base, each with the condition that brings it back:
