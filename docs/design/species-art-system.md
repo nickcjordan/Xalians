@@ -1,12 +1,21 @@
 # Species art system
 
-Xalian species art has two variants because one drawing cannot remain expressive at 300px and structurally legible at 35px.
+Status: art presentation direction updated with Nick's agreement on 2026-09-18. The current site implementation still has two SVG variants. Their existence does not limit the number of presentation forms the art library may use.
 
-## Variants
+## Presentation direction
+
+- **Agreed:** Keep the existing portrait as a visual reference baseline for each species. The ratified species template and lore remain the authority if a portrait conflicts with them.
+- **Agreed:** An animated stage performance is an approved additional presentation role. More roles may be added where a real use case calls for them.
+- **Deferred:** The current compact SVG art remains in use, but its future form is outside this animation study. If a compact species representation becomes a production requirement, it applies across the species library.
+- **Open:** The final stage style, required views, and universal clip set are not selected. The three-species cutout pilot is a working implementation, not a permanent visual standard.
+
+The current review concerns animated stage performances: how a creature moves, how its defining action reads, and how editable motion becomes a reusable game asset.
+
+## Current site forms
 
 `portrait` is the authored, high-detail illustration. Use it for a species page, a generated-record detail view, an inspection panel, or another place where the art is large enough to reward detail. Portraits are loaded one species at a time.
 
-`token` is a compact identity mark. Use it for board pieces, roster marks, card-grid thumbnails, and animated scene figures. The complete token set is eager so a game never begins with missing pieces.
+`token` is the current compact species identity mark used for board pieces, roster marks, and some animated scene figures. It is unrelated to the account's Scrambler Token. The art is a separate simplified SVG, rather than a runtime resize of the portrait. The current loader imports art lazily by species; it requires a same-named portrait and token before showing either one. Duel, Reclamation, Arcade, and Long Return currently use token art. This is implemented behavior to preserve while its long-term role is reviewed.
 
 Choose the variant from the role of the component, not from a resize observer or a CSS breakpoint. That keeps the same surface visually stable while it responds.
 
@@ -15,7 +24,7 @@ Choose the variant from the role of the component, not from a resize observer or
 <XalianImage variant="token" speciesName="Terragoyle" primaryType="Earth" />
 ```
 
-## Token drawing contract
+## Existing token drawing contract
 
 Every file in `apps/web/src/svg/species/token` must:
 
@@ -29,7 +38,7 @@ Every file in `apps/web/src/svg/species/token` must:
 
 The token is not a mechanically thickened portrait. Fine interior illustration should be removed, but defining negative space, appendages, horns, and posture should remain. Vespersyn, for example, uses the lead familiar instead of reducing the entire swarm to noise.
 
-## Adding a species
+## Adding a species to the current site
 
 1. Add the canonical species record to `packages/content/json/species.json`.
 2. Add the detailed portrait at `apps/web/src/svg/species/<name>.svg`.
@@ -37,7 +46,22 @@ The token is not a mechanically thickened portrait. Fine interior illustration s
 4. Run `npm test -- --run xalianSvg` from `apps/web`. The registry test fails if content, portrait art, and token art are not a one-to-one set.
 5. Inspect the token at 35px and 64px on a DPR 1 browser, including any surface that adds a stroke or shadow.
 
-No JavaScript registry edit is required. The asset maps are generated from the two directories at build time, and an unknown or incomplete species receives a visible fallback instead of disappearing silently.
+No JavaScript registry edit is required. The asset maps are generated from the two directories at build time, and an unknown or incomplete species receives a visible fallback instead of disappearing silently. These steps describe current code, not a permanent art-production requirement.
+
+## Stage performance brief
+
+The stage form is approved as a role. The production requirements below are proposals to test before making them universal:
+
+1. Identify the ratified template, lore, and portrait baseline. Trace the anatomy, eye or other contact point, body covering, size, emitter sources, and features that must read in silhouette.
+2. Define the actual viewing context, camera/view, apparent scale, smallest displayed size, and any habitat or staging constraints. Do not normalize biological scale without an intentional presentation reason.
+3. Save editable source for the character, its rig or frame animation, and any separate effects. The chosen visual style may use SVG, layered raster, Blender, or a combination, while the game delivery can remain 2D frames.
+4. Write a motion brief for that species: rest, anticipation, peak, recovery, and visual cue meanings. Choose clips needed by real presentation uses. The pilot's `idle`, `action`, and `hit` names are examples, not a universal catalog.
+5. Export stable placement origins, frame timing, and any needed attachment or emitter points. Keep visual cues separate from game results. Review playback at actual stage size and normal speed.
+6. Review the motion, finish treatments, source editability, clipping, joins, legibility, and resource cost. Record the art revision separately from immutable creature genesis.
+
+Additional views, expressions, locomotion, or reaction clips should be justified per creature or consuming game. A difficult body plan may require drawn frames or other authoring methods in place of a conventional cutout rig.
+
+The [art direction review](creature-art-direction-review.md) compares animation methods. The [Avilily motion brief](avilily-motion-comparison-brief.md) defines the next controlled performance study.
 
 ## Concept-art refinement protocol
 
@@ -56,4 +80,4 @@ For each refinement pass:
 9. Check the image at portrait size, 64px, and 35px. Replace fine hair, reflection streaks, tiny markings, and narrow gaps with broader masses that survive reduction.
 10. Label every displayed result as `evaluate`, `intermediate`, or `discarded`. Background corrections and other repair outputs remain intermediate until their invariants have been rechecked. Present exactly one image as the evaluation target at the end of a pass.
 
-Before art approval, perform one final lore check against the record and one final visual trace of every repeated part. Record any intentional anatomy change in the proposal's art-consistency section, then derive the compact token from the approved portrait rather than from an earlier concept.
+Before art approval, perform one final lore check against the record and one final visual trace of every repeated part. Record any intentional anatomy change in the proposal's art-consistency section. If a compact mark is needed, derive its design from the approved portrait rather than from an earlier concept, and test it at its actual use size.

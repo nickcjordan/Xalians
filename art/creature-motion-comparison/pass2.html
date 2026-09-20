@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Avilily Blender pass 1 versus pass 2</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .phones{display:flex;flex-wrap:wrap;gap:24px;justify-content:center;align-items:flex-start;margin-top:12px}
+    .phone{width:390px;max-width:100%;border:1px solid #4c6c6d;background:#162b32;box-shadow:0 8px 30px #07121855}
+    .phone canvas{display:block;width:100%;height:auto;aspect-ratio:1;background:#233d44}
+    .phone .card-head{min-height:0}
+    .beats{display:grid;grid-template-columns:repeat(auto-fit,minmax(96px,1fr));gap:6px;margin-top:22px}
+    .beats figure{margin:0;border:1px solid #3d5b5c;background:#10232b}
+    .beats canvas{display:block;width:100%;height:auto;aspect-ratio:1}
+    .beats figcaption{font-size:.72rem;color:#c8d8cf;padding:4px 6px;line-height:1.3}
+    .row-label{font-size:.75rem;letter-spacing:.18em;color:#a8c3aa;font-weight:800;margin:18px 0 4px}
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <header>
+      <p class="eyebrow">XALIANS / ANIMATION STUDY 01 / PASS 2 REVIEW</p>
+      <h1>Before and after, at phone size</h1>
+      <p class="lede">Both Blender renders share the camera, stage scale, clip length, and atlas contract. Each stage below is 390 px wide, the width the motion brief names. Watch at 1× first with the cue off. The lower strips show the same beats frame by frame.</p>
+    </header>
+    <section class="transport" aria-label="Playback controls">
+      <button id="play" type="button" disabled>Pause</button>
+      <button id="replay" type="button" disabled>Replay</button>
+      <label>Motion <select id="clip"><option value="action">Blossoming Ambuscade</option><option value="idle">Quiet presence</option></select></label>
+      <label class="check"><input id="effects" type="checkbox"> Show secretion cue</label>
+      <label class="check"><input id="light" type="checkbox"> Light stage</label>
+      <label class="check"><input id="half" type="checkbox"> Half speed</label>
+      <span class="clock" id="clock">0.00 / 1.25 s</span>
+      <input id="timeline" type="range" min="0" max="1250" value="0" aria-label="Scrub both animations" disabled>
+    </section>
+    <p id="status" class="status" role="status">Loading animation atlases…</p>
+    <section class="phones" aria-label="Two synchronized phone-size stages">
+      <article class="phone" data-variant="blender">
+        <div class="card-head"><span class="number">05</span><div><h2>Pass 1</h2><p>Object pivots, planar petals, feet fixed to the body</p></div></div>
+        <canvas width="384" height="384" role="img" aria-label="First Blender pass at phone size"></canvas>
+      </article>
+      <article class="phone" data-variant="blender2">
+        <div class="card-head"><span class="number">06</span><div><h2>Pass 2</h2><p>Notice, crouch, hop, radial bloom, landing, recovery</p></div></div>
+        <canvas width="384" height="384" role="img" aria-label="Second Blender pass at phone size"></canvas>
+      </article>
+    </section>
+    <section aria-label="Frame strips">
+      <p class="row-label">PASS 1 BEATS</p>
+      <div class="beats" data-strip="blender"></div>
+      <p class="row-label">PASS 2 BEATS</p>
+      <div class="beats" data-strip="blender2"></div>
+    </section>
+    <footer>Review companion to <a href="./">the six-way comparison</a>. Card numbers match that page. <a href="study.html?study=bioflim-blender">Bioflim</a> and <a href="study.html?study=dromeus-blender">Dromeus</a> play on the single-study page.</footer>
+  </main>
+  <script type="module" src="pass2.mjs"></script>
+</body>
+</html>

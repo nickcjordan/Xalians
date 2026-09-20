@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300" viewBox="0 0 300 300">
+  <defs>
+    <linearGradient id="slurry" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#f7dcaa"/><stop offset=".55" stop-color="#c59a66" stop-opacity=".86"/><stop offset="1" stop-color="#a37458" stop-opacity=".08"/></linearGradient>
+  </defs>
+  <g id="sand_slurry">
+    <path d="M172 164 C198 174 224 184 260 211 C235 203 218 205 197 193 C188 187 179 180 172 164 Z" fill="url(#slurry)" opacity=".78"/>
+    <path d="M173 164 C199 170 234 171 273 192 C250 187 227 190 203 183 Z" fill="url(#slurry)" opacity=".62"/>
+    <path d="M178 170 C203 190 216 205 235 233 C215 220 195 209 184 188 Z" fill="url(#slurry)" opacity=".55"/>
+    <path d="M176 167 C204 175 224 187 251 202 M183 171 C203 187 220 198 231 211" fill="none" stroke="#fff0c6" stroke-width="3" stroke-linecap="round" opacity=".8"/>
+    <circle cx="258" cy="179" r="4" fill="#f7d9a5" opacity=".78"/>
+    <circle cx="277" cy="198" r="2.8" fill="#dbb481" opacity=".76"/>
+    <circle cx="242" cy="223" r="4.1" fill="#c99a6c" opacity=".6"/>
+    <circle cx="263" cy="231" r="2.2" fill="#f7dfad" opacity=".8"/>
+    <circle cx="211" cy="221" r="2.1" fill="#f7dfad" opacity=".72"/>
+  </g>
+</svg>

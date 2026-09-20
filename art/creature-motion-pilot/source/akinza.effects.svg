@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300" viewBox="0 0 300 300">
+  <defs>
+    <linearGradient id="snow" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#effcf5"/><stop offset="1" stop-color="#86c5d2" stop-opacity=".28"/></linearGradient>
+  </defs>
+  <g id="snow_wake">
+    <path d="M68 274 C88 251 121 247 142 257 C154 250 173 252 184 264 C168 259 151 266 144 274 C126 264 106 269 93 280 Z" fill="url(#snow)" opacity=".78"/>
+    <path d="M70 271 Q89 251 112 257 M131 261 Q153 248 172 258" fill="none" stroke="#f4fff9" stroke-width="3" stroke-linecap="round" opacity=".75"/>
+    <path d="M54 263 L62 254 L66 264 Z M89 243 L94 234 L99 244 Z M119 249 L122 240 L126 251 Z M177 249 L182 240 L186 252 Z" fill="#d7f5f0" opacity=".86"/>
+    <circle cx="76" cy="246" r="2.4" fill="#e8fcf7"/>
+    <circle cx="151" cy="241" r="2" fill="#e8fcf7"/>
+    <circle cx="193" cy="255" r="2.6" fill="#e8fcf7"/>
+  </g>
+</svg>

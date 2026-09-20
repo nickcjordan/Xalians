@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="540" viewBox="0 0 960 540">
+  <defs>
+    <linearGradient id="sky" x2="0" y2="1">
+      <stop stop-color="#162d43"/><stop offset=".52" stop-color="#294e5d"/><stop offset="1" stop-color="#6f7770"/>
+    </linearGradient>
+    <linearGradient id="floor" x2="0" y2="1">
+      <stop stop-color="#728278"/><stop offset="1" stop-color="#253740"/>
+    </linearGradient>
+    <radialGradient id="light"><stop stop-color="#b4d1c9" stop-opacity=".3"/><stop offset="1" stop-color="#b4d1c9" stop-opacity="0"/></radialGradient>
+    <pattern id="stone" width="64" height="30" patternUnits="userSpaceOnUse"><path d="M0 15h64M32 0v15M0 15v15" fill="none" stroke="#98a49b" stroke-opacity=".12" stroke-width="2"/></pattern>
+  </defs>
+  <rect width="960" height="540" fill="url(#sky)"/>
+  <ellipse cx="483" cy="196" rx="413" ry="235" fill="url(#light)"/>
+  <path d="M0 298 77 245l111 33 88-64 106 38 97-76 89 66 87-42 129 67 92-28 84 46v124H0Z" fill="#203c4b" opacity=".75"/>
+  <path d="M0 324 100 287l69 22 93-27 89 23 85-39 107 42 85-26 99 23 91-29 142 45v96H0Z" fill="#344f53"/>
+  <path d="M0 349c173 31 289 30 472 4s310-13 488 2v185H0Z" fill="url(#floor)"/>
+  <path d="M0 349c173 31 289 30 472 4s310-13 488 2v185H0Z" fill="url(#stone)"/>
+  <path d="M0 349c173 31 289 30 472 4s310-13 488 2" fill="none" stroke="#adc5af" stroke-opacity=".32" stroke-width="4"/>
+  <ellipse cx="278" cy="432" rx="174" ry="29" fill="#162931" opacity=".4"/>
+  <ellipse cx="683" cy="432" rx="174" ry="29" fill="#162931" opacity=".4"/>
+  <path d="M0 489c190-24 342 7 495 0s305-27 465 4" fill="none" stroke="#a3b5a3" stroke-opacity=".12" stroke-width="4"/>
+  <path d="m78 432 32 3m744-8 38-4M390 465l42 7m225-20 38 4" stroke="#d3c8ab" stroke-opacity=".24" stroke-width="3" stroke-linecap="round"/>
+</svg>

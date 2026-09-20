@@ -1,0 +1,46 @@
+{
+  "species": "avilily",
+  "template": "avian",
+  "variant": "blender2",
+  "export": "blender2",
+  "label": "Avilily, Blender pass 2",
+  "emitter": [
+    309,
+    139
+  ],
+  "points": {
+    "perch_contact": [
+      204,
+      317
+    ],
+    "eye_rest": [
+      245,
+      121
+    ]
+  },
+  "markers": {
+    "bloom_open": {
+      "frame": 34,
+      "time_ms": 542
+    }
+  },
+  "clips": {
+    "idle": [
+      1,
+      12
+    ],
+    "action": [
+      21,
+      30
+    ]
+  },
+  "provenance": {
+    "blender": "5.2.2 LTS",
+    "spec": "avilily.json",
+    "spec_hash": "fd9f3b02120865b0",
+    "library_hash": "73033b206d1171ff",
+    "cycles_seed": 0,
+    "samples": 16
+  },
+  "objects": 156
+}
