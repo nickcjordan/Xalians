@@ -81,8 +81,20 @@ function DraftCard({ record, frames, kept, onToggle }) {
 				hold of the nine worlds and the world it gets it at, which is the one number
 				that ranks a card against the others, so the card now says so.
 			*/}
-			<span className="rec-draft-best g-mono" title={`Its best of the nine worlds: ${formatHold(bestRow.hold)} at ${bestRow.planet}`}>
-				<span className="rec-draft-best-legend">best</span>
+			{/*
+				PASS 27. The legend now says "best of nine" rather than "best", because TWO
+				independent blind critics have read this same number as advice about the coming
+				round and been misled by it: "nine of the fifteen cards advertise BEST POSEIDAS,
+				but round one is Zolton / Stonera / Telypso - as drafted it steers the player
+				toward worlds they cannot play this round."
+
+				Pass 14 answered that by putting the explanation in the `title`, and a reader
+				looking at the card still could not tell. A tooltip is not a label. The visible
+				words now carry the qualifier, which is the whole of the fix: the number was
+				always right and always described the whole Proving, not this round.
+			*/}
+			<span className="rec-draft-best g-mono" title={`Its best of the Proving's nine worlds: ${formatHold(bestRow.hold)} at ${bestRow.planet}. Not all nine are in the first round.`}>
+				<span className="rec-draft-best-legend">best of nine</span>
 				{formatHold(bestRow.hold)} <span className="rec-draft-best-planet">{bestRow.planet}</span>
 			</span>
 			{isStealthy && (

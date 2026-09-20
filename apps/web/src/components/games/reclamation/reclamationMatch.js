@@ -268,6 +268,21 @@ class ReclamationMatch extends React.Component {
 			this.scheduleBotIfDue();
 		}
 		/*
+			PASS 27. The open dossier is dropped when the round changes.
+
+			A blind critic reading the end-of-match screen found the inspector still showing
+			"KOSANOS, read on STONERA" - a creature and a world from round one, two rounds
+			stale, beside a Charter awarding worlds it never mentioned. `inspect` was only ever
+			cleared by Escape or the close button, so it survived every Ruling. A panel showing
+			a creature at a world that is no longer on the table is worse than no panel.
+		*/
+		if (prevState.match.frameIndex !== this.state.match.frameIndex && this.state.inspect) {
+			this.setState({ inspect: null });
+		}
+		if (this.state.match.phase === 'matchEnd' && this.state.inspect) {
+			this.setState({ inspect: null });
+		}
+		/*
 			PASS 21. Hot-seat's hand-off has to be raised on more occasions than the bot's turn
 			was scheduled on. The bot only ever needed waking when the match state changed
 			outside playback; a hand-off is also due when playback or the Ruling ENDS, because
@@ -1859,10 +1874,20 @@ class ReclamationMatch extends React.Component {
 			<div className={`rec-match${simple ? ' rec-match--simple' : ' rec-match--advanced'}`}>
 				{this.renderStatusStrip(view)}
 
+				{/*
+					PASS 27. The ticker keeps FOUR lines, not two.
+
+					A blind critic said simple mode has no event history and asked for the log;
+					it has this ticker, so the complaint was not quite right - but the cause was.
+					A Ruling over three worlds produces three verdict sentences, so at two lines a
+					simple-mode player never saw what happened at the first world of the round.
+					Four is the smallest number that carries a whole Ruling, which is the unit a
+					player needs to read as one thing.
+				*/}
 				{simple && this.state.log.length > 0 && (
 					<div className="rec-ticker g-screen" data-ticker aria-live="polite">
-						{this.state.log.slice(-2).map((line, i) => (
-							<span className={`g-screen-line${i === this.state.log.slice(-2).length - 1 ? ' rec-ticker-line--in' : ' g-screen-line--dim'}`} key={`${this.state.log.length}-${i}`}>{line}</span>
+						{this.state.log.slice(-4).map((line, i, shown) => (
+							<span className={`g-screen-line${i === shown.length - 1 ? ' rec-ticker-line--in' : ' g-screen-line--dim'}`} key={`${this.state.log.length}-${i}`}>{line}</span>
 						))}
 					</div>
 				)}

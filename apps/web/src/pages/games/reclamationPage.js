@@ -576,9 +576,16 @@ class ReclamationPage extends React.Component {
 									<span className="rec-charter-number g-mono">{SITES_TO_CLINCH}</span>
 									<span className="rec-charter-label">to clinch</span>
 								</div>
+								{/*
+									PASS 27. This read "12/11 BRING / SEND", which a blind critic named
+									as "genuinely incomprehensible as a label" - and it is: two numbers
+									divided by a slash, where the slash means neither a ratio nor a
+									fraction but two different quantities. It says the same thing in
+									words a first-time reader can act on.
+								*/}
 								<div className="rec-charter-figure">
-									<span className="rec-charter-number g-mono">{ROSTER_SIZE}<span className="rec-charter-sub">/{SENDABLE}</span></span>
-									<span className="rec-charter-label">bring / send</span>
+									<span className="rec-charter-number g-mono">{SENDABLE}</span>
+									<span className="rec-charter-label">sends, from {ROSTER_SIZE} kept</span>
 								</div>
 							</div>
 							<div className="rec-intro-actions">

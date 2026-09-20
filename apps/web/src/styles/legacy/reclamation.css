@@ -4837,3 +4837,73 @@
 	.rec-bench-acts { padding: var(--g-2); gap: var(--g-1); }
 	.rec-bench-act { min-height: 2.25rem; padding-inline: var(--g-2); }
 }
+
+/*
+	PASS 27. THE DOSSIER'S ACT LIST.
+
+	Act flip (pass 25) gave the handler a choice among a creature's behaviours; this is where
+	the dossier says what those behaviours are. The one currently chosen is marked, so the list
+	doubles as "what it will do" and "what else it could do".
+*/
+.rec-inspect-acts {
+	list-style: none;
+	margin: var(--g-2) 0 0;
+	padding: 0;
+	display: grid;
+	gap: var(--g-1);
+}
+
+.rec-inspect-act {
+	display: flex;
+	align-items: flex-start;
+	gap: var(--g-2);
+	padding: var(--g-1) var(--g-2);
+	font-size: var(--g-size-small);
+	opacity: 0.68;
+}
+
+/* the behaviour this creature is set to use, marked by thickness rather than colour alone */
+.rec-inspect-act--now {
+	opacity: 1;
+	box-shadow: inset 2px 0 0 var(--g-el, currentColor);
+}
+
+.rec-inspect-act-glyph { flex: 0 0 auto; }
+.rec-inspect-act-say { flex: 1 1 auto; }
+
+/*
+	PASS 27. THE DOSSIER SAYS WHEN THERE IS MORE.
+
+	The panel has always scrolled (`overflow-y: auto` on .rec-inspect), but a blind critic
+	reading a screenshot called it BROKEN: the ability list ended mid-entry at the panel edge
+	with nothing on screen saying more existed below. Scrollable and visibly-scrollable are not
+	the same thing, and a reader who cannot tell is right to call it clipped.
+
+	A fading mask at the bottom edge, drawn only while there is something below to scroll to.
+	`mask-image` degrades to nothing where unsupported, so the panel is never worse than before.
+*/
+.rec-inspect {
+	/* the fade is part of the panel, not an overlay, so it cannot cover a control */
+	mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 1) calc(100% - 1.5rem), rgba(0, 0, 0, 0) 100%);
+	-webkit-mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 1) calc(100% - 1.5rem), rgba(0, 0, 0, 0) 100%);
+}
+
+/*
+	At the end of the scroll there is nothing more to promise, so the fade is removed. Animation
+	timeline support is uneven, so this is a progressive enhancement: without it the fade simply
+	stays, which is the old behaviour plus a hint rather than a regression.
+*/
+@supports (animation-timeline: scroll(self)) {
+	.rec-inspect {
+		animation: rec-inspect-fade 1s linear both;
+		animation-timeline: scroll(self);
+		animation-range: contain;
+	}
+
+	@keyframes rec-inspect-fade {
+		to {
+			mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 1) 100%, rgba(0, 0, 0, 1) 100%);
+			-webkit-mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 1) 100%, rgba(0, 0, 0, 1) 100%);
+		}
+	}
+}
