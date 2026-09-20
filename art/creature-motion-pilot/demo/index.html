@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Xalians motion in play</title>
+  <link rel="stylesheet" href="demo.css">
+</head>
+<body>
+  <main class="shell">
+    <header class="masthead">
+      <div><p class="eyebrow">XALIANS / MOTION PILOT</p><h1>Motion in play</h1></div>
+      <p>Three creatures. One small battle moment. See whether the motion reads where a player would actually see it.</p>
+    </header>
+
+    <div class="layout">
+      <section class="game-panel" aria-label="Battle motion demo">
+        <div class="game-frame">
+          <div class="hud" aria-label="Sample battle interface">
+            <div class="fighter"><span id="left-name">AKINZA</span><div class="hp-track"><i id="left-hp"></i></div><small>DEMO VITALITY</small></div>
+            <span class="versus">VS</span>
+            <div class="fighter right"><span id="right-name">FRACKWORM</span><div class="hp-track"><i id="right-hp"></i></div><small>DEMO VITALITY</small></div>
+          </div>
+          <canvas id="battle" width="960" height="540" role="img" aria-label="Two animated Xalians in a sample battle scene"></canvas>
+          <div class="game-caption"><span id="phase">LOADING</span><span id="marker">Art cue: none</span></div>
+        </div>
+        <div class="transport">
+          <button id="replay" type="button" class="primary" disabled>Replay action</button>
+          <button id="toggle" type="button" disabled>Pause</button>
+          <label class="loop"><input id="loop" type="checkbox" checked> Loop scene</label>
+          <label>Speed <select id="speed"><option value="0.5">0.5×</option><option value="1" selected>1×</option><option value="1.5">1.5×</option></select></label>
+        </div>
+        <input id="timeline" type="range" min="0" max="1000" value="0" aria-label="Scrub battle moment" disabled>
+        <div class="time-labels"><span id="time">0.00 s</span><span id="event-time">Cue at 0.00 s</span><span id="total-time">0.00 s</span></div>
+        <p id="load-status" role="status">Loading creature sheets…</p>
+      </section>
+
+      <aside class="controls">
+        <div class="section-heading"><span>01</span><h2>Stage the moment</h2></div>
+        <div class="field-grid">
+          <label>Acts <select id="attacker"><option value="akinza">Akinza</option><option value="avilily">Avilily</option><option value="frackworm">Frackworm</option></select></label>
+          <label>Reacts <select id="defender"><option value="frackworm">Frackworm</option><option value="akinza">Akinza</option><option value="avilily">Avilily</option></select></label>
+        </div>
+        <div class="field-grid compact-fields">
+          <label>Export <select id="profile"><option value="full">Full · 384 px</option><option value="compact">Compact · 192 px</option></select></label>
+          <button id="swap" type="button">Swap sides</button>
+        </div>
+        <div class="scene-explain"><span class="tiny-label">WHAT THE DEMO IS DOING</span><p>The attacker plays its authored <b>action</b> clip. At the clip's named timing cue, the defender plays <b>hit</b>; the sample vitality bar and impact flash respond together. Both return to <b>idle</b>.</p><p>The vitality number is a visual placeholder. A real game would decide whether a hit landed and how much it changed.</p></div>
+        <div class="section-heading review-heading"><span>02</span><h2>Judge it at play size</h2></div>
+        <p class="review-intro">Set your browser near phone width or use a phone. Watch at 1× first, then compare Compact. Mark what needs another art pass.</p>
+        <p id="review-scope" class="review-scope">Reviewing Akinza vs Frackworm / Full</p>
+        <div id="scorecard" class="scorecard">
+          <fieldset data-key="identity"><legend>Can you tell the creatures apart immediately?</legend><label><input type="radio" name="identity" value="yes"> Yes</label><label><input type="radio" name="identity" value="revise"> Needs work</label></fieldset>
+          <fieldset data-key="intent"><legend>Does the action build to a readable moment?</legend><label><input type="radio" name="intent" value="yes"> Yes</label><label><input type="radio" name="intent" value="revise"> Needs work</label></fieldset>
+          <fieldset data-key="impact"><legend>Does the defender react at the right beat?</legend><label><input type="radio" name="impact" value="yes"> Yes</label><label><input type="radio" name="impact" value="revise"> Needs work</label></fieldset>
+          <fieldset data-key="compact"><legend>Does Compact still read at phone size?</legend><label><input type="radio" name="compact" value="yes"> Yes</label><label><input type="radio" name="compact" value="revise"> Needs work</label></fieldset>
+        </div>
+        <label class="notes-label" for="notes">What looked off?</label><textarea id="notes" rows="3" placeholder="Pose, timing, joins, size, effect, or something else…"></textarea>
+        <div class="review-actions"><button id="download" type="button">Download review notes</button><span id="saved" role="status">Saved in this browser</span></div>
+      </aside>
+    </div>
+    <footer>Standalone art validation scene. No game logic, account state, or permanent creature data is changed. <a href="../runtime/">Open the clip workbench</a></footer>
+  </main>
+  <script type="module" src="demo.mjs"></script>
+</body>
+</html>

@@ -1,0 +1,99 @@
+{
+  "species": "akinza",
+  "record": "docs/species-templates/akinza.json",
+  "template": "biped",
+  "label": "Akinza, Blender biped",
+  "variant": "blender",
+  "export": "akinza-blender",
+  "blend": "akinza_motion.blend",
+  "output": "rendered/akinza",
+  "palette": {
+    "ink": {"label": "night outline", "hex": "16232e"},
+    "hide": {"label": "night fur", "hex": "3f5a6e"},
+    "hide_light": {"label": "dusk fur", "hex": "6f8ea3"},
+    "belly": {"label": "frost belly", "hex": "b9cdd8"},
+    "plume": {"label": "tail plume", "hex": "587a90", "roughness": 0.8},
+    "plume_light": {"label": "tail plume light", "hex": "9db6c6", "roughness": 0.8},
+    "plume_deep": {"label": "tail plume shadow", "hex": "2e4454", "roughness": 0.8},
+    "trouser": {"label": "thigh fur", "hex": "3f5a6e", "roughness": 0.8},
+    "tooth": {"label": "fang", "hex": "ffffff", "roughness": 0.4},
+    "tongue": {"label": "tongue", "hex": "c46a7a", "roughness": 0.5},
+    "eye": {"label": "night eye", "hex": "7fe0d8", "roughness": 0.25, "emission": 0.35},
+    "claw": {"label": "claw", "hex": "2c3a48", "roughness": 0.5}
+  },
+  "proportions": {
+    "torso_scale": [0.3, 0.26, 0.5],
+    "torso_center": [0.0, 0, 0.16],
+    "torso_pitch": 8,
+    "neck_root": [0.06, -0.02, 0.6],
+    "neck_forward": 0.3,
+    "neck_up": 0.95,
+    "neck_length": 0.22,
+    "head_length": 0.28,
+    "shoulder": [0.06, 0.28, 0.52],
+    "arm_length": 0.4,
+    "hip": [-0.02, 0.15, -0.3],
+    "hip_stagger": 0.06,
+    "thigh": 0.42,
+    "shin": 0.4,
+    "ground_z": -0.95,
+    "tail_root": [-0.1, 0.04, -0.28],
+    "tail_length": 1.05,
+    "tail_droop": [-38, 22],
+    "eye_scale": 1.5,
+    "ear_length": 0.62,
+    "lunge": 0.55,
+    "hop": 0.4,
+    "crouch_drop": 0.2,
+    "tail_lift": 1,
+    "ear_spread": 0.17,
+    "ear_tilt": 30,
+    "swipe_reach": 150
+  },
+  "anatomy": {"teeth": 2, "tail_segments": 3, "tail_plumes": 3, "crown_plumes": 0, "wing_feathers": 0, "back_feathers": 0, "ears": 2, "toe_claws": false},
+  "render": {
+    "samples": 16,
+    "seed": 0,
+    "world": "5a6a7a",
+    "lights": {"key": 420, "fill": 220, "rim": 380}
+  },
+  "clips": {
+    "idle": [1, 12],
+    "action": [21, 30]
+  },
+  "markers": [
+    {"name": "quiet start", "frame": 1},
+    {"name": "action start", "frame": 21},
+    {"name": "notice", "frame": 23},
+    {"name": "crouch", "frame": 30},
+    {"name": "dash", "frame": 32},
+    {"name": "contact_pose", "frame": 35, "cue": true},
+    {"name": "landing", "frame": 38},
+    {"name": "recovered", "frame": 50}
+  ],
+  "points": {
+    "emitter": {"part": "hand", "frame": 35},
+    "ground_contact": {"part": "foot", "frame": 21},
+    "eye_rest": {"part": "pupil", "frame": 21}
+  },
+  "performance": {
+    "action": {
+      "name": "Silence of the Long Night",
+      "keys": [
+        [21, "smooth", {}],
+        [23, "out", {"notice": 1.0, "hyaw": -10}],
+        [27, "smooth", {"notice": 1.0, "hyaw": -6, "crouch": 0.7, "lean": 6, "tail": 0.4}],
+        [30, "smooth", {"notice": 0.8, "crouch": 1.0, "lean": 10, "tail": 0.9, "jaw": 0.1}],
+        [32, "in", {"crouch": 0.2, "rise": 0.1, "fwd": 0.45, "lean": 16, "swipe": 0.15, "jaw": 0.3, "tail": 0.5}],
+        [34, "out", {"rise": 0.12, "fwd": 0.94, "lean": 14, "hyaw": -6, "swipe": 0.85, "jaw": 0.7, "tail": 0.2}],
+        [35, "linear", {"rise": 0.06, "fwd": 1.0, "lean": 10, "hyaw": -6, "swipe": 1.0, "jaw": 0.8, "tail": 0.1}],
+        [37, "smooth", {"fwd": 1.0, "lean": 4, "hyaw": -4, "swipe": 0.55, "jaw": 0.2, "land": 0.6}],
+        [39, "smooth", {"fwd": 0.96, "crouch": 0.35, "lean": 0, "swipe": 0.2, "land": 1.0}],
+        [42, "smooth", {"fwd": 0.7, "rise": 0.1, "crouch": 0.1, "lean": -6, "swipe": 0.05, "tail": 0.3}],
+        [45, "smooth", {"fwd": 0.25, "rise": 0.04, "lean": -3, "tail": 0.2}],
+        [47, "smooth", {"fwd": 0.02, "crouch": 0.15, "land": 0.4}],
+        [50, "smooth", {}]
+      ]
+    }
+  }
+}

@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Avilily motion comparison</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="shell">
+    <header>
+      <p class="eyebrow">XALIANS / ANIMATION STUDY 01</p>
+      <h1>One creature, six ways to move</h1>
+      <p class="lede">Avilily prepares, opens its flower beak, and settles. Watch each version at normal speed first. The animation cue describes the bloom; the scene makes no combat decision. Card 06 is the second Blender pass built from what the first five showed; card 05 is kept as its before.</p>
+    </header>
+    <section class="transport" aria-label="Playback controls">
+      <button id="play" type="button" disabled>Pause</button>
+      <button id="replay" type="button" disabled>Replay</button>
+      <label>Motion <select id="clip"><option value="action">Blossoming Ambuscade</option><option value="idle">Quiet presence</option></select></label>
+      <label class="check"><input id="effects" type="checkbox"> Show secretion cue</label>
+      <label class="check"><input id="light" type="checkbox"> Light stage</label>
+      <span class="clock" id="clock">0.00 / 1.25 s</span>
+      <input id="timeline" type="range" min="0" max="1250" value="0" aria-label="Scrub all six animations" disabled>
+    </section>
+    <p id="status" class="status" role="status">Loading animation atlases…</p>
+    <section class="grid" aria-label="Six synchronized motion trials">
+      <article class="card" data-variant="cutout">
+        <div class="card-head"><span class="number">01</span><div><h2>Current 2D cutout</h2><p>Godot rig and authored part keys</p></div></div>
+        <canvas width="384" height="384" role="img" aria-label="Current Godot cutout animation of Avilily"></canvas>
+        <p class="question">Does the anticipation read? Watch the wing and body joins.</p>
+      </article>
+      <article class="card" data-variant="hybrid">
+        <div class="card-head"><span class="number">02</span><div><h2>Cutout with drawn bloom</h2><p>Same rig, replacement flower drawings</p></div></div>
+        <canvas width="384" height="384" role="img" aria-label="Hybrid cutout and drawn bloom animation of Avilily"></canvas>
+        <p class="question">Does the redrawn flower add clarity or feel pasted on?</p>
+      </article>
+      <article class="card" data-variant="pixel">
+        <div class="card-head"><span class="number">03</span><div><h2>Native pixel animation</h2><p>96 px grid, redrawn poses, 20 fps action</p></div></div>
+        <canvas width="384" height="384" role="img" aria-label="Pixel art frame animation of Avilily"></canvas>
+        <p class="question">Is the bloom readable through the stepped shapes and timing?</p>
+      </article>
+      <article class="card" data-variant="rendered3d">
+        <div class="card-head"><span class="number">04</span><div><h2>Godot 3D blockout</h2><p>Basic 3D volumes, 2D delivery</p></div></div>
+        <canvas width="384" height="384" role="img" aria-label="Three dimensional Avilily model rendered to two dimensional frames"></canvas>
+        <p class="question">Does volume help the action enough to justify the model work?</p>
+      </article>
+      <article class="card" data-variant="blender">
+        <div class="card-head"><span class="number">05</span><div><h2>Blender 3D character</h2><p>Modeled feather groups, keyed bloom, 2D delivery</p></div></div>
+        <canvas width="384" height="384" role="img" aria-label="Avilily animation modeled and keyed in Blender, rendered into sprite frames"></canvas>
+        <p class="question">Do the shaped feathers, lighting, and flower mechanism justify this 3D source?</p>
+      </article>
+      <article class="card" data-variant="blender2">
+        <div class="card-head"><span class="number">06</span><div><h2>Blender 3D, second pass</h2><p>Egg body, shoulder-hinged wings, radial beak, perch-solved legs</p></div></div>
+        <canvas width="384" height="384" role="img" aria-label="Second pass of the Blender Avilily: notice, crouch, hop with wings raised behind, bloom, landing, and recovery"></canvas>
+        <p class="question">Can you predict the hop before it happens, find the open beak at the peak, and read the landing without pausing?</p>
+      </article>
+    </section>
+    <section class="review" aria-label="Review notes">
+      <div><p class="eyebrow">AFTER WATCHING AT 1×</p><h2>What did you actually see?</h2><p>Look for intent before the bloom, the beak at its peak, believable recovery, and the creature's identity. Pause and scrub only after the first watch.</p></div>
+      <div><label for="preference">Which version deserves another pass?</label><select id="preference"><option value="">Still deciding</option><option value="cutout">Current 2D cutout</option><option value="hybrid">Cutout with drawn bloom</option><option value="pixel">Pixel-grid redraw</option><option value="rendered3d">Godot 3D blockout</option><option value="blender">Blender 3D character</option><option value="blender2">Blender 3D, second pass</option></select><label for="notes" class="notes-label">Review notes</label><textarea id="notes" rows="5" placeholder="Which motion reads best? Where does each version fail?"></textarea><button id="download" type="button">Download notes</button><small>Notes stay in this browser until you download them.</small></div>
+    </section>
+    <footer>Standalone animation comparison. All trials share the same stage and game-neutral atlas reader. <a href="pass2.html">Open the pass 1 versus pass 2 phone-size review</a>. <a href="study.html?study=bioflim-blender">Bioflim</a> and <a href="study.html?study=dromeus-blender">Dromeus</a> play on the single-study page. <a href="../creature-motion-pilot/demo/">Open the battle demo</a>.</footer>
+  </main>
+  <script type="module" src="viewer.mjs"></script>
+</body>
+</html>

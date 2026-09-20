@@ -1,0 +1,46 @@
+{
+  "species": "dromeus",
+  "template": "biped",
+  "variant": "blender",
+  "export": "dromeus-blender",
+  "label": "Dromeus, Blender biped",
+  "emitter": [
+    352,
+    177
+  ],
+  "points": {
+    "ground_contact": [
+      192,
+      318
+    ],
+    "eye_rest": [
+      269,
+      160
+    ]
+  },
+  "markers": {
+    "bite": {
+      "frame": 35,
+      "time_ms": 583
+    }
+  },
+  "clips": {
+    "idle": [
+      1,
+      12
+    ],
+    "action": [
+      21,
+      30
+    ]
+  },
+  "provenance": {
+    "blender": "5.2.2 LTS",
+    "spec": "dromeus.json",
+    "spec_hash": "581d35138e4eac96",
+    "library_hash": "73033b206d1171ff",
+    "cycles_seed": 0,
+    "samples": 16
+  },
+  "objects": 152
+}

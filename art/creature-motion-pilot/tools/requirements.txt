@@ -1,0 +1,2 @@
+CairoSVG>=2.7,<3
+Pillow>=11,<13

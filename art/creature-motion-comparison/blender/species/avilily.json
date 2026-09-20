@@ -1,0 +1,80 @@
+{
+  "species": "avilily",
+  "record": "docs/species-templates/avilily.json",
+  "template": "avian",
+  "label": "Avilily, Blender pass 2",
+  "variant": "blender2",
+  "export": "blender2",
+  "blend": "avilily_motion_v2.blend",
+  "output": "rendered/avilily-pass2",
+  "palette": {
+    "ink": {"label": "deep teal feather edge", "hex": "1f4448"},
+    "leaf": {"label": "floral green", "hex": "63ab68"},
+    "leaf_light": {"label": "feather highlight", "hex": "a9d97c"},
+    "leaf_deep": {"label": "underside green", "hex": "35785f"},
+    "breast": {"label": "warm pale breast", "hex": "e6f0b4"},
+    "petal": {"label": "coral flower petal", "hex": "ea9a80", "roughness": 0.62, "subsurface": 0.15},
+    "petal_light": {"label": "petal inner light", "hex": "ffd9a3", "roughness": 0.62, "subsurface": 0.15},
+    "petal_deep": {"label": "petal shadow coral", "hex": "c96f6e", "roughness": 0.62},
+    "throat": {"label": "dark flower throat", "hex": "4d2f4f"},
+    "stamen": {"label": "stamen ivory", "hex": "fff0c2", "roughness": 0.5},
+    "eye": {"label": "eye iris", "hex": "16323a", "roughness": 0.28},
+    "white": {"label": "eye and claw ivory", "hex": "f7f4dc", "roughness": 0.45},
+    "talon": {"label": "talon wood gold", "hex": "b98866"},
+    "trouser": {"label": "feathered thigh", "hex": "4f9a63"}
+  },
+  "proportions": {
+    "body_scale": [0.44, 0.38, 0.7],
+    "wing_length": 1.08,
+    "streamer_length": 1.45,
+    "petal_length": 0.56,
+    "petal_width": 0.29,
+    "thigh": 0.3,
+    "shin": 0.33,
+    "perch_z": -0.95,
+    "hop": 0.75,
+    "crouch_drop": 0.16
+  },
+  "anatomy": {"beak": "radial_flower", "crest": 3, "streamers": 2, "tail": 3, "flank_rows": 2},
+  "render": {"samples": 16, "seed": 0, "world": "728880"},
+  "clips": {
+    "idle": [1, 12],
+    "action": [21, 30]
+  },
+  "markers": [
+    {"name": "quiet start", "frame": 1},
+    {"name": "action start", "frame": 21},
+    {"name": "notice", "frame": 23},
+    {"name": "crouch", "frame": 30},
+    {"name": "bloom_open", "frame": 34, "cue": true},
+    {"name": "bloom peak", "frame": 36},
+    {"name": "landing", "frame": 43},
+    {"name": "recovered", "frame": 50}
+  ],
+  "points": {
+    "emitter": {"part": "bead", "frame": 36},
+    "perch_contact": {"part": "foot", "frame": 21},
+    "eye_rest": {"part": "pupil", "frame": 21}
+  },
+  "performance": {
+    "action": {
+      "name": "Blossoming Ambuscade",
+      "keys": [
+        [21, "smooth", {}],
+        [23, "out", {"notice": 1.0, "hyaw": -6}],
+        [26, "smooth", {"notice": 1.0, "hyaw": -4, "crouch": 0.45, "wraise": 0.06}],
+        [30, "smooth", {"notice": 0.8, "crouch": 1.0, "lean": -6, "hpitch": 5, "wraise": 0.14, "wspread": 0.1, "opn": -0.1, "tail": 0.2}],
+        [32, "in", {"crouch": 0.15, "rise": 0.1, "fwd": 0.03, "lean": 7, "hpitch": -5, "wraise": 0.62, "wspread": 0.55, "opn": 0.12, "tail": 0.6}],
+        [34, "out", {"rise": 0.31, "fwd": 0.07, "lean": 11, "hpitch": -9, "hyaw": -5, "wraise": 0.98, "wspread": 0.9, "opn": 0.72, "throat": 0.7, "bead": 0.25, "tail": 1.0}],
+        [36, "smooth", {"rise": 0.37, "fwd": 0.08, "lean": 9, "hpitch": -7, "hyaw": -8, "wraise": 1.0, "wspread": 1.0, "opn": 1.08, "throat": 1.0, "bead": 1.0, "tail": 1.0}],
+        [38, "smooth", {"rise": 0.34, "fwd": 0.08, "lean": 7, "hpitch": -5, "hyaw": -8, "wraise": 0.94, "wspread": 1.0, "opn": 1.0, "throat": 1.0, "bead": 1.0, "tail": 0.9}],
+        [40, "smooth", {"rise": 0.24, "fwd": 0.07, "lean": 4, "hpitch": -3, "hyaw": -5, "wraise": 0.8, "wspread": 0.85, "opn": 0.96, "throat": 0.95, "bead": 0.9, "tail": 0.8}],
+        [43, "in", {"rise": 0.0, "fwd": 0.04, "crouch": 0.55, "land": 1.0, "lean": -3, "hpitch": 3, "wraise": 0.5, "wspread": 0.5, "opn": 0.6, "throat": 0.6, "bead": 0.45, "tail": 0.4}],
+        [44, "out", {"crouch": 0.62, "land": 0.7, "lean": -2, "hpitch": 3, "wraise": 0.4, "wspread": 0.35, "opn": 0.45, "throat": 0.45, "bead": 0.25, "tail": 0.3}],
+        [46, "smooth", {"crouch": 0.1, "fwd": 0.01, "lean": 1, "wraise": 0.14, "wspread": 0.1, "opn": 0.14, "throat": 0.15, "bead": 0.0, "tail": 0.1}],
+        [48, "smooth", {"crouch": 0.1, "notice": 0.25, "wraise": 0.04, "opn": 0.03, "throat": 0.03}],
+        [50, "smooth", {}]
+      ]
+    }
+  }
+}

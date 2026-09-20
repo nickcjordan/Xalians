@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+  <defs>
+    <linearGradient id="petal" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff5bd"/><stop offset=".45" stop-color="#f4b48a"/><stop offset="1" stop-color="#c66d83"/></linearGradient>
+    <linearGradient id="throat" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#3a4650"/><stop offset="1" stop-color="#752e59"/></linearGradient>
+  </defs>
+  <path d="M7 47 C20 43 26 40 35 41 L45 48 L35 55 C25 54 16 52 7 51 Z" fill="#4e8767" stroke="#224e52" stroke-width="4" stroke-linejoin="round"/>
+  <path d="M38 47 C32 34 27 22 39 6 C49 14 55 27 52 42 Z" fill="url(#petal)" stroke="#77546a" stroke-width="4" stroke-linejoin="round"/>
+  <path d="M45 44 C53 26 67 17 84 18 C82 35 70 44 57 49 Z" fill="url(#petal)" stroke="#77546a" stroke-width="4" stroke-linejoin="round"/>
+  <path d="M48 52 C61 51 76 57 86 72 C71 79 56 70 46 60 Z" fill="url(#petal)" stroke="#77546a" stroke-width="4" stroke-linejoin="round"/>
+  <path d="M39 56 C36 66 38 80 48 90 C60 81 59 68 52 57 Z" fill="url(#petal)" stroke="#77546a" stroke-width="4" stroke-linejoin="round"/>
+  <path d="M33 45 C29 39 18 35 9 37 C15 49 19 56 33 59 Z" fill="#eb8e8a" stroke="#77546a" stroke-width="3"/>
+  <ellipse cx="46" cy="50" rx="17" ry="13" fill="url(#throat)" stroke="#704759" stroke-width="4"/>
+  <path d="M45 51 Q55 46 61 51 Q55 58 46 55 Z" fill="#ffe6a8"/>
+  <path d="M41 41 L39 18 M56 40 L75 24 M59 55 L76 70 M48 62 L49 81" fill="none" stroke="#fff6c7" stroke-width="3" stroke-linecap="round" opacity=".8"/>
+  <circle cx="51" cy="49" r="3" fill="#fff8d6"/>
+</svg>

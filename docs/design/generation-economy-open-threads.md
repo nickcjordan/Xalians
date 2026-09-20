@@ -29,6 +29,10 @@ Updated 2026-09-18. This brief is the entry point for a new agent and needs no p
 
 The current signed-in generation API gives owned creatures for free and can accept an exact species. Current release deletes a registry record. The Arcade verifies submitted wins and currently turns accumulated numeric credits into tokens. No general trade, starter draft, attunement, restoration reserve, or game-specific development platform exists. These mismatches are expected until explicit cutover and must not be mistaken for approved policy. Nick is the only current user and authorized clearing in-scope prototype creature and economy records **when needed at cutover**, not immediately. Identify exact data before any reset; do not touch unrelated code, content, or lore.
 
+## Separate art presentation handoff
+
+Nick approved animated stage performance as an additional species presentation on 2026-09-18 and is open to further forms. The portrait remains a visual reference beneath the ratified template and lore. The current work compares animation styles and production methods before selecting a permanent stage style. See `species-art-system.md`, `creature-art-direction-review.md`, `avilily-motion-comparison-brief.md`, and the current `creature-animation-agent-handoff.md`. Existing game art use is unaffected.
+
 ## How to work from here
 
 1. Read `xalian-generation-system.md` after this brief. Use it as the current design of record for platform lifecycle, economy, generation targeting, and game integration. Use ratified creature and lore sources for immutable genesis and canon.
