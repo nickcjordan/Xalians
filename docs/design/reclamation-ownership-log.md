@@ -2,7 +2,7 @@
 
 Status: the running state of the game under ownership (brief: `reclamation-ownership-brief.md`). This file is the resume point. Any reset reads this first and continues at the weakest thing named below, never from scratch. Each pass appends its own section; the standing state at the top is rewritten in place.
 
-## Standing state (after pass 26, 2026-09-19)
+## Standing state (after pass 27, 2026-09-19)
 
 ### Gauges, proctor mirror
 
@@ -17,7 +17,7 @@ Pass 6 changed no rule. It re-read two gauges with enough statistical power to s
 | **Affordance: comprehension by prediction** | beat deploy-totals-only | **12 of 12 (100%)**, 3 of 3 on flipped worlds (pass 11, with the resolution trace; was 92% and 1 of 2) | **met with room** |
 | Contested worlds where no attack lands at all | reported only | 9.5 / 11.1 / 10.4 percent | **judged pass 14: not a hole** |
 | A side fielding only presences wins its world | reported only | 41.9% +/- 1.5 against 53.0% +/- 1.2 with an attacker | fielding no attacker is a worse bet, not a free win |
-| **Rubric critic score** | rising per pass | **65 / 100** (pass 14; was 64 at pass 10) | fiction 9, first five minutes 8, feedback 8, glanceability 7, craft 7; lowest: mobile 3 (on a bug that did not exist), reason to keep playing 5, numbers 6, style 6, pace 6 |
+| **Rubric critic score** | rising per pass | **55 / 100** (pass 27, a HARSHER read than pass 14's 65; see pass 27) | fiction 9, first five minutes 8, feedback 8, glanceability 7, craft 7; lowest: mobile 3 (on a bug that did not exist), reason to keep playing 5, numbers 6, style 6, pace 6 |
 | **Comeback from a CONTESTED round 1** (trailing by one or two worlds) | 30 to 40 | **30.8 / 32.0 / 35.1**; pooled 29.1 +/- 1.4 | **met on three seeds** |
 | Comeback from a SWEPT round 1 (trailing by three) | not safeguarded, by ruling | 7 to 12 percent; pooled 8.0 +/- 1.8 | working as ruled |
 | Comeback, both populations averaged | (the old single gauge) | 25.9 / 27.1 / 30.7; pooled 25.2 +/- 1.2 | reported, superseded by the split |
@@ -55,13 +55,15 @@ What it reads, and where each effect kind lands (measured over the seed-7 pool, 
 
 **Nick's steer, 2026-09-19: the priority is whether the game is mechanically deep and fun, not how two people play it.**
 
-1. **The critic's engagement scores are the weakest thing on the sheet:** reason to keep playing 5, pace 6, numbers 6, style 6, against fiction 9 and first five minutes 8. Passes 24 to 26 fixed the mechanical causes the critic could not name (the decision space doubled, the arc is measured live); **a fresh critic run is now the highest-value next move**, because the remaining engagement complaints are the ones no gauge on the sheet reads.
-2. **The three borrowed effect kinds** (displace, transfer, suppress, 261 actions) still read as plain attacks. Act flip now makes a creature's SECOND act matter, which changes the case for these: an act that only exists as "another attack" is worth less than one the handler would actually pick.
-3. **Act flip has no dossier line.** The picker names each behaviour and says what it does on hover; the dossier does not yet list the acts a creature carries. The axis is playable but under-explained.
-4. **Fire is a dead element and dromeus a dead species** in the draft. Read it pooled before treating it as a failure.
-5. **The generator's attribute ranges are not published anywhere the game can read.** Pass 19 found a threshold below the floor of the attribute it cuts.
-6. **The status strip is the tallest block on a phone** at 250px, carrying six jobs.
-7. **No human has played a full Proving.** The instrument exists (hot-seat, passes 20 to 23).
+1. **Pace scored 3 of 10, the lowest score any critic has given anything.** "This looks like paperwork: the play screen is three static rectangles plus a scrolling text log, and the hero verb on screen is PASS THIS ROUND - no visible motion, no sense of creatures doing anything to each other beyond a number shrinking." The mechanics are now deep (pass 25 doubled the decision space); **what the Clash looks like is the weakest thing left**, and it is not a gauge problem.
+2. **Reason to keep playing, 4 of 10.** "Three identical empty black rectangles labelled UNCLAIMED are the least motivating opening board possible." Each world needs a stake in its panel body - what claiming it does, what losing it costs - so the empty state sells the decision instead of describing the interface.
+3. **Decimals everywhere.** Hold is printed to tenths on every surface; the critic called it "a precision the player can never act on" and the Charter "a wall of fifteen decimals in one column". Round hold to whole numbers outside the inspector.
+4. **Advanced mode is Simple on a phone.** `advanced-390` differs from `simple-390` only by a temperature range: the log and the inspector, its two best features, are both absent at 390. Either give them a phone form or say the mode is desktop-only.
+5. **The first viewport on a phone is all chrome.** Breadcrumb, mode toggle, rival name, sound, round header, world chips, two score strips, phase badge, turn line and a three-line instruction, before any world panel.
+6. **The three borrowed effect kinds** (displace, transfer, suppress, 261 actions) still read as plain attacks. Act flip makes a creature's second act matter, which changes the case for these.
+7. **Fire is a dead element and dromeus a dead species** in the draft. Read it pooled first.
+8. **The generator's attribute ranges are not published anywhere the game can read.**
+9. **No human has played a full Proving.** The instrument exists (hot-seat, passes 20 to 23).
 
 ### Hot-seat: what pass 20 did and did not do
 
@@ -534,3 +536,22 @@ Second, the metric is insensitive to what it claims to be about. **Quadrupling t
 **The lesson worth keeping:** *a band no version of the game has ever met is a hypothesis about the band, not about the game.* Twenty-five passes read this number and treated it as an outstanding fault, including three of mine. The cheap check is to ask what the statistic would read on a game that was obviously fine - here, a 2-1 lead held to 6-3 counts as "decided after round 1", which is enough to see the band cannot be right.
 
 **Verified:** 2072 tests green (five new), typecheck clean, build inside budgets, headless Proving green in all four configurations.
+
+### Pass 27 (2026-09-19): a harsher critic, and five things that were actually broken
+
+**Ran the blind critic on the current game: 55 of 100, against 65 at pass 14.** The score went DOWN, and that is the useful outcome rather than a regression. Pass 14's critic scored mobile 3 on a bug that did not exist and missed five real faults; this one found them. A critic that reads more harshly and cites the element it is reacting to is worth more than a higher number.
+
+**Five things it called broken. Four were, and are fixed:**
+
+- **The dossier was two rounds stale.** On the end-of-match screen the inspector still read "KOSANOS, read on STONERA" - a creature and a world from round one, beside a Charter awarding worlds it never mentioned. `inspect` was only ever cleared by Escape or the close button, so it survived every Ruling. Now dropped when the round changes and at the match end.
+- **The dossier clipped its content with no affordance.** It has always scrolled, but nothing on screen said more existed below, and a reader who cannot tell is right to call it clipped. A fading bottom edge, removed at the end of the scroll where there is nothing left to promise.
+- **The draft's BEST stat misled two independent critics.** "Nine of the fifteen cards advertise BEST POSEIDAS, but round one is Zolton / Stonera / Telypso." Pass 14 answered the same complaint by putting the explanation in a `title`; a reader looking at the card still could not tell. **A tooltip is not a label.** The visible legend now reads "best of nine".
+- **"12/11 BRING / SEND"** was, in the critic's words, "genuinely incomprehensible as a label". It now reads "11 sends, from 12 kept".
+
+**One was half right, and the cause was real.** The critic said simple mode has no event history and asked for the log. It has a ticker - but at two lines, and a Ruling over three worlds produces three verdict sentences, so a simple-mode player never saw the first world of the round. Four lines is the smallest number that carries a whole Ruling.
+
+**And one fault of my own, caught by reading the paint rather than the PASS.** My first act-flip dossier addition duplicated an existing class name and data attribute (`rec-inspect-acts`, `data-inspect-act`), so the panel rendered TWO act lists and my check read both: it printed `sweep, strike, attack, attack, attack` and still said PASS. The existing pass-7 list already named every act with its reach and footprint, which is strictly more informative than a role list, so the fix was to mark which act the chosen role uses rather than add a second list.
+
+**The lesson worth keeping:** *a falling critic score can be the instrument improving rather than the game regressing.* The comparison that matters is not 65 against 55, it is what each run found: pass 14's three top fixes included two artifacts of my own screenshots, and pass 27's five broken items were all real. Judge a critic by whether its findings survive checking, not by the number.
+
+**Verified:** 2072 tests green, typecheck clean, build inside budgets, all three headless checks green, and the four label and lifecycle fixes checked by paint.

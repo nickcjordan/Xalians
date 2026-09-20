@@ -8,6 +8,7 @@ import {
 } from '@xalians/rules/expedition/expeditionInterpretation';
 import { instinctSentence, attributeLanes } from './reclamationPreview';
 import { speciesLabel, formatHold, roleSentence } from './reclamationNarration';
+import { flippableRolesOf } from '@xalians/rules/expedition/creatureOnTable';
 import { RoleGlyph, SwiftGlyph, WillfulGlyph, InstinctGlyph } from './reclamationGlyphs';
 import XalianImage from '../../xalianImage';
 import {
@@ -72,6 +73,22 @@ function temperamentWords(temperament) {
 	say('aggression', 'aggressive', 'forbearing');
 	say('sociability', 'sociable', 'aloof');
 	return words.length > 0 ? words.join(', ') : 'even-tempered throughout';
+}
+
+/*
+	PASS 27. Which of a creature's acts serves the role it is set to use, so the dossier can
+	mark it. A sweep uses an area attack, a strike a single-target one, a shield a protecting
+	act and a bolster a restoring one - the same reading the table itself uses.
+*/
+function actServesRole(act, role) {
+	if (!act || !role) {
+		return false;
+	}
+	if (role === 'sweep') return act.role === 'attack' && !!act.area;
+	if (role === 'strike') return act.role === 'attack' && !act.area;
+	if (role === 'shield') return act.role === 'shield';
+	if (role === 'bolster') return act.role === 'mend';
+	return false;
 }
 
 function ReclamationInspect({ record, site, frame, rules, onClose }) {
@@ -151,21 +168,43 @@ function ReclamationInspect({ record, site, frame, rules, onClose }) {
 					{prepared.role && prepared.role !== 'none' && <RoleGlyph role={prepared.role} className="rec-inspect-role-glyph" />}
 					{roleSentence(prepared.role, prepared.blowMagnitude)}.
 				</p>
+				{/*
+					PASS 27. The old sentence here read "its role is fixed the moment it is sent;
+					there is nothing to order", which act flip (pass 25) made FALSE: the handler
+					now chooses among the behaviours the record supports, before sending. A
+					dossier that states a rule the game no longer follows is worse than one that
+					says nothing, so this branches on the lever rather than being reworded once.
+				*/}
 				<p className="g-body rec-inspect-note">
-					Its role is fixed the moment it is sent; there is nothing to order. {prepared.blow
+					{rules && rules.actFlip && flippableRolesOf(record, rules).length > 1
+						? 'You choose which of its behaviours it uses when you lift it. That choice is locked the moment it is sent.'
+						: 'Its role is fixed the moment it is sent; there is nothing to order.'}{' '}
+					{prepared.blow
 						? `It throws ${prepared.blow.name} for ${formatHold(prepared.blowMagnitude)}, before the element matchup against whatever it meets. Hurt, it attacks for less, in proportion to the hold it has left.`
 						: 'It throws no attack at all; standing at the world is what it does.'}
 				</p>
+
 				{/*
 					Pass 7: the record's own reading of this creature's acts. Reach and the
 					area footprint come straight off the record (spatial.range, spatial.area)
 					rather than from a projection onto legacy action keys, and an act the
 					table cannot speak is named here rather than silently read as a strike.
 				*/}
+				{/*
+					PASS 27. Act flip (pass 25) made this list a menu rather than an inventory:
+					the handler chooses which behaviour the creature uses, so the act it is
+					currently set to use is marked. The list itself is pass 7's and already says
+					more than a role list would (each act's reach and footprint), which is why
+					this marks it rather than adding a second list beside it.
+				*/}
 				{reading && reading.usable.length > 0 && (
 					<ul className="rec-inspect-acts" data-inspect-acts>
 						{reading.usable.map((act) => (
-							<li key={act.key} data-inspect-act={act.role}>
+							<li
+								key={act.key}
+								data-inspect-act={act.role}
+								className={actServesRole(act, prepared.role) ? 'rec-inspect-act--now' : undefined}
+							>
 								<span className="rec-inspect-act-name">{act.name}</span>
 								<span className="rec-inspect-act-fact">
 									{act.area ? 'reaches every creature here' : 'one creature'}
