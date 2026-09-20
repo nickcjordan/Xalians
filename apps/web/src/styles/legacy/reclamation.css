@@ -1656,6 +1656,53 @@
 	color: color-mix(in srgb, var(--g-ink-low) 55%, transparent);
 }
 
+/* -------------------------------------------------------------------------
+   PASS 29. THE FOOTING, in the body of an empty world.
+
+   An empty panel is 411px tall with a 264px body that used to carry the single
+   word "unclaimed". It now says what the world asks of this handler's squad.
+   Kept deliberately quiet: no colour beyond the element already on the panel,
+   micro type, and it is replaced by the figures the moment anyone stands here.
+   ------------------------------------------------------------------------- */
+
+.rec-world-footing {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: var(--g-1);
+	padding: 0 var(--g-2);
+	text-align: center;
+	max-width: 30ch;
+}
+
+.rec-world-footing-head {
+	font-family: var(--g-font-stencil);
+	font-size: var(--g-size-micro);
+	text-transform: uppercase;
+	letter-spacing: var(--g-track-wide);
+	color: color-mix(in srgb, var(--g-ink-low) 55%, transparent);
+}
+
+.rec-world-footing-line {
+	font-size: var(--g-size-micro);
+	line-height: 1.45;
+	color: var(--g-ink-mid);
+	text-wrap: balance;
+}
+
+.rec-world-footing-line b {
+	font-weight: 700;
+	color: var(--g-ink);
+}
+
+/* what the world takes reads cooler than what it offers */
+.rec-world-footing-line--cost { color: color-mix(in srgb, var(--g-ink-low) 80%, var(--g-ink-mid)); }
+
+/* home ground is the one genuinely good thing a world can offer, so it is the
+   one line that carries the element's own colour */
+.rec-world-footing-line--home { color: var(--g-ink-mid); }
+.rec-world-footing-line--home b { color: var(--g-el); }
+
 .rec-site--empty .rec-ghost-value { font-size: var(--g-size-lead); }
 
 /* kept in the DOM for the verification harness, out of sight for the reader */

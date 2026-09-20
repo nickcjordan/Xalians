@@ -136,6 +136,24 @@ for (const view of ['simple', 'advanced']) {
 				assert.deepEqual(tiny, [], `${label}: tap targets under 32px tall`);
 			}
 
+			/*
+				PASS 29. The opening board must say what each world asks of this squad.
+
+				Before pass 29 an empty world panel was 411px tall with a 264px body
+				carrying nine words, six of which were "no one", "UNCLAIMED" and "no one",
+				and a blind critic scored "reason to keep playing" 4 of 10 on exactly that.
+				The footing is what replaced it, and it is worth guarding: it is computed
+				from the handler's own bench, so a change to prepare() or to the draft can
+				empty it without any test noticing.
+			*/
+			const footings = await page.locator('[data-world-footing]').evaluateAll(
+				(els) => els.map((el) => el.innerText.replace(/\s+/g, ' ').trim()),
+			);
+			assert.equal(footings.length, 3, `${label}: ${footings.length} of 3 empty worlds say what they ask of the squad`);
+			footings.forEach((text) => {
+				assert(/\d+ of your \d+/.test(text), `${label}: a world's footing does not count the squad: "${text}"`);
+			});
+
 			let guard = 0;
 			let sends = 0;
 			while (guard < 220) {

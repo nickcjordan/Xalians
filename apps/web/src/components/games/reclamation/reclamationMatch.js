@@ -1828,6 +1828,65 @@ class ReclamationMatch extends React.Component {
 		});
 		const coaching = this.isSimple() && !this.state.coached && view.frameIndex === 0 && deploying;
 		const holdingIds = [...me.holding, ...them.holding];
+
+		/*
+			PASS 29, THE FOOTING IN THE PANEL BODY.
+
+			A blind critic scored "reason to keep playing" 4 of 10 and named the cause:
+			"three identical empty black rectangles labelled UNCLAIMED are the least
+			motivating opening board possible." Measured before designing: an empty world
+			panel is 411px tall with a 264px body carrying nine words, six of which are
+			"no one", "UNCLAIMED" and "no one". Three of them is 792px of screen saying
+			nothing about why any world is worth having, or how the three differ.
+
+			They differ a great deal, and the game already knows how. Over five seeds and
+			every site (210 site-roster pairs, a twelve-creature squad):
+
+			  creatures comfortable here      mean 5.4 of 12, RANGE 0 TO 11
+			  strained                        mean 4.4
+			  severely strained               mean 2.2
+			  native to this world (1.5x hold) mean 0.86, up to 3; 61% of worlds have one
+			  sites where every creature is comfortable   0 of 210
+			  sites where fewer than half are             87 of 210
+
+			So which of your squad can actually stand on a world is the sharpest thing that
+			distinguishes one panel from another, it is different on every world, and it was
+			never shown. This computes it from the handler's own bench, through the same
+			prepare() the figures use, so the panel cannot disagree with the table.
+		*/
+		const footingOfSite = {};
+		if (view.frame && view.frame.sites) {
+			const bench = (me.roster || []).filter((r) => !holdingIds.includes(r.id));
+			view.frame.sites.forEach((site) => {
+				let comfortable = 0;
+				let strained = 0;
+				let severe = 0;
+				let native = 0;
+				bench.forEach((record) => {
+					let plan = null;
+					try {
+						plan = prepare(record, site, site.world, 0, { rules: view.rules });
+					} catch (e) {
+						// a record the adapter cannot field is not a stake; it is counted nowhere
+						return;
+					}
+					if (!plan) {
+						return;
+					}
+					if (plan.isHome) {
+						native++;
+					}
+					if (plan.strainLevel === 'severe') {
+						severe++;
+					} else if (plan.strainLevel === 'strained') {
+						strained++;
+					} else {
+						comfortable++;
+					}
+				});
+				footingOfSite[site.id] = { comfortable, strained, severe, native, of: bench.length };
+			});
+		}
 		// assumption 20: your swift creatures that may still move this round, as the bench's
 		// move buttons. The engine's own list, so a button never offers an illegal move.
 		const movable = deploying && view.turn === this.seatInPlay()
@@ -1932,6 +1991,7 @@ class ReclamationMatch extends React.Component {
 							threats={threats}
 							highlights={highlights}
 							clashSiteId={playback ? highlights.clashSiteId : null}
+							siteFootings={deploying ? footingOfSite : null}
 							hoverSiteId={this.state.hoverSiteId}
 							advanced={!simple}
 							stakes={view.stakes}

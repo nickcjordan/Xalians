@@ -2,7 +2,7 @@
 
 Status: the running state of the game under ownership (brief: `reclamation-ownership-brief.md`). This file is the resume point. Any reset reads this first and continues at the weakest thing named below, never from scratch. Each pass appends its own section; the standing state at the top is rewritten in place.
 
-## Standing state (after pass 28, 2026-09-20)
+## Standing state (after pass 29, 2026-09-20)
 
 ### Gauges, proctor mirror
 
@@ -58,9 +58,9 @@ What it reads, and where each effect kind lands (measured over the seed-7 pool, 
 
 **Nick's steer, 2026-09-19: the priority is whether the game is mechanically deep and fun, not how two people play it.**
 
-1. **Reason to keep playing, 4 of 10.** "Three identical empty black rectangles labelled UNCLAIMED are the least motivating opening board possible." Each world needs a stake in its panel body - what claiming it does, what losing it costs - so the empty state sells the decision instead of describing the interface. **This is now the weakest thing left**, and it is about the board BEFORE anything happens, where pass 28 was about the board while it happens.
+1. **Re-score the critic on captures that can see motion, and on the new opening board.** Passes 28 and 29 both attacked scores the critic gave (pace 3, reason to keep playing 4) and neither has been re-read. Pass 28 also established that every capture set ever scored had `reducedMotion: 'reduce'` set and skipped the Clash, so the pace score of 3 was given to still frames of an animation. **This is now the top item**: it is the cheapest, and it gates knowing whether either pass worked for a reader rather than for a gauge. Any re-score must use a capture set that watches a Clash.
 2. **Decimals everywhere, the rest of it.** Pass 28 rounded the damage flash, which is the surface read fastest. Hold is still printed to tenths on the figure, the bench, the margin band and the Charter; the critic called the Charter "a wall of fifteen decimals in one column". The inspector keeps its tenths by design. Do the Charter next, then the figure.
-3. **Re-score the critic on captures that can see motion.** Pass 28 established that every capture set ever scored had `reducedMotion: 'reduce'` set and skipped the Clash. The pace score of 3 was given to still frames of an animation. Any re-score must use a capture set that watches a Clash, or it will keep measuring the harness rather than the game. This is the cheapest open item and it gates knowing whether pass 28 worked for a reader rather than for a gauge.
+3. **The footing answers "who can stand here", not "what does holding it do".** Pass 29 gave the empty world the half of the stake the game can compute from the record. The other half - what claiming a world is worth toward the Charter, what losing it costs - is still only in the status strip's sentence. Five of nine worlds clinch; a panel could say where this one sits in that count.
 4. **Advanced mode is Simple on a phone.** `advanced-390` differs from `simple-390` only by a temperature range: the log and the inspector, its two best features, are both absent at 390. Either give them a phone form or say the mode is desktop-only.
 5. **The first viewport on a phone is all chrome.** Breadcrumb, mode toggle, rival name, sound, round header, world chips, two score strips, phase badge, turn line and a three-line instruction, before any world panel.
 6. **The three borrowed effect kinds** (displace, transfer, suppress, 261 actions) still read as plain attacks. Act flip makes a creature's second act matter, which changes the case for these.
@@ -110,6 +110,38 @@ The single place the game's reading of a creature is decided:
 - `packages/rules/src/expedition/expeditionInterpretation.ts` holds every tunable as a named constant; `expeditionRules.DEFAULT_RULES` holds every ablation flag.
 
 ## Pass log
+
+### Pass 29 (2026-09-20): what a world asks of your squad
+
+**Weakest thing:** reason to keep playing, 4 of 10. "Three identical empty black rectangles labelled UNCLAIMED are the least motivating opening board possible."
+
+**Measured first.** An empty world panel is 411px tall with a 264px body carrying nine words, six of which are "no one", "UNCLAIMED" and "no one". Three of them is 792px of screen saying nothing about why any world is worth having or how the three differ. "Unclaimed" is true of every empty world, so it distinguishes none of them.
+
+**They differ a great deal, and the game already knew how.** Over five seeds and every site (210 site-roster pairs, a twelve-creature squad):
+
+| | |
+|---|---|
+| creatures comfortable at a site | mean 5.4 of 12, **range 0 to 11** |
+| strained | mean 4.4 |
+| severely strained | mean 2.2 |
+| native to the world (1.5x hold) | mean 0.86, up to 3; **61% of worlds offer one** |
+| sites where all twelve are comfortable | **0 of 210** |
+| sites where fewer than half are | **87 of 210** |
+
+And within a single frame, which is the comparison a handler actually makes: the comfortable count spreads by **3.67 on average, up to 9**, and 9 of 15 frames spread by 3 or more.
+
+**What shipped.** The footing: three short lines in the body of an empty world, computed from the handler's own bench through the same `prepare()` the figures use, so the panel cannot disagree with the table. How many of your squad are at ease here, how many are strained and how many severely, and whether any of yours calls this world home and holds half again as much on it. It is replaced by the figures the moment anyone stands here, because from then on the balance bar is the better answer.
+
+Seed 21 round 1 is the case it exists for: **Magmuth reads "0 of your 12 are at ease here, every one of them is severely strained"** beside Saiphus at 9 of 12. That is a decision written on the board before a single creature is sent.
+
+**Named "footing", not "stake".** Stake is already the game's own mechanic, the control on the panel head that makes a world count two. Sharing the word would have made one panel say "stake" about two unrelated rules.
+
+**One copy fix found by reading the output rather than the code:** "the other 12 are strained, 12 severely" is the arithmetic talking. When every strained creature is severely strained, which is the sharpest warning the panel can give, it now says so once.
+
+**Guarded twice.** `reclamation-proving.mjs` asserts all three empty worlds state what they ask of the squad and that each counts it, in all four configurations; falsified by demanding four, it fails on all four. `reclamationFooting.test.js` covers every branch of the copy, including the all-severe case, the singular case, the no-native case and the no-bench case; falsified by breaking one string, it fails.
+
+**Verification.** 1539 web tests green, all four headless checks green at 1440 and 390, phone panel-height guard (260px) still met.
+
 
 ### Pass 28 (2026-09-20): the Clash, made visible
 

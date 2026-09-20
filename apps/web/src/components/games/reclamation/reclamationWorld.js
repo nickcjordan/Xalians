@@ -110,6 +110,67 @@ export function EnvironmentScale({ site, ghost }) {
 	);
 }
 
+/*
+	PASS 29. THE FOOTING: what this world asks of YOUR squad.
+
+	Named "footing", not "stake": Stake is already the game's own mechanic, the control
+	on the panel head that makes a world count two. This is a different thing, and
+	sharing the word would make the panel say "stake" twice about two unrelated rules.
+
+	An empty world used to print the single word "unclaimed" in the middle of a 264px
+	body, three times across the frame, which a blind critic called "the least motivating
+	opening board possible" and scored 4 of 10 for reason to keep playing. "Unclaimed"
+	describes the interface; it is true of every empty world and so distinguishes none of
+	them.
+
+	What distinguishes them is who of yours can stand here, and it is sharply different
+	per world: measured over five seeds and every site, the number of a twelve-creature
+	squad comfortable at a site ranges from 0 to 11 (mean 5.4), and at 87 of 210 sites
+	fewer than half are. A native creature holds 1.5x here, and 61% of worlds offer one.
+
+	So the empty panel now says what the world costs and what it offers, in the handler's
+	own terms. It is still quiet: three short lines, no colour beyond the element already
+	on the panel, and it disappears the moment a creature stands here, because from then
+	on the figures and the balance bar are the better answer.
+*/
+export function WorldFooting({ footing, world }) {
+	if (!footing || !footing.of) {
+		// no bench to measure against (a resumed match mid-resolution, say): say the one
+		// true thing rather than an arithmetic of nothing
+		return <span className="rec-site-unclaimed">unclaimed</span>;
+	}
+	const { comfortable, severe, native, of } = footing;
+	const hostile = of - comfortable;
+	return (
+		<div className="rec-world-footing" data-world-footing>
+			<span className="rec-world-footing-head">unclaimed</span>
+			<span className="rec-world-footing-line" data-footing-ease>
+				<b className="g-mono">{comfortable}</b> of your <b className="g-mono">{of}</b> {comfortable === 1 ? 'is' : 'are'} at ease here
+			</span>
+			{hostile > 0 && (
+				<span className="rec-world-footing-line rec-world-footing-line--cost" data-footing-cost>
+					{/*
+						"the other 12 are strained, 12 severely" is the arithmetic talking. When
+						every strained creature is severely strained, which is the case a world
+						like Magmuth produces and the sharpest warning the panel can give, it
+						says so once.
+					*/}
+					{severe === hostile
+						? <>{comfortable === 0 ? 'every one of them is' : hostile === 1 ? 'the other is' : `the other ${hostile} are`} <b className="g-mono">severely</b> strained</>
+						: severe > 0
+							? <>{hostile === 1 ? 'the other is strained' : `the other ${hostile} are strained`}, <b className="g-mono">{severe}</b> severely</>
+							: <>{hostile === 1 ? 'the other is strained' : `the other ${hostile} are strained`}</>}
+				</span>
+			)}
+			{native > 0 && (
+				<span className="rec-world-footing-line rec-world-footing-line--home" data-footing-home>
+					<b className="g-mono">{native}</b> of yours {native === 1 ? 'calls' : 'call'} {world && world.planet ? world.planet : 'this world'} home, and {native === 1 ? 'holds' : 'hold'} half again as much on it
+				</span>
+			)}
+		</div>
+	);
+}
+
 function marginText(mine, theirs) {
 	const diff = mine - theirs;
 	if (Math.abs(diff) < 0.05) {
@@ -184,6 +245,7 @@ function ReclamationWorld({
 	threats,
 	highlights,
 	clashSiteId,
+	siteFootings,
 	arrival,
 	hoverSiteId,
 	previewRecordId,
@@ -422,7 +484,7 @@ function ReclamationWorld({
 										<span className={`rec-stamp rec-stamp--${verdict.who} rec-stamp--down`}>{verdict.text}</span>
 									)}
 									{!ghost && !movingRecordId && !verdict && empty && (
-										<span className="rec-site-unclaimed">unclaimed</span>
+										<WorldFooting footing={siteFootings ? siteFootings[site.id] : null} world={site.world} />
 									)}
 								</div>
 
