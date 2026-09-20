@@ -159,6 +159,12 @@ class ReclamationMatch extends React.Component {
 			log: props.initialLog ? props.initialLog.slice() : [],
 			notice: null,
 			armedRecordId: null,
+			/*
+				PASS 25, ACT FLIP. The behaviour the handler has chosen for the armed creature,
+				or null for its natural one. Cleared whenever the arming changes, so a choice
+				can never leak onto a different creature.
+			*/
+			armedRole: null,
 			// assumption 20: the swift creature armed to move, if any. A move does not spend
 			// the turn, so this is its own arming, separate from armedRecordId.
 			movingRecordId: null,
@@ -548,7 +554,7 @@ class ReclamationMatch extends React.Component {
 		if (e.key === 'Escape') {
 			if (this.state.armedRecordId || this.state.movingRecordId || this.state.inspect || this.state.pendingStakeSiteId) {
 				this.setState({
-					armedRecordId: null, movingRecordId: null, inspect: null, pendingStakeSiteId: null,
+					armedRecordId: null, armedRole: null, movingRecordId: null, inspect: null, pendingStakeSiteId: null,
 				});
 			}
 			return;
@@ -604,7 +610,7 @@ class ReclamationMatch extends React.Component {
 		if (this.seatShown === match.turn) {
 			return; // same person still moving
 		}
-		this.setState({ handoff: { seat: match.turn }, armedRecordId: null, movingRecordId: null });
+		this.setState({ handoff: { seat: match.turn }, armedRecordId: null, armedRole: null, movingRecordId: null });
 	};
 
 	// the other person has the keyboard: uncover the board for their seat
@@ -791,6 +797,16 @@ class ReclamationMatch extends React.Component {
 		return match.phase === 'deploy' && match.turn === this.seatInPlay() && !this.state.playback;
 	}
 
+	// pass 25: choosing which behaviour the armed creature will use. Only legal while a
+	// creature is armed, and only for a role its own record can support (the engine checks
+	// that too, so a stale choice can never produce an illegal send).
+	chooseRole = (role) => {
+		if (!this.state.armedRecordId) {
+			return;
+		}
+		this.setState((prev) => ({ armedRole: prev.armedRole === role ? null : role }));
+	};
+
 	armRecord = (recordId) => {
 		if (this.state.playback) {
 			this.notice('The round is still resolving.');
@@ -818,6 +834,8 @@ class ReclamationMatch extends React.Component {
 		}
 		this.setState((prev) => ({
 			armedRecordId: prev.armedRecordId === recordId ? null : recordId,
+			// pass 25: arming a different creature drops any behaviour chosen for the last one
+			armedRole: null,
 			movingRecordId: null,
 		}));
 	};
@@ -867,7 +885,9 @@ class ReclamationMatch extends React.Component {
 			return;
 		}
 		const record = match.players[this.seatInPlay()].roster.find((r) => r.id === armedRecordId);
-		const next = send(match, this.seatInPlay(), armedRecordId, siteId);
+		// pass 25: the behaviour the handler chose travels with the send, so the engine applies
+		// the same role the table previewed
+		const next = send(match, this.seatInPlay(), armedRecordId, siteId, false, this.state.armedRole || null);
 		if (!next) {
 			this.notice('That send is not allowed right now.');
 			return;
@@ -882,7 +902,7 @@ class ReclamationMatch extends React.Component {
 		// passed inside this one call and the round resolves. It therefore goes through
 		// commitStep like every other engine step, or that round's clash is never told.
 		this.commitStep(match, next, {
-			armedRecordId: null, hoverSiteId: null, hoverRecordId: null,
+			armedRecordId: null, armedRole: null, hoverSiteId: null, hoverRecordId: null,
 		});
 	};
 
@@ -936,7 +956,7 @@ class ReclamationMatch extends React.Component {
 		if (this.props.telemetry) {
 			this.props.telemetry.decisionEnd('deploy', 'pass', { round: match.frameIndex });
 		}
-		this.commitStep(match, next, { armedRecordId: null, movingRecordId: null });
+		this.commitStep(match, next, { armedRecordId: null, armedRole: null, movingRecordId: null });
 	};
 
 	// ------------------------------------------------------------------
@@ -1007,6 +1027,7 @@ class ReclamationMatch extends React.Component {
 		this.setState((prev) => ({
 			movingRecordId: prev.movingRecordId === recordId ? null : recordId,
 			armedRecordId: null,
+			armedRole: null,
 		}), () => {
 			if (this.state.movingRecordId) {
 				this.notice(`Press another world to move ${record ? speciesLabel(record) : 'it'} there. This does not spend your turn.`);
@@ -1912,6 +1933,15 @@ class ReclamationMatch extends React.Component {
 								movingRecordId={this.state.movingRecordId}
 								movable={movable}
 								onArm={this.armRecord}
+								/*
+									PASS 25, ACT FLIP. The behaviours the armed creature can take, and
+									the one chosen. The bot gained this axis in the engine; without
+									these props the player could not use it, which would be the worst
+									possible version of the change.
+								*/
+								actFlip={!!view.rules.actFlip}
+								armedRole={this.state.armedRole}
+								onChooseRole={this.chooseRole}
 								onInspect={(record) => this.inspectRecord(record, null)}
 								onHoverRecord={(id) => this.setState({ hoverRecordId: id })}
 								onPass={this.handlePass}

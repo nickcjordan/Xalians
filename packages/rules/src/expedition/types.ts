@@ -106,6 +106,11 @@ export interface Rules {
 	sendable: number;
 	// Pass 24: the most a handler may send in one round; 0 means no per-round cap
 	roundSendCap: number;
+	// Pass 25: reach at which an area act also catches the next world; 0 disables
+	// Pass 25: the handler chooses a creature's act at send
+	actFlip: boolean;
+	projectionReach: number;
+	projectionFalloff: number;
 	worldsPerFrame: number;
 }
 
@@ -260,6 +265,12 @@ export interface PreparedCreature {
 // prepare()'s options bag (creatureOnTable.prepare / holdAtSite)
 export interface PrepareOptions {
 	rules?: Rules | RulesInput | null;
+	/*
+		Pass 25: the role the HANDLER chose for this creature at send, when rules.actFlip is
+		on. Null or absent means the record's own natural role, which is every case before
+		this pass and every case with the lever off.
+	*/
+	chosenRole?: string | null;
 	bolstered?: boolean;
 	bolsterScale?: number;
 	packBondedKinAtSite?: number;
@@ -290,6 +301,8 @@ export interface BoardEntry {
 	// set by resolve() the instant a round's hidden creatures reveal, so ordering and the
 	// log can still tell which entries came in hidden this round
 	wasHidden?: boolean;
+	// Pass 25 (act flip): the role the handler named at send; null means the natural one
+	chosenRole?: string | null;
 }
 
 // board[siteId][seat]
@@ -444,6 +457,9 @@ export interface SendCandidate {
 	roleValue: number;
 	effect: number;
 	role: Role;
+	// Pass 25 (act flip): the role the handler would name for this send, null when the
+	// lever is off or the natural role is the choice
+	chosenRole?: string | null;
 }
 
 export interface ScoredSends {
@@ -463,7 +479,7 @@ export interface ScoredSends {
 }
 
 export type BotAction =
-	| { type: 'send'; recordId: string; siteId: string; hidden: boolean }
+	| { type: 'send'; recordId: string; siteId: string; hidden: boolean; chosenRole?: string | null }
 	| { type: 'move'; recordId: string; siteId: string; reason: string }
 	| { type: 'pass'; reason: string };
 
