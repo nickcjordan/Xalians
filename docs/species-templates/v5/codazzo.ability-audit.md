@@ -1,0 +1,5 @@
+# Codazzo: v5 ability audit
+
+Review date: 2026-09-21. Frozen in `generation-0.6.0-1`; game consumers still use v4. Sources: `../codazzo.json`, its walkthrough/art, canonical teaser and Endessa record. Teaser preserved verbatim.
+
+The fixed Explosive Tail Barb is a launched spine with a small target-anchored radial impact area. The explosion is physical blast impact; no fire or burning is inferred. Ordinary domains vary supported barb range/area, close tail-spine piercing and digging-claw cutting. Burrowing remains physiology. Rapid barb regrowth is represented by the fixed ability's repeatable short recovery, not by a generic self-health restoration effect or an ammunition meter. This preserves the species capability without claiming arbitrary wound healing. No unrelated chemical, ghost or elemental attack from old pools was retained. Temperament and outputs were reviewed in the [cross-roster calibration](../../design/creature-v5-calibration.md). Compilation/seeded generation cover four distinct actions and fixed explosive delivery; this audit records source permission.

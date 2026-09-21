@@ -54,10 +54,27 @@ Do not modify an already frozen release to accommodate a later edit. Make a new 
 
 ## Schema 4 release
 
-Current release generation-0.5.0-1 uses generator 0.5.0 and schema 4.0.0. It separates actions/passives and adds structured spatial, timing, status, and removal facts. Both earlier archives remain replayable unchanged.
+The first schema-4 release, `generation-0.5.0-1`, uses generator 0.5.0 and schema 4.0.0. It separates actions/passives and adds structured spatial, timing, status, and removal facts. Both earlier archives remain replayable unchanged. The selected game release is `generation-0.5.0-4` in `packages/rules/src/generator/currentRelease.json`; the standalone schema-5 archive is `generation-0.6.0-1`.
 
 Integration release generation-0.5.0-2 includes ratified Shuntara from main. Generator/schema versions remain 0.5.0/4.0.0; the release ID pins the changed content. The earlier 31-species archive remains immutable.
 
 Release generation-0.5.0-3 tightens authoring validation: effect subject restrictions inherit capability compatibility; compatibility cannot add targeting subjects; self-only targeting must admit a creature and cannot transfer resources to itself. Existing templates and generated capability facts are unchanged. All prior archives remain intact.
 
 Release generation-0.5.0-4 completes status applicability/boundary metadata and shared removal-method definitions. It introduces no new powers or game behavior. See ability-redesign-completion.md for the completion audit and deferred game work.
+
+
+## Schema 5 integration checkpoint
+
+The redesigned release adapter is `packages/rules/src/generator/creatureRelease.ts` (generator 0.6.0, schema 5.0.0). `createCreatureRelease(releaseId, sources)` compiles a nonempty, uniquely keyed species roster once and exposes the existing archive interface: `GENERATION_RELEASE_ID`, `getSpeciesTemplates`, and `generateXalian`. The release entry point also exports the two version constants. Caller-supplied species objects cannot be substituted at generation time.
+
+Generation requires a species key, nonempty string seed, origin, serial, timestamp, and profile. It validates these caller inputs, not the completed creature. The species key, seed and algorithm version form the random namespace; labelled streams separate biology, abilities, appearance and ID. The appearance odds retain the existing policy (eclipse 1/4000, prismatic 1/400, gleam 1/40, otherwise standard). Showroom forces standard appearance without changing generated biology. The result contains resolved data plus compact provenance; it does not duplicate registries or authoring definitions.
+
+`freeze({entryPoint, releaseId, archives})` supports an explicit entry point and destination for integration tests. Its default CLI behavior is unchanged. It verifies the bundled export contract and release identity before creating an archive. The dependency graph automatically fingerprints the v5 catalog, benchmarks, schemas, compiler, naming, species JSON and PRNG, together with their runtime dependencies.
+
+The release tests freeze the hypothetical support species into a temporary archive and separately freeze the complete canonical roster into a temporary archive. They validate complete v5 records, replay every canonical species in both profiles, and exercise fresh-process replay for the adapter fixture. Those temporary archives are deleted after the tests.
+
+### Frozen canonical v5 archive
+
+The 32 source-audited definitions under `docs/species-templates/v5/` are bound by `packages/rules/src/generator/canonicalCreatureRelease.ts`. Release `generation-0.6.0-1` freezes that entry point, the complete roster, schema, catalog, compiler, naming and PRNG inputs. Integrity and full-roster replay checks pass. The rating pass is recorded in [creature-v5-calibration.md](creature-v5-calibration.md); the seeded construction test samples 24 seeds per species and checks guaranteed identity and four distinct actions.
+
+The current game pointer remains `generation-0.5.0-4`. Consumers switch to v5 only in the separately scoped game migration. The [roster audit](creature-roster-audit.md) resolved paralysis and records explicit lore-only deferrals for unignited fuel and physical route barriers. The archived v5 release is replayable now without changing game imports.

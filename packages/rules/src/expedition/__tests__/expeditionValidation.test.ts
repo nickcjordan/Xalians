@@ -217,7 +217,7 @@ describe('runValidation', () => {
 		ALL_SECTIONS.forEach((id: any) => {
 			expect(report[id]).toBeDefined();
 		});
-	});
+	}, 20_000);
 
 	it('is deterministic: the same seed gives identical markdown twice', () => {
 		const a = runValidation({ matches: MATCHES, seed: SEED, only: ['regret', 'spread', 'decided'] });

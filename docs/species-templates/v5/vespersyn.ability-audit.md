@@ -1,0 +1,5 @@
+# Vespersyn: v5 ability audit
+
+Review date: 2026-09-21. Frozen in `generation-0.6.0-1`; game consumers still use v4. Sources: `../vespersyn.json`, its walkthrough, `../art/tetrahive.png`, renamed Vespersyn SVG, canonical teaser and home-world record. Teaser preserved verbatim. The later ratified `swarm` body plan supersedes the old avian walkthrough entry.
+
+The fixed Toothed Swarm uses one central mind to direct **nonliving projections** against a selected target. A second guaranteed action interposes those projections to protect the central body. An ongoing passive conceals the central body among the shapes. These are separate attack, defense and detectability functions. The ordinary domains vary swarm bites, interposition and physical central-claw contact without listing complete moves. Nothing here creates autonomous allied creatures, literal summoning of life, possession or mind control of an opponent. The central body remains part of the species. Temperament/output were reviewed in the [cross-roster calibration](../../design/creature-v5-calibration.md). Compilation/seeded generation cover four distinct actions, fixed attack/defense and concealment.

@@ -1,0 +1,390 @@
+{
+  "key": "scalatto",
+  "name": "Scalatto",
+  "nameOrigin": "A blend of scale and the French tatou, armadillo, matching its scaly armor and ability to roll into a protective ball.",
+  "element": "sand",
+  "homePlanet": "endessa",
+  "generatorPlanets": [
+    "endessa"
+  ],
+  "lore": {
+    "description": "Shielded by a scaly exoskeleton, this creature can roll into a ball to protect itself.",
+    "appearance": [
+      "Stout biped",
+      "Heavy for its height",
+      "Scaly chitin exoskeleton in overlapping bands",
+      "Long low head with a blunt snout",
+      "Backswept spines running from the head down the neck",
+      "Long curved claws on the forelimbs",
+      "Very long banded tail with a hooked tip"
+    ],
+    "origin": "One of the Xalians the Syndicate's stolen prototype Generator produced to work the drilling on Endessa.",
+    "habitat": "The dunes and cavern networks of Endessa, crossing the surface only in the low hours.",
+    "feeding": "It eats what it finds in the caverns and on the dunes in the low hours.",
+    "behavior": "It rolls into a ball inside its scaly exoskeleton to protect itself, and it feels the ground through its plating.",
+    "company": "It crosses the dunes alone."
+  },
+  "physiology": {
+    "composition": {
+      "primary": "flesh"
+    },
+    "bodyPlan": "biped",
+    "anatomy": [
+      "shell",
+      "claws",
+      "tail",
+      "body"
+    ],
+    "covering": "chitin",
+    "size": {
+      "heightCm": [
+        95,
+        125
+      ],
+      "weightKg": [
+        58,
+        84
+      ]
+    },
+    "lifespan": "long",
+    "genome": {
+      "chirality": "rolled"
+    },
+    "diet": "omnivore",
+    "communication": [
+      "vibration"
+    ],
+    "breathes": [
+      "gas"
+    ],
+    "environmentalTolerance": {
+      "ambientMedia": [
+        "gas"
+      ],
+      "temperatureC": {
+        "min": -10,
+        "max": 48
+      }
+    },
+    "capabilities": {
+      "flight": [
+        0,
+        0
+      ],
+      "swim": [
+        5,
+        20
+      ],
+      "burrow": [
+        35,
+        60
+      ],
+      "climb": [
+        15,
+        35
+      ],
+      "sprint": [
+        40,
+        70
+      ],
+      "leap": [
+        15,
+        35
+      ],
+      "manipulation": [
+        30,
+        55
+      ]
+    },
+    "senses": {
+      "sight": [
+        30,
+        55
+      ],
+      "hearing": [
+        40,
+        65
+      ],
+      "smell": [
+        35,
+        60
+      ],
+      "special": [
+        "tremorsense"
+      ]
+    },
+    "protections": [
+      {
+        "type": "harm",
+        "mechanism": "cutting",
+        "degree": "resistant"
+      }
+    ],
+    "traversal": []
+  },
+  "attributes": {
+    "strength": [
+      45,
+      70
+    ],
+    "vitality": [
+      50,
+      75
+    ],
+    "endurance": [
+      50,
+      75
+    ],
+    "agility": [
+      25,
+      50
+    ],
+    "reflex": [
+      30,
+      55
+    ],
+    "intelligence": [
+      20,
+      45
+    ],
+    "willpower": [
+      40,
+      65
+    ],
+    "instinct": [
+      40,
+      65
+    ],
+    "charisma": [
+      15,
+      40
+    ],
+    "resilience": [
+      70,
+      95
+    ]
+  },
+  "schemaVersion": "5.0.0",
+  "temperament": {
+    "boldness": [
+      20,
+      45
+    ],
+    "curiosity": [
+      20,
+      45
+    ],
+    "energy": [
+      25,
+      50
+    ],
+    "aggression": [
+      25,
+      50
+    ],
+    "sociability": [
+      10,
+      35
+    ]
+  },
+  "passives": [],
+  "signature": {
+    "type": "action",
+    "key": "scalatto-defining"
+  },
+  "actions": [
+    {
+      "key": "scalatto-defining",
+      "name": "Shell Curl",
+      "description": "It rolls inside its scaly exoskeleton to shield itself.",
+      "instrument": "shell",
+      "activation": {
+        "continuity": "discrete"
+      },
+      "timing": {
+        "preparation": "brief",
+        "recovery": "brief"
+      },
+      "delivery": {
+        "mode": "self",
+        "approach": "stationary"
+      },
+      "targeting": [
+        "self"
+      ],
+      "spatial": {},
+      "effects": [
+        {
+          "key": "outcome",
+          "type": "status",
+          "recipient": "self",
+          "onset": "instant",
+          "persistence": "lingering",
+          "likelihood": "consistent",
+          "status": "shielded",
+          "duration": "brief",
+          "removable": [
+            "disrupting"
+          ]
+        }
+      ]
+    }
+  ],
+  "mechanisms": [
+    {
+      "key": "rolling-collision",
+      "name": "Rolling Collision",
+      "description": "Its curled shell collides with a target.",
+      "instrument": "shell",
+      "targeting": [
+        "other"
+      ],
+      "activation": {
+        "continuity": [
+          "discrete"
+        ]
+      },
+      "timing": {
+        "preparation": [
+          "immediate",
+          "brief"
+        ],
+        "recovery": [
+          "repeatable",
+          "brief"
+        ]
+      },
+      "delivery": {
+        "contact": {
+          "approach": [
+            "closing"
+          ],
+          "range": [
+            "contact"
+          ]
+        }
+      },
+      "effects": [
+        {
+          "key": "outcome",
+          "type": "harm",
+          "recipient": "target",
+          "onset": "instant",
+          "persistence": "resolved",
+          "likelihood": [
+            "consistent"
+          ],
+          "mechanism": "impact",
+          "intensity": [
+            38,
+            62
+          ]
+        }
+      ]
+    },
+    {
+      "key": "foreclaw-rake",
+      "name": "Foreclaw Rake",
+      "description": "Long curved claws rake a contacted target.",
+      "instrument": "claws",
+      "targeting": [
+        "other"
+      ],
+      "activation": {
+        "continuity": [
+          "discrete"
+        ]
+      },
+      "timing": {
+        "preparation": [
+          "immediate",
+          "brief"
+        ],
+        "recovery": [
+          "repeatable",
+          "brief"
+        ]
+      },
+      "delivery": {
+        "contact": {
+          "approach": [
+            "stationary",
+            "closing"
+          ],
+          "range": [
+            "contact"
+          ]
+        }
+      },
+      "effects": [
+        {
+          "key": "outcome",
+          "type": "harm",
+          "recipient": "target",
+          "onset": "instant",
+          "persistence": "resolved",
+          "likelihood": [
+            "consistent"
+          ],
+          "mechanism": "cutting",
+          "intensity": [
+            30,
+            52
+          ]
+        }
+      ]
+    },
+    {
+      "key": "hooked-tail",
+      "name": "Hooked Tail",
+      "description": "The hooked tail strikes at close contact.",
+      "instrument": "tail",
+      "targeting": [
+        "other"
+      ],
+      "activation": {
+        "continuity": [
+          "discrete"
+        ]
+      },
+      "timing": {
+        "preparation": [
+          "immediate",
+          "brief"
+        ],
+        "recovery": [
+          "repeatable",
+          "brief"
+        ]
+      },
+      "delivery": {
+        "contact": {
+          "approach": [
+            "stationary",
+            "closing"
+          ],
+          "range": [
+            "contact"
+          ]
+        }
+      },
+      "effects": [
+        {
+          "key": "outcome",
+          "type": "harm",
+          "recipient": "target",
+          "onset": "instant",
+          "persistence": "resolved",
+          "likelihood": [
+            "consistent"
+          ],
+          "mechanism": "impact",
+          "intensity": [
+            25,
+            48
+          ]
+        }
+      ]
+    }
+  ]
+}

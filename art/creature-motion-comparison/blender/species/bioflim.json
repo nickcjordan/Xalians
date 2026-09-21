@@ -1,0 +1,85 @@
+{
+  "species": "bioflim",
+  "record": "docs/species-templates/bioflim.json",
+  "template": "amorphous",
+  "label": "Bioflim, Blender metaballs",
+  "variant": "blender",
+  "export": "bioflim-blender",
+  "blend": "bioflim_motion.blend",
+  "output": "rendered/bioflim",
+  "palette": {
+    "slime": {
+      "label": "acid slime",
+      "hex": "b4cf3a",
+      "roughness": 0.22,
+      "subsurface": 0.45,
+      "emission": 0.12,
+      "subsurface_radius": [0.25, 0.35, 0.08]
+    },
+    "slime_deep": {"label": "acid slime shadow", "hex": "6f8a1f", "roughness": 0.3},
+    "rock": {"label": "regrown rock plate", "hex": "57514a", "roughness": 0.95},
+    "rock_fresh": {"label": "fresh pale plate", "hex": "8d867a", "roughness": 0.9},
+    "sclera": {"label": "single eye", "hex": "f0e07a", "roughness": 0.35},
+    "pupil": {"label": "slit pupil", "hex": "1c1a14", "roughness": 0.3},
+    "drip": {
+      "label": "acid drip",
+      "hex": "d8ec5a",
+      "roughness": 0.15,
+      "subsurface": 0.3,
+      "emission": 0.4,
+      "subsurface_radius": [0.25, 0.35, 0.08]
+    }
+  },
+  "proportions": {
+    "ground_z": -0.95,
+    "pod_root": [0.4, -0.32, 0.02],
+    "pod_tip": [1.38, -0.66, 0.4],
+    "plate_radius": 0.86
+  },
+  "anatomy": {"plates": 11, "fresh_plates": 4, "pseudopod_elements": 6, "eye": true},
+  "render": {
+    "samples": 16,
+    "seed": 0,
+    "shape_seed": 606,
+    "world": "6f7d62",
+    "lights": {"key": 420, "fill": 200, "rim": 300}
+  },
+  "clips": {
+    "idle": [1, 12],
+    "action": [21, 30]
+  },
+  "markers": [
+    {"name": "quiet start", "frame": 1},
+    {"name": "action start", "frame": 21},
+    {"name": "glance", "frame": 23},
+    {"name": "gathered", "frame": 29},
+    {"name": "reach_peak", "frame": 33, "cue": true},
+    {"name": "reach held", "frame": 35},
+    {"name": "sag", "frame": 45},
+    {"name": "recovered", "frame": 50}
+  ],
+  "points": {
+    "emitter": {"part": "pod_tip", "frame": 35},
+    "ground_contact": {"part": "ground", "frame": 21},
+    "eye_rest": {"part": "pupil", "frame": 21}
+  },
+  "performance": {
+    "action": {
+      "name": "Shell regrowth reach",
+      "keys": [
+        [21, "smooth", {}],
+        [23, "out", {"glance": 1.0, "blink": 0.6}],
+        [25, "smooth", {"glance": 1.0}],
+        [29, "smooth", {"glance": 1.0, "gather": 1.0, "lift": 0.15}],
+        [31, "in", {"glance": 0.9, "gather": 0.5, "heave": 0.6, "reach": 0.35, "lift": 0.55, "fresh": 0.1}],
+        [33, "out", {"glance": 0.8, "heave": 1.0, "reach": 0.92, "lift": 1.0, "fresh": 0.6, "bead": 0.4}],
+        [35, "smooth", {"glance": 0.8, "heave": 0.95, "reach": 1.0, "lift": 0.95, "fresh": 1.0, "bead": 1.0}],
+        [38, "smooth", {"glance": 0.6, "heave": 0.8, "reach": 0.9, "lift": 0.8, "fresh": 1.0, "bead": 1.0, "sag": 0.1}],
+        [42, "smooth", {"glance": 0.3, "heave": 0.35, "reach": 0.45, "lift": 0.45, "fresh": 0.8, "bead": 0.5, "sag": 0.6}],
+        [45, "smooth", {"heave": 0.05, "reach": 0.1, "lift": 0.15, "fresh": 0.4, "sag": 1.0, "blink": 1.0}],
+        [47, "smooth", {"lift": 0.05, "fresh": 0.15, "sag": 0.6}],
+        [50, "smooth", {}]
+      ]
+    }
+  }
+}

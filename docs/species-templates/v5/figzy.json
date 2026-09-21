@@ -1,0 +1,418 @@
+{
+  "key": "figzy",
+  "name": "Figzy",
+  "nameOrigin": "A playful, whimsical coinage chosen to fit the creature's mischievous spirit rather than describe a literal body part.",
+  "element": "psychic",
+  "homePlanet": "telypso",
+  "generatorPlanets": [
+    "telypso"
+  ],
+  "lore": {
+    "description": "What this creature lacks in stature it makes up for with its incredible magical abilities. It is deceptively smart, yet known to be docile when it trusts you.",
+    "appearance": [
+      "Small upright biped",
+      "Lightly built",
+      "Shaggy fur coat",
+      "Very large ears",
+      "Slender branched antlers",
+      "Very large eyes",
+      "Small hands"
+    ],
+    "origin": "Made by the Telypso Generator to help settle the unstable minds of the Vallerii marooned on the world, whom it treats as patients.",
+    "habitat": "The fungal forests and bioluminescent jungles of Telypso.",
+    "feeding": "It eats what the fungal forests offer.",
+    "behavior": "It is small, deceptively smart, and docile with those it trusts. It puts itself between a distressed mind and whatever is agitating it, holding one quiet and driving the other back with a burst from its open hands.",
+    "company": "It stays with those it trusts."
+  },
+  "physiology": {
+    "composition": {
+      "primary": "flesh"
+    },
+    "bodyPlan": "biped",
+    "anatomy": [
+      "antlers",
+      "fists",
+      "hide",
+      "body"
+    ],
+    "covering": "fur",
+    "size": {
+      "heightCm": [
+        95,
+        125
+      ],
+      "weightKg": [
+        34,
+        52
+      ]
+    },
+    "lifespan": "standard",
+    "genome": {
+      "chirality": "rolled"
+    },
+    "diet": "omnivore",
+    "communication": [
+      "telepathic",
+      "display"
+    ],
+    "breathes": [
+      "gas"
+    ],
+    "environmentalTolerance": {
+      "ambientMedia": [
+        "gas"
+      ],
+      "temperatureC": {
+        "min": 12,
+        "max": 44
+      }
+    },
+    "capabilities": {
+      "flight": [
+        0,
+        0
+      ],
+      "swim": [
+        10,
+        30
+      ],
+      "burrow": [
+        0,
+        10
+      ],
+      "climb": [
+        35,
+        60
+      ],
+      "sprint": [
+        55,
+        80
+      ],
+      "leap": [
+        40,
+        65
+      ],
+      "manipulation": [
+        45,
+        70
+      ]
+    },
+    "senses": {
+      "sight": [
+        55,
+        80
+      ],
+      "hearing": [
+        65,
+        90
+      ],
+      "smell": [
+        30,
+        55
+      ],
+      "special": [
+        "psychic"
+      ]
+    },
+    "protections": [],
+    "traversal": []
+  },
+  "attributes": {
+    "strength": [
+      12,
+      32
+    ],
+    "vitality": [
+      25,
+      48
+    ],
+    "endurance": [
+      30,
+      55
+    ],
+    "agility": [
+      55,
+      82
+    ],
+    "reflex": [
+      50,
+      78
+    ],
+    "intelligence": [
+      58,
+      84
+    ],
+    "willpower": [
+      55,
+      80
+    ],
+    "instinct": [
+      45,
+      70
+    ],
+    "charisma": [
+      40,
+      68
+    ],
+    "resilience": [
+      18,
+      40
+    ]
+  },
+  "schemaVersion": "5.0.0",
+  "temperament": {
+    "boldness": [
+      35,
+      60
+    ],
+    "curiosity": [
+      55,
+      80
+    ],
+    "energy": [
+      35,
+      60
+    ],
+    "aggression": [
+      10,
+      35
+    ],
+    "sociability": [
+      45,
+      70
+    ]
+  },
+  "passives": [],
+  "signature": {
+    "type": "action",
+    "key": "figzy-defining"
+  },
+  "actions": [
+    {
+      "key": "figzy-defining",
+      "name": "Steadying Intervention",
+      "description": "It interposes a focused mental force to protect a distressed creature.",
+      "instrument": "mind",
+      "activation": {
+        "continuity": "discrete"
+      },
+      "timing": {
+        "preparation": "immediate",
+        "recovery": "brief"
+      },
+      "delivery": {
+        "mode": "signal",
+        "approach": "stationary"
+      },
+      "targeting": [
+        "other"
+      ],
+      "spatial": {
+        "range": "short"
+      },
+      "effects": [
+        {
+          "key": "outcome",
+          "type": "protect",
+          "recipient": "target",
+          "onset": "instant",
+          "persistence": "resolved",
+          "likelihood": "consistent",
+          "intensity": 55
+        }
+      ]
+    },
+    {
+      "key": "figzy-force",
+      "name": "Open-Handed Force",
+      "description": "A burst of sourced mental force from its open hands drives a threat back.",
+      "instrument": "fists",
+      "activation": {
+        "continuity": "discrete"
+      },
+      "timing": {
+        "preparation": "immediate",
+        "recovery": "brief"
+      },
+      "delivery": {
+        "mode": "pulse",
+        "approach": "stationary"
+      },
+      "targeting": [
+        "other"
+      ],
+      "spatial": {
+        "range": "short"
+      },
+      "effects": [
+        {
+          "key": "outcome",
+          "type": "displace",
+          "recipient": "target",
+          "onset": "instant",
+          "persistence": "resolved",
+          "likelihood": "consistent",
+          "direction": "away",
+          "intensity": 48
+        }
+      ],
+      "element": "psychic"
+    }
+  ],
+  "mechanisms": [
+    {
+      "key": "mental-intervention",
+      "name": "Mental Intervention",
+      "description": "Focused mental force protects another creature.",
+      "instrument": "mind",
+      "targeting": [
+        "other"
+      ],
+      "activation": {
+        "continuity": [
+          "discrete"
+        ]
+      },
+      "timing": {
+        "preparation": [
+          "immediate",
+          "brief"
+        ],
+        "recovery": [
+          "brief"
+        ]
+      },
+      "delivery": {
+        "signal": {
+          "approach": [
+            "stationary"
+          ],
+          "range": [
+            "short",
+            "medium"
+          ]
+        }
+      },
+      "effects": [
+        {
+          "key": "outcome",
+          "type": "protect",
+          "recipient": "target",
+          "onset": "instant",
+          "persistence": "resolved",
+          "likelihood": [
+            "consistent"
+          ],
+          "intensity": [
+            35,
+            62
+          ]
+        }
+      ]
+    },
+    {
+      "key": "hand-force",
+      "name": "Hand Force",
+      "description": "A burst of sourced psychic force from the hands pushes a target away.",
+      "instrument": "fists",
+      "element": "psychic",
+      "targeting": [
+        "other"
+      ],
+      "activation": {
+        "continuity": [
+          "discrete"
+        ]
+      },
+      "timing": {
+        "preparation": [
+          "immediate",
+          "brief"
+        ],
+        "recovery": [
+          "brief",
+          "prolonged"
+        ]
+      },
+      "delivery": {
+        "pulse": {
+          "approach": [
+            "stationary"
+          ],
+          "range": [
+            "short",
+            "medium"
+          ]
+        }
+      },
+      "effects": [
+        {
+          "key": "outcome",
+          "type": "displace",
+          "recipient": "target",
+          "onset": "instant",
+          "persistence": "resolved",
+          "likelihood": [
+            "consistent"
+          ],
+          "direction": "away",
+          "intensity": [
+            30,
+            55
+          ]
+        }
+      ]
+    },
+    {
+      "key": "antler-contact",
+      "name": "Antler Contact",
+      "description": "Its small antlers strike at close contact.",
+      "instrument": "antlers",
+      "targeting": [
+        "other"
+      ],
+      "activation": {
+        "continuity": [
+          "discrete"
+        ]
+      },
+      "timing": {
+        "preparation": [
+          "immediate",
+          "brief"
+        ],
+        "recovery": [
+          "repeatable",
+          "brief"
+        ]
+      },
+      "delivery": {
+        "contact": {
+          "approach": [
+            "stationary"
+          ],
+          "range": [
+            "contact"
+          ]
+        }
+      },
+      "effects": [
+        {
+          "key": "outcome",
+          "type": "harm",
+          "recipient": "target",
+          "onset": "instant",
+          "persistence": "resolved",
+          "likelihood": [
+            "consistent"
+          ],
+          "mechanism": "impact",
+          "intensity": [
+            15,
+            32
+          ]
+        }
+      ]
+    }
+  ]
+}

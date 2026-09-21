@@ -1,0 +1,401 @@
+{
+  "key": "codazzo",
+  "name": "Codazzo",
+  "nameOrigin": "Derived from the Italian coda, tail, naming the creature's exposed tail weapon and defining silhouette.",
+  "element": "rock",
+  "homePlanet": "stonera",
+  "generatorPlanets": [
+    "stonera"
+  ],
+  "lore": {
+    "description": "This creature digs its body underground when spooked, exposing only its tail made of explosive barbs. If provoked, it won't hesitate to fire off a few projectiles, as its regenerative power can quickly grow more.",
+    "appearance": [
+      "Small fox-like biped",
+      "Lightly built",
+      "Fur coat",
+      "Spiny ridge down the neck and back",
+      "Long digging claws on the forelimbs",
+      "Tall pointed ears",
+      "Thick tail ending in a fan of explosive barbs"
+    ],
+    "origin": "Made by the Stonera Generator for a world that takes a planetwide bombardment every year, where going underground fast is what keeps a creature alive.",
+    "habitat": "The fissured rock and crater fields of Stonera, worked from beneath.",
+    "feeding": "It feeds on what it digs up and on what comes too near its burrow.",
+    "behavior": "When spooked it digs itself underground and leaves only its tail of explosive barbs exposed. If provoked it fires a few of them, and its regenerative power quickly grows more.",
+    "company": "It lives alone in its burrow."
+  },
+  "physiology": {
+    "composition": {
+      "primary": "flesh"
+    },
+    "bodyPlan": "biped",
+    "anatomy": [
+      "claws",
+      "tail",
+      "spines",
+      "hide"
+    ],
+    "covering": "fur",
+    "size": {
+      "heightCm": [
+        58,
+        82
+      ],
+      "weightKg": [
+        18,
+        32
+      ]
+    },
+    "lifespan": "standard",
+    "genome": {
+      "chirality": "rolled"
+    },
+    "diet": "omnivore",
+    "communication": [
+      "vibration"
+    ],
+    "breathes": [
+      "gas"
+    ],
+    "environmentalTolerance": {
+      "ambientMedia": [
+        "gas"
+      ],
+      "temperatureC": {
+        "min": -20,
+        "max": 25
+      }
+    },
+    "capabilities": {
+      "flight": [
+        0,
+        0
+      ],
+      "swim": [
+        5,
+        20
+      ],
+      "burrow": [
+        70,
+        92
+      ],
+      "climb": [
+        30,
+        50
+      ],
+      "sprint": [
+        35,
+        55
+      ],
+      "leap": [
+        25,
+        45
+      ],
+      "manipulation": [
+        35,
+        55
+      ]
+    },
+    "senses": {
+      "sight": [
+        30,
+        50
+      ],
+      "hearing": [
+        45,
+        65
+      ],
+      "smell": [
+        40,
+        60
+      ],
+      "special": [
+        "tremorsense"
+      ]
+    },
+    "protections": [],
+    "traversal": []
+  },
+  "attributes": {
+    "strength": [
+      30,
+      50
+    ],
+    "vitality": [
+      40,
+      60
+    ],
+    "endurance": [
+      45,
+      68
+    ],
+    "agility": [
+      45,
+      65
+    ],
+    "reflex": [
+      50,
+      72
+    ],
+    "intelligence": [
+      25,
+      42
+    ],
+    "willpower": [
+      30,
+      50
+    ],
+    "instinct": [
+      55,
+      78
+    ],
+    "charisma": [
+      15,
+      35
+    ],
+    "resilience": [
+      35,
+      55
+    ]
+  },
+  "schemaVersion": "5.0.0",
+  "temperament": {
+    "boldness": [
+      25,
+      50
+    ],
+    "curiosity": [
+      25,
+      50
+    ],
+    "energy": [
+      40,
+      65
+    ],
+    "aggression": [
+      45,
+      70
+    ],
+    "sociability": [
+      10,
+      35
+    ]
+  },
+  "passives": [],
+  "signature": {
+    "type": "action",
+    "key": "codazzo-defining"
+  },
+  "actions": [
+    {
+      "key": "codazzo-defining",
+      "name": "Explosive Tail Barb",
+      "description": "It launches a quickly replaced explosive barb from its exposed tail.",
+      "instrument": "spines",
+      "activation": {
+        "continuity": "discrete"
+      },
+      "timing": {
+        "preparation": "brief",
+        "recovery": "brief"
+      },
+      "delivery": {
+        "mode": "projectile",
+        "approach": "stationary"
+      },
+      "targeting": [
+        "other"
+      ],
+      "spatial": {
+        "range": "medium",
+        "area": {
+          "shape": "radial",
+          "extent": "small",
+          "anchor": "target",
+          "persistence": "resolved"
+        }
+      },
+      "effects": [
+        {
+          "key": "outcome",
+          "type": "harm",
+          "recipient": "area",
+          "onset": "instant",
+          "persistence": "resolved",
+          "likelihood": "consistent",
+          "mechanism": "impact",
+          "intensity": 62
+        }
+      ]
+    }
+  ],
+  "mechanisms": [
+    {
+      "key": "explosive-barb",
+      "name": "Explosive Barb",
+      "description": "A tail barb launches and bursts on arrival.",
+      "instrument": "spines",
+      "targeting": [
+        "other"
+      ],
+      "activation": {
+        "continuity": [
+          "discrete"
+        ]
+      },
+      "timing": {
+        "preparation": [
+          "immediate",
+          "brief"
+        ],
+        "recovery": [
+          "brief"
+        ]
+      },
+      "delivery": {
+        "projectile": {
+          "approach": [
+            "stationary"
+          ],
+          "range": [
+            "short",
+            "medium"
+          ],
+          "area": {
+            "shape": [
+              "radial"
+            ],
+            "extent": [
+              "small",
+              "medium"
+            ],
+            "anchor": [
+              "target"
+            ],
+            "persistence": "resolved"
+          }
+        }
+      },
+      "effects": [
+        {
+          "key": "outcome",
+          "type": "harm",
+          "recipient": "area",
+          "onset": "instant",
+          "persistence": "resolved",
+          "likelihood": [
+            "consistent"
+          ],
+          "mechanism": "impact",
+          "intensity": [
+            45,
+            70
+          ]
+        }
+      ]
+    },
+    {
+      "key": "tail-spine-contact",
+      "name": "Tail Spine Contact",
+      "description": "A tail barb pierces at close contact without exploding.",
+      "instrument": "spines",
+      "targeting": [
+        "other"
+      ],
+      "activation": {
+        "continuity": [
+          "discrete"
+        ]
+      },
+      "timing": {
+        "preparation": [
+          "immediate",
+          "brief"
+        ],
+        "recovery": [
+          "repeatable",
+          "brief"
+        ]
+      },
+      "delivery": {
+        "contact": {
+          "approach": [
+            "stationary"
+          ],
+          "range": [
+            "contact"
+          ]
+        }
+      },
+      "effects": [
+        {
+          "key": "outcome",
+          "type": "harm",
+          "recipient": "target",
+          "onset": "instant",
+          "persistence": "resolved",
+          "likelihood": [
+            "consistent"
+          ],
+          "mechanism": "piercing",
+          "intensity": [
+            28,
+            50
+          ]
+        }
+      ]
+    },
+    {
+      "key": "digging-claws",
+      "name": "Digging Claws",
+      "description": "Claws cut at close contact.",
+      "instrument": "claws",
+      "targeting": [
+        "other"
+      ],
+      "activation": {
+        "continuity": [
+          "discrete"
+        ]
+      },
+      "timing": {
+        "preparation": [
+          "immediate",
+          "brief"
+        ],
+        "recovery": [
+          "repeatable",
+          "brief"
+        ]
+      },
+      "delivery": {
+        "contact": {
+          "approach": [
+            "stationary",
+            "closing"
+          ],
+          "range": [
+            "contact"
+          ]
+        }
+      },
+      "effects": [
+        {
+          "key": "outcome",
+          "type": "harm",
+          "recipient": "target",
+          "onset": "instant",
+          "persistence": "resolved",
+          "likelihood": [
+            "consistent"
+          ],
+          "mechanism": "cutting",
+          "intensity": [
+            25,
+            45
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,421 @@
+{
+  "key": "ectoghoul",
+  "name": "Ectoghoul",
+  "nameOrigin": "A compound of ecto, evoking ectoplasm, and ghoul, matching its spectral body and delight in terror.",
+  "element": "ghost",
+  "homePlanet": "phantiri",
+  "generatorPlanets": [
+    "phantiri"
+  ],
+  "lore": {
+    "description": "Appearing as a spectral green mist that forms the vague impression of a grinning skull with a ghost-like tail for a body, Ectoghouls zip across the Dreadscape, emitting a terrifying cackle wherever they go. They seem to amuse themselves by terrorizing other Xalians, disappearing and re-appearing at will, passing through surfaces, and zapping their opponents with blasts of gooey ectoplasm.",
+    "appearance": [
+      "Spectral green mist, without limbs",
+      "Weightless",
+      "Vague impression of a grinning skull",
+      "Ghost-like tail for a body, trailing off into drifting particles",
+      "Never touches the ground"
+    ],
+    "origin": "One of the non-corporeal Xalians the abandoned Phantiri Generator produced after it rewrote itself under Leviticus Overdrive.",
+    "habitat": "The Dreadscape of Phantiri.",
+    "feeding": "It takes nothing in and feeds on nothing.",
+    "behavior": "It zips across the Dreadscape cackling, disappears and reappears at will, passes through surfaces, and zaps its opponents with blasts of gooey ectoplasm. It seems to amuse itself by terrorizing other Xalians.",
+    "company": "It roams alone, and it seeks out other Xalians only to torment them."
+  },
+  "physiology": {
+    "composition": {
+      "primary": "spectral"
+    },
+    "bodyPlan": "floating",
+    "anatomy": [
+      "jaws",
+      "tail",
+      "body"
+    ],
+    "covering": "mist",
+    "size": {
+      "heightCm": [
+        80,
+        105
+      ],
+      "weightKg": [
+        0.1,
+        0.5
+      ]
+    },
+    "lifespan": "ageless",
+    "genome": {
+      "chirality": "achiral"
+    },
+    "diet": "none",
+    "communication": [
+      "vocal"
+    ],
+    "breathes": [],
+    "environmentalTolerance": {
+      "ambientMedia": [
+        "gas",
+        "liquid",
+        "vacuum"
+      ],
+      "temperatureC": {
+        "min": -50,
+        "max": 20
+      }
+    },
+    "capabilities": {
+      "flight": [
+        55,
+        80
+      ],
+      "swim": [
+        20,
+        40
+      ],
+      "burrow": [
+        10,
+        25
+      ],
+      "climb": [
+        0,
+        0
+      ],
+      "sprint": [
+        0,
+        0
+      ],
+      "leap": [
+        0,
+        0
+      ],
+      "manipulation": [
+        5,
+        20
+      ]
+    },
+    "senses": {
+      "sight": [
+        50,
+        75
+      ],
+      "hearing": [
+        45,
+        70
+      ],
+      "smell": [
+        0,
+        10
+      ],
+      "special": []
+    },
+    "protections": [],
+    "traversal": [
+      "phase"
+    ]
+  },
+  "attributes": {
+    "strength": [
+      8,
+      25
+    ],
+    "vitality": [
+      20,
+      40
+    ],
+    "endurance": [
+      35,
+      60
+    ],
+    "agility": [
+      60,
+      88
+    ],
+    "reflex": [
+      55,
+      82
+    ],
+    "intelligence": [
+      30,
+      52
+    ],
+    "willpower": [
+      35,
+      60
+    ],
+    "instinct": [
+      45,
+      70
+    ],
+    "charisma": [
+      40,
+      68
+    ],
+    "resilience": [
+      15,
+      35
+    ]
+  },
+  "schemaVersion": "5.0.0",
+  "temperament": {
+    "boldness": [
+      60,
+      85
+    ],
+    "curiosity": [
+      50,
+      75
+    ],
+    "energy": [
+      65,
+      90
+    ],
+    "aggression": [
+      55,
+      80
+    ],
+    "sociability": [
+      15,
+      40
+    ]
+  },
+  "passives": [],
+  "signature": {
+    "type": "action",
+    "key": "ectoghoul-defining"
+  },
+  "actions": [
+    {
+      "key": "ectoghoul-defining",
+      "name": "Terrifying Cackle",
+      "description": "Its cackle induces fear in a creature that hears it.",
+      "instrument": "voice",
+      "activation": {
+        "continuity": "discrete"
+      },
+      "timing": {
+        "preparation": "immediate",
+        "recovery": "brief"
+      },
+      "delivery": {
+        "mode": "signal",
+        "approach": "stationary",
+        "reception": "auditory"
+      },
+      "targeting": [
+        "other"
+      ],
+      "spatial": {
+        "range": "medium"
+      },
+      "effects": [
+        {
+          "key": "outcome",
+          "type": "status",
+          "recipient": "target",
+          "onset": "instant",
+          "persistence": "lingering",
+          "likelihood": "consistent",
+          "status": "frightened",
+          "duration": "brief",
+          "removable": [
+            "stabilizing"
+          ]
+        }
+      ]
+    },
+    {
+      "key": "ectoghoul-ectoplasm",
+      "name": "Ectoplasm Blast",
+      "description": "It blasts a selected target with its gooey ectoplasm.",
+      "instrument": "secretion",
+      "activation": {
+        "continuity": "discrete"
+      },
+      "timing": {
+        "preparation": "immediate",
+        "recovery": "brief"
+      },
+      "delivery": {
+        "mode": "projectile",
+        "approach": "stationary"
+      },
+      "targeting": [
+        "other"
+      ],
+      "spatial": {
+        "range": "short"
+      },
+      "effects": [
+        {
+          "key": "outcome",
+          "type": "harm",
+          "recipient": "target",
+          "onset": "instant",
+          "persistence": "resolved",
+          "likelihood": "consistent",
+          "mechanism": "impact",
+          "intensity": 52
+        }
+      ]
+    }
+  ],
+  "mechanisms": [
+    {
+      "key": "cackle-fear",
+      "name": "Cackle Fear",
+      "description": "An audible cackle disturbs a listening target.",
+      "instrument": "voice",
+      "targeting": [
+        "other"
+      ],
+      "activation": {
+        "continuity": [
+          "discrete"
+        ]
+      },
+      "timing": {
+        "preparation": [
+          "immediate",
+          "brief"
+        ],
+        "recovery": [
+          "brief"
+        ]
+      },
+      "delivery": {
+        "signal": {
+          "approach": [
+            "stationary"
+          ],
+          "range": [
+            "short",
+            "medium"
+          ],
+          "reception": "auditory"
+        }
+      },
+      "effects": [
+        {
+          "key": "outcome",
+          "type": "status",
+          "recipient": "target",
+          "onset": "instant",
+          "persistence": "lingering",
+          "likelihood": [
+            "likely",
+            "occasional"
+          ],
+          "duration": "brief",
+          "status": "frightened",
+          "removable": [
+            "stabilizing"
+          ]
+        }
+      ]
+    },
+    {
+      "key": "ectoplasm-blast",
+      "name": "Ectoplasm Blast",
+      "description": "Gooey ectoplasm launches toward a selected target.",
+      "instrument": "secretion",
+      "targeting": [
+        "other"
+      ],
+      "activation": {
+        "continuity": [
+          "discrete"
+        ]
+      },
+      "timing": {
+        "preparation": [
+          "immediate",
+          "brief"
+        ],
+        "recovery": [
+          "repeatable",
+          "brief"
+        ]
+      },
+      "delivery": {
+        "projectile": {
+          "approach": [
+            "stationary"
+          ],
+          "range": [
+            "short",
+            "medium"
+          ]
+        }
+      },
+      "effects": [
+        {
+          "key": "outcome",
+          "type": "harm",
+          "recipient": "target",
+          "onset": "instant",
+          "persistence": "resolved",
+          "likelihood": [
+            "consistent"
+          ],
+          "mechanism": "impact",
+          "intensity": [
+            35,
+            58
+          ]
+        }
+      ]
+    },
+    {
+      "key": "spectral-body-contact",
+      "name": "Spectral Body Contact",
+      "description": "Its formed body strikes at close contact without implying automatic possession.",
+      "instrument": "body",
+      "targeting": [
+        "other"
+      ],
+      "activation": {
+        "continuity": [
+          "discrete"
+        ]
+      },
+      "timing": {
+        "preparation": [
+          "immediate",
+          "brief"
+        ],
+        "recovery": [
+          "repeatable",
+          "brief"
+        ]
+      },
+      "delivery": {
+        "contact": {
+          "approach": [
+            "stationary",
+            "closing"
+          ],
+          "range": [
+            "contact"
+          ]
+        }
+      },
+      "effects": [
+        {
+          "key": "outcome",
+          "type": "harm",
+          "recipient": "target",
+          "onset": "instant",
+          "persistence": "resolved",
+          "likelihood": [
+            "consistent"
+          ],
+          "mechanism": "impact",
+          "intensity": [
+            22,
+            42
+          ]
+        }
+      ]
+    }
+  ]
+}

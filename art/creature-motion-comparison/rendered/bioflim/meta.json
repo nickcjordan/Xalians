@@ -1,0 +1,46 @@
+{
+  "species": "bioflim",
+  "template": "amorphous",
+  "variant": "blender",
+  "export": "bioflim-blender",
+  "label": "Bioflim, Blender metaballs",
+  "emitter": [
+    321,
+    194
+  ],
+  "points": {
+    "ground_contact": [
+      192,
+      316
+    ],
+    "eye_rest": [
+      234,
+      171
+    ]
+  },
+  "markers": {
+    "reach_peak": {
+      "frame": 33,
+      "time_ms": 500
+    }
+  },
+  "clips": {
+    "idle": [
+      1,
+      12
+    ],
+    "action": [
+      21,
+      30
+    ]
+  },
+  "provenance": {
+    "blender": "5.2.2 LTS",
+    "spec": "bioflim.json",
+    "spec_hash": "c911664671010f62",
+    "library_hash": "73033b206d1171ff",
+    "cycles_seed": 0,
+    "samples": 16
+  },
+  "objects": 44
+}

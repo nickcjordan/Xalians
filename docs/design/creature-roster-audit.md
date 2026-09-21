@@ -1,0 +1,132 @@
+# Canonical roster: v5 representation audit
+
+2026-09-21. Source revision: `119c555e`. All 32 species in `docs/species-templates/RATIFIED.json` reviewed. **Design boundary resolved; migration is now permitted but not completed.** The user initially chose to resolve the Neph and Yetimoth gaps before migration, then explicitly deferred fuel exposure as lore-only for this version. The user has now explicitly deferred route-blocking walls as lore-only too. Avilily added a third catalog distinction from this audit; the user has since ratified it and `paralyzed` is implemented.
+
+## Result
+
+The core model covers the roster's ordinary physical, elemental, support and automatic capabilities without an ordinary-move whitelist. The audit identified three source-supported concepts; all have scoped decisions:
+
+1. **Neph: exposure to unignited fuel, explicitly deferred.** Preserve the emission in lore without a fuel status or ignition/explosion mechanic. This is an accepted scope boundary, not a migration blocker.
+2. **Yetimoth: a persistent physical obstacle, explicitly deferred.** Preserve wall-making in lore without claiming the current model can create a freestanding obstacle. Armor and encasement remain representable.
+3. **Avilily: paralysis, now resolved.** Reduced alertness (`sedated`), acute response disruption (`stunned`) and physical binding (`restrained`) do not explicitly preserve loss of voluntary movement from a paralytic substance.
+
+Physical barriers are deferred for this version. The shared status catalog includes ratified `paralyzed`; fuel exposure is explicitly deferred and must not be approximated by burning. No canonical species has been changed. Do not claim Yetimoth's wall capability is mechanically represented; the deferral is the resolved scope decision.
+
+## Evidence and scope
+
+Read the canonical species descriptions and complete current lore/physiology blocks, inspected the 32 species artwork renders, compared existing signatures, traits and ordinary permission patterns, and checked relevant walkthrough rulings and planetary habitat/fauna evidence. The artwork for Vespersyn remains `art/tetrahive.png`; its renamed SVG is `apps/web/src/svg/species/vespersyn.svg`. Artwork confirms anatomy, not unspecified projected powers.
+
+Primary sources for each table row are `packages/content/json/species.json`, `docs/species-templates/<key>.json`, the corresponding `.md` walkthrough and `art/<key>.png`, plus the home-world entry in `packages/content/json/planetRecords.json`. Canon/prose and physiological guidance come from `.claude/skills/migrate-species/`; the bounded coverage checklist is `docs/species-templates/ABILITY-AUDIT.md`. Current schema/catalog/compiler and `creature-model-current.md` govern over historical trait/pool rules.
+
+This is a source-to-model design audit. It is **not** a claim that 32 new species definitions have been authored, compiled, calibrated, or tested across seeds. The existing v4 numeric bands were inspected against the stable rating meanings; final field-by-field v5 calibration, temperament bands and output bands remain part of authoring. Do not carry the old generator's trait/archetype modifiers into those bands automatically.
+
+## Three decisions
+
+### 1. Neph: unignited fuel exposure (deferred)
+
+Source: the Neph description says it can spray enemies with flammable gas; it separately describes freezing Benthane and high-pressure air. Neither the species source nor the art establishes an ignition organ. The world history also describes hydrogen-filled Neph being ignited, not creatures necessarily igniting their own gas attacks.
+
+Current mismatch: `burning` means an ongoing burning process. `overheated`, `poisoned`, and `corroding` also assert different processes. Element `fire` alone cannot mean an unignited fuel application. Retired volatile retaliation does not solve this.
+
+Decision: defer mechanical fuel exposure. The proposed `flammable` status was not adopted; `combustible` was discussed but does not specifically mean explosive either. Fuel presence, active burning and a discrete explosion are different concepts. Modeling their interaction is outside the current scope.
+
+Preserve Neph's unignited hydrogen emission in lore and explicitly mark it as not mechanically represented in this version. Its suction, pressure jets and freezing Benthane remain supported authoring candidates. Do not invent self-ignition, automatic explosion or a substitute burning effect to fill the gap. Imprit's already-ignited oil remains supported by existing effects; separate unignited oil application is deferred with fuel exposure.
+
+This supersedes the earlier requirement to resolve a fuel status before migration. Revisit only with an explicit future scope decision.
+
+### 2. Yetimoth: walls occupying space
+
+Source: the Yetimoth description explicitly distinguishes armor on itself, walls blocking escape routes, and ice encapsulating opponents.
+
+Two uses already fit: armor can apply `shielded` or another specifically justified protective status; encapsulation applies `frozen`. The wall is different: it exists at a place and can obstruct someone who was not there when it was created.
+
+Current mismatch: `spatial.area` describes geometry and lifetime for effects on recipients. It does not create a physical object or define blocked passage. `protect` prevents harm, `shielded` adds a barrier to a recipient, and `restrained` binds a recipient. None of those alone preserves a freestanding wall. The current one-target rule also does not provide arbitrary empty-space placement.
+
+Decision: defer mechanical route-blocking walls. Preserve the wall in Yetimoth's lore, but do not substitute `shielded`, `frozen` or `restrained` and claim they create an independent obstacle. Ice armor and encasing an opponent use those existing effects where authoring supports them. No barrier effect, empty-point targeting, terrain editing, object durability or generic summoned-entity model is introduced in v5. Revisit physical obstacles only as a separately scoped capability.
+
+This resolves the final source-to-model design boundary before canonical species authoring.
+
+### 3. Avilily: paralysis versus sedation
+
+Source: the description calls the saliva a powerful sedative that paralyzes on contact; the behavior repeats the immobilizing result.
+
+Current mismatch: `sedated` explicitly reduces alertness/responsiveness; `stunned` is acute response disruption; `restrained` is a binding or holding force. Raising intensity does not change one status into a different physiological process. `poisoned` can describe toxic dysfunction broadly, but alone loses the particular motor impairment the species depends on.
+
+Ratified and implemented: **`paralyzed`**, loss or impairment of voluntary movement without necessarily impairing awareness. Intensity defaults to 50 and grades motor impairment; it does not prescribe skipped turns. Removal remains mechanism-authored on each application, with no universal antidote or automatic physical freeing. Use the same existing status-effect structure; no new effect type or recipient-compatibility list is needed. Sedation and paralysis should not automatically become two mandatory copies of the same impairment: author only the independently meaningful outcomes intended by this source.
+
+## Roster coverage ledger
+
+The rows below describe supported mechanism families and migration obligations, not a finite list of generated moves. Range, area, timing and likelihood variation must later be authored only where each mechanism supports them. A listed support use is a candidate for authored permissions, not an automatic grant to every individual.
+
+| Species | Source mechanism and essential representation | Ordinary/support scope and exclusions |
+|---|---|---|
+| Akinza | Stealthy feline locomotion, claws, ears and eyes. Preserve stealth in the guaranteed definition and add explicit `lowlight`; numerical sight alone does not encode night adaptation. | Contact cuts, bites and tail/body force are anatomy-supported. Concealment must remain bounded by stealth, not invisibility. No ice projection, healing or mental effects follow from its element. |
+| Avilily | Floral lure, contact-transmitted sedative saliva, beak and talons. Preserve saliva's disabling result in the signature. **Paralyzed is now registered; species authoring remains pending.** | Review delivery by coated beak/contact and justified secretion application; do not invent a long-range spray organ. Floral camouflage supports bounded concealment. No plant growth, bodily healing, generic toxin cloud or physical glue is established. |
+| Bioflim | Acid slime, pseudopods, rocky shell and continuous shell regrowth. Signature is ongoing self restoration; separately justify innate shell protection. | Chemical contact/corrosion, pseudopod force/holding and physical shell defense fit. No ally healing follows from self-regrowing shell. No explosive retaliation, arbitrary toxin synthesis or fire/metal/water powers inherited from the old pool. |
+| Chromocat | Ionized sickle blades and exceptionally fast closing movement. Preserve the fixed blade-and-movement signature. | Contact cutting, body/tooth force and defensive blade use are grounded in anatomy. No teleportation or wall traversal follows from the photonic description. No beam emitter, electrical attacks or healing follows from a luminous blade. Calibrate mobility without treating 100 as a cap. |
+| Codazzo | Burrowing, launched explosive tail barbs and replacement of spent barbs. Preserve the explosive-projectile signature; physical blast harm and geometry are explicit. | Tail contact, claw digging/contact and alternate projectile geometry can vary where supported. Regrowing ammunition does not establish general healing or a new resource meter. Burrow is locomotion; self burial need not apply the impairing `buried` status. Explosion is not automatically fire or burning. |
+| Crystorn | Head gems emit focused light; large physical fists remain distinct. | Light stream/pulse delivery, justified visual dazzling, fist force and bracing are reviewable families. Reflection remains explicitly retired. No healing, psychic control or fire/electrical conversion from old element adjacency. |
+| Drilltail | Tail drill is the defining instrument, per the user's correction; pincers cut and hold, shell protects. | Tail boring/piercing, pincer compression/cutting/holding and shell defense fit. Burrowing/ambush are supported by the source. Do not move its signature back to pincers or infer venom from a scorpion-like outline. |
+| Dromeus | High-speed running into a brief wing-assisted leap and fang-first contact. | Fangs, claws/talons, wing/body contact and movement-assisted force; no sustained-flight promise, flame breath, heat sense or elemental projection merely from Magmuth. A closing action preserves the locomotor sequence without a new speed field. |
+| Ectoghoul | Spectral body, explicit matter transit, cackle and gooey ectoplasm. Preserve phase traversal in physiology and fear induction in its guaranteed capability. | Auditory fear signal and ectoplasm delivery are distinct channels. Review goo contact, projectile and justified binding; do not call goo corrosive without evidence. Concealment is not universal invisibility. No possession, life drain or elemental immunity follows from spectral composition. |
+| Figzy | Sourced mental force from its hands, patient steadiness and defensive intervention. | Psychic displacement/protection and stabilizing influence fit; hands/antlers retain only physically justified uses. No bodily healing, precognition, possession or arbitrary spell library. Essential protection must not depend on selecting a lucky ordinary action. |
+| Foromeer | Drill-like forelimb spurs and plated limbs; mineral excavation is a mechanical process. | Piercing/compression, pushing, bracing and tool-shaped defense fit. The old hand/spur source stays explicit. No free metal projectile, electricity or general regeneration from its planet's other fauna. |
+| Frackworm | Colossal drill head and vents that force abrasive slurry into seams. | Pressure impact, displacement, slurry-area exposure and braced physical protection can be considered. Preserve burrowing and limited vision. No ghost/dark powers or vitality drain from old pool combinations. Terrain destruction beyond an ordinary targeted outcome remains game interpretation, not a universal terrain simulator. |
+| Graviclaw | Gravity-amplified pincer compression, attraction and deliberate self anchoring. All three defining capacities need guaranteed homes. | Toward displacement, sustained holding and self-applied displacement protection fit existing fields. Ordinary pincer force and permitted gravitational geometries can vary. No black-hole entity, infinite reach, literal spacetime destruction or automatic immunity to every harm type. |
+| Hippochamp | Snout supplies a sustained high-pressure water stream for firefighting and defense. Preserve cooling removal as well as pressure in its signature. | Directed stream/jet, justified area spread, displacement, cooling and cleansing are source-grounded; splitting applications requires coherent delivery permissions. Hooves/tail supply contact alternatives. No Algael healing merely because it guards Algael rigs; no universal removal. |
+| Hypnopet | Therapeutic empathy and visibly pulsing horn trance are distinct essential capacities. | Guaranteed stabilizing removal and visually received entrancement; ordinary support variants may change supported range/timing/area. No bodily repair, forced possession, indiscriminate mental immunity or damaging horn laser. Pure support is valid. |
+| Imprit | Internally secreted combustible oil, continuous self flame, protective fur and scythe tail. | Ignited secretion, cutting/physical force and automatic contact exposure are representable. Contact flame uses an event-supplied recipient, not an externally aimed ongoing passive. Keep explicit justified protection distinct from a self-applied harmful burning status. Separate unignited fuel application is deferred; already-ignited oil stays supported. No generic healing. |
+| Kosanos | Heavy brush-clearing trunk blade, jaws and load-bearing body. | Cutting, sweeping, displacement and blade/body bracing fit. Physical freeing is a candidate when cutting an actual removable restraint, not universal cleansing. No plant emission, psychic control, poison or regeneration from element identity. |
+| Luceras | Extraordinary leap ending horns-first; limited physical mass. | Horn/body impact, justified displacement and tail contact fit. Leap rating and closing delivery preserve the act. No flight grant, wind projection or electrical/ice powers from air affiliation. |
+| Neph | Suction, pressure jets, freezing Benthane and unignited hydrogen emissions are distinct source mechanisms. **Unignited fuel exposure is explicitly lore-only for this version.** | Toward/away displacement and cooling/chilled/frozen applications can use existing fields where authored. No intrinsic ignition, automatic explosion when hit, universal toxin or electric output. Tentacles harvesting gas are not a vitality-transfer bar. |
+| Newtapede | Aquatic locomotion and whole-body wrapping/holding. | Ongoing source-bound `restrained`, separately justified compression and relative displacement; body contact alternatives remain physical. Do not infer suffocation harm against every target or regenerative healing from amphibian appearance. No water cannon without an emitter. |
+| Scalatto | A scaly shell and deliberate curled-ball defense. | Self protection, rolling impact, claw contact and tail force are justified families. Distinguish baseline shell toughness from active bracing; do not double-count the same protection. No sand projection, ghost powers or toxin. |
+| Shuntara | Spinnerets cast and tension conductive filament into a protective lattice; insulating hide supports the electrical work. | Protection/reinforcement, physically justified binding and load distribution fit. Maintain a contact/short-delivery baseline independent of local storms/conductors. Do not invent free lightning artillery or make the lattice a selective area aura. Circuit repair remains industrial lore unless given a separately agreed portable outcome. |
+| Smokat | Temporary smoke dispersal with a feline contact attack. | Guaranteed `dispersed` supports seep traversal; concealment is distinct if represented. Claw/tail contact and movement fit. No phase traversal through sealed walls, teleportation, automatic immunity, poison cloud or fire merely because the silhouette resembles flame. |
+| Sonalloy | Worked living-alloy repair, pincers, fine tendrils and continuous replacement of its own body. | Restoration, reinforcement and physical bracing are supported. Its approved walkthrough explicitly permits fitted graft/brace/recovery support across body materials: no new target-material restriction. No universal metal armor, energy drain, laser or electricity. Local reserve lore does not introduce a generic resource bar. |
+| Terragoyle | Tail-mediated levitation/launching of stone, flight and ordinary anatomy. | Impact projectiles, rock-area geometry, movement and supported force applications fit. Dormancy remains deferred. No self-anchoring immunity from standing guard and no generic mind channel substituting for its specific tail. |
+| Vespersyn | One central mind controls nonliving toothed projections for attack and defense. | Swarm contact/ranged pressure, protection and explicitly sourced concealment of the central body fit. No independent creatures, summoning life, remote ownership, drain or mind control. Retain the later ratified functional `swarm` body-plan ruling; the older walkthrough's avian text is superseded, not a newly discovered defect. |
+| Thirstaserp | Auditory rattle mesmerism and water-depleting venom delivered through fangs. Preserve both essential functions. | Signal entrancement, physical bite and chemical toxic dysfunction fit; physiology covers subterranean ambush. No hydration meter, self healing from victim water, constricting coils absent from anatomy or visual-only hypnosis. |
+| Tizzie | Tail lure establishes eye contact for psychic intrusion. | Visually received entrancement and source-supported psychic harm; stabilizing therapy is supported by its treatment origin, not bodily regeneration. No telekinetic throwing, foresight or unreceived universal mental signal. |
+| Venemist | Mouth tube disperses solvent mist that dissolves prey. | Stream/area chemical harm and corroding, with appropriate continuing exposure, fit. Two fangs provide a limited physical fallback. `Poisoned` should not substitute for dissolution merely because the prose calls the mist toxic. No automatic breach explosion or unrelated healing secretion. |
+| Voltish | Conductive skeleton and claws store environmental charge and release it on enemies. | Claw contact plus electrical harm; justified stun applications and authored discharge delivery must remain tied to the channel. Electrical protection requires evidence rather than automatic metal immunity. No attack-triggered explosion, unlimited resource drain or light/air emission from adjacency. |
+| Xylum | Root/tentacle restraint, subterranean power uptake and regrowth of torn limbs. | Sustained holding, root/serrated contact, displacement and self restoration fit. The old signature's drain payload needs re-authoring against its actual root/ground process: drawing power from soil is not evidence of vitality theft from another creature. No extra hydration/mana meter or blanket ally healing. |
+| Yetimoth | Ice armor, opponent encapsulation, heavy fists/tusks and route-blocking ice walls. **Route-blocking walls remain lore-only for this version.** | `Shielded`, `frozen`, physical strikes and justified ice delivery are representable. Walls must remain a separate unresolved outcome rather than be renamed `restrained`. No automatic physical immunity, generic healing or empty-space targeting slipped into current fields. |
+
+## Shared family review and guardrails
+
+All rows were considered against the six current effect families: harm, restore, protect, displace, status and remove. A plausible anatomy-based alternative is recorded as a candidate; shared-schema legality alone does not establish biological permission.
+
+- **Restoration:** explicit self repair for Bioflim, Xylum and Sonalloy; Sonalloy has independently evidenced external repair. Codazzo's replacement barbs are narrower than arbitrary bodily healing. Therapeutic mind regulation for Hypnopet/Figzy/Tizzie belongs in stabilizing/status effects unless bodily repair is separately evidenced.
+- **Protection:** consider armor/bracing, intentional barriers or defensive intervention only where the relevant mechanism exists. A material, element, social grouping or high rating is not an automatic immunity grant.
+- **Removal:** firefighting water supports cooling; water washing can support cleansing. Mental treatment supports stabilizing. Physical tools may free specifically removable restraints. No source justifies a universal negative-status clear.
+- **Harm and displacement:** sharp/heavy anatomy supplies cutting/piercing/compression/impact without automatically becoming elemental harm. Pressure, suction and gravity remain physically distinct authored mechanisms using shared outcome keys. Do not infer damage from every displacement or displacement from every hit.
+- **Statuses:** environmental/chemical processes, physical restraint, sensory/mental impairment, support and information were considered. No universal blind/deafen/stun rider is added to every damaging move. Explicit lasting conditions use statuses; an anatomy illustration is not evidence for an information-marking system.
+- **Automatic behavior:** ongoing self processes or self-centered areas, versus actual supported event responses. Volatile, foresighted and dormant legacy traits do not create new automatic powers. No species source in this pass requires a general conditional-physiology engine.
+- **Delivery:** contact geometry comes from anatomy; ranged modes need a source-supported emitter/channel. Sound and sight reception must follow the actual mechanism. Signal does not mean generic psychic access. No body receives every mode merely to increase combinatorial variety.
+- **Area/range coupling:** no source examined forces a particular inverse relationship between range and extent. The known independent-domain limitation remains documented; do not invent that correlation to manufacture a schema gap or silently ignore one if subsequent detailed authoring establishes it.
+- **Essential identity:** signatures and additional guaranteed definitions/physiology preserve indispensable capabilities. Ordinary selection does not decide whether a Hippochamp can extinguish, a Hypnopet can provide therapy, or a Graviclaw can anchor.
+
+## Existing data and authoring findings
+
+1. **Old ordinary pools cannot be copied.** All 32 contain combinations derived from instrument rows and neighboring elements. Examples include Dromeus chemical/fire/metal/rock, Sonalloy electric/fire/ghost/metal and Akinza dark/ice/metal/water. These are not source grants. Audit mechanism permissions from evidence and explicitly retire unsupported inherited options.
+2. **Zero has changed from a casual floor to an explicit absence.** Fifteen templates have at least one capability band crossing from zero to positive. Every such band needs a deliberate authoring decision: is the capability absent in some individuals, weak in all, or absent throughout? Do not automatically round zeros up or preserve an unsupported leap just because it was `[0,5]`. Guaranteed acts must work across the entire permitted physiology band.
+3. **Temperament is not yet independently authored.** Current templates rely on the older generator's model. Every migrated species needs five explicit bands grounded in behavior/company, independent of removed archetypes and traits.
+4. **Source prose must remain intact.** All 32 `lore.description` values match `species.json` exactly. Existing special senses need individual evidence; the newly registered lowlight sense addresses Akinza without inferring heat vision or total-darkness omniscience.
+5. **Environment checks passed within their scope.** All 32 temperature bands lie within their home planet's current habitable band, and every declared respiration phase is included in supported ambient media. This does not prove pressure/chemical tolerance or an encounter simulator.
+6. **Historical walkthrough contradictions require precedence, not silent new lore.** Vespersyn's later swarm ruling wins over its old avian prose. Sonalloy's old comparison describing Crystorn as a mineral quadruped is wrong against Crystorn's canonical flesh/mineral biped record; do not use that comparison as an anatomy source. Old signature effect mappings also do not outrank actual sourced behavior.
+
+## Completion gates
+
+- [x] Review all 32 species' source mechanisms and inspect their art for source-to-schema fit.
+- [x] Review support and impairment families as well as damage; identify concrete semantic gaps.
+- [x] Check current teaser preservation, respiration/media consistency and planetary temperature bounds.
+- [x] Record the three proposed decisions and the user's hold on migration while gaps are resolved.
+- [x] Ratify paralysis; implement its status definition, naming and generation/protection/removal regression coverage.
+- [x] Resolve fuel exposure by explicit deferral; preserve hydrogen-emission lore without substituting burning or inventing ignition/explosion behavior.
+- [x] Resolve physical barriers by explicit deferral; retain Yetimoth wall-making in lore without a mechanical freestanding obstacle.
+- [ ] Author v5 species mechanism domains, required capabilities, independent temperament and calibrated output/rating bands, with per-species coverage evidence.
+- [ ] Compile each species and verify generated structure coverage, distinct-action capacity and performance over the canonical roster.
+- [ ] Bind the migrated roster, freeze v5 and verify canonical replay. Game updates remain separate.
+
+The design-audit pass is complete at this scope. The creature redesign and species migration are **not** complete while these decisions and gates remain open.

@@ -1,0 +1,6 @@
+exports/*/idle/
+exports/*/action/
+exports/*/hit/
+godot/assets/**/*.png.import
+godot/render.log
+tools/__pycache__/

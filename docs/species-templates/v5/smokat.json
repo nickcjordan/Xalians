@@ -1,0 +1,381 @@
+{
+  "key": "smokat",
+  "name": "Smokat",
+  "nameOrigin": "A fusion of smoke and cat, naming its feline silhouette and ability to atomize into smoke.",
+  "element": "ghost",
+  "homePlanet": "phantiri",
+  "generatorPlanets": [
+    "phantiri"
+  ],
+  "lore": {
+    "description": "Feline shaped in normal form, this clever creature can instantly atomize into a cloud of smoke for a sneak attack or quick evasion.",
+    "appearance": [
+      "Lean feline shape held in a body of smoke, standing on two legs",
+      "Surface of smoke with no firm edge",
+      "Long muzzle",
+      "Pointed tufted ears",
+      "Clawed paws",
+      "Long tail whose tip trails off into loose smoke",
+      "Nearly weightless"
+    ],
+    "origin": "One of the non-corporeal Xalians the abandoned Phantiri Generator produced after it rewrote itself under Leviticus Overdrive.",
+    "habitat": "The Dreadscape of Phantiri, inside its windless fog.",
+    "feeding": "It takes nothing in and feeds on nothing.",
+    "behavior": "It holds a feline shape, climbs and springs where the footing is bad, and instantly atomizes into a cloud of smoke for a sneak attack or a quick escape.",
+    "company": "It hunts alone."
+  },
+  "physiology": {
+    "composition": {
+      "primary": "gas"
+    },
+    "bodyPlan": "biped",
+    "anatomy": [
+      "claws",
+      "jaws",
+      "tail",
+      "body"
+    ],
+    "covering": "mist",
+    "size": {
+      "heightCm": [
+        150,
+        185
+      ],
+      "weightKg": [
+        0.5,
+        3
+      ]
+    },
+    "lifespan": "ageless",
+    "genome": {
+      "chirality": "rolled"
+    },
+    "diet": "none",
+    "communication": [
+      "vocal"
+    ],
+    "breathes": [],
+    "environmentalTolerance": {
+      "ambientMedia": [
+        "gas"
+      ],
+      "temperatureC": {
+        "min": -30,
+        "max": 20
+      }
+    },
+    "capabilities": {
+      "flight": [
+        0,
+        0
+      ],
+      "swim": [
+        10,
+        30
+      ],
+      "burrow": [
+        5,
+        20
+      ],
+      "climb": [
+        55,
+        80
+      ],
+      "sprint": [
+        60,
+        85
+      ],
+      "leap": [
+        55,
+        80
+      ],
+      "manipulation": [
+        20,
+        40
+      ]
+    },
+    "senses": {
+      "sight": [
+        55,
+        80
+      ],
+      "hearing": [
+        55,
+        80
+      ],
+      "smell": [
+        45,
+        70
+      ],
+      "special": []
+    },
+    "protections": [],
+    "traversal": []
+  },
+  "attributes": {
+    "strength": [
+      45,
+      70
+    ],
+    "vitality": [
+      25,
+      50
+    ],
+    "endurance": [
+      35,
+      60
+    ],
+    "agility": [
+      55,
+      82
+    ],
+    "reflex": [
+      55,
+      82
+    ],
+    "intelligence": [
+      45,
+      70
+    ],
+    "willpower": [
+      35,
+      60
+    ],
+    "instinct": [
+      50,
+      76
+    ],
+    "charisma": [
+      25,
+      50
+    ],
+    "resilience": [
+      20,
+      45
+    ]
+  },
+  "schemaVersion": "5.0.0",
+  "temperament": {
+    "boldness": [
+      50,
+      75
+    ],
+    "curiosity": [
+      55,
+      80
+    ],
+    "energy": [
+      55,
+      80
+    ],
+    "aggression": [
+      45,
+      70
+    ],
+    "sociability": [
+      15,
+      40
+    ]
+  },
+  "passives": [],
+  "signature": {
+    "type": "action",
+    "key": "smokat-defining"
+  },
+  "actions": [
+    {
+      "key": "smokat-defining",
+      "name": "Smoke Dispersal",
+      "description": "It briefly atomizes into smoke and slips through existing openings.",
+      "instrument": "body",
+      "activation": {
+        "continuity": "discrete"
+      },
+      "timing": {
+        "preparation": "immediate",
+        "recovery": "brief"
+      },
+      "delivery": {
+        "mode": "self",
+        "approach": "stationary"
+      },
+      "targeting": [
+        "self"
+      ],
+      "spatial": {},
+      "effects": [
+        {
+          "key": "outcome",
+          "type": "status",
+          "recipient": "self",
+          "onset": "instant",
+          "persistence": "lingering",
+          "likelihood": "consistent",
+          "status": "dispersed",
+          "duration": "brief",
+          "removable": [
+            "disrupting"
+          ]
+        }
+      ]
+    }
+  ],
+  "mechanisms": [
+    {
+      "key": "smoke-feline-claws",
+      "name": "Feline Claws",
+      "description": "Its solid feline form rakes a contacted target.",
+      "instrument": "claws",
+      "targeting": [
+        "other"
+      ],
+      "activation": {
+        "continuity": [
+          "discrete"
+        ]
+      },
+      "timing": {
+        "preparation": [
+          "immediate",
+          "brief"
+        ],
+        "recovery": [
+          "repeatable",
+          "brief"
+        ]
+      },
+      "delivery": {
+        "contact": {
+          "approach": [
+            "stationary",
+            "closing"
+          ],
+          "range": [
+            "contact"
+          ]
+        }
+      },
+      "effects": [
+        {
+          "key": "outcome",
+          "type": "harm",
+          "recipient": "target",
+          "onset": "instant",
+          "persistence": "resolved",
+          "likelihood": [
+            "consistent"
+          ],
+          "mechanism": "cutting",
+          "intensity": [
+            35,
+            60
+          ]
+        }
+      ]
+    },
+    {
+      "key": "smoke-jaws",
+      "name": "Feline Jaws",
+      "description": "Its solid jaws bite at contact.",
+      "instrument": "jaws",
+      "targeting": [
+        "other"
+      ],
+      "activation": {
+        "continuity": [
+          "discrete"
+        ]
+      },
+      "timing": {
+        "preparation": [
+          "immediate",
+          "brief"
+        ],
+        "recovery": [
+          "repeatable",
+          "brief"
+        ]
+      },
+      "delivery": {
+        "contact": {
+          "approach": [
+            "stationary",
+            "closing"
+          ],
+          "range": [
+            "contact"
+          ]
+        }
+      },
+      "effects": [
+        {
+          "key": "outcome",
+          "type": "harm",
+          "recipient": "target",
+          "onset": "instant",
+          "persistence": "resolved",
+          "likelihood": [
+            "consistent"
+          ],
+          "mechanism": "piercing",
+          "intensity": [
+            30,
+            52
+          ]
+        }
+      ]
+    },
+    {
+      "key": "smoke-tail",
+      "name": "Tail Strike",
+      "description": "Its solid tail strikes at close contact.",
+      "instrument": "tail",
+      "targeting": [
+        "other"
+      ],
+      "activation": {
+        "continuity": [
+          "discrete"
+        ]
+      },
+      "timing": {
+        "preparation": [
+          "immediate",
+          "brief"
+        ],
+        "recovery": [
+          "repeatable",
+          "brief"
+        ]
+      },
+      "delivery": {
+        "contact": {
+          "approach": [
+            "stationary",
+            "closing"
+          ],
+          "range": [
+            "contact"
+          ]
+        }
+      },
+      "effects": [
+        {
+          "key": "outcome",
+          "type": "harm",
+          "recipient": "target",
+          "onset": "instant",
+          "persistence": "resolved",
+          "likelihood": [
+            "consistent"
+          ],
+          "mechanism": "impact",
+          "intensity": [
+            20,
+            42
+          ]
+        }
+      ]
+    }
+  ]
+}

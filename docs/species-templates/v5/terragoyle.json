@@ -1,0 +1,440 @@
+{
+  "key": "terragoyle",
+  "name": "Terragoyle",
+  "nameOrigin": "A fusion of terra and gargoyle, matching a stone-moving, horned bat-like guardian that waits in a statue-like state.",
+  "element": "rock",
+  "homePlanet": "stonera",
+  "generatorPlanets": [
+    "stonera"
+  ],
+  "lore": {
+    "description": "Resembling horned and vaguely humanoid bats with elongated tails tipped with a levitating ball of stone, Terragoyles can be found lining the edges of the Chasm. They were originally used to airlift debris out of Stonera's strip mines with their levitational tails, but now stand guard over the perimeter in a statue-like state, hibernating to conserve their energy until a threat is detected. When awoken, Terragoyles rise high into the sky, using their tails to levitate boulders and fling them like great flying catapults across the Chasm beneath them or to carpet bomb intruders with strafing runs of gravel and rock as they soar overhead.",
+    "appearance": [
+      "Horned, vaguely humanoid bat, hunched on all fours",
+      "Very heavy for its height",
+      "Ribbed ram-like horns curling back from the skull",
+      "Large membranous wings",
+      "Bare muscled hide",
+      "Long tail ending in a cradle, with a ball of stone levitating above it"
+    ],
+    "origin": "Used to airlift debris out of Stonera's strip mines with its levitating tail.",
+    "habitat": "The edges of the Chasm on Stonera.",
+    "feeding": "It eats when it wakes, whatever the rim offers, and goes long stretches without.",
+    "behavior": "It stands guard over the perimeter in a statue-like state, hibernating to conserve energy until it senses a threat. Then it rises into the sky and uses its tail to levitate boulders and fling them across the Chasm, or carpet-bombs intruders with strafing runs of gravel and rock.",
+    "company": "It stands in a line with others along the rim."
+  },
+  "physiology": {
+    "composition": {
+      "primary": "flesh"
+    },
+    "bodyPlan": "quadruped",
+    "anatomy": [
+      "horns",
+      "wings",
+      "tail",
+      "hide"
+    ],
+    "covering": "hide",
+    "size": {
+      "heightCm": [
+        150,
+        185
+      ],
+      "weightKg": [
+        300,
+        430
+      ]
+    },
+    "lifespan": "long",
+    "genome": {
+      "chirality": "rolled"
+    },
+    "diet": "omnivore",
+    "communication": [
+      "vocal",
+      "display"
+    ],
+    "breathes": [
+      "gas"
+    ],
+    "environmentalTolerance": {
+      "ambientMedia": [
+        "gas"
+      ],
+      "temperatureC": {
+        "min": -45,
+        "max": 25
+      }
+    },
+    "capabilities": {
+      "flight": [
+        60,
+        85
+      ],
+      "swim": [
+        0,
+        10
+      ],
+      "burrow": [
+        5,
+        20
+      ],
+      "climb": [
+        45,
+        70
+      ],
+      "sprint": [
+        20,
+        40
+      ],
+      "leap": [
+        35,
+        60
+      ],
+      "manipulation": [
+        45,
+        70
+      ]
+    },
+    "senses": {
+      "sight": [
+        55,
+        80
+      ],
+      "hearing": [
+        60,
+        85
+      ],
+      "smell": [
+        20,
+        40
+      ],
+      "special": [
+        "tremorsense"
+      ]
+    },
+    "protections": [],
+    "traversal": []
+  },
+  "attributes": {
+    "strength": [
+      60,
+      80
+    ],
+    "vitality": [
+      62,
+      82
+    ],
+    "endurance": [
+      55,
+      78
+    ],
+    "agility": [
+      20,
+      40
+    ],
+    "reflex": [
+      25,
+      45
+    ],
+    "intelligence": [
+      25,
+      45
+    ],
+    "willpower": [
+      55,
+      78
+    ],
+    "instinct": [
+      45,
+      68
+    ],
+    "charisma": [
+      20,
+      40
+    ],
+    "resilience": [
+      70,
+      90
+    ]
+  },
+  "schemaVersion": "5.0.0",
+  "temperament": {
+    "boldness": [
+      45,
+      70
+    ],
+    "curiosity": [
+      20,
+      45
+    ],
+    "energy": [
+      25,
+      50
+    ],
+    "aggression": [
+      40,
+      65
+    ],
+    "sociability": [
+      25,
+      50
+    ]
+  },
+  "passives": [],
+  "signature": {
+    "type": "action",
+    "key": "terragoyle-defining"
+  },
+  "actions": [
+    {
+      "key": "terragoyle-defining",
+      "name": "Levitated Boulder",
+      "description": "Its tail levitates a boulder and flings it at a selected target.",
+      "instrument": "tail",
+      "activation": {
+        "continuity": "discrete"
+      },
+      "timing": {
+        "preparation": "brief",
+        "recovery": "prolonged"
+      },
+      "delivery": {
+        "mode": "projectile",
+        "approach": "stationary"
+      },
+      "targeting": [
+        "other"
+      ],
+      "spatial": {
+        "range": "long"
+      },
+      "effects": [
+        {
+          "key": "outcome",
+          "type": "harm",
+          "recipient": "target",
+          "onset": "instant",
+          "persistence": "resolved",
+          "likelihood": "consistent",
+          "mechanism": "impact",
+          "intensity": 82
+        }
+      ],
+      "element": "rock"
+    },
+    {
+      "key": "terragoyle-gravel",
+      "name": "Gravel Strafing",
+      "description": "It scatters a tail-launched volley of gravel over the target area while flying.",
+      "instrument": "tail",
+      "activation": {
+        "continuity": "discrete"
+      },
+      "timing": {
+        "preparation": "brief",
+        "recovery": "brief"
+      },
+      "delivery": {
+        "mode": "projectile",
+        "approach": "stationary"
+      },
+      "targeting": [
+        "other"
+      ],
+      "spatial": {
+        "range": "medium",
+        "area": {
+          "shape": "radial",
+          "extent": "medium",
+          "anchor": "target",
+          "persistence": "resolved"
+        }
+      },
+      "effects": [
+        {
+          "key": "outcome",
+          "type": "harm",
+          "recipient": "area",
+          "onset": "instant",
+          "persistence": "resolved",
+          "likelihood": "consistent",
+          "mechanism": "impact",
+          "intensity": 52
+        }
+      ],
+      "element": "rock"
+    }
+  ],
+  "mechanisms": [
+    {
+      "key": "tail-boulder",
+      "name": "Tail Boulder",
+      "description": "Its levitational tail hurls a boulder at one selected target.",
+      "instrument": "tail",
+      "element": "rock",
+      "targeting": [
+        "other"
+      ],
+      "activation": {
+        "continuity": [
+          "discrete"
+        ]
+      },
+      "timing": {
+        "preparation": [
+          "brief"
+        ],
+        "recovery": [
+          "brief",
+          "prolonged"
+        ]
+      },
+      "delivery": {
+        "projectile": {
+          "approach": [
+            "stationary"
+          ],
+          "range": [
+            "medium",
+            "long"
+          ]
+        }
+      },
+      "effects": [
+        {
+          "key": "outcome",
+          "type": "harm",
+          "recipient": "target",
+          "onset": "instant",
+          "persistence": "resolved",
+          "likelihood": [
+            "consistent"
+          ],
+          "mechanism": "impact",
+          "intensity": [
+            65,
+            90
+          ]
+        }
+      ]
+    },
+    {
+      "key": "tail-gravel",
+      "name": "Tail Gravel",
+      "description": "The same tail launches a dispersed gravel volley.",
+      "instrument": "tail",
+      "element": "rock",
+      "targeting": [
+        "other"
+      ],
+      "activation": {
+        "continuity": [
+          "discrete"
+        ]
+      },
+      "timing": {
+        "preparation": [
+          "brief"
+        ],
+        "recovery": [
+          "brief",
+          "prolonged"
+        ]
+      },
+      "delivery": {
+        "projectile": {
+          "approach": [
+            "stationary"
+          ],
+          "range": [
+            "short",
+            "medium"
+          ],
+          "area": {
+            "shape": [
+              "radial"
+            ],
+            "extent": [
+              "small",
+              "medium"
+            ],
+            "anchor": [
+              "target"
+            ],
+            "persistence": "resolved"
+          }
+        }
+      },
+      "effects": [
+        {
+          "key": "outcome",
+          "type": "harm",
+          "recipient": "area",
+          "onset": "instant",
+          "persistence": "resolved",
+          "likelihood": [
+            "consistent"
+          ],
+          "mechanism": "impact",
+          "intensity": [
+            35,
+            62
+          ]
+        }
+      ]
+    },
+    {
+      "key": "horn-contact",
+      "name": "Horn Contact",
+      "description": "Its horns strike at close contact.",
+      "instrument": "horns",
+      "targeting": [
+        "other"
+      ],
+      "activation": {
+        "continuity": [
+          "discrete"
+        ]
+      },
+      "timing": {
+        "preparation": [
+          "immediate",
+          "brief"
+        ],
+        "recovery": [
+          "repeatable",
+          "brief"
+        ]
+      },
+      "delivery": {
+        "contact": {
+          "approach": [
+            "stationary",
+            "closing"
+          ],
+          "range": [
+            "contact"
+          ]
+        }
+      },
+      "effects": [
+        {
+          "key": "outcome",
+          "type": "harm",
+          "recipient": "target",
+          "onset": "instant",
+          "persistence": "resolved",
+          "likelihood": [
+            "consistent"
+          ],
+          "mechanism": "piercing",
+          "intensity": [
+            30,
+            55
+          ]
+        }
+      ]
+    }
+  ]
+}

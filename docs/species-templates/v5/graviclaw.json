@@ -1,0 +1,457 @@
+{
+  "key": "graviclaw",
+  "name": "Graviclaw",
+  "nameOrigin": "A compression of gravity and claw, naming the force it controls and the massive pincer where that force terminates.",
+  "element": "dark",
+  "homePlanet": "grimedes",
+  "generatorPlanets": [
+    "grimedes"
+  ],
+  "lore": {
+    "description": "With the black-shelled body of a crab and an upright torso, the centaur-like crustacean known as the Graviclaw lurks just beneath the foggy wetlands of Grimedes, using its bizarre control over the intensification of gravitational waves to generate miniature black holes in the water and draw its helpless prey right into its clutches. Graviclaws can strengthen the gravitational pull of their massive claws in order to snap them shut with a force many times heavier than their implied mass, severing through even the hardest of materials with crushing pressure. When facing larger foes, the Graviclaw can use its powers to root itself to the ground, becoming an immovable wall of chitin.",
+    "appearance": [
+      "Centaur-like crustacean, crab body below and upright torso above",
+      "Black chitin shell",
+      "Heavy for its height",
+      "Many jointed legs",
+      "One massive pincer claw as long as the torso",
+      "Small head on heavy shoulders"
+    ],
+    "origin": "Thought to come from the laboratory experiments on Grimedes, rumored to be ECHELON black sites, that produced the planet's gravity-bending Xalians.",
+    "habitat": "The foggy wetlands of Grimedes, just beneath the surface.",
+    "feeding": "It lurks under the water and draws prey to its claws with a miniature black hole rather than chasing it.",
+    "behavior": "It snaps its claws shut with a force many times its mass, cutting through the hardest materials. Against something too large to draw in, it roots itself to the ground and becomes an immovable wall of chitin.",
+    "company": "It lurks alone."
+  },
+  "physiology": {
+    "composition": {
+      "primary": "flesh",
+      "secondary": "mineral"
+    },
+    "bodyPlan": "multiped",
+    "anatomy": [
+      "pincers",
+      "shell",
+      "body"
+    ],
+    "covering": "chitin",
+    "size": {
+      "heightCm": [
+        165,
+        215
+      ],
+      "weightKg": [
+        180,
+        260
+      ]
+    },
+    "lifespan": "long",
+    "genome": {
+      "chirality": "rolled"
+    },
+    "diet": "carnivore",
+    "communication": [],
+    "breathes": [
+      "gas",
+      "liquid"
+    ],
+    "environmentalTolerance": {
+      "ambientMedia": [
+        "gas",
+        "liquid"
+      ],
+      "temperatureC": {
+        "min": -60,
+        "max": 5
+      }
+    },
+    "capabilities": {
+      "flight": [
+        0,
+        0
+      ],
+      "swim": [
+        45,
+        70
+      ],
+      "burrow": [
+        50,
+        75
+      ],
+      "climb": [
+        5,
+        20
+      ],
+      "sprint": [
+        15,
+        35
+      ],
+      "leap": [
+        5,
+        20
+      ],
+      "manipulation": [
+        45,
+        70
+      ]
+    },
+    "senses": {
+      "sight": [
+        20,
+        45
+      ],
+      "hearing": [
+        30,
+        55
+      ],
+      "smell": [
+        35,
+        60
+      ],
+      "special": [
+        "void-sense"
+      ]
+    },
+    "protections": [],
+    "traversal": []
+  },
+  "attributes": {
+    "strength": [
+      70,
+      95
+    ],
+    "vitality": [
+      55,
+      80
+    ],
+    "endurance": [
+      50,
+      75
+    ],
+    "agility": [
+      10,
+      30
+    ],
+    "reflex": [
+      25,
+      50
+    ],
+    "intelligence": [
+      25,
+      50
+    ],
+    "willpower": [
+      45,
+      70
+    ],
+    "instinct": [
+      55,
+      80
+    ],
+    "charisma": [
+      15,
+      40
+    ],
+    "resilience": [
+      70,
+      95
+    ]
+  },
+  "schemaVersion": "5.0.0",
+  "temperament": {
+    "boldness": [
+      50,
+      75
+    ],
+    "curiosity": [
+      25,
+      50
+    ],
+    "energy": [
+      20,
+      45
+    ],
+    "aggression": [
+      55,
+      80
+    ],
+    "sociability": [
+      10,
+      35
+    ]
+  },
+  "passives": [],
+  "signature": {
+    "type": "action",
+    "key": "graviclaw-defining"
+  },
+  "actions": [
+    {
+      "key": "graviclaw-defining",
+      "name": "Gravity Pincer",
+      "description": "Gravity intensifies at its massive pincer as it crushes a contacted target.",
+      "instrument": "pincers",
+      "activation": {
+        "continuity": "discrete"
+      },
+      "timing": {
+        "preparation": "brief",
+        "recovery": "brief"
+      },
+      "delivery": {
+        "mode": "contact",
+        "approach": "stationary"
+      },
+      "targeting": [
+        "other"
+      ],
+      "spatial": {
+        "range": "contact"
+      },
+      "effects": [
+        {
+          "key": "outcome",
+          "type": "harm",
+          "recipient": "target",
+          "onset": "instant",
+          "persistence": "resolved",
+          "likelihood": "consistent",
+          "mechanism": "compression",
+          "intensity": 85
+        }
+      ]
+    },
+    {
+      "key": "graviclaw-attract",
+      "name": "Gravity Draw",
+      "description": "A focused gravitational pull draws a selected target toward its claws.",
+      "instrument": "aura",
+      "activation": {
+        "continuity": "discrete"
+      },
+      "timing": {
+        "preparation": "immediate",
+        "recovery": "brief"
+      },
+      "delivery": {
+        "mode": "field",
+        "approach": "stationary"
+      },
+      "targeting": [
+        "other"
+      ],
+      "spatial": {
+        "range": "medium"
+      },
+      "effects": [
+        {
+          "key": "outcome",
+          "type": "displace",
+          "recipient": "target",
+          "onset": "instant",
+          "persistence": "resolved",
+          "likelihood": "consistent",
+          "direction": "toward",
+          "intensity": 65
+        }
+      ]
+    },
+    {
+      "key": "graviclaw-anchor",
+      "name": "Ground Anchor",
+      "description": "It roots itself against attempts to move it.",
+      "instrument": "body",
+      "activation": {
+        "continuity": "discrete"
+      },
+      "timing": {
+        "preparation": "brief",
+        "recovery": "brief"
+      },
+      "delivery": {
+        "mode": "self",
+        "approach": "stationary"
+      },
+      "targeting": [
+        "self"
+      ],
+      "spatial": {},
+      "effects": [
+        {
+          "key": "outcome",
+          "type": "status",
+          "recipient": "self",
+          "onset": "instant",
+          "persistence": "lingering",
+          "likelihood": "consistent",
+          "duration": "brief",
+          "status": "protected",
+          "protection": {
+            "type": "displace",
+            "degree": "immune"
+          },
+          "removable": [
+            "disrupting"
+          ]
+        }
+      ]
+    }
+  ],
+  "mechanisms": [
+    {
+      "key": "gravity-pincer",
+      "name": "Gravity Pincer",
+      "description": "Gravity amplifies its pincer compression.",
+      "instrument": "pincers",
+      "targeting": [
+        "other"
+      ],
+      "activation": {
+        "continuity": [
+          "discrete"
+        ]
+      },
+      "timing": {
+        "preparation": [
+          "immediate",
+          "brief"
+        ],
+        "recovery": [
+          "repeatable",
+          "brief"
+        ]
+      },
+      "delivery": {
+        "contact": {
+          "approach": [
+            "stationary",
+            "closing"
+          ],
+          "range": [
+            "contact"
+          ]
+        }
+      },
+      "effects": [
+        {
+          "key": "outcome",
+          "type": "harm",
+          "recipient": "target",
+          "onset": "instant",
+          "persistence": "resolved",
+          "likelihood": [
+            "consistent"
+          ],
+          "mechanism": "compression",
+          "intensity": [
+            65,
+            95
+          ]
+        }
+      ]
+    },
+    {
+      "key": "gravity-draw",
+      "name": "Gravity Draw",
+      "description": "A focused gravity field pulls a target toward the performer.",
+      "instrument": "aura",
+      "targeting": [
+        "other"
+      ],
+      "activation": {
+        "continuity": [
+          "discrete"
+        ]
+      },
+      "timing": {
+        "preparation": [
+          "immediate",
+          "brief"
+        ],
+        "recovery": [
+          "brief",
+          "prolonged"
+        ]
+      },
+      "delivery": {
+        "field": {
+          "approach": [
+            "stationary"
+          ],
+          "range": [
+            "short",
+            "medium"
+          ]
+        }
+      },
+      "effects": [
+        {
+          "key": "outcome",
+          "type": "displace",
+          "recipient": "target",
+          "onset": "instant",
+          "persistence": "resolved",
+          "likelihood": [
+            "consistent"
+          ],
+          "direction": "toward",
+          "intensity": [
+            45,
+            72
+          ]
+        }
+      ]
+    },
+    {
+      "key": "shell-crash",
+      "name": "Shell Crash",
+      "description": "The black shell drives blunt force at contact.",
+      "instrument": "shell",
+      "targeting": [
+        "other"
+      ],
+      "activation": {
+        "continuity": [
+          "discrete"
+        ]
+      },
+      "timing": {
+        "preparation": [
+          "immediate",
+          "brief"
+        ],
+        "recovery": [
+          "repeatable",
+          "brief"
+        ]
+      },
+      "delivery": {
+        "contact": {
+          "approach": [
+            "closing"
+          ],
+          "range": [
+            "contact"
+          ]
+        }
+      },
+      "effects": [
+        {
+          "key": "outcome",
+          "type": "harm",
+          "recipient": "target",
+          "onset": "instant",
+          "persistence": "resolved",
+          "likelihood": [
+            "consistent"
+          ],
+          "mechanism": "impact",
+          "intensity": [
+            42,
+            68
+          ]
+        }
+      ]
+    }
+  ]
+}

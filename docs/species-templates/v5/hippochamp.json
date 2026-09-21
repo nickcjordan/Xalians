@@ -1,0 +1,412 @@
+{
+  "key": "hippochamp",
+  "name": "Hippochamp",
+  "nameOrigin": "A shortening of hippocamp, whose Greek roots evoke horse and sea monster, matching its horse body and seahorse head.",
+  "element": "water",
+  "homePlanet": "poseidas",
+  "generatorPlanets": [
+    "poseidas"
+  ],
+  "lore": {
+    "description": "Four-legged creatures resembling a seahorse that patrol the various hydro-processing fleets on Poseidas, Hippochamps were designed as emergency response crews for the various electrical and chemical fires that occur on rigs, as well as a means of defense against pirates seeking to steal valuable Algael. Their long, trunk-like snouts serve as high-pressure water cannons, and can maintain a steady stream that allows them to hose down fires and threats alike.",
+    "appearance": [
+      "Four-legged, horse-bodied and seahorse-headed",
+      "Long trunk-like snout, a water cannon",
+      "Sail-like crest from brow to neck",
+      "Fin-like spines continuing along the back",
+      "Blunt hooves",
+      "Thick tail coiled in a spiral",
+      "Smooth hide"
+    ],
+    "origin": "Designed as emergency response crews for the hydro-processing rigs of Poseidas, putting out electrical and chemical fires and holding off pirates after the Algael.",
+    "habitat": "The floating rig fleets on Poseidas's global ocean, above and below the surface.",
+    "feeding": "It eats what the ocean around the rigs gives.",
+    "behavior": "It patrols the rigs and hoses down fires and threats alike with the steady stream from its snout. When storms or the toxic algae blooms come over the rigs it drops below the surface.",
+    "company": "It works in crews."
+  },
+  "physiology": {
+    "composition": {
+      "primary": "flesh"
+    },
+    "bodyPlan": "quadruped",
+    "anatomy": [
+      "trunk",
+      "hooves",
+      "tail",
+      "crest",
+      "spines",
+      "hide"
+    ],
+    "covering": "hide",
+    "size": {
+      "heightCm": [
+        115,
+        145
+      ],
+      "weightKg": [
+        120,
+        165
+      ]
+    },
+    "lifespan": "standard",
+    "genome": {
+      "chirality": "rolled"
+    },
+    "diet": "omnivore",
+    "communication": [
+      "vocal",
+      "display"
+    ],
+    "breathes": [
+      "gas",
+      "liquid"
+    ],
+    "environmentalTolerance": {
+      "ambientMedia": [
+        "gas",
+        "liquid"
+      ],
+      "temperatureC": {
+        "min": 5,
+        "max": 40
+      }
+    },
+    "capabilities": {
+      "flight": [
+        0,
+        0
+      ],
+      "swim": [
+        55,
+        75
+      ],
+      "burrow": [
+        0,
+        0
+      ],
+      "climb": [
+        10,
+        25
+      ],
+      "sprint": [
+        40,
+        60
+      ],
+      "leap": [
+        25,
+        45
+      ],
+      "manipulation": [
+        30,
+        50
+      ]
+    },
+    "senses": {
+      "sight": [
+        45,
+        65
+      ],
+      "hearing": [
+        40,
+        60
+      ],
+      "smell": [
+        35,
+        55
+      ],
+      "special": []
+    },
+    "protections": [],
+    "traversal": []
+  },
+  "attributes": {
+    "strength": [
+      45,
+      65
+    ],
+    "vitality": [
+      50,
+      70
+    ],
+    "endurance": [
+      65,
+      88
+    ],
+    "agility": [
+      40,
+      60
+    ],
+    "reflex": [
+      45,
+      65
+    ],
+    "intelligence": [
+      35,
+      55
+    ],
+    "willpower": [
+      50,
+      70
+    ],
+    "instinct": [
+      45,
+      65
+    ],
+    "charisma": [
+      30,
+      50
+    ],
+    "resilience": [
+      45,
+      65
+    ]
+  },
+  "schemaVersion": "5.0.0",
+  "temperament": {
+    "boldness": [
+      45,
+      70
+    ],
+    "curiosity": [
+      35,
+      60
+    ],
+    "energy": [
+      50,
+      75
+    ],
+    "aggression": [
+      25,
+      50
+    ],
+    "sociability": [
+      60,
+      85
+    ]
+  },
+  "passives": [],
+  "signature": {
+    "type": "action",
+    "key": "hippochamp-defining"
+  },
+  "actions": [
+    {
+      "key": "hippochamp-defining",
+      "name": "Emergency Water Cannon",
+      "description": "A sustained high-pressure stream from its snout hammers a threat and cools active fire.",
+      "instrument": "trunk",
+      "activation": {
+        "continuity": "discrete"
+      },
+      "timing": {
+        "preparation": "brief",
+        "recovery": "brief"
+      },
+      "delivery": {
+        "mode": "stream",
+        "approach": "stationary"
+      },
+      "targeting": [
+        "other"
+      ],
+      "spatial": {
+        "range": "medium"
+      },
+      "effects": [
+        {
+          "key": "outcome",
+          "type": "harm",
+          "recipient": "target",
+          "onset": "instant",
+          "persistence": "resolved",
+          "likelihood": "consistent",
+          "mechanism": "impact",
+          "intensity": 55
+        },
+        {
+          "key": "cool",
+          "type": "remove",
+          "recipient": "target",
+          "onset": "instant",
+          "persistence": "resolved",
+          "likelihood": "consistent",
+          "methods": [
+            "cooling"
+          ]
+        }
+      ],
+      "element": "water"
+    }
+  ],
+  "mechanisms": [
+    {
+      "key": "water-cannon",
+      "name": "Water Cannon",
+      "description": "The trunk directs a high-pressure water stream onto a selected target.",
+      "instrument": "trunk",
+      "element": "water",
+      "targeting": [
+        "other"
+      ],
+      "activation": {
+        "continuity": [
+          "discrete"
+        ]
+      },
+      "timing": {
+        "preparation": [
+          "immediate",
+          "brief"
+        ],
+        "recovery": [
+          "brief",
+          "prolonged"
+        ]
+      },
+      "delivery": {
+        "stream": {
+          "approach": [
+            "stationary"
+          ],
+          "range": [
+            "short",
+            "medium"
+          ]
+        }
+      },
+      "effects": [
+        {
+          "key": "outcome",
+          "type": "harm",
+          "recipient": "target",
+          "onset": "instant",
+          "persistence": "resolved",
+          "likelihood": [
+            "consistent"
+          ],
+          "mechanism": "impact",
+          "intensity": [
+            35,
+            62
+          ]
+        },
+        {
+          "key": "cool",
+          "type": "remove",
+          "recipient": "target",
+          "onset": "instant",
+          "persistence": "resolved",
+          "likelihood": [
+            "consistent"
+          ],
+          "methods": [
+            "cooling"
+          ]
+        }
+      ]
+    },
+    {
+      "key": "hoof-strike",
+      "name": "Hoof Strike",
+      "description": "A blunt hoof strikes at close contact.",
+      "instrument": "hooves",
+      "targeting": [
+        "other"
+      ],
+      "activation": {
+        "continuity": [
+          "discrete"
+        ]
+      },
+      "timing": {
+        "preparation": [
+          "immediate",
+          "brief"
+        ],
+        "recovery": [
+          "repeatable",
+          "brief"
+        ]
+      },
+      "delivery": {
+        "contact": {
+          "approach": [
+            "stationary",
+            "closing"
+          ],
+          "range": [
+            "contact"
+          ]
+        }
+      },
+      "effects": [
+        {
+          "key": "outcome",
+          "type": "harm",
+          "recipient": "target",
+          "onset": "instant",
+          "persistence": "resolved",
+          "likelihood": [
+            "consistent"
+          ],
+          "mechanism": "impact",
+          "intensity": [
+            28,
+            48
+          ]
+        }
+      ]
+    },
+    {
+      "key": "coiled-tail",
+      "name": "Coiled Tail",
+      "description": "The heavy spiral tail strikes a contacted target.",
+      "instrument": "tail",
+      "targeting": [
+        "other"
+      ],
+      "activation": {
+        "continuity": [
+          "discrete"
+        ]
+      },
+      "timing": {
+        "preparation": [
+          "immediate",
+          "brief"
+        ],
+        "recovery": [
+          "repeatable",
+          "brief"
+        ]
+      },
+      "delivery": {
+        "contact": {
+          "approach": [
+            "stationary"
+          ],
+          "range": [
+            "contact"
+          ]
+        }
+      },
+      "effects": [
+        {
+          "key": "outcome",
+          "type": "harm",
+          "recipient": "target",
+          "onset": "instant",
+          "persistence": "resolved",
+          "likelihood": [
+            "consistent"
+          ],
+          "mechanism": "impact",
+          "intensity": [
+            25,
+            45
+          ]
+        }
+      ]
+    }
+  ]
+}

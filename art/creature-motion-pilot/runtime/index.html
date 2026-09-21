@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Xalians Creature Motion Workbench</title>
+  <link rel="stylesheet" href="workbench.css">
+</head>
+<body>
+  <main class="shell">
+    <header class="intro">
+      <p class="eyebrow">XALIANS / ART WORKBENCH</p>
+      <h1>Creature motion</h1>
+      <p>Inspect the authored poses at a phone-sized battle scale. The same sprite sheets and clip data can be read by any canvas game.</p>
+    </header>
+
+    <div class="workspace">
+      <section class="viewer" aria-label="Animation preview">
+        <div class="viewer-top"><span>STAGE PREVIEW</span><span id="frame-readout">FRAME 01</span></div>
+        <canvas id="stage" width="780" height="860" aria-label="Animated creature preview"></canvas>
+        <div class="viewer-bottom"><span id="species-readout">AKINZA</span><span>390 × 430 VIEW</span></div>
+      </section>
+
+      <section class="inspector" aria-label="Animation controls">
+        <div class="section-label">01 / CHARACTER</div>
+        <div class="choice-row" id="species-controls"></div>
+
+        <div class="section-label">02 / CLIP</div>
+        <div class="choice-row" id="clip-controls"></div>
+
+        <div class="section-label">03 / PLAYBACK</div>
+        <div class="transport">
+          <button type="button" id="play" aria-label="Pause animation">Pause</button>
+          <label>Speed
+            <select id="speed">
+              <option value="0.5">0.5×</option>
+              <option value="1" selected>1×</option>
+              <option value="1.5">1.5×</option>
+              <option value="2">2×</option>
+            </select>
+          </label>
+          <label class="mirror"><input id="mirror" type="checkbox"> Mirror</label>
+        </div>
+        <div class="quality-row">
+          <label>Export profile
+            <select id="profile"></select>
+          </label>
+          <span id="profile-size"></span>
+        </div>
+        <div class="timeline-wrap">
+          <input id="timeline" type="range" min="0" max="1000" value="0" aria-label="Animation timeline">
+          <div id="markers" class="markers" aria-hidden="true"></div>
+        </div>
+        <div class="time-row"><span id="time-readout">0.00 s</span><span id="duration-readout">2.00 s</span></div>
+
+        <div class="section-label">04 / SOURCE</div>
+        <div class="source-links">
+          <a id="svg-link" href="../source/akinza.svg">Editable SVG art</a>
+          <a id="scene-link" href="../godot/scenes/akinza.tscn">Godot rig scene</a>
+          <a id="manifest-link" href="../exports/akinza/manifest.json">Atlas manifest</a>
+        </div>
+        <p class="note" id="clip-note">Idle motion uses separate head, ears, tail, and body parts.</p>
+      </section>
+    </div>
+    <p class="footer-note" id="load-status" role="status">Loading creature atlases…</p>
+  </main>
+  <script type="module" src="workbench.mjs"></script>
+</body>
+</html>

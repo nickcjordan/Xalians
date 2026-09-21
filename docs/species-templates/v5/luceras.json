@@ -1,0 +1,378 @@
+{
+  "key": "luceras",
+  "name": "Luceras",
+  "nameOrigin": "A stylized blend of Latin lepus, hare, and Greek keras, horn, matching its long-eared bounding frame and paired ram-like horns.",
+  "element": "air",
+  "homePlanet": "saiphus",
+  "generatorPlanets": [
+    "saiphus"
+  ],
+  "lore": {
+    "description": "This creature can jump so high that at times it seems as if it is flying. Once up in the air, it comes missiling down on its enemy like a battering ram.",
+    "appearance": [
+      "Small bounding quadruped, built around its hind legs",
+      "Shaggy fur",
+      "A pair of curved ram-like horns",
+      "Long upright ears",
+      "Long whiskers",
+      "Whip tail longer than the body, ending in a spiked plume"
+    ],
+    "origin": "One of the leaping animals the Saiphus Generator raised to bound between the floating islands as if gravity held no sway over them.",
+    "habitat": "The floating islands of Saiphus and the gaps between them.",
+    "feeding": "It grazes the rolling plains of the islands and drinks where vapor condenses in the canyons.",
+    "behavior": "It jumps so high it seems to fly, then comes missiling down on its enemy like a battering ram.",
+    "company": "It grazes in groups."
+  },
+  "physiology": {
+    "composition": {
+      "primary": "flesh"
+    },
+    "bodyPlan": "quadruped",
+    "anatomy": [
+      "horns",
+      "tail",
+      "body"
+    ],
+    "covering": "fur",
+    "size": {
+      "heightCm": [
+        48,
+        66
+      ],
+      "weightKg": [
+        9,
+        17
+      ]
+    },
+    "lifespan": "short",
+    "genome": {
+      "chirality": "rolled"
+    },
+    "diet": "omnivore",
+    "communication": [
+      "vocal"
+    ],
+    "breathes": [
+      "gas"
+    ],
+    "environmentalTolerance": {
+      "ambientMedia": [
+        "gas"
+      ],
+      "temperatureC": {
+        "min": -30,
+        "max": 42
+      }
+    },
+    "capabilities": {
+      "flight": [
+        0,
+        0
+      ],
+      "swim": [
+        5,
+        20
+      ],
+      "burrow": [
+        10,
+        30
+      ],
+      "climb": [
+        35,
+        55
+      ],
+      "sprint": [
+        60,
+        82
+      ],
+      "leap": [
+        82,
+        97
+      ],
+      "manipulation": [
+        15,
+        35
+      ]
+    },
+    "senses": {
+      "sight": [
+        55,
+        75
+      ],
+      "hearing": [
+        70,
+        90
+      ],
+      "smell": [
+        40,
+        60
+      ],
+      "special": []
+    },
+    "protections": [],
+    "traversal": []
+  },
+  "attributes": {
+    "strength": [
+      38,
+      58
+    ],
+    "vitality": [
+      30,
+      50
+    ],
+    "endurance": [
+      45,
+      65
+    ],
+    "agility": [
+      70,
+      90
+    ],
+    "reflex": [
+      65,
+      85
+    ],
+    "intelligence": [
+      25,
+      45
+    ],
+    "willpower": [
+      35,
+      55
+    ],
+    "instinct": [
+      55,
+      75
+    ],
+    "charisma": [
+      30,
+      50
+    ],
+    "resilience": [
+      28,
+      48
+    ]
+  },
+  "schemaVersion": "5.0.0",
+  "temperament": {
+    "boldness": [
+      45,
+      70
+    ],
+    "curiosity": [
+      35,
+      60
+    ],
+    "energy": [
+      60,
+      85
+    ],
+    "aggression": [
+      35,
+      60
+    ],
+    "sociability": [
+      50,
+      75
+    ]
+  },
+  "passives": [],
+  "signature": {
+    "type": "action",
+    "key": "luceras-defining"
+  },
+  "actions": [
+    {
+      "key": "luceras-defining",
+      "name": "Horns-First Descent",
+      "description": "It leaps high and descends horns-first into a contacted opponent.",
+      "instrument": "horns",
+      "activation": {
+        "continuity": "discrete"
+      },
+      "timing": {
+        "preparation": "brief",
+        "recovery": "brief"
+      },
+      "delivery": {
+        "mode": "contact",
+        "approach": "closing"
+      },
+      "targeting": [
+        "other"
+      ],
+      "spatial": {
+        "range": "contact"
+      },
+      "effects": [
+        {
+          "key": "outcome",
+          "type": "harm",
+          "recipient": "target",
+          "onset": "instant",
+          "persistence": "resolved",
+          "likelihood": "consistent",
+          "mechanism": "impact",
+          "intensity": 56
+        }
+      ]
+    }
+  ],
+  "mechanisms": [
+    {
+      "key": "horn-ram",
+      "name": "Horn Ram",
+      "description": "Curved horns strike through a short closing charge.",
+      "instrument": "horns",
+      "targeting": [
+        "other"
+      ],
+      "activation": {
+        "continuity": [
+          "discrete"
+        ]
+      },
+      "timing": {
+        "preparation": [
+          "immediate",
+          "brief"
+        ],
+        "recovery": [
+          "repeatable",
+          "brief"
+        ]
+      },
+      "delivery": {
+        "contact": {
+          "approach": [
+            "closing"
+          ],
+          "range": [
+            "contact"
+          ]
+        }
+      },
+      "effects": [
+        {
+          "key": "outcome",
+          "type": "harm",
+          "recipient": "target",
+          "onset": "instant",
+          "persistence": "resolved",
+          "likelihood": [
+            "consistent"
+          ],
+          "mechanism": "impact",
+          "intensity": [
+            32,
+            58
+          ]
+        }
+      ]
+    },
+    {
+      "key": "tail-spike",
+      "name": "Tail Spike",
+      "description": "The spiked plume at the end of its tail pierces nearby targets.",
+      "instrument": "tail",
+      "targeting": [
+        "other"
+      ],
+      "activation": {
+        "continuity": [
+          "discrete"
+        ]
+      },
+      "timing": {
+        "preparation": [
+          "immediate",
+          "brief"
+        ],
+        "recovery": [
+          "repeatable",
+          "brief"
+        ]
+      },
+      "delivery": {
+        "contact": {
+          "approach": [
+            "stationary",
+            "closing"
+          ],
+          "range": [
+            "contact"
+          ]
+        }
+      },
+      "effects": [
+        {
+          "key": "outcome",
+          "type": "harm",
+          "recipient": "target",
+          "onset": "instant",
+          "persistence": "resolved",
+          "likelihood": [
+            "consistent"
+          ],
+          "mechanism": "piercing",
+          "intensity": [
+            20,
+            42
+          ]
+        }
+      ]
+    },
+    {
+      "key": "body-check",
+      "name": "Body Check",
+      "description": "Its bounding body collides with a contacted target.",
+      "instrument": "body",
+      "targeting": [
+        "other"
+      ],
+      "activation": {
+        "continuity": [
+          "discrete"
+        ]
+      },
+      "timing": {
+        "preparation": [
+          "immediate",
+          "brief"
+        ],
+        "recovery": [
+          "repeatable",
+          "brief"
+        ]
+      },
+      "delivery": {
+        "contact": {
+          "approach": [
+            "closing"
+          ],
+          "range": [
+            "contact"
+          ]
+        }
+      },
+      "effects": [
+        {
+          "key": "outcome",
+          "type": "harm",
+          "recipient": "target",
+          "onset": "instant",
+          "persistence": "resolved",
+          "likelihood": [
+            "consistent"
+          ],
+          "mechanism": "impact",
+          "intensity": [
+            22,
+            45
+          ]
+        }
+      ]
+    }
+  ]
+}

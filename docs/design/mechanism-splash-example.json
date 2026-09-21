@@ -1,0 +1,38 @@
+{
+  "notice": "ABBREVIATED DESIGN EXAMPLE, not production data. Recipient domains extending delivery-keyed mappings are accepted. Hypothetical water projectile retains targeted impact and cooling, with cooling permitted to reach either the target alone or a splash area. No effect is omitted. Missing timing and lifetime fields are outside this focused example.",
+  "mechanisms": [
+    {
+      "key": "pressurized-water",
+      "instrument": "breath",
+      "element": "water",
+      "targeting": ["other"],
+      "delivery": {
+        "projectile": {
+          "range": ["short", "medium"],
+          "area": {
+            "shape": ["radial"],
+            "extent": ["small", "medium"],
+            "anchor": ["location"]
+          }
+        }
+      },
+      "effects": [
+        {
+          "key": "pressure",
+          "type": "harm",
+          "mechanism": "impact",
+          "recipient": "target",
+          "intensity": [30, 70]
+        },
+        {
+          "key": "cool",
+          "type": "remove",
+          "recipient": {
+            "projectile": ["target", "area"]
+          },
+          "methods": ["cooling"]
+        }
+      ]
+    }
+  ]
+}
