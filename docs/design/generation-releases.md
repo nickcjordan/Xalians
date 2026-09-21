@@ -54,7 +54,7 @@ Do not modify an already frozen release to accommodate a later edit. Make a new 
 
 ## Schema 4 release
 
-Current release generation-0.5.0-1 uses generator 0.5.0 and schema 4.0.0. It separates actions/passives and adds structured spatial, timing, status, and removal facts. Both earlier archives remain replayable unchanged.
+The first schema-4 release, `generation-0.5.0-1`, uses generator 0.5.0 and schema 4.0.0. It separates actions/passives and adds structured spatial, timing, status, and removal facts. Both earlier archives remain replayable unchanged. The selected game release is `generation-0.5.0-4` in `packages/rules/src/generator/currentRelease.json`; the standalone schema-5 archive is `generation-0.6.0-1`.
 
 Integration release generation-0.5.0-2 includes ratified Shuntara from main. Generator/schema versions remain 0.5.0/4.0.0; the release ID pins the changed content. The earlier 31-species archive remains immutable.
 

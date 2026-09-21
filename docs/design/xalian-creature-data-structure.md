@@ -1,6 +1,6 @@
 > Release provenance: see [immutable generation releases](generation-releases.md) for `releaseId`, archived inputs, and replay.
 
-> Ability schema update: the current actions, passives, signature, delivery, and effect contract is [Creature capabilities: schema 4](xalian-ability-model.md). It supersedes action/signature structure in this document.
+> Historical schema-4 handoff. The [schema-5 creature contract](creature-model-current.md) is authoritative for new creature and ability authoring; existing games still consume schema 4 during adaptation.
 
 # The Xalian Creature Data Structure — Handoff Reference
 

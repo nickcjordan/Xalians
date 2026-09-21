@@ -1,6 +1,6 @@
 # Bioflim: v5 ability audit
 
-Review date: 2026-09-21. Status: staged, compiled, not in the canonical v5 release. Sources: `../bioflim.json`, `../bioflim.md`, `../art/bioflim.png`, `packages/content/json/species.json` (Bioflim), `packages/content/json/planetRecords.json` (Drainov), and the v5 catalog at this revision. The existing description is preserved verbatim.
+Review date: 2026-09-21. Status: frozen in `generation-0.6.0-1`; game consumers still use v4. Sources: `../bioflim.json`, `../bioflim.md`, `../art/bioflim.png`, `packages/content/json/species.json` (Bioflim), `packages/content/json/planetRecords.json` (Drainov), and the v5 catalog at this revision. The existing description is preserved verbatim.
 
 ## Mechanism inventory and essential identity
 

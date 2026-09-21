@@ -1,6 +1,6 @@
 # Avilily: v5 ability audit
 
-Review date: 2026-09-21. Status: staged, compiled, not in the canonical v5 release. Sources: `../avilily.json`, `../avilily.md`, `../art/avilily.png`, the canonical species description and Floria's planetary record. The species teaser is preserved verbatim.
+Review date: 2026-09-21. Status: frozen in `generation-0.6.0-1`; game consumers still use v4. Sources: `../avilily.json`, `../avilily.md`, `../art/avilily.png`, the canonical species description and Floria's planetary record. The species teaser is preserved verbatim.
 
 ## Identity and source mechanisms
 

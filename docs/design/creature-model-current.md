@@ -163,6 +163,8 @@ The fixture is deliberately noncanonical. Its 14 possible ordinary structures co
 
 Implemented and tested: strict redesigned species/ability/record schemas; updated semantic catalog; mechanism compiler; constructive four-action selection; fixed signature output rolling; resolved physiology/attributes/temperament generation; protection/removal helpers; authoring validation CLI.
 
+The v5 framework has no known unresolved design or implementation decision within its agreed scope. Its complete 32-species roster is frozen as `generation-0.6.0-1`. This is a readiness statement about the creature contract, not a claim that every conceivable future power is representable. The expressly deferred mechanics listed above require a new shared design decision and release if later adopted. Games may now adapt to this frozen contract without waiting for further creature-framework work; they still own encounter scheduling, numeric balance, geometric resolution, status lifetimes and their handling of unsupported capabilities.
+
 Canonical v5 ability-design and roster gates:
 
 1. **Complete:** All 32 species are staged under `docs/species-templates/v5/`, each with a source/coverage audit. The v4 complete-move pools were not renamed into mechanism permissions; source-supported breadth was reviewed species by species.

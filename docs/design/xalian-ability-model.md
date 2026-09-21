@@ -1,6 +1,8 @@
 # Creature actions, passives, and statuses
 
-Current contract: template/record schema **4.0.0**, generator **0.5.0**. Executable definitions: `packages/content/src/schema/ability.ts` and `status.ts`. This replaces schema 3's combined abilities and inline signature. The [design decisions](ability-specification-decisions.md) explain the boundaries; [worked examples](ability-worked-examples.md) demonstrate them.
+> Historical schema-4 contract for existing game consumers. The [schema-5 creature contract](creature-model-current.md) is authoritative for new creature and ability authoring. Examples and field rules below do not describe v5.
+
+This version uses template/record schema **4.0.0** and generator **0.5.0**. Executable definitions: `packages/content/src/schema/ability.ts` and `status.ts`. It replaced schema 3's combined abilities and inline signature. The [design decisions](ability-specification-decisions.md) explain its boundaries; [worked examples](ability-worked-examples.md) demonstrate them.
 
 ## Creature structure
 

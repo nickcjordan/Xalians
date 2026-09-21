@@ -1,6 +1,6 @@
 # Hypnopet: v5 ability audit
 
-Review date: 2026-09-21. Status: staged, not released. Sources: `../hypnopet.json`, `../hypnopet.md`, `../art/hypnopet.png`, canonical teaser and Telypso record. The teaser remains verbatim.
+Review date: 2026-09-21. Status: frozen in `generation-0.6.0-1`; game consumers still use v4. Sources: `../hypnopet.json`, `../hypnopet.md`, `../art/hypnopet.png`, canonical teaser and Telypso record. The teaser remains verbatim.
 
 This species is intentionally support-only. The fixed signature **Empathic Steadying** uses a mental signal to remove conditions responsive to `stabilizing`; the separate guaranteed **Chromatic Horn Trance** requires visual reception and applies `entranced`. Both survive every ordinary roll, preserving therapy and crowd control. No harm slot is required by the creature model. Ordinary domains allow stabilizing, focused attention and visual trance variations. The visual reception is a single catalog value, while the mental therapy signal has no mandated sight or hearing channel.
 

@@ -28,7 +28,7 @@
 
 Started 2026-09-17. Findings: [holistic review](holistic-creature-model-review.md).
 
-This checklist tracks the whole-model review separately from earlier implementation completion. An implemented field is not automatically a ratified design. Recommendations remain proposals until agreed. Game updates are outside this work.
+The entries below preserve the chronological design discussion. Their unchecked boxes and provisional language are historical, not open v5 implementation gates. The current checkpoint above and [current contract](creature-model-current.md) govern new work. Game updates are outside this work.
 
 Migration policy, superseding earlier preservation notes (2026-09-18): user explicitly confirmed this is a sole-user development platform. Historical test records and backward compatibility do not constrain this redesign. Do not build legacy adapters or preserve retired semantics solely for old records. Retain deterministic generation for the new model; cleanup of obsolete artifacts belongs to the coordinated implementation, not incidental deletion during discussion.
 

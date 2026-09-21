@@ -17,7 +17,7 @@ Read these repository files from the working tree being changed:
 - [Canon and prose guidance](references/canon-and-prose.md): read when authoring descriptions, physiology, or encyclopedia prose.
 - [Physiology and presentation guidance](references/physiology-guidance.md): retained source-reading distinctions, separate from retired automatic trait/permission rules.
 
-The redesign entry point is implemented, but canonical v5 content bundling and its frozen release are not complete. Existing `docs/species-templates/<key>.json` and the deployed bundle remain v4. Stage v5 migrations under `docs/species-templates/v5/`; do not feed them into the v4 bundler or claim they are deployed. If explicitly working on the current deployed format, inspect its actual schema and validator instead of copying fields from the redesign. Do not interrupt another agent's species work.
+The complete 32-species v5 roster and its frozen `generation-0.6.0-1` release are available. Existing `docs/species-templates/<key>.json` and deployed game consumers remain v4. Author future v5 species under `docs/species-templates/v5/`; a substantive change after the frozen release requires a new release ID. Do not feed v5 definitions into the v4 bundler or claim games consume them yet. If explicitly working on the deployed game format, inspect its actual schema and validator instead of copying fields from the redesign. Do not interrupt another agent's species work.
 
 ## Sources
 
@@ -45,4 +45,4 @@ Preserve the user's teaser verbatim as `lore.description`. Distinguish explicit 
 - One target establishes directed geometry; area effects expose all reached recipients. No selective-area filter.
 - Retire traits, archetypes, corporeality, primary/secondary effects and generic resource transfers. Preserve evidenced behavior through the approved replacement, not a renamed catch-all field.
 - Do not reintroduce deferred dormancy, reflection, foresight or territorial bonuses. Species-specific ratified decisions are listed in the current contract.
-- Games own outcome amounts, probabilities, turns, reaction scheduling, encounter state and unsupported-capability availability. Finish the creature redesign before changing games.
+- Games own outcome amounts, probabilities, turns, reaction scheduling and encounter state. They may include a creature with unsupported capabilities explicitly unavailable. Game adaptation is a separate task from species authoring.
