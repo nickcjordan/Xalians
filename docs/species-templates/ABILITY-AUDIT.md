@@ -59,6 +59,7 @@ No fixed quota of options. Account for every plausible candidate family in the d
 - [ ] Nested delivery/recipient/spatial domains encode the actual relationships; all allowed combinations are coherent without fixing a list of finished moves.
 - [ ] No extra whole-ability catalog/template layer or general exclusion engine is introduced.
 - [ ] Numeric variation uses justified ranges; fixed values require a reason.
+- [ ] Apply [the stable benchmarks](../design/creature-rating-benchmarks.md) for the actual capacity/output being rated. Do not normalize to the roster, confuse 100 with a cap, or use 50 as an unknown-value fallback. Only omitted status intensity defaults to 50.
 - [ ] Status intensity uses the catalog default when no override is warranted; justified overrides prefer ranges.
 - [ ] Source, recipient, intensity, timing, area, removal, and dependence describe distinct facts without duplicate contributions.
 - [ ] Actual incompatibilities among permitted domains or guaranteed physiology are resolved at authoring, not hidden by arbitrary truncation.

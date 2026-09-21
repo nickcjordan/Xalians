@@ -1,5 +1,6 @@
 /** The redesign's catalog. This entry point is deliberately independent of game adapters. */
 import { z } from 'zod';
+import { DEFAULT_STATUS_INTENSITY } from './benchmarks.ts';
 export {
   ElementKeySchema, InstrumentKeySchema, AnatomyKeySchema, CompositionKeySchema,
   BodyPlanKeySchema, CoveringKeySchema, DietKeySchema, CommunicationKeySchema,
@@ -62,7 +63,7 @@ export interface StatusDefinition {
 }
 export const STATUS_CATALOG: Readonly<Record<StatusKey, Readonly<StatusDefinition>>> = Object.freeze(
   Object.fromEntries(Status.options.map(key => [key, Object.freeze({
-    definition: definitions[key], intensity: 50,
+    definition: definitions[key], intensity: DEFAULT_STATUS_INTENSITY,
     ...(key === 'phased' ? { traversal: 'phase' as const } : {}),
     ...(key === 'dispersed' ? { traversal: 'seep' as const } : {}),
     ...(['burning', 'corroding', 'poisoned'].includes(key) ? { harm: Object.freeze({

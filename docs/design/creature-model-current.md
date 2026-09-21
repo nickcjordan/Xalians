@@ -27,6 +27,7 @@ mechanisms: permitted domains   (generation permissions are not copied)
 - Keep anatomy, composition, body plan, covering, measurements, lifespan, chirality, diet, communication, respiration, environmental tolerance, capabilities and senses.
 - Innate protection is `physiology.protections[]`. Persistent wall/opening traversal is `physiology.traversal[]` (`phase` / `seep`). Neither is inferred from composition or element.
 - Attributes, graded senses and capabilities use nonnegative open-ended ratings. Zero means absence where appropriate. Reference benchmarks stay stable as new species appear; 100 is not a ceiling, percentile or physical ratio.
+- The agreed references are 0 absent, 25 limited, 50 standard reference, 75 strong, 100 exceptional, with values above 100 allowed. [Rating guidance](creature-rating-benchmarks.md) and the shared `benchmarks.ts` catalog define field-specific authoring anchors. These are not automatically applied game formulas.
 - Temperament's five axes remain bounded 0–100 and independently authored. Physical measurements retain units. No trait/archetype nudges.
 - `lowlight` joins the special senses. It does not grant zero-light vision, heat sensing, or a combat bonus.
 
@@ -157,13 +158,15 @@ Implemented and tested: strict redesigned species/ability/record schemas; update
 Still required before a canonical v5 release:
 
 1. Re-author and audit all 32 canonical species against this contract. The v4 complete-move pools cannot be mechanically renamed into mechanism permissions. Preserve the species decisions above and review source-supported breadth, not just old examples.
-2. Calibrate the stable rating/output benchmarks and each species' justified bands. Default status intensity is settled at 50; benchmark descriptions are not all finished.
+2. Apply the shared rating/output references to each species' justified bands during the eventual calibration audit. The reference ladder and descriptions for the 20 performance fields and four direct outputs are now recorded; canonical species calibration remains pending. Default status intensity is 50.
 3. Resolve concrete physiology-dependent passive cases if the species pass finds any. Fixed inherent passives already work; no generic conditional subsystem is presumed necessary.
 4. Adapt ability-name coverage to compositional mechanisms; display names currently come from the mechanism definition and need not distinguish every generated variant.
 5. Wire canonical content bundling and the redesigned entry point into a frozen generation release, including the new catalog and compiler. Then run replay and full-species coverage/scale checks. Draft generation intentionally does not claim a canonical release ID.
 6. Update games separately after the ability redesign is complete. Existing game imports have not changed.
 
 Do not call these migration/release gates completed because unit tests on a hypothetical species pass. Conversely, do not re-open settled concepts merely because canonical content migration remains.
+
+Work order agreed after this checkpoint: finish shared benchmarks, compositional naming, representative relationship checks and release integration before migrating species. Use hypothetical or representative design fixtures for those checks; do not re-author the canonical roster early. Freeze the actual canonical release after migration and full-roster validation.
 
 ### Verification of this implementation checkpoint
 
