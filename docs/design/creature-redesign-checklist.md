@@ -14,6 +14,7 @@
 - [x] Record the agreed reference ladder and field-specific authoring anchors in the shared benchmark catalog; preserve status default 50.
 - [x] Implement compositional naming after generation, optional source-supported vocabulary, and structural collision distinctions without rerolling capabilities.
 - [ ] Apply benchmark calibration and vocabulary review to canonical species after shared-model completion.
+- [x] Integrate the v5 release adapter and prove frozen-fixture replay in a fresh process; capture all actual generation dependencies without per-creature evaluation.
 - [ ] Integrate canonical v5 bundles and a frozen release; run full-species replay and scale verification.
 - [ ] Address evidenced conditional passive physiology if found in the species pass.
 - [x] Screen the 32-species source data and test representative relationship cases; fix correlated recipients, dependency identity, directionless self aiming and unsupported voice/communication coupling.

@@ -10,8 +10,8 @@ const archiveRoot = path.join(root, 'packages/rules/releases');
 const hash = bytes => crypto.createHash('sha256').update(bytes).digest('hex');
 const sourceHash = file => hash(fs.readFileSync(file, 'utf8').replace(/\r\n/g, '\n'));
 const validId = id => typeof id === 'string' && /^[a-z0-9][a-z0-9._-]*$/.test(id);
-function bundle() {
-  return buildSync({ absWorkingDir: root, entryPoints: ['packages/rules/src/generator/index.ts'], bundle: true, platform: 'neutral', format: 'esm', target: 'es2022', write: false, metafile: true, minify: true, legalComments: 'inline' });
+function bundle(entryPoint = 'packages/rules/src/generator/index.ts') {
+  return buildSync({ absWorkingDir: root, entryPoints: [entryPoint], bundle: true, platform: 'neutral', format: 'esm', target: 'es2022', write: false, metafile: true, minify: true, legalComments: 'inline' });
 }
 function readManifest(id, archives = archiveRoot) {
   if (!validId(id)) throw new Error('Invalid or missing generation release ID; historical release cannot be inferred');
@@ -42,20 +42,20 @@ function checkCurrent() {
   if (hash(bundle().outputFiles[0].contents) !== manifest.artifact.sha256) throw new Error('Current generator bundle differs from frozen release; create a new release');
   return manifest;
 }
-async function freeze() {
-  const { releaseId } = require('../packages/rules/src/generator/currentRelease.json');
+async function freeze({ entryPoint, releaseId = require('../packages/rules/src/generator/currentRelease.json').releaseId, archives = archiveRoot } = {}) {
   if (!validId(releaseId)) throw new Error('Invalid release ID');
-  const dir = path.join(archiveRoot, releaseId);
+  const dir = path.join(archives, releaseId);
   if (fs.existsSync(dir)) throw new Error(`Release ${releaseId} already exists; never overwrite a frozen release`);
-  const result = bundle();
+  const result = bundle(entryPoint);
   if (result.metafile.outputs[Object.keys(result.metafile.outputs)[0]].imports.length) throw new Error('Release must have no external runtime dependencies');
   const bytes = result.outputFiles[0].contents;
   const inputs = Object.fromEntries(Object.keys(result.metafile.inputs).sort().map(file => [file.replaceAll('\\', '/'), sourceHash(path.join(root, file))]));
   // Validate before allocating the immutable destination. Exclusive mkdir also
   // prevents two concurrent freeze commands from overwriting the same release.
   const archived = await import(`data:text/javascript;base64,${Buffer.from(bytes).toString('base64')}`);
+  if (archived.GENERATION_RELEASE_ID !== releaseId || typeof archived.GENERATOR_VERSION !== 'string' || typeof archived.SCHEMA_VERSION !== 'string' || typeof archived.generateXalian !== 'function') throw new Error('Release entry point does not match the requested release contract');
   const manifest = { formatVersion: 1, releaseId, generatorVersion: archived.GENERATOR_VERSION, schemaVersion: archived.SCHEMA_VERSION, build: { esbuild: esbuildVersion, target: 'es2022', runtime: 'ECMAScript 2022 (Node 20+ replay tooling)' }, artifact: { file: 'generator.mjs', sha256: hash(bytes) }, inputs };
-  fs.mkdirSync(archiveRoot, { recursive: true });
+  fs.mkdirSync(archives, { recursive: true });
   fs.mkdirSync(dir);
   fs.writeFileSync(path.join(dir, 'generator.mjs'), bytes, { flag: 'wx' });
   fs.writeFileSync(path.join(dir, 'manifest.json'), JSON.stringify(manifest, null, 2) + '\n');

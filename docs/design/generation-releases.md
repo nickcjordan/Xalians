@@ -61,3 +61,23 @@ Integration release generation-0.5.0-2 includes ratified Shuntara from main. Gen
 Release generation-0.5.0-3 tightens authoring validation: effect subject restrictions inherit capability compatibility; compatibility cannot add targeting subjects; self-only targeting must admit a creature and cannot transfer resources to itself. Existing templates and generated capability facts are unchanged. All prior archives remain intact.
 
 Release generation-0.5.0-4 completes status applicability/boundary metadata and shared removal-method definitions. It introduces no new powers or game behavior. See ability-redesign-completion.md for the completion audit and deferred game work.
+
+
+## Schema 5 integration checkpoint
+
+The redesigned release adapter is `packages/rules/src/generator/creatureRelease.ts` (generator 0.6.0, schema 5.0.0). `createCreatureRelease(releaseId, sources)` compiles a nonempty, uniquely keyed species roster once and exposes the existing archive interface: `GENERATION_RELEASE_ID`, `getSpeciesTemplates`, and `generateXalian`. The release entry point also exports the two version constants. Caller-supplied species objects cannot be substituted at generation time.
+
+Generation requires a species key, nonempty string seed, origin, serial, timestamp, and profile. It validates these caller inputs, not the completed creature. The species key, seed and algorithm version form the random namespace; labelled streams separate biology, abilities, appearance and ID. The appearance odds retain the existing policy (eclipse 1/4000, prismatic 1/400, gleam 1/40, otherwise standard). Showroom forces standard appearance without changing generated biology. The result contains resolved data plus compact provenance; it does not duplicate registries or authoring definitions.
+
+`freeze({entryPoint, releaseId, archives})` supports an explicit entry point and destination for integration tests. Its default CLI behavior is unchanged. It verifies the bundled export contract and release identity before creating an archive. The dependency graph automatically fingerprints the v5 catalog, benchmarks, schemas, compiler, naming, species JSON and PRNG, together with their runtime dependencies.
+
+The release tests freeze the hypothetical support species into a temporary archive, validate complete v5 records and replay both profiles in fresh Node processes. Those test archives are deleted after the tests; they are not canonical releases. This verifies the shared packaging and replay path before species migration.
+
+### Canonical activation still required
+
+1. Re-author and validate the complete canonical v5 roster, including source coverage, calibration and vocabulary.
+2. Build the canonical v5 species bundle and bind it through `createCreatureRelease` in the canonical generator entry point. Keep the release adapter's export contract; import the JSON bundle so esbuild captures its exact inputs.
+3. Set a new canonical release ID, freeze the completed entry point and run integrity checks, full-roster replay, structural coverage and scale checks.
+4. Switch consumers only in the separately scoped game migration.
+
+The current canonical pointer remains `generation-0.5.0-4`; the v5 adapter and test fixture do not activate it or certify the unmigrated roster. The preliminary release-integration gate is complete; canonical activation depends on the species migration, rather than another open ability-design decision.

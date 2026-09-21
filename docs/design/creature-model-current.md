@@ -161,7 +161,7 @@ Still required before a canonical v5 release:
 2. Apply the shared rating/output references to each species' justified bands during the eventual calibration audit. The reference ladder and descriptions for the 20 performance fields and four direct outputs are now recorded; canonical species calibration remains pending. Default status intensity is 50.
 3. Review any evidenced conditional physiology during species authoring; the 32-species prose/data screening did not establish a need for a general subsystem. Ongoing-passive target acquisition is settled: `targeting: [self]`, no range, and any area uses `anchor: self` and `shape: radial`. Directed automatic responses use event triggers; deliberately maintained connections are actions.
 4. Review source-supported species vocabulary during migration. [Compositional naming](creature-ability-naming.md) now runs after generation, uses a shared structural fallback, preserves guaranteed names, and distinguishes collisions without changing abilities. Naming coverage no longer depends on a fixed move list.
-5. Wire canonical content bundling and the redesigned entry point into a frozen generation release, including the new catalog and compiler. Then run replay and full-species coverage/scale checks. Draft generation intentionally does not claim a canonical release ID.
+5. Bind the migrated canonical bundle through the implemented v5 release adapter and freeze its canonical entry point. The hypothetical-roster archive now verifies complete records, captured catalog/compiler/naming inputs and fresh-process replay; canonical full-species replay and coverage/scale checks remain. Draft generation intentionally does not claim a canonical release ID.
 6. Update games separately after the ability redesign is complete. Existing game imports have not changed.
 
 Do not call these migration/release gates completed because unit tests on a hypothetical species pass. Conversely, do not re-open settled concepts merely because canonical content migration remains.
@@ -173,3 +173,10 @@ Work order agreed after this checkpoint: finish shared benchmarks, compositional
 Content: 85 tests passed. Rules: 349 tests passed. Both TypeScript checks passed. The redesigned authoring CLI and updated skill validation passed. Existing bundle freshness and generation-release integrity checks passed.
 
 The full workspace run also passed the API suite; the web suite had one asynchronous portrait-loading timeout (`xalianSvg.test.js`). That six-test file passed in isolation without changes. No game files were changed. These results do not replace canonical v5 species coverage or release replay, which are still pending.
+
+
+### Release integration checkpoint — 2026-09-21
+
+The preliminary release-integration gate is implemented and tested; see [generation releases](generation-releases.md#schema-5-integration-checkpoint). The adapter supplies explicit provenance, seeded IDs and existing appearance policy around constructive v5 generation. Species compilation occurs once when the roster loads; per-call validation concerns caller metadata only. No generated-creature evaluation was introduced.
+
+Validation: content 106 tests, rules 357 tests, release tooling 11 tests; both package TypeScript checks and current release integrity pass. Canonical species migration and final v5 activation remain outstanding. No games or canonical species were changed.
