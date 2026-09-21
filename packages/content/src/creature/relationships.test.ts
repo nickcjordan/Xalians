@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import fixture from './fixtures/support-species.json';
-import { ActionSchema, ActionTemplateSchema, abilityIdentity, type AbilityTemplate } from './ability.ts';
+import { ActionSchema, ActionTemplateSchema, PassiveTemplateSchema, abilityIdentity, type AbilityTemplate } from './ability.ts';
 import { nameOrdinaryActions } from './naming.ts';
 import { compileSpecies } from './compiler.ts';
 import { SpeciesSchema } from './species.ts';
@@ -13,6 +13,31 @@ const restoration = (): AbilityTemplate => ({ ...base(), activation: { continuit
 });
 
 describe('representative source relationships, without migrating species', () => {
+  it('allows ongoing self-centered auras with both area and self effects', () => {
+    const aura: AbilityTemplate = { ...restoration(), key: 'repair-aura', delivery: { mode: 'field', approach: 'stationary' },
+      spatial: { area: { shape: 'radial', extent: 'small', anchor: 'self', persistence: 'sustained' } },
+      effects: [...restoration().effects, { ...restoration().effects[0], key: 'aura', recipient: 'area' }] };
+    expect(PassiveTemplateSchema.safeParse(aura).success).toBe(true);
+    for (const anchor of ['target', 'location'] as const) {
+      expect(PassiveTemplateSchema.safeParse({ ...aura, spatial: { area: { ...aura.spatial.area, anchor } } }).success).toBe(false);
+    }
+    const species = specimen();
+    species.passives = [aura];
+    expect(() => compileSpecies(species)).not.toThrow();
+  });
+  it('rejects externally directed ongoing passives at authoring while allowing maintained actions', () => {
+    const directed: AbilityTemplate = { ...restoration(), key: 'directed-repair', delivery: { mode: 'stream', approach: 'stationary' },
+      targeting: ['other'], spatial: { range: 'short' },
+      effects: restoration().effects.map(effect => ({ ...effect, recipient: 'target' })) };
+    expect(PassiveTemplateSchema.safeParse(directed).success).toBe(false);
+    const species = specimen();
+    species.passives = [directed];
+    expect(() => compileSpecies(species)).toThrow(/ongoing passives target only self/);
+    expect(ActionTemplateSchema.safeParse({ ...directed, timing: base().timing }).success).toBe(true);
+  });
+  it.each(['contact', 'harmed', 'ally-harmed'] as const)('preserves the event-supplied target for %s responses', trigger => {
+    expect(PassiveTemplateSchema.safeParse({ ...base(), activation: { continuity: 'discrete', trigger } }).success).toBe(true);
+  });
   it('supports Bioflim-style automatic regrowth without requiring a selected repair action', () => {
     const species = specimen();
     species.actions = [];

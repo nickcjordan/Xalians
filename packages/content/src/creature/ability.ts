@@ -62,6 +62,10 @@ function abilitySchema<T extends typeof EffectSchema | typeof EffectTemplateSche
   }).superRefine((ability, ctx) => {
     const issue = (message: string) => ctx.addIssue({ code: 'custom', message });
     const { activation, delivery, spatial, effects } = ability;
+    if (passive && activation.continuity === 'ongoing') {
+      if (ability.targeting.length !== 1 || ability.targeting[0] !== 'self') issue('ongoing passives target only self; directed automatic responses require an event trigger');
+      if (spatial.area && (spatial.area.anchor !== 'self' || spatial.area.shape !== 'radial')) issue('ongoing passive areas must be self-centered and radial');
+    }
     if (!passive && activation.trigger) issue('actions do not have automatic triggers');
     if (passive && (activation.continuity === 'discrete') !== (activation.trigger !== undefined)) issue('discrete passives require trigger; ongoing passives omit it');
     if ((!passive || activation.continuity === 'discrete') !== (ability.timing !== undefined)) issue('actions and discrete passives require timing; ongoing passives omit timing');

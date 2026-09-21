@@ -17,7 +17,7 @@
 - [ ] Integrate canonical v5 bundles and a frozen release; run full-species replay and scale verification.
 - [ ] Address evidenced conditional passive physiology if found in the species pass.
 - [x] Screen the 32-species source data and test representative relationship cases; fix correlated recipients, dependency identity, directionless self aiming and unsupported voice/communication coupling.
-- [ ] Resolve how an ongoing passive obtains a target; self/self-centered area restriction is proposed and awaiting an answer.
+- [x] Ongoing passives target only self, with optional self-centered radial areas. Directed automatic responses use event triggers; maintained directed connections are actions. Enforced at authoring with regression coverage.
 - [ ] Adapt games after creature redesign completion, in a separate task scope.
 
 Started 2026-09-17. Findings: [holistic review](holistic-creature-model-review.md).

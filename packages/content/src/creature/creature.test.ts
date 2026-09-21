@@ -48,6 +48,7 @@ describe('redesigned ability contract', () => {
   });
   it('separates automatic ongoing processes from deliberate actions', () => {
     const value = { ...action(), activation: { continuity: 'ongoing' }, timing: undefined,
+      delivery: { mode: 'self', approach: 'stationary' }, targeting: ['self'], spatial: {},
       effects: [{ key: 'repair', type: 'restore', recipient: 'self', onset: 'instant', persistence: 'sustained', likelihood: 'consistent', intensity: 50 }] };
     expect(PassiveSchema.safeParse(value).success).toBe(true);
     expect(ActionSchema.safeParse(value).success).toBe(false);
@@ -195,7 +196,8 @@ describe('author once, construct valid combinations', () => {
   });
   it('treats passive signatures as outside action slots', () => {
     const species = template();
-    species.passives = [{ ...species.actions[0], key: 'repair-passive', activation: { continuity: 'ongoing' }, timing: undefined }];
+    species.passives = [{ ...species.actions[0], key: 'repair-passive', activation: { continuity: 'ongoing' }, timing: undefined,
+      delivery: { mode: 'self', approach: 'stationary' }, targeting: ['self'], spatial: {} }];
     species.actions = [];
     species.signature = { type: 'passive', key: 'repair-passive' };
     const generated = compileSpecies(species).abilities(() => 0n);

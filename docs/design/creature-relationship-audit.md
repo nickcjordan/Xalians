@@ -41,11 +41,11 @@ The screened templates use fixed anatomy lists and physiological bands, not an a
 
 No concrete source case from this screening requires a general conditional-physiology engine. This is not proof that none will ever exist. During species authoring, required capabilities must be supported over the full permitted physiology band; do not turn essential processes into random passive draws.
 
-## One unresolved target-selection boundary
+## Ongoing-passive target selection
 
-An ongoing passive has neither a deliberate target-selection action nor an event that supplies `target`. The current schema still permits externally directed ongoing passives, but the shared semantics do not explain how one acquires or retains that target.
+Ratified and enforced: ongoing passives use `targeting: [self]`. Any area must use `anchor: self` and `shape: radial`; range is omitted. They affect self or everyone in that area according to their effects. The existing self-only `recipient: target` alias still refers to the owner.
 
-Recommendation awaiting the user's answer: ongoing passives affect self or a self-centered area. Directed automatic responses use an existing event trigger; a deliberately maintained connection belongs in actions. If the user wants persistent directed automatic connections, define that behavior explicitly before adding a targeting system. No new restriction has been applied while this question is pending.
+Directed automatic responses use an existing event trigger; a deliberately maintained connection belongs in actions. This rule is checked when authoring species, with no per-generated-creature evaluation or new target-selection subsystem.
 
 ## Remaining boundaries
 
@@ -53,8 +53,8 @@ Recommendation awaiting the user's answer: ongoing passives affect self or a sel
 - Range/extent domains inside one delivery branch currently combine independently. A source that genuinely couples them needs a concrete relationship design; do not disguise such a case as a completed universal constraint engine. No new source case in this screening ratified that additional relationship.
 - Structured dormancy, reflection, resource transfer and illumination remain deferred. Screening does not reinstate retired powers.
 - Naming has no authority over permissions or effects.
-- Finish the passive-target boundary and release integration before canonical species migration, then perform the full roster's source/art, calibration, vocabulary and coverage audits.
+- Finish release integration before canonical species migration, then perform the full roster's source/art, calibration, vocabulary and coverage audits.
 
 ## Verification
 
-Content: 101 tests passed. Rules: 354 tests passed. Both package TypeScript checks passed. Sixteen dedicated relationship regressions cover this audit, including naming a difference in dependency structure. No per-individual schema evaluation was added to production generation.
+Content: 106 tests passed. Rules: 354 tests passed. Both package TypeScript checks passed. Twenty-one dedicated relationship regressions cover this audit, including naming a difference in dependency structure. No per-individual schema evaluation was added to production generation.
