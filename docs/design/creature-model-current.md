@@ -4,7 +4,7 @@ Updated 2026-09-21. This document supersedes conflicting proposals and chronolog
 
 ## Open decisions from the canonical roster audit
 
-The [32-species representation audit](creature-roster-audit.md) found three source-backed questions after the fixture-based implementation checks: Neph's unignited fuel exposure, Yetimoth's route-blocking ice walls, and Avilily's paralysis. Paralysis is now ratified and implemented as `paralyzed`; fuel exposure and physical barriers remain open proposals. The user chose to resolve the Neph/Yetimoth gaps before migration; complete this shared design review before authoring the canonical v5 roster. Earlier release-integration completion refers only to packaging/replay infrastructure, not final catalog coverage.
+The [32-species representation audit](creature-roster-audit.md) found three source-backed questions after the fixture-based implementation checks: Neph's unignited fuel exposure, Yetimoth's route-blocking ice walls, and Avilily's paralysis. Paralysis is ratified and implemented as `paralyzed`. Unignited fuel exposure is explicitly deferred: preserve Neph's hydrogen emission in lore, with no mechanical fuel status, ignition interaction or inferred explosion. This deferral resolves the Neph migration blocker. Yetimoth's physical barriers remain the open design question before canonical v5 authoring. Earlier release-integration completion refers only to packaging/replay infrastructure, not final catalog coverage.
 
 ## Ownership and data structure
 
@@ -154,6 +154,7 @@ The fixture is deliberately noncanonical. Its 14 possible ordinary structures co
 - Vespersyn: projections use the swarm channel; no universal summon effect, independent life, creature records or separate resource bars.
 - Crystorn: optional reflection is retired. Do not substitute another power to preserve the label.
 - Retire speculative volatile retaliation, foresight, and territorial/pack/solitary bonuses. Preserve source-supported behaviors in prose.
+- Unignited fuel exposure and its ignition/explosion interactions are deferred. Neph retains hydrogen-emission lore without a mechanically represented fuel application; do not rename it burning, add combustible/flammable keys, invent an ignition organ or restore volatile retaliation. Pressure jets, suction and freezing Benthane remain eligible for source-supported authoring. Imprit's already-ignited oil remains representable with existing effects; this does not grant a separate unignited-fuel mechanic.
 - Dormancy, generic illumination/emission, true reflection, precognition, generic resource transfer and unrestricted conditional biology are deferred. Do not restore them under renamed fields.
 - Unsupported game capabilities may be explicitly unavailable; game adaptation is outside this redesign implementation pass.
 

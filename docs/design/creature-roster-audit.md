@@ -1,16 +1,16 @@
 # Canonical roster: v5 representation audit
 
-2026-09-21. Source revision: `119c555e`. All 32 species in `docs/species-templates/RATIFIED.json` reviewed. **Migration is paused at the design boundary, not completed.** The user explicitly chose to resolve the Neph and Yetimoth gaps before migration. Avilily added a third catalog distinction from this audit; the user has since ratified it and `paralyzed` is implemented.
+2026-09-21. Source revision: `119c555e`. All 32 species in `docs/species-templates/RATIFIED.json` reviewed. **Migration is paused at the design boundary, not completed.** The user initially chose to resolve the Neph and Yetimoth gaps before migration, then explicitly deferred fuel exposure as lore-only for this version. Yetimoth remains open. Avilily added a third catalog distinction from this audit; the user has since ratified it and `paralyzed` is implemented.
 
 ## Result
 
-The core model covers the roster's ordinary physical, elemental, support and automatic capabilities without an ordinary-move whitelist. The audit identified three source-supported concepts; two remain open:
+The core model covers the roster's ordinary physical, elemental, support and automatic capabilities without an ordinary-move whitelist. The audit identified three source-supported concepts; only physical barriers remain open:
 
-1. **Neph: exposure to unignited fuel.** No registered status expresses this. Burning would assert that ignition has already happened.
+1. **Neph: exposure to unignited fuel, explicitly deferred.** Preserve the emission in lore without a fuel status or ignition/explosion mechanic. This is an accepted scope boundary, not a migration blocker.
 2. **Yetimoth: a persistent physical obstacle.** Recipient statuses and protective effects do not describe a wall occupying space and blocking passage.
 3. **Avilily: paralysis, now resolved.** Reduced alertness (`sedated`), acute response disruption (`stunned`) and physical binding (`restrained`) do not explicitly preserve loss of voluntary movement from a paralytic substance.
 
-Fuel exposure and barriers remain proposals to extend the shared contract. The shared status catalog now includes ratified `paralyzed`; no canonical species has been changed. Do not quietly omit these capabilities, replace them with an approximate effect, or declare the affected species migrated.
+Physical barriers remain a proposal to extend the shared contract. The shared status catalog includes ratified `paralyzed`; fuel exposure is explicitly deferred and must not be approximated by burning. No canonical species has been changed. Do not claim Yetimoth's wall capability is covered before resolving it.
 
 ## Evidence and scope
 
@@ -22,15 +22,17 @@ This is a source-to-model design audit. It is **not** a claim that 32 new specie
 
 ## Three decisions
 
-### 1. Neph: flammable exposure
+### 1. Neph: unignited fuel exposure (deferred)
 
 Source: the Neph description says it can spray enemies with flammable gas; it separately describes freezing Benthane and high-pressure air. Neither the species source nor the art establishes an ignition organ. The world history also describes hydrogen-filled Neph being ignited, not creatures necessarily igniting their own gas attacks.
 
 Current mismatch: `burning` means an ongoing burning process. `overheated`, `poisoned`, and `corroding` also assert different processes. Element `fire` alone cannot mean an unignited fuel application. Retired volatile retaliation does not solve this.
 
-Recommended first design: a shared status such as **`flammable`**, meaning exposure to an applied fuel that makes ignition possible or easier. Existing source/area binding can describe exposure while inside a gas cloud; this must not silently become a permanent sticky coating. Applying the status would not itself deal fire harm or ignite the recipient. Games own ignition interactions and probabilities, as they already own status outcomes. Discuss application lifetime, removal methods and whether ignition consumes the application before authoring it. Do not introduce a general condition-expression engine.
+Decision: defer mechanical fuel exposure. The proposed `flammable` status was not adopted; `combustible` was discussed but does not specifically mean explosive either. Fuel presence, active burning and a discrete explosion are different concepts. Modeling their interaction is outside the current scope.
 
-The same concept could support unignited Imprit oil when its authoring genuinely separates oil application from ignition. Imprit's existing burning-oil act remains representable without it because its body provides ignition. Do not make that new variant mandatory before agreeing its intended scope.
+Preserve Neph's unignited hydrogen emission in lore and explicitly mark it as not mechanically represented in this version. Its suction, pressure jets and freezing Benthane remain supported authoring candidates. Do not invent self-ignition, automatic explosion or a substitute burning effect to fill the gap. Imprit's already-ignited oil remains supported by existing effects; separate unignited oil application is deferred with fuel exposure.
+
+This supersedes the earlier requirement to resolve a fuel status before migration. Revisit only with an explicit future scope decision.
 
 ### 2. Yetimoth: walls occupying space
 
@@ -71,10 +73,10 @@ The rows below describe supported mechanism families and migration obligations, 
 | Graviclaw | Gravity-amplified pincer compression, attraction and deliberate self anchoring. All three defining capacities need guaranteed homes. | Toward displacement, sustained holding and self-applied displacement protection fit existing fields. Ordinary pincer force and permitted gravitational geometries can vary. No black-hole entity, infinite reach, literal spacetime destruction or automatic immunity to every harm type. |
 | Hippochamp | Snout supplies a sustained high-pressure water stream for firefighting and defense. Preserve cooling removal as well as pressure in its signature. | Directed stream/jet, justified area spread, displacement, cooling and cleansing are source-grounded; splitting applications requires coherent delivery permissions. Hooves/tail supply contact alternatives. No Algael healing merely because it guards Algael rigs; no universal removal. |
 | Hypnopet | Therapeutic empathy and visibly pulsing horn trance are distinct essential capacities. | Guaranteed stabilizing removal and visually received entrancement; ordinary support variants may change supported range/timing/area. No bodily repair, forced possession, indiscriminate mental immunity or damaging horn laser. Pure support is valid. |
-| Imprit | Internally secreted combustible oil, continuous self flame, protective fur and scythe tail. | Ignited secretion, cutting/physical force and automatic contact exposure are representable. Contact flame uses an event-supplied recipient, not an externally aimed ongoing passive. Keep explicit justified protection distinct from a self-applied harmful burning status. Unignited oil intersects the fuel proposal; no generic healing. |
+| Imprit | Internally secreted combustible oil, continuous self flame, protective fur and scythe tail. | Ignited secretion, cutting/physical force and automatic contact exposure are representable. Contact flame uses an event-supplied recipient, not an externally aimed ongoing passive. Keep explicit justified protection distinct from a self-applied harmful burning status. Separate unignited fuel application is deferred; already-ignited oil stays supported. No generic healing. |
 | Kosanos | Heavy brush-clearing trunk blade, jaws and load-bearing body. | Cutting, sweeping, displacement and blade/body bracing fit. Physical freeing is a candidate when cutting an actual removable restraint, not universal cleansing. No plant emission, psychic control, poison or regeneration from element identity. |
 | Luceras | Extraordinary leap ending horns-first; limited physical mass. | Horn/body impact, justified displacement and tail contact fit. Leap rating and closing delivery preserve the act. No flight grant, wind projection or electrical/ice powers from air affiliation. |
-| Neph | Suction, pressure jets, freezing Benthane and unignited hydrogen emissions are distinct source mechanisms. **Fuel exposure decision outstanding.** | Toward/away displacement and cooling/chilled/frozen applications can use existing fields where authored. No intrinsic ignition, automatic explosion when hit, universal toxin or electric output. Tentacles harvesting gas are not a vitality-transfer bar. |
+| Neph | Suction, pressure jets, freezing Benthane and unignited hydrogen emissions are distinct source mechanisms. **Unignited fuel exposure is explicitly lore-only for this version.** | Toward/away displacement and cooling/chilled/frozen applications can use existing fields where authored. No intrinsic ignition, automatic explosion when hit, universal toxin or electric output. Tentacles harvesting gas are not a vitality-transfer bar. |
 | Newtapede | Aquatic locomotion and whole-body wrapping/holding. | Ongoing source-bound `restrained`, separately justified compression and relative displacement; body contact alternatives remain physical. Do not infer suffocation harm against every target or regenerative healing from amphibian appearance. No water cannon without an emitter. |
 | Scalatto | A scaly shell and deliberate curled-ball defense. | Self protection, rolling impact, claw contact and tail force are justified families. Distinguish baseline shell toughness from active bracing; do not double-count the same protection. No sand projection, ghost powers or toxin. |
 | Shuntara | Spinnerets cast and tension conductive filament into a protective lattice; insulating hide supports the electrical work. | Protection/reinforcement, physically justified binding and load distribution fit. Maintain a contact/short-delivery baseline independent of local storms/conductors. Do not invent free lightning artillery or make the lattice a selective area aura. Circuit repair remains industrial lore unless given a separately agreed portable outcome. |
@@ -119,7 +121,8 @@ All rows were considered against the six current effect families: harm, restore,
 - [x] Check current teaser preservation, respiration/media consistency and planetary temperature bounds.
 - [x] Record the three proposed decisions and the user's hold on migration while gaps are resolved.
 - [x] Ratify paralysis; implement its status definition, naming and generation/protection/removal regression coverage.
-- [ ] Ratify fuel exposure and physical barriers; implement any agreed shared changes and tests.
+- [x] Resolve fuel exposure by explicit deferral; preserve hydrogen-emission lore without substituting burning or inventing ignition/explosion behavior.
+- [ ] Resolve physical barriers; implement any agreed shared changes and tests.
 - [ ] Author v5 species mechanism domains, required capabilities, independent temperament and calibrated output/rating bands, with per-species coverage evidence.
 - [ ] Compile each species and verify generated structure coverage, distinct-action capacity and performance over the canonical roster.
 - [ ] Bind the migrated roster, freeze v5 and verify canonical replay. Game updates remain separate.

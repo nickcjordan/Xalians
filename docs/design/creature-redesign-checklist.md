@@ -12,7 +12,8 @@
 - [x] Replace the stale authoring skill's copied schema with the current contract; preserve canon/prose guidance separately.
 - [x] Complete the source-to-model representation audit across all 32 canonical species and inspect their artwork; record findings in creature-roster-audit.md. This is not completed per-species authoring/calibration.
 - [x] Ratify and implement paralyzed as voluntary motor impairment distinct from stunned, sedated, slowed and restrained; retain status default intensity and mechanism-authored removal. Shared schema, naming and generation/protection tests cover the addition.
-- [ ] Resolve unignited fuel exposure (Neph) and physical route barriers (Yetimoth). These remain proposals; user chose to resolve gaps before migration.
+- [x] Defer unignited fuel exposure and ignition/explosion interactions. Preserve Neph's hydrogen emission as lore-only for this version; no combustible/flammable status or substitute burning. This resolves that migration blocker.
+- [ ] Resolve physical route barriers (Yetimoth) before species migration.
 - [ ] Re-author/audit all 32 canonical species; source biology and breadth are not a mechanical old-pool conversion.
 - [x] Record the agreed reference ladder and field-specific authoring anchors in the shared benchmark catalog; preserve status default 50.
 - [x] Implement compositional naming after generation, optional source-supported vocabulary, and structural collision distinctions without rerolling capabilities.
