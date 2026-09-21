@@ -15,7 +15,9 @@
 	reaching past createMatch's public contract to get at it).
 */
 
-import { generateBatch } from '../generator/index.ts';
+// schema 5: the pool is built by roster.ts, which supplies the replay metadata the
+// release requires and cycles the frozen release's own species list
+import { buildExpeditionPool } from './roster.ts';
 import type { XalianRecord } from '@xalians/content/schema';
 import { createRngState, nextRandom, createMatch } from './expeditionRules.ts';
 import { getWorlds } from './sites.ts';
@@ -194,7 +196,7 @@ export function buildDraftPools(seed: string | number, options: DraftOptions = {
 	const distinct = options.distinctSpecies !== undefined ? !!options.distinctSpecies : DRAFT_DISTINCT_SPECIES;
 	// a distinct deal throws duplicates back, so it needs a deeper batch to fill two pools
 	const batchSize = distinct ? poolSize * 6 : poolSize * 2;
-	const pool = generateBatch(batchSize, `${seed}-draftpool`);
+	const pool = buildExpeditionPool(`${seed}-draftpool`, batchSize);
 	const shuffled = shuffleWithRng(pool, createRngState(`${seed}-draftbuild`));
 	if (distinct) {
 		const [poolA, poolB] = dealDistinct(shuffled, poolSize);

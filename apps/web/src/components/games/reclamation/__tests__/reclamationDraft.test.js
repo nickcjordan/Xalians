@@ -1,6 +1,7 @@
 import { buildDraftPools, botDraft, validateKeep } from '@xalians/rules/expedition/draft';
 import { RIVALS } from '@xalians/rules/expedition/expeditionBot';
 import { ROSTER_SIZE } from '@xalians/rules/expedition/expeditionInterpretation';
+import { elementOf } from '../reclamationVocabulary';
 
 /*
 	ReclamationDraft coverage.
@@ -34,7 +35,8 @@ describe('ReclamationDraft data contract (component not mounted, see file header
 		poolA.forEach((record) => {
 			expect(typeof record.id).toBe('string');
 			expect(typeof record.species).toBe('string');
-			expect(record.element && typeof record.element.primary).toBe('string');
+			// schema 5 writes a bare element string where schema 4 wrote {primary, affinities}
+			expect(typeof elementOf(record)).toBe('string');
 		});
 	});
 });

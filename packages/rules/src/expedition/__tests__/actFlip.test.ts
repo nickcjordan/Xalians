@@ -43,18 +43,26 @@ function twoWay(): any {
 	return {
 		id: 'af' + uid, species: 'graviclaw',
 		provenance: { schemaVersion: '1.0.0', origin: 'nowhere' },
-		element: { primary: 'metal', affinities: { metal: 100 } },
-		archetype: { key: 'predator', favors: [] },
+		// schema 5: a bare element, no archetype, no traits, and abilities split into
+		// `actions` with the signature declared on the record
+		element: 'metal',
 		attributes: { strength: 60, vitality: 55, endurance: 55, agility: 30, reflex: 30,
 			intelligence: 50, willpower: 50, instinct: 50, charisma: 50, resilience: 55 },
 		physiology: { environmentalTolerance: { ambientMedia: ['gas'], temperatureC: { min: -80, max: 220 } }, breathes: ['gas'], capabilities: {}, senses: {} },
-		traits: [],
 		temperament: { boldness: 50, curiosity: 50, energy: 50, aggression: 50, sociability: 50 },
-		abilities: [
-			{ name: 'Hit', signature: true, instrument: 'fists', action: 'strike', medium: 'metal', intensity: 60,
-				effects: [{ kind: 'harm', emphasis: 'primary' }], delivery: { mode: 'contact' }, spatial: { range: 'contact' } },
-			{ name: 'Ward', instrument: 'hide', action: 'ward', medium: 'metal', intensity: 50,
-				effects: [{ kind: 'protect', emphasis: 'primary' }], delivery: { mode: 'contact' }, spatial: { range: 'contact' } },
+		signature: { type: 'action', key: 'hit' },
+		passives: [],
+		actions: [
+			{ key: 'hit', name: 'Hit', instrument: 'fists', description: 'A hit.',
+				activation: { continuity: 'discrete' }, timing: { preparation: 'immediate', recovery: 'brief' },
+				delivery: { mode: 'contact', approach: 'closing' }, targeting: ['other'], spatial: { range: 'contact' },
+				effects: [{ key: 'blow', type: 'harm', mechanism: 'impact', intensity: 60, recipient: 'target',
+					onset: 'instant', persistence: 'resolved', likelihood: 'consistent' }] },
+			{ key: 'ward', name: 'Ward', instrument: 'hide', description: 'A ward.',
+				activation: { continuity: 'discrete' }, timing: { preparation: 'immediate', recovery: 'brief' },
+				delivery: { mode: 'self', approach: 'stationary' }, targeting: ['self'], spatial: {},
+				effects: [{ key: 'guard', type: 'protect', intensity: 50, recipient: 'self',
+					onset: 'instant', persistence: 'resolved', likelihood: 'consistent' }] },
 		],
 	};
 }

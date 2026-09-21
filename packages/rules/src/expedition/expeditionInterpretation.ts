@@ -1041,6 +1041,66 @@ export const CONDUCT_BY_ARCHETYPE: Record<string, ConductSpec> = {
 	rogue: { attacking: 'enemyRoutableElseWeakest', supporting: 'allyWithHighestMagnitude' },
 };
 
+/*
+	SCHEMA 5: CONDUCT FROM TEMPERAMENT, BECAUSE ARCHETYPE IS RETIRED.
+
+	Whom a creature chooses used to be read off its archetype through the table above. On a
+	schema 5 record there is no archetype, so every creature fell through to the single
+	default and the measured result was all 96 creatures in a pool sharing one line,
+	`enemySentEarliest`. Eight distinct targeting behaviours collapsed into one, which is a
+	real loss of variety in the Clash and not a cosmetic one.
+
+	Schema 5 keeps temperament, bounded 0 to 100 on five independently authored axes, and
+	the frozen roster uses the range (49 distinct aggression values over 96 creatures,
+	spanning 15 to 80). So conduct is derived from temperament instead, which is arguably
+	what the archetype table was approximating all along: "predator" was a label for high
+	aggression, "survivor" for low boldness.
+
+	The mapping below is a LEVER, recorded with its reasoning. Each line says which
+	temperament makes a creature choose that way, and every attacking line in
+	CONDUCT_BY_ARCHETYPE is reachable so no behaviour is orphaned:
+
+	  high aggression, high boldness   the strongest enemy standing: a fight picked on purpose
+	  high aggression, lower boldness  the weakest enemy: finish what is already hurt
+	  high curiosity                   the enemy most vulnerable to its element: a considered pick
+	  high energy                      the slower enemy first: speed used as an advantage
+	  low boldness                     the enemy with the lowest blow: the safest target
+	  high sociability                 the enemy threatening its allies
+	  otherwise                        the enemy sent earliest, the old default
+
+	Supporting follows the same axis so a creature's two lines are coherent.
+*/
+export function conductFromTemperament(temperament: Partial<Record<string, number>> | null | undefined): ConductSpec {
+	const at = (key: string) => {
+		const value = temperament ? temperament[key] : undefined;
+		return typeof value === 'number' ? value : 50;
+	};
+	const aggression = at('aggression');
+	const boldness = at('boldness');
+	const curiosity = at('curiosity');
+	const energy = at('energy');
+	const sociability = at('sociability');
+
+	if (aggression >= TEMPERAMENT_HIGH_THRESHOLD) {
+		return boldness >= TEMPERAMENT_HIGH_THRESHOLD
+			? { attacking: 'strongestEnemyInReach', supporting: 'allyWithMostHold' }
+			: { attacking: 'weakestEnemyInReach', supporting: 'allyWithLeastHold' };
+	}
+	if (curiosity >= TEMPERAMENT_HIGH_THRESHOLD) {
+		return { attacking: 'enemyMostVulnerableToElement', supporting: 'allyMostVulnerablePresent' };
+	}
+	if (energy >= TEMPERAMENT_HIGH_THRESHOLD) {
+		return { attacking: 'slowerEnemyWeakestFirst', supporting: 'fastestAlly' };
+	}
+	if (boldness <= TEMPERAMENT_LOW_THRESHOLD) {
+		return { attacking: 'enemyWithLowestMagnitude', supporting: 'self' };
+	}
+	if (sociability >= TEMPERAMENT_HIGH_THRESHOLD) {
+		return { attacking: 'enemyThreateningWeakestAlly', supporting: 'allyWithLeastHold' };
+	}
+	return { attacking: 'enemySentEarliest', supporting: 'allySentEarliest' };
+}
+
 export function getConductSpec(archetypeKey: string | null | undefined): ConductSpec | null {
 	if (!archetypeKey) {
 		return null;

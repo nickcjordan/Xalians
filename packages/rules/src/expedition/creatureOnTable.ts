@@ -28,7 +28,7 @@ import {
 	ROLE,
 	PRESENCE_BY_ARCHETYPE,
 	getFavoredActSpec,
-	getConductSpec,
+	getConductSpec, conductFromTemperament,
 	ACT_CLASS,
 	TEMPERAMENT_HIGH_THRESHOLD,
 	TEMPERAMENT_LOW_THRESHOLD,
@@ -549,8 +549,30 @@ export function roleOf(record: XalianRecord, rules?: Partial<Rules> | null): Rol
 
 // the role before any ablation switch is applied
 export function naturalRoleOf(record: XalianRecord): Role {
-	const archetypeKey = record && record.archetype && record.archetype.key
-		? String(record.archetype.key).toLowerCase()
+	/*
+		SCHEMA 5 RETIRED `archetype`, AND STATES SOMETHING BETTER IN ITS PLACE.
+
+		Rule 1 below made a creature a presence when its ARCHETYPE said so, and read its
+		abilities only to pick which presence. On a schema 5 record `record.archetype` is
+		undefined, so that branch never fires, and the measured result was a roster with no
+		presences at all: 86 strike, 6 sweep, 0 shield, 0 bolster over 96 creatures. Twelve
+		of those creatures DO carry a shield or a mend; eleven of the twelve also carry an
+		attack, and without an archetype to mark them a presence they all read as strikes.
+		Two of the game's four roles would have quietly ceased to exist.
+
+		What schema 5 offers instead is the SIGNATURE: the record names one ability as the
+		thing this creature fundamentally is, stated outright where schema 4 had to infer it
+		from an archetype label. So a creature whose signature shields is a shield, and one
+		whose signature mends is a bolster. That is a truer reading than the archetype was:
+		it is about what this individual actually does, not which of sixteen labels its
+		species was filed under.
+
+		A creature that carries a shield or a mend on an ORDINARY action, with an attacking
+		signature, stays a blow. It can still be flipped to that role by act flip (pass 25),
+		which is exactly the decision act flip exists to offer.
+	*/
+	const archetypeKey = record && (record as any).archetype && (record as any).archetype.key
+		? String((record as any).archetype.key).toLowerCase()
 		: null;
 	/*
 		PASS 7. The role is read off what the record's actions DO (their primary effects and
@@ -565,6 +587,21 @@ export function naturalRoleOf(record: XalianRecord): Role {
 	const reading = readRecord(record);
 	if (!reading.fieldable) {
 		return ROLE.NONE as Role;
+	}
+
+	/*
+		Schema 5's reading: the signature ability decides. Checked before the archetype so a
+		record carrying both is read by what it states rather than by what it was labelled.
+	*/
+	const signatureAction = reading.actions.find((a) => a.signature)
+		|| reading.passives.find((a) => a.signature);
+	if (signatureAction) {
+		if (signatureAction.role === EFFECT_ROLE.SHIELD) {
+			return ROLE.SHIELD as Role;
+		}
+		if (signatureAction.role === EFFECT_ROLE.MEND) {
+			return ROLE.BOLSTER as Role;
+		}
 	}
 
 	const presenceDefault = archetypeKey
@@ -677,13 +714,19 @@ export function blowActOf(record: XalianRecord, acts: Act[], role: Role): Act | 
 // ---------------------------------------------------------------------------
 
 export function conductOf(record: XalianRecord): Conduct {
-	const archetypeKey = record && record.archetype && record.archetype.key;
-	const spec = getConductSpec(archetypeKey);
+	const archetypeKey = record && (record as any).archetype && (record as any).archetype.key;
 	const temperament = (record && record.temperament) || ({} as Partial<XalianRecord['temperament']>);
+	/*
+		Schema 4 read the line off the archetype; schema 5 has none, and reading nothing gave
+		every creature in a pool the same line (measured: 96 of 96 on `enemySentEarliest`).
+		The archetype is still honoured when a record carries one, so archived records read
+		exactly as before, and temperament decides otherwise.
+	*/
+	const spec = getConductSpec(archetypeKey) || conductFromTemperament(temperament as any);
 	const at = (v: number | undefined) => (typeof v === 'number' ? v : 50);
 	return {
-		attacking: spec ? spec.attacking : 'enemySentEarliest',
-		supporting: spec ? spec.supporting : 'allySentEarliest',
+		attacking: spec.attacking,
+		supporting: spec.supporting,
 		boldness: at(temperament.boldness),
 		curiosity: at(temperament.curiosity),
 		energy: at(temperament.energy),

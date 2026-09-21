@@ -2,6 +2,7 @@ import React from 'react';
 import ReclamationFigure, { ReclamationSilhouette, HoldMeter } from './reclamationFigure';
 import { RoleGlyph } from './reclamationGlyphs';
 import { formatHold, formatHoldShown, countWord } from './reclamationNarration';
+import { elementOf } from './reclamationVocabulary';
 
 /*
 	ReclamationWorld — the frame: three worlds side by side, each at one of its sites.
@@ -379,7 +380,7 @@ function ReclamationWorld({
 					// warns loudly about a key arriving through a props object
 					const figureProps = (entry, seat, facing) => ({
 						record: entry.record,
-						element: entry.record.element.primary,
+						element: elementOf(entry.record),
 						seat,
 						you,
 						facing,
@@ -398,6 +399,8 @@ function ReclamationWorld({
 						dimmed: holdingIds && holdingIds.includes(entry.recordId),
 						acting: hl.acting === entry.recordId,
 						hit: hl.hit === entry.recordId,
+						// pass 32: the engine step, so an animation replays on a repeat actor
+						beat: hl.beat,
 						hover: hl.hover === entry.recordId,
 						flash: hl.hit === entry.recordId ? hl.flash : undefined,
 						arrive: arrivedIds.includes(entry.recordId),

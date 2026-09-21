@@ -7,7 +7,14 @@
 import { describe, test, expect } from 'vitest';
 import { readAction, readRecord, EFFECT_ROLE, governingAttributeFor, REACH_BY_RANGE } from '../recordReading.ts';
 
-// a schema 4 action, spelled the way a record spells one
+/*
+	A SCHEMA 5 action, spelled the way the frozen release spells one.
+
+	The differences from schema 4 that this file used to assert on: effects carry `type`
+	rather than `kind`, there is no `emphasis` because schema 5 retired primary/secondary
+	ordering, `targeting` is a list of permitted selections rather than a scalar relation,
+	and intensity lives on the effect rather than on the ability.
+*/
 function action(overrides: any = {}) {
 	const { effect, ...rest } = overrides;
 	return {
@@ -15,13 +22,13 @@ function action(overrides: any = {}) {
 		name: 'Test Act',
 		instrument: 'fists',
 		medium: 'fire',
-		intensity: 50,
-		activation: { operation: 'discrete' },
+		activation: { continuity: 'discrete' },
+		timing: { preparation: 'immediate', recovery: 'brief' },
 		delivery: { mode: 'contact', approach: 'stationary' },
-		spatial: { selectivity: 'selective', range: 'contact' },
-		targeting: { relation: 'other', subjects: ['creature'] },
+		spatial: { range: 'contact' },
+		targeting: ['other'],
 		effects: [{
-			kind: 'harm', mechanism: 'impact', recipient: 'target', emphasis: 'primary',
+			key: 'outcome', type: 'harm', mechanism: 'impact', recipient: 'target', intensity: 50,
 			onset: 'instant', persistence: 'resolved', likelihood: 'consistent',
 			...(effect || {}),
 		}],
@@ -37,16 +44,16 @@ describe('readAction: what an action is at the table', () => {
 		expect(single.area).toBe(false);
 
 		const wide = readAction(action({
-			spatial: { selectivity: 'indiscriminate', range: 'short', area: { shape: 'radial', extent: 'medium', anchor: 'point' } },
+			spatial: { range: 'short', area: { shape: 'radial', extent: 'medium', anchor: 'self', persistence: 'resolved' } },
 		}));
 		expect(wide.role).toBe(EFFECT_ROLE.ATTACK);
 		expect(wide.area).toBe(true);
 	});
 
 	test('protect is a shield and restore is a mend', () => {
-		expect(readAction(action({ effect: { kind: 'protect', method: 'barrier', against: 'harm' } })).role)
+		expect(readAction(action({ effect: { type: 'protect', intensity: 40 } })).role)
 			.toBe(EFFECT_ROLE.SHIELD);
-		expect(readAction(action({ effect: { kind: 'restore', aspect: 'integrity' } })).role)
+		expect(readAction(action({ effect: { type: 'restore', intensity: 40 } })).role)
 			.toBe(EFFECT_ROLE.MEND);
 	});
 
@@ -56,19 +63,64 @@ describe('readAction: what an action is at the table', () => {
 		or as nothing; 431 of 1384 actions in the seed-7 pool carry one of them.
 	*/
 	test.each([
-		['restrain', { kind: 'restrain', faculty: 'movement' }],
-		['displace', { kind: 'displace', direction: 'away' }],
-		['transfer', { kind: 'transfer', from: 'target', to: 'self', resource: 'vitality' }],
-		['suppress', { kind: 'suppress', aspect: 'reactions' }],
-	])('%s reads as an attack rather than as nothing', (_kind, effect) => {
+		['harm', { type: 'harm', mechanism: 'cutting', intensity: 40 }],
+		['displace', { type: 'displace', direction: 'away', intensity: 40 }],
+	])('%s reads as an attack', (_type, effect) => {
 		const reading = readAction(action({ effect }));
 		expect(reading.role).toBe(EFFECT_ROLE.ATTACK);
-		expect(reading.effectKind).toBe(_kind);
+		expect(reading.effectKind).toBe(_type);
+	});
+
+	/*
+		SCHEMA 5 RETIRED transfer, restrain and suppress AS EFFECT TYPES. The model states
+		that restraining is `status: restrained` and draining is harm plus a dependent
+		restoration, so the open item that tracked those three reading as plain attacks is
+		dissolved rather than implemented. What matters now is that a status is named when
+		the table cannot carry it, so a player is told WHICH condition their creature
+		applies rather than being told a generic no.
+	*/
+	test('a status the frame cannot carry is unsupported, and says which status', () => {
+		const reading = readAction(action({
+			effect: {
+				type: 'status', status: 'restrained', removable: ['freeing'],
+				persistence: 'lingering', duration: 'brief',
+			},
+		}));
+		expect(reading.role).toBe(EFFECT_ROLE.UNSUPPORTED);
+		expect(reading.unsupportedReason).toContain('restrained');
+	});
+
+	test('an action is judged by every effect it carries, not by a privileged one', () => {
+		// schema 5 states that effect order carries no execution priority, so an action
+		// whose FIRST effect is a status it cannot carry is still an attack when it harms
+		const reading = readAction(action({
+			effects: [
+				{
+					key: 'condition', type: 'status', status: 'chilled', removable: ['warming'],
+					recipient: 'target', onset: 'instant', persistence: 'lingering',
+					duration: 'brief', likelihood: 'consistent',
+				},
+				{
+					key: 'blow', type: 'harm', mechanism: 'elemental', intensity: 40,
+					recipient: 'target', onset: 'instant', persistence: 'resolved', likelihood: 'consistent',
+				},
+			],
+		}));
+		expect(reading.role).toBe(EFFECT_ROLE.ATTACK);
+		expect(reading.harmMechanism).toBe('elemental');
+	});
+
+	test('the blow size is read off the effect, where schema 5 states it', () => {
+		expect(readAction(action({ effect: { type: 'harm', mechanism: 'impact', intensity: 72 } })).intensity)
+			.toBe(72);
+		// an authored band reads as its midpoint
+		expect(readAction(action({ effect: { type: 'harm', mechanism: 'impact', intensity: { min: 30, max: 50 } } })).intensity)
+			.toBe(40);
 	});
 
 	test('an effect kind the table has no rule for is unsupported, by name, never a strike', () => {
 		const reading = readAction(action({
-			effect: { kind: 'reveal', aspect: 'location' },
+			effect: { type: 'remove', methods: ['cooling'] },
 		}));
 		expect(reading.role).toBe(EFFECT_ROLE.UNSUPPORTED);
 		expect(reading.role).not.toBe(EFFECT_ROLE.ATTACK);
@@ -77,21 +129,21 @@ describe('readAction: what an action is at the table', () => {
 
 	test('an attack that can only touch itself decides no world, so it is unsupported', () => {
 		const reading = readAction(action({
-			targeting: { relation: 'self', subjects: ['creature'] },
-			spatial: { selectivity: 'selective' },
+			targeting: ['self'],
+			spatial: {},
 		}));
 		expect(reading.role).toBe(EFFECT_ROLE.UNSUPPORTED);
 	});
 
 	test('range is read, graded, and absent for a body-centered act', () => {
-		expect(readAction(action({ spatial: { selectivity: 'selective', range: 'medium' } })).reach)
+		expect(readAction(action({ spatial: { range: 'medium' } })).reach)
 			.toBe(REACH_BY_RANGE.medium);
-		expect(readAction(action({ spatial: { selectivity: 'selective', range: 'long' } })).reach)
+		expect(readAction(action({ spatial: { range: 'long' } })).reach)
 			.toBe(REACH_BY_RANGE.long);
 		const centered = readAction(action({
-			targeting: { relation: 'self', subjects: ['creature'] },
-			spatial: { selectivity: 'selective' },
-			effect: { kind: 'protect', method: 'bracing', against: 'harm', recipient: 'self' },
+			targeting: ['self'],
+			spatial: {},
+			effect: { type: 'protect', intensity: 40, recipient: 'self' },
 		}));
 		expect(centered.range).toBe(null);
 		expect(centered.reach).toBe(0);
@@ -116,7 +168,8 @@ describe('readAction: what an action is at the table', () => {
 describe('readRecord: whether the table can field the creature', () => {
 	const recordWith = (actions: any[]) => ({
 		id: 'x', species: 'test', schemaVersion: '4.0.0',
-		signature: { kind: 'action', key: actions[0]?.key || 'none' },
+		// schema 5 spells it `type`; the seam reads the record's own declaration
+		signature: { type: 'action', key: actions[0]?.key || 'none' },
 		actions, passives: [],
 	} as any);
 
@@ -129,19 +182,19 @@ describe('readRecord: whether the table can field the creature', () => {
 
 	test('a creature whose every action is unsupported is NOT fieldable, and says why', () => {
 		const reading = readRecord(recordWith([
-			action({ key: 'a', name: 'Shows Things', effect: { kind: 'reveal', aspect: 'intent' } }),
-			action({ key: 'b', name: 'Clears Things', effect: { kind: 'remove', methods: ['cleansing'] } }),
+			action({ key: 'a', name: 'Holds Things', effect: { type: 'status', status: 'restrained', removable: ['freeing'], persistence: 'lingering', duration: 'brief' } }),
+			action({ key: 'b', name: 'Clears Things', effect: { type: 'remove', methods: ['cleansing'] } }),
 		]));
 		expect(reading.fieldable).toBe(false);
 		expect(reading.usable).toEqual([]);
 		expect(reading.unsupportedReasons).toHaveLength(2);
-		expect(reading.unsupportedReasons[0]).toContain('Shows Things');
+		expect(reading.unsupportedReasons[0]).toContain('Holds Things');
 	});
 
 	test('an unsupported action is dropped, not counted, while the rest still play', () => {
 		const reading = readRecord(recordWith([
 			action({ key: 'a', name: 'Real Hit' }),
-			action({ key: 'b', name: 'Unreadable', effect: { kind: 'status', status: 'burning', removable: ['cooling'] } }),
+			action({ key: 'b', name: 'Unreadable', effect: { type: 'status', status: 'burning', removable: ['cooling'], persistence: 'lingering', duration: 'brief' } }),
 		]));
 		expect(reading.fieldable).toBe(true);
 		expect(reading.usable).toHaveLength(1);
@@ -151,8 +204,8 @@ describe('readRecord: whether the table can field the creature', () => {
 
 	test('reach is the furthest any usable action reaches', () => {
 		const reading = readRecord(recordWith([
-			action({ key: 'a', spatial: { selectivity: 'selective', range: 'contact' } }),
-			action({ key: 'b', spatial: { selectivity: 'selective', range: 'medium' } }),
+			action({ key: 'a', spatial: { range: 'contact' } }),
+			action({ key: 'b', spatial: { range: 'medium' } }),
 		]));
 		expect(reading.reach).toBe(REACH_BY_RANGE.medium);
 	});
@@ -168,9 +221,8 @@ describe('readRecord: whether the table can field the creature', () => {
 describe(`pass 8: an area shield is never a creature's attack`, () => {
 	test('a protect action with an area footprint is a shield, not a sweep', () => {
 		const areaShield = readAction(action({
-			effect: { kind: 'protect', method: 'barrier', against: 'harm' },
+			effect: { type: 'protect', intensity: 40 },
 			spatial: {
-				selectivity: 'indiscriminate',
 				range: 'short',
 				area: { shape: 'radial', extent: 'medium', anchor: 'point' },
 			},

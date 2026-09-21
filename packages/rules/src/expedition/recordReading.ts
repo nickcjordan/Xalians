@@ -81,14 +81,78 @@ export type EffectRole = typeof EFFECT_ROLE[keyof typeof EFFECT_ROLE];
 	SUPPORTED_EFFECT_KINDS is therefore the set the table can speak. Everything outside it
 	is unsupported BY NAME, which is the point: the words below are shown to the player.
 */
-const ATTACK_KINDS = new Set(['harm', 'transfer', 'restrain', 'suppress', 'displace']);
+const ATTACK_TYPES = new Set(['harm', 'displace']);
 
+/*
+	SCHEMA 5. The effect vocabulary shrank from eleven kinds to six types, and three of the
+	kinds this file used to carry no longer exist.
+
+	`transfer`, `restrain` and `suppress` are GONE as effect types. The model states that
+	restraining is `status: restrained` and draining is harm plus a dependent restoration.
+	The open item that tracked those three reading as plain attacks is therefore dissolved
+	rather than implemented: the thing it asked to model does not exist any more, and the
+	same expressiveness arrives through statuses.
+
+	What remains, measured over 320 v5 creatures and 1280 actions from the frozen release:
+
+	  attack (harm / displace at another)   927   72.4%
+	  status-only, aimed at another         217   17.0%
+	  shield (protect)                       55    4.3%
+	  status-only, self                      50    3.9%
+	  mend (restore)                         17    1.3%
+	  remove-only                            14    1.1%
+*/
 export const UNSUPPORTED_EFFECT_WORDS: Record<string, string> = {
-	enhance: 'strengthens another creature in a way this Proving does not model',
-	reveal: 'uncovers what the frame already shows both handlers',
 	status: 'applies a lasting condition the frame does not carry between worlds',
 	remove: 'clears a condition the frame does not carry between worlds',
 };
+
+/*
+	AN ACTION IS JUDGED BY EVERY EFFECT IT CARRIES, not by one privileged effect.
+
+	Schema 4 marked one effect `emphasis: 'primary'` and this file read that one. Schema 5
+	retired primary/secondary ordering outright, and states that effect order carries no
+	execution priority, so there is no privileged effect to read any more.
+
+	The table's question is what an action DOES here, and an action does whatever any of
+	its effects do. The order below is the table's own precedence, not the record's: an
+	action that harms is an attack even if it also conceals, because the harm is the part
+	the Clash can resolve.
+*/
+function tableEffectOf(ability: any): { effect: any; type: string } | null {
+	const effects = Array.isArray(ability?.effects) ? ability.effects : [];
+	if (effects.length === 0) {
+		return null;
+	}
+	for (const type of ['harm', 'displace', 'protect', 'restore']) {
+		const found = effects.find((e: any) => e && e.type === type);
+		if (found) {
+			return { effect: found, type };
+		}
+	}
+	// nothing the table can resolve: report the first effect so the reason names it
+	return { effect: effects[0], type: String(effects[0]?.type ?? 'none') };
+}
+
+/*
+	THE BLOW'S SIZE moved down a level. Schema 4 put one `intensity` on the ability; schema
+	5 puts it on each effect, because each effect has its own output band. The table reads
+	the intensity of the effect it is resolving, and falls back to the status default of 50
+	that the model states for an omitted override.
+*/
+const DEFAULT_INTENSITY = 50;
+
+function intensityOf(effect: any): number {
+	const value = effect?.intensity;
+	if (typeof value === 'number') {
+		return value;
+	}
+	// an authored band: the model allows {min, max}; the table reads its midpoint
+	if (value && typeof value.min === 'number' && typeof value.max === 'number') {
+		return (value.min + value.max) / 2;
+	}
+	return DEFAULT_INTENSITY;
+}
 
 // ---------------------------------------------------------------------------
 // reading one action
@@ -102,7 +166,7 @@ export interface ActionReading {
 	signature: boolean;
 	/** what this action is at the table */
 	role: EffectRole;
-	/** the primary effect's kind, as the record spells it */
+	/** the effect TYPE the table resolved this action by, as schema 5 spells it */
 	effectKind: string;
 	/** true when the action lands on more than its one recipient */
 	area: boolean;
@@ -112,6 +176,8 @@ export interface ActionReading {
 	reach: number;
 	/** delivery mode, straight off the record */
 	delivery: string | null;
+	/** schema 5: how a harm lands (impact/cutting/piercing/compression/elemental), or null */
+	harmMechanism?: string | null;
 	/** whether the action may touch another creature at all */
 	touchesOthers: boolean;
 	/** set when role is UNSUPPORTED: the sentence the table shows */
@@ -160,11 +226,6 @@ export const REACH_BY_RANGE: Record<string, number> = {
 	long: 4,
 };
 
-function primaryEffectOf(ability: any): any {
-	const effects = Array.isArray(ability?.effects) ? ability.effects : [];
-	return effects.find((e: any) => e && e.emphasis === 'primary') || effects[0] || null;
-}
-
 /*
 	readAction(ability) -> ActionReading
 
@@ -178,10 +239,9 @@ function primaryEffectOf(ability: any): any {
 export function readAction(ability: any): ActionReading {
 	const name = String(ability?.name || ability?.key || 'Act');
 	const key = String(ability?.key || name);
-	const intensity = typeof ability?.intensity === 'number' ? ability.intensity : 50;
 	const signature = isSignatureAbility(ability);
 	const base = {
-		key, name, signature, intensity,
+		key, name, signature,
 		instrument: ability?.instrument,
 		medium: ability?.medium,
 	};
@@ -197,6 +257,8 @@ export function readAction(ability: any): ActionReading {
 		const legacyProjected = ['hurl', 'beam', 'spray', 'burst', 'cloud'].includes(legacy);
 		return {
 			...base,
+			intensity: typeof ability?.intensity === 'number' ? ability.intensity : DEFAULT_INTENSITY,
+			harmMechanism: null,
 			role: legacyRole,
 			effectKind: legacy,
 			area: legacySweeps.includes(legacy),
@@ -208,34 +270,47 @@ export function readAction(ability: any): ActionReading {
 		};
 	}
 
-	const effect = primaryEffectOf(ability);
+	const chosen = tableEffectOf(ability);
+	const effect = chosen ? chosen.effect : null;
 	const spatial = ability?.spatial || {};
 	const delivery = ability?.delivery?.mode ? String(ability.delivery.mode) : null;
-	const relation = ability?.targeting?.relation ? String(ability.targeting.relation) : 'other';
+	/*
+		SCHEMA 5. `targeting` is a list of permitted selections (`self` / `other`), not a
+		scalar relation. The model is explicit that it is a permitted selection rather than
+		a set of simultaneous targets, so the table asks the only question it cares about:
+		may this ever be aimed at somebody else?
+	*/
+	const targeting: string[] = Array.isArray(ability?.targeting)
+		? ability.targeting.map((t: any) => String(t))
+		: [];
 	const range = spatial.range ? String(spatial.range) : null;
 	const reading = {
 		...base,
-		effectKind: effect ? String(effect.kind) : 'none',
+		intensity: effect ? intensityOf(effect) : DEFAULT_INTENSITY,
+		effectKind: chosen ? chosen.type : 'none',
 		area: !!spatial.area,
 		range,
 		reach: range ? (REACH_BY_RANGE[range] || 1) : 0,
 		delivery,
-		touchesOthers: relation !== 'self',
+		touchesOthers: targeting.includes('other'),
+		// schema 5 states how a harm lands; the table records it and does not yet price it
+		harmMechanism: effect && effect.type === 'harm' && effect.mechanism
+			? String(effect.mechanism) : null,
 		governingAttribute: null as string | null,
 	};
 
-	if (!effect) {
+	if (!chosen || !effect) {
 		return { ...reading, role: EFFECT_ROLE.UNSUPPORTED, unsupportedReason: 'has no stated effect' };
 	}
-	const kind = String(effect.kind);
+	const type = chosen.type;
 
-	if (kind === 'protect') {
+	if (type === 'protect') {
 		return { ...reading, role: EFFECT_ROLE.SHIELD };
 	}
-	if (kind === 'restore') {
+	if (type === 'restore') {
 		return { ...reading, role: EFFECT_ROLE.MEND };
 	}
-	if (ATTACK_KINDS.has(kind)) {
+	if (ATTACK_TYPES.has(type)) {
 		// an attack that cannot touch another creature is not an attack at this table
 		if (!reading.touchesOthers) {
 			return {
@@ -250,10 +325,21 @@ export function readAction(ability: any): ActionReading {
 			governingAttribute: governingAttributeFor(EFFECT_ROLE.ATTACK, delivery),
 		};
 	}
+	/*
+		A status or a removal. Named rather than generic, because the words below are shown
+		on the dossier and "applies a lasting condition" tells a player why a creature they
+		own cannot be sent. The status itself is named so the sentence is about THIS
+		creature: the measured residue is Hypnopet (entranced), Thirstaserp, Yetimoth
+		(frozen) and Avilily (paralyzed), and a player owning a Hypnopet should be told it
+		is entrancement that this Proving cannot carry.
+	*/
+	const named = type === 'status' && effect.status ? String(effect.status) : null;
+	const base_reason = UNSUPPORTED_EFFECT_WORDS[type]
+		|| `does something this Proving does not model (${type})`;
 	return {
 		...reading,
 		role: EFFECT_ROLE.UNSUPPORTED,
-		unsupportedReason: UNSUPPORTED_EFFECT_WORDS[kind] || `does something this Proving does not model (${kind})`,
+		unsupportedReason: named ? `${base_reason}: ${named}` : base_reason,
 	};
 }
 
@@ -292,8 +378,36 @@ export interface RecordReading {
 	them here means the day content leans on them, the number is already in front of us.
 */
 export function readRecord(record: XalianRecord | null | undefined): RecordReading {
-	const actions = (record ? recordActions(record as any) : []).map(readAction);
-	const passives = (record ? recordPassives(record as any) : []).map(readAction);
+	/*
+		SCHEMA 5. THE SIGNATURE IS DECLARED ON THE RECORD, and it is read here.
+
+		Schema 4 marked a signature on the ability itself (`role`, `prominence` or a boolean),
+		and `isSignatureAbility` reads those markers. Schema 5 states it once, on the record,
+		as `signature: {type: 'action' | 'passive', key}` - which is better, because it is
+		stated rather than inferred.
+
+		The shared `recordActions` helper already stamps a role from the record's signature,
+		but it reads `signature.kind` where schema 5 writes `signature.type`, so on a v5
+		record it marks every action `standard`. Checked against the frozen release: the
+		signature action came back unmarked, which is a SILENT wrong answer rather than a
+		loud one, and the signature is what a creature's blow is read from.
+
+		So the seam reads the record's own declaration and does not depend on either
+		spelling. This is the adapter earning its existence: one file knows that schema 4
+		said `kind` and schema 5 says `type`, and nothing else has to.
+	*/
+	const declared: any = (record as any)?.signature;
+	const signatureType = declared ? String(declared.type ?? declared.kind ?? '') : '';
+	const signatureKey = declared ? String(declared.key ?? '') : '';
+	const markSignature = (kind: 'action' | 'passive') => (ability: any) => {
+		const isSignature = !!signatureKey && signatureType === kind && String(ability?.key) === signatureKey;
+		// keep schema 4's own markers working for archived records, which state it per ability
+		return isSignature ? { ...ability, role: 'signature' } : ability;
+	};
+	const actions = (record ? recordActions(record as any) : [])
+		.map(markSignature('action')).map(readAction);
+	const passives = (record ? recordPassives(record as any) : [])
+		.map(markSignature('passive')).map(readAction);
 	const usable = actions.filter((a) => a.role !== EFFECT_ROLE.UNSUPPORTED);
 	const reasons: string[] = [];
 	actions.forEach((a) => {

@@ -77,8 +77,16 @@ console.log(`behaviours offered: ${words.join(', ') || 'none'}`);
 console.log(`chose: ${chosen}  role that landed on the board: ${landedRole}`);
 
 // play on to the Charter
+/*
+	SCHEMA 5 MADE A ROUND LONGER, so the loop budget needed headroom. The v5 roster throws
+	more attacks per Clash (measured: 172 sampled playback frames against 112 under schema
+	4), and at 400 iterations this check intermittently ran out before reaching the
+	Charter and reported `reached the Charter: false` on a healthy build. A check that
+	fails on good code teaches you to ignore it, so the budget is raised rather than the
+	failure tolerated.
+*/
 let guard = 0; let reached = false;
-while (guard++ < 400) {
+while (guard++ < 900) {
 	const skip = page.locator('[data-skip]');
 	if (await skip.count() && await skip.first().isVisible()) { await skip.first().click(); continue; }
 	const nf = page.locator('[data-next-frame]');
