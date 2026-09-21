@@ -134,7 +134,7 @@ Traits considered and left out, with reasons: `armored` (the smooth outline and 
 
 #### Trait re-run (2026-09-10)
 
-- `pack-bonded`: restored from cut to required at 100. Reason: the ratified `company` field, "It moves in herds through the underforest," is exactly the sentence-level, species-own evidence the 2026-09-07 evidence bar found lacking (see the cut table below, 'argued from absence'). This is the second required trait, still within the "two normally" guideline, so no special-case justification is needed.
+- `pack-bonded`: restored from cut to required at 100. Reason: the ratified `company` field, "It moves in herds through the underforest," is exactly the sentence-level, species-own evidence the 2026-09-07 evidence bar found lacking (see the cut table below, 'argued from absence'). This is the second required trait, still within the 'two normally' guideline, so no special-case justification is needed.
 - `territorial`: raised from a rolled 15 to a rolled 25 on the new `behavior` field, "then holds the lane it has cut," which states the species' own ground-holding act rather than only the planet-wide fauna observation.
 - `regenerative`: lowered from a rolled 30 to a rolled 20 to keep the rolled set at exactly 100 after `territorial`'s raise; its own evidence (the output priority and the world's-forms fauna observation) is unchanged and remains the weaker planet-wide entry.
 - `resistant` and `perceptive`: unchanged at 35 and 20; no new field bears on either.

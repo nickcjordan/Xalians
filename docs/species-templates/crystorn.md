@@ -48,11 +48,11 @@ No jobs, schedules, scenes, feeding times, causal Vallerii claims, or present-da
 ## Physiology judgments
 
 - `corporeality: corporeal`: art: a solid opaque body with limbs and a muzzle; nothing in either source suggests otherwise.
-- `composition.primary: flesh`: art: a haired animal body with limbs, muzzle, and nostrils; the registry definition is "living animal tissue, muscle and organ, whatever covers it."
+- `composition.primary: flesh`: art: a haired animal body with limbs, muzzle, and nostrils; the registry definition is 'living animal tissue, muscle and organ, whatever covers it.'
 - `composition.secondary: mineral`: species: "The gems growing out of this creature's head" are a structural growth of the resting body, which the registry allows as a secondary ("crystal horns on a furred body are `flesh` primary, `mineral` secondary").
 - `bodyPlan: biped`: art: the forelimbs are held clear of the ground at knee height and end in digited hands, and the hindlimbs are the folded bearing limbs. The registry test is that a creature "whose forelimbs in the art are free of the ground and end in hands, fists, claws held up, tools, or wings is `biped`". The seated pose is not a rest stance the registry recognizes as its own plan and no other key in the priority order fits.
 - `covering: fur`: art: the outline of the head and trunk is drawn throughout as overlapping pointed tufts, which the registry names as the one case where a silhouette shows a surface ("tufted or shaggy edges for `fur`").
-- `anatomy: core`: species: "The gems growing out of this creature's head transmit powerful light energy" is exactly the registry's `core`, an "exposed radiant or crystal focal mass"; the gems are shown external and are the thing that emits.
+- `anatomy: core`: species: "The gems growing out of this creature's head transmit powerful light energy" is exactly the registry's `core`, an 'exposed radiant or crystal focal mass'; the gems are shown external and are the thing that emits.
 - `anatomy: fists`: art: two forelimbs ending in digited hands, held open and free of the ground; `fists` is the registry key for blunt striking hands and is the honest key for a hand with no claws, talons, or pincers drawn.
 - `anatomy: hide`: art: no plating, shell, carapace, spines, or rigid casing is drawn anywhere on the trunk; a furred defensive body surface with no armored aspect is `hide`, and the species therefore declares `hide` and never `shell`.
 - Anatomy keys deliberately not taken: `horns` (the crown is emissive and the description defines it by what it transmits, so `core` is the functional key and the registry forbids a second surface-style duplicate for the same part); the ears and nostrils in the art are sense organs, which the registry states are never anatomy.
@@ -60,7 +60,7 @@ No jobs, schedules, scenes, feeding times, causal Vallerii claims, or present-da
 - `lifespan: long`: cut 3 of the rubric: a flesh body above 200 kg (band midpoint 360 kg) is `long`. No armored covering adjustment is available past `long`. Cut 4 does not apply: no source sentence says the environment shortens this creature's life; the planet history says the opposite of Luminax Xalians as a class, that they are "well adapted to the immense radiation present on their planet."
 - `genome.chirality: rolled`: default; nothing declares an achiral body.
 - `diet: energy-feeder`: the registry's fallback for a flesh body with no feeding sentence is `omnivore`, but the registry also states that "any other body shown drawing in an energy, including light taken through an organ or a core, is `energy-feeder`". Species: "The gems growing out of this creature's head transmit powerful light energy" shows the crown as an organ working light; planet: "the immense energy released by Luminax's twin suns naturally resulted in an incredible level of photosynthetic potential across the world". Judgment call recorded under Authored fields as partly authored, because the species sentence shows the crown transmitting energy rather than explicitly taking it in.
-- `communication: ["display", "vocal"]`: `display` from art: the crown is a conspicuous emissive head-growth and the registry lists "light pattern" under `display`; species: the gems "transmit powerful light energy". `vocal` from art: a wide drawn mouth line and open nostrils on a broad muzzle. Both are marked as inferred under Authored fields.
+- `communication: ["display", "vocal"]`: `display` from art: the crown is a conspicuous emissive head-growth and the registry lists 'light pattern' under `display`; species: the gems "transmit powerful light energy". `vocal` from art: a wide drawn mouth line and open nostrils on a broad muzzle. Both are marked as inferred under Authored fields.
 - `breathes: ["gas"]`: planet: the surface is an atmosphere world with "torrential storms" and "intense winds", and the body is a haired flesh animal; `breathes` is a subset of `ambientMedia`.
 - `ambientMedia: ["gas", "vacuum"]`: planet: the sentence describing Luminarii being brought into space, whose immunity to cosmic radiation was necessary for construction and maintenance of the Dyson Sphere That is a planet-wide statement about Luminax Xalians, and the registry allows a planet-wide sentence to justify an environmental field. Sustaining activity is what the sentence shows; `breathes` stays gas only.
 - `temperatureC: {min 30, max 95}`: the planet `data` block gives `Temperature Low` 24.5 C and `Temperature High` 122 C, so the band sits strictly inside the planet range. The sub-band is authored to the sunward face the species is generated for, planet: "half of the world is rendered in eternal daylight", against a heavily furred body that is not built for the extreme upper tail.
@@ -135,8 +135,8 @@ Sources added for this run: the ratified `lore.appearance` list and the five rat
 
 | Trait | Former percent | Evidence class that failed |
 |---|---|---|
-| `protective` | 24 | art-inferred from a seated, open-handed posture; the walkthrough itself records "no source sentence" |
-| `anchored` | 22 | body-mass plausibility from a seated pose; no source states it cannot be moved, and the walkthrough records "no source sentence" |
+| `protective` | 24 | art-inferred from a seated, open-handed posture; the walkthrough itself records 'no source sentence' |
+| `anchored` | 22 | body-mass plausibility from a seated pose; no source states it cannot be moved, and the walkthrough records 'no source sentence' |
 | `menacing` | 12 | the "don't be deceived" clause is about deception, not about presence eroding courage; no sentence describes fear |
 | `foresighted` | 4 | no source sentence; a rare-band roll on a still, watchful body |
 
@@ -149,7 +149,7 @@ Traits considered and deliberately left out: `armored` (the art shows no plating
 Lore-defining act, quoted: "The gems growing out of this creature's head transmit powerful light energy, don't be deceived by its calm temperament."
 
 - Instrument `core`: the effect terminates on the target as energy leaving the gems; the gems are the part, and `core` is their registry key.
-- Action `beam`: the registry defines `beam` as "a focused projected line of energy or matter". A faceted crystal that transmits light energy focuses rather than sprays; `beam` is in the physical `core` row and in the light conduit row.
+- Action `beam`: the registry defines `beam` as 'a focused projected line of energy or matter'. A faceted crystal that transmits light energy focuses rather than sprays; `beam` is in the physical `core` row and in the light conduit row.
 - Medium `light`: the species' primary element, and the sentence names light energy directly.
 - Intensity `[55, 92]`: legacy gauge `specialAttackRating: high` is the only rating the legacy block sets, and it is set high.
 - Name `Coronet of the Twin Suns`: grander register, coined. Collision scan run case-insensitively across all 14 `consolidated-*.md` files and `neutral-pools.md`; zero hits. A ledger search for `crystorn` across the same files returned nothing, so no reserved name exists for this species.
@@ -197,7 +197,7 @@ Non-FAIL adjustment recorded here for the same trail: the script warned that the
 
 ## Open questions for Nick
 
-The one question I want to raise concerns the crown. The registry's `core` key is an "exposed radiant or crystal focal mass" and it fits the gems perfectly as emitters, but the art shows them as two separate spikes rising from the head, which is also the shape the `horns` key describes, and `crest` exists specifically for an "emissive or display head-growth". I took `core` because the species sentence defines the gems entirely by what they transmit and because `core` is the only one of the three that reaches `beam`, which the signature needs. Would you rather this species declare `crest` for the crown, accepting that its physical row loses `beam` and the signature would have to lean entirely on the light conduit to keep it?
+The one question I want to raise concerns the crown. The registry's `core` key is an 'exposed radiant or crystal focal mass' and it fits the gems perfectly as emitters, but the art shows them as two separate spikes rising from the head, which is also the shape the `horns` key describes, and `crest` exists specifically for an 'emissive or display head-growth'. I took `core` because the species sentence defines the gems entirely by what they transmit and because `core` is the only one of the three that reaches `beam`, which the signature needs. Would you rather this species declare `crest` for the crown, accepting that its physical row loses `beam` and the signature would have to lean entirely on the light conduit to keep it?
 
 ## Validator output
 

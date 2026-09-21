@@ -73,7 +73,7 @@ The source description is a single sentence, well short of the 60-to-140-word re
 
 **composition.primary: flesh**: species: the creature has bones and claws, and the alloy is named as what the bones and claws are made from, not the whole body; the covering in the art is a shaggy pelt. Registry: "`flesh`: living animal tissue, muscle and organ, whatever covers it."
 
-**composition.secondary: metal**: species: "With bones and claws made from a tough, conductive metal alloy". The registry's secondary rule admits an internal structural substance the description names, "such as metal bones", explicitly.
+**composition.secondary: metal**: species: "With bones and claws made from a tough, conductive metal alloy". The registry's secondary rule admits an internal structural substance the description names, 'such as metal bones', explicitly.
 
 **bodyPlan: quadruped**: `art:` all four limbs bear weight on the ground and the forelimbs end in paws set flat, not held clear. Registry selection rule: "one whose forelimbs reach the ground as legs is `quadruped`, whatever pose it is drawn in." The description names no stance and does not name the forelimbs doing work with the arms, so the art decides.
 
@@ -81,11 +81,11 @@ The source description is a single sentence, well short of the 60-to-140-word re
 
 **anatomy: jaws**: `art:` the long tapering muzzle with a defined jawline. The minimum honest reading of a head drawn with a full snout; no teeth or beak are shown, so `jaws` and not `fangs`.
 
-**anatomy: crest**: `art:` the tall erect fan of spiked filaments rising from the neck and shoulders, drawn as a raised structure distinct from the body outline. Registry: `crest` is an "emissive or display head-growth"; this is the only registry key for a raised display growth on the head and neck.
+**anatomy: crest**: `art:` the tall erect fan of spiked filaments rising from the neck and shoulders, drawn as a raised structure distinct from the body outline. Registry: `crest` is an 'emissive or display head-growth'; this is the only registry key for a raised display growth on the head and neck.
 
 **anatomy: tail**: `art:` the large bushy tail sweeping up and back, about torso length.
 
-**anatomy: hide**: the surface key. Registry: `hide` is "an UNARMORED body surface used defensively"; nothing in either source shows plating, a shell, or a carapace, so the unarmored partner is correct and `shell` is excluded. One surface key only, per the standing rule.
+**anatomy: hide**: the surface key. Registry: `hide` is 'an UNARMORED body surface used defensively'; nothing in either source shows plating, a shell, or a carapace, so the unarmored partner is correct and `shell` is excluded. One surface key only, per the standing rule.
 
 Anatomy keys considered and rejected: `spines` (the tufted outline and crest filaments read as hair, not rigid projections, and the crest already carries the structure); `horns` and `antlers` (nothing branched or spiked on the skull; the ear notches are lightning glyphs, not growths); `fists` (the forelimbs are paws on the ground); `core` and `light-organs` (no emitter is drawn or named). Sense organs are never anatomy, so the ears and eye stay in the senses bands.
 
@@ -93,7 +93,7 @@ Anatomy keys considered and rejected: `spines` (the tufted outline and crest fil
 
 **size: heightCm [190, 235], weightKg [105, 145]**: the legacy 216 cm / 123 kg is a relative gauge, not a value to copy; both bands are authored around it as realistic absolutes for a long-limbed quadruped of that build. The upper height reading is standing height at the crest, which the art draws as the tallest point. Weight is held a little below what a 2-meter mammal would carry because Zolton's gravity is 1.59 x Earth, which favors a leaner frame, and above what a purely soft-tissue body would weigh because of the alloy skeleton (species: "bones and claws made from a tough, conductive metal alloy").
 
-**lifespan: standard**: the wear rubric, in order. Cut 1 does not apply (not spectral or energy). Cut 2 does not apply: the body is `flesh` primary, and the rubric states "a mineral or metal secondary on a flesh body does not change the band", which forecloses the argument that an alloy skeleton is a slow-wearing chassis. Cut 3: flesh body, weight band midpoint 125 kg, which falls in "20 kg up to and including 200 kg are `standard`"; then the one adjustment does not apply, since no source calls the body cold, slow, or long-lived and its covering is `fur`, not an armored covering. Cut 4 (harshness) would move it down only if the description said the environment shortens its life, and it does not.
+**lifespan: standard**: the wear rubric, in order. Cut 1 does not apply (not spectral or energy). Cut 2 does not apply: the body is `flesh` primary, and the rubric states 'a mineral or metal secondary on a flesh body does not change the band', which forecloses the argument that an alloy skeleton is a slow-wearing chassis. Cut 3: flesh body, weight band midpoint 125 kg, which falls in "20 kg up to and including 200 kg are `standard`"; then the one adjustment does not apply, since no source calls the body cold, slow, or long-lived and its covering is `fur`, not an armored covering. Cut 4 (harshness) would move it down only if the description said the environment shortens its life, and it does not.
 
 **genome.chirality: rolled**: the default; nothing in either source declares the body has no chiral chemistry, and a flesh body has it.
 
@@ -218,7 +218,7 @@ No FAIL in this run was a false positive, and I am requesting no override. The t
 
 ## Notes on rules under strain (operating rule 7)
 
-**The `crest` key is carrying a display structure it was not written for.** Section 5.6 defines `crest` as an "emissive or display head-growth". The art's structure is a tall erect fan of filaments rising from the neck and shoulders, not from the head, and it emits nothing that either source shows. I complied and took `crest`, because it is the only registry key for a raised display growth and the alternative (`spines`) states rigid projections, which the tufted filament drawing does not support. Smallest fix: widen the `crest` definition so it covers a display growth of the head, neck, or shoulders, or add a `mane` key. This will recur, because a neck crest or ruff is a common silhouette device in this art set.
+**The `crest` key is carrying a display structure it was not written for.** Section 5.6 defines `crest` as an 'emissive or display head-growth'. The art's structure is a tall erect fan of filaments rising from the neck and shoulders, not from the head, and it emits nothing that either source shows. I complied and took `crest`, because it is the only registry key for a raised display growth and the alternative (`spines`) states rigid projections, which the tufted filament drawing does not support. Smallest fix: widen the `crest` definition so it covers a display growth of the head, neck, or shoulders, or add a `mane` key. This will recur, because a neck crest or ruff is a common silhouette device in this art set.
 
 **The attribute registry has no axis for the legacy 'special attack' rating.** Voltish's only two legacy ratings are `specialAttackRating: high` and `staminaRating: high`. Stamina maps cleanly onto `endurance`, but the special-attack rating has nowhere to land among the ten attributes, so a species whose one distinguishing legacy number says 'this creature's projected power is its strength' expresses that only through the signature's intensity band. I complied and put the weight into intensity [30, 85]. Smallest fix: rule explicitly that a legacy special-attack rating is expressed through the signature intensity band and, where a secondary is likely, through `affinityOdds`, so agents stop reaching for `intelligence` or `willpower` to carry it. No registry change needed, just a line in section 6 step 7.
 
