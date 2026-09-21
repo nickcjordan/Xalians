@@ -1,16 +1,16 @@
 # Canonical roster: v5 representation audit
 
-2026-09-21. Source revision: `119c555e`. All 32 species in `docs/species-templates/RATIFIED.json` reviewed. **Migration is paused at the design boundary, not completed.** The user initially chose to resolve the Neph and Yetimoth gaps before migration, then explicitly deferred fuel exposure as lore-only for this version. Yetimoth remains open. Avilily added a third catalog distinction from this audit; the user has since ratified it and `paralyzed` is implemented.
+2026-09-21. Source revision: `119c555e`. All 32 species in `docs/species-templates/RATIFIED.json` reviewed. **Design boundary resolved; migration is now permitted but not completed.** The user initially chose to resolve the Neph and Yetimoth gaps before migration, then explicitly deferred fuel exposure as lore-only for this version. The user has now explicitly deferred route-blocking walls as lore-only too. Avilily added a third catalog distinction from this audit; the user has since ratified it and `paralyzed` is implemented.
 
 ## Result
 
-The core model covers the roster's ordinary physical, elemental, support and automatic capabilities without an ordinary-move whitelist. The audit identified three source-supported concepts; only physical barriers remain open:
+The core model covers the roster's ordinary physical, elemental, support and automatic capabilities without an ordinary-move whitelist. The audit identified three source-supported concepts; all have scoped decisions:
 
 1. **Neph: exposure to unignited fuel, explicitly deferred.** Preserve the emission in lore without a fuel status or ignition/explosion mechanic. This is an accepted scope boundary, not a migration blocker.
-2. **Yetimoth: a persistent physical obstacle.** Recipient statuses and protective effects do not describe a wall occupying space and blocking passage.
+2. **Yetimoth: a persistent physical obstacle, explicitly deferred.** Preserve wall-making in lore without claiming the current model can create a freestanding obstacle. Armor and encasement remain representable.
 3. **Avilily: paralysis, now resolved.** Reduced alertness (`sedated`), acute response disruption (`stunned`) and physical binding (`restrained`) do not explicitly preserve loss of voluntary movement from a paralytic substance.
 
-Physical barriers remain a proposal to extend the shared contract. The shared status catalog includes ratified `paralyzed`; fuel exposure is explicitly deferred and must not be approximated by burning. No canonical species has been changed. Do not claim Yetimoth's wall capability is covered before resolving it.
+Physical barriers are deferred for this version. The shared status catalog includes ratified `paralyzed`; fuel exposure is explicitly deferred and must not be approximated by burning. No canonical species has been changed. Do not claim Yetimoth's wall capability is mechanically represented; the deferral is the resolved scope decision.
 
 ## Evidence and scope
 
@@ -42,7 +42,9 @@ Two uses already fit: armor can apply `shielded` or another specifically justifi
 
 Current mismatch: `spatial.area` describes geometry and lifetime for effects on recipients. It does not create a physical object or define blocked passage. `protect` prevents harm, `shielded` adds a barrier to a recipient, and `restrained` binds a recipient. None of those alone preserves a freestanding wall. The current one-target rule also does not provide arbitrary empty-space placement.
 
-Recommended discussion: a narrowly defined **barrier outcome** that creates an obstacle, with explicit placement and lifetime. Decide whether placement must remain relative to the performer/selected target or needs a limited location-selection option. Games should own durability, pathfinding and collision resolution. Do not add arbitrary terrain editing, object inventories or a generic summoned-entity system. No exact field names have been ratified for this extension.
+Decision: defer mechanical route-blocking walls. Preserve the wall in Yetimoth's lore, but do not substitute `shielded`, `frozen` or `restrained` and claim they create an independent obstacle. Ice armor and encasing an opponent use those existing effects where authoring supports them. No barrier effect, empty-point targeting, terrain editing, object durability or generic summoned-entity model is introduced in v5. Revisit physical obstacles only as a separately scoped capability.
+
+This resolves the final source-to-model design boundary before canonical species authoring.
 
 ### 3. Avilily: paralysis versus sedation
 
@@ -89,7 +91,7 @@ The rows below describe supported mechanism families and migration obligations, 
 | Venemist | Mouth tube disperses solvent mist that dissolves prey. | Stream/area chemical harm and corroding, with appropriate continuing exposure, fit. Two fangs provide a limited physical fallback. `Poisoned` should not substitute for dissolution merely because the prose calls the mist toxic. No automatic breach explosion or unrelated healing secretion. |
 | Voltish | Conductive skeleton and claws store environmental charge and release it on enemies. | Claw contact plus electrical harm; justified stun applications and authored discharge delivery must remain tied to the channel. Electrical protection requires evidence rather than automatic metal immunity. No attack-triggered explosion, unlimited resource drain or light/air emission from adjacency. |
 | Xylum | Root/tentacle restraint, subterranean power uptake and regrowth of torn limbs. | Sustained holding, root/serrated contact, displacement and self restoration fit. The old signature's drain payload needs re-authoring against its actual root/ground process: drawing power from soil is not evidence of vitality theft from another creature. No extra hydration/mana meter or blanket ally healing. |
-| Yetimoth | Ice armor, opponent encapsulation, heavy fists/tusks and route-blocking ice walls. **Barrier decision outstanding.** | `Shielded`, `frozen`, physical strikes and justified ice delivery are representable. Walls must remain a separate unresolved outcome rather than be renamed `restrained`. No automatic physical immunity, generic healing or empty-space targeting slipped into current fields. |
+| Yetimoth | Ice armor, opponent encapsulation, heavy fists/tusks and route-blocking ice walls. **Route-blocking walls remain lore-only for this version.** | `Shielded`, `frozen`, physical strikes and justified ice delivery are representable. Walls must remain a separate unresolved outcome rather than be renamed `restrained`. No automatic physical immunity, generic healing or empty-space targeting slipped into current fields. |
 
 ## Shared family review and guardrails
 
@@ -122,7 +124,7 @@ All rows were considered against the six current effect families: harm, restore,
 - [x] Record the three proposed decisions and the user's hold on migration while gaps are resolved.
 - [x] Ratify paralysis; implement its status definition, naming and generation/protection/removal regression coverage.
 - [x] Resolve fuel exposure by explicit deferral; preserve hydrogen-emission lore without substituting burning or inventing ignition/explosion behavior.
-- [ ] Resolve physical barriers; implement any agreed shared changes and tests.
+- [x] Resolve physical barriers by explicit deferral; retain Yetimoth wall-making in lore without a mechanical freestanding obstacle.
 - [ ] Author v5 species mechanism domains, required capabilities, independent temperament and calibrated output/rating bands, with per-species coverage evidence.
 - [ ] Compile each species and verify generated structure coverage, distinct-action capacity and performance over the canonical roster.
 - [ ] Bind the migrated roster, freeze v5 and verify canonical replay. Game updates remain separate.

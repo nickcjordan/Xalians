@@ -1,0 +1,428 @@
+{
+  "key": "yetimoth",
+  "name": "Yetimoth",
+  "nameOrigin": "A fusion of yeti and mammoth, matching its hulking white-furred ape body and mammoth head.",
+  "element": "ice",
+  "homePlanet": "krystos",
+  "generatorPlanets": [
+    "krystos"
+  ],
+  "lore": {
+    "description": "Hulking, white-furred apes with the heads of mammoths and tusks made of pure ice, the Yetimoths formed the rank and file of Krystos' prisonguards in ancient times.  If their enormous size and strength was not enough to keep prisoners in line, they could also form thick sheets of ice from thin air, covering themselves in a near-impenetrable armor, blocking off escape routes in walls of frost, or encapsulating their opponents until they could lumber over close enough to pummel them into submission with their meaty, ice-gauntleted fists.",
+    "appearance": [
+      "Hulking ape standing upright",
+      "Shaggy white fur",
+      "Head of a mammoth, with a domed skull, fanned ears and a long trunk",
+      "Enormous tusks of pure ice, sweeping wider than the shoulders",
+      "Heavy fists"
+    ],
+    "origin": "Formed the rank and file of Krystos's prison guards in ancient times.",
+    "habitat": "The high-security prison complexes of Krystos's frozen tundra and the waste outside them.",
+    "feeding": "It eats what the frozen tundra gives, meat or otherwise.",
+    "behavior": "It forms thick sheets of ice from thin air, armoring itself, walling off escape routes in frost, or encasing an opponent until it can lumber close enough to pummel it with its ice-gauntleted fists.",
+    "company": "It holds a line with others beside it."
+  },
+  "attributes": {
+    "strength": [
+      72,
+      92
+    ],
+    "vitality": [
+      65,
+      85
+    ],
+    "endurance": [
+      60,
+      80
+    ],
+    "agility": [
+      12,
+      30
+    ],
+    "reflex": [
+      15,
+      35
+    ],
+    "intelligence": [
+      30,
+      50
+    ],
+    "willpower": [
+      55,
+      75
+    ],
+    "instinct": [
+      40,
+      60
+    ],
+    "charisma": [
+      35,
+      55
+    ],
+    "resilience": [
+      70,
+      90
+    ]
+  },
+  "schemaVersion": "5.0.0",
+  "physiology": {
+    "composition": {
+      "primary": "flesh",
+      "secondary": "mineral"
+    },
+    "bodyPlan": "biped",
+    "anatomy": [
+      "tusks",
+      "trunk",
+      "fists",
+      "hide",
+      "body"
+    ],
+    "covering": "fur",
+    "size": {
+      "heightCm": [
+        205,
+        255
+      ],
+      "weightKg": [
+        330,
+        470
+      ]
+    },
+    "lifespan": "long",
+    "genome": {
+      "chirality": "rolled"
+    },
+    "diet": "omnivore",
+    "communication": [
+      "vocal",
+      "display"
+    ],
+    "breathes": [
+      "gas"
+    ],
+    "environmentalTolerance": {
+      "ambientMedia": [
+        "gas"
+      ],
+      "temperatureC": {
+        "min": -60,
+        "max": -10
+      }
+    },
+    "capabilities": {
+      "flight": [
+        0,
+        0
+      ],
+      "swim": [
+        10,
+        25
+      ],
+      "burrow": [
+        15,
+        30
+      ],
+      "climb": [
+        20,
+        35
+      ],
+      "sprint": [
+        20,
+        35
+      ],
+      "leap": [
+        15,
+        30
+      ],
+      "manipulation": [
+        45,
+        65
+      ]
+    },
+    "senses": {
+      "sight": [
+        40,
+        60
+      ],
+      "hearing": [
+        55,
+        75
+      ],
+      "smell": [
+        55,
+        75
+      ],
+      "special": []
+    },
+    "protections": [],
+    "traversal": []
+  },
+  "temperament": {
+    "boldness": [
+      65,
+      85
+    ],
+    "curiosity": [
+      15,
+      35
+    ],
+    "energy": [
+      25,
+      45
+    ],
+    "aggression": [
+      45,
+      65
+    ],
+    "sociability": [
+      45,
+      65
+    ]
+  },
+  "signature": {
+    "type": "action",
+    "key": "yetimoth-defining"
+  },
+  "actions": [
+    {
+      "key": "yetimoth-defining",
+      "name": "Mantle of Unyielding Winter",
+      "description": "The Yetimoth draws thick sheets of frost out of nothing and layers them over its own pelt until the blows of its opponents stop reaching it.",
+      "instrument": "hide",
+      "element": "ice",
+      "activation": {
+        "continuity": "discrete"
+      },
+      "timing": {
+        "preparation": "brief",
+        "recovery": "brief"
+      },
+      "delivery": {
+        "mode": "self",
+        "approach": "stationary"
+      },
+      "targeting": [
+        "self"
+      ],
+      "spatial": {},
+      "effects": [
+        {
+          "key": "outcome",
+          "type": "status",
+          "recipient": "self",
+          "onset": "instant",
+          "persistence": "lingering",
+          "likelihood": "consistent",
+          "status": "shielded",
+          "removable": [
+            "warming",
+            "disrupting"
+          ],
+          "duration": "prolonged"
+        }
+      ]
+    },
+    {
+      "key": "yetimoth-encasement",
+      "name": "Ice Encasement",
+      "description": "It forms thick ice around a selected opponent, limiting movement.",
+      "instrument": "body",
+      "element": "ice",
+      "activation": {
+        "continuity": "discrete"
+      },
+      "timing": {
+        "preparation": "brief",
+        "recovery": "brief"
+      },
+      "delivery": {
+        "mode": "field",
+        "approach": "stationary"
+      },
+      "targeting": [
+        "other"
+      ],
+      "spatial": {
+        "range": "short"
+      },
+      "effects": [
+        {
+          "key": "freeze",
+          "type": "status",
+          "status": "frozen",
+          "recipient": "target",
+          "onset": "instant",
+          "persistence": "lingering",
+          "duration": "brief",
+          "likelihood": "likely",
+          "removable": [
+            "warming",
+            "freeing"
+          ]
+        }
+      ]
+    }
+  ],
+  "passives": [],
+  "mechanisms": [
+    {
+      "key": "ice-encasement",
+      "name": "Ice Encasement",
+      "description": "The body radiates cold that forms a sheet around one selected opponent.",
+      "instrument": "body",
+      "element": "ice",
+      "targeting": [
+        "other"
+      ],
+      "activation": {
+        "continuity": [
+          "discrete"
+        ]
+      },
+      "timing": {
+        "preparation": [
+          "immediate",
+          "brief"
+        ],
+        "recovery": [
+          "repeatable",
+          "brief"
+        ]
+      },
+      "delivery": {
+        "field": {
+          "approach": [
+            "stationary"
+          ],
+          "range": [
+            "short",
+            "medium"
+          ]
+        }
+      },
+      "effects": [
+        {
+          "key": "outcome",
+          "type": "status",
+          "recipient": "target",
+          "onset": "instant",
+          "persistence": "lingering",
+          "likelihood": [
+            "likely",
+            "occasional"
+          ],
+          "status": "frozen",
+          "removable": [
+            "warming",
+            "freeing"
+          ],
+          "duration": "brief"
+        }
+      ]
+    },
+    {
+      "key": "heavy-fists",
+      "name": "Heavy Fists",
+      "description": "Heavy fists pummel a contacted opponent.",
+      "instrument": "fists",
+      "targeting": [
+        "other"
+      ],
+      "activation": {
+        "continuity": [
+          "discrete"
+        ]
+      },
+      "timing": {
+        "preparation": [
+          "immediate",
+          "brief"
+        ],
+        "recovery": [
+          "repeatable",
+          "brief"
+        ]
+      },
+      "delivery": {
+        "contact": {
+          "approach": [
+            "stationary"
+          ],
+          "range": [
+            "contact"
+          ]
+        }
+      },
+      "effects": [
+        {
+          "key": "outcome",
+          "type": "harm",
+          "recipient": "target",
+          "onset": "instant",
+          "persistence": "resolved",
+          "likelihood": [
+            "consistent"
+          ],
+          "mechanism": "impact",
+          "intensity": [
+            55,
+            85
+          ]
+        }
+      ]
+    },
+    {
+      "key": "ice-tusks",
+      "name": "Ice Tusks",
+      "description": "Ice tusks drive into a contacted opponent.",
+      "instrument": "tusks",
+      "element": "ice",
+      "targeting": [
+        "other"
+      ],
+      "activation": {
+        "continuity": [
+          "discrete"
+        ]
+      },
+      "timing": {
+        "preparation": [
+          "immediate",
+          "brief"
+        ],
+        "recovery": [
+          "repeatable",
+          "brief"
+        ]
+      },
+      "delivery": {
+        "contact": {
+          "approach": [
+            "stationary"
+          ],
+          "range": [
+            "contact"
+          ]
+        }
+      },
+      "effects": [
+        {
+          "key": "outcome",
+          "type": "harm",
+          "recipient": "target",
+          "onset": "instant",
+          "persistence": "resolved",
+          "likelihood": [
+            "consistent"
+          ],
+          "mechanism": "piercing",
+          "intensity": [
+            45,
+            75
+          ]
+        }
+      ]
+    }
+  ]
+}

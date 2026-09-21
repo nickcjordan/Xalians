@@ -2,9 +2,9 @@
 
 Updated 2026-09-21. This document supersedes conflicting proposals and chronological notes in this directory. The implementation is available through `@xalians/content/creature` and `@xalians/rules/generator/creature`. These are the redesigned model's entry points; the deployed games and canonical species bundle still use v4.
 
-## Open decisions from the canonical roster audit
+## Canonical roster audit decisions
 
-The [32-species representation audit](creature-roster-audit.md) found three source-backed questions after the fixture-based implementation checks: Neph's unignited fuel exposure, Yetimoth's route-blocking ice walls, and Avilily's paralysis. Paralysis is ratified and implemented as `paralyzed`. Unignited fuel exposure is explicitly deferred: preserve Neph's hydrogen emission in lore, with no mechanical fuel status, ignition interaction or inferred explosion. This deferral resolves the Neph migration blocker. Yetimoth's physical barriers remain the open design question before canonical v5 authoring. Earlier release-integration completion refers only to packaging/replay infrastructure, not final catalog coverage.
+The [32-species representation audit](creature-roster-audit.md) found three source-backed questions after the fixture-based implementation checks: Neph's unignited fuel exposure, Yetimoth's route-blocking ice walls, and Avilily's paralysis. Paralysis is ratified and implemented as `paralyzed`. Unignited fuel exposure is explicitly deferred: preserve Neph's hydrogen emission in lore, with no mechanical fuel status, ignition interaction or inferred explosion. This deferral resolves the Neph migration blocker. Yetimoth's physical route-blocking walls are also explicitly deferred as lore-only for this version. Its ice armor and opponent freezing remain supported. The source-to-model questions identified by the roster audit are resolved at this version's scope; canonical species authoring can proceed. Earlier release-integration completion refers only to packaging/replay infrastructure, not final catalog coverage.
 
 ## Ownership and data structure
 
@@ -154,6 +154,7 @@ The fixture is deliberately noncanonical. Its 14 possible ordinary structures co
 - Vespersyn: projections use the swarm channel; no universal summon effect, independent life, creature records or separate resource bars.
 - Crystorn: optional reflection is retired. Do not substitute another power to preserve the label.
 - Retire speculative volatile retaliation, foresight, and territorial/pack/solitary bonuses. Preserve source-supported behaviors in prose.
+- Physical route-blocking ice walls and general freestanding obstacles are deferred. Yetimoth retains wall-making in lore, while ice armor may apply shielded/protection and encasing an opponent may apply frozen. Neither recipient status is a representation of an independent wall. Do not add a barrier effect, terrain editing or empty-point targeting for this version.
 - Unignited fuel exposure and its ignition/explosion interactions are deferred. Neph retains hydrogen-emission lore without a mechanically represented fuel application; do not rename it burning, add combustible/flammable keys, invent an ignition organ or restore volatile retaliation. Pressure jets, suction and freezing Benthane remain eligible for source-supported authoring. Imprit's already-ignited oil remains representable with existing effects; this does not grant a separate unignited-fuel mechanic.
 - Dormancy, generic illumination/emission, true reflection, precognition, generic resource transfer and unrestricted conditional biology are deferred. Do not restore them under renamed fields.
 - Unsupported game capabilities may be explicitly unavailable; game adaptation is outside this redesign implementation pass.
@@ -164,7 +165,7 @@ Implemented and tested: strict redesigned species/ability/record schemas; update
 
 Still required before a canonical v5 release:
 
-1. Re-author and audit all 32 canonical species against this contract. The v4 complete-move pools cannot be mechanically renamed into mechanism permissions. Preserve the species decisions above and review source-supported breadth, not just old examples.
+1. Re-author and audit all 32 canonical species against this contract. Avilily, Bioflim and Yetimoth are staged and compiled under `docs/species-templates/v5/`, each with a source/coverage audit; 29 remain. The v4 complete-move pools cannot be mechanically renamed into mechanism permissions. Preserve the species decisions above and review source-supported breadth, not just old examples.
 2. Apply the shared rating/output references to each species' justified bands during the eventual calibration audit. The reference ladder and descriptions for the 20 performance fields and four direct outputs are now recorded; canonical species calibration remains pending. Default status intensity is 50.
 3. Review any evidenced conditional physiology during species authoring; the 32-species prose/data screening did not establish a need for a general subsystem. Ongoing-passive target acquisition is settled: `targeting: [self]`, no range, and any area uses `anchor: self` and `shape: radial`. Directed automatic responses use event triggers; deliberately maintained connections are actions.
 4. Review source-supported species vocabulary during migration. [Compositional naming](creature-ability-naming.md) now runs after generation, uses a shared structural fallback, preserves guaranteed names, and distinguishes collisions without changing abilities. Naming coverage no longer depends on a fixed move list.
