@@ -78,10 +78,10 @@ export const RATING_BENCHMARKS = {
     boundary: 'Not injury reserve, repair, or an elemental/status immunity; scoped protections stay explicit.',
   },
   flight: {
-    measures: 'Performance in sustained self-powered aerial travel.', zero: 'Cannot fly.',
+    measures: 'Performance in controlled self-powered aerial travel.', zero: 'Cannot fly.',
     standard: 'Maintains controlled aerial travel through ordinary conditions.',
     exceptional: 'Maintains unusually capable aerial travel through demanding conditions.',
-    boundary: 'No wings are implied; mechanism must be sourced. Not a physical speed or infinite endurance.',
+    boundary: 'A low positive rating may describe only a brief controlled flight; a jump or passive glide alone is not flight. Source the mechanism and any temporary form separately. Not a physical speed or infinite endurance.',
   },
   swim: {
     measures: 'Performance moving through liquid.', zero: 'Cannot actively swim.',

@@ -1,0 +1,384 @@
+{
+  "key": "akinza",
+  "name": "Akinza",
+  "nameOrigin": "A compressed blend of Norwegian kanin, rabbit, and German Katze, cat, reflecting its feline frame and oversized rabbit-like ears.",
+  "element": "ice",
+  "homePlanet": "krystos",
+  "generatorPlanets": [
+    "krystos"
+  ],
+  "lore": {
+    "description": "This creature's incredible stealth and night vision allow it to sneak through the night with ease.",
+    "appearance": [
+      "Upright feline biped",
+      "Slender and light in the frame",
+      "Fur coat",
+      "Large rabbit-like ears atop the head",
+      "Large eyes",
+      "Slender arms ending in clawed hands",
+      "Long plumed tail"
+    ],
+    "origin": "Feral stock from the Krystos Generator after the impact, when the machine turned from making dainty, graceful creatures to lifeforms that could survive the frozen tundra.",
+    "habitat": "The arctic wastes outside the prison complexes of Krystos.",
+    "feeding": "It forages the tundra at night and eats what it finds.",
+    "behavior": "It moves at night, using its stealth and night vision to go unseen.",
+    "company": "It goes alone."
+  },
+  "physiology": {
+    "composition": {
+      "primary": "flesh"
+    },
+    "bodyPlan": "biped",
+    "anatomy": [
+      "claws",
+      "jaws",
+      "tail",
+      "hide"
+    ],
+    "covering": "fur",
+    "size": {
+      "heightCm": [
+        130,
+        165
+      ],
+      "weightKg": [
+        48,
+        74
+      ]
+    },
+    "lifespan": "standard",
+    "genome": {
+      "chirality": "rolled"
+    },
+    "diet": "omnivore",
+    "communication": [
+      "display"
+    ],
+    "breathes": [
+      "gas"
+    ],
+    "environmentalTolerance": {
+      "ambientMedia": [
+        "gas"
+      ],
+      "temperatureC": {
+        "min": -60,
+        "max": -10
+      }
+    },
+    "capabilities": {
+      "flight": [
+        0,
+        0
+      ],
+      "swim": [
+        5,
+        20
+      ],
+      "burrow": [
+        10,
+        30
+      ],
+      "climb": [
+        45,
+        70
+      ],
+      "sprint": [
+        65,
+        88
+      ],
+      "leap": [
+        55,
+        80
+      ],
+      "manipulation": [
+        30,
+        55
+      ]
+    },
+    "senses": {
+      "sight": [
+        70,
+        95
+      ],
+      "hearing": [
+        65,
+        90
+      ],
+      "smell": [
+        35,
+        60
+      ],
+      "special": [
+        "lowlight"
+      ]
+    },
+    "protections": [],
+    "traversal": []
+  },
+  "attributes": {
+    "strength": [
+      30,
+      55
+    ],
+    "vitality": [
+      30,
+      52
+    ],
+    "endurance": [
+      40,
+      65
+    ],
+    "agility": [
+      62,
+      90
+    ],
+    "reflex": [
+      60,
+      88
+    ],
+    "intelligence": [
+      35,
+      60
+    ],
+    "willpower": [
+      30,
+      55
+    ],
+    "instinct": [
+      58,
+      85
+    ],
+    "charisma": [
+      15,
+      40
+    ],
+    "resilience": [
+      25,
+      48
+    ]
+  },
+  "schemaVersion": "5.0.0",
+  "temperament": {
+    "boldness": [
+      25,
+      50
+    ],
+    "curiosity": [
+      35,
+      60
+    ],
+    "energy": [
+      45,
+      70
+    ],
+    "aggression": [
+      30,
+      55
+    ],
+    "sociability": [
+      10,
+      30
+    ]
+  },
+  "passives": [],
+  "signature": {
+    "type": "action",
+    "key": "akinza-defining"
+  },
+  "actions": [
+    {
+      "key": "akinza-defining",
+      "name": "Night Stalk",
+      "description": "Its low-light eyes and quiet movement let it slip from notice while stalking.",
+      "instrument": "hide",
+      "activation": {
+        "continuity": "discrete"
+      },
+      "timing": {
+        "preparation": "immediate",
+        "recovery": "brief"
+      },
+      "delivery": {
+        "mode": "self",
+        "approach": "stationary"
+      },
+      "targeting": [
+        "self"
+      ],
+      "spatial": {},
+      "effects": [
+        {
+          "key": "outcome",
+          "type": "status",
+          "recipient": "self",
+          "onset": "instant",
+          "persistence": "lingering",
+          "likelihood": "consistent",
+          "status": "concealed",
+          "duration": "brief",
+          "removable": [
+            "disrupting"
+          ]
+        }
+      ]
+    }
+  ],
+  "mechanisms": [
+    {
+      "key": "foreclaw-cut",
+      "name": "Foreclaw Cut",
+      "description": "The hooked foreclaws cut at close contact.",
+      "instrument": "claws",
+      "targeting": [
+        "other"
+      ],
+      "activation": {
+        "continuity": [
+          "discrete"
+        ]
+      },
+      "timing": {
+        "preparation": [
+          "immediate",
+          "brief"
+        ],
+        "recovery": [
+          "repeatable",
+          "brief"
+        ]
+      },
+      "delivery": {
+        "contact": {
+          "approach": [
+            "stationary",
+            "closing"
+          ],
+          "range": [
+            "contact"
+          ]
+        }
+      },
+      "effects": [
+        {
+          "key": "outcome",
+          "type": "harm",
+          "recipient": "target",
+          "onset": "instant",
+          "persistence": "resolved",
+          "likelihood": [
+            "consistent"
+          ],
+          "mechanism": "cutting",
+          "intensity": [
+            25,
+            48
+          ]
+        }
+      ]
+    },
+    {
+      "key": "jaw-bite",
+      "name": "Jaw Bite",
+      "description": "The feline jaws bite a contacted opponent.",
+      "instrument": "jaws",
+      "targeting": [
+        "other"
+      ],
+      "activation": {
+        "continuity": [
+          "discrete"
+        ]
+      },
+      "timing": {
+        "preparation": [
+          "immediate",
+          "brief"
+        ],
+        "recovery": [
+          "repeatable",
+          "brief"
+        ]
+      },
+      "delivery": {
+        "contact": {
+          "approach": [
+            "stationary",
+            "closing"
+          ],
+          "range": [
+            "contact"
+          ]
+        }
+      },
+      "effects": [
+        {
+          "key": "outcome",
+          "type": "harm",
+          "recipient": "target",
+          "onset": "instant",
+          "persistence": "resolved",
+          "likelihood": [
+            "consistent"
+          ],
+          "mechanism": "piercing",
+          "intensity": [
+            25,
+            45
+          ]
+        }
+      ]
+    },
+    {
+      "key": "tail-sweep",
+      "name": "Tail Sweep",
+      "description": "The long plumed tail strikes at close contact.",
+      "instrument": "tail",
+      "targeting": [
+        "other"
+      ],
+      "activation": {
+        "continuity": [
+          "discrete"
+        ]
+      },
+      "timing": {
+        "preparation": [
+          "immediate",
+          "brief"
+        ],
+        "recovery": [
+          "repeatable",
+          "brief"
+        ]
+      },
+      "delivery": {
+        "contact": {
+          "approach": [
+            "stationary"
+          ],
+          "range": [
+            "contact"
+          ]
+        }
+      },
+      "effects": [
+        {
+          "key": "outcome",
+          "type": "harm",
+          "recipient": "target",
+          "onset": "instant",
+          "persistence": "resolved",
+          "likelihood": [
+            "consistent"
+          ],
+          "mechanism": "impact",
+          "intensity": [
+            15,
+            32
+          ]
+        }
+      ]
+    }
+  ]
+}

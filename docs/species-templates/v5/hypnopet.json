@@ -1,0 +1,428 @@
+{
+  "key": "hypnopet",
+  "name": "Hypnopet",
+  "nameOrigin": "A compound of hypnosis and pet, reflecting its trance-producing horn and origin as a therapeutic service animal.",
+  "element": "psychic",
+  "homePlanet": "telypso",
+  "generatorPlanets": [
+    "telypso"
+  ],
+  "lore": {
+    "description": "Hypnopets resemble glowing, golden-furred bunny rabbits with a single color-changing unicorn horn atop their heads. They were created by the Telypso Generator as service animals and therapists for the insane Vallerii imprisoned on the world, where their natural empathic healing abilities served to balance and treat patients. When their horn begins to pulse and swirl with psychedelic color, it hypnotizes others and locks them in a trance, which was useful for sedating patients when they entered into dangerous bouts of mania. With the Nemesis Plague reducing the patient population of Telypso, many Hypnopets have taken to the stars as healers, though some have been forced into service by King Kozrak, who uses their hypnotic abilities as crowd control on rebellious worlds.",
+    "appearance": [
+      "Small bunny rabbit",
+      "Glowing golden fur",
+      "Single color-changing unicorn horn atop the head",
+      "Very long lop ears",
+      "Very large eyes",
+      "Large springing hind legs"
+    ],
+    "origin": "Created by the Telypso Generator as service animals and therapists for the insane Vallerii imprisoned there, using its empathic healing to balance and treat patients.",
+    "habitat": "The fungal forests and mists of Telypso, though many now travel the stars as healers.",
+    "feeding": "It grazes on what the overgrowth puts out.",
+    "behavior": "It reads the state of whoever is near it and steadies them. When its horn pulses and swirls with color it hypnotizes whoever is watching and locks them in a trance, which once sedated patients in dangerous manias and now serves King Kozrak as crowd control on rebellious worlds.",
+    "company": "It keeps close to its patients."
+  },
+  "physiology": {
+    "composition": {
+      "primary": "flesh"
+    },
+    "bodyPlan": "quadruped",
+    "anatomy": [
+      "crest",
+      "hide",
+      "body"
+    ],
+    "covering": "fur",
+    "size": {
+      "heightCm": [
+        30,
+        42
+      ],
+      "weightKg": [
+        9,
+        16
+      ]
+    },
+    "lifespan": "short",
+    "genome": {
+      "chirality": "rolled"
+    },
+    "diet": "omnivore",
+    "communication": [
+      "telepathic",
+      "display",
+      "vocal"
+    ],
+    "breathes": [
+      "gas"
+    ],
+    "environmentalTolerance": {
+      "ambientMedia": [
+        "gas"
+      ],
+      "temperatureC": {
+        "min": 12,
+        "max": 40
+      }
+    },
+    "capabilities": {
+      "flight": [
+        0,
+        0
+      ],
+      "swim": [
+        10,
+        25
+      ],
+      "burrow": [
+        25,
+        45
+      ],
+      "climb": [
+        10,
+        25
+      ],
+      "sprint": [
+        45,
+        65
+      ],
+      "leap": [
+        55,
+        75
+      ],
+      "manipulation": [
+        20,
+        38
+      ]
+    },
+    "senses": {
+      "sight": [
+        55,
+        75
+      ],
+      "hearing": [
+        70,
+        90
+      ],
+      "smell": [
+        45,
+        65
+      ],
+      "special": [
+        "psychic"
+      ]
+    },
+    "protections": [],
+    "traversal": []
+  },
+  "attributes": {
+    "strength": [
+      8,
+      24
+    ],
+    "vitality": [
+      25,
+      45
+    ],
+    "endurance": [
+      30,
+      50
+    ],
+    "agility": [
+      45,
+      68
+    ],
+    "reflex": [
+      40,
+      62
+    ],
+    "intelligence": [
+      55,
+      78
+    ],
+    "willpower": [
+      60,
+      85
+    ],
+    "instinct": [
+      50,
+      72
+    ],
+    "charisma": [
+      60,
+      88
+    ],
+    "resilience": [
+      15,
+      32
+    ]
+  },
+  "schemaVersion": "5.0.0",
+  "temperament": {
+    "boldness": [
+      25,
+      50
+    ],
+    "curiosity": [
+      45,
+      70
+    ],
+    "energy": [
+      35,
+      60
+    ],
+    "aggression": [
+      5,
+      25
+    ],
+    "sociability": [
+      65,
+      90
+    ]
+  },
+  "passives": [],
+  "signature": {
+    "type": "action",
+    "key": "hypnopet-defining"
+  },
+  "actions": [
+    {
+      "key": "hypnopet-defining",
+      "name": "Empathic Steadying",
+      "description": "It senses distress and steadies another creature through empathic contact.",
+      "instrument": "mind",
+      "activation": {
+        "continuity": "discrete"
+      },
+      "timing": {
+        "preparation": "brief",
+        "recovery": "brief"
+      },
+      "delivery": {
+        "mode": "signal",
+        "approach": "stationary"
+      },
+      "targeting": [
+        "other"
+      ],
+      "spatial": {
+        "range": "short"
+      },
+      "effects": [
+        {
+          "key": "outcome",
+          "type": "remove",
+          "recipient": "target",
+          "onset": "instant",
+          "persistence": "resolved",
+          "likelihood": "consistent",
+          "methods": [
+            "stabilizing"
+          ]
+        }
+      ]
+    },
+    {
+      "key": "hypnopet-trance",
+      "name": "Chromatic Horn Trance",
+      "description": "The pulsing color of its horn captures the attention of a watcher.",
+      "instrument": "crest",
+      "activation": {
+        "continuity": "discrete"
+      },
+      "timing": {
+        "preparation": "brief",
+        "recovery": "brief"
+      },
+      "delivery": {
+        "mode": "signal",
+        "approach": "stationary",
+        "reception": "visual"
+      },
+      "targeting": [
+        "other"
+      ],
+      "spatial": {
+        "range": "short"
+      },
+      "effects": [
+        {
+          "key": "outcome",
+          "type": "status",
+          "recipient": "target",
+          "onset": "instant",
+          "persistence": "lingering",
+          "likelihood": "consistent",
+          "status": "entranced",
+          "duration": "brief",
+          "removable": [
+            "disrupting"
+          ],
+          "intensity": 70
+        }
+      ]
+    }
+  ],
+  "mechanisms": [
+    {
+      "key": "empathic-stabilizing",
+      "name": "Empathic Stabilizing",
+      "description": "Empathy eases instability in a selected other creature.",
+      "instrument": "mind",
+      "targeting": [
+        "other"
+      ],
+      "activation": {
+        "continuity": [
+          "discrete"
+        ]
+      },
+      "timing": {
+        "preparation": [
+          "immediate",
+          "brief"
+        ],
+        "recovery": [
+          "repeatable",
+          "brief"
+        ]
+      },
+      "delivery": {
+        "signal": {
+          "approach": [
+            "stationary"
+          ],
+          "range": [
+            "short",
+            "medium"
+          ]
+        }
+      },
+      "effects": [
+        {
+          "key": "outcome",
+          "type": "remove",
+          "recipient": "target",
+          "onset": "instant",
+          "persistence": "resolved",
+          "likelihood": [
+            "consistent"
+          ],
+          "methods": [
+            "stabilizing"
+          ]
+        }
+      ]
+    },
+    {
+      "key": "empathic-focus",
+      "name": "Empathic Focus",
+      "description": "Empathic guidance helps another creature regain attention and steadiness.",
+      "instrument": "mind",
+      "targeting": [
+        "other"
+      ],
+      "activation": {
+        "continuity": [
+          "discrete"
+        ]
+      },
+      "timing": {
+        "preparation": [
+          "immediate",
+          "brief"
+        ],
+        "recovery": [
+          "repeatable",
+          "brief"
+        ]
+      },
+      "delivery": {
+        "signal": {
+          "approach": [
+            "stationary"
+          ],
+          "range": [
+            "short",
+            "medium"
+          ]
+        }
+      },
+      "effects": [
+        {
+          "key": "outcome",
+          "type": "status",
+          "recipient": "target",
+          "onset": "instant",
+          "persistence": "lingering",
+          "likelihood": [
+            "likely"
+          ],
+          "duration": "brief",
+          "status": "focused",
+          "removable": [
+            "disrupting"
+          ]
+        }
+      ]
+    },
+    {
+      "key": "horn-trance",
+      "name": "Horn Trance",
+      "description": "Swirling color in the horn entrances an observer.",
+      "instrument": "crest",
+      "targeting": [
+        "other"
+      ],
+      "activation": {
+        "continuity": [
+          "discrete"
+        ]
+      },
+      "timing": {
+        "preparation": [
+          "brief"
+        ],
+        "recovery": [
+          "brief",
+          "prolonged"
+        ]
+      },
+      "delivery": {
+        "signal": {
+          "approach": [
+            "stationary"
+          ],
+          "range": [
+            "short",
+            "medium"
+          ],
+          "reception": "visual"
+        }
+      },
+      "effects": [
+        {
+          "key": "outcome",
+          "type": "status",
+          "recipient": "target",
+          "onset": "instant",
+          "persistence": "lingering",
+          "likelihood": [
+            "likely",
+            "occasional"
+          ],
+          "duration": "brief",
+          "status": "entranced",
+          "removable": [
+            "disrupting"
+          ],
+          "intensity": [
+            55,
+            75
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,454 @@
+{
+  "key": "neph",
+  "name": "Neph",
+  "nameOrigin": "A clipping of the Greek nephos, cloud, for the colossal creature that lives and feeds in Saiphus's atmosphere.",
+  "element": "air",
+  "homePlanet": "saiphus",
+  "generatorPlanets": [
+    "saiphus"
+  ],
+  "lore": {
+    "description": "Colossal hydrogen jellyfish that travel in free-floating herds across Saiphus's lower atmosphere, the Neph are instrumental to the Benthane industry. These domesticated creatures roam the clouds in flocks, grazing off of the biochemicals and atmospheric plankton contained in the gas-liquid slush of Saiphus's deeper atmosphere using long, trailing tentacles that vacuum up valuable Benthane along with their food. When threatened, these same tentacles can be used to pull in opponents with considerable suction or to jettison air at high pressure. Neph can also forcibly expel jets of Benthane gas, which is typically used a coolant for starship engines, from their tentacles in order to blast their enemies with freezing air. Finally, being composed almost entirely hydrogen means that the Neph can also spray their enemies with bouts of flammable gas.",
+    "appearance": [
+      "Colossal hydrogen jellyfish",
+      "Nearly weightless for its size",
+      "One large smooth bell",
+      "Small central body beneath the bell",
+      "Long trailing hollow tentacles, open at the ends",
+      "Bare untextured surface"
+    ],
+    "origin": "Domesticated for the Benthane industry, which milks the Benthane its tentacles vacuum up along with its food.",
+    "habitat": "The cloud layers of Saiphus's lower atmosphere.",
+    "feeding": "It grazes on the biochemicals and atmospheric plankton in the gas-liquid slush of the deeper atmosphere, drawing them up through its long trailing tentacles.",
+    "behavior": "When threatened it pulls opponents in with suction, jets air at high pressure, blasts freezing Benthane from its tentacles, or sprays flammable hydrogen.",
+    "company": "It travels in free-floating herds."
+  },
+  "physiology": {
+    "composition": {
+      "primary": "flesh"
+    },
+    "bodyPlan": "floating",
+    "anatomy": [
+      "tendrils",
+      "vents"
+    ],
+    "covering": "bare",
+    "size": {
+      "heightCm": [
+        380,
+        620
+      ],
+      "weightKg": [
+        30,
+        90
+      ]
+    },
+    "lifespan": "standard",
+    "genome": {
+      "chirality": "rolled"
+    },
+    "diet": "herbivore",
+    "communication": [
+      "chemical"
+    ],
+    "breathes": [
+      "gas"
+    ],
+    "environmentalTolerance": {
+      "ambientMedia": [
+        "gas"
+      ],
+      "temperatureC": {
+        "min": -30,
+        "max": 45
+      }
+    },
+    "capabilities": {
+      "flight": [
+        55,
+        75
+      ],
+      "swim": [
+        10,
+        25
+      ],
+      "burrow": [
+        0,
+        0
+      ],
+      "climb": [
+        0,
+        0
+      ],
+      "sprint": [
+        5,
+        15
+      ],
+      "leap": [
+        0,
+        0
+      ],
+      "manipulation": [
+        40,
+        65
+      ]
+    },
+    "senses": {
+      "sight": [
+        25,
+        45
+      ],
+      "hearing": [
+        20,
+        40
+      ],
+      "smell": [
+        55,
+        80
+      ],
+      "special": []
+    },
+    "protections": [],
+    "traversal": []
+  },
+  "attributes": {
+    "strength": [
+      30,
+      55
+    ],
+    "vitality": [
+      55,
+      80
+    ],
+    "endurance": [
+      55,
+      80
+    ],
+    "agility": [
+      10,
+      30
+    ],
+    "reflex": [
+      10,
+      30
+    ],
+    "intelligence": [
+      10,
+      25
+    ],
+    "willpower": [
+      25,
+      45
+    ],
+    "instinct": [
+      35,
+      60
+    ],
+    "charisma": [
+      20,
+      40
+    ],
+    "resilience": [
+      15,
+      35
+    ]
+  },
+  "schemaVersion": "5.0.0",
+  "temperament": {
+    "boldness": [
+      25,
+      50
+    ],
+    "curiosity": [
+      25,
+      50
+    ],
+    "energy": [
+      25,
+      50
+    ],
+    "aggression": [
+      25,
+      50
+    ],
+    "sociability": [
+      60,
+      85
+    ]
+  },
+  "passives": [],
+  "signature": {
+    "type": "action",
+    "key": "neph-defining"
+  },
+  "actions": [
+    {
+      "key": "neph-defining",
+      "name": "Benthane Chill Jet",
+      "description": "It jets freezing Benthane from its tentacles onto a selected target.",
+      "instrument": "tendrils",
+      "activation": {
+        "continuity": "discrete"
+      },
+      "timing": {
+        "preparation": "immediate",
+        "recovery": "brief"
+      },
+      "delivery": {
+        "mode": "stream",
+        "approach": "stationary"
+      },
+      "targeting": [
+        "other"
+      ],
+      "spatial": {
+        "range": "medium"
+      },
+      "effects": [
+        {
+          "key": "outcome",
+          "type": "status",
+          "recipient": "target",
+          "onset": "instant",
+          "persistence": "lingering",
+          "likelihood": "consistent",
+          "duration": "brief",
+          "status": "chilled",
+          "removable": [
+            "warming"
+          ]
+        }
+      ],
+      "element": "ice"
+    },
+    {
+      "key": "neph-suction",
+      "name": "Tentacle Suction",
+      "description": "Its long tentacles draw a selected opponent closer.",
+      "instrument": "tendrils",
+      "activation": {
+        "continuity": "discrete"
+      },
+      "timing": {
+        "preparation": "immediate",
+        "recovery": "brief"
+      },
+      "delivery": {
+        "mode": "stream",
+        "approach": "stationary"
+      },
+      "targeting": [
+        "other"
+      ],
+      "spatial": {
+        "range": "short"
+      },
+      "effects": [
+        {
+          "key": "outcome",
+          "type": "displace",
+          "recipient": "target",
+          "onset": "instant",
+          "persistence": "resolved",
+          "likelihood": "consistent",
+          "direction": "toward",
+          "intensity": 62
+        }
+      ]
+    },
+    {
+      "key": "neph-pressure",
+      "name": "Pressure Air Jet",
+      "description": "It sends a high-pressure air jet through its tentacles to drive a target away.",
+      "instrument": "tendrils",
+      "activation": {
+        "continuity": "discrete"
+      },
+      "timing": {
+        "preparation": "immediate",
+        "recovery": "brief"
+      },
+      "delivery": {
+        "mode": "stream",
+        "approach": "stationary"
+      },
+      "targeting": [
+        "other"
+      ],
+      "spatial": {
+        "range": "medium"
+      },
+      "effects": [
+        {
+          "key": "outcome",
+          "type": "displace",
+          "recipient": "target",
+          "onset": "instant",
+          "persistence": "resolved",
+          "likelihood": "consistent",
+          "direction": "away",
+          "intensity": 58
+        }
+      ]
+    }
+  ],
+  "mechanisms": [
+    {
+      "key": "benthane-jet",
+      "name": "Benthane Jet",
+      "description": "Freezing coolant is expelled through a tentacle.",
+      "instrument": "tendrils",
+      "element": "ice",
+      "targeting": [
+        "other"
+      ],
+      "activation": {
+        "continuity": [
+          "discrete"
+        ]
+      },
+      "timing": {
+        "preparation": [
+          "immediate",
+          "brief"
+        ],
+        "recovery": [
+          "brief",
+          "prolonged"
+        ]
+      },
+      "delivery": {
+        "stream": {
+          "approach": [
+            "stationary"
+          ],
+          "range": [
+            "short",
+            "medium"
+          ]
+        }
+      },
+      "effects": [
+        {
+          "key": "outcome",
+          "type": "status",
+          "recipient": "target",
+          "onset": "instant",
+          "persistence": "lingering",
+          "likelihood": [
+            "likely",
+            "occasional"
+          ],
+          "duration": "brief",
+          "status": "chilled",
+          "removable": [
+            "warming"
+          ]
+        }
+      ]
+    },
+    {
+      "key": "tentacle-suction",
+      "name": "Tentacle Suction",
+      "description": "The tentacles pull a selected target toward the performer.",
+      "instrument": "tendrils",
+      "targeting": [
+        "other"
+      ],
+      "activation": {
+        "continuity": [
+          "discrete"
+        ]
+      },
+      "timing": {
+        "preparation": [
+          "immediate",
+          "brief"
+        ],
+        "recovery": [
+          "brief"
+        ]
+      },
+      "delivery": {
+        "stream": {
+          "approach": [
+            "stationary"
+          ],
+          "range": [
+            "short",
+            "medium"
+          ]
+        }
+      },
+      "effects": [
+        {
+          "key": "outcome",
+          "type": "displace",
+          "recipient": "target",
+          "onset": "instant",
+          "persistence": "resolved",
+          "likelihood": [
+            "consistent"
+          ],
+          "direction": "toward",
+          "intensity": [
+            40,
+            68
+          ]
+        }
+      ]
+    },
+    {
+      "key": "pressure-air",
+      "name": "Pressure Air",
+      "description": "Compressed air from a tentacle pushes the selected target away.",
+      "instrument": "tendrils",
+      "element": "air",
+      "targeting": [
+        "other"
+      ],
+      "activation": {
+        "continuity": [
+          "discrete"
+        ]
+      },
+      "timing": {
+        "preparation": [
+          "immediate",
+          "brief"
+        ],
+        "recovery": [
+          "brief"
+        ]
+      },
+      "delivery": {
+        "stream": {
+          "approach": [
+            "stationary"
+          ],
+          "range": [
+            "short",
+            "medium"
+          ]
+        }
+      },
+      "effects": [
+        {
+          "key": "outcome",
+          "type": "displace",
+          "recipient": "target",
+          "onset": "instant",
+          "persistence": "resolved",
+          "likelihood": [
+            "consistent"
+          ],
+          "direction": "away",
+          "intensity": [
+            38,
+            65
+          ]
+        }
+      ]
+    }
+  ]
+}

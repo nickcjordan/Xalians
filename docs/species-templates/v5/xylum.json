@@ -1,0 +1,415 @@
+{
+  "key": "xylum",
+  "name": "Xylum",
+  "nameOrigin": "A stylization of xylem, the plant tissue that transports water and minerals, matching its rooted body and underground feeding.",
+  "element": "plant",
+  "homePlanet": "floria",
+  "generatorPlanets": [
+    "floria"
+  ],
+  "lore": {
+    "description": "A giant organism of thick, intertwined roots that act as tentacles. It lives mostly underground as this is where it absorbs its power.",
+    "appearance": [
+      "Giant squid-like organism, inverted, its mantle buried below the soil",
+      "Six thick root-like tentacles rising from the body, serrated along the edges",
+      "A mouth at the base where the tentacles meet",
+      "An eye on either side of the body at the soil line",
+      "Plant tissue throughout"
+    ],
+    "origin": "Grown by the Genesis Prototype on Floria, the first Generator, which ran wild and filled the world with forms like it. No record says what it was made for.",
+    "habitat": "Underground in Floria's understory, beneath the World Trees, where it absorbs its power.",
+    "feeding": "It draws its power from the ground beneath the World Trees and eats nothing.",
+    "behavior": "It stays buried. When the ground above it is disturbed its tentacles come up out of the soil and wrap whatever is there, and a tentacle torn off grows back.",
+    "company": "It lies alone under the soil."
+  },
+  "physiology": {
+    "composition": {
+      "primary": "plant"
+    },
+    "bodyPlan": "multiped",
+    "anatomy": [
+      "roots",
+      "tendrils",
+      "spines",
+      "body"
+    ],
+    "covering": "bare",
+    "size": {
+      "heightCm": [
+        240,
+        400
+      ],
+      "weightKg": [
+        180,
+        320
+      ]
+    },
+    "lifespan": "long",
+    "genome": {
+      "chirality": "rolled"
+    },
+    "diet": "energy-feeder",
+    "communication": [
+      "vibration"
+    ],
+    "breathes": [
+      "gas"
+    ],
+    "environmentalTolerance": {
+      "ambientMedia": [
+        "gas",
+        "liquid"
+      ],
+      "temperatureC": {
+        "min": -4,
+        "max": 34
+      }
+    },
+    "capabilities": {
+      "flight": [
+        0,
+        0
+      ],
+      "swim": [
+        5,
+        20
+      ],
+      "burrow": [
+        70,
+        92
+      ],
+      "climb": [
+        10,
+        30
+      ],
+      "sprint": [
+        5,
+        20
+      ],
+      "leap": [
+        0,
+        10
+      ],
+      "manipulation": [
+        45,
+        70
+      ]
+    },
+    "senses": {
+      "sight": [
+        0,
+        15
+      ],
+      "hearing": [
+        20,
+        40
+      ],
+      "smell": [
+        30,
+        55
+      ],
+      "special": [
+        "tremorsense"
+      ]
+    },
+    "protections": [],
+    "traversal": []
+  },
+  "attributes": {
+    "strength": [
+      55,
+      80
+    ],
+    "vitality": [
+      60,
+      85
+    ],
+    "endurance": [
+      55,
+      80
+    ],
+    "agility": [
+      8,
+      25
+    ],
+    "reflex": [
+      15,
+      35
+    ],
+    "intelligence": [
+      20,
+      45
+    ],
+    "willpower": [
+      45,
+      70
+    ],
+    "instinct": [
+      40,
+      65
+    ],
+    "charisma": [
+      10,
+      30
+    ],
+    "resilience": [
+      50,
+      75
+    ]
+  },
+  "schemaVersion": "5.0.0",
+  "temperament": {
+    "boldness": [
+      35,
+      60
+    ],
+    "curiosity": [
+      20,
+      45
+    ],
+    "energy": [
+      20,
+      45
+    ],
+    "aggression": [
+      40,
+      65
+    ],
+    "sociability": [
+      10,
+      30
+    ]
+  },
+  "passives": [
+    {
+      "key": "xylum-defining",
+      "name": "Root Regrowth",
+      "description": "Its living root body regrows torn tentacles from its grounded reserves.",
+      "instrument": "roots",
+      "activation": {
+        "continuity": "ongoing"
+      },
+      "delivery": {
+        "mode": "self",
+        "approach": "stationary"
+      },
+      "targeting": [
+        "self"
+      ],
+      "spatial": {},
+      "effects": [
+        {
+          "key": "outcome",
+          "type": "restore",
+          "recipient": "self",
+          "onset": "gradual",
+          "persistence": "sustained",
+          "likelihood": "consistent",
+          "intensity": [
+            40,
+            75
+          ]
+        }
+      ]
+    }
+  ],
+  "signature": {
+    "type": "passive",
+    "key": "xylum-defining"
+  },
+  "actions": [
+    {
+      "key": "xylum-root-hold",
+      "name": "Root Hold",
+      "description": "The roots emerge and wrap a contacted creature in a maintained hold.",
+      "instrument": "roots",
+      "activation": {
+        "continuity": "ongoing"
+      },
+      "timing": {
+        "preparation": "brief",
+        "recovery": "brief"
+      },
+      "delivery": {
+        "mode": "contact",
+        "approach": "stationary"
+      },
+      "targeting": [
+        "other"
+      ],
+      "spatial": {
+        "range": "contact"
+      },
+      "effects": [
+        {
+          "key": "outcome",
+          "type": "status",
+          "recipient": "target",
+          "onset": "instant",
+          "persistence": "sustained",
+          "likelihood": "consistent",
+          "bound": "source",
+          "status": "restrained",
+          "removable": [
+            "freeing"
+          ]
+        }
+      ]
+    }
+  ],
+  "mechanisms": [
+    {
+      "key": "root-wrap",
+      "name": "Root Wrap",
+      "description": "Emergent roots maintain a hold on one contacted target.",
+      "instrument": "roots",
+      "targeting": [
+        "other"
+      ],
+      "activation": {
+        "continuity": [
+          "ongoing"
+        ]
+      },
+      "timing": {
+        "preparation": [
+          "immediate",
+          "brief"
+        ],
+        "recovery": [
+          "brief"
+        ]
+      },
+      "delivery": {
+        "contact": {
+          "approach": [
+            "stationary"
+          ],
+          "range": [
+            "contact"
+          ]
+        }
+      },
+      "effects": [
+        {
+          "key": "outcome",
+          "type": "status",
+          "recipient": "target",
+          "onset": "instant",
+          "persistence": "sustained",
+          "likelihood": [
+            "consistent"
+          ],
+          "bound": "source",
+          "status": "restrained",
+          "removable": [
+            "freeing"
+          ]
+        }
+      ]
+    },
+    {
+      "key": "root-compression",
+      "name": "Root Compression",
+      "description": "Thick roots squeeze a contacted target.",
+      "instrument": "roots",
+      "targeting": [
+        "other"
+      ],
+      "activation": {
+        "continuity": [
+          "discrete"
+        ]
+      },
+      "timing": {
+        "preparation": [
+          "immediate",
+          "brief"
+        ],
+        "recovery": [
+          "repeatable",
+          "brief"
+        ]
+      },
+      "delivery": {
+        "contact": {
+          "approach": [
+            "stationary"
+          ],
+          "range": [
+            "contact"
+          ]
+        }
+      },
+      "effects": [
+        {
+          "key": "outcome",
+          "type": "harm",
+          "recipient": "target",
+          "onset": "instant",
+          "persistence": "resolved",
+          "likelihood": [
+            "consistent"
+          ],
+          "mechanism": "compression",
+          "intensity": [
+            45,
+            70
+          ]
+        }
+      ]
+    },
+    {
+      "key": "serrated-spine",
+      "name": "Serrated Spine",
+      "description": "The root body drives a spine into a contacted target.",
+      "instrument": "spines",
+      "targeting": [
+        "other"
+      ],
+      "activation": {
+        "continuity": [
+          "discrete"
+        ]
+      },
+      "timing": {
+        "preparation": [
+          "immediate",
+          "brief"
+        ],
+        "recovery": [
+          "repeatable",
+          "brief"
+        ]
+      },
+      "delivery": {
+        "contact": {
+          "approach": [
+            "stationary",
+            "closing"
+          ],
+          "range": [
+            "contact"
+          ]
+        }
+      },
+      "effects": [
+        {
+          "key": "outcome",
+          "type": "harm",
+          "recipient": "target",
+          "onset": "instant",
+          "persistence": "resolved",
+          "likelihood": [
+            "consistent"
+          ],
+          "mechanism": "piercing",
+          "intensity": [
+            32,
+            58
+          ]
+        }
+      ]
+    }
+  ]
+}

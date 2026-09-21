@@ -220,7 +220,8 @@
           "removable": [
             "detoxifying"
           ],
-          "duration": "brief"
+          "duration": "brief",
+          "intensity": 75
         }
       ]
     }
@@ -275,7 +276,11 @@
           "removable": [
             "detoxifying"
           ],
-          "duration": "brief"
+          "duration": "brief",
+          "intensity": [
+            60,
+            85
+          ]
         }
       ]
     },

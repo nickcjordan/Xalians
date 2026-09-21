@@ -1,0 +1,434 @@
+{
+  "key": "kosanos",
+  "name": "Kosanos",
+  "nameOrigin": "A joining of Polish kosa, scythe, and nos, nose, naming the broad cutting blade at the end of its long trunk.",
+  "element": "plant",
+  "homePlanet": "floria",
+  "generatorPlanets": [
+    "floria"
+  ],
+  "lore": {
+    "description": "With a large blade at the end of its trunk, this simple yet powerful creature is thought to have been designed to clear the thick brush of Floria.",
+    "appearance": [
+      "Large, heavy quadruped on thick columnar legs",
+      "Smooth hide",
+      "Blunt low-carried head",
+      "Wide gape of long teeth",
+      "Single long trunk arching over the back, ending in a blade as long as the body",
+      "Short upturned tail"
+    ],
+    "origin": "Thought to have been designed to clear the thick brush of Floria.",
+    "habitat": "The underforests beneath the World Tree canopies.",
+    "feeding": "It feeds as it works, on the growth it opens up and whatever the opening turns up.",
+    "behavior": "It sets its feet, reads the ground, and fells standing growth in long low arcs of the blade on its trunk, then holds the lane it has cut.",
+    "company": "It moves in herds through the underforest."
+  },
+  "physiology": {
+    "composition": {
+      "primary": "flesh"
+    },
+    "bodyPlan": "quadruped",
+    "anatomy": [
+      "trunk",
+      "blades",
+      "jaws",
+      "tail",
+      "hide"
+    ],
+    "covering": "hide",
+    "size": {
+      "heightCm": [
+        210,
+        265
+      ],
+      "weightKg": [
+        320,
+        430
+      ]
+    },
+    "lifespan": "long",
+    "genome": {
+      "chirality": "rolled"
+    },
+    "diet": "omnivore",
+    "communication": [
+      "vibration"
+    ],
+    "breathes": [
+      "gas"
+    ],
+    "environmentalTolerance": {
+      "ambientMedia": [
+        "gas"
+      ],
+      "temperatureC": {
+        "min": 2,
+        "max": 36
+      }
+    },
+    "capabilities": {
+      "flight": [
+        0,
+        0
+      ],
+      "swim": [
+        15,
+        30
+      ],
+      "burrow": [
+        0,
+        5
+      ],
+      "climb": [
+        0,
+        10
+      ],
+      "sprint": [
+        20,
+        38
+      ],
+      "leap": [
+        5,
+        15
+      ],
+      "manipulation": [
+        45,
+        65
+      ]
+    },
+    "senses": {
+      "sight": [
+        45,
+        65
+      ],
+      "hearing": [
+        40,
+        60
+      ],
+      "smell": [
+        50,
+        70
+      ],
+      "special": [
+        "tremorsense"
+      ]
+    },
+    "protections": [],
+    "traversal": []
+  },
+  "attributes": {
+    "strength": [
+      70,
+      90
+    ],
+    "vitality": [
+      62,
+      82
+    ],
+    "endurance": [
+      65,
+      85
+    ],
+    "agility": [
+      12,
+      28
+    ],
+    "reflex": [
+      18,
+      34
+    ],
+    "intelligence": [
+      20,
+      36
+    ],
+    "willpower": [
+      40,
+      60
+    ],
+    "instinct": [
+      42,
+      62
+    ],
+    "charisma": [
+      15,
+      30
+    ],
+    "resilience": [
+      58,
+      78
+    ]
+  },
+  "schemaVersion": "5.0.0",
+  "temperament": {
+    "boldness": [
+      40,
+      65
+    ],
+    "curiosity": [
+      25,
+      50
+    ],
+    "energy": [
+      30,
+      55
+    ],
+    "aggression": [
+      25,
+      50
+    ],
+    "sociability": [
+      55,
+      80
+    ]
+  },
+  "passives": [],
+  "signature": {
+    "type": "action",
+    "key": "kosanos-defining"
+  },
+  "actions": [
+    {
+      "key": "kosanos-defining",
+      "name": "Trunk Blade Sweep",
+      "description": "Its long trunk swings the broad blade through a contacted target.",
+      "instrument": "blades",
+      "activation": {
+        "continuity": "discrete"
+      },
+      "timing": {
+        "preparation": "brief",
+        "recovery": "brief"
+      },
+      "delivery": {
+        "mode": "contact",
+        "approach": "stationary"
+      },
+      "targeting": [
+        "other"
+      ],
+      "spatial": {
+        "range": "contact"
+      },
+      "effects": [
+        {
+          "key": "outcome",
+          "type": "harm",
+          "recipient": "target",
+          "onset": "instant",
+          "persistence": "resolved",
+          "likelihood": "consistent",
+          "mechanism": "cutting",
+          "intensity": 72
+        }
+      ]
+    }
+  ],
+  "mechanisms": [
+    {
+      "key": "trunk-blade",
+      "name": "Trunk Blade",
+      "description": "The trunk carries its heavy blade through a close cut.",
+      "instrument": "blades",
+      "targeting": [
+        "other"
+      ],
+      "activation": {
+        "continuity": [
+          "discrete"
+        ]
+      },
+      "timing": {
+        "preparation": [
+          "immediate",
+          "brief"
+        ],
+        "recovery": [
+          "repeatable",
+          "brief"
+        ]
+      },
+      "delivery": {
+        "contact": {
+          "approach": [
+            "stationary",
+            "closing"
+          ],
+          "range": [
+            "contact"
+          ]
+        }
+      },
+      "effects": [
+        {
+          "key": "outcome",
+          "type": "harm",
+          "recipient": "target",
+          "onset": "instant",
+          "persistence": "resolved",
+          "likelihood": [
+            "consistent"
+          ],
+          "mechanism": "cutting",
+          "intensity": [
+            55,
+            80
+          ]
+        }
+      ]
+    },
+    {
+      "key": "trunk-shove",
+      "name": "Trunk Shove",
+      "description": "Its heavy trunk pushes through a nearby target.",
+      "instrument": "trunk",
+      "targeting": [
+        "other"
+      ],
+      "activation": {
+        "continuity": [
+          "discrete"
+        ]
+      },
+      "timing": {
+        "preparation": [
+          "immediate",
+          "brief"
+        ],
+        "recovery": [
+          "repeatable",
+          "brief"
+        ]
+      },
+      "delivery": {
+        "contact": {
+          "approach": [
+            "stationary",
+            "closing"
+          ],
+          "range": [
+            "contact"
+          ]
+        }
+      },
+      "effects": [
+        {
+          "key": "outcome",
+          "type": "harm",
+          "recipient": "target",
+          "onset": "instant",
+          "persistence": "resolved",
+          "likelihood": [
+            "consistent"
+          ],
+          "mechanism": "impact",
+          "intensity": [
+            40,
+            68
+          ]
+        }
+      ]
+    },
+    {
+      "key": "jaw-bite",
+      "name": "Jaw Bite",
+      "description": "Long teeth bite at close contact.",
+      "instrument": "jaws",
+      "targeting": [
+        "other"
+      ],
+      "activation": {
+        "continuity": [
+          "discrete"
+        ]
+      },
+      "timing": {
+        "preparation": [
+          "immediate",
+          "brief"
+        ],
+        "recovery": [
+          "repeatable",
+          "brief"
+        ]
+      },
+      "delivery": {
+        "contact": {
+          "approach": [
+            "stationary"
+          ],
+          "range": [
+            "contact"
+          ]
+        }
+      },
+      "effects": [
+        {
+          "key": "outcome",
+          "type": "harm",
+          "recipient": "target",
+          "onset": "instant",
+          "persistence": "resolved",
+          "likelihood": [
+            "consistent"
+          ],
+          "mechanism": "piercing",
+          "intensity": [
+            35,
+            60
+          ]
+        }
+      ]
+    },
+    {
+      "key": "body-press",
+      "name": "Body Press",
+      "description": "The heavy quadruped body bears down at close contact.",
+      "instrument": "hide",
+      "targeting": [
+        "other"
+      ],
+      "activation": {
+        "continuity": [
+          "discrete"
+        ]
+      },
+      "timing": {
+        "preparation": [
+          "immediate",
+          "brief"
+        ],
+        "recovery": [
+          "repeatable",
+          "brief"
+        ]
+      },
+      "delivery": {
+        "contact": {
+          "approach": [
+            "stationary"
+          ],
+          "range": [
+            "contact"
+          ]
+        }
+      },
+      "effects": [
+        {
+          "key": "outcome",
+          "type": "harm",
+          "recipient": "target",
+          "onset": "instant",
+          "persistence": "resolved",
+          "likelihood": [
+            "consistent"
+          ],
+          "mechanism": "compression",
+          "intensity": [
+            45,
+            75
+          ]
+        }
+      ]
+    }
+  ]
+}

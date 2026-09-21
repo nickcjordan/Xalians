@@ -219,7 +219,8 @@
             "warming",
             "disrupting"
           ],
-          "duration": "prolonged"
+          "duration": "prolonged",
+          "intensity": 70
         }
       ]
     },

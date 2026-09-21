@@ -24,10 +24,10 @@ The three included ordinary mechanisms are bounded source families. Preparation/
 
 Retain the measured size, temperature, respiration, special tremorsense and direct attribute/capability bands from the ratified Bioflim record for this stage. Its rocky casing supports structural toughness and impact resistance; the lower agility/reflex/sprint bands agree with its slow body. No capability band crosses zero. The v5 temperament bands are independently authored from solitary, slow swamp behavior: low energy and sociability, restrained aggression and curiosity, rather than an archetype/trait roll. The output bands for acid, compression and shell restoration are positive source-relative authoring judgments; the one absolute status-intensity baseline remains the catalog's 50.
 
-Further numeric calibration against the complete v5 roster remains the shared release gate. Do not silently normalize these ratings to current species maxima. The passive's sustained direct restoration stops with its source operation; the result does not create a generic body-material resource or a need to evaluate each generated individual.
+The complete roster numeric pass is recorded in the [cross-roster calibration](../../design/creature-v5-calibration.md). Do not silently normalize these ratings to current species maxima. The passive's sustained direct restoration stops with its source operation; the result does not create a generic body-material resource or a need to evaluate each generated individual.
 
 ## Verification and remaining work
 
 `npm run check:creature-model -- docs/species-templates/v5/bioflim.json` passes, including source/anatomy checks and a constructive proof of four structurally distinct actions. This does not assert game outcomes, exact probabilities, canon release activation or that the old pool is a source for unreviewed elemental capabilities.
 
-No registry extension, unresolved species power or conditional-physiology subsystem is required for Bioflim. Revisit this audit if its lore/art, the shared status definitions, or the mechanism compiler changes. Finish full-roster calibration/coverage and release replay before deploying v5 records.
+No registry extension, unresolved species power or conditional-physiology subsystem is required for Bioflim. Revisit this audit if its lore/art, the shared status definitions, or the mechanism compiler changes. Finish release replay before activating v5 records.

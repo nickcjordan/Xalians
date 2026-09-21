@@ -14,14 +14,14 @@
 - [x] Ratify and implement paralyzed as voluntary motor impairment distinct from stunned, sedated, slowed and restrained; retain status default intensity and mechanism-authored removal. Shared schema, naming and generation/protection tests cover the addition.
 - [x] Defer unignited fuel exposure and ignition/explosion interactions. Preserve Neph's hydrogen emission as lore-only for this version; no combustible/flammable status or substitute burning. This resolves that migration blocker.
 - [x] Defer physical route barriers (Yetimoth) as lore-only for this version. Armor and opponent freezing remain representable; no freestanding-wall effect or empty-point targeting. Canonical species authoring may proceed.
-- [ ] Re-author/audit all 32 canonical species; source biology and breadth are not a mechanical old-pool conversion.
-- [x] Stage and compile the first three representative v5 definitions (Avilily, Bioflim, Yetimoth), each with an ability audit and guaranteed identity checks. This is 3/32 species; no canonical bundle or release is active.
+- [x] Re-author/audit all 32 canonical species; source biology and breadth are not a mechanical old-pool conversion. Each staged v5 definition has a same-key ability audit.
+- [x] Stage and compile all 32 representative v5 definitions, each with an ability audit and guaranteed identity checks. The standalone `generation-0.6.0-1` archive is frozen; games still use v4.
 - [x] Record the agreed reference ladder and field-specific authoring anchors in the shared benchmark catalog; preserve status default 50.
 - [x] Implement compositional naming after generation, optional source-supported vocabulary, and structural collision distinctions without rerolling capabilities.
-- [ ] Apply benchmark calibration and vocabulary review to canonical species after shared-model completion.
+- [x] Apply benchmark calibration and vocabulary review to the canonical roster; see [calibration](creature-v5-calibration.md) and per-species ability audits.
 - [x] Integrate the v5 release adapter and prove frozen-fixture replay in a fresh process; capture all actual generation dependencies without per-creature evaluation.
-- [ ] Integrate canonical v5 bundles and a frozen release; run full-species replay and scale verification.
-- [ ] Address evidenced conditional passive physiology if found in the species pass.
+- [x] Integrate the complete canonical v5 roster and freeze `generation-0.6.0-1`; verify replay of every species in both profiles and 80 seeded draft samples per species. The active game release remains v4.
+- [x] Review conditional passive physiology in the species pass. No additional general condition system was warranted; explicit source and event-bound behavior uses current fields.
 - [x] Screen the 32-species source data and test representative relationship cases; fix correlated recipients, dependency identity, directionless self aiming and unsupported voice/communication coupling.
 - [x] Ongoing passives target only self, with optional self-centered radial areas. Directed automatic responses use event triggers; maintained directed connections are actions. Enforced at authoring with regression coverage.
 - [ ] Adapt games after creature redesign completion, in a separate task scope.

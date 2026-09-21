@@ -35,7 +35,8 @@ test('all species in every archived release replay with both profiles', async ()
         const record = archived.generateXalian(template.key, 'historical:' + template.key, {
           profile, generatedAt: '2026-09-15T12:34:56.000Z', serial: 42, origin: 'saiphus',
         });
-        assert.deepEqual(XalianRecordSchema.parse(record), record, 'current readers preserve historical representation');
+        const schema = archived.SCHEMA_VERSION === '5.0.0' ? archived.CreatureRecordSchema : XalianRecordSchema;
+        assert.deepEqual(schema.parse(record), record, 'schema for the archived representation accepts replay');
         assert.deepEqual(await replay(record), record, entry.name + ': ' + template.key + ': ' + profile);
       }
     }
@@ -107,6 +108,26 @@ test('artifact tampering fails even after a successful import', async t => {
   await assert.rejects(replay(record, temporary), /artifact integrity failure/);
 });
 const creatureEntry = 'scripts/__tests__/fixtures/creature-release.ts';
+const canonicalCreatureEntry = 'packages/rules/src/generator/canonicalCreatureRelease.ts';
+test('the complete v5 roster freezes and replays without the live species tree', async t => {
+  const temporary = temporaryArchive(t);
+  const releaseId = 'generation-0.6.0-1';
+  const manifest = await freeze({ entryPoint: canonicalCreatureEntry, releaseId, archives: temporary });
+  const ratified = JSON.parse(fs.readFileSync(path.join(__dirname, '../../docs/species-templates/RATIFIED.json'), 'utf8')).species;
+  assert.equal(Object.keys(manifest.inputs).filter(file => /^docs\/species-templates\/v5\/[^/]+\.json$/.test(file)).length, 32);
+  const { artifact } = readManifest(releaseId, temporary);
+  const archived = await import(pathToFileURL(artifact).href);
+  assert.deepEqual(archived.getSpeciesTemplates().map(template => template.key).sort(), [...ratified].sort());
+  for (const key of ratified) {
+    for (const profile of ['full', 'showroom']) {
+      const record = archived.generateXalian(key, 'v5-replay:' + key, {
+        profile, generatedAt: '2026-09-21T12:34:56.000Z', serial: 7, origin: 'saiphus',
+      });
+      assert.deepEqual(archived.CreatureRecordSchema.parse(record), record);
+      assert.deepEqual(await replay(record, temporary), record);
+    }
+  }
+});
 test('v5 freezes its actual species, catalog, compiler and naming dependencies and replays standalone', async t => {
   const temporary = temporaryArchive(t);
   const manifest = await freeze({ entryPoint: creatureEntry, releaseId: 'test-creature-v5', archives: temporary });

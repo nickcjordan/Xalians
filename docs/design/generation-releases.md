@@ -71,13 +71,10 @@ Generation requires a species key, nonempty string seed, origin, serial, timesta
 
 `freeze({entryPoint, releaseId, archives})` supports an explicit entry point and destination for integration tests. Its default CLI behavior is unchanged. It verifies the bundled export contract and release identity before creating an archive. The dependency graph automatically fingerprints the v5 catalog, benchmarks, schemas, compiler, naming, species JSON and PRNG, together with their runtime dependencies.
 
-The release tests freeze the hypothetical support species into a temporary archive, validate complete v5 records and replay both profiles in fresh Node processes. Those test archives are deleted after the tests; they are not canonical releases. This verifies the shared packaging and replay path before species migration.
+The release tests freeze the hypothetical support species into a temporary archive and separately freeze the complete canonical roster into a temporary archive. They validate complete v5 records, replay every canonical species in both profiles, and exercise fresh-process replay for the adapter fixture. Those temporary archives are deleted after the tests.
 
-### Canonical activation still required
+### Frozen canonical v5 archive
 
-1. Re-author and validate the complete canonical v5 roster, including source coverage, calibration and vocabulary.
-2. Build the canonical v5 species bundle and bind it through `createCreatureRelease` in the canonical generator entry point. Keep the release adapter's export contract; import the JSON bundle so esbuild captures its exact inputs.
-3. Set a new canonical release ID, freeze the completed entry point and run integrity checks, full-roster replay, structural coverage and scale checks.
-4. Switch consumers only in the separately scoped game migration.
+The 32 source-audited definitions under `docs/species-templates/v5/` are bound by `packages/rules/src/generator/canonicalCreatureRelease.ts`. Release `generation-0.6.0-1` freezes that entry point, the complete roster, schema, catalog, compiler, naming and PRNG inputs. Integrity and full-roster replay checks pass. The rating pass is recorded in [creature-v5-calibration.md](creature-v5-calibration.md); the seeded construction test samples 80 seeds per species and checks guaranteed identity and four distinct actions.
 
-The current canonical pointer remains `generation-0.5.0-4`; the v5 adapter and test fixture do not activate it or certify the unmigrated roster. The preliminary release-integration gate is complete. The subsequent [roster audit](creature-roster-audit.md) identified three additional source-backed design questions. Paralysis is implemented and fuel exposure explicitly deferred as lore-only. Physical barriers are explicitly deferred as lore-only for this version. Complete species migration before canonical activation.
+The current game pointer remains `generation-0.5.0-4`. Consumers switch to v5 only in the separately scoped game migration. The [roster audit](creature-roster-audit.md) resolved paralysis and records explicit lore-only deferrals for unignited fuel and physical route barriers. The archived v5 release is replayable now without changing game imports.

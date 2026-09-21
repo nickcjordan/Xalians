@@ -1,0 +1,5 @@
+# Frackworm: v5 ability audit
+
+Review date: 2026-09-21. Staged, not released. Sources: `../frackworm.json`, its walkthrough/art, canonical teaser and Endessa record. Teaser preserved verbatim.
+
+The ringed head drill is the fixed signature; pressure slurry from body vents is a second guaranteed action. Ordinary domains vary head piercing, abrasive pressure impact and colossal body compression. Its burrowing remains physiology. Source descriptions of fracturing a seam and extracting Nightcap establish industrial use; they do not make a portable terrain-destruction engine or a vitality-drain bar. A game may interpret impacts on its own terrain, but the creature record does not claim freestanding obstacles or arbitrary substrate mutation. Old ghost/dark powers are excluded. Limited vision and temperament remain source-grounded; output was reviewed in the [cross-roster calibration](../../design/creature-v5-calibration.md). Compilation/seeded generation cover four distinct actions and both guaranteed mechanisms.

@@ -1,0 +1,486 @@
+{
+  "key": "imprit",
+  "name": "Imprit",
+  "nameOrigin": "A compression of imp and sprite, matching its small demonic appearance and supernatural, erratic fire behavior.",
+  "element": "fire",
+  "homePlanet": "magmuth",
+  "generatorPlanets": [
+    "magmuth"
+  ],
+  "lore": {
+    "description": "Imprits are demonic looking creatures, resembling flaming, horned monkeys backed by long tails with scythe-like tips. Imprits possess fire-retardant fur that protects their bodies from the flammable oils they secrete, allowing them to survive despite being in a state of constant immolation.  They are remarkably intelligent among other Xalians, having been designed in ancient times as natural tinkerers and let loose into the various lightless mining shafts of Magmuth, where they were left to their own devices to fix and maintain the often makeshift mining equipment sent deep into the earth by the Vallerii. Today, they are known for being entirely erratic, likely driven mad by the isolation of the deep tunnels in which they tinkered and toiled. When released from their claustrophobic confines and set loose on the surface, Imprits take ecstatic pleasure from using their tails to swing through the air from place to place and setting fires where they least belong.",
+    "appearance": [
+      "Small horned monkey on all fours",
+      "Fire-retardant fur",
+      "Wreathed in constant flame",
+      "Heavy curved horns",
+      "Long fangs",
+      "Bare gripping hands and feet",
+      "Long whip tail with a scythe-like tip"
+    ],
+    "origin": "Designed by Magmuth's corporations as a tinkerer and let loose in the lightless mining shafts to fix and maintain the makeshift equipment the Vallerii sent down.",
+    "habitat": "The old mining shafts of Magmuth and the crag networks above them.",
+    "feeding": "It eats what it finds in the shafts and on the surface, whatever it is.",
+    "behavior": "It climbs and leaps rather than crossing open ground, swinging from its tail as readily as from a hand. Underground it takes machinery apart and puts it back together. On the surface it is erratic, and it sets fires where they least belong.",
+    "company": "It keeps to itself, shaped by the isolation of the deep tunnels."
+  },
+  "physiology": {
+    "composition": {
+      "primary": "flesh"
+    },
+    "bodyPlan": "quadruped",
+    "anatomy": [
+      "horns",
+      "fangs",
+      "tail",
+      "fists",
+      "hide"
+    ],
+    "covering": "fur",
+    "size": {
+      "heightCm": [
+        72,
+        98
+      ],
+      "weightKg": [
+        30,
+        48
+      ]
+    },
+    "lifespan": "standard",
+    "genome": {
+      "chirality": "rolled"
+    },
+    "diet": "omnivore",
+    "communication": [
+      "vocal",
+      "display"
+    ],
+    "breathes": [
+      "gas"
+    ],
+    "environmentalTolerance": {
+      "ambientMedia": [
+        "gas"
+      ],
+      "temperatureC": {
+        "min": 65,
+        "max": 105
+      }
+    },
+    "capabilities": {
+      "flight": [
+        0,
+        0
+      ],
+      "swim": [
+        0,
+        12
+      ],
+      "burrow": [
+        10,
+        30
+      ],
+      "climb": [
+        78,
+        95
+      ],
+      "sprint": [
+        52,
+        72
+      ],
+      "leap": [
+        70,
+        90
+      ],
+      "manipulation": [
+        74,
+        92
+      ]
+    },
+    "senses": {
+      "sight": [
+        52,
+        72
+      ],
+      "hearing": [
+        60,
+        80
+      ],
+      "smell": [
+        35,
+        55
+      ],
+      "special": []
+    },
+    "protections": [
+      {
+        "type": "harm",
+        "mechanism": "elemental",
+        "element": "fire",
+        "degree": "resistant"
+      }
+    ],
+    "traversal": []
+  },
+  "attributes": {
+    "strength": [
+      28,
+      46
+    ],
+    "vitality": [
+      34,
+      52
+    ],
+    "endurance": [
+      40,
+      60
+    ],
+    "agility": [
+      66,
+      86
+    ],
+    "reflex": [
+      64,
+      84
+    ],
+    "intelligence": [
+      62,
+      80
+    ],
+    "willpower": [
+      22,
+      44
+    ],
+    "instinct": [
+      50,
+      70
+    ],
+    "charisma": [
+      30,
+      52
+    ],
+    "resilience": [
+      36,
+      54
+    ]
+  },
+  "schemaVersion": "5.0.0",
+  "temperament": {
+    "boldness": [
+      60,
+      85
+    ],
+    "curiosity": [
+      60,
+      85
+    ],
+    "energy": [
+      70,
+      95
+    ],
+    "aggression": [
+      55,
+      80
+    ],
+    "sociability": [
+      15,
+      40
+    ]
+  },
+  "passives": [
+    {
+      "key": "imprit-defining",
+      "name": "Living Flame",
+      "description": "Its always-burning oils ignite whatever directly contacts its body.",
+      "instrument": "secretion",
+      "element": "fire",
+      "activation": {
+        "continuity": "discrete",
+        "trigger": "contact"
+      },
+      "timing": {
+        "preparation": "immediate",
+        "recovery": "repeatable"
+      },
+      "delivery": {
+        "mode": "contact",
+        "approach": "stationary"
+      },
+      "targeting": [
+        "other"
+      ],
+      "spatial": {
+        "range": "contact"
+      },
+      "effects": [
+        {
+          "key": "outcome",
+          "type": "status",
+          "recipient": "target",
+          "onset": "instant",
+          "persistence": "lingering",
+          "likelihood": "consistent",
+          "duration": "brief",
+          "status": "burning",
+          "removable": [
+            "cooling",
+            "smothering"
+          ]
+        }
+      ]
+    }
+  ],
+  "signature": {
+    "type": "passive",
+    "key": "imprit-defining"
+  },
+  "actions": [
+    {
+      "key": "imprit-ignited-oil",
+      "name": "Ignited Oil Contact",
+      "description": "Already-burning secretion from its body reaches a contacted target.",
+      "instrument": "secretion",
+      "activation": {
+        "continuity": "discrete"
+      },
+      "timing": {
+        "preparation": "brief",
+        "recovery": "brief"
+      },
+      "delivery": {
+        "mode": "contact",
+        "approach": "stationary"
+      },
+      "targeting": [
+        "other"
+      ],
+      "spatial": {
+        "range": "contact"
+      },
+      "effects": [
+        {
+          "key": "outcome",
+          "type": "harm",
+          "recipient": "target",
+          "onset": "instant",
+          "persistence": "resolved",
+          "likelihood": "consistent",
+          "mechanism": "elemental",
+          "intensity": 55
+        }
+      ],
+      "element": "fire"
+    }
+  ],
+  "mechanisms": [
+    {
+      "key": "ignited-oil",
+      "name": "Ignited Oil",
+      "description": "Flaming oil already alight on its body harms at contact.",
+      "instrument": "secretion",
+      "element": "fire",
+      "targeting": [
+        "other"
+      ],
+      "activation": {
+        "continuity": [
+          "discrete"
+        ]
+      },
+      "timing": {
+        "preparation": [
+          "immediate",
+          "brief"
+        ],
+        "recovery": [
+          "brief"
+        ]
+      },
+      "delivery": {
+        "contact": {
+          "approach": [
+            "stationary",
+            "closing"
+          ],
+          "range": [
+            "contact"
+          ]
+        }
+      },
+      "effects": [
+        {
+          "key": "outcome",
+          "type": "harm",
+          "recipient": "target",
+          "onset": "instant",
+          "persistence": "resolved",
+          "likelihood": [
+            "consistent"
+          ],
+          "mechanism": "elemental",
+          "intensity": [
+            38,
+            62
+          ]
+        }
+      ]
+    },
+    {
+      "key": "scythe-tail",
+      "name": "Scythe Tail",
+      "description": "The scythe tip on its tail cuts at contact.",
+      "instrument": "tail",
+      "targeting": [
+        "other"
+      ],
+      "activation": {
+        "continuity": [
+          "discrete"
+        ]
+      },
+      "timing": {
+        "preparation": [
+          "immediate",
+          "brief"
+        ],
+        "recovery": [
+          "repeatable",
+          "brief"
+        ]
+      },
+      "delivery": {
+        "contact": {
+          "approach": [
+            "stationary",
+            "closing"
+          ],
+          "range": [
+            "contact"
+          ]
+        }
+      },
+      "effects": [
+        {
+          "key": "outcome",
+          "type": "harm",
+          "recipient": "target",
+          "onset": "instant",
+          "persistence": "resolved",
+          "likelihood": [
+            "consistent"
+          ],
+          "mechanism": "cutting",
+          "intensity": [
+            40,
+            68
+          ]
+        }
+      ]
+    },
+    {
+      "key": "horn-strike",
+      "name": "Horn Strike",
+      "description": "Its horns strike a contacted target.",
+      "instrument": "horns",
+      "targeting": [
+        "other"
+      ],
+      "activation": {
+        "continuity": [
+          "discrete"
+        ]
+      },
+      "timing": {
+        "preparation": [
+          "immediate",
+          "brief"
+        ],
+        "recovery": [
+          "repeatable",
+          "brief"
+        ]
+      },
+      "delivery": {
+        "contact": {
+          "approach": [
+            "stationary",
+            "closing"
+          ],
+          "range": [
+            "contact"
+          ]
+        }
+      },
+      "effects": [
+        {
+          "key": "outcome",
+          "type": "harm",
+          "recipient": "target",
+          "onset": "instant",
+          "persistence": "resolved",
+          "likelihood": [
+            "consistent"
+          ],
+          "mechanism": "piercing",
+          "intensity": [
+            25,
+            48
+          ]
+        }
+      ]
+    },
+    {
+      "key": "hand-strike",
+      "name": "Hand Strike",
+      "description": "Its hands strike at close contact.",
+      "instrument": "fists",
+      "targeting": [
+        "other"
+      ],
+      "activation": {
+        "continuity": [
+          "discrete"
+        ]
+      },
+      "timing": {
+        "preparation": [
+          "immediate",
+          "brief"
+        ],
+        "recovery": [
+          "repeatable",
+          "brief"
+        ]
+      },
+      "delivery": {
+        "contact": {
+          "approach": [
+            "stationary",
+            "closing"
+          ],
+          "range": [
+            "contact"
+          ]
+        }
+      },
+      "effects": [
+        {
+          "key": "outcome",
+          "type": "harm",
+          "recipient": "target",
+          "onset": "instant",
+          "persistence": "resolved",
+          "likelihood": [
+            "consistent"
+          ],
+          "mechanism": "impact",
+          "intensity": [
+            22,
+            42
+          ]
+        }
+      ]
+    }
+  ]
+}

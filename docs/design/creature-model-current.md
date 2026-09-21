@@ -163,28 +163,32 @@ The fixture is deliberately noncanonical. Its 14 possible ordinary structures co
 
 Implemented and tested: strict redesigned species/ability/record schemas; updated semantic catalog; mechanism compiler; constructive four-action selection; fixed signature output rolling; resolved physiology/attributes/temperament generation; protection/removal helpers; authoring validation CLI.
 
-Still required before a canonical v5 release:
+Canonical v5 ability-design and roster gates:
 
-1. Re-author and audit all 32 canonical species against this contract. Avilily, Bioflim and Yetimoth are staged and compiled under `docs/species-templates/v5/`, each with a source/coverage audit; 29 remain. The v4 complete-move pools cannot be mechanically renamed into mechanism permissions. Preserve the species decisions above and review source-supported breadth, not just old examples.
-2. Apply the shared rating/output references to each species' justified bands during the eventual calibration audit. The reference ladder and descriptions for the 20 performance fields and four direct outputs are now recorded; canonical species calibration remains pending. Default status intensity is 50.
-3. Review any evidenced conditional physiology during species authoring; the 32-species prose/data screening did not establish a need for a general subsystem. Ongoing-passive target acquisition is settled: `targeting: [self]`, no range, and any area uses `anchor: self` and `shape: radial`. Directed automatic responses use event triggers; deliberately maintained connections are actions.
-4. Review source-supported species vocabulary during migration. [Compositional naming](creature-ability-naming.md) now runs after generation, uses a shared structural fallback, preserves guaranteed names, and distinguishes collisions without changing abilities. Naming coverage no longer depends on a fixed move list.
-5. Bind the migrated canonical bundle through the implemented v5 release adapter and freeze its canonical entry point. The hypothetical-roster archive now verifies complete records, captured catalog/compiler/naming inputs and fresh-process replay; canonical full-species replay and coverage/scale checks remain. Draft generation intentionally does not claim a canonical release ID.
-6. Update games separately after the ability redesign is complete. Existing game imports have not changed.
+1. **Complete:** All 32 species are staged under `docs/species-templates/v5/`, each with a source/coverage audit. The v4 complete-move pools were not renamed into mechanism permissions; source-supported breadth was reviewed species by species.
+2. **Complete:** The reference ladder, 20 performance field descriptions, four direct output descriptions and default status intensity 50 are recorded. [Cross-roster calibration](creature-v5-calibration.md) checked the authoring bands and corrected limited-flight and explicitly strong status cases.
+3. **Complete:** The species pass found no need for a general conditional-physiology subsystem. Ongoing passives target self, directed automatic responses use event triggers, and deliberate maintained connections are actions.
+4. **Complete:** [Compositional naming](creature-ability-naming.md) preserves guaranteed names and distinguishes ordinary collisions without changing capabilities.
+5. **Complete for the standalone release:** `generation-0.6.0-1` freezes all 32 species with their schema, catalog, compiler, naming and generator inputs. All 32 replay in both profiles; the draft generator passes 80 deterministic seeds per species with guaranteed identity and four distinct actions. Games still use v4.
+6. **Separate game work:** adapt games to v5 after this ability-design work. Existing game imports have not changed.
 
-Do not call these migration/release gates completed because unit tests on a hypothetical species pass. Conversely, do not re-open settled concepts merely because canonical content migration remains.
+These gates are backed by canonical roster tests and the archived release rather than the earlier hypothetical fixture alone. Neph's unignited fuel and Yetimoth's freestanding route walls remain explicit lore-only scope deferrals.
 
-Work order agreed after this checkpoint: finish shared benchmarks, compositional naming, representative relationship checks and release integration before migrating species. Use hypothetical or representative design fixtures for those checks; do not re-author the canonical roster early. Freeze the actual canonical release after migration and full-roster validation.
+The earlier work order is complete: shared benchmarks, naming, relationship checks and release integration preceded the canonical re-authoring. The frozen v5 release followed full-roster validation.
 
-### Verification of this implementation checkpoint
+### Historical implementation checkpoint
 
 Content: 85 tests passed. Rules: 349 tests passed. Both TypeScript checks passed. The redesigned authoring CLI and updated skill validation passed. Existing bundle freshness and generation-release integrity checks passed.
 
-The full workspace run also passed the API suite; the web suite had one asynchronous portrait-loading timeout (`xalianSvg.test.js`). That six-test file passed in isolation without changes. No game files were changed. These results do not replace canonical v5 species coverage or release replay, which are still pending.
+The full workspace run also passed the API suite; the web suite had one asynchronous portrait-loading timeout (`xalianSvg.test.js`). That six-test file passed in isolation without changes. No game files were changed. Canonical coverage and replay have since been completed separately.
 
 
 ### Release integration checkpoint - 2026-09-21
 
 The preliminary release-integration gate is implemented and tested; see [generation releases](generation-releases.md#schema-5-integration-checkpoint). The adapter supplies explicit provenance, seeded IDs and existing appearance policy around constructive v5 generation. Species compilation occurs once when the roster loads; per-call validation concerns caller metadata only. No generated-creature evaluation was introduced.
 
-Validation: content 106 tests, rules 357 tests, release tooling 11 tests; both package TypeScript checks and current release integrity pass. Canonical species migration and final v5 activation remain outstanding. No games or canonical species were changed.
+That checkpoint validated the adapter before canonical authoring. The active game release was and remains v4.
+
+### Canonical roster completion - 2026-09-21
+
+All 32 v5 definitions have source audits and preserve their canonical teasers. Content 107 tests, rules 359 tests, release tooling 12 tests, both package TypeScript checks, and release integrity pass. The full-roster seeded test exercises 80 deterministic seeds per species; all produced four distinct actions and retained guaranteed identity. `generation-0.6.0-1` is frozen and all 32 species replay in both profiles. Game adapters and game-specific balance remain separate work.

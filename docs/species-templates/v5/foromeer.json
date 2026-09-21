@@ -1,0 +1,432 @@
+{
+  "key": "foromeer",
+  "name": "Foromeer",
+  "nameOrigin": "A blend of Italian foro, hole, and meerkat, matching an upright creature whose drill hands bore through material for excavation.",
+  "element": "metal",
+  "homePlanet": "veridium",
+  "generatorPlanets": [
+    "veridium"
+  ],
+  "lore": {
+    "description": "This creature has a metallic exoskeleton on its limbs, with long drill-like horns for arms. Thought to once be used for mineral excavation, its powerful horns can break through the strongest of material.",
+    "appearance": [
+      "Tall biped on long jointed legs",
+      "Metallic exoskeleton on the limbs",
+      "Long drill-like horns for arms, longer than the body",
+      "Narrow deer-like head",
+      "A pair of long thin antennae swept back from the crown"
+    ],
+    "origin": "Thought to have been used for mineral excavation on Veridium, its drill-like horns breaking through the strongest material.",
+    "habitat": "The ore-filled crust and heavy-metal veins of Veridium, among its factory trenches and forge districts.",
+    "feeding": "It eats what it finds in the trenches and forge districts.",
+    "behavior": "It opens the metal veins with its horns. It signals by drumming through the ground rather than by call, since the manufactory is too loud for anything else.",
+    "company": "It works the veins alone."
+  },
+  "physiology": {
+    "composition": {
+      "primary": "flesh"
+    },
+    "bodyPlan": "biped",
+    "anatomy": [
+      "spurs",
+      "antennae",
+      "shell",
+      "body"
+    ],
+    "covering": "plating",
+    "size": {
+      "heightCm": [
+        180,
+        215
+      ],
+      "weightKg": [
+        82,
+        112
+      ]
+    },
+    "lifespan": "long",
+    "genome": {
+      "chirality": "rolled"
+    },
+    "diet": "omnivore",
+    "communication": [
+      "vibration"
+    ],
+    "breathes": [
+      "gas"
+    ],
+    "environmentalTolerance": {
+      "ambientMedia": [
+        "gas"
+      ],
+      "temperatureC": {
+        "min": -10,
+        "max": 36
+      }
+    },
+    "capabilities": {
+      "flight": [
+        0,
+        0
+      ],
+      "swim": [
+        0,
+        10
+      ],
+      "burrow": [
+        45,
+        75
+      ],
+      "climb": [
+        15,
+        35
+      ],
+      "sprint": [
+        25,
+        45
+      ],
+      "leap": [
+        15,
+        35
+      ],
+      "manipulation": [
+        10,
+        25
+      ]
+    },
+    "senses": {
+      "sight": [
+        30,
+        55
+      ],
+      "hearing": [
+        20,
+        40
+      ],
+      "smell": [
+        15,
+        35
+      ],
+      "special": [
+        "tremorsense"
+      ]
+    },
+    "protections": [],
+    "traversal": []
+  },
+  "attributes": {
+    "strength": [
+      55,
+      78
+    ],
+    "vitality": [
+      42,
+      62
+    ],
+    "endurance": [
+      58,
+      80
+    ],
+    "agility": [
+      28,
+      48
+    ],
+    "reflex": [
+      25,
+      45
+    ],
+    "intelligence": [
+      22,
+      42
+    ],
+    "willpower": [
+      40,
+      62
+    ],
+    "instinct": [
+      35,
+      55
+    ],
+    "charisma": [
+      15,
+      32
+    ],
+    "resilience": [
+      52,
+      74
+    ]
+  },
+  "schemaVersion": "5.0.0",
+  "temperament": {
+    "boldness": [
+      35,
+      60
+    ],
+    "curiosity": [
+      30,
+      55
+    ],
+    "energy": [
+      40,
+      65
+    ],
+    "aggression": [
+      30,
+      55
+    ],
+    "sociability": [
+      10,
+      35
+    ]
+  },
+  "passives": [],
+  "signature": {
+    "type": "action",
+    "key": "foromeer-defining"
+  },
+  "actions": [
+    {
+      "key": "foromeer-defining",
+      "name": "Forelimb Bore",
+      "description": "The long drill-shaped forelimb spurs drive through contacted material.",
+      "instrument": "spurs",
+      "activation": {
+        "continuity": "discrete"
+      },
+      "timing": {
+        "preparation": "brief",
+        "recovery": "brief"
+      },
+      "delivery": {
+        "mode": "contact",
+        "approach": "stationary"
+      },
+      "targeting": [
+        "other"
+      ],
+      "spatial": {
+        "range": "contact"
+      },
+      "effects": [
+        {
+          "key": "outcome",
+          "type": "harm",
+          "recipient": "target",
+          "onset": "instant",
+          "persistence": "resolved",
+          "likelihood": "consistent",
+          "mechanism": "piercing",
+          "intensity": 70
+        }
+      ]
+    }
+  ],
+  "mechanisms": [
+    {
+      "key": "spur-bore",
+      "name": "Spur Bore",
+      "description": "A pointed forelimb spur bores into contacted material.",
+      "instrument": "spurs",
+      "targeting": [
+        "other"
+      ],
+      "activation": {
+        "continuity": [
+          "discrete"
+        ]
+      },
+      "timing": {
+        "preparation": [
+          "immediate",
+          "brief"
+        ],
+        "recovery": [
+          "repeatable",
+          "brief"
+        ]
+      },
+      "delivery": {
+        "contact": {
+          "approach": [
+            "stationary",
+            "closing"
+          ],
+          "range": [
+            "contact"
+          ]
+        }
+      },
+      "effects": [
+        {
+          "key": "outcome",
+          "type": "harm",
+          "recipient": "target",
+          "onset": "instant",
+          "persistence": "resolved",
+          "likelihood": [
+            "consistent"
+          ],
+          "mechanism": "piercing",
+          "intensity": [
+            50,
+            75
+          ]
+        }
+      ]
+    },
+    {
+      "key": "spur-pressure",
+      "name": "Spur Pressure",
+      "description": "The forelimb drills press and crush at close contact.",
+      "instrument": "spurs",
+      "targeting": [
+        "other"
+      ],
+      "activation": {
+        "continuity": [
+          "discrete"
+        ]
+      },
+      "timing": {
+        "preparation": [
+          "immediate",
+          "brief"
+        ],
+        "recovery": [
+          "repeatable",
+          "brief"
+        ]
+      },
+      "delivery": {
+        "contact": {
+          "approach": [
+            "stationary"
+          ],
+          "range": [
+            "contact"
+          ]
+        }
+      },
+      "effects": [
+        {
+          "key": "outcome",
+          "type": "harm",
+          "recipient": "target",
+          "onset": "instant",
+          "persistence": "resolved",
+          "likelihood": [
+            "consistent"
+          ],
+          "mechanism": "compression",
+          "intensity": [
+            45,
+            70
+          ]
+        }
+      ]
+    },
+    {
+      "key": "plated-limb-strike",
+      "name": "Plated Limb Strike",
+      "description": "A plated limb delivers blunt force.",
+      "instrument": "shell",
+      "targeting": [
+        "other"
+      ],
+      "activation": {
+        "continuity": [
+          "discrete"
+        ]
+      },
+      "timing": {
+        "preparation": [
+          "immediate",
+          "brief"
+        ],
+        "recovery": [
+          "repeatable",
+          "brief"
+        ]
+      },
+      "delivery": {
+        "contact": {
+          "approach": [
+            "stationary",
+            "closing"
+          ],
+          "range": [
+            "contact"
+          ]
+        }
+      },
+      "effects": [
+        {
+          "key": "outcome",
+          "type": "harm",
+          "recipient": "target",
+          "onset": "instant",
+          "persistence": "resolved",
+          "likelihood": [
+            "consistent"
+          ],
+          "mechanism": "impact",
+          "intensity": [
+            35,
+            60
+          ]
+        }
+      ]
+    },
+    {
+      "key": "body-shove",
+      "name": "Body Shove",
+      "description": "Its upright body drives into a nearby target.",
+      "instrument": "body",
+      "targeting": [
+        "other"
+      ],
+      "activation": {
+        "continuity": [
+          "discrete"
+        ]
+      },
+      "timing": {
+        "preparation": [
+          "immediate",
+          "brief"
+        ],
+        "recovery": [
+          "repeatable",
+          "brief"
+        ]
+      },
+      "delivery": {
+        "contact": {
+          "approach": [
+            "closing"
+          ],
+          "range": [
+            "contact"
+          ]
+        }
+      },
+      "effects": [
+        {
+          "key": "outcome",
+          "type": "harm",
+          "recipient": "target",
+          "onset": "instant",
+          "persistence": "resolved",
+          "likelihood": [
+            "consistent"
+          ],
+          "mechanism": "impact",
+          "intensity": [
+            30,
+            52
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,382 @@
+{
+  "key": "crystorn",
+  "name": "Crystorn",
+  "nameOrigin": "A compression of crystal and horn, naming the paired head gems through which it releases stored light.",
+  "element": "light",
+  "homePlanet": "luminax",
+  "generatorPlanets": [
+    "luminax"
+  ],
+  "lore": {
+    "description": "The gems growing out of this creature's head transmit powerful light energy, don't be deceived by its calm temperament.",
+    "appearance": [
+      "Tall, heavy biped",
+      "Shaggy fur coat",
+      "Two large faceted gems growing out of the head",
+      "Broad blunt muzzle",
+      "Open hands with an opposable digit"
+    ],
+    "origin": "One of the crystal-bearing forms the Luminax Generator grew to survive the light of the twin suns while working the fields.",
+    "habitat": "The sunward face of Luminax.",
+    "feeding": "It feeds on the light of the twin suns through the gems on its head.",
+    "behavior": "It is calm and slow and holds still, and the gems on its head transmit powerful light energy when it is provoked.",
+    "company": "It lives alone."
+  },
+  "physiology": {
+    "composition": {
+      "primary": "flesh",
+      "secondary": "mineral"
+    },
+    "bodyPlan": "biped",
+    "anatomy": [
+      "horns",
+      "fists",
+      "hide"
+    ],
+    "covering": "fur",
+    "size": {
+      "heightCm": [
+        160,
+        195
+      ],
+      "weightKg": [
+        300,
+        420
+      ]
+    },
+    "lifespan": "long",
+    "genome": {
+      "chirality": "rolled"
+    },
+    "diet": "energy-feeder",
+    "communication": [
+      "display",
+      "vocal"
+    ],
+    "breathes": [
+      "gas"
+    ],
+    "environmentalTolerance": {
+      "ambientMedia": [
+        "gas"
+      ],
+      "temperatureC": {
+        "min": 30,
+        "max": 70
+      }
+    },
+    "capabilities": {
+      "flight": [
+        0,
+        0
+      ],
+      "swim": [
+        5,
+        20
+      ],
+      "burrow": [
+        0,
+        0
+      ],
+      "climb": [
+        10,
+        25
+      ],
+      "sprint": [
+        10,
+        30
+      ],
+      "leap": [
+        10,
+        25
+      ],
+      "manipulation": [
+        45,
+        70
+      ]
+    },
+    "senses": {
+      "sight": [
+        70,
+        92
+      ],
+      "hearing": [
+        45,
+        70
+      ],
+      "smell": [
+        40,
+        65
+      ],
+      "special": []
+    },
+    "protections": [],
+    "traversal": []
+  },
+  "attributes": {
+    "strength": [
+      55,
+      78
+    ],
+    "vitality": [
+      60,
+      85
+    ],
+    "endurance": [
+      58,
+      82
+    ],
+    "agility": [
+      12,
+      32
+    ],
+    "reflex": [
+      20,
+      42
+    ],
+    "intelligence": [
+      45,
+      68
+    ],
+    "willpower": [
+      62,
+      88
+    ],
+    "instinct": [
+      40,
+      62
+    ],
+    "charisma": [
+      35,
+      60
+    ],
+    "resilience": [
+      58,
+      80
+    ]
+  },
+  "schemaVersion": "5.0.0",
+  "temperament": {
+    "boldness": [
+      20,
+      45
+    ],
+    "curiosity": [
+      20,
+      45
+    ],
+    "energy": [
+      10,
+      35
+    ],
+    "aggression": [
+      15,
+      40
+    ],
+    "sociability": [
+      10,
+      30
+    ]
+  },
+  "passives": [],
+  "signature": {
+    "type": "action",
+    "key": "crystorn-defining"
+  },
+  "actions": [
+    {
+      "key": "crystorn-defining",
+      "name": "Gem Radiance",
+      "description": "The paired head gems focus and transmit powerful light onto one target.",
+      "instrument": "horns",
+      "activation": {
+        "continuity": "discrete"
+      },
+      "timing": {
+        "preparation": "brief",
+        "recovery": "brief"
+      },
+      "delivery": {
+        "mode": "stream",
+        "approach": "stationary"
+      },
+      "targeting": [
+        "other"
+      ],
+      "spatial": {
+        "range": "medium"
+      },
+      "effects": [
+        {
+          "key": "outcome",
+          "type": "harm",
+          "recipient": "target",
+          "onset": "instant",
+          "persistence": "resolved",
+          "likelihood": "consistent",
+          "mechanism": "elemental",
+          "intensity": 68
+        }
+      ],
+      "element": "light"
+    }
+  ],
+  "mechanisms": [
+    {
+      "key": "heavy-fists",
+      "name": "Heavy Fists",
+      "description": "The heavy hands strike at close contact.",
+      "instrument": "fists",
+      "targeting": [
+        "other"
+      ],
+      "activation": {
+        "continuity": [
+          "discrete"
+        ]
+      },
+      "timing": {
+        "preparation": [
+          "immediate",
+          "brief"
+        ],
+        "recovery": [
+          "repeatable",
+          "brief"
+        ]
+      },
+      "delivery": {
+        "contact": {
+          "approach": [
+            "stationary",
+            "closing"
+          ],
+          "range": [
+            "contact"
+          ]
+        }
+      },
+      "effects": [
+        {
+          "key": "outcome",
+          "type": "harm",
+          "recipient": "target",
+          "onset": "instant",
+          "persistence": "resolved",
+          "likelihood": [
+            "consistent"
+          ],
+          "mechanism": "impact",
+          "intensity": [
+            45,
+            72
+          ]
+        }
+      ]
+    },
+    {
+      "key": "heavy-body",
+      "name": "Heavy Body",
+      "description": "Its massive frame delivers close blunt force.",
+      "instrument": "hide",
+      "targeting": [
+        "other"
+      ],
+      "activation": {
+        "continuity": [
+          "discrete"
+        ]
+      },
+      "timing": {
+        "preparation": [
+          "immediate",
+          "brief"
+        ],
+        "recovery": [
+          "repeatable",
+          "brief"
+        ]
+      },
+      "delivery": {
+        "contact": {
+          "approach": [
+            "closing"
+          ],
+          "range": [
+            "contact"
+          ]
+        }
+      },
+      "effects": [
+        {
+          "key": "outcome",
+          "type": "harm",
+          "recipient": "target",
+          "onset": "instant",
+          "persistence": "resolved",
+          "likelihood": [
+            "consistent"
+          ],
+          "mechanism": "impact",
+          "intensity": [
+            35,
+            58
+          ]
+        }
+      ]
+    },
+    {
+      "key": "focused-gem-light",
+      "name": "Focused Gem Light",
+      "description": "The head gems project concentrated light onto a selected target.",
+      "instrument": "horns",
+      "element": "light",
+      "targeting": [
+        "other"
+      ],
+      "activation": {
+        "continuity": [
+          "discrete"
+        ]
+      },
+      "timing": {
+        "preparation": [
+          "immediate",
+          "brief"
+        ],
+        "recovery": [
+          "brief",
+          "prolonged"
+        ]
+      },
+      "delivery": {
+        "stream": {
+          "approach": [
+            "stationary"
+          ],
+          "range": [
+            "short",
+            "medium"
+          ]
+        }
+      },
+      "effects": [
+        {
+          "key": "outcome",
+          "type": "harm",
+          "recipient": "target",
+          "onset": "instant",
+          "persistence": "resolved",
+          "likelihood": [
+            "consistent"
+          ],
+          "mechanism": "elemental",
+          "intensity": [
+            48,
+            75
+          ]
+        }
+      ]
+    }
+  ]
+}

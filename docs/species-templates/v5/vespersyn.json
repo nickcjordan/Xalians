@@ -1,0 +1,443 @@
+{
+  "key": "vespersyn",
+  "name": "Vespersyn",
+  "nameOrigin": "A blend of the Latin vesper, evening, and Greek syn, together, reflecting a creature of perpetual night that moves its familiars as one unit.",
+  "element": "dark",
+  "homePlanet": "grimedes",
+  "generatorPlanets": [
+    "grimedes"
+  ],
+  "lore": {
+    "description": "When in battle, this creature summons a swarm of small flying familiars with teeth like piranhas. It controls the swarm with its mind, attacking or defending as one unit.",
+    "appearance": [
+      "Small bat-shaped flier",
+      "Light",
+      "Broad membranous wings",
+      "Upright ears",
+      "Hooked claws on the forelimbs and feet",
+      "Long thin tail",
+      "Surrounded by a swarm of summoned flying familiars, toothed like piranhas"
+    ],
+    "origin": "One of the Xalians experimented on in the laboratories of Grimedes, rumored to be ECHELON black sites, rather than a labor form.",
+    "habitat": "The thick, stalky undergrowth of Grimedes, in permanent night.",
+    "feeding": "It eats what its swarm brings down.",
+    "behavior": "In battle it summons a swarm of small flying familiars with teeth like piranhas and controls them with its mind, attacking or defending as one unit. It keeps its own body inside the swarm so nothing can tell which shape matters.",
+    "company": "It goes with its swarm and nothing else."
+  },
+  "physiology": {
+    "composition": {
+      "primary": "flesh"
+    },
+    "bodyPlan": "swarm",
+    "anatomy": [
+      "wings",
+      "claws",
+      "tail",
+      "body"
+    ],
+    "covering": "hide",
+    "size": {
+      "heightCm": [
+        60,
+        90
+      ],
+      "weightKg": [
+        8,
+        16
+      ]
+    },
+    "lifespan": "short",
+    "genome": {
+      "chirality": "rolled"
+    },
+    "diet": "carnivore",
+    "communication": [],
+    "breathes": [
+      "gas"
+    ],
+    "environmentalTolerance": {
+      "ambientMedia": [
+        "gas"
+      ],
+      "temperatureC": {
+        "min": -60,
+        "max": 5
+      }
+    },
+    "capabilities": {
+      "flight": [
+        60,
+        85
+      ],
+      "swim": [
+        0,
+        10
+      ],
+      "burrow": [
+        0,
+        5
+      ],
+      "climb": [
+        35,
+        60
+      ],
+      "sprint": [
+        15,
+        35
+      ],
+      "leap": [
+        40,
+        65
+      ],
+      "manipulation": [
+        20,
+        40
+      ]
+    },
+    "senses": {
+      "sight": [
+        30,
+        55
+      ],
+      "hearing": [
+        60,
+        85
+      ],
+      "smell": [
+        25,
+        45
+      ],
+      "special": []
+    },
+    "protections": [],
+    "traversal": []
+  },
+  "attributes": {
+    "strength": [
+      15,
+      35
+    ],
+    "vitality": [
+      25,
+      45
+    ],
+    "endurance": [
+      30,
+      55
+    ],
+    "agility": [
+      55,
+      80
+    ],
+    "reflex": [
+      50,
+      75
+    ],
+    "intelligence": [
+      45,
+      70
+    ],
+    "willpower": [
+      60,
+      85
+    ],
+    "instinct": [
+      40,
+      65
+    ],
+    "charisma": [
+      25,
+      50
+    ],
+    "resilience": [
+      20,
+      40
+    ]
+  },
+  "schemaVersion": "5.0.0",
+  "temperament": {
+    "boldness": [
+      45,
+      70
+    ],
+    "curiosity": [
+      45,
+      70
+    ],
+    "energy": [
+      55,
+      80
+    ],
+    "aggression": [
+      50,
+      75
+    ],
+    "sociability": [
+      20,
+      45
+    ]
+  },
+  "passives": [
+    {
+      "key": "vespersyn-hidden-core",
+      "name": "Hidden Core",
+      "description": "The central body remains difficult to pick out within its nonliving projections.",
+      "instrument": "swarm",
+      "activation": {
+        "continuity": "ongoing"
+      },
+      "delivery": {
+        "mode": "self",
+        "approach": "stationary"
+      },
+      "targeting": [
+        "self"
+      ],
+      "spatial": {},
+      "effects": [
+        {
+          "key": "outcome",
+          "type": "status",
+          "recipient": "self",
+          "onset": "instant",
+          "persistence": "sustained",
+          "likelihood": "consistent",
+          "bound": "source",
+          "status": "concealed",
+          "removable": [
+            "disrupting"
+          ]
+        }
+      ]
+    }
+  ],
+  "signature": {
+    "type": "action",
+    "key": "vespersyn-defining"
+  },
+  "actions": [
+    {
+      "key": "vespersyn-defining",
+      "name": "Toothed Swarm",
+      "description": "The central mind directs its small nonliving projections to bite a selected target.",
+      "instrument": "swarm",
+      "activation": {
+        "continuity": "discrete"
+      },
+      "timing": {
+        "preparation": "immediate",
+        "recovery": "brief"
+      },
+      "delivery": {
+        "mode": "field",
+        "approach": "stationary"
+      },
+      "targeting": [
+        "other"
+      ],
+      "spatial": {
+        "range": "short"
+      },
+      "effects": [
+        {
+          "key": "outcome",
+          "type": "harm",
+          "recipient": "target",
+          "onset": "instant",
+          "persistence": "resolved",
+          "likelihood": "consistent",
+          "mechanism": "piercing",
+          "intensity": 62
+        }
+      ]
+    },
+    {
+      "key": "vespersyn-guard",
+      "name": "Swarm Guard",
+      "description": "The projections gather around the central body to intercept harm.",
+      "instrument": "swarm",
+      "activation": {
+        "continuity": "discrete"
+      },
+      "timing": {
+        "preparation": "immediate",
+        "recovery": "brief"
+      },
+      "delivery": {
+        "mode": "self",
+        "approach": "stationary"
+      },
+      "targeting": [
+        "self"
+      ],
+      "spatial": {},
+      "effects": [
+        {
+          "key": "outcome",
+          "type": "protect",
+          "recipient": "self",
+          "onset": "instant",
+          "persistence": "resolved",
+          "likelihood": "consistent",
+          "intensity": 55
+        }
+      ]
+    }
+  ],
+  "mechanisms": [
+    {
+      "key": "swarm-bite",
+      "name": "Swarm Bite",
+      "description": "Mind-guided toothed projections attack a selected target.",
+      "instrument": "swarm",
+      "targeting": [
+        "other"
+      ],
+      "activation": {
+        "continuity": [
+          "discrete"
+        ]
+      },
+      "timing": {
+        "preparation": [
+          "immediate",
+          "brief"
+        ],
+        "recovery": [
+          "repeatable",
+          "brief"
+        ]
+      },
+      "delivery": {
+        "field": {
+          "approach": [
+            "stationary"
+          ],
+          "range": [
+            "short",
+            "medium"
+          ]
+        }
+      },
+      "effects": [
+        {
+          "key": "outcome",
+          "type": "harm",
+          "recipient": "target",
+          "onset": "instant",
+          "persistence": "resolved",
+          "likelihood": [
+            "consistent"
+          ],
+          "mechanism": "piercing",
+          "intensity": [
+            42,
+            68
+          ]
+        }
+      ]
+    },
+    {
+      "key": "swarm-interpose",
+      "name": "Swarm Interpose",
+      "description": "Projections intercept harm around the central body or another target.",
+      "instrument": "swarm",
+      "targeting": [
+        "self",
+        "other"
+      ],
+      "activation": {
+        "continuity": [
+          "discrete"
+        ]
+      },
+      "timing": {
+        "preparation": [
+          "immediate",
+          "brief"
+        ],
+        "recovery": [
+          "brief"
+        ]
+      },
+      "delivery": {
+        "contact": {
+          "approach": [
+            "stationary"
+          ],
+          "range": [
+            "contact"
+          ]
+        }
+      },
+      "effects": [
+        {
+          "key": "outcome",
+          "type": "protect",
+          "recipient": "target",
+          "onset": "instant",
+          "persistence": "resolved",
+          "likelihood": [
+            "consistent"
+          ],
+          "intensity": [
+            35,
+            62
+          ]
+        }
+      ]
+    },
+    {
+      "key": "central-claws",
+      "name": "Central Claws",
+      "description": "The central body's claws cut at close contact.",
+      "instrument": "claws",
+      "targeting": [
+        "other"
+      ],
+      "activation": {
+        "continuity": [
+          "discrete"
+        ]
+      },
+      "timing": {
+        "preparation": [
+          "immediate",
+          "brief"
+        ],
+        "recovery": [
+          "repeatable",
+          "brief"
+        ]
+      },
+      "delivery": {
+        "contact": {
+          "approach": [
+            "stationary",
+            "closing"
+          ],
+          "range": [
+            "contact"
+          ]
+        }
+      },
+      "effects": [
+        {
+          "key": "outcome",
+          "type": "harm",
+          "recipient": "target",
+          "onset": "instant",
+          "persistence": "resolved",
+          "likelihood": [
+            "consistent"
+          ],
+          "mechanism": "cutting",
+          "intensity": [
+            28,
+            48
+          ]
+        }
+      ]
+    }
+  ]
+}
