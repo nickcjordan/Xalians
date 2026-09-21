@@ -23,6 +23,7 @@
 */
 import { chromium } from 'playwright-core';
 import { mkdir } from 'node:fs/promises';
+import { seenOn } from './lib/visible.mjs';
 const EDGE = process.env.REC_QA_EDGE || 'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe';
 const output = process.env.REC_QA_OUTPUT || 'C:/Users/njord/AppData/Local/Temp/reclamation-qa';
 const base = process.env.REC_QA_BASE || 'http://127.0.0.1:4173';
@@ -76,8 +77,16 @@ console.log(`behaviours offered: ${words.join(', ') || 'none'}`);
 console.log(`chose: ${chosen}  role that landed on the board: ${landedRole}`);
 
 // play on to the Charter
+/*
+	SCHEMA 5 MADE A ROUND LONGER, so the loop budget needed headroom. The v5 roster throws
+	more attacks per Clash (measured: 172 sampled playback frames against 112 under schema
+	4), and at 400 iterations this check intermittently ran out before reaching the
+	Charter and reported `reached the Charter: false` on a healthy build. A check that
+	fails on good code teaches you to ignore it, so the budget is raised rather than the
+	failure tolerated.
+*/
 let guard = 0; let reached = false;
-while (guard++ < 400) {
+while (guard++ < 900) {
 	const skip = page.locator('[data-skip]');
 	if (await skip.count() && await skip.first().isVisible()) { await skip.first().click(); continue; }
 	const nf = page.locator('[data-next-frame]');
@@ -96,7 +105,20 @@ while (guard++ < 400) {
 }
 console.log(`reached the Charter: ${reached}`);
 if (errs.length) console.log(`PAGE ERRORS: ${errs.join(' | ')}`);
-const ok = pickerFor && words.length > 1 && chosen && landedRole === chosen && reached && errs.length === 0;
+/*
+	PASS 31. The board must be readable, not merely present.
+
+	Audited by setting `.rec-site { opacity: 0 }` and re-running every check: this one
+	passed with the entire game board invisible, because it only ever asked what the DOM
+	contained. The role it chose landing on the board means nothing if the board cannot
+	be seen.
+*/
+const panels = await seenOn(page, '[data-site-id]');
+const unseen = panels.filter((r) => !r.seen).map((r) => `${r.id}: ${r.reasons.join(', ')}`);
+console.log(`world panels seen: ${panels.filter((r) => r.seen).length} of ${panels.length}${unseen.length ? ` (${unseen.join(' | ')})` : ''}`);
+
+const ok = pickerFor && words.length > 1 && chosen && landedRole === chosen && reached && errs.length === 0
+	&& panels.length >= 3 && unseen.length === 0;
 console.log(ok ? 'PASS' : 'FAIL');
 if (!ok) process.exitCode = 1;
 await browser.close();

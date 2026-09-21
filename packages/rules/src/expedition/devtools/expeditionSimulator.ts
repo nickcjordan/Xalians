@@ -68,7 +68,7 @@ import {
 	RETURNED_SEND_COST, ROLE,
 } from '../expeditionInterpretation.ts';
 import { chooseSend, chooseStake, rivalById, DEFAULT_RIVAL_ID } from '../expeditionBot.ts';
-import { prepare, baseHold, speedOf, strainLevel, roleOf } from '../creatureOnTable.ts';
+import { prepare, baseHold, speedOf, strainLevel, roleOf, isFieldable } from '../creatureOnTable.ts';
 import { buildExpeditionPool } from '../roster.ts';
 import { getWorlds } from '../sites.ts';
 import type { BotAction, FrameSite, MatchState, PublicState, RngLike, Rival, RulesInput, Seat } from '../types.ts';
@@ -260,6 +260,23 @@ function randomChooseSend(publicState: PublicState, ownRoster: XalianRecord[], h
 	const candidates: Array<{ record: XalianRecord; site: FrameSite }> = [];
 	ownRoster.forEach((record: any) => {
 		if ((returnedIds.has(record.id) ? RETURNED_SEND_COST : 1) > capRemaining) {
+			return;
+		}
+		/*
+			SCHEMA 5 EXPOSED A LATENT BUG HERE. This policy advertises itself as "uniformly
+			random among LEGAL actions", and `send()` rejects an unfieldable creature, so an
+			unfieldable record in the candidate list makes the policy propose an illegal
+			action and the match abort.
+
+			It never fired under schema 4 because every generated creature was fieldable. Under
+			schema 5 about 6% are not: measured over 320 creatures from the frozen release, 18
+			have no action this table can express, because their whole repertoire is statuses
+			the Proving does not carry (Hypnopet is 20 of 20, entrancement).
+
+			So this is not a fault schema 5 introduced; it is one schema 5 revealed, in a
+			policy whose only job is to stay legal.
+		*/
+		if (!isFieldable(record)) {
 			return;
 		}
 		frame.sites.forEach((site: any) => {

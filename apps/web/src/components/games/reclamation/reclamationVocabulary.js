@@ -149,3 +149,23 @@ export function breathesLine(physiology) {
 	}
 	return `breathes ${list.map((m) => mediumName(m).toLowerCase()).join(' and ')}`;
 }
+
+/*
+	SCHEMA 5. THE ELEMENT IS A BARE STRING.
+
+	Schema 4 wrote `element: { primary, affinities }`; schema 5 writes `element: 'ice'`,
+	because it retired the secondary-element roll and affinity strength. Five components
+	read `record.element.primary` directly, which throws on a v5 record, so the read lives
+	here once instead.
+
+	Accepting both shapes is deliberate rather than defensive: the game opens archived
+	records (the adapter keeps a schema 1 path for the same reason), and a stored record
+	from before the migration should still render its element chip.
+*/
+export function elementOf(record) {
+	const element = record && record.element;
+	if (!element) {
+		return null;
+	}
+	return typeof element === 'string' ? element : (element.primary || null);
+}

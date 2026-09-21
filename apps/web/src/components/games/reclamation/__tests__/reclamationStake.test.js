@@ -256,19 +256,25 @@ describe('hiding, on the bench (Nick, 2026-09-13: no longer a choice)', () => {
 		};
 	}
 
-	it('arming a stealthy creature prints the arrives-hidden lead, and no hidden toggle is ever rendered', () => {
+	/*
+		SCHEMA 5 RETIRED `traits`, SO NO CREATURE IS STEALTHY ANY MORE.
+
+		Hiding was driven by the `stealthy` trait keyword; schema 5 rejects the whole
+		`traits` array, and measured over 96 generated creatures none of the six keyword
+		behaviours the table read (stealthy, armored, resilient, menacing, pack-bonded,
+		solitary) is true for anybody. Hiding is therefore inert rather than removed: the
+		code path still exists and nothing reaches it.
+
+		This test is kept, inverted, rather than deleted. It is what proves the claim above
+		is still true, and it is what will fail the day hiding is given a schema 5 source
+		(`physiology.protections` and the graded `capabilities` are the candidates; see
+		docs/design/reclamation-v5-migration.md). The rendering assertions move to the
+		non-stealthy case below, which is now every creature.
+	*/
+	it('no creature is stealthy under schema 5, so nothing arrives hidden', () => {
 		const { view } = makeView('A');
 		const mine = withTurn(view, 'A');
-		const stealthy = stealthyIdOf(mine);
-		expect(stealthy).toBeTruthy();
-
-		mount(<ReclamationBench {...benchProps(mine, { armedRecordId: stealthy })} />);
-		const lead = container.querySelector('[data-bench-lead]').textContent;
-		expect(lead).toContain('Stealthy: it arrives hidden. The rival will not see it until the worlds clash.');
-		expect(container.querySelector('[data-hidden-toggle]')).toBeFalsy();
-		expect(container.querySelector('[data-hidden-price]')).toBeFalsy();
-		// the send pips preview one spent, the same as any other send
-		expect(container.querySelectorAll('.rec-send-pip--pending').length).toBe(1);
+		expect(stealthyIdOf(mine)).toBeNull();
 	});
 
 	it('arming a non-stealthy creature prints no hidden language and still no toggle', () => {

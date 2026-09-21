@@ -3,7 +3,7 @@ import XalianImage from '../../xalianImage';
 import { speciesLabel, formatHold } from './reclamationNarration';
 import { prepare, baseHold, strainMultiplierFor } from '@xalians/rules/expedition/creatureOnTable';
 import { HoldMeter } from './reclamationFigure';
-import { elementName } from './reclamationVocabulary';
+import { elementName, elementOf } from './reclamationVocabulary';
 
 /*
 	ReclamationRoster — your twelve, as the Duel's roster rail draws a squad.
@@ -93,7 +93,7 @@ export function RosterSlot({
 	compact,
 	simple,
 }) {
-	const el = record.element.primary;
+	const el = elementOf(record);
 	const classes = ['rec-slot', `rec-slot--${slot.state}`, `g-el-${el}`];
 	if (armed) classes.push('rec-slot--armed');
 	if (suggested) classes.push('rec-slot--suggested');

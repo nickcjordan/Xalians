@@ -13,8 +13,7 @@ import { RoleGlyph, SwiftGlyph, WillfulGlyph, InstinctGlyph } from './reclamatio
 import XalianImage from '../../xalianImage';
 import {
 	speciesFacts, archetypeLabel, traitName, traitNature,
-	elementName, sizeLine, toleranceLine, breathesLine, coveringName, bodyPlanName,
-} from './reclamationVocabulary';
+	elementName, sizeLine, toleranceLine, breathesLine, coveringName, bodyPlanName, elementOf } from './reclamationVocabulary';
 import { TRAIT } from '@xalians/rules/expedition/expeditionInterpretation';
 
 // the traits this game reads (design doc, "Instinct"); every other trait is shown but marked
@@ -98,7 +97,7 @@ function ReclamationInspect({ record, site, frame, rules, onClose }) {
 	const target = site || frame.sites[0];
 	const world = target.world;
 	const prepared = prepare(record, target, world, 0, { rules });
-	const el = record.element.primary;
+	const el = elementOf(record);
 	const armored = prepared.armored;
 	const facts = speciesFacts(record);
 	const traits = prepared.traitKeywords;

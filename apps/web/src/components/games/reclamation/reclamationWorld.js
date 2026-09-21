@@ -1,7 +1,8 @@
 import React from 'react';
 import ReclamationFigure, { ReclamationSilhouette, HoldMeter } from './reclamationFigure';
 import { RoleGlyph } from './reclamationGlyphs';
-import { formatHold, countWord } from './reclamationNarration';
+import { formatHold, formatHoldShown, countWord } from './reclamationNarration';
+import { elementOf } from './reclamationVocabulary';
 
 /*
 	ReclamationWorld — the frame: three worlds side by side, each at one of its sites.
@@ -260,6 +261,29 @@ function ReclamationWorld({
 	// pass 28: while a world is clashing the other two recede, so the eye has somewhere
 	// to go. Only ever set during playback, and released at the Court's ruling.
 	const clashing = clashSiteId || null;
+
+	/*
+		PASS 30. The entrance is worn for its own duration and then taken off.
+
+		It used to be a permanent class, which was harmless only because nothing else
+		animated the panel: the animation ran once on mount and sat filled forever. Pass 28
+		added the camera, a second animation on the same element, and when the camera
+		released at the Court's ruling the browser restarted `rec-site-enter` from opacity
+		zero - so the verdict, the payoff of the whole round, was delivered over a board
+		fading in from nothing. A blind critic called that frame "an empty page" and rated
+		it a shipping blocker.
+
+		Dropping the class once the entrance has played makes it a one-shot, which is what
+		it always meant to be, and lets the camera come and go without the panel
+		re-entering behind it. Keyed off the component's own mount rather than off any
+		phase, so it cannot be re-armed by a state change mid-round.
+	*/
+	const [entered, setEntered] = React.useState(true);
+	React.useEffect(() => {
+		// 460ms animation plus the longest per-panel stagger (2 x 110ms), with room
+		const timer = setTimeout(() => setEntered(false), 900);
+		return () => clearTimeout(timer);
+	}, []);
 	const arrivedIds = arrival ? arrival.ids : [];
 	const stakeable = new Set(stakeableSiteIds || []);
 
@@ -287,7 +311,30 @@ function ReclamationWorld({
 					const stakedHere = !!(stake && stake.by && stake.by.length > 0);
 					const canStake = !!onStake && stakeable.has(site.id);
 
-					const classes = ['g-panel', 'rec-site', 'rec-site--enter', `rec-site--${margin.who}`, `g-el-${site.world.element}`];
+					/*
+						PASS 30, A BUG PASS 28 INTRODUCED.
+
+						`rec-site--enter` used to be harmless as a permanent class: its animation
+						runs once when the element is created and then sits filled. Pass 28 added
+						the camera, which puts a DIFFERENT animation on the same element while a
+						world is clashing. When the camera releases at the Court's ruling, the
+						element's animation list changes back and the browser starts
+						`rec-site-enter` AGAIN, from opacity 0.
+
+						The result was that the Court's verdict, the payoff of the whole round,
+						was delivered over a board fading in from nothing. A blind critic called
+						the ruling frame "an empty page" and rated it a shipping blocker; the
+						probe confirmed all three panels running `rec-site-enter` at the judge
+						event, at opacities 0.67, 0.89 and 0.98.
+
+						So the entrance is worn only while it is actually entering. Once a round
+						has been played at this frame it is dropped, and the camera can come and
+						go without the panel re-entering behind it.
+					*/
+					const classes = ['g-panel', 'rec-site', `rec-site--${margin.who}`, `g-el-${site.world.element}`];
+					if (entered) {
+						classes.push('rec-site--enter');
+					}
 					// the site something just landed on pulses in the colour of who sent it
 					if (arrival && arrival.siteId === site.id) {
 						classes.push(arrival.seat === you ? 'rec-site--landed-mine' : 'rec-site--landed-theirs');
@@ -333,7 +380,7 @@ function ReclamationWorld({
 					// warns loudly about a key arriving through a props object
 					const figureProps = (entry, seat, facing) => ({
 						record: entry.record,
-						element: entry.record.element.primary,
+						element: elementOf(entry.record),
 						seat,
 						you,
 						facing,
@@ -352,6 +399,8 @@ function ReclamationWorld({
 						dimmed: holdingIds && holdingIds.includes(entry.recordId),
 						acting: hl.acting === entry.recordId,
 						hit: hl.hit === entry.recordId,
+						// pass 32: the engine step, so an animation replays on a repeat actor
+						beat: hl.beat,
 						hover: hl.hover === entry.recordId,
 						flash: hl.hit === entry.recordId ? hl.flash : undefined,
 						arrive: arrivedIds.includes(entry.recordId),
@@ -419,7 +468,13 @@ function ReclamationWorld({
 									<div className={`rec-tally rec-tally--${margin.who}${hiddenBar ? ' rec-tally--hidden' : ''}${ghost ? ' rec-tally--preview' : ''}`} data-site-margin={site.id}>
 										<span className="rec-tally-side rec-tally-side--theirs">
 											<span className="rec-tally-label">rival</span>
-											<span className="rec-tally-value rec-tick" data-total-seat={opponent} data-site-total={site.id} key={`t-${formatHold(totalTheirs)}`}>{formatHold(totalTheirs)}</span>
+											{/*
+												pass 30: the two big totals either side of the balance bar round.
+												The MARGIN SENTENCE below keeps its tenth deliberately: "you lead
+												by 0.4" is a real and actionable state, and rounding it would print
+												"you lead by 0" over a world that is genuinely, narrowly yours.
+											*/}
+											<span className="rec-tally-value rec-tick" title={formatHold(totalTheirs)} data-total-seat={opponent} data-site-total={site.id} key={`t-${formatHold(totalTheirs)}`}>{formatHoldShown(totalTheirs)}</span>
 										</span>
 										{(() => {
 											// the balance: the rival's hold pushes in from the left, yours from the
@@ -440,7 +495,7 @@ function ReclamationWorld({
 											);
 										})()}
 										<span className="rec-tally-side rec-tally-side--mine">
-											<span className="rec-tally-value rec-tick" data-total-seat={you} data-site-total={site.id} key={`m-${formatHold(totalMine)}`}>{formatHold(totalMine)}</span>
+											<span className="rec-tally-value rec-tick" title={formatHold(totalMine)} data-total-seat={you} data-site-total={site.id} key={`m-${formatHold(totalMine)}`}>{formatHoldShown(totalMine)}</span>
 											{ghost && <span className="rec-tally-plus">+{formatHold(ghostHold)}</span>}
 											<span className="rec-tally-label">you</span>
 										</span>

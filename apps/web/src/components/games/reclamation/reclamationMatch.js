@@ -1917,6 +1917,8 @@ class ReclamationMatch extends React.Component {
 			if (playback.current.site) {
 				highlights.clashSiteId = playback.current.site;
 			}
+			// pass 32: the step index, so a figure acting twice running replays its animation
+			highlights.beat = playback.index;
 			if (kind === 'attack' || kind === 'sweep' || kind === 'shield') {
 				highlights.acting = playback.current.recordId;
 				highlights.hit = playback.current.target || null;
@@ -2236,6 +2238,18 @@ export function stepWeight(event) {
 		if (event.outcome === 'downed') return 1.9;
 		if (event.outcome === 'cancelled') return 0.7;
 		if (event.outcome === 'hurt') return 1;
+		/*
+			SCHEMA 5 MADE THE EMPTY BEATS MATTER. An attack whose target is already down or
+			out of reach produces an event with nothing to show: no figure moves, no flash
+			appears, the log gains a line. Measured on the v5 roster, those are 16.6% lapsed
+			plus 9.9% no-target, so over a QUARTER of attacks are a held pause on a still
+			board. The clash gauge caught it as motion falling to 33% of frames while every
+			animation still worked: the round had not gone quiet, it had got longer.
+
+			They are still told, because a player needs to know a blow was thrown and missed,
+			but they are got out of the way rather than dwelt on.
+		*/
+		if (event.outcome === 'lapsed' || event.outcome === 'no-target') return 0.35;
 		return 0.7;
 	}
 	if (event.type === 'sweep') {

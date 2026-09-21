@@ -2,7 +2,7 @@
 
 Status: the running state of the game under ownership (brief: `reclamation-ownership-brief.md`). This file is the resume point. Any reset reads this first and continues at the weakest thing named below, never from scratch. Each pass appends its own section; the standing state at the top is rewritten in place.
 
-## Standing state (after pass 29, 2026-09-20)
+## Standing state (after pass 31, 2026-09-20)
 
 ### Gauges, proctor mirror
 
@@ -17,7 +17,7 @@ Pass 6 changed no rule. It re-read two gauges with enough statistical power to s
 | **Affordance: comprehension by prediction** | beat deploy-totals-only | **12 of 12 (100%)**, 3 of 3 on flipped worlds (pass 11, with the resolution trace; was 92% and 1 of 2) | **met with room** |
 | Contested worlds where no attack lands at all | reported only | 9.5 / 11.1 / 10.4 percent | **judged pass 14: not a hole** |
 | A side fielding only presences wins its world | reported only | 41.9% +/- 1.5 against 53.0% +/- 1.2 with an attacker | fielding no attacker is a worse bet, not a free win |
-| **Rubric critic score** | rising per pass | **55 / 100** (pass 27, a HARSHER read than pass 14's 65; see pass 27) | fiction 9, first five minutes 8, feedback 8, glanceability 7, craft 7; lowest: mobile 3 (on a bug that did not exist), reason to keep playing 5, numbers 6, style 6, pace 6 |
+| **Rubric critic score** | rising per pass | **60 / 100** (pass 30, the FIRST read of captures that watch a Clash; 55 at pass 27) | style 8, first five minutes 7, craft 7, fiction 7; lowest: **mobile 3**, pace 5, numbers 5, glanceability 6, reason to keep playing 6, feedback 6 |
 | **Comeback from a CONTESTED round 1** (trailing by one or two worlds) | 30 to 40 | **30.8 / 32.0 / 35.1**; pooled 29.1 +/- 1.4 | **met on three seeds** |
 | Comeback from a SWEPT round 1 (trailing by three) | not safeguarded, by ruling | 7 to 12 percent; pooled 8.0 +/- 1.8 | working as ruled |
 | Comeback, both populations averaged | (the old single gauge) | 25.9 / 27.1 / 30.7; pooled 25.2 +/- 1.2 | reported, superseded by the split |
@@ -58,8 +58,8 @@ What it reads, and where each effect kind lands (measured over the seed-7 pool, 
 
 **Nick's steer, 2026-09-19: the priority is whether the game is mechanically deep and fun, not how two people play it.**
 
-1. **Re-score the critic on captures that can see motion, and on the new opening board.** Passes 28 and 29 both attacked scores the critic gave (pace 3, reason to keep playing 4) and neither has been re-read. Pass 28 also established that every capture set ever scored had `reducedMotion: 'reduce'` set and skipped the Clash, so the pace score of 3 was given to still frames of an animation. **This is now the top item**: it is the cheapest, and it gates knowing whether either pass worked for a reader rather than for a gauge. Any re-score must use a capture set that watches a Clash.
-2. **Decimals everywhere, the rest of it.** Pass 28 rounded the damage flash, which is the surface read fastest. Hold is still printed to tenths on the figure, the bench, the margin band and the Charter; the critic called the Charter "a wall of fifteen decimals in one column". The inspector keeps its tenths by design. Do the Charter next, then the figure.
+1. **Mobile scored 3 of 10, now the lowest score on the sheet.** The overlap bug is fixed, but the critic's structural complaint stands: "the three worlds need a horizontal swipe-carousel or a compact three-up summary row, because vertical stacking destroys the comparison the game is built on." At 390 you cannot see two worlds at once, so **the core act of the game, comparing three worlds to choose one, requires scrolling three times.** This is the weakest thing left and it is a layout decision, not a polish item.
+2. **The Clash still narrates itself in a log above the board.** Pass 28 made the board move; the critic still says "the narration of the fight is happening in a monospace log at the top of the page, which is paperwork by definition" and reads the SKIP button as the designer conceding the Clash is not worth watching. The next move is the sentence landing ON the world card rather than in the terminal.
 3. **The footing answers "who can stand here", not "what does holding it do".** Pass 29 gave the empty world the half of the stake the game can compute from the record. The other half - what claiming a world is worth toward the Charter, what losing it costs - is still only in the status strip's sentence. Five of nine worlds clinch; a panel could say where this one sits in that count.
 4. **Advanced mode is Simple on a phone.** `advanced-390` differs from `simple-390` only by a temperature range: the log and the inspector, its two best features, are both absent at 390. Either give them a phone form or say the mode is desktop-only.
 5. **The first viewport on a phone is all chrome.** Breadcrumb, mode toggle, rival name, sound, round header, world chips, two score strips, phase badge, turn line and a three-line instruction, before any world panel.
@@ -110,6 +110,57 @@ The single place the game's reading of a creature is decided:
 - `packages/rules/src/expedition/expeditionInterpretation.ts` holds every tunable as a named constant; `expeditionRules.DEFAULT_RULES` holds every ablation flag.
 
 ## Pass log
+
+### Pass 31 (2026-09-20): the checks were asking the wrong question
+
+**Weakest thing:** Nick asked whether the verification problem pass 30 admitted to had actually been fixed, or whether the results were still coming from the wrong layer. The honest answer was that pass 30 fixed one instance and left the class open.
+
+**The audit that settled it.** Set `.rec-site { opacity: 0 }`, which makes the entire game board invisible while leaving the DOM untouched, and re-ran everything:
+
+| | healthy build | board invisible |
+|---|---|---|
+| before this pass | 4 checks pass | **4 checks pass** |
+| after | 4 checks pass | **4 checks fail** |
+
+**All four headless checks passed with the whole board invisible.** Every assertion they made about the board was `count() > 0`, which is a question about the DOM. That is precisely why pass 28's blank-ruling bug survived four checks and 1541 unit tests: `querySelectorAll('[data-site-id]').length` was 3 throughout a screen a player would have called empty.
+
+**What shipped:** `apps/web/scripts/lib/visible.mjs`, one shared probe asking whether an element is actually seen. It walks the ancestor chain multiplying opacity, checks display/visibility/content-visibility, confirms the box is in the document, and hit-tests several points down the element so something drawn over it is caught. All four checks now gate on it.
+
+**Three faults in the probe itself, each caught by running it against a HEALTHY build.** A check that fails on a good build is worse than no check, because it teaches you to ignore it.
+
+1. **It called below-the-fold "not visible".** On a phone, worlds 2 and 3 sit under world 1 and are reached by scrolling; that is the known mobile layout problem, not a rendering fault. Being outside the document is now the fault; being outside the viewport is reported separately.
+2. **It called a sticky bar crossing a panel's middle "covered".** The judge bar pins across a tall world panel on a phone, and the panel above and below it is perfectly readable. It now samples five points and fails only when every one is behind something else.
+3. **It read the board mid-entrance and reported 0 of 3 on a healthy build.** The panels fade in over 460ms plus a stagger. The hot-seat check now waits for the board to settle, because the question is whether the board is readable while a handler is deciding.
+
+**A real finding kept, not fixed:** on a phone the judge bar does overlap the first world panel at the ruling. It is partial and the panel is readable around it, so it is recorded here rather than patched with padding that did not work (`.rec-table` padding-bottom was tried and had no effect, since the bar is sticky inside that element).
+
+**The rule this pass adds to the sheet:** every gauge is audited by breaking the thing it claims to measure and confirming it fails, AND by running it against a healthy build and confirming it passes. Pass 28 did the first half for the motion gauge. Doing only the first half produces a check that cries wolf; doing only the second produces a check that cannot fail.
+
+**Verification.** 1541 web tests green, all four headless checks green on the healthy build and all four red on an invisible board.
+
+
+### Pass 30 (2026-09-20): a critic that can see the game, and two bugs it found
+
+**Weakest thing:** passes 28 and 29 both attacked scores the critic gave and neither had been re-read. Worse, pass 28 had established that **every capture set a critic had ever scored was taken with `reducedMotion: 'reduce'` and with the Clash skipped**, so no score in the log had ever been given to the game as a player sees it.
+
+**What shipped first: a capture set that watches the game.** `apps/web/scripts/reclamation-captures.mjs` takes eleven shots per width with motion left on, the Clash watched rather than skipped, and the moments chosen by what the game is DOING (a blow landing, the Court ruling) rather than by a timer. 22 captures at 1440 and 390, 3 blows and the ruling caught at both widths.
+
+**The blind critic scored 60 of 100**, against 55 at pass 27. The two passes it was implicitly grading both moved: it called the armed-state preview "a real decision with a real preview", and quoted the footing back as "a rule and a piece of worldbuilding in the same sentence". Pace rose 3 to 5 and reason to keep playing 4 to 6.
+
+**But it found two correctness bugs, and both were mine.**
+
+**1. The Court's ruling was delivered over a blank board.** The critic called `1440-07-ruling` "an empty page" and a shipping blocker; the capture shows the header, the log, and then 600px of nothing. Confirmed by probe: the site panels were never unmounted, they were **re-running their entrance animation from opacity zero at the judge event**. The cause was pass 28. `rec-site--enter` had always been a permanent class, which was harmless only because nothing else animated the panel: the animation ran once on mount and sat filled. Pass 28 put the camera on the same element, and when the camera released at the ruling the browser restarted `rec-site-enter`. So the payoff of the round was delivered over a board fading in from nothing, in every round of every match, and four headless checks plus 1541 tests all passed. The entrance is now a one-shot dropped 900ms after mount.
+
+**2. The phone's world panels drew their edge bands on top of the footing.** Pass 13 had collapsed the empty panel to nothing on a phone because its whole body was the word "unclaimed": ranks at zero height with the RIVAL and YOU bands absolutely positioned inside them. Pass 29 put three lines of text in that body and the bands came down over it. The first fix padded the midline, which moved the text and the bands together and changed nothing; **the geometric probe still reported both bands intersecting the footing's rectangle**, which is how it was caught rather than declared fixed. The room had to come from the ranks.
+
+**Also shipped: the rest of the decimals** (open item 2). `formatHoldShown()` rounds every displayed hold on the Charter's world rows, its creature lines, the figure under each creature and the two totals beside the balance bar; the exact value moves to the title attribute. It differs from `formatBlow` in one way that matters: a hold of zero is a real state, so it prints 0 rather than clamping to 1. **The margin sentence deliberately keeps its tenth**, because "you lead by 0.4" is actionable and "you lead by 0" over a world that is narrowly yours would be a lie.
+
+**Guarded.** The proving check now compares two rectangles, not a class name: it asserts no world's edge band intersects its footing text, in all four configurations. Falsified by reverting the fix, it fails on both phone configs with a message naming the defect.
+
+**The lesson this pass paid for.** Two of the last three passes shipped a bug that every existing check passed, and both were found by a reader looking at a picture. **A check that watches the thing a player watches is worth more than another assertion about state.** The capture harness is now the instrument for that, and it should be run and re-scored every few passes rather than once.
+
+**Verification.** 1541 web tests green (the art-registry test's `process.cwd()` flake under the root runner is unrelated and passes 6/6 from its own workspace), all four headless checks green at 1440 and 390.
+
 
 ### Pass 29 (2026-09-20): what a world asks of your squad
 

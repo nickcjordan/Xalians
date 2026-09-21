@@ -1,3 +1,4 @@
+import { elementOf } from './reclamationVocabulary';
 import React from 'react';
 import {
 	InfoGlyph, HiddenGlyph, RoleGlyph, SwiftGlyph, WillfulGlyph, InstinctGlyph,
@@ -59,7 +60,7 @@ function Plinth({ record, view, you, armed, suggested, disabled, onArm, onInspec
 	// the attribute lanes that are actually doing something for this creature: the marks
 	// beside the speed number, each with its own lane sentence (Pass 2, assumption 17)
 	const laneMarks = attributeLanes(readAt, view.rules).filter((l) => l.glyph);
-	const el = record.element.primary;
+	const el = elementOf(record);
 	const classes = ['rec-plinth', `rec-plinth--${slot.state}`];
 	if (armed) classes.push('rec-plinth--armed');
 	if (suggested && inHand) classes.push('rec-plinth--suggested');

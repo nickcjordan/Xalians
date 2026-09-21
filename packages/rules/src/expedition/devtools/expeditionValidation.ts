@@ -80,7 +80,7 @@ import {
 } from '../expeditionInterpretation.ts';
 import { chooseSend, chooseStake, scoreSends, RIVALS, rivalById, DEFAULT_RIVAL_ID } from '../expeditionBot.ts';
 import { buildExpeditionPool } from '../roster.ts';
-import { prepare, roleOf } from '../creatureOnTable.ts';
+import { prepare, roleOf, isFieldable } from '../creatureOnTable.ts';
 import { buildDraftPools, botDraft, draftOptionsFromRules } from '../draft.ts';
 import { getWorlds } from '../sites.ts';
 import fs from 'node:fs';
@@ -303,7 +303,15 @@ function policyRandom(publicState: any, ownRoster: any, handler: any, rng: any) 
 	const cap = typeof me.sendableCap === 'number' ? me.sendableCap : SENDABLE;
 	const capRemaining = cap - me.sentCount;
 	const returnedIds = new Set(me.returned || []);
-	const affordable = ownRoster.filter((r: any) => (returnedIds.has(r.id) ? RETURNED_SEND_COST : 1) <= capRemaining);
+	/*
+		SCHEMA 5. Fieldability joins affordability as a legality gate, for the same reason
+		the comment above gives: "uniformly random among LEGAL actions" has to mean legal,
+		and `send()` rejects an unfieldable creature. Every schema 4 creature was fieldable
+		so this never bit; under schema 5 about 6% are not, because their whole repertoire
+		is statuses this Proving does not carry.
+	*/
+	const affordable = ownRoster.filter((r: any) => (returnedIds.has(r.id) ? RETURNED_SEND_COST : 1) <= capRemaining
+		&& isFieldable(r));
 	if (affordable.length === 0) {
 		return { type: 'pass', reason: 'nothing-affordable' };
 	}

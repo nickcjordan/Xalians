@@ -1,5 +1,5 @@
 import React from 'react';
-import { speciesLabel, formatHold, roleSentence } from './reclamationNarration';
+import { speciesLabel, formatHold, formatHoldShown, roleSentence } from './reclamationNarration';
 import { RoleGlyph } from './reclamationGlyphs';
 import { createTelemetry } from './reclamationTelemetry';
 import { RIVALS } from '@xalians/rules/expedition/expeditionBot';
@@ -362,9 +362,10 @@ function CreatureLine({ entries }) {
 						</span>
 					)}
 					<span className="rec-report-creature-name">{speciesLabel(e.record)}</span>
-					<span className="rec-report-creature-hold g-mono">{formatHold(e.hold)}</span>
+					{/* pass 30: the face rounds, the title keeps the tenth for anyone who wants it */}
+					<span className="rec-report-creature-hold g-mono" title={`hold ${formatHold(e.hold)}`}>{formatHoldShown(e.hold)}</span>
 					{e.recovered > 0 && (
-						<span className="rec-report-creature-recovered g-mono" title={`Recovered ${formatHold(e.recovered)} under a bolster at the Ruling`}>+{formatHold(e.recovered)}</span>
+						<span className="rec-report-creature-recovered g-mono" title={`Recovered ${formatHold(e.recovered)} under a bolster at the Ruling`}>+{formatHoldShown(e.recovered)}</span>
 					)}
 					{e.fate === 'downed' && <span className="rec-report-creature-fate">downed</span>}
 				</span>
@@ -392,13 +393,19 @@ function WorldRow({ world, you }) {
 					</span>
 				)}
 				<span className="rec-report-world-site">{world.siteName}</span>
-				<span className="rec-report-world-holds">
+				{/*
+					pass 30: two holds per world row, three world rows per round, nine rows in a
+					Proving. At a tenth each that is the "wall of fifteen decimals in one column"
+					a blind critic named, and not one of those tenths changes a reading of who
+					took the world. The exact pair stays in the title.
+				*/}
+				<span className="rec-report-world-holds" title={`${formatHold(world.holdYou)} to ${formatHold(world.holdRival)}`}>
 					<span className={`rec-report-hold rec-report-hold--you${youHigher && world.who === 'you' ? ' rec-report-hold--winner' : ''}`}>
-						{formatHold(world.holdYou)}
+						{formatHoldShown(world.holdYou)}
 					</span>
 					<span className="rec-report-hold-sep">to</span>
 					<span className={`rec-report-hold rec-report-hold--rival${!youHigher && world.who === 'rival' ? ' rec-report-hold--winner' : ''}`}>
-						{formatHold(world.holdRival)}
+						{formatHoldShown(world.holdRival)}
 					</span>
 				</span>
 				<span className="rec-report-world-who">{whoText}</span>
@@ -666,7 +673,7 @@ export function ReclamationReport({
 					<span className="rec-report-figure-label">downs dealt / taken</span>
 				</span>
 				<span className="rec-report-figure" data-champion>
-					<span className="rec-report-figure-value">{report.champion ? `${speciesLabel(report.champion.record)} ${formatHold(report.champion.hold)}` : 'none'}</span>
+					<span className="rec-report-figure-value">{report.champion ? `${speciesLabel(report.champion.record)} ${formatHoldShown(report.champion.hold)}` : 'none'}</span>
 					<span className="rec-report-figure-label">{report.champion ? `held ${report.champion.planet || 'a world'} for you` : 'no world held'}</span>
 				</span>
 			</div>

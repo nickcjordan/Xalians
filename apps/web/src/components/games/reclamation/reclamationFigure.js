@@ -1,5 +1,5 @@
 import React from 'react';
-import { speciesLabel, formatHold, roleSentence } from './reclamationNarration';
+import { speciesLabel, formatHold, formatHoldShown, roleSentence } from './reclamationNarration';
 import { RoleGlyph } from './reclamationGlyphs';
 import XalianImage from '../../xalianImage';
 import XalianTypeSymbolBadge from '../duel/board/xalianTypeSymbolBadge';
@@ -118,6 +118,7 @@ function ReclamationFigure({
 	dimmed,
 	acting,
 	hit,
+	beat,
 	hover,
 	flash,
 	arrive,
@@ -145,6 +146,25 @@ function ReclamationFigure({
 	if (recommended) classes.push('rec-figure--recommended');
 	if (dimmed) classes.push('rec-figure--dimmed');
 	if (acting) classes.push('rec-figure--acting');
+	/*
+		SCHEMA 5 EXPOSED A STALE-ANIMATION BUG HERE.
+
+		A CSS animation runs once when its class is applied and does not restart while the
+		class stays applied. When the same creature acts on consecutive engine steps - or is
+		hit twice in a row - the class never leaves, so the second blow plays nothing.
+
+		Under schema 4 that was rare enough to go unnoticed. Schema 5 guarantees every
+		creature exactly four structurally distinct actions, so a creature attacking several
+		times in one Clash is now normal, and the clash gauge caught the result: 77 still
+		frames during `attack` events against 43 moving, with every animation individually
+		working. The round had not stopped animating; the same figure was being asked to
+		replay an animation it had already finished.
+
+		`--rec-beat` is a render-scoped key that changes on every engine step, so React
+		remounts the plate and the browser starts the animation again. It is only applied
+		while this figure is the one acting or being hit, so a still figure is not remounted
+		sixty times a round.
+	*/
 	if (threat) classes.push(`rec-figure--threat-${threat.level}`);
 	if (role && role !== 'none') classes.push(`rec-figure--role-${role}`);
 	if (hit) classes.push('rec-figure--hit');
@@ -187,7 +207,13 @@ function ReclamationFigure({
 				{!portrait && <span className="rec-piece-unknown">?</span>}
 				{element && <XalianTypeSymbolBadge size={Math.round(px / 2.6)} type={element} classes="rec-piece-disc" />}
 			</span>
-			<span className="rec-figure-plate">
+			{/*
+				pass 32: a plate that is acting or being hit carries the engine step as its key,
+				so a creature acting twice in a row replays its animation instead of standing
+				still with a class it already finished. A plate that is doing neither keeps a
+				stable key and is not remounted.
+			*/}
+			<span className="rec-figure-plate" key={(acting || hit) && beat != null ? `beat-${beat}` : 'plate'}>
 				<span className="rec-figure-name">{name}</span>
 				{badge && <span className="rec-figure-badge">{badge}</span>}
 				{threat && (
@@ -214,7 +240,13 @@ function ReclamationFigure({
 						mine={mine}
 					/>
 				)}
-				{typeof hold === 'number' && <span className="rec-figure-hold">{formatHold(hold)}</span>}
+				{/*
+					pass 30: the number under a figure rounds. Up to six figures stand at a world
+					and the eye compares them against each other and against the margin band; the
+					tenth is noise at that size. The exact value is on the figure's own aria-label
+					and data-hold, and the inspector prints it in full.
+				*/}
+				{typeof hold === 'number' && <span className="rec-figure-hold" title={`hold ${formatHold(hold)}`}>{formatHoldShown(hold)}</span>}
 			</span>
 			{tags.length > 0 && (
 				<span className="rec-figure-tags">

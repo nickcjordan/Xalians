@@ -1,3 +1,4 @@
+import { elementOf } from './reclamationVocabulary';
 import React from 'react';
 import XalianImage from '../../xalianImage';
 import { pieceShadowFilter } from '../duel/board/duelPieceToken';
@@ -38,7 +39,7 @@ function lampLevel(hold) {
 
 function DraftCard({ record, frames, kept, onToggle }) {
 	const rating = rateForDraft(record, frames);
-	const el = record.element.primary;
+	const el = elementOf(record);
 	const bestRow = rating.byWorld.reduce((a, b) => (b.hold > a.hold ? b : a), rating.byWorld[0]);
 	const rows = [rating.byWorld.slice(0, 3), rating.byWorld.slice(3, 6), rating.byWorld.slice(6, 9)];
 	const isStealthy = isStealthyRecord(record);

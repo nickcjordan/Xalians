@@ -11,7 +11,7 @@
 	game logic: the engine takes whatever records it is given.
 */
 
-import { generateBatch } from '../generator/index.ts';
+import { generateXalian, getSpeciesTemplates, GENERATION_RELEASE_ID } from '../generator/canonicalCreatureRelease.ts';
 import type { XalianRecord } from '@xalians/content/schema';
 import { createRngState, nextRandom } from './expeditionRules.ts';
 import { ROSTER_SIZE } from './expeditionInterpretation.ts';
@@ -34,10 +34,53 @@ function shuffleWithRng(array: XalianRecord[], rngState: number): XalianRecord[]
 /*
 	buildExpeditionPool(seed, size) -> records
 	One generated creature per species, cycling, until `size` records exist.
+
+	SCHEMA 5. There is no `generateBatch` any more, and `generateXalian` now takes replay
+	metadata the caller must supply: the release comments "Validate caller metadata only,
+	not generated combinations. Never invent replay inputs." So the pool is built here, one
+	creature at a time, cycling the release's own species list exactly as the v4 batch did.
+
+	The metadata is derived from the match seed rather than from the clock, because the
+	whole point of `?seed=N` is that it replays the same expedition. A `generatedAt` of
+	`Date.now()` would make a provenance field differ between two runs of the same seed;
+	these creatures are a game's scratch pool, not registry records, so the timestamp is
+	fixed and the serial counts within the pool.
+
+	The species list is the frozen release's own, so a species added to a later release
+	joins the pool without this file changing.
 */
+const POOL_GENERATED_AT = '2026-09-21T00:00:00.000Z';
+
 export function buildExpeditionPool(seed: string | number, size: number): XalianRecord[] {
-	return generateBatch(size, `${seed}-pool`);
+	/*
+		`origin` is a PLANET, not a species: home ground compares it against the world's own
+		planet name (creatureOnTable, "a straight lowercase compare of provenance.origin
+		against the world's planet name"). Passing the species key here would typecheck,
+		generate cleanly, and silently make every creature a stranger everywhere, because no
+		world is named "akinza". The template states `homePlanet`, so that is what is passed.
+	*/
+	const species = getSpeciesTemplates()
+		.map((template: { key: string; homePlanet?: string }) => ({
+			key: template.key,
+			home: String(template.homePlanet || template.key),
+		}));
+	if (species.length === 0) {
+		return [];
+	}
+	const records: XalianRecord[] = [];
+	for (let i = 0; i < size; i++) {
+		const { key, home } = species[i % species.length];
+		records.push(generateXalian(key, `${seed}-pool-${i}`, {
+			origin: home,
+			serial: i + 1,
+			profile: 'full',
+			generatedAt: POOL_GENERATED_AT,
+		}) as unknown as XalianRecord);
+	}
+	return records;
 }
+
+export { GENERATION_RELEASE_ID };
 
 export interface BuildRostersOptions {
 	poolSize?: number;

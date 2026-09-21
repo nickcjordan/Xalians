@@ -15,6 +15,7 @@
 import { chromium } from 'playwright-core';
 import assert from 'node:assert/strict';
 import { mkdir } from 'node:fs/promises';
+import { seenOn, assertSeen } from './lib/visible.mjs';
 
 const output = process.env.REC_QA_OUTPUT || 'C:/Users/njord/AppData/Local/Temp/reclamation-qa';
 const seed = process.env.REC_QA_SEED || '7';
@@ -63,11 +64,30 @@ for (const view of ['simple', 'advanced']) {
 			judging the layout should read the -view file; the fullPage file is for reading
 			content that runs past one screen.
 		*/
-		const shot = async (name) => {
+		/*
+			PASS 31. Every shot also asserts that the board is SEEN, not merely present.
+
+			This check used to ask `count() > 0`, which is a question about the DOM. Pass 28
+			shipped a bug where the Court's ruling was painted over a board fading in from
+			opacity zero; `document.querySelectorAll('[data-site-id]').length` was 3
+			throughout, so this check passed, and so did the other three and all 1541 unit
+			tests. Audited afterwards by setting `.rec-site { opacity: 0 }`: all four checks
+			passed with the entire game board invisible.
+
+			So the moment a screenshot is worth taking is the moment the board is worth
+			checking, and the two happen together here. `seenOn` walks the ancestor opacity
+			product, the viewport, visibility/display, and hit-tests the centre point, so a
+			panel that is present, laid out and unreadable fails.
+		*/
+		const shot = async (name, opts = {}) => {
 			await page.screenshot({ path: `${output}/${label}-${name}.png`, fullPage: true });
 			await page.screenshot({ path: `${output}/${label}-${name}-view.png` });
 			const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
 			assert(overflow <= 1, `${label}/${name}: horizontal overflow ${overflow}px`);
+			if (opts.boardVisible) {
+				const sites = await seenOn(page, '[data-site-id]');
+				assertSeen(assert, sites, `${label}/${name}`, 'world panel', 3);
+			}
 		};
 
 		try {
@@ -107,7 +127,7 @@ for (const view of ['simple', 'advanced']) {
 			// Deploy: send until the round resolves, pressing a creature then a world. The
 			// table is the choice surface, so the check drives it the way a player does.
 			await page.locator('[data-slot]').first().waitFor({ state: 'visible', timeout: 20000 });
-			await shot('deploy');
+			await shot('deploy', { boardVisible: true });
 			for (const instrument of GLANCE) {
 				const [question, selector] = instrument;
 				assert(await page.locator(selector).count() > 0, `${label}: nothing on the table answers "${question}"`);
@@ -154,6 +174,36 @@ for (const view of ['simple', 'advanced']) {
 				assert(/\d+ of your \d+/.test(text), `${label}: a world's footing does not count the squad: "${text}"`);
 			});
 
+			/*
+				PASS 30. The footing must not be written over.
+
+				Pass 13 collapsed the empty world panel to nothing on a phone because its whole
+				body was the word "unclaimed": ranks at zero height with the RIVAL and YOU
+				bands absolutely positioned inside them. Pass 29 put three lines of text in that
+				body and the two bands came down on top of it, which a blind critic caught and
+				called a correctness failure.
+
+				Nothing could have caught it, because no check compared two rectangles. This
+				one does: it is geometry, not a class name, so it fails for any future reason
+				the bands and the text end up in the same place.
+			*/
+			const collisions = await page.evaluate(() => {
+				const hits = (a, b) => !(a.right <= b.left || b.right <= a.left || a.bottom <= b.top || b.bottom <= a.top);
+				const found = [];
+				document.querySelectorAll('[data-site-id]').forEach((site) => {
+					const footing = site.querySelector('[data-world-footing]');
+					if (!footing) return;
+					const fr = footing.getBoundingClientRect();
+					site.querySelectorAll('.rec-rank-edge').forEach((edge) => {
+						if (hits(fr, edge.getBoundingClientRect())) {
+							found.push(`${site.getAttribute('data-site-id')} / ${edge.textContent.trim()}`);
+						}
+					});
+				});
+				return found;
+			});
+			assert.deepEqual(collisions, [], `${label}: a world's edge band is drawn over its footing text`);
+
 			let guard = 0;
 			let sends = 0;
 			while (guard < 220) {
@@ -163,7 +213,7 @@ for (const view of ['simple', 'advanced']) {
 				if (await skip.count() && await skip.first().isVisible()) { await skip.first().click(); continue; }
 				const nextFrame = page.locator('[data-next-frame]');
 				if (await nextFrame.count() && await nextFrame.first().isVisible()) {
-					if (sends > 0) await shot(`ruling-${guard}`);
+					if (sends > 0) await shot(`ruling-${guard}`, { boardVisible: true });
 					await nextFrame.first().click();
 					continue;
 				}
