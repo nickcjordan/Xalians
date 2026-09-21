@@ -1,0 +1,438 @@
+{
+  "key": "dromeus",
+  "name": "Dromeus",
+  "nameOrigin": "From the Greek dromeus, runner, reflecting the creature's defining ground speed and running launch.",
+  "element": "fire",
+  "homePlanet": "magmuth",
+  "generatorPlanets": [
+    "magmuth"
+  ],
+  "lore": {
+    "description": "Partially feathered ground birds with lizard features, these creatures are extremely quick with razor sharp teeth. When running at high speeds, they can spread their wings to temporarily take flight as they launch into the air and sink their teeth into their prey.",
+    "appearance": [
+      "Ground bird with lizard features, on two legs",
+      "Light for its height",
+      "Partly feathered, with bare hide between",
+      "Narrow lizard-like head with jaws of sharp teeth",
+      "Clawed forelimbs held clear of the ground",
+      "Plumed wings along the arms",
+      "Hooked toe claws",
+      "Long plumed tail"
+    ],
+    "origin": "Magmuth's mining corporations designed it to cross the transient mineral islands, where a cooling lava flow gives only a short window before the ground opens again.",
+    "habitat": "The hardened lava flats and ash fields of Magmuth.",
+    "feeding": "It hunts on the flats and eats whatever it can run down.",
+    "behavior": "It runs. When it reaches speed it spreads its wings, launches itself at its prey, and bites.",
+    "company": "It runs in packs."
+  },
+  "physiology": {
+    "composition": {
+      "primary": "flesh"
+    },
+    "bodyPlan": "biped",
+    "anatomy": [
+      "jaws",
+      "fangs",
+      "claws",
+      "talons",
+      "wings",
+      "tail",
+      "hide"
+    ],
+    "covering": "feathers",
+    "size": {
+      "heightCm": [
+        88,
+        112
+      ],
+      "weightKg": [
+        38,
+        56
+      ]
+    },
+    "lifespan": "standard",
+    "genome": {
+      "chirality": "rolled"
+    },
+    "diet": "carnivore",
+    "communication": [
+      "vocal",
+      "display"
+    ],
+    "breathes": [
+      "gas"
+    ],
+    "environmentalTolerance": {
+      "ambientMedia": [
+        "gas"
+      ],
+      "temperatureC": {
+        "min": 65,
+        "max": 105
+      }
+    },
+    "capabilities": {
+      "flight": [
+        15,
+        35
+      ],
+      "swim": [
+        0,
+        10
+      ],
+      "burrow": [
+        0,
+        0
+      ],
+      "climb": [
+        25,
+        45
+      ],
+      "sprint": [
+        80,
+        98
+      ],
+      "leap": [
+        58,
+        82
+      ],
+      "manipulation": [
+        20,
+        38
+      ]
+    },
+    "senses": {
+      "sight": [
+        70,
+        90
+      ],
+      "hearing": [
+        50,
+        70
+      ],
+      "smell": [
+        45,
+        65
+      ],
+      "special": []
+    },
+    "protections": [],
+    "traversal": []
+  },
+  "attributes": {
+    "strength": [
+      38,
+      58
+    ],
+    "vitality": [
+      35,
+      55
+    ],
+    "endurance": [
+      55,
+      78
+    ],
+    "agility": [
+      72,
+      94
+    ],
+    "reflex": [
+      66,
+      88
+    ],
+    "intelligence": [
+      22,
+      40
+    ],
+    "willpower": [
+      30,
+      50
+    ],
+    "instinct": [
+      62,
+      84
+    ],
+    "charisma": [
+      25,
+      45
+    ],
+    "resilience": [
+      28,
+      46
+    ]
+  },
+  "schemaVersion": "5.0.0",
+  "temperament": {
+    "boldness": [
+      45,
+      70
+    ],
+    "curiosity": [
+      30,
+      55
+    ],
+    "energy": [
+      75,
+      95
+    ],
+    "aggression": [
+      45,
+      70
+    ],
+    "sociability": [
+      55,
+      75
+    ]
+  },
+  "passives": [],
+  "signature": {
+    "type": "action",
+    "key": "dromeus-defining"
+  },
+  "actions": [
+    {
+      "key": "dromeus-defining",
+      "name": "Running Fang Launch",
+      "description": "After a fast run, it spreads its wings for a brief launch and sinks its teeth into prey.",
+      "instrument": "jaws",
+      "activation": {
+        "continuity": "discrete"
+      },
+      "timing": {
+        "preparation": "brief",
+        "recovery": "brief"
+      },
+      "delivery": {
+        "mode": "contact",
+        "approach": "closing"
+      },
+      "targeting": [
+        "other"
+      ],
+      "spatial": {
+        "range": "contact"
+      },
+      "effects": [
+        {
+          "key": "outcome",
+          "type": "harm",
+          "recipient": "target",
+          "onset": "instant",
+          "persistence": "resolved",
+          "likelihood": "consistent",
+          "mechanism": "piercing",
+          "intensity": 62
+        }
+      ]
+    }
+  ],
+  "mechanisms": [
+    {
+      "key": "fang-bite",
+      "name": "Fang Bite",
+      "description": "Razor-sharp teeth pierce a contacted target.",
+      "instrument": "fangs",
+      "targeting": [
+        "other"
+      ],
+      "activation": {
+        "continuity": [
+          "discrete"
+        ]
+      },
+      "timing": {
+        "preparation": [
+          "immediate",
+          "brief"
+        ],
+        "recovery": [
+          "repeatable",
+          "brief"
+        ]
+      },
+      "delivery": {
+        "contact": {
+          "approach": [
+            "stationary",
+            "closing"
+          ],
+          "range": [
+            "contact"
+          ]
+        }
+      },
+      "effects": [
+        {
+          "key": "outcome",
+          "type": "harm",
+          "recipient": "target",
+          "onset": "instant",
+          "persistence": "resolved",
+          "likelihood": [
+            "consistent"
+          ],
+          "mechanism": "piercing",
+          "intensity": [
+            40,
+            65
+          ]
+        }
+      ]
+    },
+    {
+      "key": "foreclaw-rake",
+      "name": "Foreclaw Rake",
+      "description": "The hooked forelimb claws rake a contacted target.",
+      "instrument": "claws",
+      "targeting": [
+        "other"
+      ],
+      "activation": {
+        "continuity": [
+          "discrete"
+        ]
+      },
+      "timing": {
+        "preparation": [
+          "immediate",
+          "brief"
+        ],
+        "recovery": [
+          "repeatable",
+          "brief"
+        ]
+      },
+      "delivery": {
+        "contact": {
+          "approach": [
+            "stationary",
+            "closing"
+          ],
+          "range": [
+            "contact"
+          ]
+        }
+      },
+      "effects": [
+        {
+          "key": "outcome",
+          "type": "harm",
+          "recipient": "target",
+          "onset": "instant",
+          "persistence": "resolved",
+          "likelihood": [
+            "consistent"
+          ],
+          "mechanism": "cutting",
+          "intensity": [
+            30,
+            52
+          ]
+        }
+      ]
+    },
+    {
+      "key": "toe-claw-strike",
+      "name": "Toe Claw Strike",
+      "description": "Hooked toe talons strike during a ground chase.",
+      "instrument": "talons",
+      "targeting": [
+        "other"
+      ],
+      "activation": {
+        "continuity": [
+          "discrete"
+        ]
+      },
+      "timing": {
+        "preparation": [
+          "immediate",
+          "brief"
+        ],
+        "recovery": [
+          "repeatable",
+          "brief"
+        ]
+      },
+      "delivery": {
+        "contact": {
+          "approach": [
+            "stationary",
+            "closing"
+          ],
+          "range": [
+            "contact"
+          ]
+        }
+      },
+      "effects": [
+        {
+          "key": "outcome",
+          "type": "harm",
+          "recipient": "target",
+          "onset": "instant",
+          "persistence": "resolved",
+          "likelihood": [
+            "consistent"
+          ],
+          "mechanism": "piercing",
+          "intensity": [
+            32,
+            55
+          ]
+        }
+      ]
+    },
+    {
+      "key": "wing-body-check",
+      "name": "Wing Body Check",
+      "description": "Its winged body collides with a nearby target.",
+      "instrument": "wings",
+      "targeting": [
+        "other"
+      ],
+      "activation": {
+        "continuity": [
+          "discrete"
+        ]
+      },
+      "timing": {
+        "preparation": [
+          "immediate",
+          "brief"
+        ],
+        "recovery": [
+          "repeatable",
+          "brief"
+        ]
+      },
+      "delivery": {
+        "contact": {
+          "approach": [
+            "closing"
+          ],
+          "range": [
+            "contact"
+          ]
+        }
+      },
+      "effects": [
+        {
+          "key": "outcome",
+          "type": "harm",
+          "recipient": "target",
+          "onset": "instant",
+          "persistence": "resolved",
+          "likelihood": [
+            "consistent"
+          ],
+          "mechanism": "impact",
+          "intensity": [
+            25,
+            45
+          ]
+        }
+      ]
+    }
+  ]
+}

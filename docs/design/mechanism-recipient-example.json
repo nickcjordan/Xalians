@@ -1,0 +1,37 @@
+{
+  "notice": "ABBREVIATED DESIGN EXAMPLE, not production data. Effect-local recipient mapping by delivery mode is accepted for the forthcoming design. This hypothetical water mechanism supports a single-target projectile and an area pulse. Other fields are omitted for focused review.",
+  "mechanisms": [
+    {
+      "key": "pressurized-water",
+      "instrument": "breath",
+      "element": "water",
+      "targeting": ["other"],
+      "delivery": {
+        "projectile": { "range": ["short", "medium"] },
+        "pulse": {
+          "range": ["short", "medium"],
+          "area": {
+            "shape": ["cone"],
+            "extent": ["small", "medium"],
+            "anchor": ["self"]
+          }
+        }
+      },
+      "effects": [
+        {
+          "key": "pressure",
+          "type": "harm",
+          "mechanism": "impact",
+          "recipient": { "projectile": "target", "pulse": "area" },
+          "intensity": [30, 70]
+        },
+        {
+          "key": "cool",
+          "type": "remove",
+          "recipient": { "projectile": "target", "pulse": "area" },
+          "methods": ["cooling"]
+        }
+      ]
+    }
+  ]
+}

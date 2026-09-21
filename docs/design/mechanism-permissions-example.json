@@ -1,0 +1,35 @@
+{
+  "notice": "PROPOSED SPECIES-TEMPLATE FRAGMENT, not production-schema data or a canonical species. Hypothetical creature produces a tissue-repairing liquid that also washes away compatible applied substances. Numeric bounds are illustrative. Remaining timing, spatial, effect-lifetime and naming fields are omitted for focused review.",
+  "mechanisms": [
+    {
+      "key": "restorative-secretion",
+      "instrument": "secretion",
+      "targeting": ["other"],
+      "activation": {
+        "continuity": ["discrete"]
+      },
+      "delivery": {
+        "contact": {
+          "range": ["contact"]
+        },
+        "projectile": {
+          "range": ["short", "medium"]
+        }
+      },
+      "effects": [
+          {
+            "key": "repair",
+            "type": "restore",
+            "recipient": "target",
+            "intensity": [30, 70]
+          },
+          {
+            "key": "clean",
+            "type": "remove",
+            "recipient": "target",
+            "methods": ["cleansing"]
+          }
+      ]
+    }
+  ]
+}

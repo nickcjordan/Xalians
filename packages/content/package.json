@@ -9,7 +9,8 @@
     "./mock/*.json": "./json/mock/*.json",
     "./*.json": "./json/*.json",
     "./ability-compatibility": "./src/abilityCompatibility.ts",
-    "./schema": "./src/schema/index.ts"
+    "./schema": "./src/schema/index.ts",
+    "./creature": "./src/creature/index.ts"
   },
   "scripts": {
     "test": "vitest run",

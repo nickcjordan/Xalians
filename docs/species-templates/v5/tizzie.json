@@ -1,0 +1,428 @@
+{
+  "key": "tizzie",
+  "name": "Tizzie",
+  "nameOrigin": "A playful respelling of tizzy, a state of agitation or confusion, matching its spiral display and psychic disorientation.",
+  "element": "psychic",
+  "homePlanet": "telypso",
+  "generatorPlanets": [
+    "telypso"
+  ],
+  "lore": {
+    "description": "It uses its tail to draw attention to its big, hypnotic eyes. Once eye contact is made, this creature can attack from within your mind.",
+    "appearance": [
+      "Small shaggy climber",
+      "Lightly built",
+      "Fur coat",
+      "Enormous pointed ears",
+      "Big hypnotic eyes filling half the face",
+      "Long-fingered gripping hands",
+      "Long thin tail ending in a flat spiral disc, the lure"
+    ],
+    "origin": "Raised by the Telypso Generator to counterbalance the psychic energies of the deranged Vallerii marooned on the world, as treatment rather than injury.",
+    "habitat": "The branches of Telypso's bioluminescent fungal forests.",
+    "feeding": "It takes its food from what the forests give.",
+    "behavior": "It uses its tail to draw attention to its big hypnotic eyes, and once eye contact is made it attacks from inside your mind. Since the Nemesis Plague turned Telypso's creatures against one another, Tizzies turn on each other the same way.",
+    "company": "It lives among others of its kind in the branches."
+  },
+  "physiology": {
+    "composition": {
+      "primary": "flesh"
+    },
+    "bodyPlan": "biped",
+    "anatomy": [
+      "tail",
+      "lure",
+      "fists",
+      "hide"
+    ],
+    "covering": "fur",
+    "size": {
+      "heightCm": [
+        80,
+        95
+      ],
+      "weightKg": [
+        10,
+        16
+      ]
+    },
+    "lifespan": "short",
+    "genome": {
+      "chirality": "rolled"
+    },
+    "diet": "omnivore",
+    "communication": [
+      "display",
+      "telepathic"
+    ],
+    "breathes": [
+      "gas"
+    ],
+    "environmentalTolerance": {
+      "ambientMedia": [
+        "gas"
+      ],
+      "temperatureC": {
+        "min": 12,
+        "max": 42
+      }
+    },
+    "capabilities": {
+      "flight": [
+        0,
+        0
+      ],
+      "swim": [
+        10,
+        25
+      ],
+      "burrow": [
+        5,
+        20
+      ],
+      "climb": [
+        65,
+        90
+      ],
+      "sprint": [
+        55,
+        80
+      ],
+      "leap": [
+        40,
+        65
+      ],
+      "manipulation": [
+        35,
+        60
+      ]
+    },
+    "senses": {
+      "sight": [
+        70,
+        92
+      ],
+      "hearing": [
+        65,
+        88
+      ],
+      "smell": [
+        30,
+        55
+      ],
+      "special": [
+        "psychic"
+      ]
+    },
+    "protections": [],
+    "traversal": []
+  },
+  "attributes": {
+    "strength": [
+      10,
+      28
+    ],
+    "vitality": [
+      20,
+      40
+    ],
+    "endurance": [
+      25,
+      45
+    ],
+    "agility": [
+      55,
+      82
+    ],
+    "reflex": [
+      50,
+      75
+    ],
+    "intelligence": [
+      45,
+      68
+    ],
+    "willpower": [
+      50,
+      78
+    ],
+    "instinct": [
+      45,
+      70
+    ],
+    "charisma": [
+      55,
+      85
+    ],
+    "resilience": [
+      15,
+      35
+    ]
+  },
+  "schemaVersion": "5.0.0",
+  "temperament": {
+    "boldness": [
+      40,
+      65
+    ],
+    "curiosity": [
+      60,
+      85
+    ],
+    "energy": [
+      50,
+      75
+    ],
+    "aggression": [
+      35,
+      60
+    ],
+    "sociability": [
+      35,
+      60
+    ]
+  },
+  "passives": [],
+  "signature": {
+    "type": "action",
+    "key": "tizzie-defining"
+  },
+  "actions": [
+    {
+      "key": "tizzie-defining",
+      "name": "Tail-Lure Gaze",
+      "description": "Its tail lure draws attention to its eyes, which entrance whoever meets the gaze.",
+      "instrument": "gaze",
+      "activation": {
+        "continuity": "discrete"
+      },
+      "timing": {
+        "preparation": "immediate",
+        "recovery": "brief"
+      },
+      "delivery": {
+        "mode": "signal",
+        "approach": "stationary",
+        "reception": "visual"
+      },
+      "targeting": [
+        "other"
+      ],
+      "spatial": {
+        "range": "short"
+      },
+      "effects": [
+        {
+          "key": "outcome",
+          "type": "status",
+          "recipient": "target",
+          "onset": "instant",
+          "persistence": "lingering",
+          "likelihood": "consistent",
+          "status": "entranced",
+          "duration": "brief",
+          "removable": [
+            "disrupting"
+          ]
+        }
+      ]
+    },
+    {
+      "key": "tizzie-mind-strike",
+      "name": "Mind Strike",
+      "description": "After drawing eye contact it attacks a selected target within the mind.",
+      "instrument": "mind",
+      "activation": {
+        "continuity": "discrete"
+      },
+      "timing": {
+        "preparation": "immediate",
+        "recovery": "brief"
+      },
+      "delivery": {
+        "mode": "signal",
+        "approach": "stationary",
+        "reception": "visual"
+      },
+      "targeting": [
+        "other"
+      ],
+      "spatial": {
+        "range": "short"
+      },
+      "effects": [
+        {
+          "key": "outcome",
+          "type": "harm",
+          "recipient": "target",
+          "onset": "instant",
+          "persistence": "resolved",
+          "likelihood": "consistent",
+          "mechanism": "elemental",
+          "intensity": 58
+        }
+      ],
+      "element": "psychic"
+    }
+  ],
+  "mechanisms": [
+    {
+      "key": "tail-lure-gaze",
+      "name": "Tail-Lure Gaze",
+      "description": "Tail movement directs attention into eye contact.",
+      "instrument": "gaze",
+      "targeting": [
+        "other"
+      ],
+      "activation": {
+        "continuity": [
+          "discrete"
+        ]
+      },
+      "timing": {
+        "preparation": [
+          "immediate",
+          "brief"
+        ],
+        "recovery": [
+          "brief"
+        ]
+      },
+      "delivery": {
+        "signal": {
+          "approach": [
+            "stationary"
+          ],
+          "range": [
+            "short",
+            "medium"
+          ],
+          "reception": "visual"
+        }
+      },
+      "effects": [
+        {
+          "key": "outcome",
+          "type": "status",
+          "recipient": "target",
+          "onset": "instant",
+          "persistence": "lingering",
+          "likelihood": [
+            "likely",
+            "occasional"
+          ],
+          "duration": "brief",
+          "status": "entranced",
+          "removable": [
+            "disrupting"
+          ]
+        }
+      ]
+    },
+    {
+      "key": "eye-contact-mind",
+      "name": "Eye-Contact Mind Strike",
+      "description": "Its psychic attack reaches a target whose eyes receive its signal.",
+      "instrument": "mind",
+      "element": "psychic",
+      "targeting": [
+        "other"
+      ],
+      "activation": {
+        "continuity": [
+          "discrete"
+        ]
+      },
+      "timing": {
+        "preparation": [
+          "immediate",
+          "brief"
+        ],
+        "recovery": [
+          "brief",
+          "prolonged"
+        ]
+      },
+      "delivery": {
+        "signal": {
+          "approach": [
+            "stationary"
+          ],
+          "range": [
+            "short",
+            "medium"
+          ],
+          "reception": "visual"
+        }
+      },
+      "effects": [
+        {
+          "key": "outcome",
+          "type": "harm",
+          "recipient": "target",
+          "onset": "instant",
+          "persistence": "resolved",
+          "likelihood": [
+            "consistent"
+          ],
+          "mechanism": "elemental",
+          "intensity": [
+            38,
+            65
+          ]
+        }
+      ]
+    },
+    {
+      "key": "tail-contact",
+      "name": "Tail Contact",
+      "description": "Its lure-bearing tail strikes at close contact.",
+      "instrument": "tail",
+      "targeting": [
+        "other"
+      ],
+      "activation": {
+        "continuity": [
+          "discrete"
+        ]
+      },
+      "timing": {
+        "preparation": [
+          "immediate",
+          "brief"
+        ],
+        "recovery": [
+          "repeatable",
+          "brief"
+        ]
+      },
+      "delivery": {
+        "contact": {
+          "approach": [
+            "stationary"
+          ],
+          "range": [
+            "contact"
+          ]
+        }
+      },
+      "effects": [
+        {
+          "key": "outcome",
+          "type": "harm",
+          "recipient": "target",
+          "onset": "instant",
+          "persistence": "resolved",
+          "likelihood": [
+            "consistent"
+          ],
+          "mechanism": "impact",
+          "intensity": [
+            18,
+            38
+          ]
+        }
+      ]
+    }
+  ]
+}

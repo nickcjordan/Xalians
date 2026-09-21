@@ -1,0 +1,451 @@
+{
+  "key": "bioflim",
+  "name": "Bioflim",
+  "nameOrigin": "A stylized transposition of biofilm, evoking the regenerating slime layer that continually forms its protective surface.",
+  "element": "chemical",
+  "homePlanet": "drainov",
+  "generatorPlanets": [
+    "drainov"
+  ],
+  "lore": {
+    "description": "An acid slime organism protected by a thick rocky exoskeleton. Its slime can continually regenerate an outer shell, allowing for great defense.",
+    "appearance": [
+      "Shapeless mass of acid slime, without limbs",
+      "Tall as a person",
+      "Very heavy",
+      "A single eye in the hooded top",
+      "Thick rocky exoskeleton over the upper mass, continually regrown",
+      "Pseudopods for reaching",
+      "Drips and runnels where the slime sags"
+    ],
+    "origin": "Made by the Drainov Generator to live in the planet's acid swamps and chemical waste.",
+    "habitat": "The acid swamps and derelict chemical plants of Drainov.",
+    "feeding": "It feeds on whatever it settles over.",
+    "behavior": "It moves slowly, flowing through the swamps rather than over them, and its slime continually regrows the rocky shell around it.",
+    "company": "It lives alone."
+  },
+  "attributes": {
+    "strength": [
+      45,
+      65
+    ],
+    "vitality": [
+      60,
+      80
+    ],
+    "endurance": [
+      55,
+      75
+    ],
+    "agility": [
+      5,
+      20
+    ],
+    "reflex": [
+      10,
+      25
+    ],
+    "intelligence": [
+      15,
+      35
+    ],
+    "willpower": [
+      40,
+      60
+    ],
+    "instinct": [
+      30,
+      50
+    ],
+    "charisma": [
+      5,
+      20
+    ],
+    "resilience": [
+      75,
+      95
+    ]
+  },
+  "schemaVersion": "5.0.0",
+  "physiology": {
+    "composition": {
+      "primary": "slime"
+    },
+    "bodyPlan": "amorphous",
+    "anatomy": [
+      "shell",
+      "pseudopods",
+      "body"
+    ],
+    "covering": "plating",
+    "size": {
+      "heightCm": [
+        180,
+        250
+      ],
+      "weightKg": [
+        320,
+        500
+      ]
+    },
+    "lifespan": "long",
+    "genome": {
+      "chirality": "rolled"
+    },
+    "diet": "omnivore",
+    "communication": [],
+    "breathes": [],
+    "environmentalTolerance": {
+      "ambientMedia": [
+        "gas",
+        "liquid"
+      ],
+      "temperatureC": {
+        "min": 0,
+        "max": 43
+      }
+    },
+    "capabilities": {
+      "flight": [
+        0,
+        0
+      ],
+      "swim": [
+        30,
+        50
+      ],
+      "burrow": [
+        10,
+        25
+      ],
+      "climb": [
+        5,
+        20
+      ],
+      "sprint": [
+        3,
+        15
+      ],
+      "leap": [
+        0,
+        5
+      ],
+      "manipulation": [
+        20,
+        40
+      ]
+    },
+    "senses": {
+      "sight": [
+        20,
+        40
+      ],
+      "hearing": [
+        10,
+        30
+      ],
+      "smell": [
+        45,
+        70
+      ],
+      "special": [
+        "tremorsense"
+      ]
+    },
+    "traversal": [],
+    "protections": [
+      {
+        "type": "harm",
+        "mechanism": "impact",
+        "degree": "resistant"
+      }
+    ]
+  },
+  "temperament": {
+    "boldness": [
+      15,
+      35
+    ],
+    "curiosity": [
+      20,
+      40
+    ],
+    "energy": [
+      10,
+      30
+    ],
+    "aggression": [
+      20,
+      40
+    ],
+    "sociability": [
+      5,
+      25
+    ]
+  },
+  "signature": {
+    "type": "passive",
+    "key": "bioflim-defining"
+  },
+  "actions": [
+    {
+      "key": "bioflim-acid",
+      "name": "Acid Slime",
+      "description": "Its acid slime corrodes whatever it settles over.",
+      "instrument": "secretion",
+      "element": "chemical",
+      "activation": {
+        "continuity": "discrete"
+      },
+      "timing": {
+        "preparation": "brief",
+        "recovery": "brief"
+      },
+      "delivery": {
+        "mode": "contact",
+        "approach": "stationary"
+      },
+      "targeting": [
+        "other"
+      ],
+      "spatial": {
+        "range": "contact"
+      },
+      "effects": [
+        {
+          "key": "acid",
+          "type": "harm",
+          "mechanism": "elemental",
+          "recipient": "target",
+          "onset": "instant",
+          "persistence": "resolved",
+          "likelihood": "consistent",
+          "intensity": [
+            35,
+            65
+          ]
+        },
+        {
+          "key": "corrode",
+          "type": "status",
+          "status": "corroding",
+          "recipient": "target",
+          "onset": "instant",
+          "persistence": "lingering",
+          "duration": "brief",
+          "likelihood": "likely",
+          "removable": [
+            "cleansing"
+          ]
+        }
+      ]
+    }
+  ],
+  "passives": [
+    {
+      "key": "bioflim-defining",
+      "name": "Everforming Carapace",
+      "description": "The slime beneath floods over the broken plates and hardens into new shell faster than the acid can take it away.",
+      "instrument": "secretion",
+      "element": "chemical",
+      "activation": {
+        "continuity": "ongoing"
+      },
+      "delivery": {
+        "mode": "self",
+        "approach": "stationary"
+      },
+      "targeting": [
+        "self"
+      ],
+      "spatial": {},
+      "effects": [
+        {
+          "key": "regrow-shell",
+          "type": "restore",
+          "recipient": "self",
+          "onset": "gradual",
+          "persistence": "sustained",
+          "likelihood": "consistent",
+          "intensity": [
+            40,
+            85
+          ]
+        }
+      ]
+    }
+  ],
+  "mechanisms": [
+    {
+      "key": "acid-slime",
+      "name": "Acid Slime",
+      "description": "The acid slime acts through direct contact.",
+      "instrument": "secretion",
+      "element": "chemical",
+      "targeting": [
+        "other"
+      ],
+      "activation": {
+        "continuity": [
+          "discrete"
+        ]
+      },
+      "timing": {
+        "preparation": [
+          "immediate",
+          "brief"
+        ],
+        "recovery": [
+          "repeatable",
+          "brief"
+        ]
+      },
+      "delivery": {
+        "contact": {
+          "approach": [
+            "stationary"
+          ],
+          "range": [
+            "contact"
+          ]
+        }
+      },
+      "effects": [
+        {
+          "key": "acid",
+          "type": "harm",
+          "mechanism": "elemental",
+          "recipient": "target",
+          "onset": "instant",
+          "persistence": "resolved",
+          "likelihood": [
+            "consistent"
+          ],
+          "intensity": [
+            35,
+            65
+          ]
+        },
+        {
+          "key": "corrode",
+          "type": "status",
+          "status": "corroding",
+          "recipient": "target",
+          "onset": "instant",
+          "persistence": "lingering",
+          "duration": "brief",
+          "likelihood": [
+            "likely",
+            "occasional"
+          ],
+          "removable": [
+            "cleansing"
+          ]
+        }
+      ]
+    },
+    {
+      "key": "pseudopod-hold",
+      "name": "Pseudopod Hold",
+      "description": "Pseudopods wrap and hold a contacted target.",
+      "instrument": "pseudopods",
+      "targeting": [
+        "other"
+      ],
+      "activation": {
+        "continuity": [
+          "ongoing"
+        ]
+      },
+      "timing": {
+        "preparation": [
+          "immediate",
+          "brief"
+        ],
+        "recovery": [
+          "brief",
+          "prolonged"
+        ]
+      },
+      "delivery": {
+        "contact": {
+          "approach": [
+            "stationary"
+          ],
+          "range": [
+            "contact"
+          ]
+        }
+      },
+      "effects": [
+        {
+          "key": "hold",
+          "type": "status",
+          "status": "restrained",
+          "recipient": "target",
+          "onset": "instant",
+          "persistence": "sustained",
+          "bound": "source",
+          "likelihood": [
+            "consistent",
+            "likely"
+          ],
+          "removable": [
+            "freeing"
+          ]
+        }
+      ]
+    },
+    {
+      "key": "pseudopod-pressure",
+      "name": "Pseudopod Pressure",
+      "description": "A blunt pseudopod drives force into a contacted target.",
+      "instrument": "pseudopods",
+      "targeting": [
+        "other"
+      ],
+      "activation": {
+        "continuity": [
+          "discrete"
+        ]
+      },
+      "timing": {
+        "preparation": [
+          "immediate",
+          "brief"
+        ],
+        "recovery": [
+          "repeatable",
+          "brief"
+        ]
+      },
+      "delivery": {
+        "contact": {
+          "approach": [
+            "stationary"
+          ],
+          "range": [
+            "contact"
+          ]
+        }
+      },
+      "effects": [
+        {
+          "key": "press",
+          "type": "harm",
+          "mechanism": "compression",
+          "recipient": "target",
+          "onset": "instant",
+          "persistence": "resolved",
+          "likelihood": [
+            "consistent"
+          ],
+          "intensity": [
+            25,
+            50
+          ]
+        }
+      ]
+    }
+  ]
+}

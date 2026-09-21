@@ -1,0 +1,387 @@
+{
+  "key": "voltish",
+  "name": "Voltish",
+  "nameOrigin": "Built from volt, the measure associated with electricity, with a softened ending that turns it into a creature name.",
+  "element": "electric",
+  "homePlanet": "zolton",
+  "generatorPlanets": [
+    "zolton"
+  ],
+  "lore": {
+    "description": "With bones and claws made from a tough, conductive metal alloy, this daunting creature can store electrical energy from its surroundings and release the shock into enemies.",
+    "appearance": [
+      "Tall long-limbed biped, crouched low",
+      "Shaggy fur coat",
+      "Bones and claws of conductive metal alloy",
+      "Narrow head with a long muzzle",
+      "Upright pointed ears",
+      "Broad clawed hands",
+      "Large bushy tail"
+    ],
+    "origin": "One of the expendable workforce the Zolton Generator sent onto the lightning fields. No record says what work it was made for.",
+    "habitat": "The deep canyons and metallic peaks of Zolton, where ground-borne lightning surges over the crust. It keeps clear of the black lightning dead zones.",
+    "feeding": "It feeds on electrical charge from its surroundings and on nothing else.",
+    "behavior": "It stores the charge it gathers in its alloy bones and releases the shock into enemies through its claws.",
+    "company": "It keeps to itself."
+  },
+  "physiology": {
+    "composition": {
+      "primary": "flesh",
+      "secondary": "metal"
+    },
+    "bodyPlan": "biped",
+    "anatomy": [
+      "claws",
+      "jaws",
+      "tail",
+      "hide"
+    ],
+    "covering": "fur",
+    "size": {
+      "heightCm": [
+        190,
+        235
+      ],
+      "weightKg": [
+        105,
+        145
+      ]
+    },
+    "lifespan": "standard",
+    "genome": {
+      "chirality": "rolled"
+    },
+    "diet": "energy-feeder",
+    "communication": [
+      "vocal"
+    ],
+    "breathes": [
+      "gas"
+    ],
+    "environmentalTolerance": {
+      "ambientMedia": [
+        "gas"
+      ],
+      "temperatureC": {
+        "min": -55,
+        "max": 35
+      }
+    },
+    "capabilities": {
+      "flight": [
+        0,
+        0
+      ],
+      "swim": [
+        10,
+        25
+      ],
+      "burrow": [
+        5,
+        15
+      ],
+      "climb": [
+        40,
+        60
+      ],
+      "sprint": [
+        50,
+        70
+      ],
+      "leap": [
+        40,
+        60
+      ],
+      "manipulation": [
+        55,
+        75
+      ]
+    },
+    "senses": {
+      "sight": [
+        45,
+        65
+      ],
+      "hearing": [
+        50,
+        70
+      ],
+      "smell": [
+        40,
+        60
+      ],
+      "special": [
+        "electroreception"
+      ]
+    },
+    "protections": [],
+    "traversal": []
+  },
+  "attributes": {
+    "strength": [
+      55,
+      75
+    ],
+    "vitality": [
+      50,
+      70
+    ],
+    "endurance": [
+      70,
+      90
+    ],
+    "agility": [
+      40,
+      60
+    ],
+    "reflex": [
+      45,
+      65
+    ],
+    "intelligence": [
+      25,
+      45
+    ],
+    "willpower": [
+      45,
+      65
+    ],
+    "instinct": [
+      50,
+      70
+    ],
+    "charisma": [
+      30,
+      50
+    ],
+    "resilience": [
+      55,
+      75
+    ]
+  },
+  "schemaVersion": "5.0.0",
+  "temperament": {
+    "boldness": [
+      45,
+      70
+    ],
+    "curiosity": [
+      35,
+      60
+    ],
+    "energy": [
+      55,
+      80
+    ],
+    "aggression": [
+      50,
+      75
+    ],
+    "sociability": [
+      20,
+      45
+    ]
+  },
+  "passives": [],
+  "signature": {
+    "type": "action",
+    "key": "voltish-defining"
+  },
+  "actions": [
+    {
+      "key": "voltish-defining",
+      "name": "Charged Claws",
+      "description": "Conductive claws release stored environmental electricity into a contacted target.",
+      "instrument": "claws",
+      "activation": {
+        "continuity": "discrete"
+      },
+      "timing": {
+        "preparation": "brief",
+        "recovery": "brief"
+      },
+      "delivery": {
+        "mode": "contact",
+        "approach": "stationary"
+      },
+      "targeting": [
+        "other"
+      ],
+      "spatial": {
+        "range": "contact"
+      },
+      "effects": [
+        {
+          "key": "outcome",
+          "type": "harm",
+          "recipient": "target",
+          "onset": "instant",
+          "persistence": "resolved",
+          "likelihood": "consistent",
+          "mechanism": "elemental",
+          "intensity": 68
+        }
+      ],
+      "element": "electric"
+    }
+  ],
+  "mechanisms": [
+    {
+      "key": "claw-discharge",
+      "name": "Claw Discharge",
+      "description": "The alloy claws conduct stored electricity into a contacted target.",
+      "instrument": "claws",
+      "element": "electric",
+      "targeting": [
+        "other"
+      ],
+      "activation": {
+        "continuity": [
+          "discrete"
+        ]
+      },
+      "timing": {
+        "preparation": [
+          "immediate",
+          "brief"
+        ],
+        "recovery": [
+          "brief",
+          "prolonged"
+        ]
+      },
+      "delivery": {
+        "contact": {
+          "approach": [
+            "stationary",
+            "closing"
+          ],
+          "range": [
+            "contact"
+          ]
+        }
+      },
+      "effects": [
+        {
+          "key": "outcome",
+          "type": "harm",
+          "recipient": "target",
+          "onset": "instant",
+          "persistence": "resolved",
+          "likelihood": [
+            "consistent"
+          ],
+          "mechanism": "elemental",
+          "intensity": [
+            45,
+            75
+          ]
+        }
+      ]
+    },
+    {
+      "key": "claw-rake",
+      "name": "Claw Rake",
+      "description": "Its tough alloy claws cut at close contact.",
+      "instrument": "claws",
+      "targeting": [
+        "other"
+      ],
+      "activation": {
+        "continuity": [
+          "discrete"
+        ]
+      },
+      "timing": {
+        "preparation": [
+          "immediate",
+          "brief"
+        ],
+        "recovery": [
+          "repeatable",
+          "brief"
+        ]
+      },
+      "delivery": {
+        "contact": {
+          "approach": [
+            "stationary",
+            "closing"
+          ],
+          "range": [
+            "contact"
+          ]
+        }
+      },
+      "effects": [
+        {
+          "key": "outcome",
+          "type": "harm",
+          "recipient": "target",
+          "onset": "instant",
+          "persistence": "resolved",
+          "likelihood": [
+            "consistent"
+          ],
+          "mechanism": "cutting",
+          "intensity": [
+            35,
+            58
+          ]
+        }
+      ]
+    },
+    {
+      "key": "jaw-bite",
+      "name": "Jaw Bite",
+      "description": "Its jaws bite at close contact.",
+      "instrument": "jaws",
+      "targeting": [
+        "other"
+      ],
+      "activation": {
+        "continuity": [
+          "discrete"
+        ]
+      },
+      "timing": {
+        "preparation": [
+          "immediate",
+          "brief"
+        ],
+        "recovery": [
+          "repeatable",
+          "brief"
+        ]
+      },
+      "delivery": {
+        "contact": {
+          "approach": [
+            "stationary",
+            "closing"
+          ],
+          "range": [
+            "contact"
+          ]
+        }
+      },
+      "effects": [
+        {
+          "key": "outcome",
+          "type": "harm",
+          "recipient": "target",
+          "onset": "instant",
+          "persistence": "resolved",
+          "likelihood": [
+            "consistent"
+          ],
+          "mechanism": "piercing",
+          "intensity": [
+            28,
+            50
+          ]
+        }
+      ]
+    }
+  ]
+}

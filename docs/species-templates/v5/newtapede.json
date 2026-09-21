@@ -1,0 +1,388 @@
+{
+  "key": "newtapede",
+  "name": "Newtapede",
+  "nameOrigin": "A fusion of newt and centipede, matching its amphibious body and sixteen-legged segmented form.",
+  "element": "water",
+  "homePlanet": "poseidas",
+  "generatorPlanets": [
+    "poseidas"
+  ],
+  "lore": {
+    "description": "A 16 legged amphibious creature with a long, segmented body. While adapted to land, its slender frame and webbed feet make it a formidable opponent in water.",
+    "appearance": [
+      "Long, arched, segmented body on sixteen legs",
+      "Slender frame",
+      "Webbed splayed feet",
+      "Broad rounded head",
+      "Very large forward-facing eyes",
+      "Two thin antennae",
+      "Bare hide"
+    ],
+    "origin": "One of the water-breathing Xalians the Poseidas Generator produced once the seas rose and turned acidic.",
+    "habitat": "The water around and beneath Poseidas's rigs and underwater cities.",
+    "feeding": "It eats what it catches in the water and what it finds on land.",
+    "behavior": "It is at home on land but far more dangerous in water, where its slender frame and webbed feet carry it. What it catches it wraps its whole length around and holds under.",
+    "company": "It works among the other water-breathing Xalians of the rigs."
+  },
+  "physiology": {
+    "composition": {
+      "primary": "flesh"
+    },
+    "bodyPlan": "multiped",
+    "anatomy": [
+      "antennae",
+      "coils",
+      "hide",
+      "body"
+    ],
+    "covering": "bare",
+    "size": {
+      "heightCm": [
+        170,
+        230
+      ],
+      "weightKg": [
+        70,
+        115
+      ]
+    },
+    "lifespan": "standard",
+    "genome": {
+      "chirality": "rolled"
+    },
+    "diet": "omnivore",
+    "communication": [
+      "vibration",
+      "display"
+    ],
+    "breathes": [
+      "gas",
+      "liquid"
+    ],
+    "environmentalTolerance": {
+      "ambientMedia": [
+        "gas",
+        "liquid"
+      ],
+      "temperatureC": {
+        "min": 5,
+        "max": 40
+      }
+    },
+    "capabilities": {
+      "flight": [
+        0,
+        0
+      ],
+      "swim": [
+        70,
+        92
+      ],
+      "burrow": [
+        5,
+        20
+      ],
+      "climb": [
+        45,
+        70
+      ],
+      "sprint": [
+        30,
+        50
+      ],
+      "leap": [
+        10,
+        25
+      ],
+      "manipulation": [
+        30,
+        55
+      ]
+    },
+    "senses": {
+      "sight": [
+        55,
+        80
+      ],
+      "hearing": [
+        25,
+        45
+      ],
+      "smell": [
+        30,
+        55
+      ],
+      "special": [
+        "tremorsense"
+      ]
+    },
+    "protections": [],
+    "traversal": []
+  },
+  "attributes": {
+    "strength": [
+      25,
+      45
+    ],
+    "vitality": [
+      35,
+      55
+    ],
+    "endurance": [
+      55,
+      80
+    ],
+    "agility": [
+      55,
+      80
+    ],
+    "reflex": [
+      45,
+      70
+    ],
+    "intelligence": [
+      25,
+      45
+    ],
+    "willpower": [
+      30,
+      50
+    ],
+    "instinct": [
+      45,
+      65
+    ],
+    "charisma": [
+      15,
+      35
+    ],
+    "resilience": [
+      15,
+      35
+    ]
+  },
+  "schemaVersion": "5.0.0",
+  "temperament": {
+    "boldness": [
+      40,
+      65
+    ],
+    "curiosity": [
+      35,
+      60
+    ],
+    "energy": [
+      45,
+      70
+    ],
+    "aggression": [
+      40,
+      65
+    ],
+    "sociability": [
+      40,
+      65
+    ]
+  },
+  "passives": [],
+  "signature": {
+    "type": "action",
+    "key": "newtapede-defining"
+  },
+  "actions": [
+    {
+      "key": "newtapede-defining",
+      "name": "Whole-Body Wrap",
+      "description": "It wraps its long segmented body around a contacted target and holds on.",
+      "instrument": "coils",
+      "activation": {
+        "continuity": "ongoing"
+      },
+      "timing": {
+        "preparation": "brief",
+        "recovery": "brief"
+      },
+      "delivery": {
+        "mode": "contact",
+        "approach": "stationary"
+      },
+      "targeting": [
+        "other"
+      ],
+      "spatial": {
+        "range": "contact"
+      },
+      "effects": [
+        {
+          "key": "outcome",
+          "type": "status",
+          "recipient": "target",
+          "onset": "instant",
+          "persistence": "sustained",
+          "likelihood": "consistent",
+          "bound": "source",
+          "status": "restrained",
+          "removable": [
+            "freeing"
+          ]
+        }
+      ]
+    }
+  ],
+  "mechanisms": [
+    {
+      "key": "body-wrap",
+      "name": "Body Wrap",
+      "description": "Its long body maintains a hold on one contacted creature.",
+      "instrument": "coils",
+      "targeting": [
+        "other"
+      ],
+      "activation": {
+        "continuity": [
+          "ongoing"
+        ]
+      },
+      "timing": {
+        "preparation": [
+          "immediate",
+          "brief"
+        ],
+        "recovery": [
+          "brief"
+        ]
+      },
+      "delivery": {
+        "contact": {
+          "approach": [
+            "stationary",
+            "closing"
+          ],
+          "range": [
+            "contact"
+          ]
+        }
+      },
+      "effects": [
+        {
+          "key": "outcome",
+          "type": "status",
+          "recipient": "target",
+          "onset": "instant",
+          "persistence": "sustained",
+          "likelihood": [
+            "consistent"
+          ],
+          "bound": "source",
+          "status": "restrained",
+          "removable": [
+            "freeing"
+          ]
+        }
+      ]
+    },
+    {
+      "key": "coil-pressure",
+      "name": "Coil Pressure",
+      "description": "Its wrapped body squeezes at close contact.",
+      "instrument": "coils",
+      "targeting": [
+        "other"
+      ],
+      "activation": {
+        "continuity": [
+          "discrete"
+        ]
+      },
+      "timing": {
+        "preparation": [
+          "immediate",
+          "brief"
+        ],
+        "recovery": [
+          "repeatable",
+          "brief"
+        ]
+      },
+      "delivery": {
+        "contact": {
+          "approach": [
+            "stationary"
+          ],
+          "range": [
+            "contact"
+          ]
+        }
+      },
+      "effects": [
+        {
+          "key": "outcome",
+          "type": "harm",
+          "recipient": "target",
+          "onset": "instant",
+          "persistence": "resolved",
+          "likelihood": [
+            "consistent"
+          ],
+          "mechanism": "compression",
+          "intensity": [
+            35,
+            58
+          ]
+        }
+      ]
+    },
+    {
+      "key": "body-strike",
+      "name": "Body Strike",
+      "description": "The long body hits at close contact.",
+      "instrument": "body",
+      "targeting": [
+        "other"
+      ],
+      "activation": {
+        "continuity": [
+          "discrete"
+        ]
+      },
+      "timing": {
+        "preparation": [
+          "immediate",
+          "brief"
+        ],
+        "recovery": [
+          "repeatable",
+          "brief"
+        ]
+      },
+      "delivery": {
+        "contact": {
+          "approach": [
+            "stationary",
+            "closing"
+          ],
+          "range": [
+            "contact"
+          ]
+        }
+      },
+      "effects": [
+        {
+          "key": "outcome",
+          "type": "harm",
+          "recipient": "target",
+          "onset": "instant",
+          "persistence": "resolved",
+          "likelihood": [
+            "consistent"
+          ],
+          "mechanism": "impact",
+          "intensity": [
+            28,
+            50
+          ]
+        }
+      ]
+    }
+  ]
+}

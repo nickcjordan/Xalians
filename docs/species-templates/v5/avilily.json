@@ -1,0 +1,390 @@
+{
+  "key": "avilily",
+  "name": "Avilily",
+  "nameOrigin": "A blend of avian and lily, joining its small bird body to its flower-like plumage and blooming beak.",
+  "element": "plant",
+  "homePlanet": "floria",
+  "generatorPlanets": [
+    "floria"
+  ],
+  "lore": {
+    "description": "Carnivorous little green birds with bright, floral plumage, Avililies flit between Floria’s trees, camouflaging into the planet’s many flowery meadows as they travel. Their beaks resemble the closed petals of a flower but when they open their mouths that 'flower' blooms. They attract insects with their sweet, syrupy smelling saliva and vibrant floral display, but their saliva contains a powerful sedative which paralyzes anything that it comes in contact with. In ancient times, Avililies were used by Vallerii scientists and explorers to trap insects, serving as mobile bug repellent on Florian ventures. Today, the sedative properties of their saliva have been enhanced for a far-more dangerous galaxy, and swarms of flittering Avililies protect the most sacred parts of Floria’s jungles, paralyzing and consuming all who dare to threaten the pristineness of their forests.",
+    "appearance": [
+      "Small bird",
+      "Bright green floral plumage",
+      "Beak like the closed petals of a flower, opening into a bloom",
+      "Feathered crest",
+      "Broad wings",
+      "Long streamer feathers trailing from the head",
+      "Taloned gripping feet"
+    ],
+    "origin": "Used by Vallerii scientists and explorers as mobile bug repellent on Florian ventures, trapping insects with its saliva.",
+    "habitat": "The canopy of Floria's World Trees and its flowery meadows, where its plumage camouflages it.",
+    "feeding": "It eats only meat. It attracts insects with its floral display and sweet-smelling saliva, and the sedative in the saliva paralyzes them.",
+    "behavior": "It flits between the trees and hunts without chasing, waiting with its bill open. Its sedative has since been enhanced, and it paralyzes and consumes anything that threatens the sacred parts of the jungle.",
+    "company": "It lives in swarms."
+  },
+  "attributes": {
+    "strength": [
+      10,
+      28
+    ],
+    "vitality": [
+      20,
+      38
+    ],
+    "endurance": [
+      30,
+      48
+    ],
+    "agility": [
+      62,
+      85
+    ],
+    "reflex": [
+      58,
+      80
+    ],
+    "intelligence": [
+      22,
+      40
+    ],
+    "willpower": [
+      25,
+      45
+    ],
+    "instinct": [
+      50,
+      70
+    ],
+    "charisma": [
+      30,
+      55
+    ],
+    "resilience": [
+      12,
+      30
+    ]
+  },
+  "schemaVersion": "5.0.0",
+  "physiology": {
+    "composition": {
+      "primary": "flesh"
+    },
+    "bodyPlan": "avian",
+    "anatomy": [
+      "beak",
+      "wings",
+      "talons",
+      "crest",
+      "tail"
+    ],
+    "covering": "feathers",
+    "size": {
+      "heightCm": [
+        40,
+        56
+      ],
+      "weightKg": [
+        6,
+        10
+      ]
+    },
+    "lifespan": "short",
+    "genome": {
+      "chirality": "rolled"
+    },
+    "diet": "carnivore",
+    "communication": [
+      "display",
+      "chemical"
+    ],
+    "breathes": [
+      "gas"
+    ],
+    "environmentalTolerance": {
+      "ambientMedia": [
+        "gas"
+      ],
+      "temperatureC": {
+        "min": 4,
+        "max": 38
+      }
+    },
+    "capabilities": {
+      "flight": [
+        70,
+        88
+      ],
+      "swim": [
+        0,
+        10
+      ],
+      "burrow": [
+        0,
+        0
+      ],
+      "climb": [
+        20,
+        35
+      ],
+      "sprint": [
+        15,
+        30
+      ],
+      "leap": [
+        35,
+        50
+      ],
+      "manipulation": [
+        20,
+        35
+      ]
+    },
+    "senses": {
+      "sight": [
+        65,
+        85
+      ],
+      "hearing": [
+        45,
+        60
+      ],
+      "smell": [
+        50,
+        70
+      ],
+      "special": []
+    },
+    "protections": [],
+    "traversal": []
+  },
+  "temperament": {
+    "boldness": [
+      35,
+      55
+    ],
+    "curiosity": [
+      35,
+      60
+    ],
+    "energy": [
+      65,
+      85
+    ],
+    "aggression": [
+      45,
+      70
+    ],
+    "sociability": [
+      55,
+      75
+    ]
+  },
+  "signature": {
+    "type": "action",
+    "key": "avilily-defining"
+  },
+  "actions": [
+    {
+      "key": "avilily-defining",
+      "name": "Blossoming Ambuscade",
+      "description": "The Avilily opens its beak into a false bloom and coats what comes to feed in a syrup that stops it where it stands.",
+      "instrument": "secretion",
+      "activation": {
+        "continuity": "discrete"
+      },
+      "timing": {
+        "preparation": "brief",
+        "recovery": "brief"
+      },
+      "delivery": {
+        "mode": "contact",
+        "approach": "stationary"
+      },
+      "targeting": [
+        "other"
+      ],
+      "spatial": {
+        "range": "contact"
+      },
+      "effects": [
+        {
+          "key": "outcome",
+          "type": "status",
+          "recipient": "target",
+          "onset": "instant",
+          "persistence": "lingering",
+          "likelihood": "consistent",
+          "status": "paralyzed",
+          "removable": [
+            "detoxifying"
+          ],
+          "duration": "brief",
+          "intensity": 75
+        }
+      ]
+    }
+  ],
+  "passives": [],
+  "mechanisms": [
+    {
+      "key": "sedative-saliva",
+      "name": "Sedative Saliva",
+      "description": "Saliva carried from the open beak impairs voluntary movement.",
+      "instrument": "secretion",
+      "targeting": [
+        "other"
+      ],
+      "activation": {
+        "continuity": [
+          "discrete"
+        ]
+      },
+      "timing": {
+        "preparation": [
+          "immediate",
+          "brief"
+        ],
+        "recovery": [
+          "repeatable",
+          "brief"
+        ]
+      },
+      "delivery": {
+        "contact": {
+          "approach": [
+            "stationary"
+          ],
+          "range": [
+            "contact"
+          ]
+        }
+      },
+      "effects": [
+        {
+          "key": "outcome",
+          "type": "status",
+          "recipient": "target",
+          "onset": "instant",
+          "persistence": "lingering",
+          "likelihood": [
+            "likely",
+            "occasional"
+          ],
+          "status": "paralyzed",
+          "removable": [
+            "detoxifying"
+          ],
+          "duration": "brief",
+          "intensity": [
+            60,
+            85
+          ]
+        }
+      ]
+    },
+    {
+      "key": "beak-strike",
+      "name": "Beak Strike",
+      "description": "The closed flower-like beak makes close physical contact.",
+      "instrument": "beak",
+      "targeting": [
+        "other"
+      ],
+      "activation": {
+        "continuity": [
+          "discrete"
+        ]
+      },
+      "timing": {
+        "preparation": [
+          "immediate",
+          "brief"
+        ],
+        "recovery": [
+          "repeatable",
+          "brief"
+        ]
+      },
+      "delivery": {
+        "contact": {
+          "approach": [
+            "stationary"
+          ],
+          "range": [
+            "contact"
+          ]
+        }
+      },
+      "effects": [
+        {
+          "key": "outcome",
+          "type": "harm",
+          "recipient": "target",
+          "onset": "instant",
+          "persistence": "resolved",
+          "likelihood": [
+            "consistent"
+          ],
+          "mechanism": "impact",
+          "intensity": [
+            12,
+            28
+          ]
+        }
+      ]
+    },
+    {
+      "key": "talon-grip",
+      "name": "Talon Grip",
+      "description": "Talons strike or grip from the winged body.",
+      "instrument": "talons",
+      "targeting": [
+        "other"
+      ],
+      "activation": {
+        "continuity": [
+          "discrete"
+        ]
+      },
+      "timing": {
+        "preparation": [
+          "immediate",
+          "brief"
+        ],
+        "recovery": [
+          "repeatable",
+          "brief"
+        ]
+      },
+      "delivery": {
+        "contact": {
+          "approach": [
+            "stationary"
+          ],
+          "range": [
+            "contact"
+          ]
+        }
+      },
+      "effects": [
+        {
+          "key": "outcome",
+          "type": "harm",
+          "recipient": "target",
+          "onset": "instant",
+          "persistence": "resolved",
+          "likelihood": [
+            "consistent"
+          ],
+          "mechanism": "piercing",
+          "intensity": [
+            15,
+            35
+          ]
+        }
+      ]
+    }
+  ]
+}

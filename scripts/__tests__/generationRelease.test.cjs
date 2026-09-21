@@ -35,7 +35,8 @@ test('all species in every archived release replay with both profiles', async ()
         const record = archived.generateXalian(template.key, 'historical:' + template.key, {
           profile, generatedAt: '2026-09-15T12:34:56.000Z', serial: 42, origin: 'saiphus',
         });
-        assert.deepEqual(XalianRecordSchema.parse(record), record, 'current readers preserve historical representation');
+        const schema = archived.SCHEMA_VERSION === '5.0.0' ? archived.CreatureRecordSchema : XalianRecordSchema;
+        assert.deepEqual(schema.parse(record), record, 'schema for the archived representation accepts replay');
         assert.deepEqual(await replay(record), record, entry.name + ': ' + template.key + ': ' + profile);
       }
     }
@@ -105,4 +106,61 @@ test('artifact tampering fails even after a successful import', async t => {
   assert.deepEqual(await replay(record, temporary), record);
   fs.appendFileSync(path.join(temporary, id, 'generator.mjs'), '\n// unexpected edit\n');
   await assert.rejects(replay(record, temporary), /artifact integrity failure/);
+});
+const creatureEntry = 'scripts/__tests__/fixtures/creature-release.ts';
+const canonicalCreatureEntry = 'packages/rules/src/generator/canonicalCreatureRelease.ts';
+test('the complete v5 roster freezes and replays without the live species tree', async t => {
+  const temporary = temporaryArchive(t);
+  const releaseId = 'generation-0.6.0-1';
+  const manifest = await freeze({ entryPoint: canonicalCreatureEntry, releaseId, archives: temporary });
+  const ratified = JSON.parse(fs.readFileSync(path.join(__dirname, '../../docs/species-templates/RATIFIED.json'), 'utf8')).species;
+  assert.equal(Object.keys(manifest.inputs).filter(file => /^docs\/species-templates\/v5\/[^/]+\.json$/.test(file)).length, 32);
+  const { artifact } = readManifest(releaseId, temporary);
+  const archived = await import(pathToFileURL(artifact).href);
+  assert.deepEqual(archived.getSpeciesTemplates().map(template => template.key).sort(), [...ratified].sort());
+  for (const key of ratified) {
+    for (const profile of ['full', 'showroom']) {
+      const record = archived.generateXalian(key, 'v5-replay:' + key, {
+        profile, generatedAt: '2026-09-21T12:34:56.000Z', serial: 7, origin: 'saiphus',
+      });
+      assert.deepEqual(archived.CreatureRecordSchema.parse(record), record);
+      assert.deepEqual(await replay(record, temporary), record);
+    }
+  }
+});
+test('v5 freezes its actual species, catalog, compiler and naming dependencies and replays standalone', async t => {
+  const temporary = temporaryArchive(t);
+  const manifest = await freeze({ entryPoint: creatureEntry, releaseId: 'test-creature-v5', archives: temporary });
+  assert.equal(manifest.schemaVersion, '5.0.0');
+  assert.equal(manifest.generatorVersion, '0.6.0');
+  for (const file of ['catalog.ts', 'benchmarks.ts', 'compiler.ts', 'naming.ts', 'species.ts', 'record.ts', 'fixtures/support-species.json']) {
+    assert.ok(manifest.inputs['packages/content/src/creature/' + file], file);
+  }
+  assert.ok(manifest.inputs['packages/content/src/registriesConst.ts']);
+  assert.ok(manifest.inputs['packages/rules/src/generator/prng.ts']);
+  assert.equal(manifest.inputs['packages/content/src/speciesRecords.json'], undefined);
+  const { artifact } = readManifest(manifest.releaseId, temporary);
+  const archived = await import(pathToFileURL(artifact).href);
+  const species = archived.getSpeciesTemplates()[0].key;
+  for (const profile of ['full', 'showroom']) {
+    for (const seed of ['release-one', 'release-two', 'release-three']) {
+      const record = archived.generateXalian(species, seed, { profile, origin: 'saiphus', serial: 3, generatedAt: '2026-09-21T12:00:00.000Z' });
+      assert.deepEqual(archived.CreatureRecordSchema.parse(record), record);
+      assert.deepEqual(await replay(record, temporary), record);
+      // Fresh process: cannot use already-loaded live generator modules or compiled species.
+      const output = require('node:child_process').execFileSync(process.execPath, ['-e',
+        `const {replay}=require('./scripts/generationRelease.cjs'); let s=''; process.stdin.on('data',v=>s+=v); process.stdin.on('end',async()=>console.log(JSON.stringify(await replay(JSON.parse(s),process.argv[1]))));`, temporary],
+        { cwd: path.resolve(__dirname, '../..'), input: JSON.stringify(record), encoding: 'utf8' });
+      assert.deepEqual(JSON.parse(output), record);
+    }
+  }
+  assert.throws(() => archived.generateXalian(species, 'seed', {}), /seed|generatedAt|origin|serial|profile/);
+  assert.throws(() => archived.generateXalian('missing', 'seed', {}), /Unknown release species/);
+  await assert.rejects(freeze({ entryPoint: creatureEntry, releaseId: manifest.releaseId, archives: temporary }), /already exists/);
+});
+
+test('freeze refuses mismatched release identity before writing an archive', async t => {
+  const temporary = temporaryArchive(t);
+  await assert.rejects(freeze({ entryPoint: creatureEntry, releaseId: 'wrong-id', archives: temporary }), /does not match/);
+  assert.deepEqual(fs.readdirSync(temporary), []);
 });

@@ -57,9 +57,9 @@ Upgraded-description clauses and their sources:
 
 **corporeality `corporeal`.** A giant organism of roots is matter that occupies space (species).
 
-**composition `plant`, no secondary.** Registry: "living vegetable tissue: wood, fiber, stem, leaf, root." The body is roots (species). No second structural substance is named or shown, so no secondary.
+**composition `plant`, no secondary.** Registry: 'living vegetable tissue: wood, fiber, stem, leaf, root.' The body is roots (species). No second structural substance is named or shown, so no secondary.
 
-**bodyPlan `multiped`.** Registry: "stands and moves on more than four limbs, or on a limb arrangement that no other key names". The art shows six thick limbs plus two upright shoots off one mass, with the lower limbs reaching the ground; the description gives roots that act as tentacles (species). The registry's own note for this species also settles it: "a mass of living roots that lives mostly underground". Selection-order check: not a swarm (one body in the art), not floating, not piscine, not avian, not amorphous (the outline is fixed), and multiped precedes serpentine and quadruped.
+**bodyPlan `multiped`.** Registry: 'stands and moves on more than four limbs, or on a limb arrangement that no other key names'. The art shows six thick limbs plus two upright shoots off one mass, with the lower limbs reaching the ground; the description gives roots that act as tentacles (species). The registry's own note for this species also settles it: 'a mass of living roots that lives mostly underground'. Selection-order check: not a swarm (one body in the art), not floating, not piscine, not avian, not amorphous (the outline is fixed), and multiped precedes serpentine and quadruped.
 
 **anatomy `roots`, `tendrils`, `spines`, `body`.**
 - `roots` from species: "thick, intertwined roots" and the registry key for ground-anchored gripping or erupting structures; the art shows limbs meeting and breaking the ground.
@@ -68,7 +68,7 @@ Upgraded-description clauses and their sources:
 - `body` for the whole-body mass, which is the trunk the art centers and which the stub calls a giant organism (species).
 - Not declared: no `hide` and no `shell`, because neither source shows a defensive surface and the one-surface rule means declaring either would state a fact I do not have. No `jaws`, `core`, `vents`, or `light-organs`: nothing in either source shows a mouth, an emitter, or an opening.
 
-**covering `bare`.** Registry: "When neither source names or shows a surface, the covering is `bare`". The silhouette outline is smooth, and the registry says "a smooth outline shows nothing"; the serrated edges are the `spines` anatomy key, not a trunk surface. Authored.
+**covering `bare`.** Registry: "When neither source names or shows a surface, the covering is `bare`". The silhouette outline is smooth, and the registry says 'a smooth outline shows nothing'; the serrated edges are the `spines` anatomy key, not a trunk surface. Authored.
 
 **size `heightCm [240, 400]`, `weightKg [180, 320]`.** Legacy gauge is 320 cm and 237 kg, inside both bands. A three-to-four meter reach of root-limbs at a couple hundred kilograms is realistic for a living wood-and-fiber mass, and the Floria data block gives gravity as "0.80 x Earth" (planet), which permits the tall thin limb spans the art draws without the mass a heavier world would demand. The band is wide because most of the organism is buried and the measured height is the crown.
 
@@ -93,7 +93,7 @@ Upgraded-description clauses and their sources:
 - `leap [0, 10]`: nothing bears it clear of the ground.
 - `manipulation [45, 70]`: above 40 is licensed by grasping anatomy, since `roots` and `tendrils` are both on the grasping list, and by the stub's roots "that act as tentacles" (species). It handles and holds; it has no fine digits, so the top stops well short of a hand.
 
-**senses `sight [0, 15]`, `hearing [20, 40]`, `smell [30, 55]`, special `[tremorsense]`.** The art shows no eyes, so the sight band starts at 0 and its top is a bare light-sensitivity allowance. Hearing and smell are the low-to-moderate chemical and pressure awareness of a plant body. `tremorsense` is the registry's sense that "reads vibration through ground or water to locate what moves", and it is the sense the body plainly has: a creature that lives buried in soil and reaches up through it perceives through ground contact. Sourced to the art and the body rather than a sentence; listed under Authored fields.
+**senses `sight [0, 15]`, `hearing [20, 40]`, `smell [30, 55]`, special `[tremorsense]`.** The art shows no eyes, so the sight band starts at 0 and its top is a bare light-sensitivity allowance. Hearing and smell are the low-to-moderate chemical and pressure awareness of a plant body. `tremorsense` is the registry's sense that 'reads vibration through ground or water to locate what moves', and it is the sense the body plainly has: a creature that lives buried in soil and reaches up through it perceives through ground contact. Sourced to the art and the body rather than a sentence; listed under Authored fields.
 
 **archetypeWeights `bulwark 46`, `survivor 24`, `stalwart 18`, `seeker 12`.** Four entries with a dominant one, not a ladder. `bulwark` (vitality, resilience) dominates because the species is a large immovable mass whose only two filled legacy ratings are a medium special defense and a high recovery (species). `survivor` (vitality, endurance) is the second reading, a thing that outlasts. `stalwart` (resilience, willpower) covers the version that holds ground against a survey party. `seeker` (instinct, intelligence) is the smallest entry and covers the buried sensing version, kept at 12 because the underground reach is real but is not the fighting nature of the creature. No `vanguard`, no `berserker`, no agility archetype: nothing in the sources shows it closing distance.
 
