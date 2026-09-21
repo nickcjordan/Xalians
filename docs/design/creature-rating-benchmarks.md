@@ -59,4 +59,4 @@ Temperament retains bounded 0–100 spectra. Physical measurements retain their 
 
 ## Migration boundary
 
-Species migration remains deferred while naming, remaining relationship checks and release integration are completed. These references do not rescale existing species, reinterpret deployed records, or claim that the 32-species calibration pass has happened. That pass will apply the completed shared rules before the canonical release is frozen.
+All 32 canonical v5 species have been calibrated against these references and frozen in `generation-0.6.0-1`; see the [cross-roster calibration](creature-v5-calibration.md). The selected game release remains v4, so these references do not reinterpret its existing records. Future v5 species should use the same anchors and freeze a new release when their definitions become canonical.

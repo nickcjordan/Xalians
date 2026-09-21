@@ -1,5 +1,7 @@
 # Action, passive-effect, and status design decisions
 
+> Historical schema-4 decisions. The [schema-5 creature contract](creature-model-current.md) supersedes conflicting rules and is authoritative for the redesigned framework.
+
 Recorded 2026-09-16 from the creature-design discussion. This document captures the agreed direction after schema 3 was implemented. The shared data contract is implemented in schema 4; individual game behaviors remain consumer responsibilities.
 
 ## Implementation boundary

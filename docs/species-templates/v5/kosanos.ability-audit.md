@@ -1,6 +1,6 @@
 # Kosanos: v5 ability audit
 
-Review date: 2026-09-21. Status: staged, not released. Sources: `../kosanos.json`, `../kosanos.md`, `../art/kosanos.png`, canonical teaser, Floria record. The teaser remains verbatim.
+Review date: 2026-09-21. Status: frozen in `generation-0.6.0-1`; game consumers still use v4. Sources: `../kosanos.json`, `../kosanos.md`, `../art/kosanos.png`, canonical teaser, Floria record. The teaser remains verbatim.
 
 The fixed Trunk Blade Sweep preserves the brush-clearing trunk blade. Ordinary domains include its cutting blade, blunt trunk force, jaw piercing and the weight of the body pressing at contact. These outcomes use supported physical anatomy; no plant emission, healing or growth follows from the plant element. Cutting a specific restraint might someday be interpreted by a game as freeing, but no universal cleanse has been added to the species. Blade sweep remains a named physical action, not a permission for arbitrary selective area targeting.
 

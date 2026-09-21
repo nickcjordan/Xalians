@@ -1,6 +1,6 @@
 # Drilltail: v5 ability audit
 
-Review date: 2026-09-21. Status: staged, not released. Sources: `../drilltail.json`, `../drilltail.md`, `../art/drilltail.png`, the canonical species description, and Endessa's planetary record. `lore.description` remains verbatim.
+Review date: 2026-09-21. Status: frozen in `generation-0.6.0-1`; game consumers still use v4. Sources: `../drilltail.json`, `../drilltail.md`, `../art/drilltail.png`, the canonical species description, and Endessa's planetary record. `lore.description` remains verbatim.
 
 ## Identity and bounded mechanism review
 

@@ -44,7 +44,7 @@ The existing mechanism `name` labels the authored process. It no longer becomes 
 - Reserve guaranteed capability names. Ordinary names are compared case-insensitively.
 - If ordinary names collide, prefer an actual distinguishing fact: Short Range versus Long Range, preparation/recovery, area geometry, or a particular effect's likelihood.
 - If a short single distinction is insufficient, use a fuller structural description. Do not append a random identifier or reroll the ability to find a convenient name. Very long fallback names are an authoring polish issue, not a reason to reduce the permission space.
-- Pin the naming catalog and species vocabulary with the generator's eventual frozen release. The redesigned canonical release is not published yet.
+- Pin the naming catalog and species vocabulary with the generator's frozen release. `generation-0.6.0-1` now freezes the complete canonical v5 roster and naming inputs; games still use v4.
 
 The structured ability remains authoritative. Games should never parse a name to discover damage, status, target or delivery rules.
 
@@ -52,4 +52,4 @@ The structured ability remains authoritative. Games should never parse a name to
 
 Regression tests cover derived contact/projectile/splash names, explicit Acid Glob vocabulary, collisions from range and status likelihood, signature preservation, replay, and unchanged structural/numeric generation when vocabulary changes.
 
-Canonical vocabulary review remains part of the deferred species migration. Next complete representative relationship checks and release integration before that migration. No species or game updates are included in this naming implementation.
+Canonical vocabulary, representative relationships, and release replay have been reviewed for all 32 v5 species. Game adaptation remains separate work.

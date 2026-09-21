@@ -1,4 +1,4 @@
-> Ability schema update: the current actions, passives, signature, delivery, and effect contract is [Creature capabilities: schema 4](xalian-ability-model.md). It supersedes action/signature structure in this document.
+> Historical creature-system design. The [schema-5 creature contract](creature-model-current.md) is authoritative for creature and ability authoring. Existing games still consume schema 4 during their separate adaptation.
 
 > Platform lifecycle update: this document remains authoritative for immutable genesis, species templates, and generation data. For post-generation development, receipts, currency, trading, release, and restoration, read `generation-economy-open-threads.md` then `xalian-generation-system.md`. Those later platform decisions supersede older statements here that games can never consume mutable creature state.
 

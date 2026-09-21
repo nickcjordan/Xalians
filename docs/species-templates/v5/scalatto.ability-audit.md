@@ -1,6 +1,6 @@
 # Scalatto: v5 ability audit
 
-Review date: 2026-09-21. Status: staged, not released. Sources: `../scalatto.json`, `../scalatto.md`, `../art/scalatto.png`, canonical teaser, Endessa record. The teaser remains verbatim.
+Review date: 2026-09-21. Status: frozen in `generation-0.6.0-1`; game consumers still use v4. Sources: `../scalatto.json`, `../scalatto.md`, `../art/scalatto.png`, canonical teaser, Endessa record. The teaser remains verbatim.
 
 The scaly exoskeleton is baseline physiology with specific cutting resistance. The deliberate **Shell Curl** is separately fixed as a self action applying `shielded`: it adds protection only while the curled defense is available. This distinguishes its ordinary shell from actively hiding vulnerable surfaces, avoiding two copies of the same protection. The compiler does not equate the status to unconditional elemental immunity.
 

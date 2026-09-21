@@ -4,9 +4,9 @@ Author species permissions over catalog values and machine-readable relationship
 
 Use for every newly authored species and every substantive re-authoring or ability audit. Policy and scope: [coverage guidance](../design/species-ability-authoring-coverage.md).
 
-Create or update docs/species-templates/<key>.ability-audit.md using the sections below. This is species-level review evidence, not part of generated creature data. Mark items complete only with evidence; mark genuine non-applicability with a reason. Do not treat a passing schema validator as proof of creative coverage.
+Create or update `docs/species-templates/v5/<key>.ability-audit.md` using the sections below. This is species-level review evidence, not part of generated creature data. Mark items complete only with evidence; mark genuine non-applicability with a reason. Do not treat a passing schema validator as proof of creative coverage.
 
-Stage redesigned species in `docs/species-templates/v5/` until canonical bundling and release integration are complete. Record genuine representation gaps here; do not add private fields or silently feed v5 data to the v4 bundler.
+Keep redesigned species in `docs/species-templates/v5/`. The complete roster is frozen as `generation-0.6.0-1`; subsequent canonical changes need a new release ID. Record genuine representation gaps here; do not add private fields or silently feed v5 data to the v4 bundler.
 
 ## Review identity
 

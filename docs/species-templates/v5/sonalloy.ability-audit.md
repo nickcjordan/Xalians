@@ -1,6 +1,6 @@
 # Sonalloy: v5 ability audit
 
-Review date: 2026-09-21. Status: staged, not released. Sources: `../sonalloy.json`, `../sonalloy.md`, `../art/sonalloy.png`, canonical teaser and Veridium record. The teaser remains verbatim.
+Review date: 2026-09-21. Status: frozen in `generation-0.6.0-1`; game consumers still use v4. Sources: `../sonalloy.json`, `../sonalloy.md`, `../art/sonalloy.png`, canonical teaser and Veridium record. The teaser remains verbatim.
 
 The fixed **Living-Alloy Seam** restores another creature through vented alloy shaped by tendrils. The separate guaranteed ongoing self passive replaces damage within its own living-metal body. This honors the earlier ruling that its fitted repairs can help other body materials; no target-material whitelist was added. Ordinary domains allow direct seam repair, structural reinforcement applied to another creature, and pincer compression. A brace and a repair are separate physical outcomes, not duplicate effects on one action.
 

@@ -1,6 +1,6 @@
 # Foromeer: v5 ability audit
 
-Review date: 2026-09-21. Status: staged, not released. Sources: `../foromeer.json`, `../foromeer.md`, `../art/foromeer.png`, canonical teaser, Veridium record. The teaser remains verbatim.
+Review date: 2026-09-21. Status: frozen in `generation-0.6.0-1`; game consumers still use v4. Sources: `../foromeer.json`, `../foromeer.md`, `../art/foromeer.png`, canonical teaser, Veridium record. The teaser remains verbatim.
 
 The fixed Forelimb Bore keeps the long drill-shaped forelimb spurs as its defining tool. Burrowing remains in physiology. The ordinary source-backed domains are piercing and crushing with those spurs, blunt force from a plated limb, and a closing body shove. Metal is not assigned to every attack merely because the limbs are plated. The plated limbs alone do not establish global body immunity, so no whole-creature protection was inferred.
 

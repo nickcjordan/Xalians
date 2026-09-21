@@ -1,5 +1,7 @@
 # Ability redesign completion review
 
+> Historical schema-4 completion review. Its claims about primary effects, selectivity, transfer, traits, and complete-move pools were superseded by the [schema-5 creature contract](creature-model-current.md). Do not use this page as a v5 authoring or game-adaptation specification.
+
 ## Completed contract
 
 - Separate deliberate actions from automatic passives. Chosen reactions remain actions.

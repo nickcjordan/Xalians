@@ -1,6 +1,6 @@
 # Chromocat: v5 ability audit
 
-Review date: 2026-09-21. Status: staged, not released. Sources: `../chromocat.json`, `../chromocat.md`, `../art/chromocat.png`, canonical teaser, Luminax record. The teaser remains verbatim.
+Review date: 2026-09-21. Status: frozen in `generation-0.6.0-1`; game consumers still use v4. Sources: `../chromocat.json`, `../chromocat.md`, `../art/chromocat.png`, canonical teaser, Luminax record. The teaser remains verbatim.
 
 The guaranteed Photonic Sickle Rush joins the creature's exceptional closing movement to its ionized front-paw blades. Light is declared on those blades only. The ordinary domains include stationary or closing ion-blade cuts, natural claw cuts, fang piercing and a closing pounce. This covers the anatomy-supported contact families without listing finished moves. The old photonic wording explains extraordinary speed and apparent teleportation; no phase traversal, wall transit or literal teleport effect is granted.
 

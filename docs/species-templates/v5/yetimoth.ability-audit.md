@@ -1,10 +1,10 @@
 # Yetimoth: v5 ability audit
 
-Review date: 2026-09-21. Status: staged, compiled, not in the canonical v5 release. Sources: `../yetimoth.json`, `../yetimoth.md`, `../art/yetimoth.png`, the canonical species description and Krystos's planetary record. The species teaser is preserved verbatim.
+Review date: 2026-09-21. Status: frozen in `generation-0.6.0-1`; game consumers still use v4. Sources: `../yetimoth.json`, `../yetimoth.md`, `../art/yetimoth.png`, the canonical species description and Krystos's planetary record. The species teaser is preserved verbatim.
 
 ## Identity and scope
 
-The species explicitly has three uses for self-produced ice: armor, opponent encasement and route-blocking walls. The first two have exact current representations. The wall occupies space independently of a recipient; the user chose to keep it in lore without claiming a v5 terrain obstacle mechanic. This staged definition does not use `shielded`, `frozen` or `restrained` as a substitute for a freestanding wall.
+The species explicitly has three uses for self-produced ice: armor, opponent encasement and route-blocking walls. The first two have exact current representations. The wall occupies space independently of a recipient; the user chose to keep it in lore without claiming a v5 terrain obstacle mechanic. This frozen definition does not use `shielded`, `frozen` or `restrained` as a substitute for a freestanding wall.
 
 The fixed signature applies `shielded` to self with a prolonged, independently lingering lifetime. The effect describes built ice sheets over the pelt, so it need not imply that the performer continually maintains them. No separate innate impact protection is inferred from the heavy body; armor is the applied condition. `Ice Encasement` is a second guaranteed action because every Yetimoth can freeze an opponent, regardless of its ordinary roll. Its fixed form uses short range; the ordinary cold mechanism also permits short/medium variants. The organism's whole body is the listed source for externally forming cold; the source does not specify breath, a horn emitter or a thrown ice projectile.
 
