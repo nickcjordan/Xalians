@@ -10,6 +10,8 @@
 - [x] Implement status defaults and scoped protection/removal queries.
 - [x] Add executable authoring validation and focused regression tests.
 - [x] Replace the stale authoring skill's copied schema with the current contract; preserve canon/prose guidance separately.
+- [x] Complete the source-to-model representation audit across all 32 canonical species and inspect their artwork; record findings in creature-roster-audit.md. This is not completed per-species authoring/calibration.
+- [ ] Resolve unignited fuel exposure (Neph), physical route barriers (Yetimoth), and the proposed paralysis distinction (Avilily). No new keys are ratified yet; user chose to resolve gaps before migration.
 - [ ] Re-author/audit all 32 canonical species; source biology and breadth are not a mechanical old-pool conversion.
 - [x] Record the agreed reference ladder and field-specific authoring anchors in the shared benchmark catalog; preserve status default 50.
 - [x] Implement compositional naming after generation, optional source-supported vocabulary, and structural collision distinctions without rerolling capabilities.

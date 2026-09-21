@@ -2,6 +2,10 @@
 
 Updated 2026-09-21. This document supersedes conflicting proposals and chronological notes in this directory. The implementation is available through `@xalians/content/creature` and `@xalians/rules/generator/creature`. These are the redesigned model's entry points; the deployed games and canonical species bundle still use v4.
 
+## Open decisions from the canonical roster audit
+
+The [32-species representation audit](creature-roster-audit.md) found three source-backed questions after the fixture-based implementation checks: Neph's unignited fuel exposure, Yetimoth's route-blocking ice walls, and Avilily's paralysis. Their proposed representations are not ratified catalog entries. The user chose to resolve the Neph/Yetimoth gaps before migration; complete this shared design review before authoring the canonical v5 roster. Earlier release-integration completion refers only to packaging/replay infrastructure, not final catalog coverage.
+
 ## Ownership and data structure
 
 The species template describes physiology, attribute and temperament bands, guaranteed capabilities, and mechanism permissions. The generated creature contains resolved facts, four actions, automatic passives, and one signature reference. Encounter state belongs to games, including current injuries, status applications, targets, interruption, expiry, and action availability.
@@ -175,7 +179,7 @@ Content: 85 tests passed. Rules: 349 tests passed. Both TypeScript checks passed
 The full workspace run also passed the API suite; the web suite had one asynchronous portrait-loading timeout (`xalianSvg.test.js`). That six-test file passed in isolation without changes. No game files were changed. These results do not replace canonical v5 species coverage or release replay, which are still pending.
 
 
-### Release integration checkpoint — 2026-09-21
+### Release integration checkpoint - 2026-09-21
 
 The preliminary release-integration gate is implemented and tested; see [generation releases](generation-releases.md#schema-5-integration-checkpoint). The adapter supplies explicit provenance, seeded IDs and existing appearance policy around constructive v5 generation. Species compilation occurs once when the roster loads; per-call validation concerns caller metadata only. No generated-creature evaluation was introduced.
 
