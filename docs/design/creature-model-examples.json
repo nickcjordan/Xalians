@@ -1,0 +1,708 @@
+{
+  "notice": "DESIGN EXAMPLES ONLY. Not production-schema fixtures, not canonical species, not generated records. Status intensity defaults to catalog value 50 when omitted; explicit numbers illustrate authored overrides, not canonical calibration. Direct effects retain their own intensity. See creature-model-proposal.md for accepted decisions and open design choices. Action-allocation update: the creature illustration currently shows only two actions for field placement; it is abbreviated and must be expanded to four before use as a complete new-model fixture.",
+  "proposedSyntax": [
+    "element as root string",
+    "signature.type for consistency with effect.type",
+    "protected status and protection payload",
+    "spatial.area.persistence/duration",
+    "effect.bound: source or area (ratified sustained-status dependence)",
+    "trigger supplies target; self identifies passive owner (ratified)"
+  ],
+  "creature": {
+    "id": "xal_design_example",
+    "species": "hypothetical-support-species",
+    "provenance": {
+      "seed": "00000000000000000000000000000001",
+      "generatorVersion": "PROPOSED",
+      "schemaVersion": "PROPOSED",
+      "releaseId": "design-example-not-a-release",
+      "generatedAt": "2026-09-18T00:00:00Z",
+      "origin": "example-world",
+      "serial": 1,
+      "profile": "full"
+    },
+    "element": "chemical",
+    "physiology": {
+      "composition": {
+        "primary": "flesh"
+      },
+      "bodyPlan": "quadruped",
+      "anatomy": [
+        "legs",
+        "mouth"
+      ],
+      "covering": "hide",
+      "heightCm": 80,
+      "weightKg": 45,
+      "lifespan": "standard",
+      "genome": {
+        "chirality": "levo"
+      },
+      "diet": "omnivore",
+      "communication": [],
+      "breathes": [
+        "gas"
+      ],
+      "environmentalTolerance": {
+        "ambientMedia": [
+          "gas"
+        ],
+        "temperatureC": {
+          "min": 5,
+          "max": 40
+        }
+      },
+      "capabilities": {
+        "flight": 0,
+        "swim": 30,
+        "burrow": 0,
+        "climb": 20,
+        "sprint": 45,
+        "leap": 20,
+        "manipulation": 20
+      },
+      "senses": {
+        "sight": 55,
+        "hearing": 50,
+        "smell": 70,
+        "special": []
+      },
+      "protections": [
+        {
+          "type": "status",
+          "status": "poisoned",
+          "degree": "immune"
+        }
+      ]
+    },
+    "attributes": {
+      "strength": 35,
+      "vitality": 65,
+      "endurance": 60,
+      "agility": 40,
+      "reflex": 45,
+      "intelligence": 60,
+      "willpower": 65,
+      "instinct": 50,
+      "charisma": 45,
+      "resilience": 60
+    },
+    "temperament": {
+      "boldness": 40,
+      "curiosity": 65,
+      "energy": 50,
+      "aggression": 20,
+      "sociability": 70
+    },
+    "appearance": {
+      "finish": "standard"
+    },
+    "signature": {
+      "type": "action",
+      "key": "example-repair"
+    },
+    "actions": [
+      {
+        "key": "example-repair",
+        "name": "Restorative Secretion",
+        "instrument": "secretion",
+        "activation": {
+          "continuity": "discrete"
+        },
+        "timing": {
+          "preparation": "brief",
+          "recovery": "brief"
+        },
+        "delivery": {
+          "mode": "stream",
+          "approach": "stationary"
+        },
+        "targeting": [
+          "other"
+        ],
+        "spatial": {
+          "range": "short"
+        },
+        "effects": [
+          {
+            "key": "repair",
+            "type": "restore",
+            "recipient": "target",
+            "onset": "instant",
+            "persistence": "resolved",
+            "likelihood": "consistent",
+            "intensity": 85
+          },
+          {
+            "key": "coat",
+            "type": "status",
+            "recipient": "target",
+            "onset": "instant",
+            "persistence": "lingering",
+            "likelihood": "consistent",
+            "status": "mending",
+            "duration": "brief",
+            "removable": [
+              "cleansing"
+            ]
+          }
+        ],
+        "description": "Hypothetical design example; not a canonical species capability.",
+        "element": "chemical"
+      },
+      {
+        "key": "example-coating",
+        "name": "Protective Secretion",
+        "instrument": "secretion",
+        "activation": {
+          "continuity": "discrete"
+        },
+        "timing": {
+          "preparation": "brief",
+          "recovery": "brief"
+        },
+        "delivery": {
+          "mode": "stream",
+          "approach": "stationary"
+        },
+        "targeting": [
+          "other"
+        ],
+        "spatial": {
+          "range": "short"
+        },
+        "effects": [
+          {
+            "key": "coat",
+            "type": "status",
+            "recipient": "target",
+            "onset": "instant",
+            "persistence": "lingering",
+            "likelihood": "consistent",
+            "status": "protected",
+            "protection": {
+              "type": "status",
+              "status": "burning",
+              "degree": "immune"
+            },
+            "duration": "brief",
+            "removable": [
+              "cleansing"
+            ]
+          }
+        ],
+        "description": "Hypothetical design example; not a canonical species capability.",
+        "element": "chemical"
+      }
+    ],
+    "passives": [
+      {
+        "key": "example-regeneration",
+        "name": "Automatic Tissue Repair",
+        "instrument": "secretion",
+        "activation": {
+          "continuity": "ongoing"
+        },
+        "delivery": {
+          "mode": "self",
+          "approach": "stationary"
+        },
+        "targeting": [
+          "self"
+        ],
+        "spatial": {},
+        "effects": [
+          {
+            "key": "repair",
+            "type": "restore",
+            "recipient": "self",
+            "onset": "instant",
+            "persistence": "sustained",
+            "likelihood": "consistent",
+            "intensity": 30
+          }
+        ],
+        "description": "An automatic tissue-repair process. No selectable action or applied mending condition is implied."
+      }
+    ]
+  },
+  "standaloneActions": [
+    {
+      "key": "example-fireball",
+      "name": "Fireball",
+      "instrument": "breath",
+      "activation": {
+        "continuity": "discrete"
+      },
+      "timing": {
+        "preparation": "brief",
+        "recovery": "brief"
+      },
+      "delivery": {
+        "mode": "projectile",
+        "approach": "stationary"
+      },
+      "targeting": [
+        "other"
+      ],
+      "spatial": {
+        "range": "short"
+      },
+      "effects": [
+        {
+          "key": "collision",
+          "type": "harm",
+          "recipient": "target",
+          "onset": "instant",
+          "persistence": "resolved",
+          "likelihood": "consistent",
+          "mechanism": "impact",
+          "intensity": 35
+        },
+        {
+          "key": "heat",
+          "type": "harm",
+          "recipient": "target",
+          "onset": "instant",
+          "persistence": "resolved",
+          "likelihood": "consistent",
+          "mechanism": "elemental",
+          "intensity": 70
+        },
+        {
+          "key": "ignite",
+          "type": "status",
+          "recipient": "target",
+          "onset": "instant",
+          "persistence": "lingering",
+          "likelihood": "occasional",
+          "status": "burning",
+          "intensity": 45,
+          "duration": "brief",
+          "removable": [
+            "cooling",
+            "smothering"
+          ]
+        }
+      ],
+      "description": "Hypothetical design example; not a canonical species capability.",
+      "element": "fire"
+    },
+    {
+      "key": "example-repair",
+      "name": "Restorative Secretion",
+      "instrument": "secretion",
+      "activation": {
+        "continuity": "discrete"
+      },
+      "timing": {
+        "preparation": "brief",
+        "recovery": "brief"
+      },
+      "delivery": {
+        "mode": "stream",
+        "approach": "stationary"
+      },
+      "targeting": [
+        "other"
+      ],
+      "spatial": {
+        "range": "short"
+      },
+      "effects": [
+        {
+          "key": "repair",
+          "type": "restore",
+          "recipient": "target",
+          "onset": "instant",
+          "persistence": "resolved",
+          "likelihood": "consistent",
+          "intensity": 85
+        },
+        {
+          "key": "coat",
+          "type": "status",
+          "recipient": "target",
+          "onset": "instant",
+          "persistence": "lingering",
+          "likelihood": "consistent",
+          "status": "mending",
+          "duration": "brief",
+          "removable": [
+            "cleansing"
+          ]
+        }
+      ],
+      "description": "Hypothetical design example; not a canonical species capability.",
+      "element": "chemical"
+    },
+    {
+      "key": "example-cooling",
+      "name": "Cooling Jet",
+      "instrument": "breath",
+      "activation": {
+        "continuity": "discrete"
+      },
+      "timing": {
+        "preparation": "brief",
+        "recovery": "brief"
+      },
+      "delivery": {
+        "mode": "stream",
+        "approach": "stationary"
+      },
+      "targeting": [
+        "other"
+      ],
+      "spatial": {
+        "range": "short"
+      },
+      "effects": [
+        {
+          "key": "cold",
+          "type": "harm",
+          "recipient": "target",
+          "onset": "instant",
+          "persistence": "resolved",
+          "likelihood": "consistent",
+          "mechanism": "elemental",
+          "intensity": 50
+        },
+        {
+          "key": "cool",
+          "type": "remove",
+          "recipient": "target",
+          "onset": "instant",
+          "persistence": "resolved",
+          "likelihood": "consistent",
+          "methods": [
+            "cooling"
+          ]
+        }
+      ],
+      "description": "Hypothetical design example; not a canonical species capability.",
+      "element": "water"
+    },
+    {
+      "key": "example-grip",
+      "name": "Tentacle Grip",
+      "instrument": "tentacles",
+      "activation": {
+        "continuity": "ongoing"
+      },
+      "timing": {
+        "preparation": "brief",
+        "recovery": "brief"
+      },
+      "delivery": {
+        "mode": "contact",
+        "approach": "stationary"
+      },
+      "targeting": [
+        "other"
+      ],
+      "spatial": {
+        "range": "contact"
+      },
+      "effects": [
+        {
+          "key": "hold",
+          "type": "status",
+          "recipient": "target",
+          "onset": "instant",
+          "persistence": "sustained",
+          "bound": "source",
+          "likelihood": "consistent",
+          "status": "restrained",
+          "removable": [
+            "freeing"
+          ]
+        }
+      ],
+      "description": "Hypothetical design example; not a canonical species capability."
+    },
+    {
+      "key": "example-coating",
+      "name": "Protective Secretion",
+      "instrument": "secretion",
+      "activation": {
+        "continuity": "discrete"
+      },
+      "timing": {
+        "preparation": "brief",
+        "recovery": "brief"
+      },
+      "delivery": {
+        "mode": "stream",
+        "approach": "stationary"
+      },
+      "targeting": [
+        "other"
+      ],
+      "spatial": {
+        "range": "short"
+      },
+      "effects": [
+        {
+          "key": "coat",
+          "type": "status",
+          "recipient": "target",
+          "onset": "instant",
+          "persistence": "lingering",
+          "likelihood": "consistent",
+          "status": "protected",
+          "protection": {
+            "type": "status",
+            "status": "burning",
+            "degree": "immune"
+          },
+          "duration": "brief",
+          "removable": [
+            "cleansing"
+          ]
+        }
+      ],
+      "description": "Hypothetical design example; not a canonical species capability.",
+      "element": "chemical"
+    },
+    {
+      "key": "example-puddle",
+      "name": "Corrosive Puddle",
+      "instrument": "secretion",
+      "activation": {
+        "continuity": "discrete"
+      },
+      "timing": {
+        "preparation": "brief",
+        "recovery": "brief"
+      },
+      "delivery": {
+        "mode": "stream",
+        "approach": "stationary"
+      },
+      "targeting": [
+        "other"
+      ],
+      "spatial": {
+        "range": "short",
+        "area": {
+          "shape": "radial",
+          "extent": "medium",
+          "anchor": "location",
+          "persistence": "lingering",
+          "duration": "prolonged"
+        }
+      },
+      "effects": [
+        {
+          "key": "coat",
+          "type": "status",
+          "recipient": "area",
+          "onset": "instant",
+          "persistence": "lingering",
+          "likelihood": "consistent",
+          "status": "corroding",
+          "intensity": 40,
+          "duration": "brief",
+          "removable": [
+            "cleansing"
+          ]
+        }
+      ],
+      "description": "Hypothetical design example; not a canonical species capability.",
+      "element": "chemical"
+    },
+    {
+      "key": "example-field",
+      "name": "Protective Field",
+      "instrument": "aura",
+      "activation": {
+        "continuity": "discrete"
+      },
+      "timing": {
+        "preparation": "brief",
+        "recovery": "brief"
+      },
+      "delivery": {
+        "mode": "field",
+        "approach": "stationary"
+      },
+      "targeting": [
+        "other"
+      ],
+      "spatial": {
+        "range": "short",
+        "area": {
+          "shape": "radial",
+          "extent": "medium",
+          "anchor": "location",
+          "persistence": "lingering",
+          "duration": "prolonged"
+        }
+      },
+      "effects": [
+        {
+          "key": "cover",
+          "type": "status",
+          "recipient": "area",
+          "onset": "instant",
+          "persistence": "sustained",
+          "likelihood": "consistent",
+          "status": "protected",
+          "protection": {
+            "type": "harm",
+            "mechanism": "elemental",
+            "element": "fire",
+            "degree": "resistant"
+          },
+          "bound": "area",
+          "removable": [
+            "disrupting"
+          ]
+        }
+      ],
+      "description": "Hypothetical design example; not a canonical species capability."
+    },
+    {
+      "key": "example-drain",
+      "name": "Draining Cloud",
+      "instrument": "secretion",
+      "activation": {
+        "continuity": "discrete"
+      },
+      "timing": {
+        "preparation": "brief",
+        "recovery": "brief"
+      },
+      "delivery": {
+        "mode": "field",
+        "approach": "stationary"
+      },
+      "targeting": [
+        "other"
+      ],
+      "spatial": {
+        "range": "short",
+        "area": {
+          "shape": "radial",
+          "extent": "medium",
+          "anchor": "location",
+          "persistence": "resolved"
+        }
+      },
+      "effects": [
+        {
+          "key": "drain",
+          "type": "harm",
+          "recipient": "area",
+          "onset": "instant",
+          "persistence": "resolved",
+          "likelihood": "consistent",
+          "mechanism": "elemental",
+          "intensity": 40
+        },
+        {
+          "key": "recover",
+          "type": "restore",
+          "recipient": "self",
+          "onset": "instant",
+          "persistence": "resolved",
+          "likelihood": "consistent",
+          "intensity": 25,
+          "requires": "drain"
+        }
+      ],
+      "description": "Hypothetical design example; not a canonical species capability.",
+      "element": "chemical"
+    }
+  ],
+  "standalonePassives": [
+    {
+      "key": "example-regeneration",
+      "name": "Automatic Tissue Repair",
+      "instrument": "secretion",
+      "activation": {
+        "continuity": "ongoing"
+      },
+      "delivery": {
+        "mode": "self",
+        "approach": "stationary"
+      },
+      "targeting": [
+        "self"
+      ],
+      "spatial": {},
+      "effects": [
+        {
+          "key": "repair",
+          "type": "restore",
+          "recipient": "self",
+          "onset": "instant",
+          "persistence": "sustained",
+          "likelihood": "consistent",
+          "intensity": 30
+        }
+      ],
+      "description": "An automatic tissue-repair process. No selectable action or applied mending condition is implied."
+    },
+    {
+      "key": "example-retaliation",
+      "name": "Contact Discharge",
+      "instrument": "aura",
+      "element": "electric",
+      "activation": {
+        "continuity": "discrete",
+        "trigger": "contact"
+      },
+      "timing": {
+        "preparation": "immediate",
+        "recovery": "brief"
+      },
+      "delivery": {
+        "mode": "contact",
+        "approach": "stationary"
+      },
+      "targeting": [
+        "other"
+      ],
+      "spatial": {
+        "range": "contact"
+      },
+      "effects": [
+        {
+          "key": "shock",
+          "type": "harm",
+          "recipient": "target",
+          "onset": "instant",
+          "persistence": "resolved",
+          "likelihood": "consistent",
+          "mechanism": "elemental",
+          "intensity": 40
+        }
+      ],
+      "description": "Automatic discharge toward the other contacting participant, supplied as target by the contact trigger."
+    }
+  ],
+  "protectionExample": {
+    "physiology": {
+      "protections": [
+        {
+          "type": "status",
+          "status": "burning",
+          "degree": "immune"
+        },
+        {
+          "type": "harm",
+          "mechanism": "elemental",
+          "element": "fire",
+          "degree": "immune"
+        },
+        {
+          "type": "harm",
+          "mechanism": "impact",
+          "degree": "resistant"
+        }
+      ]
+    }
+  }
+}

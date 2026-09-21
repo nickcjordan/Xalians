@@ -1,0 +1,47 @@
+{
+  "notice": "PROPOSED ABBREVIATED SPECIES-TEMPLATE FRAGMENT. Hypothetical water-emitting mechanism explicitly supports narrow streams and spreading pulses; not a new canonical species capability. Both modes are area deliveries in this example. Timing, naming and remaining lifetime details are omitted. Numeric bands are illustrative.",
+  "mechanisms": [
+    {
+      "key": "pressurized-water",
+      "instrument": "breath",
+      "element": "water",
+      "targeting": ["other"],
+      "activation": {
+        "continuity": ["discrete"]
+      },
+      "delivery": {
+        "stream": {
+          "range": ["short", "medium", "long"],
+          "area": {
+            "shape": ["line"],
+            "extent": ["small", "medium"],
+            "anchor": ["self"]
+          }
+        },
+        "pulse": {
+          "range": ["short", "medium"],
+          "area": {
+            "shape": ["cone"],
+            "extent": ["small", "medium"],
+            "anchor": ["self"]
+          }
+        }
+      },
+      "effects": [
+        {
+          "key": "pressure",
+          "type": "harm",
+          "mechanism": "impact",
+          "recipient": "area",
+          "intensity": [30, 70]
+        },
+        {
+          "key": "cool",
+          "type": "remove",
+          "recipient": "area",
+          "methods": ["cooling"]
+        }
+      ]
+    }
+  ]
+}

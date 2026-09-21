@@ -1,0 +1,13 @@
+# Instrument and elemental permission ownership — proposal
+
+> Historical design discussion / audit evidence. The [current contract](creature-model-current.md) is authoritative for the redesigned model and its implementation status. Conflicting proposals below are superseded; these notes are not production schemas.
+
+Follow-up: the user authorized cleanup if a full logic pass preserves the relationships. See instrument-permissions-audit.md for the completed current-source/32-species inventory, replacement responsibilities, migration safeguards, and explicit implementation limits. Retire the duplicate fields in the coordinated redesign; do not simply delete their validation without replacing it.
+
+2026-09-21. Current templates contain physiology.anatomy, an additional top-level instruments allowlist, and optional conduits mapping instruments to elements. InstrumentKeySchema already combines physical anatomy keys with nonphysical channel keys. Current generation checks guaranteed instruments against the allowlist and uses it during legacy pool compilation.
+
+In the redesigned system, species mechanisms and authored guaranteed capabilities already explicitly declare instruments and elemental mechanisms. Recommendation pending ratification: retire independently authored top-level instruments and conduits; derive any tooling index from mechanism permissions plus guaranteed capabilities. Preserve physiology.anatomy as actual body-part information. Preserve instrument on generated abilities so consumers know how they are performed.
+
+Anatomy alone does not grant attacks or elemental access. Mechanism permissions still establish those capabilities. Compiler validation must ensure anatomy-based instruments exist for every supported physiological variant and that nonphysical channels have explicit authored support. Retiring a duplicate allowlist must not remove those guarantees or widen access to all registry values. Instruments used only by guaranteed signatures/passives must be included in any derived index. Elemental access follows authored mechanism relationships, never automatic identity or adjacency expansion.
+
+Example: Hippochamp declares trunk in anatomy and a water-emitting mechanism using instrument trunk with element water. Those facts suffice without separately repeating trunk in an instruments list and trunk: water in conduits. No independent mutable instrument-to-element permission table is necessary if the mechanism declaration already owns that relationship. Concrete multiple-element permissions still require coherence with effects and source mechanism; this proposal does not authorize flat independent element mixing.
