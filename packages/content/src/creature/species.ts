@@ -80,7 +80,6 @@ export const SpeciesSchema = z.strictObject({
     const instrument = capability.instrument;
     if ((ANATOMY_KEYS as readonly string[]).includes(instrument) && !species.physiology.anatomy.includes(instrument as typeof ANATOMY_KEYS[number])) issue(`${capability.key}: instrument ${instrument} is absent from anatomy`);
     if (instrument === 'gaze' && species.physiology.senses.sight[0] <= 0) issue(`${capability.key}: gaze requires sight throughout the species band`);
-    if (instrument === 'voice' && !species.physiology.communication.includes('vocal')) issue(`${capability.key}: voice requires vocal communication`);
   }
 });
 export type Species = z.infer<typeof SpeciesSchema>;

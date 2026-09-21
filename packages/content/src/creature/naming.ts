@@ -86,6 +86,15 @@ function distinctions(ability: Ability): string[] {
       return [`${title(effect.likelihood)} ${outcome}`, `${outcome} on ${title(effect.recipient)}`,
         `${title(effect.onset)} ${outcome}`, `${title(effect.persistence)} ${outcome}`];
     }).sort(),
+    ...ability.effects.filter(effect => !effect.requires).flatMap(parent => {
+      const children = ability.effects.filter(effect => effect.requires === parent.key);
+      if (!children.length) return [];
+      const names = children.map(effect => title(effect.type === 'status' ? effect.status : effect.type)).sort().join(' + ');
+      return [
+        `${children.length > 1 ? 'Shared Success' : 'Dependent'}: ${names}`,
+        `After ${effectDescription(parent, ability.effects, false)}: ${children.map(effect => effectDescription(effect, ability.effects, false)).sort().join(' + ')}`,
+      ];
+    }).sort((a, b) => a.length - b.length || (a < b ? -1 : a > b ? 1 : 0)),
     ...ability.effects.map(effect => effectDescription(effect, ability.effects)).sort(),
   ];
 }

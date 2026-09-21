@@ -175,6 +175,7 @@ describe('author once, construct valid combinations', () => {
     const species = template();
     species.mechanisms[0].element = 'fire';
     species.mechanisms[0].effects = fireball().effects.map(effect => ({ ...effect, likelihood: ['likely', 'occasional'] }));
+    delete species.mechanisms[0].delivery.projectile!.area;
     const compiled = compileSpecies(species);
     for (const draw of [() => 0n, (max: bigint) => max - 1n]) {
       const generated = compiled.abilities(draw);

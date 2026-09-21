@@ -73,7 +73,7 @@ function abilitySchema<T extends typeof EffectSchema | typeof EffectTemplateSche
     const usesArea = effects.some(e => e.recipient === 'area');
     if (usesArea !== (spatial.area !== undefined)) issue('area geometry exists exactly when an effect uses area');
     if (spatial.area?.persistence === 'sustained' && activation.continuity !== 'ongoing') issue('sustained area requires ongoing activation');
-    if (spatial.area && spatial.area.shape !== 'radial' && !ability.targeting.includes('other')) issue('directed area requires other targeting');
+    if (spatial.area && spatial.area.shape !== 'radial' && ability.targeting.some(target => target !== 'other')) issue('directed area requires other-only targeting; selecting self supplies no direction');
     if (new Set(effects.map(e => e.key)).size !== effects.length) issue('effect keys must be unique');
     for (const effect of effects) {
       if (effect.type === 'harm' && effect.mechanism === 'elemental' && !ability.element) issue('elemental harm requires ability element');
@@ -85,7 +85,9 @@ function abilitySchema<T extends typeof EffectSchema | typeof EffectTemplateSche
       if (effect.requires) {
         const prerequisite = effects.find(e => e.key === effect.requires);
         if (!prerequisite || prerequisite === effect || prerequisite.requires) issue('requires must refer to a different independent effect; no chains or cycles');
-        if (prerequisite && effect.recipient !== 'self' && effect.recipient !== prerequisite.recipient) issue('dependent effects share the prerequisite recipient, or affect self once');
+        const selfOnly = ability.targeting.length === 1 && ability.targeting[0] === 'self' && !activation.trigger;
+        const recipient = (value: string) => selfOnly && value === 'target' ? 'self' : value;
+        if (prerequisite && recipient(effect.recipient) !== 'self' && recipient(effect.recipient) !== recipient(prerequisite.recipient)) issue('dependent effects share the prerequisite recipient, or affect self once');
       }
     }
   });
@@ -110,9 +112,15 @@ export function abilityIdentity(ability: AbilityTemplate | Ability): string {
   const { key: _key, name: _name, description: _description, effects, ...facts } = ability;
   const spatial = facts.spatial.area && selectsSelf && facts.spatial.area.anchor === 'target'
     ? { ...facts.spatial, area: { ...facts.spatial.area, anchor: 'self' } } : facts.spatial;
-  return stable({ ...facts, spatial, targeting: [...facts.targeting].sort(), effects: effects.map(effect => ({
-    ...effectFacts(effect), ...(effect.requires ? { requires: effects.find(e => e.key === effect.requires) ? effectFacts(effects.find(e => e.key === effect.requires)!) : { missing: effect.requires } } : {}),
-  })).map(stable).sort() });
+  // Dependencies form depth-one trees. Keep each prerequisite with its dependents:
+  // two outcomes sharing one success are not equivalent to two independent successes.
+  const roots = effects.filter(effect => !effect.requires).map(effect => ({
+    effect: effectFacts(effect),
+    dependents: effects.filter(child => child.requires === effect.key).map(effectFacts).map(stable).sort(),
+  }));
+  const invalid = effects.filter(effect => effect.requires && !effects.some(parent => parent.key === effect.requires && !parent.requires))
+    .map(effect => ({ effect: effectFacts(effect), invalidDependency: effect.requires }));
+  return stable({ ...facts, spatial, targeting: [...facts.targeting].sort(), effects: [...roots, ...invalid].map(stable).sort() });
 }
 export function stable(value: unknown): string {
   if (Array.isArray(value)) return `[${value.map(stable).sort().join(',')}]`;
