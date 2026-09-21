@@ -1,5 +1,6 @@
 import { ActionTemplateSchema, abilityIdentity, stable, type Ability, type AbilityTemplate } from './ability.ts';
 import { SpeciesSchema, type Species, type Mechanism } from './species.ts';
+import { nameOrdinaryActions } from './naming.ts';
 
 type Path = (string | number)[];
 interface Dimension { path: Path; values: string[] }
@@ -207,14 +208,22 @@ export function compileSpecies(input: unknown): CompiledSpecies {
         if (value < 0n || value >= exclusive) throw new Error('draw outside requested interval');
         return value;
       };
-      const ordinary = select(branches, species.actions, slots, checkedDraw).map((ability, index) => ({
+      const selected = select(branches, species.actions, slots, checkedDraw);
+      const ordinary = selected.map((ability, index) => ({
         ...ability, key: `ordinary-${index + 1}`,
       }));
       // Local generated keys cannot collide with authored guaranteed keys.
       for (const ability of ordinary) while ([...species.actions, ...species.passives].some(a => a.key === ability.key)) ability.key = `generated-${ability.key}`;
+      const guaranteed = species.actions.map(ability => resolveOutput(ability, checkedDraw, `action/${ability.key}`));
+      const named = nameOrdinaryActions(
+        ordinary.map(ability => resolveOutput(ability, checkedDraw, `action/${ability.key}`)),
+        [...guaranteed, ...species.passives],
+        selected.map(ability => species.mechanisms.find(mechanism => mechanism.key === ability.key)?.naming),
+        checkedDraw,
+      );
       return {
         signature: clone(species.signature),
-        actions: [...species.actions, ...ordinary].map(ability => resolveOutput(ability, checkedDraw, `action/${ability.key}`)),
+        actions: [...guaranteed, ...named],
         passives: species.passives.map(ability => resolveOutput(ability, checkedDraw, `passive/${ability.key}`)),
       };
     },

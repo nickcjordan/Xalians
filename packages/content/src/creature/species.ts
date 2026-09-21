@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { NamingSchema } from './naming.ts';
 import * as c from './catalog.ts';
 import { ANATOMY_KEYS, ATTRIBUTE_KEYS, CAPABILITY_KEYS } from '../registriesConst.ts';
 import { ActionTemplateSchema, PassiveTemplateSchema, ProtectionSchema, SignatureSchema, abilityIdentity, EffectTemplateSchema } from './ability.ts';
@@ -19,6 +20,7 @@ export const MechanismEffectSchema = z.strictObject({
 });
 export const MechanismSchema = z.strictObject({
   key: c.Key, name: z.string().min(1), description: z.string().min(1), instrument: c.InstrumentKeySchema,
+  naming: NamingSchema.optional(),
   element: c.ElementKeySchema.optional(), targeting: c.choices(c.Target),
   activation: z.strictObject({ continuity: c.choices(c.Continuity) }),
   timing: z.strictObject({ preparation: c.choices(c.Preparation), recovery: c.choices(c.Recovery) }),

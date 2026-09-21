@@ -12,7 +12,8 @@
 - [x] Replace the stale authoring skill's copied schema with the current contract; preserve canon/prose guidance separately.
 - [ ] Re-author/audit all 32 canonical species; source biology and breadth are not a mechanical old-pool conversion.
 - [x] Record the agreed reference ladder and field-specific authoring anchors in the shared benchmark catalog; preserve status default 50.
-- [ ] Apply benchmark calibration to canonical species after shared-model completion; finish composition-aware naming coverage first.
+- [x] Implement compositional naming after generation, optional source-supported vocabulary, and structural collision distinctions without rerolling capabilities.
+- [ ] Apply benchmark calibration and vocabulary review to canonical species after shared-model completion.
 - [ ] Integrate canonical v5 bundles and a frozen release; run full-species replay and scale verification.
 - [ ] Address evidenced conditional passive physiology if found in the species pass.
 - [ ] Adapt games after creature redesign completion, in a separate task scope.

@@ -61,6 +61,7 @@ No fixed quota of options. Account for every plausible candidate family in the d
 - [ ] Numeric variation uses justified ranges; fixed values require a reason.
 - [ ] Apply [the stable benchmarks](../design/creature-rating-benchmarks.md) for the actual capacity/output being rated. Do not normalize to the roster, confuse 100 with a cap, or use 50 as an unknown-value fallback. Only omitted status intensity defaults to 50.
 - [ ] Status intensity uses the catalog default when no override is warranted; justified overrides prefer ranges.
+- [ ] Optional [naming vocabulary](../design/creature-ability-naming.md) is supported by the source and valid across its entire mechanism/delivery domain. Omit overly specific wording rather than narrowing valid abilities just to fit a name.
 - [ ] Source, recipient, intensity, timing, area, removal, and dependence describe distinct facts without duplicate contributions.
 - [ ] Actual incompatibilities among permitted domains or guaranteed physiology are resolved at authoring, not hidden by arbitrary truncation.
 - [ ] Permission breadth is separate from the four-action allocation; approved combinations remain reachable.

@@ -160,7 +160,7 @@ Still required before a canonical v5 release:
 1. Re-author and audit all 32 canonical species against this contract. The v4 complete-move pools cannot be mechanically renamed into mechanism permissions. Preserve the species decisions above and review source-supported breadth, not just old examples.
 2. Apply the shared rating/output references to each species' justified bands during the eventual calibration audit. The reference ladder and descriptions for the 20 performance fields and four direct outputs are now recorded; canonical species calibration remains pending. Default status intensity is 50.
 3. Resolve concrete physiology-dependent passive cases if the species pass finds any. Fixed inherent passives already work; no generic conditional subsystem is presumed necessary.
-4. Adapt ability-name coverage to compositional mechanisms; display names currently come from the mechanism definition and need not distinguish every generated variant.
+4. Review source-supported species vocabulary during migration. [Compositional naming](creature-ability-naming.md) now runs after generation, uses a shared structural fallback, preserves guaranteed names, and distinguishes collisions without changing abilities. Naming coverage no longer depends on a fixed move list.
 5. Wire canonical content bundling and the redesigned entry point into a frozen generation release, including the new catalog and compiler. Then run replay and full-species coverage/scale checks. Draft generation intentionally does not claim a canonical release ID.
 6. Update games separately after the ability redesign is complete. Existing game imports have not changed.
 
