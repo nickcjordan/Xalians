@@ -32,7 +32,7 @@ export const SpecialSense = z.enum(['echolocation', 'tremorsense', 'electrorecep
 export const Status = z.enum([
   'burning', 'overheated', 'chilled', 'corroding', 'poisoned', 'slowed', 'restrained',
   'pinned', 'frozen', 'buried', 'blinded', 'deafened', 'disoriented', 'frightened',
-  'entranced', 'sedated', 'stunned', 'mending', 'shielded', 'reinforced', 'protected',
+  'entranced', 'sedated', 'stunned', 'paralyzed', 'mending', 'shielded', 'reinforced', 'protected',
   'stimulated', 'focused', 'concealed', 'revealed', 'marked', 'phased', 'dispersed',
 ]);
 export type StatusKey = z.infer<typeof Status>;
@@ -46,7 +46,9 @@ const definitions: Record<StatusKey, string> = {
   blinded: 'Vision is impaired or unavailable.', deafened: 'Hearing is impaired or unavailable.',
   disoriented: 'Orientation or coordination is disrupted.', frightened: 'An induced fear response interferes with behavior.',
   entranced: 'Attention is captured; this is not possession.', sedated: 'Alertness and responsiveness are reduced.',
-  stunned: 'An acute shock disrupts responses.', mending: 'An applied process continues bodily repair.',
+  stunned: 'An acute shock disrupts responses.',
+  paralyzed: 'Voluntary movement is impaired or unavailable without necessarily reducing awareness; not physical binding or merely slower movement.',
+  mending: 'An applied process continues bodily repair.',
   shielded: 'An added barrier intercepts harm.', reinforced: 'An applied change strengthens existing structure.',
   protected: 'An applied protection grants its explicitly declared scope and degree.', stimulated: 'An applied process enhances the specified function.',
   focused: 'Attention or mental steadiness is improved.', concealed: 'Detectability is reduced without implying universal invisibility.',

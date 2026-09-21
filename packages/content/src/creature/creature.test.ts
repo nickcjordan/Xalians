@@ -212,6 +212,18 @@ describe('author once, construct valid combinations', () => {
 });
 
 describe('status and protection semantics', () => {
+  it('keeps paralysis protection and removal scoped to the authored condition', () => {
+    const immunity = ProtectionSchema.parse({ type: 'status', status: 'paralyzed', degree: 'immune' });
+    expect(effectiveProtection([immunity], { type: 'status', status: 'paralyzed' })).toBe('immune');
+    for (const status of ['sedated', 'stunned', 'restrained', 'poisoned'] as const) {
+      expect(effectiveProtection([immunity], { type: 'status', status })).toBeUndefined();
+    }
+    const toxin = { status: 'paralyzed', removable: ['detoxifying'] } as const;
+    const signal = { status: 'paralyzed', removable: ['disrupting'] } as const;
+    expect(removableApplications([toxin, signal], ['detoxifying'])).toEqual([toxin]);
+    expect(removableApplications([toxin, signal], ['freeing'])).toEqual([]);
+    expect(STATUS_CATALOG.paralyzed.harm).toBeUndefined();
+  });
   it('gives every status the same omitted-intensity baseline', () => {
     for (const status of Status.options) expect(STATUS_CATALOG[status].intensity).toBe(50);
     const effect = fireball().effects[1];

@@ -80,4 +80,4 @@ The release tests freeze the hypothetical support species into a temporary archi
 3. Set a new canonical release ID, freeze the completed entry point and run integrity checks, full-roster replay, structural coverage and scale checks.
 4. Switch consumers only in the separately scoped game migration.
 
-The current canonical pointer remains `generation-0.5.0-4`; the v5 adapter and test fixture do not activate it or certify the unmigrated roster. The preliminary release-integration gate is complete. The subsequent [roster audit](creature-roster-audit.md) identified three additional source-backed design questions; resolve those and complete species migration before canonical activation.
+The current canonical pointer remains `generation-0.5.0-4`; the v5 adapter and test fixture do not activate it or certify the unmigrated roster. The preliminary release-integration gate is complete. The subsequent [roster audit](creature-roster-audit.md) identified three additional source-backed design questions. Paralysis is now implemented; resolve fuel exposure and physical barriers and complete species migration before canonical activation.

@@ -1,6 +1,6 @@
 import { expect, it } from 'vitest';
 import fixture from '../../../content/src/creature/fixtures/support-species.json';
-import { ActionSchema, nameOrdinaryActions, type Ability } from '@xalians/content/creature';
+import { ActionSchema, nameOrdinaryActions, statusIntensity, type Ability } from '@xalians/content/creature';
 import { compileSpecies, creatureDraw, generateCreatureAbilities } from './creature.ts';
 
 function corrosion(): Ability {
@@ -10,6 +10,27 @@ function corrosion(): Ability {
       persistence: 'lingering', duration: 'brief', likelihood: 'likely', removable: ['cleansing'] }],
   });
 }
+
+it('compiles and names paralysis variants without adding harm or sedation', () => {
+  const compiled = compileSpecies({ ...fixture, mechanisms: fixture.mechanisms.map(mechanism => ({
+    ...mechanism, effects: [{ key: 'paralyze', type: 'status', status: 'paralyzed',
+      recipient: mechanism.effects[0].recipient, onset: 'instant', persistence: 'lingering', duration: 'brief',
+      likelihood: ['likely'], removable: ['detoxifying'] }],
+  })) });
+  const result = generateCreatureAbilities(compiled, 'paralysis');
+  expect(result.actions).toHaveLength(4);
+  for (const action of result.actions.slice(1)) {
+    expect(ActionSchema.safeParse(action).success).toBe(true);
+    expect(action.name).toContain('Paralyzing');
+    expect(action.effects).toHaveLength(1);
+    const effect = action.effects[0];
+    if (effect.type !== 'status') throw new Error('Expected only an applied status');
+    expect(effect.status).toBe('paralyzed');
+    expect(statusIntensity(effect)).toBe(50);
+    expect(effect.removable).toEqual(['detoxifying']);
+  }
+  expect(generateCreatureAbilities(compiled, 'paralysis')).toEqual(result);
+});
 
 it('names contact, targeted projectile and splash from their actual structures', () => {
   const contact = corrosion();

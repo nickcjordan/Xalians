@@ -1,16 +1,16 @@
 # Canonical roster: v5 representation audit
 
-2026-09-21. Source revision: `119c555e`. All 32 species in `docs/species-templates/RATIFIED.json` reviewed. **Migration is paused at the design boundary, not completed.** The user explicitly chose to resolve the Neph and Yetimoth gaps before migration. Avilily adds a third proposed catalog distinction from this audit.
+2026-09-21. Source revision: `119c555e`. All 32 species in `docs/species-templates/RATIFIED.json` reviewed. **Migration is paused at the design boundary, not completed.** The user explicitly chose to resolve the Neph and Yetimoth gaps before migration. Avilily added a third catalog distinction from this audit; the user has since ratified it and `paralyzed` is implemented.
 
 ## Result
 
-The core model covers the roster's ordinary physical, elemental, support and automatic capabilities without an ordinary-move whitelist. Three source-supported concepts need decisions before calling coverage complete:
+The core model covers the roster's ordinary physical, elemental, support and automatic capabilities without an ordinary-move whitelist. The audit identified three source-supported concepts; two remain open:
 
 1. **Neph: exposure to unignited fuel.** No registered status expresses this. Burning would assert that ignition has already happened.
 2. **Yetimoth: a persistent physical obstacle.** Recipient statuses and protective effects do not describe a wall occupying space and blocking passage.
-3. **Avilily: paralysis.** Reduced alertness (`sedated`), acute response disruption (`stunned`) and physical binding (`restrained`) do not explicitly preserve loss of voluntary movement from a paralytic substance.
+3. **Avilily: paralysis, now resolved.** Reduced alertness (`sedated`), acute response disruption (`stunned`) and physical binding (`restrained`) do not explicitly preserve loss of voluntary movement from a paralytic substance.
 
-These are proposals to extend the shared catalog/contract, not ratified keys or new species powers. No enum or canonical species has been changed. Do not quietly omit these capabilities, replace them with an approximate effect, or declare the affected species migrated.
+Fuel exposure and barriers remain proposals to extend the shared contract. The shared status catalog now includes ratified `paralyzed`; no canonical species has been changed. Do not quietly omit these capabilities, replace them with an approximate effect, or declare the affected species migrated.
 
 ## Evidence and scope
 
@@ -48,7 +48,7 @@ Source: the description calls the saliva a powerful sedative that paralyzes on c
 
 Current mismatch: `sedated` explicitly reduces alertness/responsiveness; `stunned` is acute response disruption; `restrained` is a binding or holding force. Raising intensity does not change one status into a different physiological process. `poisoned` can describe toxic dysfunction broadly, but alone loses the particular motor impairment the species depends on.
 
-Recommended first design: **`paralyzed`**, loss or impairment of voluntary movement without necessarily impairing awareness. Review its boundary from `slowed`/`stunned`, removal methods and intensity meaning. Use the same existing status-effect structure; no new effect type or recipient-compatibility list is needed. Sedation and paralysis should not automatically become two mandatory copies of the same impairment: author only the independently meaningful outcomes intended by this source.
+Ratified and implemented: **`paralyzed`**, loss or impairment of voluntary movement without necessarily impairing awareness. Intensity defaults to 50 and grades motor impairment; it does not prescribe skipped turns. Removal remains mechanism-authored on each application, with no universal antidote or automatic physical freeing. Use the same existing status-effect structure; no new effect type or recipient-compatibility list is needed. Sedation and paralysis should not automatically become two mandatory copies of the same impairment: author only the independently meaningful outcomes intended by this source.
 
 ## Roster coverage ledger
 
@@ -57,7 +57,7 @@ The rows below describe supported mechanism families and migration obligations, 
 | Species | Source mechanism and essential representation | Ordinary/support scope and exclusions |
 |---|---|---|
 | Akinza | Stealthy feline locomotion, claws, ears and eyes. Preserve stealth in the guaranteed definition and add explicit `lowlight`; numerical sight alone does not encode night adaptation. | Contact cuts, bites and tail/body force are anatomy-supported. Concealment must remain bounded by stealth, not invisibility. No ice projection, healing or mental effects follow from its element. |
-| Avilily | Floral lure, contact-transmitted sedative saliva, beak and talons. Preserve saliva's disabling result in the signature. **Paralysis decision outstanding.** | Review delivery by coated beak/contact and justified secretion application; do not invent a long-range spray organ. Floral camouflage supports bounded concealment. No plant growth, bodily healing, generic toxin cloud or physical glue is established. |
+| Avilily | Floral lure, contact-transmitted sedative saliva, beak and talons. Preserve saliva's disabling result in the signature. **Paralyzed is now registered; species authoring remains pending.** | Review delivery by coated beak/contact and justified secretion application; do not invent a long-range spray organ. Floral camouflage supports bounded concealment. No plant growth, bodily healing, generic toxin cloud or physical glue is established. |
 | Bioflim | Acid slime, pseudopods, rocky shell and continuous shell regrowth. Signature is ongoing self restoration; separately justify innate shell protection. | Chemical contact/corrosion, pseudopod force/holding and physical shell defense fit. No ally healing follows from self-regrowing shell. No explosive retaliation, arbitrary toxin synthesis or fire/metal/water powers inherited from the old pool. |
 | Chromocat | Ionized sickle blades and exceptionally fast closing movement. Preserve the fixed blade-and-movement signature. | Contact cutting, body/tooth force and defensive blade use are grounded in anatomy. No teleportation or wall traversal follows from the photonic description. No beam emitter, electrical attacks or healing follows from a luminous blade. Calibrate mobility without treating 100 as a cap. |
 | Codazzo | Burrowing, launched explosive tail barbs and replacement of spent barbs. Preserve the explosive-projectile signature; physical blast harm and geometry are explicit. | Tail contact, claw digging/contact and alternate projectile geometry can vary where supported. Regrowing ammunition does not establish general healing or a new resource meter. Burrow is locomotion; self burial need not apply the impairing `buried` status. Explosion is not automatically fire or burning. |
@@ -118,7 +118,8 @@ All rows were considered against the six current effect families: harm, restore,
 - [x] Review support and impairment families as well as damage; identify concrete semantic gaps.
 - [x] Check current teaser preservation, respiration/media consistency and planetary temperature bounds.
 - [x] Record the three proposed decisions and the user's hold on migration while gaps are resolved.
-- [ ] Ratify fuel exposure, physical barriers and paralysis semantics; implement any agreed shared changes and tests.
+- [x] Ratify paralysis; implement its status definition, naming and generation/protection/removal regression coverage.
+- [ ] Ratify fuel exposure and physical barriers; implement any agreed shared changes and tests.
 - [ ] Author v5 species mechanism domains, required capabilities, independent temperament and calibrated output/rating bands, with per-species coverage evidence.
 - [ ] Compile each species and verify generated structure coverage, distinct-action capacity and performance over the canonical roster.
 - [ ] Bind the migrated roster, freeze v5 and verify canonical replay. Game updates remain separate.

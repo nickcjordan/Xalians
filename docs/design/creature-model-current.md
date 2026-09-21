@@ -4,7 +4,7 @@ Updated 2026-09-21. This document supersedes conflicting proposals and chronolog
 
 ## Open decisions from the canonical roster audit
 
-The [32-species representation audit](creature-roster-audit.md) found three source-backed questions after the fixture-based implementation checks: Neph's unignited fuel exposure, Yetimoth's route-blocking ice walls, and Avilily's paralysis. Their proposed representations are not ratified catalog entries. The user chose to resolve the Neph/Yetimoth gaps before migration; complete this shared design review before authoring the canonical v5 roster. Earlier release-integration completion refers only to packaging/replay infrastructure, not final catalog coverage.
+The [32-species representation audit](creature-roster-audit.md) found three source-backed questions after the fixture-based implementation checks: Neph's unignited fuel exposure, Yetimoth's route-blocking ice walls, and Avilily's paralysis. Paralysis is now ratified and implemented as `paralyzed`; fuel exposure and physical barriers remain open proposals. The user chose to resolve the Neph/Yetimoth gaps before migration; complete this shared design review before authoring the canonical v5 roster. Earlier release-integration completion refers only to packaging/replay infrastructure, not final catalog coverage.
 
 ## Ownership and data structure
 
@@ -101,9 +101,11 @@ Retire `kind`, `emphasis`, primary/secondary ordering, direct `restrain`, enhanc
 
 ## Statuses, intensity and protections
 
-The catalog contains burning, overheated, chilled, corroding, poisoned, slowed, restrained, pinned, frozen, buried, blinded, deafened, disoriented, frightened, entranced, sedated, stunned, mending, shielded, reinforced, protected, stimulated, focused, concealed, revealed, marked, phased and dispersed.
+The catalog contains burning, overheated, chilled, corroding, poisoned, slowed, restrained, pinned, frozen, buried, blinded, deafened, disoriented, frightened, entranced, sedated, stunned, paralyzed, mending, shielded, reinforced, protected, stimulated, focused, concealed, revealed, marked, phased and dispersed.
 
 Every status has default intensity 50. An omitted override means that default, not an unknown value or a lore-parsing task. Explicit overrides require a source reason and should normally use a range. Intensity is a positive integer without a semantic ceiling. Games may treat a condition as binary; intensity does not implicitly change likelihood, duration, removal eligibility or protection degree. Direct-effect intensity includes the performer's baseline contribution; games should not automatically multiply that baseline again.
+
+`paralyzed` impairs voluntary movement without necessarily reducing awareness. It differs from `stunned` (acute shock disrupting responses), `sedated` (reduced alertness/responsiveness), `slowed` (slower movement), and `restrained` (binding/holding). Its default intensity is 50; overrides describe degree of motor impairment, not duration, chance, awareness or prescribed skipped turns. It does not imply harm, a chemical cause or sedation. Removal methods belong to each authored application: a toxin mechanism may specify detoxifying, while another mechanism must justify its own methods. Neither freeing nor immunity to poisoned automatically addresses paralysis. Games map the impairment to supported actions and movement.
 
 Burning has elemental fire harm. Corroding has elemental chemical harm and is not restricted to metal. Poisoned describes toxic dysfunction; if a game models its harm, that harm is chemical, but damage is not mandatory. Frozen is one status, not separate frost/ice encasement variants. Extinguishing burning ends the condition without creating a residual burned status.
 

@@ -53,7 +53,7 @@ Directed automatic responses use an existing event trigger; a deliberately maint
 - Range/extent domains inside one delivery branch currently combine independently. A source that genuinely couples them needs a concrete relationship design; do not disguise such a case as a completed universal constraint engine. No new source case in this screening ratified that additional relationship.
 - Structured dormancy, reflection, resource transfer and illumination remain deferred. Screening does not reinstate retired powers.
 - Naming has no authority over permissions or effects.
-- Preliminary release integration is now verified with a hypothetical-roster archive and fresh-process replay. The subsequent [roster audit](creature-roster-audit.md) identified fuel-exposure, physical-barrier and paralysis decisions; resolve those before species migration, then complete calibration/coverage and freeze the canonical release.
+- Preliminary release integration is now verified with a hypothetical-roster archive and fresh-process replay. The subsequent [roster audit](creature-roster-audit.md) identified fuel-exposure, physical-barrier and paralysis decisions. Paralysis is now implemented; resolve the remaining two before species migration, then complete calibration/coverage and freeze the canonical release.
 
 ## Verification
 

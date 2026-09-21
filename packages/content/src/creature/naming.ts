@@ -15,7 +15,7 @@ export const NAMING_CATALOG = {
     burning: 'Burning', overheated: 'Heating', chilled: 'Chilling', corroding: 'Corrosive', poisoned: 'Toxic',
     slowed: 'Slowing', restrained: 'Binding', pinned: 'Pinning', frozen: 'Freezing', buried: 'Burying',
     blinded: 'Blinding', deafened: 'Deafening', disoriented: 'Disorienting', frightened: 'Frightening',
-    entranced: 'Entrancing', sedated: 'Sedating', stunned: 'Stunning', mending: 'Mending', shielded: 'Shielding',
+    entranced: 'Entrancing', sedated: 'Sedating', stunned: 'Stunning', paralyzed: 'Paralyzing', mending: 'Mending', shielded: 'Shielding',
     reinforced: 'Reinforcing', protected: 'Protective', stimulated: 'Stimulating', focused: 'Focusing',
     concealed: 'Concealing', revealed: 'Revealing', marked: 'Marking', phased: 'Phasing', dispersed: 'Dispersing',
   },
