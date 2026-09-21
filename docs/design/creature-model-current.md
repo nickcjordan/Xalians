@@ -169,7 +169,7 @@ Canonical v5 ability-design and roster gates:
 2. **Complete:** The reference ladder, 20 performance field descriptions, four direct output descriptions and default status intensity 50 are recorded. [Cross-roster calibration](creature-v5-calibration.md) checked the authoring bands and corrected limited-flight and explicitly strong status cases.
 3. **Complete:** The species pass found no need for a general conditional-physiology subsystem. Ongoing passives target self, directed automatic responses use event triggers, and deliberate maintained connections are actions.
 4. **Complete:** [Compositional naming](creature-ability-naming.md) preserves guaranteed names and distinguishes ordinary collisions without changing capabilities.
-5. **Complete for the standalone release:** `generation-0.6.0-1` freezes all 32 species with their schema, catalog, compiler, naming and generator inputs. All 32 replay in both profiles; the draft generator passes 80 deterministic seeds per species with guaranteed identity and four distinct actions. Games still use v4.
+5. **Complete for the standalone release:** `generation-0.6.0-1` freezes all 32 species with their schema, catalog, compiler, naming and generator inputs. All 32 replay in both profiles; the draft generator passes 24 deterministic seeds per species with guaranteed identity and four distinct actions. Games still use v4.
 6. **Separate game work:** adapt games to v5 after this ability-design work. Existing game imports have not changed.
 
 These gates are backed by canonical roster tests and the archived release rather than the earlier hypothetical fixture alone. Neph's unignited fuel and Yetimoth's freestanding route walls remain explicit lore-only scope deferrals.
@@ -191,4 +191,4 @@ That checkpoint validated the adapter before canonical authoring. The active gam
 
 ### Canonical roster completion - 2026-09-21
 
-All 32 v5 definitions have source audits and preserve their canonical teasers. Content 107 tests, rules 359 tests, release tooling 12 tests, both package TypeScript checks, and release integrity pass. The full-roster seeded test exercises 80 deterministic seeds per species; all produced four distinct actions and retained guaranteed identity. `generation-0.6.0-1` is frozen and all 32 species replay in both profiles. Game adapters and game-specific balance remain separate work.
+All 32 v5 definitions have source audits and preserve their canonical teasers. Content 107 tests, rules 359 tests, release tooling 12 tests, both package TypeScript checks, and release integrity pass. The full-roster seeded test exercises 24 deterministic seeds per species; all produced four distinct actions and retained guaranteed identity. `generation-0.6.0-1` is frozen and all 32 species replay in both profiles. Game adapters and game-specific balance remain separate work.

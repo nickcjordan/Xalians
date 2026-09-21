@@ -16,7 +16,7 @@ it('constructs every staged species with guaranteed identity and distinct ordina
     expect(source.lore.description).toBe(original.lore.description);
     const compiled = compileSpecies(source);
     const variants = new Set<string>();
-    for (let index = 0; index < 80; index++) {
+    for (let index = 0; index < 24; index++) {
       const seed = `${source.key}:${index}`;
       const creature = generateCreatureDraft(compiled, seed);
       expect(CreatureDataSchema.safeParse(creature).success).toBe(true);

@@ -75,6 +75,6 @@ The release tests freeze the hypothetical support species into a temporary archi
 
 ### Frozen canonical v5 archive
 
-The 32 source-audited definitions under `docs/species-templates/v5/` are bound by `packages/rules/src/generator/canonicalCreatureRelease.ts`. Release `generation-0.6.0-1` freezes that entry point, the complete roster, schema, catalog, compiler, naming and PRNG inputs. Integrity and full-roster replay checks pass. The rating pass is recorded in [creature-v5-calibration.md](creature-v5-calibration.md); the seeded construction test samples 80 seeds per species and checks guaranteed identity and four distinct actions.
+The 32 source-audited definitions under `docs/species-templates/v5/` are bound by `packages/rules/src/generator/canonicalCreatureRelease.ts`. Release `generation-0.6.0-1` freezes that entry point, the complete roster, schema, catalog, compiler, naming and PRNG inputs. Integrity and full-roster replay checks pass. The rating pass is recorded in [creature-v5-calibration.md](creature-v5-calibration.md); the seeded construction test samples 24 seeds per species and checks guaranteed identity and four distinct actions.
 
 The current game pointer remains `generation-0.5.0-4`. Consumers switch to v5 only in the separately scoped game migration. The [roster audit](creature-roster-audit.md) resolved paralysis and records explicit lore-only deferrals for unignited fuel and physical route barriers. The archived v5 release is replayable now without changing game imports.

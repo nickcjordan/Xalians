@@ -20,7 +20,7 @@
 - [x] Implement compositional naming after generation, optional source-supported vocabulary, and structural collision distinctions without rerolling capabilities.
 - [x] Apply benchmark calibration and vocabulary review to the canonical roster; see [calibration](creature-v5-calibration.md) and per-species ability audits.
 - [x] Integrate the v5 release adapter and prove frozen-fixture replay in a fresh process; capture all actual generation dependencies without per-creature evaluation.
-- [x] Integrate the complete canonical v5 roster and freeze `generation-0.6.0-1`; verify replay of every species in both profiles and 80 seeded draft samples per species. The active game release remains v4.
+- [x] Integrate the complete canonical v5 roster and freeze `generation-0.6.0-1`; verify replay of every species in both profiles and 24 seeded draft samples per species. The active game release remains v4.
 - [x] Review conditional passive physiology in the species pass. No additional general condition system was warranted; explicit source and event-bound behavior uses current fields.
 - [x] Screen the 32-species source data and test representative relationship cases; fix correlated recipients, dependency identity, directionless self aiming and unsupported voice/communication coupling.
 - [x] Ongoing passives target only self, with optional self-centered radial areas. Directed automatic responses use event triggers; maintained directed connections are actions. Enforced at authoring with regression coverage.
