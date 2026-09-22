@@ -240,6 +240,25 @@
             }
           ]
         }
+      ],
+      "passives": [
+        {
+          "key": "core-discharge",
+          "name": "Core discharge",
+          "trigger": "contact",
+          "recovery": "brief",
+          "element": "electric",
+          "effects": [
+            {
+              "key": "outcome",
+              "type": "harm",
+              "mechanism": "elemental",
+              "recipient": "target",
+              "likelihood": "consistent",
+              "intensity": 30
+            }
+          ]
+        }
       ]
     }
   },

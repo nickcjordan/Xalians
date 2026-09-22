@@ -139,6 +139,25 @@ The first build shocked on both electric machines and read the degrading group a
 
 Companion opportunities under paralysis is 7 because the greedy bot clears each encounter in 4.94 rounds and a brief binding is spent at the victim's own opportunity. A related reading worth recording: a binding applied by a unit **faster** than its victim is spent inside the same round, so it never reaches a planning screen; only a slower applier leaves a badge the player sees before ordering. That is pass 1's `bound` semantics unchanged, but the badge makes it visible, and it means the machines' shock is felt mostly by Avilily (speed 82, faster than every machine).
 
+## Pass 3 contract: passives and triggers, 2026-09-21
+
+v5 passives are automatic processes with the same effect vocabulary as actions. The roster survey found 25 ongoing and 6 triggered passives in 640 records: ongoing restore (Bioflim, Sonalloy, Xylum), ongoing concealed (Vespersyn), contact-triggered burning (Imprit). None of the four shipped companions carries one, so the layer is exercised by one authored machine passive and by seam tests against real roster records.
+
+### Decisions
+
+| # | Decision | Confidence | Evidence |
+|---|---|---|---|
+| 21 | An ongoing passive (no trigger, no timing) becomes a permanent condition of its status group on the owner at encounter entry, `remaining` infinite, source self: ongoing restore is `mending`, ongoing concealed is sustained concealment, ongoing protect is `shielded`. An ongoing passive whose effects have no group is unsupported and named. | 80% | model doc: "Ongoing passives target self"; pass 2 groups |
+| 22 | A discrete passive fires on its trigger with the model's target: `contact` when a contact-delivery move lands on the owner (target is the attacker), `harmed` when the owner loses HP to a unit's move (target is the attacker; ticks never trigger), `ally-harmed` when a same-side unit loses HP to a move (target is that ally). It resolves after the triggering move finishes, in the owner's name, with the owner's attributes, through the same `apply` path as an action. | 80% | model doc: "Triggers supply target" |
+| 23 | A passive's `timing.recovery` is its cooldown in rounds through `COOLDOWN_ROUNDS`; it fires at most once per triggering move, never while the owner is knocked out, and a reaction never triggers another reaction (depth one). Likelihood rolls apply. | 85% | model doc: "Games schedule events and prevent reaction loops" |
+| 24 | The guardian gains one contact-triggered passive, Core discharge: elemental electric harm at intensity 30 to whoever strikes it in contact, consistent, repeatable. A contact attacker takes about 3 damage per touch; ranged attackers do not. This is the pass's one piece of authored content, so the layer is visible to the shipped squad; nothing else on the cards changes. | 65%, dungeon authoring is issue #301; a live turbine core that shocks on touch is the composition doc's own description of the guardian | `powerworks-composition-pass.md` art table |
+| 25 | Reactions emit a `react` event (owner, target, passive name) before their outcome events. The inspector lists each passive under "Reacts" or "Always" with its plain-language rule; the machines' ability notes show a passive without revealing orders. | 80% | pass 2 presentation |
+| 26 | Ally targeting stays out of scope. Every other-aimed restore, remove and protect remains enemy-only; `ally-harmed` reactions are the one place an effect reaches an ally, because the trigger supplies the ally as target. | 90%, issue #299 item | pass 2 measurement |
+
+### Measurement
+
+The sim adds: reactions fired per trigger, reaction damage as a share of companion damage taken, contact versus ranged strikes on the guardian by the greedy bot, and (from a seam-only test over the wider roster) how many of 640 records carry a passive the seam reads as supported versus unsupported and why.
+
 ## Friction reported
 
 - The pre-emptive pull is close to a free answer: a five-damage move that also removes an eighteen-damage release. `DISPLACE_HARM_FACTOR`, the pull's own cooldown and the interrupted-recovery lever are the three places to move it if human play agrees.
@@ -153,3 +172,109 @@ Pass 2:
 - **Pass 2 made every companion effect supported, so "no effect here" is now unreachable from the squad.** Graviclaw's Ground Anchor reads as a guarding condition and Hippochamp's cannon as a real removal; nothing the four carry is unsupported any more. The contract-decision-9 path is still tested, but at the seam against `dispersed` / `phased` / `marked` rather than through a real card. Worth knowing before anyone reads "the squad shows an unsupported effect" as a live case.
 - **A brief binding applied by a faster unit never reaches a planning screen.** It is applied and spent inside the same round, so the badge only appears when the applier is slower. Inherited from pass 1's `bound` counter, but pass 2's badge is where a player would notice the asymmetry. If binding should be felt regardless of initiative, the lever is `BIND_OPPORTUNITIES` at 2, which the sim can price.
 - **`protected` resistance had to be given a reading.** Decision 14 says protected applies "exactly its declared descriptor", and immune is unambiguous, but resistant has no number in the model. This build takes the reinforced quarter off the covered effect (`REINFORCED_FACTOR`), so a declared scope is felt without inventing a second dial. No creature in the roster carries a resistant `protected` status yet; three species carry innate resistances (bioflim impact, imprit fire, scalatto cutting), which this reading now honours through decision 18.
+
+## Pass 3: what it measured, 2026-09-21
+
+The same 200-run greedy sim, read twice as the one pass 3 lever moved. Core discharge was
+first authored at `recovery: "repeatable"` (decision 24's own wording, "consistent,
+repeatable"); it is now authored at `recovery: "brief"`, one answer per round. Both
+readings are kept so the lever's effect is visible.
+
+| lever state | win rate | rounds / encounter | reactions fired | reaction share of companion damage taken |
+|---|---|---|---|---|
+| Core discharge `repeatable` (as decision 24 first wrote it) | 98.5% (197 won, 3 lost) | 4.98 | contact 3,711 | **29.4%** (12,568 of 42,718) |
+| **Core discharge `brief`** (applied) | **99.5%** (199 won, 1 lost) | 4.96 | contact 1,467 | **10.2%** (3,424 of 33,529) |
+
+`brief` was applied on that evidence: at `repeatable` the reaction answered every contact
+strike in the round, became the single largest source of damage in the run ahead of Clamp
+strike, and cost the squad the first losses the sim had ever recorded. At `brief` it is a
+tenth of what the companions take, which reads as a hazard to plan around rather than a
+tax on attacking. **Overridable**: the three levers are the card's `recovery` (`repeatable`
+returns the first row exactly), the card's `intensity` (30), and the bot's own willingness
+to touch a live turbine core.
+
+The rest of the table, against pass 2, at the applied `brief` setting:
+
+| row | pass 2 | pass 3 |
+|---|---|---|
+| win rate | 100% | 99.5% (199 won, 1 lost) |
+| rounds / encounter | 4.94 | 4.96 |
+| Desperate strike | 0% | 0% of 15,405 opportunities |
+| opportunities with no legal move | 0 | 0 |
+| charges landing | 146 of 1,568 (9.3%) | 174 of 1,567 (11.1%) |
+| interruptions bind / displace | 656 / 467 | 622 / 480 |
+| binds landed / missed | 89.3% (781 of 875) | 89.8% (762 of 849) |
+| conditions applied per group | binding 781, degrading 1,019 | binding 762, degrading 1,017 |
+| applications resisted or blocked | 1,480 | 1,480 |
+| degrade share of companion damage taken | 7.8% (2,267 of 29,219) | 6.7% (2,253 of 33,529) |
+| opportunities lost to entranced | 0 | 0 |
+| companion opportunities under paralysis | 0.1% (8) | 0.0% (7) |
+| companion remove: cleared / found nothing | 0 / 800 | 0 / 800 |
+| targets skipped as concealed | 0 | 0 |
+
+New rows, same run:
+
+| row | value |
+|---|---|
+| reactions fired per trigger | contact 1,467 (harmed 0, ally-harmed 0) |
+| reaction share of companion damage taken | 10.2% (3,424 of 33,529) |
+| strikes ordered on the guardian, contact / ranged | 3,918 / 1,079 |
+
+Seam-only survey over the wider roster (20 seeds per species, 640 records):
+
+| row | value |
+|---|---|
+| records carrying a passive | 100 of 640 (15.6%) |
+| ongoing / triggered | 80 / 20 |
+| triggered by trigger | contact 20 (no `harmed`, no `ally-harmed` in the roster) |
+| supported / unsupported | 100 / 0 |
+| species carrying one | bioflim 20, imprit 20, sonalloy 20, vespersyn 20, xylum 20 |
+
+### Friction reported
+
+- **A passive's cooldown counts rounds at the round boundary, not at the owner's
+  opportunity.** Decision 23 says "`timing.recovery` is its cooldown in rounds through
+  `COOLDOWN_ROUNDS`". Decrementing it at the owner's own opportunity, as a move's cooldown
+  is decremented, refunds the reaction mid-round to every attacker who strikes after the
+  owner has acted: at `brief` the guardian answered twice in a round whose initiative put
+  two companions on either side of it. The build decrements every passive cooldown once at
+  the top of the round instead, so `brief` means exactly one answer per round whatever the
+  initiative order. This is an implementation reading of decision 23, not a new lever, and
+  it is what makes the `brief` setting above mean what it says.
+- **At `brief`, the one answer goes to the fastest toucher, which is always Avilily.**
+  Every action Avilily carries is contact and she is the fastest companion, so she absorbs
+  the guardian's single reply every round and no slower companion ever feels it. The
+  resolver tests that aim a reaction at a named companion have to sideline her to say
+  anything at all. This is the pass 2 "a faster applier is never seen" asymmetry appearing
+  again from the other side, and it means the reaction teaches its lesson to one squad
+  member rather than to the squad. If the hazard should be felt by whoever touches it, the
+  lever is the budget (`REACTIONS_PER_TRIGGERING_MOVE` is already per triggering move, so
+  `repeatable` is the setting that does this) rather than anything new.
+- **`harmed` and `ally-harmed` have no source anywhere.** All 20 triggered passives in 640
+  roster records are `contact`, and the one authored machine passive is `contact`. Both
+  other triggers are implemented and tested (against card passives fitted onto a test
+  unit), but nothing in the shipped table or the wider roster exercises them; they are the
+  pass 3 equivalent of pass 2's attention and concealment zeros, and they wait on dungeon
+  authoring (issue #301).
+- **An ongoing passive's status targets itself, which pass 2's seam refused.** v5 requires
+  `targeting: ["self"]` on an ongoing passive, so Vespersyn's Hidden Core arrives as
+  `concealed` on `recipient: "self"`, and pass 2's rule "a status on itself is not read
+  here unless it is guarding or mending" made the whole passive unsupported. The seam now
+  takes an `ongoing` flag that relaxes exactly that one check (decision 21 already says an
+  ongoing status becomes a condition on its owner); nothing else about the reading changed.
+  Worth knowing because it means the pass 2 rule was never about self-targeting as such,
+  only about actions aimed at themselves.
+- **Every companion but Hippochamp reaches the guardian at contact range,** because the
+  generator's ordinary Impact Touch actions are `range: contact` with `approach: stationary`.
+  So "stay out of contact" is not a real choice for three of the four: Crystorn has one
+  ranged option, Graviclaw two, Avilily none at all. The lesson decision 24 wants to teach
+  is only teachable to the squad that has an answer, which is a squad-composition point,
+  not a rules one.
+- **Compositional move names overflowed the squad panel.** Pass 1 introduced `baseName` for
+  the move tray but the squad panel's committed-order label still printed the whole
+  generated name, so Hippochamp's "Impact Touch (Contact Range; Targeted; Brief
+  Preparation; Repeatable Recovery; Discrete; Contact; Closing; Hooves; ...)" ran past its
+  cell at 390px and pushed the panel open. The label is now the base name, clamped to two
+  lines, with the full name on the span's `title` and in the select button's title and
+  accessible description. Same fix as the tray, one pass late; the naming lever itself is
+  still open.

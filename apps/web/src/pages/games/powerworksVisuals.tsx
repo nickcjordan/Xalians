@@ -18,8 +18,11 @@ import {
   EyeOff,
   Sparkles,
   HeartPulse,
+  Infinity as Infinite,
+  Undo2,
 } from "lucide-react";
 import {
+  asMove,
   basePower,
   COOLDOWN_ROUNDS,
   DEGRADE_FACTOR,
@@ -33,6 +36,7 @@ import {
   type Condition,
   type Move,
   type MoveEffect,
+  type Passive,
   type StatusGroup,
   type Unit,
 } from "@xalians/rules/dungeon";
@@ -118,6 +122,52 @@ export const remainingLabel = (condition: Condition) =>
   condition.remaining === Infinity
     ? "always"
     : `${condition.remaining} ${condition.remaining === 1 ? "opp" : "opps"}`;
+
+/** The heading a passive sits under: it answers an event, or it is simply always on (contract decision 25). */
+export const passiveHeading = (passive: Passive) =>
+  passive.kind === "triggered" ? "Reacts" : "Always";
+/** One icon per passive kind: a reply, or a standing state. */
+export function PassiveIcon({ passive }: { passive: Passive }) {
+  const Icon = passive.kind === "triggered" ? Undo2 : Infinite;
+  return <Icon aria-hidden="true" />;
+}
+/**
+  What a passive does, in plain words, with no order revealed: a reaction names its
+  trigger and its cooldown, an ongoing one names the state it keeps (contract decision 25).
+*/
+export function passiveRule(unit: Unit, passive: Passive): string {
+  if (passive.support === "unsupported")
+    return `No effect here${passive.reason ? ` (${passive.reason})` : ""}.`;
+  if (passive.kind === "ongoing")
+    return `Always active. ${passive.conditions
+      .map((condition) => conditionRule(condition, unit))
+      .join(" ")}`;
+  const when =
+    passive.trigger === "contact"
+      ? "When something strikes it in contact range"
+      : passive.trigger === "harmed"
+      ? "When it loses health to an attack"
+      : "When an ally beside it loses health to an attack";
+  // The cadence its recovery buys, in the player's words rather than in rounds
+  // (COOLDOWN_ROUNDS: repeatable 0, brief 1, prolonged 2).
+  const cools =
+    passive.cooldown >= COOLDOWN_ROUNDS.prolonged
+      ? " Answers every other round."
+      : passive.cooldown >= COOLDOWN_ROUNDS.brief
+      ? " Answers once per round."
+      : " Answers every time.";
+  // The reaction's own harm, on the same curve a move card shows, so the number a
+  // contact attacker will take is visible before it touches anything.
+  const power = basePower(unit, asMove(passive));
+  const harm = power ? ` ${power} base power.` : "";
+  const rest = passive.effects
+    .filter((e) => e.support !== "harm" && e.support !== "displace")
+    .map(effectSummary)
+    .join(" ");
+  return `${when}, it answers automatically.${harm}${
+    rest ? ` ${rest}` : ""
+  }${cools}`;
+}
 
 export function ElementIcon({ element }: { element: string }) {
   const Icon =

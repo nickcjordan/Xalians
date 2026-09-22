@@ -422,12 +422,18 @@
   color: #b9e8c4;
   border-color: #6fae82;
 }
+/* Pass 3: a reaction is an answering beat, in the reaction color. */
+.pw-scene-float.react {
+  color: #f3d9ab;
+  border-color: #c5a252;
+}
 .pw-scene-float.status,
 .pw-scene-float.resisted,
 .pw-scene-float.expired,
 .pw-scene-float.removed,
 .pw-scene-float.lost,
-.pw-scene-float.hidden {
+.pw-scene-float.hidden,
+.pw-scene-float.react {
   text-transform: capitalize;
 }
 .pw-scene-float small {

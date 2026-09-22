@@ -54,6 +54,7 @@ import {
   MoveIcon,
   MoveCardContent,
   PowerIcon,
+  baseName,
   moveDescription,
   effectSummary,
   cooldownLimit,
@@ -62,6 +63,9 @@ import {
   melee,
   StatusBadges,
   GroupIcon,
+  PassiveIcon,
+  passiveHeading,
+  passiveRule,
   conditionRule,
   remainingLabel,
   Health,
@@ -137,6 +141,7 @@ function eventLabel(frame: Frame) {
       removed: "Cleared",
       lost: "Opportunity lost",
       hidden: "Concealed",
+      react: "Reacts",
       result: "Complete",
     } as const
   )[e.kind];
@@ -487,6 +492,9 @@ export default function PowerworksPage() {
         e.remaining === 1 ? "opportunity" : "opportunities"
       }.`;
     if (e.kind === "resisted") return current.text;
+    // Pass 3: the reaction caption names the answer without revealing any order.
+    if (e.kind === "react")
+      return `An automatic defense answers ${name}. Nothing was ordered.`;
     if (e.kind === "tick")
       return e.group === "mending"
         ? `${name} recovers ${e.amount} HP from ${e.status}.`
@@ -948,10 +956,17 @@ export default function PowerworksPage() {
                               "Knocked out"
                             ) : busy && order ? (
                               <>
-                                <span className="pw-order-move">
+                                <span
+                                  className="pw-order-move"
+                                  title={
+                                    order.move === -2
+                                      ? undefined
+                                      : moveAt(u, order.move).name
+                                  }
+                                >
                                   {order.move === -2
                                     ? "Cannot act"
-                                    : moveAt(u, order.move).name}
+                                    : baseName(moveAt(u, order.move))}
                                 </span>
                                 <span className="pw-order-target">
                                   {frame.event?.actorId === u.id
@@ -969,10 +984,17 @@ export default function PowerworksPage() {
                               </>
                             ) : order && target ? (
                               <>
-                                <span className="pw-order-move">
+                                <span
+                                  className="pw-order-move"
+                                  title={
+                                    order.move === -2
+                                      ? undefined
+                                      : moveAt(u, order.move).name
+                                  }
+                                >
                                   {order.move === -2
                                     ? "Cannot act"
-                                    : moveAt(u, order.move).name}
+                                    : baseName(moveAt(u, order.move))}
                                 </span>
                                 <span className="pw-order-target">
                                   <ArrowRight />
@@ -1660,6 +1682,22 @@ export default function PowerworksPage() {
                 </div>
               ))}
             </div>
+            {inspect.passives.length > 0 && (
+              <ul className="pw-passive-rules">
+                {inspect.passives.map((passive) => (
+                  <li key={passive.key}>
+                    <span
+                      className={`pw-passive-name kind-${passive.kind}`}
+                    >
+                      <PassiveIcon passive={passive} />
+                      {passiveHeading(passive)}
+                      <small>{passive.name}</small>
+                    </span>
+                    <span>{passiveRule(inspect, passive)}</span>
+                  </li>
+                ))}
+              </ul>
+            )}
             {inspect.enemy && move && active && (
               <p className="pw-breakdown">
                 {!harms(move)

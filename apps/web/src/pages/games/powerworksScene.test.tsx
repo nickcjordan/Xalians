@@ -33,8 +33,8 @@ function scene(
     onInspect,
     onHover: vi.fn(),
   };
-  render(<PowerworksScene {...props} {...overrides} />);
-  return { run, onInspect };
+  const view = render(<PowerworksScene {...props} {...overrides} />);
+  return { run, onInspect, container: view.container };
 }
 
 describe("shared battlefield", () => {
@@ -256,5 +256,22 @@ describe("shared battlefield", () => {
     expect(screen.getByText("Charged")).toBeInTheDocument();
     expect(container.querySelector(".pw-flight")).toBeNull();
     expect(container.querySelector(".receiving")).toBeNull();
+  });
+  it("floats a Reacts caption on the reacting unit for a react event", () => {
+    const run = createRun(1);
+    const { container } = scene({
+      team: run.team,
+      enemies: run.enemies,
+      text: "Central guardian reacts: Core discharge answers Crystorn.",
+      event: {
+        kind: "react",
+        actorId: run.enemies[0].id,
+        targetId: run.team[0].id,
+        moveName: "Core discharge",
+      },
+    });
+    const float = container.querySelector(".pw-scene-float.react");
+    expect(float).not.toBeNull();
+    expect(float!.textContent).toContain("Reacts");
   });
 });

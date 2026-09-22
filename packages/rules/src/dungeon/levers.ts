@@ -77,6 +77,23 @@ export const MENDING_STATUSES = ["mending"] as const;
 export const BINDING_STATUSES = ["restrained", "paralyzed", "frozen", "pinned", "buried"] as const;
 /** Lever: harm mechanisms scaled by strength; every other mechanism (elemental) scales by willpower. */
 export const STRENGTH_MECHANISMS = ["impact", "cutting", "piercing", "compression"] as const;
+/*
+  Pass 3 levers: passives and triggers (contract decisions 21 to 26).
+*/
+/** Lever: the status an ongoing passive's effect becomes on its owner at encounter entry (contract decision 21). An ongoing effect type absent from this table is unsupported and named. */
+export const ONGOING_PASSIVE_STATUS = {
+  restore: "mending",
+  protect: "shielded",
+} as const;
+/** Lever: the intensity a permanent condition carries when its ongoing passive effect declares none (a status effect may omit intensity in v5). */
+export const ONGOING_PASSIVE_DEFAULT_INTENSITY = 50;
+/** Lever: a reaction fires at most this many times per triggering move (contract decision 23). */
+export const REACTIONS_PER_TRIGGERING_MOVE = 1;
+/** Lever: how deep a reaction chain may go. 1 means a reaction's own harm or status never triggers another reaction (contract decision 23). */
+export const REACTION_DEPTH = 1;
+/** Lever: the ranges a `contact` trigger reads as a contact delivery: a move that reaches its target by touching it, whichever approach it took (contract decision 22). */
+export const CONTACT_TRIGGER_RANGES = ["contact"] as const;
+
 /** Lever: Desperate strike, the exhaustion-only fallback: flat damage, no matchup, recoil on the user. */
 export const DESPERATE_STRIKE_DAMAGE = 3;
 export const DESPERATE_STRIKE_RECOIL = 2;

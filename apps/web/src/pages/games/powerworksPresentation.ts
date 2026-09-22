@@ -15,7 +15,14 @@ export function actionPresentation(frame?: Frame) {
     actor.moves.find((m) => m.signature)?.name === event?.moveName;
   const knockout = event?.kind === "hit" && target?.hp === 0;
   const bossDefeat = knockout && target?.species === "guardian";
-  const impactDelay = signature ? 680 : event?.kind === "charge" ? 600 : 360;
+  // A reaction is a short answering beat: it reads fast so the exchange stays one motion.
+  const impactDelay = signature
+    ? 680
+    : event?.kind === "charge"
+    ? 600
+    : event?.kind === "react"
+    ? 260
+    : 360;
   const duration = bossDefeat
     ? 2800
     : knockout
@@ -28,6 +35,8 @@ export function actionPresentation(frame?: Frame) {
     ? 1400
     : event?.kind === "redirect"
     ? 900
+    : event?.kind === "react"
+    ? 850
     : actor
     ? 1150
     : 700;

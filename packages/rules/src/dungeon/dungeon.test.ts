@@ -14,6 +14,7 @@ import {
   restoreRun,
   statusGroup,
   tickAmount,
+  type Command,
   type Order,
   type Run,
   type Unit,
@@ -34,12 +35,19 @@ import {
 import cards from "./cards.json";
 import {
   innateConditions,
+  readCard,
   readEffect,
   type Card,
   type CardEffect,
+  type CardPassive,
   type Move,
   type MoveEffect,
 } from "./reading.ts";
+import {
+  generateXalian,
+  getSpeciesTemplates,
+} from "../generator/canonicalCreatureRelease.ts";
+import type { CreatureRecord } from "@xalians/content/creature";
 
 function orders(s: Run): Record<string, Order> {
   return Object.fromEntries(
@@ -456,7 +464,7 @@ function fitted(name: string, effects: CardEffect[], over: Partial<Move> = {}): 
     range: "short",
     preparation: "immediate",
     recovery: "repeatable",
-    effects: effects.map(readEffect),
+    effects: effects.map((effect) => readEffect(effect)),
     ...over,
   };
 }
@@ -1001,5 +1009,474 @@ describe("Powerworks status layer", () => {
       JSON.stringify({ version: 2, seed: 7, history })
     );
     expect(restored.state).toEqual(command(after, history[1]));
+  });
+});
+
+/*
+  Pass 3: passives and triggers (contract decisions 21 to 26). The seam tests read real
+  roster records rather than fixtures, so a test can never assert a shape the release
+  does not produce; the resolver tests use the one authored machine passive (decision 24)
+  and, for depth and ally-harmed, a card passive fitted onto a test unit.
+*/
+/** A record generated from the frozen release, for the seam tests over the wider roster. */
+function roster(species: string, seed: string): CreatureRecord {
+  const template = getSpeciesTemplates().find((t) => t.key === species);
+  if (!template) throw new Error(`Unknown species ${species}`);
+  return generateXalian(species, seed, {
+    origin: template.homePlanet,
+    serial: 1,
+    profile: "full",
+    generatedAt: "2026-09-21T00:00:00.000Z",
+  });
+}
+const passiveOn = (u: Unit, key: string) => u.passives.find((p) => p.key === key)!;
+/** One card passive, read through the seam onto a throwaway card so nothing is invented. */
+function cardPassive(passive: CardPassive) {
+  return readCard(
+    { ...(cards.templates.crawler as Card), passives: [passive] },
+    "crawler",
+    "T1",
+    "Test unit"
+  ).passives[0];
+}
+/**
+  The guardian alone at test health, its Core surge removed so it clamps rather than
+  charges, and Avilily set aside.
+
+  Avilily is sidelined because Core discharge is authored at `brief` recovery (one answer
+  per round) and she is the fastest companion with no ranged move at all: every action she
+  has is contact, so she would always take the single reply and no test could aim it. With
+  her out, Crystorn's touch is the only contact strike on the table (Graviclaw's Gravity
+  Draw is medium and Hippochamp's cannon is medium), so the one answer is hers.
+*/
+function clamper() {
+  const s = lone();
+  const b = unit(s, "B4");
+  b.moves = [b.moves[0]];
+  b.cooldowns = [0];
+  unit(s, "A").hp = 0;
+  return s;
+}
+/** Crystorn's contact strike and her ranged radiance: the two orders a contact trigger tells apart. */
+const C_CONTACT = 1;
+const C_RANGED = 0;
+/**
+  Orders in which Crystorn takes the named move and the other two standing companions
+  hold a ranged one, so a contact trigger can only have been hers. Requires `clamper()`,
+  which sidelines Avilily.
+*/
+function onlyC(s: Run, move: number): Record<string, Order> {
+  const orders: Record<string, Order> = {
+    C: { move, target: "B4" },
+    G: { move: 1, target: "B4" },
+    H: { move: 0, target: "B4" },
+  };
+  // The premise, asserted rather than assumed: nobody but Crystorn closes to contact.
+  for (const [id, order] of Object.entries(orders))
+    if (id !== "C")
+      expect(
+        moveAt(unit(s, id), order.move).range,
+        `${id} must hold a ranged move`
+      ).not.toBe("contact");
+  expect(unit(s, "A").hp, "Avilily must be sidelined by clamper()").toBe(0);
+  return orders;
+}
+/** Legal orders that prefer a contact move on a standing foe, so contact triggers fire. */
+function contactOrders(s: Run): Record<string, Order> {
+  const foe = s.enemies.filter((e) => e.hp > 0)[0];
+  return Object.fromEntries(
+    s.team
+      .filter((u) => u.hp > 0)
+      .map((u) => {
+        const legal = legalMoves(u);
+        const touch = legal.find((i) => i >= 0 && moveAt(u, i).range === "contact");
+        return [u.id, { move: touch ?? legal[0] ?? -2, target: foe.id }];
+      })
+  );
+}
+const reactsTo = (
+  r: { frames: { event?: import("./index.ts").BattleEvent }[] },
+  targetId?: string
+) =>
+  r.frames.filter(
+    (f) => f.event?.kind === "react" && (!targetId || f.event.targetId === targetId)
+  );
+
+describe("Powerworks reads real passives at the seam", () => {
+  it("bioflim's ongoing restore becomes a permanent mending condition on its owner", () => {
+    const u = readCompanion(roster("bioflim", "pv-bioflim-1"), "X");
+    const passive = u.passives.find((p) => p.kind === "ongoing")!;
+    expect(passive.support).toBe("supported");
+    expect(passive.trigger).toBeUndefined();
+    expect(passive.cooldown).toBe(0);
+    expect(passive.effects[0].type).toBe("restore");
+    const mending = u.conditions.find((c) => c.status === "mending")!;
+    expect(mending.group).toBe("mending");
+    expect(mending.remaining).toBe(Infinity);
+    expect(mending.source).toBe("X");
+    expect(mending.intensity).toBeGreaterThan(0);
+    // It is a real tick on the harm curve, not a label.
+    expect(tickAmount(mending, u)).toBeGreaterThan(0);
+  });
+  it("vespersyn's ongoing concealed becomes a permanent concealment condition", () => {
+    const u = readCompanion(roster("vespersyn", "pv-vespersyn-1"), "X");
+    const passive = u.passives.find((p) => p.kind === "ongoing")!;
+    expect(passive.support).toBe("supported");
+    const hidden = u.conditions.find((c) => c.status === "concealed")!;
+    expect(hidden.group).toBe("concealment");
+    expect(hidden.remaining).toBe(Infinity);
+    expect(hidden.removable).toEqual(["disrupting"]);
+  });
+  it("sonalloy and xylum read the same way, so ongoing restore is one rule", () => {
+    for (const species of ["sonalloy", "xylum"]) {
+      const u = readCompanion(roster(species, `pv-${species}-1`), "X");
+      expect(
+        u.conditions.filter((c) => c.status === "mending"),
+        species
+      ).toHaveLength(1);
+    }
+  });
+  it("imprit's contact-triggered passive reads as a reaction that applies burning", () => {
+    const u = readCompanion(roster("imprit", "pv-imprit-1"), "X");
+    const passive = u.passives.find((p) => p.kind === "triggered")!;
+    expect(passive.trigger).toBe("contact");
+    expect(passive.support).toBe("supported");
+    // Repeatable recovery is cooldown 0: it answers every touch.
+    expect(passive.cooldown).toBe(COOLDOWN_ROUNDS.repeatable);
+    const burning = passive.effects[0];
+    expect(burning.support).toBe("status");
+    expect(burning.status).toBe("burning");
+    expect(burning.group).toBe("degrading");
+    expect(burning.statusElement).toBe("fire");
+    // An ongoing passive's conditions are its whole reading; a triggered one has none.
+    expect(passive.conditions).toEqual([]);
+  });
+  it("an ongoing passive whose effects have no lasting state is unsupported and named", () => {
+    // Harm cannot be a standing condition: nothing in the table keeps it (decision 21).
+    const passive = cardPassive({
+      key: "leak",
+      name: "Constant leak",
+      effects: [
+        {
+          key: "outcome",
+          type: "harm",
+          mechanism: "impact",
+          recipient: "target",
+          likelihood: "consistent",
+          intensity: 20,
+        },
+      ],
+    });
+    expect(passive.kind).toBe("ongoing");
+    expect(passive.support).toBe("unsupported");
+    expect(passive.reason).toContain("harm");
+    expect(passive.conditions).toEqual([]);
+  });
+  it("counts how many of 640 roster records carry a passive the seam reads", () => {
+    const species = getSpeciesTemplates();
+    let records = 0,
+      ongoing = 0,
+      triggered = 0,
+      supported = 0;
+    const reasons = new Set<string>();
+    const carriers = new Set<string>();
+    for (const t of species)
+      for (let seed = 1; seed <= 20; seed++) {
+        records++;
+        const u = readCompanion(
+          roster(t.key, `powerworks-seam-${t.key}-${seed}`),
+          "X"
+        );
+        for (const p of u.passives) {
+          carriers.add(t.key);
+          if (p.kind === "ongoing") ongoing++;
+          else triggered++;
+          if (p.support === "supported") supported++;
+          else reasons.add(p.reason ?? "");
+        }
+      }
+    expect(records).toBe(species.length * 20);
+    // Every passive the release produces on these seeds is one the table reads.
+    expect(supported).toBe(ongoing + triggered);
+    expect(reasons.size).toBe(0);
+    expect(carriers.size).toBeGreaterThan(0);
+    expect(ongoing + triggered).toBeGreaterThan(0);
+  });
+});
+
+describe("Powerworks reactions", () => {
+  it("Core discharge reads off the guardian card as a contact reaction", () => {
+    const b = unit(boss(), "B4");
+    const passive = passiveOn(b, "core-discharge");
+    expect(passive.kind).toBe("triggered");
+    expect(passive.trigger).toBe("contact");
+    expect(passive.support).toBe("supported");
+    expect(passive.element).toBe("electric");
+    // Authored at brief recovery (Nick's lever, 2026-09-21): one answer per round.
+    expect(passive.cooldown).toBe(COOLDOWN_ROUNDS.brief);
+    expect(passive.effects[0].support).toBe("harm");
+    expect(passive.effects[0].intensity).toBe(30);
+    expect(b.passiveCooldowns).toEqual([0]);
+    // The guardian keeps no standing condition from it: a reaction is not a state.
+    expect(b.conditions).toEqual([]);
+  });
+  it("fires on a contact strike and not on a ranged stream", () => {
+    expect(unit(clamper(), "C").moves[C_CONTACT].range).toBe("contact");
+    expect(unit(clamper(), "C").moves[C_RANGED].range).not.toBe("contact");
+    const fire = (move: number) => {
+      const s = clamper();
+      s.orders.B4 = { move: 0, target: "H" };
+      return reactsTo(resolveRound(s, onlyC(s, move)), "C");
+    };
+    const contact = fire(C_CONTACT);
+    expect(contact).toHaveLength(1);
+    expect(contact[0].event!.moveName).toBe("Core discharge");
+    expect(contact[0].event!.actorId).toBe("B4");
+    expect(fire(C_RANGED)).toHaveLength(0);
+  });
+  it("answers in the owner's name with the owner's attributes and does real damage", () => {
+    const s = clamper();
+    s.orders.B4 = { move: 0, target: "H" };
+    const r = resolveRound(s, onlyC(s, C_CONTACT));
+    const index = r.frames.findIndex(
+      (f) => f.event?.kind === "react" && f.event.targetId === "C"
+    );
+    const reply = r.frames
+      .slice(index + 1)
+      .find(
+        (f) =>
+          f.event?.kind === "hit" &&
+          f.event.actorId === "B4" &&
+          f.event.moveName === "Core discharge"
+      )!;
+    expect(reply).toBeTruthy();
+    expect(reply.event!.targetId).toBe("C");
+    expect(reply.event!.amount).toBeGreaterThan(0);
+    // The reaction is not an ordered move: it spends no move cooldown.
+    expect(r.state.enemies.find((u) => u.id === "B4")!.cooldowns).toEqual([0]);
+  });
+  it("fires at most once per triggering move", () => {
+    const s = clamper();
+    // The card is authored at brief recovery, which would explain a single answer on its
+    // own, so this test swaps in a repeatable copy: the budget, not the cooldown, is what
+    // must hold two landed effects on one move to one reply.
+    const repeatable = cardPassive({
+      key: "core-discharge",
+      name: "Core discharge",
+      trigger: "contact",
+      recovery: "repeatable",
+      element: "electric",
+      effects: [
+        {
+          key: "outcome",
+          type: "harm",
+          mechanism: "elemental",
+          recipient: "target",
+          likelihood: "consistent",
+          intensity: 30,
+        },
+      ],
+    });
+    expect(repeatable.cooldown).toBe(COOLDOWN_ROUNDS.repeatable);
+    unit(s, "B4").passives = [repeatable];
+    unit(s, "B4").passiveCooldowns = [0];
+    // Two landed effects on one contact move cannot buy two replies.
+    fitOnly(
+      unit(s, "C"),
+      fitted(
+        "Double Touch",
+        [
+          {
+            key: "outcome",
+            type: "harm",
+            mechanism: "impact",
+            recipient: "target",
+            likelihood: "consistent",
+            intensity: 60,
+          },
+          statusEffect("corroding"),
+        ],
+        { range: "contact", approach: "closing" }
+      )
+    );
+    s.orders.B4 = { move: 0, target: "H" };
+    expect(reactsTo(resolveRound(s, onlyC(s, 0)), "C")).toHaveLength(1);
+  });
+  it("does not fire when the reaction's owner is knocked out by the strike", () => {
+    const s = clamper();
+    unit(s, "B4").hp = 1;
+    s.orders.B4 = { move: 0, target: "H" };
+    const r = resolveRound(s, onlyC(s, C_CONTACT));
+    expect(reactsTo(r)).toHaveLength(0);
+    expect(r.state.phase).toBe("won");
+  });
+  it("honours a passive's cooldown from its recovery", () => {
+    expect(COOLDOWN_ROUNDS.repeatable).toBe(0);
+    expect(COOLDOWN_ROUNDS.brief).toBe(1);
+    // Every companion but Hippochamp reaches the guardian in contact range, so a
+    // repeatable reaction answers several strikes a round and a brief one answers once
+    // (the cooldown is spent on the first reply and re-armed at the guardian's own
+    // opportunity, one round later).
+    const perRound = (cooldown: number) => {
+      let run = clamper();
+      unit(run, "B4").passives[0].cooldown = cooldown;
+      const counts: number[] = [];
+      for (let round = 0; round < 3; round++) {
+        run.enemies.filter((e) => e.hp > 0).forEach((e) => (e.hp = e.max));
+        run.team.forEach((t) => (t.hp = t.max));
+        run.orders.B4 = { move: 0, target: "H" };
+        const r = resolveRound(run, contactOrders(run));
+        counts.push(reactsTo(r).length);
+        run = r.state;
+        expect(run.phase).toBe("planning");
+      }
+      return counts;
+    };
+    const repeatable = perRound(COOLDOWN_ROUNDS.repeatable);
+    expect(Math.min(...repeatable)).toBeGreaterThan(1);
+    expect(perRound(COOLDOWN_ROUNDS.brief)).toEqual([1, 1, 1]);
+  });
+  it("is depth one: a reaction that harms never triggers a harmed reaction on the attacker", () => {
+    const retort = cardPassive({
+      key: "retort",
+      name: "Retort",
+      trigger: "harmed",
+      recovery: "repeatable",
+      effects: [
+        {
+          key: "outcome",
+          type: "harm",
+          mechanism: "impact",
+          recipient: "target",
+          likelihood: "consistent",
+          intensity: 40,
+        },
+      ],
+    });
+    // Crystorn carries a harmed reply. The guardian's Core discharge harms her, and
+    // that harm must not buy her a reaction (decision 23).
+    const s = clamper();
+    const c = unit(s, "C");
+    c.passives = [retort];
+    c.passiveCooldowns = [0];
+    s.orders.B4 = { move: 0, target: "H" };
+    const reacts = reactsTo(resolveRound(s, onlyC(s, C_CONTACT)));
+    expect(reacts.some((f) => f.event!.moveName === "Core discharge")).toBe(true);
+    expect(reacts.some((f) => f.event!.moveName === "Retort")).toBe(false);
+    // The same Retort does fire on the guardian's ordered Clamp strike, so the passive
+    // is live and the depth guard is what stopped the chain.
+    const direct = clamper();
+    const target = unit(direct, "C");
+    target.passives = [retort];
+    target.passiveCooldowns = [0];
+    direct.orders.B4 = { move: 0, target: "C" };
+    expect(
+      reactsTo(resolveRound(direct, onlyC(direct, C_RANGED))).some(
+        (f) => f.event!.moveName === "Retort"
+      )
+    ).toBe(true);
+  });
+  it("an ally-harmed reaction takes the harmed ally as its target", () => {
+    // Crystorn shields whichever squadmate the guardian hurts: the one place an effect
+    // reaches an ally, because the trigger supplies it (decision 26).
+    const tend = cardPassive({
+      key: "tend",
+      name: "Tend",
+      trigger: "ally-harmed",
+      recovery: "repeatable",
+      effects: [
+        statusEffect("shielded", { removable: ["disrupting"] }),
+      ],
+    });
+    const s = clamper();
+    const c = unit(s, "C");
+    c.passives = [tend];
+    c.passiveCooldowns = [0];
+    s.orders.B4 = { move: 0, target: "H" };
+    const r = resolveRound(s, onlyC(s, C_RANGED));
+    const react = reactsTo(r).find((f) => f.event!.moveName === "Tend")!;
+    expect(react).toBeTruthy();
+    expect(react.event!.actorId).toBe("C");
+    expect(react.event!.targetId).toBe("H");
+    expect(
+      r.state.team.find((u) => u.id === "H")!.conditions.map((x) => x.status)
+    ).toContain("shielded");
+  });
+  it("rolls a reaction's likelihood from the run rng, so it replays and differs by seed", () => {
+    const scald = cardPassive({
+      key: "scald",
+      name: "Scald",
+      trigger: "contact",
+      recovery: "repeatable",
+      effects: [statusEffect("burning", { likelihood: "occasional" })],
+    });
+    const play = (seed: number) => {
+      let s = createRun(seed);
+      for (let i = 0; i < 3; i++) {
+        s.phase = "camp";
+        s = command(s, { kind: "advance" });
+      }
+      s.enemies.filter((u) => u.id !== "B4").forEach((u) => (u.hp = 0));
+      const b = unit(s, "B4");
+      b.hp = 500;
+      b.moves = [b.moves[0]];
+      b.cooldowns = [0];
+      b.passives = [scald];
+      b.passiveCooldowns = [0];
+      s.team.forEach((u) => (u.hp = u.max = 500));
+      // Same reason as clamper(): Avilily is all contact, so she would take the reply.
+      unit(s, "A").hp = 0;
+      s.orders.B4 = { move: 0, target: "H" };
+      return resolveRound(s, onlyC(s, C_CONTACT))
+        .frames.map((f) => `${f.event?.kind}:${f.event?.status ?? ""}`)
+        .join("|");
+    };
+    expect(play(4)).toBe(play(4));
+    expect(new Set([1, 2, 3, 4, 5, 6, 7, 8].map(play)).size).toBeGreaterThan(1);
+  });
+  it("an ongoing passive's permanent condition survives the next encounter entry", () => {
+    const s = createRun(3);
+    const g = unit(s, "G");
+    const carrier = readCompanion(roster("bioflim", "pv-bioflim-1"), g.id);
+    g.passives = carrier.passives;
+    g.passiveCooldowns = carrier.passives.map(() => 0);
+    g.conditions = [
+      ...g.conditions,
+      ...carrier.passives.flatMap((p) => p.conditions),
+    ];
+    expect(g.conditions.some((c) => c.status === "mending")).toBe(true);
+    const camped = { ...clone(s), phase: "camp" as const };
+    const after = command(camped, { kind: "advance" }).team.find(
+      (u) => u.id === "G"
+    )!;
+    // Exactly one: entry re-seeds it without duplicating what is already there.
+    expect(after.conditions.filter((c) => c.status === "mending")).toHaveLength(1);
+    expect(after.passiveCooldowns).toEqual(carrier.passives.map(() => 0));
+  });
+  it("replays a version 2 save deterministically through to a reaction", () => {
+    // A real run, played honestly with legal orders until the guardian answers a
+    // contact strike, then restored from its command history alone.
+    let s = createRun(11);
+    const history: Command[] = [];
+    let reacted = false;
+    for (let step = 0; step < 60 && s.phase !== "won" && s.phase !== "lost"; step++) {
+      if (s.phase === "camp") {
+        const action: Command = { kind: "advance" };
+        history.push(action);
+        s = command(s, action);
+        continue;
+      }
+      const action: Command = { kind: "round", orders: contactOrders(s) };
+      history.push(action);
+      const result = resolveRound(s, action.orders);
+      if (reactsTo(result).length) reacted = true;
+      s = result.state;
+    }
+    expect(reacted, "no reaction occurred in the played run").toBe(true);
+    const restored = restoreRun(
+      JSON.stringify({ version: 2, seed: 11, history })
+    );
+    expect(restored.state).toEqual(s);
+    expect(restored.state.log.some((l) => /Core discharge/.test(l))).toBe(true);
   });
 });

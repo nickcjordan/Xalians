@@ -17,17 +17,26 @@
 */
 import {
   command,
+  contactDelivery,
   createRun,
   damagePreview,
   legalMoves,
   moveAt,
+  readCompanion,
   resolveRound,
   type Order,
   type Run,
   type StatusGroup,
+  type Trigger,
   type Unit,
 } from "../index.ts";
 import { LIKELIHOOD_PERCENT } from "../levers.ts";
+import {
+  generateXalian,
+  getSpeciesTemplates,
+} from "../../generator/canonicalCreatureRelease.ts";
+
+const TRIGGERS: Trigger[] = ["contact", "harmed", "ally-harmed"];
 
 const GROUPS: StatusGroup[] = [
   "binding",
@@ -66,6 +75,11 @@ export type SimStats = {
   removeUses: number;
   removeCleared: number;
   hiddenSkips: number;
+  /** Pass 3 rows (contract, "Measurement"). */
+  reactionsFired: Record<Trigger, number>;
+  reactionDamage: number;
+  contactStrikesOnGuardian: number;
+  rangedStrikesOnGuardian: number;
 };
 
 function choose(u: Unit, enemies: Unit[]): Order | null {
@@ -130,11 +144,20 @@ export function playRun(seed: number, stats: SimStats) {
           stats.preemptivePulls++;
           preemptive.add(u.id);
         }
+        // Pass 3: how the greedy bot reaches the guardian, since only a contact
+        // delivery draws Core discharge (contract decision 24).
+        if (target?.species === "guardian" && order.move >= -1) {
+          if (contactDelivery(m)) stats.contactStrikesOnGuardian++;
+          else stats.rangedStrikesOnGuardian++;
+        }
         orders[u.id] = order;
       }
     }
     const result = resolveRound(s, orders);
     stats.rounds++;
+    // Reaction names seen this round, so the hit that follows a `react` event can be
+    // told from an ordered move that happens to share a name.
+    const reacting = new Set<string>();
     for (const f of result.frames) {
       const e = f.event;
       if (!e) continue;
@@ -157,6 +180,21 @@ export function playRun(seed: number, stats: SimStats) {
       if ((e.kind === "status" || e.kind === "bind") && e.group)
         stats.applied[e.group]++;
       if (e.kind === "resisted") stats.resisted++;
+      if (e.kind === "react") {
+        const owner = [...result.state.team, ...result.state.enemies].find(
+          (t) => t.id === e.actorId
+        );
+        const passive = owner?.passives.find((p) => p.name === e.moveName);
+        if (passive?.trigger) stats.reactionsFired[passive.trigger]++;
+        reacting.add(`${e.actorId}:${e.moveName}`);
+      }
+      // A reaction's own harm arrives as an ordinary hit under the passive's name.
+      if (
+        e.kind === "hit" &&
+        onCompanion &&
+        reacting.has(`${e.actorId}:${e.moveName}`)
+      )
+        stats.reactionDamage += e.amount ?? 0;
       if (e.kind === "lost") stats.opportunitiesLostToTrance++;
       if (e.kind === "hidden") stats.hiddenSkips++;
       if (e.kind === "removed") {
@@ -204,11 +242,117 @@ export function simulate(runs = 200, firstSeed = 1): SimStats {
     removeUses: 0,
     removeCleared: 0,
     hiddenSkips: 0,
+    reactionsFired: Object.fromEntries(TRIGGERS.map((t) => [t, 0])) as Record<
+      Trigger,
+      number
+    >,
+    reactionDamage: 0,
+    contactStrikesOnGuardian: 0,
+    rangedStrikesOnGuardian: 0,
   };
   for (let seed = firstSeed; seed < firstSeed + runs; seed++) playRun(seed, stats);
   return stats;
 }
 
+/**
+  The seam-only roster survey (contract, pass 3 "Measurement"): how many of `seeds`
+  records per species carry a passive the seam reads as supported versus unsupported,
+  and why. It reads no game state: it is the seam alone, over the wider roster.
+*/
+export type SeamSurvey = {
+  records: number;
+  withPassive: number;
+  ongoing: number;
+  triggered: number;
+  supported: number;
+  unsupported: number;
+  reasons: Record<string, number>;
+  byTrigger: Record<string, number>;
+  species: Record<string, number>;
+};
+export function surveyPassives(seeds = 20): SeamSurvey {
+  const templates = getSpeciesTemplates();
+  const survey: SeamSurvey = {
+    records: 0,
+    withPassive: 0,
+    ongoing: 0,
+    triggered: 0,
+    supported: 0,
+    unsupported: 0,
+    reasons: {},
+    byTrigger: {},
+    species: {},
+  };
+  for (const template of templates)
+    for (let seed = 1; seed <= seeds; seed++) {
+      const record = generateXalian(
+        template.key,
+        `powerworks-seam-${template.key}-${seed}`,
+        {
+          origin: template.homePlanet,
+          serial: 1,
+          profile: "full",
+          generatedAt: "2026-09-21T00:00:00.000Z",
+        }
+      );
+      const u = readCompanion(record, "X");
+      survey.records++;
+      if (u.passives.length) survey.withPassive++;
+      for (const p of u.passives) {
+        survey.species[template.key] = (survey.species[template.key] ?? 0) + 1;
+        if (p.kind === "ongoing") survey.ongoing++;
+        else {
+          survey.triggered++;
+          survey.byTrigger[p.trigger ?? "?"] =
+            (survey.byTrigger[p.trigger ?? "?"] ?? 0) + 1;
+        }
+        if (p.support === "supported") survey.supported++;
+        else {
+          survey.unsupported++;
+          const reason = p.reason ?? "unnamed";
+          survey.reasons[reason] = (survey.reasons[reason] ?? 0) + 1;
+        }
+      }
+    }
+  return survey;
+}
+export function formatSurvey(survey: SeamSurvey): string {
+  const rows: [string, string][] = [
+    ["records read", String(survey.records)],
+    [
+      "records carrying a passive",
+      `${survey.withPassive} (${(
+        (100 * survey.withPassive) /
+        survey.records
+      ).toFixed(1)}%)`,
+    ],
+    ["ongoing / triggered passives", `${survey.ongoing} / ${survey.triggered}`],
+    [
+      "triggered by trigger",
+      Object.entries(survey.byTrigger)
+        .map(([k, v]) => `${k} ${v}`)
+        .join(", ") || "none",
+    ],
+    [
+      "supported / unsupported",
+      `${survey.supported} / ${survey.unsupported}`,
+    ],
+    [
+      "unsupported reasons",
+      Object.entries(survey.reasons)
+        .map(([k, v]) => `${v}x ${k}`)
+        .join("; ") || "none",
+    ],
+    [
+      "species carrying one",
+      Object.entries(survey.species)
+        .map(([k, v]) => `${k} ${v}`)
+        .join(", ") || "none",
+    ],
+  ];
+  const width = Math.max(...rows.map(([k]) => k.length));
+  return rows.map(([k, v]) => `${k.padEnd(width)}  ${v}`).join("\n");
+}
 export function formatTable(stats: SimStats): string {
   const pct = (n: number, d: number) => (d ? `${((100 * n) / d).toFixed(1)}%` : "n/a");
   const reached = [1, 2, 3, 4].map(
@@ -249,6 +393,23 @@ export function formatTable(stats: SimStats): string {
       `${stats.removeCleared} / ${stats.removeUses}`,
     ],
     ["targets skipped as concealed", String(stats.hiddenSkips)],
+    // Pass 3 rows.
+    [
+      "reactions fired per trigger",
+      TRIGGERS.filter((t) => stats.reactionsFired[t])
+        .map((t) => `${t} ${stats.reactionsFired[t]}`)
+        .join(", ") || "none",
+    ],
+    [
+      "reaction share of companion damage taken",
+      `${pct(stats.reactionDamage, stats.companionDamage)} (${
+        stats.reactionDamage
+      } of ${stats.companionDamage})`,
+    ],
+    [
+      "strikes ordered on the guardian, contact / ranged",
+      `${stats.contactStrikesOnGuardian} / ${stats.rangedStrikesOnGuardian}`,
+    ],
   ];
   const width = Math.max(...rows.map(([k]) => k.length));
   return rows.map(([k, v]) => `${k.padEnd(width)}  ${v}`).join("\n");

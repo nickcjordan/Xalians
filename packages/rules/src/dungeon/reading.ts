@@ -15,6 +15,10 @@
 import type { CreatureRecord, Effect, Protection } from "@xalians/content/creature";
 import {
   ATTENTION_OPPORTUNITIES,
+  CONTACT_TRIGGER_RANGES,
+  COOLDOWN_ROUNDS,
+  ONGOING_PASSIVE_DEFAULT_INTENSITY,
+  ONGOING_PASSIVE_STATUS,
   ATTENTION_STATUSES,
   BINDING_OPPORTUNITIES,
   BINDING_STATUSES,
@@ -35,6 +39,8 @@ export type Range = "contact" | "short" | "medium" | "long" | "none";
 export type Preparation = "immediate" | "brief" | "prolonged";
 export type Recovery = "repeatable" | "brief" | "prolonged";
 export type Likelihood = "consistent" | "likely" | "occasional";
+/** The three v5 automatic triggers. A discrete passive carries exactly one (contract decision 22). */
+export type Trigger = "contact" | "harmed" | "ally-harmed";
 export type Support =
   | "harm"
   | "displace"
@@ -108,6 +114,33 @@ export type Move = {
   fallback?: true;
 };
 /**
+  One v5 passive as the table reads it (contract decisions 21 to 23).
+
+  `kind` "ongoing" is a passive with no trigger and no timing: it becomes a permanent
+  condition on its owner at encounter entry. `kind` "triggered" is a discrete passive:
+  it fires on its trigger, after the triggering move finishes, in the owner's name,
+  through the same apply path as an action. `cooldown` is its recovery in rounds;
+  `support` is "unsupported" with a `reason` when no effect of it is supported.
+*/
+export type Passive = {
+  key: string;
+  name: string;
+  signature: boolean;
+  kind: "ongoing" | "triggered";
+  /** Triggered passives only. */
+  trigger?: Trigger;
+  /** The move-level element classification, for the matchup of an elemental effect. */
+  element?: string;
+  effects: MoveEffect[];
+  /** Triggered passives only: recovery read as rounds through COOLDOWN_ROUNDS. */
+  cooldown: number;
+  /** Ongoing passives only: the permanent conditions this passive puts on its owner at encounter entry. */
+  conditions: Condition[];
+  support: "supported" | "unsupported";
+  /** Present only when support is "unsupported": the words the table shows. */
+  reason?: string;
+};
+/**
   One applied condition on a unit (contract decision 11). Reapplying the same status
   refreshes `remaining` and keeps the higher intensity; nothing stacks additively.
   `remaining` counts the victim's own opportunities. A permanent condition
@@ -137,7 +170,11 @@ export type Unit = {
   speed: number;
   attrs: { strength: number; willpower: number };
   moves: Move[];
+  /** Automatic processes read from record.passives[] or a card's passives[] (contract decisions 21 to 23). */
+  passives: Passive[];
   cooldowns: number[];
+  /** Rounds remaining per passive, in passives order; an ongoing passive never cools. */
+  passiveCooldowns: number[];
   signatureSpent: boolean;
   bound: number;
   ward: boolean;
@@ -167,6 +204,15 @@ export type CardEffect = {
   protection?: Protection;
   methods?: RemovalMethod[];
 };
+export type CardPassive = {
+  key: string;
+  name: string;
+  /** A card passive is discrete when it declares a trigger, ongoing when it does not. */
+  trigger?: Trigger;
+  recovery?: Recovery;
+  element?: string;
+  effects: CardEffect[];
+};
 export type Card = {
   hp: number;
   speed: number;
@@ -183,6 +229,7 @@ export type Card = {
     element?: string;
     effects: CardEffect[];
   }[];
+  passives?: CardPassive[];
 };
 
 const BINDING = new Set<string>(BINDING_STATUSES);
@@ -223,8 +270,19 @@ export function statusOpportunities(
   return LINGERING_OPPORTUNITIES[duration];
 }
 
-/** The support reading of one effect. Shared by records and cards so the table cannot disagree with itself. */
-export function readEffect(effect: CardEffect | Effect): MoveEffect {
+/**
+  The support reading of one effect. Shared by records and cards so the table cannot
+  disagree with itself.
+
+  `ongoing` relaxes exactly one pass 2 rule: a status on its own user is refused for an
+  action, because an action aimed at itself has no reading here, but an ongoing passive
+  targets self by construction (v5 requires it), so decision 21 reads whatever group the
+  status falls into. Nothing else about the reading changes.
+*/
+export function readEffect(
+  effect: CardEffect | Effect,
+  ongoing = false
+): MoveEffect {
   const base: MoveEffect = {
     key: effect.key,
     type: effect.type,
@@ -252,8 +310,9 @@ export function readEffect(effect: CardEffect | Effect): MoveEffect {
       const status = effect.status ?? "condition";
       const group = statusGroup(status);
       if (!group) return { ...unsupported(`${status} is not read here`), status };
-      // Guarding and mending are the two groups that make sense on their own user.
-      if (!aimed && group !== "guarding" && group !== "mending")
+      // Guarding and mending are the two groups that make sense on their own user;
+      // an ongoing passive may keep any group on itself (contract decision 21).
+      if (!aimed && !ongoing && group !== "guarding" && group !== "mending")
         return { ...unsupported(`${status} on itself is not read here`), status };
       const removable = ("removable" in effect ? effect.removable : undefined) as
         | RemovalMethod[]
@@ -336,9 +395,109 @@ export function innateConditions(protections: readonly Protection[]): Condition[
   }));
 }
 
+/*
+  One passive as the table reads it (contract decisions 21 to 23). The effects get the
+  same support readings as a move's, so the resolver cannot treat a reaction differently
+  from an action. An ongoing passive additionally resolves its effects into the permanent
+  conditions the owner enters an encounter with; a triggered one carries its cooldown.
+*/
+function readPassive(
+  passive: {
+    key: string;
+    name: string;
+    element?: string;
+    effects: readonly (CardEffect | Effect)[];
+  },
+  kind: "ongoing" | "triggered",
+  trigger: Trigger | undefined,
+  recovery: Recovery | undefined,
+  signature: boolean,
+  ownerId: string
+): Passive {
+  const effects = passive.effects.map((effect) =>
+    readEffect(effect, kind === "ongoing")
+  );
+  const conditions =
+    kind === "ongoing" ? ongoingConditions(effects, ownerId) : [];
+  // Support: an ongoing passive is supported when it yields at least one permanent
+  // condition; a triggered one when at least one of its effects is supported.
+  const supported =
+    kind === "ongoing" ? conditions.length > 0 : effects.some((e) => e.support !== "unsupported");
+  const reason = supported
+    ? undefined
+    : kind === "ongoing"
+    ? `nothing here reads ${effects.map((e) => e.type).join(" or ")} as a lasting state`
+    : (effects.find((e) => e.reason)?.reason ?? "no effect the table reads");
+  return {
+    key: passive.key,
+    name: passive.name,
+    signature,
+    kind,
+    ...(trigger ? { trigger } : {}),
+    ...(passive.element ? { element: passive.element } : {}),
+    effects,
+    cooldown: kind === "triggered" ? COOLDOWN_ROUNDS[recovery ?? "repeatable"] : 0,
+    conditions,
+    support: supported ? "supported" : "unsupported",
+    ...(reason ? { reason } : {}),
+  };
+}
+
+/**
+  An ongoing passive's effects as permanent conditions on its owner (contract decision 21):
+  ongoing restore is `mending`, ongoing protect is `shielded`, and an ongoing status keeps
+  the status it declares as long as the table reads its group. `remaining` is Infinity and
+  the source is the owner itself, so nothing expires it and `remove` cannot reach it.
+*/
+export function ongoingConditions(
+  effects: readonly MoveEffect[],
+  ownerId: string
+): Condition[] {
+  const conditions: Condition[] = [];
+  for (const e of effects) {
+    // A status effect already carries its group through the seam; keep it verbatim.
+    if ((e.support === "status" || e.support === "bind") && e.group) {
+      conditions.push({
+        status: e.status ?? "condition",
+        group: e.group,
+        intensity: e.intensity || ONGOING_PASSIVE_DEFAULT_INTENSITY,
+        ...(e.statusElement ? { element: e.statusElement } : {}),
+        remaining: Infinity,
+        source: ownerId,
+        removable: [...(e.removable ?? [])],
+        ...(e.protection ? { protection: e.protection } : {}),
+      });
+      continue;
+    }
+    // restore and protect become the status their lever names; nothing else has a state.
+    const status =
+      e.type === "restore" || e.type === "protect"
+        ? ONGOING_PASSIVE_STATUS[e.type]
+        : null;
+    if (!status) continue;
+    const group = statusGroup(status);
+    if (!group) continue;
+    conditions.push({
+      status,
+      group,
+      intensity: e.intensity || ONGOING_PASSIVE_DEFAULT_INTENSITY,
+      remaining: Infinity,
+      source: ownerId,
+      removable: [] as RemovalMethod[],
+    });
+  }
+  return conditions;
+}
+
+/** Does this move reach its target by touching it? A `contact` trigger reads exactly these (contract decision 22). */
+export const contactDelivery = (move: Move) =>
+  (CONTACT_TRIGGER_RANGES as readonly string[]).includes(move.range) &&
+  move.approach !== "self";
+
 const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
-const freshState = (moves: Move[]) => ({
+const freshState = (moves: Move[], passives: Passive[]) => ({
   cooldowns: moves.map(() => 0),
+  passiveCooldowns: passives.map(() => 0),
   signatureSpent: false,
   bound: 0,
   ward: false,
@@ -371,8 +530,18 @@ export function readCompanion(
     preparation: action.timing?.preparation ?? "brief",
     recovery: action.timing?.recovery ?? "repeatable",
     ...(action.element ? { element: action.element } : {}),
-    effects: action.effects.map(readEffect),
+    effects: action.effects.map((effect) => readEffect(effect)),
   }));
+  const passives: Passive[] = record.passives.map((passive) =>
+    readPassive(
+      passive,
+      passive.activation.continuity === "ongoing" ? "ongoing" : "triggered",
+      passive.activation.trigger,
+      passive.timing?.recovery,
+      record.signature.type === "passive" && record.signature.key === passive.key,
+      id
+    )
+  );
   return {
     id,
     species: record.species,
@@ -384,9 +553,14 @@ export function readCompanion(
     speed: Math.round(mean(a.agility, a.reflex) * SPEED_SCALE),
     attrs: { strength: a.strength, willpower: a.willpower },
     moves,
-    ...freshState(moves),
-    // physiology.protections are permanent guarding conditions of the unit (contract decision 18).
-    conditions: innateConditions(record.physiology.protections),
+    passives,
+    ...freshState(moves, passives),
+    // physiology.protections are permanent guarding conditions of the unit (contract
+    // decision 18); an ongoing passive adds its own permanent condition (decision 21).
+    conditions: [
+      ...innateConditions(record.physiology.protections),
+      ...passives.flatMap((p) => p.conditions),
+    ],
   };
 }
 
@@ -407,8 +581,18 @@ export function readCard(
     preparation: m.preparation,
     recovery: m.recovery,
     ...(m.element ? { element: m.element } : {}),
-    effects: m.effects.map(readEffect),
+    effects: m.effects.map((effect) => readEffect(effect)),
   }));
+  const passives: Passive[] = (card.passives ?? []).map((passive) =>
+    readPassive(
+      passive,
+      passive.trigger ? "triggered" : "ongoing",
+      passive.trigger,
+      passive.recovery,
+      false,
+      id
+    )
+  );
   return {
     id,
     species,
@@ -420,6 +604,8 @@ export function readCard(
     speed: card.speed,
     attrs: { ...card.attrs },
     moves,
-    ...freshState(moves),
+    passives,
+    ...freshState(moves, passives),
+    conditions: passives.flatMap((p) => p.conditions),
   };
 }
