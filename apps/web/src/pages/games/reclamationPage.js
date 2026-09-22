@@ -65,6 +65,35 @@ function readHotSeat() {
 	}
 }
 
+/*
+	PASS 35. The draft is SKIPPED by default: a Proving deals both squads and starts.
+
+	Nick, 2026-09-22, after playing the draft screen cold: "I don't know what I'm looking at
+	here. It's not intuitive... I'm deducing that I'm supposed to select 12 of these boxes. I
+	don't know why I'm doing that or what the purpose of me making the selection is."
+
+	The deeper reason it goes rather than gets explained: the draft is squad building against
+	a SAMPLE pool, and it stands in for a feature that does not exist yet, picking a squad
+	from the creatures you actually own. Nick's ruling is to leave that until the game's
+	mechanics are production-ready rather than polish a placeholder: "right now we're not
+	messing with integrating the owned creatures into the games, we're just providing a
+	sample to use... let's not put too much weight into the user experience of squad
+	selection until the rest of the game mechanics are production-ready."
+
+	It is a flag rather than a deletion because the draft is a real rules lever (assumption
+	23, the pool size and shape) with its own engine coverage, and the squad-building screen
+	that replaces it will want the same machinery. `?draft=1` still reaches it, the same way
+	`?hotseat=1` reaches the hand-off.
+*/
+function readDraftFlag() {
+	try {
+		const flag = new URLSearchParams(window.location.search).get('draft');
+		return flag === '1' || flag === 'true';
+	} catch (e) {
+		return false;
+	}
+}
+
 function storeMode(mode) {
 	try {
 		window.localStorage.setItem(MODE_KEY, mode);
@@ -262,6 +291,15 @@ class ReclamationPage extends React.Component {
 		clearMatch();
 		this.draftUsedAuto = false;
 		/*
+			PASS 35. Skipped by default: both squads are drafted by the proctor's habit and the
+			Proving begins. The same call the "Pick for me" button already made, so the squad a
+			player gets is the one the draft would have recommended, not a random twelve.
+		*/
+		if (!readDraftFlag()) {
+			this.beginWithDealtSquads(seed, poolA, poolB, frames);
+			return;
+		}
+		/*
 			PASS 23. `side` is which handler is keeping right now, and `keptA` holds the first
 			handler's twelve while the second makes their own. In solo play the draft never
 			leaves side A: the rival keeps by its habit, as it always has. In hot-seat the
@@ -304,6 +342,21 @@ class ReclamationPage extends React.Component {
 		this.setState((prev) => ({
 			draft: { ...prev.draft, side: 'B', keepIds: [], covered: false },
 		}));
+	};
+
+	/*
+		Deal both squads and start, with no draft screen in between. Shares createMatch and the
+		telemetry shape with confirmDraft; `draft: 'skipped'` distinguishes these Provings from
+		the ones a person drafted by hand or with "Pick for me".
+	*/
+	beginWithDealtSquads = (seed, poolA, poolB, frames) => {
+		const { rivalId, mode } = this.state;
+		const rival = rivalById(rivalId);
+		const rosterA = botDraft(poolA, frames, rival).map((id) => poolA.find((r) => r.id === id));
+		const rosterB = botDraft(poolB, frames, rival).map((id) => poolB.find((r) => r.id === id));
+		const match = createMatch({ rosterA, rosterB, worlds: getWorlds(), seed });
+		this.telemetry.beginMatch({ seed, rivalId, mode, draft: 'skipped', resumed: false });
+		this.setState((prev) => ({ seed, match, draft: null, resume: null, saved: null, matchKey: prev.matchKey + 1 }));
 	};
 
 	confirmDraft = () => {
