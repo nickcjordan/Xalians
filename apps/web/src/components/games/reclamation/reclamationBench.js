@@ -281,6 +281,13 @@ function ReclamationBench({
 				real choice, so it is never a control asking a question with one answer. The
 				natural behaviour is first and is what a player gets by pressing nothing.
 			*/}
+			{/*
+				PASS 36. The picker's room is held whether or not a picker is in it, the same way
+				`rec-callout-row` holds the callout's. It used to appear when a creature with two
+				or more behaviours was lifted and vanish when it was sent, moving the whole plinth
+				grid 62px each way.
+			*/}
+			<div className="rec-bench-acts-slot" data-act-slot>
 			{actFlip && armed && yourTurn && !me.passed && (() => {
 				const roles = flippableRolesOf(armed, view.rules);
 				if (roles.length < 2) {
@@ -306,6 +313,7 @@ function ReclamationBench({
 					</div>
 				);
 			})()}
+			</div>
 			{/* the lead rides on its own line under the head: with a creature lifted it is the
 			    role sentence, the same one the plinth, the dossier and the ghost preview print.
 
@@ -315,9 +323,14 @@ function ReclamationBench({
 			    had nothing telling them the worlds would answer "what happens if I do it".
 			    That is what the rubric critic scored the weakest of the four glance
 			    questions, judging the screen before any creature was lifted. */}
-			{(sendsLeft === 0 || step === 2 || movingRecordId || (yourTurn && !me.passed)) && (
-				<p className="rec-bench-lead g-body" data-bench-lead>{lead}</p>
-			)}
+			{/*
+				PASS 36. The lead is always rendered and its row always reserved; when there is
+				nothing to say it is empty rather than absent. It used to unmount on the rival's
+				turn and come back on yours, taking 61px of the bench with it each way.
+			*/}
+			<p className="rec-bench-lead g-body" data-bench-lead>
+				{(sendsLeft === 0 || step === 2 || movingRecordId || (yourTurn && !me.passed)) ? lead : ''}
+			</p>
 			<div className="rec-plinths" role="list">
 				{squad.map((record) => (
 					<Plinth
