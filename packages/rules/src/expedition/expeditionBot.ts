@@ -27,7 +27,7 @@
 import type { XalianRecord } from '@xalians/content/schema';
 import { prepare, traitKeywordsOf, magnitudeAgainst, roleOf, round1, flippableRolesOf } from './creatureOnTable.ts';
 import {
-	ROLE, SENDABLE, clinchFor, FRAMES_PER_MATCH, RETURNED_SEND_COST,
+	ROLE, SENDABLE, clinchFor, FRAMES_PER_MATCH,
 	presenceScaleOf, instinctLaneOf,
 } from './expeditionInterpretation.ts';
 import type {
@@ -658,18 +658,14 @@ export function scoreSends(publicState: PublicState, ownRoster: XalianRecord[], 
 	const myOnBoard = frame.sites.reduce((n, s) => n + (publicState.board[s.id][handler] || []).length, 0);
 	const evenShare = Math.floor((remainingSends + myOnBoard) / (framesAfterThis + 1));
 
-	// the Loki line: a record flagged `returned` (own-side only, from getPublicState) costs
-	// RETURNED_SEND_COST against the round's remaining cap instead of 1 - skip it outright
-	// if the remaining cap cannot afford it, and knock its value down by the cost of the
-	// extra unit spent (same currency holdCost already prices a send in).
-	const returnedIds = new Set(me.returned || []);
+	// pass 33: every send costs one against the round's cap. The second price (a creature
+	// returned from a lost world) is gone with the rule that created it.
 	const capRemaining = sendableCap - me.sentCount;
 
 	// score every (creature, site)
 	const candidates: SendCandidate[] = [];
 	ownRoster.forEach((record) => {
-		const cost = returnedIds.has(record.id) ? RETURNED_SEND_COST : 1;
-		if (cost > capRemaining) {
+		if (capRemaining < 1) {
 			return;
 		}
 		/*
@@ -710,11 +706,9 @@ export function scoreSends(publicState: PublicState, ownRoster: XalianRecord[], 
 			if (prepared.strainLevel === 'severe') {
 				value -= 1;
 			}
-			if (cost > 1) {
-				value -= weights.holdCost * h * (cost - 1);
-			}
 			candidates.push({
-				record, site, prepared, margin: m, value, flips: m <= 0 && h > -m, cost,
+				// pass 33: every send costs one, so the markdown for a pricier send is gone
+				record, site, prepared, margin: m, value, flips: m <= 0 && h > -m, cost: 1,
 				roleValue, effect: h, role: prepared.role,
 				// pass 25: the role the handler would be choosing, carried so send() can apply
 				// it; null when the lever is off, which is every candidate before this pass

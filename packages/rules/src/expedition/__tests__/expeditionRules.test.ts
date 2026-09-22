@@ -910,10 +910,8 @@ describe('judging and match end', () => {
 	});
 
 	/*
-		Coverage for docs/design/reclamation-play-enhancements.md's "Pass 2 levers", lever 3
-		(the Loki line). A creature withdrawn from a LOST (not tied) world returns to its
-		handler's roster and can be sent again, but its next send costs RETURNED_SEND_COST
-		against the sendable cap instead of 1.
+		Pass 33: a creature sent to a world is committed to it. Win and it holds there, lose
+		or tie and it is withdrawn, out of the Proving.
 	*/
 	// A milder gap than the "clinching" test's strong/weak pair: B_0 has meaningfully less
 	// hold than A_0 (so A wins the site outright at Judge) but the gap is not so wide that
@@ -933,75 +931,53 @@ describe('judging and match end', () => {
 		return state.turn!;
 	}
 
-	test('the Loki line: a creature withdrawn from a LOST world returns to the roster flagged, sendable again at double cost', () => {
-		// both sides field presences (a ward ability under a bulwark archetype reads as a
-		// shield, docs/design/reclamation-base-redesign.md assumption 4), so no blow lands
-		// and the world is decided purely on hold. A creature ROUTED is out for the match
-		// rather than returned, so a lost-world return has to be tested without combat.
+	/*
+		PASS 33. A creature sent to a world is COMMITTED to it: win and it holds there, lose or
+		tie and it is withdrawn, out of the Proving.
+
+		This replaces four tests for the return-to-roster rule that used to sit on the lost
+		branch (Nick, 2026-09-22: "I don't think that creatures from lost worlds should be
+		returned to be playable again"). Both sides field presences here, so no blow lands and
+		the world is decided purely on hold: a creature that was ROUTED would be out for the
+		match anyway, so losing without combat is the only way to test the losing branch
+		itself.
+	*/
+	test('a creature that LOSES its world is withdrawn, not returned to the roster', () => {
 		const presence = (id: any, hp: any) => makeRecord(id, {
 			archetype: { key: 'bulwark', favors: [] },
 			abilities: [{ name: 'Guard', signature: false, instrument: 'body', action: 'ward', medium: 'fire', intensity: 50 }],
 			attributes: { strength: 50, vitality: hp, endurance: hp, agility: 50, reflex: 50, intelligence: 50, willpower: 50, instinct: 50, charisma: 50, resilience: hp },
 		});
-		const strongA = () => presence('sA', 90);
-		const weakB = () => presence('wB', 20);
 		const worlds = makeWorlds();
-		const rosterA = makeRoster('A', () => strongA());
-		const rosterB = makeRoster('B', () => weakB());
-		let state = createMatch({ rosterA, rosterB, worlds, seed: 'loki-return-seed' });
-		const frame = currentFrame(state);
-		const siteId = frame.sites[0].id;
+		const rosterA = makeRoster('A', () => presence('sA', 90));
+		const rosterB = makeRoster('B', () => presence('wB', 20));
+		let state = createMatch({ rosterA, rosterB, worlds, seed: 'commit-loss-seed' });
+		const siteId = currentFrame(state).sites[0].id;
 		const idA = state.players.A.roster[0].id;
 		const idB = state.players.B.roster[0].id;
 		state = sendBothHoldOrders(state, siteId, idA, idB)!;
 
 		const judgeEvent = (state.resolutionLog as any[]).find((e: any) => e.type === 'judge');
-		const siteResult = judgeEvent.siteResults[siteId];
-		expect(siteResult.winner).toBe('A'); // higher hold wins outright, no combat happened
+		expect(judgeEvent.siteResults[siteId].winner).toBe('A'); // higher hold wins outright
 
-		// B's sent creature lost its world: back in the roster, flagged returned
-		expect(state.players.B.roster.some((r: any) => r.id === idB)).toBe(true);
-		expect(state.players.B.returned).toContain(idB);
-		// A's sent creature WON: it is still out of the roster (holding the site), not
-		// flagged returned - the Loki line only pays out on a lost world
-		expect(state.players.A.returned.length).toBe(0);
+		// B lost: its creature is withdrawn and does NOT come back to the roster
+		expect(state.players.B.withdrawn).toContain(idB);
+		expect(state.players.B.roster.some((r: any) => r.id === idB)).toBe(false);
+		// A won: its creature holds the world, also not in the roster
+		expect(state.players.A.holding).toContain(idA);
+		expect(state.players.A.roster.some((r: any) => r.id === idA)).toBe(false);
 	});
 
-	test('the Loki line: sending a returned creature costs RETURNED_SEND_COST against the cap and clears the flag', () => {
-		const strongA = () => makeRecord('sA', { attributes: { strength: 50, vitality: 90, endurance: 90, agility: 50, reflex: 50, intelligence: 50, willpower: 50, instinct: 50, charisma: 50, resilience: 90 } });
-		const weakB = () => makeRecord('wB', { attributes: { strength: 50, vitality: 20, endurance: 20, agility: 50, reflex: 50, intelligence: 50, willpower: 50, instinct: 50, charisma: 50, resilience: 20 } });
+	test('a creature withdrawn from a TIED world is also out, exactly as a lost one is', () => {
+		const equal = (id: any) => makeRecord(id, {
+			attributes: { strength: 50, vitality: 60, endurance: 60, agility: 50, reflex: 50, intelligence: 50, willpower: 50, instinct: 50, charisma: 50, resilience: 60 },
+			archetype: { key: 'survivor', favors: [] },
+			abilities: [{ name: 'Mend', signature: false, instrument: 'voice', action: 'mend', medium: 'light', intensity: 40 }],
+		});
 		const worlds = makeWorlds();
-		const rosterA = makeRoster('A', () => strongA());
-		const rosterB = makeRoster('B', () => weakB());
-		// the Loki line pays out on a creature that LOST its world and is still standing, so
-		// the magnitude scale is pinned: at pass 5's shipped 3.0 this weak creature is
-		// downed instead of returned, and the test would measure the constant, not the rule.
-		let state = createMatch({ rosterA, rosterB, worlds, seed: 'loki-cost-seed', rules: { magnitudeScale: 1.1 } });
-		let frame = currentFrame(state);
-		const siteId = frame.sites[0].id;
-		const idA = state.players.A.roster[0].id;
-		const idB = state.players.B.roster[0].id;
-		state = sendBothHoldOrders(state, siteId, idA, idB)!;
-		expect(state.players.B.returned).toContain(idB);
-
-		if (state.phase === 'deploy') {
-			frame = currentFrame(state);
-			const forced = { ...state, turn: 'B', players: { ...state.players, B: { ...state.players.B, passed: false } } } as MatchState;
-			const before = forced.players.B.sentCount;
-			const after = send(forced, 'B', idB, frame.sites[0].id)!;
-			expect(after).not.toBeNull();
-			expect(after.players.B.sentCount).toBe(before + 2);
-			expect(after.players.B.returned).not.toContain(idB);
-		}
-	});
-
-	test('a creature withdrawn from a TIED world does not get the Loki return', () => {
-		const equalA = makeRecord('eqA', { attributes: { strength: 50, vitality: 60, endurance: 60, agility: 50, reflex: 50, intelligence: 50, willpower: 50, instinct: 50, charisma: 50, resilience: 60 }, archetype: { key: 'survivor', favors: [] }, abilities: [{ name: 'Mend', signature: false, instrument: 'voice', action: 'mend', medium: 'light', intensity: 40 }] });
-		const equalB = makeRecord('eqB', { attributes: { strength: 50, vitality: 60, endurance: 60, agility: 50, reflex: 50, intelligence: 50, willpower: 50, instinct: 50, charisma: 50, resilience: 60 }, archetype: { key: 'survivor', favors: [] }, abilities: [{ name: 'Mend', signature: false, instrument: 'voice', action: 'mend', medium: 'light', intensity: 40 }] });
-		const worlds = makeWorlds();
-		const rosterA = makeRoster('A').map((r: any, i: any) => (i === 0 ? { ...equalA, id: 'A_0' } : r));
-		const rosterB = makeRoster('B').map((r: any, i: any) => (i === 0 ? { ...equalB, id: 'B_0' } : r));
-		let state = createMatch({ rosterA, rosterB, worlds, seed: 'loki-tie-seed' });
+		const rosterA = makeRoster('A').map((r: any, i: any) => (i === 0 ? { ...equal('eqA'), id: 'A_0' } : r));
+		const rosterB = makeRoster('B').map((r: any, i: any) => (i === 0 ? { ...equal('eqB'), id: 'B_0' } : r));
+		let state = createMatch({ rosterA, rosterB, worlds, seed: 'commit-tie-seed' });
 		const frame = currentFrame(state);
 		state = send(state, state.turn!, state.turn! === 'A' ? 'A_0' : 'B_0', frame.sites[0].id)!;
 		state = send(state, state.turn!, state.turn! === 'A' ? 'A_0' : 'B_0', frame.sites[0].id)!;
@@ -1010,32 +986,10 @@ describe('judging and match end', () => {
 		const judgeEvent = (state.resolutionLog as any[]).find((e: any) => e.type === 'judge');
 		const siteResult: any = Object.values(judgeEvent.siteResults)[0];
 		expect(siteResult.winner).toBeNull(); // tied
-		expect(state.players.A.returned).not.toContain('A_0');
-		expect(state.players.B.returned).not.toContain('B_0');
 		expect(state.players.A.withdrawn).toContain('A_0');
 		expect(state.players.B.withdrawn).toContain('B_0');
-	});
-
-	test('getPublicState exposes the self view\'s returned roster ids, never the opponent\'s', () => {
-		const strongA = () => makeRecord('sA', { attributes: { strength: 50, vitality: 90, endurance: 90, agility: 50, reflex: 50, intelligence: 50, willpower: 50, instinct: 50, charisma: 50, resilience: 90 } });
-		const weakB = () => makeRecord('wB', { attributes: { strength: 50, vitality: 20, endurance: 20, agility: 50, reflex: 50, intelligence: 50, willpower: 50, instinct: 50, charisma: 50, resilience: 20 } });
-		const worlds = makeWorlds();
-		const rosterA = makeRoster('A', () => strongA());
-		const rosterB = makeRoster('B', () => weakB());
-		// needs a creature that lost its world and is still standing to have a returned id
-		// to expose at all, so the magnitude scale is pinned as in the Loki cost test above.
-		let state = createMatch({ rosterA, rosterB, worlds, seed: 'loki-public-seed', rules: { magnitudeScale: 1.1 } });
-		const frame = currentFrame(state);
-		const siteId = frame.sites[0].id;
-		const idA = state.players.A.roster[0].id;
-		const idB = state.players.B.roster[0].id;
-		state = sendBothHoldOrders(state, siteId, idA, idB)!;
-		expect(state.players.B.returned).toContain(idB);
-
-		const selfView = getPublicState(state, 'B');
-		expect(selfView.players.B.returned).toContain(idB);
-		const opponentView = getPublicState(state, 'A');
-		expect(opponentView.players.B.returned).toBeUndefined();
+		expect(state.players.A.roster.some((r: any) => r.id === 'A_0')).toBe(false);
+		expect(state.players.B.roster.some((r: any) => r.id === 'B_0')).toBe(false);
 	});
 });
 
@@ -1253,7 +1207,6 @@ describe('rules ablation switches', () => {
 		const state = freshMatch();
 		expect(state.rules).toEqual({
 			hiddenSends: true,
-			lokiLine: true,
 			trailingBonus: ROSTER_TRAILING_BONUS,
 			speed: true,
 			hiddenFirst: false,
@@ -1315,7 +1268,6 @@ describe('rules ablation switches', () => {
 	it('merges a partial rules object over the defaults', () => {
 		const state = matchWithRules({ hiddenSends: false });
 		expect(state.rules.hiddenSends).toBe(false);
-		expect(state.rules.lokiLine).toBe(true);
 		expect(state.rules.trailingBonus).toBe(ROSTER_TRAILING_BONUS);
 	});
 
@@ -1397,8 +1349,8 @@ describe('rules ablation switches', () => {
 
 
 
-	// the Loki line and the trailing bonus both fire at Judge, so both need a whole round
-	// played out. playOneRound sends `count` creatures per side at the given site indices
+	// the withdrawal branches and the trailing bonus all fire at Judge, so each needs a
+	// whole round played out. playOneRound sends creatures per side at the given site indices
 	// and commits empty orders, so the judged result is decided purely by hold.
 	function playOneRound(state: any, sitesForA: any, sitesForB: any) {
 		const frame = currentFrame(state);
@@ -1431,21 +1383,16 @@ describe('rules ablation switches', () => {
 		return next;
 	}
 
-	it('lokiLine true (the default) returns a creature from a LOST world to its roster', () => {
-		// A sends two to site 0, B sends one: B loses site 0 and gets its creature back
+	// pass 33: a creature that loses its world is withdrawn and stays out, with no rule
+	// flag left to vary it. A sends two to site 0, B sends one, so B loses site 0.
+	it('a lost creature is withdrawn and does not come back to the roster', () => {
 		const state = matchWithRules({});
 		const started = state.starter === 'A' ? state : { ...state, starter: 'A', turn: 'A' };
 		const after = playOneRound(started, [0, 0], [0]);
-		expect(after.players.B.returned.length).toBeGreaterThan(0);
-		expect(after.players.B.roster.some((r: any) => after.players.B.returned.includes(r.id))).toBe(true);
-	});
-
-	it('lokiLine false withdraws a lost creature with no return, like a tie', () => {
-		const state = matchWithRules({ lokiLine: false });
-		const started = state.starter === 'A' ? state : { ...state, starter: 'A', turn: 'A' };
-		const after = playOneRound(started, [0, 0], [0]);
-		expect(after.players.B.returned).toEqual([]);
 		expect(after.players.B.withdrawn.length).toBeGreaterThan(0);
+		for (const id of after.players.B.withdrawn) {
+			expect(after.players.B.roster.some((r: any) => r.id === id)).toBe(false);
+		}
 	});
 
 	it('trailingBonus is the rules number, not the constant, when the sides finish uneven', () => {
@@ -1830,22 +1777,6 @@ describe('pass 3: the price of hiding (assumption 21), kept as levers since pass
 		});
 		openState = { ...openState, turn: 'A', players: { ...openState.players, A: { ...openState.players.A, sentCount: SENDABLE - 1 } } };
 		expect(send(openState, 'A', plain[0].id, siteId, false)).not.toBeNull();
-	});
-
-	test('a returned creature sent hidden pays the larger of the two prices, not their sum', () => {
-		const rosterA = stealthyRosterOf('S');
-		let state = createMatch({
-			rosterA, rosterB: makeRoster('B'), worlds: makeWorlds(), seed: 'hidden-loki-seed',
-			rules: { hiddenSendCost: 2 },
-		});
-		const siteId = currentFrame(state).sites[0].id;
-		state = {
-			...state,
-			turn: 'A',
-			players: { ...state.players, A: { ...state.players.A, returned: [rosterA[0].id] } },
-		};
-		const sent = send(state, 'A', rosterA[0].id, siteId)!;
-		expect(sent.players.A.sentCount).toBe(2);
 	});
 
 	test('hiddenPower scales an attack thrown from hiding and leaves an open attack alone', () => {

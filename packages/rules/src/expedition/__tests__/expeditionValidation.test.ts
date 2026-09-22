@@ -173,11 +173,6 @@ describe('sectionAblation', () => {
 		expect(noHidden.shape.hiddenSendRate!.p).toBe(0);
 	});
 
-	it('reports the returned send rate as zero under the lokiLine ablation', () => {
-		const noLoki = result.rows.find((r: any) => r.id === 'noLoki')!;
-		expect(noLoki.shape.returnedSendRate!.p).toBe(0);
-	});
-
 	it('gives one reading per non-baseline row', () => {
 		expect(result.readings).toHaveLength(ABLATIONS.length - 1);
 	});
@@ -260,7 +255,7 @@ describe('the base redesign additions', () => {
 
 	it('ablates every rule AND every role', () => {
 		const ids = ABLATIONS.map((a: any) => a.id);
-		['baseline', 'noHidden', 'noLoki', 'noSpeed', 'hiddenFirstBack', 'hidingPriced', 'noSweep', 'noBolster', 'noShield', 'noHurtAttacksLess', 'noBolsterRecovery', 'noWillful', 'noPresenceScale', 'noInstinctLanes', 'noSwiftMove', 'trailingBonusBack']
+		['baseline', 'noHidden', 'noSpeed', 'hiddenFirstBack', 'hidingPriced', 'noSweep', 'noBolster', 'noShield', 'noHurtAttacksLess', 'noBolsterRecovery', 'noWillful', 'noPresenceScale', 'noInstinctLanes', 'noSwiftMove', 'trailingBonusBack']
 			.forEach((id: any) => expect(ids).toContain(id));
 		expect(ABLATIONS.find((a: any) => a.id === 'noSweep')!.rules).toEqual({ roles: { sweep: false } });
 	});

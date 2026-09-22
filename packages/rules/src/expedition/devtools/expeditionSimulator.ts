@@ -65,7 +65,7 @@ import {
 } from '../expeditionRules.ts';
 import {
 	ROSTER_SIZE, SITES_PER_WORLD, SENDABLE, FRAMES_PER_MATCH, WORLDS_PER_FRAME,
-	RETURNED_SEND_COST, ROLE,
+	ROLE,
 } from '../expeditionInterpretation.ts';
 import { chooseSend, chooseStake, rivalById, DEFAULT_RIVAL_ID } from '../expeditionBot.ts';
 import { prepare, baseHold, speedOf, strainLevel, roleOf, isFieldable } from '../creatureOnTable.ts';
@@ -253,13 +253,10 @@ function randomChooseSend(publicState: PublicState, ownRoster: XalianRecord[], h
 	if (anyOnBoard && rng.float() < RANDOM_PASS_PROBABILITY) {
 		return { type: 'pass', reason: 'random-pass' };
 	}
-	// a returned record (the Loki line) costs RETURNED_SEND_COST against the round's cap,
-	// so it is only a legal pick while the cap can still afford it
-	const returnedIds = new Set(me.returned || []);
 	const capRemaining = sendableCap - me.sentCount;
 	const candidates: Array<{ record: XalianRecord; site: FrameSite }> = [];
 	ownRoster.forEach((record: any) => {
-		if ((returnedIds.has(record.id) ? RETURNED_SEND_COST : 1) > capRemaining) {
+		if (capRemaining < 1) {
 			return;
 		}
 		/*
@@ -533,8 +530,6 @@ function runOneMatch(matchSeed: string, pool: XalianRecord[], rng: ReturnType<ty
 
 			let nextState: MatchState | null = null;
 			if (action.type === 'send') {
-				// captured BEFORE send(), which clears the flag on the sent record
-				const wasReturned = (state.players[handler].returned || []).includes(action.recordId);
 				const record = state.players[handler].roster.find((r: any) => r.id === action.recordId) as XalianRecord;
 				// pass 25: carry the act-flip choice, null when the lever is off
 				nextState = send(state, handler, action.recordId, action.siteId, false, (action as any).chosenRole || null);
@@ -556,7 +551,6 @@ function runOneMatch(matchSeed: string, pool: XalianRecord[], rng: ReturnType<ty
 						blowFallback: !!prepared.blowIsFallback,
 						strainLevel: strainLevel(record, site, site.world),
 						homeGround: !!(record.provenance && record.provenance.origin && String(record.provenance.origin).toLowerCase() === String(site.world.planet).toLowerCase()),
-						returnedSend: wasReturned,
 					};
 					// the deploy-end snapshot has to include the send that just landed, in
 					// case this was the last action before an auto-pass ended the round.
@@ -1014,18 +1008,6 @@ function summarize(matchResults: any[], args: CliArgs, pool: XalianRecord[], riv
 		siteWinRateVisible: rate(visibleSends.filter((s: any) => s.won).length, visibleSends.filter((s: any) => !s.tie).length),
 	};
 
-	// The Loki line (Pass 2 lever, docs/design/reclamation-play-enhancements.md): how often
-	// a returned creature (withdrawn from a LOST world, sent again at RETURNED_SEND_COST)
-	// is actually re-sent, and how it fares versus a normal first send.
-	const returnedSends = allSends.filter((s: any) => s.returnedSend);
-	const firstSends = allSends.filter((s: any) => !s.returnedSend);
-	const returnedSendStats = {
-		perMatch: average(completedMatches.map((m: any) => m.sendRecords.filter((s: any) => s.returnedSend).length)),
-		rate: rate(returnedSends.length, allSends.length),
-		siteWinRateReturned: rate(returnedSends.filter((s: any) => s.won).length, returnedSends.filter((s: any) => !s.tie).length),
-		siteWinRateFirstSend: rate(firstSends.filter((s: any) => s.won).length, firstSends.filter((s: any) => !s.tie).length),
-	};
-
 	// stack-vs-spread: creatures per side per site (from send counts already grouped by
 	// site via siteRecords' countA/countB, which reflect deploy-end stacking)
 	const stackHistogram: { A: Record<string, number>; B: Record<string, number> } = { A: {}, B: {} };
@@ -1057,7 +1039,6 @@ function summarize(matchResults: any[], args: CliArgs, pool: XalianRecord[], riv
 		strainIncidence,
 		homeGround,
 		hiddenSendStats,
-		returnedSendStats,
 		stackVsSpread,
 	};
 
@@ -1402,8 +1383,6 @@ function printReport(report: any): void  {
 	console.log(`home ground incidence: ${fmtRate(c.homeGround.incidenceRate)}, site win rate: ${fmtRate(c.homeGround.siteWinRate)}`);
 	console.log(`hidden send rate: ${fmtRate(c.hiddenSendStats.rate)}`);
 	console.log(`  site win rate hidden: ${fmtRate(c.hiddenSendStats.siteWinRateHidden)}, visible: ${fmtRate(c.hiddenSendStats.siteWinRateVisible)}`);
-	console.log(`returned (Loki line) send rate: ${fmtRate(c.returnedSendStats.rate)}, ${c.returnedSendStats.perMatch.toFixed(2)} per match`);
-	console.log(`  site win rate returned: ${fmtRate(c.returnedSendStats.siteWinRateReturned)}, first send: ${fmtRate(c.returnedSendStats.siteWinRateFirstSend)}`);
 	console.log('stack-vs-spread histogram (creatures at one site, A):');
 	printHistogram(c.stackVsSpread.histogram.A);
 	console.log('stack-vs-spread histogram (creatures at one site, B):');
