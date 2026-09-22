@@ -574,9 +574,12 @@ function StoryPart() {
 									<span />
 								)}
 								{part.next && (
-									<Button asChild>
+									<Button asChild className="h-auto min-w-0 py-2 whitespace-normal text-left">
+										{/* The label carries a part number and an era name, which is
+										    wider than a small phone on one line: let it wrap rather
+										    than push the arrow off the screen. */}
 										<Link to={lore.routeFor('era', part.next)}>
-											Continue to Part {part.order + 1}: {lore.getStoryPart(part.next).era.name} <ArrowRight />
+											<span className="min-w-0">Continue to Part {part.order + 1}: {lore.getStoryPart(part.next).era.name}</span> <ArrowRight className="shrink-0" />
 										</Link>
 									</Button>
 								)}

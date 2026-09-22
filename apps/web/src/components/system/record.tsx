@@ -23,11 +23,15 @@ function SpecPlate({
       data-slot="spec-plate"
       className={cn(
         "m-0 grid items-baseline gap-x-6 gap-y-2",
-        // Four columns need real width: two 9rem labels alone are 288px, so in
-        // a 350px column (the record header at 760) the value tracks collapsed
-        // to nothing and their content spilled off the page. It waits for lg.
+        // Four columns need real width: two 9rem labels alone are 288px, so a
+        // narrow plate collapses both value tracks to zero and spills their
+        // content off the page. That depends on the width of *this* plate, not
+        // the window -- these sit in record sidebars a fraction of the
+        // viewport wide -- so the second pair waits on a container query.
+        // Gating it on the viewport instead broke twice: at md, then again at
+        // lg, where a 1024px window still gave the plate only ~267px.
         columns === 2
-          ? "grid-cols-[minmax(7rem,max-content)_minmax(0,1fr)] lg:grid-cols-[minmax(9rem,max-content)_minmax(0,1fr)_minmax(9rem,max-content)_minmax(0,1fr)]"
+          ? "@container grid-cols-[minmax(7rem,max-content)_minmax(0,1fr)] @[34rem]:grid-cols-[minmax(9rem,max-content)_minmax(0,1fr)_minmax(9rem,max-content)_minmax(0,1fr)]"
           : "grid-cols-[minmax(7rem,max-content)_minmax(0,1fr)]",
         className
       )}

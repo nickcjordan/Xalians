@@ -204,7 +204,7 @@ export default function EntryView() {
                 variant="panel"
                 className={hasArt
                     ? 'grid gap-6 md:grid-cols-[minmax(0,400px)_minmax(0,1fr)]'
-                    : 'grid gap-6 md:grid-cols-[minmax(0,62ch)_minmax(0,1fr)] md:items-start'}
+                    : 'grid gap-6 xl:grid-cols-[minmax(0,62ch)_minmax(0,1fr)] xl:items-start'}
             >
                 {hasArt ? (
                     <>
@@ -228,7 +228,7 @@ export default function EntryView() {
                 )}
             </Card>
 
-            <div className={hasSecondTrack ? 'grid gap-8 lg:grid-cols-[minmax(0,62ch)_minmax(0,1fr)]' : ''}>
+            <div className={hasSecondTrack ? 'grid gap-8 xl:grid-cols-[minmax(0,62ch)_minmax(0,1fr)]' : ''}>
                 <div className="flex min-w-0 flex-col gap-8">
                     {entry.article && entry.article.length > 0 && (
                         <section className="flex flex-col gap-4">

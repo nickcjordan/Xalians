@@ -41,7 +41,11 @@ function Masthead({ className, kicker, title, subtitle, beside, aside, ...props 
       <div className="flex min-w-0 flex-col gap-2">
         <p className="type-legend m-0">{kicker}</p>
         <div className="flex flex-wrap items-center gap-3">
-          <h1 className="type-title m-0">{title}</h1>
+          {/* A record's name is data, not copy: "Stellaris Superstructure"
+              is one 22-character word at title size, wider than a 320px
+              screen, and an unbroken word is not wrapped by the normal
+              rules. Break inside it rather than letting it run off-page. */}
+          <h1 className="type-title m-0 min-w-0 wrap-anywhere">{title}</h1>
           {beside}
         </div>
         {subtitle ? <div className="m-0 max-w-[62ch] font-body text-body text-ink-2">{subtitle}</div> : null}

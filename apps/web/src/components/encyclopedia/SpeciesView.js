@@ -394,7 +394,7 @@ export default function SpeciesView() {
                 </div>
             </Card>
 
-            <div className="grid gap-8 lg:grid-cols-[minmax(0,62ch)_minmax(0,1fr)]">
+            <div className="grid gap-8 xl:grid-cols-[minmax(0,62ch)_minmax(0,1fr)]">
                 <Card variant="panel" className="p-0 px-5">
                     {view.nameOrigin && (
                         <RecordRow term="Name origin">{view.nameOrigin}</RecordRow>

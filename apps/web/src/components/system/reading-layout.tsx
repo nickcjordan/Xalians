@@ -20,7 +20,7 @@ import { Fold } from "@/components/system/fold"
  * row that the NEXT block's `margin` could drift up into, and under a
  * single-column mobile grid the auto-placement algorithm could reorder
  * children entirely out of DOM order. `ReadingBlock` instead carries its own
- * inner grid (`lg:grid-cols-[minmax(0,62ch)_minmax(0,1fr)]`, identical across
+ * inner grid (`xl:grid-cols-[minmax(0,62ch)_minmax(0,1fr)]`, identical across
  * every block so the text track still lines up down the page) with `text` in
  * the first cell and `margin` in the second -- so alignment is guaranteed by
  * construction, not by two independent elements landing in the same
@@ -105,7 +105,7 @@ function ReadingBlock({ className, text, margin, span = "text", divided = false,
       data-slot="reading-block"
       data-span="text"
       className={cn(
-        "grid grid-cols-1 gap-y-3 py-4 lg:col-start-2 lg:grid-cols-[minmax(0,62ch)_minmax(0,1fr)] lg:gap-x-8 lg:gap-y-0",
+        "grid grid-cols-1 gap-y-3 py-4 lg:col-start-2 xl:grid-cols-[minmax(0,62ch)_minmax(0,1fr)] xl:gap-x-8 xl:gap-y-0",
         dividerClass,
         className
       )}
