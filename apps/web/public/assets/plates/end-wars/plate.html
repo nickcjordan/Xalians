@@ -22,19 +22,19 @@
       <stop offset="1" stop-color="#242527"/>
     </linearGradient>
     <linearGradient id="water" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#8e8c86"/>
-      <stop offset=".35" stop-color="#6a6b6d"/>
-      <stop offset="1" stop-color="#3c3d40"/>
+      <stop offset="0" stop-color="#928f88"/>
+      <stop offset=".45" stop-color="#75767b"/>
+      <stop offset="1" stop-color="#4a4b50"/>
     </linearGradient>
-    <linearGradient id="waterLight" x1="0" y1="0" x2="0" y2="1">
+    <linearGradient id="waterLight" gradientUnits="userSpaceOnUse" x1="0" y1="612" x2="0" y2="768">
       <stop offset="0" stop-color="#ffffff" stop-opacity=".95"/>
-      <stop offset=".4" stop-color="#f3f1ea" stop-opacity=".45"/>
-      <stop offset=".8" stop-color="#ffffff" stop-opacity="0"/>
+      <stop offset=".45" stop-color="#f3f1ea" stop-opacity=".58"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity=".3"/>
     </linearGradient>
     <linearGradient id="nearWater" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0" stop-color="#000" stop-opacity="0"/>
       <stop offset=".55" stop-color="#000" stop-opacity="0"/>
-      <stop offset="1" stop-color="#000" stop-opacity=".32"/>
+      <stop offset="1" stop-color="#000" stop-opacity=".18"/>
     </linearGradient>
     <linearGradient id="wall" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0" stop-color="#3b3c3f"/>
@@ -195,6 +195,10 @@
       <stop offset="0" stop-color="#ffffff" stop-opacity="0"/>
       <stop offset="1" stop-color="#ffffff" stop-opacity=".22"/>
     </linearGradient>
+    <linearGradient id="bankEdge" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#8d8e8d" stop-opacity=".5"/>
+      <stop offset="1" stop-color="#8d8e8d" stop-opacity="0"/>
+    </linearGradient>
     <linearGradient id="groundFog" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0" stop-color="#8d8e8d" stop-opacity="0"/>
       <stop offset="1" stop-color="#8d8e8d" stop-opacity=".35"/>
@@ -237,12 +241,35 @@
     </filter>
     <!-- the live water: the same disturbance as rippleHard, but the noise field shifts slowly so the reflection moves -->
     <filter id="rippleLive" x="-10%" y="-10%" width="120%" height="120%">
-      <feTurbulence type="turbulence" baseFrequency=".004 .07" numOctaves="2" seed="7" result="n">
+      <feTurbulence type="turbulence" baseFrequency=".004 .07" numOctaves="2" seed="7" result="n0">
         <animate attributeName="baseFrequency" values=".004 .07;.0046 .064;.0038 .074;.004 .07" dur="9s" repeatCount="indefinite"/>
       </feTurbulence>
+      <feOffset in="n0" dx="0" dy="0" result="n">
+        <animate attributeName="dy" values="0;14;0" dur="11s" calcMode="spline" keySplines=".42 0 .58 1;.42 0 .58 1" repeatCount="indefinite"/>
+        <animate attributeName="dx" values="0;-10;0" dur="7.3s" calcMode="spline" keySplines=".42 0 .58 1;.42 0 .58 1" repeatCount="indefinite"/>
+      </feOffset>
       <feDisplacementMap in="SourceGraphic" in2="n" scale="26" xChannelSelector="R" yChannelSelector="G"/>
     </filter>
     <filter id="nearBlur" x="-5%" y="-5%" width="110%" height="110%"><feGaussianBlur stdDeviation=".6"/></filter>
+    <!-- the glitter path: horizontal streaks of noise, thresholded, cut the reflection into flecks; the field drifts so the flecks move -->
+    <filter id="glitterFar" x="-5%" y="-20%" width="110%" height="140%">
+      <feTurbulence type="fractalNoise" baseFrequency=".002 .12" numOctaves="3" seed="3" result="t"/>
+      <feOffset in="t" dx="0" dy="0" result="t2">
+        <animate attributeName="dy" values="0;22;0" dur="13s" calcMode="spline" keySplines=".42 0 .58 1;.42 0 .58 1" repeatCount="indefinite"/>
+        <animate attributeName="dx" values="0;-14;0" dur="9s" calcMode="spline" keySplines=".42 0 .58 1;.42 0 .58 1" repeatCount="indefinite"/>
+      </feOffset>
+      <feColorMatrix in="t2" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 7 -3.1" result="m"/>
+      <feComposite in="SourceGraphic" in2="m" operator="in"/>
+    </filter>
+    <filter id="glitterNear" x="-5%" y="-20%" width="110%" height="140%">
+      <feTurbulence type="fractalNoise" baseFrequency=".0011 .06" numOctaves="3" seed="5" result="t"/>
+      <feOffset in="t" dx="0" dy="0" result="t2">
+        <animate attributeName="dy" values="0;34;0" dur="17s" calcMode="spline" keySplines=".42 0 .58 1;.42 0 .58 1" repeatCount="indefinite"/>
+        <animate attributeName="dx" values="0;18;0" dur="11s" calcMode="spline" keySplines=".42 0 .58 1;.42 0 .58 1" repeatCount="indefinite"/>
+      </feOffset>
+      <feColorMatrix in="t2" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 7 -3.1" result="m"/>
+      <feComposite in="SourceGraphic" in2="m" operator="in"/>
+    </filter>
     <filter id="soft20" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="20"/></filter>
     <linearGradient id="farHaze" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0" stop-color="#8d8e8d" stop-opacity="0"/>
@@ -416,14 +443,25 @@
   </g>
   <!-- the crash light lying on the water as a long reflection, broken harder than the surface tone -->
   <g filter="url(#rippleLive)">
-    <path d="M730 612 L768 612 L960 768 L500 768 Z" fill="url(#waterLight)" opacity=".9" filter="url(#softer)"/>
+    <path d="M738 614 L760 614 L1000 768 L470 768 Z" fill="url(#waterLight)" opacity=".45" filter="url(#softer)"/>
+    <g filter="url(#glitterFar)"><path d="M738 614 L760 614 L878 690 L607 690 Z" fill="url(#waterLight)"/></g>
+    <g filter="url(#glitterNear)"><path d="M607 690 L878 690 L1000 768 L470 768 Z" fill="url(#waterLight)"/></g>
+    <!-- the same broken light, faint, across the whole surface: the sky on the water -->
+    <g filter="url(#glitterFar)" opacity=".1"><path d="M728 612 L796 612 L938 690 L584 690 Z" fill="#e9e7df"/></g>
+    <g filter="url(#glitterNear)" opacity=".1"><path d="M584 690 L938 690 L1080 768 L440 768 Z" fill="#e9e7df"/></g>
     <!-- sheens: the sky lying on the surface in soft bands that widen toward the viewer -->
     <g fill="#e9e7df" filter="url(#soft)">
-      <ellipse cx="760" cy="640" rx="50" ry="2.5" opacity=".35"/><ellipse cx="750" cy="660" rx="70" ry="3" opacity=".3"/><ellipse cx="720" cy="700" rx="110" ry="4" opacity=".22"/><ellipse cx="820" cy="722" rx="120" ry="4" opacity=".17"/><ellipse cx="640" cy="748" rx="170" ry="5" opacity=".13"/><ellipse cx="900" cy="756" rx="150" ry="5" opacity=".12"/>
+      <ellipse cx="760" cy="640" rx="50" ry="2.5" opacity=".35"/><ellipse cx="750" cy="660" rx="70" ry="3" opacity=".3"/><ellipse cx="720" cy="700" rx="110" ry="4" opacity=".24"/><ellipse cx="820" cy="722" rx="120" ry="4" opacity=".2"/><ellipse cx="640" cy="748" rx="170" ry="5" opacity=".16"/><ellipse cx="900" cy="756" rx="150" ry="5" opacity=".15"/>
+      <!-- the crest of each sheen: a thinner, brighter line along its upper edge -->
+      <ellipse cx="760" cy="638" rx="46" ry="1.2" opacity=".47"/><ellipse cx="750" cy="658" rx="64" ry="1.5" opacity=".42"/><ellipse cx="720" cy="698" rx="100" ry="2" opacity=".36"/><ellipse cx="820" cy="720" rx="110" ry="2" opacity=".32"/><ellipse cx="640" cy="746" rx="156" ry="2.5" opacity=".28"/><ellipse cx="900" cy="754" rx="138" ry="2.5" opacity=".27"/>
+    </g>
+    <!-- the broad swells nearest the viewer: wide, very soft, barely there -->
+    <g fill="#7c7e84" filter="url(#soft20)">
+      <ellipse cx="620" cy="734" rx="210" ry="12" opacity=".14"/><ellipse cx="900" cy="750" rx="230" ry="13" opacity=".13"/><ellipse cx="740" cy="764" rx="280" ry="12" opacity=".12"/>
     </g>
     <!-- the reflected tower lamps, orange threads in the water -->
     <g stroke="#ff9a3c" stroke-width="2" opacity=".35" stroke-linecap="round">
-      <line x1="700" y1="640" x2="690" y2="700"/><line x1="850" y1="650" x2="866" y2="720"/><line x1="612" y1="690" x2="600" y2="740"/>
+      <path d="M700 640 Q 694 656 698 670 T 692 700" fill="none"/><path d="M850 650 Q 858 668 854 686 T 866 720" fill="none"/><path d="M612 690 Q 606 706 610 720 T 600 740" fill="none"/>
     </g>
   </g>
   <!-- the quays and towers in the water: soft dark verticals along both banks -->
@@ -553,6 +591,7 @@
   <!-- embankment walls along the water -->
   <!-- the near water is darker than the far: the light is at the mouth -->
   <path d="M728 612 L796 612 L1080 768 L440 768 Z" fill="url(#nearWater)"/>
+  <path d="M726 611 L798 611 L802 615 L722 615 Z" fill="#2a2c30" opacity=".55"/>
   <!-- embankment walls: shadowed stone below the quay line, a coping strip along the top -->
   <path d="M728 612 L440 768 L466 768 L744 612 Z" fill="#141517"/>
   <path d="M796 612 L1080 768 L1054 768 L780 612 Z" fill="#141517"/>
@@ -598,8 +637,9 @@
       <rect x="16" y="0" width="4" height="2" fill="#ffd18a"/>
     </g>
   </g>
-  <!-- ground fog lying on the far bank -->
+  <!-- ground fog lying on the far bank, and the haze that swallows the bank's edge -->
   <rect x="0" y="576" width="1536" height="48" fill="url(#groundFog)"/>
+  <rect x="0" y="595" width="1536" height="16" fill="url(#bankEdge)"/>
   <!-- ===================== THE QUAYS ===================== -->
   <g>
     <!-- left quay: warehouses stepping down to the water -->
