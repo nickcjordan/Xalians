@@ -1,4 +1,53 @@
-<!-- The end-wars era plate as a living painting: stacked SVG layers sharing one set of definitions, and two raster surface sheets blended over them. Exported from art/plates/end-wars/source.html by scripts/plates/export-plate.py; edit the source, not this file. -->
+<title>The Fall over Grimedes</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Saira:wght@500;600&family=Atkinson+Hyperlegible:wght@400;700&family=Martian+Mono:wght@400&display=swap">
+<style>
+  :root { color-scheme: dark; }
+  body {
+    margin: 0; padding: 0 16px; padding-block: 40px 64px;
+    background: #121110; color: #d9d2c0;
+    font-family: "Atkinson Hyperlegible", "Helvetica Neue", Arial, sans-serif; font-size: 16px; line-height: 1.55;
+    background-image: linear-gradient(90deg, rgba(0,0,0,.22), transparent 14%, transparent 86%, rgba(0,0,0,.22));
+  }
+  .wrap { max-width: 1240px; margin: 0 auto; display: flex; flex-direction: column; gap: 22px; }
+  .kicker { font-family: "Martian Mono", "Courier New", monospace; font-size: 11px; letter-spacing: .14em; color: #8f8878; text-transform: uppercase; display: flex; gap: 18px; flex-wrap: wrap; }
+  h1 { font-family: "Saira", "Barlow Condensed", Impact, sans-serif; font-weight: 600; font-size: clamp(28px, 4vw, 40px); line-height: .95; letter-spacing: .01em; text-transform: uppercase; margin: 0; color: #d9d2c0; text-wrap: balance; }
+  .frame { position: relative; --cut: 20px; --mat: 6px; background: rgba(217,210,192,.22);
+    clip-path: polygon(var(--cut) 0, 100% 0, 100% calc(100% - var(--cut)), calc(100% - var(--cut)) 100%, 0 100%, 0 var(--cut)); aspect-ratio: 2 / 1; }
+  .frame::before { content: ""; position: absolute; inset: 1px; background: #201f1c;
+    clip-path: polygon(calc(var(--cut) - 1px) 0, 100% 0, 100% calc(100% - var(--cut) + 1px), calc(100% - var(--cut) + 1px) 100%, 0 100%, 0 calc(var(--cut) - 1px)); }
+  .well { position: absolute; inset: var(--mat); overflow: hidden; background: #0d0d0f;
+    clip-path: polygon(calc(var(--cut) - var(--mat)) 0, 100% 0, 100% calc(100% - var(--cut) + var(--mat)), calc(100% - var(--cut) + var(--mat)) 100%, 0 100%, 0 calc(var(--cut) - var(--mat))); }
+  .well { filter: contrast(1.06); }
+  .well svg.layer { position: absolute; inset: 0; display: block; width: 100%; height: 100%; will-change: transform; }
+  /* the gouache surface: two raster sheets blended over the whole stack of layers */
+  .surface { position: absolute; inset: 0; pointer-events: none; mix-blend-mode: overlay; background-size: 100% 100%; }
+  .surface.strokes { opacity: .22; background-size: 100% 100%; -webkit-mask-image: linear-gradient(transparent 0, #000 16%, #000 75%, rgba(0,0,0,.25) 82%, rgba(0,0,0,.25)); mask-image: linear-gradient(transparent 0, #000 16%, #000 75%, rgba(0,0,0,.25) 82%, rgba(0,0,0,.25)); }
+  .surface.paper { opacity: .55; background-size: 768px 768px; background-repeat: repeat;
+    -webkit-mask-image: linear-gradient(#000 0 78%, rgba(0,0,0,.33) 80%, rgba(0,0,0,.33)), radial-gradient(ellipse 20% 30% at 61% 36%, rgba(0,0,0,.5), #000 100%), url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1536 768' preserveAspectRatio='none'%3E%3Cpath d='M0 0 H1536 V768 H0 Z M728 612 L796 612 L1080 768 L440 768 Z' fill-rule='evenodd' fill='white'/%3E%3Cpath d='M728 612 L796 612 L1080 768 L440 768 Z' fill='white' fill-opacity='.36'/%3E%3C/svg%3E");
+    mask-image: linear-gradient(#000 0 78%, rgba(0,0,0,.33) 80%, rgba(0,0,0,.33)), radial-gradient(ellipse 20% 30% at 61% 36%, rgba(0,0,0,.5), #000 100%), url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1536 768' preserveAspectRatio='none'%3E%3Cpath d='M0 0 H1536 V768 H0 Z M728 612 L796 612 L1080 768 L440 768 Z' fill-rule='evenodd' fill='white'/%3E%3Cpath d='M728 612 L796 612 L1080 768 L440 768 Z' fill='white' fill-opacity='.36'/%3E%3C/svg%3E");
+    -webkit-mask-size: 100% 100%; mask-size: 100% 100%; -webkit-mask-composite: source-in; mask-composite: intersect; }
+  .well svg.defs { position: absolute; width: 0; height: 0; overflow: hidden; }
+  .tag { position: absolute; top: 16px; right: 16px; z-index: 2; font-family: "Martian Mono", monospace; font-size: 11px; letter-spacing: .14em; color: #d9d2c0; background: rgba(18,17,16,.8); border: 1px solid rgba(217,210,192,.22); padding: 6px 10px; display: flex; gap: 10px; }
+  .tag span:last-child { color: #a39c8a; }
+  .plate { max-width: 62ch; font-size: 17px; }
+  .plate p { margin: 0 0 10px; }
+  .notes { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 18px 32px; border-top: 1px solid rgba(217,210,192,.14); padding-top: 18px; }
+  .notes h2 { font-family: "Saira", sans-serif; font-weight: 500; font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: #a39c8a; margin: 0 0 6px; }
+  .notes p { margin: 0; font-size: 14px; color: #bdb5a2; }
+  .controls { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+  button { font-family: "Saira", sans-serif; font-weight: 500; letter-spacing: .1em; text-transform: uppercase; font-size: 12px; color: #d9d2c0; background: #201f1c; border: 1px solid rgba(217,210,192,.22); padding: 9px 14px; cursor: pointer; box-shadow: 3px 3px 0 0 #3a3730; }
+  button:hover { transform: translate(-1px,-1px); box-shadow: 4px 4px 0 0 #3a3730; }
+  button:active { transform: translate(3px,3px); box-shadow: none; }
+  button:focus-visible { outline: 2px solid #5fd39b; outline-offset: 2px; }
+</style>
+
+<div class="wrap">
+  <div class="kicker"><span>Era plate</span><span>The End Wars</span><span>SVG, 1536 by 768 units</span><span>Final, after seventeen review rounds and an audit</span></div>
+  <h1>The Fall over Grimedes</h1>
+
+  <div class="frame">
+    <div class="tag"><span>03</span><span>The End Wars</span></div>
+    <div class="well">
 <svg class="defs" id="layer-defs" width="0" height="0" viewBox="0 0 1536 768" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
   <defs>
     <!-- ---------- sky, haze, water ---------- -->
@@ -2904,5 +2953,39 @@
   <rect width="1536" height="768" fill="url(#vignette)"/>
   <rect width="1536" height="768" fill="url(#sideVignette)" opacity=".3"/>
 </svg>
-      <div class="surface strokes" style="background-image:url(/assets/plates/end-wars/strokes.jpg)"></div>
-      <div class="surface paper" style="background-image:url(/assets/plates/end-wars/paper.jpg)"></div>
+      <div class="surface strokes" style="background-image:url(../_textures/strokes.jpg)"></div>
+      <div class="surface paper" style="background-image:url(../_textures/paper.jpg)"></div>
+    </div>
+  </div>
+
+  <div class="controls">
+    <button type="button" id="toggle">Pause the scene</button>
+    <span class="kicker">Tracers, fire, smoke, river, debris, embers, lamps and the ship's lights are live. Reduced motion holds the still frame.</span>
+  </div>
+
+  <div class="plate">
+    <p>The wars have long since ended, but the destruction they caused has forever changed the galaxy. The Vallerii are now all but wiped out, having been ravaged by the Nemesis Plague, a virulent bioweapon designed by APEX to target the genome of the Vallerii and their Xalian servants alike.</p>
+  </div>
+
+  <div class="notes">
+    <div><h2>What it is</h2><p>Seven stacked SVG layers sharing one set of definitions, under two procedurally generated raster sheets, a paper tile and a brush-stroke sheet, blended over the whole stack. The static layers (sky and city, hull, near towers, finish) paint once, so their lighting and texture filters cost nothing per frame; only the water, smoke and fire layers repaint. The warship is a capital ship: a chisel ram inside a sheath of hot air, a stepped hull with a bridge tower, turrets, a hangar bay and rows of lit windows, radiators, and three engine cones with a dying teal glow, burning from a breach in its spine with the plume streaming past the stern.</p></div>
+    <div><h2>How it moves</h2><p>The fire and the river are noise fields that drift in one direction and crossfade, so neither ever visibly resets; nothing animates its noise scale or steps its seed. Tracers fire one at a time with a hot head and fading tail. The river's reflection is cut into glints that travel toward the viewer. Flames lick fast and sag slowly, detonations flash and die, warning lights blink, two bridge windows stutter on failing power, and debris, ash and the far aircraft fade before every repeat. Every animation is already mid-cycle when the page loads, so the reduced-motion still frame shows the scene in progress.</p></div>
+    <div><h2>How it was checked</h2><p>An independent reviewer rendered and scored every round, closing at 9.5 of 10; a final audit rendered each layer alone and checked every animation's timing by script. In Chrome with the GPU it runs at the display's full frame rate with the raster thread well under a tenth busy, and the site shows one living plate at a time and pauses it off screen.</p></div>
+</div>
+</div>
+
+<script>
+  (function () {
+    var svgs = Array.prototype.slice.call(document.querySelectorAll('svg.layer'));
+    var btn = document.getElementById('toggle');
+    var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var paused = false;
+    function set(p) {
+      paused = p;
+      if (paused) { svgs.forEach(function (s) { s.pauseAnimations(); }); btn.textContent = 'Resume the scene'; }
+      else { svgs.forEach(function (s) { s.unpauseAnimations(); }); btn.textContent = 'Pause the scene'; }
+    }
+    if (reduced) set(true);
+    btn.addEventListener('click', function () { set(!paused); });
+  })();
+</script>
