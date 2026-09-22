@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { STATUS_CATALOG, Status } from '@xalians/content/creature';
 import {
 	CONCEPT, STATUS_CONCEPT, conceptOf, DIMINISHED_FACTOR, ATTRITION_TICK, MENDING_TICK,
-	roundsFor, applicationFrom, isHeld, powerFactor, tickAmount, advanceStatuses,
+	roundsFor, applicationFrom, isHeld, powerFactor, tickAmount, advanceStatuses, attritionBite, ATTRITION_BITE,
 	cosmeticStatuses, statusDefinition, type StatusApplication,
 } from '../statusLayer.ts';
 
@@ -130,6 +130,45 @@ describe('what statuses do in the Clash', () => {
 		expect(tickAmount([app('mending')])).toBe(MENDING_TICK);
 		expect(tickAmount([app('burning'), app('mending')])).toBe(MENDING_TICK - ATTRITION_TICK);
 		expect(tickAmount([app('blinded')])).toBe(0);
+	});
+});
+
+describe('a harmful status makes the blow that carries it hurt more', () => {
+	const effect = (status: string, recipient = 'target') => ({
+		status, concept: conceptOf(status)!, recipient,
+	});
+
+	it('bites for a blow that leaves a harmful status', () => {
+		expect(attritionBite([effect('corroding')])).toBe(ATTRITION_BITE);
+	});
+
+	it('does not bite for a blow that leaves no harmful status', () => {
+		expect(attritionBite([effect('blinded')])).toBe(0);
+		expect(attritionBite([effect('frozen')])).toBe(0);
+		expect(attritionBite([])).toBe(0);
+	});
+
+	/*
+		ONE BITE, NOT ONE PER STATUS. Same reasoning as non-stacking diminishment: an
+		accumulation of conditions must not become a removal mechanic by arithmetic.
+	*/
+	it('does not stack across several harmful statuses', () => {
+		expect(attritionBite([effect('burning'), effect('corroding'), effect('poisoned')])).toBe(ATTRITION_BITE);
+	});
+
+	it('ignores a harmful status an act puts on its own performer', () => {
+		expect(attritionBite([effect('burning', 'self')])).toBe(0);
+	});
+
+	/*
+		The balance constraint Nick set ("make sure attacks with statuses don't get too OP"),
+		as an assertion rather than a memory. Measured at 400 matches on three seeds, the
+		three species carrying such an act sit BELOW the field average even at a 0.40 bite,
+		so the shipped size has real headroom. This pins the size so raising it is a
+		deliberate act with a re-measurement attached, not a quiet edit.
+	*/
+	it('keeps the bite at the measured size', () => {
+		expect(ATTRITION_BITE).toBe(0.25);
 	});
 });
 

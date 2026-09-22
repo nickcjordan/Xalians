@@ -1195,6 +1195,10 @@ function summarize(matchResults: any[], args: CliArgs, pool: XalianRecord[], riv
 		byTrait: traitReport,
 		top5ByWinRate: top5,
 		bottom5ByWinRate: bottom5,
+		// every eligible creature, so a balance question about a named species can be asked
+		// without re-deriving the whole table (pass 34 needed the three that carry an
+		// attrition attack, which are never in the top or bottom five)
+		byCreature: eligible,
 		higherMeanHoldWinRate: rate(holdCorrelationWins, holdCorrelationEligible.length),
 		higherMeanSpeedWinRate: rate(speedCorrelationWins, speedCorrelationEligible.length),
 	};

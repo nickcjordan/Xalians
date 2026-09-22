@@ -2,7 +2,7 @@ import { describe, test, expect } from 'vitest';
 import type { XalianRecord, } from '@xalians/content/schema';
 import { createMatch, send, pass, getPublicState, currentFrame } from '../expeditionRules.ts';
 import { ROSTER_SIZE, WORLDS_PER_MATCH } from '../expeditionInterpretation.ts';
-import { DIMINISHED_FACTOR } from '../statusLayer.ts';
+import { ATTRITION_BITE, DIMINISHED_FACTOR } from '../statusLayer.ts';
 import type { Seat, World } from '../types.ts';
 
 /*
@@ -275,5 +275,42 @@ describe('the diminished factor is what the Clash actually uses', () => {
 		expect(clear, 'the control landed nothing, so there is nothing to compare').toBeGreaterThan(0);
 		expect(blinded).toBeLessThan(clear);
 		expect(blinded).toBeCloseTo(clear * DIMINISHED_FACTOR, 1);
+	});
+});
+
+describe('a blow that leaves a harmful status lands harder', () => {
+	/*
+		PASS 34. The fire or the acid is part of what the blow does, so a corroding strike
+		lands for more than the same strike without it. Measured against a control that
+		differs ONLY in the status, so the difference cannot come from anything else.
+
+		Both rosters attack the same way and only the attacker's act changes, so the power
+		logged for the attacker's own swing is the whole comparison.
+	*/
+	const powerOfFirstSwing = (rosterA: XalianRecord[], seed: string) => {
+		const { log } = clashWith(rosterA, makeRoster('B'), seed);
+		const swings = log.filter((e: any) => e.type === 'attack'
+			&& String(e.recordId).startsWith('A_') && e.power > 0);
+		return swings.length ? Number(swings[0].power) : 0;
+	};
+
+	test('lands harder than the same blow without the status', () => {
+		const plain = makeRoster('A', () => ({ actions: [action({ effects: [harmEffect()] })] }));
+		const corroding = makeRoster('A', () => ({
+			actions: [action({ effects: [harmEffect(), statusEffect('corroding', { removable: ['cleansing'] })] })],
+		}));
+		const clear = powerOfFirstSwing(plain, 'bite');
+		const bitten = powerOfFirstSwing(corroding, 'bite');
+		expect(clear, 'the control landed nothing, so there is nothing to compare').toBeGreaterThan(0);
+		expect(bitten).toBeGreaterThan(clear);
+		expect(bitten).toBeCloseTo(clear * (1 + ATTRITION_BITE), 1);
+	});
+
+	test('does not land harder for a status that is not harmful', () => {
+		const plain = makeRoster('A', () => ({ actions: [action({ effects: [harmEffect()] })] }));
+		const blinding = makeRoster('A', () => ({
+			actions: [action({ effects: [harmEffect(), statusEffect('blinded')] })],
+		}));
+		expect(powerOfFirstSwing(blinding, 'bite')).toBeCloseTo(powerOfFirstSwing(plain, 'bite'), 1);
 	});
 });

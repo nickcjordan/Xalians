@@ -109,13 +109,48 @@ export function conceptOf(status: string): Concept | null {
 export const DIMINISHED_FACTOR = 0.5;
 
 /*
-	The attrition tick. A creature carrying burning or corroding or poisoned loses hold at
-	the top of each round the status survives.
+	PASS 34, THE ATTRITION BITE. Nick ratified (2026-09-22) that a harmful status causes
+	additional harm, with the constraint that "attacks with statuses don't get too OP".
 
-	ONE TICK, NOT ONE PER APPLICATION. Three separate burnings are still one creature on
-	fire. This is the same reasoning that keeps DIMINISHED from stacking: an accumulation of
-	small conditions must not become a removal mechanic by arithmetic, because removal at
-	this table is supposed to cost somebody an act.
+	A BLOW THAT SETS YOU ALIGHT HURTS MORE THAN ONE THAT JUST HITS YOU. Pass 32 built
+	attrition as a per-round tick, and pass 32 also found that a world sees exactly one
+	Clash, so that tick has nowhere to fire. This is the same idea expressed where the
+	Proving can actually carry it: inside the blow.
+
+	WHY A FRACTION AND NOT A FLAT NUMBER. A flat bite is a bigger deal to a weak attacker
+	than a strong one, which would reward a feeble corroding act out of proportion to what
+	the record says it does. A fraction keeps the bite in step with the blow, so a status
+	sharpens an attack rather than replacing it.
+
+	WHY IT REACHES SO FEW ACTS. Only 42 of the pool's 1195 attacking acts (3.5%) can take
+	this bonus, all of them `corroding`, which is the only harmful status that rides on an
+	act that already harms. `burning` and `poisoned` are always status-only acts and already
+	land for their full magnitude, so they are NOT given a second helping: they are already
+	the damage they do.
+
+	WHY 0.25, MEASURED. Nick's constraint was that attacks with statuses must not get too
+	OP, so the size was swept at 400 matches on three seeds against both things it could
+	break. It breaks neither:
+
+	  bite   carrier win rate (7/13/21)   others   downs per match (7/13/21)
+	  0.00   57.4 / 54.0 / 53.8           ~58.9    5.49 / 5.47 / 5.69
+	  0.15   57.5 / 55.1 / 53.9           ~58.9    5.58 / 5.53 / -
+	  0.25   57.9 / 55.7 / 54.1           ~58.9    5.62 / 5.61 / 5.80
+	  0.40   58.6 / 56.3 / 54.5           ~58.8    5.67 / 5.69 / 5.83
+
+	The three species that carry one (bioflim, thirstaserp, venemist) start BELOW the field
+	average and stay below it at every size tried, so the bonus never makes them the obvious
+	pick - it narrows a gap rather than opening one. The binding constraint is downs per
+	match, already over its 3-to-5 ceiling before this pass: 0.25 costs +0.11 where 0.40
+	costs +0.19, and 0.15 is too small to feel. 0.25 is the largest bite that reads as a
+	real difference without spending more of a gauge that is already breached.
+*/
+export const ATTRITION_BITE = 0.25;
+
+/*
+	The attrition tick, for a game shape that resolves a world more than once. Retained
+	because the arithmetic is correct and tested, and inert at the current frame shape,
+	where both handlers passing resolves the world and advances the frame in one step.
 */
 export const ATTRITION_TICK = 2;
 /** `mending` restores this much hold at the top of each round. */
@@ -210,6 +245,21 @@ export function powerFactor(applications: readonly StatusApplication[]): number 
 	}
 	const restoring = applications.some((a) => a.status === 'stimulated' || a.status === 'focused');
 	return restoring ? 1 : DIMINISHED_FACTOR;
+}
+
+/*
+	The extra share of a blow that a harmful status adds to it.
+
+	ONE BITE, NOT ONE PER STATUS, for the same reason DIMINISHED does not stack: an
+	accumulation of conditions must not become a removal mechanic by arithmetic, because
+	removal at this table is supposed to cost somebody an act.
+
+	Only a status that lands on somebody ELSE bites. A status an act puts on its own
+	performer is not part of what the blow does to its target.
+*/
+export function attritionBite(applied: readonly { status?: string; concept?: string; recipient?: string }[]): number {
+	const harmful = applied.some((effect) => effect.concept === CONCEPT.ATTRITION && effect.recipient !== 'self');
+	return harmful ? ATTRITION_BITE : 0;
 }
 
 /** Hold change at the top of a round: negative for attrition, positive for mending. */

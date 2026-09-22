@@ -91,7 +91,7 @@ So "rounds within a world" means the alternating send turns before the Clash, no
 
 - **DIMINISHED works fully.** The Clash resolves creatures in speed order, so a creature blinded by a faster enemy swings later in that same Clash at half power. This is measured in `statusInClash.test.ts` against a control that differs only in the status.
 - **HELD works fully.** Same reasoning: a hold landed by a faster creature takes the slower one's swing away before it happens.
-- **ATTRITION has nowhere to fire today.** There is no second Clash at a world for a burning creature to be burned in. The arithmetic is built and unit-tested, the tick is wired into `resolve()`, and it does nothing at the current frame shape. The test for it asserts exactly that, so a passing suite is not mistaken for a working feature.
+- **ATTRITION fires inside the blow, since pass 34.** The per-round tick has nowhere to run (there is no second Clash at a world), so the same idea is expressed where the Proving can carry it: a blow that leaves a harmful status lands for more. See "Pass 34" below. The tick itself is kept, correct and inert, for a game shape that resolves a world more than once.
 - **BOONS are partly in the same position.** `stimulated` and `focused` cancel a diminishment within the Clash and work. `mending` ticks between Clashes and so, like attrition, has nowhere to fire.
 
 This is friction worth reporting rather than working around (CLAUDE.md, "report friction in the moment"). Attrition becoming real needs either more than one Clash per world or a Clash that resolves in more than one exchange. That is a change to the shape of the game, not a tuning lever, so it is Nick's call and not taken here.
@@ -151,3 +151,54 @@ Read honestly:
 ### One regression found and fixed inside the pass
 
 The first simulator run read **fallback sends 3.2 percent against 0.0 on main**. Cause: `buildActs` classed every non-ATTACK role as SUPPORT, so an afflicting act was support, so `blowActOf` found no attacking act for a creature whose only act applies a condition and sent it in swinging the synthetic `MIN_BLOW_MAGNITUDE`. An afflict aimed at an enemy is an attack at this table, so it now classes with the attacks; an afflict aimed only at itself stays support. Fallback returned to 0.0 percent and every other gauge improved with it.
+
+## Pass 34: the attrition bite
+
+Nick ratified (2026-09-22) that harmful statuses cause additional harm, with the constraint "just make sure to balance the effect so attacks with statuses don't get too OP".
+
+**A blow that leaves a harmful status lands for `ATTRITION_BITE` more.** Folded in at declaration, alongside `hiddenPower`, so a shielder reads the attack it will actually have to cancel. One bite, not one per status, for the same reason diminishment does not stack. A harmful status an act puts on its own performer does not bite, because that is not part of what the blow does to its target.
+
+### What the pool actually contains
+
+Measured before choosing anything, and it narrowed the design:
+
+| status | on an act that already harms | status-only act |
+|---|---|---|
+| corroding | 42 | 0 |
+| burning | 0 | 10 |
+| poisoned | 0 | 15 |
+
+So **only `corroding` is in a position to take a bonus.** `burning` and `poisoned` are always status-only acts, which already land for their full magnitude since pass 32: they are already the damage they do, and giving them a second helping would be paying twice for one effect. 42 of 1195 attacking acts (3.5%) can take the bite, across three species: bioflim, thirstaserp, venemist.
+
+### Sizing it against Nick's constraint
+
+Swept at 400 matches on three seeds, against both things the bonus could break.
+
+| bite | carrier win rate (7/13/21) | non-carriers | downs per match (7/13/21) |
+|---|---|---|---|
+| 0.00 | 57.4 / 54.0 / 53.8 | ~58.9 | 5.49 / 5.47 / 5.69 |
+| 0.15 | 57.5 / 55.1 / 53.9 | ~58.9 | 5.58 / 5.53 |
+| **0.25** | **57.9 / 55.7 / 54.1** | ~58.9 | **5.62 / 5.61 / 5.80** |
+| 0.40 | 58.6 / 56.3 / 54.5 | ~58.8 | 5.67 / 5.69 / 5.83 |
+
+**The "too OP" risk does not materialize at any size tried.** The three carrier species start BELOW the field average and stay below it even at 0.40. The bite narrows a gap rather than opening one, which makes sense: carrying a corroding act is not correlated with being strong, and two of the three carriers (bioflim especially) are high-hold creatures that were already losing worlds.
+
+**The binding constraint is downs per match**, already over its 3-to-5 ceiling before this pass. 0.25 costs +0.11 where 0.40 costs +0.19, and 0.15 is too small to read as a difference at the table. 0.25 is the largest bite that means something without spending more of a gauge that is already breached.
+
+`ATTRITION_BITE` is pinned by a test, so raising it is a deliberate act with a re-measurement attached rather than a quiet edit.
+
+### Final gauges, 300 matches per seed
+
+| gauge | band | before pass 34 | after |
+|---|---|---|---|
+| resolve mattered | 25-40% | 30.5 / 28.8 / 29.7 | 30.5 / 28.7 / 29.8 |
+| comeback | 30-40% | 30.0 / 29.8 / 23.5 | 29.6 / 29.5 / 23.2 |
+| downs per match | 3-5 | 5.49 / 5.47 / 5.66 | 5.62 / 5.61 / 5.80 |
+| strike keeper | 40-60% | 59.4 / 60.0 / 60.2 | 59.4 / 60.0 / 60.2 |
+| errors | 0 | 0 | 0 |
+
+Everything holds except downs, which moves as the sweep predicted. `magnitudeScale` remains the named lever for that gauge (assumption 28) and remains untouched: it is a whole-game damage retune and belongs in a pass of its own, where its effect can be seen rather than mixed in with a feature.
+
+### Verification
+
+Three breaks, each caught, healthy code green: the bite doing nothing (2 tests fail), the bite stacking per status (1), a self-aimed status biting (1). The engine test compares a corroding blow against a control differing only in the status, so the difference cannot come from anywhere else.
