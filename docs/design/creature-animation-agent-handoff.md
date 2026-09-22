@@ -40,6 +40,8 @@ Built in that session, on branch `anim/style-board`: render styles as a library 
 
 What the board says, as observation: toon and flat both leave the plastic-toy register without changing a spec; toon is the stronger candidate on Dromeus and Avilily, flat the closest to the pilot cutout; the ink homage needs authored edge marks and is parked; the contour makes template faults visible (Akinza muzzle and hands, Dromeus feet, Bioflim crease rings). Nick had not reviewed the board when this was written.
 
+Nick then looked at the toon Dromeus on the light stage and rejected it ("this looked good to you?"). He was right: the render style could not hide that the bodies are primitive assemblies. He gave the pipeline owner freedom to change anything, one creature at a time, quality first, determinism second. Dromeus became that creature. The same session added `blender/xalians_rig/skin.py` (one smooth Skin-modifier body over the posed joints, one shape key per frame) and `species/dromeus-skin.json`; the README's "One body, not an assembly" section holds the before and after and what still fails. The lesson for every later species: the performance can stay data, but the body must be one designed surface, and the light stage at 1x is the only honest check.
+
 The pending second half of the program is the 2D ceiling test: one pilot cutout (Akinza) pushed with hand-drawn replacement cels at the strike, face and landing, judged beside the toon render on the same stage, with cost recorded. Then the two paths are compared on the moving result and the finding written into `creature-art-direction-review.md` as observation versus decision.
 
 ### What is already built

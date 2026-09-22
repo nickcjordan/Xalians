@@ -61,12 +61,18 @@ subset = [int(v) for v in subset.split(",") if v] if isinstance(subset, str) els
 stage_module.clear_scene()
 palette = Palette(spec["palette"])
 creature = TEMPLATES[spec["template"]](spec, palette)
+all_frames = []
 for clip, (start, count) in spec["clips"].items():
     for frame in range(start, start + count):
         creature.apply_pose(frame, clip)
+        all_frames.append(frame)
 make_linear()
 
 scene, camera = stage_module.configure(spec)
+if hasattr(creature, "finish"):
+    # A template may grow a skinned body over the posed joints once every frame is keyed.
+    creature.finish(scene, all_frames)
+    make_linear()
 apply_style(scene, style, spec)
 scene.frame_set(spec["clips"]["action"][0])
 if not styled:

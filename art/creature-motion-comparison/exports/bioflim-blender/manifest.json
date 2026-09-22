@@ -30,7 +30,7 @@
     "blender": "5.2.2 LTS",
     "spec": "bioflim.json",
     "spec_hash": "c911664671010f62",
-    "library_hash": "ff6813f43d8980c7",
+    "library_hash": "441c8567d4c66323",
     "cycles_seed": 0,
     "samples": 16,
     "style": "plain"

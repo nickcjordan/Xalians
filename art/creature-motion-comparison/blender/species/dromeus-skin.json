@@ -1,0 +1,107 @@
+{
+  "species": "dromeus",
+  "record": "docs/species-templates/dromeus.json",
+  "template": "biped",
+  "label": "Dromeus, skinned body",
+  "variant": "blender-skin",
+  "export": "dromeus-skin",
+  "blend": "dromeus_skin.blend",
+  "output": "rendered/dromeus-skin",
+  "palette": {
+    "ink": {"label": "ash outline", "hex": "2a1e1e"},
+    "hide": {"label": "ash hide", "hex": "6b564f"},
+    "hide_light": {"label": "warm hide", "hex": "9c8074"},
+    "belly": {"label": "pale belly", "hex": "d9c3a5"},
+    "plume": {"label": "ember plume", "hex": "e0522a", "roughness": 0.6},
+    "plume_light": {"label": "flame plume", "hex": "f2a23a", "roughness": 0.6},
+    "plume_deep": {"label": "cooled plume", "hex": "8f2b1e", "roughness": 0.65},
+    "trouser": {"label": "feathered thigh", "hex": "7a4a3e", "roughness": 0.7},
+    "tooth": {"label": "tooth", "hex": "f4efe0", "roughness": 0.4},
+    "tongue": {"label": "tongue", "hex": "7a2a3a", "roughness": 0.5},
+    "eye": {"label": "ember eye", "hex": "f5c542", "roughness": 0.3},
+    "claw": {"label": "claw", "hex": "3b3030", "roughness": 0.5}
+  },
+  "proportions": {
+    "torso_scale": [0.34, 0.3, 0.6],
+    "torso_center": [0.06, 0, -0.02],
+    "head_length": 0.58,
+    "neck_length": 0.5,
+    "thigh": 0.4,
+    "shin": 0.42,
+    "ground_z": -0.95,
+    "tail_length": 0.85,
+    "arm_length": 0.34,
+    "wing_feather_length": 0.55,
+    "lunge": 0.45,
+    "hop": 0.55,
+    "crouch_drop": 0.14,
+    "tail_lift": 1
+  },
+  "anatomy": {"teeth": 6, "tail_segments": 3, "tail_plumes": 3, "crown_plumes": 3, "wing_feathers": 4, "back_feathers": 0, "body": "skin"},
+  "render": {
+    "samples": 16,
+    "seed": 0,
+    "world": "7a6a60",
+    "lights": {"key": 480, "fill": 170, "rim": 360},
+    "style": "toon",
+    "toon": {"shadow": 0.55, "size": 0.6, "smooth": 0.05}
+  },
+  "clips": {
+    "idle": [1, 12],
+    "action": [21, 30]
+  },
+  "markers": [
+    {"name": "quiet start", "frame": 1},
+    {"name": "action start", "frame": 21},
+    {"name": "notice", "frame": 23},
+    {"name": "crouch", "frame": 30},
+    {"name": "launch", "frame": 32},
+    {"name": "bite", "frame": 35, "cue": true},
+    {"name": "landing", "frame": 38},
+    {"name": "recovered", "frame": 50}
+  ],
+  "points": {
+    "emitter": {"part": "bite", "frame": 35},
+    "ground_contact": {"part": "foot", "frame": 21},
+    "eye_rest": {"part": "pupil", "frame": 21}
+  },
+  "performance": {
+    "action": {
+      "name": "Ashfall Stoop",
+      "keys": [
+        [21, "smooth", {}],
+        [23, "out", {"notice": 1.0, "hyaw": -8}],
+        [26, "smooth", {"notice": 1.0, "hyaw": -5, "crouch": 0.5, "tail": 0.3}],
+        [30, "smooth", {"notice": 0.8, "crouch": 1.0, "lean": -4, "wspread": 0.15, "jaw": 0.15, "tail": 0.8}],
+        [32, "in", {"crouch": 0.1, "rise": 0.14, "fwd": 0.3, "lean": 10, "wspread": 0.75, "jaw": 0.6, "tail": 0.6}],
+        [34, "out", {"rise": 0.2, "fwd": 0.92, "lean": 12, "hyaw": -4, "wspread": 1.0, "jaw": 1.0, "tail": 0.2}],
+        [35, "linear", {"rise": 0.14, "fwd": 1.0, "lean": 8, "hyaw": -4, "wspread": 0.95, "jaw": 0.05, "tail": 0.1}],
+        [37, "smooth", {"rise": 0.02, "fwd": 1.0, "lean": 2, "hyaw": -3, "wspread": 0.7, "jaw": 0.15, "land": 0.6}],
+        [39, "smooth", {"fwd": 0.96, "crouch": 0.35, "lean": -2, "wspread": 0.35, "jaw": 0.1, "land": 1.0}],
+        [42, "smooth", {"fwd": 0.7, "rise": 0.1, "crouch": 0.1, "lean": -6, "wspread": 0.2, "tail": 0.3}],
+        [45, "smooth", {"fwd": 0.25, "rise": 0.04, "lean": -3, "wspread": 0.08, "tail": 0.2}],
+        [47, "smooth", {"fwd": 0.02, "crouch": 0.15, "land": 0.4}],
+        [50, "smooth", {}]
+      ]
+    }
+  },
+  "skin": {
+    "hip": 0.21,
+    "thigh": 0.17,
+    "knee": 0.075,
+    "shin": 0.06,
+    "foot": 0.075,
+    "toe": 0.042,
+    "head": 0.2,
+    "snout_root": 0.15,
+    "snout": 0.06,
+    "neck_root": 0.19,
+    "neck": 0.15,
+    "rump": 0.27,
+    "torso": 0.31,
+    "chest": 0.28,
+    "belly": 0.25,
+    "belly_drop": 0.85,
+    "tail": 0.11
+  }
+}

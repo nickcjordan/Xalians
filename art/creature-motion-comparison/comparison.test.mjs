@@ -90,8 +90,9 @@ test('Akinza and Dromeus share the biped template and differ only by spec', () =
   assert.deepEqual(akinza.clips.action.markers.map((marker) => marker.name), ['contact_pose']);
 });
 
-for (const study of ['akinza-blender', 'blender2', 'dromeus-blender', 'bioflim-blender']) {
-  for (const style of ['toon', 'flat']) {
+for (const [study, styles] of [['akinza-blender', ['toon', 'flat']], ['blender2', ['toon', 'flat']], ['dromeus-blender', ['toon', 'flat']],
+                               ['bioflim-blender', ['toon', 'flat']], ['dromeus-skin', ['plain', 'flat']]]) {
+  for (const style of styles) {
     test(`${study}-${style} is the same performance as ${study} in another render style`, () => {
       const base = JSON.parse(readFileSync(join(root, 'exports', study, 'manifest.json'), 'utf8'));
       const styled = validateManifest(JSON.parse(readFileSync(join(root, 'exports', `${study}-${style}`, 'manifest.json'), 'utf8')));
@@ -105,11 +106,25 @@ for (const study of ['akinza-blender', 'blender2', 'dromeus-blender', 'bioflim-b
       assert.equal(styled.clips.action.frames.length, base.clips.action.frames.length);
       assert.equal(styled.clips.idle.frames.length, base.clips.idle.frames.length);
       assert.equal(styled.provenance.style, style);
-      assert.equal(base.provenance.style, 'plain');
+      assert.ok(base.provenance.style && base.provenance.style !== style, 'the spec renders its own style; the twin is another');
       assert.equal(styled.provenance.spec_hash, base.provenance.spec_hash, 'a render style never changes the spec');
       assert.equal(styled.provenance.library_hash, base.provenance.library_hash);
       assert.ok(existsSync(join(root, 'exports', `${study}-${style}`, styled.clips.action.sheet)));
     });
   }
 }
+
+test('the skinned Dromeus keeps the biped performance and replaces the primitive body', () => {
+  const primitive = JSON.parse(readFileSync(join(root, 'exports', 'dromeus-blender', 'manifest.json'), 'utf8'));
+  const skinned = validateManifest(JSON.parse(readFileSync(join(root, 'exports', 'dromeus-skin', 'manifest.json'), 'utf8')));
+  assert.equal(skinned.species, 'dromeus');
+  assert.equal(skinned.template, 'biped');
+  assert.equal(skinned.provenance.style, 'toon');
+  assert.deepEqual(skinned.origin, primitive.origin);
+  assert.deepEqual(skinned.clips.action.markers, primitive.clips.action.markers, 'same cue at the same time');
+  assert.equal(skinned.clips.action.frames.length, primitive.clips.action.frames.length);
+  assert.notEqual(skinned.provenance.spec_hash, primitive.provenance.spec_hash, 'its own spec');
+  assert.ok(Math.abs(skinned.emitter[0] - primitive.emitter[0]) < 12 && Math.abs(skinned.emitter[1] - primitive.emitter[1]) < 12,
+    'the bite point lands where the primitive body bit');
+});
 

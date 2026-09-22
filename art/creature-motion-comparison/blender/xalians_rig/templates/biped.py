@@ -13,10 +13,12 @@ the mouth.
 
 import math
 
+import bpy
 from mathutils import Euler, Matrix, Vector
 
 from ..builders import egg, empty, feather, leaf_surface, sphere, tube
 from ..motion import Loop, Track, key, solve_two_link
+from ..skin import Skeleton, hide_render, skin_object, world_of
 
 TAU = math.tau
 rad = math.radians
@@ -125,6 +127,7 @@ class Biped:
             tube("upper tooth %s" % i, self.upper_jaw, (x, -.07, -.05), (x + .01, -.07, -.11), .022, P["tooth"], 6, .05)
             tube("lower tooth %s" % i, self.lower_jaw, (x - .03, -.06, .02), (x - .02, -.06, .08), .02, P["tooth"], 6, .05)
         self.bite_point = empty("bite point", self.head, (.18 + hl * .55, -.02, -.05))
+        self.snout_tip = empty("snout tip", self.upper_jaw, (hl * .78, 0, -.03))
         es = prop["eye_scale"]
         sphere("eye rim", self.head, (.13, -.15, .08), (.075 * es, .04 * es, .07 * es), P["ink"])
         sphere("eye", self.head, (.135, -.17 - .01 * (es - 1), .08), (.06 * es, .03 * es, .055 * es), P["eye"])
@@ -207,8 +210,10 @@ class Biped:
                     tube("toe claw %s %s" % (side, toe), foot, (dx, dy, -.03), (dx * 1.25, dy, -.07), .02, P["claw"], 6, .1)
             if self.toe_claws:
                 tube("hooked claw %s" % side, foot, (.10, -.06, .0), (.14, -.08, .14), .028, P["claw"], 6, .2)
+            toe_tips = [empty("toe tip %s %s" % (side, toe), foot, (dx, dy, -.03))
+                        for toe, (dx, dy) in enumerate(((.24, -.05), (.20, .06), (-.09, 0)))]
             self.legs.append({"hip": hip, "knee": knee, "foot": foot, "base": Vector((x + .06, y, prop["ground_z"])),
-                              "local": Vector((x, y, hz)), "lag": 0.0 if side == 1 else 1.5})
+                              "local": Vector((x, y, hz)), "lag": 0.0 if side == 1 else 1.5, "toes": toe_tips})
         self.parts.update({"bite": self.bite_point, "pupil": self.pupil, "foot": self.legs[1]["foot"],
                            "hand": self.arms["near"]["hand"]})
 
@@ -296,3 +301,91 @@ class Biped:
             key(leg["hip"], frame)
             key(leg["knee"], frame, ("rotation_euler",))
             key(leg["foot"], frame, ("rotation_euler",))
+
+    # ------------------------------------------------------------ skin body
+    #: Primitive parts the skin body replaces (matched by object name).
+    SKIN_REPLACES = ("torso", "belly", "neck", "skull", "snout", "mandible", "tail 0", "tail 1", "tail 2",
+                     "thigh", "shin", "hock", "ankle", "toe 0", "toe 1", "toe 2", "shoulder cap",
+                     "upper arm", "forearm", "brow ridge", "toe claw")
+
+    def finish(self, scene, frames):
+        """When the spec asks for ``"body": "skin"``, grow one smooth body over the posed joints."""
+        if self.spec.get("anatomy", {}).get("body") != "skin":
+            return
+        P = self.P
+        prop = self.prop
+        R = {**DEFAULT_SKIN, **self.spec.get("skin", {})}
+        tc = Vector(prop["torso_center"])
+        ts = prop["torso_scale"]
+        pitch = rad(prop["torso_pitch"])
+        # The torso's long axis (local +Z of the egg) points forward when pitched.
+        axis = Vector((math.sin(pitch), 0, math.cos(pitch)))
+        chest = tc + axis * ts[2] * .55
+        rump = tc - axis * ts[2] * .55
+        sk = Skeleton()
+        sk.joint("rump", world_of(self.body, rump), R["rump"])
+        sk.joint("torso", world_of(self.body, tc), R["torso"])
+        sk.joint("chest", world_of(self.body, chest), R["chest"])
+        sk.joint("neck root", world_of(self.neck), R["neck_root"])
+        nf, nu = prop["neck_length"] * prop["neck_forward"], prop["neck_length"] * prop["neck_up"]
+        sk.joint("neck", world_of(self.neck, (nf * .5, 0, nu * .5)), R["neck"])
+        sk.joint("head", world_of(self.head, (.06, 0, .02)), R["head"])
+        sk.joint("snout root", world_of(self.upper_jaw, (.02, 0, 0)), R["snout_root"])
+        sk.joint("snout", world_of(self.snout_tip), R["snout"])
+        sk.chain("rump", "torso", "chest", "neck root", "neck", "head", "snout root", "snout")
+        seg = prop["tail_length"] / self.tail_segments
+        previous = "rump"
+        for i, pivot in enumerate(self.tail):
+            name = sk.joint("tail %s" % i, world_of(pivot), R["tail"] * (1 - .22 * i))
+            sk.chain(previous, name)
+            previous = name
+        tip = sk.joint("tail tip", world_of(self.tail[-1], (-seg, 0, 0)), R["tail_tip"])
+        sk.chain(previous, tip)
+        for side, leg in enumerate(self.legs):
+            hip = sk.joint("hip %s" % side, world_of(leg["hip"], (0, 0, .10)), R["hip"])
+            thigh = sk.joint("thigh %s" % side, world_of(leg["hip"], (0, 0, -prop["thigh"] * .45)), R["thigh"])
+            knee = sk.joint("knee %s" % side, world_of(leg["knee"]), R["knee"])
+            shin = sk.joint("shin %s" % side, world_of(leg["knee"], (0, 0, -prop["shin"] * .5)), R["shin"])
+            foot = sk.joint("foot %s" % side, world_of(leg["foot"], (0, 0, .01)), R["foot"])
+            sk.chain("torso", hip, thigh, knee, shin, foot)
+            for t, toe in enumerate(leg["toes"]):
+                name = sk.joint("toe %s %s" % (side, t), world_of(toe), R["toe"])
+                sk.chain(foot, name)
+        for side, arm in self.arms.items():
+            shoulder = sk.joint("%s shoulder" % side, world_of(arm["shoulder"]), R["shoulder"])
+            elbow = sk.joint("%s elbow" % side, world_of(arm["elbow"]), R["elbow"])
+            hand = sk.joint("%s hand" % side, world_of(arm["hand"]), R["hand"])
+            sk.chain("chest", shoulder, elbow, hand)
+        self.skin_body = skin_object("%s skin body" % self.spec["species"], sk, P["hide"], "torso", frames, scene,
+                                     subdivisions=R["subdivisions"], smooth=R["branch_smoothing"])
+
+        # The pale belly is a second skin chain riding just proud of the hide.
+        belly = Skeleton()
+        down = Vector((0, 0, -1))
+        drop = ts[0] * R["belly_drop"]
+        belly.joint("belly rear", world_of(self.body, rump + axis * ts[2] * .15 + down * drop), R["belly"] * .75)
+        belly.joint("belly", world_of(self.body, tc + down * drop), R["belly"])
+        belly.joint("belly front", world_of(self.body, chest - axis * ts[2] * .12 + down * drop * .9), R["belly"] * .85)
+        belly.joint("throat", world_of(self.neck, (nf * .35, 0, nu * .35 - .09)), R["belly"] * .45)
+        belly.chain("belly rear", "belly", "belly front", "throat")
+        self.skin_belly = skin_object("%s skin underside" % self.spec["species"], belly, P["belly"], "belly", frames, scene,
+                                      subdivisions=R["subdivisions"], smooth=R["branch_smoothing"])
+
+        # The lower jaw is rigid in its own pivot, so it needs no per-frame keys.
+        jaw = Skeleton()
+        jaw.joint("jaw root", lambda: Vector((0, 0, 0)), R["jaw_root"])
+        jaw.joint("jaw tip", lambda: Vector((prop["head_length"] * .70, 0, -.02)), R["jaw_tip"])
+        jaw.chain("jaw root", "jaw tip")
+        self.skin_jaw = skin_object("%s skin lower jaw" % self.spec["species"], jaw, P["hide"], "jaw root", frames[:1], scene,
+                                    parent=self.lower_jaw, subdivisions=R["subdivisions"])
+
+        hide_render(bpy.data.objects, self.SKIN_REPLACES)
+
+
+#: Skin radii (scene units) for the biped joints; a spec's ``skin`` block overrides any of them.
+DEFAULT_SKIN = {
+    "rump": .26, "torso": .30, "chest": .27, "neck_root": .17, "neck": .13, "head": .17, "snout_root": .12, "snout": .05,
+    "tail": .10, "tail_tip": .035, "hip": .16, "thigh": .12, "knee": .06, "shin": .05, "foot": .06, "toe": .03,
+    "shoulder": .07, "elbow": .045, "hand": .035, "belly": .22, "belly_drop": .55, "jaw_root": .07, "jaw_tip": .035,
+    "subdivisions": 2, "branch_smoothing": .5,
+}
