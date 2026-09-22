@@ -255,6 +255,21 @@
 			var(--grain);
 		background-size: 100% 100%, 100% 100%, 160px 160px;
 	}
+	/* A living plate (components/plates/livePlate.tsx): the poster underneath,
+	   the injected SVG layers stacked over it, each on its own compositing
+	   layer so the static ones never repaint, and two raster surface sheets
+	   blended over the whole stack. The grade is the same the demo carried. */
+	.live-plate { position: relative; filter: contrast(1.06); }
+	.live-plate-host { position: absolute; inset: 0; }
+	.live-plate-host svg.layer { position: absolute; inset: 0; display: block; width: 100%; height: 100%; will-change: transform; }
+	.live-plate-host svg.defs { position: absolute; width: 0; height: 0; overflow: hidden; }
+	.live-plate-host .surface { position: absolute; inset: 0; pointer-events: none; mix-blend-mode: overlay; background-size: 100% 100%; }
+	.live-plate-host .surface.strokes { opacity: .22; -webkit-mask-image: linear-gradient(transparent 0, black 16%, black 75%, color-mix(in srgb, black 25%, transparent) 82%, color-mix(in srgb, black 25%, transparent)); mask-image: linear-gradient(transparent 0, black 16%, black 75%, color-mix(in srgb, black 25%, transparent) 82%, color-mix(in srgb, black 25%, transparent)); }
+	.live-plate-host .surface.paper { opacity: .55; background-size: 768px 768px; background-repeat: repeat;
+		-webkit-mask-image: linear-gradient(black 0 78%, color-mix(in srgb, black 33%, transparent) 80%, color-mix(in srgb, black 33%, transparent)), radial-gradient(ellipse 20% 30% at 61% 36%, color-mix(in srgb, black 50%, transparent), black 100%);
+		mask-image: linear-gradient(black 0 78%, color-mix(in srgb, black 33%, transparent) 80%, color-mix(in srgb, black 33%, transparent)), radial-gradient(ellipse 20% 30% at 61% 36%, color-mix(in srgb, black 50%, transparent), black 100%);
+		-webkit-mask-composite: source-in; mask-composite: intersect; }
+
 	/* A frame you can press (it opens its part of The Story) stands on a mass
 	   in the ink, cut to its own shape, and lifts like every other pressable
 	   thing (section 5.1). The mass sits on the wrapper because the frame's

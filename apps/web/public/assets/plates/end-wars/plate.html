@@ -1,0 +1,1227 @@
+<!-- The End Wars era plate as a living painting: eight stacked SVG layers sharing one set of definitions, and two raster surface sheets blended over them. Generated from the design scratchpad; edit the source there, not here. -->
+<svg class="defs" id="layer-defs" width="0" height="0" viewBox="0 0 1536 768" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+  <defs>
+    <!-- ---------- sky, haze, water ---------- -->
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1d1e22"/>
+      <stop offset=".4" stop-color="#3a3c40"/>
+      <stop offset=".75" stop-color="#55575a"/>
+      <stop offset="1" stop-color="#626466"/>
+    </linearGradient>
+    <radialGradient id="horizon" cx=".46" cy=".79" r=".42">
+      <stop offset="0" stop-color="#e6e3da" stop-opacity=".9"/>
+      <stop offset=".2" stop-color="#b9b7b1" stop-opacity=".45"/>
+      <stop offset="1" stop-color="#7a7a7a" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="haze" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#7e7f80" stop-opacity="0"/>
+      <stop offset="1" stop-color="#8d8e8d" stop-opacity=".55"/>
+    </linearGradient>
+    <linearGradient id="bank" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#5e5f60"/>
+      <stop offset="1" stop-color="#242527"/>
+    </linearGradient>
+    <linearGradient id="water" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#8e8c86"/>
+      <stop offset=".35" stop-color="#6a6b6d"/>
+      <stop offset="1" stop-color="#3c3d40"/>
+    </linearGradient>
+    <linearGradient id="waterLight" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffffff" stop-opacity=".95"/>
+      <stop offset=".4" stop-color="#f3f1ea" stop-opacity=".45"/>
+      <stop offset=".8" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="nearWater" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#000" stop-opacity="0"/>
+      <stop offset=".55" stop-color="#000" stop-opacity="0"/>
+      <stop offset="1" stop-color="#000" stop-opacity=".32"/>
+    </linearGradient>
+    <linearGradient id="wall" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#3b3c3f"/>
+      <stop offset="1" stop-color="#1a1b1d"/>
+    </linearGradient>
+    <!-- ---------- cloud, smoke ---------- -->
+    <radialGradient id="cloudA" cx=".5" cy=".5" r=".5">
+      <stop offset="0" stop-color="#6c6d71" stop-opacity=".6"/>
+      <stop offset=".6" stop-color="#4a4b4f" stop-opacity=".35"/>
+      <stop offset="1" stop-color="#2a2b2e" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="cloudB" cx=".5" cy=".5" r=".5">
+      <stop offset="0" stop-color="#b3b1ab" stop-opacity=".5"/>
+      <stop offset="1" stop-color="#6a6963" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="smoke" cx=".5" cy=".5" r=".5">
+      <stop offset="0" stop-color="#0f0d10" stop-opacity=".97"/>
+      <stop offset=".5" stop-color="#1b1719" stop-opacity=".8"/>
+      <stop offset="1" stop-color="#2a2426" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="smokeRim" cx=".5" cy=".5" r=".5">
+      <stop offset="0" stop-color="#8b898c" stop-opacity=".5"/>
+      <stop offset=".6" stop-color="#5f5d61" stop-opacity=".28"/>
+      <stop offset="1" stop-color="#4a484c" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="smokeLit" cx=".5" cy=".5" r=".5">
+      <stop offset="0" stop-color="#c2632a" stop-opacity=".6"/>
+      <stop offset=".5" stop-color="#7a3d1e" stop-opacity=".3"/>
+      <stop offset="1" stop-color="#3a2a22" stop-opacity="0"/>
+    </radialGradient>
+    <!-- ---------- hull ---------- -->
+    <linearGradient id="hullA" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#b9b9bc"/>
+      <stop offset=".22" stop-color="#7c7e83"/>
+      <stop offset=".55" stop-color="#3c3e43"/>
+      <stop offset="1" stop-color="#121316"/>
+    </linearGradient>
+    <linearGradient id="hullB" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#9d9ea1"/>
+      <stop offset=".22" stop-color="#65676c"/>
+      <stop offset=".55" stop-color="#2d2f34"/>
+      <stop offset="1" stop-color="#0d0e10"/>
+    </linearGradient>
+    <linearGradient id="hullRing" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#d7d7d8"/>
+      <stop offset=".3" stop-color="#8e8f93"/>
+      <stop offset=".7" stop-color="#2a2b2f"/>
+      <stop offset="1" stop-color="#050506"/>
+    </linearGradient>
+    <linearGradient id="hullNose" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#fbfaf4"/>
+      <stop offset=".5" stop-color="#b8b8b6"/>
+      <stop offset="1" stop-color="#6b6c70"/>
+    </linearGradient>
+    <linearGradient id="fin" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#8c8d90"/>
+      <stop offset="1" stop-color="#2b2c30"/>
+    </linearGradient>
+    <linearGradient id="trail" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#fffdf5" stop-opacity="0"/>
+      <stop offset=".6" stop-color="#f4f2ea" stop-opacity=".6"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="1"/>
+    </linearGradient>
+    <!-- ---------- fire, light ---------- -->
+    <radialGradient id="fireCore" cx=".5" cy=".5" r=".5">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset=".15" stop-color="#ffeeb0"/>
+      <stop offset=".3" stop-color="#ffd25e"/>
+      <stop offset=".5" stop-color="#f5801f" stop-opacity=".92"/>
+      <stop offset=".8" stop-color="#b3320c" stop-opacity=".4"/>
+      <stop offset="1" stop-color="#5a1206" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="tongue" x1="0" y1="1" x2="0" y2="0">
+      <stop offset="0" stop-color="#fff0b0"/>
+      <stop offset=".3" stop-color="#ffa22e"/>
+      <stop offset=".7" stop-color="#d84a12" stop-opacity=".85"/>
+      <stop offset="1" stop-color="#6a1e08" stop-opacity="0"/>
+    </linearGradient>
+    <radialGradient id="flare" cx=".5" cy=".5" r=".5">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset=".18" stop-color="#f2f6ff" stop-opacity=".9"/>
+      <stop offset=".45" stop-color="#bcc9e6" stop-opacity=".3"/>
+      <stop offset="1" stop-color="#8aa0d0" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="lamp" cx=".5" cy=".5" r=".5">
+      <stop offset="0" stop-color="#ffe2b0"/>
+      <stop offset=".25" stop-color="#ffa24a" stop-opacity=".85"/>
+      <stop offset="1" stop-color="#ff7a1a" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="window" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fff4d4"/>
+      <stop offset="1" stop-color="#e0b25c"/>
+    </linearGradient>
+    <linearGradient id="vignette" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0b0a10" stop-opacity=".35"/>
+      <stop offset=".3" stop-color="#0b0a10" stop-opacity="0"/>
+      <stop offset=".8" stop-color="#0b0a10" stop-opacity="0"/>
+      <stop offset="1" stop-color="#0b0a10" stop-opacity=".5"/>
+    </linearGradient>
+
+    <!-- ---------- static lighting and material (painted once; the hull and tower layers never repaint) ---------- -->
+    <!-- The fire as a light on the hull: a specular pass from a point at the blaze, screened onto the plating -->
+    <filter id="hullLight" x="-10%" y="-60%" width="120%" height="220%" primitiveUnits="userSpaceOnUse">
+      <feColorMatrix in="SourceGraphic" type="luminanceToAlpha" result="lum"/>
+      <feGaussianBlur in="lum" stdDeviation=".5" result="bump"/>
+      <!-- a flat warm tint from the fire, multiplied lightly under the paint -->
+      <feFlood flood-color="#6b5140" flood-opacity=".18" result="warm"/>
+      <feComposite in="warm" in2="SourceAlpha" operator="in" result="warmIn"/>
+      <feBlend in="warmIn" in2="SourceGraphic" mode="multiply" result="shaded"/>
+      <!-- a tight warm highlight from the blaze -->
+      <feSpecularLighting in="bump" surfaceScale="5" specularConstant=".6" specularExponent="90" lighting-color="#ffb46a" result="spec">
+        <fePointLight x="430" y="-90" z="70"/>
+      </feSpecularLighting>
+      <feComposite in="spec" in2="SourceAlpha" operator="in" result="specIn"/>
+      <feBlend in="specIn" in2="shaded" mode="screen" result="lit"/>
+      <!-- a cold fill on the upper forward flank, opposing the fire -->
+      <feSpecularLighting in="bump" surfaceScale="5" specularConstant=".5" specularExponent="75" lighting-color="#dfe6ff" result="spec2">
+        <fePointLight x="120" y="-60" z="110"/>
+      </feSpecularLighting>
+      <feComposite in="spec2" in2="SourceAlpha" operator="in" result="spec2In"/>
+      <feBlend in="spec2In" in2="lit" mode="screen"/>
+    </filter>
+    <!-- A soft halo around every lit window, so glass glows into the air instead of sitting on the wall -->
+    <filter id="windowGlow" x="-40%" y="-20%" width="180%" height="140%">
+      <feGaussianBlur stdDeviation="3" result="b"/>
+      <feColorMatrix in="b" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 .7 0" result="halo"/>
+      <feMerge><feMergeNode in="halo"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <!-- Painted edges for the far city: the outline is eaten by noise so nothing distant is razor cut -->
+    <filter id="paintEdge" x="-5%" y="-10%" width="110%" height="120%">
+      <feTurbulence type="fractalNoise" baseFrequency=".08" numOctaves="3" seed="4" result="n"/>
+      <feColorMatrix in="n" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 6 -2.2" result="m"/>
+      <feMorphology in="SourceAlpha" operator="erode" radius="1.2" result="inner"/>
+      <feComposite in="SourceGraphic" in2="inner" operator="in" result="core"/>
+      <feComposite in="SourceGraphic" in2="m" operator="in" result="ragged"/>
+      <feMerge><feMergeNode in="ragged"/><feMergeNode in="core"/></feMerge>
+    </filter>
+    <!-- The tower faces have a curve: a horizontal gradient rounds each face -->
+    <linearGradient id="faceLit" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#2c2e34"/>
+      <stop offset=".45" stop-color="#4a4d55"/>
+      <stop offset="1" stop-color="#2a2c32"/>
+    </linearGradient>
+    <linearGradient id="faceLeft" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#1a1b1f"/>
+      <stop offset="1" stop-color="#2b2d32"/>
+    </linearGradient>
+    <linearGradient id="faceRight" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#15161a"/>
+      <stop offset="1" stop-color="#0a0b0d"/>
+    </linearGradient>
+    <!-- Light in the air: the trail's scatter, a cone of pale haze toward the ground -->
+    <linearGradient id="blockFace" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#24262b"/>
+      <stop offset="1" stop-color="#111214"/>
+    </linearGradient>
+    <linearGradient id="airLight" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity=".22"/>
+    </linearGradient>
+    <linearGradient id="groundFog" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#8d8e8d" stop-opacity="0"/>
+      <stop offset="1" stop-color="#8d8e8d" stop-opacity=".35"/>
+    </linearGradient>
+
+    <!-- ---------- filters (the same set as the first pass, none added) ---------- -->
+    <filter id="soft" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="14"/></filter>
+    <filter id="softer" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="28"/></filter>
+    <filter id="glow" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="4" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="glowWide" x="-100%" y="-100%" width="300%" height="300%">
+      <feGaussianBlur stdDeviation="10" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="cloud" x="-20%" y="-20%" width="140%" height="140%">
+      <feTurbulence type="fractalNoise" baseFrequency=".006 .011" numOctaves="4" seed="3" result="n"></feTurbulence>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="90" xChannelSelector="R" yChannelSelector="B" result="d"/>
+      <feGaussianBlur in="d" stdDeviation="3"/>
+    </filter>
+    <filter id="fire" x="-40%" y="-40%" width="180%" height="180%">
+      <feTurbulence type="fractalNoise" baseFrequency=".03 .06" numOctaves="3" seed="11" result="n">
+        <animate attributeName="seed" values="1;2;3;4;5;6;7;8;9;10;11;12" dur="1.6s" repeatCount="indefinite" calcMode="discrete"/>
+        <animate attributeName="baseFrequency" values=".03 .06;.035 .05;.03 .06" dur="2.2s" repeatCount="indefinite"/>
+      </feTurbulence>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="26" xChannelSelector="R" yChannelSelector="G" result="d"/>
+      <feGaussianBlur in="d" stdDeviation="1.2"/>
+    </filter>
+    <filter id="smokeF" x="-40%" y="-40%" width="180%" height="180%">
+      <feTurbulence type="fractalNoise" baseFrequency=".01 .015" numOctaves="4" seed="5" result="n">
+        <animate attributeName="baseFrequency" values=".01 .015;.012 .013;.01 .015" dur="18s" repeatCount="indefinite"/>
+      </feTurbulence>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="70" xChannelSelector="R" yChannelSelector="G" result="d"/>
+      <feGaussianBlur in="d" stdDeviation="6"/>
+    </filter>
+    <filter id="ripple" x="-5%" y="-5%" width="110%" height="110%">
+      <feTurbulence type="turbulence" baseFrequency=".005 .04" numOctaves="2" seed="7" result="n"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="11" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+    <!-- the live water: the same disturbance as rippleHard, but the noise field shifts slowly so the reflection moves -->
+    <filter id="rippleLive" x="-10%" y="-10%" width="120%" height="120%">
+      <feTurbulence type="turbulence" baseFrequency=".004 .07" numOctaves="2" seed="7" result="n">
+        <animate attributeName="baseFrequency" values=".004 .07;.0046 .064;.0038 .074;.004 .07" dur="9s" repeatCount="indefinite"/>
+      </feTurbulence>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="26" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+    <filter id="nearBlur" x="-5%" y="-5%" width="110%" height="110%"><feGaussianBlur stdDeviation=".6"/></filter>
+    <filter id="soft20" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="20"/></filter>
+    <linearGradient id="farHaze" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#8d8e8d" stop-opacity="0"/>
+      <stop offset="1" stop-color="#8d8e8d" stop-opacity=".35"/>
+    </linearGradient>
+    <linearGradient id="flankLit" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#8a5c38"/>
+      <stop offset="1" stop-color="#2c2e34"/>
+    </linearGradient>
+    <linearGradient id="windowCool" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#dfe8f2"/>
+      <stop offset="1" stop-color="#9fb0c4"/>
+    </linearGradient>
+    <linearGradient id="windowPale" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fffbe8"/>
+      <stop offset="1" stop-color="#f0dca8"/>
+    </linearGradient>
+    <!-- grain lives in the mid-tones: a ramp keeps it out of the dark sky -->
+    <linearGradient id="grainRamp" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fff" stop-opacity=".3"/>
+      <stop offset=".45" stop-color="#fff" stop-opacity=".9"/>
+      <stop offset="1" stop-color="#fff" stop-opacity=".9"/>
+    </linearGradient>
+    <linearGradient id="ashRamp" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fff"/>
+      <stop offset=".72" stop-color="#fff"/>
+      <stop offset=".78" stop-color="#fff" stop-opacity="0"/>
+    </linearGradient>
+    <mask id="ashMask" maskUnits="userSpaceOnUse" x="0" y="0" width="1536" height="768"><rect width="1536" height="768" fill="url(#ashRamp)"/></mask>
+    <mask id="grainMask" maskUnits="userSpaceOnUse" x="0" y="0" width="1536" height="768"><rect width="1536" height="768" fill="url(#grainRamp)"/></mask>
+    <linearGradient id="sideVignette" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#0b0a10" stop-opacity=".45"/>
+      <stop offset=".14" stop-color="#0b0a10" stop-opacity="0"/>
+      <stop offset=".86" stop-color="#0b0a10" stop-opacity="0"/>
+      <stop offset="1" stop-color="#0b0a10" stop-opacity=".45"/>
+    </linearGradient>
+    <filter id="bloom" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="11" result="b"/>
+      <feColorMatrix in="b" values="1.2 0 0 0 0  0 1 0 0 0  0 0 .8 0 0  0 0 0 .18 0"/>
+    </filter>
+    <filter id="grain" x="0" y="0" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency=".8" numOctaves="2" seed="2" stitchTiles="stitch"/>
+      <feColorMatrix values="0 0 0 0 .6  0 0 0 0 .58  0 0 0 0 .52  0 0 0 .22 0"/>
+    </filter>
+    <filter id="strokes" x="0" y="0" width="100%" height="100%">
+      <feTurbulence type="turbulence" baseFrequency=".004 .03" numOctaves="2" seed="9" result="n"/>
+      <feColorMatrix in="n" values="0 0 0 0 .75  0 0 0 0 .75  0 0 0 0 .74  0 0 0 .2 0"/>
+    </filter>
+
+    <!-- ---------- pieces ---------- -->
+    <!-- A detonation: a hot core, a halo, and the long thin rays a bright point
+         throws across a wet lens. -->
+    <g id="flareStar">
+      <circle r="26" fill="url(#flare)"/>
+      <polygon points="0,-24 2,-4 0,0 -2,-4" fill="#ffffff" opacity=".55"/>
+      <polygon points="0,24 2,4 0,0 -2,4" fill="#ffffff" opacity=".55"/>
+      <polygon points="-70,0 -4,1.6 0,0 -4,-1.6" fill="#ffffff" opacity=".6"/>
+      <polygon points="70,0 4,1.6 0,0 4,-1.6" fill="#ffffff" opacity=".6"/>
+      <circle r="3.2" fill="#ffffff"/>
+    </g>
+    <g id="lampGlow"><circle r="18" fill="url(#lamp)"/><circle r="2.6" fill="#fff0cc"/></g>
+
+    <!-- A Grimedes spire: a tapering tower of three faces, ribbed like a
+         cathedral, with a lit spine of tall windows on the face that catches
+         the crash light, collar ledges where the sections join, buttress fins
+         at the foot and a needle mast with a beacon at the tip.
+         Base at (0,0), apex at (0,-560), mast to -640. -->
+    <g id="spire">
+      <polygon points="-88,0 -70,-96 -70,0" fill="#1a1b1f"/>
+      <polygon points="88,0 70,-96 70,0" fill="#0c0d0f"/>
+      <polygon points="-70,0 -24,-380 -10,-500 0,-560 -4,-500 -10,-380 -30,0" fill="url(#faceLeft)"/>
+      <polygon points="-30,0 -10,-380 -4,-500 0,-560 4,-500 10,-380 30,0" fill="url(#faceLit)"/>
+      <polygon points="30,0 10,-380 4,-500 0,-560 10,-500 24,-380 70,0" fill="url(#faceRight)"/>
+      <g stroke="#43454b" stroke-width="1.4" opacity=".7">
+        <line x1="-56" y1="0" x2="-19" y2="-380"/><line x1="-42" y1="0" x2="-14" y2="-380"/>
+        <line x1="42" y1="0" x2="14" y2="-380"/><line x1="56" y1="0" x2="19" y2="-380"/>
+        <line x1="-14" y1="0" x2="-5" y2="-380"/><line x1="14" y1="0" x2="5" y2="-380"/>
+      </g>
+      <g fill="#3d3f45">
+        <polygon points="-52,-120 52,-120 47,-134 -47,-134"/>
+        <polygon points="-38,-250 38,-250 34,-262 -34,-262"/>
+        <polygon points="-25,-380 25,-380 22,-390 -22,-390"/>
+        <polygon points="-11,-500 11,-500 9,-508 -9,-508"/>
+      </g>
+      <g stroke="#6a6c72" stroke-width="1" opacity=".8">
+        <line x1="-52" y1="-120" x2="52" y2="-120"/><line x1="-38" y1="-250" x2="38" y2="-250"/><line x1="-25" y1="-380" x2="25" y2="-380"/>
+      </g>
+      <g fill="url(#window)" filter="url(#windowGlow)">
+        <polygon points="-5,-58 5,-58 4.4,-92 -4.4,-92"/>
+        <polygon points="-4.5,-130 4.5,-130 3.8,-170 -3.8,-170" opacity=".92"/>
+        <polygon points="-4,-204 4,-204 3.5,-230 -3.5,-230"/>
+        <polygon points="-3.5,-270 3.5,-270 3,-300 -3,-300" opacity=".85"/>
+        <polygon points="-3,-338 3,-338 2.6,-360 -2.6,-360"/>
+        <polygon points="-2.5,-414 2.5,-414 2,-440 -2,-440" opacity=".9"/>
+        <polygon points="-1.5,-506 1.5,-506 1.2,-520 -1.2,-520"/>
+        <rect x="-15" y="-60" width="3" height="10" opacity=".6"/><rect x="12" y="-40" width="2.5" height="9" opacity=".5"/>
+        <rect x="-11" y="-200" width="2.5" height="10" opacity=".55"/><rect x="9" y="-280" width="2" height="8" opacity=".5"/>
+      </g>
+      <g stroke="#1d1e21" stroke-width="1" opacity=".8">
+        <line x1="-5" y1="-75" x2="5" y2="-75"/><line x1="-4.5" y1="-150" x2="4.5" y2="-150"/><line x1="-3.5" y1="-285" x2="3.5" y2="-285"/><line x1="-2.5" y1="-427" x2="2.5" y2="-427"/>
+      </g>
+      <g fill="#0b0c0e" opacity=".55">
+        <polygon points="-52,-120 52,-120 48,-112 -48,-112"/><polygon points="-38,-250 38,-250 35,-243 -35,-243"/><polygon points="-25,-380 25,-380 23,-374 -23,-374"/>
+      </g>
+      <line x1="0" y1="-560" x2="0" y2="-640" stroke="#1d1e21" stroke-width="2.6"/>
+      <line x1="-9" y1="-600" x2="9" y2="-600" stroke="#1d1e21" stroke-width="2"/>
+      <line x1="-6" y1="-620" x2="6" y2="-620" stroke="#1d1e21" stroke-width="2"/>
+    </g>
+
+    <!-- The second pattern of spire: the same body, a different window spine and a wider collar rhythm -->
+    <g id="spireB">
+      <polygon points="-88,0 -70,-96 -70,0" fill="#1a1b1f"/>
+      <polygon points="88,0 70,-96 70,0" fill="#0c0d0f"/>
+      <polygon points="-70,0 -24,-380 -10,-500 0,-560 -4,-500 -10,-380 -30,0" fill="url(#faceLeft)"/>
+      <polygon points="-30,0 -10,-380 -4,-500 0,-560 4,-500 10,-380 30,0" fill="url(#faceLit)"/>
+      <polygon points="30,0 10,-380 4,-500 0,-560 10,-500 24,-380 70,0" fill="url(#faceRight)"/>
+      <g stroke="#43454b" stroke-width="1.4" opacity=".7">
+        <line x1="-50" y1="0" x2="-17" y2="-380"/><line x1="50" y1="0" x2="17" y2="-380"/><line x1="-22" y1="0" x2="-7" y2="-380"/><line x1="22" y1="0" x2="7" y2="-380"/>
+      </g>
+      <g fill="#3d3f45">
+        <polygon points="-58,-80 58,-80 54,-92 -54,-92"/>
+        <polygon points="-44,-200 44,-200 40,-212 -40,-212"/>
+        <polygon points="-30,-330 30,-330 27,-340 -27,-340"/>
+        <polygon points="-14,-460 14,-460 12,-468 -12,-468"/>
+      </g>
+      <g stroke="#6a6c72" stroke-width="1" opacity=".8">
+        <line x1="-58" y1="-80" x2="58" y2="-80"/><line x1="-44" y1="-200" x2="44" y2="-200"/><line x1="-30" y1="-330" x2="30" y2="-330"/>
+      </g>
+      <g fill="url(#window)" filter="url(#windowGlow)">
+        <polygon points="-10,-44 -5,-44 -5.4,-60 -10.2,-60"/><polygon points="4,-44 9,-44 8.8,-60 4.4,-60"/>
+        <polygon points="-9,-122 -4,-122 -4.4,-140 -9.2,-140" opacity=".9"/><polygon points="3,-122 8,-122 7.6,-140 3.4,-140" opacity=".7"/>
+        <polygon points="-7,-230 -3,-230 -3.3,-260 -6.8,-260"/><polygon points="2,-230 6,-230 5.6,-260 2.3,-260" opacity=".85"/>
+        <polygon points="-5,-378 -1.5,-378 -1.7,-400 -4.8,-400"/><polygon points="1,-378 4.5,-378 4.2,-400 1.2,-400" opacity=".8"/>
+        <polygon points="-2,-482 2,-482 1.7,-500 -1.7,-500"/>
+        <rect x="-18" y="-110" width="3" height="9" opacity=".5"/><rect x="14" y="-180" width="2.5" height="8" opacity=".5"/>
+      </g>
+      <g fill="#0b0c0e" opacity=".55">
+        <polygon points="-58,-80 58,-80 54,-72 -54,-72"/><polygon points="-44,-200 44,-200 41,-193 -41,-193"/><polygon points="-30,-330 30,-330 28,-324 -28,-324"/>
+      </g>
+    </g>
+    <g id="mast">
+      <line x1="0" y1="-560" x2="0" y2="-640" stroke="#1d1e21" stroke-width="2.6"/>
+      <line x1="-12" y1="-590" x2="12" y2="-590" stroke="#1d1e21" stroke-width="2"/>
+    </g>
+
+    <!-- A landing deck: a column carrying a wide flat platform, its rail lined
+         with lamps, guy cables down to the ground. Base (0,0), deck at -200. -->
+    <g id="deckTower">
+      <line x1="-58" y1="-198" x2="-30" y2="0" stroke="#26272b" stroke-width="1"/>
+      <line x1="58" y1="-198" x2="30" y2="0" stroke="#26272b" stroke-width="1"/>
+      <polygon points="-9,0 -5,-200 5,-200 9,0" fill="#1c1d20"/>
+      <polygon points="-62,-200 62,-200 50,-184 -50,-184" fill="#141517"/>
+      <ellipse cx="0" cy="-200" rx="62" ry="9" fill="#2f3135"/>
+      <ellipse cx="0" cy="-201" rx="60" ry="7" fill="#3a3c41"/>
+      <g stroke="#4a4c52" stroke-width="1.2">
+        <line x1="-60" y1="-214" x2="60" y2="-214"/>
+        <line x1="-60" y1="-214" x2="-60" y2="-201"/><line x1="-40" y1="-214" x2="-40" y2="-203"/><line x1="-20" y1="-214" x2="-20" y2="-205"/>
+        <line x1="0" y1="-214" x2="0" y2="-206"/><line x1="20" y1="-214" x2="20" y2="-205"/><line x1="40" y1="-214" x2="40" y2="-203"/><line x1="60" y1="-214" x2="60" y2="-201"/>
+      </g>
+      <g fill="#ffb454"><circle cx="-52" cy="-216" r="2.2"/><circle cx="-30" cy="-216" r="2.2"/><circle cx="-8" cy="-216" r="2.2"/><circle cx="14" cy="-216" r="2.2"/><circle cx="36" cy="-216" r="2.2"/><circle cx="56" cy="-216" r="2.2"/></g>
+      <ellipse cx="0" cy="-206" rx="56" ry="5" fill="#ffb454" opacity=".18"/>
+    </g>
+  </defs>
+</svg>
+<svg class="layer" id="layer-water" viewBox="0 0 1536 768" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+  <!-- the crash light on the river: the same glow that lights the city, under the surface -->
+  <path d="M728 612 L796 612 L1080 768 L440 768 Z" fill="url(#horizon)" opacity=".9"/>
+  <!-- the water: a channel running straight out of the picture to the light -->
+  <g filter="url(#ripple)">
+    <path d="M728 612 L796 612 L1080 768 L440 768 Z" fill="url(#water)"/>
+  </g>
+  <!-- the crash light lying on the water as a long reflection, broken harder than the surface tone -->
+  <g filter="url(#rippleLive)">
+    <path d="M730 612 L768 612 L960 768 L500 768 Z" fill="url(#waterLight)" opacity=".9" filter="url(#softer)"/>
+    <!-- sheens: the sky lying on the surface in soft bands that widen toward the viewer -->
+    <g fill="#e9e7df" filter="url(#soft)">
+      <ellipse cx="760" cy="640" rx="50" ry="2.5" opacity=".35"/><ellipse cx="750" cy="660" rx="70" ry="3" opacity=".3"/><ellipse cx="720" cy="700" rx="110" ry="4" opacity=".22"/><ellipse cx="820" cy="722" rx="120" ry="4" opacity=".17"/><ellipse cx="640" cy="748" rx="170" ry="5" opacity=".13"/><ellipse cx="900" cy="756" rx="150" ry="5" opacity=".12"/>
+    </g>
+    <!-- the reflected tower lamps, orange threads in the water -->
+    <g stroke="#ff9a3c" stroke-width="2" opacity=".35" stroke-linecap="round">
+      <line x1="700" y1="640" x2="690" y2="700"/><line x1="850" y1="650" x2="866" y2="720"/><line x1="612" y1="690" x2="600" y2="740"/>
+    </g>
+  </g>
+  <!-- the quays and towers in the water: soft dark verticals along both banks -->
+  <g opacity=".25" filter="url(#soft)">
+    <polygon points="600,700 640,700 610,768 540,768" fill="#1c1d20"/>
+    <polygon points="700,650 720,650 700,720 670,720" fill="#1c1d20"/>
+    <polygon points="880,700 940,700 1000,768 900,768" fill="#1c1d20"/>
+    <polygon points="820,650 840,650 870,720 840,720" fill="#1c1d20"/>
+  </g>
+</svg>
+<svg class="layer" id="layer-sky" viewBox="0 0 1536 768" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" role="img" aria-labelledby="scene-title scene-desc">
+  <title id="scene-title">The Battle of Grimedes</title>
+  <desc id="scene-desc">A warship wrapped in fire plunges toward a night city of tall dark towers on a river, under a sky crossed with weapon fire.</desc>
+  <!-- ===================== SKY ===================== -->
+  <rect width="1536" height="612" fill="url(#sky)"/>
+  <rect width="1536" height="612" filter="url(#strokes)" opacity=".55"/>
+
+  <!-- The cloud sheet: banks and the long swirled strokes the painter dragged through them -->
+  <g filter="url(#cloud)" opacity=".95">
+    <g>
+      <ellipse cx="260" cy="120" rx="330" ry="90" fill="url(#cloudA)"/>
+      <ellipse cx="640" cy="60" rx="380" ry="80" fill="url(#cloudA)"/>
+      <ellipse cx="520" cy="250" rx="420" ry="110" fill="url(#cloudB)"/>
+      <ellipse cx="1180" cy="330" rx="360" ry="120" fill="url(#cloudA)"/>
+      <ellipse cx="1400" cy="120" rx="260" ry="90" fill="url(#cloudA)"/>
+      <ellipse cx="900" cy="430" rx="520" ry="90" fill="url(#cloudB)"/>
+      <ellipse cx="200" cy="420" rx="300" ry="80" fill="url(#cloudB)"/>
+      <g>
+        <ellipse cx="400" cy="30" rx="300" ry="50" fill="url(#cloudB)" opacity=".6"/>
+        <ellipse cx="1000" cy="20" rx="340" ry="46" fill="url(#cloudB)" opacity=".5"/>
+        <ellipse cx="760" cy="350" rx="360" ry="60" fill="url(#cloudA)" opacity=".7"/>
+        <ellipse cx="1500" cy="470" rx="240" ry="50" fill="url(#cloudB)" opacity=".5"/>
+      </g>
+      <g fill="none" stroke="#a8a6a0" stroke-linecap="round" opacity=".22">
+        <path d="M80 200 C 220 120, 380 260, 520 180 S 760 120, 880 200" stroke-width="16"/>
+        <path d="M1536 260 C 1400 200, 1280 330, 1150 280 S 960 240, 900 330" stroke-width="14"/>
+        <path d="M60 330 C 200 300, 300 380, 460 340" stroke-width="10"/>
+        <path d="M1100 430 C 1240 400, 1360 470, 1520 420" stroke-width="12"/>
+        <path d="M400 60 C 520 20, 640 90, 760 50" stroke-width="9"/>
+      </g>
+      <!-- Stroke masses: the flat, dragged marks of a loaded brush, laid over the cloud sheet -->
+      <g fill="none" stroke-linecap="round" opacity=".12" stroke="#c7c5be">
+        <path d="M40 150 C 160 110, 250 170, 380 130" stroke-width="22"/>
+        <path d="M120 230 C 300 190, 420 250, 600 210" stroke-width="18"/>
+        <path d="M300 330 C 420 300, 520 340, 660 310" stroke-width="14"/>
+        <path d="M1240 300 C 1340 260, 1440 300, 1536 270" stroke-width="20"/>
+        <path d="M1080 420 C 1200 390, 1320 430, 1460 400" stroke-width="16"/>
+        <path d="M560 420 C 660 400, 760 440, 900 410" stroke-width="12"/>
+        <path d="M700 40 C 800 10, 900 60, 1000 30" stroke-width="16"/>
+        <path d="M0 60 C 100 30, 200 80, 320 50" stroke-width="18"/>
+      </g>
+      <g fill="none" stroke-linecap="round" opacity=".18" stroke="#26272b">
+        <path d="M60 100 C 200 60, 300 120, 440 90" stroke-width="16"/>
+        <path d="M200 280 C 340 250, 460 300, 620 270" stroke-width="12"/>
+        <path d="M1180 360 C 1300 330, 1420 370, 1536 340" stroke-width="14"/>
+        <path d="M1300 200 C 1400 180, 1480 220, 1536 200" stroke-width="12"/>
+      </g>
+
+    </g>
+  </g>
+
+  <!-- The light of the crash, spilling from the ship's path onto the river -->
+  <rect width="1536" height="768" fill="url(#horizon)" opacity=".95"/>
+  <!-- ===================== THE FAR CITY ===================== -->
+  <!-- The far city: setback blocks, domes, stacks and lesser spires, each with a
+       lit side toward the crash, then the haze over all of it -->
+  <g filter="url(#paintEdge)">
+    <g fill="#606268">
+      <rect x="20" y="572" width="54" height="34"/><rect x="30" y="556" width="34" height="16"/><rect x="40" y="546" width="14" height="10"/>
+      <rect x="150" y="584" width="60" height="24"/><rect x="164" y="568" width="32" height="16"/><polygon points="164,568 180,558 196,568"/>
+      <rect x="230" y="590" width="40" height="18"/><rect x="238" y="578" width="24" height="12"/><rect x="246" y="570" width="8" height="8"/>
+      <rect x="360" y="570" width="50" height="36"/><rect x="372" y="552" width="26" height="18"/><rect x="380" y="540" width="10" height="12"/>
+      <rect x="470" y="586" width="46" height="20"/><rect x="480" y="572" width="26" height="14"/><rect x="492" y="556" width="2" height="16"/>
+      <rect x="560" y="574" width="56" height="30"/><rect x="574" y="558" width="28" height="16"/><rect x="584" y="548" width="8" height="10"/>
+      <rect x="640" y="590" width="40" height="16"/><rect x="650" y="578" width="20" height="12"/><polygon points="650,578 660,570 670,578"/>
+      <rect x="850" y="580" width="44" height="26" fill="#55575c"/><rect x="860" y="568" width="24" height="12" fill="#55575c"/><rect x="866" y="562" width="12" height="6" fill="#55575c"/>
+      <rect x="960" y="574" width="56" height="30" fill="#55575c"/><rect x="974" y="558" width="28" height="16" fill="#55575c"/><rect x="984" y="548" width="8" height="10" fill="#55575c"/>
+      <rect x="1120" y="580" width="48" height="26" fill="#55575c"/><rect x="1130" y="566" width="28" height="14" fill="#55575c"/><rect x="1140" y="556" width="8" height="10" fill="#55575c"/>
+      <rect x="1200" y="592" width="40" height="14"/><rect x="1208" y="580" width="24" height="12"/><rect x="1219" y="566" width="2" height="14"/>
+      <rect x="1310" y="576" width="54" height="30"/><rect x="1322" y="560" width="30" height="16"/><rect x="1332" y="550" width="10" height="10"/>
+      <rect x="1400" y="582" width="44" height="24"/><rect x="1410" y="570" width="24" height="12"/><polygon points="1410,570 1422,562 1434,570"/>
+      <rect x="1470" y="578" width="60" height="28"/><rect x="1484" y="562" width="32" height="16"/>
+    </g>
+    <g fill="#7a7c80">
+      <rect x="66" y="572" width="8" height="34"/><rect x="202" y="578" width="8" height="30"/><rect x="402" y="570" width="8" height="36"/><rect x="608" y="574" width="8" height="30"/><rect x="674" y="586" width="6" height="20"/>
+      <rect x="850" y="586" width="6" height="20"/><rect x="960" y="574" width="6" height="30"/><rect x="1120" y="580" width="6" height="26"/><rect x="1310" y="576" width="6" height="30"/><rect x="1470" y="578" width="6" height="28"/>
+    </g>
+    <g fill="#55575b">
+      <path d="M100 606 L100 592 A 16 16 0 0 1 132 592 L132 606 Z"/>
+      <path d="M700 606 L700 596 A 12 12 0 0 1 724 596 L724 606 Z"/>
+      <path d="M1250 606 L1250 592 A 14 14 0 0 1 1278 592 L1278 606 Z"/>
+      <path d="M520 606 L520 598 A 10 10 0 0 1 540 598 L540 606 Z"/>
+    </g>
+    <g fill="#4f5155">
+      <rect x="290" y="548" width="6" height="58"/><rect x="304" y="556" width="5" height="50"/><rect x="760" y="560" width="5" height="46"/><rect x="1040" y="552" width="6" height="54"/><rect x="1050" y="562" width="5" height="44"/><rect x="1440" y="558" width="5" height="48"/>
+    </g>
+    <g opacity=".55">
+      <use href="#spire" transform="translate(318 604) scale(.14 .24)"/>
+      <use href="#spireB" transform="translate(930 596) scale(.16 .3)"/><use href="#mast" transform="translate(930 596) scale(.16 .3)"/>
+      <use href="#spire" transform="translate(1078 596) scale(-.15 .27)"/>
+      <use href="#spire" transform="translate(1252 600) scale(-.14 .23)"/>
+      <use href="#spire" transform="translate(120 606) scale(.12 .2)"/>
+      <use href="#spire" transform="translate(800 604) scale(.11 .18)"/>
+    </g>
+    <g fill="#d9cbb0" opacity=".4">
+      <circle cx="40" cy="586" r=".9"/><circle cx="58" cy="594" r=".9"/><circle cx="172" cy="590" r=".9"/><circle cx="196" cy="598" r=".9"/><circle cx="250" cy="592" r=".9"/><circle cx="380" cy="584" r=".9"/><circle cx="396" cy="596" r=".9"/>
+      <circle cx="486" cy="590" r=".9"/><circle cx="580" cy="586" r=".9"/><circle cx="598" cy="596" r=".9"/><circle cx="660" cy="594" r=".9"/><circle cx="866" cy="594" r=".9"/><circle cx="980" cy="586" r=".9"/><circle cx="998" cy="596" r=".9"/>
+      <circle cx="1136" cy="592" r=".9"/><circle cx="1214" cy="596" r=".9"/><circle cx="1330" cy="588" r=".9"/><circle cx="1348" cy="598" r=".9"/><circle cx="1416" cy="594" r=".9"/><circle cx="1490" cy="590" r=".9"/><circle cx="1510" cy="598" r=".9"/>
+    </g>
+    <g fill="#8e9094" opacity=".9">
+      <rect x="28" y="578" width="3" height="3"/><rect x="36" y="578" width="3" height="3"/><rect x="44" y="578" width="3" height="3"/><rect x="52" y="578" width="3" height="3"/><rect x="60" y="578" width="3" height="3"/>
+      <rect x="28" y="588" width="3" height="3"/><rect x="44" y="588" width="3" height="3"/><rect x="60" y="588" width="3" height="3"/><rect x="36" y="598" width="3" height="3"/><rect x="52" y="598" width="3" height="3"/>
+      <rect x="368" y="576" width="3" height="3"/><rect x="376" y="576" width="3" height="3"/><rect x="392" y="576" width="3" height="3"/><rect x="400" y="576" width="3" height="3"/><rect x="368" y="588" width="3" height="3"/><rect x="384" y="588" width="3" height="3"/><rect x="400" y="588" width="3" height="3"/><rect x="376" y="598" width="3" height="3"/><rect x="392" y="598" width="3" height="3"/>
+      <rect x="568" y="580" width="3" height="3"/><rect x="584" y="580" width="3" height="3"/><rect x="600" y="580" width="3" height="3"/><rect x="576" y="590" width="3" height="3"/><rect x="592" y="590" width="3" height="3"/><rect x="608" y="590" width="3" height="3"/><rect x="568" y="598" width="3" height="3"/><rect x="600" y="598" width="3" height="3"/>
+      <rect x="968" y="580" width="3" height="3"/><rect x="984" y="580" width="3" height="3"/><rect x="1000" y="580" width="3" height="3"/><rect x="976" y="590" width="3" height="3"/><rect x="992" y="590" width="3" height="3"/><rect x="1008" y="590" width="3" height="3"/><rect x="968" y="598" width="3" height="3"/><rect x="1000" y="598" width="3" height="3"/>
+      <rect x="1318" y="582" width="3" height="3"/><rect x="1334" y="582" width="3" height="3"/><rect x="1350" y="582" width="3" height="3"/><rect x="1326" y="592" width="3" height="3"/><rect x="1342" y="592" width="3" height="3"/><rect x="1318" y="600" width="3" height="3"/><rect x="1350" y="600" width="3" height="3"/>
+      <rect x="1478" y="584" width="3" height="3"/><rect x="1494" y="584" width="3" height="3"/><rect x="1510" y="584" width="3" height="3"/><rect x="1486" y="594" width="3" height="3"/><rect x="1502" y="594" width="3" height="3"/><rect x="1518" y="594" width="3" height="3"/>
+    </g>
+    <g fill="#ff6a5a"><circle cx="293" cy="546" r="1"><animate attributeName="opacity" values="1;.2;1" dur="2s" repeatCount="indefinite"/></circle><circle cx="1043" cy="550" r="1"><animate attributeName="opacity" values="1;.2;1" dur="2.6s" begin="1s" repeatCount="indefinite"/></circle></g>
+  </g>
+  <rect y="540" width="1536" height="70" fill="url(#farHaze)"/>
+  <rect y="520" width="1536" height="110" fill="url(#haze)"/>
+  <!-- ===================== THE RIVER AND ITS BANKS ===================== -->
+  <!-- ground on both banks -->
+  <path d="M0 596 H1536 V768 H0 Z M728 612 L796 612 L1080 768 L440 768 Z" fill-rule="evenodd" fill="url(#bank)"/>
+  <path d="M0 596 H1536 V768 H0 Z M728 612 L796 612 L1080 768 L440 768 Z" fill-rule="evenodd" filter="url(#strokes)" opacity=".5"/>
+  <!-- embankment walls along the water -->
+  <!-- the near water is darker than the far: the light is at the mouth -->
+  <path d="M728 612 L796 612 L1080 768 L440 768 Z" fill="url(#nearWater)"/>
+  <!-- embankment walls: shadowed stone below the quay line, a coping strip along the top -->
+  <path d="M728 612 L440 768 L466 768 L744 612 Z" fill="#141517"/>
+  <path d="M796 612 L1080 768 L1054 768 L780 612 Z" fill="#141517"/>
+  <line x1="744" y1="612" x2="466" y2="768" stroke="#4a4a46" stroke-width="1.2" opacity=".45"/>
+  <line x1="780" y1="612" x2="1054" y2="768" stroke="#4a4a46" stroke-width="1.2" opacity=".45"/>
+  <!-- the banks are not one straight line: a slipway on the left, a projecting pier on the right -->
+  <polygon points="588,700 624,700 606,730 556,730" fill="#5a5a58" opacity=".85"/>
+  <polygon points="588,700 624,700 622,704 590,704" fill="#7a7975"/>
+  <polygon points="936,690 1000,690 1024,712 962,712" fill="#26272b"/>
+  <polygon points="936,690 1000,690 1002,693 938,693" fill="#4a4b4d"/>
+  <line x1="990" y1="690" x2="990" y2="672" stroke="#111214" stroke-width="1.5"/><circle cx="990" cy="671" r="1.6" fill="#ffd28a"/>
+
+  <!-- the far bridge: a light span at the horizon -->
+  <g fill="none" stroke="#1e1f22" stroke-linecap="round">
+    <path d="M690 632 L 840 632" stroke-width="3"/>
+    <path d="M700 632 Q 765 618 830 632" stroke-width="1.5"/>
+    <line x1="720" y1="632" x2="720" y2="640" stroke-width="2"/><line x1="810" y1="632" x2="810" y2="640" stroke-width="2"/>
+  </g>
+  <!-- ===================== THE MID TOWERS ===================== -->
+  <g>
+    <use href="#spire" transform="translate(440 662) scale(.42 .48)"/>
+    <use href="#spireB" transform="translate(555 668) scale(-.36 .38)"/><use href="#mast" transform="translate(555 668) scale(-.36 .38)"/>
+    <use href="#spire" transform="translate(1000 656) scale(.44 .5)"/>
+    <use href="#spireB" transform="translate(1150 664) scale(-.4 .44)"/><use href="#mast" transform="translate(1150 664) scale(-.4 .44)"/>
+    <use href="#spire" transform="translate(846 700) scale(.22 .24)"/>
+        <use href="#spireB" transform="translate(300 672) scale(.3 .3)"/><use href="#mast" transform="translate(300 672) scale(.3 .3)"/>
+    <!-- the fire side of the spires nearest the ship -->
+    <g fill="#6b4a32" opacity=".45">
+      <polygon points="969,656 982,656 1001,380 998,378"/>
+      <polygon points="1122,664 1134,664 1151,422 1148,420"/>
+      <polygon points="1078,668 1086,668 1097,470 1095,468"/>
+    </g>
+    <!-- the terminator: a soft band where each lit face turns into shadow -->
+    <g fill="#4a3a30" opacity=".6">
+      <polygon points="982,656 988,656 1002,384 1000,382"/><polygon points="1134,664 1140,664 1152,426 1150,424"/><polygon points="1086,668 1090,668 1098,472 1097,470"/>
+    </g>
+    <use href="#deckTower" transform="translate(395 690) scale(.75 .75)"/>
+    <use href="#deckTower" transform="translate(1290 700) scale(1 1)"/>
+    <ellipse cx="1290" cy="499" rx="26" ry="3.5" fill="none" stroke="#5a5c62" stroke-width="1"/>
+    <g transform="translate(1276 492)">
+      <path d="M0 2 L 10 -2 L 18 -3 L 28 -2 L 36 2 L 28 4 L 18 5 L 10 4 Z" fill="#33353a"/>
+      <path d="M16 -3 L 18 -8 L 21 -3 Z" fill="#26272b"/>
+      <rect x="16" y="0" width="4" height="2" fill="#ffd18a"/>
+    </g>
+  </g>
+  <!-- ground fog lying on the far bank -->
+  <rect x="0" y="576" width="1536" height="48" fill="url(#groundFog)"/>
+  <!-- ===================== THE QUAYS ===================== -->
+  <g>
+    <!-- left quay: warehouses stepping down to the water -->
+    <rect x="300" y="640" width="180" height="70" fill="#202124"/>
+    <!-- sawtooth roof -->
+    <polygon points="300,640 318,626 336,640 354,626 372,640 390,626 408,640 426,626 444,640 462,626 480,640" fill="#2c2d31"/>
+    <polygon points="318,626 336,640 336,644 318,630" fill="#4a4c52" opacity=".7"/><polygon points="354,626 372,640 372,644 354,630" fill="#4a4c52" opacity=".7"/><polygon points="390,626 408,640 408,644 390,630" fill="#4a4c52" opacity=".7"/><polygon points="426,626 444,640 444,644 426,630" fill="#4a4c52" opacity=".7"/>
+    <!-- loading door, open and lit -->
+    <rect x="392" y="686" width="16" height="24" fill="#ffd28a" opacity=".8"/><rect x="392" y="686" width="16" height="4" fill="#3a3b3f"/>
+    <!-- drain pipes -->
+    <g stroke="#111214" stroke-width="2"><line x1="312" y1="640" x2="312" y2="710"/><line x1="470" y1="640" x2="470" y2="710"/></g>
+    <rect x="470" y="660" width="120" height="50" fill="#1b1c1f"/>
+    <rect x="470" y="660" width="120" height="3" fill="#33343a"/>
+    <!-- a water tank on the roof -->
+    <rect x="548" y="644" width="18" height="16" fill="#232428"/><ellipse cx="557" cy="644" rx="9" ry="2.5" fill="#34363b"/><g stroke="#111214" stroke-width="1.2"><line x1="550" y1="660" x2="550" y2="664"/><line x1="564" y1="660" x2="564" y2="664"/></g>
+    <rect x="200" y="690" width="200" height="78" fill="#191a1d"/>
+    <rect x="200" y="690" width="200" height="4" fill="#33343a"/>
+    <!-- a rooftop shed and vent stacks -->
+    <rect x="230" y="678" width="30" height="12" fill="#232428"/><rect x="300" y="682" width="4" height="8" fill="#232428"/><rect x="310" y="682" width="4" height="8" fill="#232428"/>
+    <!-- a lit doorway at the foot -->
+    <rect x="330" y="742" width="14" height="26" fill="#ffd28a" opacity=".7"/>
+    <!-- a stack -->
+    <rect x="520" y="620" width="10" height="46" fill="#1b1c1f"/>
+    <!-- right quay -->
+    <rect x="1060" y="632" width="170" height="78" fill="#202124"/>
+    <rect x="1060" y="632" width="170" height="4" fill="#3a3b3f"/>
+    <!-- a stepped parapet and a tank -->
+    <rect x="1100" y="620" width="60" height="12" fill="#26272b"/><rect x="1100" y="620" width="60" height="3" fill="#3f4147"/>
+    <rect x="1190" y="618" width="20" height="14" fill="#232428"/><ellipse cx="1200" cy="618" rx="10" ry="2.5" fill="#34363b"/>
+    <!-- loading doors -->
+    <rect x="1080" y="688" width="14" height="22" fill="#ffd28a" opacity=".75"/><rect x="1180" y="688" width="14" height="22" fill="#ffd28a" opacity=".5"/>
+    <g stroke="#111214" stroke-width="2"><line x1="1070" y1="632" x2="1070" y2="710"/><line x1="1150" y1="632" x2="1150" y2="710"/></g>
+    <rect x="1230" y="660" width="90" height="50" fill="#1b1c1f"/>
+    <rect x="1100" y="700" width="230" height="68" fill="#191a1d"/>
+    <rect x="1100" y="700" width="230" height="4" fill="#33343a"/>
+    <polygon points="1100,700 1130,684 1160,700" fill="#26272b"/><polygon points="1160,700 1190,684 1220,700" fill="#26272b"/><polygon points="1220,700 1250,684 1280,700" fill="#26272b"/>
+    <rect x="1200" y="744" width="16" height="24" fill="#ffd28a" opacity=".7"/>
+    <rect x="990" y="700" width="70" height="68" fill="#1b1c1f"/>
+    <!-- pipes and gantries along the right quay -->
+    <path d="M900 742 Q 1000 700 1100 700 L 1300 690" fill="none" stroke="#16171a" stroke-width="7" stroke-linecap="round"/>
+    <path d="M980 655 L 1090 650" fill="none" stroke="#16171a" stroke-width="4" stroke-linecap="round"/>
+    <g stroke="#16171a" stroke-width="2"><line x1="1010" y1="648" x2="1010" y2="700"/><line x1="1060" y1="646" x2="1060" y2="700"/></g>
+  </g>
+  <!-- the blaze throws the right-hand spires' shadows down the quay, away from it -->
+  <g fill="#000" opacity=".3" filter="url(#soft)">
+    <polygon points="986,656 1014,656 900,720 860,716"/>
+    <polygon points="1136,664 1164,664 1040,730 1000,726"/>
+    <polygon points="1276,700 1304,700 1180,760 1140,756"/>
+  </g>
+  <!-- the warehouses sit in their own shadow -->
+  <g fill="#000" opacity=".35" filter="url(#soft)">
+    <ellipse cx="390" cy="712" rx="110" ry="8"/><ellipse cx="1145" cy="712" rx="100" ry="8"/><ellipse cx="300" cy="768" rx="120" ry="10"/><ellipse cx="1215" cy="768" rx="130" ry="10"/>
+  </g>
+  <!-- panel joints on the facades -->
+  <g stroke="#000" stroke-width="1" opacity=".15">
+    <line x1="345" y1="644" x2="345" y2="710"/><line x1="390" y1="644" x2="390" y2="710"/><line x1="435" y1="644" x2="435" y2="710"/>
+    <line x1="250" y1="694" x2="250" y2="768"/><line x1="300" y1="694" x2="300" y2="768"/><line x1="350" y1="694" x2="350" y2="768"/>
+    <line x1="1102" y1="636" x2="1102" y2="710"/><line x1="1145" y1="636" x2="1145" y2="710"/><line x1="1188" y1="636" x2="1188" y2="710"/>
+    <line x1="1160" y1="704" x2="1160" y2="768"/><line x1="1220" y1="704" x2="1220" y2="768"/><line x1="1280" y1="704" x2="1280" y2="768"/>
+  </g>
+  <!-- a gantry crane over the left quay -->
+  <g stroke="#141517" stroke-width="3" fill="none" stroke-linecap="round">
+    <line x1="470" y1="640" x2="470" y2="700"/><line x1="440" y1="640" x2="560" y2="640"/><line x1="440" y1="640" x2="452" y2="700"/>
+    <line x1="470" y1="640" x2="500" y2="612"/><line x1="500" y1="612" x2="570" y2="612" stroke-width="2.5"/><line x1="520" y1="612" x2="520" y2="640" stroke-width="1"/>
+  </g>
+  <circle cx="570" cy="612" r="1.8" fill="#ff5a4a"><animate attributeName="opacity" values="1;.2;1" dur="1.6s" repeatCount="indefinite"/></circle>
+  <!-- containers stacked on the right quay -->
+  <g>
+    <rect x="1240" y="690" width="26" height="12" fill="#2a2b2f"/><rect x="1268" y="690" width="26" height="12" fill="#232428"/><rect x="1254" y="678" width="26" height="12" fill="#2f3034"/>
+    <rect x="960" y="686" width="24" height="12" fill="#232428"/><rect x="986" y="686" width="24" height="12" fill="#2a2b2f"/>
+  </g>
+  <!-- a barge moored under the right embankment, its cabin lit -->
+  <g>
+    <ellipse cx="918" cy="719" rx="42" ry="4" fill="#000" opacity=".3"/>
+    <polygon points="874,703 960,706 956,718 884,714" fill="#17181b"/>
+    <polygon points="874,703 960,706 960,702 878,699" fill="#2e2f33"/>
+    <rect x="928" y="691" width="18" height="8" fill="#26272b"/><rect x="928" y="691" width="18" height="1.5" fill="#3f4147"/><rect x="932" y="693" width="4" height="3" fill="#ffd28a"/><rect x="939" y="693" width="4" height="3" fill="#ffd28a"/>
+    <line x1="878" y1="699" x2="960" y2="702" stroke="#4a4b50" stroke-width="1"/>
+  </g>
+  <!-- a rail line along the left quay, sleepers catching the light -->
+  <g stroke="#6a6a66" stroke-width="1" opacity=".55">
+    <line x1="200" y1="686" x2="470" y2="704"/><line x1="200" y1="690" x2="470" y2="708"/>
+  </g>
+
+  <!-- lamp posts on the quays, each with its pool on the ground -->
+  <g>
+    <g stroke="#111214" stroke-width="1.5"><line x1="250" y1="690" x2="250" y2="668"/><line x1="440" y1="712" x2="440" y2="690"/><line x1="1250" y1="700" x2="1250" y2="678"/><line x1="1040" y1="700" x2="1040" y2="680"/></g>
+    <g fill="#ffd28a">
+      <circle cx="250" cy="667" r="1.6"/><circle cx="440" cy="689" r="1.6"/><circle cx="1250" cy="677" r="1.6"/><circle cx="1040" cy="679" r="1.6"/>
+    </g>
+    <g fill="#ffd28a" opacity=".12">
+      <ellipse cx="250" cy="691" rx="22" ry="4"/><ellipse cx="440" cy="713" rx="22" ry="4"/><ellipse cx="1250" cy="701" rx="22" ry="4"/><ellipse cx="1040" cy="701" rx="22" ry="4"/>
+    </g>
+  </g>
+  <!-- warehouse windows: each quay's rows follow its recession -->
+  <g fill="url(#windowPale)" opacity=".9" transform="matrix(1 0.03 0 1 0 -10)" filter="url(#windowGlow)">
+    <rect x="396" y="654" width="6" height="9"/><rect x="412" y="656" width="6" height="9"/><rect x="428" y="653" width="6" height="9" opacity=".8"/><rect x="444" y="655" width="6" height="9"/>
+    <rect x="380" y="677" width="6" height="9" opacity=".7"/><rect x="412" y="675" width="6" height="9"/><rect x="444" y="678" width="6" height="9" opacity=".6"/>
+  </g>
+  <g fill="url(#window)" opacity=".9" transform="matrix(1 -0.03 0 1 0 34)" filter="url(#windowGlow)">
+    <rect x="1076" y="649" width="6" height="9"/><rect x="1092" y="647" width="6" height="9"/><rect x="1108" y="648" width="6" height="9" opacity=".8"/><rect x="1124" y="650" width="6" height="9"/><rect x="1156" y="648" width="6" height="9" opacity=".7"/><rect x="1172" y="651" width="6" height="9"/>
+    <rect x="1076" y="673" width="6" height="9" opacity=".6"/><rect x="1108" y="672" width="6" height="9"/><rect x="1140" y="674" width="6" height="9"/><rect x="1172" y="672" width="6" height="9" opacity=".8"/>
+  </g>
+  <g fill="url(#window)" opacity=".9">
+    <rect x="1130" y="716" width="8" height="11" fill="url(#windowCool)"/><rect x="1150" y="716" width="8" height="11" fill="url(#windowCool)"/><rect x="1180" y="716" width="8" height="11"/><rect x="1240" y="716" width="8" height="11" opacity=".7"/><rect x="1290" y="716" width="8" height="11"/>
+    <rect x="220" y="706" width="8" height="11" fill="url(#windowCool)"/><rect x="250" y="706" width="8" height="11" opacity=".6" fill="url(#windowCool)"/><rect x="300" y="706" width="8" height="11"/><rect x="350" y="706" width="8" height="11"/>
+  </g>
+  <!-- ===================== THE NEAR BRIDGE ===================== -->
+  <!-- a through-truss from bank to bank: two chords, verticals, diagonals, a closed deck, and battered piers standing in the water -->
+  <g>
+    <g fill="#1a1b1e">
+      <polygon points="632,690 648,690 652,768 628,768"/><polygon points="752,692 768,692 772,768 748,768"/><polygon points="872,690 888,690 892,768 868,768"/>
+    </g>
+    <g fill="#4a4b4d"><ellipse cx="640" cy="742" rx="15" ry="3"/><ellipse cx="760" cy="748" rx="15" ry="3"/><ellipse cx="880" cy="742" rx="15" ry="3"/></g>
+    <g fill="#26272b"><rect x="628" y="686" width="24" height="6"/><rect x="748" y="688" width="24" height="6"/><rect x="868" y="686" width="24" height="6"/></g>
+    <ellipse cx="750" cy="706" rx="195" ry="10" fill="#000" opacity=".22" filter="url(#soft)"/>
+    <g transform="translate(0 -9)" opacity=".85">
+    <path d="M556 688 Q 750 678 944 688 L944 693 Q 750 683 556 693 Z" fill="#3a3d45"/>
+    <path d="M556 672 Q 750 662 944 672" fill="none" stroke="#3a3d45" stroke-width="2.4"/>
+    <path d="M556 688 Q 750 678 944 688" fill="none" stroke="#3a3d45" stroke-width="3"/>
+    <g stroke="#3a3d45" stroke-width="1.4">
+      <line x1="570" y1="671.3" x2="570" y2="687.3"/>
+      <line x1="600" y1="670.0" x2="600" y2="686.0"/>
+      <line x1="630" y1="668.9" x2="630" y2="684.9"/>
+      <line x1="660" y1="668.1" x2="660" y2="684.1"/>
+      <line x1="690" y1="667.5" x2="690" y2="683.5"/>
+      <line x1="720" y1="667.1" x2="720" y2="683.1"/>
+      <line x1="750" y1="667.0" x2="750" y2="683.0"/>
+      <line x1="780" y1="667.1" x2="780" y2="683.1"/>
+      <line x1="810" y1="667.5" x2="810" y2="683.5"/>
+      <line x1="840" y1="668.1" x2="840" y2="684.1"/>
+      <line x1="870" y1="668.9" x2="870" y2="684.9"/>
+      <line x1="900" y1="670.0" x2="900" y2="686.0"/>
+      <line x1="930" y1="671.3" x2="930" y2="687.3"/>
+    </g>
+    <g stroke="#0c0d0f" stroke-width="1.1" opacity=".9">
+      <line x1="570" y1="671.3" x2="600" y2="686.0"/>
+      <line x1="600" y1="686.0" x2="630" y2="668.9"/>
+      <line x1="630" y1="668.9" x2="660" y2="684.1"/>
+      <line x1="660" y1="684.1" x2="690" y2="667.5"/>
+      <line x1="690" y1="667.5" x2="720" y2="683.1"/>
+      <line x1="720" y1="683.1" x2="750" y2="667.0"/>
+      <line x1="750" y1="667.0" x2="780" y2="683.1"/>
+      <line x1="780" y1="683.1" x2="810" y2="667.5"/>
+      <line x1="810" y1="667.5" x2="840" y2="684.1"/>
+      <line x1="840" y1="684.1" x2="870" y2="668.9"/>
+      <line x1="870" y1="668.9" x2="900" y2="686.0"/>
+      <line x1="900" y1="686.0" x2="930" y2="671.3"/>
+    </g>
+    </g>
+    <path d="M556 679 Q 750 669 944 679 L944 688 Q 750 678 556 688 Z" fill="#2a2b2e"/>
+    <path d="M556 688 Q 750 678 944 688 L944 693 Q 750 683 556 693 Z" fill="#101113"/>
+    <path d="M556 672 Q 750 662 944 672" fill="none" stroke="#22242a" stroke-width="2.4"/>
+    <path d="M556 688 Q 750 678 944 688" fill="none" stroke="#22242a" stroke-width="3"/>
+    <g stroke="#22242a" stroke-width="1.4">
+      <line x1="570" y1="671.3" x2="570" y2="687.3"/>
+      <line x1="600" y1="670.0" x2="600" y2="686.0"/>
+      <line x1="630" y1="668.9" x2="630" y2="684.9"/>
+      <line x1="660" y1="668.1" x2="660" y2="684.1"/>
+      <line x1="690" y1="667.5" x2="690" y2="683.5"/>
+      <line x1="720" y1="667.1" x2="720" y2="683.1"/>
+      <line x1="750" y1="667.0" x2="750" y2="683.0"/>
+      <line x1="780" y1="667.1" x2="780" y2="683.1"/>
+      <line x1="810" y1="667.5" x2="810" y2="683.5"/>
+      <line x1="840" y1="668.1" x2="840" y2="684.1"/>
+      <line x1="870" y1="668.9" x2="870" y2="684.9"/>
+      <line x1="900" y1="670.0" x2="900" y2="686.0"/>
+      <line x1="930" y1="671.3" x2="930" y2="687.3"/>
+    </g>
+    <g stroke="#22242a" stroke-width="1.1" opacity=".9">
+      <line x1="570" y1="671.3" x2="600" y2="686.0"/>
+      <line x1="600" y1="686.0" x2="630" y2="668.9"/>
+      <line x1="630" y1="668.9" x2="660" y2="684.1"/>
+      <line x1="660" y1="684.1" x2="690" y2="667.5"/>
+      <line x1="690" y1="667.5" x2="720" y2="683.1"/>
+      <line x1="720" y1="683.1" x2="750" y2="667.0"/>
+      <line x1="750" y1="667.0" x2="780" y2="683.1"/>
+      <line x1="780" y1="683.1" x2="810" y2="667.5"/>
+      <line x1="810" y1="667.5" x2="840" y2="684.1"/>
+      <line x1="840" y1="684.1" x2="870" y2="668.9"/>
+      <line x1="870" y1="668.9" x2="900" y2="686.0"/>
+      <line x1="900" y1="686.0" x2="930" y2="671.3"/>
+    </g>
+    <!-- stopped traffic on the deck -->
+    <g fill="#1a1b1e">
+      <rect x="640" y="677" width="9" height="4"/><rect x="730" y="676" width="9" height="4"/><rect x="860" y="677" width="9" height="4"/>
+    </g>
+    <g fill="#ffd28a"><rect x="647" y="678" width="2" height="2"/><rect x="730" y="677" width="2" height="2"/><rect x="867" y="678" width="2" height="2"/></g>
+    <!-- parapet lamps -->
+    <g fill="#ffd28a" opacity=".9"><circle cx="600" cy="668" r="1.3"/><circle cx="660" cy="666" r="1.3"/><circle cx="720" cy="665" r="1.3"/><circle cx="780" cy="665" r="1.3"/><circle cx="840" cy="666" r="1.3"/><circle cx="900" cy="668" r="1.3"/></g>
+    <g stroke="#ffd28a" stroke-width="1.2" opacity=".3"><line x1="660" y1="700" x2="658" y2="740"/><line x1="780" y1="700" x2="782" y2="750"/><line x1="900" y1="700" x2="904" y2="740"/></g>
+  </g>
+</svg>
+<svg class="layer" id="layer-smoke" viewBox="0 0 1536 768" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+  <!-- ===================== THE WARSHIP ===================== -->
+  <!-- the root of the plume: nearly black where it leaves the fire -->
+  <g filter="url(#soft)">
+    <ellipse cx="1000" cy="180" rx="48" ry="32" fill="url(#smoke)"/>
+    <ellipse cx="1060" cy="130" rx="58" ry="36" fill="url(#smoke)"/>
+    <ellipse cx="1120" cy="95" rx="62" ry="38" fill="url(#smoke)"/>
+    <animateTransform attributeName="transform" type="translate" values="0 0;10 -8;0 0" dur="9s" repeatCount="indefinite"/>
+  </g>
+  <!-- Smoke: a column boiling off the burning midsection and climbing away on the wind.
+       Each mass is larger and thinner than the one below it; the lowest are lit from the fire. -->
+  <g filter="url(#smokeF)" opacity=".94">
+    <g>
+      <animateTransform attributeName="transform" type="translate" values="0 0;34 -26;0 0" dur="26s" repeatCount="indefinite"/>
+      <!-- rim light on the whole column so it reads against the dark sky -->
+      <ellipse cx="1150" cy="150" rx="260" ry="150" fill="url(#smokeRim)"/>
+      <ellipse cx="1000" cy="60" rx="220" ry="110" fill="url(#smokeRim)"/>
+      <!-- the plume, base to crown -->
+      <ellipse cx="1120" cy="200" rx="50" ry="34" fill="url(#smokeLit)" opacity=".45"/>
+      <ellipse cx="1180" cy="160" rx="50" ry="34" fill="url(#smokeLit)" opacity=".45"/>
+      <ellipse cx="1240" cy="130" rx="50" ry="34" fill="url(#smokeLit)" opacity=".45"/>
+      <ellipse cx="990" cy="200" rx="55" ry="30" fill="url(#smokeLit)" opacity=".5"/>
+      <ellipse cx="1045" cy="150" rx="60" ry="32" fill="url(#smokeLit)" opacity=".5"/>
+      <ellipse cx="1100" cy="110" rx="58" ry="30" fill="url(#smokeLit)" opacity=".5"/>
+      <ellipse cx="960" cy="290" rx="70" ry="45" fill="url(#smokeLit)"/>
+      <ellipse cx="1010" cy="240" rx="90" ry="55" fill="url(#smokeLit)"/>
+      <ellipse cx="1060" cy="200" rx="110" ry="60" fill="url(#smoke)"/>
+      <ellipse cx="1120" cy="150" rx="130" ry="70" fill="url(#smoke)"/>
+      <ellipse cx="1200" cy="110" rx="150" ry="80" fill="url(#smoke)"/>
+      <ellipse cx="1290" cy="90" rx="170" ry="80" fill="url(#smoke)" opacity=".85"/>
+      <ellipse cx="1380" cy="110" rx="180" ry="80" fill="url(#smoke)" opacity=".7"/>
+      <ellipse cx="1460" cy="150" rx="170" ry="70" fill="url(#smoke)" opacity=".5"/>
+      <ellipse cx="1380" cy="-20" rx="190" ry="60" fill="url(#smoke)" opacity=".35"/>
+      <ellipse cx="1480" cy="10" rx="170" ry="50" fill="url(#smoke)" opacity=".35"/>
+      <!-- the stern's own dark cloud, pouring straight off the engines -->
+      <ellipse cx="1080" cy="40" rx="120" ry="60" fill="url(#smoke)" opacity=".9"/>
+      <ellipse cx="1180" cy="20" rx="140" ry="50" fill="url(#smoke)" opacity=".7"/>
+    </g>
+    <!-- the masses also breathe: the column swells and thins on its own clock -->
+    <animateTransform attributeName="transform" type="scale" values="1 1;1.02 1.03;1 1" dur="9s" repeatCount="indefinite" additive="sum"/>
+  </g>
+  <g transform="translate(760 520) rotate(-52)">
+    <!-- fire behind the hull -->
+    <g filter="url(#fire)">
+      <ellipse cx="380" cy="-60" rx="70" ry="34" fill="url(#fireCore)" opacity=".4"/>
+      <ellipse cx="470" cy="60" rx="70" ry="34" fill="url(#fireCore)" opacity=".4"/>
+      <path d="M300 -46 C 320 -110, 360 -120, 372 -150 C 380 -110, 420 -100, 440 -140 C 445 -90, 500 -80, 520 -60 L 520 -40 Z" fill="url(#tongue)"/>
+      <path d="M360 40 C 380 90, 420 100, 430 140 C 450 100, 490 90, 520 110 C 530 80, 560 60, 590 60 L 560 40 Z" fill="url(#tongue)"/>
+      <path d="M450 -46 C 470 -80, 500 -90, 520 -120 C 540 -90, 570 -80, 600 -70 L 600 -40 Z" fill="url(#tongue)" opacity=".9"/>
+    </g>
+  </g>
+</svg>
+<svg class="layer" id="layer-hull" viewBox="0 0 1536 768" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+  <g transform="translate(760 520) rotate(-52)">
+    <!-- the blaze's bloom: light bleeding into the air around it -->
+    <g filter="url(#bloom)" style="mix-blend-mode:screen">
+      <ellipse cx="400" cy="-40" rx="150" ry="80" fill="#ff8a2a"></ellipse>
+      <ellipse cx="480" cy="40" rx="110" ry="60" fill="#ffb454"></ellipse>
+    </g>
+    <!-- the trail: superheated air ahead of the nose, spilling down to the river -->
+    <polygon points="0,-6 -90,-16 -132,-3 -132,3 -90,16 0,6" fill="url(#trail)" filter="url(#soft)"/>
+    <polygon points="0,-2 -80,-6 -128,0 -80,6 0,2" fill="#ffffff" opacity=".85" filter="url(#glow)"/>
+
+    <polygon points="0,-24 -100,-40 -100,40 0,24" fill="url(#airLight)" filter="url(#soft20)" opacity=".45"/>
+    <!-- the heat sheath: a thin pale skin along the nose sections -->
+    <polygon points="0,0 130,-22 130,-16 6,-2" fill="#ffffff" opacity=".35"/>
+    <polygon points="0,0 130,22 130,16 6,2" fill="#ffffff" opacity=".2"/>
+    <g filter="url(#hullLight)">
+    <!-- The hull: a spear of ringed sections, each a short cylinder a little
+         wider than the one ahead of it, so the light rolls over every joint. -->
+    <polygon points="0,0 70,-14 220,-30 360,-40 480,-46 560,-40 560,40 480,46 360,40 220,30 70,14" fill="url(#hullB)"/>
+    <!-- sections, alternating, each with its own top light and its shadowed underside -->
+    <g>
+      <polygon points="70,-14 130,-20 130,20 70,14" fill="url(#hullA)"/>
+      <polygon points="135,-21 200,-28 200,28 135,21" fill="url(#hullB)"/>
+      <polygon points="205,-29 260,-33 260,33 205,29" fill="url(#hullA)"/>
+      <polygon points="265,-34 330,-38 330,38 265,34" fill="url(#hullB)"/>
+      <polygon points="335,-39 400,-42 400,42 335,39" fill="url(#hullA)"/>
+      <polygon points="405,-43 470,-45 470,45 405,43" fill="url(#hullB)"/>
+      <polygon points="475,-46 520,-44 520,44 475,46" fill="url(#hullA)"/>
+      <polygon points="525,-43 560,-40 560,40 525,43" fill="url(#hullB)"/>
+    </g>
+    <!-- the rings at every joint: a bright lip and a dark shadow line -->
+    <g>
+      <polygon points="130,-20 135,-21 135,21 130,20" fill="url(#hullRing)"/>
+      <polygon points="200,-28 205,-29 205,29 200,28" fill="url(#hullRing)"/>
+      <polygon points="260,-33 265,-34 265,34 260,33" fill="url(#hullRing)"/>
+      <polygon points="330,-38 335,-39 335,39 330,38" fill="url(#hullRing)"/>
+      <polygon points="400,-42 405,-43 405,43 400,42" fill="url(#hullRing)"/>
+      <polygon points="470,-45 475,-46 475,46 470,45" fill="url(#hullRing)"/>
+      <polygon points="520,-44 525,-43 525,43 520,44" fill="url(#hullRing)"/>
+    </g>
+    <!-- rivet seams either side of every ring, lit on top, lost underneath -->
+    <g fill="#d8d8da" opacity=".55">
+      <circle cx="126" cy="-16" r=".8"/><circle cx="126" cy="-11" r=".8"/><circle cx="126" cy="-6" r=".8"/><circle cx="139" cy="-17" r=".8"/><circle cx="139" cy="-12" r=".8"/><circle cx="139" cy="-7" r=".8"/>
+      <circle cx="196" cy="-24" r=".8"/><circle cx="196" cy="-18" r=".8"/><circle cx="196" cy="-12" r=".8"/><circle cx="209" cy="-25" r=".8"/><circle cx="209" cy="-19" r=".8"/><circle cx="209" cy="-13" r=".8"/>
+      <circle cx="256" cy="-29" r=".8"/><circle cx="256" cy="-22" r=".8"/><circle cx="256" cy="-15" r=".8"/><circle cx="269" cy="-30" r=".8"/><circle cx="269" cy="-23" r=".8"/><circle cx="269" cy="-16" r=".8"/>
+      <circle cx="326" cy="-34" r=".8"/><circle cx="326" cy="-26" r=".8"/><circle cx="326" cy="-18" r=".8"/><circle cx="339" cy="-35" r=".8"/><circle cx="339" cy="-27" r=".8"/><circle cx="339" cy="-19" r=".8"/>
+      <circle cx="396" cy="-38" r=".8"/><circle cx="396" cy="-30" r=".8"/><circle cx="396" cy="-22" r=".8"/><circle cx="409" cy="-39" r=".8"/><circle cx="409" cy="-31" r=".8"/><circle cx="409" cy="-23" r=".8"/>
+      <circle cx="466" cy="-41" r=".8"/><circle cx="466" cy="-33" r=".8"/><circle cx="466" cy="-25" r=".8"/><circle cx="479" cy="-42" r=".8"/><circle cx="479" cy="-34" r=".8"/><circle cx="479" cy="-26" r=".8"/>
+    </g>
+    <g stroke="#0c0d0f" stroke-width=".8" opacity=".5">
+      <line x1="70" y1="-6" x2="560" y2="-18"/><line x1="70" y1="6" x2="560" y2="18"/>
+    </g>
+    <polygon points="70,-13 560,-39 560,-36 70,-11" fill="#ffffff" opacity=".4"/>
+    <!-- the nose cone, white-hot from the fall -->
+    <polygon points="0,0 70,-14 70,14" fill="url(#hullNose)"/>
+    <circle cx="4" cy="0" r="7" fill="#ffffff" filter="url(#glow)"/>
+    <!-- the long shadow line under the belly -->
+    <polygon points="70,10 560,36 560,26 70,4" fill="#050506" opacity=".5"/>
+    <!-- the fin's shadow on the hull beneath it -->
+    <polygon points="190,-28 480,-46 520,-44 520,-30 480,-32 190,-16" fill="#08090a" opacity=".45"/>
+    <!-- the dorsal fin: a raised spine with a row of lit ports along it -->
+    <polygon points="190,-28 230,-46 480,-62 520,-44 480,-46 230,-30" fill="url(#fin)"/>
+    <line x1="230" y1="-46" x2="480" y2="-62" stroke="#c9c9cb" stroke-width="1.2" opacity=".8"/>
+    <g fill="#fff0c4">
+      <rect x="250" y="-42" width="6" height="3.2"/><rect x="266" y="-43" width="6" height="3.2"/><rect x="282" y="-44" width="6" height="3.2"/><rect x="298" y="-45" width="6" height="3.2"/>
+      <rect x="314" y="-46" width="6" height="3.2"/><rect x="330" y="-47" width="6" height="3.2" opacity=".6"/><rect x="346" y="-48" width="6" height="3.2"/><rect x="362" y="-49" width="6" height="3.2"/>
+      
+      <rect x="394" y="-51" width="6" height="3.2"/>
+      <rect x="426" y="-53" width="6" height="3.2"/><rect x="442" y="-54" width="6" height="3.2" opacity=".7"/>
+    </g>
+    <!-- side ports along the hull -->
+    <g fill="#fff0c4">
+      <rect x="150" y="-8" width="5" height="3"/><rect x="162" y="-8" width="5" height="3"/><rect x="174" y="-8" width="5" height="3"/><rect x="186" y="-8" width="5" height="3"/>
+      <rect x="212" y="-12" width="6" height="3.5"/><rect x="226" y="-12" width="6" height="3.5"/><rect x="240" y="-12" width="6" height="3.5"/>
+      <rect x="150" y="6" width="5" height="3" opacity=".7"/><rect x="162" y="6" width="5" height="3" opacity=".7"/><rect x="174" y="6" width="5" height="3" opacity=".7"/>
+      <rect x="270" y="10" width="6" height="3.5" opacity=".8"/><rect x="284" y="10" width="6" height="3.5" opacity=".8"/><rect x="298" y="10" width="6" height="3.5" opacity=".8"/>
+    </g>
+    <g fill="#0a0a0c">
+      <polygon points="70,14 130,17 130,23 70,18" opacity=".7"/><polygon points="135,17 200,21 200,27 135,23" opacity=".9"/><polygon points="205,21 260,24 260,30 205,27" opacity=".6"/><polygon points="265,24 330,28 330,34 265,30" opacity=".85"/>
+      <polygon points="335,28 400,32 400,38 335,34" opacity=".65"/><polygon points="405,32 470,35 470,41 405,38" opacity=".9"/><polygon points="475,35 520,37 520,43 475,41" opacity=".7"/><polygon points="525,37 560,40 560,46 525,43" opacity=".85"/>
+    </g>
+    <polygon points="70,14 560,40 560,41 70,15" fill="#4a4b50" opacity=".35"/>
+    <polygon points="220,-30 480,-46 480,-42 220,-26" fill="#ffc27a" opacity=".4"/>
+    <polygon points="220,-30 480,-46 480,-43 220,-27" fill="#0a0a0c" opacity=".9"/>
+    <!-- the stern: three dead engine bells and the antenna gantry above them -->
+    <g>
+      <polygon points="552,-40 562,-38 562,38 552,40" fill="#2a2b2f"/>
+      <ellipse cx="561" cy="-22" rx="6" ry="12" fill="#55575c"/><ellipse cx="558" cy="-22" rx="4.5" ry="9" fill="#050507"/><ellipse cx="558.5" cy="-27" rx="2" ry="4" fill="#8a8b90" opacity=".8"/>
+      <ellipse cx="561" cy="0" rx="7" ry="14" fill="#55575c"/><ellipse cx="558" cy="0" rx="5.2" ry="10.5" fill="#050507"/><ellipse cx="558.5" cy="-6" rx="2.2" ry="4.5" fill="#8a8b90" opacity=".8"/>
+      <ellipse cx="561" cy="22" rx="6" ry="12" fill="#55575c"/><ellipse cx="558" cy="22" rx="4.5" ry="9" fill="#050507"/><ellipse cx="558.5" cy="17" rx="2" ry="4" fill="#8a8b90" opacity=".8"/>
+    </g>
+    <g stroke="#2a2b2f" stroke-width="3" fill="none">
+      <line x1="520" y1="-44" x2="560" y2="-124"/><line x1="545" y1="-42" x2="585" y2="-120"/>
+      <line x1="528" y1="-64" x2="552" y2="-62"/><line x1="536" y1="-84" x2="562" y2="-82"/><line x1="546" y1="-104" x2="572" y2="-102"/>
+      <line x1="520" y1="-44" x2="552" y2="-62" stroke-width="1.5"/><line x1="545" y1="-42" x2="528" y2="-64" stroke-width="1.5"/>
+      <line x1="528" y1="-64" x2="562" y2="-82" stroke-width="1.5"/><line x1="552" y1="-62" x2="536" y2="-84" stroke-width="1.5"/>
+    </g>
+    <line x1="560" y1="-124" x2="606" y2="-164" stroke="#1d1e21" stroke-width="4"/>
+    </g>
+  </g>
+</svg>
+<svg class="layer" id="layer-fire" viewBox="0 0 1536 768" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+  <!-- Weapon fire: each beam is a hot head with a tail that dims behind it, and leaves nothing in the sky once it has passed -->
+  <g stroke-linecap="round" fill="none">
+    <line x1="60" y1="20" x2="640" y2="250" stroke-width="4" opacity="0.18" stroke-dasharray="150 883" stroke-dashoffset="807" stroke="#e8e2d2" filter="url(#glow)"><animate attributeName="stroke-dashoffset" from="807" to="-529" dur="3.4s" repeatCount="indefinite"/></line>
+    <line x1="60" y1="20" x2="640" y2="250" stroke-width="1.6" opacity="0.35" stroke-dasharray="110 883" stroke-dashoffset="767" stroke="#e8e2d2"><animate attributeName="stroke-dashoffset" from="767" to="-569" dur="3.4s" repeatCount="indefinite"/></line>
+    <line x1="60" y1="20" x2="640" y2="250" stroke-width="1.8" opacity="1" stroke-dasharray="26 883" stroke-dashoffset="683" stroke="#ffffff"><animate attributeName="stroke-dashoffset" from="683" to="-653" dur="3.4s" repeatCount="indefinite"/></line>
+    <line x1="330" y1="0" x2="760" y2="200" stroke-width="4" opacity="0.18" stroke-dasharray="150 734" stroke-dashoffset="658" stroke="#e8e2d2" filter="url(#glow)"><animate attributeName="stroke-dashoffset" from="658" to="-380" dur="2.8s" begin="1.1s" repeatCount="indefinite"/></line>
+    <line x1="330" y1="0" x2="760" y2="200" stroke-width="1.6" opacity="0.35" stroke-dasharray="110 734" stroke-dashoffset="618" stroke="#e8e2d2"><animate attributeName="stroke-dashoffset" from="618" to="-420" dur="2.8s" begin="1.1s" repeatCount="indefinite"/></line>
+    <line x1="330" y1="0" x2="760" y2="200" stroke-width="1.8" opacity="1" stroke-dasharray="26 734" stroke-dashoffset="534" stroke="#ffffff"><animate attributeName="stroke-dashoffset" from="534" to="-504" dur="2.8s" begin="1.1s" repeatCount="indefinite"/></line>
+    <line x1="1500" y1="60" x2="1090" y2="290" stroke-width="4" opacity="0.18" stroke-dasharray="150 730" stroke-dashoffset="654" stroke="#e8e2d2" filter="url(#glow)"><animate attributeName="stroke-dashoffset" from="654" to="-376" dur="2.8s" begin="0.5s" repeatCount="indefinite"/></line>
+    <line x1="1500" y1="60" x2="1090" y2="290" stroke-width="1.6" opacity="0.35" stroke-dasharray="110 730" stroke-dashoffset="614" stroke="#e8e2d2"><animate attributeName="stroke-dashoffset" from="614" to="-416" dur="2.8s" begin="0.5s" repeatCount="indefinite"/></line>
+    <line x1="1500" y1="60" x2="1090" y2="290" stroke-width="1.8" opacity="1" stroke-dasharray="26 730" stroke-dashoffset="530" stroke="#ffffff"><animate attributeName="stroke-dashoffset" from="530" to="-500" dur="2.8s" begin="0.5s" repeatCount="indefinite"/></line>
+    <line x1="1536" y1="150" x2="1210" y2="380" stroke-width="4" opacity="0.18" stroke-dasharray="150 658" stroke-dashoffset="582" stroke="#e8e2d2" filter="url(#glow)"><animate attributeName="stroke-dashoffset" from="582" to="-304" dur="2.5s" begin="2s" repeatCount="indefinite"/></line>
+    <line x1="1536" y1="150" x2="1210" y2="380" stroke-width="1.6" opacity="0.35" stroke-dasharray="110 658" stroke-dashoffset="542" stroke="#e8e2d2"><animate attributeName="stroke-dashoffset" from="542" to="-344" dur="2.5s" begin="2s" repeatCount="indefinite"/></line>
+    <line x1="1536" y1="150" x2="1210" y2="380" stroke-width="1.8" opacity="1" stroke-dasharray="26 658" stroke-dashoffset="458" stroke="#ffffff"><animate attributeName="stroke-dashoffset" from="458" to="-428" dur="2.5s" begin="2s" repeatCount="indefinite"/></line>
+    <line x1="1120" y1="0" x2="1300" y2="420" stroke-width="4" opacity="0.18" stroke-dasharray="150 716" stroke-dashoffset="640" stroke="#e8e2d2" filter="url(#glow)"><animate attributeName="stroke-dashoffset" from="640" to="-362" dur="2.7s" begin="1.6s" repeatCount="indefinite"/></line>
+    <line x1="1120" y1="0" x2="1300" y2="420" stroke-width="1.6" opacity="0.35" stroke-dasharray="110 716" stroke-dashoffset="600" stroke="#e8e2d2"><animate attributeName="stroke-dashoffset" from="600" to="-402" dur="2.7s" begin="1.6s" repeatCount="indefinite"/></line>
+    <line x1="1120" y1="0" x2="1300" y2="420" stroke-width="1.8" opacity="1" stroke-dasharray="26 716" stroke-dashoffset="516" stroke="#ffffff"><animate attributeName="stroke-dashoffset" from="516" to="-486" dur="2.7s" begin="1.6s" repeatCount="indefinite"/></line>
+    <line x1="0" y1="140" x2="420" y2="290" stroke-width="4" opacity="0.18" stroke-dasharray="150 705" stroke-dashoffset="629" stroke="#e8e2d2" filter="url(#glow)"><animate attributeName="stroke-dashoffset" from="629" to="-351" dur="2.7s" begin="2.6s" repeatCount="indefinite"/></line>
+    <line x1="0" y1="140" x2="420" y2="290" stroke-width="1.6" opacity="0.35" stroke-dasharray="110 705" stroke-dashoffset="589" stroke="#e8e2d2"><animate attributeName="stroke-dashoffset" from="589" to="-391" dur="2.7s" begin="2.6s" repeatCount="indefinite"/></line>
+    <line x1="0" y1="140" x2="420" y2="290" stroke-width="1.8" opacity="1" stroke-dasharray="26 705" stroke-dashoffset="505" stroke="#ffffff"><animate attributeName="stroke-dashoffset" from="505" to="-475" dur="2.7s" begin="2.6s" repeatCount="indefinite"/></line>
+    <line x1="190" y1="10" x2="445" y2="120" stroke-width="4" opacity="0.18" stroke-dasharray="150 537" stroke-dashoffset="461" stroke="#e8e2d2" filter="url(#glow)"><animate attributeName="stroke-dashoffset" from="461" to="-183" dur="2.0s" begin="3.4s" repeatCount="indefinite"/></line>
+    <line x1="190" y1="10" x2="445" y2="120" stroke-width="1.6" opacity="0.35" stroke-dasharray="110 537" stroke-dashoffset="421" stroke="#e8e2d2"><animate attributeName="stroke-dashoffset" from="421" to="-223" dur="2.0s" begin="3.4s" repeatCount="indefinite"/></line>
+    <line x1="190" y1="10" x2="445" y2="120" stroke-width="1.8" opacity="1" stroke-dasharray="26 537" stroke-dashoffset="337" stroke="#ffffff"><animate attributeName="stroke-dashoffset" from="337" to="-307" dur="2.0s" begin="3.4s" repeatCount="indefinite"/></line>
+    <line x1="820" y1="40" x2="915" y2="225" stroke-width="4" opacity="0.18" stroke-dasharray="150 467" stroke-dashoffset="391" stroke="#e8e2d2" filter="url(#glow)"><animate attributeName="stroke-dashoffset" from="391" to="-113" dur="1.8s" begin="0.9s" repeatCount="indefinite"/></line>
+    <line x1="820" y1="40" x2="915" y2="225" stroke-width="1.6" opacity="0.35" stroke-dasharray="110 467" stroke-dashoffset="351" stroke="#e8e2d2"><animate attributeName="stroke-dashoffset" from="351" to="-153" dur="1.8s" begin="0.9s" repeatCount="indefinite"/></line>
+    <line x1="820" y1="40" x2="915" y2="225" stroke-width="1.8" opacity="1" stroke-dasharray="26 467" stroke-dashoffset="267" stroke="#ffffff"><animate attributeName="stroke-dashoffset" from="267" to="-237" dur="1.8s" begin="0.9s" repeatCount="indefinite"/></line>
+  </g>
+  <!-- Stars -->
+  <g fill="#f4f2ea">
+    <circle cx="120" cy="60" r="1.4"><animate attributeName="opacity" values=".9;.3;.9" dur="4s" repeatCount="indefinite"/></circle>
+    <circle cx="410" cy="90" r="1.1"><animate attributeName="opacity" values=".5;1;.5" dur="5.5s" repeatCount="indefinite"/></circle>
+    <circle cx="560" cy="160" r="1.6"><animate attributeName="opacity" values="1;.4;1" dur="3.1s" repeatCount="indefinite"/></circle>
+    <circle cx="700" cy="120" r="1.2"/><circle cx="640" cy="330" r="1.3"><animate attributeName="opacity" values=".4;1;.4" dur="6s" repeatCount="indefinite"/></circle>
+    <circle cx="780" cy="300" r="1.1"/><circle cx="880" cy="60" r="1.5"><animate attributeName="opacity" values="1;.3;1" dur="4.4s" repeatCount="indefinite"/></circle>
+    <circle cx="1030" cy="280" r="1.3"/><circle cx="1240" cy="200" r="1.6"><animate attributeName="opacity" values=".6;1;.6" dur="3.7s" repeatCount="indefinite"/></circle>
+    <circle cx="1300" cy="80" r="1.2"/><circle cx="1460" cy="250" r="1.4"><animate attributeName="opacity" values="1;.4;1" dur="5s" repeatCount="indefinite"/></circle>
+    <circle cx="960" cy="360" r="1.1"/><circle cx="1100" cy="400" r="1.5"/><circle cx="230" cy="250" r="1.2"/><circle cx="340" cy="330" r="1"/>
+    <circle cx="470" cy="420" r="1.3"><animate attributeName="opacity" values=".5;1;.5" dur="4.8s" repeatCount="indefinite"/></circle>
+    <circle cx="820" cy="180" r="1"/><circle cx="1180" cy="120" r="1.1"/><circle cx="1400" cy="330" r="1.2"/><circle cx="90" cy="300" r="1"/><circle cx="1490" cy="420" r="1.1"/>
+  </g>
+  <!-- Detonations -->
+  <g>
+    <use href="#flareStar" x="450" y="212" transform="rotate(4 450 212)" filter="url(#glowWide)"><animate attributeName="opacity" values=".9;1;.6;.95" dur="2.6s" repeatCount="indefinite"/></use>
+    <use href="#flareStar" x="800" y="270" transform="rotate(-6 800 270) scale(.62) translate(490 166)" filter="url(#glowWide)"><animate attributeName="opacity" values="1;.55;1" dur="1.4s" repeatCount="indefinite"/></use>
+    <use href="#flareStar" x="1250" y="150" transform="scale(.4) translate(1875 225)" filter="url(#glowWide)"><animate attributeName="opacity" values=".5;1;.5" dur="2.8s" begin=".4s" repeatCount="indefinite"/></use>
+    <line x1="735" y1="215" x2="795" y2="266" stroke="#fff" stroke-width="2" stroke-linecap="round" filter="url(#glow)" stroke-dasharray="30 80">
+      <animate attributeName="stroke-dashoffset" from="110" to="0" dur="1.4s" repeatCount="indefinite"/>
+    </line>
+  </g>
+  <g>
+    <use href="#lampGlow" x="440" y="355"><animate attributeName="opacity" values="1;.7;1" dur="3.4s" repeatCount="indefinite"/></use>
+    <use href="#lampGlow" x="1000" y="336"><animate attributeName="opacity" values=".8;1;.8" dur="2.9s" repeatCount="indefinite"/></use>
+    <use href="#lampGlow" x="555" y="425"><animate attributeName="opacity" values="1;.6;1" dur="4.1s" repeatCount="indefinite"/></use>
+    <use href="#lampGlow" x="1150" y="382"><animate attributeName="opacity" values=".9;1;.7;.9" dur="3.1s" repeatCount="indefinite"/></use>
+    <use href="#lampGlow" x="846" y="546" transform="scale(.7) translate(362.6 234)" opacity=".4"/>
+    <use href="#lampGlow" x="300" y="480" transform="scale(.8) translate(75 120)" opacity=".5"/>
+    <ellipse cx="395" cy="530" rx="50" ry="8" fill="#ffb454" opacity=".2" filter="url(#glow)"/>
+    <ellipse cx="1290" cy="484" rx="62" ry="9" fill="#ffb454" opacity=".22" filter="url(#glow)"/>
+  </g>
+  <!-- traffic on the near bridge: headlamps one way, tail lamps the other, passing behind the abutment houses at each end -->
+  <g>
+    <circle r="1.3" fill="#fff4d6"><animateMotion dur="11s" repeatCount="indefinite" path="M500 690 L556 688 Q 750 678 944 688 L1000 690"/></circle>
+    <circle r="1.3" fill="#fff4d6"><animateMotion dur="11s" begin="5s" repeatCount="indefinite" path="M500 690 L556 688 Q 750 678 944 688 L1000 690"/></circle>
+    <circle r="1.2" fill="#ff5a4a"><animateMotion dur="13s" begin="1s" repeatCount="indefinite" path="M1000 692 L944 690 Q 750 680 556 690 L500 692"/></circle>
+    <circle r="1.2" fill="#ff5a4a"><animateMotion dur="13s" begin="8s" repeatCount="indefinite" path="M1000 692 L944 690 Q 750 680 556 690 L500 692"/></circle>
+  </g>
+  <g transform="translate(760 520) rotate(-52)">
+    <!-- plasma sheeting back from the nose: sparks born at the tip that die along the hull -->
+    <g fill="#ffffff">
+      <circle cx="0" cy="-2" r="1.2"><animate attributeName="cx" values="4;160" dur=".7s" repeatCount="indefinite"/><animate attributeName="cy" values="-2;-22" dur=".7s" repeatCount="indefinite"/><animate attributeName="opacity" values="1;0" dur=".7s" repeatCount="indefinite"/></circle>
+      <circle cx="0" cy="2" r="1"><animate attributeName="cx" values="4;140" dur=".9s" begin=".3s" repeatCount="indefinite"/><animate attributeName="cy" values="2;24" dur=".9s" begin=".3s" repeatCount="indefinite"/><animate attributeName="opacity" values="1;0" dur=".9s" begin=".3s" repeatCount="indefinite"/></circle>
+      <circle cx="0" cy="0" r="1.4"><animate attributeName="cx" values="4;200" dur=".8s" begin=".5s" repeatCount="indefinite"/><animate attributeName="cy" values="0;-30" dur=".8s" begin=".5s" repeatCount="indefinite"/><animate attributeName="opacity" values="1;0" dur=".8s" begin=".5s" repeatCount="indefinite"/></circle>
+      <circle cx="0" cy="0" r="1"><animate attributeName="cx" values="4;120" dur=".6s" begin=".15s" repeatCount="indefinite"/><animate attributeName="cy" values="0;20" dur=".6s" begin=".15s" repeatCount="indefinite"/><animate attributeName="opacity" values="1;0" dur=".6s" begin=".15s" repeatCount="indefinite"/></circle>
+    </g>
+    <g fill="#fff0c4">
+      <rect x="378" y="-50" width="6" height="3.2"><animate attributeName="opacity" values="1;.2;1;1" dur="1.1s" repeatCount="indefinite"/></rect>
+      <rect x="410" y="-52" width="6" height="3.2"><animate attributeName="opacity" values="1;1;.1;1" dur="1.7s" repeatCount="indefinite"/></rect>
+    </g>
+    <polygon points="300,37 560,40 560,34 300,31" fill="#ff9a3c" opacity=".5"><animate attributeName="opacity" values=".5;.8;.4;.5" dur="1.1s" repeatCount="indefinite"/></polygon>
+    <polygon points="300,-37 480,-46 480,-42 300,-33" fill="#ffb454" opacity=".35"><animate attributeName="opacity" values=".35;.6;.3;.35" dur="1.4s" begin=".4s" repeatCount="indefinite"/></polygon>
+    <circle cx="606" cy="-164" r="2.5" fill="#ff5a4a"><animate attributeName="opacity" values="1;.1;1" dur="1s" repeatCount="indefinite"/></circle>
+    <!-- breaches: the hull torn open and lit from inside -->
+    <path d="M404 -14 L 416 -22 L 436 -16 L 442 -2 L 430 6 L 412 2 L 400 -6 Z" fill="#ff9c2a" opacity=".6" filter="url(#glow)">
+      <animate attributeName="opacity" values=".9;.6;1;.8" dur=".9s" repeatCount="indefinite"/>
+    </path>
+    <path d="M488 10 L 506 4 L 518 14 L 512 26 L 494 24 Z" fill="#ffd36a" opacity=".55" filter="url(#glow)">
+      <animate attributeName="opacity" values=".85;1;.5;.85" dur="1.3s" repeatCount="indefinite"/>
+    </path>
+
+    <!-- fire in front of the hull: every tongue is rooted in a breach and
+         breathes on its own clock, so the blaze is many fires, not one shape -->
+    <g filter="url(#fire)" opacity=".78">
+      <g transform="translate(420 -6)">
+        <path d="M-16 6 C -30 30, -24 60, -40 86 C -14 70, 0 90, 12 110 C 18 76, 34 60, 44 30 C 30 40, 18 20, 10 -6 Z" fill="url(#tongue)" opacity=".95">
+          <animateTransform attributeName="transform" type="scale" values="1 1;1.08 1.18;.96 1.04;1 1" dur="1.3s" repeatCount="indefinite"/>
+        </path>
+      </g>
+      <g transform="translate(504 18)">
+        <path d="M-14 4 C -26 26, -16 54, -30 74 C -10 62, 4 80, 14 96 C 18 66, 30 50, 36 24 C 24 32, 14 16, 8 -4 Z" fill="url(#tongue)" opacity=".9">
+          <animateTransform attributeName="transform" type="scale" values="1 1;.94 1.14;1.06 1.02;1 1" dur="1.1s" begin=".3s" repeatCount="indefinite"/>
+        </path>
+      </g>
+      <g transform="translate(430 -30)">
+        <path d="M-12 0 C -22 -30, -10 -56, -26 -80 C -6 -66, 8 -84, 16 -104 C 20 -70, 34 -56, 40 -30 C 26 -40, 14 -22, 10 4 Z" fill="url(#tongue)" opacity=".85">
+          <animateTransform attributeName="transform" type="scale" values="1 1;1.1 1.16;.94 1;1 1" dur="1.5s" begin=".6s" repeatCount="indefinite"/>
+        </path>
+      </g>
+      <g transform="translate(350 -38)">
+        <path d="M-8 0 C -16 -22, -6 -40, -18 -60 C -2 -48, 6 -62, 12 -78 C 14 -52, 24 -40, 28 -22 C 18 -30, 10 -16, 6 2 Z" fill="url(#tongue)" opacity=".8">
+          <animateTransform attributeName="transform" type="scale" values="1 1;.92 1.2;1.04 1;1 1" dur="1.2s" begin=".9s" repeatCount="indefinite"/>
+        </path>
+      </g>
+      <g transform="translate(318 -96) scale(1.9 .55)"><path d="M-6 0 C -12 -14, -6 -26, -14 -40 C -2 -32, 6 -42, 10 -52 C 12 -34, 20 -26, 22 -12 C 14 -18, 8 -8, 4 2 Z" fill="url(#tongue)" opacity=".55"><animateTransform attributeName="transform" type="scale" values="1 1;1.1 1.2;.95 1;1 1" dur="1.05s" begin=".2s" repeatCount="indefinite"/></path></g>
+      <g transform="translate(556 -78) scale(1.9 .55)"><path d="M-6 0 C -12 -12, -4 -24, -12 -36 C 0 -28, 6 -38, 10 -46 C 12 -30, 18 -22, 20 -10 C 12 -16, 8 -6, 4 2 Z" fill="url(#tongue)" opacity=".55"><animateTransform attributeName="transform" type="scale" values="1 1;.92 1.22;1.06 1;1 1" dur="1.25s" begin=".7s" repeatCount="indefinite"/></path></g>
+      <g transform="translate(566 66) scale(1.9 .55)"><path d="M-5 0 C -10 12, -4 22, -10 34 C 0 26, 5 36, 8 44 C 10 28, 16 20, 18 10 C 10 16, 6 6, 3 -2 Z" fill="url(#tongue)" opacity=".55"><animateTransform attributeName="transform" type="scale" values="1 1;1.08 1.18;.96 1;1 1" dur="1.15s" begin=".45s" repeatCount="indefinite"/></path></g>
+      <ellipse cx="420" cy="0" rx="60" ry="22" fill="url(#fireCore)" opacity=".4"/>
+      <ellipse cx="470" cy="30" rx="44" ry="16" fill="url(#fireCore)" opacity=".35"/>
+      <ellipse cx="420" cy="-10" rx="28" ry="16" fill="url(#fireCore)" opacity=".85"><animate attributeName="opacity" values=".85;1;.7;.85" dur=".8s" repeatCount="indefinite"/></ellipse>
+      <ellipse cx="486" cy="26" rx="20" ry="12" fill="url(#fireCore)" opacity=".85"><animate attributeName="opacity" values=".85;.65;1;.85" dur="1.1s" repeatCount="indefinite"/></ellipse>
+    </g>
+  </g>
+  <!-- ash and embers drifting down over the city on the wind, lost in the fog as they descend -->
+  <g fill="#8a7f72" mask="url(#ashMask)">
+    <circle r="1.4" opacity=".7"><animateMotion dur="17s" repeatCount="indefinite" path="M1040 300 C 1080 420, 1140 520, 1210 700"/></circle>
+    <circle r="1.1" opacity=".35"><animateMotion dur="21s" begin="3s" repeatCount="indefinite" path="M1120 280 C 1170 400, 1230 520, 1330 720"/></circle>
+    <circle r="1.6" opacity=".6"><animateMotion dur="19s" begin="7s" repeatCount="indefinite" path="M980 340 C 1020 460, 1090 560, 1150 740"/></circle>
+    <circle r="1" opacity=".3"><animateMotion dur="23s" begin="11s" repeatCount="indefinite" path="M1200 260 C 1250 400, 1320 520, 1440 700"/></circle>
+    <circle r="1.3" opacity=".6"><animateMotion dur="20s" begin="5s" repeatCount="indefinite" path="M1080 240 C 1130 380, 1180 520, 1280 720"/></circle>
+    <circle r="1.2" opacity=".35"><animateMotion dur="25s" begin="9s" repeatCount="indefinite" path="M1160 320 C 1220 440, 1300 560, 1400 740"/></circle>
+    <circle r="1.5" opacity=".7" fill="#ffb454"><animateMotion dur="15s" begin="2s" repeatCount="indefinite" path="M1010 320 C 1060 440, 1120 540, 1190 720"/><animate attributeName="opacity" values=".8;.2;.7;.1" dur="15s" begin="2s" repeatCount="indefinite"/></circle>
+    <circle r="1.2" opacity=".7" fill="#ffb454"><animateMotion dur="18s" begin="8s" repeatCount="indefinite" path="M1140 300 C 1200 420, 1260 540, 1360 730"/><animate attributeName="opacity" values=".7;.1;.6;0" dur="18s" begin="8s" repeatCount="indefinite"/></circle>
+  </g>
+  <!-- Debris shed from the ship: torn plating, one edge still glowing, each piece trailing its own smoke -->
+  <g>
+    <g>
+      <line x1="1000" y1="370" x2="940" y2="310" stroke="#1a1416" stroke-width="7" stroke-linecap="round" opacity=".5"/>
+      <polygon points="-18,-8 12,-14 20,4 -6,12" fill="#2b2c30" transform="translate(1000 370) scale(1.35)"/>
+      <polygon points="-18,-8 12,-14 14,-10 -14,-4" fill="#8e8f93" transform="translate(1000 370) scale(1.35)"/>
+      <polygon points="12,-14 20,4 17,3 10,-11" fill="#ff8a2a" transform="translate(1000 370) scale(1.35)"><animate attributeName="opacity" values="1;.4;1" dur=".7s" repeatCount="indefinite"/></polygon>
+      <animateTransform attributeName="transform" type="translate" values="0 0;140 190" dur="14s" repeatCount="indefinite"/>
+    </g>
+    <g>
+      <g>
+        <polygon points="1155,340 1172,332 1180,348 1165,356" fill="#26272b"/>
+        <polygon points="1155,340 1172,332 1173,335 1158,342" fill="#9a9b9f"/>
+        <polygon points="1180,348 1165,356 1166,352 1177,346" fill="#ffb054"><animate attributeName="opacity" values="1;.3;1" dur=".9s" repeatCount="indefinite"/></polygon>
+        <animateTransform attributeName="transform" type="rotate" values="0 1168 344;360 1168 344" dur="6s" repeatCount="indefinite"/>
+      </g>
+    </g>
+    <g>
+      <polygon points="1128,350 1146,342 1160,352 1150,366 1132,364" fill="#2b2c30"/>
+      <polygon points="1128,350 1146,342 1147,346 1131,353" fill="#8e8f93"/>
+      <polygon points="1160,352 1150,366 1148,363 1156,352" fill="#ffb054"/>
+      <animateTransform attributeName="transform" type="translate" values="0 0;40 120" dur="18s" repeatCount="indefinite"/>
+    </g>
+    <g>
+      <g transform="translate(980 380) scale(.45) translate(-980 -380)">
+        <polygon points="980,380 990,374 994,384 984,388" fill="#232428"/>
+        <polygon points="980,380 990,374 990,377 982,382" fill="#8e8f93"/>
+      </g>
+      <animateTransform attributeName="transform" type="translate" values="0 0;30 90" dur="12s" repeatCount="indefinite"/>
+    </g>
+  </g>
+  <!-- embers -->
+  <g fill="#ffb454" filter="url(#glow)">
+    <circle cx="1060" cy="300" r="1.8"><animateTransform attributeName="transform" type="translate" values="0 0;30 160" dur="9s" repeatCount="indefinite"/><animate attributeName="opacity" values="0;1;1;0" keyTimes="0;.08;.7;1" dur="9s" repeatCount="indefinite"/></circle>
+    <circle cx="1120" cy="230" r="1.5"><animateTransform attributeName="transform" type="translate" values="0 0;40 180" dur="11s" begin="3s" repeatCount="indefinite"/><animate attributeName="opacity" values="0;1;1;0" keyTimes="0;.08;.7;1" dur="11s" begin="3s" repeatCount="indefinite"/></circle>
+    <circle cx="960" cy="330" r="1.6"><animateTransform attributeName="transform" type="translate" values="0 0;-10 150" dur="10s" begin="1.5s" repeatCount="indefinite"/><animate attributeName="opacity" values="0;1;1;0" keyTimes="0;.08;.7;1" dur="10s" begin="1.5s" repeatCount="indefinite"/></circle>
+    <circle cx="1010" cy="260" r="1.4"><animateTransform attributeName="transform" type="translate" values="0 0;25 140" dur="8s" begin="5s" repeatCount="indefinite"/><animate attributeName="opacity" values="0;1;1;0" keyTimes="0;.08;.7;1" dur="8s" begin="5s" repeatCount="indefinite"/></circle>
+    <circle cx="1090" cy="180" r="1.3"><animateTransform attributeName="transform" type="translate" values="0 0;50 200" dur="13s" begin="2s" repeatCount="indefinite"/><animate attributeName="opacity" values="0;1;1;0" keyTimes="0;.08;.7;1" dur="13s" begin="2s" repeatCount="indefinite"/></circle>
+  </g>
+  <!-- firelight on everything near the ship -->
+  <ellipse cx="960" cy="330" rx="260" ry="150" fill="#ff8a2a" opacity=".13" filter="url(#softer)">
+    <animate attributeName="opacity" values=".13;.2;.11;.13" dur="1.8s" repeatCount="indefinite"/>
+  </ellipse>
+
+  <!-- A flying wing crossing the far sky, slowly, its cabin lit -->
+  <g opacity=".9">
+    <g>
+      <path d="M0 4 L 22 -6 L 40 -9 L 62 -6 L 84 4 L 62 8 L 40 10 L 22 8 Z" fill="#26272b"/>
+      <path d="M34 -9 L 40 -18 L 48 -9 Z" fill="#1e1f23"/>
+      <rect x="37" y="-2" width="7" height="3" fill="#ffd18a"/>
+      <circle cx="84" cy="4" r="1.6" fill="#ff8a6a"/>
+      <animateTransform attributeName="transform" type="translate" values="40 175;220 150" dur="46s" repeatCount="indefinite"/>
+    </g>
+  </g>
+
+  <g opacity=".6">
+    <g>
+      <path d="M0 2 L 11 -3 L 20 -4 L 31 -3 L 42 2 L 31 4 L 20 5 L 11 4 Z" fill="#2b2c30"/>
+      <circle cx="42" cy="2" r="1" fill="#ff8a6a"/>
+      <animateTransform attributeName="transform" type="translate" values="1536 300;1100 330" dur="70s" repeatCount="indefinite"/>
+    </g>
+  </g>
+</svg>
+<svg class="layer" id="layer-near" viewBox="0 0 1536 768" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+  <!-- ===================== THE NEAR TOWERS ===================== -->
+  <g>
+    <g filter="url(#nearBlur)">
+      <use href="#spire" transform="translate(212 768) scale(1 1.05)"/>
+    </g>
+    <g filter="url(#nearBlur)"><use href="#spireB" transform="translate(1400 768) scale(.85 .78)"/></g>
+    <!-- a ringed deck around the right tower at mid height -->
+    <polygon points="1362,430 1438,430 1431,440 1369,440" fill="#141517"/>
+    <ellipse cx="1400" cy="430" rx="40" ry="6.5" fill="#2f3135"/><ellipse cx="1400" cy="429" rx="38" ry="5" fill="#3a3c41"/>
+    <g stroke="#4a4c52" stroke-width="1.2"><line x1="1362" y1="418" x2="1438" y2="418"/><line x1="1362" y1="418" x2="1362" y2="430"/><line x1="1438" y1="418" x2="1438" y2="430"/><line x1="1381" y1="418" x2="1381" y2="426"/><line x1="1419" y1="418" x2="1419" y2="426"/></g>
+    <g fill="#ffb454"><circle cx="1366" cy="416" r="2"/><circle cx="1383" cy="416" r="2"/><circle cx="1417" cy="416" r="2"/><circle cx="1434" cy="416" r="2"/></g>
+    <!-- the crown: blunt, flat, two red lights, no mast -->
+    <polygon points="1369,352 1431,352 1427,362 1373,362" fill="#15161a"/>
+    <polygon points="1369,349 1431,349 1431,352 1369,352" fill="#3f4147"/>
+    <polygon points="1388,349 1412,349 1412,321 1388,321" fill="#26272b"/>
+    <polygon points="1388,321 1412,321 1412,319 1388,319" fill="#4a4c52"/>
+    <rect x="1396" y="330" width="3" height="5" fill="#ffd28a" opacity=".7"/>
+    <g fill="#ff5a4a"><circle cx="1391" cy="317" r="1.8"><animate attributeName="opacity" values="1;.2;1" dur="1.6s" repeatCount="indefinite"/></circle><circle cx="1409" cy="317" r="1.8"><animate attributeName="opacity" values="1;.2;1" dur="1.6s" begin=".8s" repeatCount="indefinite"/></circle></g>
+    <!-- the block at the left edge, a lit face of small square windows -->
+    <polygon points="0,768 0,470 30,466 52,500 52,768" fill="#0f1012"/>
+    <polygon points="52,500 52,768 92,768 92,560" fill="url(#blockFace)"/>
+    <g fill="#000" opacity=".3"><rect x="0" y="560" width="92" height="3"/><rect x="0" y="640" width="92" height="3"/><rect x="0" y="720" width="92" height="3"/></g>
+    <rect x="16" y="746" width="12" height="22" fill="#ffd28a" opacity=".6"/>
+    <g fill="#ffd28a" opacity=".5"><rect x="62" y="580" width="4" height="7"/><rect x="76" y="606" width="4" height="7"/><rect x="62" y="660" width="4" height="7"/><rect x="76" y="690" width="4" height="7"/></g>
+    <rect x="8" y="486" width="34" height="70" fill="#171819"/>
+    <g fill="#e8e3d8" opacity=".85">
+      <rect x="12" y="492" width="5" height="4"/><rect x="22" y="492" width="5" height="4"/><rect x="32" y="492" width="5" height="4"/>
+      <rect x="12" y="504" width="5" height="4"/><rect x="32" y="504" width="5" height="4"/>
+      <rect x="22" y="516" width="5" height="4"/><rect x="32" y="516" width="5" height="4"/>
+      <rect x="12" y="528" width="5" height="4"/><rect x="22" y="528" width="5" height="4"/>
+      <rect x="12" y="540" width="5" height="4"/><rect x="32" y="540" width="5" height="4"/>
+    </g>
+    <line x1="60" y1="470" x2="60" y2="380" stroke="#1d1e21" stroke-width="3"/>
+    <line x1="40" y1="410" x2="80" y2="410" stroke="#1d1e21" stroke-width="3"/>
+    <line x1="46" y1="440" x2="74" y2="440" stroke="#1d1e21" stroke-width="2"/>
+    <!-- the block at the right edge -->
+    <polygon points="1440,768 1440,530 1536,520 1536,768" fill="#111214"/>
+    <rect x="1440" y="530" width="96" height="3" fill="#2c2d31"/>
+    <g fill="url(#windowCool)" opacity=".7" filter="url(#windowGlow)">
+      <rect x="1456" y="546" width="8" height="12"/><rect x="1476" y="546" width="8" height="12"/><rect x="1500" y="546" width="8" height="12"/>
+      <rect x="1456" y="576" width="8" height="12"/><rect x="1500" y="576" width="8" height="12"/>
+      <rect x="1476" y="606" width="8" height="12"/><rect x="1500" y="606" width="8" height="12"/>
+      <rect x="1456" y="636" width="8" height="12"/><rect x="1476" y="636" width="8" height="12"/>
+      <rect x="1456" y="666" width="8" height="12"/><rect x="1500" y="666" width="8" height="12"/>
+      <rect x="1476" y="696" width="8" height="12" opacity=".6"/><rect x="1500" y="726" width="8" height="12"/>
+    </g>
+    <g fill="#1c1d21">
+      <rect x="1476" y="576" width="8" height="12"/><rect x="1456" y="606" width="8" height="12"/><rect x="1500" y="636" width="8" height="12"/><rect x="1476" y="666" width="8" height="12"/><rect x="1456" y="696" width="8" height="12"/><rect x="1456" y="726" width="8" height="12"/><rect x="1476" y="726" width="8" height="12"/>
+    </g>
+    <rect x="1452" y="508" width="30" height="12" fill="#1a1b1e"/><rect x="1500" y="512" width="16" height="8" fill="#1a1b1e"/>
+    <line x1="1490" y1="520" x2="1490" y2="470" stroke="#1d1e21" stroke-width="3"/>
+    <line x1="1470" y1="490" x2="1510" y2="490" stroke="#1d1e21" stroke-width="3"/>
+  </g>
+  <polygon points="1341,768 1356,768 1401,336 1398,334" fill="url(#flankLit)" opacity=".5"/>
+  <!-- the abutment houses at either end of the bridge: the road passes behind them -->
+  <g>
+    <polygon points="516,700 516,662 526,654 556,654 556,700" fill="#1b1c1f"/><rect x="516" y="662" width="40" height="3" fill="#33353a"/><rect x="536" y="680" width="6" height="8" fill="#ffd28a" opacity=".8"/>
+    <polygon points="944,700 944,656 974,656 984,664 984,700" fill="#1b1c1f"/><rect x="944" y="664" width="40" height="3" fill="#33353a"/><rect x="956" y="680" width="6" height="8" fill="#ffd28a" opacity=".8"/>
+    <line x1="546" y1="654" x2="546" y2="636" stroke="#111214" stroke-width="1.5"/><circle cx="546" cy="635" r="1.6" fill="#ff5a4a"><animate attributeName="opacity" values="1;.3;1" dur="2s" repeatCount="indefinite"/></circle>
+    <line x1="964" y1="656" x2="964" y2="638" stroke="#111214" stroke-width="1.5"/><circle cx="964" cy="637" r="1.6" fill="#ff5a4a"><animate attributeName="opacity" values="1;.3;1" dur="2s" begin="1s" repeatCount="indefinite"/></circle>
+  </g>
+</svg>
+<svg class="layer" id="layer-top" viewBox="0 0 1536 768" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+  <!-- beacons -->
+  <use href="#lampGlow" x="212" y="96" transform="scale(1.3) translate(-49 -22)"><animate attributeName="opacity" values="1;.75;1" dur="2.4s" repeatCount="indefinite"/></use>
+  <!-- a few flickering windows on the near towers, over the brush layer so they stay crisp -->
+  <g fill="url(#window)" filter="url(#windowGlow)">
+    <rect x="207" y="590" width="10" height="36"><animate attributeName="opacity" values="1;.35;1" dur="7s" repeatCount="indefinite"/></rect>
+    <rect x="1391" y="690" width="8" height="22"><animate attributeName="opacity" values="1;.4;1;1" dur="5.2s" begin="2s" repeatCount="indefinite"/></rect>
+  </g>
+  <!-- the fire's light on the faces that turn toward it -->
+  <ellipse cx="1260" cy="380" rx="300" ry="220" fill="#ff8a2a" opacity=".16" filter="url(#softer)">
+    <animate attributeName="opacity" values=".16;.22;.14;.16" dur="1.8s" repeatCount="indefinite"/>
+  </ellipse>
+
+  <!-- ===================== FINISH ===================== -->
+
+  <rect width="1536" height="768" fill="url(#vignette)"/>
+  <rect width="1536" height="768" fill="url(#sideVignette)" opacity=".3"/>
+</svg>
+      <div class="surface strokes" style="background-image:url(/assets/plates/end-wars/strokes.jpg)"></div>
+      <div class="surface paper" style="background-image:url(/assets/plates/end-wars/paper.jpg)"></div>
