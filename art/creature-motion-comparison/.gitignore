@@ -4,3 +4,7 @@
 /godot3d/.godot/
 /godot3d/render.log
 /blender/*.blend1
+/rendered/*-toon/
+/rendered/*-flat/
+/rendered/*-ink/
+__pycache__/

@@ -116,7 +116,7 @@ Promise.all([loadAtlas(`./exports/${name}/manifest.json`), study.against ? loadA
     document.getElementById('action-name').textContent = `Action (cue: ${cueName})`;
     const p = m.provenance || {};
     document.getElementById('provenance').textContent =
-      `template ${m.template} · species ${m.species} · Blender ${p.blender} · spec ${p.spec} ${p.spec_hash} · library ${p.library_hash} · cycles seed ${p.cycles_seed} · samples ${p.samples} · emitter ${m.emitter.join(',')} · cue ${cueName} at ${m.clips.action.markers[0].time_ms} ms`;
+      `template ${m.template} · species ${m.species} · style ${p.style || 'plain'} · Blender ${p.blender} · spec ${p.spec} ${p.spec_hash} · library ${p.library_hash} · cycles seed ${p.cycles_seed} · samples ${p.samples} · emitter ${m.emitter.join(',')} · cue ${cueName} at ${m.clips.action.markers[0].time_ms} ms`;
     ui.play.disabled = false; ui.replay.disabled = false; ui.timeline.disabled = false;
     ui.status.textContent = 'Ready. Watch at normal speed, then scrub.';
     // Deep links for review and paint checks: ?t=<ms> pauses at that time, ?cue=1 and ?light=1 set the toggles.

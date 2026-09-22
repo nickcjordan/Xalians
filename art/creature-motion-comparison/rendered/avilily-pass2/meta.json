@@ -38,9 +38,10 @@
     "blender": "5.2.2 LTS",
     "spec": "avilily.json",
     "spec_hash": "fd9f3b02120865b0",
-    "library_hash": "73033b206d1171ff",
+    "library_hash": "ff6813f43d8980c7",
     "cycles_seed": 0,
-    "samples": 16
+    "samples": 16,
+    "style": "plain"
   },
   "objects": 156
 }

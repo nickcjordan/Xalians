@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Xalians render style board</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .phones{display:flex;flex-wrap:wrap;gap:24px;justify-content:center;align-items:flex-start;margin-top:12px}
+    .phone{width:390px;max-width:100%;border:1px solid #4c6c6d;background:#162b32;box-shadow:0 8px 30px #07121855}
+    .phone canvas{display:block;width:100%;height:auto;aspect-ratio:1;background:#233d44}
+    .phone .card-head{min-height:0}
+    .board{display:grid;gap:6px;margin-top:22px}
+    .board figure{margin:0;border:1px solid #3d5b5c;background:#10232b}
+    .board canvas{display:block;width:100%;height:auto;aspect-ratio:1}
+    .board figcaption{font-size:.72rem;color:#c8d8cf;padding:4px 6px;line-height:1.3}
+    .row-label{font-size:.75rem;letter-spacing:.18em;color:#a8c3aa;font-weight:800;margin:18px 0 4px}
+    .provenance{font-family:ui-monospace,Consolas,monospace;font-size:.75rem;color:#a9c0b8;line-height:1.6;word-break:break-all}
+    nav.studies{display:flex;flex-wrap:wrap;gap:8px 16px;font-size:.88rem;margin:6px 0 0}
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <header>
+      <p class="eyebrow" id="eyebrow">XALIANS / RENDER STYLE BOARD</p>
+      <h1 id="title">Render style board</h1>
+      <p class="lede">One species, one spec, one performance, rendered through every render style the rig library offers. Same camera, stage, timing and atlas contract; only the surface and line language changes. Watch at 1× first, then scrub. Nothing here is a chosen house style.</p>
+      <nav class="studies" aria-label="Species" id="studies"></nav>
+    </header>
+    <section class="transport" aria-label="Playback controls">
+      <button id="play" type="button" disabled>Pause</button>
+      <button id="replay" type="button" disabled>Replay</button>
+      <label>Motion <select id="clip"><option value="action">Action</option><option value="idle">Quiet presence</option></select></label>
+      <label class="check"><input id="light" type="checkbox"> Light stage</label>
+      <label class="check"><input id="half" type="checkbox"> Half speed</label>
+      <span class="clock" id="clock">0.00 / 1.25 s</span>
+      <input id="timeline" type="range" min="0" max="1250" value="0" aria-label="Scrub the animation" disabled>
+    </section>
+    <p id="status" class="status" role="status">Loading atlases…</p>
+    <section class="phones" aria-label="Phone-size stages" id="phones"></section>
+    <section aria-label="Beat board">
+      <p class="row-label">BEATS, ONE ROW PER STYLE</p>
+      <div class="board" id="board"></div>
+    </section>
+    <section aria-label="Provenance">
+      <p class="row-label">PROVENANCE</p>
+      <p class="provenance" id="provenance"></p>
+    </section>
+    <footer>Companion to <a href="./">the Avilily comparison</a>, <a href="pass2.html">the pass 2 review</a> and <a href="study.html">the single-study page</a>.</footer>
+  </main>
+  <script type="module" src="styles.mjs"></script>
+</body>
+</html>

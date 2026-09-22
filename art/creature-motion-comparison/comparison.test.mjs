@@ -89,3 +89,27 @@ test('Akinza and Dromeus share the biped template and differ only by spec', () =
   assert.notEqual(akinza.provenance.spec_hash, dromeus.provenance.spec_hash);
   assert.deepEqual(akinza.clips.action.markers.map((marker) => marker.name), ['contact_pose']);
 });
+
+for (const study of ['akinza-blender', 'blender2', 'dromeus-blender', 'bioflim-blender']) {
+  for (const style of ['toon', 'flat']) {
+    test(`${study}-${style} is the same performance as ${study} in another render style`, () => {
+      const base = JSON.parse(readFileSync(join(root, 'exports', study, 'manifest.json'), 'utf8'));
+      const styled = validateManifest(JSON.parse(readFileSync(join(root, 'exports', `${study}-${style}`, 'manifest.json'), 'utf8')));
+      assert.equal(styled.species, base.species);
+      assert.equal(styled.template, base.template);
+      assert.deepEqual(styled.origin, base.origin);
+      assert.deepEqual(styled.canvas, base.canvas);
+      assert.deepEqual(styled.emitter, base.emitter, 'the same spec projects the same emitter');
+      assert.deepEqual(styled.points, base.points);
+      assert.deepEqual(styled.clips.action.markers, base.clips.action.markers);
+      assert.equal(styled.clips.action.frames.length, base.clips.action.frames.length);
+      assert.equal(styled.clips.idle.frames.length, base.clips.idle.frames.length);
+      assert.equal(styled.provenance.style, style);
+      assert.equal(base.provenance.style, 'plain');
+      assert.equal(styled.provenance.spec_hash, base.provenance.spec_hash, 'a render style never changes the spec');
+      assert.equal(styled.provenance.library_hash, base.provenance.library_hash);
+      assert.ok(existsSync(join(root, 'exports', `${study}-${style}`, styled.clips.action.sheet)));
+    });
+  }
+}
+

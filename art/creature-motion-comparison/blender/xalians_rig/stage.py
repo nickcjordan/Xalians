@@ -127,6 +127,7 @@ def write_meta(scene, camera, spec, spec_path, points, output, source_files):
             "library_hash": file_hash(source_files),
             "cycles_seed": scene.cycles.seed,
             "samples": scene.cycles.samples,
+            "style": spec.get("render", {}).get("style", "plain"),
         },
         "objects": len(bpy.data.objects),
     }
