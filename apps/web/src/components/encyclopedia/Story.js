@@ -574,10 +574,12 @@ function StoryPart() {
 									<span />
 								)}
 								{part.next && (
-									<Button asChild className="h-auto min-w-0 py-2 whitespace-normal text-left">
-										{/* The label carries a part number and an era name, which is
-										    wider than a small phone on one line: let it wrap rather
-										    than push the arrow off the screen. */}
+									<Button asChild className="h-auto min-w-0 shrink py-2 whitespace-normal text-left">
+										{/* The label carries a part number and an era name, wider
+										    than the row it sits in at several widths. The button
+										    base is `shrink-0`, so without `shrink` + `min-w-0` it
+										    refused to give ground and pushed its arrow off the
+										    page instead of wrapping. */}
 										<Link to={lore.routeFor('era', part.next)}>
 											<span className="min-w-0">Continue to Part {part.order + 1}: {lore.getStoryPart(part.next).era.name}</span> <ArrowRight className="shrink-0" />
 										</Link>

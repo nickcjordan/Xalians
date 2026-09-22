@@ -199,7 +199,11 @@ export default function WorldView() {
 
     return (
         <article className={`el-${world.element} flex flex-col gap-8`}>
-            <Card variant="panel" className="grid gap-6 md:grid-cols-[minmax(0,480px)_minmax(0,1fr)]">
+            {/* The art column takes up to 480px, so splitting at md (720) left
+                the facts beside it about 118px wide -- narrower than a single
+                era station, which then overran the card. The split waits until
+                there is room for both halves. */}
+            <Card variant="panel" className="grid gap-6 lg:grid-cols-[minmax(0,480px)_minmax(0,1fr)]">
                 <WorldArt art={heroArt} hero />
 
                 <div className="flex min-w-0 flex-col gap-5">
@@ -207,9 +211,14 @@ export default function WorldView() {
 
                     <SpecPlate columns={2} entries={factsEntries} />
 
-                    <div className="flex flex-col items-start gap-2 border-t border-edge pt-4">
+                    {/* `items-start` on the column sized the rail to its content
+                        rather than to this box, which defeated both the wrap and
+                        the scroll it falls back to: the seven era stations ran
+                        over 1000px off the side of a phone with no way to reach
+                        them. The rail must be allowed to fill the width. */}
+                    <div className="flex flex-col items-stretch gap-2 border-t border-edge pt-4">
                         <span className="type-legend whitespace-nowrap">In the story</span>
-                        <StationRow value={null} onChange={() => {}} aria-label="In the story">
+                        <StationRow value={null} onChange={() => {}} aria-label="In the story" className="min-w-0">
                             {timeline.map((row) => {
                                 const count = row.chapters.length;
                                 const lit = count > 0 || row.events.length > 0;

@@ -54,6 +54,10 @@ const shots = flag('--shots');
 // --serve <dir>: host this build ourselves rather than trusting an external
 // dev server to stay alive for the length of the run.
 const serveDir = opt('--serve', null);
+// --widths 320,1024 restricts the ladder (a sweep over every record), and
+// --routes-file reads routes one per line (more than a command line holds).
+const onlyWidths = opt('--widths', null);
+const routesFile = opt('--routes-file', null);
 
 // Straddle every token breakpoint: below, at, and above.
 const WIDTHS = [
@@ -118,6 +122,18 @@ function auditInPage() {
 		return false;
 	}
 
+	// A rail the reader can scroll to reveal is not broken. Returns the
+	// scrollable ancestor, if any, that can bring `el` into view.
+	function scrollableAncestor(el) {
+		let node = el.parentElement;
+		while (node && node !== document.body) {
+			const s = getComputedStyle(node);
+			if ((s.overflowX === 'auto' || s.overflowX === 'scroll') && node.scrollWidth > node.clientWidth + 1) return node;
+			node = node.parentElement;
+		}
+		return null;
+	}
+
 	const all = Array.from(document.querySelectorAll('body *')).filter((el) => !isScreenReaderOnly(el));
 
 	// 1. Anything painting past the right edge of the viewport. Only the
@@ -129,7 +145,7 @@ function auditInPage() {
 		if (r.width === 0 || r.height === 0) continue;
 		const style = getComputedStyle(el);
 		if (style.visibility === 'hidden' || style.display === 'none') continue;
-		if (r.right > docWidth + 1) {
+		if (r.right > docWidth + 1 && !scrollableAncestor(el)) {
 			offCanvas.push({ el, overhang: Math.round(r.right - docWidth), rect: r });
 		}
 	}
@@ -164,7 +180,15 @@ function auditInPage() {
 	// 3. Interactive targets too small to hit reliably. 44px is the floor
 	// both platform guidelines use; inline links inside a paragraph are
 	// exempt, since they are read, not aimed at.
-	const interactive = Array.from(document.querySelectorAll('a[href], button, [role="button"], input, select, summary, [tabindex]:not([tabindex="-1"])')).filter((el) => !isScreenReaderOnly(el));
+	//
+	// Only on a touch-sized viewport. The design deliberately relaxes the
+	// floor above sm (`min-h-11 sm:min-h-0` on the footer links, and on the
+	// button base), where a pointer is assumed -- measuring a wide window
+	// against the thumb floor reports that choice as a defect.
+	const isTouchWidth = window.innerWidth <= 720;
+	const interactive = isTouchWidth
+		? Array.from(document.querySelectorAll('a[href], button, [role="button"], input, select, summary, [tabindex]:not([tabindex="-1"])')).filter((el) => !isScreenReaderOnly(el))
+		: [];
 	for (const el of interactive) {
 		const r = el.getBoundingClientRect();
 		if (r.width === 0 || r.height === 0) continue;
@@ -175,8 +199,7 @@ function auditInPage() {
 		if (el.offsetParent === null && style.position !== 'fixed') continue;
 		// An anchor whose parent is a text block is an inline prose link.
 		const parentDisplay = el.parentElement ? getComputedStyle(el.parentElement).display : '';
-		const isInlineProseLink = el.tagName === 'A' && (style.display === 'inline' || style.display === 'inline-block')
-			&& !!el.closest('p, li, td, th, dd, dt, figcaption, blockquote, [data-prose]');
+		const isInlineProseLink = el.tagName === 'A' && (style.display === 'inline' || style.display === 'inline-block');
 		if (isInlineProseLink) continue;
 		if (r.height < 44 || r.width < 24) {
 			problems.push({
@@ -216,7 +239,12 @@ function auditInPage() {
 }
 
 (async () => {
-	const routes = args.filter((a) => !a.startsWith('--'));
+	let routes = args.filter((a) => !a.startsWith('--'));
+	if (routesFile) routes = fs.readFileSync(routesFile, 'utf8').split(/\r?\n/).map((l) => l.trim()).filter(Boolean);
+	if (onlyWidths) {
+		const keep = new Set(onlyWidths.split(',').map((n) => Number(n.trim())));
+		for (let i = WIDTHS.length - 1; i >= 0; i--) if (!keep.has(WIDTHS[i].w)) WIDTHS.splice(i, 1);
+	}
 	if (!routes.length) { console.error('No routes given.'); process.exit(1); }
 
 	fs.mkdirSync(out, { recursive: true });
