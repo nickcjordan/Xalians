@@ -482,6 +482,8 @@
     <g fill="#7c7e84" filter="url(#soft20)">
       <ellipse cx="620" cy="734" rx="210" ry="12" opacity=".14"/><ellipse cx="900" cy="750" rx="230" ry="13" opacity=".13"/><ellipse cx="740" cy="764" rx="280" ry="12" opacity=".12"/>
     </g>
+    <!-- the bridge lamps, broken threads in the water under the deck -->
+    <g stroke="#ffd28a" stroke-width="1.2" opacity=".3" fill="none" stroke-linecap="round"><path d="M660 700 Q 655 712 660 722 T 658 740"/><path d="M780 700 Q 786 714 780 728 T 782 750"/><path d="M900 700 Q 895 712 901 724 T 904 740"/></g>
     <!-- the reflected tower lamps, orange threads in the water -->
     <g stroke="#ff9a3c" stroke-width="2" opacity=".35" stroke-linecap="round">
       <path d="M700 640 Q 694 656 698 670 T 692 700" fill="none"/><path d="M850 650 Q 858 668 854 686 T 866 720" fill="none"/><path d="M612 690 Q 606 706 610 720 T 600 740" fill="none"/>
@@ -603,7 +605,7 @@
       <rect x="1318" y="582" width="3" height="3"/><rect x="1334" y="582" width="3" height="3"/><rect x="1350" y="582" width="3" height="3"/><rect x="1326" y="592" width="3" height="3"/><rect x="1342" y="592" width="3" height="3"/><rect x="1318" y="600" width="3" height="3"/><rect x="1350" y="600" width="3" height="3"/>
       <rect x="1478" y="584" width="3" height="3"/><rect x="1494" y="584" width="3" height="3"/><rect x="1510" y="584" width="3" height="3"/><rect x="1486" y="594" width="3" height="3"/><rect x="1502" y="594" width="3" height="3"/><rect x="1518" y="594" width="3" height="3"/>
     </g>
-    <g fill="#ff6a5a"><circle cx="293" cy="546" r="1"><animate attributeName="opacity" values="1;.2;1" dur="2s" repeatCount="indefinite" calcMode="spline" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></circle><circle cx="1043" cy="550" r="1"><animate attributeName="opacity" values="0;1;1;0;0" keyTimes="0;.12;.45;.57;1" dur="2.6s" begin="1s" repeatCount="indefinite" calcMode="spline" keySplines=".2 0 .8 1;.2 0 .8 1;.2 0 .8 1;.2 0 .8 1"/></circle></g>
+    <g fill="#ff6a5a"><circle cx="293" cy="546" r="1"><animate attributeName="opacity" values="1;.2;1" dur="2s" repeatCount="indefinite" calcMode="spline" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></circle><circle cx="1043" cy="550" r="1"><animate attributeName="opacity" values="0;1;1;0;0" keyTimes="0;.12;.45;.57;1" dur="2.6s" begin="-1s" repeatCount="indefinite" calcMode="spline" keySplines=".2 0 .8 1;.2 0 .8 1;.2 0 .8 1;.2 0 .8 1"/></circle></g>
   </g>
   <rect y="540" width="1536" height="70" fill="url(#farHaze)"/>
   <rect y="520" width="1536" height="110" fill="url(#haze)"/>
@@ -648,11 +650,10 @@
     <g fill="#6b4a32" opacity=".45">
       <polygon points="969,656 982,656 1001,380 998,378"/>
       <polygon points="1122,664 1134,664 1151,422 1148,420"/>
-      <polygon points="1078,668 1086,668 1097,470 1095,468"/>
     </g>
     <!-- the terminator: a soft band where each lit face turns into shadow -->
     <g fill="#4a3a30" opacity=".6">
-      <polygon points="982,656 988,656 1002,384 1000,382"/><polygon points="1134,664 1140,664 1152,426 1150,424"/><polygon points="1086,668 1090,668 1098,472 1097,470"/>
+      <polygon points="982,656 988,656 1002,384 1000,382"/><polygon points="1134,664 1140,664 1152,426 1150,424"/>
     </g>
     <use href="#deckTower" transform="translate(395 690) scale(.75 .75)"/>
     <use href="#deckTower" transform="translate(1290 700) scale(1 1)"/>
@@ -853,7 +854,6 @@
     <g fill="#ffd28a"><rect x="647" y="678" width="2" height="2"/><rect x="730" y="677" width="2" height="2"/><rect x="867" y="678" width="2" height="2"/></g>
     <!-- parapet lamps -->
     <g fill="#ffd28a" opacity=".9"><circle cx="600" cy="668" r="1.3"/><circle cx="660" cy="666" r="1.3"/><circle cx="720" cy="665" r="1.3"/><circle cx="780" cy="665" r="1.3"/><circle cx="840" cy="666" r="1.3"/><circle cx="900" cy="668" r="1.3"/></g>
-    <g stroke="#ffd28a" stroke-width="1.2" opacity=".3"><line x1="660" y1="700" x2="658" y2="740"/><line x1="780" y1="700" x2="782" y2="750"/><line x1="900" y1="700" x2="904" y2="740"/></g>
   </g>
 </svg>
 <svg class="layer" id="layer-smoke" viewBox="0 0 1536 768" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
@@ -911,6 +911,15 @@
       <path d="M600 40 C 660 30, 720 70, 750 140 C 710 120, 690 170, 700 230 C 660 190, 630 200, 616 250 C 606 180, 590 130, 600 90 Z" fill="url(#tongue)" opacity=".7" transform="translate(-40 0) rotate(-100 650 120)"/>
       <path d="M470 -54 C 500 -90, 540 -100, 560 -140 C 580 -100, 620 -90, 660 -90 L 600 -52 Z" fill="url(#tongue)" opacity=".9"/>
     </g>
+  </g>
+  <!-- tracers passing behind the ship -->
+  <g stroke-linecap="round" fill="none">
+    <line x1="1120" y1="0" x2="1300" y2="420" stroke-width="4" opacity="0.18" stroke-dasharray="150 1668" stroke-dashoffset="640" stroke="#e8e2d2" filter="url(#glow)"><animate attributeName="stroke-dashoffset" from="640" to="-362" dur="2.7s" begin="-1.6s" repeatCount="indefinite"/></line>
+    <line x1="1120" y1="0" x2="1300" y2="420" stroke-width="1.6" opacity="0.35" stroke-dasharray="110 1668" stroke-dashoffset="600" stroke="#e8e2d2"><animate attributeName="stroke-dashoffset" from="600" to="-402" dur="2.7s" begin="-1.6s" repeatCount="indefinite"/></line>
+    <line x1="1120" y1="0" x2="1300" y2="420" stroke-width="1.8" opacity="1" stroke-dasharray="26 1668" stroke-dashoffset="516" stroke="#ffffff"><animate attributeName="stroke-dashoffset" from="516" to="-486" dur="2.7s" begin="-1.6s" repeatCount="indefinite"/></line>
+    <line x1="1500" y1="60" x2="1090" y2="290" stroke-width="4" opacity="0.18" stroke-dasharray="150 1710" stroke-dashoffset="654" stroke="#e8e2d2" filter="url(#glow)"><animate attributeName="stroke-dashoffset" from="654" to="-376" dur="2.8s" begin="-0.5s" repeatCount="indefinite"/></line>
+    <line x1="1500" y1="60" x2="1090" y2="290" stroke-width="1.6" opacity="0.35" stroke-dasharray="110 1710" stroke-dashoffset="614" stroke="#e8e2d2"><animate attributeName="stroke-dashoffset" from="614" to="-416" dur="2.8s" begin="-0.5s" repeatCount="indefinite"/></line>
+    <line x1="1500" y1="60" x2="1090" y2="290" stroke-width="1.8" opacity="1" stroke-dasharray="26 1710" stroke-dashoffset="530" stroke="#ffffff"><animate attributeName="stroke-dashoffset" from="530" to="-500" dur="2.8s" begin="-0.5s" repeatCount="indefinite"/></line>
   </g>
 </svg>
 <svg class="layer" id="layer-hull" viewBox="0 0 1536 768" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
@@ -1036,8 +1045,9 @@
     <polygon points="474,54 500,78 548,78 598,52" fill="#1d1e21"/>
     <g stroke="#0c0d0f" stroke-width=".8" opacity=".55"><line x1="486" y1="64" x2="580" y2="63"/><line x1="494" y1="72" x2="560" y2="71"/></g>
     <polygon points="500,78 548,78 544,82 506,82" fill="#3a2a22"/>
-    <polygon points="552,88 574,110 626,108 604,84" fill="#1d1e21" transform="rotate(16 580 96)"/>
-    <g stroke="#0c0d0f" stroke-width=".8" opacity=".55" transform="rotate(16 580 96)"><line x1="562" y1="98" x2="614" y2="97"/></g>
+    <path d="M540 80 L 548 86 L 552 92" fill="none" stroke="#26272b" stroke-width="2" stroke-linecap="round"/>
+    <polygon points="552,88 574,110 626,108 604,84" fill="#1d1e21" transform="translate(-10 -6) rotate(16 580 96)"/>
+    <g stroke="#0c0d0f" stroke-width=".8" opacity=".55" transform="translate(-10 -6) rotate(16 580 96)"><line x1="562" y1="98" x2="614" y2="97"/></g>
     <!-- the transom: a flat stern with four engine bells, three dead and one still burning (the burn is in the fire layer) -->
     <polygon points="594,-60 606,-58 606,58 594,60" fill="#2a2b2f"/>
     <polygon points="594,-60 606,-58 606,-56.5 594,-58.5" fill="#c9c9cb" opacity=".6"/>
@@ -1064,27 +1074,21 @@
     <line x1="60" y1="20" x2="640" y2="250" stroke-width="4" opacity="0.18" stroke-dasharray="150 2169" stroke-dashoffset="807" stroke="#e8e2d2" filter="url(#glow)"><animate attributeName="stroke-dashoffset" from="807" to="-529" dur="3.4s" repeatCount="indefinite"/></line>
     <line x1="60" y1="20" x2="640" y2="250" stroke-width="1.6" opacity="0.35" stroke-dasharray="110 2169" stroke-dashoffset="767" stroke="#e8e2d2"><animate attributeName="stroke-dashoffset" from="767" to="-569" dur="3.4s" repeatCount="indefinite"/></line>
     <line x1="60" y1="20" x2="640" y2="250" stroke-width="1.8" opacity="1" stroke-dasharray="26 2169" stroke-dashoffset="683" stroke="#ffffff"><animate attributeName="stroke-dashoffset" from="683" to="-653" dur="3.4s" repeatCount="indefinite"/></line>
-    <line x1="330" y1="0" x2="760" y2="200" stroke-width="4" opacity="0.18" stroke-dasharray="150 1722" stroke-dashoffset="658" stroke="#e8e2d2" filter="url(#glow)"><animate attributeName="stroke-dashoffset" from="658" to="-380" dur="2.8s" begin="1.1s" repeatCount="indefinite"/></line>
-    <line x1="330" y1="0" x2="760" y2="200" stroke-width="1.6" opacity="0.35" stroke-dasharray="110 1722" stroke-dashoffset="618" stroke="#e8e2d2"><animate attributeName="stroke-dashoffset" from="618" to="-420" dur="2.8s" begin="1.1s" repeatCount="indefinite"/></line>
-    <line x1="330" y1="0" x2="760" y2="200" stroke-width="1.8" opacity="1" stroke-dasharray="26 1722" stroke-dashoffset="534" stroke="#ffffff"><animate attributeName="stroke-dashoffset" from="534" to="-504" dur="2.8s" begin="1.1s" repeatCount="indefinite"/></line>
-    <line x1="1500" y1="60" x2="1090" y2="290" stroke-width="4" opacity="0.18" stroke-dasharray="150 1710" stroke-dashoffset="654" stroke="#e8e2d2" filter="url(#glow)"><animate attributeName="stroke-dashoffset" from="654" to="-376" dur="2.8s" begin="0.5s" repeatCount="indefinite"/></line>
-    <line x1="1500" y1="60" x2="1090" y2="290" stroke-width="1.6" opacity="0.35" stroke-dasharray="110 1710" stroke-dashoffset="614" stroke="#e8e2d2"><animate attributeName="stroke-dashoffset" from="614" to="-416" dur="2.8s" begin="0.5s" repeatCount="indefinite"/></line>
-    <line x1="1500" y1="60" x2="1090" y2="290" stroke-width="1.8" opacity="1" stroke-dasharray="26 1710" stroke-dashoffset="530" stroke="#ffffff"><animate attributeName="stroke-dashoffset" from="530" to="-500" dur="2.8s" begin="0.5s" repeatCount="indefinite"/></line>
-    <line x1="1536" y1="150" x2="1210" y2="380" stroke-width="4" opacity="0.18" stroke-dasharray="150 1494" stroke-dashoffset="582" stroke="#e8e2d2" filter="url(#glow)"><animate attributeName="stroke-dashoffset" from="582" to="-304" dur="2.5s" begin="2s" repeatCount="indefinite"/></line>
-    <line x1="1536" y1="150" x2="1210" y2="380" stroke-width="1.6" opacity="0.35" stroke-dasharray="110 1494" stroke-dashoffset="542" stroke="#e8e2d2"><animate attributeName="stroke-dashoffset" from="542" to="-344" dur="2.5s" begin="2s" repeatCount="indefinite"/></line>
-    <line x1="1536" y1="150" x2="1210" y2="380" stroke-width="1.8" opacity="1" stroke-dasharray="26 1494" stroke-dashoffset="458" stroke="#ffffff"><animate attributeName="stroke-dashoffset" from="458" to="-428" dur="2.5s" begin="2s" repeatCount="indefinite"/></line>
-    <line x1="1120" y1="0" x2="1300" y2="420" stroke-width="4" opacity="0.18" stroke-dasharray="150 1668" stroke-dashoffset="640" stroke="#e8e2d2" filter="url(#glow)"><animate attributeName="stroke-dashoffset" from="640" to="-362" dur="2.7s" begin="1.6s" repeatCount="indefinite"/></line>
-    <line x1="1120" y1="0" x2="1300" y2="420" stroke-width="1.6" opacity="0.35" stroke-dasharray="110 1668" stroke-dashoffset="600" stroke="#e8e2d2"><animate attributeName="stroke-dashoffset" from="600" to="-402" dur="2.7s" begin="1.6s" repeatCount="indefinite"/></line>
-    <line x1="1120" y1="0" x2="1300" y2="420" stroke-width="1.8" opacity="1" stroke-dasharray="26 1668" stroke-dashoffset="516" stroke="#ffffff"><animate attributeName="stroke-dashoffset" from="516" to="-486" dur="2.7s" begin="1.6s" repeatCount="indefinite"/></line>
-    <line x1="0" y1="140" x2="420" y2="290" stroke-width="4" opacity="0.18" stroke-dasharray="150 1635" stroke-dashoffset="629" stroke="#e8e2d2" filter="url(#glow)"><animate attributeName="stroke-dashoffset" from="629" to="-351" dur="2.7s" begin="2.6s" repeatCount="indefinite"/></line>
-    <line x1="0" y1="140" x2="420" y2="290" stroke-width="1.6" opacity="0.35" stroke-dasharray="110 1635" stroke-dashoffset="589" stroke="#e8e2d2"><animate attributeName="stroke-dashoffset" from="589" to="-391" dur="2.7s" begin="2.6s" repeatCount="indefinite"/></line>
-    <line x1="0" y1="140" x2="420" y2="290" stroke-width="1.8" opacity="1" stroke-dasharray="26 1635" stroke-dashoffset="505" stroke="#ffffff"><animate attributeName="stroke-dashoffset" from="505" to="-475" dur="2.7s" begin="2.6s" repeatCount="indefinite"/></line>
-    <line x1="190" y1="10" x2="445" y2="120" stroke-width="4" opacity="0.18" stroke-dasharray="150 1131" stroke-dashoffset="461" stroke="#e8e2d2" filter="url(#glow)"><animate attributeName="stroke-dashoffset" from="461" to="-183" dur="2.0s" begin="3.4s" repeatCount="indefinite"/></line>
-    <line x1="190" y1="10" x2="445" y2="120" stroke-width="1.6" opacity="0.35" stroke-dasharray="110 1131" stroke-dashoffset="421" stroke="#e8e2d2"><animate attributeName="stroke-dashoffset" from="421" to="-223" dur="2.0s" begin="3.4s" repeatCount="indefinite"/></line>
-    <line x1="190" y1="10" x2="445" y2="120" stroke-width="1.8" opacity="1" stroke-dasharray="26 1131" stroke-dashoffset="337" stroke="#ffffff"><animate attributeName="stroke-dashoffset" from="337" to="-307" dur="2.0s" begin="3.4s" repeatCount="indefinite"/></line>
-    <line x1="820" y1="40" x2="915" y2="225" stroke-width="4" opacity="0.18" stroke-dasharray="150 921" stroke-dashoffset="391" stroke="#e8e2d2" filter="url(#glow)"><animate attributeName="stroke-dashoffset" from="391" to="-113" dur="1.8s" begin="0.9s" repeatCount="indefinite"/></line>
-    <line x1="820" y1="40" x2="915" y2="225" stroke-width="1.6" opacity="0.35" stroke-dasharray="110 921" stroke-dashoffset="351" stroke="#e8e2d2"><animate attributeName="stroke-dashoffset" from="351" to="-153" dur="1.8s" begin="0.9s" repeatCount="indefinite"/></line>
-    <line x1="820" y1="40" x2="915" y2="225" stroke-width="1.8" opacity="1" stroke-dasharray="26 921" stroke-dashoffset="267" stroke="#ffffff"><animate attributeName="stroke-dashoffset" from="267" to="-237" dur="1.8s" begin="0.9s" repeatCount="indefinite"/></line>
+    <line x1="330" y1="0" x2="760" y2="200" stroke-width="4" opacity="0.18" stroke-dasharray="150 1722" stroke-dashoffset="658" stroke="#e8e2d2" filter="url(#glow)"><animate attributeName="stroke-dashoffset" from="658" to="-380" dur="2.8s" begin="-1.1s" repeatCount="indefinite"/></line>
+    <line x1="330" y1="0" x2="760" y2="200" stroke-width="1.6" opacity="0.35" stroke-dasharray="110 1722" stroke-dashoffset="618" stroke="#e8e2d2"><animate attributeName="stroke-dashoffset" from="618" to="-420" dur="2.8s" begin="-1.1s" repeatCount="indefinite"/></line>
+    <line x1="330" y1="0" x2="760" y2="200" stroke-width="1.8" opacity="1" stroke-dasharray="26 1722" stroke-dashoffset="534" stroke="#ffffff"><animate attributeName="stroke-dashoffset" from="534" to="-504" dur="2.8s" begin="-1.1s" repeatCount="indefinite"/></line>
+    <line x1="1536" y1="150" x2="1210" y2="380" stroke-width="4" opacity="0.18" stroke-dasharray="150 1494" stroke-dashoffset="582" stroke="#e8e2d2" filter="url(#glow)"><animate attributeName="stroke-dashoffset" from="582" to="-304" dur="2.5s" begin="-2s" repeatCount="indefinite"/></line>
+    <line x1="1536" y1="150" x2="1210" y2="380" stroke-width="1.6" opacity="0.35" stroke-dasharray="110 1494" stroke-dashoffset="542" stroke="#e8e2d2"><animate attributeName="stroke-dashoffset" from="542" to="-344" dur="2.5s" begin="-2s" repeatCount="indefinite"/></line>
+    <line x1="1536" y1="150" x2="1210" y2="380" stroke-width="1.8" opacity="1" stroke-dasharray="26 1494" stroke-dashoffset="458" stroke="#ffffff"><animate attributeName="stroke-dashoffset" from="458" to="-428" dur="2.5s" begin="-2s" repeatCount="indefinite"/></line>
+    <line x1="0" y1="140" x2="420" y2="290" stroke-width="4" opacity="0.18" stroke-dasharray="150 1635" stroke-dashoffset="629" stroke="#e8e2d2" filter="url(#glow)"><animate attributeName="stroke-dashoffset" from="629" to="-351" dur="2.7s" begin="-2.6s" repeatCount="indefinite"/></line>
+    <line x1="0" y1="140" x2="420" y2="290" stroke-width="1.6" opacity="0.35" stroke-dasharray="110 1635" stroke-dashoffset="589" stroke="#e8e2d2"><animate attributeName="stroke-dashoffset" from="589" to="-391" dur="2.7s" begin="-2.6s" repeatCount="indefinite"/></line>
+    <line x1="0" y1="140" x2="420" y2="290" stroke-width="1.8" opacity="1" stroke-dasharray="26 1635" stroke-dashoffset="505" stroke="#ffffff"><animate attributeName="stroke-dashoffset" from="505" to="-475" dur="2.7s" begin="-2.6s" repeatCount="indefinite"/></line>
+    <line x1="190" y1="10" x2="445" y2="120" stroke-width="4" opacity="0.18" stroke-dasharray="150 1131" stroke-dashoffset="461" stroke="#e8e2d2" filter="url(#glow)"><animate attributeName="stroke-dashoffset" from="461" to="-183" dur="2.0s" begin="-3.4s" repeatCount="indefinite"/></line>
+    <line x1="190" y1="10" x2="445" y2="120" stroke-width="1.6" opacity="0.35" stroke-dasharray="110 1131" stroke-dashoffset="421" stroke="#e8e2d2"><animate attributeName="stroke-dashoffset" from="421" to="-223" dur="2.0s" begin="-3.4s" repeatCount="indefinite"/></line>
+    <line x1="190" y1="10" x2="445" y2="120" stroke-width="1.8" opacity="1" stroke-dasharray="26 1131" stroke-dashoffset="337" stroke="#ffffff"><animate attributeName="stroke-dashoffset" from="337" to="-307" dur="2.0s" begin="-3.4s" repeatCount="indefinite"/></line>
+    <line x1="820" y1="40" x2="915" y2="225" stroke-width="4" opacity="0.18" stroke-dasharray="150 921" stroke-dashoffset="391" stroke="#e8e2d2" filter="url(#glow)"><animate attributeName="stroke-dashoffset" from="391" to="-113" dur="1.8s" begin="-0.9s" repeatCount="indefinite"/></line>
+    <line x1="820" y1="40" x2="915" y2="225" stroke-width="1.6" opacity="0.35" stroke-dasharray="110 921" stroke-dashoffset="351" stroke="#e8e2d2"><animate attributeName="stroke-dashoffset" from="351" to="-153" dur="1.8s" begin="-0.9s" repeatCount="indefinite"/></line>
+    <line x1="820" y1="40" x2="915" y2="225" stroke-width="1.8" opacity="1" stroke-dasharray="26 921" stroke-dashoffset="267" stroke="#ffffff"><animate attributeName="stroke-dashoffset" from="267" to="-237" dur="1.8s" begin="-0.9s" repeatCount="indefinite"/></line>
   </g>
   <!-- Stars -->
   <g fill="#f4f2ea">
@@ -1102,8 +1106,8 @@
   <!-- Detonations -->
   <g>
     <use href="#flareStar" x="450" y="212" transform="rotate(4 450 212)" filter="url(#glowWide)"><animate attributeName="opacity" values="0;1;.35;0;0" keyTimes="0;.04;.3;.7;1" dur="3.7s" repeatCount="indefinite" calcMode="spline" keySplines=".2 0 .6 1;.2 0 .6 1;.2 0 .6 1;.2 0 .6 1"/></use>
-    <use href="#flareStar" x="800" y="270" transform="rotate(-6 800 270) scale(.62) translate(490 166)" filter="url(#glowWide)"><animate attributeName="opacity" values="0;1;.35;0;0" keyTimes="0;.04;.3;.7;1" dur="4.9s" begin="1.3s" repeatCount="indefinite" calcMode="spline" keySplines=".2 0 .6 1;.2 0 .6 1;.2 0 .6 1;.2 0 .6 1"/></use>
-    <use href="#flareStar" x="1250" y="150" transform="scale(.4) translate(1875 225)" filter="url(#glowWide)"><animate attributeName="opacity" values="0;1;.35;0;0" keyTimes="0;.04;.3;.7;1" dur="6.1s" begin="2.6s" repeatCount="indefinite" calcMode="spline" keySplines=".2 0 .6 1;.2 0 .6 1;.2 0 .6 1;.2 0 .6 1"/></use>
+    <use href="#flareStar" x="800" y="270" transform="rotate(-6 800 270) scale(.62) translate(490 166)" filter="url(#glowWide)"><animate attributeName="opacity" values="0;1;.35;0;0" keyTimes="0;.04;.3;.7;1" dur="4.9s" begin="-1.3s" repeatCount="indefinite" calcMode="spline" keySplines=".2 0 .6 1;.2 0 .6 1;.2 0 .6 1;.2 0 .6 1"/></use>
+    <use href="#flareStar" x="1250" y="150" transform="scale(.4) translate(1875 225)" filter="url(#glowWide)"><animate attributeName="opacity" values="0;1;.35;0;0" keyTimes="0;.04;.3;.7;1" dur="6.1s" begin="-2.6s" repeatCount="indefinite" calcMode="spline" keySplines=".2 0 .6 1;.2 0 .6 1;.2 0 .6 1;.2 0 .6 1"/></use>
     <line x1="735" y1="215" x2="795" y2="266" stroke="#fff" stroke-width="2" stroke-linecap="round" filter="url(#glow)" stroke-dasharray="30 80">
       <animate attributeName="stroke-dashoffset" from="110" to="0" dur="1.4s" repeatCount="indefinite"/>
     </line>
@@ -1121,28 +1125,27 @@
   <!-- traffic on the near bridge: headlamps one way, tail lamps the other, passing behind the abutment houses at each end -->
   <g>
     <circle r="1.3" fill="#fff4d6"><animateMotion dur="11s" repeatCount="indefinite" path="M500 690 L556 688 Q 750 678 944 688 L1000 690"/></circle>
-    <circle r="1.3" fill="#fff4d6"><animateMotion dur="11s" begin="5s" repeatCount="indefinite" path="M500 690 L556 688 Q 750 678 944 688 L1000 690"/></circle>
-    <circle r="1.2" fill="#ff5a4a"><animateMotion dur="13s" begin="1s" repeatCount="indefinite" path="M1000 692 L944 690 Q 750 680 556 690 L500 692"/></circle>
-    <circle r="1.2" fill="#ff5a4a"><animateMotion dur="13s" begin="8s" repeatCount="indefinite" path="M1000 692 L944 690 Q 750 680 556 690 L500 692"/></circle>
+    <circle r="1.3" fill="#fff4d6"><animateMotion dur="11s" begin="-5s" repeatCount="indefinite" path="M500 690 L556 688 Q 750 678 944 688 L1000 690"/></circle>
+    <circle r="1.2" fill="#ff5a4a"><animateMotion dur="13s" begin="-1s" repeatCount="indefinite" path="M1000 692 L944 690 Q 750 680 556 690 L500 692"/></circle>
+    <circle r="1.2" fill="#ff5a4a"><animateMotion dur="13s" begin="-8s" repeatCount="indefinite" path="M1000 692 L944 690 Q 750 680 556 690 L500 692"/></circle>
   </g>
   <g transform="translate(760 538) rotate(-52)">
     <!-- plasma sheeting back from the nose: sparks born at the tip that die along the hull -->
     <g fill="#ffffff">
       <circle cx="0" cy="-2" r="1.2"><animate attributeName="cx" values="4;160" dur=".7s" repeatCount="indefinite" calcMode="spline" keySplines="0.42 0 1 1"/><animate attributeName="cy" values="-2;-22" dur=".7s" repeatCount="indefinite" calcMode="spline" keySplines="0.42 0 1 1"/><animate attributeName="opacity" values="0;1;.8;0" keyTimes="0;.1;.4;1" dur=".7s" repeatCount="indefinite" calcMode="spline" keySplines="0.2 0 0.6 1;0.42 0 0.58 1;0.42 0 0.58 1"/></circle>
-      <circle cx="0" cy="2" r="1"><animate attributeName="cx" values="4;140" dur=".9s" begin=".3s" repeatCount="indefinite" calcMode="spline" keySplines="0.42 0 1 1"/><animate attributeName="cy" values="2;24" dur=".9s" begin=".3s" repeatCount="indefinite" calcMode="spline" keySplines="0.42 0 1 1"/><animate attributeName="opacity" values="0;1;.8;0" keyTimes="0;.1;.4;1" dur=".9s" begin=".3s" repeatCount="indefinite" calcMode="spline" keySplines="0.2 0 0.6 1;0.42 0 0.58 1;0.42 0 0.58 1"/></circle>
-      <circle cx="0" cy="0" r="1.4"><animate attributeName="cx" values="4;200" dur=".8s" begin=".5s" repeatCount="indefinite" calcMode="spline" keySplines="0.42 0 1 1"/><animate attributeName="cy" values="0;-30" dur=".8s" begin=".5s" repeatCount="indefinite" calcMode="spline" keySplines="0.42 0 1 1"/><animate attributeName="opacity" values="0;1;.8;0" keyTimes="0;.1;.4;1" dur=".8s" begin=".5s" repeatCount="indefinite" calcMode="spline" keySplines="0.2 0 0.6 1;0.42 0 0.58 1;0.42 0 0.58 1"/></circle>
-      <circle cx="0" cy="0" r="1"><animate attributeName="cx" values="4;120" dur=".6s" begin=".15s" repeatCount="indefinite" calcMode="spline" keySplines="0.42 0 1 1"/><animate attributeName="cy" values="0;20" dur=".6s" begin=".15s" repeatCount="indefinite" calcMode="spline" keySplines="0.42 0 1 1"/><animate attributeName="opacity" values="0;1;.8;0" keyTimes="0;.1;.4;1" dur=".6s" begin=".15s" repeatCount="indefinite" calcMode="spline" keySplines="0.2 0 0.6 1;0.42 0 0.58 1;0.42 0 0.58 1"/></circle>
+      <circle cx="0" cy="2" r="1"><animate attributeName="cx" values="4;140" dur=".9s" begin="-.3s" repeatCount="indefinite" calcMode="spline" keySplines="0.42 0 1 1"/><animate attributeName="cy" values="2;24" dur=".9s" begin="-.3s" repeatCount="indefinite" calcMode="spline" keySplines="0.42 0 1 1"/><animate attributeName="opacity" values="0;1;.8;0" keyTimes="0;.1;.4;1" dur=".9s" begin="-.3s" repeatCount="indefinite" calcMode="spline" keySplines="0.2 0 0.6 1;0.42 0 0.58 1;0.42 0 0.58 1"/></circle>
+      <circle cx="0" cy="0" r="1.4"><animate attributeName="cx" values="4;200" dur=".8s" begin="-.5s" repeatCount="indefinite" calcMode="spline" keySplines="0.42 0 1 1"/><animate attributeName="cy" values="0;-30" dur=".8s" begin="-.5s" repeatCount="indefinite" calcMode="spline" keySplines="0.42 0 1 1"/><animate attributeName="opacity" values="0;1;.8;0" keyTimes="0;.1;.4;1" dur=".8s" begin="-.5s" repeatCount="indefinite" calcMode="spline" keySplines="0.2 0 0.6 1;0.42 0 0.58 1;0.42 0 0.58 1"/></circle>
+      <circle cx="0" cy="0" r="1"><animate attributeName="cx" values="4;120" dur=".6s" begin="-.15s" repeatCount="indefinite" calcMode="spline" keySplines="0.42 0 1 1"/><animate attributeName="cy" values="0;20" dur=".6s" begin="-.15s" repeatCount="indefinite" calcMode="spline" keySplines="0.42 0 1 1"/><animate attributeName="opacity" values="0;1;.8;0" keyTimes="0;.1;.4;1" dur=".6s" begin="-.15s" repeatCount="indefinite" calcMode="spline" keySplines="0.2 0 0.6 1;0.42 0 0.58 1;0.42 0 0.58 1"/></circle>
     </g>
     <g fill="#fff0c4">
       <rect x="326" y="-70.6" width="5" height="3.4"><animate attributeName="opacity" values="1;.15;1;.3;1" keyTimes="0;.82;.85;.9;.93" dur="4.7s" repeatCount="indefinite" calcMode="discrete"/></rect>
-      <rect x="350" y="-71.5" width="5" height="3.4"><animate attributeName="opacity" values="1;.15;1;.3;1" keyTimes="0;.82;.85;.9;.93" dur="6.3s" begin="2s" repeatCount="indefinite" calcMode="discrete"/></rect>
+      <rect x="350" y="-71.5" width="5" height="3.4"><animate attributeName="opacity" values="1;.15;1;.3;1" keyTimes="0;.82;.85;.9;.93" dur="6.3s" begin="-2s" repeatCount="indefinite" calcMode="discrete"/></rect>
       <!-- the last engine, still burning: a blue-white core that gutters, and its short exhaust -->
       <ellipse cx="630" cy="1" rx="3" ry="11" fill="#8fe0e8" filter="url(#glow)"><animate attributeName="opacity" values=".9;.3;.8;.1;.6;.9" dur="2.3s" repeatCount="indefinite" calcMode="spline" keySplines="0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1"/></ellipse>
       <polygon points="632,-9 690,-16 690,18 632,11" fill="#5fd0d8" opacity=".3" filter="url(#soft)"><animate attributeName="opacity" values=".3;.1;.28;.04;.2;.3" dur="2.3s" repeatCount="indefinite" calcMode="spline" keySplines="0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1"/></polygon>
     </g>
-    <polygon points="300,37 560,40 560,34 300,31" fill="#ff9a3c" opacity=".5"><animate attributeName="opacity" values=".5;.7;.45;.65;.4;.6;.5" keyTimes="0;.1;.28;.45;.62;.8;1" dur="2.5s" repeatCount="indefinite" calcMode="spline" keySplines=".45 0 .55 1;.45 0 .55 1;.45 0 .55 1;.45 0 .55 1;.45 0 .55 1;.45 0 .55 1"/></polygon>
-    <polygon points="396,-39 440,-40 440,-37.5 396,-36" fill="#ffd28a" opacity=".55"><animate attributeName="opacity" values=".35;.5;.3;.45;.28;.55;.35" keyTimes="0;.1;.28;.45;.62;.8;1" dur="3.3s" begin=".4s" repeatCount="indefinite" calcMode="spline" keySplines=".45 0 .55 1;.45 0 .55 1;.45 0 .55 1;.45 0 .55 1;.45 0 .55 1;.45 0 .55 1"/></polygon>
-    <circle cx="60" cy="24" r="1.8" fill="#ff5a4a"><animate attributeName="opacity" values="0;1;1;0;0" keyTimes="0;.12;.45;.57;1" dur="2.2s" begin=".7s" repeatCount="indefinite" calcMode="spline" keySplines=".2 0 .8 1;.2 0 .8 1;.2 0 .8 1;.2 0 .8 1"/></circle>
+    <polygon points="396,-39 440,-40 440,-37.5 396,-36" fill="#ffd28a" opacity=".55"><animate attributeName="opacity" values=".35;.5;.3;.45;.28;.55;.35" keyTimes="0;.1;.28;.45;.62;.8;1" dur="3.3s" begin="-.4s" repeatCount="indefinite" calcMode="spline" keySplines=".45 0 .55 1;.45 0 .55 1;.45 0 .55 1;.45 0 .55 1;.45 0 .55 1;.45 0 .55 1"/></polygon>
+    <circle cx="60" cy="24" r="1.8" fill="#ff5a4a"><animate attributeName="opacity" values="0;1;1;0;0" keyTimes="0;.12;.45;.57;1" dur="2.2s" begin="-.7s" repeatCount="indefinite" calcMode="spline" keySplines=".2 0 .8 1;.2 0 .8 1;.2 0 .8 1;.2 0 .8 1"/></circle>
     <circle cx="605" cy="-59" r="1.6" fill="#ffffff" filter="url(#glow)"><animate attributeName="opacity" values="0;1;0;0" keyTimes="0;.04;.12;1" dur="1.9s" repeatCount="indefinite"/></circle>
     <circle cx="340" cy="-121" r="2.2" fill="#ff5a4a"><animate attributeName="opacity" values="0;1;1;0;0" keyTimes="0;.12;.45;.57;1" dur="1s" repeatCount="indefinite" calcMode="spline" keySplines=".2 0 .8 1;.2 0 .8 1;.2 0 .8 1;.2 0 .8 1"/></circle>
     <!-- breaches: the hull torn open and lit from inside -->
@@ -1170,22 +1173,22 @@
       </g>
       <g transform="translate(468 -44) scale(1.25 -1.25)">
         <path d="M-14 4 C -26 26, -16 54, -30 74 C -10 62, 4 80, 14 96 C 18 66, 30 50, 36 24 C 24 32, 14 16, 8 -4 Z" fill="url(#tongue)" opacity=".9">
-          <animateTransform attributeName="transform" type="scale" values="1 1;.96 1.11;1.04 1.02;1 1" keyTimes="0;.22;.55;1" dur="2.1s" begin=".3s" repeatCount="indefinite" calcMode="spline" keySplines=".3 0 .7 1;.3 0 .7 1;.3 0 .7 1"/>
+          <animateTransform attributeName="transform" type="scale" values="1 1;.96 1.11;1.04 1.02;1 1" keyTimes="0;.22;.55;1" dur="2.1s" begin="-.3s" repeatCount="indefinite" calcMode="spline" keySplines=".3 0 .7 1;.3 0 .7 1;.3 0 .7 1"/>
         </path>
       </g>
       <g transform="translate(432 -34)">
         <path d="M-12 0 C -22 -30, -10 -56, -26 -80 C -6 -66, 8 -84, 16 -104 C 20 -70, 34 -56, 40 -30 C 26 -40, 14 -22, 10 4 Z" fill="url(#tongue)" opacity=".85">
-          <animateTransform attributeName="transform" type="scale" values="1 1;1.07 1.12;.96 1;1 1" keyTimes="0;.22;.55;1" dur="2.9s" begin=".6s" repeatCount="indefinite" calcMode="spline" keySplines=".3 0 .7 1;.3 0 .7 1;.3 0 .7 1"/>
+          <animateTransform attributeName="transform" type="scale" values="1 1;1.07 1.12;.96 1;1 1" keyTimes="0;.22;.55;1" dur="2.9s" begin="-.6s" repeatCount="indefinite" calcMode="spline" keySplines=".3 0 .7 1;.3 0 .7 1;.3 0 .7 1"/>
         </path>
       </g>
       <g transform="translate(456 -60) scale(1.3)">
         <path d="M-8 0 C -16 -22, -6 -40, -18 -60 C -2 -48, 6 -62, 12 -78 C 14 -52, 24 -40, 28 -22 C 18 -30, 10 -16, 6 2 Z" fill="url(#tongue)" opacity=".8">
-          <animateTransform attributeName="transform" type="scale" values="1 1;.95 1.12;1.03 1;1 1" keyTimes="0;.22;.55;1" dur="2.3s" begin=".9s" repeatCount="indefinite" calcMode="spline" keySplines=".3 0 .7 1;.3 0 .7 1;.3 0 .7 1"/>
+          <animateTransform attributeName="transform" type="scale" values="1 1;.95 1.12;1.03 1;1 1" keyTimes="0;.22;.55;1" dur="2.3s" begin="-.9s" repeatCount="indefinite" calcMode="spline" keySplines=".3 0 .7 1;.3 0 .7 1;.3 0 .7 1"/>
         </path>
       </g>
-      <g transform="translate(506 -112) scale(1.9 .55)"><path d="M-6 0 C -12 -14, -6 -26, -14 -40 C -2 -32, 6 -42, 10 -52 C 12 -34, 20 -26, 22 -12 C 14 -18, 8 -8, 4 2 Z" fill="url(#tongue)" opacity=".55"><animateTransform attributeName="transform" type="scale" values="1 1;1.07 1.12;.97 1;1 1" keyTimes="0;.22;.55;1" dur="1.9s" begin=".2s" repeatCount="indefinite" calcMode="spline" keySplines=".3 0 .7 1;.3 0 .7 1;.3 0 .7 1"/></path></g>
-      <g transform="translate(560 -100) scale(2.4 .7)"><path d="M-6 0 C -12 -12, -4 -24, -12 -36 C 0 -28, 6 -38, 10 -46 C 12 -30, 18 -22, 20 -10 C 12 -16, 8 -6, 4 2 Z" fill="url(#tongue)" opacity=".55"><animateTransform attributeName="transform" type="scale" values="1 1;.95 1.12;1.04 1;1 1" keyTimes="0;.22;.55;1" dur="2.6s" begin=".7s" repeatCount="indefinite" calcMode="spline" keySplines=".3 0 .7 1;.3 0 .7 1;.3 0 .7 1"/></path></g>
-      <g transform="translate(630 20) scale(2.3 .75) rotate(-80)"><path d="M-5 0 C -10 12, -4 22, -10 34 C 0 26, 5 36, 8 44 C 10 28, 16 20, 18 10 C 10 16, 6 6, 3 -2 Z" fill="url(#tongue)" opacity=".55"><animateTransform attributeName="transform" type="scale" values="1 1;1.06 1.12;.97 1;1 1" keyTimes="0;.22;.55;1" dur="2.4s" begin=".45s" repeatCount="indefinite" calcMode="spline" keySplines=".3 0 .7 1;.3 0 .7 1;.3 0 .7 1"/></path></g>
+      <g transform="translate(506 -112) scale(1.9 .55)"><path d="M-6 0 C -12 -14, -6 -26, -14 -40 C -2 -32, 6 -42, 10 -52 C 12 -34, 20 -26, 22 -12 C 14 -18, 8 -8, 4 2 Z" fill="url(#tongue)" opacity=".55"><animateTransform attributeName="transform" type="scale" values="1 1;1.07 1.12;.97 1;1 1" keyTimes="0;.22;.55;1" dur="1.9s" begin="-.2s" repeatCount="indefinite" calcMode="spline" keySplines=".3 0 .7 1;.3 0 .7 1;.3 0 .7 1"/></path></g>
+      <g transform="translate(560 -100) scale(2.4 .7)"><path d="M-6 0 C -12 -12, -4 -24, -12 -36 C 0 -28, 6 -38, 10 -46 C 12 -30, 18 -22, 20 -10 C 12 -16, 8 -6, 4 2 Z" fill="url(#tongue)" opacity=".55"><animateTransform attributeName="transform" type="scale" values="1 1;.95 1.12;1.04 1;1 1" keyTimes="0;.22;.55;1" dur="2.6s" begin="-.7s" repeatCount="indefinite" calcMode="spline" keySplines=".3 0 .7 1;.3 0 .7 1;.3 0 .7 1"/></path></g>
+      <g transform="translate(630 20) scale(2.3 .75) rotate(-80)"><path d="M-5 0 C -10 12, -4 22, -10 34 C 0 26, 5 36, 8 44 C 10 28, 16 20, 18 10 C 10 16, 6 6, 3 -2 Z" fill="url(#tongue)" opacity=".55"><animateTransform attributeName="transform" type="scale" values="1 1;1.06 1.12;.97 1;1 1" keyTimes="0;.22;.55;1" dur="2.4s" begin="-.45s" repeatCount="indefinite" calcMode="spline" keySplines=".3 0 .7 1;.3 0 .7 1;.3 0 .7 1"/></path></g>
       <ellipse cx="426" cy="-30" rx="60" ry="22" fill="url(#fireCore)" opacity=".4"/>
       <ellipse cx="500" cy="-70" rx="50" ry="18" fill="url(#fireCore)" opacity=".35"/>
       <ellipse cx="660" cy="70" rx="46" ry="30" fill="url(#fireCore)" opacity=".3"/>
@@ -1196,13 +1199,13 @@
   <!-- ash and embers drifting down over the city on the wind, lost in the fog as they descend -->
   <g fill="#8a7f72" mask="url(#ashMask)">
     <circle r="1.4" opacity=".7"><animateMotion dur="17s" repeatCount="indefinite" path="M1040 300 C 1080 420, 1140 520, 1210 700"/><animate attributeName="opacity" values="0;.7;.7;0" keyTimes="0;.1;.8;1" dur="17s" repeatCount="indefinite"/></circle>
-    <circle r="1.1" opacity=".35"><animateMotion dur="21s" begin="3s" repeatCount="indefinite" path="M1120 280 C 1170 400, 1230 520, 1330 720"/><animate attributeName="opacity" values="0;.35;.35;0" keyTimes="0;.1;.8;1" dur="21s" begin="3s" repeatCount="indefinite"/></circle>
-    <circle r="1.6" opacity=".6"><animateMotion dur="19s" begin="7s" repeatCount="indefinite" path="M980 340 C 1020 460, 1090 560, 1150 740"/><animate attributeName="opacity" values="0;.6;.6;0" keyTimes="0;.1;.8;1" dur="19s" begin="7s" repeatCount="indefinite"/></circle>
-    <circle r="1" opacity=".3"><animateMotion dur="23s" begin="11s" repeatCount="indefinite" path="M1200 260 C 1250 400, 1320 520, 1440 700"/><animate attributeName="opacity" values="0;.3;.3;0" keyTimes="0;.1;.8;1" dur="23s" begin="11s" repeatCount="indefinite"/></circle>
-    <circle r="1.3" opacity=".6"><animateMotion dur="20s" begin="5s" repeatCount="indefinite" path="M1080 240 C 1130 380, 1180 520, 1280 720"/><animate attributeName="opacity" values="0;.6;.6;0" keyTimes="0;.1;.8;1" dur="20s" begin="5s" repeatCount="indefinite"/></circle>
-    <circle r="1.2" opacity=".35"><animateMotion dur="25s" begin="9s" repeatCount="indefinite" path="M1160 320 C 1220 440, 1300 560, 1400 740"/><animate attributeName="opacity" values="0;.35;.35;0" keyTimes="0;.1;.8;1" dur="25s" begin="9s" repeatCount="indefinite"/></circle>
-    <circle r="1.5" opacity=".7" fill="#ffb454"><animateMotion dur="15s" begin="2s" repeatCount="indefinite" path="M1010 320 C 1060 440, 1120 540, 1190 720"/><animate attributeName="opacity" values=".8;.2;.7;.1" dur="15s" begin="2s" repeatCount="indefinite" calcMode="spline" keySplines="0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1"/></circle>
-    <circle r="1.2" opacity=".7" fill="#ffb454"><animateMotion dur="18s" begin="8s" repeatCount="indefinite" path="M1140 300 C 1200 420, 1260 540, 1360 730"/><animate attributeName="opacity" values=".7;.1;.6;0" dur="18s" begin="8s" repeatCount="indefinite" calcMode="spline" keySplines="0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1"/></circle>
+    <circle r="1.1" opacity=".35"><animateMotion dur="21s" begin="-3s" repeatCount="indefinite" path="M1120 280 C 1170 400, 1230 520, 1330 720"/><animate attributeName="opacity" values="0;.35;.35;0" keyTimes="0;.1;.8;1" dur="21s" begin="-3s" repeatCount="indefinite"/></circle>
+    <circle r="1.6" opacity=".6"><animateMotion dur="19s" begin="-7s" repeatCount="indefinite" path="M980 340 C 1020 460, 1090 560, 1150 740"/><animate attributeName="opacity" values="0;.6;.6;0" keyTimes="0;.1;.8;1" dur="19s" begin="-7s" repeatCount="indefinite"/></circle>
+    <circle r="1" opacity=".3"><animateMotion dur="23s" begin="-11s" repeatCount="indefinite" path="M1200 260 C 1250 400, 1320 520, 1440 700"/><animate attributeName="opacity" values="0;.3;.3;0" keyTimes="0;.1;.8;1" dur="23s" begin="-11s" repeatCount="indefinite"/></circle>
+    <circle r="1.3" opacity=".6"><animateMotion dur="20s" begin="-5s" repeatCount="indefinite" path="M1080 240 C 1130 380, 1180 520, 1280 720"/><animate attributeName="opacity" values="0;.6;.6;0" keyTimes="0;.1;.8;1" dur="20s" begin="-5s" repeatCount="indefinite"/></circle>
+    <circle r="1.2" opacity=".35"><animateMotion dur="25s" begin="-9s" repeatCount="indefinite" path="M1160 320 C 1220 440, 1300 560, 1400 740"/><animate attributeName="opacity" values="0;.35;.35;0" keyTimes="0;.1;.8;1" dur="25s" begin="-9s" repeatCount="indefinite"/></circle>
+    <circle r="1.5" opacity=".7" fill="#ffb454"><animateMotion dur="15s" begin="-2s" repeatCount="indefinite" path="M1010 320 C 1060 440, 1120 540, 1190 720"/><animate attributeName="opacity" values=".8;.2;.7;.1" dur="15s" begin="-2s" repeatCount="indefinite" calcMode="spline" keySplines="0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1"/></circle>
+    <circle r="1.2" opacity=".7" fill="#ffb454"><animateMotion dur="18s" begin="-8s" repeatCount="indefinite" path="M1140 300 C 1200 420, 1260 540, 1360 730"/><animate attributeName="opacity" values=".7;.1;.6;0" dur="18s" begin="-8s" repeatCount="indefinite" calcMode="spline" keySplines="0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1"/></circle>
   </g>
   <!-- Debris shed from the ship: torn plating, one edge still glowing, each piece trailing its own smoke -->
   <g>
@@ -1240,10 +1243,10 @@
   <!-- embers -->
   <g fill="#ffb454" filter="url(#glow)">
     <circle cx="1060" cy="300" r="1.8"><animateTransform attributeName="transform" type="translate" values="0 0;30 160" dur="9s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 1 1"/><animate attributeName="opacity" values="0;1;1;0" keyTimes="0;.08;.7;1" dur="9s" repeatCount="indefinite" calcMode="spline" keySplines="0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1"/></circle>
-    <circle cx="1120" cy="230" r="1.5"><animateTransform attributeName="transform" type="translate" values="0 0;40 180" dur="11s" begin="3s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 1 1"/><animate attributeName="opacity" values="0;1;1;0" keyTimes="0;.08;.7;1" dur="11s" begin="3s" repeatCount="indefinite" calcMode="spline" keySplines="0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1"/></circle>
-    <circle cx="960" cy="330" r="1.6"><animateTransform attributeName="transform" type="translate" values="0 0;-10 150" dur="10s" begin="1.5s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 1 1"/><animate attributeName="opacity" values="0;1;1;0" keyTimes="0;.08;.7;1" dur="10s" begin="1.5s" repeatCount="indefinite" calcMode="spline" keySplines="0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1"/></circle>
-    <circle cx="1010" cy="260" r="1.4"><animateTransform attributeName="transform" type="translate" values="0 0;25 140" dur="8s" begin="5s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 1 1"/><animate attributeName="opacity" values="0;1;1;0" keyTimes="0;.08;.7;1" dur="8s" begin="5s" repeatCount="indefinite" calcMode="spline" keySplines="0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1"/></circle>
-    <circle cx="1090" cy="180" r="1.3"><animateTransform attributeName="transform" type="translate" values="0 0;50 200" dur="13s" begin="2s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 1 1"/><animate attributeName="opacity" values="0;1;1;0" keyTimes="0;.08;.7;1" dur="13s" begin="2s" repeatCount="indefinite" calcMode="spline" keySplines="0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1"/></circle>
+    <circle cx="1120" cy="230" r="1.5"><animateTransform attributeName="transform" type="translate" values="0 0;40 180" dur="11s" begin="-3s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 1 1"/><animate attributeName="opacity" values="0;1;1;0" keyTimes="0;.08;.7;1" dur="11s" begin="-3s" repeatCount="indefinite" calcMode="spline" keySplines="0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1"/></circle>
+    <circle cx="960" cy="330" r="1.6"><animateTransform attributeName="transform" type="translate" values="0 0;-10 150" dur="10s" begin="-1.5s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 1 1"/><animate attributeName="opacity" values="0;1;1;0" keyTimes="0;.08;.7;1" dur="10s" begin="-1.5s" repeatCount="indefinite" calcMode="spline" keySplines="0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1"/></circle>
+    <circle cx="1010" cy="260" r="1.4"><animateTransform attributeName="transform" type="translate" values="0 0;25 140" dur="8s" begin="-5s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 1 1"/><animate attributeName="opacity" values="0;1;1;0" keyTimes="0;.08;.7;1" dur="8s" begin="-5s" repeatCount="indefinite" calcMode="spline" keySplines="0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1"/></circle>
+    <circle cx="1090" cy="180" r="1.3"><animateTransform attributeName="transform" type="translate" values="0 0;50 200" dur="13s" begin="-2s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 1 1"/><animate attributeName="opacity" values="0;1;1;0" keyTimes="0;.08;.7;1" dur="13s" begin="-2s" repeatCount="indefinite" calcMode="spline" keySplines="0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1"/></circle>
   </g>
   <!-- firelight on everything near the ship -->
   <ellipse cx="960" cy="330" rx="260" ry="150" fill="#ff8a2a" opacity=".13" filter="url(#softer)">
@@ -1287,7 +1290,7 @@
     <polygon points="1388,349 1412,349 1412,321 1388,321" fill="#26272b"/>
     <polygon points="1388,321 1412,321 1412,319 1388,319" fill="#4a4c52"/>
     <rect x="1396" y="330" width="3" height="5" fill="#ffd28a" opacity=".7"/>
-    <g fill="#ff5a4a"><circle cx="1391" cy="317" r="1.8"><animate attributeName="opacity" values="0;1;1;0;0" keyTimes="0;.12;.45;.57;1" dur="1.6s" repeatCount="indefinite" calcMode="spline" keySplines=".2 0 .8 1;.2 0 .8 1;.2 0 .8 1;.2 0 .8 1"/></circle><circle cx="1409" cy="317" r="1.8"><animate attributeName="opacity" values="0;1;1;0;0" keyTimes="0;.12;.45;.57;1" dur="1.6s" begin=".8s" repeatCount="indefinite" calcMode="spline" keySplines=".2 0 .8 1;.2 0 .8 1;.2 0 .8 1;.2 0 .8 1"/></circle></g>
+    <g fill="#ff5a4a"><circle cx="1391" cy="317" r="1.8"><animate attributeName="opacity" values="0;1;1;0;0" keyTimes="0;.12;.45;.57;1" dur="1.6s" repeatCount="indefinite" calcMode="spline" keySplines=".2 0 .8 1;.2 0 .8 1;.2 0 .8 1;.2 0 .8 1"/></circle><circle cx="1409" cy="317" r="1.8"><animate attributeName="opacity" values="0;1;1;0;0" keyTimes="0;.12;.45;.57;1" dur="1.6s" begin="-.8s" repeatCount="indefinite" calcMode="spline" keySplines=".2 0 .8 1;.2 0 .8 1;.2 0 .8 1;.2 0 .8 1"/></circle></g>
     <!-- the block at the left edge, a lit face of small square windows -->
     <polygon points="0,768 0,470 30,466 52,500 52,768" fill="#0f1012"/>
     <polygon points="52,500 52,768 92,768 92,560" fill="url(#blockFace)"/>
@@ -1329,7 +1332,7 @@
     <polygon points="516,700 516,662 526,654 556,654 556,700" fill="#1b1c1f"/><rect x="516" y="662" width="40" height="3" fill="#33353a"/><rect x="536" y="680" width="6" height="8" fill="#ffd28a" opacity=".8"/>
     <polygon points="944,700 944,656 974,656 984,664 984,700" fill="#1b1c1f"/><rect x="944" y="664" width="40" height="3" fill="#33353a"/><rect x="956" y="680" width="6" height="8" fill="#ffd28a" opacity=".8"/>
     <line x1="546" y1="654" x2="546" y2="636" stroke="#111214" stroke-width="1.5"/><circle cx="546" cy="635" r="1.6" fill="#ff5a4a"><animate attributeName="opacity" values="0;1;1;0;0" keyTimes="0;.12;.45;.57;1" dur="2s" repeatCount="indefinite" calcMode="spline" keySplines=".2 0 .8 1;.2 0 .8 1;.2 0 .8 1;.2 0 .8 1"/></circle>
-    <line x1="964" y1="656" x2="964" y2="638" stroke="#111214" stroke-width="1.5"/><circle cx="964" cy="637" r="1.6" fill="#ff5a4a"><animate attributeName="opacity" values="0;1;1;0;0" keyTimes="0;.12;.45;.57;1" dur="2s" begin="1s" repeatCount="indefinite" calcMode="spline" keySplines=".2 0 .8 1;.2 0 .8 1;.2 0 .8 1;.2 0 .8 1"/></circle>
+    <line x1="964" y1="656" x2="964" y2="638" stroke="#111214" stroke-width="1.5"/><circle cx="964" cy="637" r="1.6" fill="#ff5a4a"><animate attributeName="opacity" values="0;1;1;0;0" keyTimes="0;.12;.45;.57;1" dur="2s" begin="-1s" repeatCount="indefinite" calcMode="spline" keySplines=".2 0 .8 1;.2 0 .8 1;.2 0 .8 1;.2 0 .8 1"/></circle>
   </g>
 </svg>
 <svg class="layer" id="layer-top" viewBox="0 0 1536 768" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
@@ -1338,7 +1341,7 @@
   <!-- a few flickering windows on the near towers, over the brush layer so they stay crisp -->
   <g fill="url(#window)" filter="url(#windowGlow)">
     <rect x="207" y="590" width="10" height="36"><animate attributeName="opacity" values="1;.35;1" dur="7s" repeatCount="indefinite" calcMode="spline" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></rect>
-    <rect x="1391" y="690" width="8" height="22"><animate attributeName="opacity" values="1;.4;1;1" dur="5.2s" begin="2s" repeatCount="indefinite" calcMode="spline" keySplines="0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1"/></rect>
+    <rect x="1391" y="690" width="8" height="22"><animate attributeName="opacity" values="1;.4;1;1" dur="5.2s" begin="-2s" repeatCount="indefinite" calcMode="spline" keySplines="0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1"/></rect>
   </g>
   <!-- the fire's light on the faces that turn toward it -->
   <ellipse cx="1260" cy="380" rx="300" ry="220" fill="#ff8a2a" opacity=".16" filter="url(#softer)">
