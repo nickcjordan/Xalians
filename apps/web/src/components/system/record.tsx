@@ -30,9 +30,14 @@ function SpecPlate({
         // viewport wide -- so the second pair waits on a container query.
         // Gating it on the viewport instead broke twice: at md, then again at
         // lg, where a 1024px window still gave the plate only ~267px.
+        // Below that, a 7rem label track leaves a phone-width plate ~54px for
+        // its value, which shreds "10,385 km" into one word per line. Under
+        // 20rem the pairs stack, label over value, the way a key/value list
+        // reads on a phone.
+        "@container grid-cols-1",
         columns === 2
-          ? "@container grid-cols-[minmax(7rem,max-content)_minmax(0,1fr)] @[34rem]:grid-cols-[minmax(9rem,max-content)_minmax(0,1fr)_minmax(9rem,max-content)_minmax(0,1fr)]"
-          : "grid-cols-[minmax(7rem,max-content)_minmax(0,1fr)]",
+          ? "@[20rem]:grid-cols-[minmax(7rem,max-content)_minmax(0,1fr)] @[34rem]:grid-cols-[minmax(9rem,max-content)_minmax(0,1fr)_minmax(9rem,max-content)_minmax(0,1fr)]"
+          : "@[20rem]:grid-cols-[minmax(7rem,max-content)_minmax(0,1fr)]",
         className
       )}
       {...props}
@@ -197,8 +202,15 @@ function TileArt({ className, ...props }: React.ComponentProps<"div">) {
   )
 }
 
+/**
+ * The tile's caption block. Breaks inside a word: a record name here is one
+ * long uppercase word with tracking ("Thirstaserp", "Stellaris"), the tile
+ * clips rather than scrolls, and a two-up phone grid leaves under 100px for
+ * it -- so without this the last letters were silently cut off and
+ * "ECTOGHOUL" read as "ECTOGHOU".
+ */
 function TileMeta({ className, ...props }: React.ComponentProps<"div">) {
-  return <div data-slot="tile-meta" className={cn("px-4 pb-4 pt-3", className)} {...props} />
+  return <div data-slot="tile-meta" className={cn("px-4 pb-4 pt-3 wrap-anywhere", className)} {...props} />
 }
 
 export { SpecPlate, RecordRow, Meter, MoveSet, EmptyState, Tile, TileGrid, TileArt, TileMeta }

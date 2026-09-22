@@ -207,9 +207,14 @@ export default function WorldView() {
 
                     <SpecPlate columns={2} entries={factsEntries} />
 
-                    <div className="flex flex-col items-start gap-2 border-t border-edge pt-4">
+                    {/* `items-start` on the column sized the rail to its content
+                        rather than to this box, which defeated both the wrap and
+                        the scroll it falls back to: the seven era stations ran
+                        over 1000px off the side of a phone with no way to reach
+                        them. The rail must be allowed to fill the width. */}
+                    <div className="flex flex-col items-stretch gap-2 border-t border-edge pt-4">
                         <span className="type-legend whitespace-nowrap">In the story</span>
-                        <StationRow value={null} onChange={() => {}} aria-label="In the story">
+                        <StationRow value={null} onChange={() => {}} aria-label="In the story" className="min-w-0">
                             {timeline.map((row) => {
                                 const count = row.chapters.length;
                                 const lit = count > 0 || row.events.length > 0;
