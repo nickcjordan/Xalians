@@ -244,8 +244,9 @@ def preview() -> None:
     contact.save(path / "keyframes.png", optimize=True)
 
 
-STYLE_BOARD_BEATS = {"akinza": [0, 375, 542, 583, 667, 1000], "blender2": [0, 375, 625, 708, 917, 1208],
-                     "dromeus": [0, 375, 542, 583, 667, 1000], "bioflim": [0, 333, 500, 583, 875, 1208]}
+STYLE_BOARD_BEATS = {"akinza-blender": [0, 375, 542, 583, 667, 1000], "blender2": [0, 375, 625, 708, 917, 1208],
+                     "dromeus-blender": [0, 375, 542, 583, 667, 1000], "bioflim-blender": [0, 333, 500, 583, 875, 1208],
+                     "dromeus-skin": [0, 375, 542, 583, 667, 1000]}
 
 
 def style_board() -> None:
@@ -257,8 +258,7 @@ def style_board() -> None:
     """
     path = HERE / "preview"
     path.mkdir(exist_ok=True)
-    for base, beats in STYLE_BOARD_BEATS.items():
-        export = "blender2" if base == "blender2" else f"{base}-blender"
+    for export, beats in STYLE_BOARD_BEATS.items():
         rows = []
         for folder in sorted(OUT.glob(f"{export}*")):
             if folder.name != export and not folder.name.startswith(export + "-"):
@@ -282,8 +282,9 @@ def style_board() -> None:
                 index = min(len(clip["frames"]) - 1, int(time_ms * clip["fps"] / 1000))
                 info = clip["frames"][index]
                 art = sheet.crop((info["x"], info["y"], info["x"] + CELL, info["y"] + CELL))
-                stage = Image.new("RGBA", (CELL, CELL), "#203941")
-                ImageDraw.Draw(stage).ellipse((30, 286, 355, 354), fill="#183139")
+                # The light ground is the harder test for a dark contour, so the board uses it.
+                stage = Image.new("RGBA", (CELL, CELL), "#c9b8a6")
+                ImageDraw.Draw(stage).ellipse((30, 286, 355, 354), fill="#b3a08c")
                 stage.alpha_composite(art, (ORIGIN[0] - manifest["origin"][0], ORIGIN[1] - manifest["origin"][1]))
                 x = 10 + c * (size + 8)
                 y = 22 + r * (size + 26)
@@ -291,8 +292,8 @@ def style_board() -> None:
                 if c == 0:
                     pen.text((x, y - 16), f"{style.upper()}  {manifest['label']}", fill="#e5eadc")
                 pen.text((x + size - 52, y - 16), f"{time_ms / 1000:.2f}s", fill="#a8c3aa")
-        board.save(path / f"style-board-{manifest['species']}.png", optimize=True)
-        print("Wrote", path / f"style-board-{manifest['species']}.png")
+        board.save(path / f"style-board-{export}.png", optimize=True)
+        print("Wrote", path / f"style-board-{export}.png")
 
 
 def main() -> None:

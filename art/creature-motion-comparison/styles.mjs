@@ -9,6 +9,7 @@ const SPECIES = {
   akinza: { export: 'akinza-blender', stage: tundra, beats: [[0, 'rest'], [375, 'crouch'], [458, 'dash'], [583, 'contact'], [667, 'landing'], [1000, 'step back']] },
   avilily: { export: 'blender2', stage: canopy, beats: [[0, 'rest'], [375, 'crouch'], [625, 'bloom'], [708, 'peak'], [917, 'landing'], [1208, 'recovered']] },
   dromeus: { export: 'dromeus-blender', stage: ashfield, beats: [[0, 'rest'], [375, 'crouch'], [542, 'stoop'], [583, 'bite'], [667, 'landing'], [1000, 'step back']] },
+  'dromeus-skin': { export: 'dromeus-skin', stage: ashfield, beats: [[0, 'rest'], [375, 'crouch'], [542, 'stoop'], [583, 'bite'], [667, 'landing'], [1000, 'step back']] },
   bioflim: { export: 'bioflim-blender', stage: swamp, beats: [[0, 'rest'], [333, 'gathered'], [500, 'reach cue'], [583, 'reach peak'], [875, 'sag'], [1208, 'recovered']] },
 };
 const STYLES = ['plain', 'toon', 'flat', 'ink'];
@@ -92,16 +93,19 @@ ui.timeline.addEventListener('input', () => { elapsed = Number(ui.timeline.value
 ui.timeline.addEventListener('change', () => { scrubbed = false; });
 
 async function load() {
+  // The spec's own export carries whatever style the spec names; the others sit beside it as
+  // <export>-<style>. Each manifest says which style it is, so the page never guesses.
   const found = [];
-  for (const style of STYLES) {
-    const folder = style === 'plain' ? species.export : `${species.export}-${style}`;
+  for (const folder of [species.export, ...STYLES.map((style) => `${species.export}-${style}`)]) {
     try {
       const atlas = await loadAtlas(`./exports/${folder}/manifest.json`);
-      found.push({ style, atlas });
+      const style = (atlas.manifest.provenance && atlas.manifest.provenance.style) || 'plain';
+      if (!found.some((entry) => entry.style === style)) found.push({ style, atlas });
     } catch {
       // A style that has not been rendered for this species simply has no stage.
     }
   }
+  found.sort((a, b) => STYLES.indexOf(a.style) - STYLES.indexOf(b.style));
   if (!found.length) throw new Error(`no exports found for ${name}`);
   ui.phones.replaceChildren();
   atlases = found.map(({ style, atlas }, index) => {

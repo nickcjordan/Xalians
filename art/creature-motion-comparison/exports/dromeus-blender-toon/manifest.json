@@ -30,7 +30,7 @@
     "blender": "5.2.2 LTS",
     "spec": "dromeus.json",
     "spec_hash": "581d35138e4eac96",
-    "library_hash": "ff6813f43d8980c7",
+    "library_hash": "441c8567d4c66323",
     "cycles_seed": 0,
     "samples": 16,
     "style": "toon"

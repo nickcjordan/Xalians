@@ -25,7 +25,7 @@ from .materials import color
 STYLES = ("plain", "toon", "flat", "ink")
 
 # Line thickness in pixels at the 384 px stage, per style.
-LINE = {"toon": 2.4, "flat": 2.6, "ink": 1.6}
+LINE = {"toon": 1.9, "flat": 2.1, "ink": 1.6}
 # Toon step: the lit cone half-angle (0 to 1), its edge softness, and the flat
 # shadow term added under it so the unlit side is a darker tone, not black.
 TOON = {"size": 0.6, "smooth": 0.05, "shadow": 0.5}
@@ -53,7 +53,8 @@ def _emission(tree, rgba, strength=1.0):
     return node
 
 
-def _rebuild(mat, style, entry):
+def _rebuild(mat, style, entry, toon=None):
+    toon = {**TOON, **(toon or {})}
     tree = mat.node_tree
     principled = tree.nodes.get("Principled BSDF")
     base = tuple(principled.inputs["Base Color"].default_value) if principled else tuple(mat.diffuse_color)
@@ -63,14 +64,14 @@ def _rebuild(mat, style, entry):
     if style == "flat":
         shader = _emission(tree, base, 1.0)
     elif style == "toon":
-        toon = tree.nodes.new("ShaderNodeBsdfToon")
-        toon.component = "DIFFUSE"
-        toon.inputs["Color"].default_value = base
-        toon.inputs["Size"].default_value = TOON["size"]
-        toon.inputs["Smooth"].default_value = TOON["smooth"]
-        shadow = _emission(tree, base, TOON["shadow"])
+        node = tree.nodes.new("ShaderNodeBsdfToon")
+        node.component = "DIFFUSE"
+        node.inputs["Color"].default_value = base
+        node.inputs["Size"].default_value = toon["size"]
+        node.inputs["Smooth"].default_value = toon["smooth"]
+        shadow = _emission(tree, base, toon["shadow"])
         shader = tree.nodes.new("ShaderNodeAddShader")
-        tree.links.new(toon.outputs[0], shader.inputs[0])
+        tree.links.new(node.outputs[0], shader.inputs[0])
         tree.links.new(shadow.outputs[0], shader.inputs[1])
     elif style == "ink":
         lit = entry.get("ink_lit", False) or glow > 0
@@ -101,7 +102,7 @@ def apply_style(scene, style, spec):
     for mat in bpy.data.materials:
         if mat.node_tree is None:
             continue
-        _rebuild(mat, style, by_label.get(mat.name, {}))
+        _rebuild(mat, style, by_label.get(mat.name, {}), spec.get("render", {}).get("toon"))
 
     unlined = bpy.data.collections.new("unlined parts")
     scene.collection.children.link(unlined)
@@ -130,8 +131,10 @@ def apply_style(scene, style, spec):
     lineset = fs.linesets.new("contour")
     lineset.select_silhouette = True
     lineset.select_border = True
-    lineset.select_crease = True
-    lineset.select_material_boundary = style != "ink"
+    # Silhouette and open edges only: crease and material-boundary lines traced
+    # every seam of the primitive bodies and read as scribble.
+    lineset.select_crease = False
+    lineset.select_material_boundary = False
     lineset.select_edge_mark = False
     lineset.select_contour = False
     lineset.select_external_contour = False
@@ -156,7 +159,7 @@ def apply_style(scene, style, spec):
         lineset.select_silhouette = False
         lineset.select_border = False
         lineset.select_material_boundary = True
-    lineset.select_crease = True
+        lineset.select_crease = True
 
 
 def _ink_hex(entries):

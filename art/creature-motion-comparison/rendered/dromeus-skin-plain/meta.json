@@ -1,0 +1,47 @@
+{
+  "species": "dromeus",
+  "template": "biped",
+  "variant": "blender-skin",
+  "export": "dromeus-skin-plain",
+  "label": "Dromeus, skinned body (plain)",
+  "emitter": [
+    352,
+    177
+  ],
+  "points": {
+    "ground_contact": [
+      192,
+      318
+    ],
+    "eye_rest": [
+      269,
+      160
+    ]
+  },
+  "markers": {
+    "bite": {
+      "frame": 35,
+      "time_ms": 583
+    }
+  },
+  "clips": {
+    "idle": [
+      1,
+      12
+    ],
+    "action": [
+      21,
+      30
+    ]
+  },
+  "provenance": {
+    "blender": "5.2.2 LTS",
+    "spec": "dromeus-skin.json",
+    "spec_hash": "99e8dfdf5a981bda",
+    "library_hash": "441c8567d4c66323",
+    "cycles_seed": 0,
+    "samples": 16,
+    "style": "plain"
+  },
+  "objects": 150
+}
