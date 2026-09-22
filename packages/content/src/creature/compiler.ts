@@ -1,6 +1,7 @@
 import { ActionTemplateSchema, abilityIdentity, stable, type Ability, type AbilityTemplate } from './ability.ts';
 import { SpeciesSchema, type Species, type Mechanism } from './species.ts';
 import { nameOrdinaryActions } from './naming.ts';
+import { deriveMechanisms } from './acts.ts';
 
 type Path = (string | number)[];
 interface Dimension { path: Path; values: string[] }
@@ -8,8 +9,15 @@ interface RecipientVariant { value: string; children: { index: number; values: s
 interface RecipientGroup { root: number; variants: RecipientVariant[]; size: bigint }
 interface Branch { base: AbilityTemplate; dimensions: Dimension[]; recipients: string[][]; groups: RecipientGroup[]; size: bigint }
 export type Draw = (exclusive: bigint, label: string) => bigint;
+/** What this body can do, for the check tool and the pilot floor. */
+export interface ActSummary {
+  readonly distinct: number;
+  readonly byInstrument: Readonly<Record<string, number>>;
+  readonly exclusions: readonly string[];
+}
 export interface CompiledSpecies {
   readonly species: Species;
+  readonly acts: ActSummary;
   /** Samples structures without replacement, then rolls output bands. No record evaluation. */
   abilities(draw: Draw): { actions: Ability[]; passives: Ability[]; signature: Species['signature'] };
 }
@@ -332,15 +340,35 @@ function resolveOutput(ability: AbilityTemplate, draw: Draw, label: string): Abi
   return result as Ability;
 }
 
+/** Distinct act identities on offer, in total and per instrument. An act reachable
+ * through two instruments counts once overall and once under each of them. */
+function summarize(branches: Branch[], acts: string[][], exclusions: readonly string[]): ActSummary {
+  const all = new Set<string>();
+  const byInstrument = new Map<string, Set<string>>();
+  branches.forEach((branch, index) => {
+    const instrument = branch.base.instrument;
+    const seen = byInstrument.get(instrument) ?? new Set<string>();
+    for (const act of acts[index]) { all.add(act); seen.add(act); }
+    byInstrument.set(instrument, seen);
+  });
+  return Object.freeze({
+    distinct: all.size,
+    byInstrument: Object.freeze(Object.fromEntries([...byInstrument].map(([key, set]) => [key, set.size]))),
+    exclusions: Object.freeze([...exclusions]),
+  });
+}
+
 export function compileSpecies(input: unknown): CompiledSpecies {
   const species = freeze(SpeciesSchema.parse(input));
-  const branches = species.mechanisms.flatMap(branchesFor);
+  // Anatomy grants first; authored mechanisms extend what the tables cannot say.
+  const branches = [...deriveMechanisms(species), ...species.mechanisms].flatMap(branchesFor);
   const acts = actsOf(branches);
   const slots = 4 - species.actions.length;
   // At most four direct selections prove capacity, including all cross-mechanism aliases.
   select(branches, acts, species.actions, slots, () => 0n);
   return Object.freeze({
     species,
+    acts: summarize(branches, acts, species.acts?.exclude ?? []),
     abilities(draw: Draw) {
       const checkedDraw: Draw = (exclusive, label) => {
         const value = draw(exclusive, label);

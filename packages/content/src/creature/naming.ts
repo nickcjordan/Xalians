@@ -127,6 +127,8 @@ function noun(ability: Ability): readonly string[] {
   if (area?.shape === 'sweep') return ['Sweep'];
   if (area?.shape === 'line') return ['Line'];
   if (area?.shape === 'radial' && ability.delivery.mode === 'projectile') return ['Splash'];
+  // A pulse that resolves is a burst; a pulse that stays is still a field.
+  if (area?.shape === 'radial' && ability.delivery.mode === 'pulse') return ['Burst'];
   if (area?.shape === 'radial') return ['Field'];
   // Contact with no geometry is the creature striking with a body part: name the part's act.
   if (ability.delivery.mode === 'contact') return [NAMING_CATALOG.instrument[ability.instrument]];

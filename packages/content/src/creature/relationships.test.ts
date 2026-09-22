@@ -6,6 +6,10 @@ import { compileSpecies } from './compiler.ts';
 import { SpeciesSchema } from './species.ts';
 
 const specimen = () => SpeciesSchema.parse(fixture);
+// Anatomy now grants acts of its own. Tests that read a specific ordinary slot back
+// switch derivation off with a whole-body exclusion, so every ordinary action still
+// comes from the authored mechanism under test.
+const authoredOnly = () => SpeciesSchema.parse({ ...fixture, acts: { exclude: ['*/*'] } });
 const base = (): AbilityTemplate => specimen().actions[0];
 const restoration = (): AbilityTemplate => ({ ...base(), activation: { continuity: 'ongoing' }, timing: undefined,
   delivery: { mode: 'self', approach: 'stationary' }, targeting: ['self'], spatial: {},
@@ -88,11 +92,16 @@ describe('representative source relationships, without migrating species', () =>
     expect(parsed.effects[0]).not.toHaveProperty('protection');
     expect(parsed.effects[0]).toHaveProperty('status', 'dispersed');
   });
-  it('allows sourced sound production independently of communication and respiration', () => {
+  it('allows sourced sound production independently of respiration', () => {
+    // The derived-acts contract makes voice a declared channel whose ratified predicate
+    // is vocal communication, so the old "independent of communication" half of this
+    // test is now the rule it would break. Respiration stays uncoupled: a resonator
+    // needs no breath. The channel predicates have their own coverage in acts.test.ts.
     const species = specimen();
-    species.physiology.communication = [];
+    species.physiology.communication = ['vocal'];
     species.physiology.breathes = [];
     species.actions[0].instrument = 'voice';
+    species.channels = ['voice', 'secretion'];
     species.actions[0].description = 'Noncanonical fixture: an internal resonator emits a repairing vibration; no communication behavior is implied.';
     expect(() => compileSpecies(species)).not.toThrow();
   });
@@ -155,7 +164,7 @@ it('can name the distinction between a shared prerequisite and independent prere
 });
 
 it('constructs correlated target/area recipients from requires, without a second relationship field', () => {
-  const species = specimen();
+  const species = authoredOnly();
   const recipients = { contact: ['target'] as ['target'], projectile: ['target', 'area'] as ['target', 'area'] };
   species.mechanisms[0].effects = [
     { key: 'harm', type: 'harm', mechanism: 'impact', recipient: recipients, onset: 'instant', persistence: 'resolved', likelihood: ['consistent'], intensity: 50 },
@@ -173,7 +182,7 @@ it('constructs correlated target/area recipients from requires, without a second
 });
 
 it('retains the dependent-self alternative alongside correlated target and area choices', () => {
-  const species = specimen();
+  const species = authoredOnly();
   species.mechanisms[0].effects = [
     { key: 'harm', type: 'harm', mechanism: 'impact', recipient: { contact: ['target'], projectile: ['target','area'] }, onset: 'instant', persistence: 'resolved', likelihood: ['consistent'], intensity: 50 },
     { key: 'repair', type: 'restore', recipient: { contact: ['target','self'], projectile: ['target','area','self'] }, onset: 'instant', persistence: 'resolved', likelihood: ['consistent'], intensity: 50, requires: 'harm' },
@@ -194,7 +203,7 @@ it('uses the same self-only recipient equivalence for validation and generation'
   ability.targeting = ['self']; ability.spatial = {};
   ability.effects[0].recipient = 'self'; ability.effects[2].recipient = 'target';
   expect(ActionTemplateSchema.safeParse(ability).success).toBe(true);
-  const species = specimen();
+  const species = authoredOnly();
   species.mechanisms[0].targeting = ['self'];
   species.mechanisms[0].delivery = { self: { approach: ['stationary'] } };
   species.mechanisms[0].timing = { preparation: ['immediate','brief','prolonged'], recovery: ['brief'] };

@@ -1,4 +1,5 @@
 export * from './catalog.ts';
+export * from './acts.ts';
 export * from './ability.ts';
 export * from './species.ts';
 export * from './compiler.ts';

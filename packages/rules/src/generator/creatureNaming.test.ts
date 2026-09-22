@@ -12,7 +12,9 @@ function corrosion(): Ability {
 }
 
 it('compiles and names paralysis variants without adding harm or sedation', () => {
-  const compiled = compileSpecies({ ...fixture, mechanisms: fixture.mechanisms.map(mechanism => ({
+  // Anatomy grants acts of its own now; this test names the authored mechanism, so it
+  // switches derivation off with a whole-body exclusion.
+  const compiled = compileSpecies({ ...fixture, acts: { exclude: ['*/*'] }, mechanisms: fixture.mechanisms.map(mechanism => ({
     ...mechanism, effects: [{ key: 'paralyze', type: 'status', status: 'paralyzed',
       recipient: mechanism.effects[0].recipient, onset: 'instant', persistence: 'lingering', duration: 'brief',
       likelihood: ['likely'], removable: ['detoxifying'] }],
@@ -39,6 +41,20 @@ it('names contact, targeted projectile and splash from their actual structures',
     effects: projectile.effects.map(effect => ({ ...effect, recipient: 'area' })) };
   const named = nameOrdinaryActions([contact, projectile, splash], [], [], creatureDraw('names'));
   expect(named.map(a => a.name)).toEqual(['Corrosive Touch', 'Corrosive Shot', 'Corrosive Splash']);
+});
+
+it('names a resolved radial pulse a Burst, and a lingering one a Field', () => {
+  const radial = (mode: Ability['delivery']['mode'], persistence: 'resolved' | 'lingering'): Ability => ({
+    ...corrosion(), key: `${mode}-${persistence}`, delivery: { mode, approach: 'stationary' },
+    spatial: { range: 'short', area: { shape: 'radial', extent: 'small', anchor: 'self', persistence,
+      ...(persistence === 'lingering' ? { duration: 'brief' as const } : {}) } },
+    effects: corrosion().effects.map(effect => ({ ...effect, recipient: 'area' as const })),
+  });
+  const named = (ability: Ability) => nameOrdinaryActions([ability], [], [], creatureDraw('names'))[0].name;
+  expect(named(radial('pulse', 'resolved'))).toBe('Corrosive Burst');
+  // A pulse that stays behind is still a field, and a non-pulse radial is unchanged.
+  expect(named(radial('pulse', 'lingering'))).toBe('Corrosive Field');
+  expect(named(radial('field', 'resolved'))).toBe('Corrosive Field');
 });
 
 it('names a contact strike for the body part that makes it, and keeps Touch for a channel', () => {
