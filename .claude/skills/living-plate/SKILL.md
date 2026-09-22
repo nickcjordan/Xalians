@@ -7,6 +7,8 @@ description: Build or revise a living era plate (an animated SVG recreation of a
 
 Read `docs/design/living-plate-playbook.md` end to end first. It holds the process, the composition, motion and performance rules learned on the End Wars plate, and a starting piece list for each remaining plate. Also load `build-ui` for anything that touches the page around the plate.
 
+Recreate the concept, not the picture: the painting says what the scene is about; the plate is composed freshly for its own panel shape (viewBox 1536 wide, height from the panel's aspect) and for motion, and nothing in the raster's framing is binding.
+
 The non-negotiables, each learned from a correction:
 
 1. **Source in the repo.** Work in `art/plates/<era>/source.html`, copied from `art/plates/end-wars/source.html`. Never keep the only copy in a scratchpad. Export with `python scripts/plates/export-plate.py <era>`; never hand-edit `public/assets/plates/`.
