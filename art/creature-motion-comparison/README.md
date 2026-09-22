@@ -55,11 +55,11 @@ The plain Cycles render is the study baseline, not a look. `blender/xalians_rig/
 
 Eye parts (object names containing `eye`, `pupil`, `glint`) are collected into an `unlined parts` collection that the line set excludes, because a contour at this weight swallowed the pupil, and the eye is the contact point. Outline shells are hidden in every lined style.
 
-[styles.html](http://127.0.0.1:8766/creature-motion-comparison/styles.html?species=akinza) plays every rendered style of one species in lockstep on 390 px stages with a beat board below (`?species=akinza|avilily|dromeus|bioflim`). `preview/style-board-<species>.png` is the same board as a still, written by `build.py` from the packed exports:
+[styles.html](http://127.0.0.1:8766/creature-motion-comparison/styles.html?species=akinza) plays every rendered style of one species in lockstep on 390 px stages with a beat board below (`?species=akinza|avilily|dromeus|bioflim`). `preview/style-board-<export>.png` is the same board as a still, written by `build.py` from the packed exports:
 
-![Akinza in every render style](preview/style-board-akinza.png)
+![Akinza in every render style](preview/style-board-akinza-blender.png)
 
-![Dromeus in every render style](preview/style-board-dromeus.png)
+![Dromeus in every render style](preview/style-board-dromeus-blender.png)
 
 **Observed on the boards (2026-09-21, inspection at 384 px, not viewer research).** Toon and flat both move the four studies out of the plastic-toy register and into an illustrated one without touching a spec or a template; on Dromeus and Avilily the toon row reads as a finished game sprite at phone size where the plain row reads as a render test. Flat lands the palette exactly and looks most like the pilot cutout; toon keeps a little volume in the body and ears. The contour exposes template faults the plain render hid: Akinza's muzzle reads as a bill and its hands as mitts, Dromeus's feet are tube clusters, and Bioflim's surface bumps draw small stray crease rings in toon. The ink homage does not work from these meshes: crease lines on smooth primitives are sparse and arbitrary, so the portrait's incision language would need authored edge marks rather than a render setting. Costs: a styled render of 42 frames took 30 to 44 s on this machine, against 16 to 23 s plain, the difference being Freestyle; a styled atlas is the same size class as its plain twin.
 
