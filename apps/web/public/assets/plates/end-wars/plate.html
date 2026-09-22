@@ -231,7 +231,7 @@
          neither is ever seen resetting. Field A carries the flame while B is invisible and vice versa. -->
     <filter id="fire" x="-40%" y="-40%" width="180%" height="180%">
       <feTurbulence type="fractalNoise" baseFrequency=".03 .06" numOctaves="3" seed="11" result="na"/>
-      <feOffset in="na" dx="0" dy="0" result="oa"><animate attributeName="dx" values="0;44" dur="6s" begin="3s" repeatCount="indefinite"/><animate attributeName="dy" values="0;-18" dur="6s" begin="3s" repeatCount="indefinite"/></feOffset>
+      <feOffset in="na" dx="0" dy="0" result="oa"><animate attributeName="dx" values="0;44" dur="6s" begin="-3s" repeatCount="indefinite"/><animate attributeName="dy" values="0;-18" dur="6s" begin="-3s" repeatCount="indefinite"/></feOffset>
       <feTurbulence type="fractalNoise" baseFrequency=".03 .06" numOctaves="3" seed="4" result="nb"/>
       <feOffset in="nb" dx="0" dy="0" result="ob"><animate attributeName="dx" values="0;44" dur="6s" repeatCount="indefinite"/><animate attributeName="dy" values="0;-18" dur="6s" repeatCount="indefinite"/></feOffset>
       <feComposite in="oa" in2="ob" operator="arithmetic" k1="0" k2="1" k3="0" k4="0" result="n">
@@ -257,7 +257,7 @@
     <!-- the live water: the same disturbance as rippleHard, but the noise field shifts slowly so the reflection moves -->
     <filter id="rippleLive" x="-10%" y="-110%" width="120%" height="320%">
       <feTurbulence type="turbulence" baseFrequency=".004 .07" numOctaves="2" seed="7" result="na"/>
-      <feOffset in="na" dy="0" result="oa"><animate attributeName="dy" values="0;150" dur="16s" begin="8s" repeatCount="indefinite"/></feOffset>
+      <feOffset in="na" dy="0" result="oa"><animate attributeName="dy" values="0;150" dur="16s" begin="-8s" repeatCount="indefinite"/></feOffset>
       <feTurbulence type="turbulence" baseFrequency=".004 .07" numOctaves="2" seed="12" result="nb"/>
       <feOffset in="nb" dy="0" result="ob"><animate attributeName="dy" values="0;150" dur="16s" repeatCount="indefinite"/></feOffset>
       <feComposite in="oa" in2="ob" operator="arithmetic" k1="0" k2="1" k3="0" k4="0" result="t2">
@@ -270,26 +270,26 @@
     <!-- the glitter path: horizontal streaks of noise, thresholded, cut the reflection into flecks; the field drifts so the flecks move -->
     <filter id="glitterFar" x="-5%" y="-200%" width="110%" height="500%">
       <feTurbulence type="fractalNoise" baseFrequency=".002 .12" numOctaves="3" seed="3" result="na"/>
-      <feOffset in="na" dy="0" result="oa"><animate attributeName="dy" values="0;140" dur="14s" begin="7s" repeatCount="indefinite"/></feOffset>
+      <feOffset in="na" dy="0" result="oa"><animate attributeName="dy" values="0;140" dur="14s" begin="-7s" repeatCount="indefinite"/></feOffset>
       <feTurbulence type="fractalNoise" baseFrequency=".002 .12" numOctaves="3" seed="8" result="nb"/>
       <feOffset in="nb" dy="0" result="ob"><animate attributeName="dy" values="0;140" dur="14s" repeatCount="indefinite"/></feOffset>
       <feComposite in="oa" in2="ob" operator="arithmetic" k1="0" k2="1" k3="0" k4="0" result="t2">
         <animate attributeName="k2" values="1;0;1" dur="14s" repeatCount="indefinite"/>
         <animate attributeName="k3" values="0;1;0" dur="14s" repeatCount="indefinite"/>
       </feComposite>
-      <feColorMatrix in="t2" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 7 -3.1" result="m"/>
+      <feColorMatrix in="t2" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 7 -2.6" result="m"/>
       <feComposite in="SourceGraphic" in2="m" operator="in"/>
     </filter>
     <filter id="glitterNear" x="-5%" y="-260%" width="110%" height="620%">
       <feTurbulence type="fractalNoise" baseFrequency=".0011 .06" numOctaves="3" seed="5" result="na"/>
-      <feOffset in="na" dy="0" result="oa"><animate attributeName="dy" values="0;180" dur="18s" begin="9s" repeatCount="indefinite"/></feOffset>
+      <feOffset in="na" dy="0" result="oa"><animate attributeName="dy" values="0;180" dur="18s" begin="-9s" repeatCount="indefinite"/></feOffset>
       <feTurbulence type="fractalNoise" baseFrequency=".0011 .06" numOctaves="3" seed="9" result="nb"/>
       <feOffset in="nb" dy="0" result="ob"><animate attributeName="dy" values="0;180" dur="18s" repeatCount="indefinite"/></feOffset>
       <feComposite in="oa" in2="ob" operator="arithmetic" k1="0" k2="1" k3="0" k4="0" result="t2">
         <animate attributeName="k2" values="1;0;1" dur="18s" repeatCount="indefinite"/>
         <animate attributeName="k3" values="0;1;0" dur="18s" repeatCount="indefinite"/>
       </feComposite>
-      <feColorMatrix in="t2" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 7 -3.1" result="m"/>
+      <feColorMatrix in="t2" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 7 -2.6" result="m"/>
       <feComposite in="SourceGraphic" in2="m" operator="in"/>
     </filter>
     <filter id="soft20" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="20"/></filter>
@@ -470,8 +470,8 @@
     <g filter="url(#glitterFar)"><path d="M738 614 L760 614 L878 690 L607 690 Z" fill="url(#waterLight)"/></g>
     <g filter="url(#glitterNear)"><path d="M607 690 L878 690 L1000 768 L470 768 Z" fill="url(#waterLight)"/></g>
     <!-- the same broken light, faint, across the whole surface: the sky on the water -->
-    <g filter="url(#glitterFar)" opacity=".1"><path d="M728 612 L796 612 L938 690 L584 690 Z" fill="#e9e7df"/></g>
-    <g filter="url(#glitterNear)" opacity=".1"><path d="M584 690 L938 690 L1080 768 L440 768 Z" fill="#e9e7df"/></g>
+    <g filter="url(#glitterFar)" opacity=".22"><path d="M728 612 L796 612 L938 690 L584 690 Z" fill="#e9e7df"/></g>
+    <g filter="url(#glitterNear)" opacity=".22"><path d="M584 690 L938 690 L1080 768 L440 768 Z" fill="#e9e7df"/></g>
     <!-- sheens: the sky lying on the surface in soft bands that widen toward the viewer -->
     <g fill="#e9e7df" filter="url(#soft)">
       <ellipse cx="760" cy="640" rx="50" ry="2.5" opacity=".35"/><ellipse cx="750" cy="660" rx="70" ry="3" opacity=".3"/><ellipse cx="720" cy="700" rx="110" ry="4" opacity=".24"/><ellipse cx="820" cy="722" rx="120" ry="4" opacity=".2"/><ellipse cx="640" cy="748" rx="170" ry="5" opacity=".16"/><ellipse cx="900" cy="756" rx="150" ry="5" opacity=".15"/>
@@ -902,13 +902,13 @@
     <g filter="url(#fire)">
       <ellipse cx="470" cy="-80" rx="80" ry="34" fill="url(#fireCore)" opacity=".4"/>
       <ellipse cx="660" cy="60" rx="90" ry="50" fill="url(#fireCore)" opacity=".4"/>
-      <ellipse cx="700" cy="130" rx="70" ry="40" fill="url(#fireCore)" opacity=".3"/>
+      <ellipse cx="670" cy="120" rx="60" ry="36" fill="url(#fireCore)" opacity=".3"/>
       <ellipse cx="560" cy="-110" rx="70" ry="30" fill="url(#fireCore)" opacity=".35"/>
       <path d="M400 -40 C 430 -110, 470 -130, 490 -170 C 500 -120, 540 -110, 570 -150 C 575 -100, 620 -90, 640 -70 L 600 -50 Z" fill="url(#tongue)"/>
       <path d="M440 -42 C 470 -80, 520 -96, 540 -130 C 560 -96, 600 -90, 640 -110 C 650 -80, 680 -70, 700 -60 L 600 -52 Z" fill="url(#tongue)" opacity=".8"/>
       <!-- the slipstream carries the blaze past the transom and out to the ship's lee -->
-      <path d="M596 -50 C 660 -60, 720 -20, 760 40 C 720 30, 700 80, 720 150 C 680 110, 640 120, 620 170 C 610 110, 590 70, 604 50 Z" fill="url(#tongue)" opacity=".85" transform="rotate(-100 640 50)"/>
-      <path d="M600 40 C 660 30, 720 70, 750 140 C 710 120, 690 170, 700 230 C 660 190, 630 200, 616 250 C 606 180, 590 130, 600 90 Z" fill="url(#tongue)" opacity=".7" transform="rotate(-100 650 120)"/>
+      <path d="M596 -50 C 660 -60, 720 -20, 760 40 C 720 30, 700 80, 720 150 C 680 110, 640 120, 620 170 C 610 110, 590 70, 604 50 Z" fill="url(#tongue)" opacity=".85" transform="translate(-34 0) rotate(-100 640 50)"/>
+      <path d="M600 40 C 660 30, 720 70, 750 140 C 710 120, 690 170, 700 230 C 660 190, 630 200, 616 250 C 606 180, 590 130, 600 90 Z" fill="url(#tongue)" opacity=".7" transform="translate(-40 0) rotate(-100 650 120)"/>
       <path d="M470 -54 C 500 -90, 540 -100, 560 -140 C 580 -100, 620 -90, 660 -90 L 600 -52 Z" fill="url(#tongue)" opacity=".9"/>
     </g>
   </g>
@@ -1160,7 +1160,7 @@
       <g transform="translate(456 -60) scale(1.3)"><path d="M-8 0 C -16 -22, -6 -40, -18 -60 C -2 -48, 6 -62, 12 -78 C 14 -52, 24 -40, 28 -22 C 18 -30, 10 -16, 6 2 Z"/></g>
       <g transform="translate(506 -112) scale(1.9 .55)"><path d="M-6 0 C -12 -14, -6 -26, -14 -40 C -2 -32, 6 -42, 10 -52 C 12 -34, 20 -26, 22 -12 C 14 -18, 8 -8, 4 2 Z"/></g>
       <g transform="translate(560 -100) scale(2.4 .7)"><path d="M-6 0 C -12 -12, -4 -24, -12 -36 C 0 -28, 6 -38, 10 -46 C 12 -30, 18 -22, 20 -10 C 12 -16, 8 -6, 4 2 Z"/></g>
-      <g transform="translate(640 20) scale(2.6 .8) rotate(-80)"><path d="M-5 0 C -10 12, -4 22, -10 34 C 0 26, 5 36, 8 44 C 10 28, 16 20, 18 10 C 10 16, 6 6, 3 -2 Z"/></g>
+      <g transform="translate(630 20) scale(2.3 .75) rotate(-80)"><path d="M-5 0 C -10 12, -4 22, -10 34 C 0 26, 5 36, 8 44 C 10 28, 16 20, 18 10 C 10 16, 6 6, 3 -2 Z"/></g>
     </g>
     <g filter="url(#fire)" opacity=".78">
       <g transform="translate(418 -24)">
@@ -1185,7 +1185,7 @@
       </g>
       <g transform="translate(506 -112) scale(1.9 .55)"><path d="M-6 0 C -12 -14, -6 -26, -14 -40 C -2 -32, 6 -42, 10 -52 C 12 -34, 20 -26, 22 -12 C 14 -18, 8 -8, 4 2 Z" fill="url(#tongue)" opacity=".55"><animateTransform attributeName="transform" type="scale" values="1 1;1.07 1.12;.97 1;1 1" keyTimes="0;.22;.55;1" dur="1.9s" begin=".2s" repeatCount="indefinite" calcMode="spline" keySplines=".3 0 .7 1;.3 0 .7 1;.3 0 .7 1"/></path></g>
       <g transform="translate(560 -100) scale(2.4 .7)"><path d="M-6 0 C -12 -12, -4 -24, -12 -36 C 0 -28, 6 -38, 10 -46 C 12 -30, 18 -22, 20 -10 C 12 -16, 8 -6, 4 2 Z" fill="url(#tongue)" opacity=".55"><animateTransform attributeName="transform" type="scale" values="1 1;.95 1.12;1.04 1;1 1" keyTimes="0;.22;.55;1" dur="2.6s" begin=".7s" repeatCount="indefinite" calcMode="spline" keySplines=".3 0 .7 1;.3 0 .7 1;.3 0 .7 1"/></path></g>
-      <g transform="translate(640 20) scale(2.6 .8) rotate(-80)"><path d="M-5 0 C -10 12, -4 22, -10 34 C 0 26, 5 36, 8 44 C 10 28, 16 20, 18 10 C 10 16, 6 6, 3 -2 Z" fill="url(#tongue)" opacity=".55"><animateTransform attributeName="transform" type="scale" values="1 1;1.06 1.12;.97 1;1 1" keyTimes="0;.22;.55;1" dur="2.4s" begin=".45s" repeatCount="indefinite" calcMode="spline" keySplines=".3 0 .7 1;.3 0 .7 1;.3 0 .7 1"/></path></g>
+      <g transform="translate(630 20) scale(2.3 .75) rotate(-80)"><path d="M-5 0 C -10 12, -4 22, -10 34 C 0 26, 5 36, 8 44 C 10 28, 16 20, 18 10 C 10 16, 6 6, 3 -2 Z" fill="url(#tongue)" opacity=".55"><animateTransform attributeName="transform" type="scale" values="1 1;1.06 1.12;.97 1;1 1" keyTimes="0;.22;.55;1" dur="2.4s" begin=".45s" repeatCount="indefinite" calcMode="spline" keySplines=".3 0 .7 1;.3 0 .7 1;.3 0 .7 1"/></path></g>
       <ellipse cx="426" cy="-30" rx="60" ry="22" fill="url(#fireCore)" opacity=".4"/>
       <ellipse cx="500" cy="-70" rx="50" ry="18" fill="url(#fireCore)" opacity=".35"/>
       <ellipse cx="660" cy="70" rx="46" ry="30" fill="url(#fireCore)" opacity=".3"/>
