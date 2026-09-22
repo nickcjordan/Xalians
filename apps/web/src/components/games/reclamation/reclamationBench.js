@@ -10,7 +10,7 @@ import { slotStateOf, siteHoldsFor } from './reclamationRoster';
 import { speciesLabel, formatHold, roleSentence, roleWord } from './reclamationNarration';
 import { prepare, speedOf, flippableRolesOf } from '@xalians/rules/expedition/creatureOnTable';
 import { attributeLanes } from './reclamationPreview';
-import { SENDABLE, RETURNED_SEND_COST } from '@xalians/rules/expedition/expeditionInterpretation';
+import { SENDABLE } from '@xalians/rules/expedition/expeditionInterpretation';
 
 /*
 	ReclamationBench — the squad on a bench under the three worlds (Nick, 2026-09-04,
@@ -48,8 +48,6 @@ function lampLevel(hold) {
 function Plinth({ record, view, you, armed, suggested, disabled, onArm, onInspect, onHover }) {
 	const slot = slotStateOf(record, view, you);
 	const inHand = slot.state === 'hand';
-	// the Loki line: back from a lost world, sendable again at double cost
-	const returned = inHand && ((view.players[you].returned || []).includes(record.id));
 	const holds = inHand ? siteHoldsFor(record, view, you) : null;
 	const readAt = prepare(record, view.frame.sites[0], null, 0, { rules: view.rules });
 	const stealthy = readAt.stealthy;
@@ -121,9 +119,6 @@ function Plinth({ record, view, you, armed, suggested, disabled, onArm, onInspec
 					<span className={`rec-plinth-tag rec-plinth-tag--${slot.state}`}>
 						{slot.state === 'sent' ? slot.site.world.planet : slot.state === 'holding' ? 'holding' : slot.state === 'downed' ? 'downed' : 'away'}
 					</span>
-				)}
-				{inHand && returned && (
-					<span className="rec-plinth-tag rec-plinth-tag--returned" title={`Withdrawn from a lost world and back in hand; its next send costs ${RETURNED_SEND_COST} against the cap`}>returned</span>
 				)}
 				{inHand && (suggested || stealthy) && (
 					<span className="rec-plinth-marks">

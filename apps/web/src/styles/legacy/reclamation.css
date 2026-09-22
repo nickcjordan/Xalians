@@ -4452,8 +4452,7 @@
 .rec-sound { display: inline-flex; align-items: center; gap: var(--g-2); padding: 2px var(--g-2); font-size: var(--g-size-micro); }
 .rec-sound .g-lamp { width: 8px; height: 8px; }
 
-/* the Loki line on the bench: a returned creature and the trailing seat's bonus pip */
-.rec-plinth-tag--returned { color: var(--g-accent); }
+/* the trailing seat's bonus pip on the bench */
 .rec-send-pip--bonus { border-color: var(--g-accent); }
 
 /* ===========================================================================

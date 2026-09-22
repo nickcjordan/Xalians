@@ -318,9 +318,9 @@ export const HIDDEN_FIRST = false;
 	every reply is already scaled down. Three variants price it, each a rules key so the
 	sweep can read them alone and in combination:
 
-	- HIDDEN_SEND_COST: what a hidden send costs against the round's sendable cap, charged
-	  exactly the way RETURNED_SEND_COST is (see expeditionRules.sendCostFor). 1 is free,
-	  the pass 2 setting; 2 makes hiding cost a send.
+	- HIDDEN_SEND_COST: what a hidden send costs against the round's sendable cap (see
+	  expeditionRules.sendCostFor). 1 is free, the pass 2 setting; 2 makes hiding cost a
+	  send.
 	- (variant b, hidden-first only with company, was removed with pass 4: it priced a
 	  bonus that no longer exists.)
 	- HIDDEN_POWER: the multiplier on an attack thrown from hiding.
@@ -815,11 +815,6 @@ export const DRAFT_DISTINCT_SPECIES = false;
 // constant survives only so an ablation row can put the catch-up send back and measure
 // what removing it cost.
 export const ROSTER_TRAILING_BONUS = 0;
-
-// The Loki line (docs/design/reclamation-play-enhancements.md "Pass 2 levers"): a creature
-// withdrawn from a LOST world (not a tie) returns to its handler's roster and may be sent
-// again this match, but its next send counts RETURNED_SEND_COST against SENDABLE.
-export const RETURNED_SEND_COST = 2;
 
 // ---------------------------------------------------------------------------
 // the four roles (assumption 4)

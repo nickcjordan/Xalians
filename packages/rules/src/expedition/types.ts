@@ -74,7 +74,6 @@ export type ShieldCap = 'none' | 'ownHold' | 'half';
 // partial rules through normalizeRules, so this is what rulesOf(state) always returns)
 export interface Rules {
 	hiddenSends: boolean;
-	lokiLine: boolean;
 	trailingBonus: number;
 	speed: boolean;
 	hiddenFirst: boolean;
@@ -330,7 +329,6 @@ export interface PlayerState {
 	holding: string[];
 	downed: string[];
 	withdrawn: string[];
-	returned: string[];
 	passed: boolean;
 	firstPasser: boolean;
 	sitesWon: number;
@@ -386,7 +384,6 @@ export interface PublicPlayerView {
 	roster?: XalianRecord[];
 	movableRecordIds?: string[];
 	stakeableSiteIds?: string[];
-	returned?: string[];
 }
 
 export interface PublicBoardEntry {

@@ -76,7 +76,7 @@ import {
 	createRngState, nextRandom,
 } from '../expeditionRules.ts';
 import {
-	ROSTER_SIZE, SENDABLE, FRAMES_PER_MATCH, SITES_TO_CLINCH, RETURNED_SEND_COST, ROLE,
+	ROSTER_SIZE, SENDABLE, FRAMES_PER_MATCH, SITES_TO_CLINCH, ROLE,
 } from '../expeditionInterpretation.ts';
 import { chooseSend, chooseStake, scoreSends, RIVALS, rivalById, DEFAULT_RIVAL_ID } from '../expeditionBot.ts';
 import { buildExpeditionPool } from '../roster.ts';
@@ -296,22 +296,16 @@ function policyRandom(publicState: any, ownRoster: any, handler: any, rng: any) 
 	if (anyOnBoard && rng.float() < RANDOM_PASS_PROBABILITY) {
 		return { type: 'pass', reason: 'random-pass' };
 	}
-	// the Loki line makes a returned creature's send cost RETURNED_SEND_COST against the
-	// round's cap, so a random policy that ignored it could name a send the engine rejects.
-	// "Uniformly random among LEGAL actions" has to mean legal, so returned creatures the
-	// remaining cap cannot afford are dropped from the candidate list.
 	const cap = typeof me.sendableCap === 'number' ? me.sendableCap : SENDABLE;
 	const capRemaining = cap - me.sentCount;
-	const returnedIds = new Set(me.returned || []);
 	/*
-		SCHEMA 5. Fieldability joins affordability as a legality gate, for the same reason
-		the comment above gives: "uniformly random among LEGAL actions" has to mean legal,
-		and `send()` rejects an unfieldable creature. Every schema 4 creature was fieldable
-		so this never bit; under schema 5 about 6% are not, because their whole repertoire
-		is statuses this Proving does not carry.
+		"Uniformly random among LEGAL actions" has to mean legal, and `send()` rejects both a
+		creature the remaining cap cannot afford and an unfieldable one, so both are legality
+		gates here. Schema 5 made the second one bite for the first time; since the status
+		layer (pass 32) every creature in the pool is fieldable again, and the gate stays
+		because the guarantee is about what `send()` accepts, not about today's content.
 	*/
-	const affordable = ownRoster.filter((r: any) => (returnedIds.has(r.id) ? RETURNED_SEND_COST : 1) <= capRemaining
-		&& isFieldable(r));
+	const affordable = ownRoster.filter((r: any) => capRemaining >= 1 && isFieldable(r));
 	if (affordable.length === 0) {
 		return { type: 'pass', reason: 'nothing-affordable' };
 	}
@@ -483,7 +477,7 @@ export const RANDOM_POLICY: any = NAIVE_POLICIES.find((p: any) => p.id === 'rand
 
 /*
 	playMatch(options) -> {
-		winner, error, sends, hiddenSends, returnedSends, downs,
+		winner, error, sends, hiddenSends, downs,
 		scoreByRound: [{ A, B }],   // sitesWon after each judge
 		spreadSamples: [...],        // only when options.collectSpread
 	}
@@ -527,7 +521,6 @@ export function playMatch(options: any) {
 	let hiddenSends = 0;
 	let hiddenSendWins = 0;
 	let hiddenSendDecided = 0;
-	let returnedSends = 0;
 	let downs = 0;
 	let error: any = null;
 
@@ -625,7 +618,6 @@ export function playMatch(options: any) {
 
 			let nextState = null;
 			if (action.type === 'send') {
-				const wasReturned = (state.players[handler].returned || []).includes(action.recordId);
 				const sentRecord = state.players[handler].roster.find((r: any) => r.id === action.recordId);
 				// pass 25: carry the act-flip choice, null when the lever is off
 				nextState = send(state, handler, action.recordId, action.siteId, false, (action as any).chosenRole || null);
@@ -649,9 +641,6 @@ export function playMatch(options: any) {
 					sendsBySeat[handler]++;
 					if (arrivedHidden) {
 						hiddenSends++;
-					}
-					if (wasReturned) {
-						returnedSends++;
 					}
 					if (collectSpread && handler === spreadSeat && spreadSamples.length > 0) {
 						spreadSamples[spreadSamples.length - 1].chosePass = false;
@@ -769,7 +758,6 @@ export function playMatch(options: any) {
 			hiddenSends,
 			hiddenSendWins,
 			hiddenSendDecided,
-			returnedSends,
 			downs,
 			worldsResolved,
 			resolveChangedLeader,
@@ -1161,7 +1149,6 @@ export function matchShapeOf(results: any, toClinch: number = SITES_TO_CLINCH) {
 			done.reduce((n: any, r: any) => n + (r.hiddenSendWins || 0), 0),
 			done.reduce((n: any, r: any) => n + (r.hiddenSendDecided || 0), 0),
 		),
-		returnedSendRate: rate(done.reduce((n: any, r: any) => n + r.returnedSends, 0), done.reduce((n: any, r: any) => n + r.sends, 0)),
 		winRateA: rate(done.filter((r: any) => r.winner === 'A').length, done.length),
 	};
 }
@@ -1205,7 +1192,6 @@ export function sectionDecided({ matches, seed, pool, rules }: any) {
 export const ABLATIONS = [
 	{ id: 'baseline', label: 'baseline (all rules on)', rules: {} },
 	{ id: 'noHidden', label: 'no hidden sends', rules: { hiddenSends: false } },
-	{ id: 'noLoki', label: 'no Loki line', rules: { lokiLine: false } },
 	{ id: 'noSpeed', label: 'no speed order (sent order)', rules: { speed: false } },
 	// pass 4 (assumption 24) made hiding concealment only; this row puts the pass 2 combat
 	// bonus back so it can be seen to matter (or not) against the shipped game
@@ -1294,7 +1280,6 @@ export function sectionAblation({ matches, seed, pool, rules }: any) {
 			['decided-r1', 'decidedAfterRound1'],
 			['comeback', 'comebackRate'],
 			['hidden-rate', 'hiddenSendRate'],
-			['returned-rate', 'returnedSendRate'],
 		].forEach(([label, key]: any) => {
 			if (movedRate((row.shape as Dict)[key], (baseline.shape as Dict)[key])) {
 				row.moved.push(label);

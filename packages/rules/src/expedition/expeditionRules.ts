@@ -56,7 +56,6 @@ import {
 	PROJECTION_REACH,
 	PROJECTION_FALLOFF,
 	ROSTER_TRAILING_BONUS,
-	RETURNED_SEND_COST,
 	WORLDS_PER_MATCH,
 	FRAMES_PER_MATCH,
 	WORLDS_PER_FRAME,
@@ -262,8 +261,6 @@ function drawFrames(worlds: World[], rngState: number, worldsPerFrame: number): 
 	  pass 4b (assumption 27) hiding is not a choice: a stealthy creature arrives hidden
 	  and everyone else arrives open, so this key is the ablation that removes concealment
 	  from the game rather than a permission on a send.
-	- lokiLine: false drops the return-to-roster on a LOST world, so a lost world is
-	  withdrawn exactly like a tied one.
 	- trailingBonus: the number of extra sends the trailing seat gets next round; 0
 	  removes the lever without changing any other code path.
 	- speed: false resolves everything in sent order (sentIndex, the same tiebreak
@@ -298,8 +295,8 @@ function drawFrames(worlds: World[], rngState: number, worldsPerFrame: number): 
 	  so an ablation row can put it back.
 
 	Pass 3's levers (docs/design/reclamation-base-redesign.md assumptions 21 to 23):
-	- hiddenSendCost: what a hidden send costs against the round's sendable cap, charged
-	  the same way RETURNED_SEND_COST is (assumption 21, variant a). 1 since pass 4.
+	- hiddenSendCost: what a hidden send costs against the round's sendable cap
+	  (assumption 21, variant a). 1 since pass 4.
 	- hiddenPower: the multiplier on an attack thrown from hiding (assumption 21,
 	  variant c). 1 since pass 4. Both prices were patches on the hidden-first bonus and
 	  went with it (assumption 24); the keys stay so the priced game can be measured.
@@ -311,7 +308,6 @@ function drawFrames(worlds: World[], rngState: number, worldsPerFrame: number): 
 */
 export const DEFAULT_RULES: Rules = {
 	hiddenSends: true,
-	lokiLine: true,
 	trailingBonus: ROSTER_TRAILING_BONUS,
 	speed: true,
 	hiddenFirst: HIDDEN_FIRST,
@@ -371,7 +367,6 @@ function normalizeRules(rules: RulesInput | null | undefined): Rules {
 	const num = (value: unknown, fallback: number) => (typeof value === 'number' ? value : fallback);
 	return {
 		hiddenSends: r.hiddenSends !== undefined ? !!r.hiddenSends : DEFAULT_RULES.hiddenSends,
-		lokiLine: r.lokiLine !== undefined ? !!r.lokiLine : DEFAULT_RULES.lokiLine,
 		trailingBonus: num(r.trailingBonus, DEFAULT_RULES.trailingBonus),
 		speed: r.speed !== undefined ? !!r.speed : DEFAULT_RULES.speed,
 		hiddenFirst: r.hiddenFirst !== undefined ? !!r.hiddenFirst : DEFAULT_RULES.hiddenFirst,
@@ -455,10 +450,6 @@ export function createMatch({ rosterA, rosterB, worlds, seed, rules }: CreateMat
 		holding: [], // record ids currently holding a won site (stay in that world's model)
 		downed: [], // record ids downed out of the expedition (returned to owner post-match)
 		withdrawn: [], // record ids withdrawn from lost/tied sites (out of the expedition)
-		// The Loki line (Pass 2 lever): record ids back in `roster` after being withdrawn
-		// from a LOST (not tied) world, whose NEXT send costs RETURNED_SEND_COST against the
-		// sendable cap instead of 1. Cleared for a record the moment it is sent again.
-		returned: [],
 		passed: false,
 		firstPasser: false,
 		sitesWon: 0,
@@ -703,20 +694,17 @@ function arrivesHidden(record: XalianRecord, rules: Rules): boolean {
 }
 
 /*
-	The send cost for one record, against the round's sendable cap: RETURNED_SEND_COST if it
-	is flagged `returned` (the Loki line - a creature back in the roster after its world was
-	lost), rules.hiddenSendCost when it arrives hidden (assumption 21; 1 since pass 4, so
-	a hidden send is priced like any other), 1 otherwise. The hidden flag is derived, not
-	chosen (pass 4b, assumption 27). A returned creature arriving hidden pays the LARGER of the two rather than
-	their sum: each is a price on the same one send, and stacking them could make a send
-	illegal that neither price alone forbids.
+	The send cost for one record, against the round's sendable cap: rules.hiddenSendCost when
+	it arrives hidden (assumption 21; 1 since pass 4, so a hidden send is priced like any
+	other), 1 otherwise. The hidden flag is derived, not chosen (pass 4b, assumption 27).
+
+	Pass 33 removed the second price that used to live here, the returned-creature cost. With
+	no creature ever coming back from a lost world there is nothing to charge it to.
 */
 function sendCostFor(playerState: PlayerState, recordId: string, rules: Rules = DEFAULT_RULES): number {
-	const returnedCost = (playerState.returned || []).includes(recordId) ? RETURNED_SEND_COST : 1;
 	const record = playerState.roster.find((r) => r.id === recordId);
 	const hidden = !!record && arrivesHidden(record, rules);
-	const hiddenCost = hidden && typeof rules.hiddenSendCost === 'number' ? rules.hiddenSendCost : 1;
-	return Math.max(returnedCost, hiddenCost);
+	return hidden && typeof rules.hiddenSendCost === 'number' ? rules.hiddenSendCost : 1;
 }
 
 /*
@@ -802,8 +790,8 @@ export function send(state: MatchState, handler: Seat, recordId: string, siteId:
 	// hiddenSends ablation has taken concealment out of the game, in which case everyone
 	// arrives in the open. A send never becomes illegal for this reason any more.
 	const hidden = arrivesHidden(record, rulesOf(state));
-	// the Loki line and the price of hiding (assumption 21) are both charged against the
-	// round's cap - illegal if there is not enough of it left for this send.
+	// the price of hiding (assumption 21) is charged against the round's cap - illegal if
+	// there is not enough of it left for this send.
 	const cost = sendCostFor(p, recordId, rulesOf(state));
 	if (p.sentCount + cost > sendableCapFor(state, handler)) {
 		return null;
@@ -835,10 +823,9 @@ export function send(state: MatchState, handler: Seat, recordId: string, siteId:
 	};
 
 	const nextRoster = p.roster.filter((r) => r.id !== recordId);
-	const nextReturned = p.returned.filter((id) => id !== recordId);
 	const nextPlayers = {
 		...state.players,
-		[handler]: { ...p, roster: nextRoster, returned: nextReturned, sentCount: p.sentCount + cost },
+		[handler]: { ...p, roster: nextRoster, sentCount: p.sentCount + cost },
 	};
 
 	const nextBoard = {
@@ -2191,21 +2178,18 @@ function judge(state: MatchState): MatchState {
 			const entries = s.board[site.id][player];
 			if (result.winner === player) {
 				s.players[player] = { ...s.players[player], holding: [...s.players[player].holding, ...entries.map((e) => e.recordId)], sitesWon: s.players[player].sitesWon + result.countedValue };
-			} else if (result.winner === opponent && rulesOf(s).lokiLine) {
-				// LOST (not tied): the Loki line returns these creatures to the roster,
-				// flagged so their next send costs RETURNED_SEND_COST (see send()). With
-				// the lokiLine ablation off, a lost world falls through to the tied path
-				// below and simply withdraws, with no return.
-				const recordIds = entries.map((e) => e.recordId);
-				const records = entries.map((e) => e.record);
-				s.players[player] = {
-					...s.players[player],
-					withdrawn: [...s.players[player].withdrawn, ...recordIds],
-					roster: [...s.players[player].roster, ...records],
-					returned: [...s.players[player].returned, ...recordIds],
-				};
 			} else {
-				// tied (reverts to the Court): withdraw, no Loki return
+				/*
+					LOST OR TIED: withdrawn, out of the Proving. A creature sent to a world is
+					committed to it.
+
+					PASS 33 removed the return-to-roster that used to sit on the lost branch
+					(Nick, 2026-09-22: "I don't think that creatures from lost worlds should be
+					returned to be playable again"). It was borrowed from another game's meta,
+					it fired 0.06 times per match, and its own ablation row only ever showed it
+					changing how often it fired rather than moving the comeback gauge it was
+					added to serve.
+				*/
 				s.players[player] = { ...s.players[player], withdrawn: [...s.players[player].withdrawn, ...entries.map((e) => e.recordId)] };
 			}
 		});
@@ -2379,11 +2363,6 @@ export function getPublicState(state: MatchState, handler: Seat): PublicState {
 				// the three worlds this handler may still stake this round, empty once it
 				// has staked, sent or passed (assumption 22)
 				stakeableSiteIds: stakeableSiteIdsFor(state, who),
-				// the Loki line: which of THIS handler's own roster record ids are flagged
-				// "returned" (withdrawn from a lost world, sendable again at
-				// RETURNED_SEND_COST) - own-side only, same as the roster itself, since the
-				// opponent's roster contents stay hidden.
-				returned: p.returned,
 			};
 		}
 		return base;
