@@ -40,7 +40,7 @@
 
 import type { XalianRecord } from '@xalians/content/schema';
 import {
-	CONCEPT, applicationFrom, advanceStatuses, isHeld, tickAmount,
+	CONCEPT, applicationFrom, advanceStatuses, attritionBite, isHeld, tickAmount,
 	powerFactor as statusPowerFactor, type StatusApplication,
 } from './statusLayer.ts';
 import type { StatusEffectReading } from './recordReading.ts';
@@ -1583,7 +1583,18 @@ function resolveWorld(state: MatchState, site: FrameSite): void {
 			return;
 		}
 		const fromHiding = !!item.wasHidden;
-		const powerFactor = fromHiding ? hiddenPower : 1;
+		/*
+			PASS 34. A blow that leaves a harmful status on its target lands for more than one
+			that does not: the fire or the acid is part of what the blow does. Folded in at
+			DECLARATION for the same reason hiddenPower is, so a shielder reads the attack it
+			will actually have to cancel.
+
+			Only `corroding` can take this in the current pool, because it is the only harmful
+			status carried by an act that already harms; `burning` and `poisoned` are
+			status-only acts that already land for their full magnitude.
+		*/
+		const bite = prepared.blow ? attritionBite(prepared.blow.statusEffects || []) : 0;
+		const powerFactor = (fromHiding ? hiddenPower : 1) * (1 + bite);
 		if (prepared.role === ROLE.STRIKE) {
 			const target = pickAttackTarget(state, entry, prepared.conduct, present);
 			declarations.push({
