@@ -30,9 +30,10 @@
     "blender": "5.2.2 LTS",
     "spec": "akinza.json",
     "spec_hash": "aa02a038262beb6e",
-    "library_hash": "73033b206d1171ff",
+    "library_hash": "ff6813f43d8980c7",
     "cycles_seed": 0,
-    "samples": 16
+    "samples": 16,
+    "style": "plain"
   },
   "clips": {
     "idle": {

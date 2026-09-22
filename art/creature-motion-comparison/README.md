@@ -34,13 +34,38 @@ Trials 06 to 09 are not scripts. Each is a JSON spec in `blender/species/` run t
 What makes a build reproducible:
 
 - Every frame is baked from the track; the script owns easing and lag, so Blender's interpolation never smooths anything.
-- The Cycles seed is fixed per spec and the animated seed is off. PNG stamp metadata (date, render time, file path) is disabled, so two renders of one spec are byte-identical, not merely pixel-identical. Verified on 2026-09-20 for Avilily and Bioflim: 42 of 42 frames and the meta file matched across two runs, and the library reproduced the earlier hand-scripted renders pixel for pixel before those scripts were removed.
+- The Cycles seed is fixed per spec and the animated seed is off. PNG stamp metadata (date, render time, file path) is disabled. Two renders of one spec are pixel-identical in every frame and produce the same meta file (verified 2026-09-20 for Avilily and Bioflim, and 2026-09-21 for Akinza in the plain, toon and flat styles). They are not always byte-identical, because Blender's PNG writer picks scanline filters adaptively; see "Render styles" below. The library reproduced the earlier hand-scripted renders pixel for pixel before those scripts were removed.
 - The manifest records the Blender build, the spec file and its hash, a hash of the library sources, the seed, and the sample count. A packed atlas can be traced to the exact inputs that made it.
 - Plate shapes and any other randomness draw from a seeded generator named in the spec (`render.shape_seed`).
 
 What stays hand-authored: the template code for each body plan, the numbers in a species spec, and the judgment of whether a pose reads. Adding Dromeus took a new template (the biped family covers eleven ratified species) plus a spec, about 35 minutes of agent time across two inspection rounds.
 
 **The second-biped test (Akinza, 2026-09-20).** The claim was that a second biped should cost a spec alone. It did not, quite: Dromeus is horizontal and Akinza is upright, so the template needed twelve new proportions and switches (torso pitch, neck root and direction, shoulder and hip placement, tail root, droop and lift direction, ear count, spread and tilt, eye scale, a `swipe` parameter and reach for a claw strike, a palm on bare hands, and optional toe claws). Every one defaults to the Dromeus value, and a pixel regression confirmed Dromeus rendered identically after the change (max channel difference 0 across five sampled frames). Akinza itself is then 95 lines of spec and no code. Two inspection rounds and about 30 minutes of agent time produced a recognizable upright eared figure whose crouch, dash, strike, landing, and return read at 1×; its ears merge into one shape from the three-quarter camera, the strike raises the hands to face height rather than raking forward, and the muzzle still reads as a bill. The lesson is the expected one: the first species in a family pays for the template, the second pays for the family's variation, and the third should pay for nothing but its numbers.
+
+## Render styles: the same rig through a different surface language (2026-09-21)
+
+The plain Cycles render is the study baseline, not a look. `blender/xalians_rig/styles.py` adds three render styles that rewrite every palette material after the creature is built and draw Freestyle contour lines on the fixed stage, so a template and a performance track never know which look is being rendered. A style is the `render.style` field of a spec or a command-line override, `--style=toon`, which renders beside the spec's own study as `<export>-<style>` with its own output folder and label and no saved `.blend`.
+
+| Style | Surface | Line | What it is for |
+| --- | --- | --- | --- |
+| `plain` | Principled BSDF, three area lights | The templates' own outline shells (a slightly larger ink-colored mesh behind each part) | The baseline every earlier observation was made on |
+| `toon` | Toon BSDF two-tone step over a flat shadow term (`TOON` in `styles.py`) | Freestyle silhouette, border, crease and material boundary at 2.4 px | A shaded illustration: volume survives, plastic does not |
+| `flat` | Exact palette hex as emission, no shading | The same Freestyle set at 2.6 px | The cutout's graphic language from a 3D source |
+| `ink` | Black mass, eyes lit | Pale crease and material-boundary incisions only, no outer contour | The portrait homage, kept as evidence that it needs authored incision edges |
+
+Eye parts (object names containing `eye`, `pupil`, `glint`) are collected into an `unlined parts` collection that the line set excludes, because a contour at this weight swallowed the pupil, and the eye is the contact point. Outline shells are hidden in every lined style.
+
+[styles.html](http://127.0.0.1:8766/creature-motion-comparison/styles.html?species=akinza) plays every rendered style of one species in lockstep on 390 px stages with a beat board below (`?species=akinza|avilily|dromeus|bioflim`). `preview/style-board-<species>.png` is the same board as a still, written by `build.py` from the packed exports:
+
+![Akinza in every render style](preview/style-board-akinza.png)
+
+![Dromeus in every render style](preview/style-board-dromeus.png)
+
+**Observed on the boards (2026-09-21, inspection at 384 px, not viewer research).** Toon and flat both move the four studies out of the plastic-toy register and into an illustrated one without touching a spec or a template; on Dromeus and Avilily the toon row reads as a finished game sprite at phone size where the plain row reads as a render test. Flat lands the palette exactly and looks most like the pilot cutout; toon keeps a little volume in the body and ears. The contour exposes template faults the plain render hid: Akinza's muzzle reads as a bill and its hands as mitts, Dromeus's feet are tube clusters, and Bioflim's surface bumps draw small stray crease rings in toon. The ink homage does not work from these meshes: crease lines on smooth primitives are sparse and arbitrary, so the portrait's incision language would need authored edge marks rather than a render setting. Costs: a styled render of 42 frames took 30 to 44 s on this machine, against 16 to 23 s plain, the difference being Freestyle; a styled atlas is the same size class as its plain twin.
+
+**Reproducibility, corrected.** The earlier claim was byte-identical frames. A second toon render of Akinza matched the first in every pixel of all 42 frames and the meta file, but 18 of the 43 files differed in bytes; a second plain render then changed the bytes of two committed Akinza frames with, again, identical pixels. Blender's PNG writer chooses scanline filters adaptively, so the compressed bytes are not a pipeline property. `build-blender.ps1 -Verify` now renders each spec and each style twice and compares decoded pixels with `blender/compare_frames.py`. The packer re-encodes frames into atlases with Pillow, whose output depends only on those pixels.
+
+The styled `rendered/<study>-<style>/` frame folders are ignored by Git and regenerated by `./build-blender.ps1` (the default `-Styles toon,flat`); the packed `exports/<export>-<style>/` atlases are committed, so the pages and tests work from a fresh clone.
 
 ## Rebuild and run
 
@@ -54,9 +79,10 @@ Install Python packages from `../creature-motion-pilot/tools/requirements.txt` a
 The Blender studies render in the locally installed Blender 5.2.2 under WSL:
 
 ```powershell
-./build-blender.ps1                    # avilily, bioflim, dromeus, akinza from their specs, then pack every atlas
+./build-blender.ps1                    # avilily, bioflim, dromeus, akinza from their specs, plus toon and flat, then pack every atlas
 ./build-blender.ps1 -Species dromeus   # one spec
-./build-blender.ps1 -Verify            # render each spec twice and require byte-identical frames
+./build-blender.ps1 -Styles toon,flat,ink   # which render styles to draw beside each spec's own; -Styles @() for none
+./build-blender.ps1 -Verify            # render each spec and style twice and require pixel-identical frames
 ./build-blender.ps1 -Pass1             # also rerun the first Avilily pass (replaces avilily_motion.blend)
 ```
 
@@ -64,6 +90,7 @@ Direct use of the entry point, for inspection renders of a few frames while edit
 
 ```powershell
 wsl -d Ubuntu -- /home/njord/.local/opt/blender-5.2.2-linux-x64/blender -b --factory-startup --python /mnt/c/.../blender/build_species.py -- --species=species/dromeus.json --frames=21,30,35 --out=/home/njord/inspect
+wsl -d Ubuntu -- /home/njord/.local/opt/blender-5.2.2-linux-x64/blender -b --factory-startup --python /mnt/c/.../blender/build_species.py -- --species=species/dromeus.json --frames=21,35 --style=toon --out=/home/njord/inspect
 ```
 
 Each run saves the study's editable `.blend` beside the specs (`avilily_motion_v2.blend`, `bioflim_motion.blend`, `dromeus_motion.blend`, `akinza_motion.blend`), writes `rendered/<study>/meta.json`, and with `--render` writes the frames. Packaging needs Pillow and CairoSVG; on this machine the Windows Python 3.14 can no longer load a cairo DLL, so the helper falls back to Blender's bundled Python inside WSL and installs the two packages into `~/.local/lib/xalians-art-py` on first use. Viewing the pages or using the exported atlases does not require Blender.
@@ -73,8 +100,8 @@ Each run saves the study's editable `.blend` beside the specs (`avilily_motion_v
 Checks after changing exports, specs, templates, or the viewers:
 
 ```powershell
-node --test ./comparison.test.mjs     # 14 tests: reader contract, shared stage, cue names, provenance, shared template
-node --check ./viewer.mjs; node --check ./pass2.mjs; node --check ./study.mjs; node --check ./stage.mjs
+node --test ./comparison.test.mjs     # 22 tests: reader contract, shared stage, cue names, provenance, shared template, styled twins
+node --check ./viewer.mjs; node --check ./pass2.mjs; node --check ./study.mjs; node --check ./styles.mjs; node --check ./stage.mjs
 git diff --check
 ```
 

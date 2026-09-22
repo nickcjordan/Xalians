@@ -244,6 +244,57 @@ def preview() -> None:
     contact.save(path / "keyframes.png", optimize=True)
 
 
+STYLE_BOARD_BEATS = {"akinza": [0, 375, 542, 583, 667, 1000], "blender2": [0, 375, 625, 708, 917, 1208],
+                     "dromeus": [0, 375, 542, 583, 667, 1000], "bioflim": [0, 333, 500, 583, 875, 1208]}
+
+
+def style_board() -> None:
+    """One contact sheet per species: every render style of the same spec, at the same beats.
+
+    Reads the packed exports, so the board shows exactly what the pages play.
+    A style is found by its export name: ``<export>`` is the spec's own style
+    and ``<export>-<style>`` a command-line style rendered beside it.
+    """
+    path = HERE / "preview"
+    path.mkdir(exist_ok=True)
+    for base, beats in STYLE_BOARD_BEATS.items():
+        export = "blender2" if base == "blender2" else f"{base}-blender"
+        rows = []
+        for folder in sorted(OUT.glob(f"{export}*")):
+            if folder.name != export and not folder.name.startswith(export + "-"):
+                continue
+            manifest_path = folder / "manifest.json"
+            if not manifest_path.exists():
+                continue
+            manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+            rows.append((manifest.get("provenance", {}).get("style", "plain"), manifest,
+                         Image.open(folder / "action.png").convert("RGBA")))
+        if len(rows) < 2:
+            continue
+        order = {"plain": 0, "toon": 1, "flat": 2, "ink": 3}
+        rows.sort(key=lambda row: order.get(row[0], 9))
+        size = 260
+        board = Image.new("RGB", (14 + len(beats) * (size + 8), 22 + len(rows) * (size + 26)), "#10232c")
+        pen = ImageDraw.Draw(board)
+        for r, (style, manifest, sheet) in enumerate(rows):
+            clip = manifest["clips"]["action"]
+            for c, time_ms in enumerate(beats):
+                index = min(len(clip["frames"]) - 1, int(time_ms * clip["fps"] / 1000))
+                info = clip["frames"][index]
+                art = sheet.crop((info["x"], info["y"], info["x"] + CELL, info["y"] + CELL))
+                stage = Image.new("RGBA", (CELL, CELL), "#203941")
+                ImageDraw.Draw(stage).ellipse((30, 286, 355, 354), fill="#183139")
+                stage.alpha_composite(art, (ORIGIN[0] - manifest["origin"][0], ORIGIN[1] - manifest["origin"][1]))
+                x = 10 + c * (size + 8)
+                y = 22 + r * (size + 26)
+                board.paste(stage.convert("RGB").resize((size, size), Image.Resampling.LANCZOS), (x, y))
+                if c == 0:
+                    pen.text((x, y - 16), f"{style.upper()}  {manifest['label']}", fill="#e5eadc")
+                pen.text((x + size - 52, y - 16), f"{time_ms / 1000:.2f}s", fill="#a8c3aa")
+        board.save(path / f"style-board-{manifest['species']}.png", optimize=True)
+        print("Wrote", path / f"style-board-{manifest['species']}.png")
+
+
 def main() -> None:
     cutout_action = base_frames("action", ACTION_FRAMES)
     cutout_idle = base_frames("idle", 19)
@@ -280,6 +331,7 @@ def main() -> None:
         print("Blender frames absent; run blender/build_avilily.py with --render, then build again")
     package_rendered_studies()
     preview()
+    style_board()
     print("Built comparison atlases in", OUT)
 
 
