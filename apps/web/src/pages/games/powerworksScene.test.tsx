@@ -148,6 +148,81 @@ describe("shared battlefield", () => {
     expect(enemy.closest(".pw-scene-unit")).toHaveClass("fallen", "receiving");
   });
 
+  it("names every condition on a unit with its group icon and remaining opportunities", () => {
+    const run = createRun(1);
+    const victim = run.team[0];
+    victim.conditions = [
+      {
+        status: "paralyzed",
+        group: "binding",
+        intensity: 50,
+        remaining: 1,
+        source: "B4",
+        removable: ["stabilizing"],
+      },
+      {
+        status: "corroding",
+        group: "degrading",
+        intensity: 60,
+        element: "chemical",
+        remaining: 3,
+        source: "B4",
+        removable: ["cleansing"],
+      },
+    ];
+    victim.bound = 1;
+    scene(undefined, { team: run.team, enemies: run.enemies });
+    const badge = screen.getByText("paralyzed").closest(".pw-status-badge")!;
+    expect(badge).toHaveClass("group-binding");
+    expect(badge).toHaveTextContent("1 opp");
+    expect(badge).toHaveAttribute("title", expect.stringContaining("Melee"));
+    const rot = screen.getByText("corroding").closest(".pw-status-badge")!;
+    expect(rot).toHaveClass("group-degrading");
+    expect(rot).toHaveTextContent("3 opps");
+    expect(rot).toHaveAttribute(
+      "title",
+      expect.stringContaining("Shields do not reduce it")
+    );
+  });
+
+  it("floats a caption for every new event kind", () => {
+    const run = createRun(1);
+    const victim = run.team[0];
+    const kinds = [
+      { kind: "tick" as const, group: "degrading" as const, amount: 3, text: "−3" },
+      { kind: "tick" as const, group: "mending" as const, amount: 4, text: "+4" },
+      { kind: "status" as const, status: "corroding", text: "Corroding" },
+      { kind: "resisted" as const, text: "Resisted" },
+      { kind: "removed" as const, text: "Cleared" },
+      { kind: "expired" as const, text: "Wears off" },
+      { kind: "hidden" as const, text: "Concealed" },
+    ];
+    for (const { text, ...event } of kinds) {
+      cleanup();
+      scene({
+        team: run.team,
+        enemies: run.enemies,
+        text: "Something happens.",
+        event: { ...event, targetId: victim.id, actorId: "B4" },
+      });
+      expect(
+        document.querySelector(".pw-scene-float")!.textContent,
+        `${event.kind} ${event.group ?? ""}`
+      ).toContain(text);
+    }
+    // A lost opportunity floats over the unit that lost it, not a target.
+    cleanup();
+    scene({
+      team: run.team,
+      enemies: run.enemies,
+      text: "Entranced.",
+      event: { kind: "lost", actorId: victim.id, status: "entranced", group: "attention" },
+    });
+    expect(document.querySelector(".pw-scene-float")).toHaveTextContent(
+      "Opportunity lost"
+    );
+  });
+
   it("shows a charge without revealing its hidden target", () => {
     const run = createRun(1);
     run.enemies[0].charge = run.team[0].id;

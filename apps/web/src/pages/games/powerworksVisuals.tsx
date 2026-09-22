@@ -14,14 +14,26 @@ import {
   RotateCcw,
   Check,
   Hourglass,
+  Flame,
+  EyeOff,
+  Sparkles,
+  HeartPulse,
 } from "lucide-react";
 import {
   basePower,
   COOLDOWN_ROUNDS,
+  DEGRADE_FACTOR,
   DESPERATE_STRIKE_RECOIL,
+  FRIGHTENED_OUTPUT_FACTOR,
   LIKELIHOOD_PERCENT,
+  MEND_FACTOR,
+  REINFORCED_FACTOR,
+  SHIELDED_FACTOR,
+  tickAmount,
+  type Condition,
   type Move,
   type MoveEffect,
+  type StatusGroup,
   type Unit,
 } from "@xalians/rules/dungeon";
 export const shortName = (u: Unit) =>
@@ -44,6 +56,69 @@ export const charges = (move: Move) => move.preparation === "prolonged";
 export const baseName = (move: Move) => move.name.split(" (")[0];
 /** Cooldown pips a card shows: the move's recovery in rounds; none for a repeatable move. */
 export const cooldownLimit = (move: Move) => COOLDOWN_ROUNDS[move.recovery];
+/** One icon per condition group, so the five groups are told apart at a glance. */
+export function GroupIcon({ group }: { group: StatusGroup }) {
+  const Icon = (
+    {
+      binding: Link2,
+      degrading: Flame,
+      guarding: Shield,
+      attention: Sparkles,
+      concealment: EyeOff,
+      mending: HeartPulse,
+    } as const
+  )[group];
+  return <Icon aria-hidden="true" />;
+}
+const percent = (factor: number) => `${Math.round((1 - factor) * 100)}%`;
+/** The share of a degrading condition's intensity that becomes damage each opportunity. */
+export const degradeShare = percent(1 - DEGRADE_FACTOR);
+/** What this condition does to this unit, in plain words. The inspector shows it verbatim. */
+export function conditionRule(condition: Condition, u: Unit): string {
+  switch (condition.group) {
+    case "binding":
+      return "Melee is blocked at its next opportunity, and a charge in progress is dispersed. Ranged actions still work.";
+    case "degrading": {
+      const amount = tickAmount(condition, u);
+      return `Takes ${amount} damage at the start of each of its own opportunities. Shields do not reduce it.`;
+    }
+    case "guarding":
+      if (condition.status === "shielded")
+        return `Incoming damage is reduced by ${percent(SHIELDED_FACTOR)}. This does not stack with a shield from an action: the stronger one applies.`;
+      if (condition.status === "reinforced")
+        return `Incoming damage is reduced by ${percent(REINFORCED_FACTOR)}.`;
+      if (condition.status === "focused")
+        return "Attention cannot be taken: trances and fear do not apply.";
+      return protectionRule(condition);
+    case "attention":
+      return condition.status === "entranced"
+        ? "Loses its next opportunity: the order it committed is not carried out. A charge in progress survives."
+        : `Its own damage is reduced by ${percent(FRIGHTENED_OUTPUT_FACTOR)} through its next opportunity.`;
+    case "concealment":
+      return "Cannot be chosen as a target while another unit stands. Attacking gives its position away and ends this.";
+    case "mending": {
+      const amount = Math.floor((condition.intensity / 10) * MEND_FACTOR);
+      return `Recovers ${amount} HP at the start of each of its own opportunities.`;
+    }
+  }
+}
+function protectionRule(condition: Condition): string {
+  const p = condition.protection;
+  if (!p) return "Carries a declared protection.";
+  const degree = p.degree === "immune" ? "Immune to" : "Resistant to";
+  if (p.type === "displace")
+    return `${degree} being moved: a pull or a shove neither harms it nor breaks its charge.`;
+  if (p.type === "status") return `${degree} ${p.status}.`;
+  return `${degree} ${
+    p.mechanism === "elemental" ? `${p.element} damage` : `${p.mechanism} damage`
+  }.`;
+}
+/** Remaining opportunities, as the badge prints it. A permanent condition has none. */
+export const remainingLabel = (condition: Condition) =>
+  condition.remaining === Infinity
+    ? "always"
+    : `${condition.remaining} ${condition.remaining === 1 ? "opp" : "opps"}`;
+
 export function ElementIcon({ element }: { element: string }) {
   const Icon =
     (
@@ -102,6 +177,36 @@ export function effectSummary(effect: MoveEffect): string {
       return `${cap(
         effect.status ?? "bound"
       )}: melee blocked through one action opportunity${chance}.`;
+    case "status": {
+      const status = effect.status ?? "condition";
+      const lasts =
+        effect.opportunities && effect.opportunities > 0
+          ? ` for ${effect.opportunities} ${
+              effect.opportunities === 1 ? "opportunity" : "opportunities"
+            }`
+          : "";
+      const rule =
+        effect.group === "degrading"
+          ? `: damage at the start of each of its opportunities`
+          : effect.group === "guarding"
+          ? `: ${
+              status === "protected" ? "a declared protection" : "less damage taken"
+            }`
+          : effect.group === "attention"
+          ? status === "entranced"
+            ? ": loses its next opportunity"
+            : ": its damage halved"
+          : effect.group === "concealment"
+          ? ": cannot be targeted while another unit stands"
+          : effect.group === "mending"
+          ? ": health back each opportunity"
+          : "";
+      return `${cap(status)}${rule}${lasts}${chance}.`;
+    }
+    case "remove":
+      return `Ends conditions that answer to ${(effect.methods ?? []).join(
+        " or "
+      )}.`;
     case "protect":
       return "Shields against incoming damage until its next opportunity.";
     case "restore":
@@ -270,15 +375,17 @@ export function StatusBadges({ u }: { u: Unit }) {
           Charged
         </span>
       )}
-      {!!u.bound && (
+      {u.conditions.map((condition) => (
         <span
-          className="pw-status-badge snared"
-          title="Melee blocked through the next action opportunity; ranged moves still work"
+          key={`${condition.status}-${condition.source}`}
+          className={`pw-status-badge condition group-${condition.group}`}
+          title={conditionRule(condition, u)}
         >
-          <Link2 />
-          Bound
+          <GroupIcon group={condition.group} />
+          {condition.status}
+          <small>{remainingLabel(condition)}</small>
         </span>
-      )}
+      ))}
       {u.ward && (
         <span
           className="pw-status-badge warded"

@@ -16,6 +16,7 @@ import { actionPresentation } from "./powerworksPresentation";
 import {
   damagePreview,
   matchup,
+  type BattleEvent,
   type Frame,
   type Move,
   type Order,
@@ -96,6 +97,47 @@ export function ExpeditionTrail({
       )}
     </div>
   );
+}
+
+/** The one short word the battlefield floats over a unit for each event kind. */
+export function floatLabel(event?: BattleEvent): string {
+  if (!event) return "";
+  const cap = (t: string) => t.charAt(0).toUpperCase() + t.slice(1);
+  switch (event.kind) {
+    case "hit":
+      return `−${event.amount}`;
+    case "restore":
+      return `+${event.amount}`;
+    case "tick":
+      return event.group === "mending"
+        ? `+${event.amount}`
+        : `−${event.amount}`;
+    case "bind":
+      return "Bound";
+    case "status":
+      return cap(event.status ?? "Condition");
+    case "missed":
+    case "resisted":
+      return "Resisted";
+    case "displace":
+      return "Charge broken";
+    case "ward":
+      return "Guarded";
+    case "charge":
+      return "Charging";
+    case "blocked":
+      return "Blocked";
+    case "expired":
+      return event.group === "concealment" ? "Revealed" : "Wears off";
+    case "removed":
+      return "Cleared";
+    case "lost":
+      return "Opportunity lost";
+    case "hidden":
+      return "Concealed";
+    default:
+      return "Redirected";
+  }
 }
 
 export function PowerworksScene({
@@ -283,7 +325,7 @@ export function PowerworksScene({
           source &&
           destination &&
           event &&
-          ["hit", "bind", "redirect"].includes(event.kind) && (
+          ["hit", "bind", "status", "redirect"].includes(event.kind) && (
             <>
               <path
                 className={`pw-flight ${
@@ -410,32 +452,17 @@ export function PowerworksScene({
               )}
               {(recoil ||
                 (receiving && impact && phase !== "redirect") ||
-                (acting && ["charge", "blocked"].includes(phase))) && (
+                (acting &&
+                  ["charge", "blocked", "lost", "expired"].includes(phase))) && (
                 <span
                   key={`float-${frameIndex}`}
-                  className={`pw-scene-float ${phase}`}
+                  className={`pw-scene-float ${phase} ${
+                    event?.group === "mending" ? "mending" : ""
+                  }`}
                 >
                   {phase === "blocked" && <Ban aria-hidden="true" />}
                   {phase === "redirect" && <CornerUpRight aria-hidden="true" />}
-                  {recoil
-                    ? "−2"
-                    : phase === "hit"
-                    ? `−${event?.amount}`
-                    : phase === "bind"
-                    ? "Bound"
-                    : phase === "missed"
-                    ? "Resisted"
-                    : phase === "displace"
-                    ? "Charge broken"
-                    : phase === "restore"
-                    ? `+${event?.amount}`
-                    : phase === "ward"
-                    ? "Guarded"
-                    : phase === "charge"
-                    ? "Charging"
-                    : phase === "blocked"
-                    ? "Blocked"
-                    : "Redirected"}
+                  {recoil ? "−2" : floatLabel(event)}
                   {recoil && <small>Recoil</small>}
                   {phase === "hit" && u.hp === 0 && <small>Knocked out</small>}
                 </span>

@@ -3,6 +3,7 @@
 // every record read is in reading.ts. This file is the one resolver for both sides.
 import cards from "./cards.json";
 import effectiveness from "@xalians/content/typeEffectivenessMatrix.json";
+import { DEFAULT_STATUS_INTENSITY } from "@xalians/content/creature";
 import {
   generateXalian,
   getSpeciesTemplates,
@@ -16,12 +17,22 @@ import {
   readCompanion,
   usable,
   type Card,
+  type Condition,
   type Move,
   type MoveEffect,
+  type RemovalMethod,
+  type StatusGroup,
   type Unit,
 } from "./reading.ts";
 import {
-  BIND_OPPORTUNITIES,
+  ATTENTION_STATUSES,
+  DEGRADE_FACTOR,
+  ENTRANCE_IMMUNITY_OPPORTUNITIES,
+  FOCUS_STATUS,
+  FRIGHTENED_OUTPUT_FACTOR,
+  MEND_FACTOR,
+  REINFORCED_FACTOR,
+  SHIELDED_FACTOR,
   CHARGE_RECOVERY_OPPORTUNITIES,
   INTERRUPTED_CHARGE_RECOVERY_OPPORTUNITIES,
   COMPANION_GENERATED_AT,
@@ -47,18 +58,33 @@ import {
 
 export type {
   Approach,
+  Condition,
   Move,
   MoveEffect,
   Range,
+  RemovalMethod,
+  StatusGroup,
   Support,
   Unit,
 } from "./reading.ts";
-export { LAST_RESORT, readCompanion, usable, damaging } from "./reading.ts";
+export {
+  LAST_RESORT,
+  readCompanion,
+  usable,
+  damaging,
+  statusGroup,
+  statusOpportunities,
+} from "./reading.ts";
 export {
   COOLDOWN_ROUNDS,
+  DEGRADE_FACTOR,
   DESPERATE_STRIKE_RECOIL,
+  FRIGHTENED_OUTPUT_FACTOR,
   LIKELIHOOD_PERCENT,
+  MEND_FACTOR,
+  REINFORCED_FACTOR,
   SAVE_VERSION,
+  SHIELDED_FACTOR,
 } from "./levers.ts";
 
 export type Order = { move: number; target: string };
@@ -88,7 +114,18 @@ export type BattleEvent = {
     | "charge"
     | "blocked"
     | "redirect"
+    | "status"
+    | "resisted"
+    | "tick"
+    | "expired"
+    | "removed"
+    | "lost"
+    | "hidden"
     | "result";
+  /** status / tick / expired / removed events: which condition. */
+  status?: string;
+  group?: StatusGroup;
+  remaining?: number;
   actorId?: string;
   targetId?: string;
   amount?: number;
@@ -202,6 +239,75 @@ export function legalMoves(u: Unit): number[] {
     moves.push(-1);
   return moves;
 }
+/*
+  The status layer (contract decisions 10 to 18). Conditions live on the unit;
+  every rule below reads them and nothing else invents state.
+*/
+export const conditionsIn = (u: Unit, group: StatusGroup) =>
+  u.conditions.filter((c) => c.group === group);
+const has = (u: Unit, status: string) =>
+  u.conditions.some((c) => c.status === status);
+
+/** The guarding factor on incoming harm: the better of ward and shielded (they do not multiply), then reinforced. */
+export function guardFactor(target: Unit): number {
+  const shielded = has(target, "shielded") ? SHIELDED_FACTOR : 1;
+  const ward = target.ward ? WARD_FACTOR : 1;
+  const barrier = Math.min(shielded, ward);
+  const reinforced = has(target, "reinforced") ? REINFORCED_FACTOR : 1;
+  return barrier * reinforced;
+}
+/**
+  Does any protection descriptor on this unit cover the thing being done to it?
+  `immune` blocks it outright; `resistant` is reported but does not block, so the
+  harm curve stays the one number the cards show (this game reads resistance through
+  the guarding factor, and a resistant descriptor adds the reinforced quarter).
+*/
+type Scope =
+  | { kind: "status"; status: string }
+  | { kind: "harm"; mechanism: string; element?: string }
+  | { kind: "displace" };
+export function protectionDegree(
+  u: Unit,
+  scope: Scope
+): "immune" | "resistant" | null {
+  let best: "immune" | "resistant" | null = null;
+  for (const c of u.conditions) {
+    const p = c.protection;
+    if (!p) continue;
+    const matches =
+      p.type === "displace"
+        ? scope.kind === "displace"
+        : p.type === "status"
+        ? scope.kind === "status" && p.status === scope.status
+        : scope.kind === "harm" &&
+          p.mechanism === scope.mechanism &&
+          (p.mechanism !== "elemental" || p.element === scope.element);
+    if (!matches) continue;
+    // The strongest active degree for one scope applies; degrees never add.
+    if (p.degree === "immune") return "immune";
+    best = "resistant";
+  }
+  return best;
+}
+/** The harm scope of one effect, for a protection descriptor to match against. */
+export function harmScope(e: MoveEffect, element: string): Scope {
+  if (e.support === "displace") return { kind: "displace" };
+  const mechanism = e.mechanism ?? "impact";
+  return mechanism === "elemental"
+    ? { kind: "harm", mechanism, element }
+    : { kind: "harm", mechanism };
+}
+/** frightened halves what the unit's harm does, through its next opportunity (contract decision 15). */
+export const outputFactor = (u: Unit) =>
+  has(u, "frightened") ? FRIGHTENED_OUTPUT_FACTOR : 1;
+/** A concealed unit is not selectable while another legal target stands (contract decision 16). */
+export const concealed = (u: Unit) => has(u, "concealed");
+export function selectableTargets(units: Unit[]): Unit[] {
+  const alive = units.filter((u) => u.hp > 0);
+  const open = alive.filter((u) => !concealed(u));
+  return open.length ? open : alive;
+}
+
 /** Matchup by the move's element classification when it has one, else the attacker's element, against the target's element. */
 export function matchup(attacker: Unit, target: Unit, move?: Move): number {
   if (move?.fallback) return 1;
@@ -226,12 +332,27 @@ export function basePower(u: Unit, move: Move): number {
       : move.effects.reduce((sum, e) => sum + rawHarm(u, e), 0)
   );
 }
+/*
+  Damage as the table shows it and as the resolver deals it, one function so the
+  preview cannot disagree with the outcome. Per effect: the harm curve, then the
+  target's protection descriptors (immune blocks that effect outright, resistant
+  takes the reinforced quarter off it). Then, once: the element matchup, the
+  attacker's own output factor (frightened), and the target's guarding factor
+  (the better of ward and shielded, times reinforced).
+*/
 export function damagePreview(u: Unit, move: Move, target: Unit): number {
+  const element = move.element ?? u.element;
   const base = move.fallback
     ? DESPERATE_STRIKE_DAMAGE
-    : move.effects.reduce((sum, e) => sum + rawHarm(u, e), 0);
+    : move.effects.reduce((sum, e) => {
+        const raw = rawHarm(u, e);
+        if (!raw) return sum;
+        const degree = protectionDegree(target, harmScope(e, element));
+        if (degree === "immune") return sum;
+        return sum + raw * (degree === "resistant" ? REINFORCED_FACTOR : 1);
+      }, 0);
   return Math.floor(
-    base * matchup(u, target, move) * (target.ward ? WARD_FACTOR : 1)
+    base * matchup(u, target, move) * outputFactor(u) * guardFactor(target)
   );
 }
 export function restorePreview(u: Unit, effect: MoveEffect): number {
@@ -240,6 +361,246 @@ export function restorePreview(u: Unit, effect: MoveEffect): number {
       (HARM_BASE + u.attrs.willpower / HARM_ATTR_DIVISOR)
   );
 }
+type Emit = (text: string, event?: BattleEvent) => void;
+
+/** A degrading tick or a mending tick, on the harm curve, at the element matchup (contract decisions 13 and 17). */
+export function tickAmount(c: Condition, victim: Unit): number {
+  const factor = c.group === "degrading" ? DEGRADE_FACTOR : MEND_FACTOR;
+  const raw = (c.intensity / HARM_DIVISOR) * factor;
+  if (c.group !== "degrading") return Math.floor(raw);
+  const key = (x: string) => x.charAt(0).toUpperCase() + x.slice(1);
+  const table = effectiveness as Record<string, Record<string, number>>;
+  const row = c.element ? table[key(c.element)] : undefined;
+  const against = row?.[key(victim.element)] ?? 1;
+  return Math.floor(raw * against);
+}
+
+/*
+  The start of the victim's own opportunity (contract decisions 12, 13 and 17):
+  degrading conditions tick harm (never reduced by ward), mending ticks restoration,
+  then every condition spends one of the victim's opportunities and an exhausted one
+  expires. A sustained condition ends when its source unit falls instead.
+*/
+function openOpportunity(s: Run, u: Unit, emit: Emit) {
+  for (const c of [...u.conditions]) {
+    if (u.hp <= 0) break;
+    if (c.group === "degrading") {
+      const amount = tickAmount(c, u);
+      if (amount > 0) {
+        u.hp = Math.max(0, u.hp - amount);
+        emit(
+          `${u.name} takes ${amount} damage from ${c.status}.${
+            u.hp === 0 ? " Knocked out." : ""
+          }`,
+          {
+            kind: "tick",
+            targetId: u.id,
+            amount,
+            status: c.status,
+            group: c.group,
+          }
+        );
+      }
+    } else if (c.group === "mending") {
+      const amount = Math.min(u.max - u.hp, tickAmount(c, u));
+      if (amount > 0) {
+        u.hp += amount;
+        emit(`${u.name} recovers ${amount} HP from ${c.status}.`, {
+          kind: "tick",
+          targetId: u.id,
+          amount,
+          status: c.status,
+          group: c.group,
+        });
+      }
+    }
+  }
+}
+/*
+  The close of the same opportunity: every condition spends one of the victim's own
+  opportunities and an exhausted one expires. A sustained condition ends when its
+  source unit falls instead (contract decision 12).
+*/
+function spendOpportunity(s: Run, u: Unit, emit: Emit) {
+  const standingIds = new Set(
+    [...s.team, ...s.enemies].filter((t) => t.hp > 0).map((t) => t.id)
+  );
+  u.sinceEntranced = Math.min(
+    u.sinceEntranced + 1,
+    ENTRANCE_IMMUNITY_OPPORTUNITIES + 1
+  );
+  const survivors: Condition[] = [];
+  for (const c of u.conditions) {
+    if (c.remaining === Infinity) {
+      survivors.push(c);
+      continue;
+    }
+    if (c.sustained && !standingIds.has(c.source)) {
+      emit(`${u.name} is no longer ${c.status}: its source has fallen.`, {
+        kind: "expired",
+        targetId: u.id,
+        status: c.status,
+        group: c.group,
+      });
+      continue;
+    }
+    const remaining = c.remaining - 1;
+    if (remaining <= 0) {
+      emit(`${u.name} is no longer ${c.status}.`, {
+        kind: "expired",
+        targetId: u.id,
+        status: c.status,
+        group: c.group,
+      });
+      continue;
+    }
+    survivors.push({ ...c, remaining });
+  }
+  u.conditions = survivors;
+  syncBound(u);
+}
+/** `bound` is the pass 1 counter; binding conditions are its record. They move together. */
+function syncBound(u: Unit) {
+  const binding = conditionsIn(u, "binding");
+  u.bound = binding.length ? Math.max(...binding.map((c) => c.remaining)) : 0;
+}
+
+/*
+  One status application (contract decisions 14, 15 and 18): the likelihood roll from
+  the run rng, then the target's protection descriptors and the attention guards, then
+  refresh-or-add. Reapplying the same status refreshes the duration and keeps the
+  higher intensity; nothing stacks additively.
+*/
+function applyStatus(
+  s: Run,
+  u: Unit,
+  m: Move,
+  target: Unit,
+  e: MoveEffect,
+  emit: Emit
+) {
+  if (target.hp <= 0 || !e.group) return;
+  const status = e.status ?? "condition";
+  const binding = e.group === "binding";
+  const refuse = (text: string) =>
+    emit(text, {
+      kind: "resisted",
+      actorId: u.id,
+      targetId: target.id,
+      moveName: m.name,
+      status,
+      group: e.group,
+    });
+  const chance = LIKELIHOOD_PERCENT[e.likelihood];
+  if (!(chance >= 100 || random(s) * 100 < chance)) {
+    // Binding keeps the pass 1 "missed" word; every other status reads as resisted.
+    if (binding)
+      emit(`${u.name}'s ${m.name} fails to take hold on ${target.name}.`, {
+        kind: "missed",
+        actorId: u.id,
+        targetId: target.id,
+        moveName: m.name,
+        status,
+        group: e.group,
+      });
+    else refuse(`${target.name} shakes off ${status}.`);
+    return;
+  }
+  if (protectionDegree(target, { kind: "status", status }) === "immune") {
+    refuse(`${target.name} is immune to ${status}.`);
+    return;
+  }
+  if (e.group === "attention") {
+    if (has(target, FOCUS_STATUS)) {
+      refuse(`${target.name} is focused: ${status} cannot take its attention.`);
+      return;
+    }
+    if (
+      status === "entranced" &&
+      target.sinceEntranced < ENTRANCE_IMMUNITY_OPPORTUNITIES
+    ) {
+      refuse(
+        `${target.name} broke a trance too recently to be entranced again.`
+      );
+      return;
+    }
+  }
+  const intensity = e.intensity || DEFAULT_STATUS_INTENSITY;
+  const opportunities = e.opportunities ?? 1;
+  const existing = target.conditions.find((c) => c.status === status);
+  if (existing) {
+    existing.remaining = Math.max(existing.remaining, opportunities);
+    existing.intensity = Math.max(existing.intensity, intensity);
+    existing.source = u.id;
+  } else {
+    target.conditions.push({
+      status,
+      group: e.group,
+      intensity,
+      ...(e.statusElement ? { element: e.statusElement } : {}),
+      remaining: opportunities,
+      source: u.id,
+      ...(e.sustained ? { sustained: true } : {}),
+      removable: [...(e.removable ?? [])],
+      ...(e.protection ? { protection: e.protection } : {}),
+    });
+  }
+  if (status === "entranced") target.sinceEntranced = 0;
+  syncBound(target);
+  const remaining = target.conditions.find((c) => c.status === status)!
+    .remaining;
+  emit(
+    binding
+      ? `${u.name} uses ${m.name}: ${target.name} is ${status} through its next opportunity.`
+      : `${u.name} uses ${m.name}: ${target.name} is ${status} for ${remaining} ${
+          remaining === 1 ? "opportunity" : "opportunities"
+        }.`,
+    {
+      kind: binding ? "bind" : "status",
+      actorId: u.id,
+      targetId: target.id,
+      moveName: m.name,
+      status,
+      group: e.group,
+      remaining,
+    }
+  );
+}
+
+/** `remove` ends every condition whose removable methods intersect the effect's; nothing else (contract decision 17). */
+function applyRemove(
+  u: Unit,
+  m: Move,
+  target: Unit,
+  methods: RemovalMethod[],
+  emit: Emit
+) {
+  const cleared = target.conditions.filter(
+    (c) =>
+      c.remaining !== Infinity && c.removable.some((r) => methods.includes(r))
+  );
+  if (!cleared.length) {
+    emit(`${u.name} uses ${m.name}: nothing on ${target.name} answers to it.`, {
+      kind: "removed",
+      actorId: u.id,
+      targetId: target.id,
+      moveName: m.name,
+    });
+    return;
+  }
+  target.conditions = target.conditions.filter((c) => !cleared.includes(c));
+  syncBound(target);
+  for (const c of cleared)
+    emit(`${u.name} uses ${m.name}: ${target.name} is no longer ${c.status}.`, {
+      kind: "removed",
+      actorId: u.id,
+      targetId: target.id,
+      moveName: m.name,
+      status: c.status,
+      group: c.group,
+    });
+}
+
 function prepare(s: Run) {
   s.orders = {};
   for (const u of standing(s.enemies)) {
@@ -251,7 +612,10 @@ function prepare(s: Run) {
     let move = charge ?? available.find((i) => i !== guard) ?? available[0];
     if (guard !== undefined && available.length > 1 && charge === undefined)
       move = random(s) < 1 / 3 ? guard : move;
-    const foes = standing(s.team);
+    // Decision 20: the enemy planner does not read conditions. It does obey the one
+    // targeting rule every unit obeys: a concealed companion is not selectable while
+    // another one stands (decision 16).
+    const foes = selectableTargets(s.team);
     s.orders[u.id] = {
       move: move ?? -2,
       target: u.charge ?? foes[Math.floor(random(s) * foes.length)].id,
@@ -266,6 +630,9 @@ function enter(s: Run) {
     u.signatureSpent = false;
     u.bound = 0;
     u.ward = false;
+    // Applied conditions do not carry between encounters; permanent ones (physiology) do.
+    u.conditions = u.conditions.filter((c) => c.remaining === Infinity);
+    u.sinceEntranced = Infinity;
     u.charge = null;
     u.chargeMove = -1;
     u.recovery = 0;
@@ -324,7 +691,7 @@ export function resolveRound(
       !q ||
       !(legal.length ? legal.includes(q.move) : q.move === -2) ||
       (q.move !== -2 &&
-        !standing(previous.enemies).some((t) => t.id === q.target))
+        !selectableTargets(previous.enemies).some((t) => t.id === q.target))
     )
       throw new Error(`Choose a legal move and target for ${u.name}.`);
   }
@@ -351,6 +718,7 @@ export function resolveRound(
     acted.add(u.id);
     const q = (u.enemy ? s.orders : orders)[u.id];
     const wasBound = u.bound > 0;
+    const entranced = u.conditions.some((c) => c.status === "entranced");
     u.ward = false;
     // Read before the decrement: a charge broken before this opportunity leaves a stale
     // release order that must still be blocked here, even when the interrupted-charge
@@ -358,6 +726,24 @@ export function resolveRound(
     const recovering = u.recovery > 0;
     if (u.recovery) u.recovery--;
     u.cooldowns = u.cooldowns.map((n) => Math.max(0, n - 1));
+    // The start of this unit's opportunity: degrading and mending ticks
+    // (contract decisions 13 and 17).
+    openOpportunity(s, u, emit);
+    if (u.hp <= 0) continue;
+    if (entranced) {
+      // Its committed order is not executed and not charged; a charge in progress
+      // stands (contract decision 15). The lost opportunity is the one the trance
+      // spends, so it is reported before the condition expires.
+      emit(`${u.name} is entranced and loses its opportunity.`, {
+        kind: "lost",
+        actorId: u.id,
+        status: "entranced",
+        group: "attention",
+      });
+      spendOpportunity(s, u, emit);
+      continue;
+    }
+    spendOpportunity(s, u, emit);
     if (q.move === -2)
       emit(`${u.name} cannot act while bound.`, {
         kind: "blocked",
@@ -384,12 +770,24 @@ export function resolveRound(
       } else {
         const targets = u.enemy ? s.team : s.enemies;
         let target = targets.find((t) => t.id === q.target);
-        if (!target || target.hp <= 0) {
+        // Retargeting walks the fixed row order and skips a concealed unit while
+        // another one stands (contract decision 16).
+        const open = new Set(selectableTargets(targets).map((t) => t.id));
+        if (!target || target.hp <= 0 || !open.has(target.id)) {
+          const skipped = target && target.hp > 0 && !open.has(target.id);
           const index = target ? targets.indexOf(target) : -1;
-          target = Array.from(
+          const next = Array.from(
             { length: targets.length },
             (_, i) => targets[(index + i + 1) % targets.length]
-          ).find((t) => t.hp > 0);
+          ).find((t) => open.has(t.id));
+          if (skipped && next)
+            emit(`${target!.name} is concealed; ${m.name} cannot find it.`, {
+              kind: "hidden",
+              actorId: u.id,
+              targetId: target!.id,
+              moveName: m.name,
+            });
+          target = next;
           if (target)
             emit(
               `${u.name} redirects ${m.name} to ${target.name} (${target.id}).`,
@@ -424,7 +822,6 @@ export function resolveRound(
         }
       }
     }
-    if (wasBound) u.bound = Math.max(0, u.bound - 1);
   }
   if (!standing(s.team).length) {
     s.phase = "lost";
@@ -450,6 +847,21 @@ function apply(
   emit: (text: string, event?: BattleEvent) => void
 ) {
   const supported = m.effects.filter((e) => e.support !== "unsupported");
+  // Concealment ends when its owner executes a harm or a displace: the strike gives
+  // its position away (contract decision 16).
+  if (damaging(m) && concealed(u)) {
+    u.conditions = u.conditions.filter((c) => c.group !== "concealment");
+    emit(`${u.name} breaks cover to attack.`, {
+      kind: "expired",
+      actorId: u.id,
+      status: "concealed",
+      group: "concealment",
+    });
+  }
+  // A target immune to displacement takes neither the impact harm nor the charge
+  // break: the descriptor blocks the whole mechanism (contract decision 14).
+  const displaceImmune =
+    protectionDegree(target, { kind: "displace" }) === "immune";
   if (damaging(m)) {
     const damage = damagePreview(u, m, target);
     target.hp = Math.max(0, target.hp - damage);
@@ -473,6 +885,7 @@ function apply(
     if (
       target.hp > 0 &&
       target.charge !== null &&
+      !displaceImmune &&
       supported.some((e) => e.support === "displace")
     ) {
       breakCharge(target, acted.has(target.id));
@@ -487,25 +900,23 @@ function apply(
       );
     }
   }
+  if (displaceImmune && supported.some((e) => e.support === "displace"))
+    emit(`${target.name} is anchored: displacement cannot move it.`, {
+      kind: "resisted",
+      actorId: u.id,
+      targetId: target.id,
+      moveName: m.name,
+      status: "protected",
+      group: "guarding",
+    });
   for (const e of supported) {
-    if (e.support === "bind") {
-      if (target.hp <= 0) continue;
-      const chance = LIKELIHOOD_PERCENT[e.likelihood];
-      const landed = chance >= 100 || random(s) * 100 < chance;
-      if (!landed) {
-        emit(`${u.name}'s ${m.name} fails to take hold on ${target.name}.`, {
-          kind: "missed",
-          actorId: u.id,
-          targetId: target.id,
-          moveName: m.name,
-        });
-        continue;
-      }
-      target.bound = BIND_OPPORTUNITIES;
-      emit(
-        `${u.name} uses ${m.name}: ${target.name} is ${e.status} through its next opportunity.`,
-        { kind: "bind", actorId: u.id, targetId: target.id, moveName: m.name }
-      );
+    if (e.support === "bind" || e.support === "status") {
+      // Binding writes the pass 1 counter through its condition, so the accepted Snare
+      // rule is unchanged while the badge can name the status (contract decision 11).
+      applyStatus(s, u, m, e.recipient === "self" ? u : target, e, emit);
+    } else if (e.support === "remove") {
+      if (e.methods?.length)
+        applyRemove(u, m, e.recipient === "self" ? u : target, e.methods, emit);
     } else if (e.support === "protect") {
       u.ward = true;
       emit(

@@ -5,7 +5,9 @@
   bind first, since only one that lands before the release stops it); pull a known charger
   (an enemy with a prolonged move) with a legal displace even before it has begun charging,
   and count how often that pull breaks a charge begun earlier in the same round; otherwise
-  the legal move and target with the highest damage preview (a knockout wins ties);
+  the legal move and target with the highest damage preview, a harm that also carries a
+  status beating a plain harm at equal preview (contract decision 20), a knockout winning
+  ties;
   Desperate strike only when it is the sole legal move or nothing else scores. Between
   encounters: revive whoever is down (once), then advance.
 
@@ -22,9 +24,19 @@ import {
   resolveRound,
   type Order,
   type Run,
+  type StatusGroup,
   type Unit,
 } from "../index.ts";
 import { LIKELIHOOD_PERCENT } from "../levers.ts";
+
+const GROUPS: StatusGroup[] = [
+  "binding",
+  "degrading",
+  "guarding",
+  "attention",
+  "concealment",
+  "mending",
+];
 
 export type SimStats = {
   runs: number;
@@ -44,6 +56,16 @@ export type SimStats = {
   bindsLanded: number;
   bindsMissed: number;
   roomsReached: number[];
+  /** Pass 2 rows (contract, "Measurement"). */
+  applied: Record<StatusGroup, number>;
+  resisted: number;
+  companionDamage: number;
+  companionDegradeDamage: number;
+  opportunitiesLostToTrance: number;
+  companionOpportunitiesUnderParalysis: number;
+  removeUses: number;
+  removeCleared: number;
+  hiddenSkips: number;
 };
 
 function choose(u: Unit, enemies: Unit[]): Order | null {
@@ -65,6 +87,12 @@ function choose(u: Unit, enemies: Unit[]): Order | null {
       else {
         const damage = damagePreview(u, m, t);
         score = damage + (damage > 0 && damage >= t.hp ? 50 : 0);
+        // Decision 20: at equal preview a harm that also carries a status wins.
+        if (
+          damage > 0 &&
+          m.effects.some((e) => e.support === "status" || e.support === "bind")
+        )
+          score += 0.25;
         if (i === -1) score -= 0.5; // recoil: prefer any real damage at equal preview
       }
       if (!best || score > best.score) best = { order: { move: i, target: t.id }, score };
@@ -89,6 +117,7 @@ export function playRun(seed: number, stats: SimStats) {
     const preemptive = new Set<string>();
     for (const u of s.team.filter((u) => u.hp > 0)) {
       stats.playerOpportunities++;
+      if (u.bound > 0) stats.companionOpportunitiesUnderParalysis++;
       const order = choose(u, s.enemies);
       if (!order) {
         stats.lockouts++;
@@ -119,6 +148,22 @@ export function playRun(seed: number, stats: SimStats) {
       if (e.kind === "hit" && actor && actor.moves.some((m) => m.name === e.moveName && m.preparation === "prolonged")) stats.releasesLanded++;
       if (e.kind === "bind") stats.bindsLanded++;
       if (e.kind === "missed") stats.bindsMissed++;
+      const onCompanion = result.state.team.some((t) => t.id === e.targetId);
+      if (e.kind === "hit" && onCompanion) stats.companionDamage += e.amount ?? 0;
+      if (e.kind === "tick" && e.group === "degrading" && onCompanion) {
+        stats.companionDamage += e.amount ?? 0;
+        stats.companionDegradeDamage += e.amount ?? 0;
+      }
+      if ((e.kind === "status" || e.kind === "bind") && e.group)
+        stats.applied[e.group]++;
+      if (e.kind === "resisted") stats.resisted++;
+      if (e.kind === "lost") stats.opportunitiesLostToTrance++;
+      if (e.kind === "hidden") stats.hiddenSkips++;
+      if (e.kind === "removed") {
+        // One "removed" event per condition cleared, plus one when nothing answered.
+        if (e.status) stats.removeCleared++;
+        else stats.removeUses++;
+      }
     }
     s = result.state;
   }
@@ -147,6 +192,18 @@ export function simulate(runs = 200, firstSeed = 1): SimStats {
     bindsLanded: 0,
     bindsMissed: 0,
     roomsReached: [],
+    applied: Object.fromEntries(GROUPS.map((g) => [g, 0])) as Record<
+      StatusGroup,
+      number
+    >,
+    resisted: 0,
+    companionDamage: 0,
+    companionDegradeDamage: 0,
+    opportunitiesLostToTrance: 0,
+    companionOpportunitiesUnderParalysis: 0,
+    removeUses: 0,
+    removeCleared: 0,
+    hiddenSkips: 0,
   };
   for (let seed = firstSeed; seed < firstSeed + runs; seed++) playRun(seed, stats);
   return stats;
@@ -170,6 +227,28 @@ export function formatTable(stats: SimStats): string {
     ["charge interruptions by displace", String(stats.displaceInterruptions)],
     ["pre-emptive pulls attempted", `${stats.preemptivePulls} (${stats.preemptivePullsBroke} broke a charge begun earlier that round)`],
     ["binds landed / missed", `${stats.bindsLanded} / ${stats.bindsMissed} (${pct(stats.bindsLanded, stats.bindsLanded + stats.bindsMissed)} landed)`],
+    // Pass 2 rows.
+    [
+      "conditions applied per group",
+      GROUPS.filter((g) => stats.applied[g])
+        .map((g) => `${g} ${stats.applied[g]}`)
+        .join(", ") || "none",
+    ],
+    ["applications resisted or blocked", String(stats.resisted)],
+    [
+      "degrade share of companion damage taken",
+      `${pct(stats.companionDegradeDamage, stats.companionDamage)} (${stats.companionDegradeDamage} of ${stats.companionDamage})`,
+    ],
+    ["opportunities lost to entranced", String(stats.opportunitiesLostToTrance)],
+    [
+      "companion opportunities under paralysis",
+      `${pct(stats.companionOpportunitiesUnderParalysis, stats.playerOpportunities)} (${stats.companionOpportunitiesUnderParalysis})`,
+    ],
+    [
+      "companion remove: cleared / found nothing",
+      `${stats.removeCleared} / ${stats.removeUses}`,
+    ],
+    ["targets skipped as concealed", String(stats.hiddenSkips)],
   ];
   const width = Math.max(...rows.map(([k]) => k.length));
   return rows.map(([k, v]) => `${k.padEnd(width)}  ${v}`).join("\n");

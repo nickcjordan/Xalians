@@ -400,6 +400,96 @@
 .pw-status-badge.recovery {
   color: #b7cbd2;
 }
+/* Pass 2, the status layer: one badge per applied condition, colored by its group. */
+.pw-status-badge.condition {
+  text-transform: capitalize;
+}
+.pw-status-badge.condition small {
+  text-transform: none;
+  opacity: 0.72;
+  font-size: 11px;
+}
+.pw-status-badge.group-binding {
+  color: #d9c7ef;
+  background: #3a2e4b;
+  border-color: #a48cc6;
+}
+.pw-status-badge.group-degrading {
+  color: #f3c7ab;
+  background: #4a2d20;
+  border-color: #c58152;
+}
+.pw-status-badge.group-guarding {
+  color: #aad7ed;
+  background: #203d50;
+  border-color: #719eba;
+}
+.pw-status-badge.group-attention {
+  color: #efd7ea;
+  background: #47273f;
+  border-color: #bd82ab;
+}
+.pw-status-badge.group-concealment {
+  color: #c4ccd4;
+  background: #2a3138;
+  border-color: #7d8894;
+}
+.pw-status-badge.group-mending {
+  color: #b9e8c4;
+  background: #1f3f2c;
+  border-color: #6fae82;
+}
+/* The inspector's plain-language rule for each condition. */
+.pw-condition-rules {
+  list-style: none;
+  display: grid;
+  gap: 8px;
+  padding: 0;
+  margin: 14px 0 0;
+}
+.pw-condition-rules li {
+  display: grid;
+  gap: 4px;
+  padding: 10px 12px;
+  border-left: 3px solid #78999266;
+  background: #16292d;
+  font-size: 13px;
+  color: #ceded8;
+}
+.pw-condition-name {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  text-transform: capitalize;
+  font-weight: 600;
+}
+.pw-condition-name svg {
+  width: 13px;
+  height: 13px;
+}
+.pw-condition-name small {
+  text-transform: none;
+  font-weight: 400;
+  opacity: 0.7;
+}
+.pw-condition-rules li .pw-condition-name.group-binding {
+  color: #d9c7ef;
+}
+.pw-condition-rules li .pw-condition-name.group-degrading {
+  color: #f3c7ab;
+}
+.pw-condition-rules li .pw-condition-name.group-guarding {
+  color: #aad7ed;
+}
+.pw-condition-rules li .pw-condition-name.group-attention {
+  color: #efd7ea;
+}
+.pw-condition-rules li .pw-condition-name.group-concealment {
+  color: #c4ccd4;
+}
+.pw-condition-rules li .pw-condition-name.group-mending {
+  color: #b9e8c4;
+}
 .pw-target-marker {
   display: inline-flex;
   align-items: center;

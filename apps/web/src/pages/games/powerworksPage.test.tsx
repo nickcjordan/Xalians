@@ -86,7 +86,7 @@ describe("Powerworks player flow", () => {
       name: /Emergency Water Cannon,/,
     });
     expect(attack).toHaveAccessibleDescription(
-      "Ranged attack. 5 base power. Remove: no effect here (nothing to remove yet). 1 round cooldown."
+      "Ranged attack. 5 base power. Ends conditions that answer to cooling. 1 round cooldown."
     );
     expect(attack.querySelector(".pw-card-identity")).not.toHaveTextContent(
       /power|ranged/
@@ -100,6 +100,33 @@ describe("Powerworks player flow", () => {
     expect(screen.getByLabelText("Move symbol key")).toHaveTextContent(
       "Melee attack"
     );
+  });
+  it("lists each condition on a companion with its plain-language rule in the inspector", () => {
+    mount();
+    fireEvent.click(screen.getByRole("button", { name: "Enter the facility" }));
+    // Graviclaw's Ground Anchor is the squad's one guarding status; playing it puts a
+    // real condition on a real companion, which the inspector must then explain.
+    // Seed 1 deals the squad Hippochamp, Crystorn, Avilily, Graviclaw.
+    for (const move of [
+      "Emergency Water Cannon",
+      "Gem Radiance",
+      "Blossoming Ambuscade",
+      "Ground Anchor",
+    ]) {
+      fireEvent.click(screen.getByRole("button", { name: new RegExp(move) }));
+      fireEvent.click(
+        screen.getByRole("button", { name: "Target Maintenance crawler M1" })
+      );
+    }
+    fireEvent.click(screen.getByRole("button", { name: "Commit round" }));
+    fireEvent.click(screen.getByRole("button", { name: "Show round result" }));
+    fireEvent.click(
+      screen.getByRole("button", { name: "Inspect Graviclaw on battlefield" })
+    );
+    const rules = document.querySelector(".pw-condition-rules")!;
+    expect(rules).toHaveTextContent("protected");
+    expect(rules).toHaveTextContent(/Immune to being moved/);
+    expect(rules.querySelector(".group-guarding")).toBeTruthy();
   });
   it("separates public initiative from hidden decisions and makes the route discoverable", () => {
     mount();
