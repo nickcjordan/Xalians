@@ -11,6 +11,7 @@ import {
 import type { CreatureRecord } from "@xalians/content/creature";
 import {
   LAST_RESORT,
+  contactDelivery,
   damaging,
   harmAttribute,
   readCard,
@@ -20,8 +21,10 @@ import {
   type Condition,
   type Move,
   type MoveEffect,
+  type Passive,
   type RemovalMethod,
   type StatusGroup,
+  type Trigger,
   type Unit,
 } from "./reading.ts";
 import {
@@ -52,6 +55,8 @@ import {
   RESTORE_DIVISOR,
   SAVE_HISTORY_LIMIT,
   SAVE_VERSION,
+  REACTIONS_PER_TRIGGERING_MOVE,
+  REACTION_DEPTH,
   SIGNATURE_ONCE_PER_ENCOUNTER,
   WARD_FACTOR,
 } from "./levers.ts";
@@ -61,14 +66,18 @@ export type {
   Condition,
   Move,
   MoveEffect,
+  Passive,
   Range,
   RemovalMethod,
   StatusGroup,
   Support,
+  Trigger,
   Unit,
 } from "./reading.ts";
 export {
   LAST_RESORT,
+  contactDelivery,
+  ongoingConditions,
   readCompanion,
   usable,
   damaging,
@@ -121,6 +130,7 @@ export type BattleEvent = {
     | "removed"
     | "lost"
     | "hidden"
+    | "react"
     | "result";
   /** status / tick / expired / removed events: which condition. */
   status?: string;
@@ -630,8 +640,14 @@ function enter(s: Run) {
     u.signatureSpent = false;
     u.bound = 0;
     u.ward = false;
-    // Applied conditions do not carry between encounters; permanent ones (physiology) do.
+    u.passiveCooldowns = u.passives.map(() => 0);
+    // Applied conditions do not carry between encounters; permanent ones (physiology
+    // protections and ongoing passives) do, and an ongoing passive re-seeds its own at
+    // entry so a condition a `remove` somehow reached is back (contract decision 21).
     u.conditions = u.conditions.filter((c) => c.remaining === Infinity);
+    for (const condition of u.passives.flatMap((p) => p.conditions))
+      if (!u.conditions.some((c) => c.status === condition.status))
+        u.conditions.push({ ...condition });
     u.sinceEntranced = Infinity;
     u.charge = null;
     u.chargeMove = -1;
@@ -707,6 +723,13 @@ export function resolveRound(
     });
   };
   emit(`Encounter ${s.room + 1} · Round ${s.round}`, { kind: "round" });
+  // A passive's recovery counts rounds, and a reaction fires at whatever moment in the
+  // round the triggering move happens, so its cooldown is spent and refunded at the
+  // round boundary rather than at the owner's own opportunity: decrementing at the
+  // opportunity would refund a reaction mid-round to every attacker who came after it
+  // (contract decision 23).
+  for (const u of [...s.team, ...s.enemies])
+    u.passiveCooldowns = u.passiveCooldowns.map((n) => Math.max(0, n - 1));
   const sequence = initiative(s.team, s.enemies, s.round, {
     ...s.orders,
     ...orders,
@@ -817,7 +840,9 @@ export function resolveRound(
               u.chargeMove = -1;
               u.recovery = CHARGE_RECOVERY_OPPORTUNITIES;
             }
-            apply(s, u, m, target, acted, emit);
+            const outcome = apply(s, u, m, target, acted, emit);
+            // Reactions resolve after the triggering move finishes (contract decision 22).
+            reactions(s, u, m, outcome, acted, 0, emit);
           }
         }
       }
@@ -837,6 +862,17 @@ export function resolveRound(
   }
   return { state: s, frames };
 }
+/**
+  What one move actually did, for the trigger layer to read (contract decision 22).
+  `harmed` lists every unit that lost HP to the move itself, never to a tick.
+*/
+export type Outcome = {
+  /** Units that lost HP to this move, with the amount. */
+  harmed: { id: string; amount: number }[];
+  /** Units a status or a binding landed on. */
+  afflicted: string[];
+};
+
 /** One resolver for every effect on both sides. Harm is deterministic; statuses roll the run rng. */
 function apply(
   s: Run,
@@ -845,7 +881,8 @@ function apply(
   target: Unit,
   acted: Set<string>,
   emit: (text: string, event?: BattleEvent) => void
-) {
+): Outcome {
+  const outcome: Outcome = { harmed: [], afflicted: [] };
   const supported = m.effects.filter((e) => e.support !== "unsupported");
   // Concealment ends when its owner executes a harm or a displace: the strike gives
   // its position away (contract decision 16).
@@ -865,6 +902,7 @@ function apply(
   if (damaging(m)) {
     const damage = damagePreview(u, m, target);
     target.hp = Math.max(0, target.hp - damage);
+    if (damage > 0) outcome.harmed.push({ id: target.id, amount: damage });
     if (m.fallback) u.hp = Math.max(0, u.hp - DESPERATE_STRIKE_RECOIL);
     emit(
       `${u.name} uses ${m.name} on ${target.name} (${target.id}): ${damage} damage.${
@@ -913,7 +951,11 @@ function apply(
     if (e.support === "bind" || e.support === "status") {
       // Binding writes the pass 1 counter through its condition, so the accepted Snare
       // rule is unchanged while the badge can name the status (contract decision 11).
-      applyStatus(s, u, m, e.recipient === "self" ? u : target, e, emit);
+      const victim = e.recipient === "self" ? u : target;
+      const before = victim.conditions.length;
+      applyStatus(s, u, m, victim, e, emit);
+      if (victim.conditions.length > before || victim.conditions.some((c) => c.status === e.status && c.source === u.id))
+        outcome.afflicted.push(victim.id);
     } else if (e.support === "remove") {
       if (e.methods?.length)
         applyRemove(u, m, e.recipient === "self" ? u : target, e.methods, emit);
@@ -935,7 +977,119 @@ function apply(
       });
     }
   }
+  return outcome;
 }
+/*
+  The trigger layer (contract decisions 22, 23 and 25).
+
+  Every discrete passive on the table is offered the triggering move once it has
+  finished. A reaction resolves in its owner's name, with its owner's attributes,
+  through the same `apply` path as an action, so nothing about a reaction's harm,
+  status or matchup is a second set of rules. Constraints, all levers:
+
+    - never while the owner is knocked out (the strike that felled it kills the reply);
+    - at most REACTIONS_PER_TRIGGERING_MOVE per passive per triggering move;
+    - its `timing.recovery` as a cooldown in rounds, spent when it fires;
+    - depth REACTION_DEPTH: a reaction's own harm or status triggers nothing further;
+    - `likelihood` rolls from the run rng, exactly as an action's status does.
+
+  The triggers and their targets come from the model: `contact` when a contact-delivery
+  move landed harm or a status on the owner (target: the attacker); `harmed` when the
+  owner lost HP to a unit's move, never to a tick (target: the attacker); `ally-harmed`
+  when a same-side standing unit lost HP to a move (target: that ally).
+*/
+function triggersFor(
+  owner: Unit,
+  attacker: Unit,
+  move: Move,
+  outcome: Outcome
+): Trigger[] {
+  const triggers: Trigger[] = [];
+  const hitOwner =
+    outcome.harmed.some((h) => h.id === owner.id) ||
+    outcome.afflicted.includes(owner.id);
+  if (owner.id !== attacker.id && hitOwner && contactDelivery(move))
+    triggers.push("contact");
+  if (
+    owner.id !== attacker.id &&
+    outcome.harmed.some((h) => h.id === owner.id)
+  )
+    triggers.push("harmed");
+  return triggers;
+}
+
+function reactions(
+  s: Run,
+  attacker: Unit,
+  move: Move,
+  outcome: Outcome,
+  acted: Set<string>,
+  depth: number,
+  emit: Emit
+) {
+  if (depth >= REACTION_DEPTH) return;
+  const all = [...s.team, ...s.enemies];
+  for (const owner of all) {
+    if (owner.hp <= 0) continue;
+    if (!owner.passives.length) continue;
+    // ally-harmed reads the harmed same-side unit, which is not the owner itself.
+    const ally = all.find(
+      (u) =>
+        u.id !== owner.id &&
+        u.enemy === owner.enemy &&
+        u.hp > 0 &&
+        outcome.harmed.some((h) => h.id === u.id)
+    );
+    const available = triggersFor(owner, attacker, move, outcome);
+    if (ally) available.push("ally-harmed");
+    if (!available.length) continue;
+    let fired = 0;
+    for (let i = 0; i < owner.passives.length; i++) {
+      if (fired >= REACTIONS_PER_TRIGGERING_MOVE) break;
+      const passive = owner.passives[i];
+      if (passive.kind !== "triggered" || passive.support !== "supported") continue;
+      if (!passive.trigger || !available.includes(passive.trigger)) continue;
+      if (owner.passiveCooldowns[i] > 0) continue;
+      // The trigger supplies the target: the attacker, or the harmed ally
+      // (contract decisions 22 and 26 - this is the one place an effect reaches an ally).
+      const target = passive.trigger === "ally-harmed" ? ally : attacker;
+      if (!target) continue;
+      owner.passiveCooldowns[i] = passive.cooldown;
+      fired++;
+      emit(
+        `${owner.name} reacts: ${passive.name} answers ${target.name}.`,
+        {
+          kind: "react",
+          actorId: owner.id,
+          targetId: target.id,
+          moveName: passive.name,
+        }
+      );
+      // A reaction is an action for the resolver: same effects, same rolls, same events.
+      apply(s, owner, asMove(passive), target, acted, emit);
+      if (owner.hp <= 0) break;
+    }
+  }
+}
+
+/** A triggered passive in Move clothing, so the one resolver runs it unchanged (contract decision 22). */
+export function asMove(passive: Passive): Move {
+  return {
+    key: passive.key,
+    name: passive.name,
+    signature: passive.signature,
+    // A reaction is not an approach the table can block: it is stationary at contact
+    // range, so binding never stops a reply and a reply never reads as a contact
+    // delivery that could trigger another one (depth one is the lever that guarantees it).
+    approach: "stationary",
+    range: "contact",
+    preparation: "immediate",
+    recovery: "repeatable",
+    ...(passive.element ? { element: passive.element } : {}),
+    effects: passive.effects,
+  };
+}
+
 export function command(previous: Run, action: Command): Run {
   if (action.kind === "round")
     return resolveRound(previous, action.orders).state;

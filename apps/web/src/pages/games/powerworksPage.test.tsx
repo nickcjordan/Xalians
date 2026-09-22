@@ -144,4 +144,26 @@ describe("Powerworks player flow", () => {
     ).toBeInTheDocument();
     expect(screen.getByText("You are here")).toBeInTheDocument();
   });
+  it("shows the base move name in the squad panel and keeps the full name in the title", () => {
+    mount();
+    fireEvent.click(screen.getByRole("button", { name: "Enter the facility" }));
+    // Hippochamp's compositional Impact Touch is the longest generated name on the
+    // table; the squad panel label must be its base name, not the whole qualifier list.
+    fireEvent.click(screen.getByRole("button", { name: "Select Hippochamp" }));
+    const long = screen
+      .getAllByRole("button", { name: /^Impact Touch \(/ })
+      .find((b) => (b.getAttribute("aria-label") || "").includes(";"))!;
+    expect(long).toBeTruthy();
+    const full = long.getAttribute("aria-label")!.split(",")[0];
+    expect(full).toMatch(/;/);
+    fireEvent.click(long);
+    fireEvent.click(
+      screen.getByRole("button", { name: "Target Maintenance crawler M1" })
+    );
+    const label = document.querySelector(".pw-order-move")!;
+    expect(label).toHaveTextContent("Impact Touch");
+    // The label itself carries no qualifier list, and the full name is reachable.
+    expect(label.textContent).not.toMatch(/;/);
+    expect(label.getAttribute("title")).toMatch(/;/);
+  });
 });

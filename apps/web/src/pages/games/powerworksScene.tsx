@@ -135,6 +135,8 @@ export function floatLabel(event?: BattleEvent): string {
       return "Opportunity lost";
     case "hidden":
       return "Concealed";
+    case "react":
+      return "Reacts";
     default:
       return "Redirected";
   }
@@ -453,7 +455,9 @@ export function PowerworksScene({
               {(recoil ||
                 (receiving && impact && phase !== "redirect") ||
                 (acting &&
-                  ["charge", "blocked", "lost", "expired"].includes(phase))) && (
+                  ["charge", "blocked", "lost", "expired", "react"].includes(
+                    phase
+                  ))) && (
                 <span
                   key={`float-${frameIndex}`}
                   className={`pw-scene-float ${phase} ${
