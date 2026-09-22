@@ -42,7 +42,10 @@ function BreadcrumbLink({
   return (
     <Comp
       data-slot="breadcrumb-link"
-      className={cn("transition-colors hover:text-foreground", className)}
+      /* `py-2.5` on touch buys a comfortable target height without changing
+         the trail's visual line: a breadcrumb is a row of small text, and a
+         44px box around each crumb would break the pattern it reads as. */
+      className={cn("inline-block py-2.5 transition-colors hover:text-foreground sm:py-0", className)}
       {...props}
     />
   )
