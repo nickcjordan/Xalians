@@ -36,9 +36,11 @@ import {
   legalMoves,
   moveAt,
   damagePreview,
+  basePower,
   matchup,
   initiative,
   ROOMS,
+  SAVE_VERSION,
   type Run,
   type Unit,
   type Order,
@@ -53,6 +55,11 @@ import {
   MoveCardContent,
   PowerIcon,
   moveDescription,
+  effectSummary,
+  cooldownLimit,
+  binds,
+  harms,
+  melee,
   StatusBadges,
   Health,
   shortName,
@@ -109,7 +116,10 @@ function eventLabel(frame: Frame) {
   return (
     {
       hit: `−${e.amount}`,
-      snare: "Restrained",
+      bind: "Bound",
+      missed: "Resisted",
+      displace: "Charge broken",
+      restore: `+${e.amount}`,
       ward: "Shield up",
       charge: "Charging",
       blocked: "Blocked",
@@ -209,7 +219,7 @@ export default function PowerworksPage() {
     try {
       localStorage.setItem(
         SAVE_KEY,
-        JSON.stringify({ version: 1, seed: run.seed, history })
+        JSON.stringify({ version: SAVE_VERSION, seed: run.seed, history })
       );
       setSaveFailed(false);
     } catch {
@@ -413,11 +423,11 @@ export default function PowerworksPage() {
 
   function previewText(u: Unit) {
     if (!move || !active) return "";
-    if (move.kind === "snare")
-      return u.moves.some((m) => m.range === "ranged")
+    if (binds(move) && !harms(move))
+      return u.moves.some((m) => !melee(m))
         ? "Melee blocked · ranged still works"
         : "Block next melee action";
-    const factor = move.kind === "fallback" ? 1 : matchup(active, u);
+    const factor = matchup(active, u, move);
     return `${damagePreview(active, move, u)} estimated · ${
       factor === 0
         ? "immune"
@@ -443,13 +453,20 @@ export default function PowerworksPage() {
           ? " Attacker takes 2 recoil damage."
           : ""
       }`;
-    if (e.kind === "snare")
+    if (e.kind === "bind")
       return `${name} cannot use melee at its next opportunity.`;
+    if (e.kind === "missed") return `${name} shrugs it off.`;
+    if (e.kind === "displace")
+      return `${name} is pulled off its footing. Its charge is broken.`;
+    if (e.kind === "restore") return `${name} recovers ${e.amount} HP.`;
     if (e.kind === "ward")
       return "Incoming damage is halved until the next opportunity.";
     if (e.kind === "charge")
-      return "Preparing a melee release for the next opportunity.";
-    if (e.kind === "blocked") return "Restraint prevented the action.";
+      return "Preparing a release for the next opportunity.";
+    if (e.kind === "blocked")
+      return current.text.includes("charge was broken")
+        ? "Its charge was broken; it must recover first."
+        : "Binding prevented the action.";
     if (e.kind === "redirect")
       return `The original target fell. The move redirects to ${name}.`;
     if (e.kind === "round") return "Orders resolve from fastest to slowest.";
@@ -774,7 +791,9 @@ export default function PowerworksPage() {
                         ].map((i, k) => {
                           const m = moveAt(active, i),
                             legal = available.includes(i),
-                            limit = i === 3 ? 1 : 3;
+                            limit = cooldownLimit(m),
+                            cooldown = i === -1 ? null : active.cooldowns[i],
+                            spent = m.signature && active.signatureSpent;
                           return (
                             <button
                               key={i}
@@ -782,25 +801,31 @@ export default function PowerworksPage() {
                                 moveButtons.current[k] = el;
                               }}
                               aria-label={`${m.name}${
-                                i === 3 ? ", signature" : ""
+                                m.signature ? ", signature" : ""
                               }, ${
-                                i === -1
-                                  ? "unlimited"
-                                  : `${active.uses[i]} of ${limit} uses`
+                                i === -1 || limit === 0
+                                  ? "no cooldown"
+                                  : cooldown
+                                  ? `${cooldown} of ${limit} rounds cooling`
+                                  : `${limit} round cooldown`
                               }${
                                 !legal
-                                  ? active.uses[i] === 0
-                                    ? ", exhausted"
-                                    : ", blocked by restraint"
+                                  ? spent
+                                    ? ", spent this encounter"
+                                    : cooldown
+                                    ? ", cooling down"
+                                    : active.bound && melee(m)
+                                    ? ", blocked by binding"
+                                    : ", no effect here"
                                   : ""
                               }`}
                               aria-describedby={`move-stats-${active.id}-${i}`}
-                              title={moveDescription(m)}
+                              title={moveDescription(active, m)}
                               aria-pressed={pending === i}
                               disabled={!legal}
                               className={`pw-move-card ${
                                 pending === i ? "chosen" : ""
-                              } ${i === 3 ? "signature" : ""} el-${
+                              } ${m.signature ? "signature" : ""} el-${
                                 active.element
                               }`}
                               onClick={(e) => {
@@ -821,12 +846,14 @@ export default function PowerworksPage() {
                               }}
                             >
                               <MoveCardContent
+                                unit={active}
                                 move={m}
-                                signature={i === 3}
-                                uses={i === -1 ? null : active.uses[i]}
-                                limit={limit}
+                                cooldown={cooldown}
+                                spent={spent}
                                 selected={pending === i}
-                                blocked={!legal && active.uses[i] > 0}
+                                blocked={
+                                  !legal && !!active.bound && melee(m) && !cooldown
+                                }
                                 id={`move-stats-${active.id}-${i}`}
                               />
                             </button>
@@ -1038,7 +1065,7 @@ export default function PowerworksPage() {
                     <h2>{phaseTitle}</h2>
                     <p>
                       {run.phase === "camp"
-                        ? "Carry your squad forward. Move uses refresh; wounds remain."
+                        ? "Carry your squad forward. Cooldowns and signatures refresh; wounds remain."
                         : run.phase === "won"
                         ? "The defense network falls silent. Your squad made it through."
                         : run.phase === "lost"
@@ -1245,8 +1272,8 @@ export default function PowerworksPage() {
           <>
             <ExpeditionTrail room={run.room} completed={run.phase === "won"} />
             <p>
-              Four sectors to the central guardian. Health carries forward; move
-              uses refresh at each encounter.
+              Four sectors to the central guardian. Health carries forward;
+              cooldowns and signatures refresh at each encounter.
             </p>
             <ol className="pw-route-list">
               {ROOMS.map((r, i) => (
@@ -1353,7 +1380,7 @@ export default function PowerworksPage() {
                 <PowerIcon /> Base power
               </span>
               <span>
-                <Link2 /> Restraint opportunities
+                <Link2 /> Binding opportunities
               </span>
               <span>
                 <Crown /> Signature move
@@ -1362,7 +1389,7 @@ export default function PowerworksPage() {
                 <RotateCcw /> Health recoil
               </span>
               <span>
-                <i className="pw-key-pip" /> Remaining uses
+                <i className="pw-key-pip" /> Cooldown rounds
               </span>
             </div>
             <div className="pw-guide-steps">
@@ -1390,11 +1417,12 @@ export default function PowerworksPage() {
               <section>
                 <h3>
                   <Link2 />
-                  Restraint is not stun
+                  Binding is not stun
                 </h3>
                 <p>
                   Melee is blocked through the next opportunity. Ranged moves
-                  still work. Blocked moves keep their uses.
+                  still work. Blocked moves do not start their cooldown. A
+                  pull breaks a charge outright.
                 </p>
               </section>
               <section>
@@ -1421,13 +1449,13 @@ export default function PowerworksPage() {
               <section>
                 <h3>
                   <Crown />
-                  Finite move uses
+                  Cooldowns and the signature
                 </h3>
                 <p>
-                  Filled segments are remaining uses. Three per secondary, one
-                  per signature, refreshed each encounter. Desperate strike
-                  deals 3 neutral damage with 2 recoil after all damaging moves
-                  are exhausted.
+                  Filled segments are rounds ready; a move on cooldown returns
+                  when they refill. The signature is once per encounter.
+                  Desperate strike deals 3 neutral damage with 2 recoil when
+                  nothing damaging is available.
                 </p>
               </section>
               <section>
@@ -1529,14 +1557,14 @@ export default function PowerworksPage() {
             </div>
             {inspect.charge && (
               <p className="pw-warning">
-                <Zap />A melee release is coming at its next opportunity. The
+                <Zap />A release is coming at its next opportunity. The
                 selected target is hidden.
               </p>
             )}
-            {!!inspect.snared && (
+            {!!inspect.bound && (
               <p className="pw-warning">
                 <Link2 />
-                Restrained: melee is blocked at the next opportunity. Ranged
+                Bound: melee is blocked at the next opportunity. Ranged
                 actions remain available.
               </p>
             )}
@@ -1555,42 +1583,44 @@ export default function PowerworksPage() {
             )}
             <div className="pw-inspect-moves">
               {inspect.moves.map((m, i) => (
-                <div key={m.name}>
+                <div key={m.key}>
                   <div
                     className={`pw-move-card ${
-                      !inspect.enemy && i === 3 ? "signature" : ""
+                      m.signature ? "signature" : ""
                     } el-${inspect.element}`}
                   >
                     <MoveCardContent
+                      unit={inspect}
                       move={m}
-                      signature={!inspect.enemy && i === 3}
-                      uses={inspect.enemy ? null : inspect.uses[i]}
-                      limit={i === 3 ? 1 : 3}
+                      cooldown={inspect.enemy ? null : inspect.cooldowns[i]}
+                      spent={m.signature && inspect.signatureSpent}
                       selected={false}
-                      blocked={!!inspect.snared && m.range === "melee"}
+                      blocked={!!inspect.bound && melee(m)}
                       id={`inspect-move-${i}`}
+                      fullName
                     />
                   </div>
-                  {m.kind === "snare" ? (
-                    <p>
-                      Stops melee through the next opportunity. Ranged moves
-                      still work.
-                    </p>
-                  ) : m.kind === "ward" ? (
-                    <p>Halves incoming damage until its next opportunity.</p>
-                  ) : m.kind === "charge" ? (
-                    <p>Charges first, then releases at its next opportunity.</p>
-                  ) : null}
+                  <p>
+                    {m.preparation === "prolonged"
+                      ? "Charges first, then releases at its next opportunity. "
+                      : ""}
+                    {m.effects
+                      .filter((e) => e.support !== "harm")
+                      .map(effectSummary)
+                      .join(" ")}
+                  </p>
                 </div>
               ))}
             </div>
             {inspect.enemy && move && active && (
               <p className="pw-breakdown">
-                {move.kind === "snare"
+                {!harms(move)
                   ? previewText(inspect)
-                  : `${move.damage} base × ${
-                      move.kind === "fallback" ? 1 : matchup(active, inspect)
-                    } element${
+                  : `${basePower(active, move)} base × ${matchup(
+                      active,
+                      inspect,
+                      move
+                    )} element${
                       inspect.ward ? " × 0.5 shield" : ""
                     } = ${damagePreview(
                       active,
