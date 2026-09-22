@@ -45,29 +45,45 @@ const TOKENS =
 	'By scrambling and encrypting the genome of a Xalian design, Scrambler Tokens avert the killing gaze of the Nemesis Plague. Thanks to APEX, they are now the only way to safely generate new Xalians.';
 
 // The era plates (packages/content/json/plates.json) and the Krystos
-// landscape. Alt text is the plate manifest's.
+// landscape. Alt text is the plate manifest's. Each era plate is a door to
+// its part of The Story; the titles are the chronicle's era titles.
+const ERA_TITLE = {
+	unbirth: 'The Age of Unbirth',
+	accords: 'The Accords',
+	'end-wars': 'The End Wars',
+	present: 'The Reign of Kozrak',
+	generation: 'The Age of Generators',
+} as const;
+
+type Art = { src: string; small: string; alt: string; era?: keyof typeof ERA_TITLE };
+
 const ART = {
 	unbirth: {
+		era: 'unbirth',
 		src: '/assets/img/lore/eras/unbirth.jpg',
 		small: '/assets/img/lore/eras/unbirth-768.jpg',
 		alt: 'A long dormitory hall of empty made-up beds leading to a great riveted machine.',
 	},
 	accords: {
+		era: 'accords',
 		src: '/assets/img/lore/eras/accords.jpg',
 		small: '/assets/img/lore/eras/accords-768.jpg',
 		alt: 'Three beams of light striking down from a storm cloud onto a dark ridge, lightning beside them.',
 	},
 	endWars: {
+		era: 'end-wars',
 		src: '/assets/img/lore/eras/end-wars.jpg',
 		small: '/assets/img/lore/eras/end-wars-768.jpg',
 		alt: 'A burning warship falling between the towers of a night city under a sky of tracer fire.',
 	},
 	present: {
+		era: 'present',
 		src: '/assets/img/lore/eras/present.jpg',
 		small: '/assets/img/lore/eras/present-768.jpg',
 		alt: 'A round bronze platform on the floor of an empty stone arena.',
 	},
 	generation: {
+		era: 'generation',
 		src: '/assets/img/lore/eras/generation.jpg',
 		small: '/assets/img/lore/eras/generation-768.jpg',
 		alt: 'A channel of molten metal running between rows of smoking foundry stacks.',
@@ -77,7 +93,7 @@ const ART = {
 		small: '/assets/img/planets/art/krystos-landscape-768.webp',
 		alt: 'A snowbound plain under grey peaks, the ruins of a stone estate on a ridge in the foreground.',
 	},
-};
+} satisfies Record<string, Art>;
 
 const GAMES = [
 	{ name: 'Duel', to: '/duel', copy: 'Squad tactics on an 8 by 8 board. Capture the flag or eliminate the team.' },
@@ -96,45 +112,66 @@ const SIGNATURE = specimen.actions.find((a) => a.key.endsWith('-defining'))?.nam
 
 /* ----------------------------------------------------------------- parts */
 
-/** A framed painting. The frame is the same on every spread; only the crop and the aspect change. */
+/**
+ * A framed painting: the chamfer at frame scale, a dark mat, the picture cut
+ * to the same shape inside it and graded into the room (`.frame` in
+ * globals.css). A story panel is a door: it opens its era in The Story, so
+ * it stands on a mass and lifts like every pressable thing, and its corner
+ * tag carries the spread's numeral and the era it opens. The hero's panel
+ * is only a picture; its link is the whole block around it.
+ */
 function Panel({
 	art,
 	aspect,
 	position,
 	className,
+	n,
 	eager = false,
 	still = false,
 }: {
-	art: { src: string; small: string; alt: string };
+	art: Art;
 	aspect: string;
 	position?: string;
 	className?: string;
+	/** The spread's numeral, repeated on its plate. */
+	n?: string;
 	eager?: boolean;
 	/** The hero's panel holds still; the story's drift with the scroll. */
 	still?: boolean;
 }) {
-	return (
-		<figure
-			data-panel={still ? undefined : ''}
-			className={cn(
-				'relative m-0 overflow-hidden border border-edge-strong bg-s1 shadow-[inset_0_1px_0_var(--color-edge-hi)]',
-				'after:pointer-events-none after:absolute after:inset-0 after:bg-gradient-to-t after:from-room/60 after:via-transparent after:via-35% after:to-transparent',
-				aspect,
-				className
-			)}
-		>
-			<img
-				src={art.src}
-				srcSet={`${art.small} 768w, ${art.src} 1536w`}
-				sizes="(min-width: 1000px) 1160px, 100vw"
-				alt={art.alt}
-				width={1536}
-				height={768}
-				loading={eager ? 'eager' : 'lazy'}
-				decoding="async"
-				className={cn('h-full w-full object-cover', !still && 'scale-[1.12]', position)}
-			/>
+	const figure = (
+		<figure className={cn('chamfer frame relative m-0', aspect, className)}>
+			<span className="frame-well">
+				<img
+					src={art.src}
+					srcSet={`${art.small} 768w, ${art.src} 1536w`}
+					sizes="(min-width: 1000px) 1160px, 100vw"
+					alt={art.alt}
+					width={1536}
+					height={768}
+					loading={eager ? 'eager' : 'lazy'}
+					decoding="async"
+					className={cn('h-full w-full object-cover', !still && 'scale-[1.12]', position)}
+				/>
+			</span>
+			{n && art.era ? (
+				<span className="type-data absolute top-4 right-4 z-10 flex items-baseline gap-2.5 border border-edge-strong bg-room/80 px-2.5 py-1.5 text-tiny tracking-legend text-ink">
+					<span>{n}</span>
+					<span className="text-ink-3">{ERA_TITLE[art.era]}</span>
+				</span>
+			) : null}
 		</figure>
+	);
+	if (still || !art.era) return figure;
+	return (
+		<Link
+			to={`/encyclopedia/story/${art.era}`}
+			data-panel=""
+			aria-label={`${art.alt} Opens ${ERA_TITLE[art.era]} in The Story.`}
+			className="mass-frame block no-underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
+		>
+			{figure}
+		</Link>
 	);
 }
 
@@ -210,7 +247,7 @@ function Home() {
 						<a
 							href="#specimen"
 							aria-label="A Yetimoth of Krystos, shown in full below"
-							className={`el-${ELEMENT} group relative mx-auto block w-full max-w-[420px] no-underline lg:col-span-5 lg:mx-0 lg:justify-self-end`}
+							className={`el-${ELEMENT} mass-frame group mx-auto block w-full max-w-[420px] no-underline lg:col-span-5 lg:mx-0 lg:justify-self-end`}
 						>
 							<Panel art={ART.krystos} aspect="aspect-[4/5]" position="object-[center_35%]" eager still />
 							<span
@@ -237,7 +274,7 @@ function Home() {
 
 						<div className="mb-16 grid grid-cols-1 gap-x-6 lg:mb-24 lg:grid-cols-12">
 							<div className="lg:col-span-12">
-								<Panel art={ART.unbirth} aspect="aspect-[21/9]" position="object-[center_40%]" />
+								<Panel n="01" art={ART.unbirth} aspect="aspect-[21/9]" position="object-[center_40%]" />
 							</div>
 							<Plate n="01" from="left" className="-mt-7 mx-4 lg:col-start-1 lg:col-end-8 lg:-mt-22 lg:mr-0 lg:ml-12">
 								{STORY[0]}
@@ -246,7 +283,7 @@ function Home() {
 
 						<div className="mb-16 grid grid-cols-1 gap-x-6 lg:mb-24 lg:grid-cols-12 lg:items-center">
 							<div className="lg:col-start-6 lg:col-end-13 lg:row-start-1">
-								<Panel art={ART.accords} aspect="aspect-[4/5]" position="object-[60%_center]" />
+								<Panel n="02" art={ART.accords} aspect="aspect-[4/5]" position="object-[60%_center]" />
 							</div>
 							<Plate n="02" from="left" className="-mt-7 mx-4 lg:col-start-1 lg:col-end-8 lg:row-start-1 lg:m-0 lg:-mr-18 lg:self-center">
 								{STORY[1]}
@@ -257,7 +294,7 @@ function Home() {
 							{/* The turn of the story is the largest picture on the page:
 							    it breaks the column on both sides where there is room. */}
 							<div className="lg:col-span-12 lg:-mx-8 xl:-mx-24">
-								<Panel art={ART.endWars} aspect="aspect-[2.4/1]" />
+								<Panel n="03" art={ART.endWars} aspect="aspect-[2.4/1]" />
 							</div>
 							<Plate n="03" from="right" className="-mt-7 mx-4 lg:col-start-6 lg:col-end-13 lg:-mt-18 lg:mr-12 lg:ml-0">
 								{STORY[2]}
@@ -266,7 +303,7 @@ function Home() {
 
 						<div className="mb-16 grid grid-cols-1 gap-x-6 lg:mb-24 lg:grid-cols-12 lg:items-center">
 							<div className="lg:col-start-1 lg:col-end-8">
-								<Panel art={ART.present} aspect="aspect-[4/3]" position="object-[40%_center]" />
+								<Panel n="04" art={ART.present} aspect="aspect-[4/3]" position="object-[40%_center]" />
 							</div>
 							<Plate n="04" from="right" className="-mt-7 mx-4 lg:col-start-8 lg:col-end-13 lg:m-0 lg:-ml-24 lg:self-center">
 								{STORY[3]}
@@ -312,7 +349,7 @@ function Home() {
 
 						<div className="mb-12 grid grid-cols-1 gap-x-6 lg:mb-16 lg:grid-cols-12">
 							<div className="lg:col-start-1 lg:col-end-9 lg:row-start-1">
-								<Panel art={ART.generation} aspect="aspect-video" position="object-[center_60%]" />
+								<Panel n="05" art={ART.generation} aspect="aspect-video" position="object-[center_60%]" />
 							</div>
 							<Plate n="05" from="right" className="-mt-7 mx-4 lg:col-start-8 lg:col-end-13 lg:row-start-1 lg:m-0 lg:-mb-12 lg:-ml-28 lg:self-end">
 								{TOURNAMENT}
