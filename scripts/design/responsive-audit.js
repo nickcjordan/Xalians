@@ -134,7 +134,25 @@ function auditInPage() {
 		return null;
 	}
 
-	const all = Array.from(document.querySelectorAll('body *')).filter((el) => !isScreenReaderOnly(el));
+	// Decorative layers the page deliberately oversizes and clips: a drifting
+	// starfield sets `inset: -50% -10%` so its animation can wrap without ever
+	// showing an edge, inside a parent that is `overflow: hidden`. Measured
+	// against the viewport it looks like overflow; it is the technique. An
+	// aria-hidden, non-interactive element inside a clipping ancestor paints
+	// nothing a reader can reach or miss.
+	function isClippedDecoration(el) {
+		if (!el.closest('[aria-hidden="true"]')) return false;
+		let node = el.parentElement;
+		while (node && node !== document.body) {
+			const s = getComputedStyle(node);
+			if (s.overflow === 'hidden' || s.overflowX === 'hidden' || s.overflowX === 'clip') return true;
+			node = node.parentElement;
+		}
+		return false;
+	}
+
+	const all = Array.from(document.querySelectorAll('body *'))
+		.filter((el) => !isScreenReaderOnly(el) && !isClippedDecoration(el));
 
 	// 1. Anything painting past the right edge of the viewport. Only the
 	// element nearest the overflow is worth reporting -- ancestors inherit
@@ -169,6 +187,9 @@ function auditInPage() {
 		const ox = style.overflowX;
 		if (ox === 'auto' || ox === 'scroll') continue; // intentionally scrollable
 		if (ox === 'visible') continue; // child paints outside; caught by off-canvas
+		// A decorative layer clipping its own oversized children is the
+		// technique, not a defect -- nothing readable is inside it.
+		if (el.getAttribute('aria-hidden') === 'true' || el.closest('[aria-hidden="true"]')) continue;
 		if (style.textOverflow === 'ellipsis') continue; // `truncate`: clipping is the intent
 		problems.push({
 			kind: 'clipped-overflow',
