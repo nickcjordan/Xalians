@@ -796,8 +796,14 @@ export function resolveRound(
         // Retargeting walks the fixed row order and skips a concealed unit while
         // another one stands (contract decision 16).
         const open = new Set(selectableTargets(targets).map((t) => t.id));
+        // A move whose every effect lands on its performer (Ground Anchor) still
+        // carries a target id from the order, but nothing about it is aimed, so a
+        // fallen or concealed target changes nothing and is not announced. Seen on
+        // the live site 2026-09-22: "Graviclaw redirects Ground Anchor to Shield unit".
+        const aimed = m.effects.some((e) => e.recipient !== "self");
         if (!target || target.hp <= 0 || !open.has(target.id)) {
-          const skipped = target && target.hp > 0 && !open.has(target.id);
+          const skipped =
+            aimed && target && target.hp > 0 && !open.has(target.id);
           const index = target ? targets.indexOf(target) : -1;
           const next = Array.from(
             { length: targets.length },
@@ -811,7 +817,7 @@ export function resolveRound(
               moveName: m.name,
             });
           target = next;
-          if (target)
+          if (target && aimed)
             emit(
               `${u.name} redirects ${m.name} to ${target.name} (${target.id}).`,
               {
