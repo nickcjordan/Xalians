@@ -5,7 +5,10 @@
       "speed": 60,
       "element": "sand",
       "enemy": true,
-      "attrs": { "strength": 50, "willpower": 50 },
+      "attrs": {
+        "strength": 50,
+        "willpower": 50
+      },
       "moves": [
         {
           "key": "tool-strike",
@@ -22,6 +25,18 @@
               "recipient": "target",
               "likelihood": "consistent",
               "intensity": 70
+            },
+            {
+              "key": "leak",
+              "type": "status",
+              "recipient": "target",
+              "likelihood": "occasional",
+              "status": "corroding",
+              "persistence": "lingering",
+              "duration": "brief",
+              "removable": [
+                "cleansing"
+              ]
             }
           ]
         }
@@ -32,7 +47,10 @@
       "speed": 50,
       "element": "light",
       "enemy": true,
-      "attrs": { "strength": 50, "willpower": 50 },
+      "attrs": {
+        "strength": 50,
+        "willpower": 50
+      },
       "moves": [
         {
           "key": "security-beam",
@@ -60,7 +78,10 @@
       "speed": 45,
       "element": "sand",
       "enemy": true,
-      "attrs": { "strength": 50, "willpower": 50 },
+      "attrs": {
+        "strength": 50,
+        "willpower": 50
+      },
       "moves": [
         {
           "key": "ram",
@@ -104,7 +125,10 @@
       "speed": 65,
       "element": "electric",
       "enemy": true,
-      "attrs": { "strength": 50, "willpower": 50 },
+      "attrs": {
+        "strength": 50,
+        "willpower": 50
+      },
       "moves": [
         {
           "key": "contact-strike",
@@ -121,6 +145,18 @@
               "recipient": "target",
               "likelihood": "consistent",
               "intensity": 70
+            },
+            {
+              "key": "scorch",
+              "type": "status",
+              "recipient": "target",
+              "likelihood": "occasional",
+              "status": "overheated",
+              "persistence": "lingering",
+              "duration": "brief",
+              "removable": [
+                "cooling"
+              ]
             }
           ]
         },
@@ -150,7 +186,10 @@
       "speed": 65,
       "element": "electric",
       "enemy": true,
-      "attrs": { "strength": 50, "willpower": 50 },
+      "attrs": {
+        "strength": 50,
+        "willpower": 50
+      },
       "moves": [
         {
           "key": "clamp-strike",
@@ -167,6 +206,18 @@
               "recipient": "target",
               "likelihood": "consistent",
               "intensity": 70
+            },
+            {
+              "key": "shock",
+              "type": "status",
+              "recipient": "target",
+              "likelihood": "likely",
+              "status": "paralyzed",
+              "persistence": "lingering",
+              "duration": "brief",
+              "removable": [
+                "stabilizing"
+              ]
             }
           ]
         },
@@ -196,31 +247,71 @@
     {
       "name": "1. Service entrance",
       "enemies": [
-        ["crawler", "M1", 22],
-        ["crawler", "M2", 22]
+        [
+          "crawler",
+          "M1",
+          22
+        ],
+        [
+          "crawler",
+          "M2",
+          22
+        ]
       ]
     },
     {
       "name": "2. Security checkpoint",
       "enemies": [
-        ["crawler", "M3", 22],
-        ["drone", "D2", 24],
-        ["shield", "S2", 30]
+        [
+          "crawler",
+          "M3",
+          22
+        ],
+        [
+          "drone",
+          "D2",
+          24
+        ],
+        [
+          "shield",
+          "S2",
+          30
+        ]
       ]
     },
     {
       "name": "3. Power chamber",
       "enemies": [
-        ["discharge", "V3", 48],
-        ["crawler", "M4", 22]
+        [
+          "discharge",
+          "V3",
+          48
+        ],
+        [
+          "crawler",
+          "M4",
+          22
+        ]
       ]
     },
     {
       "name": "4. Control chamber",
       "enemies": [
-        ["guardian", "B4", 110],
-        ["crawler", "M5", 22],
-        ["drone", "D4", 24]
+        [
+          "guardian",
+          "B4",
+          110
+        ],
+        [
+          "crawler",
+          "M5",
+          22
+        ],
+        [
+          "drone",
+          "D4",
+          24
+        ]
       ]
     }
   ]

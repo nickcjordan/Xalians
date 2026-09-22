@@ -410,8 +410,25 @@
   box-shadow: 0 4px 12px #0008;
   animation: pw-feedback 350ms ease-out both;
 }
-.pw-scene-float:not(.hit) {
+.pw-scene-float:not(.hit):not(.tick) {
   font-size: 14px;
+}
+/* Pass 2: a degrading or mending tick reads at the size of a hit, in its own color. */
+.pw-scene-float.tick {
+  color: #f3c7ab;
+  border-color: #c58552;
+}
+.pw-scene-float.tick.mending {
+  color: #b9e8c4;
+  border-color: #6fae82;
+}
+.pw-scene-float.status,
+.pw-scene-float.resisted,
+.pw-scene-float.expired,
+.pw-scene-float.removed,
+.pw-scene-float.lost,
+.pw-scene-float.hidden {
+  text-transform: capitalize;
 }
 .pw-scene-float small {
   display: block;

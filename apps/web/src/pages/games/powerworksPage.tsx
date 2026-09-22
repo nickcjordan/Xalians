@@ -61,6 +61,9 @@ import {
   harms,
   melee,
   StatusBadges,
+  GroupIcon,
+  conditionRule,
+  remainingLabel,
   Health,
   shortName,
 } from "./powerworksVisuals";
@@ -110,6 +113,8 @@ type Panel =
   | "extract"
   | null;
 
+const cap = (text: string) => text.charAt(0).toUpperCase() + text.slice(1);
+
 function eventLabel(frame: Frame) {
   const e = frame.event;
   if (!e) return "Encounter complete";
@@ -125,6 +130,13 @@ function eventLabel(frame: Frame) {
       blocked: "Blocked",
       redirect: "Redirected",
       round: "Round begins",
+      status: e.status ? cap(e.status) : "Condition",
+      resisted: "Resisted",
+      tick: e.group === "mending" ? `+${e.amount}` : `−${e.amount}`,
+      expired: "Wears off",
+      removed: "Cleared",
+      lost: "Opportunity lost",
+      hidden: "Concealed",
       result: "Complete",
     } as const
   )[e.kind];
@@ -470,6 +482,33 @@ export default function PowerworksPage() {
     if (e.kind === "redirect")
       return `The original target fell. The move redirects to ${name}.`;
     if (e.kind === "round") return "Orders resolve from fastest to slowest.";
+    if (e.kind === "status")
+      return `${name} is ${e.status} for ${e.remaining} ${
+        e.remaining === 1 ? "opportunity" : "opportunities"
+      }.`;
+    if (e.kind === "resisted") return current.text;
+    if (e.kind === "tick")
+      return e.group === "mending"
+        ? `${name} recovers ${e.amount} HP from ${e.status}.`
+        : `${name} takes ${e.amount} damage from ${e.status}.`;
+    if (e.kind === "expired") {
+      const owner = units.find((u) => u.id === (e.targetId ?? e.actorId));
+      const who = owner ? labelFor(owner) : "The unit";
+      return e.group === "concealment" && e.actorId
+        ? `${who} breaks cover to attack.`
+        : `${who} is no longer ${e.status}.`;
+    }
+    if (e.kind === "removed")
+      return e.status
+        ? `${name} is no longer ${e.status}.`
+        : `Nothing on ${name} answered to it.`;
+    if (e.kind === "lost") {
+      const owner = units.find((u) => u.id === e.actorId);
+      return `${
+        owner ? labelFor(owner) : "The unit"
+      } is entranced and loses this opportunity.`;
+    }
+    if (e.kind === "hidden") return `${name} is concealed and cannot be found.`;
     return current.text;
   }
 
@@ -477,7 +516,7 @@ export default function PowerworksPage() {
     return (
       frame?.event?.targetId === u.id ||
       (frame?.event?.actorId === u.id &&
-        ["blocked", "charge"].includes(frame.event.kind))
+        ["blocked", "charge", "lost"].includes(frame.event.kind))
     );
   }
 
@@ -1561,12 +1600,21 @@ export default function PowerworksPage() {
                 selected target is hidden.
               </p>
             )}
-            {!!inspect.bound && (
-              <p className="pw-warning">
-                <Link2 />
-                Bound: melee is blocked at the next opportunity. Ranged
-                actions remain available.
-              </p>
+            {inspect.conditions.length > 0 && (
+              <ul className="pw-condition-rules">
+                {inspect.conditions.map((condition) => (
+                  <li key={`${condition.status}-${condition.source}`}>
+                    <span
+                      className={`pw-condition-name group-${condition.group}`}
+                    >
+                      <GroupIcon group={condition.group} />
+                      {condition.status}
+                      <small>{remainingLabel(condition)}</small>
+                    </span>
+                    <span>{conditionRule(condition, inspect)}</span>
+                  </li>
+                ))}
+              </ul>
             )}
             {inspect.ward && (
               <p className="pw-warning">

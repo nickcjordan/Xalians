@@ -12,13 +12,22 @@
   the table shows it as "no effect here" (contract decision 9). A move is usable
   if any of its effects is supported.
 */
-import type { CreatureRecord, Effect } from "@xalians/content/creature";
+import type { CreatureRecord, Effect, Protection } from "@xalians/content/creature";
 import {
+  ATTENTION_OPPORTUNITIES,
+  ATTENTION_STATUSES,
+  BINDING_OPPORTUNITIES,
   BINDING_STATUSES,
+  CONCEALMENT_STATUSES,
+  DEGRADING_STATUS_ELEMENTS,
   DESPERATE_STRIKE_DAMAGE,
+  GUARDING_STATUSES,
   HP_SCALE,
+  LINGERING_OPPORTUNITIES,
+  MENDING_STATUSES,
   SPEED_SCALE,
   STRENGTH_MECHANISMS,
+  SUSTAINED_FALLBACK_OPPORTUNITIES,
 } from "./levers.ts";
 
 export type Approach = "closing" | "stationary" | "self";
@@ -31,8 +40,27 @@ export type Support =
   | "displace"
   | "protect"
   | "bind"
+  | "status"
   | "restore"
+  | "remove"
   | "unsupported";
+/** The five table groups a supported status falls into (contract decision 10). */
+export type StatusGroup =
+  | "binding"
+  | "degrading"
+  | "guarding"
+  | "attention"
+  | "concealment"
+  | "mending";
+export type RemovalMethod =
+  | "cooling"
+  | "smothering"
+  | "warming"
+  | "cleansing"
+  | "detoxifying"
+  | "freeing"
+  | "stabilizing"
+  | "disrupting";
 export type HarmMechanism =
   | "impact"
   | "cutting"
@@ -48,6 +76,19 @@ export type MoveEffect = {
   intensity: number;
   mechanism?: HarmMechanism;
   status?: string;
+  /** Status effects only: which table group reads it (contract decision 10). Binding also keeps support "bind" so pass 1 semantics are unchanged. */
+  group?: StatusGroup;
+  /** Degrading statuses only: the element its tick is classified as, for the matchup. */
+  statusElement?: string;
+  /** Status effects only: how many of the victim's opportunities the condition lasts; 0 means sustained by its source unit. */
+  opportunities?: number;
+  sustained?: boolean;
+  /** Status effects only: the methods that end this application (contract decision 17). */
+  removable?: RemovalMethod[];
+  /** `protected` only: its declared descriptor, applied exactly (contract decision 14). */
+  protection?: Protection;
+  /** `remove` effects only: the methods this effect carries; it ends conditions whose removable list intersects them. */
+  methods?: RemovalMethod[];
   support: Support;
   /** Present only when support is "unsupported": the words the table shows. */
   reason?: string;
@@ -66,6 +107,25 @@ export type Move = {
   /** Desperate strike only: flat damage, no matchup, recoil. */
   fallback?: true;
 };
+/**
+  One applied condition on a unit (contract decision 11). Reapplying the same status
+  refreshes `remaining` and keeps the higher intensity; nothing stacks additively.
+  `remaining` counts the victim's own opportunities. A permanent condition
+  (physiology.protections) has remaining Infinity and no source.
+*/
+export type Condition = {
+  status: string;
+  group: StatusGroup;
+  intensity: number;
+  /** Degrading only: the element its tick is classified as. */
+  element?: string;
+  remaining: number;
+  /** The unit that applied it; "innate" for a physiology protection. A sustained condition ends when its source falls. */
+  source: string;
+  sustained?: boolean;
+  removable: RemovalMethod[];
+  protection?: Protection;
+};
 export type Unit = {
   id: string;
   species: string;
@@ -81,6 +141,10 @@ export type Unit = {
   signatureSpent: boolean;
   bound: number;
   ward: boolean;
+  /** Every applied condition, including the binding ones mirrored by `bound` (contract decision 11). */
+  conditions: Condition[];
+  /** Opportunities since this unit was last entranced, for the reapplication guard (contract decision 15). Infinity when it never was. */
+  sinceEntranced: number;
   charge: string | null;
   /** Index of the move being charged, -1 when none. Kept beside `charge` so a unit with two prolonged moves releases the one it began. */
   chargeMove: number;
@@ -96,6 +160,12 @@ export type CardEffect = {
   intensity?: number;
   mechanism?: HarmMechanism;
   status?: string;
+  /** Status cards carry the same persistence and duration words a record does. */
+  persistence?: "resolved" | "sustained" | "lingering";
+  duration?: "brief" | "prolonged";
+  removable?: RemovalMethod[];
+  protection?: Protection;
+  methods?: RemovalMethod[];
 };
 export type Card = {
   hp: number;
@@ -126,6 +196,33 @@ export function harmAttribute(mechanism: HarmMechanism): "strength" | "willpower
     : "willpower";
 }
 
+const DEGRADING = new Set<string>(Object.keys(DEGRADING_STATUS_ELEMENTS));
+const GUARDING = new Set<string>(GUARDING_STATUSES);
+const ATTENTION = new Set<string>(ATTENTION_STATUSES);
+const CONCEALMENT = new Set<string>(CONCEALMENT_STATUSES);
+const MENDING = new Set<string>(MENDING_STATUSES);
+type DegradingStatus = keyof typeof DEGRADING_STATUS_ELEMENTS;
+
+/** Which of the five table groups reads a status, or null when the table has no rule for it (contract decision 10). */
+export function statusGroup(status: string): StatusGroup | null {
+  if (BINDING.has(status)) return "binding";
+  if (DEGRADING.has(status)) return "degrading";
+  if (GUARDING.has(status)) return "guarding";
+  if (ATTENTION.has(status)) return "attention";
+  if (CONCEALMENT.has(status)) return "concealment";
+  if (MENDING.has(status)) return "mending";
+  return null;
+}
+/** Duration in the victim's opportunities: binding keeps its ruled value, attention is deliberately short, everything else is the lingering table (contract decision 12). */
+export function statusOpportunities(
+  group: StatusGroup,
+  duration: "brief" | "prolonged"
+): number {
+  if (group === "binding") return BINDING_OPPORTUNITIES[duration];
+  if (group === "attention") return ATTENTION_OPPORTUNITIES[duration];
+  return LINGERING_OPPORTUNITIES[duration];
+}
+
 /** The support reading of one effect. Shared by records and cards so the table cannot disagree with itself. */
 export function readEffect(effect: CardEffect | Effect): MoveEffect {
   const base: MoveEffect = {
@@ -153,12 +250,46 @@ export function readEffect(effect: CardEffect | Effect): MoveEffect {
       return { ...base, support: "restore" };
     case "status": {
       const status = effect.status ?? "condition";
-      if (!aimed) return { ...unsupported(`${status} on itself is not read yet`), status };
-      if (BINDING.has(status)) return { ...base, status, support: "bind" };
-      return { ...unsupported(`${status} is not read yet`), status };
+      const group = statusGroup(status);
+      if (!group) return { ...unsupported(`${status} is not read here`), status };
+      // Guarding and mending are the two groups that make sense on their own user.
+      if (!aimed && group !== "guarding" && group !== "mending")
+        return { ...unsupported(`${status} on itself is not read here`), status };
+      const removable = ("removable" in effect ? effect.removable : undefined) as
+        | RemovalMethod[]
+        | undefined;
+      const protection = ("protection" in effect ? effect.protection : undefined) as
+        | Protection
+        | undefined;
+      if (status === "protected" && !protection)
+        return { ...unsupported("protected without a declared scope"), status };
+      const persistence = "persistence" in effect ? effect.persistence : "lingering";
+      const duration =
+        ("duration" in effect && effect.duration ? effect.duration : undefined) ?? "brief";
+      const sustained = persistence === "sustained";
+      return {
+        ...base,
+        status,
+        group,
+        ...(group === "degrading"
+          ? { statusElement: DEGRADING_STATUS_ELEMENTS[status as DegradingStatus] }
+          : {}),
+        opportunities: sustained
+          ? SUSTAINED_FALLBACK_OPPORTUNITIES
+          : statusOpportunities(group, duration),
+        sustained,
+        removable: removable ? [...removable] : [],
+        ...(protection ? { protection } : {}),
+        support: group === "binding" ? "bind" : "status",
+      };
     }
-    case "remove":
-      return unsupported("nothing to remove yet");
+    case "remove": {
+      const methods = ("methods" in effect ? effect.methods : undefined) as
+        | RemovalMethod[]
+        | undefined;
+      if (!methods || !methods.length) return unsupported("no removal methods");
+      return { ...base, methods: [...methods], support: "remove" };
+    }
   }
 }
 
@@ -192,12 +323,27 @@ export const LAST_RESORT: Move = {
   ],
 };
 
+/** physiology.protections[] as permanent guarding conditions (contract decision 18). */
+export function innateConditions(protections: readonly Protection[]): Condition[] {
+  return protections.map((protection) => ({
+    status: "protected",
+    group: "guarding" as const,
+    intensity: 50,
+    remaining: Infinity,
+    source: "innate",
+    removable: [] as RemovalMethod[],
+    protection,
+  }));
+}
+
 const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 const freshState = (moves: Move[]) => ({
   cooldowns: moves.map(() => 0),
   signatureSpent: false,
   bound: 0,
   ward: false,
+  conditions: [] as Condition[],
+  sinceEntranced: Infinity,
   charge: null,
   chargeMove: -1,
   recovery: 0,
@@ -239,6 +385,8 @@ export function readCompanion(
     attrs: { strength: a.strength, willpower: a.willpower },
     moves,
     ...freshState(moves),
+    // physiology.protections are permanent guarding conditions of the unit (contract decision 18).
+    conditions: innateConditions(record.physiology.protections),
   };
 }
 

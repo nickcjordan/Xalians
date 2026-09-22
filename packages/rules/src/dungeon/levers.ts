@@ -33,6 +33,46 @@ export const BIND_OPPORTUNITIES = 1;
 export const CHARGE_RECOVERY_OPPORTUNITIES = 1;
 /** Lever: after a charge is broken by binding or displacement the unit passes this many opportunities before charging again. 0 means it may charge at its very next opportunity, so an interrupter on a one-round cooldown cannot lock a charger out alone (first sim: 1195 of 1200 blind pulls broke a charge and no release ever landed). */
 export const INTERRUPTED_CHARGE_RECOVERY_OPPORTUNITIES = 0;
+/** Lever: duration in victim opportunities for a lingering status by its declared duration (contract decision 12). Binding keeps BIND_OPPORTUNITIES; attention statuses use ATTENTION_OPPORTUNITIES. */
+export const LINGERING_OPPORTUNITIES = { brief: 2, prolonged: 4 } as const;
+/** Lever: binding duration in victim opportunities (the ruled Snare value, contract decision 12). */
+export const BINDING_OPPORTUNITIES = {
+  brief: BIND_OPPORTUNITIES,
+  prolonged: BIND_OPPORTUNITIES * 2,
+} as const;
+/** Lever: attention statuses are short by construction: losing two opportunities in a row is not a game (contract decision 12). */
+export const ATTENTION_OPPORTUNITIES = { brief: 1, prolonged: 2 } as const;
+/** Lever: a sustained status lasts while its source unit stands; this is the fallback duration when its source is already gone. */
+export const SUSTAINED_FALLBACK_OPPORTUNITIES = 1;
+/** Lever: a degrading status ticks floor(intensity / HARM_DIVISOR * DEGRADE_FACTOR) times the element matchup at the start of the victim's opportunity, never reduced by ward (contract decision 13). */
+export const DEGRADE_FACTOR = 0.5;
+/** Lever: a mending status restores on the same curve at the start of the victim's opportunity (contract decision 17). */
+export const MEND_FACTOR = 0.5;
+/** Lever: statuses read as degrading, with the element their tick is classified as (contract decision 13). Poisoned harm is optional in the model; this game models it as chemical. */
+export const DEGRADING_STATUS_ELEMENTS = {
+  corroding: "chemical",
+  poisoned: "chemical",
+  burning: "fire",
+  overheated: "fire",
+  chilled: "ice",
+} as const;
+/** Lever: statuses read as guarding (contract decision 14). protected carries its own declared descriptor. */
+export const GUARDING_STATUSES = ["shielded", "protected", "reinforced"] as const;
+/** Lever: guarding factors. shielded halves incoming harm; reinforced takes a quarter off. Ward and shielded do not multiply: the better one wins (contract decision 14). */
+export const SHIELDED_FACTOR = 0.5;
+export const REINFORCED_FACTOR = 0.75;
+/** Lever: statuses read as attention (contract decision 15). */
+export const ATTENTION_STATUSES = ["entranced", "frightened"] as const;
+/** Lever: frightened halves the victim's harm output through its next opportunity (contract decision 15). */
+export const FRIGHTENED_OUTPUT_FACTOR = 0.5;
+/** Lever: entranced cannot be reapplied to a unit that was entranced within its last this-many opportunities (contract decision 15). */
+export const ENTRANCE_IMMUNITY_OPPORTUNITIES = 2;
+/** Lever: the status that blocks attention statuses outright (contract decision 15). */
+export const FOCUS_STATUS = "focused";
+/** Lever: statuses read as concealment (contract decision 16). */
+export const CONCEALMENT_STATUSES = ["concealed"] as const;
+/** Lever: statuses read as mending (contract decision 17). */
+export const MENDING_STATUSES = ["mending"] as const;
 /** Lever: statuses read as binding (contract decision 4). */
 export const BINDING_STATUSES = ["restrained", "paralyzed", "frozen", "pinned", "buried"] as const;
 /** Lever: harm mechanisms scaled by strength; every other mechanism (elemental) scales by willpower. */
