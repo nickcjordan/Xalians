@@ -88,10 +88,18 @@ function Meter({
   return (
     <div
       data-slot="meter"
-      className={cn("grid grid-cols-[7rem_1fr_3.5rem] items-center gap-2 py-1 md:grid-cols-[8.5rem_1fr_3.5rem] md:gap-3", className)}
+      /* A 7rem name column and a 3.5rem value column leave a 320px screen
+         about 6px of track, where an 82% fill and a 25% fill are both a
+         sliver and the bar stops meaning anything. Below sm the name sits on
+         its own line above a full-width bar, so the comparison the meter
+         exists to make survives on a phone. */
+      className={cn(
+        "grid grid-cols-[minmax(0,1fr)_3.5rem] items-center gap-x-2 gap-y-0.5 py-1 max-sm:[&>[data-slot=meter-name]]:col-span-2 sm:grid-cols-[7rem_1fr_3.5rem] md:grid-cols-[8.5rem_1fr_3.5rem] md:gap-3",
+        className
+      )}
       {...props}
     >
-      <span className="type-legend">{name}</span>
+      <span data-slot="meter-name" className="type-legend">{name}</span>
       <div className="relative h-1.5 bg-s0">
         {ghost != null ? <div className="absolute inset-y-0 left-0 bg-el/35" style={{ width: `${ghost}%` }} /> : null}
         <div className="absolute inset-y-0 left-0 bg-el" style={{ width: `${pct}%` }} />
