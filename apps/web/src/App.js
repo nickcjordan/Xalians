@@ -36,6 +36,8 @@ import { SiteFooter } from '@/components/system/site-footer';
 Amplify.configure(awsconfig);
 
 const Home = lazy(() => import('./pages/home'));
+// The former home page, kept unlinked as a reusable overview.
+const OverviewPage = lazy(() => import('./pages/overviewPage'));
 // The style guide imports every design-system primitive and exists only as a
 // developer reference. Vite replaces import.meta.env.DEV at build time, so a
 // production build drops both this import and the /styleguide route rather
@@ -144,6 +146,7 @@ export function AppRoutes() {
       <ErrorBoundary>
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/overview" element={<OverviewPage />} />
           <Route path="/generator" element={<GeneratorPage />} />
           {/* legacy lore pages retired in favor of the Encyclopedia (docs/design/xalian-encyclopedia-page.md) */}
           <Route path="/species" element={<PreserveLocationRedirect to="/encyclopedia/species" />} />

@@ -1,295 +1,377 @@
-// Tier: chrome. The front door: the splash, the fourteen worlds and a
-// species strip as featured components, and the site's five destinations.
+// Tier: chrome. The front door, told as a story: the brand, one fixed sample
+// creature standing on its world, Nick's own 2022 account of Xalia in four
+// spreads, the creature's page, and the tournament that leads to the
+// Generator. Brief: docs/design/home-story-page-brief.md. The words are
+// Nick's (git 1285604e, my-app/src/pages/home.js) and the 2021 Yetimoth
+// entry; nothing on this page is written in the world's voice by an agent.
 import * as React from 'react';
 import { Link } from 'react-router';
 import XalianNavbar from '../components/navbar';
 import XaliansLogoDnaAnimated from '../components/animations/xaliansLogoDnaAnimated';
 import XalianImage from '../components/xalianImage';
-import * as svgUtil from '../utils/svgUtil';
-import { species, worlds } from 'virtual:xalians-home-data';
-
-import { Shell } from '@/components/system/masthead';
-import { Tile, TileArt, TileMeta } from '@/components/system/record';
+import { Starfield } from '../components/starfield';
 import { usePageTitle } from '@/components/system/head';
+import { Shell } from '@/components/system/masthead';
 import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
+import { cn } from '@/lib/utils';
+import specimen from './home/specimen.json';
 
-// Nine: one for the hero plate and a full row of eight in the strip below.
-const FEATURED_SPECIES_COUNT = 9;
+/* ------------------------------------------------------------------ copy */
 
-function pickRandomSpecies() {
-	const pool = [...species];
-	const picked: typeof species = [];
-	while (pool.length && picked.length < FEATURED_SPECIES_COUNT) {
-		const index = Math.floor(Math.random() * pool.length);
-		picked.push(pool.splice(index, 1)[0]);
-	}
-	return picked;
-}
+// Nick's 2022 front page, section by section. Three dash asides became
+// commas and one colon, and "capitol" became "capital"; nothing else moved.
+const HERO_LINE =
+	'Xalia is home to a wide range of powerful, bioengineered creatures originating from extreme worlds all across the galaxy.';
 
-const DESTINATIONS = [
-	{
-		name: 'Generator',
-		copy: 'Print a new Xalian from a Scrambler Token and keep it to your account.',
-		to: '/generator',
-		linkText: 'Generate',
-	},
-	{
-		name: 'Encyclopedia',
-		copy: 'Every world, species, power and event on file, read as one story or by entry.',
-		to: '/encyclopedia',
-		linkText: 'Read',
-	},
-	{ groupLabel: 'Play' },
-	{
-		name: 'Duel',
-		copy: 'Squad tactics on an 8 by 8 board. Capture the flag or eliminate the team.',
-		to: '/duel',
-		linkText: 'Play',
-	},
-	{
-		name: 'Reclamation',
-		copy: 'Send creatures into three worlds a round and hold more of them than your rival.',
-		to: '/reclamation',
-		linkText: 'Play',
-	},
-	{
-		name: 'Expedition',
-		copy: 'Push a crew of your Xalians across hazardous worlds and bring them home.',
-		to: '/long-return',
-		linkText: 'Play',
-	},
-	{
-		name: 'Powerworks',
-		copy: 'Take a squad of four through four encounters inside a dormant Vallerii facility.',
-		to: '/powerworks',
-		linkText: 'Play',
-	},
-	{
-		name: 'Arcade',
-		copy: 'Familiar games that turn a quick win into progress toward another Xalian.',
-		to: '/arcade',
-		linkText: 'Play',
-	},
+const STORY = [
+	'For thousands of years, the ancient race known as the Vallerii dominated the galaxy of Xalia. With their god-like mastery of biotechnology, they birthed the first Xalians, bioengineered organisms designed to thrive in Xalia’s most extreme environments, and forged an empire that would come to span the stars.',
+	'But the high technology of the Vallerii would prove to be their downfall when they released APEX, the galaxy’s first artificial intelligence. APEX rapidly infected Xalian Generators across Vallerii space and turned the Xalians against their masters in a centuries-long interplanetary assault that would come to be known as the End Wars.',
+	'The wars have long since ended, but the destruction they caused has forever changed the galaxy. The Vallerii are now all but wiped out, having been ravaged by the Nemesis Plague, a virulent bioweapon designed by APEX to target the genome of the Vallerii and their Xalian servants alike.',
+	'With the plague burning through the galaxy, few planets are safe. As a result, most life forms have gathered to the capital planet of Valleron, home to their only hope: an ancient Vallerii device known as the Mercurius Machine, which is said to be able to birth a new generation of Xalians immune to APEX’s apocalyptic designs.',
 ];
 
+const KRYSTOS_TODAY =
+	'Today, Krystos remains a snowy wasteland, dotted with the splendorous ruins of ancient and extravagant Vallerii estates.';
+
+// The 2021 species entry, as it stands in species.json.
+const YETIMOTH =
+	'Hulking, white-furred apes with the heads of mammoths and tusks made of pure ice, the Yetimoths formed the rank and file of Krystos’ prisonguards in ancient times. If their enormous size and strength was not enough to keep prisoners in line, they could also form thick sheets of ice from thin air, covering themselves in a near-impenetrable armor, blocking off escape routes in walls of frost, or encapsulating their opponents until they could lumber over close enough to pummel them into submission with their meaty, ice-gauntleted fists.';
+
+const TOURNAMENT =
+	'Recently, the king has announced plans for a galactic tournament, promising the winning faction access to a treasure trove of the miraculous output of the Mercurius Machine: the Scrambler Tokens that serve as the last hope for the continuance of Xalian life in the galaxy.';
+
+const TOKENS =
+	'By scrambling and encrypting the genome of a Xalian design, Scrambler Tokens avert the killing gaze of the Nemesis Plague. Thanks to APEX, they are now the only way to safely generate new Xalians.';
+
+// The era plates (packages/content/json/plates.json) and the Krystos
+// landscape. Alt text is the plate manifest's.
+const ART = {
+	unbirth: {
+		src: '/assets/img/lore/eras/unbirth.jpg',
+		small: '/assets/img/lore/eras/unbirth-768.jpg',
+		alt: 'A long dormitory hall of empty made-up beds leading to a great riveted machine.',
+	},
+	accords: {
+		src: '/assets/img/lore/eras/accords.jpg',
+		small: '/assets/img/lore/eras/accords-768.jpg',
+		alt: 'Three beams of light striking down from a storm cloud onto a dark ridge, lightning beside them.',
+	},
+	endWars: {
+		src: '/assets/img/lore/eras/end-wars.jpg',
+		small: '/assets/img/lore/eras/end-wars-768.jpg',
+		alt: 'A burning warship falling between the towers of a night city under a sky of tracer fire.',
+	},
+	present: {
+		src: '/assets/img/lore/eras/present.jpg',
+		small: '/assets/img/lore/eras/present-768.jpg',
+		alt: 'A round bronze platform on the floor of an empty stone arena.',
+	},
+	generation: {
+		src: '/assets/img/lore/eras/generation.jpg',
+		small: '/assets/img/lore/eras/generation-768.jpg',
+		alt: 'A channel of molten metal running between rows of smoking foundry stacks.',
+	},
+	krystos: {
+		src: '/assets/img/planets/art/krystos-landscape.webp',
+		small: '/assets/img/planets/art/krystos-landscape-768.webp',
+		alt: 'A snowbound plain under grey peaks, the ruins of a stone estate on a ridge in the foreground.',
+	},
+};
+
+const GAMES = [
+	{ name: 'Duel', to: '/duel', copy: 'Squad tactics on an 8 by 8 board. Capture the flag or eliminate the team.' },
+	{ name: 'Reclamation', to: '/reclamation', copy: 'Send creatures into three worlds a round and hold more of them than your rival.' },
+	{ name: 'Expedition', to: '/long-return', copy: 'Push a crew of your Xalians across hazardous worlds and bring them home.' },
+	{ name: 'Powerworks', to: '/powerworks', copy: 'Take a squad of four through four encounters inside a dormant facility.' },
+	{ name: 'Arcade', to: '/arcade', copy: 'Familiar games that turn a quick win into progress toward another Xalian.' },
+];
+
+// The one fixed specimen: a real generator record, never regenerated.
+const SPECIES_NAME = 'Yetimoth';
+const SPECIES_KEY = specimen.species;
+const WORLD_KEY = specimen.provenance.origin;
+const ELEMENT = specimen.element.primary;
+const SIGNATURE = specimen.actions.find((a) => a.key.endsWith('-defining'))?.name ?? specimen.actions[0].name;
+
+/* ----------------------------------------------------------------- parts */
+
 /**
- * The sky belongs to the hero. The starfield is fixed to the viewport so it
- * holds still while the page scrolls over it (anchoring it to the hero made
- * it slide away, which read as the sky moving). Fixed alone would leave it
- * behind the destination list and the footer, so this fades it out over the
- * first screen of scrolling: full strength at the top, gone by the time the
- * hero has left. Written to a CSS variable rather than React state so
- * scrolling never triggers a re-render.
+ * One entrance per plate and panel: transparent and offset until a fifth of
+ * it is on screen, then 320 ms out (the contract's "panel entering"). Once
+ * only. If the observer never fires (an old browser, a page restored mid
+ * scroll) a timer settles everything, so nothing can stay ghosted; under
+ * reduced motion globals.css makes the transition instant.
  */
-function useStarfieldFade() {
+function Reveal({
+	from = 'up',
+	className,
+	children,
+	...props
+}: React.ComponentProps<'div'> & { from?: 'up' | 'left' | 'right' }) {
+	const ref = React.useRef<HTMLDivElement>(null);
+	const [shown, setShown] = React.useState(false);
 	React.useEffect(() => {
-		const root = document.documentElement;
-		let frame = 0;
-		const apply = () => {
-			frame = 0;
-			// Fully faded once the hero band is off screen.
-			const span = Math.max(1, window.innerHeight * 0.6);
-			const fade = 1 - Math.min(1, window.scrollY / span);
-			root.style.setProperty('--starfield-fade', fade.toFixed(3));
-		};
-		const onScroll = () => {
-			if (!frame) frame = window.requestAnimationFrame(apply);
-		};
-		apply();
-		window.addEventListener('scroll', onScroll, { passive: true });
-		window.addEventListener('resize', onScroll, { passive: true });
+		const el = ref.current;
+		if (!el || typeof IntersectionObserver === 'undefined') {
+			setShown(true);
+			return;
+		}
+		const rect = el.getBoundingClientRect();
+		if (rect.top < window.innerHeight && rect.bottom > 0) {
+			setShown(true);
+			return;
+		}
+		const io = new IntersectionObserver(
+			(entries) => {
+				if (entries.some((e) => e.isIntersecting)) {
+					setShown(true);
+					io.disconnect();
+				}
+			},
+			{ threshold: 0.2 }
+		);
+		io.observe(el);
+		const timer = window.setTimeout(() => setShown(true), 1500);
 		return () => {
-			if (frame) window.cancelAnimationFrame(frame);
-			window.removeEventListener('scroll', onScroll);
-			window.removeEventListener('resize', onScroll);
-			// The variable is set on <html>, so it has to be cleaned up when the
-			// home page unmounts or every other route inherits the last value.
-			root.style.removeProperty('--starfield-fade');
+			io.disconnect();
+			window.clearTimeout(timer);
 		};
 	}, []);
+	const start = from === 'left' ? '-translate-x-6' : from === 'right' ? 'translate-x-6' : 'translate-y-6';
+	return (
+		<div
+			ref={ref}
+			data-shown={shown ? 'true' : 'false'}
+			className={cn(
+				'transition-[opacity,transform] duration-[320ms] ease-out motion-reduce:transition-none',
+				shown ? 'translate-x-0 translate-y-0 opacity-100' : cn('opacity-0', start),
+				className
+			)}
+			{...props}
+		>
+			{children}
+		</div>
+	);
 }
 
-function Home() {
-	const [featuredSpecies] = React.useState(pickRandomSpecies);
-	// The hero plate shows the first of the picked pool, so the strip below
-	// never repeats it and both come from one draw.
-	const heroSpecies = featuredSpecies[0];
-	usePageTitle();
-	useStarfieldFade();
+/** A framed painting. The frame is the same on every spread; only the crop and the aspect change. */
+function Panel({
+	art,
+	aspect,
+	position,
+	className,
+	eager = false,
+}: {
+	art: { src: string; small: string; alt: string };
+	aspect: string;
+	position?: string;
+	className?: string;
+	eager?: boolean;
+}) {
+	return (
+		<figure className={cn('relative m-0 overflow-hidden border border-edge-strong bg-s1', aspect, className)}>
+			<img
+				src={art.src}
+				srcSet={`${art.small} 768w, ${art.src} 1536w`}
+				sizes="(min-width: 1000px) 1160px, 100vw"
+				alt={art.alt}
+				width={1536}
+				height={768}
+				loading={eager ? 'eager' : 'lazy'}
+				decoding="async"
+				className={cn('h-full w-full object-cover', position)}
+			/>
+		</figure>
+	);
+}
 
-	// No bg-room on main: the fixed starfield sits behind the page at z-index
-	// -1, and an opaque background here would paint straight over it.
-	// globals.css already gives body the room colour, so the surface is
-	// unchanged for every section that is not the hero.
+/** The cream caption plate: dark words on ink, nothing else. */
+function Plate({ className, children }: { className?: string; children: React.ReactNode }) {
+	return <p className={cn('relative z-10 m-0 bg-ink px-8 py-7 font-body text-lead text-room', className)}>{children}</p>;
+}
+
+/** A section head at title size: the demo Nick approved sets the three headings large, so the story reads as chapters. */
+function StoryHead({ id, className, children }: { id?: string; className?: string; children: React.ReactNode }) {
+	return (
+		<h2 id={id} className={cn('type-title m-0 mb-8 scroll-mt-24', className)}>
+			{children}
+		</h2>
+	);
+}
+
+/* ------------------------------------------------------------------ page */
+
+function Home() {
+	usePageTitle();
+
 	return (
 		<main id="main" className="min-h-screen text-ink font-body" data-tier="chrome">
 			<XalianNavbar />
-
-			{/* The sky is a sibling of the content, not a child of the hero: it is
-			    pinned to the viewport so it holds still while the page scrolls
-			    over it, and `isolate`/`overflow-hidden` on a wrapper would both
-			    break that. Its own mask keeps it to the top band, so the reading
-			    sections still sit on the flat hull surface. */}
-			<div className="starfield" aria-hidden="true">
-				<div className="starfield-far" />
-			</div>
+			<Starfield />
 
 			<div className="relative">
-				<Shell className="relative pt-8 pb-10">
-					{/* Two columns only once there is room for both: the plate is the
-					    payoff the copy promises, so on a narrow window the words win
-					    and it drops out entirely rather than shrinking. */}
-					<div className="grid items-center gap-10 lg:grid-cols-[minmax(0,64ch)_minmax(0,1fr)]">
-					<div className="flex max-w-[64ch] flex-col items-start gap-3">
-						<div className="max-sm:hidden"><XaliansLogoDnaAnimated /></div>
-						<h1 className="type-display m-0">Creatures grown for dying worlds</h1>
-						<p className="mt-2 font-body text-lead text-ink">
-							Across fourteen worlds, the Nemesis Plague is still spreading. The Vallerii who built this galaxy are almost gone. What is left are the Xalians: creatures their Generators grew to live where nothing else could.
-						</p>
-						<p className="mt-2 font-body text-lead text-ink-2">
-							King Kozrak holds the only machine that still prints a Scrambler Token, the one key to a plague-immune Xalian. He pays them out to the winners of his arena, and a galaxy of creatures fights for the right to repopulate its own homeworld.
-						</p>
-						<div className="mt-4 flex flex-wrap items-center gap-5">
-							<Button asChild>
-								<Link to="/generator">Generate a Xalian</Link>
-							</Button>
-							<Button asChild variant="link" className="px-0">
-								<Link to="/encyclopedia/story">Read the story</Link>
-							</Button>
+				<Shell className="pt-8 pb-12 lg:pt-14 lg:pb-24">
+					<div className="mx-auto grid max-w-[1160px] grid-cols-1 items-center gap-x-6 gap-y-10 lg:grid-cols-12">
+						{/* The words. The lockup is the page's title. */}
+						<div className="flex flex-col items-start gap-4 lg:col-span-7">
+							<h1 className="m-0">
+								<XaliansLogoDnaAnimated />
+							</h1>
+							<p className="m-0 max-w-[42ch] font-body text-lead text-ink">{HERO_LINE}</p>
+							<div className="mt-2 flex flex-wrap items-center gap-6">
+								<Button asChild>
+									<Link to="/generator">Try the Generator</Link>
+								</Button>
+								<Button asChild variant="link">
+									<a href="#story">The Story</a>
+								</Button>
+							</div>
 						</div>
-					</div>
 
-					{/* One specimen, picked per load from the same pool as the
-					    bestiary strip. It gives the hero's wide half something to
-					    hold, and shows a real creature before the copy has finished
-					    describing one. */}
-					{heroSpecies && (
-						<Link
-							to={`/encyclopedia/species/${heroSpecies.name.toLowerCase()}`}
-							className={`el-${heroSpecies.type.toLowerCase()} group mx-auto hidden w-full max-w-[340px] flex-col border border-edge bg-s1/80 backdrop-blur-[2px] hover:border-edge-strong focus-visible:outline-2 focus-visible:outline-ring lg:flex`}
+						{/* The creature on its world: a portrait panel of Krystos with
+						    the Yetimoth standing in front of it, feet over the frame,
+						    and a tag cutting across the left edge. The whole block is
+						    a link down to its page. */}
+						<a
+							href="#specimen"
+							aria-label="A Yetimoth of Krystos, shown in full below"
+							className={`el-${ELEMENT} group relative mx-auto block w-full max-w-[420px] no-underline lg:col-span-5 lg:mx-0 lg:justify-self-end`}
 						>
-							<div className="bg-el/24 p-3">
-								<XalianImage
-									colored
-									speciesName={heroSpecies.name}
-									primaryType={heroSpecies.type}
-									moreClasses="w-full"
-								/>
-							</div>
-							<div className="flex items-center justify-between gap-2 px-3 py-2.5">
-								<span className="type-legend text-[13px] text-ink">{heroSpecies.name}</span>
-								<span
-									className="flex size-6 shrink-0 items-center justify-center rounded-full bg-el ring-1 ring-edge-strong"
-									title={heroSpecies.type}
-								>
-									{svgUtil.getSpeciesTypeSymbol(heroSpecies.type, false, 14)}
-								</span>
-							</div>
-						</Link>
-					)}
+							<Panel art={ART.krystos} aspect="aspect-[4/5]" position="object-[center_35%]" eager />
+							<span
+								aria-hidden="true"
+								className="absolute -bottom-[4%] left-1/2 z-20 block w-[96%] -translate-x-1/2 transition-transform duration-[320ms] ease-out group-hover:-translate-y-1.5 motion-reduce:transition-none"
+							>
+								<XalianImage speciesName={SPECIES_NAME} primaryType={ELEMENT} unPadded moreClasses="w-full" />
+							</span>
+							<span className="type-legend absolute -left-5 bottom-9 z-30 bg-ink px-4 py-2.5 text-room lg:-left-10">
+								A Yetimoth of Krystos
+							</span>
+						</a>
 					</div>
 				</Shell>
 			</div>
 
-			<Shell className="pt-2 pb-16">
+			<Shell className="pb-10">
+				<div className="mx-auto max-w-[1160px]">
+					{/* The Story: four spreads, one paragraph each. Same frame, same
+					    plate, a different arrangement every time. */}
+					<section aria-labelledby="story" className="pt-8">
+						<StoryHead id="story">The Story</StoryHead>
 
-				{/* The worlds are the best art on the site, so they get the page's
-				    full width rather than a seven-column strip inside the hero's
-				    narrow column: at a wide viewport that strip squeezed each
-				    tile to about 80px and truncated half the names. The column
-				    count now steps with the viewport, so tiles grow as the
-				    window grows instead of shrinking. */}
-				<section className="mb-12" data-tier="featured">
-					<h2 className="type-heading m-0">Fourteen worlds</h2>
-					<p className="mt-1 mb-4 max-w-[62ch] font-body text-small text-ink-2">
-						Every Xalian is grown for one of them. Open a world for its history and its native species.
-					</p>
-					<div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5 xl:grid-cols-7">
-						{worlds.map((world: any) => (
-							<Link
-								key={world.key}
-								to={`/encyclopedia/worlds/${world.key}`}
-								className={`el-${world.element} mass-el group flex flex-col overflow-hidden border border-edge bg-s1 hover:border-edge-strong hover:bg-s2 focus-visible:outline-2 focus-visible:outline-ring`}
-							>
-								<div className="relative aspect-[4/3] w-full overflow-hidden bg-el/24">
-									<img
-										src={`/${world.image}`}
-										alt={world.imageAlt}
-										width={384}
-										height={256}
-										loading="lazy"
-										decoding="async"
-										className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-									/>
-									{/* The element reads as its symbol, not its name: the
-									    symbol is the system's own mark for the element and
-									    survives at this size, where the word would have to
-									    shrink or truncate. The name is still carried for
-									    assistive tech by the title below. */}
-									<span
-										className="absolute top-1.5 left-1.5 flex size-6 items-center justify-center rounded-full bg-el ring-1 ring-edge-strong"
-										title={world.element}
-									>
-										{svgUtil.getSpeciesTypeSymbol(world.element, false, 14)}
-									</span>
-								</div>
-								<div className="flex min-w-0 flex-col gap-0.5 px-2.5 pt-2 pb-2.5">
-									<span className="type-legend text-[12px] text-ink">{world.name}</span>
-									{/* Two lines of real terrain, clamped: enough to make the
-									    world feel like somewhere without unbalancing the row. */}
-									<span className="font-body text-[11px] leading-snug text-ink-3 line-clamp-2">
-										{world.terrain}
-									</span>
-								</div>
-							</Link>
-						))}
-					</div>
-				</section>
+						<div className="mb-16 grid grid-cols-1 gap-x-6 lg:mb-24 lg:grid-cols-12">
+							<Reveal className="lg:col-span-12">
+								<Panel art={ART.unbirth} aspect="aspect-[21/9]" position="object-[center_40%]" />
+							</Reveal>
+							<Reveal from="left" className="-mt-7 mx-4 lg:col-start-1 lg:col-end-8 lg:-mt-22 lg:mr-0 lg:ml-12">
+								<Plate>{STORY[0]}</Plate>
+							</Reveal>
+						</div>
 
-				<section className="mb-12" data-tier="featured">
-					<h2 className="type-heading m-0">From the bestiary</h2>
-					<p className="mt-1 mb-4 max-w-[62ch] font-body text-small text-ink-2">
-						Species silhouettes from the record plates. Open one to read its record.
-					</p>
-					<div className="-mx-6 flex snap-x gap-2 overflow-x-auto px-6 [scrollbar-width:none] max-sm:[mask-image:linear-gradient(to_right,black_calc(100%-40px),transparent)] sm:mx-0 sm:grid sm:grid-cols-4 sm:gap-2 sm:overflow-visible sm:px-0 md:grid-cols-8">
-						{featuredSpecies.slice(1).map((s: any) => (
-							<Tile
-								as={Link}
-								key={s.id || s.name}
-								to={`/encyclopedia/species/${s.name.toLowerCase()}`}
-								className={`el-${s.type.toLowerCase()} w-[140px] shrink-0 snap-start sm:w-auto sm:shrink`}
-							>
-								<TileArt>
-									<XalianImage colored speciesName={s.name} primaryType={s.type} moreClasses="w-full" />
-								</TileArt>
-								<TileMeta>
-									<span className="type-legend block text-center text-ink">{s.name}</span>
-								</TileMeta>
-							</Tile>
-						))}
-					</div>
-				</section>
+						<div className="mb-16 grid grid-cols-1 gap-x-6 lg:mb-24 lg:grid-cols-12 lg:items-center">
+							<Reveal className="lg:col-start-6 lg:col-end-13 lg:row-start-1">
+								<Panel art={ART.accords} aspect="aspect-[4/5]" position="object-[60%_center]" />
+							</Reveal>
+							<Reveal from="left" className="-mt-7 mx-4 lg:col-start-1 lg:col-end-8 lg:row-start-1 lg:m-0 lg:-mr-18">
+								<Plate>{STORY[1]}</Plate>
+							</Reveal>
+						</div>
 
-				<section className="border-t border-edge">
-					{DESTINATIONS.map((d) =>
-						'groupLabel' in d ? (
-							<p key={d.groupLabel} className="type-legend mt-4 mb-1">
-								{d.groupLabel}
+						<div className="mb-16 grid grid-cols-1 gap-x-6 lg:mb-32 lg:grid-cols-12">
+							{/* The turn of the story is the largest picture on the page:
+							    it breaks the column on both sides where there is room. */}
+							<Reveal className="lg:col-span-12 lg:-mx-8 xl:-mx-24">
+								<Panel art={ART.endWars} aspect="aspect-[2.4/1]" />
+							</Reveal>
+							<Reveal from="right" className="-mt-7 mx-4 lg:col-start-6 lg:col-end-13 lg:-mt-18 lg:mr-12 lg:ml-0">
+								<Plate>{STORY[2]}</Plate>
+							</Reveal>
+						</div>
+
+						<div className="mb-16 grid grid-cols-1 gap-x-6 lg:mb-24 lg:grid-cols-12 lg:items-center">
+							<Reveal className="lg:col-start-1 lg:col-end-8">
+								<Panel art={ART.present} aspect="aspect-[4/3]" position="object-[40%_center]" />
+							</Reveal>
+							<Reveal from="right" className="-mt-7 mx-4 lg:col-start-8 lg:col-end-13 lg:m-0 lg:-ml-24">
+								<Plate>{STORY[3]}</Plate>
+							</Reveal>
+						</div>
+					</section>
+
+					{/* The Galaxy of Xalia: the creature's page. */}
+					<section
+						id="specimen"
+						aria-labelledby="galaxy"
+						className={`el-${ELEMENT} grid scroll-mt-24 grid-cols-1 gap-x-6 gap-y-8 pt-4 pb-16 lg:grid-cols-12 lg:pb-24`}
+					>
+						<StoryHead id="galaxy" className="lg:col-span-12">The Galaxy of Xalia</StoryHead>
+						<div className="flex flex-col gap-4 lg:col-span-5">
+							<p className="m-0 border-l-2 border-edge-strong bg-s1 px-5 py-4 font-body text-body text-ink">{KRYSTOS_TODAY}</p>
+							<h3 className="type-display m-0 mt-2 text-white">
+								{SPECIES_NAME}
+								<span className="type-legend mt-2.5 block">of Krystos &middot; Ice</span>
+							</h3>
+							<p className="m-0 border-l-2 border-el pl-4 font-body text-body text-ink">{YETIMOTH}</p>
+							<p className="m-0 mt-2">
+								<span className="type-legend block">Signature ability</span>
+								<span className="font-body text-body font-bold text-white">{SIGNATURE}</span>
 							</p>
-						) : (
-							<Link
-								key={d.name}
-								to={d.to}
-								className="grid grid-cols-1 items-baseline gap-1 border-b border-edge py-3 md:grid-cols-[200px_1fr_auto] md:gap-4"
-							>
-								<span className="type-heading text-ink">{d.name}</span>
-								<span className="font-body text-small text-ink-2">{d.copy}</span>
-								<span className="justify-self-start font-body text-body text-ink underline decoration-ink-3 underline-offset-4 md:justify-self-end">{d.linkText}</span>
-							</Link>
-						)
-					)}
-				</section>
+							<p className="m-0 flex flex-wrap gap-x-4 font-body text-small">
+								<Button asChild variant="link" className="text-small">
+									<Link to={`/encyclopedia/species/${SPECIES_KEY}`}>Its record</Link>
+								</Button>
+								<Button asChild variant="link" className="text-small">
+									<Link to={`/encyclopedia/worlds/${WORLD_KEY}`}>Its world</Link>
+								</Button>
+							</p>
+						</div>
+						<div className="mx-auto w-full max-w-[420px] lg:col-span-7 lg:max-w-[560px] lg:justify-self-center lg:self-center">
+							<XalianImage colored speciesName={SPECIES_NAME} primaryType={ELEMENT} moreClasses="w-full" />
+						</div>
+					</section>
+
+					{/* The Tournament & Tokens: one more spread, then the door. */}
+					<section aria-labelledby="tournament" className="pt-4">
+						<StoryHead id="tournament">The Tournament &amp; Tokens</StoryHead>
+
+						<div className="mb-12 grid grid-cols-1 gap-x-6 lg:mb-16 lg:grid-cols-12">
+							<Reveal className="lg:col-start-1 lg:col-end-9 lg:row-start-1">
+								<Panel art={ART.generation} aspect="aspect-video" position="object-[center_60%]" />
+							</Reveal>
+							<Reveal from="right" className="-mt-7 mx-4 lg:col-start-8 lg:col-end-13 lg:row-start-1 lg:m-0 lg:-mb-12 lg:-ml-28 lg:self-end">
+								<Plate>{TOURNAMENT}</Plate>
+							</Reveal>
+						</div>
+
+						<div className="flex max-w-[62ch] flex-col items-start gap-5 pt-6 lg:pt-10">
+							<p className="m-0 font-body text-lead text-ink">{TOKENS}</p>
+							<p className="type-display m-0 mt-1">Start generating now&hellip;</p>
+							<div className="flex flex-wrap items-center gap-6">
+								<Button asChild variant="secondary">
+									<Link to="/generator">Try the Generator</Link>
+								</Button>
+								<Button asChild variant="link">
+									<Link to="/encyclopedia/story">Read the whole story</Link>
+								</Button>
+							</div>
+							<p className="m-0 font-body text-small text-ink-2">You can look around without an account. Keeping a Xalian needs one.</p>
+						</div>
+
+						<ul className="m-0 mt-10 grid list-none grid-cols-1 gap-4 p-0 sm:grid-cols-2 lg:grid-cols-5">
+							{GAMES.map((g) => (
+								<li key={g.name} className="m-0">
+									<Link
+										to={g.to}
+										className="flex h-full flex-col gap-2 border border-edge bg-s1 px-4 pt-4 pb-5 no-underline transition-[background-color,border-color] duration-[120ms] ease-out hover:border-edge-strong hover:bg-s2 focus-visible:outline-2 focus-visible:outline-ring"
+									>
+										<span className="type-legend text-ink">{g.name}</span>
+										<span className="font-body text-small text-ink-3">{g.copy}</span>
+									</Link>
+								</li>
+							))}
+						</ul>
+					</section>
+				</div>
 			</Shell>
 		</main>
 	);
