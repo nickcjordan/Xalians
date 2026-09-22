@@ -102,8 +102,9 @@ export function EnvironmentScale({ site, ghost }) {
 				{hasBand && (
 					<span className="rec-env-band rec-env-band--site" style={{ left: `${pctOnScale(t.min)}%`, width: `${pctOnScale(t.max) - pctOnScale(t.min)}%` }} />
 				)}
+				{/* pass 37: placed by transform, so previewing one creature after another moves paint, not layout */}
 				{own && (
-					<span className="rec-env-band rec-env-band--creature" style={{ left: `${pctOnScale(own.min)}%`, width: `${Math.max(0.8, pctOnScale(own.max) - pctOnScale(own.min))}%` }} />
+					<span className="rec-env-band rec-env-band--creature" style={{ transform: `translateX(${pctOnScale(own.min)}cqw)`, width: `${Math.max(0.8, pctOnScale(own.max) - pctOnScale(own.min))}%` }} />
 				)}
 			</span>
 			<span className="rec-env-readout g-mono">{hasBand ? `${t.min} to ${t.max} C` : 'no band'}</span>
@@ -487,9 +488,11 @@ function ReclamationWorld({
 											const word = total === 0 ? 'unclaimed' : Math.abs(totalMine + ghostHold - totalTheirs) < 0.05 ? 'level' : null;
 											return (
 												<span className={`rec-balance${ghost ? ' rec-balance--preview' : ''}`} title={afterText || margin.text || 'unclaimed'} data-balance={site.id} data-balance-text={afterText || margin.text || 'unclaimed'}>
-													<span className="rec-balance-fill rec-balance-fill--theirs" style={{ width: `${pctTheirs}%` }} />
-													<span className="rec-balance-fill rec-balance-fill--ghost" style={{ width: `${pctGhost}%`, right: `${pctMine}%` }} />
-													<span className="rec-balance-fill rec-balance-fill--mine" style={{ width: `${pctMine}%` }} />
+													{/* pass 37: each fill spans the bar and is clipped to its share, so a
+													    preview changes paint only and never counts as the table moving */}
+													<span className="rec-balance-fill rec-balance-fill--theirs" style={{ clipPath: `inset(0 ${100 - pctTheirs}% 0 0)` }} />
+													<span className="rec-balance-fill rec-balance-fill--ghost" style={{ clipPath: `inset(0 ${pctMine}% 0 ${Math.max(0, 100 - pctMine - pctGhost)}%)` }} />
+													<span className="rec-balance-fill rec-balance-fill--mine" style={{ clipPath: `inset(0 0 0 ${100 - pctMine}%)` }} />
 													{word && <span className="rec-balance-word">{word}</span>}
 												</span>
 											);
@@ -507,7 +510,7 @@ function ReclamationWorld({
 							    edge painted in its side's colour and labelled, so whose creature stands
 							    where is read from the floor before the figures are */}
 							<div className={`rec-site-field rec-site-floor${empty ? ' rec-site-field--empty' : ''}`}>
-								<div className={`rec-rank rec-rank--theirs${theirs.length > 4 ? ' rec-rank--crowded' : ''}`} data-rank="theirs">
+								<div className={`rec-rank rec-rank--theirs${theirs.length > 4 ? ' rec-rank--crowded' : ''}`} data-rank="theirs" data-rank-rows={rankGrid(theirs.length)['--rank-rows-n']} data-rank-rows-wide={rankGrid(theirs.length)['--rank-rows-w']} style={rankGrid(theirs.length)}>
 									<span className="rec-rank-edge rec-rank-edge--theirs" aria-hidden="true">rival</span>
 									{theirs.map((entry) => <ReclamationFigure key={entry.recordId} {...figureProps(entry, opponent, 'down')} />)}
 									{theirs.length === 0 && <span className="rec-rank-open">no one</span>}
@@ -543,7 +546,7 @@ function ReclamationWorld({
 									)}
 								</div>
 
-								<div className={`rec-rank rec-rank--mine${mine.length > 4 ? ' rec-rank--crowded' : ''}`} data-rank="mine">
+								<div className={`rec-rank rec-rank--mine${mine.length > 4 ? ' rec-rank--crowded' : ''}`} data-rank="mine" data-rank-rows={rankGrid(mine.length)['--rank-rows-n']} data-rank-rows-wide={rankGrid(mine.length)['--rank-rows-w']} style={rankGrid(mine.length)}>
 									{mine.map((entry) => <ReclamationFigure key={entry.recordId} {...figureProps(entry, you, 'up')} />)}
 									{mine.length === 0 && <span className="rec-rank-open">no one</span>}
 									<span className="rec-rank-edge rec-rank-edge--mine" aria-hidden="true">you</span>
@@ -555,6 +558,27 @@ function ReclamationWorld({
 			</div>
 		</div>
 	);
+}
+
+/*
+	PASS 37. A rank is a fixed box, so the figures in it size to the box rather than the box to
+	the figures. The rows and columns a rank of n needs are handed to the CSS, which divides
+	the rank's own measured size by them (container query units), so a world with eleven
+	creatures on one side shows eleven smaller figures in the same space as one large one.
+	Two grids are handed over, narrow and wide, and a container query on the rank's own
+	width picks between them.
+*/
+export function rankGrid(n) {
+	const count = Math.max(1, n);
+	// a narrow rank (a phone's world, about 120px) takes four abreast, a wide one seven
+	const narrow = count <= 4 ? 1 : count <= 10 ? 2 : 3;
+	const wide = count <= 7 ? 1 : count <= 14 ? 2 : 3;
+	return {
+		'--rank-rows-n': narrow,
+		'--rank-cols-n': Math.ceil(count / narrow),
+		'--rank-rows-w': wide,
+		'--rank-cols-w': Math.ceil(count / wide),
+	};
 }
 
 export default ReclamationWorld;

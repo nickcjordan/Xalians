@@ -58,7 +58,7 @@ What it reads, and where each effect kind lands (measured over the seed-7 pool, 
 
 **Nick's steer, 2026-09-19: the priority is whether the game is mechanically deep and fun, not how two people play it.**
 
-1. **Mobile scored 3 of 10, now the lowest score on the sheet.** The overlap bug is fixed, but the critic's structural complaint stands: "the three worlds need a horizontal swipe-carousel or a compact three-up summary row, because vertical stacking destroys the comparison the game is built on." At 390 you cannot see two worlds at once, so **the core act of the game, comparing three worlds to choose one, requires scrolling three times.** This is the weakest thing left and it is a layout decision, not a polish item.
+1. **(Pass 37: addressed, needs a play.)** The table is one fixed screen at every size and the three worlds stand side by side on a phone, so all three compare at a glance. What is left is judging the phone figures by hand; they are small when a world is crowded. **Mobile scored 3 of 10, now the lowest score on the sheet.** The overlap bug is fixed, but the critic's structural complaint stands: "the three worlds need a horizontal swipe-carousel or a compact three-up summary row, because vertical stacking destroys the comparison the game is built on." At 390 you cannot see two worlds at once, so **the core act of the game, comparing three worlds to choose one, requires scrolling three times.** This is the weakest thing left and it is a layout decision, not a polish item.
 2. **The Clash still narrates itself in a log above the board.** Pass 28 made the board move; the critic still says "the narration of the fight is happening in a monospace log at the top of the page, which is paperwork by definition" and reads the SKIP button as the designer conceding the Clash is not worth watching. The next move is the sentence landing ON the world card rather than in the terminal.
 3. **The footing answers "who can stand here", not "what does holding it do".** Pass 29 gave the empty world the half of the stake the game can compute from the record. The other half - what claiming a world is worth toward the Charter, what losing it costs - is still only in the status strip's sentence. Five of nine worlds clinch; a panel could say where this one sits in that count.
 4. **Advanced mode is Simple on a phone.** `advanced-390` differs from `simple-390` only by a temperature range: the log and the inspector, its two best features, are both absent at 390. Either give them a phone form or say the mode is desktop-only.
@@ -690,3 +690,29 @@ Second, the metric is insensitive to what it claims to be about. **Quadrupling t
 **The lesson worth keeping:** *a falling critic score can be the instrument improving rather than the game regressing.* The comparison that matters is not 65 against 55, it is what each run found: pass 14's three top fixes included two artifacts of my own screenshots, and pass 27's five broken items were all real. Judge a critic by whether its findings survive checking, not by the number.
 
 **Verified:** 2072 tests green, typecheck clean, build inside budgets, all three headless checks green, and the four label and lifecycle fixes checked by paint.
+
+### Pass 37 (2026-09-22): one screen
+
+**Nick, after pass 36:** "The screen still immediately shifted when the first creature was put on the screen ... This is a game. You should have the game characteristics, such as one constant screen without any scrolling."
+
+**Why pass 36 missed it.** Its check measured layout shift and nothing else. Measured this pass, seed 7: the match was 1659px tall on a 1440x900 screen (2100px on a 390x844 phone), the worlds started 580px down and the bench at 1293px. A page like that scores near zero shift while the player scrolls down to lift a creature and back up to press a world on every send, and the scroll is what reads as the screen jumping.
+
+**What changed.** The match console is exactly the viewport, split into fixed shares: a thin masthead, a status strip of fixed height, the three worlds taking what is left, and a dock of fixed height at the bottom. Everything that used to appear as its own row now has a place that never resizes:
+
+- the stake question, the "what just happened" callout, the first round's coaching and the hint share one message slot in the status strip;
+- the ticker is the strip's last column; the next round's worlds ride on the round line;
+- the bench, the Court's next-round bar and the bench during the Clash share the dock, and the Charter's report covers the table when the Proving ends;
+- in simple mode the dossier is a drawer over the table, closed by lifting a creature; on a phone, advanced mode's log is set aside and its dossier is the same drawer;
+- figures size to their rank (container query units, rows and columns handed over by `rankGrid`), so eleven creatures stand in the space one did, and a crowded rank prints each as its piece over one line of name and hold.
+
+**Two behaviour fixes found on the way.** Pressing a creature already standing on a world, with a creature in hand, now sends to that world; it used to open the dossier, which the new check hit on its second send. And the balance bar, the creature's temperature band and the ghost's grid are drawn so that previewing one creature after another changes paint, never layout.
+
+**The check now measures the promise, not a proxy.** `reclamation-shift.mjs` drives a round at six screen sizes (1920x950, 1440x900, 1536x730, 1366x650, 390x844, 375x667) and fails if the page is ever taller or wider than the screen or scrolled, if any world, bench creature, pass or next-round button is off screen, or if hovering or sending moves the layout. It walks rest, hover, four sends with the rival's answers, the Clash, the Ruling and round two. Result: fits and reachable everywhere, hover 0.0000, sends 0.002 to 0.011 (the creatures already standing on a world shrinking to make room).
+
+**Checks adjusted, with reasons.** The proving check's 260px phone panel ceiling (pass 13) is replaced by "the table fits the phone's screen", which is what it stood in for. It also moves the pointer off the bench before reading the footings, since a resting pointer previews a creature. The act-flip check reads the board while it is in play rather than under the Charter's report, and it and the hot-seat check now ask for `?draft=1`, since pass 35 made the draft opt-in and both had been timing out on the missing draft screen since.
+
+**Found, not fixed:** `reclamation-clash.mjs` fails its 30% motion floor at 22%, and fails identically on the pass 36 build, so it predates this pass.
+
+**The lesson worth keeping:** *measure the promise, not a proxy for it.* "Nothing jumps" was measured as layout shift; the player's promise was "I never scroll", and a page can keep the first while breaking the second on every move.
+
+**Verified:** 1562 web tests green on a quiet machine (the Long Return extraction test and the species-art loader test time out under load, on main as well); `reclamation-shift`, `reclamation-proving` (4 of 4), `reclamation-actflip` and `reclamation-hotseat` green against this build; paint read at 1440, 1366, 390 and 375 in rest, lifted, crowded, dossier, Clash and Ruling states, simple and advanced.

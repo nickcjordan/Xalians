@@ -143,12 +143,16 @@ for (const view of ['simple', 'advanced']) {
 				nearly two screens, which the rubric critic named the worst thing about the
 				phone experience. These two assertions are the floor under the fix.
 			*/
+			/*
+				PASS 37. The panel-height floor above is replaced by the rule it was a stand-in
+				for. The worlds now stand side by side on one fixed screen, so a tall panel no
+				longer pushes the bench away; what must hold is that the whole table fits the
+				phone's screen without scrolling. reclamation-shift.mjs checks the same at every
+				step of a round and at six screen sizes.
+			*/
 			if (width === 390) {
-				const panels = await page.locator('[data-site-id]').evaluateAll(
-					(els) => els.map((el) => Math.round(el.getBoundingClientRect().height)),
-				);
-				const tallest = Math.max(0, ...panels);
-				assert(tallest <= 260, `${label}: an empty world panel is ${tallest}px tall on a phone`);
+				const fits = await page.evaluate(() => document.documentElement.scrollHeight <= window.innerHeight + 1);
+				assert(fits, `${label}: the table is taller than the phone's screen`);
 
 				const tiny = await page.locator('button:visible').evaluateAll((els) => els
 					.map((el) => ({
@@ -169,6 +173,10 @@ for (const view of ['simple', 'advanced']) {
 				from the handler's own bench, so a change to prepare() or to the draft can
 				empty it without any test noticing.
 			*/
+			// the pointer is moved off the bench first: resting on a creature previews it, and
+			// a preview replaces each world's footing with what that creature would hold there
+			await page.mouse.move(2, 2);
+			await page.waitForTimeout(250);
 			const footings = await page.locator('[data-world-footing]').evaluateAll(
 				(els) => els.map((el) => el.innerText.replace(/\s+/g, ' ').trim()),
 			);

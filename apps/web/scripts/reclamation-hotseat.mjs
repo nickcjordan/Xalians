@@ -35,7 +35,7 @@ const browser = await chromium.launch({ executablePath: EDGE, headless: true });
 const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
 const errs = [];
 page.on('pageerror', (e) => errs.push(e.message));
-await page.goto(`${base}/reclamation?seed=${seed}&view=advanced&hotseat=1`, { waitUntil: 'networkidle' });
+await page.goto(`${base}/reclamation?seed=${seed}&view=advanced&hotseat=1&draft=1`, { waitUntil: 'networkidle' });
 const d = page.locator('[data-discard-match]');
 if (await d.count() && await d.first().isVisible()) await d.first().click();
 await page.locator('[data-enter]').first().click();

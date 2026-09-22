@@ -220,8 +220,72 @@ function ReclamationBench({
 					<span className="rec-bench-kicker">Your squad</span>
 					<span className="rec-bench-count g-mono">{(me.roster || []).length}<span className="rec-bench-count-of">/{squad.length}</span></span>
 				</span>
+				{/*
+					PASS 37. The lead and the act picker ride in the head row, beside the heading,
+					so the bench is two rows (the head and the creatures) and fits the dock.
+				*/}
 				<div className="rec-bench-say">
 					<h3 className="rec-bench-heading" key={heading}>{heading}</h3>
+					{/* the lead, beside the heading: with a creature lifted it is the
+					    role sentence, the same one the plinth, the dossier and the ghost preview print.
+
+					    PASS 10: it is shown at rest too, whenever it is this handler's turn. The
+					    resting line is where the table promises what lifting does, and it used to be
+					    written and then never rendered, so a player who had not yet lifted anything
+					    had nothing telling them the worlds would answer "what happens if I do it".
+					    That is what the rubric critic scored the weakest of the four glance
+					    questions, judging the screen before any creature was lifted. */}
+					{/*
+						PASS 36. The lead is always rendered and its row always reserved; when there is
+						nothing to say it is empty rather than absent. It used to unmount on the rival's
+						turn and come back on yours, taking 61px of the bench with it each way.
+					*/}
+					<p className="rec-bench-lead g-body" data-bench-lead>
+						{(sendsLeft === 0 || step === 2 || movingRecordId || (yourTurn && !me.passed)) ? lead : ''}
+					</p>
+				</div>
+				{/*
+					PASS 25, ACT FLIP. A creature has three or four usable acts and most can offer
+					two or more genuinely different behaviours; until this pass the table picked one
+					and discarded the rest, which is why the decision space ran out by round three
+					(2.05 near-best options, half of them with one dominant answer).
+
+					The picker only appears with a creature lifted and only when that creature has a
+					real choice, so it is never a control asking a question with one answer. The
+					natural behaviour is first and is what a player gets by pressing nothing.
+				*/}
+				{/*
+					PASS 36. The picker's room is held whether or not a picker is in it, the same way
+					`rec-callout-row` holds the callout's. It used to appear when a creature with two
+					or more behaviours was lifted and vanish when it was sent, moving the whole plinth
+					grid 62px each way.
+				*/}
+				<div className="rec-bench-acts-slot" data-act-slot>
+					{actFlip && armed && yourTurn && !me.passed && (() => {
+					const roles = flippableRolesOf(armed, view.rules);
+					if (roles.length < 2) {
+						return null;
+					}
+					const current = armedRole || roles[0];
+					return (
+						<div className="rec-bench-acts" data-act-picker={armed.id}>
+							<span className="rec-bench-acts-legend">{speciesLabel(armed)} can</span>
+							{roles.map((role) => (
+								<button
+									type="button"
+									key={role}
+									className={`g-btn rec-bench-act${role === current ? ' rec-bench-act--on' : ''}`}
+									aria-pressed={role === current}
+									data-act-role={role}
+									onClick={() => onChooseRole && onChooseRole(role)}
+									title={roleSentence(role)}
+								>
+									{roleWord(role)}
+								</button>
+							))}
+						</div>
+					);
+				})()}
 				</div>
 				<span className="rec-deploy-count" title={`${me.sentCount || 0} of ${cap} sends spent this Proving${cap > SENDABLE ? ", one of them the trailing seat's bonus this round" : ''}; ${(me.roster || []).length} in hand`}>
 					{/* the pips preview what the send in hand would cost: one send, whether it
@@ -271,66 +335,6 @@ function ReclamationBench({
 				)}
 			</header>
 
-			{/*
-				PASS 25, ACT FLIP. A creature has three or four usable acts and most can offer
-				two or more genuinely different behaviours; until this pass the table picked one
-				and discarded the rest, which is why the decision space ran out by round three
-				(2.05 near-best options, half of them with one dominant answer).
-
-				The picker only appears with a creature lifted and only when that creature has a
-				real choice, so it is never a control asking a question with one answer. The
-				natural behaviour is first and is what a player gets by pressing nothing.
-			*/}
-			{/*
-				PASS 36. The picker's room is held whether or not a picker is in it, the same way
-				`rec-callout-row` holds the callout's. It used to appear when a creature with two
-				or more behaviours was lifted and vanish when it was sent, moving the whole plinth
-				grid 62px each way.
-			*/}
-			<div className="rec-bench-acts-slot" data-act-slot>
-			{actFlip && armed && yourTurn && !me.passed && (() => {
-				const roles = flippableRolesOf(armed, view.rules);
-				if (roles.length < 2) {
-					return null;
-				}
-				const current = armedRole || roles[0];
-				return (
-					<div className="rec-bench-acts" data-act-picker={armed.id}>
-						<span className="rec-bench-acts-legend">{speciesLabel(armed)} can</span>
-						{roles.map((role) => (
-							<button
-								type="button"
-								key={role}
-								className={`g-btn rec-bench-act${role === current ? ' rec-bench-act--on' : ''}`}
-								aria-pressed={role === current}
-								data-act-role={role}
-								onClick={() => onChooseRole && onChooseRole(role)}
-								title={roleSentence(role)}
-							>
-								{roleWord(role)}
-							</button>
-						))}
-					</div>
-				);
-			})()}
-			</div>
-			{/* the lead rides on its own line under the head: with a creature lifted it is the
-			    role sentence, the same one the plinth, the dossier and the ghost preview print.
-
-			    PASS 10: it is shown at rest too, whenever it is this handler's turn. The
-			    resting line is where the table promises what lifting does, and it used to be
-			    written and then never rendered, so a player who had not yet lifted anything
-			    had nothing telling them the worlds would answer "what happens if I do it".
-			    That is what the rubric critic scored the weakest of the four glance
-			    questions, judging the screen before any creature was lifted. */}
-			{/*
-				PASS 36. The lead is always rendered and its row always reserved; when there is
-				nothing to say it is empty rather than absent. It used to unmount on the rival's
-				turn and come back on yours, taking 61px of the bench with it each way.
-			*/}
-			<p className="rec-bench-lead g-body" data-bench-lead>
-				{(sendsLeft === 0 || step === 2 || movingRecordId || (yourTurn && !me.passed)) ? lead : ''}
-			</p>
 			<div className="rec-plinths" role="list">
 				{squad.map((record) => (
 					<Plinth
