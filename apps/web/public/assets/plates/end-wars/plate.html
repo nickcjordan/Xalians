@@ -459,7 +459,7 @@
 </svg>
 <svg class="layer" id="layer-water" viewBox="0 0 1536 768" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
   <!-- the crash light on the river: the same glow that lights the city, under the surface -->
-  <path d="M728 612 L796 612 L1080 768 L440 768 Z" fill="url(#horizon)" opacity=".9"/>
+  <path d="M728 612 L796 612 L1080 768 L440 768 Z" fill="url(#horizon)" opacity=".6"/>
   <!-- the water: a channel running straight out of the picture to the light -->
   <g filter="url(#ripple)">
     <path d="M728 612 L796 612 L1080 768 L440 768 Z" fill="url(#water)"/>
@@ -548,8 +548,8 @@
     </g>
   </g>
 
-  <!-- The light of the crash, spilling from the ship's path onto the river -->
-  <rect width="1536" height="768" fill="url(#horizon)" opacity=".95"/>
+  <!-- the glow of the burning city low on the horizon, where the river meets it -->
+  <rect width="1536" height="768" fill="url(#horizon)" opacity=".6"/>
   <!-- ===================== THE FAR CITY ===================== -->
   <!-- The far city: setback blocks, domes, stacks and lesser spires, each with a
        lit side toward the crash, then the haze over all of it -->
@@ -623,8 +623,6 @@
   <line x1="744" y1="612" x2="466" y2="768" stroke="#4a4a46" stroke-width="1.2" opacity=".45"/>
   <line x1="780" y1="612" x2="1054" y2="768" stroke="#4a4a46" stroke-width="1.2" opacity=".45"/>
   <!-- the banks are not one straight line: a slipway on the left, a projecting pier on the right -->
-  <polygon points="588,700 624,700 606,730 556,730" fill="#5a5a58" opacity=".85"/>
-  <polygon points="588,700 624,700 622,704 590,704" fill="#7a7975"/>
   <polygon points="936,690 1000,690 1024,712 962,712" fill="#26272b"/>
   <polygon points="936,690 1000,690 1002,693 938,693" fill="#4a4b4d"/>
   <line x1="990" y1="690" x2="990" y2="672" stroke="#111214" stroke-width="1.5"/><circle cx="990" cy="671" r="1.6" fill="#ffd28a"/>
@@ -703,7 +701,7 @@
     <rect x="1200" y="744" width="16" height="24" fill="#ffd28a" opacity=".7"/>
     <rect x="990" y="700" width="70" height="68" fill="#1b1c1f"/>
     <!-- pipes and gantries along the right quay -->
-    <path d="M900 742 Q 1000 700 1100 700 L 1300 690" fill="none" stroke="#16171a" stroke-width="7" stroke-linecap="round"/>
+    <path d="M1016 744 Q 1060 704 1110 700 L 1300 690" fill="none" stroke="#16171a" stroke-width="7" stroke-linecap="round"/>
     <path d="M980 655 L 1090 650" fill="none" stroke="#16171a" stroke-width="4" stroke-linecap="round"/>
     <g stroke="#16171a" stroke-width="2"><line x1="1010" y1="648" x2="1010" y2="700"/><line x1="1060" y1="646" x2="1060" y2="700"/></g>
   </g>
@@ -930,14 +928,9 @@
       <ellipse cx="520" cy="-90" rx="110" ry="60" fill="#ffb454"></ellipse>
       <ellipse cx="670" cy="80" rx="120" ry="80" fill="#ff8a2a"></ellipse>
     </g>
-    <!-- the trail: superheated air ahead of the nose, spilling down to the river -->
-    <polygon points="44,-32 -16,-28 -60,-14 -150,-4 -150,4 -60,14 -16,28 44,32" fill="url(#trail)" filter="url(#soft)"/>
-    <polygon points="34,-12 -24,-11 -140,0 -24,11 34,12" fill="#ffffff" opacity=".6" filter="url(#glow)"/>
-
-    <polygon points="0,-24 -100,-40 -100,40 0,24" fill="url(#airLight)" filter="url(#soft20)" opacity=".45"/>
-    <!-- the heat sheath: a thin pale skin along the nose sections -->
-    <polygon points="0,0 130,-22 130,-16 6,-2" fill="#ffffff" opacity=".35"/>
-    <polygon points="0,0 130,22 130,16 6,2" fill="#ffffff" opacity=".2"/>
+    <!-- entry heat: the ram glows where the air piles up against it, and the glow hugs the bow -->
+    <ellipse cx="-6" cy="2" rx="34" ry="30" fill="#fff3dc" opacity=".55" filter="url(#soft20)"/>
+    <ellipse cx="4" cy="2" rx="12" ry="11" fill="#fff6e6" opacity=".35" filter="url(#soft)"/>
     <g filter="url(#hullLight)">
     <!-- The warship, seen from her port flank, bow down. Local x runs from the ram at 0 to the
          transom at 600; negative y is her dorsal side. A capital ship, not a rocket: a chisel bow,
@@ -980,7 +973,6 @@
     <polygon points="-14,-2 -10,10 30,18 30,4" fill="#1c1d21" opacity=".55"/>
     <polygon points="30,-16 -8,-11 -8,-9.5 30,-14.5" fill="#ffffff" opacity=".5"/>
     <!-- the bow shock: a pale arc standing clear of the ram, taller than the hull is deep -->
-    <path d="M-28 -38 Q -70 2 -26 40 Q -50 2 -28 -38 Z" fill="#ffffff" opacity=".35" filter="url(#soft)"/>
     <!-- the long shadow under the belly -->
     <polygon points="30,10 230,20 240,30 440,34 452,42 600,40 600,52 452,54 440,44 240,40 230,30 70,26 30,18" fill="#050506" opacity=".5"/>
     <polygon points="70,24 600,50 600,51 70,25" fill="#4a4b50" opacity=".35"/>
@@ -1209,14 +1201,14 @@
   </g>
   <!-- Debris shed from the ship: torn plating, one edge still glowing, each piece trailing its own smoke -->
   <g>
-    <g>
-      <line x1="1000" y1="370" x2="940" y2="310" stroke="#1a1416" stroke-width="7" stroke-linecap="round" opacity=".5"/>
+    <g transform="translate(10 -170)"><g>
+      <line x1="1000" y1="370" x2="964" y2="332" stroke="#3a3430" stroke-width="12" stroke-linecap="round" opacity=".28" filter="url(#soft)"/>
       <polygon points="-18,-8 12,-14 20,4 -6,12" fill="#2b2c30" transform="translate(1000 370) scale(1.35)"/>
       <polygon points="-18,-8 12,-14 14,-10 -14,-4" fill="#8e8f93" transform="translate(1000 370) scale(1.35)"/>
       <polygon points="12,-14 20,4 17,3 10,-11" fill="#ff8a2a" transform="translate(1000 370) scale(1.35)"><animate attributeName="opacity" values="1;.4;1" dur=".7s" repeatCount="indefinite" calcMode="spline" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></polygon>
       <animateTransform attributeName="transform" type="translate" values="0 0;140 190" dur="14s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 1 1"/><animate attributeName="opacity" values="0;1;1;0" keyTimes="0;.05;.82;1" dur="14s" repeatCount="indefinite"/>
-    </g>
-    <g>
+    </g></g>
+    <g transform="translate(-30 -150)"><g>
       <animateTransform attributeName="transform" type="translate" values="0 0;60 150" dur="16s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 1 1"/>
       <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;.05;.82;1" dur="16s" repeatCount="indefinite"/>
       <g>
@@ -1225,20 +1217,20 @@
         <polygon points="1180,348 1165,356 1166,352 1177,346" fill="#ffb054"><animate attributeName="opacity" values="1;.3;1" dur=".9s" repeatCount="indefinite" calcMode="spline" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/></polygon>
         <animateTransform attributeName="transform" type="rotate" values="0 1168 344;360 1168 344" dur="6s" repeatCount="indefinite"/>
       </g>
-    </g>
-    <g>
+    </g></g>
+    <g transform="translate(-50 -150)"><g>
       <polygon points="1128,350 1146,342 1160,352 1150,366 1132,364" fill="#2b2c30"/>
       <polygon points="1128,350 1146,342 1147,346 1131,353" fill="#8e8f93"/>
       <polygon points="1160,352 1150,366 1148,363 1156,352" fill="#ffb054"/>
       <animateTransform attributeName="transform" type="translate" values="0 0;40 120" dur="18s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 1 1"/><animate attributeName="opacity" values="0;1;1;0" keyTimes="0;.05;.82;1" dur="18s" repeatCount="indefinite"/>
-    </g>
-    <g>
+    </g></g>
+    <g transform="translate(40 -160)"><g>
       <g transform="translate(980 380) scale(.45) translate(-980 -380)">
         <polygon points="980,380 990,374 994,384 984,388" fill="#232428"/>
         <polygon points="980,380 990,374 990,377 982,382" fill="#8e8f93"/>
       </g>
       <animateTransform attributeName="transform" type="translate" values="0 0;30 90" dur="12s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 1 1"/><animate attributeName="opacity" values="0;1;1;0" keyTimes="0;.05;.82;1" dur="12s" repeatCount="indefinite"/>
-    </g>
+    </g></g>
   </g>
   <!-- embers -->
   <g fill="#ffb454" filter="url(#glow)">
@@ -1305,9 +1297,10 @@
       <rect x="12" y="528" width="5" height="4"/><rect x="22" y="528" width="5" height="4"/>
       <rect x="12" y="540" width="5" height="4"/><rect x="32" y="540" width="5" height="4"/>
     </g>
-    <line x1="60" y1="470" x2="60" y2="380" stroke="#1d1e21" stroke-width="3"/>
-    <line x1="40" y1="410" x2="80" y2="410" stroke="#1d1e21" stroke-width="3"/>
-    <line x1="46" y1="440" x2="74" y2="440" stroke="#1d1e21" stroke-width="2"/>
+    <!-- a mast on the flat of the roof -->
+    <line x1="16" y1="469" x2="16" y2="392" stroke="#1d1e21" stroke-width="3"/>
+    <line x1="0" y1="418" x2="32" y2="418" stroke="#1d1e21" stroke-width="3"/>
+    <line x1="4" y1="444" x2="28" y2="444" stroke="#1d1e21" stroke-width="2"/>
     <!-- the block at the right edge -->
     <polygon points="1440,768 1440,530 1536,520 1536,768" fill="#111214"/>
     <rect x="1440" y="530" width="96" height="3" fill="#2c2d31"/>
@@ -1322,8 +1315,8 @@
     <g fill="#1c1d21">
       <rect x="1476" y="576" width="8" height="12"/><rect x="1456" y="606" width="8" height="12"/><rect x="1500" y="636" width="8" height="12"/><rect x="1476" y="666" width="8" height="12"/><rect x="1456" y="696" width="8" height="12"/><rect x="1456" y="726" width="8" height="12"/><rect x="1476" y="726" width="8" height="12"/>
     </g>
-    <rect x="1452" y="508" width="30" height="12" fill="#1a1b1e"/><rect x="1500" y="512" width="16" height="8" fill="#1a1b1e"/>
-    <line x1="1490" y1="520" x2="1490" y2="470" stroke="#1d1e21" stroke-width="3"/>
+    <rect x="1452" y="514" width="30" height="15" fill="#1a1b1e"/><rect x="1500" y="514" width="16" height="10" fill="#1a1b1e"/>
+    <line x1="1490" y1="526" x2="1490" y2="470" stroke="#1d1e21" stroke-width="3"/>
     <line x1="1470" y1="490" x2="1510" y2="490" stroke="#1d1e21" stroke-width="3"/>
   </g>
   <polygon points="1341,768 1356,768 1401,336 1398,334" fill="url(#flankLit)" opacity=".5"/>
