@@ -1642,11 +1642,18 @@ class ReclamationMatch extends React.Component {
 					it would take. When it is not winnable, it says that too, because a player
 					owed the truth is owed it in both directions.
 				*/}
-				{stillReachable && (
-					<p className="rec-status-reach g-body" data-still-reachable={stillReachable.tone}>
-						{stillReachable.text}
-					</p>
-				)}
+				{/*
+					PASS 36. Always rendered, empty when there is nothing to say. This line only
+					appears once one side pulls far enough ahead for the Charter to be in question,
+					so it arrived mid-match and added a whole grid row to the status panel,
+					pushing the board down under it.
+				*/}
+				<p
+					className="rec-status-reach g-body"
+					data-still-reachable={stillReachable ? stillReachable.tone : 'none'}
+				>
+					{stillReachable ? stillReachable.text : ''}
+				</p>
 
 				<div className="rec-status-score" title={`First to ${toClinch} sites takes the Charter`}>
 					<span className="rec-score rec-score--mine">
@@ -1960,7 +1967,14 @@ class ReclamationMatch extends React.Component {
 					Four is the smallest number that carries a whole Ruling, which is the unit a
 					player needs to read as one thing.
 				*/}
-				{simple && this.state.log.length > 0 && (
+				{/*
+					PASS 36. The ticker is ALWAYS rendered in simple mode, empty or not, and its
+					CSS reserves four lines. It used to appear on the first logged event and then
+					grow from one line to four, pushing the whole board down each time: measured
+					at +52px on the first send alone, which is a share of the jump Nick reported
+					when "moves are made".
+				*/}
+				{simple && (
 					<div className="rec-ticker g-screen" data-ticker aria-live="polite">
 						{this.state.log.slice(-4).map((line, i, shown) => (
 							<span className={`g-screen-line${i === shown.length - 1 ? ' rec-ticker-line--in' : ' g-screen-line--dim'}`} key={`${this.state.log.length}-${i}`}>{line}</span>

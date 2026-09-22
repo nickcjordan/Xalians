@@ -321,12 +321,20 @@
 	letter-spacing: var(--g-track-label);
 }
 
+/*
+	PASS 36. The turn row keeps one height across every label it shows.
+
+	"your turn" / "the proctor is deciding" / "skip to the ruling" are different lengths, so
+	the row wrapped to a second line for some of them and back for others: measured at 51px
+	against 72px on a send at 390px, and the 21px came straight out of the board below.
+*/
 .rec-status-turn {
 	display: flex;
 	align-items: center;
 	justify-content: flex-end;
 	gap: var(--g-3);
 	flex-wrap: wrap;
+	min-height: 72px;
 }
 
 .rec-status-phase {
@@ -1521,7 +1529,22 @@
 	.rec-status-score { grid-column: 1; justify-content: flex-start; gap: var(--g-3); }
 	.rec-score-of { display: none; }
 	.rec-status-turn { grid-column: 1; grid-row: auto; justify-content: space-between; flex-direction: row; }
-	.rec-status-hint { font-size: var(--g-size-tiny); padding-top: var(--g-1); }
+	/*
+		PASS 36. On a phone the hint is CLAMPED to two lines rather than reserving room for
+		its longest wrap: the reserved version cost 132px of an 844px viewport and squeezed
+		the board out. Clamping fixes the height just as well and spends a quarter of the
+		room to do it.
+	*/
+	.rec-status-hint {
+		font-size: var(--g-size-tiny);
+		padding-top: var(--g-1);
+		min-height: 2lh;
+		max-height: 2lh;
+		overflow: hidden;
+		display: -webkit-box;
+		-webkit-line-clamp: 2;
+		-webkit-box-orient: vertical;
+	}
 
 	.rec-body {
 		display: flex;
@@ -1973,12 +1996,21 @@
 .rec-body--wide { grid-template-columns: minmax(0, 1fr); }
 
 /* what just happened, in the machine's own voice, two lines under the strip */
+/*
+	PASS 36. The ticker reserves its four lines whether it has them or not.
+
+	It is always rendered now (reclamationMatch.js), so this height is what stops the board
+	moving as the log fills from nothing to four lines. 4 lines at 1.4 line-height on the
+	micro size, plus the gaps between them.
+*/
 .rec-ticker {
 	flex: 0 0 auto;
 	display: flex;
 	flex-direction: column;
+	justify-content: flex-end;
 	gap: 2px;
 	padding: var(--g-2) var(--g-3);
+	min-height: calc(4 * 1.4 * var(--g-size-micro) + 3 * 2px + 2 * var(--g-2));
 }
 
 .rec-ticker .g-screen-line {
@@ -2802,11 +2834,20 @@
 
 /* --- the site floor -------------------------------------------------------- */
 
+/*
+	PASS 36. The head keeps its full height whether or not the Stake button is in it.
+
+	Stake is offered only before your first send of a round and only until the one stake is
+	spent, so it appeared and vanished mid-play and took a grid row with it: measured at
+	72px against 51px, and the 21px went straight into the field below, moving every rank
+	and the bench under it. The head reserves the taller of its two states.
+*/
 .rec-site-head {
 	display: grid;
 	grid-template-columns: auto minmax(0, 1fr);
 	column-gap: var(--g-2);
 	align-items: baseline;
+	min-height: 72px;
 }
 
 .rec-site-index {
@@ -2901,14 +2942,39 @@
 	background: rgba(0, 0, 0, 0.28);
 }
 
-.rec-site-field--empty .rec-rank { flex: 0 0 auto; min-height: 40px; }
-.rec-site-field--empty .rec-site-midline { flex: 1 1 auto; border: 0; }
+/*
+	PASS 36. An empty rank is the SAME height as one holding a creature. It used to reserve
+	40px against the 96px a occupied rank takes, so the first creature to land on a world
+	grew that world by 56px and pushed everything below it down. The rank keeps its full
+	room from the start; an empty world is emptier-looking and the board does not move.
+*/
+.rec-site-field--empty .rec-rank { flex: 0 0 auto; }
+/*
+	PASS 36b. An empty world's seam does NOT stretch to absorb the field's slack. It used to
+	take `flex: 1 1 auto`, so an empty world's seam was as tall as the field allowed and
+	shrank to its reserved height the moment a creature landed, moving the ranks and
+	everything below them by 21px. It now keeps the same reserved height as an occupied
+	world's seam.
+*/
+.rec-site-field--empty .rec-site-midline { border: 0; }
 .rec-site-field--empty .rec-site-midline--empty { margin: 0; }
 .rec-site--empty .rec-site-field { justify-content: stretch; }
 
+/*
+	PASS 36. Everything the seam can hold hangs from its TOP, not its middle.
+
+	The seam reserves one height (above) and shows one of three things in it: a world
+	footing while the world is empty, a ghost while a creature is previewed, a verdict
+	stamp after the Ruling. Centred, each of those sat at a different y because each is a
+	different height, so swapping between them moved the text being read even though the
+	seam itself never changed size. Anchoring the content to the top makes the swap
+	invisible.
+*/
+.rec-site-floor .rec-site-midline { align-items: flex-start; }
 .rec-site-floor .rec-ghost {
 	flex-wrap: wrap;
 	justify-content: center;
+	align-content: flex-start;
 	padding: var(--g-1) var(--g-2);
 }
 
@@ -3186,7 +3252,14 @@
 .rec-piece .rec-figure-hold { color: var(--g-ink); font-size: var(--g-size-micro); }
 .rec-figure--theirs.rec-piece .rec-figure-hold { color: var(--g-ink-mid); }
 
-.rec-ghost { display: inline-flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: var(--g-2) var(--g-3); max-width: 100%; }
+/*
+	PASS 36. The ghost's rows hang from the top of the seam rather than floating in its
+	middle. Centred, a creature whose preview carried a taller meter or an extra plan line
+	pushed the rows above it up and the rows below it down, so moving the pointer along the
+	bench moved the numbers being compared. `flex-start` on both axes holds every row at a
+	fixed y whatever the preview says.
+*/
+.rec-ghost { display: inline-flex; align-items: flex-start; align-content: flex-start; justify-content: center; flex-wrap: wrap; gap: var(--g-2) var(--g-3); max-width: 100%; }
 .rec-ghost .rec-ghost-value {
 	font-family: var(--g-font-mono);
 	font-variant-numeric: tabular-nums;
@@ -3424,7 +3497,23 @@
 }
 .rec-bench--active .rec-bench-heading { color: var(--rec-you); }
 
-.rec-bench-lead { margin: 0; font-size: var(--g-size-micro); color: var(--g-ink-mid); }
+/*
+	PASS 36. The status hint keeps one height across its two states. It carries a longer
+	sentence at rest and a shorter one with a creature lifted (62px against 35px measured),
+	so lifting anything pulled the board up 27px.
+*/
+/*
+	The room is stated in LINES of the hint's own type, so it follows the font size the
+	breakpoints set rather than a pixel guess. Three lines covers the wide table's longest
+	state; the narrow table clamps its own hint instead of reserving five lines, because at
+	390px five lines of reserved hint left only 199px of an 844px viewport for the board and
+	the bench, and a creature could not be pressed at all.
+*/
+.rec-status-hint { min-height: 3lh; }
+
+/* PASS 36: the row is kept when the lead has nothing to say, so the bench never resizes */
+.rec-bench-lead { margin: 0; font-size: var(--g-size-micro); color: var(--g-ink-mid); min-height: calc(3 * 1.4 * var(--g-size-micro)); }
+.rec-bench-lead:empty::before { content: ''; display: inline-block; }
 
 .rec-bench-actions { display: inline-flex; gap: var(--g-2); align-items: center; }
 .rec-bench-actions .g-btn { font-size: var(--g-size-micro); }
@@ -3574,7 +3663,16 @@
 .rec-plinth--armed::before { top: -2px; left: -2px; border-right: 0; border-bottom: 0; }
 .rec-plinth--armed::after { bottom: -2px; right: -2px; border-left: 0; border-top: 0; }
 
-/* the page scrolls when the bench needs the room; the worlds keep a floor */
+/*
+	PASS 36. The page is allowed to be longer than the viewport; it must not CHANGE length
+	while the player plays. That is what the element reservations in this file are for.
+
+	Measured and rejected, twice: pinning the console to 100vh (and a halfway version that
+	pinned only the worlds to 52vh). Both stop the page scrolling and both break the game:
+	at 1440x900 and 390x844 the squeeze put the bench below the fold, a creature at y965 of a
+	900px viewport with `clickable: false`, and on a phone the pass button with it. Any
+	future attempt must check that the controls are pressable, not only that nothing moves.
+*/
 .rec-console--match { height: auto; min-height: 100vh; overflow: visible; }
 .rec-shell--match, .rec-match, .rec-body, .rec-table { overflow: visible; }
 .rec-sites { min-height: 340px; }
@@ -3893,8 +3991,37 @@
 
 /* the trays keep their proportion: the ranks and the seam grow with the width */
 .rec-console--match .rec-sites { min-height: calc(340px * var(--rec-scale)); }
-.rec-console--match .rec-site-floor .rec-site-midline { min-height: calc(72px * var(--rec-scale)); }
-.rec-console--match .rec-rank { min-height: calc(96px * var(--rec-scale)); }
+/*
+	PASS 36. The seam is the SAME HEIGHT whether it holds a ghost, a world footing or
+	nothing. It used to reserve 72px, which the footing's own text outgrew (measured at
+	94px), so previewing a creature swapped a 94px block for a 72px ghost and every rank
+	below it rose 22px. Pointing at a bench card moved the board you were reading.
+
+	136px is the tallest thing the seam carries (a ghost with a plan, reserved just below).
+	Holding that always costs empty seam on a resting table and buys a table that does not
+	move under the pointer; reclamation-shift.mjs holds hover at a shift budget of zero.
+*/
+.rec-console--match .rec-site-floor .rec-site-midline { min-height: calc(136px * var(--rec-scale)); }
+/*
+	PASS 36. A rank reserves the height of a creature STANDING IN IT, not less.
+
+	It reserved 96px and a figure measures 153px, so the first creature to land on a world
+	grew that world by 57px and pushed the bench and everything under it down the page. This
+	is the largest single part of the jump Nick reported when "moves are made". Reserving the
+	real height costs empty rank on a resting table and holds the board still.
+*/
+.rec-console--match .rec-rank { min-height: calc(153px * var(--rec-scale)); }
+/*
+	On a phone the reservations fall back to the compact pass 13 sizes. The full ones made an
+	empty world 279px tall against the 260px ceiling reclamation-proving.mjs holds (pass 13
+	cut phone panels from 386px because three of them stood two screens between the bench
+	and the first world). The phone keeps some shift on send as the price of that guard.
+*/
+@media (max-width: 760px) {
+	.rec-console--match .rec-site-floor .rec-site-midline { min-height: calc(72px * var(--rec-scale)); }
+	.rec-console--match .rec-rank { min-height: calc(96px * var(--rec-scale)); }
+	.rec-site-head { min-height: 0; }
+}
 
 /* the bulbs: one step up per size on a wide screen so the meters stay legible */
 .rec-console--match .rec-meter { --bulb-w: calc(4px * var(--rec-scale)); --bulb-h: calc(10px * var(--rec-scale)); }
@@ -4650,10 +4777,20 @@
 	background: color-mix(in srgb, var(--g-hull-lo) 88%, transparent);
 }
 
-/* with the arithmetic under it the ghost outgrows the seam. It stays out of the flow (a
-   tray whose height follows the pointer never settles), so instead the seam is given
-   room whenever a plan is on the table: every tray carries a ghost at once while a
-   creature is lifted, so the height changes with the lift, never with the hover */
+/*
+	PASS 36. The seam holds the ghost's room AT ALL TIMES.
+
+	This used to grow only `:has(.rec-ghost-plan)`, on the reasoning that "the height changes
+	with the lift, never with the hover". That reasoning was sound and its premise was wrong:
+	the ghost is driven by `armedRecordId || hoverRecordId` (reclamationMatch.js), so merely
+	pointing at a creature on the bench put a plan into all three trays and grew every one of
+	them from 26px to 136px. Measured at 0.0484 shift on a 1440 viewport, which is the
+	"hovering causes more elements to appear and shift the page down" Nick reported.
+
+	Reserving it always costs 110px of empty seam on a resting table and buys a table that
+	never moves under the pointer. reclamation-shift.mjs holds hover at a shift budget of
+	exactly zero, so this cannot regress quietly.
+*/
 .rec-site-floor .rec-site-midline:has(.rec-ghost-plan) { min-height: 136px; }
 .rec-ghost-plan { background: transparent; }
 
@@ -4903,7 +5040,10 @@
 	and one being told it is gone does not need a scolding. The colour is the only thing
 	that differs, and it follows the side colours the rest of the table already uses.
 */
+/* PASS 36: the row is kept when there is nothing to say, so the panel never resizes */
+.rec-status-reach[data-still-reachable="none"] { visibility: hidden; }
 .rec-status-reach {
+	min-height: 2lh;
 	grid-column: 1 / -1;
 	margin: 0;
 	font-size: var(--g-size-micro);
@@ -5088,6 +5228,13 @@
 	lifting and sending and must not interrupt that motion. Depth is thickness, per the design
 	system: the chosen one is solid, the others are flat.
 */
+/*
+	PASS 36. The slot holds the picker's room at all times, so lifting and sending a creature
+	never resizes the bench. 2.25rem is the picker button's own min-height (below) plus the
+	padding the row carries.
+*/
+.rec-bench-acts-slot { min-height: calc(2.25rem + 2 * var(--g-2)); display: flex; align-items: stretch; }
+.rec-bench-acts-slot > * { flex: 1 1 auto; }
 .rec-bench-acts {
 	display: flex;
 	align-items: center;
