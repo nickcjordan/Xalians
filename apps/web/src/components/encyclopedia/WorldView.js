@@ -199,7 +199,11 @@ export default function WorldView() {
 
     return (
         <article className={`el-${world.element} flex flex-col gap-8`}>
-            <Card variant="panel" className="grid gap-6 md:grid-cols-[minmax(0,480px)_minmax(0,1fr)]">
+            {/* The art column takes up to 480px, so splitting at md (720) left
+                the facts beside it about 118px wide -- narrower than a single
+                era station, which then overran the card. The split waits until
+                there is room for both halves. */}
+            <Card variant="panel" className="grid gap-6 lg:grid-cols-[minmax(0,480px)_minmax(0,1fr)]">
                 <WorldArt art={heroArt} hero />
 
                 <div className="flex min-w-0 flex-col gap-5">
