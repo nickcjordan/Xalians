@@ -148,9 +148,10 @@ it('does not lose distinct dependency structures during capacity proof or select
 
 it('can name the distinction between a shared prerequisite and independent prerequisites', () => {
   const named = nameOrdinaryActions([ActionSchema.parse(compound(true)), ActionSchema.parse(compound(false))], [], [], () => 0n);
-  expect(named[0].name).toContain('Shared Success');
-  expect(named[1].name).toContain('Dependent');
-  expect(named[0].name).not.toBe(named[1].name);
+  // The independent form aims one of its outcomes at self, so tier two separates the
+  // two on that fact alone and neither needs a structural parenthetical.
+  expect(named[0].name).toBe('Heavy Touch');
+  expect(named[1].name).toBe('Self Heavy Touch');
 });
 
 it('constructs correlated target/area recipients from requires, without a second relationship field', () => {

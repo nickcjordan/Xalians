@@ -258,24 +258,68 @@ function matchingRanks(branch: Branch, selected: AbilityTemplate): bigint[] {
   return [...found];
 }
 
-function select(branches: Branch[], guaranteed: AbilityTemplate[], count: number, draw: Draw): AbilityTemplate[] {
+/**
+ * The act is what the creature does: which part of it acts, on what, carrying which
+ * outcomes to whom. Everything the identity drops is how hard, how far, how likely or
+ * how long the same act happens to run this time — preparation, recovery, approach,
+ * range, area extent and persistence, and each effect's likelihood, onset, persistence
+ * and duration. Those vary per individual and are named by naming's fact words; they
+ * never make two of a creature's four slots a different capability.
+ */
+function actIdentity(ability: AbilityTemplate): string {
+  const selectsSelf = ability.targeting.length === 1 && ability.targeting[0] === 'self' && !ability.activation.trigger;
+  const area = ability.spatial.area;
+  return stable({
+    instrument: ability.instrument, element: ability.element,
+    mode: ability.delivery.mode, reception: ability.delivery.reception,
+    targeting: [...ability.targeting].sort(),
+    area: area ? { shape: area.shape, anchor: selectsSelf && area.anchor === 'target' ? 'self' : area.anchor } : undefined,
+    effects: ability.effects.map(effect => stable({
+      type: effect.type,
+      status: 'status' in effect ? effect.status : undefined,
+      mechanism: 'mechanism' in effect ? effect.mechanism : undefined,
+      direction: 'direction' in effect ? effect.direction : undefined,
+      methods: 'methods' in effect ? [...effect.methods].sort() : undefined,
+      recipient: selectsSelf && effect.recipient === 'target' ? 'self' : effect.recipient,
+    })).sort(),
+  });
+}
+
+/** Every rank of a branch, with its act identity. A branch's size is the product of its
+ * own authored dimensions (tens, not the whole move space), so this is authoring-scale
+ * work done once when a species is compiled, never per generated creature. */
+function actsOf(branches: Branch[]): string[][] {
+  return branches.map(branch => {
+    const acts: string[] = [];
+    for (let rank = 0n; rank < branch.size; rank++) acts.push(actIdentity(construct(branch, rank)));
+    return acts;
+  });
+}
+
+function select(branches: Branch[], acts: string[][], guaranteed: AbilityTemplate[], count: number, draw: Draw): AbilityTemplate[] {
   const excluded = branches.map(() => new Set<bigint>());
   const exclude = (ability: AbilityTemplate) => branches.forEach((branch, index) => matchingRanks(branch, ability).forEach(rank => excluded[index].add(rank)));
   guaranteed.forEach(exclude);
+  // Act identities already spoken for, by a guaranteed action or by an earlier slot.
+  const usedActs = new Set(guaranteed.map(actIdentity));
   const selected: AbilityTemplate[] = [];
   for (let slot = 0; slot < count; slot++) {
-    const remaining = branches.map((branch, i) => branch.size - BigInt(excluded[i].size));
-    const total = remaining.reduce((sum, value) => sum + value, 0n);
+    // Ascending ranks still on offer, per branch. Without replacement, exactly as before.
+    const available = branches.map((branch, i) => acts[i].flatMap((_, rank) => excluded[i].has(BigInt(rank)) ? [] : [rank]));
+    // Act-first: while any act this creature has not taken remains, draw only among those.
+    const fresh = available.map((ranks, i) => ranks.filter(rank => !usedActs.has(acts[i][rank])));
+    const pool = fresh.some(ranks => ranks.length) ? fresh : available;
+    const sizes = pool.map(ranks => BigInt(ranks.length));
+    const total = sizes.reduce((sum, value) => sum + value, 0n);
     if (total === 0n) throw new Error('species permissions cannot supply four structurally distinct actions');
     let choice = draw(total, `structure/${slot}`);
     if (choice < 0n || choice >= total) throw new Error('draw outside requested interval');
     let index = 0;
-    while (choice >= remaining[index]) { choice -= remaining[index]; index++; }
-    // Lift an index in the remaining space into the full mixed-radix space.
-    for (const blocked of [...excluded[index]].sort((a, b) => a < b ? -1 : a > b ? 1 : 0)) if (blocked <= choice) choice++;
-    const ability = construct(branches[index], choice);
+    while (choice >= sizes[index]) { choice -= sizes[index]; index++; }
+    const ability = construct(branches[index], BigInt(pool[index][Number(choice)]));
     selected.push(ability);
     exclude(ability);
+    usedActs.add(actIdentity(ability));
   }
   return selected;
 }
@@ -291,9 +335,10 @@ function resolveOutput(ability: AbilityTemplate, draw: Draw, label: string): Abi
 export function compileSpecies(input: unknown): CompiledSpecies {
   const species = freeze(SpeciesSchema.parse(input));
   const branches = species.mechanisms.flatMap(branchesFor);
+  const acts = actsOf(branches);
   const slots = 4 - species.actions.length;
   // At most four direct selections prove capacity, including all cross-mechanism aliases.
-  select(branches, species.actions, slots, () => 0n);
+  select(branches, acts, species.actions, slots, () => 0n);
   return Object.freeze({
     species,
     abilities(draw: Draw) {
@@ -302,7 +347,7 @@ export function compileSpecies(input: unknown): CompiledSpecies {
         if (value < 0n || value >= exclusive) throw new Error('draw outside requested interval');
         return value;
       };
-      const selected = select(branches, species.actions, slots, checkedDraw);
+      const selected = select(branches, acts, species.actions, slots, checkedDraw);
       const ordinary = selected.map((ability, index) => ({
         ...ability, key: `ordinary-${index + 1}`,
       }));

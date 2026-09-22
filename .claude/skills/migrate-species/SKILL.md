@@ -33,8 +33,9 @@ Preserve the user's teaser verbatim as `lore.description`. Distinguish explicit 
 4. Keep signature structure fixed. Prefer justified numeric bands to fixed output values; omit status intensity overrides unless source evidence warrants deviation from the catalog default of 50.
 5. Derive source permissions from each mechanism or guaranteed capability. Do not restore template `instruments`, `conduits`, element adjacency grants or a second permission matrix. Validate physical instruments against anatomy and requirements over the entire physiological band.
 6. Run `npm run check:creature-model -- docs/species-templates/v5/<key>.json`. This invokes the shared compiler and proves four distinct actions can be selected. Resolve failures in authoring permissions, not by truncating, padding or adding generation retries.
-7. Write `<key>.ability-audit.md` beside the staged template. Record included/excluded mechanism families, source evidence, retired powers and genuine remaining questions. A schema pass alone does not demonstrate creative completeness.
-8. Update the species walkthrough and encyclopedia when the authorized task includes those changes. Report the actual migration/release status. Do not add a new approval checkpoint where the user has already authorized the change.
+7. Read the naming line that `check:creature-model` prints, and read the ordinary names it generates over seeds. Defaults name a contact strike for the body part and harm for what it does; a species whose parenthetical or shared-base-name rate is not near zero needs an authored `naming` vocabulary that fits this body, not a permission change. Every authored word must fit every variant it can apply to.
+8. Write `<key>.ability-audit.md` beside the staged template. Record included/excluded mechanism families, source evidence, retired powers and genuine remaining questions. A schema pass alone does not demonstrate creative completeness.
+9. Update the species walkthrough and encyclopedia when the authorized task includes those changes. Report the actual migration/release status. Do not add a new approval checkpoint where the user has already authorized the change.
 
 ## Invariants to preserve
 
