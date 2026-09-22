@@ -27,7 +27,7 @@ The End Wars plate went wrong most often when a step here was skipped. Do them i
 3. **Block in the static layers at full frame**, darkest to lightest, far to near. Judge at the size the site shows it (about 1160 pixels wide), not zoomed in.
 4. **Add motion last, one system at a time**, following section 5.
 5. **Run the piece audit** (section 7) and fix every piece that fails alone or in context.
-6. **Run the reviewer loop** (section 8) until the reviewer finds nothing worth a round.
+6. **Run the reviewer loop** (section 8) to its stop gate without involving Nick.
 7. **Export, wire the panel, verify on the page** (section 9), open the PR with auto-merge.
 
 ## 4. Composition rules
@@ -63,9 +63,27 @@ The End Wars plate went wrong most often when a step here was skipped. Do them i
 
 `node scripts/plates/pieces-audit.cjs <absolute path to source.html>` tags every commented piece and every shape inside the major groups, renders each one alone on a neutral ground and again in its surroundings with an outline, and writes contact sheets to `untracked/snaps/pieces/`. Read every sheet. For each piece ask: what is this, is that what it reads as, and does it touch what it should touch. This is the check that found the floating mast, the searchlight beam, the debris perched on spire tips, the pipe starting in the river and the slab floating in the water, none of which a full-frame look or a reviewer round had caught.
 
-## 8. The reviewer loop
+## 8. The reviewer loop (runs without Nick)
 
-Resume or start an Opus reviewer subagent with a brief that names the file, the capture tools and the owner's concern for the round, and asks for ranked findings with concrete fixes and a score. Implement what it ranks, deviate only when a render shows its suggestion fails, and say so. Stop only when the reviewer finds nothing worth a round, not when the findings feel marginal. The reviewer judges pixels; it does not know intent, so the piece list from step 2 stays your job.
+The loop is how the plate reaches Nick already finished. On End Wars he had to point out more than a dozen problems by hand (the beam with no purpose, the floating mast, the roads to nowhere, the empty middle distance, the abrupt bolts), several of them after a reviewer had scored the plate 9.5. Each of those failures had one of three causes: the reviewer judged pixels without knowing what each piece was meant to be, it never looked at motion frame by frame, or it had been resumed so many times that it stopped seeing what it had already accepted. The loop below closes all three, and it runs to its stop gate without asking Nick anything.
+
+**The files**
+- `.claude/skills/living-plate/reviewer-brief.md`: the reviewer's prompt. It requires four passes every round: full frame at site size, every piece against the piece list, motion in dense time captures across a full cycle, and the owner checklist.
+- `.claude/skills/living-plate/owner-checklist.md`: every correction Nick made on End Wars, as a pass or fail question. When he corrects something on a later plate, the correction becomes a new item in the same session, so no correction is ever needed twice.
+- `art/plates/<era>/review-log.md`: one entry per round (score, findings, what was changed, any deviation and the render that justified it, checklist failures). The loop resumes from it after a context reset; it is committed with the plate.
+
+**One round**
+1. Send the brief to an Opus reviewer subagent. Resume the same reviewer between rounds so it can confirm its own findings were fixed.
+2. Implement every finding in rank order. Deviate only when a render shows the suggestion fails, and record the render in the log. The builder never grades its own work and never skips a finding as marginal.
+3. Rerun the piece audit on anything touched, log the round, and start the next one.
+
+**Cold eyes.** Every third round, and always at the gate, use a fresh reviewer that has seen no earlier round. A resumed reviewer anchors on what it already accepted; a fresh one sees the plate the way Nick does.
+
+**Stop gate.** The loop ends only when, in the same round: a cold reviewer returns "Nothing worth a round", every owner checklist item passes, the piece audit shows no failing piece, and the score is at least 9. Then ship (section 9) and show Nick the result.
+
+**Round cap.** If fifteen rounds pass without clearing the gate, stop and tell Nick which findings keep coming back and why, instead of looping on. Two rounds in a row with the same top finding also stops the loop early: the fix is wrong, not unfinished, so rethink the piece before another round.
+
+**When Nick reviews anyway.** Anything he points out after the gate means the loop missed it. Add it to the owner checklist, fix it, and run a cold round before handing back.
 
 Capture tools, all under `scripts/plates/` (outputs in `untracked/snaps/`; create the folder first):
 
