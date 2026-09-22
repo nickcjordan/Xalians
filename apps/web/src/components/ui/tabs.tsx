@@ -56,8 +56,13 @@ function TabsList({
 /* One tab: legend face on level 1 with a hairline edge; the active tab
    carries the viable underline (contract section 6). Exported so router
    NavLinks can wear the same classes as Radix triggers. */
+/* `min-h-11 sm:min-h-0`: py-2 on 13px legend type measures 39px, under the
+   44px floor a thumb needs, and these are the encyclopedia's primary
+   navigation. The floor applies on touch widths only and relaxes above sm
+   where a pointer is assumed, the same way the footer links and the button
+   base already do, so the desktop tab is unchanged. */
 const tabTriggerClass =
-  "inline-flex items-center gap-1.5 border border-edge border-b-2 border-b-transparent bg-s1 px-4 py-2 font-legend text-[13px] font-medium uppercase tracking-legend whitespace-nowrap text-ink-2 transition-colors duration-1 ease-out hover:text-ink focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring disabled:pointer-events-none disabled:opacity-40 data-[state=active]:border-b-viable data-[state=active]:text-ink aria-[current=page]:border-b-viable aria-[current=page]:text-ink [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4"
+  "inline-flex min-h-11 items-center gap-1.5 border border-edge border-b-2 border-b-transparent bg-s1 px-4 py-2 font-legend text-[13px] font-medium uppercase tracking-legend whitespace-nowrap text-ink-2 transition-colors duration-1 ease-out hover:text-ink focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring disabled:pointer-events-none disabled:opacity-40 data-[state=active]:border-b-viable data-[state=active]:text-ink aria-[current=page]:border-b-viable aria-[current=page]:text-ink sm:min-h-0 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4"
 
 function TabsTrigger({
   className,

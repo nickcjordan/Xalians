@@ -590,7 +590,9 @@ function StoryPart() {
 							{!part.next && (
 								<div className="mt-7 border-t border-edge pt-5 text-center">
 									<p className="type-legend m-0">End of the Story</p>
-									<div className="mt-4 flex justify-center gap-4">
+									{/* Two `shrink-0` buttons and a gap are wider than a small
+									    phone, so the second one ran off the page: wrap instead. */}
+									<div className="mt-4 flex flex-wrap justify-center gap-4">
 										<Button asChild variant="secondary"><Link to="/encyclopedia/species">The Bestiary</Link></Button>
 										<Button asChild variant="secondary"><Link to="/encyclopedia/worlds">The Worlds</Link></Button>
 									</div>
