@@ -114,15 +114,18 @@ for (const view of ['simple', 'advanced']) {
 			await enter.first().waitFor({ state: 'visible', timeout: 15000 });
 			await enter.first().click();
 
-			// the draft: take the proctor's own keep so the check is about the table, not the draft
-			const auto = page.locator('[data-draft-auto]');
-			if (await auto.count()) {
-				await auto.first().waitFor({ state: 'visible', timeout: 15000 });
-				await shot('draft');
-				await auto.first().click();
-				const confirm = page.locator('[data-draft-confirm]');
-				if (await confirm.count() && await confirm.first().isEnabled()) await confirm.first().click();
-			}
+			/*
+				PASS 35. The draft is skipped by default, so pressing Enter lands on the table.
+				This asserts that rather than tolerating either, because "skipped by default" is
+				the thing a player meets and a silent return of the draft screen is exactly the
+				regression worth catching. `?draft=1` still reaches it; the hot-seat check
+				covers the drafted path.
+			*/
+			const draftScreens = await page.locator('[data-draft-auto]').count();
+			assert(
+				draftScreens === 0,
+				`${label}: the draft screen appeared; it is meant to be skipped unless ?draft=1`,
+			);
 
 			// Deploy: send until the round resolves, pressing a creature then a world. The
 			// table is the choice surface, so the check drives it the way a player does.
