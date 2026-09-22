@@ -204,6 +204,20 @@ describe("Powerworks battle rules", () => {
     expect(c.signatureSpent).toBe(true);
     expect(c.cooldowns[0]).toBe(COOLDOWN_ROUNDS.brief);
   });
+  it("does not announce a redirect for a self-only move whose ordered target has fallen", () => {
+    const s = createRun();
+    const g = unit(s, "G");
+    const anchor = g.moves.findIndex((m) => m.effects.every((e) => e.recipient === "self"));
+    expect(anchor).toBeGreaterThanOrEqual(0);
+    s.enemies[0].hp = 1;
+    s.enemies[1].hp = 200;
+    const q = orders(s);
+    q.G = { move: anchor, target: s.enemies[0].id };
+    const r = resolveRound(s, q);
+    expect(r.frames.some((f) => f.event?.kind === "redirect" && f.event.actorId === "G")).toBe(false);
+    expect(r.state.log.some((l) => l.includes("Graviclaw redirects"))).toBe(false);
+    expect(unit(r.state, "G").conditions.some((c) => c.status === "protected")).toBe(true);
+  });
   it("ends immediately after the final knockout and preserves unexecuted orders", () => {
     const s = createRun();
     s.enemies[0].hp = 1;
