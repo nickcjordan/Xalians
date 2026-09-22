@@ -41,6 +41,7 @@
 
 import { recordActions, recordPassives, isSignatureAbility } from '@xalians/content/ability-compatibility';
 import type { XalianRecord } from '@xalians/content/schema';
+import { conceptOf, roundsFor, type Concept } from './statusLayer.ts';
 
 // ---------------------------------------------------------------------------
 // what the game can express
@@ -55,6 +56,12 @@ export const EFFECT_ROLE = {
 	ATTACK: 'attack',
 	SHIELD: 'shield',
 	MEND: 'mend',
+	/*
+		PASS 32. An act whose whole point is the condition it leaves behind. Before the status
+		layer these were UNSUPPORTED: 276 of 1280 actions (21.6 percent), which made 17
+		creatures unfieldable and locked Hypnopet out of the game entirely at 10 of 10.
+	*/
+	AFFLICT: 'afflict',
 	UNSUPPORTED: 'unsupported',
 } as const;
 export type EffectRole = typeof EFFECT_ROLE[keyof typeof EFFECT_ROLE];
@@ -102,9 +109,16 @@ const ATTACK_TYPES = new Set(['harm', 'displace']);
 	  mend (restore)                         17    1.3%
 	  remove-only                            14    1.1%
 */
+/*
+	PASS 32 RETIRED THE `status` ENTRY. The sentence used to read "applies a lasting
+	condition the frame does not carry between worlds", which was true until the status layer
+	made the frame carry exactly that. `remove` stays unsupported: clearing a condition is
+	only worth an act once a game has conditions worth clearing, and the pool has 14
+	remove-only actions against 267 status-only ones, so it is the smaller half of the work
+	and is not guessed at here.
+*/
 export const UNSUPPORTED_EFFECT_WORDS: Record<string, string> = {
-	status: 'applies a lasting condition the frame does not carry between worlds',
-	remove: 'clears a condition the frame does not carry between worlds',
+	remove: 'clears a condition, which no act at this table applies to itself',
 };
 
 /*
@@ -124,7 +138,7 @@ function tableEffectOf(ability: any): { effect: any; type: string } | null {
 	if (effects.length === 0) {
 		return null;
 	}
-	for (const type of ['harm', 'displace', 'protect', 'restore']) {
+	for (const type of ['harm', 'displace', 'protect', 'restore', 'status']) {
 		const found = effects.find((e: any) => e && e.type === type);
 		if (found) {
 			return { effect: found, type };
@@ -132,6 +146,44 @@ function tableEffectOf(ability: any): { effect: any; type: string } | null {
 	}
 	// nothing the table can resolve: report the first effect so the reason names it
 	return { effect: effects[0], type: String(effects[0]?.type ?? 'none') };
+}
+
+/*
+	EVERY status an ability applies, not only the one the table judged it by. An act that
+	harms AND blinds is an attack whose blow also blinds, and both halves matter, so this
+	reads the whole effect list.
+
+	A status the concept map cannot sort is dropped rather than carried as an unknown. That
+	cannot currently happen (statusLayer.ts sorts all 29 catalog statuses and will not
+	compile if one is added without sorting), so this is the belt to that braces.
+*/
+function statusEffectsOf(ability: any): StatusEffectReading[] {
+	const effects = Array.isArray(ability?.effects) ? ability.effects : [];
+	const read: StatusEffectReading[] = [];
+	for (const effect of effects) {
+		if (!effect || effect.type !== 'status' || !effect.status) {
+			continue;
+		}
+		const concept = conceptOf(String(effect.status));
+		if (!concept) {
+			continue;
+		}
+		const rounds = roundsFor(effect);
+		if (rounds === 0) {
+			continue;
+		}
+		read.push({
+			status: String(effect.status),
+			concept,
+			recipient: String(effect.recipient ?? 'target'),
+			persistence: String(effect.persistence ?? ''),
+			...(effect.duration ? { duration: String(effect.duration) } : {}),
+			...(effect.bound ? { bound: String(effect.bound) } : {}),
+			removable: Array.isArray(effect.removable) ? effect.removable.map(String) : [],
+			rounds,
+		});
+	}
+	return read;
 }
 
 /*
@@ -186,6 +238,26 @@ export interface ActionReading {
 	intensity: number;
 	/** which attribute powers this action (pass 2's attribute jobs, read from delivery) */
 	governingAttribute: string | null;
+	/*
+		PASS 32: the statuses this action applies, already sorted into concepts and given a
+		life in rounds. Read here because this file is the seam: the rules never look at an
+		effect, they look at these.
+	*/
+	statusEffects?: StatusEffectReading[];
+}
+
+/** One status an action applies, as the table carries it. */
+export interface StatusEffectReading {
+	status: string;
+	concept: Concept;
+	/** 'self' or 'target', straight off the effect */
+	recipient: string;
+	persistence: string;
+	duration?: string;
+	bound?: string;
+	removable: string[];
+	/** rounds it lives, or null when it is maintained by its source */
+	rounds: number | null;
 }
 
 /*
@@ -297,6 +369,7 @@ export function readAction(ability: any): ActionReading {
 		harmMechanism: effect && effect.type === 'harm' && effect.mechanism
 			? String(effect.mechanism) : null,
 		governingAttribute: null as string | null,
+		statusEffects: statusEffectsOf(ability),
 	};
 
 	if (!chosen || !effect) {
@@ -333,14 +406,26 @@ export function readAction(ability: any): ActionReading {
 		(frozen) and Avilily (paralyzed), and a player owning a Hypnopet should be told it
 		is entrancement that this Proving cannot carry.
 	*/
-	const named = type === 'status' && effect.status ? String(effect.status) : null;
+	if (type === 'status') {
+		/*
+			PASS 32. A status-only act is an AFFLICT: it decides a world by making the creatures
+			at it worse rather than by cutting them down. `statusEffects` is read from every
+			status effect the action carries, not just the one the table judged it by, because a
+			single act can burn and blind at once and both land.
+
+			An afflict aimed only at itself is still an act, unlike an attack: a creature that
+			shields or mends or steadies itself is doing something the Clash resolves. 50 of the
+			pool's 267 status-only actions are self-aimed and most of them are boons.
+		*/
+		return {
+			...reading,
+			role: EFFECT_ROLE.AFFLICT,
+			governingAttribute: governingAttributeFor(EFFECT_ROLE.ATTACK, delivery),
+		};
+	}
 	const base_reason = UNSUPPORTED_EFFECT_WORDS[type]
 		|| `does something this Proving does not model (${type})`;
-	return {
-		...reading,
-		role: EFFECT_ROLE.UNSUPPORTED,
-		unsupportedReason: named ? `${base_reason}: ${named}` : base_reason,
-	};
+	return { ...reading, role: EFFECT_ROLE.UNSUPPORTED, unsupportedReason: base_reason };
 }
 
 // ---------------------------------------------------------------------------

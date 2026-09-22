@@ -400,7 +400,19 @@ export function buildActs(record: XalianRecord, strainMult: number, magnitudeSca
 		const attrs = (record && record.attributes) as unknown as Record<string, number> || {};
 		const attrValue = reading.governingAttribute ? attrs[reading.governingAttribute] : undefined;
 		const printed = magnitudeOf(reading.intensity, attrValue);
-		const actClass: ActClass = reading.role !== EFFECT_ROLE.ATTACK
+		/*
+			PASS 32. An AFFLICT aimed at an enemy is an attack at this table, so it classes with
+			the attacks. Before this, an afflict fell to SUPPORT and `blowActOf` could not find
+			an attacking act for a creature whose only act applies a condition, which sent it in
+			swinging the synthetic MIN_BLOW_MAGNITUDE fallback: measured at 3.2 percent of sends
+			against 0.0 on main, which is the regression this branch prevents.
+
+			An afflict aimed only at itself stays SUPPORT, because a creature steadying itself
+			is not throwing a blow.
+		*/
+		const afflictsOthers = reading.role === EFFECT_ROLE.AFFLICT && reading.touchesOthers;
+		const attacks = reading.role === EFFECT_ROLE.ATTACK || afflictsOthers;
+		const actClass: ActClass = !attacks
 			? (ACT_CLASS.SUPPORT as ActClass)
 			: reading.delivery === 'contact'
 				? (ACT_CLASS.CONTACT as ActClass)
@@ -425,6 +437,10 @@ export function buildActs(record: XalianRecord, strainMult: number, magnitudeSca
 			area: reading.area,
 			range: reading.range,
 			reach: reading.reach,
+			// pass 32: the conditions this act applies, carried so the Clash can leave them
+			...(reading.statusEffects && reading.statusEffects.length
+				? { statusEffects: reading.statusEffects }
+				: {}),
 		};
 	});
 }
