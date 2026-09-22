@@ -164,9 +164,10 @@ function Panel({
 				)}
 			</span>
 			{n && art.era ? (
-				<span className="type-data absolute top-4 right-4 z-10 flex items-baseline gap-2.5 border border-edge-strong bg-room/80 px-2.5 py-1.5 text-tiny tracking-legend text-ink">
+				<span className="type-data absolute top-2 right-2 z-10 flex items-baseline gap-2.5 border border-edge-strong bg-room/80 px-2 py-1 text-tiny tracking-legend text-ink sm:top-4 sm:right-4 sm:px-2.5 sm:py-1.5">
 					<span>{n}</span>
-					<span className="text-ink-3">{ERA_TITLE[art.era]}</span>
+					{/* On a phone the tag would cover a quarter of the painting; the numeral stays, the era name is in the link's label. */}
+					<span className="hidden text-ink-3 sm:inline">{ERA_TITLE[art.era]}</span>
 				</span>
 			) : null}
 		</figure>
