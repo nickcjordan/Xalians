@@ -4,20 +4,16 @@ import { MemoryRouter } from 'react-router';
 import { describe, expect, it, vi } from 'vitest';
 
 /**
- * Issue #432: home page orientation. Covers the lede above the lore
- * paragraph, the two new section headings (with their aria-labels removed
- * in favor of the headings), the full seven-row directory with its "Play"
- * group label, and the hero lockup collapsing to a single accessible name.
+ * The story front door (docs/design/home-story-page-brief.md): Nick's 2022
+ * copy in his order, one fixed specimen from a real generator record, the
+ * one primary key, and the five games.
  */
 
 vi.mock('../../components/navbar', () => ({ default: () => null }));
 vi.mock('aws-amplify', () => ({ Amplify: { configure: vi.fn() } }));
-vi.mock('virtual:xalians-home-data', () => ({
-	worlds: [{ key: 'magmuth', name: 'Magmuth', element: 'fire', terrain: 'Jagged Molten Cliffs, Lava Pits', image: 'img.png', imageAlt: 'Magmuth' }],
-	species: [{ id: '00001', name: 'Graviclaw', type: 'Metal' }],
-}));
 
 import Home from '../home';
+import specimen from '../home/specimen.json';
 
 function renderHome() {
 	return render(
@@ -27,66 +23,67 @@ function renderHome() {
 	);
 }
 
-describe('Home (#432 orientation)', () => {
-	it('leads with the in-world lede above the lore paragraph, and drops the Xalia eyebrow', () => {
+describe('Home (the story front door)', () => {
+	it('opens with the lockup, the 2022 line and the one primary key', () => {
 		renderHome();
-
-		expect(
-			screen.getByText(/Across fourteen worlds, the Nemesis Plague is still spreading\./)
-		).toBeInTheDocument();
-		expect(screen.getByText(/King Kozrak holds the only machine that still prints a Scrambler Token/)).toBeInTheDocument();
-		expect(screen.getByRole('heading', { level: 1, name: 'Creatures grown for dying worlds' })).toBeInTheDocument();
-		expect(screen.queryByText('Xalia')).not.toBeInTheDocument();
+		expect(screen.getByRole('heading', { level: 1 })).toBeInTheDocument();
+		expect(screen.getByText(/Xalia is home to a wide range of powerful, bioengineered creatures/)).toBeInTheDocument();
+		const keys = screen.getAllByRole('link', { name: 'Try the Generator' });
+		expect(keys).toHaveLength(2);
+		expect(keys[0]).toHaveAttribute('href', '/generator');
+		expect(keys[0].getAttribute('data-variant')).toBe('default');
+		expect(keys[1].getAttribute('data-variant')).toBe('secondary');
 	});
 
-	it('gives the worlds and species sections visible headings and captions', () => {
+	it('tells the story in the 2022 order under the 2022 headings', () => {
 		renderHome();
-
-		expect(screen.getByRole('heading', { level: 2, name: 'Fourteen worlds' })).toBeInTheDocument();
-		expect(screen.getByText('Every Xalian is grown for one of them. Open a world for its history and its native species.')).toBeInTheDocument();
-		// The terrain line is the difference between a world tile and a swatch.
-		expect(screen.getByText('Jagged Molten Cliffs, Lava Pits')).toBeInTheDocument();
-
-		expect(screen.getByRole('heading', { level: 2, name: 'From the bestiary' })).toBeInTheDocument();
-		expect(screen.getByText('Species silhouettes from the record plates. Open one to read its record.')).toBeInTheDocument();
-	});
-
-	it('lists all seven nav destinations under a Play group label, in order, with per-row link text', () => {
-		renderHome();
-
-		const groupLabels = screen.getAllByText('Play').filter((el) => el.tagName === 'P');
-		expect(groupLabels).toHaveLength(1);
-
-		const rows: Array<[string, string, string]> = [
-			['Generator', '/generator', 'Generate'],
-			['Encyclopedia', '/encyclopedia', 'Read'],
-			['Duel', '/duel', 'Play'],
-			['Reclamation', '/reclamation', 'Play'],
-			['Expedition', '/long-return', 'Play'],
-			['Powerworks', '/powerworks', 'Play'],
-			['Arcade', '/arcade', 'Play'],
+		for (const name of ['The Story', 'The Galaxy of Xalia', 'The Tournament & Tokens']) {
+			expect(screen.getByRole('heading', { level: 2, name })).toBeInTheDocument();
+		}
+		const text = document.body.textContent || '';
+		const order = [
+			'For thousands of years, the ancient race known as the Vallerii',
+			'But the high technology of the Vallerii',
+			'The wars have long since ended',
+			'With the plague burning through the galaxy',
+			'Today, Krystos remains a snowy wasteland',
+			'Hulking, white-furred apes',
+			'Recently, the king has announced plans',
+			'By scrambling and encrypting the genome',
+			'Start generating now',
 		];
-
-		for (const [name, to, linkText] of rows) {
-			const heading = screen.getByText(name);
-			const row = heading.closest('a');
-			expect(row).not.toBeNull();
-			expect(row).toHaveAttribute('href', to);
-			expect(row!.textContent).toContain(linkText);
+		let last = -1;
+		for (const phrase of order) {
+			const at = text.indexOf(phrase);
+			expect(at, phrase).toBeGreaterThan(last);
+			last = at;
 		}
-
-		expect(screen.getByText('Push a crew of your Xalians across hazardous worlds and bring them home.')).toBeInTheDocument();
-		expect(screen.getByText('Take a squad of four through four encounters inside a dormant Vallerii facility.')).toBeInTheDocument();
+		// No dashes of any kind in the copy.
+		expect(text).not.toMatch(/[–—]/);
 	});
 
-	it('gives the hero lockup a single accessible name, not "Xalians ALIANS"', () => {
+	it('shows the one fixed specimen from its record and links to its pages', () => {
 		renderHome();
+		expect(specimen.provenance.seed).toBe('home-sample-2');
+		expect(screen.getByRole('heading', { level: 3, name: /Yetimoth/ })).toBeInTheDocument();
+		expect(screen.getByText('Mantle of Unyielding Winter')).toBeInTheDocument();
+		expect(screen.getByRole('link', { name: 'Its record' })).toHaveAttribute('href', '/encyclopedia/species/yetimoth');
+		expect(screen.getByRole('link', { name: 'Its world' })).toHaveAttribute('href', '/encyclopedia/worlds/krystos');
+		expect(screen.getByRole('link', { name: 'A Yetimoth of Krystos, shown in full below' })).toHaveAttribute('href', '#specimen');
+	});
 
-		const lockups = screen.getAllByRole('link', { name: 'Xalians' });
-		expect(lockups.length).toBeGreaterThan(0);
-		for (const lockup of lockups) {
-			expect(lockup).toHaveAccessibleName('Xalians');
+	it('lists the five games with their routes', () => {
+		renderHome();
+		const games: Array<[string, string]> = [
+			['Duel', '/duel'],
+			['Reclamation', '/reclamation'],
+			['Expedition', '/long-return'],
+			['Powerworks', '/powerworks'],
+			['Arcade', '/arcade'],
+		];
+		for (const [name, to] of games) {
+			const row = screen.getByText(name).closest('a');
+			expect(row).toHaveAttribute('href', to);
 		}
-		expect(screen.queryByRole('link', { name: /xalians alians/i })).not.toBeInTheDocument();
 	});
 });

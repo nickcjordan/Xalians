@@ -1,0 +1,275 @@
+{
+	"id": "xal_27bee5e491ae7be1634f",
+	"species": "yetimoth",
+	"provenance": {
+		"seed": "home-sample-2",
+		"generatorVersion": "0.5.0",
+		"schemaVersion": "4.0.0",
+		"generatedAt": "2026-09-19T00:00:00Z",
+		"origin": "krystos",
+		"serial": 1,
+		"profile": "full",
+		"releaseId": "generation-0.5.0-4"
+	},
+	"physiology": {
+		"corporeality": "corporeal",
+		"composition": {
+			"primary": "flesh",
+			"secondary": "mineral"
+		},
+		"bodyPlan": "biped",
+		"anatomy": [
+			"tusks",
+			"trunk",
+			"fists",
+			"hide"
+		],
+		"covering": "fur",
+		"heightCm": 231,
+		"weightKg": 394,
+		"lifespan": "long",
+		"genome": {
+			"chirality": "levo"
+		},
+		"diet": "omnivore",
+		"communication": [
+			"vocal",
+			"display"
+		],
+		"breathes": [
+			"gas"
+		],
+		"environmentalTolerance": {
+			"ambientMedia": [
+				"gas"
+			],
+			"temperatureC": {
+				"min": -60,
+				"max": -10
+			}
+		},
+		"capabilities": {
+			"flight": 0,
+			"swim": 13,
+			"burrow": 29,
+			"climb": 21,
+			"sprint": 20,
+			"leap": 23,
+			"manipulation": 50
+		},
+		"senses": {
+			"sight": 42,
+			"hearing": 67,
+			"smell": 59
+		}
+	},
+	"archetype": {
+		"key": "bulwark",
+		"favors": [
+			"vitality",
+			"resilience"
+		]
+	},
+	"attributes": {
+		"strength": 86,
+		"vitality": 84,
+		"endurance": 69,
+		"agility": 14,
+		"reflex": 16,
+		"intelligence": 43,
+		"willpower": 67,
+		"instinct": 59,
+		"charisma": 47,
+		"resilience": 89
+	},
+	"element": {
+		"primary": "ice",
+		"affinities": {
+			"ice": 100
+		}
+	},
+	"traits": [
+		"armored",
+		"territorial"
+	],
+	"temperament": {
+		"boldness": 53,
+		"curiosity": 36,
+		"energy": 48,
+		"aggression": 40,
+		"sociability": 43
+	},
+	"appearance": {
+		"finish": "standard"
+	},
+	"actions": [
+		{
+			"key": "yetimoth-defining",
+			"name": "Mantle of Unyielding Winter",
+			"instrument": "hide",
+			"medium": "ice",
+			"activation": {
+				"operation": "ongoing"
+			},
+			"timing": {
+				"preparation": "brief",
+				"recovery": "brief"
+			},
+			"delivery": {
+				"mode": "self",
+				"approach": "stationary"
+			},
+			"spatial": {
+				"selectivity": "selective"
+			},
+			"targeting": {
+				"relation": "self",
+				"subjects": [
+					"creature"
+				]
+			},
+			"effects": [
+				{
+					"kind": "protect",
+					"recipient": "self",
+					"emphasis": "primary",
+					"onset": "instant",
+					"persistence": "sustained",
+					"likelihood": "consistent",
+					"method": "barrier",
+					"against": "harm"
+				}
+			],
+			"description": "The Yetimoth draws thick sheets of frost out of nothing and layers them over its own pelt until the blows of its opponents stop reaching it.",
+			"intensity": 68
+		},
+		{
+			"key": "yetimoth-standard-default-tusks-terrorize-ice",
+			"name": "Daunting Frost",
+			"instrument": "tusks",
+			"medium": "ice",
+			"intensity": 95,
+			"activation": {
+				"operation": "discrete"
+			},
+			"timing": {
+				"preparation": "brief",
+				"recovery": "brief"
+			},
+			"spatial": {
+				"range": "short",
+				"selectivity": "selective"
+			},
+			"delivery": {
+				"mode": "signal",
+				"approach": "stationary"
+			},
+			"targeting": {
+				"relation": "other",
+				"subjects": [
+					"creature",
+					"object"
+				]
+			},
+			"effects": [
+				{
+					"kind": "suppress",
+					"recipient": "target",
+					"emphasis": "primary",
+					"onset": "instant",
+					"persistence": "resolved",
+					"likelihood": "consistent",
+					"aspect": "composure"
+				}
+			],
+			"description": "A directed signal unsettles the recipient and suppresses composure."
+		},
+		{
+			"key": "yetimoth-standard-default-fists-strike-ice",
+			"name": "Icebound Strike",
+			"instrument": "fists",
+			"medium": "ice",
+			"intensity": 42,
+			"activation": {
+				"operation": "discrete"
+			},
+			"timing": {
+				"preparation": "brief",
+				"recovery": "brief"
+			},
+			"spatial": {
+				"range": "contact",
+				"selectivity": "selective"
+			},
+			"delivery": {
+				"mode": "contact",
+				"approach": "stationary"
+			},
+			"targeting": {
+				"relation": "other",
+				"subjects": [
+					"creature",
+					"object"
+				]
+			},
+			"effects": [
+				{
+					"kind": "harm",
+					"recipient": "target",
+					"emphasis": "primary",
+					"onset": "instant",
+					"persistence": "resolved",
+					"likelihood": "consistent",
+					"mechanism": "impact"
+				}
+			],
+			"description": "A direct impact delivered through the stated instrument."
+		},
+		{
+			"key": "yetimoth-standard-default-tusks-crush-ice",
+			"name": "Glacial Squash",
+			"instrument": "tusks",
+			"medium": "ice",
+			"intensity": 69,
+			"activation": {
+				"operation": "ongoing"
+			},
+			"timing": {
+				"preparation": "brief",
+				"recovery": "brief"
+			},
+			"spatial": {
+				"range": "contact",
+				"selectivity": "selective"
+			},
+			"delivery": {
+				"mode": "contact",
+				"approach": "stationary"
+			},
+			"targeting": {
+				"relation": "other",
+				"subjects": [
+					"creature",
+					"object"
+				]
+			},
+			"effects": [
+				{
+					"kind": "harm",
+					"recipient": "target",
+					"emphasis": "primary",
+					"onset": "instant",
+					"persistence": "sustained",
+					"likelihood": "consistent",
+					"mechanism": "compression"
+				}
+			],
+			"description": "Sustained pressure compresses the recipient."
+		}
+	],
+	"passives": [],
+	"signature": {
+		"kind": "action",
+		"key": "yetimoth-defining"
+	}
+}

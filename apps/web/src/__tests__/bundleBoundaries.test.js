@@ -52,12 +52,21 @@ describe('production loading boundaries', () => {
 		expect(app).not.toMatch(/^const StyleGuidePage = lazy\(/m);
 	});
 
-	it('builds Home from the compact generated content contract', () => {
+	it('builds the overview page from the compact generated content contract', () => {
+		const overview = fs.readFileSync(path.join(SRC_DIR, 'pages', 'overviewPage.tsx'), 'utf8');
+
+		expect(overview).toContain("from 'virtual:xalians-home-data'");
+		expect(overview).not.toMatch(/from ['\"]\.\.\/lore/);
+		expect(overview).not.toMatch(/@xalians\/content\/(?:species|planetRecords)\.json/);
+	});
+
+	it('keeps Home off the content bundles: one fixed specimen record and static art', () => {
 		const home = fs.readFileSync(path.join(SRC_DIR, 'pages', 'home.tsx'), 'utf8');
 
-		expect(home).toContain("from 'virtual:xalians-home-data'");
+		expect(home).toContain("from './home/specimen.json'");
 		expect(home).not.toMatch(/from ['\"]\.\.\/lore/);
-		expect(home).not.toMatch(/@xalians\/content\/(?:species|planetRecords)\.json/);
+		expect(home).not.toMatch(/virtual:xalians-home-data/);
+		expect(home).not.toMatch(/@xalians\/content\//);
 	});
 
 	it('keeps species art lazy by format and species', () => {

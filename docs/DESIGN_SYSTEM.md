@@ -200,6 +200,7 @@ Empty states are a solid hairline box on `--g-s0` with a legend line and one sen
 | Helix spinner rungs lighting in sequence | 1.2 s cycle | `.helix-spinner` in `globals.css`; the one loop, because it is loading |
 | The home splash morph, once on arrival | GSAP timeline | `xaliansLogoDnaAnimated.js` |
 | A value updating on glass | 200 ms | the component |
+| A home story plate or panel entering as it scrolls into view, once | 320 ms | `Reveal` in `pages/home.tsx` (docs/design/home-story-page-brief.md) |
 
 Under reduced motion `globals.css` sets every animation and transition to near zero, the spinner holds its 70 percent frame and the splash shows its resting frame. Nothing in the catalog is added without a row here.
 
