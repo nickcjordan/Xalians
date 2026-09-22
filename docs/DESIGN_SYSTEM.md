@@ -201,6 +201,7 @@ Empty states are a solid hairline box on `--g-s0` with a legend line and one sen
 | The home splash morph, once on arrival | GSAP timeline | `xaliansLogoDnaAnimated.js` |
 | A value updating on glass | 200 ms | the component |
 | The home story: a painting settling into its frame and a plate sliding out from behind it as they scroll in, once (800 to 900 ms); the creature arriving after the lockup, once; the specimen printing in from a blur, once; a scroll-linked drift of each painting inside its frame (scrubbed, no loop) | GSAP ScrollTrigger | `pages/home/motion.ts` (docs/design/home-story-page-brief.md) |
+| A living plate (the End Wars painting on the home story): fire, smoke, weapon fire, water and lamps in motion inside the painting itself. The one ruled exception to "nothing loops" (Nick, 2026-09-22): it is the picture, not the interface. It plays only while in view and the tab is shown, and holds its resting frame under reduced motion; a page shows one at a time | SMIL inside stacked SVG layers | `components/plates/livePlate.tsx`, fragment at `public/assets/plates/<era>/plate.html` |
 
 Under reduced motion `globals.css` sets every animation and transition to near zero, the spinner holds its 70 percent frame and the splash shows its resting frame. Nothing in the catalog is added without a row here.
 

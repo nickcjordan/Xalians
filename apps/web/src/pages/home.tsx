@@ -10,6 +10,7 @@ import XalianNavbar from '../components/navbar';
 import XaliansLogoDnaAnimated from '../components/animations/xaliansLogoDnaAnimated';
 import XalianImage from '../components/xalianImage';
 import { Starfield } from '../components/starfield';
+import { LivePlate } from '../components/plates/livePlate';
 import { usePageTitle } from '@/components/system/head';
 import { Shell } from '@/components/system/masthead';
 import { Button } from '@/components/ui/button';
@@ -55,7 +56,7 @@ const ERA_TITLE = {
 	generation: 'The Age of Generators',
 } as const;
 
-type Art = { src: string; small: string; alt: string; era?: keyof typeof ERA_TITLE };
+type Art = { src: string; small: string; alt: string; era?: keyof typeof ERA_TITLE; live?: string };
 
 const ART = {
 	unbirth: {
@@ -75,6 +76,9 @@ const ART = {
 		src: '/assets/img/lore/eras/end-wars.jpg',
 		small: '/assets/img/lore/eras/end-wars-768.jpg',
 		alt: 'A burning warship falling between the towers of a night city under a sky of tracer fire.',
+		// The living version of this plate: stacked SVG layers with fire, smoke,
+		// weapon fire and water in motion, fetched when the panel comes near.
+		live: '/assets/plates/end-wars/plate.html',
 	},
 	present: {
 		era: 'present',
@@ -142,17 +146,22 @@ function Panel({
 	const figure = (
 		<figure className={cn('chamfer frame relative m-0', aspect, className)}>
 			<span className="frame-well">
-				<img
-					src={art.src}
-					srcSet={`${art.small} 768w, ${art.src} 1536w`}
-					sizes="(min-width: 1000px) 1160px, 100vw"
-					alt={art.alt}
-					width={1536}
-					height={768}
-					loading={eager ? 'eager' : 'lazy'}
-					decoding="async"
-					className={cn('h-full w-full object-cover', !still && 'scale-[1.12]', position)}
-				/>
+				{art.live ? (
+					// A living plate holds still in its frame: its motion is its own.
+					<LivePlate src={art.live} poster={art} />
+				) : (
+					<img
+						src={art.src}
+						srcSet={`${art.small} 768w, ${art.src} 1536w`}
+						sizes="(min-width: 1000px) 1160px, 100vw"
+						alt={art.alt}
+						width={1536}
+						height={768}
+						loading={eager ? 'eager' : 'lazy'}
+						decoding="async"
+						className={cn('h-full w-full object-cover', !still && 'scale-[1.12]', position)}
+					/>
+				)}
 			</span>
 			{n && art.era ? (
 				<span className="type-data absolute top-4 right-4 z-10 flex items-baseline gap-2.5 border border-edge-strong bg-room/80 px-2.5 py-1.5 text-tiny tracking-legend text-ink">
@@ -294,7 +303,7 @@ function Home() {
 							{/* The turn of the story is the largest picture on the page:
 							    it breaks the column on both sides where there is room. */}
 							<div className="lg:col-span-12 lg:-mx-8 xl:-mx-24">
-								<Panel n="03" art={ART.endWars} aspect="aspect-[2.4/1]" />
+								<Panel n="03" art={ART.endWars} aspect="aspect-[2/1]" />
 							</div>
 							<Plate n="03" from="right" className="-mt-7 mx-4 lg:col-start-6 lg:col-end-13 lg:-mt-18 lg:mr-12 lg:ml-0">
 								{STORY[2]}
