@@ -69,7 +69,7 @@ describe("shared battlefield", () => {
         kind: "redirect",
         actorId: actor.id,
         targetId: run.enemies[1].id,
-        moveName: actor.moves[3].name,
+        moveName: actor.moves.find((m) => m.signature)!.name,
       },
     });
     expect(screen.getByText("Target changed")).toBeInTheDocument();
@@ -87,7 +87,7 @@ describe("shared battlefield", () => {
     const run = createRun(1);
     const actor = run.team.find((u) => u.id === "H")!;
     actor.hp -= 2;
-    actor.uses = [0, 0, 0, 0];
+    actor.cooldowns = [1, 1, 1, 1];
     run.enemies[0].hp -= 3;
     scene({
       team: run.team,
@@ -136,7 +136,7 @@ describe("shared battlefield", () => {
         kind: "hit",
         actorId: "H",
         targetId: run.enemies[0].id,
-        moveName: "Water stream",
+        moveName: "Emergency Water Cannon",
         amount: 12,
       },
     });

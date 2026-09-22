@@ -13,8 +13,17 @@ import {
   Crown,
   RotateCcw,
   Check,
+  Hourglass,
 } from "lucide-react";
-import type { Move, Unit } from "@xalians/rules/dungeon";
+import {
+  basePower,
+  COOLDOWN_ROUNDS,
+  DESPERATE_STRIKE_RECOIL,
+  LIKELIHOOD_PERCENT,
+  type Move,
+  type MoveEffect,
+  type Unit,
+} from "@xalians/rules/dungeon";
 export const shortName = (u: Unit) =>
   ({
     crawler: "Crawler",
@@ -23,6 +32,18 @@ export const shortName = (u: Unit) =>
     discharge: "Capacitor",
     guardian: "Guardian",
   }[u.species] || u.name);
+export const melee = (move: Move) => move.approach === "closing";
+export const binds = (move: Move) =>
+  move.effects.some((e) => e.support === "bind");
+export const guards = (move: Move) =>
+  move.effects.some((e) => e.support === "protect");
+export const harms = (move: Move) =>
+  move.effects.some((e) => e.support === "harm" || e.support === "displace");
+export const charges = (move: Move) => move.preparation === "prolonged";
+/** The generated name before its parenthetical qualifiers: what a move card shows. The full name stays in labels and the inspector. */
+export const baseName = (move: Move) => move.name.split(" (")[0];
+/** Cooldown pips a card shows: the move's recovery in rounds; none for a repeatable move. */
+export const cooldownLimit = (move: Move) => COOLDOWN_ROUNDS[move.recovery];
 export function ElementIcon({ element }: { element: string }) {
   const Icon =
     (
@@ -37,25 +58,18 @@ export function ElementIcon({ element }: { element: string }) {
     )[element as "dark"] || Sun;
   return <Icon size={15} aria-hidden="true" />;
 }
-export function MoveIcon({
-  move,
-  signature = false,
-}: {
-  move: Move;
-  signature?: boolean;
-}) {
-  const Icon =
-    move.kind === "snare"
-      ? Link2
-      : move.kind === "ward"
-      ? Shield
-      : move.kind === "charge"
-      ? Zap
-      : signature
-      ? Crown
-      : move.range === "ranged"
-      ? Crosshair
-      : Swords;
+export function MoveIcon({ move }: { move: Move }) {
+  const Icon = binds(move)
+    ? Link2
+    : guards(move)
+    ? Shield
+    : charges(move)
+    ? Zap
+    : move.signature
+    ? Crown
+    : melee(move)
+    ? Swords
+    : Crosshair;
   return <Icon aria-hidden="true" />;
 }
 export function PowerIcon() {
@@ -72,93 +86,149 @@ export function PowerIcon() {
     </svg>
   );
 }
-export function moveDescription(move: Move) {
-  return `${move.range === "ranged" ? "Ranged attack" : "Melee attack"}. ${
-    move.kind === "snare"
-      ? "Restrains melee through one action opportunity."
-      : move.kind === "ward"
-      ? "Shields against incoming damage."
-      : `${move.damage} base power.`
-  }${move.kind === "fallback" ? " Costs 2 health in recoil." : ""}`;
+/** One sentence per effect, from its support reading. Unsupported effects are named and say so. */
+const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
+export function effectSummary(effect: MoveEffect): string {
+  const chance =
+    effect.likelihood === "consistent"
+      ? ""
+      : ` (${LIKELIHOOD_PERCENT[effect.likelihood]}% chance)`;
+  switch (effect.support) {
+    case "harm":
+      return `${cap(effect.mechanism ?? "impact")} harm.`;
+    case "displace":
+      return "Pulls the target off its footing: breaks a charge and does impact harm.";
+    case "bind":
+      return `${cap(
+        effect.status ?? "bound"
+      )}: melee blocked through one action opportunity${chance}.`;
+    case "protect":
+      return "Shields against incoming damage until its next opportunity.";
+    case "restore":
+      return "Recovers health.";
+    default:
+      return `${cap(effect.status ?? effect.type)}: no effect here${
+        effect.reason ? ` (${effect.reason})` : ""
+      }.`;
+  }
+}
+export function moveDescription(u: Unit, move: Move) {
+  const power = harms(move) ? ` ${basePower(u, move)} base power.` : "";
+  const timing = `${
+    charges(move) ? " Charges first, releases at its next opportunity." : ""
+  }${
+    cooldownLimit(move)
+      ? ` ${cooldownLimit(move)} round cooldown.`
+      : move.fallback
+      ? ""
+      : " No cooldown."
+  }`;
+  return `${melee(move) ? "Melee attack" : "Ranged attack"}.${power} ${move.effects
+    .filter((e) => e.support !== "harm")
+    .map(effectSummary)
+    .join(" ")}${timing}${
+    move.fallback ? ` Costs ${DESPERATE_STRIKE_RECOIL} health in recoil.` : ""
+  }`
+    .replace(/\s+/g, " ")
+    .trim();
 }
 export function MoveCardContent({
+  unit,
   move,
-  signature,
-  uses,
-  limit,
+  cooldown,
+  spent = false,
   selected,
   blocked,
   id,
+  fullName = false,
 }: {
+  unit: Unit;
   move: Move;
-  signature: boolean;
-  uses: number | null;
-  limit: number;
+  /** Show the whole generated name (the inspector) rather than the base name (the move tray). */
+  fullName?: boolean;
+  /** Rounds remaining before the move returns; null for a move with no cooldown pips (repeatable, or Desperate strike). */
+  cooldown: number | null;
+  spent?: boolean;
   selected: boolean;
   blocked: boolean;
   id: string;
 }) {
-  const Range = move.range === "ranged" ? Crosshair : Swords;
-  const control = move.kind === "snare";
-  const ward = move.kind === "ward";
+  const Range = melee(move) ? Swords : Crosshair;
+  const control = binds(move);
+  const ward = guards(move);
+  const limit = cooldownLimit(move);
+  const unsupported = move.effects.filter((e) => e.support === "unsupported");
   return (
     <>
       <span className="pw-card-identity">
         <span className="pw-card-category" aria-hidden="true">
           <Range />
-          {signature && (
+          {move.signature && (
             <>
               <Crown />
               Signature
             </>
           )}
         </span>
-        <strong>{move.name}</strong>
+        <strong title={fullName ? undefined : move.name}>
+          {fullName ? move.name : baseName(move)}
+        </strong>
       </span>
       <span
         className={`pw-card-effect ${control ? "control" : ""}`}
-        title={moveDescription(move)}
+        title={moveDescription(unit, move)}
         aria-hidden="true"
       >
         {control ? <Link2 /> : ward ? <Shield /> : <PowerIcon />}
-        <b>{control ? 1 : ward ? "½" : move.damage}</b>
-        {control && <small>action</small>}
-        {ward && <small>damage</small>}
+        <b>
+          {control && !harms(move)
+            ? 1
+            : ward && !harms(move)
+            ? "½"
+            : basePower(unit, move)}
+        </b>
+        {control && !harms(move) && <small>action</small>}
+        {ward && !harms(move) && <small>damage</small>}
+        {unsupported.length === move.effects.length && <small>no effect</small>}
       </span>
       <span className="pw-card-resource" aria-hidden="true">
         <span className="pw-card-state">
           {blocked ? (
             <>
               <Link2 />
-              Restrained
+              Bound
             </>
-          ) : uses === 0 ? (
-            "Exhausted"
+          ) : spent ? (
+            "Spent"
+          ) : cooldown ? (
+            <>
+              <Hourglass />
+              Cooling
+            </>
           ) : selected ? (
             <>
               <Check />
               Selected
             </>
           ) : (
-            "Uses"
+            "Cooldown"
           )}
         </span>
         <span className="pw-card-charges">
-          {uses === null
+          {cooldown === null || limit === 0
             ? "∞"
             : Array.from({ length: limit }, (_, n) => (
-                <i key={n} className={n < uses ? "full" : ""} />
+                <i key={n} className={n < limit - cooldown ? "full" : ""} />
               ))}
         </span>
-        {move.kind === "fallback" && (
+        {move.fallback && (
           <span className="pw-card-recoil">
-            <RotateCcw />
-            −2 HP
+            <RotateCcw />−{DESPERATE_STRIKE_RECOIL} HP
           </span>
         )}
       </span>
       <span className="pw-sr" id={id}>
-        {moveDescription(move)}
+        {moveDescription(unit, move)}
       </span>
     </>
   );
@@ -194,19 +264,19 @@ export function StatusBadges({ u }: { u: Unit }) {
       {!!u.charge && (
         <span
           className="pw-status-badge charged"
-          title="Releases a powerful melee attack at its next opportunity"
+          title="Releases a powerful attack at its next opportunity"
         >
           <Zap />
           Charged
         </span>
       )}
-      {!!u.snared && (
+      {!!u.bound && (
         <span
           className="pw-status-badge snared"
           title="Melee blocked through the next action opportunity; ranged moves still work"
         >
           <Link2 />
-          Restrained
+          Bound
         </span>
       )}
       {u.ward && (

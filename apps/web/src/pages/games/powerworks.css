@@ -552,6 +552,11 @@
   line-height: 1.2;
   font-weight: 600;
   color: #e5efec;
+  /* Generated names can run long; the card keeps two lines and the full name lives in the label and inspector. */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 .pw-card-effect {
   display: flex;

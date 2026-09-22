@@ -27,6 +27,9 @@ import {
   Portrait,
   StatusBadges,
   PowerIcon,
+  binds,
+  harms,
+  melee as closing,
 } from "./powerworksVisuals";
 
 export const sectorStory = [
@@ -153,7 +156,7 @@ export function PowerworksScene({
   const recipient = all.find((u) => u.id === event?.targetId);
   const action = actor?.moves.find((m) => m.name === event?.moveName);
   const melee =
-    action?.range === "melee" || event?.moveName === "Desperate strike";
+    (action ? closing(action) : false) || event?.moveName === "Desperate strike";
   const presentation = actionPresentation(frame);
   const { signature, knockout, bossDefeat } = presentation;
   const point = (u: Unit) => ({
@@ -227,7 +230,7 @@ export function PowerworksScene({
                 {bossDefeat && impact
                   ? "Defense disabled"
                   : phase === "blocked"
-                  ? "Stopped by restraint"
+                  ? "Stopped by binding"
                   : phase === "redirect"
                   ? "Target changed"
                   : `${actor?.name} · Signature`}
@@ -280,7 +283,7 @@ export function PowerworksScene({
           source &&
           destination &&
           event &&
-          ["hit", "snare", "redirect"].includes(event.kind) && (
+          ["hit", "bind", "redirect"].includes(event.kind) && (
             <>
               <path
                 className={`pw-flight ${
@@ -317,7 +320,7 @@ export function PowerworksScene({
           active &&
           u.enemy &&
           u.hp > 0 &&
-          ["hit", "fallback"].includes(move.kind)
+          harms(move)
             ? damagePreview(active, move, u)
             : 0;
         const recoil =
@@ -337,7 +340,7 @@ export function PowerworksScene({
               receiving && impact ? "receiving" : ""
             } ${u.hp <= 0 && !beforeKnockout ? "fallen" : ""} ${
               u.hp > 0 && u.charge ? "charged" : ""
-            } ${u.hp > 0 && u.snared ? "restrained" : ""} ${
+            } ${u.hp > 0 && u.bound ? "restrained" : ""} ${
               u.hp > 0 && u.ward ? "protected" : ""
             } ${
               aiming?.id === u.id || queuedTarget?.id === u.id ? "aimed" : ""
@@ -387,7 +390,7 @@ export function PowerworksScene({
               <span className="pw-actor-art" key={`${u.id}-${frameIndex}`}>
                 <Portrait u={u} />
               </span>
-              {u.hp > 0 && u.snared > 0 && (
+              {u.hp > 0 && u.bound > 0 && (
                 <span className="pw-binding" aria-hidden="true">
                   <Link2 />
                 </span>
@@ -418,8 +421,14 @@ export function PowerworksScene({
                     ? "−2"
                     : phase === "hit"
                     ? `−${event?.amount}`
-                    : phase === "snare"
-                    ? "Restrained"
+                    : phase === "bind"
+                    ? "Bound"
+                    : phase === "missed"
+                    ? "Resisted"
+                    : phase === "displace"
+                    ? "Charge broken"
+                    : phase === "restore"
+                    ? `+${event?.amount}`
                     : phase === "ward"
                     ? "Guarded"
                     : phase === "charge"
@@ -480,10 +489,10 @@ export function PowerworksScene({
             {planning && move && u.enemy && u.hp > 0 && (
               <span
                 className={`pw-scene-preview ${
-                  active && matchup(active, u) > 1 ? "strong" : ""
+                  active && matchup(active, u, move) > 1 ? "strong" : ""
                 }`}
               >
-                {move.kind === "snare" ? <Link2 /> : <PowerIcon />}
+                {binds(move) && !harms(move) ? <Link2 /> : <PowerIcon />}
                 {previewText(u)}
               </span>
             )}
@@ -503,7 +512,7 @@ export function PowerworksScene({
             <>
               <Zap />
               <strong>Charged defense</strong>
-              <span>A melee release is coming</span>
+              <span>A release is coming</span>
             </>
           )}
         </div>

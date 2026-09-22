@@ -26,11 +26,12 @@ describe("Powerworks player flow", () => {
     const ui = mount();
     fireEvent.click(screen.getByRole("button", { name: "Enter the facility" }));
     expect(screen.getByRole("button", { name: "Commit round" })).toBeDisabled();
+    // Seed 1 deals the squad as Hippochamp, Crystorn, Avilily, Graviclaw; each signature in turn.
     for (const move of [
-      "Hydrostatic Lance",
-      "Coronet of the Twin Suns",
+      "Emergency Water Cannon",
+      "Gem Radiance",
       "Blossoming Ambuscade",
-      "Claw compression",
+      "Gravity Pincer",
     ]) {
       fireEvent.click(screen.getByRole("button", { name: new RegExp(move) }));
       fireEvent.click(
@@ -42,12 +43,12 @@ describe("Powerworks player flow", () => {
     fireEvent.click(screen.getByRole("button", { name: "Show round result" }));
     expect(screen.getByText("Round 2")).toBeInTheDocument();
     fireEvent.click(screen.getByRole("button", { name: "Combat record" }));
-    expect(screen.getByRole("log")).toHaveTextContent("redirects");
+    expect(screen.getByRole("log")).toHaveTextContent("paralyzed");
     ui.unmount();
     mount();
     expect(screen.getByText("Round 2")).toBeInTheDocument();
     fireEvent.click(screen.getByRole("button", { name: "Combat record" }));
-    expect(screen.getByRole("log")).toHaveTextContent("Hydrostatic Lance");
+    expect(screen.getByRole("log")).toHaveTextContent("Emergency Water Cannon");
   });
   it("recovers from an invalid save and explains the temporary exhaustion rule", () => {
     localStorage.setItem("xalians.powerworks.v1", "{broken");
@@ -61,15 +62,19 @@ describe("Powerworks player flow", () => {
   it("lets players review, change and clear a queued order with an unambiguous target", () => {
     mount();
     fireEvent.click(screen.getByRole("button", { name: "Enter the facility" }));
-    fireEvent.click(screen.getByRole("button", { name: /Water stream, / }));
-    expect(screen.getAllByText("12 estimated · strong")).toHaveLength(2);
+    fireEvent.click(
+      screen.getByRole("button", { name: /Emergency Water Cannon, / })
+    );
+    expect(screen.getAllByText("8 estimated · strong")).toHaveLength(2);
     fireEvent.click(
       screen.getByRole("button", { name: "Target Maintenance crawler M2" })
     );
     const hippo = screen.getByRole("button", { name: "Select Hippochamp" });
-    expect(hippo).toHaveAccessibleDescription(/Water stream.*Crawler 2/);
+    expect(hippo).toHaveAccessibleDescription(
+      /Emergency Water Cannon.*Crawler 2/
+    );
     fireEvent.click(hippo);
-    expect(hippo).toHaveAttribute("title", "Water stream → Crawler 2");
+    expect(hippo).toHaveAttribute("title", "Emergency Water Cannon → Crawler 2");
     fireEvent.click(screen.getByRole("button", { name: /Clear/ }));
     expect(hippo).toHaveAccessibleDescription("Choose a move");
     expect(screen.getByRole("button", { name: "Commit round" })).toBeDisabled();
@@ -77,8 +82,12 @@ describe("Powerworks player flow", () => {
   it("explains visual move stats without repeating power and range text on cards", () => {
     mount();
     fireEvent.click(screen.getByRole("button", { name: "Enter the facility" }));
-    const attack = screen.getByRole("button", { name: /Water stream,/ });
-    expect(attack).toHaveAccessibleDescription("Ranged attack. 8 base power.");
+    const attack = screen.getByRole("button", {
+      name: /Emergency Water Cannon,/,
+    });
+    expect(attack).toHaveAccessibleDescription(
+      "Ranged attack. 5 base power. Remove: no effect here (nothing to remove yet). 1 round cooldown."
+    );
     expect(attack.querySelector(".pw-card-identity")).not.toHaveTextContent(
       /power|ranged/
     );
@@ -97,7 +106,7 @@ describe("Powerworks player flow", () => {
     fireEvent.click(screen.getByRole("button", { name: "Enter the facility" }));
     fireEvent.click(screen.getByRole("button", { name: "View turn order" }));
     const list = screen.getByRole("list");
-    expect(list).toHaveTextContent(/1AvililyYour squad80speed/);
+    expect(list).toHaveTextContent(/1AvililyYour squad82speed/);
     expect(list).not.toHaveTextContent(/Tool strike|target/i);
     fireEvent.click(screen.getByRole("button", { name: "Close panel" }));
     fireEvent.click(

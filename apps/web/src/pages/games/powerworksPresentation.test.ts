@@ -28,6 +28,8 @@ describe("battle presentation timing", () => {
   it("reserves time for signatures, knockouts and the guardian without slowing routine hits", () => {
     const run = createRun(1);
     const actor = run.team.find((u) => u.id === "H")!;
+    const routineMove = actor.moves.find((m) => !m.signature)!;
+    const signatureMove = actor.moves.find((m) => m.signature)!;
     const frame: Frame = {
       ...hit,
       team: run.team,
@@ -36,13 +38,13 @@ describe("battle presentation timing", () => {
         kind: "hit",
         actorId: actor.id,
         targetId: run.enemies[0].id,
-        moveName: actor.moves[0].name,
+        moveName: routineMove.name,
       },
     };
     const routine = actionPresentation(frame);
     const signature = actionPresentation({
       ...frame,
-      event: { ...frame.event!, moveName: actor.moves[3].name },
+      event: { ...frame.event!, moveName: signatureMove.name },
     });
     expect(signature.signature).toBe(true);
     expect(signature.duration).toBeGreaterThan(routine.duration);
@@ -62,7 +64,7 @@ describe("battle presentation timing", () => {
         event: {
           ...frame.event!,
           kind: "redirect",
-          moveName: actor.moves[3].name,
+          moveName: signatureMove.name,
         },
       }).signature
     ).toBe(false);

@@ -6,12 +6,13 @@ export function actionPresentation(frame?: Frame) {
   const units = [...(frame?.team || []), ...(frame?.enemies || [])];
   const actor = units.find((u) => u.id === event?.actorId);
   const target = units.find((u) => u.id === event?.targetId);
-  const delivered = !!event && ["hit", "snare", "ward"].includes(event.kind);
+  const delivered =
+    !!event && ["hit", "bind", "ward", "restore"].includes(event.kind);
   const signature =
     delivered &&
     !!actor &&
     !actor.enemy &&
-    actor.moves[3]?.name === event?.moveName;
+    actor.moves.find((m) => m.signature)?.name === event?.moveName;
   const knockout = event?.kind === "hit" && target?.hp === 0;
   const bossDefeat = knockout && target?.species === "guardian";
   const impactDelay = signature ? 680 : event?.kind === "charge" ? 600 : 360;
@@ -77,7 +78,8 @@ export function useBattlePresentation(
     const audio = context.current;
     if (!sound || !impact || !frame?.event || !audio || paused) return;
     const kind = frame.event.kind;
-    if (!["hit", "snare", "ward", "charge"].includes(kind)) return;
+    if (!["hit", "bind", "ward", "charge", "displace", "restore"].includes(kind))
+      return;
     const oscillator = audio.createOscillator(),
       gain = audio.createGain();
     const start = audio.currentTime,
