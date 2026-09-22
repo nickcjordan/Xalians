@@ -21,8 +21,8 @@ The direction was settled in a seventeen-round demo (2026-09-21 to 22) that Nick
 | 3 | The two 2022 paragraphs about battle fees and teams of six are omitted: they describe a game that no longer exists. | 90% | `git show 1285604e:my-app/src/pages/home.js` lines 515 to 522 |
 | 4 | The sample creature is one fixed record: Yetimoth, seed `home-sample-2`, generator 0.5.0, stored as JSON with the page. It never regenerates. | 95%, Nick: "just pick one and tell the story" | `apps/web/src/pages/home/specimen.json` |
 | 5 | Section headings use `type-title` (40 px) rather than `type-heading` (24 px). The contract reserves title size for the masthead; the demo Nick approved used large section heads and they carry the graphic-novel feel. Reported as a lever. | 70% | `docs/DESIGN_SYSTEM.md` section 4; demo v15 to v17 |
-| 6 | The plates carry no mint edge and the creature has no element glow. Both were in the demo; both break contract rules (accent never on decorative rules; nothing glows). Reported as friction. | 80% | `docs/DESIGN_SYSTEM.md` sections 3.1 and 5 |
-| 7 | The slow zoom on paintings is dropped: the contract forbids loops. Plates get a single 320 ms entrance as they scroll into view, added to the motion catalog. | 90% | `docs/DESIGN_SYSTEM.md` section 7 |
+| 6 | The creature carries a white glow, ruled by Nick on 2026-09-22 and recorded as the one exception in contract section 5. The demo's mint plate stripe stays out (accent never on decorative rules); the plate's chamfer and numeral take its place. | 90% | `docs/DESIGN_SYSTEM.md` sections 3.1 and 5 |
+| 7 | No loops: the demo's endless zoom became a scroll-linked drift, and every entrance plays once. Nick asked for visible motion on 2026-09-22 after a 320 ms version read as none. | 90% | `docs/DESIGN_SYSTEM.md` section 7 |
 | 8 | Two "Try the Generator" keys on one page: the hero's is the primary; the close's is `secondary`. One primary per screen. | 85% | `docs/DESIGN_SYSTEM.md` section 3.1 |
 | 9 | Nick's 2022 text is quoted as written even where it compresses the histories. The fact-check gate reports the deltas; Nick rules on each rather than the agent rewriting his words. | 90%, Nick asked for his original words | `.claude/skills/lore-factcheck/SKILL.md`; PR body |
 
@@ -46,9 +46,9 @@ All sections sit in a 1160 px column inside the Shell on desktop, twelve grid co
 ## 4. Parts
 
 - **Panel:** `figure`, hairline `border-edge-strong`, `bg-s1`, `overflow-hidden`, the image `object-cover` with a `srcset` of the 768 and 1536 files, lazy below the hero. No filter, no zoom.
-- **Cream plate:** `bg-ink text-room`, `px-8 py-7`, `font-body text-lead`. Nothing else: no stripe, no shadow.
+- **Cream plate:** the system chamfer (`.chamfer` with the fill set to ink and the edge to the third ink), `text-room`, a numeral kicker in the data face, `font-body text-lead`, and `shadow-float` because it floats over its painting. Revised 2026-09-22 after Nick judged the first flat version crude.
 - **Dark plate** (the Krystos sentence only): `bg-s1 border-l-2 border-edge-strong px-5 py-4`.
-- **Entrance:** each plate and panel starts 24 px offset (left, right or down, by spread) and transparent, and settles in 320 ms `ease-out` when 20 percent of it enters the viewport, once. Reduced motion makes it instant through the global rule. A safety timer settles everything after 1.5 s so a missed intersection never leaves ghosted text.
+- **Motion** (`pages/home/motion.ts`, GSAP ScrollTrigger, one context, none of it under reduced motion): each painting settles into its frame and each plate slides out from behind its panel as they scroll in, once (800 to 900 ms, power3 out); the paintings are drawn 12 percent larger than their frames and drift with the scroll; the hero creature arrives after the lockup; the specimen prints in from a blur. The markup renders the resting frame, so a browser that runs none of it sees the complete page.
 - **Headings:** `type-title` on the three section h2s; `type-display` on "Start generating now…"; `type-legend` on the kicker lines.
 
 ## 5. Verification
