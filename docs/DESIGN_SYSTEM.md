@@ -140,7 +140,7 @@ The version 3 faces (Barlow Condensed, Barlow, IBM Plex Mono, Special Elite and 
 - **Space** is a 4 point scale: 4, 8, 12, 16, 24, 32, 48, 64 (`--g-1` to `--g-8`).
 - **Corners are square.** No radius anywhere except dots and toggles. Ruled 2026-09-09.
 - **The chamfer is the signature shape**, reserved for emphasis: a twelve pixel cut at top left and bottom right on the **glass tier** (live data), and an eight pixel cut on the **one primary key** per screen. Nothing else is cut. The cut echoes the logo's corners, and because it is rare it marks what is live and what is next. It is drawn as two clipped layers (an edge-colored layer and a one pixel inset surface layer) so the hairline follows the contour; `.g-glass` and `.g-key--primary` carry this and nothing else needs to.
-- **Surfaces are told apart by tone,** a hairline edge and one inset top highlight, not by light. Levels: page (`--color-room`), 0, 1, 2, glass, floating. Nothing is lit, nothing glows, nothing is beveled.
+- **Surfaces are told apart by tone,** a hairline edge and one inset top highlight, not by light. Levels: page (`--color-room`), 0, 1, 2, glass, floating. Nothing is lit, nothing glows, nothing is beveled. One ruled exception (Nick, 2026-09-22): the creature silhouette on the home page carries a white glow so it separates from the painting or the room behind it; the glow is the creature's, not the surface's.
 - The room keeps a very faint grain and edge vignette. It is not a flat fill.
 
 ### 5.1 Depth is thickness (ratified 2026-09-11)
@@ -200,7 +200,7 @@ Empty states are a solid hairline box on `--g-s0` with a legend line and one sen
 | Helix spinner rungs lighting in sequence | 1.2 s cycle | `.helix-spinner` in `globals.css`; the one loop, because it is loading |
 | The home splash morph, once on arrival | GSAP timeline | `xaliansLogoDnaAnimated.js` |
 | A value updating on glass | 200 ms | the component |
-| A home story plate or panel entering as it scrolls into view, once | 320 ms | `Reveal` in `pages/home.tsx` (docs/design/home-story-page-brief.md) |
+| The home story: a painting settling into its frame and a plate sliding out from behind it as they scroll in, once (800 to 900 ms); the creature arriving after the lockup, once; the specimen printing in from a blur, once; a scroll-linked drift of each painting inside its frame (scrubbed, no loop) | GSAP ScrollTrigger | `pages/home/motion.ts` (docs/design/home-story-page-brief.md) |
 
 Under reduced motion `globals.css` sets every animation and transition to near zero, the spinner holds its 70 percent frame and the splash shows its resting frame. Nothing in the catalog is added without a row here.
 

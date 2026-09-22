@@ -15,6 +15,7 @@ import { Shell } from '@/components/system/masthead';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import specimen from './home/specimen.json';
+import { startStoryMotion } from './home/motion';
 
 /* ------------------------------------------------------------------ copy */
 
@@ -95,65 +96,6 @@ const SIGNATURE = specimen.actions.find((a) => a.key.endsWith('-defining'))?.nam
 
 /* ----------------------------------------------------------------- parts */
 
-/**
- * One entrance per plate and panel: transparent and offset until a fifth of
- * it is on screen, then 320 ms out (the contract's "panel entering"). Once
- * only. If the observer never fires (an old browser, a page restored mid
- * scroll) a timer settles everything, so nothing can stay ghosted; under
- * reduced motion globals.css makes the transition instant.
- */
-function Reveal({
-	from = 'up',
-	className,
-	children,
-	...props
-}: React.ComponentProps<'div'> & { from?: 'up' | 'left' | 'right' }) {
-	const ref = React.useRef<HTMLDivElement>(null);
-	const [shown, setShown] = React.useState(false);
-	React.useEffect(() => {
-		const el = ref.current;
-		if (!el || typeof IntersectionObserver === 'undefined') {
-			setShown(true);
-			return;
-		}
-		const rect = el.getBoundingClientRect();
-		if (rect.top < window.innerHeight && rect.bottom > 0) {
-			setShown(true);
-			return;
-		}
-		const io = new IntersectionObserver(
-			(entries) => {
-				if (entries.some((e) => e.isIntersecting)) {
-					setShown(true);
-					io.disconnect();
-				}
-			},
-			{ threshold: 0.2 }
-		);
-		io.observe(el);
-		const timer = window.setTimeout(() => setShown(true), 1500);
-		return () => {
-			io.disconnect();
-			window.clearTimeout(timer);
-		};
-	}, []);
-	const start = from === 'left' ? '-translate-x-6' : from === 'right' ? 'translate-x-6' : 'translate-y-6';
-	return (
-		<div
-			ref={ref}
-			data-shown={shown ? 'true' : 'false'}
-			className={cn(
-				'transition-[opacity,transform] duration-[320ms] ease-out motion-reduce:transition-none',
-				shown ? 'translate-x-0 translate-y-0 opacity-100' : cn('opacity-0', start),
-				className
-			)}
-			{...props}
-		>
-			{children}
-		</div>
-	);
-}
-
 /** A framed painting. The frame is the same on every spread; only the crop and the aspect change. */
 function Panel({
 	art,
@@ -161,15 +103,26 @@ function Panel({
 	position,
 	className,
 	eager = false,
+	still = false,
 }: {
 	art: { src: string; small: string; alt: string };
 	aspect: string;
 	position?: string;
 	className?: string;
 	eager?: boolean;
+	/** The hero's panel holds still; the story's drift with the scroll. */
+	still?: boolean;
 }) {
 	return (
-		<figure className={cn('relative m-0 overflow-hidden border border-edge-strong bg-s1', aspect, className)}>
+		<figure
+			data-panel={still ? undefined : ''}
+			className={cn(
+				'relative m-0 overflow-hidden border border-edge-strong bg-s1 shadow-[inset_0_1px_0_var(--color-edge-hi)]',
+				'after:pointer-events-none after:absolute after:inset-0 after:bg-gradient-to-t after:from-room/60 after:via-transparent after:via-35% after:to-transparent',
+				aspect,
+				className
+			)}
+		>
 			<img
 				src={art.src}
 				srcSet={`${art.small} 768w, ${art.src} 1536w`}
@@ -179,16 +132,33 @@ function Panel({
 				height={768}
 				loading={eager ? 'eager' : 'lazy'}
 				decoding="async"
-				className={cn('h-full w-full object-cover', position)}
+				className={cn('h-full w-full object-cover', !still && 'scale-[1.12]', position)}
 			/>
 		</figure>
 	);
 }
 
-/** The cream caption plate: dark words on ink, nothing else. */
-function Plate({ className, children }: { className?: string; children: React.ReactNode }) {
-	return <p className={cn('relative z-10 m-0 bg-ink px-8 py-7 font-body text-lead text-room', className)}>{children}</p>;
+/**
+ * The caption plate: cream, cut with the system's chamfer so the hairline
+ * follows the corner, a numeral in the data face, and the float shadow
+ * because it sits over its painting rather than on the page.
+ */
+const PLATE_STYLE = { '--chamfer-fill': 'var(--color-ink)', '--chamfer-edge': 'var(--color-ink-3)' } as React.CSSProperties;
+
+function Plate({ n, from, className, children }: { n: string; from: 'left' | 'right' | 'up'; className?: string; children: React.ReactNode }) {
+	return (
+		<div data-plate={from} className={cn('chamfer relative z-10 shadow-float', className)} style={PLATE_STYLE}>
+			<div className="flex flex-col gap-3 px-7 pt-5 pb-7 text-room sm:px-8">
+				<span className="type-data text-tiny tracking-legend text-ink-4">{n}</span>
+				<p className="m-0 font-body text-lead">{children}</p>
+			</div>
+		</div>
+	);
 }
+
+/** The creature silhouette with a white glow, so it separates from whatever stands behind it (Nick, 2026-09-22). */
+const GLOW =
+	'drop-shadow(0 0 2px var(--color-white)) drop-shadow(0 0 18px color-mix(in srgb, var(--color-white) 80%, transparent)) drop-shadow(0 0 48px color-mix(in srgb, var(--color-white) 35%, transparent))';
 
 /** A section head at title size: the demo Nick approved sets the three headings large, so the story reads as chapters. */
 function StoryHead({ id, className, children }: { id?: string; className?: string; children: React.ReactNode }) {
@@ -203,9 +173,14 @@ function StoryHead({ id, className, children }: { id?: string; className?: strin
 
 function Home() {
 	usePageTitle();
+	const rootRef = React.useRef<HTMLElement>(null);
+	React.useEffect(() => {
+		const root = rootRef.current;
+		return root ? startStoryMotion(root) : undefined;
+	}, []);
 
 	return (
-		<main id="main" className="min-h-screen text-ink font-body" data-tier="chrome">
+		<main id="main" ref={rootRef} className="min-h-screen text-ink font-body" data-tier="chrome">
 			<XalianNavbar />
 			<Starfield />
 
@@ -237,14 +212,15 @@ function Home() {
 							aria-label="A Yetimoth of Krystos, shown in full below"
 							className={`el-${ELEMENT} group relative mx-auto block w-full max-w-[420px] no-underline lg:col-span-5 lg:mx-0 lg:justify-self-end`}
 						>
-							<Panel art={ART.krystos} aspect="aspect-[4/5]" position="object-[center_35%]" eager />
+							<Panel art={ART.krystos} aspect="aspect-[4/5]" position="object-[center_35%]" eager still />
 							<span
+								data-hero-fig
 								aria-hidden="true"
 								className="absolute -bottom-[4%] left-1/2 z-20 block w-[96%] -translate-x-1/2 transition-transform duration-[320ms] ease-out group-hover:-translate-y-1.5 motion-reduce:transition-none"
 							>
-								<XalianImage speciesName={SPECIES_NAME} primaryType={ELEMENT} unPadded moreClasses="w-full" />
+								<span className="block" style={{ filter: GLOW }}><XalianImage speciesName={SPECIES_NAME} primaryType={ELEMENT} unPadded moreClasses="w-full" /></span>
 							</span>
-							<span className="type-legend absolute -left-5 bottom-9 z-30 bg-ink px-4 py-2.5 text-room lg:-left-10">
+							<span className="type-legend chamfer-key absolute -left-5 bottom-9 z-30 px-4 py-2.5 text-room lg:-left-10" style={PLATE_STYLE}>
 								A Yetimoth of Krystos
 							</span>
 						</a>
@@ -260,41 +236,41 @@ function Home() {
 						<StoryHead id="story">The Story</StoryHead>
 
 						<div className="mb-16 grid grid-cols-1 gap-x-6 lg:mb-24 lg:grid-cols-12">
-							<Reveal className="lg:col-span-12">
+							<div className="lg:col-span-12">
 								<Panel art={ART.unbirth} aspect="aspect-[21/9]" position="object-[center_40%]" />
-							</Reveal>
-							<Reveal from="left" className="-mt-7 mx-4 lg:col-start-1 lg:col-end-8 lg:-mt-22 lg:mr-0 lg:ml-12">
-								<Plate>{STORY[0]}</Plate>
-							</Reveal>
+							</div>
+							<Plate n="01" from="left" className="-mt-7 mx-4 lg:col-start-1 lg:col-end-8 lg:-mt-22 lg:mr-0 lg:ml-12">
+								{STORY[0]}
+							</Plate>
 						</div>
 
 						<div className="mb-16 grid grid-cols-1 gap-x-6 lg:mb-24 lg:grid-cols-12 lg:items-center">
-							<Reveal className="lg:col-start-6 lg:col-end-13 lg:row-start-1">
+							<div className="lg:col-start-6 lg:col-end-13 lg:row-start-1">
 								<Panel art={ART.accords} aspect="aspect-[4/5]" position="object-[60%_center]" />
-							</Reveal>
-							<Reveal from="left" className="-mt-7 mx-4 lg:col-start-1 lg:col-end-8 lg:row-start-1 lg:m-0 lg:-mr-18">
-								<Plate>{STORY[1]}</Plate>
-							</Reveal>
+							</div>
+							<Plate n="02" from="left" className="-mt-7 mx-4 lg:col-start-1 lg:col-end-8 lg:row-start-1 lg:m-0 lg:-mr-18 lg:self-center">
+								{STORY[1]}
+							</Plate>
 						</div>
 
 						<div className="mb-16 grid grid-cols-1 gap-x-6 lg:mb-32 lg:grid-cols-12">
 							{/* The turn of the story is the largest picture on the page:
 							    it breaks the column on both sides where there is room. */}
-							<Reveal className="lg:col-span-12 lg:-mx-8 xl:-mx-24">
+							<div className="lg:col-span-12 lg:-mx-8 xl:-mx-24">
 								<Panel art={ART.endWars} aspect="aspect-[2.4/1]" />
-							</Reveal>
-							<Reveal from="right" className="-mt-7 mx-4 lg:col-start-6 lg:col-end-13 lg:-mt-18 lg:mr-12 lg:ml-0">
-								<Plate>{STORY[2]}</Plate>
-							</Reveal>
+							</div>
+							<Plate n="03" from="right" className="-mt-7 mx-4 lg:col-start-6 lg:col-end-13 lg:-mt-18 lg:mr-12 lg:ml-0">
+								{STORY[2]}
+							</Plate>
 						</div>
 
 						<div className="mb-16 grid grid-cols-1 gap-x-6 lg:mb-24 lg:grid-cols-12 lg:items-center">
-							<Reveal className="lg:col-start-1 lg:col-end-8">
+							<div className="lg:col-start-1 lg:col-end-8">
 								<Panel art={ART.present} aspect="aspect-[4/3]" position="object-[40%_center]" />
-							</Reveal>
-							<Reveal from="right" className="-mt-7 mx-4 lg:col-start-8 lg:col-end-13 lg:m-0 lg:-ml-24">
-								<Plate>{STORY[3]}</Plate>
-							</Reveal>
+							</div>
+							<Plate n="04" from="right" className="-mt-7 mx-4 lg:col-start-8 lg:col-end-13 lg:m-0 lg:-ml-24 lg:self-center">
+								{STORY[3]}
+							</Plate>
 						</div>
 					</section>
 
@@ -325,8 +301,8 @@ function Home() {
 								</Button>
 							</p>
 						</div>
-						<div className="mx-auto w-full max-w-[420px] lg:col-span-7 lg:max-w-[560px] lg:justify-self-center lg:self-center">
-							<XalianImage colored speciesName={SPECIES_NAME} primaryType={ELEMENT} moreClasses="w-full" />
+						<div data-figure className="mx-auto w-full max-w-[420px] lg:col-span-7 lg:max-w-[560px] lg:justify-self-center lg:self-center">
+							<span className="block" style={{ filter: GLOW }}><XalianImage speciesName={SPECIES_NAME} primaryType={ELEMENT} unPadded moreClasses="w-full" /></span>
 						</div>
 					</section>
 
@@ -335,12 +311,12 @@ function Home() {
 						<StoryHead id="tournament">The Tournament &amp; Tokens</StoryHead>
 
 						<div className="mb-12 grid grid-cols-1 gap-x-6 lg:mb-16 lg:grid-cols-12">
-							<Reveal className="lg:col-start-1 lg:col-end-9 lg:row-start-1">
+							<div className="lg:col-start-1 lg:col-end-9 lg:row-start-1">
 								<Panel art={ART.generation} aspect="aspect-video" position="object-[center_60%]" />
-							</Reveal>
-							<Reveal from="right" className="-mt-7 mx-4 lg:col-start-8 lg:col-end-13 lg:row-start-1 lg:m-0 lg:-mb-12 lg:-ml-28 lg:self-end">
-								<Plate>{TOURNAMENT}</Plate>
-							</Reveal>
+							</div>
+							<Plate n="05" from="right" className="-mt-7 mx-4 lg:col-start-8 lg:col-end-13 lg:row-start-1 lg:m-0 lg:-mb-12 lg:-ml-28 lg:self-end">
+								{TOURNAMENT}
+							</Plate>
 						</div>
 
 						<div className="flex max-w-[62ch] flex-col items-start gap-5 pt-6 lg:pt-10">
