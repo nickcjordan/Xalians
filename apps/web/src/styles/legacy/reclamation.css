@@ -3078,8 +3078,11 @@
 	bottom: 1px;
 	background: repeating-linear-gradient(90deg, var(--rec-you) 0 2px, transparent 2px 3px);
 	box-shadow: 0 0 0 1px var(--rec-you);
-	transition: left var(--g-move), width var(--g-move);
+	left: 0;
+	transition: transform var(--g-move), width var(--g-move);
 }
+/* the creature band is placed in the scale's own width units (pass 37) */
+.rec-env-scale { container-type: inline-size; }
 
 .rec-env--strained .rec-env-band--creature { background: repeating-linear-gradient(90deg, var(--g-accent) 0 2px, transparent 2px 3px); box-shadow: 0 0 0 1px var(--g-accent); }
 .rec-env--severe .rec-env-band--creature { background: repeating-linear-gradient(90deg, var(--g-lamp-red) 0 2px, transparent 2px 3px); box-shadow: 0 0 0 1px var(--g-lamp-red); }
@@ -3663,20 +3666,7 @@
 .rec-plinth--armed::before { top: -2px; left: -2px; border-right: 0; border-bottom: 0; }
 .rec-plinth--armed::after { bottom: -2px; right: -2px; border-left: 0; border-top: 0; }
 
-/*
-	PASS 36. The page is allowed to be longer than the viewport; it must not CHANGE length
-	while the player plays. That is what the element reservations in this file are for.
-
-	Measured and rejected, twice: pinning the console to 100vh (and a halfway version that
-	pinned only the worlds to 52vh). Both stop the page scrolling and both break the game:
-	at 1440x900 and 390x844 the squeeze put the bench below the fold, a creature at y965 of a
-	900px viewport with `clickable: false`, and on a phone the pass button with it. Any
-	future attempt must check that the controls are pressable, not only that nothing moves.
-*/
-.rec-console--match { height: auto; min-height: 100vh; overflow: visible; }
-.rec-shell--match, .rec-match, .rec-body, .rec-table { overflow: visible; }
-.rec-sites { min-height: 340px; }
-.rec-world, .rec-sites { flex: 0 0 auto; }
+/* pass 36's page-length reservations were replaced by the one-screen layer at the end of this file (pass 37) */
 
 @media (max-width: 1100px) {
 	.rec-plinths { grid-auto-columns: minmax(76px, 1fr); }
@@ -3989,40 +3979,6 @@
 .rec-console--match .rec-plinths { grid-auto-columns: minmax(calc(84px * var(--rec-scale)), 1fr); }
 .rec-console--match .rec-lamp { width: calc(10px * var(--rec-scale)); height: calc(10px * var(--rec-scale)); }
 
-/* the trays keep their proportion: the ranks and the seam grow with the width */
-.rec-console--match .rec-sites { min-height: calc(340px * var(--rec-scale)); }
-/*
-	PASS 36. The seam is the SAME HEIGHT whether it holds a ghost, a world footing or
-	nothing. It used to reserve 72px, which the footing's own text outgrew (measured at
-	94px), so previewing a creature swapped a 94px block for a 72px ghost and every rank
-	below it rose 22px. Pointing at a bench card moved the board you were reading.
-
-	136px is the tallest thing the seam carries (a ghost with a plan, reserved just below).
-	Holding that always costs empty seam on a resting table and buys a table that does not
-	move under the pointer; reclamation-shift.mjs holds hover at a shift budget of zero.
-*/
-.rec-console--match .rec-site-floor .rec-site-midline { min-height: calc(136px * var(--rec-scale)); }
-/*
-	PASS 36. A rank reserves the height of a creature STANDING IN IT, not less.
-
-	It reserved 96px and a figure measures 153px, so the first creature to land on a world
-	grew that world by 57px and pushed the bench and everything under it down the page. This
-	is the largest single part of the jump Nick reported when "moves are made". Reserving the
-	real height costs empty rank on a resting table and holds the board still.
-*/
-.rec-console--match .rec-rank { min-height: calc(153px * var(--rec-scale)); }
-/*
-	On a phone the reservations fall back to the compact pass 13 sizes. The full ones made an
-	empty world 279px tall against the 260px ceiling reclamation-proving.mjs holds (pass 13
-	cut phone panels from 386px because three of them stood two screens between the bench
-	and the first world). The phone keeps some shift on send as the price of that guard.
-*/
-@media (max-width: 760px) {
-	.rec-console--match .rec-site-floor .rec-site-midline { min-height: calc(72px * var(--rec-scale)); }
-	.rec-console--match .rec-rank { min-height: calc(96px * var(--rec-scale)); }
-	.rec-site-head { min-height: 0; }
-}
-
 /* the bulbs: one step up per size on a wide screen so the meters stay legible */
 .rec-console--match .rec-meter { --bulb-w: calc(4px * var(--rec-scale)); --bulb-h: calc(10px * var(--rec-scale)); }
 .rec-console--match .rec-meter--chip { --bulb-w: calc(2px * var(--rec-scale)); --bulb-h: calc(6px * var(--rec-scale)); }
@@ -4324,9 +4280,9 @@
 	overflow: hidden;
 }
 
-.rec-balance-fill { position: absolute; top: 0; bottom: 0; transition: width var(--g-move); }
-.rec-balance-fill--theirs { left: 0; background: var(--rec-rival); }
-.rec-balance-fill--mine { right: 0; background: var(--rec-you); }
+.rec-balance-fill { position: absolute; inset: 0; transition: clip-path var(--g-move); }
+.rec-balance-fill--theirs { background: var(--rec-rival); }
+.rec-balance-fill--mine { background: var(--rec-you); }
 .rec-balance-fill--ghost {
 	background: repeating-linear-gradient(135deg, var(--rec-you) 0 3px, transparent 3px 6px);
 	opacity: 0.8;
@@ -5343,4 +5299,727 @@
 			-webkit-mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 1) 100%, rgba(0, 0, 0, 1) 100%);
 		}
 	}
+}
+
+/* =========================================================================
+   PASS 37. ONE SCREEN.
+
+   Nick, 2026-09-22: "We should not be building this like a normal page in a website. This
+   is a game. You should have the game characteristics, such as one constant screen without
+   any scrolling."
+
+   Measured before this layer, seed 7: the match was 1659px tall on a 1440x900 screen and
+   2100px on a 390x844 phone. The worlds started 580px down and the bench started at 1293px,
+   so every send meant scrolling down to lift a creature and back up to press a world.
+
+   The rule now is the rule of a game screen. The console is exactly the viewport. Inside
+   it every region has a fixed share: the masthead and the status strip are fixed heights,
+   the dock at the bottom (bench, Court bar) is a fixed height, and the worlds take what is
+   left. Nothing inside a region can change the region's size, because content that varies
+   (how many creatures stand on a world, which message is showing) sizes to its box rather
+   than the box to it. Two earlier attempts to pin the console failed because the regions
+   kept their content-driven heights and the bench fell off the bottom; that is what
+   reclamation-shift.mjs now checks directly (every control in view, page never taller
+   than the viewport, nothing moves).
+
+   Scoped with [data-terminal] so it outranks the thirty-six earlier layers without
+   !important.
+   ========================================================================= */
+
+.rec-console--match[data-terminal] {
+	height: 100vh;
+	height: 100dvh;
+	min-height: 0;
+	overflow: hidden;
+	display: flex;
+	flex-direction: column;
+	/* the three fixed shares, retuned below for short screens and phones */
+	--os-status: calc(80px * var(--rec-scale));
+	--os-dock: calc(230px * var(--rec-scale));
+	--os-seam: calc(78px * var(--rec-scale));
+	--os-head: calc(72px * var(--rec-scale));
+}
+
+.rec-console--match[data-terminal] > .rec-shell--match {
+	flex: 1 1 0;
+	min-height: 0;
+	overflow: hidden;
+	display: flex;
+	flex-direction: column;
+	gap: var(--g-2);
+	padding: var(--g-2) var(--g-4) var(--g-2);
+}
+
+.rec-console--match[data-terminal] .rec-masthead { flex: 0 0 auto; align-items: center; gap: var(--g-3); }
+.rec-console--match[data-terminal] .rec-masthead .g-segment { min-height: 0; padding-block: 2px; }
+.rec-console--match[data-terminal] .rec-sound { min-height: 0; padding-block: 2px; }
+
+.rec-console--match[data-terminal] .rec-match {
+	flex: 1 1 0;
+	min-height: 0;
+	overflow: hidden;
+	display: flex;
+	flex-direction: column;
+	gap: var(--g-2);
+	position: relative;
+}
+
+/* --- the status strip: round, score, turn, one message slot, the ticker ------- */
+
+.rec-console--match[data-terminal] .rec-status {
+	flex: 0 0 var(--os-status);
+	height: var(--os-status);
+	min-height: 0;
+	overflow: hidden;
+	display: grid;
+	grid-template-columns: auto auto calc(15rem * var(--rec-scale)) minmax(0, 1fr);
+	grid-template-rows: minmax(0, 1fr);
+	align-items: center;
+	gap: 0 var(--g-4);
+	padding: var(--g-1) var(--g-3);
+}
+.rec-console--match[data-terminal] .rec-match--simple .rec-status {
+	grid-template-columns: auto auto calc(15rem * var(--rec-scale)) minmax(0, 1fr) minmax(0, 24%);
+}
+
+.rec-console--match[data-terminal] .rec-status-world {
+	display: grid;
+	grid-template-columns: auto auto;
+	align-items: center;
+	gap: 2px var(--g-2);
+	min-width: 0;
+}
+.rec-console--match[data-terminal] .rec-status-planet { font-size: var(--g-size-lead); margin: 0; }
+.rec-console--match[data-terminal] .rec-status-worlds { grid-column: 1 / -1; }
+.rec-console--match[data-terminal] .rec-next-plate {
+	grid-column: 1 / -1;
+	display: inline-flex;
+	align-items: center;
+	gap: var(--g-1);
+	margin: 0;
+	padding: 0;
+	opacity: 0.75;
+}
+.rec-console--match[data-terminal] .rec-next-plate .rec-status-element { font-size: var(--g-size-micro); padding: 0 var(--g-1); }
+.rec-console--match[data-terminal] .rec-next-plate-label { font-size: var(--g-size-micro); letter-spacing: var(--g-track-label); text-transform: uppercase; color: var(--g-ink-low); }
+
+.rec-console--match[data-terminal] .rec-status-score {
+	grid-column: auto;
+	display: grid;
+	gap: 2px;
+	justify-content: start;
+}
+.rec-console--match[data-terminal] .rec-status-turn {
+	grid-column: auto;
+	display: grid;
+	justify-items: start;
+	justify-content: start;
+	align-content: center;
+	gap: 2px;
+	min-height: 0;
+	min-width: 0;
+}
+.rec-console--match[data-terminal] .rec-turn { max-width: 100%; min-width: 0; white-space: nowrap; }
+.rec-console--match[data-terminal] .rec-turn-text { overflow: hidden; text-overflow: ellipsis; }
+
+/* the one message slot: two lines of whatever is most urgent, and the reach line under it */
+.rec-console--match[data-terminal] .rec-status-say {
+	grid-column: auto;
+	min-width: 0;
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+	/* anchored at the top, so a one-line message and a two-line one start in the same place */
+	justify-content: flex-start;
+	padding-top: var(--g-2);
+	gap: 2px;
+	overflow: hidden;
+}
+.rec-console--match[data-terminal] .rec-status-hint {
+	grid-column: auto;
+	min-height: 0;
+	margin: 0;
+	padding: 0 0 0 var(--g-2);
+	font-size: var(--g-size-small);
+	line-height: 1.35;
+	display: -webkit-box;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 2;
+	overflow: hidden;
+}
+.rec-console--match[data-terminal] .rec-status-reach {
+	grid-column: auto;
+	min-height: 1lh;
+	margin: 0;
+	font-size: var(--g-size-micro);
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+.rec-console--match[data-terminal] .rec-status-reach[data-still-reachable="none"] { visibility: hidden; }
+.rec-console--match[data-terminal] .rec-status-say .rec-callout-row { min-height: 0; margin: 0; position: static; }
+.rec-console--match[data-terminal] .rec-status-say .rec-callout { position: static; max-width: 100%; margin: 0; }
+.rec-console--match[data-terminal] .rec-status-say .rec-coach {
+	margin: 0;
+	padding: 0 0 0 var(--g-2);
+	border: 0;
+	background: none;
+	box-shadow: none;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	gap: var(--g-3);
+}
+.rec-console--match[data-terminal] .rec-status-say .rec-coach-steps { flex: 1 1 0; min-width: 0; display: grid; gap: 1px; margin: 0; padding: 0; }
+.rec-console--match[data-terminal] .rec-status-say .rec-coach-step { min-width: 0; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: var(--g-size-micro); line-height: 1.35; }
+.rec-console--match[data-terminal] .rec-status-say .rec-coach-index { display: inline-flex; width: 1.3em; height: 1.3em; margin-right: var(--g-1); font-size: 0.85em; }
+.rec-console--match[data-terminal] .rec-status-say .rec-coach-dismiss { min-height: 0; padding-block: var(--g-1); }
+.rec-console--match[data-terminal] .rec-status-say .rec-stake-ask { margin: 0; flex-wrap: wrap; gap: var(--g-1) var(--g-2); font-size: var(--g-size-small); }
+.rec-console--match[data-terminal] .rec-status-say .rec-stake-ask .g-btn { min-height: 0; padding-block: 2px; }
+
+.rec-console--match[data-terminal] .rec-ticker {
+	grid-column: auto;
+	height: calc(var(--os-status) - 2 * var(--g-1));
+	min-height: 0;
+	margin: 0;
+	padding: var(--g-1) var(--g-2);
+	overflow: hidden;
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-end;
+	font-size: var(--g-size-micro);
+	line-height: 1.3;
+}
+.rec-console--match[data-terminal] .rec-ticker .g-screen-line { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* a notice floats over the top of the table rather than pushing it down */
+.rec-console--match[data-terminal] .rec-notice {
+	position: absolute;
+	z-index: 30;
+	top: calc(var(--os-status) + var(--g-2));
+	left: 50%;
+	transform: translateX(-50%);
+	max-width: min(640px, 92%);
+	margin: 0;
+	box-shadow: var(--g-drop);
+}
+
+/* --- the body: the table, and in advanced mode the rail beside it ------------- */
+
+.rec-console--match[data-terminal] .rec-body {
+	flex: 1 1 0;
+	min-height: 0;
+	overflow: hidden;
+	position: relative;
+}
+.rec-console--match[data-terminal] .rec-body:not(.rec-body--wide) { grid-template-columns: minmax(0, 1fr) minmax(280px, 340px); }
+.rec-console--match[data-terminal] .rec-table {
+	min-height: 0;
+	height: 100%;
+	overflow: hidden;
+	display: flex;
+	flex-direction: column;
+	gap: var(--g-2);
+}
+.rec-console--match[data-terminal] .rec-rail {
+	min-height: 0;
+	height: 100%;
+	max-height: none;
+	overflow: hidden;
+	display: flex;
+	flex-direction: column;
+	gap: var(--g-2);
+}
+.rec-console--match[data-terminal] .rec-rail .rec-log { flex: 1 1 0; min-height: 0; max-height: none; overflow-y: auto; }
+.rec-console--match[data-terminal] .rec-rail .rec-inspect { flex: 1 1 0; min-height: 0; max-height: none; overflow-y: auto; }
+.rec-console--match[data-terminal] .rec-rail .rec-inspect + .rec-log { flex: 0 0 30%; }
+
+/* simple mode: the dossier is a drawer over the right of the table */
+.rec-console--match[data-terminal] .rec-rail--drawer {
+	position: absolute;
+	z-index: 20;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	width: min(400px, 94%);
+	background: var(--g-hull);
+	box-shadow: -12px 0 24px rgba(0, 0, 0, 0.55);
+}
+
+/* --- the worlds take whatever the fixed regions leave ------------------------ */
+
+.rec-console--match[data-terminal] .rec-world {
+	flex: 1 1 0;
+	min-height: 0;
+	display: flex;
+	flex-direction: column;
+	position: relative;
+}
+.rec-console--match[data-terminal] .rec-hidden-banner {
+	position: absolute;
+	z-index: 6;
+	left: 50%;
+	top: 50%;
+	transform: translate(-50%, -50%);
+	max-width: min(560px, 90%);
+	margin: 0;
+	pointer-events: none;
+	box-shadow: var(--g-drop);
+}
+.rec-console--match[data-terminal] .rec-sites {
+	flex: 1 1 0;
+	min-height: 0;
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	grid-template-rows: minmax(0, 1fr);
+}
+.rec-console--match[data-terminal] .rec-site {
+	min-height: 0;
+	overflow: hidden;
+	display: flex;
+	flex-direction: column;
+	gap: var(--g-1);
+	padding: var(--g-2);
+}
+.rec-console--match[data-terminal] .rec-site-head {
+	flex: 0 0 var(--os-head);
+	height: var(--os-head);
+	min-height: 0;
+	overflow: hidden;
+	row-gap: 0;
+	align-content: start;
+}
+.rec-console--match[data-terminal] .rec-tally { flex: 0 0 auto; min-height: 0; margin: 0; grid-template-columns: calc(4.5rem * var(--rec-scale)) minmax(0, 1fr) calc(7rem * var(--rec-scale)); }
+.rec-console--match[data-terminal] .rec-tally-side--mine { justify-content: flex-start; }
+.rec-console--match[data-terminal] .rec-tally-plus { display: inline-block; min-width: 5ch; }
+.rec-console--match[data-terminal] .rec-tally-side--mine .rec-tally-value { min-width: 2ch; text-align: right; }
+
+.rec-console--match[data-terminal] .rec-site-floor {
+	flex: 1 1 0;
+	min-height: 0;
+	overflow: hidden;
+	display: grid;
+	grid-template-rows: minmax(0, 1fr) var(--os-seam) minmax(0, 1fr);
+}
+
+/*
+	The ranks are containers, and a figure sizes to the rank divided by the rows and columns
+	the rank's count needs (rankGrid in reclamationWorld.js). 44px is what the name plate and
+	the foot under a piece take, so the piece itself gets the rest of its row.
+*/
+.rec-console--match[data-terminal] .rec-site-floor .rec-rank {
+	min-height: 0;
+	height: 100%;
+	container-type: size;
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	gap: 2px;
+	overflow: hidden;
+	padding: 16px var(--g-1) 2px;
+}
+.rec-console--match[data-terminal] .rec-site-floor .rec-rank--mine { padding: 2px var(--g-1) 16px; }
+.rec-console--match[data-terminal] .rec-site-floor .rec-rank .rec-figure-foot { flex-wrap: nowrap; white-space: nowrap; gap: 2px; min-height: 0; }
+.rec-console--match[data-terminal] .rec-site-floor .rec-rank .rec-figure-plate { min-height: 0; }
+.rec-console--match[data-terminal] .rec-site-floor .rec-rank .rec-piece-stage { flex: 0 0 auto; }
+/*
+	The element badge is drawn by a shared Duel component that sizes itself inline from the
+	figure's JS size, so it stays large while the piece shrinks to fit its rank and ends up
+	covering the creature. Sized to the piece here instead; !important only because the
+	component's size is an inline style.
+*/
+.rec-console--match[data-terminal] .rec-site-floor .rec-piece-disc { width: 36% !important; height: 36% !important; }
+.rec-console--match[data-terminal] .rec-site-floor .rec-piece-disc svg { width: 80%; height: 80%; }
+/* the grid the rank's width calls for, read by the figures inside it */
+.rec-console--match[data-terminal] .rec-site-floor .rec-rank > * { --rank-rows: var(--rank-rows-n, 1); --rank-cols: var(--rank-cols-n, 1); }
+@container (min-width: 300px) {
+	.rec-console--match[data-terminal] .rec-site-floor .rec-rank > * { --rank-rows: var(--rank-rows-w, 1); --rank-cols: var(--rank-cols-w, 1); }
+}
+.rec-console--match[data-terminal] .rec-site-floor .rec-rank .rec-figure {
+	min-width: 0;
+	width: calc(100cqw / var(--rank-cols, 1) - 4px);
+	max-width: calc(116px * var(--rec-scale));
+	height: calc(100cqh / var(--rank-rows, 1) - 4px);
+	justify-content: center;
+}
+.rec-console--match[data-terminal] .rec-site-floor .rec-rank .rec-piece-stage {
+	--rec-piece: clamp(18px, min(calc(100cqh / var(--rank-rows, 1) - 40px), calc(100cqw / var(--rank-cols, 1) - 14px)), calc(72px * var(--rec-scale)));
+}
+.rec-console--match[data-terminal] .rec-site-floor .rec-rank .rec-figure-plate { max-width: 100%; min-width: 0; }
+.rec-console--match[data-terminal] .rec-site-floor .rec-rank .rec-figure-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+/*
+	A crowded rank (two or three rows) prints each creature as its piece over one line, the
+	name and the hold side by side. The bulb meter and the role glyph go: at that size they
+	were drawn on top of the next figure's name, and the dossier carries both in full.
+*/
+@container (max-width: 299.98px) {
+	.rec-console--match[data-terminal] .rec-site-floor .rec-rank:not([data-rank-rows="1"]) .rec-figure {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) auto;
+		grid-template-rows: minmax(0, 1fr) auto;
+		grid-template-areas: "stage stage" "plate foot";
+		align-items: center;
+		column-gap: 2px;
+		row-gap: 0;
+	}
+	.rec-console--match[data-terminal] .rec-site-floor .rec-rank:not([data-rank-rows="1"]) .rec-figure--down {
+		grid-template-rows: auto minmax(0, 1fr);
+		grid-template-areas: "plate foot" "stage stage";
+	}
+	.rec-console--match[data-terminal] .rec-site-floor .rec-rank:not([data-rank-rows="1"]) .rec-piece-stage { grid-area: stage; justify-self: center; }
+	.rec-console--match[data-terminal] .rec-site-floor .rec-rank:not([data-rank-rows="1"]) .rec-figure-plate { grid-area: plate; padding: 0 2px; }
+	.rec-console--match[data-terminal] .rec-site-floor .rec-rank:not([data-rank-rows="1"]) .rec-figure-foot { grid-area: foot; }
+	.rec-console--match[data-terminal] .rec-site-floor .rec-rank:not([data-rank-rows="1"]) .rec-figure-foot .rec-meter,
+	.rec-console--match[data-terminal] .rec-site-floor .rec-rank:not([data-rank-rows="1"]) .rec-figure-foot .rec-role-glyph,
+	.rec-console--match[data-terminal] .rec-site-floor .rec-rank:not([data-rank-rows="1"]) .rec-figure-tags { display: none; }
+	.rec-console--match[data-terminal] .rec-site-floor .rec-rank:not([data-rank-rows="1"]) .rec-piece-stage {
+		--rec-piece: clamp(18px, min(calc(100cqh / var(--rank-rows, 1) - 20px), calc(100cqw / var(--rank-cols, 1) - 10px)), calc(64px * var(--rec-scale)));
+	}
+}
+@container (min-width: 300px) {
+	.rec-console--match[data-terminal] .rec-site-floor .rec-rank:not([data-rank-rows-wide="1"]) .rec-figure {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) auto;
+		grid-template-rows: minmax(0, 1fr) auto;
+		grid-template-areas: "stage stage" "plate foot";
+		align-items: center;
+		column-gap: 2px;
+		row-gap: 0;
+	}
+	.rec-console--match[data-terminal] .rec-site-floor .rec-rank:not([data-rank-rows-wide="1"]) .rec-figure--down {
+		grid-template-rows: auto minmax(0, 1fr);
+		grid-template-areas: "plate foot" "stage stage";
+	}
+	.rec-console--match[data-terminal] .rec-site-floor .rec-rank:not([data-rank-rows-wide="1"]) .rec-piece-stage { grid-area: stage; justify-self: center; }
+	.rec-console--match[data-terminal] .rec-site-floor .rec-rank:not([data-rank-rows-wide="1"]) .rec-figure-plate { grid-area: plate; padding: 0 2px; }
+	.rec-console--match[data-terminal] .rec-site-floor .rec-rank:not([data-rank-rows-wide="1"]) .rec-figure-foot { grid-area: foot; }
+	.rec-console--match[data-terminal] .rec-site-floor .rec-rank:not([data-rank-rows-wide="1"]) .rec-figure-foot .rec-meter,
+	.rec-console--match[data-terminal] .rec-site-floor .rec-rank:not([data-rank-rows-wide="1"]) .rec-figure-foot .rec-role-glyph,
+	.rec-console--match[data-terminal] .rec-site-floor .rec-rank:not([data-rank-rows-wide="1"]) .rec-figure-tags { display: none; }
+	.rec-console--match[data-terminal] .rec-site-floor .rec-rank:not([data-rank-rows-wide="1"]) .rec-piece-stage {
+		--rec-piece: clamp(18px, min(calc(100cqh / var(--rank-rows, 1) - 20px), calc(100cqw / var(--rank-cols, 1) - 10px)), calc(64px * var(--rec-scale)));
+	}
+}
+.rec-console--match[data-terminal] .rec-rank-open { align-self: center; }
+
+/* during the Clash the skip key sits at the right of the message slot */
+.rec-console--match[data-terminal] .rec-status-say--skip {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) auto;
+	align-content: center;
+	column-gap: var(--g-3);
+}
+.rec-console--match[data-terminal] .rec-status-say--skip > * { grid-column: 1; }
+.rec-console--match[data-terminal] .rec-status-say--skip > .rec-skip { grid-column: 2; grid-row: 1 / span 2; align-self: center; min-height: 0; padding-block: var(--g-1); }
+
+.rec-console--match[data-terminal] .rec-site-floor .rec-site-midline {
+	min-height: 0;
+	height: var(--os-seam);
+	overflow: hidden;
+	position: relative;
+}
+.rec-console--match[data-terminal] .rec-site-floor .rec-site-midline:has(.rec-ghost-plan) { min-height: 0; }
+.rec-console--match[data-terminal] .rec-site-floor .rec-ghost { overflow: hidden; gap: 2px var(--g-2); align-content: center; }
+/*
+	The ghost is a fixed grid, the call and the number in columns of their own width, so
+	pointing from one creature to the next changes what the seam says and never where it
+	says it (pass 36 held the seam's height; this holds its columns).
+*/
+.rec-console--match[data-terminal] .rec-site-floor .rec-ghost:not(.rec-ghost--relocate) {
+	display: grid;
+	/* the call and the number are fixed columns and the meter takes the rest of the seam,
+	   so the grid is the same shape for every creature at any world width */
+	grid-template-columns: calc(7.5rem * var(--rec-scale)) 6ch minmax(0, 1fr);
+	/* fixed row heights and a top anchor, so a meter with a home cap or a longer plan line
+	   never nudges the row it sits in */
+	grid-template-rows: calc(2rem * var(--rec-scale)) calc(1.4rem * var(--rec-scale));
+	grid-template-areas: "cta value meter" "plan plan plan";
+	justify-content: stretch;
+	column-gap: var(--g-2);
+	row-gap: 2px;
+	align-items: center;
+	align-content: start;
+	padding-top: var(--g-1);
+}
+.rec-console--match[data-terminal] .rec-ghost-cta { justify-self: stretch; text-align: center; white-space: nowrap; }
+.rec-console--match[data-terminal] .rec-ghost-value { text-align: left; font-variant-numeric: tabular-nums; }
+.rec-console--match[data-terminal] .rec-site-floor .rec-ghost .rec-meter { grid-area: meter; justify-self: start; max-width: 100%; overflow: hidden; }
+/* the past-20 bulbs carry a border; drawn inside their box, a home meter is no taller than any other */
+.rec-console--match[data-terminal] .rec-bulb { box-sizing: border-box; }
+/* a home meter carries a third bank; in a narrow seam it runs off the edge rather than wrapping to a second line */
+.rec-console--match[data-terminal] .rec-site-floor .rec-ghost .rec-meter-bulbs { flex-wrap: nowrap; }
+.rec-console--match[data-terminal] .rec-site-floor .rec-ghost .rec-ghost-cta { grid-area: cta; }
+.rec-console--match[data-terminal] .rec-site-floor .rec-ghost .rec-ghost-value { grid-area: value; }
+.rec-console--match[data-terminal] .rec-ghost-plan { grid-area: plan; justify-self: start; max-width: 100%; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.rec-console--match[data-terminal] .rec-world-footing { gap: 1px; font-size: var(--g-size-micro); }
+/*
+	An empty world has nothing in its ranks, so its footing is centered on the whole floor,
+	clear of the RIVAL and YOU edge bands (22px in from each end), rather than squeezed into
+	the seam. reclamation-proving.mjs checks the bands and the text never overlap.
+*/
+.rec-console--match[data-terminal] .rec-site-floor { position: relative; }
+.rec-console--match[data-terminal] .rec-site-field--empty .rec-site-midline { position: static; overflow: visible; }
+.rec-console--match[data-terminal] .rec-site-field--empty .rec-world-footing {
+	position: absolute;
+	z-index: 2;
+	inset: 22px var(--g-1);
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	overflow: hidden;
+}
+
+/* --- the dock: bench or Court bar, one fixed height -------------------------- */
+
+.rec-console--match[data-terminal] .rec-dock {
+	flex: 0 0 var(--os-dock);
+	height: var(--os-dock);
+	min-height: 0;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	position: relative;
+}
+.rec-console--match[data-terminal] .rec-dock > .rec-bench {
+	flex: 1 1 0;
+	min-height: 0;
+	display: grid;
+	grid-template-columns: minmax(0, 1fr);
+	grid-template-rows: auto minmax(0, 1fr);
+}
+.rec-console--match[data-terminal] .rec-bench-head {
+	grid-template-columns: auto minmax(0, 1fr) auto minmax(calc(11rem * var(--rec-scale)), auto);
+	grid-template-rows: minmax(0, 1fr);
+	gap: 0 var(--g-4);
+	padding: var(--g-1) var(--g-3);
+	height: calc(2.75rem * var(--rec-scale));
+	min-height: 0;
+	overflow: hidden;
+}
+.rec-console--match[data-terminal] .rec-bench-title { grid-column: 1; grid-row: 1; }
+.rec-console--match[data-terminal] .rec-bench-say { grid-column: 2; grid-row: 1; align-self: stretch; display: flex; align-items: center; gap: var(--g-3); min-width: 0; }
+.rec-console--match[data-terminal] .rec-bench-acts-slot { grid-column: 2; grid-row: 1; justify-self: end; z-index: 1; background: var(--g-hull-lo); }
+.rec-console--match[data-terminal] .rec-bench-acts-slot:empty { display: none; }
+.rec-console--match[data-terminal] .rec-bench-head:has(.rec-bench-acts) .rec-bench-lead { visibility: hidden; }
+.rec-console--match[data-terminal] .rec-deploy-count { grid-column: 3; grid-row: 1; }
+.rec-console--match[data-terminal] .rec-bench-actions { grid-column: 4; grid-row: 1; justify-self: end; flex-wrap: nowrap; }
+.rec-console--match[data-terminal] .rec-bench-actions .g-btn { white-space: nowrap; }
+.rec-console--match[data-terminal] .rec-bench-heading {
+	flex: 0 0 calc(15rem * var(--rec-scale));
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+.rec-console--match[data-terminal] .rec-bench-say .rec-bench-lead {
+	flex: 1 1 0;
+	min-width: 0;
+	min-height: 0;
+	margin: 0;
+	padding: 0;
+	font-size: var(--g-size-micro);
+	line-height: 1.3;
+	display: -webkit-box;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 2;
+	overflow: hidden;
+}
+.rec-console--match[data-terminal] .rec-bench-actions .g-btn { min-height: 0; padding-block: var(--g-1); }
+.rec-console--match[data-terminal] .rec-bench-acts-slot { min-height: 0; display: flex; align-items: center; padding-left: var(--g-2); }
+.rec-console--match[data-terminal] .rec-bench-acts { border-top: 0; padding: 0; gap: var(--g-1); flex-wrap: nowrap; }
+.rec-console--match[data-terminal] .rec-bench-act { min-height: 0; padding-block: 2px; }
+.rec-console--match[data-terminal] .rec-plinths {
+	min-height: 0;
+	overflow: hidden;
+	grid-auto-columns: minmax(0, 1fr);
+	padding: var(--g-1) var(--g-2) var(--g-2);
+}
+.rec-console--match[data-terminal] .rec-plinth { min-height: 0; overflow: hidden; }
+.rec-console--match[data-terminal] .rec-plinth-name { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.rec-console--match[data-terminal] .rec-judge-bar { margin: 0; }
+
+/* the Charter's report covers the table and reads inside its own box */
+.rec-console--match[data-terminal] .rec-verdict-cover {
+	position: absolute;
+	z-index: 25;
+	inset: 0;
+	overflow-y: auto;
+	background: var(--g-hull-lo);
+}
+
+/* --- short desks: the bench and the seam give up height first ---------------- */
+
+@media (min-width: 761px) and (max-height: 820px) {
+	.rec-console--match[data-terminal] { --os-status: 64px; --os-dock: 172px; --os-seam: 60px; --os-head: 60px; }
+	.rec-console--match[data-terminal] .rec-plinth-lanes,
+	.rec-console--match[data-terminal] .rec-plinth-marks { display: none; }
+	.rec-console--match[data-terminal] .rec-next-plate { display: none; }
+	/* a short desk prints every rank the compact way, piece over one line of name and hold */
+	.rec-console--match[data-terminal] .rec-site-floor .rec-rank .rec-figure {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) auto;
+		grid-template-rows: minmax(0, 1fr) auto;
+		grid-template-areas: "stage stage" "plate foot";
+		align-items: center;
+		column-gap: 2px;
+		row-gap: 0;
+	}
+	.rec-console--match[data-terminal] .rec-site-floor .rec-rank .rec-figure--down {
+		grid-template-rows: auto minmax(0, 1fr);
+		grid-template-areas: "plate foot" "stage stage";
+	}
+	.rec-console--match[data-terminal] .rec-site-floor .rec-rank .rec-piece-stage { grid-area: stage; justify-self: center; }
+	.rec-console--match[data-terminal] .rec-site-floor .rec-rank .rec-figure-plate { grid-area: plate; padding: 0 2px; }
+	.rec-console--match[data-terminal] .rec-site-floor .rec-rank .rec-figure-foot { grid-area: foot; }
+	.rec-console--match[data-terminal] .rec-site-floor .rec-rank .rec-figure-foot .rec-meter,
+	.rec-console--match[data-terminal] .rec-site-floor .rec-rank .rec-figure-foot .rec-role-glyph,
+	.rec-console--match[data-terminal] .rec-site-floor .rec-rank .rec-figure-tags { display: none; }
+	.rec-console--match[data-terminal] .rec-site-floor .rec-rank .rec-piece-stage {
+		--rec-piece: clamp(18px, min(calc(100cqh / var(--rank-rows, 1) - 20px), calc(100cqw / var(--rank-cols, 1) - 10px)), calc(64px * var(--rec-scale)));
+	}
+}
+@media (min-width: 761px) and (max-height: 680px) {
+	.rec-console--match[data-terminal] { --os-status: 52px; --os-dock: 150px; --os-seam: 48px; --os-head: 40px; }
+	.rec-console--match[data-terminal] .rec-masthead .g-kicker,
+	.rec-console--match[data-terminal] .rec-masthead-rival { display: none; }
+	.rec-console--match[data-terminal] .rec-status-worlds,
+	.rec-console--match[data-terminal] .rec-site-place { display: none; }
+	.rec-console--match[data-terminal] .rec-site-head { grid-template-rows: auto; }
+	.rec-console--match[data-terminal] .rec-bench-say .rec-bench-lead { -webkit-line-clamp: 1; }
+	.rec-console--match[data-terminal] .rec-plinth-init,
+	.rec-console--match[data-terminal] .rec-plinth-role { display: none; }
+	.rec-console--match[data-terminal] .rec-plinth-art { width: 34px; height: 34px; }
+	.rec-console--match[data-terminal] .rec-plinth-main { padding-top: var(--g-1); gap: 1px; }
+}
+
+/* --- phones: the same screen, narrower ---------------------------------------- */
+
+@media (max-width: 760px) {
+	.rec-console--match[data-terminal] { --os-status: 104px; --os-dock: 244px; --os-seam: 60px; --os-head: 52px; }
+	/*
+		Every control on a phone keeps a 32px tap target (reclamation-proving.mjs holds it).
+		The one-screen squeeze takes height from type, padding and empty room, never from a
+		finger's target.
+	*/
+	.rec-console--match[data-terminal] .rec-masthead .g-segment,
+	.rec-console--match[data-terminal] .rec-sound,
+	.rec-console--match[data-terminal] .rec-stake-btn,
+	.rec-console--match[data-terminal] .rec-bench-actions .g-btn,
+	.rec-console--match[data-terminal] .rec-bench-act,
+	.rec-console--match[data-terminal] .rec-status-say .g-btn,
+	.rec-console--match[data-terminal] .rec-judge-bar .g-btn { min-height: 32px; }
+	.rec-console--match[data-terminal] .rec-status-say .rec-coach-dismiss { font-size: var(--g-size-micro); padding: 2px var(--g-2); }
+	.rec-console--match[data-terminal] > .rec-shell--match { padding: var(--g-1) var(--g-2) var(--g-1); gap: var(--g-1); }
+
+	.rec-console--match[data-terminal] .rec-masthead { flex-wrap: nowrap; gap: var(--g-2); min-width: 0; }
+	.rec-console--match[data-terminal] .rec-masthead .g-kicker,
+	.rec-console--match[data-terminal] .rec-masthead-rival,
+	.rec-console--match[data-terminal] .rec-masthead-seed { display: none; }
+	.rec-console--match[data-terminal] .rec-masthead-title { display: none; }
+	.rec-console--match[data-terminal] .rec-masthead .rec-sound { margin-left: auto; }
+
+	.rec-console--match[data-terminal] .rec-match { gap: var(--g-1); }
+	.rec-console--match[data-terminal] .rec-status,
+	.rec-console--match[data-terminal] .rec-match--simple .rec-status {
+		grid-template-columns: auto auto minmax(0, 1fr);
+		grid-template-rows: 1.5rem minmax(0, 1fr);
+		gap: 2px var(--g-3);
+		padding: var(--g-1) var(--g-2);
+		align-items: start;
+	}
+	.rec-console--match[data-terminal] .rec-status-worlds,
+	.rec-console--match[data-terminal] .rec-next-plate,
+	.rec-console--match[data-terminal] .rec-ticker { display: none; }
+	.rec-console--match[data-terminal] .rec-status-planet { font-size: var(--g-size-small); }
+	.rec-console--match[data-terminal] .rec-status-say { grid-column: 1 / -1; height: auto; justify-content: flex-start; }
+	.rec-console--match[data-terminal] .rec-status-hint { font-size: var(--g-size-micro); padding-left: var(--g-1); }
+	.rec-console--match[data-terminal] .rec-status-say .rec-coach-steps { font-size: var(--g-size-micro); gap: var(--g-1); }
+	.rec-console--match[data-terminal] .rec-status-turn { justify-self: end; align-self: center; }
+	.rec-console--match[data-terminal] .rec-status-phase,
+	.rec-console--match[data-terminal] .rec-pips,
+	.rec-console--match[data-terminal] .rec-world-dots { display: none; }
+	.rec-console--match[data-terminal] .rec-status-score { grid-auto-flow: column; gap: var(--g-3); align-self: center; }
+	.rec-console--match[data-terminal] .rec-status-world { align-self: center; }
+	.rec-console--match[data-terminal] .rec-turn { font-size: var(--g-size-micro); }
+
+	.rec-console--match[data-terminal] .rec-sites { gap: var(--g-1); }
+	.rec-console--match[data-terminal] .rec-site { padding: var(--g-1); gap: 2px; }
+	.rec-console--match[data-terminal] .rec-site-place,
+	.rec-console--match[data-terminal] .rec-env-slot .rec-env { display: none; }
+	.rec-console--match[data-terminal] .rec-site-name { font-size: var(--g-size-micro); }
+	.rec-console--match[data-terminal] .rec-stake-btn { min-height: 32px; padding: 0 var(--g-1); font-size: var(--g-size-micro); }
+	.rec-console--match[data-terminal] .rec-tally-label,
+	.rec-console--match[data-terminal] .rec-tally-plus { display: none; }
+	.rec-console--match[data-terminal] .rec-site-floor .rec-rank { padding: 14px 1px 1px; }
+	.rec-console--match[data-terminal] .rec-site-floor .rec-rank--mine { padding: 1px 1px 14px; }
+	.rec-console--match[data-terminal] .rec-site-floor .rec-rank .rec-figure-name { font-size: 9px; }
+	.rec-console--match[data-terminal] .rec-site-floor .rec-ghost .rec-meter,
+	.rec-console--match[data-terminal] .rec-site-floor .rec-ghost-plan { display: none; }
+	.rec-console--match[data-terminal] .rec-world-footing-line--cost { display: none; }
+
+	.rec-console--match[data-terminal] .rec-bench-head {
+		grid-template-columns: auto minmax(0, 1fr) 8.5rem;
+		grid-template-rows: 32px 32px;
+		gap: 2px var(--g-2);
+		padding: var(--g-1) var(--g-2);
+		height: auto;
+	}
+	.rec-console--match[data-terminal] .rec-bench-heading { flex: 1 1 auto; font-size: var(--g-size-micro); }
+	.rec-console--match[data-terminal] .rec-bench-say .rec-bench-lead { display: none; }
+	.rec-console--match[data-terminal] .rec-bench-acts-slot { grid-column: 1 / 3; grid-row: 2; justify-self: stretch; padding-left: 0; }
+	.rec-console--match[data-terminal] .rec-deploy-count { grid-column: 1 / 3; grid-row: 2; }
+	.rec-console--match[data-terminal] .rec-bench-actions { grid-column: 3; grid-row: 1 / 3; flex-direction: column; align-items: stretch; justify-self: stretch; }
+	.rec-console--match[data-terminal] .rec-bench-actions { gap: 2px; justify-content: center; }
+	.rec-console--match[data-terminal] .rec-bench-actions .g-btn { font-size: var(--g-size-micro); padding: 2px var(--g-1); letter-spacing: 0.04em; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+	.rec-console--match[data-terminal] .rec-tally { grid-template-columns: auto minmax(0, 1fr) auto; }
+	.rec-console--match[data-terminal] .rec-tally-plus { min-width: 0; }
+	/* a crowded rank on a phone shows the creature, not its element badge */
+	.rec-console--match[data-terminal] .rec-site-floor .rec-rank:not([data-rank-rows="1"]) .rec-piece-disc { visibility: hidden; }
+	/* the ghost on a phone is the call over the number, centered in a narrow world */
+	.rec-console--match[data-terminal] .rec-site-floor .rec-ghost:not(.rec-ghost--relocate) { grid-template-columns: minmax(0, 1fr); grid-template-areas: "cta" "value"; justify-items: center; }
+	.rec-console--match[data-terminal] .rec-ghost-cta { padding: 0 var(--g-1); font-size: 9px; letter-spacing: 0.04em; }
+	.rec-console--match[data-terminal] .rec-ghost-value { text-align: center; }
+	.rec-console--match[data-terminal] .rec-bench-acts-legend { display: none; }
+	.rec-console--match[data-terminal] .rec-bench-acts { min-width: 0; }
+	.rec-console--match[data-terminal] .rec-bench-act { flex: 1 1 0; min-width: 0; padding-inline: var(--g-1); font-size: var(--g-size-micro); }
+	.rec-console--match[data-terminal] .rec-plinths {
+		grid-auto-flow: row;
+		grid-template-columns: repeat(6, minmax(0, 1fr));
+		grid-template-rows: repeat(2, minmax(0, 1fr));
+		grid-auto-rows: 0;
+		gap: 2px;
+		padding: 2px;
+	}
+	.rec-console--match[data-terminal] .rec-plinth-main { padding: 2px 1px; gap: 1px; }
+	.rec-console--match[data-terminal] .rec-plinth-name { font-size: 9px; }
+	.rec-console--match[data-terminal] .rec-plinth-init,
+	.rec-console--match[data-terminal] .rec-plinth-lanes,
+	.rec-console--match[data-terminal] .rec-plinth-marks,
+	.rec-console--match[data-terminal] .rec-plinth-role { display: none; }
+	.rec-console--match[data-terminal] .rec-plinth-art { width: 30px; height: 30px; }
+	.rec-console--match[data-terminal] .rec-plinth-read { position: absolute; top: 0; right: 0; width: 32px; height: 32px; min-height: 32px; padding: 0; border: 0; background: none; display: flex; align-items: flex-start; justify-content: flex-end; }
+	.rec-console--match[data-terminal] .rec-rail--drawer { width: 100%; }
+	/*
+		Advanced mode's rail cannot stand beside three worlds at phone width, and stacked
+		under them it took the bottom third of the screen. On a phone the table keeps the
+		whole width, the log is set aside, and the dossier opens as the same drawer simple
+		mode uses.
+	*/
+	.rec-console--match[data-terminal] .rec-body:not(.rec-body--wide) { display: flex; flex-direction: column; }
+	.rec-console--match[data-terminal] .rec-body:not(.rec-body--wide) > .rec-table { flex: 1 1 0; }
+	.rec-console--match[data-terminal] .rec-body:not(.rec-body--wide) > .rec-rail {
+		position: absolute;
+		z-index: 20;
+		inset: 0;
+		width: 100%;
+		height: auto;
+		background: var(--g-hull);
+	}
+	.rec-console--match[data-terminal] .rec-body:not(.rec-body--wide) > .rec-rail:not(:has(.rec-inspect)) { display: none; }
+	.rec-console--match[data-terminal] .rec-rail .rec-inspect + .rec-log { display: none; }
+}
+@media (max-width: 760px) and (max-height: 720px) {
+	/* a small phone's worlds carry the one number that matters most about each */
+	.rec-console--match[data-terminal] .rec-world-footing-head,
+	.rec-console--match[data-terminal] .rec-world-footing-line--home { display: none; }
 }

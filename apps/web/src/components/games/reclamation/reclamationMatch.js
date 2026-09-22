@@ -852,6 +852,12 @@ class ReclamationMatch extends React.Component {
 			// pass 25: arming a different creature drops any behaviour chosen for the last one
 			armedRole: null,
 			movingRecordId: null,
+			/*
+				pass 37: lifting a creature closes the dossier. On one screen the dossier is a
+				drawer over the right of the table, and a creature in hand is about to be sent,
+				so every world has to be pressable.
+			*/
+			inspect: null,
 		}));
 	};
 
@@ -1606,6 +1612,8 @@ class ReclamationMatch extends React.Component {
 		const deciding = waiting && !rivalBeat;
 		const turnLabel = this.turnText(view);
 		const lampKind = yourTurn ? 'amber' : waiting ? 'red' : 'off';
+		const simple = this.isSimple();
+		const coaching = simple && !this.state.coached && view.frameIndex === 0 && view.phase === 'deploy' && !this.state.playback && !this.state.judged;
 		const phaseLabel = this.state.playback ? 'Clash'
 			: view.phase === 'matchEnd' ? 'Charter'
 				: this.state.judged ? 'Ruling' : 'Deploy';
@@ -1627,7 +1635,15 @@ class ReclamationMatch extends React.Component {
 							<span className={`g-chip g-chip--outline rec-status-element g-el-${site.world.element}`} key={site.id} title={`${site.world.planet}, at ${site.name}`}>{site.world.planet}</span>
 						))}
 					</span>
-
+					{/* pass 37: the next round's worlds ride on the round line, not in a row of their own */}
+					{view.nextFrame && !this.state.judged && (
+						<span className="rec-next-plate" data-next-plate>
+							<span className="rec-next-plate-label">then</span>
+							{view.nextFrame.map((w) => (
+								<span className={`g-chip g-chip--outline rec-status-element g-el-${w.element}`} key={w.siteId} title={`${w.planet}, at ${w.siteName}`}>{w.planet}</span>
+							))}
+						</span>
+					)}
 				</div>
 
 				{/*
@@ -1648,12 +1664,6 @@ class ReclamationMatch extends React.Component {
 					so it arrived mid-match and added a whole grid row to the status panel,
 					pushing the board down under it.
 				*/}
-				<p
-					className="rec-status-reach g-body"
-					data-still-reachable={stillReachable ? stillReachable.tone : 'none'}
-				>
-					{stillReachable ? stillReachable.text : ''}
-				</p>
 
 				<div className="rec-status-score" title={`First to ${toClinch} sites takes the Charter`}>
 					<span className="rec-score rec-score--mine">
@@ -1675,18 +1685,59 @@ class ReclamationMatch extends React.Component {
 						<span className={`g-lamp g-lamp--${lampKind}`} key={lampKind} />
 						<span className="rec-turn-text rec-turn-text--in" data-turn-text key={turnLabel}>{turnLabel}</span>
 					</span>
+				</div>
+
+				{/*
+					PASS 37. ONE MESSAGE SLOT. The stake question, what just happened, the first
+					round's coaching and the hint used to be four separate rows (a callout row over
+					the worlds, a coaching strip under them, the hint here), each appearing and
+					vanishing on its own schedule. They are one fixed-height slot now, showing the
+					most urgent of them, so nothing that is said ever moves the table.
+				*/}
+				<div className={`rec-status-say${this.state.playback ? ' rec-status-say--skip' : ''}`} data-say>
+					{/* pass 37: the skip key sits beside the sentence that offers it, not under the turn lamp */}
 					{this.state.playback && (
 						<button type="button" className="g-btn rec-skip" onClick={this.hurry} data-skip title="Space">
 							Skip to the ruling
 						</button>
 					)}
+					{this.state.pendingStakeSiteId ? this.renderStakeConfirm(view)
+						: this.state.beat ? this.renderCallout()
+							: coaching ? this.renderCoach()
+								: (
+									<p className={`rec-status-hint g-body${yourTurn ? ' rec-status-hint--yours' : ''}`} data-hint>
+										{rivalBeat ? this.rivalBeat().text : this.whatAClickDoes(view)}
+									</p>
+								)}
+					<p
+						className="rec-status-reach g-body"
+						data-still-reachable={stillReachable ? stillReachable.tone : 'none'}
+					>
+						{stillReachable ? stillReachable.text : ''}
+					</p>
 				</div>
 
-				{this.state.pendingStakeSiteId ? this.renderStakeConfirm(view) : (
-					<p className={`rec-status-hint g-body${yourTurn ? ' rec-status-hint--yours' : ''}`} data-hint>
-						{rivalBeat ? this.rivalBeat().text : this.whatAClickDoes(view)}
-					</p>
+				{/* pass 37: the simple-mode ticker is the strip's last column, a fixed four lines */}
+				{simple && (
+					<div className="rec-ticker g-screen" data-ticker aria-live="polite">
+						{this.state.log.slice(-4).map((line, i, shown) => (
+							<span className={`g-screen-line${i === shown.length - 1 ? ' rec-ticker-line--in' : ' g-screen-line--dim'}`} key={`${this.state.log.length}-${i}`}>{line}</span>
+						))}
+					</div>
 				)}
+			</div>
+		);
+	}
+
+	renderCoach() {
+		return (
+			<div className="rec-coach" data-coach role="note">
+				<ol className="rec-coach-steps">
+					<li className={`rec-coach-step${!this.state.armedRecordId ? ' rec-coach-step--now' : ' rec-coach-step--done'}`}><span className="rec-coach-index g-mono">1</span> Lift a creature from the bench</li>
+					<li className={`rec-coach-step${this.state.armedRecordId ? ' rec-coach-step--now' : ''}`}><span className="rec-coach-index g-mono">2</span> Press a world to send it there</li>
+					<li className="rec-coach-step"><span className="rec-coach-index g-mono">3</span> Or pass, and keep the rest for later rounds</li>
+				</ol>
+				<button type="button" className="g-btn rec-coach-dismiss" onClick={this.dismissCoach} data-coach-dismiss>Got it</button>
 			</div>
 		);
 	}
@@ -1833,7 +1884,6 @@ class ReclamationMatch extends React.Component {
 				text: threatSentence(threatMap[id]),
 			};
 		});
-		const coaching = this.isSimple() && !this.state.coached && view.frameIndex === 0 && deploying;
 		const holdingIds = [...me.holding, ...them.holding];
 
 		/*
@@ -1958,35 +2008,15 @@ class ReclamationMatch extends React.Component {
 				{this.renderStatusStrip(view)}
 
 				{/*
-					PASS 27. The ticker keeps FOUR lines, not two.
-
-					A blind critic said simple mode has no event history and asked for the log;
-					it has this ticker, so the complaint was not quite right - but the cause was.
-					A Ruling over three worlds produces three verdict sentences, so at two lines a
-					simple-mode player never saw what happened at the first world of the round.
-					Four is the smallest number that carries a whole Ruling, which is the unit a
-					player needs to read as one thing.
+					PASS 27 kept the ticker at FOUR lines, the smallest that carries a whole Ruling
+					(three verdict sentences). Pass 37 moved it into the status strip's last column.
 				*/}
-				{/*
-					PASS 36. The ticker is ALWAYS rendered in simple mode, empty or not, and its
-					CSS reserves four lines. It used to appear on the first logged event and then
-					grow from one line to four, pushing the whole board down each time: measured
-					at +52px on the first send alone, which is a share of the jump Nick reported
-					when "moves are made".
-				*/}
-				{simple && (
-					<div className="rec-ticker g-screen" data-ticker aria-live="polite">
-						{this.state.log.slice(-4).map((line, i, shown) => (
-							<span className={`g-screen-line${i === shown.length - 1 ? ' rec-ticker-line--in' : ' g-screen-line--dim'}`} key={`${this.state.log.length}-${i}`}>{line}</span>
-						))}
-					</div>
-				)}
 
 				{notice && <div className="g-notice g-notice--alert rec-notice" role="status" data-notice>{notice}</div>}
 
-				<div className={`rec-body${showRail ? '' : ' rec-body--wide'}`}>
+				{/* pass 37: in simple mode the dossier is a drawer over the table, so opening it never narrows the worlds */}
+				<div className={`rec-body${showRail && !simple ? '' : ' rec-body--wide'}`}>
 					<div className="rec-table">
-						{this.renderCallout()}
 						<ReclamationWorld
 							key={view.frame.index}
 							arrival={this.state.arrival}
@@ -2016,75 +2046,78 @@ class ReclamationMatch extends React.Component {
 							onStake={this.askStake}
 							onSiteClick={this.handleSiteClick}
 							onSiteHover={(id) => this.setState({ hoverSiteId: id })}
-							onFigureClick={(entry, seat, site) => this.inspectRecord(entry.record, site)}
+							/*
+								pass 37: with a creature in hand, pressing a creature already standing
+								on a world is pressing that world. Figures fill most of a world now
+								that they size to it, and a send that opened a dossier instead was the
+								table ignoring what the player plainly meant.
+							*/
+							onFigureClick={(entry, seat, site) => (this.state.armedRecordId || this.state.movingRecordId
+								? this.handleSiteClick(site.id)
+								: this.inspectRecord(entry.record, site))}
 						/>
 
-						{view.nextFrame && !judged && (
-							<div className="rec-next-plate" data-next-plate>
-								<span className="rec-next-plate-label">Next round</span>
-								{view.nextFrame.map((w) => (
-									<span className={`g-chip g-chip--outline rec-status-element g-el-${w.element}`} key={w.siteId} title={`${w.planet}, at ${w.siteName}`}>{w.planet}</span>
-								))}
-							</div>
-						)}
+						{/*
+							PASS 37. THE DOCK. The bench, the Court's "load the next round" bar and nothing
+							at all (during a Clash) take turns in one box of a fixed height, so the worlds
+							above it keep their size whatever the dock is showing.
+						*/}
+						<div className="rec-dock" data-dock>
+							{/*
+								pass 37: the bench stays in the dock through the Clash, pressed flat,
+								rather than leaving a hole the size of the dock. Not in hot-seat, where
+								the squad in hand is one person's secret and the Clash is watched by both.
+							*/}
+							{(deployPanelOpen || (playback && !this.hotSeat)) && (
+								<ReclamationBench
+									view={view}
+									you={this.seatInPlay()}
+									squad={this.hotSeat && this.seatInPlay() === THEM ? this.squadB : this.squad}
+									mode={simple ? 'simple' : 'advanced'}
+									armedRecordId={this.state.armedRecordId}
+									recommendation={rec}
+									movingRecordId={this.state.movingRecordId}
+									movable={movable}
+									onArm={this.armRecord}
+									/*
+										PASS 25, ACT FLIP. The behaviours the armed creature can take, and
+										the one chosen. The bot gained this axis in the engine; without
+										these props the player could not use it, which would be the worst
+										possible version of the change.
+									*/
+									actFlip={!!view.rules.actFlip}
+									armedRole={this.state.armedRole}
+									onChooseRole={this.chooseRole}
+									onInspect={(record) => this.inspectRecord(record, null)}
+									onHoverRecord={(id) => this.setState({ hoverRecordId: id })}
+									onPass={this.handlePass}
+									onBeginMove={this.beginMove}
+									rivalBeat={this.rivalBeat()}
+								/>
+							)}
 
-						{coaching && (
-							<div className="rec-coach rec-rise" data-coach role="note">
-								<ol className="rec-coach-steps">
-									<li className={`rec-coach-step${!this.state.armedRecordId ? ' rec-coach-step--now' : ' rec-coach-step--done'}`}><span className="rec-coach-index g-mono">1</span> Lift a creature from the bench</li>
-									<li className={`rec-coach-step${this.state.armedRecordId ? ' rec-coach-step--now' : ''}`}><span className="rec-coach-index g-mono">2</span> Press a world to send it there</li>
-									<li className="rec-coach-step"><span className="rec-coach-index g-mono">3</span> Or pass, and keep the rest for later rounds</li>
-								</ol>
-								<button type="button" className="g-btn rec-coach-dismiss" onClick={this.dismissCoach} data-coach-dismiss>Got it</button>
-							</div>
-						)}
+							{judged && !playback && view.phase !== 'matchEnd' && (
+								<div className="rec-judge-bar rec-rise" data-judge-bar>
+									<span className="rec-judge-bar-text">
+										The Court has ruled on round {(this.state.judgedFrame || 0) + 1}.
+										{view.nextFrame ? ` The frame loads ${view.nextFrame.map((w) => w.planet).join(', ')} next; ${this.state.match.turn === YOU ? 'you send first' : 'the rival sends first'}.` : ''}
+									</span>
+									<button type="button" className="g-btn g-btn--primary" onClick={this.nextFrame} data-next-frame>
+										Load round {(this.state.judgedFrame || 0) + 2}
+									</button>
+								</div>
+							)}
 
-						{deployPanelOpen && (
-							<ReclamationBench
-								view={view}
-								you={this.seatInPlay()}
-								squad={this.hotSeat && this.seatInPlay() === THEM ? this.squadB : this.squad}
-								mode={simple ? 'simple' : 'advanced'}
-								armedRecordId={this.state.armedRecordId}
-								recommendation={rec}
-								movingRecordId={this.state.movingRecordId}
-								movable={movable}
-								onArm={this.armRecord}
-								/*
-									PASS 25, ACT FLIP. The behaviours the armed creature can take, and
-									the one chosen. The bot gained this axis in the engine; without
-									these props the player could not use it, which would be the worst
-									possible version of the change.
-								*/
-								actFlip={!!view.rules.actFlip}
-								armedRole={this.state.armedRole}
-								onChooseRole={this.chooseRole}
-								onInspect={(record) => this.inspectRecord(record, null)}
-								onHoverRecord={(id) => this.setState({ hoverRecordId: id })}
-								onPass={this.handlePass}
-								onBeginMove={this.beginMove}
-								rivalBeat={this.rivalBeat()}
-							/>
-						)}
+						</div>
 
-						{judged && !playback && view.phase !== 'matchEnd' && (
-							<div className="rec-judge-bar rec-rise" data-judge-bar>
-								<span className="rec-judge-bar-text">
-									The Court has ruled on round {(this.state.judgedFrame || 0) + 1}.
-									{view.nextFrame ? ` The frame loads ${view.nextFrame.map((w) => w.planet).join(', ')} next; ${this.state.match.turn === YOU ? 'you send first' : 'the rival sends first'}.` : ''}
-								</span>
-								<button type="button" className="g-btn g-btn--primary" onClick={this.nextFrame} data-next-frame>
-									Load round {(this.state.judgedFrame || 0) + 2}
-								</button>
-							</div>
+						{judged && !playback && view.phase === 'matchEnd' && (
+							<div className="rec-verdict-cover" data-verdict-cover>{this.renderVerdictPanel()}</div>
 						)}
-
-						{judged && !playback && view.phase === 'matchEnd' && this.renderVerdictPanel()}
 
 					</div>
 
 					{showRail && (
-					<div className="rec-rail">
+					<div className={`rec-rail${simple ? ' rec-rail--drawer' : ''}`}>
 						{inspect && (
 							<ReclamationInspect
 								record={inspect.record}

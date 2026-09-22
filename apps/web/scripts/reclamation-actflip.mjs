@@ -33,7 +33,7 @@ const browser = await chromium.launch({ executablePath: EDGE, headless: true });
 const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
 const errs = [];
 page.on('pageerror', (e) => errs.push(e.message));
-await page.goto(`${base}/reclamation?seed=${seed}&view=advanced`, { waitUntil: 'networkidle' });
+await page.goto(`${base}/reclamation?seed=${seed}&view=advanced&draft=1`, { waitUntil: 'networkidle' });
 const d = page.locator('[data-discard-match]');
 if (await d.count() && await d.first().isVisible()) await d.first().click();
 await page.locator('[data-enter]').first().click();
@@ -72,6 +72,12 @@ for (let i = 0; i < arms && !pickerFor; i++) {
 		}
 	}
 }
+/*
+	PASS 37. The board is read here, with the role just landed on it, rather than at the
+	Charter. The table is one screen now and the Charter's report covers it when the
+	Proving ends, so reading the board at the end would measure the report.
+*/
+const panels = await seenOn(page, '[data-site-id]');
 console.log(`picker appeared for: ${pickerFor || 'none'}`);
 console.log(`behaviours offered: ${words.join(', ') || 'none'}`);
 console.log(`chose: ${chosen}  role that landed on the board: ${landedRole}`);
@@ -113,7 +119,6 @@ if (errs.length) console.log(`PAGE ERRORS: ${errs.join(' | ')}`);
 	contained. The role it chose landing on the board means nothing if the board cannot
 	be seen.
 */
-const panels = await seenOn(page, '[data-site-id]');
 const unseen = panels.filter((r) => !r.seen).map((r) => `${r.id}: ${r.reasons.join(', ')}`);
 console.log(`world panels seen: ${panels.filter((r) => r.seen).length} of ${panels.length}${unseen.length ? ` (${unseen.join(' | ')})` : ''}`);
 
