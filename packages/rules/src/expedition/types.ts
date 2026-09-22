@@ -15,6 +15,8 @@
 
 import type { Sites, XalianRecord } from '@xalians/content/schema';
 import type { ElementKey } from '../generator/types.ts';
+import type { StatusApplication } from './statusLayer.ts';
+import type { StatusEffectReading } from './recordReading.ts';
 
 export type Seat = 'A' | 'B';
 
@@ -209,6 +211,12 @@ export interface Act {
 	area?: boolean;
 	range?: string | null;
 	reach?: number;
+	/*
+		Pass 32: the conditions this act leaves on what it touches, already sorted into
+		concepts by statusLayer.ts. Absent on the synthetic acts, and on the 72 percent of
+		actions that apply none.
+	*/
+	statusEffects?: StatusEffectReading[];
 }
 
 export interface Conduct {
@@ -303,6 +311,12 @@ export interface BoardEntry {
 	wasHidden?: boolean;
 	// Pass 25 (act flip): the role the handler named at send; null means the natural one
 	chosenRole?: string | null;
+	/*
+		Pass 32 (the status layer): the conditions riding on this creature. Statuses persist
+		across the rounds of ONE world and are gone on the next, which needs no clearing step
+		because a new frame builds a new board (see emptyBoardForFrame).
+	*/
+	statuses?: StatusApplication[];
 }
 
 // board[siteId][seat]
@@ -388,6 +402,12 @@ export interface PublicBoardEntry {
 	downed: boolean;
 	speed: number;
 	bolstered: boolean;
+	/* pass 32: what the table shows and the UI animates */
+	statuses?: StatusApplication[];
+	/** true when a status keeps this creature out of the exchange entirely */
+	held?: boolean;
+	/** the fraction of its power this creature currently lands, 1 when unimpaired */
+	powerFactor?: number;
 }
 
 export interface PublicState {

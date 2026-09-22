@@ -79,15 +79,33 @@ describe('readAction: what an action is at the table', () => {
 		the table cannot carry it, so a player is told WHICH condition their creature
 		applies rather than being told a generic no.
 	*/
-	test('a status the frame cannot carry is unsupported, and says which status', () => {
+	/*
+		PASS 32 INVERTED THIS TEST. It used to assert that a status was UNSUPPORTED and that
+		the reason named it, which was true while the frame carried no conditions. The status
+		layer makes the frame carry exactly that, so a status-only act is now an AFFLICT and
+		the assertion is that it reads the status rather than refusing it.
+	*/
+	test('a status-only action is an afflict, and carries what it applies', () => {
 		const reading = readAction(action({
 			effect: {
 				type: 'status', status: 'restrained', removable: ['freeing'],
 				persistence: 'lingering', duration: 'brief',
 			},
 		}));
+		expect(reading.role).toBe(EFFECT_ROLE.AFFLICT);
+		expect(reading.unsupportedReason).toBeUndefined();
+		expect(reading.statusEffects).toEqual([{
+			status: 'restrained', concept: 'held', recipient: 'target',
+			persistence: 'lingering', duration: 'brief', removable: ['freeing'], rounds: 1,
+		}]);
+	});
+
+	test('a removal is still unsupported, and says so', () => {
+		// the pool has 14 remove-only actions against 267 status-only ones; clearing a
+		// condition is the smaller half of the work and is deliberately not guessed at
+		const reading = readAction(action({ effect: { type: 'remove', methods: ['cleansing'] } }));
 		expect(reading.role).toBe(EFFECT_ROLE.UNSUPPORTED);
-		expect(reading.unsupportedReason).toContain('restrained');
+		expect(reading.unsupportedReason).toContain('clears a condition');
 	});
 
 	test('an action is judged by every effect it carries, not by a privileged one', () => {
@@ -181,20 +199,35 @@ describe('readRecord: whether the table can field the creature', () => {
 	});
 
 	test('a creature whose every action is unsupported is NOT fieldable, and says why', () => {
+		// both actions are removals, since pass 32 made statuses fieldable
 		const reading = readRecord(recordWith([
-			action({ key: 'a', name: 'Holds Things', effect: { type: 'status', status: 'restrained', removable: ['freeing'], persistence: 'lingering', duration: 'brief' } }),
-			action({ key: 'b', name: 'Clears Things', effect: { type: 'remove', methods: ['cleansing'] } }),
+			action({ key: 'a', name: 'Clears Things', effect: { type: 'remove', methods: ['cleansing'] } }),
+			action({ key: 'b', name: 'Clears More', effect: { type: 'remove', methods: ['detoxifying'] } }),
 		]));
 		expect(reading.fieldable).toBe(false);
 		expect(reading.usable).toEqual([]);
 		expect(reading.unsupportedReasons).toHaveLength(2);
-		expect(reading.unsupportedReasons[0]).toContain('Holds Things');
+		expect(reading.unsupportedReasons[0]).toContain('Clears Things');
+	});
+
+	/*
+		PASS 32's headline measurement, as a test. Before the status layer this creature was
+		unfieldable: entrancement was its only act and the frame could not carry it. Hypnopet
+		was 10 of 10 unfieldable in the seed-7 pool for exactly this reason.
+	*/
+	test('a creature whose only act applies a status is fieldable', () => {
+		const reading = readRecord(recordWith([
+			action({ key: 'a', name: 'Rapt Gaze', effect: { type: 'status', status: 'entranced', removable: ['disrupting'], persistence: 'lingering', duration: 'brief' } }),
+		]));
+		expect(reading.fieldable).toBe(true);
+		expect(reading.usable).toHaveLength(1);
+		expect(reading.unsupportedReasons).toEqual([]);
 	});
 
 	test('an unsupported action is dropped, not counted, while the rest still play', () => {
 		const reading = readRecord(recordWith([
 			action({ key: 'a', name: 'Real Hit' }),
-			action({ key: 'b', name: 'Unreadable', effect: { type: 'status', status: 'burning', removable: ['cooling'], persistence: 'lingering', duration: 'brief' } }),
+			action({ key: 'b', name: 'Unreadable', effect: { type: 'remove', methods: ['cleansing'] } }),
 		]));
 		expect(reading.fieldable).toBe(true);
 		expect(reading.usable).toHaveLength(1);

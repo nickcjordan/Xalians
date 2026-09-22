@@ -40,6 +40,11 @@
 
 import type { XalianRecord } from '@xalians/content/schema';
 import {
+	CONCEPT, applicationFrom, advanceStatuses, isHeld, tickAmount,
+	powerFactor as statusPowerFactor, type StatusApplication,
+} from './statusLayer.ts';
+import type { StatusEffectReading } from './recordReading.ts';
+import {
 	prepare, magnitudeAgainst, holdAtSite, targetMatchupMultiplier, traitKeywordsOf, isFieldable,
 	roleOf, round1, isSwift, speedOf, flippableRolesOf,
 } from './creatureOnTable.ts';
@@ -89,7 +94,7 @@ import {
 	DRAFT_DISTINCT_SPECIES,
 } from './expeditionInterpretation.ts';
 import type {
-	Board, BoardEntry, Conduct, Frame, FrameSite, LogEvent, MatchState, PlayerState,
+	Act, Board, BoardEntry, Conduct, Frame, FrameSite, LogEvent, MatchState, PlayerState,
 	PreparedCreature, PublicBoardEntry, PublicPlayerView, PublicState, Role, Rules,
 	RulesInput, Seat, ShieldCap, World, ClaimCounting, StakeTiming,
 } from './types.ts';
@@ -1376,7 +1381,7 @@ function buildResolutionOrder(state: MatchState, entries: BoardEntry[]): OrderMe
 			*/
 			reaches: !!prepared.blow && (
 				(rules.reachFirst && (prepared.blow.reach || 0) > 1)
-				|| (rules.pinning && prepared.blow.effectKind === 'restrain')
+				|| (rules.pinning && actHolds(prepared.blow))
 			),
 		};
 	});
@@ -1456,11 +1461,82 @@ function resolve(state: MatchState): MatchState {
 		e.wasHidden = !!e.hidden;
 		e.hidden = false;
 	});
+	/*
+		PASS 32. The status tick, before anything else in the round.
+
+		Attrition takes its bite and mending gives its back, then every application ages and
+		the expired ones fall off. This runs at the TOP of a round, so a status applied last
+		round is felt this round and a brief one is gone by the round after: the creature that
+		set you on fire got something for it even if it is no longer standing.
+
+		Statuses need no clearing when the frame turns. A new frame builds a new board
+		(emptyBoardForFrame), so they die with the world they were applied at, which is Nick's
+		ruling: "once the round is over and we are on a new world, any statuses would be gone."
+	*/
+	tickStatuses(s);
 	currentFrame(s).sites.forEach((site) => recomputeHoldsAtSite(s, site));
 
 	currentFrame(s).sites.forEach((site) => resolveWorld(s, site));
 
 	return s;
+}
+
+/*
+	One round's worth of status upkeep, over the whole board.
+
+	ORDER MATTERS: hold changes first, then ageing. A brief application that was going to
+	expire this round still gets its last tick, because it was riding the creature through
+	the round it is expiring at the end of.
+
+	A maintained hold survives only while its source does, which `advanceStatuses` decides
+	from the live board. That is the thing that makes a hold worth breaking: down the holder
+	and its captive swings again next round.
+*/
+function tickStatuses(state: MatchState): void {
+	const standing = new Set(allBoardEntries(state).filter(isAlive).map((e) => e.recordId));
+	allBoardEntries(state).forEach((entry) => {
+		const applications = entry.statuses || [];
+		if (!applications.length) {
+			return;
+		}
+		if (entry.downed) {
+			entry.statuses = [];
+			return;
+		}
+		const change = tickAmount(applications);
+		if (change < 0) {
+			const { remaining, outcome } = applyBlow(state, siteOfEntry(state, entry), entry, -change);
+			logEvent(state, {
+				type: 'attrition',
+				recordId: entry.recordId,
+				site: entry.siteId,
+				amount: -change,
+				remaining,
+				outcome,
+				statuses: applications.filter((a) => a.concept === CONCEPT.ATTRITION).map((a) => a.status),
+			});
+		} else if (change > 0) {
+			const before = entry.damage || 0;
+			entry.damage = round1(Math.max(0, before - change));
+			entry.hurt = (entry.damage || 0) > 0;
+			logEvent(state, {
+				type: 'mending',
+				recordId: entry.recordId,
+				site: entry.siteId,
+				amount: round1(before - (entry.damage || 0)),
+			});
+		}
+		entry.statuses = advanceStatuses(applications, (sourceId) => standing.has(sourceId));
+	});
+}
+
+/** the frame site an entry is standing at, which applyBlow needs for its own logging */
+function siteOfEntry(state: MatchState, entry: BoardEntry): FrameSite {
+	const found = currentFrame(state).sites.find((site) => site.id === entry.siteId);
+	if (!found) {
+		throw new Error(`entry ${entry.recordId} is at site ${entry.siteId}, which is not in this frame`);
+	}
+	return found;
 }
 
 interface Declaration {
@@ -1472,9 +1548,14 @@ interface Declaration {
 	victims?: Array<{ victim: BoardEntry; amount: number }>;
 	amount: number;
 	cancelledAgainst: Partial<Record<Seat, { recordId: string; fraction: number }>>;
-	// pass 8: true when this creature's one attack has a restrain primary effect, so a
-	// landed strike pins its target for the rest of this Clash
-	restrains?: boolean;
+	/*
+		PASS 32: true when this creature's act applies a HELD status, so landing it keeps its
+		target out of the exchange. Replaces pass 8's `restrains`, which read a v4 effect type
+		that schema 5 retired.
+	*/
+	holds?: boolean;
+	/** the statuses this act leaves on what it touches */
+	applies?: StatusEffectReading[];
 }
 
 /*
@@ -1526,8 +1607,14 @@ function resolveWorld(state: MatchState, site: FrameSite): void {
 				target: target || null,
 				amount: target ? round1(attackPowerAgainst(state, entry, prepared, target) * powerFactor) : 0,
 				cancelledAgainst: {},
-				// pass 8: the record's own primary effect for this creature's one attack
-				restrains: !!prepared.blow && prepared.blow.effectKind === 'restrain',
+				/*
+					PASS 32. Was `prepared.blow.effectKind === 'restrain'`, which schema 5
+					retired: `restrain` is not an effect type any more, so this read false for
+					every creature in the pool and the pinning rule was silently inert from the
+					v5 conversion until now. It reads the act's own statuses instead.
+				*/
+				holds: !!prepared.blow && actHolds(prepared.blow),
+				applies: prepared.blow ? (prepared.blow.statusEffects || []) : [],
 			});
 			return;
 		}
@@ -1693,7 +1780,7 @@ function resolveWorld(state: MatchState, site: FrameSite): void {
 		still counts its whole hold at the Ruling, which keeps the rule from being a second
 		way to remove a creature.
 	*/
-	const pinned = new Set<string>();
+	const held = new Set<string>();
 	declarations.forEach((declaration) => {
 		const striker = findLiveEntry(state, declaration.entry.recordId);
 		if (!striker || striker.downed) {
@@ -1711,7 +1798,7 @@ function resolveWorld(state: MatchState, site: FrameSite): void {
 			});
 			return;
 		}
-		if (rules.pinning && pinned.has(declaration.entry.recordId)) {
+		if (rules.pinning && held.has(declaration.entry.recordId)) {
 			logEvent(state, {
 				type: 'attack',
 				recordId: declaration.entry.recordId,
@@ -1727,20 +1814,16 @@ function resolveWorld(state: MatchState, site: FrameSite): void {
 			return;
 		}
 		if (declaration.role === ROLE.STRIKE) {
-			const landed = landStrike(state, site, declaration, hurtFactorOf(state, striker));
-			// a restraining strike that actually landed pins its target for this Clash
-			if (rules.pinning && landed && declaration.restrains && declaration.target) {
-				pinned.add(declaration.target.recordId);
-				logEvent(state, {
-					type: 'pin',
-					recordId: declaration.entry.recordId,
-					target: declaration.target.recordId,
-					site: site.id,
-				});
+			const landed = landStrike(state, site, declaration, blowFactorOf(state, striker));
+			if (landed && declaration.target) {
+				applyActStatuses(state, site, declaration, [declaration.target.recordId], held, rules);
 			}
 			return;
 		}
-		landSweep(state, site, declaration, hurtFactorOf(state, striker));
+		const victims = landSweep(state, site, declaration, blowFactorOf(state, striker));
+		if (victims.length) {
+			applyActStatuses(state, site, declaration, victims, held, rules);
+		}
 	});
 }
 
@@ -1753,6 +1836,84 @@ function resolveWorld(state: MatchState, site: FrameSite): void {
 	deciding who is standing at the end. Declaration is unscaled, so a shield still reads
 	the attack the striker meant to throw.
 */
+/*
+	PASS 32, THE STATUS LAYER. These three functions are the whole engine-side surface of it.
+	What each status DOES is decided in statusLayer.ts; this is only where the Clash asks.
+
+	Design and the ruling record: docs/design/reclamation-status-layer.md.
+*/
+
+/** true when an act leaves a HELD status on what it touches, so landing it stops a swing */
+function actHolds(act: Act): boolean {
+	return (act.statusEffects || []).some(
+		(effect) => effect.concept === CONCEPT.HELD && effect.recipient !== 'self',
+	);
+}
+
+/*
+	The factor a creature's blows land at: how hurt it is, times how diminished it is.
+
+	Both are multipliers on the same quantity and they compose, because being half dead and
+	being blinded are different problems. A creature that is both lands a quarter of what it
+	meant to, which is the floor this rule can produce: DIMINISHED does not stack with itself
+	(statusLayer.ts, powerFactor), so nothing drives it lower than hurt alone can.
+*/
+function blowFactorOf(state: MatchState, entry: BoardEntry): number {
+	return hurtFactorOf(state, entry) * statusPowerFactor(entry.statuses || []);
+}
+
+/*
+	Leave an act's statuses on the creatures it landed on.
+
+	SELF-AIMED EFFECTS GO TO THE ACTOR, not the victim. 50 of the pool's status-only actions
+	are self-aimed and most of them are boons, so an act that shields its performer while it
+	burns its target has to put each half in the right place; `recipient` says which.
+
+	A landed HELD status also registers in this Clash's `held` set, which is what takes the
+	victim's own swing away if it has not swung yet. That is the pass 8 pinning rule, now
+	driven by the record's own statuses rather than by a retired effect type.
+*/
+function applyActStatuses(
+	state: MatchState,
+	site: FrameSite,
+	declaration: Declaration,
+	targetIds: readonly string[],
+	held: Set<string>,
+	rules: Rules,
+): void {
+	const applies = declaration.applies || [];
+	if (!applies.length) {
+		return;
+	}
+	const sourceId = declaration.entry.recordId;
+	for (const effect of applies) {
+		const recipients = effect.recipient === 'self' ? [sourceId] : targetIds;
+		for (const recipientId of recipients) {
+			const live = findLiveEntry(state, recipientId);
+			if (!live || live.downed) {
+				continue;
+			}
+			const application = applicationFrom(effect, sourceId);
+			if (!application) {
+				continue;
+			}
+			live.statuses = [...(live.statuses || []), application];
+			logEvent(state, {
+				type: 'status',
+				recordId: sourceId,
+				target: recipientId,
+				site: site.id,
+				status: application.status,
+				concept: application.concept,
+				rounds: application.rounds,
+			});
+			if (rules.pinning && application.concept === CONCEPT.HELD && recipientId !== sourceId) {
+				held.add(recipientId);
+			}
+		}
+	}
+}
+
 function hurtFactorOf(state: MatchState, entry: BoardEntry): number {
 	if (!rulesOf(state).hurtAttacksLess) {
 		return 1;
@@ -1808,7 +1969,8 @@ function landStrike(state: MatchState, site: FrameSite, declaration: Declaration
 	return outcome !== 'downed';
 }
 
-function landSweep(state: MatchState, site: FrameSite, declaration: Declaration, hurtFactor = 1): void {
+/** returns the recordIds a sweep actually landed on, so pass 32 can leave statuses there */
+function landSweep(state: MatchState, site: FrameSite, declaration: Declaration, hurtFactor = 1): string[] {
 	const cancelledSides = Object.keys(declaration.cancelledAgainst);
 	logEvent(state, {
 		type: 'sweep',
@@ -1821,6 +1983,7 @@ function landSweep(state: MatchState, site: FrameSite, declaration: Declaration,
 		cancelled: cancelledSides.length > 0,
 		cancelledAgainst: cancelledSides,
 	});
+	const struck: string[] = [];
 	(declaration.victims || []).forEach(({ victim, amount }) => {
 		const base = {
 			type: 'attack',
@@ -1843,7 +2006,11 @@ function landSweep(state: MatchState, site: FrameSite, declaration: Declaration,
 		}
 		const { remaining, outcome } = applyBlow(state, site, live, landing);
 		logEvent(state, { ...base, power: landing, remaining, outcome, cancelled: !!cut });
+		if (outcome !== 'downed') {
+			struck.push(victim.recordId);
+		}
 	});
+	return struck;
 }
 
 /*
@@ -1986,6 +2153,10 @@ function judge(state: MatchState): MatchState {
 			downed: e.downed,
 			speed: speedOf(e.record),
 			bolstered: e.bolstered,
+			// pass 32: the conditions on this creature, for the plinth and the animation
+			statuses: e.statuses || [],
+			held: isHeld(e.statuses || []),
+			powerFactor: statusPowerFactor(e.statuses || []),
 		}) as unknown as PublicBoardEntry & { hold: number };
 		const entriesA = s.board[site.id].A.map(entryView);
 		const entriesB = s.board[site.id].B.map(entryView);
@@ -2155,6 +2326,10 @@ export function getPublicState(state: MatchState, handler: Seat): PublicState {
 					downed: !!e.downed,
 					speed: speedOf(e.record),
 					bolstered: !!e.bolstered,
+					// pass 32: the conditions on this creature, for the plinth and the animation
+					statuses: e.statuses || [],
+					held: isHeld(e.statuses || []),
+					powerFactor: statusPowerFactor(e.statuses || []),
 				});
 			});
 		});

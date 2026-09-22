@@ -223,7 +223,8 @@ describe('runValidation', () => {
 		const a = runValidation({ matches: MATCHES, seed: SEED, only: ['regret', 'spread', 'decided'] });
 		const b = runValidation({ matches: MATCHES, seed: SEED, only: ['regret', 'spread', 'decided'] });
 		expect(toMarkdown(b)).toBe(toMarkdown(a));
-	});
+		// two full validation runs, so it needs the same budget as its neighbour above
+	}, 20_000);
 
 	it('a different seed gives a different report', () => {
 		const a = runValidation({ matches: MATCHES, seed: SEED, only: ['regret'] });
