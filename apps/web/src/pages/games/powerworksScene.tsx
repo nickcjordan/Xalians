@@ -27,13 +27,29 @@ import {
 import {
   ElementIcon,
   Health,
+  MoveIcon,
   Portrait,
   StatusBadges,
   PowerIcon,
+  baseName,
   binds,
   harms,
   melee as contact,
 } from "./powerworksVisuals";
+
+/**
+  What a companion's plaque chip says (radial orders decision 7): its order's move and
+  target, or its playback state, or why it has none. The page reads it from the plans.
+*/
+export type OrderChip = {
+  move: Move | null;
+  /** The target's short name; null for a move that acts on its user. */
+  target: string | null;
+  /** During playback: acting now, acted, waiting. */
+  status?: string | null;
+  /** When there is no move to show: "No order", "Cannot act", "Knocked out". */
+  empty?: string | null;
+};
 
 export const sectorStory = [
   {
@@ -148,6 +164,12 @@ export function floatLabel(event?: BattleEvent): string {
   }
 }
 
+/** The chip's words, for its label and the figure's description: "Heavy Ram → Crawler 1". */
+export function chipText(chip: OrderChip) {
+  if (!chip.move) return chip.empty ?? "No order";
+  return `${chip.move.name} → ${chip.status ?? chip.target ?? "itself"}`;
+}
+
 export function PowerworksScene({
   team,
   enemies,
@@ -170,6 +192,11 @@ export function PowerworksScene({
   onSelect,
   onInspect,
   onHover,
+  onOpen,
+  onBack,
+  openId = null,
+  chips = {},
+  ring = null,
 }: {
   team: Unit[];
   enemies: Unit[];
@@ -193,7 +220,17 @@ export function PowerworksScene({
   onSelect: (u: Unit, keyboard: boolean) => void;
   onInspect: (id: string) => void;
   onHover: (id: string | null) => void;
+  /** Open a companion's ring from its order chip or a target's order link. */
+  onOpen?: (u: Unit, keyboard: boolean) => void;
+  /** A click on empty stage backs out one step (radial orders decision 5). */
+  onBack?: () => void;
+  /** The companion whose radial menu is open. */
+  openId?: string | null;
+  chips?: Record<string, OrderChip>;
+  /** The radial menu, drawn over the stage. */
+  ring?: React.ReactNode;
 }) {
+  const open = onOpen ?? onSelect;
   const [arriving, setArriving] = useState(true);
   useEffect(() => {
     setArriving(true);
@@ -246,11 +283,22 @@ export function PowerworksScene({
       ? all.find((u) => u.id === targetId && targetable(u))
       : null;
   const aimPoint = aiming ? position(aiming) : null;
-  const queuedTarget =
-    planning && !move && active && plans[active.id]
-      ? all.find((u) => u.id === plans[active.id].target && u.hp > 0)
-      : null;
-  const queuedPoint = queuedTarget ? position(queuedTarget) : null;
+  // The intent line from every companion with an order to its target, while planning
+  // (decision 7). A move that acts on its user names a foe only nominally, so it has none.
+  const intents = planning
+    ? team.flatMap((u) => {
+        const order = plans[u.id];
+        if (!order || u.hp <= 0 || (move && active?.id === u.id)) return [];
+        if (chips[u.id] && chips[u.id].move && chips[u.id].target === null) return [];
+        const target = all.find((t) => t.id === order.target && t.hp > 0);
+        return target ? [{ id: u.id, from: position(u), to: position(target) }] : [];
+      })
+    : [];
+  const aimedIds = new Set(
+    intents
+      .filter((i) => i.id === active?.id)
+      .map((i) => plans[i.id].target)
+  );
   const phase = event?.kind || "idle";
   const style = {
     "--action-time": `${presentation.impactDelay / 0.28 / speed}ms`,
@@ -258,6 +306,16 @@ export function PowerworksScene({
   } as React.CSSProperties;
   return (
     <section
+      onClick={(e) => {
+        if (!planning || !onBack) return;
+        if (
+          (e.target as Element).closest(
+            "button, .pw-radial, .pw-radial-detail, .pw-unit-plaque"
+          )
+        )
+          return;
+        onBack();
+      }}
       className={`pw-theater sector-${room} ${frame ? "playing" : "planning"} ${
         paused ? "paused" : ""
       } ${arriving ? "arriving" : ""} ${signature ? "signature-action" : ""} ${
@@ -331,12 +389,16 @@ export function PowerworksScene({
         aria-hidden="true"
         key={`path-${frameIndex}`}
       >
-        {queuedPoint && source && (
+        {intents.map(({ id, from, to }) => (
           <path
-            className="pw-queued-path"
-            d={`M${source.x} ${source.y} Q50 45 ${queuedPoint.x} ${queuedPoint.y}`}
+            key={id}
+            className={`pw-queued-path ${active?.id === id ? "active" : ""}`}
+            data-intent={id}
+            d={`M${from.x} ${from.y} Q${(from.x + to.x) / 2} ${
+              Math.min(from.y, to.y) - 12
+            } ${to.x} ${to.y}`}
           />
-        )}
+        ))}
         {aimPoint && source && (
           <path
             className="pw-aim-path"
@@ -389,9 +451,25 @@ export function PowerworksScene({
           receiving = recipient?.id === u.id;
         const selected = planning && active?.id === u.id;
         const queued = Object.entries(plans)
-          .filter(([, q]) => q.target === u.id)
-          .map(([id]) => team.find((p) => p.id === id)!);
+          .filter(
+            ([id, q]) =>
+              q.target === u.id &&
+              !(chips[id] && chips[id].move && chips[id].target === null)
+          )
+          .map(([id]) => team.find((p) => p.id === id)!)
+          .filter(Boolean);
+        const chip = !u.enemy ? chips[u.id] : undefined;
+        const ringOpen = openId === u.id;
+        // The figure and its plaque are one selection control (decision 2).
+        const act = (keyboard: boolean) =>
+          target
+            ? onTarget(u.id, keyboard)
+            : u.enemy
+            ? onInspect(u.id)
+            : onSelect(u, keyboard);
         const target = targetable(u);
+        const pressable =
+          planning && u.hp > 0 && !(u.enemy && !!move && !target);
         const estimate =
           target && active && u.enemy && harms(move!)
             ? damagePreview(active, move!, u)
@@ -416,8 +494,9 @@ export function PowerworksScene({
             } ${u.hp > 0 && u.bound ? "restrained" : ""} ${
               u.hp > 0 && u.ward ? "protected" : ""
             } ${
-              aiming?.id === u.id || queuedTarget?.id === u.id ? "aimed" : ""
+              aiming?.id === u.id || aimedIds.has(u.id) ? "aimed" : ""
             } ${receiving && knockout && impact ? "just-fallen" : ""}`}
+            data-unit={u.id}
             style={
               {
                 left: `${pos.x}%`,
@@ -443,23 +522,20 @@ export function PowerworksScene({
                   ? `Target ${u.name} ${u.id}`
                   : target
                   ? `Target ${u.name} (squadmate)`
-                  : `Plan ${u.name} on battlefield`
+                  : `Select ${u.name}`
               }
-              aria-pressed={!u.enemy && !target ? selected : undefined}
+              aria-haspopup={!u.enemy && !target ? "menu" : undefined}
+              aria-expanded={!u.enemy && !target ? ringOpen : undefined}
+              aria-describedby={!u.enemy && chip ? `order-${u.id}` : undefined}
               disabled={!planning || u.hp <= 0 || (u.enemy && !!move && !target)}
-              onClick={(e) =>
-                target
-                  ? onTarget(u.id, e.detail === 0)
-                  : u.enemy
-                  ? onInspect(u.id)
-                  : onSelect(u, e.detail === 0)
-              }
+              onClick={(e) => act(e.detail === 0)}
               onMouseEnter={() => (u.enemy || target) && onHover(u.id)}
               onMouseLeave={() => onHover(null)}
               onFocus={() => (u.enemy || target) && onHover(u.id)}
               onBlur={() => onHover(null)}
             >
               <span className="pw-ground" />
+              {selected && <span className="pw-ground-ring" aria-hidden="true" />}
               {!u.enemy && (
                 <span className="pw-squad-number" aria-hidden="true">
                   {team.indexOf(u) + 1}
@@ -504,7 +580,13 @@ export function PowerworksScene({
                 </span>
               )}
             </button>
-            <div className="pw-unit-plaque">
+            <div
+              className="pw-unit-plaque"
+              onClick={(e) => {
+                if ((e.target as Element).closest("button") || !pressable) return;
+                act(false);
+              }}
+            >
               <div>
                 <ElementIcon element={u.element} />
                 <strong>{labelFor(u)}</strong>
@@ -518,6 +600,48 @@ export function PowerworksScene({
                 </button>
               </div>
               <Health u={u} estimate={estimate} />
+              {chip && (
+                <button
+                  className={`pw-order-chip ${chip.move ? "" : "empty"} ${
+                    chip.status === "Acted" ? "done" : ""
+                  }`}
+                  disabled={!planning || u.hp <= 0}
+                  tabIndex={-1}
+                  title={chip.move ? chip.move.name : undefined}
+                  aria-label={
+                    !planning || u.hp <= 0
+                      ? `${u.name}'s order: ${chipText(chip)}`
+                      : chip.move
+                      ? `Change ${u.name}'s order: ${chipText(chip)}`
+                      : `Give ${u.name} an order`
+                  }
+                  onClick={(e) => open(u, e.detail === 0)}
+                >
+                  {chip.move ? (
+                    <>
+                      <MoveIcon move={chip.move} />
+                      <span className="pw-order-chip-move">
+                        {baseName(chip.move)}
+                      </span>
+                      <span className="pw-order-chip-target">
+                        {chip.status ? (
+                          chip.status
+                        ) : (
+                          <>
+                            <ArrowRight />
+                            {chip.target ?? "Self"}
+                          </>
+                        )}
+                      </span>
+                    </>
+                  ) : (
+                    <span className="pw-order-chip-move">{chip.empty}</span>
+                  )}
+                  <span className="pw-sr" id={`order-${u.id}`}>
+                    {chipText(chip)}
+                  </span>
+                </button>
+              )}
               {target && !u.enemy && (
                 // A squadmate stands low on the stage, so its preview sits just above
                 // its plaque rather than below its conditions, where it would leave the
@@ -542,19 +666,13 @@ export function PowerworksScene({
                     aria-label={`Edit ${p.name}'s order targeting ${labelFor(
                       u
                     )}`}
-                    onClick={(e) => onSelect(p, e.detail === 0)}
+                    onClick={(e) => open(p, e.detail === 0)}
                   >
                     <span>{team.indexOf(p) + 1}</span>
                     <Portrait u={p} small />
                   </button>
                 ))}
               </div>
-            )}
-            {planning && !u.enemy && plans[u.id]?.target && (
-              <span className="pw-planned-destination">
-                <ArrowRight />
-                {labelFor(all.find((e) => e.id === plans[u.id].target) || u)}
-              </span>
             )}
             {target && u.enemy && (
               <span
@@ -569,6 +687,7 @@ export function PowerworksScene({
           </div>
         );
       })}
+      {ring}
       {planning && (move || enemies.some((u) => u.charge && u.hp > 0)) && (
         <div className="pw-scene-direction targeting">
           {move ? (
