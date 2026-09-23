@@ -110,7 +110,24 @@ export const SEVERE_STRAIN_MULTIPLIER = 0.25;
 	bot, and the bot changed in this pass (its candidate space became creature x world x role).
 	Re-sweep it if the bot changes again.
 */
-export const MAGNITUDE_SCALE = 2.0;
+/*
+	PASS 48: 2.0 -> 1.8, because the creatures changed. Generation 0.7.0 (derived acts) hits
+	harder, and at 2.0 downs per match read 5.2 to 5.5 against the band of 3 to 5. It also
+	made speed the attribute that decides games: measured causally (the same squads, one side
+	given +15 in one attribute), +15 agility bought 9.0 points of win rate against 3.1 for
+	+15 vitality, because at that blow size the creature that lands first often downs the
+	other before it acts. Swept on three seeds at 1000 matches:
+
+		scale 1.4: downs 2.6 to 3.2 (under band)
+		scale 1.7: downs 4.0 to 4.3, flips 25.2 to 26.1 (at the floor), comeback 26.5 to 30.9
+		scale 1.8: downs 4.4 to 4.8, flips 26.5 to 27.9, comeback 27.9 to 31.3
+		scale 1.85: downs 4.7 to 5.0, flips 27.2 to 28.3, comeback 28.1 to 28.7
+		scale 2.0: downs 5.2 to 5.5 (over band), flips 28.1 to 29.3, comeback 30.1 to 30.3
+
+	1.8 is where downs return to the band with flips still inside theirs, the same criterion
+	as pass 25, and speed's lead over hold narrows (see draft.ts DRAFT_SPEED_VALUE).
+*/
+export const MAGNITUDE_SCALE = 1.8;
 
 /*
 	Pass 5 (2026-09-18): the lever that tested WHY the flip gauge was stuck, kept as an
