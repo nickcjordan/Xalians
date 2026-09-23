@@ -391,12 +391,14 @@ export function captionEvent(event, ctx = {}) {
 				: [actor, ` recovers ${formatHoldShown(event.amount)}`];
 		case 'pin':
 			return [actor, ' restrains ', target];
-		case 'attack':
+		case 'attack': {
+			// pass 47: a sweep catching its own side says so, or two names in one color read as a mistake
+			const own = actor.seat && target.seat && actor.seat === target.seat ? 'its own ' : '';
 			switch (event.outcome) {
 				case 'downed':
-					return [actor, ' downs ', target];
+					return [actor, ` downs ${own}`, target];
 				case 'hurt':
-					return [actor, ` ${attackVerb(event.role)} `, target, `: −${formatHoldShown(event.power)}, ${left(event.remaining)}`];
+					return [actor, ` ${attackVerb(event.role)} ${own}`, target, `: −${formatHoldShown(event.power)}, ${left(event.remaining)}`];
 				case 'lapsed':
 					return [actor, ' falls before it acts'];
 				case 'pinned':
@@ -406,6 +408,7 @@ export function captionEvent(event, ctx = {}) {
 				default:
 					return null;
 			}
+		}
 		default:
 			return null;
 	}

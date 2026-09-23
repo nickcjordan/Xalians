@@ -95,4 +95,24 @@ describe('what is still reachable', () => {
 		const line = reachabilityLine({ ...view(2), rules: { sendable: 11, trailingBonus: 0 }, board, players: { A: me } }, me, side(2));
 		expect(line === null || line.tone !== 'lost').toBe(true);
 	});
+
+	/*
+		PASS 47. A pass closes this round only. The line used to count no new worlds at all
+		once you had passed, so every Clash of round one at 0 to 0 read "out of reach".
+	*/
+	test('after a pass in round one, the rounds to come still count', () => {
+		const me = { sitesWon: 0, sentCount: 4, roster: new Array(8).fill({}), stakeUsed: false, stakeableSiteIds: [], passed: true };
+		const board = { s0: { A: [{ record: {}, downed: false }], B: [] }, s1: { A: [], B: [] }, s2: { A: [], B: [] } };
+		const line = reachabilityLine({ ...view(0, 'resolve'), rules: { sendable: 11, trailingBonus: 0 }, board, players: { A: me } }, me, side(0));
+		expect(line === null || line.tone !== 'lost').toBe(true);
+	});
+
+	test('but a pass does close this round: its empty worlds are not counted', () => {
+		// round three, passed, standing on one world, needing three more: lost, whatever is in hand
+		const me = { sitesWon: 2, sentCount: 8, roster: [{}, {}, {}], stakeUsed: true, passed: true };
+		const board = { s0: { A: [{ record: {}, downed: false }], B: [] }, s1: { A: [], B: [] }, s2: { A: [], B: [] } };
+		const line = reachabilityLine({ ...view(2), rules: { sendable: 11, trailingBonus: 0 }, board, players: { A: me } }, me, side(2));
+		expect(line && line.tone).toBe('lost');
+	});
 });
+

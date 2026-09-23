@@ -606,6 +606,10 @@ function ReclamationWorld({
 								<div className={`rec-rank rec-rank--theirs${theirs.length > 4 ? ' rec-rank--crowded' : ''}`} data-rank="theirs" data-rank-rows={rankGrid(theirs.length)['--rank-rows-n']} data-rank-list={theirs.length >= 2 && theirs.length <= 4 ? '' : undefined} data-rank-rows-wide={rankGrid(theirs.length)['--rank-rows-w']} style={rankGrid(theirs.length)}>
 									<span className="rec-rank-edge rec-rank-edge--theirs" aria-hidden="true">rival</span>
 									{theirs.map((entry) => <ReclamationFigure key={entry.recordId} {...figureProps(entry, opponent, 'down')} />)}
+									{/* pass 47: a world only you stand on is yours unless the rival answers */}
+									{!!siteFootings && theirs.length === 0 && mine.length > 0 && (
+										<span className="rec-rank-unopposed rec-rank-unopposed--yours" data-unopposed="yours">Unopposed: yours so far</span>
+									)}
 								</div>
 
 								<div className={`rec-site-midline${empty ? ' rec-site-midline--empty' : ''}`}>
@@ -679,6 +683,14 @@ function ReclamationWorld({
 
 								<div className={`rec-rank rec-rank--mine${mine.length > 4 ? ' rec-rank--crowded' : ''}`} data-rank="mine" data-rank-rows={rankGrid(mine.length)['--rank-rows-n']} data-rank-list={mine.length >= 2 && mine.length <= 4 ? '' : undefined} data-rank-rows-wide={rankGrid(mine.length)['--rank-rows-w']} style={rankGrid(mine.length)}>
 									{mine.map((entry) => <ReclamationFigure key={entry.recordId} {...figureProps(entry, you, 'up')} />)}
+									{/*
+										pass 47: a world only the rival stands on goes to the rival for one
+										creature. A critic stacked a fourth creature on a world already won
+										while two such worlds went by, and learned the rule on the result screen.
+									*/}
+									{!!siteFootings && mine.length === 0 && theirs.length > 0 && (
+										<span className="rec-rank-unopposed rec-rank-unopposed--rival" data-unopposed="rival">Unopposed: the rival takes it</span>
+									)}
 									<span className="rec-rank-edge rec-rank-edge--mine" aria-hidden="true">you</span>
 								</div>
 							</div>

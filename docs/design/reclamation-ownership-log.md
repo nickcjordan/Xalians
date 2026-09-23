@@ -872,3 +872,19 @@ The mirror (same creatures both sides) reads A 53.5 pooled: with identical creat
 **Open item 8, done.** The record schema publishes the attribute range (0 to 100), frozen with the generation release, so the game restates it and `recordAttributeRange.test.ts` fails if they disagree. The old comment's "1 to 99, the generator clamps" was wrong.
 
 **Verified:** 587 rules tests (three new), 191 content tests, typecheck clean, web build, 199 Reclamation web tests.
+
+### Pass 47 (2026-09-23): a blind critic plays the whole game again
+
+**Instrument.** A new play-through probe plays a full game the way a first-timer would with what the table now offers (a "best here" pick on an empty world, else the first creature, pass when suggested) at 1440 and 390, and a blind critic (screenshots only) read the arc. Scores: clarity 5, decisions 4, the Clash 4, arc 3, want another game 5, phone 5.
+
+**What it found, and what changed:**
+- **A false "out of reach" through every Clash** (critic's third problem, and a real bug from pass 39). Once you had passed, the reach line counted no new worlds at all, so a round-one Clash at 0 to 0 said winning was out of reach. A pass closes this round only; the line now counts one new world per sendable creature in this round's empty worlds (unless you passed) and the rounds to come, and says it in fewer words so it no longer truncates. Two new tests; the first fails on the old code.
+- **An empty world was a free win nobody mentioned** (first problem). The critic stacked a fourth creature on a world already won while two worlds went to the rival unanswered, and learned the rule on the result screen. During Deploy a world only the rival stands on now reads "Unopposed: the rival takes it" in your empty rank, and one only you stand on "Unopposed: yours so far".
+- **The budget read as per round** (second problem). "11 sends left this game" is now "7 sends left for 9 worlds", the budget beside what it has to cover.
+- **Friendly fire read as a mistake** (fourth problem). A sweep catching its own side now says so: "Voltish hits its own Hippochamp: −6, barely standing". A standing creature under half a point shows "<1" rather than "0".
+- **Phone** (fifth problem): the instruction wins over the rival's last move while a creature is lifted ("Pick a world for Scalatto" had been replaced by a stale rival line); the world head drops its "20 →17" forecast, which ran off the column (the figures carry their own); the YOU chip no longer sits on a four-creature list's last figure; the intro's labels no longer run together.
+- **Jargon on the intro** (clarity): "Five worlds take the Charter" is "The first to five worlds wins"; "The Charter" panel is "The game"; "to clinch" is "to win"; "sends, from 12 kept" is "sends"; "Enter the frame" is "Start the game"; the "Survey program" plate is gone; the resume line and the mode title say what they mean (the mode title still described the dropped suggestion).
+
+**Not changed, recorded:** "every ruling reads the same" and "round three is a formality when the rival needs one of three" (arc 3). The arc problem is structural, and the next pass's measurement bears on it: speed is worth about three times any hold attribute.
+
+**Verified:** 1589 web tests (one flaky art-registry test passes alone); `reclamation-shift`, `reclamation-proving` (4 of 4), `reclamation-actflip`, `reclamation-hotseat` green; the full play-through re-shot at 1440 and 390 and read.
