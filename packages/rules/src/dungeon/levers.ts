@@ -138,6 +138,8 @@ export const COMPANION_GENERATED_AT = "2026-09-21T00:00:00.000Z";
  * command history names moves the squad no longer has and is rejected rather than replayed wrong.
  * Version 4 (2026-09-23): companions come from generation-0.7.0-2 (same seeds, new derived kits) and pass 4
  * resolves area, shock, tempo and senses effects, so a version 3 history no longer replays the same run.
- * The decision 37 seeds landed before any version 4 save shipped, so the version did not move again. */
-export const SAVE_VERSION = 4;
+ * The decision 37 seeds landed before any version 4 save shipped, so the version did not move again.
+ * Version 5 (2026-09-23, pass 5): orders may name a squadmate (contract decisions 39 to 41), so a history
+ * can carry side-crossing targets that a version 4 replay would reject or resolve as a foe order. */
+export const SAVE_VERSION = 5;
 export const SAVE_HISTORY_LIMIT = 2000;

@@ -433,8 +433,7 @@
   },
   "acts": {
     "exclude": [
-      "*/drain",
-      "*/mend"
+      "*/drain"
     ]
   }
 }

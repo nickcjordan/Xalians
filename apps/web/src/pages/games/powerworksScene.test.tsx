@@ -58,6 +58,36 @@ describe("shared battlefield", () => {
     );
   });
 
+  it("makes a legal squadmate a target with its own label and preview, and leaves the rest selectable", () => {
+    const run = createRun(1);
+    const [performer, mate, other] = run.team;
+    const onTarget = vi.fn();
+    scene(undefined, {
+      active: performer,
+      move: performer.moves[0],
+      targetIds: [run.enemies[0].id, mate.id],
+      previewText: (u) => (u.enemy ? "7 estimated" : "heals 9"),
+      onTarget,
+    });
+    const target = screen.getByRole("button", {
+      name: `Target ${mate.name} (squadmate)`,
+    });
+    expect(target).toHaveClass("valid-target");
+    expect(screen.getByText("heals 9")).toBeInTheDocument();
+    fireEvent.click(target);
+    expect(onTarget).toHaveBeenCalledWith(mate.id, true);
+    // A squadmate the move cannot name stays a selection button, and an enemy the move
+    // cannot name is not pressable.
+    expect(
+      screen.getByRole("button", { name: `Plan ${other.name} on battlefield` })
+    ).toBeEnabled();
+    expect(
+      screen.getByRole("button", {
+        name: `Target ${run.enemies[1].name} ${run.enemies[1].id}`,
+      })
+    ).toBeDisabled();
+    expect(screen.getByText("Choose an enemy or a squadmate")).toBeInTheDocument();
+  });
   it("calls out a redirected melee attack without playing it as another signature", () => {
     const run = createRun(1);
     const actor = run.team.find((u) => u.id === "A")!;

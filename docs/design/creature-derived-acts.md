@@ -219,6 +219,8 @@ Released as `generation-0.7.0-2`.
 
 Released as `generation-0.7.0-3`.
 
+6. **Hypnopet heals** (Nick, 2026-09-23: "i am fine with hypnopet being able to heal"). Its `*/mend` exclusion is lifted, so the mind and the psychic horn derive self and other restoration; `*/drain` stays excluded. Released as `generation-0.7.0-4`.
+
 ## Friction met in the first two games, 2026-09-22
 
 Reported for the next pass; none blocks this release.

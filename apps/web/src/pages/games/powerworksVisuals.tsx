@@ -29,7 +29,6 @@ import {
   AREA_HARM_FACTOR,
   asMove,
   basePower,
-  beneficial,
   BLINDED_RANGED_FACTOR,
   COOLDOWN_ROUNDS,
   DEGRADE_FACTOR,
@@ -37,7 +36,8 @@ import {
   FRIGHTENED_OUTPUT_FACTOR,
   LIKELIHOOD_PERCENT,
   MEND_FACTOR,
-  reachesOwnSide,
+  helpful,
+  restorePreview,
   selfBurst,
   REINFORCED_FACTOR,
   SHIELDED_FACTOR,
@@ -63,6 +63,9 @@ export const binds = (move: Move) =>
   move.effects.some((e) => e.support === "bind");
 export const guards = (move: Move) =>
   move.effects.some((e) => e.support === "protect");
+/** A move that can do something for a squadmate: restore, protect, remove or a guarding or mending status aimed past its user (contract decision 39). */
+export const helps = (move: Move) =>
+  move.effects.some((e) => helpful(e) && e.recipient !== "self");
 export const harms = (move: Move) =>
   move.effects.some((e) => e.support === "harm" || e.support === "displace");
 export const charges = (move: Move) => move.preparation === "prolonged";
@@ -266,9 +269,10 @@ export function effectSummary(effect: MoveEffect, move?: Move): string {
     effect.likelihood === "consistent"
       ? ""
       : ` (${LIKELIHOOD_PERCENT[effect.likelihood]}% chance)`;
-  // Beneficial effects never reach a foe here (contract decision 35).
-  if (move && effect.support !== "unsupported" && beneficial(effect) && !reachesOwnSide(move, effect))
-    return `${cap(effect.status ?? effect.type)}: withheld here, because it would help the enemy it reaches.`;
+  // Since pass 5 a helpful effect that reaches its target is aimed at a squadmate
+  // (contract decisions 39 and 40); it is still withheld from an enemy (decision 35).
+  const onMate = helpful(effect) && effect.recipient !== "self";
+  const mates = effect.recipient === "area" ? "every squadmate it reaches" : "a squadmate";
   switch (effect.support) {
     case "harm":
       return `${cap(effect.mechanism ?? "impact")} harm${
@@ -314,17 +318,21 @@ export function effectSummary(effect: MoveEffect, move?: Move): string {
             ? ": its next aimed action goes astray"
             : ": its ranged damage halved"
           : "";
-      return `${cap(status)}${rule}${lasts}${chance}.`;
+      return `${cap(status)}${onMate ? ` on ${mates}` : ""}${rule}${lasts}${chance}.`;
     }
     case "remove":
       return `Ends conditions that answer to ${(effect.methods ?? []).join(
         " or "
-      )}.`;
+      )}, on ${effect.recipient === "self" ? "itself" : `${mates} or an enemy`}.`;
     case "protect":
-      return "Shields against incoming damage until its next opportunity.";
+      return onMate
+        ? `Shields ${mates}: incoming damage halved until its next opportunity.`
+        : "Shields against incoming damage until its next opportunity.";
     case "restore":
       return effect.requires
         ? "Recovers health, only when its harm lands."
+        : onMate
+        ? `Heals ${mates}.`
         : "Recovers health.";
     default:
       return `${cap(effect.status ?? effect.type)}: no effect here${
@@ -377,8 +385,13 @@ export function MoveCardContent({
   id: string;
 }) {
   const Range = melee(move) ? Swords : Crosshair;
+  const heals = (m: Move) =>
+    m.effects
+      .filter((e) => e.support === "restore" && e.recipient !== "self")
+      .reduce((sum, e) => sum + restorePreview(unit, e), 0);
   const control = binds(move);
   const ward = guards(move);
+  const heal = heals(move);
   const limit = cooldownLimit(move);
   const unsupported = move.effects.filter((e) => e.support === "unsupported");
   return (
@@ -403,16 +416,27 @@ export function MoveCardContent({
         title={moveDescription(unit, move)}
         aria-hidden="true"
       >
-        {control ? <Link2 /> : ward ? <Shield /> : <PowerIcon />}
+        {control ? (
+          <Link2 />
+        ) : heal && !harms(move) ? (
+          <HeartPulse />
+        ) : ward ? (
+          <Shield />
+        ) : (
+          <PowerIcon />
+        )}
         <b>
           {control && !harms(move)
             ? 1
+            : heal && !harms(move)
+            ? heal
             : ward && !harms(move)
             ? "½"
             : basePower(unit, move)}
         </b>
         {control && !harms(move) && <small>action</small>}
-        {ward && !harms(move) && <small>damage</small>}
+        {!control && heal > 0 && !harms(move) && <small>heal</small>}
+        {!control && !heal && ward && !harms(move) && <small>damage</small>}
         {unsupported.length === move.effects.length && <small>no effect</small>}
       </span>
       <span className="pw-card-resource" aria-hidden="true">

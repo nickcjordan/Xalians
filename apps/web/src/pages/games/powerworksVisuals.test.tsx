@@ -208,7 +208,7 @@ describe("powerworks pass 4 presentation", () => {
     const real = u.moves.find((m) => m.area);
     if (real) expect(moveDescription(u, real)).toContain("Reaches");
   });
-  it("marks a beneficial effect aimed at a foe as withheld, and a drain's heal as conditional", () => {
+  it("describes a helpful effect aimed past its user as landing on a squadmate, and a drain's heal as conditional", () => {
     const lash = move({
       name: "Reinforcing Lash",
       effects: [
@@ -223,8 +223,9 @@ describe("powerworks pass 4 presentation", () => {
         }),
       ],
     });
+    // Pass 5 (decision 39): a guarding status aimed past its user names a squadmate.
     expect(effectSummary(lash.effects[1], lash)).toBe(
-      "Reinforced: withheld here, because it would help the enemy it reaches."
+      "Reinforced on a squadmate: less damage taken."
     );
     const drain = move({
       effects: [

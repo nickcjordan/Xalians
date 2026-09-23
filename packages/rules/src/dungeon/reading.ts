@@ -10,7 +10,9 @@
   Nothing here invents a rule for an effect the game cannot express. Every
   effect carries a `support` reading; an unsupported one names its reason and
   the table shows it as "no effect here" (contract decision 9). A move is usable
-  if any of its effects is supported.
+  if any of its effects is supported. Since pass 5 an effect is also helpful or
+  hostile (decision 38), which decides whether an order may name a squadmate or a
+  foe (decision 39).
 */
 import type { CreatureRecord, Effect, Protection } from "@xalians/content/creature";
 import {
@@ -334,11 +336,11 @@ export function readEffect(
     case "displace":
       if (!aimed) return unsupported("displacement aimed at itself");
       return { ...base, mechanism: "impact", support: "displace" };
+    // Aimed protection and restoration are read since pass 5 (contract decisions 39 to 41):
+    // an order may name a squadmate, and decision 35 still withholds them from a foe.
     case "protect":
-      if (aimed) return unsupported("protection only guards its user here");
       return { ...base, support: "protect" };
     case "restore":
-      if (aimed) return unsupported("restoration would mend a foe");
       return { ...base, support: "restore" };
     case "status": {
       const status = effect.status ?? "condition";
@@ -396,28 +398,43 @@ export const beneficial = (e: MoveEffect) =>
   e.support === "protect" ||
   (e.support === "status" && (e.group === "guarding" || e.group === "mending"));
 /**
-  Can this effect ever reach a unit on its performer's own side? Self effects do, and a
-  radial area anchored on the performer reaches its adjacent allies (contract decision 33).
-  Every other recipient is a foe, because this game aims only at foes.
+  Helpful and hostile (contract decision 38). Helpful: restore, protect, remove, and a
+  guarding, mending or focused status (focused is in the guarding group). Hostile: harm,
+  displace and every other status. `remove` is both: it only clears conditions, so it helps
+  a squadmate, and aimed at a foe it strips that foe's guards, so it is also legal there.
+  An unsupported effect is neither.
 */
-export const reachesOwnSide = (move: Move, e: MoveEffect) =>
-  e.recipient === "self" ||
-  (e.recipient === "area" &&
-    move.area?.shape === "radial" &&
-    move.area.anchor === "self");
+export const helpful = (e: MoveEffect) =>
+  e.support !== "unsupported" && (beneficial(e) || e.support === "remove");
+export const hostile = (e: MoveEffect) =>
+  e.support !== "unsupported" && !beneficial(e) && e.support !== "remove";
+/** An effect that reaches the selected target: a target effect, or an area effect, whose recipients always include the target (contract decision 33). */
+const reachesTarget = (e: MoveEffect) => e.recipient !== "self";
+/**
+  Who a move may be aimed at (contract decision 39). A standing squadmate when at least one
+  of its target-reaching effects is helpful; a foe when at least one is hostile or is
+  `remove`. A move carrying only effects on its performer (Ground Anchor) keeps the nominal
+  foe target it has always carried, so nothing about ordering it changes. Area effects count
+  as target-reaching because the selected target is always one of an area's recipients.
+*/
+export const aimsAtSquadmate = (move: Move) =>
+  move.effects.some((e) => reachesTarget(e) && helpful(e));
+export const aimsAtFoe = (move: Move) =>
+  move.fallback === true ||
+  move.effects.some((e) => reachesTarget(e) && (hostile(e) || e.support === "remove")) ||
+  !move.effects.some((e) => reachesTarget(e) && e.support !== "unsupported");
 /** A radial area anchored on its performer: it reaches every foe and the performer's own adjacent allies (contract decision 33). */
 export const selfBurst = (move: Move) =>
   move.area?.shape === "radial" && move.area.anchor === "self";
 /**
-  Any supported effect makes a move usable (contract decision 9), except a beneficial
-  effect that can only ever reach a foe: decision 35 withholds it every time, so a move
-  carrying nothing else would be a dead order.
+  Any supported effect makes a move usable (contract decision 9). Since pass 5 every
+  supported effect has somewhere to land: a self effect on its user, a helpful one on a
+  squadmate, a hostile one on a foe (decision 39), so the pass 4 exception for a beneficial
+  effect that could only reach a foe is gone. Whether a target stands right now is the
+  table's question (`legalTargets`), not the move's.
 */
 export const usable = (move: Move) =>
-  move.effects.some(
-    (e) =>
-      e.support !== "unsupported" && (!beneficial(e) || reachesOwnSide(move, e))
-  );
+  move.effects.some((e) => e.support !== "unsupported");
 /** A move that can take health from a foe: harm or displace. Desperate strike appears only when none is legal. */
 export const damaging = (move: Move) =>
   move.effects.some((e) => e.support === "harm" || e.support === "displace");

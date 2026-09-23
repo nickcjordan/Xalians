@@ -112,7 +112,7 @@ describe("Powerworks player flow", () => {
       name: /Emergency Water Cannon,/,
     });
     expect(attack).toHaveAccessibleDescription(
-      "Ranged attack. 5 base power. Ends conditions that answer to cooling. 1 round cooldown."
+      "Ranged attack. 5 base power. Ends conditions that answer to cooling, on a squadmate or an enemy. 1 round cooldown."
     );
     expect(attack.querySelector(".pw-card-identity")).not.toHaveTextContent(
       /power|ranged/
@@ -173,6 +173,56 @@ describe("Powerworks player flow", () => {
       screen.getByRole("heading", { name: "Expedition route" })
     ).toBeInTheDocument();
     expect(screen.getByText("You are here")).toBeInTheDocument();
+  });
+  it("offers squadmates as targets for a helpful move and previews what lands on them (pass 5)", () => {
+    mount();
+    fireEvent.click(screen.getByRole("button", { name: "Enter the facility" }));
+    // Seed 1 opens on Hippochamp. The cannon carries a cooling removal, so it may name a
+    // squadmate as well as an enemy; Water Sweep only harms, so it names enemies only.
+    fireEvent.click(
+      screen.getByRole("button", { name: /Emergency Water Cannon, / })
+    );
+    for (const mate of ["Crystorn", "Avilily", "Graviclaw"])
+      expect(
+        screen.getByRole("button", { name: `Target ${mate} (squadmate)` })
+      ).toBeEnabled();
+    expect(
+      screen.queryByRole("button", { name: "Target Hippochamp (squadmate)" })
+    ).toBeNull();
+    // Nothing on Crystorn answers to cooling yet, and the preview says so.
+    expect(screen.getAllByText("nothing to clear").length).toBe(3);
+    expect(
+      screen.getByText("Choose an enemy or a squadmate")
+    ).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: /Water Sweep, / }));
+    expect(
+      screen.queryByRole("button", { name: "Target Crystorn (squadmate)" })
+    ).toBeNull();
+    fireEvent.click(
+      screen.getByRole("button", { name: /Emergency Water Cannon, / })
+    );
+    fireEvent.click(
+      screen.getByRole("button", { name: "Target Crystorn (squadmate)" })
+    );
+    const hippo = screen.getByRole("button", { name: "Select Hippochamp" });
+    expect(hippo).toHaveAccessibleDescription(/Emergency Water Cannon.*Crystorn/);
+    // Plan the rest of the squad and commit: the record says the cannon found nothing on
+    // Crystorn, and it dealt her no damage.
+    for (const move of ["Gem Radiance", "Blossoming Ambuscade", "Gravity Pincer"]) {
+      fireEvent.click(screen.getByRole("button", { name: new RegExp(move) }));
+      fireEvent.click(
+        screen.getByRole("button", { name: "Target Maintenance crawler M1" })
+      );
+    }
+    fireEvent.click(screen.getByRole("button", { name: "Commit round" }));
+    fireEvent.click(screen.getByRole("button", { name: "Show round result" }));
+    fireEvent.click(screen.getByRole("button", { name: "Combat record" }));
+    expect(screen.getByRole("log")).toHaveTextContent(
+      "Hippochamp uses Emergency Water Cannon: nothing on Crystorn answers to it."
+    );
+    expect(screen.getByRole("log")).not.toHaveTextContent(
+      "Emergency Water Cannon on Crystorn"
+    );
   });
   it("shows the base move name in the squad panel and keeps the full name in the title", () => {
     naming.long = true;

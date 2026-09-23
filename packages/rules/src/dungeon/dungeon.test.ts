@@ -10,6 +10,13 @@ import {
   effectiveSpeed,
   initiative,
   legalMoves,
+  legalTargets,
+  guardedThreat,
+  aimsAtFoe,
+  aimsAtSquadmate,
+  helpful,
+  hostile,
+  restorePreview,
   moveAt,
   readCompanion,
   resolveRound,
@@ -566,12 +573,12 @@ describe("Powerworks battle rules", () => {
     expect(r.revival).toBe(1);
     expect(r.xp).toBe(0);
   });
-  it("replays a version 4 command history deterministically and rejects versions 1, 2 and 3", () => {
+  it("replays a version 5 command history deterministically and rejects versions 1 to 4", () => {
     const s = createRun(41);
     const q = orders(s);
     const action = { kind: "round" as const, orders: q };
     const restored = restoreRun(
-      JSON.stringify({ version: 4, seed: 41, history: [action] })
+      JSON.stringify({ version: 5, seed: 41, history: [action] })
     );
     expect(restored.state).toEqual(command(s, action));
     expect(() => restoreRun('{"version":1,"seed":41,"history":[]}')).toThrow(
@@ -582,6 +589,10 @@ describe("Powerworks battle rules", () => {
     );
     // Version 3 histories name the generation-0.7.0-1 kits and pass 3 rules.
     expect(() => restoreRun('{"version":3,"seed":41,"history":[]}')).toThrow(
+      "Unsupported save."
+    );
+    // Version 4 histories cannot carry an order that names a squadmate (pass 5).
+    expect(() => restoreRun('{"version":4,"seed":41,"history":[]}')).toThrow(
       "Unsupported save."
     );
   });
@@ -1190,7 +1201,7 @@ describe("Powerworks status layer", () => {
     expect(r.state.phase).toBe("camp");
     expect(r.state.xp).toBe(10);
   });
-  it("replays a version 4 save deterministically with conditions in play", () => {
+  it("replays a version 5 save deterministically with conditions in play", () => {
     const s = createRun(7);
     const first = orders(s);
     const after = command(s, { kind: "round", orders: first });
@@ -1200,7 +1211,7 @@ describe("Powerworks status layer", () => {
       { kind: "round" as const, orders: second },
     ];
     const restored = restoreRun(
-      JSON.stringify({ version: 4, seed: 7, history })
+      JSON.stringify({ version: 5, seed: 7, history })
     );
     expect(restored.state).toEqual(command(after, history[1]));
   });
@@ -1648,7 +1659,7 @@ describe("Powerworks reactions", () => {
     expect(after.conditions.filter((c) => c.status === "mending")).toHaveLength(1);
     expect(after.passiveCooldowns).toEqual(carrier.passives.map(() => 0));
   });
-  it("replays a version 4 save deterministically through to a reaction", () => {
+  it("replays a version 5 save deterministically through to a reaction", () => {
     // A real run, played honestly with legal orders until the guardian answers a
     // contact strike, then restored from its command history alone. The orders play to
     // win (strongest legal preview, a revival when someone falls) until the final
@@ -1696,7 +1707,7 @@ describe("Powerworks reactions", () => {
     expect(reacted, "no reaction occurred in the played run").toBe(true);
     expect(history.some((c) => c.kind === "advance")).toBe(true);
     const restored = restoreRun(
-      JSON.stringify({ version: 4, seed: 11, history })
+      JSON.stringify({ version: 5, seed: 11, history })
     );
     expect(restored.state).toEqual(s);
     expect(restored.state.log.some((l) => /Core discharge/.test(l))).toBe(true);
@@ -2126,18 +2137,22 @@ describe("Powerworks pass 4: dependencies and beneficial effects", () => {
     expect(held).toHaveLength(1);
     expect(held[0]).toMatchObject({ reason: "foe", effect: "reinforced", targetId: "B4" });
   });
-  it("a move that can only benefit a foe is not a legal order; the same status on itself is", () => {
+  it("a move that can only benefit is aimed at a squadmate, never a foe; the same status on itself stays a self order", () => {
+    // Pass 4 made Focusing Signal an illegal order (it could only help a foe). Pass 5
+    // (decision 39) lets it name a squadmate, so it is legal again, and only there.
     const signal = fitted("Focusing Signal", [statusEffect("focused", { removable: ["disrupting"] })]);
     const response = fitted("Focusing Response", [
       statusEffect("focused", { recipient: "self", removable: ["disrupting"] }),
     ]);
     expect(signal.effects[0].support).toBe("status");
-    expect(usable(signal)).toBe(false);
+    expect(usable(signal)).toBe(true);
     expect(usable(response)).toBe(true);
     let s = lone();
     const c = unit(s, "C");
     fitMoves(c, [tap(), signal, response]);
-    expect(legalMoves(c)).toEqual([0, 2]);
+    expect(legalMoves(c, s)).toEqual([0, 1, 2]);
+    expect(legalTargets(s, c, 1).every((t) => !t.enemy && t.id !== "C")).toBe(true);
+    expect(() => resolveRound(s, plain(s, { C: { move: 1, target: "B4" } }))).toThrow();
     s = resolveRound(s, plain(s, { C: { move: 2, target: "B4" } })).state;
     expect(conditionOn(unit(s, "C"), "focused")?.group).toBe("guarding");
   });
@@ -2161,5 +2176,356 @@ describe("Powerworks pass 4: a companion charges from its own record (decision 3
     r = resolveRound(s, plain(s, { [carrier.id]: { move: index, target: "B4" } }));
     expect(events(r, "hit", carrier.id).some((h) => h.moveName === name)).toBe(true);
     expect(unit(r.state, carrier.id).charge).toBeNull();
+  });
+});
+
+/*
+  Pass 5: ally targeting (contract decisions 38 to 42). Every rule is built from fitted
+  moves read through the seam, never from what a companion seed rolled.
+*/
+/** A restore aimed at the move's target. */
+const mend = (intensity = 60, over: Partial<CardEffect> = {}): CardEffect => ({
+  key: "mend",
+  type: "restore",
+  recipient: "target",
+  likelihood: "consistent",
+  intensity,
+  ...over,
+});
+/** A protect aimed at the move's target. */
+const cover = (): CardEffect => ({
+  key: "cover",
+  type: "protect",
+  recipient: "target",
+  likelihood: "consistent",
+  intensity: 50,
+});
+/** A cooling removal aimed at the move's target: Hippochamp's cannon shape. */
+const cooling = (): CardEffect => ({
+  key: "clear",
+  type: "remove",
+  recipient: "target",
+  likelihood: "consistent",
+  methods: ["cooling"],
+});
+const overheated = (source = "B4") => ({
+  status: "overheated",
+  group: "degrading" as const,
+  intensity: 30,
+  element: "fire",
+  remaining: 2,
+  source,
+  removable: ["cooling" as const],
+});
+const idsOf = (units: Unit[]) => units.map((u) => u.id);
+
+describe("Powerworks pass 5: helpful and hostile at the seam (decision 38)", () => {
+  it("classifies restore, protect, remove and guarding, mending or focused statuses as helpful", () => {
+    for (const effect of [
+      mend(),
+      cover(),
+      cooling(),
+      statusEffect("shielded"),
+      statusEffect("reinforced"),
+      statusEffect("focused"),
+      statusEffect("mending"),
+      statusEffect("protected", { protection: { type: "displace", degree: "immune" } }),
+    ]) {
+      const e = readEffect(effect);
+      const label = `${effect.type} ${effect.status ?? ""}`;
+      expect(e.support, label).not.toBe("unsupported");
+      expect(helpful(e), label).toBe(true);
+      expect(hostile(e), label).toBe(false);
+    }
+    const pull: CardEffect = {
+      key: "pull",
+      type: "displace",
+      recipient: "target",
+      likelihood: "consistent",
+      intensity: 40,
+    };
+    for (const effect of [
+      harm(40),
+      pull,
+      statusEffect("paralyzed"),
+      statusEffect("corroding"),
+      statusEffect("stunned"),
+      statusEffect("slowed"),
+      statusEffect("blinded"),
+      statusEffect("frightened"),
+    ]) {
+      const e = readEffect(effect);
+      const label = `${effect.type} ${effect.status ?? ""}`;
+      expect(hostile(e), label).toBe(true);
+      expect(helpful(e), label).toBe(false);
+    }
+  });
+  it("reads aimed protect and restore as supported: nothing is unsupported for ally targeting any more", () => {
+    const protect = readEffect(cover());
+    const restore = readEffect(mend());
+    expect(protect.support).toBe("protect");
+    expect(restore.support).toBe("restore");
+    expect(protect.reason).toBeUndefined();
+    expect(restore.reason).toBeUndefined();
+    // Traversal stays unsupported and named.
+    expect(readEffect(statusEffect("phased")).support).toBe("unsupported");
+  });
+});
+
+describe("Powerworks pass 5: who an order may name (decision 39)", () => {
+  const kit = () => [
+    fitted("Test Mend", [mend()]),
+    fitted("Test Jab", [harm(40)]),
+    fitted("Test Cannon", [harm(40), cooling()], { range: "medium" }),
+    fitted("Test Anchor", [
+      statusEffect("protected", {
+        recipient: "self",
+        protection: { type: "displace", degree: "immune" },
+        removable: [],
+      }),
+    ]),
+  ];
+  it("names squadmates for a helpful move, foes for a hostile one, both for a move carrying both", () => {
+    const s = lone();
+    const c = unit(s, "C");
+    fitMoves(c, kit());
+    const mates = idsOf(s.team.filter((u) => u.id !== "C"));
+    expect(aimsAtSquadmate(c.moves[0])).toBe(true);
+    expect(aimsAtFoe(c.moves[0])).toBe(false);
+    expect(idsOf(legalTargets(s, c, 0))).toEqual(mates);
+    expect(idsOf(legalTargets(s, c, 1))).toEqual(["B4"]);
+    expect(idsOf(legalTargets(s, c, 2))).toEqual(["B4", ...mates]);
+    // A move acting only on its user keeps the nominal foe target it always carried.
+    expect(idsOf(legalTargets(s, c, 3))).toEqual(["B4"]);
+    // Desperate strike aims at foes.
+    expect(idsOf(legalTargets(s, c, -1))).toEqual(["B4"]);
+  });
+  it("never names the performer or a fallen unit, and rejects an order that crosses the rule", () => {
+    const s = lone();
+    const c = unit(s, "C");
+    fitMoves(c, kit());
+    unit(s, "A").hp = 0;
+    expect(idsOf(legalTargets(s, c, 0))).not.toContain("A");
+    expect(idsOf(legalTargets(s, c, 0))).not.toContain("C");
+    const order = (move: number, target: string) => plain(s, { C: { move, target } });
+    expect(() => resolveRound(s, order(0, "C"))).toThrow(/legal move and target/);
+    expect(() => resolveRound(s, order(0, "A"))).toThrow(/legal move and target/);
+    expect(() => resolveRound(s, order(0, "B4"))).toThrow(/legal move and target/);
+    expect(() => resolveRound(s, order(1, "H"))).toThrow(/legal move and target/);
+    expect(() => resolveRound(s, order(0, "H"))).not.toThrow();
+    expect(() => resolveRound(s, order(2, "H"))).not.toThrow();
+  });
+  it("a helpful-only move is not a legal order while no squadmate stands", () => {
+    const s = lone();
+    const c = unit(s, "C");
+    fitMoves(c, kit());
+    expect(legalMoves(c, s)).toContain(0);
+    for (const u of s.team) if (u.id !== "C") u.hp = 0;
+    expect(legalMoves(c, s)).not.toContain(0);
+    expect(legalMoves(c, s)).toContain(1);
+    // Without the table the unit's own legality is unchanged.
+    expect(legalMoves(c)).toContain(0);
+  });
+  it("machines carry no helpful move, so the enemy planner is unchanged (decision 42)", () => {
+    for (const [key, card] of Object.entries(cards.templates)) {
+      const u = readCard(card as Card, key, "T", key);
+      for (const m of u.moves) expect(aimsAtSquadmate(m), `${key} ${m.name}`).toBe(false);
+    }
+  });
+});
+
+describe("Powerworks pass 5: what lands (decision 40)", () => {
+  /** Hippochamp alone acts first, holding one fitted move; everyone else taps the guardian. */
+  function first(move: Move) {
+    const s = lone();
+    hush(s, ["H"]);
+    const h = unit(s, "H");
+    fitOnly(h, move);
+    h.speed = 300;
+    return s;
+  }
+  it("aimed at a squadmate, only the helpful effects resolve: the cannon clears and does not wound", () => {
+    const s = first(fitted("Test Cannon", [harm(55), cooling()], { range: "medium" }));
+    const c = unit(s, "C");
+    c.conditions.push(overheated());
+    const before = c.hp;
+    const r = resolveRound(s, plain(s, { H: { move: 0, target: "C" } }));
+    expect(events(r, "hit", "H")).toHaveLength(0);
+    const removed = events(r, "removed", "H");
+    expect(removed).toHaveLength(1);
+    expect(removed[0]).toMatchObject({ targetId: "C", status: "overheated" });
+    expect(conditionOn(unit(r.state, "C"), "overheated")).toBeUndefined();
+    // Nothing from Hippochamp touched Crystorn's health, and overheated never ticked.
+    expect(unit(r.state, "C").hp).toBe(before);
+  });
+  it("aimed at a foe, the hostile effects and remove resolve", () => {
+    const s = first(fitted("Test Cannon", [harm(55), cooling()], { range: "medium" }));
+    unit(s, "B4").conditions.push(overheated("C"));
+    const r = resolveRound(s, plain(s, { H: { move: 0, target: "B4" } }));
+    expect(events(r, "hit", "H")[0].amount).toBeGreaterThan(0);
+    expect(events(r, "removed", "H")[0]).toMatchObject({ targetId: "B4", status: "overheated" });
+  });
+  it("a strike never heals and a heal never wounds: the same move splits by aim", () => {
+    const tend = fitted("Test Tend", [harm(40), mend(60)], { range: "short" });
+    const atFoe = first(tend);
+    const struck = resolveRound(atFoe, plain(atFoe, { H: { move: 0, target: "B4" } }));
+    expect(events(struck, "hit", "H")[0].amount).toBeGreaterThan(0);
+    expect(events(struck, "restore", "H")).toHaveLength(0);
+    expect(events(struck, "withheld", "H")[0]).toMatchObject({ reason: "foe", effect: "restore" });
+    const atMate = first(tend);
+    unit(atMate, "C").hp = 100;
+    const healed = resolveRound(atMate, plain(atMate, { H: { move: 0, target: "C" } }));
+    expect(events(healed, "hit", "H")).toHaveLength(0);
+    expect(events(healed, "withheld", "H")).toHaveLength(0);
+    expect(events(healed, "restore", "H")[0]).toMatchObject({ targetId: "C" });
+    expect(events(healed, "restore", "H")[0].amount).toBeGreaterThan(0);
+  });
+  it("a helpful area reaches squadmates in its geometry and is withheld from foes", () => {
+    // A radial field on its target, aimed at the middle of the performer's own line (the
+    // performer left out): the target and both its neighbors are healed, no foe is.
+    const field = fitted("Test Mending Field", [mend(60, { recipient: "area" })], {
+      range: "short",
+      area: { shape: "radial", extent: "medium", anchor: "location" },
+    });
+    const s = wide();
+    const performer = s.team[0];
+    const line = s.team.filter((u) => u.id !== performer.id);
+    hush(s, [performer.id]);
+    fitOnly(performer, field);
+    performer.speed = 300;
+    for (const u of s.team) u.hp = 100;
+    expect(idsOf(areaReach(s, performer, field, line[1]))).toEqual([line[0].id, line[2].id]);
+    const r = resolveRound(s, plain(s, { [performer.id]: { move: 0, target: line[1].id } }));
+    expect(events(r, "restore", performer.id).map((e) => e.targetId).sort()).toEqual(
+      idsOf(line).sort()
+    );
+    expect(events(r, "hit", performer.id)).toHaveLength(0);
+    // A burst on its user, aimed at a squadmate: every foe it reaches is withheld; the
+    // performer's adjacent allies and the named squadmate are healed.
+    const pulse = fitted("Test Mending Pulse", [mend(60, { recipient: "area" })], {
+      range: "short",
+      area: { shape: "radial", extent: "small", anchor: "self" },
+    });
+    const t = wide();
+    const [left, middle, right, far] = t.team;
+    hush(t, [middle.id]);
+    fitOnly(middle, pulse);
+    middle.speed = 300;
+    for (const u of t.team) u.hp = 100;
+    const pr = resolveRound(t, plain(t, { [middle.id]: { move: 0, target: far.id } }));
+    expect(events(pr, "restore", middle.id).map((e) => e.targetId).sort()).toEqual(
+      [far.id, left.id, right.id].sort()
+    );
+    expect(events(pr, "withheld", middle.id).map((e) => e.targetId).sort()).toEqual(
+      idsOf(t.enemies).sort()
+    );
+  });
+  it("aimed at a squadmate, a helpful status lands and provokes nothing", () => {
+    const guard = fitted("Test Guard", [statusEffect("shielded", { removable: ["disrupting"] })]);
+    const s = first(guard);
+    const r = resolveRound(s, plain(s, { H: { move: 0, target: "A" } }));
+    expect(events(r, "status", "H")[0]).toMatchObject({ targetId: "A", status: "shielded" });
+    expect(conditionOn(unit(r.state, "A"), "shielded")?.source).toBe("H");
+    expect(reactsTo(r).filter((f) => f.event!.targetId === "H")).toHaveLength(0);
+  });
+});
+
+describe("Powerworks pass 5: readings (decision 41)", () => {
+  it("restore on a squadmate heals on the harm curve, capped at its max HP", () => {
+    const s = lone();
+    hush(s, ["C"]);
+    const c = unit(s, "C");
+    fitOnly(c, fitted("Test Mend", [mend(60)]));
+    c.speed = 300;
+    const amount = restorePreview(c, c.moves[0].effects[0]);
+    expect(amount).toBeGreaterThan(3);
+    const h = unit(s, "H");
+    h.hp = h.max - 3;
+    const capped = resolveRound(s, plain(s, { C: { move: 0, target: "H" } }));
+    expect(events(capped, "restore", "C")[0]).toMatchObject({ targetId: "H", amount: 3 });
+    expect(unit(capped.state, "H").hp).toBe(h.max);
+    h.hp = 100;
+    const full = resolveRound(s, plain(s, { C: { move: 0, target: "H" } }));
+    expect(events(full, "restore", "C")[0].amount).toBe(amount);
+  });
+  it("protect on a squadmate is the ward reading: harm halved until the squadmate's next opportunity", () => {
+    const s = lone();
+    hush(s, ["C"]);
+    const b = unit(s, "B4");
+    b.moves = [b.moves[0]];
+    b.cooldowns = [0];
+    s.orders.B4 = { move: 0, target: "H" };
+    fitOnly(unit(s, "C"), fitted("Test Cover", [cover()]));
+    unit(s, "C").speed = 300;
+    // Hippochamp acts after the guardian, so the ward is standing when the clamp lands.
+    unit(s, "H").speed = 1;
+    const h = unit(s, "H");
+    const bare = damagePreview(b, b.moves[0], { ...h, ward: false } as Unit);
+    const warded = damagePreview(b, b.moves[0], { ...h, ward: true } as Unit);
+    expect(warded).toBeLessThan(bare);
+    const r = resolveRound(s, plain(s, { C: { move: 0, target: "H" } }));
+    expect(events(r, "ward", "C")[0]).toMatchObject({ targetId: "H" });
+    const clamp = events(r, "hit", "B4").find((e) => e.targetId === "H")!;
+    expect(clamp.amount).toBe(warded);
+    // Spent at Hippochamp's own opportunity, exactly as a self ward is.
+    expect(unit(r.state, "H").ward).toBe(false);
+    // What the ward guards against is the clamp, the guardian's strongest usable harm on it.
+    expect(guardedThreat(s, h, readEffect(cover()))).toBe(bare);
+    // A displacement immunity guards against no harm the guardian carries.
+    const anchor = readEffect(
+      statusEffect("protected", { protection: { type: "displace", degree: "immune" } })
+    );
+    expect(guardedThreat(s, h, anchor)).toBe(0);
+  });
+  it("a redirect never switches sides: a fallen squadmate's order goes to the next squadmate in line", () => {
+    const s = wide();
+    const [, second, third, healer] = s.team;
+    hush(s, [healer.id]);
+    fitOnly(healer, fitted("Test Mend", [mend(60)]));
+    healer.speed = 1;
+    // A machine fells the ordered squadmate before the healer acts.
+    const e0 = s.enemies[0];
+    fitOnly(e0, fitted("Test Crush", [harm(5000)]));
+    e0.speed = 300;
+    s.orders[e0.id] = { move: 0, target: second.id };
+    for (const u of s.team) u.hp = 100;
+    const r = resolveRound(s, plain(s, { [healer.id]: { move: 0, target: second.id } }));
+    expect(unit(r.state, second.id).hp).toBe(0);
+    const redirect = events(r, "redirect", healer.id)[0];
+    expect(redirect.targetId).toBe(third.id);
+    expect(events(r, "restore", healer.id)[0].targetId).toBe(third.id);
+  });
+  it("an ally-aimed order lapses when no squadmate stands, starting no cooldown", () => {
+    const s = wide();
+    const [, target, , healer] = s.team;
+    hush(s, [healer.id]);
+    fitOnly(healer, fitted("Test Mend", [mend(60)], { recovery: "brief" }));
+    healer.speed = 1;
+    for (const u of s.team) if (u.id !== target.id && u.id !== healer.id) u.hp = 0;
+    target.hp = 1;
+    const e0 = s.enemies[0];
+    fitOnly(e0, fitted("Test Crush", [harm(5000)]));
+    e0.speed = 300;
+    s.orders[e0.id] = { move: 0, target: target.id };
+    const r = resolveRound(s, plain(s, { [healer.id]: { move: 0, target: target.id } }));
+    expect(events(r, "lapsed", healer.id)).toHaveLength(1);
+    expect(events(r, "restore", healer.id)).toHaveLength(0);
+    expect(events(r, "redirect", healer.id)).toHaveLength(0);
+    expect(unit(r.state, healer.id).cooldowns).toEqual([0]);
+  });
+  it("replays a version 5 save whose order names a squadmate", () => {
+    const s = createRun(5);
+    const h = unit(s, "H");
+    const cannon = h.moves.findIndex((m) => aimsAtSquadmate(m));
+    expect(cannon, "the squad carries a helpful other-aimed move").toBeGreaterThanOrEqual(0);
+    const q = { ...orders(s), H: { move: cannon, target: "C" } };
+    const after = command(s, { kind: "round", orders: q });
+    const restored = restoreRun(
+      JSON.stringify({ version: 5, seed: 5, history: [{ kind: "round", orders: q }] })
+    );
+    expect(restored.state).toEqual(after);
+    // Aimed at Crystorn, the cannon clears or finds nothing; it never deals damage to her.
+    expect(after.log.some((l) => /Emergency Water Cannon.*Crystorn/.test(l))).toBe(true);
+    expect(after.log.some((l) => /Hippochamp uses Emergency Water Cannon on Crystorn/.test(l))).toBe(false);
   });
 });

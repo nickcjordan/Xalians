@@ -4,10 +4,11 @@
   Policy per companion per round: bind a charging enemy when a bind is legal (an immediate
   bind first, since only one that lands before the release stops it); pull a known charger
   (an enemy with a prolonged move) with a legal displace even before it has begun charging,
-  and count how often that pull breaks a charge begun earlier in the same round; otherwise
-  the legal move and target with the highest damage preview, a harm that also carries a
-  status beating a plain harm at equal preview (contract decision 20), a knockout winning
-  ties;
+  and count how often that pull breaks a charge begun earlier in the same round; otherwise,
+  since pass 5, every legal (move, target) pair, squadmates included, priced by contract
+  decision 43 (`pairValue`). The damage-first policy of passes 1 to 4 (highest damage
+  preview, a harm with a status winning at equal preview per decision 20, a knockout
+  winning ties) is kept as `policy: "pass4"` so the two can be told apart.
   Desperate strike only when it is the sole legal move or nothing else scores. Between
   encounters: revive whoever is down (once), then advance.
 
@@ -16,17 +17,28 @@
   prints the table, or import `simulate` from another script.
 */
 import {
-  beneficial,
+  aimsAtFoe,
+  areaReach,
   command,
   contactDelivery,
   createRun,
   damagePreview,
+  damaging,
+  guardedThreat,
+  helpful,
+  hostile,
   legalMoves,
+  legalTargets,
   moveAt,
-  reachesOwnSide,
   readCompanion,
   resolveRound,
+  restorePreview,
+  squadmateOf,
+  tickAmount,
   usable,
+  type Frame,
+  type Move,
+  type MoveEffect,
   type Order,
   type Run,
   type StatusGroup,
@@ -97,9 +109,155 @@ export type SimStats = {
   withheldBeneficial: number;
   companionChargesBegun: number;
   companionReleasesLanded: number;
+  /** Pass 5 rows (contract decisions 43 and 44). */
+  ordersByMove: Record<string, Record<string, number>>;
+  ordersAtSquadmates: number;
+  allyHeals: number;
+  allyHealed: number;
+  allyRemoveUses: number;
+  allyRemoveCleared: number;
+  allyProtects: number;
+  allyPrevented: number;
 };
 
-function choose(u: Unit, enemies: Unit[]): Order | null {
+/**
+  Sim-only (contract decision 43): the value the greedy policy puts on one hostile status
+  landing on a foe, by group, and on clearing one condition of that group from a squadmate.
+  It is a measurement tool, not a game lever, so it lives here and never in levers.ts.
+  Shock and binding lead, so a removal clears them first. Guarding and mending are helpful,
+  never hostile; concealment on a foe only hides it, so it is worth nothing to the squad.
+*/
+export const SIM_STATUS_VALUE: Record<StatusGroup, number> = {
+  shock: 6,
+  binding: 5,
+  attention: 4,
+  degrading: 3,
+  tempo: 3,
+  senses: 3,
+  concealment: 0,
+  guarding: 0,
+  mending: 0,
+};
+
+/** Which policy orders the squad, and whether support is taken away (contract decision 44). */
+export type SimOptions = {
+  /** "pass5" is decision 43's pricing; "pass4" is the damage-first policy passes 1 to 4 measured with. */
+  policy: "pass5" | "pass4";
+  /** "none" is the shipped squad. "moves" removes every move carrying a helpful effect from the companions' legal orders (decision 44 as written); "aim" keeps every move but never names a squadmate. */
+  healerFree: "none" | "moves" | "aim";
+};
+const SHIPPED: SimOptions = { policy: "pass5", healerFree: "none" };
+
+/**
+  The pass 5 greedy policy (contract decision 43). The two charge answers keep their
+  places: a reactive bind on a charging foe, then a pre-emptive pull on a known charger.
+  Otherwise every legal (move, target) pair is priced and the best is taken:
+
+    - harm by its preview on the target, with the knockout bonus passes 1 to 4 already
+      priced a preview with, so the harm term is unchanged;
+    - a charged harm (beginning a charge) by that value halved, for the round it costs;
+    - a heal by the HP it would restore on a squadmate below half health;
+    - a remove by the conditions it would clear on a squadmate, each at its group's
+      SIM_STATUS_VALUE (shock and binding first);
+    - a protect or guard by the harm the target's most dangerous attacker previews against
+      it, halved, counting only the harm the guard's scope covers (`guardedThreat`);
+    - a hostile status by SIM_STATUS_VALUE for its group.
+
+  A pair's value is the sum of the terms its aim lets resolve (decision 40): aimed at a
+  squadmate only the helpful ones, aimed at a foe the hostile ones and remove, plus whatever
+  lands on the performer. Desperate strike keeps its half-point penalty.
+*/
+function pairValue(s: Run, u: Unit, i: number, m: Move, t: Unit): number {
+  const ally = squadmateOf(u, t);
+  let value = 0;
+  if (!ally && damaging(m)) {
+    const damage = damagePreview(u, m, t);
+    let harm = damage + (damage > 0 && damage >= t.hp ? 50 : 0);
+    if (m.preparation === "prolonged" && u.charge === null) harm /= 2;
+    value += harm;
+  }
+  const around = areaReach(s, u, m, t);
+  for (const e of m.effects) {
+    if (e.support === "unsupported") continue;
+    if (!ally && hostile(e) && (e.support === "bind" || e.support === "status") && e.group) {
+      // A bind only earns its keep against a charge (the reactive rule above already takes
+      // that case); spent on an idle machine it wastes a once-per-encounter paralysis.
+      if (e.recipient !== "self" && !(e.group === "binding" && t.charge === null)) value += SIM_STATUS_VALUE[e.group];
+      continue;
+    }
+    if (!helpful(e)) continue;
+    // Own-side recipients of a helpful effect: the performer for a self effect; the named
+    // squadmate and whoever of its line the area reaches when aimed at a squadmate; the
+    // performer's own neighbors a burst on self reaches when aimed at a foe.
+    const recipients =
+      e.recipient === "self"
+        ? [u]
+        : e.recipient === "target"
+        ? ally
+          ? [t]
+          : []
+        : [...(ally ? [t] : []), ...around].filter((r) => r.enemy === u.enemy);
+    for (const r of recipients) value += helpValue(s, u, e, r);
+  }
+  if (i === -1) value -= 0.5; // recoil: prefer any real damage at equal preview
+  return value;
+}
+/** What one helpful effect is worth on one own-side recipient (contract decision 43). */
+function helpValue(s: Run, u: Unit, e: MoveEffect, r: Unit): number {
+  if (e.support === "restore")
+    return r.hp < r.max / 2 ? Math.min(r.max - r.hp, restorePreview(u, e)) : 0;
+  if (e.support === "remove")
+    return r.conditions
+      .filter(
+        (c) =>
+          c.remaining !== Infinity &&
+          c.removable.some((method) => e.methods?.includes(method))
+      )
+      .reduce((sum, c) => sum + SIM_STATUS_VALUE[c.group], 0);
+  if (e.support === "protect" || e.group === "guarding")
+    return guardedThreat(s, r, e) / 2;
+  if (e.group === "mending") {
+    // A mending status is a heal spread over its duration.
+    const tick = tickAmount(
+      { status: e.status ?? "mending", group: "mending", intensity: e.intensity, remaining: 1, source: u.id, removable: [] },
+      r
+    );
+    return r.hp < r.max / 2 ? Math.min(r.max - r.hp, tick * (e.opportunities ?? 1)) : 0;
+  }
+  return 0;
+}
+/** A move carries a helpful effect (contract decision 44's healer-free crew drops these). */
+const supportMove = (m: Move) => m.effects.some((e) => helpful(e));
+function choose(u: Unit, s: Run, options: SimOptions): Order | null {
+  if (options.policy === "pass4") return choosePass4(u, s.enemies);
+  const legal = legalMoves(u, s).filter(
+    (i) => options.healerFree !== "moves" || i < 0 || !supportMove(u.moves[i])
+  );
+  if (!legal.length) return null;
+  let best: { order: Order; score: number } | null = null;
+  for (const i of legal) {
+    const m = moveAt(u, i);
+    const bind = m.effects.find((e) => e.support === "bind");
+    const pull = m.effects.some((e) => e.support === "displace");
+    for (const t of legalTargets(s, u, i)) {
+      const ally = squadmateOf(u, t);
+      if (ally && options.healerFree === "aim") continue;
+      let score: number;
+      const charger = t.moves.some((c) => c.preparation === "prolonged");
+      if (!ally && bind && t.charge)
+        score = 1000 + (m.preparation === "immediate" ? 10 : 0) + LIKELIHOOD_PERCENT[bind.likelihood] / 100;
+      else if (!ally && pull && charger) score = 900 + (t.charge ? 50 : 0);
+      else score = pairValue(s, u, i, m, t);
+      if (!best || score > best.score) best = { order: { move: i, target: t.id }, score };
+    }
+  }
+  if (best) return best.order;
+  const fallback = legal[0];
+  return { move: fallback, target: legalTargets(s, u, fallback)[0]?.id ?? "" };
+}
+
+/** The damage-first policy passes 1 to 4 measured with, kept so pass 5 can tell the policy's effect from ally targeting's. */
+function choosePass4(u: Unit, enemies: Unit[]): Order | null {
   const legal = legalMoves(u);
   if (!legal.length) return null;
   const foes = enemies.filter((t) => t.hp > 0);
@@ -132,8 +290,50 @@ function choose(u: Unit, enemies: Unit[]): Order | null {
   return best?.order ?? { move: legal[0], target: foes[0].id };
 }
 
-export function playRun(seed: number, stats: SimStats) {
+/**
+  Harm a guard applied by a squadmate kept off a companion on one hit: the preview the hit
+  would have dealt without those guards, less what it dealt. Read from the frame before the
+  hit, so the attacker's and the victim's state are the ones the resolver used.
+*/
+function preventedBySquadmate(
+  before: Frame,
+  event: NonNullable<Frame["event"]>,
+  allyWarded: Set<string>
+): number {
+  const units = [...before.team, ...before.enemies];
+  const attacker = units.find((u) => u.id === event.actorId);
+  const victim = units.find((u) => u.id === event.targetId);
+  if (!attacker || !victim || victim.enemy) return 0;
+  const fromMate = (source: string) =>
+    source !== victim.id && before.team.some((t) => t.id === source);
+  const guarded =
+    (victim.ward && allyWarded.has(victim.id)) ||
+    victim.conditions.some((c) => c.group === "guarding" && fromMate(c.source));
+  if (!guarded) return 0;
+  const move =
+    attacker.moves.find((m) => m.name === event.moveName) ??
+    (() => {
+      const passive = attacker.passives.find((p) => p.name === event.moveName);
+      return passive
+        ? ({ ...passive, approach: "stationary", range: "contact", preparation: "immediate", recovery: "repeatable" } as unknown as Move)
+        : undefined;
+    })();
+  if (!move) return 0;
+  const bare: Unit = {
+    ...victim,
+    ward: victim.ward && !allyWarded.has(victim.id),
+    conditions: victim.conditions.filter(
+      (c) => !(c.group === "guarding" && fromMate(c.source))
+    ),
+  };
+  const without = damagePreview(attacker, move, bare, event.area ? "area" : "target");
+  return Math.max(0, without - (event.amount ?? 0));
+}
+
+export function playRun(seed: number, stats: SimStats, options: SimOptions = SHIPPED) {
   let s: Run = createRun(seed);
+  /** Companions whose standing ward came from a squadmate, until it is spent. */
+  const allyWarded = new Set<string>();
   let guard = 0;
   let rooms = 1;
   while ((s.phase === "planning" || s.phase === "camp") && guard++ < 400) {
@@ -149,13 +349,18 @@ export function playRun(seed: number, stats: SimStats) {
     for (const u of s.team.filter((u) => u.hp > 0)) {
       stats.playerOpportunities++;
       if (u.bound > 0) stats.companionOpportunitiesUnderParalysis++;
-      const order = choose(u, s.enemies);
+      const order = choose(u, s, options);
       if (!order) {
         stats.lockouts++;
         orders[u.id] = { move: -2, target: "" };
       } else {
         if (order.move === -1) stats.desperateStrikes++;
         const m = moveAt(u, order.move);
+        const byMove = (stats.ordersByMove[u.name] ??= {});
+        const moveName = m.name.split(" (")[0];
+        byMove[moveName] = (byMove[moveName] ?? 0) + 1;
+        if (s.team.some((t) => t.id === order.target && t.id !== u.id))
+          stats.ordersAtSquadmates++;
         const target = s.enemies.find((t) => t.id === order.target);
         if (m.effects.some((e) => e.support === "displace") && target && !target.charge) {
           stats.preemptivePulls++;
@@ -179,9 +384,31 @@ export function playRun(seed: number, stats: SimStats) {
       string,
       { name: string; ids: Set<string>; areaOnly: Set<string>; allies: Set<string> }
     >();
-    for (const f of result.frames) {
+    const isCompanion = (id?: string) => result.state.team.some((t) => t.id === id);
+    for (const [k, f] of result.frames.entries()) {
       const e = f.event;
+      // A ward a squadmate gave is spent once the frame shows it gone.
+      for (const id of [...allyWarded])
+        if (!f.team.find((t) => t.id === id)?.ward) allyWarded.delete(id);
       if (!e) continue;
+      // Pass 5 rows: help one companion gives another (never itself).
+      const toSquadmate =
+        isCompanion(e.actorId) && isCompanion(e.targetId) && e.actorId !== e.targetId;
+      if (toSquadmate && e.kind === "restore") {
+        stats.allyHeals++;
+        stats.allyHealed += e.amount ?? 0;
+      }
+      if (toSquadmate && e.kind === "removed") {
+        if (e.status) stats.allyRemoveCleared++;
+        else stats.allyRemoveUses++;
+      }
+      if (toSquadmate && e.kind === "ward") {
+        stats.allyProtects++;
+        allyWarded.add(e.targetId!);
+      }
+      if (toSquadmate && e.kind === "status" && e.group === "guarding") stats.allyProtects++;
+      if (e.kind === "hit" && isCompanion(e.targetId) && k > 0)
+        stats.allyPrevented += preventedBySquadmate(result.frames[k - 1], e, allyWarded);
       if (e.kind === "blocked" && f.text.includes("Charge dispersed")) stats.bindInterruptions++;
       if (e.kind === "displace") {
         stats.displaceInterruptions++;
@@ -256,6 +483,7 @@ export function playRun(seed: number, stats: SimStats) {
       if (e.kind === "hidden") stats.hiddenSkips++;
       if (e.kind === "removed") {
         // One "removed" event per condition cleared, plus one when nothing answered.
+        // `removeUses` counts only the ones that found nothing (the row's name since pass 2).
         if (e.status) stats.removeCleared++;
         else stats.removeUses++;
       }
@@ -280,7 +508,11 @@ export function playRun(seed: number, stats: SimStats) {
   else stats.losses++;
 }
 
-export function simulate(runs = 200, firstSeed = 1): SimStats {
+export function simulate(
+  runs = 200,
+  firstSeed = 1,
+  options: SimOptions = SHIPPED
+): SimStats {
   const stats: SimStats = {
     runs,
     wins: 0,
@@ -327,9 +559,42 @@ export function simulate(runs = 200, firstSeed = 1): SimStats {
     withheldBeneficial: 0,
     companionChargesBegun: 0,
     companionReleasesLanded: 0,
+    ordersByMove: {},
+    ordersAtSquadmates: 0,
+    allyHeals: 0,
+    allyHealed: 0,
+    allyRemoveUses: 0,
+    allyRemoveCleared: 0,
+    allyProtects: 0,
+    allyPrevented: 0,
   };
-  for (let seed = firstSeed; seed < firstSeed + runs; seed++) playRun(seed, stats);
+  for (let seed = firstSeed; seed < firstSeed + runs; seed++)
+    playRun(seed, stats, options);
   return stats;
+}
+
+/** The pass 5 rows (contract decisions 43 and 44): orders per move and what support did. */
+export function formatPass5(stats: SimStats): string {
+  const rows: [string, string][] = [
+    ["orders naming a squadmate", String(stats.ordersAtSquadmates)],
+    ["heals on squadmates (HP restored)", `${stats.allyHeals} (${stats.allyHealed})`],
+    [
+      "removes on squadmates: cleared / found nothing",
+      `${stats.allyRemoveCleared} / ${stats.allyRemoveUses}`,
+    ],
+    ["protects on squadmates (harm prevented)", `${stats.allyProtects} (${stats.allyPrevented})`],
+    ...Object.entries(stats.ordersByMove).map(
+      ([name, moves]): [string, string] => [
+        `orders: ${name}`,
+        Object.entries(moves)
+          .sort((a, b) => b[1] - a[1])
+          .map(([move, n]) => `${move} ${n}`)
+          .join(", "),
+      ]
+    ),
+  ];
+  const width = Math.max(...rows.map(([k]) => k.length));
+  return rows.map(([k, v]) => `${k.padEnd(width)}  ${v}`).join("\n");
 }
 
 /**
@@ -515,8 +780,8 @@ export function formatTable(stats: SimStats): string {
 /**
   The seam-only action survey (contract, pass 4): over `seeds` records per species, what
   every action effect reads as. Unsupported effects are grouped by the reason the table
-  shows; beneficial effects that can only ever reach a foe (withheld every time by
-  decision 35) are grouped by status or type; the pass 4 readings (area geometry, drains,
+  shows; helpful effects that reach their target (aimed at a squadmate since pass 5,
+  decision 39) are grouped by status or type; the pass 4 readings (area geometry, drains,
   charged ordinary acts, the new status groups) are counted with the species that carry
   them. It reads no game state: it is the seam alone, over the wider roster.
 */
@@ -526,8 +791,8 @@ export type ActionSurvey = {
   effects: number;
   /** reason -> count and where. */
   unsupported: Record<string, { count: number; species: Set<string>; moves: Set<string> }>;
-  /** status or type -> count and where: beneficial, aimed only at foes. */
-  withheld: Record<string, { count: number; species: Set<string>; moves: Set<string> }>;
+  /** status or type -> count and where: helpful effects that reach the target, aimed at a squadmate since pass 5. */
+  allyAimed: Record<string, { count: number; species: Set<string>; moves: Set<string> }>;
   /** Moves with no effect this game can resolve against a foe. */
   deadMoves: Record<string, { count: number; species: Set<string> }>;
   /** Pass 4 readings: key -> count and species. */
@@ -539,7 +804,7 @@ export function surveyActions(seeds = 20): ActionSurvey {
     actions: 0,
     effects: 0,
     unsupported: {},
-    withheld: {},
+    allyAimed: {},
     deadMoves: {},
     readings: {},
   };
@@ -594,14 +859,21 @@ export function surveyActions(seeds = 20): ActionSurvey {
             continue;
           }
           if (e.requires) note(survey.readings, `drain (${e.type} requires ${e.requires})`, template.key, name);
-          if (beneficial(e) && !reachesOwnSide(m, e))
-            note(survey.withheld, e.status ?? e.type, template.key, name);
+          // Pass 5: a helpful effect that reaches its target is aimed at a squadmate
+          // (contract decision 39); before pass 5 it could only ever be withheld from a foe.
+          if (helpful(e) && e.recipient !== "self")
+            note(
+              survey.allyAimed,
+              `${e.status ?? e.type}${aimsAtFoe(m) ? " (move also aims at a foe)" : " (squadmates only)"}`,
+              template.key,
+              name
+            );
           if (e.group && ["shock", "tempo", "senses"].includes(e.group))
             note(survey.readings, `${e.group}: ${e.status}`, template.key, name);
           if (e.status === "focused")
             note(
               survey.readings,
-              `focused on ${e.recipient === "self" ? "itself" : "a foe (withheld)"}`,
+              `focused on ${e.recipient === "self" ? "itself" : "a squadmate"}`,
               template.key,
               name
             );
@@ -625,8 +897,8 @@ export function formatActionSurvey(survey: ActionSurvey): string {
       .sort((a, b) => b[1].count - a[1].count)
       .map(([k, r]) => `  ${k}: ${r.count}, ${where(r)}`) || []),
     "",
-    "beneficial, aimed only at foes, withheld (status or type: count, species [moves])",
-    ...Object.entries(survey.withheld)
+    "helpful, aimed at a squadmate (status or type: count, species [moves])",
+    ...Object.entries(survey.allyAimed)
       .sort((a, b) => b[1].count - a[1].count)
       .map(([k, r]) => `  ${k}: ${r.count}, ${where(r)}`),
     "",

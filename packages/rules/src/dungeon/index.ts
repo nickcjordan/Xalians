@@ -11,8 +11,11 @@ import {
 import type { CreatureRecord } from "@xalians/content/creature";
 import {
   LAST_RESORT,
+  aimsAtFoe,
+  aimsAtSquadmate,
   beneficial,
   contactDelivery,
+  helpful,
   damaging,
   harmAttribute,
   readCard,
@@ -80,10 +83,13 @@ export type {
 } from "./reading.ts";
 export {
   LAST_RESORT,
+  aimsAtFoe,
+  aimsAtSquadmate,
   beneficial,
   contactDelivery,
+  helpful,
+  hostile,
   ongoingConditions,
-  reachesOwnSide,
   readCompanion,
   selfBurst,
   usable,
@@ -104,6 +110,7 @@ export {
   SAVE_VERSION,
   SHIELDED_FACTOR,
   SLOWED_SPEED_FACTOR,
+  WARD_FACTOR,
 } from "./levers.ts";
 
 export type Order = { move: number; target: string };
@@ -144,6 +151,7 @@ export type BattleEvent = {
     | "stumble"
     | "withheld"
     | "broken"
+    | "lapsed"
     | "result";
   /** status / tick / expired / removed events: which condition. */
   status?: string;
@@ -267,7 +275,17 @@ export function moveAt(u: Unit, i: number): Move {
   move is the release. Desperate strike is the exhaustion-only option: it appears when
   nothing damaging is legal and the unit is not bound (it is a closing move).
 */
-export function legalMoves(u: Unit): number[] {
+/**
+  Legality of a move for this unit. Given the table (`s`), a move with no legal target
+  standing right now is not legal either (contract decision 39): a heal that can only name
+  a squadmate is not an order while the performer stands alone. Without the table the
+  answer is the unit's own legality, which is what the enemy planner has always read
+  (machines carry no helpful moves, decision 42).
+*/
+export function legalMoves(
+  u: Unit,
+  s?: { team: Unit[]; enemies: Unit[] }
+): number[] {
   if (u.hp <= 0) return [];
   if (u.charge !== null) return [u.chargeMove];
   const moves = u.moves
@@ -279,13 +297,41 @@ export function legalMoves(u: Unit): number[] {
         usable(m) &&
         !(SIGNATURE_ONCE_PER_ENCOUNTER && m.signature && u.signatureSpent) &&
         !(u.bound && m.approach === "closing") &&
-        !(u.recovery && prolonged(m))
+        !(u.recovery && prolonged(m)) &&
+        (!s || legalTargets(s, u, i).length > 0)
       );
     });
   if (!u.enemy && !u.bound && !moves.some((i) => damaging(u.moves[i])))
     moves.push(-1);
   return moves;
 }
+/**
+  Who this unit may name in an order for move `i` (contract decision 39): a selectable foe
+  when the move carries a hostile effect or `remove` (and for Desperate strike and a move
+  that acts only on its user, which keep their nominal foe target); a standing squadmate
+  other than the performer when it carries a helpful effect that reaches its target. Fallen
+  units are never targets; revival stays the camp's action. Concealment only hides a unit
+  from its foes: a concealed squadmate can still be named by its own side.
+*/
+export function legalTargets(
+  s: { team: Unit[]; enemies: Unit[] },
+  u: Unit,
+  i: number
+): Unit[] {
+  if (i < -1 || u.hp <= 0) return [];
+  const m = moveAt(u, i);
+  const foes = selectableTargets(u.enemy ? s.team : s.enemies);
+  const mates = (u.enemy ? s.enemies : s.team).filter(
+    (t) => t.hp > 0 && t.id !== u.id
+  );
+  return [
+    ...(aimsAtFoe(m) ? foes : []),
+    ...(i >= 0 && aimsAtSquadmate(m) ? mates : []),
+  ];
+}
+/** Is this unit on the performer's own side, and not the performer? An order naming it is ally-aimed (contract decision 40). */
+export const squadmateOf = (u: Unit, t: Unit) =>
+  t.enemy === u.enemy && t.id !== u.id;
 /*
   The status layer (contract decisions 10 to 18). Conditions live on the unit;
   every rule below reads them and nothing else invents state.
@@ -434,7 +480,8 @@ export function damagePreview(
 /*
   Who a move's area reaches beyond its selected target (contract decision 33). The line
   is the order of the `team` and `enemies` arrays, standing units only, so a line closes
-  up when a unit falls.
+  up when a unit falls. Since pass 5 it is the target's line: a squadmate target reads its
+  area along the performer's own line, the performer left out (contract decision 40).
 
     - line, cone, sweep: small reaches the next unit after the target in the opposing
       line (the far side), medium both neighbors, large the whole opposing line;
@@ -456,21 +503,62 @@ export function areaReach(
     return [];
   const foes = (u.enemy ? s.team : s.enemies).filter((t) => t.hp > 0);
   const own = (u.enemy ? s.enemies : s.team).filter((t) => t.hp > 0);
-  const at = foes.findIndex((t) => t.id === target.id);
-  const around = (line: Unit[], i: number) =>
-    [line[i - 1], line[i + 1]].filter((t): t is Unit => !!t && i >= 0);
+  // The line an area is read along is the target's own line (pass 5): the opposing line
+  // for a foe, as before, and the performer's own line, the performer left out, for a
+  // squadmate (contract decision 40, "a helpful area effect reaches squadmates in its
+  // geometry"). The performer is never swept by its own aimed area.
+  const line = squadmateOf(u, target) ? own.filter((t) => t.id !== u.id) : foes;
+  const at = line.findIndex((t) => t.id === target.id);
+  const around = (row: Unit[], i: number) =>
+    [row[i - 1], row[i + 1]].filter((t): t is Unit => !!t && i >= 0);
   if (area.shape === "radial") {
     if (area.anchor === "self")
       return [
-        ...foes.filter((t) => t.id !== target.id),
+        ...foes,
         ...around(own, own.findIndex((t) => t.id === u.id)),
-      ];
-    return around(foes, at);
+      ].filter((t) => t.id !== target.id);
+    return around(line, at);
   }
   if (area.extent === "small")
-    return at >= 0 && foes[at + 1] ? [foes[at + 1]] : [];
-  if (area.extent === "medium") return around(foes, at);
-  return foes.filter((t) => t.id !== target.id);
+    return at >= 0 && line[at + 1] ? [line[at + 1]] : [];
+  if (area.extent === "medium") return around(line, at);
+  return line.filter((t) => t.id !== target.id);
+}
+/**
+  What a guard would guard against (pass 5): the largest harm any standing foe of `target`
+  previews against it with a move it could use now, counting only the attack effects the
+  guard covers. A ward, shielded and reinforced cover every harm and displacement; a
+  `protected` status covers exactly its declared scope (contract decision 14), so a
+  displacement immunity guards against a pull and nothing else; focused guards no harm.
+  The planning preview prints it ("guards against about 8"); the sim halves it (decision 43).
+*/
+export function guardedThreat(
+  s: { team: Unit[]; enemies: Unit[] },
+  target: Unit,
+  guard: MoveEffect
+): number {
+  const covers = (attacker: Unit, m: Move, e: MoveEffect): boolean => {
+    if (e.support !== "harm" && e.support !== "displace") return false;
+    if (guard.support === "protect") return true;
+    if (guard.status === "shielded" || guard.status === "reinforced") return true;
+    const p = guard.protection;
+    if (guard.status !== "protected" || !p) return false;
+    if (p.type === "displace") return e.support === "displace";
+    if (p.type !== "harm" || e.support !== "harm") return false;
+    return (
+      p.mechanism === (e.mechanism ?? "impact") &&
+      (p.mechanism !== "elemental" || p.element === (m.element ?? attacker.element))
+    );
+  };
+  let worst = 0;
+  for (const foe of (target.enemy ? s.team : s.enemies).filter((t) => t.hp > 0))
+    for (const i of legalMoves(foe)) {
+      const m = moveAt(foe, i);
+      const effects = m.effects.filter((e) => covers(foe, m, e));
+      if (!effects.length) continue;
+      worst = Math.max(worst, damagePreview(foe, { ...m, effects }, target));
+    }
+  return worst;
 }
 export function restorePreview(u: Unit, effect: MoveEffect): number {
   return Math.floor(
@@ -847,12 +935,12 @@ export function resolveRound(
     throw new Error("This encounter is not accepting orders.");
   for (const u of standing(previous.team)) {
     const q = orders[u.id];
-    const legal = legalMoves(u);
+    const legal = legalMoves(u, previous);
     if (
       !q ||
       !(legal.length ? legal.includes(q.move) : q.move === -2) ||
       (q.move !== -2 &&
-        !selectableTargets(previous.enemies).some((t) => t.id === q.target))
+        !legalTargets(previous, u, q.move).some((t) => t.id === q.target))
     )
       throw new Error(`Choose a legal move and target for ${u.name}.`);
   }
@@ -949,11 +1037,26 @@ export function resolveRound(
           moveName: m.name,
         });
       } else {
-        const targets = u.enemy ? s.team : s.enemies;
+        // An order names a foe or, since pass 5, a squadmate (contract decision 39). A
+        // redirect never switches sides (decision 41): an ally-aimed order walks its own
+        // line, the performer left out, and concealment does not hide a unit from its own
+        // side.
+        const ordered = [...s.team, ...s.enemies].find((t) => t.id === q.target);
+        const towardAlly = !!ordered && squadmateOf(u, ordered);
+        const targets = towardAlly
+          ? (u.enemy ? s.enemies : s.team).filter((t) => t.id !== u.id)
+          : u.enemy
+          ? s.team
+          : s.enemies;
         let target = targets.find((t) => t.id === q.target);
         // Retargeting walks the fixed row order and skips a concealed unit while
         // another one stands (contract decision 16).
-        const open = new Set(selectableTargets(targets).map((t) => t.id));
+        const open = new Set(
+          (towardAlly
+            ? targets.filter((t) => t.hp > 0)
+            : selectableTargets(targets)
+          ).map((t) => t.id)
+        );
         // A move whose every effect lands on its performer (Ground Anchor) still
         // carries a target id from the order, but nothing about it is aimed, so a
         // fallen or concealed target changes nothing and is not announced. Seen on
@@ -1026,6 +1129,15 @@ export function resolveRound(
             // Reactions resolve after the triggering move finishes (contract decision 22).
             reactions(s, u, m, outcome, acted, 0, emit);
           }
+        } else if (towardAlly) {
+          // No squadmate stands to receive it: the order lapses (contract decision 41).
+          // Nothing was delivered, so no cooldown starts and a signature is not spent; a
+          // release that lapses disperses its charge like an interruption.
+          if (release) breakCharge(u, true);
+          emit(
+            `${u.name}'s ${m.name} lapses: no squadmate stands to receive it.`,
+            { kind: "lapsed", actorId: u.id, moveName: m.name }
+          );
         }
       }
     }
@@ -1066,6 +1178,11 @@ export type Outcome = {
   every effect that `requires` another, which resolves only when its prerequisite
   succeeded on at least one recipient (contract decision 34). A beneficial effect that
   would reach an opposing unit is withheld and recorded (contract decision 35).
+
+  Aim (contract decision 40): an order naming a squadmate resolves only its helpful
+  effects (and whatever lands on the performer); nothing strikes, so a heal never wounds.
+  An order naming a foe resolves as it always has. `remove` is side-neutral: it clears
+  whatever answers to it on every recipient it reaches.
 */
 function apply(
   s: Run,
@@ -1076,11 +1193,21 @@ function apply(
   emit: (text: string, event?: BattleEvent) => void
 ): Outcome {
   const outcome: Outcome = { harmed: [], afflicted: [] };
-  const supported = m.effects.filter((e) => e.support !== "unsupported");
+  // What lands depends on the aim (contract decision 40). Aimed at a squadmate, only the
+  // helpful effects resolve, so a heal never wounds; aimed at a foe, the hostile ones and
+  // `remove`, with helpful effects withheld per foe recipient as decision 35 already did.
+  // Effects on the performer always resolve.
+  const towardAlly = squadmateOf(u, target);
+  const supported = m.effects.filter(
+    (e) =>
+      e.support !== "unsupported" &&
+      (e.recipient === "self" || !towardAlly || helpful(e))
+  );
+  const strikes = !towardAlly && damaging(m);
   const element = m.element ?? u.element;
   // Concealment ends when its owner executes a harm or a displace: the strike gives
-  // its position away (contract decision 16).
-  if (damaging(m) && concealed(u)) {
+  // its position away (contract decision 16). Helping a squadmate gives nothing away.
+  if (strikes && concealed(u)) {
     u.conditions = u.conditions.filter((c) => c.group !== "concealment");
     emit(`${u.name} breaks cover to attack.`, {
       kind: "expired",
@@ -1166,7 +1293,7 @@ function apply(
         group: "guarding",
       });
   };
-  if (damaging(m)) {
+  if (strikes) {
     strike(target, "target");
     for (const victim of around) strike(victim, "area");
   }
@@ -1222,7 +1349,9 @@ function apply(
         // rule is unchanged while the badge can name the status (contract decision 11).
         if (applyStatus(s, u, m, victim, e, acted, emit)) {
           succeeded.add(e.key);
-          outcome.afflicted.push(victim.id);
+          // A helpful status is not an affliction: only a hostile one can provoke a
+          // contact reaction.
+          if (!helpful(e)) outcome.afflicted.push(victim.id);
         }
       } else if (e.support === "remove") {
         if (e.methods?.length) applyRemove(u, m, victim, e.methods, emit);
