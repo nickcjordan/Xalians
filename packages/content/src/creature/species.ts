@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { NamingSchema } from './naming.ts';
 import * as c from './catalog.ts';
-import { ANATOMY_KEYS, ATTRIBUTE_KEYS, CAPABILITY_KEYS, CHANNEL_KEYS } from '../registriesConst.ts';
+import { ATTRIBUTE_KEYS, CAPABILITY_KEYS, CHANNEL_KEYS } from '../registriesConst.ts';
 import { ActionTemplateSchema, PassiveTemplateSchema, ProtectionSchema, SignatureSchema, abilityIdentity, EffectTemplateSchema } from './ability.ts';
 import { PATTERNS } from './acts.ts';
 
@@ -41,12 +41,18 @@ export const MechanismSchema = z.strictObject({
 export type Mechanism = z.infer<typeof MechanismSchema>;
 
 const ratings = c.band(c.Rating);
+const size = z.strictObject({
+  massKg: c.band(z.number().positive()),
+  heightCm: c.band(z.number().positive()).optional(),
+  lengthCm: c.band(z.number().positive()).optional(),
+  widthCm: c.band(z.number().positive()).optional(),
+}).refine(value => value.heightCm || value.lengthCm || value.widthCm, 'at least one overall dimension is required');
 export const TemplatePhysiologySchema = z.strictObject({
   composition: z.strictObject({ primary: c.CompositionKeySchema, secondary: c.CompositionKeySchema.optional() })
     .refine(v => v.primary !== v.secondary, 'secondary composition must differ from primary'),
   bodyPlan: c.BodyPlanKeySchema, anatomy: c.choices(c.AnatomyKeySchema)
     .refine(v => !(v.includes('shell') && v.includes('hide')), 'choose the resting surface classification, not both shell and hide'), covering: c.CoveringKeySchema,
-  size: z.strictObject({ heightCm: c.band(z.number().positive()), weightKg: c.band(z.number().positive()) }),
+  size,
   lifespan: c.LifespanKeySchema, genome: z.strictObject({ chirality: z.enum(['rolled', 'achiral']) }),
   diet: c.DietKeySchema, communication: z.array(c.CommunicationKeySchema), breathes: z.array(c.MediumPhaseKeySchema),
   environmentalTolerance: z.strictObject({ ambientMedia: c.choices(c.MediumPhaseKeySchema),
@@ -59,7 +65,7 @@ export function checkPhysiology(value: { breathes: string[]; environmentalTolera
   if (value.breathes.some(phase => !value.environmentalTolerance.ambientMedia.includes(phase))) ctx.addIssue({ code: 'custom', message: 'breathing media must be supported ambient media' });
 }
 export const SpeciesSchema = z.strictObject({
-  schemaVersion: z.literal('5.0.0'), key: c.Key, name: z.string().min(1), nameOrigin: z.string().min(1),
+  schemaVersion: z.literal('5.1.0'), key: c.Key, name: z.string().min(1), nameOrigin: z.string().min(1),
   element: c.ElementKeySchema, homePlanet: c.Key, generatorPlanets: c.choices(c.Key),
   lore: z.strictObject({ description: z.string().min(1), appearance: z.array(z.string().min(1)).min(3).max(8),
     origin: z.string().min(1), habitat: z.string().min(1), feeding: z.string().min(1), behavior: z.string().min(1), company: z.string().min(1) }),
@@ -87,7 +93,7 @@ export const SpeciesSchema = z.strictObject({
   if (new Set(species.actions.map(abilityIdentity)).size !== species.actions.length) issue('guaranteed actions must be structurally distinct');
   for (const capability of [...guaranteed, ...species.mechanisms]) {
     const instrument = capability.instrument;
-    if ((ANATOMY_KEYS as readonly string[]).includes(instrument) && !species.physiology.anatomy.includes(instrument as typeof ANATOMY_KEYS[number])) issue(`${capability.key}: instrument ${instrument} is absent from anatomy`);
+    if (c.AnatomyKeySchema.options.includes(instrument as z.infer<typeof c.AnatomyKeySchema>) && !species.physiology.anatomy.includes(instrument as z.infer<typeof c.AnatomyKeySchema>)) issue(`${capability.key}: instrument ${instrument} is absent from anatomy`);
     if (instrument === 'gaze' && species.physiology.senses.sight[0] <= 0) issue(`${capability.key}: gaze requires sight throughout the species band`);
   }
   checkChannels(species, issue);

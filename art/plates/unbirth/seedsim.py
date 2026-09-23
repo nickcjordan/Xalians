@@ -16,7 +16,7 @@ strength that lands a seed on a chosen spot.
 """
 import math
 
-G = 200.0  # units per second squared: the machine is about 10 m tall at 20 units a metre
+G = 128.0  # units per second squared: the machine is about 30 m tall at 13 units a metre
 DT = 1 / 40
 
 
@@ -27,7 +27,7 @@ def wind_at(t, y, phase, strength):
     return strength * aloft * gust
 
 
-def fly(kind, p0, v0, ground, strength, phase=0.0, step=1 / 15, max_t=16.0, k_open=3.2, sink=40.0, period=2.2, glide=22.0, fine=(1.5, .075)):
+def fly(kind, p0, v0, ground, strength, phase=0.0, step=1 / 15, max_t=16.0, k_open=3.2, sink=40.0, period=2.2, glide=22.0, fine=(1.5, .075), drag=.35):
     """Returns [(t, x, y, angle)] until the seed reaches the ground line y = ground(x). A parachute
     seed with a bigger canopy (larger k_open) falls slower and so travels farther on the wind."""
     x, y = p0
@@ -46,7 +46,7 @@ def fly(kind, p0, v0, ground, strength, phase=0.0, step=1 / 15, max_t=16.0, k_op
         elif kind == 'samara':
             k = 3.0 if vy > -20 else 1.2  # once it starts to fall it autorotates and brakes; terminal ~ 67
         else:
-            k = .35
+            k = drag  # a heavy seed: gravity and a little drag, the wind leaning on it
         if kind == 'glider':
             if not opened and vy > -30:
                 opened = True
@@ -129,4 +129,18 @@ def aim_sink(p0, v0, target, ground_y, wind, phase=0.0, period=2.2, lo=12.0, hi=
             hi = mid
         else:
             lo = mid
+    return (lo + hi) / 2
+
+
+def aim_speed(p0, elev, target, ground_y, wind, phase=0.0, lo=10.0, hi=900.0, drag=.35):
+    """The muzzle speed that brings a pod fired at a fixed elevation (degrees) down at target x on
+    the line y = ground_y: a barrel's angle is fixed, its charge is not."""
+    r = math.radians(elev)
+    for _ in range(30):
+        mid = (lo + hi) / 2
+        path = fly('nut', p0, (mid * math.cos(r), -mid * math.sin(r)), lambda x: ground_y, wind, phase, drag=drag)
+        if path[-1][1] < target:
+            lo = mid
+        else:
+            hi = mid
     return (lo + hi) / 2
