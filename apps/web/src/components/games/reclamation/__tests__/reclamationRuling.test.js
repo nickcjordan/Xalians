@@ -18,6 +18,8 @@ describe('verdictOf (pass 49: the stamp says why)', () => {
 	it('gives a contested world its margin, and a tie its word', () => {
 		expect(verdictOf(r('A', 46.2, 0.4), 'A', 'Endessa').text).toBe('yours by 46');
 		expect(verdictOf(r('B', 6, 6.3), 'A', 'Zolton').text).toBe('rival’s by 0.3');
+		// pass 50: the margin of the printed numbers (9 to 6 reads "by 3", not the 2.2 underneath)
+		expect(verdictOf(r('A', 8.6, 6.4), 'A', 'Krystos').text).toBe('yours by 3');
 		expect(verdictOf(r(null, 5, 5), 'A', 'Floria').text).toBe('tied');
 	});
 });

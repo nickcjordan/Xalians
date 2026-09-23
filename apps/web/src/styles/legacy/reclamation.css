@@ -1078,7 +1078,7 @@
 	.rec-log { padding: var(--g-1) var(--g-2); }
 }
 
-/* =========================================================================
+/* ==================================================================
    UX PASS — emphasis, affordances, and what-is-happening
    ========================================================================= */
 
@@ -6906,3 +6906,11 @@
 @media (max-width: 760px) {
 	.rec-console--match[data-terminal] .rec-stamp { white-space: normal; text-align: center; max-width: 100%; line-height: 1.2; }
 }
+=======
+/* --- pass 50 ---------------------------------------------------------------- */
+.rec-status-reach[data-still-reachable="stake"] { border-left-color: var(--g-lamp-amber); color: var(--g-ink); }
+/* "17 →1" in red read as minus one: the arrow stands clear of both numbers */
+.rec-console--match[data-terminal] .rec-after-arrow { margin: 0 2px 0 3px; }
+/* the trailing world's answers sit in the midline, above your rank */
+.rec-console--match[data-terminal] .rec-world-footing--trail { display: flex; justify-content: center; max-width: 100%; }
+.rec-console--match[data-terminal] .rec-world-footing--trail .rec-world-best { margin-top: 0; }

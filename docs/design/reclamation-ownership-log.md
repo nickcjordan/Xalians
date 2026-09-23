@@ -928,3 +928,15 @@ Five new tests (`reclamationRuling.test.js`), including the fallen-defenders cas
 **Open item 6, closed.** Schema 5 retired transfer, restrain and suppress as effect types; the status layer of pass 32 carries what they meant, and displace stays an attack by the base redesign's ruling (a push at a sealed world is force and nothing more). The item described content that no longer exists.
 
 **Verified:** 207 Reclamation web tests; the four table checks green; the full play-through re-shot and read at 1440 and 390.
+
+### Pass 50 (2026-09-23): a second blind critic, and the budget arithmetic said aloud
+
+**The critic** (seed 21, same probe): clarity 6 (was 5), decisions 4, the Clash 5 (was 4), arc 3, want another game 5, phone 7 (was 5). Its top five, and what changed:
+
+1. **"The send budget kills you silently."** Round three opened needing three worlds with two sends and nothing said so; the critic called it impossible. It was not: an unused stake counts two. The reach line now has a third tone for exactly that, at the start of the round while it can be acted on: "You need 3 more worlds with 2 sends left: only a stake (it counts two) keeps the win in reach." And lifting a creature over a world you already lead now says "You already lead here by N" above the preview (the critic stacked four creatures on a world won by 42 while another went unopposed).
+2. **"Hidden decimals decide worlds."** A world printed 2 against 2 was ruled "rival's by 0.2", and one printed 9 against 6 "rival's by 2". Two holds that round to the same whole now print their tenths on the world's tally and in the result's rows and closest-loss line, and the stamp's margin is the difference of the printed numbers ("by 3" under "9 to 6").
+3. Friendly fire with no warning: the preview already says "No rival here: it hits only yours" and "Your sweep here hits it too"; the scripted player never read a preview. No change.
+4. **"Best here disappears where it is needed."** A world you trail now offers its two best answers too, labelled with the gap: "You trail by 12. Best here: Venemist 18, Kosanos 13".
+5. **Ambiguous marks.** The result's downed figure reads "you downed / you lost" in the two sides' colors (it read "creatures downed, rival's / yours", which the critic read both ways); the forecast arrow stands clear of both numbers ("17 → 1", which read as minus one).
+
+**Verified:** 1606 web tests (new: the stake tone, the printed-margin rule); the four table checks green; the play-through re-shot on seed 21 at 1440 and 390 and read.

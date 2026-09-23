@@ -69,7 +69,7 @@ export function classifyEvent(event) {
 	the world, three rounds running, and stopped trusting either. The tenth is kept only where
 	rounding would make two different holds read the same (a close Ruling).
 */
-function wholeOrTenths(a, b) {
+export function wholeOrTenths(a, b) {
 	const ra = Math.round(a);
 	const rb = Math.round(b);
 	return ra === rb && Math.abs(a - b) >= 0.05 ? [formatHold(a), formatHold(b)] : [String(ra), String(rb)];
@@ -437,9 +437,16 @@ export function verdictOf(result, you, planet, sentBy) {
 	const unopposed = loserSent === 0;
 	const margin = Math.abs((r.holdA || 0) - (r.holdB || 0));
 	const whose = mine ? 'yours' : 'rival’s';
+	/*
+		pass 50: the margin is the difference of the numbers the board prints. A critic read
+		"9 to 6" on the tally and "rival's by 2" on the stamp (holds that rounded apart); when
+		the printed wholes tie, the tally shows tenths and so does the margin.
+	*/
+	const [shownA, shownB] = wholeOrTenths(r.holdA || 0, r.holdB || 0);
+	const shownMargin = Math.round(Math.abs(Number(shownA) - Number(shownB)) * 10) / 10;
 	return {
 		who: mine ? 'yours' : 'theirs',
-		text: unopposed ? `${whose}, unopposed` : `${whose} by ${formatHoldShown(margin) === '0' ? formatHold(margin) : formatHoldShown(margin)}`,
+		text: unopposed ? `${whose}, unopposed` : `${whose} by ${formatHold(shownMargin)}`,
 		planet,
 		unopposed,
 		margin,
