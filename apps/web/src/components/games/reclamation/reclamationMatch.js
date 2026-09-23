@@ -1499,6 +1499,12 @@ class ReclamationMatch extends React.Component {
 					const clinch = clinchFor(frame.sites.length, FRAMES_PER_MATCH);
 					const need = Math.max(0, clinch - match.players[YOU].sitesWon);
 					const theirs = Math.max(0, clinch - match.players[THEM].sitesWon);
+					// pass 41: when the sends left cannot take the worlds needed, the opening says so first
+					const liveView = getPublicState(match, YOU);
+					const reach = reachabilityLine(liveView, liveView.players[YOU], liveView.players[THEM]);
+					if (reach && reach.tone === 'lost') {
+						return `${names}. ${reach.text} ${match.turn === YOU ? 'You send first.' : 'The rival sends first.'}`;
+					}
 					const stakes = need <= frame.sites.length && theirs <= frame.sites.length
 						? `Either side can win the game this round: you need ${need}, the rival ${theirs}.`
 						: need <= frame.sites.length
@@ -1591,6 +1597,7 @@ class ReclamationMatch extends React.Component {
 				roleLine: plan.roleLine,
 				lines: plan.lines,
 				effect: plan.effect,
+				recordId: record.id,
 				targetRecordId: plan.targetRecordId,
 				strainLevel: plan.strainLevel,
 				isHome: plan.isHome,
@@ -1647,7 +1654,7 @@ class ReclamationMatch extends React.Component {
 			}
 			const rec = this.recommendation(view);
 			const suggestedWorld = rec && rec.type === 'send' && rec.recordId === armedRecordId ? this.worldName(this.state.match, rec.siteId) : null;
-			return `Pick a world for ${speciesLabel(record)}${suggestedWorld ? ` (${suggestedWorld} is suggested)` : ''}, or pick it again to put it back.${stealthy ? ' It arrives hidden.' : ''}`;
+			return `Pick a world for ${speciesLabel(record)}.${suggestedWorld ? ` ${suggestedWorld} is suggested.` : ''}${stealthy ? ' It arrives hidden.' : ''}`;
 		}
 		if (view.players[this.seatInPlay()].passed) {
 			return 'You passed. Waiting for the rival.';
@@ -1744,7 +1751,7 @@ class ReclamationMatch extends React.Component {
 				)}
 
 				<div className="rec-status-world">
-					<h2 className="rec-status-planet">Round {view.frameIndex + 1} <span className="rec-status-of">of {FRAMES_PER_MATCH}</span></h2>
+					<h2 className="rec-status-planet">Round {view.frameIndex + 1}<span className="rec-status-of"><span className="rec-status-of-word"> of </span><span className="rec-status-of-slash">/</span>{FRAMES_PER_MATCH}</span></h2>
 					{/* the next round's worlds are planning arithmetic: advanced mode, and the help panel's round list */}
 					{!simple && view.nextFrame && !this.state.judged && (
 						<span className="rec-next-plate" data-next-plate>

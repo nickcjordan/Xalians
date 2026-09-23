@@ -6790,3 +6790,21 @@
 	.rec-console--match[data-terminal] .rec-world-best-pick { min-height: 32px; padding: 0 4px; font-size: 9px; max-width: 100%; overflow: hidden; text-overflow: ellipsis; }
 	.rec-console--match[data-terminal] .rec-report-closest { font-size: var(--g-size-small); }
 }
+
+/* --- pass 41 ---------------------------------------------------------------- */
+
+/* the preview's number carries its unit since pass 38, and 6ch cut "13 HOLD" under the meter */
+.rec-console--match[data-terminal] .rec-site-floor .rec-ghost:not(.rec-ghost--relocate) { grid-template-columns: calc(7.5rem * var(--rec-scale)) 10ch minmax(0, 1fr); }
+.rec-console--match[data-terminal] .rec-ghost-value { white-space: nowrap; }
+@media (max-width: 760px) {
+	/* the round count is "1/3" on a phone, where "of 3" did not fit */
+	.rec-console--match[data-terminal] .rec-status-of { display: inline; font-size: 0.75em; }
+	.rec-console--match[data-terminal] .rec-status-of-word { display: none; }
+}
+@media (min-width: 761px) {
+	.rec-console--match[data-terminal] .rec-status-of-slash { display: none; }
+}
+@media (max-width: 760px) {
+	.rec-console--match[data-terminal] .rec-status-planet { margin-right: 6px; white-space: nowrap; }
+}
+.rec-console--match[data-terminal] .rec-ghost-text { min-width: 0; overflow: hidden; text-overflow: ellipsis; }

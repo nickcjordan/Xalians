@@ -71,6 +71,21 @@ function buildWorlds(match, you, recordsById) {
 	const worlds = [];
 	const recovered = recoveredByRound(match);
 	const judgeEvents = (match.resolutionLog || []).filter((e) => e && e.type === 'judge');
+	/*
+		PASS 41. The judge lists only the creatures still standing, so a world where every one
+		of yours fell reads the same as one you never sent to. Every creature that fell was
+		named by an event at its world, so a world is contested if any event there names one
+		of yours.
+	*/
+	const mine = new Set();
+	const p = (match.players && match.players[you]) || {};
+	[...(p.roster || []).map((r) => r.id), ...(p.holding || []), ...(p.withdrawn || []), ...(p.downed || [])].forEach((id) => mine.add(id));
+	const contestedSites = new Set();
+	(match.resolutionLog || []).forEach((e) => {
+		if (e && e.site && (mine.has(e.recordId) || mine.has(e.target))) {
+			contestedSites.add(e.site);
+		}
+	});
 	judgeEvents.forEach((event) => {
 		const frame = match.frames ? match.frames[event.round] : null;
 		const siteResults = event.siteResults || {};
@@ -109,6 +124,7 @@ function buildWorlds(match, you, recordsById) {
 				holdRival: you === 'A' ? result.holdB : result.holdA,
 				yours: rowsFor(you),
 				theirs: rowsFor(rival),
+				contestedByYou: (entries[you] || []).length > 0 || contestedSites.has(siteId),
 			});
 		});
 	});
@@ -190,10 +206,8 @@ function decisiveSentence(match, you, worlds, reason) {
 		if (lastFrame === null || taken.length === 0) {
 			return 'The game was decided before a world could be read.';
 		}
-		const closest = taken.reduce((best, w) => (!best || Math.abs(w.holdYou - w.holdRival) < Math.abs(best.holdYou - best.holdRival) ? w : best), null);
-		const by = Math.abs(closest.holdYou - closest.holdRival);
 		const winner = winnerSide === 'you' ? 'You' : 'The rival';
-		return `${winner} reached five worlds in round ${lastFrame + 1}, the closest of them ${worldLabel(closest)}, by ${formatHoldShown(by)}.`;
+		return `${winner} reached five worlds in round ${lastFrame + 1}.`;
 	}
 	if (reason === 'tiebreak') {
 		const rosterYou = match.players[you].roster.length;
@@ -378,7 +392,7 @@ function WorldRow({ world, you }) {
 	const whoText = world.who === 'you' ? 'yours' : world.who === 'rival' ? "the rival's" : 'tied';
 	const youHigher = world.holdYou >= world.holdRival;
 	return (
-		<div className={`rec-report-world rec-report-world--${world.who}`} data-world-row>
+		<div className={`rec-report-world rec-report-world--${world.who}`} data-world-row title={world.siteName || undefined}>
 			<div className="rec-report-world-head">
 				<span className={`g-chip g-chip--outline rec-report-world-planet g-el-${world.element || 'fire'}`}>
 					{world.planet || 'Unknown world'}
@@ -392,7 +406,6 @@ function WorldRow({ world, you }) {
 						x{world.countedValue}
 					</span>
 				)}
-				<span className="rec-report-world-site">{world.siteName}</span>
 				{/*
 					pass 30: two holds per world row, three world rows per round, nine rows in a
 					Proving. At a tenth each that is the "wall of fifteen decimals in one column"
@@ -644,7 +657,7 @@ export function ReclamationReport({
 		<div className={`g-panel rec-report rec-rise ${report.won ? 'rec-report--won' : 'rec-report--lost'}`} data-report>
 			<span className="g-kicker">{report.won ? 'You win' : 'You lose'}</span>
 			<h2 className="rec-report-title">
-				{report.won ? `You beat the ${rival}.` : `The ${rival} wins.`}
+				{report.won ? 'You win.' : 'The rival wins.'}
 			</h2>
 			<p className="g-body rec-report-lede">
 				{report.sitesYou} {report.sitesYou === 1 ? 'world' : 'worlds'} to {report.sitesRival}, {why}.
@@ -667,14 +680,24 @@ export function ReclamationReport({
 				take is the one a different send would most likely have turned, so it is named.
 			*/}
 			{(() => {
+				/*
+					PASS 41. Why, in the rows' own numbers: the worlds you left empty (the rival
+					took them for the price of one creature each), then the closest world you
+					contested and lost, which a different send would most likely have turned.
+				*/
 				const lost = (report.worlds || []).filter((w) => w.who === 'rival');
-				if (lost.length === 0) {
+				const empty = lost.filter((w) => w.contestedByYou === false);
+				const contested = lost.filter((w) => !empty.includes(w));
+				const closest = contested.length
+					? contested.reduce((a, b) => (Math.abs(b.holdRival - b.holdYou) < Math.abs(a.holdRival - a.holdYou) ? b : a))
+					: null;
+				if (!empty.length && !closest) {
 					return null;
 				}
-				const closest = lost.reduce((a, b) => (Math.abs(b.holdRival - b.holdYou) < Math.abs(a.holdRival - a.holdYou) ? b : a));
 				return (
 					<p className="g-body rec-report-closest" data-closest-loss>
-						Your closest loss: {closest.planet}, round {closest.frameIndex + 1}, {formatHoldShown(closest.holdYou)} to {formatHoldShown(closest.holdRival)}.
+						{empty.length > 0 && <>You left {empty.length === 1 ? 'one world' : `${empty.length} worlds`} empty ({empty.map((w) => w.planet).join(', ')}), and the rival took {empty.length === 1 ? 'it' : 'them'} unopposed. </>}
+						{closest && <>Your closest loss was {closest.planet} in round {closest.frameIndex + 1}, {formatHoldShown(closest.holdYou)} to {formatHoldShown(closest.holdRival)}.</>}
 					</p>
 				);
 			})()}

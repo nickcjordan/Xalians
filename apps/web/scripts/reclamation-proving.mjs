@@ -245,7 +245,7 @@ for (const view of ['simple', 'advanced']) {
 					const ghostLies = await page.evaluate(() => [...document.querySelectorAll('[data-site-id]')]
 						.filter((site) => site.querySelector('[data-rank="theirs"] [data-record-id]'))
 						.map((site) => (site.querySelector('[data-ghost-plan]') || {}).textContent || '')
-						.filter((text) => /No rival here|Nothing (here )?to hit yet/.test(text)));
+						.filter((text) => /No rival here|Nothing (here )?to (hit|strike) yet/.test(text)));
 					assert(ghostLies.length === 0, `${label}: a world with a rival on it previews "${ghostLies[0]}"`);
 					const siteCount = await site.count();
 					if (siteCount) {

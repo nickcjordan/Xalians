@@ -434,7 +434,8 @@ export function ghostSummary(plan, fmt) {
 			if (seen.length > 0) {
 				return { text: `Its instinct would not strike ${seen.length === 1 ? seen[0] : 'any rival here'}`, warn: true };
 			}
-			return { text: 'No rival here to strike', warn: true };
+			// pass 41: not a warning: a creature sent to an empty world still holds it
+			return { text: 'Nothing to strike yet; it holds the world', warn: false };
 		}
 		return { text: e.target.downs ? `Downs ${e.target.name}` : `Takes ${fmt(e.target.amount)} off ${e.target.name}`, warn: false };
 	}
