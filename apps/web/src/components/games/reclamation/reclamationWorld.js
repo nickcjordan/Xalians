@@ -1,7 +1,7 @@
 import React from 'react';
 import ReclamationFigure, { ReclamationSilhouette, HoldMeter } from './reclamationFigure';
 import { RoleGlyph } from './reclamationGlyphs';
-import { formatHold, formatHoldShown, countWord } from './reclamationNarration';
+import { formatHold, formatHoldShown, countWord, speciesLabel } from './reclamationNarration';
 import { ghostSummary } from './reclamationPreview';
 import { elementOf } from './reclamationVocabulary';
 
@@ -136,7 +136,7 @@ export function EnvironmentScale({ site, ghost }) {
 	on the panel, and it disappears the moment a creature stands here, because from then
 	on the figures and the balance bar are the better answer.
 */
-export function WorldFooting({ footing, world, compact, detail }) {
+export function WorldFooting({ footing, world, compact, detail, onPick }) {
 	if (!footing || !footing.of) {
 		// no bench to measure against (a resumed match mid-resolution, say): say the one
 		// true thing rather than an arithmetic of nothing
@@ -163,6 +163,31 @@ export function WorldFooting({ footing, world, compact, detail }) {
 				{detail && hostile > 0 && (
 					<span className="rec-world-footing-line rec-world-footing-line--cost" data-footing-cost>
 						<b className="g-mono">{hostile}</b> strained{severe > 0 ? `, ${severe} severely` : ''}
+					</span>
+				)}
+				{/*
+					PASS 39. The three of your squad that would hold this world best, by name and
+					number. A blind critic called the rounds "the same screen three times": three
+					empty panels with one count each. These change with every round's worlds, and a
+					press picks that creature up, which is the next thing the player does anyway.
+				*/}
+				{(footing.best || []).length > 0 && (
+					<span className="rec-world-best" data-world-best>
+						<span className="rec-world-best-label">Best here</span>
+						{footing.best.map(({ record, hold }) => (onPick ? (
+							<button
+								type="button"
+								className="g-btn rec-world-best-pick"
+								key={record.id}
+								data-best-pick={record.id}
+								title={`Pick up ${speciesLabel(record)}`}
+								onClick={(e) => { e.stopPropagation(); onPick(record.id); }}
+							>
+								{speciesLabel(record)} <b className="g-mono">{formatHoldShown(hold)}</b>
+							</button>
+						) : (
+							<span className="rec-world-best-pick" key={record.id}>{speciesLabel(record)} <b className="g-mono">{formatHoldShown(hold)}</b></span>
+						)))}
 					</span>
 				)}
 			</div>
@@ -274,6 +299,7 @@ function ReclamationWorld({
 	highlights,
 	clashSiteId,
 	siteFootings,
+	onPickBest,
 	arrival,
 	hoverSiteId,
 	previewRecordId,
@@ -623,7 +649,7 @@ function ReclamationWorld({
 										<span className={`rec-stamp rec-stamp--${verdict.who} rec-stamp--down`}>{verdict.text}</span>
 									)}
 									{!ghost && !movingRecordId && !verdict && empty && (
-										<WorldFooting footing={siteFootings ? siteFootings[site.id] : null} world={site.world} compact detail={advanced} />
+										<WorldFooting footing={siteFootings ? siteFootings[site.id] : null} world={site.world} compact detail={advanced} onPick={onPickBest} />
 									)}
 								</div>
 

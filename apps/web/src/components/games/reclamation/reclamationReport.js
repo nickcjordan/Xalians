@@ -662,6 +662,22 @@ export function ReclamationReport({
 			</div>
 
 			<p className="g-body rec-report-decisive">{report.decisive}</p>
+			{/*
+				PASS 39. The result tallied and did not say why. The closest world you did not
+				take is the one a different send would most likely have turned, so it is named.
+			*/}
+			{(() => {
+				const lost = (report.worlds || []).filter((w) => w.who === 'rival');
+				if (lost.length === 0) {
+					return null;
+				}
+				const closest = lost.reduce((a, b) => (Math.abs(b.holdRival - b.holdYou) < Math.abs(a.holdRival - a.holdYou) ? b : a));
+				return (
+					<p className="g-body rec-report-closest" data-closest-loss>
+						Your closest loss: {closest.planet}, round {closest.frameIndex + 1}, {formatHoldShown(closest.holdYou)} to {formatHoldShown(closest.holdRival)}.
+					</p>
+				);
+			})()}
 
 			<div className="rec-report-foot">
 				<span className="rec-report-figure" data-sends>
