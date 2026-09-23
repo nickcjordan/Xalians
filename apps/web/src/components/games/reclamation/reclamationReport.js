@@ -188,12 +188,12 @@ function decisiveSentence(match, you, worlds, reason) {
 		const lastFrame = worlds.length ? worlds[worlds.length - 1].frameIndex : null;
 		const taken = worlds.filter((w) => w.frameIndex === lastFrame && w.who === winnerSide);
 		if (lastFrame === null || taken.length === 0) {
-			return 'The Charter was decided before a world could be read.';
+			return 'The game was decided before a world could be read.';
 		}
 		const closest = taken.reduce((best, w) => (!best || Math.abs(w.holdYou - w.holdRival) < Math.abs(best.holdYou - best.holdRival) ? w : best), null);
 		const by = Math.abs(closest.holdYou - closest.holdRival);
 		const winner = winnerSide === 'you' ? 'You' : 'The rival';
-		return `${winner} clinched the Charter in round ${lastFrame + 1}, taking ${worldLabel(closest)} by ${formatHold(by)}.`;
+		return `${winner} reached five worlds in round ${lastFrame + 1}, the closest of them ${worldLabel(closest)}, by ${formatHoldShown(by)}.`;
 	}
 	if (reason === 'tiebreak') {
 		const rosterYou = match.players[you].roster.length;
@@ -230,7 +230,7 @@ function decisiveSentence(match, you, worlds, reason) {
 		}
 	});
 	if (!narrowest) {
-		return 'The Proving ran its third frame with no world decisively read.';
+		return 'The game ran its three rounds with no world decisively read.';
 	}
 	const winner = narrowest.who === 'you' ? 'You' : 'The rival';
 	return `${winner} won ${worldLabel(narrowest)} by the narrowest margin, in round ${narrowest.frameIndex + 1}, and that decided the game.`;
@@ -286,7 +286,7 @@ export function buildMatchReport(match, you, recordsById) {
 	try {
 		decisive = decisiveSentence(normalizedMatch, you, worlds, reason);
 	} catch (err) {
-		decisive = 'The Charter was decided; the record of exactly how is incomplete.';
+		decisive = 'The game was decided; the record of exactly how is incomplete.';
 	}
 
 	let sendsYou = 0;
@@ -375,7 +375,7 @@ function CreatureLine({ entries }) {
 }
 
 function WorldRow({ world, you }) {
-	const whoText = world.who === 'you' ? 'yours' : world.who === 'rival' ? "the rival's" : 'to the Court';
+	const whoText = world.who === 'you' ? 'yours' : world.who === 'rival' ? "the rival's" : 'tied';
 	const youHigher = world.holdYou >= world.holdRival;
 	return (
 		<div className={`rec-report-world rec-report-world--${world.who}`} data-world-row>
@@ -387,7 +387,7 @@ function WorldRow({ world, you }) {
 					<span
 						className="rec-report-world-counted g-mono"
 						data-counted={world.countedValue}
-						title={`Staked${(world.staked || []).length > 1 ? ' by both handlers' : ''}: it counted ${world.countedValue} toward the Charter.`}
+						title={`Staked${(world.staked || []).length > 1 ? ' by both handlers' : ''}: it counted ${world.countedValue} worlds.`}
 					>
 						x{world.countedValue}
 					</span>
@@ -533,7 +533,7 @@ class ReclamationProvingNotes extends React.Component {
 				closes on the Proving and the instrument is one click for whoever wants it.
 			*/
 			<details className="g-panel rec-notes" data-notes>
-				<summary className="g-kicker rec-notes-summary">Proving notes</summary>
+				<summary className="g-kicker rec-notes-summary">Your notes on this game</summary>
 				<div className="rec-notes-row">
 					<label className="rec-notes-label" htmlFor="rec-notes-tension">Where was the moment of most tension?</label>
 					<input
@@ -603,7 +603,7 @@ class ReclamationProvingNotes extends React.Component {
 						Export notes
 					</button>
 					<span className="rec-notes-count g-mono" data-notes-count>
-						{notesCount} {notesCount === 1 ? 'Proving' : 'Provings'} noted, {telemetryCount} recorded
+						{notesCount} {notesCount === 1 ? 'game' : 'games'} noted, {telemetryCount} recorded
 					</span>
 				</div>
 				{exported && (
@@ -626,10 +626,10 @@ export function ReclamationReport({
 	const rival = rivalName || 'the rival';
 	const rounds = worldsByRound(report.worlds || []);
 	const why = report.reason === 'clinched'
-		? 'clinched at five worlds'
+		? `${report.won ? 'you' : 'the rival'} reached five first`
 		: report.reason === 'tiebreak'
 			? 'settled on the tiebreak'
-			: 'after the third frame';
+			: 'after three rounds';
 	/*
 		The next rung: RIVALS is in ladder order (weakest first, by measured win rate against
 		the proctor), so the next rival is simply the one after this handler's. Offered only
@@ -642,9 +642,9 @@ export function ReclamationReport({
 
 	return (
 		<div className={`g-panel rec-report rec-rise ${report.won ? 'rec-report--won' : 'rec-report--lost'}`} data-report>
-			<span className="g-kicker">The Charter</span>
+			<span className="g-kicker">{report.won ? 'You win' : 'You lose'}</span>
 			<h2 className="rec-report-title">
-				{report.won ? 'The Charter is yours.' : `The ${rival} takes the Charter.`}
+				{report.won ? `You beat the ${rival}.` : `The ${rival} wins.`}
 			</h2>
 			<p className="g-body rec-report-lede">
 				{report.sitesYou} {report.sitesYou === 1 ? 'world' : 'worlds'} to {report.sitesRival}, {why}.
@@ -670,7 +670,7 @@ export function ReclamationReport({
 				</span>
 				<span className="rec-report-figure" data-routs>
 					<span className="rec-report-figure-value">{report.downs.dealt} / {report.downs.taken}</span>
-					<span className="rec-report-figure-label">downs dealt / taken</span>
+					<span className="rec-report-figure-label">creatures downed, rival&apos;s / yours</span>
 				</span>
 				<span className="rec-report-figure" data-champion>
 					<span className="rec-report-figure-value">{report.champion ? `${speciesLabel(report.champion.record)} ${formatHoldShown(report.champion.hold)}` : 'none'}</span>
@@ -716,7 +716,7 @@ export function ReclamationReport({
 					onClick={() => onNewProving()}
 					data-new-proving
 				>
-					{nextRival ? 'Another against this rival' : 'New Proving'}
+					{nextRival ? 'Play this rival again' : 'Play again'}
 				</button>
 			</div>
 		</div>

@@ -66,7 +66,7 @@ function Plinth({ record, view, you, armed, suggested, disabled, onArm, onInspec
 	const bestId = holds ? holds.reduce((a, b) => (b.hold > a.hold ? b : a)).site.id : null;
 	const title = inHand
 		? (armed ? 'Lifted. Press a world to send it there, or press again to set it down.' : holds.map((h) => `${h.site.world.planet} ${formatHold(h.hold)}`).join(' · '))
-		: slot.state === 'sent' ? `Sent to ${slot.site.world.planet}` : slot.state === 'holding' ? 'Holding a world won earlier' : slot.state === 'downed' ? 'Downed, out of the Proving' : 'Withdrawn';
+		: slot.state === 'sent' ? `Sent to ${slot.site.world.planet}` : slot.state === 'holding' ? 'Won its world in an earlier round, and stays there' : slot.state === 'downed' ? 'Fell in a Clash, out of the game' : 'Spent on a world that was lost or tied, out of the game';
 	return (
 		<div className={classes.join(' ')} data-slot={record.id} data-slot-state={slot.state}>
 			<button
@@ -130,7 +130,7 @@ function Plinth({ record, view, you, armed, suggested, disabled, onArm, onInspec
 						{/* pass 38: "sent to", so the slot that names a best world in hand never reads the same once sent */}
 						{slot.state === 'sent'
 							? <span className={`rec-plinth-sent g-el-${slot.site.world.element}`} title={`Sent to ${slot.site.world.planet}`}><span className="rec-plinth-best-dot" aria-hidden="true" />&rarr;<span className="rec-plinth-sent-where">{slot.site.world.planet}</span></span>
-							: slot.state === 'holding' ? 'holding' : slot.state === 'downed' ? 'fallen' : 'away'}
+							: slot.state === 'holding' ? 'won' : slot.state === 'downed' ? 'fallen' : 'spent'}
 					</span>
 				)}
 				{inHand && (suggested || stealthy) && (

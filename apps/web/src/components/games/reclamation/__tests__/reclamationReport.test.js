@@ -429,10 +429,10 @@ describe('ReclamationReport / Proving notes panel', () => {
 		mount({
 			report: minimalReport(true), onNewProving: () => {}, rivalName: 'Broker', seed: 9, rivalId: 'proctor', storage,
 		});
-		expect(container.querySelector('[data-notes-count]').textContent).toBe('0 Provings noted, 2 recorded');
+		expect(container.querySelector('[data-notes-count]').textContent).toBe('0 games noted, 2 recorded');
 		act(() => {
 			container.querySelector('[data-notes-save]').dispatchEvent(new window.MouseEvent('click', { bubbles: true }));
 		});
-		expect(container.querySelector('[data-notes-count]').textContent).toBe('1 Proving noted, 2 recorded');
+		expect(container.querySelector('[data-notes-count]').textContent).toBe('1 game noted, 2 recorded');
 	});
 });

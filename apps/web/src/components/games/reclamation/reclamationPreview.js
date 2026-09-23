@@ -327,6 +327,8 @@ export function ghostPlanFor(publicState, record, site, seat, sentIndex) {
 			}
 		} else {
 			const target = pickAttackTargetPreview(publicState, ghost, units);
+			// pass 39: rivals can stand here and still not be one its instinct would strike
+			effect.enemies = enemiesAtSite(ghost, units).map((u) => speciesLabel(u.record));
 			if (!target) {
 				lines.push('no enemy here to attack');
 			} else {
@@ -428,6 +430,10 @@ export function ghostSummary(plan, fmt) {
 	}
 	if (plan.role === ROLE.STRIKE) {
 		if (!e.target) {
+			const seen = e.enemies || [];
+			if (seen.length > 0) {
+				return { text: `Its instinct would not strike ${seen.length === 1 ? seen[0] : 'any rival here'}`, warn: true };
+			}
 			return { text: 'No rival here to strike', warn: true };
 		}
 		return { text: e.target.downs ? `Downs ${e.target.name}` : `Takes ${fmt(e.target.amount)} off ${e.target.name}`, warn: false };

@@ -98,6 +98,35 @@ export function reachabilityLine(view, you, them) {
 	const theirNeed = toClinch - them.sitesWon;
 	const behind = you.sitesWon < them.sitesWon;
 
+	/*
+		PASS 39. Worlds are not the only limit: every world you win needs a creature on it, and
+		sends are a budget for the whole game. A blind critic reached round three needing three
+		worlds with two sends left while the line still read "you need 3 more of the 3 worlds
+		left". This is an upper bound on what you could still count, so the line only calls a
+		game lost when it certainly is: the worlds you already stand on this round, one more
+		per send you could still make (the trailing bonus included for every round it could
+		come), and two more if your stake is unused (a world both sides staked counts three).
+	*/
+	if (you.isSelf !== false && typeof you.sentCount === 'number') {
+		const rules = view.rules || {};
+		const bonusRounds = roundsAfterThis + (thisRoundStillOpen ? 1 : 0);
+		const sendsMax = Math.max(0, (typeof rules.sendable === 'number' ? rules.sendable : SENDABLE) - you.sentCount)
+			+ (rules.trailingBonus || 0) * bonusRounds;
+		const inHand = Array.isArray(you.roster) ? you.roster.length : (typeof you.rosterCount === 'number' ? you.rosterCount : sendsMax);
+		const newWorlds = you.passed && thisRoundStillOpen ? 0 : Math.min(sendsMax, inHand);
+		const standing = thisRoundStillOpen
+			? view.frame.sites.filter((site) => (((view.board || {})[site.id] || {})[view.players && view.players.B === you ? 'B' : 'A'] || []).some((e) => e.record && !e.downed)).length
+			: 0;
+		const stakeBonus = !you.stakeUsed && (roundsAfterThis > 0 || (you.stakeableSiteIds || []).length > 0) ? 2 : 0;
+		const reachable = Math.min(worldsLeft, standing + newWorlds) + stakeBonus;
+		if (yourNeed > reachable && yourNeed > 0) {
+			return {
+				tone: 'lost',
+				text: `Winning is out of reach: you need ${yourNeed} more ${yourNeed === 1 ? 'world' : 'worlds'}, and each needs a creature on it, but you can send only ${plural(Math.min(sendsMax, inHand), 'more creature')}.`,
+			};
+		}
+	}
+
 	// already out of reach on worlds: the rival cannot be caught even by taking every one
 	if (yourNeed > worldsLeft && theirNeed <= worldsLeft) {
 		return {
@@ -1548,6 +1577,7 @@ class ReclamationMatch extends React.Component {
 				role: plan.role,
 				roleLine: plan.roleLine,
 				lines: plan.lines,
+				effect: plan.effect,
 				targetRecordId: plan.targetRecordId,
 				strainLevel: plan.strainLevel,
 				isHome: plan.isHome,
@@ -1602,7 +1632,9 @@ class ReclamationMatch extends React.Component {
 			} catch (e) {
 				stealthy = false;
 			}
-			return `Pick a world for ${speciesLabel(record)}, or pick it again to put it back.${stealthy ? ' It arrives hidden.' : ''}`;
+			const rec = this.recommendation(view);
+			const suggestedWorld = rec && rec.type === 'send' && rec.recordId === armedRecordId ? this.worldName(this.state.match, rec.siteId) : null;
+			return `Pick a world for ${speciesLabel(record)}${suggestedWorld ? ` (${suggestedWorld} is suggested)` : ''}, or pick it again to put it back.${stealthy ? ' It arrives hidden.' : ''}`;
 		}
 		if (view.players[this.seatInPlay()].passed) {
 			return 'You passed. Waiting for the rival.';
@@ -1752,9 +1784,9 @@ class ReclamationMatch extends React.Component {
 							)}
 					<p
 						className="rec-status-reach g-body"
-						data-still-reachable={stillReachable ? stillReachable.tone : 'none'}
+						data-still-reachable={stillReachable && !beat ? stillReachable.tone : 'none'}
 					>
-						{stillReachable ? stillReachable.text : ''}
+						{stillReachable && !beat ? stillReachable.text : ''}
 					</p>
 				</div>
 
@@ -2111,7 +2143,7 @@ class ReclamationMatch extends React.Component {
 								rather than leaving a hole the size of the dock. Not in hot-seat, where
 								the squad in hand is one person's secret and the Clash is watched by both.
 							*/}
-							{(deployPanelOpen || ((playback || (judged && view.phase !== 'matchEnd')) && !this.hotSeat)) && (
+							{(deployPanelOpen || ((playback || judged) && !this.hotSeat)) && (
 								<ReclamationBench
 									view={view}
 									you={this.seatInPlay()}
@@ -2143,6 +2175,22 @@ class ReclamationMatch extends React.Component {
 								/>
 							)}
 
+							{/*
+								PASS 39: the last round's Ruling gets its moment on the board too. The
+								result used to cover the table the instant the Clash finished, so the
+								round that decided the game was the one round a player never saw ruled.
+								The key keeps data-next-frame, which every check already presses.
+							*/}
+							{judged && !playback && view.phase === 'matchEnd' && !this.state.reportOpen && (
+								<div className="rec-judge-bar rec-rise" data-judge-bar>
+									<span className="rec-judge-bar-text">
+										{view.winner === this.seatInPlay() ? 'You win the game' : view.winner ? 'The rival wins the game' : 'The game is over'}, {view.players[this.seatInPlay()].sitesWon} worlds to {view.players[this.seatOpponent()].sitesWon}.
+									</span>
+									<button type="button" className="g-btn g-btn--primary" onClick={() => this.setState({ reportOpen: true })} data-next-frame data-see-result>
+										See the result
+									</button>
+								</div>
+							)}
 							{judged && !playback && view.phase !== 'matchEnd' && (
 								<div className="rec-judge-bar rec-rise" data-judge-bar>
 									<span className="rec-judge-bar-text">
@@ -2156,7 +2204,7 @@ class ReclamationMatch extends React.Component {
 
 						</div>
 
-						{judged && !playback && view.phase === 'matchEnd' && (
+						{judged && !playback && view.phase === 'matchEnd' && this.state.reportOpen && (
 							<div className="rec-verdict-cover" data-verdict-cover>{this.renderVerdictPanel()}</div>
 						)}
 

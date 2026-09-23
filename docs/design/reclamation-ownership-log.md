@@ -747,3 +747,28 @@ Second, the metric is insensitive to what it claims to be about. **Quadrupling t
 
 **Verified:** 186 Reclamation tests and 533 rules tests green; `reclamation-shift` (one screen, nothing moving, at every size), `reclamation-proving` (4 of 4), `reclamation-actflip` and `reclamation-hotseat` green against this build; paint read at 1440 and 390, simple and advanced, in all six states plus the stake choice and the panels.
 
+
+### Pass 39 (2026-09-22): the whole game, and a preview that had been blind since pass 38
+
+**Nick:** "Iterate on, continue improving it."
+
+**New instrument.** Every earlier critic round saw round one only. A play-through probe now follows the table's own suggestions through all three rounds and the result, at 1440 and 390, and a blind critic read the whole arc (clarity 5 desk / 3 phone; "want another game" 3 / 2).
+
+**The bug it found.** Pass 38's per-world preview sentence read an `effect` the match never passed to the worlds, so every strike said "No rival here to strike" and every sweep "Nothing to hit yet", including beside a rival in plain view. Nothing could have caught it: the unit tests exercised `ghostSummary` directly. Fixed (one line), and `reclamation-proving` now fails if a world with a rival on it previews "No rival here" or "Nothing to hit". Checked both ways: with the line removed the check fails at all four sizes, with it restored all four pass.
+
+**What else changed.**
+- **The last round's Ruling is seen.** The result used to cover the table the instant the final Clash ended, so the round that decided the game was the one round never shown ruled. It now rules on the board like the others, with "You win the game, 5 worlds to 4" and a See the result key.
+- **The reach line counts sends.** Every world won needs a creature on it and sends are a game budget; the critic reached round three needing three worlds with two sends left while the line said three of three were there. It now calls the game lost when it certainly is (worlds you stand on, plus one per send you could still make, plus two for an unused stake).
+- **A strike whose instinct picks no one** says "Its instinct would not strike Crystorn" instead of claiming no rival is there.
+- **The result speaks plainly**: "You lose / The Court proctor wins", "the rival reached five first", "Play again", "creatures downed", whole numbers, "tied" for a tie; no Charter, Proving or Court. On a phone the three rounds stand side by side and the whole result fits one screen.
+- **Squad cards** read "won", "spent" and "fallen" (was "holding", "away"), with titles that say what each means.
+- **Phone**: the preview is the number over its sentence at every world (it was cut at the column edge); the suggested world is named in the instruction instead of a tag over the world's name; the callout drops its kicker so its sentence fits.
+- **Narration**: "Shuntara blocks Venemist's attack of 12."
+
+**Open, from the play-through critic (next pass):**
+1. Following the suggestions lost 4 to 5, and round one's suggestion (Graviclaw to Zolton) was punished at once. The advisor does not see the rival's likely answer; what it recommends should be re-measured with the engine forecast.
+2. The end screen tallies but does not explain why you lost (sends spent per round, the closest loss).
+3. The rounds look alike: each opens on three empty panels. A round-opening line with the stakes ("Round 3: you need all three") is the cheap version.
+4. Advanced mode on a phone, the empty world panel and strain in the preview (carried from pass 38).
+
+**Verified:** 1565 web and 533 rules tests; `reclamation-shift`, `reclamation-proving` (with the new honesty check), `reclamation-actflip`, `reclamation-hotseat` green; paint read of the full play-through at 390 and 1440.

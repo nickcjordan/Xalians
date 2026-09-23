@@ -93,7 +93,7 @@ describe('narrateEvent', () => {
 	it('leaves a cancelled attack to the shield that cancelled it', () => {
 		expect(narrateEvent({ type: 'attack', role: 'strike', outcome: 'cancelled', power: 4 }, ctx)).toBeNull();
 		expect(narrateEvent({ type: 'shield', cancelled: 'v', amount: 4 }, { actorName: 'Yetimoth', targetName: 'Voltish' }))
-			.toBe("Yetimoth shields: Voltish's attack of 4 is cancelled.");
+			.toBe("Yetimoth blocks Voltish's attack of 4.");
 	});
 
 	it('says a shield with nothing to cancel, and an attack with nothing to hit', () => {

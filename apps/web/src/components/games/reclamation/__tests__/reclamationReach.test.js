@@ -69,4 +69,30 @@ describe('what is still reachable', () => {
 		expect(reachabilityLine(view(2, 'matchEnd'), side(1), side(5))).toBe(null);
 		expect(reachabilityLine(null, side(0), side(0))).toBe(null);
 	});
+
+	/*
+		PASS 39. Every world won needs a creature on it, and sends are a budget for the whole
+		game. A critic reached round three needing three worlds with two sends left while the
+		line still said three of the three were there to take.
+	*/
+	test('calls the game lost when there are not enough sends left to take the worlds needed', () => {
+		const me = { sitesWon: 2, sentCount: 9, roster: [{}, {}, {}], stakeUsed: true, passed: false };
+		const line = reachabilityLine({ ...view(2), rules: { sendable: 11, trailingBonus: 0 }, board: {} }, me, side(2));
+		expect(line).toBeTruthy();
+		expect(line.tone).toBe('lost');
+		expect(line.text).toContain('only 2 more creatures');
+	});
+
+	test('does not call it lost while an unused stake could still make up the difference', () => {
+		const me = { sitesWon: 2, sentCount: 9, roster: [{}, {}, {}], stakeUsed: false, stakeableSiteIds: ['s0'], passed: false };
+		const line = reachabilityLine({ ...view(2), rules: { sendable: 11, trailingBonus: 0 }, board: {} }, me, side(2));
+		expect(line === null || line.tone !== 'lost').toBe(true);
+	});
+
+	test('counts a world you already stand on as still winnable without a send', () => {
+		const me = { sitesWon: 2, sentCount: 10, roster: [{}], stakeUsed: true, passed: false };
+		const board = { s0: { A: [{ record: {}, downed: false }], B: [] }, s1: { A: [{ record: {}, downed: false }], B: [] }, s2: { A: [], B: [] } };
+		const line = reachabilityLine({ ...view(2), rules: { sendable: 11, trailingBonus: 0 }, board, players: { A: me } }, me, side(2));
+		expect(line === null || line.tone !== 'lost').toBe(true);
+	});
 });
