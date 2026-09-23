@@ -195,13 +195,20 @@ Generator 0.7.0, schema 5.0.0, release `generation-0.7.0-1` frozen from the same
 
 ## Measurements
 
-Filled in as the work lands.
-
 | reading | before | after |
 |---|---|---|
-| mechanisms per species (mean) | 3.19 authored | |
-| distinct acts per species (min / median / max) | | |
-| species below 8 acts | 18 of 32 (coarse identity) | |
-| parenthetical share, collision share (120 seeds) | 0.00% / 0.00% | |
-| Powerworks win rate, mean rounds | | |
-| Reclamation fairness | | |
+| authored mechanisms per species (mean) | 3.19 | 1.16 (derivation supplies the rest) |
+| distinct acts per species (min / median / max) | 3 / 3 / 4 (coarse identity) | 13 / 20 / 54 |
+| species below 8 acts | 32 of 32 | 0 of 32 |
+| parenthetical share, collision share (120 seeds) | 50.1% / 60.8% on 0.6.0-1 | 0.00% / 0.00% |
+| Powerworks win rate, mean rounds (200 greedy runs) | 99.5%, 4.96 | 98.0%, 5.26 (Graviclaw seed 4) |
+| Reclamation strike / sweep keeper win rate | 61.2 / 62.8 | 59.9 to 60.9 / 54.7 to 57.1 |
+
+## Friction met in the first two games, 2026-09-22
+
+Reported for the next pass; none blocks this release.
+
+1. **No ordinary act has prolonged preparation.** Every pattern's preparation domain is `immediate | brief`, so no generated creature can charge up, and the Powerworks charge-up rule is exercised only by machines and a fitted test move. Proposed: beam, burst and crush gain `prolonged` in their preparation domain.
+2. **Small-strength bodies barely hurt.** Avilily (strength 12) derives harms around 9 to 17, which Powerworks turns into 0 or 1 damage; 65 of 300 Avilily seeds cannot damage a machine. This is the output factor meeting a low attribute, not a selection fault; the lever is a floor on derived harm or a light-instrument curve, to be ruled with the calibration doc.
+3. **Games meet derived statuses they do not read yet.** Powerworks names stunned, slowed, blinded, disoriented and focused as unsupported, resolves area harm against the one selected target, and lets a drain heal even when its harm is blocked. These are game-side gaps (the seam reports them explicitly) and the next Powerworks pass; they are recorded in `powerworks-v5-mechanics.md`.
+4. **Same verb, different part.** Crystorn can hold Heavy Ram (hide) and Heavy Gore (horns), both repeatable contact impact. They are different acts by the contract (different instruments), and the names say so, but in a game that ignores instruments they play alike. Left as is: distinguishing them is the game's choice of what an instrument means.

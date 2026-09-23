@@ -278,3 +278,74 @@ Seam-only survey over the wider roster (20 seeds per species, 640 records):
   lines, with the full name on the span's `title` and in the select button's title and
   accessible description. Same fix as the tray, one pass late; the naming lever itself is
   still open.
+
+## Release generation-0.7.0-1 (derived acts), 2026-09-22
+
+The canonical release moved from `generation-0.6.0-1` to `generation-0.7.0-1` ([creature-derived-acts.md](creature-derived-acts.md)): ordinary actions now derive from anatomy, so the same seed rolls different ordinary actions, while guaranteed actions, signatures and passives are unchanged. Nothing in `levers.ts` moved except `COMPANION_SEEDS`.
+
+### Companion seeds
+
+| companion | 0.6.0-1 seed | 0.7.0-1 seed | why |
+|---|---|---|---|
+| Graviclaw | `powerworks-graviclaw-1` | **`powerworks-graviclaw-4`** | Seed 1's only derived ordinary action is Frightening Signal, so once Gravity Pincer (the signature) is spent its one damaging ordinary move is the brief Gravity Draw, and every other round it has nothing damaging legal: Desperate strike on 1,510 of its 4,530 opportunities in the 200-run sim, every Desperate strike in the run. Seed 3 is the lowest that keeps a damaging move legal every round, but its fourth action is a second displacement, which this game resolves exactly like Gravity Draw; seed 4 is the lowest that does both. |
+| Avilily | `powerworks-avilily-6` | `powerworks-avilily-6` (kept) | Speed 81, still faster than both chargers (65); paralysis and a second bind present; two brief harms alternate, so no Desperate strike. |
+| Crystorn | `powerworks-crystorn-1` | `powerworks-crystorn-1` (kept) | Four damaging actions, two repeatable. |
+| Hippochamp | `powerworks-hippochamp-1` | `powerworks-hippochamp-1` (kept) | Cannon unchanged; gains a contact pull and a bind. |
+
+The four actions each, as the seam reads them (`*` signature; approach/range, preparation/recovery, effects):
+
+- **Graviclaw** (seed 4, HP 77, speed 27, strength 91): *Gravity Pincer, stationary/contact, brief/brief, compression harm 85. Gravity Draw, stationary/medium, immediate/brief, displace 65. Ground Anchor, self, brief/brief, protected (immune to displacement). Crushing Ram, stationary/contact, brief/repeatable, compression harm 73.
+- **Avilily** (seed 6, HP 32, speed 81, strength 12): *Blossoming Ambuscade, stationary/contact, brief/brief, paralyzed (bind, consistent). Piercing Peck, stationary/contact, brief/brief, piercing harm 14. Binding Lash, closing/contact, brief/brief, restrained (bind, likely). Heavy Peck, closing/contact, immediate/brief, impact harm 9.
+- **Crystorn** (seed 1, HP 68, speed 28, strength 68, willpower 73): *Gem Radiance, stationary/medium, brief/brief, light elemental harm 68. Crushing Gore, closing/contact, brief/brief, compression harm 55. Heavy Ram, stationary/contact, brief/repeatable, impact harm 52. Heavy Gore, closing/contact, immediate/repeatable, impact harm 63.
+- **Hippochamp** (seed 1, HP 70, speed 57): *Emergency Water Cannon, stationary/medium, brief/brief, water impact harm 55 plus remove (cooling). Piercing Shot, stationary/medium, brief/repeatable, piercing harm 39. Binding Slam, closing/contact, immediate/repeatable, water restrained (bind, occasional). Repelling Ram, stationary/contact, immediate/brief, displace 36.
+
+No two actions on one companion share a tray name, and every effect the squad carries is supported. A test ("carries the intro's two answers to a charge and four distinct actions each") now pins Avilily's paralysis, Graviclaw's pull, distinct names and full support.
+
+**Not satisfiable:** a companion with a prolonged-preparation move. The release derives none: 0 of 2,560 roster actions (20 seeds per species) and 0 of 4,800 companion actions (300 seeds per companion) are prolonged. The old squad had none either, so the intro never taught it from a real record; decision 3's player-side charge-up is now reachable only from a fitted test move.
+
+### Sim, 200 greedy runs
+
+| row | pass 3 (0.6.0-1, applied) | 0.7.0-1, Graviclaw seed 1 kept | **0.7.0-1, Graviclaw seed 4 (applied)** |
+|---|---|---|---|
+| win rate | 99.5% (199 won, 1 lost) | 91.0% (182 won, 18 lost) | **98.0% (196 won, 4 lost)** |
+| rounds / encounter | 4.96 | 5.86 | 5.26 |
+| Desperate strike | 0% of 15,405 | 8.5% of 17,848 | 0.0% of 16,298 |
+| opportunities with no legal move | 0 | 3 | 4 |
+| charges landing | 174 of 1,567 (11.1%) | 160 of 1,862 (8.6%) | 117 of 1,724 (6.8%) |
+| interruptions bind / displace | 622 / 480 | 178 / 1,450 | 183 / 1,215 |
+| pre-emptive pulls (broke a charge) | not recorded | 3,300 (1,450) | 2,410 (1,215) |
+| binds landed / missed | 89.8% (762 of 849) | 80.6% (1,789 of 2,219) | 80.7% (1,731 of 2,145) |
+| conditions applied per group | binding 762, degrading 1,017 | binding 1,789, degrading 1,243 | binding 1,731, degrading 1,108 |
+| applications resisted or blocked | 1,480 | 1,743 | 1,516 |
+| degrade share of companion damage taken | 6.7% (2,253 of 33,529) | 7.3% (2,888 of 39,658) | 7.3% (2,576 of 35,229) |
+| opportunities lost to entranced | 0 | 0 | 0 |
+| companion opportunities under paralysis | 0.0% (7) | 0.0% (3) | 0.0% (5) |
+| companion remove: cleared / found nothing | 0 / 800 | 0 / 800 | 0 / 800 |
+| targets skipped as concealed | 0 | 0 | 0 |
+| reactions fired | contact 1,467 | contact 2,025 | contact 1,726 |
+| reaction share of companion damage taken | 10.2% (3,424 of 33,529) | 20.5% (8,137 of 39,658) | 19.1% (6,715 of 35,229) |
+| strikes on the guardian, contact / ranged | 3,918 / 1,079 | 4,390 / 1,503 | 3,825 / 1,471 |
+
+The seam-only passive survey is unchanged (100 of 640 records carry a passive, 80 ongoing / 20 contact-triggered, 100 supported), as it should be: passives did not change.
+
+**Reading.** Keeping Graviclaw seed 1 cost the squad nine points of win rate, and the whole loss traces to one kit: after its signature, Graviclaw had a single brief damaging move, so it spent a third of its opportunities on Desperate strike and its recoil. With seed 4's repeatable Crushing Ram, Desperate strike is back to zero and the win rate to 98%, a point and a half under pass 3. The rest of the drift comes from the derived kits themselves. Hippochamp now carries a contact pull (Repelling Ram) beside Graviclaw's Gravity Draw, so the greedy bot pulls chargers far more often (1,215 displace interruptions against 480) and fewer charges land (6.8% against 11.1%), but binds land less often (80.7% against 89.8%) because the new binds are `likely` and `occasional` where the old squad's were consistent. Encounters run longer (5.26 rounds against 4.96) because Avilily's derived pecks carry harm 14 and 9 at strength 12 and preview 0 or 1 damage (she dealt 1,537 of the squad's 74,362 damage in the run), so a quarter of the squad now only binds. That same fact doubles the Core discharge share: a peck that does 0 damage and lands no status does not trigger a contact reaction, so the guardian's one reply per round no longer lands on Avilily (plant, resistant to electric) but on Hippochamp's contact pull (water, weak to electric): 806 of 1,726 replies and 4,836 of 6,715 reaction damage were hers. The contract states no numeric win-rate band; 98% under a perfect-information greedy bot still reads as the forgiving intro the prototype doc asks for, so no lever moved.
+
+### Seam readings on the new roster
+
+The derived tables bring statuses and shapes the seam has no rule for. Surveyed over 20 seeds per species (2,560 actions); none of it reaches the shipped squad. Nothing was widened: the existing groups already cover burning, shielded, reinforced, frightened, buried, pinned and frozen by name, and the rest need a rule.
+
+| reading | where it appears | what the seam does |
+|---|---|---|
+| stunned | Voltish: Electric Shot, Electric Swipe, Stunning Sweep, Electric Sweep, Stunning Shot | unsupported, named. Paralyzed is this game's binding (blocks closing moves), not a skipped opportunity, and the electric row deliberately separates stunned from its paralyzed bind, so neither binding nor entranced covers it without a new rule. |
+| slowed | Hippochamp: Water Shot, Slowing Field, Water Sweep, Slowing Sweep | unsupported, named; needs a speed or approach rule. |
+| blinded | Chromocat: Blinding Shot; Frackworm: Blinding Shot, Blinding Field, Blinding Touch, Sand Shot | unsupported, named. |
+| disoriented | Neph: Disorienting Sweep, Disorienting Field | unsupported, named. |
+| sedated | none in 2,560 actions (plant medium row) | would be unsupported, named. |
+| focused | Figzy: Focusing Response; Hypnopet: Focusing Response, Focusing Signal | unsupported, named. Decision 15 already gives focused a rule and the engine honors it by name, but `statusGroup` has no group for it. Mapping it to guarding would read the two self-aimed Responses correctly and make Hypnopet's Focusing Signal focus a foe (see the Sonalloy row), so it waits on a ruling. |
+| phased | none in 2,560 actions (ghost ward) | unsupported by decision 16. |
+| concealed on itself (an action) | Akinza: Night Stalk | unsupported by the pass 2 self rule; the concealment group exists, so reading it is a one-line relaxation, not a new rule. |
+| area harm (lash sweeps, pulse bursts) | 30 of 32 species; Heavy Sweep on most, a Burst on 14 conduit species | read as harm on the one selected target. The seam does not read `spatial.area`, so a sweep or burst hits one machine. |
+| area status (fields, sweeps) | Bioflim and Venemist Corrosive Field, Imprit Burning Field and sweeps, and the four rows above | applied to the one selected target; a lingering field does not persist on a location. |
+| drain (harm plus `requires` restore on self) | Bioflim: Chemical Touch; Tizzie: Psychic Signal, Restorative Signal | read as harm plus an independent self restore on the willpower curve; the `requires` dependency is not read, so the heal happens even when the harm is blocked or zero. |
+| guarding status aimed at another | Sonalloy: Reinforcing Lash (reinforced on target) | **supported, and misread**: it reinforces the foe it hits. The pass 2 seam refuses `protect` aimed at another ("protection only guards its user here") but not a guarding status, and it cannot refuse one outright because decision 26's ally-harmed reactions aim a status at an ally through the same path. |
+| ally-aimed protect and restore | Figzy, Shuntara, Vespersyn protect; Sonalloy Living-Alloy Seam | unsupported, named (ally targeting, issue #299, unchanged). |

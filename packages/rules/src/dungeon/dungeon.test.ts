@@ -80,11 +80,29 @@ function lone() {
   s.team.forEach((u) => (u.hp = u.max = 500));
   return s;
 }
-/** Orders with Avilily on her repeatable Piercing Touch, so her paralysis does not bind the guardian mid-test. */
-const quiet = (s: Run): Record<string, Order> => ({
-  ...orders(s),
-  A: { move: 2, target: "B4" },
+/**
+  Orders in which nobody binds, pulls or afflicts the guardian, so a charge it begins
+  stands until the test acts on it. Chosen by what each move does, not by its index,
+  so the helper does not depend on what a companion seed happened to roll.
+*/
+const quiet = (s: Run): Record<string, Order> => plain(s);
+/** A plain harm effect, for fitted moves. */
+const harm = (intensity: number, mechanism: CardEffect["mechanism"] = "impact"): CardEffect => ({
+  key: "outcome",
+  type: "harm",
+  recipient: "target",
+  likelihood: "consistent",
+  intensity,
+  mechanism,
 });
+/** A short-range harm that binds, pulls and afflicts nothing: the filler a test gives a bystander. */
+const tap = (over: Partial<Move> = {}) => fitted("Quiet Tap", [harm(10)], over);
+/** Give a unit exactly these fitted moves, all ready. */
+function fitMoves(u: Unit, moves: Move[]) {
+  u.moves = moves;
+  u.cooldowns = moves.map(() => 0);
+  u.signatureSpent = false;
+}
 const clone = <T,>(v: T): T => structuredClone(v);
 const hasEvent = (r: { frames: { event?: { kind: string } }[] }, kind: string) =>
   r.frames.some((f) => f.event?.kind === kind);
@@ -121,6 +139,24 @@ describe("Powerworks reads the four companions", () => {
     expect(chargers.length).toBeGreaterThan(0);
     for (const [key, t] of chargers)
       expect(fastest, `${key} charges at speed ${t.speed}`).toBeGreaterThan(t.speed);
+  });
+  it("carries the intro's two answers to a charge and four distinct actions each", () => {
+    const s = createRun(1);
+    // Avilily's paralysis (a bind) and Graviclaw's pull (a displace) are the lesson.
+    expect(
+      unit(s, "A").moves.some((m) => m.effects.some((e) => e.status === "paralyzed" && e.support === "bind"))
+    ).toBe(true);
+    expect(
+      unit(s, "G").moves.some((m) => m.effects.some((e) => e.support === "displace"))
+    ).toBe(true);
+    for (const u of s.team) {
+      // No two actions share a tray name, and nothing the squad carries is unsupported.
+      const names = u.moves.map((m) => m.name.split(" (")[0]);
+      expect(new Set(names).size, `${u.name}: ${names.join(", ")}`).toBe(4);
+      for (const m of u.moves)
+        for (const e of m.effects)
+          expect(e.support, `${u.name} ${m.name} ${e.type}`).not.toBe("unsupported");
+    }
   });
   it("names unsupported effects and keeps a move usable only when some effect is supported", () => {
     const s = createRun(1);
@@ -181,15 +217,34 @@ describe("Powerworks battle rules", () => {
     const r = resolveRound(s, orders(s));
     expect(r.state.log.some((l) => l.includes("stopped by binding"))).toBe(true);
     expect(unit(r.state, e.id).cooldowns).toEqual([0]);
+    // A companion carrying both approaches: bound, only its stationary moves stay legal,
+    // and a stationary damaging move keeps Desperate strike off the list.
+    const contact = { range: "contact" as const };
+    const closing = { range: "contact" as const, approach: "closing" as const };
     const h = unit(s, "H");
+    fitMoves(h, [
+      fitted("Closing Ram", [harm(50)], closing),
+      fitted("Standing Jab", [harm(40)], contact),
+      fitted("Closing Grab", [statusEffect("restrained", { removable: ["freeing"] })], closing),
+      fitted("Standing Hold", [statusEffect("paralyzed", { removable: ["stabilizing"] })], contact),
+    ]);
     h.bound = 1;
     const legal = legalMoves(h);
     expect(legal).not.toContain(-1);
     expect(legal.every((i) => h.moves[i].approach === "stationary")).toBe(true);
-    expect(legal.length).toBeGreaterThan(0);
+    expect(legal).toEqual([1, 3]);
     expect(h.moves.some((m) => m.approach === "closing")).toBe(true);
+    // Stationary contact is not a closing move: a companion whose every move touches
+    // without closing loses nothing to binding.
     const a = unit(s, "A");
+    fitMoves(a, [
+      fitted("Standing Jab", [harm(40)], contact),
+      fitted("Standing Peck", [harm(20, "piercing")], contact),
+      fitted("Standing Hold", [statusEffect("paralyzed", { removable: ["stabilizing"] })], contact),
+      fitted("Standing Grip", [statusEffect("restrained", { removable: ["freeing"] })], contact),
+    ]);
     a.bound = 1;
+    expect(a.moves.every((m) => m.range === "contact" && m.approach === "stationary")).toBe(true);
     expect(legalMoves(a)).toEqual([0, 1, 2, 3]);
   });
   it("retargets the same signature and spends it exactly once", () => {
@@ -231,18 +286,23 @@ describe("Powerworks battle rules", () => {
   });
   it("cooldown gates a move for its recovery rounds and then returns it", () => {
     let s = lone();
+    fitMoves(unit(s, "C"), [
+      fitted("Quick Jab", [harm(30)]),
+      fitted("Heavy Swing", [harm(60)], { recovery: "brief" }),
+    ]);
     const q = orders(s);
-    q.C = { move: 3, target: "B4" };
+    q.C = { move: 1, target: "B4" };
     s = resolveRound(s, q).state;
     let c = unit(s, "C");
-    expect(c.moves[3].recovery).toBe("brief");
-    expect(c.cooldowns[3]).toBe(1);
-    expect(legalMoves(c)).not.toContain(3);
-    expect(legalMoves(c)).toContain(1);
+    expect(c.moves[1].recovery).toBe("brief");
+    expect(c.cooldowns[1]).toBe(1);
+    expect(COOLDOWN_ROUNDS.brief).toBe(1);
+    expect(legalMoves(c)).not.toContain(1);
+    expect(legalMoves(c)).toContain(0);
     s = resolveRound(s, orders(s)).state;
     c = unit(s, "C");
-    expect(c.cooldowns[3]).toBe(0);
-    expect(legalMoves(c)).toContain(3);
+    expect(c.cooldowns[1]).toBe(0);
+    expect(legalMoves(c)).toContain(1);
   });
   it("the signature is usable once per encounter, beyond its cooldown, and refreshes at the next one", () => {
     let s = lone();
@@ -266,7 +326,14 @@ describe("Powerworks battle rules", () => {
     let s = lone();
     s = resolveRound(s, quiet(s)).state;
     expect(unit(s, "B4").charge).toBeTruthy();
-    // The bind must land before the release: Avilily reads slower than the guardian now.
+    // The bind must land before the release, and it must land: a consistent hold from a
+    // companion faster than the guardian.
+    fitOnly(
+      unit(s, "A"),
+      fitted("Test Hold", [statusEffect("paralyzed", { removable: ["stabilizing"] })], {
+        range: "contact",
+      })
+    );
     unit(s, "A").speed = 100;
     const q = orders(s);
     q.A = { move: 0, target: "B4" };
@@ -280,7 +347,25 @@ describe("Powerworks battle rules", () => {
   });
   it("displace breaks a charge, deals its share of harm, and blocks only the stale release", () => {
     let s = lone();
-    // Keep Avilily's paralysis out of it: the guardian must be free when the pull lands.
+    // Nobody but the puller may bind or pull: the guardian must be free when the pull
+    // lands, and the pull must be the only thing that could break its charge.
+    for (const id of ["A", "C", "H"]) fitOnly(unit(s, id), tap());
+    fitMoves(unit(s, "G"), [
+      tap(),
+      fitted(
+        "Test Pull",
+        [
+          {
+            key: "outcome",
+            type: "displace",
+            recipient: "target",
+            likelihood: "consistent",
+            intensity: 65,
+          },
+        ],
+        { range: "medium" }
+      ),
+    ]);
     s = resolveRound(s, quiet(s)).state;
     expect(unit(s, "B4").charge).toBeTruthy();
     unit(s, "G").speed = 100;
@@ -299,52 +384,81 @@ describe("Powerworks battle rules", () => {
     expect(moveAt(unit(s, "B4"), s.orders.B4.move).preparation).toBe("prolonged");
   });
   it("a companion with prolonged preparation charges, releases, then recovers", () => {
+    // The release generation-0.7.0-1 derives no prolonged preparation at all (0 of 4,800
+    // companion actions), so the charge is fitted: a plain move and a prolonged harm.
     let s = lone();
     const h = unit(s, "H");
-    h.moves[2].preparation = "prolonged";
+    fitMoves(h, [
+      tap(),
+      fitted("Tidal Surge", [harm(80)], { preparation: "prolonged" }),
+    ]);
     let q = orders(s);
-    q.H = { move: 2, target: "B4" };
+    q.H = { move: 1, target: "B4" };
     let r = resolveRound(s, q);
     expect(r.frames.some((f) => f.event?.kind === "charge" && f.event.actorId === "H")).toBe(true);
     s = r.state;
     expect(unit(s, "H").charge).toBe("B4");
-    expect(legalMoves(unit(s, "H"))).toEqual([2]);
+    expect(legalMoves(unit(s, "H"))).toEqual([1]);
     q = orders(s);
     r = resolveRound(s, q);
-    expect(r.frames.some((f) => f.event?.kind === "hit" && f.event.actorId === "H")).toBe(true);
+    expect(
+      r.frames.some(
+        (f) => f.event?.kind === "hit" && f.event.actorId === "H" && f.event.moveName === "Tidal Surge"
+      )
+    ).toBe(true);
     s = r.state;
     expect(unit(s, "H").charge).toBeNull();
     expect(unit(s, "H").recovery).toBe(1);
-    expect(legalMoves(unit(s, "H"))).not.toContain(2);
+    expect(legalMoves(unit(s, "H"))).not.toContain(1);
     s = resolveRound(s, orders(s)).state;
-    expect(legalMoves(unit(s, "H"))).toContain(2);
+    expect(legalMoves(unit(s, "H"))).toContain(1);
   });
   it("rolls status likelihood from the seeded rng so runs replay and differ by seed", () => {
+    // Avilily carries one likely hold and acts first, so every seed rolls it exactly once.
+    const hold = () =>
+      fitted(
+        "Test Hold",
+        [statusEffect("paralyzed", { likelihood: "likely", removable: ["stabilizing"] })],
+        { range: "contact" }
+      );
     const play = (seed: number) => {
       const s = createRun(seed);
+      const a = unit(s, "A");
+      fitOnly(a, hold());
+      a.speed = 200;
       const q = orders(s);
-      q.A = { move: 3, target: s.enemies[0].id };
+      q.A = { move: 0, target: s.enemies[0].id };
       return resolveRound(s, q);
     };
-    expect(unit(createRun(1), "A").moves[3].effects[0].likelihood).toBe("likely");
+    expect(hold().effects[0].likelihood).toBe("likely");
+    expect(hold().effects[0].support).toBe("bind");
+    expect(LIKELIHOOD_PERCENT.likely).toBeLessThan(100);
     expect(LIKELIHOOD_PERCENT.occasional).toBeLessThan(100);
+    const byA = (r: ReturnType<typeof play>, kind: string) =>
+      r.frames.some((f) => f.event?.kind === kind && f.event.actorId === "A");
     let landed = 0,
       missed = 0;
     for (let seed = 1; seed <= 40; seed++) {
       const first = play(seed),
         again = play(seed);
       expect(again.state).toEqual(first.state);
-      if (hasEvent(first, "bind")) landed++;
-      if (hasEvent(first, "missed")) missed++;
+      if (byA(first, "bind")) landed++;
+      if (byA(first, "missed")) missed++;
     }
     expect(landed).toBeGreaterThan(0);
     expect(missed).toBeGreaterThan(0);
     expect(landed + missed).toBe(40);
   });
   it("immediate preparation wins initiative at equal speed", () => {
+    // The same harm twice, differing only in preparation.
+    const pair = () => [
+      fitted("Brief Swing", [harm(40)], { preparation: "brief" }),
+      fitted("Snap Swing", [harm(40)], { preparation: "immediate" }),
+    ];
     const first = (move: number) => {
       const s = createRun(1);
       const h = unit(s, "H");
+      fitMoves(h, pair());
       const m1 = unit(s, "M1");
       h.speed = m1.speed - 1;
       const q = orders(s);
@@ -353,11 +467,10 @@ describe("Powerworks battle rules", () => {
         .frames.filter((f) => f.event?.actorId && f.event.kind !== "redirect")
         .map((f) => f.event!.actorId);
     };
-    const h = unit(createRun(1), "H");
-    expect(h.moves[3].preparation).toBe("immediate");
-    expect(h.moves[2].preparation).toBe("brief");
-    expect(first(3).indexOf("H")).toBeLessThan(first(3).indexOf("M1"));
-    expect(first(2).indexOf("H")).toBeGreaterThan(first(2).indexOf("M1"));
+    expect(pair()[1].preparation).toBe("immediate");
+    expect(pair()[0].preparation).toBe("brief");
+    expect(first(1).indexOf("H")).toBeLessThan(first(1).indexOf("M1"));
+    expect(first(0).indexOf("H")).toBeGreaterThan(first(0).indexOf("M1"));
   });
   it("preserves knockouts and health, clears cooldowns, permits one partial revival", () => {
     let s = createRun();
@@ -404,15 +517,18 @@ describe("Powerworks battle rules", () => {
     expect(r.revival).toBe(1);
     expect(r.xp).toBe(0);
   });
-  it("replays a version 2 command history deterministically and rejects version 1", () => {
+  it("replays a version 3 command history deterministically and rejects versions 1 and 2", () => {
     const s = createRun(41);
     const q = orders(s);
     const action = { kind: "round" as const, orders: q };
     const restored = restoreRun(
-      JSON.stringify({ version: 2, seed: 41, history: [action] })
+      JSON.stringify({ version: 3, seed: 41, history: [action] })
     );
     expect(restored.state).toEqual(command(s, action));
     expect(() => restoreRun('{"version":1,"seed":41,"history":[]}')).toThrow(
+      "Unsupported save."
+    );
+    expect(() => restoreRun('{"version":2,"seed":41,"history":[]}')).toThrow(
       "Unsupported save."
     );
   });
@@ -505,21 +621,30 @@ function fitOnly(u: Unit, move: Move) {
 const conditionOn = (u: Unit, status: string) =>
   u.conditions.find((c) => c.status === status);
 /**
-  Orders that change nothing but health: no displacement (it breaks charges), no bind
-  and no status. Graviclaw's first legal move is Gravity Draw, so a status test that
-  used `orders()` would be measuring the pull instead of the condition.
+  Orders that change nothing on the foes but health: no displacement (it breaks
+  charges), no bind and no status aimed at them. A plain harm first; failing that, a
+  move whose only other effects stay on its user or remove (a ward, Ground Anchor).
+  Chosen by what the move does, so a status test never measures a pull or a bind that
+  a companion seed happened to put first.
 */
 function plain(s: Run, over: Record<string, Order> = {}): Record<string, Order> {
   const quietMove = (u: Unit) => {
-    const safe = legalMoves(u).find((i) => {
-      const m = moveAt(u, i);
-      return (
-        i >= 0 &&
-        m.preparation !== "prolonged" &&
-        m.effects.every((e) => e.support === "harm")
-      );
-    });
-    return safe ?? legalMoves(u)[0] ?? -2;
+    const ready = legalMoves(u).filter(
+      (i) => i >= 0 && moveAt(u, i).preparation !== "prolonged"
+    );
+    const safe = ready.find((i) =>
+      moveAt(u, i).effects.every((e) => e.support === "harm")
+    );
+    const harmless = ready.find((i) =>
+      moveAt(u, i).effects.every(
+        (e) =>
+          e.support === "harm" ||
+          e.support === "remove" ||
+          e.support === "unsupported" ||
+          e.recipient === "self"
+      )
+    );
+    return safe ?? harmless ?? legalMoves(u)[0] ?? -2;
   };
   return {
     ...Object.fromEntries(
@@ -782,6 +907,8 @@ describe("Powerworks status layer", () => {
   });
   it("entranced loses the opportunity without breaking a charge and cannot be reapplied within two opportunities", () => {
     let s = lone();
+    // Everyone but the lurer holds a plain tap, so nothing else can break the charge.
+    for (const id of ["A", "C", "G", "H"]) fitOnly(unit(s, id), tap());
     // The boss begins a charge first; the lure arrives before its release.
     s = resolveRound(s, plain(s)).state;
     expect(unit(s, "B4").charge).toBeTruthy();
@@ -1010,7 +1137,7 @@ describe("Powerworks status layer", () => {
     expect(r.state.phase).toBe("camp");
     expect(r.state.xp).toBe(10);
   });
-  it("replays a version 2 save deterministically with conditions in play", () => {
+  it("replays a version 3 save deterministically with conditions in play", () => {
     const s = createRun(7);
     const first = orders(s);
     const after = command(s, { kind: "round", orders: first });
@@ -1020,7 +1147,7 @@ describe("Powerworks status layer", () => {
       { kind: "round" as const, orders: second },
     ];
     const restored = restoreRun(
-      JSON.stringify({ version: 2, seed: 7, history })
+      JSON.stringify({ version: 3, seed: 7, history })
     );
     expect(restored.state).toEqual(command(after, history[1]));
   });
@@ -1327,12 +1454,13 @@ describe("Powerworks reactions", () => {
   it("honours a passive's cooldown from its recovery", () => {
     expect(COOLDOWN_ROUNDS.repeatable).toBe(0);
     expect(COOLDOWN_ROUNDS.brief).toBe(1);
-    // Every companion but Hippochamp reaches the guardian in contact range, so a
+    // The three standing companions each hold one repeatable contact strike, so a
     // repeatable reaction answers several strikes a round and a brief one answers once
-    // (the cooldown is spent on the first reply and re-armed at the guardian's own
-    // opportunity, one round later).
+    // (the cooldown is spent on the first reply and re-armed at the round boundary).
     const perRound = (cooldown: number) => {
       let run = clamper();
+      for (const id of ["C", "G", "H"])
+        fitOnly(unit(run, id), fitted("Contact Jab", [harm(30)], { range: "contact" }));
       unit(run, "B4").passives[0].cooldown = cooldown;
       const counts: number[] = [];
       for (let round = 0; round < 3; round++) {
@@ -1467,28 +1595,55 @@ describe("Powerworks reactions", () => {
     expect(after.conditions.filter((c) => c.status === "mending")).toHaveLength(1);
     expect(after.passiveCooldowns).toEqual(carrier.passives.map(() => 0));
   });
-  it("replays a version 2 save deterministically through to a reaction", () => {
+  it("replays a version 3 save deterministically through to a reaction", () => {
     // A real run, played honestly with legal orders until the guardian answers a
-    // contact strike, then restored from its command history alone.
-    let s = createRun(11);
-    const history: Command[] = [];
-    let reacted = false;
-    for (let step = 0; step < 60 && s.phase !== "won" && s.phase !== "lost"; step++) {
-      if (s.phase === "camp") {
-        const action: Command = { kind: "advance" };
+    // contact strike, then restored from its command history alone. The orders play to
+    // win (strongest legal preview, a revival when someone falls) until the final
+    // chamber, then prefer contact on the guardian, so reaching the reaction depends on
+    // the rules and not on what the companion seeds happened to roll.
+    const strongest = (s: Run): Record<string, Order> =>
+      Object.fromEntries(
+        s.team
+          .filter((u) => u.hp > 0)
+          .map((u) => {
+            let best: { order: Order; score: number } | null = null;
+            for (const i of legalMoves(u))
+              for (const t of s.enemies.filter((e) => e.hp > 0)) {
+                const m = moveAt(u, i);
+                const score =
+                  damagePreview(u, m, t) +
+                  (t.species === "guardian" && m.range === "contact" ? 1000 : 0);
+                if (!best || score > best.score) best = { order: { move: i, target: t.id }, score };
+              }
+            return [u.id, best?.order ?? { move: -2, target: s.enemies[0].id }];
+          })
+      );
+    const play = (seed: number) => {
+      let s = createRun(seed);
+      const history: Command[] = [];
+      let reacted = false;
+      for (let step = 0; step < 80 && !reacted && s.phase !== "won" && s.phase !== "lost"; step++) {
+        if (s.phase === "camp") {
+          const down = s.team.find((u) => u.hp <= 0);
+          const action: Command =
+            down && s.revival ? { kind: "revive", id: down.id } : { kind: "advance" };
+          history.push(action);
+          s = command(s, action);
+          continue;
+        }
+        const action: Command = { kind: "round", orders: strongest(s) };
         history.push(action);
-        s = command(s, action);
-        continue;
+        const result = resolveRound(s, action.orders);
+        if (reactsTo(result).length) reacted = true;
+        s = result.state;
       }
-      const action: Command = { kind: "round", orders: contactOrders(s) };
-      history.push(action);
-      const result = resolveRound(s, action.orders);
-      if (reactsTo(result).length) reacted = true;
-      s = result.state;
-    }
+      return { s, history, reacted };
+    };
+    const { s, history, reacted } = play(11);
     expect(reacted, "no reaction occurred in the played run").toBe(true);
+    expect(history.some((c) => c.kind === "advance")).toBe(true);
     const restored = restoreRun(
-      JSON.stringify({ version: 2, seed: 11, history })
+      JSON.stringify({ version: 3, seed: 11, history })
     );
     expect(restored.state).toEqual(s);
     expect(restored.state.log.some((l) => /Core discharge/.test(l))).toBe(true);
