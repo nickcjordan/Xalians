@@ -865,6 +865,27 @@ describe("Powerworks status layer", () => {
     expect(BINDING_OPPORTUNITIES.brief).toBe(1);
     expect(ATTENTION_OPPORTUNITIES.brief).toBe(1);
   });
+  it("does not let a degrading status take hold where it could never tick", () => {
+    // Seen live 2026-09-23: Crystorn (light) corroding, "takes 0 damage" each opportunity,
+    // because chemical has no effect on light in the effectiveness matrix.
+    let s = lone();
+    fitOnly(
+      unit(s, "C"),
+      fitted("Rot Wash", [statusEffect("corroding", { intensity: 90, duration: "prolonged" })])
+    );
+    unit(s, "B4").element = "light";
+    const step = resolveRound(s, plain(s, { C: { move: 0, target: "B4" } }));
+    expect(conditionOn(unit(step.state, "B4"), "corroding")).toBeUndefined();
+    expect(step.state.log.join(" ")).toMatch(/unaffected: chemical has no effect on light/);
+    // The same status on a target it can hurt still lands.
+    s = lone();
+    fitOnly(
+      unit(s, "C"),
+      fitted("Rot Wash", [statusEffect("corroding", { intensity: 90, duration: "prolonged" })])
+    );
+    s = resolveRound(s, plain(s, { C: { move: 0, target: "B4" } })).state;
+    expect(conditionOn(unit(s, "B4"), "corroding")).toBeDefined();
+  });
   it("counts a duration down by the victim's opportunities and expires it", () => {
     let s = lone();
     // Crystorn is slower than the guardian, so the condition lands after the
