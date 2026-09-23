@@ -391,7 +391,7 @@ Nick, 2026-09-23: "Proceed with your updates as you recommend them." Pass 4 read
 | 34 | **Drain dependency.** An effect with `requires` resolves only when its prerequisite succeeded on at least one recipient; a drain's restore needs harm actually dealt (above zero after protection). | 95% | model doc, "`requires` names one other independent effect's success" |
 | 35 | **Beneficial effects aimed at a foe are not applied.** A guarding, mending or focused status, a restore or a protect whose recipient is `target` or `area` does not reach an opposing unit; the move's other effects still resolve, and the record says what was withheld. Reactions from `ally-harmed` keep reaching the ally (decision 26). This retires the Sonalloy misread until ally targeting lands. Phased and dispersed stay unsupported (traversal). | 85% | seam readings table, Sonalloy Reinforcing Lash |
 | 36 | **Charge-up from the roster.** Creature pass two lets crush, beam and burst roll prolonged preparation, so companions can charge. The companion seeds are re-checked so at least one companion carries a real charged act, keeping decision 3's rule exercised by a creature, not only by machines. | 85% | creature-derived-acts.md, pass two |
-| 37 | **Every companion keeps an every-round harm.** After its signature is spent, each companion that has any harm act has at least one damaging action that is legal every round (recovery repeatable, not prolonged preparation) and is not a burst anchored on itself. Decision 36 stands, but any companion may carry the ordinary charged act, as long as it is not a burst on itself that reaches squadmates. Seeds are re-picked under the full set: keep a seed that passes, else the lowest that passes. | 90%, the coordinator's ruling on the evidence, 2026-09-23 | the 0.7.0-3 kits alone took the greedy win rate from 98% to 79% with the pass 3 resolver; Graviclaw 9 with the other first seeds read 93.5%; a charged burst on self (Hippochamp 5) read 70.0% and hit a squadmate 1,361 times; "Pass 4: what it measured" below |
+| 37 | **Every companion keeps an every-round harm.** After its signature is spent, each companion that has any harm act has at least one damaging action that is legal every round (recovery repeatable, not prolonged preparation) and is not a burst anchored on itself. **Amended 2026-09-23 (pass 6):** the harm counts only if it previews at least 1 against a standard machine target, that is, its move-card power (`basePower`, the harm curve before matchup and guard) is at least 1; a harm that previews 0 is not an every-round harm. Decision 36 stands, but any companion may carry the ordinary charged act, as long as it is not a burst on itself that reaches squadmates. Seeds are re-picked under the full set: keep a seed that passes, else the lowest that passes. | 90%, the coordinator's ruling on the evidence, 2026-09-23 | the 0.7.0-3 kits alone took the greedy win rate from 98% to 79% with the pass 3 resolver; Graviclaw 9 with the other first seeds read 93.5%; a charged burst on self (Hippochamp 5) read 70.0% and hit a squadmate 1,361 times; "Pass 4: what it measured" below; for the power-1 amendment, the pass 6 offer survey on 0.7.0-4: 180 of 3,200 offers carried an every-round harm at power 0 (Avilily 60 of her 115 offers, Ectoghoul 42 of 84) |
 
 ## Pass 4: what it measured, 2026-09-23
 
@@ -584,3 +584,125 @@ The first pass 5 policy read 87.5% because its flat binding value spent Avilily'
 | moves kept, no order names a squadmate | 92.0% (184 won) |
 
 Support is not mandatory, which decision 44 requires, and on this squad it is also never used: none of the four companions carries a heal, protect or guard aimed past itself, and the cannon's cooling removal rides a signature the policy spends in round one. Ally targeting is in the game for the roster (Figzy, Shuntara, Sonalloy, Yetimoth, Hypnopet), not yet for the shipped four; a companion with real support is a squad-composition decision for a later pass. The charged act (Crushing Kick) and Crystorn's signature are still never ordered, because each previews below an every-round alternative.
+
+## Pass 6 contract: the squad draft, 2026-09-23
+
+Nick, 2026-09-23: "go ahead", on the recommendation that Powerworks stop testing the creature system through four fixed seeds. The derived roster offers 13 to 54 acts per species, and the fixed squad exercised almost none of the status, charge and support rules the last three passes built. A run now begins with a draft from real generated creatures. Every decision is a recommended, overridable lever.
+
+| # | Decision | Confidence | Evidence |
+|---|---|---|---|
+| 45 | **The offer.** Before the first encounter the player sees `DRAFT_OFFER_SIZE` (8) creatures and picks `SQUAD_SIZE` (4). The offer is seeded from the run seed: species drawn without replacement from the canonical roster, each creature generated from seed `powerworks-draft-<runSeed>-<index>` on the canonical release. Same run seed, same offer. | 80% | Reclamation's draft; seeded replay contract |
+| 46 | **Offer guarantees.** Every offered creature passes decision 37 (an every-round harm after its signature; since the 2026-09-23 amendment, one whose move-card power is at least 1, so no offered creature leans on a harm that previews 0). The offer as a whole holds at least one creature with a bind and one with a displace, so the intro's two answers to a charge are always draftable, and at least one with a helpful move it can aim at a squadmate. The offer is built constructively: draw candidates in seed order and fill each guarantee from the first qualifying candidate, then fill the rest in order; never reroll the whole offer. | 80% | decisions 36, 37, 39; the power-1 amendment: 180 of 3,200 offers on 0.7.0-4 had a power-0 every-round harm (Avilily 60 of 115), 0 of 3,200 after it |
+| 47 | **The starter squad stays.** The briefing offers "Draft a squad" (the default action) and "Take the starter squad" (the current four seeds). The starter is the tutorial-safe path and the regression baseline. | 85% | the fixed four measured 92.0% |
+| 48 | **Saves carry the picks.** A run starts from `{seed, squad}` where squad is either "starter" or the four offer indexes; the draft is the first command in the history. `SAVE_VERSION` 6; version 5 is rejected. | 90% | command-replay saves |
+| 49 | **The draft screen is chrome, not the game.** It is setup, so it uses the site's design system (card, button and badge components, element hues only on element-tagged content, the accent only on the one forward action). Each offered creature shows its portrait, name, element, HP and speed as the game will read them, and its four actions as the game reads them, with any unsupported action marked plainly. Picks toggle; "Enter the facility" enables at four. One fixed screen at 1280x720 and 390x844, the list scrolling inside its own panel on a phone if it must. | 75% | DESIGN_SYSTEM.md tiers; games are one fixed screen |
+| 50 | **Companion art.** The four painted companions keep their painted art; every other species uses the site's species portrait component inside the same frame. No new art is generated. | 90% | Reclamation figures |
+| 51 | **Measurement.** The sim drafts two ways, 400 runs each: a random legal draft, and a greedy draft (pick by a simple score: every-round harm preview plus bind, displace and support presence). It reports win rate for each, the spread of win rates by species included (with counts), the most and least ordered acts, how often charged, status and support moves are ordered, and the starter squad's rate as the baseline. Win rates for the draft are expected to spread; the report says which species drag or carry, and nothing is retuned in this pass. | 80% | Reclamation's per-species simulator readout |
+| 52 | **The stall rule.** When `ENCOUNTER_STALL_ROUNDS` (6) consecutive rounds of one encounter resolve in which no unit on either side loses HP and none falls, the squad is forced out: the run ends as a retreat (the existing `retreated` phase), earned practice XP is kept, and the record says the facility's defenses outlasted the squad after six rounds without progress. Healing is not progress; any lost HP resets the count; a result on the sixth round still counts. It replaced a first reading as a 20-round cap. | 80%, the coordinator's ruling on the evidence, 2026-09-23 | the first pass 6 sim on 0.7.0-4 had one random and one greedy run loop for 397 rounds with nothing dealing damage; on 0.7.0-5 a 20-round cap turned 26 random and 9 greedy wins into losses (36 and 14 runs forced out, 44 of them at the guardian), while no run loops once the power-1 filter is in; the no-progress trigger ends 1 run in 1,000 |
+
+## Pass 6: what it measured, 2026-09-23
+
+Measured on `generation-0.7.0-5` (ordinary acts can no longer outclass a signature; 15 species had bands lowered), with the decision 37 power-1 amendment and the decision 52 stall rule in place. The first pass 6 run was on `generation-0.7.0-4` without either, and a second tried decision 52 as a 20-round cap; the headline numbers of both are kept as rows below and their full tables are in the branch history. Save format version 6; version 5 saves are rejected, because a version 6 history opens with the draft command. No game lever was retuned: the new levers are the draft's own (`DRAFT_OFFER_SIZE` 8, `SQUAD_SIZE` 4, `DRAFT_SEED_PREFIX`, `DRAFT_MAX_ROSTER_PASSES` 4) and decision 52's `ENCOUNTER_STALL_ROUNDS` 6.
+
+### How the decisions were read
+
+Where the contract left a choice open, the build took the reading below. Each is a lever or a one-line change.
+
+- **The offer (45).** The roster (32 species of the canonical release) is shuffled by a stream seeded from `powerworks-draft-<runSeed>`, separate from the run's own rng, so drafting never moves a run's random draws. Candidate `k` is the species at position `k` of that order, generated from `powerworks-draft-<runSeed>-<k>`: the seed's index is the candidate's place in the draw, not its place in the offer, because a constructive offer skips candidates and so cannot know an offer index before it generates. The offer is listed in draw order and indexed 0 to 7; a draft command names those indexes. `draftOffer(seed)` is cached per seed.
+- **The guarantees (46).** A candidate that fails decision 37 is skipped and never offered (`everyRoundHarms`, the same test the starter seeds were picked by, now requiring move-card power of at least 1). No species is offered twice. The three guarantees are filled in the order bind, displace, support, each from the first qualifying candidate in draw order unless an earlier pick already carries it; then the rest fill in draw order. "A helpful move it can aim at a squadmate" is decision 39's `aimsAtSquadmate`. If one pass over the roster runs out, the draw continues into a second pass with fresh seeds (`DRAFT_MAX_ROSTER_PASSES`); over 400 seeds the furthest candidate drawn was 101, so a second and third pass do happen when the support guarantee is late.
+- **The power-1 amendment (37).** "Previews at least 1 against a standard machine target" is read as `basePower(u, m) >= 1`: the harm curve at the creature's attributes with a neutral matchup and no guard, the number the move card shows. On 0.7.0-5 it removes every power-0 every-round harm from the offer (0 of 3,200) and the starter still passes: Graviclaw's Slashing Pinch reads 9, Avilily's Slashing Peck 1, Crystorn's Blinding Shot 7, Hippochamp's Water Sweep 3.
+- **The starter (47).** `createRun(seed)` still means the starter squad, so every earlier caller reads the same run; the starter draft is `toEqual` to `createRun(seed)`.
+- **Saves (48).** `openRun(seed)` is a run in a new `draft` phase with no team; its only legal command is `{kind: "draft", squad}`, where `squad` is `"starter"` or exactly four distinct integer offer indexes, stored sorted so click order does not change the run. A draft on a run that already has a squad, anything but a draft on a run that has none, and a history that never drafts are all rejected.
+- **The stall rule (52).** Checked after a round resolves with no result: the round made progress when some unit on either side has less HP than it had before the round (a fall is a loss of HP; healing is not progress). `Run.stalled` counts rounds in a row without progress and resets on any progress and at every encounter entry. At `ENCOUNTER_STALL_ROUNDS` the phase becomes `retreated`, the run carries `ended: "outlasted"`, XP is untouched, and a final `outlasted` event and record line say "The facility's defenses outlasted the squad: 6 rounds without progress. The squad is forced out with N practice XP." A clear or a wipe on that round wins over the rule. The playback caption, the outcome title ("Forced out") and its copy name the rule. The sim counts these runs as losses.
+- **Unit ids.** Each squad member's id is the shortest prefix of its species that no other member shares, first letter capitalized (Terragoyle, Foromeer, Xylum, Sonalloy read T, F, X, S; Venemist beside Vespersyn read Ven and Ves). They depend only on which four stand together, are letters only so they never meet a machine's letter-and-digit id, and the starter still reads G, A, C, H. All 35,960 sets of four species are checked.
+- **Signatures.** A drafted species may carry its signature as a passive (Imprit's contact burn), so the "exactly one signature" check counts actions and passives together.
+- **The draft screen (49).** `apps/web/src/pages/games/powerworksDraft.tsx`, `data-tier="chrome"`, rendered in place of the immersive page (outside `.pw`, whose unlayered `.pw button` rule would override every system component). It uses the navbar, Masthead, Card, Badge (element chip; `warn` for an action with no effect here), Toggle for the picks and one default Button for "Enter the facility". Each card shows the art, name, element chip, HP and speed exactly as `readCompanion` reads them, and each action as a base name plus one reading line in the body face: its move-card power, what else it does (binds, pulls, heals or shields a squadmate or itself, a status), melee (contact reach) or ranged, "closes in" when its approach is closing (what binding blocks), area, and its tempo in short words (each round, every 2nd, every 3rd, charges). The reading may wrap rather than cut off; at 1280x720 none wraps or truncates over the seeds checked. The same split runs through the whole game: the move card, its description and the inspector say "Melee attack" for contact reach and "Ranged attack" otherwise, add "that closes in" for a closing approach, draw swords or a crosshair by reach, and every binding text says moves that close in are blocked (before this, `melee` meant a closing approach, so a stationary contact strike read "Ranged attack"). At four picks the other toggles stay pressable and say to unpick one first, rather than being disabled, so every pick keeps its hit area. The briefing offers "Draft a squad" (primary) and "Take the starter squad"; restarting returns to the briefing, where the same seed deals the same offer.
+- **Art (50).** The painted set is the starter four and the five machines (`PAINTED_SPECIES`). Every other species is `XalianImage`'s token silhouette inside the same `.pw-portrait` frame, filled with its element hue. The game's element icons now cover all fourteen elements, and the eight elements the intro never used take their accent and tint from the site's element tokens.
+- **The sim (51).** `options.draft` is `"starter"`, `"random"` (four distinct offer indexes from a seeded stream) or `"greedy"`. The greedy draft picks one creature at a time by its best every-round harm's move-card power plus `SIM_DRAFT_ANSWER_VALUE` (bind 5, displace 5, support 3) for an answer the squad does not carry yet; ties go to the earlier offer index. The ordering policy is pass 5's, unchanged. "Charged" counts orders that begin a charge; "status" counts orders of a move carrying a supported status or bind; "support" counts orders of a move that can aim at a squadmate, whoever it named.
+
+### Sim, the starter at 200 runs, each draft at 400
+
+| row | starter squad (200) | random draft (400) | greedy draft (400) |
+|---|---|---|---|
+| first run, 0.7.0-4, no amendment, no stall rule: win rate | 92.0% (184 won) | 58.5% (234 won; 1 run looped 397 rounds) | 79.8% (319 won; 1 run looped 397 rounds) |
+| decision 52 as a 20-round cap, 0.7.0-5: win rate (runs forced out) | 91.5% (0) | 58.3% (36 forced out, 32 at the guardian) | 78.8% (14 forced out, 12 at the guardian) |
+| **win rate** | **91.5% (183 won, 17 lost)** | **64.8% (259 won, 141 lost)** | **81.0% (324 won, 76 lost)** |
+| runs forced out by the stall rule (counted lost) | 0 | 1 | 0 |
+| runs reaching the final chamber | 200 | 365 | 391 |
+| rounds / encounter | 5.76 | 6.90 | 5.84 |
+| longest run, rounds | 31 | 105 | 63 |
+| runs stopped at the sim's 400-step guard | 0 | 0 | 0 |
+| Desperate strike | 0.0% of 17,380 | 0.0% of 36,617 | 0.0% of 33,861 |
+| opportunities with no legal move | 10 | 5 | 1 |
+| machine charges landing | 225 of 1,823 (12.3%) | 712 of 3,786 (18.8%) | 593 of 3,898 (15.2%) |
+| interruptions bind / displace | 457 / 918 | 323 / 2,363 | 148 / 2,776 |
+| orders | 17,370 | 36,612 | 33,860 |
+| orders beginning a charge | 252 (1.5%) | 319 (0.9%) | 117 (0.3%) |
+| companion charges begun / released | 252 / 24 | 299 / 262 | 108 / 74 |
+| orders of a status-carrying move | 5,687 (32.7%) | 8,459 (23.1%) | 7,485 (22.1%) |
+| orders of a support move | 800 (4.6%) | 717 (2.0%) | 1,221 (3.6%) |
+| orders naming a squadmate | 0 (0.0%) | 445 (1.2%) | 775 (2.3%) |
+| heals on squadmates (HP) | 0 (0) | 128 (901) | 172 (1,263) |
+| protects on squadmates (harm prevented) | 0 (0) | 312 (300) | 584 (576) |
+| removes on squadmates that cleared something | 0 | 0 | 0 |
+| conditions applied per group | binding 721, degrading 1,174, tempo 1,502, senses 807 | binding 1,417, degrading 3,669, guarding 660, attention 857, concealment 22, shock 477, tempo 448, senses 428 | binding 1,159, degrading 2,877, guarding 580, attention 547, concealment 9, shock 366, tempo 597, senses 469 |
+| opportunities lost to stunned / entranced | 0 / 0 | 388 / 190 | 304 / 68 |
+| reaction share of companion damage taken | 16.3% | 7.9% | 11.1% |
+| degrade share of companion damage taken | 7.0% | 8.4% | 8.4% |
+
+Win rate by species drafted (the squad's result counted once for each of its four members; small counts are noisy):
+
+| species | random draft: win rate (won of drafted) | greedy draft |
+|---|---|---|
+| terragoyle | 97.0% (32 of 33) | 98.0% (50 of 51) |
+| xylum | 92.9% (65 of 70) | 92.9% (118 of 127) |
+| kosanos | 89.5% (68 of 76) | 93.5% (101 of 108) |
+| frackworm | 83.3% (30 of 36) | 95.7% (44 of 46) |
+| sonalloy | 82.2% (60 of 73) | 87.6% (113 of 129) |
+| scalatto | 77.6% (52 of 67) | 93.1% (67 of 72) |
+| foromeer | 77.0% (47 of 61) | 85.6% (89 of 104) |
+| neph | 76.9% (10 of 13) | 100.0% (8 of 8) |
+| thirstaserp | 76.0% (38 of 50) | 87.0% (20 of 23) |
+| luceras | 73.4% (47 of 64) | 95.2% (20 of 21) |
+| codazzo | 73.4% (58 of 79) | 79.3% (23 of 29) |
+| hippochamp | 70.4% (57 of 81) | 85.1% (114 of 134) |
+| drilltail | 67.2% (41 of 61) | 86.8% (33 of 38) |
+| crystorn | 66.0% (35 of 53) | 76.8% (73 of 95) |
+| ectoghoul | 63.6% (14 of 22) | not drafted |
+| voltish | 60.0% (42 of 70) | 81.4% (57 of 70) |
+| bioflim | 60.0% (24 of 40) | 84.8% (39 of 46) |
+| smokat | 57.1% (44 of 77) | 73.8% (59 of 80) |
+| chromocat | 57.1% (40 of 70) | 66.1% (39 of 59) |
+| tizzie | 57.1% (8 of 14) | 76.9% (10 of 13) |
+| imprit | 55.2% (32 of 58) | 46.7% (7 of 15) |
+| figzy | 50.0% (9 of 18) | 90.0% (9 of 10) |
+| vespersyn | 50.0% (20 of 40) | 77.8% (7 of 9) |
+| hypnopet | 50.0% (3 of 6) | 100.0% (2 of 2) |
+| yetimoth | 50.0% (18 of 36) | 73.7% (42 of 57) |
+| graviclaw | 50.0% (3 of 6) | 76.9% (10 of 13) |
+| venemist | 46.8% (22 of 47) | 53.3% (8 of 15) |
+| dromeus | 46.7% (35 of 75) | 55.1% (27 of 49) |
+| akinza | 42.9% (30 of 70) | 46.2% (12 of 26) |
+| shuntara | 42.2% (27 of 64) | 64.4% (76 of 118) |
+| newtapede | 39.5% (15 of 38) | 62.5% (15 of 24) |
+| avilily | 31.3% (10 of 32) | 44.4% (4 of 9) |
+
+Acts ordered most and least, per run the act was carried in (acts carried in at least 10 runs):
+
+| draft | most ordered | least ordered |
+|---|---|---|
+| random | Crystorn Light Shot 19.5, Crystorn Blinding Shot 18.4, Voltish Electric Shot 17.8, Newtapede Repelling Squeeze 17.2, Codazzo Repelling Lash 16.7, Chromocat Light Shot 16.5 | Smokat Smoke Dispersal 0.0 (77), Imprit Fire Burst 0.0 (10), Avilily Heavy Sweep 0.0 (10), Crystorn Light Burst 0.1 (18), Akinza Night Stalk 0.3 (70), Neph Benthane Chill Jet 0.5 (13) |
+| greedy | Voltish Electric Swipe 17.5, Crystorn Light Shot 16.6, Crystorn Blinding Shot 15.6, Voltish Stunning Swipe 15.5, Chromocat Light Shot 15.0, Yetimoth Ice Shot 14.7 | Smokat Smoke Dispersal 0.0 (80), Scalatto Heavy Sweep 0.0 (22), Smokat Heavy Sweep 0.0 (14), Graviclaw Ground Anchor 0.0 (13), Crystorn Crushing Gore 0.0 (12), Terragoyle Rock Burst 0.0 (12) |
+
+The offer itself, over 400 seeds on 0.7.0-5: codazzo 160 offers, hippochamp 159, chromocat 153, sonalloy 150 at the top; neph 35, figzy 31, tizzie 27, graviclaw 13 and hypnopet 11 at the bottom. Between the two runs (the release and the power-1 amendment together) Avilily falls from 115 offers to 60 and Ectoghoul from 84 to 44; no offered creature now has a power-0 every-round harm (0 of 3,200, against 180 on 0.7.0-4).
+
+**Reading.** The starter reads 91.5%, half a point under pass 5's 92.0%, and that movement is the release, not pass 6: on 0.7.0-5 the starter's charged act now gets ordered (252 charges begun, against none on 0.7.0-4), and the stall rule never ends a starter run. A random draft wins 64.8% and a greedy one 81.0%, so the draft decides a large share of the outcome, and the greedy score (every-round harm plus the two charge answers and a support) closes most of the gap to the hand-picked starter but stays ten points under it. The stall rule does what the 20-round cap did not: it ends one run in 1,000 (a random draft in sector 3, a run that also lost with no rule at all), where the cap forced out 36 random and 14 greedy runs and turned 26 and 9 of them from wins into losses. Long fights that keep landing damage now run to their end (the longest random run is 105 rounds, the longest greedy 63), and with the power-1 filter no run loops, so no run reaches the sim's 400-step guard. Drafted squads still lose earlier than the starter, which never does: 35 random and 9 greedy runs fall before the final chamber. The species that carry are bulky creatures with a strong every-round harm and one of the charge answers built in: Terragoyle (97% and 98%), Xylum (93% and 93%, a bind and a pull on one body), Kosanos (90% and 94%) and Frackworm (83% and 96%). The ones that drag are the light or narrow kits: Avilily (31% and 44%), Newtapede (40% and 63%), Shuntara (42% and 64%), Akinza (43% and 46%) and Dromeus (47% and 55%). Shuntara is still the clearest case: the greedy draft takes her 118 times for the support guarantee, while every protect on a squadmate across the 400 greedy runs prevented 576 damage, under two points per run. The rules the last three passes built are now reached by creatures: drafted companions begin 299 and 108 charges; stuns and trances cost the machines 388 and 190 opportunities in the random draft; a squadmate is named in 1.2% to 2.3% of orders, healing 901 and 1,263 HP and shielding 312 and 584 times. Charged moves stay under 1% of drafted orders and support moves 2% to 4%; no remove was ever aimed at a squadmate, because the policy only prices a remove that would clear something and a squadmate almost never carries a condition a drafted remove answers. The most ordered acts are repeatable ranged elemental shots (Light Shot, Electric Shot, Electric Swipe, Ice Shot, 15 to 20 orders per run carried), which never draw the guardian's contact reply; the least ordered are the unsupported Smoke Dispersal and the bursts on self (Fire, Light and Rock Burst), which the greedy policy never pays to hit its own squadmates with. Machine charges land more often in drafted runs (18.8% and 15.2% against 12.3%) because few drafted squads carry a consistent bind: bind interruptions fall from 457 to 323 and 148 while pulls carry the load. No game lever moved.
+
+### Friction reported
+
+- **A 20-round cap was the wrong shape for decision 52.** Measured first, it forced out 36 random and 14 greedy runs, 44 of them at the guardian, and 26 and 9 of those would have been wins; no run looped once the power-1 filter was in. Decision 52 is now the no-progress trigger, which ends one run in 1,000. The lever is `ENCOUNTER_STALL_ROUNDS`; a squad that heals itself while dealing nothing would still stall, which is the intent.
+- **The support guarantee drafts a weak body.** Guaranteeing "a helpful move it can aim at a squadmate" pulls Sonalloy (150 offers) and Shuntara (140) into most offers, and the greedy score's support bonus picks Shuntara at a 64.4% win rate. On a four-slot squad a support body costs more damage than its shields prevent. The levers are `SIM_DRAFT_ANSWER_VALUE.support` for the sim, and the guarantee itself for the game.
+- **Graviclaw and Hypnopet are almost never offered.** Three of Graviclaw's four actions are guaranteed, so it rarely rolls a repeatable harm: 13 offers in 400 seeds. Hypnopet (11), Tizzie (27), Figzy (31) and Neph (35) are nearly as rare. A player who liked the starter's Graviclaw will rarely see one to draft, and most drafted squads are drawn entirely as silhouettes.
+- **Avilily is the weakest body the offer carries.** After the amendment she qualifies only on a seed whose every-round peck reads power 1 or more; the starter's Avilily passes with Slashing Peck at exactly 1. She still binds, which is why the offer keeps her.
+- **Unsupported acts ride along.** Smokat's Smoke Dispersal (traversal) is carried in 77 random and 80 greedy runs and never ordered; the card marks it "No effect here", as decision 49 asks.
+- **The briefing scrolls.** At 1280x720 the briefing's starter roster sits below the fold (page height 836) and at 390x844 the page is 1,019 tall. The forward action is in view at both sizes; the layout is the pre-pass-6 briefing with a second key on the same row.

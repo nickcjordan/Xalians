@@ -26,3 +26,7 @@ Compilation and seeded cohort generation verify four distinct actions and extern
   acts: 25 distinct on offer (pincers 5, tendrils 7, vents 1, body 5, secretion 7); exclusions: secretion/beam
   naming over 24 seeds: 0.0% of ordinary actions carry a structural parenthetical, 0.0% of creatures have two ordinary actions sharing a base name
 ```
+
+## Signature guardrail, 2026-09-23
+
+An ordinary act never outclasses the signature at what the signature does (contract: `docs/design/creature-derived-acts.md`, "Signature guardrail, 2026-09-23"). Authored mechanism `alloy-seam` restore lowered from [45, 75] to [45, 65], the cap set by the signature `sonalloy-defining` (restore 65).

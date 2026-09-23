@@ -118,6 +118,14 @@ describe('createMatch validation', () => {
 		expect(() => createMatch({ rosterA: roster, rosterB: makeRoster('B'), worlds, seed: 1 })).toThrow(/duplicate/);
 	});
 
+	test('rejects a record id both sides hold (pass 46: the engine finds pieces by id)', () => {
+		const worlds = makeWorlds();
+		const rosterB = makeRoster('B');
+		const rosterA = makeRoster('A');
+		rosterB[3] = { ...rosterB[3], id: rosterA[5].id };
+		expect(() => createMatch({ rosterA, rosterB, worlds, seed: 1 })).toThrow(/share a record id/);
+	});
+
 	test('rejects fewer than 9 worlds', () => {
 		expect(() => createMatch({ rosterA: makeRoster('A'), rosterB: makeRoster('B'), worlds: makeWorlds(1), seed: 1 })).toThrow(ExpeditionRuleError);
 	});

@@ -565,7 +565,6 @@ class ReclamationPage extends React.Component {
 						</div>
 						<div className="g-masthead-aside">
 							<span className="g-mono rec-masthead-seed">seed {seed}</span>
-							<span className="g-nameplate">Survey program</span>
 						</div>
 					</header>
 
@@ -573,17 +572,17 @@ class ReclamationPage extends React.Component {
 						<div className="g-panel rec-resume rec-rise" data-resume>
 							<span className="g-lamp g-lamp--amber" aria-hidden="true" />
 							<span className="rec-resume-text">
-								A Proving against the {rivalById(saved.rivalId || DEFAULT_RIVAL_ID).name} is still on the frame, round {(saved.match.frameIndex || 0) + 1}, {saved.match.players.A.sitesWon} worlds to {saved.match.players.B.sitesWon}.
+								A game against the {rivalById(saved.rivalId || DEFAULT_RIVAL_ID).name} is unfinished: round {(saved.match.frameIndex || 0) + 1}, {saved.match.players.A.sitesWon} worlds to {saved.match.players.B.sitesWon}.
 							</span>
 							<span className="rec-resume-actions">
-								<button type="button" className="g-key g-key--primary" onClick={this.resumeMatch} data-resume-match>Resume the Proving</button>
+								<button type="button" className="g-key g-key--primary" onClick={this.resumeMatch} data-resume-match>Resume the game</button>
 								<button type="button" className="g-key" onClick={this.discardSaved} data-discard-match>Abandon it</button>
 							</span>
 						</div>
 					)}
 
 					<div className="g-panel rec-intro-panel">
-						<p className="rec-thesis">Send your creatures into three worlds a round. Hold more of a world than the rival and it is yours. Five worlds take the Charter.</p>
+						<p className="rec-thesis">Send your creatures into three worlds a round. Hold more of a world than the rival and it is yours. The first to five worlds wins.</p>
 
 						<section className="rec-module rec-module--round" aria-label="A round">
 							<h2 className="rec-module-title">A round</h2>
@@ -632,8 +631,8 @@ class ReclamationPage extends React.Component {
 							</ul>
 						</section>
 
-						<section className="rec-module rec-module--charter" aria-label="The Charter">
-							<h2 className="rec-module-title">The Charter</h2>
+						<section className="rec-module rec-module--charter" aria-label="The game">
+							<h2 className="rec-module-title">The game</h2>
 							<div className="rec-charter-figures">
 								<div className="rec-charter-figure">
 									<span className="rec-charter-number g-mono">{FRAMES_PER_MATCH}</span>
@@ -645,7 +644,7 @@ class ReclamationPage extends React.Component {
 								</div>
 								<div className="rec-charter-figure rec-charter-figure--key">
 									<span className="rec-charter-number g-mono">{SITES_TO_CLINCH}</span>
-									<span className="rec-charter-label">to clinch</span>
+									<span className="rec-charter-label">to win</span>
 								</div>
 								{/*
 									PASS 27. This read "12/11 BRING / SEND", which a blind critic named
@@ -654,24 +653,25 @@ class ReclamationPage extends React.Component {
 									fraction but two different quantities. It says the same thing in
 									words a first-time reader can act on.
 								*/}
-								<div className="rec-charter-figure">
+								{/* pass 47: "sends, from 12 kept" ran into its neighbour on a phone, and "kept" meant nothing yet */}
+								<div className="rec-charter-figure" title={`${SENDABLE} sends for the whole game, from a squad of ${ROSTER_SIZE}`}>
 									<span className="rec-charter-number g-mono">{SENDABLE}</span>
-									<span className="rec-charter-label">sends, from {ROSTER_SIZE} kept</span>
+									<span className="rec-charter-label">sends</span>
 								</div>
 							</div>
 							<div className="rec-intro-actions">
-								<div className="rec-intro-mode" title={mode === 'simple' ? 'Simple: the suggested move is marked and only what would down a creature is printed.' : 'Advanced: every number on the figures, the plan lines under a send, the log and the dossiers.'}>
+								<div className="rec-intro-mode" title={mode === 'simple' ? 'Simple: the essentials on the table; every number is in the reading behind each creature.' : 'Advanced: every number on the figures, the temperature bands, speed, and the log.'}>
 									<ModeSwitch mode={mode} onChange={this.setMode} />
 								</div>
 								<button type="button" className="g-key g-key--primary rec-enter" onClick={this.startMatch} data-enter>
-									Enter the frame
+									Start the game
 								</button>
 								<span className="rec-intro-against">against the {rival.name}</span>
 							</div>
 						</section>
 
 						<details className="rec-fiction">
-							<summary className="rec-fiction-summary">Why the frame</summary>
+							<summary className="rec-fiction-summary">The story behind it</summary>
 							<div className="g-screen rec-rules-screen">
 								<div className="g-screen-line">The worlds were lost to war and plague, and no expedition goes in blind. Before Kozrak grants a Charter over a world, the claim is proved on the Court's <strong>frame</strong>: the Generators' own models of the fourteen worlds, run on Poseidas without the Generators. Only the fighting is simulated. The Charter, and the Tokens that come with it, are real.</div>
 								<div className="g-screen-line">Each round the frame loads three worlds side by side, every one at a different site of its surface, and no world is loaded twice in a Proving. When both handlers have passed, every world clashes at once: each creature does the one thing its nature does there, attacks subtract from hold, and a creature driven to nothing is downed out of the Proving. Creatures on a won world stay in its model to hold the claim; the rest withdraw; either way they are out of the Proving. A pass is permanent for the round. A stealthy creature arrives hidden: the rival learns that you sent something, not what or where, until the worlds clash.</div>

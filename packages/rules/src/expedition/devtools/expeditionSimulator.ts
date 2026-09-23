@@ -175,8 +175,16 @@ function makeRng(seed: string | number): RngLike & { shuffle<T>(array: T[]): T[]
 	};
 }
 
-function buildRandomRoster(pool: XalianRecord[], rng: ReturnType<typeof makeRng>): XalianRecord[]  {
-	const shuffled = rng.shuffle(pool);
+/*
+	PASS 46. `taken` keeps the second roster off the first one's creatures. Both rosters were
+	drawn from the same pool independently, so about three matches in ten gave the two sides
+	a shared creature, and the engine finds creatures by id across the whole board: the
+	shared piece's liveness, pins and statuses answered for both sides at once. The engine
+	now refuses shared ids outright.
+*/
+function buildRandomRoster(pool: XalianRecord[], rng: ReturnType<typeof makeRng>, taken: XalianRecord[] = []): XalianRecord[]  {
+	const takenIds = new Set(taken.map((r) => r.id));
+	const shuffled = rng.shuffle(takenIds.size ? pool.filter((r) => !takenIds.has(r.id)) : pool);
 	return shuffled.slice(0, ROSTER_SIZE);
 }
 
@@ -371,7 +379,9 @@ function runOneMatch(matchSeed: string, pool: XalianRecord[], rng: ReturnType<ty
 	const rivalFor = { A: rivals && rivals.A, B: rivals && rivals.B };
 
 	const rosterA = buildRandomRoster(pool, rng);
-	const rosterB = mirror ? rosterA.slice() : buildRandomRoster(pool, rng);
+	// pass 46: a mirror is the same creatures as separate pieces, so B's copies get their own ids
+	// (the engine refuses shared ids; sharing them read A 30.5 percent in a proctor mirror)
+	const rosterB = mirror ? rosterA.map((r) => ({ ...r, id: `${r.id}~B` })) : buildRandomRoster(pool, rng, rosterA);
 
 	const worlds = getWorlds();
 	let state = createMatch({ rosterA, rosterB, worlds, seed: matchSeed, rules });

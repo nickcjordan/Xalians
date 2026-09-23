@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   formatActionSurvey,
   formatPass5,
+  formatPass6,
   formatSurvey,
   formatTable,
   simulate,
@@ -29,6 +30,25 @@ describe("Powerworks greedy measurement", () => {
       expect(stats.rounds).toBeGreaterThan(0);
       if (options.healerFree !== "none") expect(stats.ordersAtSquadmates).toBe(0);
     }, 120000);
+  // Pass 6 (contract decision 51): the starter baseline at 200, then two drafts at 400 each.
+  const drafts: [string, number, SimOptions][] = [
+    ["starter squad", 200, { policy: "pass5", healerFree: "none", draft: "starter" }],
+    ["random legal draft", 400, { policy: "pass5", healerFree: "none", draft: "random" }],
+    ["greedy draft", 400, { policy: "pass5", healerFree: "none", draft: "greedy" }],
+  ];
+  for (const [label, runs, options] of drafts)
+    it(`plays ${runs} seeded runs (${label}) and prints the pass 6 rows`, () => {
+      const stats = simulate(runs, 1, options);
+      console.log(
+        `
+Powerworks greedy sim (${runs} runs, seeds 1-${runs}, ${label})
+${formatTable(stats)}
+${formatPass6(stats)}
+`
+      );
+      expect(stats.wins + stats.losses).toBe(runs);
+      expect(Object.values(stats.squadSpecies).reduce((n, v) => n + v.runs, 0)).toBe(runs * 4);
+    }, 300000);
   it("surveys 20 seeds per species at the seam and prints the table", () => {
     const survey = surveyPassives(20);
     console.log(

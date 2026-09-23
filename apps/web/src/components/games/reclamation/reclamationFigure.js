@@ -264,7 +264,8 @@ function ReclamationFigure({
 					tenth is noise at that size. The exact value is on the figure's own aria-label
 					and data-hold, and the inspector prints it in full.
 				*/}
-				{typeof hold === 'number' && <span className="rec-figure-hold" title={`hold ${formatHold(hold)}`}>{formatHoldShown(hold)}</span>}
+				{/* pass 47: a standing creature under half a point read "0", and a critic asked why it had not fallen */}
+				{typeof hold === 'number' && <span className="rec-figure-hold" title={`hold ${formatHold(hold)}`}>{hold > 0 && hold < 0.5 && !downed ? '<1' : formatHoldShown(hold)}</span>}
 				{/* pass 38: the forecast after the number, so the number and the marks agree */}
 				{typeof hold === 'number' && typeof forecast === 'number' && (
 					<span className={`rec-figure-after${ownSweep ? ' rec-figure-after--own' : ''}${forecast === 0 ? ' rec-figure-after--falls' : ''}`} title={lossText} data-forecast={formatHoldShown(forecast)}><span className="rec-after-arrow" aria-hidden="true">&rarr;</span>{formatHoldShown(forecast)}</span>

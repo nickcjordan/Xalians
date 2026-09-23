@@ -24,10 +24,12 @@ import type { ActClass, Role, Rules } from './types.ts';
 // ---------------------------------------------------------------------------
 
 /*
-	Hold compression (assumption 11). The registry's attribute range is 1 to 99 (the
-	generator clamps every attribute there, packages/rules/src/generator/generate.ts),
-	so the raw mean of vitality/resilience/endurance is read against a 0 to 100 scale and
-	mapped onto [HOLD_FLOOR, HOLD_CEILING]:
+	Hold compression (assumption 11). The record schema publishes the attribute range, 0 to
+	100 (`zeroToHundred` in @xalians/content's record schema, which is frozen with the
+	generation release, so it is not re-exported from there). The scale below restates it,
+	and recordAttributeRange.test.ts fails if the two ever disagree. The raw mean of
+	vitality/resilience/endurance is read against that range and mapped onto
+	[HOLD_FLOOR, HOLD_CEILING]:
 
 		hold = HOLD_FLOOR + (raw - RAW_ATTRIBUTE_MIN) * (HOLD_CEILING - HOLD_FLOOR)
 		                    / (RAW_ATTRIBUTE_MAX - RAW_ATTRIBUTE_MIN)

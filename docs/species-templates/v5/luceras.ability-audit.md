@@ -35,3 +35,7 @@ The existing leap/sprint and ordinary sense bands remain source-reviewed, withou
   acts: 14 distinct on offer (horns 5, tail 5, body 4); exclusions: none
   naming over 24 seeds: 0.0% of ordinary actions carry a structural parenthetical, 0.0% of creatures have two ordinary actions sharing a base name
 ```
+
+## Signature guardrail, 2026-09-23
+
+An ordinary act never outclasses the signature at what the signature does (contract: `docs/design/creature-derived-acts.md`, "Signature guardrail, 2026-09-23"). `acts.output` `horns/strike` lowered from [32, 58] to [32, 56], the cap set by the signature `luceras-defining` (impact harm 56). The override also bands the piercing horn strike, which moves with it.

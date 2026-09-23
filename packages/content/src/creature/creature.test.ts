@@ -113,7 +113,8 @@ describe('author once, construct valid combinations', () => {
     const species = authoredOnly();
     const mechanism = species.mechanisms[0];
     mechanism.targeting = species.actions[0].targeting;
-    mechanism.effects = [{ ...species.actions[0].effects[0], likelihood: ['consistent'], intensity: [100,200] }];
+    // A different band, below the signature's so the signature guardrail does not refuse it first.
+    mechanism.effects = [{ ...species.actions[0].effects[0], likelihood: ['consistent'], intensity: [10,20] }];
     mechanism.delivery = { contact: { approach: ['stationary'], range: ['contact'] } };
     mechanism.timing = { preparation: ['brief'], recovery: ['brief'] };
     expect(() => compileSpecies(species)).toThrow(/four structurally distinct/);

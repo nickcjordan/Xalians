@@ -169,35 +169,148 @@ const PATTERN_NOUNS: Readonly<Record<Pattern, string>> = Object.freeze({
   beam: 'Beam', burst: 'Burst', spray: 'Spray', cloud: 'Cloud',
 });
 
-export function deriveMechanisms(species: {
+/**
+ * The signature guardrail, 2026-09-23 (a lever; contract "Signature guardrail").
+ *
+ * A species' signature is its defining act, so an ordinary act never outclasses it at
+ * what it does. What an effect "does" is its kind: harm by mechanism (and by element when
+ * the harm is elemental), displace by direction, restore as one kind. Each harm, displace
+ * or restore effect of an action signature sets a cap for its kind; every derived ordinary
+ * effect of the same kind is clamped so neither end of its band exceeds the cap's matching
+ * end. An element-bearing signature's physical harm also caps elemental harm of its
+ * element. Passive signatures set no caps.
+ */
+export type Band = readonly [number, number];
+export interface SignatureCap { readonly kind: string; readonly band: Band; readonly signature: string }
+interface KindedEffect { readonly type: string; readonly mechanism?: string; readonly direction?: string; readonly intensity?: number | readonly number[] }
+interface SignatureSource {
+  signature?: { readonly type: string; readonly key: string };
+  actions?: readonly { readonly key: string; readonly element?: string; readonly effects: readonly KindedEffect[] }[];
+}
+
+/** The kind of one effect, or undefined when the guardrail does not compare it. */
+export function effectKind(effect: KindedEffect, element: string | undefined): string | undefined {
+  if (effect.type === 'harm') return effect.mechanism === 'elemental' ? `elemental ${element ?? 'unspecified'} harm` : `${effect.mechanism} harm`;
+  if (effect.type === 'displace') return `displace ${effect.direction}`;
+  if (effect.type === 'restore') return 'restore';
+  return undefined;
+}
+const asBand = (value: number | readonly number[]): Band => typeof value === 'number' ? [value, value] : [value[0], value[1]];
+const showBand = (band: Band) => `[${band[0]}, ${band[1]}]`;
+
+/** The caps an action signature sets, by kind. Two effects of one kind cap at the wider. */
+export function signatureCaps(species: SignatureSource): ReadonlyMap<string, SignatureCap> {
+  const caps = new Map<string, SignatureCap>();
+  if (species.signature?.type !== 'action') return caps;
+  const signature = species.actions?.find(action => action.key === species.signature!.key);
+  if (!signature) return caps;
+  const cap = (kind: string, band: Band) => {
+    const prior = caps.get(kind)?.band;
+    caps.set(kind, { kind, signature: signature.key,
+      band: prior ? [Math.max(prior[0], band[0]), Math.max(prior[1], band[1])] : band });
+  };
+  for (const effect of signature.effects) {
+    const kind = effectKind(effect, signature.element);
+    if (!kind || effect.intensity === undefined) continue;
+    const band = asBand(effect.intensity);
+    cap(kind, band);
+    // An element-bearing signature's physical harm is also what that element does through
+    // the same body (Terragoyle's thrown boulder is impact on a rock tail; the derived rock
+    // hurl is elemental rock), so it caps elemental harm of its element too. The reverse
+    // half (an elemental harm capping a physical mechanism) needs a signature carrying both
+    // shapes; none does, so it is not implemented.
+    if (effect.type === 'harm' && effect.mechanism !== 'elemental' && signature.element) cap(effectKind({ type: 'harm', mechanism: 'elemental' }, signature.element)!, band);
+  }
+  return caps;
+}
+/** Whether a band outclasses a cap at either end. */
+function exceeds(band: Band, cap: Band): boolean { return band[0] > cap[0] || band[1] > cap[1]; }
+
+export interface DerivedActs {
+  readonly mechanisms: Mechanism[];
+  /** Keys of derived mechanisms with at least one band lowered by the signature guardrail. */
+  readonly clamped: readonly string[];
+  /** Authored bands above a signature cap: an explicit `acts.output` or an authored mechanism. */
+  readonly violations: readonly string[];
+}
+
+type DeriveSpecies = SignatureSource & {
   element: string; attributes: Bands;
   physiology: { anatomy: readonly string[]; communication?: readonly string[] };
   channels?: readonly string[];
   conduits?: Readonly<Partial<Record<string, string>>>;
   acts?: { exclude?: readonly string[]; output?: Readonly<Record<string, readonly [number, number]>> };
-}): Mechanism[] {
+  mechanisms?: readonly { readonly key: string; readonly element?: string; readonly effects: readonly KindedEffect[] }[];
+};
+
+/** The derived mechanisms. Throws when an authored band breaks the signature guardrail. */
+export function deriveMechanisms(species: DeriveSpecies): Mechanism[] {
+  const result = deriveActs(species);
+  if (result.violations.length) throw new Error(`signature guardrail: ${result.violations.join('; ')}`);
+  return result.mechanisms;
+}
+
+/** Derivation with the guardrail's bookkeeping: what it clamped and what it refuses. */
+export function deriveActs(species: DeriveSpecies): DerivedActs {
   const input: DeriveInput = {
     element: species.element as Element, attributes: species.attributes,
     anatomy: species.physiology.anatomy, communication: species.physiology.communication ?? [], channels: species.channels ?? [],
     conduits: species.conduits ?? {}, exclude: species.acts?.exclude ?? [], output: species.acts?.output ?? {},
   };
+  const caps = signatureCaps(species);
   const mechanisms: Mechanism[] = [];
+  const clamped: string[] = [];
+  const violations: string[] = [];
+  /** Clamp after overrides: an override may sit below a cap, never above it. */
+  const guard = (built: Mechanism[], act: string) => {
+    const override = input.output[act];
+    for (const mechanism of built) {
+      let lowered = false;
+      for (const effect of mechanism.effects) {
+        if (!Array.isArray(effect.intensity)) continue;
+        const kind = effectKind(effect, mechanism.element);
+        const cap = kind ? caps.get(kind) : undefined;
+        if (!cap) continue;
+        const band = effect.intensity as unknown as Band;
+        if (!exceeds(band, cap.band)) continue;
+        if (override) {
+          const message = `acts.output ${act} ${showBand(override)} exceeds the signature ${cap.signature} ${showBand(cap.band)} on ${kind} (${mechanism.key})`;
+          if (!violations.includes(message)) violations.push(message);
+          continue;
+        }
+        effect.intensity = [Math.min(band[0], cap.band[0]), Math.min(band[1], cap.band[1])];
+        lowered = true;
+      }
+      if (lowered) clamped.push(mechanism.key);
+      mechanisms.push(mechanism);
+    }
+  };
   for (const instrument of [...input.anatomy, ...input.channels] as Instrument[]) {
     const row = INSTRUMENT_ROWS[instrument];
     for (const pattern of row.patterns) {
       if (MEDIUM_ONLY.includes(pattern)) continue;
       if (excluded(input.exclude, instrument, pattern)) continue;
       if (pattern === 'terrorize' && !canDisplay(input, instrument, row)) continue;
-      mechanisms.push(...build(input, instrument, row, pattern, undefined));
+      guard(build(input, instrument, row, pattern, undefined), `${instrument}/${pattern}`);
     }
     const element = input.conduits[instrument] as Element | undefined;
     if (!element) continue;
     for (const pattern of MEDIUM_ROWS[element].patterns) {
       if (excluded(input.exclude, instrument, pattern)) continue;
-      mechanisms.push(...build(input, instrument, row, pattern, element));
+      guard(build(input, instrument, row, pattern, element), `${instrument}/${pattern}`);
     }
   }
-  return mechanisms;
+  // Authored mechanisms are checked, never clamped: the author wrote that number.
+  for (const mechanism of species.mechanisms ?? []) {
+    for (const effect of mechanism.effects) {
+      const kind = effectKind(effect, mechanism.element);
+      const cap = kind ? caps.get(kind) : undefined;
+      if (!cap || effect.intensity === undefined) continue;
+      const band = asBand(effect.intensity);
+      if (exceeds(band, cap.band)) violations.push(`mechanism ${mechanism.key} ${showBand(band)} exceeds the signature ${cap.signature} ${showBand(cap.band)} on ${kind}`);
+    }
+  }
+  return { mechanisms, clamped, violations };
 }
 
 /** A body part only threatens with what the species can signal: a visual display needs

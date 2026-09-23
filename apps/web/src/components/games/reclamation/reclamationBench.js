@@ -10,7 +10,7 @@ import { slotStateOf, siteHoldsFor } from './reclamationRoster';
 import { speciesLabel, formatHold, roleSentence, roleWord } from './reclamationNarration';
 import { prepare, speedOf, flippableRolesOf } from '@xalians/rules/expedition/creatureOnTable';
 import { attributeLanes } from './reclamationPreview';
-import { SENDABLE } from '@xalians/rules/expedition/expeditionInterpretation';
+import { SENDABLE, FRAMES_PER_MATCH } from '@xalians/rules/expedition/expeditionInterpretation';
 
 /*
 	ReclamationBench — the squad on a bench under the three worlds (Nick, 2026-09-04,
@@ -186,6 +186,8 @@ function ReclamationBench({
 	// the round's cap: the sendable ten, plus the trailing seat's bonus send this round
 	const cap = typeof me.sendableCap === 'number' ? me.sendableCap : SENDABLE;
 	const sendsLeft = Math.max(0, cap - (me.sentCount || 0));
+	// this round's worlds and every round still to come
+	const worldsAhead = ((view.frame && view.frame.sites.length) || 3) * Math.max(1, FRAMES_PER_MATCH - (view.frameIndex || 0));
 	const armed = armedRecordId ? (me.roster || []).find((r) => r.id === armedRecordId) : null;
 	const step = !yourTurn ? 0 : armed ? 2 : 1;
 	const rec = recommendation && recommendation.type === 'send' ? recommendation : null;
@@ -247,10 +249,15 @@ function ReclamationBench({
 					);
 				})()}
 				</div>
-				<span className="rec-deploy-count" title={`${me.sentCount || 0} of ${cap} sends spent this Proving${cap > SENDABLE ? ", one of them the trailing seat's bonus this round" : ''}; ${(me.roster || []).length} in hand`}>
+				<span className="rec-deploy-count" title={`${me.sentCount || 0} of ${cap} sends spent this game${cap > SENDABLE ? ", one of them the trailing seat's bonus this round" : ''}; ${(me.roster || []).length} in hand`}>
 					{/* the pips preview what the send in hand would cost: one send, whether it
 					    arrives hidden or in the open (hiding is no longer a priced choice) */}
-					<span className="rec-sends-text">{sendsLeft} send{sendsLeft === 1 ? '' : 's'} left<span className="rec-sends-scope"> this game</span></span>
+					{/*
+						pass 47: the budget beside what it has to cover. A critic spent four and four and
+						met round three needing three worlds with three sends, reading "11 sends left
+						this game" as a per-round counter.
+					*/}
+					<span className="rec-sends-text">{sendsLeft} send{sendsLeft === 1 ? '' : 's'} left<span className="rec-sends-scope"> for {worldsAhead} worlds</span></span>
 				</span>
 				{yourTurn && !me.passed && (
 					<div className="rec-bench-actions">
