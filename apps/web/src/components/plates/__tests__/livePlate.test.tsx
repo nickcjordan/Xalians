@@ -3,7 +3,7 @@ import { render, screen, waitFor } from '@testing-library/react';
 import { LivePlate } from '../livePlate';
 
 const FRAGMENT =
-	'<svg class="layer" id="layer-a" viewBox="0 0 1536 768"><rect width="10" height="10"/></svg><svg class="layer" id="layer-b" viewBox="0 0 1536 768"><rect width="10" height="10"/></svg><div class="surface paper"></div>';
+	'<svg class="defs" id="layer-defs" width="0" height="0"><defs/></svg><svg class="layer" id="layer-a" viewBox="0 0 1536 768"><rect width="10" height="10"/></svg><svg class="layer" id="layer-b" viewBox="0 0 1536 768"><rect width="10" height="10"/></svg><div class="surface paper"></div>';
 
 type Cb = (entries: { isIntersecting: boolean }[]) => void;
 const observers: { cb: Cb; disconnect: ReturnType<typeof vi.fn> }[] = [];
@@ -28,6 +28,7 @@ describe('LivePlate', () => {
 		vi.stubGlobal('fetch', vi.fn(() => Promise.resolve({ ok: true, text: () => Promise.resolve(FRAGMENT) })));
 		(SVGSVGElement.prototype as unknown as { pauseAnimations: () => void }).pauseAnimations = vi.fn();
 		(SVGSVGElement.prototype as unknown as { unpauseAnimations: () => void }).unpauseAnimations = vi.fn();
+		(SVGSVGElement.prototype as unknown as { setCurrentTime: (t: number) => void }).setCurrentTime = vi.fn();
 	});
 	afterEach(() => {
 		vi.unstubAllGlobals();
@@ -51,11 +52,16 @@ describe('LivePlate', () => {
 		const play = SVGSVGElement.prototype.unpauseAnimations as unknown as ReturnType<typeof vi.fn>;
 		expect(pause).toHaveBeenCalled();
 		expect(play).not.toHaveBeenCalled();
+		// and seeked to zero, so the still is the plate's composed first frame, not its resting values
+		const seek = SVGSVGElement.prototype.setCurrentTime as unknown as ReturnType<typeof vi.fn>;
+		expect(seek).toHaveBeenCalledWith(0);
 		expect(observers).toHaveLength(2);
 		observers[1].cb([{ isIntersecting: true }]);
-		expect(play).toHaveBeenCalledTimes(2);
+		// both layers and the defs sheet, whose animated filters keep their own clock
+		expect(play).toHaveBeenCalledTimes(3);
+		expect(play.mock.instances).toContain(container.querySelector('svg.defs'));
 		observers[1].cb([{ isIntersecting: false }]);
-		expect(pause.mock.calls.length).toBeGreaterThanOrEqual(4);
+		expect(pause.mock.calls.length).toBeGreaterThanOrEqual(6);
 	});
 
 	it('keeps the poster when the fetch fails', async () => {
