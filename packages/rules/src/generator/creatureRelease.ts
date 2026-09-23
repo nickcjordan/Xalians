@@ -4,7 +4,7 @@ import { CreatureRecordSchema, type CreatureRecord } from '@xalians/content/crea
 import { compileSpecies, generateCreatureDraft } from './creature.ts';
 import { makeRng } from './prng.ts';
 
-export const GENERATOR_VERSION = '0.6.0';
+export const GENERATOR_VERSION = '0.7.0';
 export const SCHEMA_VERSION = '5.0.0';
 const replayInputs = CreatureRecordSchema.shape.provenance.omit({ generatorVersion: true, schemaVersion: true, releaseId: true });
 type Options = Omit<CreatureRecord['provenance'], 'seed' | 'generatorVersion' | 'schemaVersion' | 'releaseId'>;

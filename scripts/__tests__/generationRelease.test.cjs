@@ -111,7 +111,7 @@ const creatureEntry = 'scripts/__tests__/fixtures/creature-release.ts';
 const canonicalCreatureEntry = 'packages/rules/src/generator/canonicalCreatureRelease.ts';
 test('the complete v5 roster freezes and replays without the live species tree', async t => {
   const temporary = temporaryArchive(t);
-  const releaseId = 'generation-0.6.0-1';
+  const releaseId = 'generation-0.7.0-1';
   const manifest = await freeze({ entryPoint: canonicalCreatureEntry, releaseId, archives: temporary });
   const ratified = JSON.parse(fs.readFileSync(path.join(__dirname, '../../docs/species-templates/RATIFIED.json'), 'utf8')).species;
   assert.equal(Object.keys(manifest.inputs).filter(file => /^docs\/species-templates\/v5\/[^/]+\.json$/.test(file)).length, 32);
@@ -132,7 +132,7 @@ test('v5 freezes its actual species, catalog, compiler and naming dependencies a
   const temporary = temporaryArchive(t);
   const manifest = await freeze({ entryPoint: creatureEntry, releaseId: 'test-creature-v5', archives: temporary });
   assert.equal(manifest.schemaVersion, '5.0.0');
-  assert.equal(manifest.generatorVersion, '0.6.0');
+  assert.equal(manifest.generatorVersion, '0.7.0');
   for (const file of ['catalog.ts', 'benchmarks.ts', 'compiler.ts', 'naming.ts', 'species.ts', 'record.ts', 'fixtures/support-species.json']) {
     assert.ok(manifest.inputs['packages/content/src/creature/' + file], file);
   }
