@@ -77,6 +77,7 @@ import {
   ExpeditionTrail,
   sectorStory,
 } from "./powerworksScene";
+import { PowerworksEnvironment } from "./powerworksEnvironment";
 import { useBattlePresentation } from "./powerworksPresentation";
 import "./powerworks.css";
 import "./powerworksScene.css";
@@ -580,7 +581,7 @@ export default function PowerworksPage() {
 
       {!started ? (
         <section className="pw-briefing">
-          <div className="pw-brief-backdrop" aria-hidden="true" />
+          <PowerworksEnvironment room={0} className="pw-brief-backdrop" />
           <div>
             <p className="pw-eyebrow">A SQUAD EXPEDITION</p>
             <h1>
@@ -1094,7 +1095,7 @@ export default function PowerworksPage() {
             ) : (
               <section className={`pw-outcome ${run.phase}`}>
                 <div className="pw-outcome-body">
-                  <div className="pw-outcome-landscape" aria-hidden="true">
+                  <PowerworksEnvironment room={run.room} className="pw-outcome-landscape">
                     <div className="pw-travel-squad">
                       {run.team.map((u) => (
                         <span key={u.id} className={u.hp <= 0 ? "down" : ""}>
@@ -1102,7 +1103,7 @@ export default function PowerworksPage() {
                         </span>
                       ))}
                     </div>
-                  </div>
+                  </PowerworksEnvironment>
                   <ExpeditionTrail
                     room={run.room}
                     completed={run.phase === "won"}

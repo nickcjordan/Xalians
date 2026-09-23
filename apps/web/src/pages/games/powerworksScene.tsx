@@ -13,6 +13,7 @@ import {
   Ban,
 } from "lucide-react";
 import { actionPresentation } from "./powerworksPresentation";
+import { PowerworksEnvironment } from "./powerworksEnvironment";
 import {
   damagePreview,
   matchup,
@@ -247,7 +248,7 @@ export function PowerworksScene({
       data-impact={impact}
       data-action={phase}
     >
-      <div className="pw-environment" aria-hidden="true" />
+      <PowerworksEnvironment room={room} />
       <div className="pw-room-prop" aria-hidden="true">
         {room === 1 ? <Shield /> : room >= 2 ? <Zap /> : null}
       </div>
@@ -347,6 +348,15 @@ export function PowerworksScene({
                 rx="5"
                 ry="8"
               />
+              {impact && event.kind !== "redirect" && (
+                <g
+                  className={`pw-contact-mark ${event.kind}`}
+                  transform={`translate(${destination.x} ${destination.y})`}
+                >
+                  <circle r="3.3" />
+                  <path d="M-9 0h-4M9 0h4M0-9v-4M0 9v4M-6-6l-3-3M6-6l3-3M-6 6l-3 3M6 6l3 3" />
+                </g>
+              )}
             </>
           )}
       </svg>

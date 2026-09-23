@@ -15,31 +15,64 @@
 .pw-environment,
 .pw-brief-backdrop,
 .pw-outcome-landscape {
-  background-image: linear-gradient(0deg, #0b1b25aa, #0b1b2520 60%, #0b1b2599),
-    url("/assets/powerworks/turbine-hall.webp");
-  background-size: cover;
-  background-position: center 61%;
+  overflow: hidden;
+  background: #1b3036;
 }
 .pw-environment {
   position: absolute;
   inset: 0;
   z-index: -2;
 }
-.sector-0 .pw-environment {
-  background-position: 25% 72%;
-  filter: saturate(0.7);
+.pw-facility > svg {
+  width: 100%;
+  height: 100%;
+  display: block;
 }
-.sector-1 .pw-environment {
-  filter: saturate(0.65) hue-rotate(12deg);
-  background-position: 75% 65%;
+.pw-facility .pw-env-beacon {
+  animation: pw-env-beacon 3.4s ease-in-out infinite;
 }
-.sector-2 .pw-environment {
-  filter: saturate(0.95);
-  background-position: center 45%;
+.pw-facility .pw-env-beacon.delayed {
+  animation-delay: -1.7s;
 }
-.sector-3 .pw-environment {
-  filter: saturate(0.9) sepia(0.15);
-  background-position: center 30%;
+.pw-facility .pw-env-rotor {
+  animation: pw-env-turn 20s linear infinite;
+}
+.pw-facility .pw-env-rotor.slow {
+  animation-duration: 45s;
+}
+.pw-facility .pw-env-haze {
+  animation: pw-env-drift 14s ease-in-out infinite alternate;
+}
+.pw-facility .pw-env-core,
+.pw-facility .pw-env-conduit {
+  animation: pw-env-beacon 4.6s ease-in-out infinite;
+}
+.pw-theater.playing .pw-facility .pw-env-rotor,
+.pw-theater.playing .pw-facility .pw-env-haze,
+.pw-theater.playing .pw-facility .pw-env-beacon,
+.pw-theater.playing .pw-facility .pw-env-core,
+.pw-theater.playing .pw-facility .pw-env-conduit {
+  animation-play-state: paused;
+}
+.pw-theater.signature-action .pw-facility {
+  filter: brightness(.78);
+}
+.pw-theater.boss-defeat .pw-facility .pw-env-core,
+.pw-outcome.won .pw-facility .pw-env-core {
+  opacity: .22;
+  animation: none;
+}
+.pw-outcome.lost .pw-facility {
+  filter: saturate(.45) brightness(.65);
+}
+@keyframes pw-env-turn {
+  to { transform: rotate(360deg); }
+}
+@keyframes pw-env-beacon {
+  50% { opacity: .46; }
+}
+@keyframes pw-env-drift {
+  to { transform: translateX(22px); opacity: .025; }
 }
 .pw-theater:after {
   content: "";
@@ -368,6 +401,34 @@
 .pw-impact-ring.snare {
   stroke: #d2b2ef;
   stroke-dasharray: 2 1;
+}
+.pw-contact-mark {
+  color: var(--accent);
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.1;
+  vector-effect: non-scaling-stroke;
+  filter: drop-shadow(0 0 3px currentColor);
+  animation: pw-contact 520ms ease-out both;
+}
+.pw-contact-mark circle {
+  fill: currentColor;
+  opacity: .28;
+}
+.pw-contact-mark.snare {
+  color: #d2b2ef;
+  stroke-dasharray: 2 1;
+}
+.pw-theater.signature-action .pw-contact-mark {
+  stroke-width: 1.8;
+}
+.pw-theater.paused .pw-contact-mark {
+  animation: none;
+  opacity: .6;
+}
+@keyframes pw-contact {
+  from { opacity: 1; }
+  to { opacity: 0; }
 }
 .pw-scene-unit.performing {
   z-index: 9;
@@ -780,12 +841,12 @@
   position: relative;
 }
 .pw-outcome-landscape {
+  height: 170px;
   min-height: 170px;
   width: calc(100% + var(--outcome-inset) + var(--outcome-inset));
   margin: -30px calc(-1 * var(--outcome-inset)) 0;
   position: relative;
   flex-shrink: 0;
-  background-position: center 40%;
 }
 .pw-travel-squad {
   position: absolute;
@@ -801,12 +862,6 @@
   max-width: 100px;
   filter: drop-shadow(0 6px 4px #000);
   animation: pw-walk-in 700ms ease-out both;
-}
-.pw-outcome.won .pw-outcome-landscape {
-  filter: saturate(0.6);
-}
-.pw-outcome.lost .pw-outcome-landscape {
-  filter: saturate(0.25) brightness(0.6);
 }
 .pw-reward-reveal {
   display: flex;
@@ -997,6 +1052,7 @@
     top: 15px;
   }
   .pw-outcome-landscape {
+    height: 135px;
     min-height: 135px;
     width: calc(100% + 24px);
     margin: -22px -12px 0;
@@ -1019,6 +1075,11 @@
   }
 }
 @media (prefers-reduced-motion: reduce) {
+  .pw-facility *,
+  .pw-facility *:after {
+    animation: none !important;
+    transition: none !important;
+  }
   .pw-theater *,
   .pw-theater *:after,
   .pw-travel-squad *,
@@ -1064,6 +1125,7 @@
 }
 .pw-outcome.camp .pw-outcome-landscape {
   order: 0;
+  height: 100px;
   min-height: 100px;
 }
 .pw-outcome.camp .pw-travel-squad {
@@ -1190,6 +1252,7 @@
 }
 @media (max-width: 600px) and (max-height: 720px) {
   .pw-outcome.camp .pw-outcome-landscape {
+    height: 60px;
     min-height: 60px;
   }
   .pw-outcome.camp .pw-travel-squad {
