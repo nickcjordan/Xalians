@@ -799,3 +799,20 @@ Second, the metric is insensitive to what it claims to be about. **Quadrupling t
 **Open:** the advisor still spends a round's sends without regard to what later rounds need; measure the suggestion policy against the rivals in the simulator before changing it. Advanced on a phone, strain in the preview.
 
 **Verified:** 1565 web and 543 rules tests; `reclamation-shift` (hover 0.0000), `reclamation-proving` (4 of 4), `reclamation-actflip`, `reclamation-hotseat` green; paint read of the full play-through at 390 and 1440.
+
+### Pass 42 (2026-09-22): what the suggestion is worth, measured
+
+Two play-through critics followed every suggestion and lost, and read the advice as a trap. The suggestion is `chooseSend` with the default rival, the Court proctor's own policy, so its strength is the proctor's. Measured with the simulator, 300 matches per pairing, seed 41, the suggestion policy on side A:
+
+| against | suggestion wins | 95% CI |
+|---|---|---|
+| Zolto envoy | 45.3% | 39.7 to 51.0 |
+| Heir of the Thousand Families | 45.0% | 39.4 to 50.6 |
+| Court proctor (itself) | 50.0% | 44.3 to 55.7 |
+| Syndicate broker | 49.7% | 44.0 to 55.3 |
+| Windsailor crew | 49.7% | 44.0 to 55.3 |
+
+So following the suggestions is a coin flip against every rival, and slightly worse than one against the two the ladder calls weakest. Nothing in the table was lying about this, but nothing said it either. The help now says what the mark is ("what the Court proctor would do in your seat ... it wins about half its games").
+
+**Open, and Nick's call:** a suggestion worth following needs a stronger policy than the rivals it advises against, one that reads the rival's likely answer without seeing its hidden roster (rollouts over sampled rosters, or the engine forecast plus a one-ply rival response). The alternative is to drop the per-send suggestion and keep only the Pass suggestion, whose reasons are arithmetic.
+
