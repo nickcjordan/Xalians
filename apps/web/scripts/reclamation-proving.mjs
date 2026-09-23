@@ -235,6 +235,18 @@ for (const view of ['simple', 'advanced']) {
 				const site = page.locator('[data-site-id]');
 				if (await arm.count()) {
 					await arm.first().click({ timeout: 5000 }).catch(() => {});
+					/*
+						PASS 39. The preview must read the board it is drawn over. Pass 38 built the
+						per-world sentence from data the table never passed through, so every strike
+						said "No rival here to strike" beside a rival standing in plain view, and
+						nothing here could have noticed. A world with a rival on it may say its
+						instinct would not strike, never that no rival is there.
+					*/
+					const ghostLies = await page.evaluate(() => [...document.querySelectorAll('[data-site-id]')]
+						.filter((site) => site.querySelector('[data-rank="theirs"] [data-record-id]'))
+						.map((site) => (site.querySelector('[data-ghost-plan]') || {}).textContent || '')
+						.filter((text) => /No rival here|Nothing (here )?to hit yet/.test(text)));
+					assert(ghostLies.length === 0, `${label}: a world with a rival on it previews "${ghostLies[0]}"`);
 					const siteCount = await site.count();
 					if (siteCount) {
 						// spread across the frame the way a handler does, rather than stacking

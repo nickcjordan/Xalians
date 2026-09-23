@@ -6732,3 +6732,49 @@
 @media (min-width: 761px) {
 	.rec-console--match[data-terminal] .rec-site-floor .rec-ghost-plan { justify-self: stretch; align-items: flex-start; }
 }
+
+/* --- pass 39 ---------------------------------------------------------------- */
+
+@media (max-width: 760px) {
+	/* a phone's preview is the number over its sentence at every world, crowded or not; side by side it was cut at the column edge */
+	.rec-console--match[data-terminal] .rec-site-floor .rec-ghost:not(.rec-ghost--relocate) { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto auto; grid-template-areas: "value" "plan"; justify-items: center; }
+	/* the suggested world is named in the instruction; its tag covered the world's name */
+	.rec-console--match[data-terminal] .rec-site-recommend { display: none; }
+	/* the callout keeps its sentence: the kicker took a line the sentence needed */
+	.rec-console--match[data-terminal] .rec-status-say .rec-callout-kicker { display: none; }
+	.rec-console--match[data-terminal] .rec-skip { min-height: 30px; padding: 0 var(--g-2); align-self: center; }
+
+	/* the result fits the phone: one line per world, and the creatures stay in the history */
+	.rec-console--match[data-terminal] .rec-report { padding: var(--g-2) var(--g-3); }
+	.rec-console--match[data-terminal] .rec-report-title { font-size: 1.35rem; line-height: 1.1; margin: 2px 0; }
+	.rec-console--match[data-terminal] .rec-report-lede,
+	.rec-console--match[data-terminal] .rec-report-decisive { font-size: var(--g-size-small); margin: 2px 0; }
+	.rec-console--match[data-terminal] .rec-report-worlds { gap: var(--g-1); }
+	.rec-console--match[data-terminal] .rec-report-round-title { margin: 4px 0 2px; font-size: 10px; }
+	.rec-console--match[data-terminal] .rec-report-world { padding: 3px var(--g-2); }
+	.rec-console--match[data-terminal] .rec-report-world-site,
+	.rec-console--match[data-terminal] .rec-report-world-creatures { display: none; }
+	.rec-console--match[data-terminal] .rec-report-world-head { flex-wrap: nowrap; gap: var(--g-2); }
+	.rec-console--match[data-terminal] .rec-report-world-who { margin-left: auto; white-space: nowrap; }
+	.rec-console--match[data-terminal] .rec-report-foot { gap: var(--g-1); }
+	.rec-console--match[data-terminal] .rec-report-figure { padding: 4px var(--g-2); }
+	.rec-console--match[data-terminal] .rec-report-figure-value { font-size: 1rem; }
+	.rec-console--match[data-terminal] .rec-report-figure-label { font-size: 8px; }
+	.rec-console--match[data-terminal] .rec-notes { padding: 4px var(--g-2); }
+}
+@media (max-width: 760px) {
+	/* in a world with creatures standing, the preview is its number and its sentence: the HOLD label gave the sentence no room */
+	.rec-console--match[data-terminal] .rec-site-field:not(.rec-site-field--empty) .rec-ghost-unit { display: none; }
+	.rec-console--match[data-terminal] .rec-site-field:not(.rec-site-field--empty) .rec-ghost-plan { font-size: 9px; line-height: 1.2; }
+
+	/* the result's rounds stand side by side, a column each, so the whole game reads on one screen */
+	.rec-console--match[data-terminal] .rec-report-worlds { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--g-1); }
+	.rec-console--match[data-terminal] .rec-report-round { min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+	.rec-console--match[data-terminal] .rec-report-world { padding: 3px 4px; }
+	.rec-console--match[data-terminal] .rec-report-world-head { flex-direction: column; align-items: flex-start; gap: 1px; }
+	.rec-console--match[data-terminal] .rec-report-world-planet { font-size: 9px; padding: 1px 4px; max-width: 100%; overflow: hidden; text-overflow: ellipsis; }
+	.rec-console--match[data-terminal] .rec-report-world-holds { font-size: 12px; }
+	.rec-console--match[data-terminal] .rec-report-world-who { display: none; }
+	.rec-console--match[data-terminal] .rec-report-foot { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+	.rec-console--match[data-terminal] .rec-report-figure-value { font-size: 0.9rem; }
+}

@@ -185,7 +185,7 @@ export function narrateEvent(event, ctx = {}) {
 			return `${actor} shields, and nothing is thrown at its side.`;
 		}
 		const blocked = ctx.targetName || 'the attack';
-		return `${actor} shields: ${blocked}'s attack of ${formatHoldShown(event.amount)} is cancelled.`;
+		return `${actor} blocks ${blocked}'s attack of ${formatHoldShown(event.amount)}.`;
 	}
 	if (event.type === 'recover') {
 		const under = ctx.bolsterName ? `under ${ctx.bolsterName}'s bolster` : 'under a bolster';
