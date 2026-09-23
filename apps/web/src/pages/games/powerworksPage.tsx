@@ -81,6 +81,7 @@ import { PowerworksEnvironment } from "./powerworksEnvironment";
 import { useBattlePresentation } from "./powerworksPresentation";
 import "./powerworks.css";
 import "./powerworksScene.css";
+import "./powerworksHud.css";
 
 const SAVE_KEY = "xalians.powerworks.v1";
 
@@ -926,6 +927,9 @@ export default function PowerworksPage() {
                           frame?.event?.actorId === u.id ? "acting" : ""
                         } ${affected(u) ? "affected" : ""}`}
                       >
+                        <span className="pw-companion-portrait">
+                          <Portrait u={u} small />
+                        </span>
                         <button
                           className="pw-select"
                           aria-label={`Select ${u.name}`}

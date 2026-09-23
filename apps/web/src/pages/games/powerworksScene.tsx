@@ -204,17 +204,21 @@ export function PowerworksScene({
     (action ? closing(action) : false) || event?.moveName === "Desperate strike";
   const presentation = actionPresentation(frame);
   const { signature, knockout, bossDefeat } = presentation;
+  const laneShift = (u: Unit) => {
+    const row = u.enemy ? enemies : team;
+    return (row.length - 1 - row.indexOf(u)) * (u.enemy ? 3 : 1);
+  };
   const point = (u: Unit) => ({
     x:
       (u.enemy ? (enemies.length === 2 ? 30 : 20) : 14) +
       ((u.enemy ? enemies : team).indexOf(u) *
         (u.enemy ? (enemies.length === 2 ? 40 : 60) : 72)) /
         Math.max(1, (u.enemy ? enemies : team).length - 1),
-    y: u.enemy ? 29 : 75,
+    y: (u.enemy ? 30 : 72) + laneShift(u),
   });
   // Center a lone defender rather than leaving it in the first slot.
   const position = (u: Unit) =>
-    u.enemy && enemies.length === 1 ? { x: 50, y: 29 } : point(u);
+    u.enemy && enemies.length === 1 ? { x: 50, y: 30 } : point(u);
   const source = actor
     ? position(actor)
     : active
@@ -402,6 +406,7 @@ export function PowerworksScene({
             style={
               {
                 left: `${pos.x}%`,
+                "--lane-shift": `${laneShift(u)}%`,
 
                 "--travel-x": `${
                   source && destination ? destination.x - source.x : 0
