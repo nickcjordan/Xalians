@@ -176,6 +176,26 @@ describe('the landing order', () => {
 	});
 });
 
+describe('a keen creature fights on through its hurt (pass 51)', () => {
+	test('lands its full power however hurt, where the same creature at conduct instinct lands its share', () => {
+		const fastBiter = record({ attributes: { strength: 70, agility: 99, reflex: 99, vitality: 60, endurance: 60, resilience: 60 } });
+		const keenBig = record({ attributes: { strength: 99, agility: 1, reflex: 1, vitality: 60, endurance: 60, resilience: 60, instinct: 90 } });
+		const hurtOn = clashOf(keenBig, fastBiter);
+		const hurtOff = clashOf(keenBig, fastBiter, { hurtAttacksLess: false });
+		const on = attacksIn(hurtOn).find((e) => e.recordId === 'A_0');
+		const off = attacksIn(hurtOff).find((e) => e.recordId === 'A_0');
+		expect(on).toBeTruthy();
+		if (on.outcome !== 'lapsed' && off.outcome !== 'lapsed') {
+			expect(on.power).toBeCloseTo(off.power, 1);
+		}
+		// and with the lever off, the keen creature is back to its share like anyone else
+		const leverOff = attacksIn(clashOf(keenBig, fastBiter, { keenFightsHurt: 0 })).find((e) => e.recordId === 'A_0');
+		if (leverOff && leverOff.outcome !== 'lapsed' && off.outcome !== 'lapsed') {
+			expect(leverOff.power).toBeLessThan(off.power);
+		}
+	});
+});
+
 describe('what the rulebook says about menacing', () => {
 	/*
 		"It does not redirect a sweep, which chooses no target and hits everyone." The

@@ -940,3 +940,37 @@ Five new tests (`reclamationRuling.test.js`), including the fallen-defenders cas
 5. **Ambiguous marks.** The result's downed figure reads "you downed / you lost" in the two sides' colors (it read "creatures downed, rival's / yours", which the critic read both ways); the forecast arrow stands clear of both numbers ("17 → 1", which read as minus one).
 
 **Verified:** 1606 web tests (new: the stake tone, the printed-margin rule); the four table checks green; the play-through re-shot on seed 21 at 1440 and 390 and read.
+
+### Pass 51 (2026-09-23): every attribute a job, measured
+
+**Nick:** "It would be nice to have every attribute have a job, but if we can't reasonably do that, that's fine too."
+
+**Measured where each job applies**, not across the whole squad (pass 48 boosted everyone, which dilutes a job that only some creatures have). The same squads both sides, side A's creatures +15 in one attribute only where it has a job, 3000 games a row at magnitude 1.8, the `--applies` mode of `devtools/attributeProbe.ts`:
+
+| attribute | creatures a squad it applies to | win-rate change | per creature |
+|---|---|---|---|
+| strength (powers contact blows) | 6.5 | +2.3 | 0.35 |
+| intelligence (powers projected blows) | 3.8 | +1.9 | 0.50 |
+| charisma (scales shields and bolsters), at +40 | 1.7 | +1.6 | 0.35 per +15 |
+| willpower (one grade less strain) | 12 | +1.6 | 0.13 |
+| instinct (targeting lanes) | 10.3 | -1.3 | none |
+| (vitality, for scale, pass 48) | 12 | +4.7 | 0.39 |
+
+So strength, intelligence and charisma have real jobs, as strong per creature as a hold attribute: intelligence and charisma only looked weak because fewer creatures use them. Willpower's job is real and small. **Instinct had none:** targeting only matters where a creature has two enemies to choose between, and most worlds are one against one.
+
+**Three second jobs tried, one shipped:**
+
+| lever | effect |
+|---|---|
+| a keen creature takes half a sweep's blow | instinct +0.6 (nothing); removed |
+| a willful creature cannot be held | willpower +1.7 (no change); removed |
+| a keen creature fights through half its hurt | instinct +0.7 (nothing) |
+| **a keen creature fights through all of its hurt** | **instinct +3.6; shipped** (`KEEN_FIGHTS_HURT = 1`) |
+
+A keen creature (instinct 65 or more, about a third of the pool) now attacks at full power however much hold it has lost, where every other creature attacks for less in proportion. It reads as the fiction says instinct should: it fights on. Match gauges with it on (seeds 7 / 13 / 21, 1000 games): downs 5.14 / 4.65 / 4.91 (band 3 to 5), flips 25.6 / 25.6 / 27.1 (band 25 to 40), comeback 29.0 / 30.3 / 29.0.
+
+**Watch:** downs now sit at the top of their band (the validation report's seed-7 mirror reads 5.32 on 200 games). If a later change pushes them over, the pair to move is this lever with `MAGNITUDE_SCALE`, not either alone.
+
+**The intro's claim, corrected to what is true:** "Each attribute does one thing on the table, and the dossier says which. Speed and hold decide the most; the rest matter where they apply." Charisma's line says it is for shields and bolsters; instinct's says keen creatures fight on at full power when hurt, and the dossier says the same.
+
+**Verified:** 604 rules tests (new: a keen creature lands full power while hurt, and not with the lever off); typecheck clean; 1606 web tests; the four table checks green; validation report regenerated.

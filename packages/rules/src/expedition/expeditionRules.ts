@@ -72,6 +72,7 @@ import {
 	BOLSTER_FLOOR,
 	HIDDEN_FIRST,
 	ARMORED_REDUCTION,
+	KEEN_FIGHTS_HURT,
 	SHIELD_CAP,
 	SHIELD_CAPS,
 	ROLE,
@@ -325,6 +326,7 @@ export const DEFAULT_RULES: Rules = {
 	instinctLanes: true,
 	keenInstinct: KEEN_INSTINCT,
 	dullInstinct: DULL_INSTINCT,
+	keenFightsHurt: KEEN_FIGHTS_HURT,
 	swiftMove: true,
 	swiftSpeed: SWIFT_SPEED,
 	hurtAttacksLess: HURT_ATTACKS_LESS,
@@ -389,6 +391,7 @@ function normalizeRules(rules: RulesInput | null | undefined): Rules {
 		instinctLanes: r.instinctLanes !== undefined ? !!r.instinctLanes : DEFAULT_RULES.instinctLanes,
 		keenInstinct: num(r.keenInstinct, DEFAULT_RULES.keenInstinct),
 		dullInstinct: num(r.dullInstinct, DEFAULT_RULES.dullInstinct),
+		keenFightsHurt: num(r.keenFightsHurt, DEFAULT_RULES.keenFightsHurt),
 		swiftMove: r.swiftMove !== undefined ? !!r.swiftMove : DEFAULT_RULES.swiftMove,
 		swiftSpeed: num(r.swiftSpeed, DEFAULT_RULES.swiftSpeed),
 		hurtAttacksLess: r.hurtAttacksLess !== undefined ? !!r.hurtAttacksLess : DEFAULT_RULES.hurtAttacksLess,
@@ -1982,7 +1985,13 @@ function hurtFactorOf(state: MatchState, entry: BoardEntry): number {
 		return 1;
 	}
 	const current = typeof entry.currentHold === 'number' ? entry.currentHold : full;
-	return Math.max(0, Math.min(1, current / full));
+	const factor = Math.max(0, Math.min(1, current / full));
+	// pass 51, instinct's second job: a keen creature fights on through its hurt (KEEN_FIGHTS_HURT)
+	const rules = rulesOf(state);
+	if (rules.keenFightsHurt > 0 && instinctLaneOf(entry.record, rules) === 'keen') {
+		return 1 - (1 - factor) * (1 - Math.min(1, rules.keenFightsHurt));
+	}
+	return factor;
 }
 
 function landStrike(state: MatchState, site: FrameSite, declaration: Declaration, hurtFactor = 1): boolean {
