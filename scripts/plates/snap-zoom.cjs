@@ -11,7 +11,7 @@ function findChrome() {
 (async () => {
   const [file, name, ...rest] = process.argv.slice(2);
   const b = await chromium.launch({ executablePath: findChrome() });
-  const ctx = await b.newContext({ viewport: { width: 1600, height: 1000 }, deviceScaleFactor: 2 });
+  const ctx = await b.newContext({ viewport: { width: 1600, height: 2100 }, deviceScaleFactor: 2 });
   const p = await ctx.newPage();
   await p.goto('file:///' + file, { waitUntil: 'load' });
   await p.waitForTimeout(2500);
