@@ -34,6 +34,7 @@
   },
   "attributes": {"strength": [20,40], "vitality": [40,60], "endurance": [40,60], "agility": [20,40], "reflex": [20,40], "intelligence": [40,60], "willpower": [40,60], "instinct": [40,60], "charisma": [40,60], "resilience": [40,60]},
   "temperament": {"boldness": [20,40], "curiosity": [40,60], "energy": [40,60], "aggression": [10,30], "sociability": [60,80]},
+  "channels": ["secretion"],
   "signature": {"type": "action", "key": "repair"},
   "actions": [{
     "key": "repair", "name": "Restorative Secretion", "description": "A concentrated secretion repairs existing tissue.",

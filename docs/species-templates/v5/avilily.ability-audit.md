@@ -21,3 +21,20 @@ The ordinary source families are contact saliva, physical beak contact and talon
 The existing flight and senses bands come from anatomy and the original source review; no new sensory channel follows from floral camouflage. The v5 temperament bands are authored from active canopy hunting and living in swarms, separately from retired trait/archetype weights. No capability band relied on by the guaranteed saliva is conditional. Output ratings were reviewed in the [cross-roster calibration](../../design/creature-v5-calibration.md).
 
 `npm run check:creature-model -- docs/species-templates/v5/avilily.json` passes. The schema check proves source and capacity constraints, not the full biological audit or game encounter effects. No private catalog key, whole-move whitelist or species-specific compatibility engine was introduced.
+
+## Derived acts, 2026-09-22
+
+Channels declared: `secretion`. Justification: the guaranteed saliva ability uses it, and the description gives sweet, syrupy saliva applied on contact. No conduit is declared: the plant element has no evidenced outlet on this bird, and the audit above already excluded an emission organ for the saliva.
+
+Mechanisms removed as redundant: `beak-strike` (beak strike, impact) and `talon-grip` (talons strike, piercing), both identical to their derived acts. Kept: `sedative-saliva`, because the secretion row's bind is `restrained` and the source outcome is registered `paralyzed` with a detoxifying removal path, which the tables cannot say.
+
+Exclusions:
+
+- `*/drain` removed on 2026-09-22. Physical `drain` is now medium-only and Avilily declares no conduit, so the beak row no longer derives one. The reading stands: Avilily paralyzes and consumes afterward, it does not take vitality through the bite.
+- `secretion/mend` - the audit above states no restorative chemistry or cleansing follows from the saliva.
+
+```
+avilily: valid permissions, four distinct actions constructible
+  acts: 22 distinct on offer (beak 4, wings 4, talons 4, crest 2, tail 5, secretion 3); exclusions: secretion/mend
+  naming over 24 seeds: 0.0% of ordinary actions carry a structural parenthetical, 0.0% of creatures have two ordinary actions sharing a base name
+```

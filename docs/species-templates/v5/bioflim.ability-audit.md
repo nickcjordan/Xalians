@@ -31,3 +31,19 @@ The complete roster numeric pass is recorded in the [cross-roster calibration](.
 `npm run check:creature-model -- docs/species-templates/v5/bioflim.json` passes, including source/anatomy checks and a constructive proof of four structurally distinct actions. This does not assert game outcomes, exact probabilities, canon release activation or that the old pool is a source for unreviewed elemental capabilities.
 
 No registry extension, unresolved species power or conditional-physiology subsystem is required for Bioflim. Revisit this audit if its lore/art, the shared status definitions, or the mechanism compiler changes. Finish release replay before activating v5 records.
+
+## Derived acts, 2026-09-22
+
+Channels declared: `secretion`. Justification: the guaranteed Acid Slime action and the Everforming Carapace passive both use it, and the body itself is acid slime. Conduit `secretion: chemical`: the authored and guaranteed acid abilities already carry the chemical element through the slime, which is the species element and the evidenced outlet.
+
+Mechanisms removed as redundant: `pseudopod-hold` (pseudopods snare, restrained) and `pseudopod-pressure` (pseudopods compression). Kept: `acid-slime`, because the chemical medium row has no strike, so contact elemental harm with a separate corroding condition is not derivable.
+
+Exclusions:
+
+- `secretion/mend` - the audit above states no cleansing or ally healing follows from a corrosive substance. Shell regrowth is the passive, not a mend act.
+
+```
+bioflim: valid permissions, four distinct actions constructible
+  acts: 21 distinct on offer (shell 4, pseudopods 5, body 4, secretion 8); exclusions: secretion/mend
+  naming over 24 seeds: 0.0% of ordinary actions carry a structural parenthetical, 0.0% of creatures have two ordinary actions sharing a base name
+```

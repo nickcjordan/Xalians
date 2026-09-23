@@ -424,5 +424,19 @@
         }
       ]
     }
-  ]
+  ],
+  "channels": [
+    "mind"
+  ],
+  "conduits": {
+    "crest": "psychic"
+  },
+  "acts": {
+    "exclude": [
+      "*/drain",
+      "*/mend",
+      "crest/burst",
+      "mind/crush"
+    ]
+  }
 }

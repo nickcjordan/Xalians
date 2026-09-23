@@ -220,162 +220,23 @@
       ]
     }
   ],
-  "mechanisms": [
-    {
-      "key": "smoke-feline-claws",
-      "name": "Feline Claws",
-      "description": "Its solid feline form rakes a contacted target.",
-      "instrument": "claws",
-      "targeting": [
-        "other"
+  "mechanisms": [],
+  "channels": [],
+  "conduits": {},
+  "acts": {
+    "output": {
+      "claws/strike": [
+        35,
+        60
       ],
-      "activation": {
-        "continuity": [
-          "discrete"
-        ]
-      },
-      "timing": {
-        "preparation": [
-          "immediate",
-          "brief"
-        ],
-        "recovery": [
-          "repeatable",
-          "brief"
-        ]
-      },
-      "delivery": {
-        "contact": {
-          "approach": [
-            "stationary",
-            "closing"
-          ],
-          "range": [
-            "contact"
-          ]
-        }
-      },
-      "effects": [
-        {
-          "key": "outcome",
-          "type": "harm",
-          "recipient": "target",
-          "onset": "instant",
-          "persistence": "resolved",
-          "likelihood": [
-            "consistent"
-          ],
-          "mechanism": "cutting",
-          "intensity": [
-            35,
-            60
-          ]
-        }
-      ]
-    },
-    {
-      "key": "smoke-jaws",
-      "name": "Feline Jaws",
-      "description": "Its solid jaws bite at contact.",
-      "instrument": "jaws",
-      "targeting": [
-        "other"
+      "jaws/strike": [
+        30,
+        52
       ],
-      "activation": {
-        "continuity": [
-          "discrete"
-        ]
-      },
-      "timing": {
-        "preparation": [
-          "immediate",
-          "brief"
-        ],
-        "recovery": [
-          "repeatable",
-          "brief"
-        ]
-      },
-      "delivery": {
-        "contact": {
-          "approach": [
-            "stationary",
-            "closing"
-          ],
-          "range": [
-            "contact"
-          ]
-        }
-      },
-      "effects": [
-        {
-          "key": "outcome",
-          "type": "harm",
-          "recipient": "target",
-          "onset": "instant",
-          "persistence": "resolved",
-          "likelihood": [
-            "consistent"
-          ],
-          "mechanism": "piercing",
-          "intensity": [
-            30,
-            52
-          ]
-        }
-      ]
-    },
-    {
-      "key": "smoke-tail",
-      "name": "Tail Strike",
-      "description": "Its solid tail strikes at close contact.",
-      "instrument": "tail",
-      "targeting": [
-        "other"
-      ],
-      "activation": {
-        "continuity": [
-          "discrete"
-        ]
-      },
-      "timing": {
-        "preparation": [
-          "immediate",
-          "brief"
-        ],
-        "recovery": [
-          "repeatable",
-          "brief"
-        ]
-      },
-      "delivery": {
-        "contact": {
-          "approach": [
-            "stationary",
-            "closing"
-          ],
-          "range": [
-            "contact"
-          ]
-        }
-      },
-      "effects": [
-        {
-          "key": "outcome",
-          "type": "harm",
-          "recipient": "target",
-          "onset": "instant",
-          "persistence": "resolved",
-          "likelihood": [
-            "consistent"
-          ],
-          "mechanism": "impact",
-          "intensity": [
-            20,
-            42
-          ]
-        }
+      "tail/strike": [
+        20,
+        42
       ]
     }
-  ]
+  }
 }

@@ -278,110 +278,22 @@
           ]
         }
       ]
-    },
-    {
-      "key": "claw-rake",
-      "name": "Claw Rake",
-      "description": "Its tough alloy claws cut at close contact.",
-      "instrument": "claws",
-      "targeting": [
-        "other"
+    }
+  ],
+  "channels": [],
+  "conduits": {
+    "claws": "electric"
+  },
+  "acts": {
+    "output": {
+      "claws/strike": [
+        35,
+        58
       ],
-      "activation": {
-        "continuity": [
-          "discrete"
-        ]
-      },
-      "timing": {
-        "preparation": [
-          "immediate",
-          "brief"
-        ],
-        "recovery": [
-          "repeatable",
-          "brief"
-        ]
-      },
-      "delivery": {
-        "contact": {
-          "approach": [
-            "stationary",
-            "closing"
-          ],
-          "range": [
-            "contact"
-          ]
-        }
-      },
-      "effects": [
-        {
-          "key": "outcome",
-          "type": "harm",
-          "recipient": "target",
-          "onset": "instant",
-          "persistence": "resolved",
-          "likelihood": [
-            "consistent"
-          ],
-          "mechanism": "cutting",
-          "intensity": [
-            35,
-            58
-          ]
-        }
-      ]
-    },
-    {
-      "key": "jaw-bite",
-      "name": "Jaw Bite",
-      "description": "Its jaws bite at close contact.",
-      "instrument": "jaws",
-      "targeting": [
-        "other"
-      ],
-      "activation": {
-        "continuity": [
-          "discrete"
-        ]
-      },
-      "timing": {
-        "preparation": [
-          "immediate",
-          "brief"
-        ],
-        "recovery": [
-          "repeatable",
-          "brief"
-        ]
-      },
-      "delivery": {
-        "contact": {
-          "approach": [
-            "stationary",
-            "closing"
-          ],
-          "range": [
-            "contact"
-          ]
-        }
-      },
-      "effects": [
-        {
-          "key": "outcome",
-          "type": "harm",
-          "recipient": "target",
-          "onset": "instant",
-          "persistence": "resolved",
-          "likelihood": [
-            "consistent"
-          ],
-          "mechanism": "piercing",
-          "intensity": [
-            28,
-            50
-          ]
-        }
+      "jaws/strike": [
+        28,
+        50
       ]
     }
-  ]
+  }
 }

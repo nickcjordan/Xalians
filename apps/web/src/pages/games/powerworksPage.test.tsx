@@ -3,9 +3,35 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { fireEvent, render, screen, cleanup } from "@testing-library/react";
 import { MemoryRouter } from "react-router";
 import PowerworksPage from "./powerworksPage";
+import { COMPANION_RECORDS, readCompanion } from "@xalians/rules/dungeon";
+
+/*
+  The generator's naming guardrail no longer produces compositional names such as
+  "Impact Touch (Contact Range; Targeted; ...)", so the one test about them gives
+  Hippochamp such a name itself. Every other test sees the real release untouched.
+*/
+const LONG_NAME =
+  "Piercing Shot (Medium Range; Targeted; Brief Preparation; Repeatable Recovery; Discrete)";
+const naming = vi.hoisted(() => ({ long: false }));
+vi.mock("@xalians/rules/dungeon", async (importOriginal) => {
+  const mod = await importOriginal<typeof import("@xalians/rules/dungeon")>();
+  return {
+    ...mod,
+    createRun: (seed?: number) => {
+      const run = mod.createRun(seed);
+      if (naming.long) {
+        const h = run.team.find((u) => u.species === "hippochamp")!;
+        const move = h.moves.find((m) => !m.signature)!;
+        move.name = LONG_NAME;
+      }
+      return run;
+    },
+  };
+});
 
 beforeEach(() => {
   cleanup();
+  naming.long = false;
   localStorage.clear();
   vi.stubGlobal("matchMedia", () => ({ matches: true }));
   HTMLDialogElement.prototype.showModal = function () {
@@ -133,7 +159,11 @@ describe("Powerworks player flow", () => {
     fireEvent.click(screen.getByRole("button", { name: "Enter the facility" }));
     fireEvent.click(screen.getByRole("button", { name: "View turn order" }));
     const list = screen.getByRole("list");
-    expect(list).toHaveTextContent(/1AvililyYour squad82speed/);
+    // The fastest companion leads the public order, with the speed its record reads.
+    const avilily = readCompanion(COMPANION_RECORDS.avilily, "A");
+    expect(list).toHaveTextContent(
+      new RegExp(`1AvililyYour squad${avilily.speed}speed`)
+    );
     expect(list).not.toHaveTextContent(/Tool strike|target/i);
     fireEvent.click(screen.getByRole("button", { name: "Close panel" }));
     fireEvent.click(
@@ -145,13 +175,14 @@ describe("Powerworks player flow", () => {
     expect(screen.getByText("You are here")).toBeInTheDocument();
   });
   it("shows the base move name in the squad panel and keeps the full name in the title", () => {
+    naming.long = true;
     mount();
     fireEvent.click(screen.getByRole("button", { name: "Enter the facility" }));
-    // Hippochamp's compositional Impact Touch is the longest generated name on the
-    // table; the squad panel label must be its base name, not the whole qualifier list.
+    // A compositional name is the longest a move can carry; the squad panel label must
+    // be its base name, not the whole qualifier list.
     fireEvent.click(screen.getByRole("button", { name: "Select Hippochamp" }));
     const long = screen
-      .getAllByRole("button", { name: /^Impact Touch \(/ })
+      .getAllByRole("button", { name: /^Piercing Shot \(/ })
       .find((b) => (b.getAttribute("aria-label") || "").includes(";"))!;
     expect(long).toBeTruthy();
     const full = long.getAttribute("aria-label")!.split(",")[0];
@@ -161,7 +192,8 @@ describe("Powerworks player flow", () => {
       screen.getByRole("button", { name: "Target Maintenance crawler M1" })
     );
     const label = document.querySelector(".pw-order-move")!;
-    expect(label).toHaveTextContent("Impact Touch");
+    expect(label).toHaveTextContent("Piercing Shot");
+    expect(label.textContent).not.toContain("(");
     // The label itself carries no qualifier list, and the full name is reachable.
     expect(label.textContent).not.toMatch(/;/);
     expect(label.getAttribute("title")).toMatch(/;/);

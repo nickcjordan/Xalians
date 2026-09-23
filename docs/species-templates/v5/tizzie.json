@@ -267,59 +267,6 @@
   ],
   "mechanisms": [
     {
-      "key": "tail-lure-gaze",
-      "name": "Tail-Lure Gaze",
-      "description": "Tail movement directs attention into eye contact.",
-      "instrument": "gaze",
-      "targeting": [
-        "other"
-      ],
-      "activation": {
-        "continuity": [
-          "discrete"
-        ]
-      },
-      "timing": {
-        "preparation": [
-          "immediate",
-          "brief"
-        ],
-        "recovery": [
-          "brief"
-        ]
-      },
-      "delivery": {
-        "signal": {
-          "approach": [
-            "stationary"
-          ],
-          "range": [
-            "short",
-            "medium"
-          ],
-          "reception": "visual"
-        }
-      },
-      "effects": [
-        {
-          "key": "outcome",
-          "type": "status",
-          "recipient": "target",
-          "onset": "instant",
-          "persistence": "lingering",
-          "likelihood": [
-            "likely",
-            "occasional"
-          ],
-          "duration": "brief",
-          "status": "entranced",
-          "removable": [
-            "disrupting"
-          ]
-        }
-      ]
-    },
-    {
       "key": "eye-contact-mind",
       "name": "Eye-Contact Mind Strike",
       "description": "Its psychic attack reaches a target whose eyes receive its signal.",
@@ -372,57 +319,27 @@
           ]
         }
       ]
-    },
-    {
-      "key": "tail-contact",
-      "name": "Tail Contact",
-      "description": "Its lure-bearing tail strikes at close contact.",
-      "instrument": "tail",
-      "targeting": [
-        "other"
-      ],
-      "activation": {
-        "continuity": [
-          "discrete"
-        ]
-      },
-      "timing": {
-        "preparation": [
-          "immediate",
-          "brief"
-        ],
-        "recovery": [
-          "repeatable",
-          "brief"
-        ]
-      },
-      "delivery": {
-        "contact": {
-          "approach": [
-            "stationary"
-          ],
-          "range": [
-            "contact"
-          ]
-        }
-      },
-      "effects": [
-        {
-          "key": "outcome",
-          "type": "harm",
-          "recipient": "target",
-          "onset": "instant",
-          "persistence": "resolved",
-          "likelihood": [
-            "consistent"
-          ],
-          "mechanism": "impact",
-          "intensity": [
-            18,
-            38
-          ]
-        }
+    }
+  ],
+  "channels": [
+    "gaze",
+    "mind"
+  ],
+  "conduits": {
+    "gaze": "psychic",
+    "mind": "psychic"
+  },
+  "acts": {
+    "exclude": [
+      "*/mend",
+      "gaze/shove",
+      "mind/shove"
+    ],
+    "output": {
+      "tail/strike": [
+        18,
+        38
       ]
     }
-  ]
+  }
 }

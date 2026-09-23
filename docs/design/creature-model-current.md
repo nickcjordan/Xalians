@@ -23,11 +23,12 @@ temperament: numeric bands      temperament: values
 signature: {type, key}           signature: {type, key}
 actions: guaranteed definitions actions: exactly four resolved actions
 passives: guaranteed definitions passives: automatic capabilities
-mechanisms: permitted domains   (generation permissions are not copied)
+channels / conduits / acts      (derivation inputs are not copied)
+mechanisms: authored extensions (generation permissions are not copied)
 ```
 
 - One species element. An ability has an optional element classification; omission means unclassified. No secondary-element roll, affinity strength, automatic adjacency permission, or effect-level element override.
-- Retire `traits`, `archetype`, `archetypeWeights`, `physiology.corporeality`, template `instruments`, `conduits`, and `actionPool`. They are rejected by the new schema.
+- Retire `traits`, `archetype`, `archetypeWeights`, `physiology.corporeality`, template `instruments`, and `actionPool`. They are rejected by the new schema. `conduits` returned on 2026-09-22 together with `channels` and `acts`, as the declarations the derived act space reads; see [derived acts](creature-derived-acts.md).
 - Keep anatomy, composition, body plan, covering, measurements, lifespan, chirality, diet, communication, respiration, environmental tolerance, capabilities and senses.
 - Innate protection is `physiology.protections[]`. Persistent wall/opening traversal is `physiology.traversal[]` (`phase` / `seep`). Neither is inferred from composition or element.
 - Attributes, graded senses and capabilities use nonnegative open-ended ratings. Zero means absence where appropriate. Reference benchmarks stay stable as new species appear; 100 is not a ceiling, percentile or physical ratio.
@@ -127,6 +128,8 @@ Removal matches explicit method intersections: cooling, smothering, warming, cle
 `stimulated` requires a named function. `protected` requires a protection descriptor. `phased` grants phase traversal; `dispersed` grants seep traversal. These do not implicitly grant immunity or concealment. Existing innate and temporary traversal grants coexist.
 
 ## Species permissions and constructive generation
+
+**Superseded 2026-09-22 by [derived acts](creature-derived-acts.md):** the body decides what a species can do. The compiler derives ordinary mechanisms from anatomy, declared channels and declared conduits through registry tables (instrument rows, medium rows, patterns), the species record narrows them with reasoned exclusions or re-bands them, and authored `mechanisms[]` extend the set with what the tables cannot say. The paragraphs below describe the authored-mechanism form, which is unchanged in shape.
 
 Mechanisms describe source-supported processes, not a whitelist of named finished moves. Each mechanism owns its instrument, optional element, targeting, continuity/timing domains, delivery-specific range/area permissions, and inherent effects. An effect's recipient is a scalar or a delivery-keyed set of permitted recipients. Likelihood is an authored domain; intensity is a value/band. Every semantic value comes from the shared catalog.
 

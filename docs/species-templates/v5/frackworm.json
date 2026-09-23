@@ -258,58 +258,6 @@
   ],
   "mechanisms": [
     {
-      "key": "ringed-drill",
-      "name": "Ringed Drill",
-      "description": "Its ringed head bores into a contacted target.",
-      "instrument": "jaws",
-      "targeting": [
-        "other"
-      ],
-      "activation": {
-        "continuity": [
-          "discrete"
-        ]
-      },
-      "timing": {
-        "preparation": [
-          "immediate",
-          "brief"
-        ],
-        "recovery": [
-          "repeatable",
-          "brief"
-        ]
-      },
-      "delivery": {
-        "contact": {
-          "approach": [
-            "stationary",
-            "closing"
-          ],
-          "range": [
-            "contact"
-          ]
-        }
-      },
-      "effects": [
-        {
-          "key": "outcome",
-          "type": "harm",
-          "recipient": "target",
-          "onset": "instant",
-          "persistence": "resolved",
-          "likelihood": [
-            "consistent"
-          ],
-          "mechanism": "piercing",
-          "intensity": [
-            65,
-            95
-          ]
-        }
-      ]
-    },
-    {
       "key": "pressure-slurry",
       "name": "Pressure Slurry",
       "description": "Vents force abrasive slurry against a selected target.",
@@ -360,57 +308,21 @@
           ]
         }
       ]
-    },
-    {
-      "key": "armored-body-crush",
-      "name": "Armored Body Crush",
-      "description": "Its massive segmented body presses a contacted target.",
-      "instrument": "body",
-      "targeting": [
-        "other"
-      ],
-      "activation": {
-        "continuity": [
-          "discrete"
-        ]
-      },
-      "timing": {
-        "preparation": [
-          "immediate",
-          "brief"
-        ],
-        "recovery": [
-          "repeatable",
-          "brief"
-        ]
-      },
-      "delivery": {
-        "contact": {
-          "approach": [
-            "stationary"
-          ],
-          "range": [
-            "contact"
-          ]
-        }
-      },
-      "effects": [
-        {
-          "key": "outcome",
-          "type": "harm",
-          "recipient": "target",
-          "onset": "instant",
-          "persistence": "resolved",
-          "likelihood": [
-            "consistent"
-          ],
-          "mechanism": "compression",
-          "intensity": [
-            55,
-            82
-          ]
-        }
+    }
+  ],
+  "channels": [],
+  "conduits": {
+    "vents": "sand"
+  },
+  "acts": {
+    "exclude": [
+      "*/drain"
+    ],
+    "output": {
+      "jaws/strike": [
+        65,
+        95
       ]
     }
-  ]
+  }
 }

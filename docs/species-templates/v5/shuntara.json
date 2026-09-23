@@ -338,57 +338,16 @@
           ]
         }
       ]
-    },
-    {
-      "key": "jaw-contact",
-      "name": "Jaw Contact",
-      "description": "Its jaws deliver a close bite.",
-      "instrument": "jaws",
-      "targeting": [
-        "other"
-      ],
-      "activation": {
-        "continuity": [
-          "discrete"
-        ]
-      },
-      "timing": {
-        "preparation": [
-          "immediate",
-          "brief"
-        ],
-        "recovery": [
-          "repeatable",
-          "brief"
-        ]
-      },
-      "delivery": {
-        "contact": {
-          "approach": [
-            "stationary"
-          ],
-          "range": [
-            "contact"
-          ]
-        }
-      },
-      "effects": [
-        {
-          "key": "outcome",
-          "type": "harm",
-          "recipient": "target",
-          "onset": "instant",
-          "persistence": "resolved",
-          "likelihood": [
-            "consistent"
-          ],
-          "mechanism": "piercing",
-          "intensity": [
-            20,
-            38
-          ]
-        }
+    }
+  ],
+  "channels": [],
+  "conduits": {},
+  "acts": {
+    "output": {
+      "jaws/strike": [
+        20,
+        38
       ]
     }
-  ]
+  }
 }

@@ -377,110 +377,17 @@
           ]
         }
       ]
-    },
-    {
-      "key": "horn-strike",
-      "name": "Horn Strike",
-      "description": "Its horns strike a contacted target.",
-      "instrument": "horns",
-      "targeting": [
-        "other"
-      ],
-      "activation": {
-        "continuity": [
-          "discrete"
-        ]
-      },
-      "timing": {
-        "preparation": [
-          "immediate",
-          "brief"
-        ],
-        "recovery": [
-          "repeatable",
-          "brief"
-        ]
-      },
-      "delivery": {
-        "contact": {
-          "approach": [
-            "stationary",
-            "closing"
-          ],
-          "range": [
-            "contact"
-          ]
-        }
-      },
-      "effects": [
-        {
-          "key": "outcome",
-          "type": "harm",
-          "recipient": "target",
-          "onset": "instant",
-          "persistence": "resolved",
-          "likelihood": [
-            "consistent"
-          ],
-          "mechanism": "piercing",
-          "intensity": [
-            25,
-            48
-          ]
-        }
-      ]
-    },
-    {
-      "key": "hand-strike",
-      "name": "Hand Strike",
-      "description": "Its hands strike at close contact.",
-      "instrument": "fists",
-      "targeting": [
-        "other"
-      ],
-      "activation": {
-        "continuity": [
-          "discrete"
-        ]
-      },
-      "timing": {
-        "preparation": [
-          "immediate",
-          "brief"
-        ],
-        "recovery": [
-          "repeatable",
-          "brief"
-        ]
-      },
-      "delivery": {
-        "contact": {
-          "approach": [
-            "stationary",
-            "closing"
-          ],
-          "range": [
-            "contact"
-          ]
-        }
-      },
-      "effects": [
-        {
-          "key": "outcome",
-          "type": "harm",
-          "recipient": "target",
-          "onset": "instant",
-          "persistence": "resolved",
-          "likelihood": [
-            "consistent"
-          ],
-          "mechanism": "impact",
-          "intensity": [
-            22,
-            42
-          ]
-        }
-      ]
     }
-  ]
+  ],
+  "channels": [
+    "secretion"
+  ],
+  "conduits": {
+    "secretion": "fire"
+  },
+  "acts": {
+    "exclude": [
+      "secretion/mend"
+    ]
+  }
 }

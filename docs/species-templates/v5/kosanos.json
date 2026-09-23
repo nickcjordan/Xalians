@@ -225,161 +225,6 @@
   ],
   "mechanisms": [
     {
-      "key": "trunk-blade",
-      "name": "Trunk Blade",
-      "description": "The trunk carries its heavy blade through a close cut.",
-      "instrument": "blades",
-      "targeting": [
-        "other"
-      ],
-      "activation": {
-        "continuity": [
-          "discrete"
-        ]
-      },
-      "timing": {
-        "preparation": [
-          "immediate",
-          "brief"
-        ],
-        "recovery": [
-          "repeatable",
-          "brief"
-        ]
-      },
-      "delivery": {
-        "contact": {
-          "approach": [
-            "stationary",
-            "closing"
-          ],
-          "range": [
-            "contact"
-          ]
-        }
-      },
-      "effects": [
-        {
-          "key": "outcome",
-          "type": "harm",
-          "recipient": "target",
-          "onset": "instant",
-          "persistence": "resolved",
-          "likelihood": [
-            "consistent"
-          ],
-          "mechanism": "cutting",
-          "intensity": [
-            55,
-            80
-          ]
-        }
-      ]
-    },
-    {
-      "key": "trunk-shove",
-      "name": "Trunk Shove",
-      "description": "Its heavy trunk pushes through a nearby target.",
-      "instrument": "trunk",
-      "targeting": [
-        "other"
-      ],
-      "activation": {
-        "continuity": [
-          "discrete"
-        ]
-      },
-      "timing": {
-        "preparation": [
-          "immediate",
-          "brief"
-        ],
-        "recovery": [
-          "repeatable",
-          "brief"
-        ]
-      },
-      "delivery": {
-        "contact": {
-          "approach": [
-            "stationary",
-            "closing"
-          ],
-          "range": [
-            "contact"
-          ]
-        }
-      },
-      "effects": [
-        {
-          "key": "outcome",
-          "type": "harm",
-          "recipient": "target",
-          "onset": "instant",
-          "persistence": "resolved",
-          "likelihood": [
-            "consistent"
-          ],
-          "mechanism": "impact",
-          "intensity": [
-            40,
-            68
-          ]
-        }
-      ]
-    },
-    {
-      "key": "jaw-bite",
-      "name": "Jaw Bite",
-      "description": "Long teeth bite at close contact.",
-      "instrument": "jaws",
-      "targeting": [
-        "other"
-      ],
-      "activation": {
-        "continuity": [
-          "discrete"
-        ]
-      },
-      "timing": {
-        "preparation": [
-          "immediate",
-          "brief"
-        ],
-        "recovery": [
-          "repeatable",
-          "brief"
-        ]
-      },
-      "delivery": {
-        "contact": {
-          "approach": [
-            "stationary"
-          ],
-          "range": [
-            "contact"
-          ]
-        }
-      },
-      "effects": [
-        {
-          "key": "outcome",
-          "type": "harm",
-          "recipient": "target",
-          "onset": "instant",
-          "persistence": "resolved",
-          "likelihood": [
-            "consistent"
-          ],
-          "mechanism": "piercing",
-          "intensity": [
-            35,
-            60
-          ]
-        }
-      ]
-    },
-    {
       "key": "body-press",
       "name": "Body Press",
       "description": "The heavy quadruped body bears down at close contact.",
@@ -430,5 +275,23 @@
         }
       ]
     }
-  ]
+  ],
+  "channels": [],
+  "conduits": {},
+  "acts": {
+    "output": {
+      "blades/strike": [
+        55,
+        80
+      ],
+      "trunk/strike": [
+        40,
+        68
+      ],
+      "jaws/strike": [
+        35,
+        60
+      ]
+    }
+  }
 }

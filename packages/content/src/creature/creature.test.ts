@@ -8,6 +8,9 @@ import { effectiveProtection, removableApplications, statusIntensity } from './s
 
 const copy = <T>(value: T): T => JSON.parse(JSON.stringify(value));
 const template = (): Species => SpeciesSchema.parse(fixture);
+// Anatomy now grants acts of its own. These tests measure authored permissions, so they
+// switch derivation off with a whole-body exclusion rather than re-deriving the numbers.
+const authoredOnly = (): Species => SpeciesSchema.parse({ ...fixture, acts: { exclude: ['*/*'] } });
 const action = (): AbilityTemplate => copy(template().actions[0]);
 const fireball = (): AbilityTemplate => ({ ...action(), element: 'fire', effects: [
   { key: 'heat', type: 'harm', mechanism: 'elemental', recipient: 'target', onset: 'instant', persistence: 'resolved', likelihood: 'consistent', intensity: [30,70] },
@@ -77,7 +80,7 @@ describe('redesigned ability contract', () => {
 
 describe('author once, construct valid combinations', () => {
   it('always returns four distinct actions, including pure support', () => {
-    const compiled = compileSpecies(fixture);
+    const compiled = compileSpecies(authoredOnly());
     for (let offset = 0n; offset < 30n; offset++) {
       const generated = compiled.abilities(max => offset % max);
       expect(generated.actions).toHaveLength(4);
@@ -99,7 +102,7 @@ describe('author once, construct valid combinations', () => {
     expect(identities.size).toBe(14);
   });
   it('rejects inadequate capacity even when mechanisms repeat with different names and output', () => {
-    const species = template();
+    const species = authoredOnly();
     const mechanism = species.mechanisms[0];
     delete mechanism.delivery.projectile;
     mechanism.effects[0].recipient = 'target';
@@ -107,7 +110,7 @@ describe('author once, construct valid combinations', () => {
     expect(() => compileSpecies(species)).toThrow(/four structurally distinct/);
   });
   it('rejects intensity-only duplicates of guaranteed actions before generation', () => {
-    const species = template();
+    const species = authoredOnly();
     const mechanism = species.mechanisms[0];
     mechanism.targeting = species.actions[0].targeting;
     mechanism.effects = [{ ...species.actions[0].effects[0], likelihood: ['consistent'], intensity: [100,200] }];
@@ -124,7 +127,7 @@ describe('author once, construct valid combinations', () => {
     expect(new Set(generated.actions.map(abilityIdentity)).size).toBe(4);
   });
   it('excludes self-only recipient aliases without pretending they provide extra capacity', () => {
-    const species = template();
+    const species = authoredOnly();
     species.mechanisms[0].targeting = ['self'];
     species.mechanisms[0].delivery = { contact: { approach: ['stationary'] } };
     species.mechanisms[0].effects[0].recipient = { contact: ['self','target'] };
@@ -132,7 +135,7 @@ describe('author once, construct valid combinations', () => {
     expect(() => compileSpecies(species)).toThrow(/four structurally distinct/);
   });
   it('partitions two area-capable effects without omitting or duplicating combinations', () => {
-    const species = template();
+    const species = authoredOnly();
     species.mechanisms[0].effects.push({ ...copy(species.mechanisms[0].effects[0]), key: 'cool', methods: ['cooling'] });
     const compiled = compileSpecies(species);
     const structures = new Set<string>();
@@ -154,6 +157,7 @@ describe('author once, construct valid combinations', () => {
   it('checks every physiological band, including guaranteed-only sources', () => {
     const species = template();
     species.actions[0].instrument = 'gaze';
+    species.channels = ['gaze', 'secretion'];
     species.physiology.senses.sight = [0,50];
     expect(() => compileSpecies(species)).toThrow(/throughout/);
     species.physiology.senses.sight = [1,50];
@@ -173,7 +177,7 @@ describe('author once, construct valid combinations', () => {
     expect(ActionTemplateSchema.safeParse(value).success).toBe(true);
   });
   it('keeps mandatory compound effects while varying only their approved likelihood', () => {
-    const species = template();
+    const species = authoredOnly();
     species.mechanisms[0].element = 'fire';
     species.mechanisms[0].effects = fireball().effects.map(effect => ({ ...effect, likelihood: ['likely', 'occasional'] }));
     delete species.mechanisms[0].delivery.projectile!.area;

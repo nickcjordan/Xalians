@@ -16,3 +16,21 @@ The guaranteed **Running Fang Launch** requires closing delivery and a brief pre
 Old swim `[0, 10]` remains weak and optional, while burrow is absent. The five temperament bands are grounded in energetic pursuit and pack company rather than retired runner/predator weights. Attribute bands retain the source-reviewed relative ratings but receive no old archetype or trait modifiers. Output bands were reviewed in the [cross-roster calibration](../../design/creature-v5-calibration.md). The four-action construction uses mechanism domains, not a finite finished-move list.
 
 `npm run check:creature-model -- docs/species-templates/v5/dromeus.json` and seeded canonical cohort testing cover schema/constructibility and deterministic identity; the audit addresses source permission separately.
+
+## Derived acts, 2026-09-22
+
+Channels declared: none. Dromeus has vocal and display communication and good sight, but the audit above excludes fire breath, an emitter and special perception, and nothing in the source uses voice or stare against another creature. Conduits: none, for the same reason: Magmuth and the fire element do not by themselves establish an outlet.
+
+Mechanisms removed as redundant: `fang-bite` (fangs strike, piercing), `foreclaw-rake` (claws strike, cutting), `toe-claw-strike` (talons strike, piercing) and `wing-body-check` (wings strike, impact). All four are exactly their derived acts. Nothing was kept; Dromeus had no mechanism the tables cannot express. The authored fang band, well above the derived default and the source of the guaranteed Running Fang Launch, is preserved as `acts.output`.
+
+Exclusions:
+
+- `*/drain` removed on 2026-09-22. Physical `drain` is now medium-only and Dromeus declares no conduit, so neither the jaws nor the fangs row derives one. The reading stands: Dromeus is a runner and a biter, and no source has it taking vitality from the bite.
+
+No exclusions remain, so the `acts.exclude` key was removed; `acts.output` stays.
+
+```
+dromeus: valid permissions, four distinct actions constructible
+  acts: 25 distinct on offer (jaws 4, fangs 1, claws 4, talons 4, wings 4, tail 5, hide 3); exclusions: none
+  naming over 24 seeds: 0.0% of ordinary actions carry a structural parenthetical, 0.0% of creatures have two ordinary actions sharing a base name
+```

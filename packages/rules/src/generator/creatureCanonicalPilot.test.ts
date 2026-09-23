@@ -1,7 +1,7 @@
 import { expect, it } from 'vitest';
 import { readdirSync, readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
-import { CreatureDataSchema, abilityIdentity } from '@xalians/content/creature';
+import { CreatureDataSchema, MIN_DISTINCT_ACTS, abilityIdentity } from '@xalians/content/creature';
 import { compileSpecies, generateCreatureDraft } from './creature.ts';
 
 it('constructs every staged species with guaranteed identity and distinct ordinary actions', () => {
@@ -15,6 +15,13 @@ it('constructs every staged species with guaranteed identity and distinct ordina
     const original = JSON.parse(readFileSync(fileURLToPath(new URL(`../../../../docs/species-templates/${file}`, import.meta.url)), 'utf8')) as { lore: { description: string } };
     expect(source.lore.description).toBe(original.lore.description);
     const compiled = compileSpecies(source);
+    // Anatomy grants. A ratified body offers a real act space, and no instrument the
+    // record lists sits idle unless its audit excluded it on purpose.
+    expect(compiled.acts.distinct, source.key).toBeGreaterThanOrEqual(MIN_DISTINCT_ACTS);
+    for (const instrument of compiled.species.physiology.anatomy) {
+      const silenced = compiled.acts.exclusions.some(value => value.split('/')[0] === instrument || value.split('/')[0] === '*');
+      if (!silenced) expect(compiled.acts.byInstrument[instrument], `${source.key}/${instrument}`).toBeGreaterThan(0);
+    }
     const variants = new Set<string>();
     for (let index = 0; index < 24; index++) {
       const seed = `${source.key}:${index}`;

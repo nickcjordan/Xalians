@@ -343,109 +343,17 @@
           ]
         }
       ]
-    },
-    {
-      "key": "pseudopod-hold",
-      "name": "Pseudopod Hold",
-      "description": "Pseudopods wrap and hold a contacted target.",
-      "instrument": "pseudopods",
-      "targeting": [
-        "other"
-      ],
-      "activation": {
-        "continuity": [
-          "ongoing"
-        ]
-      },
-      "timing": {
-        "preparation": [
-          "immediate",
-          "brief"
-        ],
-        "recovery": [
-          "brief",
-          "prolonged"
-        ]
-      },
-      "delivery": {
-        "contact": {
-          "approach": [
-            "stationary"
-          ],
-          "range": [
-            "contact"
-          ]
-        }
-      },
-      "effects": [
-        {
-          "key": "hold",
-          "type": "status",
-          "status": "restrained",
-          "recipient": "target",
-          "onset": "instant",
-          "persistence": "sustained",
-          "bound": "source",
-          "likelihood": [
-            "consistent",
-            "likely"
-          ],
-          "removable": [
-            "freeing"
-          ]
-        }
-      ]
-    },
-    {
-      "key": "pseudopod-pressure",
-      "name": "Pseudopod Pressure",
-      "description": "A blunt pseudopod drives force into a contacted target.",
-      "instrument": "pseudopods",
-      "targeting": [
-        "other"
-      ],
-      "activation": {
-        "continuity": [
-          "discrete"
-        ]
-      },
-      "timing": {
-        "preparation": [
-          "immediate",
-          "brief"
-        ],
-        "recovery": [
-          "repeatable",
-          "brief"
-        ]
-      },
-      "delivery": {
-        "contact": {
-          "approach": [
-            "stationary"
-          ],
-          "range": [
-            "contact"
-          ]
-        }
-      },
-      "effects": [
-        {
-          "key": "press",
-          "type": "harm",
-          "mechanism": "compression",
-          "recipient": "target",
-          "onset": "instant",
-          "persistence": "resolved",
-          "likelihood": [
-            "consistent"
-          ],
-          "intensity": [
-            25,
-            50
-          ]
-        }
-      ]
     }
-  ]
+  ],
+  "channels": [
+    "secretion"
+  ],
+  "conduits": {
+    "secretion": "chemical"
+  },
+  "acts": {
+    "exclude": [
+      "secretion/mend"
+    ]
+  }
 }

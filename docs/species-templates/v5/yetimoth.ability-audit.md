@@ -21,3 +21,24 @@ The fixed signature applies `shielded` to self with a prolonged, independently l
 The size and physiological bands were reviewed in the [cross-roster calibration](../../design/creature-v5-calibration.md). The temperament bands follow a slow, imposing guard that holds a line with others; they are not generated from retired territorial/pack trait percentages. The target recipient of each frost effect is fixed by the same authored mechanism domains that the compiler checks. There is no selective area filter.
 
 `npm run check:creature-model -- docs/species-templates/v5/yetimoth.json` passes. The future game may decide how `frozen` limits an affected participant; that does not stand in for the deferred wall capability. No species-specific catalog key or move whitelist was introduced.
+
+## Derived acts, 2026-09-22
+
+**Channels:** none. The species speaks vocally and by display, but no source shows the voice used against another creature, and the ice is formed from the air by the body rather than exhaled.
+
+**Conduits:** `hide: ice`, `body: ice`, `tusks: ice` and `fists: ice`. The v4 record paired `hide` and `fists` with ice; the guaranteed `yetimoth-defining` layers ice over the pelt, the guaranteed `yetimoth-encasement` and the authored `ice-encasement` form ice around an opponent from the body, the authored `ice-tusks` carries ice on the tusks, and the lore names ice-gauntleted fists and enormous tusks of pure ice. Ice is the species element, so none of the four needs foreign-element evidence.
+
+**Mechanisms removed as redundant:** `heavy-fists` (derived `fists/strike` impact, band preserved in `acts.output` at 55 to 85) and `ice-tusks` (derived `tusks/strike` through the ice conduit, band preserved at 45 to 75).
+
+**Mechanisms kept:** `ice-encasement`. It reaches by `field` at short to medium range, where the ice medium row's `frozen` bind comes from a contact snare, so forming ice around an opponent at a distance is not derivable.
+
+**Exclusions:** none. Anatomy grants four ice outlets and this audit subtracts nothing from them: the deferred item is the freestanding ice wall, which is not an act on a recipient and so was never in the derived space.
+
+**Projectile re-check, 2026-09-22.** The ice medium row gained `hurl`, so each of the four conduits now derives a projectile elemental harm. `ice-encasement` was re-checked against it and is kept: it delivers by `field` and its single effect is a `frozen` status on the target, where a derived hurl delivers by `projectile` and its single effect is harm. Different delivery mode and different effect type, so it is not redundant. Yetimoth authored no other projectile.
+
+**Check tool:**
+
+```
+  acts: 54 distinct on offer (tusks 14, trunk 4, fists 11, hide 11, body 14); exclusions: none
+  naming over 24 seeds: 0.0% of ordinary actions carry a structural parenthetical, 0.0% of creatures have two ordinary actions sharing a base name
+```

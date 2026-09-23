@@ -103,12 +103,14 @@ export const FINAL_ENCOUNTER_XP = 30;
 export const RECOVERY_STATION_HP = 10;
 /** Lever: the companions are generated once from these fixed seeds of the frozen release so a run is replayable. */
 export const COMPANION_SEEDS = {
-  graviclaw: "powerworks-graviclaw-1",
+  graviclaw: "powerworks-graviclaw-4",
   avilily: "powerworks-avilily-6",
   crystorn: "powerworks-crystorn-1",
   hippochamp: "powerworks-hippochamp-1",
 } as const;
 export const COMPANION_GENERATED_AT = "2026-09-21T00:00:00.000Z";
-/** Save format. Version 1 saves (frozen cards, use counters) cannot be replayed under these rules and are rejected. */
-export const SAVE_VERSION = 2;
+/** Save format. Version 1 saves (frozen cards, use counters) cannot be replayed under these rules and are rejected.
+ * Version 3 (2026-09-22): companions come from generation-0.7.0-1 and a new Graviclaw seed, so a version 2
+ * command history names moves the squad no longer has and is rejected rather than replayed wrong. */
+export const SAVE_VERSION = 3;
 export const SAVE_HISTORY_LIMIT = 2000;

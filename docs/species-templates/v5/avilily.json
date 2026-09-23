@@ -283,108 +283,15 @@
           ]
         }
       ]
-    },
-    {
-      "key": "beak-strike",
-      "name": "Beak Strike",
-      "description": "The closed flower-like beak makes close physical contact.",
-      "instrument": "beak",
-      "targeting": [
-        "other"
-      ],
-      "activation": {
-        "continuity": [
-          "discrete"
-        ]
-      },
-      "timing": {
-        "preparation": [
-          "immediate",
-          "brief"
-        ],
-        "recovery": [
-          "repeatable",
-          "brief"
-        ]
-      },
-      "delivery": {
-        "contact": {
-          "approach": [
-            "stationary"
-          ],
-          "range": [
-            "contact"
-          ]
-        }
-      },
-      "effects": [
-        {
-          "key": "outcome",
-          "type": "harm",
-          "recipient": "target",
-          "onset": "instant",
-          "persistence": "resolved",
-          "likelihood": [
-            "consistent"
-          ],
-          "mechanism": "impact",
-          "intensity": [
-            12,
-            28
-          ]
-        }
-      ]
-    },
-    {
-      "key": "talon-grip",
-      "name": "Talon Grip",
-      "description": "Talons strike or grip from the winged body.",
-      "instrument": "talons",
-      "targeting": [
-        "other"
-      ],
-      "activation": {
-        "continuity": [
-          "discrete"
-        ]
-      },
-      "timing": {
-        "preparation": [
-          "immediate",
-          "brief"
-        ],
-        "recovery": [
-          "repeatable",
-          "brief"
-        ]
-      },
-      "delivery": {
-        "contact": {
-          "approach": [
-            "stationary"
-          ],
-          "range": [
-            "contact"
-          ]
-        }
-      },
-      "effects": [
-        {
-          "key": "outcome",
-          "type": "harm",
-          "recipient": "target",
-          "onset": "instant",
-          "persistence": "resolved",
-          "likelihood": [
-            "consistent"
-          ],
-          "mechanism": "piercing",
-          "intensity": [
-            15,
-            35
-          ]
-        }
-      ]
     }
-  ]
+  ],
+  "channels": [
+    "secretion"
+  ],
+  "conduits": {},
+  "acts": {
+    "exclude": [
+      "secretion/mend"
+    ]
+  }
 }

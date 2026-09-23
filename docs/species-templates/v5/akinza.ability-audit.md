@@ -16,3 +16,21 @@ The defining source fact is stealth at night. `senses.special: ["lowlight"]` mak
 The 0–100 attribute and capability bands are the old source-reviewed values carried forward where no retired trait/archetype boost is required. The lowlight sense and five temperament bands were authored from the nocturnal, solitary hunting description. The old swim and burrow ranges cross zero; they are not required for the signature and remain weak optional locomotion, not a claim that all individuals swim or burrow. The generated four-action constraint is met by the three physical domains plus fixed stealth. Output bands were reviewed in the [cross-roster calibration](../../design/creature-v5-calibration.md).
 
 `npm run check:creature-model -- docs/species-templates/v5/akinza.json` and seeded canonical cohort testing cover schema/constructibility and deterministic identity. This audit records source judgment, which the compiler alone cannot prove.
+
+## Derived acts, 2026-09-22
+
+Channels declared: none. Akinza breathes gas and sees well, so the breath and gaze predicates hold, but no guaranteed action, passive or authored mechanism uses a channel and neither the description nor the art shows it fighting by breath or stare. The ice element grants no outlet; the audit above already excluded ice projection, so no conduit is declared. A species with no evidenced outlet gets none.
+
+Mechanisms removed as redundant: `foreclaw-cut` (claws strike, cutting), `jaw-bite` (jaws strike, piercing) and `tail-sweep` (tail strike, impact). Each is exactly the derived act for the same instrument, delivery and harm mechanism. Nothing was kept; Akinza had no mechanism the tables cannot express.
+
+Exclusions:
+
+- `*/drain` removed on 2026-09-22. Physical `drain` is now medium-only, and Akinza declares no conduit, so the jaws row no longer offers a drain at all. The reading stands: nothing in the description or art has Akinza taking vitality from what it bites, and the audit above excludes healing outright. There is nothing left to exclude.
+
+No exclusions remain, so the `acts` key was removed from the record.
+
+```
+akinza: valid permissions, four distinct actions constructible
+  acts: 16 distinct on offer (claws 4, jaws 4, tail 5, hide 3); exclusions: none
+  naming over 24 seeds: 0.0% of ordinary actions carry a structural parenthetical, 0.0% of creatures have two ordinary actions sharing a base name
+```
