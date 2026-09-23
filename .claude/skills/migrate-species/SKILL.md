@@ -18,7 +18,7 @@ Read these repository files from the working tree being changed:
 - [Canon and prose guidance](references/canon-and-prose.md): read when authoring descriptions, physiology, or encyclopedia prose.
 - [Physiology and presentation guidance](references/physiology-guidance.md): retained source-reading distinctions, separate from retired automatic trait/permission rules.
 
-The complete 32-species v5 roster and its frozen `generation-0.6.0-1` release are available. Existing `docs/species-templates/<key>.json` and deployed game consumers remain v4. Author future v5 species under `docs/species-templates/v5/`; a substantive change after the frozen release requires a new release ID. Do not feed v5 definitions into the v4 bundler or claim games consume them yet. If explicitly working on the deployed game format, inspect its actual schema and validator instead of copying fields from the redesign. Do not interrupt another agent's species work.
+The complete 32-species v5 roster is available. The current frozen canonical v5 release is `generation-0.7.0-4`; earlier archives remain replayable. Existing `docs/species-templates/<key>.json` and the legacy public generator remain v4, while Powerworks and Reclamation consume the frozen v5 roster. Author future v5 species under `docs/species-templates/v5/`; a substantive change needs a new release ID and separately scoped game adoption. Do not feed v5 definitions into the v4 bundler. If explicitly working on the deployed game format, inspect its actual schema and validator instead of copying fields from the redesign. Do not interrupt another agent's species work.
 
 ## Sources
 

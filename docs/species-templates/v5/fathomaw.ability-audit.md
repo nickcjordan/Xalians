@@ -18,7 +18,7 @@ No `channels` or `conduits` are proposed. Pressure adaptation, dual-medium breat
 
 | Source and family | Disposition | Evidence and boundary |
 | --- | --- | --- |
-| `jaws/crush` | Include | Held contact compression from the hydraulic mouth. It remains structurally distinct from some variants of the guaranteed release signature. |
+| `jaws/crush` | Include | Held contact compression from the hydraulic mouth, including the current table's brief or prolonged preparation. It remains structurally distinct from the guaranteed clamp-and-release signature. |
 | `jaws/snare` | Include | Nick approved a brief ordinary hold on a moving target. It applies restrained without requiring injury. |
 | `jaws/strike` | Exclude whole generic row, then extend | The row grants both piercing and compression. Broad blunt teeth do not pierce; a compression-only quick bite is supported and needs an authored mechanism because exclusions are per instrument/pattern. |
 | `jaws/rake` | Exclude | No cutting edge or raking teeth. |
@@ -47,7 +47,7 @@ The available deliveries are contact for jaws, fins and body; contact and a self
 - Guaranteed action: `Yield Point`, `jaws`, physical compression at stationary contact, fixed structure and release. Output band 62 to 78 remains the agreed proposal.
 - `acts.exclude`: `jaws/strike`, `jaws/rake`, `tail/crush`, `tail/snare`, `body/strike`, `body/crush`, `body/ward`. Every exclusion is justified above. No exclusion is for compactness or because another part has the same effect category.
 - Authored extensions: compression-only quick jaw strike; impact-only short body ram; held jaw squeeze with compression harm and restrained status. The first two recover supported variants that the shared exclusion granularity cannot isolate. The third expresses a coherent compound act absent from the table.
-- No `acts.output` override is selected yet. Compare derived bands and the three extension bands against the current strength and rating benchmarks during template authoring; do not mechanically preserve older draft numbers.
+- No `acts.output` override is selected yet. Compare derived bands and the three extension bands against the current strength and rating benchmarks during template authoring. The current table scales heavy physical harm at 0.8 of strength and light physical harm at 0.85; do not mechanically preserve older draft numbers.
 
 The included table acts plus extensions are the proposed species permission space, not a whitelist of complete moves assigned to every individual. Four selected actions per generated creature remain a separate generator rule. The shared fin row is v5-only while the pinned v4 registry remains unchanged.
 
