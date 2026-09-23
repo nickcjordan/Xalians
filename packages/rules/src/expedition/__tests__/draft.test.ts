@@ -1,7 +1,7 @@
 import { describe, test, it, expect } from 'vitest';
-import { buildDraftPools, rateForDraft, botDraft, validateKeep, poolMeanBlowOf, draftOptionsFromRules, DRAFT_POOL_SIZE, MAX_PER_SPECIES, SWEEP_EXPECTED_CREATURES, BOLSTER_EXPECTED_ALLIES } from '../draft.ts';
+import { buildDraftPools, rateForDraft, botDraft, validateKeep, poolMeanBlowOf, draftOptionsFromRules, DRAFT_POOL_SIZE, MAX_PER_SPECIES, SWEEP_EXPECTED_CREATURES, BOLSTER_EXPECTED_ALLIES, DRAFT_SPEED_REFERENCE, DRAFT_SPEED_VALUE } from '../draft.ts';
 import { DEFAULT_RULES } from '../expeditionRules.ts';
-import { roleOf } from '../creatureOnTable.ts';
+import { roleOf, speedOf } from '../creatureOnTable.ts';
 import { ROLE, SWEEP_DISCOUNT, BOLSTER_FLOOR } from '../expeditionInterpretation.ts';
 import { RIVALS } from '../expeditionBot.ts';
 import { ROSTER_SIZE, WORLDS_PER_MATCH } from '../expeditionInterpretation.ts';
@@ -135,15 +135,23 @@ describe('validateKeep', () => {
 });
 
 describe('the rating is hold plus role value', () => {
-	it('rates every creature as mean hold plus what its role is worth', () => {
+	it('rates every creature as mean hold plus what its role is worth plus its speed (pass 48)', () => {
 		const { poolA, frames } = buildDraftPools('rating-seed');
 		const poolMeanBlow = poolMeanBlowOf(poolA, frames, null);
 		poolA.forEach((record: any) => {
 			const r = rateForDraft(record, frames, { poolMeanBlow });
 			expect(r.role).toBe(roleOf(record, null));
 			expect(r.roleValue).toBeGreaterThanOrEqual(0);
-			expect(r.rating).toBeCloseTo(r.mean + r.roleValue, 5);
+			expect(r.speedValue).toBeCloseTo((speedOf(record) - DRAFT_SPEED_REFERENCE) * DRAFT_SPEED_VALUE, 5);
+			expect(r.rating).toBeCloseTo(r.mean + r.roleValue + r.speedValue, 5);
 		});
+	});
+
+	it('rates the faster of two otherwise identical creatures higher (pass 48)', () => {
+		const { poolA, frames } = buildDraftPools('rating-seed');
+		const base: any = poolA[0];
+		const fast = { ...base, attributes: { ...base.attributes, agility: Math.min(100, base.attributes.agility + 20), reflex: Math.min(100, base.attributes.reflex + 20) } };
+		expect(rateForDraft(fast, frames).rating).toBeGreaterThan(rateForDraft(base, frames).rating);
 	});
 
 	it('prices a strike at its mean attack and a sweep at the discounted attack times the expected count', () => {

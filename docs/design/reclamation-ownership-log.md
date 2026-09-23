@@ -64,7 +64,7 @@ What it reads, and where each effect kind lands (measured over the seed-7 pool, 
 4. **(Pass 44: done. The phone world head carries the temperature scale and readout, each card its speed; the log stays behind ≡ and the attribute marks in the creature's reading.)** **Advanced mode is Simple on a phone.** `advanced-390` differs from `simple-390` only by a temperature range: the log and the inspector, its two best features, are both absent at 390. Either give them a phone form or say the mode is desktop-only.
 5. **(Pass 38: done.)** The site navbar and masthead are gone from the match, and the top bar is one row. **The first viewport on a phone is all chrome.** Breadcrumb, mode toggle, rival name, sound, round header, world chips, two score strips, phase badge, turn line and a three-line instruction, before any world panel.
 6. **The three borrowed effect kinds** (displace, transfer, suppress, 261 actions) still read as plain attacks. Act flip makes a creature's second act matter, which changes the case for these.
-7. **Fire is a dead element and dromeus a dead species** in the draft. Read it pooled first.
+7. **(Pass 48: done for dromeus, akinza and avilily; imprit is still cut most of the time.)** **Fire is a dead element and dromeus a dead species** in the draft. Read it pooled first.
 8. **(Pass 46: done. The record schema is the published range; a test holds the game's scale to it.)** **The generator's attribute ranges are not published anywhere the game can read.**
 9. **No human has played a full Proving.** The instrument exists (hot-seat, passes 20 to 23).
 
@@ -888,3 +888,29 @@ The mirror (same creatures both sides) reads A 53.5 pooled: with identical creat
 **Not changed, recorded:** "every ruling reads the same" and "round three is a formality when the rival needs one of three" (arc 3). The arc problem is structural, and the next pass's measurement bears on it: speed is worth about three times any hold attribute.
 
 **Verified:** 1589 web tests (one flaky art-registry test passes alone); `reclamation-shift`, `reclamation-proving` (4 of 4), `reclamation-actflip`, `reclamation-hotseat` green; the full play-through re-shot at 1440 and 390 and read.
+
+### Pass 48 (2026-09-23): speed had become the whole game, and the draft could not see it
+
+**The measurement.** Pass 46's attribute lanes were selection-biased, so this pass asked causally: the same squads for both sides, side A's creatures given +15 in one attribute, proctor against proctor, 3000 matches per row on seeds 7, 13 and 21 (`devtools/attributeProbe.ts`, now tracked). With independent squads, as in real play, at the shipped blow size of 2.0:
+
+| +15 in | win rate change |
+|---|---|
+| agility or reflex (speed +7.5) | **+9.0** |
+| strength | +5.3 |
+| vitality (hold +0.74 after compression) | +3.1 |
+| intelligence | +2.1 |
+| willpower | +0.4 |
+| charisma | -0.4 |
+| instinct | -1.2 |
+
+(Each row is +/- 1.8 against a baseline also +/- 1.8.) Speed decides who lands first, and at that blow size the first to land often downs the other before it acts, so the fast and fragile creatures the creature system builds were not fragile enough to pay for it. The same blow size had downs at 5.2 to 5.5 against a band of 3 to 5.
+
+**Change 1: `MAGNITUDE_SCALE` 2.0 to 1.8.** Swept on three seeds at 1000 matches (the table is in the constant's comment). 1.8 is where downs return to the band (4.4 to 4.8) with flips still in theirs (26.5 to 27.9), the criterion pass 25 used. At 1.8, +15 speed buys 7.5 points and +15 in a hold attribute about 5.0 (vitality 4.7, resilience 5.1, endurance 5.2): speed leads hold by 1.5 to 1 per attribute point, down from 2.9 to 1. Validation, seed 7: the third round now changes the leader in 49.5 percent of games (was 43.5), and half are settled only at the final Ruling (was 43.5).
+
+**Change 2: the draft prices speed.** The rating was mean hold plus role value, and the four species the draft never kept (dromeus, imprit, akinza, avilily; kept 9 to 16 percent) are the four fastest in the pool, with keeper win rates of 44 to 58 percent. `rateForDraft` now adds `(speed - 50) * DRAFT_SPEED_VALUE`, and 0.15 hold per speed point is the ratio the probe measured at 1.8. **Checked by outcome, not only keep rate:** a proctor drafting with the speed value beats one drafting without it **52.9 percent +/- 1.8** (3000 games, each side from its own pool, pools alternated). Dead species went from four to one (imprit, 15 percent; its keeper win rate is 52 percent, so it is still undervalued), and species outside the keep band went from 23 to 19.
+
+**Friction for the creature system (reported, not changed):** at this table, intelligence, willpower, charisma and instinct buy between -1.2 and +2.1 points per +15, which is within noise of nothing. The intro's "Every attribute a job" names a job for each, and those jobs are real but small. Either the table gives them more to do or the claim softens. Charisma scales presences (shield and bolster), which are 16 percent of sends, so its weight is diluted by how rarely it acts.
+
+**Not changed:** simple mode still does not print speed on the cards. The preview's forecast already includes who lands first, so its consequences are shown even when the number is not.
+
+**Verified:** 588 rules tests (the rating test now includes speed, plus a new test that a faster copy rates higher), typecheck clean, 1586 web tests, the four table checks green, and the validation report regenerated.

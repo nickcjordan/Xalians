@@ -36,6 +36,21 @@ export const SWEEP_EXPECTED_CREATURES = 3;
 export const BOLSTER_EXPECTED_ALLIES = 2;
 
 /*
+	PASS 48. What a point of speed is worth, in hold. The rating priced hold and role value
+	and nothing else, and speed decides who lands first. Measured causally (the same squads,
+	one side given +15 in one attribute, proctor against proctor, 3000 matches at the pass 48
+	magnitude, 1.8): +15 agility, which is +7.5 speed, bought 7.5 points of win rate; +15 in a
+	hold attribute (vitality, resilience or endurance, 4.7 / 5.1 / 5.2 points), which is +0.74
+	hold after compression, bought about 5.0. So a point of speed is worth about 0.15 hold,
+	read against the middle of the attribute range. Each reading is +/- 1.8 on 3000 matches.
+	The four species the draft never kept (dromeus, imprit, akinza, avilily) are the four
+	fastest in the pool, with keeper win rates of 44 to 58 percent: they were cut for the
+	one thing the rating did not see.
+*/
+export const DRAFT_SPEED_REFERENCE = 50;
+export const DRAFT_SPEED_VALUE = 0.15;
+
+/*
 	Both sides draft from a pool of DRAFT_POOL_SIZE and keep twelve (ROSTER_SIZE). The
 	number itself lives in expeditionInterpretation.ts with every other lever (docs/design/
 	reclamation-base-redesign.md assumption 15) and is re-exported here so the draft's own
@@ -132,6 +147,8 @@ export interface DraftOptions {
 	distinctSpecies?: boolean;
 	rules?: Partial<Rules> | null;
 	poolMeanBlow?: number;
+	// pass 48: hold per point of speed (DRAFT_SPEED_VALUE); 0 drafts as before pass 48
+	speedValue?: number;
 }
 
 /*
@@ -242,6 +259,8 @@ export interface DraftRating {
 	homes: number;
 	role: RoleType;
 	roleValue: number;
+	// pass 48: speed, priced in hold (see DRAFT_SPEED_VALUE)
+	speedValue: number;
 	rating: number;
 	byWorld: DraftWorldRow[];
 }
@@ -254,7 +273,7 @@ export interface DraftRating {
 	prepare() exactly as the bench and figures read a creature - no formula of this
 	module's own.
 
-	RATING = mean hold + role value (2026-09-09, docs/design/reclamation-base-redesign.md
+	RATING = mean hold + role value + speed value (pass 48; the first two 2026-09-09, docs/design/reclamation-base-redesign.md
 	assumption 4). Rating by hold alone left 21 of 29 species outside the 30 to 90 percent
 	keep band, because a creature's whole contribution to a world is its hold PLUS what
 	its one role does there, and the draft was pricing only the first half. Role value, in
@@ -312,7 +331,9 @@ export function rateForDraft(record: XalianRecord, frames: Frame[], options: Dra
 		roleValue = meanLift * BOLSTER_EXPECTED_ALLIES + bolsterFloor;
 	}
 
-	return { best, mean, homes, role, roleValue, rating: mean + roleValue, byWorld };
+	const perSpeed = typeof options.speedValue === 'number' ? options.speedValue : DRAFT_SPEED_VALUE;
+	const speedValue = (speedOf(record) - DRAFT_SPEED_REFERENCE) * perSpeed;
+	return { best, mean, homes, role, roleValue, speedValue, rating: mean + roleValue + speedValue, byWorld };
 }
 
 /*
@@ -402,7 +423,7 @@ export function botDraft(
 	const poolMeanBlow = poolMeanBlowOf(pool, frames, rules);
 	const ratings = pool.map((record) => ({
 		record,
-		rating: rateForDraft(record, frames, { rules, poolMeanBlow }),
+		rating: rateForDraft(record, frames, { rules, poolMeanBlow, speedValue: options.speedValue }),
 	}));
 
 	const scored: ScoredDraftCandidate[] = ratings.map(({ record, rating }) => {
