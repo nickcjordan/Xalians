@@ -420,6 +420,17 @@ class ReclamationPage extends React.Component {
 		}));
 	};
 
+	// pass 38: Leave keeps the Proving (it is saved on every step) and returns to the intro, which offers to resume it
+	leaveMatch = () => {
+		const saved = loadMatch();
+		this.setState({ match: null, resume: null, saved: saved && saved.match && saved.match.phase !== 'matchEnd' ? saved : null });
+	};
+
+	abandonMatch = () => {
+		clearMatch();
+		this.setState({ match: null, resume: null, saved: null });
+	};
+
 	discardSaved = () => {
 		clearMatch();
 		this.setState({ saved: null });
@@ -504,18 +515,25 @@ class ReclamationPage extends React.Component {
 				? resume.squadIds.map((id) => resume.rosters.A.find((r) => r.id === id)).filter(Boolean)
 				: null;
 			return (
+				/*
+					PASS 38. Play is immersive: the site navigation and the masthead give way to the
+					game, which carries its own visible way out (Leave, in the top bar). The mode
+					switch and the sound move into the table's settings panel; the rival's name
+					moves onto its score.
+				*/
 				<div className="g-console rec-console rec-console--match" data-terminal="field">
-					<XalianNavbar />
 					<div className="g-shell rec-shell rec-shell--match">
-						<header className="rec-masthead">
-							<span className="g-kicker">Kozrak's Charter</span>
-							<h1 className="rec-masthead-title">Reclamation</h1>
-							<ModeSwitch mode={mode} onChange={this.setMode} compact />
-							<span className="rec-masthead-rival" data-masthead-rival>against the {rival.name}</span>
-							{this.renderSoundToggle()}
-							<span className="g-mono rec-masthead-seed">seed {seed}</span>
-						</header>
+						<h1 className="sr-only">Reclamation, against the {rival.name}</h1>
 						<ReclamationMatch
+							onLeave={this.leaveMatch}
+							onAbandon={this.abandonMatch}
+							rivalName={readHotSeat() ? null : rival.name}
+							settings={(
+								<>
+									<ModeSwitch mode={mode} onChange={this.setMode} />
+									{this.renderSoundToggle()}
+								</>
+							)}
 							key={matchKey}
 							initialMatch={match}
 							initialLog={resume ? resume.log : null}

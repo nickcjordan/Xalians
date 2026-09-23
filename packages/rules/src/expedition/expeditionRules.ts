@@ -879,6 +879,56 @@ function runResolveAndJudge(state: MatchState): MatchState {
 }
 
 /*
+	forecastClash(state, handler) -> { [recordId]: { hold, downed } } | null
+
+	PASS 38. What the Clash would leave standing if the round ended now, as `handler` can
+	know it: the engine's own resolve and the Ruling's bolster recovery, run on a copy of
+	the board with the opponent's hidden sends taken off, so the forecast never reveals
+	what the table hides. Two blind critics watched a world read 32 and rule at 20, and a
+	creature marked to fall survive because its slower attacker fell first; a forecast
+	built from each attack alone could not know the order, the shields or the recovery.
+	Resolve draws no randomness, so with nothing hidden the forecast is the Ruling exactly
+	(forecastClash.test.ts holds it to that). Every entry on the copy is keyed, downed
+	ones at hold 0. Null outside Deploy. The state passed in is not touched.
+*/
+export interface ClashForecast { hold: number; downed: boolean }
+export function forecastClash(state: MatchState, handler: Seat): Record<string, ClashForecast> | null {
+	if (!state || state.phase !== 'deploy') {
+		return null;
+	}
+	const opponent = otherPlayer(handler);
+	const board = cloneBoard(state.board);
+	Object.keys(board).forEach((siteId) => {
+		board[siteId][opponent] = board[siteId][opponent].filter((e) => !e.hidden);
+		(['A', 'B'] as Seat[]).forEach((player) => {
+			board[siteId][player] = board[siteId][player].map((e) => ({ ...e, statuses: (e.statuses || []).map((a) => ({ ...a })) }));
+		});
+	});
+	const copy: MatchState = {
+		...state,
+		phase: 'resolve',
+		turn: null,
+		players: { A: { ...state.players.A }, B: { ...state.players.B } },
+		board,
+		resolutionLog: [],
+	};
+	const resolved = resolve(copy);
+	applyBolsterRecovery(resolved);
+	const out: Record<string, ClashForecast> = {};
+	currentFrame(state).sites.forEach((site) => {
+		(['A', 'B'] as Seat[]).forEach((player) => {
+			board[site.id][player].forEach((e) => {
+				const after = resolved.board[site.id][player].find((x) => x.recordId === e.recordId);
+				out[e.recordId] = after && !after.downed
+					? { hold: currentHoldOf(resolved, after), downed: false }
+					: { hold: 0, downed: true };
+			});
+		});
+	});
+	return out;
+}
+
+/*
 	stakeWorld(state, handler, siteId) -> new state, or null
 
 	THE STAKE (docs/design/reclamation-base-redesign.md assumption 22), the first comeback

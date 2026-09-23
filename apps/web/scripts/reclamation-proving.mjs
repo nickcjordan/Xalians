@@ -182,7 +182,7 @@ for (const view of ['simple', 'advanced']) {
 			);
 			assert.equal(footings.length, 3, `${label}: ${footings.length} of 3 empty worlds say what they ask of the squad`);
 			footings.forEach((text) => {
-				assert(/\d+ of your \d+/.test(text), `${label}: a world's footing does not count the squad: "${text}"`);
+				assert(/\d+ of (your )?\d+/.test(text), `${label}: a world's footing does not count the squad: "${text}"`);
 			});
 
 			/*

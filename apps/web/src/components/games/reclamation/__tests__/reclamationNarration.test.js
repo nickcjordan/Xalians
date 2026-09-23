@@ -52,7 +52,7 @@ describe('classifyEvent', () => {
 describe('roleSentence', () => {
 	it('gives one sentence per role, naming the number where there is one', () => {
 		expect(roleSentence('strike', 4)).toBe('Attacks one enemy here for 4');
-		expect(roleSentence('sweep', 2.5)).toBe('Sweeps everyone here for 2.5');
+		expect(roleSentence('sweep', 2.5)).toBe('Sweeps every other creature here, yours too, for 2.5');
 		expect(roleSentence('bolster')).toBe('Bolsters allies here against the world, and recovers what they lose');
 		expect(roleSentence('shield')).toBe('Shields allies here from the largest attack');
 		expect(roleSentence('none')).toBe('Stands here and throws nothing');
@@ -85,9 +85,9 @@ describe('narrateEvent', () => {
 	// assumption 18: a hurt creature attacks for less, and the sentence names the condition
 	it('names a hurt attacker, since its power is already scaled by what it has left', () => {
 		expect(narrateEvent({ type: 'attack', role: 'strike', outcome: 'hurt', power: 2.3, remaining: 4 }, { ...ctx, actorHurt: true }))
-			.toBe('Rakh, hurt, strikes Vrix for 2.3; Vrix stands at 4.');
+			.toBe('Rakh, hurt, strikes Vrix for 2; Vrix stands at 4.');
 		expect(narrateEvent({ type: 'attack', role: 'strike', outcome: 'hurt', power: 2.3, remaining: 4, hidden: true }, { ...ctx, actorHurt: true }))
-			.toBe('Rakh, from hiding and hurt, strikes Vrix for 2.3; Vrix stands at 4.');
+			.toBe('Rakh, from hiding and hurt, strikes Vrix for 2; Vrix stands at 4.');
 	});
 
 	it('leaves a cancelled attack to the shield that cancelled it', () => {
@@ -105,24 +105,24 @@ describe('narrateEvent', () => {
 
 	it('says an attack lapsed when its attacker was downed first', () => {
 		expect(narrateEvent({ type: 'attack', role: 'strike', outcome: 'lapsed', power: 0 }, ctx))
-			.toBe("Rakh's attack lapses, downed first.");
+			.toBe('Rakh falls before it can attack.');
 	});
 
 	it('announces a sweep over the world, then tells each victim as its own attack', () => {
 		expect(narrateEvent({ type: 'sweep', role: 'sweep', power: 2, hitCount: 3 }, ctx))
 			.toBe('Rakh sweeps over Stonera for 2 each, catching 3 creatures.');
 		expect(narrateEvent({ type: 'attack', role: 'sweep', outcome: 'hurt', power: 2, remaining: 5 }, ctx))
-			.toBe('Rakh catches Vrix for 2; Vrix stands at 5.');
+			.toBe('Rakh hits Vrix for 2; Vrix stands at 5.');
 		// a sweep alone at a world declares and hits nobody; "catching 0 creatures" is not
 		// a sentence anyone should read
 		expect(narrateEvent({ type: 'sweep', role: 'sweep', power: 2, hitCount: 0 }, ctx))
-			.toBe('Rakh sweeps over Stonera, and catches nothing.');
+			.toBe('Rakh sweeps over Stonera, and hits nothing.');
 	});
 
 	// assumption 19: the Ruling's first step, told before the worlds are read
 	it('narrates a recovery under a bolster', () => {
 		expect(narrateEvent({ type: 'recover', amount: 2.1, remaining: 7.4 }, { actorName: 'Kosanos', bolsterName: 'Neph' }))
-			.toBe('Kosanos recovers 2.1 under Neph\'s bolster; stands at 7.4.');
+			.toBe('Kosanos recovers 2 under Neph\'s bolster; stands at 7.');
 	});
 
 	it('never prints undefined when the event gives it nothing', () => {

@@ -308,17 +308,20 @@ export function ghostPlanFor(publicState, record, site, seat, sentIndex) {
 	const role = prepared.role;
 	const lines = [];
 	let targetRecordId = null;
+	// pass 38: the same facts as the lines, as data, for the one sentence each world prints
+	const effect = { victims: [], target: null, blocked: null, allies: 0, restored: 0 };
 
 	if (role === ROLE.STRIKE || role === ROLE.SWEEP) {
 		if (role === ROLE.SWEEP) {
 			const caught = units.filter((u) => u.site.id === site.id);
 			if (caught.length === 0) {
-				lines.push('nothing stands here to catch');
+				lines.push('nothing stands here to hit');
 			} else {
 				caught.forEach((victim) => {
 					const amount = attackPower(publicState, record, prepared, victim.record);
 					const hold = livingHold(victim);
 					const downs = amount >= hold;
+					effect.victims.push({ name: speciesLabel(victim.record), mine: victim.seat === seat, amount, downs });
 					lines.push(`${downs ? 'downs' : `takes ${formatHold(amount)} off`} ${speciesLabel(victim.record)}${victim.seat === seat ? ' (yours)' : ''}`);
 				});
 			}
@@ -330,6 +333,7 @@ export function ghostPlanFor(publicState, record, site, seat, sentIndex) {
 				targetRecordId = target.recordId;
 				const amount = attackPower(publicState, record, prepared, target.record);
 				const hold = livingHold(target);
+				effect.target = { name: speciesLabel(target.record), amount, downs: amount >= hold };
 				lines.push(amount >= hold
 					? `downs ${speciesLabel(target.record)}`
 					: `takes ${formatHold(amount)} off ${speciesLabel(target.record)}`);
@@ -356,6 +360,7 @@ export function ghostPlanFor(publicState, record, site, seat, sentIndex) {
 			lines.push('nothing here to cancel yet');
 		} else {
 			targetRecordId = worst.enemy.recordId;
+			effect.blocked = { name: speciesLabel(worst.enemy.record), amount: worst.amount };
 			lines.push(`would cancel ${speciesLabel(worst.enemy.record)}'s ${formatHold(worst.amount)}`);
 		}
 	} else if (role === ROLE.BOLSTER) {
@@ -368,6 +373,8 @@ export function ghostPlanFor(publicState, record, site, seat, sentIndex) {
 			});
 			restored += Math.max(0, lifted.hold - ally.prepared.hold);
 		});
+		effect.allies = allies.length;
+		effect.restored = restored;
 		lines.push(allies.length === 0
 			? 'no ally here to lift yet'
 			: `gives ${formatHold(restored)} hold back to ${allies.length} all${allies.length === 1 ? 'y' : 'ies'} here`);
@@ -382,8 +389,60 @@ export function ghostPlanFor(publicState, record, site, seat, sentIndex) {
 		blowMagnitude: prepared.blowMagnitude,
 		roleLine: roleSentence(role, prepared.blowMagnitude),
 		lines,
+		effect,
 		targetRecordId,
 	};
+}
+
+/*
+	PASS 38. ghostSummary(plan, fmt) -> { text, warn } | null
+
+	What this send would do at THIS world, in one sentence, from the engine's own numbers.
+	The role's generic sentence ("sweeps every other creature here, for 10") printed the
+	same words on all three worlds and a base figure the matchup then changed (10 on the
+	card, 6 in the Clash), and two blind critics named that the worst problem on the table.
+	`warn` marks a send that would only hurt your own side or do nothing.
+*/
+export function ghostSummary(plan, fmt) {
+	if (!plan) {
+		return null;
+	}
+	const e = plan.effect || { victims: [] };
+	if (plan.role === ROLE.SWEEP) {
+		const rivals = e.victims.filter((v) => !v.mine);
+		const own = e.victims.filter((v) => v.mine);
+		if (e.victims.length === 0) {
+			return { text: 'Nothing here to hit yet', warn: false };
+		}
+		if (rivals.length === 0) {
+			return { text: `No rival here. It would hit only your own ${own.length === 1 ? 'creature' : own.length}`, warn: true };
+		}
+		const downs = rivals.filter((v) => v.downs).length;
+		let text = rivals.length === 1
+			? `${rivals[0].downs ? 'Downs' : `Takes ${fmt(rivals[0].amount)} off`} ${rivals[0].name}`
+			: `Hits ${rivals.length} rival creatures${downs > 0 ? `, downs ${downs}` : ''}`;
+		if (own.length > 0) {
+			text += `, and ${own.length === 1 ? 'one' : own.length} of yours`;
+		}
+		return { text, warn: own.length > 0 };
+	}
+	if (plan.role === ROLE.STRIKE) {
+		if (!e.target) {
+			return { text: 'No rival here to strike', warn: true };
+		}
+		return { text: e.target.downs ? `Downs ${e.target.name}` : `Takes ${fmt(e.target.amount)} off ${e.target.name}`, warn: false };
+	}
+	if (plan.role === ROLE.SHIELD) {
+		return e.blocked
+			? { text: `Blunts ${e.blocked.name}'s ${fmt(e.blocked.amount)}`, warn: false }
+			: { text: 'Nothing here to blunt yet', warn: false };
+	}
+	if (plan.role === ROLE.BOLSTER) {
+		return e.allies > 0
+			? { text: `Gives ${fmt(e.restored)} back to ${e.allies === 1 ? 'your creature' : `${e.allies} of yours`} here`, warn: false }
+			: { text: 'No creature of yours here to lift yet', warn: false };
+	}
+	return null;
 }
 
 // the printed instinct sentence's noun phrase, per the design doc's targeting table
@@ -545,6 +604,34 @@ export function threatsFor(publicState, you) {
 		}
 	});
 	return threats;
+}
+
+/*
+	PASS 38. ownSweepsFor(publicState, you) -> { recordId: amount } for each of your creatures
+	standing at a world where another of your creatures sweeps. A sweep hits every other
+	creature at its world, your own included (the design's friendly fire), and a blind critic
+	watched Kosanos drop from 7 to 1 on a world with no rival and read it as a bug. The number
+	is the same attackPower the enemy forecast uses, so the two marks are comparable.
+*/
+export function ownSweepsFor(publicState, you) {
+	const units = flattenBoard(publicState);
+	const hits = {};
+	units.filter((u) => u.seat === you).forEach((unit) => {
+		let total = 0;
+		units.forEach((other) => {
+			if (other.seat !== you || other.recordId === unit.recordId || other.site.id !== unit.site.id) {
+				return;
+			}
+			if (!other.prepared || other.prepared.role !== 'sweep' || !other.prepared.blow) {
+				return;
+			}
+			total += Math.max(0, attackPower(publicState, other.record, other.prepared, unit.record));
+		});
+		if (total > 0) {
+			hits[unit.recordId] = total;
+		}
+	});
+	return hits;
 }
 
 // one clause for a threat, for the figure's mark and its tooltip
