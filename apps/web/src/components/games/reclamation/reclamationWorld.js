@@ -2,6 +2,7 @@ import React from 'react';
 import ReclamationFigure, { ReclamationSilhouette, HoldMeter } from './reclamationFigure';
 import { RoleGlyph } from './reclamationGlyphs';
 import { formatHold, formatHoldShown, countWord } from './reclamationNarration';
+import { ghostSummary } from './reclamationPreview';
 import { elementOf } from './reclamationVocabulary';
 
 /*
@@ -90,8 +91,8 @@ export function EnvironmentScale({ site, ghost }) {
 		: (tol.breathes.length > 0 && env.medium && !tol.breathes.includes(env.medium)) ? 'cannot'
 			: (env.medium && !tol.ambientMedia.includes(env.medium)) ? 'strained' : 'ok';
 	const medium = env.medium ? String(env.medium) : 'unknown';
-	const bandText = hasBand ? `${t.min} to ${t.max} C` : 'unrecorded band';
-	const ownText = own ? `; the creature tolerates ${own.min} to ${own.max} C` : '';
+	const bandText = hasBand ? `${t.min} to ${t.max}\u00b0C` : 'unrecorded band';
+	const ownText = own ? `; the creature tolerates ${own.min} to ${own.max}\u00b0C` : '';
 	return (
 		<div className={`rec-env${ghost ? ` rec-env--${ghost.strainLevel}` : ''}`} title={`${medium}, ${bandText}${ownText}`}>
 			<span className={`rec-env-medium rec-env-medium--${medium}${mediumOk ? ` rec-env-medium--${mediumOk}` : ''}`} aria-label={`${medium} medium`}>
@@ -107,7 +108,7 @@ export function EnvironmentScale({ site, ghost }) {
 					<span className="rec-env-band rec-env-band--creature" style={{ transform: `translateX(${pctOnScale(own.min)}cqw)`, width: `${Math.max(0.8, pctOnScale(own.max) - pctOnScale(own.min))}%` }} />
 				)}
 			</span>
-			<span className="rec-env-readout g-mono">{hasBand ? `${t.min} to ${t.max} C` : 'no band'}</span>
+			<span className="rec-env-readout g-mono">{hasBand ? `${t.min} to ${t.max}\u00b0C` : 'no band'}</span>
 		</div>
 	);
 }
@@ -135,7 +136,7 @@ export function EnvironmentScale({ site, ghost }) {
 	on the panel, and it disappears the moment a creature stands here, because from then
 	on the figures and the balance bar are the better answer.
 */
-export function WorldFooting({ footing, world }) {
+export function WorldFooting({ footing, world, compact, detail }) {
 	if (!footing || !footing.of) {
 		// no bench to measure against (a resumed match mid-resolution, say): say the one
 		// true thing rather than an arithmetic of nothing
@@ -143,6 +144,30 @@ export function WorldFooting({ footing, world }) {
 	}
 	const { comfortable, severe, native, of } = footing;
 	const hostile = of - comfortable;
+	/*
+		PASS 38. In simple mode the footing keeps its purpose (which world suits this squad)
+		in the fewest words: how many are at ease, and how many are at home. The strain
+		breakdown and the "half again" arithmetic are advanced mode and the help panel.
+	*/
+	if (compact) {
+		return (
+			<div className="rec-world-footing rec-world-footing--compact" data-world-footing>
+				<span className="rec-world-footing-line" data-footing-ease>
+					<b className="g-mono rec-world-footing-big">{comfortable}</b> of your {of} hold well here
+				</span>
+				{detail && native > 0 && (
+					<span className="rec-world-footing-line rec-world-footing-line--home" data-footing-home>
+						<b className="g-mono">{native}</b> {native === 1 ? 'calls' : 'call'} it home
+					</span>
+				)}
+				{detail && hostile > 0 && (
+					<span className="rec-world-footing-line rec-world-footing-line--cost" data-footing-cost>
+						<b className="g-mono">{hostile}</b> strained{severe > 0 ? `, ${severe} severely` : ''}
+					</span>
+				)}
+			</div>
+		);
+	}
 	return (
 		<div className="rec-world-footing" data-world-footing>
 			<span className="rec-world-footing-head">unclaimed</span>
@@ -244,7 +269,8 @@ function ReclamationWorld({
 	recommendedSiteId,
 	holdingIds,
 	hiddenEnemyCount,
-	threats,
+	forecast,
+	ownSweeps,
 	highlights,
 	clashSiteId,
 	siteFootings,
@@ -377,6 +403,34 @@ function ReclamationWorld({
 						classes.push(clashing === site.id ? 'rec-site--clashing' : 'rec-site--waiting');
 					}
 
+					// pass 38: the hold a creature would stand at after the Clash, from what stands now
+					const forecastOf = (entry) => {
+						const f = forecast && forecast[entry.recordId];
+						const h = holds[entry.recordId];
+						if (!f || !h || typeof h.hold !== 'number') {
+							return null;
+						}
+						if (f.downed) {
+							return 0;
+						}
+						return Math.abs(f.hold - h.hold) < 0.05 ? null : f.hold;
+					};
+					const forecastTotal = (entries, live) => {
+						let changed = false;
+						const sum = entries.filter((e) => e.record).reduce((acc, e) => {
+							const f = forecastOf(e);
+							const h = holds[e.recordId];
+							if (f === null || !h) {
+								return acc + (h && typeof h.hold === 'number' ? h.hold : 0);
+							}
+							changed = true;
+							return acc + f;
+						}, 0);
+						return changed && Math.abs(sum - live) > 0.05 ? sum : null;
+					};
+					const afterMine = forecastTotal(mine, totalMine);
+					const afterTheirs = forecastTotal(theirs, totalTheirs);
+
 					// the key is passed on the element itself, never inside the spread: React
 					// warns loudly about a key arriving through a props object
 					const figureProps = (entry, seat, facing) => ({
@@ -395,9 +449,18 @@ function ReclamationWorld({
 						baseHold: holds[entry.recordId] ? holds[entry.recordId].baseHold : undefined,
 						// the base redesign's one glyph per creature: what it does at the Clash
 						role: holds[entry.recordId] ? holds[entry.recordId].role : entry.role,
+						// pass 38: one reading per hold in simple mode, the number; the meter is advanced
+						showMeter: !!advanced,
+						fallen: !!entry.fallen,
+						ownSweep: seat === you && !!(ownSweeps && ownSweeps[entry.recordId] > 0),
+						// pass 38: a strike of yours at a world with no rival in sight will find no target
+						noTarget: seat === you && !!siteFootings && !!holds[entry.recordId] && holds[entry.recordId].role === 'strike'
+							&& theirs.filter((e) => e.record).length === 0 && !(hiddenEnemyCount > 0),
+						forecast: forecastOf(entry),
 						blowMagnitude: holds[entry.recordId] ? holds[entry.recordId].blowMagnitude : undefined,
 						selected: armedRecordId === entry.recordId || movingRecordId === entry.recordId,
-						dimmed: holdingIds && holdingIds.includes(entry.recordId),
+						// pass 38: not at the Ruling, where the winners of the round were dimmed along with the fallen
+						dimmed: !verdict && holdingIds && holdingIds.includes(entry.recordId),
 						acting: hl.acting === entry.recordId,
 						hit: hl.hit === entry.recordId,
 						// pass 32: the engine step, so an animation replays on a repeat actor
@@ -405,7 +468,8 @@ function ReclamationWorld({
 						hover: hl.hover === entry.recordId,
 						flash: hl.hit === entry.recordId ? hl.flash : undefined,
 						arrive: arrivedIds.includes(entry.recordId),
-						threat: threats && threats[entry.recordId] ? threats[entry.recordId] : undefined,
+						threat: forecastOf(entry) === 0 ? { level: 'downed', text: 'Falls in the Clash, as the board stands now' } : undefined,
+						lossText: forecastOf(entry) !== null ? `After the Clash, as the board stands now: ${formatHoldShown(forecastOf(entry))}` : undefined,
 						onClick: (e) => {
 							e.stopPropagation();
 							onFigureClick(entry, seat, site);
@@ -432,11 +496,11 @@ function ReclamationWorld({
 							} : undefined}
 						>
 							<header className="rec-site-head">
-								<span className="rec-site-index" aria-hidden="true">{siteIndex + 1}</span>
-								<h3 className="rec-site-name">{site.world.planet}</h3>
-								<span className="rec-site-place" title={site.description || undefined}>{site.name}</span>
-								{/* simple mode shows the scale only while a creature is previewed; its room is kept so the card never jumps */}
-								<span className={`rec-env-slot${advanced || ghost ? '' : ' rec-env-slot--quiet'}`}><EnvironmentScale site={site} ghost={ghost} /></span>
+								{/* pass 38: no index box (nothing refers to "world 2"); the place and the temperature scale are advanced mode, the place's description stays on the name as deeper reading */}
+								<span className="rec-site-dot" aria-hidden="true" />
+								<h3 className="rec-site-name" title={`${site.name}${site.description ? `. ${site.description}` : ''}`}>{site.world.planet}</h3>
+								{advanced && <span className="rec-site-place" title={site.description || undefined}>{site.name}</span>}
+								{advanced && <span className="rec-env-slot"><EnvironmentScale site={site} ghost={ghost} /></span>}
 								{/* the stake: what this world counts, or the control that puts it up */}
 								<StakeMark stake={stake} you={you} />
 								{canStake && (
@@ -445,13 +509,13 @@ function ReclamationWorld({
 										className={`rec-stake-btn${pendingStakeSiteId === site.id ? ' rec-stake-btn--asking' : ''}`}
 										data-stake={site.id}
 										aria-pressed={pendingStakeSiteId === site.id}
-										title={`Stake ${site.world.planet}: it would count ${stakedHere ? 'three' : 'two'} toward the Charter for whoever holds it. Once a Proving, and only before your first send of the round.`}
+										title={`Stake ${site.world.planet}: counts ${stakedHere ? 'three' : 'two'} worlds for whoever holds it. Once a game, before your first send of a round.`}
 										onClick={(e) => {
 											e.stopPropagation();
 											onStake(site.id);
 										}}
 									>
-										Stake
+										<span className="rec-stake-word">Stake </span>&times;2
 									</button>
 								)}
 								{recommended && <span className="rec-site-recommend" data-recommended-site>recommended</span>}
@@ -476,6 +540,7 @@ function ReclamationWorld({
 												"you lead by 0" over a world that is genuinely, narrowly yours.
 											*/}
 											<span className="rec-tally-value rec-tick" title={formatHold(totalTheirs)} data-total-seat={opponent} data-site-total={site.id} key={`t-${formatHold(totalTheirs)}`}>{formatHoldShown(totalTheirs)}</span>
+											{afterTheirs !== null && <span className="rec-tally-after" title="After the Clash, from what stands now" data-tally-after={opponent}><span className="rec-after-arrow" aria-hidden="true">&rarr;</span>{formatHoldShown(afterTheirs)}</span>}
 										</span>
 										{(() => {
 											// the balance: the rival's hold pushes in from the left, yours from the
@@ -484,7 +549,8 @@ function ReclamationWorld({
 											const total = totalMine + totalTheirs + ghostHold;
 											const pctTheirs = total > 0 ? (totalTheirs / total) * 100 : 0;
 											const pctMine = total > 0 ? (totalMine / total) * 100 : 0;
-											const pctGhost = total > 0 ? (ghostHold / total) * 100 : 0;
+											// pass 38: an empty world's bar would be all preview, which read as a loading bar; it stays empty until someone stands there
+											const pctGhost = total > 0 && (totalMine + totalTheirs) > 0 ? (ghostHold / total) * 100 : 0;
 											const word = total === 0 ? 'unclaimed' : Math.abs(totalMine + ghostHold - totalTheirs) < 0.05 ? 'level' : null;
 											return (
 												<span className={`rec-balance${ghost ? ' rec-balance--preview' : ''}`} title={afterText || margin.text || 'unclaimed'} data-balance={site.id} data-balance-text={afterText || margin.text || 'unclaimed'}>
@@ -499,7 +565,8 @@ function ReclamationWorld({
 										})()}
 										<span className="rec-tally-side rec-tally-side--mine">
 											<span className="rec-tally-value rec-tick" title={formatHold(totalMine)} data-total-seat={you} data-site-total={site.id} key={`m-${formatHold(totalMine)}`}>{formatHoldShown(totalMine)}</span>
-											{ghost && <span className="rec-tally-plus">+{formatHold(ghostHold)}</span>}
+											{afterMine !== null && <span className="rec-tally-after" title="After the Clash, from what stands now" data-tally-after={you}><span className="rec-after-arrow" aria-hidden="true">&rarr;</span>{formatHoldShown(afterMine)}</span>}
+											{ghost && advanced && <span className="rec-tally-plus">+{formatHoldShown(ghostHold)}</span>}
 											<span className="rec-tally-label">you</span>
 										</span>
 									</div>
@@ -510,31 +577,45 @@ function ReclamationWorld({
 							    edge painted in its side's colour and labelled, so whose creature stands
 							    where is read from the floor before the figures are */}
 							<div className={`rec-site-field rec-site-floor${empty ? ' rec-site-field--empty' : ''}`}>
-								<div className={`rec-rank rec-rank--theirs${theirs.length > 4 ? ' rec-rank--crowded' : ''}`} data-rank="theirs" data-rank-rows={rankGrid(theirs.length)['--rank-rows-n']} data-rank-rows-wide={rankGrid(theirs.length)['--rank-rows-w']} style={rankGrid(theirs.length)}>
+								<div className={`rec-rank rec-rank--theirs${theirs.length > 4 ? ' rec-rank--crowded' : ''}`} data-rank="theirs" data-rank-rows={rankGrid(theirs.length)['--rank-rows-n']} data-rank-list={theirs.length >= 2 && theirs.length <= 4 ? '' : undefined} data-rank-rows-wide={rankGrid(theirs.length)['--rank-rows-w']} style={rankGrid(theirs.length)}>
 									<span className="rec-rank-edge rec-rank-edge--theirs" aria-hidden="true">rival</span>
 									{theirs.map((entry) => <ReclamationFigure key={entry.recordId} {...figureProps(entry, opponent, 'down')} />)}
-									{theirs.length === 0 && <span className="rec-rank-open">no one</span>}
 								</div>
 
 								<div className={`rec-site-midline${empty ? ' rec-site-midline--empty' : ''}`}>
 									{ghost && (
 										<span className="rec-ghost" data-ghost={site.id}>
-											<span className="rec-ghost-cta">{ghost.preview ? 'would hold' : 'send here'}</span>
-											<HoldMeter hold={ghost.hold} unstrained={ghost.unstrained} isHome={ghost.isHome} strainLevel={ghost.strainLevel} size="large" scale />
-											<span className="rec-ghost-value">{formatHold(ghost.hold)}</span>
+											{/* pass 38: three identical "send here" calls cut; the outlined world and its number are the call */}
+											{/* simple mode prints the same whole number the figure will carry once sent */}
+											<span className="rec-ghost-value">{formatHoldShown(ghost.hold)}<span className="rec-ghost-unit">hold</span></span>
+											<HoldMeter hold={ghost.hold} unstrained={ghost.unstrained} isHome={ghost.isHome} strainLevel={ghost.strainLevel} size="large" />
 											{/* the arithmetic of the send, from the engine's own numbers: the role
 											    in a sentence, then what it would do to the board as it stands */}
-											{ghost.roleLine && (
-												<span className="rec-ghost-plan" data-ghost-plan={site.id}>
-													<span className="rec-ghost-role">
-														{ghost.role && ghost.role !== 'none' && <RoleGlyph role={ghost.role} />}
-														{ghost.roleLine}
+											{(() => {
+												/*
+													pass 38: one sentence for what this send does HERE, from the
+													engine's numbers, in place of the role's generic sentence that
+													printed the same words on every world
+												*/
+												const summary = ghostSummary(ghost, formatHoldShown);
+												const caughtByOwn = ghost.role !== 'sweep' && mine.some((e) => holds[e.recordId] && holds[e.recordId].role === 'sweep');
+												if (!summary && !caughtByOwn) {
+													return null;
+												}
+												const warn = (summary && summary.warn) || caughtByOwn;
+												return (
+													<span className="rec-ghost-plan" data-ghost-plan={site.id}>
+														<span className={`rec-ghost-role${warn ? ' rec-ghost-role--warn' : ''}`} title={ghost.roleLine} data-ghost-warn={warn ? site.id : undefined}>
+															{ghost.role && ghost.role !== 'none' && <RoleGlyph role={ghost.role} />}
+															{summary ? summary.text : ''}
+															{caughtByOwn && <span className="rec-ghost-own" data-ghost-own={site.id}>{summary ? '. ' : ''}Your sweep here will hit it too</span>}
+														</span>
+														{advanced && ghost.role === 'sweep' && (ghost.lines || []).length > 1 && (ghost.lines || []).map((line, i) => (
+															<span className="rec-ghost-line" key={`${site.id}-${i}`}>{line}</span>
+														))}
 													</span>
-													{advanced && (ghost.lines || []).map((line, i) => (
-														<span className="rec-ghost-line" key={`${site.id}-${i}`}>{line}</span>
-													))}
-												</span>
-											)}
+												);
+											})()}
 										</span>
 									)}
 									{!ghost && movingRecordId && <span className="rec-ghost rec-ghost--relocate">move here</span>}
@@ -542,13 +623,12 @@ function ReclamationWorld({
 										<span className={`rec-stamp rec-stamp--${verdict.who} rec-stamp--down`}>{verdict.text}</span>
 									)}
 									{!ghost && !movingRecordId && !verdict && empty && (
-										<WorldFooting footing={siteFootings ? siteFootings[site.id] : null} world={site.world} />
+										<WorldFooting footing={siteFootings ? siteFootings[site.id] : null} world={site.world} compact detail={advanced} />
 									)}
 								</div>
 
-								<div className={`rec-rank rec-rank--mine${mine.length > 4 ? ' rec-rank--crowded' : ''}`} data-rank="mine" data-rank-rows={rankGrid(mine.length)['--rank-rows-n']} data-rank-rows-wide={rankGrid(mine.length)['--rank-rows-w']} style={rankGrid(mine.length)}>
+								<div className={`rec-rank rec-rank--mine${mine.length > 4 ? ' rec-rank--crowded' : ''}`} data-rank="mine" data-rank-rows={rankGrid(mine.length)['--rank-rows-n']} data-rank-list={mine.length >= 2 && mine.length <= 4 ? '' : undefined} data-rank-rows-wide={rankGrid(mine.length)['--rank-rows-w']} style={rankGrid(mine.length)}>
 									{mine.map((entry) => <ReclamationFigure key={entry.recordId} {...figureProps(entry, you, 'up')} />)}
-									{mine.length === 0 && <span className="rec-rank-open">no one</span>}
 									<span className="rec-rank-edge rec-rank-edge--mine" aria-hidden="true">you</span>
 								</div>
 							</div>
@@ -572,10 +652,12 @@ export function rankGrid(n) {
 	const count = Math.max(1, n);
 	// a narrow rank (a phone's world, about 120px) takes four abreast, a wide one seven
 	const narrow = count <= 4 ? 1 : count <= 10 ? 2 : 3;
+	// pass 38: two to four in a phone's world stand one per row, each with its name, instead of shrinking abreast
+	const list = count >= 2 && count <= 4;
 	const wide = count <= 7 ? 1 : count <= 14 ? 2 : 3;
 	return {
-		'--rank-rows-n': narrow,
-		'--rank-cols-n': Math.ceil(count / narrow),
+		'--rank-rows-n': list ? count : narrow,
+		'--rank-cols-n': list ? 1 : Math.ceil(count / narrow),
 		'--rank-rows-w': wide,
 		'--rank-cols-w': Math.ceil(count / wide),
 	};

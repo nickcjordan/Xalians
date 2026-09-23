@@ -117,7 +117,7 @@ describe('the stake, on a world tray head', () => {
 		expect(controls.length).toBe(view.frame.sites.length);
 		expect(controls.map((n) => n.getAttribute('data-stake')).sort())
 			.toEqual(view.frame.sites.map((s) => s.id).sort());
-		expect(controls[0].textContent).toBe('Stake');
+		expect(controls[0].textContent).toBe('Stake ×2');
 	});
 
 	it('offers no Stake control where the handler may not stake', () => {
@@ -287,8 +287,9 @@ describe('hiding, on the bench (Nick, 2026-09-13: no longer a choice)', () => {
 		expect(open).toBeTruthy();
 
 		mount(<ReclamationBench {...benchProps(mine, { armedRecordId: open.id })} />);
-		const lead = container.querySelector('[data-bench-lead]').textContent;
-		expect(lead).not.toContain('hidden');
+		// pass 38: the bench has no lead line any more; nothing on it may speak of hiding
+		expect(container.querySelector('[data-bench-lead]')).toBeNull();
+		expect(container.textContent).not.toContain('hidden');
 		expect(container.querySelector('[data-hidden-toggle]')).toBeFalsy();
 	});
 });

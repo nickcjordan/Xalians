@@ -3,19 +3,28 @@ import ReclamationWorld from './reclamationWorld';
 import ReclamationBench from './reclamationBench';
 import ReclamationInspect from './reclamationInspect';
 import ReclamationLog from './reclamationLog';
+import { HelpPanel, HistoryPanel, SettingsPanel } from './reclamationPanels';
 import { ReclamationReport, buildMatchReport } from './reclamationReport';
 import {
-	send, pass, moveSwift, stakeWorld, getPublicState,
+	send, pass, moveSwift, stakeWorld, getPublicState, forecastClash,
 	createRngState, nextRandom,
 } from '@xalians/rules/expedition/expeditionRules';
 import { chooseSend, chooseStake, rivalById, DEFAULT_RIVAL_ID } from '@xalians/rules/expedition/expeditionBot';
 import { prepare, strainMultiplierFor } from '@xalians/rules/expedition/creatureOnTable';
 import { SENDABLE, clinchFor, FRAMES_PER_MATCH } from '@xalians/rules/expedition/expeditionInterpretation';
 import {
-	speciesLabel, formatHold, formatBlow, classifyEvent, narrateEvent, cueForEvent, narrateSwiftMove,
+	speciesLabel, formatHold, formatHoldShown, formatBlow, classifyEvent, narrateEvent, cueForEvent, narrateSwiftMove,
 	narrateSend, narratePass, narrateJudge, narrateMatchEnd, narrateStake, countWord,
 } from './reclamationNarration';
-import { flattenBoard, prepareWithCompanions, siteHoldTotal, threatsFor, threatSentence, ghostPlanFor } from './reclamationPreview';
+import { flattenBoard, prepareWithCompanions, siteHoldTotal, ghostPlanFor, ownSweepsFor } from './reclamationPreview';
+
+// pass 38: the top bar's short form of each pass reason; the full sentence is the button's title
+const PASS_SHORT = {
+	'holding-majority': 'you lead on two worlds and the rival has passed',
+	'saving-the-roster': 'keep your remaining sends for the rounds to come',
+	'nothing-to-gain': 'no send would change a world this round',
+	'no-sendable-creatures': 'you have nothing left to send',
+};
 import { recommendSend } from './reclamationAdvice';
 
 function capitalize(sentence) {
@@ -93,20 +102,20 @@ export function reachabilityLine(view, you, them) {
 	if (yourNeed > worldsLeft && theirNeed <= worldsLeft) {
 		return {
 			tone: 'lost',
-			text: `The Charter is out of reach: ${plural(worldsLeft, 'world')} left and you need ${yourNeed}. Worlds still count toward the record.`,
+			text: `Winning is out of reach: you need ${yourNeed}, with ${plural(worldsLeft, 'world')} left. Worlds still count toward the record.`,
 		};
 	}
 	if (theirNeed > worldsLeft && yourNeed <= worldsLeft) {
 		return {
 			tone: 'won',
-			text: `The rival can no longer clinch: ${plural(worldsLeft, 'world')} left and they need ${theirNeed}.`,
+			text: `The rival can no longer clinch: they need ${theirNeed}, with ${plural(worldsLeft, 'world')} left.`,
 		};
 	}
 	// still live, and the player is behind: say exactly what it would take
 	if (behind && yourNeed <= worldsLeft) {
 		return {
 			tone: 'behind',
-			text: `Still yours to take: ${yourNeed} more of the ${worldsLeft} worlds left clinches the Charter.`,
+			text: `You need ${yourNeed} more of the ${worldsLeft} worlds left to win.`,
 		};
 	}
 	return null;
@@ -172,6 +181,8 @@ class ReclamationMatch extends React.Component {
 			// inline confirm in the status strip. A stake is once per Proving, so it is
 			// never taken on one click.
 			pendingStakeSiteId: null,
+			// pass 38: the stake is one key in the squad bar; the worlds offer it only while it is open
+			stakeMode: false,
 			inspect: null, // { record, site }
 			// resolution playback
 			playback: null, // { events, index, snapshotBoard, hurtAt }
@@ -567,9 +578,13 @@ class ReclamationMatch extends React.Component {
 			return;
 		}
 		if (e.key === 'Escape') {
-			if (this.state.armedRecordId || this.state.movingRecordId || this.state.inspect || this.state.pendingStakeSiteId) {
+			if (this.state.panel) {
+				this.setState({ panel: null });
+				return;
+			}
+			if (this.state.armedRecordId || this.state.movingRecordId || this.state.inspect || this.state.pendingStakeSiteId || this.state.stakeMode) {
 				this.setState({
-					armedRecordId: null, armedRole: null, movingRecordId: null, inspect: null, pendingStakeSiteId: null,
+					armedRecordId: null, armedRole: null, movingRecordId: null, inspect: null, pendingStakeSiteId: null, stakeMode: false,
 				});
 			}
 			return;
@@ -751,6 +766,8 @@ class ReclamationMatch extends React.Component {
 		}
 
 		this.appendLogLines(lines);
+		// pass 38: the rival's move stays readable in the instruction line until you answer it
+		this.setState({ lastRival: beat ? beat.text.replace(/ Nothing you send now can be answered\.$/, '') : null });
 		this.cue('rival');
 		if (arrivals.length > 0) {
 			this.arrive(arrivals, (moved && !beat.siteId) ? moved.siteId : beat.siteId, THEM);
@@ -762,7 +779,8 @@ class ReclamationMatch extends React.Component {
 	siteName = (match, siteId) => {
 		const frame = match.frames[match.frameIndex];
 		const site = frame.sites.find((s) => s.id === siteId);
-		return site ? site.name : siteId;
+		// pass 38: the planet, as the board heads each world; the site's own name is flavor for advanced mode
+		return site ? site.world.planet : siteId;
 	};
 
 	// the planet a site stands on: what the stake is named by, since a stake is on the
@@ -923,7 +941,7 @@ class ReclamationMatch extends React.Component {
 		// passed inside this one call and the round resolves. It therefore goes through
 		// commitStep like every other engine step, or that round's clash is never told.
 		this.commitStep(match, next, {
-			armedRecordId: null, armedRole: null, hoverSiteId: null, hoverRecordId: null,
+			armedRecordId: null, armedRole: null, hoverSiteId: null, hoverRecordId: null, lastRival: null,
 		});
 	};
 
@@ -977,7 +995,7 @@ class ReclamationMatch extends React.Component {
 		if (this.props.telemetry) {
 			this.props.telemetry.decisionEnd('deploy', 'pass', { round: match.frameIndex });
 		}
-		this.commitStep(match, next, { armedRecordId: null, armedRole: null, movingRecordId: null });
+		this.commitStep(match, next, { armedRecordId: null, armedRole: null, movingRecordId: null, lastRival: null });
 	};
 
 	// ------------------------------------------------------------------
@@ -997,7 +1015,7 @@ class ReclamationMatch extends React.Component {
 		const view = this.view();
 		const stakeable = (view.players[this.seatInPlay()].stakeableSiteIds) || [];
 		if (!stakeable.includes(siteId)) {
-			this.notice('That world cannot be staked now. A stake is once a Proving, and only before your first send of the round.');
+			this.notice('That world cannot be staked now. A stake is once a game, and only before your first send of a round.');
 			return;
 		}
 		this.setState((prev) => ({
@@ -1005,7 +1023,11 @@ class ReclamationMatch extends React.Component {
 		}));
 	};
 
-	cancelStake = () => this.setState({ pendingStakeSiteId: null });
+	cancelStake = () => this.setState({ pendingStakeSiteId: null, stakeMode: false });
+
+	toggleStakeMode = () => this.setState((prev) => ({
+		stakeMode: !prev.stakeMode, pendingStakeSiteId: null, armedRecordId: null, armedRole: null, movingRecordId: null,
+	}));
 
 	confirmStake = () => {
 		const { match, pendingStakeSiteId } = this.state;
@@ -1029,7 +1051,7 @@ class ReclamationMatch extends React.Component {
 		}
 		// a stake does not spend the turn and can never close a round, so it is a plain
 		// state step rather than a commitStep
-		this.setState({ match: next, pendingStakeSiteId: null }, this.afterEngineStep);
+		this.setState({ match: next, pendingStakeSiteId: null, stakeMode: false }, this.afterEngineStep);
 	};
 
 	/*
@@ -1145,9 +1167,9 @@ class ReclamationMatch extends React.Component {
 				this.props.telemetry.coachDismissed({ beforeFirstOrders: false });
 			}
 		}
-		this.appendLog('Both handlers have passed. The worlds clash.');
+		this.appendLog('Both sides have passed. The worlds clash.');
 		this.cutBeats();
-		this.beat({ kind: 'resolve', seat: null, short: 'The clash', text: 'Both handlers have passed. Each world clashes in turn, fastest first.' });
+		this.beat({ kind: 'resolve', seat: null, short: 'The clash', text: 'Both sides have passed. Each world clashes in turn, fastest first.' });
 		this.playbackStartedAt = Date.now();
 		this.setState({
 			match: next,
@@ -1371,13 +1393,14 @@ class ReclamationMatch extends React.Component {
 				const r = judgeEvent.siteResults[siteId];
 				verdicts[siteId] = {
 					who: !r.winner ? 'court' : r.winner === YOU ? 'yours' : 'theirs',
-					text: !r.winner ? 'to the Court' : r.winner === YOU ? 'yours' : 'the rival’s',
+					text: !r.winner ? 'tied' : r.winner === YOU ? 'yours' : 'rival’s',
 				};
 			});
 		}
 		const resolved = judgedViewFromRuling(
 			this.applyPlaybackEffects({ ...playback, index: playback.events.length }),
 			judgeEvent,
+			playback.frozenView,
 		);
 		const live = getPublicState(match, YOU);
 		// Hold the world just played while the live engine is already on the next one. Its
@@ -1406,12 +1429,13 @@ class ReclamationMatch extends React.Component {
 			const parts = [];
 			if (tally.yours) parts.push(`${plural(tally.yours, 'world')} yours`);
 			if (tally.theirs) parts.push(`${plural(tally.theirs, 'world')} the rival's`);
-			if (tally.court) parts.push(`${plural(tally.court, 'world')} to the Court`);
+			if (tally.court) parts.push(`${plural(tally.court, 'world')} tied, held by no one`);
+			// pass 38: the round's result in plain words, once (the dock no longer repeats it)
 			this.beat({
 				kind: 'judge',
 				seat: null,
 				short: 'The Court rules',
-				text: `The Court reads the frame: ${parts.join(', ')}.`,
+				text: `Round ${playback.frame.index + 1}: ${parts.join(', ')}.`,
 			});
 		}
 
@@ -1431,11 +1455,11 @@ class ReclamationMatch extends React.Component {
 	};
 
 	nextFrame = () => {
-		this.setState({ verdicts: null, judged: false, judgedFrame: null, judgedSnapshot: null }, () => {
+		this.setState({ verdicts: null, judged: false, judgedFrame: null, judgedSnapshot: null, lastRival: null }, () => {
 			const { match } = this.state;
 			const frame = match.frames[match.frameIndex];
 			const names = frameWorldNames(frame);
-			this.appendLog(`The frame loads ${names}.`);
+			this.appendLog(`Round ${frame.index + 1}: ${names}.`);
 			this.cutBeats();
 			this.beat({
 				kind: 'world',
@@ -1544,35 +1568,76 @@ class ReclamationMatch extends React.Component {
 	// ------------------------------------------------------------------
 	// the status strip
 	// ------------------------------------------------------------------
+	/*
+		PASS 38. The one instruction for this moment, in as few words as it takes. The top
+		bar's message slot is the only place that says what to do next; the bench heading, the
+		bench lead and the coaching strip that used to repeat it are gone
+		(docs/design/reclamation-declutter.md).
+	*/
 	whatAClickDoes(view) {
 		const { armedRecordId, movingRecordId, playback } = this.state;
 		if (playback) {
-			return 'The worlds are clashing. Skip, or press space, to jump to the ruling.';
+			// pass 38: during the Clash the line says what is happening now, not that something is
+			const now = this.state.log[this.state.log.length - 1];
+			return now && !/^Both sides have passed/.test(now) ? now : 'The worlds clash, fastest first.';
 		}
 		if (view.phase === 'matchEnd') {
-			return 'The Proving is over. The report says how it went; start a new one to play again.';
+			return 'The game is over.';
 		}
 		if (this.state.judged) {
-			return 'The Court has ruled. Load the next frame when you are ready.';
+			return this.rulingSentence(view);
 		}
 		if (view.turn !== this.seatInPlay()) {
-			return 'The rival is deciding. Press space to hurry it.';
+			return view.players[this.seatInPlay()].passed ? 'You passed. The rival is still choosing.' : 'The rival is choosing.';
 		}
 		if (movingRecordId) {
 			const record = this.findRecordOnBoard(this.state.match, movingRecordId);
-			return `Press another world to move ${record ? speciesLabel(record) : 'it'} there. It is swift, so this does not spend your turn.`;
+			return `Pick the world ${record ? speciesLabel(record) : 'it'} moves to. A move does not use your turn.`;
 		}
 		if (armedRecordId) {
 			const record = view.players[this.seatInPlay()].roster.find((r) => r.id === armedRecordId);
-			return `${speciesLabel(record)} is lifted. Press a world to send it there, or press it again to set it down.`;
+			let stealthy = false;
+			try {
+				stealthy = !!prepare(record, view.frame.sites[0], null, 0, { rules: view.rules }).stealthy;
+			} catch (e) {
+				stealthy = false;
+			}
+			return `Pick a world for ${speciesLabel(record)}, or pick it again to put it back.${stealthy ? ' It arrives hidden.' : ''}`;
 		}
 		if (view.players[this.seatInPlay()].passed) {
-			return 'You have passed. Waiting on the rival.';
+			return 'You passed. Waiting for the rival.';
 		}
-		if ((view.players[this.seatInPlay()].stakeableSiteIds || []).length > 0) {
-			return 'Lift a creature from the bench, then press a world. Or stake a world, once this Proving, to make it count two. Or pass.';
+		const rivalPassed = view.players[this.seatOpponent()].passed;
+		const me = view.players[this.seatInPlay()];
+		const cap = typeof me.sendableCap === 'number' ? me.sendableCap : SENDABLE;
+		if ((me.sentCount || 0) >= cap) {
+			return `You have used all ${cap} sends. Pass to end your round.`;
 		}
-		return 'Lift a creature from the bench, then press a world. Or pass.';
+		if (this.state.stakeMode) {
+			return 'Pick a world to stake: it counts two worlds for whoever holds it.';
+		}
+		const rec = this.recommendation(view);
+		if (rec && rec.type === 'pass') {
+			return `Pass suggested: ${PASS_SHORT[rec.reasonKey] || rec.reason.split('. ')[0].replace(/\.$/, '').toLowerCase()}.`;
+		}
+		const lastRival = this.state.lastRival ? `${this.state.lastRival} ` : rivalPassed ? 'The rival has passed. ' : '';
+		return `${lastRival}Pick a creature from your squad.`;
+	}
+
+	// the Ruling in one sentence, from the counts the score is about to show
+	rulingSentence(view) {
+		const judged = this.state.judgedFrame != null ? this.state.judgedFrame : view.frameIndex;
+		const verdicts = this.state.verdicts || {};
+		let mine = 0;
+		let theirs = 0;
+		Object.keys(verdicts).forEach((id) => {
+			if (verdicts[id].who === 'yours') mine++;
+			else if (verdicts[id].who === 'theirs') theirs++;
+		});
+		if (!mine && !theirs) {
+			return `Round ${judged + 1} is ruled.`;
+		}
+		return `Round ${judged + 1}: you took ${plural(mine, 'world')}, the rival ${theirs}.`;
 	}
 
 	// a rival beat holds the turn readout on what the rival just did, so "Your move" lands
@@ -1584,22 +1649,22 @@ class ReclamationMatch extends React.Component {
 
 	turnText(view) {
 		if (this.state.playback) {
-			return 'The clash';
+			return 'Clash';
 		}
 		const rivalBeat = this.rivalBeat();
 		if (rivalBeat && view.phase === 'deploy' && !this.state.judged) {
 			return rivalBeat.short;
 		}
 		if (this.state.judged && view.phase !== 'matchEnd') {
-			return 'The Court has ruled';
+			return 'Round over';
 		}
 		if (view.phase === 'matchEnd') {
-			return 'The Proving is over';
+			return 'Over';
 		}
 		if (view.turn === this.seatInPlay()) {
 			return 'Your move';
 		}
-		return 'The rival is deciding';
+		return 'Rival\u2019s move';
 	}
 
 	renderStatusStrip(view) {
@@ -1613,32 +1678,32 @@ class ReclamationMatch extends React.Component {
 		const turnLabel = this.turnText(view);
 		const lampKind = yourTurn ? 'amber' : waiting ? 'red' : 'off';
 		const simple = this.isSimple();
-		const coaching = simple && !this.state.coached && view.frameIndex === 0 && view.phase === 'deploy' && !this.state.playback && !this.state.judged;
-		const phaseLabel = this.state.playback ? 'Clash'
-			: view.phase === 'matchEnd' ? 'Charter'
-				: this.state.judged ? 'Ruling' : 'Deploy';
 		// a pip is keyed on whether it is lit, so lighting one remounts it and it pops
 		const toClinch = clinchFor(view.frame.sites.length, FRAMES_PER_MATCH);
 		const pips = (n) => Array.from({ length: toClinch }).map((_, i) => (
 			<span className={`rec-pip${i < n ? ' rec-pip--lit' : ''}`} key={`${i}-${i < n ? 'lit' : 'dark'}`} />
 		));
-		const frameDots = Array.from({ length: FRAMES_PER_MATCH }).map((_, i) => (
-			<span className={`rec-world-dot${i === view.frameIndex ? ' rec-world-dot--now' : i < view.frameIndex ? ' rec-world-dot--done' : ''}`} key={i} />
-		));
+		/*
+			PASS 38. Only a callout that says something the board does not. Your own send is
+			visible the moment the creature lands on the world, so it is not also narrated; the
+			rival's moves, the Clash and the Court still are.
+		*/
+		const beat = this.state.beat && this.state.beat.seat !== this.seatInPlay() ? this.state.beat : null;
 		return (
-			<div className="g-panel rec-status">
+			<div className="g-panel rec-status" data-topbar>
+				{/* the way out, always visible (design system core rule); the Proving is saved and resumes from the intro */}
+				{this.props.onLeave && (
+					<button type="button" className="g-btn rec-leave" onClick={this.props.onLeave} data-leave aria-label="Leave the table">
+						<span aria-hidden="true">&larr;</span> <span className="rec-tool-word">Leave</span>
+					</button>
+				)}
+
 				<div className="rec-status-world">
-					<span className="rec-world-dots" title={`Round ${view.frameIndex + 1} of ${FRAMES_PER_MATCH}`}>{frameDots}</span>
-					<h2 className="rec-status-planet">Round {view.frameIndex + 1}</h2>
-					<span className="rec-status-worlds" aria-label="The worlds loaded in the frame">
-						{view.frame.sites.map((site) => (
-							<span className={`g-chip g-chip--outline rec-status-element g-el-${site.world.element}`} key={site.id} title={`${site.world.planet}, at ${site.name}`}>{site.world.planet}</span>
-						))}
-					</span>
-					{/* pass 37: the next round's worlds ride on the round line, not in a row of their own */}
-					{view.nextFrame && !this.state.judged && (
+					<h2 className="rec-status-planet">Round {view.frameIndex + 1} <span className="rec-status-of">of {FRAMES_PER_MATCH}</span></h2>
+					{/* the next round's worlds are planning arithmetic: advanced mode, and the help panel's round list */}
+					{!simple && view.nextFrame && !this.state.judged && (
 						<span className="rec-next-plate" data-next-plate>
-							<span className="rec-next-plate-label">then</span>
+							<span className="rec-next-plate-label">next</span>
 							{view.nextFrame.map((w) => (
 								<span className={`g-chip g-chip--outline rec-status-element g-el-${w.element}`} key={w.siteId} title={`${w.planet}, at ${w.siteName}`}>{w.planet}</span>
 							))}
@@ -1646,26 +1711,7 @@ class ReclamationMatch extends React.Component {
 					)}
 				</div>
 
-				{/*
-					PASS 12. What is still reachable, in one sentence.
-
-					The rubric critic's lowest line (4 of 10): shut out on three worlds in
-					round 3, nothing on the screen offered a reason to take the turn. This is
-					NOT a gift to the side behind, which is ruled out; it is arithmetic the
-					player could do themselves and should not have to. Worlds still open this
-					round plus the worlds of the rounds after it, against what each side needs
-					to clinch, says in one line whether the Proving is still winnable and what
-					it would take. When it is not winnable, it says that too, because a player
-					owed the truth is owed it in both directions.
-				*/}
-				{/*
-					PASS 36. Always rendered, empty when there is nothing to say. This line only
-					appears once one side pulls far enough ahead for the Charter to be in question,
-					so it arrived mid-match and added a whole grid row to the status panel,
-					pushing the board down under it.
-				*/}
-
-				<div className="rec-status-score" title={`First to ${toClinch} sites takes the Charter`}>
+				<div className="rec-status-score" title={`First to ${toClinch} worlds wins`}>
 					<span className="rec-score rec-score--mine">
 						<span className="rec-score-label">You</span>
 						<span className="rec-pips">{pips(you.sitesWon)}</span>
@@ -1675,12 +1721,11 @@ class ReclamationMatch extends React.Component {
 						<span className="rec-score-label">Rival</span>
 						<span className="rec-pips">{pips(them.sitesWon)}</span>
 						<span className="rec-score-value rec-tick" data-sites-b key={them.sitesWon}>{them.sitesWon}</span>
+						{them.passed && view.phase === 'deploy' && !this.state.judged && !this.state.playback && <span className="rec-score-passed" data-rival-passed>has passed</span>}
 					</span>
-
 				</div>
 
 				<div className="rec-status-turn">
-					<span className="rec-status-phase">{phaseLabel}</span>
 					<span className={`rec-turn${yourTurn ? ' rec-turn--yours' : ''}${waiting ? ' rec-turn--waiting' : ''}${deciding ? ' rec-turn--deciding' : ''}`}>
 						<span className={`g-lamp g-lamp--${lampKind}`} key={lampKind} />
 						<span className="rec-turn-text rec-turn-text--in" data-turn-text key={turnLabel}>{turnLabel}</span>
@@ -1688,27 +1733,23 @@ class ReclamationMatch extends React.Component {
 				</div>
 
 				{/*
-					PASS 37. ONE MESSAGE SLOT. The stake question, what just happened, the first
-					round's coaching and the hint used to be four separate rows (a callout row over
-					the worlds, a coaching strip under them, the hint here), each appearing and
-					vanishing on its own schedule. They are one fixed-height slot now, showing the
-					most urgent of them, so nothing that is said ever moves the table.
+					PASS 37 made this ONE MESSAGE SLOT. Pass 38 made it the only place on the table
+					that says what to do next: the stake's question, what the rival or the Court
+					just did, or the one instruction for this moment.
 				*/}
 				<div className={`rec-status-say${this.state.playback ? ' rec-status-say--skip' : ''}`} data-say>
-					{/* pass 37: the skip key sits beside the sentence that offers it, not under the turn lamp */}
 					{this.state.playback && (
 						<button type="button" className="g-btn rec-skip" onClick={this.hurry} data-skip title="Space">
-							Skip to the ruling
+							Skip <kbd>Space</kbd>
 						</button>
 					)}
 					{this.state.pendingStakeSiteId ? this.renderStakeConfirm(view)
-						: this.state.beat ? this.renderCallout()
-							: coaching ? this.renderCoach()
-								: (
-									<p className={`rec-status-hint g-body${yourTurn ? ' rec-status-hint--yours' : ''}`} data-hint>
-										{rivalBeat ? this.rivalBeat().text : this.whatAClickDoes(view)}
-									</p>
-								)}
+						: beat ? this.renderCallout(beat)
+							: (
+								<p className={`rec-status-hint g-body${yourTurn ? ' rec-status-hint--yours' : ''}`} data-hint>
+									{rivalBeat ? this.rivalBeat().text : this.whatAClickDoes(view)}
+								</p>
+							)}
 					<p
 						className="rec-status-reach g-body"
 						data-still-reachable={stillReachable ? stillReachable.tone : 'none'}
@@ -1717,29 +1758,41 @@ class ReclamationMatch extends React.Component {
 					</p>
 				</div>
 
-				{/* pass 37: the simple-mode ticker is the strip's last column, a fixed four lines */}
-				{simple && (
-					<div className="rec-ticker g-screen" data-ticker aria-live="polite">
-						{this.state.log.slice(-4).map((line, i, shown) => (
-							<span className={`g-screen-line${i === shown.length - 1 ? ' rec-ticker-line--in' : ' g-screen-line--dim'}`} key={`${this.state.log.length}-${i}`}>{line}</span>
-						))}
-					</div>
-				)}
+				{/* pass 38: reference opens on request. The simple-mode ticker became History. */}
+				<div className="rec-status-tools">
+					{(
+						<button type="button" className="g-btn rec-tool rec-tool--history" onClick={() => this.setState({ panel: 'history' })} data-open-history aria-label="History">
+							<svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="none" stroke="currentColor" strokeWidth="1.6" d="M2 4h12M2 8h12M2 12h8" /></svg>
+							<span className="rec-tool-word">History</span>
+						</button>
+					)}
+					<button type="button" className="g-btn rec-tool" onClick={() => this.setState({ panel: 'help' })} data-open-help aria-label="How to play">?</button>
+					{this.props.settings && (
+						<button type="button" className="g-btn rec-tool" onClick={() => this.setState({ panel: 'settings' })} data-open-settings aria-label="Settings">
+							<svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M6.6 1h2.8l.4 1.9 1.3.6 1.7-1 2 2-1 1.7.6 1.3 1.9.4v2.8l-1.9.4-.6 1.3 1 1.7-2 2-1.7-1-1.3.6-.4 1.9H6.6l-.4-1.9-1.3-.6-1.7 1-2-2 1-1.7-.6-1.3L0 9.4V6.6l1.9-.4.6-1.3-1-1.7 2-2 1.7 1 1.3-.6zM8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5z" /></svg>
+						</button>
+					)}
+				</div>
 			</div>
 		);
 	}
 
-	renderCoach() {
-		return (
-			<div className="rec-coach" data-coach role="note">
-				<ol className="rec-coach-steps">
-					<li className={`rec-coach-step${!this.state.armedRecordId ? ' rec-coach-step--now' : ' rec-coach-step--done'}`}><span className="rec-coach-index g-mono">1</span> Lift a creature from the bench</li>
-					<li className={`rec-coach-step${this.state.armedRecordId ? ' rec-coach-step--now' : ''}`}><span className="rec-coach-index g-mono">2</span> Press a world to send it there</li>
-					<li className="rec-coach-step"><span className="rec-coach-index g-mono">3</span> Or pass, and keep the rest for later rounds</li>
-				</ol>
-				<button type="button" className="g-btn rec-coach-dismiss" onClick={this.dismissCoach} data-coach-dismiss>Got it</button>
-			</div>
-		);
+	renderPanel(view) {
+		const close = () => this.setState({ panel: null });
+		switch (this.state.panel) {
+			case 'help':
+				return <HelpPanel match={this.state.match} clinch={clinchFor(view.frame.sites.length, FRAMES_PER_MATCH)} onClose={close} />;
+			case 'history':
+				return <HistoryPanel lines={this.state.log} onClose={close} />;
+			case 'settings':
+				return (
+					<SettingsPanel rivalName={this.props.rivalName} seed={this.isSimple() ? null : this.props.seed} onAbandon={this.props.onAbandon} onClose={close}>
+						{this.props.settings}
+					</SettingsPanel>
+				);
+			default:
+				return null;
+		}
 	}
 
 	/*
@@ -1755,11 +1808,11 @@ class ReclamationMatch extends React.Component {
 		return (
 			<div className="rec-stake-ask g-body" data-stake-ask={siteId} role="status">
 				<span className="rec-stake-ask-text">
-					Stake {site ? site.world.planet : 'this world'}? It counts {word} toward the Charter for whoever holds it. Once a Proving.
+					Stake {site ? site.world.planet : 'this world'}? It counts {word} worlds for whoever holds it.
 				</span>
 				<span className="rec-stake-ask-actions">
 					<button type="button" className="g-btn g-btn--primary rec-stake-yes" onClick={this.confirmStake} data-stake-confirm>Stake it</button>
-					<button type="button" className="g-btn rec-stake-no" onClick={this.cancelStake} data-stake-cancel>Not this round</button>
+					<button type="button" className="g-btn rec-stake-no" onClick={this.cancelStake} data-stake-cancel>Cancel</button>
 				</span>
 			</div>
 		);
@@ -1767,13 +1820,12 @@ class ReclamationMatch extends React.Component {
 
 	// the callout: one sentence over the sites saying what just happened, in the colour
 	// of whoever did it. Keyed on the beat so each one plays its own entrance and exit.
-	renderCallout() {
-		const { beat } = this.state;
+	renderCallout(beat) {
 		if (!beat) {
 			return <div className="rec-callout-row" data-callout-row />;
 		}
 		const who = beat.seat === YOU ? 'you' : beat.seat === THEM ? 'rival' : 'table';
-		const kicker = beat.seat === YOU ? 'You' : beat.seat === THEM ? 'The rival' : beat.kind === 'judge' ? 'The Court' : 'The table';
+		const kicker = beat.seat === YOU ? 'You' : beat.seat === THEM ? 'The rival' : beat.kind === 'judge' ? 'Ruling' : 'The table';
 		const ms = (typeof window !== 'undefined' && window.__reclamationBeatMs) || BEAT_MS;
 		return (
 			<div className="rec-callout-row" data-callout-row>
@@ -1865,25 +1917,14 @@ class ReclamationMatch extends React.Component {
 		const clickable = deploying && view.turn === this.seatInPlay();
 
 		/*
-			The threat read (the base redesign's "Interface consequences"): each of your
-			figures carries the number it would lose this round to the worst visible enemy
-			attack at its own world, and a downed mark when that number reaches its
-			remaining hold. It is a number now, not a level, because attacks subtract.
+			PASS 38, THE FORECAST IN THE NUMBERS. Two blind critics watched a world read 32
+			with "-6 own sweep" marked on two creatures and then rule at 20, and a creature
+			marked to fall survive because its slower attacker fell first. The forecast is now
+			the engine's own resolve run on what this seat can see (forecastClash), so each
+			creature's number and each world's total print what the Clash would leave.
 		*/
-		const threatMap = deploying ? threatsFor(view, YOU) : {};
-		const threats = {};
-		Object.keys(threatMap).forEach((id) => {
-			// simple and advanced differ only in how much arithmetic is printed: simple marks
-			// only the attack that would down, advanced prints every number
-			if (simple && !threatMap[id].downs) {
-				return;
-			}
-			threats[id] = {
-				level: threatMap[id].downs ? 'downed' : 'amount',
-				amount: formatHold(threatMap[id].amount),
-				text: threatSentence(threatMap[id]),
-			};
-		});
+		const forecast = deploying ? forecastClash(this.state.match, this.seatInPlay()) : null;
+		const ownSweepMap = deploying ? ownSweepsFor(view, YOU) : null;
 		const holdingIds = [...me.holding, ...them.holding];
 
 		/*
@@ -2006,6 +2047,7 @@ class ReclamationMatch extends React.Component {
 		return (
 			<div className={`rec-match${simple ? ' rec-match--simple' : ' rec-match--advanced'}`}>
 				{this.renderStatusStrip(view)}
+				{this.renderPanel(view)}
 
 				{/*
 					PASS 27 kept the ticker at FOUR lines, the smallest that carries a whole Ruling
@@ -2034,14 +2076,15 @@ class ReclamationMatch extends React.Component {
 							recommendedSiteId={recommendedSiteId}
 							holdingIds={holdingIds}
 							hiddenEnemyCount={deploying ? (them.hiddenSentThisRound || 0) : 0}
-							threats={threats}
+							forecast={forecast}
+							ownSweeps={ownSweepMap}
 							highlights={highlights}
 							clashSiteId={playback ? highlights.clashSiteId : null}
 							siteFootings={deploying ? footingOfSite : null}
 							hoverSiteId={this.state.hoverSiteId}
 							advanced={!simple}
 							stakes={view.stakes}
-							stakeableSiteIds={deploying && view.turn === this.seatInPlay() ? (me.stakeableSiteIds || []) : []}
+							stakeableSiteIds={deploying && view.turn === this.seatInPlay() && (this.state.stakeMode || this.state.pendingStakeSiteId) ? (me.stakeableSiteIds || []) : []}
 							pendingStakeSiteId={this.state.pendingStakeSiteId}
 							onStake={this.askStake}
 							onSiteClick={this.handleSiteClick}
@@ -2068,7 +2111,7 @@ class ReclamationMatch extends React.Component {
 								rather than leaving a hole the size of the dock. Not in hot-seat, where
 								the squad in hand is one person's secret and the Clash is watched by both.
 							*/}
-							{(deployPanelOpen || (playback && !this.hotSeat)) && (
+							{(deployPanelOpen || ((playback || (judged && view.phase !== 'matchEnd')) && !this.hotSeat)) && (
 								<ReclamationBench
 									view={view}
 									you={this.seatInPlay()}
@@ -2092,18 +2135,21 @@ class ReclamationMatch extends React.Component {
 									onHoverRecord={(id) => this.setState({ hoverRecordId: id })}
 									onPass={this.handlePass}
 									onBeginMove={this.beginMove}
+									stakeAvailable={deploying && view.turn === this.seatInPlay() && (me.stakeableSiteIds || []).length > 0}
+									stakeMode={this.state.stakeMode || !!this.state.pendingStakeSiteId}
+									onToggleStake={this.toggleStakeMode}
 									rivalBeat={this.rivalBeat()}
+									interactive={deployPanelOpen}
 								/>
 							)}
 
 							{judged && !playback && view.phase !== 'matchEnd' && (
 								<div className="rec-judge-bar rec-rise" data-judge-bar>
 									<span className="rec-judge-bar-text">
-										The Court has ruled on round {(this.state.judgedFrame || 0) + 1}.
-										{view.nextFrame ? ` The frame loads ${view.nextFrame.map((w) => w.planet).join(', ')} next; ${this.state.match.turn === YOU ? 'you send first' : 'the rival sends first'}.` : ''}
+										{view.nextFrame ? <>Next: {view.nextFrame.map((w) => w.planet).join(', ')}. {this.state.match.turn === YOU ? 'You send first.' : 'The rival sends first.'}</> : 'That was the last round.'}
 									</span>
 									<button type="button" className="g-btn g-btn--primary" onClick={this.nextFrame} data-next-frame>
-										Load round {(this.state.judgedFrame || 0) + 2}
+										Round {(this.state.judgedFrame || 0) + 2}
 									</button>
 								</div>
 							)}
@@ -2227,7 +2273,7 @@ export function playbackEffects(frozenView, events, index) {
 	an animation over a pre-clash snapshot; it must not become a second implementation of
 	the Court's final board. Every surviving creature is public once the Court rules.
 */
-export function judgedViewFromRuling(resolvedView, judgeEvent) {
+export function judgedViewFromRuling(resolvedView, judgeEvent, beforeView) {
 	if (!judgeEvent || !judgeEvent.siteResults) {
 		return resolvedView;
 	}
@@ -2240,9 +2286,24 @@ export function judgedViewFromRuling(resolvedView, judgeEvent) {
 		}
 		board[site.id] = { A: [], B: [] };
 		['A', 'B'].forEach((seat) => {
-			board[site.id][seat] = (result.entries[seat] || [])
-				.filter((entry) => entry.record && !entry.downed)
+			/*
+				PASS 38. A creature downed in the Clash stays on the board at the Ruling,
+				marked fallen, rather than vanishing. A blind critic could not tell what the
+				round had cost it: "Sonalloy and my Graviclaw vanish with no trace, so I
+				can't learn from what happened."
+			*/
+			const ruled = (result.entries[seat] || []).filter((entry) => entry.record);
+			const ruledIds = new Set(ruled.map((entry) => entry.recordId));
+			// the Ruling's entries omit a creature the Clash downed; the board from before the Clash still has it
+			const before = (beforeView || resolvedView).board;
+			const lost = (((before && before[site.id]) || {})[seat] || [])
+				.filter((entry) => entry.record && !ruledIds.has(entry.recordId))
+				.map((entry) => ({ ...entry, downed: true }));
+			board[site.id][seat] = ruled.concat(lost)
 				.map((entry) => {
+					if (entry.downed) {
+						return { ...entry, currentHold: 0, hidden: false, revealPending: false, fallen: true };
+					}
 					const currentHold = typeof entry.hold === 'number' ? entry.hold : entry.currentHold;
 					if (entry.hurt && currentHold > 0) {
 						hurt[entry.recordId] = true;

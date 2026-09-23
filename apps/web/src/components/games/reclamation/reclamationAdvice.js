@@ -123,5 +123,6 @@ export function recommendSend(view, roster, you) {
 		type: 'pass',
 		label: 'Pass this round',
 		reason: PASS_REASONS[choice.reason] || 'Passing is the better move here.',
+		reasonKey: choice.reason,
 	};
 }

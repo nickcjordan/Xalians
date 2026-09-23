@@ -6023,3 +6023,712 @@
 	.rec-console--match[data-terminal] .rec-world-footing-head,
 	.rec-console--match[data-terminal] .rec-world-footing-line--home { display: none; }
 }
+
+/* =========================================================================
+   PASS 38. THE DECLUTTER.
+
+   docs/design/reclamation-declutter.md holds the inventory: every string the table printed,
+   in six states, with a verdict. This layer is its layout. The site navigation and the
+   masthead are gone from play, so the top bar carries the way out (Leave) and the three
+   panel buttons (History in simple mode, How to play, Settings). The ticker column is gone,
+   and so are the round's world chips and the phase chip. The bench head keeps only the act
+   picker, the sends left and the pass.
+   ========================================================================= */
+
+.rec-console--match[data-terminal] { --os-status: calc(60px * var(--rec-scale)); }
+
+.rec-console--match[data-terminal] .rec-status,
+.rec-console--match[data-terminal] .rec-match--simple .rec-status {
+	grid-template-columns: auto auto auto calc(10rem * var(--rec-scale)) minmax(0, 1fr) auto;
+	gap: 0 var(--g-4);
+	padding: var(--g-1) var(--g-3);
+}
+
+.rec-console--match[data-terminal] .rec-leave,
+.rec-console--match[data-terminal] .rec-tool {
+	min-height: 32px;
+	padding: var(--g-1) var(--g-3);
+	font-size: var(--g-size-small);
+	display: inline-flex;
+	align-items: center;
+	gap: var(--g-1);
+}
+.rec-console--match[data-terminal] .rec-tool { min-width: 32px; justify-content: center; }
+.rec-console--match[data-terminal] .rec-status-tools { display: inline-flex; gap: var(--g-2); align-items: center; justify-self: end; }
+
+.rec-console--match[data-terminal] .rec-status-world { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; }
+.rec-console--match[data-terminal] .rec-status-planet { font-size: var(--g-size-body); white-space: nowrap; }
+.rec-console--match[data-terminal] .rec-status-of { color: var(--g-ink-low); font-size: 0.8em; }
+.rec-console--match[data-terminal] .rec-score-label { max-width: 9rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* the one instruction reads as the loudest line in the bar */
+.rec-console--match[data-terminal] .rec-status-hint { font-size: var(--g-size-body); color: var(--g-ink); }
+.rec-console--match[data-terminal] .rec-status-say { padding-top: var(--g-1); }
+
+.rec-console--match kbd {
+	font-family: var(--g-font-mono);
+	font-size: 0.75em;
+	padding: 0 4px;
+	border: var(--g-hairline) solid var(--g-seam);
+	border-radius: 2px;
+	color: var(--g-ink-mid);
+}
+
+/* --- the worlds ------------------------------------------------------------ */
+
+.rec-console--match[data-terminal] { --os-head: calc(34px * var(--rec-scale)); }
+.rec-console--match[data-terminal] .rec-match--advanced .rec-site-head { flex-basis: calc(72px * var(--rec-scale)); height: calc(72px * var(--rec-scale)); }
+.rec-console--match[data-terminal] .rec-site-head .rec-site-name { grid-column: 1 / -1; }
+
+/* an empty world's footing, compact: one large count and one line under it */
+.rec-console--match[data-terminal] .rec-world-footing--compact { gap: 2px; font-size: var(--g-size-small); color: var(--g-ink-mid); }
+.rec-console--match[data-terminal] .rec-world-footing-big { font-size: var(--g-size-lead); color: var(--g-ink); }
+.rec-console--match[data-terminal] .rec-world-footing--compact .rec-world-footing-line--home b { color: var(--g-el); }
+
+/* the ghost is the number, the meter beside it, and the consequence under both */
+.rec-console--match[data-terminal] .rec-site-floor .rec-ghost:not(.rec-ghost--relocate) {
+	grid-template-columns: 6ch minmax(0, 1fr);
+	grid-template-areas: "value meter" "plan plan";
+}
+.rec-console--match[data-terminal] .rec-ghost-own { color: var(--g-lamp-amber); }
+
+/* --- the bench head -------------------------------------------------------- */
+
+.rec-console--match[data-terminal] .rec-bench-head {
+	grid-template-columns: minmax(0, 1fr) auto minmax(calc(11rem * var(--rec-scale)), auto);
+	height: calc(2.6rem * var(--rec-scale));
+}
+.rec-console--match[data-terminal] .rec-bench-acts-slot { grid-column: 1; grid-row: 1; justify-self: start; padding-left: 0; background: none; }
+.rec-console--match[data-terminal] .rec-bench-acts-slot:empty { display: block; }
+.rec-console--match[data-terminal] .rec-deploy-count { grid-column: 2; grid-row: 1; }
+.rec-console--match[data-terminal] .rec-bench-actions { grid-column: 3; grid-row: 1; }
+.rec-console--match[data-terminal] .rec-sends-text { font-size: var(--g-size-small); color: var(--g-ink-mid); }
+.rec-console--match[data-terminal] .rec-btn-mark {
+	margin-left: var(--g-2);
+	padding: 0 var(--g-1);
+	font-size: var(--g-size-micro);
+	color: var(--g-lamp-amber);
+	border: var(--g-hairline) solid currentColor;
+	border-radius: 2px;
+	text-transform: uppercase;
+	letter-spacing: 0.06em;
+}
+
+/* --- the panels ------------------------------------------------------------ */
+
+.rec-panel-cover {
+	position: absolute;
+	inset: 0;
+	z-index: 40;
+	display: flex;
+	align-items: flex-start;
+	justify-content: center;
+	padding: var(--g-4) var(--g-3);
+	background: color-mix(in srgb, var(--g-hull-lo) 70%, transparent);
+}
+.rec-panel {
+	width: min(640px, 100%);
+	max-height: 100%;
+	display: flex;
+	flex-direction: column;
+	background: var(--g-hull);
+	box-shadow: var(--g-drop);
+}
+.rec-panel-head {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--g-3);
+	padding: var(--g-3) var(--g-4);
+	border-bottom: var(--g-hairline) solid var(--g-seam);
+}
+.rec-panel-title {
+	margin: 0;
+	font-family: var(--g-font-stencil);
+	font-size: var(--g-size-lead);
+	text-transform: uppercase;
+	letter-spacing: var(--g-track-label);
+	color: var(--g-ink);
+}
+.rec-panel-close { min-height: 32px; }
+.rec-panel-body {
+	overflow-y: auto;
+	padding: var(--g-3) var(--g-4) var(--g-4);
+	font-family: var(--g-font-body, inherit);
+	font-size: var(--g-size-body);
+	line-height: 1.5;
+	color: var(--g-ink-mid);
+}
+.rec-panel-body p { margin: 0 0 var(--g-2); }
+.rec-help-section { margin-bottom: var(--g-4); }
+.rec-help-head {
+	margin: 0 0 var(--g-2);
+	font-family: var(--g-font-stencil);
+	font-size: var(--g-size-small);
+	text-transform: uppercase;
+	letter-spacing: var(--g-track-label);
+	color: var(--g-ink);
+}
+.rec-help-steps { margin: 0 0 var(--g-2); padding-left: 1.4em; }
+.rec-help-roles { list-style: none; margin: 0 0 var(--g-2); padding: 0; display: grid; gap: var(--g-1); }
+.rec-help-roles b { color: var(--g-ink); }
+.rec-help-rounds { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--g-1); }
+.rec-help-rounds li { display: flex; flex-wrap: wrap; align-items: center; gap: var(--g-1); }
+.rec-help-round-n { min-width: 5.5rem; font-family: var(--g-font-mono); font-size: var(--g-size-small); }
+.rec-help-round--now .rec-help-round-n { color: var(--g-ink); }
+.rec-help-quiet { color: var(--g-ink-low); }
+.rec-history { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--g-1); font-family: var(--g-font-mono); font-size: var(--g-size-small); }
+.rec-history-line { color: var(--g-ink-low); }
+.rec-history-line--now { color: var(--g-ink); }
+.rec-settings { display: flex; flex-wrap: wrap; gap: var(--g-3); align-items: center; margin-bottom: var(--g-3); }
+.rec-settings .g-segment, .rec-settings .rec-sound { min-height: 32px; }
+.rec-settings-facts { display: grid; grid-template-columns: auto 1fr; gap: var(--g-1) var(--g-3); margin: 0 0 var(--g-3); }
+.rec-settings-facts dt { color: var(--g-ink-low); }
+.rec-settings-facts dd { margin: 0; color: var(--g-ink); }
+.rec-settings-abandon { min-height: 32px; }
+
+/* --- short desks and phones ------------------------------------------------ */
+
+@media (min-width: 761px) and (max-height: 820px) {
+	.rec-console--match[data-terminal] { --os-status: 56px; --os-head: 30px; }
+	.rec-console--match[data-terminal] .rec-match--advanced .rec-site-head { flex-basis: 56px; height: 56px; }
+}
+
+@media (max-width: 760px) {
+	.rec-console--match[data-terminal] { --os-status: 92px; --os-head: 40px; }
+	.rec-console--match[data-terminal] .rec-status,
+	.rec-console--match[data-terminal] .rec-match--simple .rec-status {
+		grid-template-columns: auto auto minmax(0, 1fr) auto;
+		grid-template-rows: 34px minmax(0, 1fr);
+		gap: 2px var(--g-2);
+	}
+	.rec-console--match[data-terminal] .rec-leave { grid-column: 1; grid-row: 1; padding: 0 var(--g-2); }
+	.rec-console--match[data-terminal] .rec-status-world { grid-column: 2; grid-row: 1; align-self: center; }
+	.rec-console--match[data-terminal] .rec-status-score { grid-column: 3; grid-row: 1; justify-self: center; }
+	.rec-console--match[data-terminal] .rec-status-turn { display: none; }
+	.rec-console--match[data-terminal] .rec-status-tools { grid-column: 4; grid-row: 1; gap: 2px; }
+	.rec-console--match[data-terminal] .rec-tool { padding: 0 var(--g-2); }
+	.rec-console--match[data-terminal] .rec-status-say { grid-column: 1 / -1; grid-row: 2; }
+	.rec-console--match[data-terminal] .rec-status-hint { font-size: var(--g-size-small); }
+	.rec-console--match[data-terminal] .rec-status-planet { font-size: var(--g-size-small); }
+	.rec-console--match[data-terminal] .rec-status-of { display: none; }
+	.rec-console--match[data-terminal] .rec-score-label { max-width: 4.5rem; }
+
+	.rec-console--match[data-terminal] .rec-bench-head {
+		grid-template-columns: minmax(0, 1fr) auto;
+		grid-template-rows: 32px;
+		height: auto;
+	}
+	.rec-console--match[data-terminal] .rec-bench-acts-slot { grid-column: 1; grid-row: 1; }
+	.rec-console--match[data-terminal] .rec-deploy-count { grid-column: 1; grid-row: 1; }
+	.rec-console--match[data-terminal] .rec-bench-actions { grid-column: 2; grid-row: 1; flex-direction: row; }
+	.rec-console--match[data-terminal] .rec-bench-acts-slot:not(:empty) ~ .rec-deploy-count { display: none; }
+	.rec-console--match[data-terminal] .rec-btn-mark { display: none; }
+	.rec-panel-cover { padding: var(--g-2); }
+	.rec-panel-head { padding: var(--g-2) var(--g-3); }
+	.rec-panel-body { padding: var(--g-2) var(--g-3) var(--g-3); font-size: var(--g-size-small); }
+}
+
+/* pass 38: the head is one line, name then stake; advanced mode wraps its place and scale under it */
+.rec-console--match[data-terminal] .rec-site-head {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	align-content: flex-start;
+	gap: 2px var(--g-2);
+}
+.rec-console--match[data-terminal] .rec-site-head .rec-site-name { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin: 0; }
+.rec-console--match[data-terminal] .rec-site-head .rec-site-place,
+.rec-console--match[data-terminal] .rec-site-head .rec-env-slot { flex: 1 0 100%; order: 2; }
+.rec-console--match[data-terminal] .rec-site-head .rec-env-slot { display: block; }
+.rec-console--match[data-terminal] .rec-site-head .rec-stake-btn { min-height: 26px; padding: 0 var(--g-2); }
+/* an empty world's preview sits in the middle of its floor, clear of the edge bands */
+/* fixed columns either side of the number and meter, so pointing at another creature never slides them */
+.rec-console--match[data-terminal] .rec-site-field--empty .rec-ghost:not(.rec-ghost--relocate) {
+	inset: 22px var(--g-2);
+	align-content: center;
+	grid-template-columns: minmax(0, 1fr) 6ch minmax(0, calc(14rem * var(--rec-scale))) minmax(0, 1fr);
+	grid-template-areas: ". value meter ." ". plan plan .";
+}
+.rec-console--match[data-terminal] .rec-match--simple .rec-dock { flex-basis: calc(196px * var(--rec-scale)); height: calc(196px * var(--rec-scale)); }
+@media (max-width: 760px) {
+	.rec-console--match[data-terminal] .rec-match--simple .rec-dock { flex-basis: 236px; height: 236px; }
+	.rec-console--match[data-terminal] .rec-site-field--empty .rec-ghost:not(.rec-ghost--relocate) { grid-template-columns: minmax(0, 1fr); grid-template-areas: "value" "plan"; }
+	.rec-console--match[data-terminal] .rec-site-head .rec-stake-btn { min-height: 32px; }
+}
+@media (max-width: 760px) {
+	/* the bar's words give way to their icons on a phone; each keeps its accessible name */
+	.rec-console--match[data-terminal] .rec-tool-word { display: none; }
+	.rec-console--match[data-terminal] .rec-leave { min-width: 32px; justify-content: center; }
+	.rec-console--match[data-terminal] .rec-status-score .rec-score-label { display: none; }
+	.rec-console--match[data-terminal] .rec-status-score { grid-auto-flow: column; gap: var(--g-2); }
+	.rec-console--match[data-terminal] .rec-score--mine::after { content: ''; }
+}
+
+/* --- pass 38, second round: what the blind critic could not read ------------ */
+
+/* a fallen creature stays on the board at the Ruling, greyed and struck through */
+.rec-console--match[data-terminal] .rec-figure--fallen { opacity: 0.4; filter: grayscale(1); animation: none; pointer-events: auto; }
+.rec-console--match[data-terminal] .rec-figure--fallen .rec-figure-name { text-decoration: line-through; }
+
+/* a forecast sits over the piece rather than inside the name plate, so the name keeps its room */
+.rec-console--match[data-terminal] .rec-figure { position: relative; }
+.rec-console--match[data-terminal] .rec-figure .rec-figure-threat {
+	position: absolute;
+	top: 0;
+	left: 50%;
+	transform: translateX(-50%);
+	z-index: 2;
+	white-space: nowrap;
+	font-size: var(--g-size-micro);
+}
+
+/* hurt reads as a colored edge on the name plate, not a tilt that looked like a glitch */
+.rec-console--match[data-terminal] .rec-figure--staggered .rec-figure-plate { transform: none; border-bottom-color: var(--g-lamp-red); }
+
+/* the clashing world lights up in place; lifting it made it overlap the bar above */
+.rec-console--match[data-terminal] .rec-site--clashing { animation: none; transform: none; }
+
+/* the only rival-number and reach line room is kept when there is something to say */
+.rec-console--match[data-terminal] .rec-status-reach[data-still-reachable="none"] { display: none; }
+.rec-console--match[data-terminal] .rec-status-hint { -webkit-line-clamp: 2; }
+
+/* a keyboard hint means nothing on a touch screen */
+@media (hover: none) {
+	.rec-console--match[data-terminal] .rec-skip kbd { display: none; }
+}
+
+/* the empty world's two lines are read, not squinted at */
+.rec-console--match[data-terminal] .rec-world-footing--compact { font-size: var(--g-size-body); line-height: 1.4; text-align: center; }
+.rec-console--match[data-terminal] .rec-world-footing--compact .rec-world-footing-big { font-size: 1.6em; }
+
+/* the help panel shows there is more below while there is */
+.rec-panel-body {
+	mask-image: linear-gradient(to bottom, black calc(100% - 2rem), transparent 100%);
+	-webkit-mask-image: linear-gradient(to bottom, black calc(100% - 2rem), transparent 100%);
+	padding-bottom: 2.5rem;
+}
+
+/* the Ruling's bar fills the dock it stands in */
+.rec-console--match[data-terminal] .rec-dock > .rec-judge-bar {
+	flex: 1 1 0;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--g-4);
+	padding: var(--g-3) var(--g-5);
+	font-size: var(--g-size-lead);
+}
+.rec-console--match[data-terminal] .rec-dock > .rec-judge-bar .g-btn { min-height: 48px; padding-inline: var(--g-5); font-size: var(--g-size-body); white-space: nowrap; }
+
+@media (max-width: 760px) {
+	/* the role glyph comes back to the phone's squad: it is how Sweep is told from Strike */
+	.rec-console--match[data-terminal] .rec-plinth-role { display: inline-flex; }
+	.rec-console--match[data-terminal] .rec-plinth-name { letter-spacing: 0; font-size: 9px; }
+	.rec-console--match[data-terminal] .rec-stamp { font-size: var(--g-size-micro); white-space: nowrap; padding-inline: var(--g-1); }
+	.rec-console--match[data-terminal] .rec-dock > .rec-judge-bar { flex-direction: column; align-items: stretch; justify-content: center; padding: var(--g-3); font-size: var(--g-size-small); }
+	.rec-console--match[data-terminal] .rec-world-footing--compact { font-size: var(--g-size-small); }
+}
+.rec-console--match[data-terminal] .rec-dock > .rec-judge-bar .rec-judge-bar-text { font-size: inherit; color: var(--g-ink); }
+
+/* --- pass 38, third round -------------------------------------------------- */
+
+/* the stray rule across the top of the instruction line, and its left bar's twin, go */
+.rec-console--match[data-terminal] .rec-status-hint { border-top: 0; }
+.rec-console--match[data-terminal] .rec-status-reach { border: 0; padding-left: var(--g-2); }
+
+/* the rival's pass, beside its score, for as long as it lasts */
+.rec-console--match[data-terminal] .rec-score-passed {
+	margin-left: var(--g-2);
+	padding: 0 var(--g-1);
+	font-size: var(--g-size-micro);
+	text-transform: uppercase;
+	letter-spacing: 0.06em;
+	color: var(--rec-rival);
+	border: var(--g-hairline) solid currentColor;
+	border-radius: 2px;
+}
+
+/* each world carries its dot, the same color as its dot under every creature in the squad */
+.rec-console--match[data-terminal] .rec-site-dot {
+	flex: 0 0 auto;
+	width: 10px;
+	height: 10px;
+	border-radius: 50%;
+	background: var(--g-el);
+	box-shadow: 0 0 4px color-mix(in srgb, var(--g-el) 60%, transparent);
+}
+
+/* with a creature in hand, every world says it can be pressed */
+.rec-console--match[data-terminal] .rec-site--targeted {
+	border-color: var(--rec-you);
+	box-shadow: var(--g-relief), 0 0 0 1px var(--rec-you), inset 0 0 24px color-mix(in srgb, var(--rec-you) 10%, transparent);
+	cursor: pointer;
+}
+.rec-console--match[data-terminal] .rec-site--targeted:hover { box-shadow: var(--g-relief), 0 0 0 2px var(--rec-you), inset 0 0 32px color-mix(in srgb, var(--rec-you) 18%, transparent); }
+
+/* the preview's number says what it is */
+.rec-console--match[data-terminal] .rec-ghost-unit {
+	margin-left: 4px;
+	font-family: var(--g-font-stencil);
+	font-size: var(--g-size-micro);
+	text-transform: uppercase;
+	letter-spacing: 0.08em;
+	color: var(--g-ink-low);
+}
+.rec-console--match[data-terminal] .rec-site-floor .rec-ghost:not(.rec-ghost--relocate) { grid-template-columns: minmax(0, 1fr) 9ch minmax(0, calc(14rem * var(--rec-scale))) minmax(0, 1fr); }
+.rec-console--match[data-terminal] .rec-ghost-value { white-space: nowrap; }
+
+/* the role glyph in the name plate */
+.rec-console--match[data-terminal] .rec-figure-plate-role { display: inline-flex; margin-right: 3px; flex: 0 0 auto; }
+.rec-console--match[data-terminal] .rec-figure-plate { display: inline-flex; align-items: center; justify-content: center; }
+
+/* the dossier key is a corner of the card, not a row of its own */
+.rec-console--match[data-terminal] .rec-plinth-read {
+	position: absolute;
+	top: 0;
+	right: 0;
+	width: 26px;
+	height: 26px;
+	min-height: 0;
+	padding: 0;
+	border: 0;
+	background: none;
+	display: flex;
+	align-items: flex-start;
+	justify-content: flex-end;
+	z-index: 2;
+}
+
+/* a suggested pass is the one bright key on the bench */
+.rec-console--match[data-terminal] .rec-pass-btn--suggested { box-shadow: 0 0 12px color-mix(in srgb, var(--g-accent) 45%, transparent); }
+
+/* the Ruling's next step reads beside the key that takes it */
+.rec-console--match[data-terminal] .rec-dock > .rec-judge-bar { justify-content: flex-end; }
+
+/* the advanced log reads at body size, not as the loudest text on the screen */
+.rec-console--match[data-terminal] .rec-rail .rec-log { font-size: var(--g-size-small); line-height: 1.45; }
+
+/* the fallen of a round the Court has ruled stay greyed; the rest of the board does not */
+.rec-console--match[data-terminal] .rec-site[class*="rec-site--verdict"] .rec-figure:not(.rec-figure--fallen) { opacity: 1; filter: none; }
+
+@media (max-width: 760px) {
+	.rec-console--match[data-terminal] .rec-sends-scope { display: none; }
+	.rec-console--match[data-terminal] .rec-plinth-read { width: 32px; height: 32px; min-height: 32px; }
+	.rec-console--match[data-terminal] .rec-site-dot { width: 7px; height: 7px; }
+	.rec-console--match[data-terminal] .rec-ghost-unit { display: block; margin: 0; text-align: center; }
+	.rec-console--match[data-terminal] .rec-site-floor .rec-ghost-plan { display: block; font-size: 10px; line-height: 1.3; white-space: normal; text-align: center; }
+	.rec-console--match[data-terminal] .rec-site-field--empty .rec-ghost:not(.rec-ghost--relocate) { grid-template-columns: minmax(0, 1fr); grid-template-areas: "value" "plan"; }
+	.rec-console--match[data-terminal] .rec-site-floor .rec-ghost:not(.rec-ghost--relocate) { grid-template-rows: auto auto; }
+}
+.rec-console--match[data-terminal] .rec-match--advanced .rec-plinth-name { letter-spacing: 0.02em; font-size: 0.6875rem; }
+/* the chosen behaviour is filled, the other is an outline: which one is on can be seen */
+.rec-console--match[data-terminal] .rec-bench-act--on { background: var(--rec-you); color: var(--g-hull-lo); box-shadow: none; opacity: 1; }
+.rec-console--match[data-terminal] .rec-bench-act:not(.rec-bench-act--on) { opacity: 0.85; }
+
+/* --- pass 38, fourth round -------------------------------------------------- */
+
+/* your own sweep's forecast, in amber rather than the enemy's red */
+.rec-console--match[data-terminal] .rec-figure-threat--own {
+	padding: 0 4px;
+	border-radius: 2px;
+	background: color-mix(in srgb, var(--g-lamp-amber) 85%, black);
+	color: var(--g-hull-lo);
+	font-family: var(--g-font-stencil);
+	text-transform: uppercase;
+	letter-spacing: 0.06em;
+}
+
+/* the tally's side labels are its legend: which number is whose */
+.rec-console--match[data-terminal] .rec-tally-label { display: inline; }
+
+/* at the Ruling the bench stays, flat, and the Court's bar takes its head row */
+.rec-console--match[data-terminal] .rec-dock:has(> .rec-judge-bar) > .rec-bench { pointer-events: none; }
+.rec-console--match[data-terminal] .rec-dock:has(> .rec-bench) > .rec-judge-bar {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	z-index: 3;
+	flex: none;
+	height: calc(2.9rem * var(--rec-scale));
+	padding: 0 var(--g-3);
+	font-size: var(--g-size-body);
+	background: var(--g-hull);
+	border-bottom: var(--g-hairline) solid var(--g-seam);
+}
+.rec-console--match[data-terminal] .rec-dock:has(> .rec-bench) > .rec-judge-bar .g-btn { min-height: 34px; }
+
+/* advanced mode's decimal needs room beside the meter */
+.rec-console--match[data-terminal] .rec-match--advanced .rec-site-floor .rec-ghost:not(.rec-ghost--relocate) { grid-template-columns: minmax(0, 1fr) 12ch minmax(0, calc(14rem * var(--rec-scale))) minmax(0, 1fr); }
+
+/* the history key hides only where advanced mode's rail already shows the log */
+@media (min-width: 761px) {
+	.rec-console--match[data-terminal] .rec-match--advanced .rec-tool--history { display: none; }
+}
+
+/* the help panel's scroll shows */
+.rec-panel-body { scrollbar-width: thin; scrollbar-color: var(--g-ink-low) transparent; }
+.rec-panel-body::-webkit-scrollbar { width: 8px; }
+.rec-panel-body::-webkit-scrollbar-thumb { background: var(--g-ink-low); border-radius: 4px; }
+
+@media (max-width: 760px) {
+	/* a crowded phone world has no room for bulb meters: the number is the reading */
+	.rec-console--match[data-terminal] .rec-site-floor .rec-figure-foot .rec-meter { display: none; }
+	/* scores carry their names, small */
+	.rec-console--match[data-terminal] .rec-status-score .rec-score-label { display: inline; font-size: 9px; max-width: none; }
+	.rec-console--match[data-terminal] .rec-status-score .rec-pips { display: none; }
+	/* the Court's callout keeps inside the bar */
+	.rec-console--match[data-terminal] .rec-status-say .rec-callout { max-height: 100%; overflow: hidden; }
+	.rec-console--match[data-terminal] .rec-status-say .rec-callout-text { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; }
+	.rec-console--match[data-terminal] .rec-dock:has(> .rec-bench) > .rec-judge-bar { flex-direction: row; align-items: center; height: 44px; font-size: var(--g-size-micro); padding: 0 var(--g-2); }
+	.rec-console--match[data-terminal] .rec-dock:has(> .rec-bench) > .rec-judge-bar .g-btn { min-height: 32px; padding-inline: var(--g-3); }
+	.rec-console--match[data-terminal] .rec-tally-label { display: none; }
+}
+@media (max-width: 760px) {
+	/* the rival's pass is told in the instruction line on a phone; the chip does not fit the bar */
+	.rec-console--match[data-terminal] .rec-score-passed { display: none; }
+	/* in a narrow world the own-sweep forecast is an amber mark over the creature, not a label */
+	.rec-console--match[data-terminal] .rec-figure-threat--own { font-size: 0; width: 10px; height: 10px; padding: 0; border-radius: 50%; }
+}
+
+/* --- pass 38, fifth round --------------------------------------------------- */
+
+/* the squad card's best world, in that world's color */
+.rec-console--match[data-terminal] .rec-plinth-best {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	max-width: 100%;
+	overflow: hidden;
+	font-family: var(--g-font-stencil);
+	font-size: var(--g-size-micro);
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+	color: var(--g-el);
+	white-space: nowrap;
+}
+.rec-console--match[data-terminal] .rec-plinth-best-dot { flex: 0 0 auto; width: 7px; height: 7px; border-radius: 50%; background: var(--g-el); }
+
+/* the world panels lose their corner rivets and the seam its band: both read as placeholders */
+.rec-console--match[data-terminal] .rec-site.g-panel { background-image: linear-gradient(160deg, var(--g-hull-hi), var(--g-hull)); }
+.rec-console--match[data-terminal] .rec-site-floor .rec-site-midline { background: transparent; border-color: color-mix(in srgb, var(--g-seam) 60%, transparent); }
+
+/* the empty world's lines at a readable size */
+.rec-console--match[data-terminal] .rec-world-footing--compact .rec-world-footing-line { font-size: var(--g-size-body); }
+
+/* the own-sweep forecast carries its number */
+.rec-console--match[data-terminal] .rec-figure-threat--own { white-space: nowrap; }
+
+@media (max-width: 760px) {
+	/* advanced mode on a phone: the preview is the call over the number, as in simple */
+	.rec-console--match[data-terminal] .rec-match--advanced .rec-site-floor .rec-ghost:not(.rec-ghost--relocate),
+	.rec-console--match[data-terminal] .rec-match--advanced .rec-site-field--empty .rec-ghost:not(.rec-ghost--relocate) { grid-template-columns: minmax(0, 1fr); grid-template-areas: "value" "plan"; }
+	.rec-console--match[data-terminal] .rec-world-footing--compact .rec-world-footing-line { font-size: var(--g-size-small); }
+	.rec-console--match[data-terminal] .rec-plinth-best { font-size: 8px; letter-spacing: 0; }
+}
+@media (max-width: 760px) {
+	/* the stake key sits on the name line in a narrow world: "×2", with its full name for screen readers in its title */
+	.rec-console--match[data-terminal] .rec-stake-word { display: none; }
+	.rec-console--match[data-terminal] .rec-site-head { flex-wrap: nowrap; }
+	.rec-console--match[data-terminal] .rec-site-head .rec-stake-btn { min-width: 32px; flex: 0 0 auto; }
+	.rec-console--match[data-terminal] { --os-head: 36px; }
+}
+
+/* --- pass 38, sixth round ---------------------------------------------------- */
+
+/* the Court's key keeps inside its bar */
+.rec-console--match[data-terminal] .rec-dock:has(> .rec-bench) > .rec-judge-bar .g-btn { height: calc(2.2rem * var(--rec-scale)); min-height: 0; padding-block: 0; }
+.rec-console--match[data-terminal] .rec-dock:has(> .rec-judge-bar) > .rec-bench { padding-top: calc(2.9rem * var(--rec-scale)); }
+.rec-console--match[data-terminal] .rec-dock:has(> .rec-judge-bar) > .rec-bench > .rec-bench-head { display: none; }
+
+/* a rival creature your attacks would down reads in your color: it is your win, not a warning */
+.rec-console--match[data-terminal] .rec-figure--theirs .rec-figure-threat--downed { background: var(--rec-you); color: var(--g-hull-lo); }
+
+@media (max-width: 760px) {
+	/* a phone's world head is its name: the place and the temperature scale never fit there */
+	.rec-console--match[data-terminal] .rec-site-head .rec-site-place,
+	.rec-console--match[data-terminal] .rec-site-head .rec-env-slot { display: none; }
+	.rec-console--match[data-terminal] .rec-site-head .rec-site-name { letter-spacing: 0.02em; font-size: 10px; }
+	.rec-console--match[data-terminal] .rec-site-head { gap: 3px; }
+	.rec-console--match[data-terminal] .rec-dock:has(> .rec-bench) > .rec-judge-bar .g-btn { height: 32px; }
+	.rec-console--match[data-terminal] .rec-dock:has(> .rec-judge-bar) > .rec-bench { padding-top: 44px; }
+	/* the forecast marks sit inside a crowded rank's figures */
+	.rec-console--match[data-terminal] .rec-site-floor .rec-rank:not([data-rank-rows="1"]) .rec-figure .rec-figure-threat { top: 1px; }
+}
+
+/* --- pass 38, seventh round ------------------------------------------------- */
+
+/* the forecast after a creature's number: red for what the rival takes, amber for your own sweep, your color for a rival you would down */
+.rec-console--match[data-terminal] .rec-figure-after {
+	margin-left: 2px;
+	font-family: var(--g-font-mono);
+	font-size: 0.85em;
+	font-weight: 700;
+	color: var(--g-lamp-red);
+	white-space: nowrap;
+}
+.rec-console--match[data-terminal] .rec-figure-after--own { color: var(--g-lamp-amber); }
+.rec-console--match[data-terminal] .rec-figure--theirs .rec-figure-after { color: var(--rec-you); }
+
+/* the tally's forecast, small beside the live total */
+.rec-console--match[data-terminal] .rec-tally-after {
+	font-family: var(--g-font-mono);
+	font-size: 0.72em;
+	font-weight: 700;
+	color: var(--g-ink-mid);
+	white-space: nowrap;
+}
+
+/* a send that would only hurt your side, or do nothing, reads amber */
+.rec-console--match[data-terminal] .rec-ghost-role--warn { color: var(--g-lamp-amber); }
+
+/* a sent squad card: the world's dot and its name */
+.rec-console--match[data-terminal] .rec-plinth-sent {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	max-width: 100%;
+	overflow: hidden;
+	white-space: nowrap;
+}
+.rec-console--match[data-terminal] .rec-plinth-sent .rec-plinth-sent-where { color: var(--g-el); overflow: hidden; text-overflow: ellipsis; }
+
+/* the help panel's key to the marks */
+.rec-help-marks { margin: 0; padding-left: 1.1em; display: grid; gap: var(--g-1); }
+
+/*
+	A phone's world with two to four of a side's creatures stands them one per row, the
+	piece on the left and its name and number beside it, instead of shrinking them abreast
+	until the names went (rankGrid's `list`).
+*/
+@container (max-width: 299.98px) {
+	.rec-console--match[data-terminal] .rec-site-floor .rec-rank[data-rank-list] { flex-direction: column; flex-wrap: nowrap; align-items: stretch; }
+	.rec-console--match[data-terminal] .rec-site-floor .rec-rank[data-rank-list] .rec-figure,
+	.rec-console--match[data-terminal] .rec-site-floor .rec-rank[data-rank-list] .rec-figure--down {
+		display: grid;
+		grid-template-columns: auto minmax(0, 1fr);
+		grid-template-rows: auto auto;
+		grid-template-areas: "stage plate" "stage foot";
+		align-content: center;
+		justify-items: start;
+		column-gap: 4px;
+		width: calc(100cqw - 2px);
+		max-width: none;
+		height: calc(100cqh / var(--rank-rows, 1) - 3px);
+	}
+	.rec-console--match[data-terminal] .rec-site-floor .rec-rank[data-rank-list] .rec-piece-stage {
+		grid-area: stage;
+		align-self: center;
+		--rec-piece: clamp(18px, calc(100cqh / var(--rank-rows, 1) - 10px), 40px);
+	}
+	.rec-console--match[data-terminal] .rec-site-floor .rec-rank[data-rank-list] .rec-figure-plate { grid-area: plate; max-width: 100%; justify-self: stretch; }
+	.rec-console--match[data-terminal] .rec-site-floor .rec-rank[data-rank-list] .rec-figure-foot { grid-area: foot; }
+	.rec-console--match[data-terminal] .rec-site-floor .rec-rank[data-rank-list] .rec-piece-disc { visibility: hidden; }
+	.rec-console--match[data-terminal] .rec-site-floor .rec-rank[data-rank-list] .rec-figure .rec-figure-threat { top: auto; bottom: 1px; left: auto; right: 1px; transform: none; }
+}
+
+@media (max-width: 760px) {
+	/* a sent card's world is its dot; the name did not fit and was cut */
+	.rec-console--match[data-terminal] .rec-plinth-sent .rec-plinth-sent-where { display: none; }
+	/* squad names in full */
+	.rec-console--match[data-terminal] .rec-plinth-name { font-size: 8px; letter-spacing: 0; }
+	.rec-console--match[data-terminal] .rec-figure-threat { font-size: 8px; padding: 0 3px; }
+}
+
+/* the forecast's arrow in the body face, where the mono one drew a dash */
+.rec-console--match[data-terminal] .rec-after-arrow { font-family: var(--g-font-body); font-weight: 700; margin-right: 1px; }
+/* a rival creature's chip sits under its piece, clear of the rank's RIVAL label */
+.rec-console--match[data-terminal] .rec-figure--theirs.rec-figure--down .rec-figure-threat { top: auto; bottom: 0; }
+@container (max-width: 299.98px) {
+	/* the phone list's name plate gives the name the room */
+	.rec-console--match[data-terminal] .rec-site-floor .rec-rank[data-rank-list] .rec-figure-plate { font-size: 8px; letter-spacing: 0; padding: 0 2px; }
+}
+/* advanced squad cards are narrower: a sent card is its world's dot, and names set tighter */
+@media (max-width: 760px) {
+	.rec-console--match[data-terminal] .rec-match--advanced .rec-plinth-sent .rec-plinth-sent-where { display: none; }
+}
+.rec-console--match[data-terminal] .rec-match--advanced .rec-plinth-sent { font-size: 0.625rem; letter-spacing: 0; }
+.rec-console--match[data-terminal] .rec-match--advanced .rec-plinth-name { font-size: 0.625rem; letter-spacing: 0; }
+@container (max-width: 299.98px) {
+	/* the phone list's piece gives up room to the name */
+	.rec-console--match[data-terminal] .rec-site-floor .rec-rank[data-rank-list] .rec-piece-stage { --rec-piece: clamp(18px, calc(100cqh / var(--rank-rows, 1) - 12px), 32px); }
+	.rec-console--match[data-terminal] .rec-site-floor .rec-rank[data-rank-list] .rec-figure { column-gap: 2px; }
+}
+@container (max-width: 299.98px) {
+	.rec-console--match[data-terminal] .rec-site-floor .rec-rank[data-rank-list] .rec-figure-name { font-size: 8px; letter-spacing: 0; }
+	.rec-console--match[data-terminal] .rec-site-floor .rec-rank[data-rank-list] .rec-figure-plate-role { transform: scale(0.8); margin: 0 -1px; }
+}
+@container (max-width: 299.98px) {
+	.rec-console--match[data-terminal] .rec-site-floor .rec-rank[data-rank-list] .rec-figure-plate { padding: 0 1px; gap: 1px; }
+}
+
+/* --- pass 38, eighth round -------------------------------------------------- */
+
+/* the world total's forecast reads at the size of the total it follows */
+.rec-console--match[data-terminal] .rec-tally-after { font-size: 0.9em; margin-left: 3px; }
+.rec-console--match[data-terminal] .rec-tally-side--theirs .rec-tally-after { margin-right: 3px; }
+
+/* the phone keeps the own-sweep and no-target chips, small, inside the creature's row */
+@media (max-width: 760px) {
+	.rec-console--match[data-terminal] .rec-figure-threat--own { display: inline-block; font-size: 7px; width: auto; height: auto; padding: 0 2px; border-radius: 2px; letter-spacing: 0.02em; }
+}
+
+/* the log reads as prose, in order, each round's ruling a divider */
+.rec-console--match[data-terminal] .rec-rail .rec-log { font-family: var(--g-font-body); letter-spacing: 0; }
+.rec-console--match[data-terminal] .rec-log-round,
+.rec-history-line.rec-log-round { margin-top: var(--g-1); padding-top: var(--g-1); border-top: var(--g-hairline) solid var(--g-seam); font-weight: 700; }
+
+/* the one stake key sits beside Pass */
+.rec-console--match[data-terminal] .rec-stake-key { white-space: nowrap; }
+/* the stake's confirm is one row: the question, then its two keys */
+.rec-console--match[data-terminal] .rec-status-say .rec-stake-ask { display: flex; flex-direction: row; align-items: center; gap: var(--g-2); flex-wrap: nowrap; min-width: 0; }
+.rec-console--match[data-terminal] .rec-status-say .rec-stake-ask-text { flex: 1 1 auto; min-width: 0; }
+.rec-console--match[data-terminal] .rec-status-say .rec-stake-ask-actions { display: flex; width: auto; gap: var(--g-1); flex: 0 0 auto; }
+@media (max-width: 760px) {
+	.rec-console--match[data-terminal] .rec-status-say .rec-stake-ask-text { font-size: var(--g-size-small); line-height: 1.25; }
+	.rec-console--match[data-terminal] .rec-status-say .rec-stake-ask .g-btn { min-height: 30px; padding: 0 8px; font-size: 10px; }
+}
+
+/* --- pass 38, ninth round --------------------------------------------------- */
+
+@container (max-width: 299.98px) {
+	/* the phone list gives each creature's chip its own line under the number, never over it */
+	.rec-console--match[data-terminal] .rec-site-floor .rec-rank[data-rank-list] .rec-figure,
+	.rec-console--match[data-terminal] .rec-site-floor .rec-rank[data-rank-list] .rec-figure--down {
+		grid-template-rows: auto auto auto;
+		grid-template-areas: "stage plate" "stage foot" "stage mark";
+	}
+	.rec-console--match[data-terminal] .rec-site-floor .rec-rank[data-rank-list] .rec-figure .rec-figure-threat { position: static; grid-area: mark; justify-self: start; transform: none; }
+	/* and acts in place: the lunge carried a creature over the one beside it */
+	.rec-console--match[data-terminal] .rec-site-floor .rec-rank[data-rank-list] .rec-figure--acting,
+	.rec-console--match[data-terminal] .rec-site-floor .rec-rank[data-rank-list] .rec-figure--hit { animation-name: rec-list-pulse; }
+}
+@keyframes rec-list-pulse {
+	0% { transform: scale(1); }
+	35% { transform: scale(1.05); }
+	100% { transform: scale(1); }
+}
+
+
+@media (max-width: 760px) {
+	/* a sent card names its world, small, as the best-world label does */
+	.rec-console--match[data-terminal] .rec-match:not(.rec-match--advanced) .rec-plinth-sent .rec-plinth-sent-where { display: inline; font-size: 8px; letter-spacing: 0; }
+	.rec-console--match[data-terminal] .rec-plinth-sent { gap: 2px; font-size: 8px; }
+	/* the rival's pass, as a small mark beside its score */
+	.rec-console--match[data-terminal] .rec-score-passed { display: inline-block; font-size: 0; width: 6px; height: 6px; border-radius: 50%; background: var(--g-ink-low); margin-left: 3px; padding: 0; border: 0; }
+}
+
+/* the log: one face, and its heading stays */
+.rec-console--match[data-terminal] .rec-rail .rec-log > * { font-family: var(--g-font-body); letter-spacing: 0; }
+.rec-console--match[data-terminal] .rec-rail .rec-log .g-readout-unit { position: sticky; top: 0; z-index: 1; background: var(--g-hull-lo); font-family: var(--g-font-stencil); }
+
+/* a lone creature's name plate may use the room its world has */
+.rec-console--match[data-terminal] .rec-site-floor .rec-rank .rec-figure { max-width: calc(150px * var(--rec-scale)); }
+.rec-console--match[data-terminal] .rec-tally-side { gap: 4px; }
+/* the preview's sentence starts where its cell starts, so a longer or shorter one changes paint, never where it sits */
+.rec-console--match[data-terminal] .rec-ghost-plan { align-items: flex-start; }
+/* the preview's sentence starts at the same place for every creature and world: its row spans the grid and it is anchored left */
+@media (min-width: 761px) {
+	.rec-console--match[data-terminal] .rec-site-floor .rec-ghost-plan { justify-self: stretch; align-items: flex-start; }
+}

@@ -25,7 +25,7 @@ describe('recommendSend', () => {
 		expect(rec.label).toMatch(/^Send .+ to /);
 		expect(rec.reason).toMatch(/holds [0-9.]+ at .+, which nobody has claimed yet\./);
 		// the reason ends on the role sentence, the one sentence the whole table prints
-		expect(rec.reason).toMatch(/(Attacks one enemy here for [0-9.]+|Sweeps everyone here for [0-9.]+|Bolsters allies here against the world, and recovers what they lose|Shields allies here from the largest attack|Stands here and throws nothing)\.$/);
+		expect(rec.reason).toMatch(/(Attacks one enemy here for [0-9.]+|Sweeps every other creature here, yours too, for [0-9.]+|Bolsters allies here against the world, and recovers what they lose|Shields allies here from the largest attack|Stands here and throws nothing)\.$/);
 	});
 
 	test('the recommended send is legal', () => {

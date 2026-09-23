@@ -63,6 +63,18 @@ export function classifyEvent(event) {
 	return 'unknown';
 }
 
+/*
+	PASS 38. The log prints the numbers the board prints: whole numbers. A blind critic read
+	"stands at 6.2" in the log beside a 6 on the figure, and "12.3 against 0" beside a 12 on
+	the world, three rounds running, and stopped trusting either. The tenth is kept only where
+	rounding would make two different holds read the same (a close Ruling).
+*/
+function wholeOrTenths(a, b) {
+	const ra = Math.round(a);
+	const rb = Math.round(b);
+	return ra === rb && Math.abs(a - b) >= 0.05 ? [formatHold(a), formatHold(b)] : [String(ra), String(rb)];
+}
+
 // hold values are fractional; the table prints them to one decimal, dropping a trailing .0
 export function formatHold(value) {
 	if (typeof value !== 'number' || !isFinite(value)) {
@@ -126,7 +138,7 @@ export function roleSentence(role, attackPower) {
 	const n = typeof attackPower === 'number' ? formatHold(attackPower) : '?';
 	switch (role) {
 		case 'strike': return `Attacks one enemy here for ${n}`;
-		case 'sweep': return `Sweeps everyone here for ${n}`;
+		case 'sweep': return `Sweeps every other creature here, yours too, for ${n}`;
 		case 'bolster': return 'Bolsters allies here against the world, and recovers what they lose';
 		case 'shield': return 'Shields allies here from the largest attack';
 		default: return 'Stands here and throws nothing';
@@ -147,7 +159,7 @@ export function roleWord(role) {
 // the verb a landing attack reads with: a strike is aimed, a sweep catches whatever
 // happens to be standing at the world
 function attackVerb(role) {
-	return role === 'sweep' ? 'catches' : 'strikes';
+	return role === 'sweep' ? 'hits' : 'strikes';
 }
 
 /*
@@ -173,11 +185,11 @@ export function narrateEvent(event, ctx = {}) {
 			return `${actor} shields, and nothing is thrown at its side.`;
 		}
 		const blocked = ctx.targetName || 'the attack';
-		return `${actor} shields: ${blocked}'s attack of ${formatHold(event.amount)} is cancelled.`;
+		return `${actor} shields: ${blocked}'s attack of ${formatHoldShown(event.amount)} is cancelled.`;
 	}
 	if (event.type === 'recover') {
 		const under = ctx.bolsterName ? `under ${ctx.bolsterName}'s bolster` : 'under a bolster';
-		return `${actor} recovers ${formatHold(event.amount)} ${under}; stands at ${formatHold(event.remaining)}.`;
+		return `${actor} recovers ${formatHoldShown(event.amount)} ${under}; stands at ${formatHoldShown(event.remaining)}.`;
 	}
 	if (event.type === 'pin') {
 		/*
@@ -195,29 +207,29 @@ export function narrateEvent(event, ctx = {}) {
 		// a sweep standing alone at a world still declares, and "catching 0 creatures" reads
 		// as a non-event; say what actually happened instead
 		if (n === 0) {
-			return `${actor}${condition} sweeps over ${where}, and catches nothing.`;
+			return `${actor}${condition} sweeps over ${where}, and hits nothing.`;
 		}
-		return `${actor}${condition} sweeps over ${where} for ${formatHold(event.power)} each, catching ${n} creature${n === 1 ? '' : 's'}.`;
+		return `${actor}${condition} sweeps over ${where} for ${formatHoldShown(event.power)} each, catching ${n} creature${n === 1 ? '' : 's'}.`;
 	}
 	if (event.type !== 'attack') {
 		return null;
 	}
 	switch (event.outcome) {
 		case 'downed':
-			return `${actor}${condition} ${attackVerb(event.role)} ${target} for ${formatHold(event.power)} and downs ${target}.`;
+			return `${actor}${condition} ${attackVerb(event.role)} ${target} for ${formatHoldShown(event.power)} and downs ${target}.`;
 		case 'hurt':
-			return `${actor}${condition} ${attackVerb(event.role)} ${target} for ${formatHold(event.power)}; ${target} stands at ${formatHold(event.remaining)}.`;
+			return `${actor}${condition} ${attackVerb(event.role)} ${target} for ${formatHoldShown(event.power)}; ${target} stands at ${formatHoldShown(event.remaining)}.`;
 		case 'cancelled':
 			// said by the shield event that cancelled it
 			return null;
 		case 'lapsed':
-			return `${actor}'s attack lapses, downed first.`;
+			return `${actor} falls before it can attack.`;
 		case 'pinned':
 			// PASS 18: said by the victim, so the log reads in the order the table saw it -
 			// the pin lands, then the swing it took does not happen
 			return `${actor} is restrained, and does not swing.`;
 		case 'no-target':
-			return `${actor}${condition} finds no target.`;
+			return `${actor}${condition} finds no rival to strike.`;
 		default:
 			return `${actor} ${attackVerb(event.role)} ${target}.`;
 	}
@@ -264,7 +276,7 @@ export function narrateSend(ctx = {}) {
 }
 
 export function narratePass(ctx = {}) {
-	return ctx.you ? 'You pass. You are out of this round’s deploy.' : 'The rival passes for this round.';
+	return ctx.you ? 'You pass. You are out of this round.' : 'The rival passes for this round.';
 }
 
 /*
@@ -306,8 +318,7 @@ export function narrateJudge(event, ctx = {}) {
 		const value = typeof r.countedValue === 'number' ? r.countedValue : (counted[siteId] || 1);
 		const base = names[siteId] || siteId;
 		const name = value > 1 ? `${base} (counting ${countWord(value)})` : base;
-		const a = formatHold(r.holdA);
-		const b = formatHold(r.holdB);
+		const [a, b] = wholeOrTenths(r.holdA, r.holdB);
 		const mine = you === 'A' ? a : b;
 		const theirs = you === 'A' ? b : a;
 		if (!r.winner) {
@@ -335,5 +346,5 @@ export function narrateMatchEnd(ctx = {}) {
 	if (winner) {
 		return `The rival takes the Charter, ${sites(sitesThem)} to ${sitesYou}, ${why}.`;
 	}
-	return `The Proving ends level, ${sitesYou} to ${sitesThem}.`;
+	return `The game ends level, ${sitesYou} to ${sitesThem}.`;
 }

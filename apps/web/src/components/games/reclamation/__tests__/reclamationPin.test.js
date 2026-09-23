@@ -60,7 +60,7 @@ describe('the pin speaks', () => {
 		const cancelled = narrateEvent({ type: 'attack', recordId: 'a', role: 'strike', outcome: 'cancelled' }, ctx);
 		expect(pinned).not.toBe(lapsed);
 		expect(pinned).toContain('restrained');
-		expect(lapsed).toContain('lapses');
+		expect(lapsed).toContain('falls before it can attack');
 		// a cancelled attack is narrated by the shield that cancelled it, not twice
 		expect(cancelled).toBe(null);
 	});

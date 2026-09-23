@@ -45,7 +45,7 @@ function lampLevel(hold) {
 	return 0;
 }
 
-function Plinth({ record, view, you, armed, suggested, disabled, onArm, onInspect, onHover }) {
+function Plinth({ record, view, you, armed, suggested, disabled, onArm, onInspect, onHover, advanced }) {
 	const slot = slotStateOf(record, view, you);
 	const inHand = slot.state === 'hand';
 	const holds = inHand ? siteHoldsFor(record, view, you) : null;
@@ -92,8 +92,9 @@ function Plinth({ record, view, you, armed, suggested, disabled, onArm, onInspec
 						<RoleGlyph role={role} />
 					</span>
 				)}
-				<span className="rec-plinth-init g-mono" title="Speed: the faster attacks land first when the worlds resolve">{Math.round(speedOf(record))}</span>
-				{laneMarks.length > 0 && (
+				{/* pass 38: speed and the attribute lanes are arithmetic, shown in advanced mode; the dossier always has them */}
+				{advanced && <span className="rec-plinth-init g-mono" title="Speed: the faster attacks land first when the worlds resolve">{Math.round(speedOf(record))}</span>}
+				{advanced && laneMarks.length > 0 && (
 					<span className="rec-plinth-lanes" aria-label="What this creature's attributes do here">
 						{laneMarks.map((mark) => (
 							<span className={`rec-plinth-lane rec-plinth-lane--${mark.glyph}`} key={mark.key} title={mark.text} aria-label={mark.text} data-lane-mark={mark.glyph}>
@@ -104,7 +105,16 @@ function Plinth({ record, view, you, armed, suggested, disabled, onArm, onInspec
 						))}
 					</span>
 				)}
-				{inHand && holds && (
+				{/* pass 38: simple mode names the one world it holds best; the three dots are advanced mode */}
+				{inHand && holds && !advanced && (() => {
+					const best = holds.reduce((a, b) => (b.hold > a.hold ? b : a));
+					return (
+						<span className={`rec-plinth-best g-el-${best.site.world.element}`} data-plinth-best={best.site.id} title={holds.map((h) => `${h.site.world.planet} ${formatHold(h.hold)}`).join(' · ')}>
+							<span className="rec-plinth-best-dot" aria-hidden="true" />{best.site.world.planet}
+						</span>
+					);
+				})()}
+				{inHand && holds && advanced && (
 					<span className="rec-lamps" aria-label="Where it holds well">
 						{holds.map((h) => (
 							<span
@@ -117,12 +127,15 @@ function Plinth({ record, view, you, armed, suggested, disabled, onArm, onInspec
 				)}
 				{!inHand && (
 					<span className={`rec-plinth-tag rec-plinth-tag--${slot.state}`}>
-						{slot.state === 'sent' ? slot.site.world.planet : slot.state === 'holding' ? 'holding' : slot.state === 'downed' ? 'downed' : 'away'}
+						{/* pass 38: "sent to", so the slot that names a best world in hand never reads the same once sent */}
+						{slot.state === 'sent'
+							? <span className={`rec-plinth-sent g-el-${slot.site.world.element}`} title={`Sent to ${slot.site.world.planet}`}><span className="rec-plinth-best-dot" aria-hidden="true" />&rarr;<span className="rec-plinth-sent-where">{slot.site.world.planet}</span></span>
+							: slot.state === 'holding' ? 'holding' : slot.state === 'downed' ? 'fallen' : 'away'}
 					</span>
 				)}
 				{inHand && (suggested || stealthy) && (
 					<span className="rec-plinth-marks">
-						{suggested && <span className="rec-plinth-mark rec-plinth-mark--suggested">suggested</span>}
+						{suggested && <span className="rec-plinth-mark rec-plinth-mark--suggested" title={typeof suggested === 'string' ? suggested : undefined}>suggested</span>}
 						{stealthy && <span className="rec-plinth-mark rec-plinth-mark--glyph" title="Stealthy: arrives hidden"><HiddenGlyph /></span>}
 					</span>
 				)}
@@ -160,9 +173,14 @@ function ReclamationBench({
 	actFlip,
 	armedRole,
 	onChooseRole,
+	// pass 38: false through the Clash, when the bench stays in the dock but nothing on it acts
+	interactive = true,
+	stakeAvailable,
+	stakeMode,
+	onToggleStake,
 }) {
 	const me = view.players[you];
-	const yourTurn = view.turn === you && view.phase === 'deploy';
+	const yourTurn = interactive && view.turn === you && view.phase === 'deploy';
 	const advanced = mode === 'advanced';
 	// the round's cap: the sendable ten, plus the trailing seat's bonus send this round
 	const cap = typeof me.sendableCap === 'number' ? me.sendableCap : SENDABLE;
@@ -177,73 +195,14 @@ function ReclamationBench({
 	// does not spend the turn. One button per creature that still may.
 	const movers = movable || [];
 
-	let heading;
-	let lead;
-	if (!yourTurn) {
-		heading = rivalBeat ? 'The rival has moved' : 'The rival is deciding';
-		lead = rivalBeat ? rivalBeat.text : 'When the rival has sent or passed, the move is yours.';
-	} else if (me.passed) {
-		heading = 'You have passed';
-		lead = 'Passing is permanent for this round. The rival finishes its deploy alone.';
-	} else if (movingRecordId) {
-		const mover = movers.find((m) => m.record.id === movingRecordId);
-		heading = mover ? `Move ${speciesLabel(mover.record)}` : 'Move';
-		lead = 'Press a world to move it there. It is swift, so this does not spend your turn.';
-	} else if (step === 2) {
-		heading = `${speciesLabel(armed)} is lifted`;
-		// the lead is the role sentence, the same one the dossier and the plinth print
-		lead = `${roleSentence(armedRead.role, armedRead.blowMagnitude)}. Press a world to send it there; each world shows what it would hold and what it would do.`;
-		// a stealthy creature always arrives hidden now (Nick, 2026-09-13): no toggle, just
-		// a statement of what will happen when it is sent.
-		if (armedStealthy) {
-			lead = `${lead} Stealthy: it arrives hidden. The rival will not see it until the worlds clash.`;
-		}
-	} else {
-		heading = 'Lift a creature';
-		/*
-			PASS 10. The resting line named the lamps but never promised what lifting does, so
-			a player who had not yet lifted a creature could not know the table would answer
-			"what happens if I do it" (the rubric critic, 2026-09-18, scored that question
-			the weakest of the four glanceable ones). The line now says the promise in the
-			order a player acts in: lift, and every world prints what this creature would
-			hold there and what it would do.
-		*/
-		lead = sendsLeft === 0
-			? `You have sent all ${SENDABLE} this Proving allows. The rest are your reserve.`
-			: 'Lift one and every world prints what it would hold there and what it would do. The lamps under each say where it holds well.';
-	}
-
 	return (
 		<section className={`rec-bench rec-bench--step-${step}${yourTurn && !me.passed ? ' rec-bench--active' : ''}`} aria-label="Your squad" data-deploy-step={step}>
 			<header className="rec-bench-head">
-				<span className="rec-bench-title">
-					<span className="rec-bench-kicker">Your squad</span>
-					<span className="rec-bench-count g-mono">{(me.roster || []).length}<span className="rec-bench-count-of">/{squad.length}</span></span>
-				</span>
 				{/*
-					PASS 37. The lead and the act picker ride in the head row, beside the heading,
-					so the bench is two rows (the head and the creatures) and fits the dock.
+					PASS 38. The head keeps only what is acted on: the act picker, the sends left and
+					the pass. "Your squad 12/12", the heading and the lead line repeated the top bar's
+					instruction and turn line, which are now the one place that says what to do.
 				*/}
-				<div className="rec-bench-say">
-					<h3 className="rec-bench-heading" key={heading}>{heading}</h3>
-					{/* the lead, beside the heading: with a creature lifted it is the
-					    role sentence, the same one the plinth, the dossier and the ghost preview print.
-
-					    PASS 10: it is shown at rest too, whenever it is this handler's turn. The
-					    resting line is where the table promises what lifting does, and it used to be
-					    written and then never rendered, so a player who had not yet lifted anything
-					    had nothing telling them the worlds would answer "what happens if I do it".
-					    That is what the rubric critic scored the weakest of the four glance
-					    questions, judging the screen before any creature was lifted. */}
-					{/*
-						PASS 36. The lead is always rendered and its row always reserved; when there is
-						nothing to say it is empty rather than absent. It used to unmount on the rival's
-						turn and come back on yours, taking 61px of the bench with it each way.
-					*/}
-					<p className="rec-bench-lead g-body" data-bench-lead>
-						{(sendsLeft === 0 || step === 2 || movingRecordId || (yourTurn && !me.passed)) ? lead : ''}
-					</p>
-				</div>
 				{/*
 					PASS 25, ACT FLIP. A creature has three or four usable acts and most can offer
 					two or more genuinely different behaviours; until this pass the table picked one
@@ -290,21 +249,7 @@ function ReclamationBench({
 				<span className="rec-deploy-count" title={`${me.sentCount || 0} of ${cap} sends spent this Proving${cap > SENDABLE ? ", one of them the trailing seat's bonus this round" : ''}; ${(me.roster || []).length} in hand`}>
 					{/* the pips preview what the send in hand would cost: one send, whether it
 					    arrives hidden or in the open (hiding is no longer a priced choice) */}
-					<span className="rec-sends" aria-hidden="true">
-						{Array.from({ length: cap }).map((_, i) => {
-							const spent = i < (me.sentCount || 0);
-							const previewCost = armed ? 1 : 0;
-							const pending = !spent && previewCost > 0
-								&& i < (me.sentCount || 0) + previewCost;
-							return (
-								<span
-									className={`rec-send-pip${spent ? ' rec-send-pip--spent' : ''}${pending ? ' rec-send-pip--pending' : ''}${i >= SENDABLE ? ' rec-send-pip--bonus' : ''}`}
-									key={i}
-								/>
-							);
-						})}
-					</span>
-					<span className="g-mono rec-sends-text">{sendsLeft} send{sendsLeft === 1 ? '' : 's'} left</span>
+					<span className="rec-sends-text">{sendsLeft} send{sendsLeft === 1 ? '' : 's'} left<span className="rec-sends-scope"> this game</span></span>
 				</span>
 				{yourTurn && !me.passed && (
 					<div className="rec-bench-actions">
@@ -321,15 +266,28 @@ function ReclamationBench({
 								{movingRecordId === mover.record.id ? 'Choose a world' : `Move ${speciesLabel(mover.record)}`}
 							</button>
 						))}
+						{/* pass 38: the stake is one key here, not a button on every world's head */}
+						{stakeAvailable && (
+							<button
+								type="button"
+								className={`g-btn rec-stake-key${stakeMode ? ' rec-fallback-btn--active' : ''}`}
+								onClick={onToggleStake}
+								aria-pressed={!!stakeMode}
+								data-stake-mode
+								title="Once a game, before your first send of a round: the world you stake counts two worlds for whoever holds it."
+							>
+								{stakeMode ? 'Stake: pick a world' : <>Stake &times;2</>}
+							</button>
+						)}
 						<button
 							type="button"
-							className={`g-btn rec-pass-btn${recommendation && recommendation.type === 'pass' ? ' rec-pass-btn--suggested' : ''}`}
+							className={`g-btn rec-pass-btn${recommendation && recommendation.type === 'pass' ? ' rec-pass-btn--suggested g-btn--primary' : ''}`}
 							onClick={onPass}
 							data-pass
 							title="Pass is permanent for this round."
 						>
 							Pass this round
-							{recommendation && recommendation.type === 'pass' && <span className="rec-btn-sub">suggested: {recommendation.reason}</span>}
+							{/* pass 38: a suggested pass is the one bright key; the reason is the top bar's instruction */}
 						</button>
 					</div>
 				)}
@@ -343,11 +301,12 @@ function ReclamationBench({
 						view={view}
 						you={you}
 						armed={armedRecordId === record.id}
-						suggested={suggestedRecordId === record.id}
+						suggested={suggestedRecordId === record.id ? (rec.reason || true) : false}
 						disabled={!yourTurn || me.passed || sendsLeft === 0}
 						onArm={onArm}
 						onInspect={onInspect}
 						onHover={onHoverRecord}
+						advanced={advanced}
 					/>
 				))}
 			</div>

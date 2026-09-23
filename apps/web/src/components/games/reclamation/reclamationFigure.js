@@ -128,6 +128,12 @@ function ReclamationFigure({
 	onClick,
 	size,
 	title,
+	showMeter,
+	fallen,
+	ownSweep,
+	forecast,
+	lossText,
+	noTarget,
 }) {
 	const mine = seat === you;
 	const px = size === 'small' ? 40 : FIGURE_SIZE;
@@ -140,6 +146,8 @@ function ReclamationFigure({
 	}
 	if (hurt) classes.push('rec-figure--staggered');
 	if (downed) classes.push('rec-figure--routed');
+	// pass 38: downed in the round just ruled, and left on the board greyed so the loss can be read
+	if (fallen) classes.push('rec-figure--fallen');
 	if (hidden) classes.push('rec-figure--hidden');
 	if (selected) classes.push('rec-figure--selected');
 	if (armed) classes.push('rec-figure--armed');
@@ -213,22 +221,32 @@ function ReclamationFigure({
 				still with a class it already finished. A plate that is doing neither keeps a
 				stable key and is not remounted.
 			*/}
+			{/* pass 38: the forecast sits over the piece, out of the name plate, so the name keeps its room; it says what would happen, not what has */}
+			{/* pass 38: the chip says who pays: "you lose it" over yours, "you down it" over the rival's */}
+			{threat && (
+				<span className={`rec-figure-threat rec-figure-threat--${threat.level}`} title={threat.text} data-threat={threat.level}>
+					{mine ? 'you lose it' : 'you down it'}
+				</span>
+			)}
+			{/* pass 38: your own sweep at this world will hit this creature too; nothing said so before the Clash did it */}
+			{!threat && !ownSweep && noTarget && (
+				<span className="rec-figure-threat rec-figure-threat--own" data-no-target title="No rival stands at this world, so its strike will find no target">no target</span>
+			)}
+			{!threat && ownSweep && (
+				<span className="rec-figure-threat rec-figure-threat--own" data-own-sweep title={lossText}>own sweep</span>
+			)}
 			<span className="rec-figure-plate" key={(acting || hit) && beat != null ? `beat-${beat}` : 'plate'}>
-				<span className="rec-figure-name">{name}</span>
-				{badge && <span className="rec-figure-badge">{badge}</span>}
-				{threat && (
-					<span className={`rec-figure-threat rec-figure-threat--${threat.level}`} title={threat.text} data-threat={threat.level}>
-						{threat.level === 'downed' ? 'downed' : `-${threat.amount}`}
-					</span>
-				)}
-			</span>
-			<span className="rec-figure-foot">
+				{/* pass 38: the role glyph rides with the name, so the number below is only the hold */}
 				{role && role !== 'none' && (
-					<span className="rec-role-glyph" title={roleSentence(role, blowMagnitude)} aria-label={roleSentence(role, blowMagnitude)} data-role={role}>
+					<span className="rec-role-glyph rec-figure-plate-role" title={roleSentence(role, blowMagnitude)} aria-label={roleSentence(role, blowMagnitude)} data-role={role}>
 						<RoleGlyph role={role} />
 					</span>
 				)}
-				{typeof hold === 'number' && (
+				<span className="rec-figure-name">{name}</span>
+				{badge && <span className="rec-figure-badge">{badge}</span>}
+			</span>
+			<span className="rec-figure-foot">
+				{typeof hold === 'number' && showMeter !== false && (
 					<HoldMeter
 						hold={hold}
 						unstrained={unstrainedHold}
@@ -247,6 +265,10 @@ function ReclamationFigure({
 					and data-hold, and the inspector prints it in full.
 				*/}
 				{typeof hold === 'number' && <span className="rec-figure-hold" title={`hold ${formatHold(hold)}`}>{formatHoldShown(hold)}</span>}
+				{/* pass 38: the forecast after the number, so the number and the marks agree */}
+				{typeof hold === 'number' && typeof forecast === 'number' && (
+					<span className={`rec-figure-after${ownSweep ? ' rec-figure-after--own' : ''}${forecast === 0 ? ' rec-figure-after--falls' : ''}`} title={lossText} data-forecast={formatHoldShown(forecast)}><span className="rec-after-arrow" aria-hidden="true">&rarr;</span>{formatHoldShown(forecast)}</span>
+				)}
 			</span>
 			{tags.length > 0 && (
 				<span className="rec-figure-tags">
