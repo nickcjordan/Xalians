@@ -8,6 +8,8 @@ Nick saw two ordinary actions with the same name on one Crystorn in Powerworks. 
 
 Nick's ruling: **derive the act space from registry tables, and let species records narrow or extend it with evidence.** "That was the original intent I have, anyways." Act-first selection and the instrument and fact vocabulary from the naming branch stay; they are what make a wide space read as variety instead of repeats.
 
+Authoring consequence: inspect the full derived act space for every new species and for edits to existing defining facts. Keep every act the anatomy and lore support, exclude contradicted acts with concrete reasons, and add supported extensions the tables cannot represent. Logical exhaustiveness is bounded by evidence and the shared vocabulary; it is not an arbitrary quota or a license to invent powers. The four actions selected for one individual do not limit the species act space.
+
 ## Assumptions & Decisions
 
 | # | Assumption / Decision | Confidence | Supporting Evidence |
@@ -74,6 +76,7 @@ Patterns are the ratified matrix with decisions 3 and 4 applied. Class sets the 
 | blades | strike, rake, lash | cutting | light | | |
 | spurs | strike, rake | piercing, cutting | light | | |
 | wings | strike, lash, shove, ward | impact | light | | |
+| fins | strike, shove | impact | light | | |
 | tail | strike, lash, crush, shove, snare | impact | heavy | restrained (freeing) | |
 | stinger | strike, drain, terrorize | piercing | light | | none |
 | rattle | ward, terrorize | | light | | auditory |
@@ -149,6 +152,10 @@ The two halves of the roster pass reported the same friction from opposite ends,
 4. **Mend through any signal channel is a signal.** A psychic conduit on gaze was deriving a repair delivered by touch.
 
 Kept as they were, with the reason: tail and spur harm rows stay impact-only and piercing-or-cutting-only respectively (a bladed or drilling tail is what an authored mechanism is for, and widening the row would hand every fluffy tail a blade); hide and shell keep strike (decision 4) and the band scales with strength, so a small body's ram is weak rather than absent; `body/terrorize` on species with display communication stays. Two judgment calls are recorded for Nick, not ruled: Chromocat's light spray can blind while Crystorn's audit excludes dazzle, and Hypnopet's "support only" audit was read as no harm required rather than harm forbidden.
+
+### Fins added for the Poseidas deep-route proposal, 2026-09-23
+
+Nick approved fins as anatomy and a blunt contact source. The v5 catalog adds `fins` without changing the legacy `registries.json` bundle pinned by the current v4 release. The shared v5 `fins` row grants impact `strike` and away `shove` at contact, using the light physical output class. It grants no grasp, cutting, compression, ward or water projection by itself. Fathomaw's reinforced anterior pair is the proposed source of these acts; other species receive them only if their anatomy declares `fins`. The generic row is a starting permission, not proof that every fin of every species can make both acts without review. Frozen release archives remain unchanged.
 
 ## Species record changes
 

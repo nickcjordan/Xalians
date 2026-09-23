@@ -35,13 +35,13 @@
     ],
     "covering": "chitin",
     "size": {
-      "heightCm": [
-        900,
-        1500
-      ],
-      "weightKg": [
+      "massKg": [
         2200,
         4200
+      ],
+      "lengthCm": [
+        900,
+        1500
       ]
     },
     "lifespan": "long",
@@ -156,7 +156,7 @@
       78
     ]
   },
-  "schemaVersion": "5.0.0",
+  "schemaVersion": "5.1.0",
   "temperament": {
     "boldness": [
       45,

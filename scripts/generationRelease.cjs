@@ -32,15 +32,21 @@ async function replay(record, archives = archiveRoot) {
   if (archived.GENERATOR_VERSION !== manifest.generatorVersion || archived.SCHEMA_VERSION !== manifest.schemaVersion || archived.GENERATION_RELEASE_ID !== manifest.releaseId) throw new Error('Archived generator disagrees with release manifest');
   return archived.generateXalian(record.species, p.seed, { origin: p.origin, serial: p.serial, generatedAt: p.generatedAt, profile: p.profile || 'full' });
 }
-function checkCurrent() {
-  const { releaseId } = require('../packages/rules/src/generator/currentRelease.json');
+function checkFrozenSource(releaseId, entryPoint) {
   const { manifest } = readManifest(releaseId);
   for (const [file, expected] of Object.entries(manifest.inputs)) {
     if (sourceHash(path.join(root, file)) !== expected) throw new Error(`Frozen release ${releaseId} changed: ${file}. Create a new release ID and freeze it.`);
   }
   if (manifest.build.esbuild !== esbuildVersion) throw new Error('Release build tool changed; create a new release');
-  if (hash(bundle().outputFiles[0].contents) !== manifest.artifact.sha256) throw new Error('Current generator bundle differs from frozen release; create a new release');
+  if (hash(bundle(entryPoint).outputFiles[0].contents) !== manifest.artifact.sha256) throw new Error(`Generator bundle differs from frozen release ${releaseId}; create a new release`);
   return manifest;
+}
+function checkCurrent() {
+  const { releaseId } = require('../packages/rules/src/generator/currentRelease.json');
+  const creature = require('../packages/rules/src/generator/currentCreatureRelease.json');
+  const legacyManifest = checkFrozenSource(releaseId);
+  const creatureManifest = checkFrozenSource(creature.releaseId, creature.entryPoint);
+  return [legacyManifest, creatureManifest];
 }
 async function freeze({ entryPoint, releaseId = require('../packages/rules/src/generator/currentRelease.json').releaseId, archives = archiveRoot } = {}) {
   if (!validId(releaseId)) throw new Error('Invalid release ID');
@@ -74,7 +80,7 @@ if (require.main === module) (async () => {
       if (changed) throw new Error(`Previously archived release files changed:\n${changed}`);
     }
     for (const entry of fs.readdirSync(archiveRoot, { withFileTypes: true })) if (entry.isDirectory()) readManifest(entry.name);
-    console.log(`Verified ${checkCurrent().releaseId} and archived artifact integrity`);
+    console.log(`Verified ${checkCurrent().map(manifest => manifest.releaseId).join(' and ')} plus archived artifact integrity`);
   } else if (command === 'replay' && file) console.log(JSON.stringify(await replay(JSON.parse(fs.readFileSync(file, 'utf8'))), null, 2));
   else throw new Error('Usage: node scripts/generationRelease.cjs freeze|check|replay <record.json>');
 })().catch(error => { console.error(error.message); process.exitCode = 1; });

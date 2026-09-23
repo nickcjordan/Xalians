@@ -27,7 +27,7 @@ export const NAMING_CATALOG = {
   instrument: {
     jaws: 'Bite', fangs: 'Bite', beak: 'Peck', tusks: 'Gore', horns: 'Gore', antlers: 'Butt',
     trunk: 'Slam', tongue: 'Whip', claws: 'Swipe', talons: 'Rake', fists: 'Punch', hooves: 'Kick',
-    pincers: 'Pinch', blades: 'Slash', spurs: 'Kick', wings: 'Buffet', tail: 'Lash', stinger: 'Sting',
+    pincers: 'Pinch', blades: 'Slash', spurs: 'Kick', wings: 'Buffet', fins: 'Slap', tail: 'Lash', stinger: 'Sting',
     coils: 'Squeeze', hide: 'Ram', shell: 'Bash', spines: 'Prick', tendrils: 'Lash', roots: 'Grip',
     pseudopods: 'Slam', body: 'Ram',
     crest: 'Touch', lure: 'Touch', rattle: 'Touch', 'light-organs': 'Touch', vents: 'Touch',

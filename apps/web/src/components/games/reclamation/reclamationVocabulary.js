@@ -117,16 +117,24 @@ export function bodyPlanName(key) {
 	return nameOf(BODY_PLANS, key);
 }
 
-// "165 to 215 cm, 180 to 260 kg" style is the template's; a record has one of each
+// A record carries mass and whichever overall dimensions describe its body plan.
 export function sizeLine(physiology) {
 	if (!physiology) {
 		return '';
 	}
 	const parts = [];
 	if (typeof physiology.heightCm === 'number') {
-		parts.push(`${physiology.heightCm} cm`);
+		parts.push(`height ${physiology.heightCm} cm`);
 	}
-	if (typeof physiology.weightKg === 'number') {
+	if (typeof physiology.lengthCm === 'number') {
+		parts.push(`length ${physiology.lengthCm} cm`);
+	}
+	if (typeof physiology.widthCm === 'number') {
+		parts.push(`width ${physiology.widthCm} cm`);
+	}
+	if (typeof physiology.massKg === 'number') {
+		parts.push(`mass ${physiology.massKg} kg`);
+	} else if (typeof physiology.weightKg === 'number') {
 		parts.push(`${physiology.weightKg} kg`);
 	}
 	return parts.join(', ');

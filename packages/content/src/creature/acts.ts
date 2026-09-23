@@ -9,7 +9,8 @@
  */
 import type { z } from 'zod';
 import type * as c from './catalog.ts';
-import { ANATOMY_KEYS, CHANNEL_KEYS, ELEMENT_KEYS } from '../registriesConst.ts';
+import { CHANNEL_KEYS, ELEMENT_KEYS } from '../registriesConst.ts';
+import { AnatomyKeySchema } from './catalog.ts';
 import type { Mechanism } from './species.ts';
 
 type Instrument = z.infer<typeof c.InstrumentKeySchema>;
@@ -18,6 +19,7 @@ type StatusKey = c.StatusKey;
 type Removal = z.infer<typeof c.Removal>;
 type HarmMechanism = Exclude<z.infer<typeof c.Harm>, 'elemental'>;
 type Reception = z.infer<typeof c.Reception>;
+const ANATOMY_KEYS = AnatomyKeySchema.options;
 
 /** Physical patterns need an instrument row that lists them; medium patterns need a conduit. */
 export const PATTERNS = Object.freeze([
@@ -66,6 +68,7 @@ export const INSTRUMENT_ROWS: Readonly<Record<Instrument, InstrumentRow>> = Obje
   blades: row({ patterns: ['strike', 'rake', 'lash'], harm: ['cutting'], class: 'light' }),
   spurs: row({ patterns: ['strike', 'rake'], harm: ['piercing', 'cutting'], class: 'light' }),
   wings: row({ patterns: ['strike', 'lash', 'shove', 'ward'], harm: ['impact'], class: 'light' }),
+  fins: row({ patterns: ['strike', 'shove'], harm: ['impact'], class: 'light' }),
   tail: row({ patterns: ['strike', 'lash', 'crush', 'shove', 'snare'], harm: ['impact'], class: 'heavy', bind: restrained }),
   stinger: row({ patterns: ['strike', 'drain', 'terrorize'], harm: ['piercing'], class: 'light', reception: 'none' }),
   rattle: row({ patterns: ['ward', 'terrorize'], harm: [], class: 'light', reception: 'auditory' }),

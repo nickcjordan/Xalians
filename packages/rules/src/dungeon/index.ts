@@ -773,6 +773,12 @@ export function restorePreview(u: Unit, effect: MoveEffect): number {
 type Emit = (text: string, event?: BattleEvent) => void;
 
 /** A degrading tick or a mending tick, on the harm curve, at the element matchup (contract decisions 13 and 17). */
+/** Effectiveness of an element against a unit's element, from the shared matrix. */
+function matchupOf(element: string, against: string): number {
+  const key = (x: string) => x.charAt(0).toUpperCase() + x.slice(1);
+  const table = effectiveness as Record<string, Record<string, number>>;
+  return table[key(element)]?.[key(against)] ?? 1;
+}
 export function tickAmount(c: Condition, victim: Unit): number {
   const factor = c.group === "degrading" ? DEGRADE_FACTOR : MEND_FACTOR;
   const raw = (c.intensity / HARM_DIVISOR) * factor;
@@ -957,6 +963,28 @@ function applyStatus(
     return false;
   }
   const intensity = e.intensity || DEFAULT_STATUS_INTENSITY;
+  // A degrading status does nothing in this game but tick harm. When its element has no
+  // effect on the target (chemical against light or ice in the effectiveness matrix) or it
+  // is too weak to tick, it would sit on the unit reading "takes 0 damage" (seen on the live
+  // site 2026-09-23: Crystorn corroding). The model lets elemental immunity coexist with the
+  // application; here the application would change nothing, so it does not take hold.
+  if (
+    e.group === "degrading" &&
+    tickAmount(
+      { status, group: e.group, intensity, remaining: 1, source: u.id, removable: [],
+        ...(e.statusElement ? { element: e.statusElement } : {}) },
+      target
+    ) === 0
+  ) {
+    const unaffected =
+      e.statusElement && matchupOf(e.statusElement, target.element) === 0;
+    refuse(
+      unaffected
+        ? `${target.name} is unaffected: ${e.statusElement} has no effect on ${target.element}, so ${status} cannot take hold.`
+        : `${status} is too weak to harm ${target.name}.`
+    );
+    return false;
+  }
   const opportunities = e.opportunities ?? 1;
   const existing = target.conditions.find((c) => c.status === status);
   if (existing) {

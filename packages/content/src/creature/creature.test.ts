@@ -17,6 +17,19 @@ const fireball = (): AbilityTemplate => ({ ...action(), element: 'fire', effects
   { key: 'ignite', type: 'status', status: 'burning', recipient: 'target', onset: 'instant', persistence: 'lingering', duration: 'brief', likelihood: 'likely', removable: ['cooling','smothering'] },
 ] });
 
+describe('overall scale authoring', () => {
+  it('requires mass and at least one overall linear dimension', () => {
+    const source = copy(fixture);
+    expect(SpeciesSchema.safeParse(source).success).toBe(true);
+    delete (source.physiology.size as { heightCm?: unknown }).heightCm;
+    expect(SpeciesSchema.safeParse(source).success).toBe(false);
+    (source.physiology.size as { lengthCm?: unknown }).lengthCm = [100, 200];
+    expect(SpeciesSchema.safeParse(source).success).toBe(true);
+    delete (source.physiology.size as { massKg?: unknown }).massKg;
+    expect(SpeciesSchema.safeParse(source).success).toBe(false);
+  });
+});
+
 describe('redesigned ability contract', () => {
   it('requires explicit elemental classification, with burning independent of harm success', () => {
     const value = fireball();

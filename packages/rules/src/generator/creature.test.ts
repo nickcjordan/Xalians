@@ -29,8 +29,34 @@ it('generates the full resolved model without traits, archetypes or implicit phy
   expect(generateCreatureDraft(compiled, 'whole-creature')).toEqual(creature);
   expect(CreatureDataSchema.safeParse(creature).success).toBe(true);
   expect(creature.attributes.strength).toBeGreaterThanOrEqual(150);
+  expect(creature.physiology.massKg).toBeGreaterThanOrEqual(source.physiology.size.massKg[0]);
+  expect(creature.physiology.massKg).toBeLessThanOrEqual(source.physiology.size.massKg[1]);
+  const heightScale = (creature.physiology.heightCm! - source.physiology.size.heightCm[0]) /
+    (source.physiology.size.heightCm[1] - source.physiology.size.heightCm[0]);
+  const massScale = (creature.physiology.massKg - source.physiology.size.massKg[0]) /
+    (source.physiology.size.massKg[1] - source.physiology.size.massKg[0]);
+  expect(heightScale).toBeCloseTo(massScale, 12);
   expect(creature).not.toHaveProperty('traits');
   expect(creature).not.toHaveProperty('archetype');
   expect(creature.physiology).not.toHaveProperty('corporeality');
   expect(creature.physiology.protections).toEqual([]);
+});
+
+it('resolves every declared overall dimension together and leaves undeclared ones absent', () => {
+  const source = JSON.parse(JSON.stringify(fixture));
+  source.physiology.size.lengthCm = [100, 200];
+  source.physiology.size.widthCm = [20, 40];
+  const creature = generateCreatureDraft(compileSpecies(source), 'three-dimensions');
+  const { size } = source.physiology;
+  const percentile = (creature.physiology.massKg - size.massKg[0]) / (size.massKg[1] - size.massKg[0]);
+  for (const key of ['heightCm', 'lengthCm', 'widthCm'] as const) {
+    expect((creature.physiology[key]! - size[key][0]) / (size[key][1] - size[key][0])).toBeCloseTo(percentile, 12);
+  }
+  delete source.physiology.size.heightCm;
+  delete source.physiology.size.widthCm;
+  const lengthOnly = generateCreatureDraft(compileSpecies(source), 'length-only');
+  expect(lengthOnly.physiology.heightCm).toBeUndefined();
+  expect(lengthOnly.physiology.widthCm).toBeUndefined();
+  expect(lengthOnly.physiology.lengthCm).toBeGreaterThanOrEqual(100);
+  expect(CreatureDataSchema.safeParse(lengthOnly).success).toBe(true);
 });
