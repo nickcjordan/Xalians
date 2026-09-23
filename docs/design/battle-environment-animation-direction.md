@@ -51,3 +51,11 @@ Validate download size, decoded atlas memory, frame time, and visual clarity on 
 ## Next practical experiment
 
 Once the SVG references can be inspected, compose one small comparison scene around an existing creature render: shared layout and palette, a toon-compatible treatment and a lined-compatible treatment. Include idle, generic action, target impact, an actually applied status, and a short transition. Judge all layers together at game size before making more backgrounds or choosing a permanent style. Keep this separate from the live game until the direction is agreed.
+
+## Live End Wars reference, September 22
+
+Nick supplied the third homepage story scene as an accessible SVG reference: https://www.xalians.com/#story, labeled `03 The End Wars`. Inspected the live scene and its rendered DOM. The earlier Claude artifacts remain uninspected.
+
+Observed: a layered city recedes toward a central vanishing point; dark foreground towers frame a diagonally descending burning ship. Warm windows, beacons, fire, debris, and moving tracer streaks punctuate the subdued city and sky. Successive live observations show changing tracer/debris positions. The rendered scene contains seven SVG layer elements plus shared definitions, with transform and opacity animations on independently timed cycles. This is direct evidence of an SVG recreation rather than a conclusion drawn from the screenshot. No runtime performance benchmark was performed.
+
+Application proposal: borrow the depth, selective motion, warm focal accents, and independent layer structure. For battle, reserve an uncluttered ground plane for combatants and reduce texture and background contrast to fit the toon/lined creatures. Broad scenery and ambient loops establish place; attacks and status consequences should use event-driven effects. Continuous bright streaks would compete with actual ranged attacks and should be reduced or absent during combat. A dramatic moving ship fits an introduction or scripted event better than an always-active focal point behind a normal battle. Keep the strongest contrast and motion on the current actor and recipient. The same environment layers can support an establishing view, a quiet planning state, active combat, and a settled result state.
