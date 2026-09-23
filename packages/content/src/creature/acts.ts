@@ -329,7 +329,7 @@ function build(input: DeriveInput, instrument: Instrument, row: InstrumentRow, p
       description: `${title(instrument)} drive the target back.`,
       targeting: ['other'], timing: timing(), delivery: reach(),
       effects: [{ key: 'force', type: 'displace', direction: 'away', recipient: 'target', onset: 'instant',
-        persistence: 'resolved', likelihood: ['consistent'], intensity: bandOf('strength', OUTPUT_FACTORS.displace) }],
+        persistence: 'resolved', likelihood: ['consistent'], intensity: bandOf(elemental || row.class === 'channel' ? 'willpower' : 'strength', OUTPUT_FACTORS.displace) }],
     })];
     case 'snare': {
       const bind = mediumRow?.bind ?? row.bind;

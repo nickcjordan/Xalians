@@ -35,7 +35,7 @@ import { createCreatureRelease, GENERATOR_VERSION, SCHEMA_VERSION } from './crea
 export { CreatureRecordSchema } from '@xalians/content/creature';
 export { GENERATOR_VERSION, SCHEMA_VERSION };
 
-const release = createCreatureRelease('generation-0.7.0-2', [
+const release = createCreatureRelease('generation-0.7.0-3', [
   akinza, avilily, bioflim, chromocat, codazzo, crystorn, drilltail, dromeus,
   ectoghoul, figzy, foromeer, frackworm, graviclaw, hippochamp, hypnopet, imprit,
   kosanos, luceras, neph, newtapede, scalatto, shuntara, smokat, sonalloy,

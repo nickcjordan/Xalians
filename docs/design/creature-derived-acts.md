@@ -132,7 +132,7 @@ Every derived harm, displace and restore effect gets a band from a species attri
 | physical harm, heavy instrument | strength | 0.8 (was 0.85) |
 | physical harm, light instrument | strength | 0.85 (was 0.65) |
 | lash (area harm) | strength | class factor times 0.8 |
-| displace force | strength | 0.8 |
+| displace force | strength for a body part; willpower through a channel or medium | 0.8 |
 | elemental harm (beam, burst, spray, medium strike) | willpower | 0.85; burst 0.7 |
 | channel harm (mind crush, swarm strike) | willpower | 0.75 |
 | restore (mend, drain) | vitality | 0.6; drain 0.4 |
@@ -213,6 +213,11 @@ Nick: "Proceed with your updates as you recommend them." Applied, each overridab
 3. **Light can blind** (Nick). Crystorn's `horns/spray` exclusion is gone; Chromocat already kept its blinding spray.
 
 Released as `generation-0.7.0-2`.
+
+4. **Push force follows what pushes.** A push through the mind or through an element used the body's strength, so a Hypnopet's mental push was as weak as its kick. A channel or medium push now scales with willpower, the same attribute as channel and elemental harm; a body push keeps strength.
+5. **Hypnopet may cause harm** (Nick, 2026-09-23: "I see no reason why a hypnopet couldnt cause harm. It may not be the most effective but why not?"). Its `crest/burst` and `mind/crush` exclusions, written by the migration audit under a "support-only" reading that was never Nick's, are lifted. Whether its "empathic healing" restores bodies is still open.
+
+Released as `generation-0.7.0-3`.
 
 ## Friction met in the first two games, 2026-09-22
 
