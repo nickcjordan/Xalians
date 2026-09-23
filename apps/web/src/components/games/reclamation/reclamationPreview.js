@@ -28,7 +28,7 @@
 	enemy is absent from it, exactly as it is absent from getPublicState.
 */
 
-import { prepare, magnitudeAgainst, targetMatchupMultiplier } from '@xalians/rules/expedition/creatureOnTable';
+import { prepare, magnitudeAgainst, targetMatchupMultiplier, STRAIN_OVERLAP_COMFORT } from '@xalians/rules/expedition/creatureOnTable';
 import { attackPowerAgainst } from '@xalians/rules/expedition/expeditionRules';
 import { ROLE, instinctLaneOf, presenceScaleOf } from '@xalians/rules/expedition/expeditionInterpretation';
 import { speciesLabel, formatHold, roleSentence } from './reclamationNarration';
@@ -450,6 +450,68 @@ export function ghostSummary(plan, fmt) {
 			: { text: 'No creature of yours here to lift yet', warn: false };
 	}
 	return null;
+}
+
+/*
+	PASS 44. What strain costs a send, and why, in words. The meter already drew the
+	lost hold as dim bulbs, but nothing said what they were: a critic read a strained
+	creature's lower number as the creature being weak. The cause mirrors the engine's
+	strain rule (creatureOnTable.strainLevel): breath first, then a temperature band
+	that misses the world's by more than the comfort share, then the medium. The
+	Grimedes and Luminax exemptions need no mirror, because an exempt creature's
+	strain level is none and no note is asked for.
+*/
+export function strainCause(tolerance, site) {
+	const env = (site && site.environment) || {};
+	const tol = tolerance || {};
+	const breathes = tol.breathes || [];
+	if (env.medium && breathes.length > 0 && !breathes.includes(env.medium)) {
+		return 'breath';
+	}
+	const band = tol.temperatureC;
+	const t = env.temperatureC;
+	if (band && t && [band.min, band.max, t.min, t.max].every((n) => typeof n === 'number') && !(t.min >= band.min && t.max <= band.max)) {
+		const overlap = Math.min(band.max, t.max) - Math.max(band.min, t.min);
+		if (overlap <= 0 || overlap / Math.max(1, t.max - t.min) < STRAIN_OVERLAP_COMFORT) {
+			// the side of the world's band that reaches furthest past the creature's
+			return band.min - t.min >= t.max - band.max ? 'cold' : 'hot';
+		}
+	}
+	if (env.medium && !(tol.ambientMedia || []).includes(env.medium)) {
+		return 'medium';
+	}
+	return null;
+}
+
+const STRAIN_CAUSE_TEXT = {
+	cold: () => 'Too cold',
+	hot: () => 'Too hot',
+	breath: (medium) => (medium === 'vacuum' ? 'No air' : 'Cannot breathe'),
+	medium: () => 'Wrong medium',
+};
+
+/*
+	{ text: "Too cold: −7 hold", title } or null when the send is not strained or the cost
+	rounds away. Short, because a phone column is under a hundred pixels wide; the title
+	says it in full.
+*/
+export function strainNote(ghost, site, fmt) {
+	if (!ghost || !ghost.strainLevel || ghost.strainLevel === 'none' || typeof ghost.unstrained !== 'number') {
+		return null;
+	}
+	const lost = ghost.unstrained - ghost.hold;
+	const shown = fmt(lost);
+	if (!(lost > 0) || String(shown) === '0') {
+		return null;
+	}
+	const cause = strainCause(ghost.tolerance, site);
+	const medium = site && site.environment && site.environment.medium;
+	const why = cause ? STRAIN_CAUSE_TEXT[cause](medium) : 'Strained';
+	const grade = ghost.strainLevel === 'severe' ? 'Severely strained' : 'Strained';
+	return {
+		text: `${why}: −${shown} hold`,
+		title: `${grade} here${cause ? ` (${why.toLowerCase()})` : ''}: it holds ${shown} less than it would at a world that suits it`,
+	};
 }
 
 // the printed instinct sentence's noun phrase, per the design doc's targeting table

@@ -2,7 +2,7 @@ import React from 'react';
 import ReclamationFigure, { ReclamationSilhouette, HoldMeter } from './reclamationFigure';
 import { RoleGlyph } from './reclamationGlyphs';
 import { formatHold, formatHoldShown, countWord, speciesLabel } from './reclamationNarration';
-import { ghostSummary } from './reclamationPreview';
+import { ghostSummary, strainNote } from './reclamationPreview';
 import { elementOf } from './reclamationVocabulary';
 
 /*
@@ -629,20 +629,26 @@ function ReclamationWorld({
 												*/
 												const summary = ghostSummary(ghost, formatHoldShown);
 												const caughtByOwn = ghost.role !== 'sweep' && mine.some((e) => holds[e.recordId] && holds[e.recordId].role === 'sweep');
-												if (!summary && !caughtByOwn) {
+												// pass 44: the dim bulbs get their reason in words
+												const strain = strainNote(ghost, site, formatHoldShown);
+												if (!summary && !caughtByOwn && !strain) {
 													return null;
 												}
 												const warn = (summary && summary.warn) || caughtByOwn;
 												return (
 													<span className="rec-ghost-plan" data-ghost-plan={site.id}>
-														<span className={`rec-ghost-role${warn ? ' rec-ghost-role--warn' : ''}`} title={ghost.roleLine} data-ghost-warn={warn ? site.id : undefined}>
-															{ghost.role && ghost.role !== 'none' && <RoleGlyph role={ghost.role} />}
-															{/* pass 41: one text run, so the flex gap cannot open a space before the period */}
-															<span className="rec-ghost-text">
-																{summary ? summary.text : ''}
-																{caughtByOwn && <span className="rec-ghost-own" data-ghost-own={site.id}>{summary ? '. ' : ''}Your sweep here hits it too</span>}
+														{/* pass 44: its own line, above what the send would do */}
+														{strain && <span className="rec-ghost-strain" data-ghost-strain={site.id} title={strain.title}>{strain.text}</span>}
+														{(summary || caughtByOwn) && (
+															<span className={`rec-ghost-role${warn ? ' rec-ghost-role--warn' : ''}`} title={ghost.roleLine} data-ghost-warn={warn ? site.id : undefined}>
+																{ghost.role && ghost.role !== 'none' && <RoleGlyph role={ghost.role} />}
+																{/* pass 41: one text run, so the flex gap cannot open a space before the period */}
+																<span className="rec-ghost-text">
+																	{summary ? summary.text : ''}
+																	{caughtByOwn && <span className="rec-ghost-own" data-ghost-own={site.id}>{summary ? '. ' : ''}Your sweep here hits it too</span>}
+																</span>
 															</span>
-														</span>
+														)}
 														{advanced && ghost.role === 'sweep' && (ghost.lines || []).length > 1 && (ghost.lines || []).map((line, i) => (
 															<span className="rec-ghost-line" key={`${site.id}-${i}`}>{line}</span>
 														))}
