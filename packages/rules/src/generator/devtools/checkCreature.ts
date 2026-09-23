@@ -31,6 +31,14 @@ function actLine(compiled: CompiledSpecies): string {
     + `; exclusions: ${exclusions.length ? exclusions.join(', ') : 'none'}`;
 }
 
+/** The signature guardrail: what the signature caps, and how many derived acts it lowered. */
+function signatureLine(compiled: CompiledSpecies): string {
+  const { signatureKinds, clamped } = compiled.acts;
+  const kind = signatureKinds.length ? signatureKinds.join(', ')
+    : compiled.species.signature.type === 'passive' ? 'none (passive, exempt)' : 'none';
+  return `  signature kind: ${kind}; ordinary acts clamped: ${clamped.length}${clamped.length ? ` (${clamped.join(', ')})` : ''}`;
+}
+
 const paths = process.argv.slice(2);
 if (!paths.length) throw new Error('Pass one or more redesigned species JSON paths; add --example last to print a resolved example.');
 const example = paths.at(-1) === '--example';
@@ -42,6 +50,7 @@ for (const path of paths) {
   else {
     console.log(`${compiled.species.key}: valid permissions, four distinct actions constructible`);
     console.log(actLine(compiled));
+    console.log(signatureLine(compiled));
     console.log(collisionLine(compiled));
   }
 }

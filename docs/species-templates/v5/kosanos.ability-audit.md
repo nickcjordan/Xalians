@@ -26,3 +26,7 @@ The compiler and seeded cohort test verify four distinct actions, signature rete
   acts: 19 distinct on offer (trunk 4, blades 2, jaws 4, tail 5, hide 4); exclusions: none
   naming over 24 seeds: 0.0% of ordinary actions carry a structural parenthetical, 0.0% of creatures have two ordinary actions sharing a base name
 ```
+
+## Signature guardrail, 2026-09-23
+
+An ordinary act never outclasses the signature at what the signature does (contract: `docs/design/creature-derived-acts.md`, "Signature guardrail, 2026-09-23"). `acts.output` `blades/strike` lowered from [55, 80] to [55, 72], the cap set by the signature `kosanos-defining` (cutting harm 72). The derived `blades/rake` (cutting) is clamped by the compiler to the same cap.

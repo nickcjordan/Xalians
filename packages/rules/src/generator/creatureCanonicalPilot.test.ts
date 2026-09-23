@@ -1,7 +1,7 @@
 import { expect, it } from 'vitest';
 import { readdirSync, readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
-import { CreatureDataSchema, MIN_DISTINCT_ACTS, abilityIdentity } from '@xalians/content/creature';
+import { CreatureDataSchema, MIN_DISTINCT_ACTS, abilityIdentity, effectKind, signatureCaps } from '@xalians/content/creature';
 import { compileSpecies, generateCreatureDraft } from './creature.ts';
 
 it('constructs every staged species with guaranteed identity and distinct ordinary actions', () => {
@@ -22,6 +22,18 @@ it('constructs every staged species with guaranteed identity and distinct ordina
       const silenced = compiled.acts.exclusions.some(value => value.split('/')[0] === instrument || value.split('/')[0] === '*');
       if (!silenced) expect(compiled.acts.byInstrument[instrument], `${source.key}/${instrument}`).toBeGreaterThan(0);
     }
+    // The signature guardrail: no ordinary band of the signature's kind outclasses the
+    // signature's own band at either end, derived or authored. Bands, not rolls.
+    const caps = signatureCaps(compiled.species);
+    expect([...caps.keys()], source.key).toEqual([...compiled.acts.signatureKinds]);
+    for (const mechanism of compiled.mechanisms) for (const effect of mechanism.effects) {
+      const kind = effectKind(effect, mechanism.element);
+      const cap = kind ? caps.get(kind) : undefined;
+      if (!cap || effect.intensity === undefined) continue;
+      const band = typeof effect.intensity === 'number' ? [effect.intensity, effect.intensity] : effect.intensity;
+      expect(band[0], `${source.key}/${mechanism.key}/${effect.key} minimum vs ${cap.signature}`).toBeLessThanOrEqual(cap.band[0]);
+      expect(band[1], `${source.key}/${mechanism.key}/${effect.key} maximum vs ${cap.signature}`).toBeLessThanOrEqual(cap.band[1]);
+    }
     const variants = new Set<string>();
     for (let index = 0; index < 24; index++) {
       const seed = `${source.key}:${index}`;
@@ -31,6 +43,17 @@ it('constructs every staged species with guaranteed identity and distinct ordina
       expect(new Set(creature.actions.map(abilityIdentity)).size).toBe(4);
       variants.add(creature.actions.map(abilityIdentity).sort().join('|'));
       expect(generateCreatureDraft(compiled, seed)).toEqual(creature);
+      // Every ordinary action this seed drew came from a band checked above, so its roll of
+      // the signature's kind never lands above the signature's maximum.
+      for (const action of creature.actions.filter(value => /(^|-)ordinary-\d+$/.test(value.key))) {
+        for (const effect of action.effects) {
+          const kind = effectKind(effect, action.element);
+          const cap = kind ? caps.get(kind) : undefined;
+          if (cap && 'intensity' in effect && typeof effect.intensity === 'number') {
+            expect(effect.intensity, `${seed}/${action.name}`).toBeLessThanOrEqual(cap.band[1]);
+          }
+        }
+      }
       if (source.key === 'bioflim') {
         expect(creature.signature.type).toBe('passive');
         expect(creature.passives.some(passive => passive.effects.some(effect => effect.type === 'restore'))).toBe(true);

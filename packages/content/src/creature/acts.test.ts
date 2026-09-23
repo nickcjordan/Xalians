@@ -347,3 +347,102 @@ describe('push force follows what pushes, 2026-09-23', () => {
     expect(force('derived-mind-shove')).toEqual([80, 160]);
   });
 });
+
+describe('the signature guardrail, 2026-09-23', () => {
+  /** A fists-and-tail body with strong attributes, so every derived band sits well above
+   * the caps the tests set, and an action signature on the given part. */
+  const signed = (signature: { instrument: string; element?: string; mechanism: string; intensity: number | [number, number] }) => {
+    const species = bodyWith('body', 'fire') as Record<string, unknown> & { physiology: { anatomy: string[] } };
+    species.physiology.anatomy = ['fists', 'tail'];
+    species.attributes = { ...(species.attributes as object), strength: [100, 200], willpower: [100, 200] };
+    species.actions = [{
+      key: 'defining', name: 'Defining Blow', description: 'The act this species is known for.',
+      instrument: signature.instrument, ...(signature.element ? { element: signature.element } : {}),
+      activation: { continuity: 'discrete' }, timing: { preparation: 'brief', recovery: 'brief' },
+      delivery: { mode: 'contact', approach: 'stationary' }, targeting: ['other'], spatial: { range: 'contact' },
+      effects: [{ key: 'outcome', type: 'harm', recipient: 'target', onset: 'instant', persistence: 'resolved', likelihood: 'consistent',
+        mechanism: signature.mechanism, intensity: signature.intensity }],
+    }];
+    species.signature = { type: 'action', key: 'defining' };
+    return species;
+  };
+  const bandOf = (species: Record<string, unknown>, key: string) =>
+    compileSpecies(species).mechanisms.find(mechanism => mechanism.key === key)!.effects[0].intensity;
+
+  it('clamps derived physical harm of the signature mechanism at both ends', () => {
+    const species = signed({ instrument: 'fists', mechanism: 'impact', intensity: [40, 90] });
+    // Unclamped, heavy impact at strength [100, 200] would be [80, 160].
+    expect(bandOf(species, 'derived-fists-strike-impact')).toEqual([40, 90]);
+    expect(bandOf(species, 'derived-tail-strike-impact')).toEqual([40, 90]);
+    // Compression is a different mechanism: not what the signature does, so untouched.
+    expect(bandOf(species, 'derived-fists-crush')).toEqual([80, 160]);
+    const compiled = compileSpecies(species);
+    expect(compiled.acts.signatureKinds).toEqual(['impact harm']);
+    expect(compiled.acts.clamped).toContain('derived-fists-strike-impact');
+    expect(compiled.acts.clamped).not.toContain('derived-fists-crush');
+  });
+
+  it('clamps derived elemental harm of the signature element and leaves another element untouched', () => {
+    const species = signed({ instrument: 'tail', element: 'ice', mechanism: 'elemental', intensity: 70 });
+    // Ice is foreign to this fire body; the ice signature on the tail is the evidence the conduit needs.
+    species.conduits = { fists: 'fire', tail: 'ice' };
+    // Unclamped, elemental harm at willpower [100, 200] would be [85, 170].
+    expect(bandOf(species, 'derived-tail-spray-ice')).toEqual([70, 70]);
+    expect(bandOf(species, 'derived-tail-hurl-ice')).toEqual([70, 70]);
+    expect(bandOf(species, 'derived-fists-beam-fire')).toEqual([85, 170]);
+    expect(bandOf(species, 'derived-fists-spray-fire')).toEqual([85, 170]);
+  });
+
+  it('lets an element-bearing physical signature cap elemental harm of its element too', () => {
+    // Terragoyle's shape: the signature is impact harm on a tail that carries the element.
+    const species = signed({ instrument: 'tail', element: 'ice', mechanism: 'impact', intensity: 70 });
+    species.conduits = { fists: 'fire', tail: 'ice' };
+    const compiled = compileSpecies(species);
+    expect(compiled.acts.signatureKinds).toEqual(['impact harm', 'elemental ice harm']);
+    expect(bandOf(species, 'derived-tail-hurl-ice')).toEqual([70, 70]);
+    expect(bandOf(species, 'derived-tail-strike-impact')).toEqual([70, 70]);
+    // Another element, and another physical mechanism, are different acts.
+    expect(bandOf(species, 'derived-fists-beam-fire')).toEqual([85, 170]);
+    expect(bandOf(species, 'derived-fists-crush')).toEqual([80, 160]);
+    expect(() => compileSpecies({ ...species, acts: { output: { 'tail/hurl': [65, 90] } } }))
+      .toThrow(/acts\.output tail\/hurl \[65, 90\] exceeds the signature defining \[70, 70\] on elemental ice harm/);
+    // A physical signature without an element caps no elemental harm.
+    const plain = signed({ instrument: 'tail', mechanism: 'impact', intensity: 70 });
+    plain.conduits = { tail: 'fire' };
+    expect(compileSpecies(plain).acts.signatureKinds).toEqual(['impact harm']);
+    expect(bandOf(plain, 'derived-tail-spray-fire')).toEqual([85, 170]);
+  });
+
+  it('keeps an output override that sits below the cap', () => {
+    const species = { ...signed({ instrument: 'fists', mechanism: 'impact', intensity: [40, 90] }), acts: { output: { 'fists/strike': [10, 20] } } };
+    expect(bandOf(species, 'derived-fists-strike-impact')).toEqual([10, 20]);
+  });
+
+  it('rejects an output override above the cap, naming both', () => {
+    const species = { ...signed({ instrument: 'fists', mechanism: 'impact', intensity: [40, 90] }), acts: { output: { 'fists/strike': [30, 95] } } };
+    expect(() => compileSpecies(species)).toThrow(/acts\.output fists\/strike \[30, 95\] exceeds the signature defining \[40, 90\] on impact harm/);
+  });
+
+  it('rejects an authored mechanism band above the cap rather than clamping it', () => {
+    const species = signed({ instrument: 'fists', mechanism: 'impact', intensity: [40, 90] });
+    species.mechanisms = [{
+      key: 'haymaker', name: 'Haymaker', description: 'A wide, heavy swing.', instrument: 'fists',
+      targeting: ['other'], activation: { continuity: ['discrete'] },
+      timing: { preparation: ['brief'], recovery: ['brief'] },
+      delivery: { contact: { approach: ['closing'], range: ['contact'] } },
+      effects: [{ key: 'outcome', type: 'harm', mechanism: 'impact', recipient: 'target', onset: 'instant', persistence: 'resolved', likelihood: ['consistent'], intensity: [50, 99] }],
+    }];
+    expect(() => compileSpecies(species)).toThrow(/mechanism haymaker \[50, 99\] exceeds the signature defining \[40, 90\] on impact harm/);
+    (species.mechanisms as { effects: { intensity: [number, number] }[] }[])[0].effects[0].intensity = [30, 80];
+    expect(() => compileSpecies(species)).not.toThrow();
+  });
+
+  it('exempts a passive signature', () => {
+    const species = signed({ instrument: 'fists', mechanism: 'impact', intensity: [40, 90] });
+    withSignature(species);
+    const compiled = compileSpecies(species);
+    expect(compiled.acts.signatureKinds).toEqual([]);
+    expect(compiled.acts.clamped).toEqual([]);
+    expect(compiled.mechanisms.find(mechanism => mechanism.key === 'derived-fists-strike-impact')!.effects[0].intensity).toEqual([80, 160]);
+  });
+});
