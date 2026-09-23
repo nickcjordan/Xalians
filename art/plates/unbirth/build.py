@@ -25,10 +25,10 @@ CONCEPT = """The Age of Unbirth: sterile, the Vallerii built machines to make li
 the Genesis Prototype, raised on Floria, a bare world of smooth rock and shallow seas that its
 star boiled into a world-washing flood every year, chosen so any mistake would be washed away.
 Uncalibrated, it ran at full capacity through the entire storm and made not only Xalians but the
-vegetation, fungi and World Trees to support them (Floria, paragraphs 1 to 7); some Xalians there
-are said to be born from its first seeds (paragraph 10). The plate is that first storm: the
+vegetation, fungi and World Trees to support them (Floria, paragraphs 2 to 8); some Xalians there
+are said to be born from its first seeds (paragraph 11). The plate is that first storm: the
 machine throws seed pods into the wind, and the flood meant to wash its mistakes away carries
-them across the world. Once a cycle it surges into overdrive (paragraph 7: uncalibrated, "at full
+them across the world. Once a cycle it surges into overdrive (paragraphs 5 and 8: uncalibrated, "at full
 capacity") and a newborn Xalian steps out of a hatch at its base and wades off downstream. Read left
 to right: machine, seeds, the first growth taking hold where they land, a young World Tree.
 Inference, not stated canon: the pods carry both plants and plant-like Xalians."""
@@ -43,7 +43,7 @@ only other light. Wind blows left to right: rain slants and pods drift that way.
 - rain curtains: soft slanted shafts of heavier rain hanging from the cloud to the horizon. Static.
 - the young World Tree: in the middle distance at right, a tapering trunk on buttress roots with
   broad level boughs (thick enough to be roads) that each hold out one enormous flat leaf, like a
-  landing pad (Floria, paragraph 7). Seen from below: dark undersides with radiating veins, a pale
+  landing pad (Floria, paragraph 8). Seen from below: dark undersides with radiating veins, a pale
   rim where the sky catches the far edge, rain sheeting off the rims. Its crown leaf meets the storm.
   Green catches at its roots. Static; the strike behind it throws it into silhouette.
 - the far plain: floodwater sheeting over smooth rock to the horizon, dark whaleback domes of
@@ -231,13 +231,13 @@ def limb(x0, y0, cx, cy, x1, y1, w0, w1):
 
 TX, TB = 1330, 434  # the trunk's center and where it stands on the plain
 TREE_TOP = 186
-TRUNK_TOP = 120  # the trunk runs on up into the cloud
+TRUNK_TOP = TREE_TOP - 2  # the trunk tapers into the crown leaf, pressed against the cloud base
 g_bark = lin([(0, '#141c21', 1), (.3, '#0a1014', 1), (.7, '#070b0e', 1), (1, '#10171b', 1)], TX - 40, 0, TX + 40, 0, units=True)
-trunk = 'M%s %s C %s %s, %s %s, %s %s L %s %s L %s %s L %s %s C %s %s, %s %s, %s %s Z' % (
-    f(TX - 36), f(TB), f(TX - 24), f(TB - 40), f(TX - 22), f(330), f(TX - 16), f(250),
-    f(TX - 8), f(TRUNK_TOP), f(TX + 8), f(TRUNK_TOP),
-    f(TX + 16), f(250), f(TX + 22), f(330), f(TX + 26), f(TB - 40), f(TX + 38), f(TB))
-lin([(0, '#1a232b', 1), (.19, '#0b1114', 1), (1, '#090e11', 1)], 0, TRUNK_TOP, 0, TB, units=True, id='trunkV')
+trunk = 'M%s %s C %s %s, %s %s, %s %s C %s %s, %s %s, %s %s L %s %s C %s %s, %s %s, %s %s C %s %s, %s %s, %s %s Z' % (
+    f(TX - 38), f(TB), f(TX - 22), f(TB - 30), f(TX - 21), f(360), f(TX - 15), f(300),
+    f(TX - 11), f(252), f(TX - 7), f(215), f(TX - 4), f(TRUNK_TOP), f(TX + 4), f(TRUNK_TOP),
+    f(TX + 7), f(215), f(TX + 11), f(252), f(TX + 15), f(300), f(TX + 21), f(360), f(TX + 22), f(TB - 30), f(TX + 40), f(TB))
+lin([(0, '#0b1114', 1), (1, '#090e11', 1)], 0, TRUNK_TOP, 0, TB, units=True, id='trunkV')
 roots = ''.join('<polygon points="%s" fill="#090e11"/>' % pts(limb(TX + sx0, TB - 22, TX + sx0 + dx * .45, TB - 4, TX + sx0 + dx, TB + 4, w, 3)) for sx0, dx, w in [
     (-24, -66, 14), (26, 70, 14), (-14, -38, 9), (16, 42, 9)])
 
@@ -245,7 +245,7 @@ roots = ''.join('<polygon points="%s" fill="#090e11"/>' % pts(limb(TX + sx0, TB 
 PADS = []  # (cx, cy, rx, ry): the great flat leaves, for the veins, the rims and the rain off them
 STALKS = []
 boughs_ = []
-for y0, d, L, rise, w0, w1, rx, ry in [(372, -1, 150, 40, 24, 16, 86, 16), (340, 1, 160, 44, 23, 16, 90, 16), (290, -1, 104, 34, 18, 12, 70, 13), (258, 1, 110, 36, 17, 12, 66, 12)]:
+for y0, d, L, rise, w0, w1, rx, ry in [(372, -1, 150, 40, 24, 16, 86, 16), (340, 1, 160, 44, 23, 16, 90, 16), (290, -1, 104, 34, 15, 11, 70, 13), (258, 1, 110, 36, 12, 10, 66, 12)]:
     # a broad bough, thick enough to be a road, climbing out from the trunk and turning up into a stalk
     ex, ey = TX + d * L, y0 - rise
     boughs_.append('<polygon points="%s" fill="#090e11"/>' % pts(limb(TX + d * 6, y0, TX + d * L * .55, y0 - rise * .2, ex, ey, w0, w1)))
@@ -257,7 +257,7 @@ for y0, d, L, rise, w0, w1, rx, ry in [(372, -1, 150, 40, 24, 16, 86, 16), (340,
 for (dx, y, rx, ry) in [(-34, 312, 26, 6), (30, 226, 22, 5)]:
     STALKS.append('<path d="M%s %s Q %s %s %s %s" stroke="#0a1013" stroke-width="3.5" fill="none" stroke-linecap="round"/>' % (f(TX + dx * .3), f(y + 14), f(TX + dx * .8), f(y + 8), f(TX + dx), f(y + ry * .3)))
     PADS.append((TX + dx, y, rx, ry))
-PADS.append((TX + 2, TREE_TOP - 6, 52, 9))  # the crown leaf, meeting the storm
+PADS.append((TX + 2, TREE_TOP - 6, 66, 10))  # the crown leaf, meeting the storm
 lin([(0, '#1b2b22', 1), (.6, '#142019', 1), (1, '#0c1411', 1)], id='padUnder')
 pads_ = []
 for cx, cy, rx, ry in PADS:
@@ -279,8 +279,8 @@ for cx, cy, rx, ry in PADS[:4]:
 far.append('<!-- the young World Tree: a tapering trunk on buttress roots, broad level boughs, each holding out one enormous flat leaf like a landing pad -->'
            '<g filter="url(#soft1)"><path d="%s" fill="url(#trunkV)"/>%s</g><g>%s%s%s</g>' % (trunk, roots, ''.join(boughs_), ''.join(pads_), ''.join(STALKS)))
 far.append('<!-- rain sheeting off the rims of the great leaves --><g stroke="#8a9ca2" stroke-width=".8" opacity=".35" stroke-linecap="round">%s</g>' % ''.join(drips))
-crown_lobes = ''.join('<ellipse cx="%s" cy="%s" rx="%s" ry="%s" fill="url(#lobe)"/>' % (f(TX + dx), f(cy), f(rx), f(ry)) for dx, cy, rx, ry in [(-150, 150, 80, 30), (-70, 164, 76, 30), (10, 170, 70, 26), (90, 162, 80, 30), (170, 150, 74, 28)])
-far.append('<!-- the storm swallowing the crown: the trunk climbs on into the cloud, its top leaf half lost --><g filter="url(#cloud)"><rect x="%d" y="60" width="440" height="95" fill="url(#mass)"/>%s</g>' % (TX - 220, crown_lobes))
+crown_lobes = ''.join('<ellipse cx="%s" cy="%s" rx="%s" ry="%s" fill="url(#lobe)"/>' % (f(TX + dx), f(cy), f(rx), f(ry)) for dx, cy, rx, ry in [(-150, 138, 80, 30), (-70, 150, 76, 30), (10, 152, 70, 24), (90, 148, 80, 30), (170, 138, 74, 28)])
+far.append('<!-- the storm swallowing the crown: the trunk climbs on into the cloud, its top leaf half lost --><g filter="url(#cloud)"><rect x="%d" y="60" width="440" height="80" fill="url(#mass)"/>%s</g>' % (TX - 220, crown_lobes))
 far.append('<!-- the tree hazed by distance and rain --><rect x="%d" y="150" width="480" height="%d" fill="#27313c" opacity=".04"/>' % (TX - 240, TB - 150))
 far.append('<!-- the roots fading into the plain haze --><rect x="%d" y="%d" width="260" height="14" fill="#27313c" opacity=".3" filter="url(#soft6)"/>' % (TX - 130, TB - 6))
 
@@ -534,9 +534,13 @@ def surge(vals, scale=1.0):
 
 
 cx_, cy_ = GS(GX, 372)
-glow.append('<!-- the surge: the cloud base over the machine lit from below --><ellipse cx="%d" cy="222" rx="470" ry="92" fill="url(#glowWash)" opacity="0">%s</ellipse>' % (GX + 40, surge(SURGE_V, .9)))
+plinth_ = pts([(GX - 72, 454), (GX - 60, 426), (GX + 60, 426), (GX + 72, 454)])
+defs.append('<mask id="machineOut" maskUnits="userSpaceOnUse" x="0" y="0" width="%d" height="%d"><rect width="%d" height="%d" fill="#fff"/><g transform="translate(%s %s) scale(%s) translate(-%s -%s)" fill="#222"><path d="%s"/><polygon points="%s"/>%s</g></mask>' % (
+    W, H, W, H, f(GX), f(GBASE), f(GSC), f(GX), f(GBASE), vessel, plinth_,
+    ''.join('<polygon points="%s"/>' % pts([(GX + (vx - GX) * .6 - 9, 294), (vx - 7, vy + 4), (vx + 7, vy + 4), (GX + (vx - GX) * .6 + 9, 294)]) for vx, vy, _l in VENTS)))
+glow.append('<!-- the surge: the cloud base over the machine lit from below --><ellipse cx="%d" cy="222" rx="470" ry="92" fill="url(#glowWash)" opacity="0" mask="url(#machineOut)">%s</ellipse>' % (GX + 40, surge(SURGE_V, .9)))
 glow.append('<!-- the surge: the light flooding the shelf --><ellipse cx="%d" cy="%d" rx="290" ry="48" fill="url(#glowWash)" opacity="0">%s</ellipse>' % (GX + 20, GBASE + 12, surge(SURGE_V, .85)))
-glow.append('<!-- the surge: the core flaring --><circle cx="%s" cy="%s" r="116" fill="url(#glowPod)" opacity="0">%s</circle><circle cx="%s" cy="%s" r="26" fill="#ffffff" opacity="0" filter="url(#soft2)">%s</circle>' % (
+glow.append('<!-- the surge: the core flaring --><circle cx="%s" cy="%s" r="116" fill="url(#glowPod)" opacity="0" mask="url(#machineOut)">%s</circle><circle cx="%s" cy="%s" r="26" fill="#ffffff" opacity="0" filter="url(#soft2)">%s</circle>' % (
     f(cx_), f(cy_), surge(SURGE_V, .8), f(cx_), f(cy_), surge(SURGE_V, .85)))
 seams_ = ''.join('<line x1="%s" y1="%s" x2="%s" y2="%s"/>' % (f(GS(GX - 44, ry_ + 2.5)[0]), f(GS(GX - 44, ry_ + 2.5)[1]), f(GS(GX + 44, ry_ + 2.5)[0]), f(GS(GX + 44, ry_ + 2.5)[1])) for ry_ in (330, 352, 392, 414))
 glow.append('<!-- the surge: every seam blazing --><g stroke="%s" stroke-width="2" filter="url(#glow)" opacity="0">%s%s</g>' % (GLOW_CORE, surge(SURGE_V), seams_))
@@ -692,9 +696,9 @@ def build_pods(lseed, pseed=23, quick=False):
     prnd = random.Random(pseed)
     lrnd = random.Random(lseed)
     # the newborn walks the shelf and wades off downstream after the surge: no pod rides across it
-    for (x0, x1, y) in ((600, 700, 490), (690, 800, 505), (780, 880, 535), (840, 960, 564)):
+    for (x0, x1, y) in ((600, 700, 490), (690, 800, 505), (780, 880, 535), (840, 1000, 566)):
         for w in (0, T, -T):
-            taken.append((x0, x1, y, S + 3.9 + w, S + 15.6 + w))
+            taken.append((x0, x1, y, S + 3.9 + w, S + 16.6 + w))
 
     def lodge_plan(on, vent, spot, j0):
         # a pod that comes to rest on a rock top; its sprout stands there for 12.5 s, as tall as it grows
@@ -915,8 +919,8 @@ life.append('<!-- the hatch door sliding up into its frame -->'
 
 # the newborn: the same kind as the one in the water, half its size, facing downstream
 NB = .6
-WALK = [(GX - 14, GBASE - 17.5), (GX - 1, GBASE - 17.5), (GX + 15, GBASE - 27), (GX + 34, 484), (640, 489), (700, 497), (760, 513), (815, 540), (858, 562), (902, 570), (946, 576)]
-APPEAR, HOP0, HOP1, PAUSE1, WALK1, GONE = 3.0, 3.95, 4.4, 6.4, 13.2, 15.6
+WALK = [(GX - 14, GBASE - 17.5), (GX - 1, GBASE - 17.5), (GX + 15, GBASE - 27), (GX + 34, 484), (640, 489), (700, 497), (760, 513), (815, 540), (858, 562), (902, 570), (946, 576), (986, 572)]
+APPEAR, HOP0, HOP1, PAUSE1, WALK1, GONE = 3.0, 3.95, 4.4, 6.4, 13.2, 16.6
 EMERGE = 3.8  # it walks up out of the interior, growing from deep inside to the threshold
 seg = [math.hypot(b[0] - a[0], b[1] - a[1]) for a, b in zip(WALK, WALK[1:])]
 cum = [0]
@@ -929,8 +933,11 @@ key_p = [0, 0, cum[1] / tot, cum[1] / tot, cum[2] / tot, cum[3] / tot, cum[3] / 
 for i in range(4, 9):
     key_t.append(PAUSE1 + (WALK1 - PAUSE1) * (cum[i] - cum[3]) / walk_len)
     key_p.append(cum[i] / tot)
-key_t += [WALK1 + (GONE - WALK1) * (cum[9] - cum[8]) / (cum[10] - cum[8]), GONE]
-key_p += [cum[9] / tot, 1]
+for i in (9, 10):
+    key_t.append(WALK1 + (GONE - WALK1) * (cum[i] - cum[8]) / (cum[11] - cum[8]))
+    key_p.append(cum[i] / tot)
+key_t.append(GONE)
+key_p.append(1)
 # keyTimes run from the surge onset: the motion is on the same clock
 hop_ease = ['0 0 1 1'] * len(key_t)
 hop_ease[3], hop_ease[4] = '0 0 .58 1', '.42 0 1 1'  # out on the rise, in on the fall
@@ -982,7 +989,7 @@ defs.append('<clipPath id="hatchClip" clipPathUnits="userSpaceOnUse"><rect x="%s
     at((f(hw), str(W), str(W)), (HOP0,), attr='width').replace('repeatCount', 'calcMode="discrete" repeatCount'),
     at((f(hh), str(H), str(H)), (HOP0,), attr='height').replace('repeatCount', 'calcMode="discrete" repeatCount')))
 # wading: below the waterline its legs are under the flood (none on the shelf)
-WATERLINE = [(812, 700), (815, 541), (858, 559), (902, 566), (946, 571), (1536, 571), (1536, 700)]
+WATERLINE = [(812, 700), (815, 541), (858, 559), (902, 566), (946, 571), (986, 567), (1536, 567), (1536, 700)]
 defs.append('<clipPath id="wadeClip" clipPathUnits="userSpaceOnUse"><polygon points="%s"/></clipPath>' % pts([(0, 0), (W, 0)] + WATERLINE[::-1] + [(0, 700)]))
 # .85 at the threshold keeps it all inside the doorway until the clip opens at the hop
 grow = '<animateTransform attributeName="transform" type="scale" values=".5;.5;.85;.85;1;1" keyTimes="%s" dur="%ss" begin="%s" repeatCount="indefinite"/>' % (kt(T, APPEAR, EMERGE, HOP0, HOP1), f(T), onset_begin(T, S))
@@ -990,7 +997,7 @@ life.append('<!-- the newborn Xalian: walks up out of the lit hatch, hops down, 
             '<g clip-path="url(#hatchClip)"><g clip-path="url(#wadeClip)"><g opacity="0">%s%s' % (motion, at((0, 0, 1, 1, 0, 0), (APPEAR, APPEAR + .3, GONE - 1.6, GONE))) +
             '<g transform="scale(%s %s)"><g>%s<g>%s<ellipse cx="-6" cy="-40" rx="22" ry="12" fill="url(#glowPod)" opacity=".4"/>%s%s</g></g></g></g></g></g>' % (f(-NB), f(NB), grow, bob, nbody, neye))
 # rings spreading from its legs as it wades
-for (rx0, ry0, tt) in ((842, 553, 12.7), (906, 570, 14.2), (934, 574, 14.9)):
+for (rx0, ry0, tt) in ((842, 553, 12.7), (906, 570, 14.2), (940, 574, 15.0), (970, 573, 15.8)):
     life.append('<ellipse cx="%s" cy="%s" rx="1" ry=".4" fill="none" stroke="#9fb2b8" stroke-width="1.4" opacity="0">%s%s%s</ellipse>' % (
         f(rx0), f(ry0), at((1, 1, 2, 14, 14), (tt, tt + .05, tt + .9), attr='rx'), at((.4, .4, .6, 3.5, 3.5), (tt, tt + .05, tt + .9), attr='ry'), at((0, 0, .7, 0, 0), (tt, tt + .05, tt + .9))))
 
