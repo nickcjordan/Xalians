@@ -132,3 +132,41 @@ Round 8 was the last under the cap:
 - **The cold checks found real misses early.** The first found the Xalian hidden in the dark, the Generator's glow washing its own body, and the World Tree failing its lore scale.
 - **After that, the cold checks mostly churned on taste.** Over four checks the tree was, in turn, an oak, a dead tree, an acacia, a baobab and a mushroom. The pods went from fireflies to comets.
 - **Lesson.** One cold check is worth running at the gate, and its findings about identity and lore should be taken. Repeated cold checks on a still-life object whose look is a matter of taste do not converge, and the call should go to Nick on the live page. That matches the Accords trial.
+
+## Enhancement pass (Nick, 2026-09-23)
+
+After seeing the plate live, Nick asked for all five enhancements I had proposed. The loop was the same as before: one resumed visual reviewer and one resumed motion reviewer.
+
+**What was added**
+- **The birth.** Once a cycle, after the surge, the hatch in the plinth slides open on a lit interior. A newborn of the adult's kind, at half its size, walks across the lit interior as it grows toward the threshold. It hops down, pauses on the shelf, walks down the shelf's lit face and wades off downstream, fading into the rain. t=0 falls inside the pause, so the still poster shows the newborn beside the open hatch. Lore: Floria paragraph 7 (the Prototype made Xalians along with the vegetation).
+- **The overdrive surge.** The core charges, then flares white. Every seam blazes, all three vents fire together and throw a volley, and the cloud base and the rain around the machine light up. Then it settles. It runs about 4 s of the 24 s cycle. Lore: paragraph 7 ("uncalibrated", "at full capacity").
+- **Growth you can watch.** Five pods a cycle come to rest on rock tops. A sprout rises from each: a folded pair of leaves opens as the stem climbs, stands, then fades before its seed returns.
+- **The World Tree, replaced.** The distant colossus that four cold checks read as four different ordinary trees is gone. In its place, a young World Tree stands in the middle distance: a trunk climbing into the storm on buttress roots, broad boughs thick enough to be roads, each turning up into a stalk that holds out one enormous flat leaf, seen from below, with rain sheeting off the rims (paragraph 7: "leaves so wide they doubled as landing pads").
+- **A first prototype.**
+  - One structural rib runs the full height; the other stops at an unskinned opening with pipework inside.
+  - A replaced panel in a different metal, and one seam half dark.
+  - Cables sag off the flank and are clamped to the rock.
+  - A vent run is bolted up the right side into the third stack.
+  - A split panel leaks flickering light, with its corner bent out.
+  - Three instrument lamps blink in turn.
+
+## Rounds 9 to 12 (visual 7.5, 8.5, 9 "Nothing worth a round"; motion: see below)
+
+- **The tree (round 9).** It read as floating plates. The boughs are now solid, as dark as the trunk and out of the blur. The stalks are drawn in front of each leaf and turn up into its underside. The rims are softened, and the trunk climbs into a band of cloud lobes that swallows the crown leaf.
+- **The birth (rounds 9 to 11).**
+  - The newborn was bigger than its door and faded in on top of the frame. It is now clipped to the doorway while inside. It walks sideways across the lit interior while growing to .85, and reaches full size through the hop, so nothing pops when the clip opens.
+  - The hop eases out on the rise and in on the fall.
+  - The strides are matched to the ground speed: a 30° swing centered on the vertical while walking, and 20° while emerging.
+- **Wading (rounds 9 to 11).** It walked on the water. Past the first step down, its legs are clipped at a waterline, and rings spread from them.
+- **The prototype (rounds 9 and 10).**
+  - Two symmetric ribs and even seams read as a cage. That was broken with the stopped rib, the opening and the dead half-seam.
+  - The crack read first as a lightning icon, then as a stuck pod. It is now a thin split with a lit core line and a spill below.
+- **Sprouts (round 10).** Mid-growth, a sprout read as a bulb on a stick. Now the leaves start as a folded pair and open while the stem rises, with no bud knob. It is also smaller.
+- **Pods (motion, rounds 9 to 12).** Lodge pods overtook their bursts, pods rode through sprouts, and the surge volley crossed itself. The fixes:
+  - Each lodge pod joins its burst's fastest-first sort.
+  - Vent 2's regular burst at the release gave way to the volley.
+  - Each vent's volley pods settle in their own band.
+  - The build now carries a sampler that plays every pod's animateMotion (spline easing over keyPoints by arc length) every 0.02 s. It rejects any draw where two pods come within 16 units in flight or 10 once down, or where a pod passes through a standing sprout. The motion reviewer confirmed it models SMIL.
+  - The pod draws were searched and pinned (`PODS_SEARCH=1` searches again).
+
+**Left to Nick, per the reviewer:** the trunk's nearly parallel sides above the lowest boughs (a taste note; the fix, if wanted, is a taper from about 44 to 30), and the crack's faint zigzag.
