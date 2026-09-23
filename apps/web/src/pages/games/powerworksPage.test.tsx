@@ -3,7 +3,14 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { fireEvent, render, screen, cleanup } from "@testing-library/react";
 import { MemoryRouter } from "react-router";
 import PowerworksPage from "./powerworksPage";
-import { COMPANION_RECORDS, readCompanion } from "@xalians/rules/dungeon";
+import { PowerworksDraft } from "./powerworksDraft";
+import {
+  COMPANION_KEYS,
+  COMPANION_RECORDS,
+  draftOffer,
+  readCompanion,
+  usable,
+} from "@xalians/rules/dungeon";
 
 /*
   The generator's naming guardrail no longer produces compositional names such as
@@ -17,14 +24,15 @@ vi.mock("@xalians/rules/dungeon", async (importOriginal) => {
   const mod = await importOriginal<typeof import("@xalians/rules/dungeon")>();
   return {
     ...mod,
-    createRun: (seed?: number) => {
-      const run = mod.createRun(seed);
-      if (naming.long) {
-        const h = run.team.find((u) => u.species === "hippochamp")!;
+    // Since pass 6 a run's squad arrives through the draft command (contract decision 48).
+    command: (run: import("@xalians/rules/dungeon").Run, action: import("@xalians/rules/dungeon").Command) => {
+      const next = mod.command(run, action);
+      if (naming.long && action.kind === "draft") {
+        const h = next.team.find((u) => u.species === "hippochamp")!;
         const move = h.moves.find((m) => !m.signature)!;
         move.name = LONG_NAME;
       }
-      return run;
+      return next;
     },
   };
 });
@@ -50,7 +58,7 @@ const mount = () =>
 describe("Powerworks player flow", () => {
   it("requires the whole squad, resolves a round, and restores it after remount", () => {
     const ui = mount();
-    fireEvent.click(screen.getByRole("button", { name: "Enter the facility" }));
+    fireEvent.click(screen.getByRole("button", { name: "Take the starter squad" }));
     expect(screen.getByRole("button", { name: "Commit round" })).toBeDisabled();
     // Seed 1 deals the squad as Hippochamp, Crystorn, Avilily, Graviclaw; each signature in turn.
     for (const move of [
@@ -80,14 +88,14 @@ describe("Powerworks player flow", () => {
     localStorage.setItem("xalians.powerworks.v1", "{broken");
     mount();
     expect(
-      screen.getByRole("button", { name: "Enter the facility" })
+      screen.getByRole("button", { name: /Draft a squad/ })
     ).toBeInTheDocument();
     fireEvent.click(screen.getByRole("button", { name: "Field guide" }));
     expect(screen.getByText(/Desperate strike deals 3/)).toBeInTheDocument();
   });
   it("lets players review, change and clear a queued order with an unambiguous target", () => {
     mount();
-    fireEvent.click(screen.getByRole("button", { name: "Enter the facility" }));
+    fireEvent.click(screen.getByRole("button", { name: "Take the starter squad" }));
     fireEvent.click(
       screen.getByRole("button", { name: /Emergency Water Cannon, / })
     );
@@ -107,7 +115,7 @@ describe("Powerworks player flow", () => {
   });
   it("explains visual move stats without repeating power and range text on cards", () => {
     mount();
-    fireEvent.click(screen.getByRole("button", { name: "Enter the facility" }));
+    fireEvent.click(screen.getByRole("button", { name: "Take the starter squad" }));
     const attack = screen.getByRole("button", {
       name: /Emergency Water Cannon,/,
     });
@@ -129,7 +137,7 @@ describe("Powerworks player flow", () => {
   });
   it("lists each condition on a companion with its plain-language rule in the inspector", () => {
     mount();
-    fireEvent.click(screen.getByRole("button", { name: "Enter the facility" }));
+    fireEvent.click(screen.getByRole("button", { name: "Take the starter squad" }));
     // Graviclaw's Ground Anchor is the squad's one guarding status; playing it puts a
     // real condition on a real companion, which the inspector must then explain.
     // Seed 1 deals the squad Hippochamp, Crystorn, Avilily, Graviclaw.
@@ -156,7 +164,7 @@ describe("Powerworks player flow", () => {
   });
   it("separates public initiative from hidden decisions and makes the route discoverable", () => {
     mount();
-    fireEvent.click(screen.getByRole("button", { name: "Enter the facility" }));
+    fireEvent.click(screen.getByRole("button", { name: "Take the starter squad" }));
     fireEvent.click(screen.getByRole("button", { name: "View turn order" }));
     const list = screen.getByRole("list");
     // The fastest companion leads the public order, with the speed its record reads.
@@ -176,7 +184,7 @@ describe("Powerworks player flow", () => {
   });
   it("offers squadmates as targets for a helpful move and previews what lands on them (pass 5)", () => {
     mount();
-    fireEvent.click(screen.getByRole("button", { name: "Enter the facility" }));
+    fireEvent.click(screen.getByRole("button", { name: "Take the starter squad" }));
     // Seed 1 opens on Hippochamp. The cannon carries a cooling removal, so it may name a
     // squadmate as well as an enemy; Water Sweep only harms, so it names enemies only.
     fireEvent.click(
@@ -227,7 +235,7 @@ describe("Powerworks player flow", () => {
   it("shows the base move name in the squad panel and keeps the full name in the title", () => {
     naming.long = true;
     mount();
-    fireEvent.click(screen.getByRole("button", { name: "Enter the facility" }));
+    fireEvent.click(screen.getByRole("button", { name: "Take the starter squad" }));
     // A compositional name is the longest a move can carry; the squad panel label must
     // be its base name, not the whole qualifier list.
     fireEvent.click(screen.getByRole("button", { name: "Select Hippochamp" }));
@@ -247,5 +255,62 @@ describe("Powerworks player flow", () => {
     // The label itself carries no qualifier list, and the full name is reachable.
     expect(label.textContent).not.toMatch(/;/);
     expect(label.getAttribute("title")).toMatch(/;/);
+  });
+  it("drafts four of eight generated creatures and plays the run with them (pass 6)", () => {
+    const ui = mount();
+    fireEvent.click(screen.getByRole("button", { name: /Draft a squad/ }));
+    const offer = draftOffer(1);
+    expect(screen.getAllByRole("button", { name: /^Pick / })).toHaveLength(8);
+    const enter = screen.getByRole("button", { name: /Enter the facility/ });
+    expect(enter).toBeDisabled();
+    // Four species outside the starter squad, so the game must draw drafted creatures.
+    const starter: readonly string[] = COMPANION_KEYS;
+    const chosen = offer.filter((e) => !starter.includes(e.species)).slice(0, 4);
+    expect(chosen).toHaveLength(4);
+    for (const e of chosen)
+      fireEvent.click(screen.getByRole("button", { name: `Pick ${e.unit.name}` }));
+    expect(enter).toBeEnabled();
+    // A fifth pick waits for a swap.
+    const other = offer.find((e) => !chosen.includes(e))!;
+    const fifth = screen.getByRole("button", { name: `Pick ${other.unit.name}` });
+    expect(fifth).toHaveAttribute("aria-disabled", "true");
+    fireEvent.click(fifth);
+    expect(fifth).toHaveAttribute("aria-pressed", "false");
+    expect(enter).toBeEnabled();
+    fireEvent.click(enter);
+    for (const e of chosen)
+      expect(screen.getByRole("button", { name: `Select ${e.unit.name}` })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Commit round" })).toBeDisabled();
+    // The drafted run is saved from its draft command and restored after a remount.
+    ui.unmount();
+    mount();
+    for (const e of chosen)
+      expect(screen.getByRole("button", { name: `Select ${e.unit.name}` })).toBeInTheDocument();
+    const save = JSON.parse(localStorage.getItem("xalians.powerworks.v1")!);
+    expect(save.version).toBe(6);
+    expect(save.history[0]).toEqual({
+      kind: "draft",
+      squad: chosen.map((e) => e.index).sort((a, b) => a - b),
+    });
+  });
+  it("shows each offered creature as the game reads it and marks an unsupported action plainly", () => {
+    // Find a seed whose offer carries an action the game cannot resolve (Smokat's Smoke Dispersal).
+    let seed = 1;
+    while (!draftOffer(seed).some((e) => e.unit.moves.some((m) => !usable(m)))) seed++;
+    const offer = draftOffer(seed);
+    render(
+      <MemoryRouter>
+        <PowerworksDraft seed={seed} onBack={() => {}} onEnter={() => {}} />
+      </MemoryRouter>
+    );
+    expect(document.querySelector('[data-tier="chrome"]')).toBeTruthy();
+    for (const e of offer) {
+      const card = screen.getByRole("heading", { name: e.unit.name }).closest("[data-slot=card]")!;
+      expect(card).toHaveTextContent(`HP ${e.unit.max}`);
+      expect(card).toHaveTextContent(`Speed ${e.unit.speed}`);
+      expect(card).toHaveTextContent(e.unit.element);
+      expect(card.querySelectorAll("ul li")).toHaveLength(4);
+    }
+    expect(screen.getAllByText("No effect here").length).toBeGreaterThan(0);
   });
 });

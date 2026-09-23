@@ -32,7 +32,7 @@ import {
   PowerIcon,
   binds,
   harms,
-  melee as closing,
+  melee as contact,
 } from "./powerworksVisuals";
 
 export const sectorStory = [
@@ -141,6 +141,8 @@ export function floatLabel(event?: BattleEvent): string {
       return "Reacts";
     case "lapsed":
       return "Lapsed";
+    case "outlasted":
+      return "Forced out";
     default:
       return "Redirected";
   }
@@ -207,7 +209,7 @@ export function PowerworksScene({
   const recipient = all.find((u) => u.id === event?.targetId);
   const action = actor?.moves.find((m) => m.name === event?.moveName);
   const melee =
-    (action ? closing(action) : false) || event?.moveName === "Desperate strike";
+    (action ? contact(action) : false) || event?.moveName === "Desperate strike";
   const presentation = actionPresentation(frame);
   const { signature, knockout, bossDefeat } = presentation;
   const laneShift = (u: Unit) => {

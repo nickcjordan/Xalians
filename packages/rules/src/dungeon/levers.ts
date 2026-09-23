@@ -114,12 +114,20 @@ export const CONTACT_TRIGGER_RANGES = ["contact"] as const;
 /** Lever: Desperate strike, the exhaustion-only fallback: flat damage, no matchup, recoil on the user. */
 export const DESPERATE_STRIKE_DAMAGE = 3;
 export const DESPERATE_STRIKE_RECOIL = 2;
+/**
+  Lever: the stalemate rule (contract decision 52). When this many consecutive rounds of one
+  encounter resolve in which no unit on either side loses HP and none falls, the squad is
+  forced out: the run ends as a retreat, earned practice XP kept. A long fight that keeps
+  making progress is never cut off. It replaced a 20-round cap, which the pass 6 sim showed
+  turned 26 random-draft and 9 greedy-draft wins into losses while no run looped.
+*/
+export const ENCOUNTER_STALL_ROUNDS = 6;
 /** Lever: practice XP per cleared encounter and for the final chamber; the pre-boss recovery station heal. */
 export const ENCOUNTER_XP = 10;
 export const FINAL_ENCOUNTER_XP = 30;
 export const RECOVERY_STATION_HP = 10;
 /**
-  Lever: the companions are generated once from these fixed seeds of the frozen release so a run is
+  Lever: the starter squad (contract decision 47) is generated once from these fixed seeds of the frozen release so a run is
   replayable. Re-picked 2026-09-23 on generation-0.7.0-3 under contract decision 37: every companion
   with a harm act keeps an every-round harm after its signature, and the ordinary charged act
   (decision 36) is not a burst that reaches squadmates. Graviclaw 4 and Avilily 6 had no every-round
@@ -140,6 +148,19 @@ export const COMPANION_GENERATED_AT = "2026-09-21T00:00:00.000Z";
  * resolves area, shock, tempo and senses effects, so a version 3 history no longer replays the same run.
  * The decision 37 seeds landed before any version 4 save shipped, so the version did not move again.
  * Version 5 (2026-09-23, pass 5): orders may name a squadmate (contract decisions 39 to 41), so a history
- * can carry side-crossing targets that a version 4 replay would reject or resolve as a foe order. */
-export const SAVE_VERSION = 5;
+ * can carry side-crossing targets that a version 4 replay would reject or resolve as a foe order.
+ * Version 6 (2026-09-23, pass 6): a run starts from the draft (contract decision 48), so the first command
+ * of every history is `{kind: "draft", squad}`; a version 5 history has none and is rejected. */
+export const SAVE_VERSION = 6;
+/*
+  Pass 6 levers: the squad draft (contract decisions 45 to 48).
+*/
+/** Lever: how many generated creatures the draft offers (contract decision 45). */
+export const DRAFT_OFFER_SIZE = 8;
+/** Lever: how many of the offer the player picks, and so the squad size (contract decision 45). */
+export const SQUAD_SIZE = 4;
+/** Lever: the seed prefix of a drafted creature; candidate `k` of run seed `n` is generated from `${DRAFT_SEED_PREFIX}-${n}-${k}` (contract decision 45). */
+export const DRAFT_SEED_PREFIX = "powerworks-draft";
+/** Lever: how many passes over the roster the constructive offer may draw before it gives up (contract decision 46). One pass is 32 candidates; the 200-seed test never needs a second. */
+export const DRAFT_MAX_ROSTER_PASSES = 4;
 export const SAVE_HISTORY_LIMIT = 2000;

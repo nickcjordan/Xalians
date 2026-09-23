@@ -4,7 +4,14 @@ import {
   COMPANION_RECORDS,
   command,
   createRun,
+  draftCandidate,
+  draftOffer,
+  draftOrder,
+  everyRoundHarms,
+  openRun,
+  unitIds,
   damagePreview,
+  basePower,
   areaReach,
   damaging,
   effectiveSpeed,
@@ -38,6 +45,10 @@ import {
   SLOWED_SPEED_FACTOR,
   COOLDOWN_ROUNDS,
   DEGRADE_FACTOR,
+  DRAFT_OFFER_SIZE,
+  ENCOUNTER_STALL_ROUNDS,
+  SAVE_VERSION,
+  SQUAD_SIZE,
   ENTRANCE_IMMUNITY_OPPORTUNITIES,
   FRIGHTENED_OUTPUT_FACTOR,
   LIKELIHOOD_PERCENT,
@@ -121,13 +132,34 @@ const clone = <T,>(v: T): T => structuredClone(v);
 const hasEvent = (r: { frames: { event?: { kind: string } }[] }, kind: string) =>
   r.frames.some((f) => f.event?.kind === kind);
 
-describe("Powerworks reads the four companions", () => {
-  it("reads four moves each from the frozen release with exactly one signature", () => {
-    for (const key of COMPANION_KEYS) {
-      const u = readCompanion(COMPANION_RECORDS[key], key.toUpperCase());
-      expect(u.species).toBe(key);
-      expect(u.moves).toHaveLength(4);
-      expect(u.moves.filter((m) => m.signature)).toHaveLength(1);
+/*
+  Since pass 6 a run's four companions are the starter squad or four drafted from the offer
+  (contract decisions 45 to 48). The shape checks hold for any squad; the intro-lesson checks
+  (the two answers to a charge, the charged act, the fastest companion) are the starter's,
+  because the offer guarantees the answers between eight creatures, not on any four picked.
+*/
+/** The starter plus drafted squads over a few seeds: every shape a run's team can take. */
+const squads = (): Run[] => [
+  createRun(1),
+  ...[1, 2, 3, 4, 5].flatMap((seed) => [
+    createRun(seed, [0, 1, 2, 3]),
+    createRun(seed, [4, 5, 6, 7]),
+  ]),
+];
+describe("Powerworks reads its companions", () => {
+  it("reads four moves each from the frozen release with exactly one signature, action or passive, for any squad", () => {
+    const units = [
+      ...COMPANION_KEYS.map((key) => readCompanion(COMPANION_RECORDS[key], key.toUpperCase())),
+      ...squads().flatMap((s) => s.team),
+    ];
+    for (const u of units) {
+      expect(u.moves, u.species).toHaveLength(4);
+      // A drafted species may carry its signature as a passive (Imprit's contact burn), so
+      // the one signature is counted over actions and passives together.
+      expect(
+        [...u.moves, ...u.passives].filter((m) => m.signature),
+        u.species
+      ).toHaveLength(1);
       expect(u.hp).toBeGreaterThan(0);
       expect(u.hp).toBe(u.max);
       expect(u.speed).toBeGreaterThan(0);
@@ -140,8 +172,22 @@ describe("Powerworks reads the four companions", () => {
           if (e.support === "unsupported") expect(e.reason).toBeTruthy();
       }
     }
+    for (const key of COMPANION_KEYS)
+      expect(readCompanion(COMPANION_RECORDS[key], "X").species).toBe(key);
   });
-  it("every companion can deal damage and the fastest one outspeeds every charger", () => {
+  it("gives every squad four unique letter ids that never meet a machine's", () => {
+    const machineIds = new Set(cards.rooms.flatMap((r) => r.enemies.map((row) => String(row[1]))));
+    for (const s of squads()) {
+      const ids = s.team.map((u) => u.id);
+      expect(new Set(ids).size).toBe(4);
+      for (const id of ids) {
+        expect(id).toMatch(/^[A-Z][a-z]*$/);
+        expect(machineIds.has(id)).toBe(false);
+      }
+    }
+    expect(createRun(1).team.map((u) => u.id).sort()).toEqual(["A", "C", "G", "H"]);
+  });
+  it("every starter companion can deal damage and the fastest one outspeeds every charger", () => {
     // The intro lesson (stop the charge) needs a companion who acts before the release.
     const s = createRun(1);
     for (const u of s.team)
@@ -154,7 +200,7 @@ describe("Powerworks reads the four companions", () => {
     for (const [key, t] of chargers)
       expect(fastest, `${key} charges at speed ${t.speed}`).toBeGreaterThan(t.speed);
   });
-  it("carries the intro's two answers to a charge and four distinct actions each", () => {
+  it("the starter carries the intro's two answers to a charge and four distinct actions each", () => {
     const s = createRun(1);
     // Avilily's paralysis (a bind) and Graviclaw's pull (a displace) are the lesson.
     expect(
@@ -172,7 +218,7 @@ describe("Powerworks reads the four companions", () => {
           expect(e.support, `${u.name} ${m.name} ${e.type}`).not.toBe("unsupported");
     }
   });
-  it("carries a real ordinary charged act on at least one companion (decision 36)", () => {
+  it("the starter carries a real ordinary charged act on at least one companion (decision 36)", () => {
     // Creature pass two lets crush, beam and burst roll prolonged preparation, so the
     // player-side charge-up is exercised by a creature, not only by the machines. Any
     // companion may carry it, but not as a burst that reaches squadmates (decision 37).
@@ -188,33 +234,39 @@ describe("Powerworks reads the four companions", () => {
     expect(carriers.length, "no companion carries a usable ordinary charged act").toBeGreaterThan(0);
     for (const { u, i } of carriers) expect(legalMoves(u), u.name).toContain(i);
   });
-  it("keeps an every-round harm on every companion that has a harm act, after its signature (decision 37)", () => {
+  it("keeps an every-round harm on every companion of any squad, after its signature (decisions 37 and 46)", () => {
     // Throughput, not only the lessons: 0.7.0-3's kits alone took the greedy win rate from
-    // 98% to 79% because three companions lost every harm they could use each round.
-    const s = createRun(1);
-    for (const u of s.team) {
-      if (!u.moves.some((m) => m.effects.some((e) => e.support === "harm"))) continue;
-      u.signatureSpent = true;
-      const everyRound = u.moves
-        .map((m, i) => ({ m, i }))
-        .filter(
-          ({ m }) =>
-            !m.signature &&
-            m.effects.some((e) => e.support === "harm") &&
-            m.recovery === "repeatable" &&
-            m.preparation !== "prolonged" &&
-            !selfBurst(m) &&
-            usable(m)
+    // 98% to 79% because three companions lost every harm they could use each round. Since
+    // pass 6 the offer only carries creatures that pass, so every drafted squad does too.
+    for (const s of squads())
+      for (const u of s.team) {
+        u.signatureSpent = true;
+        const everyRound = everyRoundHarms(u);
+        expect(everyRound, u.species).toEqual(
+          u.moves
+            .map((m, i) => ({ m, i }))
+            .filter(
+              ({ m }) =>
+                !m.signature &&
+                m.effects.some((e) => e.support === "harm") &&
+                m.recovery === "repeatable" &&
+                m.preparation !== "prolonged" &&
+                !selfBurst(m) &&
+                usable(m) &&
+                // Decision 37 counts only a harm that previews at least 1 (pass 6).
+                basePower(u, m) >= 1
+            )
+            .map(({ i }) => i)
         );
-      expect(everyRound.length, `${u.name}: ${u.moves.map((m) => m.name.split(" (")[0]).join(", ")}`).toBeGreaterThan(0);
-      // Repeatable means it is legal again at once: used, it sets no cooldown.
-      const { m, i } = everyRound[0];
-      u.cooldowns[i] = COOLDOWN_ROUNDS[m.recovery];
-      expect(legalMoves(u), u.name).toContain(i);
-      expect(legalMoves(u), u.name).not.toContain(-1);
-    }
+        expect(everyRound.length, `${u.name}: ${u.moves.map((m) => m.name.split(" (")[0]).join(", ")}`).toBeGreaterThan(0);
+        // Repeatable means it is legal again at once: used, it sets no cooldown.
+        const i = everyRound[0];
+        u.cooldowns[i] = COOLDOWN_ROUNDS[u.moves[i].recovery];
+        expect(legalMoves(u), u.name).toContain(i);
+        expect(legalMoves(u), u.name).not.toContain(-1);
+      }
   });
-  it("names unsupported effects and keeps a move usable only when some effect is supported", () => {
+  it("names unsupported effects and keeps a move usable only when some effect is supported (starter)", () => {
     const s = createRun(1);
     // Pass 2 reads Ground Anchor: protected with a declared displacement immunity.
     const g = unit(s, "G");
@@ -573,14 +625,22 @@ describe("Powerworks battle rules", () => {
     expect(r.revival).toBe(1);
     expect(r.xp).toBe(0);
   });
-  it("replays a version 5 command history deterministically and rejects versions 1 to 4", () => {
+  it("replays a version 6 starter history deterministically and rejects versions 1 to 5", () => {
     const s = createRun(41);
     const q = orders(s);
     const action = { kind: "round" as const, orders: q };
     const restored = restoreRun(
-      JSON.stringify({ version: 5, seed: 41, history: [action] })
+      JSON.stringify({
+        version: 6,
+        seed: 41,
+        history: [{ kind: "draft", squad: "starter" }, action],
+      })
     );
     expect(restored.state).toEqual(command(s, action));
+    // Version 5 histories open on a round, with no draft (pass 6, decision 48).
+    expect(() =>
+      restoreRun(JSON.stringify({ version: 5, seed: 41, history: [action] }))
+    ).toThrow("Unsupported save.");
     expect(() => restoreRun('{"version":1,"seed":41,"history":[]}')).toThrow(
       "Unsupported save."
     );
@@ -611,7 +671,10 @@ describe("Powerworks battle rules", () => {
           expect(u.cooldowns.every((n) => n >= 0)).toBe(true);
         }
       }
-      expect(["won", "lost"]).toContain(s.phase);
+      // Since pass 6 a run also ends when an encounter stalls (decision 52): rounds in a row
+      // in which nobody loses HP. This naive first-legal-move policy may reach it.
+      expect(["won", "lost", "retreated"]).toContain(s.phase);
+      if (s.phase === "retreated") expect(s.ended).toBe("outlasted");
     }
   });
   it("exposes public initiative and damage events without revealing a charging target", () => {
@@ -1201,19 +1264,20 @@ describe("Powerworks status layer", () => {
     expect(r.state.phase).toBe("camp");
     expect(r.state.xp).toBe(10);
   });
-  it("replays a version 5 save deterministically with conditions in play", () => {
+  it("replays a version 6 save deterministically with conditions in play", () => {
     const s = createRun(7);
     const first = orders(s);
     const after = command(s, { kind: "round", orders: first });
     const second = orders(after);
     const history = [
+      { kind: "draft" as const, squad: "starter" as const },
       { kind: "round" as const, orders: first },
       { kind: "round" as const, orders: second },
     ];
     const restored = restoreRun(
-      JSON.stringify({ version: 5, seed: 7, history })
+      JSON.stringify({ version: 6, seed: 7, history })
     );
-    expect(restored.state).toEqual(command(after, history[1]));
+    expect(restored.state).toEqual(command(after, history[2]));
   });
 });
 
@@ -1659,7 +1723,7 @@ describe("Powerworks reactions", () => {
     expect(after.conditions.filter((c) => c.status === "mending")).toHaveLength(1);
     expect(after.passiveCooldowns).toEqual(carrier.passives.map(() => 0));
   });
-  it("replays a version 5 save deterministically through to a reaction", () => {
+  it("replays a version 6 save deterministically through to a reaction", () => {
     // A real run, played honestly with legal orders until the guardian answers a
     // contact strike, then restored from its command history alone. The orders play to
     // win (strongest legal preview, a revival when someone falls) until the final
@@ -1707,7 +1771,7 @@ describe("Powerworks reactions", () => {
     expect(reacted, "no reaction occurred in the played run").toBe(true);
     expect(history.some((c) => c.kind === "advance")).toBe(true);
     const restored = restoreRun(
-      JSON.stringify({ version: 5, seed: 11, history })
+      JSON.stringify({ version: 6, seed: 11, history: [{ kind: "draft", squad: "starter" }, ...history] })
     );
     expect(restored.state).toEqual(s);
     expect(restored.state.log.some((l) => /Core discharge/.test(l))).toBe(true);
@@ -2513,7 +2577,7 @@ describe("Powerworks pass 5: readings (decision 41)", () => {
     expect(events(r, "redirect", healer.id)).toHaveLength(0);
     expect(unit(r.state, healer.id).cooldowns).toEqual([0]);
   });
-  it("replays a version 5 save whose order names a squadmate", () => {
+  it("replays a version 6 save whose order names a squadmate", () => {
     const s = createRun(5);
     const h = unit(s, "H");
     const cannon = h.moves.findIndex((m) => aimsAtSquadmate(m));
@@ -2521,11 +2585,261 @@ describe("Powerworks pass 5: readings (decision 41)", () => {
     const q = { ...orders(s), H: { move: cannon, target: "C" } };
     const after = command(s, { kind: "round", orders: q });
     const restored = restoreRun(
-      JSON.stringify({ version: 5, seed: 5, history: [{ kind: "round", orders: q }] })
+      JSON.stringify({ version: 6, seed: 5, history: [{ kind: "draft", squad: "starter" }, { kind: "round", orders: q }] })
     );
     expect(restored.state).toEqual(after);
     // Aimed at Crystorn, the cannon clears or finds nothing; it never deals damage to her.
     expect(after.log.some((l) => /Emergency Water Cannon.*Crystorn/.test(l))).toBe(true);
     expect(after.log.some((l) => /Hippochamp uses Emergency Water Cannon on Crystorn/.test(l))).toBe(false);
+  });
+});
+
+/*
+  Pass 6: the squad draft (contract decisions 45 to 48). The offer is read from real
+  generated records, so every guarantee is checked against what the release produces.
+*/
+describe("Powerworks pass 6: the offer (decisions 45 and 46)", () => {
+  it("is seeded by the run seed: the same seed deals the same offer, generated from its named seeds", () => {
+    const a = draftOffer(7);
+    const b = draftOffer(7);
+    expect(b.map((e) => e.seed)).toEqual(a.map((e) => e.seed));
+    expect(draftOrder(7)).toEqual(draftOrder(7));
+    for (const e of a) {
+      expect(e.seed).toBe(`powerworks-draft-7-${e.candidate}`);
+      // The record is exactly the canonical release's creature for that seed.
+      expect(e.record).toEqual(roster(e.species, e.seed));
+      expect(e.species).toBe(draftOrder(7)[e.candidate % draftOrder(7).length]);
+    }
+    // A different seed deals a different offer.
+    expect(draftOffer(8).map((e) => e.seed)).not.toEqual(a.map((e) => e.seed));
+  });
+  it("holds its guarantees over 200 seeds: eight distinct species, each with an every-round harm, and a bind, a displace and a support between them", () => {
+    for (let seed = 1; seed <= 200; seed++) {
+      const offer = draftOffer(seed);
+      expect(offer, `seed ${seed}`).toHaveLength(DRAFT_OFFER_SIZE);
+      expect(offer.map((e) => e.index)).toEqual([0, 1, 2, 3, 4, 5, 6, 7]);
+      expect(new Set(offer.map((e) => e.species)).size, `seed ${seed}`).toBe(DRAFT_OFFER_SIZE);
+      // Listed in draw order.
+      const drawn = offer.map((e) => e.candidate);
+      expect(drawn).toEqual([...drawn].sort((x, y) => x - y));
+      for (const e of offer)
+        expect(everyRoundHarms(e.unit).length, `seed ${seed} ${e.species}`).toBeGreaterThan(0);
+      expect(offer.some((e) => e.answers.bind), `seed ${seed} bind`).toBe(true);
+      expect(offer.some((e) => e.answers.displace), `seed ${seed} displace`).toBe(true);
+      expect(offer.some((e) => e.answers.support), `seed ${seed} support`).toBe(true);
+    }
+  }, 120000);
+  it("is built constructively, never rerolled: guarantees from their first qualifier, the rest in draw order", () => {
+    for (let seed = 1; seed <= 25; seed++) {
+      const order = draftOrder(seed);
+      const offer = draftOffer(seed);
+      // Replay the draw: every qualifying candidate of a new species, in order.
+      const qualifying: NonNullable<ReturnType<typeof draftCandidate>>[] = [];
+      const last = Math.max(...offer.map((e) => e.candidate));
+      for (let k = 0; k <= last; k++) {
+        const c = draftCandidate(seed, k, order);
+        if (c && !qualifying.some((q) => q.species === c.species)) qualifying.push(c);
+      }
+      const picks = new Set(offer.map((e) => e.candidate));
+      // Each guarantee comes from its first qualifier unless an earlier pick carries it.
+      const guaranteed: number[] = [];
+      for (const answer of ["bind", "displace", "support"] as const) {
+        if (guaranteed.some((k) => qualifying.find((q) => q.candidate === k)!.answers[answer]))
+          continue;
+        const first = qualifying.find((q) => q.answers[answer] && !guaranteed.includes(q.candidate))!;
+        expect(picks.has(first.candidate), `seed ${seed} ${answer}`).toBe(true);
+        guaranteed.push(first.candidate);
+      }
+      // The rest are the earliest qualifiers not already picked, with no gaps.
+      const rest = qualifying
+        .filter((q) => !guaranteed.includes(q.candidate))
+        .slice(0, DRAFT_OFFER_SIZE - guaranteed.length)
+        .map((q) => q.candidate);
+      expect([...picks].sort((x, y) => x - y), `seed ${seed}`).toEqual(
+        [...guaranteed, ...rest].sort((x, y) => x - y)
+      );
+    }
+  }, 120000);
+});
+
+
+/** A legal order for every standing companion of any squad: its first legal move at that move's first legal target. */
+function anyOrders(s: Run): Record<string, Order> {
+  return Object.fromEntries(
+    s.team
+      .filter((u) => u.hp > 0)
+      .map((u) => {
+        const i = legalMoves(u, s)[0];
+        return [
+          u.id,
+          i === undefined ? { move: -2, target: "" } : { move: i, target: legalTargets(s, u, i)[0].id },
+        ];
+      })
+  );
+}
+describe("Powerworks pass 6: the draft command and saves (decisions 47 and 48)", () => {
+  it("a run opens in its draft, and the starter draft is byte-identical to the starter run", () => {
+    const open = openRun(12);
+    expect(open.phase).toBe("draft");
+    expect(open.team).toEqual([]);
+    expect(open.squad).toBeNull();
+    expect(command(open, { kind: "draft", squad: "starter" })).toEqual(createRun(12));
+    expect(createRun(12).squad).toBe("starter");
+    expect(() => command(open, { kind: "advance" })).toThrow(/Choose a squad/);
+    expect(() => command(open, { kind: "round", orders: {} })).toThrow(/Choose a squad/);
+  });
+  it("takes exactly four distinct offer indexes and rejects anything else", () => {
+    const open = openRun(3);
+    const bad: unknown[] = [
+      [0, 1, 2],
+      [0, 1, 2, 3, 4],
+      [0, 0, 1, 2],
+      [0, 1, 2, DRAFT_OFFER_SIZE],
+      [-1, 0, 1, 2],
+      [0, 1, 2, 2.5],
+      ["0", 1, 2, 3],
+      "random",
+      null,
+      {},
+    ];
+    for (const squad of bad)
+      expect(
+        () => command(open, { kind: "draft", squad: squad as number[] }),
+        JSON.stringify(squad)
+      ).toThrow(`Choose ${SQUAD_SIZE} different creatures from the offer.`);
+    const run = command(open, { kind: "draft", squad: [6, 1, 3, 0] });
+    expect(run.squad).toEqual([0, 1, 3, 6]);
+    expect(run.phase).toBe("planning");
+    const offer = draftOffer(3);
+    expect(run.team.map((u) => u.species).sort()).toEqual(
+      [0, 1, 3, 6].map((i) => offer[i].species).sort()
+    );
+    // Click order does not change the run.
+    expect(command(open, { kind: "draft", squad: [0, 1, 3, 6] })).toEqual(run);
+    // The draft is the first command and only that.
+    expect(() => command(run, { kind: "draft", squad: [0, 1, 2, 3] })).toThrow(/already chosen/);
+  });
+  it("reads a drafted creature exactly as the offer shows it", () => {
+    const offer = draftOffer(3);
+    const run = createRun(3, [1, 2, 4, 7]);
+    for (const u of run.team) {
+      const shown = offer.find((e) => e.species === u.species)!.unit;
+      expect(u.hp).toBe(shown.hp);
+      expect(u.speed).toBe(shown.speed);
+      expect(u.moves).toEqual(shown.moves);
+    }
+  });
+  it("gives any four species unique ids that do not depend on their order", () => {
+    const keys = getSpeciesTemplates().map((t) => t.key);
+    expect(unitIds(["graviclaw", "avilily", "crystorn", "hippochamp"])).toEqual(["G", "A", "C", "H"]);
+    let checked = 0;
+    for (let a = 0; a < keys.length; a++)
+      for (let b = a + 1; b < keys.length; b++)
+        for (let c = b + 1; c < keys.length; c++)
+          for (let d = c + 1; d < keys.length; d++) {
+            const four = [keys[a], keys[b], keys[c], keys[d]];
+            const ids = unitIds(four);
+            expect(new Set(ids).size).toBe(4);
+            expect(unitIds([...four].reverse()).reverse()).toEqual(ids);
+            checked++;
+          }
+    expect(checked).toBe(35960);
+  });
+  it("replays a version 6 save with a drafted squad deterministically", () => {
+    let s = command(openRun(19), { kind: "draft", squad: [0, 2, 5, 7] });
+    const history: Command[] = [{ kind: "draft", squad: [0, 2, 5, 7] }];
+    for (let step = 0; step < 6 && (s.phase === "planning" || s.phase === "camp"); step++) {
+      const action: Command =
+        s.phase === "camp" ? { kind: "advance" } : { kind: "round", orders: anyOrders(s) };
+      history.push(action);
+      s = command(s, action);
+    }
+    expect(history.length).toBeGreaterThan(2);
+    const restored = restoreRun(JSON.stringify({ version: SAVE_VERSION, seed: 19, history }));
+    expect(restored.state).toEqual(s);
+    expect(restored.state.squad).toEqual([0, 2, 5, 7]);
+    // An illegal draft, a second draft, no draft, or an empty history is rejected.
+    expect(() =>
+      restoreRun(
+        JSON.stringify({ version: 6, seed: 19, history: [{ kind: "draft", squad: [0, 0, 1, 2] }] })
+      )
+    ).toThrow();
+    expect(() =>
+      restoreRun(JSON.stringify({ version: 6, seed: 19, history: [history[0], history[0]] }))
+    ).toThrow();
+    expect(() => restoreRun(JSON.stringify({ version: 6, seed: 19, history: [] }))).toThrow(
+      "Unsupported save."
+    );
+    expect(() =>
+      restoreRun(JSON.stringify({ version: 6, seed: 19, history: history.slice(1) }))
+    ).toThrow();
+  });
+});
+
+describe("Powerworks pass 6: the stalemate rule (decision 52)", () => {
+  /** Every unit on both sides carries only this fitted move, and the machines aim it at the first companion. */
+  const fitAll = (s: Run, move: () => Move) => {
+    for (const u of [...s.team, ...s.enemies]) fitOnly(u, move());
+    for (const e of s.enemies) s.orders[e.id] = { move: 0, target: s.team[0].id };
+  };
+  const tapAll = (run: Run) =>
+    Object.fromEntries(run.team.map((u) => [u.id, { move: 0, target: run.enemies[0].id }]));
+  it("forces the squad out after ENCOUNTER_STALL_ROUNDS rounds in which nobody loses HP, keeping earned XP", () => {
+    // Both sides only tap for nothing, so no round can make progress.
+    let s = createRun(4);
+    s.xp = 10;
+    fitAll(s, () => fitted("Glancing Tap", [harm(0)]));
+    for (let round = 1; round < ENCOUNTER_STALL_ROUNDS; round++) {
+      s = resolveRound(s, tapAll(s)).state;
+      expect(s.phase, `round ${round}`).toBe("planning");
+      expect(s.stalled).toBe(round);
+    }
+    const hp = s.team.map((u) => u.hp);
+    const r = resolveRound(s, tapAll(s));
+    expect(r.state.phase).toBe("retreated");
+    expect(r.state.ended).toBe("outlasted");
+    expect(r.state.round).toBe(ENCOUNTER_STALL_ROUNDS);
+    expect(r.state.xp).toBe(10);
+    expect(r.state.team.map((u) => u.hp)).toEqual(hp);
+    expect(r.frames.at(-1)!.event?.kind).toBe("outlasted");
+    expect(r.state.log.at(-1)).toMatch(/defenses outlasted the squad: 6 rounds without progress/);
+    expect(() => command(r.state, { kind: "advance" })).toThrow();
+    expect(() => resolveRound(r.state, tapAll(r.state))).toThrow();
+  });
+  it("any lost HP resets the count, and a result on the stall round still counts", () => {
+    let s = createRun(4);
+    fitAll(s, () => fitted("Glancing Tap", [harm(0)]));
+    for (let round = 1; round < ENCOUNTER_STALL_ROUNDS; round++) s = resolveRound(s, tapAll(s)).state;
+    expect(s.stalled).toBe(ENCOUNTER_STALL_ROUNDS - 1);
+    // One companion lands one point: progress, so the count starts again.
+    const nudge = { ...tapAll(s), [s.team[0].id]: { move: 0, target: s.enemies[0].id } };
+    fitOnly(s.team[0], fitted("Scratch", [harm(10)]));
+    const after = resolveRound(s, nudge).state;
+    expect(after.phase).toBe("planning");
+    expect(after.stalled).toBe(0);
+    // A clear on what would be the stall round is a clear.
+    const last = structuredClone(s);
+    last.enemies.forEach((e) => (e.hp = 1));
+    for (const u of last.team) fitOnly(u, fitted("Finishing Tap", [harm(200)]));
+    const r = resolveRound(
+      last,
+      Object.fromEntries(last.team.map((u, i) => [u.id, { move: 0, target: last.enemies[i % last.enemies.length].id }]))
+    );
+    expect(r.state.phase).toBe("camp");
+    expect(r.state.ended).toBeUndefined();
+  });
+  it("a long fight that keeps making progress is never forced out", () => {
+    // Everyone deals a sliver each round to foes with a deep pool of health: 40 rounds, far
+    // past any round cap, all of them progress.
+    let s = createRun(4);
+    fitAll(s, () => fitted("Scratch", [harm(10)]));
+    s.enemies.forEach((e) => (e.hp = e.max = 5000));
+    s.team.forEach((u) => (u.hp = u.max = 5000));
+    for (let round = 1; round <= 40; round++) {
+      s = resolveRound(s, tapAll(s)).state;
+      expect(s.phase, `round ${round}`).toBe("planning");
+      expect(s.stalled).toBe(0);
+    }
+    expect(s.round).toBe(41);
   });
 });

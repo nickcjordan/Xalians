@@ -1,4 +1,15 @@
 import React from "react";
+import XalianImageJs from "@/components/xalianImage";
+/** The site's species portrait component. Its JavaScript defaults type `fill` and `padding` as undefined, so it is widened here. */
+const XalianImage = XalianImageJs as unknown as React.ComponentType<{
+  variant?: "portrait" | "token";
+  speciesName: string;
+  primaryType: string;
+  padding?: string;
+  fill?: string;
+  unPadded?: boolean;
+  moreClasses?: string;
+}>;
 import {
   Crosshair,
   Swords,
@@ -24,6 +35,13 @@ import {
   Snail,
   ScanEye,
   Users,
+  Wind,
+  Snowflake,
+  Pickaxe,
+  Cog,
+  FlaskConical,
+  Ghost,
+  Brain,
 } from "lucide-react";
 import {
   AREA_HARM_FACTOR,
@@ -58,7 +76,10 @@ export const shortName = (u: Unit) =>
     discharge: "Capacitor",
     guardian: "Guardian",
   }[u.species] || u.name);
-export const melee = (move: Move) => move.approach === "closing";
+/** Reach: a melee move touches its target (range contact); everything else is ranged. The words and the icons follow this. */
+export const melee = (move: Move) => move.range === "contact";
+/** Approach: a move that closes in on its target. This, not reach, is what binding blocks (contract decision 4). */
+export const closes = (move: Move) => move.approach === "closing";
 export const binds = (move: Move) =>
   move.effects.some((e) => e.support === "bind");
 export const guards = (move: Move) =>
@@ -97,7 +118,7 @@ export const degradeShare = percent(1 - DEGRADE_FACTOR);
 export function conditionRule(condition: Condition, u: Unit): string {
   switch (condition.group) {
     case "binding":
-      return "Melee is blocked at its next opportunity, and a charge in progress is dispersed. Ranged actions still work.";
+      return "Moves that close in on a target are blocked at its next opportunity, and a charge in progress is dispersed. Moves made from where it stands still work, at any reach.";
     case "degrading": {
       const amount = tickAmount(condition, u);
       return `Takes ${amount} damage at the start of each of its own opportunities. Shields do not reduce it.`;
@@ -197,18 +218,25 @@ export function passiveRule(unit: Unit, passive: Passive): string {
   }${cools}`;
 }
 
+/** One glyph per element, all fourteen, so a drafted creature of any element reads at a glance (pass 6). */
+const ELEMENT_ICONS = {
+  dark: Moon,
+  plant: Leaf,
+  light: Sun,
+  water: Droplets,
+  sand: Mountain,
+  electric: Zap,
+  fire: Flame,
+  ice: Snowflake,
+  air: Wind,
+  rock: Pickaxe,
+  metal: Cog,
+  chemical: FlaskConical,
+  ghost: Ghost,
+  psychic: Brain,
+} as const;
 export function ElementIcon({ element }: { element: string }) {
-  const Icon =
-    (
-      {
-        dark: Moon,
-        plant: Leaf,
-        light: Sun,
-        water: Droplets,
-        sand: Mountain,
-        electric: Zap,
-      } as const
-    )[element as "dark"] || Sun;
+  const Icon = ELEMENT_ICONS[element as keyof typeof ELEMENT_ICONS] || Sun;
   return <Icon size={15} aria-hidden="true" />;
 }
 export function MoveIcon({ move }: { move: Move }) {
@@ -283,7 +311,7 @@ export function effectSummary(effect: MoveEffect, move?: Move): string {
     case "bind":
       return `${cap(
         effect.status ?? "bound"
-      )}: melee blocked through one action opportunity${chance}.`;
+      )}: moves that close in are blocked through one action opportunity${chance}.`;
     case "status": {
       const status = effect.status ?? "condition";
       const lasts =
@@ -352,7 +380,11 @@ export function moveDescription(u: Unit, move: Move) {
       : " No cooldown."
   }`;
   const area = areaSummary(move);
-  return `${melee(move) ? "Melee attack" : "Ranged attack"}.${power} ${
+  const kind =
+    move.approach === "self"
+      ? "Acts on itself"
+      : `${melee(move) ? "Melee attack" : "Ranged attack"}${closes(move) ? " that closes in" : ""}`;
+  return `${kind}.${power} ${
     area ? `${area} ` : ""
   }${move.effects
     .filter((e) => e.support !== "harm")
@@ -487,22 +519,53 @@ export function MoveCardContent({
     </>
   );
 }
+/**
+  Species with painted Powerworks art: the starter four and the five machines (contract
+  decision 50). Every other species is drawn with the site's species silhouette inside the
+  same frame; no new art is generated.
+*/
+export const PAINTED_SPECIES: ReadonlySet<string> = new Set([
+  "graviclaw",
+  "avilily",
+  "crystorn",
+  "hippochamp",
+  "crawler",
+  "drone",
+  "shield",
+  "discharge",
+  "guardian",
+]);
+export const hasPaintedArt = (species: string) => PAINTED_SPECIES.has(species);
 export function Portrait({ u, small = false }: { u: Unit; small?: boolean }) {
   return (
     <span
       className={`pw-portrait el-${u.element} species-${u.species} ${
         small ? "small" : ""
-      }`}
+      } ${hasPaintedArt(u.species) ? "" : "silhouette"}`}
       aria-hidden="true"
     >
-      <img
-        className="pw-painted-art"
-        src={`/assets/powerworks/${u.species}.webp`}
-        alt=""
-        width={512}
-        height={512}
-        draggable={false}
-      />
+      {hasPaintedArt(u.species) ? (
+        <img
+          className="pw-painted-art"
+          src={`/assets/powerworks/${u.species}.webp`}
+          alt=""
+          width={512}
+          height={512}
+          draggable={false}
+        />
+      ) : (
+        // The site's species portrait component, as Reclamation's figures use it: the
+        // token silhouette, filled in the element's own hue so it reads on the dark stage.
+        <XalianImage
+          variant="token"
+          speciesName={u.species}
+          primaryType={u.element}
+          padding="0px"
+          fill={`var(--color-el-${u.element})`}
+          unPadded
+          moreClasses="pw-species-art"
+        />
+      )}
     </span>
   );
 }
