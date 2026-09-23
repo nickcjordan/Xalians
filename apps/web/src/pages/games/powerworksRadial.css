@@ -1,0 +1,606 @@
+/*
+  Powerworks orders on the stage (docs/design/powerworks-radial-orders.md): the radial move
+  menu over a selected companion, its detail card, the selected companion's ground ring and
+  raised plaque, and the order chip on every companion's plaque. Every material and color
+  here is the game's own (the move card emblem, the plaque, the command trim); nothing new.
+*/
+.pw-radial {
+  /* The disc, the label under it, the tag and label height below the disc, how far the
+     arc sits from the feet in figure heights, and the arc's half spread in degrees. */
+  --disc: 56px;
+  --label-w: 76px;
+  --under: 36px;
+  --reach: 0.95;
+  --spread: 38;
+  --spread-wide: 50;
+  --detail-pin: 0;
+  position: absolute;
+  z-index: 14;
+  width: 0;
+  height: 0;
+}
+
+/* The wheel's trim: a thin arc of the command panel's gold that the discs sit on. */
+.pw .pw-radial-arc {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 1px;
+  height: 1px;
+  overflow: visible;
+  pointer-events: none;
+  animation: pw-radial-open 200ms var(--ease-out) both;
+  transform-origin: 0 0;
+}
+.pw-radial-arc path {
+  fill: none;
+  stroke: #c6a767;
+  stroke-width: 2px;
+  stroke-opacity: 0.55;
+  filter: drop-shadow(0 0 3px #d7b46566);
+}
+.pw-radial-menu {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 0;
+  height: 0;
+  transform-origin: 0 0;
+  animation: pw-radial-open 200ms var(--ease-out) both;
+}
+@keyframes pw-radial-open {
+  from {
+    opacity: 0;
+    transform: scale(0.72);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* A slot is one ability disc: the move card's octagon emblem at icon size. */
+.pw .pw-radial .pw-radial-slot {
+  position: absolute;
+  left: calc(var(--x) - var(--disc) / 2);
+  top: calc(var(--y) - var(--disc) / 2);
+  width: var(--disc);
+  height: var(--disc);
+  display: block;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  color: #f4eee0;
+  overflow: visible;
+}
+.pw .pw-radial .pw-radial-slot:hover:not(:disabled) {
+  background: transparent;
+}
+.pw-radial-disc {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: var(--accent);
+  background: linear-gradient(145deg, var(--accent), #948056);
+  clip-path: polygon(29% 0, 71% 0, 100% 29%, 100% 71%, 71% 100%, 29% 100%, 0 71%, 0 29%);
+  filter: drop-shadow(0 3px 4px #03090bcc);
+  transition: filter 120ms var(--ease-out);
+}
+.pw-radial-disc::before {
+  content: "";
+  position: absolute;
+  inset: 3px;
+  background: radial-gradient(circle at 35% 25%, #34484c, #0b1a21 80%);
+  clip-path: inherit;
+}
+.pw .pw-radial-disc svg {
+  position: relative;
+  width: 26px;
+  height: 26px;
+  filter: drop-shadow(0 0 4px var(--accent));
+}
+.pw-radial-slot.control .pw-radial-disc {
+  color: #d7b9eb;
+  background: linear-gradient(#e1c2f5, #80619b);
+}
+.pw-radial-slot.ward .pw-radial-disc {
+  color: #acdbe4;
+  background: linear-gradient(#b9eaf2, #547983);
+}
+.pw-radial-slot.signature .pw-radial-disc {
+  color: #ffdf95;
+  background: linear-gradient(#ffe2a0, #a87939);
+}
+.pw-radial-slot.signature .pw-radial-disc::before {
+  inset: 4px;
+}
+.pw-radial-slot:hover .pw-radial-disc,
+.pw-radial-slot.armed .pw-radial-disc {
+  filter: drop-shadow(0 0 7px #f1cb6ccc) brightness(1.12);
+}
+.pw-radial-slot.current .pw-radial-disc {
+  filter: drop-shadow(0 0 5px #f5e0a9) drop-shadow(0 3px 4px #03090bcc);
+}
+.pw-radial-slot.dim {
+  cursor: default;
+}
+.pw-radial-slot.dim .pw-radial-disc {
+  filter: grayscale(0.75) brightness(0.62) drop-shadow(0 3px 4px #03090bcc);
+}
+.pw .pw-radial .pw-radial-slot:focus-visible {
+  outline: 3px solid #e2efad;
+  outline-offset: 3px;
+  z-index: 1;
+}
+
+/* The disc is the control; its badge, tag and label never take a tap from the stage beneath. */
+.pw-radial-power,
+.pw-radial-tag,
+.pw-radial-label,
+.pw-radial-key {
+  pointer-events: none;
+}
+/* The power number: a small badge on the disc's rim. */
+.pw-radial-power {
+  position: absolute;
+  top: -5px;
+  right: -12px;
+  min-width: 22px;
+  height: 18px;
+  padding: 0 4px 0 3px;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  font: 600 12px/1 var(--font-legend);
+  font-variant-numeric: tabular-nums;
+  color: #efdbab;
+  background: linear-gradient(#314047, #0c1b23);
+  border: 1px solid #c6a767;
+  border-radius: 2px;
+  box-shadow: 0 2px 4px #03090bcc;
+}
+.pw-radial-slot.signature .pw-radial-power {
+  color: #ffdf95;
+  border-color: #ffe2a0;
+}
+.pw .pw-radial-power svg {
+  width: 10px;
+  height: 10px;
+  color: #d9c38f;
+}
+.pw .pw-radial-power.icon svg {
+  width: 11px;
+  height: 11px;
+  color: #acdbe4;
+}
+.pw-radial-slot.dim .pw-radial-power {
+  opacity: 0.6;
+}
+
+/* Cooldown pips or the reason it cannot be chosen: a small tag on the disc's lower rim. */
+.pw-radial-tag {
+  position: absolute;
+  left: 50%;
+  top: calc(100% - 7px);
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 13px;
+  padding: 1px 4px;
+  background: #08151bf0;
+  border: 1px solid #bca77966;
+  border-radius: 2px;
+  white-space: nowrap;
+}
+.pw-radial-tag .pw-card-charges {
+  margin-left: 0;
+  gap: 2px;
+}
+.pw-radial-tag .pw-card-charges i {
+  width: 9px;
+  height: 4px;
+}
+.pw-radial-reason {
+  font: 600 9px/1 var(--font-legend);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #d7bfa5;
+}
+.pw-radial-reason.ready {
+  font-size: 10px;
+  color: #b6d0c6;
+}
+
+/* The move's name under the disc: one short line, readable without hovering. */
+.pw-radial-label {
+  position: absolute;
+  left: 50%;
+  top: calc(100% + 8px);
+  transform: translateX(-50%);
+  width: max-content;
+  max-width: var(--label-w);
+  padding: 0 4px;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  text-align: center;
+  font: 600 10.5px/13px var(--font-legend);
+  color: #f4eee0;
+  background: #08151bd9;
+  border-radius: 2px;
+  text-shadow: 0 1px 2px #000;
+}
+.pw-radial-slot.dim .pw-radial-label {
+  color: #aab4ad;
+}
+.pw .pw-radial .pw-radial-slot.reading {
+  z-index: 2;
+}
+.pw-radial-slot.reading .pw-radial-label {
+  max-width: none;
+  -webkit-line-clamp: unset;
+  display: block;
+  white-space: nowrap;
+  background: #08151bf2;
+  box-shadow: 0 0 0 1px #c6a76799;
+}
+/* The hotkey: a small dim keycap, quieter than the power badge. */
+.pw-radial-key {
+  position: absolute;
+  top: -3px;
+  left: -6px;
+  width: 13px;
+  height: 14px;
+  display: grid;
+  place-items: center;
+  font: 500 9px/1 var(--font-legend);
+  color: #aab4ad;
+  background: #0b1a21e6;
+  border: 1px solid #6b7a7488;
+  border-bottom-width: 2px;
+  border-radius: 2px;
+}
+
+/* The detail card: compact, on the plaque's material, beside the ring away from the enemies. */
+.pw-radial-detail {
+  position: absolute;
+  z-index: 15;
+  width: 260px;
+  padding: 6px 9px 7px;
+  background: linear-gradient(180deg, #15232bf5, #08151bf5);
+  border: 1px solid #bca77980;
+  border-left: 2px solid #c7a968;
+  border-radius: 2px;
+  box-shadow: inset 0 1px #e8d29c39, 0 6px 16px #03090bbd;
+  text-align: left;
+  pointer-events: none;
+}
+.pw-radial-detail.signature {
+  border-left-color: #ffe2a0;
+}
+.pw-radial-detail-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 3px;
+}
+.pw-radial-detail-head strong {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+  flex: 1;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font: 600 13px/1.2 var(--font-legend);
+  color: #f4eee0;
+}
+.pw .pw-radial-detail-head strong svg {
+  width: 12px;
+  height: 12px;
+  color: #ffdf95;
+}
+.pw-radial-detail-head > b {
+  display: flex;
+  align-items: baseline;
+  gap: 3px;
+  font: 600 16px/1 var(--font-legend);
+  color: #efdbab;
+}
+.pw .pw-radial-detail-head > b svg {
+  width: 14px;
+  height: 14px;
+  color: #acdbe4;
+}
+.pw-radial-detail-head > b small {
+  font: 400 10px/1.2 var(--font-body);
+  color: #d2cfbf;
+}
+.pw-radial-detail p {
+  margin: 0;
+  font-size: 11.5px;
+  line-height: 1.35;
+  color: #d9d3c1;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.pw-radial-detail .pw-radial-detail-state {
+  margin-top: 3px;
+  font-size: 11px;
+  color: #efdbab;
+  -webkit-line-clamp: 1;
+}
+.pw-radial-detail-hint {
+  color: #c9c8b6;
+}
+
+/* The selected companion: a still gold ground ring with a soft fill under the figure, and a raised plaque (decision 2). */
+.pw-ground-ring {
+  position: absolute;
+  left: 6%;
+  right: 6%;
+  bottom: -4%;
+  height: 18%;
+  border: 3px solid #f2d68b;
+  border-radius: 50%;
+  background: radial-gradient(ellipse, #f2d68b40 0%, #f2d68b1f 55%, #f2d68b00 72%);
+  box-shadow: 0 0 14px #e9bb5299, inset 0 0 10px #f2d68b66;
+  pointer-events: none;
+}
+/* Keyboard focus on a figure: the same ellipse, thin and dashed, so selection always reads
+   stronger than focus (review fix 5). */
+.pw .pw-scene-character:focus-visible {
+  /* The site's focus guard keeps outline-style solid; a zero width hands the job to the
+     dashed ellipse below, which is the visible focus for a figure. */
+  outline-width: 0;
+  outline-color: transparent;
+}
+.pw .pw-scene-character:focus-visible::after {
+  content: "";
+  position: absolute;
+  left: 6%;
+  right: 6%;
+  bottom: -4%;
+  height: 18%;
+  border: 2px dashed #e2efadcc;
+  border-radius: 50%;
+  pointer-events: none;
+}
+.pw-scene-unit.selected .pw-scene-character:focus-visible::after {
+  left: 1%;
+  right: 1%;
+  bottom: -7%;
+  height: 24%;
+}
+.pw-scene-unit.selected {
+  z-index: 3;
+}
+.pw-scene-unit .pw-unit-plaque {
+  transition: transform 120ms var(--ease-out);
+}
+.pw-scene-unit.selected .pw-unit-plaque {
+  transform: translateY(-4px);
+}
+.pw-scene-unit.ally .pw-unit-plaque {
+  cursor: pointer;
+}
+
+/* The order chip on each companion's plaque (decision 7). */
+.pw .pw-unit-plaque .pw-order-chip {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 3px;
+  width: 100%;
+  min-width: 0;
+  min-height: 19px;
+  margin: 3px 0 0;
+  padding: 1px 4px;
+  border: 1px solid #bca77955;
+  border-radius: 2px;
+  background: #0a171dcc;
+  font: 600 11px/1.2 var(--font-legend);
+  color: #f2ead5;
+  text-align: left;
+}
+.pw .pw-unit-plaque .pw-order-chip:hover:not(:disabled) {
+  background: #1b2c33;
+  border-color: #f2d68b;
+}
+.pw .pw-unit-plaque .pw-order-chip:disabled {
+  cursor: default;
+}
+.pw .pw-unit-plaque .pw-order-chip svg {
+  width: 11px;
+  height: 11px;
+  color: var(--accent);
+}
+.pw-order-chip-move {
+  min-width: 0;
+  flex: 0 1 auto;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.pw-order-chip-target {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  flex: none;
+  margin-left: auto;
+  color: #efdbab;
+  white-space: nowrap;
+}
+.pw .pw-unit-plaque .pw-order-chip-target svg {
+  width: 10px;
+  height: 10px;
+  color: #efdbab;
+}
+.pw .pw-unit-plaque .pw-order-chip.empty {
+  border-style: dashed;
+  border-color: #aab4ad44;
+  background: transparent;
+  font-weight: 400;
+  color: #aab4ad;
+}
+.pw .pw-unit-plaque .pw-order-chip.done {
+  color: #aab4ad;
+}
+.pw-unit-plaque strong {
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+/* Every standing order draws its intent line while planning; the open companion's is brighter. */
+.pw-queued-path.active {
+  opacity: 0.9;
+}
+
+/* The taller stage draws each companion wider, so its feet reach the squad number;
+   the number stays on top, as it did when the stage was shorter. */
+.pw-scene-character .pw-squad-number {
+  z-index: 1;
+}
+
+@media (min-width: 601px) {
+  /* While planning the ring rises over a companion's head; the defenders stand a little
+     higher so the ring never covers them (the stage grew when the tray left). */
+  .pw .pw-theater.planning .pw-scene-unit.defender {
+    top: calc(9% + var(--lane-shift, 0%));
+  }
+  /* The plaque chip makes a companion's plaque taller; during playback the stage is
+     shorter, so the squad stands a little higher and its chips clear the action banner. */
+  .pw .pw-theater.playing .pw-scene-unit.ally {
+    top: calc(45% + var(--lane-shift, 0%));
+  }
+}
+
+@media (max-width: 600px) {
+  .pw-radial {
+    /* Companions stand 90px apart on a phone, so the arc reaches farther and spreads less:
+       every disc stays above the heads and the neighbors stay tappable. */
+    --disc: 52px;
+    --label-w: 60px;
+    --under: 22px;
+    --clear-heads: 1;
+    --pitch: 64px;
+    --detail-pin: 1;
+  }
+  .pw .pw-radial-disc svg {
+    width: 23px;
+    height: 23px;
+  }
+  .pw-radial-power {
+    right: -7px;
+    min-width: 20px;
+    height: 17px;
+    font-size: 11px;
+  }
+  .pw-radial-label {
+    top: calc(100% + 7px);
+    display: block;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    font-size: 10px;
+    line-height: 14px;
+    padding: 0 3px;
+  }
+  .pw-radial-key {
+    display: none;
+  }
+  /* On a phone the card is pinned to the top of the stage, above the enemy plaques. */
+  .pw-radial-detail {
+    width: calc(100cqw - 24px);
+  }
+  .pw .pw-unit-plaque .pw-order-chip {
+    flex-wrap: wrap;
+    column-gap: 2px;
+    row-gap: 0;
+    min-height: 28px;
+    padding: 1px 3px;
+    font-size: 10px;
+    line-height: 1.15;
+  }
+  .pw .pw-unit-plaque .pw-order-chip > svg {
+    display: none;
+  }
+  .pw .pw-unit-plaque .pw-order-chip {
+    margin-left: -3px;
+    margin-right: -3px;
+    width: calc(100% + 6px);
+    padding: 1px 2px;
+  }
+  .pw-order-chip-move {
+    flex: 1 1 100%;
+    white-space: normal;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    line-height: 1.1;
+  }
+  /* The squad stands larger and lower while planning, into the floor that the tray left
+     (review fix 1): its art is drawn wider than its plaque column, and the ring rises from
+     its feet over every head. */
+  .pw .pw-theater.planning .pw-scene-unit.ally {
+    top: calc(64% + var(--lane-shift, 0%));
+    height: 152px;
+  }
+  /* The defenders stand higher while planning, so the detail card fits between their row
+     and the ring (review fix 4). */
+  .pw .pw-theater.planning .pw-scene-unit.defender {
+    top: calc(12% + var(--lane-shift, 0%));
+  }
+  .pw .pw-theater.planning .pw-scene-unit.ally .pw-actor-art {
+    inset: -4% -17% 0;
+    pointer-events: none;
+  }
+  .pw .pw-theater.planning .pw-scene-unit.ally .pw-ground-ring,
+  .pw .pw-theater.planning .pw-scene-unit.ally .pw-scene-character:focus-visible::after {
+    left: -12%;
+    right: -12%;
+  }
+  .pw-order-chip-target {
+    margin-left: 0;
+  }
+  /* A phone plaque is narrow: the inspect button (decision 12) sits on its top corner as a
+     small badge, so the name gets the plaque's width. */
+  .pw .pw-scene-unit.ally .pw-unit-plaque > div > button {
+    position: absolute;
+    top: -9px;
+    right: -6px;
+    width: 18px;
+    height: 18px;
+    min-width: 18px;
+    min-height: 18px;
+    padding: 0;
+    margin: 0;
+    z-index: 1;
+    background: linear-gradient(#314047, #0c1b23);
+    border: 1px solid #bca77999;
+    border-radius: 50%;
+  }
+  .pw .pw-scene-unit.ally .pw-unit-plaque > div > button svg {
+    width: 12px;
+    height: 12px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pw .pw-radial-arc,
+  .pw-radial-menu {
+    animation: none !important;
+  }
+  .pw-scene-unit .pw-unit-plaque,
+  .pw-radial-disc {
+    transition: none !important;
+  }
+}

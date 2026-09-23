@@ -786,27 +786,6 @@
   background: transparent;
   border: 0;
 }
-.pw .pw-squad {
-  height: 90px;
-  min-height: 90px;
-}
-.pw .pw-squad .pw-select {
-  gap: 6px;
-}
-.pw .pw-companion-top {
-  height: 20px;
-}
-.pw .pw-companion-top strong {
-  font-size: 13px;
-}
-.pw .pw-queued {
-  flex: 1;
-  min-height: 36px;
-  font-size: 12px;
-}
-.pw .pw-squad-status {
-  display: none;
-}
 .pw .pw-action-duet {
   display: none;
 }
@@ -914,12 +893,6 @@
   .pw-unit-plaque > div > svg {
     display: none;
   }
-  .pw-scene-unit.ally .pw-unit-plaque button {
-    display: none;
-  }
-  .pw .pw-companion-top strong {
-    font-size: 12px;
-  }
 }
 @media (max-width: 600px) {
   .pw-theater {
@@ -934,7 +907,9 @@
     height: 33%;
   }
   .pw-scene-unit.defender {
-    height: 33%;
+    /* The stage is most of the phone since orders moved onto it (radial orders decision
+       8); a shorter box keeps each defender's figure under its own plaque. */
+    height: 24%;
     width: 28%;
   }
   .pw-scene-unit.guardian {
@@ -1002,22 +977,6 @@
   }
   .pw-scene-direction > span:last-child {
     max-width: 300px;
-  }
-  .pw .pw-squad {
-    height: 109px;
-    min-height: 109px;
-    padding: 6px 2px;
-    gap: 4px;
-  }
-  .pw .pw-squad .pw-select {
-    gap: 4px;
-  }
-  .pw .pw-queued {
-    min-height: 61px;
-    line-height: 1.2;
-  }
-  .pw .pw-squad-info {
-    display: none;
   }
   .pw .pw-command.resolving {
     height: 165px;
@@ -1119,12 +1078,6 @@
 .pw-scene-direction.targeting {
   top: 6px;
   bottom: auto;
-}
-.pw button.pw-active-identity {
-  padding: 0;
-  border: 0;
-  background: transparent;
-  text-align: left;
 }
 @media (max-width: 600px) {
   .pw-scene-direction.targeting {
@@ -1323,7 +1276,9 @@
   }
   .pw-battle-shell:has(.pw-theater) {
     flex: 0 1 auto;
-    height: min(calc(100svh - 96px), calc(clamp(390px, 60vw, 620px) + 290px));
+    /* The stage plus the commit bar (radial orders decision 8: the move tray and squad
+       row are gone, so their height goes to the stage up to the same composition bound). */
+    height: min(calc(100svh - 96px), calc(clamp(390px, 60vw, 620px) + 61px));
     margin-bottom: auto;
   }
 }
@@ -1362,19 +1317,6 @@
 }
 .pw .pw-order-link.active {
   border-color: var(--lime);
-}
-.pw-planned-destination {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 4px;
-  font-size: 12px;
-  color: var(--lime);
-  background: var(--panel);
-}
-.pw-planned-destination svg {
-  width: 12px;
-  height: 12px;
 }
 .pw-queued-path {
   stroke: var(--lime);
@@ -1504,9 +1446,6 @@
     width: 20px;
     height: 20px;
     left: 0;
-  }
-  .pw-planned-destination {
-    font-size: 12px;
   }
   .pw-action-banner {
     padding: 4px 9px;

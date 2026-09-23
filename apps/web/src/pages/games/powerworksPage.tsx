@@ -62,18 +62,14 @@ import {
 import {
   Portrait,
   ElementIcon,
-  MoveIcon,
   MoveCardContent,
   PowerIcon,
-  baseName,
-  moveDescription,
   effectSummary,
   areaSummary,
-  cooldownLimit,
+  actsOnSelf,
   binds,
   harms,
   helps,
-  melee,
   closes,
   StatusBadges,
   GroupIcon,
@@ -90,7 +86,9 @@ import {
   PowerworksScene,
   ExpeditionTrail,
   sectorStory,
+  type OrderChip,
 } from "./powerworksScene";
+import { PowerworksRadial, ringIndices } from "./powerworksRadial";
 import { PowerworksEnvironment } from "./powerworksEnvironment";
 import { PowerworksDraft } from "./powerworksDraft";
 import { useBattlePresentation } from "./powerworksPresentation";
@@ -106,6 +104,21 @@ const roomCopy = [
   "Stored energy hums beneath the floor. Watch for a charging capacitor.",
   "Silence the guardian. Interrupting a charge buys time, but it will rebuild.",
 ];
+
+/**
+  The next standing companion in speed order that still needs an order and can act
+  (radial orders decision 6), or undefined when every order is set.
+*/
+function nextInSpeed(state: Run, orders: Record<string, Order>) {
+  const ids = initiative(state.team, state.enemies, state.round)
+    .filter((u) => !u.enemy)
+    .map((u) => u.id);
+  return ids
+    .map((id) => state.team.find((u) => u.id === id)!)
+    .find(
+      (u) => u && u.hp > 0 && !orders[u.id] && legalMoves(u, state).length > 0
+    );
+}
 
 function boot() {
   try {
@@ -196,9 +209,17 @@ export default function PowerworksPage() {
   // The starter squad as the briefing shows it before a squad is chosen (contract decision 47).
   const starter = useMemo(() => squadUnits(run.seed, "starter"), [run.seed]);
 
+  // The companion whose orders are open on the stage; "" when nothing is selected.
   const [selected, setSelected] = useState(
-    initial.state.team.find((u) => u.hp > 0)?.id || ""
+    () =>
+      (initial.started &&
+        initial.state.phase === "planning" &&
+        nextInSpeed(initial.state, {})?.id) ||
+      ""
   );
+  // Whether focus should enter the ring when it opens: a player opened it, rather than the
+  // round beginning (radial orders decision 9).
+  const [ringFocus, setRingFocus] = useState(false);
 
   const [playbackOrders, setPlaybackOrders] = useState<Record<string, Order>>(
     {}
@@ -223,7 +244,7 @@ export default function PowerworksPage() {
     [saveFailed, setSaveFailed] = useState(false);
 
   const dialog = useRef<HTMLDialogElement>(null),
-    moveButtons = useRef<Array<HTMLButtonElement | null>>([]);
+    keys = useRef<(e: KeyboardEvent) => void>(() => {});
 
   const busy = frames.length > 0,
     frame = frames[frameIndex];
@@ -236,9 +257,7 @@ export default function PowerworksPage() {
 
   const planning = started && run.phase === "planning" && !busy;
 
-  const active =
-    run.team.find((u) => u.id === selected && u.hp > 0) ??
-    run.team.find((u) => u.hp > 0);
+  const active = run.team.find((u) => u.id === selected && u.hp > 0);
 
   const move = active && pending !== null ? moveAt(active, pending) : null;
 
@@ -259,6 +278,8 @@ export default function PowerworksPage() {
   const roomName = ROOMS[run.room].name.replace(/^\d\. /, "");
 
   const available = active ? legalMoves(active, run) : [];
+  // The ring is open over the selected companion until a move is chosen (decisions 3 and 5).
+  const ringOpen = planning && !!active && pending === null;
   // Who the pending move may name (contract decision 39): foes, and squadmates when it
   // carries a helpful effect.
   const targetIds =
@@ -290,16 +311,30 @@ export default function PowerworksPage() {
     return () => clearTimeout(timer);
   }, [busy, frameIndex, paused, speed, panel, frameDuration]);
 
-  useEffect(() => {
-    const key = (e: KeyboardEvent) => {
-      if (e.key === "Escape" && !panel) {
-        setPending(null);
-        setHoverTarget(null);
+  // Escape backs out one step; keys 1 to 4 choose a slot of the open ring (decision 9).
+  keys.current = (e: KeyboardEvent) => {
+    if (panel || e.defaultPrevented || e.altKey || e.ctrlKey || e.metaKey) return;
+    const field = (e.target as Element | null)?.closest?.("input, textarea, select");
+    if (field) return;
+    if (e.key === "Escape") {
+      if (planning && active) {
+        e.preventDefault();
+        backOut();
       }
-    };
+      return;
+    }
+    if (ringOpen && active && /^[1-9]$/.test(e.key)) {
+      const index = ringIndices(active, available)[Number(e.key) - 1];
+      if (index === undefined) return;
+      e.preventDefault();
+      choose(index, true);
+    }
+  };
+  useEffect(() => {
+    const key = (e: KeyboardEvent) => keys.current(e);
     window.addEventListener("keydown", key);
     return () => window.removeEventListener("keydown", key);
-  }, [panel]);
+  }, []);
 
   useEffect(() => {
     const old = document.title;
@@ -345,21 +380,117 @@ export default function PowerworksPage() {
     });
   }
 
-  function select(u: Unit, keyboard = false) {
+  /** Focus a companion's figure on the stage: where focus returns when its ring closes. */
+  function focusFigure(id: string) {
+    requestAnimationFrame(() =>
+      document
+        .querySelector<HTMLButtonElement>(
+          `[data-unit="${id}"] .pw-scene-character`
+        )
+        ?.focus()
+    );
+  }
+
+  function focusCommit() {
+    requestAnimationFrame(() =>
+      document.querySelector<HTMLButtonElement>(".pw-commit .pw-primary")?.focus()
+    );
+  }
+
+  /** Open a companion's ring (decision 2). Its standing order, if any, is marked on its slot. */
+  function openRing(u: Unit) {
     if (!planning || u.hp <= 0) return;
     setSelected(u.id);
-    setPending(plans[u.id]?.move ?? null);
+    setPending(null);
+    setHoverTarget(null);
+    setRingFocus(true);
+    setNotice(
+      `Planning ${u.name}. ${
+        plans[u.id] ? "Its order can be changed." : "Choose a move."
+      }`
+    );
+  }
+
+  /** Close the open ring and select nothing; focus returns to the companion. */
+  function closeRing() {
+    const id = active?.id;
+    setSelected("");
+    setPending(null);
+    setHoverTarget(null);
+    setNotice("");
+    if (id) focusFigure(id);
+  }
+
+  /**
+    The figure and plaque: selecting the open companion again closes its ring. From the
+    keyboard, Enter or Space on a ring that opened by itself (a round beginning) moves focus
+    into it instead; Escape closes it.
+  */
+  function select(u: Unit, keyboard = false) {
+    if (!planning || u.hp <= 0) return;
+    if (active?.id === u.id && pending === null) {
+      if (keyboard && !document.activeElement?.closest("[role=menu]"))
+        requestAnimationFrame(() =>
+          document
+            .querySelector<HTMLButtonElement>('[role=menu] [tabindex="0"]')
+            ?.focus()
+        );
+      else closeRing();
+    } else openRing(u);
+  }
+
+  /** Escape or a click on empty stage: target selection back to the ring, the ring to nothing (decision 5). */
+  function backOut() {
+    if (!planning || !active) return;
+    if (pending !== null) {
+      setPending(null);
+      setHoverTarget(null);
+      setRingFocus(true);
+      setNotice(`Choose a move for ${active.name}.`);
+    } else closeRing();
+  }
+
+  /** Tab and Shift+Tab from an open ring: the next or previous standing companion (decision 9). */
+  function step(direction: 1 | -1) {
+    if (!active) return;
+    const standing = run.team.filter((u) => u.hp > 0);
+    const next =
+      standing[standing.findIndex((u) => u.id === active.id) + direction];
+    if (next) openRing(next);
+    else {
+      const id = active.id;
+      setSelected("");
+      setNotice("");
+      if (direction > 0) focusCommit();
+      else focusFigure(id);
+    }
+  }
+
+  /** A slot of the ring was chosen: target selection follows, or the order is set for a move on its user. */
+  function choose(i: number, keyboard: boolean) {
+    if (!planning || !active || !available.includes(i)) return;
+    const m = moveAt(active, i);
+    const targets = legalTargets(run, active, i);
+    if (!targets.length) return;
+    if (actsOnSelf(m)) {
+      order(active, i, targets[0].id, keyboard);
+      return;
+    }
+    setPending(i);
     setHoverTarget(null);
     setNotice(
-      `Planning ${u.name}${
-        plans[u.id] ? ". Existing order can be changed." : ". Choose a move."
+      `${m.name} selected. ${
+        helps(m) && targets.some((t) => !t.enemy)
+          ? "Choose an enemy or a squadmate."
+          : "Choose an enemy."
       }`
     );
     if (keyboard)
       requestAnimationFrame(() =>
-        moveButtons.current.find((b) => b && !b.disabled)?.focus()
+        document
+          .querySelector<HTMLButtonElement>(".pw-target:not(:disabled)")
+          ?.focus()
       );
-    else revealControls(".pw-command");
   }
 
   function labelFor(u: Unit) {
@@ -373,46 +504,38 @@ export default function PowerworksPage() {
   }
   function assign(id: string, keyboard = false) {
     if (!planning || !active || pending === null) return;
-    const next = { ...plans, [active.id]: { move: pending, target: id } };
+    order(active, pending, id, keyboard);
+  }
+
+  /** Set an order, then move to the next companion in speed order without one (decision 6). */
+  function order(u: Unit, moveIndex: number, target: string, keyboard: boolean) {
+    const next = { ...plans, [u.id]: { move: moveIndex, target } };
     setPlans(next);
+    setPending(null);
     setHoverTarget(null);
-    const nextUnit = living.find(
-      (u) => !next[u.id] && legalMoves(u, run).length
-    );
-    const named = [...run.team, ...run.enemies].find((u) => u.id === id);
+    const nextUnit = nextInSpeed(run, next);
+    const named = [...run.team, ...run.enemies].find((t) => t.id === target);
+    const m = moveAt(u, moveIndex);
     setNotice(
-      `${active.name} assigned to ${named?.name ?? "its target"}${
-        named && !named.enemy ? " (squadmate)" : ""
+      `${u.name}: ${m.name}${
+        actsOnSelf(m)
+          ? " on itself"
+          : ` on ${named?.name ?? "its target"}${
+              named && !named.enemy ? " (squadmate)" : ""
+            }`
       }. ${
         nextUnit
           ? `Now planning ${nextUnit.name}.`
           : "All orders ready. Review or commit."
       }`
     );
-    setPending(null);
-    if (nextUnit) setSelected(nextUnit.id);
-    if (keyboard)
-      requestAnimationFrame(() => {
-        if (nextUnit)
-          moveButtons.current.find((b) => b && !b.disabled)?.focus();
-        else
-          document
-            .querySelector<HTMLButtonElement>(".pw-commit .pw-primary")
-            ?.focus();
-      });
-    else revealControls(nextUnit ? ".pw-command" : ".pw-squad");
-  }
-
-  function clearOrder() {
-    if (!active) return;
-    setPlans((p) => {
-      const n = { ...p };
-      delete n[active.id];
-      return n;
-    });
-    setPending(null);
-    setHoverTarget(null);
-    setNotice(`${active.name}'s order cleared.`);
+    if (nextUnit) {
+      setSelected(nextUnit.id);
+      setRingFocus(true);
+    } else {
+      setSelected("");
+      if (keyboard) focusCommit();
+    }
   }
 
   function apply(action: Command) {
@@ -426,7 +549,8 @@ export default function PowerworksPage() {
       setError("");
       setNotice(action.kind === "revive" ? "Companion revived." : "");
       if (action.kind === "advance") {
-        setSelected(next.team.find((u) => u.hp > 0)?.id || next.team[0]?.id || "");
+        setSelected(nextInSpeed(next, {})?.id ?? "");
+        setRingFocus(false);
         revealControls(".pw-theater", "start");
       }
     } catch (e) {
@@ -446,6 +570,9 @@ export default function PowerworksPage() {
       setRun(result.state);
       setHistory((h) => [...h, { kind: "round", orders }]);
       setPlaybackOrders(orders);
+      // The next round opens on its fastest companion once playback ends (decision 6).
+      setSelected(nextInSpeed(result.state, {})?.id ?? "");
+      setRingFocus(false);
       setLastFrames(result.frames);
       setFrames(result.frames);
       setFrameIndex(0);
@@ -492,7 +619,8 @@ export default function PowerworksPage() {
       setHistory([action]);
       setStarted(true);
       setDrafting(false);
-      setSelected(next.team[0].id);
+      setSelected(nextInSpeed(next, {})?.id ?? "");
+      setRingFocus(false);
       setPlans({});
       setPending(null);
       setError("");
@@ -684,13 +812,47 @@ export default function PowerworksPage() {
     return current.text;
   }
 
-  function affected(u: Unit) {
-    return (
-      frame?.event?.targetId === u.id ||
-      (frame?.event?.actorId === u.id &&
-        ["blocked", "charge", "lost"].includes(frame.event.kind))
-    );
-  }
+  // Each companion's plaque chip (radial orders decision 7): its order, its playback
+  // state, or why it has none.
+  const actedBy = (id: string) =>
+    frames
+      .slice(0, frameIndex)
+      .some((f) => f.event?.actorId === id && f.event.kind !== "redirect");
+  const chips: Record<string, OrderChip> = Object.fromEntries(
+    team.map((u): [string, OrderChip] => {
+      const queued = (busy ? playbackOrders : plans)[u.id];
+      if (u.hp <= 0)
+        return [u.id, { move: null, target: null, empty: "Knocked out" }];
+      if (!queued || queued.move === -2)
+        return [
+          u.id,
+          {
+            move: null,
+            target: null,
+            empty:
+              queued || (planning && !legalMoves(u, run).length)
+                ? "Cannot act"
+                : "No order",
+          },
+        ];
+      const m = moveAt(u, queued.move);
+      const target = [...enemies, ...team].find((t) => t.id === queued.target);
+      return [
+        u.id,
+        {
+          move: m,
+          target: actsOnSelf(m) || !target ? null : labelFor(target),
+          status: busy
+            ? frame?.event?.actorId === u.id
+              ? "Acting now"
+              : actedBy(u.id)
+              ? "Acted"
+              : "Waiting"
+            : null,
+        },
+      ];
+    })
+  );
 
   const phaseTitle =
     run.phase === "camp"
@@ -903,335 +1065,90 @@ export default function PowerworksPage() {
                   previewText={previewText}
                   onTarget={assign}
                   onSelect={select}
+                  onOpen={(u) => openRing(u)}
+                  onBack={backOut}
                   onInspect={inspectUnit}
                   onHover={setHoverTarget}
+                  openId={ringOpen ? active?.id : null}
+                  chips={chips}
+                  ring={
+                    ringOpen && active ? (
+                      <PowerworksRadial
+                        key={active.id}
+                        unit={active}
+                        available={available}
+                        current={plans[active.id]?.move ?? null}
+                        autoFocus={ringFocus}
+                        onChoose={choose}
+                        onStep={step}
+                      />
+                    ) : null
+                  }
                 />
 
-                <section
-                  className={`pw-command ${busy ? "resolving" : ""}`}
-                  aria-label={busy ? "Round playback" : "Move selection"}
-                >
-                  {busy ? (
-                    <>
-                      <div className="pw-action-story" aria-live="polite">
-                        <div className="pw-action-copy">
-                          <span className="pw-eyebrow">
-                            {frame.event?.actorId
-                              ? labelFor(
-                                  [...team, ...enemies].find(
-                                    (u) => u.id === frame.event?.actorId
-                                  )!
-                                )
-                              : `Round ${playRound}`}
-                          </span>
-                          <strong>
-                            {frame.event?.moveName || eventLabel(frame)}
-                          </strong>
-                          <p>
-                            {impact
-                              ? actionCaption(frame)
-                              : "Preparing the action…"}
-                          </p>
-                        </div>
-                      </div>
-                      <div className="pw-playback-controls">
-                        <span>
-                          {frameIndex + 1} / {frames.length}
+                {busy && (
+                  <section
+                    className="pw-command resolving"
+                    aria-label="Round playback"
+                  >
+                    <div className="pw-action-story" aria-live="polite">
+                      <div className="pw-action-copy">
+                        <span className="pw-eyebrow">
+                          {frame.event?.actorId
+                            ? labelFor(
+                                [...team, ...enemies].find(
+                                  (u) => u.id === frame.event?.actorId
+                                )!
+                              )
+                            : `Round ${playRound}`}
                         </span>
-                        <button
-                          onClick={() => setPaused((v) => !v)}
-                          aria-label={
-                            paused ? "Resume playback" : "Pause playback"
-                          }
-                        >
-                          {paused ? <Play /> : <Pause />}
-                          {paused ? "Resume" : "Pause"}
-                        </button>
-                        <button
-                          onClick={() => {
-                            setPaused(true);
-                            nextFrame();
-                          }}
-                          aria-label="Next action"
-                        >
-                          <ChevronRight />
-                          Next
-                        </button>
-                        <button
-                          onClick={() =>
-                            setSpeed((s) => (s === 1 ? 2 : s === 2 ? 0.5 : 1))
-                          }
-                          aria-label={`Playback speed ${speed}x`}
-                        >
-                          {speed}×
-                        </button>
-                        <button onClick={finishPlayback}>
-                          Show round result <SkipForward />
-                        </button>
+                        <strong>
+                          {frame.event?.moveName || eventLabel(frame)}
+                        </strong>
+                        <p>
+                          {impact
+                            ? actionCaption(frame)
+                            : "Preparing the action…"}
+                        </p>
                       </div>
-                    </>
-                  ) : active ? (
-                    <>
-                      <div className="pw-command-head">
-                        <button
-                          aria-label={`Inspect selected ${active.name}`}
-                          onClick={() => inspectUnit(active.id)}
-                          className={`pw-active-identity el-${active.element}`}
-                          key={active.id}
-                        >
-                          <Portrait u={active} small />
-                          <div>
-                            <span>
-                              <ElementIcon element={active.element} />
-                              {active.element}
-                            </span>
-                            <h2>{active.name}</h2>
-                          </div>
-                        </button>
-                        <span className="pw-command-prompt">
-                          {plans[active.id]
-                            ? "Change this order"
-                            : pending !== null
-                            ? "Select a target above"
-                            : "Choose a move"}
-                        </span>
-                        <div className="pw-command-tools">
-                          <button
-                            className="pw-symbol-help"
-                            aria-label="Explain move symbols"
-                            onClick={() => setPanel("guide")}
-                          >
-                            <Info />
-                          </button>
-                          <button
-                            className="pw-clear"
-                            disabled={!plans[active.id] && pending === null}
-                            onClick={clearOrder}
-                          >
-                            <X />
-                            Clear <span>order</span>
-                          </button>
-                        </div>
-                      </div>
-
-                      <div className="pw-moves">
-                        {[
-                          ...active.moves.map((_, i) => i),
-                          ...(available.includes(-1) ? [-1] : []),
-                        ].map((i, k) => {
-                          const m = moveAt(active, i),
-                            legal = available.includes(i),
-                            limit = cooldownLimit(m),
-                            cooldown = i === -1 ? null : active.cooldowns[i],
-                            spent = m.signature && active.signatureSpent;
-                          return (
-                            <button
-                              key={i}
-                              ref={(el) => {
-                                moveButtons.current[k] = el;
-                              }}
-                              aria-label={`${m.name}${
-                                m.signature ? ", signature" : ""
-                              }, ${
-                                i === -1 || limit === 0
-                                  ? "no cooldown"
-                                  : cooldown
-                                  ? `${cooldown} of ${limit} rounds cooling`
-                                  : `${limit} round cooldown`
-                              }${
-                                !legal
-                                  ? spent
-                                    ? ", spent this encounter"
-                                    : cooldown
-                                    ? ", cooling down"
-                                    : active.bound && closes(m)
-                                    ? ", blocked by binding"
-                                    : ", no effect here"
-                                  : ""
-                              }`}
-                              aria-describedby={`move-stats-${active.id}-${i}`}
-                              title={moveDescription(active, m)}
-                              aria-pressed={pending === i}
-                              disabled={!legal}
-                              className={`pw-move-card ${
-                                pending === i ? "chosen" : ""
-                              } ${m.signature ? "signature" : ""} el-${
-                                active.element
-                              }`}
-                              onClick={(e) => {
-                                setPending(i);
-                                setHoverTarget(null);
-                                setNotice(
-                                  `${m.name} selected. ${
-                                    helps(m) &&
-                                    legalTargets(run, active, i).some(
-                                      (t) => !t.enemy
-                                    )
-                                      ? "Choose an enemy or a squadmate."
-                                      : "Choose an enemy."
-                                  }`
-                                );
-                                if (e.detail === 0)
-                                  requestAnimationFrame(() =>
-                                    document
-                                      .querySelector<HTMLButtonElement>(
-                                        ".pw-target:not(:disabled)"
-                                      )
-                                      ?.focus()
-                                  );
-                                else revealControls(".pw-theater");
-                              }}
-                            >
-                              <MoveCardContent
-                                unit={active}
-                                move={m}
-                                cooldown={cooldown}
-                                spent={spent}
-                                selected={pending === i}
-                                blocked={
-                                  !legal && !!active.bound && closes(m) && !cooldown
-                                }
-                                id={`move-stats-${active.id}-${i}`}
-                              />
-                            </button>
-                          );
-                        })}
-                      </div>
-                    </>
-                  ) : null}
-                </section>
-
-                <section className="pw-squad" aria-label="Your squad">
-                  {team.map((u) => {
-                    const order = (busy ? playbackOrders : plans)[u.id],
-                      target = [...enemies, ...team].find(
-                        (e) => e.id === order?.target
-                      ),
-                      selectedUnit = active?.id === u.id && planning;
-                    return (
-                      <div
-                        key={u.id}
-                        className={`pw-companion el-${u.element} ${
-                          selectedUnit ? "selected" : ""
-                        } ${order ? "ready" : ""} ${u.hp <= 0 ? "down" : ""} ${
-                          frame?.event?.actorId === u.id ? "acting" : ""
-                        } ${affected(u) ? "affected" : ""}`}
+                    </div>
+                    <div className="pw-playback-controls">
+                      <span>
+                        {frameIndex + 1} / {frames.length}
+                      </span>
+                      <button
+                        onClick={() => setPaused((v) => !v)}
+                        aria-label={
+                          paused ? "Resume playback" : "Pause playback"
+                        }
                       >
-                        <span className="pw-companion-portrait">
-                          <Portrait u={u} small />
-                        </span>
-                        <button
-                          className="pw-select"
-                          aria-label={`Select ${u.name}`}
-                          aria-describedby={`order-${u.id}`}
-                          title={
-                            order && target
-                              ? `${
-                                  order.move === -2
-                                    ? "Cannot act"
-                                    : moveAt(u, order.move).name
-                                } → ${labelFor(target)}`
-                              : undefined
-                          }
-                          aria-pressed={selectedUnit}
-                          disabled={!planning || u.hp <= 0}
-                          onClick={(e) => select(u, e.detail === 0)}
-                        >
-                          <span className="pw-companion-top">
-                            <ElementIcon element={u.element} />
-                            <strong>{u.name}</strong>
-                            {order ? (
-                              <Check className="pw-ready-check" />
-                            ) : (
-                              <span className="pw-unassigned" />
-                            )}
-                          </span>
-                          <span className="pw-queued" id={`order-${u.id}`}>
-                            {u.hp <= 0 ? (
-                              "Knocked out"
-                            ) : busy && order ? (
-                              <>
-                                <span
-                                  className="pw-order-move"
-                                  title={
-                                    order.move === -2
-                                      ? undefined
-                                      : moveAt(u, order.move).name
-                                  }
-                                >
-                                  {order.move === -2
-                                    ? "Cannot act"
-                                    : baseName(moveAt(u, order.move))}
-                                </span>
-                                <span className="pw-order-target">
-                                  {frame.event?.actorId === u.id
-                                    ? "Acting now"
-                                    : frames
-                                        .slice(0, frameIndex)
-                                        .some(
-                                          (f) =>
-                                            f.event?.actorId === u.id &&
-                                            f.event.kind !== "redirect"
-                                        )
-                                    ? "Acted"
-                                    : "Waiting"}
-                                </span>
-                              </>
-                            ) : order && target ? (
-                              <>
-                                <span
-                                  className="pw-order-move"
-                                  title={
-                                    order.move === -2
-                                      ? undefined
-                                      : moveAt(u, order.move).name
-                                  }
-                                >
-                                  {order.move === -2
-                                    ? "Cannot act"
-                                    : baseName(moveAt(u, order.move))}
-                                </span>
-                                <span className="pw-order-target">
-                                  <ArrowRight />
-                                  <Portrait u={target} small />
-                                  {labelFor(target)}
-                                </span>
-                              </>
-                            ) : !legalMoves(u, run).length ? (
-                              <>
-                                <Link2 />
-                                Cannot act
-                              </>
-                            ) : selectedUnit ? (
-                              <>
-                                <Crosshair />
-                                {pending !== null
-                                  ? "Choose a target"
-                                  : "Choose a move"}
-                              </>
-                            ) : busy ? (
-                              ""
-                            ) : (
-                              <>Needs an order</>
-                            )}
-                          </span>
-                        </button>
-
-                        <button
-                          className="pw-squad-info"
-                          aria-label={`Inspect ${u.name}`}
-                          onClick={() => inspectUnit(u.id)}
-                        >
-                          <Info />
-                        </button>
-
-                        <div className="pw-squad-status">
-                          <StatusBadges u={u} />
-                        </div>
-                      </div>
-                    );
-                  })}
-                </section>
+                        {paused ? <Play /> : <Pause />}
+                        {paused ? "Resume" : "Pause"}
+                      </button>
+                      <button
+                        onClick={() => {
+                          setPaused(true);
+                          nextFrame();
+                        }}
+                        aria-label="Next action"
+                      >
+                        <ChevronRight />
+                        Next
+                      </button>
+                      <button
+                        onClick={() =>
+                          setSpeed((s) => (s === 1 ? 2 : s === 2 ? 0.5 : 1))
+                        }
+                        aria-label={`Playback speed ${speed}x`}
+                      >
+                        {speed}×
+                      </button>
+                      <button onClick={finishPlayback}>
+                        Show round result <SkipForward />
+                      </button>
+                    </div>
+                  </section>
+                )}
 
                 <footer className="pw-commit">
                   <div className="pw-readiness" aria-live="polite">
@@ -1683,8 +1600,9 @@ export default function PowerworksPage() {
             </div>
             <p>
               Plan one order for each standing companion, then commit the round.
-              Tap any queued creature to edit its move or target. Escape leaves
-              target selection; Clear removes its order.
+              Select a creature on the stage to open its moves above it; keys 1
+              to 4 choose one. Its order shows on its plaque; select it again to
+              change it. Escape steps back.
             </p>
             <div className="pw-guide-grid">
               <section>
