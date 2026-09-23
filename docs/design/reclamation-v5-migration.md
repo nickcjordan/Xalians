@@ -225,3 +225,19 @@ Two readings need stating honestly rather than glossed:
 ## What this does not do
 
 Pass A adds no mechanic. It converts the reading, fixes what the conversion exposed, and records the new gauge readings as they land. The status layer (ratified, Nick 2026-09-21), damage types, retaliation from passive triggers and area geometry are the opportunities v5 opens, each wanting its own measured pass.
+
+## Re-measured on generation-0.7.0-1 (derived acts), 2026-09-22
+
+The creature release under the game changed: ordinary actions are now derived from each species' anatomy (see `creature-derived-acts.md`), so every roster draws different ordinary acts for the same seed. No Reclamation rule or lever moved. Simulator, 300 matches per seed, seeds 7 / 11 / 23:
+
+| Gauge | Band | v5 reading (above) | **0.7.0-1 reading** |
+|---|---|---|---|
+| Resolution changes the leader | 25 to 40 | 26.6 / 25.1 / 26.3 | **29.7 / 28.3 / 28.5** |
+| Downs per match | 3 to 5 | 5.17 / 5.00 / 5.32 | **5.48 / 5.09 / 5.48** |
+| Comeback from a contested round 1 | 30 to 40 | 28.0 / 30.7 / 29.9 | **28.0 / 28.9 / 29.0** |
+| Strike keeper win rate | 40 to 60 | 61.2 | **60.9 / 59.9 / 59.9** |
+| Sweep keeper win rate | 40 to 60 | 62.8 | **54.7 / 57.1 / 56.9** |
+| Bolster, shield keeper win rate | 40 to 60 | 45.4, 52.5 | **47.2, 52.5 / 47.4, 52.6 / 43.8, 58.3** |
+| Seat A match win rate | about 50 | | 47.7 / 48.3 / 46.7 |
+
+Reading: sweep came back into band (wider bodies now carry real sweeps and fewer duplicated heavy blows), strike sits on the band's edge instead of over it, and resolution matters slightly more. Downs rose a little further above the band and comeback stays just under it; both were already outside before this change and remain the lever pass's items, not this conversion's. The seeds used for the earlier v5 column were not recorded in this doc, so the comparison is between runs, not seed for seed.
