@@ -299,3 +299,44 @@ Taken, as identity findings against the brief:
 - **The near fronds competed with the machine.** They are 30% darker.
 
 Logged, not taken: "far pods don't shrink" (they shrink to 0.4 over their flight; the pods it cited were near ones).
+
+## Into the flood (Nick, 2026-09-23, after PR #610)
+
+Nick's notes on the live plate:
+- Remove the cannon: a Generator would not have one.
+- From a studies page of three delivery methods (published as an artifact), he picked "into the flood" over seeding the storm and breathing spores.
+- The study's seeds all travelled in one line straight to the tree, which looked weird.
+- The vegetation at the tree's foot looked like lily pads and made the tree read as close. It should be smaller trees around the giant, stepping down into shrubs, weeds and grass.
+
+**What changed**
+- **No barrels.** A sluice gate with a wheel sits at the machine's foot. A riveted chute on legs runs from it down to the water behind the shelf, with glowing fluid sliding down it. The roof carries a banded header tank and a hopper. The gantry stands over the sluice. The hoist is cut.
+- **Seeds on the flood (`drift()`).**
+  - Seeds slide down the chute from rest under constant acceleration, at uneven intervals.
+  - Each drops in at a jittered point and fans out on its own heading. It is braked from the lip's speed, then eases into a current that runs left to right and is slower with distance. It wanders, and parts around slabs.
+  - Each meets one of four ends: splitting (a larva swims out, faster than the water, and dives on the move), sinking while still drifting, catching on a slab's upstream end and washing up onto the rock to sprout, or being carried off toward the island.
+  - Every voyage is placed clear of the other seeds, the larvae, the sprouts, and its own future larva and sprout.
+- **Surge.** The gate bursts and a rush of seeds goes down together. The heavy birth seed rides the chute small, slows against its wall, jumps it and lands on the shelf. Its husk is now brown, and the newborn is a round-headed tadpole with one tapering tail.
+- **The World Tree** keeps its distant trunk. It is now darker than the cloud and the forest, and it stands on an island of young forest at the horizon: broadleaf crowns and conifer spires, tallest by the trunk (about a sixth of its visible height), stepping down to shrubs, weeds and a grass fringe, hazier toward the back.
+
+**Rounds (visual 6.5 then 8.5; motion 7 then 8.5; both confirmed)**
+- **Visual.**
+  - Between flashes the trunk was invisible, and the island read as a near hill. The trunk is now dark and the island sits at the horizon.
+  - The seeds were hard to follow at site size. They now have halos, the outfall glow is brighter, and the gate flashes with each release.
+  - With the barrels gone the machine read as a cabinet. It now has the header tank and hopper.
+  - The birth seed looked jammed in the chute. It now rides at a smaller scale.
+  - A rim light on the trunk read as hanging vines, and was cut (the same finding as round 4 of the first loop).
+- **Motion.**
+  - Seeds passed through a sprout, caught seeds jumped back upstream, and sprouts stood in water.
+  - Sinks stopped dead, hatchlings swam slower than the water, and seeds flipped off the lip.
+  - The chute's speed stepped. It is now sampled every 0.12 s with uniform acceleration, braked on the water with tau 0.1.
+  - Far seeds faded in open water.
+
+**The gate: one cold check (6.5)**
+
+Taken:
+- **The machine's glows were missing entirely.** The line appending them was cut along with the barrels loop, so the vat never flared and none of the lamps, seams, gauge, steam or vat seeds showed. The line is restored.
+- **The surge read as a gun firing.** The chute now stays dim in the surge, the light spills at the gate, and the heavy seed rides the chute at half size.
+- **The larva read as a seedling, with leaf lobes.** It now has a round head and one tapering tail, and the heavy seed's husk is brown.
+- **Seeds left the chute as a dotted string.** Emission is now jittered, the drop point is jittered, and seeds brake faster.
+
+Logged, not taken, as accepted decisions or taste: the island as "a hedge band" (the resumed reviewer judged the scale met), the cloud across the trunk, the reeds, the slabs, and sprouts fading at their reset.
