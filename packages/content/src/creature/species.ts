@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { NamingSchema } from './naming.ts';
 import * as c from './catalog.ts';
-import { ANATOMY_KEYS, ATTRIBUTE_KEYS, CAPABILITY_KEYS, CHANNEL_KEYS } from '../registriesConst.ts';
+import { ATTRIBUTE_KEYS, CAPABILITY_KEYS, CHANNEL_KEYS } from '../registriesConst.ts';
 import { ActionTemplateSchema, PassiveTemplateSchema, ProtectionSchema, SignatureSchema, abilityIdentity, EffectTemplateSchema } from './ability.ts';
 import { PATTERNS } from './acts.ts';
 
@@ -87,7 +87,7 @@ export const SpeciesSchema = z.strictObject({
   if (new Set(species.actions.map(abilityIdentity)).size !== species.actions.length) issue('guaranteed actions must be structurally distinct');
   for (const capability of [...guaranteed, ...species.mechanisms]) {
     const instrument = capability.instrument;
-    if ((ANATOMY_KEYS as readonly string[]).includes(instrument) && !species.physiology.anatomy.includes(instrument as typeof ANATOMY_KEYS[number])) issue(`${capability.key}: instrument ${instrument} is absent from anatomy`);
+    if (c.AnatomyKeySchema.options.includes(instrument as z.infer<typeof c.AnatomyKeySchema>) && !species.physiology.anatomy.includes(instrument as z.infer<typeof c.AnatomyKeySchema>)) issue(`${capability.key}: instrument ${instrument} is absent from anatomy`);
     if (instrument === 'gaze' && species.physiology.senses.sight[0] <= 0) issue(`${capability.key}: gaze requires sight throughout the species band`);
   }
   checkChannels(species, issue);

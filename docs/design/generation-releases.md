@@ -73,6 +73,8 @@ Generation requires a species key, nonempty string seed, origin, serial, timesta
 
 The release tests freeze the hypothetical support species into a temporary archive and separately freeze the complete canonical roster into a temporary archive. They validate complete v5 records, replay every canonical species in both profiles, and exercise fresh-process replay for the adapter fixture. Those temporary archives are deleted after the tests.
 
+Compilation, four-action generation, freezing and replay establish structural validity and reproducibility, not creative completeness. New or edited species still require the logically exhaustive, evidence-backed [ability audit](../species-templates/ABILITY-AUDIT.md) over derived acts, exclusions and supported extensions. Four selected actions per individual are not a target size or cap for the species act space.
+
 ### Frozen canonical v5 archive
 
 The 32 source-audited definitions under `docs/species-templates/v5/` are bound by `packages/rules/src/generator/canonicalCreatureRelease.ts`. Release `generation-0.6.0-1` freezes that entry point, the complete roster, schema, catalog, compiler, naming and PRNG inputs. Integrity and full-roster replay checks pass. The rating pass is recorded in [creature-v5-calibration.md](creature-v5-calibration.md); the seeded construction test samples 24 seeds per species and checks guaranteed identity and four distinct actions.

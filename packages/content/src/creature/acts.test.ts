@@ -1,10 +1,12 @@
 import { describe, expect, it } from 'vitest';
 import fixture from './fixtures/support-species.json';
-import { INSTRUMENT_ROWS, MEDIUM_ROWS, MIN_DISTINCT_ACTS, PATTERNS, deriveMechanisms } from './acts.ts';
+import { ANATOMY_KEYS, INSTRUMENT_ROWS, MEDIUM_ROWS, MIN_DISTINCT_ACTS, PATTERNS, deriveMechanisms } from './acts.ts';
 import { MechanismSchema, SpeciesSchema, type Species } from './species.ts';
+import { AnatomyKeySchema } from './catalog.ts';
+import { AnatomyKeySchema as LegacyAnatomyKeySchema } from '../schema/registries.ts';
 import { compileSpecies } from './compiler.ts';
 import { Removal, Status } from './catalog.ts';
-import { ANATOMY_KEYS, CHANNEL_KEYS, ELEMENT_KEYS } from '../registriesConst.ts';
+import { CHANNEL_KEYS, ELEMENT_KEYS } from '../registriesConst.ts';
 
 const copy = <T>(value: T): T => JSON.parse(JSON.stringify(value)) as T;
 
@@ -49,6 +51,10 @@ function withSignature(species: Record<string, unknown>): Record<string, unknown
 }
 
 describe('the derivation tables', () => {
+  it('adds fins to v5 anatomy without changing the frozen v4 registry', () => {
+    expect(AnatomyKeySchema.options).toContain('fins');
+    expect(LegacyAnatomyKeySchema.options).not.toContain('fins');
+  });
   it('lists only known patterns on every instrument row', () => {
     for (const [instrument, row] of Object.entries(INSTRUMENT_ROWS)) {
       for (const pattern of row.patterns) expect(PATTERNS, instrument).toContain(pattern);
@@ -76,6 +82,15 @@ describe('the derivation tables', () => {
 });
 
 describe('derivation produces valid mechanisms for every body', () => {
+  it('derives blunt fin contact without inventing grasping or cutting', () => {
+    const species = withSignature(bodyWith('fins'));
+    const derived = deriveMechanisms(SpeciesSchema.parse(species));
+    expect(derived.map(mechanism => mechanism.key)).toEqual([
+      'derived-fins-strike-impact', 'derived-fins-shove',
+    ]);
+    expect(derived[0].effects[0]).toMatchObject({ type: 'harm', mechanism: 'impact' });
+    expect(derived[1].effects[0]).toMatchObject({ type: 'displace', direction: 'away' });
+  });
   it.each([...ANATOMY_KEYS, ...CHANNEL_KEYS])('derives valid, compilable acts from %s alone', instrument => {
     const species = withSignature(bodyWith(instrument));
     for (const mechanism of deriveMechanisms(SpeciesSchema.parse(species) as unknown as Parameters<typeof deriveMechanisms>[0])) {

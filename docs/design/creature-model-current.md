@@ -131,6 +131,8 @@ Removal matches explicit method intersections: cooling, smothering, warming, cle
 
 **Superseded 2026-09-22 by [derived acts](creature-derived-acts.md):** the body decides what a species can do. The compiler derives ordinary mechanisms from anatomy, declared channels and declared conduits through registry tables (instrument rows, medium rows, patterns), the species record narrows them with reasoned exclusions or re-bands them, and authored `mechanisms[]` extend the set with what the tables cannot say. The paragraphs below describe the authored-mechanism form, which is unchanged in shape.
 
+For new or edited species, review every derived act against the creature's evidence and explore justified extensions. The species act space should be logically exhaustive within its sources and the shared vocabulary. Do not exclude an independently capable body part because another part can produce a similar outcome, or because the four-action individual selection needs only a few options. Automated compilation proves structural validity and selection capacity, not creative completeness.
+
 Mechanisms describe source-supported processes, not a whitelist of named finished moves. Each mechanism owns its instrument, optional element, targeting, continuity/timing domains, delivery-specific range/area permissions, and inherent effects. An effect's recipient is a scalar or a delivery-keyed set of permitted recipients. Likelihood is an authored domain; intensity is a value/band. Every semantic value comes from the shared catalog.
 
 The compiler partitions by delivery and whether/which first effect uses area. It groups each independent effect with its dependents so recipient choices obey `requires` constructively; other categorical domains remain factored. It validates supported field relationships at authoring time, checks physical source anatomy and gaze support across the full sight band, and proves enough distinct actions can be selected. Voice does not imply vocal communication or respiration. At runtime it selects unused structure indices directly, removes equivalent representations across mechanisms, and then rolls output. It does not enumerate a species' entire move universe, evaluate lore per individual, or generate/reject/retry creatures.
@@ -146,7 +148,7 @@ npm run check:creature-model -- path/to/species.json
 npm run check:creature-model -- packages/content/src/creature/fixtures/support-species.json --example
 ```
 
-The fixture is deliberately noncanonical. Its 14 possible ordinary structures come from compact permissions, not 14 authored moves.
+The fixture is deliberately noncanonical. Its 14 possible ordinary structures come from factored permissions, not 14 authored moves. Its small size is not a target for canonical species.
 
 ## Species decisions retained for the migration
 
