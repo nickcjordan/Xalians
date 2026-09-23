@@ -19,6 +19,11 @@ describe('captionEvent', () => {
 		expect(text(captionEvent({ type: 'shield', cancelled: 'x', amount: 4 }, { actor: rakh, target: vrix }))).toBe("Rakh blocks Vrix's 4");
 		expect(text(captionEvent({ type: 'recover', amount: 2 }, { actor: rakh, bolster: vrix }))).toBe('Vrix gives Rakh 2 back');
 	});
+	it('says when a sweep catches its own side', () => {
+		const mine = { name: 'Hippochamp', seat: 'A' };
+		expect(text(captionEvent({ type: 'attack', role: 'sweep', outcome: 'hurt', power: 6, remaining: 3 }, { actor: rakh, target: mine }))).toBe('Rakh hits its own Hippochamp: −6, 3 left');
+		expect(text(captionEvent({ type: 'attack', role: 'sweep', outcome: 'downed', power: 6 }, { actor: rakh, target: mine }))).toBe('Rakh downs its own Hippochamp');
+	});
 	it('never says a standing creature has 0 left', () => {
 		expect(text(captionEvent({ type: 'attack', role: 'sweep', outcome: 'hurt', power: 4, remaining: 0.4 }, { actor: rakh, target: vrix }))).toBe('Rakh hits Vrix: −4, barely standing');
 		expect(narrateEvent({ type: 'attack', role: 'sweep', outcome: 'hurt', power: 4, remaining: 0.4 }, { actorName: 'Rakh', targetName: 'Vrix' }))
