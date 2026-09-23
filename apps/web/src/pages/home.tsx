@@ -17,6 +17,7 @@ import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import specimen from './home/specimen.json';
 import { startStoryMotion } from './home/motion';
+import { StoryStage, type StageScene } from './home/storyStage';
 
 /* ------------------------------------------------------------------ copy */
 
@@ -150,6 +151,8 @@ function Panel({
 	n,
 	eager = false,
 	still = false,
+	live,
+	staged = false,
 }: {
 	art: Art;
 	aspect: string;
@@ -160,13 +163,17 @@ function Panel({
 	eager?: boolean;
 	/** The hero's panel holds still; the story's drift with the scroll. */
 	still?: boolean;
+	/** On the story's stage: whether its living plate is the page's live one. */
+	live?: boolean;
+	/** On the story's stage, which moves it itself: no scroll-in or drift. */
+	staged?: boolean;
 }) {
 	const figure = (
 		<figure className={cn('chamfer frame relative m-0', aspect, className)}>
 			<span className="frame-well">
 				{art.live ? (
 					// A living plate holds still in its frame: its motion is its own.
-					<LivePlate src={art.live} poster={{ ...(art.still ?? art), alt: art.alt }} />
+					<LivePlate src={art.live} poster={{ ...(art.still ?? art), alt: art.alt }} active={live} />
 				) : (
 					<img
 						src={art.src}
@@ -177,7 +184,7 @@ function Panel({
 						height={768}
 						loading={eager ? 'eager' : 'lazy'}
 						decoding="async"
-						className={cn('h-full w-full object-cover', !still && 'scale-[1.12]', position)}
+						className={cn('h-full w-full object-cover', !still && !staged && 'scale-[1.12]', position)}
 					/>
 				)}
 			</span>
@@ -194,7 +201,7 @@ function Panel({
 	return (
 		<Link
 			to={`/encyclopedia/story/${art.era}`}
-			data-panel=""
+			data-panel={staged ? undefined : ''}
 			aria-label={`${art.alt} Opens ${ERA_TITLE[art.era]} in The Story.`}
 			className="mass-frame block no-underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
 		>
@@ -210,12 +217,26 @@ function Panel({
  */
 const PLATE_STYLE = { '--chamfer-fill': 'var(--color-ink)', '--chamfer-edge': 'var(--color-ink-3)' } as React.CSSProperties;
 
-function Plate({ n, from, className, children }: { n: string; from: 'left' | 'right' | 'up'; className?: string; children: React.ReactNode }) {
+function Plate({
+	n,
+	from,
+	className,
+	compact = false,
+	children,
+}: {
+	n: string;
+	/** The side it slides out from as it scrolls in; left out on the stage, which moves it itself. */
+	from?: 'left' | 'right' | 'up';
+	className?: string;
+	/** Body size on a phone, where the stage has to fit the plate and its painting on one screen. */
+	compact?: boolean;
+	children: React.ReactNode;
+}) {
 	return (
 		<div data-plate={from} className={cn('chamfer relative z-10 shadow-float', className)} style={PLATE_STYLE}>
-			<div className="flex flex-col gap-3 px-7 pt-5 pb-7 text-room sm:px-8">
+			<div className={cn('flex flex-col px-7 text-room sm:px-8', compact ? 'gap-2 pt-4 pb-5 lg:gap-3 lg:pt-5 lg:pb-7' : 'gap-3 pt-5 pb-7')}>
 				<span className="type-data text-tiny tracking-legend text-ink-4">{n}</span>
-				<p className="m-0 font-body text-lead">{children}</p>
+				<p className={cn('m-0 font-body', compact ? 'text-body lg:text-lead' : 'text-lead')}>{children}</p>
 			</div>
 		</div>
 	);
@@ -234,6 +255,50 @@ function StoryHead({ id, className, children }: { id?: string; className?: strin
 	);
 }
 
+/**
+ * The story's scenes. Each spread keeps its own arrangement on the stage:
+ * `wide` lays the caption over the painting's foot at the left, `wide-right`
+ * at the right; `portrait` sets it beside the painting at the left, `side`
+ * at the right. The stage sizes each painting to fit the screen by its aspect.
+ */
+type Layout = 'wide' | 'wide-right' | 'portrait' | 'side';
+
+const SPREADS: Array<{ n: string; art: Art; text: string; layout: Layout; aspect: string; ar: number; position?: string; from: 'left' | 'right' }> = [
+	{ n: '01', art: ART.unbirth, text: STORY[0], layout: 'wide', aspect: 'aspect-[21/9]', ar: 21 / 9, position: 'object-[center_40%]', from: 'left' },
+	{ n: '02', art: ART.accords, text: STORY[1], layout: 'portrait', aspect: 'aspect-[4/5]', ar: 4 / 5, position: 'object-[60%_center]', from: 'left' },
+	// The turn of the story is the largest picture: it breaks the column where there is room.
+	{ n: '03', art: ART.endWars, text: STORY[2], layout: 'wide-right', aspect: 'aspect-[2/1]', ar: 2, from: 'right' },
+	{ n: '04', art: ART.present, text: STORY[3], layout: 'side', aspect: 'aspect-[4/3]', ar: 4 / 3, position: 'object-[40%_center]', from: 'right' },
+];
+
+const STORY_SCENES: StageScene[] = SPREADS.map((sp) => ({
+	key: sp.n,
+	n: sp.n,
+	label: ERA_TITLE[sp.art.era!],
+	live: sp.art.live,
+	render: (live) =>
+		live === undefined ? (
+			// Stacked (a window too short for the stage): the spread in the page.
+			<div className="grid grid-cols-1">
+				<Panel n={sp.n} art={sp.art} aspect={sp.aspect} position={sp.position} />
+				<Plate n={sp.n} from={sp.from} className="-mt-7 mx-4">
+					{sp.text}
+				</Plate>
+			</div>
+		) : (
+			<div className="scene-spread" data-layout={sp.layout} style={{ '--ar': sp.ar } as React.CSSProperties}>
+				<div className="scene-frame">
+					<Panel n={sp.n} art={sp.art} aspect={sp.aspect} position={sp.position} live={live} staged />
+				</div>
+				<div className="scene-caption" data-from={sp.from}>
+					<Plate n={sp.n} compact>
+						{sp.text}
+					</Plate>
+				</div>
+			</div>
+		),
+}));
+
 /* ------------------------------------------------------------------ page */
 
 function Home() {
@@ -245,7 +310,7 @@ function Home() {
 	}, []);
 
 	return (
-		<main id="main" ref={rootRef} className="min-h-screen text-ink font-body" data-tier="chrome">
+		<main id="main" ref={rootRef} className="min-h-screen overflow-x-clip text-ink font-body" data-tier="chrome">
 			<XalianNavbar />
 			<Starfield />
 
@@ -295,49 +360,10 @@ function Home() {
 
 			<Shell className="pb-10">
 				<div className="mx-auto max-w-[1160px]">
-					{/* The Story: four spreads, one paragraph each. Same frame, same
-					    plate, a different arrangement every time. */}
-					<section aria-labelledby="story" className="pt-8">
-						<StoryHead id="story">The Story</StoryHead>
-
-						<div className="mb-16 grid grid-cols-1 gap-x-6 lg:mb-24 lg:grid-cols-12">
-							<div className="lg:col-span-12">
-								<Panel n="01" art={ART.unbirth} aspect="aspect-[21/9]" position="object-[center_40%]" />
-							</div>
-							<Plate n="01" from="left" className="-mt-7 mx-4 lg:col-start-1 lg:col-end-8 lg:-mt-22 lg:mr-0 lg:ml-12">
-								{STORY[0]}
-							</Plate>
-						</div>
-
-						<div className="mb-16 grid grid-cols-1 gap-x-6 lg:mb-24 lg:grid-cols-12 lg:items-center">
-							<div className="lg:col-start-6 lg:col-end-13 lg:row-start-1">
-								<Panel n="02" art={ART.accords} aspect="aspect-[4/5]" position="object-[60%_center]" />
-							</div>
-							<Plate n="02" from="left" className="-mt-7 mx-4 lg:col-start-1 lg:col-end-8 lg:row-start-1 lg:m-0 lg:-mr-18 lg:self-center">
-								{STORY[1]}
-							</Plate>
-						</div>
-
-						<div className="mb-16 grid grid-cols-1 gap-x-6 lg:mb-32 lg:grid-cols-12">
-							{/* The turn of the story is the largest picture on the page:
-							    it breaks the column on both sides where there is room. */}
-							<div className="lg:col-span-12 lg:-mx-8 xl:-mx-24">
-								<Panel n="03" art={ART.endWars} aspect="aspect-[2/1]" />
-							</div>
-							<Plate n="03" from="right" className="-mt-7 mx-4 lg:col-start-6 lg:col-end-13 lg:-mt-18 lg:mr-12 lg:ml-0">
-								{STORY[2]}
-							</Plate>
-						</div>
-
-						<div className="mb-16 grid grid-cols-1 gap-x-6 lg:mb-24 lg:grid-cols-12 lg:items-center">
-							<div className="lg:col-start-1 lg:col-end-8">
-								<Panel n="04" art={ART.present} aspect="aspect-[4/3]" position="object-[40%_center]" />
-							</div>
-							<Plate n="04" from="right" className="-mt-7 mx-4 lg:col-start-8 lg:col-end-13 lg:m-0 lg:-ml-24 lg:self-center">
-								{STORY[3]}
-							</Plate>
-						</div>
-					</section>
+					{/* The Story: four scenes on one stage, shown one at a time as
+					    the reader scrolls. Same frame, same plate, a different
+					    arrangement every time. */}
+					<StoryStage id="story" title={<StoryHead id="story-title" className="mb-0">The Story</StoryHead>} scenes={STORY_SCENES} />
 
 					{/* The Galaxy of Xalia: the creature's page. */}
 					<section

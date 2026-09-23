@@ -5,9 +5,12 @@
 // stays underneath it, so a browser that never fetches or never animates sees
 // the finished picture.
 //
-// One plate at a time (plateStage.ts): only the plate most in view keeps its
-// SVG in the DOM. Every other plate drops its SVG entirely and shows its still,
-// so a page of plates only ever pays for one.
+// One plate at a time: only the live plate keeps its SVG in the DOM. Every
+// other plate drops its SVG entirely and shows its still, so a page of plates
+// only ever pays for one. A page that presents its plates one scene at a time
+// (the home story's stage) says which plate is live through `active`; left
+// out, the plate joins the page's stage (plateStage.ts), where the plate most
+// in view is live.
 //
 // Motion discipline (docs/DESIGN_SYSTEM.md section 7, ruled exception of
 // 2026-09-22): the plate's fire, smoke and water loop because they are the
@@ -22,6 +25,8 @@ type Props = {
 	src: string;
 	/** The still shown whenever the plate is not live, and beneath it while it is. */
 	poster: { src: string; small: string; alt: string };
+	/** Controlled: whether this plate is the live one. Left out, the plate most in view is live. */
+	active?: boolean;
 	className?: string;
 };
 
@@ -54,16 +59,18 @@ function holdAtStart(host: HTMLElement) {
 	});
 }
 
-export function LivePlate({ src, poster, className }: Props) {
+export function LivePlate({ src, poster, active, className }: Props) {
 	const hostRef = React.useRef<HTMLDivElement>(null);
-	const [live, setLive] = React.useState(false);
+	const controlled = active !== undefined;
+	const [staged, setStaged] = React.useState(false);
+	const live = controlled ? active : staged;
 	const [ready, setReady] = React.useState(false);
 
 	// Join the stage: report how much of this plate is in view; the stage says when it is live.
 	React.useEffect(() => {
 		const host = hostRef.current;
-		if (!host || typeof window === 'undefined' || typeof IntersectionObserver === 'undefined') return undefined;
-		const slot = joinStage(setLive);
+		if (controlled || !host || typeof window === 'undefined' || typeof IntersectionObserver === 'undefined') return undefined;
+		const slot = joinStage(setStaged);
 		const seen = new IntersectionObserver((entries) => entries.forEach((e) => slot.update(e.isIntersecting ? e.intersectionRatio : 0)), { threshold: THRESHOLDS });
 		const near = new IntersectionObserver(
 			(entries) => {
@@ -82,7 +89,7 @@ export function LivePlate({ src, poster, className }: Props) {
 			near.disconnect();
 			slot.release();
 		};
-	}, [src]);
+	}, [src, controlled]);
 
 	// Mount the SVG while live; take it out of the DOM entirely when not.
 	React.useEffect(() => {
