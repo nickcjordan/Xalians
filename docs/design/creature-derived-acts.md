@@ -137,7 +137,7 @@ Every derived harm, displace and restore effect gets a band from a species attri
 | channel harm (mind crush, swarm strike) | willpower | 0.75 |
 | restore (mend, drain) | vitality | 0.6; drain 0.4 |
 
-Bands round to integers and floor at 1. A species may override a band per act (below). Statuses keep the catalog default unless overridden.
+Bands round to integers and floor at 1. A species may override a band per act (below). Statuses keep the catalog default unless overridden. Since 2026-09-23 every band is then capped by the species' signature (see "Signature guardrail, 2026-09-23").
 
 ### Lever moves from the species pass, 2026-09-22
 
@@ -229,3 +229,49 @@ Reported for the next pass; none blocks this release.
 2. **Small-strength bodies barely hurt.** Avilily (strength 12) derives harms around 9 to 17, which Powerworks turns into 0 or 1 damage; 65 of 300 Avilily seeds cannot damage a machine. This is the output factor meeting a low attribute, not a selection fault; the lever is a floor on derived harm or a light-instrument curve, to be ruled with the calibration doc.
 3. **Games meet derived statuses they do not read yet.** Powerworks names stunned, slowed, blinded, disoriented and focused as unsupported, resolves area harm against the one selected target, and lets a drain heal even when its harm is blocked. These are game-side gaps (the seam reports them explicitly) and the next Powerworks pass; they are recorded in `powerworks-v5-mechanics.md`.
 4. **Same verb, different part.** Crystorn can hold Heavy Ram (hide) and Heavy Gore (horns), both repeatable contact impact. They are different acts by the contract (different instruments), and the names say so, but in a game that ignores instruments they play alike. Left as is: distinguishing them is the game's choice of what an instrument means.
+
+## Signature guardrail, 2026-09-23
+
+**The rule (a lever):** an ordinary act never outclasses the signature at what the signature does.
+
+**Why.** In Powerworks, Crystorn's signature Gem Radiance (a stream of light harm from the horns, fixed at 68) was never worth ordering, because its derived ordinary Blinding Shot (the light spray through the same horn conduit, harm plus blinded) rolled 73. The spray's band was willpower [62, 88] times 0.85, so [53, 75]: an ordinary act could beat the defining one at its own job and add a status on top. Derivation widened every body's act space on 2026-09-22 without anything tying it back to the act the species is known for.
+
+**As implemented** (`deriveActs` and `signatureCaps` in `packages/content/src/creature/acts.ts`, enforced by `compileSpecies`):
+
+1. Only an action signature sets caps. A passive signature (Bioflim, Imprit, Xylum) is exempt.
+2. Each harm, displace or restore effect of the signature action sets a cap for its kind. A kind is: harm by mechanism (`piercing harm`), elemental harm by element (`elemental light harm`, the element being the signature action's element), displace by direction (`displace away`, `displace toward`), and restore as one kind. A fixed signature intensity is a band of one value. Two effects of one kind cap at the wider of the two. When the signature action carries an element, its physical harm also caps elemental harm of that element with the same band (added the same day to close the Terragoyle gap below): a thrown boulder authored as impact on a rock tail and the derived rock throw are one act. The reverse half, an elemental harm capping the physical mechanism it names, would need a signature carrying both shapes; none of the 32 does, so it is not implemented. A different physical mechanism stays a different act (Vespersyn's cutting rake under a piercing signature, Kosanos's compression press under a cutting one).
+3. Every derived effect of a capped kind has its band clamped: its maximum to at most the cap's maximum and its minimum to at most the cap's minimum. The clamp runs inside derivation after `acts.output` overrides, so an override below the cap stands.
+4. An explicit `acts.output` whose band would exceed the cap is a compile error naming the override, the signature, both bands and the kind. An authored mechanism band above the cap is also a compile error, never a silent clamp: the author wrote that number and has to lower it.
+5. Status, protect and remove effects are not compared, and guaranteed actions other than the signature are not touched.
+
+`check:creature-model` prints one line per species, `signature kind: <kind>; ordinary acts clamped: N` (N counts derived mechanisms with a lowered band, listed by key). `creatureCanonicalPilot.test.ts` asserts that every compiled band of a signature's kind, derived or authored, sits at or under the signature band at both ends, and that no ordinary roll over 24 seeds per species lands above the signature's maximum.
+
+**What it touched.** 16 of 32 species have an action signature with a capped kind (15 harm, Sonalloy's restore); three of them (Chromocat light, Hippochamp water, Terragoyle rock) carry an element on a physical signature and so also cap that element's elemental harm. 13 action signatures carry only statuses, protection or removal, and 3 signatures are passive. The compiler clamps 5 derived acts on 3 species: Crystorn's `horns/beam` and `horns/spray` through light, both [53, 75] to [53, 68]; Hippochamp's `trunk/spray` and `trunk/lash` through water, both [43, 60] to [43, 55]; and Kosanos's `blades/rake`, [60, 77] to [60, 72]. Fifteen records failed to compile under the rule and were lowered to the cap (never a signature raised), with a dated line in each audit:
+
+| species | band lowered | from | to | cap |
+|---|---|---|---|---|
+| chromocat | mechanism `ion-sickle` | [52, 78] | [52, 75] | cutting 75 |
+| codazzo | mechanism `explosive-barb` | [45, 70] | [45, 62] | impact 62 |
+| drilltail | mechanism `tail-auger` | [42, 67] | [42, 58] | piercing 58 |
+| dromeus | `acts.output fangs/strike` | [40, 65] | [40, 62] | piercing 62 |
+| foromeer | `acts.output spurs/strike` | [50, 75] | [50, 70] | piercing 70 |
+| frackworm | `acts.output jaws/strike` | [65, 95] | [65, 88] | piercing 88 |
+| graviclaw | `acts.output pincers/strike` | [65, 95] | [65, 85] | compression 85 |
+| hippochamp | mechanism `water-cannon` | [35, 62] | [35, 55] | impact 55 |
+| kosanos | `acts.output blades/strike` | [55, 80] | [55, 72] | cutting 72 |
+| luceras | `acts.output horns/strike` | [32, 58] | [32, 56] | impact 56 |
+| sonalloy | mechanism `alloy-seam` | [45, 75] | [45, 65] | restore 65 |
+| terragoyle | `acts.output tail/hurl` | [65, 90] | [65, 82] | elemental rock 82 (from its impact signature on a rock tail) |
+| venemist | mechanism `solvent-mist` | [45, 72] | [45, 65] | elemental chemical 65 |
+| vespersyn | `acts.output swarm/strike` and mechanism `swarm-bite` | [42, 68] | [42, 62] | piercing 62 |
+| voltish | mechanism `claw-discharge` | [45, 75] | [45, 68] | elemental electric 68 |
+
+An override keyed `instrument/strike` bands every harm mechanism that strike makes, so lowering Foromeer's, Frackworm's, Graviclaw's and Luceras's strike override also lowers the sibling mechanism (cutting spur, compression jaw, cutting pincer, piercing horn) that the signature does not cap.
+
+**Friction left by the rule as written**, reported for Nick, not ruled:
+
+1. **Terragoyle, closed the same day.** Its signature thrown boulder is authored as `impact` harm on a rock tail (82), while the derived `tail/hurl` through the rock conduit is `elemental rock` harm with an override of [65, 90]. Same act in the lore, different kind in the record, so the first cut of the guardrail did not see it. Closed by the element extension in point 2 of "As implemented"; the override is lowered to [65, 82], and Hippochamp's water spray and lash are clamped by the same extension.
+2. **Near neighbors, left alone.** Vespersyn's derived swarm rake (`cutting`, up to 64) sits over its `piercing` signature (62), and Kosanos's authored `body-press` (`compression`, up to 75) over its `cutting` signature (72). Different mechanisms are different acts, so both stay; recorded in case play shows they crowd the signature out anyway.
+3. **Ties are allowed.** Signatures are fixed values, so a clamped band reaches the signature exactly (Crystorn's spray now tops out at 68 and still adds blinded). "Never outclasses" is met; "always worth ordering" is not guaranteed if a game values the rider. The lever to pull, if needed, is a margin below the cap.
+
+Released as `generation-0.7.0-5`.

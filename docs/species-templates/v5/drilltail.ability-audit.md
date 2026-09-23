@@ -34,3 +34,7 @@ drilltail: valid permissions, four distinct actions constructible
   acts: 23 distinct on offer (pincers 5, tail 6, jaws 4, shell 4, claws 4); exclusions: none
   naming over 24 seeds: 0.0% of ordinary actions carry a structural parenthetical, 0.0% of creatures have two ordinary actions sharing a base name
 ```
+
+## Signature guardrail, 2026-09-23
+
+An ordinary act never outclasses the signature at what the signature does (contract: `docs/design/creature-derived-acts.md`, "Signature guardrail, 2026-09-23"). Authored mechanism `tail-auger` piercing harm lowered from [42, 67] to [42, 58], the cap set by the signature `drilltail-defining` (piercing harm 58).

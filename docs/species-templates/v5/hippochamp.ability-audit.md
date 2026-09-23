@@ -23,3 +23,7 @@ hippochamp: valid permissions, four distinct actions constructible
   acts: 28 distinct on offer (trunk 11, hooves 3, tail 5, crest 2, spines 4, hide 3); exclusions: trunk/mend
   naming over 24 seeds: 0.0% of ordinary actions carry a structural parenthetical, 0.0% of creatures have two ordinary actions sharing a base name
 ```
+
+## Signature guardrail, 2026-09-23
+
+An ordinary act never outclasses the signature at what the signature does (contract: `docs/design/creature-derived-acts.md`, "Signature guardrail, 2026-09-23"). Authored mechanism `water-cannon` impact harm lowered from [35, 62] to [35, 55], the cap set by the signature `hippochamp-defining` (impact harm 55). Because the signature carries the water element, it also caps elemental water harm: the compiler clamps the derived water spray and water lash through the trunk from [43, 60] to [43, 55].
