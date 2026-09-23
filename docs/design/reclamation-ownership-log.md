@@ -63,7 +63,7 @@ What it reads, and where each effect kind lands (measured over the seed-7 pool, 
 3. **(Pass 45: closed without a change; see the pass 45 entry.)** **The footing answers "who can stand here", not "what does holding it do".** Pass 29 gave the empty world the half of the stake the game can compute from the record. The other half - what claiming a world is worth toward the Charter, what losing it costs - is still only in the status strip's sentence. Five of nine worlds clinch; a panel could say where this one sits in that count.
 4. **(Pass 44: done. The phone world head carries the temperature scale and readout, each card its speed; the log stays behind ≡ and the attribute marks in the creature's reading.)** **Advanced mode is Simple on a phone.** `advanced-390` differs from `simple-390` only by a temperature range: the log and the inspector, its two best features, are both absent at 390. Either give them a phone form or say the mode is desktop-only.
 5. **(Pass 38: done.)** The site navbar and masthead are gone from the match, and the top bar is one row. **The first viewport on a phone is all chrome.** Breadcrumb, mode toggle, rival name, sound, round header, world chips, two score strips, phase badge, turn line and a three-line instruction, before any world panel.
-6. **The three borrowed effect kinds** (displace, transfer, suppress, 261 actions) still read as plain attacks. Act flip makes a creature's second act matter, which changes the case for these.
+6. **(Pass 49: closed. Schema 5 retired transfer, restrain and suppress as effect types; the status layer of pass 32 carries what they meant, and displace stays an attack by the base redesign's ruling. See recordReading.ts.)** **The three borrowed effect kinds** (displace, transfer, suppress, 261 actions) still read as plain attacks. Act flip makes a creature's second act matter, which changes the case for these.
 7. **(Pass 48: done for dromeus, akinza and avilily; imprit is still cut most of the time.)** **Fire is a dead element and dromeus a dead species** in the draft. Read it pooled first.
 8. **(Pass 46: done. The record schema is the published range; a test holds the game's scale to it.)** **The generator's attribute ranges are not published anywhere the game can read.**
 9. **No human has played a full Proving.** The instrument exists (hot-seat, passes 20 to 23).
@@ -914,3 +914,17 @@ The mirror (same creatures both sides) reads A 53.5 pooled: with identical creat
 **Not changed:** simple mode still does not print speed on the cards. The preview's forecast already includes who lands first, so its consequences are shown even when the number is not.
 
 **Verified:** 588 rules tests (the rating test now includes speed, plus a new test that a faster copy rates higher), typecheck clean, 1586 web tests, the four table checks green, and the validation report regenerated.
+
+### Pass 49 (2026-09-23): the Ruling says why
+
+**From pass 47's critic** (arc 3 of 10): "every Ruling reads exactly the same: 1 world yours, 2 worlds the rival's". What differed from round to round was the why, and nothing said it: a world won by 46, two given away for nothing.
+
+- **The stamp on each world says why:** "yours by 37", "rival's, unopposed", "tied". Unopposed means the loser sent no one. The judge's own entries leave out the downed, so a world whose defenders all fell would have read as unopposed; the verdict counts who was at the world when the Clash began.
+- **The Ruling line says the round world by world:** "Round 2: Endessa yours by 37; Saiphus and Luminax the rival's, unopposed." It replaces "you took 1 world, the rival 2" in both the callout and the top line.
+- On a phone the stamp may wrap to two lines.
+
+Five new tests (`reclamationRuling.test.js`), including the fallen-defenders case.
+
+**Open item 6, closed.** Schema 5 retired transfer, restrain and suppress as effect types; the status layer of pass 32 carries what they meant, and displace stays an attack by the base redesign's ruling (a push at a sealed world is force and nothing more). The item described content that no longer exists.
+
+**Verified:** 207 Reclamation web tests; the four table checks green; the full play-through re-shot and read at 1440 and 390.

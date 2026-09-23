@@ -6899,3 +6899,10 @@
 	/* "20 →17" does not fit a phone world's head beside the bar; the figures carry their own forecasts */
 	.rec-console--match[data-terminal] .rec-site .rec-tally-after { display: none; }
 }
+
+/* --- pass 49 ---------------------------------------------------------------- */
+
+/* the stamp says why ("rival's, unopposed"), so on a phone column it may take two lines */
+@media (max-width: 760px) {
+	.rec-console--match[data-terminal] .rec-stamp { white-space: normal; text-align: center; max-width: 100%; line-height: 1.2; }
+}
