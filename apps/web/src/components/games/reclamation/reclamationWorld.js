@@ -91,8 +91,8 @@ export function EnvironmentScale({ site, ghost }) {
 		: (tol.breathes.length > 0 && env.medium && !tol.breathes.includes(env.medium)) ? 'cannot'
 			: (env.medium && !tol.ambientMedia.includes(env.medium)) ? 'strained' : 'ok';
 	const medium = env.medium ? String(env.medium) : 'unknown';
-	const bandText = hasBand ? `${t.min} to ${t.max} C` : 'unrecorded band';
-	const ownText = own ? `; the creature tolerates ${own.min} to ${own.max} C` : '';
+	const bandText = hasBand ? `${t.min} to ${t.max}\u00b0C` : 'unrecorded band';
+	const ownText = own ? `; the creature tolerates ${own.min} to ${own.max}\u00b0C` : '';
 	return (
 		<div className={`rec-env${ghost ? ` rec-env--${ghost.strainLevel}` : ''}`} title={`${medium}, ${bandText}${ownText}`}>
 			<span className={`rec-env-medium rec-env-medium--${medium}${mediumOk ? ` rec-env-medium--${mediumOk}` : ''}`} aria-label={`${medium} medium`}>
@@ -108,7 +108,7 @@ export function EnvironmentScale({ site, ghost }) {
 					<span className="rec-env-band rec-env-band--creature" style={{ transform: `translateX(${pctOnScale(own.min)}cqw)`, width: `${Math.max(0.8, pctOnScale(own.max) - pctOnScale(own.min))}%` }} />
 				)}
 			</span>
-			<span className="rec-env-readout g-mono">{hasBand ? `${t.min} to ${t.max} C` : 'no band'}</span>
+			<span className="rec-env-readout g-mono">{hasBand ? `${t.min} to ${t.max}\u00b0C` : 'no band'}</span>
 		</div>
 	);
 }
@@ -453,6 +453,9 @@ function ReclamationWorld({
 						showMeter: !!advanced,
 						fallen: !!entry.fallen,
 						ownSweep: seat === you && !!(ownSweeps && ownSweeps[entry.recordId] > 0),
+						// pass 38: a strike of yours at a world with no rival in sight will find no target
+						noTarget: seat === you && !!siteFootings && !!holds[entry.recordId] && holds[entry.recordId].role === 'strike'
+							&& theirs.filter((e) => e.record).length === 0 && !(hiddenEnemyCount > 0),
 						forecast: forecastOf(entry),
 						blowMagnitude: holds[entry.recordId] ? holds[entry.recordId].blowMagnitude : undefined,
 						selected: armedRecordId === entry.recordId || movingRecordId === entry.recordId,

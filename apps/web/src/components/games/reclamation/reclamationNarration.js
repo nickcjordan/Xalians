@@ -346,5 +346,5 @@ export function narrateMatchEnd(ctx = {}) {
 	if (winner) {
 		return `The rival takes the Charter, ${sites(sitesThem)} to ${sitesYou}, ${why}.`;
 	}
-	return `The Proving ends level, ${sitesYou} to ${sitesThem}.`;
+	return `The game ends level, ${sitesYou} to ${sitesThem}.`;
 }

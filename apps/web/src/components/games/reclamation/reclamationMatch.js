@@ -181,6 +181,8 @@ class ReclamationMatch extends React.Component {
 			// inline confirm in the status strip. A stake is once per Proving, so it is
 			// never taken on one click.
 			pendingStakeSiteId: null,
+			// pass 38: the stake is one key in the squad bar; the worlds offer it only while it is open
+			stakeMode: false,
 			inspect: null, // { record, site }
 			// resolution playback
 			playback: null, // { events, index, snapshotBoard, hurtAt }
@@ -580,9 +582,9 @@ class ReclamationMatch extends React.Component {
 				this.setState({ panel: null });
 				return;
 			}
-			if (this.state.armedRecordId || this.state.movingRecordId || this.state.inspect || this.state.pendingStakeSiteId) {
+			if (this.state.armedRecordId || this.state.movingRecordId || this.state.inspect || this.state.pendingStakeSiteId || this.state.stakeMode) {
 				this.setState({
-					armedRecordId: null, armedRole: null, movingRecordId: null, inspect: null, pendingStakeSiteId: null,
+					armedRecordId: null, armedRole: null, movingRecordId: null, inspect: null, pendingStakeSiteId: null, stakeMode: false,
 				});
 			}
 			return;
@@ -1013,7 +1015,7 @@ class ReclamationMatch extends React.Component {
 		const view = this.view();
 		const stakeable = (view.players[this.seatInPlay()].stakeableSiteIds) || [];
 		if (!stakeable.includes(siteId)) {
-			this.notice('That world cannot be staked now. A stake is once a Proving, and only before your first send of the round.');
+			this.notice('That world cannot be staked now. A stake is once a game, and only before your first send of a round.');
 			return;
 		}
 		this.setState((prev) => ({
@@ -1021,7 +1023,11 @@ class ReclamationMatch extends React.Component {
 		}));
 	};
 
-	cancelStake = () => this.setState({ pendingStakeSiteId: null });
+	cancelStake = () => this.setState({ pendingStakeSiteId: null, stakeMode: false });
+
+	toggleStakeMode = () => this.setState((prev) => ({
+		stakeMode: !prev.stakeMode, pendingStakeSiteId: null, armedRecordId: null, armedRole: null, movingRecordId: null,
+	}));
 
 	confirmStake = () => {
 		const { match, pendingStakeSiteId } = this.state;
@@ -1045,7 +1051,7 @@ class ReclamationMatch extends React.Component {
 		}
 		// a stake does not spend the turn and can never close a round, so it is a plain
 		// state step rather than a commitStep
-		this.setState({ match: next, pendingStakeSiteId: null }, this.afterEngineStep);
+		this.setState({ match: next, pendingStakeSiteId: null, stakeMode: false }, this.afterEngineStep);
 	};
 
 	/*
@@ -1607,6 +1613,9 @@ class ReclamationMatch extends React.Component {
 		if ((me.sentCount || 0) >= cap) {
 			return `You have used all ${cap} sends. Pass to end your round.`;
 		}
+		if (this.state.stakeMode) {
+			return 'Pick a world to stake: it counts two worlds for whoever holds it. Press Stake again to leave it.';
+		}
 		const rec = this.recommendation(view);
 		if (rec && rec.type === 'pass') {
 			return `Pass suggested: ${PASS_SHORT[rec.reasonKey] || rec.reason.split('. ')[0].replace(/\.$/, '').toLowerCase()}.`;
@@ -1799,11 +1808,11 @@ class ReclamationMatch extends React.Component {
 		return (
 			<div className="rec-stake-ask g-body" data-stake-ask={siteId} role="status">
 				<span className="rec-stake-ask-text">
-					Stake {site ? site.world.planet : 'this world'}? It counts {word} toward the Charter for whoever holds it. Once a Proving.
+					Stake {site ? site.world.planet : 'this world'}? It counts {word} worlds for whoever holds it.
 				</span>
 				<span className="rec-stake-ask-actions">
 					<button type="button" className="g-btn g-btn--primary rec-stake-yes" onClick={this.confirmStake} data-stake-confirm>Stake it</button>
-					<button type="button" className="g-btn rec-stake-no" onClick={this.cancelStake} data-stake-cancel>Not this round</button>
+					<button type="button" className="g-btn rec-stake-no" onClick={this.cancelStake} data-stake-cancel>Cancel</button>
 				</span>
 			</div>
 		);
@@ -2075,7 +2084,7 @@ class ReclamationMatch extends React.Component {
 							hoverSiteId={this.state.hoverSiteId}
 							advanced={!simple}
 							stakes={view.stakes}
-							stakeableSiteIds={deploying && view.turn === this.seatInPlay() ? (me.stakeableSiteIds || []) : []}
+							stakeableSiteIds={deploying && view.turn === this.seatInPlay() && (this.state.stakeMode || this.state.pendingStakeSiteId) ? (me.stakeableSiteIds || []) : []}
 							pendingStakeSiteId={this.state.pendingStakeSiteId}
 							onStake={this.askStake}
 							onSiteClick={this.handleSiteClick}
@@ -2126,6 +2135,9 @@ class ReclamationMatch extends React.Component {
 									onHoverRecord={(id) => this.setState({ hoverRecordId: id })}
 									onPass={this.handlePass}
 									onBeginMove={this.beginMove}
+									stakeAvailable={deploying && view.turn === this.seatInPlay() && (me.stakeableSiteIds || []).length > 0}
+									stakeMode={this.state.stakeMode || !!this.state.pendingStakeSiteId}
+									onToggleStake={this.toggleStakeMode}
 									rivalBeat={this.rivalBeat()}
 									interactive={deployPanelOpen}
 								/>

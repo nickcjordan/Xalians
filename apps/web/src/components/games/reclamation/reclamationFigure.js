@@ -133,6 +133,7 @@ function ReclamationFigure({
 	ownSweep,
 	forecast,
 	lossText,
+	noTarget,
 }) {
 	const mine = seat === you;
 	const px = size === 'small' ? 40 : FIGURE_SIZE;
@@ -228,6 +229,9 @@ function ReclamationFigure({
 				</span>
 			)}
 			{/* pass 38: your own sweep at this world will hit this creature too; nothing said so before the Clash did it */}
+			{!threat && !ownSweep && noTarget && (
+				<span className="rec-figure-threat rec-figure-threat--own" data-no-target title="No rival stands at this world, so its strike will find no target">no target</span>
+			)}
 			{!threat && ownSweep && (
 				<span className="rec-figure-threat rec-figure-threat--own" data-own-sweep title={lossText}>own sweep</span>
 			)}

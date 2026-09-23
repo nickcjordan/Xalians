@@ -76,7 +76,7 @@ export function HelpPanel({ match, clinch, onClose }) {
 			</section>
 			<section className="rec-help-section">
 				<h3 className="rec-help-head">Advanced mode</h3>
-				<p>Adds the arithmetic. On each squad card: its speed (the arrowed number; faster attacks land first), the small marks for what its attributes do (hover one for its meaning), and three dots, one per world of the round from left to right, brighter where it holds better, the ringed one its best. On each world: the temperature band, with the world&apos;s range shaded and the picked creature&apos;s own marked, and how many of your squad would be strained there. Under a preview, every hit a sweep would land. The log runs down the side.</p>
+				<p>Adds the arithmetic. On each squad card: its speed (the arrowed number; faster attacks land first), the small marks for what its attributes do (hover one for its meaning), and three dots, one per world of the round from left to right, brighter where it holds better, the ringed one its best. On each world: the temperature band, with the world&apos;s range shaded and the picked creature&apos;s own marked, and how many of your squad would be strained there. Under a preview, every hit a sweep would land. The log runs down the side. A phone has room for the worlds and the squad only, so there advanced mode keeps its numbers in each creature&apos;s reading (its &#9432;) and the log behind &equiv;.</p>
 			</section>
 			{frames.length > 0 && (
 				<section className="rec-help-section">
@@ -101,16 +101,23 @@ export function HelpPanel({ match, clinch, onClose }) {
 	);
 }
 
-// newest first, the way the advanced rail reads, so the present is at the top
+// in order, the way the advanced rail reads, opened at the present (the bottom)
 export function HistoryPanel({ lines, onClose }) {
+	const endRef = React.useRef(null);
+	React.useLayoutEffect(() => {
+		if (endRef.current && endRef.current.scrollIntoView) {
+			endRef.current.scrollIntoView({ block: 'end' });
+		}
+	}, []);
 	return (
 		<Panel title="History" kind="history" onClose={onClose}>
 			{lines.length === 0 && <p className="rec-help-quiet">Nothing has happened yet.</p>}
 			<ol className="rec-history">
-				{lines.slice().reverse().map((line, i) => (
-					<li className={i === 0 ? 'rec-history-line rec-history-line--now' : 'rec-history-line'} key={`${lines.length - i}`}>{line}</li>
+				{lines.map((line, i) => (
+					<li className={`rec-history-line${i === lines.length - 1 ? ' rec-history-line--now' : ''}${/^Round \d+:/.test(line) ? ' rec-log-round' : ''}`} key={i}>{line}</li>
 				))}
 			</ol>
+			<span ref={endRef} />
 		</Panel>
 	);
 }
@@ -126,7 +133,7 @@ export function SettingsPanel({ children, rivalName, seed, onAbandon, onClose })
 			{onAbandon && (
 				<>
 					<button type="button" className="g-btn rec-settings-abandon" onClick={onAbandon} data-abandon>End this game</button>
-					<p className="rec-help-quiet">Leave keeps the game to resume later. Ending it does not.</p>
+					<p className="rec-help-quiet">To stop for now, use Leave at the top left: the game waits for you. Ending it cannot be undone.</p>
 				</>
 			)}
 		</Panel>

@@ -233,7 +233,7 @@ function decisiveSentence(match, you, worlds, reason) {
 		return 'The Proving ran its third frame with no world decisively read.';
 	}
 	const winner = narrowest.who === 'you' ? 'You' : 'The rival';
-	return `${winner} won ${worldLabel(narrowest)} by the narrowest margin, in round ${narrowest.frameIndex + 1}, and that decided the Charter.`;
+	return `${winner} won ${worldLabel(narrowest)} by the narrowest margin, in round ${narrowest.frameIndex + 1}, and that decided the game.`;
 }
 
 function championOf(worlds, you) {

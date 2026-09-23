@@ -129,13 +129,13 @@ function Plinth({ record, view, you, armed, suggested, disabled, onArm, onInspec
 					<span className={`rec-plinth-tag rec-plinth-tag--${slot.state}`}>
 						{/* pass 38: "sent to", so the slot that names a best world in hand never reads the same once sent */}
 						{slot.state === 'sent'
-							? <span className={`rec-plinth-sent g-el-${slot.site.world.element}`} title={`Sent to ${slot.site.world.planet}`}><span className="rec-plinth-best-dot" aria-hidden="true" />sent<span className="rec-plinth-sent-where"> {slot.site.world.planet}</span></span>
+							? <span className={`rec-plinth-sent g-el-${slot.site.world.element}`} title={`Sent to ${slot.site.world.planet}`}><span className="rec-plinth-best-dot" aria-hidden="true" />&rarr;<span className="rec-plinth-sent-where">{slot.site.world.planet}</span></span>
 							: slot.state === 'holding' ? 'holding' : slot.state === 'downed' ? 'fallen' : 'away'}
 					</span>
 				)}
 				{inHand && (suggested || stealthy) && (
 					<span className="rec-plinth-marks">
-						{suggested && <span className="rec-plinth-mark rec-plinth-mark--suggested">suggested</span>}
+						{suggested && <span className="rec-plinth-mark rec-plinth-mark--suggested" title={typeof suggested === 'string' ? suggested : undefined}>suggested</span>}
 						{stealthy && <span className="rec-plinth-mark rec-plinth-mark--glyph" title="Stealthy: arrives hidden"><HiddenGlyph /></span>}
 					</span>
 				)}
@@ -175,6 +175,9 @@ function ReclamationBench({
 	onChooseRole,
 	// pass 38: false through the Clash, when the bench stays in the dock but nothing on it acts
 	interactive = true,
+	stakeAvailable,
+	stakeMode,
+	onToggleStake,
 }) {
 	const me = view.players[you];
 	const yourTurn = interactive && view.turn === you && view.phase === 'deploy';
@@ -263,6 +266,19 @@ function ReclamationBench({
 								{movingRecordId === mover.record.id ? 'Choose a world' : `Move ${speciesLabel(mover.record)}`}
 							</button>
 						))}
+						{/* pass 38: the stake is one key here, not a button on every world's head */}
+						{stakeAvailable && (
+							<button
+								type="button"
+								className={`g-btn rec-stake-key${stakeMode ? ' rec-fallback-btn--active' : ''}`}
+								onClick={onToggleStake}
+								aria-pressed={!!stakeMode}
+								data-stake-mode
+								title="Once a game, before your first send of a round: the world you stake counts two worlds for whoever holds it."
+							>
+								{stakeMode ? 'Stake: pick a world' : <>Stake &times;2</>}
+							</button>
+						)}
 						<button
 							type="button"
 							className={`g-btn rec-pass-btn${recommendation && recommendation.type === 'pass' ? ' rec-pass-btn--suggested g-btn--primary' : ''}`}
@@ -285,7 +301,7 @@ function ReclamationBench({
 						view={view}
 						you={you}
 						armed={armedRecordId === record.id}
-						suggested={suggestedRecordId === record.id}
+						suggested={suggestedRecordId === record.id ? (rec.reason || true) : false}
 						disabled={!yourTurn || me.passed || sendsLeft === 0}
 						onArm={onArm}
 						onInspect={onInspect}

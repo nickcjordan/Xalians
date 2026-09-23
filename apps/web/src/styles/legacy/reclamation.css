@@ -6629,8 +6629,6 @@
 }
 
 @media (max-width: 760px) {
-	/* on a phone the own-sweep forecast is the amber number itself; the chip does not fit */
-	.rec-console--match[data-terminal] .rec-figure-threat--own { display: none; }
 	/* a sent card's world is its dot; the name did not fit and was cut */
 	.rec-console--match[data-terminal] .rec-plinth-sent .rec-plinth-sent-where { display: none; }
 	/* squad names in full */
@@ -6660,4 +6658,31 @@
 }
 @container (max-width: 299.98px) {
 	.rec-console--match[data-terminal] .rec-site-floor .rec-rank[data-rank-list] .rec-figure-plate { padding: 0 1px; gap: 1px; }
+}
+
+/* --- pass 38, eighth round -------------------------------------------------- */
+
+/* the world total's forecast reads at the size of the total it follows */
+.rec-console--match[data-terminal] .rec-tally-after { font-size: 0.9em; margin-left: 3px; }
+.rec-console--match[data-terminal] .rec-tally-side--theirs .rec-tally-after { margin-right: 3px; }
+
+/* the phone keeps the own-sweep and no-target chips, small, inside the creature's row */
+@media (max-width: 760px) {
+	.rec-console--match[data-terminal] .rec-figure-threat--own { display: inline-block; font-size: 7px; width: auto; height: auto; padding: 0 2px; border-radius: 2px; letter-spacing: 0.02em; }
+}
+
+/* the log reads as prose, in order, each round's ruling a divider */
+.rec-console--match[data-terminal] .rec-rail .rec-log { font-family: var(--g-font-body); letter-spacing: 0; }
+.rec-console--match[data-terminal] .rec-log-round,
+.rec-history-line.rec-log-round { margin-top: var(--g-1); padding-top: var(--g-1); border-top: var(--g-hairline) solid var(--g-seam); font-weight: 700; }
+
+/* the one stake key sits beside Pass */
+.rec-console--match[data-terminal] .rec-stake-key { white-space: nowrap; }
+/* the stake's confirm is one row: the question, then its two keys */
+.rec-console--match[data-terminal] .rec-status-say .rec-stake-ask { display: flex; flex-direction: row; align-items: center; gap: var(--g-2); flex-wrap: nowrap; min-width: 0; }
+.rec-console--match[data-terminal] .rec-status-say .rec-stake-ask-text { flex: 1 1 auto; min-width: 0; }
+.rec-console--match[data-terminal] .rec-status-say .rec-stake-ask-actions { display: flex; width: auto; gap: var(--g-1); flex: 0 0 auto; }
+@media (max-width: 760px) {
+	.rec-console--match[data-terminal] .rec-status-say .rec-stake-ask-text { font-size: var(--g-size-small); line-height: 1.25; }
+	.rec-console--match[data-terminal] .rec-status-say .rec-stake-ask .g-btn { min-height: 30px; padding: 0 8px; font-size: 10px; }
 }
