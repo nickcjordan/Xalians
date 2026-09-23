@@ -5,10 +5,10 @@
 Nick disliked the Unbirth painting (empty beds before an energy core: two ideas side by side, and dull). He approved a new scene built on Floria's history: the first storm after the Genesis Prototype was switched on. The machine throws seed pods into the wind, and the flood that was meant to wash its mistakes away carries them across the world. The panel reads left to right, from cause to consequence: machine, seeds, first growth, the young World Tree.
 
 Lore checks, done by the builder (Nick does not fact-check lore):
-- Floria before the Generator was shallow ocean and smooth rock. Once a year its oceans vaporized into clouds dense enough to blot out the sun, then fell back as a torrent that washed the world smooth (Floria, paragraphs 1 and 2).
-- The Generator went on Floria so mistakes "would simply be washed away in due time" (paragraph 3).
-- It ran "at full capacity through the entire storm," making "not just Xalians ... but the vegetation, fungi and jungles to support them," and the World Trees (paragraph 7). Floria is the written exception: Generators elsewhere make Xalians, and the other worlds have native life (Poseidas paragraph 1, Luminax paragraphs 1 and 2).
-- "Creatures born from the first seeds of the Genesis Prototype" (paragraph 10) is hedged in the source with "some say". The plate shows seeds, not a claim.
+- Floria before the Generator was shallow ocean and smooth rock. Once a year its oceans vaporized into clouds dense enough to blot out the sun, then fell back as a torrent that washed the world smooth (Floria, paragraph 2).
+- The Generator went on Floria so mistakes "would simply be washed away in due time" (paragraph 4).
+- It ran "at full capacity through the entire storm," making "not just Xalians ... but the vegetation, fungi and jungles to support them," and the World Trees (paragraph 8). Floria is the written exception: Generators elsewhere make Xalians, and the other worlds have native life (Poseidas paragraph 1, Luminax paragraphs 1 and 2).
+- "Creatures born from the first seeds of the Genesis Prototype" (paragraph 11) is hedged in the source with "some say". The plate shows seeds, not a claim.
 - Inference, not stated canon: the pods carry both plants and plant-like Xalians. No text on the page states it.
 - The fleeing Vallerii ship was left out, so the scene carries one idea.
 
@@ -132,3 +132,52 @@ Round 8 was the last under the cap:
 - **The cold checks found real misses early.** The first found the Xalian hidden in the dark, the Generator's glow washing its own body, and the World Tree failing its lore scale.
 - **After that, the cold checks mostly churned on taste.** Over four checks the tree was, in turn, an oak, a dead tree, an acacia, a baobab and a mushroom. The pods went from fireflies to comets.
 - **Lesson.** One cold check is worth running at the gate, and its findings about identity and lore should be taken. Repeated cold checks on a still-life object whose look is a matter of taste do not converge, and the call should go to Nick on the live page. That matches the Accords trial.
+
+## Enhancement pass (Nick, 2026-09-23)
+
+After seeing the plate live, Nick asked for all five enhancements I had proposed. The loop was the same as before: one resumed visual reviewer and one resumed motion reviewer.
+
+**What was added**
+- **The birth.** Once a cycle, after the surge, the hatch in the plinth slides open on a lit interior. A newborn of the adult's kind, at half its size, walks across the lit interior as it grows toward the threshold. It hops down, pauses on the shelf, walks down the shelf's lit face and wades off downstream, fading into the rain. t=0 falls inside the pause, so the still poster shows the newborn beside the open hatch. Lore: Floria paragraph 8 (the Prototype made Xalians along with the vegetation).
+- **The overdrive surge.** The core charges, then flares white. Every seam blazes, all three vents fire together and throw a volley, and the cloud base and the rain around the machine light up. Then it settles. It runs about 4 s of the 24 s cycle. Lore: paragraphs 5 and 8 (never calibrated; "at full capacity").
+- **Growth you can watch.** Five pods a cycle come to rest on rock tops. A sprout rises from each: a folded pair of leaves opens as the stem climbs, stands, then fades before its seed returns.
+- **The World Tree, replaced.** The distant colossus that four cold checks read as four different ordinary trees is gone. In its place, a young World Tree stands in the middle distance: a trunk climbing into the storm on buttress roots, broad boughs thick enough to be roads, each turning up into a stalk that holds out one enormous flat leaf, seen from below, with rain sheeting off the rims (paragraph 8: "leaves so wide they doubled as landing pads").
+- **A first prototype.**
+  - One structural rib runs the full height; the other stops at an unskinned opening with pipework inside.
+  - A replaced panel in a different metal, and one seam half dark.
+  - Cables sag off the flank and are clamped to the rock.
+  - A vent run is bolted up the right side into the third stack.
+  - A split panel leaks flickering light, with its corner bent out.
+  - Three instrument lamps blink in turn.
+
+## Rounds 9 to 12 (visual 7.5, 8.5, 9 "Nothing worth a round"; motion: see below)
+
+- **The tree (round 9).** It read as floating plates. The boughs are now solid, as dark as the trunk and out of the blur. The stalks are drawn in front of each leaf and turn up into its underside. The rims are softened, and the trunk climbs into a band of cloud lobes that swallows the crown leaf.
+- **The birth (rounds 9 to 11).**
+  - The newborn was bigger than its door and faded in on top of the frame. It is now clipped to the doorway while inside. It walks sideways across the lit interior while growing to .85, and reaches full size through the hop, so nothing pops when the clip opens.
+  - The hop eases out on the rise and in on the fall.
+  - The strides are matched to the ground speed: a 30° swing centered on the vertical while walking, and 20° while emerging.
+- **Wading (rounds 9 to 11).** It walked on the water. Past the first step down, its legs are clipped at a waterline, and rings spread from them.
+- **The prototype (rounds 9 and 10).**
+  - Two symmetric ribs and even seams read as a cage. That was broken with the stopped rib, the opening and the dead half-seam.
+  - The crack read first as a lightning icon, then as a stuck pod. It is now a thin split with a lit core line and a spill below.
+- **Sprouts (round 10).** Mid-growth, a sprout read as a bulb on a stick. Now the leaves start as a folded pair and open while the stem rises, with no bud knob. It is also smaller.
+- **Pods (motion, rounds 9 to 12).** Lodge pods overtook their bursts, pods rode through sprouts, and the surge volley crossed itself. The fixes:
+  - Each lodge pod joins its burst's fastest-first sort.
+  - Vent 2's regular burst at the release gave way to the volley.
+  - Each vent's volley pods settle in their own band.
+  - The build now carries a sampler that plays every pod's animateMotion (spline easing over keyPoints by arc length) every 0.02 s. It rejects any draw where two pods come within 16 units in flight or 10 once down, or where a pod passes through a standing sprout. The motion reviewer confirmed it models SMIL.
+  - The pod draws were searched and pinned (`PODS_SEARCH=1` searches again).
+
+## The gate: one cold check (7)
+
+The fresh reviewer read the scene right without help ("a machine seeding life into a drowned world"), birth included. What was taken:
+- **The World Tree read as a smokestack** (identity): a parallel-sided trunk rising past its top bough into the cloud. The trunk now tapers hard from its roots and ends in a larger crown leaf pressed against the cloud base.
+- **The surge washed out the machine** (broken): the flare's halo lay over the body, which looked translucent. The halo and the cloud-base light are now masked off the vessel, the plinth and the stacks, so the body stays solid and only the seams and core blaze.
+- **The newborn faded in open water** (it read as drowning). It now wades on toward the grown one, with rings spreading, and fades beside it.
+- **Paragraph numbers** in the concept were off by one (counted from zero). All citations in this log and in `build.py` now count from one.
+
+Logged, not taken:
+- **"The pods read as leaves"** reverses the round 8 decision (almond husks with a lit seam), which the resumed reviewer accepted.
+- **"The newborn is invisible on a phone":** on a phone the lit hatch carries the birth, as the resumed reviewer judged. It is a desktop beat.
+- Its three taste notes.
