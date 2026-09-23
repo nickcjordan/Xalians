@@ -169,6 +169,15 @@ function attackVerb(role) {
 	ctx: { actorName, targetName, siteName, worldName }
 	Every field is optional; the sentence degrades rather than printing "undefined".
 */
+/*
+	PASS 45. A creature left with under half a point of hold rounds to 0, and "stands at 0"
+	beside a creature still standing read as a bug (seen in a Clash on seed 7). Past the
+	decimal, the honest whole-number word is that it barely stands.
+*/
+function standsAt(name, remaining) {
+	return formatHoldShown(remaining) === '0' ? `${name} barely stands` : `${name} stands at ${formatHoldShown(remaining)}`;
+}
+
 export function narrateEvent(event, ctx = {}) {
 	if (!event) {
 		return null;
@@ -189,7 +198,7 @@ export function narrateEvent(event, ctx = {}) {
 	}
 	if (event.type === 'recover') {
 		const under = ctx.bolsterName ? `under ${ctx.bolsterName}'s bolster` : 'under a bolster';
-		return `${actor} recovers ${formatHoldShown(event.amount)} ${under}; stands at ${formatHoldShown(event.remaining)}.`;
+		return `${actor} recovers ${formatHoldShown(event.amount)} ${under}; ${standsAt('', event.remaining).trim()}.`;
 	}
 	if (event.type === 'pin') {
 		/*
@@ -218,7 +227,7 @@ export function narrateEvent(event, ctx = {}) {
 		case 'downed':
 			return `${actor}${condition} ${attackVerb(event.role)} ${target} for ${formatHoldShown(event.power)} and downs ${target}.`;
 		case 'hurt':
-			return `${actor}${condition} ${attackVerb(event.role)} ${target} for ${formatHoldShown(event.power)}; ${target} stands at ${formatHoldShown(event.remaining)}.`;
+			return `${actor}${condition} ${attackVerb(event.role)} ${target} for ${formatHoldShown(event.power)}; ${standsAt(target, event.remaining)}.`;
 		case 'cancelled':
 			// said by the shield event that cancelled it
 			return null;
@@ -347,4 +356,57 @@ export function narrateMatchEnd(ctx = {}) {
 		return `The rival takes the Charter, ${sites(sitesThem)} to ${sitesYou}, ${why}.`;
 	}
 	return `The game ends level, ${sitesYou} to ${sitesThem}.`;
+}
+
+/*
+	PASS 45. THE CLASH ON THE WORLD. captionEvent(event, ctx) -> an array of parts, each a
+	string or { name, seat }, or null when the event has nothing to show.
+
+	The Clash was told in a sentence in the top bar, a screen away from the creatures doing
+	it; the ownership log's open item 2 since pass 28 ("paperwork by definition"). The caption
+	sits on the clashing world itself, between the two ranks. It names creatures bare,
+	because the ranks already say whose is whose and the caption colors each name by side;
+	and it is short enough for a phone column under a hundred pixels wide. The full
+	sentence stays in the log.
+
+	ctx: actor, target, bolster as { name, seat } (target is the blocked attacker for a shield).
+*/
+export function captionEvent(event, ctx = {}) {
+	if (!event) {
+		return null;
+	}
+	const actor = ctx.actor || { name: 'A creature', seat: null };
+	const target = ctx.target || { name: 'its target', seat: null };
+	const left = (remaining) => (formatHoldShown(remaining) === '0' ? 'barely standing' : `${formatHoldShown(remaining)} left`);
+	switch (event.type) {
+		case 'sweep': {
+			const n = typeof event.hitCount === 'number' ? event.hitCount : 0;
+			return n === 0 ? [actor, ' sweeps and hits nothing'] : [actor, ` sweeps: −${formatHoldShown(event.power)} to each of ${n}`];
+		}
+		case 'shield':
+			return event.cancelled ? [actor, ' blocks ', target, `'s ${formatHoldShown(event.amount)}`] : [actor, ' shields; nothing comes'];
+		case 'recover':
+			return ctx.bolster
+				? [ctx.bolster, ' gives ', actor, ` ${formatHoldShown(event.amount)} back`]
+				: [actor, ` recovers ${formatHoldShown(event.amount)}`];
+		case 'pin':
+			return [actor, ' restrains ', target];
+		case 'attack':
+			switch (event.outcome) {
+				case 'downed':
+					return [actor, ' downs ', target];
+				case 'hurt':
+					return [actor, ` ${attackVerb(event.role)} `, target, `: −${formatHoldShown(event.power)}, ${left(event.remaining)}`];
+				case 'lapsed':
+					return [actor, ' falls before it acts'];
+				case 'pinned':
+					return [actor, ' is restrained'];
+				case 'no-target':
+					return [actor, ' finds no rival to strike'];
+				default:
+					return null;
+			}
+		default:
+			return null;
+	}
 }

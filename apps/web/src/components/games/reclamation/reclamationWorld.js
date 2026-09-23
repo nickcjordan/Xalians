@@ -658,6 +658,17 @@ function ReclamationWorld({
 										</span>
 									)}
 									{!ghost && movingRecordId && <span className="rec-ghost rec-ghost--relocate">move here</span>}
+									{/*
+										pass 45: the Clash told where it happens, between the two ranks, each
+										name in its side's color; keyed per step so each line enters fresh
+									*/}
+									{!ghost && !movingRecordId && clashing === site.id && hl.caption && (
+										<span className="rec-clash-caption" key={`cap-${hl.caption.key}`} data-clash-caption={site.id}>
+											{hl.caption.parts.map((part, i) => (typeof part === 'string'
+												? <React.Fragment key={i}>{part}</React.Fragment>
+												: <b key={i} className={`rec-clash-name rec-clash-name--${part.seat === you ? 'you' : part.seat ? 'rival' : 'none'}`}>{part.name}</b>))}
+										</span>
+									)}
 									{!ghost && !movingRecordId && verdict && (
 										<span className={`rec-stamp rec-stamp--${verdict.who} rec-stamp--down`}>{verdict.text}</span>
 									)}

@@ -14,7 +14,7 @@ import { prepare, strainMultiplierFor } from '@xalians/rules/expedition/creature
 import { SENDABLE, clinchFor, FRAMES_PER_MATCH } from '@xalians/rules/expedition/expeditionInterpretation';
 import {
 	speciesLabel, formatHold, formatHoldShown, formatBlow, classifyEvent, narrateEvent, cueForEvent, narrateSwiftMove,
-	narrateSend, narratePass, narrateJudge, narrateMatchEnd, narrateStake, countWord,
+	narrateSend, narratePass, narrateJudge, narrateMatchEnd, narrateStake, countWord, captionEvent,
 } from './reclamationNarration';
 import { flattenBoard, prepareWithCompanions, siteHoldTotal, ghostPlanFor, ownSweepsFor } from './reclamationPreview';
 
@@ -1637,9 +1637,9 @@ class ReclamationMatch extends React.Component {
 	whatAClickDoes(view) {
 		const { armedRecordId, movingRecordId, playback } = this.state;
 		if (playback) {
-			// pass 38: during the Clash the line says what is happening now, not that something is
-			const now = this.state.log[this.state.log.length - 1];
-			return now && !/^Both sides have passed/.test(now) ? now : 'The worlds clash, fastest first.';
+			// pass 45: what is happening is said on the world it happens at; this line says which world
+			const current = playback.current && playback.current.site ? playback.frame.sites.find((s) => s.id === playback.current.site) : null;
+			return current ? `${current.world.planet} clashes. The fastest act first.` : 'The worlds clash in turn, fastest first.';
 		}
 		if (view.phase === 'matchEnd') {
 			return 'The game is over.';
@@ -2091,6 +2091,18 @@ class ReclamationMatch extends React.Component {
 				highlights.acting = playback.current.bolster || null;
 				highlights.hit = playback.current.recordId;
 				highlights.flash = flashFor(playback.current);
+			}
+			// pass 45: what is happening, said on the clashing world rather than in the top bar
+			const snap = playback.boardBefore || {};
+			const who = (id) => (id && snap[id] ? { name: speciesLabel(snap[id].record), seat: snap[id].seat } : null);
+			const ev = playback.current;
+			const parts = captionEvent(ev, {
+				actor: who(ev.recordId) || undefined,
+				target: who(kind === 'shield' ? ev.cancelled : ev.target) || undefined,
+				bolster: kind === 'recover' ? who(ev.bolster) || undefined : undefined,
+			});
+			if (parts && ev.site) {
+				highlights.caption = { parts, key: playback.index };
 			}
 		}
 

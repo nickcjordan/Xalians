@@ -44,7 +44,7 @@ export function HelpPanel({ match, clinch, onClose }) {
 					<li>Pick a world. Each world shows what that creature would hold there before you commit.</li>
 					<li>Or pass. A pass lasts the rest of the round, so pass when you want to keep creatures for later.</li>
 				</ol>
-				<p>You have {SENDABLE} sends for the whole game, across {FRAMES_PER_MATCH} rounds, so not every creature in your squad will be sent: choose which. When both sides have passed, the worlds clash and the round is ruled.</p>
+				<p>You have {SENDABLE} sends for the whole game, across {FRAMES_PER_MATCH} rounds, so not every creature in your squad will be sent: choose which. When both sides have passed, the worlds clash one at a time, the fastest creatures acting first; each blow is told on the world it lands on, and the whole account is in the history (&equiv;). Then the round is ruled.</p>
 			</section>
 			<section className="rec-help-section">
 				<h3 className="rec-help-head">Stake &times;2</h3>
