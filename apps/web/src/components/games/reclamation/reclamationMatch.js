@@ -4,6 +4,7 @@ import ReclamationBench from './reclamationBench';
 import ReclamationInspect from './reclamationInspect';
 import ReclamationLog from './reclamationLog';
 import { HelpPanel, HistoryPanel, SettingsPanel } from './reclamationPanels';
+import ReclamationLegend from './reclamationLegend';
 import { ReclamationReport, buildMatchReport } from './reclamationReport';
 import {
 	send, pass, moveSwift, stakeWorld, getPublicState, forecastClash,
@@ -17,16 +18,10 @@ import {
 	narrateSend, narratePass, narrateJudge, narrateMatchEnd, narrateStake, countWord, captionEvent,
 	verdictOf, rulingLine,
 } from './reclamationNarration';
-import { flattenBoard, prepareWithCompanions, siteHoldTotal, ghostPlanFor, ownSweepsFor } from './reclamationPreview';
+import { flattenBoard, prepareWithCompanions, siteHoldTotal, ghostPlanFor } from './reclamationPreview';
+import { fitTable, roundTrack } from './reclamationFit';
+import { RoundTrack, ScorePips } from './reclamationInstruments';
 
-// pass 38: the top bar's short form of each pass reason; the full sentence is the button's title
-const PASS_SHORT = {
-	'holding-majority': 'you lead on two worlds and the rival has passed',
-	'saving-the-roster': 'keep your remaining sends for the rounds to come',
-	'nothing-to-gain': 'no send would change a world this round',
-	'no-sendable-creatures': 'you have nothing left to send',
-};
-import { recommendSend } from './reclamationAdvice';
 
 function capitalize(sentence) {
 	return sentence ? sentence.charAt(0).toUpperCase() + sentence.slice(1) : sentence;
@@ -320,6 +315,19 @@ class ReclamationMatch extends React.Component {
 		this.exposeDebug();
 		this.scheduleBotIfDue();
 		this.trackDecisionWindows(null, this.state);
+		/*
+			PASS 52. The table has no labels, so the first game in this browser opens its key
+			once, after the worlds have finished entering. Never under automation: the checks
+			and the glance set read the table at rest.
+		*/
+		const automated = typeof navigator !== 'undefined' && navigator.webdriver;
+		if (!automated && !readLegendSeen() && this.state.match && this.state.match.phase === 'deploy') {
+			this.legendTimer = setTimeout(() => {
+				if (!this.state.panel && !this.state.handoff) {
+					this.setState({ panel: 'legend' });
+				}
+			}, 1100);
+		}
 	}
 
 	componentDidUpdate(prevProps, prevState) {
@@ -419,7 +427,7 @@ class ReclamationMatch extends React.Component {
 
 	componentWillUnmount() {
 		document.removeEventListener('keydown', this.handleKeyDown);
-		[this.botTimer, this.noticeTimer, this.playbackTimer, this.beatTimer, this.arrivalTimer].forEach((t) => t && clearTimeout(t));
+		[this.botTimer, this.noticeTimer, this.playbackTimer, this.beatTimer, this.arrivalTimer, this.legendTimer].forEach((t) => t && clearTimeout(t));
 		if (typeof window !== 'undefined') {
 			delete window.__reclamationDebug;
 		}
@@ -477,6 +485,27 @@ class ReclamationMatch extends React.Component {
 			currentEvent: this.state.playback && this.state.playback.current
 				? this.state.playback.current.type : null,
 			rosterIds: (view.players[YOU].roster || []).map((r) => r.id),
+			/*
+				pass 52: the glance set's answer key (scripts/reclamation-glance.mjs): each world's
+				forecast totals and, for every creature in hand, what sending it to each world
+				would do there, so a blind reader's answers can be scored against the engine.
+			*/
+			glance: () => {
+				const fits = this.fitsFor();
+				const names = {};
+				(this.state.match.players[YOU].roster || []).forEach((r) => { names[r.id] = speciesLabel(r); });
+				return {
+					worlds: view.frame.sites.map((site) => ({ siteId: site.id, planet: site.world.planet })),
+					forecastTotals: fits ? fits.base : null,
+					fits: fits ? Object.fromEntries(Object.entries(fits.fits).map(([id, row]) => [id, {
+						name: names[id],
+						sites: Object.fromEntries(Object.entries(row).map(([siteId, cell]) => [siteId, {
+							swing: cell.swing, takes: cell.takes, deficit: cell.deficit, hold: cell.hold, isHome: cell.isHome, strainLevel: cell.strainLevel,
+						}])),
+					}])) : null,
+					sendsLeft: Math.max(0, (view.players[YOU].sendableCap || SENDABLE) - (view.players[YOU].sentCount || 0)),
+				};
+			},
 			format: formatHold,
 			telemetry: () => this.props.telemetry && this.props.telemetry.snapshot(),
 		};
@@ -1137,24 +1166,6 @@ class ReclamationMatch extends React.Component {
 		return this.props.mode !== 'advanced';
 	}
 
-	recommendation(view) {
-		if (view.phase !== 'deploy' || this.state.playback || this.state.judged) {
-			return null;
-		}
-		const seat = this.seatInPlay();
-		/*
-			PASS 43. Only a suggested PASS reaches the table. The per-send suggestion was the
-			Court proctor's own policy, and measured in pass 42 it wins 45 to 50 percent against
-			every rival: a coin flip that three blind critics followed and read as a trap. It
-			also cost three marks (the card outline, its "suggested" word, the world's
-			"recommended" tag). Each empty world's "best here" names now give a first-timer a
-			place to start from the creatures' own numbers, without claiming to be advice. A
-			pass is suggested for reasons that are arithmetic, so it stays.
-		*/
-		const rec = recommendSend(view, view.players[seat].roster, seat);
-		return rec && rec.type === 'pass' ? rec : null;
-	}
-
 	// ------------------------------------------------------------------
 	// the round closes: Resolve and Judge run inside the engine's pass()
 	// ------------------------------------------------------------------
@@ -1591,6 +1602,35 @@ class ReclamationMatch extends React.Component {
 		return holds;
 	}
 
+	/*
+		PASS 52. What every creature in hand would do at every world if sent there now
+		(reclamationFit.fitTable, the engine's forecastSend), for the bench's fit strips, the
+		worlds' front lines and the preview of the creature under the pointer. Cached on the
+		match state and the lifted creature's chosen act, so a hover repaints and never
+		recomputes. Null outside Deploy and while a round is played back or ruled.
+	*/
+	fitsFor() {
+		const { match, armedRecordId, armedRole, playback, judged } = this.state;
+		if (!match || match.phase !== 'deploy' || playback || judged) {
+			return null;
+		}
+		const seat = this.seatInPlay();
+		const key = `${seat}|${armedRecordId || ''}|${armedRole || ''}`;
+		if (this.fitCache && this.fitCache.match === match && this.fitCache.key === key) {
+			return this.fitCache.value;
+		}
+		let value = null;
+		try {
+			value = fitTable(match, seat, match.players[seat].roster || [], (id) => (id === armedRecordId ? armedRole : null));
+		} catch (e) {
+			// eslint-disable-next-line no-console
+			console.error('Reclamation: the fit table could not be built', e);
+			value = null;
+		}
+		this.fitCache = { match, key, value };
+		return value;
+	}
+
 	totalsForBoard(view) {
 		const totals = {};
 		view.frame.sites.forEach((site) => {
@@ -1655,10 +1695,16 @@ class ReclamationMatch extends React.Component {
 	*/
 	whatAClickDoes(view) {
 		const { armedRecordId, movingRecordId, playback } = this.state;
+		/*
+			PASS 52. Words only for news (docs/design/reclamation-glance-redesign.md): what the
+			rival just did, a rule the moment needs (the stake's question, no sends left), the
+			Ruling. The standing instructions ("Pick a creature from your squad", "Pick a world
+			for Scalatto", "The rival is choosing") are gone: the bench and the worlds light up
+			and the turn lamp says whose move it is. A first game keeps the one instruction
+			until its first Clash.
+		*/
 		if (playback) {
-			// pass 45: what is happening is said on the world it happens at; this line says which world
-			const current = playback.current && playback.current.site ? playback.frame.sites.find((s) => s.id === playback.current.site) : null;
-			return current ? `${current.world.planet} clashes. The fastest act first.` : 'The worlds clash in turn, fastest first.';
+			return '';
 		}
 		if (view.phase === 'matchEnd') {
 			return 'The game is over.';
@@ -1666,41 +1712,28 @@ class ReclamationMatch extends React.Component {
 		if (this.state.judged) {
 			return this.rulingSentence(view);
 		}
-		if (view.turn !== this.seatInPlay()) {
-			return view.players[this.seatInPlay()].passed ? 'You passed. The rival is still choosing.' : 'The rival is choosing.';
-		}
-		if (movingRecordId) {
-			const record = this.findRecordOnBoard(this.state.match, movingRecordId);
-			return `Pick the world ${record ? speciesLabel(record) : 'it'} moves to. A move does not use your turn.`;
-		}
-		if (armedRecordId) {
-			const record = view.players[this.seatInPlay()].roster.find((r) => r.id === armedRecordId);
-			let stealthy = false;
-			try {
-				stealthy = !!prepare(record, view.frame.sites[0], null, 0, { rules: view.rules }).stealthy;
-			} catch (e) {
-				stealthy = false;
-			}
-			return `Pick a world for ${speciesLabel(record)}.${stealthy ? ' It arrives hidden.' : ''}`;
-		}
-		if (view.players[this.seatInPlay()].passed) {
-			return 'You passed. Waiting for the rival.';
-		}
-		const rivalPassed = view.players[this.seatOpponent()].passed;
 		const me = view.players[this.seatInPlay()];
+		if (view.turn !== this.seatInPlay() || me.passed) {
+			return '';
+		}
 		const cap = typeof me.sendableCap === 'number' ? me.sendableCap : SENDABLE;
 		if ((me.sentCount || 0) >= cap) {
-			return `You have used all ${cap} sends. Pass to end your round.`;
+			return 'No sends left. Pass to end the round.';
 		}
 		if (this.state.stakeMode) {
-			return 'Pick a world to stake: it counts two worlds for whoever holds it.';
+			return 'Pick a world to stake. It counts two.';
 		}
-		const rec = this.recommendation(view);
-		if (rec && rec.type === 'pass') {
-			return `Pass suggested: ${PASS_SHORT[rec.reasonKey] || rec.reason.split('. ')[0].replace(/\.$/, '').toLowerCase()}.`;
+		if (armedRecordId || movingRecordId) {
+			return this.state.coached ? '' : 'Now pick a world.';
 		}
-		const lastRival = this.state.lastRival ? `${this.state.lastRival} ` : rivalPassed ? 'The rival has passed. ' : '';
-		return `${lastRival}Pick a creature from your squad.`;
+		const rivalPassed = view.players[this.seatOpponent()].passed;
+		if (this.state.lastRival) {
+			return this.state.lastRival;
+		}
+		if (rivalPassed) {
+			return 'The rival has passed.';
+		}
+		return this.state.coached ? '' : 'Pick a creature from your squad, then a world.';
 	}
 
 	// the Ruling in one sentence, from the counts the score is about to show
@@ -1742,7 +1775,9 @@ class ReclamationMatch extends React.Component {
 	renderStatusStrip(view) {
 		const you = view.players[this.seatInPlay()];
 		const them = view.players[this.seatOpponent()];
-		const stillReachable = reachabilityLine(view, you, them);
+		const reach = reachabilityLine(view, you, them);
+		// pass 52: the reach line speaks only when the game is slipping or settled; "you need 5 more of the 6 left" is the pips and the track
+		const stillReachable = reach && reach.tone !== 'behind' ? reach : null;
 		const rivalBeat = !!this.rivalBeat() && view.phase === 'deploy' && !this.state.judged;
 		const yourTurn = view.turn === this.seatInPlay() && view.phase === 'deploy' && !this.state.playback && !this.state.judged && !rivalBeat;
 		const waiting = (view.turn === THEM || rivalBeat) && view.phase === 'deploy' && !this.state.playback && !this.state.judged;
@@ -1750,11 +1785,7 @@ class ReclamationMatch extends React.Component {
 		const turnLabel = this.turnText(view);
 		const lampKind = yourTurn ? 'amber' : waiting ? 'red' : 'off';
 		const simple = this.isSimple();
-		// a pip is keyed on whether it is lit, so lighting one remounts it and it pops
 		const toClinch = clinchFor(view.frame.sites.length, FRAMES_PER_MATCH);
-		const pips = (n) => Array.from({ length: toClinch }).map((_, i) => (
-			<span className={`rec-pip${i < n ? ' rec-pip--lit' : ''}`} key={`${i}-${i < n ? 'lit' : 'dark'}`} />
-		));
 		/*
 			PASS 38. Only a callout that says something the board does not. Your own send is
 			visible the moment the creature lands on the world, so it is not also narrated; the
@@ -1771,8 +1802,16 @@ class ReclamationMatch extends React.Component {
 					</button>
 				)}
 
+				{/*
+					PASS 52. The round is a track of the game's nine worlds and the score is two rows
+					of pips, the rival's above yours, in each side's color: no "Round 2 of 3", no
+					"You" and "Rival" labels, no digits beside the pips.
+				*/}
 				<div className="rec-status-world">
-					<h2 className="rec-status-planet">Round {view.frameIndex + 1}<span className="rec-status-of"><span className="rec-status-of-word"> of </span><span className="rec-status-of-slash">/</span>{FRAMES_PER_MATCH}</span></h2>
+					<RoundTrack
+						track={roundTrack(this.state.match.frames, this.state.playback ? view.resolutionLog : this.state.match.resolutionLog, this.seatInPlay(), view.frameIndex)}
+						frameIndex={view.frameIndex}
+					/>
 					{/* the next round's worlds are planning arithmetic: advanced mode, and the help panel's round list */}
 					{!simple && view.nextFrame && !this.state.judged && (
 						<span className="rec-next-plate" data-next-plate>
@@ -1784,18 +1823,17 @@ class ReclamationMatch extends React.Component {
 					)}
 				</div>
 
-				<div className="rec-status-score" title={`First to ${toClinch} worlds wins`}>
-					<span className="rec-score rec-score--mine">
-						<span className="rec-score-label">You</span>
-						<span className="rec-pips">{pips(you.sitesWon)}</span>
-						<span className="rec-score-value rec-tick" data-sites-a key={you.sitesWon}>{you.sitesWon}</span>
-					</span>
-					<span className="rec-score rec-score--theirs">
-						<span className="rec-score-label">Rival</span>
-						<span className="rec-pips">{pips(them.sitesWon)}</span>
-						<span className="rec-score-value rec-tick" data-sites-b key={them.sitesWon}>{them.sitesWon}</span>
-						{them.passed && view.phase === 'deploy' && !this.state.judged && !this.state.playback && <span className="rec-score-passed" data-rival-passed>has passed</span>}
-					</span>
+				<div className="rec-status-score">
+					<ScorePips
+						mine={you.sitesWon}
+						theirs={them.sitesWon}
+						toClinch={toClinch}
+						rivalPassed={!!(them.passed && view.phase === 'deploy' && !this.state.judged && !this.state.playback)}
+						mySends={Math.max(0, (typeof you.sendableCap === 'number' ? you.sendableCap : SENDABLE) - (you.sentCount || 0))}
+						theirSends={Math.max(0, (typeof them.sendableCap === 'number' ? them.sendableCap : SENDABLE) - (them.sentCount || 0))}
+						worldsAhead={view.frame.sites.length * Math.max(1, FRAMES_PER_MATCH - (view.frameIndex || 0))}
+						sendsTone={stillReachable && (stillReachable.tone === 'lost' || stillReachable.tone === 'stake') ? stillReachable.tone : null}
+					/>
 				</div>
 
 				<div className="rec-status-turn">
@@ -1844,7 +1882,7 @@ class ReclamationMatch extends React.Component {
 							<span className="rec-tool-word">History</span>
 						</button>
 					)}
-					<button type="button" className="g-btn rec-tool" onClick={() => this.setState({ panel: 'help' })} data-open-help aria-label="How to play">?</button>
+					<button type="button" className="g-btn rec-tool" onClick={() => this.setState({ panel: 'legend' })} data-open-help aria-label="What the marks mean, and how to play">?</button>
 					{this.props.settings && (
 						<button type="button" className="g-btn rec-tool" onClick={() => this.setState({ panel: 'settings' })} data-open-settings aria-label="Settings">
 							<svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M6.6 1h2.8l.4 1.9 1.3.6 1.7-1 2 2-1 1.7.6 1.3 1.9.4v2.8l-1.9.4-.6 1.3 1 1.7-2 2-1.7-1-1.3.6-.4 1.9H6.6l-.4-1.9-1.3-.6-1.7 1-2-2 1-1.7-.6-1.3L0 9.4V6.6l1.9-.4.6-1.3-1-1.7 2-2 1.7 1 1.3-.6zM8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5z" /></svg>
@@ -1858,6 +1896,20 @@ class ReclamationMatch extends React.Component {
 	renderPanel(view) {
 		const close = () => this.setState({ panel: null });
 		switch (this.state.panel) {
+			case 'legend':
+				// pass 52: the key to the marks, pinned where they are; its own button opens the full rules
+				return (
+					<ReclamationLegend
+						onClose={() => {
+							writeLegendSeen();
+							close();
+						}}
+						onRules={() => {
+							writeLegendSeen();
+							this.setState({ panel: 'help' });
+						}}
+					/>
+				);
 			case 'help':
 				return <HelpPanel match={this.state.match} clinch={clinchFor(view.frame.sites.length, FRAMES_PER_MATCH)} onClose={close} />;
 			case 'history':
@@ -1975,10 +2027,6 @@ class ReclamationMatch extends React.Component {
 		const view = this.view();
 		const { notice, playback, verdicts, judged, inspect } = this.state;
 		const simple = this.isSimple();
-		const rec = this.recommendation(view);
-		// the suggested site is marked once its creature is the chosen one
-		const recommendedSiteId = rec && rec.type === 'send' && this.state.armedRecordId === rec.recordId ? rec.siteId
-			: rec && rec.type === 'move' && this.state.movingRecordId === rec.recordId ? rec.siteId : null;
 		// simple mode has no rail; the bench lives under the worlds and the dossier is the
 		// only thing that opens one
 		const deployPanelOpen = view.phase === 'deploy' && !playback && !judged;
@@ -2001,72 +2049,34 @@ class ReclamationMatch extends React.Component {
 			the engine's own resolve run on what this seat can see (forecastClash), so each
 			creature's number and each world's total print what the Clash would leave.
 		*/
-		const forecast = deploying ? forecastClash(this.state.match, this.seatInPlay()) : null;
-		const ownSweepMap = deploying ? ownSweepsFor(view, YOU) : null;
+		const fits = deploying ? this.fitsFor() : null;
+		const forecast = fits ? fits.forecast : null;
 		const holdingIds = [...me.holding, ...them.holding];
 
 		/*
-			PASS 29, THE FOOTING IN THE PANEL BODY.
-
-			A blind critic scored "reason to keep playing" 4 of 10 and named the cause:
-			"three identical empty black rectangles labelled UNCLAIMED are the least
-			motivating opening board possible." Measured before designing: an empty world
-			panel is 411px tall with a 264px body carrying nine words, six of which are
-			"no one", "UNCLAIMED" and "no one". Three of them is 792px of screen saying
-			nothing about why any world is worth having, or how the three differ.
-
-			They differ a great deal, and the game already knows how. Over five seeds and
-			every site (210 site-roster pairs, a twelve-creature squad):
-
-			  creatures comfortable here      mean 5.4 of 12, RANGE 0 TO 11
-			  strained                        mean 4.4
-			  severely strained               mean 2.2
-			  native to this world (1.5x hold) mean 0.86, up to 3; 61% of worlds have one
-			  sites where every creature is comfortable   0 of 210
-			  sites where fewer than half are             87 of 210
-
-			So which of your squad can actually stand on a world is the sharpest thing that
-			distinguishes one panel from another, it is different on every world, and it was
-			never shown. This computes it from the handler's own bench, through the same
-			prepare() the figures use, so the panel cannot disagree with the table.
+			PASS 52. Each world's front line stands on the Clash forecast while you deploy (what
+			the Ruling would decide if the round ended now) and on the live holds while the
+			round plays back, so the line you choose by is the line you watch move. The preview
+			is the fit table's row for the creature under the pointer or lifted.
 		*/
-		const footingOfSite = {};
-		if (view.frame && view.frame.sites) {
-			const bench = (me.roster || []).filter((r) => !holdingIds.includes(r.id));
-			view.frame.sites.forEach((site) => {
-				let comfortable = 0;
-				let strained = 0;
-				let severe = 0;
-				let native = 0;
-				const holdsHere = [];
-				bench.forEach((record) => {
-					let plan = null;
-					try {
-						plan = prepare(record, site, site.world, 0, { rules: view.rules });
-					} catch (e) {
-						// a record the adapter cannot field is not a stake; it is counted nowhere
-						return;
-					}
-					if (!plan) {
-						return;
-					}
-					if (plan.isHome) {
-						native++;
-					}
-					holdsHere.push({ record, hold: plan.hold });
-					if (plan.strainLevel === 'severe') {
-						severe++;
-					} else if (plan.strainLevel === 'strained') {
-						strained++;
-					} else {
-						comfortable++;
-					}
-				});
-				// pass 39: the three that would hold this world best, so each round's worlds open on their own names
-				const best = holdsHere.sort((a, b) => b.hold - a.hold).slice(0, 3);
-				footingOfSite[site.id] = { comfortable, strained, severe, native, of: bench.length, best };
-			});
-		}
+		const orient = (t) => (this.seatInPlay() === YOU ? t : { mine: t.theirs, theirs: t.mine });
+		const fronts = {};
+		view.frame.sites.forEach((site) => {
+			if (fits && fits.base[site.id]) {
+				fronts[site.id] = orient(fits.base[site.id]);
+			} else {
+				const t = totals[site.id] || {};
+				fronts[site.id] = { mine: t[YOU] || 0, theirs: t[THEM] || 0 };
+			}
+		});
+		const previewId = ghosts ? (this.state.armedRecordId || this.state.hoverRecordId) : null;
+		const previewRow = previewId && fits ? fits.fits[previewId] : null;
+		const preview = previewRow ? Object.fromEntries(Object.entries(previewRow).map(([siteId, cell]) => [siteId, {
+			totals: orient(cell.after),
+			forecast: cell.forecast,
+		}])) : null;
+		const reach = deploying ? reachabilityLine(view, me, them) : null;
+
 		// assumption 20: your swift creatures that may still move this round, as the bench's
 		// move buttons. The engine's own list, so a button never offers an illegal move.
 		const movable = deploying && view.turn === this.seatInPlay()
@@ -2160,22 +2170,20 @@ class ReclamationMatch extends React.Component {
 							board={view.board}
 							you={YOU}
 							holds={holds}
-							totals={totals}
 							hurt={view.hurt}
 							ghosts={ghosts}
 							verdicts={verdicts}
 							armedRecordId={this.state.armedRecordId}
 							movingRecordId={this.state.movingRecordId}
 							clickable={clickable}
-							recommendedSiteId={recommendedSiteId}
 							holdingIds={holdingIds}
 							hiddenEnemyCount={deploying ? (them.hiddenSentThisRound || 0) : 0}
 							forecast={forecast}
-							ownSweeps={ownSweepMap}
+							fronts={fronts}
+							preview={preview}
+							deploying={deploying}
 							highlights={highlights}
 							clashSiteId={playback ? highlights.clashSiteId : null}
-							siteFootings={deploying ? footingOfSite : null}
-							onPickBest={clickable ? this.armRecord : null}
 							hoverSiteId={this.state.hoverSiteId}
 							advanced={!simple}
 							stakes={view.stakes}
@@ -2213,8 +2221,10 @@ class ReclamationMatch extends React.Component {
 									squad={this.hotSeat && this.seatInPlay() === THEM ? this.squadB : this.squad}
 									mode={simple ? 'simple' : 'advanced'}
 									armedRecordId={this.state.armedRecordId}
-									recommendation={rec}
 									movingRecordId={this.state.movingRecordId}
+									fits={fits}
+									focusSiteId={this.state.hoverSiteId}
+									sendsTone={reach && (reach.tone === 'lost' || reach.tone === 'stake') ? reach.tone : null}
 									movable={movable}
 									onArm={this.armRecord}
 									/*
@@ -2307,6 +2317,23 @@ function writeCoached() {
 		window.localStorage.setItem(COACH_KEY, 'yes');
 	} catch (e) {
 		// nothing to do; the strip returns next time
+	}
+}
+
+// pass 52: the key to the table's marks opens by itself once per browser
+const LEGEND_KEY = 'reclamation.legendSeen';
+function readLegendSeen() {
+	try {
+		return window.localStorage.getItem(LEGEND_KEY) === 'yes';
+	} catch (e) {
+		return true;
+	}
+}
+function writeLegendSeen() {
+	try {
+		window.localStorage.setItem(LEGEND_KEY, 'yes');
+	} catch (e) {
+		// nothing to do; the key opens again next time
 	}
 }
 

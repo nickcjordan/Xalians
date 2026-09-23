@@ -5,7 +5,7 @@
 	Ruling leaves standing, at exactly their held values. And it must not touch the state.
 */
 import { describe, test, expect } from 'vitest';
-import { createMatch, send, pass, moveSwift, stakeWorld, getPublicState, forecastClash, createRngState, nextRandom } from '../expeditionRules.ts';
+import { createMatch, send, pass, moveSwift, stakeWorld, getPublicState, forecastClash, forecastSend, createRngState, nextRandom } from '../expeditionRules.ts';
 import { chooseSend, chooseStake } from '../expeditionBot.ts';
 import { buildRosters } from '../roster.ts';
 import { getWorlds } from '../sites.ts';
@@ -130,5 +130,52 @@ describe('forecastClash', () => {
 	test('is null outside Deploy', () => {
 		const state = playMatch('f8', () => {});
 		expect(forecastClash(state, 'A')).toBe(null);
+	});
+});
+
+/*
+	PASS 52. The bench's fit strip prints what each creature would do at each world, so the
+	forecast of a send must be the send: the same board forecastClash() reads after send().
+*/
+describe('forecastSend', () => {
+	test('equals forecastClash after the real send, for every creature in hand at every world', () => {
+		let checked = 0;
+		playMatch('s1', (before) => {
+			const handler = before.turn as Seat;
+			const frame = before.frames[before.frameIndex];
+			before.players[handler].roster.slice(0, 4).forEach((record) => {
+				frame.sites.forEach((site: any) => {
+					const real = send({ ...before, players: { ...before.players, [handler]: { ...before.players[handler], passed: false } } }, handler, record.id, site.id);
+					if (!real) {
+						return;
+					}
+					const expected = forecastClash(real, handler);
+					expect(forecastSend(before, handler, record.id, site.id)).toEqual(expected);
+					checked += 1;
+				});
+			});
+		});
+		expect(checked).toBeGreaterThan(20);
+	});
+
+	test('ignores whose turn it is and leaves the state untouched', () => {
+		playMatch('s2', (before) => {
+			const handler = before.turn as Seat;
+			const other = handler === 'A' ? 'B' : 'A';
+			const record = before.players[other].roster[0];
+			const site = before.frames[before.frameIndex].sites[0];
+			if (!record) {
+				return;
+			}
+			const snapshot = JSON.stringify(before);
+			const forecast = forecastSend(before, other, record.id, site.id);
+			expect(forecast && forecast[record.id]).toBeDefined();
+			expect(JSON.stringify(before)).toBe(snapshot);
+		});
+	});
+
+	test('is null for a creature not in hand, a site not in the round, or outside Deploy', () => {
+		const state = playMatch('s3', () => {});
+		expect(forecastSend(state, 'A', 'nope', 'nope')).toBe(null);
 	});
 });

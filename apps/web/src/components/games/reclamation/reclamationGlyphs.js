@@ -166,6 +166,45 @@ export function RoleGlyph({ role, className }) {
 	}
 }
 
+// pass 52: home ground, on a fit column and a lifted creature's preview
+export function HomeGlyph({ className }) {
+	return (
+		<svg className={`rec-glyph rec-glyph--home${className ? ` ${className}` : ''}`} {...box}>
+			<path d="M4 11.5 12 4l8 7.5" /><path d="M6.5 10v10h11V10" />
+		</svg>
+	);
+}
+
+/*
+	pass 52: why a lifted creature holds less here, as a mark with the reason as its title
+	(pass 44's "Too cold: -7 hold" line). cold a snowflake, hot a flame, breath and medium
+	a drop crossed out.
+*/
+export function StrainGlyph({ cause, className }) {
+	const cls = `rec-glyph rec-glyph--strain rec-glyph--strain-${cause}${className ? ` ${className}` : ''}`;
+	if (cause === 'cold') {
+		return (
+			<svg className={cls} {...box}>
+				<path d="M12 3v18" /><path d="M4.2 7.5 19.8 16.5" /><path d="M4.2 16.5 19.8 7.5" />
+				<path d="m9.5 4.5 2.5 2 2.5-2" /><path d="m9.5 19.5 2.5-2 2.5 2" />
+			</svg>
+		);
+	}
+	if (cause === 'hot') {
+		return (
+			<svg className={cls} {...box}>
+				<path d="M12 21c-3.6 0-6-2.4-6-5.6 0-3.8 3.4-5.6 4.2-10.4 2.4 1.6 3.2 4 3 6 1-.6 1.7-1.6 2-2.8 1.7 1.8 2.8 4.2 2.8 7.2 0 3.2-2.4 5.6-6 5.6z" />
+			</svg>
+		);
+	}
+	return (
+		<svg className={cls} {...box}>
+			<path d="M12 3.5s-5.5 6.3-5.5 10a5.5 5.5 0 0 0 11 0c0-3.7-5.5-10-5.5-10z" />
+			<path d="M4.5 20 19.5 5" />
+		</svg>
+	);
+}
+
 /*
 	The attribute lanes (docs/design/reclamation-base-redesign.md, "Pass 2: every attribute
 	a job"). Small marks beside the speed number on a plinth, in the same stroke style as

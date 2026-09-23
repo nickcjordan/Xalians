@@ -28,7 +28,9 @@ const browser = await chromium.launch({ executablePath: EDGE, headless: true });
 // the four questions the brief says a player must answer in under two seconds; each needs
 // its instrument present on the table, so the check asserts the instruments exist
 const GLANCE = [
-	['who is winning this world', '[data-balance]'],
+	// pass 52: the front line on each world, and the fit strip on each card in hand
+	['who is winning this world', '[data-front]'],
+	['what each creature would do at each world', '[data-slot-state="hand"] [data-fit] [data-fit-site]'],
 	['who is winning the Proving', '[data-terminal] [data-turn-text], [data-turn-text]'],
 ];
 
@@ -164,56 +166,29 @@ for (const view of ['simple', 'advanced']) {
 			}
 
 			/*
-				PASS 29. The opening board must say what each world asks of this squad.
-
-				Before pass 29 an empty world panel was 411px tall with a 264px body
-				carrying nine words, six of which were "no one", "UNCLAIMED" and "no one",
-				and a blind critic scored "reason to keep playing" 4 of 10 on exactly that.
-				The footing is what replaced it, and it is worth guarding: it is computed
-				from the handler's own bench, so a change to prepare() or to the draft can
-				empty it without any test noticing.
+				PASS 52. Every card in hand says, at rest, what it would do at each world: three
+				columns in world order, each with its number. This replaces pass 29's footing
+				count, and it is computed from the engine's forecastSend(), so a change to the
+				engine or the draft that empties it fails here rather than silently.
 			*/
-			// the pointer is moved off the bench first: resting on a creature previews it, and
-			// a preview replaces each world's footing with what that creature would hold there
+			// the pointer is moved off the bench first: resting on a creature previews it
 			await page.mouse.move(2, 2);
 			await page.waitForTimeout(250);
-			const footings = await page.locator('[data-world-footing]').evaluateAll(
-				(els) => els.map((el) => el.innerText.replace(/\s+/g, ' ').trim()),
-			);
-			assert.equal(footings.length, 3, `${label}: ${footings.length} of 3 empty worlds say what they ask of the squad`);
-			footings.forEach((text) => {
-				assert(/\d+ of (your )?\d+/.test(text), `${label}: a world's footing does not count the squad: "${text}"`);
+			const strips = await page.evaluate(() => [...document.querySelectorAll('[data-slot-state="hand"]')].map((card) => {
+				const cols = [...card.querySelectorAll('[data-fit] [data-fit-site]')];
+				const numbers = cols.map((col) => (col.querySelector('.rec-fit-num') || {}).textContent || '');
+				const strip = card.querySelector('[data-fit]');
+				const box = card.getBoundingClientRect();
+				const r = strip ? strip.getBoundingClientRect() : null;
+				const inside = !!r && r.left >= box.left - 1 && r.right <= box.right + 1 && r.top >= box.top - 1 && r.bottom <= box.bottom + 1;
+				return { id: card.getAttribute('data-slot'), cols: cols.length, numbers, inside };
+			}));
+			assert(strips.length > 0, `${label}: no creature in hand at the start of the game`);
+			strips.forEach((strip) => {
+				assert.equal(strip.cols, 3, `${label}: ${strip.id} shows ${strip.cols} of 3 world columns`);
+				strip.numbers.forEach((n) => assert(/^\u2212?\d+$/.test(n.trim()), `${label}: ${strip.id} has a fit column without a number ("${n}")`));
+				assert(strip.inside, `${label}: ${strip.id}'s fit strip runs outside its card`);
 			});
-
-			/*
-				PASS 30. The footing must not be written over.
-
-				Pass 13 collapsed the empty world panel to nothing on a phone because its whole
-				body was the word "unclaimed": ranks at zero height with the RIVAL and YOU
-				bands absolutely positioned inside them. Pass 29 put three lines of text in that
-				body and the two bands came down on top of it, which a blind critic caught and
-				called a correctness failure.
-
-				Nothing could have caught it, because no check compared two rectangles. This
-				one does: it is geometry, not a class name, so it fails for any future reason
-				the bands and the text end up in the same place.
-			*/
-			const collisions = await page.evaluate(() => {
-				const hits = (a, b) => !(a.right <= b.left || b.right <= a.left || a.bottom <= b.top || b.bottom <= a.top);
-				const found = [];
-				document.querySelectorAll('[data-site-id]').forEach((site) => {
-					const footing = site.querySelector('[data-world-footing]');
-					if (!footing) return;
-					const fr = footing.getBoundingClientRect();
-					site.querySelectorAll('.rec-rank-edge').forEach((edge) => {
-						if (hits(fr, edge.getBoundingClientRect())) {
-							found.push(`${site.getAttribute('data-site-id')} / ${edge.textContent.trim()}`);
-						}
-					});
-				});
-				return found;
-			});
-			assert.deepEqual(collisions, [], `${label}: a world's edge band is drawn over its footing text`);
 
 			let guard = 0;
 			let sends = 0;
@@ -261,32 +236,28 @@ for (const view of ['simple', 'advanced']) {
 				if (await arm.count()) {
 					await arm.first().click({ timeout: 5000 }).catch(() => {});
 					/*
-						PASS 39. The preview must read the board it is drawn over. Pass 38 built the
-						per-world sentence from data the table never passed through, so every strike
-						said "No rival here to strike" beside a rival standing in plain view, and
-						nothing here could have noticed. A world with a rival on it may say its
-						instinct would not strike, never that no rival is there.
+						PASS 52. A lifted creature previews itself on every world, and the preview
+						token stays inside its world and clear of the totals on the world's line
+						(on a phone the two first landed on top of each other).
 					*/
-					const ghostLies = await page.evaluate(() => [...document.querySelectorAll('[data-site-id]')]
-						.filter((site) => site.querySelector('[data-rank="theirs"] [data-record-id]'))
-						.map((site) => (site.querySelector('[data-ghost-plan]') || {}).textContent || '')
-						.filter((text) => /No rival here|Nothing (here )?to (hit|strike) yet/.test(text)));
-					assert(ghostLies.length === 0, `${label}: a world with a rival on it previews "${ghostLies[0]}"`);
-					/*
-						PASS 44. The preview's words must sit inside the preview. A desk-only column
-						rule leaked to the phone in pass 41 and pushed every phone preview 26px past
-						its world's edge, where the overflow clip cut each line mid-word.
-					*/
-					const ghostSpill = await page.evaluate(() => [...document.querySelectorAll('[data-ghost]')]
-						.map((ghost) => {
-							const box = ghost.getBoundingClientRect();
-							const over = [...ghost.querySelectorAll('[data-ghost-plan], [data-ghost-strain]')]
-								.map((el) => el.getBoundingClientRect())
-								.filter((r) => r.width > 0 && (r.right > box.right + 1 || r.left < box.left - 1));
-							return over.length ? `${ghost.getAttribute('data-ghost')} by ${Math.round(Math.max(...over.map((r) => r.right - box.right)))}px` : null;
-						})
-						.filter(Boolean));
-					assert(ghostSpill.length === 0, `${label}: a preview's text runs past its own box (${ghostSpill[0]})`);
+					const previewFaults = await page.evaluate(() => {
+						const hits = (a, b) => !(a.right <= b.left || b.right <= a.left || a.bottom <= b.top || b.bottom <= a.top);
+						const out = [];
+						document.querySelectorAll('[data-ghost]').forEach((ghost) => {
+							const site = ghost.closest('[data-site-id]');
+							const g = ghost.getBoundingClientRect();
+							const w = site.getBoundingClientRect();
+							if (g.left < w.left - 1 || g.right > w.right + 1 || g.top < w.top - 1 || g.bottom > w.bottom + 1) {
+								out.push(`${site.getAttribute('data-site-id')}: the preview runs outside its world`);
+							}
+							const totals = site.querySelector('[data-front-totals]');
+							if (totals && hits(g, totals.getBoundingClientRect())) {
+								out.push(`${site.getAttribute('data-site-id')}: the preview covers the totals`);
+							}
+						});
+						return out;
+					});
+					assert.deepEqual(previewFaults, [], `${label}: ${previewFaults[0]}`);
 					const siteCount = await site.count();
 					if (siteCount) {
 						// spread across the frame the way a handler does, rather than stacking

@@ -429,7 +429,7 @@ export function captionEvent(event, ctx = {}) {
 export function verdictOf(result, you, planet, sentBy) {
 	const r = result || {};
 	if (!r.winner) {
-		return { who: 'court', text: 'tied', planet, unopposed: false, margin: 0 };
+		return { who: 'court', text: 'tied', planet, unopposed: false, margin: 0, shownMargin: 0 };
 	}
 	const mine = r.winner === you;
 	const loser = r.winner === 'A' ? 'B' : 'A';
@@ -450,6 +450,8 @@ export function verdictOf(result, you, planet, sentBy) {
 		planet,
 		unopposed,
 		margin,
+		// pass 52: the margin as the board printed it, for the crest on the world
+		shownMargin,
 	};
 }
 

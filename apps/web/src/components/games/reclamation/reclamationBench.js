@@ -6,8 +6,9 @@ import {
 import XalianImage from '../../xalianImage';
 import { pieceShadowFilter } from '../duel/board/duelPieceToken';
 import { team } from '../../../constants/designTokens';
-import { slotStateOf, siteHoldsFor } from './reclamationRoster';
-import { speciesLabel, formatHold, roleSentence, roleWord } from './reclamationNarration';
+import { slotStateOf } from './reclamationRoster';
+import { speciesLabel, roleSentence, roleWord } from './reclamationNarration';
+import { FitStrip, fitSentence } from './reclamationInstruments';
 import { prepare, speedOf, flippableRolesOf } from '@xalians/rules/expedition/creatureOnTable';
 import { attributeLanes } from './reclamationPreview';
 import { SENDABLE, FRAMES_PER_MATCH } from '@xalians/rules/expedition/expeditionInterpretation';
@@ -32,23 +33,18 @@ import { SENDABLE, FRAMES_PER_MATCH } from '@xalians/rules/expedition/expedition
 	it, a mark per attribute lane that is doing something - a wing for swift, an upright
 	bar for willful, an eye for keen or dull instinct - each carrying its lane sentence as
 	its title, the same sentence the dossier's Lanes block prints.
+
+	PASS 52, THE GLANCE REDESIGN (docs/design/reclamation-glance-redesign.md). The lamps and
+	the best-world name became the fit strip: three columns, one per world in the order the
+	worlds stand above, each as tall as what sending this creature there now would move
+	that world your way (the engine's forecastSend), with the rival's lead ticked on it
+	where the rival has one. Nothing on a card is suggested; it only says what would happen.
 */
 
-// a lamp is lit for a hold that would matter at a world: two-thirds of the printed
-// scale is bright, a third is dim, less is dark (levers)
-export const LAMP_BRIGHT_AT = 12;
-export const LAMP_DIM_AT = 6;
-
-function lampLevel(hold) {
-	if (hold >= LAMP_BRIGHT_AT) return 2;
-	if (hold >= LAMP_DIM_AT) return 1;
-	return 0;
-}
-
-function Plinth({ record, view, you, armed, suggested, suggestedSiteId, disabled, onArm, onInspect, onHover, advanced }) {
+function Plinth({ record, view, you, armed, disabled, onArm, onInspect, onHover, advanced, fitRow, focusSiteId }) {
 	const slot = slotStateOf(record, view, you);
 	const inHand = slot.state === 'hand';
-	const holds = inHand ? siteHoldsFor(record, view, you) : null;
+	const sites = view.frame.sites;
 	const readAt = prepare(record, view.frame.sites[0], null, 0, { rules: view.rules });
 	const stealthy = readAt.stealthy;
 	// the base redesign's one glyph per creature: the role it plays at the Clash, the same
@@ -61,11 +57,10 @@ function Plinth({ record, view, you, armed, suggested, suggestedSiteId, disabled
 	const el = elementOf(record);
 	const classes = ['rec-plinth', `rec-plinth--${slot.state}`];
 	if (armed) classes.push('rec-plinth--armed');
-	if (suggested && inHand) classes.push('rec-plinth--suggested');
 	if (disabled) classes.push('rec-plinth--disabled');
-	const bestId = holds ? holds.reduce((a, b) => (b.hold > a.hold ? b : a)).site.id : null;
+	if (inHand && fitRow && Object.values(fitRow).some((cell) => cell && cell.takes)) classes.push('rec-plinth--takes');
 	const title = inHand
-		? (armed ? 'Lifted. Press a world to send it there, or press again to set it down.' : holds.map((h) => `${h.site.world.planet} ${formatHold(h.hold)}`).join(' · '))
+		? `${speciesLabel(record)}${armed ? ', lifted: press a world to send it there, or press it again to set it down' : ''}. ${fitSentence(sites, fitRow)}`
 		: slot.state === 'sent' ? `Sent to ${slot.site.world.planet}` : slot.state === 'holding' ? 'Won its world in an earlier round, and stays there' : slot.state === 'downed' ? 'Fell in a Clash, out of the game' : 'Spent on a world that was lost or tied, out of the game';
 	return (
 		<div className={classes.join(' ')} data-slot={record.id} data-slot-state={slot.state}>
@@ -105,39 +100,28 @@ function Plinth({ record, view, you, armed, suggested, suggestedSiteId, disabled
 						))}
 					</span>
 				)}
-				{/* pass 38: simple mode names the one world it holds best; the three dots are advanced mode */}
-				{inHand && holds && !advanced && (() => {
-					// pass 41: the suggested card names the world it is suggested FOR; a critic read "Telypso, suggested" off a card suggested for Stonera
-					const best = (suggestedSiteId && holds.find((h) => h.site.id === suggestedSiteId)) || holds.reduce((a, b) => (b.hold > a.hold ? b : a));
-					return (
-						<span className={`rec-plinth-best g-el-${best.site.world.element}`} data-plinth-best={best.site.id} title={holds.map((h) => `${h.site.world.planet} ${formatHold(h.hold)}`).join(' · ')}>
-							<span className="rec-plinth-best-dot" aria-hidden="true" />{best.site.world.planet}
-						</span>
-					);
-				})()}
-				{inHand && holds && advanced && (
-					<span className="rec-lamps" aria-label="Where it holds well">
-						{holds.map((h) => (
-							<span
-								key={h.site.id}
-								className={`rec-lamp g-el-${h.site.world.element} rec-lamp--${lampLevel(h.hold)}${h.isHome ? ' rec-lamp--home' : ''}${bestId === h.site.id ? ' rec-lamp--best' : ''}`}
-								title={`${h.site.world.planet}: ${formatHold(h.hold)}${h.isHome ? ', home ground' : ''}${h.strainLevel !== 'none' ? `, ${h.strainLevel}` : ''}`}
-							/>
-						))}
+				{/* pass 52: the fit strip, one column per world, for a creature in hand or the world it went to */}
+				{((inHand && fitRow) || slot.state === 'sent') && (
+					<FitStrip
+						sites={sites}
+						row={inHand ? fitRow : null}
+						sentSiteId={slot.state === 'sent' && slot.site ? slot.site.id : null}
+						focusSiteId={inHand ? focusSiteId : null}
+						off={disabled}
+					/>
+				)}
+				{!inHand && slot.state !== 'sent' && (
+					<span className={`rec-plinth-tag rec-plinth-tag--${slot.state}`} aria-label={slot.state === 'holding' ? 'won its world' : slot.state === 'downed' ? 'fell in a Clash' : 'spent'}>
+						{slot.state === 'holding'
+							? <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 21V3" /><path d="M6 4h12l-3 4.5L18 13H6" /></svg>
+							: slot.state === 'downed'
+								? <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" /></svg>
+								: <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14" /></svg>}
 					</span>
 				)}
-				{!inHand && (
-					<span className={`rec-plinth-tag rec-plinth-tag--${slot.state}`}>
-						{/* pass 38: "sent to", so the slot that names a best world in hand never reads the same once sent */}
-						{slot.state === 'sent'
-							? <span className={`rec-plinth-sent g-el-${slot.site.world.element}`} title={`Sent to ${slot.site.world.planet}`}><span className="rec-plinth-best-dot" aria-hidden="true" />&rarr;<span className="rec-plinth-sent-where">{slot.site.world.planet}</span></span>
-							: slot.state === 'holding' ? 'won' : slot.state === 'downed' ? 'fallen' : 'spent'}
-					</span>
-				)}
-				{inHand && (suggested || stealthy) && (
+				{inHand && stealthy && (
 					<span className="rec-plinth-marks">
-						{suggested && <span className="rec-plinth-mark rec-plinth-mark--suggested" title={typeof suggested === 'string' ? suggested : undefined}>suggested</span>}
-						{stealthy && <span className="rec-plinth-mark rec-plinth-mark--glyph" title="Stealthy: arrives hidden"><HiddenGlyph /></span>}
+						<span className="rec-plinth-mark rec-plinth-mark--glyph" title="Stealthy: arrives hidden"><HiddenGlyph /></span>
 					</span>
 				)}
 			</button>
@@ -179,6 +163,10 @@ function ReclamationBench({
 	stakeAvailable,
 	stakeMode,
 	onToggleStake,
+	// pass 52: the fit table (reclamationFit.fitTable) and the world under the pointer
+	fits,
+	focusSiteId,
+	sendsTone,
 }) {
 	const me = view.players[you];
 	const yourTurn = interactive && view.turn === you && view.phase === 'deploy';
@@ -190,8 +178,6 @@ function ReclamationBench({
 	const worldsAhead = ((view.frame && view.frame.sites.length) || 3) * Math.max(1, FRAMES_PER_MATCH - (view.frameIndex || 0));
 	const armed = armedRecordId ? (me.roster || []).find((r) => r.id === armedRecordId) : null;
 	const step = !yourTurn ? 0 : armed ? 2 : 1;
-	const rec = recommendation && recommendation.type === 'send' ? recommendation : null;
-	const suggestedRecordId = rec && !armed ? rec.recordId : null;
 	const armedRead = armed ? prepare(armed, view.frame.sites[0], null, 0, { rules: view.rules }) : null;
 	const armedStealthy = !!(armedRead && armedRead.stealthy);
 	// assumption 20: a swift creature already on the table may move once a round, and it
@@ -249,16 +235,8 @@ function ReclamationBench({
 					);
 				})()}
 				</div>
-				<span className="rec-deploy-count" title={`${me.sentCount || 0} of ${cap} sends spent this game${cap > SENDABLE ? ", one of them the trailing seat's bonus this round" : ''}; ${(me.roster || []).length} in hand`}>
-					{/* the pips preview what the send in hand would cost: one send, whether it
-					    arrives hidden or in the open (hiding is no longer a priced choice) */}
-					{/*
-						pass 47: the budget beside what it has to cover. A critic spent four and four and
-						met round three needing three worlds with three sends, reading "11 sends left
-						this game" as a per-round counter.
-					*/}
-					<span className="rec-sends-text">{sendsLeft} send{sendsLeft === 1 ? '' : 's'} left<span className="rec-sends-scope"> for {worldsAhead} worlds</span></span>
-				</span>
+				{/* pass 52: the sends left moved to the top bar, beside each side's score */}
+				<span className="rec-deploy-count" data-sends-count={sendsLeft} />
 				{yourTurn && !me.passed && (
 					<div className="rec-bench-actions">
 						{movers.map((mover) => (
@@ -289,13 +267,12 @@ function ReclamationBench({
 						)}
 						<button
 							type="button"
-							className={`g-btn rec-pass-btn${recommendation && recommendation.type === 'pass' ? ' rec-pass-btn--suggested g-btn--primary' : ''}`}
+							className="g-btn rec-pass-btn"
 							onClick={onPass}
 							data-pass
-							title="Pass is permanent for this round."
+							title="Pass: send nothing more this round. It is permanent for the round."
 						>
-							Pass this round
-							{/* pass 38: a suggested pass is the one bright key; the reason is the top bar's instruction */}
+							Pass
 						</button>
 					</div>
 				)}
@@ -309,8 +286,8 @@ function ReclamationBench({
 						view={view}
 						you={you}
 						armed={armedRecordId === record.id}
-						suggested={suggestedRecordId === record.id ? (rec.reason || true) : false}
-						suggestedSiteId={suggestedRecordId === record.id ? rec.siteId : null}
+						fitRow={fits && fits.fits ? fits.fits[record.id] : null}
+						focusSiteId={focusSiteId}
 						disabled={!yourTurn || me.passed || sendsLeft === 0}
 						onArm={onArm}
 						onInspect={onInspect}

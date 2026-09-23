@@ -974,3 +974,23 @@ A keen creature (instinct 65 or more, about a third of the pool) now attacks at 
 **The intro's claim, corrected to what is true:** "Each attribute does one thing on the table, and the dossier says which. Speed and hold decide the most; the rest matter where they apply." Charisma's line says it is for shields and bolsters; instinct's says keen creatures fight on at full power when hurt, and the dossier says the same.
 
 **Verified:** 604 rules tests (new: a keen creature lands full power while hurt, and not with the lever off); typecheck clean; 1606 web tests; the four table checks green; validation report regenerated.
+
+### Pass 52 (2026-09-23): the glance redesign
+
+**Nick**, looking at round 1: "I have to click each of my creatures to see the things that would be factors in my decision making ... I don't want labels ... none of [the numbers are] intuitive ... go through a full redesign." The brief and its measurements are `reclamation-glance-redesign.md`.
+
+**Three instruments replace the table's words:**
+
+- **The front line.** Each world's field is split into the rival's brass ground above and your cyan ground below, where the Clash forecast's totals put the line; the two totals sit on it. A world only the rival stands on is brass all the way down. The "RIVAL" and "YOU" tags, the tally row, "Unopposed: ...", the footing count and the "Best here" names are gone.
+- **The fit strip.** Every card carries three numbered columns, one per world in world order: what sending it there now would move that world your way, from a new engine function, `forecastSend()` (the send placed exactly as `send()` places it, then `forecastClash()`; `send()` and it share `placeEntry()`). The rival's lead is ticked on each column; a column that clears it is lit. Pointing at a world lights its column on every card.
+- **The hold bar.** Under every figure, with the part the Clash would take striped and a cross on one that would fall, in place of "you lose it", "you down it", "own sweep" and "no target".
+
+The top bar became a round track (the nine worlds, filled by who won them) and two rows of pips, the rival's above yours, each with that side's sends left. The standing instructions are gone (a first game keeps one until its first Clash); the message line carries only news. The suggested pass and `reclamationAdvice.js` are deleted. The Ruling is a pennant with the margin. A one-time key pins a number on each instrument (`reclamationLegend.js`), and ? opens it again.
+
+**Measured, not assumed.** A new capture, `scripts/reclamation-glance.mjs`, plays seed 7 to three positions and dumps the engine's answer key beside each screenshot. Four fresh readers, one per version: the old table 32 of 41 checkable answers, the first redesign (bars without numbers) 28.5, numbers on the bars 41, and 41 again after the key's first look. The first redesign was worse than the old table, which is why the columns carry numbers. Readers' own ease score: 5, 4, 4, 6.
+
+**Also:** a leftover merge marker (`=======`) in `reclamation.css` since pass 50, the cause of the build's one CSS warning, is gone; 217 rules for classes the table no longer renders are pruned.
+
+**Verified:** 607 rules tests (new: `forecastSend` equals `forecastClash` after the real send for every creature at every world, ignores whose turn it is, touches nothing); 1607 web tests (new: `reclamationGlance.test.js`, the fit table against the engine and each instrument's marks); the four table checks green, `reclamation-proving.mjs` extended as above; the glance set, the Clash and the Ruling shot and read at 1440, 1873 and 390, simple and advanced.
+
+**Open:** no human has used this table; the key's placement on a phone covers one figure; the rival's squad stays hidden by design, and every reader asked for it.

@@ -6,6 +6,7 @@ import XalianTypeSymbolBadge from '../duel/board/xalianTypeSymbolBadge';
 import { pieceShadowFilter } from '../duel/board/duelPieceToken';
 import { getSpeciesTemplate } from '@xalians/rules/generator';
 import { team } from '../../../constants/designTokens';
+import { HoldBar } from './reclamationInstruments';
 
 /*
 	ReclamationFigure — one creature standing at a site.
@@ -30,8 +31,8 @@ import { team } from '../../../constants/designTokens';
 	- role: one of 'strike' | 'sweep' | 'bolster' | 'shield' (the base redesign's four
 	  roles), drawn as one glyph beside the hold bulb with the role sentence as its title;
 	  'none' draws nothing
-	- threat: { level: 'downed' | 'amount', amount, text } - what this creature would lose
-	  this round to the worst visible enemy attack
+	- forecast: the hold the Clash would leave it at, as the board stands (pass 52: drawn as
+	  the struck end of its hold bar, and a cross over it when that is nothing)
 
 	The CSS class names still read `staggered` and `routed`; the words the player sees are
 	Pass 2's, hurt and downed (docs/design/reclamation-base-redesign.md assumption 17).
@@ -173,7 +174,10 @@ function ReclamationFigure({
 		while this figure is the one acting or being hit, so a still figure is not remounted
 		sixty times a round.
 	*/
-	if (threat) classes.push(`rec-figure--threat-${threat.level}`);
+	// pass 52: forecast to fall in the Clash, as the board stands
+	const falls = typeof forecast === 'number' && forecast === 0 && typeof hold === 'number' && hold > 0;
+	if (falls) classes.push('rec-figure--falls');
+	if (noTarget) classes.push('rec-figure--no-target');
 	if (role && role !== 'none') classes.push(`rec-figure--role-${role}`);
 	if (hit) classes.push('rec-figure--hit');
 	if (hover) classes.push('rec-figure--hover');
@@ -221,55 +225,40 @@ function ReclamationFigure({
 				still with a class it already finished. A plate that is doing neither keeps a
 				stable key and is not remounted.
 			*/}
-			{/* pass 38: the forecast sits over the piece, out of the name plate, so the name keeps its room; it says what would happen, not what has */}
-			{/* pass 38: the chip says who pays: "you lose it" over yours, "you down it" over the rival's */}
-			{threat && (
-				<span className={`rec-figure-threat rec-figure-threat--${threat.level}`} title={threat.text} data-threat={threat.level}>
-					{mine ? 'you lose it' : 'you down it'}
+			{/*
+				PASS 52. The forecast is drawn, not written: the bar below strikes out what the
+				Clash would take, and a creature it would down carries a cross. "you lose it",
+				"you down it", "own sweep" and "no target" were labels over the art.
+			*/}
+			{falls && (
+				<span className="rec-figure-mark rec-figure-mark--falls" title={lossText} data-threat="downed">
+					<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" /></svg>
 				</span>
-			)}
-			{/* pass 38: your own sweep at this world will hit this creature too; nothing said so before the Clash did it */}
-			{!threat && !ownSweep && noTarget && (
-				<span className="rec-figure-threat rec-figure-threat--own" data-no-target title="No rival stands at this world, so its strike will find no target">no target</span>
-			)}
-			{!threat && ownSweep && (
-				<span className="rec-figure-threat rec-figure-threat--own" data-own-sweep title={lossText}>own sweep</span>
 			)}
 			<span className="rec-figure-plate" key={(acting || hit) && beat != null ? `beat-${beat}` : 'plate'}>
 				{/* pass 38: the role glyph rides with the name, so the number below is only the hold */}
 				{role && role !== 'none' && (
-					<span className="rec-role-glyph rec-figure-plate-role" title={roleSentence(role, blowMagnitude)} aria-label={roleSentence(role, blowMagnitude)} data-role={role}>
+					<span
+						className={`rec-role-glyph rec-figure-plate-role${noTarget ? ' rec-role-glyph--idle' : ''}`}
+						title={noTarget ? 'No rival stands at this world, so its strike has no target' : roleSentence(role, blowMagnitude)}
+						aria-label={roleSentence(role, blowMagnitude)}
+						data-role={role}
+						data-no-target={noTarget ? '' : undefined}
+					>
 						<RoleGlyph role={role} />
 					</span>
 				)}
 				<span className="rec-figure-name">{name}</span>
 				{badge && <span className="rec-figure-badge">{badge}</span>}
 			</span>
-			<span className="rec-figure-foot">
-				{typeof hold === 'number' && showMeter !== false && (
-					<HoldMeter
-						hold={hold}
-						unstrained={unstrainedHold}
-						printedHold={printedHold}
-						isHome={isHome}
-						strainLevel={strainLevel}
-						hurt={hurt}
-						size="chip"
-						mine={mine}
-					/>
-				)}
-				{/*
-					pass 30: the number under a figure rounds. Up to six figures stand at a world
-					and the eye compares them against each other and against the margin band; the
-					tenth is noise at that size. The exact value is on the figure's own aria-label
-					and data-hold, and the inspector prints it in full.
-				*/}
+			{/*
+				PASS 52. The hold as a bar in this side's color, the part the Clash would take
+				striped at its end, and the number. The bulb meter stays for the dossier and the intro.
+			*/}
+			<span className="rec-figure-foot" data-forecast={typeof hold === 'number' && typeof forecast === 'number' ? formatHoldShown(forecast) : undefined} title={lossText}>
+				{typeof hold === 'number' && <HoldBar hold={hold} after={forecast} side={mine ? 'mine' : 'theirs'} className="rec-figure-bar" />}
 				{/* pass 47: a standing creature under half a point read "0", and a critic asked why it had not fallen */}
 				{typeof hold === 'number' && <span className="rec-figure-hold" title={`hold ${formatHold(hold)}`}>{hold > 0 && hold < 0.5 && !downed ? '<1' : formatHoldShown(hold)}</span>}
-				{/* pass 38: the forecast after the number, so the number and the marks agree */}
-				{typeof hold === 'number' && typeof forecast === 'number' && (
-					<span className={`rec-figure-after${ownSweep ? ' rec-figure-after--own' : ''}${forecast === 0 ? ' rec-figure-after--falls' : ''}`} title={lossText} data-forecast={formatHoldShown(forecast)}><span className="rec-after-arrow" aria-hidden="true">&rarr;</span>{formatHoldShown(forecast)}</span>
-				)}
 			</span>
 			{tags.length > 0 && (
 				<span className="rec-figure-tags">
