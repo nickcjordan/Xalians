@@ -33,3 +33,7 @@ crystorn: valid permissions, four distinct actions constructible
   acts: 17 distinct on offer (horns 11, fists 3, hide 3); exclusions: horns/mend
   naming over 24 seeds: 0.0% of ordinary actions carry a structural parenthetical, 0.0% of creatures have two ordinary actions sharing a base name
 ```
+
+## Signature guardrail, 2026-09-23
+
+An ordinary act never outclasses the signature at what the signature does (contract: `docs/design/creature-derived-acts.md`, "Signature guardrail, 2026-09-23"). No record change. The compiler now clamps the derived `horns/beam` and `horns/spray` through the light medium (willpower [62, 88] x 0.85 = [53, 75]) to [53, 68], the cap set by the signature `crystorn-defining` (elemental light harm 68). This is the case that motivated the rule: the light spray (Blinding Shot in Powerworks) rolled 73 against the signature 68.

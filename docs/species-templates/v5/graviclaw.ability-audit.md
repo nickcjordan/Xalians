@@ -24,3 +24,7 @@ graviclaw: valid permissions, four distinct actions constructible
   acts: 28 distinct on offer (pincers 11, shell 4, body 4, aura 9); exclusions: */drain, aura/mend
   naming over 24 seeds: 0.0% of ordinary actions carry a structural parenthetical, 0.0% of creatures have two ordinary actions sharing a base name
 ```
+
+## Signature guardrail, 2026-09-23
+
+An ordinary act never outclasses the signature at what the signature does (contract: `docs/design/creature-derived-acts.md`, "Signature guardrail, 2026-09-23"). `acts.output` `pincers/strike` lowered from [65, 95] to [65, 85], the cap set by the signature `graviclaw-defining` (compression harm 85). The override also bands the cutting pincer strike, which moves with it.

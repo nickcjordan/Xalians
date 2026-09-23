@@ -22,3 +22,7 @@ Fixed Charged Claws declares electric elemental harm through conductive claws us
   acts: 23 distinct on offer (claws 11, jaws 4, tail 5, hide 3); exclusions: none
   naming over 24 seeds: 0.0% of ordinary actions carry a structural parenthetical, 0.0% of creatures have two ordinary actions sharing a base name
 ```
+
+## Signature guardrail, 2026-09-23
+
+An ordinary act never outclasses the signature at what the signature does (contract: `docs/design/creature-derived-acts.md`, "Signature guardrail, 2026-09-23"). Authored mechanism `claw-discharge` elemental electric harm lowered from [45, 75] to [45, 68], the cap set by the signature `voltish-defining` (elemental electric harm 68).

@@ -19,3 +19,7 @@ frackworm: valid permissions, four distinct actions constructible
   acts: 19 distinct on offer (jaws 4, vents 7, shell 4, body 4); exclusions: */drain
   naming over 24 seeds: 0.0% of ordinary actions carry a structural parenthetical, 0.0% of creatures have two ordinary actions sharing a base name
 ```
+
+## Signature guardrail, 2026-09-23
+
+An ordinary act never outclasses the signature at what the signature does (contract: `docs/design/creature-derived-acts.md`, "Signature guardrail, 2026-09-23"). `acts.output` `jaws/strike` lowered from [65, 95] to [65, 88], the cap set by the signature `frackworm-defining` (piercing harm 88). The override also bands the compression jaw strike, which moves with it.

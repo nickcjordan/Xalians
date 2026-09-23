@@ -26,3 +26,7 @@ chromocat: valid permissions, four distinct actions constructible
   acts: 25 distinct on offer (blades 8, claws 4, jaws 4, fangs 1, tail 5, hide 3); exclusions: blades/mend
   naming over 24 seeds: 0.0% of ordinary actions carry a structural parenthetical, 0.0% of creatures have two ordinary actions sharing a base name
 ```
+
+## Signature guardrail, 2026-09-23
+
+An ordinary act never outclasses the signature at what the signature does (contract: `docs/design/creature-derived-acts.md`, "Signature guardrail, 2026-09-23"). Authored mechanism `ion-sickle` cutting harm lowered from [52, 78] to [52, 75], the cap set by the signature `chromocat-defining` (cutting harm 75).

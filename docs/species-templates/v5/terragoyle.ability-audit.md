@@ -24,3 +24,7 @@ The tail's levitation/launch channel is fixed in two guaranteed forms: a single 
   acts: 17 distinct on offer (horns 6, wings 4, tail 4, hide 3); exclusions: tail/strike, tail/crush, tail/lash, tail/snare, tail/shove
   naming over 24 seeds: 0.0% of ordinary actions carry a structural parenthetical, 0.0% of creatures have two ordinary actions sharing a base name
 ```
+
+## Signature guardrail, 2026-09-23
+
+An ordinary act never outclasses the signature at what the signature does (contract: `docs/design/creature-derived-acts.md`, "Signature guardrail, 2026-09-23"). The signature `terragoyle-defining` is impact harm 82 on a rock tail; because it carries the rock element it also caps elemental rock harm. `acts.output` `tail/hurl` (the derived rock throw) lowered from [65, 90] to [65, 82], so the ordinary throw no longer outclasses the signature boulder.

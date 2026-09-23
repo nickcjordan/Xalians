@@ -1,7 +1,7 @@
 import { ActionTemplateSchema, abilityIdentity, stable, type Ability, type AbilityTemplate } from './ability.ts';
 import { SpeciesSchema, type Species, type Mechanism } from './species.ts';
 import { nameOrdinaryActions } from './naming.ts';
-import { deriveMechanisms } from './acts.ts';
+import { deriveActs, signatureCaps } from './acts.ts';
 
 type Path = (string | number)[];
 interface Dimension { path: Path; values: string[] }
@@ -14,10 +14,16 @@ export interface ActSummary {
   readonly distinct: number;
   readonly byInstrument: Readonly<Record<string, number>>;
   readonly exclusions: readonly string[];
+  /** The kinds an action signature caps (none for a passive signature), and the derived
+   * mechanisms whose bands the signature guardrail lowered. */
+  readonly signatureKinds: readonly string[];
+  readonly clamped: readonly string[];
 }
 export interface CompiledSpecies {
   readonly species: Species;
   readonly acts: ActSummary;
+  /** Every mechanism the compiler draws from, derived first, with final output bands. */
+  readonly mechanisms: readonly Mechanism[];
   /** Samples structures without replacement, then rolls output bands. No record evaluation. */
   abilities(draw: Draw): { actions: Ability[]; passives: Ability[]; signature: Species['signature'] };
 }
@@ -342,7 +348,7 @@ function resolveOutput(ability: AbilityTemplate, draw: Draw, label: string): Abi
 
 /** Distinct act identities on offer, in total and per instrument. An act reachable
  * through two instruments counts once overall and once under each of them. */
-function summarize(branches: Branch[], acts: string[][], exclusions: readonly string[]): ActSummary {
+function summarize(branches: Branch[], acts: string[][], exclusions: readonly string[], signatureKinds: readonly string[], clamped: readonly string[]): ActSummary {
   const all = new Set<string>();
   const byInstrument = new Map<string, Set<string>>();
   branches.forEach((branch, index) => {
@@ -355,20 +361,28 @@ function summarize(branches: Branch[], acts: string[][], exclusions: readonly st
     distinct: all.size,
     byInstrument: Object.freeze(Object.fromEntries([...byInstrument].map(([key, set]) => [key, set.size]))),
     exclusions: Object.freeze([...exclusions]),
+    signatureKinds: Object.freeze([...signatureKinds]),
+    clamped: Object.freeze([...clamped]),
   });
 }
 
 export function compileSpecies(input: unknown): CompiledSpecies {
   const species = freeze(SpeciesSchema.parse(input));
-  // Anatomy grants first; authored mechanisms extend what the tables cannot say.
-  const branches = [...deriveMechanisms(species), ...species.mechanisms].flatMap(branchesFor);
+  // Anatomy grants first; authored mechanisms extend what the tables cannot say. No
+  // ordinary act outclasses the signature at what the signature does: derived bands are
+  // clamped, and an authored band above the cap is refused rather than silently lowered.
+  const derived = deriveActs(species);
+  if (derived.violations.length) throw new Error(`${species.key}: signature guardrail: ${derived.violations.join('; ')}`);
+  const mechanisms = freeze([...derived.mechanisms, ...species.mechanisms]);
+  const branches = mechanisms.flatMap(branchesFor);
   const acts = actsOf(branches);
   const slots = 4 - species.actions.length;
   // At most four direct selections prove capacity, including all cross-mechanism aliases.
   select(branches, acts, species.actions, slots, () => 0n);
   return Object.freeze({
     species,
-    acts: summarize(branches, acts, species.acts?.exclude ?? []),
+    acts: summarize(branches, acts, species.acts?.exclude ?? [], [...signatureCaps(species).keys()], derived.clamped),
+    mechanisms,
     abilities(draw: Draw) {
       const checkedDraw: Draw = (exclusive, label) => {
         const value = draw(exclusive, label);
