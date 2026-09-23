@@ -30,6 +30,10 @@ The End Wars plate went wrong most often when a step here was skipped. Do them i
 6. **Run the reviewer loop** (section 8) to its stop gate without involving Nick.
 7. **Export, wire the panel, verify on the page** (section 9), open the PR with auto-merge.
 
+**Generated plates.** A plate made mostly of repeated procedural pieces (cloud billows, facets, lightning, sprites) can be generated. Accords is: `art/plates/accords/build.py` writes `source.html` from `shell.html`, and every round edits the script, never the output. The piece list lives in the script as `CONCEPT` and `PIECES` and is written into the source's top comment, where the reviewer reads it. Hand-drawn plates like End Wars keep editing `source.html` directly.
+
+**Check the page, not only the source.** The source page and the home page do not run the same code. Capture the plate on the home page with `snap-home-plate.cjs <era>`, which also writes a `-spread` capture including the text card. Do this every few rounds, not only at the end: the Accords reviewer found two events hidden under the card, and a reduced-motion still that the source page could never show.
+
 ## 4. Composition rules
 
 - **Designed shapes, never traced ones.** Build every object from clean geometry that describes what it is: a spire is faces and ribs, a ship is hull sections, a bunk is a frame and a mattress. Never run a displacement filter over architecture; it reads as melting.
@@ -94,7 +98,7 @@ Capture tools, all under `scripts/plates/` (outputs in `untracked/snaps/`; creat
 | `snap-layer.cjs <file> <name> <layer ids or all> [x y w h]` | one or more layers alone |
 | `pieces-audit.cjs <file>` | every piece alone and in context |
 | `measure-gpu.cjs <file> [file ...]` | headed GPU frame rate, compare versions |
-| `snap-home-plate.cjs` | the panel on the running dev server (port 3012) at desktop, phone and reduced motion |
+| `snap-home-plate.cjs [era]` | that era's panel on the running dev server (port 3012) at desktop, phone and reduced motion, plus a `-spread` capture with the text card |
 | `gen-texture.cjs <out dir>` | regenerate the surface sheets if ever needed |
 
 ## 9. Shipping a plate

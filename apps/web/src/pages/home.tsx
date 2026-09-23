@@ -69,7 +69,10 @@ const ART = {
 		era: 'accords',
 		src: '/assets/img/lore/eras/accords.jpg',
 		small: '/assets/img/lore/eras/accords-768.jpg',
-		alt: 'Three beams of light striking down from a storm cloud onto a dark ridge, lightning beside them.',
+		alt: 'A lattice mast on a metal summit reaching up into a crimson storm, lightning striking the peaks around it.',
+		// The living version: the QED works on Zolton, a cradle mast above a
+		// storm cloud sea where crimson sprites bloom and lightning strikes.
+		live: '/assets/plates/accords/plate.html',
 	},
 	endWars: {
 		era: 'end-wars',

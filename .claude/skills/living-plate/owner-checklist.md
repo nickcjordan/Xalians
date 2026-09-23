@@ -8,7 +8,7 @@ Every item here is something Nick had to point out by hand on the End Wars plate
 3. Is it clear what every moving thing is: a projectile, a beam, a spark, debris? (The streaks read as lasers, rays and flaming projectiles at once until they became anti-air bolts from named batteries.)
 
 ## Grounding
-4. Is anything floating in the air that should stand on something? (A black mast floated mid-sky like a cross.)
+4. Is anything floating in the air that should stand on something? (A black mast floated mid-sky like a cross.) Does every built thing sit square on its support, its footprint inside the support's top and centered on it? (The Accords blockhouse overhung its summit on one side, and three reviewers passed it.)
 5. Does every road, bridge, pipe and river reach an edge, a building or a vanishing point? (Both bridges led to roads going nowhere.)
 6. Does everything receding fade into haze or darkness rather than stopping at a hard edge? (The river was cut off at its far end.)
 
@@ -28,5 +28,11 @@ Every item here is something Nick had to point out by hand on the End Wars plate
 ## Strength
 16. Is any effect louder than its role? (The anti-air bolts were too large and intense until cut by about a third.)
 
+## Concept (added on Accords, 2026-09-22)
+18. Does the scene say its lore at a glance, in idle frames as well as at its big moment? (Accords read as a calm "radio mast above clouds" for nine seconds out of twelve until the sky was filled with staggered sprites and strikes.)
+19. Does every lore claim the plate depicts match the source's literal wording? (The QED lore says chips go at *opposite ends* of a sprite; the first Accords plate had only one end.) A reviewer finding that argues against the literal wording is rejected, not implemented. (A reviewer asked to make the sprites less like jellyfish; Zolton's history says they dance "like electrical jellyfish.")
+20. Does anything important sit under the desktop text card, which covers roughly the left third of a portrait panel around its middle? (The Accords twin lamp and two storm events played under it.)
+
 ## Page
 17. Does the source page's own text (kicker, pass label, notes) match the current plate? (The review page said "Twenty-fourth pass" long after.)
+21. On the live home page, does the reduced-motion still show the plate's composed t=0 frame rather than bare resting values? Check `home-reduced-<era>.png`. (Found on Accords: the page paused the plate before SMIL ever sampled it, so every animated element sat at opacity 0. `livePlate.tsx` now seeks to 0 after injection.)

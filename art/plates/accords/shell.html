@@ -1,0 +1,89 @@
+<!doctype html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The QED Works</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Saira:wght@500;600&family=Atkinson+Hyperlegible:wght@400;700&family=Martian+Mono:wght@400&display=swap">
+<style>
+  :root { color-scheme: dark; }
+  body {
+    margin: 0; padding: 0 16px; padding-block: 24px 64px;
+    background: #121110; color: #d9d2c0;
+    font-family: "Atkinson Hyperlegible", "Helvetica Neue", Arial, sans-serif; font-size: 16px; line-height: 1.55;
+  }
+  .wrap { max-width: 1240px; margin: 0 auto; display: flex; flex-direction: column; gap: 18px; }
+  .kicker { font-family: "Martian Mono", "Courier New", monospace; font-size: 11px; letter-spacing: .14em; color: #8f8878; text-transform: uppercase; display: flex; gap: 18px; flex-wrap: wrap; }
+  h1 { font-family: "Saira", "Barlow Condensed", Impact, sans-serif; font-weight: 600; font-size: clamp(28px, 4vw, 40px); line-height: .95; letter-spacing: .01em; text-transform: uppercase; margin: 0; color: #d9d2c0; text-wrap: balance; }
+  .stage { display: grid; grid-template-columns: minmax(0, 720px) minmax(0, 1fr); gap: 32px; align-items: start; }
+  @media (max-width: 900px) { .stage { grid-template-columns: 1fr; } }
+  .frame { position: relative; --cut: 20px; --mat: 6px; background: rgba(217,210,192,.22);
+    clip-path: polygon(var(--cut) 0, 100% 0, 100% calc(100% - var(--cut)), calc(100% - var(--cut)) 100%, 0 100%, 0 var(--cut)); aspect-ratio: 4 / 5; }
+  .frame::before { content: ""; position: absolute; inset: 1px; background: #201f1c;
+    clip-path: polygon(calc(var(--cut) - 1px) 0, 100% 0, 100% calc(100% - var(--cut) + 1px), calc(100% - var(--cut) + 1px) 100%, 0 100%, 0 calc(var(--cut) - 1px)); }
+  .well { position: absolute; inset: var(--mat); overflow: hidden; background: #0d0d0f;
+    clip-path: polygon(calc(var(--cut) - var(--mat)) 0, 100% 0, 100% calc(100% - var(--cut) + var(--mat)), calc(100% - var(--cut) + var(--mat)) 100%, 0 100%, 0 calc(var(--cut) - var(--mat))); }
+  .well { filter: contrast(1.06); }
+  .well svg.layer { position: absolute; inset: 0; display: block; width: 100%; height: 100%; will-change: transform; }
+  .surface { position: absolute; inset: 0; pointer-events: none; mix-blend-mode: overlay; background-size: 100% 100%; }
+  .well svg.defs { position: absolute; width: 0; height: 0; overflow: hidden; }
+  .tag { position: absolute; top: 16px; right: 16px; z-index: 2; font-family: "Martian Mono", monospace; font-size: 11px; letter-spacing: .14em; color: #d9d2c0; background: rgba(18,17,16,.8); border: 1px solid rgba(217,210,192,.22); padding: 6px 10px; display: flex; gap: 10px; }
+  .tag span:last-child { color: #a39c8a; }
+  .side { display: flex; flex-direction: column; gap: 18px; }
+  .plate { max-width: 62ch; font-size: 17px; }
+  .plate p { margin: 0 0 10px; }
+  .notes { display: flex; flex-direction: column; gap: 16px; border-top: 1px solid rgba(217,210,192,.14); padding-top: 18px; }
+  .notes h2 { font-family: "Saira", sans-serif; font-weight: 500; font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: #a39c8a; margin: 0 0 6px; }
+  .notes p { margin: 0; font-size: 14px; color: #bdb5a2; max-width: 62ch; }
+  .controls { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+  button { font-family: "Saira", sans-serif; font-weight: 500; letter-spacing: .1em; text-transform: uppercase; font-size: 12px; color: #d9d2c0; background: #201f1c; border: 1px solid rgba(217,210,192,.22); padding: 9px 14px; cursor: pointer; box-shadow: 3px 3px 0 0 #3a3730; }
+  button:hover { transform: translate(-1px,-1px); box-shadow: 4px 4px 0 0 #3a3730; }
+  button:active { transform: translate(3px,3px); box-shadow: none; }
+  button:focus-visible { outline: 2px solid #5fd39b; outline-offset: 2px; }
+</style>
+
+<div class="wrap">
+  <div class="kicker"><span>Era plate</span><span>The Accords</span><span>SVG, 1536 by 1920 units</span><span>Final pass</span></div>
+  <h1>The QED Works on Zolton</h1>
+
+  <div class="stage">
+  <div class="frame">
+    <div class="tag"><span>02</span><span>The Accords</span></div>
+    <div class="well">
+<!--LAYERS-->      <div class="surface strokes" style="background-image:url(../_textures/strokes.jpg); opacity:.18; -webkit-mask-image:linear-gradient(transparent 0, #000 12%, #000 100%); mask-image:linear-gradient(transparent 0, #000 12%, #000 100%)"></div>
+      <div class="surface paper" style="background-image:url(../_textures/paper.jpg); opacity:.45; background-size:768px 768px; background-repeat:repeat; -webkit-mask-image:none; mask-image:none"></div>
+    </div>
+  </div>
+
+  <div class="side">
+  <div class="controls">
+    <button type="button" id="toggle">Pause the scene</button>
+    <span class="kicker">Sprites, lightning, the forging and the storm's glow are live. Reduced motion holds the still frame.</span>
+  </div>
+
+  <div class="plate">
+    <p>The APEX Accords placed the Xalian Generators under a single regulating intelligence, and its reach depended on Zolton's Quantum Entanglement Devices, forged in the planet's lightning-wracked bloodstorms.</p>
+  </div>
+
+  <div class="notes">
+    <div><h2>What it is</h2><p>The machine that made the link. A QED works stands on the summit of one of Zolton's metal spires, high above a sea of storm cloud lit red from inside. Chips are forged at opposite ends of a crimson sprite: a pod hung on a tether above, and the cradle on the mast below. When the sprite blooms between them, a discharge runs down the mast and both ends pulse together: two chips, entangled. One cold lamp on the mast never flickers.</p></div>
+    <div><h2>How it moves</h2><p>Sprites bloom fast, flicker and fade slowly on eight separate clocks, staggered so the sky is never quiet for long. Bloodstorm lightning falls from the storm wall and from sprites into the spire tips, leaves a glint on the tip and an afterglow in the cloud, and flickers deep inside the cloud sea. The storm's red light swells and settles. Every animation starts mid-cycle, and the page seeks the plate to its first frame before it pauses, so the reduced-motion still shows the forging in progress.</p></div>
+  </div>
+  </div>
+  </div>
+  </div>
+</div>
+
+<script>
+  (function () {
+    var svgs = Array.prototype.slice.call(document.querySelectorAll('svg.layer'));
+    var btn = document.getElementById('toggle');
+    var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var paused = false;
+    function set(p) {
+      paused = p;
+      if (paused) { svgs.forEach(function (s) { s.pauseAnimations(); }); btn.textContent = 'Resume the scene'; }
+      else { svgs.forEach(function (s) { s.unpauseAnimations(); }); btn.textContent = 'Pause the scene'; }
+    }
+    if (reduced) set(true);
+    btn.addEventListener('click', function () { set(!paused); });
+  })();
+</script>
