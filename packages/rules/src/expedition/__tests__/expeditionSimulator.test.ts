@@ -173,12 +173,21 @@ describe('expeditionSimulator report shape', () => {
 	});
 });
 
-describe('--mirror gives identical roster ids on both sides', () => {
-	test('every match has A and B rosters with the same record ids', () => {
+describe('--mirror gives both sides the same creatures as separate pieces', () => {
+	// pass 46: the same creatures, never the same ids (the engine finds pieces by id)
+	test('every match has B holding the records of A under ids of its own', () => {
 		const matchResults = runSimulationRaw({ matches: 5, seed: 'mirror-test-seed', mirror: true });
 		matchResults.forEach((m: any) => {
 			expect(m.error).toBeNull();
-			expect(m.rosterAIds).toEqual(m.rosterBIds);
+			expect(m.rosterBIds).toEqual(m.rosterAIds.map((id: string) => `${id}~B`));
+		});
+	});
+
+	test('without --mirror, the two rosters never share a creature', () => {
+		const matchResults = runSimulationRaw({ matches: 20, seed: 'no-share-seed', mirror: false });
+		matchResults.forEach((m: any) => {
+			expect(m.error).toBeNull();
+			expect(m.rosterBIds.filter((id: string) => m.rosterAIds.includes(id))).toEqual([]);
 		});
 	});
 
