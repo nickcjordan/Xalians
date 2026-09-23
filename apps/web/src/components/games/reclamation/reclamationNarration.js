@@ -413,3 +413,68 @@ export function captionEvent(event, ctx = {}) {
 			return null;
 	}
 }
+
+/*
+	PASS 49. THE RULING SAYS WHY. verdictOf(result, you, planet) -> { who, text, planet,
+	unopposed, margin } for one world of the judge event.
+
+	A blind critic read three Rulings in a row as "1 world yours, 2 worlds the rival's" and
+	called the rounds identical. What differed was the why: a world won by 46, two given
+	away for nothing. The stamp now carries it ("rival's, unopposed", "yours by 12"), and
+	rulingLine says the round in those terms.
+*/
+// `sentBy` (optional): how many creatures each seat had at the world when the Clash began.
+// The judge's own entries leave out the downed, so a world whose defenders all fell would
+// otherwise read as unopposed.
+export function verdictOf(result, you, planet, sentBy) {
+	const r = result || {};
+	if (!r.winner) {
+		return { who: 'court', text: 'tied', planet, unopposed: false, margin: 0 };
+	}
+	const mine = r.winner === you;
+	const loser = r.winner === 'A' ? 'B' : 'A';
+	const loserSent = sentBy && typeof sentBy[loser] === 'number' ? sentBy[loser] : ((r.entries && r.entries[loser]) || []).length;
+	const unopposed = loserSent === 0;
+	const margin = Math.abs((r.holdA || 0) - (r.holdB || 0));
+	const whose = mine ? 'yours' : 'rival’s';
+	return {
+		who: mine ? 'yours' : 'theirs',
+		text: unopposed ? `${whose}, unopposed` : `${whose} by ${formatHoldShown(margin) === '0' ? formatHold(margin) : formatHoldShown(margin)}`,
+		planet,
+		unopposed,
+		margin,
+	};
+}
+
+function joinNames(names) {
+	return names.length <= 1 ? (names[0] || '') : `${names.slice(0, -1).join(', ')} and ${names[names.length - 1]}`;
+}
+
+// "Round 2: Endessa yours by 46; Saiphus and Luminax the rival's, unopposed."
+export function rulingLine(frameIndex, verdictList) {
+	const list = (verdictList || []).filter(Boolean);
+	if (!list.length) {
+		return `Round ${frameIndex + 1} is ruled.`;
+	}
+	const groups = [];
+	const add = (key, label, planet) => {
+		let g = groups.find((x) => x.key === key);
+		if (!g) {
+			g = { key, label, names: [] };
+			groups.push(g);
+		}
+		g.names.push(planet);
+	};
+	list.forEach((v) => {
+		if (v.who === 'court') {
+			add('tied', 'tied', v.planet);
+		} else if (v.unopposed) {
+			add(`${v.who}-free`, v.who === 'yours' ? 'yours, unopposed' : 'the rival’s, unopposed', v.planet);
+		} else {
+			// contested worlds keep their own margins, one clause each
+			add(`${v.who}-${v.planet}`, v.who === 'yours' ? `yours by ${v.text.replace(/^.* by /, '')}` : `the rival’s by ${v.text.replace(/^.* by /, '')}`, v.planet);
+		}
+	});
+	return `Round ${frameIndex + 1}: ${groups.map((g) => `${joinNames(g.names)} ${g.label}`).join('; ')}.`;
+}
+

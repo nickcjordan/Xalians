@@ -15,6 +15,7 @@ import { SENDABLE, clinchFor, FRAMES_PER_MATCH } from '@xalians/rules/expedition
 import {
 	speciesLabel, formatHold, formatHoldShown, formatBlow, classifyEvent, narrateEvent, cueForEvent, narrateSwiftMove,
 	narrateSend, narratePass, narrateJudge, narrateMatchEnd, narrateStake, countWord, captionEvent,
+	verdictOf, rulingLine,
 } from './reclamationNarration';
 import { flattenBoard, prepareWithCompanions, siteHoldTotal, ghostPlanFor, ownSweepsFor } from './reclamationPreview';
 
@@ -1440,10 +1441,11 @@ class ReclamationMatch extends React.Component {
 			verdicts = {};
 			Object.keys(judgeEvent.siteResults).forEach((siteId) => {
 				const r = judgeEvent.siteResults[siteId];
-				verdicts[siteId] = {
-					who: !r.winner ? 'court' : r.winner === YOU ? 'yours' : 'theirs',
-					text: !r.winner ? 'tied' : r.winner === YOU ? 'yours' : 'rival’s',
-				};
+				// pass 49: the stamp says why ("rival's, unopposed", "yours by 12")
+				const site = playback.frame.sites.find((x) => x.id === siteId);
+				const before = (playback.frozenView && playback.frozenView.board && playback.frozenView.board[siteId]) || null;
+				const sentBy = before ? { A: (before.A || []).length, B: (before.B || []).length } : undefined;
+				verdicts[siteId] = verdictOf(r, YOU, site ? site.world.planet : siteId, sentBy);
 			});
 		}
 		const resolved = judgedViewFromRuling(
@@ -1473,18 +1475,13 @@ class ReclamationMatch extends React.Component {
 
 		if (verdicts) {
 			this.cue(match.phase === 'matchEnd' ? 'charter' : 'stamp');
-			const tally = { yours: 0, theirs: 0, court: 0 };
-			Object.keys(verdicts).forEach((siteId) => { tally[verdicts[siteId].who] += 1; });
-			const parts = [];
-			if (tally.yours) parts.push(`${plural(tally.yours, 'world')} yours`);
-			if (tally.theirs) parts.push(`${plural(tally.theirs, 'world')} the rival's`);
-			if (tally.court) parts.push(`${plural(tally.court, 'world')} tied, held by no one`);
 			// pass 38: the round's result in plain words, once (the dock no longer repeats it)
 			this.beat({
 				kind: 'judge',
 				seat: null,
 				short: 'The Court rules',
-				text: `Round ${playback.frame.index + 1}: ${parts.join(', ')}.`,
+				// pass 49: world by world, with why (unopposed, or by how much)
+				text: rulingLine(playback.frame.index, playback.frame.sites.map((x) => verdicts[x.id]).filter(Boolean)),
 			});
 		}
 
@@ -1698,16 +1695,9 @@ class ReclamationMatch extends React.Component {
 	rulingSentence(view) {
 		const judged = this.state.judgedFrame != null ? this.state.judgedFrame : view.frameIndex;
 		const verdicts = this.state.verdicts || {};
-		let mine = 0;
-		let theirs = 0;
-		Object.keys(verdicts).forEach((id) => {
-			if (verdicts[id].who === 'yours') mine++;
-			else if (verdicts[id].who === 'theirs') theirs++;
-		});
-		if (!mine && !theirs) {
-			return `Round ${judged + 1} is ruled.`;
-		}
-		return `Round ${judged + 1}: you took ${plural(mine, 'world')}, the rival ${theirs}.`;
+		// pass 49: the round in the terms that made it, world by world, in frame order
+		const order = (view.frame && view.frame.sites) ? view.frame.sites.map((x) => x.id) : Object.keys(verdicts);
+		return rulingLine(judged, order.map((id) => verdicts[id]).filter(Boolean));
 	}
 
 	// a rival beat holds the turn readout on what the rival just did, so "Your move" lands
