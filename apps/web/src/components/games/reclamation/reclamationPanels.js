@@ -66,7 +66,7 @@ export function HelpPanel({ match, clinch, onClose }) {
 					<li><b>You lose it</b> over one of yours, <b>you down it</b> over the rival&apos;s: that creature would fall.</li>
 					<li><b>Own sweep</b>: your own sweep at that world would hit it.</li>
 					<li>The small symbol in a creature&apos;s name plate is its role. The colored badge on its piece is its element.</li>
-					<li><b>Pass</b> lights up when the game suggests passing; the reason is in the bar at the top.</li>
+					<li><b>Suggested</b> marks what the Court proctor, the house rival, would do in your seat, and <b>Pass</b> lights up when it would pass; the reason is in the bar at the top. It is a starting point, not the answer: played against the other rivals it wins about half its games.</li>
 					<li><b>8 of your 12 hold well here</b>: how many of your squad would stand at this world without strain.</li>
 					<li>&equiv; opens the history, &#9881; the settings.</li>
 				</ul>
