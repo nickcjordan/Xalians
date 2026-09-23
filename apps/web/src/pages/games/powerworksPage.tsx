@@ -48,6 +48,7 @@ import {
   sedated,
   areaReach,
   ROOMS,
+  ENCOUNTER_STALL_ROUNDS,
   SAVE_VERSION,
   type Run,
   type Unit,
@@ -73,6 +74,7 @@ import {
   harms,
   helps,
   melee,
+  closes,
   StatusBadges,
   GroupIcon,
   PassiveIcon,
@@ -163,6 +165,7 @@ function eventLabel(frame: Frame) {
       withheld: "Withheld",
       broken: "Charge broken",
       lapsed: "Lapsed",
+      outlasted: "Forced out",
       result: "Complete",
     } as const
   )[e.kind];
@@ -505,9 +508,9 @@ export default function PowerworksPage() {
     if (!move || !active) return "";
     if (!u.enemy) return squadmatePreview(u);
     if (binds(move) && !harms(move))
-      return u.moves.some((m) => !melee(m))
-        ? "Melee blocked · ranged still works"
-        : "Block next melee action";
+      return u.moves.some((m) => !closes(m))
+        ? "Blocks closing in · other moves still work"
+        : "Blocks its next move";
     const factor = matchup(active, u, move);
     // An area move names how many more foes it reaches from this target, and names every
     // squadmate a burst on self would also hit (contract decision 33).
@@ -616,7 +619,7 @@ export default function PowerworksPage() {
           : ""
       }`;
     if (e.kind === "bind")
-      return `${name} cannot use melee at its next opportunity.`;
+      return `${name} cannot close in on a target at its next opportunity.`;
     if (e.kind === "missed") return `${name} shrugs it off.`;
     if (e.kind === "displace")
       return `${name} is pulled off its footing. Its charge is broken.`;
@@ -641,6 +644,9 @@ export default function PowerworksPage() {
         target && actor && target.enemy === actor.enemy ? ", a squadmate" : ""
       }.`;
     if (e.kind === "round") return "Orders resolve from fastest to slowest.";
+    // The stalemate rule (contract decision 52).
+    if (e.kind === "outlasted")
+      return `${ENCOUNTER_STALL_ROUNDS} rounds without progress: nobody on either side lost health. The defenses outlasted the squad, which is forced out with its practice XP.`;
     const helping =
       !!actor && !!target && actor.id !== target.id && actor.enemy === target.enemy;
     if (e.kind === "status")
@@ -693,6 +699,8 @@ export default function PowerworksPage() {
       ? "Powerworks silenced"
       : run.phase === "lost"
       ? "Expedition ended"
+      : run.ended === "outlasted"
+      ? "Forced out"
       : "Squad extracted";
 
   // The draft is setup, so it is the site's chrome rather than this immersive page
@@ -1036,7 +1044,7 @@ export default function PowerworksPage() {
                                     ? ", spent this encounter"
                                     : cooldown
                                     ? ", cooling down"
-                                    : active.bound && melee(m)
+                                    : active.bound && closes(m)
                                     ? ", blocked by binding"
                                     : ", no effect here"
                                   : ""
@@ -1081,7 +1089,7 @@ export default function PowerworksPage() {
                                 spent={spent}
                                 selected={pending === i}
                                 blocked={
-                                  !legal && !!active.bound && melee(m) && !cooldown
+                                  !legal && !!active.bound && closes(m) && !cooldown
                                 }
                                 id={`move-stats-${active.id}-${i}`}
                               />
@@ -1318,6 +1326,8 @@ export default function PowerworksPage() {
                         ? "The defense network falls silent. Your squad made it through."
                         : run.phase === "lost"
                         ? "Your squad could not continue. A fresh attempt restores everyone."
+                        : run.ended === "outlasted"
+                        ? `${ENCOUNTER_STALL_ROUNDS} rounds passed without progress. The facility's defenses outlasted the squad, which leaves with its earned practice XP.`
                         : "The squad leaves with its earned practice XP."}
                     </p>
                   </div>
@@ -1683,8 +1693,9 @@ export default function PowerworksPage() {
                   Binding is not stun
                 </h3>
                 <p>
-                  Melee is blocked through the next opportunity. Ranged moves
-                  still work. Blocked moves do not start their cooldown. A
+                  Moves that close in on a target are blocked through the next
+                  opportunity. Moves made from where the creature stands still
+                  work, melee or ranged. Blocked moves do not start their cooldown. A
                   pull breaks a charge outright.
                 </p>
               </section>
@@ -1882,7 +1893,7 @@ export default function PowerworksPage() {
                       cooldown={inspect.enemy ? null : inspect.cooldowns[i]}
                       spent={m.signature && inspect.signatureSpent}
                       selected={false}
-                      blocked={!!inspect.bound && melee(m)}
+                      blocked={!!inspect.bound && closes(m)}
                       id={`inspect-move-${i}`}
                       fullName
                     />

@@ -205,7 +205,7 @@ describe("shared battlefield", () => {
     const badge = screen.getByText("paralyzed").closest(".pw-status-badge")!;
     expect(badge).toHaveClass("group-binding");
     expect(badge).toHaveTextContent("1 opp");
-    expect(badge).toHaveAttribute("title", expect.stringContaining("Melee"));
+    expect(badge).toHaveAttribute("title", expect.stringContaining("close in"));
     const rot = screen.getByText("corroding").closest(".pw-status-badge")!;
     expect(rot).toHaveClass("group-degrading");
     expect(rot).toHaveTextContent("3 opps");

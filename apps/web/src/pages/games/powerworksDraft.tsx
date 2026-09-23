@@ -29,6 +29,7 @@ import {
   harms,
   hasPaintedArt,
   melee,
+  closes,
   moveDescription,
 } from "./powerworksVisuals";
 
@@ -48,22 +49,28 @@ export function actionReading(u: Unit, m: Move) {
     if (e.support === "bind") parts.push("binds");
     else if (e.support === "displace") parts.push("pulls");
     else if (e.support === "restore")
-      parts.push(e.recipient === "self" ? "heals itself" : "heals a squadmate");
+      parts.push(e.recipient === "self" ? "heals self" : "heals squadmate");
     else if (e.support === "protect")
-      parts.push(e.recipient === "self" ? "shields itself" : "shields a squadmate");
-    else if (e.support === "remove") parts.push(`clears ${(e.methods ?? []).join(" or ")}`);
+      parts.push(e.recipient === "self" ? "shields self" : "shields squadmate");
+    else if (e.support === "remove") parts.push(`clears ${(e.methods ?? []).join("/")}`);
     else if (e.support === "status" && e.status)
-      parts.push(e.recipient === "self" ? `${e.status} itself` : e.status);
+      parts.push(e.recipient === "self" ? `${e.status} self` : e.status);
   }
-  parts.push(m.approach === "self" ? "on itself" : melee(m) ? "melee" : "ranged");
+  // Reach: an action on its user already says "self" in its effect words.
+  if (m.approach !== "self") {
+    parts.push(melee(m) ? "melee" : "ranged");
+    // What binding blocks, said where it applies.
+    if (closes(m)) parts.push("closes in");
+  }
   if (m.area) parts.push("area");
-  // Tempo in the player's words: a one-round cooldown means every second round.
+  // Tempo in the player's words, short enough never to be cut off: a one-round cooldown
+  // means every second round.
   parts.push(
     charges(m)
-      ? "charges first"
+      ? "charges"
       : cooldownLimit(m)
-      ? `every ${({ 1: "2nd", 2: "3rd" } as Record<number, string>)[cooldownLimit(m)] ?? `${cooldownLimit(m) + 1}th`} round`
-      : "every round"
+      ? `every ${({ 1: "2nd", 2: "3rd" } as Record<number, string>)[cooldownLimit(m)] ?? `${cooldownLimit(m) + 1}th`}`
+      : "each round"
   );
   const part = m.effects.some((e) => e.support === "unsupported");
   return {
@@ -157,7 +164,7 @@ function OfferCard({
                     </Badge>
                   )}
                 </div>
-                <div className="type-data truncate text-tiny text-ink-2">
+                <div className="text-tiny text-ink-2" data-draft="reading">
                   {read.none
                     ? read.reason ?? "Nothing it does has a rule in this game."
                     : `${read.text}${read.part ? " · part has no effect here" : ""}`}

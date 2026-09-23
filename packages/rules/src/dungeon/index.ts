@@ -55,6 +55,7 @@ import {
   DRAFT_OFFER_SIZE,
   DRAFT_SEED_PREFIX,
   SQUAD_SIZE,
+  ENCOUNTER_STALL_ROUNDS,
   ENCOUNTER_XP,
   FINAL_ENCOUNTER_XP,
   HARM_ATTR_DIVISOR,
@@ -109,6 +110,7 @@ export {
   DEGRADE_FACTOR,
   DESPERATE_STRIKE_RECOIL,
   DRAFT_OFFER_SIZE,
+  ENCOUNTER_STALL_ROUNDS,
   FRIGHTENED_OUTPUT_FACTOR,
   LIKELIHOOD_PERCENT,
   MEND_FACTOR,
@@ -140,6 +142,10 @@ export type Run = {
   enemies: Unit[];
   orders: Record<string, Order>;
   phase: Phase;
+  /** Set only when a retreat was forced by the stalemate rule (contract decision 52): the facility outlasted the squad. */
+  ended?: "outlasted";
+  /** Consecutive rounds of this encounter in which no unit lost HP and none fell (contract decision 52). */
+  stalled: number;
   revival: number;
   xp: number;
   log: string[];
@@ -168,6 +174,8 @@ export type BattleEvent = {
     | "withheld"
     | "broken"
     | "lapsed"
+    /** The stalemate rule forced the squad out (contract decision 52). */
+    | "outlasted"
     | "result";
   /** status / tick / expired / removed events: which condition. */
   status?: string;
@@ -246,7 +254,10 @@ export function unitIds(species: readonly string[]): string[] {
 /**
   Decision 37 on one unit: the indexes of its ordinary damaging moves that are legal every
   round once its signature is spent (repeatable recovery, not a charge, not a burst that
-  reaches squadmates, usable). Contract decision 46 offers only creatures that have one.
+  reaches squadmates, usable) and that preview at least 1 against a standard machine target:
+  its move-card power (`basePower`, the harm curve before matchup and guard) is at least 1.
+  A harm that previews 0 is not a harm the squad can lean on (pass 6: 180 of 3,200 offers
+  had one). Contract decision 46 offers only creatures that have one.
 */
 export function everyRoundHarms(u: Unit): number[] {
   return u.moves
@@ -258,7 +269,8 @@ export function everyRoundHarms(u: Unit): number[] {
         m.recovery === "repeatable" &&
         m.preparation !== "prolonged" &&
         !selfBurst(m) &&
-        usable(m)
+        usable(m) &&
+        basePower(u, m) >= 1
     )
     .map(({ i }) => i);
 }
@@ -1058,6 +1070,7 @@ function prepare(s: Run) {
 }
 function enter(s: Run) {
   s.round = 1;
+  s.stalled = 0;
   s.phase = "planning";
   for (const u of s.team) {
     u.cooldowns = u.moves.map(() => 0);
@@ -1100,6 +1113,7 @@ export function openRun(seed = 1): Run {
     squad: null,
     room: 0,
     round: 1,
+    stalled: 0,
     team: [],
     enemies: [],
     orders: {},
@@ -1123,6 +1137,7 @@ export function createRun(seed = 1, squad: Squad = "starter"): Run {
     squad: picked,
     room: 0,
     round: 1,
+    stalled: 0,
     team: squadUnits(seed >>> 0, picked),
     enemies: [],
     orders: {},
@@ -1368,11 +1383,30 @@ export function resolveRound(
     s.xp += xp;
     s.phase = s.room === 3 ? "won" : "camp";
     emit(`Encounter cleared. +${xp} practice XP per squad member.`);
+  } else if (
+    (s.stalled = madeProgress(previous, s) ? 0 : s.stalled + 1) >= ENCOUNTER_STALL_ROUNDS
+  ) {
+    // The stalemate rule (contract decision 52): rounds in a row in which nobody on either
+    // side lost HP force the squad out. The run ends as a retreat and keeps its earned XP.
+    s.phase = "retreated";
+    s.ended = "outlasted";
+    emit(
+      `The facility's defenses outlasted the squad: ${ENCOUNTER_STALL_ROUNDS} rounds without progress. The squad is forced out with ${s.xp} practice XP.`,
+      { kind: "outlasted" }
+    );
   } else {
     s.round++;
     prepare(s);
   }
   return { state: s, frames };
+}
+/**
+  Progress for the stalemate rule (contract decision 52): some unit on either side lost HP
+  this round (a fall is a loss of HP). Healing is not progress.
+*/
+function madeProgress(before: Run, after: Run): boolean {
+  const hp = new Map([...before.team, ...before.enemies].map((u) => [u.id, u.hp]));
+  return [...after.team, ...after.enemies].some((u) => u.hp < (hp.get(u.id) ?? u.hp));
 }
 /**
   What one move actually did, for the trigger layer to read (contract decision 22).

@@ -17,6 +17,9 @@ import {
   conditionRule,
   effectSummary,
   moveDescription,
+  MoveIcon,
+  closes,
+  melee,
   passiveHeading,
   passiveRule,
 } from "./powerworksVisuals";
@@ -263,5 +266,46 @@ describe("powerworks pass 4 presentation", () => {
     expect(card(burst)).toContain("Hits squadmates");
     cleanup();
     expect(card(sweep)).not.toContain("Hits squadmates");
+  });
+});
+
+describe("Powerworks reach and approach are separate words (pass 6)", () => {
+  const u = readCompanion(COMPANION_RECORDS.graviclaw, "G");
+  const move = (range: Move["range"], approach: Move["approach"]): Move => ({
+    key: "test",
+    name: "Test Buffet",
+    signature: false,
+    approach,
+    range,
+    preparation: "brief",
+    recovery: "repeatable",
+    effects: [
+      { key: "outcome", type: "harm", recipient: "target", likelihood: "consistent", intensity: 50, mechanism: "impact", support: "harm" },
+    ],
+  });
+  it("names contact reach melee and everything else ranged, and adds closes in for a closing approach", () => {
+    expect(moveDescription(u, move("contact", "stationary"))).toMatch(/^Melee attack\./);
+    expect(moveDescription(u, move("contact", "closing"))).toMatch(/^Melee attack that closes in\./);
+    expect(moveDescription(u, move("medium", "stationary"))).toMatch(/^Ranged attack\./);
+    expect(moveDescription(u, move("short", "closing"))).toMatch(/^Ranged attack that closes in\./);
+    expect(melee(move("contact", "stationary"))).toBe(true);
+    expect(closes(move("contact", "stationary"))).toBe(false);
+  });
+  it("draws the icon by reach: swords for contact, crosshair otherwise", () => {
+    const icon = (m: Move) => render(<MoveIcon move={m} />).container.innerHTML;
+    const contact = icon(move("contact", "stationary"));
+    cleanup();
+    const closing = icon(move("contact", "closing"));
+    cleanup();
+    const ranged = icon(move("medium", "stationary"));
+    expect(contact).toBe(closing);
+    expect(contact).not.toBe(ranged);
+  });
+  it("keeps the binding rule on approach, in plain words", () => {
+    const rule = conditionRule(
+      { status: "paralyzed", group: "binding", intensity: 50, remaining: 1, source: "B4", removable: [] },
+      u
+    );
+    expect(rule).toMatch(/Moves that close in on a target are blocked/);
   });
 });

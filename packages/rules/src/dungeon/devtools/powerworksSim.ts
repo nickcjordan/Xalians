@@ -134,6 +134,8 @@ export type SimStats = {
   ordersStatus: number;
   /** Orders of a support move: one carrying a helpful effect it can aim at a squadmate (decision 39). */
   ordersSupport: number;
+  /** Runs the stall rule ended (contract decision 52): six rounds without progress, forced out, counted as losses. */
+  outlastedRuns: number;
   /** Runs the sim stopped at its 400-step guard, still in play: counted as losses. */
   stalledRuns: number;
   /** The longest run, in rounds. */
@@ -607,6 +609,7 @@ export function playRun(seed: number, stats: SimStats, options: SimOptions = SHI
   stats.encounters += rooms;
   stats.roomsReached.push(rooms);
   if (s.phase === "planning" || s.phase === "camp") stats.stalledRuns++;
+  if (s.ended === "outlasted") stats.outlastedRuns++;
   stats.longestRun = Math.max(stats.longestRun, roundsThisRun);
   if (s.phase === "won") {
     stats.wins++;
@@ -679,6 +682,7 @@ export function simulate(
     ordersChargeBegun: 0,
     ordersStatus: 0,
     ordersSupport: 0,
+    outlastedRuns: 0,
     stalledRuns: 0,
     longestRun: 0,
   };
@@ -736,7 +740,7 @@ export function formatPass6(stats: SimStats, rows = 12): string {
     `win rate ${pct(stats.wins, stats.runs)} (${stats.wins} won, ${stats.losses} lost)`,
     `orders ${stats.ordersTotal}: charge begun ${stats.ordersChargeBegun} (${pct(stats.ordersChargeBegun, stats.ordersTotal)}), status-carrying ${stats.ordersStatus} (${pct(stats.ordersStatus, stats.ordersTotal)}), support move ${stats.ordersSupport} (${pct(stats.ordersSupport, stats.ordersTotal)}), named a squadmate ${stats.ordersAtSquadmates} (${pct(stats.ordersAtSquadmates, stats.ordersTotal)})`,
     `companion charges begun / releases landed ${stats.companionChargesBegun} / ${stats.companionReleasesLanded}`,
-    `runs stopped at the 400-step guard (counted lost) ${stats.stalledRuns}; longest run ${stats.longestRun} rounds`,
+    `runs forced out by the stall rule (counted lost) ${stats.outlastedRuns}; runs stopped at the 400-step guard ${stats.stalledRuns}; longest run ${stats.longestRun} rounds`,
     `heals on squadmates ${stats.allyHeals} (${stats.allyHealed} HP), removes cleared ${stats.allyRemoveCleared}, protects ${stats.allyProtects} (${stats.allyPrevented} prevented)`,
     "",
     "species: runs drafted, win rate",

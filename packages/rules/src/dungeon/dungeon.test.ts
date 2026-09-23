@@ -11,6 +11,7 @@ import {
   openRun,
   unitIds,
   damagePreview,
+  basePower,
   areaReach,
   damaging,
   effectiveSpeed,
@@ -45,6 +46,7 @@ import {
   COOLDOWN_ROUNDS,
   DEGRADE_FACTOR,
   DRAFT_OFFER_SIZE,
+  ENCOUNTER_STALL_ROUNDS,
   SAVE_VERSION,
   SQUAD_SIZE,
   ENTRANCE_IMMUNITY_OPPORTUNITIES,
@@ -250,7 +252,9 @@ describe("Powerworks reads its companions", () => {
                 m.recovery === "repeatable" &&
                 m.preparation !== "prolonged" &&
                 !selfBurst(m) &&
-                usable(m)
+                usable(m) &&
+                // Decision 37 counts only a harm that previews at least 1 (pass 6).
+                basePower(u, m) >= 1
             )
             .map(({ i }) => i)
         );
@@ -667,7 +671,10 @@ describe("Powerworks battle rules", () => {
           expect(u.cooldowns.every((n) => n >= 0)).toBe(true);
         }
       }
-      expect(["won", "lost"]).toContain(s.phase);
+      // Since pass 6 a run also ends when an encounter stalls (decision 52): rounds in a row
+      // in which nobody loses HP. This naive first-legal-move policy may reach it.
+      expect(["won", "lost", "retreated"]).toContain(s.phase);
+      if (s.phase === "retreated") expect(s.ended).toBe("outlasted");
     }
   });
   it("exposes public initiative and damage events without revealing a charging target", () => {
@@ -2766,5 +2773,73 @@ describe("Powerworks pass 6: the draft command and saves (decisions 47 and 48)",
     expect(() =>
       restoreRun(JSON.stringify({ version: 6, seed: 19, history: history.slice(1) }))
     ).toThrow();
+  });
+});
+
+describe("Powerworks pass 6: the stalemate rule (decision 52)", () => {
+  /** Every unit on both sides carries only this fitted move, and the machines aim it at the first companion. */
+  const fitAll = (s: Run, move: () => Move) => {
+    for (const u of [...s.team, ...s.enemies]) fitOnly(u, move());
+    for (const e of s.enemies) s.orders[e.id] = { move: 0, target: s.team[0].id };
+  };
+  const tapAll = (run: Run) =>
+    Object.fromEntries(run.team.map((u) => [u.id, { move: 0, target: run.enemies[0].id }]));
+  it("forces the squad out after ENCOUNTER_STALL_ROUNDS rounds in which nobody loses HP, keeping earned XP", () => {
+    // Both sides only tap for nothing, so no round can make progress.
+    let s = createRun(4);
+    s.xp = 10;
+    fitAll(s, () => fitted("Glancing Tap", [harm(0)]));
+    for (let round = 1; round < ENCOUNTER_STALL_ROUNDS; round++) {
+      s = resolveRound(s, tapAll(s)).state;
+      expect(s.phase, `round ${round}`).toBe("planning");
+      expect(s.stalled).toBe(round);
+    }
+    const hp = s.team.map((u) => u.hp);
+    const r = resolveRound(s, tapAll(s));
+    expect(r.state.phase).toBe("retreated");
+    expect(r.state.ended).toBe("outlasted");
+    expect(r.state.round).toBe(ENCOUNTER_STALL_ROUNDS);
+    expect(r.state.xp).toBe(10);
+    expect(r.state.team.map((u) => u.hp)).toEqual(hp);
+    expect(r.frames.at(-1)!.event?.kind).toBe("outlasted");
+    expect(r.state.log.at(-1)).toMatch(/defenses outlasted the squad: 6 rounds without progress/);
+    expect(() => command(r.state, { kind: "advance" })).toThrow();
+    expect(() => resolveRound(r.state, tapAll(r.state))).toThrow();
+  });
+  it("any lost HP resets the count, and a result on the stall round still counts", () => {
+    let s = createRun(4);
+    fitAll(s, () => fitted("Glancing Tap", [harm(0)]));
+    for (let round = 1; round < ENCOUNTER_STALL_ROUNDS; round++) s = resolveRound(s, tapAll(s)).state;
+    expect(s.stalled).toBe(ENCOUNTER_STALL_ROUNDS - 1);
+    // One companion lands one point: progress, so the count starts again.
+    const nudge = { ...tapAll(s), [s.team[0].id]: { move: 0, target: s.enemies[0].id } };
+    fitOnly(s.team[0], fitted("Scratch", [harm(10)]));
+    const after = resolveRound(s, nudge).state;
+    expect(after.phase).toBe("planning");
+    expect(after.stalled).toBe(0);
+    // A clear on what would be the stall round is a clear.
+    const last = structuredClone(s);
+    last.enemies.forEach((e) => (e.hp = 1));
+    for (const u of last.team) fitOnly(u, fitted("Finishing Tap", [harm(200)]));
+    const r = resolveRound(
+      last,
+      Object.fromEntries(last.team.map((u, i) => [u.id, { move: 0, target: last.enemies[i % last.enemies.length].id }]))
+    );
+    expect(r.state.phase).toBe("camp");
+    expect(r.state.ended).toBeUndefined();
+  });
+  it("a long fight that keeps making progress is never forced out", () => {
+    // Everyone deals a sliver each round to foes with a deep pool of health: 40 rounds, far
+    // past any round cap, all of them progress.
+    let s = createRun(4);
+    fitAll(s, () => fitted("Scratch", [harm(10)]));
+    s.enemies.forEach((e) => (e.hp = e.max = 5000));
+    s.team.forEach((u) => (u.hp = u.max = 5000));
+    for (let round = 1; round <= 40; round++) {
+      s = resolveRound(s, tapAll(s)).state;
+      expect(s.phase, `round ${round}`).toBe("planning");
+      expect(s.stalled).toBe(0);
+    }
+    expect(s.round).toBe(41);
   });
 });

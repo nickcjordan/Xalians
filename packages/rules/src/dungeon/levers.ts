@@ -114,6 +114,14 @@ export const CONTACT_TRIGGER_RANGES = ["contact"] as const;
 /** Lever: Desperate strike, the exhaustion-only fallback: flat damage, no matchup, recoil on the user. */
 export const DESPERATE_STRIKE_DAMAGE = 3;
 export const DESPERATE_STRIKE_RECOIL = 2;
+/**
+  Lever: the stalemate rule (contract decision 52). When this many consecutive rounds of one
+  encounter resolve in which no unit on either side loses HP and none falls, the squad is
+  forced out: the run ends as a retreat, earned practice XP kept. A long fight that keeps
+  making progress is never cut off. It replaced a 20-round cap, which the pass 6 sim showed
+  turned 26 random-draft and 9 greedy-draft wins into losses while no run looped.
+*/
+export const ENCOUNTER_STALL_ROUNDS = 6;
 /** Lever: practice XP per cleared encounter and for the final chamber; the pre-boss recovery station heal. */
 export const ENCOUNTER_XP = 10;
 export const FINAL_ENCOUNTER_XP = 30;
