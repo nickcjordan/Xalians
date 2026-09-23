@@ -56,17 +56,27 @@ const ERA_TITLE = {
 	generation: 'The Age of Generators',
 } as const;
 
-type Art = { src: string; small: string; alt: string; era?: keyof typeof ERA_TITLE; live?: string };
+type Art = {
+	src: string;
+	small: string;
+	alt: string;
+	era?: keyof typeof ERA_TITLE;
+	/** The living plate's fragment. */
+	live?: string;
+	/** The living plate's own first frame, shown whenever it is not the page's one live plate. */
+	still?: { src: string; small: string };
+};
 
 const ART = {
 	unbirth: {
 		era: 'unbirth',
 		src: '/assets/img/lore/eras/unbirth.jpg',
 		small: '/assets/img/lore/eras/unbirth-768.jpg',
-		alt: 'A long dormitory hall of empty made-up beds leading to a great riveted machine.',
+		alt: 'A glowing machine alone on flooded rock throws seed pods into a storm; downstream the first plants and a small leafy creature take hold, and a colossal tree climbs into the clouds far off.',
 		// The living version: the Genesis Prototype on Floria, throwing seed
 		// pods into the storm that was meant to wash its mistakes away.
 		live: '/assets/plates/unbirth/plate.html',
+		still: { src: '/assets/plates/unbirth/poster.jpg', small: '/assets/plates/unbirth/poster-768.jpg' },
 	},
 	accords: {
 		era: 'accords',
@@ -76,6 +86,7 @@ const ART = {
 		// The living version: the QED works on Zolton, a cradle mast above a
 		// storm cloud sea where crimson sprites bloom and lightning strikes.
 		live: '/assets/plates/accords/plate.html',
+		still: { src: '/assets/plates/accords/poster.jpg', small: '/assets/plates/accords/poster-768.jpg' },
 	},
 	endWars: {
 		era: 'end-wars',
@@ -83,8 +94,9 @@ const ART = {
 		small: '/assets/img/lore/eras/end-wars-768.jpg',
 		alt: 'A burning warship falling between the towers of a night city under a sky of tracer fire.',
 		// The living version of this plate: stacked SVG layers with fire, smoke,
-		// weapon fire and water in motion, fetched when the panel comes near.
+		// weapon fire and water in motion; live while it is the plate most in view.
 		live: '/assets/plates/end-wars/plate.html',
+		still: { src: '/assets/plates/end-wars/poster.jpg', small: '/assets/plates/end-wars/poster-768.jpg' },
 	},
 	present: {
 		era: 'present',
@@ -154,7 +166,7 @@ function Panel({
 			<span className="frame-well">
 				{art.live ? (
 					// A living plate holds still in its frame: its motion is its own.
-					<LivePlate src={art.live} poster={art} />
+					<LivePlate src={art.live} poster={{ ...(art.still ?? art), alt: art.alt }} />
 				) : (
 					<img
 						src={art.src}
