@@ -1,30 +1,37 @@
 // Tier: featured component. A living painting: an era plate built as stacked
 // SVG layers with SMIL motion, served as an HTML fragment from public/ and
-// injected here when it comes near the viewport. The poster (the raster
-// plate) shows until the fragment lands and stays underneath it, so a
-// browser that never fetches or never animates sees the finished picture.
+// injected here while this plate holds the page's stage. The poster (a still
+// of the plate's own first frame) shows whenever the plate is not live and
+// stays underneath it, so a browser that never fetches or never animates sees
+// the finished picture.
+//
+// One plate at a time (plateStage.ts): only the plate most in view keeps its
+// SVG in the DOM. Every other plate drops its SVG entirely and shows its still,
+// so a page of plates only ever pays for one.
 //
 // Motion discipline (docs/DESIGN_SYSTEM.md section 7, ruled exception of
 // 2026-09-22): the plate's fire, smoke and water loop because they are the
-// painting, not the interface. It pauses whenever it is off screen, when the
-// tab is hidden, and always under reduced motion, so a page holding several
-// plates only ever pays for the one in view.
+// painting, not the interface. The live plate pauses when the tab is hidden,
+// and always under reduced motion, where it holds its composed first frame.
 import * as React from 'react';
 import { cn } from '@/lib/utils';
+import { joinStage, loadFragment } from './plateStage';
 
 type Props = {
 	/** The fragment's URL, e.g. /assets/plates/end-wars/plate.html. */
 	src: string;
-	/** The raster plate shown until the fragment lands and kept beneath it. */
+	/** The still shown whenever the plate is not live, and beneath it while it is. */
 	poster: { src: string; small: string; alt: string };
 	className?: string;
 };
 
-const NEAR = '320px';
+// Start fetching a plate's fragment a little before it scrolls into view.
+const NEAR = '600px';
 // Every top-level svg in a plate has its own animation timeline: the layers,
 // and the shared defs sheet, whose animated filters (fire, smoke, glitter) and
 // clip paths would otherwise run free while the layers are paused.
 const PLATE_SVGS = 'svg.layer, svg.defs';
+const THRESHOLDS = Array.from({ length: 21 }, (_, i) => i / 20);
 
 function setPlaying(host: HTMLElement, playing: boolean) {
 	host.querySelectorAll<SVGSVGElement>(PLATE_SVGS).forEach((svg) => {
@@ -49,60 +56,70 @@ function holdAtStart(host: HTMLElement) {
 
 export function LivePlate({ src, poster, className }: Props) {
 	const hostRef = React.useRef<HTMLDivElement>(null);
+	const [live, setLive] = React.useState(false);
 	const [ready, setReady] = React.useState(false);
 
-	// Fetch and inject once the plate is near the viewport.
+	// Join the stage: report how much of this plate is in view; the stage says when it is live.
 	React.useEffect(() => {
 		const host = hostRef.current;
 		if (!host || typeof window === 'undefined' || typeof IntersectionObserver === 'undefined') return undefined;
-		let cancelled = false;
-		const io = new IntersectionObserver(
+		const slot = joinStage(setLive);
+		const seen = new IntersectionObserver((entries) => entries.forEach((e) => slot.update(e.isIntersecting ? e.intersectionRatio : 0)), { threshold: THRESHOLDS });
+		const near = new IntersectionObserver(
 			(entries) => {
 				if (!entries.some((e) => e.isIntersecting)) return;
-				io.disconnect();
-				fetch(src)
-					.then((r) => (r.ok ? r.text() : Promise.reject(new Error(String(r.status)))))
-					.then((html) => {
-						if (cancelled) return;
-						host.innerHTML = html;
-						holdAtStart(host);
-						setReady(true);
-					})
-					.catch(() => {
-						/* the poster stays */
-					});
+				near.disconnect();
+				loadFragment(src).catch(() => {
+					/* the poster stays */
+				});
 			},
 			{ rootMargin: NEAR }
 		);
-		io.observe(host);
+		seen.observe(host);
+		near.observe(host);
 		return () => {
-			cancelled = true;
-			io.disconnect();
+			seen.disconnect();
+			near.disconnect();
+			slot.release();
 		};
 	}, [src]);
 
-	// Play only while visible, only while the tab is shown, never under reduced motion.
+	// Mount the SVG while live; take it out of the DOM entirely when not.
 	React.useEffect(() => {
 		const host = hostRef.current;
-		if (!ready || !host || typeof IntersectionObserver === 'undefined') return undefined;
-		const reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-		if (reduced) {
+		if (!host) return undefined;
+		if (!live) {
 			setPlaying(host, false);
+			host.innerHTML = '';
+			setReady(false);
 			return undefined;
 		}
-		let visible = false;
-		const apply = () => setPlaying(host, visible && document.visibilityState !== 'hidden');
-		const io = new IntersectionObserver(
-			(entries) => {
-				visible = entries.some((e) => e.isIntersecting);
-				apply();
-			},
-			{ threshold: 0.05 }
-		);
-		io.observe(host);
+		let cancelled = false;
+		loadFragment(src)
+			.then((html) => {
+				if (cancelled) return;
+				host.innerHTML = html;
+				holdAtStart(host);
+				setReady(true);
+			})
+			.catch(() => {
+				/* the poster stays */
+			});
+		return () => {
+			cancelled = true;
+		};
+	}, [live, src]);
+
+	// The live plate plays while the tab is shown, never under reduced motion.
+	React.useEffect(() => {
+		const host = hostRef.current;
+		if (!ready || !host) return undefined;
+		const reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+		if (reduced) return undefined;
+		const apply = () => setPlaying(host, document.visibilityState !== 'hidden');
+		apply();
 		document.addEventListener('visibilitychange', apply);
 		return () => {
-			io.disconnect();
 			document.removeEventListener('visibilitychange', apply);
 			setPlaying(host, false);
 		};
