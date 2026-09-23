@@ -32,7 +32,10 @@ All sections sit in a 1160 px column inside the Shell on desktop, twelve grid co
 
 **Hero.** Left: the animated brand lockup (the existing splash morph), the sentence "Xalia is home to a wide range of powerful, bioengineered creatures originating from extreme worlds all across the galaxy.", the primary key "Try the Generator", and a text link "The Story" to `#story`. Right: a portrait panel (4:5) of the Krystos landscape with the Yetimoth silhouette standing in front of it, its feet breaking the bottom edge, and a small cream tag "A Yetimoth of Krystos" cutting across the panel's left edge. The whole art block links to `#specimen`. The existing starfield stays behind the hero band.
 
-**The Story.** Heading, then four spreads, one paragraph each, in this order and these arrangements:
+**The Story.** Heading, then four spreads, one paragraph each, in this order and these arrangements.
+
+**Shown one at a time (Nick, 2026-09-23).** The four spreads share one stage (`pages/home/storyStage.tsx`): the section pins a full-height box with the heading and a rail of numerals 01 to 04, and each 90 percent of a screen of scroll is one spread. Crossing into the next spread sends the shown painting drifting out the way the page travels while the next drifts in, then its caption plate slides out from its side; scrolling back plays it in reverse, and the rail jumps to a spread. Each painting is sized to fit the screen by its aspect, so a spread never needs scrolling within itself. Only the shown spread's living plate has SVG in the DOM, and it goes live once its entrance settles (its still is its own first frame, so the change is invisible). A window under 560 px tall (a phone on its side) stacks the spreads in the page instead. The arrangements below hold on the stage at 1000 px and wider; below that each caption sits under its painting.
+
 
 1. Unbirth plate (`lore/eras/unbirth.jpg`), wide 21:9 across all twelve columns; plate on columns 1 to 7 overlapping the panel's lower left corner by 88 px, inset 48 px.
 2. Accords plate (`accords.jpg`), tall 4:5 on columns 6 to 12; plate on columns 1 to 7 cutting into it from the left, vertically centered.
