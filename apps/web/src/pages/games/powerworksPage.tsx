@@ -1,5 +1,5 @@
-// Tier: immersive. Powerworks presentation redesign authorized by Nick.
-import React, { useEffect, useRef, useState } from "react";
+// Tier: immersive. Powerworks presentation redesign authorized by Nick. The squad draft before the first encounter is chrome and lives in powerworksDraft.tsx (contract decision 49).
+import React, { useEffect, useMemo, useRef, useState } from "react";
 
 import { Link } from "react-router";
 
@@ -29,7 +29,8 @@ import {
 } from "lucide-react";
 
 import {
-  createRun,
+  openRun,
+  squadUnits,
   command,
   resolveRound,
   restoreRun,
@@ -54,6 +55,7 @@ import {
   type Command,
   type Frame,
   type Move,
+  type Squad,
 } from "@xalians/rules/dungeon";
 
 import {
@@ -88,6 +90,7 @@ import {
   sectorStory,
 } from "./powerworksScene";
 import { PowerworksEnvironment } from "./powerworksEnvironment";
+import { PowerworksDraft } from "./powerworksDraft";
 import { useBattlePresentation } from "./powerworksPresentation";
 import "./powerworks.css";
 import "./powerworksScene.css";
@@ -112,8 +115,10 @@ function boot() {
   const n = Number(
     new URLSearchParams(window.location.search).get("seed") || 1
   );
+  // A fresh run opens in its draft (contract decision 48): the briefing offers the draft
+  // and the starter squad, and the first command of the history is the choice.
   return {
-    state: createRun(Number.isFinite(n) ? n : 1),
+    state: openRun(Number.isFinite(n) ? n : 1),
     history: [] as Command[],
     started: false,
   };
@@ -183,10 +188,13 @@ export default function PowerworksPage() {
 
   const [run, setRun] = useState<Run>(initial.state),
     [history, setHistory] = useState<Command[]>(initial.history),
-    [started, setStarted] = useState(initial.started);
+    [started, setStarted] = useState(initial.started),
+    [drafting, setDrafting] = useState(false);
+  // The starter squad as the briefing shows it before a squad is chosen (contract decision 47).
+  const starter = useMemo(() => squadUnits(run.seed, "starter"), [run.seed]);
 
   const [selected, setSelected] = useState(
-    initial.state.team.find((u) => u.hp > 0)?.id || "G"
+    initial.state.team.find((u) => u.hp > 0)?.id || ""
   );
 
   const [playbackOrders, setPlaybackOrders] = useState<Record<string, Order>>(
@@ -415,7 +423,7 @@ export default function PowerworksPage() {
       setError("");
       setNotice(action.kind === "revive" ? "Companion revived." : "");
       if (action.kind === "advance") {
-        setSelected(next.team.find((u) => u.hp > 0)?.id || "G");
+        setSelected(next.team.find((u) => u.hp > 0)?.id || next.team[0]?.id || "");
         revealControls(".pw-theater", "start");
       }
     } catch (e) {
@@ -450,19 +458,47 @@ export default function PowerworksPage() {
     }
   }
 
+  /** A new run returns to the briefing, where the squad is chosen again (contract decision 48). */
   function fresh(seed: number) {
-    const next = createRun(seed);
+    const next = openRun(seed);
     setRun(next);
     setHistory([]);
-    setStarted(true);
-    setSelected(next.team[0].id);
+    setStarted(false);
+    setDrafting(false);
+    setSelected("");
     setPlans({});
     setPending(null);
     setFrames([]);
     setLastFrames([]);
     setPanel(null);
     setError("");
-    setNotice("New expedition ready.");
+    setNotice("New expedition ready. Choose a squad.");
+    try {
+      localStorage.removeItem(SAVE_KEY);
+    } catch {
+      /* Storage unavailable: nothing to clear. */
+    }
+  }
+
+  /** The draft command: the first command of every history (contract decision 48). */
+  function begin(squad: Squad) {
+    try {
+      const action: Command = { kind: "draft", squad };
+      const next = command(run, action);
+      setRun(next);
+      setHistory([action]);
+      setStarted(true);
+      setDrafting(false);
+      setSelected(next.team[0].id);
+      setPlans({});
+      setPending(null);
+      setError("");
+      setNotice(
+        `Squad ready: ${next.team.map((u) => u.name).join(", ")}. Choose a move.`
+      );
+    } catch (e) {
+      setError((e as Error).message);
+    }
   }
 
   function previewText(u: Unit) {
@@ -659,6 +695,17 @@ export default function PowerworksPage() {
       ? "Expedition ended"
       : "Squad extracted";
 
+  // The draft is setup, so it is the site's chrome rather than this immersive page
+  // (contract decision 49). It replaces the page until a squad is chosen.
+  if (!started && drafting)
+    return (
+      <PowerworksDraft
+        seed={run.seed}
+        onBack={() => setDrafting(false)}
+        onEnter={(picks) => begin(picks)}
+      />
+    );
+
   return (
     <main
       className={`pw ${started ? "in-run" : ""} room-${run.room} ${
@@ -712,9 +759,9 @@ export default function PowerworksPage() {
             </h1>
             <p>The facility has been abandoned. Its defenses haven’t.</p>
             <p>
-              Lead four companions through four encounters. Plan their moves
-              together, read the enemy’s behavior, and reach the central
-              guardian.
+              Draft four of eight generated creatures, or take the starter
+              squad. Plan their moves together, read the enemy’s behavior, and
+              reach the central guardian.
             </p>
             <div className="pw-brief-facts">
               <span>
@@ -727,9 +774,14 @@ export default function PowerworksPage() {
                 <Crown />1 guardian
               </span>
             </div>
-            <button className="pw-primary" onClick={() => setStarted(true)}>
-              Enter the facility <ArrowRight />
-            </button>
+            <div className="pw-brief-actions">
+              <button className="pw-primary" onClick={() => setDrafting(true)}>
+                Draft a squad <ArrowRight />
+              </button>
+              <button onClick={() => begin("starter")}>
+                Take the starter squad
+              </button>
+            </div>
             <small>
               Practice expedition · No account or real rewards required
             </small>
@@ -743,8 +795,8 @@ export default function PowerworksPage() {
             <span>CENTRAL GUARDIAN / ONLINE</span>
           </div>
           <ExpeditionTrail room={0} />
-          <div className="pw-brief-roster">
-            {run.team.map((u) => (
+          <div className="pw-brief-roster" aria-label="The starter squad">
+            {starter.map((u) => (
               <div key={u.id} className={`el-${u.element}`}>
                 <Portrait u={u} />
                 <strong>{u.name}</strong>
@@ -1605,7 +1657,7 @@ export default function PowerworksPage() {
             </div>
             <div className="pw-guide-steps">
               <span>
-                <Portrait u={run.team[0]} small />
+                <Portrait u={run.team[0] ?? starter[0]} small />
                 Choose a creature
               </span>
               <ChevronRight />
@@ -1905,8 +1957,8 @@ export default function PowerworksPage() {
         {panel === "restart" && (
           <>
             <p>
-              This replaces your current run. The same seed gives a repeatable
-              starting point.
+              This replaces your current run and returns to the briefing. The
+              same seed deals the same draft and the same starting point.
             </p>
             <div className="pw-outcome-actions">
               <button onClick={() => setPanel(null)}>Keep playing</button>

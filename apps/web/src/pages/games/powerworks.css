@@ -102,6 +102,41 @@
   --accent: #edd493;
   --tint: #deb96926;
 }
+/* Pass 6: a drafted squad can bring any of the fourteen elements. The rest take their
+   accent and tint from the site's element hues rather than a new literal. */
+.pw .el-fire,
+.pw .el-ice,
+.pw .el-air,
+.pw .el-rock,
+.pw .el-metal,
+.pw .el-chemical,
+.pw .el-ghost,
+.pw .el-psychic {
+  --accent: color-mix(in srgb, var(--el-hue) 62%, white);
+  --tint: color-mix(in srgb, var(--el-hue) 15%, transparent);
+}
+.pw .el-fire { --el-hue: var(--color-el-fire); }
+.pw .el-ice { --el-hue: var(--color-el-ice); }
+.pw .el-air { --el-hue: var(--color-el-air); }
+.pw .el-rock { --el-hue: var(--color-el-rock); }
+.pw .el-metal { --el-hue: var(--color-el-metal); }
+.pw .el-chemical { --el-hue: var(--color-el-chemical); }
+.pw .el-ghost { --el-hue: var(--color-el-ghost); }
+.pw .el-psychic { --el-hue: var(--color-el-psychic); }
+/* Pass 6: a species without painted art stands as the site's silhouette in the same
+   frame (contract decision 50). `.pw svg` would shrink it to an icon. */
+.pw .pw-species-art {
+  width: 100%;
+  height: 100%;
+  align-items: flex-end;
+}
+.pw .pw-species-art svg {
+  width: 100%;
+  height: 100%;
+}
+.pw-scene-character .pw-species-art {
+  filter: drop-shadow(0 0 1px var(--color-ink)) drop-shadow(0 3px 2px var(--color-room));
+}
 .pw.room-1 {
   --room-glow: #477580;
 }
@@ -1280,6 +1315,12 @@
 .pw-brief-facts svg {
   height: 16px;
   width: 16px;
+}
+/* Pass 6: the draft (the default action) and the starter squad (contract decision 47). */
+.pw-brief-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
 }
 .pw-briefing small {
   display: block;

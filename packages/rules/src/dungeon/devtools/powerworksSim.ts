@@ -18,12 +18,16 @@
 */
 import {
   aimsAtFoe,
+  aimsAtSquadmate,
   areaReach,
+  basePower,
   command,
   contactDelivery,
   createRun,
   damagePreview,
   damaging,
+  draftOffer,
+  everyRoundHarms,
   guardedThreat,
   helpful,
   hostile,
@@ -41,11 +45,12 @@ import {
   type MoveEffect,
   type Order,
   type Run,
+  type Squad,
   type StatusGroup,
   type Trigger,
   type Unit,
 } from "../index.ts";
-import { LIKELIHOOD_PERCENT } from "../levers.ts";
+import { DRAFT_OFFER_SIZE, LIKELIHOOD_PERCENT, SQUAD_SIZE } from "../levers.ts";
 import {
   generateXalian,
   getSpeciesTemplates,
@@ -118,6 +123,21 @@ export type SimStats = {
   allyRemoveCleared: number;
   allyProtects: number;
   allyPrevented: number;
+  /** Pass 6 rows (contract decision 51). Per species in the squad: runs it was drafted into and runs won. */
+  squadSpecies: Record<string, { runs: number; wins: number }>;
+  /** Per act ("Species: Move"): runs it was carried in, and orders given to it. */
+  acts: Record<string, { carried: number; orders: number }>;
+  ordersTotal: number;
+  /** Orders that begin a charge (prolonged preparation, not already charging). */
+  ordersChargeBegun: number;
+  /** Orders of a move carrying a status or a bind (supported). */
+  ordersStatus: number;
+  /** Orders of a support move: one carrying a helpful effect it can aim at a squadmate (decision 39). */
+  ordersSupport: number;
+  /** Runs the sim stopped at its 400-step guard, still in play: counted as losses. */
+  stalledRuns: number;
+  /** The longest run, in rounds. */
+  longestRun: number;
 };
 
 /**
@@ -145,6 +165,8 @@ export type SimOptions = {
   policy: "pass5" | "pass4";
   /** "none" is the shipped squad. "moves" removes every move carrying a helpful effect from the companions' legal orders (decision 44 as written); "aim" keeps every move but never names a squadmate. */
   healerFree: "none" | "moves" | "aim";
+  /** Pass 6 (contract decision 51): the starter squad (the default), a random legal draft, or a greedy draft. */
+  draft?: "starter" | "random" | "greedy";
 };
 const SHIPPED: SimOptions = { policy: "pass5", healerFree: "none" };
 
@@ -225,6 +247,63 @@ function helpValue(s: Run, u: Unit, e: MoveEffect, r: Unit): number {
     return r.hp < r.max / 2 ? Math.min(r.max - r.hp, tick * (e.opportunities ?? 1)) : 0;
   }
   return 0;
+}
+/**
+  Sim-only (contract decision 51): what the greedy draft adds for an answer the squad does
+  not carry yet. A bind and a displace are the two answers to a charge; a support move is
+  worth a little less, since the pass 5 sim found the squad rarely spends one.
+*/
+export const SIM_DRAFT_ANSWER_VALUE = { bind: 5, displace: 5, support: 3 } as const;
+/** A small seeded stream for the random draft, apart from the run's rng. */
+function draftRandom(seed: number) {
+  let state = (Math.imul(seed >>> 0, 2654435761) ^ 0x5bd1e995) >>> 0;
+  return () => {
+    state = (Math.imul(1664525, state) + 1013904223) >>> 0;
+    return state / 4294967296;
+  };
+}
+/** A random legal draft: SQUAD_SIZE distinct offer indexes, seeded (contract decision 51). */
+export function randomDraft(seed: number): number[] {
+  const random = draftRandom(seed);
+  const indexes = Array.from({ length: DRAFT_OFFER_SIZE }, (_, i) => i);
+  for (let i = indexes.length - 1; i > 0; i--) {
+    const j = Math.floor(random() * (i + 1));
+    [indexes[i], indexes[j]] = [indexes[j], indexes[i]];
+  }
+  return indexes.slice(0, SQUAD_SIZE);
+}
+/**
+  The greedy draft (contract decision 51): pick one creature at a time by its every-round
+  harm preview (the best attribute-scaled base power among its every-round harms, the number
+  its move card shows) plus SIM_DRAFT_ANSWER_VALUE for each answer (bind, displace, support)
+  the squad does not carry yet. Ties go to the earlier offer index.
+*/
+export function greedyDraft(seed: number): number[] {
+  const offer = draftOffer(seed);
+  const picked: number[] = [];
+  const has = { bind: false, displace: false, support: false };
+  while (picked.length < SQUAD_SIZE) {
+    let best = -1;
+    let bestScore = -Infinity;
+    for (const e of offer) {
+      if (picked.includes(e.index)) continue;
+      const harm = Math.max(
+        0,
+        ...everyRoundHarms(e.unit).map((i) => basePower(e.unit, e.unit.moves[i]))
+      );
+      let score = harm;
+      for (const answer of ["bind", "displace", "support"] as const)
+        if (e.answers[answer] && !has[answer]) score += SIM_DRAFT_ANSWER_VALUE[answer];
+      if (score > bestScore) {
+        bestScore = score;
+        best = e.index;
+      }
+    }
+    picked.push(best);
+    for (const answer of ["bind", "displace", "support"] as const)
+      has[answer] ||= offer[best].answers[answer];
+  }
+  return picked;
 }
 /** A move carries a helpful effect (contract decision 44's healer-free crew drops these). */
 const supportMove = (m: Move) => m.effects.some((e) => helpful(e));
@@ -331,11 +410,24 @@ function preventedBySquadmate(
 }
 
 export function playRun(seed: number, stats: SimStats, options: SimOptions = SHIPPED) {
-  let s: Run = createRun(seed);
+  const squad: Squad =
+    options.draft === "random"
+      ? randomDraft(seed)
+      : options.draft === "greedy"
+      ? greedyDraft(seed)
+      : "starter";
+  let s: Run = createRun(seed, squad);
+  // Pass 6 rows: who was drafted and which acts the squad carried.
+  for (const u of s.team) {
+    (stats.squadSpecies[u.species] ??= { runs: 0, wins: 0 }).runs++;
+    for (const name of new Set(u.moves.map((m) => m.name.split(" (")[0])))
+      (stats.acts[`${u.name}: ${name}`] ??= { carried: 0, orders: 0 }).carried++;
+  }
   /** Companions whose standing ward came from a squadmate, until it is spent. */
   const allyWarded = new Set<string>();
   let guard = 0;
   let rooms = 1;
+  let roundsThisRun = 0;
   while ((s.phase === "planning" || s.phase === "camp") && guard++ < 400) {
     if (s.phase === "camp") {
       const down = s.team.find((u) => u.hp <= 0);
@@ -359,6 +451,15 @@ export function playRun(seed: number, stats: SimStats, options: SimOptions = SHI
         const byMove = (stats.ordersByMove[u.name] ??= {});
         const moveName = m.name.split(" (")[0];
         byMove[moveName] = (byMove[moveName] ?? 0) + 1;
+        // Pass 6 rows (contract decision 51).
+        stats.ordersTotal++;
+        if (order.move >= 0) {
+          (stats.acts[`${u.name}: ${moveName}`] ??= { carried: 0, orders: 0 }).orders++;
+          if (m.preparation === "prolonged" && u.charge === null) stats.ordersChargeBegun++;
+          if (m.effects.some((e) => e.support === "bind" || e.support === "status"))
+            stats.ordersStatus++;
+          if (aimsAtSquadmate(m)) stats.ordersSupport++;
+        }
         if (s.team.some((t) => t.id === order.target && t.id !== u.id))
           stats.ordersAtSquadmates++;
         const target = s.enemies.find((t) => t.id === order.target);
@@ -377,6 +478,7 @@ export function playRun(seed: number, stats: SimStats, options: SimOptions = SHI
     }
     const result = resolveRound(s, orders);
     stats.rounds++;
+    roundsThisRun++;
     // Reaction names seen this round, so the hit that follows a `react` event can be
     // told from an ordered move that happens to share a name.
     const reacting = new Set<string>();
@@ -504,8 +606,12 @@ export function playRun(seed: number, stats: SimStats, options: SimOptions = SHI
   }
   stats.encounters += rooms;
   stats.roomsReached.push(rooms);
-  if (s.phase === "won") stats.wins++;
-  else stats.losses++;
+  if (s.phase === "planning" || s.phase === "camp") stats.stalledRuns++;
+  stats.longestRun = Math.max(stats.longestRun, roundsThisRun);
+  if (s.phase === "won") {
+    stats.wins++;
+    for (const u of s.team) stats.squadSpecies[u.species].wins++;
+  } else stats.losses++;
 }
 
 export function simulate(
@@ -567,6 +673,14 @@ export function simulate(
     allyRemoveCleared: 0,
     allyProtects: 0,
     allyPrevented: 0,
+    squadSpecies: {},
+    acts: {},
+    ordersTotal: 0,
+    ordersChargeBegun: 0,
+    ordersStatus: 0,
+    ordersSupport: 0,
+    stalledRuns: 0,
+    longestRun: 0,
   };
   for (let seed = firstSeed; seed < firstSeed + runs; seed++)
     playRun(seed, stats, options);
@@ -595,6 +709,48 @@ export function formatPass5(stats: SimStats): string {
   ];
   const width = Math.max(...rows.map(([k]) => k.length));
   return rows.map(([k, v]) => `${k.padEnd(width)}  ${v}`).join("\n");
+}
+
+/**
+  The pass 6 rows (contract decision 51): win rate by species drafted (with counts), the most
+  and least ordered acts (orders per run the act was carried in), and how often charged,
+  status and support moves are ordered.
+*/
+export function formatPass6(stats: SimStats, rows = 12): string {
+  const pct = (n: number, d: number) => (d ? `${((100 * n) / d).toFixed(1)}%` : "n/a");
+  const species = Object.entries(stats.squadSpecies).sort(
+    (a, b) => b[1].wins / b[1].runs - a[1].wins / a[1].runs || b[1].runs - a[1].runs
+  );
+  const acts = Object.entries(stats.acts)
+    .filter(([, a]) => a.carried > 0)
+    .map(([name, a]) => ({ name, ...a, rate: a.orders / a.carried }));
+  const most = [...acts]
+    .filter((a) => a.carried >= 10)
+    .sort((a, b) => b.rate - a.rate || b.carried - a.carried)
+    .slice(0, rows);
+  const least = [...acts]
+    .filter((a) => a.carried >= 10)
+    .sort((a, b) => a.rate - b.rate || b.carried - a.carried)
+    .slice(0, rows);
+  const lines = [
+    `win rate ${pct(stats.wins, stats.runs)} (${stats.wins} won, ${stats.losses} lost)`,
+    `orders ${stats.ordersTotal}: charge begun ${stats.ordersChargeBegun} (${pct(stats.ordersChargeBegun, stats.ordersTotal)}), status-carrying ${stats.ordersStatus} (${pct(stats.ordersStatus, stats.ordersTotal)}), support move ${stats.ordersSupport} (${pct(stats.ordersSupport, stats.ordersTotal)}), named a squadmate ${stats.ordersAtSquadmates} (${pct(stats.ordersAtSquadmates, stats.ordersTotal)})`,
+    `companion charges begun / releases landed ${stats.companionChargesBegun} / ${stats.companionReleasesLanded}`,
+    `runs stopped at the 400-step guard (counted lost) ${stats.stalledRuns}; longest run ${stats.longestRun} rounds`,
+    `heals on squadmates ${stats.allyHeals} (${stats.allyHealed} HP), removes cleared ${stats.allyRemoveCleared}, protects ${stats.allyProtects} (${stats.allyPrevented} prevented)`,
+    "",
+    "species: runs drafted, win rate",
+    ...species.map(
+      ([k, v]) => `  ${k.padEnd(12)} ${String(v.runs).padStart(4)}  ${pct(v.wins, v.runs)}`
+    ),
+    "",
+    "most ordered acts carried in at least 10 runs: orders (runs carried, orders per run)",
+    ...most.map((a) => `  ${a.name}: ${a.orders} (${a.carried}, ${a.rate.toFixed(1)})`),
+    "",
+    "least ordered acts carried in at least 10 runs: orders (runs carried, orders per run)",
+    ...least.map((a) => `  ${a.name}: ${a.orders} (${a.carried}, ${a.rate.toFixed(1)})`),
+  ];
+  return lines.join("\n");
 }
 
 /**

@@ -20,6 +20,7 @@ import {
   harmAttribute,
   readCard,
   readCompanion,
+  selfBurst,
   usable,
   type Card,
   type Condition,
@@ -50,6 +51,10 @@ import {
   DESPERATE_STRIKE_DAMAGE,
   DESPERATE_STRIKE_RECOIL,
   DISPLACE_HARM_FACTOR,
+  DRAFT_MAX_ROSTER_PASSES,
+  DRAFT_OFFER_SIZE,
+  DRAFT_SEED_PREFIX,
+  SQUAD_SIZE,
   ENCOUNTER_XP,
   FINAL_ENCOUNTER_XP,
   HARM_ATTR_DIVISOR,
@@ -103,21 +108,32 @@ export {
   COOLDOWN_ROUNDS,
   DEGRADE_FACTOR,
   DESPERATE_STRIKE_RECOIL,
+  DRAFT_OFFER_SIZE,
   FRIGHTENED_OUTPUT_FACTOR,
   LIKELIHOOD_PERCENT,
   MEND_FACTOR,
   REINFORCED_FACTOR,
   SAVE_VERSION,
+  SQUAD_SIZE,
   SHIELDED_FACTOR,
   SLOWED_SPEED_FACTOR,
   WARD_FACTOR,
 } from "./levers.ts";
 
 export type Order = { move: number; target: string };
-export type Phase = "planning" | "camp" | "won" | "lost" | "retreated";
+/** "draft" is a run that has not chosen its squad yet (contract decision 48): its only legal command is the draft. */
+export type Phase = "draft" | "planning" | "camp" | "won" | "lost" | "retreated";
+/**
+  Which four companions a run takes (contract decisions 47 and 48): the starter squad, or
+  SQUAD_SIZE distinct indexes into `draftOffer(seed)`. A drafted squad is kept sorted, so the
+  same four picks make the same run whatever order they were clicked in.
+*/
+export type Squad = "starter" | number[];
 export type Run = {
   seed: number;
   rng: number;
+  /** The squad this run took; null while the run is still in its draft (contract decision 48). */
+  squad: Squad | null;
   room: number;
   round: number;
   team: Unit[];
@@ -179,35 +195,211 @@ export type Frame = {
   event?: BattleEvent;
 };
 export type Command =
+  /** The first command of every history (contract decision 48). */
+  | { kind: "draft"; squad: Squad }
   | { kind: "round"; orders: Record<string, Order> }
   | { kind: "advance" }
   | { kind: "revive"; id: string }
   | { kind: "retreat" };
 export const ROOMS = cards.rooms;
+/** The starter squad's species, in team order (contract decision 47). */
 export const COMPANION_KEYS = ["graviclaw", "avilily", "crystorn", "hippochamp"] as const;
-const COMPANION_IDS = ["G", "A", "C", "H"] as const;
 
-// The four companions are generated once, at module load, from fixed seeds of the
-// frozen release, so every run reads the same records and a save replays.
+// The starter squad is generated once, at module load, from fixed seeds of the frozen
+// release, so every starter run reads the same records and a save replays.
 const templates = getSpeciesTemplates();
+const generate = (key: string, seed: string): CreatureRecord => {
+  const species = templates.find((t) => t.key === key);
+  if (!species) throw new Error(`Unknown species ${key}`);
+  return generateXalian(key, seed, {
+    origin: species.homePlanet,
+    serial: 1,
+    profile: "full",
+    generatedAt: COMPANION_GENERATED_AT,
+  });
+};
+/** The starter squad's records, keyed by species (contract decision 47). */
 export const COMPANION_RECORDS: Readonly<Record<string, CreatureRecord>> =
   Object.freeze(
     Object.fromEntries(
-      COMPANION_KEYS.map((key) => {
-        const species = templates.find((t) => t.key === key);
-        if (!species) throw new Error(`Unknown companion species ${key}`);
-        return [
-          key,
-          generateXalian(key, COMPANION_SEEDS[key], {
-            origin: species.homePlanet,
-            serial: 1,
-            profile: "full",
-            generatedAt: COMPANION_GENERATED_AT,
-          }),
-        ];
-      })
+      COMPANION_KEYS.map((key) => [key, generate(key, COMPANION_SEEDS[key])])
     )
   );
+
+/**
+  Unit ids for a squad: each species' shortest prefix that no other squad member shares,
+  first letter capitalized. They depend only on which species stand together, so they are
+  stable for any four, and they are letters only, so they never meet a machine's letter-and-
+  digit id (M1, D2, B4). The starter reads G, A, C, H, exactly as before pass 6.
+*/
+export function unitIds(species: readonly string[]): string[] {
+  return species.map((key) => {
+    for (let n = 1; n <= key.length; n++) {
+      const prefix = key.slice(0, n);
+      if (species.every((other) => other === key || !other.startsWith(prefix)))
+        return prefix.charAt(0).toUpperCase() + prefix.slice(1);
+    }
+    return key.charAt(0).toUpperCase() + key.slice(1);
+  });
+}
+
+/**
+  Decision 37 on one unit: the indexes of its ordinary damaging moves that are legal every
+  round once its signature is spent (repeatable recovery, not a charge, not a burst that
+  reaches squadmates, usable). Contract decision 46 offers only creatures that have one.
+*/
+export function everyRoundHarms(u: Unit): number[] {
+  return u.moves
+    .map((m, i) => ({ m, i }))
+    .filter(
+      ({ m }) =>
+        !m.signature &&
+        m.effects.some((e) => e.support === "harm") &&
+        m.recovery === "repeatable" &&
+        m.preparation !== "prolonged" &&
+        !selfBurst(m) &&
+        usable(m)
+    )
+    .map(({ i }) => i);
+}
+/** The three answers the offer guarantees between them (contract decision 46). */
+export type DraftAnswers = { bind: boolean; displace: boolean; support: boolean };
+export function draftAnswers(u: Unit): DraftAnswers {
+  const carries = (support: string) =>
+    u.moves.some((m) => m.effects.some((e) => e.support === support));
+  return {
+    bind: carries("bind"),
+    displace: carries("displace"),
+    // A helpful move it can aim at a squadmate (contract decision 39).
+    support: u.moves.some((m) => aimsAtSquadmate(m)),
+  };
+}
+/** One offered creature (contract decision 45). `unit` is the table's reading of it, with a preview id. */
+export type OfferEntry = {
+  /** Its place in the offer, 0 to DRAFT_OFFER_SIZE - 1: what a draft command names. */
+  index: number;
+  /** Its place in the candidate draw; the record's seed carries it. */
+  candidate: number;
+  species: string;
+  seed: string;
+  record: CreatureRecord;
+  unit: Unit;
+  answers: DraftAnswers;
+};
+/** A small seeded stream for the draft, apart from the run's own rng so the starter's run stays byte-identical. */
+function draftStream(text: string) {
+  let h = 2166136261;
+  for (let i = 0; i < text.length; i++) h = Math.imul(h ^ text.charCodeAt(i), 16777619);
+  let state = h >>> 0;
+  return () => {
+    state = (Math.imul(1664525, state) + 1013904223) >>> 0;
+    return state / 4294967296;
+  };
+}
+/** The roster in the order a run seed's draft draws it (contract decision 45). */
+export function draftOrder(seed: number): string[] {
+  const random = draftStream(`${DRAFT_SEED_PREFIX}-${seed >>> 0}`);
+  const order = templates.map((t) => t.key);
+  for (let i = order.length - 1; i > 0; i--) {
+    const j = Math.floor(random() * (i + 1));
+    [order[i], order[j]] = [order[j], order[i]];
+  }
+  return order;
+}
+/** Candidate `k` of a run seed's draw, read by the table; null when it fails decision 37 and is never offered. */
+export function draftCandidate(
+  seed: number,
+  k: number,
+  order = draftOrder(seed)
+): Omit<OfferEntry, "index"> | null {
+  const species = order[k % order.length];
+  const candidateSeed = `${DRAFT_SEED_PREFIX}-${seed >>> 0}-${k}`;
+  const record = generate(species, candidateSeed);
+  const unit = readCompanion(record, "X");
+  return everyRoundHarms(unit).length
+    ? { candidate: k, species, seed: candidateSeed, record, unit, answers: draftAnswers(unit) }
+    : null;
+}
+const offers = new Map<number, OfferEntry[]>();
+/**
+  The draft offer for a run seed (contract decisions 45 and 46), built constructively:
+
+    1. The roster is shuffled by a stream seeded from the run seed. Candidate `k` is the
+       species at `k` in that order (a second pass over the roster only if the first runs
+       out), generated from `powerworks-draft-<runSeed>-<k>` on the canonical release.
+    2. A candidate that fails decision 37 (no every-round harm after its signature) is never
+       offered, and no species is offered twice.
+    3. Each guarantee (a bind, a displace, a helpful move it can aim at a squadmate) is filled
+       from the first qualifying candidate in draw order, unless an earlier pick already
+       carries it; then the rest fill in draw order. The whole offer is never rerolled.
+
+  The offer is listed in draw order. Same run seed, same offer; the result is cached.
+*/
+export function draftOffer(seed: number): OfferEntry[] {
+  const runSeed = seed >>> 0;
+  const cached = offers.get(runSeed);
+  if (cached) return [...cached];
+  const order = draftOrder(runSeed);
+  const limit = order.length * DRAFT_MAX_ROSTER_PASSES;
+  const drawn = new Map<number, Omit<OfferEntry, "index"> | null>();
+  /** Candidate k, generated on first use; null when it fails decision 37. */
+  const candidate = (k: number) => {
+    if (!drawn.has(k)) drawn.set(k, draftCandidate(runSeed, k, order));
+    return drawn.get(k) ?? null;
+  };
+  const chosen: Omit<OfferEntry, "index">[] = [];
+  const open = (k: number) => {
+    const c = candidate(k);
+    return c && !chosen.some((p) => p.species === c.species) ? c : null;
+  };
+  for (const answer of ["bind", "displace", "support"] as const) {
+    if (chosen.some((c) => c.answers[answer])) continue;
+    for (let k = 0; k < limit; k++) {
+      const c = open(k);
+      if (c?.answers[answer]) {
+        chosen.push(c);
+        break;
+      }
+    }
+  }
+  for (let k = 0; k < limit && chosen.length < DRAFT_OFFER_SIZE; k++) {
+    const c = open(k);
+    if (c) chosen.push(c);
+  }
+  if (chosen.length < DRAFT_OFFER_SIZE)
+    throw new Error(`The roster cannot fill a draft offer for seed ${runSeed}.`);
+  const offer = chosen
+    .sort((a, b) => a.candidate - b.candidate)
+    .map((c, index) => ({ ...c, index }));
+  if (offers.size > 64) offers.delete(offers.keys().next().value!);
+  offers.set(runSeed, offer);
+  return [...offer];
+}
+/** A draft command's squad, checked (contract decision 48): "starter", or exactly SQUAD_SIZE distinct offer indexes. Returns it normalized (indexes sorted). */
+export function checkSquad(squad: unknown): Squad {
+  if (squad === "starter") return "starter";
+  if (
+    !Array.isArray(squad) ||
+    squad.length !== SQUAD_SIZE ||
+    !squad.every((i) => Number.isInteger(i) && i >= 0 && i < DRAFT_OFFER_SIZE) ||
+    new Set(squad).size !== SQUAD_SIZE
+  )
+    throw new Error(`Choose ${SQUAD_SIZE} different creatures from the offer.`);
+  return [...(squad as number[])].sort((a, b) => a - b);
+}
+/** The squad's units, in team order, with their ids (contract decisions 47 and 48). */
+export function squadUnits(seed: number, squad: Squad): Unit[] {
+  const picked = checkSquad(squad);
+  const records =
+    picked === "starter"
+      ? COMPANION_KEYS.map((key) => COMPANION_RECORDS[key])
+      : (() => {
+          const offer = draftOffer(seed);
+          return picked.map((i) => offer[i].record);
+        })();
+  const ids = unitIds(records.map((r) => r.species));
+  return records.map((record, i) => readCompanion(record, ids[i]));
+}
 
 const names: Record<string, string> = {
   crawler: "Maintenance crawler",
@@ -897,15 +1089,41 @@ function enter(s: Run) {
   s.log.push(`Entered ${ROOMS[s.room].name}.`);
   prepare(s);
 }
-export function createRun(seed = 1): Run {
+/**
+  A run that has not chosen its squad (contract decision 48): no team, no encounter, and the
+  draft as its only legal command. The page shows the briefing and the offer from here.
+*/
+export function openRun(seed = 1): Run {
+  return {
+    seed: seed >>> 0,
+    rng: seed >>> 0,
+    squad: null,
+    room: 0,
+    round: 1,
+    team: [],
+    enemies: [],
+    orders: {},
+    phase: "draft",
+    revival: 1,
+    xp: 0,
+    log: [],
+  };
+}
+/**
+  A run with its squad chosen, entering the first encounter: the starter squad by default,
+  so every pre-pass-6 caller reads the same run as before, or four offer indexes (contract
+  decisions 47 and 48). The draft never touches the run's rng, so a starter run is
+  byte-identical to the one pass 5 measured.
+*/
+export function createRun(seed = 1, squad: Squad = "starter"): Run {
+  const picked = checkSquad(squad);
   const s: Run = {
     seed: seed >>> 0,
     rng: seed >>> 0,
+    squad: picked,
     room: 0,
     round: 1,
-    team: COMPANION_KEYS.map((key, i) =>
-      readCompanion(COMPANION_RECORDS[key], COMPANION_IDS[i])
-    ),
+    team: squadUnits(seed >>> 0, picked),
     enemies: [],
     orders: {},
     phase: "planning",
@@ -1506,6 +1724,14 @@ export function asMove(passive: Passive): Move {
 }
 
 export function command(previous: Run, action: Command): Run {
+  if (action.kind === "draft") {
+    // The draft is the first command of a history and only that (contract decision 48).
+    if (previous.phase !== "draft")
+      throw new Error("The squad is already chosen for this run.");
+    return createRun(previous.seed, action.squad);
+  }
+  if (previous.phase === "draft")
+    throw new Error("Choose a squad before entering the facility.");
   if (action.kind === "round")
     return resolveRound(previous, action.orders).state;
   const s = clone(previous);
@@ -1536,6 +1762,8 @@ export function command(previous: Run, action: Command): Run {
 }
 
 // Saves contain commands, not trusted arbitrary combat state. Replay validates each action.
+// Since version 6 a history opens with the draft (contract decision 48), replayed from the
+// seed's own offer, so a save names four offer indexes and never a creature record.
 export function restoreRun(raw: string): { state: Run; history: Command[] } {
   const save = JSON.parse(raw);
   if (
@@ -1545,7 +1773,8 @@ export function restoreRun(raw: string): { state: Run; history: Command[] } {
     save.history.length > SAVE_HISTORY_LIMIT
   )
     throw new Error("Unsupported save.");
-  let state = createRun(save.seed);
+  let state = openRun(save.seed);
   for (const action of save.history) state = command(state, action);
+  if (state.phase === "draft") throw new Error("Unsupported save.");
   return { state, history: save.history };
 }

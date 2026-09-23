@@ -1,4 +1,15 @@
 import React from "react";
+import XalianImageJs from "@/components/xalianImage";
+/** The site's species portrait component. Its JavaScript defaults type `fill` and `padding` as undefined, so it is widened here. */
+const XalianImage = XalianImageJs as unknown as React.ComponentType<{
+  variant?: "portrait" | "token";
+  speciesName: string;
+  primaryType: string;
+  padding?: string;
+  fill?: string;
+  unPadded?: boolean;
+  moreClasses?: string;
+}>;
 import {
   Crosshair,
   Swords,
@@ -24,6 +35,13 @@ import {
   Snail,
   ScanEye,
   Users,
+  Wind,
+  Snowflake,
+  Pickaxe,
+  Cog,
+  FlaskConical,
+  Ghost,
+  Brain,
 } from "lucide-react";
 import {
   AREA_HARM_FACTOR,
@@ -197,18 +215,25 @@ export function passiveRule(unit: Unit, passive: Passive): string {
   }${cools}`;
 }
 
+/** One glyph per element, all fourteen, so a drafted creature of any element reads at a glance (pass 6). */
+const ELEMENT_ICONS = {
+  dark: Moon,
+  plant: Leaf,
+  light: Sun,
+  water: Droplets,
+  sand: Mountain,
+  electric: Zap,
+  fire: Flame,
+  ice: Snowflake,
+  air: Wind,
+  rock: Pickaxe,
+  metal: Cog,
+  chemical: FlaskConical,
+  ghost: Ghost,
+  psychic: Brain,
+} as const;
 export function ElementIcon({ element }: { element: string }) {
-  const Icon =
-    (
-      {
-        dark: Moon,
-        plant: Leaf,
-        light: Sun,
-        water: Droplets,
-        sand: Mountain,
-        electric: Zap,
-      } as const
-    )[element as "dark"] || Sun;
+  const Icon = ELEMENT_ICONS[element as keyof typeof ELEMENT_ICONS] || Sun;
   return <Icon size={15} aria-hidden="true" />;
 }
 export function MoveIcon({ move }: { move: Move }) {
@@ -487,22 +512,53 @@ export function MoveCardContent({
     </>
   );
 }
+/**
+  Species with painted Powerworks art: the starter four and the five machines (contract
+  decision 50). Every other species is drawn with the site's species silhouette inside the
+  same frame; no new art is generated.
+*/
+export const PAINTED_SPECIES: ReadonlySet<string> = new Set([
+  "graviclaw",
+  "avilily",
+  "crystorn",
+  "hippochamp",
+  "crawler",
+  "drone",
+  "shield",
+  "discharge",
+  "guardian",
+]);
+export const hasPaintedArt = (species: string) => PAINTED_SPECIES.has(species);
 export function Portrait({ u, small = false }: { u: Unit; small?: boolean }) {
   return (
     <span
       className={`pw-portrait el-${u.element} species-${u.species} ${
         small ? "small" : ""
-      }`}
+      } ${hasPaintedArt(u.species) ? "" : "silhouette"}`}
       aria-hidden="true"
     >
-      <img
-        className="pw-painted-art"
-        src={`/assets/powerworks/${u.species}.webp`}
-        alt=""
-        width={512}
-        height={512}
-        draggable={false}
-      />
+      {hasPaintedArt(u.species) ? (
+        <img
+          className="pw-painted-art"
+          src={`/assets/powerworks/${u.species}.webp`}
+          alt=""
+          width={512}
+          height={512}
+          draggable={false}
+        />
+      ) : (
+        // The site's species portrait component, as Reclamation's figures use it: the
+        // token silhouette, filled in the element's own hue so it reads on the dark stage.
+        <XalianImage
+          variant="token"
+          speciesName={u.species}
+          primaryType={u.element}
+          padding="0px"
+          fill={`var(--color-el-${u.element})`}
+          unPadded
+          moreClasses="pw-species-art"
+        />
+      )}
     </span>
   );
 }

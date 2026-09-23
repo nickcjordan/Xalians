@@ -119,7 +119,7 @@ export const ENCOUNTER_XP = 10;
 export const FINAL_ENCOUNTER_XP = 30;
 export const RECOVERY_STATION_HP = 10;
 /**
-  Lever: the companions are generated once from these fixed seeds of the frozen release so a run is
+  Lever: the starter squad (contract decision 47) is generated once from these fixed seeds of the frozen release so a run is
   replayable. Re-picked 2026-09-23 on generation-0.7.0-3 under contract decision 37: every companion
   with a harm act keeps an every-round harm after its signature, and the ordinary charged act
   (decision 36) is not a burst that reaches squadmates. Graviclaw 4 and Avilily 6 had no every-round
@@ -140,6 +140,19 @@ export const COMPANION_GENERATED_AT = "2026-09-21T00:00:00.000Z";
  * resolves area, shock, tempo and senses effects, so a version 3 history no longer replays the same run.
  * The decision 37 seeds landed before any version 4 save shipped, so the version did not move again.
  * Version 5 (2026-09-23, pass 5): orders may name a squadmate (contract decisions 39 to 41), so a history
- * can carry side-crossing targets that a version 4 replay would reject or resolve as a foe order. */
-export const SAVE_VERSION = 5;
+ * can carry side-crossing targets that a version 4 replay would reject or resolve as a foe order.
+ * Version 6 (2026-09-23, pass 6): a run starts from the draft (contract decision 48), so the first command
+ * of every history is `{kind: "draft", squad}`; a version 5 history has none and is rejected. */
+export const SAVE_VERSION = 6;
+/*
+  Pass 6 levers: the squad draft (contract decisions 45 to 48).
+*/
+/** Lever: how many generated creatures the draft offers (contract decision 45). */
+export const DRAFT_OFFER_SIZE = 8;
+/** Lever: how many of the offer the player picks, and so the squad size (contract decision 45). */
+export const SQUAD_SIZE = 4;
+/** Lever: the seed prefix of a drafted creature; candidate `k` of run seed `n` is generated from `${DRAFT_SEED_PREFIX}-${n}-${k}` (contract decision 45). */
+export const DRAFT_SEED_PREFIX = "powerworks-draft";
+/** Lever: how many passes over the roster the constructive offer may draw before it gives up (contract decision 46). One pass is 32 candidates; the 200-seed test never needs a second. */
+export const DRAFT_MAX_ROSTER_PASSES = 4;
 export const SAVE_HISTORY_LIMIT = 2000;
