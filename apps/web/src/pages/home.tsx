@@ -73,9 +73,9 @@ const ART = {
 		era: 'unbirth',
 		src: '/assets/img/lore/eras/unbirth.jpg',
 		small: '/assets/img/lore/eras/unbirth-768.jpg',
-		alt: 'A glowing machine alone on flooded rock throws seed pods into a storm, and a newborn leafy creature steps from a hatch at its base; downstream the first sprouts take hold beside a grown one of its kind, and a young giant tree holds out leaves as wide as landing pads.',
-		// The living version: the Genesis Prototype on Floria, throwing seed
-		// pods into the storm that was meant to wash its mistakes away.
+		alt: 'A glowing machine alone on flooded rock throws glowing winged seeds into a storm; one heavy husked seed splits open beside it and a newborn leafy creature climbs out; downstream the first sprouts take hold beside a grown one of its kind, and a colossal tree climbs into the clouds far off.',
+		// The living version: the Genesis Prototype on Floria, throwing winged
+		// seeds into the storm that was meant to wash its mistakes away.
 		live: '/assets/plates/unbirth/plate.html',
 		still: { src: '/assets/plates/unbirth/poster.jpg', small: '/assets/plates/unbirth/poster-768.jpg' },
 	},

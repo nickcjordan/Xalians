@@ -181,3 +181,58 @@ Logged, not taken:
 - **"The pods read as leaves"** reverses the round 8 decision (almond husks with a lit seam), which the resumed reviewer accepted.
 - **"The newborn is invisible on a phone":** on a phone the lit hatch carries the birth, as the resumed reviewer judged. It is a desktop beat.
 - Its three taste notes.
+
+## Rework: seeds only (Nick, 2026-09-23)
+
+Nick's feedback on the live enhancement pass:
+- The machine opening a gate and a creature walking out, while it also throws seeds, is two ideas. Gates are what later Generators do; this one only pumps out seeds.
+- The tree "doesn't look good".
+- The seeds "look like flying tadpoles", and they fall wrong.
+
+His decisions on a studies page:
+1. The birth comes from a heavy seed, and the hatch goes.
+2. Parachute-style seeds are fine as long as they do not read as dandelion seeds.
+3. The distant colossus tree is the one that reads; the nearer tree studies do not.
+
+**What changed**
+- **The World Tree** is back to the distant colossus from before the enhancement pass. The young tree in the middle distance is gone.
+- **The hatch is gone.** In the surge, the middle vent throws one heavy husked seed short, tumbling on a true arc. It lands upright on the shelf, glows and splits along its seam, and the newborn climbs out. The husk halves fall flat.
+- **Seed physics** is now in `seedsim.py`, not drawn curves. Gravity, drag, and one gusting wind that is stronger aloft. Four kinds were studied: parachute, samara, nut and glider. The plate uses the glider, Javan-cucumber style: a steady sink with a slow swoop (the phugoid), speed building through each dive, and pitch following heading. Each seed's sink rate is solved so that it comes down on its spot, and throws that would dive (sink above 75) are rejected.
+- **The seed art.** A dark almond seed with a lit seam, set at the leading edge of one broad translucent wing with a lit rim and fanned veins. The wing's visible breadth swells and thins with the pitch, and each seed flies with its own slight roll. It is folded in the jet, spreads at the top of the climb, and folds again when it touches down.
+- **Placement is constructive.** The search over random draws took 21 minutes and still left clashes. Now every throw is redrawn, up to 60 times, until its whole flight keeps clear of every seed already in the sky, every standing sprout and the grown creature, using the final check's rule with a margin. A seed bound for the rock also checks that its future sprout stands clear. The build's final pairwise check reports 0 clashes on the first draw.
+- **Riders:** 6 seeds ride the flood. The build refuses a draw with fewer. Water is reserved around the newborn's walk and around each sprout.
+
+**Rounds (visual rising to 9, "Nothing worth a round"; motion 8.5, "Nothing worth a round")**
+- **Visual.**
+  - Seeds read as paratroopers, then as gulls. That led to the glider wing and the pitch-driven breadth.
+  - The birth seed fell down the machine's face. It is now a lower, flatter throw.
+  - The husk halves read as the newborn's feet.
+  - The birth seed did not read as upright once landed.
+  - An open canopy sat on the water. Seeds now fold at touchdown.
+  - The wing rims were tinted toward the glow, and the back edge curved in, which ended a flying-saucer echo.
+- **Motion.**
+  - Burst mates overlapped, and the check window ended early.
+  - keyTime rounding.
+  - The pivot offset, and a snap at the apex.
+  - Dead stops at touchdown. The speed now decays toward the ride over 0.12 s.
+  - A dip in the glow at the hand-off.
+  - The rise ran inverted.
+  - No riders.
+  - The swoop's energy ran backwards.
+  - The separation check underestimated the wing's size.
+  - The walk overstrode, and the legs hitched at the walk-to-wade change. It is now one gait at one pace.
+  - A rounder bounce.
+  - The rainFar clock (0.55 s) did not divide 24; it is now 0.6 s.
+  - The surge volley flew in single file. The launch spread is wider.
+
+**The gate: one cold check (7)**
+
+Taken:
+- **The newborn was hard to see at full frame.** The resumed reviewer had also noted it. It is now 20% larger with a brighter glow, and its leg swing is scaled so the feet still keep pace.
+- **The seeds read as eyes.** The seed sat in the middle of the almond wing like an iris. It now sits at the leading edge, as a gliding seed's does, with a smaller glow.
+- **The newborn faded in open water, short of the grown one.** It now walks on to stand beside the grown one's forelegs and fades only after it arrives.
+- **A seed brushed the grown one's tail.** The clearance test now treats the grown one as solid. The surge's middle-vent sprout moved onto the rise, because no throw to its old spot could clear the tail.
+
+Logged, not taken:
+- **Hang the seed under the wing on two lines.** That is the rigged sail the rounds moved away from ("paratroopers"), and Nick asked for nothing dandelion-like.
+- **The underglow on the cloud base, the foreground fronds, and the pale current dashes.** These are accepted decisions from earlier rounds; they are Nick's to judge on the live page.

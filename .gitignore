@@ -72,3 +72,6 @@ untracked/
 # read-only AWS CLI captures used to write terraform/import config against; never commit
 # live account data
 .live/
+
+# python bytecode from the plate builders
+__pycache__/
