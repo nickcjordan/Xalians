@@ -315,15 +315,16 @@ export function MoveCardContent({
   const unsupported = move.effects.filter((e) => e.support === "unsupported");
   return (
     <>
+      <span
+        className={`pw-card-emblem ${control ? "control" : ward ? "ward" : ""}`}
+        aria-hidden="true"
+      >
+        <MoveIcon move={move} />
+      </span>
       <span className="pw-card-identity">
         <span className="pw-card-category" aria-hidden="true">
-          <Range />
-          {move.signature && (
-            <>
-              <Crown />
-              Signature
-            </>
-          )}
+          {(move.signature || control || ward || charges(move)) && <Range />}
+          {move.signature && "Signature"}
         </span>
         <strong title={fullName ? undefined : move.name}>
           {fullName ? move.name : baseName(move)}
@@ -366,7 +367,7 @@ export function MoveCardContent({
               Selected
             </>
           ) : (
-            "Cooldown"
+            cooldown === null || limit === 0 ? "Repeatable" : "Ready"
           )}
         </span>
         <span className="pw-card-charges">
