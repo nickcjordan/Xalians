@@ -1494,7 +1494,20 @@ class ReclamationMatch extends React.Component {
 				kind: 'world',
 				seat: null,
 				short: `Round ${frame.index + 1}`,
-				text: `The frame loads ${names}. ${match.turn === YOU ? 'You send first this round.' : 'The rival sends first this round.'}`,
+				// pass 39: each round opens on what it is worth, so the rounds do not read alike
+				text: (() => {
+					const clinch = clinchFor(frame.sites.length, FRAMES_PER_MATCH);
+					const need = Math.max(0, clinch - match.players[YOU].sitesWon);
+					const theirs = Math.max(0, clinch - match.players[THEM].sitesWon);
+					const stakes = need <= frame.sites.length && theirs <= frame.sites.length
+						? `Either side can win the game this round: you need ${need}, the rival ${theirs}.`
+						: need <= frame.sites.length
+							? `You can win the game this round: you need ${need} of these ${frame.sites.length}.`
+							: theirs <= frame.sites.length
+								? `The rival can win the game this round with ${theirs} of these ${frame.sites.length}.`
+								: `You need ${need} more worlds to win, the rival ${theirs}.`;
+					return `${names}. ${stakes} ${match.turn === YOU ? 'You send first.' : 'The rival sends first.'}`;
+				})(),
 			});
 			this.scheduleBotIfDue();
 		});
@@ -1992,6 +2005,7 @@ class ReclamationMatch extends React.Component {
 				let strained = 0;
 				let severe = 0;
 				let native = 0;
+				const holdsHere = [];
 				bench.forEach((record) => {
 					let plan = null;
 					try {
@@ -2006,6 +2020,7 @@ class ReclamationMatch extends React.Component {
 					if (plan.isHome) {
 						native++;
 					}
+					holdsHere.push({ record, hold: plan.hold });
 					if (plan.strainLevel === 'severe') {
 						severe++;
 					} else if (plan.strainLevel === 'strained') {
@@ -2014,7 +2029,9 @@ class ReclamationMatch extends React.Component {
 						comfortable++;
 					}
 				});
-				footingOfSite[site.id] = { comfortable, strained, severe, native, of: bench.length };
+				// pass 39: the three that would hold this world best, so each round's worlds open on their own names
+				const best = holdsHere.sort((a, b) => b.hold - a.hold).slice(0, 3);
+				footingOfSite[site.id] = { comfortable, strained, severe, native, of: bench.length, best };
 			});
 		}
 		// assumption 20: your swift creatures that may still move this round, as the bench's
@@ -2113,6 +2130,7 @@ class ReclamationMatch extends React.Component {
 							highlights={highlights}
 							clashSiteId={playback ? highlights.clashSiteId : null}
 							siteFootings={deploying ? footingOfSite : null}
+							onPickBest={clickable ? this.armRecord : null}
 							hoverSiteId={this.state.hoverSiteId}
 							advanced={!simple}
 							stakes={view.stakes}

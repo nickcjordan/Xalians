@@ -772,3 +772,14 @@ Second, the metric is insensitive to what it claims to be about. **Quadrupling t
 4. Advanced mode on a phone, the empty world panel and strain in the preview (carried from pass 38).
 
 **Verified:** 1565 web and 533 rules tests; `reclamation-shift`, `reclamation-proving` (with the new honesty check), `reclamation-actflip`, `reclamation-hotseat` green; paint read of the full play-through at 390 and 1440.
+
+### Pass 40 (2026-09-22): each round opens on its own worlds
+
+**From the pass 39 play-through critic:** "The rounds look the same. Each one is three empty columns with the same 'X of your N hold well here'", and the result "is a tally; it never says why you lost".
+
+- **Best here.** An empty world names the three of your squad that would hold it best, with their holds ("Neph 15, Kosanos 14, Scalatto 12"). Each is a key that picks that creature up. The names change with every round's worlds, and a world where your best is 4 says "do not go here" without a word.
+- **Each round opens on its stakes:** "Endessa, Saiphus, Luminax. Either side can win the game this round: you need 2, the rival 1. The rival sends first." (It used to read "The frame loads ...".)
+- **The result names your closest loss:** "Your closest loss: Stonera, round 1, 7 to 8."
+- The phone's best-here keys are 32px tall; `reclamation-proving` caught them at 26.
+
+**Verified:** 1565 web tests; `reclamation-shift`, `reclamation-proving` (4 of 4), `reclamation-actflip`, `reclamation-hotseat` green; paint read of the full play-through at 390 and 1440.

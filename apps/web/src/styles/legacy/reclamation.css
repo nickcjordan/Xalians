@@ -6778,3 +6778,15 @@
 	.rec-console--match[data-terminal] .rec-report-foot { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); }
 	.rec-console--match[data-terminal] .rec-report-figure-value { font-size: 0.9rem; }
 }
+
+/* an empty world names the three of your squad that would hold it best, each a key that picks it up */
+.rec-console--match[data-terminal] .rec-world-best { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 4px; margin-top: var(--g-2); max-width: 100%; }
+.rec-console--match[data-terminal] .rec-world-best-label { width: 100%; text-align: center; font-family: var(--g-font-stencil); font-size: var(--g-size-micro); letter-spacing: 0.08em; text-transform: uppercase; color: var(--g-ink-low); }
+.rec-console--match[data-terminal] .rec-world-best-pick { min-height: 28px; padding: 2px 8px; font-size: var(--g-size-small); text-transform: none; letter-spacing: 0; white-space: nowrap; }
+.rec-console--match[data-terminal] .rec-world-best-pick b { color: var(--g-el); margin-left: 3px; }
+.rec-console--match[data-terminal] .rec-report-closest { margin: 2px 0; color: var(--g-ink-mid); }
+@media (max-width: 760px) {
+	.rec-console--match[data-terminal] .rec-world-best { flex-direction: column; gap: 3px; margin-top: var(--g-1); }
+	.rec-console--match[data-terminal] .rec-world-best-pick { min-height: 32px; padding: 0 4px; font-size: 9px; max-width: 100%; overflow: hidden; text-overflow: ellipsis; }
+	.rec-console--match[data-terminal] .rec-report-closest { font-size: var(--g-size-small); }
+}
