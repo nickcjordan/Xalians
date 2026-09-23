@@ -12,7 +12,7 @@ import {
 	PROJECTION_REACH, PROJECTION_FALLOFF, ACT_FLIP,
 	ROSTER_TRAILING_BONUS, ROLE, HOLD_FLOOR, HOLD_CEILING, MAGNITUDE_SCALE, SWEEP_DISCOUNT,
 	BOLSTER_FLOOR, ARMORED_REDUCTION, SHIELD_CAP, WILLFUL_THRESHOLD, KEEN_INSTINCT,
-	DULL_INSTINCT, SWIFT_SPEED, BOLSTER_RECOVERY,
+	DULL_INSTINCT, KEEN_FIGHTS_HURT, SWIFT_SPEED, BOLSTER_RECOVERY,
 	HIDDEN_SEND_COST, HIDDEN_POWER, STAKE_ENABLED,
 	STAKE_SITE_VALUE, STAKE_BOTH_VALUE, DRAFT_POOL_SIZE, DRAFT_DISTINCT_SPECIES, CLAIM_COUNTING, STAKE_TIMING, PINNING, REACH_FIRST,
 } from '../expeditionInterpretation.ts';
@@ -1233,6 +1233,7 @@ describe('rules ablation switches', () => {
 			instinctLanes: true,
 			keenInstinct: KEEN_INSTINCT,
 			dullInstinct: DULL_INSTINCT,
+			keenFightsHurt: KEEN_FIGHTS_HURT,
 			swiftMove: true,
 			swiftSpeed: SWIFT_SPEED,
 			hurtAttacksLess: true,
@@ -1986,3 +1987,4 @@ describe('pass 3: the stake (assumption 22)', () => {
 		expect(view.players.A.stakeableSiteIds).toBeUndefined();
 	});
 });
+

@@ -91,6 +91,8 @@ export interface Rules {
 	instinctLanes: boolean;
 	keenInstinct: number;
 	dullInstinct: number;
+	// pass 51: how much of the hurt penalty a keen creature fights through (0 = none, 1 = all)
+	keenFightsHurt: number;
 	swiftMove: boolean;
 	swiftSpeed: number;
 	hurtAttacksLess: boolean;

@@ -186,8 +186,8 @@ const LANES = [
 	{ key: 'power', word: 'Strength, intelligence', note: 'attack power, by contact or by mind' },
 	{ key: 'speed', word: 'Agility, reflex', note: 'speed: who attacks first, and who may move once a round' },
 	{ key: 'willpower', word: 'Willpower', note: 'holds against the world: one grade less strain' },
-	{ key: 'charisma', word: 'Charisma', note: 'presence: how much a bolster gives back and a shield stops' },
-	{ key: 'instinct', word: 'Instinct', note: 'targeting: keen picks what it can down, dull hits what came first' },
+	{ key: 'charisma', word: 'Charisma', note: 'for shields and bolsters: how much a bolster gives back and a shield stops' },
+	{ key: 'instinct', word: 'Instinct', note: 'keen: picks what it can down, and fights on at full power when hurt' },
 ];
 
 function seedFromQueryOrDefault() {
@@ -601,7 +601,7 @@ class ReclamationPage extends React.Component {
 
 						<section className="rec-module rec-module--lanes" aria-label="Every attribute a job">
 							<h2 className="rec-module-title">Every attribute a job</h2>
-							<p className="rec-module-lead">Nothing on a creature's record is decoration: each attribute does one thing on the table, and the dossier says which.</p>
+							<p className="rec-module-lead">Each attribute does one thing on the table, and the dossier says which. Speed and hold decide the most; the rest matter where they apply.</p>
 							<ul className="rec-lane-list rec-intro-lanes">
 								{LANES.map((lane) => (
 									<li className="rec-lane" key={lane.key} data-intro-lane={lane.key}>

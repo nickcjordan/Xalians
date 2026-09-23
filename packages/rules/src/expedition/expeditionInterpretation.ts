@@ -236,6 +236,34 @@ export const KEEN_INSTINCT = 65;
 */
 export const DULL_INSTINCT = 50;
 
+/*
+	PASS 51: INSTINCT'S SECOND JOB. A keen creature (instinct at or above KEEN_INSTINCT) fights
+	on through its hurt: it attacks at full power however much hold it has lost, where every
+	other creature attacks for less in proportion (HURT_ATTACKS_LESS).
+
+	Why. Measured causally (the same squads both sides, one side's creatures +15 in one
+	attribute, only where the attribute has a job, 3000 games a row, magnitude 1.8):
+
+		strength      +2.3 on the 6.5 creatures a squad whose blow it powers
+		intelligence  +1.9 on the 3.8 whose blow it powers (the same per creature)
+		charisma      +1.6 at +40 on the 1.7 shields and bolsters (the same per creature: rare, not weak)
+		willpower     +1.6 on all twelve (strain relief; small, real)
+		instinct      -1.3 on the 10.3 attackers: no job worth measuring
+
+	Instinct's targeting only matters where a creature has two enemies to choose between,
+	and most worlds are one against one. Three second jobs were tried as levers:
+
+		a keen creature takes half a sweep's blow          instinct +0.6 (nothing)
+		a willful creature cannot be held (willpower)      willpower +1.7 (no change from +1.6)
+		a keen creature fights through half its hurt       instinct +0.7 (nothing)
+		a keen creature fights through all of its hurt     instinct +3.6 (a real job)
+
+	The last is shipped. Match gauges with it on, seeds 7 / 13 / 21 at 1000 games: downs
+	5.14 / 4.65 / 4.91 (band 3 to 5), flips 25.6 / 25.6 / 27.1 (band 25 to 40), comeback
+	29.0 / 30.3 / 29.0. The other two were removed rather than left as levers.
+*/
+export const KEEN_FIGHTS_HURT = 1;
+
 export type InstinctLane = 'keen' | 'conduct' | 'dull';
 
 // 'keen' | 'conduct' | 'dull' - which targeting lane a creature reads its target from.

@@ -15,6 +15,25 @@
 */
 import { buildExpeditionPool } from '../roster.ts';
 import { playMatch, PROCTOR_POLICY, parseRules } from './expeditionValidation.ts';
+import { roleOf, buildActs, blowActOf } from '../creatureOnTable.ts';
+
+/*
+	--applies=1: boost only the creatures the attribute has a job on at this table (strength
+	and intelligence: a creature with an act they power; charisma: a shield or bolster;
+	instinct: a strike or sweep; the rest: everyone), and report how many were boosted per
+	squad, so a job that is real but rare reads as rare rather than as nothing.
+*/
+function applies(record: any, attr: string): boolean {
+	const role = roleOf(record);
+	if (attr === 'strength' || attr === 'intelligence') {
+		// the attribute that powers the blow this creature actually throws
+		const blow = blowActOf(record, buildActs(record, 1), role);
+		return !!blow && !blow.fallback && (attr === 'strength' ? blow.class === 'contact' : blow.class === 'projection');
+	}
+	if (attr === 'charisma') return role === 'shield' || role === 'bolster';
+	if (attr === 'instinct') return role === 'strike' || role === 'sweep';
+	return true;
+}
 
 const ATTRS = ['none', 'vitality', 'resilience', 'endurance', 'strength', 'intelligence', 'agility', 'reflex', 'willpower', 'charisma', 'instinct'];
 const args: Record<string, string> = Object.fromEntries(process.argv.slice(2).map((a) => { const i = a.indexOf('='); return i < 0 ? [a.replace(/^--/, ''), '1'] : [a.slice(2, i), a.slice(i + 1)]; }));
@@ -37,15 +56,18 @@ function shuffle<T>(arr: T[], seed: number): T[] {
 }
 
 for (const attr of only) {
-	let wins = 0; let n = 0; let errors = 0; let downs = 0;
+	let wins = 0; let n = 0; let errors = 0; let downs = 0; let boosted = 0; let dealt = 0;
 	for (const seed of seeds) {
 		const pool = buildExpeditionPool(seed, 87);
 		for (let i = 0; i < MATCHES; i++) {
-			const dealt = shuffle(pool, i * 7919 + 17);
-			const base = dealt.slice(0, 12);
-			const rosterA = base.map((r: any) => (attr === 'none' ? r : { ...r, attributes: { ...r.attributes, [attr]: Math.min(100, r.attributes[attr] + BOOST) } }));
+			const deal = shuffle(pool, i * 7919 + 17);
+			const base = deal.slice(0, 12);
+			dealt++;
+			const boost = (r: any) => attr !== 'none' && (!args.applies || applies(r, attr));
+			boosted += base.filter(boost).length;
+			const rosterA = base.map((r: any) => (boost(r) ? { ...r, attributes: { ...r.attributes, [attr]: Math.min(100, r.attributes[attr] + BOOST) } } : r));
 			// --indep: B is a different squad from the same pool, as in real play
-			const rosterB = args.indep ? dealt.slice(12, 24) : base.map((r: any) => ({ ...r, id: `${r.id}~B` }));
+			const rosterB = args.indep ? deal.slice(12, 24) : base.map((r: any) => ({ ...r, id: `${r.id}~B` }));
 			const res = playMatch({ matchSeed: `${seed}-probe-${i}`, rosterA, rosterB, policyA: PROCTOR_POLICY.send, policyB: PROCTOR_POLICY.send, rules });
 			if (res.error) { errors++; continue; }
 			n++;
@@ -54,5 +76,5 @@ for (const attr of only) {
 		}
 	}
 	const p = wins / n;
-	console.log(`${attr.padEnd(13)} A wins ${(100 * p).toFixed(1)}% +/- ${(196 * Math.sqrt(p * (1 - p) / n)).toFixed(1)} (n=${n}) downs/match ${(downs / n).toFixed(2)}${errors ? ` errors ${errors}` : ''}`);
+	console.log(`${attr.padEnd(13)} A wins ${(100 * p).toFixed(1)}% +/- ${(196 * Math.sqrt(p * (1 - p) / n)).toFixed(1)} (n=${n}) downs/match ${(downs / n).toFixed(2)} boosted/squad ${(boosted / Math.max(1, dealt)).toFixed(1)}${errors ? ` errors ${errors}` : ''}`);
 }

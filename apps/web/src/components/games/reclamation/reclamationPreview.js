@@ -632,7 +632,7 @@ export function attributeLanes(prepared, rules) {
 		label: 'Instinct',
 		glyph: lane === 'conduct' ? null : lane,
 		text: lane === 'keen'
-			? `Instinct ${at('instinct')}: keen, picks the enemy it can down.`
+			? `Instinct ${at('instinct')}: keen, picks the enemy it can down and fights on at full power when hurt.`
 			: lane === 'dull'
 				? `Instinct ${at('instinct')}: dull, hits the enemy sent earliest.`
 				: `Instinct ${at('instinct')}: follows its archetype's line.`,
