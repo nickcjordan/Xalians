@@ -37,13 +37,13 @@
     ],
     "covering": "hide",
     "size": {
+      "massKg": [
+        320,
+        430
+      ],
       "heightCm": [
         210,
         265
-      ],
-      "weightKg": [
-        320,
-        430
       ]
     },
     "lifespan": "long",
@@ -158,7 +158,7 @@
       78
     ]
   },
-  "schemaVersion": "5.0.0",
+  "schemaVersion": "5.1.0",
   "temperament": {
     "boldness": [
       40,

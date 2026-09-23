@@ -6906,7 +6906,6 @@
 @media (max-width: 760px) {
 	.rec-console--match[data-terminal] .rec-stamp { white-space: normal; text-align: center; max-width: 100%; line-height: 1.2; }
 }
-=======
 /* --- pass 50 ---------------------------------------------------------------- */
 .rec-status-reach[data-still-reachable="stake"] { border-left-color: var(--g-lamp-amber); color: var(--g-ink); }
 /* "17 →1" in red read as minus one: the arrow stands clear of both numbers */

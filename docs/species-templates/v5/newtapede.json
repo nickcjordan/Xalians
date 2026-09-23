@@ -37,13 +37,13 @@
     ],
     "covering": "bare",
     "size": {
+      "massKg": [
+        70,
+        115
+      ],
       "heightCm": [
         170,
         230
-      ],
-      "weightKg": [
-        70,
-        115
       ]
     },
     "lifespan": "standard",
@@ -161,7 +161,7 @@
       35
     ]
   },
-  "schemaVersion": "5.0.0",
+  "schemaVersion": "5.1.0",
   "temperament": {
     "boldness": [
       40,

@@ -1,14 +1,20 @@
 {
-  "schemaVersion": "5.0.0",
+  "schemaVersion": "5.1.0",
   "key": "support-example",
   "name": "Support Example",
   "nameOrigin": "Noncanonical test species for the redesigned authoring contract.",
   "element": "chemical",
   "homePlanet": "drainov",
-  "generatorPlanets": ["drainov"],
+  "generatorPlanets": [
+    "drainov"
+  ],
   "lore": {
     "description": "A hypothetical organism secretes a tissue-repairing fluid and can wash applied substances away.",
-    "appearance": ["Soft body", "Fluid-emitting surface", "Smooth resting outline"],
+    "appearance": [
+      "Soft body",
+      "Fluid-emitting surface",
+      "Smooth resting outline"
+    ],
     "origin": "Noncanonical implementation fixture.",
     "habitat": "Noncanonical implementation fixture.",
     "feeding": "Noncanonical implementation fixture.",
@@ -16,46 +22,282 @@
     "company": "Noncanonical implementation fixture."
   },
   "physiology": {
-    "composition": {"primary": "flesh"},
+    "composition": {
+      "primary": "flesh"
+    },
     "bodyPlan": "amorphous",
-    "anatomy": ["body"],
+    "anatomy": [
+      "body"
+    ],
     "covering": "bare",
-    "size": {"heightCm": [50, 80], "weightKg": [30, 45]},
+    "size": {
+      "massKg": [
+        30,
+        45
+      ],
+      "heightCm": [
+        50,
+        80
+      ]
+    },
     "lifespan": "standard",
-    "genome": {"chirality": "rolled"},
+    "genome": {
+      "chirality": "rolled"
+    },
     "diet": "omnivore",
     "communication": [],
-    "breathes": ["gas"],
-    "environmentalTolerance": {"ambientMedia": ["gas"], "temperatureC": {"min": 5, "max": 40}},
-    "capabilities": {"flight": [0,0], "swim": [20,40], "burrow": [0,0], "climb": [0,0], "sprint": [20,40], "leap": [0,0], "manipulation": [10,30]},
-    "senses": {"sight": [40,60], "hearing": [40,60], "smell": [40,60], "special": []},
+    "breathes": [
+      "gas"
+    ],
+    "environmentalTolerance": {
+      "ambientMedia": [
+        "gas"
+      ],
+      "temperatureC": {
+        "min": 5,
+        "max": 40
+      }
+    },
+    "capabilities": {
+      "flight": [
+        0,
+        0
+      ],
+      "swim": [
+        20,
+        40
+      ],
+      "burrow": [
+        0,
+        0
+      ],
+      "climb": [
+        0,
+        0
+      ],
+      "sprint": [
+        20,
+        40
+      ],
+      "leap": [
+        0,
+        0
+      ],
+      "manipulation": [
+        10,
+        30
+      ]
+    },
+    "senses": {
+      "sight": [
+        40,
+        60
+      ],
+      "hearing": [
+        40,
+        60
+      ],
+      "smell": [
+        40,
+        60
+      ],
+      "special": []
+    },
     "protections": [],
     "traversal": []
   },
-  "attributes": {"strength": [20,40], "vitality": [40,60], "endurance": [40,60], "agility": [20,40], "reflex": [20,40], "intelligence": [40,60], "willpower": [40,60], "instinct": [40,60], "charisma": [40,60], "resilience": [40,60]},
-  "temperament": {"boldness": [20,40], "curiosity": [40,60], "energy": [40,60], "aggression": [10,30], "sociability": [60,80]},
-  "channels": ["secretion"],
-  "signature": {"type": "action", "key": "repair"},
-  "actions": [{
-    "key": "repair", "name": "Restorative Secretion", "description": "A concentrated secretion repairs existing tissue.",
-    "instrument": "secretion", "element": "chemical",
-    "activation": {"continuity": "discrete"},
-    "timing": {"preparation": "brief", "recovery": "brief"},
-    "delivery": {"mode": "contact", "approach": "stationary"},
-    "targeting": ["self", "other"], "spatial": {"range": "contact"},
-    "effects": [{"key": "repair", "type": "restore", "recipient": "target", "onset": "instant", "persistence": "resolved", "likelihood": "consistent", "intensity": [60,80]}]
-  }],
+  "attributes": {
+    "strength": [
+      20,
+      40
+    ],
+    "vitality": [
+      40,
+      60
+    ],
+    "endurance": [
+      40,
+      60
+    ],
+    "agility": [
+      20,
+      40
+    ],
+    "reflex": [
+      20,
+      40
+    ],
+    "intelligence": [
+      40,
+      60
+    ],
+    "willpower": [
+      40,
+      60
+    ],
+    "instinct": [
+      40,
+      60
+    ],
+    "charisma": [
+      40,
+      60
+    ],
+    "resilience": [
+      40,
+      60
+    ]
+  },
+  "temperament": {
+    "boldness": [
+      20,
+      40
+    ],
+    "curiosity": [
+      40,
+      60
+    ],
+    "energy": [
+      40,
+      60
+    ],
+    "aggression": [
+      10,
+      30
+    ],
+    "sociability": [
+      60,
+      80
+    ]
+  },
+  "channels": [
+    "secretion"
+  ],
+  "signature": {
+    "type": "action",
+    "key": "repair"
+  },
+  "actions": [
+    {
+      "key": "repair",
+      "name": "Restorative Secretion",
+      "description": "A concentrated secretion repairs existing tissue.",
+      "instrument": "secretion",
+      "element": "chemical",
+      "activation": {
+        "continuity": "discrete"
+      },
+      "timing": {
+        "preparation": "brief",
+        "recovery": "brief"
+      },
+      "delivery": {
+        "mode": "contact",
+        "approach": "stationary"
+      },
+      "targeting": [
+        "self",
+        "other"
+      ],
+      "spatial": {
+        "range": "contact"
+      },
+      "effects": [
+        {
+          "key": "repair",
+          "type": "restore",
+          "recipient": "target",
+          "onset": "instant",
+          "persistence": "resolved",
+          "likelihood": "consistent",
+          "intensity": [
+            60,
+            80
+          ]
+        }
+      ]
+    }
+  ],
   "passives": [],
-  "mechanisms": [{
-    "key": "washing-fluid", "name": "Washing Fluid", "description": "The fluid carries away compatible applied substances.",
-    "instrument": "secretion", "element": "chemical", "targeting": ["other"],
-    "activation": {"continuity": ["discrete"]},
-    "timing": {"preparation": ["immediate", "brief"], "recovery": ["brief"]},
-    "delivery": {
-      "contact": {"approach": ["stationary"], "range": ["contact"]},
-      "projectile": {"approach": ["stationary"], "range": ["short", "medium"],
-        "area": {"shape": ["radial"], "extent": ["small", "medium"], "anchor": ["location"], "persistence": "resolved"}}
-    },
-    "effects": [{"key": "wash", "type": "remove", "recipient": {"contact": ["target"], "projectile": ["target", "area"]}, "onset": "instant", "persistence": "resolved", "likelihood": ["consistent"], "methods": ["cleansing"]}]
-  }]
+  "mechanisms": [
+    {
+      "key": "washing-fluid",
+      "name": "Washing Fluid",
+      "description": "The fluid carries away compatible applied substances.",
+      "instrument": "secretion",
+      "element": "chemical",
+      "targeting": [
+        "other"
+      ],
+      "activation": {
+        "continuity": [
+          "discrete"
+        ]
+      },
+      "timing": {
+        "preparation": [
+          "immediate",
+          "brief"
+        ],
+        "recovery": [
+          "brief"
+        ]
+      },
+      "delivery": {
+        "contact": {
+          "approach": [
+            "stationary"
+          ],
+          "range": [
+            "contact"
+          ]
+        },
+        "projectile": {
+          "approach": [
+            "stationary"
+          ],
+          "range": [
+            "short",
+            "medium"
+          ],
+          "area": {
+            "shape": [
+              "radial"
+            ],
+            "extent": [
+              "small",
+              "medium"
+            ],
+            "anchor": [
+              "location"
+            ],
+            "persistence": "resolved"
+          }
+        }
+      },
+      "effects": [
+        {
+          "key": "wash",
+          "type": "remove",
+          "recipient": {
+            "contact": [
+              "target"
+            ],
+            "projectile": [
+              "target",
+              "area"
+            ]
+          },
+          "onset": "instant",
+          "persistence": "resolved",
+          "likelihood": [
+            "consistent"
+          ],
+          "methods": [
+            "cleansing"
+          ]
+        }
+      ]
+    }
+  ]
 }

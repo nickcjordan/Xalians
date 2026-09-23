@@ -34,13 +34,13 @@
     ],
     "covering": "mist",
     "size": {
+      "massKg": [
+        0.1,
+        0.5
+      ],
       "heightCm": [
         80,
         105
-      ],
-      "weightKg": [
-        0.1,
-        0.5
       ]
     },
     "lifespan": "ageless",
@@ -155,7 +155,7 @@
       35
     ]
   },
-  "schemaVersion": "5.0.0",
+  "schemaVersion": "5.1.0",
   "temperament": {
     "boldness": [
       60,

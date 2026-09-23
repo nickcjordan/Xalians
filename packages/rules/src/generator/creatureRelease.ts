@@ -4,8 +4,10 @@ import { CreatureRecordSchema, type CreatureRecord } from '@xalians/content/crea
 import { compileSpecies, generateCreatureDraft } from './creature.ts';
 import { makeRng } from './prng.ts';
 
-export const GENERATOR_VERSION = '0.7.0';
-export const SCHEMA_VERSION = '5.0.0';
+export const GENERATOR_VERSION = '0.8.0';
+export const SCHEMA_VERSION = '5.1.0';
+// Size resolution changed. Keep unrelated authored facts on their established stream.
+const CREATURE_FACT_NAMESPACE_VERSION = '0.7.0';
 const replayInputs = CreatureRecordSchema.shape.provenance.omit({ generatorVersion: true, schemaVersion: true, releaseId: true });
 type Options = Omit<CreatureRecord['provenance'], 'seed' | 'generatorVersion' | 'schemaVersion' | 'releaseId'>;
 // Preserve the existing appearance policy; no retired v4 generation tables are imported.
@@ -29,6 +31,7 @@ export function createCreatureRelease(releaseId: string, sources: readonly unkno
       // Validate caller metadata only, not generated combinations. Never invent replay inputs.
       const inputs = replayInputs.parse({ ...options, seed });
       const generationSeed = JSON.stringify([species, seed, GENERATOR_VERSION]);
+      const creatureFactSeed = JSON.stringify([species, seed, CREATURE_FACT_NAMESPACE_VERSION]);
       const rng = makeRng(generationSeed);
       const roll = rng.fork('appearance').float();
       let finish: CreatureRecord['appearance']['finish'] = 'standard';
@@ -38,7 +41,7 @@ export function createCreatureRelease(releaseId: string, sources: readonly unkno
         if (roll < cumulative) { finish = candidate; break; }
       }
       return {
-        ...generateCreatureDraft(compiled, generationSeed),
+        ...generateCreatureDraft(compiled, creatureFactSeed),
         id: `xal_${rng.fork('id').hex(20)}`,
         provenance: { ...inputs, generatorVersion: GENERATOR_VERSION, schemaVersion: SCHEMA_VERSION, releaseId },
         appearance: { finish: inputs.profile === 'showroom' ? 'standard' : finish },

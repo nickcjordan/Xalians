@@ -1,6 +1,8 @@
 # Creature model: current agreed contract
 
-Updated 2026-09-21. This document supersedes conflicting proposals and chronological notes in this directory. The implementation is available through `@xalians/content/creature` and `@xalians/rules/generator/creature`. These are the redesigned model's entry points; the deployed games and canonical species bundle still use v4.
+Updated 2026-09-23. This document supersedes conflicting proposals and chronological notes in this directory. The implementation is available through `@xalians/content/creature` and `@xalians/rules/generator/creature`. These are the redesigned model's entry points; the legacy public generator and bundled species remain v4.
+
+Current implementation update, 2026-09-23: schema 5.1.0 and generator 0.8.0 are frozen as `generation-0.8.0-1`. Powerworks and Reclamation use this v5 canonical roster; the legacy public generator and its species bundle remain v4. Historical checkpoint paragraphs below describe the state when written, not the current game routing. The 32-species scale migration changed only measurement fields and resolution; archived earlier records keep their original representation.
 
 ## Canonical roster audit decisions
 
@@ -12,7 +14,7 @@ The species template describes physiology, attribute and temperament bands, guar
 
 ```text
 Species                         Generated creature
-schemaVersion: 5.0.0             id / provenance / appearance (release envelope)
+schemaVersion: 5.1.0             id / provenance / appearance (release envelope)
 key / name / nameOrigin          species
 element                         element
 homePlanet / generatorPlanets
@@ -29,7 +31,7 @@ mechanisms: authored extensions (generation permissions are not copied)
 
 - One species element. An ability has an optional element classification; omission means unclassified. No secondary-element roll, affinity strength, automatic adjacency permission, or effect-level element override.
 - Retire `traits`, `archetype`, `archetypeWeights`, `physiology.corporeality`, template `instruments`, and `actionPool`. They are rejected by the new schema. `conduits` returned on 2026-09-22 together with `channels` and `acts`, as the declarations the derived act space reads; see [derived acts](creature-derived-acts.md).
-- Keep anatomy, composition, body plan, covering, measurements, lifespan, chirality, diet, communication, respiration, environmental tolerance, capabilities and senses.
+- Keep anatomy, composition, body plan, covering, measurements, lifespan, chirality, diet, communication, respiration, environmental tolerance, capabilities and senses. Schema 5.1 requires mass plus at least one applicable overall height, length or width. Other overall dimensions are optional; appendage measurements remain descriptive prose, not structured fields.
 - Innate protection is `physiology.protections[]`. Persistent wall/opening traversal is `physiology.traversal[]` (`phase` / `seep`). Neither is inferred from composition or element.
 - Attributes, graded senses and capabilities use nonnegative open-ended ratings. Zero means absence where appropriate. Reference benchmarks stay stable as new species appear; 100 is not a ceiling, percentile or physical ratio.
 - The agreed references are 0 absent, 25 limited, 50 standard reference, 75 strong, 100 exceptional, with values above 100 allowed. [Rating guidance](creature-rating-benchmarks.md) and the shared `benchmarks.ts` catalog define field-specific authoring anchors. These are not automatically applied game formulas.

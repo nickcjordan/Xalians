@@ -41,7 +41,7 @@ This is a local/server tooling capability, not a new HTTP endpoint. Historical a
 4. Run `npm run check:releases`, `npm run test:releases`, and the relevant generation/content tests. Add enduring replay fixtures when behavior changes.
 5. Review and commit the new pointer, manifest, and artifact together with the source change. Retain all previous archives.
 
-Frontend and API production builds run integrity checks before building. CI checks current input/artifact agreement, tests historical replay, and rejects modifications or deletions to previously archived files relative to the base branch. Local equivalent: `npm run check:releases -- --base origin/main`.
+Frontend and API production builds run integrity checks before building. The check verifies both the selected legacy generator and the current canonical v5 creature release against their frozen source and bundle hashes. CI also tests historical replay and rejects modifications or deletions to previously archived files relative to the base branch. Local equivalent: `npm run check:releases -- --base origin/main`.
 
 Do not modify an already frozen release to accommodate a later edit. Make a new release. During fluid development, finish a coherent content batch before freezing to avoid unnecessary archives.
 
@@ -81,4 +81,4 @@ The 32 source-audited definitions under `docs/species-templates/v5/` are bound b
 
 At this initial checkpoint, the legacy game pointer remained `generation-0.5.0-4`; game adoption of v5 was separately scoped. The [roster audit](creature-roster-audit.md) resolved paralysis and records explicit lore-only deferrals for unignited fuel and physical route barriers.
 
-Current state, 2026-09-23: `canonicalCreatureRelease.ts` selects frozen v5 `generation-0.7.0-4`, and Powerworks and Reclamation consume that v5 roster. The legacy public generator still selects v4 `generation-0.5.0-4`. Earlier v5 archives remain replayable. New species or changes to the v5 roster require a new release ID; adoption by any other game remains a separate decision.
+Current state, 2026-09-23: `canonicalCreatureRelease.ts` selects frozen v5 `generation-0.8.0-1` with generator 0.8.0 and schema 5.1.0. Schema 5.1 replaces `weightKg` with `massKg`, requires at least one overall linear dimension, and supports optional height, length and width bands. One size percentile resolves all declared measurements, and Frackworm's established 900 to 1500 cm band is represented as length instead of height. The 32-species roster retains its other facts and abilities. Powerworks and Reclamation consume the new v5 release; Reclamation displays the applicable dimensions and mass. The legacy public generator still selects v4 `generation-0.5.0-4`, and all earlier v5 archives remain replayable. Fathomaw is not yet in the frozen roster. A new species or another substantive change needs another release ID.

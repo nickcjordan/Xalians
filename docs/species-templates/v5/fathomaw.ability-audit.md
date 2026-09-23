@@ -53,4 +53,4 @@ The included table acts plus extensions are the proposed species permission spac
 
 ## Completion status
 
-The audit is incomplete. The tail sweep needs a final anatomy and art check. Numeric calibration, naming review and template compilation also remain. The approved mass, height, length and width direction must be integrated without changing a frozen release or forcing body length into `heightCm`. No Fathomaw template, generated creature, art approval, release, game integration or encyclopedia entry is claimed here.
+The audit is incomplete. The tail sweep needs a final anatomy and art check. Numeric calibration, naming review and template compilation also remain. Schema 5.1 now supports the approved mass, height, length and width bands, so scale no longer blocks honest template authoring. No Fathomaw template, generated creature, art approval, release, game integration or encyclopedia entry is claimed here.
