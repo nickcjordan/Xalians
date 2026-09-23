@@ -10,7 +10,7 @@ The paired head gems are the fixed signature instrument. **Gem Radiance** transm
 |---|---|
 | Focused light | Included as a medium-range stream with bounded range, preparation and output variation. The head gems supply the actual channel. |
 | Fists and massive body | Included as distinct close physical impact domains. A heavy biped can strike or collide without making its body into an elemental emitter. |
-| Dazzle/blind, reflected beam | Excluded at this stage. Powerful transmitted light supports harm, but the source does not say visual impairment persists; reflection was explicitly retired in the roster audit. |
+| Dazzle/blind, reflected beam | Blinding included by Nick's ruling of 2026-09-23 (light is capable of blinding); reflection stays retired per the roster audit. |
 | Psychic control, healing, electrical or fire conversion | Excluded. Neither source nor anatomy provides these channels. |
 
 The existing ability and sense bands are retained with no retired trait/archetype boost. The old weak swim range crosses zero; no guaranteed act depends on swimming. Five temperament bands reflect the stated calm, solitary behavior. Numeric output was reviewed in the [cross-roster calibration](../../design/creature-v5-calibration.md). The domains are bounded by mechanism, not a list of finished moves.
@@ -26,10 +26,10 @@ Mechanisms removed as redundant: `heavy-fists` (fists strike, impact), `heavy-bo
 Exclusions:
 
 - `horns/mend` - the audit above excludes healing outright; neither source nor anatomy provides a restorative channel.
-- `horns/spray` - the light medium's spray carries `blinded`, and the audit above excludes dazzle and blinding at this stage because the source does not say visual impairment persists.
+- `horns/spray` was excluded here until 2026-09-23; Nick ruled that light is capable of blinding, so the light spray and its `blinded` rider are back.
 
 ```
 crystorn: valid permissions, four distinct actions constructible
-  acts: 16 distinct on offer (horns 10, fists 3, hide 3); exclusions: horns/mend, horns/spray
+  acts: 17 distinct on offer (horns 11, fists 3, hide 3); exclusions: horns/mend
   naming over 24 seeds: 0.0% of ordinary actions carry a structural parenthetical, 0.0% of creatures have two ordinary actions sharing a base name
 ```

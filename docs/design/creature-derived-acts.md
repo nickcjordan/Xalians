@@ -33,7 +33,7 @@ A pattern is an act shape in v5 vocabulary. Physical patterns need an instrument
 | pattern | delivery | effects | notes |
 |---|---|---|---|
 | strike | contact, range contact | harm, mechanism from the instrument row (first listed is the default; each listed mechanism is a separate act) | |
-| crush | contact | harm compression | preparation `brief`, recovery `brief | prolonged` (held pressure) |
+| crush | contact | harm compression | preparation `brief | prolonged`, recovery `brief | prolonged` (held pressure; may be charged) |
 | rake | contact | harm cutting | |
 | lash | contact, area sweep `small | medium` anchor self, resolved | harm on area; mechanism impact, or cutting for blades | targeting other only |
 | drain | contact | harm on target, plus restore on self `requires` the harm | medium only since the species pass (see Lever moves); a biological drainer authors its own mechanism |
@@ -43,8 +43,8 @@ A pattern is an act shape in v5 vocabulary. Physical patterns need an instrument
 | terrorize | signal, range `short | medium`, reception per instrument column | status frightened, lingering `brief`, removable stabilizing | a body part derives it only when the species can signal it: visual reception needs `display` communication, auditory needs `vocal` or `vibration` (Thirstaserp's rattle); channels carry their own predicates |
 | ward | self, targeting self | status shielded on self, lingering `brief | prolonged`, removable disrupting | preparation `brief`, recovery `brief | prolonged`; a medium row may substitute its ward status |
 | mend | two mechanisms: self delivery on self; contact (signal for the signal channels mind, gaze, voice, aura) on target `short` | restore | targeting self, or other |
-| beam | stream, range `short | medium | long` | harm elemental | medium only; preparation `brief`, recovery `brief | prolonged` |
-| burst | pulse, area radial `small | medium` anchor self, resolved | harm elemental on area | medium only; recovery `brief | prolonged` |
+| beam | stream, range `short | medium | long` | harm elemental | medium only; preparation `brief | prolonged`, recovery `brief | prolonged` |
+| burst | pulse, area radial `small | medium` anchor self, resolved | harm elemental on area | medium only; preparation `immediate | brief | prolonged`, recovery `brief | prolonged` |
 | spray | projectile, range `short | medium` | harm elemental on target, plus the medium status if the row has one | medium only |
 | cloud | field, range `short | medium`, area radial `small | medium` anchor location, lingering `brief | prolonged` | medium status on area, lingering `brief` | medium only; rows without a status have no cloud |
 
@@ -129,8 +129,8 @@ Every derived harm, displace and restore effect gets a band from a species attri
 
 | effect | governing attribute | factor |
 |---|---|---|
-| physical harm, heavy instrument | strength | 0.85 |
-| physical harm, light instrument | strength | 0.65 |
+| physical harm, heavy instrument | strength | 0.8 (was 0.85) |
+| physical harm, light instrument | strength | 0.85 (was 0.65) |
 | lash (area harm) | strength | class factor times 0.8 |
 | displace force | strength | 0.8 |
 | elemental harm (beam, burst, spray, medium strike) | willpower | 0.85; burst 0.7 |
@@ -203,6 +203,16 @@ Generator 0.7.0, schema 5.0.0, release `generation-0.7.0-1` frozen from the same
 | parenthetical share, collision share (120 seeds) | 50.1% / 60.8% on 0.6.0-1 | 0.00% / 0.00% |
 | Powerworks win rate, mean rounds (200 greedy runs) | 99.5%, 4.96 | 98.0%, 5.26 (Graviclaw seed 4) |
 | Reclamation strike / sweep keeper win rate | 61.2 / 62.8 | 59.9 to 60.9 / 54.7 to 57.1 |
+
+## Pass two, 2026-09-23
+
+Nick: "Proceed with your updates as you recommend them." Applied, each overridable:
+
+1. **Charge-up.** Crush, beam and burst may now roll prolonged preparation, so a generated creature can carry a charged act (named "Charged" by the fact words). Held pressure and projected energy are the acts a body plausibly gathers itself for; strikes, lashes and guards stay immediate or brief.
+2. **Light and heavy factors re-calibrated on evidence.** The authored v5 bands, measured before derivation replaced them, sat at a median 0.83 to 0.90 of the strength band for light instruments and 0.75 to 0.83 for heavy ones (24 and 47 effects). The first guess (heavy 0.85, light 0.65) had it backwards: authors already express heft through strength. Now heavy 0.8, light 0.85. Avilily's pecks rise from about 9 to 17 to about 9 to 24.
+3. **Light can blind** (Nick). Crystorn's `horns/spray` exclusion is gone; Chromocat already kept its blinding spray.
+
+Released as `generation-0.7.0-2`.
 
 ## Friction met in the first two games, 2026-09-22
 
