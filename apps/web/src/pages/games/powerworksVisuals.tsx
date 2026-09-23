@@ -395,6 +395,82 @@ export function moveDescription(u: Unit, move: Move) {
     .replace(/\s+/g, " ")
     .trim();
 }
+/**
+  A move that only acts on its user (Ground Anchor): every effect lands on the performer.
+  It keeps the nominal foe target the rules require, but the order needs no target choice
+  (radial orders decision 5), and the stage draws no intent line for it.
+*/
+export const actsOnSelf = (move: Move) =>
+  move.effects.length > 0 && move.effects.every((e) => e.recipient === "self");
+/** Health a move restores to a squadmate it names, for the card's number. */
+const healsFor = (unit: Unit, move: Move) =>
+  move.effects
+    .filter((e) => e.support === "restore" && e.recipient !== "self")
+    .reduce((sum, e) => sum + restorePreview(unit, e), 0);
+/**
+  The one number a move card and a radial slot show, and what it counts: base power for
+  a harmful move, one action for a pure bind, health for a pure heal, half damage for a
+  pure shield. `label` is the spoken form ("power 60", "heals 12").
+*/
+export function moveFigure(unit: Unit, move: Move) {
+  const control = binds(move),
+    ward = guards(move),
+    heal = healsFor(unit, move),
+    harm = harms(move);
+  if (control && !harm)
+    return { value: "1" as string | number, unit: "action", kind: "control" as const, label: "binds 1 action" };
+  if (heal && !harm)
+    return { value: heal as string | number, unit: "heal", kind: "heal" as const, label: `heals ${heal}` };
+  if (ward && !harm)
+    return { value: "½" as string | number, unit: "damage", kind: "ward" as const, label: "halves damage" };
+  const power = basePower(unit, move);
+  // A move with no power of its own (a guard on its user) shows its own icon, not a 0.
+  if (!harm && !power) {
+    const status = move.effects.find((e) => e.support === "status" && e.status);
+    return {
+      value: null as string | number | null,
+      unit: "",
+      kind: "none" as const,
+      label: status
+        ? `${status.status}${status.recipient === "self" ? " on itself" : ""}`
+        : "no power",
+    };
+  }
+  return { value: power as string | number | null, unit: "", kind: "power" as const, label: `power ${power}` };
+}
+/**
+  The icon that stands in for a number when a move has none: its status group's icon (a
+  shield for a guard on itself), else the move's own icon.
+*/
+export function FigureIcon({ move }: { move: Move }) {
+  const status = move.effects.find((e) => e.support === "status" && e.group);
+  return status?.group ? <GroupIcon group={status.group} /> : <MoveIcon move={move} />;
+}
+/**
+  The short reading the radial detail card shows: what kind of move it is, what it reaches
+  and what it does besides harm. Its power is on the disc and its timing on the readiness
+  line, so neither repeats here. The full reading stays on the slot's description.
+*/
+export function briefReading(u: Unit, move: Move) {
+  const kind =
+    move.approach === "self"
+      ? "Acts on itself."
+      : `${melee(move) ? "Melee attack" : "Ranged attack"}${
+          closes(move) ? " that closes in" : ""
+        }.`;
+  const area = areaSummary(move).split(". ")[0];
+  const effects = move.effects
+    .filter((e) => e.support !== "harm")
+    .map((e) => effectSummary(e, move))
+    .join(" ");
+  return `${kind}${charges(move) ? " Charges first." : ""}${
+    area ? ` ${area.replace(/\.?$/, ".")}` : ""
+  }${effects ? ` ${effects}` : ""}${
+    move.fallback ? ` Costs ${DESPERATE_STRIKE_RECOIL} health.` : ""
+  }`
+    .replace(/\s+/g, " ")
+    .trim();
+}
 export function MoveCardContent({
   unit,
   move,
@@ -417,13 +493,9 @@ export function MoveCardContent({
   id: string;
 }) {
   const Range = melee(move) ? Swords : Crosshair;
-  const heals = (m: Move) =>
-    m.effects
-      .filter((e) => e.support === "restore" && e.recipient !== "self")
-      .reduce((sum, e) => sum + restorePreview(unit, e), 0);
   const control = binds(move);
   const ward = guards(move);
-  const heal = heals(move);
+  const heal = healsFor(unit, move);
   const limit = cooldownLimit(move);
   const unsupported = move.effects.filter((e) => e.support === "unsupported");
   return (
@@ -448,7 +520,9 @@ export function MoveCardContent({
         title={moveDescription(unit, move)}
         aria-hidden="true"
       >
-        {control ? (
+        {moveFigure(unit, move).kind === "none" ? (
+          <FigureIcon move={move} />
+        ) : control ? (
           <Link2 />
         ) : heal && !harms(move) ? (
           <HeartPulse />
@@ -457,15 +531,9 @@ export function MoveCardContent({
         ) : (
           <PowerIcon />
         )}
-        <b>
-          {control && !harms(move)
-            ? 1
-            : heal && !harms(move)
-            ? heal
-            : ward && !harms(move)
-            ? "½"
-            : basePower(unit, move)}
-        </b>
+        {moveFigure(unit, move).value !== null && (
+          <b>{moveFigure(unit, move).value}</b>
+        )}
         {control && !harms(move) && <small>action</small>}
         {!control && heal > 0 && !harms(move) && <small>heal</small>}
         {!control && !heal && ward && !harms(move) && <small>damage</small>}

@@ -171,8 +171,6 @@
   background: linear-gradient(90deg, transparent, #f3d99a, transparent);
   pointer-events: none;
 }
-.pw-active-identity h2 { color: #f1dfa9; font-family: var(--font-legend); }
-.pw-command-prompt { color: #c9c8b6; text-transform: uppercase; letter-spacing: .08em; }
 .pw .pw-move-card {
   grid-template-columns: 36px minmax(0, 1fr) 40px;
   grid-template-rows: 1fr 19px;
@@ -243,52 +241,6 @@
 }
 .pw-card-effect { border-left-color: #bfa87878; color: #efdbab; }
 .pw-card-resource { border-top-color: #aa98666e; }
-.pw-squad {
-  border: 1px solid #a48d63;
-  border-top: 0;
-  border-radius: 0 0 5px 5px;
-  background: linear-gradient(180deg, #26363a, #0d1c23 25%, #0b1921);
-  box-shadow: inset 0 2px #ddc68d38, 0 8px 18px #040b10bd;
-}
-.pw-companion {
-  border-radius: 2px;
-  border-color: #82795e;
-  background: linear-gradient(135deg, var(--tint), transparent 55%), linear-gradient(180deg, #304044, #14262c 18%, #102027);
-  box-shadow: inset 0 1px #f1ddaa3d, inset 0 -3px #071218;
-}
-.pw-companion::before {
-  content: "";
-  position: absolute;
-  inset: 4px 4px auto;
-  height: 1px;
-  background: linear-gradient(90deg, var(--accent), transparent 65%);
-  pointer-events: none;
-}
-.pw-companion-portrait {
-  position: absolute;
-  right: 8px;
-  bottom: 16px;
-  width: 48px;
-  height: 48px;
-  opacity: .23;
-  filter: saturate(.55);
-  pointer-events: none;
-  z-index: 0;
-}
-.pw-companion-portrait .pw-portrait.small { width: 100%; height: 100%; }
-.pw .pw-select { position: relative; z-index: 1; }
-/* The inspect button sits over the select button's name row, so it must stack above it or
-   a click lands on Select (issue #589). */
-.pw .pw-squad-info { z-index: 2; }
-.pw-companion.selected .pw-companion-portrait { opacity: .4; }
-.pw-companion.selected {
-  border-color: #f1d69a;
-  box-shadow: inset 0 3px #e5c479, 0 0 13px #eac87d50;
-}
-.pw-companion.ready {
-  background: linear-gradient(135deg, #6d74513d, transparent 55%), linear-gradient(180deg, #344341, #14262b 23%);
-}
-.pw-queued { border-top-color: #ac9a7077; }
 .pw-commit {
   padding: 6px 12px;
   margin-top: 5px;
@@ -376,7 +328,6 @@
   .pw-card-identity strong { font-size: 11px; }
   .pw-card-category { font-size: 9px; }
   .pw-card-effect b { font-size: 19px; }
-  .pw-companion-portrait { width: 38px; height: 38px; right: 3px; bottom: 20px; opacity: .17; }
   .pw-scene-unit.defender,
   .pw-theater.playing .pw-scene-unit.defender { top: calc(19% + var(--lane-shift, 0%)); }
   .pw-scene-unit.ally,
