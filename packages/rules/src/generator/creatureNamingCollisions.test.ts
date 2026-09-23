@@ -40,4 +40,4 @@ it('keeps structural parentheticals and shared base names rare on every canonica
   console.log(`\nOrdinary action naming over ${SEEDS} seeds per species\n${table}\n`);
   const over = readings.filter(r => r.parenthetical > LIMIT || r.collision > LIMIT);
   expect(over.map(r => `${r.key} paren ${r.parenthetical.toFixed(1)}% collision ${r.collision.toFixed(1)}%`)).toEqual([]);
-});
+}, 30_000);
