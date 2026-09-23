@@ -22,7 +22,11 @@ import {
   melee,
   passiveHeading,
   passiveRule,
+  moveFigure,
+  actsOnSelf,
+  briefReading,
 } from "./powerworksVisuals";
+import { ringIndices, slotName, slotState } from "./powerworksRadial";
 import type { Condition, Move, MoveEffect, StatusGroup } from "@xalians/rules/dungeon";
 
 afterEach(cleanup);
@@ -307,5 +311,69 @@ describe("Powerworks reach and approach are separate words (pass 6)", () => {
       u
     );
     expect(rule).toMatch(/Moves that close in on a target are blocked/);
+  });
+});
+
+describe("Powerworks radial orders: the numbers and words a slot shows", () => {
+  const graviclaw = readCompanion(COMPANION_RECORDS.graviclaw, "G");
+  it("reads the one number a card or slot shows, and says what it counts", () => {
+    const strike = graviclaw.moves.find((m) => m.name === "Gravity Pincer")!;
+    const pincer = moveFigure(graviclaw, strike);
+    expect(pincer.kind).toBe("power");
+    expect(pincer.label).toBe(`power ${pincer.value}`);
+    const bind = move({
+      effects: [effect({ type: "status", support: "bind", mechanism: undefined })],
+    });
+    expect(moveFigure(graviclaw, bind)).toMatchObject({ value: "1", label: "binds 1 action" });
+    const shield = move({
+      effects: [effect({ type: "protect", support: "protect", mechanism: undefined })],
+    });
+    expect(moveFigure(graviclaw, shield)).toMatchObject({ value: "½", label: "halves damage" });
+  });
+  it("knows a move that only acts on its user, which takes no target choice", () => {
+    const anchor = graviclaw.moves.find((m) => m.name === "Ground Anchor")!;
+    expect(actsOnSelf(anchor)).toBe(true);
+    expect(actsOnSelf(graviclaw.moves.find((m) => m.name === "Gravity Pincer")!)).toBe(false);
+  });
+  it("prints an unavailable slot's reason in short form and names every slot plainly", () => {
+    const u = readCompanion(COMPANION_RECORDS.graviclaw, "G");
+    const pincer = u.moves.findIndex((m) => m.name === "Gravity Pincer");
+    const slash = u.moves.findIndex((m) => m.name === "Slashing Pinch");
+    expect(slotState(u, u.moves[pincer], pincer, true)).toMatchObject({ short: "ready", dim: false });
+    u.cooldowns[pincer] = 2;
+    expect(slotState(u, u.moves[pincer], pincer, false)).toMatchObject({ short: "cooling 2", dim: true });
+    u.cooldowns[pincer] = 0;
+    u.signatureSpent = true;
+    expect(slotState(u, u.moves[pincer], pincer, false).short).toBe("spent");
+    u.bound = 1;
+    expect(slotState(u, u.moves[slash], slash, false).short).toBe("bound");
+    expect(slotName(u, u.moves[slash], "bound")).toMatch(
+      /^Graviclaw: Slashing Pinch, power \d+, bound$/
+    );
+    // The fallback joins the ring only when it is the one choice left.
+    expect(ringIndices(u, [0, 1, 2, 3])).toEqual([0, 1, 2, 3]);
+    expect(ringIndices(u, [-1])).toEqual([0, 1, 2, 3, -1]);
+  });
+});
+
+describe("Powerworks radial orders: a move with no power", () => {
+  it("shows its own icon and no number on the inspector card", () => {
+    const u = readCompanion(COMPANION_RECORDS.graviclaw, "G");
+    const anchor = u.moves.find((m) => m.name === "Ground Anchor")!;
+    expect(moveFigure(u, anchor)).toMatchObject({ value: null, kind: "none" });
+    const { container } = render(
+      <MoveCardContent unit={u} move={anchor} cooldown={0} selected={false} blocked={false} id="x" />
+    );
+    const figure = container.querySelector(".pw-card-effect")!;
+    expect(figure.querySelector("b")).toBeNull();
+    expect(figure.querySelector("svg")).not.toBeNull();
+    expect(figure.textContent).not.toContain("0");
+  });
+  it("gives the detail card a short reading without the power or timing it shows elsewhere", () => {
+    const u = readCompanion(COMPANION_RECORDS.hippochamp, "H");
+    const cannon = u.moves.find((m) => m.name === "Emergency Water Cannon")!;
+    expect(briefReading(u, cannon)).toBe(
+      "Ranged attack. Ends conditions that answer to cooling, on a squadmate or an enemy."
+    );
   });
 });

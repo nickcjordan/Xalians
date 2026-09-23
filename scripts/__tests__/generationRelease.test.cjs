@@ -35,11 +35,40 @@ test('all species in every archived release replay with both profiles', async ()
         const record = archived.generateXalian(template.key, 'historical:' + template.key, {
           profile, generatedAt: '2026-09-15T12:34:56.000Z', serial: 42, origin: 'saiphus',
         });
-        const schema = archived.SCHEMA_VERSION === '5.0.0' ? archived.CreatureRecordSchema : XalianRecordSchema;
+        const schema = archived.SCHEMA_VERSION.startsWith('5.') ? archived.CreatureRecordSchema : XalianRecordSchema;
         assert.deepEqual(schema.parse(record), record, 'schema for the archived representation accepts replay');
         assert.deepEqual(await replay(record), record, entry.name + ': ' + template.key + ': ' + profile);
       }
     }
+  }
+});
+
+test('schema 5.1 changes scale without rerolling other v5 creature facts', async () => {
+  const before = await import(pathToFileURL(readManifest('generation-0.7.0-5').artifact).href);
+  const after = await import(pathToFileURL(readManifest('generation-0.8.0-1').artifact).href);
+  const options = { profile: 'full', generatedAt: '2026-09-23T12:00:00.000Z', serial: 1, origin: 'saiphus' };
+  for (const { key } of after.getSpeciesTemplates()) {
+    const oldSize = before.getSpeciesTemplates().find(source => source.key === key).physiology.size;
+    const newSize = after.getSpeciesTemplates().find(source => source.key === key).physiology.size;
+    assert.deepEqual(newSize.massKg, oldSize.weightKg, key + ': mass band');
+    assert.deepEqual(key === 'frackworm' ? newSize.lengthCm : newSize.heightCm, oldSize.heightCm, key + ': overall extent band');
+    const oldRecord = before.generateXalian(key, 'scale-migration:' + key, options);
+    const newRecord = after.generateXalian(key, 'scale-migration:' + key, options);
+    for (const field of ['attributes', 'temperament', 'signature', 'actions', 'passives']) {
+      assert.deepEqual(newRecord[field], oldRecord[field], key + ': ' + field);
+    }
+    const { heightCm: oldHeight, weightKg: oldWeight, ...oldPhysiology } = oldRecord.physiology;
+    const { heightCm: newHeight, lengthCm, widthCm, massKg, ...newPhysiology } = newRecord.physiology;
+    assert.deepEqual(newPhysiology, oldPhysiology, key + ': remaining physiology');
+    assert.ok(massKg > 0, key + ': mass');
+    assert.ok([newHeight, lengthCm, widthCm].some(value => typeof value === 'number'), key + ': linear dimension');
+    if (key === 'frackworm') {
+      assert.equal(newHeight, undefined);
+      assert.ok(lengthCm >= 900 && lengthCm <= 1500);
+    } else {
+      assert.ok(typeof newHeight === 'number');
+    }
+    assert.ok(oldHeight > 0 && oldWeight > 0);
   }
 });
 
@@ -111,7 +140,7 @@ const creatureEntry = 'scripts/__tests__/fixtures/creature-release.ts';
 const canonicalCreatureEntry = 'packages/rules/src/generator/canonicalCreatureRelease.ts';
 test('the complete v5 roster freezes and replays without the live species tree', async t => {
   const temporary = temporaryArchive(t);
-  const releaseId = 'generation-0.7.0-5';
+  const releaseId = 'generation-0.8.0-1';
   const manifest = await freeze({ entryPoint: canonicalCreatureEntry, releaseId, archives: temporary });
   const ratified = JSON.parse(fs.readFileSync(path.join(__dirname, '../../docs/species-templates/RATIFIED.json'), 'utf8')).species;
   assert.equal(Object.keys(manifest.inputs).filter(file => /^docs\/species-templates\/v5\/[^/]+\.json$/.test(file)).length, 32);
@@ -131,8 +160,8 @@ test('the complete v5 roster freezes and replays without the live species tree',
 test('v5 freezes its actual species, catalog, compiler and naming dependencies and replays standalone', async t => {
   const temporary = temporaryArchive(t);
   const manifest = await freeze({ entryPoint: creatureEntry, releaseId: 'test-creature-v5', archives: temporary });
-  assert.equal(manifest.schemaVersion, '5.0.0');
-  assert.equal(manifest.generatorVersion, '0.7.0');
+  assert.equal(manifest.schemaVersion, '5.1.0');
+  assert.equal(manifest.generatorVersion, '0.8.0');
   for (const file of ['catalog.ts', 'benchmarks.ts', 'compiler.ts', 'naming.ts', 'species.ts', 'record.ts', 'fixtures/support-species.json']) {
     assert.ok(manifest.inputs['packages/content/src/creature/' + file], file);
   }

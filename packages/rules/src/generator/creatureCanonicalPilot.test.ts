@@ -43,6 +43,11 @@ it('constructs every staged species with guaranteed identity and distinct ordina
       expect(new Set(creature.actions.map(abilityIdentity)).size).toBe(4);
       variants.add(creature.actions.map(abilityIdentity).sort().join('|'));
       expect(generateCreatureDraft(compiled, seed)).toEqual(creature);
+      if (source.key === 'frackworm') {
+        expect(creature.physiology.heightCm).toBeUndefined();
+        expect(creature.physiology.lengthCm).toBeGreaterThanOrEqual(900);
+        expect(creature.physiology.lengthCm).toBeLessThanOrEqual(1500);
+      }
       // Every ordinary action this seed drew came from a band checked above, so its roll of
       // the signature's kind never lands above the signature's maximum.
       for (const action of creature.actions.filter(value => /(^|-)ordinary-\d+$/.test(value.key))) {

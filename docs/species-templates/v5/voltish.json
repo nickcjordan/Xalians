@@ -38,13 +38,13 @@
     ],
     "covering": "fur",
     "size": {
+      "massKg": [
+        105,
+        145
+      ],
       "heightCm": [
         190,
         235
-      ],
-      "weightKg": [
-        105,
-        145
       ]
     },
     "lifespan": "standard",
@@ -159,7 +159,7 @@
       75
     ]
   },
-  "schemaVersion": "5.0.0",
+  "schemaVersion": "5.1.0",
   "temperament": {
     "boldness": [
       45,

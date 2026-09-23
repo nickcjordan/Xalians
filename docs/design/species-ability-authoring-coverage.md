@@ -2,6 +2,8 @@
 
 > Historical design discussion / audit evidence. The [current contract](creature-model-current.md) is authoritative for the redesigned model and its implementation status. Conflicting proposals below are superseded; these notes are not production schemas.
 
+Current derived-act correction: [the shared tables](creature-derived-acts.md) grant ordinary acts from declared anatomy, channels and conduits. For new species or edits to defining facts, review every derived act against source evidence, exclude only contradictions with recorded reasons, and author supported extensions the tables cannot express. The bounded exhaustive-coverage objective below still applies; the four-action per-individual output is not a limit on the species act space.
+
 2026-09-18. Applies to the forthcoming redesign; not a claim that current species have completed this pass.
 
 Operational checklist: [ABILITY-AUDIT.md](../species-templates/ABILITY-AUDIT.md). Use it for every initial species authoring and substantive re-authoring/ability audit, saving per-species evidence as `docs/species-templates/<key>.ability-audit.md`. The migration skill and new-species workflow link to that single checklist.

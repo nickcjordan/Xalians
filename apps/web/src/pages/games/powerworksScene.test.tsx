@@ -2,7 +2,7 @@ import React from "react";
 import { cleanup, render, screen, fireEvent } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { createRun, type Frame } from "@xalians/rules/dungeon";
-import { PowerworksScene } from "./powerworksScene";
+import { PowerworksScene, chipText, type OrderChip } from "./powerworksScene";
 
 afterEach(cleanup);
 
@@ -40,22 +40,93 @@ function scene(
 describe("shared battlefield", () => {
   it("links each queued attacker to its target and lets that order be edited", () => {
     const run = createRun(1);
-    const onSelect = vi.fn();
+    const onOpen = vi.fn();
     const unit = run.team[0];
     const target = run.enemies[0];
     scene(undefined, {
       plans: { [unit.id]: { move: 0, target: target.id } },
-      onSelect,
+      onOpen,
     });
     const edit = screen.getByRole("button", {
       name: `Edit ${unit.name}'s order targeting ${target.name}`,
     });
     expect(edit.closest(".pw-scene-unit")).toHaveClass("defender");
     fireEvent.click(edit);
-    expect(onSelect).toHaveBeenCalledWith(
+    expect(onOpen).toHaveBeenCalledWith(
       expect.objectContaining({ id: unit.id }),
       true
     );
+  });
+
+  it("carries each companion's order on a chip under its health, and the chip reopens its ring", () => {
+    const run = createRun(1);
+    const [performer, other] = run.team;
+    const target = run.enemies[1];
+    const onOpen = vi.fn();
+    const chips: Record<string, OrderChip> = {
+      [performer.id]: { move: performer.moves[0], target: "Crawler 2" },
+      [other.id]: { move: null, target: null, empty: "No order" },
+    };
+    const { container } = scene(undefined, {
+      plans: { [performer.id]: { move: 0, target: target.id } },
+      chips,
+      onOpen,
+    });
+    const plaque = container.querySelector(`[data-unit="${performer.id}"] .pw-unit-plaque`)!;
+    const chip = plaque.querySelector(".pw-order-chip")!;
+    // The chip sits under the health bar and names the move and the target.
+    expect(plaque.querySelector(".pw-health")!.nextElementSibling).toBe(chip);
+    expect(chip).toHaveTextContent(performer.moves[0].name.split(" (")[0]);
+    expect(chip).toHaveTextContent("Crawler 2");
+    expect(
+      screen.getByRole("button", { name: `Select ${performer.name}` })
+    ).toHaveAccessibleDescription(chipText(chips[performer.id]));
+    fireEvent.click(chip);
+    expect(onOpen).toHaveBeenCalledWith(
+      expect.objectContaining({ id: performer.id }),
+      true
+    );
+    // No order reads quietly.
+    expect(
+      container.querySelector(`[data-unit="${other.id}"] .pw-order-chip`)
+    ).toHaveClass("empty");
+    // The intent line runs from the companion to its target while planning.
+    expect(container.querySelector(`[data-intent="${performer.id}"]`)).not.toBeNull();
+    expect(container.querySelectorAll(".pw-queued-path")).toHaveLength(1);
+  });
+
+  it("makes the figure and its plaque one selection control, marks the open companion, and backs out on empty stage", () => {
+    const run = createRun(1);
+    const [first, second] = run.team;
+    const onSelect = vi.fn();
+    const onBack = vi.fn();
+    const { container } = scene(undefined, {
+      active: first,
+      openId: first.id,
+      onSelect,
+      onBack,
+      ring: <div className="pw-radial" data-testid="ring" />,
+    });
+    const figure = screen.getByRole("button", { name: `Select ${first.name}` });
+    expect(figure).toHaveAttribute("aria-haspopup", "menu");
+    expect(figure).toHaveAttribute("aria-expanded", "true");
+    expect(
+      screen.getByRole("button", { name: `Select ${second.name}` })
+    ).toHaveAttribute("aria-expanded", "false");
+    // The selected companion stands on a ground ring; the ring the page passes is drawn on stage.
+    expect(container.querySelector(`[data-unit="${first.id}"] .pw-ground-ring`)).not.toBeNull();
+    expect(container.querySelector(`[data-unit="${second.id}"] .pw-ground-ring`)).toBeNull();
+    expect(screen.getByTestId("ring").closest(".pw-theater")).not.toBeNull();
+    // A click on the plaque selects, as the figure does; the plaque's info button inspects.
+    fireEvent.click(
+      container.querySelector(`[data-unit="${second.id}"] .pw-unit-plaque strong`)!
+    );
+    expect(onSelect).toHaveBeenCalledWith(
+      expect.objectContaining({ id: second.id }),
+      false
+    );
+    fireEvent.click(screen.getByRole("region", { name: "Battlefield" }));
+    expect(onBack).toHaveBeenCalledTimes(1);
   });
 
   it("makes a legal squadmate a target with its own label and preview, and leaves the rest selectable", () => {
@@ -79,7 +150,7 @@ describe("shared battlefield", () => {
     // A squadmate the move cannot name stays a selection button, and an enemy the move
     // cannot name is not pressable.
     expect(
-      screen.getByRole("button", { name: `Plan ${other.name} on battlefield` })
+      screen.getByRole("button", { name: `Select ${other.name}` })
     ).toBeEnabled();
     expect(
       screen.getByRole("button", {
@@ -132,7 +203,7 @@ describe("shared battlefield", () => {
       },
     });
     expect(
-      screen.getByRole("button", { name: "Plan Hippochamp on battlefield" })
+      screen.getByRole("button", { name: "Select Hippochamp" })
     ).toHaveTextContent("Recoil");
     expect(
       screen.getByRole("button", {
@@ -145,7 +216,7 @@ describe("shared battlefield", () => {
     const { run, onInspect } = scene();
     const unit = run.team[0];
     expect(
-      screen.getByRole("button", { name: `Plan ${unit.name} on battlefield` })
+      screen.getByRole("button", { name: `Select ${unit.name}` })
     ).toBeEnabled();
     fireEvent.click(
       screen.getByRole("button", {

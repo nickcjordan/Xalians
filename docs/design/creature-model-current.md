@@ -1,6 +1,8 @@
 # Creature model: current agreed contract
 
-Updated 2026-09-21. This document supersedes conflicting proposals and chronological notes in this directory. The implementation is available through `@xalians/content/creature` and `@xalians/rules/generator/creature`. These are the redesigned model's entry points; the deployed games and canonical species bundle still use v4.
+Updated 2026-09-23. This document supersedes conflicting proposals and chronological notes in this directory. The implementation is available through `@xalians/content/creature` and `@xalians/rules/generator/creature`. These are the redesigned model's entry points; the legacy public generator and bundled species remain v4.
+
+Current implementation update, 2026-09-23: schema 5.1.0 and generator 0.8.0 are frozen as `generation-0.8.0-1`. Powerworks and Reclamation use this v5 canonical roster; the legacy public generator and its species bundle remain v4. Historical checkpoint paragraphs below describe the state when written, not the current game routing. The 32-species scale migration changed only measurement fields and resolution; archived earlier records keep their original representation.
 
 ## Canonical roster audit decisions
 
@@ -12,7 +14,7 @@ The species template describes physiology, attribute and temperament bands, guar
 
 ```text
 Species                         Generated creature
-schemaVersion: 5.0.0             id / provenance / appearance (release envelope)
+schemaVersion: 5.1.0             id / provenance / appearance (release envelope)
 key / name / nameOrigin          species
 element                         element
 homePlanet / generatorPlanets
@@ -29,7 +31,7 @@ mechanisms: authored extensions (generation permissions are not copied)
 
 - One species element. An ability has an optional element classification; omission means unclassified. No secondary-element roll, affinity strength, automatic adjacency permission, or effect-level element override.
 - Retire `traits`, `archetype`, `archetypeWeights`, `physiology.corporeality`, template `instruments`, and `actionPool`. They are rejected by the new schema. `conduits` returned on 2026-09-22 together with `channels` and `acts`, as the declarations the derived act space reads; see [derived acts](creature-derived-acts.md).
-- Keep anatomy, composition, body plan, covering, measurements, lifespan, chirality, diet, communication, respiration, environmental tolerance, capabilities and senses.
+- Keep anatomy, composition, body plan, covering, measurements, lifespan, chirality, diet, communication, respiration, environmental tolerance, capabilities and senses. Schema 5.1 requires mass plus at least one applicable overall height, length or width. Other overall dimensions are optional; appendage measurements remain descriptive prose, not structured fields.
 - Innate protection is `physiology.protections[]`. Persistent wall/opening traversal is `physiology.traversal[]` (`phase` / `seep`). Neither is inferred from composition or element.
 - Attributes, graded senses and capabilities use nonnegative open-ended ratings. Zero means absence where appropriate. Reference benchmarks stay stable as new species appear; 100 is not a ceiling, percentile or physical ratio.
 - The agreed references are 0 absent, 25 limited, 50 standard reference, 75 strong, 100 exceptional, with values above 100 allowed. [Rating guidance](creature-rating-benchmarks.md) and the shared `benchmarks.ts` catalog define field-specific authoring anchors. These are not automatically applied game formulas.
@@ -131,6 +133,8 @@ Removal matches explicit method intersections: cooling, smothering, warming, cle
 
 **Superseded 2026-09-22 by [derived acts](creature-derived-acts.md):** the body decides what a species can do. The compiler derives ordinary mechanisms from anatomy, declared channels and declared conduits through registry tables (instrument rows, medium rows, patterns), the species record narrows them with reasoned exclusions or re-bands them, and authored `mechanisms[]` extend the set with what the tables cannot say. The paragraphs below describe the authored-mechanism form, which is unchanged in shape.
 
+For new or edited species, review every derived act against the creature's evidence and explore justified extensions. The species act space should be logically exhaustive within its sources and the shared vocabulary. Do not exclude an independently capable body part because another part can produce a similar outcome, or because the four-action individual selection needs only a few options. Automated compilation proves structural validity and selection capacity, not creative completeness.
+
 Mechanisms describe source-supported processes, not a whitelist of named finished moves. Each mechanism owns its instrument, optional element, targeting, continuity/timing domains, delivery-specific range/area permissions, and inherent effects. An effect's recipient is a scalar or a delivery-keyed set of permitted recipients. Likelihood is an authored domain; intensity is a value/band. Every semantic value comes from the shared catalog.
 
 The compiler partitions by delivery and whether/which first effect uses area. It groups each independent effect with its dependents so recipient choices obey `requires` constructively; other categorical domains remain factored. It validates supported field relationships at authoring time, checks physical source anatomy and gaze support across the full sight band, and proves enough distinct actions can be selected. Voice does not imply vocal communication or respiration. At runtime it selects unused structure indices directly, removes equivalent representations across mechanisms, and then rolls output. It does not enumerate a species' entire move universe, evaluate lore per individual, or generate/reject/retry creatures.
@@ -146,7 +150,7 @@ npm run check:creature-model -- path/to/species.json
 npm run check:creature-model -- packages/content/src/creature/fixtures/support-species.json --example
 ```
 
-The fixture is deliberately noncanonical. Its 14 possible ordinary structures come from compact permissions, not 14 authored moves.
+The fixture is deliberately noncanonical. Its 14 possible ordinary structures come from factored permissions, not 14 authored moves. Its small size is not a target for canonical species.
 
 ## Species decisions retained for the migration
 

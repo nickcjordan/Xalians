@@ -1,5 +1,7 @@
 # Xalian Creature Expansion Framework
 
+The target-selection and portable encounter guidance below remains useful, but its template, trait, archetype, affinity and move-pool steps describe v4. For current species authoring, follow the [v5 creature contract](creature-model-current.md), [derived-act model](creature-derived-acts.md), and [ability audit](../species-templates/ABILITY-AUDIT.md). Review the full act space granted by anatomy, channels and conduits. Exclude only source-contradicted acts with recorded reasons and add justified extensions the tables cannot express. Do not stop after enough acts to fill four generated slots or narrow the species for a compact presentation.
+
 ## Purpose
 
 New creatures are selected from demonstrated universe needs, not from an isolated concept backlog. The system separates four questions that are easy to blur together:
@@ -130,6 +132,7 @@ At every step, compare the draft to its contrast set and record the coverage del
 - Traits follow from ratified facts and do not duplicate raw fields.
 - Lore, data, and art describe the same silhouette and central act.
 - Every ability instrument and the signature's complete baseline remain usable wherever the creature can participate; environmental bonuses are explicitly secondary.
+- For v5, the species audit accounts for all derived acts and plausible extension families, including concrete exclusion and equivalence reasons. Four generated actions and a passing compiler do not prove creative completeness.
 
 ### Gate C: Population
 

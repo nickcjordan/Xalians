@@ -6210,18 +6210,8 @@
 	.rec-console--match[data-terminal] .rec-clash-caption { font-size: 10px; line-height: 1.25; padding: 1px 2px; }
 }
 
-/* --- pass 47 ---------------------------------------------------------------- */
-
-/* an unanswered world says so in the empty rank, placed over it so the figures' grid is untouched */
-@media (max-width: 760px) {
-	/* "20 →17" does not fit a phone world's head beside the bar; the figures carry their own forecasts */
-}
-
-/* --- pass 49 ---------------------------------------------------------------- */
 /* --- pass 50 ---------------------------------------------------------------- */
 .rec-status-reach[data-still-reachable="stake"] { border-left-color: var(--g-lamp-amber); color: var(--g-ink); }
-/* "17 →1" in red read as minus one: the arrow stands clear of both numbers */
-/* the trailing world's answers sit in the midline, above your rank */
 
 /* --- pass 52: the glance redesign ---------------------------------------------
    docs/design/reclamation-glance-redesign.md. Whose a thing is reads from where it
