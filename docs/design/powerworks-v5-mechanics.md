@@ -350,6 +350,31 @@ The derived tables bring statuses and shapes the seam has no rule for. Surveyed 
 | guarding status aimed at another | Sonalloy: Reinforcing Lash (reinforced on target) | **supported, and misread**: it reinforces the foe it hits. The pass 2 seam refuses `protect` aimed at another ("protection only guards its user here") but not a guarding status, and it cannot refuse one outright because decision 26's ally-harmed reactions aim a status at an ally through the same path. |
 | ally-aimed protect and restore | Figzy, Shuntara, Vespersyn protect; Sonalloy Living-Alloy Seam | unsupported, named (ally targeting, issue #299, unchanged). |
 
+#### After pass 4, on generation-0.7.0-3
+
+The same survey rerun on `generation-0.7.0-3` after pass 4 (`surveyActions` in `devtools/powerworksSim.ts`, 20 seeds per species, 640 records, 2,560 actions, 2,710 effects). Every row of the table above now has a rule except ally targeting and traversal.
+
+| reading | where it appears on 0.7.0-3 | what the seam does after pass 4 |
+|---|---|---|
+| stunned | Voltish: 16 effects (Electric Shot, Sweep, Swipe; Stunning Shot, Sweep, Swipe) | **shock** (decision 27): loses the next opportunity, breaks a charge, one stun per trance window, focus does not block it. |
+| slowed | Hippochamp: 16 (Slowing Field, Slowing Sweep, Water Shot, Water Sweep) | **tempo** (decision 28): half speed for initiative. |
+| sedated | none in 2,560 actions | **tempo** (decision 29): acts last, passives silent. Tested with a fitted move only. |
+| blinded | Chromocat, Crystorn, Frackworm: 25 (Blinding Field, Blinding Shot, Blinding Touch, Light Shot, Sand Shot) | **senses** (decision 30): non-contact harm halved; statuses from a visual signal cannot reach it. |
+| disoriented | Neph: 4 (Disorienting Field, Disorienting Sweep) | **senses** (decision 31): the next aimed execution goes to a drawn standing target, announced as a stumble. |
+| focused | none on 0.7.0-3 (Figzy's and Hypnopet's focusing acts no longer roll on these seeds) | **guarding** (decision 32): on itself it blocks attention; aimed at a foe it is withheld. |
+| concealed on itself (an action) | Akinza: Night Stalk, 20 | **supported** (decision 32). |
+| area harm | sweeps 182 (small 87, medium 95) on 26 species; bursts, radial on self, 80 (small 34, medium 46) on 15 species; radial on the target 40 (Terragoyle Gravel Strafing, Codazzo Explosive Tail Barb) | **read with geometry** (decision 33): every recipient at `AREA_HARM_FACTOR` 0.6; a burst on self also reaches the performer's adjacent allies. |
+| area status | fields, radial on a location: 28 (Bioflim, Frackworm, Hippochamp, Imprit, Neph, Venemist) | **per recipient** (decision 33): each recipient rolls; a lingering field applies once. |
+| drain | Bioflim Chemical Touch; Tizzie Restorative Signal, Restorative Touch: 6 | **dependency read** (decision 34): the restore needs harm dealt. |
+| guarding status aimed at a foe | Sonalloy Reinforcing Lash: 1 (status only on this release) | **withheld** (decision 35); a move carrying nothing else is not a legal order. |
+| ally-aimed protect | Figzy Steadying Intervention; Shuntara Conductive Lattice, Protective Stream, Protective Touch: 43 | unsupported, named (ally targeting, issue #299). |
+| ally-aimed restore | Sonalloy Living-Alloy Seam; Yetimoth Restorative Ram: 21 | unsupported, named (ally targeting, issue #299). |
+| dispersed | Smokat Smoke Dispersal: 20 | unsupported, named (traversal, decision 16). |
+| phased | none in 2,560 actions | unsupported (traversal). |
+| charged ordinary act | 126 actions on all 32 species (bursts, crushes, streams, Chilling Punch, Metal Touch) | read by decision 3's player-side charge-up; Hippochamp's Crushing Kick is the squad's (decisions 36 and 37). |
+
+Moves with nothing this game can resolve against a foe, so never a legal order: Figzy Steadying Intervention (20), Shuntara Conductive Lattice (20), Smokat Smoke Dispersal (20), Sonalloy Living-Alloy Seam (20), and four rarer rolls (Shuntara Protective Touch 2 and Protective Stream 1, Sonalloy Reinforcing Lash 1, Yetimoth Restorative Ram 1). Four species lose one of their four actions every seed; ally targeting is what returns them.
+
 ## Pass 4 contract: the derived roster's effects, 2026-09-23
 
 Nick, 2026-09-23: "Proceed with your updates as you recommend them." Pass 4 reads every effect shape the derived-acts roster produces that the seam named as unsupported or misread in the section above. Ally targeting (issue #299) stays out of scope and is the next pass. Every decision is a lever, recommended and overridable.
@@ -366,3 +391,89 @@ Nick, 2026-09-23: "Proceed with your updates as you recommend them." Pass 4 read
 | 34 | **Drain dependency.** An effect with `requires` resolves only when its prerequisite succeeded on at least one recipient; a drain's restore needs harm actually dealt (above zero after protection). | 95% | model doc, "`requires` names one other independent effect's success" |
 | 35 | **Beneficial effects aimed at a foe are not applied.** A guarding, mending or focused status, a restore or a protect whose recipient is `target` or `area` does not reach an opposing unit; the move's other effects still resolve, and the record says what was withheld. Reactions from `ally-harmed` keep reaching the ally (decision 26). This retires the Sonalloy misread until ally targeting lands. Phased and dispersed stay unsupported (traversal). | 85% | seam readings table, Sonalloy Reinforcing Lash |
 | 36 | **Charge-up from the roster.** Creature pass two lets crush, beam and burst roll prolonged preparation, so companions can charge. The companion seeds are re-checked so at least one companion carries a real charged act, keeping decision 3's rule exercised by a creature, not only by machines. | 85% | creature-derived-acts.md, pass two |
+| 37 | **Every companion keeps an every-round harm.** After its signature is spent, each companion that has any harm act has at least one damaging action that is legal every round (recovery repeatable, not prolonged preparation) and is not a burst anchored on itself. Decision 36 stands, but any companion may carry the ordinary charged act, as long as it is not a burst on itself that reaches squadmates. Seeds are re-picked under the full set: keep a seed that passes, else the lowest that passes. | 90%, the coordinator's ruling on the evidence, 2026-09-23 | the 0.7.0-3 kits alone took the greedy win rate from 98% to 79% with the pass 3 resolver; Graviclaw 9 with the other first seeds read 93.5%; a charged burst on self (Hippochamp 5) read 70.0% and hit a squadmate 1,361 times; "Pass 4: what it measured" below |
+
+## Pass 4: what it measured, 2026-09-23
+
+Measured on `generation-0.7.0-3` (the release moved from 0.7.0-2 to 0.7.0-3 while this pass was built; every number below is on 0.7.0-3). Save format version 4; version 3 saves are rejected.
+
+### How the decisions were read
+
+Where the contract left a choice open, the build took the reading below. Each is a lever or a one-line change.
+
+- **Shock (27).** Duration uses the attention table (`SHOCK_OPPORTUNITIES` = 1 brief, 2 prolonged), "like entranced"; every derived stun is brief, so in practice one opportunity. The charge break is announced as a new `broken` event, not as `displace`, because the sim counts `displace` as a pull interruption and the caption for it says "pulled off its footing".
+- **Tempo (28, 29).** Slowed speed is floored (`floor(speed * 0.5)`). Sedated sorts before speed: a sedated unit acts after every unsedated one, and two sedated units keep speed order between them. The turn-order panel and the inspector show the effective speed.
+- **Senses (30, 31).** A blinded unit refuses every status carried by a visual signal, not only attention statuses. Disoriented stumbles only when the order executes (a release or an ordinary move), never when a charge begins; the draw is uniform over every standing selectable foe, the chosen target included, and replaces the fallen-target redirect for that order.
+- **Areas (33).** The line is the standing units of the `team` or `enemies` array in order, so it closes up when a unit falls. "Small, one neighbor on the far side" reads as the next unit after the target in array order; a target at the end of its line has none. `large` (no derived sweep rolls it) reaches the whole opposing line. The target takes area harm at 0.6 like every other recipient. Concealment prevents selection, not being caught in an area. Area hits after the target carry `area: true` on their `hit` event.
+- **Friendly harm provokes nothing.** A burst on self harms the performer's adjacent allies (the model's no-ally-filter rule); a reaction now fires only on a foe's move, so no squadmate answers another. This is new: before pass 4 nothing a unit did could reach its own side.
+- **Drains (34).** A harm prerequisite succeeds on a recipient when it dealt more than zero and the recipient is not immune to that effect's scope; a displacement succeeds when the recipient is not immune to displacement; a status when it landed. A failed dependency emits `withheld` with reason `requires`.
+- **Beneficial effects (35).** Withheld at the resolver, per recipient, whenever the recipient stands on the other side, with a `withheld` event (reason `foe`). The seam still names ally-aimed `protect` and `restore` as unsupported, as the seam table says, so the resolver rule reaches guarding and mending statuses in practice. A move whose every supported effect is beneficial and can only reach a foe is not a legal order (`usable` is false), so it can never be a dead turn: on 0.7.0-3 that is Sonalloy's Reinforcing Lash, which rolls status-only. A radial area anchored on self still delivers a beneficial effect to the performer's adjacent allies.
+- **Focused (32)** is in the guarding group (`GUARDING_STATUSES`), so decision 35 withholds it from a foe and it guards its own user.
+
+### Companion seeds and kits (decisions 36 and 37)
+
+The first seed check kept all four seeds (Graviclaw 4, Avilily 6, Crystorn 1, Hippochamp 1): each met every requirement the "reads the four companions" block then encoded, and Graviclaw's Dark Signal met decision 36. That squad read 76% (the second sim column below), so decision 37 was added and the seeds re-picked under the full set: keep a seed that still passes, otherwise the lowest that passes. The requirement check is `dungeon.test.ts`, "keeps an every-round harm on every companion that has a harm act" and "carries a real ordinary charged act".
+
+- **Graviclaw** 4 fails decision 37 (its only derived slot is the prolonged Dark Signal), and Graviclaw can never carry the charge and an every-round harm together, because three of its four actions are guaranteed: no seed from 1 to 200 does both. Seed 9 fails too (its Slashing Pinch is brief recovery, not repeatable). The lowest passing seed is **17**.
+- **Avilily** 6 fails decision 37 (both pecks are brief recovery). The lowest passing seed is **1**.
+- **Crystorn** 1 still passes (Blinding Shot is repeatable) and is kept.
+- **Hippochamp** 1 fails decision 37. Its lowest passing seed is 2, but then no companion charges, so decision 36 moves to whichever companion that must change anyway can carry it at the lowest seed: Hippochamp **25** (Avilily's lowest with a charge is 38; Crystorn's is 22 but Crystorn 1 still passes and is kept).
+
+`SAVE_VERSION` stays 4: version 4 had not shipped when the seeds moved.
+
+- **Graviclaw** (`powerworks-graviclaw-17`, HP 73, speed 32, strength 86): *Gravity Pincer, stationary/contact, brief/brief, compression harm 85. Gravity Draw, stationary/medium, immediate/brief, displace 65. Ground Anchor, self, brief/brief, protected (immune to displacement). **Slashing Pinch**, closing/contact, brief/repeatable, cutting harm 73.
+- **Avilily** (`powerworks-avilily-1`, HP 36, speed 72, strength 25): *Blossoming Ambuscade, stationary/contact, brief/brief, paralyzed (bind, consistent). Piercing Peck, stationary/contact, immediate/brief, piercing harm 19. Binding Rake, closing/contact, brief/repeatable, restrained (bind, occasional). **Slashing Peck**, closing/contact, immediate/repeatable, cutting harm 16.
+- **Crystorn** (`powerworks-crystorn-1`, HP 68, speed 28, strength 68, willpower 73): *Gem Radiance, stationary/medium, brief/brief, light harm 68. Repelling Punch, stationary/contact, brief/brief, displace 46. **Blinding Shot**, stationary/short, brief/repeatable, light harm 73 plus blinded (occasional). Heavy Ram, closing/contact, brief/brief, impact harm 60.
+- **Hippochamp** (`powerworks-hippochamp-25`, HP 63, speed 48, strength 56, willpower 64): *Emergency Water Cannon, stationary/medium, brief/brief, water impact harm 55 plus remove (cooling). Repelling Slam, closing/contact, brief/brief, displace 44. **Crushing Kick**, stationary/contact, prolonged/prolonged, compression harm 36 (the charged act). **Water Sweep**, stationary/contact, a small sweep, brief/repeatable, water harm 58 to everyone it reaches plus slowed (likely).
+
+### Sim, 200 greedy runs
+
+The second column is the pass 3 resolver (the committed code before this pass) run on the 0.7.0-3 kits with the first seeds, so the release's drift and pass 4's rules can be told apart.
+
+| row | 0.7.0-1 (pass 3 rules) | 0.7.0-3, first seeds, pass 3 rules | 0.7.0-3, first seeds, pass 4 | **0.7.0-3, decision 37 seeds, pass 4 (applied)** |
+|---|---|---|---|---|
+| win rate | 98.0% (196 won, 4 lost) | 79.0% (158 won, 42 lost) | 76.0% (152 won, 48 lost) | **92.0% (184 won, 16 lost)** |
+| rounds / encounter | 5.26 | 6.42 | 6.45 | 5.66 |
+| Desperate strike | 0.0% of 16,298 | 2.3% of 18,663 | 2.2% of 18,628 (all Graviclaw's) | 0.0% of 16,996 |
+| opportunities with no legal move | 4 | 0 | 0 | 17 (0.1%) |
+| machine charges landing | 117 of 1,724 (6.8%) | 388 of 3,123 (companion charges in the denominator) | 415 of 2,138 (19.4%) | 223 of 1,805 (12.4%) |
+| interruptions bind / displace | 183 / 1,215 | 563 / 1,109 | 516 / 1,111 | 461 / 895 |
+| pre-emptive pulls (broke a charge) | 2,410 (1,215) | 3,311 (1,109) | 3,364 (1,111) | 1,590 (559) |
+| binds landed / missed | 80.7% (1,731 of 2,145) | 79.0% (866 of 1,096) | 77.9% (848 of 1,089) | 69.9% (743 of 1,063) |
+| conditions applied per group | binding 1,731, degrading 1,108 | binding 866, degrading 1,350 | binding 848, degrading 1,331, senses 1,040 | binding 743, degrading 1,112, **tempo 1,291, senses 764** |
+| applications resisted or blocked | 1,516 | 1,881 | 3,374 | 3,247 |
+| degrade share of companion damage taken | 7.3% (2,576 of 35,229) | 6.2% (3,004 of 48,749) | 5.9% (2,936 of 49,728) | 6.6% (2,671 of 40,719) |
+| opportunities lost to entranced | 0 | 0 | 0 | 0 |
+| companion opportunities under paralysis | 0.0% (5) | 0.1% (14) | 0.0% (8) | 0.1% (17) |
+| companion remove: cleared / found nothing | 0 / 800 | 0 / 799 | 0 / 800 | 0 / 800 |
+| targets skipped as concealed | 0 | 0 | 0 | 0 |
+| reactions fired | contact 1,726 | contact 1,845 | contact 1,799 | contact 1,858 |
+| reaction share of companion damage taken | 19.1% (6,715 of 35,229) | 13.2% (6,442 of 48,749) | 13.4% (6,657 of 49,728) | 16.5% (6,723 of 40,719) |
+| strikes on the guardian, contact / ranged | 3,825 / 1,471 | 4,151 / 2,484 | 4,007 / 2,408 | 3,908 / 1,892 |
+
+New rows (first seeds, then the applied decision 37 seeds):
+
+| row | first seeds, pass 4 | **decision 37 seeds (applied)** |
+|---|---|---|
+| conditions per group, new groups | senses 1,040 | **tempo 1,291 (Water Sweep's slow), senses 764 (Blinding Shot)**, shock 0 |
+| opportunities lost to stunned / charges broken by shock / stumbles | 0 / 0 / 0 | 0 / 0 / 0 |
+| area hits per area move | none (Slowing Field never ordered) | **Water Sweep: 1,950 uses, 2,256 recipients (306 reached only by the sweep), 0 squadmates** |
+| drains healed / withheld | 0 / 0 | 0 / 0 |
+| beneficial effects withheld from a foe | 0 | 0 |
+| companion charges begun / releases landed | 955 / 722 (Graviclaw's Dark Signal) | **0 / 0** (Crushing Kick never ordered) |
+
+**Reading.** The drop to 76% was the release, not the rules: the pass 3 resolver on the same first seeds read 79%, and pass 4's further three points sit inside one standard error (about three points at 200 runs). The release had taken the squad's every-round damage away: Graviclaw's slot went from Crushing Ram (repeatable) to the charged Dark Signal and it spent 402 opportunities on Desperate strike, Avilily's pecks and Hippochamp's harms all went to brief recovery, and encounters stretched to 6.45 rounds, so more machine charges began and landed (19.4%) and every loss came in the final chamber. Decision 37 puts an every-round harm back on each companion and the win rate returns to 92%: Desperate strike is at zero again, encounters are 5.66 rounds, and machine releases land 12.4% of the time; all 16 losses are still in the final chamber. It is six points under 0.7.0-1's 98%, but within the 86.5% to 93.5% range the single-seed counterfactuals measured, and, as the pass 1 note says, the greedy bot is not a first-time player. Pass 4's rules are now live on the squad in two groups: Water Sweep is ordered 1,996 times and resolves 1,950 (second only to Blinding Shot's 2,923 orders), slows 1,291 machines and catches a second machine 306 times; Blinding Shot blinds 764. The sweep never reaches a squadmate, because a sweep only reaches foes; only a burst on self does. Binds land less often (69.9%) because Avilily 1's second bind is `occasional`, where Avilily 6's was `likely`. The 17 opportunities with no legal move are Avilily's: bound, with Piercing Peck cooling and her signature spent, her only other moves close to contact, and a bound unit gets no Desperate strike. Shock, stumbles, drains and withheld effects stay structural zeros: no companion carries a source. Decision 36 is met on paper and not in play: Hippochamp's Crushing Kick (compression 36, charged, two-round cooldown) previews under Water Sweep every round, so the greedy bot never orders it. No lever moved beyond the ruled seeds.
+
+Counterfactuals from the first seed check, measured with the same sim and a temporary seed override: Graviclaw 9 with the other first seeds read 93.5% (fails decision 37); Graviclaw 17, 86.5%; Graviclaw 24, 59.5%; Graviclaw 9 with Hippochamp 5 (a charged Water Burst, a burst on self) read 70.0%, with the burst reaching a squadmate 1,361 times in 938 uses. That last row is why decision 37 bars a burst on self from being the charged act.
+
+### Presentation
+
+The planning preview names every squadmate an area would also hit ("also hits Avilily and Crystorn") beside the count of extra foes ("reaches 2 more"); the inspector adds "Right now it also hits ..." under a burst on self; and a burst's move card carries a "Hits squadmates" line in the recoil slot. No companion in the applied squad carries a burst, so these show only for the wider roster and fitted tests.
+
+### Friction reported
+
+- **The applied squad never charges.** Decision 36 is satisfied by Crushing Kick, but the greedy bot orders damage by preview and a 36-intensity charged kick never out-previews Water Sweep, so the player-side charge-up is exercised by the tests and a human, not by the sim. If the charge should be felt in the sim, the lever is the policy (value a release by its landed damage over two opportunities) rather than the seeds.
+- **Avilily can be locked out.** 17 opportunities with no legal move, all while bound: Avilily 1's every-round harm and second bind both close to contact. Decision 37 checks that an every-round harm exists, not that one is legal while bound.
+- **Status-only moves never get ordered by the greedy bot,** so any field or signal whose value is not damage is invisible to the sim. Water Sweep made the tempo group measurable only because it also harms.
+- **Crystorn's signature is never ordered,** because the derived Blinding Shot (light harm 73, repeatable) out-previews Gem Radiance (light harm 68, brief). A derived ordinary act stronger than the signature is a creature-model friction: the signature should read as the creature's best act.
+- **Four species lose an action every seed to ally targeting** (Figzy, Shuntara, Sonalloy, and Smokat to traversal); none is in the squad. Issue #299 is the next pass.

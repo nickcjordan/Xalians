@@ -39,6 +39,9 @@ import {
   basePower,
   matchup,
   initiative,
+  effectiveSpeed,
+  sedated,
+  areaReach,
   ROOMS,
   SAVE_VERSION,
   type Run,
@@ -46,6 +49,7 @@ import {
   type Order,
   type Command,
   type Frame,
+  type Move,
 } from "@xalians/rules/dungeon";
 
 import {
@@ -57,6 +61,7 @@ import {
   baseName,
   moveDescription,
   effectSummary,
+  areaSummary,
   cooldownLimit,
   binds,
   harms,
@@ -144,6 +149,9 @@ function eventLabel(frame: Frame) {
       lost: "Opportunity lost",
       hidden: "Concealed",
       react: "Reacts",
+      stumble: "Stumbles",
+      withheld: "Withheld",
+      broken: "Charge broken",
       result: "Complete",
     } as const
   )[e.kind];
@@ -447,7 +455,14 @@ export default function PowerworksPage() {
         ? "Melee blocked · ranged still works"
         : "Block next melee action";
     const factor = matchup(active, u, move);
-    return `${damagePreview(active, move, u)} estimated · ${
+    // An area move names how many more foes it reaches from this target, and names every
+    // squadmate a burst on self would also hit (contract decision 33).
+    const around = areaReach(run, active, move, u);
+    const foes = around.filter((t) => t.enemy !== active.enemy).length;
+    const friends = around.filter((t) => t.enemy === active.enemy);
+    return `${damagePreview(active, move, u)} estimated${
+      foes ? ` · reaches ${foes} more` : ""
+    }${friends.length ? ` · also hits ${listNames(friends)}` : ""} · ${
       factor === 0
         ? "immune"
         : factor > 1
@@ -458,12 +473,42 @@ export default function PowerworksPage() {
     }${u.ward ? " · shielded" : ""}`;
   }
 
+  /** "Avilily", "Avilily and Crystorn": squadmates an area would also hit. */
+  function listNames(units: Unit[]) {
+    const names = units.map(labelFor);
+    return names.length > 1
+      ? `${names.slice(0, -1).join(", ")} and ${names[names.length - 1]}`
+      : names[0];
+  }
+  /** Who a burst on self would hit on its own side right now, for the inspector. */
+  function squadmatesHit(u: Unit, m: Move) {
+    const foe = (u.enemy ? run.team : run.enemies).find((t) => t.hp > 0);
+    const self = [...run.team, ...run.enemies].find((t) => t.id === u.id);
+    if (!foe || !self) return [];
+    return areaReach(run, self, m, foe).filter((t) => t.enemy === u.enemy);
+  }
+
   function actionCaption(current: Frame) {
     const e = current.event;
     if (!e) return current.text;
     const units = [...current.team, ...current.enemies];
     const target = units.find((u) => u.id === e.targetId);
     const name = target ? labelFor(target) : "The target";
+    const actor = units.find((u) => u.id === e.actorId);
+    const actorName = actor ? labelFor(actor) : "The unit";
+    // Pass 4: area reach, stumbles, withheld effects and charges broken by shock.
+    if (e.kind === "hit" && e.area)
+      return `${name} is caught in the area: ${e.amount} damage.${
+        target?.hp === 0 ? " Knocked out." : ""
+      }`;
+    if (e.kind === "stumble")
+      return `${actorName} is disoriented. The move goes to ${name} instead.`;
+    if (e.kind === "withheld")
+      return e.reason === "requires"
+        ? "Its harm did not land, so nothing returns."
+        : `${name} is an enemy, so the ${e.effect} is withheld.`;
+    if (e.kind === "broken")
+      return `${name} is stunned. Its charge is broken.`;
     if (e.kind === "hit")
       return `${name} takes ${e.amount} damage.${
         target?.hp === 0 ? " Knocked out." : ""
@@ -512,12 +557,10 @@ export default function PowerworksPage() {
       return e.status
         ? `${name} is no longer ${e.status}.`
         : `Nothing on ${name} answered to it.`;
-    if (e.kind === "lost") {
-      const owner = units.find((u) => u.id === e.actorId);
-      return `${
-        owner ? labelFor(owner) : "The unit"
-      } is entranced and loses this opportunity.`;
-    }
+    if (e.kind === "lost")
+      return `${actorName} is ${
+        e.status === "stunned" ? "stunned" : "entranced"
+      } and loses this opportunity.`;
     if (e.kind === "hidden") return `${name} is concealed and cannot be found.`;
     return current.text;
   }
@@ -1402,10 +1445,25 @@ export default function PowerworksPage() {
                     <strong>{labelFor(u)}</strong>
                     <small>{u.enemy ? "Facility defense" : "Your squad"}</small>
                   </div>
-                  <span className="pw-speed">
+                  <span
+                    className="pw-speed"
+                    title={
+                      sedated(u)
+                        ? "Sedated: acts after every alert unit"
+                        : effectiveSpeed(u) !== u.speed
+                        ? `Slowed from ${u.speed}`
+                        : undefined
+                    }
+                  >
                     <ChevronRight />
-                    {u.speed}
-                    <small>speed</small>
+                    {effectiveSpeed(u)}
+                    <small>
+                      {sedated(u)
+                        ? "sedated"
+                        : effectiveSpeed(u) !== u.speed
+                        ? "slowed"
+                        : "speed"}
+                    </small>
                   </span>
                 </li>
               ))}
@@ -1613,7 +1671,11 @@ export default function PowerworksPage() {
                 </span>
                 <Health u={inspect} />
                 <p>
-                  Speed {inspect.speed} ·{" "}
+                  Speed {effectiveSpeed(inspect)}
+                  {effectiveSpeed(inspect) !== inspect.speed
+                    ? ` (slowed from ${inspect.speed})`
+                    : ""}{" "}
+                  ·{" "}
                   {inspect.enemy ? "Facility defense" : "Your companion"}
                 </p>
                 <div className="pw-statuses">
@@ -1679,9 +1741,15 @@ export default function PowerworksPage() {
                     {m.preparation === "prolonged"
                       ? "Charges first, then releases at its next opportunity. "
                       : ""}
+                    {areaSummary(m) ? `${areaSummary(m)} ` : ""}
+                    {squadmatesHit(inspect, m).length
+                      ? `Right now it also hits ${listNames(
+                          squadmatesHit(inspect, m)
+                        )}. `
+                      : ""}
                     {m.effects
                       .filter((e) => e.support !== "harm")
-                      .map(effectSummary)
+                      .map((e) => effectSummary(e, m))
                       .join(" ")}
                   </p>
                 </div>

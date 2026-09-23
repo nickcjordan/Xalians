@@ -33,7 +33,9 @@ export function actionPresentation(frame?: Frame) {
     ? 1650
     : event?.kind === "blocked"
     ? 1400
-    : event?.kind === "redirect"
+    : event?.kind === "redirect" ||
+      event?.kind === "withheld" ||
+      event?.kind === "stumble"
     ? 900
     : event?.kind === "react"
     ? 850

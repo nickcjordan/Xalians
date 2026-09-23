@@ -1,12 +1,14 @@
 import { describe, expect, it } from "vitest";
 import {
+  formatActionSurvey,
   formatSurvey,
   formatTable,
   simulate,
+  surveyActions,
   surveyPassives,
 } from "./powerworksSim.ts";
 
-// Measurement, not a rule: prints the pass 1, 2 and 3 tables for 200 seeded greedy runs,
+// Measurement, not a rule: prints the pass 1 to 4 tables for 200 seeded greedy runs,
 // plus the seam-only passive survey over the wider roster (contract pass 3 "Measurement").
 describe("Powerworks greedy measurement", () => {
   it("plays 200 seeded runs and prints the table", () => {
@@ -30,5 +32,13 @@ ${formatSurvey(survey)}
     expect(survey.supported + survey.unsupported).toBe(
       survey.ongoing + survey.triggered
     );
+  }, 120000);
+  it("surveys every action effect at the seam over 20 seeds per species and prints it", () => {
+    const survey = surveyActions(20);
+    console.log(`
+Powerworks action seam survey (20 seeds per species)
+${formatActionSurvey(survey)}
+`);
+    expect(survey.actions).toBe(survey.records * 4);
   }, 120000);
 });

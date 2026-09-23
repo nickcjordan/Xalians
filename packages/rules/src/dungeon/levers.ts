@@ -56,8 +56,8 @@ export const DEGRADING_STATUS_ELEMENTS = {
   overheated: "fire",
   chilled: "ice",
 } as const;
-/** Lever: statuses read as guarding (contract decision 14). protected carries its own declared descriptor. */
-export const GUARDING_STATUSES = ["shielded", "protected", "reinforced"] as const;
+/** Lever: statuses read as guarding (contract decision 14). protected carries its own declared descriptor. focused joins in pass 4 (contract decision 32): it guards attention and does nothing else. */
+export const GUARDING_STATUSES = ["shielded", "protected", "reinforced", "focused"] as const;
 /** Lever: guarding factors. shielded halves incoming harm; reinforced takes a quarter off. Ward and shielded do not multiply: the better one wins (contract decision 14). */
 export const SHIELDED_FACTOR = 0.5;
 export const REINFORCED_FACTOR = 0.75;
@@ -75,6 +75,23 @@ export const CONCEALMENT_STATUSES = ["concealed"] as const;
 export const MENDING_STATUSES = ["mending"] as const;
 /** Lever: statuses read as binding (contract decision 4). */
 export const BINDING_STATUSES = ["restrained", "paralyzed", "frozen", "pinned", "buried"] as const;
+/*
+  Pass 4 levers: the derived roster's effects (contract decisions 27 to 35).
+*/
+/** Lever: statuses read as shock (contract decision 27): the victim loses its next opportunity and a charge in progress breaks. Focus does not block it. */
+export const SHOCK_STATUSES = ["stunned"] as const;
+/** Lever: shock durations, like entranced (contract decision 27). Every derived stun is brief, so in practice one opportunity. */
+export const SHOCK_OPPORTUNITIES = ATTENTION_OPPORTUNITIES;
+/** Lever: statuses read as tempo (contract decisions 28 and 29). */
+export const TEMPO_STATUSES = ["slowed", "sedated"] as const;
+/** Lever: a slowed unit's speed is multiplied by this for initiative through its duration (contract decision 28). */
+export const SLOWED_SPEED_FACTOR = 0.5;
+/** Lever: statuses read as senses (contract decisions 30 and 31). */
+export const SENSES_STATUSES = ["blinded", "disoriented"] as const;
+/** Lever: a blinded unit's non-contact harm is multiplied by this (contract decision 30). Contact harm is unaffected. */
+export const BLINDED_RANGED_FACTOR = 0.5;
+/** Lever: every recipient of an area effect takes its harm at this share, the selected target included (contract decision 33). */
+export const AREA_HARM_FACTOR = 0.6;
 /** Lever: harm mechanisms scaled by strength; every other mechanism (elemental) scales by willpower. */
 export const STRENGTH_MECHANISMS = ["impact", "cutting", "piercing", "compression"] as const;
 /*
@@ -101,16 +118,26 @@ export const DESPERATE_STRIKE_RECOIL = 2;
 export const ENCOUNTER_XP = 10;
 export const FINAL_ENCOUNTER_XP = 30;
 export const RECOVERY_STATION_HP = 10;
-/** Lever: the companions are generated once from these fixed seeds of the frozen release so a run is replayable. */
+/**
+  Lever: the companions are generated once from these fixed seeds of the frozen release so a run is
+  replayable. Re-picked 2026-09-23 on generation-0.7.0-3 under contract decision 37: every companion
+  with a harm act keeps an every-round harm after its signature, and the ordinary charged act
+  (decision 36) is not a burst that reaches squadmates. Graviclaw 4 and Avilily 6 had no every-round
+  harm, Hippochamp 1 neither; Graviclaw can never carry both (three of its four actions are
+  guaranteed), so the charge moved to Hippochamp 25 (Crushing Kick). Crystorn 1 still passes.
+*/
 export const COMPANION_SEEDS = {
-  graviclaw: "powerworks-graviclaw-4",
-  avilily: "powerworks-avilily-6",
+  graviclaw: "powerworks-graviclaw-17",
+  avilily: "powerworks-avilily-1",
   crystorn: "powerworks-crystorn-1",
-  hippochamp: "powerworks-hippochamp-1",
+  hippochamp: "powerworks-hippochamp-25",
 } as const;
 export const COMPANION_GENERATED_AT = "2026-09-21T00:00:00.000Z";
 /** Save format. Version 1 saves (frozen cards, use counters) cannot be replayed under these rules and are rejected.
  * Version 3 (2026-09-22): companions come from generation-0.7.0-1 and a new Graviclaw seed, so a version 2
- * command history names moves the squad no longer has and is rejected rather than replayed wrong. */
-export const SAVE_VERSION = 3;
+ * command history names moves the squad no longer has and is rejected rather than replayed wrong.
+ * Version 4 (2026-09-23): companions come from generation-0.7.0-2 (same seeds, new derived kits) and pass 4
+ * resolves area, shock, tempo and senses effects, so a version 3 history no longer replays the same run.
+ * The decision 37 seeds landed before any version 4 save shipped, so the version did not move again. */
+export const SAVE_VERSION = 4;
 export const SAVE_HISTORY_LIMIT = 2000;

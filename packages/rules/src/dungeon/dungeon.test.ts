@@ -5,23 +5,30 @@ import {
   command,
   createRun,
   damagePreview,
+  areaReach,
   damaging,
+  effectiveSpeed,
   initiative,
   legalMoves,
   moveAt,
   readCompanion,
   resolveRound,
   restoreRun,
+  selfBurst,
   statusGroup,
   tickAmount,
+  usable,
   type Command,
   type Order,
   type Run,
   type Unit,
 } from "./index.ts";
 import {
+  AREA_HARM_FACTOR,
   ATTENTION_OPPORTUNITIES,
   BINDING_OPPORTUNITIES,
+  BLINDED_RANGED_FACTOR,
+  SLOWED_SPEED_FACTOR,
   COOLDOWN_ROUNDS,
   DEGRADE_FACTOR,
   ENTRANCE_IMMUNITY_OPPORTUNITIES,
@@ -156,6 +163,48 @@ describe("Powerworks reads the four companions", () => {
       for (const m of u.moves)
         for (const e of m.effects)
           expect(e.support, `${u.name} ${m.name} ${e.type}`).not.toBe("unsupported");
+    }
+  });
+  it("carries a real ordinary charged act on at least one companion (decision 36)", () => {
+    // Creature pass two lets crush, beam and burst roll prolonged preparation, so the
+    // player-side charge-up is exercised by a creature, not only by the machines. Any
+    // companion may carry it, but not as a burst that reaches squadmates (decision 37).
+    const s = createRun(1);
+    const carriers = s.team.flatMap((u) =>
+      u.moves
+        .map((m, i) => ({ u, m, i }))
+        .filter(
+          ({ m }) =>
+            !m.signature && m.preparation === "prolonged" && usable(m) && !selfBurst(m)
+        )
+    );
+    expect(carriers.length, "no companion carries a usable ordinary charged act").toBeGreaterThan(0);
+    for (const { u, i } of carriers) expect(legalMoves(u), u.name).toContain(i);
+  });
+  it("keeps an every-round harm on every companion that has a harm act, after its signature (decision 37)", () => {
+    // Throughput, not only the lessons: 0.7.0-3's kits alone took the greedy win rate from
+    // 98% to 79% because three companions lost every harm they could use each round.
+    const s = createRun(1);
+    for (const u of s.team) {
+      if (!u.moves.some((m) => m.effects.some((e) => e.support === "harm"))) continue;
+      u.signatureSpent = true;
+      const everyRound = u.moves
+        .map((m, i) => ({ m, i }))
+        .filter(
+          ({ m }) =>
+            !m.signature &&
+            m.effects.some((e) => e.support === "harm") &&
+            m.recovery === "repeatable" &&
+            m.preparation !== "prolonged" &&
+            !selfBurst(m) &&
+            usable(m)
+        );
+      expect(everyRound.length, `${u.name}: ${u.moves.map((m) => m.name.split(" (")[0]).join(", ")}`).toBeGreaterThan(0);
+      // Repeatable means it is legal again at once: used, it sets no cooldown.
+      const { m, i } = everyRound[0];
+      u.cooldowns[i] = COOLDOWN_ROUNDS[m.recovery];
+      expect(legalMoves(u), u.name).toContain(i);
+      expect(legalMoves(u), u.name).not.toContain(-1);
     }
   });
   it("names unsupported effects and keeps a move usable only when some effect is supported", () => {
@@ -384,8 +433,8 @@ describe("Powerworks battle rules", () => {
     expect(moveAt(unit(s, "B4"), s.orders.B4.move).preparation).toBe("prolonged");
   });
   it("a companion with prolonged preparation charges, releases, then recovers", () => {
-    // The release generation-0.7.0-1 derives no prolonged preparation at all (0 of 4,800
-    // companion actions), so the charge is fitted: a plain move and a prolonged harm.
+    // The rule, independent of what a seed rolled: a plain move and a fitted prolonged
+    // harm. The real companion charge (decision 36) is tested in the pass 4 block.
     let s = lone();
     const h = unit(s, "H");
     fitMoves(h, [
@@ -517,18 +566,22 @@ describe("Powerworks battle rules", () => {
     expect(r.revival).toBe(1);
     expect(r.xp).toBe(0);
   });
-  it("replays a version 3 command history deterministically and rejects versions 1 and 2", () => {
+  it("replays a version 4 command history deterministically and rejects versions 1, 2 and 3", () => {
     const s = createRun(41);
     const q = orders(s);
     const action = { kind: "round" as const, orders: q };
     const restored = restoreRun(
-      JSON.stringify({ version: 3, seed: 41, history: [action] })
+      JSON.stringify({ version: 4, seed: 41, history: [action] })
     );
     expect(restored.state).toEqual(command(s, action));
     expect(() => restoreRun('{"version":1,"seed":41,"history":[]}')).toThrow(
       "Unsupported save."
     );
     expect(() => restoreRun('{"version":2,"seed":41,"history":[]}')).toThrow(
+      "Unsupported save."
+    );
+    // Version 3 histories name the generation-0.7.0-1 kits and pass 3 rules.
+    expect(() => restoreRun('{"version":3,"seed":41,"history":[]}')).toThrow(
       "Unsupported save."
     );
   });
@@ -1137,7 +1190,7 @@ describe("Powerworks status layer", () => {
     expect(r.state.phase).toBe("camp");
     expect(r.state.xp).toBe(10);
   });
-  it("replays a version 3 save deterministically with conditions in play", () => {
+  it("replays a version 4 save deterministically with conditions in play", () => {
     const s = createRun(7);
     const first = orders(s);
     const after = command(s, { kind: "round", orders: first });
@@ -1147,7 +1200,7 @@ describe("Powerworks status layer", () => {
       { kind: "round" as const, orders: second },
     ];
     const restored = restoreRun(
-      JSON.stringify({ version: 3, seed: 7, history })
+      JSON.stringify({ version: 4, seed: 7, history })
     );
     expect(restored.state).toEqual(command(after, history[1]));
   });
@@ -1595,7 +1648,7 @@ describe("Powerworks reactions", () => {
     expect(after.conditions.filter((c) => c.status === "mending")).toHaveLength(1);
     expect(after.passiveCooldowns).toEqual(carrier.passives.map(() => 0));
   });
-  it("replays a version 3 save deterministically through to a reaction", () => {
+  it("replays a version 4 save deterministically through to a reaction", () => {
     // A real run, played honestly with legal orders until the guardian answers a
     // contact strike, then restored from its command history alone. The orders play to
     // win (strongest legal preview, a revival when someone falls) until the final
@@ -1643,9 +1696,470 @@ describe("Powerworks reactions", () => {
     expect(reacted, "no reaction occurred in the played run").toBe(true);
     expect(history.some((c) => c.kind === "advance")).toBe(true);
     const restored = restoreRun(
-      JSON.stringify({ version: 3, seed: 11, history })
+      JSON.stringify({ version: 4, seed: 11, history })
     );
     expect(restored.state).toEqual(s);
     expect(restored.state.log.some((l) => /Core discharge/.test(l))).toBe(true);
+  });
+});
+
+/*
+  Pass 4: the derived roster's effects (contract decisions 27 to 36). Every rule is built
+  from fitted moves read through the seam, never from what a companion seed rolled, except
+  the one test that checks a real companion's charged act (decision 36).
+*/
+/** The final chamber, seeded, with all three machines standing at test health. */
+function wide(seed = 1) {
+  let s = createRun(seed);
+  for (let i = 0; i < 3; i++) {
+    s.phase = "camp";
+    s = command(s, { kind: "advance" });
+  }
+  s.enemies.forEach((u) => (u.hp = u.max = 500));
+  s.team.forEach((u) => (u.hp = u.max = 500));
+  return s;
+}
+/** Everyone taps quietly except the named companion, so nothing else binds, pulls or afflicts. */
+function hush(s: Run, except: string[] = []) {
+  for (const u of s.team) if (!except.includes(u.id)) fitOnly(u, tap());
+}
+/** An area harm effect at this intensity. */
+const areaHarm = (intensity: number): CardEffect => ({ ...harm(intensity), recipient: "area" });
+const events = (
+  r: { frames: { event?: import("./index.ts").BattleEvent }[] },
+  kind: string,
+  actorId?: string
+) =>
+  r.frames
+    .map((f) => f.event!)
+    .filter((e) => e?.kind === kind && (!actorId || e.actorId === actorId));
+
+describe("Powerworks pass 4: new status groups at the seam", () => {
+  it("reads stunned as shock, slowed and sedated as tempo, blinded and disoriented as senses, focused as guarding", () => {
+    expect(statusGroup("stunned")).toBe("shock");
+    expect(statusGroup("slowed")).toBe("tempo");
+    expect(statusGroup("sedated")).toBe("tempo");
+    expect(statusGroup("blinded")).toBe("senses");
+    expect(statusGroup("disoriented")).toBe("senses");
+    expect(statusGroup("focused")).toBe("guarding");
+    // Traversal stays unsupported (decision 35's last sentence).
+    expect(statusGroup("phased")).toBeNull();
+    expect(statusGroup("dispersed")).toBeNull();
+  });
+  it("reads concealed on itself as a legal action (decision 32) and keeps other self statuses refused", () => {
+    const stalk = fitted("Night Stalk", [
+      statusEffect("concealed", { recipient: "self", removable: ["disrupting"] }),
+    ]);
+    expect(stalk.effects[0].support).toBe("status");
+    expect(stalk.effects[0].group).toBe("concealment");
+    expect(usable(stalk)).toBe(true);
+    const selfStun = readEffect(statusEffect("stunned", { recipient: "self" }));
+    expect(selfStun.support).toBe("unsupported");
+    // In play: the stalker is concealed, so the machines cannot pick it while another stands.
+    let s = lone();
+    hush(s, ["C"]);
+    // The guardian clamps rather than charging, so its next order is freshly aimed.
+    const b = unit(s, "B4");
+    b.moves = [b.moves[0]];
+    b.cooldowns = [0];
+    s.orders.B4 = { move: 0, target: "H" };
+    fitOnly(unit(s, "C"), stalk);
+    unit(s, "C").speed = 200;
+    s = resolveRound(s, plain(s, { C: { move: 0, target: "B4" } })).state;
+    expect(conditionOn(unit(s, "C"), "concealed")?.group).toBe("concealment");
+    expect(s.orders.B4.target).not.toBe("C");
+  });
+  it("keeps the drain's dependency and the area geometry on a real roster record", () => {
+    // Tizzie's Psychic Signal and Bioflim's Chemical Touch are drains; a lash is a sweep.
+    const found = { requires: false, area: false };
+    for (const species of ["bioflim", "tizzie", "crystorn", "hippochamp"])
+      for (let seed = 1; seed <= 20; seed++) {
+        const u = readCompanion(roster(species, `powerworks-seam-${species}-${seed}`), "X");
+        for (const m of u.moves) {
+          if (m.effects.some((e) => e.requires)) found.requires = true;
+          if (m.area && m.effects.some((e) => e.recipient === "area")) found.area = true;
+        }
+      }
+    expect(found).toEqual({ requires: true, area: true });
+  });
+});
+
+describe("Powerworks pass 4: shock", () => {
+  /** The guardian mid-charge, with the named companion holding a fitted stun and acting first. */
+  function charging(stun: Move) {
+    let s = lone();
+    hush(s);
+    s = resolveRound(s, plain(s)).state;
+    expect(unit(s, "B4").charge).toBeTruthy();
+    fitOnly(unit(s, "C"), stun);
+    unit(s, "C").speed = 200;
+    return s;
+  }
+  const jolt = () =>
+    fitted("Stun Jolt", [statusEffect("stunned", { removable: ["stabilizing"] })]);
+  it("a stun loses the victim's next opportunity and breaks its charge (decision 27)", () => {
+    const s = charging(jolt());
+    const r = resolveRound(s, plain(s, { C: { move: 0, target: "B4" } }));
+    expect(events(r, "status", "C")[0]?.status).toBe("stunned");
+    expect(events(r, "status", "C")[0]?.group).toBe("shock");
+    const broken = events(r, "broken", "C");
+    expect(broken).toHaveLength(1);
+    expect(broken[0].targetId).toBe("B4");
+    const lost = events(r, "lost", "B4");
+    expect(lost).toHaveLength(1);
+    expect(lost[0].status).toBe("stunned");
+    // The guardian neither released nor struck this round.
+    expect(events(r, "hit", "B4")).toHaveLength(0);
+    expect(unit(r.state, "B4").charge).toBeNull();
+    expect(conditionOn(unit(r.state, "B4"), "stunned")).toBeUndefined();
+  });
+  it("cannot be reapplied within the trance window, and focus does not block it", () => {
+    const s = charging(jolt());
+    const first = resolveRound(s, plain(s, { C: { move: 0, target: "B4" } })).state;
+    const again = resolveRound(first, plain(first, { C: { move: 0, target: "B4" } }));
+    expect(events(again, "status", "C")).toHaveLength(0);
+    expect(events(again, "resisted", "C")[0]?.status).toBe("stunned");
+    expect(ENTRANCE_IMMUNITY_OPPORTUNITIES).toBe(2);
+    // A focused guardian is still stunned: shock is physical, not attention.
+    const focused = charging(jolt());
+    unit(focused, "B4").conditions.push({
+      status: "focused",
+      group: "guarding",
+      intensity: 50,
+      remaining: 5,
+      source: "X",
+      removable: [],
+    });
+    const r = resolveRound(focused, plain(focused, { C: { move: 0, target: "B4" } }));
+    expect(events(r, "status", "C")[0]?.status).toBe("stunned");
+    expect(events(r, "lost", "B4")).toHaveLength(1);
+  });
+});
+
+describe("Powerworks pass 4: tempo", () => {
+  it("slowed halves the victim's speed for initiative through its duration (decision 28)", () => {
+    let s = lone();
+    hush(s, ["C"]);
+    fitOnly(unit(s, "C"), fitted("Slow Wash", [statusEffect("slowed", { removable: ["warming"] })]));
+    unit(s, "C").speed = 200;
+    // Hippochamp sits between the guardian's full and halved speed.
+    const b = unit(s, "B4");
+    unit(s, "H").speed = Math.floor(b.speed * SLOWED_SPEED_FACTOR) + 1;
+    const before = initiative(s.team, s.enemies, s.round).map((u) => u.id);
+    expect(before.indexOf("B4")).toBeLessThan(before.indexOf("H"));
+    s = resolveRound(s, plain(s, { C: { move: 0, target: "B4" } })).state;
+    const slowed = unit(s, "B4");
+    expect(conditionOn(slowed, "slowed")?.group).toBe("tempo");
+    expect(effectiveSpeed(slowed)).toBe(Math.floor(slowed.speed * SLOWED_SPEED_FACTOR));
+    const after = initiative(s.team, s.enemies, s.round).map((u) => u.id);
+    expect(after.indexOf("B4")).toBeGreaterThan(after.indexOf("H"));
+    // It wears off with the victim's own opportunities, and full speed returns.
+    fitOnly(unit(s, "C"), tap());
+    let guard = 0;
+    while (conditionOn(unit(s, "B4"), "slowed") && guard++ < 6)
+      s = resolveRound(s, plain(s)).state;
+    expect(effectiveSpeed(unit(s, "B4"))).toBe(unit(s, "B4").speed);
+  });
+  it("sedated acts after every unsedated unit and its passives do not react (decision 29)", () => {
+    let s = clamper();
+    hush(s, ["C"]);
+    fitOnly(unit(s, "C"), fitted("Soothing Mist", [statusEffect("sedated", { removable: ["disrupting"] })]));
+    unit(s, "C").speed = 200;
+    s.orders.B4 = { move: 0, target: "H" };
+    s = resolveRound(s, plain(s, { C: { move: 0, target: "B4" } })).state;
+    expect(conditionOn(unit(s, "B4"), "sedated")?.group).toBe("tempo");
+    // Faster than everyone, and still last.
+    s.team.forEach((u) => (u.speed = 1));
+    const order = initiative(s.team, s.enemies, s.round).map((u) => u.id);
+    expect(order[order.length - 1]).toBe("B4");
+    // Core discharge answers a contact strike on an alert guardian, not on a sedated one.
+    fitOnly(unit(s, "C"), fitted("Contact Jab", [harm(30)], { range: "contact" }));
+    s.orders.B4 = { move: 0, target: "H" };
+    const quietGuardian = resolveRound(s, plain(s, { C: { move: 0, target: "B4" } }));
+    expect(reactsTo(quietGuardian)).toHaveLength(0);
+    const alert = clone(s);
+    unit(alert, "B4").conditions = [];
+    expect(reactsTo(resolveRound(alert, plain(alert, { C: { move: 0, target: "B4" } })))).toHaveLength(1);
+  });
+});
+
+describe("Powerworks pass 4: senses", () => {
+  const blind = () => fitted("Glare Burst", [statusEffect("blinded", { removable: ["cleansing"] })]);
+  it("blinded halves the victim's non-contact harm and leaves contact harm alone (decision 30)", () => {
+    let s = lone();
+    hush(s, ["C"]);
+    fitOnly(unit(s, "C"), blind());
+    unit(s, "C").speed = 200;
+    s = resolveRound(s, plain(s, { C: { move: 0, target: "B4" } })).state;
+    const b = unit(s, "B4");
+    expect(conditionOn(b, "blinded")?.group).toBe("senses");
+    const seen = { ...b, conditions: [] } as Unit;
+    const shot = fitted("Test Beam", [harm(80)], { range: "medium" });
+    const touch = fitted("Test Grip", [harm(80)], { range: "contact" });
+    const h = unit(s, "H");
+    expect(damagePreview(b, shot, h)).toBe(
+      Math.floor(damagePreview(seen, shot, h) * BLINDED_RANGED_FACTOR)
+    );
+    expect(damagePreview(b, shot, h)).toBeLessThan(damagePreview(seen, shot, h));
+    expect(damagePreview(b, touch, h)).toBe(damagePreview(seen, touch, h));
+  });
+  it("a blinded unit is immune to statuses from a visual signal", () => {
+    const glare = fitted(
+      "Frightening Signal",
+      [statusEffect("frightened", { removable: ["stabilizing"] })],
+      { reception: "visual" }
+    );
+    const play = (blinded: boolean) => {
+      const s = lone();
+      hush(s, ["C"]);
+      fitOnly(unit(s, "C"), glare);
+      unit(s, "C").speed = 200;
+      if (blinded)
+        unit(s, "B4").conditions.push({
+          status: "blinded",
+          group: "senses",
+          intensity: 50,
+          remaining: 2,
+          source: "X",
+          removable: ["cleansing"],
+        });
+      return resolveRound(s, plain(s, { C: { move: 0, target: "B4" } }));
+    };
+    expect(events(play(false), "status", "C")[0]?.status).toBe("frightened");
+    const refused = play(true);
+    expect(events(refused, "status", "C")).toHaveLength(0);
+    expect(events(refused, "resisted", "C")[0]?.status).toBe("frightened");
+  });
+  it("disoriented sends the victim's aimed order to a drawn standing target, announced as a stumble (decision 31)", () => {
+    const play = (seed: number) => {
+      const s = wide(seed);
+      hush(s, ["C"]);
+      // The guardian disorients Crystorn before Crystorn acts.
+      const b = unit(s, "B4");
+      b.moves = [fitted("Disorienting Sweep", [statusEffect("disoriented", { removable: ["stabilizing"] })])];
+      b.cooldowns = [0];
+      b.speed = 300;
+      s.orders.B4 = { move: 0, target: "C" };
+      fitOnly(unit(s, "C"), fitted("Aimed Jab", [harm(30)]));
+      unit(s, "C").speed = 1;
+      const aimedAt = s.enemies[0].id;
+      const r = resolveRound(s, plain(s, { C: { move: 0, target: aimedAt } }));
+      const stumble = events(r, "stumble", "C");
+      expect(stumble, `seed ${seed}`).toHaveLength(1);
+      const hit = events(r, "hit", "C")[0];
+      expect(hit.targetId).toBe(stumble[0].targetId);
+      return stumble[0].targetId!;
+    };
+    expect(play(3)).toBe(play(3));
+    const drawn = new Set(Array.from({ length: 12 }, (_, i) => play(i + 1)));
+    expect(drawn.size).toBeGreaterThan(1);
+  });
+});
+
+describe("Powerworks pass 4: areas", () => {
+  const sweep = (extent: "small" | "medium" | "large") =>
+    fitted("Test Sweep", [areaHarm(60)], {
+      range: "contact",
+      area: { shape: "sweep", extent, anchor: "self" },
+    });
+  const burst = () =>
+    fitted("Test Burst", [areaHarm(60)], {
+      range: "short",
+      area: { shape: "radial", extent: "small", anchor: "self" },
+    });
+  const spread = () =>
+    fitted("Test Field", [areaHarm(60)], {
+      range: "short",
+      area: { shape: "radial", extent: "medium", anchor: "location" },
+    });
+  const ids = (units: Unit[]) => units.map((u) => u.id);
+  it("reads the line from the order of the team and enemies arrays (decision 33)", () => {
+    const s = wide();
+    const [e0, e1, e2] = s.enemies;
+    const [t0, t1, t2] = s.team;
+    // A sweep: small reaches the far neighbor, medium both, large the whole line.
+    expect(ids(areaReach(s, t0, sweep("small"), e0))).toEqual([e1.id]);
+    expect(ids(areaReach(s, t0, sweep("small"), e2))).toEqual([]);
+    expect(ids(areaReach(s, t0, sweep("medium"), e1))).toEqual([e0.id, e2.id]);
+    expect(ids(areaReach(s, t0, sweep("medium"), e0))).toEqual([e1.id]);
+    expect(ids(areaReach(s, t0, sweep("large"), e0))).toEqual([e1.id, e2.id]);
+    // Radial on self: every foe and the performer's own neighbors in its line.
+    expect(ids(areaReach(s, t1, burst(), e0))).toEqual([e1.id, e2.id, t0.id, t2.id]);
+    // Radial on the target or a location: the target's two neighbors.
+    expect(ids(areaReach(s, t0, spread(), e1))).toEqual([e0.id, e2.id]);
+    // The line closes up when a unit falls.
+    e1.hp = 0;
+    expect(ids(areaReach(s, t0, sweep("medium"), e0))).toEqual([e2.id]);
+    // A move without an area reaches nobody else.
+    expect(areaReach(s, t0, tap(), e0)).toEqual([]);
+  });
+  it("every recipient takes the area harm at AREA_HARM_FACTOR, the target included", () => {
+    const s = wide();
+    hush(s, ["C"]);
+    const c = unit(s, "C");
+    fitOnly(c, sweep("medium"));
+    c.speed = 300;
+    const middle = s.enemies[1];
+    const r = resolveRound(s, plain(s, { C: { move: 0, target: middle.id } }));
+    const hits = events(r, "hit", "C");
+    expect(hits.map((h) => h.targetId).sort()).toEqual(ids(s.enemies).sort());
+    expect(hits.filter((h) => h.area).map((h) => h.targetId).sort()).toEqual(
+      [s.enemies[0].id, s.enemies[2].id].sort()
+    );
+    // The same harm aimed at one target, at the area share of its intensity.
+    const single = fitted("Single", [harm(60 * AREA_HARM_FACTOR)], { range: "contact" });
+    for (const h of hits) {
+      const victim = unit(s, h.targetId!);
+      expect(h.amount, victim.name).toBe(damagePreview(c, single, victim));
+    }
+    expect(damagePreview(c, sweep("medium"), middle)).toBeLessThan(
+      damagePreview(c, fitted("Full", [harm(60)], { range: "contact" }), middle)
+    );
+  });
+  it("rolls an area status independently for each recipient", () => {
+    const field = fitted(
+      "Slowing Field",
+      [{ ...statusEffect("slowed", { removable: ["warming"], likelihood: "occasional" }), recipient: "area" }],
+      { range: "short", area: { shape: "radial", extent: "medium", anchor: "location" } }
+    );
+    let mixed = false;
+    for (let seed = 1; seed <= 20 && !mixed; seed++) {
+      const s = wide(seed);
+      hush(s, ["C"]);
+      fitOnly(unit(s, "C"), field);
+      unit(s, "C").speed = 300;
+      const r = resolveRound(s, plain(s, { C: { move: 0, target: s.enemies[1].id } }));
+      const landed = events(r, "status", "C").length;
+      const shaken = events(r, "resisted", "C").length;
+      expect(landed + shaken, `seed ${seed}`).toBe(3);
+      if (landed > 0 && shaken > 0) mixed = true;
+    }
+    expect(mixed).toBe(true);
+  });
+  it("a burst on self reaches the performer's adjacent allies, and friendly harm provokes no reaction", () => {
+    const s = wide();
+    hush(s, [s.team[1].id]);
+    const [left, bursting, right] = s.team;
+    fitOnly(bursting, burst());
+    bursting.speed = 300;
+    // A harmed reply on the left neighbor must stay quiet: only a foe's move provokes one.
+    left.passives = [
+      cardPassive({
+        key: "retort",
+        name: "Retort",
+        trigger: "harmed",
+        recovery: "repeatable",
+        effects: [harm(40)],
+      }),
+    ];
+    left.passiveCooldowns = [0];
+    const r = resolveRound(
+      s,
+      plain(s, { [bursting.id]: { move: 0, target: s.enemies[0].id } })
+    );
+    const hits = events(r, "hit", bursting.id);
+    expect(hits.map((h) => h.targetId).sort()).toEqual(
+      [...ids(s.enemies), left.id, right.id].sort()
+    );
+    expect(hits.find((h) => h.targetId === left.id)!.amount).toBeGreaterThan(0);
+    expect(
+      reactsTo(r).filter((f) => f.event!.actorId === left.id && f.event!.targetId === bursting.id)
+    ).toHaveLength(0);
+  });
+});
+
+describe("Powerworks pass 4: dependencies and beneficial effects", () => {
+  const drain = () =>
+    fitted("Test Drain", [
+      { ...harm(50), key: "toll" },
+      {
+        key: "gain",
+        type: "restore",
+        recipient: "self",
+        likelihood: "consistent",
+        intensity: 60,
+        requires: "toll",
+      },
+    ]);
+  it("a drain heals only when its harm is actually dealt (decision 34)", () => {
+    const run = (immune: boolean) => {
+      const s = lone();
+      hush(s, ["C"]);
+      const c = unit(s, "C");
+      fitOnly(c, drain());
+      c.hp = 300;
+      c.speed = 300;
+      if (immune)
+        unit(s, "B4").conditions = innateConditions([
+          { type: "harm", mechanism: "impact", degree: "immune" },
+        ]);
+      return resolveRound(s, plain(s, { C: { move: 0, target: "B4" } }));
+    };
+    expect(drain().effects[1].requires).toBe("toll");
+    const fed = run(false);
+    expect(events(fed, "hit", "C")[0].amount).toBeGreaterThan(0);
+    expect(events(fed, "restore", "C")[0].amount).toBeGreaterThan(0);
+    expect(events(fed, "withheld", "C")).toHaveLength(0);
+    const starved = run(true);
+    expect(events(starved, "hit", "C")[0].amount).toBe(0);
+    expect(events(starved, "restore", "C")).toHaveLength(0);
+    const held = events(starved, "withheld", "C");
+    expect(held).toHaveLength(1);
+    expect(held[0].reason).toBe("requires");
+    expect(held[0].effect).toBe("restore");
+  });
+  it("a beneficial status aimed at a foe is withheld while the move's harm resolves (decision 35)", () => {
+    // Sonalloy's Reinforcing Lash shape: harm plus reinforced on the target.
+    const lash = fitted("Reinforcing Lash", [
+      harm(40),
+      statusEffect("reinforced", { key: "condition", removable: ["disrupting"] }),
+    ]);
+    expect(usable(lash)).toBe(true);
+    const s = lone();
+    hush(s, ["C"]);
+    fitOnly(unit(s, "C"), lash);
+    unit(s, "C").speed = 300;
+    const r = resolveRound(s, plain(s, { C: { move: 0, target: "B4" } }));
+    expect(events(r, "hit", "C")[0].amount).toBeGreaterThan(0);
+    expect(conditionOn(unit(r.state, "B4"), "reinforced")).toBeUndefined();
+    const held = events(r, "withheld", "C");
+    expect(held).toHaveLength(1);
+    expect(held[0]).toMatchObject({ reason: "foe", effect: "reinforced", targetId: "B4" });
+  });
+  it("a move that can only benefit a foe is not a legal order; the same status on itself is", () => {
+    const signal = fitted("Focusing Signal", [statusEffect("focused", { removable: ["disrupting"] })]);
+    const response = fitted("Focusing Response", [
+      statusEffect("focused", { recipient: "self", removable: ["disrupting"] }),
+    ]);
+    expect(signal.effects[0].support).toBe("status");
+    expect(usable(signal)).toBe(false);
+    expect(usable(response)).toBe(true);
+    let s = lone();
+    const c = unit(s, "C");
+    fitMoves(c, [tap(), signal, response]);
+    expect(legalMoves(c)).toEqual([0, 2]);
+    s = resolveRound(s, plain(s, { C: { move: 2, target: "B4" } })).state;
+    expect(conditionOn(unit(s, "C"), "focused")?.group).toBe("guarding");
+  });
+});
+
+describe("Powerworks pass 4: a companion charges from its own record (decision 36)", () => {
+  it("the real charged act begins a charge, then releases at the next opportunity", () => {
+    let s = lone();
+    const carrier = s.team.find((u) =>
+      u.moves.some((m) => !m.signature && m.preparation === "prolonged" && usable(m))
+    )!;
+    expect(carrier).toBeTruthy();
+    const index = carrier.moves.findIndex(
+      (m) => !m.signature && m.preparation === "prolonged" && usable(m)
+    );
+    const name = carrier.moves[index].name;
+    let r = resolveRound(s, plain(s, { [carrier.id]: { move: index, target: "B4" } }));
+    expect(events(r, "charge", carrier.id)[0]?.moveName).toBe(name);
+    s = r.state;
+    expect(legalMoves(unit(s, carrier.id))).toEqual([index]);
+    r = resolveRound(s, plain(s, { [carrier.id]: { move: index, target: "B4" } }));
+    expect(events(r, "hit", carrier.id).some((h) => h.moveName === name)).toBe(true);
+    expect(unit(r.state, carrier.id).charge).toBeNull();
   });
 });
