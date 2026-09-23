@@ -74,11 +74,11 @@ export function HelpPanel({ match, clinch, onClose }) {
 			</section>
 			<section className="rec-help-section">
 				<h3 className="rec-help-head">Hold</h3>
-				<p>A creature&apos;s number is how firmly it holds a world. It holds half again on its home world, and less where its body strains. Under each creature in your squad is the world it holds best this round, in that world&apos;s color. Pick it up to see its hold on every world.</p>
+				<p>A creature&apos;s number is how firmly it holds a world. It holds half again on its home world, and less where its body strains; the preview then says why and what it costs, as in &ldquo;Too cold: &minus;7 hold&rdquo;. Under each creature in your squad is the world it holds best this round, in that world&apos;s color. Pick it up to see its hold on every world.</p>
 			</section>
 			<section className="rec-help-section">
 				<h3 className="rec-help-head">Advanced mode</h3>
-				<p>Adds the arithmetic. On each squad card: its speed (the arrowed number; faster attacks land first), the small marks for what its attributes do (hover one for its meaning), and three dots, one per world of the round from left to right, brighter where it holds better, the ringed one its best. On each world: the temperature band, with the world&apos;s range shaded and the picked creature&apos;s own marked, and how many of your squad would be strained there. Under a preview, every hit a sweep would land. The log runs down the side. A phone has room for the worlds and the squad only, so there advanced mode keeps its numbers in each creature&apos;s reading (its &#9432;) and the log behind &equiv;.</p>
+				<p>Adds the arithmetic. On each squad card: its speed (the arrowed number; faster attacks land first), the small marks for what its attributes do (hover one for its meaning), and three dots, one per world of the round from left to right, brighter where it holds better, the ringed one its best. On each world: the temperature band, with the world&apos;s range shaded and the picked creature&apos;s own marked, and how many of your squad would be strained there. Under a preview, every hit a sweep would land. The log runs down the side. On a phone the speed and the temperature band show as they do here; the log sits behind &equiv; and the attribute marks in each creature&apos;s reading (its &#9432;).</p>
 			</section>
 			{frames.length > 0 && (
 				<section className="rec-help-section">

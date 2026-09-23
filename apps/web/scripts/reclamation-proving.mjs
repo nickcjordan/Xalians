@@ -247,6 +247,21 @@ for (const view of ['simple', 'advanced']) {
 						.map((site) => (site.querySelector('[data-ghost-plan]') || {}).textContent || '')
 						.filter((text) => /No rival here|Nothing (here )?to (hit|strike) yet/.test(text)));
 					assert(ghostLies.length === 0, `${label}: a world with a rival on it previews "${ghostLies[0]}"`);
+					/*
+						PASS 44. The preview's words must sit inside the preview. A desk-only column
+						rule leaked to the phone in pass 41 and pushed every phone preview 26px past
+						its world's edge, where the overflow clip cut each line mid-word.
+					*/
+					const ghostSpill = await page.evaluate(() => [...document.querySelectorAll('[data-ghost]')]
+						.map((ghost) => {
+							const box = ghost.getBoundingClientRect();
+							const over = [...ghost.querySelectorAll('[data-ghost-plan], [data-ghost-strain]')]
+								.map((el) => el.getBoundingClientRect())
+								.filter((r) => r.width > 0 && (r.right > box.right + 1 || r.left < box.left - 1));
+							return over.length ? `${ghost.getAttribute('data-ghost')} by ${Math.round(Math.max(...over.map((r) => r.right - box.right)))}px` : null;
+						})
+						.filter(Boolean));
+					assert(ghostSpill.length === 0, `${label}: a preview's text runs past its own box (${ghostSpill[0]})`);
 					const siteCount = await site.count();
 					if (siteCount) {
 						// spread across the frame the way a handler does, rather than stacking
