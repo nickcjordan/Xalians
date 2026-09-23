@@ -4,7 +4,7 @@ Review date: 2026-09-21. Status: frozen in `generation-0.6.0-1`; game consumers 
 
 Its identity is support: The fixed signature **Empathic Steadying** uses a mental signal to remove conditions responsive to `stabilizing`; the separate guaranteed **Chromatic Horn Trance** requires visual reception and applies `entranced`. Both survive every ordinary roll, preserving therapy and crowd control. Harm is not its identity, but Nick ruled on 2026-09-23 that nothing forbids it: "I see no reason why a hypnopet couldnt cause harm. It may not be the most effective but why not?" Ordinary domains allow stabilizing, focused attention and visual trance variations. The visual reception is a single catalog value, while the mental therapy signal has no mandated sight or hearing channel.
 
-Candidate exclusions: body regeneration or healing vitality from the metaphor of empathic healing (open question for Nick, since the teaser calls them healers), possession, and an indiscriminate spell library. The damaging horn beam exclusion was lifted with the harm ruling of 2026-09-23. A recipient's immunity or a game's lack of support can make an encounter effect unavailable, but generation never omits either essential capacity. Temperament reflects patient-oriented company and low aggression. Numeric output and likelihood were reviewed in the [cross-roster calibration](../../design/creature-v5-calibration.md). The mechanisms are factored domains, not a finite move whitelist.
+Candidate exclusions: possession and an indiscriminate spell library. Bodily healing is included: the teaser calls them healers, and Nick ruled on 2026-09-23 "i am fine with hypnopet being able to heal." The damaging horn beam exclusion was lifted with the harm ruling of 2026-09-23. A recipient's immunity or a game's lack of support can make an encounter effect unavailable, but generation never omits either essential capacity. Temperament reflects patient-oriented company and low aggression. Numeric output and likelihood were reviewed in the [cross-roster calibration](../../design/creature-v5-calibration.md). The mechanisms are factored domains, not a finite move whitelist.
 
 Compilation and seeded cohort generation verify four distinct actions and both guaranteed functions; this audit records source permission separately.
 
@@ -16,7 +16,7 @@ Mechanisms removed as redundant: none. All three are kept. `empathic-stabilizing
 
 Exclusions:
 
-- `*/mend` - the audit above excludes body regeneration and healing vitality from the metaphor of empathic healing. Its therapy is condition removal, not restoration.
+- `*/mend` was excluded here until 2026-09-23 on a reading of "empathic healing" as a metaphor. Nick ruled that a Hypnopet can heal, so the mind and the horn now derive self and other restoration. `*/drain` stays: taking vitality from another to heal itself is a different claim than healing, and nothing in the source supports it.
 - `*/drain` - the psychic medium offers a drain; taking vitality contradicts a service animal and therapist outright.
 - `crest/burst` and `mind/crush` were excluded here as harm until 2026-09-23. Nick ruled that a Hypnopet may cause harm, so both are back: a psychic burst from the horn and a mental squeeze.
 
@@ -24,6 +24,6 @@ Its harm acts are the physical ones a rabbit's body grants (hide and body strike
 
 ```
 hypnopet: valid permissions, four distinct actions constructible
-  acts: 23 distinct on offer (crest 8, hide 3, body 5, mind 7); exclusions: */drain, */mend
+  acts: 27 distinct on offer (crest 10, hide 3, body 5, mind 9); exclusions: */drain
   naming over 24 seeds: 0.0% of ordinary actions carry a structural parenthetical, 0.0% of creatures have two ordinary actions sharing a base name
 ```
