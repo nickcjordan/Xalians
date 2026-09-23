@@ -439,6 +439,22 @@
   background: #1f3f2c;
   border-color: #6fae82;
 }
+/* Pass 4: shock, tempo and senses, one hue each in the same badge shape. */
+.pw-status-badge.group-shock {
+  color: #f1e3a6;
+  background: #463c1c;
+  border-color: #c2a64f;
+}
+.pw-status-badge.group-tempo {
+  color: #c9d8e8;
+  background: #26313f;
+  border-color: #8298b2;
+}
+.pw-status-badge.group-senses {
+  color: #e6d2bd;
+  background: #3d3024;
+  border-color: #a98a69;
+}
 /* The inspector's plain-language rule for each passive: the same panel as a condition. */
 .pw-passive-rules,
 .pw-condition-rules {
@@ -494,6 +510,15 @@
 }
 .pw-condition-rules li .pw-condition-name.group-mending {
   color: #b9e8c4;
+}
+.pw-condition-rules li .pw-condition-name.group-shock {
+  color: #f1e3a6;
+}
+.pw-condition-rules li .pw-condition-name.group-tempo {
+  color: #c9d8e8;
+}
+.pw-condition-rules li .pw-condition-name.group-senses {
+  color: #e6d2bd;
 }
 .pw-passive-rules li .pw-passive-name.kind-triggered {
   color: #f3d9ab;

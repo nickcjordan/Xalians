@@ -16,14 +16,17 @@
   prints the table, or import `simulate` from another script.
 */
 import {
+  beneficial,
   command,
   contactDelivery,
   createRun,
   damagePreview,
   legalMoves,
   moveAt,
+  reachesOwnSide,
   readCompanion,
   resolveRound,
+  usable,
   type Order,
   type Run,
   type StatusGroup,
@@ -45,6 +48,9 @@ const GROUPS: StatusGroup[] = [
   "attention",
   "concealment",
   "mending",
+  "shock",
+  "tempo",
+  "senses",
 ];
 
 export type SimStats = {
@@ -80,6 +86,17 @@ export type SimStats = {
   reactionDamage: number;
   contactStrikesOnGuardian: number;
   rangedStrikesOnGuardian: number;
+  /** Pass 4 rows (contract, "Pass 4 contract"). */
+  lostToStun: number;
+  stumbles: number;
+  chargesBrokenByShock: number;
+  /** Per area move: uses, recipients reached (the target included), recipients only the area reached, and own allies it reached. */
+  areaMoves: Record<string, { uses: number; recipients: number; areaOnly: number; allies: number }>;
+  drainsHealed: number;
+  drainsWithheld: number;
+  withheldBeneficial: number;
+  companionChargesBegun: number;
+  companionReleasesLanded: number;
 };
 
 function choose(u: Unit, enemies: Unit[]): Order | null {
@@ -158,6 +175,10 @@ export function playRun(seed: number, stats: SimStats) {
     // Reaction names seen this round, so the hit that follows a `react` event can be
     // told from an ordered move that happens to share a name.
     const reacting = new Set<string>();
+    const areaReached = new Map<
+      string,
+      { name: string; ids: Set<string>; areaOnly: Set<string>; allies: Set<string> }
+    >();
     for (const f of result.frames) {
       const e = f.event;
       if (!e) continue;
@@ -166,8 +187,9 @@ export function playRun(seed: number, stats: SimStats) {
         stats.displaceInterruptions++;
         if (e.actorId && preemptive.has(e.actorId)) stats.preemptivePullsBroke++;
       }
-      if (e.kind === "charge") stats.chargesBegun++;
       const actor = result.state.enemies.find((t) => t.id === e.actorId);
+      // Machine charges only; a companion's own charge is its own row (pass 4).
+      if (e.kind === "charge" && actor) stats.chargesBegun++;
       if (e.kind === "hit" && actor && actor.moves.some((m) => m.name === e.moveName && m.preparation === "prolonged")) stats.releasesLanded++;
       if (e.kind === "bind") stats.bindsLanded++;
       if (e.kind === "missed") stats.bindsMissed++;
@@ -195,13 +217,60 @@ export function playRun(seed: number, stats: SimStats) {
         reacting.has(`${e.actorId}:${e.moveName}`)
       )
         stats.reactionDamage += e.amount ?? 0;
-      if (e.kind === "lost") stats.opportunitiesLostToTrance++;
+      if (e.kind === "lost") {
+        if (e.status === "stunned") stats.lostToStun++;
+        else stats.opportunitiesLostToTrance++;
+      }
+      // Pass 4 rows.
+      if (e.kind === "stumble") stats.stumbles++;
+      if (e.kind === "broken") stats.chargesBrokenByShock++;
+      if (e.kind === "withheld") {
+        if (e.reason === "requires") stats.drainsWithheld++;
+        else stats.withheldBeneficial++;
+      }
+      const performer = [...result.state.team, ...result.state.enemies].find(
+        (t) => t.id === e.actorId
+      );
+      const performed = performer?.moves.find((m) => m.name === e.moveName);
+      if (e.kind === "restore" && performed?.effects.some((x) => x.requires))
+        stats.drainsHealed++;
+      if (performer && !performer.enemy && performed) {
+        if (e.kind === "charge") stats.companionChargesBegun++;
+        if (e.kind === "hit" && !e.area && performed.preparation === "prolonged")
+          stats.companionReleasesLanded++;
+      }
+      // Who each area move reached this round, by performer and move.
+      if (
+        performed?.area &&
+        e.targetId &&
+        ["hit", "status", "bind", "resisted", "missed", "withheld"].includes(e.kind)
+      ) {
+        const key = `${e.actorId}:${e.moveName}`;
+        const seen = areaReached.get(key) ?? { name: e.moveName!, ids: new Set<string>(), areaOnly: new Set<string>(), allies: new Set<string>() };
+        seen.ids.add(e.targetId);
+        if (e.area) seen.areaOnly.add(e.targetId);
+        const victim = [...result.state.team, ...result.state.enemies].find((t) => t.id === e.targetId);
+        if (victim && victim.enemy === performer!.enemy) seen.allies.add(e.targetId);
+        areaReached.set(key, seen);
+      }
       if (e.kind === "hidden") stats.hiddenSkips++;
       if (e.kind === "removed") {
         // One "removed" event per condition cleared, plus one when nothing answered.
         if (e.status) stats.removeCleared++;
         else stats.removeUses++;
       }
+    }
+    for (const reached of areaReached.values()) {
+      const row = (stats.areaMoves[reached.name] ??= {
+        uses: 0,
+        recipients: 0,
+        areaOnly: 0,
+        allies: 0,
+      });
+      row.uses++;
+      row.recipients += reached.ids.size;
+      row.areaOnly += reached.areaOnly.size;
+      row.allies += reached.allies.size;
     }
     s = result.state;
   }
@@ -249,6 +318,15 @@ export function simulate(runs = 200, firstSeed = 1): SimStats {
     reactionDamage: 0,
     contactStrikesOnGuardian: 0,
     rangedStrikesOnGuardian: 0,
+    lostToStun: 0,
+    stumbles: 0,
+    chargesBrokenByShock: 0,
+    areaMoves: {},
+    drainsHealed: 0,
+    drainsWithheld: 0,
+    withheldBeneficial: 0,
+    companionChargesBegun: 0,
+    companionReleasesLanded: 0,
   };
   for (let seed = firstSeed; seed < firstSeed + runs; seed++) playRun(seed, stats);
   return stats;
@@ -410,7 +488,157 @@ export function formatTable(stats: SimStats): string {
       "strikes ordered on the guardian, contact / ranged",
       `${stats.contactStrikesOnGuardian} / ${stats.rangedStrikesOnGuardian}`,
     ],
+    // Pass 4 rows.
+    ["opportunities lost to stunned", String(stats.lostToStun)],
+    ["charges broken by shock", String(stats.chargesBrokenByShock)],
+    ["stumbles (disoriented)", String(stats.stumbles)],
+    [
+      "area moves: uses, recipients (area-only, own allies)",
+      Object.entries(stats.areaMoves)
+        .map(
+          ([name, r]) =>
+            `${name.split(" (")[0]} ${r.uses} uses, ${r.recipients} recipients (${r.areaOnly} area-only, ${r.allies} allies)`
+        )
+        .join("; ") || "none",
+    ],
+    ["drains healed / withheld", `${stats.drainsHealed} / ${stats.drainsWithheld}`],
+    ["beneficial effects withheld from a foe", String(stats.withheldBeneficial)],
+    [
+      "companion charges begun / releases landed",
+      `${stats.companionChargesBegun} / ${stats.companionReleasesLanded}`,
+    ],
   ];
   const width = Math.max(...rows.map(([k]) => k.length));
   return rows.map(([k, v]) => `${k.padEnd(width)}  ${v}`).join("\n");
+}
+
+/**
+  The seam-only action survey (contract, pass 4): over `seeds` records per species, what
+  every action effect reads as. Unsupported effects are grouped by the reason the table
+  shows; beneficial effects that can only ever reach a foe (withheld every time by
+  decision 35) are grouped by status or type; the pass 4 readings (area geometry, drains,
+  charged ordinary acts, the new status groups) are counted with the species that carry
+  them. It reads no game state: it is the seam alone, over the wider roster.
+*/
+export type ActionSurvey = {
+  records: number;
+  actions: number;
+  effects: number;
+  /** reason -> count and where. */
+  unsupported: Record<string, { count: number; species: Set<string>; moves: Set<string> }>;
+  /** status or type -> count and where: beneficial, aimed only at foes. */
+  withheld: Record<string, { count: number; species: Set<string>; moves: Set<string> }>;
+  /** Moves with no effect this game can resolve against a foe. */
+  deadMoves: Record<string, { count: number; species: Set<string> }>;
+  /** Pass 4 readings: key -> count and species. */
+  readings: Record<string, { count: number; species: Set<string>; moves: Set<string> }>;
+};
+export function surveyActions(seeds = 20): ActionSurvey {
+  const survey: ActionSurvey = {
+    records: 0,
+    actions: 0,
+    effects: 0,
+    unsupported: {},
+    withheld: {},
+    deadMoves: {},
+    readings: {},
+  };
+  const note = (
+    table: Record<string, { count: number; species: Set<string>; moves: Set<string> }>,
+    key: string,
+    species: string,
+    move: string
+  ) => {
+    const row = (table[key] ??= { count: 0, species: new Set(), moves: new Set() });
+    row.count++;
+    row.species.add(species);
+    row.moves.add(move);
+  };
+  for (const template of getSpeciesTemplates())
+    for (let seed = 1; seed <= seeds; seed++) {
+      const record = generateXalian(
+        template.key,
+        `powerworks-seam-${template.key}-${seed}`,
+        {
+          origin: template.homePlanet,
+          serial: 1,
+          profile: "full",
+          generatedAt: "2026-09-21T00:00:00.000Z",
+        }
+      );
+      const u = readCompanion(record, "X");
+      survey.records++;
+      for (const m of u.moves) {
+        survey.actions++;
+        const name = m.name.split(" (")[0];
+        if (!usable(m)) {
+          const row = (survey.deadMoves[name] ??= { count: 0, species: new Set() });
+          row.count++;
+          row.species.add(template.key);
+        }
+        if (!m.signature && m.preparation === "prolonged" && usable(m))
+          note(survey.readings, "charged ordinary act (prolonged preparation)", template.key, name);
+        if (m.area) {
+          const harmed = m.effects.some((e) => e.recipient === "area" && e.support === "harm");
+          note(
+            survey.readings,
+            `area ${harmed ? "harm" : "status"}: ${m.area.shape} on ${m.area.anchor}, ${m.area.extent}`,
+            template.key,
+            name
+          );
+        }
+        for (const e of m.effects) {
+          survey.effects++;
+          if (e.support === "unsupported") {
+            note(survey.unsupported, e.reason ?? "unnamed", template.key, name);
+            continue;
+          }
+          if (e.requires) note(survey.readings, `drain (${e.type} requires ${e.requires})`, template.key, name);
+          if (beneficial(e) && !reachesOwnSide(m, e))
+            note(survey.withheld, e.status ?? e.type, template.key, name);
+          if (e.group && ["shock", "tempo", "senses"].includes(e.group))
+            note(survey.readings, `${e.group}: ${e.status}`, template.key, name);
+          if (e.status === "focused")
+            note(
+              survey.readings,
+              `focused on ${e.recipient === "self" ? "itself" : "a foe (withheld)"}`,
+              template.key,
+              name
+            );
+          if (e.status === "concealed" && e.recipient === "self")
+            note(survey.readings, "concealed on itself", template.key, name);
+        }
+      }
+    }
+  return survey;
+}
+export function formatActionSurvey(survey: ActionSurvey): string {
+  const where = (row: { species: Set<string>; moves?: Set<string> }) =>
+    `${[...row.species].sort().join(", ")}${
+      row.moves ? ` [${[...row.moves].sort().join(", ")}]` : ""
+    }`;
+  const lines: string[] = [
+    `records ${survey.records}, actions ${survey.actions}, effects ${survey.effects}`,
+    "",
+    "unsupported (reason: count, species [moves])",
+    ...(Object.entries(survey.unsupported)
+      .sort((a, b) => b[1].count - a[1].count)
+      .map(([k, r]) => `  ${k}: ${r.count}, ${where(r)}`) || []),
+    "",
+    "beneficial, aimed only at foes, withheld (status or type: count, species [moves])",
+    ...Object.entries(survey.withheld)
+      .sort((a, b) => b[1].count - a[1].count)
+      .map(([k, r]) => `  ${k}: ${r.count}, ${where(r)}`),
+    "",
+    "moves with nothing to resolve against a foe (move: count, species)",
+    ...Object.entries(survey.deadMoves)
+      .sort((a, b) => b[1].count - a[1].count)
+      .map(([k, r]) => `  ${k}: ${r.count}, ${where(r)}`),
+    "",
+    "pass 4 readings (reading: count, species [moves])",
+    ...Object.entries(survey.readings)
+      .sort((a, b) => a[0].localeCompare(b[0]))
+      .map(([k, r]) => `  ${k}: ${r.count}, ${where(r)}`),
+  ];
+  return lines.join("\n");
 }

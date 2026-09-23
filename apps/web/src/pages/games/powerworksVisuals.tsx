@@ -20,18 +20,28 @@ import {
   HeartPulse,
   Infinity as Infinite,
   Undo2,
+  ZapOff,
+  Snail,
+  ScanEye,
+  Users,
 } from "lucide-react";
 import {
+  AREA_HARM_FACTOR,
   asMove,
   basePower,
+  beneficial,
+  BLINDED_RANGED_FACTOR,
   COOLDOWN_ROUNDS,
   DEGRADE_FACTOR,
   DESPERATE_STRIKE_RECOIL,
   FRIGHTENED_OUTPUT_FACTOR,
   LIKELIHOOD_PERCENT,
   MEND_FACTOR,
+  reachesOwnSide,
+  selfBurst,
   REINFORCED_FACTOR,
   SHIELDED_FACTOR,
+  SLOWED_SPEED_FACTOR,
   tickAmount,
   type Condition,
   type Move,
@@ -60,7 +70,7 @@ export const charges = (move: Move) => move.preparation === "prolonged";
 export const baseName = (move: Move) => move.name.split(" (")[0];
 /** Cooldown pips a card shows: the move's recovery in rounds; none for a repeatable move. */
 export const cooldownLimit = (move: Move) => COOLDOWN_ROUNDS[move.recovery];
-/** One icon per condition group, so the five groups are told apart at a glance. */
+/** One icon per condition group, so the groups are told apart at a glance. */
 export function GroupIcon({ group }: { group: StatusGroup }) {
   const Icon = (
     {
@@ -70,6 +80,9 @@ export function GroupIcon({ group }: { group: StatusGroup }) {
       attention: Sparkles,
       concealment: EyeOff,
       mending: HeartPulse,
+      shock: ZapOff,
+      tempo: Snail,
+      senses: ScanEye,
     } as const
   )[group];
   return <Icon aria-hidden="true" />;
@@ -104,6 +117,18 @@ export function conditionRule(condition: Condition, u: Unit): string {
       const amount = Math.floor((condition.intensity / 10) * MEND_FACTOR);
       return `Recovers ${amount} HP at the start of each of its own opportunities.`;
     }
+    case "shock":
+      return "Loses its next opportunity, and a charge in progress is broken. Focus does not prevent it.";
+    case "tempo":
+      return condition.status === "sedated"
+        ? "Acts after every alert unit, and its automatic defenses do not answer."
+        : `Acts at ${Math.round(SLOWED_SPEED_FACTOR * 100)}% of its speed in the turn order (${Math.floor(
+            u.speed * SLOWED_SPEED_FACTOR
+          )} instead of ${u.speed}).`;
+    case "senses":
+      return condition.status === "disoriented"
+        ? "Its next aimed action goes to a random enemy instead of the one it chose."
+        : `Its ranged damage is reduced by ${percent(BLINDED_RANGED_FACTOR)}; contact attacks are unaffected. Signals that must be seen cannot reach it.`;
   }
 }
 function protectionRule(condition: Condition): string {
@@ -162,7 +187,7 @@ export function passiveRule(unit: Unit, passive: Passive): string {
   const harm = power ? ` ${power} base power.` : "";
   const rest = passive.effects
     .filter((e) => e.support !== "harm" && e.support !== "displace")
-    .map(effectSummary)
+    .map((e) => effectSummary(e))
     .join(" ");
   return `${when}, it answers automatically.${harm}${
     rest ? ` ${rest}` : ""
@@ -211,16 +236,44 @@ export function PowerIcon() {
     </svg>
   );
 }
+/**
+  Who a move's area reaches, in plain words (contract decision 33), or "" for a move
+  without one. The line is the order units stand in on the table.
+*/
+export function areaSummary(move: Move): string {
+  const area = move.area;
+  if (!area || !move.effects.some((e) => e.recipient === "area")) return "";
+  const share = `Each takes ${Math.round(AREA_HARM_FACTOR * 100)}% of the harm.`;
+  const harmed = move.effects.some(
+    (e) => e.recipient === "area" && (e.support === "harm" || e.support === "displace")
+  );
+  const reach =
+    area.shape === "radial"
+      ? area.anchor === "self"
+        ? "Reaches every enemy, and the squadmates standing either side of the user."
+        : "Reaches the target and the enemies either side of it."
+      : area.extent === "small"
+      ? "Reaches the target and the next enemy in line."
+      : area.extent === "medium"
+      ? "Reaches the target and the enemies either side of it."
+      : "Reaches the whole enemy line.";
+  return harmed ? `${reach} ${share}` : reach;
+}
 /** One sentence per effect, from its support reading. Unsupported effects are named and say so. */
 const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
-export function effectSummary(effect: MoveEffect): string {
+export function effectSummary(effect: MoveEffect, move?: Move): string {
   const chance =
     effect.likelihood === "consistent"
       ? ""
       : ` (${LIKELIHOOD_PERCENT[effect.likelihood]}% chance)`;
+  // Beneficial effects never reach a foe here (contract decision 35).
+  if (move && effect.support !== "unsupported" && beneficial(effect) && !reachesOwnSide(move, effect))
+    return `${cap(effect.status ?? effect.type)}: withheld here, because it would help the enemy it reaches.`;
   switch (effect.support) {
     case "harm":
-      return `${cap(effect.mechanism ?? "impact")} harm.`;
+      return `${cap(effect.mechanism ?? "impact")} harm${
+        effect.recipient === "area" ? " to everyone it reaches" : ""
+      }.`;
     case "displace":
       return "Pulls the target off its footing: breaks a charge and does impact harm.";
     case "bind":
@@ -250,6 +303,16 @@ export function effectSummary(effect: MoveEffect): string {
           ? ": cannot be targeted while another unit stands"
           : effect.group === "mending"
           ? ": health back each opportunity"
+          : effect.group === "shock"
+          ? ": loses its next opportunity and any charge"
+          : effect.group === "tempo"
+          ? status === "sedated"
+            ? ": acts last, defenses silent"
+            : ": acts at half speed"
+          : effect.group === "senses"
+          ? status === "disoriented"
+            ? ": its next aimed action goes astray"
+            : ": its ranged damage halved"
           : "";
       return `${cap(status)}${rule}${lasts}${chance}.`;
     }
@@ -260,7 +323,9 @@ export function effectSummary(effect: MoveEffect): string {
     case "protect":
       return "Shields against incoming damage until its next opportunity.";
     case "restore":
-      return "Recovers health.";
+      return effect.requires
+        ? "Recovers health, only when its harm lands."
+        : "Recovers health.";
     default:
       return `${cap(effect.status ?? effect.type)}: no effect here${
         effect.reason ? ` (${effect.reason})` : ""
@@ -278,9 +343,12 @@ export function moveDescription(u: Unit, move: Move) {
       ? ""
       : " No cooldown."
   }`;
-  return `${melee(move) ? "Melee attack" : "Ranged attack"}.${power} ${move.effects
+  const area = areaSummary(move);
+  return `${melee(move) ? "Melee attack" : "Ranged attack"}.${power} ${
+    area ? `${area} ` : ""
+  }${move.effects
     .filter((e) => e.support !== "harm")
-    .map(effectSummary)
+    .map((e) => effectSummary(e, move))
     .join(" ")}${timing}${
     move.fallback ? ` Costs ${DESPERATE_STRIKE_RECOIL} health in recoil.` : ""
   }`
@@ -380,6 +448,12 @@ export function MoveCardContent({
         {move.fallback && (
           <span className="pw-card-recoil">
             <RotateCcw />−{DESPERATE_STRIKE_RECOIL} HP
+          </span>
+        )}
+        {selfBurst(move) && (
+          <span className="pw-card-recoil">
+            <Users />
+            Hits squadmates
           </span>
         )}
       </span>

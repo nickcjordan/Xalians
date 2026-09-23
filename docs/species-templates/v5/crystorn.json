@@ -228,8 +228,7 @@
   },
   "acts": {
     "exclude": [
-      "horns/mend",
-      "horns/spray"
+      "horns/mend"
     ]
   }
 }

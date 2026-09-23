@@ -305,16 +305,45 @@ describe('a self-guard applies', () => {
 });
 
 describe('output bands follow the governing attribute', () => {
-  it('scales heavy and light physical harm by class and floors at one', () => {
+  it('scales heavy and light physical harm by the calibrated class factors and floors at one', () => {
     const species = bodyWith('body', 'fire') as Species & Record<string, unknown>;
     (species.physiology as { anatomy: string[] }).anatomy = ['fists', 'spurs'];
     withSignature(species);
     species.attributes = { ...species.attributes, strength: [100, 200] };
     const derived = deriveMechanisms(SpeciesSchema.parse(species) as unknown as Parameters<typeof deriveMechanisms>[0]);
-    expect(derived.find(m => m.key === 'derived-fists-strike-impact')!.effects[0].intensity).toEqual([85, 170]);
-    expect(derived.find(m => m.key === 'derived-spurs-strike-piercing')!.effects[0].intensity).toEqual([65, 130]);
+    expect(derived.find(m => m.key === 'derived-fists-strike-impact')!.effects[0].intensity).toEqual([80, 160]);
+    expect(derived.find(m => m.key === 'derived-spurs-strike-piercing')!.effects[0].intensity).toEqual([85, 170]);
     species.attributes = { ...species.attributes, strength: [0, 1] };
     const floored = deriveMechanisms(SpeciesSchema.parse(species) as unknown as Parameters<typeof deriveMechanisms>[0]);
     expect(floored.find(m => m.key === 'derived-fists-strike-impact')!.effects[0].intensity).toEqual([1, 1]);
+  });
+});
+
+describe('charge-up acts, 2026-09-23', () => {
+  it('lets crush, beam and burst be prepared at length, and nothing else', () => {
+    const species = bodyWith('body', 'fire') as Species & Record<string, unknown>;
+    (species.physiology as { anatomy: string[] }).anatomy = ['fists'];
+    withSignature(species);
+    species.conduits = { fists: 'fire' };
+    const derived = deriveMechanisms(SpeciesSchema.parse(species) as unknown as Parameters<typeof deriveMechanisms>[0]);
+    const chargeable = derived.filter(m => m.timing.preparation.includes('prolonged')).map(m => m.key).sort();
+    expect(chargeable).toEqual(['derived-fists-beam-fire', 'derived-fists-burst-fire', 'derived-fists-crush']);
+  });
+});
+
+describe('push force follows what pushes, 2026-09-23', () => {
+  it('scales a body push by strength and a mind or medium push by willpower', () => {
+    const species = bodyWith('body', 'water') as Species & Record<string, unknown>;
+    (species.physiology as { anatomy: string[] }).anatomy = ['trunk'];
+    (species.physiology as { communication: string[] }).communication = ['telepathic'];
+    withSignature(species);
+    species.channels = ['mind'];
+    species.conduits = { trunk: 'water' };
+    species.attributes = { ...species.attributes, strength: [10, 20], willpower: [100, 200] };
+    const derived = deriveMechanisms(SpeciesSchema.parse(species) as unknown as Parameters<typeof deriveMechanisms>[0]);
+    const force = (key: string) => derived.find(m => m.key === key)!.effects[0].intensity;
+    expect(force('derived-trunk-shove')).toEqual([8, 16]);
+    expect(force('derived-trunk-shove-water')).toEqual([80, 160]);
+    expect(force('derived-mind-shove')).toEqual([80, 160]);
   });
 });

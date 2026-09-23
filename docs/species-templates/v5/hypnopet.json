@@ -434,9 +434,7 @@
   "acts": {
     "exclude": [
       "*/drain",
-      "*/mend",
-      "crest/burst",
-      "mind/crush"
+      "*/mend"
     ]
   }
 }
