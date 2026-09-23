@@ -783,3 +783,19 @@ Second, the metric is insensitive to what it claims to be about. **Quadrupling t
 - The phone's best-here keys are 32px tall; `reclamation-proving` caught them at 26.
 
 **Verified:** 1565 web tests; `reclamation-shift`, `reclamation-proving` (4 of 4), `reclamation-actflip`, `reclamation-hotseat` green; paint read of the full play-through at 390 and 1440.
+
+### Pass 41 (2026-09-22): the table stops contradicting itself
+
+**From the play-through critic after pass 40** (clarity 4 desk / 3 phone): the game "gives up on you before round 3 even starts" without saying so; the end screen's explanation was "nonsense"; a suggested card named the wrong world.
+
+- **The round's opening tells the truth about sends.** Pass 40's stakes line said "you can win the game this round: you need 3 of these 3" to a player with 2 sends left. It now reads the same sends-aware reach as the status line, and opens on "Winning is out of reach ..." when that is so.
+- **The result says why.** The clinch sentence no longer calls the widest margin "the closest of them". Instead: "You left one world empty (Luminax), and the rival took it unopposed. Your closest loss was Endessa in round 2, 11 to 13." A world counts as contested if any event at it names one of your creatures, since the judge lists only survivors and a world where all yours fell would otherwise read as empty. Headline "The rival wins." (the rival's name was used nowhere else in play); site names moved to the row titles.
+- **A suggested squad card names the world it is suggested for**, not its best world.
+- **A strike into an empty world** reads "Nothing to strike yet; it holds the world", not an amber warning: holding an uncontested world is often the right send.
+- **Preview**: keyed per creature, so hovering creature after creature is a new preview each time; hover shift is 0.0000 at all four desk sizes (it was 0.0001, at the budget). The number's column is wide enough for "13 HOLD", and the own-sweep clause no longer opens a stray space.
+- **Phone**: the round reads "Round 3/3"; the armed hint is one line ("Pick a world for Graviclaw. Zolton is suggested.").
+- The honesty check in `reclamation-proving` follows the new wording, and was re-proven by removing the fix: it fails at every size, then passes with the fix restored.
+
+**Open:** the advisor still spends a round's sends without regard to what later rounds need; measure the suggestion policy against the rivals in the simulator before changing it. Advanced on a phone, strain in the preview.
+
+**Verified:** 1565 web and 543 rules tests; `reclamation-shift` (hover 0.0000), `reclamation-proving` (4 of 4), `reclamation-actflip`, `reclamation-hotseat` green; paint read of the full play-through at 390 and 1440.

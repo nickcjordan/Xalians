@@ -45,7 +45,7 @@ function lampLevel(hold) {
 	return 0;
 }
 
-function Plinth({ record, view, you, armed, suggested, disabled, onArm, onInspect, onHover, advanced }) {
+function Plinth({ record, view, you, armed, suggested, suggestedSiteId, disabled, onArm, onInspect, onHover, advanced }) {
 	const slot = slotStateOf(record, view, you);
 	const inHand = slot.state === 'hand';
 	const holds = inHand ? siteHoldsFor(record, view, you) : null;
@@ -107,7 +107,8 @@ function Plinth({ record, view, you, armed, suggested, disabled, onArm, onInspec
 				)}
 				{/* pass 38: simple mode names the one world it holds best; the three dots are advanced mode */}
 				{inHand && holds && !advanced && (() => {
-					const best = holds.reduce((a, b) => (b.hold > a.hold ? b : a));
+					// pass 41: the suggested card names the world it is suggested FOR; a critic read "Telypso, suggested" off a card suggested for Stonera
+					const best = (suggestedSiteId && holds.find((h) => h.site.id === suggestedSiteId)) || holds.reduce((a, b) => (b.hold > a.hold ? b : a));
 					return (
 						<span className={`rec-plinth-best g-el-${best.site.world.element}`} data-plinth-best={best.site.id} title={holds.map((h) => `${h.site.world.planet} ${formatHold(h.hold)}`).join(' · ')}>
 							<span className="rec-plinth-best-dot" aria-hidden="true" />{best.site.world.planet}
@@ -302,6 +303,7 @@ function ReclamationBench({
 						you={you}
 						armed={armedRecordId === record.id}
 						suggested={suggestedRecordId === record.id ? (rec.reason || true) : false}
+						suggestedSiteId={suggestedRecordId === record.id ? rec.siteId : null}
 						disabled={!yourTurn || me.passed || sendsLeft === 0}
 						onArm={onArm}
 						onInspect={onInspect}

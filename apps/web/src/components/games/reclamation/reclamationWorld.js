@@ -610,7 +610,11 @@ function ReclamationWorld({
 
 								<div className={`rec-site-midline${empty ? ' rec-site-midline--empty' : ''}`}>
 									{ghost && (
-										<span className="rec-ghost" data-ghost={site.id}>
+										/*
+											pass 41: keyed by creature, so each creature's preview is a
+											new preview rather than the last one's text moving about
+										*/
+										<span className="rec-ghost" data-ghost={site.id} key={ghost.recordId || 'ghost'}>
 											{/* pass 38: three identical "send here" calls cut; the outlined world and its number are the call */}
 											{/* simple mode prints the same whole number the figure will carry once sent */}
 											<span className="rec-ghost-value">{formatHoldShown(ghost.hold)}<span className="rec-ghost-unit">hold</span></span>
@@ -633,8 +637,11 @@ function ReclamationWorld({
 													<span className="rec-ghost-plan" data-ghost-plan={site.id}>
 														<span className={`rec-ghost-role${warn ? ' rec-ghost-role--warn' : ''}`} title={ghost.roleLine} data-ghost-warn={warn ? site.id : undefined}>
 															{ghost.role && ghost.role !== 'none' && <RoleGlyph role={ghost.role} />}
-															{summary ? summary.text : ''}
-															{caughtByOwn && <span className="rec-ghost-own" data-ghost-own={site.id}>{summary ? '. ' : ''}Your sweep here will hit it too</span>}
+															{/* pass 41: one text run, so the flex gap cannot open a space before the period */}
+															<span className="rec-ghost-text">
+																{summary ? summary.text : ''}
+																{caughtByOwn && <span className="rec-ghost-own" data-ghost-own={site.id}>{summary ? '. ' : ''}Your sweep here hits it too</span>}
+															</span>
 														</span>
 														{advanced && ghost.role === 'sweep' && (ghost.lines || []).length > 1 && (ghost.lines || []).map((line, i) => (
 															<span className="rec-ghost-line" key={`${site.id}-${i}`}>{line}</span>
