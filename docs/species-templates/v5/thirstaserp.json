@@ -35,13 +35,13 @@
     ],
     "covering": "scales",
     "size": {
+      "massKg": [
+        95,
+        145
+      ],
       "heightCm": [
         190,
         250
-      ],
-      "weightKg": [
-        95,
-        145
       ]
     },
     "lifespan": "standard",
@@ -156,7 +156,7 @@
       55
     ]
   },
-  "schemaVersion": "5.0.0",
+  "schemaVersion": "5.1.0",
   "temperament": {
     "boldness": [
       40,

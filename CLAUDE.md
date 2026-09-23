@@ -16,6 +16,8 @@ Xalians is a shared creature-generation and collection platform with multiple ga
 
 ## Creature system: levers, not stone (Nick, 2026-09-02)
 
+For current new-species authoring or edits to an existing species' defining facts or abilities, follow `docs/design/creature-model-current.md`, `docs/design/creature-derived-acts.md`, `.claude/skills/migrate-species/SKILL.md`, and `docs/species-templates/ABILITY-AUDIT.md`. Review the complete act space derived from anatomy, channels and conduits, exclude only on concrete evidence, and author justified extensions the tables cannot express. Do not trim to a tidy number of moves or confuse four generated actions for an individual with a species-level limit. Update the prior audit for affected families; compilation does not establish creative completeness. Older v4 guidance below is historical where it conflicts with this contract.
+
 Every ratified decision in the creature system (registry keys and their definitions, the trait model and its percents, the instrument-by-action matrix, the conduit medium table, size bands, lifespan cuts, catalog cells, signature rulings) is a **tuned lever, not a fixed law**. The platform is being built one piece at a time, every game and feature will consume real creatures, and each build is a test of the system. Ratification means "the current setting", chosen so work can proceed consistently; it does not mean the question is closed forever.
 
 What this requires of every agent working in this repo:

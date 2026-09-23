@@ -41,13 +41,13 @@
     ],
     "covering": "feathers",
     "size": {
+      "massKg": [
+        38,
+        56
+      ],
       "heightCm": [
         88,
         112
-      ],
-      "weightKg": [
-        38,
-        56
       ]
     },
     "lifespan": "standard",
@@ -161,7 +161,7 @@
       46
     ]
   },
-  "schemaVersion": "5.0.0",
+  "schemaVersion": "5.1.0",
   "temperament": {
     "boldness": [
       45,

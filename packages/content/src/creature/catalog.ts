@@ -1,11 +1,17 @@
 /** The redesign's catalog. This entry point is deliberately independent of game adapters. */
 import { z } from 'zod';
 import { DEFAULT_STATUS_INTENSITY } from './benchmarks.ts';
+import { AnatomyKeySchema as LegacyAnatomyKeySchema, InstrumentKeySchema as LegacyInstrumentKeySchema } from '../schema/registries.ts';
 export {
-  ElementKeySchema, InstrumentKeySchema, AnatomyKeySchema, CompositionKeySchema,
+  ElementKeySchema, CompositionKeySchema,
   BodyPlanKeySchema, CoveringKeySchema, DietKeySchema, CommunicationKeySchema,
   MediumPhaseKeySchema, LifespanKeySchema,
 } from '../schema/registries.ts';
+
+// The v4 registry is pinned by the current release. New v5 anatomy belongs in the
+// redesigned creature catalog until a new platform release is explicitly selected.
+export const AnatomyKeySchema = z.enum([...LegacyAnatomyKeySchema.options, 'fins'] as const);
+export const InstrumentKeySchema = z.enum([...LegacyInstrumentKeySchema.options, 'fins'] as const);
 
 export const Continuity = z.enum(['discrete', 'ongoing']);
 export const Trigger = z.enum(['contact', 'harmed', 'ally-harmed']);
