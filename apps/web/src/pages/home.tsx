@@ -64,6 +64,9 @@ const ART = {
 		src: '/assets/img/lore/eras/unbirth.jpg',
 		small: '/assets/img/lore/eras/unbirth-768.jpg',
 		alt: 'A long dormitory hall of empty made-up beds leading to a great riveted machine.',
+		// The living version: the Genesis Prototype on Floria, throwing seed
+		// pods into the storm that was meant to wash its mistakes away.
+		live: '/assets/plates/unbirth/plate.html',
 	},
 	accords: {
 		era: 'accords',
