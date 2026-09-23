@@ -1,30 +1,29 @@
 import React from 'react';
-import ReclamationFigure, { ReclamationSilhouette, HoldMeter } from './reclamationFigure';
-import { RoleGlyph } from './reclamationGlyphs';
-import { formatHold, formatHoldShown, countWord, speciesLabel, wholeOrTenths } from './reclamationNarration';
-import { ghostSummary, strainNote } from './reclamationPreview';
+import ReclamationFigure, { ReclamationSilhouette } from './reclamationFigure';
+import { RoleGlyph, SwiftGlyph, HomeGlyph, StrainGlyph } from './reclamationGlyphs';
+import { formatHold, formatHoldShown, countWord, speciesLabel } from './reclamationNarration';
+import { strainNote, strainCause } from './reclamationPreview';
 import { elementOf } from './reclamationVocabulary';
+import { FrontLine, HoldBar, Crest, frontSentence } from './reclamationInstruments';
+import { getSpeciesTypeSymbol } from '../../../utils/svgUtil';
 
 /*
 	ReclamationWorld — the frame: three worlds side by side, each at one of its sites.
 
-	Each site is a matte panel headed by the site's name and its environment line. The
-	handler's creatures stand below the midline facing up; the rival's stand above it
-	facing down. The thing a handler most needs from a site is who is winning it and by
-	how much, so that is the site's biggest readout: a margin band under the heading that
-	says "you lead by 4.2", "the rival leads by 3.1" or "level, to the Court", with the
-	two raw totals beside it.
+	Each site is a matte panel headed by the planet's name. The handler's creatures stand
+	below the midline facing up; the rival's stand above it facing down.
 
-	When a creature is armed, every site says what sending it there would do ("you would
-	lead by 2.1", "still behind by 1.3") so the choice of site is legible before the click.
+	PASS 52, THE GLANCE REDESIGN (docs/design/reclamation-glance-redesign.md). Who is
+	winning a world is its front line: the field split into the rival's brass ground above
+	and your cyan ground below where the two totals put the line, with the totals on it.
+	No "rival" and "you" tags, no margin sentence, no footing count, no "best here" names:
+	whose a creature is reads from which side of the line it stands on, and what each of
+	yours would do here is on its own card (the fit strip). A creature pointed at or lifted
+	moves the line to where its send would put it and marks what the send would cost every
+	figure here.
 
-	An empty site is quiet: name and weather, open ground, one faint word. It speaks only
-	when there is something to say: the send invitation while a creature is armed, the
-	move target while a swift creature is being moved, or the Court's stamp. A one-sided site says who holds it and skips
-	the totals, since the one number is already in the sentence.
-
-	Every hold shown is passed in already computed by the engine's prepare(): this
-	component derives nothing except differences between numbers it was given.
+	Every number shown is passed in already computed by the engine (prepare(),
+	forecastClash(), forecastSend()): this component derives nothing.
 
 	PASS 3, THE STAKE (assumption 22). A tray head carries a "Stake" control while its
 	world is one this handler may still stake, and a mark saying what a staked world now
@@ -114,155 +113,6 @@ export function EnvironmentScale({ site, ghost }) {
 }
 
 /*
-	PASS 29. THE FOOTING: what this world asks of YOUR squad.
-
-	Named "footing", not "stake": Stake is already the game's own mechanic, the control
-	on the panel head that makes a world count two. This is a different thing, and
-	sharing the word would make the panel say "stake" twice about two unrelated rules.
-
-	An empty world used to print the single word "unclaimed" in the middle of a 264px
-	body, three times across the frame, which a blind critic called "the least motivating
-	opening board possible" and scored 4 of 10 for reason to keep playing. "Unclaimed"
-	describes the interface; it is true of every empty world and so distinguishes none of
-	them.
-
-	What distinguishes them is who of yours can stand here, and it is sharply different
-	per world: measured over five seeds and every site, the number of a twelve-creature
-	squad comfortable at a site ranges from 0 to 11 (mean 5.4), and at 87 of 210 sites
-	fewer than half are. A native creature holds 1.5x here, and 61% of worlds offer one.
-
-	So the empty panel now says what the world costs and what it offers, in the handler's
-	own terms. It is still quiet: three short lines, no colour beyond the element already
-	on the panel, and it disappears the moment a creature stands here, because from then
-	on the figures and the balance bar are the better answer.
-*/
-/*
-	BestHere: up to three of your squad that would hold this world best, each a key that picks
-	it up. Pass 39 on empty worlds; pass 50 also on a world you trail, labelled with the gap,
-	because a critic saw the names vanish exactly where they were needed: the world the rival
-	had just claimed.
-*/
-function BestHere({ best, onPick, label, limit }) {
-	const picks = (best || []).slice(0, limit || 3);
-	if (!picks.length) {
-		return null;
-	}
-	return (
-		<span className="rec-world-best" data-world-best>
-			<span className="rec-world-best-label">{label || 'Best here'}</span>
-			{picks.map(({ record, hold }) => (onPick ? (
-				<button
-					type="button"
-					className="g-btn rec-world-best-pick"
-					key={record.id}
-					data-best-pick={record.id}
-					title={`Pick up ${speciesLabel(record)}`}
-					onClick={(e) => { e.stopPropagation(); onPick(record.id); }}
-				>
-					{speciesLabel(record)} <b className="g-mono">{formatHoldShown(hold)}</b>
-				</button>
-			) : (
-				<span className="rec-world-best-pick" key={record.id}>{speciesLabel(record)} <b className="g-mono">{formatHoldShown(hold)}</b></span>
-			)))}
-		</span>
-	);
-}
-
-export function WorldFooting({ footing, world, compact, detail, onPick }) {
-	if (!footing || !footing.of) {
-		// no bench to measure against (a resumed match mid-resolution, say): say the one
-		// true thing rather than an arithmetic of nothing
-		return <span className="rec-site-unclaimed">unclaimed</span>;
-	}
-	const { comfortable, severe, native, of } = footing;
-	const hostile = of - comfortable;
-	/*
-		PASS 38. In simple mode the footing keeps its purpose (which world suits this squad)
-		in the fewest words: how many are at ease, and how many are at home. The strain
-		breakdown and the "half again" arithmetic are advanced mode and the help panel.
-	*/
-	if (compact) {
-		return (
-			<div className="rec-world-footing rec-world-footing--compact" data-world-footing>
-				<span className="rec-world-footing-line" data-footing-ease>
-					<b className="g-mono rec-world-footing-big">{comfortable}</b> of your {of} hold well here
-				</span>
-				{detail && native > 0 && (
-					<span className="rec-world-footing-line rec-world-footing-line--home" data-footing-home>
-						<b className="g-mono">{native}</b> {native === 1 ? 'calls' : 'call'} it home
-					</span>
-				)}
-				{detail && hostile > 0 && (
-					<span className="rec-world-footing-line rec-world-footing-line--cost" data-footing-cost>
-						<b className="g-mono">{hostile}</b> strained{severe > 0 ? `, ${severe} severely` : ''}
-					</span>
-				)}
-				{/*
-					PASS 39. The three of your squad that would hold this world best, by name and
-					number. A blind critic called the rounds "the same screen three times": three
-					empty panels with one count each. These change with every round's worlds, and a
-					press picks that creature up, which is the next thing the player does anyway.
-				*/}
-				<BestHere best={footing.best} onPick={onPick} />
-			</div>
-		);
-	}
-	return (
-		<div className="rec-world-footing" data-world-footing>
-			<span className="rec-world-footing-head">unclaimed</span>
-			<span className="rec-world-footing-line" data-footing-ease>
-				<b className="g-mono">{comfortable}</b> of your <b className="g-mono">{of}</b> {comfortable === 1 ? 'is' : 'are'} at ease here
-			</span>
-			{hostile > 0 && (
-				<span className="rec-world-footing-line rec-world-footing-line--cost" data-footing-cost>
-					{/*
-						"the other 12 are strained, 12 severely" is the arithmetic talking. When
-						every strained creature is severely strained, which is the case a world
-						like Magmuth produces and the sharpest warning the panel can give, it
-						says so once.
-					*/}
-					{severe === hostile
-						? <>{comfortable === 0 ? 'every one of them is' : hostile === 1 ? 'the other is' : `the other ${hostile} are`} <b className="g-mono">severely</b> strained</>
-						: severe > 0
-							? <>{hostile === 1 ? 'the other is strained' : `the other ${hostile} are strained`}, <b className="g-mono">{severe}</b> severely</>
-							: <>{hostile === 1 ? 'the other is strained' : `the other ${hostile} are strained`}</>}
-				</span>
-			)}
-			{native > 0 && (
-				<span className="rec-world-footing-line rec-world-footing-line--home" data-footing-home>
-					<b className="g-mono">{native}</b> of yours {native === 1 ? 'calls' : 'call'} {world && world.planet ? world.planet : 'this world'} home, and {native === 1 ? 'holds' : 'hold'} half again as much on it
-				</span>
-			)}
-		</div>
-	);
-}
-
-function marginText(mine, theirs) {
-	const diff = mine - theirs;
-	if (Math.abs(diff) < 0.05) {
-		return { who: 'level', text: 'level, to the Court' };
-	}
-	if (diff > 0) {
-		return { who: 'mine', text: theirs === 0 ? `you hold it, ${formatHold(mine)}, unopposed` : `you lead by ${formatHold(diff)}` };
-	}
-	return { who: 'theirs', text: mine === 0 ? `rival holds it, ${formatHold(theirs)}, unopposed` : `rival leads by ${formatHold(-diff)}` };
-}
-
-function ghostText(ghost, mine, theirs) {
-	const after = mine + ghost.hold - theirs;
-	if (theirs === 0) {
-		return mine === 0 ? 'claims it, unopposed' : `holds it unopposed, ${formatHold(mine + ghost.hold)}`;
-	}
-	if (Math.abs(after) < 0.05) {
-		return 'would be level';
-	}
-	if (after > 0) {
-		return mine > theirs ? `lead grows to ${formatHold(after)}` : `you would lead by ${formatHold(after)}`;
-	}
-	return `still behind by ${formatHold(-after)}`;
-}
-
-/*
 	THE STAKE, on the tray head (Pass 3, assumption 22). A world this handler may still
 	stake carries a small "Stake" control; a world already staked carries a mark saying
 	what it now counts, in the colour of whoever staked it, and in both colours when both
@@ -295,7 +145,6 @@ function ReclamationWorld({
 	board,
 	you,
 	holds,
-	totals,
 	hurt,
 	ghosts,
 	verdicts,
@@ -305,18 +154,16 @@ function ReclamationWorld({
 	onSiteHover,
 	onFigureClick,
 	clickable,
-	recommendedSiteId,
 	holdingIds,
 	hiddenEnemyCount,
 	forecast,
-	ownSweeps,
+	fronts,
+	preview,
 	highlights,
 	clashSiteId,
-	siteFootings,
-	onPickBest,
+	deploying,
 	arrival,
 	hoverSiteId,
-	previewRecordId,
 	advanced,
 	stakes,
 	stakeableSiteIds,
@@ -330,20 +177,9 @@ function ReclamationWorld({
 	const clashing = clashSiteId || null;
 
 	/*
-		PASS 30. The entrance is worn for its own duration and then taken off.
-
-		It used to be a permanent class, which was harmless only because nothing else
-		animated the panel: the animation ran once on mount and sat filled forever. Pass 28
-		added the camera, a second animation on the same element, and when the camera
-		released at the Court's ruling the browser restarted `rec-site-enter` from opacity
-		zero - so the verdict, the payoff of the whole round, was delivered over a board
-		fading in from nothing. A blind critic called that frame "an empty page" and rated
-		it a shipping blocker.
-
-		Dropping the class once the entrance has played makes it a one-shot, which is what
-		it always meant to be, and lets the camera come and go without the panel
-		re-entering behind it. Keyed off the component's own mount rather than off any
-		phase, so it cannot be re-armed by a state change mid-round.
+		PASS 30. The entrance is worn for its own duration and then taken off, so the camera
+		(pass 28) can come and go without the panel re-entering from opacity zero behind the
+		Court's verdict. Keyed off the component's own mount rather than off any phase.
 	*/
 	const [entered, setEntered] = React.useState(true);
 	React.useEffect(() => {
@@ -356,51 +192,33 @@ function ReclamationWorld({
 
 	return (
 		<div className="rec-world">
+			{/* pass 52: a hidden rival send is a silhouette and a count; the sentence is its title */}
 			{hiddenEnemyCount > 0 && (
-				<div className="rec-hidden-banner rec-rise" data-hidden-banner>
+				<div
+					className="rec-hidden-banner rec-rise"
+					data-hidden-banner
+					title={`The rival has ${hiddenEnemyCount === 1 ? 'a creature' : `${hiddenEnemyCount} creatures`} hidden somewhere in this round. It is revealed when the worlds clash, and is not in the forecast.`}
+				>
 					<ReclamationSilhouette count={hiddenEnemyCount} />
-					<span className="rec-hidden-banner-text">
-						The rival has {hiddenEnemyCount === 1 ? 'a creature' : `${hiddenEnemyCount} creatures`} hidden somewhere in the frame. It is revealed when the worlds clash.
-					</span>
 				</div>
 			)}
 			<div className="rec-sites">
 				{frame.sites.map((site, siteIndex) => {
 					const theirs = (board[site.id][opponent] || []).filter((e) => e.record);
 					const mine = (board[site.id][you] || []).filter((e) => e.record);
-					const totalMine = totals[site.id] ? totals[site.id][you] : 0;
-					const totalTheirs = totals[site.id] ? totals[site.id][opponent] : 0;
-					// pass 50: two holds that round to the same whole print their tenths, so a world ruled by 0.2 never reads "2 to 2"
-					const [shownMine, shownTheirs] = wholeOrTenths(totalMine, totalTheirs);
 					const empty = theirs.length === 0 && mine.length === 0;
-					const margin = empty ? { who: 'empty', text: '' } : marginText(totalMine, totalTheirs);
 					const ghost = ghosts && ghosts[site.id];
 					const verdict = verdicts && verdicts[site.id];
 					const stake = stakes && stakes[site.id];
 					const stakedHere = !!(stake && stake.by && stake.by.length > 0);
 					const canStake = !!onStake && stakeable.has(site.id);
+					const front = (fronts && fronts[site.id]) || { theirs: 0, mine: 0 };
+					const previewHere = preview && preview[site.id];
+					const lead = Math.abs(front.theirs - front.mine) < 0.05
+						? (front.theirs + front.mine > 0.05 ? 'level' : 'empty')
+						: front.theirs > front.mine ? 'theirs' : 'mine';
 
-					/*
-						PASS 30, A BUG PASS 28 INTRODUCED.
-
-						`rec-site--enter` used to be harmless as a permanent class: its animation
-						runs once when the element is created and then sits filled. Pass 28 added
-						the camera, which puts a DIFFERENT animation on the same element while a
-						world is clashing. When the camera releases at the Court's ruling, the
-						element's animation list changes back and the browser starts
-						`rec-site-enter` AGAIN, from opacity 0.
-
-						The result was that the Court's verdict, the payoff of the whole round,
-						was delivered over a board fading in from nothing. A blind critic called
-						the ruling frame "an empty page" and rated it a shipping blocker; the
-						probe confirmed all three panels running `rec-site-enter` at the judge
-						event, at opacities 0.67, 0.89 and 0.98.
-
-						So the entrance is worn only while it is actually entering. Once a round
-						has been played at this frame it is dropped, and the camera can come and
-						go without the panel re-entering behind it.
-					*/
-					const classes = ['g-panel', 'rec-site', `rec-site--${margin.who}`, `g-el-${site.world.element}`];
+					const classes = ['g-panel', 'rec-site', `rec-site--${lead}`, `g-el-${site.world.element}`];
 					if (entered) {
 						classes.push('rec-site--enter');
 					}
@@ -417,12 +235,11 @@ function ReclamationWorld({
 					if (ghost || movingRecordId) {
 						classes.push('rec-site--targeted');
 					}
+					if (armedRecordId || movingRecordId) {
+						classes.push('rec-site--ready');
+					}
 					if (verdict) {
 						classes.push(`rec-site--verdict-${verdict.who}`);
-					}
-					const recommended = recommendedSiteId === site.id;
-					if (recommended) {
-						classes.push('rec-site--recommended');
 					}
 					if (hoverSiteId === site.id) {
 						classes.push('rec-site--hover');
@@ -433,101 +250,88 @@ function ReclamationWorld({
 					if (pendingStakeSiteId === site.id) {
 						classes.push('rec-site--stake-pending');
 					}
-					/*
-						PASS 28. The clashing world, and the two that are waiting.
-
-						Measured: over 61 frames of a live Clash, nothing on the table said which
-						of the three worlds the current event belonged to. The panel now says it,
-						and the other two dim, so the round reads as three fights in sequence
-						rather than one undifferentiated wall of text.
-					*/
 					if (clashing) {
 						classes.push(clashing === site.id ? 'rec-site--clashing' : 'rec-site--waiting');
 					}
 
-					// pass 38: the hold a creature would stand at after the Clash, from what stands now
+					/*
+						PASS 52. What the Clash would leave each creature at: with a creature pointed
+						at or lifted, the forecast of that send (so a strike's victim shows its cut
+						before the click); otherwise the board as it stands. Undefined when nothing
+						would change, and during the Clash and the Ruling, which show live holds.
+					*/
+					const siteForecast = previewHere && previewHere.forecast ? previewHere.forecast : forecast;
 					const forecastOf = (entry) => {
-						const f = forecast && forecast[entry.recordId];
+						const f = siteForecast && siteForecast[entry.recordId];
 						const h = holds[entry.recordId];
 						if (!f || !h || typeof h.hold !== 'number') {
-							return null;
+							return undefined;
 						}
 						if (f.downed) {
 							return 0;
 						}
-						return Math.abs(f.hold - h.hold) < 0.05 ? null : f.hold;
+						return Math.abs(f.hold - h.hold) < 0.05 ? undefined : f.hold;
 					};
-					const forecastTotal = (entries, live) => {
-						let changed = false;
-						const sum = entries.filter((e) => e.record).reduce((acc, e) => {
-							const f = forecastOf(e);
-							const h = holds[e.recordId];
-							if (f === null || !h) {
-								return acc + (h && typeof h.hold === 'number' ? h.hold : 0);
-							}
-							changed = true;
-							return acc + f;
-						}, 0);
-						return changed && Math.abs(sum - live) > 0.05 ? sum : null;
-					};
-					const afterMine = forecastTotal(mine, totalMine);
-					const afterTheirs = forecastTotal(theirs, totalTheirs);
 
 					// the key is passed on the element itself, never inside the spread: React
 					// warns loudly about a key arriving through a props object
-					const figureProps = (entry, seat, facing) => ({
-						record: entry.record,
-						element: elementOf(entry.record),
-						seat,
-						you,
-						facing,
-						hidden: entry.hidden,
-						hold: holds[entry.recordId] ? holds[entry.recordId].hold : undefined,
-						printedHold: holds[entry.recordId] ? holds[entry.recordId].printed : undefined,
-						hurt: !!(hurt && hurt[entry.recordId]),
-						strainLevel: holds[entry.recordId] ? holds[entry.recordId].strainLevel : undefined,
-						isHome: holds[entry.recordId] ? holds[entry.recordId].isHome : false,
-						unstrainedHold: holds[entry.recordId] ? holds[entry.recordId].unstrained : undefined,
-						baseHold: holds[entry.recordId] ? holds[entry.recordId].baseHold : undefined,
-						// the base redesign's one glyph per creature: what it does at the Clash
-						role: holds[entry.recordId] ? holds[entry.recordId].role : entry.role,
-						// pass 38: one reading per hold in simple mode, the number; the meter is advanced
-						showMeter: !!advanced,
-						fallen: !!entry.fallen,
-						ownSweep: seat === you && !!(ownSweeps && ownSweeps[entry.recordId] > 0),
-						// pass 38: a strike of yours at a world with no rival in sight will find no target
-						noTarget: seat === you && !!siteFootings && !!holds[entry.recordId] && holds[entry.recordId].role === 'strike'
-							&& theirs.filter((e) => e.record).length === 0 && !(hiddenEnemyCount > 0),
-						forecast: forecastOf(entry),
-						blowMagnitude: holds[entry.recordId] ? holds[entry.recordId].blowMagnitude : undefined,
-						selected: armedRecordId === entry.recordId || movingRecordId === entry.recordId,
-						// pass 38: not at the Ruling, where the winners of the round were dimmed along with the fallen
-						dimmed: !verdict && holdingIds && holdingIds.includes(entry.recordId),
-						acting: hl.acting === entry.recordId,
-						hit: hl.hit === entry.recordId,
-						// pass 32: the engine step, so an animation replays on a repeat actor
-						beat: hl.beat,
-						hover: hl.hover === entry.recordId,
-						flash: hl.hit === entry.recordId ? hl.flash : undefined,
-						arrive: arrivedIds.includes(entry.recordId),
-						threat: forecastOf(entry) === 0 ? { level: 'downed', text: 'Falls in the Clash, as the board stands now' } : undefined,
-						lossText: forecastOf(entry) !== null ? `After the Clash, as the board stands now: ${formatHoldShown(forecastOf(entry))}` : undefined,
-						onClick: (e) => {
-							e.stopPropagation();
-							onFigureClick(entry, seat, site);
-						},
-						title: 'Inspect this creature',
-					});
+					const figureProps = (entry, seat, facing) => {
+						const h = holds[entry.recordId];
+						const after = forecastOf(entry);
+						return {
+							record: entry.record,
+							element: elementOf(entry.record),
+							seat,
+							you,
+							facing,
+							hidden: entry.hidden,
+							hold: h ? h.hold : undefined,
+							printedHold: h ? h.printed : undefined,
+							hurt: !!(hurt && hurt[entry.recordId]),
+							strainLevel: h ? h.strainLevel : undefined,
+							isHome: h ? h.isHome : false,
+							unstrainedHold: h ? h.unstrained : undefined,
+							baseHold: h ? h.baseHold : undefined,
+							// the base redesign's one glyph per creature: what it does at the Clash
+							role: h ? h.role : entry.role,
+							// the bulb meter is advanced mode's arithmetic; the bar is on every figure
+							showMeter: !!advanced,
+							fallen: !!entry.fallen,
+							// pass 38: a strike of yours at a world with no rival in sight will find no target
+							noTarget: seat === you && !!deploying && !!h && h.role === 'strike'
+								&& theirs.length === 0 && !(hiddenEnemyCount > 0),
+							forecast: after,
+							blowMagnitude: h ? h.blowMagnitude : undefined,
+							selected: armedRecordId === entry.recordId || movingRecordId === entry.recordId,
+							// pass 38: not at the Ruling, where the winners of the round were dimmed along with the fallen
+							dimmed: !verdict && holdingIds && holdingIds.includes(entry.recordId),
+							acting: hl.acting === entry.recordId,
+							hit: hl.hit === entry.recordId,
+							// pass 32: the engine step, so an animation replays on a repeat actor
+							beat: hl.beat,
+							hover: hl.hover === entry.recordId,
+							flash: hl.hit === entry.recordId ? hl.flash : undefined,
+							arrive: arrivedIds.includes(entry.recordId),
+							lossText: after !== undefined ? (after === 0 ? 'Falls in the Clash, as the board stands' : `After the Clash, as the board stands: ${formatHoldShown(after)}`) : undefined,
+							onClick: (e) => {
+								e.stopPropagation();
+								onFigureClick(entry, seat, site);
+							},
+							title: 'Inspect this creature',
+						};
+					};
 
 					return (
 						<section
 							className={classes.join(' ')}
 							key={site.id}
 							data-site-id={site.id}
+							data-site-lead={lead}
 							style={{ '--rec-i': siteIndex }}
+							aria-label={frontSentence(site.world.planet, front.theirs, front.mine)}
 							onClick={clickable ? () => onSiteClick(site.id) : undefined}
-							onMouseEnter={clickable && onSiteHover ? () => onSiteHover(site.id) : undefined}
-							onMouseLeave={clickable && onSiteHover ? () => onSiteHover(null) : undefined}
+							onMouseEnter={onSiteHover ? () => onSiteHover(site.id) : undefined}
+							onMouseLeave={onSiteHover ? () => onSiteHover(null) : undefined}
 							role={clickable ? 'button' : undefined}
 							tabIndex={clickable ? 0 : undefined}
 							onKeyDown={clickable ? (e) => {
@@ -538,7 +342,7 @@ function ReclamationWorld({
 							} : undefined}
 						>
 							<header className="rec-site-head">
-								{/* pass 38: no index box (nothing refers to "world 2"); the place and the temperature scale are advanced mode, the place's description stays on the name as deeper reading */}
+								{/* pass 38: the place and the temperature scale are advanced mode; the place's description stays on the name */}
 								<span className="rec-site-dot" aria-hidden="true" />
 								<h3 className="rec-site-name" title={`${site.name}${site.description ? `. ${site.description}` : ''}`}>{site.world.planet}</h3>
 								{advanced && <span className="rec-site-place" title={site.description || undefined}>{site.name}</span>}
@@ -560,134 +364,28 @@ function ReclamationWorld({
 										<span className="rec-stake-word">Stake </span>&times;2
 									</button>
 								)}
-								{recommended && <span className="rec-site-recommend" data-recommended-site>recommended</span>}
 							</header>
 
-							{/* the tally: the two sides' totals as printed readouts, the leading side's in
-							    its colour, and one sentence between them. A previewed send prints its
-							    own figure after yours. An empty world keeps the room and shows nothing. */}
-							{(() => {
-								const ghostHold = ghost ? ghost.hold : 0;
-								const afterText = ghost ? ghostText(ghost, totalMine, totalTheirs) : null;
-								const quiet = empty && !ghost;
-								const hiddenBar = quiet && !verdict;
-								return (
-									<div className={`rec-tally rec-tally--${margin.who}${hiddenBar ? ' rec-tally--hidden' : ''}${ghost ? ' rec-tally--preview' : ''}`} data-site-margin={site.id}>
-										<span className="rec-tally-side rec-tally-side--theirs">
-											<span className="rec-tally-label">rival</span>
-											{/*
-												pass 30: the two big totals either side of the balance bar round.
-												The MARGIN SENTENCE below keeps its tenth deliberately: "you lead
-												by 0.4" is a real and actionable state, and rounding it would print
-												"you lead by 0" over a world that is genuinely, narrowly yours.
-											*/}
-											<span className="rec-tally-value rec-tick" title={formatHold(totalTheirs)} data-total-seat={opponent} data-site-total={site.id} key={`t-${formatHold(totalTheirs)}`}>{shownTheirs}</span>
-											{afterTheirs !== null && <span className="rec-tally-after" title="After the Clash, from what stands now" data-tally-after={opponent}><span className="rec-after-arrow" aria-hidden="true">&rarr;</span>{formatHoldShown(afterTheirs)}</span>}
-										</span>
-										{(() => {
-											// the balance: the rival's hold pushes in from the left, yours from the
-											// right, a previewed send as a hatched extension of yours; the words are
-											// kept only for the states a bar cannot say (unclaimed, level)
-											const total = totalMine + totalTheirs + ghostHold;
-											const pctTheirs = total > 0 ? (totalTheirs / total) * 100 : 0;
-											const pctMine = total > 0 ? (totalMine / total) * 100 : 0;
-											// pass 38: an empty world's bar would be all preview, which read as a loading bar; it stays empty until someone stands there
-											const pctGhost = total > 0 && (totalMine + totalTheirs) > 0 ? (ghostHold / total) * 100 : 0;
-											const word = total === 0 ? 'unclaimed' : Math.abs(totalMine + ghostHold - totalTheirs) < 0.05 ? 'level' : null;
-											return (
-												<span className={`rec-balance${ghost ? ' rec-balance--preview' : ''}`} title={afterText || margin.text || 'unclaimed'} data-balance={site.id} data-balance-text={afterText || margin.text || 'unclaimed'}>
-													{/* pass 37: each fill spans the bar and is clipped to its share, so a
-													    preview changes paint only and never counts as the table moving */}
-													<span className="rec-balance-fill rec-balance-fill--theirs" style={{ clipPath: `inset(0 ${100 - pctTheirs}% 0 0)` }} />
-													<span className="rec-balance-fill rec-balance-fill--ghost" style={{ clipPath: `inset(0 ${pctMine}% 0 ${Math.max(0, 100 - pctMine - pctGhost)}%)` }} />
-													<span className="rec-balance-fill rec-balance-fill--mine" style={{ clipPath: `inset(0 0 0 ${100 - pctMine}%)` }} />
-													{word && <span className="rec-balance-word">{word}</span>}
-												</span>
-											);
-										})()}
-										<span className="rec-tally-side rec-tally-side--mine">
-											<span className="rec-tally-value rec-tick" title={formatHold(totalMine)} data-total-seat={you} data-site-total={site.id} key={`m-${formatHold(totalMine)}`}>{shownMine}</span>
-											{afterMine !== null && <span className="rec-tally-after" title="After the Clash, from what stands now" data-tally-after={you}><span className="rec-after-arrow" aria-hidden="true">&rarr;</span>{formatHoldShown(afterMine)}</span>}
-											{ghost && advanced && <span className="rec-tally-plus">+{formatHoldShown(ghostHold)}</span>}
-											<span className="rec-tally-label">you</span>
-										</span>
-									</div>
-								);
-							})()}
-
-							{/* the ground: the rival's rank on the far edge, yours on the near one, each
-							    edge painted in its side's colour and labelled, so whose creature stands
-							    where is read from the floor before the figures are */}
+							{/*
+								PASS 52. The ground: the rival's rank above, yours below, and between them
+								the front line, drawn where the two totals put it. There are no "rival" and
+								"you" tags: the ground's color and which side of the line a creature stands
+								on say whose it is.
+							*/}
 							<div className={`rec-site-field rec-site-floor${empty ? ' rec-site-field--empty' : ''}`}>
+								{/* pass 52: the world's element, large and faint, so its color on the bench's fit columns has somewhere to come from */}
+								<span className="rec-site-emblem" aria-hidden="true">{getSpeciesTypeSymbol(site.world.element, true, 120, 'rec-site-emblem-svg')}</span>
+								<FrontLine siteId={site.id} theirs={front.theirs} mine={front.mine} preview={previewHere ? previewHere.totals : null} />
 								<div className={`rec-rank rec-rank--theirs${theirs.length > 4 ? ' rec-rank--crowded' : ''}`} data-rank="theirs" data-rank-rows={rankGrid(theirs.length)['--rank-rows-n']} data-rank-list={theirs.length >= 2 && theirs.length <= 4 ? '' : undefined} data-rank-rows-wide={rankGrid(theirs.length)['--rank-rows-w']} style={rankGrid(theirs.length)}>
-									<span className="rec-rank-edge rec-rank-edge--theirs" aria-hidden="true">rival</span>
 									{theirs.map((entry) => <ReclamationFigure key={entry.recordId} {...figureProps(entry, opponent, 'down')} />)}
-									{/* pass 47: a world only you stand on is yours unless the rival answers */}
-									{!!siteFootings && theirs.length === 0 && mine.length > 0 && (
-										<span className="rec-rank-unopposed rec-rank-unopposed--yours" data-unopposed="yours">Unopposed: yours so far</span>
-									)}
 								</div>
 
 								<div className={`rec-site-midline${empty ? ' rec-site-midline--empty' : ''}`}>
 									{ghost && (
-										/*
-											pass 41: keyed by creature, so each creature's preview is a
-											new preview rather than the last one's text moving about
-										*/
-										<span className="rec-ghost" data-ghost={site.id} key={ghost.recordId || 'ghost'}>
-											{/* pass 38: three identical "send here" calls cut; the outlined world and its number are the call */}
-											{/* simple mode prints the same whole number the figure will carry once sent */}
-											<span className="rec-ghost-value">{formatHoldShown(ghost.hold)}<span className="rec-ghost-unit">hold</span></span>
-											<HoldMeter hold={ghost.hold} unstrained={ghost.unstrained} isHome={ghost.isHome} strainLevel={ghost.strainLevel} size="large" />
-											{/* the arithmetic of the send, from the engine's own numbers: the role
-											    in a sentence, then what it would do to the board as it stands */}
-											{(() => {
-												/*
-													pass 38: one sentence for what this send does HERE, from the
-													engine's numbers, in place of the role's generic sentence that
-													printed the same words on every world
-												*/
-												const summary = ghostSummary(ghost, formatHoldShown);
-												const caughtByOwn = ghost.role !== 'sweep' && mine.some((e) => holds[e.recordId] && holds[e.recordId].role === 'sweep');
-												// pass 44: the dim bulbs get their reason in words
-												const strain = strainNote(ghost, site, formatHoldShown);
-												/*
-													pass 50: a world you already lead says so before you add to it. A
-													blind critic stacked four creatures on a world won by 42 while two
-													went to the rival unopposed; sends are the budget that decides a game.
-												*/
-												const leadNow = (afterMine != null ? afterMine : totalMine) - (afterTheirs != null ? afterTheirs : totalTheirs);
-												const alreadyLead = mine.length > 0 && !(hiddenEnemyCount > 0) && leadNow >= 1
-													? `You already lead here by ${formatHoldShown(leadNow)}`
-													: null;
-												if (!summary && !caughtByOwn && !strain && !alreadyLead) {
-													return null;
-												}
-												const warn = (summary && summary.warn) || caughtByOwn;
-												return (
-													<span className="rec-ghost-plan" data-ghost-plan={site.id}>
-														{/* pass 44: its own line, above what the send would do */}
-														{strain && <span className="rec-ghost-strain" data-ghost-strain={site.id} title={strain.title}>{strain.text}</span>}
-														{alreadyLead && <span className="rec-ghost-strain rec-ghost-lead" data-ghost-lead={site.id}>{alreadyLead}</span>}
-														{(summary || caughtByOwn) && (
-															<span className={`rec-ghost-role${warn ? ' rec-ghost-role--warn' : ''}`} title={ghost.roleLine} data-ghost-warn={warn ? site.id : undefined}>
-																{ghost.role && ghost.role !== 'none' && <RoleGlyph role={ghost.role} />}
-																{/* pass 41: one text run, so the flex gap cannot open a space before the period */}
-																<span className="rec-ghost-text">
-																	{summary ? summary.text : ''}
-																	{caughtByOwn && <span className="rec-ghost-own" data-ghost-own={site.id}>{summary ? '. ' : ''}Your sweep here hits it too</span>}
-																</span>
-															</span>
-														)}
-														{advanced && ghost.role === 'sweep' && (ghost.lines || []).length > 1 && (ghost.lines || []).map((line, i) => (
-															<span className="rec-ghost-line" key={`${site.id}-${i}`}>{line}</span>
-														))}
-													</span>
-												);
-											})()}
-										</span>
+										/* pass 41: keyed by creature, so each creature's preview enters fresh */
+										<GhostToken key={ghost.recordId || 'ghost'} ghost={ghost} site={site} after={previewHere && previewHere.forecast ? previewHere.forecast[ghost.recordId] : null} />
 									)}
-									{!ghost && movingRecordId && <span className="rec-ghost rec-ghost--relocate">move here</span>}
+									{!ghost && movingRecordId && <span className="rec-ghost rec-ghost--relocate" aria-label="Move here" title="Move here"><SwiftGlyph /></span>}
 									{/*
 										pass 45: the Clash told where it happens, between the two ranks, each
 										name in its side's color; keyed per step so each line enters fresh
@@ -699,41 +397,11 @@ function ReclamationWorld({
 												: <b key={i} className={`rec-clash-name rec-clash-name--${part.seat === you ? 'you' : part.seat ? 'rival' : 'none'}`}>{part.name}</b>))}
 										</span>
 									)}
-									{!ghost && !movingRecordId && verdict && (
-										<span className={`rec-stamp rec-stamp--${verdict.who} rec-stamp--down`}>{verdict.text}</span>
-									)}
-									{!ghost && !movingRecordId && !verdict && empty && (
-										<WorldFooting footing={siteFootings ? siteFootings[site.id] : null} world={site.world} compact detail={advanced} onPick={onPickBest} />
-									)}
-									{(() => {
-										// pass 50: a world you trail offers its best answers too, with the gap to close
-										if (ghost || movingRecordId || verdict || empty || !siteFootings || !onPickBest) {
-											return null;
-										}
-										const gap = (afterTheirs != null ? afterTheirs : totalTheirs) - (afterMine != null ? afterMine : totalMine);
-										const footing = siteFootings[site.id];
-										if (!(gap >= 1) || !footing || !(footing.best || []).length) {
-											return null;
-										}
-										return (
-											<span className="rec-world-footing rec-world-footing--compact rec-world-footing--trail" data-world-trail={site.id}>
-												<BestHere best={footing.best} onPick={onPickBest} limit={2} label={`You trail by ${formatHoldShown(gap)}. Best here`} />
-											</span>
-										);
-									})()}
+									{!ghost && !movingRecordId && verdict && <Crest verdict={verdict} />}
 								</div>
 
 								<div className={`rec-rank rec-rank--mine${mine.length > 4 ? ' rec-rank--crowded' : ''}`} data-rank="mine" data-rank-rows={rankGrid(mine.length)['--rank-rows-n']} data-rank-list={mine.length >= 2 && mine.length <= 4 ? '' : undefined} data-rank-rows-wide={rankGrid(mine.length)['--rank-rows-w']} style={rankGrid(mine.length)}>
 									{mine.map((entry) => <ReclamationFigure key={entry.recordId} {...figureProps(entry, you, 'up')} />)}
-									{/*
-										pass 47: a world only the rival stands on goes to the rival for one
-										creature. A critic stacked a fourth creature on a world already won
-										while two such worlds went by, and learned the rule on the result screen.
-									*/}
-									{!!siteFootings && mine.length === 0 && theirs.length > 0 && (
-										<span className="rec-rank-unopposed rec-rank-unopposed--rival" data-unopposed="rival">Unopposed: the rival takes it</span>
-									)}
-									<span className="rec-rank-edge rec-rank-edge--mine" aria-hidden="true">you</span>
 								</div>
 							</div>
 						</section>
@@ -741,6 +409,39 @@ function ReclamationWorld({
 				})}
 			</div>
 		</div>
+	);
+}
+
+/*
+	PASS 52. The creature under the pointer, or lifted, as it would stand at this world: its
+	role, its hold as a bar (the part the environment takes drawn dim, the part the Clash
+	would take striped) and the number. Why it is strained is a mark with its reason as the
+	title, in place of pass 44's "Too cold: -7 hold" line.
+*/
+function GhostToken({ ghost, site, after }) {
+	const strain = strainNote(ghost, site, formatHoldShown);
+	const cause = strain ? (strainCause(ghost.tolerance, site) || 'strained') : null;
+	const falls = !!(after && after.downed);
+	const afterHold = after ? (after.downed ? 0 : after.hold) : undefined;
+	const shownAfter = afterHold === undefined || Math.abs(afterHold - ghost.hold) < 0.05 ? undefined : afterHold;
+	return (
+		<span
+			className={`rec-ghost${falls ? ' rec-ghost--falls' : ''}`}
+			data-ghost={site.id}
+			data-ghost-hold={formatHold(ghost.hold)}
+			title={[
+				`${ghost.record ? speciesLabel(ghost.record) : 'It'} holds ${formatHold(ghost.hold)} here`,
+				ghost.isHome ? 'home ground' : null,
+				strain ? strain.title : null,
+				falls ? 'it would fall in the Clash, as the board stands' : null,
+			].filter(Boolean).join('. ')}
+		>
+			{ghost.role && ghost.role !== 'none' && <span className="rec-role-glyph rec-ghost-role" data-role={ghost.role}><RoleGlyph role={ghost.role} /></span>}
+			<HoldBar hold={ghost.hold} after={shownAfter} unstrained={ghost.unstrained} side="mine" className="rec-ghost-bar" />
+			<span className="rec-ghost-value g-mono">{formatHoldShown(ghost.hold)}</span>
+			{ghost.isHome && <span className="rec-ghost-mark rec-ghost-mark--home" data-ghost-home><HomeGlyph /></span>}
+			{cause && <span className={`rec-ghost-mark rec-ghost-mark--strain`} data-ghost-strain={cause}><StrainGlyph cause={cause} /></span>}
+		</span>
 	);
 }
 

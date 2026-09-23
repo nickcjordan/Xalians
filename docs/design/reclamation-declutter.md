@@ -1,5 +1,7 @@
 # Reclamation: the declutter pass (pass 38)
 
+> Pass 52 (`reclamation-glance-redesign.md`) replaced the worlds' tallies, edge tags, footing counts and best-here names, the bench's best-world names and lamps, and the top bar's round and score readouts with the front line, the fit strip, the round track and unlabeled pips. The rows below that name those elements are history.
+
 Nick, 2026-09-22, after the one-screen pass: "there's so much on the screen, I don't even know where to go. It needs to be intuitive how to play the game." He asked for a full design pass over every piece of text on the table: remove what gives no value or has gone stale, move what belongs somewhere else, replace text with a visual where one works, and put reference material in a panel you open when you want it. He also made pass 37's rule permanent: everything stays on one view, and what shows adapts to the size of the view.
 
 ## How this pass is scoped so it cannot stop early

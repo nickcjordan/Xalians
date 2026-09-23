@@ -40,8 +40,8 @@ export function HelpPanel({ match, clinch, onClose }) {
 			<section className="rec-help-section">
 				<h3 className="rec-help-head">Your turn</h3>
 				<ol className="rec-help-steps">
-					<li>Pick a creature from your squad at the bottom.</li>
-					<li>Pick a world. Each world shows what that creature would hold there before you commit.</li>
+					<li>Pick a creature from your squad at the bottom. Pointing at one shows, on every world, where that send would put the line.</li>
+					<li>Pick a world.</li>
 					<li>Or pass. A pass lasts the rest of the round, so pass when you want to keep creatures for later.</li>
 				</ol>
 				<p>You have {SENDABLE} sends for the whole game, across {FRAMES_PER_MATCH} rounds, so not every creature in your squad will be sent: choose which. When both sides have passed, the worlds clash one at a time, the fastest creatures acting first; each blow is told on the world it lands on, and the whole account is in the history (&equiv;). Then the round is ruled.</p>
@@ -61,24 +61,23 @@ export function HelpPanel({ match, clinch, onClose }) {
 			</section>
 			<section className="rec-help-section">
 				<h3 className="rec-help-head">Reading the board</h3>
+				<p>The rival is always above and in brass; you are always below and in cyan.</p>
 				<ul className="rec-help-marks">
-					<li>A number with an arrow, <b>12 &rarr;6</b>, is what that creature (or world) would stand at after the Clash, from what is on the board now. Some creatures arrive hidden: the rival&apos;s show only as a count until the Clash, and are not in the forecast.</li>
-					<li><b>You lose it</b> over one of yours, <b>you down it</b> over the rival&apos;s: that creature would fall.</li>
-					<li><b>Own sweep</b>: your own sweep at that world would hit it.</li>
-					<li>The small symbol in a creature&apos;s name plate is its role. The colored badge on its piece is its element.</li>
-					<li><b>Best here</b> on an empty world names the three of your squad that would hold it best; press one to pick it up.</li>
-					<li><b>Pass</b> lights up when passing is the better move; the reason is in the bar at the top.</li>
-					<li><b>8 of your 12 hold well here</b>: how many of your squad would stand at this world without strain.</li>
+					<li><b>The line across a world</b> divides the rival&apos;s ground from yours. It sits where the two sides&apos; totals put it: in the middle when level, pushed down toward you when the rival holds more, up toward the rival when you do. A world colored all brass goes to the rival as things stand. The two numbers on the line are the totals, the rival&apos;s above and yours below. They are what the Clash would leave if the round ended now; the rival&apos;s hidden creatures are not in them.</li>
+					<li><b>The bar under a creature</b> is its hold, with its number. A striped red end is what the Clash would take from it; a red cross means it would fall.</li>
+					<li><b>The three columns on each card in your squad</b> are the three worlds, in the same order as above and in their colors. A column&apos;s height is how far sending that creature there now would move that world your way. Where the rival leads a world, a brass tick on its column marks how far: a column that clears the tick is lit full, because that creature alone would take the lead there. A column with a brass foot is the creature&apos;s home world. Point at a world to light its column on every card.</li>
+					<li>The pips at the top: the round track (the game&apos;s nine worlds, three rounds of three, filled in the winner&apos;s color), then the score, the rival&apos;s row above yours. First to {clinch} wins. The chevrons beside Pass are the sends you have left.</li>
+					<li>The small symbol by a creature&apos;s name is its role. The colored badge on its piece is its element.</li>
 					<li>&equiv; opens the history, &#9881; the settings.</li>
 				</ul>
 			</section>
 			<section className="rec-help-section">
 				<h3 className="rec-help-head">Hold</h3>
-				<p>A creature&apos;s number is how firmly it holds a world. It holds half again on its home world, and less where its body strains; the preview then says why and what it costs, as in &ldquo;Too cold: &minus;7 hold&rdquo;. Under each creature in your squad is the world it holds best this round, in that world&apos;s color. Pick it up to see its hold on every world.</p>
+				<p>A creature&apos;s hold is how firmly it holds a world, and a world goes to the side with more hold after the Clash. A creature holds half again on its home world, and less where its body strains: pointing at it shows the lost part of its bar dimmed and a mark for why (cold, heat, or the wrong air or medium), with the reason in words on the mark.</p>
 			</section>
 			<section className="rec-help-section">
 				<h3 className="rec-help-head">Advanced mode</h3>
-				<p>Adds the arithmetic. On each squad card: its speed (the arrowed number; faster attacks land first), the small marks for what its attributes do (hover one for its meaning), and three dots, one per world of the round from left to right, brighter where it holds better, the ringed one its best. On each world: the temperature band, with the world&apos;s range shaded and the picked creature&apos;s own marked, and how many of your squad would be strained there. Under a preview, every hit a sweep would land. The log runs down the side. On a phone the speed and the temperature band show as they do here; the log sits behind &equiv; and the attribute marks in each creature&apos;s reading (its &#9432;).</p>
+				<p>Adds the arithmetic. On each squad card: its speed (faster attacks land first), the small marks for what its attributes do (hover one for its meaning), and each fit column&apos;s number. On each world: the site&apos;s name and its temperature band, with the picked creature&apos;s own band marked. The log runs down the side. On a phone the log sits behind &equiv; and the attribute marks in each creature&apos;s reading (its &#9432;).</p>
 			</section>
 			{frames.length > 0 && (
 				<section className="rec-help-section">

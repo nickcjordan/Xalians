@@ -811,6 +811,16 @@ export function send(state: MatchState, handler: Seat, recordId: string, siteId:
 		return null;
 	}
 
+	return advanceDeployTurn(placeEntry(state, handler, record, siteId, hidden, cost, chosenRole), handler);
+}
+
+/*
+	placeEntry: the send's effect on the board and the roster, without the turn. Shared by
+	send() and forecastSend() so the forecast of a send is the send, exactly.
+*/
+function placeEntry(state: MatchState, handler: Seat, record: XalianRecord, siteId: string, hidden: boolean, cost: number, chosenRole: string | null): MatchState {
+	const p = state.players[handler];
+	const recordId = record.id;
 	const sentIndex = p.sentCount;
 	const entry: BoardEntry = {
 		recordId,
@@ -855,10 +865,36 @@ export function send(state: MatchState, handler: Seat, recordId: string, siteId:
 		[handler]: ((state.sentThisFrame && state.sentThisFrame[handler]) || 0) + 1,
 	};
 
-	let nextState = withRecomputedHolds({
+	return withRecomputedHolds({
 		...state, players: nextPlayers, board: nextBoard, sentThisFrame: nextSentThisFrame,
 	});
-	return advanceDeployTurn(nextState, handler);
+}
+
+/*
+	forecastSend(state, handler, recordId, siteId, chosenRole?) -> forecast | null
+
+	PASS 52 (the glance redesign). What the Clash would leave standing if `handler` sent
+	this creature to this world now: the send placed exactly as send() places it, then
+	forecastClash() on the result, so the opponent's hidden sends stay hidden. It answers
+	"what would this creature do there", not "may I send it": whose turn it is, a pass and
+	the send cap are not checked, because the bench shows every creature's worth at every
+	world all the time, the rival's turn included. Null outside Deploy, for a creature not
+	in the handler's hand, one the table cannot field, or a site not in this round.
+*/
+export function forecastSend(state: MatchState, handler: Seat, recordId: string, siteId: string, chosenRole: string | null = null): Record<string, ClashForecast> | null {
+	if (!state || state.phase !== 'deploy') {
+		return null;
+	}
+	const p = state.players[handler];
+	const record = p.roster.find((r) => r.id === recordId);
+	if (!record || !isFieldable(record)) {
+		return null;
+	}
+	if (!siteById(currentFrame(state), siteId)) {
+		return null;
+	}
+	const placed = placeEntry(state, handler, record, siteId, arrivesHidden(record, rulesOf(state)), sendCostFor(p, recordId, rulesOf(state)), rulesOf(state).actFlip ? chosenRole || null : null);
+	return forecastClash(placed, handler);
 }
 
 /*
