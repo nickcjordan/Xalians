@@ -36,13 +36,13 @@ A pattern is an act shape in v5 vocabulary. Physical patterns need an instrument
 | crush | contact | harm compression | preparation `brief`, recovery `brief | prolonged` (held pressure) |
 | rake | contact | harm cutting | |
 | lash | contact, area sweep `small | medium` anchor self, resolved | harm on area; mechanism impact, or cutting for blades | targeting other only |
-| drain | contact | harm (instrument mechanism) on target, plus restore on self `requires` the harm | |
+| drain | contact | harm on target, plus restore on self `requires` the harm | medium only since the species pass (see Lever moves); a biological drainer authors its own mechanism |
 | shove | contact | displace away | |
 | snare | contact (spinnerets: projectile `short | medium`) | status from the instrument's bind column, lingering `brief`, removable per column | |
-| hurl | projectile `short | medium` | harm (instrument mechanism) | spines only among physical rows |
-| terrorize | signal, range `short | medium`, reception per instrument column | status frightened, lingering `brief`, removable stabilizing | |
+| hurl | projectile `short | medium` | harm (instrument mechanism, or elemental through a medium) | spines only among physical rows; rock, ice and metal medium rows (thrown solid matter) |
+| terrorize | signal, range `short | medium`, reception per instrument column | status frightened, lingering `brief`, removable stabilizing | a body part derives it only when the species can signal it: visual reception needs `display` communication, auditory needs `vocal` or `vibration` (Thirstaserp's rattle); channels carry their own predicates |
 | ward | self, targeting self | status shielded on self, lingering `brief | prolonged`, removable disrupting | preparation `brief`, recovery `brief | prolonged`; a medium row may substitute its ward status |
-| mend | two mechanisms: self delivery on self; contact (signal for mind and aura) on target `short` | restore | targeting self, or other |
+| mend | two mechanisms: self delivery on self; contact (signal for the signal channels mind, gaze, voice, aura) on target `short` | restore | targeting self, or other |
 | beam | stream, range `short | medium | long` | harm elemental | medium only; preparation `brief`, recovery `brief | prolonged` |
 | burst | pulse, area radial `small | medium` anchor self, resolved | harm elemental on area | medium only; recovery `brief | prolonged` |
 | spray | projectile, range `short | medium` | harm elemental on target, plus the medium status if the row has one | medium only |
@@ -113,12 +113,12 @@ What an element can do when it leaves through a declared conduit. Patterns are t
 | plant | snare, ward, mend, lash, cloud, spray | sedated (stabilizing) | restrained (freeing) | |
 | electric | beam, burst, lash, strike, snare, spray | stunned (stabilizing) | paralyzed (stabilizing) | |
 | ghost | terrorize, drain, cloud, snare, ward | frightened (stabilizing) | restrained (freeing) | phased |
-| rock | ward, crush, burst, shove, strike | | buried (freeing) | reinforced |
+| rock | ward, crush, burst, shove, strike, hurl | | buried (freeing) | reinforced |
 | chemical | spray, cloud, burst, drain, snare | corroding (cleansing) | restrained (cleansing, freeing) | |
 | air | shove, burst, cloud, lash, ward | disoriented (stabilizing) | | |
 | psychic | burst, snare, terrorize, ward, mend, drain, shove | disoriented (stabilizing) | entranced (disrupting) | focused |
-| ice | snare, ward, spray, burst, crush, mend | chilled (warming) | frozen (warming) | |
-| metal | strike, ward, beam, crush, rake | | | reinforced |
+| ice | snare, ward, spray, burst, crush, mend, hurl | chilled (warming) | frozen (warming) | |
+| metal | strike, ward, beam, crush, rake, hurl | | | reinforced |
 | sand | cloud, spray, drain, snare, burst, rake | blinded (cleansing) | buried (freeing) | |
 
 Water's status is the one invention here: the catalog has no soaked state, and slowed by drag is the nearest honest reading. Dark is gravity, per the 2026-08-30 element fantasy ruling, so its bind is pinned and it has no spray or cloud.
@@ -138,6 +138,17 @@ Every derived harm, displace and restore effect gets a band from a species attri
 | restore (mend, drain) | vitality | 0.6; drain 0.4 |
 
 Bands round to integers and floor at 1. A species may override a band per act (below). Statuses keep the catalog default unless overridden.
+
+### Lever moves from the species pass, 2026-09-22
+
+The two halves of the roster pass reported the same friction from opposite ends, and four settings moved before the freeze:
+
+1. **Physical drain is medium-only.** Seventeen of 32 records had excluded a life drain from every mouth, tendril or root. A drain now derives only through a dark, ghost, chemical, sand or psychic conduit; Thirstaserp's dehydrating venom and Neph's suction stay authored.
+2. **A part's terrorize needs a signal.** Bioflim (no communication) and Frackworm (nearly blind, vibration only) were granting threat displays. Visual reception now requires `display` communication and auditory requires `vocal`; mind, gaze, voice, swarm and aura keep their own predicates.
+3. **Rock, ice and metal can hurl.** Terragoyle's whole identity is thrown boulders and the rock row had no ranged delivery but burst. Thrown solid matter is a projectile elemental harm on those three rows.
+4. **Mend through any signal channel is a signal.** A psychic conduit on gaze was deriving a repair delivered by touch.
+
+Kept as they were, with the reason: tail and spur harm rows stay impact-only and piercing-or-cutting-only respectively (a bladed or drilling tail is what an authored mechanism is for, and widening the row would hand every fluffy tail a blade); hide and shell keep strike (decision 4) and the band scales with strength, so a small body's ram is weak rather than absent; `body/terrorize` on species with display communication stays. Two judgment calls are recorded for Nick, not ruled: Chromocat's light spray can blind while Crystorn's audit excludes dazzle, and Hypnopet's "support only" audit was read as no harm required rather than harm forbidden.
 
 ## Species record changes
 

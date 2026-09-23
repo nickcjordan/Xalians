@@ -299,58 +299,6 @@
   ],
   "mechanisms": [
     {
-      "key": "gravity-pincer",
-      "name": "Gravity Pincer",
-      "description": "Gravity amplifies its pincer compression.",
-      "instrument": "pincers",
-      "targeting": [
-        "other"
-      ],
-      "activation": {
-        "continuity": [
-          "discrete"
-        ]
-      },
-      "timing": {
-        "preparation": [
-          "immediate",
-          "brief"
-        ],
-        "recovery": [
-          "repeatable",
-          "brief"
-        ]
-      },
-      "delivery": {
-        "contact": {
-          "approach": [
-            "stationary",
-            "closing"
-          ],
-          "range": [
-            "contact"
-          ]
-        }
-      },
-      "effects": [
-        {
-          "key": "outcome",
-          "type": "harm",
-          "recipient": "target",
-          "onset": "instant",
-          "persistence": "resolved",
-          "likelihood": [
-            "consistent"
-          ],
-          "mechanism": "compression",
-          "intensity": [
-            65,
-            95
-          ]
-        }
-      ]
-    },
-    {
       "key": "gravity-draw",
       "name": "Gravity Draw",
       "description": "A focused gravity field pulls a target toward the performer.",
@@ -401,57 +349,25 @@
           ]
         }
       ]
-    },
-    {
-      "key": "shell-crash",
-      "name": "Shell Crash",
-      "description": "The black shell drives blunt force at contact.",
-      "instrument": "shell",
-      "targeting": [
-        "other"
-      ],
-      "activation": {
-        "continuity": [
-          "discrete"
-        ]
-      },
-      "timing": {
-        "preparation": [
-          "immediate",
-          "brief"
-        ],
-        "recovery": [
-          "repeatable",
-          "brief"
-        ]
-      },
-      "delivery": {
-        "contact": {
-          "approach": [
-            "closing"
-          ],
-          "range": [
-            "contact"
-          ]
-        }
-      },
-      "effects": [
-        {
-          "key": "outcome",
-          "type": "harm",
-          "recipient": "target",
-          "onset": "instant",
-          "persistence": "resolved",
-          "likelihood": [
-            "consistent"
-          ],
-          "mechanism": "impact",
-          "intensity": [
-            42,
-            68
-          ]
-        }
+    }
+  ],
+  "channels": [
+    "aura"
+  ],
+  "conduits": {
+    "pincers": "dark",
+    "aura": "dark"
+  },
+  "acts": {
+    "exclude": [
+      "*/drain",
+      "aura/mend"
+    ],
+    "output": {
+      "pincers/strike": [
+        65,
+        95
       ]
     }
-  ]
+  }
 }

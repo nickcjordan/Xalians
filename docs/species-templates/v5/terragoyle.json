@@ -268,58 +268,6 @@
   ],
   "mechanisms": [
     {
-      "key": "tail-boulder",
-      "name": "Tail Boulder",
-      "description": "Its levitational tail hurls a boulder at one selected target.",
-      "instrument": "tail",
-      "element": "rock",
-      "targeting": [
-        "other"
-      ],
-      "activation": {
-        "continuity": [
-          "discrete"
-        ]
-      },
-      "timing": {
-        "preparation": [
-          "brief"
-        ],
-        "recovery": [
-          "brief",
-          "prolonged"
-        ]
-      },
-      "delivery": {
-        "projectile": {
-          "approach": [
-            "stationary"
-          ],
-          "range": [
-            "medium",
-            "long"
-          ]
-        }
-      },
-      "effects": [
-        {
-          "key": "outcome",
-          "type": "harm",
-          "recipient": "target",
-          "onset": "instant",
-          "persistence": "resolved",
-          "likelihood": [
-            "consistent"
-          ],
-          "mechanism": "impact",
-          "intensity": [
-            65,
-            90
-          ]
-        }
-      ]
-    },
-    {
       "key": "tail-gravel",
       "name": "Tail Gravel",
       "description": "The same tail launches a dispersed gravel volley.",
@@ -383,58 +331,29 @@
           ]
         }
       ]
-    },
-    {
-      "key": "horn-contact",
-      "name": "Horn Contact",
-      "description": "Its horns strike at close contact.",
-      "instrument": "horns",
-      "targeting": [
-        "other"
+    }
+  ],
+  "channels": [],
+  "conduits": {
+    "tail": "rock"
+  },
+  "acts": {
+    "exclude": [
+      "tail/strike",
+      "tail/crush",
+      "tail/lash",
+      "tail/snare",
+      "tail/shove"
+    ],
+    "output": {
+      "horns/strike": [
+        30,
+        55
       ],
-      "activation": {
-        "continuity": [
-          "discrete"
-        ]
-      },
-      "timing": {
-        "preparation": [
-          "immediate",
-          "brief"
-        ],
-        "recovery": [
-          "repeatable",
-          "brief"
-        ]
-      },
-      "delivery": {
-        "contact": {
-          "approach": [
-            "stationary",
-            "closing"
-          ],
-          "range": [
-            "contact"
-          ]
-        }
-      },
-      "effects": [
-        {
-          "key": "outcome",
-          "type": "harm",
-          "recipient": "target",
-          "onset": "instant",
-          "persistence": "resolved",
-          "likelihood": [
-            "consistent"
-          ],
-          "mechanism": "piercing",
-          "intensity": [
-            30,
-            55
-          ]
-        }
+      "tail/hurl": [
+        65,
+        90
       ]
     }
-  ]
+  }
 }

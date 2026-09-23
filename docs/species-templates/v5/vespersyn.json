@@ -386,58 +386,22 @@
           ]
         }
       ]
-    },
-    {
-      "key": "central-claws",
-      "name": "Central Claws",
-      "description": "The central body's claws cut at close contact.",
-      "instrument": "claws",
-      "targeting": [
-        "other"
+    }
+  ],
+  "channels": [
+    "swarm"
+  ],
+  "conduits": {},
+  "acts": {
+    "output": {
+      "swarm/strike": [
+        42,
+        68
       ],
-      "activation": {
-        "continuity": [
-          "discrete"
-        ]
-      },
-      "timing": {
-        "preparation": [
-          "immediate",
-          "brief"
-        ],
-        "recovery": [
-          "repeatable",
-          "brief"
-        ]
-      },
-      "delivery": {
-        "contact": {
-          "approach": [
-            "stationary",
-            "closing"
-          ],
-          "range": [
-            "contact"
-          ]
-        }
-      },
-      "effects": [
-        {
-          "key": "outcome",
-          "type": "harm",
-          "recipient": "target",
-          "onset": "instant",
-          "persistence": "resolved",
-          "likelihood": [
-            "consistent"
-          ],
-          "mechanism": "cutting",
-          "intensity": [
-            28,
-            48
-          ]
-        }
+      "claws/strike": [
+        28,
+        48
       ]
     }
-  ]
+  }
 }

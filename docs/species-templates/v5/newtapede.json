@@ -280,109 +280,20 @@
           ]
         }
       ]
-    },
-    {
-      "key": "coil-pressure",
-      "name": "Coil Pressure",
-      "description": "Its wrapped body squeezes at close contact.",
-      "instrument": "coils",
-      "targeting": [
-        "other"
+    }
+  ],
+  "channels": [],
+  "conduits": {},
+  "acts": {
+    "output": {
+      "coils/crush": [
+        35,
+        58
       ],
-      "activation": {
-        "continuity": [
-          "discrete"
-        ]
-      },
-      "timing": {
-        "preparation": [
-          "immediate",
-          "brief"
-        ],
-        "recovery": [
-          "repeatable",
-          "brief"
-        ]
-      },
-      "delivery": {
-        "contact": {
-          "approach": [
-            "stationary"
-          ],
-          "range": [
-            "contact"
-          ]
-        }
-      },
-      "effects": [
-        {
-          "key": "outcome",
-          "type": "harm",
-          "recipient": "target",
-          "onset": "instant",
-          "persistence": "resolved",
-          "likelihood": [
-            "consistent"
-          ],
-          "mechanism": "compression",
-          "intensity": [
-            35,
-            58
-          ]
-        }
-      ]
-    },
-    {
-      "key": "body-strike",
-      "name": "Body Strike",
-      "description": "The long body hits at close contact.",
-      "instrument": "body",
-      "targeting": [
-        "other"
-      ],
-      "activation": {
-        "continuity": [
-          "discrete"
-        ]
-      },
-      "timing": {
-        "preparation": [
-          "immediate",
-          "brief"
-        ],
-        "recovery": [
-          "repeatable",
-          "brief"
-        ]
-      },
-      "delivery": {
-        "contact": {
-          "approach": [
-            "stationary",
-            "closing"
-          ],
-          "range": [
-            "contact"
-          ]
-        }
-      },
-      "effects": [
-        {
-          "key": "outcome",
-          "type": "harm",
-          "recipient": "target",
-          "onset": "instant",
-          "persistence": "resolved",
-          "likelihood": [
-            "consistent"
-          ],
-          "mechanism": "impact",
-          "intensity": [
-            28,
-            50
-          ]
-        }
+      "body/strike": [
+        28,
+        50
       ]
     }
-  ]
+  }
 }

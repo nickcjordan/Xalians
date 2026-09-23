@@ -230,161 +230,23 @@
       ]
     }
   ],
-  "mechanisms": [
-    {
-      "key": "rolling-collision",
-      "name": "Rolling Collision",
-      "description": "Its curled shell collides with a target.",
-      "instrument": "shell",
-      "targeting": [
-        "other"
+  "mechanisms": [],
+  "channels": [],
+  "conduits": {},
+  "acts": {
+    "output": {
+      "shell/strike": [
+        38,
+        62
       ],
-      "activation": {
-        "continuity": [
-          "discrete"
-        ]
-      },
-      "timing": {
-        "preparation": [
-          "immediate",
-          "brief"
-        ],
-        "recovery": [
-          "repeatable",
-          "brief"
-        ]
-      },
-      "delivery": {
-        "contact": {
-          "approach": [
-            "closing"
-          ],
-          "range": [
-            "contact"
-          ]
-        }
-      },
-      "effects": [
-        {
-          "key": "outcome",
-          "type": "harm",
-          "recipient": "target",
-          "onset": "instant",
-          "persistence": "resolved",
-          "likelihood": [
-            "consistent"
-          ],
-          "mechanism": "impact",
-          "intensity": [
-            38,
-            62
-          ]
-        }
-      ]
-    },
-    {
-      "key": "foreclaw-rake",
-      "name": "Foreclaw Rake",
-      "description": "Long curved claws rake a contacted target.",
-      "instrument": "claws",
-      "targeting": [
-        "other"
+      "claws/strike": [
+        30,
+        52
       ],
-      "activation": {
-        "continuity": [
-          "discrete"
-        ]
-      },
-      "timing": {
-        "preparation": [
-          "immediate",
-          "brief"
-        ],
-        "recovery": [
-          "repeatable",
-          "brief"
-        ]
-      },
-      "delivery": {
-        "contact": {
-          "approach": [
-            "stationary",
-            "closing"
-          ],
-          "range": [
-            "contact"
-          ]
-        }
-      },
-      "effects": [
-        {
-          "key": "outcome",
-          "type": "harm",
-          "recipient": "target",
-          "onset": "instant",
-          "persistence": "resolved",
-          "likelihood": [
-            "consistent"
-          ],
-          "mechanism": "cutting",
-          "intensity": [
-            30,
-            52
-          ]
-        }
-      ]
-    },
-    {
-      "key": "hooked-tail",
-      "name": "Hooked Tail",
-      "description": "The hooked tail strikes at close contact.",
-      "instrument": "tail",
-      "targeting": [
-        "other"
-      ],
-      "activation": {
-        "continuity": [
-          "discrete"
-        ]
-      },
-      "timing": {
-        "preparation": [
-          "immediate",
-          "brief"
-        ],
-        "recovery": [
-          "repeatable",
-          "brief"
-        ]
-      },
-      "delivery": {
-        "contact": {
-          "approach": [
-            "stationary",
-            "closing"
-          ],
-          "range": [
-            "contact"
-          ]
-        }
-      },
-      "effects": [
-        {
-          "key": "outcome",
-          "type": "harm",
-          "recipient": "target",
-          "onset": "instant",
-          "persistence": "resolved",
-          "likelihood": [
-            "consistent"
-          ],
-          "mechanism": "impact",
-          "intensity": [
-            25,
-            48
-          ]
-        }
+      "tail/strike": [
+        25,
+        48
       ]
     }
-  ]
+  }
 }

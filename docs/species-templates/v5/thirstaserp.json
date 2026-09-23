@@ -373,58 +373,16 @@
           ]
         }
       ]
-    },
-    {
-      "key": "fang-pierce",
-      "name": "Fang Pierce",
-      "description": "Its fangs pierce a contacted target.",
-      "instrument": "fangs",
-      "targeting": [
-        "other"
-      ],
-      "activation": {
-        "continuity": [
-          "discrete"
-        ]
-      },
-      "timing": {
-        "preparation": [
-          "immediate",
-          "brief"
-        ],
-        "recovery": [
-          "repeatable",
-          "brief"
-        ]
-      },
-      "delivery": {
-        "contact": {
-          "approach": [
-            "stationary",
-            "closing"
-          ],
-          "range": [
-            "contact"
-          ]
-        }
-      },
-      "effects": [
-        {
-          "key": "outcome",
-          "type": "harm",
-          "recipient": "target",
-          "onset": "instant",
-          "persistence": "resolved",
-          "likelihood": [
-            "consistent"
-          ],
-          "mechanism": "piercing",
-          "intensity": [
-            32,
-            55
-          ]
-        }
+    }
+  ],
+  "channels": [],
+  "conduits": {},
+  "acts": {
+    "output": {
+      "fangs/strike": [
+        32,
+        55
       ]
     }
-  ]
+  }
 }

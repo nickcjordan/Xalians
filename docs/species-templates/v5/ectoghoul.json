@@ -261,59 +261,6 @@
   ],
   "mechanisms": [
     {
-      "key": "cackle-fear",
-      "name": "Cackle Fear",
-      "description": "An audible cackle disturbs a listening target.",
-      "instrument": "voice",
-      "targeting": [
-        "other"
-      ],
-      "activation": {
-        "continuity": [
-          "discrete"
-        ]
-      },
-      "timing": {
-        "preparation": [
-          "immediate",
-          "brief"
-        ],
-        "recovery": [
-          "brief"
-        ]
-      },
-      "delivery": {
-        "signal": {
-          "approach": [
-            "stationary"
-          ],
-          "range": [
-            "short",
-            "medium"
-          ],
-          "reception": "auditory"
-        }
-      },
-      "effects": [
-        {
-          "key": "outcome",
-          "type": "status",
-          "recipient": "target",
-          "onset": "instant",
-          "persistence": "lingering",
-          "likelihood": [
-            "likely",
-            "occasional"
-          ],
-          "duration": "brief",
-          "status": "frightened",
-          "removable": [
-            "stabilizing"
-          ]
-        }
-      ]
-    },
-    {
       "key": "ectoplasm-blast",
       "name": "Ectoplasm Blast",
       "description": "Gooey ectoplasm launches toward a selected target.",
@@ -364,58 +311,22 @@
           ]
         }
       ]
-    },
-    {
-      "key": "spectral-body-contact",
-      "name": "Spectral Body Contact",
-      "description": "Its formed body strikes at close contact without implying automatic possession.",
-      "instrument": "body",
-      "targeting": [
-        "other"
-      ],
-      "activation": {
-        "continuity": [
-          "discrete"
-        ]
-      },
-      "timing": {
-        "preparation": [
-          "immediate",
-          "brief"
-        ],
-        "recovery": [
-          "repeatable",
-          "brief"
-        ]
-      },
-      "delivery": {
-        "contact": {
-          "approach": [
-            "stationary",
-            "closing"
-          ],
-          "range": [
-            "contact"
-          ]
-        }
-      },
-      "effects": [
-        {
-          "key": "outcome",
-          "type": "harm",
-          "recipient": "target",
-          "onset": "instant",
-          "persistence": "resolved",
-          "likelihood": [
-            "consistent"
-          ],
-          "mechanism": "impact",
-          "intensity": [
-            22,
-            42
-          ]
-        }
+    }
+  ],
+  "channels": [
+    "voice",
+    "secretion"
+  ],
+  "conduits": {},
+  "acts": {
+    "exclude": [
+      "secretion/mend"
+    ],
+    "output": {
+      "body/strike": [
+        22,
+        42
       ]
     }
-  ]
+  }
 }

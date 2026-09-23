@@ -144,6 +144,85 @@ describe('derivation produces valid mechanisms for every body', () => {
   });
 });
 
+describe('the four lever moves of 2026-09-22', () => {
+  const keysOf = (species: Record<string, unknown>) =>
+    deriveMechanisms(SpeciesSchema.parse(species) as unknown as Parameters<typeof deriveMechanisms>[0]).map(mechanism => mechanism.key);
+
+  it('derives no physical drain from jaws, but a dark conduit on jaws drains', () => {
+    const plain = bodyWith('body', 'dark');
+    (plain.physiology as { anatomy: string[] }).anatomy = ['jaws'];
+    withSignature(plain);
+    const bare = keysOf(plain);
+    expect(bare).not.toContain('derived-jaws-drain-piercing');
+    expect(bare).not.toContain('derived-jaws-drain-compression');
+    expect(bare).toContain('derived-jaws-strike-piercing');
+
+    const channelled = bodyWith('body', 'dark');
+    (channelled.physiology as { anatomy: string[] }).anatomy = ['jaws'];
+    withSignature(channelled);
+    channelled.conduits = { jaws: 'dark' };
+    expect(keysOf(channelled)).toContain('derived-jaws-drain-dark');
+  });
+
+  it('gives a body no terrorize without display communication, and one with it', () => {
+    const mute = bodyWith('body', 'fire');
+    (mute.physiology as { communication: string[] }).communication = ['vibration'];
+    withSignature(mute);
+    expect(keysOf(mute)).not.toContain('derived-body-terrorize');
+
+    const showy = bodyWith('body', 'fire');
+    (showy.physiology as { communication: string[] }).communication = ['display'];
+    withSignature(showy);
+    expect(keysOf(showy)).toContain('derived-body-terrorize');
+  });
+
+  it('gives a rattle no terrorize without vocal or vibration communication', () => {
+    const silent = bodyWith('body', 'fire');
+    (silent.physiology as { anatomy: string[]; communication: string[] }).anatomy = ['rattle'];
+    (silent.physiology as { communication: string[] }).communication = ['display'];
+    withSignature(silent);
+    const keys = keysOf(silent);
+    expect(keys).not.toContain('derived-rattle-terrorize');
+    // The ward is all a silent rattle still offers, which is what the per-instrument rule surfaces.
+    expect(keys).toContain('derived-rattle-ward');
+
+    const heard = bodyWith('body', 'fire');
+    (heard.physiology as { anatomy: string[] }).anatomy = ['rattle'];
+    (heard.physiology as { communication: string[] }).communication = ['vibration'];
+    withSignature(heard);
+    expect(keysOf(heard)).toContain('derived-rattle-terrorize');
+  });
+
+  it.each(['rock', 'ice', 'metal'] as const)('derives a projectile elemental hurl from a %s conduit', element => {
+    const species = bodyWith('body', element);
+    (species.physiology as { anatomy: string[] }).anatomy = ['tail'];
+    withSignature(species);
+    species.conduits = { tail: element };
+    const derived = deriveMechanisms(SpeciesSchema.parse(species) as unknown as Parameters<typeof deriveMechanisms>[0]);
+    const hurl = derived.find(mechanism => mechanism.key === `derived-tail-hurl-${element}`);
+    expect(hurl, element).toBeDefined();
+    expect(Object.keys(hurl!.delivery)).toEqual(['projectile']);
+    expect(hurl!.delivery.projectile!.range).toEqual(['short', 'medium']);
+    expect(hurl!.effects).toHaveLength(1);
+    expect(hurl!.effects[0].type).toBe('harm');
+    expect((hurl!.effects[0] as { mechanism?: string }).mechanism).toBe('elemental');
+    // Rock, ice and metal are the only rows that gained hurl; a physical tail has none.
+    expect(derived.map(mechanism => mechanism.key)).not.toContain('derived-tail-hurl-impact');
+  });
+
+  it('delivers the other form of a psychic mend by signal from a gaze channel', () => {
+    const species = bodyWith('gaze', 'psychic');
+    withSignature(species);
+    species.conduits = { gaze: 'psychic' };
+    const derived = deriveMechanisms(SpeciesSchema.parse(species) as unknown as Parameters<typeof deriveMechanisms>[0]);
+    const mend = derived.find(mechanism => mechanism.key === 'derived-gaze-mend-other-psychic')!;
+    expect(mend).toBeDefined();
+    expect(Object.keys(mend.delivery)).toEqual(['signal']);
+    expect(mend.delivery.signal!.reception).toBe('visual');
+    expect(mend.effects[0].type).toBe('restore');
+  });
+});
+
 describe('species narrow or re-band what the tables grant', () => {
   const body = () => {
     const species = bodyWith('body', 'fire');

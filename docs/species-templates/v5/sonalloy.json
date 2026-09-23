@@ -404,5 +404,22 @@
         }
       ]
     }
-  ]
+  ],
+  "channels": [
+    "secretion"
+  ],
+  "conduits": {
+    "secretion": "metal"
+  },
+  "acts": {
+    "exclude": [
+      "secretion/beam"
+    ],
+    "output": {
+      "pincers/strike": [
+        30,
+        52
+      ]
+    }
+  }
 }

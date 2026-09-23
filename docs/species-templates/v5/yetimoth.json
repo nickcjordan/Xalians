@@ -321,109 +321,25 @@
           "duration": "brief"
         }
       ]
-    },
-    {
-      "key": "heavy-fists",
-      "name": "Heavy Fists",
-      "description": "Heavy fists pummel a contacted opponent.",
-      "instrument": "fists",
-      "targeting": [
-        "other"
+    }
+  ],
+  "channels": [],
+  "conduits": {
+    "hide": "ice",
+    "body": "ice",
+    "tusks": "ice",
+    "fists": "ice"
+  },
+  "acts": {
+    "output": {
+      "fists/strike": [
+        55,
+        85
       ],
-      "activation": {
-        "continuity": [
-          "discrete"
-        ]
-      },
-      "timing": {
-        "preparation": [
-          "immediate",
-          "brief"
-        ],
-        "recovery": [
-          "repeatable",
-          "brief"
-        ]
-      },
-      "delivery": {
-        "contact": {
-          "approach": [
-            "stationary"
-          ],
-          "range": [
-            "contact"
-          ]
-        }
-      },
-      "effects": [
-        {
-          "key": "outcome",
-          "type": "harm",
-          "recipient": "target",
-          "onset": "instant",
-          "persistence": "resolved",
-          "likelihood": [
-            "consistent"
-          ],
-          "mechanism": "impact",
-          "intensity": [
-            55,
-            85
-          ]
-        }
-      ]
-    },
-    {
-      "key": "ice-tusks",
-      "name": "Ice Tusks",
-      "description": "Ice tusks drive into a contacted opponent.",
-      "instrument": "tusks",
-      "element": "ice",
-      "targeting": [
-        "other"
-      ],
-      "activation": {
-        "continuity": [
-          "discrete"
-        ]
-      },
-      "timing": {
-        "preparation": [
-          "immediate",
-          "brief"
-        ],
-        "recovery": [
-          "repeatable",
-          "brief"
-        ]
-      },
-      "delivery": {
-        "contact": {
-          "approach": [
-            "stationary"
-          ],
-          "range": [
-            "contact"
-          ]
-        }
-      },
-      "effects": [
-        {
-          "key": "outcome",
-          "type": "harm",
-          "recipient": "target",
-          "onset": "instant",
-          "persistence": "resolved",
-          "likelihood": [
-            "consistent"
-          ],
-          "mechanism": "piercing",
-          "intensity": [
-            45,
-            75
-          ]
-        }
+      "tusks/strike": [
+        45,
+        75
       ]
     }
-  ]
+  }
 }

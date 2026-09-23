@@ -304,109 +304,15 @@
           ]
         }
       ]
-    },
-    {
-      "key": "hoof-strike",
-      "name": "Hoof Strike",
-      "description": "A blunt hoof strikes at close contact.",
-      "instrument": "hooves",
-      "targeting": [
-        "other"
-      ],
-      "activation": {
-        "continuity": [
-          "discrete"
-        ]
-      },
-      "timing": {
-        "preparation": [
-          "immediate",
-          "brief"
-        ],
-        "recovery": [
-          "repeatable",
-          "brief"
-        ]
-      },
-      "delivery": {
-        "contact": {
-          "approach": [
-            "stationary",
-            "closing"
-          ],
-          "range": [
-            "contact"
-          ]
-        }
-      },
-      "effects": [
-        {
-          "key": "outcome",
-          "type": "harm",
-          "recipient": "target",
-          "onset": "instant",
-          "persistence": "resolved",
-          "likelihood": [
-            "consistent"
-          ],
-          "mechanism": "impact",
-          "intensity": [
-            28,
-            48
-          ]
-        }
-      ]
-    },
-    {
-      "key": "coiled-tail",
-      "name": "Coiled Tail",
-      "description": "The heavy spiral tail strikes a contacted target.",
-      "instrument": "tail",
-      "targeting": [
-        "other"
-      ],
-      "activation": {
-        "continuity": [
-          "discrete"
-        ]
-      },
-      "timing": {
-        "preparation": [
-          "immediate",
-          "brief"
-        ],
-        "recovery": [
-          "repeatable",
-          "brief"
-        ]
-      },
-      "delivery": {
-        "contact": {
-          "approach": [
-            "stationary"
-          ],
-          "range": [
-            "contact"
-          ]
-        }
-      },
-      "effects": [
-        {
-          "key": "outcome",
-          "type": "harm",
-          "recipient": "target",
-          "onset": "instant",
-          "persistence": "resolved",
-          "likelihood": [
-            "consistent"
-          ],
-          "mechanism": "impact",
-          "intensity": [
-            25,
-            45
-          ]
-        }
-      ]
     }
-  ]
+  ],
+  "channels": [],
+  "conduits": {
+    "trunk": "water"
+  },
+  "acts": {
+    "exclude": [
+      "trunk/mend"
+    ]
+  }
 }

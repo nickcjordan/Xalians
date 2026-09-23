@@ -277,161 +277,25 @@
         }
       ],
       "element": "light"
-    },
-    {
-      "key": "feline-claw",
-      "name": "Feline Claw",
-      "description": "Its natural claws rake a contacted target.",
-      "instrument": "claws",
-      "targeting": [
-        "other"
+    }
+  ],
+  "channels": [],
+  "conduits": {
+    "blades": "light"
+  },
+  "acts": {
+    "exclude": [
+      "blades/mend"
+    ],
+    "output": {
+      "fangs/strike": [
+        35,
+        60
       ],
-      "activation": {
-        "continuity": [
-          "discrete"
-        ]
-      },
-      "timing": {
-        "preparation": [
-          "immediate",
-          "brief"
-        ],
-        "recovery": [
-          "repeatable",
-          "brief"
-        ]
-      },
-      "delivery": {
-        "contact": {
-          "approach": [
-            "stationary",
-            "closing"
-          ],
-          "range": [
-            "contact"
-          ]
-        }
-      },
-      "effects": [
-        {
-          "key": "outcome",
-          "type": "harm",
-          "recipient": "target",
-          "onset": "instant",
-          "persistence": "resolved",
-          "likelihood": [
-            "consistent"
-          ],
-          "mechanism": "cutting",
-          "intensity": [
-            38,
-            58
-          ]
-        }
-      ]
-    },
-    {
-      "key": "fang-bite",
-      "name": "Fang Bite",
-      "description": "Long fangs pierce at close contact.",
-      "instrument": "fangs",
-      "targeting": [
-        "other"
-      ],
-      "activation": {
-        "continuity": [
-          "discrete"
-        ]
-      },
-      "timing": {
-        "preparation": [
-          "immediate",
-          "brief"
-        ],
-        "recovery": [
-          "repeatable",
-          "brief"
-        ]
-      },
-      "delivery": {
-        "contact": {
-          "approach": [
-            "stationary",
-            "closing"
-          ],
-          "range": [
-            "contact"
-          ]
-        }
-      },
-      "effects": [
-        {
-          "key": "outcome",
-          "type": "harm",
-          "recipient": "target",
-          "onset": "instant",
-          "persistence": "resolved",
-          "likelihood": [
-            "consistent"
-          ],
-          "mechanism": "piercing",
-          "intensity": [
-            35,
-            60
-          ]
-        }
-      ]
-    },
-    {
-      "key": "body-pounce",
-      "name": "Body Pounce",
-      "description": "A rapid pounce lands the feline body against its target.",
-      "instrument": "hide",
-      "targeting": [
-        "other"
-      ],
-      "activation": {
-        "continuity": [
-          "discrete"
-        ]
-      },
-      "timing": {
-        "preparation": [
-          "immediate",
-          "brief"
-        ],
-        "recovery": [
-          "repeatable",
-          "brief"
-        ]
-      },
-      "delivery": {
-        "contact": {
-          "approach": [
-            "closing"
-          ],
-          "range": [
-            "contact"
-          ]
-        }
-      },
-      "effects": [
-        {
-          "key": "outcome",
-          "type": "harm",
-          "recipient": "target",
-          "onset": "instant",
-          "persistence": "resolved",
-          "likelihood": [
-            "consistent"
-          ],
-          "mechanism": "impact",
-          "intensity": [
-            30,
-            55
-          ]
-        }
+      "claws/strike": [
+        38,
+        58
       ]
     }
-  ]
+  }
 }

@@ -307,109 +307,23 @@
           ]
         }
       ]
-    },
-    {
-      "key": "root-compression",
-      "name": "Root Compression",
-      "description": "Thick roots squeeze a contacted target.",
-      "instrument": "roots",
-      "targeting": [
-        "other"
+    }
+  ],
+  "channels": [],
+  "conduits": {},
+  "acts": {
+    "exclude": [
+      "spines/hurl"
+    ],
+    "output": {
+      "roots/strike": [
+        45,
+        70
       ],
-      "activation": {
-        "continuity": [
-          "discrete"
-        ]
-      },
-      "timing": {
-        "preparation": [
-          "immediate",
-          "brief"
-        ],
-        "recovery": [
-          "repeatable",
-          "brief"
-        ]
-      },
-      "delivery": {
-        "contact": {
-          "approach": [
-            "stationary"
-          ],
-          "range": [
-            "contact"
-          ]
-        }
-      },
-      "effects": [
-        {
-          "key": "outcome",
-          "type": "harm",
-          "recipient": "target",
-          "onset": "instant",
-          "persistence": "resolved",
-          "likelihood": [
-            "consistent"
-          ],
-          "mechanism": "compression",
-          "intensity": [
-            45,
-            70
-          ]
-        }
-      ]
-    },
-    {
-      "key": "serrated-spine",
-      "name": "Serrated Spine",
-      "description": "The root body drives a spine into a contacted target.",
-      "instrument": "spines",
-      "targeting": [
-        "other"
-      ],
-      "activation": {
-        "continuity": [
-          "discrete"
-        ]
-      },
-      "timing": {
-        "preparation": [
-          "immediate",
-          "brief"
-        ],
-        "recovery": [
-          "repeatable",
-          "brief"
-        ]
-      },
-      "delivery": {
-        "contact": {
-          "approach": [
-            "stationary",
-            "closing"
-          ],
-          "range": [
-            "contact"
-          ]
-        }
-      },
-      "effects": [
-        {
-          "key": "outcome",
-          "type": "harm",
-          "recipient": "target",
-          "onset": "instant",
-          "persistence": "resolved",
-          "likelihood": [
-            "consistent"
-          ],
-          "mechanism": "piercing",
-          "intensity": [
-            32,
-            58
-          ]
-        }
+      "spines/strike": [
+        32,
+        58
       ]
     }
-  ]
+  }
 }

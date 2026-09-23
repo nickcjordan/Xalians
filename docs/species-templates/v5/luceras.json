@@ -219,160 +219,23 @@
       ]
     }
   ],
-  "mechanisms": [
-    {
-      "key": "horn-ram",
-      "name": "Horn Ram",
-      "description": "Curved horns strike through a short closing charge.",
-      "instrument": "horns",
-      "targeting": [
-        "other"
+  "mechanisms": [],
+  "channels": [],
+  "conduits": {},
+  "acts": {
+    "output": {
+      "horns/strike": [
+        32,
+        58
       ],
-      "activation": {
-        "continuity": [
-          "discrete"
-        ]
-      },
-      "timing": {
-        "preparation": [
-          "immediate",
-          "brief"
-        ],
-        "recovery": [
-          "repeatable",
-          "brief"
-        ]
-      },
-      "delivery": {
-        "contact": {
-          "approach": [
-            "closing"
-          ],
-          "range": [
-            "contact"
-          ]
-        }
-      },
-      "effects": [
-        {
-          "key": "outcome",
-          "type": "harm",
-          "recipient": "target",
-          "onset": "instant",
-          "persistence": "resolved",
-          "likelihood": [
-            "consistent"
-          ],
-          "mechanism": "impact",
-          "intensity": [
-            32,
-            58
-          ]
-        }
-      ]
-    },
-    {
-      "key": "tail-spike",
-      "name": "Tail Spike",
-      "description": "The spiked plume at the end of its tail pierces nearby targets.",
-      "instrument": "tail",
-      "targeting": [
-        "other"
+      "tail/strike": [
+        20,
+        42
       ],
-      "activation": {
-        "continuity": [
-          "discrete"
-        ]
-      },
-      "timing": {
-        "preparation": [
-          "immediate",
-          "brief"
-        ],
-        "recovery": [
-          "repeatable",
-          "brief"
-        ]
-      },
-      "delivery": {
-        "contact": {
-          "approach": [
-            "stationary",
-            "closing"
-          ],
-          "range": [
-            "contact"
-          ]
-        }
-      },
-      "effects": [
-        {
-          "key": "outcome",
-          "type": "harm",
-          "recipient": "target",
-          "onset": "instant",
-          "persistence": "resolved",
-          "likelihood": [
-            "consistent"
-          ],
-          "mechanism": "piercing",
-          "intensity": [
-            20,
-            42
-          ]
-        }
-      ]
-    },
-    {
-      "key": "body-check",
-      "name": "Body Check",
-      "description": "Its bounding body collides with a contacted target.",
-      "instrument": "body",
-      "targeting": [
-        "other"
-      ],
-      "activation": {
-        "continuity": [
-          "discrete"
-        ]
-      },
-      "timing": {
-        "preparation": [
-          "immediate",
-          "brief"
-        ],
-        "recovery": [
-          "repeatable",
-          "brief"
-        ]
-      },
-      "delivery": {
-        "contact": {
-          "approach": [
-            "closing"
-          ],
-          "range": [
-            "contact"
-          ]
-        }
-      },
-      "effects": [
-        {
-          "key": "outcome",
-          "type": "harm",
-          "recipient": "target",
-          "onset": "instant",
-          "persistence": "resolved",
-          "likelihood": [
-            "consistent"
-          ],
-          "mechanism": "impact",
-          "intensity": [
-            22,
-            45
-          ]
-        }
+      "body/strike": [
+        22,
+        45
       ]
     }
-  ]
+  }
 }

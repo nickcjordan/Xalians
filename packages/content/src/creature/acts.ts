@@ -25,7 +25,11 @@ export const PATTERNS = Object.freeze([
   'beam', 'burst', 'spray', 'cloud',
 ] as const);
 export type Pattern = typeof PATTERNS[number];
-const MEDIUM_ONLY: readonly Pattern[] = Object.freeze(['beam', 'burst', 'spray', 'cloud'] as const);
+/** Medium-only patterns need a conduit. Drain joined them on 2026-09-22: the species pass
+ * excluded a physical life drain on 17 of 32 records, because a mouth is not a vampire.
+ * A biological drainer authors its own mechanism; a dark, ghost, chemical, sand or psychic
+ * conduit still derives one. */
+const MEDIUM_ONLY: readonly Pattern[] = Object.freeze(['beam', 'burst', 'spray', 'cloud', 'drain'] as const);
 
 /** Class sets the output factor. `channel` is mind, gaze, voice, secretion, swarm and aura. */
 export type InstrumentClass = 'heavy' | 'light' | 'channel';
@@ -110,12 +114,12 @@ export const MEDIUM_ROWS: Readonly<Record<Element, MediumRow>> = Object.freeze({
   plant: medium({ patterns: ['snare', 'ward', 'mend', 'lash', 'cloud', 'spray'], status: { status: 'sedated', removable: ['stabilizing'] }, bind: restrained }),
   electric: medium({ patterns: ['beam', 'burst', 'lash', 'strike', 'snare', 'spray'], status: { status: 'stunned', removable: ['stabilizing'] }, bind: { status: 'paralyzed', removable: ['stabilizing'] } }),
   ghost: medium({ patterns: ['terrorize', 'drain', 'cloud', 'snare', 'ward'], status: { status: 'frightened', removable: ['stabilizing'] }, bind: restrained, ward: 'phased' }),
-  rock: medium({ patterns: ['ward', 'crush', 'burst', 'shove', 'strike'], bind: { status: 'buried', removable: ['freeing'] }, ward: 'reinforced' }),
+  rock: medium({ patterns: ['ward', 'crush', 'burst', 'shove', 'strike', 'hurl'], bind: { status: 'buried', removable: ['freeing'] }, ward: 'reinforced' }),
   chemical: medium({ patterns: ['spray', 'cloud', 'burst', 'drain', 'snare'], status: { status: 'corroding', removable: ['cleansing'] }, bind: { status: 'restrained', removable: ['cleansing', 'freeing'] } }),
   air: medium({ patterns: ['shove', 'burst', 'cloud', 'lash', 'ward'], status: { status: 'disoriented', removable: ['stabilizing'] } }),
   psychic: medium({ patterns: ['burst', 'snare', 'terrorize', 'ward', 'mend', 'drain', 'shove'], status: { status: 'disoriented', removable: ['stabilizing'] }, bind: entranced, ward: 'focused' }),
-  ice: medium({ patterns: ['snare', 'ward', 'spray', 'burst', 'crush', 'mend'], status: { status: 'chilled', removable: ['warming'] }, bind: { status: 'frozen', removable: ['warming'] } }),
-  metal: medium({ patterns: ['strike', 'ward', 'beam', 'crush', 'rake'], ward: 'reinforced' }),
+  ice: medium({ patterns: ['snare', 'ward', 'spray', 'burst', 'crush', 'mend', 'hurl'], status: { status: 'chilled', removable: ['warming'] }, bind: { status: 'frozen', removable: ['warming'] } }),
+  metal: medium({ patterns: ['strike', 'ward', 'beam', 'crush', 'rake', 'hurl'], ward: 'reinforced' }),
   sand: medium({ patterns: ['cloud', 'spray', 'drain', 'snare', 'burst', 'rake'], status: { status: 'blinded', removable: ['cleansing'] }, bind: { status: 'buried', removable: ['freeing'] } }),
 } satisfies Record<Element, MediumRow>);
 
@@ -143,6 +147,7 @@ interface DeriveInput {
   element: Element;
   attributes: Bands;
   anatomy: readonly string[];
+  communication: readonly string[];
   channels: readonly string[];
   conduits: Readonly<Partial<Record<string, string>>>;
   exclude: readonly string[];
@@ -166,14 +171,14 @@ const PATTERN_NOUNS: Readonly<Record<Pattern, string>> = Object.freeze({
 
 export function deriveMechanisms(species: {
   element: string; attributes: Bands;
-  physiology: { anatomy: readonly string[] };
+  physiology: { anatomy: readonly string[]; communication?: readonly string[] };
   channels?: readonly string[];
   conduits?: Readonly<Partial<Record<string, string>>>;
   acts?: { exclude?: readonly string[]; output?: Readonly<Record<string, readonly [number, number]>> };
 }): Mechanism[] {
   const input: DeriveInput = {
     element: species.element as Element, attributes: species.attributes,
-    anatomy: species.physiology.anatomy, channels: species.channels ?? [],
+    anatomy: species.physiology.anatomy, communication: species.physiology.communication ?? [], channels: species.channels ?? [],
     conduits: species.conduits ?? {}, exclude: species.acts?.exclude ?? [], output: species.acts?.output ?? {},
   };
   const mechanisms: Mechanism[] = [];
@@ -182,6 +187,7 @@ export function deriveMechanisms(species: {
     for (const pattern of row.patterns) {
       if (MEDIUM_ONLY.includes(pattern)) continue;
       if (excluded(input.exclude, instrument, pattern)) continue;
+      if (pattern === 'terrorize' && !canDisplay(input, instrument, row)) continue;
       mechanisms.push(...build(input, instrument, row, pattern, undefined));
     }
     const element = input.conduits[instrument] as Element | undefined;
@@ -192,6 +198,16 @@ export function deriveMechanisms(species: {
     }
   }
   return mechanisms;
+}
+
+/** A body part only threatens with what the species can signal: a visual display needs
+ * display communication, a sound needs vocal. Channels carry their own predicates. */
+function canDisplay(input: DeriveInput, instrument: Instrument, row: InstrumentRow): boolean {
+  if ((CHANNEL_KEYS as readonly string[]).includes(instrument)) return true;
+  if (row.reception === 'visual') return input.communication.includes('display');
+  // A rattle signals by sound whether or not the species calls; vibration communication counts.
+  if (row.reception === 'auditory') return input.communication.includes('vocal') || input.communication.includes('vibration');
+  return true;
 }
 
 /** One pattern on one instrument, optionally through a medium. Strike, drain and hurl
@@ -353,7 +369,7 @@ function build(input: DeriveInput, instrument: Instrument, row: InstrumentRow, p
     })];
     case 'mend': {
       const band = bandOf('vitality', OUTPUT_FACTORS.mend);
-      const other: Delivery = instrument === 'mind' || instrument === 'aura'
+      const other: Delivery = SIGNAL_CHANNELS.includes(instrument)
         ? { signal: { approach: ['stationary'], range: ['short'], ...(row.reception && row.reception !== 'none' ? { reception: row.reception } : {}) } }
         : { contact: { approach: ['stationary'], range: ['contact'] } };
       const repair = (recipient: Effect['recipient']): Effect => ({ key: 'repair', type: 'restore', recipient,

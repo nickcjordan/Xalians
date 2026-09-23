@@ -223,58 +223,6 @@
   ],
   "mechanisms": [
     {
-      "key": "spur-bore",
-      "name": "Spur Bore",
-      "description": "A pointed forelimb spur bores into contacted material.",
-      "instrument": "spurs",
-      "targeting": [
-        "other"
-      ],
-      "activation": {
-        "continuity": [
-          "discrete"
-        ]
-      },
-      "timing": {
-        "preparation": [
-          "immediate",
-          "brief"
-        ],
-        "recovery": [
-          "repeatable",
-          "brief"
-        ]
-      },
-      "delivery": {
-        "contact": {
-          "approach": [
-            "stationary",
-            "closing"
-          ],
-          "range": [
-            "contact"
-          ]
-        }
-      },
-      "effects": [
-        {
-          "key": "outcome",
-          "type": "harm",
-          "recipient": "target",
-          "onset": "instant",
-          "persistence": "resolved",
-          "likelihood": [
-            "consistent"
-          ],
-          "mechanism": "piercing",
-          "intensity": [
-            50,
-            75
-          ]
-        }
-      ]
-    },
-    {
       "key": "spur-pressure",
       "name": "Spur Pressure",
       "description": "The forelimb drills press and crush at close contact.",
@@ -324,109 +272,16 @@
           ]
         }
       ]
-    },
-    {
-      "key": "plated-limb-strike",
-      "name": "Plated Limb Strike",
-      "description": "A plated limb delivers blunt force.",
-      "instrument": "shell",
-      "targeting": [
-        "other"
-      ],
-      "activation": {
-        "continuity": [
-          "discrete"
-        ]
-      },
-      "timing": {
-        "preparation": [
-          "immediate",
-          "brief"
-        ],
-        "recovery": [
-          "repeatable",
-          "brief"
-        ]
-      },
-      "delivery": {
-        "contact": {
-          "approach": [
-            "stationary",
-            "closing"
-          ],
-          "range": [
-            "contact"
-          ]
-        }
-      },
-      "effects": [
-        {
-          "key": "outcome",
-          "type": "harm",
-          "recipient": "target",
-          "onset": "instant",
-          "persistence": "resolved",
-          "likelihood": [
-            "consistent"
-          ],
-          "mechanism": "impact",
-          "intensity": [
-            35,
-            60
-          ]
-        }
-      ]
-    },
-    {
-      "key": "body-shove",
-      "name": "Body Shove",
-      "description": "Its upright body drives into a nearby target.",
-      "instrument": "body",
-      "targeting": [
-        "other"
-      ],
-      "activation": {
-        "continuity": [
-          "discrete"
-        ]
-      },
-      "timing": {
-        "preparation": [
-          "immediate",
-          "brief"
-        ],
-        "recovery": [
-          "repeatable",
-          "brief"
-        ]
-      },
-      "delivery": {
-        "contact": {
-          "approach": [
-            "closing"
-          ],
-          "range": [
-            "contact"
-          ]
-        }
-      },
-      "effects": [
-        {
-          "key": "outcome",
-          "type": "harm",
-          "recipient": "target",
-          "onset": "instant",
-          "persistence": "resolved",
-          "likelihood": [
-            "consistent"
-          ],
-          "mechanism": "impact",
-          "intensity": [
-            30,
-            52
-          ]
-        }
+    }
+  ],
+  "channels": [],
+  "conduits": {},
+  "acts": {
+    "output": {
+      "spurs/strike": [
+        50,
+        75
       ]
     }
-  ]
+  }
 }

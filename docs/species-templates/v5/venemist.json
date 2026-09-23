@@ -310,109 +310,25 @@
           ]
         }
       ]
-    },
-    {
-      "key": "two-fang-bite",
-      "name": "Two-Fang Bite",
-      "description": "Its two teeth bite at close contact.",
-      "instrument": "fangs",
-      "targeting": [
-        "other"
+    }
+  ],
+  "channels": [],
+  "conduits": {
+    "vents": "chemical"
+  },
+  "acts": {
+    "exclude": [
+      "vents/drain"
+    ],
+    "output": {
+      "fangs/strike": [
+        20,
+        40
       ],
-      "activation": {
-        "continuity": [
-          "discrete"
-        ]
-      },
-      "timing": {
-        "preparation": [
-          "immediate",
-          "brief"
-        ],
-        "recovery": [
-          "repeatable",
-          "brief"
-        ]
-      },
-      "delivery": {
-        "contact": {
-          "approach": [
-            "stationary",
-            "closing"
-          ],
-          "range": [
-            "contact"
-          ]
-        }
-      },
-      "effects": [
-        {
-          "key": "outcome",
-          "type": "harm",
-          "recipient": "target",
-          "onset": "instant",
-          "persistence": "resolved",
-          "likelihood": [
-            "consistent"
-          ],
-          "mechanism": "piercing",
-          "intensity": [
-            20,
-            40
-          ]
-        }
-      ]
-    },
-    {
-      "key": "body-contact",
-      "name": "Body Contact",
-      "description": "Its body delivers close blunt contact.",
-      "instrument": "hide",
-      "targeting": [
-        "other"
-      ],
-      "activation": {
-        "continuity": [
-          "discrete"
-        ]
-      },
-      "timing": {
-        "preparation": [
-          "immediate",
-          "brief"
-        ],
-        "recovery": [
-          "repeatable",
-          "brief"
-        ]
-      },
-      "delivery": {
-        "contact": {
-          "approach": [
-            "closing"
-          ],
-          "range": [
-            "contact"
-          ]
-        }
-      },
-      "effects": [
-        {
-          "key": "outcome",
-          "type": "harm",
-          "recipient": "target",
-          "onset": "instant",
-          "persistence": "resolved",
-          "likelihood": [
-            "consistent"
-          ],
-          "mechanism": "impact",
-          "intensity": [
-            18,
-            35
-          ]
-        }
+      "hide/strike": [
+        18,
+        35
       ]
     }
-  ]
+  }
 }

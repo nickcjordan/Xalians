@@ -71,7 +71,11 @@ Prototyped on the same 640 records: instrument-derived nouns for contact (fists 
 
 Measured for the selection change: over 40 seeds per species, every one of the 32 species exposes at least as many distinct acts (ignoring timing and approach) as it has ordinary slots to fill: 32 of 32 can fill four slots. Eight species (akinza, luceras, newtapede, scalatto, smokat, sonalloy, voltish, xylum) expose exactly three, so under an act-first draw every individual of those species carries the same three ordinary acts and varies only in timing, approach and output. Today those species draw from 11 to 24 timing variants of the same three acts, which is variety in name only.
 
-### Proposed change (built on `creature/act-first-selection`, awaiting Nick's ruling)
+### Ruling, 2026-09-22
+
+Nick accepted act-first selection and the vocabulary, and went further: the repeats were a symptom of the authored act space being three mechanisms wide. The act space is now derived from the body through registry tables, with species records narrowing or extending it; see [derived acts](creature-derived-acts.md). Under that change the selection and naming below stay as built.
+
+### The change (built on `creature/act-first-selection`)
 
 - **Act-first selection.** The draw picks an act without replacement while unselected acts remain, then picks the act's variable facts. An act is what is done and with what: instrument, element, delivery mode and reception, targeting, area shape and anchor, and each effect's type, status, mechanism, direction, methods and recipient. Everything else is how hard, how far, how likely and how long (timing, approach, range, area extent and lifetime, effect likelihood, onset, persistence and duration) and still varies per individual without making two slots different. A first build with a finer identity (timing and approach only) left 24.8% of creatures colliding because likelihood-only and range-only pairs were still drawn twice; the coarser identity is the correction. A species with fewer acts than slots falls back to today's behaviour for the remaining slots, so no species loses the four-action guarantee.
 - **Instrument nouns and mechanism words** as the shared default vocabulary, registry-backed (fists Punch, hooves Kick, claws Swipe, jaws Bite; impact Heavy, cutting Slashing, compression Crushing), with the authored `naming` override unchanged.
@@ -89,7 +93,7 @@ The last column holds over 640 records, over the 120-seed guardrail (3,840 creat
 
 Under the coarse identity 18 of 32 species expose fewer distinct acts than ordinary slots (two acts for three slots is the common case), so act-first fills the rest by repeating an act with different facts, and the fact words carry the difference. That is the honest shape of the roster: most species have two or three things they do, and individuals differ in how. Widening a species' permissions is the creature-side answer if a species should have more.
 
-- This is a generation change, so it needs a new release ID; `generation-0.6.0-1` stays frozen. Every game reading the canonical release gets different ordinary actions for the same seed: Powerworks' four companions and Reclamation's pools must be re-measured after the switch.
+- This is a generation change, so it ships in the next frozen release together with derived acts; `generation-0.6.0-1` stays archived. Every game reading the canonical release gets different ordinary actions for the same seed: Powerworks' four companions and Reclamation's pools are re-measured after the switch.
 
 ## Validation and next boundary
 

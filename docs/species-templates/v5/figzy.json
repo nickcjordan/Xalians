@@ -362,57 +362,19 @@
           ]
         }
       ]
-    },
-    {
-      "key": "antler-contact",
-      "name": "Antler Contact",
-      "description": "Its small antlers strike at close contact.",
-      "instrument": "antlers",
-      "targeting": [
-        "other"
-      ],
-      "activation": {
-        "continuity": [
-          "discrete"
-        ]
-      },
-      "timing": {
-        "preparation": [
-          "immediate",
-          "brief"
-        ],
-        "recovery": [
-          "repeatable",
-          "brief"
-        ]
-      },
-      "delivery": {
-        "contact": {
-          "approach": [
-            "stationary"
-          ],
-          "range": [
-            "contact"
-          ]
-        }
-      },
-      "effects": [
-        {
-          "key": "outcome",
-          "type": "harm",
-          "recipient": "target",
-          "onset": "instant",
-          "persistence": "resolved",
-          "likelihood": [
-            "consistent"
-          ],
-          "mechanism": "impact",
-          "intensity": [
-            15,
-            32
-          ]
-        }
-      ]
     }
-  ]
+  ],
+  "channels": [
+    "mind"
+  ],
+  "conduits": {
+    "fists": "psychic",
+    "mind": "psychic"
+  },
+  "acts": {
+    "exclude": [
+      "*/drain",
+      "*/mend"
+    ]
+  }
 }
