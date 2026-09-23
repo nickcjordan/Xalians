@@ -29,9 +29,13 @@ import {
   HP_SCALE,
   LINGERING_OPPORTUNITIES,
   MENDING_STATUSES,
+  SENSES_STATUSES,
+  SHOCK_OPPORTUNITIES,
+  SHOCK_STATUSES,
   SPEED_SCALE,
   STRENGTH_MECHANISMS,
   SUSTAINED_FALLBACK_OPPORTUNITIES,
+  TEMPO_STATUSES,
 } from "./levers.ts";
 
 export type Approach = "closing" | "stationary" | "self";
@@ -50,14 +54,23 @@ export type Support =
   | "restore"
   | "remove"
   | "unsupported";
-/** The five table groups a supported status falls into (contract decision 10). */
+/** The table groups a supported status falls into (contract decision 10; shock, tempo and senses from pass 4, decisions 27 to 31). */
 export type StatusGroup =
   | "binding"
   | "degrading"
   | "guarding"
   | "attention"
   | "concealment"
-  | "mending";
+  | "mending"
+  | "shock"
+  | "tempo"
+  | "senses";
+/** An area's geometry as the table reads it (contract decision 33). Persistence is not kept: a lingering area applies once at resolution. */
+export type Area = {
+  shape: "line" | "cone" | "radial" | "sweep";
+  extent: "small" | "medium" | "large";
+  anchor: "self" | "target" | "location";
+};
 export type RemovalMethod =
   | "cooling"
   | "smothering"
@@ -95,6 +108,8 @@ export type MoveEffect = {
   protection?: Protection;
   /** `remove` effects only: the methods this effect carries; it ends conditions whose removable list intersects them. */
   methods?: RemovalMethod[];
+  /** The key of another effect on the same move that must succeed on at least one recipient before this one resolves (contract decision 34): a drain's restore requires its harm. */
+  requires?: string;
   support: Support;
   /** Present only when support is "unsupported": the words the table shows. */
   reason?: string;
@@ -109,6 +124,10 @@ export type Move = {
   recovery: Recovery;
   /** The move's own element classification when it has one; matchup falls back to the creature's element. */
   element?: string;
+  /** Present when an effect's recipient is `area`: who beyond the target it reaches (contract decision 33). */
+  area?: Area;
+  /** Signal delivery only: the sense the signal must reach. A blinded unit is immune to statuses from a visual signal (contract decision 30). */
+  reception?: "visual" | "auditory";
   effects: MoveEffect[];
   /** Desperate strike only: flat damage, no matchup, recoil. */
   fallback?: true;
@@ -182,6 +201,8 @@ export type Unit = {
   conditions: Condition[];
   /** Opportunities since this unit was last entranced, for the reapplication guard (contract decision 15). Infinity when it never was. */
   sinceEntranced: number;
+  /** Opportunities since this unit was last stunned, for the same guard on shock (contract decision 27). Infinity when it never was. */
+  sinceStunned: number;
   charge: string | null;
   /** Index of the move being charged, -1 when none. Kept beside `charge` so a unit with two prolonged moves releases the one it began. */
   chargeMove: number;
@@ -203,6 +224,7 @@ export type CardEffect = {
   removable?: RemovalMethod[];
   protection?: Protection;
   methods?: RemovalMethod[];
+  requires?: string;
 };
 export type CardPassive = {
   key: string;
@@ -227,6 +249,8 @@ export type Card = {
     preparation: Preparation;
     recovery: Recovery;
     element?: string;
+    area?: Area;
+    reception?: "visual" | "auditory";
     effects: CardEffect[];
   }[];
   passives?: CardPassive[];
@@ -248,9 +272,12 @@ const GUARDING = new Set<string>(GUARDING_STATUSES);
 const ATTENTION = new Set<string>(ATTENTION_STATUSES);
 const CONCEALMENT = new Set<string>(CONCEALMENT_STATUSES);
 const MENDING = new Set<string>(MENDING_STATUSES);
+const SHOCK = new Set<string>(SHOCK_STATUSES);
+const TEMPO = new Set<string>(TEMPO_STATUSES);
+const SENSES = new Set<string>(SENSES_STATUSES);
 type DegradingStatus = keyof typeof DEGRADING_STATUS_ELEMENTS;
 
-/** Which of the five table groups reads a status, or null when the table has no rule for it (contract decision 10). */
+/** Which table group reads a status, or null when the table has no rule for it (contract decisions 10 and 27 to 31). */
 export function statusGroup(status: string): StatusGroup | null {
   if (BINDING.has(status)) return "binding";
   if (DEGRADING.has(status)) return "degrading";
@@ -258,17 +285,23 @@ export function statusGroup(status: string): StatusGroup | null {
   if (ATTENTION.has(status)) return "attention";
   if (CONCEALMENT.has(status)) return "concealment";
   if (MENDING.has(status)) return "mending";
+  if (SHOCK.has(status)) return "shock";
+  if (TEMPO.has(status)) return "tempo";
+  if (SENSES.has(status)) return "senses";
   return null;
 }
-/** Duration in the victim's opportunities: binding keeps its ruled value, attention is deliberately short, everything else is the lingering table (contract decision 12). */
+/** Duration in the victim's opportunities: binding keeps its ruled value, attention and shock are deliberately short, everything else is the lingering table (contract decisions 12 and 27). */
 export function statusOpportunities(
   group: StatusGroup,
   duration: "brief" | "prolonged"
 ): number {
   if (group === "binding") return BINDING_OPPORTUNITIES[duration];
   if (group === "attention") return ATTENTION_OPPORTUNITIES[duration];
+  if (group === "shock") return SHOCK_OPPORTUNITIES[duration];
   return LINGERING_OPPORTUNITIES[duration];
 }
+/** The groups that make sense on their own user when an action aims them there (pass 2, relaxed for concealment by contract decision 32). */
+const SELF_GROUPS = new Set<StatusGroup>(["guarding", "mending", "concealment"]);
 
 /**
   The support reading of one effect. Shared by records and cards so the table cannot
@@ -289,6 +322,7 @@ export function readEffect(
     recipient: effect.recipient,
     likelihood: effect.likelihood,
     intensity: "intensity" in effect && effect.intensity ? effect.intensity : 0,
+    ...(effect.requires ? { requires: effect.requires } : {}),
     support: "unsupported",
   };
   const unsupported = (reason: string): MoveEffect => ({ ...base, reason });
@@ -310,9 +344,10 @@ export function readEffect(
       const status = effect.status ?? "condition";
       const group = statusGroup(status);
       if (!group) return { ...unsupported(`${status} is not read here`), status };
-      // Guarding and mending are the two groups that make sense on their own user;
-      // an ongoing passive may keep any group on itself (contract decision 21).
-      if (!aimed && !ongoing && group !== "guarding" && group !== "mending")
+      // Guarding, mending and concealment are the groups that make sense on their own
+      // user (decision 32 added concealment: Akinza's Night Stalk); an ongoing passive
+      // may keep any group on itself (contract decision 21).
+      if (!aimed && !ongoing && !SELF_GROUPS.has(group))
         return { ...unsupported(`${status} on itself is not read here`), status };
       const removable = ("removable" in effect ? effect.removable : undefined) as
         | RemovalMethod[]
@@ -352,9 +387,37 @@ export function readEffect(
   }
 }
 
-/** Any supported effect makes a move usable (contract decision 9). */
+/**
+  A beneficial effect: it guards, mends, focuses, restores or protects whoever receives it
+  (contract decision 35). Aimed at a foe it is withheld, never applied.
+*/
+export const beneficial = (e: MoveEffect) =>
+  e.support === "restore" ||
+  e.support === "protect" ||
+  (e.support === "status" && (e.group === "guarding" || e.group === "mending"));
+/**
+  Can this effect ever reach a unit on its performer's own side? Self effects do, and a
+  radial area anchored on the performer reaches its adjacent allies (contract decision 33).
+  Every other recipient is a foe, because this game aims only at foes.
+*/
+export const reachesOwnSide = (move: Move, e: MoveEffect) =>
+  e.recipient === "self" ||
+  (e.recipient === "area" &&
+    move.area?.shape === "radial" &&
+    move.area.anchor === "self");
+/** A radial area anchored on its performer: it reaches every foe and the performer's own adjacent allies (contract decision 33). */
+export const selfBurst = (move: Move) =>
+  move.area?.shape === "radial" && move.area.anchor === "self";
+/**
+  Any supported effect makes a move usable (contract decision 9), except a beneficial
+  effect that can only ever reach a foe: decision 35 withholds it every time, so a move
+  carrying nothing else would be a dead order.
+*/
 export const usable = (move: Move) =>
-  move.effects.some((e) => e.support !== "unsupported");
+  move.effects.some(
+    (e) =>
+      e.support !== "unsupported" && (!beneficial(e) || reachesOwnSide(move, e))
+  );
 /** A move that can take health from a foe: harm or displace. Desperate strike appears only when none is legal. */
 export const damaging = (move: Move) =>
   move.effects.some((e) => e.support === "harm" || e.support === "displace");
@@ -503,6 +566,7 @@ const freshState = (moves: Move[], passives: Passive[]) => ({
   ward: false,
   conditions: [] as Condition[],
   sinceEntranced: Infinity,
+  sinceStunned: Infinity,
   charge: null,
   chargeMove: -1,
   recovery: 0,
@@ -530,6 +594,16 @@ export function readCompanion(
     preparation: action.timing?.preparation ?? "brief",
     recovery: action.timing?.recovery ?? "repeatable",
     ...(action.element ? { element: action.element } : {}),
+    ...(action.spatial.area
+      ? {
+          area: {
+            shape: action.spatial.area.shape,
+            extent: action.spatial.area.extent,
+            anchor: action.spatial.area.anchor,
+          },
+        }
+      : {}),
+    ...(action.delivery.reception ? { reception: action.delivery.reception } : {}),
     effects: action.effects.map((effect) => readEffect(effect)),
   }));
   const passives: Passive[] = record.passives.map((passive) =>
@@ -581,6 +655,8 @@ export function readCard(
     preparation: m.preparation,
     recovery: m.recovery,
     ...(m.element ? { element: m.element } : {}),
+    ...(m.area ? { area: { ...m.area } } : {}),
+    ...(m.reception ? { reception: m.reception } : {}),
     effects: m.effects.map((effect) => readEffect(effect)),
   }));
   const passives: Passive[] = (card.passives ?? []).map((passive) =>

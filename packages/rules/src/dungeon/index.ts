@@ -11,6 +11,7 @@ import {
 import type { CreatureRecord } from "@xalians/content/creature";
 import {
   LAST_RESORT,
+  beneficial,
   contactDelivery,
   damaging,
   harmAttribute,
@@ -28,7 +29,9 @@ import {
   type Unit,
 } from "./reading.ts";
 import {
-  ATTENTION_STATUSES,
+  AREA_HARM_FACTOR,
+  BLINDED_RANGED_FACTOR,
+  SLOWED_SPEED_FACTOR,
   DEGRADE_FACTOR,
   ENTRANCE_IMMUNITY_OPPORTUNITIES,
   FOCUS_STATUS,
@@ -63,6 +66,7 @@ import {
 
 export type {
   Approach,
+  Area,
   Condition,
   Move,
   MoveEffect,
@@ -76,15 +80,20 @@ export type {
 } from "./reading.ts";
 export {
   LAST_RESORT,
+  beneficial,
   contactDelivery,
   ongoingConditions,
+  reachesOwnSide,
   readCompanion,
+  selfBurst,
   usable,
   damaging,
   statusGroup,
   statusOpportunities,
 } from "./reading.ts";
 export {
+  AREA_HARM_FACTOR,
+  BLINDED_RANGED_FACTOR,
   COOLDOWN_ROUNDS,
   DEGRADE_FACTOR,
   DESPERATE_STRIKE_RECOIL,
@@ -94,6 +103,7 @@ export {
   REINFORCED_FACTOR,
   SAVE_VERSION,
   SHIELDED_FACTOR,
+  SLOWED_SPEED_FACTOR,
 } from "./levers.ts";
 
 export type Order = { move: number; target: string };
@@ -131,11 +141,24 @@ export type BattleEvent = {
     | "lost"
     | "hidden"
     | "react"
+    | "stumble"
+    | "withheld"
+    | "broken"
     | "result";
   /** status / tick / expired / removed events: which condition. */
   status?: string;
   group?: StatusGroup;
   remaining?: number;
+  /** hit events only: this recipient was reached by the move's area, not selected (contract decision 33). */
+  area?: true;
+  /**
+    withheld events only: why an effect did not resolve. "foe" is a beneficial effect that
+    would have reached an opposing unit (contract decision 35); "requires" is a dependent
+    effect whose prerequisite did not succeed (contract decision 34).
+  */
+  reason?: "foe" | "requires";
+  /** withheld events only: the effect that did not resolve, as a status name or an effect type. */
+  effect?: string;
   actorId?: string;
   targetId?: string;
   amount?: number;
@@ -209,14 +232,28 @@ export function initiative(
     const q = orders?.[u.id];
     const m = q && q.move >= -1 ? moveAt(u, q.move) : null;
     return (
-      u.speed +
+      effectiveSpeed(u) +
       (m && m.preparation === "immediate" ? IMMEDIATE_INITIATIVE_BONUS : 0)
     );
   };
+  // Sedated units act after every unsedated one (contract decision 29), then speed.
+  const late = (u: Unit) => (sedated(u) ? 1 : 0);
   return [...all].sort(
-    (a, b) => pace(b) - pace(a) || priority.indexOf(a) - priority.indexOf(b)
+    (a, b) =>
+      late(a) - late(b) ||
+      pace(b) - pace(a) ||
+      priority.indexOf(a) - priority.indexOf(b)
   );
 }
+/** Speed as initiative reads it: a slowed unit moves at SLOWED_SPEED_FACTOR through its duration (contract decision 28). */
+export function effectiveSpeed(u: Unit): number {
+  return u.conditions.some((c) => c.status === "slowed")
+    ? Math.floor(u.speed * SLOWED_SPEED_FACTOR)
+    : u.speed;
+}
+/** A sedated unit acts after every unsedated one and its passives do not react (contract decision 29). */
+export const sedated = (u: Unit) =>
+  u.conditions.some((c) => c.status === "sedated");
 function enemyUnit(species: string, id: string, hp?: number): Unit {
   const card = cards.templates[species as keyof typeof cards.templates] as Card;
   return readCard(card, species, id, names[species] ?? species, hp);
@@ -326,14 +363,29 @@ export function matchup(attacker: Unit, target: Unit, move?: Move): number {
     key(move?.element ?? attacker.element)
   ][key(target.element)];
 }
-/** Unscaled harm of one effect: intensity/10 * (0.5 + attr/100); displace at its lever share. */
+/**
+  Unscaled harm of one effect: intensity/10 * (0.5 + attr/100); displace at its lever
+  share; an area effect at AREA_HARM_FACTOR for every recipient, the selected target
+  included (contract decision 33).
+*/
 function rawHarm(u: Unit, e: MoveEffect): number {
   if (e.support !== "harm" && e.support !== "displace") return 0;
   const attr = u.attrs[harmAttribute(e.mechanism ?? "impact")];
   const intensity =
-    e.support === "displace" ? e.intensity * DISPLACE_HARM_FACTOR : e.intensity;
+    (e.support === "displace" ? e.intensity * DISPLACE_HARM_FACTOR : e.intensity) *
+    (e.recipient === "area" ? AREA_HARM_FACTOR : 1);
   return (intensity / HARM_DIVISOR) * (HARM_BASE + attr / HARM_ATTR_DIVISOR);
 }
+/** Which recipient a unit is for one move: the selected target, or a unit only its area reaches. */
+export type Reach = "target" | "area";
+/** Does this effect land on a unit reached this way? The target receives target and area effects; an area recipient only area effects. */
+const reaches = (e: MoveEffect, reach: Reach) =>
+  e.recipient === "area" || (reach === "target" && e.recipient === "target");
+/** blinded halves the unit's non-contact harm (contract decision 30); contact harm is unaffected. */
+export const sensesFactor = (u: Unit, move: Move) =>
+  !move.fallback && move.range !== "contact" && has(u, "blinded")
+    ? BLINDED_RANGED_FACTOR
+    : 1;
 /** Attribute-scaled harm before matchup and ward: the number a move card shows. */
 export function basePower(u: Unit, move: Move): number {
   return Math.floor(
@@ -347,14 +399,24 @@ export function basePower(u: Unit, move: Move): number {
   preview cannot disagree with the outcome. Per effect: the harm curve, then the
   target's protection descriptors (immune blocks that effect outright, resistant
   takes the reinforced quarter off it). Then, once: the element matchup, the
-  attacker's own output factor (frightened), and the target's guarding factor
-  (the better of ward and shielded, times reinforced).
+  attacker's own output factors (frightened, blinded on a non-contact move), and the
+  target's guarding factor (the better of ward and shielded, times reinforced).
+
+  `reach` says how the unit is reached: "target" (the default, the selected target) takes
+  every harm effect, "area" (a unit the move's area caught) only the area ones
+  (contract decision 33).
 */
-export function damagePreview(u: Unit, move: Move, target: Unit): number {
+export function damagePreview(
+  u: Unit,
+  move: Move,
+  target: Unit,
+  reach: Reach = "target"
+): number {
   const element = move.element ?? u.element;
   const base = move.fallback
     ? DESPERATE_STRIKE_DAMAGE
     : move.effects.reduce((sum, e) => {
+        if (!reaches(e, reach)) return sum;
         const raw = rawHarm(u, e);
         if (!raw) return sum;
         const degree = protectionDegree(target, harmScope(e, element));
@@ -362,8 +424,53 @@ export function damagePreview(u: Unit, move: Move, target: Unit): number {
         return sum + raw * (degree === "resistant" ? REINFORCED_FACTOR : 1);
       }, 0);
   return Math.floor(
-    base * matchup(u, target, move) * outputFactor(u) * guardFactor(target)
+    base *
+      matchup(u, target, move) *
+      outputFactor(u) *
+      sensesFactor(u, move) *
+      guardFactor(target)
   );
+}
+/*
+  Who a move's area reaches beyond its selected target (contract decision 33). The line
+  is the order of the `team` and `enemies` arrays, standing units only, so a line closes
+  up when a unit falls.
+
+    - line, cone, sweep: small reaches the next unit after the target in the opposing
+      line (the far side), medium both neighbors, large the whole opposing line;
+    - radial anchored on self: every standing opposing unit and the performer's own
+      adjacent allies (the model's no-ally-filter rule);
+    - radial anchored on the target or a location: the target's two neighbors.
+
+  The selected target is never in the returned list: it is always a recipient already.
+  Concealment does not protect a unit from an area; it only prevents selection.
+*/
+export function areaReach(
+  s: { team: Unit[]; enemies: Unit[] },
+  u: Unit,
+  move: Move,
+  target: Unit
+): Unit[] {
+  const area = move.area;
+  if (!area || !move.effects.some((e) => e.recipient === "area" && e.support !== "unsupported"))
+    return [];
+  const foes = (u.enemy ? s.team : s.enemies).filter((t) => t.hp > 0);
+  const own = (u.enemy ? s.enemies : s.team).filter((t) => t.hp > 0);
+  const at = foes.findIndex((t) => t.id === target.id);
+  const around = (line: Unit[], i: number) =>
+    [line[i - 1], line[i + 1]].filter((t): t is Unit => !!t && i >= 0);
+  if (area.shape === "radial") {
+    if (area.anchor === "self")
+      return [
+        ...foes.filter((t) => t.id !== target.id),
+        ...around(own, own.findIndex((t) => t.id === u.id)),
+      ];
+    return around(foes, at);
+  }
+  if (area.extent === "small")
+    return at >= 0 && foes[at + 1] ? [foes[at + 1]] : [];
+  if (area.extent === "medium") return around(foes, at);
+  return foes.filter((t) => t.id !== target.id);
 }
 export function restorePreview(u: Unit, effect: MoveEffect): number {
   return Math.floor(
@@ -439,6 +546,10 @@ function spendOpportunity(s: Run, u: Unit, emit: Emit) {
     u.sinceEntranced + 1,
     ENTRANCE_IMMUNITY_OPPORTUNITIES + 1
   );
+  u.sinceStunned = Math.min(
+    u.sinceStunned + 1,
+    ENTRANCE_IMMUNITY_OPPORTUNITIES + 1
+  );
   const survivors: Condition[] = [];
   for (const c of u.conditions) {
     if (c.remaining === Infinity) {
@@ -476,10 +587,12 @@ function syncBound(u: Unit) {
 }
 
 /*
-  One status application (contract decisions 14, 15 and 18): the likelihood roll from
-  the run rng, then the target's protection descriptors and the attention guards, then
-  refresh-or-add. Reapplying the same status refreshes the duration and keeps the
-  higher intensity; nothing stacks additively.
+  One status application (contract decisions 14, 15, 18, 27 and 30): the likelihood roll
+  from the run rng, then the target's protection descriptors, the senses guard (a blinded
+  unit cannot receive a visual signal), the attention and shock guards, then
+  refresh-or-add. Reapplying the same status refreshes the duration and keeps the higher
+  intensity; nothing stacks additively. A shock that lands breaks a charge in progress.
+  Returns whether the status landed.
 */
 function applyStatus(
   s: Run,
@@ -487,9 +600,10 @@ function applyStatus(
   m: Move,
   target: Unit,
   e: MoveEffect,
+  acted: Set<string>,
   emit: Emit
-) {
-  if (target.hp <= 0 || !e.group) return;
+): boolean {
+  if (target.hp <= 0 || !e.group) return false;
   const status = e.status ?? "condition";
   const binding = e.group === "binding";
   const refuse = (text: string) =>
@@ -514,16 +628,22 @@ function applyStatus(
         group: e.group,
       });
     else refuse(`${target.name} shakes off ${status}.`);
-    return;
+    return false;
   }
   if (protectionDegree(target, { kind: "status", status }) === "immune") {
     refuse(`${target.name} is immune to ${status}.`);
-    return;
+    return false;
+  }
+  // A blinded unit cannot see a visual signal, so nothing it carries takes hold
+  // (contract decision 30).
+  if (m.reception === "visual" && has(target, "blinded")) {
+    refuse(`${target.name} is blinded: ${m.name} cannot be seen.`);
+    return false;
   }
   if (e.group === "attention") {
     if (has(target, FOCUS_STATUS)) {
       refuse(`${target.name} is focused: ${status} cannot take its attention.`);
-      return;
+      return false;
     }
     if (
       status === "entranced" &&
@@ -532,8 +652,17 @@ function applyStatus(
       refuse(
         `${target.name} broke a trance too recently to be entranced again.`
       );
-      return;
+      return false;
     }
+  }
+  // Shock is physical, not attention: focus does not block it, but the same window
+  // as a trance does (contract decision 27).
+  if (
+    e.group === "shock" &&
+    target.sinceStunned < ENTRANCE_IMMUNITY_OPPORTUNITIES
+  ) {
+    refuse(`${target.name} was stunned too recently to be stunned again.`);
+    return false;
   }
   const intensity = e.intensity || DEFAULT_STATUS_INTENSITY;
   const opportunities = e.opportunities ?? 1;
@@ -556,6 +685,7 @@ function applyStatus(
     });
   }
   if (status === "entranced") target.sinceEntranced = 0;
+  if (e.group === "shock") target.sinceStunned = 0;
   syncBound(target);
   const remaining = target.conditions.find((c) => c.status === status)!
     .remaining;
@@ -575,6 +705,20 @@ function applyStatus(
       remaining,
     }
   );
+  // An acute shock disrupts what the body was doing: a charge in progress breaks
+  // (contract decision 27), exactly as a pull breaks one.
+  if (e.group === "shock" && target.charge !== null) {
+    breakCharge(target, acted.has(target.id));
+    emit(`${target.name} is stunned: its charge is broken.`, {
+      kind: "broken",
+      actorId: u.id,
+      targetId: target.id,
+      moveName: m.name,
+      status,
+      group: e.group,
+    });
+  }
+  return true;
 }
 
 /** `remove` ends every condition whose removable methods intersect the effect's; nothing else (contract decision 17). */
@@ -649,6 +793,7 @@ function enter(s: Run) {
       if (!u.conditions.some((c) => c.status === condition.status))
         u.conditions.push({ ...condition });
     u.sinceEntranced = Infinity;
+    u.sinceStunned = Infinity;
     u.charge = null;
     u.chargeMove = -1;
     u.recovery = 0;
@@ -742,6 +887,7 @@ export function resolveRound(
     const q = (u.enemy ? s.orders : orders)[u.id];
     const wasBound = u.bound > 0;
     const entranced = u.conditions.some((c) => c.status === "entranced");
+    const stunned = u.conditions.some((c) => c.group === "shock");
     u.ward = false;
     // Read before the decrement: a charge broken before this opportunity leaves a stale
     // release order that must still be blocked here, even when the interrupted-charge
@@ -753,6 +899,18 @@ export function resolveRound(
     // (contract decisions 13 and 17).
     openOpportunity(s, u, emit);
     if (u.hp <= 0) continue;
+    if (stunned) {
+      // Shock takes the opportunity like a trance (contract decision 27); its charge
+      // was already broken when the shock landed.
+      emit(`${u.name} is stunned and loses its opportunity.`, {
+        kind: "lost",
+        actorId: u.id,
+        status: "stunned",
+        group: "shock",
+      });
+      spendOpportunity(s, u, emit);
+      continue;
+    }
     if (entranced) {
       // Its committed order is not executed and not charged; a charge in progress
       // stands (contract decision 15). The lost opportunity is the one the trance
@@ -801,7 +959,25 @@ export function resolveRound(
         // fallen or concealed target changes nothing and is not announced. Seen on
         // the live site 2026-09-22: "Graviclaw redirects Ground Anchor to Shield unit".
         const aimed = m.effects.some((e) => e.recipient !== "self");
-        if (!target || target.hp <= 0 || !open.has(target.id)) {
+        // Beginning a charge delivers nothing yet; only an execution can stumble.
+        const executes = !(prolonged(m) && !release);
+        if (aimed && executes && has(u, "disoriented") && open.size) {
+          // Disoriented: the aimed order goes to a uniformly drawn standing legal
+          // target from the run rng, announced as a stumble (contract decision 31).
+          const pool = targets.filter((t) => open.has(t.id));
+          target = pool[Math.floor(random(s) * pool.length)];
+          emit(
+            `${u.name} is disoriented: ${m.name} stumbles toward ${target.name} (${target.id}).`,
+            {
+              kind: "stumble",
+              actorId: u.id,
+              targetId: target.id,
+              moveName: m.name,
+              status: "disoriented",
+              group: "senses",
+            }
+          );
+        } else if (!target || target.hp <= 0 || !open.has(target.id)) {
           const skipped =
             aimed && target && target.hp > 0 && !open.has(target.id);
           const index = target ? targets.indexOf(target) : -1;
@@ -879,7 +1055,18 @@ export type Outcome = {
   afflicted: string[];
 };
 
-/** One resolver for every effect on both sides. Harm is deterministic; statuses roll the run rng. */
+/**
+  One resolver for every effect on both sides. Harm is deterministic; statuses roll the run rng.
+
+  Recipients (contract decision 33): the selected target, plus whoever the move's area
+  reaches (`areaReach`). The target takes every harm effect; an area recipient only the
+  area ones, each at AREA_HARM_FACTOR; statuses roll independently per recipient.
+
+  Order: harm and displacement first, per recipient; then every independent effect; then
+  every effect that `requires` another, which resolves only when its prerequisite
+  succeeded on at least one recipient (contract decision 34). A beneficial effect that
+  would reach an opposing unit is withheld and recorded (contract decision 35).
+*/
 function apply(
   s: Run,
   u: Unit,
@@ -890,6 +1077,7 @@ function apply(
 ): Outcome {
   const outcome: Outcome = { harmed: [], afflicted: [] };
   const supported = m.effects.filter((e) => e.support !== "unsupported");
+  const element = m.element ?? u.element;
   // Concealment ends when its owner executes a harm or a displace: the strike gives
   // its position away (contract decision 16).
   if (damaging(m) && concealed(u)) {
@@ -901,88 +1089,174 @@ function apply(
       group: "concealment",
     });
   }
-  // A target immune to displacement takes neither the impact harm nor the charge
-  // break: the descriptor blocks the whole mechanism (contract decision 14).
-  const displaceImmune =
-    protectionDegree(target, { kind: "displace" }) === "immune";
-  if (damaging(m)) {
-    const damage = damagePreview(u, m, target);
-    target.hp = Math.max(0, target.hp - damage);
-    if (damage > 0) outcome.harmed.push({ id: target.id, amount: damage });
-    if (m.fallback) u.hp = Math.max(0, u.hp - DESPERATE_STRIKE_RECOIL);
+  const around = areaReach(s, u, m, target);
+  /** Effect keys that succeeded on at least one recipient, for `requires`. */
+  const succeeded = new Set<string>();
+  const recipientsOf = (e: MoveEffect): Unit[] =>
+    e.recipient === "self"
+      ? [u]
+      : e.recipient === "area"
+      ? [target, ...around]
+      : [target];
+
+  // Harm and displacement, per recipient.
+  const strike = (victim: Unit, reach: Reach) => {
+    const landing = supported.filter(
+      (e) =>
+        (e.support === "harm" || e.support === "displace") &&
+        (reach === "target" || e.recipient === "area")
+    );
+    if (!landing.length && !(m.fallback && reach === "target")) return;
+    // A victim immune to displacement takes neither the impact harm nor the charge
+    // break: the descriptor blocks the whole mechanism (contract decision 14).
+    const displaceImmune =
+      protectionDegree(victim, { kind: "displace" }) === "immune";
+    const damage = damagePreview(u, m, victim, reach);
+    victim.hp = Math.max(0, victim.hp - damage);
+    if (damage > 0) outcome.harmed.push({ id: victim.id, amount: damage });
+    for (const e of landing) {
+      const immune =
+        protectionDegree(victim, harmScope(e, element)) === "immune";
+      if (e.support === "harm" && damage > 0 && !immune) succeeded.add(e.key);
+      if (e.support === "displace" && !displaceImmune) succeeded.add(e.key);
+    }
+    if (m.fallback && reach === "target")
+      u.hp = Math.max(0, u.hp - DESPERATE_STRIKE_RECOIL);
     emit(
-      `${u.name} uses ${m.name} on ${target.name} (${target.id}): ${damage} damage.${
-        target.hp === 0 ? " Knocked out." : ""
-      }${
-        m.fallback
-          ? ` Attacker takes ${DESPERATE_STRIKE_RECOIL} recoil damage.`
-          : ""
-      }`,
+      reach === "target"
+        ? `${u.name} uses ${m.name} on ${victim.name} (${victim.id}): ${damage} damage.${
+            victim.hp === 0 ? " Knocked out." : ""
+          }${
+            m.fallback
+              ? ` Attacker takes ${DESPERATE_STRIKE_RECOIL} recoil damage.`
+              : ""
+          }`
+        : `${u.name}'s ${m.name} reaches ${victim.name} (${victim.id}): ${damage} damage.${
+            victim.hp === 0 ? " Knocked out." : ""
+          }`,
       {
         kind: "hit",
         actorId: u.id,
-        targetId: target.id,
+        targetId: victim.id,
         amount: damage,
         moveName: m.name,
+        ...(reach === "area" ? { area: true as const } : {}),
       }
     );
-    if (
-      target.hp > 0 &&
-      target.charge !== null &&
-      !displaceImmune &&
-      supported.some((e) => e.support === "displace")
-    ) {
-      breakCharge(target, acted.has(target.id));
+    const pulls = landing.some((e) => e.support === "displace");
+    if (victim.hp > 0 && victim.charge !== null && !displaceImmune && pulls) {
+      breakCharge(victim, acted.has(victim.id));
       emit(
-        `${target.name} is pulled off its footing: its charge is broken.`,
+        `${victim.name} is pulled off its footing: its charge is broken.`,
         {
           kind: "displace",
           actorId: u.id,
-          targetId: target.id,
+          targetId: victim.id,
           moveName: m.name,
         }
       );
     }
-  }
-  if (displaceImmune && supported.some((e) => e.support === "displace"))
-    emit(`${target.name} is anchored: displacement cannot move it.`, {
-      kind: "resisted",
-      actorId: u.id,
-      targetId: target.id,
-      moveName: m.name,
-      status: "protected",
-      group: "guarding",
-    });
-  for (const e of supported) {
-    if (e.support === "bind" || e.support === "status") {
-      // Binding writes the pass 1 counter through its condition, so the accepted Snare
-      // rule is unchanged while the badge can name the status (contract decision 11).
-      const victim = e.recipient === "self" ? u : target;
-      const before = victim.conditions.length;
-      applyStatus(s, u, m, victim, e, emit);
-      if (victim.conditions.length > before || victim.conditions.some((c) => c.status === e.status && c.source === u.id))
-        outcome.afflicted.push(victim.id);
-    } else if (e.support === "remove") {
-      if (e.methods?.length)
-        applyRemove(u, m, e.recipient === "self" ? u : target, e.methods, emit);
-    } else if (e.support === "protect") {
-      u.ward = true;
-      emit(
-        `${u.name} activates ${m.name}: incoming damage halved until its next opportunity.`,
-        { kind: "ward", actorId: u.id, targetId: u.id, moveName: m.name }
-      );
-    } else if (e.support === "restore") {
-      const amount = Math.min(u.max - u.hp, restorePreview(u, e));
-      u.hp += amount;
-      emit(`${u.name} uses ${m.name}: recovers ${amount} HP.`, {
-        kind: "restore",
+    if (displaceImmune && pulls)
+      emit(`${victim.name} is anchored: displacement cannot move it.`, {
+        kind: "resisted",
         actorId: u.id,
-        targetId: u.id,
-        amount,
+        targetId: victim.id,
         moveName: m.name,
+        status: "protected",
+        group: "guarding",
       });
-    }
+  };
+  if (damaging(m)) {
+    strike(target, "target");
+    for (const victim of around) strike(victim, "area");
   }
+
+  const withhold = (
+    e: MoveEffect,
+    victim: Unit,
+    reason: "foe" | "requires",
+    text: string
+  ) =>
+    emit(text, {
+      kind: "withheld",
+      actorId: u.id,
+      targetId: victim.id,
+      moveName: m.name,
+      reason,
+      effect: e.status ?? e.type,
+      ...(e.group ? { group: e.group } : {}),
+    });
+  const resolve = (e: MoveEffect) => {
+    if (e.support === "harm" || e.support === "displace") return;
+    if (e.requires && !succeeded.has(e.requires)) {
+      // A drain's restore needs harm actually dealt (contract decision 34).
+      withhold(
+        e,
+        u,
+        "requires",
+        `${u.name}'s ${m.name} draws nothing, so nothing returns.`
+      );
+      return;
+    }
+    for (const victim of recipientsOf(e)) {
+      if (victim.hp <= 0) continue;
+      // Beneficial effects never reach an opposing unit (contract decision 35). A
+      // reaction aimed at an ally by its trigger is on the owner's side, so it passes.
+      if (beneficial(e) && victim.enemy !== u.enemy) {
+        withhold(
+          e,
+          victim,
+          "foe",
+          `${u.name}'s ${m.name} would ${
+            e.support === "restore"
+              ? "restore"
+              : e.support === "protect"
+              ? "shield"
+              : `leave ${e.status}`
+          } ${victim.name}, a foe: withheld.`
+        );
+        continue;
+      }
+      if (e.support === "bind" || e.support === "status") {
+        // Binding writes the pass 1 counter through its condition, so the accepted Snare
+        // rule is unchanged while the badge can name the status (contract decision 11).
+        if (applyStatus(s, u, m, victim, e, acted, emit)) {
+          succeeded.add(e.key);
+          outcome.afflicted.push(victim.id);
+        }
+      } else if (e.support === "remove") {
+        if (e.methods?.length) applyRemove(u, m, victim, e.methods, emit);
+        succeeded.add(e.key);
+      } else if (e.support === "protect") {
+        victim.ward = true;
+        succeeded.add(e.key);
+        emit(
+          victim.id === u.id
+            ? `${u.name} activates ${m.name}: incoming damage halved until its next opportunity.`
+            : `${u.name}'s ${m.name} shields ${victim.name}: incoming damage halved until its next opportunity.`,
+          { kind: "ward", actorId: u.id, targetId: victim.id, moveName: m.name }
+        );
+      } else if (e.support === "restore") {
+        const amount = Math.min(victim.max - victim.hp, restorePreview(u, e));
+        victim.hp += amount;
+        succeeded.add(e.key);
+        emit(
+          victim.id === u.id
+            ? `${u.name} uses ${m.name}: recovers ${amount} HP.`
+            : `${u.name}'s ${m.name} restores ${amount} HP to ${victim.name}.`,
+          {
+            kind: "restore",
+            actorId: u.id,
+            targetId: victim.id,
+            amount,
+            moveName: m.name,
+          }
+        );
+      }
+    }
+  };
+  for (const e of supported.filter((e) => !e.requires)) resolve(e);
+  for (const e of supported.filter((e) => e.requires)) resolve(e);
   return outcome;
 }
 /*
@@ -1038,6 +1312,12 @@ function reactions(
   for (const owner of all) {
     if (owner.hp <= 0) continue;
     if (!owner.passives.length) continue;
+    // A sedated unit's passives do not react while it lasts (contract decision 29).
+    if (sedated(owner)) continue;
+    // Only a foe's move provokes a reaction. A radial area anchored on its performer
+    // reaches the performer's own neighbors (contract decision 33); that friendly harm
+    // triggers nothing, so no squadmate ever answers another.
+    if (owner.enemy === attacker.enemy) continue;
     // ally-harmed reads the harmed same-side unit, which is not the owner itself.
     const ally = all.find(
       (u) =>

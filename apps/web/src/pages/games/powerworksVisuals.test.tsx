@@ -10,10 +10,17 @@ import {
   type Unit,
 } from "@xalians/rules/dungeon";
 import {
+  GroupIcon,
+  MoveCardContent,
   PassiveIcon,
+  areaSummary,
+  conditionRule,
+  effectSummary,
+  moveDescription,
   passiveHeading,
   passiveRule,
 } from "./powerworksVisuals";
+import type { Condition, Move, MoveEffect, StatusGroup } from "@xalians/rules/dungeon";
 
 afterEach(cleanup);
 
@@ -104,5 +111,156 @@ describe("powerworks passive presentation", () => {
     );
     expect(container.querySelector("svg")).toBeTruthy();
     expect(screen.queryByRole("img")).toBeNull();
+  });
+});
+
+/** A condition of a pass 4 group, as the seam would put it on a unit. */
+const condition = (status: string, group: StatusGroup): Condition => ({
+  status,
+  group,
+  intensity: 50,
+  remaining: 2,
+  source: "X",
+  removable: [],
+});
+const effect = (over: Partial<MoveEffect>): MoveEffect => ({
+  key: "outcome",
+  type: "harm",
+  recipient: "target",
+  likelihood: "consistent",
+  intensity: 60,
+  mechanism: "impact",
+  support: "harm",
+  ...over,
+});
+const move = (over: Partial<Move>): Move => ({
+  key: "test",
+  name: "Test Move",
+  signature: false,
+  approach: "stationary",
+  range: "short",
+  preparation: "brief",
+  recovery: "brief",
+  effects: [effect({})],
+  ...over,
+});
+
+describe("powerworks pass 4 presentation", () => {
+  it("gives shock, tempo and senses a plain-language rule and an icon each", () => {
+    const u = readCompanion(COMPANION_RECORDS.avilily, "A");
+    expect(conditionRule(condition("stunned", "shock"), u)).toContain(
+      "Loses its next opportunity"
+    );
+    expect(conditionRule(condition("stunned", "shock"), u)).toContain("charge");
+    const slowed = conditionRule(condition("slowed", "tempo"), u);
+    expect(slowed).toContain(`${Math.floor(u.speed / 2)} instead of ${u.speed}`);
+    expect(conditionRule(condition("sedated", "tempo"), u)).toContain(
+      "after every alert unit"
+    );
+    expect(conditionRule(condition("blinded", "senses"), u)).toContain(
+      "contact attacks are unaffected"
+    );
+    expect(conditionRule(condition("disoriented", "senses"), u)).toContain(
+      "random enemy"
+    );
+    for (const group of ["shock", "tempo", "senses"] as const) {
+      const { container } = render(<GroupIcon group={group} />);
+      expect(container.querySelector("svg"), group).toBeTruthy();
+      cleanup();
+    }
+  });
+  it("says who an area move reaches, on the card text and in the inspector sentence", () => {
+    const u = readCompanion(COMPANION_RECORDS.hippochamp, "H");
+    const sweep = move({
+      name: "Water Sweep",
+      area: { shape: "sweep", extent: "medium", anchor: "self" },
+      effects: [effect({ recipient: "area" })],
+    });
+    expect(areaSummary(sweep)).toBe(
+      "Reaches the target and the enemies either side of it. Each takes 60% of the harm."
+    );
+    expect(moveDescription(u, sweep)).toContain("Reaches the target and the enemies either side of it.");
+    const burst = move({
+      area: { shape: "radial", extent: "small", anchor: "self" },
+      effects: [effect({ recipient: "area" })],
+    });
+    expect(areaSummary(burst)).toContain("the squadmates standing either side of the user");
+    const field = move({
+      area: { shape: "radial", extent: "medium", anchor: "location" },
+      effects: [
+        effect({
+          type: "status",
+          support: "status",
+          status: "slowed",
+          group: "tempo",
+          recipient: "area",
+          likelihood: "occasional",
+          opportunities: 2,
+          mechanism: undefined,
+        }),
+      ],
+    });
+    // A status-only field names its reach and says nothing about a harm share.
+    expect(areaSummary(field)).toBe("Reaches the target and the enemies either side of it.");
+    expect(moveDescription(u, field)).toContain("Slowed: acts at half speed");
+    expect(areaSummary(move({}))).toBe("");
+    // The real companion field reads the same way.
+    const real = u.moves.find((m) => m.area);
+    if (real) expect(moveDescription(u, real)).toContain("Reaches");
+  });
+  it("marks a beneficial effect aimed at a foe as withheld, and a drain's heal as conditional", () => {
+    const lash = move({
+      name: "Reinforcing Lash",
+      effects: [
+        effect({}),
+        effect({
+          key: "condition",
+          type: "status",
+          support: "status",
+          status: "reinforced",
+          group: "guarding",
+          mechanism: undefined,
+        }),
+      ],
+    });
+    expect(effectSummary(lash.effects[1], lash)).toBe(
+      "Reinforced: withheld here, because it would help the enemy it reaches."
+    );
+    const drain = move({
+      effects: [
+        effect({ key: "toll" }),
+        effect({
+          key: "gain",
+          type: "restore",
+          support: "restore",
+          recipient: "self",
+          requires: "toll",
+          mechanism: undefined,
+        }),
+      ],
+    });
+    expect(effectSummary(drain.effects[1], drain)).toBe(
+      "Recovers health, only when its harm lands."
+    );
+  });
+  it("puts a squadmate warning on the card of a burst anchored on its user, and only there", () => {
+    const u = readCompanion(COMPANION_RECORDS.hippochamp, "H");
+    const burst = move({
+      name: "Water Burst",
+      area: { shape: "radial", extent: "small", anchor: "self" },
+      effects: [effect({ recipient: "area" })],
+    });
+    const sweep = move({
+      name: "Water Sweep",
+      area: { shape: "sweep", extent: "small", anchor: "self" },
+      effects: [effect({ recipient: "area" })],
+    });
+    const card = (m: Move) =>
+      render(
+        <MoveCardContent unit={u} move={m} cooldown={0} selected={false} blocked={false} id="x" />
+      ).container.textContent;
+    expect(card(burst)).toContain("Hits squadmates");
+    cleanup();
+    expect(card(sweep)).not.toContain("Hits squadmates");
   });
 });

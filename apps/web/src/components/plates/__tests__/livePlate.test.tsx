@@ -117,4 +117,15 @@ describe('LivePlate', () => {
 		expect(container.querySelector('[data-live-plate="poster"]')).toBeTruthy();
 		expect(layers(container)).toBe(0);
 	});
+
+	it('follows its page when told which plate is live, with no observer of its own', async () => {
+		const { container, rerender } = render(<LivePlate src="/assets/plates/x/plate.html" poster={poster} active={false} />);
+		expect(observers).toHaveLength(0);
+		expect(layers(container)).toBe(0);
+		rerender(<LivePlate src="/assets/plates/x/plate.html" poster={poster} active />);
+		await waitFor(() => expect(layers(container)).toBe(2));
+		rerender(<LivePlate src="/assets/plates/x/plate.html" poster={poster} active={false} />);
+		await waitFor(() => expect(layers(container)).toBe(0));
+		expect(container.querySelector('[data-live-plate="poster"]')).toBeTruthy();
+	});
 });

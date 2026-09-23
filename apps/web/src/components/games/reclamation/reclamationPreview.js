@@ -417,7 +417,7 @@ export function ghostSummary(plan, fmt) {
 			return { text: 'Nothing to hit yet. Hits yours sent here later', warn: false };
 		}
 		if (rivals.length === 0) {
-			return { text: `No rival here. It would hit only your own ${own.length === 1 ? 'creature' : own.length}`, warn: true };
+			return { text: 'No rival here: it hits only yours', warn: true };
 		}
 		const downs = rivals.filter((v) => v.downs).length;
 		let text = rivals.length === 1

@@ -816,3 +816,9 @@ So following the suggestions is a coin flip against every rival, and slightly wo
 
 **Open, and Nick's call:** a suggestion worth following needs a stronger policy than the rivals it advises against, one that reads the rival's likely answer without seeing its hidden roster (rollouts over sampled rosters, or the engine forecast plus a one-ply rival response). The alternative is to drop the per-send suggestion and keep only the Pass suggestion, whose reasons are arithmetic.
 
+### Pass 43 (2026-09-23): the per-send suggestion is gone
+
+**Nick, on pass 42's open decision:** "drop it if you don't feel it is providing value."
+
+It was not. Measured in pass 42, following it is a coin flip against every rival; three blind critics followed it and read it as a trap; and it cost three marks on the table (the squad card's outline, its "suggested" word, the world's "recommended" tag, plus a clause in the armed hint). The "best here" names on each empty world (pass 40) already give a first-timer a place to start from the creatures' own numbers without claiming to be advice. `recommendation()` now returns only a suggested pass, whose reasons are arithmetic ("keep your remaining sends for the rounds to come"). The advisor module itself is untouched, so a stronger advisor can come back through the same seam.
+

@@ -125,7 +125,7 @@ export const MEDIUM_ROWS: Readonly<Record<Element, MediumRow>> = Object.freeze({
 
 /** Governing attribute times factor, rounded, floored at 1. Levers. */
 export const OUTPUT_FACTORS = Object.freeze({
-  physicalHarmHeavy: 0.85, physicalHarmLight: 0.65, lashScale: 0.8, displace: 0.8,
+  physicalHarmHeavy: 0.8, physicalHarmLight: 0.85, lashScale: 0.8, displace: 0.8,
   elementalHarm: 0.85, burst: 0.7, channelHarm: 0.75, mend: 0.6, drainRestore: 0.4,
 });
 
@@ -235,6 +235,8 @@ function build(input: DeriveInput, instrument: Instrument, row: InstrumentRow, p
   const channelSignal = SIGNAL_CHANNELS.includes(instrument);
   const timing = (): Mechanism['timing'] => ({ preparation: ['immediate', 'brief'], recovery: ['repeatable', 'brief'] });
   const held = (): Mechanism['timing'] => ({ preparation: ['brief'], recovery: ['brief', 'prolonged'] });
+  /** Acts a body can gather itself for: held pressure and projected energy may be charged. */
+  const charged = (): Mechanism['timing'] => ({ preparation: ['brief', 'prolonged'], recovery: ['brief', 'prolonged'] });
 
   /** The same reach with a sweep area over it, for lash. */
   const sweeping = (): Delivery => {
@@ -286,7 +288,7 @@ function build(input: DeriveInput, instrument: Instrument, row: InstrumentRow, p
       return [make({
         key: key([]), name: name([mediumWord ?? partWord, PATTERN_NOUNS.crush]),
         description: `${title(instrument)} apply held pressure to a held target.`,
-        targeting: ['other'], timing: held(), delivery: reach(),
+        targeting: ['other'], timing: charged(), delivery: reach(),
         effects: [harmEffect(elemental ? 'elemental' : 'compression'), ...(extra ? [extra] : [])],
       })];
     }
@@ -327,7 +329,7 @@ function build(input: DeriveInput, instrument: Instrument, row: InstrumentRow, p
       description: `${title(instrument)} drive the target back.`,
       targeting: ['other'], timing: timing(), delivery: reach(),
       effects: [{ key: 'force', type: 'displace', direction: 'away', recipient: 'target', onset: 'instant',
-        persistence: 'resolved', likelihood: ['consistent'], intensity: bandOf('strength', OUTPUT_FACTORS.displace) }],
+        persistence: 'resolved', likelihood: ['consistent'], intensity: bandOf(elemental || row.class === 'channel' ? 'willpower' : 'strength', OUTPUT_FACTORS.displace) }],
     })];
     case 'snare': {
       const bind = mediumRow?.bind ?? row.bind;
@@ -386,14 +388,14 @@ function build(input: DeriveInput, instrument: Instrument, row: InstrumentRow, p
     case 'beam': return [make({
       key: key([]), name: name([mediumWord!, PATTERN_NOUNS.beam]),
       description: `A sustained ${element} stream runs from the ${instrument.replace(/-/g, ' ')} to the target.`,
-      targeting: ['other'], timing: held(),
+      targeting: ['other'], timing: charged(),
       delivery: { stream: { approach: ['stationary'], range: ['short', 'medium', 'long'] } },
       effects: [harmEffect('elemental')],
     })];
     case 'burst': return [make({
       key: key([]), name: name([mediumWord!, PATTERN_NOUNS.burst]),
       description: `${title(element!)} releases outward from the ${instrument.replace(/-/g, ' ')} in every direction.`,
-      targeting: ['other'], timing: { preparation: ['immediate', 'brief'], recovery: ['brief', 'prolonged'] },
+      targeting: ['other'], timing: { preparation: ['immediate', 'brief', 'prolonged'], recovery: ['brief', 'prolonged'] },
       delivery: { pulse: { approach: ['stationary'], range: ['short', 'medium'],
         area: { shape: ['radial'], extent: ['small', 'medium'], anchor: ['self'], persistence: 'resolved' } } },
       effects: [harmEffect('elemental', 'area')],

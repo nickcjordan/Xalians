@@ -2,9 +2,9 @@
 
 Review date: 2026-09-21. Status: frozen in `generation-0.6.0-1`; game consumers still use v4. Sources: `../hypnopet.json`, `../hypnopet.md`, `../art/hypnopet.png`, canonical teaser and Telypso record. The teaser remains verbatim.
 
-This species is intentionally support-only. The fixed signature **Empathic Steadying** uses a mental signal to remove conditions responsive to `stabilizing`; the separate guaranteed **Chromatic Horn Trance** requires visual reception and applies `entranced`. Both survive every ordinary roll, preserving therapy and crowd control. No harm slot is required by the creature model. Ordinary domains allow stabilizing, focused attention and visual trance variations. The visual reception is a single catalog value, while the mental therapy signal has no mandated sight or hearing channel.
+Its identity is support: The fixed signature **Empathic Steadying** uses a mental signal to remove conditions responsive to `stabilizing`; the separate guaranteed **Chromatic Horn Trance** requires visual reception and applies `entranced`. Both survive every ordinary roll, preserving therapy and crowd control. Harm is not its identity, but Nick ruled on 2026-09-23 that nothing forbids it: "I see no reason why a hypnopet couldnt cause harm. It may not be the most effective but why not?" Ordinary domains allow stabilizing, focused attention and visual trance variations. The visual reception is a single catalog value, while the mental therapy signal has no mandated sight or hearing channel.
 
-Candidate exclusions: body regeneration or healing vitality from the metaphor of empathic healing, possession, an indiscriminate spell library, and a damaging horn beam. A recipient's immunity or a game's lack of support can make an encounter effect unavailable, but generation never omits either essential capacity. Temperament reflects patient-oriented company and low aggression. Numeric output and likelihood were reviewed in the [cross-roster calibration](../../design/creature-v5-calibration.md). The mechanisms are factored domains, not a finite move whitelist.
+Candidate exclusions: body regeneration or healing vitality from the metaphor of empathic healing (open question for Nick, since the teaser calls them healers), possession, and an indiscriminate spell library. The damaging horn beam exclusion was lifted with the harm ruling of 2026-09-23. A recipient's immunity or a game's lack of support can make an encounter effect unavailable, but generation never omits either essential capacity. Temperament reflects patient-oriented company and low aggression. Numeric output and likelihood were reviewed in the [cross-roster calibration](../../design/creature-v5-calibration.md). The mechanisms are factored domains, not a finite move whitelist.
 
 Compilation and seeded cohort generation verify four distinct actions and both guaranteed functions; this audit records source permission separately.
 
@@ -18,13 +18,12 @@ Exclusions:
 
 - `*/mend` - the audit above excludes body regeneration and healing vitality from the metaphor of empathic healing. Its therapy is condition removal, not restoration.
 - `*/drain` - the psychic medium offers a drain; taking vitality contradicts a service animal and therapist outright.
-- `crest/burst` - the audit above excludes a damaging horn beam; a psychic burst from the horn is that, with an area.
-- `mind/crush` - compression harm delivered by the mind is a psychic attack, and the audit above states no harm slot is required by this creature and none is wanted from the mental channel.
+- `crest/burst` and `mind/crush` were excluded here as harm until 2026-09-23. Nick ruled that a Hypnopet may cause harm, so both are back: a psychic burst from the horn and a mental squeeze.
 
-Its remaining harm acts are the plain physical ones a rabbit's body grants: a hide or body strike and a shove. Those are not excluded, because the audit says no harm is required, not that the animal cannot kick.
+Its harm acts are the physical ones a rabbit's body grants (hide and body strikes, a crush) plus the psychic burst from the horn and the mental squeeze. Physical harm scales with its small strength; the psychic acts and the mind's push scale with its willpower.
 
 ```
 hypnopet: valid permissions, four distinct actions constructible
-  acts: 21 distinct on offer (crest 7, hide 3, body 5, mind 6); exclusions: */drain, */mend, crest/burst, mind/crush
+  acts: 23 distinct on offer (crest 8, hide 3, body 5, mind 7); exclusions: */drain, */mend
   naming over 24 seeds: 0.0% of ordinary actions carry a structural parenthetical, 0.0% of creatures have two ordinary actions sharing a base name
 ```

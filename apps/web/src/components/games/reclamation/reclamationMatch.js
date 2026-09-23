@@ -1119,7 +1119,17 @@ class ReclamationMatch extends React.Component {
 			return null;
 		}
 		const seat = this.seatInPlay();
-		return recommendSend(view, view.players[seat].roster, seat);
+		/*
+			PASS 43. Only a suggested PASS reaches the table. The per-send suggestion was the
+			Court proctor's own policy, and measured in pass 42 it wins 45 to 50 percent against
+			every rival: a coin flip that three blind critics followed and read as a trap. It
+			also cost three marks (the card outline, its "suggested" word, the world's
+			"recommended" tag). Each empty world's "best here" names now give a first-timer a
+			place to start from the creatures' own numbers, without claiming to be advice. A
+			pass is suggested for reasons that are arithmetic, so it stays.
+		*/
+		const rec = recommendSend(view, view.players[seat].roster, seat);
+		return rec && rec.type === 'pass' ? rec : null;
 	}
 
 	// ------------------------------------------------------------------
@@ -1652,9 +1662,7 @@ class ReclamationMatch extends React.Component {
 			} catch (e) {
 				stealthy = false;
 			}
-			const rec = this.recommendation(view);
-			const suggestedWorld = rec && rec.type === 'send' && rec.recordId === armedRecordId ? this.worldName(this.state.match, rec.siteId) : null;
-			return `Pick a world for ${speciesLabel(record)}.${suggestedWorld ? ` ${suggestedWorld} is suggested.` : ''}${stealthy ? ' It arrives hidden.' : ''}`;
+			return `Pick a world for ${speciesLabel(record)}.${stealthy ? ' It arrives hidden.' : ''}`;
 		}
 		if (view.players[this.seatInPlay()].passed) {
 			return 'You passed. Waiting for the rival.';
