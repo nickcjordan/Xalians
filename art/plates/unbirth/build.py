@@ -30,63 +30,68 @@ star boiled into a world-washing flood every year, chosen so any mistake would b
 Uncalibrated, it ran at full capacity through the entire storm and made not only Xalians but the
 vegetation, fungi and World Trees to support them (Floria, paragraphs 2 to 8); some Xalians there
 are said to be born from its first seeds (paragraph 11). The plate is that first storm: a heavy
-industrial seed battery on the rock at left fires glowing seed pods out across the flood, and the
-flood meant to wash its mistakes away carries them over the world. This machine makes life only by
-seeds (Nick, 2026-09-23): a hatch that creatures walk out of belongs to the later Generators. Pods
-that come down in the water split and let out larvae; pods on rock sprout. Once a cycle it surges
-into overdrive (paragraphs 5 and 8: never calibrated, "at full capacity") and lobs one heavy seed
-short onto its own shelf, which splits and lets out a newborn larva that swims away. Read left to
-right: machine, pods in flight, the first life taking hold where they land, the World Tree, whose
-canopy already spreads over the plain. No grown creature is shown (Nick, 2026-09-23). Inference, not
-stated canon: the pods carry both plants and plant-like Xalians."""
+industrial machine on the rock at left lets its glowing seeds down a chute into the flood, and the
+flood meant to wash its mistakes away carries them out over the world instead (Nick, 2026-09-23: a
+Generator would not have a cannon). This machine makes life only by seeds: a hatch that creatures
+walk out of belongs to the later Generators. Seeds that split on the water let out larvae; seeds
+that catch on rock sprout. Once a cycle it surges into overdrive (paragraphs 5 and 8: never
+calibrated, "at full capacity"), the gate bursts, and one heavy seed is flung from the chute onto its
+own shelf, which splits and lets out a newborn larva that swims away. Read left to right: machine,
+seeds spreading on the current, the first life taking hold, and far off the World Tree on its island
+of young forest grown from earlier seeds. No grown creature is shown. Inference, not stated canon:
+the seeds carry both plants and plant-like Xalians."""
 
 PIECES = """Piece list (far to near). Key light: the Generator itself, a gold-green glow from its vat, seams
-and muzzles, the only warm light in the scene. The sun is blacked out; lightning inside the cloud is
-the only other light. Wind blows left to right: rain slants and pods drift that way.
+and chute, the only warm light in the scene. The sun is blacked out; lightning inside the cloud is
+the only other light. Wind and flood run left to right: rain slants and seeds drift that way.
 - storm ceiling: a heavy near-black cloud mass across the top, its base a row of hanging lobes,
   faintly lit gold-green from below over the Generator. Static.
 - air under the cloud: dark, lightening a little toward the horizon. Static.
 - lightning: flashes inside the cloud mass on their own clocks; one lights the World Tree from behind.
 - rain curtains: soft slanted shafts of heavier rain hanging from the cloud to the horizon. Static.
-- the World Tree: a colossal trunk far off at right on the plain, great boughs sweeping up into the
-  storm; its canopy spreads under the cloud base across the right half of the sky, its own seed pods
-  glowing faintly among the leaves; its roots flare out across the far plain from its foot, and the
-  trunk is reflected in the flood. Hazed by distance.
+- the World Tree: a colossal trunk far off at right, great boughs sweeping up into the storm; its
+  canopy domes over it and spreads under the cloud base across the right half of the sky, its own
+  seed pods glowing faintly among the leaves. Hazed by distance.
+- its island: land rising from the flood around its foot, covered in the young forest earlier seeds
+  have grown: tall trees (broadleaf crowns and conifer spires) crowding the trunk, still a fraction
+  of its height, stepping down to shrubs, weeds and grass at the waterline; pods glowing among them.
+  The scale of that forest is what makes the tree read as colossal.
 - the far plain: floodwater sheeting over smooth rock to the horizon, dark whaleback domes of
   scoured rock breaking the surface, smaller and paler with distance. Static.
 - the shelf: a broad smooth dome of black rock at left under the machine, wet, the Generator's light
   pooling on it, running out into the flood.
-- the Genesis Prototype, a heavy industrial seed battery filling the left of the panel: a stepped
+- the Genesis Prototype, a heavy industrial machine filling the left of the panel: a stepped
   foundation bolted into the rock with heavy struts; a tall armored housing of riveted plate columns
   and girder bands; a tall glass incubation cylinder with rounded ends, thin hoops and pipes feeding
-  it, its fluid glowing, pale seeds ripening and bubbles rising in it; a feed pipe from it up into a
-  breech turret; three launch barrels on the turret with banded tubes, slotted brakes and round
-  glowing mouths, aimed low out across the plain; a boiler annex on the left with a gauge, lamps,
-  louvres and a steam relief valve; a steel lattice gantry with a catwalk, a beacon and a hoist
-  hanging a pod canister; cables looped down to clamps on the rock. It is a
-  first prototype: a patch plate in another metal, a seam gone half dark, a split plate leaking light.
-  The vat breathes; the barrels kick back and flash as they fire; steam puffs and drifts downwind;
-  the gauge trembles; the lamps and the beacon blink.
-- the overdrive surge, once a cycle: the vat charges and then flares white, every seam blazes, all
-  three barrels fire at once and throw a volley of pods, the cloud base and the rain around the
-  machine light up, then it all settles back.
-- the birth, in the surge: the front barrel lobs one heavy acorn seed short, point first on a true
-  arc; it rights itself as it lands on the shelf, glows, and splits along its seam; a newborn larva (tadpole-like,
-  leafy, a glowing eye) rises out of it and looks about, wriggles down the shelf, slips into the
-  flood and swims off downstream with a wake, then dives. The empty husk fades.
-- pods: acorn-like seeds, smaller than the birth seed: a long pointed nut under a toothed olive cup,
-  glowing softly, flying point first on true ballistic arcs (the heavy nut leads, the cup trails). Physics, not drawn curves (seedsim.py): each barrel's elevation is fixed, so the
-  charge is what brings each pod down on its spot, and the wind leans on it. Every shot is placed so
-  its whole flight keeps clear of the others and of the swimming larvae. Near ones splash into the
-  flood, tip onto their side, ride the current, and split: a small larva swims out and dives. Some land on rock and sprout. Far ones
-  dwindle and splash toward the horizon.
+  it, its fluid glowing, pale seeds ripening and bubbles rising in it; a feed pipe up into a roof
+  housing with a banded header tank and a hopper; a boiler annex on the left with a gauge, lamps, louvres and a steam relief valve; a steel
+  lattice gantry with a catwalk and a beacon over the sluice; cables looped down to
+  clamps on the rock; and at its foot a sluice gate with a wheel, and a riveted chute running down
+  from it on legs to the water behind the shelf, glowing fluid sliding down it. It is a first
+  prototype: a patch plate in another metal, a seam gone half dark, a split plate leaking light.
+  The vat breathes; steam puffs and drifts downwind; the gauge trembles; the lamps and beacon blink.
+- the overdrive surge, once a cycle: the vat charges and then flares white, every seam blazes, the
+  gate bursts open and a rush of seeds goes down the chute together, the cloud base and the rain
+  around the machine light up, then it all settles back.
+- the birth, in the surge: one heavy acorn seed comes down the chute first and jumps its wall, point
+  first on a true arc; it rights itself as it lands on the shelf, glows, and splits along its seam; a
+  newborn larva (tadpole-like, leafy, a glowing eye) rises out of it and looks about, wriggles down
+  the shelf, slips into the flood and swims off downstream with a wake, then dives. The husk fades.
+- seeds: acorn-like, smaller than the birth seed: a long pointed nut under a toothed olive cup,
+  glowing softly. They slide down the chute one by one, drop into the lit water at its foot, and the
+  flood takes them: each fans out on its own heading, eases into the current (left to right, slower
+  with distance), wanders a little, parts around the slabs, lying on its side and turning slowly.
+  Each meets its own end: some split and let a small larva out, which swims off and dives; some go
+  under; some catch on a slab's edge and sprout; many are carried off downstream toward the island.
+  Integrated per seed, not drawn curves, and every voyage is placed so it keeps clear of the others
+  and of the swimming larvae.
 - the mid plain: floodwater across the middle ground with flat slabs of scoured rock, the Generator's
   light reflected in it; rain rings the water. The flood runs left to right: pale current lines drift
   across it, foam catches on the upstream side of each slab and a wake trails off its downstream side.
 - the first growth: downwind, moss catching along the edges of the rock slabs and low fronds in the
   cracks, sparse near the Generator and denser to the right; lodged pods glowing faintly among them.
-- growth you can watch: a pod comes to rest on a rock top; a sprout rises from it and two leaves
-  unfurl, it stands a while, then fades before its pod returns.
+- growth you can watch: a seed catches on a rock; a sprout rises from it and two leaves unfurl, it
+  stands a while, then fades before its seed returns.
 - near rock: a dark wet ledge along the bottom left, and a rock rise at bottom right where a clump of
   young fronds and three lodged pods grow, bending in the gusts.
 - rain: slanted streaks over the whole scene, finer and fainter far, heavier near; the rain near the
@@ -247,7 +252,7 @@ def limb(x0, y0, cx, cy, x1, y1, w0, w1, n=13, wf=None):
 
 TX = 1290
 tree_col = '#10181e'
-g_trunk_rim = lin([(0, '#18201f', 1), (.5, '#0d1413', 1), (1, '#131b1b', 1)], 0, 120, 0, HZ, units=True)
+g_trunk_rim = lin([(0, '#0e1414', 1), (.5, '#070b0b', 1), (1, '#0a0f0f', 1)], 0, 120, 0, HZ, units=True)
 trunk = 'M%s %s C %s %s, %s %s, %s %s L %s %s L %s %s C %s %s, %s %s, %s %s L %s %s Z' % (
     f(TX - 110), f(HZ + 6), f(TX - 66), f(HZ - 16), f(TX - 54), f(HZ - 90), f(TX - 42), f(200),
     f(TX - 28), f(0), f(TX + 32), f(0),
@@ -256,6 +261,7 @@ boughs = ''.join('<polygon points="%s" fill="url(#%s)"/>' % (pts(limb(*L)[0]), g
     (TX - 30, 290, TX - 130, 226, TX - 290, 150, 60, 16), (TX + 34, 276, TX + 120, 214, TX + 250, 140, 54, 16),
     (TX - 20, 250, TX - 70, 190, TX - 150, 120, 34, 12), (TX + 24, 244, TX + 80, 182, TX + 140, 116, 30, 11),
     (TX - 170, 200, TX - 280, 176, TX - 400, 150, 20, 6), (TX + 170, 184, TX + 240, 170, TX + 330, 150, 16, 6)])
+TRUNK_RIM = ''  # a rim light down the trunk read as hanging vines, twice: its dark value against the cloud carries it
 # the canopy: leaf masses spreading under the storm ceiling across the right of the sky
 crnd_ = random.Random(71)
 canopy = []
@@ -274,7 +280,8 @@ for i in range(230):
 lin([(0, '#fff', 0), (.15, '#fff', .12), (.3, '#fff', .35), (.45, '#fff', .6), (.6, '#fff', .82), (.75, '#fff', .95), (1, '#fff', 1)], 0, 60, 0, 250, units=True, id='treeFade')
 defs.append('<mask id="treeMask" maskUnits="userSpaceOnUse" x="%s" y="-40" width="1300" height="%s"><rect x="%s" y="-40" width="1300" height="%s" fill="url(#treeFade)"/></mask>' % (f(TX - 700), f(HZ + 60), f(TX - 700), f(HZ + 60)))
 far.append('<!-- the World Tree: a colossal trunk far off on the plain, great boughs sweeping up into the storm, its canopy spread under the cloud across the right of the sky, -->'
-           '<g mask="url(#treeMask)"><g filter="url(#cloud)">%s</g><g filter="url(#soft1)"><path d="%s" fill="url(#%s)"/>%s</g><g opacity=".85">%s</g></g>' % (''.join(canopy), trunk, g_trunk_rim, boughs, ''.join(leaves_)))
+           '<g mask="url(#treeMask)"><g filter="url(#cloud)">%s</g><g filter="url(#soft1)"><path d="%s" fill="url(#%s)"/>%s</g>%s<g opacity=".85">%s</g></g>' % (
+               ''.join(canopy), trunk, g_trunk_rim, boughs, TRUNK_RIM, ''.join(leaves_)))
 far.append('<!-- the tree hazed by distance and rain --><rect x="%d" y="100" width="1100" height="%d" fill="#27313c" opacity=".1"/>' % (TX - 550, HZ - 90))
 # its great roots: out across the far plain from the trunk foot, thickening as they come nearer
 ROOTS = [((TX - 100, HZ + 2), (TX - 200, HZ + 8), (TX - 330, HZ + 20), 12, 3),
@@ -324,6 +331,87 @@ for _ in range(26):
         f(x - rx), f(y), f(x), f(y - ry * 2), f(x + rx), f(y), c, f(x - rx * .7), f(y - ry * .6), f(x - rx * .1), f(y - ry * 1.6), f(x + rx * .4), f(y - ry * 1.1), mix('#4a5866', ROCK_WET, k), f(lerp(.6, 1.4, k))))
 far.append('<!-- whaleback domes of scoured rock breaking the water, smaller and paler with distance --><g>%s</g>' % ''.join(whales))
 far.append('<!-- a far whaleback on the left of the plain --><path d="M60 %d C 120 %d, 230 %d, 300 %d Z" fill="#232d35"/>' % (HZ + 4, HZ - 20, HZ - 22, HZ + 4))
+# The World Tree's island: land rising from the flood around its foot, covered in the forest the
+# Generator's seeds have already grown. Young trees crowd the colossus, the tallest nearest it and
+# still only a fraction of its height; lower trees and shrubs step down toward the shore, and weeds and
+# grass fringe the waterline. The scale of that forest is what makes the World Tree read as colossal.
+irnd = random.Random(91)
+ISL_FRONT = [(930, 407), (1010, 404), (1120, 402), (1240, 400), (1380, 398), (W + 30, 397)]
+ISL_BACK = [(W + 30, HZ - 3), (TX + 200, HZ - 6), (TX, HZ - 7), (TX - 260, HZ - 4), (980, HZ - 2), (930, 405)]
+lin([(0, '#1b2622', 1), (1, '#0c1210', 1)], 0, HZ - 10, 0, 450, units=True, id='islandG')
+isle = ['<polygon points="%s" fill="url(#islandG)"/>' % pts(ISL_FRONT + ISL_BACK)]
+
+
+def isl_front(x):
+    for (ax, ay), (bx, by) in zip(ISL_FRONT, ISL_FRONT[1:]):
+        if ax <= x <= bx:
+            return lerp(ay, by, (x - ax) / (bx - ax))
+    return HZ + 5
+
+
+def isl_back(x):
+    bk = sorted(ISL_BACK, key=lambda p: p[0])
+    for (ax, ay), (bx, by) in zip(bk, bk[1:]):
+        if ax <= x <= bx:
+            return lerp(ay, by, (x - ax) / max(1, bx - ax))
+    return HZ
+
+
+def haze(c, y, x=1100):
+    # farther back on the island is hazier
+    return mix(c, '#2a3440', .25 + .35 * max(0, min(1, (isl_front(x) - y) / 12)))
+
+
+plants = []
+for i in range(800):
+    x = irnd.uniform(934, W + 20)
+    y0, y1 = isl_back(x), isl_front(x)
+    if y1 - y0 < 2:
+        continue
+    y = irnd.uniform(y0, y1)
+    d = min(1, abs(x - TX) / 560)  # 0 at the trunk
+    shore = (y1 - y) / max(1, y1 - y0)  # 0 at the waterline, 1 at the back
+    h = lerp(52, 5, d ** .8) * lerp(.35, 1, min(1, shore * 2.2)) * irnd.uniform(.55, 1.15) * (1.3 if irnd.random() < .07 else 1)  # the odd emergent stands above the rest
+    if h > 14 and irnd.random() < .6:
+        plants.append((y, 'tree', x, h))
+    elif h > 6 and irnd.random() < .5:
+        plants.append((y, 'shrub', x, h))
+    elif irnd.random() < .25:
+        plants.append((y, 'weed', x, h))
+for x in range(934, W + 20, 5):
+    plants.append((isl_front(x) - .5, 'grass', x + irnd.uniform(-1.5, 1.5), irnd.uniform(2, 4)))
+plants.sort()
+veg = []
+for (y, kind, x, h) in plants:
+    base = haze(mix('#15241b', '#264330', irnd.random()), y, x)
+    lit = haze(mix('#2f4d33', '#46683e', irnd.random()), y, x)
+    if kind == 'tree':
+        if irnd.random() < .55:
+            # a broadleaf: a thin trunk and a cauliflower crown, lit a little on its upper side
+            cy_ = y - h * .68
+            blobs = [(x + irnd.uniform(-.22, .22) * h, cy_ + irnd.uniform(-.14, .14) * h, h * irnd.uniform(.16, .26)) for _ in range(4)]
+            veg.append('<line x1="%s" y1="%s" x2="%s" y2="%s" stroke="%s" stroke-width="%s"/>' % (f(x), f(y), f(x), f(cy_), haze('#0f1512', y), f(max(.6, h * .045))) +
+                       ''.join('<circle cx="%s" cy="%s" r="%s" fill="%s"/>' % (f(bx), f(by), f(r), base) for bx, by, r in blobs) +
+                       '<circle cx="%s" cy="%s" r="%s" fill="%s" opacity=".55"/>' % (f(x - h * .05), f(cy_ - h * .1), f(h * .14), lit))
+        else:
+            # a conifer: stacked tiers narrowing to a spire
+            tiers = ''.join('<polygon points="%s"/>' % pts([(x - h * w, y - h * lo), (x, y - h * hi), (x + h * w, y - h * lo)]) for w, lo, hi in ((.2, .18, .62), (.15, .42, .82), (.1, .64, 1.0)))
+            veg.append('<line x1="%s" y1="%s" x2="%s" y2="%s" stroke="%s" stroke-width="%s"/><g fill="%s">%s</g>' % (f(x), f(y), f(x), f(y - h * .3), haze('#0f1512', y), f(max(.6, h * .04)), base, tiers))
+    elif kind == 'shrub':
+        veg.append(''.join('<ellipse cx="%s" cy="%s" rx="%s" ry="%s" fill="%s"/>' % (f(x + dx * h), f(y - h * .35), f(h * .38), f(h * .32), base) for dx in (-.25, .2)) +
+                   '<ellipse cx="%s" cy="%s" rx="%s" ry="%s" fill="%s" opacity=".5"/>' % (f(x - h * .05), f(y - h * .5), f(h * .22), f(h * .16), lit))
+    else:
+        n_ = 3 if kind == 'weed' else 2
+        veg.append('<g stroke="%s" stroke-width=".8" fill="none" stroke-linecap="round">%s</g>' % (base if kind == 'weed' else haze('#3a5a34', y), ''.join(
+            '<path d="M%s %s q %s %s %s %s"/>' % (f(x), f(y), f(a * .3), f(-h * .6), f(a), f(-h)) for a in [irnd.uniform(-3, 3) for _ in range(n_)])))
+isle.append('<g>%s</g>' % ''.join(veg))
+# pods glowing here and there in the young forest
+for i in range(26):
+    x = irnd.uniform(940, W - 20)
+    y = irnd.uniform(isl_back(x), isl_front(x)) - irnd.uniform(3, 16) * max(.2, 1 - abs(x - TX) / 560)
+    isle.append('<circle cx="%s" cy="%s" r="2.4" fill="url(#glowPod)" opacity=".4"/><circle cx="%s" cy="%s" r=".9" fill="%s" opacity=".8"/>' % (f(x), f(y), f(x), f(y), GLOW_MID))
+isle.append('<polyline points="%s" fill="none" stroke="#b8c8cc" stroke-width="1" opacity=".25" filter="url(#soft2)"/>' % pts([(x, y + 1.5) for x, y in ISL_FRONT]))
+far.append('<!-- the World Tree\'s island: the young forest its seeds have grown, tall trees crowding its foot and stepping down to shrubs, weeds and grass at the waterline -->' + ''.join(isle))
 far.append('<!-- horizon haze --><rect x="0" y="%d" width="%d" height="26" fill="#343f4a" opacity=".45" filter="url(#soft6)"/>' % (HZ - 14, W))
 
 # ------------------------------------------------------------------ land layer (static): mid plain, shelf, the Generator, growth, near rock
@@ -361,15 +449,14 @@ land.append('<!-- the shelf sinking into the floodwater --><ellipse cx="560" cy=
 land.append('<!-- the Generator light pooled on the wet rock --><ellipse cx="%d" cy="%d" rx="300" ry="36" fill="url(#glowWash)" opacity=".8"/>' % (GX + 90, GBASE + 10))
 land.append('<!-- the halo of the Generator light in the rain around it --><ellipse cx="%d" cy="300" rx="260" ry="210" fill="url(#glowWash)" opacity=".3"/>' % GX)
 
-# The Genesis Prototype: a heavy industrial seed battery, drawn at full size. A stepped foundation
-# bolted into the rock; a tall armored housing of riveted plate columns with girder bands and a big
-# clamped core window; a boiler annex on its left with a gauge, lamps and a steam relief valve; a
-# steel lattice gantry with a catwalk up its right side; and on top a breech turret carrying three
-# launch barrels pointed downwind (drawn in the glow layer, because they recoil when they fire).
-gen = ['<!-- the Genesis Prototype: foundation, housing, core, annex, gantry, turret -->']
+# The Genesis Prototype: a heavy industrial machine, drawn in its own frame at GSC. A stepped
+# foundation bolted into the rock; a tall armored housing of riveted plate columns with girder bands
+# and a glass incubation cylinder; a boiler annex on its left with a gauge, lamps and a steam relief
+# valve; a steel lattice gantry with a catwalk up its right side; a roof housing on top. The sluice
+# and chute at its foot are drawn in the scene's own coordinates, below.
+gen = ['<!-- the Genesis Prototype: foundation, housing, vat, annex, gantry, roof -->']
 lin([(0, '#3c4a4e', 1), (.12, METAL_MID, 1), (.6, METAL_DARK, 1), (1, '#141a1c', 1)], 0, 0, 1, 0, id='plateG')
 lin([(0, METAL_WET, 1), (.3, METAL_MID, 1), (1, METAL_DARK, 1)], id='metalV')
-lin([(0, '#4d5b60', 1), (.25, '#2a3437', 1), (.7, METAL_DARK, 1), (1, '#0b0f10', 1)], id='barrelG')
 FOUND1 = [(GX - 190, 496), (GX - 176, 472), (GX + 170, 472), (GX + 186, 496)]
 FOUND2 = [(GX - 178, 472), (GX - 170, 456), (GX + 160, 456), (GX + 168, 472)]
 HOUSING = [(GX - 100, 456), (GX - 100, 262), (GX - 84, 246), (GX + 76, 246), (GX + 92, 262), (GX + 92, 456)]
@@ -394,10 +481,6 @@ for gx_ in (GR0, GR1):
 gen.append('<rect x="%d" y="262" width="%d" height="5" fill="#141a1c"/><line x1="%d" y1="262" x2="%d" y2="262" stroke="%s" stroke-width="1" opacity=".6"/>' % (GX + 92, GR1 + 14 - GX - 92, GX + 92, GR1 + 14, METAL_WET))
 gen.append('<polyline points="%s" fill="none" stroke="#141a1c" stroke-width="1.6"/>' % pts([(GX + 92, 246), (GR1 + 14, 246), (GR1 + 14, 262)]) + ''.join('<line x1="%d" y1="246" x2="%d" y2="262" stroke="#141a1c" stroke-width="1.4"/>' % (x, x) for x in range(GX + 104, GR1 + 15, 12)))
 gen.append('<rect x="%d" y="%d" width="%d" height="6" fill="#141a1c"/>' % (GR0 - 4, GTOP - 8, GR1 - GR0 + 8))
-# a hoist at the catwalk's end, its cable hanging a pod canister below the barrels' line of fire
-gen.append('<!-- a hoist and a pod canister --><rect x="%d" y="256" width="10" height="6" fill="#141a1c"/><circle cx="%d" cy="264" r="3" fill="none" stroke="#3a4649" stroke-width="1.2"/>'
-           '<line x1="%d" y1="266" x2="%d" y2="318" stroke="#0b0f10" stroke-width="1.2"/><rect x="%d" y="318" width="16" height="22" rx="3" fill="#1c2427" stroke="#3a4649" stroke-width=".8"/><rect x="%d" y="324" width="10" height="10" rx="2" fill="%s" opacity=".55"/>' % (
-               GR1 + 8, GR1 + 13, GR1 + 13, GR1 + 13, GR1 + 5, GR1 + 8, GLOW_MID))
 # the boiler annex: louvres, a pressure gauge, instrument lamps, and the steam relief valve on top
 gen.append('<polygon points="%s" fill="url(#plateG)"/><polyline points="%s" fill="none" stroke="%s" stroke-width="1.2" opacity=".6"/>' % (pts(ANNEX), pts(ANNEX[:4]), METAL_WET))
 gen.append('<g stroke="#0b0f10" stroke-width="2.2">%s</g>' % ''.join('<line x1="%d" y1="%d" x2="%d" y2="%d"/>' % (GX - 160, y, GX - 108, y) for y in range(386, 436, 7)))
@@ -451,45 +534,33 @@ gen.append('<rect x="%d" y="%d" width="%d" height="%d" rx="34" fill="none" strok
 gen.append(''.join('<rect x="%d" y="%d" width="%d" height="9" fill="#1c2427" stroke="#3a4649" stroke-width=".8"/>' % (VAT[0] - 16, y, VAT[2] + 32) for y in (VAT[1] - 16, VAT[1] + VAT[3] + 7)))
 VAT_BANDS = ''.join('<rect x="%d" y="%d" width="%d" height="3" fill="#1c2427" stroke="#3a4649" stroke-width=".6"/><line x1="%d" y1="%d" x2="%d" y2="%d" stroke="%s" stroke-width=".7" opacity=".6"/>' % (
     VAT[0] - 8, y, VAT[2] + 16, VAT[0] - 8, y, VAT[0] + VAT[2] + 8, y, METAL_WET) for y in (VAT[1] + 58, VAT[1] + 108))
-# the feed pipe from the vat's head up into the turret, where the pods are loaded
+# the feed pipe from the vat's head up into the roof housing
 gen.append('<rect x="%d" y="236" width="16" height="%d" fill="#141a1c"/><rect x="%d" y="236" width="16" height="%d" fill="none" stroke="%s" stroke-width=".8" opacity=".5"/>' % (cx0 - 8, VAT[1] - 16 - 236, cx0 - 8, VAT[1] - 16 - 236, METAL_WET) +
            ''.join('<rect x="%d" y="%d" width="22" height="4" fill="#2a3437"/>' % (cx0 - 11, y) for y in (240, 254)))
-# the turret on top, with the drum the barrels pivot on
+# the roof housing on top, a banded header tank lying on it and a hopper that feeds the vat
 gen.append('<polygon points="%s" fill="url(#plateG)"/><polyline points="%s" fill="none" stroke="%s" stroke-width="1.2" opacity=".6"/>' % (pts(TURRET), pts(TURRET[:3]), METAL_WET))
-gen.append('<path d="M%d 222 A 34 34 0 0 1 %d 222 Z" fill="#141a1c"/><path d="M%d 222 A 34 34 0 0 1 %d 222" fill="none" stroke="%s" stroke-width="1.2" opacity=".6"/>' % (GX - 40, GX + 28, GX - 40, GX + 28, METAL_WET))
+gen.append('<!-- the header tank --><rect x="%d" y="188" width="100" height="28" rx="14" fill="#1a2225"/><line x1="%d" y1="190" x2="%d" y2="190" stroke="%s" stroke-width="1.2" opacity=".6"/>' % (GX - 64, GX - 52, GX + 24, METAL_WET) +
+           ''.join('<rect x="%d" y="187" width="5" height="30" fill="#0e1315"/>' % x for x in (GX - 44, GX - 16, GX + 12)) +
+           ''.join('<rect x="%d" y="214" width="8" height="4" fill="#2a3437"/>' % x for x in (GX - 50, GX + 22)))
+gen.append('<!-- the hopper --><polygon points="%s" fill="#141a1c"/><polyline points="%s" fill="none" stroke="%s" stroke-width="1" opacity=".6"/><rect x="%d" y="208" width="10" height="10" fill="#141a1c"/>' % (
+    pts([(GX + 42, 180), (GX + 76, 180), (GX + 64, 208), (GX + 54, 208)]), pts([(GX + 42, 180), (GX + 76, 180)]), METAL_WET, GX + 54))
 gen.append(''.join('<circle cx="%d" cy="232" r="1.3" fill="#56666b"/>' % x for x in range(GX - 60, GX + 60, 12)))
 land.append('<g transform="%s">%s</g>' % (MT, ''.join(gen)))
 
-# the launch barrels, back to front: pivot x, pivot y, elevation (degrees), length, bore width
-BARRELS = [(GX - 30, 208, 20, 150, 22), (GX - 6, 218, 16, 138, 25), (GX + 18, 228, 12, 122, 28)]
+MACHINE_SIL = ''.join('<polygon points="%s"/>' % pts(p) for p in (FOUND1, FOUND2, HOUSING, ANNEX, TURRET))
 
-
-def muzzle(i, back=0.0):
-    bx, by, a, L, w = BARRELS[i]
-    r = math.radians(a)
-    return bx + (L - back) * math.cos(r), by - (L - back) * math.sin(r)
-
-
-VENTS = [GS(*muzzle(i)) + (BARRELS[i][2],) for i in range(3)]  # muzzle x, muzzle y (in the scene), elevation
-
-
-def barrel_art(i):
-    # one barrel in its own frame: the breech at the pivot, the bore along +x to the muzzle
-    bx, by, a, L, w = BARRELS[i]
-    h = w / 2
-    bands = ''.join('<rect x="%s" y="%s" width="6" height="%s" fill="#0d1214"/><line x1="%s" y1="%s" x2="%s" y2="%s" stroke="%s" stroke-width=".8" opacity=".6"/>' % (
-        f(L * k), f(-h - 1.5), f(w + 3), f(L * k), f(-h - 1.5), f(L * k + 6), f(-h - 1.5), METAL_WET) for k in (.2, .47, .72))
-    return ('<rect x="-20" y="%s" width="30" height="%s" fill="#101517" stroke="#2c3639" stroke-width="1"/>' % (f(-h - 5), f(w + 10)) +
-            '<polygon points="%s" fill="url(#barrelG)"/>' % pts([(0, -h), (L - 12, -h + 1.5), (L - 12, h - 1.5), (0, h)]) +
-            '<line x1="0" y1="%s" x2="%s" y2="%s" stroke="%s" stroke-width="1" opacity=".7"/>' % (f(-h + .8), f(L - 12), f(-h + 2.2), METAL_WET) + bands +
-            '<rect x="%s" y="%s" width="22" height="%s" fill="#141a1c" stroke="#2c3639" stroke-width=".8"/><line x1="%s" y1="%s" x2="%s" y2="%s" stroke="%s" stroke-width=".8" opacity=".6"/>' % (
-                f(L - 22), f(-h - 2), f(w + 4), f(L - 22), f(-h - 2), f(L), f(-h - 2), METAL_WET) +
-            ''.join('<rect x="%s" y="%s" width="3" height="%s" rx="1" fill="#050708"/>' % (f(L - 18 + 6 * k), f(-h - 1), f(w + 2)) for k in range(3)) +
-            '<ellipse cx="%s" cy="0" rx="4" ry="%s" fill="#2a3437"/><ellipse cx="%s" cy="0" rx="2.6" ry="%s" fill="#050708" stroke="%s" stroke-width=".8" stroke-opacity=".75"/>' % (f(L), f(h + 3), f(L + .6), f(h - .5), GLOW_MID))
-
-
-MACHINE_SIL = ''.join('<polygon points="%s"/>' % pts(p) for p in (FOUND1, FOUND2, HOUSING, ANNEX, TURRET)) + ''.join(
-    '<g transform="translate(%s %s) rotate(%s)"><rect x="-22" y="%s" width="%s" height="%s"/></g>' % (f(bx), f(by), f(-a), f(-w / 2 - 5), f(L + 24), f(w + 10)) for bx, by, a, L, w in BARRELS)
+# the sluice at the machine's foot and the chute running down from it into the water behind the shelf
+CHUTE0, CHUTE1 = (436, 436), (520, 474)  # the gate, and the chute's lip
+OUTFALL = (540, 482)  # where the seeds drop into the flood, carried a little past the lip
+_ca = math.atan2(CHUTE1[1] - CHUTE0[1], CHUTE1[0] - CHUTE0[0])
+_nx, _ny = -math.sin(_ca), math.cos(_ca)
+trough = [(CHUTE0[0] + _nx * 7, CHUTE0[1] + _ny * 7), (CHUTE1[0] + _nx * 7, CHUTE1[1] + _ny * 7), (CHUTE1[0] - _nx * 7, CHUTE1[1] - _ny * 7), (CHUTE0[0] - _nx * 7, CHUTE0[1] - _ny * 7)]
+land.append('<!-- the chute\'s legs on the shelf --><line x1="470" y1="452" x2="468" y2="500" stroke="#0b0f10" stroke-width="4"/><line x1="505" y1="468" x2="504" y2="508" stroke="#0b0f10" stroke-width="4"/>'
+            '<!-- the chute: a trough of riveted plate, its near wall catching the light --><polygon points="%s" fill="#141a1c"/><line x1="%s" y1="%s" x2="%s" y2="%s" stroke="%s" stroke-width="1" opacity=".6"/>' % (
+                pts(trough), f(trough[3][0]), f(trough[3][1]), f(trough[2][0]), f(trough[2][1]), METAL_WET) +
+            ''.join('<circle cx="%s" cy="%s" r="1" fill="#56666b"/>' % (f(lerp(trough[3][0], trough[2][0], k / 6)), f(lerp(trough[3][1], trough[2][1], k / 6) - 1.5)) for k in range(1, 6)) +
+            '<!-- the sluice gate, with its wheel --><rect x="%d" y="%d" width="24" height="30" fill="#1c2427" stroke="#3a4649" stroke-width="1"/><circle cx="%d" cy="%d" r="7" fill="none" stroke="#3a4649" stroke-width="2"/><line x1="%d" y1="%d" x2="%d" y2="%d" stroke="#3a4649" stroke-width="1.2"/><line x1="%d" y1="%d" x2="%d" y2="%d" stroke="#3a4649" stroke-width="1.2"/>' % (
+                CHUTE0[0] - 14, CHUTE0[1] - 22, CHUTE0[0] - 2, CHUTE0[1] - 30, CHUTE0[0] - 9, CHUTE0[1] - 30, CHUTE0[0] + 5, CHUTE0[1] - 30, CHUTE0[0] - 2, CHUTE0[1] - 37, CHUTE0[0] - 2, CHUTE0[1] - 23))
 
 # the first growth: moss and low fronds downwind, denser to the right
 growth = []
@@ -553,7 +624,7 @@ POD_CAP = ('M-7.4 -17.6 Q -8.2 -26.4 0 -28 Q 8.2 -26.4 7.4 -17.6 L 6.2 -16 L 4.9
 POD_SCALES = 'M-5.4 -23.6 l 1.4 1.6 M-2.6 -24.8 l 1.4 1.6 M.3 -25.1 l 1.4 1.6 M3.1 -24.4 l 1.4 1.6 M-4.4 -20.4 l 1.4 1.6 M-1.5 -21.2 l 1.4 1.6 M1.4 -21.2 l 1.4 1.6 M4.2 -20.4 l 1.4 1.6'
 POD_RIBS = 'M-2.3 -19 Q -3.3 -10 -1.7 -2 M2.8 -18.6 Q 3.6 -9.5 2 -2.4'  # faint ribs along the husk, off center
 
-# ------------------------------------------------------------------ glow layer (animated): the Generator breathing, the barrels firing, light on rock and water, ripples
+# ------------------------------------------------------------------ glow layer (animated): the Generator breathing, the chute running, light on rock and water, ripples
 glow = []
 mglow = []  # glows on the machine, drawn in its frame
 CORE_T = 3.0
@@ -561,17 +632,16 @@ mglow.append('<!-- the core breathing: an uneven pulse -->'
             '<circle cx="%d" cy="%d" r="72" fill="url(#glowPod)" opacity=".5"><animate attributeName="opacity" values=".45;.8;.6;.95;.5;.45" keyTimes="0;.18;.36;.55;.8;1" dur="%ss" begin="-1.1s" repeatCount="indefinite" %s%s/></circle>' % (CORE[0], CORE[1], f(CORE_T), SPLINE, ease(5)))
 glow.append('<!-- the light on the rock and the water breathing with the core -->'
             '<ellipse cx="%d" cy="%d" rx="260" ry="30" fill="url(#glowWash)" opacity=".3"><animate attributeName="opacity" values=".25;.5;.35;.6;.3;.25" keyTimes="0;.18;.36;.55;.8;1" dur="%ss" begin="-1.1s" repeatCount="indefinite" %s%s/></ellipse>' % (GX + 90, GBASE + 12, f(CORE_T), SPLINE, ease(5)))
-# each barrel throws a burst every 6 s; the three are staggered 2 s apart (shots, flashes and recoil are drawn after the flights are planned)
-LAUNCH0 = .4
 # the overdrive surge, once a cycle: the core charges, then everything fires at once and settles
-from seedsim import fly, aim_speed
+from seedsim import fly, aim_speed  # the birth seed's flight off the chute
 REL = 1.5  # the release, after the charge
-# the birth seed: one heavy husked seed lobbed short by the front barrel in the surge, landing on the shelf
+# the birth seed: one heavy husked seed that comes down the chute in the surge and is flung off its side onto the shelf
 BIRTH_SPOT = (532, 497)  # its centre at rest, clear of the foundation; it sits on the lit rock at y 509
-_bv = VENTS[2][:2]
-_ba = math.radians(VENTS[2][2])
-_bs = aim_speed(_bv, VENTS[2][2], BIRTH_SPOT[0], BIRTH_SPOT[1], 30, .7, lo=5, hi=400, drag=.6)
-BIRTH_PATH = [(0.0, _bv[0], _bv[1], 0.0)] + fly('nut', _bv, (_bs * math.cos(_ba), -_bs * math.sin(_ba)), lambda x: BIRTH_SPOT[1], 30, .7, step=.1, drag=.6)
+_bv, _be = (500, 465), 35  # it jumps the chute's wall two thirds of the way down
+_pre = [(0.0, CHUTE0[0], CHUTE0[1] - 4, 0.0), (.4, 462, 444, 0.0), (.7, 489, 458, 0.0), (.95, 500, 465, 0.0)]  # it gathers speed, then slows against the wall
+_ba = math.radians(_be)
+_bs = aim_speed(_bv, _be, BIRTH_SPOT[0], BIRTH_SPOT[1], 30, .7, lo=2, hi=400, drag=.6)
+BIRTH_PATH = _pre + [(t + _pre[-1][0], x, y, a) for t, x, y, a in fly('nut', _bv, (_bs * math.cos(_ba), -_bs * math.sin(_ba)), lambda x: BIRTH_SPOT[1], 30, .7, step=.1, drag=.6)]
 BIRTH_D = BIRTH_PATH[-1][0]
 # it thuds down, bounces once and settles upright
 _lx, _ly = BIRTH_PATH[-1][1], BIRTH_PATH[-1][2]
@@ -581,10 +651,9 @@ BIRTH_D += .45
 B0 = REL + .05 + BIRTH_D  # its landing, in seconds after the surge's onset
 S = (-(B0 + 3.9)) % T  # the surge's onset, chosen so t=0 finds the newborn beside its open husk
 BIRTH_LAND = S + B0
-SURGE_BURST = int(round((S + REL - LAUNCH0) / 2)) % 12  # the regular burst the volley replaces
 SURGE_T = (1.0, 1.35, REL, 2.6, 4.0)
 SURGE_V = (0, .22, .4, 1, .35, 0, 0)
-FIRE_V = (0, 0, 0, 1, .3, 0, 0)  # the barrels fire only on the release
+FIRE_V = (0, 0, 0, 1, .3, 0, 0)  # the gate bursts open only on the release
 
 
 def surge(vals, scale=1.0):
@@ -618,6 +687,12 @@ glow.append('<!-- the surge: the core flaring --><circle cx="%s" cy="%s" r="165"
 mglow.append('<rect x="%d" y="%d" width="%d" height="%d" rx="12" fill="#ffffff" opacity="0" filter="url(#soft2)">%s</rect>' % (VAT[0] + 4, VAT[1] + 6, VAT[2] - 8, VAT[3] - 12, surge(SURGE_V, .8)))
 seams_ = ''.join('<line x1="%d" y1="%s" x2="%d" y2="%s"/>' % (GX - 90, f(y + .6), GX + 82, f(y + .6)) for y, _fr in SEAMS)
 mglow.append('<!-- the surge: every seam blazing --><g stroke="%s" stroke-width="2" filter="url(#glow)" opacity="0">%s%s</g>' % (GLOW_CORE, surge(SURGE_V), seams_))
+# glowing fluid running down the chute, the lit water where it spills into the flood, and the gate in the surge
+glow.append('<!-- glowing fluid running down the chute, a brighter ripple sliding down it --><line x1="%s" y1="%s" x2="%s" y2="%s" stroke="%s" stroke-width="3.5" opacity=".45"/><line x1="%s" y1="%s" x2="%s" y2="%s" stroke="%s" stroke-width="2" opacity=".7" stroke-dasharray="12 34" stroke-linecap="round"><animate attributeName="stroke-dashoffset" values="46;0" dur=".75s" repeatCount="indefinite"/></line>' % (
+    f(CHUTE0[0]), f(CHUTE0[1] - 1), f(CHUTE1[0]), f(CHUTE1[1] - 1), GLOW_MID, f(CHUTE0[0]), f(CHUTE0[1] - 1), f(CHUTE1[0]), f(CHUTE1[1] - 1), GLOW_CORE))
+glow.append('<!-- the lit water spreading from the outfall --><ellipse cx="%d" cy="%d" rx="72" ry="11" fill="url(#glowWash)" opacity=".7"><animate attributeName="opacity" values=".6;.9;.65;.6" keyTimes="0;.35;.7;1" dur="3s" repeatCount="indefinite" %s%s/></ellipse>' % (OUTFALL[0] + 30, OUTFALL[1] + 2, SPLINE, ease(3)))
+glow.append('<!-- the surge: the gate bursting open --><ellipse cx="%d" cy="%d" rx="34" ry="26" fill="url(#glowPod)" opacity="0">%s</ellipse><line x1="%s" y1="%s" x2="%s" y2="%s" stroke="%s" stroke-width="5" opacity="0" filter="url(#glow)">%s</line>' % (
+    CHUTE0[0], CHUTE0[1] - 8, surge(FIRE_V), f(CHUTE0[0]), f(CHUTE0[1] - 1), f(CHUTE1[0]), f(CHUTE1[1] - 1), GLOW_CORE, surge(FIRE_V, .3)))
 # the split plate leaking light, flickering unevenly
 mglow.append('<!-- the split plate leaking light, flickering -->'
             '<g opacity=".4"><animate attributeName="opacity" values=".35;.85;.4;.95;.3;.7;.35" keyTimes="0;.1;.18;.4;.55;.8;1" dur="4s" begin="-1.3s" repeatCount="indefinite"/>'
@@ -749,52 +824,10 @@ for a_, b_ in zip(NB_LAND + NB_SWIM[1:], (NB_LAND + NB_SWIM[1:])[1:]):
 NB_TRACK.append((GONE, (NB_SWIM[-1][0] + NB_SWIM_V * (GONE - DIVE), NB_SWIM[-1][1] + .3)))
 
 
-# ------------------------------------------------------------------ pods layer (animated): seed pods fired from the barrels on ballistic arcs
-# Every pod flies on real physics (seedsim.py): its barrel fires it along the barrel's own elevation,
-# it rises and falls on a true arc under gravity and a little drag while the one wind (stronger aloft,
-# gusting) pushes it downwind, and it tumbles as it goes. The elevations are fixed, so the charge (the
-# muzzle speed) is what brings each pod down on its spot. The flight is sampled into animateMotion
-# values, so the plate plays the physics back as computed. Pods that come down in the near flood bob
-# on it, ride the current, and split: a larva swims out and dives. Pods that come down far off splash
-# and sink. Pods that come down on rock or root settle, and a sprout rises from them.
-pods = []
-WIND = 45.0
-STEP = .12
-KPOD = .15  # a pod's drag: heavy enough to arc, light enough for the wind to lean on
-POD = .75  # a flying pod is the birth seed's husk at three quarters size
-SPROUT_SPOTS = [(1300, 481), (1440, 495), (1170, 510), (962, 595), (1238, 560)]  # on the rock slabs and the near rise
-SHOTS = []  # (barrel, time) of every shot, for the flashes and the recoil
-
-
-def near_spot(r, ride, taken, t0, t1):
-    tries = 0
-    while True:
-        tries += 1
-        if tries > 8000:
-            return None  # the water is taken (the newborn is swimming, sprouts stand): this one settles far off
-        gap = 50 if tries < 3000 else 30
-        lx = r.uniform(730, 1150)
-        ly = r.uniform(470, 566)
-        end = lx + ride + 80  # its ride, then its larva's swim
-        if end > 1200 and ly > 540:
-            continue  # the ride stops short of the near rise
-        if any(sx_ - rx_ - 6 < end and lx - 6 < sx_ + rx_ and sy_ - ry_ - 2 < ly < sy_ + ry_ * .35 + 10 for sx_, sy_, rx_, ry_ in SLABS):
-            continue  # a pod never rides across a rock slab
-        if any(any(abs(y - ly) < w + 8 and lx - 10 < x < end + 10 for x, y, w in sp) for sp in ROOT_SPINES):
-            continue  # nor across a root
-        if tries < 3000 and any(math.hypot(lx - ax0, ly - ay) < 35 for ax0, ax1, ay, a0, a1 in taken):
-            continue  # each landing spot is used once in the cycle
-        if any(a0 < t1 and t0 < a1 and abs(ly - ay) < gap and lx - gap < ax1 and ax0 < end + gap for ax0, ax1, ay, a0, a1 in taken):
-            continue
-        return lx, ly
-
-
-# the birth seed's husk, its origin at the bottom where it rests: two halves along a glowing seam,
-# taller than wide, like an acorn, big enough to hold the newborn folded up
 HUSK_L = 'M0 -24 C -5 -24, -8.5 -19, -8.5 -12 C -8.5 -5, -7 .5, -3 .5 L 0 .5 Z'
 HUSK_R = 'M0 -24 C 5 -24, 8.5 -19, 8.5 -12 C 8.5 -5, 7 .5, 3 .5 L 0 .5 Z'
 HUSK_CAP = 'M-10 -19.6 Q -10.6 -26.6 0 -28.2 Q 10.6 -26.6 10 -19.6 L 8.4 -18.2 L 6.8 -19.6 L 5 -18.2 L 3.4 -19.6 L 1.6 -18.2 L 0 -19.6 L -1.6 -18.2 L -3.4 -19.6 L -5 -18.2 L -6.8 -19.6 L -8.4 -18.2 Z M-.7 -28 L .5 -31.8 L 1.7 -31.6 L 1.1 -28 Z'
-HUSK = ('<circle cy="-12" r="22" fill="url(#glowPod)" opacity=".75"/><path d="%s" fill="#35501b"/><path d="%s" fill="#35501b" stroke="#35501b" stroke-width=".6"/><path d="%s%s" fill="none" stroke="#6e9636" stroke-width=".8"/>'
+HUSK = ('<circle cy="-12" r="22" fill="url(#glowPod)" opacity=".75"/><path d="%s" fill="#4d4526"/><path d="%s" fill="#4d4526" stroke="#4d4526" stroke-width=".6"/><path d="%s%s" fill="none" stroke="#8a7a44" stroke-width=".8"/>'
         '<path d="%s" fill="#5b7436" stroke="#8fb050" stroke-width=".7"/>' % (HUSK_L, HUSK_R, HUSK_L.replace(' Z', ''), HUSK_R.replace(' Z', ''), HUSK_CAP))
 POD_ART = ('<circle cy="-12" r="20" fill="url(#glowPod)" opacity=".65"/><path d="%s" fill="#35501b"/><path d="%s" fill="#35501b" stroke="#35501b" stroke-width=".6"/><path d="%s%s" fill="none" stroke="#6e9636" stroke-width=".8"/>'
            '<path d="%s" fill="#5b7436" stroke="#8fb050" stroke-width=".6"/><path d="%s" stroke="#34481c" stroke-width=".7"/>' % (
@@ -802,13 +835,12 @@ POD_ART = ('<circle cy="-12" r="20" fill="url(#glowPod)" opacity=".65"/><path d=
 
 
 def larva_art(wag, body_anim=''):
-    # a tadpole-like leafy larva facing right: a round body with two leaf frills, a glowing eye, and a
-    # finned leaf tail that sweeps side to side
+    # a tadpole-like larva facing right: a round head with a glowing eye and one long tapering tail
+    # that sweeps side to side, green like everything the Generator makes
     return ('<circle r="12" fill="url(#glowPod)" opacity=".5"/>'
-            '<g>%s<path d="M-4 0 C -10 -3.4, -17 -3.2, -23 0 C -17 3.2, -10 3.4, -4 0 Z" fill="#5b8f3a"/><path d="M-5 0 L -21 0" stroke="#a6d45a" stroke-width=".6"/></g>' % wag +
-            '<g>%s<ellipse cx="0" cy="0" rx="7" ry="5.4" fill="#3f6f2e"/>' % body_anim +
-            '<path d="M-2 -4 Q 0 -10.5 4.5 -9.5 Q 3 -5.5 1 -4 Z" fill="#a6d45a"/><path d="M-5.5 -2.5 Q -7 -8 -2.5 -9 Q -2.5 -5.5 -3.5 -2.5 Z" fill="#86b848"/>'
-            '<circle cx="3.8" cy="-1.3" r="2" fill="%s"/></g>' % GLOW_CORE)
+            '<g>%s<path d="M-5 -3.6 C -12 -3, -19 -1.4, -26 0 C -19 1.4, -12 3, -5 3.6 Z" fill="#4a7a32"/><path d="M-6 -.2 L -23 0" stroke="#8fbf52" stroke-width=".6" opacity=".7"/></g>' % wag +
+            '<g>%s<ellipse cx="0" cy="0" rx="7.6" ry="6.4" fill="#3f6f2e"/><ellipse cx="1" cy="2.4" rx="4.4" ry="2.4" fill="#6f9a44" opacity=".6"/>' % body_anim +
+            '<circle cx="4" cy="-1.6" r="2.1" fill="%s"/></g>' % GLOW_CORE)
 
 
 HATCH_DRIFT = 22 * .3  # a hatchling drifts with its husk before it swims
@@ -820,12 +852,14 @@ def hatch_pos(hp, t):
     u = (t - th) % T
     if u > 2.8:
         return None
-    x1 = x0 + HATCH_DRIFT + SWIM * 2.2
+    cur = current(y0)
+    v = cur + 15  # it swims a little faster than the water
+    x1 = x0 + cur * .3 + v * 2.2
     if u < .3:
-        return x0 + 22 * u, y0 - 2
+        return x0 + cur * u, y0 - 2
     if u < 2.5:
-        return lerp(x0 + HATCH_DRIFT, x1, (u - .3) / 2.2), lerp(y0 - 2, y0 + 1, (u - .3) / 2.2)
-    return x1 + SWIM * (u - 2.5), y0 + 1
+        return lerp(x0 + cur * .3, x1, (u - .3) / 2.2), lerp(y0 - 2, y0 + 1, (u - .3) / 2.2)
+    return x1 + v * (u - 2.5), y0 + 1
 
 
 def nb_pos(t):
@@ -842,319 +876,284 @@ def nb_pos(t):
     return NB_TRACK[-1][1][0], NB_TRACK[-1][1][1] - 3
 
 
-def build_pods(lseed, pseed=23, quick=False):
-    """Every pod of the cycle: the regular bursts, the pods that lodge and sprout, and the surge
-    volley. Returns their SVG, the lodged pods (x, y, landing time), the hatchlings and every clash."""
-    global taken
-    taken = []
-    del SHOTS[:]
-    out, sim, lodged, sprout_sim, hatch = [], [], [], [], []
-    prnd = random.Random(pseed)
-    lrnd = random.Random(lseed)
-    # the newborn wriggles down the shelf and swims off after it climbs out: no pod rides across it
-    for (x0, x1, y, a0, a1) in NEWBORN_WATER:
-        for w in (0, T, -T):
-            taken.append((x0, x1, y, a0 + w, a1 + w))
+def depth_k(y):
+    # 0 at the horizon, 1 at the bottom of the frame
+    return min(1.0, max(0.0, (y - HZ) / (H - HZ)))
 
-    def plan(vent, kind, lx, ly, rr, ride=0):
-        # fired from the muzzle along the barrel, with the charge that brings it down on its spot
-        mx, my, elev = VENTS[vent]
-        phase = rr.uniform(0, 6.3)
-        e = elev + rr.uniform(-1.5, 1.5)  # a little play in the mount
-        spd = aim_speed((mx, my), e, lx, ly, WIND, phase, lo=40, hi=900, drag=KPOD)
-        r = math.radians(e)
-        path = fly('nut', (mx, my), (spd * math.cos(r), -spd * math.sin(r)), lambda x: ly, WIND, phase, step=STEP, drag=KPOD, fine=(.8, .06))
-        path = [(0.0, mx, my, 0.0)] + path
-        path = [p_ for p_ in path[:-1] if p_[0] < path[-1][0] - .05] + path[-1:]  # no flight sample crowding the landing
-        wob = rr.uniform(0, 6.3)
-        out_ = []
-        for k, (t, x, y, _a) in enumerate(path):
-            k_ = min(k, len(path) - 2)  # the landing sample keeps the heading it came in on
-            (ta, xa, ya, _), (tb, xb, yb, _) = path[max(0, k_ - 1)], path[min(len(path) - 1, k_ + 1)]
-            head = math.degrees(math.atan2(yb - ya, xb - xa))  # the way it is going
-            out_.append((t, x, y, head - 90 + 7 * math.sin(2 * math.pi * t / .7 + wob) * min(1, t / .3)))  # the point leads; the cup trails, wobbling
-        path = out_
-        return dict(kind=kind, vent=vent, path=path, speed=spd, ride=ride, D=path[-1][0], spot=(lx, ly))
 
-    def emit(o, p, test=False):
-        path, kind, D, ride = p['path'], p['kind'], p['D'], p['ride']
-        lx, ly = path[-1][1], path[-1][2]
-        ts = [t for t, *_ in path]
-        xs = [x for _, x, _y, _a in path]
-        ys = [y for _, _x, y, _a in path]
-        angs = [a for *_r, a in path]
-        R = ride / 22 if ride else 0  # riding at the current's speed
-        hatch_t = D + R  # a rider splits when its ride ends
-        end = {'lodge': D + .7, 'near': hatch_t + 1.4, 'far': D + .35}[kind]
-        # it comes down point first: on rock it rights itself and rocks; on water it tips over onto its side
-        up = round(angs[-1] / 360) * 360
-        if kind != 'lodge':
-            up += 72 if angs[-1] > 0 else -72  # on the water it rolls on over onto its side
-        a_last = angs[-1]
-        (t_a, x_a, _ya, _aa), (t_b, x_b, _yb, _ab) = path[-2], path[-1]
-        v0x = (x_b - x_a) / max(1e-3, t_b - t_a)
-        v = 22 if kind == 'near' else 0
-        roll_d = .5 if kind != 'lodge' else .35  # on the water it tips over onto its side; on rock it rights itself
-        sgn_ = 1 if angs[-1] >= 0 else -1
-        x_, tt = lx, D
-        while tt < end - 1e-6:
-            dt = .05 if tt - D < .4 else .2
-            tt2 = min(tt + dt, end)
-            # its speed decays from its flight to the current's over a few tenths of a second
-            if kind == 'lodge':
-                vv = v0x * math.exp(-(tt - D) / .05)
-            else:
-                vv = v + (v0x - v) * math.exp(-(tt - D) / (.12 if kind == 'near' else .06))
-            x_ += vv * (tt2 - tt)
-            k_ = min(1, (tt2 - D) / roll_d)
-            bob_ = 1.2 * math.sin(2 * math.pi * (tt2 - D) / 1.2) * min(1, (tt2 - D) / .4) if kind == 'near' else 0
-            ts.append(tt2)
-            xs.append(x_)
-            ys.append(ly + bob_)
-            rock_ = 0 if kind != 'lodge' else sgn_ * lerp(0, 8, min(1, (tt2 - D) / .08)) if tt2 - D < .08 else (sgn_ * lerp(8, -3, (tt2 - D - .08) / .1) if tt2 - D < .18 else sgn_ * lerp(-3, 0, min(1, (tt2 - D - .18) / .12)))
-            angs.append(a_last + (up - a_last) * (1 - (1 - k_) ** 3) + rock_)  # a lodge pod carries on past upright, rocks back, and stops
-            tt = tt2
-        ts.append(T)
-        xs.append(xs[-1])
-        ys.append(ys[-1])
-        angs.append(angs[-1])
-        rec = (o, ts, xs, ys, .1, end, D, '%s from barrel %d at %s' % (kind, p['vent'] + 1, f(o % T)), p['vent'], 1.0, kind == 'far', 0)
-        if test:
-            jh = bisect.bisect_left(ts, hatch_t)
-            return clear(rec, (xs[min(jh, len(xs) - 1)], ly, o + hatch_t) if kind == 'near' else None)  # only asking whether this shot keeps clear
-        if kind == 'lodge':
-            lodged.append((xs[-2], ly, (o + D) % T))
-            sprout_sim.append((xs[-2], ly, o + D, len(sim)))
-        if kind == 'near':
-            j_ = bisect.bisect_left(ts, hatch_t)
-            hatch.append((xs[min(j_, len(xs) - 1)], ly, o + hatch_t))
-        sim.append(rec)
-        SHOTS.append((p['vent'], o))
-        b = onset_begin(T, o)
-        label = {'lodge': 'coming down on rock, where it will sprout', 'near': 'coming down in the flood, riding it, and splitting', 'far': 'coming down far off'}[kind]
-        kts = ';'.join(('%.5f' % (t / T)).rstrip('0').rstrip('.') for t in ts)
-        shrink = '.4' if kind == 'far' else '1'  # the far ones dwindle with distance
-        fade = (.05, end - .25, end) if kind != 'near' else (.05, hatch_t + .9, end)
-        halves = ''
-        if kind == 'near':
-            # the husk splits along its seam as the larva leaves it
-            # closed, it is one smooth body: a backing line hides the join, the halves' own edges show
-            # only once they part, and the outer outline gives way to them
-            halves = ('<path d="M0 -26 L 0 .5" stroke="#35501b" stroke-width="1.4"><animate attributeName="opacity" values="1;1;0;0" keyTimes="%s" dur="%ss" begin="%s" repeatCount="indefinite"/></path>' % (kt(T, hatch_t - .6, hatch_t - .5), f(T), b))
-            for side, path_ in ((-1, POD_L), (1, POD_R)):
-                halves += '<g><animateTransform attributeName="transform" type="rotate" values="0 0 0;0 0 0;%d 0 0;%d 0 0" keyTimes="%s" dur="%ss" begin="%s" repeatCount="indefinite"/><path d="%s" fill="#35501b" stroke="#6e9636" stroke-width=".8" stroke-opacity="0"><animate attributeName="stroke-opacity" values="0;0;1;1" keyTimes="%s" dur="%ss" begin="%s" repeatCount="indefinite"/></path></g>' % (
-                    side * 60, side * 60, kt(T, hatch_t, hatch_t + .4), f(T), b, path_, kt(T, hatch_t, hatch_t + .1), f(T), b)
-            halves += '<path d="%s%s" fill="none" stroke="#6e9636" stroke-width=".8"><animate attributeName="opacity" values="1;1;0;0" keyTimes="%s" dur="%ss" begin="%s" repeatCount="indefinite"/></path>' % (
-                POD_L.replace(' Z', ''), POD_R.replace(' Z', ''), kt(T, hatch_t, hatch_t + .1), f(T), b)
-            # the seam lights up as it opens, and the cap falls away
-            seam = '<path d="M0 -20 L 0 0" stroke="%s" stroke-width=".9" opacity="0"><animate attributeName="opacity" values="0;0;1;0;0" keyTimes="%s" dur="%ss" begin="%s" repeatCount="indefinite"/></path>' % (GLOW_CORE, kt(T, hatch_t - .5, hatch_t, hatch_t + .2), f(T), b)
-            cap = '<path d="%s" fill="#5b7436" stroke="#8fb050" stroke-width=".6"><animate attributeName="opacity" values="1;1;0;0" keyTimes="%s" dur="%ss" begin="%s" repeatCount="indefinite"/></path>' % (POD_CAP, kt(T, hatch_t, hatch_t + .25), f(T), b)
-            body = '<circle cy="-12" r="20" fill="url(#glowPod)" opacity=".65"/>' + halves + seam + cap
-        else:
-            body = POD_ART
-        out.append('<!-- a pod from barrel %d, %s -->' % (p['vent'] + 1, label) +
-                   '<g opacity="0"><animateMotion values="%s" keyTimes="%s" dur="%ss" begin="%s" repeatCount="indefinite" calcMode="linear"/>' % (
-                       ';'.join('%s,%s' % (f(x), f(y)) for x, y in zip(xs, ys)), kts, f(T), b) +
-                   '<animate attributeName="opacity" values="0;1;1;0;0" keyTimes="%s" dur="%ss" begin="%s" repeatCount="indefinite"/>' % (kt(T, *fade), f(T), b) +
-                   '<g><animateTransform attributeName="transform" type="scale" values="1;%s;%s" keyTimes="0;%s;1" dur="%ss" begin="%s" repeatCount="indefinite"/>' % (shrink, shrink, f(D / T), f(T), b) +
-                   '<g><animateTransform attributeName="transform" type="rotate" values="%s" keyTimes="%s" dur="%ss" begin="%s" repeatCount="indefinite" calcMode="linear"/>' % (
-                       ';'.join(f(a) for a in angs), kts, f(T), b) +
-                   '<g transform="scale(%s) translate(0 12)">%s</g></g></g></g>' % (f(POD), body))
-        if kind != 'lodge':
-            # the splash where it comes down: a ring spreading, and a brief fleck of spray
-            sk = .4 if kind == 'far' else 1
-            tl = o + D
-            out.append('<!-- its splash --><g transform="translate(%s %s) scale(%s)">' % (f(lx), f(ly + 3), f(sk)) +
-                       '<ellipse rx="1" ry=".4" fill="none" stroke="#b8c8cc" stroke-width="1.4" opacity="0">%s%s%s</ellipse>' % (
-                           at_on((1, 1, 3, 18, 18), (0, .02, .9), tl, 'rx'), at_on((.4, .4, 1, 5, 5), (0, .02, .9), tl, 'ry'), at_on((0, 0, .8, 0, 0), (0, .02, .9), tl)) +
-                       '<ellipse cy="-5" rx="3" ry="6" fill="#dfe8e6" opacity="0" filter="url(#soft2)">%s</ellipse></g>' % at_on((0, 0, .55, 0, 0), (0, .02, .3), tl))
+def seed_scale(y):
+    return lerp(.3, 1.25, depth_k(y))
+
+
+def current(y):
+    # the flood's speed on screen: it runs left to right, slower the farther off it is
+    return lerp(26, 62, depth_k(y))  # a flood in full spate
+
+
+def on_slab(x, y, pad=0):
+    for (sx, sy, rx, ry) in SLABS:
+        if abs(x - sx) < rx + pad and sy - ry - pad < y < sy + ry * .4 + pad:
+            return (sx, sy, rx, ry)
+    return None
+
+
+def drift(rr):
+    """One seed's voyage from the outfall: it leaves the chute's foot fanning out on its own heading,
+    eases into the current, wanders a little, parts around the slabs, and meets one of four ends.
+    Returns the samples [(t, x, y)], its end ('hatch', 'sink', 'far', 'catch') and where."""
+    x, y = OUTFALL[0] + rr.uniform(-6, 8), OUTFALL[1] + rr.uniform(-3, 3)
+    heading = math.radians(rr.uniform(-38, 52))  # up is away from the viewer, down is toward
+    sp = rr.uniform(40, 64)
+    hvx, hvy = sp * math.cos(heading), .45 * sp * math.sin(heading)  # its own heading; the current turns it downstream quickly
+    lip = 2 * math.hypot(CHUTE1[0] - CHUTE0[0], CHUTE1[1] - CHUTE0[1]) / SLIDE * .5  # it comes off the lip fast, and the water brakes it
+    ca = math.atan2(CHUTE1[1] - CHUTE0[1], CHUTE1[0] - CHUTE0[0])
+    vx, vy = lip * math.cos(ca), lip * math.sin(ca)
+    per, ph = rr.uniform(3, 6), rr.uniform(0, 6.3)
+    fate = rr.choices(('hatch', 'sink', 'far'), (.5, .15, .35))[0]
+    life = {'hatch': rr.uniform(4, 11), 'sink': rr.uniform(3, 9), 'far': rr.uniform(10, 18)}[fate]
+    if fate == 'far':
+        vy = -rr.uniform(10, 18)  # carried off downstream and away toward the horizon
+    t, out, dt = 0.0, [(0.0, x, y)], .05
+    catch_ok = rr.random() < .6
+    while t < life:
+        u = current(y)
+        if t < .6:
+            vx += (hvx - vx) * dt / .1  # braked from the lip's speed to its own heading
+            vy += (hvy - vy) * dt / .1
+        vx += (u - vx) * .5 * dt
+        vy += (-vy) * (.25 if fate == 'far' else .45) * dt
+        wob = 3.2 * math.cos(2 * math.pi * t / per + ph) * (2 * math.pi / per) * seed_scale(y)  # a slow wander across the current
+        x += vx * dt
+        y += (vy + wob) * dt
+        t += dt
+        if x < 718 and y > shelf_top(x) - 9:
+            y, vy = shelf_top(x) - 9, min(vy, 0)  # it cannot ride up onto the shelf
+        if (x > 1110 and y > 540) or y > 600:
+            fate = 'sink'  # it fetches up against the near rise and goes under
+            break
+        sl = on_slab(x, y, pad=6)
+        if sl:
+            if catch_ok and fate != 'far' and x < sl[0] - sl[2] * .55:
+                fate = 'catch'  # caught on the slab's upstream end: it stops, and washes up onto the rock
+                out.append((t, x, y))
+                t += .3
+                x, y = sl[0] - sl[2] + 8, sl[1] - sl[3] * .75
+                out.append((t, x, y))
+                break
+            y += (4 if y > sl[1] - sl[3] * .3 else -4) * 1.0  # it parts around the rock
+        if fate == 'far' and y < 418:
+            break  # lost to sight toward the island
+        if round(t / dt) % 5 == 0:
+            out.append((t, x, y))
+    if out[-1][0] < t - 1e-6:
+        out.append((t, x, y))
+    if fate == 'hatch' and y < 440:
+        fate = 'far'  # too far off to see a larva: it simply goes on out of sight
+    return out, fate
+
+
+# ------------------------------------------------------------------ seeds layer (animated): seeds let down the chute into the flood and carried off on its current
+# The machine lets its seeds out through a sluice at its foot, down a chute into the water behind the
+# shelf, and the flood that was meant to wash its mistakes away takes them. From the outfall each fans
+# out on its own heading, eases into the current (left to right, slower with distance), wanders a
+# little, and parts around the slabs. Each meets its own end: most split and let a larva out; some
+# sink; some catch on a slab and sprout; some are carried off toward the World Tree's island. The
+# current is integrated for every seed and played back as computed, and every seed is placed so its
+# whole voyage keeps clear of the others and of every larva.
+pods = []
+SEED = .5  # a seed on the water is the pod at half size, and smaller with distance
+_er = random.Random(7)
+EMIT = [.4 + .55 * i + _er.uniform(-.2, .2) for i in range(43)]  # one down the chute about every half second; a voyage that cannot keep clear is not made
+FLUSH = [S + REL + .35 + .22 * i for i in range(10)]  # the surge: the gates burst open and a rush of seeds goes down together
+EMIT = [o for o in EMIT if not (S + REL - .9 < o < FLUSH[-1] + 1.2)] + FLUSH
+SLIDE = 1.2  # down the chute, gathering speed from rest (about 150 u/s at the lip)
+DROP = .15  # off its lip into the water
+
+
+def build_seeds(seed=41, quick=False):
+    rr = random.Random(seed)
+    out, sim, lodged, hatch, sprout_sim = [], [], [], [], []
+
+    def track(o, samples, fate):
+        # the whole path from the gate: down the chute, off the lip, then the voyage
+        # it starts from rest at the gate and gathers speed down the chute
+        slide = [(k / 10 * SLIDE, (k / 10) ** 2) for k in range(11)]  # uniform acceleration down the chute
+        ts = [t for t, _q in slide] + [SLIDE + DROP] + [SLIDE + DROP + t for t, _x, _y in samples[1:]]
+        xs = [lerp(CHUTE0[0], CHUTE1[0], q) for _t, q in slide] + [samples[0][1]] + [x for _t, x, _y in samples[1:]]
+        ys = [lerp(CHUTE0[1], CHUTE1[1], q) - 4 for _t, q in slide] + [samples[0][2]] + [y for _t, _x, y in samples[1:]]
+        return ts, xs, ys
 
     def at_(rec, t):
-        o, ts, xs, ys, v0, v1, D, _l, _v, cs_, far_, _b = rec
+        o, ts, xs, ys, end, fate = rec
         u = (t - o) % T
-        if not (v0 <= u <= v1):
+        if not (0 <= u <= end):
             return None
         j = min(max(bisect.bisect_right(ts, u), 1), len(ts) - 1)
         r = (u - ts[j - 1]) / ((ts[j] - ts[j - 1]) or 1)
-        size = cs_ * ((1 - .6 * min(1, u / D)) if far_ else 1)
-        return xs[j - 1] + (xs[j] - xs[j - 1]) * r, ys[j - 1] + (ys[j] - ys[j - 1]) * r, u < D, u, size
+        y = ys[j - 1] + (ys[j] - ys[j - 1]) * r
+        return xs[j - 1] + (xs[j] - xs[j - 1]) * r, y, u, SEED * seed_scale(y)
 
-    def clear(rec, hatch_pt=None):
-        # would this shot keep clear, its whole flight, of every pod already in the sky with it (by the
-        # same rule as the check below, with a margin), of every standing sprout, and of every larva
-        # swimming? And would the larva it lets out keep clear of every pod already fired?
-        o, ts, xs, ys, v0, v1, D, _l, vent_, *_r = rec
-        for n in range(int(v0 / .05), int(v1 / .05) + 1):
+    def clear(rec):
+        o, ts, xs, ys, end, fate = rec
+        for n in range(int((SLIDE + DROP) / .05), int(end / .05) + 1):
             t = o + n * .05
             a = at_(rec, t)
             if not a:
                 continue
-            for hp in hatch:
-                q = hatch_pos(hp, t)
-                if q and math.hypot(a[0] - q[0], a[1] - q[1]) < 14 + 10 * a[4]:
-                    return False
-            q = nb_pos(t)
-            if q and math.hypot(a[0] - q[0], a[1] - q[1]) < 22 + 10 * a[4]:
-                return False
             for other in sim:
                 b_ = at_(other, t)
-                if b_ and not ((a[3] < .2 or b_[3] < .2) and vent_ == other[8]):
-                    if math.hypot(a[0] - b_[0], a[1] - b_[1]) < 1.2 * max(10, 11 * (a[4] + b_[4])):
-                        return False
+                if b_ and b_[2] > SLIDE + DROP and math.hypot(a[0] - b_[0], a[1] - b_[1]) < 1.15 * max(7, 18 * (a[3] + b_[3])):
+                    return False
+            for hp in hatch:
+                q = hatch_pos(hp, t)
+                if q and math.hypot(a[0] - q[0], a[1] - q[1]) < 12 + 20 * a[3]:
+                    return False
+            q = nb_pos(t)
+            if q and math.hypot(a[0] - q[0], a[1] - q[1]) < 20 + 20 * a[3]:
+                return False
             for (sx, sy, land, own) in sprout_sim:
                 if .3 <= (t - land) % T <= 12.5:
                     sc_ = lerp(.84, 1.4, (sy - HZ) / (H - HZ))
                     if math.hypot(a[0] - sx, a[1] - (sy - 16 * sc_)) < 1.15 * (16 * sc_ + 6):
                         return False
-        if _l.startswith('lodge'):
-            # and the sprout it will grow stands clear of every pod already fired
-            sx, sy = xs[-1], ys[-1]
+        if fate == 'catch':
+            sx, sy = xs[-1], ys[-1] + 1
             sc_ = lerp(.84, 1.4, (sy - HZ) / (H - HZ))
             for n in range(6, 251):
-                t = o + D + n * .05
+                t = o + ts[-1] + n * .05
                 for other in sim:
                     b_ = at_(other, t)
                     if b_ and math.hypot(b_[0] - sx, b_[1] - (sy - 16 * sc_)) < 1.15 * (16 * sc_ + 6):
                         return False
-        if hatch_pt:
+                for hp in hatch:
+                    q = hatch_pos(hp, t)
+                    if q and math.hypot(q[0] - sx, q[1] - (sy - 16 * sc_)) < 16 * sc_ + 10:
+                        return False
+        if fate == 'hatch':
+            hp = (xs[-1], ys[-1], o + ts[-1])
             for n in range(0, 57):
-                t = hatch_pt[2] + n * .05
-                q = hatch_pos(hatch_pt, t)
+                t = hp[2] + n * .05
+                q = hatch_pos(hp, t)
                 for other in sim:
                     b_ = at_(other, t)
-                    if q and b_ and math.hypot(b_[0] - q[0], b_[1] - q[1]) < 14 + 10 * b_[4]:
+                    if q and b_ and math.hypot(b_[0] - q[0], b_[1] - q[1]) < 12 + 20 * b_[3]:
                         return False
         return True
 
-    def throw(on, draw):
-        # the first of up to 60 draws whose flight keeps clear; None if none does
-        for _try in range(60):
-            cand = draw()
-            if cand is None:
-                return None
-            if emit(on, cand, test=True):
-                emit(on, cand)
-                return cand
-        return None
+    def emit(o, samples, fate):
+        ts, xs, ys = track(o, samples, fate)
+        D = ts[-1]  # when it meets its end
+        end = D + {'hatch': 1.4, 'sink': .8, 'far': .6, 'catch': .7}[fate]
+        # it floats lying on its side, turning slowly as the water turns it
+        tilt = -rr.uniform(66, 80)  # it keeps the lean it had on the chute
+        yaw_p = rr.uniform(4, 8)
+        chute_ang = math.degrees(math.atan2(CHUTE1[1] - CHUTE0[1], CHUTE1[0] - CHUTE0[0])) - 90
+        angs = [chute_ang] * 11 + [lerp(chute_ang, tilt, .5)] + [tilt + 12 * math.sin(2 * math.pi * t / yaw_p) * min(1, t / 1.5) for t in ts[12:]]
+        scs = [seed_scale(y) for y in ys]
+        # after its end: a hatching seed holds while it splits; a sinking one tips and goes under; a far one
+        # fades as it goes; a caught one settles against the rock
+        ts.append(end)
+        xs.append(xs[-1] + current(ys[-1]) * (end - D) * {'hatch': 1, 'far': 1, 'sink': .7, 'catch': 0}[fate])
+        ys.append(ys[-1] + (3 * scs[-1] if fate == 'sink' else 0))
+        angs.append(angs[-1] + (20 if fate == 'sink' else 0))
+        scs.append(scs[-1] * (.5 if fate == 'sink' else 1))
+        rec = (o, ts, xs, ys, end, fate)
+        return rec, angs, scs
 
-    def lodge(on, vent, spot):
-        # a pod bound for rock, redrawn until its flight (and the sprout it grows) keeps clear
-        p = throw(on, lambda: plan(vent, 'lodge', spot[0], spot[1], lrnd))
-        assert p, 'no clear shot to the rock at %s' % (spot,)
-        land = on + p['D']
-        for w in (0, T, -T):
-            for h in (0, 15, 30, 45):
-                taken.append((spot[0] - 24, spot[0] + 24, spot[1] - h, land - .6 + w, land + 12.5 + w))
+    def draw(rec, angs, scs):
+        o, ts, xs, ys, end, fate = rec
+        D = ts[-2]
+        b = onset_begin(T, o)
+        kts = ';'.join(('%.5f' % (t / T)).rstrip('0').rstrip('.') for t in ts + [T])
+        if fate == 'hatch':
+            halves = ('<path d="M0 -26 L 0 .5" stroke="#35501b" stroke-width="1.4"><animate attributeName="opacity" values="1;1;0;0" keyTimes="%s" dur="%ss" begin="%s" repeatCount="indefinite"/></path>' % (kt(T, D - .6, D - .5), f(T), b))
+            for side, path_ in ((-1, POD_L), (1, POD_R)):
+                halves += '<g><animateTransform attributeName="transform" type="rotate" values="0 0 0;0 0 0;%d 0 0;%d 0 0" keyTimes="%s" dur="%ss" begin="%s" repeatCount="indefinite"/><path d="%s" fill="#35501b" stroke="#6e9636" stroke-width=".8" stroke-opacity="0"><animate attributeName="stroke-opacity" values="0;0;1;1" keyTimes="%s" dur="%ss" begin="%s" repeatCount="indefinite"/></path></g>' % (
+                    side * 60, side * 60, kt(T, D, D + .4), f(T), b, path_, kt(T, D, D + .1), f(T), b)
+            halves += '<path d="%s%s" fill="none" stroke="#6e9636" stroke-width=".8"><animate attributeName="opacity" values="1;1;0;0" keyTimes="%s" dur="%ss" begin="%s" repeatCount="indefinite"/></path>' % (
+                POD_L.replace(' Z', ''), POD_R.replace(' Z', ''), kt(T, D, D + .1), f(T), b)
+            seam = '<path d="M0 -20 L 0 0" stroke="%s" stroke-width=".9" opacity="0"><animate attributeName="opacity" values="0;0;1;0;0" keyTimes="%s" dur="%ss" begin="%s" repeatCount="indefinite"/></path>' % (GLOW_CORE, kt(T, D - .5, D, D + .2), f(T), b)
+            cap = '<path d="%s" fill="#5b7436" stroke="#8fb050" stroke-width=".6"><animate attributeName="opacity" values="1;1;0;0" keyTimes="%s" dur="%ss" begin="%s" repeatCount="indefinite"/></path>' % (POD_CAP, kt(T, D, D + .25), f(T), b)
+            body = '<circle cy="-12" r="20" fill="url(#glowPod)" opacity=".65"/>' + halves + seam + cap
+        else:
+            body = POD_ART
+        fade = {'hatch': (.05, D + .9, end), 'sink': (.05, D + .1, end), 'far': (.05, D - 1.5, end), 'catch': (.05, D + .3, end)}[fate]
+        label = {'hatch': 'splitting on the water to let a larva out', 'sink': 'going under', 'far': 'carried off toward the island', 'catch': 'caught on a slab, where it sprouts'}[fate]
+        out.append('<!-- a seed down the chute and out on the flood, %s -->' % label +
+                   '<g opacity="0"><animateMotion values="%s" keyTimes="%s" dur="%ss" begin="%s" repeatCount="indefinite" calcMode="linear"/>' % (
+                       ';'.join('%s,%s' % (f(x), f(y)) for x, y in zip(xs + [xs[-1]], ys + [ys[-1]])), kts, f(T), b) +
+                   '<animate attributeName="opacity" values="0;1;1;0;0" keyTimes="%s" dur="%ss" begin="%s" repeatCount="indefinite"/>' % (kt(T, *fade), f(T), b) +
+                   '<g><animateTransform attributeName="transform" type="scale" values="%s" keyTimes="%s" dur="%ss" begin="%s" repeatCount="indefinite"/>' % (';'.join(f(v) for v in scs + [scs[-1]]), kts, f(T), b) +
+                   '<g><animateTransform attributeName="transform" type="rotate" values="%s" keyTimes="%s" dur="%ss" begin="%s" repeatCount="indefinite"/>' % (';'.join(f(a) for a in angs + [angs[-1]]), kts, f(T), b) +
+                   '<g transform="scale(%s) translate(0 13)"><circle cy="-12" r="30" fill="url(#glowPod)" opacity=".5"/>%s</g></g></g></g>' % (f(SEED), body))
+        # its splash as it drops off the lip, and a ring where it goes under
+        out.append('<ellipse cx="%s" cy="%s" rx="1" ry=".4" fill="none" stroke="#b8c8cc" stroke-width="1.2" opacity="0">%s%s%s</ellipse>' % (
+            f(OUTFALL[0]), f(OUTFALL[1] + 2), at_on((1, 1, 2, 11, 11), (SLIDE + DROP, SLIDE + DROP + .05, SLIDE + DROP + .8), o, 'rx'),
+            at_on((.4, .4, .6, 2.6, 2.6), (SLIDE + DROP, SLIDE + DROP + .05, SLIDE + DROP + .8), o, 'ry'), at_on((0, 0, .6, 0, 0), (SLIDE + DROP, SLIDE + DROP + .05, SLIDE + DROP + .8), o)))
+        if fate == 'sink':
+            sc_ = scs[-2]
+            out.append('<ellipse cx="%s" cy="%s" rx="1" ry=".4" fill="none" stroke="#b8c8cc" stroke-width="1.1" opacity="0">%s%s%s</ellipse>' % (
+                f(xs[-1]), f(ys[-1] + 1), at_on((1, 1, 2, 12 * sc_, 12 * sc_), (D + .3, D + .35, D + 1.1), o, 'rx'),
+                at_on((.4, .4, .6, 3 * sc_, 3 * sc_), (D + .3, D + .35, D + 1.1), o, 'ry'), at_on((0, 0, .5, 0, 0), (D + .3, D + .35, D + 1.1), o)))
 
-    # the birth seed goes into the sky first, then the pods bound for rock, then every other pod, each
-    # fired only where its whole flight keeps clear of all already fired
+    # the birth seed goes first, then every other seed, each drawn again until its voyage keeps clear
     o = S + REL + .05
     ts = [t for t, *_ in BIRTH_PATH] + [T]
     xs = [x for _, x, _y, _a in BIRTH_PATH] + [BIRTH_PATH[-1][1]]
     ys = [y for _, _x, y, _a in BIRTH_PATH] + [BIRTH_PATH[-1][2]]
     angs = []
     for k, (t, x, y, _a) in enumerate(BIRTH_PATH):
-        (ta, xa, ya, _), (tb, xb, yb, _) = BIRTH_PATH[max(0, k - 1)], BIRTH_PATH[min(len(BIRTH_PATH) - 1, k + 1)]
+        (ta, xa, ya, _), (tb, xb, yb, _) = BIRTH_PATH[max(0, k - 3)], BIRTH_PATH[min(len(BIRTH_PATH) - 1, k + 3)]  # a wide difference, so it turns smoothly into its jump
         head = math.degrees(math.atan2(yb - ya, xb - xa)) - 90
         land_k = min(1, max(0, (t - (BIRTH_D - .45)) / .3))  # from its landing it rights itself through the bounce
         angs.append(head * (1 - land_k) if t < BIRTH_D - .45 else angs_land * (1 - land_k))
         if t < BIRTH_D - .45:
             angs_land = head
-    angs.append(0)  # point first in flight, upright after
-    sim.append((o, ts, xs, ys, .1, BIRTH_D, BIRTH_D, 'the birth seed', 2, 1.0, False, 0))
-    SHOTS.append((2, o))
+    angs.append(0)  # point first off the chute, upright after
+    sim.append((o, ts[:-1], xs[:-1], ys[:-1], BIRTH_D, 'birth'))
     b = onset_begin(T, o)
     kts = ';'.join(('%.5f' % (t / T)).rstrip('0').rstrip('.') for t in ts)
-    birth_svg = ('<!-- the birth seed: heavy and husked, lobbed short in the surge onto the shelf -->'
+    birth_svg = ('<!-- the birth seed: heavy and husked, flung from the chute in the surge onto the shelf -->'
                  '<g opacity="0"><animateMotion values="%s" keyTimes="%s" dur="%ss" begin="%s" repeatCount="indefinite" calcMode="linear"/>' % (
                      ';'.join('%s,%s' % (f(x), f(y)) for x, y in zip(xs, ys)), kts, f(T), b) +
                  '<animate attributeName="opacity" values="0;1;0;0" keyTimes="%s" dur="%ss" begin="%s" repeatCount="indefinite" calcMode="discrete"/>' % (kt(T, .02, BIRTH_D + .08), f(T), b) +
                  '<g><animateTransform attributeName="transform" type="rotate" values="%s" keyTimes="%s" dur="%ss" begin="%s" repeatCount="indefinite"/>' % (';'.join(f(a) for a in angs), kts, f(T), b) +
-                 '<g transform="translate(0 12)">%s</g></g></g>' % HUSK)
+                 '<g><animateTransform attributeName="transform" type="scale" values=".5;.5;1;1" keyTimes="%s" dur="%ss" begin="%s" repeatCount="indefinite"/>' % (kt(T, .9, 1.4), f(T), b) +
+                 '<g transform="translate(0 12)">%s</g></g></g></g>' % HUSK)
+    for o in EMIT:
+        for _try in range(90):
+            samples, fate = drift(rr)
+            rec, angs, scs = emit(o, samples, fate)
+            if clear(rec):
+                sim.append(rec)
+                draw(rec, angs, scs)
+                o_, ts_, xs_, ys_, end_, fate_ = rec
+                if fate == 'hatch':
+                    hatch.append((xs_[-2], ys_[-2], o + ts_[-2]))
+                if fate == 'catch':
+                    lodged.append((xs_[-1], ys_[-1] + 1, (o + ts_[-2]) % T))
+                    sprout_sim.append((xs_[-1], ys_[-1] + 1, o + ts_[-2], len(sim) - 1))
+                break
+    out.append(birth_svg)
 
-    LODGE_BURSTS = {1: SPROUT_SPOTS[0], 5: SPROUT_SPOTS[3], 11: SPROUT_SPOTS[2]}
-    for k, spot in LODGE_BURSTS.items():
-        lodge(LAUNCH0 + 2 * k, k % 3, spot)
-    VOLLEY = (.9, .5, .45)  # each barrel's first shot in the surge after the release; the front barrel lobs the birth seed first
-    for vent, spot in ((1, SPROUT_SPOTS[4]), (0, SPROUT_SPOTS[1])):
-        lodge(S + REL + .05 + VOLLEY[vent], vent, spot)
-
-    # the surge's far pods: one more from each barrel, and a second from the back one
-    for j_, vent in enumerate((0, 1, 2, 0)):
-        band = (980 + 130 * vent + (60 if j_ == 3 else 0), 1110 + 130 * vent + (60 if j_ == 3 else 0))
-        throw(S + REL + .05 + .45 * (1 + (j_ == 3)) + VOLLEY[vent], lambda vent=vent, band=band: plan(vent, 'far', lrnd.uniform(*band), lrnd.uniform(404, 436), lrnd))
-
-    for k in range(12):
-        if abs(LAUNCH0 + 2 * k - (S + REL)) < 2.2:
-            continue  # the burst that falls on the surge release: the volley takes its place
-        on = LAUNCH0 + 2 * k
-        j_ = 1 if k in LODGE_BURSTS else 0
-        for kind in (['far', 'near'] if k % 2 else ['near', 'far']):
-            got = None
-            if kind == 'near':
-                ride = prnd.uniform(30, 60)
-
-                def rider(k=k, ride=ride, o_=on + j_ * .45):
-                    # a free-looking spot on the water, and a flight there whose ride and swim find the water free
-                    for _try in range(40):
-                        spot = near_spot(prnd, ride, taken, o_ + 3, o_ + 3.01)
-                        if spot is None:
-                            return None
-                        cand = plan(k % 3, 'near', spot[0], spot[1], prnd, ride)
-                        t0, t1 = o_ + cand['D'] - .6, o_ + cand['D'] + ride / 22 + 3.4
-                        if not any(a0 < t1 and t0 < a1 and abs(spot[1] - ay) < 22 and spot[0] - 22 < ax1 and ax0 < spot[0] + ride + 100 for ax0, ax1, ay, a0, a1 in taken):
-                            cand['water'] = (t0, t1)
-                            return cand
-                    return None
-                got = throw(on + j_ * .45, rider)
-                if got:
-                    spot, (t0, t1) = got['spot'], got['water']
-                    for w in (0, T):  # the cycle wraps, so a pod late in it shares the water with one early in the next
-                        for s_ in (w, -w):
-                            taken.append((spot[0], spot[0] + ride + 80, spot[1], t0 + s_, t1 + s_))
-            if got is None:
-                got = throw(on + j_ * .45, lambda k=k: plan(k % 3, 'far', prnd.uniform(960, 1460), prnd.uniform(404, 436), prnd))
-            if got:
-                j_ += 1
-    out.append(birth_svg)  # drawn last, over the rest
-
-    # every pair of pods on screen together must stay apart, and no pod may pass through a standing
-    # sprout except the one it grew from
+    # every pair of seeds on the water together keeps apart, and none drifts through a standing sprout
     close = {}
-    table = []
     for step in range(int(T / .05)):
         t = step * .05
         now = [(i, at_(rec, t)) for i, rec in enumerate(sim)]
-        now = [(i, p) for i, p in now if p]
-        table.append(now)
+        now = [(i, p) for i, p in now if p and p[2] > SLIDE + DROP]
         for x_ in range(len(now)):
-            i, (ax, ay, af, au, asz) = now[x_]
+            i, (ax, ay, au, asz) = now[x_]
             for y_ in range(x_ + 1, len(now)):
-                j, (bx, by, bf, bu, bsz) = now[y_]
-                if (au < .2 or bu < .2) and sim[i][8] == sim[j][8]:
-                    continue  # two pods leaving the same muzzle a beat apart
+                j, (bx, by, bu, bsz) = now[y_]
                 d = math.hypot(ax - bx, ay - by)
-                if d < max(10, 11 * (asz + bsz)) and d < close.get((i, j), (99, 0))[0]:
+                if d < max(7, 18 * (asz + bsz)) and d < close.get((i, j), (99, 0))[0]:
                     close[(i, j)] = (d, t)
-                    if quick:
-                        return out, lodged, hatch, ['a clash']
-    for (sx, sy, land, own) in sprout_sim:
-        sc_ = lerp(.84, 1.4, (sy - HZ) / (H - HZ))
-        cx_, cy_, r_ = sx, sy - 16 * sc_, 16 * sc_ + 6
-        for step, now in enumerate(table):
-            t = step * .05
-            if not (.3 <= (t - land) % T <= 12.5):
-                continue
-            for i, p in now:
-                if i != own and math.hypot(p[0] - cx_, p[1] - cy_) < r_:
-                    close[(i, -1 - own)] = (math.hypot(p[0] - cx_, p[1] - cy_), t)
-                    if quick:
-                        return out, lodged, hatch, ['a clash']
-    riders = sum(1 for rec in sim if rec[7].startswith('near'))
-    if riders < 5:
-        close[(-9, -9)] = (riders, 0)
-    clashes = ['only %d pods ride the flood' % d if i == -9 else '%s and %s: %s apart at t %s' % (sim[i][7], sim[j][7] if j >= 0 else 'the sprout from ' + sim[-1 - j][7], f(d), f(t)) for (i, j), (d, t) in close.items()]
-    return out, lodged, hatch, clashes
+    clashes = ['%s and %s: %s apart at t %s' % (sim[i][5], sim[j][5], f(d), f(t)) for (i, j), (d, t) in close.items()]
+    fates = {}
+    for rec in sim[1:]:
+        fates[rec[5]] = fates.get(rec[5], 0) + 1
+    return out, lodged, hatch, clashes, fates
 
 
 def at_on(vals, times, onset, attr='opacity'):
@@ -1163,49 +1162,21 @@ def at_on(vals, times, onset, attr='opacity'):
         attr, ';'.join(f(v) for v in vals), kt(T, *times), f(T), onset_begin(T, onset))
 
 
-# every shot is placed clear as it is made, so the first draw passes; PODS_SEARCH=1 still searches others
-best = None
-SEARCH = os.environ.get('PODS_SEARCH')
-SEEDS = [(23, 29)] if not SEARCH else [(p, l) for p in range(23, 123) for l in range(29, 39)]
-for pseed, lseed in SEEDS:
-    got = build_pods(lseed, pseed, quick=bool(SEARCH))
-    if SEARCH and not got[3]:
-        got = build_pods(lseed, pseed)
-    if best is None or len(got[3]) < len(best[1][3]):
-        best = ((pseed, lseed), got)
-    if not got[3]:
-        break
-lseed, (pod_svg, LODGE, HATCH, clashes) = best
-if SEARCH:
-    build_pods(lseed[1], lseed[0])  # the shots of the chosen draw
-print('pods: draws %s, %d clashes, %d riders' % (lseed, len(clashes), len(HATCH)), *clashes[:6], sep=chr(10) + '  ')
-pods.extend(pod_svg)
-
-# the barrels, drawn over the turret: each kicks back along its bore when it fires and runs out again
-for i, (bx, by, a, L, w) in enumerate(BARRELS):
-    shots = sorted({round(o % T, 3) for v, o in SHOTS if v == i})
-    times, vals = [], []
-    for j, s in enumerate(shots):
-        nxt = shots[j + 1] if j + 1 < len(shots) else shots[0] + T
-        rec_ = min(.38, nxt - s - .03)
-        times += [s, s + .05, s + rec_]
-        vals += ['0 0', '-9 0', '0 0']
-    if times and times[-1] > T - 1e-3:
-        times, vals = times[:-3], vals[:-3]  # a recoil that would run past the cycle's end is left out
-    recoil = '<animateTransform attributeName="transform" type="translate" values="0 0;%s;0 0" keyTimes="%s" dur="%ss" repeatCount="indefinite"/>' % (';'.join(vals), kt(T, *times), f(T)) if times else ''
-    mglow.append('<!-- launch barrel %d, recoiling as it fires --><g transform="translate(%s %s) rotate(%s)"><g>%s%s</g></g>' % (i + 1, f(bx), f(by), f(-a), recoil, barrel_art(i)))
-    mx, my = muzzle(i)
-    ft, fv = [], []
-    for j, s in enumerate(shots):
-        nxt = shots[j + 1] if j + 1 < len(shots) else shots[0] + T
-        ft += [s, s + .04, s + min(.3, nxt - s - .02)]
-        fv += [0, 1, 0]
-    if ft and ft[-1] > T - 1e-3:
-        ft, fv = ft[:-3], fv[:-3]
-    mglow.append('<!-- the muzzle flash of barrel %d --><ellipse cx="%s" cy="%s" rx="26" ry="20" fill="url(#glowPod)" opacity="0"><animate attributeName="opacity" values="0;%s;0" keyTimes="%s" dur="%ss" repeatCount="indefinite"/></ellipse>' % (
-        i + 1, f(mx), f(my), ';'.join(f(v) for v in fv), kt(T, *ft), f(T)))
-    mglow.append('<!-- the surge: barrel %d firing with the others --><ellipse cx="%s" cy="%s" rx="46" ry="34" fill="url(#glowPod)" opacity="0">%s</ellipse>' % (i + 1, f(mx), f(my), surge(FIRE_V)))
-glow.append('<g transform="%s">%s</g>' % (MT, ''.join(mglow)))
+seed_svg, LODGE, HATCH, clashes, FATES = build_seeds()
+# the gate flashing open as each seed is let down the chute
+_rel = sorted({round(o % T, 3) for o in EMIT})
+_ft, _fv = [], []
+for j_, o_ in enumerate(_rel):
+    nx_ = _rel[j_ + 1] if j_ + 1 < len(_rel) else _rel[0] + T
+    if o_ + min(.3, nx_ - o_ - .02) >= T - 1e-3:
+        continue
+    _ft += [o_, o_ + .05, o_ + min(.3, nx_ - o_ - .02)]
+    _fv += [0, .8, 0]
+glow.append('<!-- the gate flashing open as each seed is let down --><ellipse cx="%d" cy="%d" rx="16" ry="11" fill="url(#glowPod)" opacity="0"><animate attributeName="opacity" values="0;%s;0" keyTimes="%s" dur="%ss" repeatCount="indefinite"/></ellipse>' % (
+    CHUTE0[0], CHUTE0[1] - 4, ';'.join(f(v) for v in _fv), kt(T, *_ft), f(T)))
+print('seeds: %d on the flood %s, %d clashes' % (sum(FATES.values()), FATES, len(clashes)), *clashes[:6], sep=chr(10) + '  ')
+pods.extend(seed_svg)
+glow.append('<g transform="%s">%s</g>' % (MT, ''.join(mglow)))  # the machine's own glows, in its frame
 
 # ------------------------------------------------------------------ life layer (animated): the birth seed and the newborn, hatchlings, and sprouts rising where pods lodge
 life = []
@@ -1227,10 +1198,10 @@ life.append('<!-- light splashing off the rock where the birth seed lands --><el
 life.append('<!-- the birth seed at rest on the shelf: it glows, splits along its seam, and is left empty -->'
             '<g transform="translate(%s %s)"><g opacity="0">%s' % (f(hx), f(hy), at((0, 0, 1, 1, 0, 0), (B0, B0 + .02, B0 + 7, B0 + 8.5))) +
             '<circle cy="-12" r="22" fill="url(#glowPod)" opacity="0">%s</circle>' % at((0, .7, .7, .9, .6, 1, .3, 0, 0), (B0, B0 + .4, B0 + .7, B0 + 1.0, SPLIT0, SPLIT1 + .6, B0 + 4.5)) +
-            '<path d="M0 -24 L 0 .5" stroke="#35501b" stroke-width="1.4">%s</path>' % at((1, 1, 0, 0), (SPLIT0 - .6, SPLIT0 - .5)) +
-            '<g><path d="%s" fill="#35501b" stroke="#6e9636" stroke-width=".8" stroke-opacity="0">%s</path>%s</g>' % (HUSK_L, at((0, 0, 1, 1), (SPLIT0, SPLIT0 + .1), 'stroke-opacity'), rot_at(('0 0 0', '0 0 0', '-72 0 0', '-72 0 0'), (SPLIT0, SPLIT1))) +
-            '<g><path d="%s" fill="#35501b" stroke="#6e9636" stroke-width=".8" stroke-opacity="0">%s</path>%s</g>' % (HUSK_R, at((0, 0, 1, 1), (SPLIT0, SPLIT0 + .1), 'stroke-opacity'), rot_at(('0 0 0', '0 0 0', '72 0 0', '72 0 0'), (SPLIT0, SPLIT1))) +
-            '<path d="%s%s" stroke="#6e9636" stroke-width=".8" fill="none">%s</path>' % (HUSK_L.replace(' Z', ''), HUSK_R.replace(' Z', ''), at((1, 1, 0, 0), (SPLIT0, SPLIT0 + .1))) +
+            '<path d="M0 -24 L 0 .5" stroke="#4d4526" stroke-width="1.4">%s</path>' % at((1, 1, 0, 0), (SPLIT0 - .6, SPLIT0 - .5)) +
+            '<g><path d="%s" fill="#4d4526" stroke="#8a7a44" stroke-width=".8" stroke-opacity="0">%s</path>%s</g>' % (HUSK_L, at((0, 0, 1, 1), (SPLIT0, SPLIT0 + .1), 'stroke-opacity'), rot_at(('0 0 0', '0 0 0', '-72 0 0', '-72 0 0'), (SPLIT0, SPLIT1))) +
+            '<g><path d="%s" fill="#4d4526" stroke="#8a7a44" stroke-width=".8" stroke-opacity="0">%s</path>%s</g>' % (HUSK_R, at((0, 0, 1, 1), (SPLIT0, SPLIT0 + .1), 'stroke-opacity'), rot_at(('0 0 0', '0 0 0', '72 0 0', '72 0 0'), (SPLIT0, SPLIT1))) +
+            '<path d="%s%s" stroke="#8a7a44" stroke-width=".8" fill="none">%s</path>' % (HUSK_L.replace(' Z', ''), HUSK_R.replace(' Z', ''), at((1, 1, 0, 0), (SPLIT0, SPLIT0 + .1))) +
             '<path d="M0 -19 L 0 0" stroke="%s" stroke-width="1" stroke-linecap="round" opacity="0">%s</path>' % (GLOW_CORE, at((0, 0, 1, 0, 0), (SPLIT0 - .6, SPLIT0, SPLIT1))) +
             '<path d="%s" fill="#5b7436" stroke="#8fb050" stroke-width=".7">%s%s</path></g></g>' % (HUSK_CAP, at((1, 1, 0, 0), (SPLIT0 + .1, SPLIT0 + .5)), rot_at(('0 0 -24', '0 0 -24', '-40 0 -24', '-40 0 -24'), (SPLIT0, SPLIT0 + .5))))
 
@@ -1278,7 +1249,9 @@ for (x_, y_, t0_) in ((NB_SWIM[0][0], WATER_Y, ENTRY), (NB_SWIM[-1][0], WATER_Y,
 # hatchlings: a larva swims out of each pod that split on the flood, and dives
 for n, (x0, y0, th) in enumerate(HATCH):
     b = onset_begin(T, th)
-    x1 = x0 + HATCH_DRIFT + SWIM * 2.2
+    cur = current(y0)
+    v_ = cur + 15
+    x1 = x0 + cur * .3 + v_ * 2.2
     cid = 'hatchClip%d' % n
     defs.append('<clipPath id="%s" clipPathUnits="userSpaceOnUse"><rect x="0" y="0" width="%d" height="%s"/></clipPath>' % (cid, W, f(y0 + 1.2)))
     wagh = '<animateTransform attributeName="transform" type="rotate" values="-24 -4 0;24 -4 0;-24 -4 0" dur=".3s" repeatCount="indefinite"/>'
@@ -1287,12 +1260,12 @@ for n, (x0, y0, th) in enumerate(HATCH):
     life.append('<!-- a larva hatched from a pod on the flood, swimming off and diving -->'
                 '<g clip-path="url(#%s)"><g opacity="0">' % cid +
                 '<animateMotion values="%s,%s;%s,%s;%s,%s;%s,%s;%s,%s" keyTimes="%s" dur="%ss" begin="%s" repeatCount="indefinite" calcMode="linear"/>' % (
-                    f(x0), f(y0 - 2), f(x0 + HATCH_DRIFT), f(y0 - 2), f(x1), f(y0 + 1), f(x1 + SWIM * .3), f(y0 + 1), f(x1 + SWIM * .3), f(y0 + 1), kt(T, .3, 2.5, 2.8), f(T), b) +
+                    f(x0), f(y0 - 2), f(x0 + cur * .3), f(y0 - 2), f(x1), f(y0 + 1), f(x1 + v_ * .3), f(y0 + 1), f(x1 + v_ * .3), f(y0 + 1), kt(T, .3, 2.5, 2.8), f(T), b) +
                 '<animate attributeName="opacity" values="0;0;1;1;0;0" keyTimes="%s" dur="%ss" begin="%s" repeatCount="indefinite"/>' % (kt(T, .15, .45, 2.3, 2.8), f(T), b) +
                 '<g transform="scale(%s)"><g><animateTransform attributeName="transform" type="scale" values=".4;.4;1;1;1 .2;1 .2" keyTimes="%s" dur="%ss" begin="%s" repeatCount="indefinite"/>' % (f(sc), kt(T, .2, .6, 2.3, 2.8), f(T), b) +
                 '<path d="M-9 1 L -40 -3 M-9 1.6 L -40 6" stroke="#a9bcc2" stroke-width="1" fill="none" opacity=".55" stroke-linecap="round"/>' + larva_art(wagh) + '</g></g></g></g>')
     life.append('<ellipse cx="%s" cy="%s" rx="1" ry=".4" fill="none" stroke="#b8c8cc" stroke-width="1.2" opacity="0">%s%s%s</ellipse>' % (
-        f(x1 + SWIM * .3), f(y0 + 1), at_on((1, 1, 2, 14, 14), (2.5, 2.55, 3.4), th, 'rx'), at_on((.4, .4, .6, 3.5, 3.5), (2.5, 2.55, 3.4), th, 'ry'), at_on((0, 0, .6, 0, 0), (2.5, 2.55, 3.4), th)))
+        f(x1 + v_ * .3), f(y0 + 1), at_on((1, 1, 2, 14, 14), (2.5, 2.55, 3.4), th, 'rx'), at_on((.4, .4, .6, 3.5, 3.5), (2.5, 2.55, 3.4), th, 'ry'), at_on((0, 0, .6, 0, 0), (2.5, 2.55, 3.4), th)))
 
 # sprouts rising where pods lodged: a stem climbs, two leaves unfurl, it stands a while, then fades
 for (x, y, L) in LODGE:
@@ -1382,7 +1355,7 @@ top = ['<rect width="%d" height="%d" fill="url(#vignette)"/>' % (W, H), '<rect w
 def layer(id_, body, role=False):
     head = '<svg class="layer" id="layer-%s" viewBox="0 0 %d %d" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice"' % (id_, W, H)
     if role:
-        head += ' role="img" aria-labelledby="scene-title scene-desc">\n  <title id="scene-title">The Genesis Prototype on Floria</title>\n  <desc id="scene-desc">A heavy industrial machine on wet rock fires glowing seed pods from three barrels out across a flooded plain in a storm; pods that land in the water split and tadpole-like larvae swim out, pods on rock sprout; once a cycle a heavy seed lands beside the machine and a newborn larva wriggles out and swims away; far off a colossal tree spreads its canopy under the clouds.</desc>\n'
+        head += ' role="img" aria-labelledby="scene-title scene-desc">\n  <title id="scene-title">The Genesis Prototype on Floria</title>\n  <desc id="scene-desc">A heavy industrial machine on wet rock lets glowing seeds down a chute into a flood in a storm; the current spreads them across the plain, where some split and tadpole-like larvae swim out and others catch on rock and sprout; once a cycle a heavy seed is flung onto the rock beside the machine and a newborn larva wriggles out and swims away; far off a colossal tree rises from an island of young forest, its canopy spread under the clouds.</desc>\n'
     else:
         head += ' aria-hidden="true">\n'
     return head + body + '\n</svg>\n'
