@@ -229,7 +229,7 @@ export function narrateEvent(event, ctx = {}) {
 			// the pin lands, then the swing it took does not happen
 			return `${actor} is restrained, and does not swing.`;
 		case 'no-target':
-			return `${actor}${condition} finds no target.`;
+			return `${actor}${condition} finds no rival to strike.`;
 		default:
 			return `${actor} ${attackVerb(event.role)} ${target}.`;
 	}

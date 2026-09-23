@@ -6645,7 +6645,10 @@
 	.rec-console--match[data-terminal] .rec-site-floor .rec-rank[data-rank-list] .rec-figure-plate { font-size: 8px; letter-spacing: 0; padding: 0 2px; }
 }
 /* advanced squad cards are narrower: a sent card is its world's dot, and names set tighter */
-.rec-console--match[data-terminal] .rec-match--advanced .rec-plinth-sent .rec-plinth-sent-where { display: none; }
+@media (max-width: 760px) {
+	.rec-console--match[data-terminal] .rec-match--advanced .rec-plinth-sent .rec-plinth-sent-where { display: none; }
+}
+.rec-console--match[data-terminal] .rec-match--advanced .rec-plinth-sent { font-size: 0.625rem; letter-spacing: 0; }
 .rec-console--match[data-terminal] .rec-match--advanced .rec-plinth-name { font-size: 0.625rem; letter-spacing: 0; }
 @container (max-width: 299.98px) {
 	/* the phone list's piece gives up room to the name */
@@ -6685,4 +6688,47 @@
 @media (max-width: 760px) {
 	.rec-console--match[data-terminal] .rec-status-say .rec-stake-ask-text { font-size: var(--g-size-small); line-height: 1.25; }
 	.rec-console--match[data-terminal] .rec-status-say .rec-stake-ask .g-btn { min-height: 30px; padding: 0 8px; font-size: 10px; }
+}
+
+/* --- pass 38, ninth round --------------------------------------------------- */
+
+@container (max-width: 299.98px) {
+	/* the phone list gives each creature's chip its own line under the number, never over it */
+	.rec-console--match[data-terminal] .rec-site-floor .rec-rank[data-rank-list] .rec-figure,
+	.rec-console--match[data-terminal] .rec-site-floor .rec-rank[data-rank-list] .rec-figure--down {
+		grid-template-rows: auto auto auto;
+		grid-template-areas: "stage plate" "stage foot" "stage mark";
+	}
+	.rec-console--match[data-terminal] .rec-site-floor .rec-rank[data-rank-list] .rec-figure .rec-figure-threat { position: static; grid-area: mark; justify-self: start; transform: none; }
+	/* and acts in place: the lunge carried a creature over the one beside it */
+	.rec-console--match[data-terminal] .rec-site-floor .rec-rank[data-rank-list] .rec-figure--acting,
+	.rec-console--match[data-terminal] .rec-site-floor .rec-rank[data-rank-list] .rec-figure--hit { animation-name: rec-list-pulse; }
+}
+@keyframes rec-list-pulse {
+	0% { transform: scale(1); }
+	35% { transform: scale(1.05); }
+	100% { transform: scale(1); }
+}
+
+
+@media (max-width: 760px) {
+	/* a sent card names its world, small, as the best-world label does */
+	.rec-console--match[data-terminal] .rec-match:not(.rec-match--advanced) .rec-plinth-sent .rec-plinth-sent-where { display: inline; font-size: 8px; letter-spacing: 0; }
+	.rec-console--match[data-terminal] .rec-plinth-sent { gap: 2px; font-size: 8px; }
+	/* the rival's pass, as a small mark beside its score */
+	.rec-console--match[data-terminal] .rec-score-passed { display: inline-block; font-size: 0; width: 6px; height: 6px; border-radius: 50%; background: var(--g-ink-low); margin-left: 3px; padding: 0; border: 0; }
+}
+
+/* the log: one face, and its heading stays */
+.rec-console--match[data-terminal] .rec-rail .rec-log > * { font-family: var(--g-font-body); letter-spacing: 0; }
+.rec-console--match[data-terminal] .rec-rail .rec-log .g-readout-unit { position: sticky; top: 0; z-index: 1; background: var(--g-hull-lo); font-family: var(--g-font-stencil); }
+
+/* a lone creature's name plate may use the room its world has */
+.rec-console--match[data-terminal] .rec-site-floor .rec-rank .rec-figure { max-width: calc(150px * var(--rec-scale)); }
+.rec-console--match[data-terminal] .rec-tally-side { gap: 4px; }
+/* the preview's sentence starts where its cell starts, so a longer or shorter one changes paint, never where it sits */
+.rec-console--match[data-terminal] .rec-ghost-plan { align-items: flex-start; }
+/* the preview's sentence starts at the same place for every creature and world: its row spans the grid and it is anchored left */
+@media (min-width: 761px) {
+	.rec-console--match[data-terminal] .rec-site-floor .rec-ghost-plan { justify-self: stretch; align-items: flex-start; }
 }

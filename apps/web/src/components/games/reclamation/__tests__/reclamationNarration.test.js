@@ -100,7 +100,7 @@ describe('narrateEvent', () => {
 		expect(narrateEvent({ type: 'shield', cancelled: null, amount: 0 }, { actorName: 'Yetimoth' }))
 			.toBe('Yetimoth shields, and nothing is thrown at its side.');
 		expect(narrateEvent({ type: 'attack', role: 'strike', outcome: 'no-target', power: 0 }, ctx))
-			.toBe('Rakh finds no target.');
+			.toBe('Rakh finds no rival to strike.');
 	});
 
 	it('says an attack lapsed when its attacker was downed first', () => {

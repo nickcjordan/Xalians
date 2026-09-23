@@ -21,7 +21,7 @@ import { flattenBoard, prepareWithCompanions, siteHoldTotal, ghostPlanFor, ownSw
 // pass 38: the top bar's short form of each pass reason; the full sentence is the button's title
 const PASS_SHORT = {
 	'holding-majority': 'you lead on two worlds and the rival has passed',
-	'saving-the-roster': 'you have sent enough for this round',
+	'saving-the-roster': 'keep your remaining sends for the rounds to come',
 	'nothing-to-gain': 'no send would change a world this round',
 	'no-sendable-creatures': 'you have nothing left to send',
 };
@@ -1614,7 +1614,7 @@ class ReclamationMatch extends React.Component {
 			return `You have used all ${cap} sends. Pass to end your round.`;
 		}
 		if (this.state.stakeMode) {
-			return 'Pick a world to stake: it counts two worlds for whoever holds it. Press Stake again to leave it.';
+			return 'Pick a world to stake: it counts two worlds for whoever holds it.';
 		}
 		const rec = this.recommendation(view);
 		if (rec && rec.type === 'pass') {
@@ -1703,7 +1703,7 @@ class ReclamationMatch extends React.Component {
 					{/* the next round's worlds are planning arithmetic: advanced mode, and the help panel's round list */}
 					{!simple && view.nextFrame && !this.state.judged && (
 						<span className="rec-next-plate" data-next-plate>
-							<span className="rec-next-plate-label">then</span>
+							<span className="rec-next-plate-label">next</span>
 							{view.nextFrame.map((w) => (
 								<span className={`g-chip g-chip--outline rec-status-element g-el-${w.element}`} key={w.siteId} title={`${w.planet}, at ${w.siteName}`}>{w.planet}</span>
 							))}

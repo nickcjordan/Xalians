@@ -106,12 +106,17 @@ Verdicts: **keep**, **cut** (no value, stale or duplicated), **move** (belongs e
 
 ## New panels
 
-- **How to play** (the ? button): the aim, a round, hold and strain, the four roles, stake, pass, what the lamps mean, the keyboard, and the rounds of this Proving with their worlds.
-- **History** (simple mode): the full event log that used to be the ticker.
-- **Settings** (the gear button): Simple / Advanced, sound, the rival, the seed, and abandon the Proving.
+- **How to play** (the ? button): the aim, your turn, what creatures do, reading the board (the forecast arrows, the fall and own-sweep chips, the role glyph and element badge), the stake, hold, advanced mode, the rounds of this game with their worlds, and the keys.
+- **History** (the lines button): the full log, in order, the present at the bottom. Hidden on an advanced desk, where the log runs down the side.
+- **Settings** (the gear button): Simple / Advanced, sound, the rival, the seed (advanced only), and End this game.
 
 ## Screen-size tiers
 
 - **Desk, tall enough** (at least 761 wide, more than 820 tall): everything above.
 - **Short desk** (820 tall or less): compact figures, no plinth lanes. This is pass 37's tier, kept.
 - **Phone** (760 wide or less): the same hierarchy. The worlds keep only name, stake, balance and figures, and plinths keep picture, name and lamps. Tap targets stay at 32px or more.
+
+## What shipped beyond the inventory
+
+The critic rounds found things no inventory of strings could: numbers that disagreed with the Clash. The fix was structural, not copy: the engine's own `forecastClash` drives every forecast on the table, and the preview's sentence is built per world from the engine's numbers. The pass log in `reclamation-ownership-log.md` (pass 38) has the full list, the scores and what is left.
+

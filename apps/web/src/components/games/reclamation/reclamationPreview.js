@@ -412,7 +412,7 @@ export function ghostSummary(plan, fmt) {
 		const rivals = e.victims.filter((v) => !v.mine);
 		const own = e.victims.filter((v) => v.mine);
 		if (e.victims.length === 0) {
-			return { text: 'Nothing here to hit yet', warn: false };
+			return { text: 'Nothing to hit yet. Hits yours sent here later', warn: false };
 		}
 		if (rivals.length === 0) {
 			return { text: `No rival here. It would hit only your own ${own.length === 1 ? 'creature' : own.length}`, warn: true };

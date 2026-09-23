@@ -47,6 +47,10 @@ export function HelpPanel({ match, clinch, onClose }) {
 				<p>You have {SENDABLE} sends for the whole game, across {FRAMES_PER_MATCH} rounds, so not every creature in your squad will be sent: choose which. When both sides have passed, the worlds clash and the round is ruled.</p>
 			</section>
 			<section className="rec-help-section">
+				<h3 className="rec-help-head">Stake &times;2</h3>
+				<p>Once a game, before your first send of a round, you may press Stake &times;2 beside Pass and pick one of the round&apos;s worlds. That world then counts two worlds for whoever holds it (three if both sides staked it), so it is a gamble either way. The key goes away once you send, and does not come back once used.</p>
+			</section>
+			<section className="rec-help-section">
 				<h3 className="rec-help-head">What creatures do</h3>
 				<ul className="rec-help-roles">
 					{ROLES.map(([role, word, text]) => (
@@ -58,17 +62,14 @@ export function HelpPanel({ match, clinch, onClose }) {
 			<section className="rec-help-section">
 				<h3 className="rec-help-head">Reading the board</h3>
 				<ul className="rec-help-marks">
-					<li>A number with an arrow, <b>12 &rarr;6</b>, is what that creature (or world) would stand at after the Clash, from what is on the board now. Hidden sends are not in it.</li>
+					<li>A number with an arrow, <b>12 &rarr;6</b>, is what that creature (or world) would stand at after the Clash, from what is on the board now. Some creatures arrive hidden: the rival&apos;s show only as a count until the Clash, and are not in the forecast.</li>
 					<li><b>You lose it</b> over one of yours, <b>you down it</b> over the rival&apos;s: that creature would fall.</li>
 					<li><b>Own sweep</b>: your own sweep at that world would hit it.</li>
 					<li>The small symbol in a creature&apos;s name plate is its role. The colored badge on its piece is its element.</li>
 					<li><b>Pass</b> lights up when the game suggests passing; the reason is in the bar at the top.</li>
+					<li><b>8 of your 12 hold well here</b>: how many of your squad would stand at this world without strain.</li>
 					<li>&equiv; opens the history, &#9881; the settings.</li>
 				</ul>
-			</section>
-			<section className="rec-help-section">
-				<h3 className="rec-help-head">Stake &times;2</h3>
-				<p>Once a game, before your first send of a round, you may stake one of the round&apos;s worlds. It then counts two worlds for whoever holds it, and three if both sides staked it. The buttons go away once you send.</p>
 			</section>
 			<section className="rec-help-section">
 				<h3 className="rec-help-head">Hold</h3>
