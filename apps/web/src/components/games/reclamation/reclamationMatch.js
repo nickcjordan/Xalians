@@ -113,16 +113,26 @@ export function reachabilityLine(view, you, them) {
 		const sendsMax = Math.max(0, (typeof rules.sendable === 'number' ? rules.sendable : SENDABLE) - you.sentCount)
 			+ (rules.trailingBonus || 0) * bonusRounds;
 		const inHand = Array.isArray(you.roster) ? you.roster.length : (typeof you.rosterCount === 'number' ? you.rosterCount : sendsMax);
-		const newWorlds = you.passed && thisRoundStillOpen ? 0 : Math.min(sendsMax, inHand);
 		const standing = thisRoundStillOpen
 			? view.frame.sites.filter((site) => (((view.board || {})[site.id] || {})[view.players && view.players.B === you ? 'B' : 'A'] || []).some((e) => e.record && !e.downed)).length
 			: 0;
+		/*
+			PASS 47. A pass closes THIS round only. The first version counted no new worlds at
+			all once you had passed, so through every Clash, even in round one at 0 to 0, the
+			line told a blind critic the game was already lost. New worlds are one per creature
+			still sendable, placed in this round's empty worlds (unless you passed) or in the
+			rounds still to come.
+		*/
+		const avail = Math.min(sendsMax, inHand);
+		const openThisRound = thisRoundStillOpen && !you.passed ? perRound - standing : 0;
 		const stakeBonus = !you.stakeUsed && (roundsAfterThis > 0 || (you.stakeableSiteIds || []).length > 0) ? 2 : 0;
-		const reachable = Math.min(worldsLeft, standing + newWorlds) + stakeBonus;
+		const reachable = standing + Math.min(avail, openThisRound + roundsAfterThis * perRound) + stakeBonus;
 		if (yourNeed > reachable && yourNeed > 0) {
 			return {
 				tone: 'lost',
-				text: `Winning is out of reach: you need ${yourNeed} more ${yourNeed === 1 ? 'world' : 'worlds'}, and each needs a creature on it, but you can send only ${plural(Math.min(sendsMax, inHand), 'more creature')}.`,
+				text: avail > 0
+					? `Out of reach: you need ${yourNeed} more ${yourNeed === 1 ? 'world' : 'worlds'} and can send only ${plural(avail, 'more creature')}.`
+					: `Out of reach: you need ${yourNeed} more ${yourNeed === 1 ? 'world' : 'worlds'} and have no sends left.`,
 			};
 		}
 	}
@@ -1749,6 +1759,7 @@ class ReclamationMatch extends React.Component {
 			rival's moves, the Clash and the Court still are.
 		*/
 		const beat = this.state.beat && this.state.beat.seat !== this.seatInPlay() ? this.state.beat : null;
+		const handling = !!(this.state.armedRecordId || this.state.movingRecordId || this.state.stakeMode);
 		return (
 			<div className="g-panel rec-status" data-topbar>
 				{/* the way out, always visible (design system core rule); the Proving is saved and resumes from the intro */}
@@ -1803,11 +1814,16 @@ class ReclamationMatch extends React.Component {
 							Skip <kbd>Space</kbd>
 						</button>
 					)}
+					{/*
+						pass 47: with a creature in hand the instruction wins over the rival's last
+						move; a critic lifted a creature on a phone and read a stale rival line
+						where "Pick a world for Scalatto" should have been
+					*/}
 					{this.state.pendingStakeSiteId ? this.renderStakeConfirm(view)
-						: beat ? this.renderCallout(beat)
+						: beat && !handling ? this.renderCallout(beat)
 							: (
 								<p className={`rec-status-hint g-body${yourTurn ? ' rec-status-hint--yours' : ''}`} data-hint>
-									{rivalBeat ? this.rivalBeat().text : this.whatAClickDoes(view)}
+									{rivalBeat && !handling ? this.rivalBeat().text : this.whatAClickDoes(view)}
 								</p>
 							)}
 					<p

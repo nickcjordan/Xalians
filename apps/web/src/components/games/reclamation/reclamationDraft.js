@@ -184,7 +184,7 @@ function ReclamationDraft({ pool, frames, keepIds, onToggle, onKeepAll, onConfir
 						disabled={!canConfirm}
 						onClick={onConfirm}
 					>
-						Enter the frame
+						Start the game
 					</button>
 				</div>
 			</footer>
