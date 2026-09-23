@@ -1,5 +1,5 @@
 import React from 'react';
-import { speciesLabel, formatHold, formatHoldShown, roleSentence } from './reclamationNarration';
+import { speciesLabel, formatHold, formatHoldShown, roleSentence, wholeOrTenths } from './reclamationNarration';
 import { RoleGlyph } from './reclamationGlyphs';
 import { createTelemetry } from './reclamationTelemetry';
 import { RIVALS } from '@xalians/rules/expedition/expeditionBot';
@@ -414,11 +414,12 @@ function WorldRow({ world, you }) {
 				*/}
 				<span className="rec-report-world-holds" title={`${formatHold(world.holdYou)} to ${formatHold(world.holdRival)}`}>
 					<span className={`rec-report-hold rec-report-hold--you${youHigher && world.who === 'you' ? ' rec-report-hold--winner' : ''}`}>
-						{formatHoldShown(world.holdYou)}
+						{/* pass 50: a pair that rounds to the same whole keeps its tenths, so a lost world never reads "2 to 2" */}
+						{wholeOrTenths(world.holdYou, world.holdRival)[0]}
 					</span>
 					<span className="rec-report-hold-sep">to</span>
 					<span className={`rec-report-hold rec-report-hold--rival${!youHigher && world.who === 'rival' ? ' rec-report-hold--winner' : ''}`}>
-						{formatHoldShown(world.holdRival)}
+						{wholeOrTenths(world.holdYou, world.holdRival)[1]}
 					</span>
 				</span>
 				<span className="rec-report-world-who">{whoText}</span>
@@ -697,7 +698,7 @@ export function ReclamationReport({
 				return (
 					<p className="g-body rec-report-closest" data-closest-loss>
 						{empty.length > 0 && <>You left {empty.length === 1 ? 'one world' : `${empty.length} worlds`} empty ({empty.map((w) => w.planet).join(', ')}), and the rival took {empty.length === 1 ? 'it' : 'them'} unopposed. </>}
-						{closest && <>Your closest loss was {closest.planet} in round {closest.frameIndex + 1}, {formatHoldShown(closest.holdYou)} to {formatHoldShown(closest.holdRival)}.</>}
+						{closest && <>Your closest loss was {closest.planet} in round {closest.frameIndex + 1}, {wholeOrTenths(closest.holdYou, closest.holdRival).join(' to ')}.</>}
 					</p>
 				);
 			})()}
@@ -708,8 +709,9 @@ export function ReclamationReport({
 					<span className="rec-report-figure-label">sends spent, you / rival</span>
 				</span>
 				<span className="rec-report-figure" data-routs>
-					<span className="rec-report-figure-value">{report.downs.dealt} / {report.downs.taken}</span>
-					<span className="rec-report-figure-label">creatures downed, rival&apos;s / yours</span>
+					{/* pass 50: "3 / 0, rival's / yours" read either way round */}
+					<span className="rec-report-figure-value"><span className="rec-report-hold--you">{report.downs.dealt}</span> / <span className="rec-report-hold--rival">{report.downs.taken}</span></span>
+					<span className="rec-report-figure-label">you downed / you lost</span>
 				</span>
 				<span className="rec-report-figure" data-champion>
 					<span className="rec-report-figure-value">{report.champion ? `${speciesLabel(report.champion.record)} ${formatHoldShown(report.champion.hold)}` : 'none'}</span>

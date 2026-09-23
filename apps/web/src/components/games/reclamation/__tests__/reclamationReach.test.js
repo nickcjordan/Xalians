@@ -114,5 +114,12 @@ describe('what is still reachable', () => {
 		const line = reachabilityLine({ ...view(2), rules: { sendable: 11, trailingBonus: 0 }, board, players: { A: me } }, me, side(2));
 		expect(line && line.tone).toBe('lost');
 	});
+
+	test('says when only the stake keeps the win in reach (pass 50)', () => {
+		const me = { sitesWon: 2, sentCount: 9, roster: [{}, {}, {}], stakeUsed: false, stakeableSiteIds: ['s0'], passed: false };
+		const line = reachabilityLine({ ...view(2), rules: { sendable: 11, trailingBonus: 0 }, board: {} }, me, side(2));
+		expect(line && line.tone).toBe('stake');
+		expect(line.text).toContain('only a stake');
+	});
 });
 

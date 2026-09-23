@@ -136,6 +136,18 @@ export function reachabilityLine(view, you, them) {
 					: `Out of reach: you need ${yourNeed} more ${yourNeed === 1 ? 'world' : 'worlds'} and have no sends left.`,
 			};
 		}
+		/*
+			PASS 50. The case a blind critic read as impossible and silent: round three, three
+			worlds needed, two sends. It is reachable only through the stake (a staked world
+			counts two), which the line now says, at the start of the round while it can
+			still be acted on.
+		*/
+		if (stakeBonus > 0 && yourNeed > reachable - stakeBonus && yourNeed > 0) {
+			return {
+				tone: 'stake',
+				text: `You need ${yourNeed} more ${yourNeed === 1 ? 'world' : 'worlds'} with ${plural(avail, 'send')} left: only a stake (it counts two) keeps the win in reach.`,
+			};
+		}
 	}
 
 	// already out of reach on worlds: the rival cannot be caught even by taking every one
@@ -1519,7 +1531,7 @@ class ReclamationMatch extends React.Component {
 					// pass 41: when the sends left cannot take the worlds needed, the opening says so first
 					const liveView = getPublicState(match, YOU);
 					const reach = reachabilityLine(liveView, liveView.players[YOU], liveView.players[THEM]);
-					if (reach && reach.tone === 'lost') {
+					if (reach && (reach.tone === 'lost' || reach.tone === 'stake')) {
 						return `${names}. ${reach.text} ${match.turn === YOU ? 'You send first.' : 'The rival sends first.'}`;
 					}
 					const stakes = need <= frame.sites.length && theirs <= frame.sites.length

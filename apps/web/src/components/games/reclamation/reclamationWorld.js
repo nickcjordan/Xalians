@@ -1,7 +1,7 @@
 import React from 'react';
 import ReclamationFigure, { ReclamationSilhouette, HoldMeter } from './reclamationFigure';
 import { RoleGlyph } from './reclamationGlyphs';
-import { formatHold, formatHoldShown, countWord, speciesLabel } from './reclamationNarration';
+import { formatHold, formatHoldShown, countWord, speciesLabel, wholeOrTenths } from './reclamationNarration';
 import { ghostSummary, strainNote } from './reclamationPreview';
 import { elementOf } from './reclamationVocabulary';
 
@@ -136,6 +136,38 @@ export function EnvironmentScale({ site, ghost }) {
 	on the panel, and it disappears the moment a creature stands here, because from then
 	on the figures and the balance bar are the better answer.
 */
+/*
+	BestHere: up to three of your squad that would hold this world best, each a key that picks
+	it up. Pass 39 on empty worlds; pass 50 also on a world you trail, labelled with the gap,
+	because a critic saw the names vanish exactly where they were needed: the world the rival
+	had just claimed.
+*/
+function BestHere({ best, onPick, label, limit }) {
+	const picks = (best || []).slice(0, limit || 3);
+	if (!picks.length) {
+		return null;
+	}
+	return (
+		<span className="rec-world-best" data-world-best>
+			<span className="rec-world-best-label">{label || 'Best here'}</span>
+			{picks.map(({ record, hold }) => (onPick ? (
+				<button
+					type="button"
+					className="g-btn rec-world-best-pick"
+					key={record.id}
+					data-best-pick={record.id}
+					title={`Pick up ${speciesLabel(record)}`}
+					onClick={(e) => { e.stopPropagation(); onPick(record.id); }}
+				>
+					{speciesLabel(record)} <b className="g-mono">{formatHoldShown(hold)}</b>
+				</button>
+			) : (
+				<span className="rec-world-best-pick" key={record.id}>{speciesLabel(record)} <b className="g-mono">{formatHoldShown(hold)}</b></span>
+			)))}
+		</span>
+	);
+}
+
 export function WorldFooting({ footing, world, compact, detail, onPick }) {
 	if (!footing || !footing.of) {
 		// no bench to measure against (a resumed match mid-resolution, say): say the one
@@ -171,25 +203,7 @@ export function WorldFooting({ footing, world, compact, detail, onPick }) {
 					empty panels with one count each. These change with every round's worlds, and a
 					press picks that creature up, which is the next thing the player does anyway.
 				*/}
-				{(footing.best || []).length > 0 && (
-					<span className="rec-world-best" data-world-best>
-						<span className="rec-world-best-label">Best here</span>
-						{footing.best.map(({ record, hold }) => (onPick ? (
-							<button
-								type="button"
-								className="g-btn rec-world-best-pick"
-								key={record.id}
-								data-best-pick={record.id}
-								title={`Pick up ${speciesLabel(record)}`}
-								onClick={(e) => { e.stopPropagation(); onPick(record.id); }}
-							>
-								{speciesLabel(record)} <b className="g-mono">{formatHoldShown(hold)}</b>
-							</button>
-						) : (
-							<span className="rec-world-best-pick" key={record.id}>{speciesLabel(record)} <b className="g-mono">{formatHoldShown(hold)}</b></span>
-						)))}
-					</span>
-				)}
+				<BestHere best={footing.best} onPick={onPick} />
 			</div>
 		);
 	}
@@ -356,6 +370,8 @@ function ReclamationWorld({
 					const mine = (board[site.id][you] || []).filter((e) => e.record);
 					const totalMine = totals[site.id] ? totals[site.id][you] : 0;
 					const totalTheirs = totals[site.id] ? totals[site.id][opponent] : 0;
+					// pass 50: two holds that round to the same whole print their tenths, so a world ruled by 0.2 never reads "2 to 2"
+					const [shownMine, shownTheirs] = wholeOrTenths(totalMine, totalTheirs);
 					const empty = theirs.length === 0 && mine.length === 0;
 					const margin = empty ? { who: 'empty', text: '' } : marginText(totalMine, totalTheirs);
 					const ghost = ghosts && ghosts[site.id];
@@ -565,7 +581,7 @@ function ReclamationWorld({
 												by 0.4" is a real and actionable state, and rounding it would print
 												"you lead by 0" over a world that is genuinely, narrowly yours.
 											*/}
-											<span className="rec-tally-value rec-tick" title={formatHold(totalTheirs)} data-total-seat={opponent} data-site-total={site.id} key={`t-${formatHold(totalTheirs)}`}>{formatHoldShown(totalTheirs)}</span>
+											<span className="rec-tally-value rec-tick" title={formatHold(totalTheirs)} data-total-seat={opponent} data-site-total={site.id} key={`t-${formatHold(totalTheirs)}`}>{shownTheirs}</span>
 											{afterTheirs !== null && <span className="rec-tally-after" title="After the Clash, from what stands now" data-tally-after={opponent}><span className="rec-after-arrow" aria-hidden="true">&rarr;</span>{formatHoldShown(afterTheirs)}</span>}
 										</span>
 										{(() => {
@@ -590,7 +606,7 @@ function ReclamationWorld({
 											);
 										})()}
 										<span className="rec-tally-side rec-tally-side--mine">
-											<span className="rec-tally-value rec-tick" title={formatHold(totalMine)} data-total-seat={you} data-site-total={site.id} key={`m-${formatHold(totalMine)}`}>{formatHoldShown(totalMine)}</span>
+											<span className="rec-tally-value rec-tick" title={formatHold(totalMine)} data-total-seat={you} data-site-total={site.id} key={`m-${formatHold(totalMine)}`}>{shownMine}</span>
 											{afterMine !== null && <span className="rec-tally-after" title="After the Clash, from what stands now" data-tally-after={you}><span className="rec-after-arrow" aria-hidden="true">&rarr;</span>{formatHoldShown(afterMine)}</span>}
 											{ghost && advanced && <span className="rec-tally-plus">+{formatHoldShown(ghostHold)}</span>}
 											<span className="rec-tally-label">you</span>
@@ -635,7 +651,16 @@ function ReclamationWorld({
 												const caughtByOwn = ghost.role !== 'sweep' && mine.some((e) => holds[e.recordId] && holds[e.recordId].role === 'sweep');
 												// pass 44: the dim bulbs get their reason in words
 												const strain = strainNote(ghost, site, formatHoldShown);
-												if (!summary && !caughtByOwn && !strain) {
+												/*
+													pass 50: a world you already lead says so before you add to it. A
+													blind critic stacked four creatures on a world won by 42 while two
+													went to the rival unopposed; sends are the budget that decides a game.
+												*/
+												const leadNow = (afterMine != null ? afterMine : totalMine) - (afterTheirs != null ? afterTheirs : totalTheirs);
+												const alreadyLead = mine.length > 0 && !(hiddenEnemyCount > 0) && leadNow >= 1
+													? `You already lead here by ${formatHoldShown(leadNow)}`
+													: null;
+												if (!summary && !caughtByOwn && !strain && !alreadyLead) {
 													return null;
 												}
 												const warn = (summary && summary.warn) || caughtByOwn;
@@ -643,6 +668,7 @@ function ReclamationWorld({
 													<span className="rec-ghost-plan" data-ghost-plan={site.id}>
 														{/* pass 44: its own line, above what the send would do */}
 														{strain && <span className="rec-ghost-strain" data-ghost-strain={site.id} title={strain.title}>{strain.text}</span>}
+														{alreadyLead && <span className="rec-ghost-strain rec-ghost-lead" data-ghost-lead={site.id}>{alreadyLead}</span>}
 														{(summary || caughtByOwn) && (
 															<span className={`rec-ghost-role${warn ? ' rec-ghost-role--warn' : ''}`} title={ghost.roleLine} data-ghost-warn={warn ? site.id : undefined}>
 																{ghost.role && ghost.role !== 'none' && <RoleGlyph role={ghost.role} />}
@@ -679,6 +705,22 @@ function ReclamationWorld({
 									{!ghost && !movingRecordId && !verdict && empty && (
 										<WorldFooting footing={siteFootings ? siteFootings[site.id] : null} world={site.world} compact detail={advanced} onPick={onPickBest} />
 									)}
+									{(() => {
+										// pass 50: a world you trail offers its best answers too, with the gap to close
+										if (ghost || movingRecordId || verdict || empty || !siteFootings || !onPickBest) {
+											return null;
+										}
+										const gap = (afterTheirs != null ? afterTheirs : totalTheirs) - (afterMine != null ? afterMine : totalMine);
+										const footing = siteFootings[site.id];
+										if (!(gap >= 1) || !footing || !(footing.best || []).length) {
+											return null;
+										}
+										return (
+											<span className="rec-world-footing rec-world-footing--compact rec-world-footing--trail" data-world-trail={site.id}>
+												<BestHere best={footing.best} onPick={onPickBest} limit={2} label={`You trail by ${formatHoldShown(gap)}. Best here`} />
+											</span>
+										);
+									})()}
 								</div>
 
 								<div className={`rec-rank rec-rank--mine${mine.length > 4 ? ' rec-rank--crowded' : ''}`} data-rank="mine" data-rank-rows={rankGrid(mine.length)['--rank-rows-n']} data-rank-list={mine.length >= 2 && mine.length <= 4 ? '' : undefined} data-rank-rows-wide={rankGrid(mine.length)['--rank-rows-w']} style={rankGrid(mine.length)}>
