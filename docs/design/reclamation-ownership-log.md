@@ -65,7 +65,7 @@ What it reads, and where each effect kind lands (measured over the seed-7 pool, 
 5. **(Pass 38: done.)** The site navbar and masthead are gone from the match, and the top bar is one row. **The first viewport on a phone is all chrome.** Breadcrumb, mode toggle, rival name, sound, round header, world chips, two score strips, phase badge, turn line and a three-line instruction, before any world panel.
 6. **The three borrowed effect kinds** (displace, transfer, suppress, 261 actions) still read as plain attacks. Act flip makes a creature's second act matter, which changes the case for these.
 7. **Fire is a dead element and dromeus a dead species** in the draft. Read it pooled first.
-8. **The generator's attribute ranges are not published anywhere the game can read.**
+8. **(Pass 46: done. The record schema is the published range; a test holds the game's scale to it.)** **The generator's attribute ranges are not published anywhere the game can read.**
 9. **No human has played a full Proving.** The instrument exists (hot-seat, passes 20 to 23).
 
 ### Hot-seat: what pass 20 did and did not do
@@ -841,3 +841,34 @@ It was not. Measured in pass 42, following it is a coin flip against every rival
 **Open item 3, closed without a change.** It asked the empty world to say what holding it is worth toward the win. Since passes 39 to 41 the round's opening line says exactly that for the round ("You can win the game this round: you need 2 of these 3", or "Winning is out of reach ..."), and a staked world carries its count on its own head. Nothing world-specific is left unsaid, so a line on each empty world would repeat the opening line three times, which is the clutter pass 38 removed. Reopen it if a critic or a player misses it.
 
 **Verified:** 1584 web tests; `reclamation-shift`, `reclamation-proving` (4 of 4, caption guard included), `reclamation-actflip`, `reclamation-hotseat` green; paint read of the Clash at 1440 and 390.
+
+### Pass 46 (2026-09-23): the gauges re-read on new content, and a devtool bug under all of them
+
+**Nick, 2026-09-23:** keep doing the work already identified, bigger game changes included; limited time to steer.
+
+**Why re-read first.** Four creature content freezes (generation 0.7.0-1 to 0.7.0-4, derived acts) landed since the last full measurement, and a gauge's conclusion expires when what it measures changes.
+
+**The bug under the gauges.** The first proctor mirror on the new content read **A 30.5 percent against B** (1000 matches, seed 7). The simulator's `--mirror` handed both sides the same array, so both sides held pieces with the same record ids, and the engine finds a creature by id across the whole board (liveness, pins, status sources, the forecast): one side's piece answered for the other's. Worse, the non-mirror path had the same fault at a lower rate: both devtools drew the two rosters from one pool independently, so about three matches in ten gave the sides a shared creature. Every simulator and validation number since the status layer carried some of this.
+
+Fixed three ways: `createMatch` now refuses rosters that share an id (`SHARED_RECORD_IDS`), the mirror gives B the same creatures under ids of its own, and both devtools draw the second roster from what the first left. The real game was never exposed: its two draft pools are disjoint slices of one batch.
+
+**The gauges, clean** (proctor, independent rosters, 1000 matches each on seeds 7 / 13 / 21):
+
+| Gauge | Band | Reading |
+|---|---|---|
+| A win rate (seat fairness) | 50 | 49.9 / 48.4 / 52.3 |
+| Round-one starter win rate | 50 | 45.7 / 48.6 / 46.8, pooled about 47: the side that sends first gives up about three points |
+| Comeback (trailing after round 1) | 30 to 40 | 30.3 / 30.1 / 30.1, on the floor |
+| Resolution changes the leader | 25 to 40 | 28.6 / 28.1 / 29.3, met |
+| Downs per match | 3 to 5 | 5.52 / 5.17 / 5.39, **just above the band** (derived acts hit harder) |
+| Option spread (validation, seed 7) | 3 to 5 near-best | 5.76 overall; 8.2 / 4.8 / 3.2 by round, one dominant option on 34 percent of round-three turns (was 50) |
+
+The mirror (same creatures both sides) reads A 53.5 pooled: with identical creatures, speed ties are common and the tie order favors A. Real rosters rarely tie, which is why the independent-roster rate is even.
+
+**Two readings the regenerated validation report makes that are not what they look like.**
+- **The attribute lanes invert** (vitality: top quartile wins its world 47.4 percent, bottom quartile 64.4; agility the reverse). Lanes compare creatures the bot CHOSE to send where it chose to send them, so they carry the bot's selection. A causal probe (the same squad on both sides, one side's creatures given +15 in one attribute) reads vitality **+7.5 points** (60.2 against 52.7, n=3000 each): vitality helps, as it should. The full per-attribute probe is the next pass's evidence.
+- **Draft: four dead species** (imprit, dromeus, akinza, avilily; kept 9 to 16 percent), all with the lowest mean hold, while their keeper win rates are 44 to 58 percent. The draft keeps 12 of 15, so the bottom three by rating are cut every time; the question is whether the rating prices what these creatures are worth, which the attribute probe answers.
+
+**Open item 8, done.** The record schema publishes the attribute range (0 to 100), frozen with the generation release, so the game restates it and `recordAttributeRange.test.ts` fails if they disagree. The old comment's "1 to 99, the generator clamps" was wrong.
+
+**Verified:** 587 rules tests (three new), 191 content tests, typecheck clean, web build, 199 Reclamation web tests.

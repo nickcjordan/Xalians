@@ -430,6 +430,17 @@ export interface CreateMatchArgs {
 export function createMatch({ rosterA, rosterB, worlds, seed, rules }: CreateMatchArgs): MatchState {
 	validateRosterInput(rosterA, 'rosterA');
 	validateRosterInput(rosterB, 'rosterB');
+	/*
+		PASS 46. The two sides may not share a record id. The engine finds a creature by its id
+		across the whole board (liveness, pins, status sources, the forecast), so a shared id
+		makes one side's creature answer for the other's. The simulator's --mirror mode handed
+		both sides the same array, and the proctor mirror read A 30.5 percent against B over
+		1000 matches (seed 7) until it was caught; with distinct ids it reads even.
+	*/
+	const idsA = new Set(rosterA.map((r) => r.id));
+	if (rosterB.some((r) => idsA.has(r.id))) {
+		throw new ExpeditionRuleError('SHARED_RECORD_IDS', 'rosterA and rosterB share a record id; each side needs its own pieces');
+	}
 	validateWorldsInput(worlds);
 
 	let rngState = createRngState(seed);

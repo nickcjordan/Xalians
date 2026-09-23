@@ -205,8 +205,10 @@ function makeRng(seed: any) {
 	};
 }
 
-function buildRandomRoster(pool: any, rng: any) {
-	return rng.shuffle(pool).slice(0, ROSTER_SIZE);
+// pass 46: `taken` keeps the second roster off the first one's creatures (see the simulator's copy)
+function buildRandomRoster(pool: any, rng: any, taken: any[] = []) {
+	const takenIds = new Set(taken.map((r: any) => r.id));
+	return rng.shuffle(takenIds.size ? pool.filter((r: any) => !takenIds.has(r.id)) : pool).slice(0, ROSTER_SIZE);
 }
 
 function average(array: any) {
@@ -809,7 +811,7 @@ export function runBatch(opts: any) {
 	const results = [];
 	for (let i = 0; i < matches; i++) {
 		const rosterA = buildRandomRoster(pool, rng);
-		const rosterB = buildRandomRoster(pool, rng);
+		const rosterB = buildRandomRoster(pool, rng, rosterA);
 		results.push(playMatch({
 			matchSeed: `${seed}-match-${i}`,
 			rosterA,
