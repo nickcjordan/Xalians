@@ -34,6 +34,10 @@ import {
   resolveRound,
   restoreRun,
   legalMoves,
+  legalTargets,
+  guardedThreat,
+  helpful,
+  restorePreview,
   moveAt,
   damagePreview,
   basePower,
@@ -65,6 +69,7 @@ import {
   cooldownLimit,
   binds,
   harms,
+  helps,
   melee,
   StatusBadges,
   GroupIcon,
@@ -152,6 +157,7 @@ function eventLabel(frame: Frame) {
       stumble: "Stumbles",
       withheld: "Withheld",
       broken: "Charge broken",
+      lapsed: "Lapsed",
       result: "Complete",
     } as const
   )[e.kind];
@@ -226,7 +232,9 @@ export default function PowerworksPage() {
   const move = active && pending !== null ? moveAt(active, pending) : null;
 
   const living = run.team.filter((u) => u.hp > 0),
-    ready = living.filter((u) => plans[u.id] || !legalMoves(u).length).length;
+    ready = living.filter(
+      (u) => plans[u.id] || !legalMoves(u, run).length
+    ).length;
 
   const chosenTarget =
     hoverTarget ?? (active ? plans[active.id]?.target : null);
@@ -239,7 +247,13 @@ export default function PowerworksPage() {
 
   const roomName = ROOMS[run.room].name.replace(/^\d\. /, "");
 
-  const available = active ? legalMoves(active) : [];
+  const available = active ? legalMoves(active, run) : [];
+  // Who the pending move may name (contract decision 39): foes, and squadmates when it
+  // carries a helpful effect.
+  const targetIds =
+    active && pending !== null
+      ? legalTargets(run, active, pending).map((u) => u.id)
+      : [];
 
   useEffect(() => {
     if (!started) return;
@@ -351,10 +365,13 @@ export default function PowerworksPage() {
     const next = { ...plans, [active.id]: { move: pending, target: id } };
     setPlans(next);
     setHoverTarget(null);
-    const nextUnit = living.find((u) => !next[u.id] && legalMoves(u).length);
+    const nextUnit = living.find(
+      (u) => !next[u.id] && legalMoves(u, run).length
+    );
+    const named = [...run.team, ...run.enemies].find((u) => u.id === id);
     setNotice(
-      `${active.name} assigned to ${
-        run.enemies.find((u) => u.id === id)?.name
+      `${active.name} assigned to ${named?.name ?? "its target"}${
+        named && !named.enemy ? " (squadmate)" : ""
       }. ${
         nextUnit
           ? `Now planning ${nextUnit.name}.`
@@ -409,7 +426,7 @@ export default function PowerworksPage() {
   function commit() {
     const orders = { ...plans };
     living.forEach((u) => {
-      if (!legalMoves(u).length) orders[u.id] = { move: -2, target: "" };
+      if (!legalMoves(u, run).length) orders[u.id] = { move: -2, target: "" };
     });
     try {
       const result = resolveRound(run, orders);
@@ -450,6 +467,7 @@ export default function PowerworksPage() {
 
   function previewText(u: Unit) {
     if (!move || !active) return "";
+    if (!u.enemy) return squadmatePreview(u);
     if (binds(move) && !harms(move))
       return u.moves.some((m) => !melee(m))
         ? "Melee blocked · ranged still works"
@@ -473,6 +491,50 @@ export default function PowerworksPage() {
     }${u.ward ? " · shielded" : ""}`;
   }
 
+  /**
+    What the pending move does for a squadmate it names (contract decisions 40 and 41):
+    "heals 12", "clears Restrained", "guards against about 8". Only its helpful effects
+    land on a squadmate, so nothing else is previewed.
+  */
+  function squadmatePreview(u: Unit) {
+    if (!move || !active) return "";
+    const parts: string[] = [];
+    for (const e of move.effects) {
+      if (!helpful(e) || e.recipient === "self") continue;
+      if (e.support === "restore")
+        parts.push(
+          u.hp >= u.max
+            ? "already at full health"
+            : `heals ${Math.min(u.max - u.hp, restorePreview(active, e))}`
+        );
+      else if (e.support === "remove") {
+        const cleared = u.conditions.filter(
+          (c) =>
+            c.remaining !== Infinity &&
+            c.removable.some((r) => e.methods?.includes(r))
+        );
+        parts.push(
+          cleared.length
+            ? `clears ${cleared.map((c) => cap(c.status)).join(", ")}`
+            : "nothing to clear"
+        );
+      } else if (e.support === "protect" || e.group === "guarding") {
+        const threat = guardedThreat(run, u, e);
+        const guard = threat
+          ? `guards against about ${threat}`
+          : "nothing it covers threatens";
+        parts.push(
+          e.support === "protect"
+            ? guard
+            : `${cap(e.status ?? "guarded")} · ${guard}`
+        );
+      } else if (e.group === "mending")
+        parts.push(`mending for ${e.opportunities ?? 1} opportunities`);
+    }
+    const around = areaReach(run, active, move, u).filter((t) => !t.enemy);
+    if (around.length) parts.push(`also reaches ${listNames(around)}`);
+    return parts.join(" · ");
+  }
   /** "Avilily", "Avilily and Crystorn": squadmates an area would also hit. */
   function listNames(units: Unit[]) {
     const names = units.map(labelFor);
@@ -522,9 +584,16 @@ export default function PowerworksPage() {
     if (e.kind === "missed") return `${name} shrugs it off.`;
     if (e.kind === "displace")
       return `${name} is pulled off its footing. Its charge is broken.`;
-    if (e.kind === "restore") return `${name} recovers ${e.amount} HP.`;
+    if (e.kind === "restore")
+      return e.actorId && e.actorId !== e.targetId
+        ? `${actorName} heals ${name}: ${e.amount} HP back.`
+        : `${name} recovers ${e.amount} HP.`;
     if (e.kind === "ward")
-      return "Incoming damage is halved until the next opportunity.";
+      return e.actorId && e.targetId && e.actorId !== e.targetId
+        ? `${actorName} shields ${name}: incoming damage is halved until its next opportunity.`
+        : "Incoming damage is halved until the next opportunity.";
+    if (e.kind === "lapsed")
+      return "No squadmate stands to receive it. The order lapses.";
     if (e.kind === "charge")
       return "Preparing a release for the next opportunity.";
     if (e.kind === "blocked")
@@ -532,10 +601,16 @@ export default function PowerworksPage() {
         ? "Its charge was broken; it must recover first."
         : "Binding prevented the action.";
     if (e.kind === "redirect")
-      return `The original target fell. The move redirects to ${name}.`;
+      return `The original target fell. The move redirects to ${name}${
+        target && actor && target.enemy === actor.enemy ? ", a squadmate" : ""
+      }.`;
     if (e.kind === "round") return "Orders resolve from fastest to slowest.";
+    const helping =
+      !!actor && !!target && actor.id !== target.id && actor.enemy === target.enemy;
     if (e.kind === "status")
-      return `${name} is ${e.status} for ${e.remaining} ${
+      return `${helping ? `${actorName} helps ${name}: ` : ""}${name} is ${
+        e.status
+      } for ${e.remaining} ${
         e.remaining === 1 ? "opportunity" : "opportunities"
       }.`;
     if (e.kind === "resisted") return current.text;
@@ -555,7 +630,9 @@ export default function PowerworksPage() {
     }
     if (e.kind === "removed")
       return e.status
-        ? `${name} is no longer ${e.status}.`
+        ? `${helping ? `${actorName} clears it: ` : ""}${name} is no longer ${
+            e.status
+          }.`
         : `Nothing on ${name} answered to it.`;
     if (e.kind === "lost")
       return `${actorName} is ${
@@ -756,6 +833,7 @@ export default function PowerworksPage() {
                   move={move || null}
                   plans={plans}
                   targetId={chosenTarget}
+                  targetIds={targetIds}
                   planning={planning}
                   impact={impact}
                   paused={paused || !!panel}
@@ -924,7 +1002,14 @@ export default function PowerworksPage() {
                                 setPending(i);
                                 setHoverTarget(null);
                                 setNotice(
-                                  `${m.name} selected. Choose an enemy.`
+                                  `${m.name} selected. ${
+                                    helps(m) &&
+                                    legalTargets(run, active, i).some(
+                                      (t) => !t.enemy
+                                    )
+                                      ? "Choose an enemy or a squadmate."
+                                      : "Choose an enemy."
+                                  }`
                                 );
                                 if (e.detail === 0)
                                   requestAnimationFrame(() =>
@@ -959,7 +1044,9 @@ export default function PowerworksPage() {
                 <section className="pw-squad" aria-label="Your squad">
                   {team.map((u) => {
                     const order = (busy ? playbackOrders : plans)[u.id],
-                      target = enemies.find((e) => e.id === order?.target),
+                      target = [...enemies, ...team].find(
+                        (e) => e.id === order?.target
+                      ),
                       selectedUnit = active?.id === u.id && planning;
                     return (
                       <div
@@ -1050,7 +1137,7 @@ export default function PowerworksPage() {
                                   {labelFor(target)}
                                 </span>
                               </>
-                            ) : !legalMoves(u).length ? (
+                            ) : !legalMoves(u, run).length ? (
                               <>
                                 <Link2 />
                                 Cannot act
@@ -1529,7 +1616,7 @@ export default function PowerworksPage() {
               <ChevronRight />
               <span>
                 <Crosshair />
-                Choose an enemy
+                Choose a target
               </span>
             </div>
             <p>
@@ -1568,6 +1655,17 @@ export default function PowerworksPage() {
                   If a target falls, the same move redirects to the next living
                   enemy in its row. Previews use current defenses; hidden
                   actions may change the result.
+                </p>
+              </section>
+              <section>
+                <h3>
+                  <Heart />
+                  Helping a squadmate
+                </h3>
+                <p>
+                  A move that heals, shields or clears can name a squadmate.
+                  Only what helps lands on them; its damage does not. If they
+                  fall first, it goes to the next squadmate, never an enemy.
                 </p>
               </section>
               <section>
@@ -1771,6 +1869,15 @@ export default function PowerworksPage() {
                 ))}
               </ul>
             )}
+            {!inspect.enemy &&
+              move &&
+              active &&
+              targetIds.includes(inspect.id) && (
+                <p className="pw-breakdown">
+                  {squadmatePreview(inspect)}. Only what helps lands on a
+                  squadmate.
+                </p>
+              )}
             {inspect.enemy && move && active && (
               <p className="pw-breakdown">
                 {!harms(move)

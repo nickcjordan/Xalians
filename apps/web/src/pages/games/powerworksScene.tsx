@@ -11,6 +11,7 @@ import {
   Zap,
   CornerUpRight,
   Ban,
+  HeartPulse,
 } from "lucide-react";
 import { actionPresentation } from "./powerworksPresentation";
 import { PowerworksEnvironment } from "./powerworksEnvironment";
@@ -138,6 +139,8 @@ export function floatLabel(event?: BattleEvent): string {
       return "Concealed";
     case "react":
       return "Reacts";
+    case "lapsed":
+      return "Lapsed";
     default:
       return "Redirected";
   }
@@ -153,6 +156,7 @@ export function PowerworksScene({
   move,
   plans,
   targetId,
+  targetIds,
   planning,
   impact,
   paused,
@@ -174,6 +178,8 @@ export function PowerworksScene({
   move: Move | null;
   plans: Record<string, Order>;
   targetId?: string | null;
+  /** Who the pending move may name (contract decision 39). Defaults to every standing enemy, the only targets before pass 5. */
+  targetIds?: string[];
   planning: boolean;
   impact: boolean;
   paused: boolean;
@@ -225,14 +231,22 @@ export function PowerworksScene({
     ? position(team.find((u) => u.id === active.id) || team[0])
     : null;
   const destination = recipient ? position(recipient) : null;
+  // Legal targets for the pending move: enemies and, for a helpful move, squadmates.
+  const targets = new Set(
+    move
+      ? targetIds ?? enemies.filter((u) => u.hp > 0).map((u) => u.id)
+      : []
+  );
+  const targetable = (u: Unit) =>
+    planning && !!move && u.hp > 0 && targets.has(u.id);
   const aiming =
     planning && move && targetId
-      ? enemies.find((u) => u.id === targetId && u.hp > 0)
+      ? all.find((u) => u.id === targetId && targetable(u))
       : null;
   const aimPoint = aiming ? position(aiming) : null;
   const queuedTarget =
     planning && !move && active && plans[active.id]
-      ? enemies.find((u) => u.id === plans[active.id].target && u.hp > 0)
+      ? all.find((u) => u.id === plans[active.id].target && u.hp > 0)
       : null;
   const queuedPoint = queuedTarget ? position(queuedTarget) : null;
   const phase = event?.kind || "idle";
@@ -332,7 +346,10 @@ export function PowerworksScene({
           source &&
           destination &&
           event &&
-          ["hit", "bind", "status", "redirect"].includes(event.kind) && (
+          actor.id !== recipient.id &&
+          ["hit", "bind", "status", "redirect", "restore", "ward", "removed"].includes(
+            event.kind
+          ) && (
             <>
               <path
                 className={`pw-flight ${
@@ -372,14 +389,10 @@ export function PowerworksScene({
         const queued = Object.entries(plans)
           .filter(([, q]) => q.target === u.id)
           .map(([id]) => team.find((p) => p.id === id)!);
+        const target = targetable(u);
         const estimate =
-          planning &&
-          move &&
-          active &&
-          u.enemy &&
-          u.hp > 0 &&
-          harms(move)
-            ? damagePreview(active, move, u)
+          target && active && u.enemy && harms(move!)
+            ? damagePreview(active, move!, u)
             : 0;
         const recoil =
           acting &&
@@ -418,26 +431,30 @@ export function PowerworksScene({
             }
           >
             <button
-              className={`pw-scene-character ${u.enemy ? "pw-target" : ""} ${
-                planning && move && u.enemy && u.hp > 0 ? "valid-target" : ""
+              className={`pw-scene-character ${
+                u.enemy || target ? "pw-target" : ""
+              } ${target ? "valid-target" : ""} ${
+                target && !u.enemy ? "squadmate-target" : ""
               }`}
               aria-label={
                 u.enemy
                   ? `Target ${u.name} ${u.id}`
+                  : target
+                  ? `Target ${u.name} (squadmate)`
                   : `Plan ${u.name} on battlefield`
               }
-              aria-pressed={!u.enemy ? selected : undefined}
-              disabled={!planning || u.hp <= 0}
+              aria-pressed={!u.enemy && !target ? selected : undefined}
+              disabled={!planning || u.hp <= 0 || (u.enemy && !!move && !target)}
               onClick={(e) =>
-                u.enemy
-                  ? move
-                    ? onTarget(u.id, e.detail === 0)
-                    : onInspect(u.id)
+                target
+                  ? onTarget(u.id, e.detail === 0)
+                  : u.enemy
+                  ? onInspect(u.id)
                   : onSelect(u, e.detail === 0)
               }
-              onMouseEnter={() => u.enemy && onHover(u.id)}
+              onMouseEnter={() => (u.enemy || target) && onHover(u.id)}
               onMouseLeave={() => onHover(null)}
-              onFocus={() => u.enemy && onHover(u.id)}
+              onFocus={() => (u.enemy || target) && onHover(u.id)}
               onBlur={() => onHover(null)}
             >
               <span className="pw-ground" />
@@ -464,9 +481,7 @@ export function PowerworksScene({
                   <Zap />
                 </span>
               )}
-              {u.enemy && planning && move && u.hp > 0 && (
-                <Crosshair className="pw-scene-reticle" />
-              )}
+              {target && <Crosshair className="pw-scene-reticle" />}
               {(recoil ||
                 (receiving && impact && phase !== "redirect") ||
                 (acting &&
@@ -501,6 +516,15 @@ export function PowerworksScene({
                 </button>
               </div>
               <Health u={u} estimate={estimate} />
+              {target && !u.enemy && (
+                // A squadmate stands low on the stage, so its preview sits just above
+                // its plaque rather than below its conditions, where it would leave the
+                // stage (pass 5 paint check).
+                <span className="pw-scene-preview support">
+                  <HeartPulse />
+                  {previewText(u)}
+                </span>
+              )}
             </div>
             <div className="pw-scene-status">
               <StatusBadges u={u} />
@@ -527,18 +551,16 @@ export function PowerworksScene({
             {planning && !u.enemy && plans[u.id]?.target && (
               <span className="pw-planned-destination">
                 <ArrowRight />
-                {labelFor(
-                  enemies.find((e) => e.id === plans[u.id].target) || u
-                )}
+                {labelFor(all.find((e) => e.id === plans[u.id].target) || u)}
               </span>
             )}
-            {planning && move && u.enemy && u.hp > 0 && (
+            {target && u.enemy && (
               <span
                 className={`pw-scene-preview ${
-                  active && matchup(active, u, move) > 1 ? "strong" : ""
+                  active && matchup(active, u, move!) > 1 ? "strong" : ""
                 }`}
               >
-                {binds(move) && !harms(move) ? <Link2 /> : <PowerIcon />}
+                {binds(move!) && !harms(move!) ? <Link2 /> : <PowerIcon />}
                 {previewText(u)}
               </span>
             )}
@@ -552,7 +574,11 @@ export function PowerworksScene({
               <Crosshair />
               <strong>{move.name}</strong>
               <ArrowRight />
-              <span>Choose an enemy</span>
+              <span>
+                {team.some((u) => targetable(u))
+                  ? "Choose an enemy or a squadmate"
+                  : "Choose an enemy"}
+              </span>
             </>
           ) : (
             <>

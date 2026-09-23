@@ -277,6 +277,9 @@
 }
 .pw-companion-portrait .pw-portrait.small { width: 100%; height: 100%; }
 .pw .pw-select { position: relative; z-index: 1; }
+/* The inspect button sits over the select button's name row, so it must stack above it or
+   a click lands on Select (issue #589). */
+.pw .pw-squad-info { z-index: 2; }
 .pw-companion.selected .pw-companion-portrait { opacity: .4; }
 .pw-companion.selected {
   border-color: #f1d69a;
@@ -361,7 +364,9 @@
 
 @media (max-width: 600px) {
   .pw .pw-move-card {
-    grid-template-columns: 29px minmax(0, 1fr) 29px;
+    /* The count column matches the count's own 40px minimum, so "1 action" is not
+       clipped by the card (issue #589). */
+    grid-template-columns: 29px minmax(0, 1fr) 40px;
     grid-template-rows: 1fr 17px;
     column-gap: 4px;
     padding: 5px 6px 0;

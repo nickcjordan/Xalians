@@ -261,6 +261,24 @@
   background: #304229;
   color: #e8f5c3;
 }
+/* What a helpful move does for a squadmate it names (pass 5): heal, clear, guard. It is
+   anchored just above the squadmate's plaque, over the foot of its art, so it stays on the
+   stage whatever conditions the squadmate carries. */
+.pw-scene-unit.ally .pw-unit-plaque {
+  position: relative;
+}
+.pw-unit-plaque > .pw-scene-preview.support {
+  position: absolute;
+  left: -4px;
+  right: -4px;
+  bottom: calc(100% + 3px);
+  margin: 0;
+  z-index: 5;
+  pointer-events: none;
+  background: #1d3a33f2;
+  color: #d9f1e2;
+  box-shadow: inset 2px 0 #9fd8b8, 0 3px 8px #03090bcc;
+}
 .pw-scene-preview svg {
   width: 12px;
   height: 12px;
@@ -1508,7 +1526,9 @@
 }
 @media (min-width: 601px) and (max-height: 760px) {
   .pw-theater {
-    min-height: 322px;
+    /* 300, not 322: at 1280x720 the fixed panels leave the theater 317px, and a larger
+       floor pushed the commit footer 5px past the viewport (issue #589). */
+    min-height: 300px;
   }
 }
 @media (max-width: 600px) {

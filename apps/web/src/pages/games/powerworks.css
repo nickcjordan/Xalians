@@ -2682,4 +2682,22 @@
   .pw-outcome {
     max-height: calc(100svh - 98px);
   }
+  /*
+    One fixed screen in play (issue #589): the page is exactly the viewport and the theater
+    takes whatever the fixed command, squad and commit panels leave, instead of a fixed
+    340px that made the planning screen 852px tall at 390x844. The theater keeps a floor,
+    so a much shorter phone still scrolls rather than crushing the stage.
+  */
+  .pw.in-run:has(.pw-theater) {
+    height: 100svh;
+  }
+  .pw-battle-shell:has(.pw-theater) {
+    flex: 1 1 auto;
+    min-height: 0;
+  }
+  .pw .pw-theater {
+    flex: 1 1 0;
+    height: auto;
+    min-height: 300px;
+  }
 }

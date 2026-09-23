@@ -491,3 +491,96 @@ Nick, 2026-09-23: "proceed with your work", after ruling that Hypnopet may harm 
 | 42 | **The enemy planner does not change.** Machines have no helpful moves. | 95% | cards.json |
 | 43 | **The sim's greedy policy prices more than damage.** It keeps its current order (reactive bind on a charger, pre-emptive pull on a known charger) and then scores every legal (move, target) pair: harm by preview; a charged harm by its preview halved for the round it costs; a heal by the HP it would restore on a squadmate below half health; a remove by the conditions it would clear on a squadmate (binding and shock first); a protect or guard by the harm the target's most dangerous attacker previews against it, halved; a hostile status by a fixed value per group (`SIM_STATUS_VALUE`, a sim-only table). It takes the best. This is a measurement tool, not the game; it is how the charged, status and support rules stop being structural zeros in the tables. | 70% | pass 4: the sim never ordered Crushing Kick or Crystorn's signature |
 | 44 | **Healer-free crews still win.** The sim runs the shipped squad and a squad with every helpful move removed from the companions' legal orders; support should make a run easier, never mandatory. Report both. | 90% | issue #299 |
+
+## Pass 5: what it measured, 2026-09-23
+
+Measured on `generation-0.7.0-4` (Hypnopet may heal; the four companions' kits are unchanged from pass 4). Save format version 5; version 4 saves are rejected, because a version 5 history can carry an order that names a squadmate.
+
+### How the decisions were read
+
+Where the contract left a choice open, the build took the reading below. Each is a lever or a one-line change.
+
+- **Helpful and hostile (38).** `helpful` and `hostile` live in the seam (`reading.ts`). An unsupported effect is neither. Aimed `protect` and `restore` are now supported readings; the two pass 4 reasons ("protection only guards its user here", "restoration would mend a foe") are gone.
+- **Who an order may name (39).** "Target-recipient effects" is read as every effect that reaches the selected target: `target` effects and `area` effects, because an area's recipients always include the target (decision 33). Without that reading a healing field could never name a squadmate. A squadmate means another standing unit on the performer's side, never the performer itself (v5 `targeting: other`). A move acting only on its user (Ground Anchor) keeps the nominal foe target it always carried. Concealment hides a unit from its foes only; its own side can still name it. `legalMoves(u, table)` drops a move with no legal target standing (a heal while the performer stands alone); without the table it answers as before, which is what the enemy planner reads.
+- **What lands (40).** Aimed at a squadmate, only helpful effects (and effects on the performer) resolve; nothing strikes, no withheld event is written for the hostile effects the aim left out, and concealment does not break. Aimed at a foe, the move resolves as in pass 4, with decision 35's per-recipient withholding. `remove` is side-neutral: it clears whatever answers to it on every recipient it reaches. A helpful area aimed at a squadmate reads its geometry along the performer's own line, the performer left out; a burst on self still reaches every foe (withheld) and the performer's neighbors. A helpful status is not an affliction, so it never provokes a contact reaction.
+- **Readings (41).** Restore uses `restorePreview` capped at the squadmate's missing HP. Protect on a squadmate sets the same `ward` flag a self protect sets, so it is spent at the start of the squadmate's next opportunity. "Through its next opportunity" and "until" differ only for a reaction answering the squadmate's own strike during that opportunity; the build takes the self-ward reading the decision names. A redirect walks the squadmate line in fixed order, the performer left out; when no squadmate stands the order lapses with a new `lapsed` event, no cooldown starts, no signature is spent, and a lapsing release disperses its charge. A disoriented unit's stumble stays on the side its order named.
+- **Enemy planner (42).** Unchanged; a test reads every card and finds no move that may name a squadmate.
+- **Sim policy (43).** `pairValue` in `devtools/powerworksSim.ts`. The harm term keeps the knockout bonus passes 1 to 4 priced a preview with, so only the new terms differ. A pair's value is the sum of the terms its aim lets resolve. A guard is priced through its declared scope (`guardedThreat` in the resolver, shared with the planning preview): a displacement immunity guards against no harm the machines carry, so Ground Anchor prices at zero. `SIM_STATUS_VALUE` is sim-only: shock 6, binding 5, attention 4, degrading 3, tempo 3, senses 3, concealment, guarding and mending 0; the same value prices clearing a condition of that group from a squadmate. The decision 20 tiebreak is superseded by the status value.
+- **Healer-free crew (44).** Read as written: every move carrying any helpful effect is removed from the companions' legal orders, which takes Hippochamp's signature cannon and Graviclaw's Ground Anchor. A second variant keeps every move and only forbids naming a squadmate.
+
+### Sim, 200 greedy runs
+
+| row | pass 4 (applied) | **pass 5, shipped squad, pass 5 policy** | pass 5, healer-free (helpful moves removed) | pass 5, shipped squad, pass 4 policy |
+|---|---|---|---|---|
+| win rate | 92.0% (184 won, 16 lost) | **87.5% (175 won, 25 lost)** | 91.0% (182 won, 18 lost) | 92.0% (184 won, 16 lost) |
+| rounds / encounter | 5.66 | 5.81 | 5.65 | 5.66 |
+| Desperate strike | 0.0% of 16,996 | 0.0% of 17,180 | 0.0% of 17,098 | 0.0% of 16,996 |
+| opportunities with no legal move | 17 | 15 | 2 | 17 |
+| machine charges landing | 223 of 1,805 (12.4%) | 369 of 1,464 (25.2%) | 295 of 1,550 (19.0%) | 223 of 1,805 (12.4%) |
+| companion charges begun / landed | 0 / 0 | 0 / 0 | 0 / 0 | 0 / 0 |
+| interruptions bind / displace | 461 / 895 | 210 / 741 | 152 / 930 | 461 / 895 |
+| binds landed / missed | 69.9% (743 of 1,063) | 54.8% (2,197 of 4,008) | 56.5% (2,123 of 3,757) | 69.9% (743 of 1,063) |
+| conditions applied per group | binding 743, degrading 1,112, tempo 1,291, senses 764 | binding 2,197, degrading 987, tempo 1,422, senses 765 | binding 2,123, degrading 927, tempo 2,740, senses 774 | binding 743, degrading 1,112, tempo 1,291, senses 764 |
+| orders naming a squadmate | (not possible) | 0 | 0 | 0 |
+| heals on squadmates (HP restored) | (not possible) | 0 (0) | 0 (0) | 0 (0) |
+| removes on squadmates: cleared / found nothing | (not possible) | 0 / 0 | 0 / 0 | 0 / 0 |
+| protects on squadmates (harm prevented) | (not possible) | 0 (0) | 0 (0) | 0 (0) |
+
+The second healer-free variant (every move kept, no order names a squadmate) reads identical to the shipped column on every row, because the shipped column never names a squadmate.
+
+Orders per move (200 runs):
+
+| companion | pass 5 policy | healer-free | pass 4 policy |
+|---|---|---|---|
+| Hippochamp | Water Sweep 1,926, Repelling Slam 1,400, Emergency Water Cannon 800 | Water Sweep 2,679, Repelling Slam 1,519 | Water Sweep 1,996, Repelling Slam 1,473, Emergency Water Cannon 800 |
+| Crystorn | Blinding Shot 2,970, Repelling Punch 1,614 | Blinding Shot 2,839, Repelling Punch 1,668 | Blinding Shot 2,923, Repelling Punch 1,574 |
+| Avilily | Binding Rake 3,047, Blossoming Ambuscade 800, Piercing Peck 338, Slashing Peck 2 | Binding Rake 2,805, Blossoming Ambuscade 800, Piercing Peck 442, Slashing Peck 5 | Piercing Peck 2,000, Slashing Peck 1,051, Binding Rake 482, Blossoming Ambuscade 426 |
+| Graviclaw | Slashing Pinch 2,006, Gravity Draw 1,462, Gravity Pincer 800 | Slashing Pinch 1,955, Gravity Draw 1,585, Gravity Pincer 799 | Slashing Pinch 1,998, Gravity Draw 1,456, Gravity Pincer 800 |
+
+Sensitivity of the one sim-only number that moved the result (shipped squad, pass 5 policy, only `SIM_STATUS_VALUE.binding` changed): binding 5, 175 won; binding 2, 176 won; binding 0, 184 won with every row equal to the pass 4 column.
+
+**Reading.** Ally targeting changed nothing the squad does: the pass 4 policy under pass 5 rules reproduces the pass 4 column row for row, and the pass 5 policy never names a squadmate in 200 runs. The squad's only helpful other-aimed effect is the cooling rider on Hippochamp's signature, the signature is once per encounter and is always spent in the first round for its harm, and in the first round no squadmate is overheated yet. So heals, removes and protects on squadmates are structural zeros for this squad, as attention and concealment were in pass 2; they are exercised by the fitted tests and by the planning preview on a restored run (the paint check), not by the sim. Everything that moved came from the policy, not the rules: the flat binding value makes the bot spend Avilily's once-per-encounter consistent paralysis in round one on a machine that is not charging, and order her occasional Binding Rake over her pecks every round (3,047 orders). The consistent answer to a charge is then gone when the charge comes, so bind interruptions fall from 461 to 210, machine releases land twice as often (25.2% against 12.4%), and the win rate falls 4.5 points, all losses still in the final chamber. With binding priced at zero the policy returns exactly to pass 4. The healer-free crew wins 91.0%, inside one standard error (about 2 points at 200 runs) of the shipped 87.5% and above it, so support is not mandatory; removing the cannon moves Hippochamp's orders to Water Sweep, which slows twice as many machines. Decision 43's other two aims did not land either: the charged act (Crushing Kick) is still never ordered, because halving its preview only widens the gap to Water Sweep, and Crystorn's signature is still never ordered, because Blinding Shot carries a blind on top of a larger preview. No lever moved.
+
+### Seam readings after pass 5, on generation-0.7.0-4
+
+The same survey (`surveyActions`, 20 seeds per species, 640 records, 2,560 actions, 2,710 effects).
+
+| reading | where it appears | what the seam does after pass 5 |
+|---|---|---|
+| dispersed | Smokat: Smoke Dispersal, 20 | **unsupported, named** (traversal, decision 16). The one move in 2,560 with nothing to resolve. |
+| phased | none in 2,560 actions | unsupported (traversal). |
+| ally-aimed protect | Figzy Steadying Intervention; Shuntara Conductive Lattice, Protective Stream, Protective Touch: 43 | **supported**: names squadmates only, ward on the squadmate (decision 41). |
+| ally-aimed restore | Sonalloy Living-Alloy Seam; Yetimoth Restorative Ram: 21 | **supported**: names squadmates only, capped heal. |
+| remove on a move that also harms or stands alone | Hippochamp Emergency Water Cannon; Hypnopet Empathic Steadying (stabilizing): 40 | **supported both ways**: a squadmate or a foe (decision 38). |
+| focused aimed past its user | Hypnopet Focusing Signal: 1 | **supported**: names squadmates only (was withheld from a foe in pass 4). |
+| guarding status on a move that harms | Sonalloy Reinforcing Lash: 1 (status only on this release) | **supported**: names squadmates only; aimed at a foe it would have nothing to deliver. |
+| harm, displacement or a non-guarding status aimed at itself; protected without a scope; remove without methods | none in 2,560 actions | unsupported, named, as before (fitted tests only). |
+
+Moves with nothing to resolve: Smoke Dispersal (20). Figzy, Shuntara and Sonalloy no longer lose an action on any seed. Hypnopet's heal does not appear in these 20 seeds; over 300 records of its own it rolls a restore on 26 (Restorative Signal 7, Restorative Touch 11, Restorative Response 8).
+
+### Presentation
+
+In planning, a move with a helpful effect makes every squadmate it may name a target on the stage ("Target Crystorn (squadmate)"), and the direction reads "Choose an enemy or a squadmate". The squadmate preview says what lands: "heals 12", "clears Overheated", "nothing to clear", "guards against about 8" (the largest harm a standing foe previews against it, through the guard's scope). It sits just above the squadmate's plaque, because allies stand low on the stage and a preview below their conditions left it. Captions name the helper ("Hippochamp heals Crystorn: 9 HP back", "Hippochamp clears it: Crystorn is no longer overheated"), a lapse has its own caption, and the combat record carries the resolver's text ("Hippochamp uses Emergency Water Cannon: Crystorn is no longer overheated."). The field guide gains "Helping a squadmate".
+
+Issue #589 was fixed in the same pass. At 390x844 the page was 852px tall because the stage was a fixed 340px under a fixed stack; the page is now the viewport in play and the stage takes what the panels leave (332px), with a 300px floor. At 1280x720 the squad-panel inspect buttons sat under the select button's z-index 1 and now stack above it, and a 322px stage floor that pushed the commit footer 5px past 720 is now 300px. On the phone move tray the count cell was 40px wide in a 29px grid track; the track is now 40px, so "1 action" is whole.
+
+### Friction reported
+
+- **The shipped squad has no support to give.** Ally targeting is live and tested, but none of the four companions carries a heal, a protect or a guard aimed past itself; the only helpful other-aimed effect is a cooling rider on a signature that is always spent in round one. Hippochamp's derived Slowing Field or a Sonalloy or Shuntara on the roster would put support on the table; a squad-composition choice, not a rules one.
+- **A flat status value misprices binding.** Binding here only answers a charge or stops a closing move, so a fixed value per group spends Avilily's consistent paralysis on a machine that is not charging. The lever is the sim's pricing (value binding by the target's charge state or its closing moves), not the game.
+- **Decision 43 does not make the charge visible.** Halving a charged preview makes Crushing Kick less attractive, not more; the companion charge-up is still exercised only by tests.
+- **The healer-free reading removes a signature.** Read as written, decision 44 takes the cannon's harm away with its removal, so that column also measures a lost damage move. The "no order names a squadmate" variant is the cleaner support-free reading; on this squad it equals the shipped column.
+- **Hypnopet's heal is rare.** "Hypnopet heals" holds on about 9% of records (26 of 300) and on none of the 20 survey seeds, while its signature Empathic Steadying (stabilizing) appears on every record and would clear the guardian's paralysis from a squadmate.
+- **The squadmate preview covers the lower art on a phone.** At 390px it is about 36px of a 63px figure, over the squad number. It is on the stage and readable; the alternative placements collided with the enemy preview above.
+
+### Sim pricing correction, 2026-09-23
+
+The first pass 5 policy read 87.5% because its flat binding value spent Avilily's once-per-encounter paralysis on an idle machine in round one, halving bind interruptions. A bind now earns its sim value only against a charging machine (the reactive rule already covers that case). Re-measured, 200 runs each:
+
+| variant | win rate |
+|---|---|
+| shipped squad, pass 5 policy | 92.0% (184 won) |
+| healer-free, every helpful move removed | 93.5% (187 won) |
+| moves kept, no order names a squadmate | 92.0% (184 won) |
+
+Support is not mandatory, which decision 44 requires, and on this squad it is also never used: none of the four companions carries a heal, protect or guard aimed past itself, and the cannon's cooling removal rides a signature the policy spends in round one. Ally targeting is in the game for the roster (Figzy, Shuntara, Sonalloy, Yetimoth, Hypnopet), not yet for the shipped four; a companion with real support is a squad-composition decision for a later pass. The charged act (Crushing Kick) and Crystorn's signature are still never ordered, because each previews below an every-round alternative.
