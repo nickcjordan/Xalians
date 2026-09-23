@@ -217,11 +217,36 @@ for (const view of ['simple', 'advanced']) {
 
 			let guard = 0;
 			let sends = 0;
+			let captionSeen = false;
 			while (guard < 220) {
 				guard++;
 				// pace controls first: never let playback stall the check
 				const skip = page.locator('[data-skip]');
-				if (await skip.count() && await skip.first().isVisible()) { await skip.first().click(); continue; }
+				if (await skip.count() && await skip.first().isVisible()) {
+					/*
+						PASS 45. The Clash is told on the world it happens at. Once per configuration,
+						watch the first Clash until a caption shows, and require it inside the world
+						that is clashing, before skipping the rest.
+					*/
+					if (!captionSeen) {
+						const caption = page.locator('[data-clash-caption]');
+						await caption.first().waitFor({ state: 'visible', timeout: 15000 }).catch(() => {});
+						const placed = await page.evaluate(() => {
+							const cap = document.querySelector('[data-clash-caption]');
+							if (!cap) return 'no caption appeared during the Clash';
+							const site = document.querySelector(`[data-site-id="${cap.getAttribute('data-clash-caption')}"]`);
+							if (!site || !site.contains(cap)) return 'the caption is not inside its own world';
+							const c = cap.getBoundingClientRect();
+							const w = site.getBoundingClientRect();
+							return c.left >= w.left - 1 && c.right <= w.right + 1 && c.top >= w.top - 1 && c.bottom <= w.bottom + 1
+								? null : `the caption runs outside its world (${Math.round(c.left)}..${Math.round(c.right)} in ${Math.round(w.left)}..${Math.round(w.right)})`;
+						});
+						assert(placed === null, `${label}: ${placed}`);
+						captionSeen = true;
+					}
+					await skip.first().click();
+					continue;
+				}
 				const nextFrame = page.locator('[data-next-frame]');
 				if (await nextFrame.count() && await nextFrame.first().isVisible()) {
 					if (sends > 0) await shot(`ruling-${guard}`, { boardVisible: true });
