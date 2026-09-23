@@ -236,3 +236,66 @@ Taken:
 Logged, not taken:
 - **Hang the seed under the wing on two lines.** That is the rigged sail the rounds moved away from ("paratroopers"), and Nick asked for nothing dandelion-like.
 - **The underglow on the cloud base, the foreground fronds, and the pale current dashes.** These are accepted decisions from earlier rounds; they are Nick's to judge on the live page.
+
+## Industrial rework (Nick, 2026-09-23, after PR #601)
+
+Nick's notes on the live plate:
+1. The Generator's base looked like a beer distillery and the nozzles looked bad. It should be bigger and more industrial.
+2. The seed that lands and lets a creature out "looks decent", but the gliding seeds looked like Yoda heads.
+3. The seeds all drift right, so the machine should take up more of the left; the left quarter was pointless.
+4. He does not want the grown creature in the water. Baby tadpole-like things coming out of seeds are fine.
+5. The tree "doesn't look bad" but was not integrated into the scene.
+
+**What changed**
+- **The machine is a heavy seed battery, drawn 1.18× and filling the left quarter.** It has:
+  - a stepped foundation with struts;
+  - a riveted plate housing with girder bands;
+  - a tall incubation vat with clamp bands, a fluid surface, pale half-formed pods at several depths, and rising bubbles;
+  - a feed pipe up into a breech turret;
+  - three banded barrels aimed low (20, 16 and 12 degrees), with slotted brakes and round glowing mouths, which recoil and flash on each shot;
+  - a boiler annex with a gauge, lamps, louvres and a steam relief valve;
+  - a lattice gantry with a catwalk, a beacon and a service crane.
+
+  All of its glows are drawn in the machine's frame.
+- **Seeds are pods, all of them.** Each is the birth seed's husk (the part Nick liked), long and pointed, under a notched acorn cup, with faint off-center ribs and no seam until it splits. The physics is ballistic (seedsim `nut`, gravity 128 because the machine is now about 30 m tall, drag .15). Each barrel's elevation is fixed, and `aim_speed()` solves the charge that lands each pod. Each pod tumbles a whole number of turns, so it lands upright.
+  - Near pods splash, roll onto their side, ride the current and split; a tadpole-like leafy larva drifts with the husk, swims off with a wake, and dives on the move.
+  - Far pods splash and sink.
+  - Pods on rock rock to rest and sprout.
+- **The birth** lets out a newborn larva. It rises from the split acorn, looks about, wriggles down the shelf, slips into the flood, swims off and dives. The grown creature is gone.
+- **The tree** keeps the distant trunk Nick approved. Its canopy now spreads under the cloud base across the right half of the sky, and its own glowing pods twinkle there. Root flares run along the far plain, and the trunk is reflected in the flood.
+- **Placement** is constructive as before. Swimming larvae are now obstacles too, and a rider is rejected if its own future hatchling would cross a pod. The build reports 0 clashes and 9 riders.
+
+**Rounds (visual 7, 7.5, 8.5 "Nothing worth a round"; motion 7.5, 9, 9.5 "Nothing worth a round")**
+- **Visual.**
+  - The round core window read as a washing machine door, so it became the tall vat.
+  - The vat bars read as a lit door, so they became clamp bands.
+  - The barrels read first as telescopes, then as flashlight heads, so they were lowered and given dark brakes and round mouths.
+  - The pods read first as coffee beans or cat's eyes, then (with a pointed calyx) as beetles, and finally became acorns with an overhanging notched cup and no center seam.
+  - The prop roots read as poles and were cut.
+  - Root humps in the near water read as fins or driftwood and became flares on the far plain.
+  - The trunk's purple cast and banding were fixed.
+  - The lightning-glyph crack became a straight crack.
+  - The empty center foreground got slabs and moss.
+- **Motion.**
+  - Barrel 1's flash was dropped for backwards keyTimes; flashes are now capped by the gap to the next shot.
+  - The surge stuttered with an interleaved regular burst; bursts near the volley are now dropped.
+  - Pods snapped and spun backwards at touchdown; spins are now whole turns.
+  - Sprouts rose 15 units from their pods.
+  - Split husks stopped dead, and larvae stopped dead as they dived.
+  - Far pods braked instantly.
+  - The newborn slowly lifted during the swim.
+  - A pod fell through a hatchling; larvae are now obstacles.
+  - The roll on the water sped up the spin.
+  - The lodge rock ran backwards.
+
+**The gate: one cold check (6.5)**
+
+Taken, as identity findings against the brief:
+- **Pods read as beetles in flight and on the water.** They now fly point first (the heavy nut leads and the cup trails) instead of tumbling. The ribs are gone, and the cup is larger (about 40% of the length), lighter and toothed.
+- **The vat read as a door.** It is now a glass capsule with rounded ends, thin hoops, a highlight down the glass and pipes feeding it. The seeds inside are pale little acorns.
+- **Pods crossed the crane jib.** The jib is gone, and a hoist hangs its canister below the line of fire.
+- **The barrels were stepped like a telescope.** The bands and brake are now flush.
+- **The canopy read as a garland.** It is now a denser mass that domes over the trunk.
+- **The near fronds competed with the machine.** They are 30% darker.
+
+Logged, not taken: "far pods don't shrink" (they shrink to 0.4 over their flight; the pods it cited were near ones).
