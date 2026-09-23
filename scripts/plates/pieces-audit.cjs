@@ -2,9 +2,9 @@ const path=require('path');const {chromium}=require(require.resolve('playwright-
 const root=path.join(process.env.LOCALAPPDATA,'ms-playwright');const d=fs.readdirSync(root).filter(x=>x.startsWith('chromium_headless_shell')).sort().reverse()[0];
 const OUT=path.join(__dirname,'..','..','untracked','snaps','pieces');fs.mkdirSync(OUT,{recursive:true});
 (async()=>{const b=await chromium.launch({executablePath:path.join(root,d,'chrome-headless-shell-win64/chrome-headless-shell.exe')});
-const ctx=await b.newContext({viewport:{width:1600,height:1000},deviceScaleFactor:1.5});const p=await ctx.newPage();
+const ctx=await b.newContext({viewport:{width:1600,height:2100},deviceScaleFactor:1.5});const p=await ctx.newPage();
 await p.goto('file:///'+process.argv[2]);await p.waitForTimeout(1500);
-await p.evaluate(()=>document.querySelectorAll('svg.layer').forEach(s=>s.pauseAnimations()));
+await p.evaluate(()=>document.querySelectorAll('svg.layer, svg.defs').forEach(s=>s.pauseAnimations()));
 const list=await p.evaluate(()=>{const out=[];let i=0;
  const desc=(el)=>{const t=el.tagName;const h=el.getAttribute('href');const tr=el.getAttribute('transform');return '('+t+(h?' '+h:'')+(tr?' '+tr.slice(0,40):'')+')';};
  document.querySelectorAll('svg.layer').forEach(svg=>{

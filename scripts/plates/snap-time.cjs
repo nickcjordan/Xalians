@@ -11,15 +11,15 @@ function findChrome() {
 (async () => {
   const [file, name, x, y, w, h, ...times] = process.argv.slice(2);
   const b = await chromium.launch({ executablePath: findChrome() });
-  const ctx = await b.newContext({ viewport: { width: 1600, height: 1000 }, deviceScaleFactor: 2 });
+  const ctx = await b.newContext({ viewport: { width: 1600, height: 2100 }, deviceScaleFactor: 2 });
   const p = await ctx.newPage();
   await p.goto('file:///' + file, { waitUntil: 'load' });
   await p.waitForTimeout(500);
-  await p.evaluate(() => document.querySelectorAll('svg.layer').forEach((s) => s.pauseAnimations()));
+  await p.evaluate(() => document.querySelectorAll('svg.layer, svg.defs').forEach((s) => s.pauseAnimations()));
   const box = await p.evaluate(() => { const r = document.getElementById('layer-sky').getBoundingClientRect(); return { x: r.x, y: r.y, w: r.width, h: r.height }; });
   const k = box.w / 1536;
   for (const t of times) {
-    await p.evaluate((tt) => document.querySelectorAll('svg.layer').forEach((s) => s.setCurrentTime(tt)), Number(t));
+    await p.evaluate((tt) => document.querySelectorAll('svg.layer, svg.defs').forEach((s) => s.setCurrentTime(tt)), Number(t));
     await p.waitForTimeout(150);
     await p.screenshot({ path: path.join(__dirname, '..', '..', 'untracked', 'snaps', `${name}-t${t}.png`), clip: { x: box.x + x * k, y: box.y + y * k, width: w * k, height: h * k } });
   }

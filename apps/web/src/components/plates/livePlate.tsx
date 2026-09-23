@@ -21,12 +21,29 @@ type Props = {
 };
 
 const NEAR = '320px';
+// Every top-level svg in a plate has its own animation timeline: the layers,
+// and the shared defs sheet, whose animated filters (fire, smoke, glitter) and
+// clip paths would otherwise run free while the layers are paused.
+const PLATE_SVGS = 'svg.layer, svg.defs';
 
 function setPlaying(host: HTMLElement, playing: boolean) {
-	host.querySelectorAll<SVGSVGElement>('svg.layer').forEach((svg) => {
+	host.querySelectorAll<SVGSVGElement>(PLATE_SVGS).forEach((svg) => {
 		if (typeof svg.pauseAnimations !== 'function') return;
 		if (playing) svg.unpauseAnimations();
 		else svg.pauseAnimations();
+	});
+}
+
+// A freshly injected plate is paused before its timeline has ever been
+// sampled, which leaves every animated element at its authored resting value
+// (most are opacity 0) instead of the frame the plate was composed for. Seeking
+// to zero while paused forces that first sample, so the reduced-motion still
+// and the first frame before play are the plate's real t=0.
+function holdAtStart(host: HTMLElement) {
+	host.querySelectorAll<SVGSVGElement>(PLATE_SVGS).forEach((svg) => {
+		if (typeof svg.pauseAnimations !== 'function') return;
+		svg.pauseAnimations();
+		if (typeof svg.setCurrentTime === 'function') svg.setCurrentTime(0);
 	});
 }
 
@@ -48,7 +65,7 @@ export function LivePlate({ src, poster, className }: Props) {
 					.then((html) => {
 						if (cancelled) return;
 						host.innerHTML = html;
-						setPlaying(host, false);
+						holdAtStart(host);
 						setReady(true);
 					})
 					.catch(() => {
@@ -92,7 +109,7 @@ export function LivePlate({ src, poster, className }: Props) {
 	}, [ready]);
 
 	return (
-		<span className={cn('live-plate block h-full w-full', className)} data-live-plate={ready ? 'ready' : 'poster'}>
+		<span className={cn('live-plate block h-full w-full', className)} data-live-plate={ready ? 'ready' : 'poster'} data-plate-src={src}>
 			<img
 				src={poster.src}
 				srcSet={`${poster.small} 768w, ${poster.src} 1536w`}
