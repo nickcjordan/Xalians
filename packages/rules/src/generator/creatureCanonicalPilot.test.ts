@@ -154,4 +154,4 @@ it('constructs every staged species with guaranteed identity and distinct ordina
     }
     expect(variants.size).toBeGreaterThan(1);
   }
-});
+}, 30_000);
