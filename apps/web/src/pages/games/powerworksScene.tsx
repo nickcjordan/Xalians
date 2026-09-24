@@ -1,41 +1,42 @@
 // Tier: immersive. A shared stage for the squad and the facility defenses.
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import {
   Check,
-  Crosshair,
   Info,
   Link2,
   Crown,
   ArrowRight,
+  ArrowDown,
+  ArrowDownLeft,
+  ArrowDownRight,
   Shield,
   Zap,
   CornerUpRight,
   Ban,
-  HeartPulse,
+  Sparkles,
 } from "lucide-react";
 import { actionPresentation } from "./powerworksPresentation";
 import { PowerworksEnvironment } from "./powerworksEnvironment";
 import {
-  damagePreview,
-  matchup,
   type BattleEvent,
   type Frame,
   type Move,
   type Order,
+  type StatusGroup,
   type Unit,
 } from "@xalians/rules/dungeon";
 import {
   ElementIcon,
+  GroupIcon,
   Health,
   MoveIcon,
   Portrait,
   StatusBadges,
-  PowerIcon,
   baseName,
-  binds,
-  harms,
   melee as contact,
+  type HealthPreview,
 } from "./powerworksVisuals";
+import { StageContext, stageMap, IDENTITY, type StageRefs } from "./powerworksStage";
 
 /**
   What a companion's plaque chip says (radial orders decision 7): its order's move and
@@ -50,6 +51,37 @@ export type OrderChip = {
   /** When there is no move to show: "No order", "Cannot act", "Knocked out". */
   empty?: string | null;
 };
+
+/**
+  What the chosen move would do to one unit (radial orders round 2), drawn on the creature
+  itself: a target ring or an area mark at its feet, the chunk on its health bar, ghost
+  status badges with their chance, a pull arrow. `words` is the same reading in plain
+  words, carried by the target button's accessible name and the move card's target line.
+*/
+export type UnitPreview = HealthPreview & {
+  /** A legal target of the chosen move, or a unit only the aimed target's area reaches. */
+  role: "target" | "reached";
+  /**
+    A squadmate the rules let the move name but nothing would land on (full health, nothing
+    to clear, no threat to guard): drawn dimmed like a non-target, its reason kept in words.
+  */
+  idle?: boolean;
+  /** The move would pull this unit off its footing. */
+  pull: boolean;
+  statuses: {
+    status: string;
+    group: StatusGroup;
+    chance: number;
+    immune: boolean;
+  }[];
+  /** A helpful move's reading on a squadmate: guards, clears, or why it does nothing. */
+  notes: { kind: "guard" | "clear" | "none"; text: string }[];
+  words: string;
+  /** The outcome's first clause, for the move card's one target line: "5 damage, 22 to 17". */
+  line: string;
+};
+/** The one-shot beat when an order locks: the target ring flashes, the chip lights. */
+export type OrderFlash = { actor: string; target: string | null; stamp: number };
 
 export const sectorStory = [
   {
@@ -187,7 +219,7 @@ export function PowerworksScene({
   speed,
   reducedMotion,
   labelFor,
-  previewText,
+  previews = {},
   onTarget,
   onSelect,
   onInspect,
@@ -197,6 +229,7 @@ export function PowerworksScene({
   openId = null,
   chips = {},
   ring = null,
+  flash = null,
 }: {
   team: Unit[];
   enemies: Unit[];
@@ -215,7 +248,8 @@ export function PowerworksScene({
   speed: number;
   reducedMotion: boolean;
   labelFor: (u: Unit) => string;
-  previewText: (u: Unit) => string;
+  /** What the chosen move would do to each unit it reaches, drawn on the creatures (round 2). */
+  previews?: Record<string, UnitPreview>;
   onTarget: (id: string, keyboard: boolean) => void;
   onSelect: (u: Unit, keyboard: boolean) => void;
   onInspect: (id: string) => void;
@@ -229,6 +263,8 @@ export function PowerworksScene({
   chips?: Record<string, OrderChip>;
   /** The radial menu, drawn over the stage. */
   ring?: React.ReactNode;
+  /** The order that just locked, for its one-shot beat. */
+  flash?: OrderFlash | null;
 }) {
   const open = onOpen ?? onSelect;
   const [arriving, setArriving] = useState(true);
@@ -276,10 +312,10 @@ export function PowerworksScene({
       ? targetIds ?? enemies.filter((u) => u.hp > 0).map((u) => u.id)
       : []
   );
-  const targetable = (u: Unit) =>
-    planning && !!move && u.hp > 0 && targets.has(u.id);
+  const targeting = planning && !!move;
+  const targetable = (u: Unit) => targeting && u.hp > 0 && targets.has(u.id);
   const aiming =
-    planning && move && targetId
+    targeting && targetId
       ? all.find((u) => u.id === targetId && targetable(u))
       : null;
   const aimPoint = aiming ? position(aiming) : null;
@@ -295,421 +331,518 @@ export function PowerworksScene({
       })
     : [];
   const aimedIds = new Set(
-    intents
-      .filter((i) => i.id === active?.id)
-      .map((i) => plans[i.id].target)
+    intents.filter((i) => i.id === active?.id).map((i) => plans[i.id].target)
   );
   const phase = event?.kind || "idle";
   const style = {
     "--action-time": `${presentation.impactDelay / 0.28 / speed}ms`,
     "--impact-delay": `${presentation.impactDelay / speed}ms`,
   } as React.CSSProperties;
-  return (
-    <section
-      onClick={(e) => {
-        if (!planning || !onBack) return;
-        if (
-          (e.target as Element).closest(
-            "button, .pw-radial, .pw-radial-detail, .pw-unit-plaque"
-          )
-        )
-          return;
-        onBack();
-      }}
-      className={`pw-theater sector-${room} ${frame ? "playing" : "planning"} ${
-        paused ? "paused" : ""
-      } ${arriving ? "arriving" : ""} ${signature ? "signature-action" : ""} ${
-        knockout && impact ? "knockout-action" : ""
-      } ${bossDefeat && impact ? "boss-defeat" : ""}`}
-      aria-label="Battlefield"
-      style={style}
-      data-impact={impact}
-      data-action={phase}
-    >
-      <PowerworksEnvironment room={room} />
-      <div className="pw-room-prop" aria-hidden="true">
-        {room === 1 ? <Shield /> : room >= 2 ? <Zap /> : null}
-      </div>
-      {frame &&
-        (signature ||
-          phase === "blocked" ||
-          phase === "redirect" ||
-          (bossDefeat && impact)) && (
-          <div
-            className={`pw-action-banner ${phase}`}
-            key={`banner-${frameIndex}`}
-          >
-            {bossDefeat && impact ? (
-              <Crown />
-            ) : phase === "blocked" ? (
-              <Ban />
-            ) : phase === "redirect" ? (
-              <CornerUpRight />
-            ) : (
-              <Crown />
-            )}
-            <div>
-              <small>
-                {bossDefeat && impact
-                  ? "Defense disabled"
-                  : phase === "blocked"
-                  ? "Stopped by binding"
-                  : phase === "redirect"
-                  ? "Target changed"
-                  : `${actor?.name} · Signature`}
-              </small>
-              <strong>
-                {bossDefeat && impact
-                  ? "The guardian falls"
-                  : phase === "redirect"
-                  ? `Now targeting ${recipient ? labelFor(recipient) : ""}`
-                  : event?.moveName || "Cannot act"}
-              </strong>
-            </div>
-          </div>
-        )}
-      <div className="pw-scene-heading">
-        <span>{sectorStory[room].place}</span>
-        {room === 3 && (
-          <strong>
-            <Crown /> Central guardian
-          </strong>
-        )}
-      </div>
-      {arriving && (
-        <div className="pw-arrival" aria-hidden="true">
-          <span>Sector {room + 1} / 4</span>
-          <strong>{sectorStory[room].name}</strong>
-        </div>
-      )}
-      <svg
-        className={`pw-action-path ${actor ? `el-${actor.element}` : ""}`}
-        viewBox="0 0 100 100"
-        preserveAspectRatio="none"
-        aria-hidden="true"
-        key={`path-${frameIndex}`}
-      >
-        {intents.map(({ id, from, to }) => (
-          <path
-            key={id}
-            className={`pw-queued-path ${active?.id === id ? "active" : ""}`}
-            data-intent={id}
-            d={`M${from.x} ${from.y} Q${(from.x + to.x) / 2} ${
-              Math.min(from.y, to.y) - 12
-            } ${to.x} ${to.y}`}
-          />
-        ))}
-        {aimPoint && source && (
-          <path
-            className="pw-aim-path"
-            d={`M${source.x} ${source.y} Q50 45 ${aimPoint.x} ${aimPoint.y}`}
-          />
-        )}
-        {actor &&
-          recipient &&
-          source &&
-          destination &&
-          event &&
-          actor.id !== recipient.id &&
-          ["hit", "bind", "status", "redirect", "restore", "ward", "removed"].includes(
-            event.kind
-          ) && (
-            <>
-              <path
-                className={`pw-flight ${
-                  melee && event.kind !== "redirect" ? "contact" : "projectile"
-                } ${event.kind}`}
-                pathLength="1"
-                d={`M${source.x} ${source.y} Q${
-                  (source.x + destination.x) / 2
-                } ${(source.y + destination.y) / 2 - 12} ${destination.x} ${
-                  destination.y
-                }`}
-              />
-              <ellipse
-                className={`pw-impact-ring ${event.kind}`}
-                cx={destination.x}
-                cy={destination.y}
-                rx="5"
-                ry="8"
-              />
-              {impact && event.kind !== "redirect" && (
-                <g
-                  className={`pw-contact-mark ${event.kind}`}
-                  transform={`translate(${destination.x} ${destination.y})`}
-                >
-                  <circle r="3.3" />
-                  <path d="M-9 0h-4M9 0h4M0-9v-4M0 9v4M-6-6l-3-3M6-6l3-3M-6 6l-3 3M6 6l3 3" />
-                </g>
-              )}
-            </>
-          )}
-      </svg>
-      {all.map((u) => {
-        const pos = position(u),
-          acting = actor?.id === u.id,
-          receiving = recipient?.id === u.id;
-        const selected = planning && active?.id === u.id;
-        const queued = Object.entries(plans)
-          .filter(
-            ([id, q]) =>
-              q.target === u.id &&
-              !(chips[id] && chips[id].move && chips[id].target === null)
-          )
-          .map(([id]) => team.find((p) => p.id === id)!)
-          .filter(Boolean);
-        const chip = !u.enemy ? chips[u.id] : undefined;
-        const ringOpen = openId === u.id;
-        // The figure and its plaque are one selection control (decision 2).
-        const act = (keyboard: boolean) =>
-          target
-            ? onTarget(u.id, keyboard)
-            : u.enemy
-            ? onInspect(u.id)
-            : onSelect(u, keyboard);
-        const target = targetable(u);
-        const pressable =
-          planning && u.hp > 0 && !(u.enemy && !!move && !target);
-        const estimate =
-          target && active && u.enemy && harms(move!)
-            ? damagePreview(active, move!, u)
-            : 0;
-        const recoil =
-          acting &&
-          phase === "hit" &&
-          event?.moveName === "Desperate strike" &&
-          impact;
-        const beforeKnockout = receiving && !impact;
-        return (
-          <div
-            key={u.id}
-            className={`pw-scene-unit el-${u.element} ${
-              u.enemy ? "defender" : "ally"
-            } ${u.species === "guardian" ? "guardian" : ""} ${
-              selected ? "selected" : ""
-            } ${acting ? `performing ${melee ? "melee" : "ranged"}` : ""} ${
-              receiving && impact ? "receiving" : ""
-            } ${u.hp <= 0 && !beforeKnockout ? "fallen" : ""} ${
-              u.hp > 0 && u.charge ? "charged" : ""
-            } ${u.hp > 0 && u.bound ? "restrained" : ""} ${
-              u.hp > 0 && u.ward ? "protected" : ""
-            } ${
-              aiming?.id === u.id || aimedIds.has(u.id) ? "aimed" : ""
-            } ${receiving && knockout && impact ? "just-fallen" : ""}`}
-            data-unit={u.id}
-            style={
-              {
-                left: `${pos.x}%`,
-                "--lane-shift": `${laneShift(u)}%`,
 
-                "--travel-x": `${
-                  source && destination ? destination.x - source.x : 0
-                }cqw`,
-                "--travel-y": `${
-                  source && destination ? (destination.y - source.y) * 0.95 : 0
-                }cqh`,
-              } as React.CSSProperties
-            }
-          >
-            <button
-              className={`pw-scene-character ${
-                u.enemy || target ? "pw-target" : ""
-              } ${target ? "valid-target" : ""} ${
-                target && !u.enemy ? "squadmate-target" : ""
-              }`}
-              aria-label={
-                u.enemy
-                  ? `Target ${u.name} ${u.id}`
-                  : target
-                  ? `Target ${u.name} (squadmate)`
-                  : `Select ${u.name}`
-              }
-              aria-haspopup={!u.enemy && !target ? "menu" : undefined}
-              aria-expanded={!u.enemy && !target ? ringOpen : undefined}
-              aria-describedby={!u.enemy && chip ? `order-${u.id}` : undefined}
-              disabled={!planning || u.hp <= 0 || (u.enemy && !!move && !target)}
-              onClick={(e) => act(e.detail === 0)}
-              onMouseEnter={() => (u.enemy || target) && onHover(u.id)}
-              onMouseLeave={() => onHover(null)}
-              onFocus={() => (u.enemy || target) && onHover(u.id)}
-              onBlur={() => onHover(null)}
-            >
-              <span className="pw-ground" />
-              {selected && <span className="pw-ground-ring" aria-hidden="true" />}
-              {!u.enemy && (
-                <span className="pw-squad-number" aria-hidden="true">
-                  {team.indexOf(u) + 1}
-                </span>
-              )}
-              <span className="pw-actor-art" key={`${u.id}-${frameIndex}`}>
-                <Portrait u={u} />
-              </span>
-              {u.hp > 0 && u.bound > 0 && (
-                <span className="pw-binding" aria-hidden="true">
-                  <Link2 />
-                </span>
-              )}
-              {u.hp > 0 && u.ward && (
-                <span className="pw-barrier" aria-hidden="true">
-                  <Shield />
-                </span>
-              )}
-              {u.hp > 0 && u.charge && (
-                <span className="pw-charge-aura" aria-hidden="true">
-                  <Zap />
-                </span>
-              )}
-              {target && <Crosshair className="pw-scene-reticle" />}
-              {(recoil ||
-                (receiving && impact && phase !== "redirect") ||
-                (acting &&
-                  ["charge", "blocked", "lost", "expired", "react"].includes(
-                    phase
-                  ))) && (
-                <span
-                  key={`float-${frameIndex}`}
-                  className={`pw-scene-float ${phase} ${
-                    event?.group === "mending" ? "mending" : ""
-                  }`}
-                >
-                  {phase === "blocked" && <Ban aria-hidden="true" />}
-                  {phase === "redirect" && <CornerUpRight aria-hidden="true" />}
-                  {recoil ? "−2" : floatLabel(event)}
-                  {recoil && <small>Recoil</small>}
-                  {phase === "hit" && u.hp === 0 && <small>Knocked out</small>}
-                </span>
-              )}
-            </button>
-            <div
-              className="pw-unit-plaque"
-              onClick={(e) => {
-                if ((e.target as Element).closest("button") || !pressable) return;
-                act(false);
-              }}
-            >
-              <div>
-                <ElementIcon element={u.element} />
-                <strong>{labelFor(u)}</strong>
-                <button
-                  aria-label={`Inspect ${u.name}${
-                    u.enemy ? ` ${u.id}` : " on battlefield"
-                  }`}
-                  onClick={() => onInspect(u.id)}
-                >
-                  <Info />
-                </button>
-              </div>
-              <Health u={u} estimate={estimate} />
-              {chip && (
-                <button
-                  className={`pw-order-chip ${chip.move ? "" : "empty"} ${
-                    chip.status === "Acted" ? "done" : ""
-                  }`}
-                  disabled={!planning || u.hp <= 0}
-                  tabIndex={-1}
-                  title={chip.move ? chip.move.name : undefined}
-                  aria-label={
-                    !planning || u.hp <= 0
-                      ? `${u.name}'s order: ${chipText(chip)}`
-                      : chip.move
-                      ? `Change ${u.name}'s order: ${chipText(chip)}`
-                      : `Give ${u.name} an order`
-                  }
-                  onClick={(e) => open(u, e.detail === 0)}
-                >
-                  {chip.move ? (
-                    <>
-                      <MoveIcon move={chip.move} />
-                      <span className="pw-order-chip-move">
-                        {baseName(chip.move)}
-                      </span>
-                      <span className="pw-order-chip-target">
-                        {chip.status ? (
-                          chip.status
-                        ) : (
-                          <>
-                            <ArrowRight />
-                            {chip.target ?? "Self"}
-                          </>
-                        )}
-                      </span>
-                    </>
-                  ) : (
-                    <span className="pw-order-chip-move">{chip.empty}</span>
-                  )}
-                  <span className="pw-sr" id={`order-${u.id}`}>
-                    {chipText(chip)}
-                  </span>
-                </button>
-              )}
-              {target && !u.enemy && (
-                // A squadmate stands low on the stage, so its preview sits just above
-                // its plaque rather than below its conditions, where it would leave the
-                // stage (pass 5 paint check).
-                <span className="pw-scene-preview support">
-                  <HeartPulse />
-                  {previewText(u)}
-                </span>
-              )}
-            </div>
-            <div className="pw-scene-status">
-              <StatusBadges u={u} />
-            </div>
-            {planning && queued.length > 0 && (
-              <div className="pw-target-orders">
-                {queued.map((p) => (
-                  <button
-                    key={p.id}
-                    className={`pw-order-link ${
-                      active?.id === p.id ? "active" : ""
-                    }`}
-                    aria-label={`Edit ${p.name}'s order targeting ${labelFor(
-                      u
-                    )}`}
-                    onClick={(e) => open(p, e.detail === 0)}
-                  >
-                    <span>{team.indexOf(p) + 1}</span>
-                    <Portrait u={p} small />
-                  </button>
-                ))}
-              </div>
-            )}
-            {target && u.enemy && (
-              <span
-                className={`pw-scene-preview ${
-                  active && matchup(active, u, move!) > 1 ? "strong" : ""
-                }`}
-              >
-                {binds(move!) && !harms(move!) ? <Link2 /> : <PowerIcon />}
-                {previewText(u)}
-              </span>
-            )}
+  // The camera (round 2): while a companion is selected the stage leans in toward its
+  // feet, as far as keeps every plaque inside the stage, and eases back out after.
+  const stageRef = useRef<HTMLElement>(null),
+    layerRef = useRef<HTMLDivElement>(null);
+  const focus = planning && active && active.hp > 0 ? active.id : null;
+  const stage: StageRefs = { stage: stageRef, layer: layerRef, focus };
+  const [size, setSize] = useState("");
+  // The unit whose who-targets-it chips are showing: only the one hovered or focused.
+  const [peek, setPeek] = useState<string | null>(null);
+  useLayoutEffect(() => {
+    const layer = layerRef.current;
+    if (!layer) return;
+    const map = stageMap(stage);
+    const z = focus && map ? map.zoom : IDENTITY;
+    layer.style.transition = reducedMotion
+      ? "none"
+      : "transform 240ms cubic-bezier(0.2, 0.7, 0.2, 1)";
+    layer.style.transform = `translate(${z.tx.toFixed(2)}px, ${z.ty.toFixed(
+      2
+    )}px) scale(${z.s})`;
+    layer.dataset.zoom = z.s.toFixed(3);
+  }, [focus, move?.key, size, reducedMotion, team.length, enemies.length]);
+  useEffect(() => {
+    const el = stageRef.current;
+    if (!el || typeof ResizeObserver === "undefined") return;
+    const observer = new ResizeObserver(() =>
+      setSize(`${el.clientWidth}x${el.clientHeight}`)
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  return (
+    <StageContext.Provider value={stage}>
+      <section
+        ref={stageRef}
+        onClick={(e) => {
+          if (!planning || !onBack) return;
+          if (
+            (e.target as Element).closest(
+              "button, .pw-radial, .pw-radial-card, .pw-unit-plaque"
+            )
+          )
+            return;
+          onBack();
+        }}
+        className={`pw-theater sector-${room} ${frame ? "playing" : "planning"} ${
+          paused ? "paused" : ""
+        } ${arriving ? "arriving" : ""} ${signature ? "signature-action" : ""} ${
+          knockout && impact ? "knockout-action" : ""
+        } ${bossDefeat && impact ? "boss-defeat" : ""} ${
+          targeting ? "targeting" : ""
+        } ${aiming ? "aiming" : ""}`}
+        aria-label="Battlefield"
+        style={style}
+        data-impact={impact}
+        data-action={phase}
+        data-motion={reducedMotion ? "reduced" : "full"}
+      >
+        <div className="pw-stage-zoom" ref={layerRef}>
+          <PowerworksEnvironment room={room} />
+          <div className="pw-room-prop" aria-hidden="true">
+            {room === 1 ? <Shield /> : room >= 2 ? <Zap /> : null}
           </div>
-        );
-      })}
-      {ring}
-      {planning && (move || enemies.some((u) => u.charge && u.hp > 0)) && (
-        <div className="pw-scene-direction targeting">
-          {move ? (
-            <>
-              <Crosshair />
-              <strong>{move.name}</strong>
-              <ArrowRight />
-              <span>
-                {team.some((u) => targetable(u))
-                  ? "Choose an enemy or a squadmate"
-                  : "Choose an enemy"}
-              </span>
-            </>
-          ) : (
-            <>
-              <Zap />
-              <strong>Charged defense</strong>
-              <span>A release is coming</span>
-            </>
+          <svg
+            className={`pw-action-path ${actor ? `el-${actor.element}` : ""}`}
+            viewBox="0 0 100 100"
+            preserveAspectRatio="none"
+            aria-hidden="true"
+            key={`path-${frameIndex}`}
+          >
+            {intents.map(({ id, from, to }) => (
+              <path
+                key={id}
+                className={`pw-queued-path ${active?.id === id ? "active" : ""}`}
+                data-intent={id}
+                d={`M${from.x} ${from.y} Q${(from.x + to.x) / 2} ${
+                  Math.min(from.y, to.y) - 12
+                } ${to.x} ${to.y}`}
+              />
+            ))}
+            {aimPoint && source && (
+              <path
+                key={`aim-${aiming?.id}`}
+                className="pw-aim-path"
+                data-aim={aiming?.id}
+                d={`M${source.x} ${source.y} Q${(source.x + aimPoint.x) / 2} ${
+                  Math.min(source.y, aimPoint.y) - 14
+                } ${aimPoint.x} ${aimPoint.y}`}
+              />
+            )}
+            {actor &&
+              recipient &&
+              source &&
+              destination &&
+              event &&
+              actor.id !== recipient.id &&
+              ["hit", "bind", "status", "redirect", "restore", "ward", "removed"].includes(
+                event.kind
+              ) && (
+                <>
+                  <path
+                    className={`pw-flight ${
+                      melee && event.kind !== "redirect" ? "contact" : "projectile"
+                    } ${event.kind}`}
+                    pathLength="1"
+                    d={`M${source.x} ${source.y} Q${
+                      (source.x + destination.x) / 2
+                    } ${(source.y + destination.y) / 2 - 12} ${destination.x} ${
+                      destination.y
+                    }`}
+                  />
+                  <ellipse
+                    className={`pw-impact-ring ${event.kind}`}
+                    cx={destination.x}
+                    cy={destination.y}
+                    rx="5"
+                    ry="8"
+                  />
+                  {impact && event.kind !== "redirect" && (
+                    <g
+                      className={`pw-contact-mark ${event.kind}`}
+                      transform={`translate(${destination.x} ${destination.y})`}
+                    >
+                      <circle r="3.3" />
+                      <path d="M-9 0h-4M9 0h4M0-9v-4M0 9v4M-6-6l-3-3M6-6l3-3M-6 6l-3 3M6 6l3 3" />
+                    </g>
+                  )}
+                </>
+              )}
+          </svg>
+          {all.map((u) => {
+            const pos = position(u),
+              acting = actor?.id === u.id,
+              receiving = recipient?.id === u.id;
+            const selected = planning && active?.id === u.id;
+            const queued = Object.entries(plans)
+              .filter(
+                ([id, q]) =>
+                  q.target === u.id &&
+                  !(chips[id] && chips[id].move && chips[id].target === null)
+              )
+              .map(([id]) => team.find((p) => p.id === id)!)
+              .filter(Boolean);
+            const chip = !u.enemy ? chips[u.id] : undefined;
+            const ringOpen = openId === u.id;
+            const target = targetable(u);
+            const reading = targeting && u.hp > 0 ? previews[u.id] : undefined;
+            // A squadmate the move would do nothing for reads as a non-target (round 2 review).
+            const idle = !!reading?.idle;
+            const preview = idle ? undefined : reading;
+            // The figure and its plaque are one selection control (decision 2).
+            const act = (keyboard: boolean) =>
+              target
+                ? onTarget(u.id, keyboard)
+                : u.enemy
+                ? onInspect(u.id)
+                : onSelect(u, keyboard);
+            const pressable =
+              planning && u.hp > 0 && !(u.enemy && !!move && !target);
+            // Dimmed while a move is armed: every unit it cannot name or reach, but never
+            // the companion choosing it.
+            const ineligible =
+              targeting && ((!target && !preview) || idle) && active?.id !== u.id;
+            const recoil =
+              acting &&
+              phase === "hit" &&
+              event?.moveName === "Desperate strike" &&
+              impact;
+            const beforeKnockout = receiving && !impact;
+            const flashing = !!flash && !reducedMotion && flash.target === u.id;
+            // A pull draws its arrow toward the companion pulling.
+            const from = active ? position(active) : pos;
+            const Pull =
+              pos.x - from.x > 8 ? ArrowDownLeft : from.x - pos.x > 8 ? ArrowDownRight : ArrowDown;
+            const marks = preview ? (
+              <>
+                {preview.statuses.map((s) => (
+                  <span
+                    key={`ghost-${s.status}`}
+                    className={`pw-status-badge condition group-${s.group} ghost ${
+                      s.immune ? "immune" : ""
+                    }`}
+                    aria-hidden="true"
+                  >
+                    <GroupIcon group={s.group} />
+                    {s.status}
+                    <small>{s.immune ? "immune" : `${s.chance}%`}</small>
+                  </span>
+                ))}
+                {preview.notes.map((n) => (
+                  <span
+                    key={`note-${n.text}`}
+                    className={`pw-status-badge ghost note-${n.kind} ${
+                      n.kind === "guard"
+                        ? "group-guarding"
+                        : n.kind === "clear"
+                        ? "group-mending"
+                        : ""
+                    }`}
+                    aria-hidden="true"
+                  >
+                    {n.kind === "guard" ? <Shield /> : n.kind === "clear" ? <Sparkles /> : null}
+                    {n.text}
+                  </span>
+                ))}
+              </>
+            ) : null;
+            return (
+              <div
+                key={u.id}
+                className={`pw-scene-unit el-${u.element} ${
+                  u.enemy ? "defender" : "ally"
+                } ${u.species === "guardian" ? "guardian" : ""} ${
+                  selected ? "selected" : ""
+                } ${acting ? `performing ${melee ? "melee" : "ranged"}` : ""} ${
+                  receiving && impact ? "receiving" : ""
+                } ${u.hp <= 0 && !beforeKnockout ? "fallen" : ""} ${
+                  u.hp > 0 && u.charge ? "charged" : ""
+                } ${u.hp > 0 && u.bound ? "restrained" : ""} ${
+                  u.hp > 0 && u.ward ? "protected" : ""
+                } ${aiming?.id === u.id || aimedIds.has(u.id) ? "aimed" : ""} ${
+                  receiving && knockout && impact ? "just-fallen" : ""
+                } ${target ? "targetable" : ""} ${
+                  preview?.role === "reached" ? "reached" : ""
+                } ${preview?.danger ? "danger" : ""} ${preview?.muted ? "muted" : ""} ${
+                  ineligible ? "ineligible" : ""
+                }`}
+                data-unit={u.id}
+                onMouseEnter={() => setPeek(u.id)}
+                onMouseLeave={() => setPeek((p) => (p === u.id ? null : p))}
+                onFocus={() => setPeek(u.id)}
+                onBlur={(e) => {
+                  if (!e.currentTarget.contains(e.relatedTarget as Node | null))
+                    setPeek((p) => (p === u.id ? null : p));
+                }}
+                style={
+                  {
+                    left: `${pos.x}%`,
+                    "--lane-shift": `${laneShift(u)}%`,
+
+                    "--travel-x": `${
+                      source && destination ? destination.x - source.x : 0
+                    }cqw`,
+                    "--travel-y": `${
+                      source && destination ? (destination.y - source.y) * 0.95 : 0
+                    }cqh`,
+                  } as React.CSSProperties
+                }
+              >
+                <button
+                  className={`pw-scene-character ${
+                    u.enemy || target ? "pw-target" : ""
+                  } ${target ? "valid-target" : ""} ${
+                    target && !u.enemy ? "squadmate-target" : ""
+                  }`}
+                  aria-label={
+                    target
+                      ? `Target ${u.enemy ? `${u.name} ${u.id}` : `${u.name} (squadmate)`}${
+                          reading?.words ? `: ${reading.words}` : ""
+                        }`
+                      : u.enemy
+                      ? `Target ${u.name} ${u.id}`
+                      : `Select ${u.name}`
+                  }
+                  aria-haspopup={!u.enemy && !target ? "menu" : undefined}
+                  aria-expanded={!u.enemy && !target ? ringOpen : undefined}
+                  aria-describedby={!u.enemy && chip ? `order-${u.id}` : undefined}
+                  disabled={!planning || u.hp <= 0 || (u.enemy && !!move && !target)}
+                  onClick={(e) => act(e.detail === 0)}
+                  onMouseEnter={() => (u.enemy || target) && onHover(u.id)}
+                  onMouseLeave={() => onHover(null)}
+                  onFocus={() => (u.enemy || target) && onHover(u.id)}
+                  onBlur={() => onHover(null)}
+                >
+                  <span className="pw-ground" />
+                  {selected && <span className="pw-ground-ring" aria-hidden="true" />}
+                  {((target && !idle) || preview?.role === "reached") && (
+                    <span
+                      className={`pw-target-ring ${
+                        preview?.role === "reached" ? "area" : ""
+                      } ${preview?.danger ? "danger" : ""}`}
+                      aria-hidden="true"
+                    />
+                  )}
+                  {flashing && (
+                    <span
+                      key={`flash-${flash!.stamp}`}
+                      className="pw-target-flash"
+                      aria-hidden="true"
+                    />
+                  )}
+                  {!u.enemy && (
+                    <span className="pw-squad-number" aria-hidden="true">
+                      {team.indexOf(u) + 1}
+                    </span>
+                  )}
+                  <span className="pw-actor-art" key={`${u.id}-${frameIndex}`}>
+                    <Portrait u={u} />
+                  </span>
+                  {u.hp > 0 && u.bound > 0 && (
+                    <span className="pw-binding" aria-hidden="true">
+                      <Link2 />
+                    </span>
+                  )}
+                  {u.hp > 0 && u.ward && (
+                    <span className="pw-barrier" aria-hidden="true">
+                      <Shield />
+                    </span>
+                  )}
+                  {u.hp > 0 && u.charge && (
+                    <span className="pw-charge-aura" aria-hidden="true">
+                      <Zap />
+                    </span>
+                  )}
+                  {preview?.pull && (
+                    <span className="pw-pull-arrow" aria-hidden="true">
+                      <Pull />
+                    </span>
+                  )}
+                  {(recoil ||
+                    (receiving && impact && phase !== "redirect") ||
+                    (acting &&
+                      ["charge", "blocked", "lost", "expired", "react"].includes(
+                        phase
+                      ))) && (
+                    <span
+                      key={`float-${frameIndex}`}
+                      className={`pw-scene-float ${phase} ${
+                        event?.group === "mending" ? "mending" : ""
+                      }`}
+                    >
+                      {phase === "blocked" && <Ban aria-hidden="true" />}
+                      {phase === "redirect" && <CornerUpRight aria-hidden="true" />}
+                      {recoil ? "−2" : floatLabel(event)}
+                      {recoil && <small>Recoil</small>}
+                      {phase === "hit" && u.hp === 0 && <small>Knocked out</small>}
+                    </span>
+                  )}
+                </button>
+                <div
+                  className="pw-unit-plaque"
+                  onClick={(e) => {
+                    if ((e.target as Element).closest("button") || !pressable) return;
+                    act(false);
+                  }}
+                >
+                  <div>
+                    <ElementIcon element={u.element} />
+                    <strong>{labelFor(u)}</strong>
+                    <button
+                      aria-label={`Inspect ${u.name}${
+                        u.enemy ? ` ${u.id}` : " on battlefield"
+                      }`}
+                      onClick={() => onInspect(u.id)}
+                    >
+                      <Info />
+                    </button>
+                  </div>
+                  <Health u={u} preview={preview} />
+                  {chip && (
+                    <button
+                      className={`pw-order-chip ${chip.move ? "" : "empty"} ${
+                        chip.status === "Acted" ? "done" : ""
+                      } ${
+                        flash && !reducedMotion && flash.actor === u.id ? "just-set" : ""
+                      }`}
+                      key={flash && flash.actor === u.id ? `chip-${flash.stamp}` : "chip"}
+                      disabled={!planning || u.hp <= 0}
+                      tabIndex={-1}
+                      title={chip.move ? chip.move.name : undefined}
+                      aria-label={
+                        !planning || u.hp <= 0
+                          ? `${u.name}'s order: ${chipText(chip)}`
+                          : chip.move
+                          ? `Change ${u.name}'s order: ${chipText(chip)}`
+                          : `Give ${u.name} an order`
+                      }
+                      onClick={(e) => open(u, e.detail === 0)}
+                    >
+                      {chip.move ? (
+                        <>
+                          <MoveIcon move={chip.move} />
+                          <span className="pw-order-chip-move">
+                            {baseName(chip.move)}
+                          </span>
+                          <span className="pw-order-chip-target">
+                            {chip.status ? (
+                              chip.status
+                            ) : (
+                              <>
+                                <ArrowRight />
+                                {chip.target ?? "Self"}
+                              </>
+                            )}
+                          </span>
+                        </>
+                      ) : (
+                        <span className="pw-order-chip-move">{chip.empty}</span>
+                      )}
+                      <span className="pw-sr" id={`order-${u.id}`}>
+                        {chipText(chip)}
+                      </span>
+                    </button>
+                  )}
+                  {!u.enemy &&
+                    preview &&
+                    (preview.statuses.length > 0 || preview.notes.length > 0) && (
+                      // A squadmate stands low on the stage, so its marks sit just above
+                      // its plaque, where they stay on the stage whatever it carries.
+                      <span className="pw-preview-marks">{marks}</span>
+                    )}
+                </div>
+                <div className="pw-scene-status">
+                  <StatusBadges u={u} />
+                  {u.enemy && marks}
+                </div>
+                {planning && !move && queued.length > 0 && peek === u.id && (
+                  // Who already aims here, shown only while this unit is hovered or
+                  // focused, and named (round 2 review). While a move is armed the
+                  // target's own preview speaks instead.
+                  <div
+                    className="pw-target-orders"
+                    role="group"
+                    aria-label={`Targeted by ${queued.map((p) => p.name).join(" and ")}`}
+                  >
+                    <span className="pw-target-orders-label">
+                      Targeted by {queued.map((p) => p.name).join(" and ")}
+                    </span>
+                    {queued.map((p) => (
+                      <button
+                        key={p.id}
+                        className={`pw-order-link ${active?.id === p.id ? "active" : ""}`}
+                        aria-label={`Edit ${p.name}'s order targeting ${labelFor(u)}`}
+                        onClick={(e) => open(p, e.detail === 0)}
+                      >
+                        <span>{team.indexOf(p) + 1}</span>
+                        <Portrait u={p} small />
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+        {frame &&
+          (signature ||
+            phase === "blocked" ||
+            phase === "redirect" ||
+            (bossDefeat && impact)) && (
+            <div className={`pw-action-banner ${phase}`} key={`banner-${frameIndex}`}>
+              {bossDefeat && impact ? (
+                <Crown />
+              ) : phase === "blocked" ? (
+                <Ban />
+              ) : phase === "redirect" ? (
+                <CornerUpRight />
+              ) : (
+                <Crown />
+              )}
+              <div>
+                <small>
+                  {bossDefeat && impact
+                    ? "Defense disabled"
+                    : phase === "blocked"
+                    ? "Stopped by binding"
+                    : phase === "redirect"
+                    ? "Target changed"
+                    : `${actor?.name} · Signature`}
+                </small>
+                <strong>
+                  {bossDefeat && impact
+                    ? "The guardian falls"
+                    : phase === "redirect"
+                    ? `Now targeting ${recipient ? labelFor(recipient) : ""}`
+                    : event?.moveName || "Cannot act"}
+                </strong>
+              </div>
+            </div>
+          )}
+        <div className="pw-scene-heading">
+          <span>{sectorStory[room].place}</span>
+          {room === 3 && (
+            <strong>
+              <Crown /> Central guardian
+            </strong>
           )}
         </div>
-      )}
-    </section>
+        {arriving && (
+          <div className="pw-arrival" aria-hidden="true">
+            <span>Sector {room + 1} / 4</span>
+            <strong>{sectorStory[room].name}</strong>
+          </div>
+        )}
+        {ring}
+        {planning && !move && enemies.some((u) => u.charge && u.hp > 0) && (
+          <div className="pw-scene-direction">
+            <Zap />
+            <strong>Charged defense</strong>
+            <span>A release is coming</span>
+          </div>
+        )}
+      </section>
+    </StageContext.Provider>
   );
 }

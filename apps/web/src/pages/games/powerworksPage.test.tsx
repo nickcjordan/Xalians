@@ -1,12 +1,16 @@
 import React from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { fireEvent, render, screen, cleanup } from "@testing-library/react";
+import { act, fireEvent, render, screen, cleanup } from "@testing-library/react";
 import { MemoryRouter } from "react-router";
 import PowerworksPage from "./powerworksPage";
 import { PowerworksDraft } from "./powerworksDraft";
+import { kindWords } from "./powerworksVisuals";
 import {
   COMPANION_KEYS,
   COMPANION_RECORDS,
+  LIKELIHOOD_PERCENT,
+  createRun,
+  damagePreview,
   draftOffer,
   readCompanion,
   usable,
@@ -58,14 +62,23 @@ const mount = () =>
 /** The open ring's companion, from its menu's name ("Avilily's moves"). */
 const ringOwner = () =>
   screen.queryByRole("menu")?.getAttribute("aria-label")?.replace(/'s moves$/, "") ?? null;
+const escape = (text: string) => text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+/**
+  A target button by the start of its name: since round 2 the name goes on to say what the
+  chosen move would do there ("Target Maintenance crawler M1: 8 damage, 22 to 14, strong").
+*/
+const targetButton = (name: string) =>
+  screen.getByRole("button", { name: new RegExp(`^${escape(name)}(:|$)`) });
 /** Choose a move from the open ring by its slot's name, then a target when one is asked for. */
 function order(move: string, target: string | null = "Target Maintenance crawler M1") {
   const who = ringOwner();
   fireEvent.click(
     screen.getByRole("menuitem", { name: new RegExp(`^${who}: ${move}`) })
   );
-  if (target) fireEvent.click(screen.getByRole("button", { name: target }));
+  if (target) fireEvent.click(targetButton(target));
 }
+/** The chosen move's card, once its disc has expanded (round 2). */
+const moveCard = () => document.querySelector<HTMLElement>(".pw-radial-card.open");
 /**
   Plan the whole squad as the rings open in speed order (radial orders decision 6): each
   companion's move is named, with an optional target (null for a move on its user).
@@ -139,17 +152,23 @@ describe("Powerworks player flow", () => {
     fireEvent.click(hippo);
     expect(hippo).toHaveAttribute("aria-expanded", "true");
     expect(ringOwner()).toBe("Hippochamp");
-    // Key 1 chooses the first slot, Emergency Water Cannon; the targets show their previews.
+    // Key 1 chooses the first slot, Emergency Water Cannon: its disc becomes the move card,
+    // and each target says in its name what the cannon would do there.
     fireEvent.keyDown(window, { key: "1" });
     expect(screen.queryByRole("menu")).toBeNull();
-    expect(screen.getAllByText("8 estimated · strong")).toHaveLength(2);
+    expect(
+      screen.getByRole("group", { name: "Hippochamp: Emergency Water Cannon, chosen" })
+    ).toBeInTheDocument();
+    for (const id of ["M1", "M2"])
+      expect(targetButton(`Target Maintenance crawler ${id}`)).toHaveAccessibleName(
+        `Target Maintenance crawler ${id}: 8 damage, 22 to 14, strong`
+      );
     // Escape backs out one step, to the ring.
     fireEvent.keyDown(window, { key: "Escape" });
     expect(ringOwner()).toBe("Hippochamp");
+    expect(moveCard()).toBeNull();
     fireEvent.keyDown(window, { key: "1" });
-    fireEvent.click(
-      screen.getByRole("button", { name: "Target Maintenance crawler M2" })
-    );
+    fireEvent.click(targetButton("Target Maintenance crawler M2"));
     expect(hippo).toHaveAccessibleDescription(
       "Emergency Water Cannon → Crawler 2"
     );
@@ -216,18 +235,18 @@ describe("Powerworks player flow", () => {
     const ram = screen.getByRole("menuitem", { name: /^Crystorn: Heavy Ram/ });
     fireEvent.pointerDown(ram, { pointerType: "touch" });
     fireEvent.click(ram, { detail: 1 });
-    // The first tap reads the slot: the detail card shows the full plain-language reading.
+    // The first tap lifts the disc and arms it (round 2: no card yet); it asks for a second.
     expect(ringOwner()).toBe("Crystorn");
-    const detail = document.querySelector(".pw-radial-detail")!;
-    expect(detail).toHaveTextContent("Heavy Ram");
-    expect(detail).toHaveTextContent("Melee attack that closes in.");
-    expect(detail).toHaveTextContent(/tap again to choose/i);
     expect(ram).toHaveClass("armed");
-    // The second tap chooses it, and target selection follows.
+    expect(ram.querySelector(".pw-radial-label")).toHaveTextContent("Tap again");
+    expect(moveCard()).toBeNull();
+    // The second tap chooses it: the disc expands into its card, with the full reading.
     fireEvent.pointerDown(ram, { pointerType: "touch" });
     fireEvent.click(ram, { detail: 1 });
     expect(screen.queryByRole("menu")).toBeNull();
-    expect(screen.getByText("Choose an enemy")).toBeInTheDocument();
+    expect(moveCard()).toHaveTextContent("Heavy Ram");
+    expect(moveCard()).toHaveTextContent("Melee attack that closes in.");
+    expect(moveCard()).toHaveTextContent("Choose an enemy");
     vi.unstubAllGlobals();
     Object.defineProperty(window, "PointerEvent", { value: undefined, configurable: true });
   });
@@ -235,11 +254,9 @@ describe("Powerworks player flow", () => {
     mount();
     fireEvent.click(screen.getByRole("button", { name: "Take the starter squad" }));
     fireEvent.click(screen.getByRole("button", { name: "Select Graviclaw" }));
-    // A guard on itself has no power: its disc badge shows an icon, not a 0.
+    // A guard on itself has no power; its name says what it does instead.
     const anchor = screen.getByRole("menuitem", { name: /^Graviclaw: Ground Anchor/ });
     expect(anchor).toHaveAccessibleName(/protected on itself/);
-    expect(anchor.querySelector(".pw-radial-power")).toHaveClass("icon");
-    expect(anchor.querySelector(".pw-radial-power")!.textContent).toBe("");
     // Every disc carries its name underneath.
     expect(
       screen.getAllByRole("menuitem").map((m) => m.querySelector(".pw-radial-label")!.textContent)
@@ -264,12 +281,18 @@ describe("Powerworks player flow", () => {
       name: /^Hippochamp: Emergency Water Cannon, signature, power 5, ready$/,
     });
     expect(attack).toHaveAccessibleDescription(
-      "Ranged attack. 5 base power. Ends conditions that answer to cooling, on a squadmate or an enemy. 1 round cooldown."
+      "Ranged attack. 5 base power. Cools: ends Overheated and Burning. 1 round cooldown."
     );
     expect(attack.querySelector(".pw-radial-label")).not.toHaveTextContent(
       /power|ranged/
     );
-    expect(attack.querySelector(".pw-radial-power")).toHaveTextContent("5");
+    // Round 2: the power waits for the card, which also says how long the move rests.
+    expect(attack.querySelector(".pw-radial-disc")!.textContent).toBe("");
+    expect(attack.querySelector(".pw-radial-label")).toHaveTextContent("Emergency Water Cannon");
+    expect(attack.querySelector(".pw-radial-power")).toBeNull();
+    fireEvent.click(attack);
+    expect(moveCard()).toHaveTextContent(/5\s*power/);
+    expect(moveCard()).toHaveTextContent("Rests 1 round after use · once per encounter");
     fireEvent.click(screen.getByRole("button", { name: "Field guide" }));
     expect(screen.getByLabelText("Move symbol key")).toHaveTextContent(
       "Base power"
@@ -328,21 +351,27 @@ describe("Powerworks player flow", () => {
     fireEvent.click(screen.getByRole("button", { name: "Select Hippochamp" }));
     order("Emergency Water Cannon", null);
     for (const mate of ["Crystorn", "Avilily", "Graviclaw"])
-      expect(
-        screen.getByRole("button", { name: `Target ${mate} (squadmate)` })
-      ).toBeEnabled();
+      expect(targetButton(`Target ${mate} (squadmate)`)).toBeEnabled();
     expect(
       screen.queryByRole("button", { name: "Target Hippochamp (squadmate)" })
     ).toBeNull();
-    // Nothing on Crystorn answers to cooling yet, and the preview says so.
-    expect(screen.getAllByText("nothing to clear").length).toBe(3);
+    // Nothing on a squadmate answers to cooling yet: each is drawn dimmed like a non-target,
+    // with no label, and its target name says why (round 2 review).
+    expect(screen.queryByText("nothing to clear")).toBeNull();
+    for (const [mate, id] of [["Crystorn", "C"], ["Avilily", "A"], ["Graviclaw", "G"]]) {
+      expect(document.querySelector(`[data-unit="${id}"]`)).toHaveClass("ineligible");
+      expect(document.querySelector(`[data-unit="${id}"] .pw-target-ring`)).toBeNull();
+      expect(targetButton(`Target ${mate} (squadmate)`)).toHaveAccessibleName(
+        `Target ${mate} (squadmate): nothing to clear`
+      );
+    }
     expect(
       screen.getByText("Choose an enemy or a squadmate")
     ).toBeInTheDocument();
     fireEvent.keyDown(window, { key: "Escape" });
     order("Water Sweep", null);
     expect(
-      screen.queryByRole("button", { name: "Target Crystorn (squadmate)" })
+      screen.queryByRole("button", { name: /^Target Crystorn \(squadmate\)/ })
     ).toBeNull();
     fireEvent.keyDown(window, { key: "Escape" });
     order("Emergency Water Cannon", "Target Crystorn (squadmate)");
@@ -377,9 +406,7 @@ describe("Powerworks player flow", () => {
     expect(long.querySelector(".pw-radial-label")).toHaveTextContent("Piercing Shot");
     expect(long.querySelector(".pw-radial-label")!.textContent).not.toContain("(");
     fireEvent.click(long);
-    fireEvent.click(
-      screen.getByRole("button", { name: "Target Maintenance crawler M1" })
-    );
+    fireEvent.click(targetButton("Target Maintenance crawler M1"));
     const label = document.querySelector('[data-unit="H"] .pw-order-chip-move')!;
     expect(label).toHaveTextContent("Piercing Shot");
     expect(label.textContent).not.toContain("(");
@@ -443,5 +470,245 @@ describe("Powerworks player flow", () => {
       expect(card.querySelectorAll("ul li")).toHaveLength(4);
     }
     expect(screen.getAllByText("No effect here").length).toBeGreaterThan(0);
+  });
+
+  describe("round 2: what a disc shows, choosing one, and the outcome on the creatures", () => {
+    /** The starter run as the page deals it, to read the rules' own preview numbers. */
+    const starterRun = () => createRun(1);
+
+    it("rests each disc at its icon, name and signature rim; only an unavailable one carries a reason", () => {
+      mount();
+      fireEvent.click(screen.getByRole("button", { name: "Take the starter squad" }));
+      fireEvent.click(screen.getByRole("button", { name: "Select Hippochamp" }));
+      const slots = screen.getAllByRole("menuitem");
+      for (const slot of slots) {
+        // Icon and name only: no power badge, no bind count, no cooldown pips, no keycap.
+        expect(slot.querySelector(".pw-radial-disc svg")).not.toBeNull();
+        expect(slot.querySelector(".pw-radial-label")!.textContent).not.toBe("");
+        expect(slot.querySelector(".pw-radial-power, .pw-card-charges, .pw-radial-key")).toBeNull();
+        expect(slot.querySelector(".pw-radial-tag")).toBeNull();
+      }
+      const cannon = screen.getByRole("menuitem", { name: /^Hippochamp: Emergency Water Cannon/ });
+      expect(cannon).toHaveClass("signature");
+      // The signature shows what kind of move it is (a ranged strike); its gold rim alone
+      // marks it, and no disc wears a crown or a kind-colored rim.
+      expect(cannon.querySelector(".pw-radial-disc svg")).toHaveClass("lucide-crosshair");
+      expect(document.querySelector(".pw-radial-disc .lucide-crown")).toBeNull();
+      expect(document.querySelector(".pw-radial-slot.control, .pw-radial-slot.ward")).toBeNull();
+      expect(
+        screen.getByRole("menuitem", { name: /^Hippochamp: Repelling Slam/ }).querySelector(".pw-radial-disc svg")
+      ).toHaveClass("lucide-magnet");
+      expect(slots.filter((s) => s.classList.contains("signature"))).toHaveLength(1);
+      // After a round in which Hippochamp slams, its slam cools: dimmed, with its one reason.
+      planAll({
+        Avilily: "Blossoming Ambuscade",
+        Hippochamp: "Repelling Slam",
+        Graviclaw: "Gravity Pincer",
+        Crystorn: "Gem Radiance",
+      });
+      fireEvent.click(screen.getByRole("button", { name: "Commit round" }));
+      fireEvent.click(screen.getByRole("button", { name: "Show round result" }));
+      fireEvent.click(screen.getByRole("button", { name: "Select Hippochamp" }));
+      const slam = screen.getByRole("menuitem", { name: /^Hippochamp: Repelling Slam/ });
+      expect(slam).toHaveClass("dim");
+      expect(slam).toHaveAttribute("aria-disabled", "true");
+      expect(slam.querySelector(".pw-radial-tag")).toHaveTextContent("cooling 1");
+      expect(
+        screen.getByRole("menuitem", { name: /^Hippochamp: Emergency Water Cannon/ })
+      ).not.toHaveClass("dim");
+    });
+
+    it("expands the chosen disc into its move card, which stays through targeting; Back and Escape return to the wheel", () => {
+      mount();
+      fireEvent.click(screen.getByRole("button", { name: "Take the starter squad" }));
+      fireEvent.click(screen.getByRole("button", { name: "Select Hippochamp" }));
+      fireEvent.click(screen.getByRole("menuitem", { name: /^Hippochamp: Water Sweep/ }));
+      // The wheel is gone from the accessibility tree; the card names the chosen move.
+      expect(screen.queryByRole("menu")).toBeNull();
+      const card = screen.getByRole("group", { name: "Hippochamp: Water Sweep, chosen" });
+      expect(card).toHaveTextContent("Chosen move");
+      expect(card).toHaveTextContent(/\d+\s*power/);
+      expect(card).toHaveTextContent("Reaches the target and the next enemy in line.");
+      // The status has its own line, chance first, never clipped.
+      expect(
+        [...card.querySelectorAll(".pw-radial-card-effect")].map((p) => p.textContent)
+      ).toEqual(["75% chance: Slowed, half speed for 2 opportunities."]);
+      expect(card).toHaveTextContent("Use every round");
+      expect(card).toHaveTextContent("Choose an enemy");
+      // The other discs have folded back: hidden, and out of the tab order.
+      const folded = document.querySelectorAll(".pw-radial-slot");
+      expect([...folded].every((b) => (b as HTMLButtonElement).tabIndex === -1)).toBe(true);
+      expect(document.querySelector(".pw-radial-slot.held")).toHaveTextContent("Water Sweep");
+      // The back control returns to the wheel; choosing again reopens the card.
+      fireEvent.click(screen.getByRole("button", { name: "Back to Hippochamp's moves" }));
+      expect(ringOwner()).toBe("Hippochamp");
+      expect(moveCard()).toBeNull();
+      fireEvent.click(screen.getByRole("menuitem", { name: /^Hippochamp: Water Sweep/ }));
+      expect(moveCard()).not.toBeNull();
+      // Escape does the same, and a second Escape closes the wheel.
+      fireEvent.keyDown(window, { key: "Escape" });
+      expect(ringOwner()).toBe("Hippochamp");
+      fireEvent.keyDown(window, { key: "Escape" });
+      expect(screen.queryByRole("menu")).toBeNull();
+      expect(moveCard()).toBeNull();
+    });
+
+    it("shows hotkeys only after the keyboard has been used, and hides them after a touch", () => {
+      mount();
+      fireEvent.click(screen.getByRole("button", { name: "Take the starter squad" }));
+      expect(ringOwner()).toBe("Avilily");
+      expect(document.querySelectorAll(".pw-radial-key")).toHaveLength(0);
+      fireEvent.keyDown(window, { key: "ArrowRight" });
+      const keys = [...document.querySelectorAll(".pw-radial-key")].map((k) => k.textContent);
+      expect(keys).toEqual(["1", "2", "3", "4"]);
+      // A modifier alone is not keyboard use.
+      cleanup();
+      localStorage.clear();
+      mount();
+      fireEvent.click(screen.getByRole("button", { name: "Take the starter squad" }));
+      fireEvent.keyDown(window, { key: "Shift" });
+      expect(document.querySelectorAll(".pw-radial-key")).toHaveLength(0);
+      fireEvent.keyDown(window, { key: "Tab" });
+      expect(document.querySelectorAll(".pw-radial-key")).toHaveLength(4);
+      // A touch puts the pointer back in charge.
+      const touch = new Event("pointerdown") as Event & { pointerType: string };
+      touch.pointerType = "touch";
+      act(() => {
+        window.dispatchEvent(touch);
+      });
+      expect(document.querySelectorAll(".pw-radial-key")).toHaveLength(0);
+    });
+
+    it("draws the move's outcome on the creatures, says it in each target's name, and adds the aimed target's line to the card", () => {
+      const run = starterRun();
+      const hippo = run.team.find((u) => u.id === "H")!;
+      const sweep = hippo.moves.find((m) => m.name === "Water Sweep")!;
+      const [m1] = run.enemies;
+      const hit = damagePreview(hippo, sweep, m1);
+      const slowed = LIKELIHOOD_PERCENT[sweep.effects.find((e) => e.status === "slowed")!.likelihood];
+      mount();
+      fireEvent.click(screen.getByRole("button", { name: "Take the starter squad" }));
+      fireEvent.click(screen.getByRole("button", { name: "Select Hippochamp" }));
+      fireEvent.click(screen.getByRole("menuitem", { name: /^Hippochamp: Water Sweep/ }));
+      const target = targetButton("Target Maintenance crawler M1");
+      expect(target).toHaveAccessibleName(
+        `Target Maintenance crawler M1: ${hit} damage, 22 to ${22 - hit}, strong, slowed ${slowed}% chance`
+      );
+      // On the creature: a target ring, the chunk and its number on the health bar, the
+      // status ghost with its chance. The squad, which the sweep cannot name, is dimmed.
+      const unit = document.querySelector('[data-unit="M1"]')!;
+      expect(unit).toHaveClass("targetable");
+      expect(unit.querySelector(".pw-target-ring")).not.toBeNull();
+      expect(unit.querySelector(".pw-hp-chunk")).not.toBeNull();
+      expect(unit.querySelector(".pw-hp-delta")).toHaveTextContent(`−${hit}`);
+      expect(unit.querySelector(".pw-status-badge.ghost")).toHaveTextContent(`slowed${slowed}%`);
+      for (const id of ["C", "A", "G"])
+        expect(document.querySelector(`[data-unit="${id}"]`)).toHaveClass("ineligible");
+      expect(document.querySelector('[data-unit="H"]')).not.toHaveClass("ineligible");
+      // Aiming at Crawler 1: it rises, the intent line runs to it, the sweep's area marks
+      // Crawler 2 with its own chunk, and the card gains the one line for Crawler 1.
+      fireEvent.mouseEnter(target);
+      expect(unit).toHaveClass("aimed");
+      expect(document.querySelector('.pw-aim-path[data-aim="M1"]')).not.toBeNull();
+      const m2 = document.querySelector('[data-unit="M2"]')!;
+      expect(m2).toHaveClass("reached");
+      expect(m2.querySelector(".pw-target-ring.area")).not.toBeNull();
+      expect(m2.querySelector(".pw-hp-delta")).not.toBeNull();
+      expect(targetButton("Target Maintenance crawler M1")).toHaveAccessibleName(
+        /, also reaches Crawler 2$/
+      );
+      expect(moveCard()!.querySelector(".pw-radial-card-target")).toHaveTextContent(
+        `Crawler 1: ${hit} damage, 22 to ${22 - hit}`
+      );
+      fireEvent.mouseLeave(target);
+      expect(moveCard()).toHaveTextContent("Choose an enemy");
+    });
+
+    it("reads a heal as a touch, not an attack", () => {
+      const seed = 3;
+      const offer = draftOffer(seed);
+      const healer = offer.find((e) => e.species === "sonalloy");
+      expect(healer).toBeDefined();
+      const heal = healer!.unit.moves.find((m) => m.effects.some((e) => e.support === "restore"))!;
+      expect(kindWords(heal)).toMatch(/^(Touch|At range)$/);
+    });
+
+    it("marks a pull with an arrow on the target and names it", () => {
+      mount();
+      fireEvent.click(screen.getByRole("button", { name: "Take the starter squad" }));
+      fireEvent.click(screen.getByRole("button", { name: "Select Graviclaw" }));
+      fireEvent.click(screen.getByRole("menuitem", { name: /^Graviclaw: Gravity Draw/ }));
+      expect(document.querySelectorAll(".pw-pull-arrow")).toHaveLength(2);
+      expect(targetButton("Target Maintenance crawler M1")).toHaveAccessibleName(
+        /pulled off its footing/
+      );
+    });
+
+    it("is instant under reduced motion: no leaving wheel, no animations, no camera transition", () => {
+      const animate = vi.fn();
+      Element.prototype.animate = animate as unknown as Element["animate"];
+      mount();
+      fireEvent.click(screen.getByRole("button", { name: "Take the starter squad" }));
+      const stage = screen.getByRole("region", { name: "Battlefield" });
+      expect(stage).toHaveAttribute("data-motion", "reduced");
+      const layer = stage.querySelector<HTMLElement>(".pw-stage-zoom")!;
+      expect(layer.style.transition).toBe("none");
+      fireEvent.click(screen.getByRole("button", { name: "Select Hippochamp" }));
+      // The wheel that closed is simply gone; nothing folds.
+      expect(document.querySelectorAll("[data-radial]")).toHaveLength(1);
+      expect(document.querySelector(".pw-radial.folding")).toBeNull();
+      order("Water Sweep");
+      expect(document.querySelector(".pw-radial-card")).toBeNull();
+      expect(document.querySelector(".pw-target-flash, .pw-order-chip.just-set")).toBeNull();
+      expect(animate).not.toHaveBeenCalled();
+      delete (Element.prototype as { animate?: unknown }).animate;
+    });
+
+    it("animates when motion is allowed: the wheel folds, the disc grows into the card and collapses into the chip, the camera eases", async () => {
+      vi.stubGlobal("matchMedia", () => ({ matches: false }));
+      const animate = vi.fn((_frames: Keyframe[], _options?: KeyframeAnimationOptions) => ({
+        cancel() {},
+        finished: Promise.resolve(),
+      }));
+      Element.prototype.animate = animate as unknown as Element["animate"];
+      mount();
+      fireEvent.click(screen.getByRole("button", { name: "Take the starter squad" }));
+      const stage = screen.getByRole("region", { name: "Battlefield" });
+      expect(stage).toHaveAttribute("data-motion", "full");
+      expect(stage.querySelector<HTMLElement>(".pw-stage-zoom")!.style.transition).toMatch(
+        /^transform 240ms/
+      );
+      // Moving to Hippochamp: Avilily's wheel stays a moment to fold back into her.
+      fireEvent.click(screen.getByRole("button", { name: "Select Hippochamp" }));
+      expect(document.querySelector('.pw-radial.folding[data-radial="A"]')).not.toBeNull();
+      expect(ringOwner()).toBe("Hippochamp");
+      // Choosing: the disc grows into the card (its outline and its emblem animate).
+      fireEvent.click(screen.getByRole("menuitem", { name: /^Hippochamp: Water Sweep/ }));
+      const grow = animate.mock.calls.find(([frames]) =>
+        frames.some((f) => typeof f.clipPath === "string")
+      );
+      expect(grow).toBeDefined();
+      // Confirming: the target ring flashes once, the chip lights, the card collapses, and
+      // Hippochamp's wheel never comes back: its discs are hidden at once.
+      fireEvent.click(targetButton("Target Maintenance crawler M1"));
+      expect(document.querySelector('[data-unit="M1"] .pw-target-flash')).not.toBeNull();
+      expect(document.querySelector('[data-unit="H"] .pw-order-chip')).toHaveClass("just-set");
+      expect(document.querySelector('.pw-radial-card.leaving')).not.toBeNull();
+      expect(document.querySelector('.pw-radial.locked[data-radial="H"]')).not.toBeNull();
+      // The next companion's wheel waits until the collapse has finished.
+      expect(screen.queryByRole("menu")).toBeNull();
+      // Every animation the wheel runs is short: about 120 to 250 ms.
+      const durations = animate.mock.calls.map(([, o]) => Number(o?.duration));
+      expect(durations.length).toBeGreaterThan(0);
+      expect(durations.every((d) => d >= 120 && d <= 250)).toBe(true);
+      // The leaving wheel removes itself once its exit has run.
+      await act(async () => {
+        await new Promise((r) => setTimeout(r, 300));
+      });
+      expect(document.querySelector(".pw-radial-card.leaving")).toBeNull();
+      expect(document.querySelectorAll("[data-radial]")).toHaveLength(1);
+      expect(ringOwner()).toBe("Avilily");
+      delete (Element.prototype as { animate?: unknown }).animate;
+    });
   });
 });
