@@ -122,12 +122,21 @@ export function stageMap(refs: StageRefs | null, from?: Element | null): StageMa
     (stage?.querySelector(":scope > .pw-stage-zoom") as HTMLDivElement | null | undefined);
   if (!stage || !layer) return null;
   const b = stage.getBoundingClientRect();
-  const ox = b.left + stage.clientLeft,
-    oy = b.top + stage.clientTop;
+  // The console scale (layout pass): on a large screen the play screen is drawn with CSS
+  // zoom, and client rects then read in screen pixels while offsets, client sizes and the
+  // camera's transform stay in the page's own. Every box is brought back to the page's.
+  const z = stage.offsetWidth > 0 && b.width > 0 ? b.width / stage.offsetWidth : 1;
+  const ox = b.left + stage.clientLeft * z,
+    oy = b.top + stage.clientTop * z;
   const painted = paintedZoom(layer);
   const raw = (el: Element): Box => {
     const r = el.getBoundingClientRect();
-    return { left: r.left - ox, top: r.top - oy, right: r.right - ox, bottom: r.bottom - oy };
+    return {
+      left: (r.left - ox) / z,
+      top: (r.top - oy) / z,
+      right: (r.right - ox) / z,
+      bottom: (r.bottom - oy) / z,
+    };
   };
   // Where an element in the camera layer stands with no camera at all: a playback beat's
   // push may still be easing back out when planning opens.

@@ -370,23 +370,26 @@ sky = []
 lin([(0, '#04070a', 1), (.35, '#0a1016', 1), (.6, '#111a22', 1), (1, '#27313c', 1)], 0, 0, 0, HZ, units=True, id='air')
 sky.append('<!-- air under the cloud: dark, lightening a little toward the horizon --><rect width="%d" height="%d" fill="url(#air)"/>' % (W, HZ + 10))
 sky.append('<!-- far off at right the last light under the storm: the open air the World Tree stands in, paler than its crown and trunk so they stand against it -->'
-           '<ellipse cx="1240" cy="266" rx="580" ry="112" fill="#303c49" opacity=".75" filter="url(#soft)"/>')
+           '<ellipse cx="1250" cy="262" rx="820" ry="215" fill="url(#treeAirG)"/>')
+# (a blurred solid ellipse here left its own rim visible left of the tree as a pale oval, Nick 2026-09-24; the light
+# now falls off smoothly all the way to nothing)
+rad([(0, '#303c49', .8), (.4, '#303c49', .75), (.6, '#303c49', .52), (.78, '#303c49', .22), (.9, '#303c49', .07), (1, '#303c49', 0)], id='treeAirG')
 lin([(0, '#030507', 1), (.7, '#0a1012', 1), (1, '#131c24', 1)], 0, 0, 0, 240, units=True, id='mass')
 lin([(0, '#070b0d', 1), (.5, '#0c1318', 1), (.62, '#0e161c', .9), (.82, '#10181e', .4), (1, '#111a20', 0)], id='lobe')  # darker than the air under it: a lit lobe bottom read as a snowy ridge
-TREE_LIFT = 74
+CLOUD_LIFT = 34  # the cloud base, level all the way across (an arc lifted over the tree looked odd, Nick 2026-09-24)
 lobes = []
 x = -80
 while x < W + 80:
     cy = 176 + 22 * math.sin(x / 140) + 10 * math.sin(x / 47) + rnd.uniform(-8, 8)
-    cy -= TREE_LIFT * min(1, max(0, (x - 800) / 180))  # over the World Tree the cloud base rides higher, so its crown's underside hangs in open air
+    cy -= CLOUD_LIFT
     lobes.append('<ellipse cx="%s" cy="%s" rx="%s" ry="%s" fill="url(#lobe)"/>' % (f(x), f(cy), f(rnd.uniform(62, 110)), f(rnd.uniform(34, 58))))
     x += rnd.uniform(52, 84)
 # the mass the lobes hang from: its base sits inside the lobes' solid tops, so only the lobes' soft bottoms show
-MASS_POLY = pts([(-40, -40), (W + 40, -40)] + [(x_, 150 - TREE_LIFT * min(1, max(0, (x_ - 800) / 180))) for x_ in range(W + 40, -41, -20)])
+MASS_POLY = pts([(-40, -40), (W + 40, -40)] + [(x_, 150 - CLOUD_LIFT) for x_ in range(W + 40, -41, -20)])
 scud = []
 for _ in range(14):
     sx_ = rnd.uniform(0, W)
-    scud.append('<ellipse cx="%s" cy="%s" rx="%s" ry="%s" fill="#0f171d" opacity="%s"/>' % (f(sx_), f(rnd.uniform(218, 250) - (TREE_LIFT if sx_ > 860 else 0)), f(rnd.uniform(40, 90)), f(rnd.uniform(6, 12)), f(rnd.uniform(.5, .85))))
+    scud.append('<ellipse cx="%s" cy="%s" rx="%s" ry="%s" fill="#0f171d" opacity="%s"/>' % (f(sx_), f(rnd.uniform(218, 250) - CLOUD_LIFT), f(rnd.uniform(40, 90)), f(rnd.uniform(6, 12)), f(rnd.uniform(.5, .85))))
 # the cloud's underside in relief: billows shaded by the little light that comes up from the horizon
 defs.append('<filter id="cloudRelief" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB">'
             '<feTurbulence type="fractalNoise" baseFrequency=".0025 .006" numOctaves="5" seed="5" result="n"/>'
@@ -415,7 +418,7 @@ def cloud_flash(cx, cy, rx, ry, grad, period, onset, peak, name, vapor=0):
 
 flash.append(cloud_flash(300, 150, 260, 80, 'flash', 12, 3.1, .65, 'inside the cloud, left'))
 flash.append(cloud_flash(960, 140, 360, 100, 'flash', 24, 9.7, .9, 'inside the cloud, center'))
-flash.append(cloud_flash(1330, 150, 320, 92, 'flashBack', 24, 15.3, .5, 'behind the World Tree, lighting its silhouette', vapor=26))  # high in the crown, dimming toward the island
+flash.append(cloud_flash(1330, 170, 320, 92, 'flashBack', 24, 15.3, .5, 'behind the World Tree, lighting its silhouette', vapor=26))  # high in the crown, dimming toward the island
 flash.append(cloud_flash(640, 120, 260, 80, 'flash', 12, 8.3, .55, 'high in the cloud over the Generator'))
 
 # ------------------------------------------------------------------ far layer (static): curtains, the World Tree, the far plain
@@ -458,18 +461,18 @@ TX = 1290
 
 def ty(y):
     # the pods' heights (glow layer) follow the crown's underside
-    return y - 26
+    return y - 6
 
 
 CROWN_X0, CROWN_X1 = 868, W + 90
 
 
 def crown_top(x):
-    return 60 + 64 * (abs(x - TX) / 560) ** 1.5 + 6 * math.sin(x / 41)
+    return 80 + 64 * (abs(x - TX) / 560) ** 1.5 + 6 * math.sin(x / 41)
 
 
 def crown_bot(x):
-    return 166 - 16 * min(1, abs(x - TX) / 600) + 6 * math.sin(x / 33) + 3 * math.sin(x / 13)
+    return 186 - 16 * min(1, abs(x - TX) / 600) + 6 * math.sin(x / 33) + 3 * math.sin(x / 13)
 
 
 def trunk_hw(y):
@@ -480,7 +483,7 @@ def trunk_hw(y):
 
 
 tl_, tr_ = [], []
-for y in list(range(206, HZ + 7, 6)) + [HZ + 6]:
+for y in list(range(190, HZ + 7, 6)) + [HZ + 6]:
     w_ = trunk_hw(y)
     tl_.append((TX - w_ + 2 * math.sin(y / 17), y))
     tr_.append((TX + 4 + w_ + 2 * math.sin(y / 19 + 1), y))
@@ -499,7 +502,7 @@ roots = ''.join('<polygon points="%s"/>' % pts(limb(x0, y0, cx, cy, x1, y1, w0, 
     (TX - 44, HZ - 34, TX - 74, HZ - 6, TX - 132, HZ + 6, 24, 9), (TX - 22, HZ - 20, TX - 34, HZ - 2, TX - 64, HZ + 7, 18, 8),
     (TX + 30, HZ - 20, TX + 42, HZ - 2, TX + 72, HZ + 7, 18, 8), (TX + 52, HZ - 34, TX + 82, HZ - 6, TX + 140, HZ + 6, 24, 9)))  # low and broad, sinking into the island
 # where it meets the crown the trunk divides into four great limbs that are into the leaves almost at once
-limbs_ = ''.join('<polygon points="%s"/>' % pts(limb(*L, n=20)[0]) for L in (
+limbs_ = ''.join('<polygon points="%s"/>' % pts(limb(L[0], L[1] + 20, L[2], L[3] + 20, L[4], L[5] + 20, L[6], L[7], n=20)[0]) for L in (  # all 20 lower with the crown
     (TX - 20, 222, TX - 90, 196, TX - 250, 150, 28, 9), (TX - 8, 214, TX - 30, 180, TX - 90, 138, 22, 8),
     (TX + 14, 214, TX + 36, 180, TX + 100, 138, 22, 8), (TX + 28, 222, TX + 100, 196, TX + 270, 150, 28, 9),
     (TX - 110, 190, TX - 150, 176, TX - 190, 150, 9, 4), (TX + 118, 188, TX + 160, 176, TX + 206, 150, 9, 4),
@@ -548,14 +551,15 @@ veil = []
 x = TX - 560
 while x < W + 90:
     d_ = min(1, abs(x - TX) / 560)
-    cy = lerp(52, 92, d_) + 14 * math.sin(x / 70) + vr_.uniform(-8, 8)
+    cy = lerp(72, 112, d_) + 14 * math.sin(x / 70) + vr_.uniform(-8, 8)
     veil.append('<ellipse cx="%s" cy="%s" rx="%s" ry="%s" fill="url(#lobe)"/>' % (f(x), f(cy), f(vr_.uniform(50, 96)), f(vr_.uniform(28, 42))))
     x += vr_.uniform(40, 70)
-veil.append('<rect x="%s" y="-40" width="%s" height="%s" fill="url(#mass)"/>' % (f(TX - 620), f(W - TX + 720), f(100)))
+veil.append('<rect x="%s" y="-40" width="%s" height="%s" fill="url(#mass)"/>' % (f(TX - 620), f(W - TX + 720), f(120)))
 scud_ = ''.join('<ellipse cx="%s" cy="%s" rx="%s" ry="%s" fill="#0f171d" opacity="%s"/>' % (f(vr_.uniform(TX - 460, W)), f(vr_.uniform(96, 130)), f(vr_.uniform(40, 80)), f(vr_.uniform(3, 6)), f(vr_.uniform(.35, .6))) for _ in range(5))
 far.append('<!-- the cloud hanging in front of the top of the crown, and rags of scud across it -->'
            '<g filter="url(#cloudRelief)"><g filter="url(#cloud)">%s%s</g></g>' % (''.join(veil), scud_))
-far.append('<!-- the tree hazed by distance and rain --><rect x="%d" y="100" width="1100" height="%d" fill="#27313c" opacity=".12"/>' % (TX - 550, HZ - 90))
+lin([(0, '#27313c', 0), (1, '#27313c', 1)], TX - 560, 0, TX - 330, 0, units=True, id='treeHazeG')  # fading in from the left: a hard rect edge showed
+far.append('<!-- the tree hazed by distance and rain --><rect x="%d" y="100" width="1100" height="%d" fill="url(#treeHazeG)" opacity=".12"/>' % (TX - 560, HZ - 90))
 # mist lying across the trunk at several heights, and rain curtains between it and the viewer: the air
 # between here and there is miles deep
 mist_ = ''.join('<ellipse cx="%s" cy="%s" rx="%s" ry="%s" fill="#2c3642" opacity="%s"/>' % (f(TX + dx), f(y), f(rx), f(ry), f(op)) for dx, y, rx, ry, op in (

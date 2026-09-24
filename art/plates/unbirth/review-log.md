@@ -554,3 +554,18 @@ Nick: "the tree looks like it has some tufts of leaves way close in the foregrou
 **Review.** The visual reviewer found the blend and the cloud bottoms fixed. Taken:
 - A limb carried out under the crown's long left reach, whose flat underside had read as a cloud bank's base.
 - A slightly softer crown edge (crownEdge blur from 0.8 to 1.2).
+
+## The pale oval beside the tree (2026-09-24)
+
+**Nick** circled a pale oval to the left of the World Tree. It was the open air behind the tree: a solid ellipse blurred by 14 units. At that size the blur left its rim visible, as a curved edge running from under the cloud down to the horizon. The tree-haze rect also had a hard left edge at x 730.
+
+**Fixed.** The air is now a radial gradient that falls off smoothly to nothing, with its core kept bright enough that the limbs still silhouette. The haze rect fades in from the left over 230 units. The rain curtains, the soft vertical columns under the cloud, are unchanged.
+
+## A level cloud base (2026-09-24)
+
+**Nick:** the storm clouds arced up over the tree, which looked odd. The cloud base should run straight across.
+
+**Fixed.**
+- The ramp that raised the cloud base over x > 800 is gone. The whole cloud base (lobes, the mass and the scud) now sits 34 higher, level all the way across.
+- To keep the crown's underside hanging in open air under that base, the tree's upper parts are 20 lower: the crown (top and underside), the limbs, the veil over the crown, the pods and the strike behind it.
+- The trunk starts at y 190, so it meets the lowered limbs.

@@ -2,7 +2,7 @@ import React from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { act, fireEvent, render, screen, cleanup } from "@testing-library/react";
 import { MemoryRouter } from "react-router";
-import PowerworksPage from "./powerworksPage";
+import PowerworksPage, { consoleScale } from "./powerworksPage";
 import { PowerworksDraft } from "./powerworksDraft";
 import { kindWords } from "./powerworksVisuals";
 import {
@@ -402,7 +402,7 @@ describe("Powerworks player flow", () => {
     mount();
     fireEvent.click(screen.getByRole("button", { name: "Take the starter squad" }));
     fireEvent.click(screen.getByRole("button", { name: "View turn order" }));
-    const list = screen.getByRole("list");
+    const list = document.querySelector<HTMLElement>(".pw-turn-list")!;
     // The fastest companion leads the public order, with the speed its record reads.
     const avilily = readCompanion(COMPANION_RECORDS.avilily, "A");
     expect(list).toHaveTextContent(
@@ -417,6 +417,32 @@ describe("Powerworks player flow", () => {
       screen.getByRole("heading", { name: "Expedition route" })
     ).toBeInTheDocument();
     expect(screen.getByText("You are here")).toBeInTheDocument();
+  });
+  it("shows the turn order in the bottom bar, marks set orders, and selects a companion from it (layout pass)", () => {
+    mount();
+    fireEvent.click(screen.getByRole("button", { name: "Take the starter squad" }));
+    const strip = screen.getByRole("list", { name: "Turn order" });
+    const turns = Array.from(strip.querySelectorAll("button")).map((b) => b.getAttribute("aria-label"));
+    // The same order the turn order panel reads: the fastest companion first, every
+    // standing unit once, and every companion still waiting for its order.
+    expect(turns[0]).toMatch(/^Turn 1: Avilily, needs an order$/);
+    expect(turns).toHaveLength(6);
+    expect(turns.filter((t) => /needs an order/.test(t ?? ""))).toHaveLength(4);
+    fireEvent.click(screen.getByRole("button", { name: /^Turn \d: Hippochamp/ }));
+    expect(screen.getByRole("button", { name: "Select Hippochamp" })).toHaveAttribute(
+      "aria-expanded",
+      "true"
+    );
+  });
+  it("draws the play screen larger on a large landscape screen and never smaller (layout pass)", () => {
+    expect(consoleScale(1280, 720)).toBe(1);
+    expect(consoleScale(1920, 1080)).toBe(1.5);
+    expect(consoleScale(2560, 1440)).toBe(2);
+    // The smaller ratio wins, so the whole composition fits: a tall screen grows by width.
+    expect(consoleScale(1920, 1200)).toBe(1.5);
+    expect(consoleScale(3440, 1440)).toBe(2);
+    expect(consoleScale(1024, 768)).toBe(1);
+    expect(consoleScale(390, 844)).toBe(1);
   });
   it("offers squadmates as targets for a helpful move and previews what lands on them (pass 5)", () => {
     mount();
