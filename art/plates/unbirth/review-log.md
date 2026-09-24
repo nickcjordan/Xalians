@@ -537,3 +537,20 @@ Nick: "the tree looks like it has some tufts of leaves way close in the foregrou
 - A little taper up the trunk and more flare into the roots.
 
 **Also fixed: the home stage on a tall window.** The painting's row stretched to the full stage height, and the frame sat at its foot under an empty band (Nick's screenshot at about 2000 by 1340). The row now stops at the painting's height (`--fit`), and the scene is centered.
+
+## Canopy into the cloud, and the cloud's bottoms (2026-09-24)
+
+**Nick:** the canopy looks better but could blend into the clouds more, and some hard cloud bottoms came back.
+
+**Why.**
+- The whole crown sat in front of the dark cloud body, and it was lighter than that cloud. Its lit dome tops made a cumulus-like top edge, so it read as a green cloud laid over grey.
+- The cloud lobes were solid to their bottoms. Against the paler air beside the tree that gave them a hard lower line.
+
+**Changed.**
+- The cloud lobes fade out over their lower 40%. The cloud mass is a polygon whose base sits inside the lobes' solid tops.
+- The cloud base rides 74 higher over the tree (it was 46), so the crown's underside hangs in open air.
+- The crown's domes have lower relief. A mask (crownFade) fades the crown's upper part out along its own outline, deeper at the thin ends, so the crown goes up into the cloud with no top edge.
+
+**Review.** The visual reviewer found the blend and the cloud bottoms fixed. Taken:
+- A limb carried out under the crown's long left reach, whose flat underside had read as a cloud bank's base.
+- A slightly softer crown edge (crownEdge blur from 0.8 to 1.2).
