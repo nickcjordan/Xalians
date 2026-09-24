@@ -3,11 +3,10 @@ import ReclamationFigure, { ReclamationSilhouette } from './reclamationFigure';
 import XalianImage from '../../xalianImage';
 import { pieceShadowFilter } from '../duel/board/duelPieceToken';
 import { team } from '../../../constants/designTokens';
-import { SwiftGlyph } from './reclamationGlyphs';
+import { SwiftGlyph, MediumGlyph } from './reclamationGlyphs';
 import { formatHoldShown, countWord } from './reclamationNarration';
-import { strainNote, strainCause } from './reclamationPreview';
 import { elementOf } from './reclamationVocabulary';
-import { Standing, standingSentence } from './reclamationInstruments';
+import { Standing, standingSentence, WhyMarks } from './reclamationInstruments';
 import { getSpeciesTypeSymbol } from '../../../utils/svgUtil';
 
 /*
@@ -55,40 +54,10 @@ function pctOnScale(c) {
 	return ((clamped - SCALE_MIN_C) / (SCALE_MAX_C - SCALE_MIN_C)) * 100;
 }
 
-function MediumGlyph({ medium }) {
-	const m = String(medium || '').toLowerCase();
-	if (m === 'liquid') {
-		return (
-			<svg className="rec-medium-glyph" viewBox="0 0 12 12" aria-hidden="true">
-				<path d="M6 1.2 C6 1.2 2.4 5.6 2.4 7.8 A3.6 3.6 0 0 0 9.6 7.8 C9.6 5.6 6 1.2 6 1.2 Z" />
-			</svg>
-		);
-	}
-	if (m === 'vacuum') {
-		return (
-			<svg className="rec-medium-glyph" viewBox="0 0 12 12" aria-hidden="true">
-				<circle cx="6" cy="6" r="3.6" fill="none" strokeWidth="1.4" />
-				<circle cx="6" cy="6" r="0.9" />
-			</svg>
-		);
-	}
-	if (m === 'solid') {
-		return (
-			<svg className="rec-medium-glyph" viewBox="0 0 12 12" aria-hidden="true">
-				<path d="M1.5 10.5 L4.5 3.5 L7 7.5 L8.5 5 L10.5 10.5 Z" />
-			</svg>
-		);
-	}
-	// gas: three drifting strokes
-	return (
-		<svg className="rec-medium-glyph" viewBox="0 0 12 12" aria-hidden="true">
-			<path d="M1.5 3.2 C3 2 4.5 4.4 6 3.2 S9 2 10.5 3.2 M1.5 6.2 C3 5 4.5 7.4 6 6.2 S9 5 10.5 6.2 M1.5 9.2 C3 8 4.5 10.4 6 9.2 S9 8 10.5 9.2" fill="none" strokeWidth="1.2" strokeLinecap="round" />
-		</svg>
-	);
-}
-
-export function EnvironmentScale({ site, ghost }) {
+export function EnvironmentScale({ site, ghost, why }) {
 	const env = (site && site.environment) || {};
+	// pass 57: the reason mark the card's column carries, beside the bands it comes from
+	const climate = why && why.climate ? why.climate : null;
 	const t = env.temperatureC || {};
 	const hasBand = typeof t.min === 'number' && typeof t.max === 'number';
 	const tol = ghost && ghost.tolerance;
@@ -115,6 +84,9 @@ export function EnvironmentScale({ site, ghost }) {
 				)}
 			</span>
 			<span className="rec-env-readout g-mono">{hasBand ? `${t.min} to ${t.max}\u00b0C` : 'no band'}</span>
+			<span className="rec-env-why" data-env-why={climate ? climate.cause || 'strained' : undefined}>
+				{climate && <WhyMarks reasons={{ climate }} />}
+			</span>
 		</div>
 	);
 }
@@ -308,6 +280,8 @@ function ReclamationWorld({
 							hurt: !!(hurt && hurt[entry.recordId]),
 							strainLevel: h ? h.strainLevel : undefined,
 							isHome: h ? h.isHome : false,
+							// pass 57: the marks a card's column carries, on the creature standing here
+							reasons: h ? h.reasons : null,
 							unstrainedHold: h ? h.unstrained : undefined,
 							baseHold: h ? h.baseHold : undefined,
 							// the base redesign's one glyph per creature: what it does at the Clash
@@ -365,7 +339,13 @@ function ReclamationWorld({
 								<span className="rec-site-symbol" aria-hidden="true">{getSpeciesTypeSymbol(site.world.element, true, 16, 'rec-site-symbol-svg')}</span>
 								<h3 className="rec-site-name" title={`${site.name}${site.description ? `. ${site.description}` : ''}`}>{site.world.planet}</h3>
 								{advanced && <span className="rec-site-place" title={site.description || undefined}>{site.name}</span>}
-								{advanced && <span className="rec-env-slot"><EnvironmentScale site={site} ghost={ghost} /></span>}
+								{/*
+									PASS 57. The climate in every mode: the flame or snowflake on a card's column
+									names this world's heat or cold, so the world shows its band, and a creature
+									pointed at lays its own band over it (Nick: "What does it mean that a ghost-type
+									creature going to a sand-based world shows a flame icon?").
+								*/}
+								<span className="rec-env-slot"><EnvironmentScale site={site} ghost={ghost} why={previewHere && previewHere.why ? previewHere.why : null} /></span>
 								{/* the stake: what this world counts, or the control that puts it up */}
 								<StakeMark stake={stake} you={you} />
 								{canStake && (
@@ -402,7 +382,7 @@ function ReclamationWorld({
 										now={front}
 										preview={previewHere ? previewHere.totals : null}
 										scale={standingScale}
-										marks={ghost && previewHere ? previewMarks(ghost, site, previewHere.forecast) : null}
+										marks={null}
 										verdict={verdict || null}
 									/>
 									{!ghost && movingRecordId && <span className="rec-ghost rec-ghost--relocate" aria-label="Move here" title="Move here"><SwiftGlyph /></span>}
@@ -421,6 +401,31 @@ function ReclamationWorld({
 
 								<div className={`rec-rank rec-rank--mine${mine.length > 4 ? ' rec-rank--crowded' : ''}`} data-rank="mine" data-rank-rows={rankGrid(mine.length)['--rank-rows-n']} data-rank-list={mine.length >= 2 && mine.length <= 4 ? '' : undefined} data-rank-rows-wide={rankGrid(mine.length)['--rank-rows-w']} style={rankGrid(mine.length)}>
 									{mine.map((entry) => <ReclamationFigure key={entry.recordId} {...figureProps(entry, you, 'up')} />)}
+									{/*
+										PASS 57. The creature pointed at or lifted stands in your half of every world
+										as it would there: its silhouette at the size of a piece, what it would move
+										the world (its card's number) and why, big, in the room an empty world was
+										not using. Laid over the rank, so pointing never moves a figure.
+									*/}
+									{ghost && previewHere && previewHere.why && ghost.record && (
+										<span key={`ghost-${ghost.record.id}`} className={`rec-ghost-piece${mine.length ? ' rec-ghost-piece--beside' : ''}`} data-ghost-piece={site.id} aria-hidden="true">
+											<span className="rec-ghost-piece-art">
+												<XalianImage variant="token" speciesName={ghost.record.species} primaryType={elementOf(ghost.record)} padding="0px" fill="black" filter={pieceShadowFilter(team.one, 96)} moreClasses="rec-ghost-piece-img" />
+											</span>
+											<span className="rec-ghost-piece-read">
+												<b className="g-mono" data-ghost-swing={previewHere.why.swing.toFixed(2)}>{signedHold(previewHere.why.swing)}</b>
+												<WhyMarks reasons={previewHere.why} className="rec-ghost-piece-whys" />
+											</span>
+											{/* pass 57, after the blind readers: when part of the number comes off the rival, say how much of it is which */}
+											{previewHere.why.taken > 0.5 && (
+												<span className="rec-ghost-piece-split g-mono" data-ghost-split>
+													<i className="rec-ghost-piece-own">{formatHoldShown(Math.max(0, previewHere.why.own + previewHere.why.allies))}</i>
+													<span aria-hidden="true"> + </span>
+													<i className="rec-ghost-piece-taken">{formatHoldShown(previewHere.why.taken)}</i>
+												</span>
+											)}
+										</span>
+									)}
 								</div>
 							</div>
 						</section>
@@ -432,29 +437,6 @@ function ReclamationWorld({
 }
 
 /*
-	PASS 54. Why the creature under the pointer holds what it would here, as marks beside the
-	number at the end of your bar: a house on its home world, the strain glyph (its reason as
-	the title) where the world is too hot, too cold or the wrong air, a cross where the Clash
-	would drive it to nothing. The number already counts all three. The creature's own
-	silhouette rides the end of the run it would add, so the preview reads as that creature
-	sent here and not as the world as it stands (the first blind readers of the standing
-	took the lifted bars for the board).
-*/
-function previewMarks(ghost, site, forecast) {
-	const strain = strainNote(ghost, site, formatHoldShown);
-	const after = forecast && forecast[ghost.recordId];
-	const record = ghost.record;
-	return {
-		art: record ? (
-			<XalianImage variant="token" speciesName={record.species} primaryType={elementOf(record)} padding="0px" fill="black" filter={pieceShadowFilter(team.one, 44)} moreClasses="rec-standing-art-img" />
-		) : null,
-		home: !!ghost.isHome,
-		strain: strain ? (strainCause(ghost.tolerance, site) || 'strained') : null,
-		falls: !!(after && after.downed),
-	};
-}
-
-/*
 	PASS 37. A rank is a fixed box, so the figures in it size to the box rather than the box to
 	the figures. The rows and columns a rank of n needs are handed to the CSS, which divides
 	the rank's own measured size by them (container query units), so a world with eleven
@@ -462,6 +444,11 @@ function previewMarks(ghost, site, forecast) {
 	Two grids are handed over, narrow and wide, and a container query on the rank's own
 	width picks between them.
 */
+// pass 57: what a send would move a world, as its card's column prints it
+function signedHold(v) {
+	return v < -0.5 ? `−${formatHoldShown(-v)}` : `+${formatHoldShown(Math.max(0, v))}`;
+}
+
 export function rankGrid(n) {
 	const count = Math.max(1, n);
 	// a narrow rank (a phone's world, about 120px) takes four abreast, a wide one seven

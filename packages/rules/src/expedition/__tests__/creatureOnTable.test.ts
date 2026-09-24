@@ -170,25 +170,42 @@ describe('bolster lifts one grade of strain (assumption 8)', () => {
 });
 
 describe('worldMatchupMultiplier', () => {
+	// pass 57: the type chart is a lever, off as shipped; these pin what it does when it is on
+	const CHART = { elementMatchups: true };
 	test('a favorable matchup (matrix[creature][world] = 2) doubles hold contribution', () => {
 		// fire vs plant world: matrix[Fire][Plant] = 2 per typeEffectivenessMatrix.json
 		const r = record({ element: { primary: 'fire', affinities: { fire: 100 } } });
 		const w = world({ element: 'plant' });
-		expect(worldMatchupMultiplier(r, w.element)).toBeCloseTo(2, 5);
+		expect(worldMatchupMultiplier(r, w.element, CHART)).toBeCloseTo(2, 5);
 	});
 
 	test('an unfavorable matchup (matrix[creature][world] = 0.5) halves hold contribution', () => {
 		// fire vs water world: matrix[Fire][Water] = 0.5
 		const r = record({ element: { primary: 'fire', affinities: { fire: 100 } } });
 		const w = world({ element: 'water' });
-		expect(worldMatchupMultiplier(r, w.element)).toBeCloseTo(0.5, 5);
+		expect(worldMatchupMultiplier(r, w.element, CHART)).toBeCloseTo(0.5, 5);
 	});
 
 	test('a hard-zero matchup is softened to 0.25, never a full exclusion', () => {
 		// fire vs ghost world: matrix[Fire][Ghost] = 0
 		const r = record({ element: { primary: 'fire', affinities: { fire: 100 } } });
 		const w = world({ element: 'ghost' });
-		expect(worldMatchupMultiplier(r, w.element)).toBeCloseTo(0.25, 5);
+		expect(worldMatchupMultiplier(r, w.element, CHART)).toBeCloseTo(0.25, 5);
+	});
+
+	test('pass 57: a schema 5 element (a bare string) reads the chart when the lever is on', () => {
+		// the conversion's miss: `element.primary` of 'fire' is undefined, so the chart answered 1
+		const r = record({ element: 'fire' as never });
+		expect(worldMatchupMultiplier(r, 'plant', CHART)).toBeCloseTo(2, 5);
+		expect(worldMatchupMultiplier(r, 'water', CHART)).toBeCloseTo(0.5, 5);
+	});
+
+	test('pass 57: off as shipped, so a world never scales a hold by element', () => {
+		const v4 = record({ element: { primary: 'fire', affinities: { fire: 100 } } });
+		const v5 = record({ element: 'fire' as never });
+		expect(worldMatchupMultiplier(v4, 'plant')).toBe(1);
+		expect(worldMatchupMultiplier(v5, 'plant')).toBe(1);
+		expect(worldMatchupMultiplier(v5, 'plant', { elementMatchups: false })).toBe(1);
 	});
 });
 
@@ -295,9 +312,11 @@ describe('act magnitudes', () => {
 		const targetFavorable = record({ id: 'target1', element: { primary: 'plant', affinities: { plant: 100 } } });
 		const targetUnfavorable = record({ id: 'target2', element: { primary: 'water', affinities: { water: 100 } } });
 		const act = buildActs(actor, 1)[0];
-		const magFavorable = magnitudeAgainst(actor, act, targetFavorable);
-		const magUnfavorable = magnitudeAgainst(actor, act, targetUnfavorable);
+		const magFavorable = magnitudeAgainst(actor, act, targetFavorable, { elementMatchups: true });
+		const magUnfavorable = magnitudeAgainst(actor, act, targetUnfavorable, { elementMatchups: true });
 		expect(magFavorable).toBeGreaterThan(magUnfavorable);
+		// pass 57: off as shipped, a blow lands the same on every element
+		expect(magnitudeAgainst(actor, act, targetFavorable)).toBe(magnitudeAgainst(actor, act, targetUnfavorable));
 	});
 });
 

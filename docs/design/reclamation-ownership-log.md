@@ -1126,3 +1126,33 @@ Validation report regenerated:
   - why a creature is worth its column (hold against what its attacks take);
   - who will hit whom when an enemy arrives.
 - **Mandala:** per Nick ("I don't want you to change things just for the sake of it ... I actually think we have put the mechanics in a decent place"), nothing more from the study is planned. It stays a reference.
+
+### Pass 57 (2026-09-24): where the eye goes, and why a column is as tall as it is
+
+**Nick:** "Focus on making the important pieces big and loud so the user's attention is brought to the right spot ... part of your work seemed to just make a bunch of things smaller too." And: "it's still not obvious to me why one creature would fare better at one of the worlds over another ... What does it mean that a ghost-type creature going to a sand-based world shows a flame icon?" The design and every number are in `reclamation-attention-and-why.md`.
+
+- **Found: the type chart has done nothing since 2026-09-21.** Schema 5 writes the element as a string and the engine read `element.primary`, so the world matchup and the target matchup both answered 1 for every live creature. The reader is fixed and the chart is a lever, `elementMatchups`, shipped **off** so the game is unchanged (seed 7 matches pass 56 to the last figure). With it on: bolster keepers 50 to 52 percent (41 to 43 off), strike keepers 66 to 67 (67.5 to 69.6 off), the other gauges about level. The world matchup contradicts what a player reads an element to mean (fire at half strength on the fire world). Every species' element is its home world's, so the element symbol says where a creature comes from.
+- **The column says why.** `reclamationFit.breakdown` splits every swing into what the creature keeps, what the Clash takes off it, what it adds to allies and what it takes off the rival (a test holds the parts to the engine's number), and names the reasons: home, climate (hot, cold, the wrong air), company, falls. A card's column is stacked from those parts, a dashed line marks its body, and marks under each column say why it sits above or below: a house, a flame, a snowflake, the world's air struck out, a cross.
+- **The same reasons everywhere.** Every world shows its temperature band (it was advanced mode only), with a pointed creature's band laid over it; the creature pointed at stands as a ghost piece in your half of every world with its number, its marks and, when part of the number comes off the rival, the split (`3+12`); a creature on the board wears its marks beside its name; the dossier drops "World matchup x1".
+- **Where the eye goes.** `data-moment` (mine, lifted, theirs, clash, ruling) lights the moment's subject and quiets the rest: the squad lit and a quarter taller on your move, the other cards stepped back while one is lifted, the rival's half of every world glowing brass while it chooses, the squad folded away through the Clash and the Ruling. The standing, the world names, the card numbers and the score all grew.
+
+**Measured.** Blind readers (the pass 54 protocol, five moments, one reader per build):
+
+| | Before | After, as shipped |
+|---|---|---|
+| Why a creature is worth more at one world (1 to 10) | 3 | 6 (round 1 "about an 8") |
+| How easily you could make a good move | 5 | 6 |
+| The why questions (Terragoyle, Figzy, Hippochamp, who falls, Graviclaw) | two "cannot tell", one wrong list | all right, fairly sure or sure |
+
+**Verified:**
+
+- 623 rules tests pass; 1665 web tests pass.
+- The four table checks are green.
+- Captured at 1896 by 1100, 390 by 844 and 375 by 667.
+
+**Open:**
+
+- Round 1's empty worlds are still the largest thing on the screen while the decision is on the cards.
+- In round 2 a card's number sums what a creature keeps and what it takes; the last reader asked for the fight's result on the card ("7 v 0").
+- Whether element should matter (the chart, off) is Nick's call. If it should, the target matchup alone is the candidate, not the world matchup.
+- Strike keepers still win 67 to 70 percent.

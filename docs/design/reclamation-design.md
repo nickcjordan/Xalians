@@ -112,12 +112,12 @@ Each round the frame loads three worlds, drawn from the fourteen with no world r
 
 Everything a creature is on the table is derived from its record; nothing is stored on the record.
 
-- **Hold** is its staying power at a site and what it contributes to winning the site. Base hold is the mean of vitality, resilience, and endurance mapped through the interpretation layer's compression (`holdFloor` 2.8 to `holdCeiling` 17.6 over the attribute range, giving a species mean spread near two to one; base redesign assumption 11). At a site it is scaled by the world matchup, home ground, strain, bolster and company.
-- **World matchup** reads the type chart with the creature as attacker and the world's element as defender (`matrix[creature][world]`), softened so a 0 becomes 0.25, and blended with a graded secondary affinity exactly as the first design did. A Plant creature on Poseidas holds double; a Fire creature holds half.
+- **Hold** is its staying power at a site and what it contributes to winning the site. Base hold is the mean of vitality, resilience, and endurance mapped through the interpretation layer's compression (`holdFloor` 2.8 to `holdCeiling` 17.6 over the attribute range, giving a species mean spread near two to one; base redesign assumption 11). At a site it is scaled by home ground, strain, bolster and company (and by the world matchup when `elementMatchups` is on; it is off, see the next line).
+- **World matchup** reads the type chart with the creature as attacker and the world's element as defender (`matrix[creature][world]`), softened so a 0 becomes 0.25, and blended with a graded secondary affinity exactly as the first design did. A Plant creature on Poseidas holds double; a Fire creature holds half. **Off (pass 57, `elementMatchups` false).** Schema 5 writes a creature's element as a bare string and the engine still read `element.primary`, so from the schema 5 conversion (2026-09-21) the chart answered 1 for every live creature, here and against a target. Pass 57 fixed the reader, made the chart a lever, and shipped it off so the game played since then is unchanged; every species' element is its home world's, so an element symbol says where a creature comes from and home ground is what it buys.
 - **Home ground:** hold is multiplied by 1.5 on the creature's origin world.
 - **Strain:** a creature outside a site's environment is strained: hold and act magnitudes halved, and it acts last regardless of initiative. Since 2026-09-03 the temperature test is graded (assumption 19): a creature whose tolerance covers the site band, or at least half of it, is comfortable; a smaller overlap, or a gap of up to 30 C between the bands, is strained; a wider gap is severe, as is a medium the creature cannot breathe: a quarter instead of a half. A medium the body merely does not tolerate around it is strained. Strain never excludes; a strained body still blocks nothing, still counts, and is still a bad idea unless the alternatives are worse.
 - **Speed** is the mean of reflex and agility. Higher attacks first. Among equals, the creature sent earlier attacks first. At or above `swiftSpeed` the creature is swift and may move once a round.
-- **The blow** of a strike or area creature has magnitude `max(1, round((intensity / 10) x (0.5 + governingAttr / 100)))` from its favored attacking ability, rescaled by `magnitudeScale`; against a target it is further scaled by the type chart, creature against target's element, blended with the target's secondary affinity, and by the striker's strain. Presences have no blow.
+- **The blow** of a strike or area creature has magnitude `max(1, round((intensity / 10) x (0.5 + governingAttr / 100)))` from its favored attacking ability, rescaled by `magnitudeScale`; against a target it is further scaled by the striker's strain, and by the type chart (creature against target's element, blended with the target's secondary affinity) when `elementMatchups` is on, which as shipped it is not. Presences have no blow.
 - **Conduct** is one printed sentence saying whom the creature chooses when it acts, derived from archetype, traits, and temperament. See below.
 - **Traits** appear as keywords with fixed meanings. See below.
 
@@ -142,7 +142,7 @@ Written because a fresh reader given the table's numbers and the rules above pre
 1. **Every attacker declares.** Its power against one particular target is computed in this order, and the order matters because each step multiplies the one before:
    1. the printed power of its one attack (`intensity / 10 x (0.5 + governing attribute / 100)`, rounded, then times `magnitudeScale`),
    2. times the striker's own strain (a half when strained, a quarter when severe),
-   3. times the element matchup of the attacker against that target,
+   3. times the element matchup of the attacker against that target (1 while `elementMatchups` is off, as shipped since pass 57),
    4. **if the attacker is a sweep, times `sweepDiscount` (0.6)**,
    5. **if the TARGET is armored, times (1 - `armoredReduction`), so three quarters**,
    6. rounded to one decimal.
@@ -199,7 +199,7 @@ One sentence per creature, derived, never authored. First pass:
 | bulwark, stalwart | the enemy threatening the ally with the least hold | the ally with the least hold |
 | survivor | the enemy with the lowest magnitude | itself |
 | skirmisher, runner | the enemy with lower initiative than itself, weakest first | the fastest ally |
-| seeker, sage | the enemy its element is most effective against | the ally most vulnerable to the enemies present |
+| seeker, sage | the enemy its element is most effective against (with `elementMatchups` off every element is equal, so the enemy sent earliest; the dossier says so) | the ally most vulnerable to the enemies present |
 | virtuoso, sovereign | the enemy with the highest magnitude | the ally with the highest magnitude |
 | rogue | the enemy with the highest hold it can rout, else the weakest | the ally with the highest magnitude |
 

@@ -19,7 +19,9 @@ export const LEGEND_ITEMS = [
 	{ key: 'standing', selector: '[data-standing]', text: 'Who holds this world after the Clash: the rival’s bar above, yours below, on one scale for all three worlds. The longer bar takes it. Hatched is what the Clash takes; pass the brass tick to lead.' },
 	{ key: 'world', selector: '[data-site-id]', fallbackFor: 'standing', text: 'A world goes to whoever holds more of it after the Clash. The rival stands above the seam, you below.' },
 	{ key: 'bar', selector: '[data-rank] .rec-figure-foot', text: 'A creature’s hold. A red striped end is what the Clash would take from it.' },
-	{ key: 'fit', selector: '[data-slot-state="hand"] [data-fit]', text: 'What this creature would add to each world if sent now, counting what it does in the Clash, in world order. Past a brass tick, it takes the lead there.' },
+	{ key: 'fit', selector: '[data-slot-state="hand"] [data-fit]', text: 'What this creature would add to each world if sent now, in world order: its own hold in the world’s color, what it would take off the rival there in brass, and hatched what the Clash would take off it. Past the brass pointer, it takes the lead there.' },
+	{ key: 'why', selector: '[data-slot-state="hand"] .rec-fit .rec-why', text: 'The dashed line is what it holds at a world that neither helps nor hurts it. Under each column, why it stands above or below: a house on its home world (half again as much), a flame or a snowflake where the world is too hot or too cold, the world’s air struck out where it cannot breathe (half, or a quarter).' },
+	{ key: 'climate', selector: '[data-site-id] .rec-env-scale', text: 'The world’s temperature band. Point at a creature and its own band lies over it: where the two miss, the world strains it.' },
 	{ key: 'role', selector: '[data-slot-state="hand"] .rec-plinth-role', text: 'Its role in the Clash: strike one, sweep all, shield, or bolster.' },
 	{ key: 'stake', selector: '[data-stake-mode]', text: 'Once a game: make one world count two.' },
 ];

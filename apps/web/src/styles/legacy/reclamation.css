@@ -6121,20 +6121,7 @@
 	background: linear-gradient(to top, color-mix(in srgb, var(--g-el) 10%, transparent), transparent);
 	transition: opacity 160ms ease;
 }
-.rec-console--match[data-terminal] .rec-fit-bar {
-	position: absolute;
-	left: 18%;
-	right: 18%;
-	bottom: 0;
-	height: 100%;
-	background: color-mix(in srgb, var(--g-el) 70%, var(--g-hull-lo));
-	transform-origin: 50% 100%;
-	transform: scaleY(var(--fit, 0));
-	transition: transform 220ms ease, background-color 160ms ease;
-}
 /* a column that clears the rival's lead there is lit full: this one alone would take it */
-.rec-console--match[data-terminal] .rec-fit-col--takes .rec-fit-bar { background: var(--g-el); box-shadow: 0 0 8px color-mix(in srgb, var(--g-el) 70%, transparent); }
-.rec-console--match[data-terminal] .rec-fit-col--over .rec-fit-bar { border-top: 2px solid var(--g-ink); }
 .rec-console--match[data-terminal] .rec-fit-col--hurts { border-bottom-color: var(--rec-loss); }
 /* the rival's lead at that world, on the same scale */
 .rec-console--match[data-terminal] .rec-fit-tick {
@@ -6162,7 +6149,6 @@
 .rec-console--match[data-terminal] .rec-fit-col--dim { opacity: 0.22; }
 .rec-console--match[data-terminal] .rec-fit-col--focus { background: linear-gradient(to top, color-mix(in srgb, var(--g-el) 22%, transparent), transparent); }
 .rec-console--match[data-terminal] .rec-fit-col--gone { opacity: 0; }
-.rec-console--match[data-terminal] .rec-fit-col--sent .rec-fit-bar { transform: scaleY(0.35); background: var(--rec-you); }
 .rec-console--match[data-terminal] .rec-fit--off { opacity: 0.6; }
 .rec-console--match[data-terminal] .rec-plinth-tag svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 .rec-console--match[data-terminal] .rec-plinth-tag--holding { color: var(--rec-you); }
@@ -6235,7 +6221,6 @@
 
 /* pass 52, round 2 */
 .rec-console--match[data-terminal] .rec-site-floor { container-type: size; }
-.rec-console--match[data-terminal] .rec-fit-col--short .rec-fit-bar { opacity: 0.5; }
 
 /* pass 52, round 3: each world wears its element; the rival lead tick stands proud of its column */
 .rec-console--match[data-terminal] .rec-site-head { border-bottom: 2px solid color-mix(in srgb, var(--g-el) 55%, transparent); }
@@ -6275,16 +6260,6 @@
 }
 .rec-console--match[data-terminal] .rec-fit-col--focus .rec-fit-well { background: linear-gradient(to top, color-mix(in srgb, var(--g-el) 24%, transparent), transparent); }
 .rec-console--match[data-terminal] .rec-fit-col--hurts .rec-fit-well { border-bottom-color: var(--rec-loss); }
-.rec-console--match[data-terminal] .rec-fit-home {
-	position: absolute;
-	left: 50%;
-	bottom: -9px;
-	width: 10px;
-	height: 8px;
-	margin-left: -5px;
-	color: var(--g-brass-light);
-}
-.rec-console--match[data-terminal] .rec-fit-home svg { display: block; width: 100%; height: 100%; fill: currentColor; }
 .rec-console--match[data-terminal] .rec-plinth .rec-fit { margin-bottom: 8px; }
 
 .rec-console--match[data-terminal] .rec-scoreboard {
@@ -6309,7 +6284,6 @@
 @media (max-width: 760px) {
 	.rec-console--match[data-terminal] .rec-fit-col { grid-template-rows: 10px var(--fit-h); }
 	.rec-console--match[data-terminal] .rec-fit-num { font-size: 9px; line-height: 10px; letter-spacing: -0.03em; }
-	.rec-console--match[data-terminal] .rec-fit-home { width: 7px; height: 6px; margin-left: -3.5px; bottom: -7px; }
 	.rec-console--match[data-terminal] .rec-plinth .rec-fit { margin-bottom: 6px; }
 	.rec-console--match[data-terminal] .rec-scoreboard { column-gap: 4px; row-gap: 3px; grid-template-columns: auto auto 10px; }
 	.rec-console--match[data-terminal] .rec-scoreboard .rec-pip { width: 10px; height: 7px; }
@@ -6847,12 +6821,6 @@
 .rec-console--match[data-terminal] .rec-standing--mine .rec-standing-lane--theirs .rec-standing-num,
 .rec-console--match[data-terminal] .rec-standing--theirs .rec-standing-lane--mine .rec-standing-num { opacity: 0.7; }
 /* why the previewed creature holds what it would: home, strain, falls */
-.rec-console--match[data-terminal] .rec-standing-why { display: inline-flex; }
-.rec-console--match[data-terminal] .rec-standing-why svg { width: calc(var(--st-num) * 0.9); height: calc(var(--st-num) * 0.9); display: block; }
-.rec-console--match[data-terminal] .rec-standing-why--home { color: var(--g-brass-light); }
-.rec-console--match[data-terminal] .rec-standing-why--strain { color: var(--g-lamp-amber); }
-.rec-console--match[data-terminal] .rec-standing-why--falls { color: var(--rec-loss); }
-.rec-console--match[data-terminal] .rec-standing-why--falls svg { fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; }
 /* the Ruling: the pennant at the end of the winner's bar, the loser's bar dimmed */
 .rec-console--match[data-terminal] .rec-standing .rec-crest {
 	padding: 0;
@@ -6998,23 +6966,9 @@
    leave it, the hatched run above what the Clash would take, a cross when it would fall. A
    swift creature that may still move shows what each move would do, striped as every "would
    be" on the table is. */
-.rec-console--match[data-terminal] .rec-fit-col--sent .rec-fit-bar { transform: scaleY(var(--fit, 0)); background: var(--rec-you); }
-.rec-console--match[data-terminal] .rec-fit-going {
-	position: absolute;
-	left: 18%;
-	right: 18%;
-	bottom: 0;
-	height: 100%;
-	transform-origin: 50% 100%;
-	transform: scaleY(var(--fit-going, 0));
-	background: repeating-linear-gradient(135deg, color-mix(in srgb, var(--rec-loss) 75%, transparent) 0 2px, color-mix(in srgb, var(--rec-loss) 18%, transparent) 2px 5px);
-}
 .rec-console--match[data-terminal] .rec-fit-col--sent .rec-fit-num { color: var(--rec-you); }
 .rec-console--match[data-terminal] .rec-fit-col--falls .rec-fit-num { color: var(--rec-loss); }
 .rec-console--match[data-terminal] .rec-fit-falls { display: inline-block; width: 10px; height: 10px; vertical-align: -1px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; }
-.rec-console--match[data-terminal] .rec-fit-col--move .rec-fit-bar {
-	background: repeating-linear-gradient(0deg, color-mix(in srgb, var(--rec-you) 70%, transparent) 0 3px, color-mix(in srgb, var(--rec-you) 35%, transparent) 3px 5px);
-}
 .rec-console--match[data-terminal] .rec-fit-col--move .rec-fit-num { color: var(--rec-you); opacity: 0.85; }
 
 /* pass 55, keep one back: a creature left in hand with no sends left is the reserve */
@@ -7049,4 +7003,427 @@
 }
 @media (prefers-reduced-motion: reduce) {
 	.rec-console--match[data-terminal] .rec-sites { transition: none; }
+}
+
+/* --- pass 57: where the eye goes, and why a column is as tall as it is ------------------
+   docs/design/reclamation-attention-and-why.md. Nick, 2026-09-24: "focus on making the
+   important pieces big and loud so the user's attention is brought to the right spot ...
+   part of your work seemed to just make a bunch of things smaller too." The instruments a
+   decision is made from grow (the world's standing, the card's columns, the world's name
+   and climate); `data-moment` on the table quiets whatever the moment is not about. */
+
+/* the world's standing: thicker bars, bigger numbers */
+.rec-console--match[data-terminal] {
+	--st-h: calc(24px * var(--rec-scale));
+	--st-gap: calc(10px * var(--rec-scale));
+	--st-num: calc(26px * var(--rec-scale));
+	--why: calc(15px * var(--rec-scale));
+}
+@media (min-width: 761px) and (max-height: 820px) {
+	.rec-console--match[data-terminal] { --st-h: 17px; --st-gap: 8px; --st-num: 20px; --why: 13px; }
+}
+@media (min-width: 761px) and (max-height: 700px) {
+	.rec-console--match[data-terminal] { --st-h: 13px; --st-gap: 6px; --st-num: 16px; --why: 12px; }
+}
+@media (max-width: 760px) {
+	.rec-console--match[data-terminal] { --st-h: 9px; --st-gap: 8px; --st-num: 12px; --why: 10px; }
+}
+.rec-console--match[data-terminal] .rec-standing-num { padding: 0 calc(var(--st-num) * 0.25); gap: calc(var(--st-num) * 0.2); }
+.rec-console--match[data-terminal] .rec-standing-art {
+	width: calc(var(--st-num) * 1.7);
+	height: calc(var(--st-num) * 1.7);
+	margin: calc(var(--st-num) * -0.35) 0;
+}
+
+/* the reason marks, the same on a column, a preview and a creature standing on a world */
+.rec-console--match[data-terminal] .rec-whys { display: inline-flex; align-items: center; justify-content: center; gap: 2px; min-width: 0; }
+.rec-console--match[data-terminal] .rec-why { display: inline-flex; flex: 0 0 auto; width: var(--why); height: var(--why); }
+.rec-console--match[data-terminal] .rec-why svg { display: block; width: 100%; height: 100%; stroke-width: 2.1; }
+.rec-console--match[data-terminal] .rec-why--home { color: var(--g-el); filter: drop-shadow(0 0 3px color-mix(in srgb, var(--g-el) 70%, transparent)); }
+.rec-console--match[data-terminal] .rec-why--home svg { fill: color-mix(in srgb, var(--g-el) 35%, transparent); }
+.rec-console--match[data-terminal] .rec-why--hot { color: var(--g-lamp-amber); }
+.rec-console--match[data-terminal] .rec-why--hot svg { fill: color-mix(in srgb, var(--g-lamp-amber) 35%, transparent); }
+.rec-console--match[data-terminal] .rec-why--cold { color: var(--g-el-ice); }
+.rec-console--match[data-terminal] .rec-why--breath,
+.rec-console--match[data-terminal] .rec-why--medium,
+.rec-console--match[data-terminal] .rec-why--strained { color: var(--g-el-air); }
+/* severe strain (a quarter) burns brighter than strain (a half) */
+.rec-console--match[data-terminal] .rec-why--level-severe { filter: drop-shadow(0 0 3px currentColor); }
+.rec-console--match[data-terminal] .rec-why--level-severe svg { stroke-width: 2.8; }
+.rec-console--match[data-terminal] .rec-why--company-up { color: var(--rec-you); }
+.rec-console--match[data-terminal] .rec-why--company-down { color: var(--rec-loss); }
+.rec-console--match[data-terminal] .rec-why--falls { color: var(--rec-loss); }
+.rec-console--match[data-terminal] .rec-why--falls svg { stroke-width: 3; }
+
+/* the card: the columns take the height the card has */
+.rec-console--match[data-terminal] .rec-plinth-main { gap: 2px; padding-bottom: 4px; }
+.rec-console--match[data-terminal] .rec-plinth-stage { width: calc(40px * var(--rec-scale)); height: calc(38px * var(--rec-scale)); }
+.rec-console--match[data-terminal] .rec-plinth-art { width: calc(38px * var(--rec-scale)); height: calc(38px * var(--rec-scale)); }
+.rec-console--match[data-terminal] .rec-plinth .rec-fit {
+	flex: 1 1 0;
+	min-height: 0;
+	height: auto;
+	margin: 2px 0 0;
+	padding: 0 6px;
+	gap: 6px;
+	grid-template-rows: minmax(0, 1fr);
+}
+.rec-console--match[data-terminal] .rec-fit-col {
+	display: grid;
+	grid-template-rows: auto minmax(0, 1fr) var(--why);
+	row-gap: 2px;
+	min-height: 0;
+}
+.rec-console--match[data-terminal] .rec-fit-num {
+	font-size: calc(15px * var(--rec-scale));
+	line-height: 1.1;
+	font-weight: 700;
+	color: var(--g-ink);
+}
+.rec-console--match[data-terminal] .rec-fit-col--short .rec-fit-num { color: var(--g-ink-mid); }
+.rec-console--match[data-terminal] .rec-fit-well { min-height: 0; overflow: visible; }
+.rec-console--match[data-terminal] .rec-fit-part {
+	position: absolute;
+	left: 12%;
+	right: 12%;
+	bottom: calc(var(--p-at, 0) * 100%);
+	height: calc(var(--p, 0) * 100%);
+	transition: bottom 220ms ease, height 220ms ease;
+}
+.rec-console--match[data-terminal] .rec-fit-part--own { --p-at: var(--p-own-at); --p: var(--p-own); background: color-mix(in srgb, var(--g-el) 82%, var(--g-hull-lo)); }
+.rec-console--match[data-terminal] .rec-fit-part--lost {
+	--p-at: var(--p-lost-at);
+	--p: var(--p-lost);
+	background: repeating-linear-gradient(135deg, color-mix(in srgb, var(--rec-loss) 80%, transparent) 0 2px, color-mix(in srgb, var(--rec-loss) 22%, transparent) 2px 5px);
+}
+.rec-console--match[data-terminal] .rec-fit-part--allies {
+	--p-at: var(--p-allies-at);
+	--p: var(--p-allies);
+	background: color-mix(in srgb, var(--rec-you) 55%, transparent);
+	box-shadow: inset 0 1px 0 rgba(0, 0, 0, 0.6);
+}
+/* what it takes off the rival, solid in the rival's color (it counts), edged dark so it never merges with a brass-like world */
+.rec-console--match[data-terminal] .rec-fit-part--taken {
+	--p-at: var(--p-taken-at);
+	--p: var(--p-taken);
+	background: var(--rec-rival);
+	box-shadow: inset 0 0 0 1.5px rgba(0, 0, 0, 0.75), inset 0 2px 0 rgba(255, 244, 214, 0.35);
+}
+.rec-console--match[data-terminal] .rec-fit-col--takes .rec-fit-part--own { background: var(--g-el); box-shadow: 0 0 8px color-mix(in srgb, var(--g-el) 60%, transparent); }
+.rec-console--match[data-terminal] .rec-fit-col--short .rec-fit-part--own { opacity: 0.7; }
+.rec-console--match[data-terminal] .rec-fit-col--over .rec-fit-well { box-shadow: inset 0 2px 0 var(--g-ink); }
+/* the creature's body, across the three columns: above it the world lifted it, below it the world or the Clash cut it */
+.rec-console--match[data-terminal] .rec-fit[style*="--fit-body"] .rec-fit-col:not(.rec-fit-col--gone):not(.rec-fit-col--none) .rec-fit-well::after {
+	content: "";
+	position: absolute;
+	left: -4px;
+	right: -4px;
+	bottom: calc(var(--fit-body) * 100%);
+	border-top: 1.5px dashed color-mix(in srgb, var(--g-ink) 60%, transparent);
+	pointer-events: none;
+	z-index: 2;
+}
+/* the rival's lead there, as a brass pointer on the column's edge: a column that reaches past it takes the world */
+.rec-console--match[data-terminal] .rec-fit-tick {
+	left: -1px;
+	right: auto;
+	width: 0;
+	height: 0;
+	margin: 0 0 -4px;
+	background: none;
+	box-shadow: none;
+	border-top: 4px solid transparent;
+	border-bottom: 4px solid transparent;
+	border-left: 6px solid var(--rec-rival);
+	filter: drop-shadow(0 0 1px rgba(0, 0, 0, 0.9));
+	bottom: calc(var(--fit-tick, 0) * 100%);
+	transform: none;
+	z-index: 3;
+}
+.rec-console--match[data-terminal] .rec-fit-why { height: var(--why); }
+.rec-console--match[data-terminal] .rec-fit-col--dim { opacity: 0.3; }
+/* the rival just landed on this world: your columns for it changed, and flash as they do */
+.rec-console--match[data-terminal] .rec-fit-col--news .rec-fit-well { animation: rec-fit-news 1300ms ease-out both; }
+@keyframes rec-fit-news {
+	0%, 35% { box-shadow: 0 0 0 2px var(--rec-rival), 0 0 14px color-mix(in srgb, var(--rec-rival) 70%, transparent); }
+	100% { box-shadow: 0 0 0 2px transparent; }
+}
+.rec-console--match[data-terminal] .rec-fit-col--sent .rec-fit-part--own { background: var(--rec-you); }
+.rec-console--match[data-terminal] .rec-fit-col--move .rec-fit-part--own {
+	background: repeating-linear-gradient(0deg, color-mix(in srgb, var(--rec-you) 70%, transparent) 0 3px, color-mix(in srgb, var(--rec-you) 35%, transparent) 3px 5px);
+}
+
+/* the world's head: its name and its climate, big enough to read across the table */
+.rec-console--match[data-terminal] { --os-head: calc(44px * var(--rec-scale)); }
+.rec-console--match[data-terminal] .rec-site-head {
+	display: flex;
+	flex-wrap: nowrap;
+	align-items: center;
+	gap: calc(8px * var(--rec-scale));
+	padding: 0 calc(6px * var(--rec-scale));
+}
+.rec-console--match[data-terminal] .rec-site-head .rec-site-name {
+	flex: 0 1 auto;
+	font-size: calc(19px * var(--rec-scale));
+	letter-spacing: 0.08em;
+	color: var(--g-el);
+	text-shadow: 0 0 12px color-mix(in srgb, var(--g-el) 35%, transparent);
+}
+.rec-console--match[data-terminal] .rec-site-symbol { width: calc(26px * var(--rec-scale)); height: calc(26px * var(--rec-scale)); }
+.rec-console--match[data-terminal] .rec-site-head .rec-env-slot,
+.rec-console--match[data-terminal] .rec-match--advanced .rec-site-head .rec-env-slot {
+	display: block;
+	flex: 1 1 auto;
+	order: 0;
+	min-width: 0;
+	max-width: calc(300px * var(--rec-scale));
+	margin-left: auto;
+}
+.rec-console--match[data-terminal] .rec-site-head .rec-env,
+.rec-console--match[data-terminal] .rec-env-slot .rec-env {
+	display: grid;
+	grid-template-columns: auto minmax(0, 1fr) auto var(--why);
+	grid-template-areas: none;
+	align-items: center;
+	gap: calc(6px * var(--rec-scale));
+}
+.rec-console--match[data-terminal] .rec-site-head .rec-env-medium { grid-area: auto; width: calc(18px * var(--rec-scale)); height: calc(18px * var(--rec-scale)); }
+.rec-console--match[data-terminal] .rec-site-head .rec-env-scale { grid-area: auto; height: calc(10px * var(--rec-scale)); }
+.rec-console--match[data-terminal] .rec-site-head .rec-env-readout { grid-area: auto; font-size: calc(12px * var(--rec-scale)); color: var(--g-ink-mid); text-align: right; }
+.rec-console--match[data-terminal] .rec-site-head .rec-env-band--site { background: color-mix(in srgb, var(--g-ink) 78%, transparent); }
+.rec-console--match[data-terminal] .rec-site-head .rec-env-band--creature { top: 2px; bottom: 2px; }
+/* the creature's own band is always yours in color; whether the world strains it is the mark beside the readout */
+.rec-console--match[data-terminal] .rec-env--strained .rec-env-band--creature,
+.rec-console--match[data-terminal] .rec-env--severe .rec-env-band--creature,
+.rec-console--match[data-terminal] .rec-env .rec-env-band--creature {
+	background: repeating-linear-gradient(90deg, var(--rec-you) 0 2px, color-mix(in srgb, var(--rec-you) 35%, transparent) 2px 3px);
+	box-shadow: 0 0 0 1px var(--rec-you), 0 0 6px color-mix(in srgb, var(--rec-you) 60%, transparent);
+}
+.rec-console--match[data-terminal] .rec-env-why { display: inline-flex; width: var(--why); height: var(--why); }
+.rec-console--match[data-terminal] .rec-sites--arena .rec-site--waiting .rec-env-slot { display: none; }
+
+/* a creature standing on a world carries the same marks by its name */
+.rec-console--match[data-terminal] .rec-figure-plate { display: inline-flex; align-items: center; gap: 3px; }
+.rec-console--match[data-terminal] .rec-figure-whys { --why: calc(11px * var(--rec-scale)); }
+
+/* --- the moment's subject ---------------------------------------------------------- */
+
+/* your move: the squad is lit */
+.rec-console--match[data-terminal] .rec-match[data-moment="mine"] .rec-dock > .rec-bench,
+.rec-console--match[data-terminal] .rec-match[data-moment="lifted"] .rec-dock > .rec-bench {
+	border-color: var(--rec-you);
+	box-shadow: var(--g-relief), var(--g-drop), inset 0 0 0 1px var(--rec-you), 0 0 22px color-mix(in srgb, var(--rec-you) 22%, transparent);
+}
+.rec-console--match[data-terminal] .rec-match[data-moment="mine"] .rec-plinth--hand .rec-plinth-name { color: var(--rec-you); }
+/* a creature lifted: it rises, the others step back, and the worlds are the subject */
+.rec-console--match[data-terminal] .rec-match[data-moment="lifted"] .rec-plinth--hand:not(.rec-plinth--armed) { opacity: 0.45; }
+.rec-console--match[data-terminal] .rec-match[data-moment="lifted"] .rec-plinth--armed {
+	box-shadow: 0 0 0 2px var(--rec-you), 0 0 18px color-mix(in srgb, var(--rec-you) 45%, transparent);
+	transform: translateY(-4px);
+}
+/* the rival's move: your squad waits in the dark, the rival's world pulses */
+.rec-console--match[data-terminal] .rec-match[data-moment="theirs"] .rec-dock > .rec-bench { opacity: 0.62; filter: saturate(0.7); transition: opacity 240ms ease, filter 240ms ease; }
+.rec-console--match[data-terminal] .rec-match[data-moment="theirs"] .rec-dock > .rec-bench .rec-fit-col--news { opacity: 1; }
+.rec-console--match[data-terminal] .rec-match[data-moment="theirs"] .rec-sites { box-shadow: inset 0 2px 0 color-mix(in srgb, var(--rec-rival) 60%, transparent); }
+/* the Clash and the Ruling: the squad folds away and the worlds take its height */
+.rec-console--match[data-terminal] .rec-dock { transition: flex-basis 420ms cubic-bezier(0.3, 0.7, 0.2, 1), height 420ms cubic-bezier(0.3, 0.7, 0.2, 1); }
+.rec-console--match[data-terminal] .rec-match[data-moment="clash"] .rec-dock { flex-basis: 0; height: 0; overflow: hidden; }
+.rec-console--match[data-terminal] .rec-match[data-moment="ruling"] .rec-dock { flex: 0 0 auto; height: auto; }
+.rec-console--match[data-terminal] .rec-match[data-moment="clash"] .rec-dock > .rec-bench,
+.rec-console--match[data-terminal] .rec-match[data-moment="ruling"] .rec-dock > .rec-bench { display: none; }
+.rec-console--match[data-terminal] .rec-match[data-moment="ruling"] .rec-dock > .rec-judge-bar {
+	position: static;
+	flex: 1 1 0;
+	height: auto;
+	border-left: 3px solid var(--g-brass);
+	/* the folded dock has no room below it, so the bar fades in where it stands instead of rising */
+	animation: rec-judge-in 260ms ease-out both;
+}
+@keyframes rec-judge-in { from { opacity: 0; } to { opacity: 1; } }
+/* the Ruling: each world wears its winner */
+.rec-console--match[data-terminal] .rec-site--verdict-yours { box-shadow: inset 0 0 0 2px var(--rec-you), inset 0 0 60px color-mix(in srgb, var(--rec-you) 16%, transparent); }
+.rec-console--match[data-terminal] .rec-site--verdict-theirs { box-shadow: inset 0 0 0 2px var(--rec-rival), inset 0 0 60px color-mix(in srgb, var(--rec-rival) 16%, transparent); }
+
+@media (min-width: 761px) and (max-height: 820px) {
+	.rec-console--match[data-terminal] { --os-head: 38px; }
+	.rec-console--match[data-terminal] .rec-site-head .rec-site-name { font-size: 16px; }
+	.rec-console--match[data-terminal] .rec-fit-num { font-size: 13px; }
+}
+@media (max-width: 760px) {
+	.rec-console--match[data-terminal] { --os-head: 34px; }
+	.rec-console--match[data-terminal] .rec-site-head { flex-wrap: wrap; align-content: center; row-gap: 2px; gap: 3px; padding: 0 2px; }
+	.rec-console--match[data-terminal] .rec-site-head .rec-site-name { font-size: 11px; letter-spacing: 0.02em; }
+	.rec-console--match[data-terminal] .rec-site-symbol { width: 13px; height: 13px; }
+	/* a phone's head keeps the band, under the name, without the words */
+	.rec-console--match[data-terminal] .rec-site-head .rec-env-slot,
+	.rec-console--match[data-terminal] .rec-match--advanced .rec-site-head .rec-env-slot { display: block; flex: 1 0 100%; max-width: none; margin: 0; order: 2; }
+	.rec-console--match[data-terminal] .rec-site-head .rec-env,
+	.rec-console--match[data-terminal] .rec-env-slot .rec-env { grid-template-columns: minmax(0, 1fr) var(--why); gap: 2px; }
+	.rec-console--match[data-terminal] .rec-site-head .rec-env-medium,
+	.rec-console--match[data-terminal] .rec-site-head .rec-env-readout { display: none; }
+	.rec-console--match[data-terminal] .rec-site-head .rec-env-scale { height: 5px; }
+	.rec-console--match[data-terminal] .rec-plinth .rec-fit { padding: 0 3px; gap: 3px; }
+	.rec-console--match[data-terminal] .rec-fit-num { font-size: 10px; }
+	.rec-console--match[data-terminal] .rec-plinth-stage { width: 32px; height: 30px; }
+	.rec-console--match[data-terminal] .rec-plinth-art { width: 30px; height: 30px; }
+	.rec-console--match[data-terminal] .rec-figure-whys { --why: 9px; }
+	.rec-console--match[data-terminal] .rec-match[data-moment="ruling"] .rec-dock > .rec-judge-bar { flex-direction: row; align-items: center; padding: 0 var(--g-2); font-size: var(--g-size-micro); }
+}
+@media (prefers-reduced-motion: reduce) {
+	.rec-console--match[data-terminal] .rec-fit-part,
+	.rec-console--match[data-terminal] .rec-dock { transition: none; }
+	.rec-console--match[data-terminal] .rec-fit-col--news .rec-fit-well { animation: none; box-shadow: 0 0 0 2px var(--rec-rival); }
+}
+
+/* pass 57: a medium the creature cannot take, as the world's own symbol struck through */
+.rec-console--match[data-terminal] .rec-glyph--no-medium { position: relative; display: inline-flex; width: 100%; height: 100%; }
+.rec-console--match[data-terminal] .rec-glyph--no-medium .rec-medium-glyph { width: 100%; height: 100%; fill: currentColor; stroke: currentColor; opacity: 0.85; }
+.rec-console--match[data-terminal] .rec-glyph--no-medium .rec-no-medium-strike { position: absolute; inset: 0; width: 100%; height: 100%; fill: none; stroke: var(--rec-loss); stroke-width: 1.8; stroke-linecap: round; }
+
+/* pass 57: the creature pointed at, standing in your half of each world as it would there */
+.rec-console--match[data-terminal] .rec-ghost-piece {
+	position: absolute;
+	inset: 0;
+	z-index: 2;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: calc(4px * var(--rec-scale));
+	pointer-events: none;
+	--ghost: clamp(28px, calc(100cqh - 5.4 * var(--st-num)), calc(118px * var(--rec-scale)));
+	animation: rec-ghost-piece-in 220ms ease-out both;
+}
+.rec-console--match[data-terminal] .rec-ghost-piece--beside { align-items: flex-end; padding-right: 4%; --ghost: clamp(24px, calc(62cqh - 2.6 * var(--st-num)), calc(96px * var(--rec-scale))); }
+.rec-console--match[data-terminal] .rec-ghost-piece-art {
+	display: block;
+	width: var(--ghost);
+	height: var(--ghost);
+	opacity: 0.9;
+	filter: drop-shadow(0 0 10px color-mix(in srgb, var(--rec-you) 55%, transparent));
+	animation: rec-ghost-piece-breathe 1100ms ease-in-out infinite alternate;
+}
+.rec-console--match[data-terminal] .rec-ghost-piece-art svg,
+.rec-console--match[data-terminal] .rec-ghost-piece-art img { width: 100% !important; height: 100% !important; max-width: none !important; max-height: none !important; }
+.rec-console--match[data-terminal] .rec-ghost-piece-read {
+	display: inline-flex;
+	align-items: center;
+	gap: calc(var(--st-num) * 0.3);
+	padding: 2px calc(var(--st-num) * 0.35);
+	background: color-mix(in srgb, var(--g-hull-lo) 80%, transparent);
+	border: 1px dashed color-mix(in srgb, var(--rec-you) 70%, transparent);
+}
+.rec-console--match[data-terminal] .rec-ghost-piece-read b {
+	font-family: var(--g-font-mono);
+	font-size: calc(var(--st-num) * 1.65);
+	line-height: 1.05;
+	font-weight: 700;
+	color: var(--rec-you);
+	font-variant-numeric: tabular-nums;
+}
+.rec-console--match[data-terminal] .rec-ghost-piece-whys { --why: calc(var(--st-num) * 1.1); gap: calc(var(--st-num) * 0.2); }
+.rec-console--match[data-terminal] .rec-ghost-piece--beside .rec-ghost-piece-read b { font-size: calc(var(--st-num) * 1.05); }
+.rec-console--match[data-terminal] .rec-ghost-piece--beside .rec-ghost-piece-whys { --why: calc(var(--st-num) * 0.85); }
+@keyframes rec-ghost-piece-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+@keyframes rec-ghost-piece-breathe { from { opacity: 0.72; } to { opacity: 0.95; } }
+@media (max-width: 760px) {
+	.rec-console--match[data-terminal] .rec-ghost-piece { --ghost: clamp(20px, calc(100cqh - 3.4 * var(--st-num)), 64px); }
+	.rec-console--match[data-terminal] .rec-ghost-piece--beside { --ghost: clamp(16px, calc(50cqh - 2 * var(--st-num)), 36px); }
+	.rec-console--match[data-terminal] .rec-ghost-piece-read { padding: 1px 3px; }
+}
+@media (prefers-reduced-motion: reduce) {
+	.rec-console--match[data-terminal] .rec-ghost-piece,
+	.rec-console--match[data-terminal] .rec-ghost-piece-art { animation: none; }
+}
+
+/* --- pass 57, after the blind readers ----------------------------------------------
+   Both readers put their eye on the empty worlds first and called the squad "a thin strip
+   with small numbers"; the after-build reader called the ghost's silhouette "big and
+   telling nothing", read the rival's red hatching as danger, lost the rival's turn, and
+   asked what each number is made of. */
+
+/* the squad is the decision while you deploy, so it takes more of the table on a tall enough screen */
+@media (min-width: 761px) and (min-height: 821px) {
+	.rec-console--match[data-terminal] .rec-match--simple .rec-dock,
+	.rec-console--match[data-terminal] .rec-match--advanced .rec-dock { flex-basis: calc(292px * var(--rec-scale)); height: calc(292px * var(--rec-scale)); }
+	.rec-console--match[data-terminal] .rec-fit-num { font-size: calc(18px * var(--rec-scale)); }
+}
+.rec-console--match[data-terminal] .rec-fit-part-num {
+	position: absolute;
+	inset: 0;
+	display: grid;
+	place-items: center;
+	font-style: normal;
+	font-weight: 700;
+	font-size: calc(11px * var(--rec-scale));
+	line-height: 1;
+	color: rgba(10, 8, 4, 0.88);
+	pointer-events: none;
+}
+@media (max-width: 760px) {
+	.rec-console--match[data-terminal] .rec-fit-part-num { font-size: 8px; }
+}
+
+/* what the number is made of, under it, when part of it comes off the rival */
+.rec-console--match[data-terminal] .rec-ghost-piece-split {
+	display: inline-flex;
+	align-items: baseline;
+	gap: 2px;
+	padding: 0 calc(var(--st-num) * 0.3);
+	font-size: calc(var(--st-num) * 0.85);
+	font-weight: 700;
+	background: color-mix(in srgb, var(--g-hull-lo) 80%, transparent);
+	color: var(--g-ink-mid);
+}
+.rec-console--match[data-terminal] .rec-ghost-piece-split i { font-style: normal; }
+.rec-console--match[data-terminal] .rec-ghost-piece-own { color: var(--rec-you); }
+.rec-console--match[data-terminal] .rec-ghost-piece-taken { color: var(--rec-rival); }
+
+/* the rival's losses are your gains: hatched in its own fading brass, and a rival your send would down is crossed in your color */
+.rec-console--match[data-terminal] .rec-standing-lane--theirs .rec-standing-loss {
+	background: repeating-linear-gradient(135deg, color-mix(in srgb, var(--rec-rival) 60%, transparent) 0 2px, color-mix(in srgb, var(--rec-rival) 12%, transparent) 2px 6px);
+	box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--rec-you) 55%, transparent);
+}
+.rec-console--match[data-terminal] .rec-hbar--theirs .rec-hbar-loss {
+	background: repeating-linear-gradient(135deg, color-mix(in srgb, var(--rec-rival) 65%, transparent) 0 2px, color-mix(in srgb, var(--rec-rival) 15%, transparent) 2px 4px);
+}
+.rec-console--match[data-terminal] .rec-figure--theirs .rec-figure-mark--falls { color: var(--rec-you); filter: drop-shadow(0 0 4px color-mix(in srgb, var(--rec-you) 70%, transparent)) drop-shadow(0 0 2px rgba(0, 0, 0, 0.9)); }
+.rec-console--match[data-terminal] .rec-figure--theirs.rec-figure--falls .rec-figure-hold { color: var(--rec-you); }
+
+/* the score is the stakes: bigger pennants, a bigger turn pointer, bigger send counts */
+.rec-console--match[data-terminal] .rec-scoreboard .rec-pip.rec-pip--flag { width: calc(20px * var(--rec-scale)); height: calc(23px * var(--rec-scale)); }
+.rec-console--match[data-terminal] .rec-scoreboard { grid-template-columns: calc(15px * var(--rec-scale)) auto auto 14px; row-gap: calc(4px * var(--rec-scale)); }
+.rec-console--match[data-terminal] .rec-turn-lamp,
+.rec-console--match[data-terminal] .rec-turn-lamp--on.rec-turn-lamp--mine,
+.rec-console--match[data-terminal] .rec-turn-lamp--on.rec-turn-lamp--theirs { width: calc(15px * var(--rec-scale)); height: calc(18px * var(--rec-scale)); }
+.rec-console--match[data-terminal] .rec-send-tick { width: calc(5px * var(--rec-scale)); height: calc(13px * var(--rec-scale)); }
+.rec-console--match[data-terminal] .rec-sends b { font-size: calc(17px * var(--rec-scale)); }
+.rec-console--match[data-terminal] .rec-track-world { width: calc(16px * var(--rec-scale)); height: calc(16px * var(--rec-scale)); }
+@media (max-width: 760px) {
+	.rec-console--match[data-terminal] .rec-scoreboard .rec-pip.rec-pip--flag { width: 10px; height: 12px; }
+	.rec-console--match[data-terminal] .rec-scoreboard { grid-template-columns: 8px auto auto 10px; row-gap: 3px; }
+	.rec-console--match[data-terminal] .rec-turn-lamp,
+	.rec-console--match[data-terminal] .rec-turn-lamp--on.rec-turn-lamp--mine,
+	.rec-console--match[data-terminal] .rec-turn-lamp--on.rec-turn-lamp--theirs { width: 8px; height: 10px; }
+	.rec-console--match[data-terminal] .rec-sends b { font-size: 12px; }
+	.rec-console--match[data-terminal] .rec-track-world { width: 9px; height: 9px; }
+}
+
+/* the rival's move: the side it will land on glows in its color at every world, so the eye waits where the move will come */
+.rec-console--match[data-terminal] .rec-match[data-moment="theirs"] .rec-site-floor::before {
+	content: "";
+	position: absolute;
+	left: 0;
+	right: 0;
+	top: 0;
+	height: 46%;
+	z-index: 0;
+	pointer-events: none;
+	background: linear-gradient(to bottom, color-mix(in srgb, var(--rec-rival) 26%, transparent), transparent);
+	animation: rec-theirs-wait 1300ms ease-in-out infinite alternate;
+}
+.rec-console--match[data-terminal] .rec-match[data-moment="theirs"] .rec-site { border-color: color-mix(in srgb, var(--rec-rival) 70%, transparent); }
+@keyframes rec-theirs-wait { from { opacity: 0.35; } to { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) {
+	.rec-console--match[data-terminal] .rec-match[data-moment="theirs"] .rec-site-floor::before { animation: none; opacity: 0.8; }
 }

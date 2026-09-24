@@ -9,6 +9,7 @@ import { team } from '../../../constants/designTokens';
 import { slotStateOf } from './reclamationRoster';
 import { speciesLabel, roleSentence, roleWord } from './reclamationNarration';
 import { FitStrip, fitSentence } from './reclamationInstruments';
+import { fitScale } from './reclamationFit';
 import { prepare, speedOf, flippableRolesOf } from '@xalians/rules/expedition/creatureOnTable';
 import { attributeLanes } from './reclamationPreview';
 import { SENDABLE, FRAMES_PER_MATCH } from '@xalians/rules/expedition/expeditionInterpretation';
@@ -41,7 +42,7 @@ import { SENDABLE, FRAMES_PER_MATCH } from '@xalians/rules/expedition/expedition
 	where the rival has one. Nothing on a card is suggested; it only says what would happen.
 */
 
-function Plinth({ record, view, you, armed, disabled, onArm, onInspect, onHover, advanced, fitRow, focusSiteId, sentCell, moveRow, reserve }) {
+function Plinth({ record, view, you, armed, disabled, onArm, onInspect, onHover, advanced, fitRow, focusSiteId, sentCell, moveRow, reserve, stripScale, newsSiteId }) {
 	const slot = slotStateOf(record, view, you);
 	/*
 		PASS 55, KEEP ONE BACK. With no sends left, a creature still in hand is the reserve: it
@@ -117,6 +118,8 @@ function Plinth({ record, view, you, armed, disabled, onArm, onInspect, onHover,
 						moveRow={slot.state === 'sent' ? moveRow : null}
 						focusSiteId={inHand ? focusSiteId : null}
 						off={disabled}
+						scale={stripScale}
+						newsSiteId={newsSiteId}
 					/>
 				)}
 				{kept && (
@@ -181,6 +184,8 @@ function ReclamationBench({
 	fits,
 	focusSiteId,
 	sendsTone,
+	// pass 57: the world the rival just sent to, whose columns changed with the arrival
+	newsSiteId,
 }) {
 	const me = view.players[you];
 	const yourTurn = interactive && view.turn === you && view.phase === 'deploy';
@@ -197,6 +202,8 @@ function ReclamationBench({
 	// assumption 20: a swift creature already on the table may move once a round, and it
 	// does not spend the turn. One button per creature that still may.
 	const movers = movable || [];
+	// pass 57: one scale for every card's columns, so a column reads against the next card's
+	const stripScale = fitScale(fits);
 
 	return (
 		<section className={`rec-bench rec-bench--step-${step}${yourTurn && !me.passed ? ' rec-bench--active' : ''}`} aria-label="Your squad" data-deploy-step={step}>
@@ -305,6 +312,8 @@ function ReclamationBench({
 						moveRow={fits && fits.moves ? fits.moves[record.id] || null : null}
 						reserve={sendsLeft === 0}
 						focusSiteId={focusSiteId}
+						stripScale={stripScale}
+						newsSiteId={newsSiteId}
 						disabled={!yourTurn || me.passed || sendsLeft === 0}
 						onArm={onArm}
 						onInspect={onInspect}
