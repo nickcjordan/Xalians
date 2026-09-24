@@ -93,7 +93,7 @@ Agreed temperament favors steady inspection over aggression: boldness 35 to 55, 
 - **Behavior:** Sweeps a route with short clicks, tests suspicious surfaces with its jaws, and pushes loosened pieces clear with its body, anterior fins, and tail.
 - **Company (agreed):** Several may service one route while remaining spaced across separate sections; they exchange low calls rather than working as one tightly coordinated body.
 
-The species description below is drafted in the schema 5.1 candidate. Nick accepted it as serviceable but found it boring; that reaction is a creative issue to revisit before final approval. Naming followed the defining body, purpose and ability decisions.
+The species description below is drafted in the schema 5.1 candidate. Nick accepted it as serviceable and confirmed that its engineered passage-clearing role is the character to retain; no extra mannerism is needed to explain the creature. Naming followed the defining body, purpose and ability decisions.
 
 ### Draft canonical prose for review
 

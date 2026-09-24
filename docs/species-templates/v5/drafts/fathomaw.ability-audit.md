@@ -1,6 +1,6 @@
 # Fathomaw ability audit (draft)
 
-Review date: 2026-09-23. Mode: initial authoring. Current source: [Poseidas deep-route proposal](../../../design/creature-proposals/poseidas-deep-route.md) and its recorded approvals, Poseidas planetary lore, the v5 catalog and derived-act tables. The proposal is not a ratified species. The [schema 5.1 draft template](fathomaw.json) compiles, but it has no approved creature art and is outside the frozen roster and release. This audit records the ability decision space without claiming publication readiness.
+Review date: 2026-09-23. Mode: initial authoring. Current source: [Poseidas deep-route proposal](../../../design/creature-proposals/poseidas-deep-route.md) and its recorded approvals, Poseidas planetary lore, the v5 catalog and derived-act tables. The proposal is not a ratified species. The [schema 5.1 draft template](fathomaw.json) compiles, and the [land-crawl concept](../../../design/creature-proposals/art/fathomaw-land-crawl-concept.png) was accepted as a direction, but it is not final portrait art. The draft remains outside the frozen roster and release.
 
 ## Mechanism inventory
 
@@ -28,7 +28,7 @@ No `channels` or `conduits` are proposed. Pressure adaptation, dual-medium breat
 | `fins/shove` | Include | The same fins bear weight and push loose material or a contacted target. |
 | Fin grasp, rake, ward, projection | Exclude | No grasping digits, cutting edge, defensive barrier, or emitter. |
 | `tail/strike` | Include | Direct impact with a powerful propulsion tail. |
-| `tail/lash` | Include as proposal | A lateral sweep with the tail can reach nearby recipients in either supported medium. It is body contact, not a water wave. Review against the final anatomy and art. |
+| `tail/lash` | Include | The accepted concept has a thick tail root and broad paddle that can sweep laterally. The sweep uses the animal's tail in either medium, not a water wave. Final art must preserve this capability. |
 | `tail/shove` | Include | The tail propels the animal and redirects contacted material or targets. |
 | `tail/crush`, `tail/snare` | Exclude | The tail is broad and propulsive, not established as wrapping, grasping, or sustaining pressure on a target. |
 | `body/shove` | Include | Whole-body mass can push at contact without sprinting or external terrain. |
@@ -52,6 +52,18 @@ The available deliveries are contact for jaws, fins and body; contact and a self
 
 The included table acts plus extensions are the proposed species permission space, not a whitelist of complete moves assigned to every individual. Four selected actions per generated creature remain a separate generator rule. The shared fin row is v5-only while the pinned v4 registry remains unchanged.
 
+## Neutral-land portability check
+
+The accepted concept shows a continuous belly contact surface, two broad planted anterior fins with reinforced roots, two smaller planted posterior fins, and a tail capable of assisting a slow crawl. At 105 to 170 kg under Poseidas's 1.7-Earth gravity, broad contact surfaces distribute weight rather than requiring an upright gait. This supports ordinary encounter-length movement, not equal land and water speed or sustained dry-land travel. Gas respiration and tolerance are declared separately from the visible locomotion mechanism.
+
+- Jaw crush, snare, both maintained holds, the quick bite, and `Yield Point` use self-contained jaw closure. None draws pressure or working fluid from the surrounding water.
+- Fin strike and shove use the same load-bearing anterior roots that pull the body across a solid surface. They do not require free swimming or a water wave.
+- Tail strike, lash, and shove use the thick tail and paddle directly. A lateral sweep is possible without swimming, though its reach and speed may differ by medium in a game's interpretation.
+- Body shove and the authored short ram use the planted fins, broad belly, and trunk mass. The ram is a short grounded push, not a sprint; the species' `sprint` capability remains zero.
+- Echolocation is a sense, not a required trigger for any action. Its range may be shorter in gas, but the jaw, fin, tail, and body acts remain available.
+
+No proposed act requires a home-world storm, deep-water pressure, a city structure, liquid around the body, or external life support. The final portrait and any compact representation must retain visible fin roots and a credible land-supporting posture; a concept approval alone does not verify their small-scale legibility.
+
 ## Completion status
 
-The draft compiles under schema 5.1 with ten distinct ordinary acts (jaws 3, fins 2, tail 3, body 2) plus the guaranteed signature. It includes four authored extensions and seven justified generic-row exclusions. The checker confirms four distinct actions can be constructed, no ordinary act was clamped by the signature, and 24 seeded examples had no structural parenthetical names or duplicate ordinary base names. This is a structural and naming check, not art approval or final balancing. The tail sweep still needs an anatomy and art check. No release, game integration or encyclopedia entry is claimed here.
+The draft compiles under schema 5.1 with ten distinct ordinary acts (jaws 3, fins 2, tail 3, body 2) plus the guaranteed signature. It includes four authored extensions and seven justified generic-row exclusions. The checker confirms four distinct actions can be constructed, no ordinary act was clamped by the signature, and 24 seeded examples had no structural parenthetical names or duplicate ordinary base names. The accepted concept supports the tail sweep and neutral-land mechanism at the design level. This is a structural, naming, lore and concept check, not final art approval or game balancing. No release, game integration or encyclopedia entry is claimed here.
