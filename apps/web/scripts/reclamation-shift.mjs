@@ -141,6 +141,13 @@ for (const [label, width, height, isMobile] of SCREENS) {
 	if (await discard.count() && await discard.first().isVisible()) {
 		await discard.first().click();
 	}
+	/*
+		PASS 53. The start screen is one screen too (Nick, 2026-09-23): it was 1766px tall on a
+		900px desk and 3522px on a phone, with the rival plates a whole scroll below Start.
+	*/
+	await page.waitForTimeout(400);
+	await checkFits(page, label, 'on the start screen');
+	await checkReachable(page, label, 'on the start screen', '[data-enter], [data-rival], [data-mode-switch], [data-intro-more]', 'start-screen controls');
 	await page.locator('[data-enter]').first().click();
 	await page.locator('[data-arm]').first().waitFor({ state: 'visible', timeout: 20000 });
 	// let the entrance settle; its animation is a shift nobody is complaining about
@@ -238,6 +245,31 @@ for (const [label, width, height, isMobile] of SCREENS) {
 	} else {
 		fail(`${label}: no pass button after the sends`);
 	}
+
+	/*
+		PASS 53. Back to the start screen with a game waiting: the resume row takes room of
+		its own, and everything must still fit. Then the draft (?draft=1, and both handlers in
+		hot-seat), fifteen cards on one screen.
+	*/
+	const leave = page.locator('[data-leave]');
+	if (await leave.count()) {
+		await leave.first().click();
+		await page.locator('[data-resume]').first().waitFor({ state: 'visible', timeout: 10000 }).catch(() => {});
+		if (await page.locator('[data-resume]').count()) {
+			await page.waitForTimeout(400);
+			await checkFits(page, label, 'on the start screen with a game to resume');
+			await checkReachable(page, label, 'on the start screen with a game to resume', '[data-resume-match], [data-discard-match], [data-enter], [data-rival]', 'start-screen controls');
+			await page.locator('[data-discard-match]').first().click();
+		} else {
+			fail(`${label}: leaving the table offered no game to resume`);
+		}
+	}
+	await page.goto(`${base}/reclamation?seed=${SEED}&view=simple&draft=1`, { waitUntil: 'networkidle' });
+	await page.locator('[data-enter]').first().click();
+	await page.locator('[data-draft-auto]').first().waitFor({ state: 'visible', timeout: 20000 }).catch(() => {});
+	await page.waitForTimeout(400);
+	await checkFits(page, label, 'in the draft');
+	await checkReachable(page, label, 'in the draft', '[data-draft], [data-draft-auto], [data-draft-confirm]', 'draft controls');
 
 	console.log(`     ${label} done`);
 	await context.close();
