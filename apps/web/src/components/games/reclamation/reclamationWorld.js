@@ -3,7 +3,7 @@ import ReclamationFigure, { ReclamationSilhouette } from './reclamationFigure';
 import XalianImage from '../../xalianImage';
 import { pieceShadowFilter } from '../duel/board/duelPieceToken';
 import { team } from '../../../constants/designTokens';
-import { SwiftGlyph, MediumGlyph } from './reclamationGlyphs';
+import { SwiftGlyph, MediumGlyph, CompanyGlyph } from './reclamationGlyphs';
 import { formatHoldShown, countWord } from './reclamationNarration';
 import { elementOf } from './reclamationVocabulary';
 import { Standing, standingSentence, WhyMarks } from './reclamationInstruments';
@@ -419,8 +419,46 @@ function ReclamationWorld({
 											</span>
 											<span className="rec-ghost-piece-read">
 												<b className="g-mono" data-ghost-gain={previewHere.why.gain.toFixed(2)}>{signedHold(previewHere.why.gain)}</b>
-												<WhyMarks reasons={previewHere.why} className="rec-ghost-piece-whys" />
 											</span>
+											{/*
+												PASS 59. How the number is made, in order, under it: its normal hold, each mark
+												with its factor, and when the Clash would take something off it, what it
+												arrives with and what the Clash takes ("13 🔥×½ → 7 −3" under "+4"), and what it
+												adds to your creatures already there ("+8" beside two figures). A blind
+												reader took "+4 🔥×½" for 4 being the halved number; the factor belongs to the
+												arrival, so it stands before it. One side only: the rival's side is the rival's
+												bar and its crossed creatures. The loss printed is the difference of the two
+												numbers printed, so the chain always lands on the number above it.
+											*/}
+											{(() => {
+												const why = previewHere.why;
+												const marked = !!(why.home || why.climate || why.selfLift || why.company);
+												const fights = why.toll > 0.5;
+												const going = Number(formatHoldShown(why.going));
+												const kept = Number(formatHoldShown(Math.max(0, why.own)));
+												// what it adds to your creatures already there: the rest of its number, so the chain lands on it exactly
+												const helps = Number(formatHoldShown(why.gain)) - kept;
+												const steps = fights || helps !== 0;
+												if (!marked && !steps && !why.falls) {
+													return null;
+												}
+												return (
+													<span className="rec-ghost-piece-chain g-mono" data-ghost-chain>
+														{marked && <i className="rec-ghost-piece-body">{formatHoldShown(why.body)}</i>}
+														{marked && <WhyMarks reasons={{ ...why, falls: false }} className="rec-ghost-piece-whys" factors roomy />}
+														{marked && steps && <i className="rec-ghost-piece-arrow" aria-hidden="true">{'\u2192'}</i>}
+														{steps && <i className="rec-ghost-piece-going">{going}</i>}
+														{fights && <i className="rec-ghost-piece-toll">{`\u2212${Math.max(0, going - kept)}`}</i>}
+														{helps !== 0 && (
+															<i className="rec-ghost-piece-allies" title="What it would add to your creatures already there">
+																{`${helps > 0 ? '+' : '\u2212'}${Math.abs(helps)}`}
+																<CompanyGlyph />
+															</i>
+														)}
+														{why.falls && <WhyMarks reasons={{ falls: true }} className="rec-ghost-piece-whys" />}
+													</span>
+												);
+											})()}
 										</span>
 									)}
 								</div>

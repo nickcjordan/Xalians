@@ -65,6 +65,16 @@ export const STRAIN_MULTIPLIER = 0.5;
 export const SEVERE_STRAIN_MULTIPLIER = 0.25;
 
 /*
+	PASS 59, WHOLE HOLDS (docs/design/reclamation-read-the-card.md). A creature's normal hold
+	and its hold at a world are whole numbers. The card prints each reason with its factor
+	(a house x1 1/2, a flame x1/2), and a blind reader checking the arithmetic found it would
+	not close: a normal hold of 12.4 prints as 12 and its home hold of 18.6 as 19, and
+	12 x 1 1/2 is 18. Rounding the normal hold, then the hold at the world, makes every factor
+	on the card add up to within the one rounding of its last step. Blows are unchanged.
+*/
+export const WHOLE_HOLDS = true;
+
+/*
 	Magnitude scale (assumption 12): every blow's printed magnitude is multiplied by this
 	before it is subtracted from a hold, so "a typical strike takes about a third of a
 	typical hold" is one number rather than a rewrite of the magnitude formula.

@@ -9,7 +9,7 @@ import { getWorlds } from '@xalians/rules/expedition/sites';
 import { ROSTER_SIZE } from '@xalians/rules/expedition/expeditionInterpretation';
 import { roleOf } from '@xalians/rules/expedition/creatureOnTable';
 import { fitTable, forecastTotalsAt, standingScale, STANDING_FLOOR, roundTrack, FIT_SCALE, fitScale, fitTakesAny, FIT_RIVAL_ROOM } from '../reclamationFit';
-import { Standing, FitStrip, ScorePips, HoldBar, Crest, WhyMarks, whyWords, fitSentence } from '../reclamationInstruments';
+import { Standing, FitStrip, ScorePips, HoldBar, Crest, WhyMarks, whyWords, fitSentence, factorText } from '../reclamationInstruments';
 
 /*
 	PASS 52, THE GLANCE REDESIGN (docs/design/reclamation-glance-redesign.md).
@@ -81,6 +81,33 @@ describe('fitTable', () => {
 		// the rival's creature goes in at its full hold, and the Clash can only take from it
 		expect(table.base[site.id].theirsBefore).toBeGreaterThan(0);
 		expect(table.base[site.id].theirs).toBeLessThanOrEqual(table.base[site.id].theirsBefore + 1e-9);
+	});
+
+	// pass 59: a bolster alone at a world lifts itself (the rules say "itself included"); that is not company
+	it('tells a bolster lifting itself apart from company, and carries each factor that makes the number', () => {
+		let selfLifts = 0;
+		[7, 11, 13, 21].forEach((seed) => {
+			const { poolA, poolB } = buildDraftPools(seed, draftOptionsFromRules(DEFAULT_RULES));
+			const match = createMatch({ rosterA: poolA.slice(0, ROSTER_SIZE), rosterB: poolB.slice(0, ROSTER_SIZE), worlds: getWorlds(), seed });
+			const seat = match.turn;
+			const table = fitTable(match, seat, match.players[seat].roster);
+			match.players[seat].roster.forEach((record) => Object.values(table.fits[record.id]).forEach((cell) => {
+				// round 1: every world is empty, so nothing there is company
+				expect(cell.company).toBe(0);
+				if (cell.selfLift) {
+					expect(roleOf(record, match.rules)).toBe('bolster');
+					selfLifts += 1;
+				}
+				expect(cell.homeFactor).toBe(cell.home ? 1.5 : 1);
+				if (cell.climate) expect(cell.climate.factor).toBe(cell.climate.level === 'severe' ? 0.25 : 0.5);
+				// the card's arithmetic closes: a whole normal hold times the printed factor, rounded once, is the number
+				expect(Number.isInteger(cell.body)).toBe(true);
+				if (!cell.selfLift) {
+					expect(cell.own).toBe(Math.round(cell.body * cell.homeFactor * (cell.climate ? cell.climate.factor : 1)));
+				}
+			}));
+		});
+		expect(selfLifts).toBeGreaterThan(0);
 	});
 
 	it('is null outside Deploy', () => {
@@ -266,6 +293,29 @@ describe('the instruments', () => {
 		expect(cols[1].querySelector('[data-why="home"]')).not.toBeNull();
 		expect(cols[2].querySelector('[data-why="cold"]')).not.toBeNull();
 		expect(cols[2].querySelector('[data-why="falls"]')).not.toBeNull();
+	});
+
+	// pass 59: each mark carries the factor it applies, so the card shows how its number was made
+	it('prints each mark with its factor, and leaves a creature that falls to its cross', () => {
+		expect(factorText(1.5)).toBe('\u00d71\u00bd');
+		expect(factorText(0.5)).toBe('\u00d7\u00bd');
+		expect(factorText(0.25)).toBe('\u00d7\u00bc');
+		const home = render(<WhyMarks reasons={{ home: true, homeFactor: 1.5 }} factors />);
+		expect(home.container.querySelector('.rec-why-x').textContent).toBe('\u00d71\u00bd');
+		const cold = render(<WhyMarks reasons={{ climate: { level: 'severe', cause: 'cold', factor: 0.25 } }} factors />);
+		expect(cold.container.querySelector('.rec-why-x').textContent).toBe('\u00d7\u00bc');
+		const self = render(<WhyMarks reasons={{ selfLift: 1.2 }} factors />);
+		expect(self.container.querySelector('[data-why="self"]')).not.toBeNull();
+		expect(self.container.querySelector('.rec-why-x').textContent).toBe('+1');
+		// two marks in one column: only the first carries its factor; a fall carries none
+		const two = render(<WhyMarks reasons={{ climate: { level: 'strained', cause: 'hot', factor: 0.5 }, company: 2 }} factors />);
+		expect(two.container.querySelectorAll('.rec-why-x').length).toBe(1);
+		const falls = render(<WhyMarks reasons={{ climate: { level: 'strained', cause: 'hot', factor: 0.5 }, falls: true }} factors />);
+		expect(falls.container.querySelectorAll('.rec-why-x').length).toBe(0);
+		expect(falls.container.querySelector('[data-why="falls"]')).not.toBeNull();
+		// without `factors` (a creature standing on a world) the marks stay bare
+		const bare = render(<WhyMarks reasons={{ home: true, homeFactor: 1.5 }} />);
+		expect(bare.container.querySelector('.rec-why-x')).toBeNull();
 	});
 
 	it('names each reason in words for the title, and draws nothing for a creature with none', () => {

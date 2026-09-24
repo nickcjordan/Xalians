@@ -58,6 +58,9 @@ function site(overrides: any = {}): FrameSite {
 	} as unknown as FrameSite;
 }
 
+// pass 59: holds are whole numbers as shipped; the formula tests below read the fractions behind them
+const FRAC = { wholeHolds: false };
+
 // hold compression (docs/design/reclamation-base-redesign.md assumption 11)
 function compressed(raw: any, floor: any = HOLD_FLOOR, ceiling: any = HOLD_CEILING) {
 	return floor + ((raw - RAW_ATTRIBUTE_MIN) * (ceiling - floor)) / (RAW_ATTRIBUTE_MAX - RAW_ATTRIBUTE_MIN);
@@ -66,14 +69,20 @@ function compressed(raw: any, floor: any = HOLD_FLOOR, ceiling: any = HOLD_CEILI
 describe('baseHold: the hold compression', () => {
 	test('maps the raw mean of vitality, resilience and endurance onto [floor, ceiling]', () => {
 		// mean(60, 80, 70) = 70
-		expect(baseHold(record())).toBeCloseTo(compressed(70), 5);
+		expect(baseHold(record(), FRAC)).toBeCloseTo(compressed(70), 5);
+	});
+
+	// pass 59: as shipped, the normal hold is the compression rounded to a whole number
+	test('is a whole number as shipped, the compression rounded', () => {
+		expect(baseHold(record())).toBe(Math.round(compressed(70)));
+		expect(Number.isInteger(baseHold(record()))).toBe(true);
 	});
 
 	test('hits the compression endpoints exactly at the registry attribute range', () => {
 		const zero = record({ attributes: { ...record().attributes, vitality: 0, resilience: 0, endurance: 0 } });
 		const full = record({ attributes: { ...record().attributes, vitality: 100, resilience: 100, endurance: 100 } });
-		expect(baseHold(zero)).toBeCloseTo(HOLD_FLOOR, 5);
-		expect(baseHold(full)).toBeCloseTo(HOLD_CEILING, 5);
+		expect(baseHold(zero, FRAC)).toBeCloseTo(HOLD_FLOOR, 5);
+		expect(baseHold(full, FRAC)).toBeCloseTo(HOLD_CEILING, 5);
 	});
 
 	test('a rules object moves the floor and ceiling without touching a record', () => {
@@ -161,8 +170,8 @@ describe('bolster lifts one grade of strain (assumption 8)', () => {
 		const r = record({ physiology: { breathes: ['gas'], environmentalTolerance: { ambientMedia: ['gas'], temperatureC: { min: 0, max: 5 } } } });
 		const w = world();
 		const s = site({ environment: { medium: 'gas', temperatureC: { min: 20, max: 30 } } });
-		const plain = holdAtSite(r, s, w);
-		const lifted = holdAtSite(r, s, w, { bolstered: true });
+		const plain = holdAtSite(r, s, w, { rules: FRAC });
+		const lifted = holdAtSite(r, s, w, { bolstered: true, rules: FRAC });
 		expect(plain.level).toBe('strained');
 		expect(lifted.effectiveLevel).toBe('none');
 		expect(lifted.value).toBeCloseTo(plain.value / strainMultiplierFor('strained'), 5);
@@ -214,10 +223,13 @@ describe('holdAtSite: home ground and strain composition', () => {
 		const r = record({ provenance: { serial: 1, origin: 'stonera' }, element: { primary: 'rock', affinities: { rock: 100 } } });
 		const w = world({ planet: 'Stonera', element: 'rock' });
 		const s = site({ environment: { medium: 'gas', temperatureC: { min: -10, max: 40 } } });
-		const { value, isHome } = holdAtSite(r, s, w);
+		const { value, isHome } = holdAtSite(r, s, w, { rules: FRAC });
 		expect(isHome).toBe(true);
 		// baseHold * matchup(rock-vs-rock = 1) * home(1.5) * strain(1)
-		expect(value).toBeCloseTo(baseHold(r) * 1 * 1.5, 5);
+		expect(value).toBeCloseTo(baseHold(r, FRAC) * 1 * 1.5, 5);
+		// pass 59: as shipped the whole normal hold times 1.5, rounded once
+		const whole = holdAtSite(r, s, w);
+		expect(whole.value).toBe(Math.round(baseHold(r) * 1.5));
 	});
 
 	test('no home ground bonus off the origin world', () => {
@@ -467,8 +479,8 @@ describe('every attribute a job (assumption 17)', () => {
 		const stubborn = record({ physiology: strainedPhysiology, attributes: { ...attrs, willpower: WILLFUL_THRESHOLD } });
 		const meek = record({ physiology: strainedPhysiology, attributes: { ...attrs, willpower: WILLFUL_THRESHOLD - 1 } });
 
-		const stubbornView = prepare(stubborn, site(), world(), 0);
-		const meekView = prepare(meek, site(), world(), 0);
+		const stubbornView = prepare(stubborn, site(), world(), 0, { rules: FRAC });
+		const meekView = prepare(meek, site(), world(), 0, { rules: FRAC });
 		expect(meekView.strainLevel).toBe('strained');
 		// the printed grade is unchanged; what changes is the grade the arithmetic uses
 		expect(stubbornView.strainLevel).toBe('strained');
@@ -478,11 +490,11 @@ describe('every attribute a job (assumption 17)', () => {
 		expect(stubbornView.hold).toBeCloseTo(meekView.hold * 2, 5);
 
 		// bolster does not push a willful creature past comfortable: it gets the floor
-		const bolstered = prepare(stubborn, site(), world(), 0, { bolstered: true });
+		const bolstered = prepare(stubborn, site(), world(), 0, { bolstered: true, rules: FRAC });
 		expect(bolstered.hold).toBeCloseTo(stubbornView.hold + BOLSTER_FLOOR, 5);
 
 		// and the willful ablation puts the grade back
-		const off = prepare(stubborn, site(), world(), 0, { rules: { willful: false } });
+		const off = prepare(stubborn, site(), world(), 0, { rules: { willful: false, wholeHolds: false } });
 		expect(off.willful).toBe(false);
 		expect(off.hold).toBeCloseTo(meekView.hold, 5);
 	});
@@ -497,9 +509,9 @@ describe('every attribute a job (assumption 17)', () => {
 
 	test('a charismatic bolsterer restores more hold than a charmless one', () => {
 		const target = record();
-		const plain = holdAtSite(target, site(), world(), {}).value;
-		const strong = holdAtSite(target, site(), world(), { bolstered: true, bolsterScale: 1.5 }).value;
-		const weak = holdAtSite(target, site(), world(), { bolstered: true, bolsterScale: 0.5 }).value;
+		const plain = holdAtSite(target, site(), world(), { rules: FRAC }).value;
+		const strong = holdAtSite(target, site(), world(), { bolstered: true, bolsterScale: 1.5, rules: FRAC }).value;
+		const weak = holdAtSite(target, site(), world(), { bolstered: true, bolsterScale: 0.5, rules: FRAC }).value;
 		// comfortable already, so the whole lift is the scaled floor
 		expect(strong - plain).toBeCloseTo(BOLSTER_FLOOR * 1.5, 5);
 		expect(weak - plain).toBeCloseTo(BOLSTER_FLOOR * 0.5, 5);

@@ -25,6 +25,7 @@ import {
 	BOLSTER_FLOOR,
 	MAGNITUDE_SCALE,
 	ELEMENT_MATCHUPS,
+	WHOLE_HOLDS,
 	MIN_BLOW_MAGNITUDE,
 	ROLE,
 	PRESENCE_BY_ARCHETYPE,
@@ -73,6 +74,11 @@ function recordElement(record: XalianRecord | null | undefined): XalianRecord['e
 // pass 57: whether the type chart is in play (rules.elementMatchups, off as shipped)
 export function elementMatchupsOn(rules?: Partial<Rules> | null): boolean {
 	return rules && typeof rules.elementMatchups === 'boolean' ? rules.elementMatchups : ELEMENT_MATCHUPS;
+}
+
+// pass 59: whether holds are whole numbers (rules.wholeHolds, on as shipped)
+export function wholeHoldsOn(rules?: Partial<Rules> | null): boolean {
+	return rules && typeof rules.wholeHolds === 'boolean' ? rules.wholeHolds : WHOLE_HOLDS;
 }
 
 // world matchup: matrix[creature][world], softened + blended, creature as attacker
@@ -285,7 +291,8 @@ export function baseHold(record: XalianRecord, rules?: Partial<Rules> | null): n
 	const floor = rules && typeof rules.holdFloor === 'number' ? rules.holdFloor : HOLD_FLOOR;
 	const ceiling = rules && typeof rules.holdCeiling === 'number' ? rules.holdCeiling : HOLD_CEILING;
 	const span = RAW_ATTRIBUTE_MAX - RAW_ATTRIBUTE_MIN;
-	return floor + ((raw - RAW_ATTRIBUTE_MIN) * (ceiling - floor)) / span;
+	const value = floor + ((raw - RAW_ATTRIBUTE_MIN) * (ceiling - floor)) / span;
+	return wholeHoldsOn(rules) ? Math.round(value) : value;
 }
 
 /*
@@ -341,6 +348,12 @@ export function holdAtSite(
 	}
 	if (alliesAtSite > 0 && hasAnyTraitKeyword(record, 'solitary')) {
 		value -= alliesAtSite; // SOLITARY_HOLD_PENALTY_PER_ALLY = 1
+	}
+
+	// pass 59: the hold at the world is whole too, rounded once after every factor, so the
+	// card's normal hold times its factor lands on its number to within that one rounding
+	if (wholeHoldsOn(rules)) {
+		value = Math.round(value);
 	}
 
 	// `level` is the creature's own strain grade, as the plinth prints it; `effectiveLevel`

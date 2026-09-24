@@ -2,6 +2,8 @@
 
 Status: shipped in pass 58. It builds on `reclamation-attention-and-why.md` (pass 57); where they disagree, this document wins.
 
+Pass 59 (`reclamation-read-the-card.md`) reversed this document's assumption 2: Nick read the cyan columns as pointing at the blue world, and a card is only ever yours, so its columns wear their worlds' colors again and the card carries no side color. The rest (never adding the two sides; the rival's side at the column's top) stands.
+
 ## What Nick asked
 
 Nick, 2026-09-24, on the pass 57 table. The rival had sent Bioflim (14) to Endessa, and he was pointing at Scalatto, whose card read 13, 34 and 13:

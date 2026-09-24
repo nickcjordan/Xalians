@@ -1,5 +1,6 @@
 import { forecastClash, forecastSend, moveSwift, movableRecordIdsFor } from '@xalians/rules/expedition/expeditionRules';
-import { prepare, baseHold } from '@xalians/rules/expedition/creatureOnTable';
+import { prepare, baseHold, roleOf, strainMultiplierFor, wholeHoldsOn } from '@xalians/rules/expedition/creatureOnTable';
+import { HOME_GROUND_MULTIPLIER } from '@xalians/rules/expedition/expeditionInterpretation';
 import { strainCause } from './reclamationPreview';
 
 /*
@@ -69,6 +70,14 @@ export function forecastTotalsAt(match, seat, forecast, siteId, extraId) {
 	(a willful creature shrugs off one grade), and `company` is whatever bolsters and packs
 	add on top. The element type chart is not in it: it has read 1 for every schema 5
 	creature since the conversion (rules.elementMatchups, off as shipped).
+
+	PASS 59, READ THE CARD (docs/design/reclamation-read-the-card.md). Nick, 2026-09-24: "I
+	also don't understand what the icons are beneath each bar or how each bar is calculated."
+	So each reason carries the factor it applies (`homeFactor`, `climate.factor`), which the
+	card prints beside its mark, and a bolster standing alone is told apart from company: the
+	rules let a bolster lift itself ("allies at its world, itself included"), and pass 57
+	drew that as two figures on a world with nobody else on it. It is `selfLift` now, drawn
+	with the bolster's own role mark.
 */
 const BAND = { none: 1, strained: 0.5, severe: 0.25 };
 export function breakdown(ownForecast, base, totals, record, site, reading, rules) {
@@ -83,8 +92,12 @@ export function breakdown(ownForecast, base, totals, record, site, reading, rule
 	const cause = held !== 'none'
 		? (strainCause({ temperatureC: tolerance.temperatureC, ambientMedia: tolerance.ambientMedia || [], breathes: (record.physiology && record.physiology.breathes) || [] }, site) || 'strained')
 		: null;
-	const expected = body * (home ? 1.5 : 1) * (BAND[held] || 1);
-	const company = going - expected;
+	// rounded as the engine rounds a hold at a world (rules.wholeHolds), so a plain 13 x 1/2 is 7 and no company
+	const plain = body * (home ? HOME_GROUND_MULTIPLIER : 1) * (BAND[held] || 1);
+	const expected = wholeHoldsOn(rules) ? Math.round(plain) : plain;
+	const lift = going - expected;
+	// a bolster with none of yours beside it can only have lifted itself
+	const self = Math.abs(lift) >= 0.5 && !(base.mine > EPS) && roleOf(record, rules) === 'bolster';
 	const allies = totals.mine - own - base.mine;
 	return {
 		own,
@@ -97,10 +110,12 @@ export function breakdown(ownForecast, base, totals, record, site, reading, rule
 		taken: Math.max(0, base.theirs - totals.theirs),
 		body,
 		home,
-		climate: held !== 'none' ? { level: held, cause, medium: (site.environment && site.environment.medium) || null } : null,
+		homeFactor: home ? HOME_GROUND_MULTIPLIER : 1,
+		climate: held !== 'none' ? { level: held, cause, medium: (site.environment && site.environment.medium) || null, factor: strainMultiplierFor(held) } : null,
 		// willpower lifted its grade here: it would be strained, and is not (or less so)
 		shrugged: level !== held,
-		company: Math.abs(company) >= 0.5 ? company : 0,
+		company: Math.abs(lift) >= 0.5 && !self ? lift : 0,
+		selfLift: self ? lift : 0,
 	};
 }
 
