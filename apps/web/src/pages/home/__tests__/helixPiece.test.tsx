@@ -1,40 +1,42 @@
 import * as React from 'react';
 import { render } from '@testing-library/react';
-import { act } from 'react';
 import { describe, expect, it } from 'vitest';
-import { HelixPiece } from '../helixPiece';
-import { SceneTime } from '../storyStage';
+import { HelixPiece, loopAt } from '../helixPiece';
 
-// The helix pieces draw straight to the DOM from their stretch of the scroll.
-// jsdom has no layout, but it keeps attributes, so a frame can be read back.
-const opacities = (c: HTMLElement) => [...c.querySelectorAll('line')].map((l) => Number(l.getAttribute('opacity')));
+// The helix pieces play on their own clock, never the scroll's. jsdom has no
+// animation frames worth trusting, so the clock is checked through loopAt and
+// the drawing through the first and last frames.
+// The chip is the group inside the whole piece's group.
+const chipOpacity = (c: HTMLElement) => Number(c.querySelector('g[opacity] g[opacity]')?.getAttribute('opacity'));
+
+describe('loopAt', () => {
+	it('fades in at the first frame, plays, holds the last, and fades out before it repeats', () => {
+		expect(loopAt('plague', 0)).toEqual({ t: 0, fade: 0 });
+		expect(loopAt('plague', 0.6).fade).toBeCloseTo(1);
+		expect(loopAt('plague', 1.5)).toEqual({ t: 0, fade: 1 });
+		const mid = loopAt('plague', 0.6 + 1.2 + 3.2);
+		expect(mid.t).toBeCloseTo(0.5);
+		expect(loopAt('plague', 0.6 + 1.2 + 6.4 + 1)).toEqual({ t: 1, fade: 1 });
+		const out = loopAt('plague', 0.6 + 1.2 + 6.4 + 1.8 + 0.35);
+		expect(out.t).toBe(1);
+		expect(out.fade).toBeCloseTo(0.5);
+		// One period later it is back where it began.
+		expect(loopAt('plague', 10.7)).toEqual(loopAt('plague', 0));
+	});
+});
 
 describe('HelixPiece', () => {
-	it('draws the plague reaching the helix as its time moves, and back again', () => {
-		const time = new SceneTime();
-		const { container } = render(<HelixPiece mode="plague" live={false} time={time} label="The plague" />);
-		expect(container.querySelector('svg')).toHaveAttribute('aria-label', 'The plague');
-		const whole = opacities(container);
-		expect(whole.every((o) => o > 0)).toBe(true);
-		act(() => time.set(1));
-		// At the end most of it has fallen away: a short length is left.
-		const gone = opacities(container).filter((o) => o < 0.02).length;
-		expect(gone).toBeGreaterThan(whole.length / 2);
-		act(() => time.set(0));
-		expect(opacities(container)).toEqual(whole);
+	it('starts on the stage at its first frame: the plague piece whole, the token chip not yet sealed', () => {
+		const plague = render(<HelixPiece mode="plague" live={false} label="The plague" />);
+		expect(plague.container.querySelector('svg')).toHaveAttribute('aria-label', 'The plague');
+		const lines = [...plague.container.querySelectorAll('line')].map((l) => Number(l.getAttribute('opacity')));
+		expect(lines.every((o) => o > 0)).toBe(true);
+		const token = render(<HelixPiece mode="token" live={false} label="The token" />);
+		expect(chipOpacity(token.container)).toBe(0);
 	});
 
-	it('seals the token chip only at the end of its stretch', () => {
-		const time = new SceneTime();
-		const { container } = render(<HelixPiece mode="token" live={false} time={time} label="The token" />);
-		const chip = () => Number(container.querySelector('g[opacity]')?.getAttribute('opacity'));
-		expect(chip()).toBe(0);
-		act(() => time.set(1));
-		expect(chip()).toBe(1);
-	});
-
-	it('rests on its last frame when it has no stage time (stacked)', () => {
+	it('rests on its last frame when stacked', () => {
 		const { container } = render(<HelixPiece mode="token" live={undefined} label="The token" />);
-		expect(Number(container.querySelector('g[opacity]')?.getAttribute('opacity'))).toBe(1);
+		expect(chipOpacity(container)).toBe(1);
 	});
 });

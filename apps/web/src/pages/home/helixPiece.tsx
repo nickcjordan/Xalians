@@ -1,5 +1,5 @@
 // Tier: featured component. The home story's two helix pieces (docs/design/
-// home-story-content-plan.md, beats 5 and 6): small scrubbed animations with no
+// home-story-content-plan.md, beats 5 and 6): small looping animations with no
 // landscape, one genome helix drawn on the dark ground.
 //
 // - `plague`: the Nemesis Plague reaches the helix from one end. Its rungs
@@ -12,14 +12,13 @@
 //   sealed inside it.
 //
 // The token piece starts exactly where the plague piece ends, so the two read
-// as one object across the stage. Both are drawn from their stretch of the
-// scroll (`SceneTime`): the stage writes the reader's place every frame the page
-// moves, and the piece redraws from it directly, so scrolling back plays it
-// backward. A slow turn runs on its own clock only while the piece is the
-// shown one and motion is allowed. Stacked, or under reduced motion, the piece
-// rests on its last frame.
+// as one object across the stage. Each plays on its own clock and loops while
+// it is the shown piece and on the screen: the scroll only chooses which beat
+// is shown, it never drives the animation (Nick, 2026-09-24: tying the two was
+// buggy). Every loop holds its last frame, fades out and fades back in at its
+// first before it repeats. Stacked, or under reduced motion, a piece rests on
+// its last frame.
 import * as React from 'react';
-import type { SceneTime } from './storyStage';
 
 const W = 640;
 const H = 360;
@@ -32,6 +31,28 @@ const SEG = 8; // strand segment length
 const RUNGS = Array.from({ length: 26 }, (_, i) => 70 + i * 20);
 const SEGS = Array.from({ length: (X1 - X0) / SEG }, (_, i) => X0 + i * SEG);
 const TURN = 0.55; // radians a second, while the piece is live
+
+// One loop of each piece, in seconds: rest at the start, play, hold the end, fade out, fade in.
+const LOOP = {
+	plague: { rest: 1.2, play: 6.4, hold: 1.8, out: 0.7, in: 0.6 },
+	token: { rest: 0.4, play: 7.6, hold: 2.2, out: 0.7, in: 0.6 },
+} as const;
+
+/** Where a loop is at `sec`: the animation's own 0 to 1, and the piece's opacity. */
+export function loopAt(mode: 'plague' | 'token', sec: number) {
+	const L = LOOP[mode];
+	const period = L.rest + L.play + L.hold + L.out + L.in;
+	let s = sec % period;
+	if (s < L.in) return { t: 0, fade: s / L.in };
+	s -= L.in;
+	if (s < L.rest) return { t: 0, fade: 1 };
+	s -= L.rest;
+	if (s < L.play) return { t: s / L.play, fade: 1 };
+	s -= L.play;
+	if (s < L.hold) return { t: 1, fade: 1 };
+	s -= L.hold;
+	return { t: 1, fade: 1 - s / L.out };
+}
 
 // The four bases and their pairs, as art colors (lore art keeps its own palette).
 const BASE = ['#5fbfae', '#d6a95a', '#8196e2', '#d0708e'];
@@ -173,15 +194,18 @@ function reduced() {
 	return typeof window !== 'undefined' && !!window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 }
 
-export function HelixPiece({ mode, live, time, label }: { mode: Mode; live: boolean | undefined; time?: SceneTime; label: string }) {
+export function HelixPiece({ mode, live, label }: { mode: Mode; live: boolean | undefined; label: string }) {
 	const rungA = React.useRef<Array<SVGLineElement | null>>([]);
 	const rungB = React.useRef<Array<SVGLineElement | null>>([]);
 	const segs = React.useRef<Array<SVGLineElement | null>>([]);
 	const chip = React.useRef<SVGGElement | null>(null);
-	const state = React.useRef({ t: time ? time.value : 1, phase: 0.4 });
+	const whole = React.useRef<SVGGElement | null>(null);
+	// Stacked, or before its clock starts, a piece shows its last frame; on the stage it starts at its first.
+	const state = React.useRef({ t: live === undefined ? 1 : 0, fade: 1, phase: 0.4, sec: 0 });
 
 	const draw = React.useCallback(() => {
-		const { t, phase } = state.current;
+		const { t, phase, fade } = state.current;
+		whole.current?.setAttribute('opacity', fade.toFixed(3));
 		const fr = frameAt(mode, t);
 		const sq = fr.squeeze;
 		const sx = (x: number) => W / 2 + (x - W / 2) * (1 - 0.72 * sq);
@@ -242,36 +266,36 @@ export function HelixPiece({ mode, live, time, label }: { mode: Mode; live: bool
 		}
 	}, [mode]);
 
-	// Scrubbed by the scroll: redraw whenever the reader's place in this stretch moves.
-	// Under reduced motion it rests on its last frame instead.
-	React.useEffect(() => {
-		if (!time || reduced()) {
+	// The first frame to show: the last one when stacked or under reduced motion.
+	React.useLayoutEffect(() => {
+		if (live === undefined || reduced()) {
 			state.current.t = 1;
-			draw();
-			return undefined;
+			state.current.fade = 1;
 		}
-		state.current.t = time.value;
 		draw();
-		return time.subscribe((t) => {
-			state.current.t = t;
-			draw();
-		});
-	}, [time, draw]);
+	}, [live, draw]);
 
-	// The slow turn, only while this is the shown piece and motion is allowed.
+	// The loop and the slow turn, only while this is the shown piece, on the screen, and motion is allowed.
+	// Paused, it keeps its place; shown again, it carries on from there.
 	React.useEffect(() => {
 		if (!live || reduced()) return undefined;
 		let frame = 0;
 		let last = performance.now();
 		const tick = (now: number) => {
-			state.current.phase += (TURN * Math.min(100, now - last)) / 1000;
+			const dt = Math.min(100, now - last) / 1000;
 			last = now;
+			const st = state.current;
+			st.sec += dt;
+			st.phase += TURN * dt;
+			const at = loopAt(mode, st.sec);
+			st.t = at.t;
+			st.fade = at.fade;
 			draw();
 			frame = window.requestAnimationFrame(tick);
 		};
 		frame = window.requestAnimationFrame(tick);
 		return () => window.cancelAnimationFrame(frame);
-	}, [live, draw]);
+	}, [live, mode, draw]);
 
 	return (
 		<svg viewBox={`0 0 ${W} ${H}`} role="img" aria-label={label} className="block h-auto w-full overflow-visible">
@@ -286,6 +310,7 @@ export function HelixPiece({ mode, live, time, label }: { mode: Mode; live: bool
 					<stop offset="1" stopColor="#9fd9cf" stopOpacity="0" />
 				</radialGradient>
 			</defs>
+			<g ref={whole}>
 			{mode === 'token' ? (
 				// The Scrambler Token: a small chip, contacts along its edges, the new genome sealed in its face.
 				<g ref={chip} opacity="0">
@@ -313,6 +338,7 @@ export function HelixPiece({ mode, live, time, label }: { mode: Mode; live: bool
 						<line ref={(el) => { rungB.current[i] = el; }} />
 					</React.Fragment>
 				))}
+			</g>
 			</g>
 		</svg>
 	);

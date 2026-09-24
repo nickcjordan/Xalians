@@ -16,7 +16,7 @@ Nick approved this sequence on 2026-09-24 ("agreed, proceed"). This plan records
 | 2 | Every headline is a phrase from Nick's 2022 front page, not new copy. Agent-written headlines were rejected as robotic in the first demo. | 95% | `home-story-page-brief.md` section 1; `git show 1285604e:my-app/src/pages/home.js` |
 | 3 | A headline may quote a phrase from the paragraph of a neighboring beat, the way a pull quote repeats its article. Reported as a lever if it reads as repetition. | 70% | beats 2 and 3 below |
 | 4 | The Accords scene (the QED works on Zolton) leaves the stage. Its point, that APEX took the Generators, is made directly by beat 3. Its living plate and poster stay in the repo; nothing is deleted. | 90%, Nick approved the swap | conversation 2026-09-24; `apps/web/public/assets/plates/accords/` |
-| 5 | The small pieces are driven by scroll position within their stretch of the stage (scrubbed), not by a clock. Scrolling back plays them backward, and every scroll moves something. | 85%, follows Nick's "scrolling should always do something" | `home-story-page-brief.md` section 3 |
+| 5 | The small pieces play on their own clock and loop while they are the shown beat and on the screen; the scroll only chooses the beat and moves the timeline's dot. A piece off the stage holds nothing in the DOM. (Revised 2026-09-24: the first build scrubbed the pieces by scroll, and Nick ruled that buggy: "I don't think you should try and tie the scroll progression to the animation progression.") | 95%, Nick's ruling | conversation 2026-09-24; `pages/home/helixPiece.tsx` `loopAt` |
 | 6 | On a full scene the headline becomes the scene's heading, and the era title moves into the kicker with the numeral ("01 · The Age of Unbirth"). | 70%, a layout call Nick judges live | `apps/web/src/pages/home.tsx` `SceneReading` |
 | 7 | The small pieces are React components (inline SVG and GSAP), not plate fragments. They carry no landscape and no frame, so the plate pipeline's layers and poster are not needed. | 80% | `components/plates/livePlate.tsx`; the End Wars and Unbirth plates |
 | 8 | The optional closing tease (the ancient presence stirring behind the last creature) is deferred. I recommended leaving it out unless the page should end on dread, and Nick approved without adding it. | 80% | conversation 2026-09-24 |
@@ -53,7 +53,7 @@ Text sources: `STORY[0]` to `STORY[3]` and `TOKENS` are Nick's 2022 paragraphs a
 - **Headline:** "Designed to thrive in Xalia's most extreme environments" (from `STORY[0]`).
 - **Reading text:** none. The headline stands alone under the piece.
 - **What it shows:** a Generator's vat window, close up and alone on the dark ground: the curved glass, the green gel, rising bubbles. Inside, a creature condenses out of the glow and passes through three forms, the silhouettes of real species from an ice world, an air world and a fire world, each tinted by its world, before it settles into the last one and opens its eyes.
-- **Motion:** scrubbed by scroll. The first quarter of the stretch forms the creature, the middle half morphs it through the three forms, and the last quarter settles it. A slow bubble drift runs on its own clock underneath, so the piece is never frozen while the reader pauses.
+- **Motion:** a loop on its own clock: the creature forms, morphs through the three forms and settles, holds, fades out and fades back in at its first frame. A slow bubble drift runs underneath.
 - **Chain step:** 2.
 
 ### Beat 3 · Small piece · APEX takes the Generators
@@ -61,7 +61,7 @@ Text sources: `STORY[0]` to `STORY[3]` and `TOKENS` are Nick's 2022 paragraphs a
 - **Headline:** "The galaxy's first artificial intelligence" (from `STORY[1]`).
 - **Reading text:** none.
 - **What it shows:** the same vat window and the same creature from beat 2, so the two pieces read as one object. A thin line of another light threads into the frame of the vat, and the gel's green is overtaken from the edges inward by that light. The creature's eyes change last. The color is an art choice made at build, not canon, and follows the rule that lore art is independent of the site palette.
-- **Motion:** scrubbed. The takeover runs from 10 to 80 percent of the stretch, and the eyes change in the last 20.
+- **Motion:** a loop on its own clock: the takeover runs through most of it and the eyes change last, then it holds, fades out and fades back in.
 - **Chain step:** 3.
 
 ### Beat 4 · Full scene · The End Wars (built)
@@ -77,7 +77,7 @@ Text sources: `STORY[0]` to `STORY[3]` and `TOKENS` are Nick's 2022 paragraphs a
 - **Headline:** "Designed by APEX to target the genome" (from `STORY[2]`).
 - **Reading text:** `STORY[2]`, set beside or beneath the piece like a full scene's reading column.
 - **What it shows:** a genome helix, drawn with the same double-strand language as the site's DNA X mark, turning slowly on the dark ground. Starting at one end, rungs darken and fall away, the strands fray, and the pieces drift down as dust until a short broken length is left turning.
-- **Motion:** scrubbed. The decay advances with the scroll. The slow turn runs on its own clock.
+- **Motion:** a loop of about eleven seconds: the whole helix turns, the decay runs across it, the broken length holds, fades out and fades back in whole.
 - **Chain step:** 4.
 
 ### Beat 6 · Small piece · The Scrambler Token
@@ -85,7 +85,7 @@ Text sources: `STORY[0]` to `STORY[3]` and `TOKENS` are Nick's 2022 paragraphs a
 - **Headline:** "The only way to safely generate new Xalians" (from `TOKENS`).
 - **Reading text:** `TOKENS`.
 - **What it shows:** the last of the broken helix from beat 5 fades, and a new helix gathers out of the dark from scattered blanks. It is not rebuilt from the fallen pieces: a token's genome is generated new (the fact-check caught the first version implying salvage). Its rungs shuffle into a random order, each pair lighting as it locks, and the new helix folds down into a small chip, the Scrambler Token, with the genome sealed in its face. (Built as its own helix drawing rather than from the brand morph: the brand mark is a logo glyph, not a long helix.)
-- **Motion:** scrubbed. The remnant fades in the first eighth, the new helix gathers by a third, it scrambles in the second third and seals into the chip in the last.
+- **Motion:** a loop of about twelve seconds: the remnant fades, the new helix gathers, scrambles and seals into the chip, which holds before the loop fades out and back in.
 - **Chain step:** 5.
 
 ### Beat 7 · Full scene · The Reign of Kozrak (to build)
@@ -114,7 +114,7 @@ Each step is its own PR, auto-merged and judged live by Nick.
 4. Beats 2 and 3: they share the vat and the creature.
 5. Beat 7, the present as a living plate: the largest piece, built through the `living-plate` skill with its review loop.
 
-Every step is verified by paint before it is presented: rendered at wide, phone and reduced motion with no console errors, and a scrub test of each small piece at several scroll positions.
+Every step is verified by paint before it is presented: rendered at wide, phone and reduced motion with no console errors, and each small piece snapped at several moments of its loop.
 
 ## 7. Fact-check notes (2026-09-24)
 
