@@ -271,74 +271,238 @@
 		-webkit-mask-size: 100% 100%; mask-size: 100% 100%; -webkit-mask-composite: source-in; mask-composite: intersect; }
 
 	/* The home story's stage (pages/home/storyStage.tsx): four scenes stacked
-	   in one pinned box, one shown at a time. A scene is its painting's frame
-	   and its caption plate, sized to the box by the painting's aspect (`--ar`)
-	   so every scene fits one screen. Scenes behind the reader wait above
-	   ("past"), scenes ahead wait below ("future"): moving on sends the shown
-	   frame drifting out the way the page travels while the next drifts in
-	   after it, then the next caption slides out from behind its painting.
-	   Exit eases in, entry eases out (section 7); reversing plays it backward.
-	   Under reduced motion the theme makes every one of these instant. */
-	.story-stage { --story-step: 90svh; }
+	   in one pinned box, one shown at a time, and a timeline in the stage's
+	   head whose dot is the reader's place in the section. A scene is three
+	   parts: the painting, as large as the box allows by its aspect (`--ar`);
+	   its label, small, under the frame's foot; and the reading column, set
+	   large. Scenes behind the reader wait above ("past"), scenes ahead wait
+	   below ("future"): moving on sends the shown frame drifting out the way
+	   the page travels while the next drifts in after it, then the reading
+	   column and the label arrive. Exit eases in, entry eases out (section 7);
+	   reversing plays it backward. Under reduced motion the theme makes every
+	   one of these instant; the dot keeps following the scroll. */
+	.story-stage { --story-step: 70svh; }
+
+	/* The timeline: a hairline track, a tick at the start of each scene's
+	   stretch and one at its end, the part behind the dot filled in ink, and
+	   the dot itself, all read from --story-progress (0 to 1). */
+	.story-line { position: relative; }
+	.story-track {
+		position: absolute;
+		left: 0;
+		right: 0;
+		bottom: 4px;
+		height: 2px;
+		background: var(--color-edge-strong);
+		pointer-events: none;
+	}
+	.story-track::after {
+		content: "";
+		position: absolute;
+		right: 0;
+		bottom: -4px;
+		width: 2px;
+		height: 10px;
+		background: var(--color-edge-strong);
+	}
+	.story-fill {
+		position: absolute;
+		inset: 0;
+		background: var(--color-ink-3);
+		transform-origin: left center;
+		transform: scaleX(var(--story-progress, 0));
+	}
+	.story-dot {
+		position: absolute;
+		top: 50%;
+		left: calc(var(--story-progress, 0) * 100%);
+		width: 10px;
+		height: 10px;
+		border-radius: 50%;
+		background: var(--color-ink);
+		outline: 3px solid var(--color-room);
+		transform: translate(-50%, -50%);
+	}
+	.story-marker { position: relative; }
+	.story-marker::before {
+		content: "";
+		position: absolute;
+		left: 0;
+		bottom: 0;
+		width: 2px;
+		height: 10px;
+		background: var(--color-edge-strong);
+		transition: background-color 120ms ease-out;
+	}
+	.story-marker[data-reached]::before { background: var(--color-ink); }
+
 	.story-scene {
 		position: absolute;
 		inset: 0;
-		container-type: size;
-		display: grid;
-		place-items: center;
 		pointer-events: none;
 	}
 	.story-scene[data-state="active"] { z-index: 1; pointer-events: auto; }
+
+	/* One column by default (a phone): the painting takes the height the words
+	   leave it, then its label, then the reading column. The painting's cell
+	   is a size container so the frame fits it by its aspect either way. */
 	.scene-spread {
-		--reserve: 250px;
-		position: relative;
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		width: 100%;
+		--lift: 4px;
+		display: grid;
+		grid-template-columns: minmax(0, 1fr);
+		grid-template-rows: minmax(0, 1fr) auto auto;
+		grid-template-areas: "frame" "label" "read";
+		row-gap: 12px;
+		height: 100%;
 	}
+	.scene-art { display: contents; }
 	.scene-frame {
-		position: relative;
-		z-index: 0;
-		width: min(100cqw, calc((100cqh - var(--reserve)) * var(--ar)));
+		grid-area: frame;
+		container-type: size;
+		display: flex;
+		align-items: flex-end;
+		justify-content: center;
+		min-height: 0;
 		transition: opacity 560ms var(--ease-in), transform 640ms var(--ease-in);
 	}
-	.scene-caption {
-		position: relative;
-		z-index: 1;
-		align-self: stretch;
-		margin: -28px 16px 0;
-		transition: opacity 320ms var(--ease-in), transform 320ms var(--ease-in);
-	}
+	.scene-frame > * { width: min(calc(100cqw - var(--lift)), calc((100cqh - var(--lift)) * var(--ar))); }
+	.scene-spread .scene-label { grid-area: label; }
+	.scene-spread .scene-read { grid-area: read; }
+	.scene-spread .scene-label,
+	.scene-spread .scene-read { transition: opacity 280ms var(--ease-in), transform 280ms var(--ease-in); }
+
 	.story-scene[data-state="past"] .scene-frame { opacity: 0; transform: translateY(-9%) scale(.96); }
 	.story-scene[data-state="future"] .scene-frame { opacity: 0; transform: translateY(9%) scale(1.03); }
-	.story-scene:not([data-state="active"]) .scene-caption { opacity: 0; transform: translateY(24px); }
+	.story-scene:not([data-state="active"]) .scene-read,
+	.story-scene:not([data-state="active"]) .scene-label { opacity: 0; transform: translateY(20px); }
 	.story-scene[data-state="active"] .scene-frame { transition: opacity 700ms var(--ease-out) 180ms, transform 950ms var(--ease-out) 180ms; }
-	.story-scene[data-state="active"] .scene-caption { transition: opacity 600ms var(--ease-out) 620ms, transform 760ms var(--ease-out) 620ms; }
-	@media (min-width: 1000px) {
-		.story-scene:not([data-state="active"]) .scene-caption[data-from="left"] { transform: translateX(-56px); }
-		.story-scene:not([data-state="active"]) .scene-caption[data-from="right"] { transform: translateX(56px); }
-		/* Wide: the caption over the painting's foot, at one side, sized and
-		   placed by the painting (`--fw`, its width) rather than the column. */
-		.scene-spread[data-layout="wide"], .scene-spread[data-layout="wide-right"] {
-			--reserve: 160px;
-			--fw: min(100cqw, calc((100cqh - var(--reserve)) * var(--ar)));
-			width: var(--fw);
-		}
-		.scene-spread[data-layout="wide"] .scene-frame, .scene-spread[data-layout="wide-right"] .scene-frame { width: var(--fw); }
-		.scene-spread[data-layout="wide"] .scene-caption { align-self: flex-start; width: max(calc(var(--fw) * .58), 520px); margin: -88px 0 0 48px; }
-		.scene-spread[data-layout="wide-right"] .scene-caption { align-self: flex-end; width: max(calc(var(--fw) * .58), 520px); margin: -72px 48px 0 0; }
-		/* The turn of the story breaks the column on both sides where there is room. */
-		.scene-spread[data-layout="wide-right"] { --fw: min(calc(100cqw + 64px), calc((100cqh - var(--reserve)) * var(--ar))); }
-		/* Beside: the caption over the painting's near edge, level with its middle. */
-		.scene-spread[data-layout="portrait"], .scene-spread[data-layout="side"] { --reserve: 16px; flex-direction: row; justify-content: center; }
-		.scene-spread[data-layout="portrait"] .scene-frame { width: min(56cqw, calc((100cqh - var(--reserve)) * var(--ar))); }
-		.scene-spread[data-layout="portrait"] .scene-caption { order: -1; align-self: center; width: 50cqw; margin: 0 -72px 0 0; }
-		.scene-spread[data-layout="side"] .scene-frame { width: min(62cqw, calc((100cqh - var(--reserve)) * var(--ar))); }
-		.scene-spread[data-layout="side"] .scene-caption { align-self: center; width: 44cqw; margin: 0 0 0 -96px; }
+	.story-scene[data-state="active"] .scene-read { transition: opacity 600ms var(--ease-out) 420ms, transform 760ms var(--ease-out) 420ms; }
+	.story-scene[data-state="active"] .scene-label { transition: opacity 500ms var(--ease-out) 720ms, transform 600ms var(--ease-out) 720ms; }
+	/* The theme zeroes durations under reduced motion; the delays go too, so
+	   a scene change is one instant cut. */
+	@media (prefers-reduced-motion: reduce) {
+		.story-scene .scene-frame,
+		.story-scene .scene-read,
+		.story-scene .scene-label { transition-delay: 0s !important; }
 	}
-	@media (min-width: 1440px) {
-		.scene-spread[data-layout="wide-right"] { --fw: min(calc(100cqw + 192px), calc((100cqh - var(--reserve)) * var(--ar))); }
+
+	@media (min-width: 1000px) {
+		/* Wide: the painting runs across the stage; under it, a row with the
+		   label beneath the frame's foot and the reading column beside it. */
+		.scene-spread[data-layout="wide"],
+		.scene-spread[data-layout="wide-right"] {
+			grid-template-rows: minmax(0, 1fr) auto;
+			column-gap: 48px;
+			row-gap: 20px;
+		}
+		.scene-spread[data-layout="wide"] {
+			grid-template-columns: minmax(0, 4fr) minmax(0, 8fr);
+			grid-template-areas: "frame frame" "label read";
+		}
+		.scene-spread[data-layout="wide"] .scene-frame { justify-content: flex-start; }
+		.scene-spread[data-layout="wide-right"] {
+			grid-template-columns: minmax(0, 8fr) minmax(0, 4fr);
+			grid-template-areas: "frame frame" "read label";
+		}
+		.scene-spread[data-layout="wide-right"] .scene-frame { justify-content: flex-end; }
+		.scene-spread[data-layout="wide"] .scene-label,
+		.scene-spread[data-layout="wide-right"] .scene-label { align-self: start; }
+
+		/* Beside: the reading column and the painting side by side, the label
+		   under the frame. The frame leaves `--label` of height for the label,
+		   and the label is never narrower than 24rem, so it always fits there. */
+		.scene-spread[data-layout="portrait"],
+		.scene-spread[data-layout="side"] {
+			--label: 10rem;
+			grid-template-rows: minmax(0, 1fr);
+			column-gap: 56px;
+			align-items: center;
+		}
+		.scene-spread[data-layout="portrait"] {
+			grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+			grid-template-areas: "read art";
+		}
+		.scene-spread[data-layout="side"] {
+			grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+			grid-template-areas: "art read";
+		}
+		.scene-spread[data-layout="portrait"] .scene-art,
+		.scene-spread[data-layout="side"] .scene-art {
+			grid-area: art;
+			container-type: size;
+			align-self: stretch;
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			gap: 14px;
+		}
+		.scene-spread[data-layout="portrait"] .scene-art { align-items: flex-start; }
+		.scene-spread[data-layout="side"] .scene-art { align-items: flex-end; }
+		.scene-spread[data-layout="portrait"] .scene-frame,
+		.scene-spread[data-layout="side"] .scene-frame {
+			display: block;
+			flex: none;
+			container-type: normal;
+			width: min(calc(100cqw - var(--lift)), calc((100cqh - var(--label) - var(--lift)) * var(--ar)));
+		}
+		.scene-spread[data-layout="portrait"] .scene-frame > *,
+		.scene-spread[data-layout="side"] .scene-frame > * { width: 100%; }
+		.scene-spread[data-layout="portrait"] .scene-label,
+		.scene-spread[data-layout="side"] .scene-label {
+			flex: none;
+			width: max(min(24rem, calc(100cqw - var(--lift))), min(calc(100cqw - var(--lift)), calc((100cqh - var(--label) - var(--lift)) * var(--ar))));
+		}
+		.story-scene:not([data-state="active"]) [data-layout="portrait"] .scene-read { transform: translateX(-40px); }
+		.story-scene:not([data-state="active"]) [data-layout="side"] .scene-read { transform: translateX(40px); }
+	}
+
+	/* A short, wide window (a laptop): a wide painting run across the stage
+	   would leave its words a strip; set it beside them instead, the same way
+	   the beside scenes are. The stage's scene box is the container. */
+	.story-scene { container: scene / size; }
+	@container scene (min-width: 940px) and (min-aspect-ratio: 2.1) {
+		.scene-spread[data-layout="wide"],
+		.scene-spread[data-layout="wide-right"] {
+			--label: 10rem;
+			grid-template-rows: minmax(0, 1fr);
+			column-gap: 48px;
+			align-items: center;
+		}
+		.scene-spread[data-layout="wide"] {
+			grid-template-columns: minmax(0, 8fr) minmax(0, 4fr);
+			grid-template-areas: "art read";
+		}
+		.scene-spread[data-layout="wide-right"] {
+			grid-template-columns: minmax(0, 4fr) minmax(0, 8fr);
+			grid-template-areas: "read art";
+		}
+		.scene-spread[data-layout="wide"] .scene-art,
+		.scene-spread[data-layout="wide-right"] .scene-art {
+			grid-area: art;
+			container-type: size;
+			align-self: stretch;
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			gap: 14px;
+		}
+		.scene-spread[data-layout="wide"] .scene-art { align-items: flex-end; }
+		.scene-spread[data-layout="wide-right"] .scene-art { align-items: flex-start; }
+		.scene-spread[data-layout="wide"] .scene-frame,
+		.scene-spread[data-layout="wide-right"] .scene-frame {
+			display: block;
+			flex: none;
+			container-type: normal;
+			width: min(calc(100cqw - var(--lift)), calc((100cqh - var(--label) - var(--lift)) * var(--ar)));
+		}
+		.scene-spread[data-layout="wide"] .scene-frame > *,
+		.scene-spread[data-layout="wide-right"] .scene-frame > * { width: 100%; }
+		.scene-spread[data-layout="wide"] .scene-label,
+		.scene-spread[data-layout="wide-right"] .scene-label {
+			align-self: auto;
+			flex: none;
+			width: max(min(24rem, calc(100cqw - var(--lift))), min(calc(100cqw - var(--lift)), calc((100cqh - var(--label) - var(--lift)) * var(--ar))));
+		}
 	}
 
 	/* A frame you can press (it opens its part of The Story) stands on a mass
