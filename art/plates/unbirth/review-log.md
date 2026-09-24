@@ -412,3 +412,29 @@ Taken (identity):
 - **The horizon** was a hard line. It now dissolves into the rain.
 
 Textures: in the same round, the water ripples, the shelf and near rock, the storm ceiling's underside and the machine's plates became lit height fields (feSpecularLighting and feDiffuseLighting on fractal noise). These are the first step of the photographic stage Nick asked for. They sit in static layers, so they paint once.
+
+## Textures, stage one (2026-09-23, after PR #617)
+
+Nick: "then we can work on making it more photographic with textures". This PR is that stage's first round, built on the lit height fields that #617 introduced.
+- **The machine in relief.** The machine group's own luminance, blurred, serves as a height field lit by a specular sky light, so every plate, band, pipe, flange, rivet and the tank takes wet light on its upper edges. The reviewer: "the most photographic the machine has looked".
+- **The canopy in relief.** Leaf-mass noise is combined with the canopy's luminance and diffuse-lit from above.
+  - The first tuning (fine grain, a pale light, lit all over) turned the World Tree into a dead oak in front of a lichen cliff.
+  - The fix: noise about 3× larger, green light at a low angle, only the tops lit, the canopy kept darker than the air, and foliage clumps closing over the outer 45% of each great bough.
+- **The paper and brush-stroke overlays are cut** (.18 to .07 and .45 to .22): painted texture works against photographic.
+- **Tried and cut.** Out-of-focus drops in front of the lens read as soap bubbles, and they strobed at 30 units per frame.
+
+**The gate: one cold identity check (6)**
+
+Taken:
+- The strike behind the crown tore pale holes in it. Its peak is now .7.
+- The chute still read as a rod. It is wider, the far wall's inner face shows, and the fluid runs low in the trough.
+- The surge seams read as LED strips, the split-plate glow as a pill lamp and the gate as a ball lamp. The seams are now thin broken leaks, the glow a faint wash, and the gate a smaller burst.
+- The sprouts read as lime clip-art icons. They are now a dark living green.
+
+Performance: the near fronds' layer-wide blur re-ran every frame as they swayed (a variant without it measured about 57 fps against 35). It is replaced by a baked soft edge on each blade.
+
+Logged, not taken, as accepted decisions or taste:
+- The canopy's value and hue against the cloud. The resumed reviewer accepted it after two tunings, and this is the fifth cold check to re-judge the tree's look.
+- The birth seed's shape and its split husk. Nick has seen and liked the birth since the industrial rework.
+- The near fronds as reeds.
+- The drifting seeds as fireflies. Nick accepted the acorn seeds, which now carry under-glints.
