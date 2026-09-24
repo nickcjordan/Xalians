@@ -1,0 +1,293 @@
+/*
+  Tier: immersive. The layout pass (2026-09-24): the play screen is the whole screen, the way
+  a console game is. One HUD bar across the top holds the way out, where the squad is, the
+  round, and the tools; the stage fills everything under it edge to edge; the bottom bar holds
+  the turn order and the one forward control. On a screen larger than 1280x720 the page is
+  zoomed (useConsoleScale), so everything grows together and nothing is left as margin.
+  `--pw-vw` and `--pw-vh` are one percent of the viewport in the zoomed page's own pixels;
+  unzoomed, they fall back to the viewport units.
+*/
+.pw.in-run {
+  height: calc(var(--pw-vh, 1svh) * 100);
+}
+
+/* The turn order strip: figures in the order the round resolves, left to right. */
+.pw-turn-strip {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+.pw .pw-turn-strip-label {
+  flex: none;
+  padding: 4px 6px;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+.pw-turn-strip-label .pw-eyebrow {
+  color: #b9ab86;
+}
+.pw-turn-strip ol {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  min-width: 0;
+  overflow: hidden;
+}
+/* A small chevron between figures says "then". */
+.pw-turn-strip li + li::before {
+  content: "";
+  flex: none;
+  width: 5px;
+  height: 5px;
+  margin: 0 3px 0 1px;
+  border-top: 1.5px solid #8f8466;
+  border-right: 1.5px solid #8f8466;
+  transform: rotate(45deg);
+  opacity: 0.7;
+}
+.pw-turn-strip li {
+  display: flex;
+  align-items: center;
+  transition: opacity var(--duration-2, 200ms) ease-out;
+}
+.pw .pw-turn-strip li > button {
+  position: relative;
+  width: 38px;
+  height: 38px;
+  padding: 2px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  border: 1.5px solid #6d7f78;
+  background: radial-gradient(circle at 50% 35%, #2a3b40, #0f1b21);
+  box-shadow: inset 0 1px #e8d6a430, 0 2px 5px #03080cb0;
+  cursor: pointer;
+  transition:
+    transform var(--duration-2, 200ms) ease-out,
+    border-color var(--duration-2, 200ms) ease-out,
+    box-shadow var(--duration-2, 200ms) ease-out;
+}
+.pw .pw-turn-strip li > button:disabled {
+  cursor: default;
+}
+.pw .pw-turn-strip .pw-portrait.small {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  overflow: hidden;
+}
+/* Machines wear the danger rim; a companion's rim says whether its order is set. */
+.pw .pw-turn-strip li.enemy > button {
+  border-color: #b86c5a;
+  background: radial-gradient(circle at 50% 35%, #3b2a28, #180f10);
+}
+.pw .pw-turn-strip li.ally > button {
+  border-style: dashed;
+  border-color: #a7b4a4;
+}
+.pw .pw-turn-strip li.ally.set > button {
+  border-style: solid;
+  border-color: #e7cf8f;
+}
+.pw .pw-turn-strip li.ally.set > button::after {
+  content: "";
+  position: absolute;
+  right: -2px;
+  bottom: -2px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #e7cf8f;
+  box-shadow: 0 0 0 2px #0e191e;
+}
+.pw .pw-turn-strip li.selected > button {
+  border-color: #f4e2b0;
+  box-shadow: 0 0 0 2px #f4e2b055, 0 0 12px #e9bb5255;
+}
+@media (hover: hover) {
+  .pw .pw-turn-strip li > button:hover:not(:disabled) {
+    transform: translateY(-2px);
+  }
+}
+.pw .pw-turn-strip li.acting > button {
+  transform: scale(1.12);
+  border-color: #f4e2b0;
+  box-shadow: 0 0 0 2px #f4e2b066, 0 0 16px #e9bb5288;
+}
+.pw-turn-strip li.acted,
+.pw-turn-strip li.down {
+  opacity: 0.4;
+}
+.pw-turn-strip li.down .pw-portrait {
+  filter: grayscale(1);
+}
+
+@media (min-width: 601px) {
+  .pw.in-run {
+    min-height: 0;
+  }
+  /* The HUD bar: the way out, the sector, the route, the round, and the tools, in one row. */
+  .pw.in-run > .pw-top {
+    height: 52px;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 0;
+    padding: 0;
+  }
+  .pw.in-run > .pw-top > .pw-brand {
+    height: 100%;
+    padding: 0 20px;
+    border-right: 1px solid #bcad8340;
+  }
+  .pw.in-run > .pw-top > .pw-tools {
+    height: 100%;
+    align-items: stretch;
+    gap: 0;
+    padding-right: 8px;
+  }
+  .pw.in-run .pw-top .pw-room-bar {
+    height: 100%;
+    min-width: 0;
+    padding: 0 20px;
+    background: none;
+    border: 0;
+    box-shadow: none;
+  }
+  .pw.in-run .pw-top .pw-round {
+    margin-right: 6px;
+  }
+  /* The stage takes everything between the bars, edge to edge. */
+  .pw.in-run .pw-battle-shell,
+  .pw.in-run .pw-battle-shell:has(.pw-theater) {
+    flex: 1 1 auto;
+    height: auto;
+    min-height: 0;
+    width: 100%;
+    max-width: none;
+    margin: 0;
+  }
+  .pw.in-run .pw-theater {
+    border-width: 0;
+    border-radius: 0;
+    box-shadow: inset 0 0 0 1px #071015;
+  }
+  .pw.in-run .pw-commit {
+    height: 64px;
+    min-height: 64px;
+    margin: 0;
+    padding: 0 20px;
+    gap: 20px;
+    border-width: 1px 0 0;
+  }
+  .pw.in-run .pw-commit > .pw-readiness {
+    flex: 0 0 200px;
+  }
+  .pw.in-run .pw-commit > .pw-primary,
+  .pw.in-run .pw-commit > .pw-playback-controls {
+    flex: none;
+  }
+  .pw.in-run .pw-commit > .pw-primary {
+    min-width: 200px;
+  }
+  /* The camp and result screens fill the same space. */
+  .pw.in-run .pw-outcome {
+    flex: 1 1 auto;
+    min-height: 0;
+    margin: 0;
+    border-width: 0;
+    border-radius: 0;
+  }
+}
+
+@media (max-width: 850px) and (min-width: 601px) {
+  .pw.in-run .pw-commit > .pw-readiness {
+    flex-basis: 150px;
+  }
+  .pw-turn-strip-label {
+    display: none;
+  }
+}
+
+/* A phone keeps its two rows up top: the tools, then where the squad is. */
+@media (max-width: 600px) {
+  .pw.in-run > .pw-top {
+    height: auto;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-rows: 40px auto;
+    padding: 0;
+  }
+  .pw.in-run > .pw-top > .pw-brand {
+    padding-left: 12px;
+  }
+  .pw.in-run > .pw-top > .pw-brand {
+    grid-area: 1 / 1;
+  }
+  .pw.in-run > .pw-top > .pw-tools {
+    grid-area: 1 / 2;
+    padding-right: 12px;
+  }
+  .pw.in-run > .pw-top > .pw-room-bar {
+    grid-area: 2 / 1 / 3 / 3;
+  }
+  /* The bottom bar is only wide enough for the count and the forward control. */
+  .pw-turn-strip {
+    display: none;
+  }
+}
+
+/* A phone on its side is too short to play on: it asks to be turned upright. */
+.pw-rotate {
+  display: none;
+}
+@media (orientation: landscape) and (max-height: 480px) and (pointer: coarse) {
+  .pw.in-run > :not(.pw-rotate):not(dialog) {
+    display: none;
+  }
+  .pw.in-run > .pw-rotate {
+    flex: 1;
+    display: grid;
+    place-content: center;
+    justify-items: center;
+    gap: 12px;
+    padding: 24px;
+    text-align: center;
+    color: #e5d1a1;
+  }
+  .pw-rotate svg {
+    width: 40px;
+    height: 40px;
+  }
+}
+
+@media (min-width: 601px) and (max-width: 1100px) {
+  /* The route's diamonds already say which sector this is; the tools keep their names for
+     assistive technology and show as icons. */
+  .pw.in-run .pw-top .pw-room-bar .pw-eyebrow,
+  .pw.in-run .pw-top .pw-round small,
+  .pw.in-run .pw-tools button > span {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+  }
+  .pw.in-run .pw-top .pw-room-bar h1 {
+    white-space: nowrap;
+  }
+  .pw.in-run .pw .pw-tools button,
+  .pw.in-run .pw-tools button {
+    min-width: 44px;
+    justify-content: center;
+  }
+}

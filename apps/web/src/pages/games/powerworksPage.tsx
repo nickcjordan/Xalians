@@ -26,6 +26,7 @@ import {
   Crown,
   Volume2,
   VolumeX,
+  Smartphone,
 } from "lucide-react";
 
 import {
@@ -105,8 +106,41 @@ import { useBattlePresentation } from "./powerworksPresentation";
 import "./powerworks.css";
 import "./powerworksScene.css";
 import "./powerworksHud.css";
+import "./powerworksLayout.css";
 
 const SAVE_KEY = "xalians.powerworks.v1";
+
+/**
+  The console scale (layout pass, 2026-09-24). The play screen is composed at 1280x720; on a
+  larger landscape screen it is drawn larger with CSS zoom so the game fills the screen, and
+  the text stays crisp (zoom lays the page out again at the new size, where a transform
+  scale would blur it). Never below 1: a smaller screen keeps its own responsive layout.
+*/
+export const CONSOLE = { width: 1280, height: 720 } as const;
+export function consoleScale(width: number, height: number): number {
+  if (width <= 600) return 1;
+  const z = Math.min(width / CONSOLE.width, height / CONSOLE.height);
+  return z > 1 ? Math.floor(z * 1000) / 1000 : 1;
+}
+/**
+  The zoom for the play screen, and `--pw-vw` and `--pw-vh` as one percent of the viewport in
+  the zoomed page's own pixels: viewport units inside a zoomed element would be zoomed too.
+*/
+function useConsoleScale(on: boolean): React.CSSProperties | undefined {
+  const [box, setBox] = useState(() => ({ w: window.innerWidth, h: window.innerHeight }));
+  useEffect(() => {
+    const read = () => setBox({ w: window.innerWidth, h: window.innerHeight });
+    window.addEventListener("resize", read);
+    return () => window.removeEventListener("resize", read);
+  }, []);
+  const z = on ? consoleScale(box.w, box.h) : 1;
+  if (z === 1) return undefined;
+  return {
+    zoom: z,
+    "--pw-vw": `${box.w / z / 100}px`,
+    "--pw-vh": `${box.h / z / 100}px`,
+  } as React.CSSProperties;
+}
 
 const roomCopy = [
   "Enter the service tunnels. The maintenance network is still awake.",
@@ -273,6 +307,7 @@ export default function PowerworksPage() {
     enemies = shown?.enemies ?? run.enemies;
 
   const planning = started && run.phase === "planning" && !busy;
+  const consoleStyle = useConsoleScale(started);
 
   const active = run.team.find((u) => u.id === selected && u.hp > 0);
 
@@ -286,9 +321,11 @@ export default function PowerworksPage() {
   const chosenTarget =
     hoverTarget ?? (active ? plans[active.id]?.target : null);
 
+  // The order the round will resolve in, as the engine reads it: the machines' orders and
+  // the squad's plans so far count (an immediate move acts earlier).
   const initiativeUnits = busy
     ? turnOrder
-    : initiative(run.team, run.enemies, run.round);
+    : initiative(run.team, run.enemies, run.round, { ...run.orders, ...plans });
 
   const inspect = [...team, ...enemies].find((u) => u.id === inspectId);
 
@@ -520,6 +557,66 @@ export default function PowerworksPage() {
       );
   }
 
+  /**
+    The turn order as a strip in the bottom bar (layout pass): every standing unit in the
+    order the round resolves, read left to right. A companion's figure selects it while
+    planning and shows whether its order is set; a machine's opens its inspector. While a
+    round plays, the unit acting is lit and the ones that have acted fade.
+  */
+  function turnStrip() {
+    const acted = new Set(
+      busy
+        ? frames
+            .slice(0, frameIndex)
+            .map((f) => f.event?.actorId)
+            .filter((id): id is string => !!id)
+        : []
+    );
+    const actor = busy ? frame?.event?.actorId : undefined;
+    return (
+      <div className="pw-turn-strip">
+        <button
+          className="pw-turn-strip-label"
+          onClick={() => setPanel("initiative")}
+          aria-label="Turn order speeds"
+          title="Fastest acts first. Select to see speeds."
+        >
+          <span className="pw-eyebrow">Turn order</span>
+        </button>
+        <ol aria-label="Turn order">
+          {initiativeUnits.map((u, i) => {
+            const standing = (busy ? [...team, ...enemies] : [...run.team, ...run.enemies]).find(
+              (t) => t.id === u.id
+            );
+            const down = !standing || standing.hp <= 0;
+            const set = !u.enemy && !!plans[u.id];
+            return (
+              <li
+                key={u.id}
+                className={`${u.enemy ? "enemy" : "ally"} ${actor === u.id ? "acting" : ""} ${
+                  acted.has(u.id) && actor !== u.id ? "acted" : ""
+                } ${down ? "down" : ""} ${!busy && active?.id === u.id ? "selected" : ""} ${
+                  set ? "set" : ""
+                }`}
+              >
+                <button
+                  onClick={() => (u.enemy ? inspectUnit(u.id) : select(u))}
+                  disabled={!u.enemy && (!planning || down)}
+                  aria-label={`Turn ${i + 1}: ${labelFor(u)}${
+                    u.enemy ? "" : set ? ", order set" : busy ? "" : ", needs an order"
+                  }`}
+                  title={labelFor(u)}
+                >
+                  <Portrait u={u} small />
+                </button>
+              </li>
+            );
+          })}
+        </ol>
+      </div>
+    );
+  }
+
   function labelFor(u: Unit) {
     const peers = run.enemies.filter((e) => e.species === u.species);
     return (
@@ -601,7 +698,7 @@ export default function PowerworksPage() {
     try {
       const result = resolveRound(run, orders);
       setPlayRound(run.round);
-      setTurnOrder(initiative(run.team, run.enemies, run.round));
+      setTurnOrder(initiative(run.team, run.enemies, run.round, { ...run.orders, ...orders }));
       setRun(result.state);
       setHistory((h) => [...h, { kind: "round", orders }]);
       setPlaybackOrders(orders);
@@ -1193,15 +1290,82 @@ export default function PowerworksPage() {
       } ${move ? "is-targeting" : ""}`}
       data-tier="immersive"
       id="main"
+      style={consoleStyle}
     >
       <header className="pw-top">
         <Link to="/" className="pw-brand">
           <ArrowLeft size={16} />
           <span>XALIANS</span>
         </Link>
-        <div className="pw-game-name">
-          THE DORMANT POWERWORKS <span>Prototype</span>
-        </div>
+        {/* In play the header is the HUD (layout pass): where the squad is and which
+            round it is, beside the tools, so no second bar splits the screen. */}
+        {started ? (
+          <div className="pw-room-bar">
+            <div>
+              <span className="pw-eyebrow">SECTOR {run.room + 1}/4</span>
+              <h1>{roomName}</h1>
+            </div>
+            <nav aria-label="Dungeon progress">
+              {ROOMS.map((r, i) => (
+                <button
+                  onClick={() => setPanel("route")}
+                  key={r.name}
+                  className={
+                    run.phase === "won" || i < run.room
+                      ? "cleared"
+                      : i === run.room
+                      ? "current"
+                      : ""
+                  }
+                  aria-current={
+                    i === run.room && run.phase !== "won" ? "step" : undefined
+                  }
+                  aria-label={`${r.name.replace(/^\d\. /, "")}: ${
+                    i < run.room || run.phase === "won"
+                      ? "cleared"
+                      : i === run.room
+                      ? "current sector"
+                      : "ahead"
+                  }`}
+                  title={r.name}
+                >
+                  {i < run.room || run.phase === "won" ? <Check /> : <span>{i + 1}</span>}
+                </button>
+              ))}
+            </nav>
+            <button
+              className="pw-round"
+              aria-label={
+                run.phase === "planning" || busy
+                  ? "View turn order"
+                  : "View expedition route"
+              }
+              onClick={() =>
+                setPanel(
+                  run.phase === "planning" || busy ? "initiative" : "route"
+                )
+              }
+            >
+              <span>
+                {busy
+                  ? `Round ${playRound}`
+                  : run.phase === "planning"
+                  ? `Round ${run.round}`
+                  : run.phase === "camp"
+                  ? "Encounter complete"
+                  : "Expedition complete"}
+              </span>
+              <small>
+                {run.phase === "planning" || busy ? "Turn order" : "Route"}
+              </small>
+              <ChevronRight />
+            </button>
+          </div>
+        ) : (
+          <div className="pw-game-name">
+            THE DORMANT POWERWORKS <span>Prototype</span>
+          </div>
+        )}
         <div className="pw-tools">
           <button
             onClick={toggleSound}
@@ -1290,68 +1454,6 @@ export default function PowerworksPage() {
         </section>
       ) : (
         <>
-          <div className="pw-room-bar">
-            <div>
-              <span className="pw-eyebrow">SECTOR {run.room + 1}/4</span>
-              <h1>{roomName}</h1>
-            </div>
-            <nav aria-label="Dungeon progress">
-              {ROOMS.map((r, i) => (
-                <button
-                  onClick={() => setPanel("route")}
-                  key={r.name}
-                  className={
-                    run.phase === "won" || i < run.room
-                      ? "cleared"
-                      : i === run.room
-                      ? "current"
-                      : ""
-                  }
-                  aria-current={
-                    i === run.room && run.phase !== "won" ? "step" : undefined
-                  }
-                  aria-label={`${r.name.replace(/^\d\. /, "")}: ${
-                    i < run.room || run.phase === "won"
-                      ? "cleared"
-                      : i === run.room
-                      ? "current sector"
-                      : "ahead"
-                  }`}
-                  title={r.name}
-                >
-                  {i < run.room || run.phase === "won" ? <Check /> : i + 1}
-                </button>
-              ))}
-            </nav>
-            <button
-              className="pw-round"
-              aria-label={
-                run.phase === "planning" || busy
-                  ? "View turn order"
-                  : "View expedition route"
-              }
-              onClick={() =>
-                setPanel(
-                  run.phase === "planning" || busy ? "initiative" : "route"
-                )
-              }
-            >
-              <span>
-                {busy
-                  ? `Round ${playRound}`
-                  : run.phase === "planning"
-                  ? `Round ${run.round}`
-                  : run.phase === "camp"
-                  ? "Encounter complete"
-                  : "Expedition complete"}
-              </span>
-              <small>
-                {run.phase === "planning" || busy ? "Turn order" : "Route"}
-              </small>
-              <ChevronRight />
-            </button>
-          </div>
-
           <div className="pw-battle-shell">
             {run.phase === "planning" || busy ? (
               <>
@@ -1450,6 +1552,7 @@ export default function PowerworksPage() {
                           </small>
                         </p>
                       </div>
+                      {turnStrip()}
                       <div
                         className="pw-playback-controls"
                         role="group"
@@ -1522,6 +1625,7 @@ export default function PowerworksPage() {
                           </small>
                         </p>
                       </div>
+                      {turnStrip()}
                       <button
                         className="pw-primary"
                         disabled={!planning || ready !== living.length}
@@ -1725,6 +1829,12 @@ export default function PowerworksPage() {
         </>
       )}
 
+      {started && (
+        <div className="pw-rotate">
+          <Smartphone />
+          <p>Turn your screen upright to play.</p>
+        </div>
+      )}
       <div className="pw-sr" aria-live="polite">
         {notice}
       </div>

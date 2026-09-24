@@ -734,7 +734,7 @@
   position: relative;
   isolation: isolate;
   max-width: 1440px;
-  min-height: calc(100svh - 40px);
+  min-height: calc(calc(var(--pw-vh, 1svh) * 100) - 40px);
   padding: 65px 55px 32px;
   grid-template-columns: 1fr 1fr;
 }
@@ -1082,7 +1082,7 @@
 }
 
 .pw-outcome-body {
-  --outcome-inset: clamp(16px, 4vw, 60px);
+  --outcome-inset: clamp(16px, calc(var(--pw-vw, 1vw) * 4), 60px);
 }
 .pw-trail .here.passed > span {
   color: #1b302c;
@@ -1169,7 +1169,7 @@
 }
 @media (min-width: 601px) {
   .pw.in-run {
-    height: 100svh;
+    height: calc(var(--pw-vh, 1svh) * 100);
   }
   .pw-battle-shell {
     max-width: 1320px;
@@ -1181,7 +1181,7 @@
     flex: 0 1 auto;
     /* The stage plus the commit bar (radial orders decision 8: the move tray and squad
        row are gone, so their height goes to the stage up to the same composition bound). */
-    height: min(calc(100svh - 96px), calc(clamp(390px, 60vw, 620px) + 61px));
+    height: min(calc(calc(var(--pw-vh, 1svh) * 100) - 96px), calc(clamp(390px, calc(var(--pw-vw, 1vw) * 60), 620px) + 61px));
     margin-bottom: auto;
   }
 }
