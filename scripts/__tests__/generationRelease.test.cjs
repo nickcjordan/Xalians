@@ -72,6 +72,26 @@ test('schema 5.1 changes scale without rerolling other v5 creature facts', async
   }
 });
 
+test('Fathomaw release adds one species without changing existing v5 results', async () => {
+  const before = await import(pathToFileURL(readManifest('generation-0.8.0-1').artifact).href);
+  const after = await import(pathToFileURL(readManifest('generation-0.8.0-2').artifact).href);
+  const previous = before.getSpeciesTemplates().map(species => species.key);
+  assert.deepEqual(after.getSpeciesTemplates().map(species => species.key), [
+    ...previous.slice(0, previous.indexOf('figzy')), 'fathomaw', ...previous.slice(previous.indexOf('figzy')),
+  ]);
+  const options = { profile: 'full', generatedAt: '2026-09-24T12:00:00.000Z', serial: 1, origin: 'poseidas' };
+  for (const key of previous) {
+    const oldRecord = before.generateXalian(key, 'fathomaw-content-release:' + key, options);
+    const newRecord = after.generateXalian(key, 'fathomaw-content-release:' + key, options);
+    assert.deepEqual({ ...newRecord, provenance: { ...newRecord.provenance, releaseId: oldRecord.provenance.releaseId } }, oldRecord, key);
+  }
+  const newRecord = after.generateXalian('fathomaw', 'fathomaw-content-release', options);
+  assert.equal(newRecord.provenance.releaseId, 'generation-0.8.0-2');
+  assert.equal(newRecord.actions[0].name, 'Yield Point');
+  assert.deepEqual(after.CreatureRecordSchema.parse(newRecord), newRecord);
+  assert.deepEqual(await replay(newRecord), newRecord);
+});
+
 test('a copied archive replays independently of the live template tree', async t => {
   const temporary = temporaryArchive(t);
   const record = fixtures()[0];
@@ -140,14 +160,14 @@ const creatureEntry = 'scripts/__tests__/fixtures/creature-release.ts';
 const canonicalCreatureEntry = 'packages/rules/src/generator/canonicalCreatureRelease.ts';
 test('the complete v5 roster freezes and replays without the live species tree', async t => {
   const temporary = temporaryArchive(t);
-  const releaseId = 'generation-0.8.0-1';
+  const releaseId = require('../../packages/rules/src/generator/currentCreatureRelease.json').releaseId;
   const manifest = await freeze({ entryPoint: canonicalCreatureEntry, releaseId, archives: temporary });
-  const ratified = JSON.parse(fs.readFileSync(path.join(__dirname, '../../docs/species-templates/RATIFIED.json'), 'utf8')).species;
-  assert.equal(Object.keys(manifest.inputs).filter(file => /^docs\/species-templates\/v5\/[^/]+\.json$/.test(file)).length, 32);
+  const v5Files = fs.readdirSync(path.join(__dirname, '../../docs/species-templates/v5')).filter(file => file.endsWith('.json'));
+  assert.equal(Object.keys(manifest.inputs).filter(file => /^docs\/species-templates\/v5\/[^/]+\.json$/.test(file)).length, v5Files.length);
   const { artifact } = readManifest(releaseId, temporary);
   const archived = await import(pathToFileURL(artifact).href);
-  assert.deepEqual(archived.getSpeciesTemplates().map(template => template.key).sort(), [...ratified].sort());
-  for (const key of ratified) {
+  assert.deepEqual(archived.getSpeciesTemplates().map(template => template.key).sort(), v5Files.map(file => file.slice(0, -5)).sort());
+  for (const key of v5Files.map(file => file.slice(0, -5))) {
     for (const profile of ['full', 'showroom']) {
       const record = archived.generateXalian(key, 'v5-replay:' + key, {
         profile, generatedAt: '2026-09-21T12:34:56.000Z', serial: 7, origin: 'saiphus',

@@ -8,6 +8,7 @@ import crystorn from '../../../../docs/species-templates/v5/crystorn.json';
 import drilltail from '../../../../docs/species-templates/v5/drilltail.json';
 import dromeus from '../../../../docs/species-templates/v5/dromeus.json';
 import ectoghoul from '../../../../docs/species-templates/v5/ectoghoul.json';
+import fathomaw from '../../../../docs/species-templates/v5/fathomaw.json';
 import figzy from '../../../../docs/species-templates/v5/figzy.json';
 import foromeer from '../../../../docs/species-templates/v5/foromeer.json';
 import frackworm from '../../../../docs/species-templates/v5/frackworm.json';
@@ -35,9 +36,9 @@ import { createCreatureRelease, GENERATOR_VERSION, SCHEMA_VERSION } from './crea
 export { CreatureRecordSchema } from '@xalians/content/creature';
 export { GENERATOR_VERSION, SCHEMA_VERSION };
 
-const release = createCreatureRelease('generation-0.8.0-1', [
+const release = createCreatureRelease('generation-0.8.0-2', [
   akinza, avilily, bioflim, chromocat, codazzo, crystorn, drilltail, dromeus,
-  ectoghoul, figzy, foromeer, frackworm, graviclaw, hippochamp, hypnopet, imprit,
+  ectoghoul, fathomaw, figzy, foromeer, frackworm, graviclaw, hippochamp, hypnopet, imprit,
   kosanos, luceras, neph, newtapede, scalatto, shuntara, smokat, sonalloy,
   terragoyle, thirstaserp, tizzie, venemist, vespersyn, voltish, xylum, yetimoth,
 ]);

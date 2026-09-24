@@ -1,6 +1,6 @@
 # Poseidas deep-route concept
 
-Status: engineered purpose agreed in discussion on 2026-09-21; ridge-oriented, belly-supported body direction, broad crusher teeth, a physical elementally unclassified signature direction, the species name `Fathomaw`, the signature title `Yield Point`, the overall scale bands, gas/liquid respiration and tolerance, the vocal loose-group communication model, omnivorous feeding ecology, environmental-only pressure adaptation, and the movement, sensing, attribute and temperament bands were accepted on 2026-09-22. On 2026-09-23 Nick also approved `fins` as anatomy, a distinct blunt anterior-fin contact move, an ordinary sustained jaw hold, and an ordinary damaging squeeze that can both injure and restrain, while clarifying that ordinary act coverage should be exhaustive within supported anatomy rather than compact for its own sake. Other physiology values remain proposals, not an approved species or v5 template. Art is not yet approved.
+Status: ratified as the 33rd canonical v5 species on 2026-09-24. The approved source, physiology, permissions, name, and signature are in the [canonical template](../../species-templates/v5/fathomaw.json) and [ability audit](../../species-templates/v5/fathomaw.ability-audit.md). Nick accepted the square-jaw portrait direction as good enough for now after the detached cheek crescent was removed. The portrait study is a preserved design reference, not published site art. A compact game token and game-specific adaptation remain separate work.
 
 ## Why this creature exists
 
@@ -10,17 +10,23 @@ This narrows the older target brief's open-water navigator into a ridge-oriented
 
 Agreed engineered purpose: inspect submerged ridgeline routes and the foundations that connect deep-city structures. The proposed means are echolocation to find voids and shifted joints in dark, turbid water, jaws to grip and crack already weakened obstructions into movable pieces, and body and fins to push those pieces aside. It is not a general builder or a source of Algael. Present-day animals can continue using the same navigation and clearance behavior in the inhabited deep layer without requiring a crew, tool, rig or city structure to act.
 
-This work assignment is a creative inference from the planet's existing infrastructure, not a previously established Poseidas species fact. Nick accepted an industrial purpose for this creature while cautioning that industrial work should not become the default identity for all future creatures. The specific anatomy and behavior above still need review.
+This work assignment is a creative inference from the planet's existing infrastructure, not a previously established Poseidas species fact. Nick accepted an industrial purpose for this creature while cautioning that industrial work should not become the default identity for all future creatures. The purpose, body direction, and land-crawl mechanism have been reviewed, but final portrait art and complete-species ratification remain separate steps.
 
 ## Proposed body as one integrated design
 
-- A long, broad-chested piscine trunk tapers into a powerful swimming tail. Its broad underside forms a continuous resting surface. The head is a blunt wedge, not a copied shark, ray or whale profile.
-- One continuous upper jaw meets a single wide lower jaw. A small number of broad, blunt crusher teeth interlock across the mouth. They grip irregular rubble and food while spreading compression across a contacted surface; they are not fangs, cutting blades or a dense row of fine detail. Paired muscular, fluid-filled chambers beside the recessed jaw hinge drive the lower jaw upward. They are part of the head, not two external pincers or free-moving arms. The animal supplies and retains the working fluid; it does not need surrounding water to charge or perform this action.
-- Two large anterior fins attach to reinforced shoulder arches, and two shorter posterior fins attach farther down the trunk. In water they steer and brake around ridges. On solid ground the broad underside carries much of the weight while thick fin bases and rays splay outward. The anterior pair pulls, the posterior pair braces and steers, and the tail helps propel a low crawl. The animal does not stand upright on four fin-legs.
+- A long, broad-chested piscine trunk tapers into a powerful swimming tail with a broad, deeply notched two-lobed paddle. Its broad underside forms a continuous resting surface. The head is a blunt wedge, not a copied shark, ray or whale profile.
+- One continuous upper jaw meets a single wide lower jaw with an almost square-ended front. A small number of broad, blunt crusher teeth interlock across the mouth. They grip irregular rubble and food while spreading compression across a contacted surface; they are not fangs, cutting blades or a dense row of fine detail. Paired muscular, fluid-filled chambers beside the recessed jaw hinge drive the lower jaw upward. They are part of the head, not two external pincers or free-moving arms. The animal supplies and retains the working fluid; it does not need surrounding water to charge or perform this action.
+- Two large anterior fins attach to reinforced shoulder arches, and two shorter posterior fins attach farther down the trunk. In water they steer and brake around ridges. On solid ground the broad underside carries much of the weight while thick fin bases and broad splayed contact edges plant against the surface. The anterior pair visibly pulls, the posterior pair braces and pushes, and the tail can assist a low crawl. The animal does not stand upright on four fin-legs. The accepted [land-crawl concept](art/fathomaw-land-crawl-concept.png) shows this direction but does not fix every incidental line or marking as canon.
 - A broad resonant brow and elongated sensory ridges behind the jaw hinges form one readable head architecture. Short head-produced clicks return through those ridges. Small eyes sit visibly forward of them. The ridges must not be rendered as additional circular eyes or as unrelated side vents.
 - A relatively smooth, resilient outer surface, fluid-supported internal structure and minimized compressible cavities allow normal life in Poseidas's deep layer. This is environmental physiology, not armor or resistance to deliberately applied compression, impact or other attacks.
 
 The front, side and three-quarter silhouettes must show the upper-and-lower mouth, its few readable crusher teeth, all four fin roots, broad belly contact and tail propulsion. The fins cannot disappear behind the trunk in the approved art. The mouth seam and resonant brow should remain recognizable when the image is reduced to a small game token. Decoration should follow these structures, not disguise their joints. The earlier side-closing jaw-plate idea is rejected at this stage because it could read as a pair of external pincers rather than one mouth.
+
+### Portrait study and character pass, 2026-09-24
+
+The [current square-jaw portrait study](art/fathomaw-portrait-study.png) is the selected visual direction for now. It exaggerates the near-square front of the lower crusher jaw and uses a broad, notched two-lobed tail paddle as a second silhouette cue. Those shapes support the established bite and propulsion rather than introducing a new ability. Nick liked the square jaw and accepted the corrected portrait as good enough for now. An earlier detached white cheek crescent was rejected as arbitrary decoration and is absent from the saved study. The hydraulic chambers remain internal, expressed by the volume behind the jaw hinge, not by a separate white organ or mark. The image is a design reference, not the sole canonical snapshot or a published site asset.
+
+At full portrait size the upper and lower jaws, four fin attachments, broad belly, and tail are readable. A 64 px reduction keeps the overall jaw, fin, and tail silhouette, but fine brow and mouth details become weak. At 35 px the portrait is too dense to serve as the existing single-color game token. A separately authored compact mark remains a later art-delivery task, not a reason to change the species anatomy or claim this portrait is already integrated into a game.
 
 ## Ecological and encounter checks
 
@@ -30,9 +36,9 @@ The playable design follows Poseidas's agreed amphibious baseline. It breathes a
 
 The jaw press is complete on neutral dry ground. Deep pressure does not make its bite stronger by default: ambient pressure acts throughout the body and the surrounding water. Depth is the condition under which the animal retains navigation, mobility and tolerance that many others lack. Any proposed depth-dependent amplification would need a separately evidenced mechanism, not a free bonus.
 
-## Proposed v5 physiology
+## Draft v5 physiology
 
-These values are the next design layer. The scale bands are agreed; the remaining rows are proposals.
+The scale, locomotion, senses, attributes, temperament, and remaining smooth-flesh biology defaults have been reviewed and approved. This table remains the candidate record rather than published species data; rolled chirality is the ordinary model default and was not a separate creative decision.
 
 | Field | Proposal | Reasoning |
 | --- | --- | --- |
@@ -93,20 +99,20 @@ Agreed temperament favors steady inspection over aggression: boldness 35 to 55, 
 - **Behavior:** Sweeps a route with short clicks, tests suspicious surfaces with its jaws, and pushes loosened pieces clear with its body, anterior fins, and tail.
 - **Company (agreed):** Several may service one route while remaining spaced across separate sections; they exchange low calls rather than working as one tightly coordinated body.
 
-The full species description remains unwritten until the body and these facts are approved. Naming still comes after the remaining defining pieces.
+The species description below is drafted in the schema 5.1 candidate. Nick accepted it as serviceable and confirmed that its engineered passage-clearing role is the character to retain; no extra mannerism is needed to explain the creature. Naming followed the defining body, purpose and ability decisions.
 
 ### Draft canonical prose for review
 
-These lines describe the agreed body direction and engineered role. They are not yet a published teaser or an approved template. The appearance lines specify the creature, not a single image pose.
+These lines describe the ratified body direction and engineered role. They are present in the canonical v5 template. The appearance lines specify the creature, not a single image pose.
 
 Proposed `lore.appearance`:
 
-1. A long, broad-chested piscine trunk tapers into a powerful tail above a wide, continuous belly surface.
+1. A long, broad-chested piscine trunk tapers into a muscular tail with a broad, deeply notched two-lobed paddle above a wide, continuous belly surface.
 2. Smooth, flexible skin covers the trunk.
-3. A blunt wedge head carries one broad upper jaw and one lower jaw, with a few large interlocking crusher teeth.
+3. A blunt wedge head carries one broad upper jaw and one almost square-ended lower jaw, with a few large interlocking crusher teeth.
 4. Muscular ridges beside the jaw hinges contain the paired fluid-filled chambers that drive the lower jaw.
 5. A broad resonant brow and elongated sensory ridges frame small eyes set toward the front of the head.
-6. Two large anterior fins attach at reinforced shoulders, with a shorter posterior pair farther down the trunk.
+6. Two large anterior fins attach at reinforced shoulders and a shorter posterior pair farther down the trunk; thick fin bases and broad splayed edges bear and propel the body during a low ground crawl.
 
 Proposed `lore.description`:
 
@@ -120,7 +126,7 @@ The current v5 model has one species element, optional ability element classific
 
 ### Fixed signature structure
 
-The recommended signature is an unnamed hydraulic jaw press. It sets its broad mouth around a contacted target, drives the lower jaw into the fixed palate through paired fluid-filled muscle chambers, and releases after the compression resolves.
+The agreed `Yield Point` signature is a hydraulic jaw press. It sets its broad mouth around a contacted target, drives the lower jaw into the fixed palate through paired fluid-filled muscle chambers, and releases after the compression resolves.
 
 | Field | Proposal |
 | --- | --- |
@@ -145,8 +151,9 @@ The proposed anatomy is `jaws`, `fins`, `tail` and `body`. No channel or conduit
 | Jaws | `crush` | Include. The hydraulic mouth applies compression at contact; this is distinct from the guaranteed, stationary `Yield Point` signature. |
 | Jaws | `strike` | Exclude the shared row as a whole because it would grant a piercing strike from broad, blunt crusher teeth. Restore its supported quick compression variant as an authored extension; `acts.exclude` cannot remove only the piercing variant. |
 | Jaws | `rake` | Exclude. The teeth have no cutting edge. |
-| Jaws | `snare` | Include. The broad teeth and hydraulic closure can grip a moving target for a brief hold without requiring an injuring squeeze. This is an ordinary action; the approved `Yield Point` signature still clamps and releases. |
-| Jaws | compression plus hold | Approved ordinary behavior requiring an authored extension. Maintaining hydraulic pressure while gripping can injure and restrain the same target. The table's separate `crush` and `snare` rows cannot express that compound act; neither outcome depends on the other succeeding. |
+| Jaws | `snare` | Include. The broad teeth and hydraulic closure can leave a brief restraint without requiring injury. The shared row does not maintain a source-bound grip; the approved `Yield Point` signature still clamps and releases. |
+| Jaws | maintained noninjuring grip | Approved ordinary behavior requiring an authored extension. The source-bound restraint lasts while Fathomaw keeps its jaws closed, unlike the brief shared snare. |
+| Jaws | compression plus maintained hold | Approved ordinary behavior requiring an authored extension. Maintaining hydraulic pressure while gripping can injure and restrain the same target. The table's separate `crush` and `snare` rows cannot express that compound act; neither outcome depends on the other succeeding. |
 | Anterior fins | `strike`, `shove` | Include both. Their reinforced roots and load-bearing rays can deliver blunt contact or push a target in liquid or on solid ground. |
 | Tail | `strike`, `lash`, `shove` | Include. The powered tail can hit one target, sweep across nearby targets, or redirect a contacted target. A sweep still uses the animal's own tail, not an external water wave. |
 | Tail | `crush`, `snare` | Exclude. The broad propulsion tail is not described as prehensile, able to maintain a hold, or able to apply held compression. |
@@ -162,7 +169,7 @@ These are source-by-source dispositions, not a manually chosen move-count target
 | Candidate or family | Disposition | Reason |
 | --- | --- | --- |
 | Contact compression and impact | Included through jaws, fins, tail and body as detailed above | Each source is audited separately; similar effects do not erase independently capable parts. |
-| Sustained jaw hold | Included | Nick approved an ordinary brief hold on a moving opponent. A noninjuring hold comes from `jaws/snare`; the separately approved damaging hold needs an authored extension. Neither changes the clamp-and-release signature. |
+| Sustained jaw hold | Included | Nick approved both noninjuring and damaging maintained grips. Each needs an authored source-bound extension; the shared `jaws/snare` is a separate brief lingering restraint. Neither changes the clamp-and-release signature. |
 | Fin grasp or cutting | Excluded | Broad supporting fins have no established grasping digits or cutting edge. |
 | Echolocation attack, deafening or disorientation | Excluded | Echolocation is a special sense. Nothing yet supports weaponized sound. |
 | Reveal or mark action | Excluded for now | Ordinary echolocation already establishes perception. A persistent applied status would invent a separate tracking process. |
@@ -171,13 +178,19 @@ These are source-by-source dispositions, not a manually chosen move-count target
 | Restoration, direct protection, status removal or beneficial status | Excluded | No repair, shielding, cleansing or stimulation mechanism has been established. |
 | Automatic passive | Excluded | Pressure tolerance, gas/liquid respiration and echolocation are physiology, not automatic encounter effects. |
 
-Registered `jaws`, `fins`, `tail` and `body` describe the proposed physical sources. No `channels` or `conduits` are proposed. Two generic rows reveal table-granularity friction: jaws strike grants piercing and compression together, while body strike grants impact and compression together, yet `acts.exclude` addresses only an entire instrument/pattern row. Fathomaw would exclude both rows and author their supported compression-only quick jaw act and impact-only body ram. A third extension would combine jaw compression with the approved hold. These preserve the full justified capability set without granting unsupported variants. The final v5 audit remains incomplete until the template is authored and compiled against the approved scale model.
+Registered `jaws`, `fins`, `tail` and `body` describe the physical sources. No `channels` or `conduits` are established. Two generic rows reveal table-granularity friction: jaws strike grants piercing and compression together, while body strike grants impact and compression together, yet `acts.exclude` addresses only an entire instrument/pattern row. The [canonical schema 5.1 template](../../species-templates/v5/fathomaw.json) excludes both rows and restores the supported compression-only quick jaw act and impact-only body ram. Two further extensions encode the separately approved maintained noninjuring and damaging jaw holds. These preserve the full justified capability set without granting unsupported variants. The [ability audit](../../species-templates/v5/fathomaw.ability-audit.md) records compilation and creative coverage.
 
 ## Collision and novelty test
 
 Graviclaw already has a compression signature through gravity-amplified pincers, and Newtapede has ordinary coil compression. The proposed jaw act is therefore not the roster's first compression effect. Its distinction must come from the integrated deep-water survey body, hydraulic head architecture, echolocation and use of a jaw press to inspect and clear ridgeline obstructions. If that distinction collapses to "aquatic Graviclaw" when names and elements are removed, revise the act or purpose before authoring the template.
 
 The genuine current coverage opportunities are the first piscine body plan and first echolocating species. Neither is a quota that justifies a weak creature.
+
+## Ratification verification and remaining presentation work
+
+Checked against current main on 2026-09-24. The schema 5.1 template compiles with 10 distinct ordinary acts (jaws 3, fins 2, tail 3, body 2), seven justified generic-row exclusions, four authored extensions, and the fixed `Yield Point` signature. The checker finds no ordinary compression band above the signature, no structural parenthetical names, and no duplicate ordinary base names across its 24 seeded previews. A separate 240-seed sample produced four actions with the signature first in every case; its 720 ordinary selections drew from all four declared instruments. This is generation validity and preliminary population sampling, not a game balance result.
+
+With Fathomaw, the canonical v5 roster has 33 species, Poseidas has three, and the roster gains its first `piscine` body plan and echolocation sense. The shared compression outcome is not new; the novelty is the combined hydraulic crusher jaw, ridge survey role, amphibious low-crawl body, and sensing method. The preserved portrait study supports that identity, but a separate compact token and production portrait conversion are not yet authored. Game balance and presentation in each consumer remain untested and separately scoped. The legacy v4 `RATIFIED.json` remains unchanged because it controls a different public generator and bundle.
 
 ## Naming audit
 
@@ -233,4 +246,4 @@ The review exposed a roster-wide scale issue rather than a need for granular ana
 - Treat the ratified data as canonical and every image, token, animation, model or game rendering as an implementation of that data. There is no single canonical snapshot. Visual implementations may vary where the data is silent, but they may not contradict stated anatomy, measurements, relationships or other facts.
 - Keep measurements descriptive by default. Games may deliberately interpret them, but body or appendage dimensions do not automatically become hitboxes, movement distances or attack ranges.
 
-The flat anatomy vocabulary remains focused on registered ability sources. Fathomaw's anterior fins are both canonical visual and locomotor facts and an approved ability instrument; no appendage measurements are required. Schema 5.1 now supports its agreed `massKg`, `heightCm`, `lengthCm` and `widthCm` bands without forcing body length into height. Fathomaw itself remains a proposal and is not in the frozen release. Do not proceed to art until its physiology and finished prose are accepted.
+The flat anatomy vocabulary remains focused on registered ability sources. Fathomaw's anterior fins are both canonical visual and locomotor facts and an approved ability instrument; no appendage measurements are required. Schema 5.1 supports its agreed `massKg`, `heightCm`, `lengthCm` and `widthCm` bands without forcing body length into height. The ratified template is authoritative; the reviewed portrait is one visual interpretation and does not replace the canonical description.
