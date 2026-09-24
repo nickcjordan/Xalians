@@ -455,3 +455,29 @@ Logged, not taken, as accepted decisions or taste:
 - **The text card** covers the bottom fifth of the left three fifths of the plate on desktop, and most of the bottom quarter on a phone. It is the home page's layout. The newborn's swim from the shelf ran under it on desktop; with the birth cut, nothing in the story plays under the card.
 
 **Rounds.** The visual reviewer scored 8.5: the storm came too close to the outfall and ended at a hard edge. The motion reviewer found the whitecaps drifting slower than the current, and a catch that washed upstream.
+
+## Nick's second set of notes (2026-09-23, after PR #623)
+
+- **Layers.** Whitecaps, spindrift and rain rings in the glow layer drew over the machine, and the steam puffs drifted across the housing like fog. The water is now masked behind the machine's outline, with the gantry cut only where its steel is, and the steam is a small plume that thins before the housing.
+- **The island's young trees** read as a row of bushes. The understory is lower, and sixteen young trees stand clear of it in three forms (tree fern, spire, forking broadleaf with gapped clumps), dark against pale air laid at the World Tree's foot.
+- **Growth at the source.** Nick: the source would have a ton of growth itself, ideally peeking in from the bottom and left. There is now a static near layer (broad leaves, ferns, grass, tree-fern fronds arching in at top left, out of focus, rim-lit by the vat near it), plus moss, fern clumps, seedlings and a young tree fern at the machine's foot.
+- **The World Tree's pods** read as beads at a scale where no single pod could show. They are a dim shimmer of tiny points in the lower crown.
+- **Sprouting rocks on the left.** Four small islets with growth and the frond plant sit between the machine and the island, and far whalebacks at left carry sprigs.
+- **The green streak** on the housing was the split plate; it read as a glitch and is cut.
+- **Green on the distant cloud** is gone: the cloud is miles off over the sea. Only the rain-filled air around the machine glows, and the surge lights that air, not the cloud.
+- **The canopy against the cloud** looked like texture laid over cloud (a fade mask made its top half transparent). The canopy is solid, the cloud's own lobes and scud hang in front of its top, and clumps close the crown over the trunk.
+- **The larvae** are alien newborns rather than cartoon tadpoles: a half-clear body with a glowing yolk, feathered gills, small dark eyes, lateral light spots, and a clear ribbed tail fin swinging on an eased wag.
+
+**Rounds.** The visual reviewer scored 8: the trunk showed as a pillar splitting the crown, the seedlings at the foot read as a planted border, and the top-left fronds read as dotted chains. All three were taken. The motion reviewer passed the clocks (1504 animations, all dividing 24 s) and found that the clip hid water behind the open gantry lattice, and that the larva's tail reversed abruptly. Both were taken.
+
+**Gate.** The cold check scored 5.5. Taken:
+- The crown read as cracked mud because its relief lit the hard edge of every clump. The height field is now blurred, so the clumps bulge softly and show no crack lines or contour rings.
+- The island's young trees stood in an even row. They are now in loose groups with gaps, at different depths and heights.
+- The foreground leaves were too sharp. Their blur is deeper.
+
+Logged, not taken:
+- The trunk reads as a funnel or tornado. This is the sixth re-judgment of the tree's value, and lifting it lost the tree before.
+- The shelf's straight right edge and its pool-like wet reflection. Unchanged since the realism pass, and Nick has not flagged them.
+- The frond plant repeating on the islets. Nick asked for that plant to be replicated.
+- The chute's glowing fluid reading as a tube. Nick's green streak was the split plate on the housing, now cut.
+- The hard-edged whitecap chips up close, the right-hand rock as a plain silhouette, and the larvae being small at site size.

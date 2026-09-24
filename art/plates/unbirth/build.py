@@ -44,22 +44,25 @@ PIECES = """Piece list (far to near). Key light: the Generator itself, a gold-gr
 and chute, the only warm light in the scene. The sun is blacked out; lightning inside the cloud is
 the only other light. Wind and flood run left to right: rain slants and seeds drift that way.
 - storm ceiling: a heavy near-black cloud mass across the top, its base a row of hanging lobes,
-  faintly lit gold-green from below over the Generator. Static.
+  darker than the air under them. It hangs miles off over the sea, so the Generator's light never
+  reaches it: only the rain-filled air right around the machine glows. Static.
 - air under the cloud: dark, lightening a little toward the horizon. Static.
 - lightning: flashes inside the cloud mass on their own clocks; one lights the World Tree from behind.
 - rain curtains: soft slanted shafts of heavier rain hanging from the cloud to the horizon. Static.
 - the World Tree: a colossal trunk far off at right, great boughs sweeping up into the storm; its
   canopy domes over it and spreads under the cloud base across the right half of the sky: masses of
   foliage, clumped and ragged, no single leaf showing at this distance, bulging in relief with only
-  its tops catching light, closing over the far reaches of the boughs, its far reach thinning into the
-  cloud; its
-  own seed pods glowing faintly among them. Miles of air lie between: the trunk pales as it climbs,
+  its tops catching light, closing over the far reaches of the boughs; its top pushes up into the
+  storm, the cloud's own lobes hanging in front of it and rags of scud across it; its
+  own seed pods, too small to see one by one at this distance, a dim shimmer of countless points
+  in its lower crown. Miles of air lie between: the trunk pales as it climbs,
   mist lies across it and rain curtains hang in front of it.
 - its island: land rising from the flood around its foot, covered in the young forest earlier seeds
-  have grown: tall trees (broadleaf crowns and conifer spires) crowding the trunk, still a fraction
-  of its height, a few young trees standing clear of the scrub with bare trunks and crowns of their
-  own, stepping down to shrubs, weeds and grass at the waterline, a ragged treeline with
-  mist settled between its rows; pods glowing among them.
+  have grown: a low understory crowding the trunk, and standing clear of it young trees of three
+  kinds, tree ferns with arching fronds, narrow spires, and broadleaves forking into limbs with sky
+  between their clumps, still a fraction of the colossus's height, dark against the pale air at its
+  foot; stepping down to shrubs, weeds and grass at the waterline, mist settled between the rows; a
+  faint shimmer of pods among them.
   The scale of that forest is what makes the tree read as colossal.
 - the storm sea out in the distance, left of the island: dark swell faces with their crests breaking
   white, whitecaps that break, throw spray downwind and fall back, and spindrift driven along the
@@ -82,20 +85,23 @@ the only other light. Wind and flood run left to right: rain slants and seeds dr
   clamps on the rock; and at its foot a sluice gate with a wheel, and a chute running down from it on
   legs to the water behind the shelf: a trough, dark inside, with a riveted near wall, one sheet of
   glowing fluid sliding down it with light moving on it. It is a first
-  prototype: a patch plate in another metal, a seam gone half dark, a split plate leaking light.
+  prototype: a patch plate in another metal, a seam gone half dark.
   Weathered by storm after storm: grime in vertical runoff streaks, rust toward the foot and in runs
   from the rivets, plates wet in streaks, no two rivets alike; water drips off its ledges. Every
   plate, band, pipe, flange and rivet stands in relief, its upper edges catching wet sky light. The vat's
   light spills onto the plates around the window; strikes in the cloud catch its top edges.
-  The vat breathes; steam puffs and drifts downwind; the gauge trembles; the lamps and beacon blink.
+  The vat breathes; a small plume of steam rises from the relief valve and thins away; the gauge
+  trembles; the lamps and beacon blink.
 - the overdrive surge, once a cycle: the vat charges and then flares white, every seam blazes, the
-  gate bursts open and a rush of seeds goes down the chute together, the cloud base and the rain
-  around the machine light up, then it all settles back.
+  gate bursts open and a rush of seeds goes down the chute together, the rain-filled air around the
+  machine lights up, then it all settles back.
 - seeds: acorn-like: a long pointed nut under a toothed olive cup,
   glowing softly. They slide down the chute one by one, drop into the lit water at its foot, and the
   flood takes them: each fans out on its own heading, eases into the current (left to right, slower
   with distance), wanders a little, parts around the slabs, lying on its side and turning slowly.
-  Each meets its own end: some split and let a small larva out, which swims off and dives; some go
+  Each meets its own end: some split and let a small larva out (a long half-clear body with its yolk
+  glowing inside, feathered gills, small dark eyes, light spots down its flank and a long tail with a
+  clear ribbed fin), which swims off and dives; some go
   under; some catch on a slab's edge and sprout; many are carried off downstream toward the island.
   While it floats each glints in the water under it and rings the water as it bobs.
   Integrated per seed, not drawn curves, and every voyage is placed so it keeps clear of the others
@@ -104,7 +110,16 @@ the only other light. Wind and flood run left to right: rain slants and seeds dr
   light reflected in it; rain rings the water. The flood runs left to right: pale current lines drift
   across it, foam catches on the upstream side of each slab and a wake trails off its downstream side.
 - the first growth: downwind, moss catching along the edges of the rock slabs and low fronds in the
-  cracks, sparse near the Generator and denser to the right; lodged pods glowing faintly among them.
+  cracks, denser to the right; out on the small rocks and far whalebacks at left too, moss, blades of
+  the frond plant, a sapling here and there, pods glowing; lodged pods glowing faintly among them.
+- the growth at the source: the machine's own seeds have taken hold around it. Moss creeps along the
+  foundation's foot, ferns and the frond plant stand in clumps at its corners and by the chute's legs,
+  seedlings rise from glowing pods in front of it, and a young tree fern stands at the shelf's left end,
+  all lit on the side that faces the vat.
+- in front of the lens: the viewer stands at the edge of that growth. Broad leaves, ferns and grass lean
+  into the frame from the bottom and the left, near-black and out of focus, their edges catching the
+  vat's green where the machine is near and the cool sky elsewhere, beaded with rain; the fronds of a
+  tree fern standing off the frame arch in at the top left. Static.
 - growth you can watch: a seed catches on a rock; a sprout rises from it and two leaves unfurl, it
   stands a while, then fades before its seed returns.
 - near rock: a dark wet ledge along the bottom left, and a rock rise at bottom right where a few
@@ -183,7 +198,7 @@ METAL_DARK, METAL_MID, METAL_WET = '#101517', '#1f272a', '#56666b'
 ROCK, ROCK_WET = '#0c1111', '#343f4a'
 WATER_FAR, WATER_NEAR = '#343f4a', '#0d1419'
 
-defs.append('''<filter id="nearDof" x="-10%" y="-10%" width="120%" height="120%"><feGaussianBlur stdDeviation="1.5"/></filter>
+defs.append('''<filter id="nearDof" x="-10%" y="-10%" width="120%" height="120%"><feGaussianBlur stdDeviation="1.9"/></filter>
 <filter id="soft1" x="-10%" y="-10%" width="120%" height="120%"><feGaussianBlur stdDeviation="1.2"/></filter>
 <filter id="soft" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="14"/></filter>
 <filter id="soft6" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="6"/></filter>
@@ -271,6 +286,84 @@ rad([(0, '#e6f0ff', .8), (.35, '#9fb4d8', .35), (1, '#2a3446', 0)], id='flash')
 rad([(0, '#e4ecff', .9), (.45, '#8ea4cc', .5), (1, '#26324a', 0)], id='flashBack')
 rad([(0, '#ffffff', 1), (.4, '#e8f0ff', .8), (1, '#9fb4d8', 0)], id='flashCore')
 
+# ------------------------------------------------------------------ leaves: the plants that grow from the machine's seeds
+def leaf_shape(x0, y0, ang, L, w, droop, n=18):
+    # a lance-shaped leaf from its base: a curved midrib that droops toward the side it leans to, widest about a
+    # third of the way up and pointed at the tip. Returns the outline, the midrib, and the two edges.
+    a = math.radians(ang)
+    dx, dy = math.sin(a), -math.cos(a)
+    px, py = math.cos(a), math.sin(a)
+    sd = 1 if ang >= 0 else -1
+    c = (x0 + dx * L * .55, y0 + dy * L * .55)
+    tip = (x0 + dx * L + px * droop * sd, y0 + dy * L + py * droop * sd)
+    spine, left, right = [], [], []
+    for i in range(n):
+        t = i / (n - 1)
+        u = 1 - t
+        sx_, sy_ = u * u * x0 + 2 * u * t * c[0] + t * t * tip[0], u * u * y0 + 2 * u * t * c[1] + t * t * tip[1]
+        tx_, ty_ = 2 * u * (c[0] - x0) + 2 * t * (tip[0] - c[0]), 2 * u * (c[1] - y0) + 2 * t * (tip[1] - c[1])
+        nn = math.hypot(tx_, ty_) or 1
+        hw = w / 2 * (math.sin(math.pi * min(1, t ** .8 * 1.02)) ** .8 if t < 1 else 0) * (.35 + .65 * min(1, t * 6))
+        spine.append((sx_, sy_, tx_ / nn, ty_ / nn))
+        left.append((sx_ - ty_ / nn * hw, sy_ + tx_ / nn * hw))
+        right.append((sx_ + ty_ / nn * hw, sy_ - tx_ / nn * hw))
+    return left + right[::-1], spine, left, right
+
+
+LEAF_N = [0]
+
+
+def draw_leaf(x0, y0, ang, L, w, droop, light, rr, near=True, base='#070d09', mid='#15281b', tipc='#28422c'):
+    # one leaf: shaded from its dark base to a paler tip, a midrib, the edge that faces the light catching it
+    # (green where the machine is near, the cool sky elsewhere), and a few beads of rain
+    poly, spine, left, right = leaf_shape(x0, y0, ang, L, w, droop)
+    LEAF_N[0] += 1
+    gid = 'leafG%d' % LEAF_N[0]
+    lin([(0, base, 1), (.5, mid, 1), (1, tipc, 1)], x0, y0, spine[-1][0], spine[-1][1], units=True, id=gid)
+    m = spine[len(spine) // 2]
+    dist = math.hypot(m[0] - LIGHT_AT[0], m[1] - LIGHT_AT[1])
+    to = (LIGHT_AT[0] - m[0], LIGHT_AT[1] - m[1]) if dist < 560 else (0, -1)
+    lit_left = (-m[3]) * to[0] + m[2] * to[1] > 0
+    edge = (left if lit_left else right)[2:-1]
+    rim_c, rim_o = (GLOW_MID, lerp(.85, .3, min(1, dist / 560))) if dist < 560 else ('#a9bcc2', .32)
+    out = '<path d="M%s Z" fill="url(#%s)"/>' % (' L '.join('%s %s' % (f(x), f(y)) for x, y in poly), gid)
+    if dist < 560:  # the vat's light coming through the leaf
+        out += '<path d="M%s Z" fill="%s" opacity="%s"/>' % (' L '.join('%s %s' % (f(x), f(y)) for x, y in poly), GLOW_EDGE, f(lerp(.3, .04, dist / 560)))
+    out += '<polyline points="%s" fill="none" stroke="%s" stroke-width="%s" opacity=".5"/>' % (pts([(x, y) for x, y, _, _ in spine[1:-2]]), mix(tipc, '#2c4432', .4), f(max(.5, w * .045)))
+    out += '<polyline points="%s" fill="none" stroke="%s" stroke-width="%s" opacity="%s" stroke-linecap="round"/>' % (pts(edge), rim_c, f(min(3, max(.9, w * .07))), f(rim_o))
+    for _ in range(rr.randint(0, 3) if near else 0):
+        x, y, _, _ = spine[rr.randint(4, len(spine) - 4)]
+        out += '<circle cx="%s" cy="%s" r="%s" fill="#d6e2e4" opacity="%s"/>' % (f(x + rr.uniform(-w * .2, w * .2)), f(y + rr.uniform(-w * .15, w * .15)), f(rr.uniform(.7, 1.5)), f(rr.uniform(.3, .55)))
+    return out
+
+
+def draw_fern(x0, y0, ang, L, lw, droop, light, rr, col='#122419', tipc='#2c4a30', broad=.18):
+    # a fern frond: a curved stem carrying paired leaflets that shorten toward the tip, the lit side catching light
+    poly, spine, left, right = leaf_shape(x0, y0, ang, L, 1, droop, n=26)
+    m = spine[len(spine) // 2]
+    dist = math.hypot(m[0] - LIGHT_AT[0], m[1] - LIGHT_AT[1])
+    rim_c, rim_o = (GLOW_MID, lerp(.8, .3, min(1, dist / 560))) if dist < 560 else ('#a9bcc2', .3)
+    out = '<polyline points="%s" fill="none" stroke="%s" stroke-width="%s" stroke-linecap="round"/>' % (pts([(x, y) for x, y, _, _ in spine]), col, f(max(.8, lw * .16)))
+    lf = ''
+    lit = ''
+    for i, (x, y, tx_, ty_) in enumerate(spine[2:-1]):
+        t = (i + 2) / len(spine)
+        pl = lw * (1 - t) ** .6 * (.55 + .45 * math.sin(math.pi * min(1, t * 1.6)))
+        for side in (1, -1):
+            nx_, ny_ = -ty_ * side, tx_ * side
+            dx_, dy_ = nx_ * .8 + tx_ * .6, ny_ * .8 + ty_ * .6
+            dd = math.hypot(dx_, dy_)
+            dx_, dy_ = dx_ / dd, dy_ / dd
+            ex, ey = x + dx_ * pl, y + dy_ * pl + pl * .25  # the leaflet hangs a little
+            lf += '<path d="M%s %s Q %s %s %s %s Q %s %s %s %s Z"/>' % (f(x), f(y), f(x + dx_ * pl * .5 - tx_ * pl * broad), f(y + dy_ * pl * .5 - ty_ * pl * broad), f(ex), f(ey), f(x + dx_ * pl * .5 + tx_ * pl * broad), f(y + dy_ * pl * .5 + ty_ * pl * broad), f(x), f(y))
+            if dy_ < 0 and i % 2 == 0:
+                lit += '<line x1="%s" y1="%s" x2="%s" y2="%s"/>' % (f(x + dx_ * pl * .2), f(y + dy_ * pl * .2), f(ex), f(ey))
+    lin([(0, col, 1), (1, tipc, 1)], x0, y0, spine[-1][0], spine[-1][1], units=True, id='fernG%d' % (LEAF_N[0] + 1))
+    LEAF_N[0] += 1
+    out += '<g fill="url(#fernG%d)">%s</g><g stroke="%s" stroke-width="%s" opacity="%s" stroke-linecap="round">%s</g>' % (LEAF_N[0], lf, rim_c, f(max(.6, lw * .08)), f(rim_o), lit)
+    return out
+
+
 # ------------------------------------------------------------------ sky layer (static): the storm ceiling and the air under it
 sky = []
 lin([(0, '#04070a', 1), (.35, '#0a1016', 1), (.6, '#111a22', 1), (1, '#27313c', 1)], 0, 0, 0, HZ, units=True, id='air')
@@ -294,8 +387,8 @@ defs.append('<filter id="cloudRelief" x="0" y="0" width="100%" height="100%" col
             '<feDiffuseLighting in="hb" surfaceScale="30" diffuseConstant="1" lighting-color="#b4c0ca" result="lit"><feDistantLight azimuth="90" elevation="20"/></feDiffuseLighting>'
             '<feComposite in="lit" in2="SourceGraphic" operator="arithmetic" k1="1.5" k2=".15" k3="0" k4="0" result="m"/><feComposite in="m" in2="SourceGraphic" operator="in"/></filter>')
 sky.append('<!-- storm ceiling: the cloud mass and its hanging lobes, their undersides in relief --><g filter="url(#cloudRelief)"><g filter="url(#cloud)"><rect x="-40" y="-40" width="%d" height="220" fill="url(#mass)"/>%s%s</g></g>' % (W + 80, ''.join(lobes), ''.join(scud)))
-sky.append('<!-- the cloud base lit gold-green from below over the Generator --><ellipse cx="%d" cy="220" rx="420" ry="80" fill="url(#glowWash)" opacity=".8"/>' % (GX + 40))
-sky.append('<ellipse cx="%d" cy="300" rx="300" ry="110" fill="url(#glowWash)" opacity=".25"/>' % GX)
+# (the cloud base is not lit green: it hangs miles off over the sea, far beyond the reach of the vat. Nick 2026-09-23)
+sky.append('<!-- the rain-filled air right around the Generator lit by it, gone well below the cloud --><ellipse cx="%d" cy="352" rx="230" ry="100" fill="url(#glowWash)" opacity=".22"/>' % GX)
 
 # ------------------------------------------------------------------ flash layer (animated): lightning inside the cloud
 flash = []
@@ -378,6 +471,11 @@ for L in [(TX - 30, 290, TX - 150, 250, TX - 290, 150, 60, 16), (TX + 34, 276, T
         for _ in range(2):
             OVER_LEAVES.append('<ellipse cx="%s" cy="%s" rx="%s" ry="%s" fill="%s"/>' % (
                 f(px + orng.uniform(-14, 14)), f(py - w * .4 + orng.uniform(-12, 6)), f(orng.uniform(12, 24)), f(orng.uniform(7, 13)), mix('#152419', '#1f3326', orng.random())))
+for _ in range(64):  # the crown closing over the top of the trunk, so it is one mass and not two slabs either side of a pillar
+    y_ = orng.uniform(96, 238)
+    spread = lerp(120, 60, (y_ - 96) / 142)
+    OVER_LEAVES.append('<ellipse cx="%s" cy="%s" rx="%s" ry="%s" fill="%s"/>' % (
+        f(TX + max(-spread, min(spread, orng.gauss(0, spread * .55)))), f(y_), f(orng.uniform(16, 30)), f(orng.uniform(8, 14)), mix('#152419', '#1f3326', orng.random())))
 TRUNK_RIM = ''  # a rim light down the trunk read as hanging vines, twice: its dark value against the cloud carries it
 # the air behind the crown a little paler than the cloud, always, so the boughs branch against it at rest
 BACKLIGHT = ''.join('<ellipse cx="%s" cy="%s" rx="%s" ry="%s" fill="#3c4a58" opacity="%s"/>' % (f(TX + dx), f(y), f(rx), f(ry), f(op)) for dx, y, rx, ry, op in (
@@ -396,7 +494,7 @@ for i in range(80):
     canopy.append('<ellipse cx="%s" cy="%s" rx="%s" ry="%s" fill="%s"/>' % (f(x), f(y), f(crnd_.uniform(40, 90)), f(crnd_.uniform(18, 34)), mix('#1c2e22', '#122018', crnd_.random())))
 # seen from miles off no single leaf shows: the canopy is masses of foliage, clumped and ragged at the
 # edges, a little lighter where the clumps bulge, lost into the cloud above
-lin([(0, '#fff', 0), (.15, '#fff', .12), (.3, '#fff', .35), (.45, '#fff', .6), (.6, '#fff', .82), (.75, '#fff', .95), (1, '#fff', 1)], 0, 60, 0, 250, units=True, id='treeFade')
+lin([(0, '#fff', 0), (.12, '#fff', .55), (.24, '#fff', 1), (1, '#fff', 1)], 0, 60, 0, 250, units=True, id='treeFade')  # solid below its top: the cloud hides the top, not a fade
 defs.append('<mask id="treeMask" maskUnits="userSpaceOnUse" x="%s" y="-40" width="1300" height="%s"><rect x="%s" y="-40" width="1300" height="%s" fill="url(#treeFade)"/></mask>' % (f(TX - 700), f(HZ + 60), f(TX - 700), f(HZ + 60)))
 clumps = []
 for i in range(150):
@@ -414,8 +512,8 @@ for (gx0, gx1, gy0, gy1) in ((TX - 150, TX - 50, 196, 250), (TX + 55, TX + 170, 
 defs.append('<filter id="clumpEdge" x="-5%" y="-20%" width="110%" height="140%"><feTurbulence type="fractalNoise" baseFrequency=".13" numOctaves="2" seed="37" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="7" xChannelSelector="R" yChannelSelector="G" result="d"/><feGaussianBlur in="d" stdDeviation=".6"/></filter>')
 defs.append('<filter id="foliageRelief" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB">'
             '<feTurbulence type="fractalNoise" baseFrequency=".022" numOctaves="4" seed="95" result="n"/><feColorMatrix in="n" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  1 0 0 0 0" result="h"/>'
-            '<feColorMatrix in="SourceGraphic" type="luminanceToAlpha" result="lum"/><feComposite in="h" in2="lum" operator="arithmetic" k1="0" k2=".6" k3="1.6" k4="0" result="hh"/>'
-            '<feDiffuseLighting in="hh" surfaceScale="6" diffuseConstant="1" lighting-color="#9fbc96" result="d"><feDistantLight azimuth="270" elevation="30"/></feDiffuseLighting>'
+            '<feColorMatrix in="SourceGraphic" type="luminanceToAlpha" result="lum"/><feComposite in="h" in2="lum" operator="arithmetic" k1="0" k2=".6" k3="1.6" k4="0" result="hh0"/><feGaussianBlur in="hh0" stdDeviation="2.6" result="hh"/>'
+            '<feDiffuseLighting in="hh" surfaceScale="7" diffuseConstant="1" lighting-color="#9fbc96" result="d"><feDistantLight azimuth="270" elevation="30"/></feDiffuseLighting>'
             '<feComposite in="d" in2="SourceGraphic" operator="arithmetic" k1="1.05" k2=".15" k3="0" k4="0" result="m"/><feComposite in="m" in2="SourceGraphic" operator="in"/></filter>')
 lin([(0, '#fff', 0), (.16, '#fff', 1), (1, '#fff', 1)], 0, 0, 1, 0, id='canopyFadeG')
 defs.append('<mask id="canopyFade" x="0" y="0" width="1" height="1" maskContentUnits="objectBoundingBox"><rect width="1" height="1" fill="url(#canopyFadeG)"/></mask>')  # the crown's far reach thins into the cloud
@@ -424,6 +522,20 @@ far.append('<!-- the air behind the World Tree\'s crown, held a little paler tha
 far.append('<!-- the World Tree: a colossal trunk far off on the plain, great boughs sweeping up into the storm, its canopy spread under the cloud across the right of the sky, -->'
            '<g mask="url(#treeMask)"><g filter="url(#soft)" opacity=".4" fill="#0a0f10"><path d="%s"/>%s</g><g filter="url(#foliageRelief)" mask="url(#canopyFade)"><use href="#canopyMass"/><g filter="url(#clumpEdge)" opacity=".85">%s</g><g filter="url(#leafMass)"><use href="#canopyMass"/></g></g><g filter="url(#soft2)"><path d="%s" fill="url(#%s)"/>%s<g fill="url(#%s)">%s</g></g><g filter="url(#foliageRelief)"><g filter="url(#clumpEdge)">%s</g></g>%s</g>' % (
                trunk, boughs.replace(' fill="url(#%s)"' % g_trunk_rim, ''), ''.join(clumps), trunk, g_trunk_rim, boughs, g_trunk_rim, BUTTRESS, ''.join(OVER_LEAVES), TRUNK_RIM))
+# the crown pushes up into the storm: the cloud's own lobes hang in front of its top and rags of scud cross it, so
+# its leaves are lost into cloud rather than laid over it as a texture
+vr_ = random.Random(113)
+veil = []
+x = TX - 560
+while x < W + 90:
+    d_ = min(1, abs(x - TX) / 560)
+    cy = lerp(78, 112, d_) + 16 * math.sin(x / 70) + vr_.uniform(-8, 10)
+    veil.append('<ellipse cx="%s" cy="%s" rx="%s" ry="%s" fill="url(#lobe)"/>' % (f(x), f(cy), f(vr_.uniform(50, 96)), f(vr_.uniform(30, 48))))
+    x += vr_.uniform(40, 70)
+veil.append('<rect x="%s" y="-40" width="%s" height="%s" fill="url(#mass)"/>' % (f(TX - 620), f(W - TX + 720), f(128)))
+scud_ = ''.join('<ellipse cx="%s" cy="%s" rx="%s" ry="%s" fill="#0f171d" opacity="%s"/>' % (f(vr_.uniform(TX - 480, W)), f(vr_.uniform(136, 170)), f(vr_.uniform(40, 80)), f(vr_.uniform(4, 8)), f(vr_.uniform(.45, .75))) for _ in range(7))
+far.append('<!-- the cloud hanging in front of the top of the crown, and rags of scud across it -->'
+           '<g filter="url(#cloudRelief)"><g filter="url(#cloud)">%s%s</g></g>' % (''.join(veil), scud_))
 far.append('<!-- the tree hazed by distance and rain --><rect x="%d" y="100" width="1100" height="%d" fill="#27313c" opacity=".12"/>' % (TX - 550, HZ - 90))
 # mist lying across the trunk at several heights, and rain curtains between it and the viewer: the air
 # between here and there is miles deep
@@ -467,6 +579,7 @@ far.append('<!-- the far flood broken by wind and rain: fine streaks of reflecte
            '<rect x="0" y="410" width="%d" height="72" fill="url(#farRipB)" filter="url(#rippleMid)" opacity=".7"/>' % W)
 far.append('<!-- the brightest water right at the horizon, the sky at a grazing angle --><rect x="0" y="%d" width="%d" height="5" fill="#56646f" opacity=".22" filter="url(#soft2)"/>' % (HZ - 1, W))
 whales = []
+WHALES = []
 for _ in range(26):
     y = HZ + 4 + (rnd.random() ** 1.3) * 78
     k = (y - HZ) / 80
@@ -476,17 +589,51 @@ for _ in range(26):
     rx = lerp(14, 110, k) * rnd.uniform(.7, 1.3)
     ry = lerp(2.5, 12, k) * rnd.uniform(.8, 1.2)
     c = mix('#29333d', ROCK, k)
+    WHALES.append((x, y, rx, ry, k))
     whales.append('<path d="M%s %s Q %s %s %s %s Z" fill="%s" opacity="%s" filter="url(#reflect)"/>' % (f(x - rx), f(y), f(x), f(y + ry * 1.4), f(x + rx), f(y), mix('#1c252d', '#05080a', k), f(lerp(.35, .6, k))) +
                   '<ellipse cx="%s" cy="%s" rx="%s" ry="%s" fill="#8a9aa4" opacity="%s" filter="url(#foam)"/>' % (f(x), f(y + .3), f(rx * .9), f(lerp(.3, .7, k)), f(lerp(.2, .35, k))))
     whales.append('<path d="M%s %s Q %s %s %s %s Z" fill="%s"/><path d="M%s %s Q %s %s %s %s" stroke="%s" stroke-width="%s" fill="none" opacity=".5"/>' % (
         f(x - rx), f(y), f(x), f(y - ry * 2), f(x + rx), f(y), c, f(x - rx * .7), f(y - ry * .6), f(x - rx * .1), f(y - ry * 1.6), f(x + rx * .4), f(y - ry * 1.1), mix('#4a5866', ROCK_WET, k), f(lerp(.6, 1.4, k))))
 far.append('<!-- whaleback domes of scoured rock breaking the water, smaller and paler with distance --><g>%s</g>' % ''.join(whales))
+
+
+def rock_growth(x, y, rx, ry, k, rr, crest=True):
+    # seeds that caught on a far rock and took: moss along its crest, a few blades of the frond plant, now and
+    # then a sapling or a glowing pod; grayed by distance like the rock itself
+    far_ = (1 - k) * .55
+    col = lambda c: mix(c, '#2a3440', far_)
+    top = [(x - rx + 2 * rx * t, y - (4 * ry * t * (1 - t) if crest else ry)) for t in (.18, .3, .42, .54, .66, .78)]
+    g = '<polyline points="%s" fill="none" stroke="%s" stroke-width="%s" stroke-linecap="round" opacity=".85" filter="url(#moss)"/>' % (pts(top), col(mix(GREEN_DARK, GREEN, .55)), f(lerp(.9, 2.2, k)))
+    for _ in range(rr.randint(3, 6)):
+        bx, by = top[rr.randint(1, 4)]
+        bx += rr.uniform(-2, 2)
+        h = lerp(3, 12, k) * rr.uniform(.6, 1.3)
+        a = rr.uniform(-.5, .5)
+        g += '<path d="M%s %s q %s %s %s %s" stroke="%s" stroke-width="%s" fill="none" stroke-linecap="round"/>' % (
+            f(bx), f(by), f(a * h * .2), f(-h * .6), f(a * h + h * .15), f(-h), col(mix(GREEN_DARK, GREEN, rr.uniform(.4, .8))), f(lerp(.6, 1.3, k)))
+    if rr.random() < .4:
+        bx, by = top[rr.randint(1, 4)]
+        h = lerp(6, 20, k) * rr.uniform(.8, 1.2)
+        g += '<line x1="%s" y1="%s" x2="%s" y2="%s" stroke="%s" stroke-width="%s"/>' % (f(bx), f(by), f(bx + h * .05), f(by - h * .7), col('#0e1511'), f(lerp(.5, 1, k)))
+        g += ''.join('<circle cx="%s" cy="%s" r="%s" fill="%s"/>' % (f(bx + h * dx), f(by - h * dy), f(h * r_), col(mix('#1a2e1f', '#2c4a30', rr.random()))) for dx, dy, r_ in ((-.1, .78, .16), (.12, .82, .15), (0, .96, .17)))
+    if rr.random() < .45:
+        bx, by = top[rr.randint(1, 4)]
+        g += '<circle cx="%s" cy="%s" r="%s" fill="url(#glowPod)" opacity=".4"/>' % (f(bx), f(by - .6), f(lerp(.9, 2.2, k)))
+    return g
+
+
+grnd_ = random.Random(117)
+far.append('<!-- the first growth out on the far rocks at left too: moss, blades and saplings where seeds caught -->%s' % ''.join(
+    rock_growth(x, y, rx, ry, k, grnd_) for x, y, rx, ry, k in WHALES if (452 < x < 960 or x < 24) and rx > 16))
 far.append('<!-- a far whaleback on the left of the plain --><path d="M60 %d C 120 %d, 230 %d, 300 %d Z" fill="#232d35"/>' % (HZ + 4, HZ - 20, HZ - 22, HZ + 4))
 # The World Tree's island: land rising from the flood around its foot, covered in the forest the
 # Generator's seeds have already grown. Young trees crowd the colossus, the tallest nearest it and
 # still only a fraction of its height; lower trees and shrubs step down toward the shore, and weeds and
 # grass fringe the waterline. The scale of that forest is what makes the World Tree read as colossal.
 irnd = random.Random(91)
+far.append('<!-- pale air lying at the World Tree\'s foot behind its island, so the young forest stands against it in silhouette --><g filter="url(#soft6)">%s</g>' % ''.join(
+    '<ellipse cx="%s" cy="%s" rx="%s" ry="%s" fill="#3d4a58" opacity="%s"/>' % (f(x), f(y), f(rx), f(ry), f(op)) for x, y, rx, ry, op in (
+        (1010, 372, 120, 16, .5), (1150, 366, 130, 20, .55), (1290, 362, 150, 22, .45), (1430, 366, 140, 20, .55), (1530, 372, 80, 16, .45))))
 ISL_FRONT = [(930, 407), (1010, 404), (1120, 402), (1240, 400), (1380, 398), (W + 30, 397)]
 ISL_BACK = [(W + 30, HZ - 3), (TX + 200, HZ - 6), (TX, HZ - 7), (TX - 260, HZ - 4), (980, HZ - 2), (930, 405)]
 lin([(0, '#1b2622', 1), (1, '#0c1210', 1)], 0, HZ - 10, 0, 450, units=True, id='islandG')
@@ -522,7 +669,7 @@ for i in range(800):
     y = irnd.uniform(y0, y1)
     d = min(1, abs(x - TX) / 560)  # 0 at the trunk
     shore = (y1 - y) / max(1, y1 - y0)  # 0 at the waterline, 1 at the back
-    h = lerp(52, 5, d ** .8) * lerp(.35, 1, min(1, shore * 2.2)) * irnd.uniform(.55, 1.15) * (1.3 if irnd.random() < .07 else 1)  # the odd emergent stands above the rest
+    h = .72 * lerp(52, 5, d ** .8) * lerp(.35, 1, min(1, shore * 2.2)) * irnd.uniform(.55, 1.15) * (1.3 if irnd.random() < .07 else 1)  # the understory: low, so the young trees stand clear of it
     if h > 14 and irnd.random() < .6:
         plants.append((y, 'tree', x, h))
     elif h > 6 and irnd.random() < .5:
@@ -532,11 +679,11 @@ for i in range(800):
 for x in range(934, W + 20, 5):
     plants.append((isl_front(x) - .5, 'grass', x + irnd.uniform(-1.5, 1.5), irnd.uniform(2, 4)))
 yrnd = random.Random(105)
-for xx in (968, 1010, 1058, 1112, 1160, 1206, 1376, 1418, 1452, 1494, 1236, 1342):
-    x = xx + yrnd.uniform(-8, 8)
-    y = lerp(isl_back(x), isl_front(x), yrnd.uniform(.35, .75))
+for j, xx in enumerate((950, 962, 1016, 1068, 1078, 1092, 1150, 1204, 1216, 1238, 1352, 1366, 1420, 1470, 1486, 1532, 1004, 1180)):
+    x = xx + yrnd.uniform(-5, 5)  # in loose groups with gaps between, some standing back in the haze and some forward
+    y = lerp(isl_back(x), isl_front(x), yrnd.uniform(.1, .85))
     d = min(1, abs(x - TX) / 560)
-    plants.append((y, 'young', x, lerp(58, 30, d) * yrnd.uniform(.85, 1.15)))
+    plants.append((y, 'young', x, lerp(84, 40, d) * yrnd.uniform(.6, 1.2)))
 plants.sort()
 veg = []
 MIST_ROWS = [HZ - 4, HZ - 1, HZ + 2]  # mist settles between the rows of the forest, so the back rows stand behind a veil
@@ -548,20 +695,37 @@ for (y, kind, x, h) in plants:
     base = haze(mix('#162219', '#223829', irnd.random()), y, x)
     lit = haze(mix('#28402d', '#355036', irnd.random()), y, x)
     if kind == 'young':
-        # a young tree standing clear of the scrub: a bare trunk for its lower half, then a crown of its own
-        tk = haze('#0e1411', y, x)
-        crown = haze(mix('#1a2c1f', '#2a4430', yrnd.random()), y, x)
-        top = haze(mix('#304c35', '#3e5e40', yrnd.random()), y, x)
-        if yrnd.random() < .6:
-            lean = yrnd.uniform(-.07, .07) * h
-            blobs = [(x + lean + yrnd.uniform(-.16, .16) * h, y - h * yrnd.uniform(.5, .95), h * yrnd.uniform(.07, .15)) for _ in range(11)]
-            veg.append('<line x1="%s" y1="%s" x2="%s" y2="%s" stroke="%s" stroke-width="%s"/>' % (f(x), f(y), f(x + lean), f(y - h * .7), tk, f(max(.8, h * .045))) +
-                       ''.join('<line x1="%s" y1="%s" x2="%s" y2="%s" stroke="%s" stroke-width="%s"/>' % (f(x), f(y - h * a_), f(x + sgn * h * .12), f(y - h * (a_ + .12)), tk, f(max(.5, h * .02))) for a_, sgn in ((.45, -1), (.55, 1))) +
-                       ''.join('<circle cx="%s" cy="%s" r="%s" fill="%s"/>' % (f(bx), f(by), f(r), crown) for bx, by, r in blobs) +
-                       ''.join('<circle cx="%s" cy="%s" r="%s" fill="%s" opacity=".55"/>' % (f(bx - r * .2), f(by - r * .3), f(r * .6), top) for bx, by, r in blobs[:4]))
+        # a young tree standing clear of the understory, dark against the pale air behind: a tree fern, a spire,
+        # or a broadleaf whose trunk forks into limbs carrying separate clumps with sky between them
+        tk = haze('#0a0f0c', y, x)
+        crown = haze(mix('#122017', '#1c3122', yrnd.random()), y, x)
+        top = haze(mix('#2a4430', '#365539', yrnd.random()), y, x)
+        form = ('fern', 'spire', 'broad')[int(yrnd.random() * 3)]
+        lean = yrnd.uniform(-.05, .05) * h
+        if form == 'fern':
+            tx_, ty_ = x + lean, y - h
+            v_ = '<path d="M%s %s Q %s %s %s %s" stroke="%s" stroke-width="%s" fill="none"/>' % (f(x), f(y), f(x - lean * .3), f(y - h * .5), f(tx_), f(ty_), tk, f(max(.9, h * .035)))
+            for a_ in (-160, -138, -116, -96, -80, -60, -40, -18):
+                a = math.radians(a_ + yrnd.uniform(-6, 6))
+                L = h * yrnd.uniform(.3, .42)
+                ex, ey = tx_ + math.cos(a) * L, ty_ + math.sin(a) * L * .35 + L * .5  # out, up, and drooping at the tip
+                cx_, cy_ = tx_ + math.cos(a) * L * .5, ty_ + math.sin(a) * L * .7 - L * .08
+                v_ += '<path d="M%s %s Q %s %s %s %s" stroke="%s" stroke-width="%s" fill="none" stroke-linecap="round"/>' % (f(tx_), f(ty_), f(cx_), f(cy_), f(ex), f(ey), crown, f(max(.8, h * .038)))
+            veg.append(v_)
+        elif form == 'spire':
+            tiers = ''.join('<polygon points="%s"/>' % pts([(x + lean * lo - h * w, y - h * lo), (x + lean * hi, y - h * hi), (x + lean * lo + h * w, y - h * lo)])
+                            for w, lo, hi in ((.15, .26, .52), (.13, .38, .64), (.1, .5, .76), (.075, .62, .88), (.05, .74, 1.02)))
+            veg.append('<line x1="%s" y1="%s" x2="%s" y2="%s" stroke="%s" stroke-width="%s"/><g fill="%s">%s</g>' % (f(x), f(y), f(x + lean * .3), f(y - h * .4), tk, f(max(.8, h * .04)), crown, tiers))
         else:
-            tiers = ''.join('<polygon points="%s"/>' % pts([(x - h * w, y - h * lo), (x, y - h * hi), (x + h * w, y - h * lo)]) for w, lo, hi in ((.13, .3, .62), (.1, .48, .8), (.07, .66, 1.02)))
-            veg.append('<line x1="%s" y1="%s" x2="%s" y2="%s" stroke="%s" stroke-width="%s"/><g fill="%s">%s</g>' % (f(x), f(y), f(x), f(y - h * .5), tk, f(max(.8, h * .04)), crown, tiers))
+            fork = (x + lean * .45, y - h * .4)
+            limbs = [(fork[0] + h * dx, y - h * dy) for dx, dy in ((-.15, .66), (.02, .8), (.16, .64))]
+            v_ = '<line x1="%s" y1="%s" x2="%s" y2="%s" stroke="%s" stroke-width="%s"/>' % (f(x), f(y), f(fork[0]), f(fork[1]), tk, f(max(.9, h * .045)))
+            v_ += ''.join('<line x1="%s" y1="%s" x2="%s" y2="%s" stroke="%s" stroke-width="%s" stroke-linecap="round"/>' % (f(fork[0]), f(fork[1]), f(lx), f(ly + h * .05), tk, f(max(.6, h * .025))) for lx, ly in limbs)
+            for lx, ly in limbs:
+                cl = [(lx + yrnd.uniform(-.1, .1) * h, ly + yrnd.uniform(-.09, .06) * h, h * yrnd.uniform(.06, .1)) for _ in range(9)]
+                v_ += ''.join('<circle cx="%s" cy="%s" r="%s" fill="%s"/>' % (f(bx), f(by), f(r), crown) for bx, by, r in cl)
+                v_ += ''.join('<circle cx="%s" cy="%s" r="%s" fill="%s" opacity=".55"/>' % (f(bx - r * .2), f(by - r * .35), f(r * .55), top) for bx, by, r in cl[:2])
+            veg.append(v_)
         continue
     if kind == 'tree':
         if irnd.random() < .5:
@@ -589,7 +753,7 @@ isle.append('<use href="#isleVeg"/>')
 for i in range(26):
     x = irnd.uniform(940, W - 20)
     y = irnd.uniform(isl_back(x), isl_front(x)) - irnd.uniform(3, 16) * max(.2, 1 - abs(x - TX) / 560)
-    isle.append('<circle cx="%s" cy="%s" r="2.4" fill="url(#glowPod)" opacity=".4"/><circle cx="%s" cy="%s" r=".9" fill="%s" opacity=".8"/>' % (f(x), f(y), f(x), f(y), GLOW_MID))
+    isle.append('<circle cx="%s" cy="%s" r="1.3" fill="url(#glowPod)" opacity=".35"/><circle cx="%s" cy="%s" r=".45" fill="%s" opacity=".75"/>' % (f(x), f(y), f(x), f(y), GLOW_MID))
 isle.append('<polyline points="%s" fill="none" stroke="#b8c8cc" stroke-width="1" opacity=".25" filter="url(#soft2)"/>' % pts([(x, y + 1.5) for x, y in ISL_FRONT]))
 far.append('<!-- the World Tree\'s island: the young forest its seeds have grown, tall trees crowding its foot and stepping down to shrubs, weeds and grass at the waterline -->' + ''.join(isle))
 # the island and the foot of the trunk mirrored in the flood below the shore, darker than the water and broken by the ripples
@@ -638,6 +802,8 @@ land.append('<!-- the ripples beyond the shelf catching the Generator light, fad
             '<g mask="url(#litWaterMask)"><rect x="0" y="466" width="1000" height="%d" fill="#fff" filter="url(#rippleLit)" opacity=".55"/></g>' % (H - 466))
 # slabs of scoured rock in the mid plain
 SLABS = [(800, 604, 60, 7), (962, 600, 48, 6), (880, 506, 90, 9), (1010, 488, 70, 7), (1180, 520, 120, 11), (1300, 486, 60, 6), (1440, 502, 90, 8), (160, 492, 80, 7), (300, 470, 60, 5), (1060, 552, 80, 8), (760, 530, 60, 7)]
+ISLETS = [(566, 448, 30, 3.4), (664, 438, 22, 2.8), (752, 456, 36, 4), (846, 444, 26, 3.2)]  # small rocks out in the water at left, each with growth on it
+SLABS += ISLETS
 sl = []
 for (x, y, rx, ry) in SLABS:
     p = [(x - rx, y), (x - rx * .8, y - ry * .7), (x - rx * .2, y - ry), (x + rx * .5, y - ry * .8), (x + rx, y - ry * .1), (x + rx * .9, y + ry * .3), (x - rx * .7, y + ry * .35)]
@@ -657,6 +823,9 @@ for (x, y, rx, ry) in SLABS:
     sl.append('<path d="M%s %s L %s %s M%s %s L %s %s" stroke="#8ea2aa" stroke-width="%s" fill="none" opacity=".35" stroke-linecap="round" filter="url(#foam)"/>' % (
         f(x + rx), f(y), f(x + rx * 1.9), f(y - ry * .6), f(x + rx * .9), f(y + ry * .3), f(x + rx * 2), f(y + ry * 1.2), f(.9 + ry / 10)))
 land.append('<!-- flat slabs of scoured rock in the floodwater --><g>%s</g>' % ''.join(sl))
+irnd_ = random.Random(119)
+land.append('<!-- the small rocks out in the water at left, each with seeds caught and sprouting on it -->%s' % ''.join(
+    rock_growth(x, y, rx * .75, ry, depth_k(y) if 'depth_k' in globals() else (y - HZ) / (H - HZ), irnd_, crest=False) for x, y, rx, ry in ISLETS))
 
 VAT_X0, VAT_X1 = GX - 6 - 30, GX - 6 + 30  # the vat's glass, in the machine's frame
 # the shelf: a broad smooth dome of wet black rock under the machine, running out into the flood
@@ -684,7 +853,7 @@ land.append('<!-- a faint tail of that light running on down the dome toward the
 rad([(0, '#000', 0), (.55, '#000', .15), (1, '#000', .7)], cx=GX + 40, cy=GBASE, r=420, units=True, id='shelfEdgeDark')
 land.append('<!-- the dome darker toward its edges, turning away from the light --><polygon points="%s" fill="url(#shelfEdgeDark)"/>' % pts(shelf))
 land.append('<!-- the foot of the machine pressing on the rock: a dark contact shadow --><ellipse cx="%d" cy="%d" rx="232" ry="6" fill="#000" opacity=".75" filter="url(#soft2)"/>' % (GX, GBASE + 8))
-land.append('<!-- the halo of the Generator light in the rain around it --><ellipse cx="%d" cy="300" rx="260" ry="210" fill="url(#glowWash)" opacity=".3"/>' % GX)
+land.append('<!-- the halo of the Generator light in the rain around it, local: it dies out well below the cloud --><ellipse cx="%d" cy="352" rx="215" ry="120" fill="url(#glowWash)" opacity=".3"/>' % GX)
 
 # The Genesis Prototype: a heavy industrial machine, drawn in its own frame at GSC. A stepped
 # foundation bolted into the rock; a tall armored housing of riveted plate columns with girder bands
@@ -700,6 +869,7 @@ HOUSING = [(GX - 100, 456), (GX - 100, 262), (GX - 84, 246), (GX + 76, 246), (GX
 ANNEX = [(GX - 168, 456), (GX - 168, 346), (GX - 156, 334), (GX - 100, 334), (GX - 100, 456)]
 TURRET = [(GX - 78, 248), (GX - 66, 216), (GX + 56, 216), (GX + 70, 248)]
 CORE = (GX - 6, 353)
+LIGHT_AT = GS(*CORE)  # where the leaves near the machine take their light from
 # the foundation: two stepped blocks with bolt rows, anchored by heavy struts from the housing
 for poly, c in ((FOUND1, '#151b1d'), (FOUND2, '#1c2427')):
     gen.append('<polygon points="%s" fill="%s"/><polyline points="%s" fill="none" stroke="%s" stroke-width="1.4" opacity=".7"/>' % (pts(poly), c, pts(poly[1:3]), METAL_WET))
@@ -748,14 +918,12 @@ for x in (GX - 60, GX - 20, GX + 20, GX + 60):
     gen.append('<line x1="%d" y1="258" x2="%d" y2="456" stroke="#0b0f10" stroke-width="4"/><line x1="%s" y1="258" x2="%s" y2="456" stroke="%s" stroke-width=".8" opacity=".5"/>' % (x, x, f(x - 1.8), f(x - 1.8), METAL_WET) +
                ''.join('<circle cx="%d" cy="%d" r="1.2" fill="#56666b"/>' % (x, y) for y in range(268, 452, 22) if not (y in (296, 312, 400, 412))))
 gen.append('<polygon points="%s" fill="none" stroke="%s" stroke-width="1.6" opacity=".6"/>' % (pts(HOUSING), METAL_WET))
-# a first prototype, not a finished product: a patch plate in another metal, a split plate leaking light
+# a first prototype, not a finished product: a patch plate in another metal
 gen.append('<!-- a replaced plate in a different metal --><rect x="%d" y="426" width="34" height="14" fill="#2f3a3a"/><rect x="%d" y="426" width="34" height="14" fill="none" stroke="#56666b" stroke-width=".6" opacity=".7"/>' % (GX + 24, GX + 24) +
            ''.join('<circle cx="%d" cy="%d" r="1" fill="#6b7a7e"/>' % (x, y) for x in (GX + 27, GX + 55) for y in (429, 437)))
 SPLIT = [(GX + 70, 318), (GX + 75, 344), (GX + 78, 344), (GX + 73, 318)]
 CRACK = [(GX + 71.5, 319), (GX + 72.5, 325), (GX + 74, 331), (GX + 75, 337), (GX + 76.5, 343)]
-gen.append('<!-- a split plate leaking light --><polygon points="%s" fill="#050708"/><polyline points="%s" fill="none" stroke="%s" stroke-width=".9" stroke-linejoin="round"/>' % (pts(SPLIT), pts(CRACK), GLOW_MID))
-gen.append('<polygon points="%s" fill="%s"/><polyline points="%s" fill="none" stroke="%s" stroke-width=".7"/>' % (
-    pts([(GX + 75, 318), (GX + 84, 315), (GX + 79, 326)]), METAL_MID, pts([(GX + 75, 318), (GX + 84, 315)]), METAL_WET))
+# (a split plate leaking light read as a glitch in the render, a green streak on the housing, and was cut: Nick 2026-09-23)
 # the core: a tall incubation vat seen through a barred window, its fluid glowing; pods ripen in it
 cx0, cy0 = CORE
 VAT = (cx0 - 30, 282, 60, 150)  # x, y, width, height of the glass
@@ -849,6 +1017,19 @@ defs.append('<filter id="machineRelief" x="-2%" y="-2%" width="104%" height="104
 land.append('<g transform="%s" filter="url(#machineRelief)">%s</g>' % (MT, ''.join(gen)))
 
 MACHINE_SIL = ''.join('<polygon points="%s"/>' % pts(p) for p in (FOUND1, FOUND2, HOUSING, ANNEX, TURRET))
+# the machine's whole outline in the scene's coordinates, cables, valve, tank, stack, gantry, gate and chute
+# included: the water animated in the glow layer (whitecaps, spindrift, rain rings) lies behind the machine,
+# so it is cut away wherever the machine stands
+MACHINE_OUTLINE = [GS(x, y) for x, y in (
+    (GX - 238, 502), (GX - 180, 380), (GX - 170, 346), (GX - 160, 334), (GX - 160, 294), (GX - 136, 294), (GX - 136, 334), (GX - 100, 334),
+    (GX - 100, 262), (GX - 84, 246), (GX - 78, 248), (GX - 70, 216), (GX - 70, 184), (GX - 32, 177), (GX - 10, 177), (GX + 40, 186),
+    (GX + 40, 195), (GX + 54, 195), (GX + 54, 158), (GX + 86, 158), (GX + 86, 188), (GX + 66, 188), (GX + 66, 220), (GX + 72, 246),
+    (GX + 92, 262), (GX + 92, 418))] + [(422, 398), (448, 398), (448, 428), (524, 464), (533, 480), (533, 530), (-4, 530)]
+# the gantry is open lattice: water shows through it, so only its steel hides what passes behind
+GANTRY_STEEL = '<g stroke="#000" stroke-width="2">%s</g>' % ''.join(gan) + ''.join('<line x1="%d" y1="%d" x2="%d" y2="474" stroke="#000" stroke-width="5"/>' % (gx_, GTOP - 6, gx_) for gx_ in (GR0, GR1)) + (
+    '<rect x="%d" y="246" width="%d" height="21" fill="#000"/><rect x="%d" y="%d" width="%d" height="6" fill="#000"/><circle cx="%d" cy="%d" r="5" fill="#000"/>' % (GX + 92, GR1 + 14 - GX - 92, GR0 - 4, GTOP - 8, GR1 - GR0 + 8, (GR0 + GR1) // 2, GTOP - 12))
+defs.append('<mask id="behindMachine" maskUnits="userSpaceOnUse" x="0" y="0" width="%d" height="%d"><rect width="%d" height="%d" fill="#fff"/><polygon points="%s" fill="#000"/><g transform="%s">%s</g></mask>' % (
+    W, H, W, H, pts(MACHINE_OUTLINE), MT, GANTRY_STEEL))
 
 # the sluice at the machine's foot and the chute running down from it into the water behind the shelf
 CHUTE0, CHUTE1 = (436, 436), (520, 474)  # the gate, and the chute's lip
@@ -917,6 +1098,36 @@ LODGED_POD = ('<path d="M0 -26 C -2.5 -24, -5.5 -18, -5.5 -12 C -5.5 -5, -3 -.5,
               '<path d="M-7.4 -17.6 Q -8.2 -26.4 0 -28 Q 8.2 -26.4 7.4 -17.6 Z" fill="#4d5f33"/>')
 land.append('<!-- lodged pods among the growth: small acorns tipped on their sides in the moss --><g>%s</g>' % ''.join(
     '<g transform="translate(%s %s) rotate(%d) scale(.22) translate(0 13)">%s</g>' % (f(x), f(y - 2), (-72, 64, -80, 70, -66, 76, -74, 68)[i], LODGED_POD) for i, (x, y) in enumerate(LODGED)))
+
+# The growth at the source: the machine's own seeds have taken hold all around it. Moss creeps along the
+# foundation's foot, ferns and the frond plant stand in clumps at its corners and by the chute's legs, seedlings
+# rise from glowing pods in front of it, and a young tree fern already stands at the shelf's left end. All of it
+# lit from the vat, on the side that faces it.
+src = []
+srnd = random.Random(127)
+for _ in range(60):
+    cx_, sp_ = srnd.choice(((68, 34), (68, 34), (190, 26), (430, 40), (430, 40), (505, 18)))  # in patches, bare rock between
+    x = cx_ + srnd.gauss(0, sp_)
+    y = 497 + abs(srnd.gauss(0, 4)) + max(0, abs(x - GX) - 170) * .05
+    lit_ = max(0, 1 - abs(x - GX) / 260)
+    src.append('<ellipse cx="%s" cy="%s" rx="%s" ry="%s" fill="%s" opacity="%s"/>' % (f(x), f(y), f(srnd.uniform(4, 13)), f(srnd.uniform(1.4, 3.2)), mix(mix(GREEN_DARK, GREEN, srnd.uniform(.3, .7)), GREEN_LIT, lit_ * srnd.uniform(.1, .4)), f(srnd.uniform(.6, .9))))
+land_src = ['<!-- moss creeping along the foundation\'s foot --><g filter="url(#moss)">%s</g>' % ''.join(src)]
+tf_x, tf_y, tf_h = 16, 503, 96  # the young tree fern at the shelf's left end
+land_src.append('<!-- a young tree fern at the shelf\'s left end --><path d="M%s %s Q %s %s %s %s" stroke="#0a100c" stroke-width="3.2" fill="none" stroke-linecap="round"/>' % (
+    f(tf_x), f(tf_y), f(tf_x - 4), f(tf_y - tf_h * .5), f(tf_x + 3), f(tf_y - tf_h)) +
+    ''.join(draw_fern(tf_x + 3, tf_y - tf_h, a_, tf_h * .55, 7, 16, LIGHT_AT, srnd, col='#0b170e', tipc='#1c3321') for a_ in (-70, -40, -12, 16, 44, 72)))
+for (x, y, n, hmax) in ((50, 500, 5, 26), (30, 507, 4, 20), (512, 507, 5, 24), (538, 516, 3, 16), (152, 503, 3, 12), (404, 503, 3, 13)):
+    for j in range(n):
+        a_ = lerp(-55, 55, j / max(1, n - 1)) + srnd.uniform(-10, 10)
+        if srnd.random() < .5:
+            land_src.append(draw_fern(x + srnd.uniform(-3, 3), y, a_, hmax * srnd.uniform(.7, 1.1), 4.2, 6, LIGHT_AT, srnd, col='#0d1a10', tipc='#2a4a2c'))
+        else:
+            land_src.append(draw_leaf(x + srnd.uniform(-3, 3), y, a_ * .6, hmax * srnd.uniform(.8, 1.2), hmax * .16, 5, LIGHT_AT, srnd, near=False, base='#0a130c', mid='#1a3020', tipc='#2e4c30'))
+for (x, y, sc_) in ((112, 509, 1.3), (126, 514, .7), (180, 506, 1), (402, 512, 1.5), (446, 507, .8), (458, 519, 1.1)):  # seedlings rising from glowing pods, in two loose clusters
+    land_src.append('<g transform="translate(%s %s) scale(%s) translate(%s %s)">' % (f(x), f(y), f(sc_), f(-x), f(-y)) + '<circle cx="%s" cy="%s" r="5" fill="url(#glowPod)" opacity=".45"/><g transform="translate(%s %s) rotate(%d) scale(.2) translate(0 13)">%s</g>' % (f(x), f(y - 1), f(x), f(y), srnd.choice((-74, 70)), LODGED_POD) +
+                    '<path d="M%s %s q 1 -5 -.5 -10" stroke="#4f7a2e" stroke-width="1.1" fill="none" stroke-linecap="round"/><path d="M%s %s q 3 -4 7 -2.5 q -4 2 -7 2.5 Z M%s %s q -3 -4 -7 -2.5 q 4 2 7 2.5 Z" fill="#5f8a3a"/>' % (
+                        f(x + 2), f(y - 1), f(x + 1.5), f(y - 11), f(x + 1.5), f(y - 11)) + '</g>')
+land.append('<!-- the growth at the source, around the machine\'s foot -->' + ''.join(land_src))
 
 # near rock: the dark wet ledge at bottom left and the rise at bottom right
 ledge = [(-20, 600), (120, 596), (260, 612), (420, 606), (600, 622), (760, 616), (900, 636), (960, H + 10), (-20, H + 10)]
@@ -1022,8 +1233,8 @@ for i in range(7):
 vat_.append(VAT_BANDS)  # the clamp bands over the glass
 mglow.append('<!-- pods ripening in the vat, and bubbles rising --><g clip-path="url(#vatClip)">%s</g>%s' % (''.join(vat_[:-1]), vat_[-1]))
 _sl = random.Random(79)
-glow.append('<!-- the surge: the undersides of the cloud lobes over the machine lit from below --><g opacity="0" mask="url(#machineOut)">%s%s</g>' % (surge(SURGE_V, .9), ''.join(
-    '<ellipse cx="%s" cy="%s" rx="%s" ry="%s" fill="url(#glowWash)" opacity="%s"/>' % (f(GX + _sl.uniform(-220, 420)), f(_sl.uniform(170, 226)), f(_sl.uniform(60, 130)), f(_sl.uniform(16, 34)), f(_sl.uniform(.45, 1))) for _ in range(12))))
+glow.append('<!-- the surge: the rain-filled air around the machine lit up, in drifts; the cloud far overhead stays dark --><g opacity="0" mask="url(#machineOut)">%s%s</g>' % (surge(SURGE_V, .9), ''.join(
+    '<ellipse cx="%s" cy="%s" rx="%s" ry="%s" fill="url(#glowWash)" opacity="%s"/>' % (f(GX + _sl.uniform(-200, 240)), f(_sl.uniform(262, 440)), f(_sl.uniform(50, 110)), f(_sl.uniform(30, 60)), f(_sl.uniform(.45, 1))) for _ in range(12))))
 glow.append('<!-- the surge: the light flooding the shelf --><ellipse cx="%d" cy="%d" rx="340" ry="48" fill="url(#glowWash)" opacity="0">%s</ellipse>' % (GX + 90, GBASE + 10, surge(SURGE_V, .85)))
 glow.append('<!-- the surge: the core flaring --><circle cx="%s" cy="%s" r="165" fill="url(#glowPod)" opacity="0" mask="url(#machineOut)">%s</circle>' % (f(GS(*CORE)[0]), f(GS(*CORE)[1]), surge(SURGE_V, .8)))
 mglow.insert(len(mglow) - 1, '<!-- the vat flaring white behind its seeds, which stay dark against it --><rect x="%d" y="%d" width="%d" height="%d" rx="12" fill="#ffffff" opacity="0" filter="url(#soft2)">%s</rect>' % (VAT[0] + 4, VAT[1] + 6, VAT[2] - 8, VAT[3] - 12, surge(SURGE_V, .7)))
@@ -1047,12 +1258,6 @@ glow.append('<!-- the lit water spreading from the outfall: a low glow, and over
             '<g filter="url(#glitterLit)"><ellipse cx="%d" cy="%d" rx="130" ry="18" fill="url(#glitterFall)"/><ellipse cx="%d" cy="%d" rx="60" ry="9" fill="url(#glitterCore)"/></g>' % (OUTFALL[0] + 70, OUTFALL[1] + 6, OUTFALL[0] + 30, OUTFALL[1] + 3))
 glow.append('<!-- the surge: the gate bursting open --><ellipse cx="%d" cy="%d" rx="22" ry="12" fill="url(#glowWash)" opacity="0">%s</ellipse><line x1="%s" y1="%s" x2="%s" y2="%s" stroke="%s" stroke-width="5" opacity="0" filter="url(#glow)">%s</line>' % (
     CHUTE0[0], CHUTE0[1] - 8, surge(FIRE_V), f(CHUTE0[0]), f(CHUTE0[1] - 1), f(CHUTE1[0]), f(CHUTE1[1] - 1), GLOW_CORE, surge(FIRE_V, .3)))
-# the split plate leaking light, flickering unevenly
-mglow.append('<!-- the split plate leaking light, flickering -->'
-            '<g opacity=".4"><animate attributeName="opacity" values=".35;.85;.4;.95;.3;.7;.35" keyTimes="0;.1;.18;.4;.55;.8;1" dur="4s" begin="-1.3s" repeatCount="indefinite"/>'
-            '<ellipse cx="%s" cy="%s" rx="3" ry="9" fill="url(#glowWash)" opacity=".5"/><polyline points="%s" fill="none" stroke="%s" stroke-width="1.1" stroke-linejoin="round" filter="url(#glow)"/></g>' % (
-                f(CRACK[2][0] + 1), f(CRACK[2][1] + 4), pts(CRACK), GLOW_CORE))
-mglow.append('<!-- the split blazing in the surge, its light spilling down the plate --><ellipse cx="%s" cy="%s" rx="6" ry="22" fill="url(#glowPod)" opacity="0">%s</ellipse>' % (f(CRACK[2][0] + 1), f(CRACK[2][1] + 8), surge(SURGE_V)))
 # the instrument lamps blinking in turn, and the gauge needle trembling
 for i in range(3):
     mglow.append('<circle cx="%d" cy="446" r="2.2" fill="%s" opacity=".15"><animate attributeName="opacity" values=".15;1;.15;.15" keyTimes="%s" dur="3s" begin="%s" repeatCount="indefinite"/></circle>' % (
@@ -1068,10 +1273,10 @@ mglow.append('<circle cx="%d" cy="%d" r="9" fill="url(#glowPod)" opacity=".2"><a
 for i in range(3):
     per, ph = 3.0, i * 1.0
     mglow.append('<!-- steam from the relief valve --><ellipse cx="%d" cy="296" rx="7" ry="5" fill="#8a989c" opacity="0" filter="url(#soft2)">'
-                '<animateTransform attributeName="transform" type="translate" values="0 0;26 -34;64 -64" keyTimes="0;.45;1" dur="%ss" begin="%s" repeatCount="indefinite"/>'
-                '<animate attributeName="rx" values="6;14;26" keyTimes="0;.45;1" dur="%ss" begin="%s" repeatCount="indefinite"/>'
-                '<animate attributeName="ry" values="4;9;15" keyTimes="0;.45;1" dur="%ss" begin="%s" repeatCount="indefinite"/>'
-                '<animate attributeName="opacity" values="0;.42;.2;0" keyTimes="0;.12;.6;1" dur="%ss" begin="%s" repeatCount="indefinite"/></ellipse>' % (
+                '<animateTransform attributeName="transform" type="translate" values="0 0;6 -24;16 -46" keyTimes="0;.45;1" dur="%ss" begin="%s" repeatCount="indefinite"/>'
+                '<animate attributeName="rx" values="4;8;13" keyTimes="0;.45;1" dur="%ss" begin="%s" repeatCount="indefinite"/>'
+                '<animate attributeName="ry" values="3;6;9" keyTimes="0;.45;1" dur="%ss" begin="%s" repeatCount="indefinite"/>'
+                '<animate attributeName="opacity" values="0;.34;.12;0" keyTimes="0;.12;.55;1" dur="%ss" begin="%s" repeatCount="indefinite"/></ellipse>' % (
                     GX - 150, f(per), onset_begin(per, ph), f(per), onset_begin(per, ph), f(per), onset_begin(per, ph), f(per), onset_begin(per, ph)))
 
 # the reflection shimmers as rain breaks the water
@@ -1150,7 +1355,7 @@ for i in range(400):
                 '<animate attributeName="opacity" values="0;.3;.3;0" keyTimes="0;.25;.7;1" dur="%ss" begin="-%ss" repeatCount="indefinite"/>%s</g>' % (
                     f(run_), f(per), f(ph), f(per), f(ph), spindles))
 glow.append('<!-- the flood current: pale lines drifting downstream --><g>%s</g>' % ''.join(cur_))
-glow.append('<!-- rain rings on the floodwater --><g>%s</g>' % ''.join(rings))
+glow.append('<!-- rain rings on the floodwater, none over the machine --><g mask="url(#behindMachine)">%s</g>' % ''.join(rings))
 # whitecaps breaking out in the distance: a crest turns white, throws a puff of spray downwind, and falls back
 rad([(0, '#e6eef2', .8), (.5, '#c9d6dc', .35), (1, '#c9d6dc', 0)], id='sprayG')
 wc, wrnd3 = [], random.Random(103)
@@ -1170,7 +1375,7 @@ while len(wc) < 64:
                   kt(per, .15, .6, 1.8), f(per), f(ph), f(drift), f(drift), kt(per, 1.8), f(per), f(ph),
                   pts([(x, y), (x + L * .3, y - .8 - 1.4 * k), (x + L, y), (x + L * .4, y + .6 + .8 * k)]),
                   f(x + L * .7), f(y - 1), f(L * .8), f(2 + 4 * k), f(y - 1), f(y - 3 - 5 * k), f(y - 3 - 5 * k), kt(per, 1.2), f(per), f(ph)))
-glow.append('<!-- whitecaps breaking out in the distance, spray blowing off them downwind --><g>%s</g>' % ''.join(wc))
+glow.append('<!-- whitecaps breaking out in the distance, spray blowing off them downwind, passing behind the machine --><g mask="url(#behindMachine)">%s</g>' % ''.join(wc))
 # spindrift: sheets of spray torn off the far water and driven along the horizon by the wind
 sd = []
 for i in range(9):
@@ -1181,7 +1386,7 @@ for i in range(9):
     sd.append('<ellipse cx="%s" cy="%s" rx="%s" ry="%s" fill="url(#sprayG)" opacity="0"><animate attributeName="opacity" values="0;.5;0" dur="%ss" begin="-%ss" repeatCount="indefinite"/>'
               '<animateTransform attributeName="transform" type="translate" values="0 0;%s 0" dur="%ss" begin="-%ss" repeatCount="indefinite"/></ellipse>' % (
                   f(x), f(y), f(L / 2), f(wrnd3.uniform(1.5, 3)), f(per), f(ph), f(40 * per), f(per), f(ph)))
-glow.append('<!-- spindrift driven along the horizon --><g>%s</g>' % ''.join(sd))
+glow.append('<!-- spindrift driven along the horizon, passing behind the machine --><g mask="url(#behindMachine)">%s</g>' % ''.join(sd))
 # lodged pods glowing faintly
 for i, (x, y) in enumerate(LODGED):
     glow.append('<circle cx="%s" cy="%s" r="7" fill="url(#glowPod)" opacity=".2"><animate attributeName="opacity" values=".12;.3;.15;.12" keyTimes="0;.4;.7;1" dur="%ss" begin="-%ss" repeatCount="indefinite" %s%s/></circle>' % (
@@ -1191,14 +1396,14 @@ trnd_ = random.Random(83)
 _pc = [(TX - 330, 176), (TX - 120, 196), (TX + 90, 186), (TX + 250, 176)]  # the pods hang in bunches, as fruit does
 for i, (cx_, cy_) in enumerate(_pc):
     per = [6, 8, 12, 8][i]
-    n_p = 5 + i % 3 + 1
-    bunch = ''
-    for j in range(n_p):  # strung along a short drooping line, uneven in size and brightness
-        t_ = j / (n_p - 1)
-        px, py = cx_ - 14 + 28 * t_ + trnd_.uniform(-2, 2), cy_ + 7 * math.sin(math.pi * t_) + trnd_.uniform(-2.5, 3.5)
-        bunch += '<circle cx="%s" cy="%s" r="%s" fill="%s" opacity="%s"/>' % (f(px), f(py), f(trnd_.uniform(.7, 1.9)), GLOW_MID, f(trnd_.uniform(.35, .85)))
-    glow.append('<!-- a bunch of the World Tree seed pods glowing among its leaves --><ellipse cx="%s" cy="%s" rx="26" ry="12" fill="url(#glowPod)" opacity=".2"><animate attributeName="opacity" values=".12;.3;.18;.12" keyTimes="0;.4;.7;1" dur="%ss" begin="-%ss" repeatCount="indefinite" %s%s/></ellipse>%s' % (
-        f(cx_), f(cy_ + 4), per, f(trnd_.uniform(0, per)), SPLINE, ease(3), bunch))
+    # miles off, no single pod shows: thousands of them hang in the lower crown, a dim shimmer of points too
+    # small to count, brightest where they are thickest
+    dust = ''
+    for j in range(46):
+        u_, v_ = trnd_.gauss(0, .45), trnd_.gauss(0, .45)
+        dust += '<circle cx="%s" cy="%s" r="%s" fill="%s" opacity="%s"/>' % (f(cx_ + u_ * 34), f(cy_ + 4 + v_ * 10 + abs(u_) * 5), f(trnd_.uniform(.28, .55)), GLOW_MID, f(trnd_.uniform(.25, .7)))
+    glow.append('<!-- the World Tree seed pods: a dim shimmer of countless small lights in its lower crown --><ellipse cx="%s" cy="%s" rx="44" ry="14" fill="url(#glowPod)" opacity=".1"><animate attributeName="opacity" values=".06;.14;.09;.06" keyTimes="0;.4;.7;1" dur="%ss" begin="-%ss" repeatCount="indefinite" %s%s/></ellipse><g>%s</g>' % (
+        f(cx_), f(cy_ + 6), per, f(trnd_.uniform(0, per)), SPLINE, ease(3), dust))
 glow.append('<!-- the same strike lighting the cloud base over the World Tree from within -->'
             '<ellipse cx="%s" cy="178" rx="440" ry="54" fill="url(#flashBack)" opacity="0"><animate attributeName="opacity" values="0;.5;.08;.4;0;0" keyTimes="%s" dur="24s" begin="%s" repeatCount="indefinite"/></ellipse>' % (
                 f(TX), kt(24, .04, .1, .16, .45), onset_begin(24, 15.3)))
@@ -1241,12 +1446,26 @@ POD_ART = ('<circle cy="-12" r="16" fill="url(#glowPod)" opacity=".45"/><path d=
 
 
 def larva_art(wag, body_anim=''):
-    # a tadpole-like larva facing right: a round head with a glowing eye and one long tapering tail
-    # that sweeps side to side, green like everything the Generator makes
-    return ('<circle r="12" fill="url(#glowPod)" opacity=".5"/>'
-            '<g>%s<path d="M-5 -3.6 C -12 -3, -19 -1.4, -26 0 C -19 1.4, -12 3, -5 3.6 Z" fill="#4a7a32"/><path d="M-6 -.2 L -23 0" stroke="#8fbf52" stroke-width=".6" opacity=".7"/></g>' % wag +
-            '<g>%s<ellipse cx="0" cy="0" rx="7.6" ry="6.4" fill="#3f6f2e"/><ellipse cx="1" cy="2.4" rx="4.4" ry="2.4" fill="#6f9a44" opacity=".6"/>' % body_anim +
-            '<circle cx="4" cy="-1.6" r="2.1" fill="%s"/></g>' % GLOW_CORE)
+    # a larva facing right, a newborn of the flood rather than a cartoon tadpole: a long, half-clear body, dark
+    # along the back and pale beneath, its yolk glowing faintly inside it; feathered gills fanning behind the head;
+    # small dark eyes; a line of light spots down its flank; and a long tail edged with a clear ribbed fin that
+    # sweeps side to side
+    return ('<ellipse cx="-4" cy="0" rx="16" ry="7" fill="url(#glowPod)" opacity=".14"/>'
+            '<g>%s' % wag +
+            '<path d="M-5 -1.9 C -12 -6.6, -24 -5.6, -34 -.4 C -24 4.6, -12 6.2, -5 2.1 Z" fill="#a9c2ae" opacity=".22"/>'
+            '<path d="M-10 -3.5 L -11.6 -.5 M-15 -4.3 L -16.2 -.5 M-20 -4.1 L -21 -.4 M-25 -3 L -25.6 -.3 M-10 3.6 L -11.6 .6 M-15 4.2 L -16.2 .6 M-20 3.9 L -21 .5" stroke="#cfe0cf" stroke-width=".35" opacity=".4"/>'
+            '<path d="M-5 -2.1 C -13 -1.8, -21 -.8, -31 -.1 C -21 .8, -13 1.8, -5 2.1 Z" fill="#23402a"/></g>'
+            '<g>%s' % body_anim +
+            '<g stroke="#9cbc8a" stroke-width=".6" fill="none" stroke-linecap="round" opacity=".9">'
+            '<path d="M1.5 -3.4 q -1 -3 -4.2 -4.6"/><path d="M.5 -3.2 q -2.6 -1.6 -5.8 -1.9"/><path d="M-.5 -2.8 q -3.2 -.4 -6 .4"/>'
+            '<path d="M1.5 3.4 q -1 3 -4.2 4.6"/><path d="M.5 3.2 q -2.6 1.6 -5.8 1.9"/></g>'
+            '<g fill="#b8d4a0" opacity=".7"><circle cx="-1.8" cy="-6.6" r=".45"/><circle cx="-4.2" cy="-5.2" r=".4"/><circle cx="-4.6" cy="-2.2" r=".4"/><circle cx="-1.8" cy="6.6" r=".45"/><circle cx="-4.4" cy="4.9" r=".4"/></g>'
+            '<path d="M9 0 C 9 -3.2, 5 -4.2, 0 -3.7 C -4.5 -3.2, -7.5 -2.2, -8.5 0 C -7.5 2.4, -4.5 3.6, 0 3.9 C 5 4.2, 9 3, 9 0 Z" fill="#294530" opacity=".78"/>'
+            '<path d="M8.4 1 C 5 3.6, -2.5 3.9, -8 1 C -3 1.8, 4 1.8, 8.4 1 Z" fill="#8fae88" opacity=".55"/>'
+            '<path d="M8.2 -1.3 C 4 -3.4, -3 -3.4, -8.2 -.9" stroke="#0c160e" stroke-width="1.3" fill="none" opacity=".7"/>'
+            '<ellipse cx="-.5" cy="1" rx="3.4" ry="1.7" fill="%s" opacity=".85" filter="url(#soft1)"/>' % GLOW_MID +
+            '<g fill="%s">%s</g>' % (GLOW_CORE, ''.join('<circle cx="%s" cy=".2" r="%s" opacity="%s"/>' % (f(-7 + 2.6 * k), f(.42 - .05 * k), f(.75 - .1 * k)) for k in range(4))) +
+            '<circle cx="5.6" cy="-1.3" r=".95" fill="#050806"/><circle cx="5.9" cy="-1.6" r=".32" fill="#e6efd8"/></g>')
 
 
 HATCH_DRIFT = 22 * .3  # a hatchling drifts with its husk before it swims
@@ -1664,7 +1883,7 @@ for n, (x0, y0, th) in enumerate(HATCH):
     x1 = x0 + cur * .3 + v_ * 2.2
     cid = 'hatchClip%d' % n
     defs.append('<clipPath id="%s" clipPathUnits="userSpaceOnUse"><rect x="0" y="0" width="%d" height="%s"/></clipPath>' % (cid, W, f(y0 + 1.2)))
-    wagh = '<animateTransform attributeName="transform" type="rotate" values="-24 -4 0;24 -4 0;-24 -4 0" dur=".3s" repeatCount="indefinite"/>'
+    wagh = '<animateTransform attributeName="transform" type="rotate" values="-24 -4 0;24 -4 0;-24 -4 0" dur=".3s" repeatCount="indefinite" calcMode="spline" keySplines=".45 0 .55 1;.45 0 .55 1"/>'
     k = (y0 - HZ) / (H - HZ)
     sc = lerp(.7, 1.0, k)
     life.append('<!-- a larva hatched from a pod on the flood, swimming off and diving -->'
@@ -1706,7 +1925,8 @@ FROND_BASES = [(1262, 556, 88, -14), (1290, 552, 104, 2), (1348, 550, 60, 26), (
 FROND_BASES += [(1128, 511, 44, -10), (1146, 510, 56, 4), (1166, 509, 36, 22),
                 (1402, 495, 34, -12), (1418, 494, 44, 6), (1434, 495, 28, 20),
                 (852, 499, 30, -8), (866, 498, 38, 10),
-                (992, 482, 22, -6), (1002, 481, 28, 12)]
+                (992, 482, 22, -6), (1002, 481, 28, 12),
+                (560, 445, 14, -8), (570, 445, 18, 10), (748, 452, 18, -4), (760, 452, 14, 16), (842, 441, 13, 6)]
 for i, (x, y, h, a) in enumerate(FROND_BASES):
     tip = (x + math.sin(math.radians(a)) * h + h * .18, y - math.cos(math.radians(a)) * h)
     wdt = h * .09
@@ -1738,6 +1958,37 @@ for i, (x, y, h, a) in enumerate(FROND_BASES):
 fr.append('<!-- drops falling from the frond tips -->' + ''.join(FROND_DRIPS))
 fr.append('<!-- three lodged pods at the frond feet -->' + ''.join(
     '<circle cx="%d" cy="%d" r="10" fill="url(#glowPod)" opacity=".25"/><g transform="translate(%d %d) rotate(%d) scale(.36) translate(0 13)">%s</g>' % (x, y, x, y, a, LODGED_POD) for x, y, a in [(1276, 552, -70), (1334, 548, 76), (1418, 549, -64)]))
+
+# ------------------------------------------------------------------ near layer (static): the growth at the source, right in front of the lens
+# The viewer stands at the edge of the growth the machine's seeds have raised around it: broad leaves, ferns and
+# grass lean into the frame from the bottom and the left, near and out of focus, and more of it is implied all
+# around. They frame the machine without crowding it: low along the bottom, tall only at the left edge, and the
+# fronds of a tree fern standing off the frame arch in at the top left.
+nrr = random.Random(131)
+defs.append('<filter id="nearDof2" x="-10%" y="-10%" width="120%" height="120%"><feGaussianBlur stdDeviation="2.4"/></filter>')
+defs.append('<filter id="nearDof3" x="-10%" y="-10%" width="120%" height="120%"><feGaussianBlur stdDeviation="2.6"/></filter>')
+near_left = [draw_leaf(-34, 640, 8, 300, 44, 26, LIGHT_AT, nrr), draw_leaf(-40, 560, 58, 168, 36, 38, LIGHT_AT, nrr),
+             draw_fern(-30, 474, 70, 124, 16, 40, LIGHT_AT, nrr), draw_leaf(-26, 660, 26, 200, 30, 30, LIGHT_AT, nrr)]
+near_left += [draw_leaf(x_, H + 16, a_, L_, 5, 10, LIGHT_AT, nrr, near=False) for x_, a_, L_ in ((6, 12, 150), (22, 20, 120), (-4, 4, 176), (40, 30, 96))]  # grass
+near_left += [draw_leaf(-30, 430, 62, 110, 30, 34, LIGHT_AT, nrr), draw_fern(-20, 330, 76, 110, 26, 44, LIGHT_AT, nrr, broad=.3), draw_leaf(-36, 250, 70, 96, 26, 36, LIGHT_AT, nrr)]
+near_top = [draw_fern(-84, 150, 82, 200, 40, 74, LIGHT_AT, nrr, broad=.34), draw_fern(-64, 50, 102, 160, 32, 40, LIGHT_AT, nrr, broad=.34)]
+near_bottom = []
+for x_, a_, L_, w_, dr in ((30, -16, 140, 30, 20), (74, 6, 172, 36, 24), (116, 26, 118, 28, 22), (166, -8, 96, 24, 14)):
+    near_bottom.append(draw_leaf(x_, H + 30, a_, L_, w_, dr, LIGHT_AT, nrr))
+for x_, a_, L_, w_, dr in ((236, -30, 70, 20, 10), (282, 10, 58, 18, 8), (352, -14, 64, 18, 10), (400, 30, 72, 20, 12),
+                          (560, -24, 96, 24, 14), (604, 8, 124, 28, 18), (652, 34, 102, 24, 16), (706, -12, 88, 22, 12), (762, 22, 110, 26, 16),
+                          (1500, -30, 120, 28, 18), (1540, -8, 150, 32, 22)):  # broad leaves among the grass, lower where the lit rock is
+    near_bottom.append(draw_leaf(x_, H + 26, a_, L_, w_, dr, LIGHT_AT, nrr))
+for i in range(30):  # grass along the foot of the frame
+    x_ = lerp(180, 820, i / 29) + nrr.uniform(-10, 10)
+    near_bottom.append(draw_leaf(x_, H + 10, nrr.uniform(-28, 28), nrr.uniform(36, 74), nrr.uniform(3, 5), nrr.uniform(4, 12), LIGHT_AT, nrr, near=False))
+for a_, L_ in ((-56, 84), (-22, 104), (14, 110), (48, 88)):
+    near_bottom.append(draw_fern(470, H + 18, a_, L_, 12, 30, LIGHT_AT, nrr))
+for x_, a_, L_, w_, dr in ((860, -22, 118, 28, 18), (900, 4, 146, 32, 22), (944, 24, 112, 26, 18), (980, 40, 80, 20, 14)):
+    near_bottom.append(draw_leaf(x_, H + 30, a_, L_, w_, dr, LIGHT_AT, nrr))
+near = ['<!-- the growth right in front of the lens: fronds of a tree fern off the frame arching in at the top left --><g filter="url(#nearDof3)">%s</g>' % ''.join(near_top),
+        '<!-- broad leaves, a fern and grass leaning in from the left edge --><g filter="url(#nearDof2)">%s</g>' % ''.join(near_left),
+        '<!-- broad leaves, ferns and grass along the foot of the frame --><g filter="url(#nearDof)">%s</g>' % ''.join(near_bottom)]
 
 # ------------------------------------------------------------------ rain layer (animated): slanted streaks, far and near, and the rain lit by the Generator
 rain = []
@@ -1813,7 +2064,7 @@ top = ['<rect width="%d" height="%d" fill="url(#vignette)"/>' % (W, H), '<rect w
 def layer(id_, body, role=False):
     head = '<svg class="layer" id="layer-%s" viewBox="0 0 %d %d" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice"' % (id_, W, H)
     if role:
-        head += ' role="img" aria-labelledby="scene-title scene-desc">\n  <title id="scene-title">The Genesis Prototype on Floria</title>\n  <desc id="scene-desc">A heavy industrial machine on wet rock lets glowing seeds down a chute into a flood in a storm; the current spreads them across the plain, where some split and tadpole-like larvae swim out and others catch on rock and sprout; out in the distance the storm whips the water into whitecaps; far off a colossal tree rises from an island of young forest, its canopy spread under the clouds.</desc>\n'
+        head += ' role="img" aria-labelledby="scene-title scene-desc">\n  <title id="scene-title">The Genesis Prototype on Floria</title>\n  <desc id="scene-desc">A heavy industrial machine on wet rock, ringed by the growth its own seeds have raised, lets glowing seeds down a chute into a flood in a storm; the current spreads them across the plain, where some split and larvae swim out and others catch on rock and sprout; out in the distance the storm whips the water into whitecaps; far off a colossal tree rises from an island of young forest, its canopy spread under the clouds.</desc>\n'
     else:
         head += ' aria-hidden="true">\n'
     return head + body + '\n</svg>\n'
@@ -1829,6 +2080,7 @@ layers = (piece_comment + svg_defs
           + layer('glow', '<!-- ===================== THE GENERATOR BREATHING, VENTS, RIPPLES ===================== -->\n' + '\n'.join(glow))
           + layer('life', '<!-- ===================== THE HATCH, THE NEWBORN, SPROUTS ===================== -->\n' + '\n'.join(life))
           + layer('pods', '<!-- ===================== SEED PODS ===================== -->\n' + '\n'.join(pods))
+          + layer('near', '<!-- ===================== THE GROWTH AT THE SOURCE, IN FRONT OF THE LENS ===================== -->\n' + '\n'.join(near))
           + layer('fronds', '<!-- ===================== NEAR FRONDS, a little out of focus this close (a baked soft edge: a live blur re-ran every frame as they swayed) ===================== -->\n' + '\n'.join(fr))
           + layer('rain', '<!-- ===================== RAIN ===================== -->\n' + '\n'.join(rain))
           + layer('top', '<!-- ===================== FINISH ===================== -->\n' + '\n'.join(top)))
