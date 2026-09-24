@@ -51,6 +51,21 @@ ${formatPass6(stats)}
       expect(stats.wins + stats.losses).toBe(runs);
       expect(Object.values(stats.squadSpecies).reduce((n, v) => n + v.runs, 0)).toBe(runs * 4);
     }, 300000);
+  // Pass 7: the look-ahead and the random floor play whole runs, and never read the run's
+  // own dice, so a seed replays to the same result. The comparison itself is
+  // powerworksCompare.ts, too slow for this suite.
+  for (const policy of ["lookahead", "random"] as const)
+    it(`plays 2 seeded runs under the ${policy} policy, reproducibly`, () => {
+      const options: SimOptions = { policy, healerFree: "none", draft: "random", lookahead: { samples: 2, horizon: 2 } };
+      const first = simulate(2, 1, options);
+      const again = simulate(2, 1, options);
+      expect(first.wins + first.losses).toBe(2);
+      expect(again).toEqual(first);
+      if (policy === "lookahead") {
+        expect(first.lookaheadDecisions).toBeGreaterThan(0);
+        expect(first.lookaheadOverrides).toBeLessThanOrEqual(first.lookaheadDecisions);
+      } else expect(first.lookaheadDecisions).toBe(0);
+    }, 120000);
   // Contract decision 53: how often each species is offered, and how often its tries pass.
   it("surveys the draft offer over 400 seeds and prints it", () => {
     const survey = surveyOffer(400);
