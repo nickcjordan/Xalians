@@ -73,7 +73,7 @@ const ART = {
 		era: 'unbirth',
 		src: '/assets/img/lore/eras/unbirth.jpg',
 		small: '/assets/img/lore/eras/unbirth-768.jpg',
-		alt: 'A heavy industrial machine on flooded rock lets glowing seeds down a chute into the storm flood; the current spreads them across the plain, where some split and tadpole-like larvae swim out, and one heavy seed splits beside the machine to let out a newborn; far off a colossal tree rises from an island of young forest grown from earlier seeds.',
+		alt: 'A heavy industrial machine on flooded rock lets glowing seeds down a chute into the storm flood; the current spreads them across the plain, where some split and tadpole-like larvae swim out and others take root on the rocks; out in the distance the storm whips the water white, and far off a colossal tree rises from an island of young forest grown from earlier seeds.',
 		// The living version: the Genesis Prototype on Floria, letting its seeds
 		// into the flood that was meant to wash its mistakes away.
 		live: '/assets/plates/unbirth/plate.html',
