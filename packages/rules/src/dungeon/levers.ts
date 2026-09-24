@@ -153,8 +153,9 @@ export const COMPANION_GENERATED_AT = "2026-09-21T00:00:00.000Z";
  * of every history is `{kind: "draft", squad}`; a version 5 history has none and is rejected.
  * Version 7 (2026-09-24, contract decision 53): the offer retries each species over its own seeds, so the
  * same run seed deals a different offer and a version 6 history's offer indexes name other creatures; it is rejected.
- * Version 8 (2026-09-24, pass 8, contract decision 55): every machine past the first chamber carries half again
- * its HP, so a version 7 history's orders resolve against other numbers from chamber 2 on; it is rejected. */
+ * Version 8 (2026-09-24, pass 8, contract decision 55): a drafted squad's machines past the first chamber carry
+ * DRAFTED_MACHINE_HP_FACTOR times their HP, so a drafted version 7 history's orders resolve against other numbers
+ * from chamber 2 on; version 7 is rejected. */
 export const SAVE_VERSION = 8;
 /*
   Pass 6 levers: the squad draft (contract decisions 45 to 48).
@@ -171,6 +172,14 @@ export const DRAFT_SEED_PREFIX = "powerworks-draft";
   species' candidate. Pass `p` over the roster tries `j` from `p * DRAFT_SEEDS_PER_SPECIES` up.
 */
 export const DRAFT_SEEDS_PER_SPECIES = 8;
+/**
+  Lever: a drafted squad meets a harder facility (contract decision 55). A run whose squad is
+  not "starter" enters every chamber from the second on (room index 1 and up) with each
+  machine's row HP multiplied by this factor and rounded; its max HP is the same number.
+  Chamber 1 and every starter run keep the rows as written, so the starter stays the
+  tutorial-safe path (decision 47).
+*/
+export const DRAFTED_MACHINE_HP_FACTOR = 1.5;
 /** Lever: how many passes over the roster the constructive offer may draw before it gives up (contract decision 46). One pass is 32 candidates. */
 export const DRAFT_MAX_ROSTER_PASSES = 4;
 export const SAVE_HISTORY_LIMIT = 2000;

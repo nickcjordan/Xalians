@@ -47,6 +47,7 @@ import {
   DEGRADE_FACTOR,
   DRAFT_OFFER_SIZE,
   DRAFT_SEEDS_PER_SPECIES,
+  DRAFTED_MACHINE_HP_FACTOR,
   ENCOUNTER_STALL_ROUNDS,
   SAVE_VERSION,
   SQUAD_SIZE,
@@ -634,8 +635,8 @@ describe("Powerworks battle rules", () => {
     expect(SAVE_VERSION).toBe(8);
     const restored = restoreRun(JSON.stringify({ version: 8, seed: 41, history }));
     expect(restored.state).toEqual(command(s, action));
-    // Version 7 histories were played against the pass 7 machine HP (pass 8, decision 55),
-    // so the same orders would resolve against other numbers from chamber 2 on.
+    // A drafted version 7 history was played against the pass 7 machine HP (pass 8,
+    // decision 55), so its orders would resolve against other numbers from chamber 2 on.
     expect(() => restoreRun(JSON.stringify({ version: 7, seed: 41, history }))).toThrow(
       "Unsupported save."
     );
@@ -706,8 +707,9 @@ describe("Powerworks battle rules", () => {
     target.ward = false;
     const neutral = { ...target, element: "fire" } as Unit;
     expect(b.moves[0].name).toBe("Clamp strike");
-    // Pass 8 (decision 55): machines past the first chamber carry half again their HP.
-    expect(b.hp).toBe(165);
+    // The starter keeps the rows as written (decision 55 scales drafted runs only).
+    expect(b.hp).toBe(110);
+    expect(b.max).toBe(110);
     expect(b.speed).toBe(65);
     // Neutral matchup: 7 for the strike, 18 for the surge, both at attr 50.
     expect(damagePreview(b, b.moves[0], neutral)).toBe(7);
@@ -2753,6 +2755,46 @@ function anyOrders(s: Run): Record<string, Order> {
       })
   );
 }
+describe("Powerworks pass 8: a drafted squad meets a harder facility (decision 55)", () => {
+  /** Every chamber's machines as the run enters it, walking the rooms the way `boss()` does. */
+  function chambers(start: Run) {
+    let s = start;
+    const seen = [s.enemies];
+    for (let i = 0; i < 3; i++) {
+      s.phase = "camp";
+      s = command(s, { kind: "advance" });
+      seen.push(s.enemies);
+    }
+    return seen;
+  }
+  const rowHp = (room: number, id: string) =>
+    Number(cards.rooms[room].enemies.find((row) => row[1] === id)![2]);
+  it("scales a drafted run's machines from chamber 2 on and leaves chamber 1 alone", () => {
+    expect(DRAFTED_MACHINE_HP_FACTOR).toBe(1.5);
+    const seen = chambers(createRun(3, [1, 2, 4, 7]));
+    seen.forEach((enemies, room) => {
+      expect(enemies.length).toBe(cards.rooms[room].enemies.length);
+      for (const e of enemies) {
+        const expected =
+          room === 0 ? rowHp(room, e.id) : Math.round(rowHp(room, e.id) * DRAFTED_MACHINE_HP_FACTOR);
+        expect(e.hp, `${room}:${e.id}`).toBe(expected);
+        expect(e.max, `${room}:${e.id}`).toBe(expected);
+      }
+    });
+    expect(seen[0].map((e) => e.hp)).toEqual([22, 22]);
+    expect(seen[3].find((e) => e.id === "B4")!.hp).toBe(165);
+    expect(seen[2].find((e) => e.id === "V3")!.hp).toBe(72);
+  });
+  it("keeps every starter chamber at the rows as written", () => {
+    chambers(createRun(3)).forEach((enemies, room) => {
+      for (const e of enemies) {
+        expect(e.hp, `${room}:${e.id}`).toBe(rowHp(room, e.id));
+        expect(e.max, `${room}:${e.id}`).toBe(rowHp(room, e.id));
+      }
+    });
+  });
+});
+
 describe("Powerworks pass 6: the draft command and saves (decisions 47 and 48)", () => {
   it("a run opens in its draft, and the starter draft is byte-identical to the starter run", () => {
     const open = openRun(12);
