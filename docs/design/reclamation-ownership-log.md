@@ -1084,3 +1084,45 @@ From Nick's list after pass 54:
 - Why a creature is worth its column (hold against what its attacks take).
 - Who will hit whom when an enemy arrives.
 - The negative column.
+
+### Pass 56 (2026-09-23): each world fought to the last side standing
+
+**Nick:** "It should start with one round of attacks and then just continue cycling that way ... until one side or the other has no more characters with health ... make a big cinematic scene out of it for each of the worlds." And on the -13 cards: turn friendly fire off entirely. The design and every number are in `reclamation-fight-to-the-end.md`.
+
+- **The fight.** A world's Clash repeats exchange after exchange (`clashExchanges` 12). Between exchanges, bolsters mend, statuses tick (burning now burns, the status layer's first real multi-turn use) and holds are recomputed. The fight stops when one side has nobody standing, nobody standing can attack, or an exchange changes nothing. 99.6 percent of worlds end with one side standing; 0.2 percent reach the cap. A world is fought to its end before the next begins.
+- **No friendly fire** (`friendlyFire` false): a sweep hits the other side only.
+- **Shields cancel whole, every exchange** (`shieldCap` 'none'). Half-price shields fell to 37 to 40 percent keeper win rate under the fight; whole-cancel shields measure 45 to 51.
+- **Bolsters mend between exchanges** as well as at the Ruling (33 to 37 percent without it, 41 to 43 with).
+- **The scene.** While a world fights it takes most of the table; its creatures grow to as much as 150px a piece; the two waiting worlds narrow at its side. Exchanges and status bites are told on the world. On a phone the caption keeps its small size.
+- **Rule text** in the help panel, the start screen and the rulebook's exact Clash section now describe the fight. The tests that pin one exchange's mechanics run `clashExchanges` 1 explicitly.
+
+**Measured** (three seeds, 500 matches; single exchange, then the fight):
+
+| | Single exchange | Fight to the end |
+|---|---|---|
+| Starter's win rate | 44 to 47 | 45 to 53 |
+| The Clash changes the leader | 19.5 to 23 | 27.5 to 32.3 (into the 25 to 40 band) |
+| Comeback | 30 to 32 | 27.6 to 31.6 |
+| Falls per match | 3 to 4 | 8.4 to 8.7 (the old 3 to 5 band described one exchange and is now reported, not held) |
+
+Validation report regenerated:
+
+- **Near-best options by round:** 5.36 / 3.59 / 2.39. Round 3 has one dominant answer 46 percent of the time.
+- **Naive policies:** always-presence-first comes within 3.5 points of the proctor (45.8 against a 49.3 mirror, 400 matches), which the tool flags. The design's own reading of that policy says presences are too cheap only if it *beats* the proctor, and too dear if it never comes close. Half-price shields put it 9 points behind with shields under band; whole cancel is kept.
+- The other naive policies are 9 points or more behind.
+
+**Verified:**
+
+- Rules tests pass. New: `fightToTheEnd.test.ts`. The status test shows burning biting in the next exchange.
+- 1641 web tests pass.
+- The four table checks are green.
+- The Clash was shot at 1884 and 390.
+
+**Open:**
+
+- Strike keepers win 67.5 to 69.6 percent, over the band, and were 64 to 66 under the single exchange. No lever tried here moved them.
+- Nobody has watched a Proving of fights as a player.
+- From Nick's list:
+  - why a creature is worth its column (hold against what its attacks take);
+  - who will hit whom when an enemy arrives.
+- **Mandala:** per Nick ("I don't want you to change things just for the sake of it ... I actually think we have put the mechanics in a decent place"), nothing more from the study is planned. It stays a reference.

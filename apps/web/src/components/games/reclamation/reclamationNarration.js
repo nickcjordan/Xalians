@@ -196,6 +196,21 @@ export function narrateEvent(event, ctx = {}) {
 		const blocked = ctx.targetName || 'the attack';
 		return `${actor} blocks ${blocked}'s attack of ${formatHoldShown(event.amount)}.`;
 	}
+	/*
+		PASS 56, THE FIGHT TO THE LAST SIDE STANDING. A world fights exchange after exchange
+		until one side has nobody standing; each exchange after the first is announced, and
+		what a status does between them is told, since that is when it bites.
+	*/
+	if (event.type === 'exchange') {
+		const where = ctx.worldName || ctx.siteName || '';
+		return `${where ? `At ${where} the` : 'The'} fight goes on: exchange ${event.exchange}.`;
+	}
+	if (event.type === 'attrition') {
+		return `${actor} loses ${formatHoldShown(event.amount)} to ${(event.statuses || []).join(' and ') || 'its condition'}${event.outcome === 'downed' ? ', and falls' : ''}.`;
+	}
+	if (event.type === 'mending') {
+		return `${actor} mends ${formatHoldShown(event.amount)}.`;
+	}
 	if (event.type === 'recover') {
 		const under = ctx.bolsterName ? `under ${ctx.bolsterName}'s bolster` : 'under a bolster';
 		return `${actor} recovers ${formatHoldShown(event.amount)} ${under}; ${standsAt('', event.remaining).trim()}.`;
@@ -391,6 +406,15 @@ export function captionEvent(event, ctx = {}) {
 				: [actor, ` recovers ${formatHoldShown(event.amount)}`];
 		case 'pin':
 			return [actor, ' restrains ', target];
+		// pass 56: the fight goes on, exchange after exchange, and what a status does between them
+		case 'exchange':
+			return [`The fight goes on: exchange ${event.exchange}`];
+		case 'attrition':
+			return event.outcome === 'downed'
+				? [actor, ` falls to ${(event.statuses || []).join(' and ') || 'its condition'}`]
+				: [actor, ` loses ${formatHoldShown(event.amount)} to ${(event.statuses || []).join(' and ') || 'its condition'}`];
+		case 'mending':
+			return [actor, ` mends ${formatHoldShown(event.amount)}`];
 		case 'attack': {
 			// pass 47: a sweep catching its own side says so, or two names in one color read as a mistake
 			const own = actor.seat && target.seat && actor.seat === target.seat ? 'its own ' : '';

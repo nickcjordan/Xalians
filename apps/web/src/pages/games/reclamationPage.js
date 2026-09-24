@@ -173,8 +173,8 @@ function RivalPlates({ rivalId, onChange }) {
 // Ruling; there is no Orders phase and a creature's role is fixed at send)
 const PHASES = [
 	{ kind: 'deploy', word: 'Deploy', note: 'send a creature, move a swift one, stake a world, or pass' },
-	{ kind: 'clash', word: 'Clash', note: 'attacks subtract from hold, fastest first' },
-	{ kind: 'ruling', word: 'Ruling', note: 'bolsters recover, then more hold takes the world' },
+	{ kind: 'clash', word: 'Clash', note: 'each world fights until one side is left standing' },
+	{ kind: 'ruling', word: 'Ruling', note: 'the side still standing takes the world' },
 ];
 
 /*
@@ -697,14 +697,14 @@ class ReclamationPage extends React.Component {
 							<li><b className="g-mono">12</b> on another world that suits its body.</li>
 							<li><b className="g-mono">5</b> where its body strains (too hot, too cold, the wrong air): the world takes the rest.</li>
 						</ul>
-						<p>Attacks in the Clash take hold away, fastest first, and a creature driven to nothing falls.</p>
+						<p>Attacks in the Clash take hold away, fastest first, and a creature driven to nothing falls. A world is fought exchange after exchange until one side has nobody standing.</p>
 					</Panel>
 				)}
 				{introPanel === 'story' && (
 					<Panel title="The story behind it" kind="story" onClose={closeIntroPanel}>
 						<p>The worlds were lost to war and plague, and no expedition goes in blind. Before Kozrak grants a Charter over a world, the claim is proved on the Court&apos;s <strong>frame</strong>: the Generators&apos; own models of the fourteen worlds, run on Poseidas without the Generators. Only the fighting is simulated. The Charter, and the Tokens that come with it, are real.</p>
-						<p>Each round the frame loads three worlds side by side, every one at a different site of its surface, and no world is loaded twice in a Proving. When both handlers have passed, every world clashes at once: each creature does the one thing its nature does there, attacks subtract from hold, and a creature driven to nothing is downed out of the Proving. Creatures on a won world stay in its model to hold the claim; the rest withdraw; either way they are out of the Proving. A pass is permanent for the round. A stealthy creature arrives hidden: the rival learns that you sent something, not what or where, until the worlds clash.</p>
-						<p>Attacks land in speed order, and a creature already hurt attacks for less, in proportion to the hold it has left, so hitting first shapes the whole exchange. A swift creature already on a world may step to another world of the frame once a round, without spending a turn. At the Ruling, allies standing with a bolster recover half of what the round took from them before the Court reads the worlds. Once a Proving, before your first send of a round, either handler may stake one of the round&apos;s worlds: it then counts two toward the Charter for whoever holds it at the Ruling, three if both handlers staked it, and nothing at all if it is tied. Nothing is given to the side that is behind: there is no catch-up send, the stake is a risk you choose and it doubles the loss as readily as the gain, and every world is won on what you put on it.</p>
+						<p>Each round the frame loads three worlds side by side, every one at a different site of its surface, and no world is loaded twice in a Proving. When both handlers have passed, the worlds clash in turn: each creature does the one thing its nature does there, attacks subtract from hold, a creature driven to nothing is downed out of the Proving, and the fight goes on exchange after exchange until one side has nobody standing. Creatures on a won world stay in its model to hold the claim; the rest withdraw; either way they are out of the Proving. A pass is permanent for the round. A stealthy creature arrives hidden: the rival learns that you sent something, not what or where, until the worlds clash.</p>
+						<p>Attacks land in speed order, and a creature already hurt attacks for less, in proportion to the hold it has left, so hitting first shapes the whole exchange. A swift creature already on a world may step to another world of the frame once a round, without spending a turn. Allies standing with a bolster recover half of what the fight took from them between exchanges and again before the Court reads the worlds. Once a Proving, before your first send of a round, either handler may stake one of the round&apos;s worlds: it then counts two toward the Charter for whoever holds it at the Ruling, three if both handlers staked it, and nothing at all if it is tied. Nothing is given to the side that is behind: there is no catch-up send, the stake is a risk you choose and it doubles the loss as readily as the gain, and every world is won on what you put on it.</p>
 					</Panel>
 				)}
 			</div>

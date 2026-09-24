@@ -75,6 +75,8 @@ import {
 	KEEN_FIGHTS_HURT,
 	SHIELD_CAP,
 	SHIELD_OWN_SWEEPS,
+	CLASH_EXCHANGES,
+	FRIENDLY_FIRE,
 	SHIELD_CAPS,
 	ROLE,
 	WILLFUL_THRESHOLD,
@@ -360,6 +362,10 @@ export const DEFAULT_RULES: Rules = {
 	actFlip: ACT_FLIP,
 	// Pass 55: shields cancel only the other side's attacks
 	shieldOwnSweeps: SHIELD_OWN_SWEEPS,
+	// Pass 56: a world fights exchange after exchange, up to this many
+	clashExchanges: CLASH_EXCHANGES,
+	// Pass 56: a sweep hits the other side only
+	friendlyFire: FRIENDLY_FIRE,
 	projectionReach: PROJECTION_REACH,
 	projectionFalloff: PROJECTION_FALLOFF,
 	worldsPerFrame: WORLDS_PER_FRAME,
@@ -420,6 +426,8 @@ function normalizeRules(rules: RulesInput | null | undefined): Rules {
 		roundSendCap: num(r.roundSendCap, DEFAULT_RULES.roundSendCap),
 		actFlip: r.actFlip !== undefined ? !!r.actFlip : DEFAULT_RULES.actFlip,
 		shieldOwnSweeps: r.shieldOwnSweeps !== undefined ? !!r.shieldOwnSweeps : DEFAULT_RULES.shieldOwnSweeps,
+		clashExchanges: Math.max(1, Math.floor(num(r.clashExchanges, DEFAULT_RULES.clashExchanges))),
+		friendlyFire: r.friendlyFire !== undefined ? !!r.friendlyFire : DEFAULT_RULES.friendlyFire,
 		projectionReach: num(r.projectionReach, DEFAULT_RULES.projectionReach),
 		projectionFalloff: num(r.projectionFalloff, DEFAULT_RULES.projectionFalloff),
 		worldsPerFrame: num(r.worldsPerFrame, DEFAULT_RULES.worldsPerFrame),
@@ -1592,9 +1600,70 @@ function resolve(state: MatchState): MatchState {
 	tickStatuses(s);
 	currentFrame(s).sites.forEach((site) => recomputeHoldsAtSite(s, site));
 
-	currentFrame(s).sites.forEach((site) => resolveWorld(s, site));
+	currentFrame(s).sites.forEach((site) => resolveBattle(s, site));
 
 	return s;
+}
+
+/*
+	PASS 56. One world's Clash, fought exchange after exchange up to rules.clashExchanges.
+
+	Each exchange is today's declare, shield and land (resolveWorld). Between exchanges the
+	world's statuses tick (attrition bites, mending gives back, applications age) and the holds
+	are recomputed for the company left standing, so a creature set burning keeps burning and
+	a pinned one swings again when its pin runs out. The fight stops when one side has nobody
+	standing, when nobody standing can attack, or when an exchange changes nothing at all (a
+	stalemate a further exchange could not break). A world is fought to its end before the next
+	world begins, so the log tells each world's battle whole, which is what lets the table play
+	each one as its own scene.
+*/
+function resolveBattle(state: MatchState, site: FrameSite): void {
+	const most = Math.max(1, Math.floor(rulesOf(state).clashExchanges || 1));
+	for (let exchange = 1; exchange <= most; exchange++) {
+		if (exchange > 1) {
+			if (!canStillFight(state, site)) {
+				break;
+			}
+			logEvent(state, { type: 'exchange', site: site.id, exchange });
+			/*
+				A bolster mends its allies between exchanges, as it mends them at the Ruling: in a
+				fight to the end the creature that cannot strike keeps the ones that can standing.
+				Measured: without it a bolster's world was won 33 to 37 percent of the time.
+			*/
+			applyBolsterRecovery(state, site);
+			tickStatuses(state, site);
+			recomputeHoldsAtSite(state, site);
+			if (!canStillFight(state, site)) {
+				break;
+			}
+		}
+		const before = battleFingerprint(state, site);
+		resolveWorld(state, site);
+		if (exchange > 1 && battleFingerprint(state, site) === before) {
+			break;
+		}
+	}
+}
+
+// both sides have someone standing, and someone standing can attack
+function canStillFight(state: MatchState, site: FrameSite): boolean {
+	const alive = (seat: Seat) => state.board[site.id][seat].filter(isAlive);
+	const a = alive('A');
+	const b = alive('B');
+	if (a.length === 0 || b.length === 0) {
+		return false;
+	}
+	return [...a, ...b].some((entry) => {
+		const role = prepareEntry(state, entry).role;
+		return role === ROLE.STRIKE || role === ROLE.SWEEP;
+	});
+}
+
+// what an exchange can change at a world: who stands, and what each has taken
+function battleFingerprint(state: MatchState, site: FrameSite): string {
+	return (['A', 'B'] as Seat[])
+		.map((seat) => state.board[site.id][seat].map((e) => `${e.recordId}:${e.downed ? 'x' : round1(e.damage || 0)}`).join(','))
+		.join('|');
 }
 
 /*
@@ -1608,9 +1677,10 @@ function resolve(state: MatchState): MatchState {
 	from the live board. That is the thing that makes a hold worth breaking: down the holder
 	and its captive swings again next round.
 */
-function tickStatuses(state: MatchState): void {
+function tickStatuses(state: MatchState, onlySite?: FrameSite): void {
 	const standing = new Set(allBoardEntries(state).filter(isAlive).map((e) => e.recordId));
-	allBoardEntries(state).forEach((entry) => {
+	// pass 56: between exchanges only the world still fighting ticks
+	allBoardEntries(state).filter((entry) => !onlySite || entry.siteId === onlySite.id).forEach((entry) => {
 		const applications = entry.statuses || [];
 		if (!applications.length) {
 			return;
@@ -1745,10 +1815,10 @@ function resolveWorld(state: MatchState, site: FrameSite): void {
 			});
 			return;
 		}
-		// a sweep removes a reduced power from every OTHER creature at the world, both
-		// sides; the actor is the one creature its own cloud does not catch
+		// a sweep removes a reduced power from every creature of the other side at the world;
+		// pass 56: with rules.friendlyFire (off since pass 56) it also caught its own side
 		const victims = present
-			.filter((e) => e.recordId !== entry.recordId)
+			.filter((e) => e.recordId !== entry.recordId && (rules.friendlyFire || e.player !== entry.player))
 			.map((victim) => ({ victim, amount: round1(attackPowerAgainst(state, entry, prepared, victim) * powerFactor) }));
 		/*
 			PASS 25. CROSS-WORLD PROJECTION (the base redesign's lever pool: "one area act that
@@ -1775,7 +1845,7 @@ function resolveWorld(state: MatchState, site: FrameSite): void {
 			const next = index >= 0 ? frame.sites[index + 1] : null;
 			if (next) {
 				const falloff = typeof rules.projectionFalloff === 'number' ? rules.projectionFalloff : 0.5;
-				(['A', 'B'] as Seat[]).forEach((player) => {
+				(['A', 'B'] as Seat[]).filter((player) => rules.friendlyFire || player !== entry.player).forEach((player) => {
 					state.board[next.id][player].filter(isAlive).forEach((victim) => {
 						victims.push({
 							victim,
@@ -2200,13 +2270,14 @@ function downEntry(state: MatchState, entry: BoardEntry): void {
 	recovered, logged before the judge event so the table can tell that part of the Ruling
 	before the worlds are read.
 */
-function applyBolsterRecovery(state: MatchState): void {
+function applyBolsterRecovery(state: MatchState, onlySite?: FrameSite): void {
 	const rules = rulesOf(state);
 	const share = typeof rules.bolsterRecovery === 'number' ? rules.bolsterRecovery : 0;
 	if (share <= 0) {
 		return;
 	}
-	currentFrame(state).sites.forEach((site) => {
+	// pass 56: between exchanges of a fight only the world still fighting mends
+	currentFrame(state).sites.filter((site) => !onlySite || site.id === onlySite.id).forEach((site) => {
 		(['A', 'B'] as Seat[]).forEach((player) => {
 			const bolster = bolsterInForce(state, site, player);
 			if (!bolster) {

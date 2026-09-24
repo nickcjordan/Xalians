@@ -285,7 +285,8 @@ describe('what the second reader could not settle', () => {
 			attributes: { charisma: 99, vitality: 40, endurance: 40, resilience: 40 },
 		});
 		const bigHitter = record({ attributes: { strength: 99, agility: 99, reflex: 99 } });
-		const state = clashOf(shielder, bigHitter);
+		// pass 56: within ONE exchange; a fight's next exchange shields again after this one's blows
+		const state = clashOf(shielder, bigHitter, { clashExchanges: 1, shieldCap: 'half' });
 
 		const shieldEvents = (state.resolutionLog as any[]).filter((e) => e.type === 'shield');
 		const attackEvents = (state.resolutionLog as any[]).filter((e) => e.type === 'attack');
@@ -299,15 +300,16 @@ describe('what the second reader could not settle', () => {
 		}
 	});
 
-	// "Nothing heals mid-Clash. Bolster is a Ruling step only."
-	test('every recovery is logged after every attack', () => {
+	// "Nothing heals mid-exchange." Pass 56: a bolster mends between the exchanges of a fight, so
+	// with a single exchange every recovery still comes after every blow (and see fightToTheEnd.test.ts)
+	test('within a single exchange, every recovery is logged after every attack', () => {
 		const bolster = record({
 			archetype: { key: 'sage', favors: [] },
 			abilities: [{ name: 'Mend', signature: true, instrument: 'voice', action: 'mend', medium: 'metal', intensity: 60 }],
 			attributes: { charisma: 99, vitality: 60, endurance: 60, resilience: 60 },
 		});
 		const hitter = record({ attributes: { strength: 80, agility: 99, reflex: 99 } });
-		const state = clashOf(bolster, hitter);
+		const state = clashOf(bolster, hitter, { clashExchanges: 1 });
 		const log = state.resolutionLog as any[];
 		const lastAttack = log.map((e) => e.type).lastIndexOf('attack');
 		const firstRecover = log.map((e) => e.type).indexOf('recover');

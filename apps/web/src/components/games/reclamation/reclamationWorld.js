@@ -210,7 +210,17 @@ function ReclamationWorld({
 					<ReclamationSilhouette count={hiddenEnemyCount} />
 				</div>
 			)}
-			<div className="rec-sites">
+			{/*
+				PASS 56, THE SCENE (Nick, 2026-09-23: "make a big cinematic scene out of it for each
+				of the worlds as all the attacks play out"). A world fights to its end before the next
+				begins, so while one clashes it takes the table: its column opens to most of the width,
+				its figures grow with it (they size to their rank), and the worlds waiting their turn
+				narrow at its sides. Released at the Ruling, when all three are read side by side.
+			*/}
+			<div
+				className={`rec-sites${clashing ? ' rec-sites--arena' : ''}`}
+				data-arena={clashing ? Math.max(0, frame.sites.findIndex((s) => s.id === clashing)) : undefined}
+			>
 				{frame.sites.map((site, siteIndex) => {
 					const theirs = (board[site.id][opponent] || []).filter((e) => e.record);
 					const mine = (board[site.id][you] || []).filter((e) => e.record);

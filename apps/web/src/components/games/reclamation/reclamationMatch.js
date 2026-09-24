@@ -2508,6 +2508,10 @@ export function stepWeight(event) {
 	if (event.type === 'judge') {
 		return 1.6;
 	}
+	// pass 56: a new exchange gets its own beat, so the fight reads as going on
+	if (event.type === 'exchange') {
+		return 1.3;
+	}
 	if (event.type === 'attack') {
 		if (event.outcome === 'downed') return 1.9;
 		if (event.outcome === 'cancelled') return 0.7;
