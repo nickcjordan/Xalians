@@ -515,3 +515,25 @@ Nick: the World Tree and its leaves "are still blending oddly into the foregroun
 Logged:
 - two lit gaps in the strike keep crisp tips for a fraction of a second;
 - the limbs are fairly straight at mid-length (taste).
+
+## The World Tree, third drawing (Nick, 2026-09-24, after PR #635)
+
+Nick: "the tree looks like it has some tufts of leaves way close in the foreground, and the tree itself looks further in the background than the leaves do." He also said the trunk had changed and gained "weird low branches", and asked for another attempt.
+
+**Cause.**
+- The crown was many small clumps lit in relief. That is detail only a near object shows, so the clumps read near.
+- The trunk was soft and hazy, so it read far.
+- The low branches were two broken stubs and limbs that started low on the trunk.
+
+**Redrawn from scratch.**
+- The trunk is tall and nearly straight on low broad roots. It divides only where it meets the crown.
+- The crown is one umbrella of large overlapping domes in three rows, each lit on top and shaded under, with a large-lump edge plus a fine leafy one.
+- Wood and leaves share one filter (treeAir: a 0.7 blur, then 26% mixed toward the air), so the whole tree sits at one depth.
+
+**Review.** The visual reviewer said ship. Taken:
+- The strike behind the crown is dimmer and higher, so its wedges are soft.
+- A fine leafy displacement on the crown's edge.
+- A darker band under each dome.
+- A little taper up the trunk and more flare into the roots.
+
+**Also fixed: the home stage on a tall window.** The painting's row stretched to the full stage height, and the frame sat at its foot under an empty band (Nick's screenshot at about 2000 by 1340). The row now stops at the painting's height (`--fit`), and the scene is centered.
