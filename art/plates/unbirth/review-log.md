@@ -569,3 +569,11 @@ Nick: "the tree looks like it has some tufts of leaves way close in the foregrou
 - The ramp that raised the cloud base over x > 800 is gone. The whole cloud base (lobes, the mass and the scud) now sits 34 higher, level all the way across.
 - To keep the crown's underside hanging in open air under that base, the tree's upper parts are 20 lower: the crown (top and underside), the limbs, the veil over the crown, the pods and the strike behind it.
 - The trunk starts at y 190, so it meets the lowered limbs.
+
+## Pixelated near fronds (2026-09-24)
+
+**Nick:** the blurred fronds up front, at the top left, came in pixelated.
+
+**Cause.** A near fern's lit edge was a short dash on every other leaflet. Under the depth-of-field blur each dash became a soft square, and a regular row of them read as pixels.
+
+**Fixed.** Out-of-focus ferns (`draw_fern(..., soft=True)`: the top-left tree-fern fronds, the ferns at the left edge and the ferns at the foot) carry their light as one soft line along the tips of the leaflets that face it. Their leaflets are a little broader, so the blade reads as one out-of-focus shape. The in-focus ferns are unchanged.
