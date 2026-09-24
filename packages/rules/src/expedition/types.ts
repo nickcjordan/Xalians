@@ -114,6 +114,10 @@ export interface Rules {
 	actFlip: boolean;
 	// Pass 55: a shield may also cancel its own side's sweep (off: only the other side's attacks)
 	shieldOwnSweeps: boolean;
+	// Pass 56: the most exchanges a world's Clash may run; 1 is a single exchange
+	clashExchanges: number;
+	// Pass 56: a sweep also catches its own side (off: the other side only)
+	friendlyFire: boolean;
 	projectionReach: number;
 	projectionFalloff: number;
 	worldsPerFrame: number;

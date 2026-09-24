@@ -181,9 +181,9 @@ describe('the rating is hold plus role value', () => {
 			expect(r.roleValue).toBeCloseTo(meanLift * BOLSTER_EXPECTED_ALLIES + BOLSTER_FLOOR, 5);
 		}
 		if (shield) {
-			// the shipped shieldCap is 'half', so a cancel nets half a typical blow
-			expect(rateForDraft(shield, frames, { poolMeanBlow }).roleValue).toBeCloseTo(poolMeanBlow / 2, 5);
-			expect(rateForDraft(shield, frames, { poolMeanBlow, rules: { shieldCap: 'none' } }).roleValue).toBeCloseTo(poolMeanBlow, 5);
+			// pass 56: the shipped shieldCap is 'none', so a cancel nets a whole typical blow; 'half' nets half
+			expect(rateForDraft(shield, frames, { poolMeanBlow }).roleValue).toBeCloseTo(poolMeanBlow, 5);
+			expect(rateForDraft(shield, frames, { poolMeanBlow, rules: { shieldCap: 'half' } }).roleValue).toBeCloseTo(poolMeanBlow / 2, 5);
 		}
 	});
 });

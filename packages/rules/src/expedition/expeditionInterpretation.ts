@@ -520,8 +520,15 @@ export const SHIELD_CAPS = ['none', 'ownHold', 'half'] as const;
 	rate: 'none' 67.7 percent, 'ownHold' 63.7, 'half' 59.0 - only 'half' is inside the 40
 	to 60 fairness band. Always-presence-first against the proctor: 45.5, 48.5, 43.0, so
 	'half' is also the setting where leading with the presences is worth least.
+
+	PASS 56: 'none', because the Clash is now fought to the last side standing. A shield acts
+	every exchange, and paying half of every cancel it made wore it down before the fight was
+	over: shield keeper win rate fell to 37 to 40 percent (three seeds, 500 matches). A whole
+	cancel, free, measures 45.4 / 51.3 / 48.9 percent under the fight, inside the band, and
+	keeps the resolve gauge in band (27.5 to 32.3 percent). The 67.7 percent that ruled 'none'
+	out was a single exchange, where one free cancel decided the whole Clash.
 */
-export const SHIELD_CAP = 'half';
+export const SHIELD_CAP = 'none';
 /*
 	PASS 55: false. A shield cancels only the other side's attacks. Before this pass it cancelled
 	the largest attack declared against its own side, and its own side's sweeps counted (they
@@ -531,6 +538,37 @@ export const SHIELD_CAP = 'half';
 	had been stopping downed the sweeper. Measured in the ownership log's pass 55 entry.
 */
 export const SHIELD_OWN_SWEEPS = false;
+/*
+	PASS 56, THE FIGHT TO THE LAST SIDE STANDING (Nick, 2026-09-23): "right now there's just
+	one round of attacks and then whoever has the most life wins, but that's kind of dumb. I
+	feel like it should start with one round of attacks and then just continue cycling that
+	way ... until one side or the other has no more characters with health. This way the
+	winner goes to who has creatures remaining."
+
+	The most exchanges a world's Clash may run. 1 is the single exchange every pass before 56
+	played. Above 1, each world fights exchange after exchange (statuses tick between them,
+	so burning and the rest last) until one side has nobody standing, nobody left standing can
+	attack, or an exchange changes nothing; the cap only stops a fight that would otherwise
+	run on, and then the Ruling reads the hold still standing, as it always has.
+	Set to 12 in pass 56 (three seeds, 500 matches, friendly fire off, shields 'none'):
+	99.6 percent of worlds end with one side standing and 0.2 percent reach the cap; fights
+	run 1 exchange (mostly uncontested worlds) 45 percent, 2 exchanges 36 percent, 3 or more
+	19 percent. Against the single exchange: the round-one starter's win rate 44-47 percent
+	becomes 45-53 (fairer), resolve changing the leader 19.5-23.3 becomes 27.5-32.3 (into
+	the 25 to 40 band), comeback 29.8-31.8 becomes 27.6-31.6, downs 2.9-3.7 become 8.4-8.7
+	(the loser of a fight is downed, so the old 3 to 5 band no longer describes the rule).
+	Strike keepers win 67.5-69.6 percent, over the band; they were already 64-66 under the
+	single exchange. That lean is the log's open item.
+*/
+export const CLASH_EXCHANGES = 12;
+/*
+	PASS 56: false. A sweep hits the other side only. Nick, 2026-09-23: "I don't think a
+	sweeping attack should inflict damage on your own team ... I'd consider just turning
+	friendly fire off entirely for the sake of simplicity ... To me, it just adds complexity
+	and doesn't really make things more fun." It was the cause of 97.7 percent of the negative
+	columns a card could show (a send whose own sweep would catch your creatures there).
+*/
+export const FRIENDLY_FIRE = false;
 
 // A blow-role creature with no attacking ability at all still strikes, at the pool's
 // minimum printed magnitude (magnitudeOf floors at 1). The simulator counts how often

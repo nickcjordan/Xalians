@@ -7023,3 +7023,30 @@
 .rec-console--match[data-terminal] .rec-plinth-tag--reserve { color: var(--g-brass-light); }
 .rec-console--match[data-terminal] .rec-plinth-tag--reserve svg { fill: color-mix(in srgb, var(--g-brass-light) 35%, transparent); }
 .rec-console--match[data-terminal] .rec-status-reach[data-still-reachable="reserve"] { border-left-color: var(--g-brass-light); color: var(--g-ink); }
+
+/* --- pass 56: the scene ---------------------------------------------------------------
+   A world fights to its end before the next begins, so while one clashes it takes the
+   table: its column opens to most of the width and its figures grow with it; the worlds
+   waiting their turn narrow at its sides. Released at the Ruling. */
+.rec-console--match[data-terminal] .rec-sites {
+	transition: grid-template-columns 520ms cubic-bezier(0.3, 0.7, 0.2, 1);
+}
+.rec-console--match[data-terminal] .rec-sites--arena[data-arena="0"] { grid-template-columns: minmax(0, 5fr) minmax(0, 1fr) minmax(0, 1fr); }
+.rec-console--match[data-terminal] .rec-sites--arena[data-arena="1"] { grid-template-columns: minmax(0, 1fr) minmax(0, 5fr) minmax(0, 1fr); }
+.rec-console--match[data-terminal] .rec-sites--arena[data-arena="2"] { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 5fr); }
+/* the fighting world's creatures may grow well past the resting size */
+.rec-console--match[data-terminal] .rec-site--clashing .rec-site-floor .rec-rank .rec-figure { max-width: calc(220px * var(--rec-scale)); }
+.rec-console--match[data-terminal] .rec-site--clashing .rec-site-floor .rec-rank .rec-piece-stage {
+	--rec-piece: clamp(18px, min(calc(100cqh / var(--rank-rows, 1) - 40px), calc(100cqw / var(--rank-cols, 1) - 14px)), calc(150px * var(--rec-scale)));
+}
+.rec-console--match[data-terminal] .rec-site--clashing .rec-clash-caption { font-size: calc(var(--g-size-lead) * var(--rec-scale, 1)); padding: var(--g-1) var(--g-3); }
+/* a waiting world keeps its name and its bars, and gives up its prose */
+.rec-console--match[data-terminal] .rec-sites--arena .rec-site--waiting .rec-site-name { font-size: var(--g-size-micro); }
+.rec-console--match[data-terminal] .rec-sites--arena .rec-site--waiting .rec-standing-num { display: none; }
+@media (max-width: 760px) {
+	/* a phone's fighting world is narrow: the caption keeps its small size so it does not cover the rival */
+	.rec-console--match[data-terminal] .rec-site--clashing .rec-clash-caption { font-size: 11px; padding: 1px 3px; }
+}
+@media (prefers-reduced-motion: reduce) {
+	.rec-console--match[data-terminal] .rec-sites { transition: none; }
+}

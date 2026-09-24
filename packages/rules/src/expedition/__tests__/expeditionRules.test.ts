@@ -2,14 +2,26 @@ import {recordActions} from '@xalians/content/ability-compatibility';
 import { describe, test, it, expect } from 'vitest';
 import type { XalianRecord } from '@xalians/content/schema';
 import {
-	createMatch, send, pass, getPublicState, moveSwift, stakeWorld, stakeableSiteIdsFor,
+	createMatch as createMatchAsShipped, send, pass, getPublicState, moveSwift, stakeWorld, stakeableSiteIdsFor,
 	DEFAULT_RULES,
 	ExpeditionRuleError, hasLegalSend, prepareEntry, currentFrame, findEntry, currentHoldOf,
 } from '../expeditionRules.ts';
+
+/*
+	PASS 56. The Clash is now fought to the last side standing, exchange after exchange, with
+	whole-cancel shields. The tests in this file pin the mechanics of ONE exchange (a blow, a
+	shield's price, what the Ruling reads after it), so every match here plays a single exchange
+	with half-price shields unless a test asks otherwise. The fight itself is tested in
+	fightToTheEnd.test.ts, and the shipped defaults are checked against createMatchAsShipped.
+*/
+const SINGLE_EXCHANGE = { clashExchanges: 1, shieldCap: 'half' };
+function createMatch(args: any) {
+	return createMatchAsShipped({ ...args, rules: { ...SINGLE_EXCHANGE, ...(args.rules || {}) } });
+}
 import {
 	ROSTER_SIZE, SENDABLE, SITES_TO_CLINCH, WORLDS_PER_MATCH, FRAMES_PER_MATCH, WORLDS_PER_FRAME,
 	ROUND_SEND_CAP,
-	PROJECTION_REACH, PROJECTION_FALLOFF, ACT_FLIP, SHIELD_OWN_SWEEPS,
+	PROJECTION_REACH, PROJECTION_FALLOFF, ACT_FLIP, SHIELD_OWN_SWEEPS, CLASH_EXCHANGES, FRIENDLY_FIRE,
 	ROSTER_TRAILING_BONUS, ROLE, HOLD_FLOOR, HOLD_CEILING, MAGNITUDE_SCALE, SWEEP_DISCOUNT,
 	BOLSTER_FLOOR, ARMORED_REDUCTION, SHIELD_CAP, WILLFUL_THRESHOLD, KEEN_INSTINCT,
 	DULL_INSTINCT, KEEN_FIGHTS_HURT, SWIFT_SPEED, BOLSTER_RECOVERY,
@@ -657,7 +669,8 @@ describe('the four roles', () => {
 		const now = deploy(crowd, [smallStriker], 'own-sweep-seed');
 		const shieldsNow = (now.resolutionLog as any[]).filter((e: any) => e.type === 'shield');
 		shieldsNow.forEach((e: any) => expect(String(e.cancelled || '')).not.toMatch(/^A_/));
-		const old = deploy(crowd, [smallStriker], 'own-sweep-seed', { shieldOwnSweeps: true });
+		// the old case needs the old sweep too: without friendly fire a sweep never reaches its own side
+		const old = deploy(crowd, [smallStriker], 'own-sweep-seed', { shieldOwnSweeps: true, friendlyFire: true });
 		const shieldsOld = (old.resolutionLog as any[]).filter((e: any) => e.type === 'shield');
 		expect(shieldsOld.some((e: any) => e.cancelled === 'A_1')).toBe(true);
 	});
@@ -719,14 +732,20 @@ describe('the four roles', () => {
 		expect(judgedHold(off, 'A_0').role).toBe(ROLE.NONE);
 	});
 
-	test('a sweep logs one sweep event plus one attack per creature at the world, both sides', () => {
+	test('a sweep logs one sweep event plus one attack per creature of the other side', () => {
 		const state = deploy([areaCreature, smallStriker], [smallStriker], 'area-seed');
 		const sweep = (state.resolutionLog as any[]).find((e: any) => e.type === 'sweep');
 		expect(sweep).toBeTruthy();
 		expect(sweep.recordId).toBe('A_0');
 		const victims = (state.resolutionLog as any[]).filter((e: any) => e.type === 'attack' && e.recordId === 'A_0' && e.role === ROLE.SWEEP);
 		expect(victims.length).toBe(sweep.hitCount);
-		// it catches its own ally as well as the enemy
+		// pass 56: no friendly fire, so it catches the enemy and never its own ally
+		expect(victims.map((v: any) => v.target).sort()).toEqual(['B_0']);
+	});
+
+	test('with the friendly fire lever on, a sweep also catches its own ally', () => {
+		const state = deploy([areaCreature, smallStriker], [smallStriker], 'area-seed', { friendlyFire: true });
+		const victims = (state.resolutionLog as any[]).filter((e: any) => e.type === 'attack' && e.recordId === 'A_0' && e.role === ROLE.SWEEP);
 		expect(victims.map((v: any) => v.target).sort()).toEqual(['A_1', 'B_0']);
 	});
 
@@ -1227,7 +1246,7 @@ describe('rules ablation switches', () => {
 	}
 
 	it('defaults to every rule on and every lever at its first setting', () => {
-		const state = freshMatch();
+		const state = createMatchAsShipped({ rosterA: makeRoster('A'), rosterB: makeRoster('B'), worlds: makeWorlds(), seed: 'test-seed' });
 		expect(state.rules).toEqual({
 			hiddenSends: true,
 			trailingBonus: ROSTER_TRAILING_BONUS,
@@ -1282,6 +1301,9 @@ describe('rules ablation switches', () => {
 			actFlip: ACT_FLIP,
 			// Pass 55: shields cancel only the other side's attacks, never their own sweep
 			shieldOwnSweeps: SHIELD_OWN_SWEEPS,
+			// Pass 56: the most exchanges a world's Clash may run, and no friendly fire
+			clashExchanges: CLASH_EXCHANGES,
+			friendlyFire: FRIENDLY_FIRE,
 			projectionReach: PROJECTION_REACH,
 			projectionFalloff: PROJECTION_FALLOFF,
 			worldsPerFrame: WORLDS_PER_FRAME,
