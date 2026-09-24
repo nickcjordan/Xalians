@@ -994,3 +994,36 @@ The top bar became a round track (the nine worlds, filled by who won them) and t
 **Verified:** 607 rules tests (new: `forecastSend` equals `forecastClash` after the real send for every creature at every world, ignores whose turn it is, touches nothing); 1607 web tests (new: `reclamationGlance.test.js`, the fit table against the engine and each instrument's marks); the four table checks green, `reclamation-proving.mjs` extended as above; the glance set, the Clash and the Ruling shot and read at 1440, 1873 and 390, simple and advanced.
 
 **Open:** no human has used this table; the key's placement on a phone covers one figure; the rival's squad stays hidden by design, and every reader asked for it.
+
+### Pass 53 (2026-09-23): the start screen and the draft are one screen
+
+**Nick:** "You should make the starting screen the same behavior as the rest of the screens, in the sense that it all fits on one view."
+
+**Measured first.** The start screen was 1766px tall on a 1440 by 900 desk and 3522px on a 390 by 844 phone: the rival plates sat a whole scroll below Start, and three reference modules (hold, every attribute a job, the story) stood between the player and the game. The draft (`?draft=1`, and both handlers in hot-seat) was 940px on every desk and 2431px on a phone.
+
+- **The start screen** is now the viewport at every size: a head (title, the thesis, the seed), then one panel with the round's three steps and the game's four numbers beside the five rivals, the mode and Start. The rivals are rows on a desk and a row of glyphs on a phone with the chosen one named under them. On a phone the three steps stand side by side, and a game waiting to resume is two keys ("Resume round 2, 1 to 3", "Abandon") with the sentence on the key's accessible name.
+- **The reference is a key away:** "What each attribute does", "Hold and home worlds" and "The story behind it" open as panels over the screen, Escape closes them. The hold module's bulb meter is gone from the intro, since the table no longer draws hold that way; the panel says it in the table's terms.
+- **The draft** shares the height under the rounds and over its footer: fifteen cards in two rows on a desk (three below 1100 wide and on a phone), each sizing its picture to its own box.
+- 41 rules for the removed intro modules pruned.
+
+**Verified:** `reclamation-shift.mjs` now also holds the start screen, the start screen with a game to resume, and the draft to the viewport at all six screens, with their controls wholly on screen; the four checks green; 1619 web tests.
+
+**Open:** the end-of-game result still scrolls inside its own box on a short desk (1366 by 650: 816px of content in 570); it fits at 1440 by 900 and 390 by 844.
+
+### Pass 54 (2026-09-23): the world's standing
+
+**Nick**, on round 1 with a creature lifted: "Is the solid versus the striped section supposed to indicate [something] at this point in time? I don't see a reason for there to be a distinction ... a number in the top left corner of something is next to useless ... go through each of these affordances and ask if it's actually providing value." The audit, the design and the measurements are `reclamation-world-standing.md`.
+
+**Why the worlds were split alike:** pass 52's front line drew a share of each world, so any send into an empty world took all of it: a 5 and a 16 drew the same half-hatched field, and the only amounts were the two corner totals.
+
+- **The standing.** Each world's seam carries two bars from the same edge, the rival's above yours, on one scale shared by the three worlds that covers every total a send in hand could make (`standingScale()`), so it never rescales under the pointer. The fill is what the Clash is forecast to leave, the hatched run past it is what the Clash takes (the engine's forecast now reports each creature's hold going in, `ClashForecast.before`), and a brass mark drops the rival's end through your lane. With a creature pointed at or lifted, your bar grows by a striped run with the creature's silhouette on its end and its home, strain or fall mark beside the number. The side behind reads at half strength; the Ruling's pennant rides the winner's bar. The field is no longer tinted by who leads; the corner totals, the preview token and the faint emblem are gone.
+- **The world head** carries its element's symbol and a wash of its color, the color its column wears on every card.
+- **The top bar:** the score is pennants, sends are a tick per send with the count after (the count alone on a phone), and whose move it is is a pointer at the head of that side's row; the "Your move" words are gone.
+- **The Clash's caption** stands above the seam, over the rival's rank, so the bars stay in sight while they move.
+- 65 rules for the front line, the token, the emblem and the turn words pruned.
+
+**Measured:** blind readers on four moments of seed 7, before (live, pass 53) and after. With the reader model pass 52 used, both builds answered nearly every checkable question and both put ease at 5 of 10; the before reader "cannot tell why it splits at the midline", the after reader marked the two bars, the preview, the lifted creature's silhouette, the pennants and the ticks "sure". The pointer reads as "you or your turn" in a still picture. A weaker reader model first found the three things fixed above (the preview read as the board, the pips read as the round track, the dot said nothing).
+
+**Verified:** 610 rules tests (new: the forecast's `before` is positive and never less than what the Clash leaves); 1621 web tests (the standing, its scale, the pennant on the winner's bar, the ticks and the pointer); the four table checks green, `reclamation-proving.mjs` now asserts every world's standing and numbers stay inside its world while a creature is lifted; the Clash and the Ruling shot at 1884 and 390.
+
+**Open, from Nick's next list (2026-09-23):** remove the act choice; say why a creature is worth its column (hold against what its attacks take); say why a figure's bar changes when an enemy arrives; explain a negative column; columns for a moving creature; a sent card's space; the eleventh send leaving a creature on the bench with no signal; the Clash to the last side standing, with a scene per world; Mandala's mechanics.

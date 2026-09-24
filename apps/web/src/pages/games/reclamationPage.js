@@ -4,7 +4,7 @@ import '../../styles/legacy/immersive.css';
 import '../../styles/legacy/reclamation.css';
 import XalianNavbar from '../../components/navbar';
 import ReclamationMatch from '../../components/games/reclamation/reclamationMatch';
-import { HoldMeter } from '../../components/games/reclamation/reclamationFigure';
+import { Panel } from '../../components/games/reclamation/reclamationPanels';
 import { PhaseGlyph, RivalGlyph } from '../../components/games/reclamation/reclamationGlyphs';
 import { buildDraftPools, botDraft, validateKeep, draftOptionsFromRules } from '@xalians/rules/expedition/draft';
 import ReclamationDraft from '../../components/games/reclamation/reclamationDraft';
@@ -228,6 +228,8 @@ class ReclamationPage extends React.Component {
 			// assumption 23; the pool size is a rules lever, read through draftOptionsFromRules)
 			draft: null,
 			soundOn: false,
+			// pass 53: the reference panel open over the start screen, if any
+			introPanel: null,
 		};
 		// the console's cues, synthesized in code, off until the player turns them on
 		this.sound = createSound({});
@@ -240,9 +242,21 @@ class ReclamationPage extends React.Component {
 		this.draftUsedAuto = false;
 	}
 
+	componentDidMount() {
+		document.addEventListener('keydown', this.onIntroKey);
+	}
+
 	componentWillUnmount() {
 		this.sound.dispose();
+		document.removeEventListener('keydown', this.onIntroKey);
 	}
+
+	// pass 53: Escape closes a reference panel on the start screen, as it does on the table
+	onIntroKey = (e) => {
+		if (e.key === 'Escape' && this.state.introPanel) {
+			this.setState({ introPanel: null });
+		}
+	};
 
 	toggleSound = () => {
 		this.sound.toggle();
@@ -554,36 +568,53 @@ class ReclamationPage extends React.Component {
 			);
 		}
 
+		/*
+			PASS 53. THE START SCREEN IS ONE SCREEN (Nick, 2026-09-23: "make the starting screen
+			the same behavior as the rest of the screens, in the sense that it all fits on one
+			view"). It was 1766px tall on a 900px desk and 3522px on a phone: the rival plates
+			sat a whole scroll below the Start key, and three reference modules (the round, hold,
+			every attribute a job) stood between the player and the game.
+
+			What a player needs to start is on the screen: what the game is (the thesis), how a
+			round goes, the game's numbers, who to play, the mode, and Start. What they may want
+			to read is a key away: each attribute's job, hold and home worlds, and the story, in
+			the same kind of panel the table's help opens. reclamation-shift.mjs holds it to the
+			viewport at every size it checks, with and without a game waiting to resume.
+		*/
+		const introPanel = this.state.introPanel;
+		const closeIntroPanel = () => this.setState({ introPanel: null });
 		return (
-			<div className="g-console rec-console rec-console--intro" data-terminal="field">
+			<div className="g-console rec-console rec-console--intro" data-terminal="field" data-intro>
 				<XalianNavbar />
 				<div className="g-shell rec-shell rec-shell--intro">
-					<header className="g-masthead">
-						<div className="g-masthead-heading">
-							<p className="g-kicker">Field terminal</p>
-							<h1 className="g-title">Reclamation</h1>
-						</div>
-						<div className="g-masthead-aside">
-							<span className="g-mono rec-masthead-seed">seed {seed}</span>
-						</div>
+					<header className="rec-intro-head">
+						<h1 className="g-title rec-intro-title">Reclamation</h1>
+						<p className="rec-thesis">Send your creatures into three worlds a round. Hold more of a world than the rival and it is yours. The first to five worlds wins.</p>
+						<span className="g-mono rec-masthead-seed">seed {seed}</span>
 					</header>
 
 					{saved && (
 						<div className="g-panel rec-resume rec-rise" data-resume>
 							<span className="g-lamp g-lamp--amber" aria-hidden="true" />
 							<span className="rec-resume-text">
-								A game against the {rivalById(saved.rivalId || DEFAULT_RIVAL_ID).name} is unfinished: round {(saved.match.frameIndex || 0) + 1}, {saved.match.players.A.sitesWon} worlds to {saved.match.players.B.sitesWon}.
+								Unfinished against the {rivalById(saved.rivalId || DEFAULT_RIVAL_ID).name}: round {(saved.match.frameIndex || 0) + 1}, {saved.match.players.A.sitesWon} worlds to {saved.match.players.B.sitesWon}.
 							</span>
 							<span className="rec-resume-actions">
-								<button type="button" className="g-key g-key--primary" onClick={this.resumeMatch} data-resume-match>Resume the game</button>
-								<button type="button" className="g-key" onClick={this.discardSaved} data-discard-match>Abandon it</button>
+								<button
+									type="button"
+									className="g-key g-key--primary"
+									onClick={this.resumeMatch}
+									data-resume-match
+									aria-label={`Resume the game against the ${rivalById(saved.rivalId || DEFAULT_RIVAL_ID).name}: round ${(saved.match.frameIndex || 0) + 1}, ${saved.match.players.A.sitesWon} worlds to ${saved.match.players.B.sitesWon}`}
+								>
+									Resume<span className="rec-resume-short"> round {(saved.match.frameIndex || 0) + 1}, {saved.match.players.A.sitesWon} to {saved.match.players.B.sitesWon}</span>
+								</button>
+								<button type="button" className="g-key" onClick={this.discardSaved} data-discard-match>Abandon</button>
 							</span>
 						</div>
 					)}
 
 					<div className="g-panel rec-intro-panel">
-						<p className="rec-thesis">Send your creatures into three worlds a round. Hold more of a world than the rival and it is yours. The first to five worlds wins.</p>
-
 						<section className="rec-module rec-module--round" aria-label="A round">
 							<h2 className="rec-module-title">A round</h2>
 							<ol className="rec-phases">
@@ -597,43 +628,7 @@ class ReclamationPage extends React.Component {
 									</li>
 								))}
 							</ol>
-						</section>
-
-						<section className="rec-module rec-module--lanes" aria-label="Every attribute a job">
-							<h2 className="rec-module-title">Every attribute a job</h2>
-							<p className="rec-module-lead">Each attribute does one thing on the table, and the dossier says which. Speed and hold decide the most; the rest matter where they apply.</p>
-							<ul className="rec-lane-list rec-intro-lanes">
-								{LANES.map((lane) => (
-									<li className="rec-lane" key={lane.key} data-intro-lane={lane.key}>
-										<span className="rec-lane-word">{lane.word}</span>
-										<span className="rec-lane-text">{lane.note}</span>
-									</li>
-								))}
-							</ul>
-						</section>
-
-						<section className="rec-module rec-module--hold" aria-label="Hold">
-							<h2 className="rec-module-title">Hold</h2>
-							<p className="rec-module-lead">How firmly a creature keeps a world, 0 to 20. The Generators built each for one world.</p>
-							<ul className="rec-hold-cases">
-								<li className="rec-hold-case g-el-water">
-									<HoldMeter hold={18} isHome size="large" scale />
-									<span className="rec-hold-case-note">on its own world, half again</span>
-								</li>
-								<li className="rec-hold-case g-el-rock">
-									<HoldMeter hold={12} size="large" scale />
-									<span className="rec-hold-case-note">on another world</span>
-								</li>
-								<li className="rec-hold-case g-el-ice">
-									<HoldMeter hold={5} unstrained={12} strainLevel="severe" size="large" scale />
-									<span className="rec-hold-case-note">where its body strains, the world takes the rest</span>
-								</li>
-							</ul>
-						</section>
-
-						<section className="rec-module rec-module--charter" aria-label="The game">
-							<h2 className="rec-module-title">The game</h2>
-							<div className="rec-charter-figures">
+							<div className="rec-charter-figures" aria-label="The game">
 								<div className="rec-charter-figure">
 									<span className="rec-charter-number g-mono">{FRAMES_PER_MATCH}</span>
 									<span className="rec-charter-label">rounds</span>
@@ -646,19 +641,23 @@ class ReclamationPage extends React.Component {
 									<span className="rec-charter-number g-mono">{SITES_TO_CLINCH}</span>
 									<span className="rec-charter-label">to win</span>
 								</div>
-								{/*
-									PASS 27. This read "12/11 BRING / SEND", which a blind critic named
-									as "genuinely incomprehensible as a label" - and it is: two numbers
-									divided by a slash, where the slash means neither a ratio nor a
-									fraction but two different quantities. It says the same thing in
-									words a first-time reader can act on.
-								*/}
-								{/* pass 47: "sends, from 12 kept" ran into its neighbour on a phone, and "kept" meant nothing yet */}
+								{/* pass 27, pass 47: sends in words a first-time reader can act on */}
 								<div className="rec-charter-figure" title={`${SENDABLE} sends for the whole game, from a squad of ${ROSTER_SIZE}`}>
 									<span className="rec-charter-number g-mono">{SENDABLE}</span>
 									<span className="rec-charter-label">sends</span>
 								</div>
 							</div>
+						</section>
+
+						<section className="rec-module rec-module--rivals" aria-labelledby="rec-rivals-title">
+							<h2 className="rec-module-title" id="rec-rivals-title">
+								Your rival <span className="rec-rivals-ladder-note">weakest to strongest</span>
+							</h2>
+							<RivalPlates rivalId={rivalId} onChange={this.setRival} />
+							{/* on a phone the plates are glyphs only, so the chosen one is named here */}
+							<p className="rec-rival-chosen" data-rival-chosen>
+								<b>{rival.name}</b> {rival.tag}{recordLine(rival.id) ? <span className="g-mono"> {recordLine(rival.id)}</span> : null}
+							</p>
 							<div className="rec-intro-actions">
 								<div className="rec-intro-mode" title={mode === 'simple' ? 'Simple: the essentials on the table; every number is in the reading behind each creature.' : 'Advanced: every number on the figures, the temperature bands, speed, and the log.'}>
 									<ModeSwitch mode={mode} onChange={this.setMode} />
@@ -666,29 +665,48 @@ class ReclamationPage extends React.Component {
 								<button type="button" className="g-key g-key--primary rec-enter" onClick={this.startMatch} data-enter>
 									Start the game
 								</button>
-								<span className="rec-intro-against">against the {rival.name}</span>
 							</div>
 						</section>
 
-						<details className="rec-fiction">
-							<summary className="rec-fiction-summary">The story behind it</summary>
-							<div className="g-screen rec-rules-screen">
-								<div className="g-screen-line">The worlds were lost to war and plague, and no expedition goes in blind. Before Kozrak grants a Charter over a world, the claim is proved on the Court's <strong>frame</strong>: the Generators' own models of the fourteen worlds, run on Poseidas without the Generators. Only the fighting is simulated. The Charter, and the Tokens that come with it, are real.</div>
-								<div className="g-screen-line">Each round the frame loads three worlds side by side, every one at a different site of its surface, and no world is loaded twice in a Proving. When both handlers have passed, every world clashes at once: each creature does the one thing its nature does there, attacks subtract from hold, and a creature driven to nothing is downed out of the Proving. Creatures on a won world stay in its model to hold the claim; the rest withdraw; either way they are out of the Proving. A pass is permanent for the round. A stealthy creature arrives hidden: the rival learns that you sent something, not what or where, until the worlds clash.</div>
-								<div className="g-screen-line">Attacks land in speed order, and a creature already hurt attacks for less, in proportion to the hold it has left, so hitting first shapes the whole exchange. A swift creature already on a world may step to another world of the frame once a round, without spending a turn. At the Ruling, allies standing with a bolster recover half of what the round took from them before the Court reads the worlds. Once a Proving, before your first send of a round, either handler may stake one of the round's worlds: it then counts two toward the Charter for whoever holds it at the Ruling, three if both handlers staked it, and nothing at all if it is tied. Nothing is given to the side that is behind: there is no catch-up send, the stake is a risk you choose and it doubles the loss as readily as the gain, and every world is won on what you put on it.</div>
-							</div>
-						</details>
+						<nav className="rec-intro-more" aria-label="More about the game">
+							<button type="button" className="g-btn" onClick={() => this.setState({ introPanel: 'attributes' })} data-intro-more="attributes">What each attribute does</button>
+							<button type="button" className="g-btn" onClick={() => this.setState({ introPanel: 'hold' })} data-intro-more="hold">Hold and home worlds</button>
+							<button type="button" className="g-btn" onClick={() => this.setState({ introPanel: 'story' })} data-intro-more="story">The story behind it</button>
+						</nav>
 					</div>
-
-					<section className="rec-rivals-panel" aria-labelledby="rec-rivals-title">
-						<header className="rec-rivals-head">
-							<span className="g-kicker">Connected over QED</span>
-							<h2 className="rec-rivals-title" id="rec-rivals-title">Your rival</h2>
-							<span className="rec-rivals-ladder-note">weakest to strongest</span>
-						</header>
-						<RivalPlates rivalId={rivalId} onChange={this.setRival} />
-					</section>
 				</div>
+
+				{introPanel === 'attributes' && (
+					<Panel title="What each attribute does" kind="attributes" onClose={closeIntroPanel}>
+						<p>Each attribute does one thing on the table, and each creature&apos;s reading (its &#9432;) says which. Speed and hold decide the most; the rest matter where they apply.</p>
+						<ul className="rec-lane-list rec-intro-lanes">
+							{LANES.map((lane) => (
+								<li className="rec-lane" key={lane.key} data-intro-lane={lane.key}>
+									<span className="rec-lane-word">{lane.word}</span>
+									<span className="rec-lane-text">{lane.note}</span>
+								</li>
+							))}
+						</ul>
+					</Panel>
+				)}
+				{introPanel === 'hold' && (
+					<Panel title="Hold and home worlds" kind="hold" onClose={closeIntroPanel}>
+						<p>Hold is how firmly a creature keeps a world, and a world goes to whichever side holds more of it after the Clash. On the table it is the bar under each creature, with its number.</p>
+						<ul className="rec-intro-hold">
+							<li><b className="g-mono">18</b> on its own world: the Generators built each creature for one world, and there it holds half again.</li>
+							<li><b className="g-mono">12</b> on another world that suits its body.</li>
+							<li><b className="g-mono">5</b> where its body strains (too hot, too cold, the wrong air): the world takes the rest.</li>
+						</ul>
+						<p>Attacks in the Clash take hold away, fastest first, and a creature driven to nothing falls.</p>
+					</Panel>
+				)}
+				{introPanel === 'story' && (
+					<Panel title="The story behind it" kind="story" onClose={closeIntroPanel}>
+						<p>The worlds were lost to war and plague, and no expedition goes in blind. Before Kozrak grants a Charter over a world, the claim is proved on the Court&apos;s <strong>frame</strong>: the Generators&apos; own models of the fourteen worlds, run on Poseidas without the Generators. Only the fighting is simulated. The Charter, and the Tokens that come with it, are real.</p>
+						<p>Each round the frame loads three worlds side by side, every one at a different site of its surface, and no world is loaded twice in a Proving. When both handlers have passed, every world clashes at once: each creature does the one thing its nature does there, attacks subtract from hold, and a creature driven to nothing is downed out of the Proving. Creatures on a won world stay in its model to hold the claim; the rest withdraw; either way they are out of the Proving. A pass is permanent for the round. A stealthy creature arrives hidden: the rival learns that you sent something, not what or where, until the worlds clash.</p>
+						<p>Attacks land in speed order, and a creature already hurt attacks for less, in proportion to the hold it has left, so hitting first shapes the whole exchange. A swift creature already on a world may step to another world of the frame once a round, without spending a turn. At the Ruling, allies standing with a bolster recover half of what the round took from them before the Court reads the worlds. Once a Proving, before your first send of a round, either handler may stake one of the round&apos;s worlds: it then counts two toward the Charter for whoever holds it at the Ruling, three if both handlers staked it, and nothing at all if it is tied. Nothing is given to the side that is behind: there is no catch-up send, the stake is a risk you choose and it doubles the loss as readily as the gain, and every world is won on what you put on it.</p>
+					</Panel>
+				)}
 			</div>
 		);
 	}

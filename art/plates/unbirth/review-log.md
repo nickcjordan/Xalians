@@ -340,3 +340,118 @@ Taken:
 - **Seeds left the chute as a dotted string.** Emission is now jittered, the drop point is jittered, and seeds brake faster.
 
 Logged, not taken, as accepted decisions or taste: the island as "a hedge band" (the resumed reviewer judged the scale met), the cloud across the trunk, the reeds, the slabs, and sprouts fading at their reset.
+
+## Realism pass (2026-09-23, Nick: "not quite there … more realistic")
+
+Nick agreed with five realism gaps named after the flood version went live (PR #613). He also ruled that hand-coded SVG has no illustrated ceiling here, and that painted or generated textures are a normal next stage rather than a risky change.
+
+1. **Water behaves like water.**
+   - Ripple textures (noise thresholded into streaks of reflected sky) are finer toward the horizon, with trough streaks near the viewer.
+   - The ripples beyond the shelf catch the Generator in short horizontal flecks.
+   - The outfall is a glitter of broken light drifting with the current.
+   - Slabs and whalebacks have dark reflections and lapping lines. The island is mirrored below its shore.
+   - Floating seeds glint in the water under them and ring as they bob.
+   - There are 100 rain rings of uneven size (a third are half-rings) and splash crowns on rock and water.
+   - Strikes are mirrored in the far water.
+2. **Light touches things.**
+   - The shelf's light follows the dome and stops at its edge, with wet glints.
+   - The lit window is smeared down the wet rock, with a tail, and there is a contact shadow under the foundation.
+   - The vat light spills onto the plates, and the window frame is lit.
+   - Rain blazes just outside the window, with the glass kept clear.
+   - Strikes catch the machine's top edges.
+3. **The World Tree is colossal and far.**
+   - The trunk pales only above its lower third, with mist across it, rain curtains in front and a feathered shadow behind its hard edge.
+   - The lower boughs are knotted and bowed, and lesser limbs run into the crown.
+   - The canopy is displaced foliage masses and clumps with a leaf-mass texture, with no single leaves.
+   - The island is a ragged treeline with mist between its rows.
+   - The backlit strike blooms through vapor high in the crown.
+4. **Foreground plants.** Five fronds (were eight), with a base-to-tip gradient, a dark far half, a broken wet edge, drips from two tips, and a slight defocus. The lodged pods are dim tipped acorns. The moss is dark wet olive, in clumps.
+5. **A weathered machine.**
+   - Grime runoff, rust toward the foot and in runs from rivets, wet streaks, and plate-tone variation.
+   - The lit seams fade toward their ends with a soft bloom.
+   - Quieter rivets that vary and are sometimes missing, and wet highlights on the upper edges.
+   - Drips fall off the ledges under the seeds' gravity.
+
+**Rounds (visual 7.5, 8.5, 9; motion: another round, another round, nothing)**
+- **Visual 1.**
+  - The glitter and current lines looked ruled on. They became short flecks and tapered, broken spindles.
+  - The weathering was invisible at site size. Plate tone, a foot band, fading seams and quieter rivets fixed it.
+  - The tree lost presence. The lower trunk is dark again and the mist is cut.
+  - The backlit gaps looked like cut paper.
+  - The middle air was flat. Curtains and far mist were added.
+  - The near rock was ruler-edged. Its edges are now stepped, with wet edges and glints.
+  - The fronds were flat, the pods read as UI dots, the rings formed a pattern, and the moss was bands.
+  - The rain blaze hid the vat seeds, and the window smear read as a cone.
+- **Visual 2.** The dashed ledge sheen read as a guideline and became a noise-masked sheen. The sky gaps beside the boughs still looked like cut paper; the fixes were knotted boughs, a feathered shadow and the strike moved into the crown.
+- **Motion 1.**
+  - 195 animations broke the 24 s clock (glitter, splashes, drips, seed rings).
+  - The glitter left an empty strip at the outfall, and thinned at its crossfade (fixed with equal-power weights and a k4 correction).
+  - Drips fell at inconsistent gravity, seed rings popped in, and one filter was unused.
+- **Motion 2.** The streaks moved at half the water's speed. The frond drips swung with their frond and fell four times too fast (now released at rest and falling outside the frond). The half-ring strokes depended on display size (they now animate `d`).
+- **A rendering note.** A user-space mask on the island reflection blanked it in Chrome. An objectBoundingBox mask on an outer group works. Filters on a group with a negative scale also misbehaved, so the flip goes inside the filtered group.
+
+**The gate: one cold check (5)**
+
+Taken (identity):
+- **The World Tree read as a tornado funnel and vanished on a phone.**
+  - Pale air is now held behind the crown at all times, so the boughs branch against it.
+  - Buttress roots at the foot, and a canopy a shade greener than the cloud.
+  - Foliage clumps hang into the gaps between the upper boughs, so the back-flash shows through leaves rather than windows.
+  - Lifting the whole trunk toward the air, as the check suggested, lost the tree entirely in a render. The trunk stays dark at its base.
+- **The shelf read as a lawn.** The fix is relief-lit wet rock (lighting filters): the tint is cut, the dome darkens toward its edges and the rim is feathered. The splash crowns, which read as grass tufts, became ring bursts.
+- **The surge read as neon tubes and a searchlight.** The seams now blaze in broken, uneven pieces, the cloud glow is lit lobe undersides, and the vat seeds stay visible against the flare.
+- **The chute read as a striped barrier pole.** It is now a trough with a dark interior, a riveted near wall, one fluid sheet and moving soft highlights.
+- **The wakes read as sticks.** They are now curved, broken foam arcs.
+- **Far growth was lit by nothing.** It greys with distance. The near fronds are near-black, with a cool wet edge and more defocus.
+- **Smaller misreads:**
+  - The split-plate leak read as an orb lamp. It now spills down the plate.
+  - The relief valve read as a floating glyph. It is now a wheel on a stem.
+  - The strike rim read as a cartoon outline. It now lights only the upward edges, as tapered slivers.
+  - The floating seeds read as fireflies or lollipops. The halo is smaller and the under-glint round.
+  - The canopy pods now hang in clusters, and the opened husk shows a pale inside.
+- **The horizon** was a hard line. It now dissolves into the rain.
+
+Textures: in the same round, the water ripples, the shelf and near rock, the storm ceiling's underside and the machine's plates became lit height fields (feSpecularLighting and feDiffuseLighting on fractal noise). These are the first step of the photographic stage Nick asked for. They sit in static layers, so they paint once.
+
+## Textures, stage one (2026-09-23, after PR #617)
+
+Nick: "then we can work on making it more photographic with textures". This PR is that stage's first round, built on the lit height fields that #617 introduced.
+- **The machine in relief.** The machine group's own luminance, blurred, serves as a height field lit by a specular sky light, so every plate, band, pipe, flange, rivet and the tank takes wet light on its upper edges. The reviewer: "the most photographic the machine has looked".
+- **The canopy in relief.** Leaf-mass noise is combined with the canopy's luminance and diffuse-lit from above.
+  - The first tuning (fine grain, a pale light, lit all over) turned the World Tree into a dead oak in front of a lichen cliff.
+  - The fix: noise about 3× larger, green light at a low angle, only the tops lit, the canopy kept darker than the air, and foliage clumps closing over the outer 45% of each great bough.
+- **The paper and brush-stroke overlays are cut** (.18 to .07 and .45 to .22): painted texture works against photographic.
+- **Tried and cut.** Out-of-focus drops in front of the lens read as soap bubbles, and they strobed at 30 units per frame.
+
+**The gate: one cold identity check (6)**
+
+Taken:
+- The strike behind the crown tore pale holes in it. Its peak is now .7.
+- The chute still read as a rod. It is wider, the far wall's inner face shows, and the fluid runs low in the trough.
+- The surge seams read as LED strips, the split-plate glow as a pill lamp and the gate as a ball lamp. The seams are now thin broken leaks, the glow a faint wash, and the gate a smaller burst.
+- The sprouts read as lime clip-art icons. They are now a dark living green.
+
+Performance: the near fronds' layer-wide blur re-ran every frame as they swayed (a variant without it measured about 57 fps against 35). It is replaced by a baked soft edge on each blade.
+
+Logged, not taken, as accepted decisions or taste:
+- The canopy's value and hue against the cloud. The resumed reviewer accepted it after two tunings, and this is the fifth cold check to re-judge the tree's look.
+- The birth seed's shape and its split husk. Nick has seen and liked the birth since the industrial rework.
+- The near fronds as reeds.
+- The drifting seeds as fireflies. Nick accepted the acorn seeds, which now carry under-glints.
+
+## Nick's notes on the live page (2026-09-23, after PR #619)
+
+- **The birth on the shelf is cut.** Nick: the heavy seed that lands on the rock "doesn't look good". The surge still flushes seeds down the chute, and the seeds no longer steer around a newborn.
+- **A storm on open water.** Nick: "a relatively calm storm for being on the open ocean". Out in the distance there are now:
+  - dark swell faces with crests breaking white;
+  - whitecaps that break, throw spray and ride the current;
+  - spindrift along the horizon.
+
+  The water near the machine and the tree stays calm, as he asked. The field feathers out toward the island rather than stopping at a line.
+- **No mountains.** The cloud base read as a mountain skyline because the lobes' lit bottoms made pale peaks. The lobes now hang darker than the air under them.
+- **The generator's roof.** The cone hopper and the tube looked out of place. They became a pressure tank with dished ends, a manway and saddles, plus a breather stack with a gooseneck.
+- **Young trees on the island** stand clear of the scrub, with their own trunks and leaning crowns.
+- **The near frond plant** now also grows, smaller, on four slabs where the first growth is.
+- **The text card** covers the bottom fifth of the left three fifths of the plate on desktop, and most of the bottom quarter on a phone. It is the home page's layout. The newborn's swim from the shelf ran under it on desktop; with the birth cut, nothing in the story plays under the card.
+
+**Rounds.** The visual reviewer scored 8.5: the storm came too close to the outfall and ended at a hard edge. The motion reviewer found the whitecaps drifting slower than the current, and a catch that washed upstream.
