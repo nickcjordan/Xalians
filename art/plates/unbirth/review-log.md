@@ -438,3 +438,20 @@ Logged, not taken, as accepted decisions or taste:
 - The birth seed's shape and its split husk. Nick has seen and liked the birth since the industrial rework.
 - The near fronds as reeds.
 - The drifting seeds as fireflies. Nick accepted the acorn seeds, which now carry under-glints.
+
+## Nick's notes on the live page (2026-09-23, after PR #619)
+
+- **The birth on the shelf is cut.** Nick: the heavy seed that lands on the rock "doesn't look good". The surge still flushes seeds down the chute, and the seeds no longer steer around a newborn.
+- **A storm on open water.** Nick: "a relatively calm storm for being on the open ocean". Out in the distance there are now:
+  - dark swell faces with crests breaking white;
+  - whitecaps that break, throw spray and ride the current;
+  - spindrift along the horizon.
+
+  The water near the machine and the tree stays calm, as he asked. The field feathers out toward the island rather than stopping at a line.
+- **No mountains.** The cloud base read as a mountain skyline because the lobes' lit bottoms made pale peaks. The lobes now hang darker than the air under them.
+- **The generator's roof.** The cone hopper and the tube looked out of place. They became a pressure tank with dished ends, a manway and saddles, plus a breather stack with a gooseneck.
+- **Young trees on the island** stand clear of the scrub, with their own trunks and leaning crowns.
+- **The near frond plant** now also grows, smaller, on four slabs where the first growth is.
+- **The text card** covers the bottom fifth of the left three fifths of the plate on desktop, and most of the bottom quarter on a phone. It is the home page's layout. The newborn's swim from the shelf ran under it on desktop; with the birth cut, nothing in the story plays under the card.
+
+**Rounds.** The visual reviewer scored 8.5: the storm came too close to the outfall and ended at a hard edge. The motion reviewer found the whitecaps drifting slower than the current, and a catch that washed upstream.

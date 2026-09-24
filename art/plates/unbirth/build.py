@@ -35,8 +35,7 @@ flood meant to wash its mistakes away carries them out over the world instead (N
 Generator would not have a cannon). This machine makes life only by seeds: a hatch that creatures
 walk out of belongs to the later Generators. Seeds that split on the water let out larvae; seeds
 that catch on rock sprout. Once a cycle it surges into overdrive (paragraphs 5 and 8: never
-calibrated, "at full capacity"), the gate bursts, and one heavy seed is flung from the chute onto its
-own shelf, which splits and lets out a newborn larva that swims away. Read left to right: machine,
+calibrated, "at full capacity"), the gate bursts, and a rush of seeds goes down the chute together. Read left to right: machine,
 seeds spreading on the current, the first life taking hold, and far off the World Tree on its island
 of young forest grown from earlier seeds. No grown creature is shown. Inference, not stated canon:
 the seeds carry both plants and plant-like Xalians."""
@@ -58,9 +57,13 @@ the only other light. Wind and flood run left to right: rain slants and seeds dr
   mist lies across it and rain curtains hang in front of it.
 - its island: land rising from the flood around its foot, covered in the young forest earlier seeds
   have grown: tall trees (broadleaf crowns and conifer spires) crowding the trunk, still a fraction
-  of its height, stepping down to shrubs, weeds and grass at the waterline, a ragged treeline with
+  of its height, a few young trees standing clear of the scrub with bare trunks and crowns of their
+  own, stepping down to shrubs, weeds and grass at the waterline, a ragged treeline with
   mist settled between its rows; pods glowing among them.
   The scale of that forest is what makes the tree read as colossal.
+- the storm sea out in the distance, left of the island: dark swell faces with their crests breaking
+  white, whitecaps that break, throw spray downwind and fall back, and spindrift driven along the
+  horizon; the water near the machine and the tree stays calm enough to read.
 - the far plain: floodwater sheeting over smooth rock to the horizon, its surface broken by wind and
   rain into fine streaks of reflected sky, densest and brightest toward the horizon; dark whaleback
   domes of scoured rock breaking the surface, smaller and paler with distance, each with a dark
@@ -74,7 +77,7 @@ the only other light. Wind and flood run left to right: rain slants and seeds dr
   foundation bolted into the rock with heavy struts; a tall armored housing of riveted plate columns
   and girder bands; a tall glass incubation cylinder with rounded ends, thin hoops and pipes feeding
   it, its fluid glowing, seeds ripening dark against the glow and bubbles rising in it; a feed pipe up into a roof
-  housing with a banded header tank and a hopper; a boiler annex on the left with a gauge, lamps, louvres and a steam relief valve; a steel
+  housing with a header tank on saddles and a breather stack ending in a gooseneck; a boiler annex on the left with a gauge, lamps, louvres and a steam relief valve; a steel
   lattice gantry with a catwalk and a beacon over the sluice; cables looped down to
   clamps on the rock; and at its foot a sluice gate with a wheel, and a chute running down from it on
   legs to the water behind the shelf: a trough, dark inside, with a riveted near wall, one sheet of
@@ -88,11 +91,7 @@ the only other light. Wind and flood run left to right: rain slants and seeds dr
 - the overdrive surge, once a cycle: the vat charges and then flares white, every seam blazes, the
   gate bursts open and a rush of seeds goes down the chute together, the cloud base and the rain
   around the machine light up, then it all settles back.
-- the birth, in the surge: one heavy acorn seed comes down the chute first and jumps its wall, point
-  first on a true arc; it rights itself as it lands on the shelf, glows, and splits along its seam; a
-  newborn larva (tadpole-like, leafy, a glowing eye) rises out of it and looks about, wriggles down
-  the shelf, slips into the flood and swims off downstream with a wake, then dives. The husk fades.
-- seeds: acorn-like, smaller than the birth seed: a long pointed nut under a toothed olive cup,
+- seeds: acorn-like: a long pointed nut under a toothed olive cup,
   glowing softly. They slide down the chute one by one, drop into the lit water at its foot, and the
   flood takes them: each fans out on its own heading, eases into the current (left to right, slower
   with distance), wanders a little, parts around the slabs, lying on its side and turning slowly.
@@ -109,7 +108,8 @@ the only other light. Wind and flood run left to right: rain slants and seeds dr
 - growth you can watch: a seed catches on a rock; a sprout rises from it and two leaves unfurl, it
   stands a while, then fades before its seed returns.
 - near rock: a dark wet ledge along the bottom left, and a rock rise at bottom right where a few
-  young fronds and three lodged pods grow, dark and wet, a little out of focus this close, bending in
+  young fronds and three lodged pods grow (the same plant takes hold, smaller, on the slabs where the
+  first growth is), dark and wet, a little out of focus this close, bending in
   the gusts.
 - rain: slanted streaks over the whole scene, finer and fainter far, heavier near; the rain near the
   Generator catches its light, blazing right in front of the window; it splashes in small crowns on
@@ -276,7 +276,7 @@ sky = []
 lin([(0, '#04070a', 1), (.35, '#0a1016', 1), (.6, '#111a22', 1), (1, '#27313c', 1)], 0, 0, 0, HZ, units=True, id='air')
 sky.append('<!-- air under the cloud: dark, lightening a little toward the horizon --><rect width="%d" height="%d" fill="url(#air)"/>' % (W, HZ + 10))
 lin([(0, '#030507', 1), (.7, '#0a1012', 1), (1, '#131c24', 1)], 0, 0, 0, 240, units=True, id='mass')
-lin([(0, '#080d0f', 1), (.55, '#131b22', 1), (.85, '#242e38', 1), (1, '#33404c', 1)], id='lobe')
+lin([(0, '#070b0d', 1), (.6, '#0d141a', 1), (1, '#10181e', 1)], id='lobe')  # darker than the air under it: a lit lobe bottom read as a snowy ridge
 lobes = []
 x = -80
 while x < W + 80:
@@ -286,7 +286,7 @@ while x < W + 80:
 scud = []
 for _ in range(14):
     sx_ = rnd.uniform(0, W)
-    scud.append('<ellipse cx="%s" cy="%s" rx="%s" ry="%s" fill="#19232b" opacity="%s"/>' % (f(sx_), f(rnd.uniform(218, 250)), f(rnd.uniform(40, 90)), f(rnd.uniform(6, 12)), f(rnd.uniform(.5, .85))))
+    scud.append('<ellipse cx="%s" cy="%s" rx="%s" ry="%s" fill="#0f171d" opacity="%s"/>' % (f(sx_), f(rnd.uniform(218, 250)), f(rnd.uniform(40, 90)), f(rnd.uniform(6, 12)), f(rnd.uniform(.5, .85))))
 # the cloud's underside in relief: billows shaded by the little light that comes up from the horizon
 defs.append('<filter id="cloudRelief" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB">'
             '<feTurbulence type="fractalNoise" baseFrequency=".0025 .006" numOctaves="5" seed="5" result="n"/>'
@@ -531,6 +531,12 @@ for i in range(800):
         plants.append((y, 'weed', x, h))
 for x in range(934, W + 20, 5):
     plants.append((isl_front(x) - .5, 'grass', x + irnd.uniform(-1.5, 1.5), irnd.uniform(2, 4)))
+yrnd = random.Random(105)
+for xx in (968, 1010, 1058, 1112, 1160, 1206, 1376, 1418, 1452, 1494, 1236, 1342):
+    x = xx + yrnd.uniform(-8, 8)
+    y = lerp(isl_back(x), isl_front(x), yrnd.uniform(.35, .75))
+    d = min(1, abs(x - TX) / 560)
+    plants.append((y, 'young', x, lerp(58, 30, d) * yrnd.uniform(.85, 1.15)))
 plants.sort()
 veg = []
 MIST_ROWS = [HZ - 4, HZ - 1, HZ + 2]  # mist settles between the rows of the forest, so the back rows stand behind a veil
@@ -541,6 +547,22 @@ for (y, kind, x, h) in plants:
         mist_i += 1
     base = haze(mix('#162219', '#223829', irnd.random()), y, x)
     lit = haze(mix('#28402d', '#355036', irnd.random()), y, x)
+    if kind == 'young':
+        # a young tree standing clear of the scrub: a bare trunk for its lower half, then a crown of its own
+        tk = haze('#0e1411', y, x)
+        crown = haze(mix('#1a2c1f', '#2a4430', yrnd.random()), y, x)
+        top = haze(mix('#304c35', '#3e5e40', yrnd.random()), y, x)
+        if yrnd.random() < .6:
+            lean = yrnd.uniform(-.07, .07) * h
+            blobs = [(x + lean + yrnd.uniform(-.16, .16) * h, y - h * yrnd.uniform(.5, .95), h * yrnd.uniform(.07, .15)) for _ in range(11)]
+            veg.append('<line x1="%s" y1="%s" x2="%s" y2="%s" stroke="%s" stroke-width="%s"/>' % (f(x), f(y), f(x + lean), f(y - h * .7), tk, f(max(.8, h * .045))) +
+                       ''.join('<line x1="%s" y1="%s" x2="%s" y2="%s" stroke="%s" stroke-width="%s"/>' % (f(x), f(y - h * a_), f(x + sgn * h * .12), f(y - h * (a_ + .12)), tk, f(max(.5, h * .02))) for a_, sgn in ((.45, -1), (.55, 1))) +
+                       ''.join('<circle cx="%s" cy="%s" r="%s" fill="%s"/>' % (f(bx), f(by), f(r), crown) for bx, by, r in blobs) +
+                       ''.join('<circle cx="%s" cy="%s" r="%s" fill="%s" opacity=".55"/>' % (f(bx - r * .2), f(by - r * .3), f(r * .6), top) for bx, by, r in blobs[:4]))
+        else:
+            tiers = ''.join('<polygon points="%s"/>' % pts([(x - h * w, y - h * lo), (x, y - h * hi), (x + h * w, y - h * lo)]) for w, lo, hi in ((.13, .3, .62), (.1, .48, .8), (.07, .66, 1.02)))
+            veg.append('<line x1="%s" y1="%s" x2="%s" y2="%s" stroke="%s" stroke-width="%s"/><g fill="%s">%s</g>' % (f(x), f(y), f(x), f(y - h * .5), tk, f(max(.8, h * .04)), crown, tiers))
+        continue
     if kind == 'tree':
         if irnd.random() < .5:
             # a broadleaf: a thin trunk and a ragged crown of small clumps, taller than wide, lit a little on its upper side
@@ -580,6 +602,22 @@ far.append('<!-- the island mirrored in the flood --><g mask="url(#isleReflMask)
 far.append('<!-- mist lying on the far water, in drifts --><g filter="url(#soft)">%s</g>' % ''.join(
     '<ellipse cx="%d" cy="%d" rx="%d" ry="%d" fill="#3a4652" opacity="%s"/>' % (x, y, rx, ry, f(op)) for x, y, rx, ry, op in (
         (180, 386, 260, 9, .35), (520, 389, 300, 8, .3), (840, 384, 220, 10, .28), (1100, 391, 260, 7, .22), (1420, 388, 200, 8, .2))))
+wrnd2 = random.Random(101)
+swell = []
+for yb in (HZ + 4, HZ + 8, HZ + 13, HZ + 19, HZ + 26):  # the farther half only: the water near the machine stays calm
+    k = (yb - HZ) / 50
+    x = wrnd2.uniform(-40, 40)
+    while x < 900:
+        L = wrnd2.uniform(40, 150) * (.5 + k)
+        fade = min(1, max(0, (930 - x) / 150))  # the rough water feathers out toward the island rather than stopping
+        if not (60 < x < 520 and yb > 420) and wrnd2.random() < fade:
+            y_ = yb + wrnd2.uniform(-1.5, 1.5)
+            # the dark face of the swell under its crest, and the crest breaking white along it
+            swell.append('<ellipse cx="%s" cy="%s" rx="%s" ry="%s" fill="#070c10" opacity="%s"/>' % (f(x + L / 2), f(y_ + 1.4 + 2 * k), f(L / 2), f(1.2 + 3 * k), f((.4 + .2 * k) * fade)))
+            swell.append('<ellipse cx="%s" cy="%s" rx="%s" ry="%s" fill="#b8c6ce" opacity="%s"/>' % (f(x + L * wrnd2.uniform(.35, .6)), f(y_), f(L * wrnd2.uniform(.18, .4)), f(.5 + 1.2 * k), f(wrnd2.uniform(.3, .55) * fade)))
+        x += L + wrnd2.uniform(10, 60)
+far.append('<!-- a storm sea out in the distance: dark swell faces with their crests breaking white -->'
+           '<g filter="url(#foam)">%s</g>' % ''.join(swell))
 far.append('<!-- horizon haze: the last of the water dissolving into the rain --><rect x="0" y="%d" width="%d" height="30" fill="#2e3945" opacity=".6" filter="url(#soft6)"/>' % (HZ - 14, W))
 
 # ------------------------------------------------------------------ land layer (static): mid plain, shelf, the Generator, growth, near rock
@@ -739,13 +777,23 @@ VAT_BANDS = ''.join('<rect x="%d" y="%d" width="%d" height="3" fill="#1c2427" st
 # the feed pipe from the vat's head up into the roof housing
 gen.append('<rect x="%d" y="236" width="16" height="%d" fill="#141a1c"/><rect x="%d" y="236" width="16" height="%d" fill="none" stroke="%s" stroke-width=".8" opacity=".5"/>' % (cx0 - 8, VAT[1] - 16 - 236, cx0 - 8, VAT[1] - 16 - 236, METAL_WET) +
            ''.join('<rect x="%d" y="%d" width="22" height="4" fill="#2a3437"/>' % (cx0 - 11, y) for y in (240, 254)))
-# the roof housing on top, a banded header tank lying on it and a hopper that feeds the vat
+# the roof housing on top, a header tank lying on it with its breather
 gen.append('<polygon points="%s" fill="url(#plateG)" filter="url(#plateMetal)"/><polyline points="%s" fill="none" stroke="%s" stroke-width="1.2" opacity=".6"/>' % (pts(TURRET), pts(TURRET[:3]), METAL_WET))
-gen.append('<!-- the header tank --><rect x="%d" y="188" width="100" height="28" rx="14" fill="#1a2225"/><line x1="%d" y1="190" x2="%d" y2="190" stroke="%s" stroke-width="1.2" opacity=".6"/>' % (GX - 64, GX - 52, GX + 24, METAL_WET) +
-           ''.join('<rect x="%d" y="187" width="5" height="30" fill="#0e1315"/>' % x for x in (GX - 44, GX - 16, GX + 12)) +
-           ''.join('<rect x="%d" y="214" width="8" height="4" fill="#2a3437"/>' % x for x in (GX - 50, GX + 22)))
-gen.append('<!-- the hopper --><polygon points="%s" fill="#141a1c"/><polyline points="%s" fill="none" stroke="%s" stroke-width="1" opacity=".6"/><rect x="%d" y="208" width="10" height="10" fill="#141a1c"/>' % (
-    pts([(GX + 42, 180), (GX + 76, 180), (GX + 64, 208), (GX + 54, 208)]), pts([(GX + 42, 180), (GX + 76, 180)]), METAL_WET, GX + 54))
+# the header tank: a pressure cylinder with dished ends, lying on two saddles on the roof, holding the medium the vat
+# is fed from; its breather rises from the far end as a stack that turns down in a gooseneck against the rain
+TK0, TK1 = GX - 62, GX + 34  # the tank's ends
+gen.append('<!-- the saddles under the tank --><polygon points="%s" fill="#141a1c"/><polygon points="%s" fill="#141a1c"/>' % (
+    pts([(TK0 + 10, 216), (TK0 + 16, 204), (TK0 + 30, 204), (TK0 + 36, 216)]), pts([(TK1 - 36, 216), (TK1 - 30, 204), (TK1 - 16, 204), (TK1 - 10, 216)])))
+lin([(0, '#3a474b', 1), (.3, '#222b2e', 1), (.75, '#141a1c', 1), (1, '#0c1011', 1)], 0, 186, 0, 214, units=True, id='tankG')
+gen.append('<!-- the header tank --><rect x="%d" y="186" width="%d" height="28" fill="url(#tankG)"/>' % (TK0, TK1 - TK0) +
+           '<ellipse cx="%d" cy="200" rx="6" ry="14" fill="#1a2225"/><ellipse cx="%d" cy="200" rx="6" ry="14" fill="#1f282b"/>' % (TK0, TK1) +
+           ''.join('<rect x="%d" y="185" width="4" height="30" fill="#10161a"/>' % x for x in (TK0 + 16, (TK0 + TK1) // 2 - 2, TK1 - 20)) +
+           '<line x1="%d" y1="188.5" x2="%d" y2="188.5" stroke="%s" stroke-width="1.1" opacity=".55"/>' % (TK0 + 2, TK1 - 2, METAL_WET) +
+           '<!-- a manway on its crown --><rect x="%d" y="181" width="14" height="6" fill="#1c2427"/><rect x="%d" y="179" width="18" height="3" fill="#2a3437"/>' % (TK0 + 34, TK0 + 32))
+SX = GX + 60  # the breather stack
+gen.append('<!-- the breather: a pipe from the tank end into a stack that turns down in a gooseneck --><rect x="%d" y="196" width="%d" height="8" fill="#141a1c"/><rect x="%d" y="194" width="4" height="12" fill="#2a3437"/>' % (TK1 + 4, SX - TK1 - 4, SX - 8) +
+           '<path d="M%d 216 V 172 A 9 9 0 0 1 %d 172 V 182" fill="none" stroke="#141a1c" stroke-width="9"/><path d="M%d 214 V 172 A 11.5 11.5 0 0 1 %d 170" fill="none" stroke="%s" stroke-width="1" opacity=".55"/>' % (SX, SX + 18, SX - 3.5, SX + 11, METAL_WET) +
+           '<rect x="%d" y="180" width="13" height="4" fill="#2a3437"/><rect x="%d" y="209" width="15" height="4" fill="#2a3437"/>' % (SX + 12, SX - 7))
 gen.append(''.join('<circle cx="%d" cy="232" r="1.3" fill="#56666b"/>' % x for x in range(GX - 60, GX + 60, 12)))
 # Weathering: a prototype run through storm after storm. Rain runoff has left grime in vertical streaks,
 # rust blooms toward the foot and bleeds in runs from the rivets, and the plates shine wet in streaks.
@@ -774,7 +822,7 @@ lin([(0, '#000', 0), (1, '#000', .45)], 0, 420, 0, 498, units=True, id='footShad
 # wet highlights along the upper edges that face the sky: the girder bands, the roof, the tank
 gen.append('<!-- wet highlights on the upper edges --><g stroke="#a9bcc4" fill="none" stroke-linecap="round">'
            '<line x1="%d" y1="295.4" x2="%d" y2="295.4" stroke-width=".7" opacity=".35"/><line x1="%d" y1="401.4" x2="%d" y2="401.4" stroke-width=".7" opacity=".3"/>'
-           '<polyline points="%s" stroke-width=".9" opacity=".4"/><path d="M%d 189.2 H %d" stroke-width="1" opacity=".45"/><polyline points="%s" stroke-width=".8" opacity=".35"/></g>' % (
+           '<polyline points="%s" stroke-width=".9" opacity=".4"/><path d="M%d 187.2 H %d" stroke-width="1" opacity=".45"/><polyline points="%s" stroke-width=".8" opacity=".35"/></g>' % (
                GX - 96, GX + 88, GX - 96, GX + 88, pts([(TURRET[1][0] + 2, TURRET[1][1] + .6), (TURRET[2][0] - 2, TURRET[2][1] + .6)]), GX - 52, GX + 24, pts([(ANNEX[2][0] + 2, ANNEX[2][1] + .6), (ANNEX[3][0], ANNEX[3][1] + .6)])))
 # the vat's light spilling onto the metal around it: strongest on the plates beside the window, gone by the corners
 rad([(0, GLOW_MID, .22), (.3, GLOW_MID, .1), (.65, GLOW_EDGE, .03), (1, GLOW_EDGE, 0)], id='vatSpill')
@@ -1103,6 +1151,37 @@ for i in range(400):
                     f(run_), f(per), f(ph), f(per), f(ph), spindles))
 glow.append('<!-- the flood current: pale lines drifting downstream --><g>%s</g>' % ''.join(cur_))
 glow.append('<!-- rain rings on the floodwater --><g>%s</g>' % ''.join(rings))
+# whitecaps breaking out in the distance: a crest turns white, throws a puff of spray downwind, and falls back
+rad([(0, '#e6eef2', .8), (.5, '#c9d6dc', .35), (1, '#c9d6dc', 0)], id='sprayG')
+wc, wrnd3 = [], random.Random(103)
+while len(wc) < 64:
+    x, y = wrnd3.uniform(-20, 920), HZ + 2 + wrnd3.random() ** 1.4 * 30
+    if (60 < x < 600 and y > 412) or wrnd3.random() > min(1, (930 - x) / 150):
+        continue  # none right behind the machine's foot, and fewer toward the island
+    k = (y - HZ) / 50
+    L = lerp(8, 36, k) * wrnd3.uniform(.7, 1.4)
+    per = wrnd3.choice((3, 4, 6, 8))
+    ph = wrnd3.uniform(0, per)
+    drift = lerp(26, 62, (y - HZ) / (H - HZ)) * 1.8  # its foam rides the water at the current's speed (see current())
+    wc.append('<g opacity="0"><animate attributeName="opacity" values="0;.85;.7;0;0" keyTimes="%s" dur="%ss" begin="-%ss" repeatCount="indefinite"/>'
+              '<animateTransform attributeName="transform" type="translate" values="0 0;%s 0;%s 0" keyTimes="%s" dur="%ss" begin="-%ss" repeatCount="indefinite"/>'
+              '<polygon points="%s" fill="#eef4f6"/>'
+              '<ellipse cx="%s" cy="%s" rx="%s" ry="%s" fill="url(#sprayG)" opacity=".7"><animate attributeName="cy" values="%s;%s;%s" keyTimes="%s" dur="%ss" begin="-%ss" repeatCount="indefinite"/></ellipse></g>' % (
+                  kt(per, .15, .6, 1.8), f(per), f(ph), f(drift), f(drift), kt(per, 1.8), f(per), f(ph),
+                  pts([(x, y), (x + L * .3, y - .8 - 1.4 * k), (x + L, y), (x + L * .4, y + .6 + .8 * k)]),
+                  f(x + L * .7), f(y - 1), f(L * .8), f(2 + 4 * k), f(y - 1), f(y - 3 - 5 * k), f(y - 3 - 5 * k), kt(per, 1.2), f(per), f(ph)))
+glow.append('<!-- whitecaps breaking out in the distance, spray blowing off them downwind --><g>%s</g>' % ''.join(wc))
+# spindrift: sheets of spray torn off the far water and driven along the horizon by the wind
+sd = []
+for i in range(9):
+    x, y = wrnd3.uniform(-100, 640), HZ + wrnd3.uniform(-2, 12)
+    per = (3, 4, 6)[i % 3]
+    ph = wrnd3.uniform(0, per)
+    L = wrnd3.uniform(60, 150)
+    sd.append('<ellipse cx="%s" cy="%s" rx="%s" ry="%s" fill="url(#sprayG)" opacity="0"><animate attributeName="opacity" values="0;.5;0" dur="%ss" begin="-%ss" repeatCount="indefinite"/>'
+              '<animateTransform attributeName="transform" type="translate" values="0 0;%s 0" dur="%ss" begin="-%ss" repeatCount="indefinite"/></ellipse>' % (
+                  f(x), f(y), f(L / 2), f(wrnd3.uniform(1.5, 3)), f(per), f(ph), f(40 * per), f(per), f(ph)))
+glow.append('<!-- spindrift driven along the horizon --><g>%s</g>' % ''.join(sd))
 # lodged pods glowing faintly
 for i, (x, y) in enumerate(LODGED):
     glow.append('<circle cx="%s" cy="%s" r="7" fill="url(#glowPod)" opacity=".2"><animate attributeName="opacity" values=".12;.3;.15;.12" keyTimes="0;.4;.7;1" dur="%ss" begin="-%ss" repeatCount="indefinite" %s%s/></circle>' % (
@@ -1264,7 +1343,7 @@ def drift(rr):
                 fate = 'catch'  # caught on the slab's upstream end: it stops, and washes up onto the rock
                 out.append((t, x, y))
                 t += .3
-                x, y = sl[0] - sl[2] + 8, sl[1] - sl[3] * .75
+                x, y = max(sl[0] - sl[2] + 8, x + 4), sl[1] - sl[3] * .75  # it only ever washes forward onto the rock
                 out.append((t, x, y))
                 break
             y += (4 if y > sl[1] - sl[3] * .3 else -4) * 1.0  # it parts around the rock
@@ -1335,9 +1414,6 @@ def build_seeds(seed=41, quick=False):
                 q = hatch_pos(hp, t)
                 if q and math.hypot(a[0] - q[0], a[1] - q[1]) < 12 + 20 * a[3]:
                     return False
-            q = nb_pos(t)
-            if q and math.hypot(a[0] - q[0], a[1] - q[1]) < 20 + 20 * a[3]:
-                return False
             for (sx, sy, land, own) in sprout_sim:
                 if .3 <= (t - land) % T <= 12.5:
                     sc_ = lerp(.84, 1.4, (sy - HZ) / (H - HZ))
@@ -1443,7 +1519,6 @@ def build_seeds(seed=41, quick=False):
         if t < BIRTH_D - .45:
             angs_land = head
     angs.append(0)  # point first off the chute, upright after
-    sim.append((o, ts[:-1], xs[:-1], ys[:-1], BIRTH_D, 'birth'))
     b = onset_begin(T, o)
     kts = ';'.join(('%.5f' % (t / T)).rstrip('0').rstrip('.') for t in ts)
     birth_svg = ('<!-- the birth seed: heavy and husked, flung from the chute in the surge onto the shelf -->'
@@ -1467,7 +1542,6 @@ def build_seeds(seed=41, quick=False):
                     lodged.append((xs_[-1], ys_[-1] + 1, (o + ts_[-2]) % T))
                     sprout_sim.append((xs_[-1], ys_[-1] + 1, o + ts_[-2], len(sim) - 1))
                 break
-    out.append(birth_svg)
 
     # every pair of seeds on the water together keeps apart, and none drifts through a standing sprout
     close = {}
@@ -1484,7 +1558,7 @@ def build_seeds(seed=41, quick=False):
                     close[(i, j)] = (d, t)
     clashes = ['%s and %s: %s apart at t %s' % (sim[i][5], sim[j][5], f(d), f(t)) for (i, j), (d, t) in close.items()]
     fates = {}
-    for rec in sim[1:]:
+    for rec in sim:
         fates[rec[5]] = fates.get(rec[5], 0) + 1
     return out, lodged, hatch, clashes, fates
 
@@ -1504,7 +1578,7 @@ def flash_anim(period, onset, peak):
         f(peak), f(peak * .18), f(peak * .75), kt(period, .04, .1, .16, .45), f(period), onset_begin(period, onset))
 
 
-RIM_EDGES = [TURRET[1:3], HOUSING[1:5], ANNEX[1:4], [(GX + 104, 188 - 8), (GX + 136, 188 - 8)], [(GX + 42, 180), (GX + 76, 180)], [(GX - 50, 188), (GX + 22, 188)]]
+RIM_EDGES = [TURRET[1:3], HOUSING[1:5], ANNEX[1:4], [(GX + 104, 188 - 8), (GX + 136, 188 - 8)], [(TK0 + 4, 186), (TK1 - 4, 186)], [(GX + 52, 172), (GX + 60, 164), (GX + 72, 164)]]
 def _taper(e, w):
     # a lit edge as a thin sliver, widest in its middle and gone at its ends
     L = [(a, b) for a, b in zip(e, e[1:])]
@@ -1565,7 +1639,7 @@ print('seeds: %d on the flood %s, %d clashes' % (sum(FATES.values()), FATES, len
 pods.extend(seed_svg)
 glow.append('<g transform="%s">%s</g>' % (MT, ''.join(mglow)))  # the machine's own glows, in its frame
 
-# ------------------------------------------------------------------ life layer (animated): the birth seed and the newborn, hatchlings, and sprouts rising where pods lodge
+# ------------------------------------------------------------------ life layer (animated): hatchlings, and sprouts rising where pods lodge
 life = []
 
 
@@ -1579,60 +1653,8 @@ def rot_at(vals, times, begin=None):
     return at(vals, times, 'transform', begin).replace('<animate attributeName="transform"', '<animateTransform attributeName="transform" type="rotate"')
 
 
-# the birth seed at rest: it lands, glows, splits along its seam, and the newborn climbs out of it
-SPLIT0, SPLIT1 = B0 + 1.2, B0 + 1.7
-life.append('<!-- light splashing off the rock where the birth seed lands --><ellipse cx="%s" cy="%s" rx="30" ry="7" fill="url(#glowWash)" opacity="0">%s</ellipse>' % (f(hx), f(hy), at((0, 0, .9, 0, 0), (B0 - .45, B0 - .4, B0 + .4))))
-life.append('<!-- the birth seed at rest on the shelf: it glows, splits along its seam, and is left empty -->'
-            '<g transform="translate(%s %s)"><g opacity="0">%s' % (f(hx), f(hy), at((0, 0, 1, 1, 0, 0), (B0, B0 + .02, B0 + 7, B0 + 8.5))) +
-            '<circle cy="-12" r="22" fill="url(#glowPod)" opacity="0">%s</circle>' % at((0, .7, .7, .9, .6, 1, .3, 0, 0), (B0, B0 + .4, B0 + .7, B0 + 1.0, SPLIT0, SPLIT1 + .6, B0 + 4.5)) +
-            '<path d="M0 -24 L 0 .5" stroke="#4d4526" stroke-width="1.4">%s</path>' % at((1, 1, 0, 0), (SPLIT0 - .6, SPLIT0 - .5)) +
-            '<g><path d="%s" fill="#4d4526" stroke="#8a7a44" stroke-width=".8" stroke-opacity="0">%s</path>%s%s</g>' % (HUSK_L, at((0, 0, 1, 1), (SPLIT0, SPLIT0 + .1), 'stroke-opacity'), '<path d="%s" fill="#b8a878" opacity="0" transform="translate(%s 1) scale(.72)">%s</path>' % (HUSK_L, '-.8', at((0, 0, .75, .75), (SPLIT0, SPLIT0 + .3))), rot_at(('0 0 0', '0 0 0', '-72 0 0', '-72 0 0'), (SPLIT0, SPLIT1))) +
-            '<g><path d="%s" fill="#4d4526" stroke="#8a7a44" stroke-width=".8" stroke-opacity="0">%s</path>%s%s</g>' % (HUSK_R, at((0, 0, 1, 1), (SPLIT0, SPLIT0 + .1), 'stroke-opacity'), '<path d="%s" fill="#b8a878" opacity="0" transform="translate(%s 1) scale(.72)">%s</path>' % (HUSK_R, '.8', at((0, 0, .75, .75), (SPLIT0, SPLIT0 + .3))), rot_at(('0 0 0', '0 0 0', '72 0 0', '72 0 0'), (SPLIT0, SPLIT1))) +
-            '<path d="%s%s" stroke="#8a7a44" stroke-width=".8" fill="none">%s</path>' % (HUSK_L.replace(' Z', ''), HUSK_R.replace(' Z', ''), at((1, 1, 0, 0), (SPLIT0, SPLIT0 + .1))) +
-            '<path d="M0 -19 L 0 0" stroke="%s" stroke-width="1" stroke-linecap="round" opacity="0">%s</path>' % (GLOW_CORE, at((0, 0, 1, 0, 0), (SPLIT0 - .6, SPLIT0, SPLIT1))) +
-            '<path d="%s" fill="#5b7436" stroke="#8fb050" stroke-width=".7">%s%s</path></g></g>' % (HUSK_CAP, at((1, 1, 0, 0), (SPLIT0 + .1, SPLIT0 + .5)), rot_at(('0 0 -24', '0 0 -24', '-40 0 -24', '-40 0 -24'), (SPLIT0, SPLIT0 + .5))))
-
-# the newborn: a tadpole-like larva, bigger than the hatchlings in the flood. It rises out of the
-# split husk, looks about, wriggles down the shelf, slips into the water and swims off downstream,
-# then dives
-NBS = 1.5
-path_ = NB_LAND + NB_SWIM[1:]
-seg = [math.hypot(b[0] - a[0], b[1] - a[1]) for a, b in zip(path_, path_[1:])]
-kt_nb = [APPEAR, CRAWL0]
-tt_ = CRAWL0
-for i, d in enumerate(seg):
-    tt_ += d / (CRAWL_V if i < len(NB_LAND) - 1 else NB_SWIM_V)
-    kt_nb.append(tt_)
-path_ = path_ + [(path_[-1][0] + NB_SWIM_V * (GONE - DIVE), path_[-1][1] + .3)]  # it dives on the move
-kt_nb.append(GONE)
-motion = '<animateMotion values="%s" keyTimes="%s" dur="%ss" begin="%s" repeatCount="indefinite" calcMode="linear"/>' % (
-    ';'.join('%s,%s' % (f(x), f(y)) for x, y in [path_[0], path_[0], path_[0]] + path_[1:] + [path_[-1]]), kt(T, *kt_nb), f(T), onset_begin(T, S))
-# it heads the way it goes: level on the water, nose down the slope on the shelf
-heads = [math.degrees(math.atan2(b[1] - a[1], b[0] - a[0])) * .6 for a, b in zip(path_, path_[1:])]
-turn = at(['%s 0 0' % f(v) for v in [0, 0, 0, -10, 12, 0] + heads + [heads[-1], 0]], [APPEAR, EMERGE, EMERGE + .8, EMERGE + 1.6, CRAWL0 - .2] + kt_nb[1:-1] + [kt_nb[-1]], 'transform').replace('<animate attributeName="transform"', '<animateTransform attributeName="transform" type="rotate"')
-# it wags slowly as it looks about, fast as it wriggles and swims
-wag_t, wag_v = [APPEAR], ['0 -4 0']
-t_ = EMERGE
-while t_ < GONE - .2:
-    per = .6 if t_ < CRAWL0 else .3
-    wag_t += [t_, t_ + per / 2]
-    wag_v += ['-22 -4 0', '22 -4 0']
-    t_ += per
-wag = at(['0 -4 0'] + wag_v + ['0 -4 0', '0 -4 0'], wag_t + [GONE], 'transform').replace('<animate attributeName="transform"', '<animateTransform attributeName="transform" type="rotate"')
-grow = '<animateTransform attributeName="transform" type="scale" values=".3;.3;1;1;1 .2;1 .2" keyTimes="%s" dur="%ss" begin="%s" repeatCount="indefinite"/>' % (kt(T, APPEAR, EMERGE, DIVE, GONE), f(T), onset_begin(T, S))
-rise = '<animateTransform attributeName="transform" type="translate" values="0 -8;0 -8;0 -18;0 -14;0 -14;0 -3;0 -3;0 -8" keyTimes="%s" dur="%ss" begin="%s" repeatCount="indefinite"/>' % (kt(T, APPEAR, EMERGE, EMERGE + .5, CRAWL0 - .3, CRAWL0 + .4, GONE), f(T), onset_begin(T, S))
-# in the water only its top shows, and a wake spreads behind it
-defs.append('<clipPath id="swimClip" clipPathUnits="userSpaceOnUse"><polygon points="%s"/></clipPath>' % pts([(0, 0), (W, 0), (W, WATER_Y + 1.5), (NB_SWIM[0][0] - 8, WATER_Y + 1.5), (NB_SWIM[0][0] - 8, 700), (0, 700)]))
+# (the birth on the shelf, a heavy seed flung from the chute that split and let out a newborn, was cut: Nick 2026-09-23)
 WAKE = '<path d="M-9 0 Q -22 -1.2 -44 -6 M-9 2 Q -22 3.5 -44 10" stroke="#a9bcc2" stroke-width="1" fill="none" opacity=".5" stroke-linecap="round" stroke-dasharray="5 2 8 3 4 4 6 5"/><path d="M-7 1 Q -12 .6 -16 -.4" stroke="#c4d2d6" stroke-width="1.2" fill="none" opacity=".5" stroke-linecap="round"/>'
-wake = ('<g opacity="0">%s' + WAKE + '</g>') % at((0, 0, 1, 1, 0, 0), (ENTRY, ENTRY + .3, DIVE, DIVE + .3))
-life.append('<!-- the newborn: a leafy larva rising out of the split seed, wriggling down the shelf and swimming off downstream until it dives -->'
-            '<g clip-path="url(#swipClip)"><g opacity="0">%s%s' % (motion, at((0, 0, 1, 1, 0, 0), (APPEAR, APPEAR + .4, DIVE + .1, GONE))) +
-            '<g>%s<g transform="scale(%s)"><g>%s<g>%s%s%s</g></g></g></g></g></g>' % (rise, f(NBS), grow, turn, wake, larva_art(wag)))
-life[-1] = life[-1].replace('swipClip', 'swimClip')
-# its splash as it slips in, and the ring where it dives
-for (x_, y_, t0_) in ((NB_SWIM[0][0], WATER_Y, ENTRY), (NB_SWIM[-1][0], WATER_Y, DIVE + .15)):
-    life.append('<ellipse cx="%s" cy="%s" rx="1" ry=".4" fill="none" stroke="#b8c8cc" stroke-width="1.4" opacity="0">%s%s%s</ellipse>' % (
-        f(x_), f(y_), at((1, 1, 2, 18, 18), (t0_, t0_ + .05, t0_ + 1), attr='rx'), at((.4, .4, .6, 4.5, 4.5), (t0_, t0_ + .05, t0_ + 1), attr='ry'), at((0, 0, .7, 0, 0), (t0_, t0_ + .05, t0_ + 1))))
 
 # hatchlings: a larva swims out of each pod that split on the flood, and dives
 for n, (x0, y0, th) in enumerate(HATCH):
@@ -1680,6 +1702,11 @@ for (x, y, L) in LODGE:
 fr = []
 FROND_DRIPS = []  # drops falling from the frond tips, drawn outside the swinging fronds
 FROND_BASES = [(1262, 556, 88, -14), (1290, 552, 104, 2), (1348, 550, 60, 26), (1418, 551, 96, -4), (1452, 554, 66, 20)]  # a few, not a bed
+# the same plant taking hold on the slabs where the first growth is, smaller with distance: seeds that caught there earlier
+FROND_BASES += [(1128, 511, 44, -10), (1146, 510, 56, 4), (1166, 509, 36, 22),
+                (1402, 495, 34, -12), (1418, 494, 44, 6), (1434, 495, 28, 20),
+                (852, 499, 30, -8), (866, 498, 38, 10),
+                (992, 482, 22, -6), (1002, 481, 28, 12)]
 for i, (x, y, h, a) in enumerate(FROND_BASES):
     tip = (x + math.sin(math.radians(a)) * h + h * .18, y - math.cos(math.radians(a)) * h)
     wdt = h * .09
@@ -1705,9 +1732,9 @@ for i, (x, y, h, a) in enumerate(FROND_BASES):
                            '<animate attributeName="opacity" values=".7;.7;0;0" keyTimes="0;%s;%s;1" dur="%ss" begin="-%ss" repeatCount="indefinite"/></ellipse>' % (
                                f(rx_), f(ry_), f(fall_), f(fall_), f(tf / dp), f(dp), f(i * .37), f(tf / dp * .9), f(tf / dp), f(dp), f(i * .37)))
     fr.append('<!-- a young frond on the near rise --><g><animateTransform attributeName="transform" type="rotate" values="%s %s %s;%s %s %s;%s %s %s" keyTimes="0;.3;1" dur="%ss" begin="-%ss" repeatCount="indefinite" calcMode="spline" keySplines=".3 0 .3 1;.4 0 .6 1"/>'
-              '<path d="%s" fill="url(#frondG%d)" stroke="%s" stroke-width="2.6" stroke-opacity=".35" stroke-linejoin="round"/><path d="%s" fill="#040706" opacity=".35"/><path d="%s" stroke="%s" stroke-width="1" fill="none" opacity=".6"/><path d="%s" stroke="#a9bcc2" stroke-width="1" fill="none" opacity=".4" stroke-dasharray="%s"/>%s</g>' % (
+              '<path d="%s" fill="url(#frondG%d)" stroke="%s" stroke-width="%s" stroke-opacity=".35" stroke-linejoin="round"/><path d="%s" fill="#040706" opacity=".35"/><path d="%s" stroke="%s" stroke-width="1" fill="none" opacity=".6"/><path d="%s" stroke="#a9bcc2" stroke-width="1" fill="none" opacity=".4" stroke-dasharray="%s"/>%s</g>' % (
                   f(-2), f(x), f(y), f(amp), f(x), f(y), f(-2), f(x), f(y), f(per), f(i * .37),
-                  d, i, base_c, far_half, rib, mix(GREEN, '#0a1210', .45), d[:d.index(' Q ', d.index(' Q ') + 1)], ' '.join(f(v) for v in (12 + 3 * i, 7, 20, 10 + i, 30)), drip_))  # wet along its lit edge, in patches
+                  d, i, base_c, f(2.6 * h / 90), far_half, rib, mix(GREEN, '#0a1210', .45), d[:d.index(' Q ', d.index(' Q ') + 1)], ' '.join(f(v) for v in (12 + 3 * i, 7, 20, 10 + i, 30)), drip_))  # wet along its lit edge, in patches
 fr.append('<!-- drops falling from the frond tips -->' + ''.join(FROND_DRIPS))
 fr.append('<!-- three lodged pods at the frond feet -->' + ''.join(
     '<circle cx="%d" cy="%d" r="10" fill="url(#glowPod)" opacity=".25"/><g transform="translate(%d %d) rotate(%d) scale(.36) translate(0 13)">%s</g>' % (x, y, x, y, a, LODGED_POD) for x, y, a in [(1276, 552, -70), (1334, 548, 76), (1418, 549, -64)]))
@@ -1786,7 +1813,7 @@ top = ['<rect width="%d" height="%d" fill="url(#vignette)"/>' % (W, H), '<rect w
 def layer(id_, body, role=False):
     head = '<svg class="layer" id="layer-%s" viewBox="0 0 %d %d" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice"' % (id_, W, H)
     if role:
-        head += ' role="img" aria-labelledby="scene-title scene-desc">\n  <title id="scene-title">The Genesis Prototype on Floria</title>\n  <desc id="scene-desc">A heavy industrial machine on wet rock lets glowing seeds down a chute into a flood in a storm; the current spreads them across the plain, where some split and tadpole-like larvae swim out and others catch on rock and sprout; once a cycle a heavy seed is flung onto the rock beside the machine and a newborn larva wriggles out and swims away; far off a colossal tree rises from an island of young forest, its canopy spread under the clouds.</desc>\n'
+        head += ' role="img" aria-labelledby="scene-title scene-desc">\n  <title id="scene-title">The Genesis Prototype on Floria</title>\n  <desc id="scene-desc">A heavy industrial machine on wet rock lets glowing seeds down a chute into a flood in a storm; the current spreads them across the plain, where some split and tadpole-like larvae swim out and others catch on rock and sprout; out in the distance the storm whips the water into whitecaps; far off a colossal tree rises from an island of young forest, its canopy spread under the clouds.</desc>\n'
     else:
         head += ' aria-hidden="true">\n'
     return head + body + '\n</svg>\n'
