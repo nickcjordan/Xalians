@@ -54,6 +54,7 @@ import {
   DRAFT_MAX_ROSTER_PASSES,
   DRAFT_OFFER_SIZE,
   DRAFT_SEED_PREFIX,
+  DRAFT_SEEDS_PER_SPECIES,
   SQUAD_SIZE,
   ENCOUNTER_STALL_ROUNDS,
   ENCOUNTER_XP,
@@ -110,6 +111,7 @@ export {
   DEGRADE_FACTOR,
   DESPERATE_STRIKE_RECOIL,
   DRAFT_OFFER_SIZE,
+  DRAFT_SEEDS_PER_SPECIES,
   ENCOUNTER_STALL_ROUNDS,
   FRIGHTENED_OUTPUT_FACTOR,
   LIKELIHOOD_PERCENT,
@@ -290,9 +292,11 @@ export function draftAnswers(u: Unit): DraftAnswers {
 export type OfferEntry = {
   /** Its place in the offer, 0 to DRAFT_OFFER_SIZE - 1: what a draft command names. */
   index: number;
-  /** Its place in the candidate draw; the record's seed carries it. */
+  /** Its place in the candidate draw: the species' place in the shuffled roster, plus 32 per later pass. */
   candidate: number;
   species: string;
+  /** Which of the species' seeds it is, `j` in `${DRAFT_SEED_PREFIX}-<runSeed>-<species>-<j>` (contract decision 53). */
+  attempt: number;
   seed: string;
   record: CreatureRecord;
   unit: Unit;
@@ -318,29 +322,45 @@ export function draftOrder(seed: number): string[] {
   }
   return order;
 }
-/** Candidate `k` of a run seed's draw, read by the table; null when it fails decision 37 and is never offered. */
+/** The seed of try `j` for one species of a run seed's draw (contract decision 53). */
+export function draftSeed(seed: number, species: string, j: number): string {
+  return `${DRAFT_SEED_PREFIX}-${seed >>> 0}-${species}-${j}`;
+}
+/**
+  Candidate `k` of a run seed's draw (contract decision 53): the species at `k` in the shuffled
+  roster, as the first of its DRAFT_SEEDS_PER_SPECIES seeds for this pass whose creature passes
+  decision 37. Pass `p = floor(k / 32)` tries `j` from `p * DRAFT_SEEDS_PER_SPECIES`, so a later
+  pass never repeats a creature. Null when none passes: the species is skipped on this pass.
+*/
 export function draftCandidate(
   seed: number,
   k: number,
   order = draftOrder(seed)
 ): Omit<OfferEntry, "index"> | null {
   const species = order[k % order.length];
-  const candidateSeed = `${DRAFT_SEED_PREFIX}-${seed >>> 0}-${k}`;
-  const record = generate(species, candidateSeed);
-  const unit = readCompanion(record, "X");
-  return everyRoundHarms(unit).length
-    ? { candidate: k, species, seed: candidateSeed, record, unit, answers: draftAnswers(unit) }
-    : null;
+  const pass = Math.floor(k / order.length);
+  for (let t = 0; t < DRAFT_SEEDS_PER_SPECIES; t++) {
+    const attempt = pass * DRAFT_SEEDS_PER_SPECIES + t;
+    const candidateSeed = draftSeed(seed, species, attempt);
+    const record = generate(species, candidateSeed);
+    const unit = readCompanion(record, "X");
+    if (everyRoundHarms(unit).length)
+      return { candidate: k, species, attempt, seed: candidateSeed, record, unit, answers: draftAnswers(unit) };
+  }
+  return null;
 }
 const offers = new Map<number, OfferEntry[]>();
 /**
-  The draft offer for a run seed (contract decisions 45 and 46), built constructively:
+  The draft offer for a run seed (contract decisions 45, 46 and 53), built constructively:
 
     1. The roster is shuffled by a stream seeded from the run seed. Candidate `k` is the
        species at `k` in that order (a second pass over the roster only if the first runs
-       out), generated from `powerworks-draft-<runSeed>-<k>` on the canonical release.
-    2. A candidate that fails decision 37 (no every-round harm after its signature) is never
-       offered, and no species is offered twice.
+       out): the first of up to DRAFT_SEEDS_PER_SPECIES creatures, generated from
+       `powerworks-draft-<runSeed>-<species>-<j>` on the canonical release, that passes
+       decision 37 (contract decision 53). A creature that fails is never offered; a species
+       is skipped on that pass only when none of its tries passes. No species is offered twice.
+    2. A species offers one candidate per pass, so the guarantees choose between species,
+       never between creatures of one species.
     3. Each guarantee (a bind, a displace, a helpful move it can aim at a squadmate) is filled
        from the first qualifying candidate in draw order, unless an earlier pick already
        carries it; then the rest fill in draw order. The whole offer is never rerolled.

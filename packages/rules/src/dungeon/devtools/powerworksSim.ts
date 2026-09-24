@@ -26,7 +26,9 @@ import {
   createRun,
   damagePreview,
   damaging,
+  draftCandidate,
   draftOffer,
+  draftOrder,
   everyRoundHarms,
   guardedThreat,
   helpful,
@@ -50,7 +52,12 @@ import {
   type Trigger,
   type Unit,
 } from "../index.ts";
-import { DRAFT_OFFER_SIZE, LIKELIHOOD_PERCENT, SQUAD_SIZE } from "../levers.ts";
+import {
+  DRAFT_OFFER_SIZE,
+  DRAFT_SEEDS_PER_SPECIES,
+  LIKELIHOOD_PERCENT,
+  SQUAD_SIZE,
+} from "../levers.ts";
 import {
   generateXalian,
   getSpeciesTemplates,
@@ -753,6 +760,70 @@ export function formatPass6(stats: SimStats, rows = 12): string {
     "",
     "least ordered acts carried in at least 10 runs: orders (runs carried, orders per run)",
     ...least.map((a) => `  ${a.name}: ${a.orders} (${a.carried}, ${a.rate.toFixed(1)})`),
+  ];
+  return lines.join("\n");
+}
+
+/**
+  The offer survey (contract decision 53): over `seeds` run seeds, how often each species is
+  offered, and, for every species on the first pass over the roster whether or not the offer
+  reached it, whether any of its DRAFT_SEEDS_PER_SPECIES tries passes decision 37 and which try
+  did. It reads no game state beyond the offer.
+*/
+export type OfferSurvey = {
+  seeds: number;
+  /** species -> times offered. */
+  offers: Record<string, number>;
+  /** species -> first-pass tries: seeds where some try passed, the sum of the passing try's index, and seeds where none did. */
+  tries: Record<string, { passed: number; attemptSum: number; skipped: number }>;
+  /** The furthest candidate any offer drew, and how many offers drew past the first pass. */
+  furthest: number;
+  pastFirstPass: number;
+};
+export function surveyOffer(seeds = 400, first = 1): OfferSurvey {
+  const survey: OfferSurvey = { seeds, offers: {}, tries: {}, furthest: 0, pastFirstPass: 0 };
+  for (const t of getSpeciesTemplates()) {
+    survey.offers[t.key] = 0;
+    survey.tries[t.key] = { passed: 0, attemptSum: 0, skipped: 0 };
+  }
+  for (let seed = first; seed < first + seeds; seed++) {
+    const order = draftOrder(seed);
+    const offer = draftOffer(seed);
+    for (const e of offer) survey.offers[e.species]++;
+    const last = Math.max(...offer.map((e) => e.candidate));
+    survey.furthest = Math.max(survey.furthest, last);
+    if (last >= order.length) survey.pastFirstPass++;
+    for (let k = 0; k < order.length; k++) {
+      const c = draftCandidate(seed, k, order);
+      const row = survey.tries[order[k]];
+      if (c) {
+        row.passed++;
+        row.attemptSum += c.attempt;
+      } else row.skipped++;
+    }
+  }
+  return survey;
+}
+export function formatOfferSurvey(survey: OfferSurvey): string {
+  const rows = Object.entries(survey.offers).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
+  const counts = rows.map(([, n]) => n).sort((a, b) => a - b);
+  const mid = counts.length / 2;
+  const median = counts.length % 2 ? counts[Math.floor(mid)] : (counts[mid - 1] + counts[mid]) / 2;
+  const lines = [
+    `offers over ${survey.seeds} seeds: min ${counts[0]}, median ${median}, max ${counts[counts.length - 1]}, total ${counts.reduce((a, b) => a + b, 0)}; furthest candidate ${survey.furthest}, offers past the first pass ${survey.pastFirstPass}`,
+    `species under a third of the median (${(median / 3).toFixed(1)}): ${
+      rows
+        .filter(([, n]) => n < median / 3)
+        .map(([k, n]) => `${k} ${n}`)
+        .join(", ") || "none"
+    }`,
+    `species: offered, first-pass seeds with a pass within ${DRAFT_SEEDS_PER_SPECIES} tries, skipped, mean passing try`,
+    ...rows.map(([k, n]) => {
+      const t = survey.tries[k];
+      return `  ${k.padEnd(12)} ${String(n).padStart(4)}  ${String(t.passed).padStart(4)}  ${String(t.skipped).padStart(4)}  ${
+        t.passed ? (t.attemptSum / t.passed).toFixed(2) : "n/a"
+      }`;
+    }),
   ];
   return lines.join("\n");
 }

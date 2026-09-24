@@ -318,8 +318,8 @@ export const REMOVAL_WORDS: Record<RemovalMethod, { verb: string; ends: string[]
   cleansing: { verb: "Cleanses", ends: ["corroding", "restrained", "blinded"] },
   detoxifying: { verb: "Detoxifies", ends: ["poisoned", "paralyzed"] },
   freeing: { verb: "Frees", ends: ["restrained", "frozen", "buried"] },
-  stabilizing: { verb: "Steadies", ends: ["paralyzed", "blinded", "frightened", "stunned"] },
-  disrupting: { verb: "Disrupts", ends: ["entranced", "concealed", "protected", "shielded"] },
+  stabilizing: { verb: "Steadies", ends: ["paralyzed", "blinded", "frightened", "stunned", "disoriented", "sedated"] },
+  disrupting: { verb: "Disrupts", ends: ["entranced", "concealed", "protected", "shielded", "reinforced", "focused"] },
 };
 /** "Overheated and Burning", "Blinded, Paralyzed and Stunned". */
 const listed = (names: string[]) => {
