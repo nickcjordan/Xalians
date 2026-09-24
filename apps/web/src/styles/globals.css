@@ -335,6 +335,8 @@
 		transition: background-color 120ms ease-out;
 	}
 	.story-marker[data-reached]::before { background: var(--color-ink); }
+	/* A small piece's tick: shorter, so the full scenes read as the chapters. */
+	.story-marker[data-minor]::before { height: 6px; }
 
 	.story-scene {
 		position: absolute;

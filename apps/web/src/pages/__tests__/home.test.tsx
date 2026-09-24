@@ -35,21 +35,23 @@ describe('Home (the story front door)', () => {
 		expect(keys[1].getAttribute('data-variant')).toBe('secondary');
 	});
 
-	it('tells the story in the 2022 order under the 2022 headings', () => {
+	it('tells the story in the beats of the content plan under the 2022 headings', () => {
 		renderHome();
 		for (const name of ['The Story', 'The Galaxy of Xalia', 'The Tournament & Tokens']) {
 			expect(screen.getByRole('heading', { level: 2, name })).toBeInTheDocument();
 		}
 		const text = document.body.textContent || '';
+		// docs/design/home-story-content-plan.md: the token paragraph is its own
+		// beat, after the plague and before the king's Valleron.
 		const order = [
 			'For thousands of years, the ancient race known as the Vallerii',
 			'But the high technology of the Vallerii',
 			'The wars have long since ended',
+			'By scrambling and encrypting the genome',
 			'With the plague burning through the galaxy',
 			'Today, Krystos remains a snowy wasteland',
 			'Hulking, white-furred apes',
 			'Recently, the king has announced plans',
-			'By scrambling and encrypting the genome',
 			'Start generating now',
 		];
 		let last = -1;
@@ -57,6 +59,12 @@ describe('Home (the story front door)', () => {
 			const at = text.indexOf(phrase);
 			expect(at, phrase).toBeGreaterThan(last);
 			last = at;
+		}
+		// Told once: the token paragraph left the tournament section for its beat.
+		expect(text.split('By scrambling and encrypting the genome').length).toBe(2);
+		// Every headline is a phrase of the 2022 page.
+		for (const headline of ['They birthed the first Xalians', 'Turned the Xalians against their masters', 'Designed by APEX to target the genome', 'The only way to safely generate new Xalians', 'Only the strongest factions will survive…']) {
+			expect(screen.getByRole('heading', { level: 3, name: headline })).toBeInTheDocument();
 		}
 		// No dashes of any kind in the copy.
 		expect(text).not.toMatch(/[–—]/);
