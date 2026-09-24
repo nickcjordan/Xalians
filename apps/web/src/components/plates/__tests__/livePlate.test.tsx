@@ -65,7 +65,9 @@ describe('LivePlate', () => {
 		expect(seek).toHaveBeenCalledWith(0);
 		// both layers and the defs sheet, whose animated filters keep their own clock
 		const play = SVGSVGElement.prototype.unpauseAnimations as unknown as ReturnType<typeof vi.fn>;
-		expect(play).toHaveBeenCalledTimes(3);
+		// Play starts in the effect that runs after the "ready" commit; wait for it rather
+		// than assuming it has flushed (it had not on CI, 2026-09-24).
+		await waitFor(() => expect(play).toHaveBeenCalledTimes(3));
 		expect(play.mock.instances).toContain(container.querySelector('svg.defs'));
 	});
 
