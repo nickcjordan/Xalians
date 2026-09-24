@@ -345,13 +345,19 @@
 
 	/* One column by default (a phone): the painting takes the height the words
 	   leave it, then its label, then the reading column. The painting's cell
-	   is a size container so the frame fits it by its aspect either way. */
+	   is a size container so the frame fits it by its aspect either way. Its
+	   row never grows past the painting's own height at full width, and the
+	   scene sits centered in the stage, so a tall window gets even space
+	   above and below instead of an empty band over the painting. (--fit is
+	   that height: the stage box is the container, see `.story-scene`.) */
 	.scene-spread {
 		--lift: 4px;
+		--fit: calc(100cqw / var(--ar) + var(--lift));
 		display: grid;
 		grid-template-columns: minmax(0, 1fr);
-		grid-template-rows: minmax(0, 1fr) auto auto;
+		grid-template-rows: minmax(0, var(--fit)) auto auto;
 		grid-template-areas: "frame" "label" "read";
+		align-content: center;
 		row-gap: 12px;
 		height: 100%;
 	}
@@ -391,7 +397,7 @@
 		   label beneath the frame's foot and the reading column beside it. */
 		.scene-spread[data-layout="wide"],
 		.scene-spread[data-layout="wide-right"] {
-			grid-template-rows: minmax(0, 1fr) auto;
+			grid-template-rows: minmax(0, var(--fit)) auto;
 			column-gap: 48px;
 			row-gap: 20px;
 		}
