@@ -24,6 +24,7 @@ import {
 	SEVERE_STRAIN_MULTIPLIER,
 	BOLSTER_FLOOR,
 	MAGNITUDE_SCALE,
+	ELEMENT_MATCHUPS,
 	MIN_BLOW_MAGNITUDE,
 	ROLE,
 	PRESENCE_BY_ARCHETYPE,
@@ -52,22 +53,43 @@ type AnySite = (AuthoredSite & { world?: WorldFacts }) | FrameSite;
 // ---------------------------------------------------------------------------
 
 function recordElement(record: XalianRecord | null | undefined): XalianRecord['element'] {
+	const element: unknown = record && record.element;
+	/*
+		PASS 57. Schema 5 writes the element as a bare string ('ghost') and retired the
+		graded secondary; schema 4 wrote { primary, affinities }. Reading `.primary` off the
+		string gave undefined, so the type chart answered 1 for every live creature from the
+		schema 5 conversion on (ELEMENT_MATCHUPS says what that did to the game).
+	*/
+	if (typeof element === 'string' && element) {
+		return { primary: element, affinities: { [element]: 100 } } as unknown as XalianRecord['element'];
+	}
 	// the '' fallback primary is not a real ElementKey (registry-enums narrowed it to a
 	// literal union); this path only runs for a record missing element entirely, which
 	// none of the real callers ever pass, so the cast documents "never a real element"
 	// rather than widening the type for everyone else
-	return (record && record.element) || ({ primary: '', affinities: {} } as unknown as XalianRecord['element']);
+	return (element as XalianRecord['element']) || ({ primary: '', affinities: {} } as unknown as XalianRecord['element']);
+}
+
+// pass 57: whether the type chart is in play (rules.elementMatchups, off as shipped)
+export function elementMatchupsOn(rules?: Partial<Rules> | null): boolean {
+	return rules && typeof rules.elementMatchups === 'boolean' ? rules.elementMatchups : ELEMENT_MATCHUPS;
 }
 
 // world matchup: matrix[creature][world], softened + blended, creature as attacker
-export function worldMatchupMultiplier(record: XalianRecord, worldElement: string | null | undefined): number {
+export function worldMatchupMultiplier(record: XalianRecord, worldElement: string | null | undefined, rules?: Partial<Rules> | null): number {
+	if (!elementMatchupsOn(rules)) {
+		return 1;
+	}
 	return conditionMultiplier(worldElement, recordElement(record));
 }
 
 // magnitude scaling: matrix[creature][target], softened + blended with the TARGET's
 // secondary (per the design doc: "scaled by the type chart, creature against target's
 // element, blended with the target's secondary affinity")
-export function targetMatchupMultiplier(actorRecord: XalianRecord, targetRecord: XalianRecord): number {
+export function targetMatchupMultiplier(actorRecord: XalianRecord, targetRecord: XalianRecord, rules?: Partial<Rules> | null): number {
+	if (!elementMatchupsOn(rules)) {
+		return 1;
+	}
 	const actorPrimary = recordElement(actorRecord).primary;
 	// conditionMultiplier(againstElement, creatureElement) computes matrix[creatureElement.primary][againstElement]
 	// blended with cardElement's OWN secondary. Here we want matrix[actorPrimary][x] blended
@@ -285,7 +307,7 @@ export function holdAtSite(
 	const world = worldOfSite(site, worldArg);
 	const rules = opts.rules as Partial<Rules> | undefined;
 	const base = baseHold(record, rules);
-	const matchup = worldMatchupMultiplier(record, world && world.element);
+	const matchup = worldMatchupMultiplier(record, world && world.element, rules);
 	const origin = record && record.provenance && record.provenance.origin;
 	const isHome = !!origin && !!(world && world.planet) && String(origin).toLowerCase() === String(world.planet).toLowerCase();
 	const homeGround = isHome ? HOME_GROUND_MULTIPLIER : 1;
@@ -460,8 +482,8 @@ export function round1(value: number): number {
 	strain-scaled base magnitude. Strain is already folded into act.magnitude by
 	buildActs(), so this only adds the target matchup.
 */
-export function magnitudeAgainst(actorRecord: XalianRecord, act: Act, targetRecord: XalianRecord): number {
-	const matchup = targetMatchupMultiplier(actorRecord, targetRecord);
+export function magnitudeAgainst(actorRecord: XalianRecord, act: Act, targetRecord: XalianRecord, rules?: Partial<Rules> | null): number {
+	const matchup = targetMatchupMultiplier(actorRecord, targetRecord, rules);
 	return round1(Math.max(0.1, act.magnitude * matchup));
 }
 

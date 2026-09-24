@@ -7,8 +7,9 @@ import {
 } from '@xalians/rules/expedition/expeditionRules';
 import { getWorlds } from '@xalians/rules/expedition/sites';
 import { ROSTER_SIZE } from '@xalians/rules/expedition/expeditionInterpretation';
-import { fitTable, forecastTotalsAt, standingScale, STANDING_FLOOR, roundTrack, FIT_SCALE } from '../reclamationFit';
-import { Standing, FitStrip, ScorePips, HoldBar, Crest } from '../reclamationInstruments';
+import { roleOf } from '@xalians/rules/expedition/creatureOnTable';
+import { fitTable, forecastTotalsAt, standingScale, STANDING_FLOOR, roundTrack, FIT_SCALE, fitScale } from '../reclamationFit';
+import { Standing, FitStrip, ScorePips, HoldBar, Crest, WhyMarks, whyWords } from '../reclamationInstruments';
 
 /*
 	PASS 52, THE GLANCE REDESIGN (docs/design/reclamation-glance-redesign.md).
@@ -85,6 +86,42 @@ describe('fitTable', () => {
 	it('is null outside Deploy', () => {
 		expect(fitTable({ phase: 'matchEnd' }, 'A', [])).toBe(null);
 	});
+
+	// pass 57: a column is stacked from what makes it, so its parts must add up to the engine's swing
+	it('breaks every swing into own, allies and taken, with the toll and the reasons beside them', () => {
+		let match = makeMatch();
+		const rival = match.turn;
+		const seat = other(rival);
+		const sites = match.frames[match.frameIndex].sites;
+		// a rival striker, so the Clash there is a fight (a lone shield cancels every blow and nothing is taken)
+		const striker = match.players[rival].roster.find((r) => roleOf(r, match.rules) === 'strike');
+		match = send(match, rival, striker.id, sites[0].id);
+		const table = fitTable(match, seat, match.players[seat].roster);
+		let fights = 0;
+		let reasons = 0;
+		Object.values(table.fits).forEach((row) => Object.entries(row).forEach(([siteId, cell]) => {
+			expect(cell.own + cell.allies + cell.taken).toBeCloseTo(cell.swing, 6);
+			expect(cell.toll).toBeGreaterThanOrEqual(0);
+			expect(cell.going).toBeCloseTo(cell.own + cell.toll, 6);
+			expect(cell.body).toBeGreaterThan(0);
+			if (cell.falls) expect(cell.own).toBe(0);
+			// only a world with a rival on it can take anything off the rival
+			if (siteId !== sites[0].id) expect(cell.taken).toBe(0);
+			if (cell.taken > 0) fights += 1;
+			if (cell.home) expect(cell.isHome).toBe(true);
+			if (cell.climate) {
+				expect(['strained', 'severe']).toContain(cell.climate.level);
+				expect(['hot', 'cold', 'breath', 'medium', 'strained']).toContain(cell.climate.cause);
+			}
+			if (cell.home || cell.climate) reasons += 1;
+		}));
+		expect(fights).toBeGreaterThan(0);
+		expect(reasons).toBeGreaterThan(0);
+		// the bench's scale holds the tallest column, in steps of six, and never shrinks below FIT_SCALE
+		const scale = fitScale(table);
+		expect(scale).toBeGreaterThanOrEqual(FIT_SCALE);
+		expect(scale % 6).toBe(0);
+	});
 });
 
 describe('standingScale', () => {
@@ -147,7 +184,7 @@ describe('the instruments', () => {
 				now={{ theirs: 12, mine: 0, theirsBefore: 12, mineBefore: 0 }}
 				preview={{ theirs: 4, mine: 18, theirsBefore: 12, mineBefore: 18 }}
 				scale={24}
-				marks={{ home: true, strain: null, falls: false }}
+				marks={{ art: <i data-art-probe /> }}
 			/>,
 		);
 		const st = container.querySelector('[data-standing="p"]');
@@ -156,7 +193,9 @@ describe('the instruments', () => {
 		expect(container.querySelector('[data-standing-ghost]').getAttribute('data-standing-ghost')).toBe('18');
 		expect(container.querySelector('[data-standing-side="theirs"] .rec-standing-loss')).not.toBeNull();
 		expect(container.querySelector('[data-standing-total="mine"]').textContent).toBe('18');
-		expect(container.querySelector('[data-standing-home]')).not.toBeNull();
+		// the creature itself rides the run it would add (pass 54); why it holds that stands with its ghost piece (pass 57)
+		expect(container.querySelector('[data-standing-total="mine"] [data-art-probe]')).not.toBeNull();
+		expect(container.querySelector('[data-standing-total="mine"] [data-why]')).toBeNull();
 	});
 
 	it('puts the pennant at the end of the winner bar once the world is ruled', () => {
@@ -172,11 +211,11 @@ describe('the instruments', () => {
 			{ id: 's3', world: { planet: 'Three', element: 'ice' } },
 		];
 		const row = {
-			s1: { swing: 18.2, deficit: 12, takes: true, after: {}, isHome: false, strainLevel: 'none' },
-			s2: { swing: 9.6, deficit: 14, takes: false, after: {}, isHome: false, strainLevel: 'none' },
-			s3: { swing: -1.2, deficit: 0, takes: false, after: {}, isHome: false, strainLevel: 'none' },
+			s1: { swing: 18.2, deficit: 12, takes: true, after: {}, own: 6.2, toll: 2, allies: 0, taken: 12, body: 8, home: false, climate: null },
+			s2: { swing: 9.6, deficit: 14, takes: false, after: {}, own: 9.6, toll: 0, allies: 0, taken: 0, body: 8, home: true, climate: null },
+			s3: { swing: -1.2, deficit: 0, takes: false, after: {}, own: 0, toll: 3, allies: -1.2, taken: 0, body: 8, home: false, climate: { level: 'strained', cause: 'cold' }, falls: true },
 		};
-		const { container } = render(<FitStrip sites={sites} row={row} />);
+		const { container } = render(<FitStrip sites={sites} row={row} scale={24} />);
 		const cols = [...container.querySelectorAll('[data-fit-site]')];
 		expect(cols.map((c) => c.querySelector('.rec-fit-num').textContent)).toEqual(['18', '10', '−1']);
 		expect(cols[0].className).toContain('rec-fit-col--takes');
@@ -184,7 +223,26 @@ describe('the instruments', () => {
 		expect(cols[2].className).toContain('rec-fit-col--hurts');
 		expect(cols[0].querySelector('.rec-fit-tick')).not.toBeNull();
 		expect(cols[2].querySelector('.rec-fit-tick')).toBeNull();
-		expect(Number(cols[0].style.getPropertyValue('--fit'))).toBeCloseTo(Math.min(1, 18.2 / FIT_SCALE), 3);
+		// pass 57: own at the bottom, what the Clash takes off it hatched above, what it takes off the rival on top
+		expect(Number(cols[0].style.getPropertyValue('--p-own'))).toBeCloseTo(6.2 / 24, 3);
+		expect(Number(cols[0].style.getPropertyValue('--p-lost-at'))).toBeCloseTo(6.2 / 24, 3);
+		expect(Number(cols[0].style.getPropertyValue('--p-lost'))).toBeCloseTo(2 / 24, 3);
+		expect(Number(cols[0].style.getPropertyValue('--p-taken-at'))).toBeCloseTo(8.2 / 24, 3);
+		expect(Number(cols[0].style.getPropertyValue('--p-taken'))).toBeCloseTo(12 / 24, 3);
+		expect(cols[0].className).toContain('rec-fit-col--fights');
+		// the body line across the strip, and the reasons under each column
+		expect(Number(container.querySelector('[data-fit]').style.getPropertyValue('--fit-body'))).toBeCloseTo(8 / 24, 3);
+		expect(cols[0].querySelector('[data-why]')).toBeNull();
+		expect(cols[1].querySelector('[data-why="home"]')).not.toBeNull();
+		expect(cols[2].querySelector('[data-why="cold"]')).not.toBeNull();
+		expect(cols[2].querySelector('[data-why="falls"]')).not.toBeNull();
+	});
+
+	it('names each reason in words for the title, and draws nothing for a creature with none', () => {
+		expect(whyWords({ home: true })).toEqual(['its home world: it holds half again as much here']);
+		expect(whyWords({ climate: { level: 'severe', cause: 'hot' } })[0]).toBe('too hot for it here: it holds a quarter of what it would');
+		const none = render(<WhyMarks reasons={{ home: false, climate: null, company: 0, falls: false }} />);
+		expect(none.container.querySelector('[data-why]')).toBeNull();
 	});
 
 	it('shows a sent creature only at the world it went to', () => {
@@ -202,8 +260,9 @@ describe('the instruments', () => {
 		const col = kept.container.querySelector('[data-fit-site="s1"]');
 		expect(col.getAttribute('data-fit-sent')).toBe('9.4');
 		expect(col.querySelector('.rec-fit-num').textContent).toBe('9');
-		expect(Number(col.style.getPropertyValue('--fit'))).toBeCloseTo(9.4 / FIT_SCALE, 3);
-		expect(col.querySelector('.rec-fit-going')).not.toBeNull();
+		expect(Number(col.style.getPropertyValue('--p-own'))).toBeCloseTo(9.4 / FIT_SCALE, 3);
+		expect(Number(col.style.getPropertyValue('--p-lost'))).toBeCloseTo((14 - 9.4) / FIT_SCALE, 3);
+		expect(col.querySelector('.rec-fit-part--lost')).not.toBeNull();
 		const falls = render(<FitStrip sites={sites} row={null} sentSiteId="s1" sentCell={{ hold: 0, downed: true, before: 8 }} />);
 		const fallen = falls.container.querySelector('[data-fit-site="s1"]');
 		expect(fallen.getAttribute('data-fit-sent')).toBe('falls');

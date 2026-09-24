@@ -118,6 +118,8 @@ export interface Rules {
 	clashExchanges: number;
 	// Pass 56: a sweep also catches its own side (off: the other side only)
 	friendlyFire: boolean;
+	// Pass 57: the type chart, for a creature against its world and an attacker against its target
+	elementMatchups: boolean;
 	projectionReach: number;
 	projectionFalloff: number;
 	worldsPerFrame: number;

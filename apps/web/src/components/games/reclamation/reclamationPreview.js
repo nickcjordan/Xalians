@@ -249,7 +249,7 @@ export function pickAttackTargetPreview(publicState, unit, units) {
 		}
 		case 'enemyMostVulnerableToElement':
 			chosen = candidates.reduce((best, c) => {
-				const eff = targetMatchupMultiplier(unit.record, c.unit.record);
+				const eff = targetMatchupMultiplier(unit.record, c.unit.record, publicState && publicState.rules);
 				return !best || eff > best._eff ? { ...c, _eff: eff } : best;
 			}, null);
 			break;
@@ -559,7 +559,15 @@ export function instinctSentence(prepared, rules) {
 	if (lane === 'dull') {
 		return `Dull instinct: it hits whatever the enemy sent earliest. When it stands with its side it favours ${supporting}.`;
 	}
-	const attacking = ATTACKING_PHRASE[prepared.conduct.attacking] || 'an enemy';
+	/*
+		PASS 57. With the type chart off (rules.elementMatchups, as shipped) every element is as
+		good as every other against every target, so "the enemy its element is most effective
+		against" is the first candidate it meets, the enemy sent earliest. Say what it does.
+	*/
+	const line = prepared.conduct.attacking === 'enemyMostVulnerableToElement' && !(rules && rules.elementMatchups)
+		? 'enemySentEarliest'
+		: prepared.conduct.attacking;
+	const attacking = ATTACKING_PHRASE[line] || 'an enemy';
 	return `When it attacks it chooses ${attacking}. When it stands with its side it favours ${supporting}.`;
 }
 

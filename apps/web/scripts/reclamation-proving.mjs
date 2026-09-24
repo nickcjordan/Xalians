@@ -33,6 +33,8 @@ const GLANCE = [
 	['who is winning this world', '[data-standing]'],
 	['what each creature would do at each world', '[data-slot-state="hand"] [data-fit] [data-fit-site]'],
 	['who is winning the Proving', '[data-score] [data-turn-lamp]'],
+	// pass 57: each world's climate, which the flame and the snowflake on a card are about
+	['what each world is like', '[data-site-id] .rec-env-scale'],
 ];
 
 let failures = 0;
@@ -261,6 +263,26 @@ for (const view of ['simple', 'advanced']) {
 						const lifted = document.querySelectorAll('[data-standing].rec-standing--preview').length;
 						if (lifted === 0) {
 							out.push('a lifted creature previews itself on no world');
+						}
+						/*
+							PASS 57. The lifted creature stands as a ghost piece in your half of every
+							world, its number the same as its card's column there, inside its world.
+						*/
+						const ghosts = [...document.querySelectorAll('[data-ghost-piece]')];
+						if (ghosts.length === 0) {
+							out.push('a lifted creature stands as a ghost on no world');
+						}
+						ghosts.forEach((g) => {
+							const site = g.closest('[data-site-id]');
+							const w = site.getBoundingClientRect();
+							const read = g.querySelector('.rec-ghost-piece-read') || g;
+							const r = read.getBoundingClientRect();
+							if (r.left < w.left - 1 || r.right > w.right + 1 || r.top < w.top - 1 || r.bottom > w.bottom + 1) {
+								out.push(`${site.getAttribute('data-site-id')}: the ghost's number runs outside its world`);
+							}
+						});
+						if (!document.querySelector('.rec-match[data-moment="lifted"]')) {
+							out.push('a creature is lifted but the table does not say the moment is the lift');
 						}
 						document.querySelectorAll('[data-standing]').forEach((st) => {
 							const site = st.closest('[data-site-id]');

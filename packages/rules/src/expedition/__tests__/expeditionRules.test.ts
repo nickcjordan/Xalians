@@ -21,7 +21,7 @@ function createMatch(args: any) {
 import {
 	ROSTER_SIZE, SENDABLE, SITES_TO_CLINCH, WORLDS_PER_MATCH, FRAMES_PER_MATCH, WORLDS_PER_FRAME,
 	ROUND_SEND_CAP,
-	PROJECTION_REACH, PROJECTION_FALLOFF, ACT_FLIP, SHIELD_OWN_SWEEPS, CLASH_EXCHANGES, FRIENDLY_FIRE,
+	PROJECTION_REACH, PROJECTION_FALLOFF, ACT_FLIP, SHIELD_OWN_SWEEPS, CLASH_EXCHANGES, FRIENDLY_FIRE, ELEMENT_MATCHUPS,
 	ROSTER_TRAILING_BONUS, ROLE, HOLD_FLOOR, HOLD_CEILING, MAGNITUDE_SCALE, SWEEP_DISCOUNT,
 	BOLSTER_FLOOR, ARMORED_REDUCTION, SHIELD_CAP, WILLFUL_THRESHOLD, KEEN_INSTINCT,
 	DULL_INSTINCT, KEEN_FIGHTS_HURT, SWIFT_SPEED, BOLSTER_RECOVERY,
@@ -644,7 +644,8 @@ describe('the four roles', () => {
 	});
 
 	test('shieldCap half cancels the whole blow and takes half of it off the shielder', () => {
-		const state = deploy([shielder, smallStriker], [bigStriker, smallStriker], 'shield-seed', { shieldCap: 'half' });
+		// pass 57: these fixtures were sized with the type chart in play, which the lever now turns off by default
+		const state = deploy([shielder, smallStriker], [bigStriker, smallStriker], 'shield-seed', { shieldCap: 'half', elementMatchups: true });
 		const shield = (state.resolutionLog as any[]).find((e: any) => e.type === 'shield');
 		expect(shield.cancelled).toBe('B_0');
 		expect(shield.fraction).toBe(1);
@@ -1304,6 +1305,8 @@ describe('rules ablation switches', () => {
 			// Pass 56: the most exchanges a world's Clash may run, and no friendly fire
 			clashExchanges: CLASH_EXCHANGES,
 			friendlyFire: FRIENDLY_FIRE,
+			// Pass 57: the type chart, off: what schema 5 creatures have played since the conversion
+			elementMatchups: ELEMENT_MATCHUPS,
 			projectionReach: PROJECTION_REACH,
 			projectionFalloff: PROJECTION_FALLOFF,
 			worldsPerFrame: WORLDS_PER_FRAME,
@@ -1434,7 +1437,8 @@ describe('rules ablation switches', () => {
 	// pass 33: a creature that loses its world is withdrawn and stays out, with no rule
 	// flag left to vary it. A sends two to site 0, B sends one, so B loses site 0.
 	it('a lost creature is withdrawn and does not come back to the roster', () => {
-		const state = matchWithRules({});
+		// pass 57: this round's outcome was found with the type chart in play (the lever is off by default)
+		const state = matchWithRules({ elementMatchups: true });
 		const started = state.starter === 'A' ? state : { ...state, starter: 'A', turn: 'A' };
 		const after = playOneRound(started, [0, 0], [0]);
 		expect(after.players.B.withdrawn.length).toBeGreaterThan(0);

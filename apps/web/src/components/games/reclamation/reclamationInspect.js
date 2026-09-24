@@ -41,7 +41,10 @@ const READ_TRAITS = new Set(Object.values(TRAIT));
 function multiplierLines(record, prepared, site, world) {
 	const lines = [];
 	lines.push({ key: 'Base hold', val: formatHold(prepared.baseHold) });
-	lines.push({ key: 'World matchup', val: `x${(Math.round(prepared.holdMultiplier * 100) / 100)}` });
+	// pass 57: the type chart is off as shipped (rules.elementMatchups), so the line prints only when it moves the hold
+	if (typeof prepared.holdMultiplier === 'number' && Math.abs(prepared.holdMultiplier - 1) > 1e-9) {
+		lines.push({ key: 'World matchup', val: `x${(Math.round(prepared.holdMultiplier * 100) / 100)}` });
+	}
 	lines.push({ key: 'Home ground', val: prepared.isHome ? `x${HOME_GROUND_MULTIPLIER}` : 'x1 (not its origin world)' });
 	const strainMult = prepared.strainLevel === 'severe' ? SEVERE_STRAIN_MULTIPLIER
 		: prepared.strainLevel === 'strained' ? STRAIN_MULTIPLIER : 1;
@@ -179,7 +182,7 @@ function ReclamationInspect({ record, site, frame, rules, onClose }) {
 						? 'You choose which of its behaviours it uses when you lift it. That choice is locked the moment it is sent.'
 						: 'Its role is fixed the moment it is sent; there is nothing to order.'}{' '}
 					{prepared.blow
-						? `It throws ${prepared.blow.name} for ${formatHold(prepared.blowMagnitude)}, before the element matchup against whatever it meets. Hurt, it attacks for less, in proportion to the hold it has left.`
+						? `It throws ${prepared.blow.name} for ${formatHold(prepared.blowMagnitude)}${rules && rules.elementMatchups ? ', before the element matchup against whatever it meets' : ''}. Hurt, it attacks for less, in proportion to the hold it has left.`
 						: 'It throws no attack at all; standing at the world is what it does.'}
 				</p>
 

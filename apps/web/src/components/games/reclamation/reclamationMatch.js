@@ -18,7 +18,7 @@ import {
 	narrateSend, narratePass, narrateJudge, narrateMatchEnd, narrateStake, countWord, captionEvent,
 	verdictOf, rulingLine,
 } from './reclamationNarration';
-import { flattenBoard, prepareWithCompanions, siteHoldTotal, ghostPlanFor } from './reclamationPreview';
+import { flattenBoard, prepareWithCompanions, siteHoldTotal, ghostPlanFor, strainCause } from './reclamationPreview';
 import { fitTable, roundTrack, standingScale } from './reclamationFit';
 import { RoundTrack, ScorePips } from './reclamationInstruments';
 
@@ -43,6 +43,13 @@ const ARRIVE_MS = 1300;
 const RESOLUTION_STEP_MS = 700;
 const LOG_CAP = 120;
 // "Zolton, Krystos and Saiphus": the frame's worlds as a sentence fragment
+// pass 57: a creature's tolerances in the shape strainCause reads, to name what strains it
+function toleranceOf(record) {
+	const physiology = (record && record.physiology) || {};
+	const tolerance = physiology.environmentalTolerance || {};
+	return { temperatureC: tolerance.temperatureC || null, ambientMedia: tolerance.ambientMedia || [], breathes: physiology.breathes || [] };
+}
+
 function frameWorldNames(frame) {
 	const names = frame.sites.map((site) => site.world.planet);
 	return names.length > 1 ? `${names.slice(0, -1).join(', ')} and ${names[names.length - 1]}` : names.join('');
@@ -1620,6 +1627,13 @@ class ReclamationMatch extends React.Component {
 						// as what the environment took
 						unstrained: full / strainMultiplierFor(prepared.strainLevel),
 						baseHold: prepared.baseHold,
+						// pass 57: why it holds what it does here, the marks its card's column carries
+						reasons: {
+							home: !!prepared.isHome,
+							climate: prepared.effectiveStrainLevel && prepared.effectiveStrainLevel !== 'none'
+								? { level: prepared.effectiveStrainLevel, cause: strainCause(toleranceOf(e.record), site) || 'strained', medium: (site.environment && site.environment.medium) || null }
+								: null,
+						},
 					};
 				});
 			});
@@ -2087,6 +2101,8 @@ class ReclamationMatch extends React.Component {
 		let preview = previewRow ? Object.fromEntries(Object.entries(previewRow).map(([siteId, cell]) => [siteId, {
 			totals: orient(cell.after),
 			forecast: cell.forecast,
+			// pass 57: why it would hold what it would there, drawn on the world as on the card
+			why: cell,
 		}])) : null;
 		/*
 			PASS 55. A swift creature being moved previews the move on every world while a world
@@ -2175,8 +2191,34 @@ class ReclamationMatch extends React.Component {
 			return this.renderHandoff(this.state.handoff);
 		}
 
+		/*
+			PASS 57, WHERE THE EYE GOES (docs/design/reclamation-attention-and-why.md). Nick,
+			2026-09-24: "Focus on what the user should be putting their eyes on at any given point
+			in the game and identify how to better bring their attention to that spot." One word
+			for the moment, and the stylesheet makes that moment's subject the loudest thing on
+			the table and quiets the rest:
+
+			  mine     your move: the squad, lit, is where the decision is
+			  lifted   a creature in hand: the three worlds and what it would do at each
+			  theirs   the rival's move: your squad dims; the world it lands on pulses and your
+			           columns for that world flash as they change
+			  clash    a world fighting: it takes the table, and the squad folds away
+			  ruling   the round ruled: each world's winner
+		*/
+		// a creature in hand wins over the rival's news still being told: the lift is what you are doing
+		const holding = !!(this.state.armedRecordId || this.state.movingRecordId) && view.turn === this.seatInPlay();
+		const myMove = deploying && view.turn === this.seatInPlay() && !me.passed && !this.rivalBeat();
+		const moment = playback ? 'clash'
+			: judged ? 'ruling'
+				: !deploying ? 'rest'
+					: holding ? 'lifted'
+						: myMove ? 'mine'
+							: 'theirs';
+		const arrival = this.state.arrival;
+		const newsSiteId = deploying && arrival && arrival.seat !== this.seatInPlay() ? arrival.siteId : null;
+
 		return (
-			<div className={`rec-match${simple ? ' rec-match--simple' : ' rec-match--advanced'}`}>
+			<div className={`rec-match${simple ? ' rec-match--simple' : ' rec-match--advanced'}`} data-moment={moment}>
 				{this.renderStatusStrip(view)}
 				{this.renderPanel(view)}
 
@@ -2252,6 +2294,7 @@ class ReclamationMatch extends React.Component {
 									movingRecordId={this.state.movingRecordId}
 									fits={fits}
 									focusSiteId={this.state.hoverSiteId}
+									newsSiteId={newsSiteId}
 									sendsTone={reach && (reach.tone === 'lost' || reach.tone === 'stake') ? reach.tone : null}
 									movable={movable}
 									onArm={this.armRecord}

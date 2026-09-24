@@ -175,6 +175,74 @@ export function HomeGlyph({ className }) {
 	);
 }
 
+// a world's medium (moved here from reclamationWorld in pass 57, so a reason mark can wear it)
+export function MediumGlyph({ medium }) {
+	const m = String(medium || '').toLowerCase();
+	if (m === 'liquid') {
+		return (
+			<svg className="rec-medium-glyph" viewBox="0 0 12 12" aria-hidden="true">
+				<path d="M6 1.2 C6 1.2 2.4 5.6 2.4 7.8 A3.6 3.6 0 0 0 9.6 7.8 C9.6 5.6 6 1.2 6 1.2 Z" />
+			</svg>
+		);
+	}
+	if (m === 'vacuum') {
+		return (
+			<svg className="rec-medium-glyph" viewBox="0 0 12 12" aria-hidden="true">
+				<circle cx="6" cy="6" r="3.6" fill="none" strokeWidth="1.4" />
+				<circle cx="6" cy="6" r="0.9" />
+			</svg>
+		);
+	}
+	if (m === 'solid') {
+		return (
+			<svg className="rec-medium-glyph" viewBox="0 0 12 12" aria-hidden="true">
+				<path d="M1.5 10.5 L4.5 3.5 L7 7.5 L8.5 5 L10.5 10.5 Z" />
+			</svg>
+		);
+	}
+	// gas: three drifting strokes
+	return (
+		<svg className="rec-medium-glyph" viewBox="0 0 12 12" aria-hidden="true">
+			<path d="M1.5 3.2 C3 2 4.5 4.4 6 3.2 S9 2 10.5 3.2 M1.5 6.2 C3 5 4.5 7.4 6 6.2 S9 5 10.5 6.2 M1.5 9.2 C3 8 4.5 10.4 6 9.2 S9 8 10.5 9.2" fill="none" strokeWidth="1.2" strokeLinecap="round" />
+		</svg>
+	);
+}
+
+/*
+	PASS 57: the air or water a creature cannot take, as the world's own medium symbol struck
+	through, so the mark under a card's column matches the symbol in that world's head.
+*/
+export function NoMediumGlyph({ medium, className }) {
+	return (
+		<span className={`rec-glyph rec-glyph--no-medium${className ? ` ${className}` : ''}`} aria-hidden="true">
+			<MediumGlyph medium={medium} />
+			<svg className="rec-no-medium-strike" viewBox="0 0 12 12" aria-hidden="true"><path d="M1.5 10.5 10.5 1.5" /></svg>
+		</span>
+	);
+}
+
+/*
+	PASS 57: company, the reason a hold moves because of who else stands there (a bolster's
+	lift, a pack's bond, a solitary creature's unease): two figures side by side.
+*/
+export function CompanyGlyph({ className }) {
+	return (
+		<svg className={`rec-glyph rec-glyph--company${className ? ` ${className}` : ''}`} {...box}>
+			<circle cx="8" cy="8" r="2.6" /><path d="M3.5 19v-2.5a4.5 4.5 0 0 1 9 0V19" />
+			<circle cx="16.5" cy="9" r="2.2" /><path d="M14.2 19v-2a3.6 3.6 0 0 1 6.3-2.4" />
+		</svg>
+	);
+}
+
+// pass 57: the Clash would drive it to nothing
+export function FallsGlyph({ className }) {
+	return (
+		<svg className={`rec-glyph rec-glyph--falls${className ? ` ${className}` : ''}`} {...box}>
+			<path d="M6 6l12 12M18 6 6 18" />
+		</svg>
+	);
+}
+
 /*
 	pass 52: why a lifted creature holds less here, as a mark with the reason as its title
 	(pass 44's "Too cold: -7 hold" line). cold a snowflake, hot a flame, breath and medium
@@ -185,15 +253,18 @@ export function StrainGlyph({ cause, className }) {
 	if (cause === 'cold') {
 		return (
 			<svg className={cls} {...box}>
-				<path d="M12 3v18" /><path d="M4.2 7.5 19.8 16.5" /><path d="M4.2 16.5 19.8 7.5" />
-				<path d="m9.5 4.5 2.5 2 2.5-2" /><path d="m9.5 19.5 2.5-2 2.5 2" />
+				<path d="M12 2.5v19" /><path d="M3.8 7.25 20.2 16.75" /><path d="M3.8 16.75 20.2 7.25" />
+				<path d="m9.4 3.9 2.6 2.4 2.6-2.4" /><path d="m9.4 20.1 2.6-2.4 2.6 2.4" />
+				<path d="m4.1 10.3 3.4-1 -.8-3.4" /><path d="m19.9 13.7-3.4 1 .8 3.4" />
+				<path d="m4.1 13.7 3.4 1-.8 3.4" /><path d="m19.9 10.3-3.4-1 .8-3.4" />
 			</svg>
 		);
 	}
 	if (cause === 'hot') {
 		return (
 			<svg className={cls} {...box}>
-				<path d="M12 21c-3.6 0-6-2.4-6-5.6 0-3.8 3.4-5.6 4.2-10.4 2.4 1.6 3.2 4 3 6 1-.6 1.7-1.6 2-2.8 1.7 1.8 2.8 4.2 2.8 7.2 0 3.2-2.4 5.6-6 5.6z" />
+				<path d="M12 21.5c-3.9 0-6.5-2.6-6.5-6 0-4.3 3.6-6.2 4.6-11 2.5 1.8 3.4 4.3 3.1 6.6 1.1-.6 1.9-1.8 2.2-3.1 1.8 2 3.1 4.6 3.1 7.5 0 3.4-2.6 6-6.5 6z" />
+				<path d="M12 21.5c-1.7 0-2.8-1.1-2.8-2.7 0-1.9 1.5-2.9 2.1-5 1.6 1.2 2.9 2.8 2.9 4.9 0 1.6-.9 2.8-2.2 2.8z" />
 			</svg>
 		);
 	}

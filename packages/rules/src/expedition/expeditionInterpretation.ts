@@ -569,6 +569,26 @@ export const CLASH_EXCHANGES = 12;
 	columns a card could show (a send whose own sweep would catch your creatures there).
 */
 export const FRIENDLY_FIRE = false;
+/*
+	PASS 57: false, which is what the game has actually played since the schema 5 conversion
+	(2026-09-21). Schema 5 writes a creature's element as a bare string ('ghost') where
+	schema 4 wrote { primary, affinities }; the conversion moved the interface's reads to the
+	new shape but creatureOnTable still read `element.primary`, so both uses of the type chart
+	came back 1 for every live creature: the world matchup (a creature's element against the
+	world's, scaling its hold) and the target matchup (an attacker's element against its
+	target's, scaling the blow). Every measurement from pass 25 on was taken with both at 1.
+
+	Found in pass 57 while explaining why a creature is worth more at one world than another
+	(Nick: "it's obvious when the creature has an element that aligns to the element on the
+	screen, but it's not obvious when it's any other combination"). With the chart dead, what
+	moves a creature's hold from world to world is home ground, the world's climate and the
+	company it keeps; an element symbol only ever says where a creature comes from (every
+	species' element is its home world's). The reader now understands schema 5, so this lever
+	really switches the chart; it ships off so the game Nick has been playing is unchanged.
+	The world matchup reads the combat chart against a place, which puts a fire creature at
+	half strength on the fire world, the opposite of what a player expects.
+*/
+export const ELEMENT_MATCHUPS = false;
 
 // A blow-role creature with no attacking ability at all still strikes, at the pool's
 // minimum printed magnitude (magnitudeOf floors at 1). The simulator counts how often

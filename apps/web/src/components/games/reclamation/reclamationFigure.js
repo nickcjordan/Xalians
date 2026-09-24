@@ -6,7 +6,7 @@ import XalianTypeSymbolBadge from '../duel/board/xalianTypeSymbolBadge';
 import { pieceShadowFilter } from '../duel/board/duelPieceToken';
 import { getSpeciesTemplate } from '@xalians/rules/generator';
 import { team } from '../../../constants/designTokens';
-import { HoldBar } from './reclamationInstruments';
+import { HoldBar, WhyMarks } from './reclamationInstruments';
 
 /*
 	ReclamationFigure — one creature standing at a site.
@@ -135,6 +135,7 @@ function ReclamationFigure({
 	forecast,
 	lossText,
 	noTarget,
+	reasons,
 }) {
 	const mine = seat === you;
 	const px = size === 'small' ? 40 : FIGURE_SIZE;
@@ -249,6 +250,8 @@ function ReclamationFigure({
 					</span>
 				)}
 				<span className="rec-figure-name">{name}</span>
+				{/* pass 57: why it holds what it does here, the marks its card's column carries */}
+				{reasons && (reasons.home || reasons.climate) && <WhyMarks reasons={reasons} className="rec-figure-whys" />}
 				{badge && <span className="rec-figure-badge">{badge}</span>}
 			</span>
 			{/*

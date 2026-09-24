@@ -77,6 +77,7 @@ import {
 	SHIELD_OWN_SWEEPS,
 	CLASH_EXCHANGES,
 	FRIENDLY_FIRE,
+	ELEMENT_MATCHUPS,
 	SHIELD_CAPS,
 	ROLE,
 	WILLFUL_THRESHOLD,
@@ -366,6 +367,8 @@ export const DEFAULT_RULES: Rules = {
 	clashExchanges: CLASH_EXCHANGES,
 	// Pass 56: a sweep hits the other side only
 	friendlyFire: FRIENDLY_FIRE,
+	// Pass 57: the type chart, off (what schema 5 creatures have played since the conversion)
+	elementMatchups: ELEMENT_MATCHUPS,
 	projectionReach: PROJECTION_REACH,
 	projectionFalloff: PROJECTION_FALLOFF,
 	worldsPerFrame: WORLDS_PER_FRAME,
@@ -428,6 +431,7 @@ function normalizeRules(rules: RulesInput | null | undefined): Rules {
 		shieldOwnSweeps: r.shieldOwnSweeps !== undefined ? !!r.shieldOwnSweeps : DEFAULT_RULES.shieldOwnSweeps,
 		clashExchanges: Math.max(1, Math.floor(num(r.clashExchanges, DEFAULT_RULES.clashExchanges))),
 		friendlyFire: r.friendlyFire !== undefined ? !!r.friendlyFire : DEFAULT_RULES.friendlyFire,
+		elementMatchups: r.elementMatchups !== undefined ? !!r.elementMatchups : DEFAULT_RULES.elementMatchups,
 		projectionReach: num(r.projectionReach, DEFAULT_RULES.projectionReach),
 		projectionFalloff: num(r.projectionFalloff, DEFAULT_RULES.projectionFalloff),
 		worldsPerFrame: num(r.worldsPerFrame, DEFAULT_RULES.worldsPerFrame),
@@ -1374,7 +1378,7 @@ function pickAttackTarget(state: MatchState, entry: BoardEntry, conduct: Conduct
 			break;
 		}
 		case 'enemyMostVulnerableToElement':
-			chosen = pickMostVulnerableToElement(entry, candidates);
+			chosen = pickMostVulnerableToElement(state, entry, candidates);
 			break;
 		case 'enemyWithHighestMagnitude':
 			chosen = candidates.reduce((best: AttackCandidate | null, c) => (!best || c._magnitude > best._magnitude ? c : best), null);
@@ -1418,9 +1422,10 @@ function pickAttackTarget(state: MatchState, entry: BoardEntry, conduct: Conduct
 	return chosen;
 }
 
-function pickMostVulnerableToElement(entry: BoardEntry, candidates: AttackCandidate[]): AttackCandidate | null {
+function pickMostVulnerableToElement(state: MatchState, entry: BoardEntry, candidates: AttackCandidate[]): AttackCandidate | null {
+	const rules = rulesOf(state);
 	return candidates.reduce((best: AttackCandidate | null, c) => {
-		const eff = targetMatchupMultiplier(entry.record, c.record);
+		const eff = targetMatchupMultiplier(entry.record, c.record, rules);
 		if (!best || eff > (best._eff as number)) {
 			return { ...c, _eff: eff };
 		}
@@ -1556,7 +1561,7 @@ function attackPowerAgainst(state: MatchState, actorEntry: BoardEntry, preparedA
 	if (!blow) {
 		return 0;
 	}
-	let amount = magnitudeAgainst(actorEntry.record, blow, targetEntry.record);
+	let amount = magnitudeAgainst(actorEntry.record, blow, targetEntry.record, rules);
 	if (preparedActor.role === ROLE.SWEEP) {
 		amount *= rules.sweepDiscount;
 	}

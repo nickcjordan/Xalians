@@ -1,5 +1,6 @@
 import { forecastClash, forecastSend, moveSwift, movableRecordIdsFor } from '@xalians/rules/expedition/expeditionRules';
-import { prepare } from '@xalians/rules/expedition/creatureOnTable';
+import { prepare, baseHold } from '@xalians/rules/expedition/creatureOnTable';
+import { strainCause } from './reclamationPreview';
 
 /*
 	PASS 52, THE GLANCE REDESIGN (docs/design/reclamation-glance-redesign.md).
@@ -46,6 +47,76 @@ export function forecastTotalsAt(match, seat, forecast, siteId, extraId) {
 		mineBefore: mineIds.reduce((sum, id) => sum + going(id), 0),
 		theirsBefore: theirIds.reduce((sum, id) => sum + going(id), 0),
 	};
+}
+
+/*
+	PASS 57, WHY A COLUMN IS AS TALL AS IT IS (docs/design/reclamation-attention-and-why.md).
+	Nick, 2026-09-24: "it's still not obvious to me why one creature would fare better at one
+	of the worlds over another ... it's obvious when the creature has an element that aligns
+	to the element on the screen, but it's not obvious when it's any other combination."
+
+	A send's swing is exactly the sum of three parts, all from the same two forecasts:
+
+	  own      what the creature would still stand with after the Clash (0 when it falls)
+	  allies   what it changes for your other creatures there (a bolster's lift, a shield's
+	           cover, a pack's bond; negative for a solitary one)
+	  taken    what the Clash would take off the rival there because it came
+
+	and `toll` is what the Clash would take off it (its hold going in, less `own`). Its hold
+	going in is made of its body and the world: `body` is what it holds at a world that
+	neither favors nor strains it (baseHold: vitality, resilience and endurance), times 1.5
+	on its home world, times a half or a quarter where the climate or the air strains it
+	(a willful creature shrugs off one grade), and `company` is whatever bolsters and packs
+	add on top. The element type chart is not in it: it has read 1 for every schema 5
+	creature since the conversion (rules.elementMatchups, off as shipped).
+*/
+const BAND = { none: 1, strained: 0.5, severe: 0.25 };
+export function breakdown(ownForecast, base, totals, record, site, reading, rules) {
+	const f = ownForecast || null;
+	const own = f && !f.downed ? f.hold : 0;
+	const going = f && typeof f.before === 'number' ? f.before : own;
+	const body = baseHold(record, rules);
+	const level = reading ? reading.strainLevel : 'none';
+	const held = reading ? reading.heldStrainLevel || level : 'none';
+	const home = !!(reading && reading.isHome);
+	const tolerance = (record.physiology && record.physiology.environmentalTolerance) || {};
+	const cause = held !== 'none'
+		? (strainCause({ temperatureC: tolerance.temperatureC, ambientMedia: tolerance.ambientMedia || [], breathes: (record.physiology && record.physiology.breathes) || [] }, site) || 'strained')
+		: null;
+	const expected = body * (home ? 1.5 : 1) * (BAND[held] || 1);
+	const company = going - expected;
+	return {
+		own,
+		going,
+		toll: Math.max(0, going - own),
+		falls: !!(f && f.downed && going > EPS),
+		allies: totals.mine - own - base.mine,
+		taken: Math.max(0, base.theirs - totals.theirs),
+		body,
+		home,
+		climate: held !== 'none' ? { level: held, cause, medium: (site.environment && site.environment.medium) || null } : null,
+		// willpower lifted its grade here: it would be strained, and is not (or less so)
+		shrugged: level !== held,
+		company: Math.abs(company) >= 0.5 ? company : 0,
+	};
+}
+
+/*
+	The strip's scale: one for the whole bench, so a column on one card reads against the
+	columns on the next. The tallest column any card could draw (its swing and what the Clash
+	would take off it), rounded up to a step of six, between FIT_SCALE and twice it; a
+	column past the cap is clipped and marked.
+*/
+export function fitScale(fits) {
+	let top = FIT_SCALE;
+	if (fits && fits.fits) {
+		Object.values(fits.fits).forEach((row) => Object.values(row || {}).forEach((cell) => {
+			if (cell) {
+				top = Math.max(top, (cell.going || 0) + Math.max(0, cell.allies || 0) + (cell.taken || 0), cell.swing || 0);
+			}
+		}));
+	}
+	return Math.min(FIT_SCALE * 2, Math.ceil(top / 6) * 6);
 }
 
 /*
@@ -114,6 +185,7 @@ export function fitTable(match, seat, records, roleOf) {
 				isHome: !!(reading && reading.isHome),
 				strainLevel: reading ? reading.strainLevel : 'none',
 				forecast: after,
+				...breakdown(after[record.id], before, totals, record, site, reading, match.rules),
 			};
 		});
 		fits[record.id] = row;

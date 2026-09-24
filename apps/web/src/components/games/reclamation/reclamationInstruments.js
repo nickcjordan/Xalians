@@ -1,7 +1,7 @@
 import React from 'react';
 import { formatHold, formatHoldShown, wholeOrTenths } from './reclamationNarration';
 import { FIT_SCALE, HOLD_BAR_SCALE } from './reclamationFit';
-import { HomeGlyph, StrainGlyph } from './reclamationGlyphs';
+import { HomeGlyph, StrainGlyph, CompanyGlyph, FallsGlyph, NoMediumGlyph } from './reclamationGlyphs';
 
 /*
 	PASS 52, THE GLANCE REDESIGN (docs/design/reclamation-glance-redesign.md).
@@ -54,8 +54,10 @@ function leadOf(theirs, mine) {
 	  number   the side's total, riding the end of its bar
 
 	`now` and `preview` are { theirs, mine, theirsBefore, mineBefore } (reclamationFit's
-	forecast totals), `scale` is standingScale()'s, `marks` says what the previewed creature
-	is here ({ home, strain, falls }), and `verdict` is the Court's ruling on the world once
+	forecast totals), `scale` is standingScale()'s, `marks` may carry the previewed creature's
+	silhouette (`art`; since pass 57 the world passes none, because the creature pointed at
+	stands in your rank as its ghost piece with its number and its reasons), and `verdict` is
+	the Court's ruling on the world once
 	it is ruled, drawn as a pennant at the end of the winner's bar. Nothing is drawn for an
 	empty world.
 */
@@ -116,9 +118,6 @@ export function Standing({ siteId, now, preview, scale, marks, verdict }) {
 						{preview && mk.art && <span className="rec-standing-art" data-standing-art>{mk.art}</span>}
 						{(m > EPS || mb > EPS || preview || won === 'mine') && <b className="g-mono">{shownMine}</b>}
 						{(won === 'mine' || won === 'tie') && <Crest verdict={verdict} />}
-						{mk.home && <span className="rec-standing-why rec-standing-why--home" data-standing-home><HomeGlyph /></span>}
-						{mk.strain && <span className="rec-standing-why rec-standing-why--strain" data-standing-strain={mk.strain}><StrainGlyph cause={mk.strain} /></span>}
-						{mk.falls && <span className="rec-standing-why rec-standing-why--falls" data-standing-falls><svg viewBox="0 0 12 12"><path d="M2.5 2.5l7 7M9.5 2.5l-7 7" /></svg></span>}
 					</span>
 				)}
 			</span>
@@ -170,40 +169,138 @@ export function HoldBar({ hold, after, unstrained, side, className }) {
 	PASS 55. A sent creature's card (`sentSiteId`) keeps its strip. The column of the world it
 	went to is its own forecast there (`sentCell`, the engine's { hold, downed, before }): the
 	bar is what the Clash would leave it, the hatched run above is what the Clash would take,
-	and a cross stands in for the number when it would fall. It used to be one blue bar the
-	same height on every card (Nick: "a poor way to denote that"). A swift creature that may
-	still step to another world (`moveRow`, fitTable's moves) shows, in the other columns,
-	what the move would do across the frame, striped like every other "would be" on the table.
+	and a cross stands in for the number when it would fall. A swift creature that may still
+	step to another world (`moveRow`, fitTable's moves) shows, in the other columns, what the
+	move would do across the frame, striped like every other "would be" on the table.
+
+	PASS 57, THE COLUMN SAYS WHY (docs/design/reclamation-attention-and-why.md). A column is
+	stacked from what makes it, bottom up, on one scale for the whole bench (`scale`,
+	fitScale()):
+
+	  own      the creature itself, what it would still stand with after the Clash, in the
+	           world's color
+	  lost     hatched red on top of it: what the Clash would take off it
+	  allies   lighter: what it would add to your creatures already there
+	  taken    brass, the rival's color: what it would take off the rival there, so a column
+	           grows the moment a rival arrives and shows by what
+
+	The solid parts add up to the number. A dashed line across the three columns marks its
+	body, what it holds at a world that neither favors nor strains it, so a column that
+	stands above the line was lifted by the world and one below it was cut; under each column
+	a row of marks says by what: a house on its home world, a flame, a snowflake or a
+	breath where the world is too hot, too cold or the wrong air, two figures where company
+	moves it, a cross where it would fall.
 */
 function FallsMark() {
 	return <svg className="rec-fit-falls" viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 2.5l7 7M9.5 2.5l-7 7" /></svg>;
 }
 
 function swingNumber(swing) {
-	return swing < -0.5 ? `−${formatHoldShown(-swing)}` : formatHoldShown(Math.max(0, swing));
+	return swing < -0.5 ? `\u2212${formatHoldShown(-swing)}` : formatHoldShown(Math.max(0, swing));
 }
 
-export function FitStrip({ sites, row, sentSiteId, sentCell, moveRow, focusSiteId, off }) {
+const CLIMATE_WORDS = {
+	hot: 'too hot for it here',
+	cold: 'too cold for it here',
+	breath: 'it cannot breathe here',
+	medium: 'the wrong air or water for it here',
+	strained: 'the world strains it',
+};
+
+/*
+	WhyMarks: the reasons a creature's hold here is what it is, as marks. The same marks on a
+	card's column, on the lifted creature's preview on a world, and on a creature standing on
+	a world. `reasons` is a fit cell (or anything with { home, climate, company, falls }).
+*/
+export function whyWords(reasons) {
+	const r = reasons || {};
+	const out = [];
+	if (r.home) out.push('its home world: it holds half again as much here');
+	if (r.climate) out.push(`${CLIMATE_WORDS[r.climate.cause] || CLIMATE_WORDS.strained}: it holds ${r.climate.level === 'severe' ? 'a quarter' : 'half'} of what it would`);
+	if (r.company) out.push(`the creatures with it here ${r.company > 0 ? 'add' : 'take'} ${formatHold(Math.abs(r.company))}`);
+	if (r.falls) out.push('the Clash would drive it to nothing');
+	return out;
+}
+
+const upperFirst = (text) => text.replace(/^./, (c) => c.toUpperCase());
+
+export function WhyMarks({ reasons, className }) {
+	const r = reasons || {};
+	const marks = [];
+	if (r.home) {
+		marks.push(<span className="rec-why rec-why--home" key="home" data-why="home" title="Home world: it holds half again as much here"><HomeGlyph /></span>);
+	}
+	if (r.climate) {
+		const cause = r.climate.cause || 'strained';
+		marks.push(
+			<span
+				className={`rec-why rec-why--climate rec-why--${cause} rec-why--level-${r.climate.level}`}
+				key="climate"
+				data-why={cause}
+				data-why-level={r.climate.level}
+				title={`${upperFirst(CLIMATE_WORDS[cause] || CLIMATE_WORDS.strained)}: it holds ${r.climate.level === 'severe' ? 'a quarter' : 'half'} of what it would`}
+			>
+				{(cause === 'breath' || cause === 'medium') && r.climate.medium
+					? <NoMediumGlyph medium={r.climate.medium} />
+					: <StrainGlyph cause={cause === 'strained' ? 'medium' : cause} />}
+			</span>,
+		);
+	}
+	if (r.company) {
+		marks.push(<span className={`rec-why rec-why--company rec-why--company-${r.company > 0 ? 'up' : 'down'}`} key="company" data-why="company" title={`The creatures with it here ${r.company > 0 ? 'add' : 'take'} ${formatHold(Math.abs(r.company))}`}><CompanyGlyph /></span>);
+	}
+	if (r.falls) {
+		marks.push(<span className="rec-why rec-why--falls" key="falls" data-why="falls" title="The Clash would drive it to nothing"><FallsGlyph /></span>);
+	}
+	return <span className={`rec-whys${className ? ` ${className}` : ''}`} aria-hidden="true">{marks}</span>;
+}
+
+// the stacked parts of a column, as fractions of the bench's scale, bottom up
+function stackOf(cell, scale) {
+	const s = scale > 0 ? scale : FIT_SCALE;
+	const parts = [['own', cell.own], ['lost', cell.toll], ['allies', cell.allies], ['taken', cell.taken]];
+	let at = 0;
+	const style = {};
+	parts.forEach(([key, value]) => {
+		const v = Math.max(0, value || 0);
+		const from = Math.min(1, at / s);
+		const to = Math.min(1, (at + v) / s);
+		style[`--p-${key}-at`] = from.toFixed(4);
+		style[`--p-${key}`] = Math.max(0, to - from).toFixed(4);
+		at += v;
+	});
+	return { style, over: at > s + EPS };
+}
+
+export function FitStrip({ sites, row, sentSiteId, sentCell, moveRow, focusSiteId, off, scale, newsSiteId }) {
+	const s = scale > 0 ? scale : FIT_SCALE;
+	const anyCell = row ? sites.map((site) => row[site.id]).find(Boolean) : null;
+	const body = anyCell && typeof anyCell.body === 'number' ? clamp01(anyCell.body / s) : null;
 	return (
-		<span className={`rec-fit${off ? ' rec-fit--off' : ''}`} data-fit aria-hidden="true">
+		<span className={`rec-fit${off ? ' rec-fit--off' : ''}`} data-fit data-fit-scale={s} aria-hidden="true" style={body !== null ? { '--fit-body': body.toFixed(4) } : undefined}>
 			{sites.map((site) => {
 				const classes = ['rec-fit-col', `g-el-${site.world.element}`];
 				if (focusSiteId) {
 					classes.push(focusSiteId === site.id ? 'rec-fit-col--focus' : 'rec-fit-col--dim');
 				}
+				if (newsSiteId && newsSiteId === site.id) {
+					classes.push('rec-fit-col--news');
+				}
 				if (sentSiteId && sentSiteId === site.id) {
 					const falls = !!(sentCell && sentCell.downed);
-					const kept = sentCell && !falls ? clamp01(sentCell.hold / FIT_SCALE) : 0;
-					const going = sentCell ? clamp01(Math.max(sentCell.before || 0, falls ? 0 : sentCell.hold) / FIT_SCALE) : kept;
+					const kept = sentCell && !falls ? sentCell.hold : 0;
+					const going = sentCell ? Math.max(sentCell.before || 0, kept) : 0;
+					const { style } = stackOf({ own: kept, toll: Math.max(0, going - kept) }, s);
 					classes.push('rec-fit-col--sent');
 					if (falls) classes.push('rec-fit-col--falls');
 					return (
-						<span className={classes.join(' ')} key={site.id} style={{ '--fit': kept.toFixed(4), '--fit-going': going.toFixed(4) }} data-fit-site={site.id} data-fit-sent={sentCell ? (falls ? 'falls' : sentCell.hold.toFixed(1)) : ''}>
+						<span className={classes.join(' ')} key={site.id} style={style} data-fit-site={site.id} data-fit-sent={sentCell ? (falls ? 'falls' : sentCell.hold.toFixed(1)) : ''}>
 							<span className="rec-fit-num g-mono">{sentCell ? (falls ? <FallsMark /> : formatHoldShown(sentCell.hold)) : ''}</span>
 							<span className="rec-fit-well">
-								{going > kept + 0.001 && <span className="rec-fit-going" />}
-								<span className="rec-fit-bar" />
+								<span className="rec-fit-part rec-fit-part--own" />
+								<span className="rec-fit-part rec-fit-part--lost" />
 							</span>
+							<span className="rec-whys rec-fit-why" />
 						</span>
 					);
 				}
@@ -211,43 +308,54 @@ export function FitStrip({ sites, row, sentSiteId, sentCell, moveRow, focusSiteI
 					const move = moveRow && moveRow[site.id];
 					if (!move) {
 						classes.push('rec-fit-col--gone');
-						return <span className={classes.join(' ')} key={site.id} data-fit-site={site.id}><span className="rec-fit-num" /><span className="rec-fit-well" /></span>;
+						return <span className={classes.join(' ')} key={site.id} data-fit-site={site.id}><span className="rec-fit-num" /><span className="rec-fit-well" /><span className="rec-whys rec-fit-why" /></span>;
 					}
 					classes.push('rec-fit-col--move');
 					if (move.swing < -EPS) classes.push('rec-fit-col--hurts');
+					const { style } = stackOf({ own: Math.max(0, move.swing) }, s);
 					return (
-						<span className={classes.join(' ')} key={site.id} style={{ '--fit': clamp01(move.swing / FIT_SCALE).toFixed(4) }} data-fit-site={site.id} data-fit-move={move.swing.toFixed(2)}>
+						<span className={classes.join(' ')} key={site.id} style={style} data-fit-site={site.id} data-fit-move={move.swing.toFixed(2)}>
 							<span className="rec-fit-num g-mono">{swingNumber(move.swing)}</span>
-							<span className="rec-fit-well"><span className="rec-fit-bar" /></span>
+							<span className="rec-fit-well"><span className="rec-fit-part rec-fit-part--own" /></span>
+							<span className="rec-whys rec-fit-why" />
 						</span>
 					);
 				}
 				const cell = row && row[site.id];
 				if (!cell) {
 					classes.push('rec-fit-col--none');
-					return <span className={classes.join(' ')} key={site.id} data-fit-site={site.id}><span className="rec-fit-num" /><span className="rec-fit-well" /></span>;
+					return <span className={classes.join(' ')} key={site.id} data-fit-site={site.id}><span className="rec-fit-num" /><span className="rec-fit-well" /><span className="rec-whys rec-fit-why" /></span>;
 				}
-				const height = clamp01(cell.swing / FIT_SCALE);
-				const tick = cell.deficit > EPS ? clamp01(cell.deficit / FIT_SCALE) : null;
+				const { style, over } = stackOf(cell, s);
+				const tick = cell.deficit > EPS ? clamp01(cell.deficit / s) : null;
 				if (cell.takes) classes.push('rec-fit-col--takes');
 				else if (tick !== null) classes.push('rec-fit-col--short');
-				if (cell.swing > FIT_SCALE) classes.push('rec-fit-col--over');
+				if (over) classes.push('rec-fit-col--over');
 				if (cell.swing < -EPS) classes.push('rec-fit-col--hurts');
+				if (cell.taken > EPS) classes.push('rec-fit-col--fights');
+				if (tick !== null) style['--fit-tick'] = tick.toFixed(4);
 				return (
 					<span
 						className={classes.join(' ')}
 						key={site.id}
-						style={{ '--fit': height.toFixed(4), '--fit-tick': tick === null ? undefined : tick.toFixed(4) }}
+						style={style}
 						data-fit-site={site.id}
 						data-fit-swing={cell.swing.toFixed(2)}
+						data-fit-parts={[cell.own, cell.toll, cell.allies, cell.taken].map((v) => (v || 0).toFixed(1)).join('/')}
 						data-fit-takes={cell.takes ? '' : undefined}
 					>
 						{/* the number sits on its column: what this send would move that world, the same unit as the totals on the world's line */}
 						<span className="rec-fit-num g-mono">{swingNumber(cell.swing)}</span>
 						<span className="rec-fit-well">
-							<span className="rec-fit-bar" />
+							<span className="rec-fit-part rec-fit-part--own" />
+							<span className="rec-fit-part rec-fit-part--lost" />
+							<span className="rec-fit-part rec-fit-part--allies" />
+							<span className="rec-fit-part rec-fit-part--taken">
+								{cell.taken >= Math.max(3, s * 0.14) && <i className="rec-fit-part-num g-mono">{formatHoldShown(cell.taken)}</i>}
+							</span>
 							{tick !== null && <span className="rec-fit-tick" />}
 						</span>
+						<WhyMarks reasons={cell} className="rec-fit-why" />
 					</span>
 				);
 			})}
@@ -267,9 +375,9 @@ export function fitSentence(sites, row) {
 		}
 		const move = cell.swing >= 0 ? `+${formatHold(cell.swing)} your way` : `${formatHold(cell.swing)}, against you`;
 		const lead = cell.takes ? ', takes the lead' : cell.deficit > EPS ? `, the rival still ahead by ${formatHold(Math.max(0, cell.deficit - Math.max(0, cell.swing)))}` : '';
-		const home = cell.isHome ? ', home ground' : '';
-		const strain = cell.strainLevel && cell.strainLevel !== 'none' ? `, ${cell.strainLevel === 'severe' ? 'severely strained' : 'strained'}` : '';
-		return `${site.world.planet} ${move}${lead}${home}${strain}`;
+		const taken = cell.taken > EPS ? `, ${formatHold(cell.taken)} of it off the rival there` : '';
+		const why = whyWords(cell);
+		return `${site.world.planet} ${move}${lead}${taken}${why.length ? ` (${why.join('; ')})` : ''}`;
 	}).filter(Boolean).join('. ');
 }
 

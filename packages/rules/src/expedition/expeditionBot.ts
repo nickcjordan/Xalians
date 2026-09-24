@@ -947,7 +947,7 @@ function rawBlowAmount(publicState: PublicState, siteId: string, attackerEntry: 
 		return 0;
 	}
 	const rules = rulesOf(publicState);
-	let amount = magnitudeAgainst(attackerEntry.record, prepared.blow, victimEntry.record);
+	let amount = magnitudeAgainst(attackerEntry.record, prepared.blow, victimEntry.record, rules);
 	if (prepared.role === ROLE.SWEEP) {
 		amount *= rules && typeof rules.sweepDiscount === 'number' ? rules.sweepDiscount : 0.6;
 	}
@@ -1007,8 +1007,8 @@ function conductTargetGuess(publicState: PublicState, siteId: string, prepared: 
 	if (line === 'enemyMostVulnerableToElement') {
 		const fallbackAct: Act = { action: 'strike', class: null, magnitude: 1, printedMagnitude: 1, name: 'fallback' };
 		return holds.reduce((best, c) => {
-			const eff = magnitudeAgainst(prepared.record, prepared.blow || fallbackAct, c.entry.record);
-			const bestEff = magnitudeAgainst(prepared.record, prepared.blow || fallbackAct, best.entry.record);
+			const eff = magnitudeAgainst(prepared.record, prepared.blow || fallbackAct, c.entry.record, rulesOf(publicState));
+			const bestEff = magnitudeAgainst(prepared.record, prepared.blow || fallbackAct, best.entry.record, rulesOf(publicState));
 			return eff > bestEff ? c : best;
 		}).entry;
 	}
