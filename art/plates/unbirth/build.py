@@ -372,25 +372,28 @@ sky.append('<!-- air under the cloud: dark, lightening a little toward the horiz
 sky.append('<!-- far off at right the last light under the storm: the open air the World Tree stands in, paler than its crown and trunk so they stand against it -->'
            '<ellipse cx="1240" cy="266" rx="580" ry="112" fill="#303c49" opacity=".75" filter="url(#soft)"/>')
 lin([(0, '#030507', 1), (.7, '#0a1012', 1), (1, '#131c24', 1)], 0, 0, 0, 240, units=True, id='mass')
-lin([(0, '#070b0d', 1), (.6, '#0d141a', 1), (1, '#10181e', 1)], id='lobe')  # darker than the air under it: a lit lobe bottom read as a snowy ridge
+lin([(0, '#070b0d', 1), (.5, '#0c1318', 1), (.62, '#0e161c', .9), (.82, '#10181e', .4), (1, '#111a20', 0)], id='lobe')  # darker than the air under it: a lit lobe bottom read as a snowy ridge
+TREE_LIFT = 74
 lobes = []
 x = -80
 while x < W + 80:
     cy = 176 + 22 * math.sin(x / 140) + 10 * math.sin(x / 47) + rnd.uniform(-8, 8)
-    cy -= 46 * min(1, max(0, (x - 800) / 180))  # over the World Tree the cloud base rides higher, so its crown stands against open air
+    cy -= TREE_LIFT * min(1, max(0, (x - 800) / 180))  # over the World Tree the cloud base rides higher, so its crown's underside hangs in open air
     lobes.append('<ellipse cx="%s" cy="%s" rx="%s" ry="%s" fill="url(#lobe)"/>' % (f(x), f(cy), f(rnd.uniform(62, 110)), f(rnd.uniform(34, 58))))
     x += rnd.uniform(52, 84)
+# the mass the lobes hang from: its base sits inside the lobes' solid tops, so only the lobes' soft bottoms show
+MASS_POLY = pts([(-40, -40), (W + 40, -40)] + [(x_, 150 - TREE_LIFT * min(1, max(0, (x_ - 800) / 180))) for x_ in range(W + 40, -41, -20)])
 scud = []
 for _ in range(14):
     sx_ = rnd.uniform(0, W)
-    scud.append('<ellipse cx="%s" cy="%s" rx="%s" ry="%s" fill="#0f171d" opacity="%s"/>' % (f(sx_), f(rnd.uniform(218, 250) - (46 if sx_ > 860 else 0)), f(rnd.uniform(40, 90)), f(rnd.uniform(6, 12)), f(rnd.uniform(.5, .85))))
+    scud.append('<ellipse cx="%s" cy="%s" rx="%s" ry="%s" fill="#0f171d" opacity="%s"/>' % (f(sx_), f(rnd.uniform(218, 250) - (TREE_LIFT if sx_ > 860 else 0)), f(rnd.uniform(40, 90)), f(rnd.uniform(6, 12)), f(rnd.uniform(.5, .85))))
 # the cloud's underside in relief: billows shaded by the little light that comes up from the horizon
 defs.append('<filter id="cloudRelief" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB">'
             '<feTurbulence type="fractalNoise" baseFrequency=".0025 .006" numOctaves="5" seed="5" result="n"/>'
             '<feColorMatrix in="n" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  1.2 0 0 0 -.1" result="h"/><feGaussianBlur in="h" stdDeviation="3" result="hb"/>'
             '<feDiffuseLighting in="hb" surfaceScale="30" diffuseConstant="1" lighting-color="#b4c0ca" result="lit"><feDistantLight azimuth="90" elevation="20"/></feDiffuseLighting>'
             '<feComposite in="lit" in2="SourceGraphic" operator="arithmetic" k1="1.5" k2=".15" k3="0" k4="0" result="m"/><feComposite in="m" in2="SourceGraphic" operator="in"/></filter>')
-sky.append('<!-- storm ceiling: the cloud mass and its hanging lobes, their undersides in relief --><g filter="url(#cloudRelief)"><g filter="url(#cloud)"><rect x="-40" y="-40" width="%d" height="220" fill="url(#mass)"/>%s%s</g></g>' % (W + 80, ''.join(lobes), ''.join(scud)))
+sky.append('<!-- storm ceiling: the cloud mass and its hanging lobes, their undersides in relief --><g filter="url(#cloudRelief)"><g filter="url(#cloud)"><polygon points="%s" fill="url(#mass)"/>%s%s</g></g>' % (MASS_POLY, ''.join(lobes), ''.join(scud)))
 # (the cloud base is not lit green: it hangs miles off over the sea, far beyond the reach of the vat. Nick 2026-09-23)
 sky.append('<!-- the rain-filled air right around the Generator lit by it, gone well below the cloud --><ellipse cx="%d" cy="352" rx="230" ry="100" fill="url(#glowWash)" opacity=".22"/>' % GX)
 
@@ -499,12 +502,13 @@ roots = ''.join('<polygon points="%s"/>' % pts(limb(x0, y0, cx, cy, x1, y1, w0, 
 limbs_ = ''.join('<polygon points="%s"/>' % pts(limb(*L, n=20)[0]) for L in (
     (TX - 20, 222, TX - 90, 196, TX - 250, 150, 28, 9), (TX - 8, 214, TX - 30, 180, TX - 90, 138, 22, 8),
     (TX + 14, 214, TX + 36, 180, TX + 100, 138, 22, 8), (TX + 28, 222, TX + 100, 196, TX + 270, 150, 28, 9),
-    (TX - 110, 190, TX - 150, 176, TX - 190, 150, 9, 4), (TX + 118, 188, TX + 160, 176, TX + 206, 150, 9, 4)))
+    (TX - 110, 190, TX - 150, 176, TX - 190, 150, 9, 4), (TX + 118, 188, TX + 160, 176, TX + 206, 150, 9, 4),
+    (TX - 180, 182, TX - 300, 172, TX - 420, 158, 13, 4)))  # the long left reach is held up by wood, or its underside reads as a cloud bank's base
 # the crown: one broad umbrella of foliage, its outline lumped at a large scale and ragged where the leaves are,
 # lit a little on top, darker underneath, a slow texture of leaf masses inside it, and nothing finer
 crnd_ = random.Random(71)
 cm = []
-lin([(0, '#34463a', 1), (.35, '#26352c', 1), (.72, '#1a2520', 1), (.86, '#121915', 1), (1, '#151d19', 1)], id='domeG')  # a darker band under each dome
+lin([(0, '#2c3b31', 1), (.4, '#232f28', 1), (.74, '#19231e', 1), (.88, '#121915', 1), (1, '#141b17', 1)], id='domeG')  # low relief: a lit top on every dome billowed like cumulus
 rows = ((0, .34, 64, 88, 58, 86), (1, .62, 52, 74, 40, 60), (2, .9, 38, 56, 24, 38))  # (row, depth in the crown, spacing lo/hi, rx lo/hi)
 for r_, dep, s0, s1, r0, r1 in rows:
     x = CROWN_X0 + crnd_.uniform(0, 30) - 20 * r_
@@ -519,8 +523,13 @@ for r_, dep, s0, s1, r0, r1 in rows:
         x += crnd_.uniform(s0, s1)
 lin([(0, '#2a392f', 1), (.45, '#212e27', 1), (.8, '#18221e', 1), (1, '#131b18', 1)], 0, 60, 0, 196, units=True, id='crownG')
 defs.append('<filter id="crownEdge" x="-5%" y="-25%" width="110%" height="150%"><feTurbulence type="fractalNoise" baseFrequency=".035 .06" numOctaves="3" seed="151" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="16" xChannelSelector="R" yChannelSelector="G" result="d"/>'
-            '<feTurbulence type="fractalNoise" baseFrequency=".22" numOctaves="2" seed="159" result="n2"/><feDisplacementMap in="d" in2="n2" scale="4" xChannelSelector="R" yChannelSelector="G" result="d2"/><feGaussianBlur in="d2" stdDeviation=".8"/></filter>')  # large lumps, then a fine leafy edge
+            '<feTurbulence type="fractalNoise" baseFrequency=".22" numOctaves="2" seed="159" result="n2"/><feDisplacementMap in="d" in2="n2" scale="4" xChannelSelector="R" yChannelSelector="G" result="d2"/><feGaussianBlur in="d2" stdDeviation="1.2"/></filter>')  # large lumps, then a fine leafy edge
 defs.append('<g id="crownShape"><g filter="url(#crownEdge)">%s</g></g>' % ''.join(cm))
+# the crown goes up into the cloud rather than stopping under it: its upper part fades out following its own outline,
+# so the storm behind shows through and no lit top edge lies against the cloud; the thin ends of the umbrella fade deeper
+fade_ = pts([(x_, lerp(crown_top(x_), crown_bot(x_), .16 + .3 * min(1, abs(x_ - TX) / 560) ** 2)) for x_ in range(CROWN_X0 - 80, CROWN_X1 + 81, 12)] + [(CROWN_X1 + 80, HZ + 20), (CROWN_X0 - 80, HZ + 20)])
+defs.append('<filter id="crownFadeBlur" filterUnits="userSpaceOnUse" x="%d" y="-60" width="%d" height="%d"><feGaussianBlur stdDeviation="14"/></filter>' % (CROWN_X0 - 200, CROWN_X1 - CROWN_X0 + 400, HZ + 160))
+defs.append('<mask id="crownFade" maskUnits="userSpaceOnUse" x="%d" y="-60" width="%d" height="%d"><polygon points="%s" fill="#fff" filter="url(#crownFadeBlur)"/></mask>' % (CROWN_X0 - 200, CROWN_X1 - CROWN_X0 + 400, HZ + 160, fade_))
 noise_tex('crownLeaves', .03, .05, 153, '#3a5040', 2.6, -1.35, 3)  # leaf masses: soft, low, large
 noise_tex('crownShade', .02, .04, 157, '#0c1210', 2.4, -1.1, 3)
 # one depth for the whole tree: it is softened a little and every part of it, wood and leaf, mixed the same way toward
@@ -531,7 +540,7 @@ defs.append('<filter id="treeAir" x="-5%" y="-10%" width="110%" height="120%" co
 far.append('<!-- the World Tree: a tall trunk on buttress roots dividing only into its crown, one broad umbrella of foliage under the storm, all of it hazed alike by the miles of rain -->'
            '<g filter="url(#treeAir)">'
            '<g fill="url(#trunkG)"><polygon points="%s"/>%s%s</g><polygon points="%s" fill="url(#trunkSide)" opacity=".6"/><g filter="url(#soft1)">%s</g>'
-           '<use href="#crownShape"/><g opacity=".55"><use href="#crownShape" filter="url(#crownLeaves)"/></g><g opacity=".5"><use href="#crownShape" filter="url(#crownShade)"/></g>'
+           '<g mask="url(#crownFade)"><use href="#crownShape"/><g opacity=".5"><use href="#crownShape" filter="url(#crownLeaves)"/></g><g opacity=".5"><use href="#crownShape" filter="url(#crownShade)"/></g></g>'
            '</g>' % (trunk, roots, limbs_, trunk, bark))
 # the crown pushes up into the storm: the cloud's own lobes hang in front of its top and rags of scud cross it
 vr_ = random.Random(113)
