@@ -370,7 +370,10 @@ sky = []
 lin([(0, '#04070a', 1), (.35, '#0a1016', 1), (.6, '#111a22', 1), (1, '#27313c', 1)], 0, 0, 0, HZ, units=True, id='air')
 sky.append('<!-- air under the cloud: dark, lightening a little toward the horizon --><rect width="%d" height="%d" fill="url(#air)"/>' % (W, HZ + 10))
 sky.append('<!-- far off at right the last light under the storm: the open air the World Tree stands in, paler than its crown and trunk so they stand against it -->'
-           '<ellipse cx="1240" cy="266" rx="580" ry="112" fill="#303c49" opacity=".75" filter="url(#soft)"/>')
+           '<ellipse cx="1250" cy="262" rx="820" ry="215" fill="url(#treeAirG)"/>')
+# (a blurred solid ellipse here left its own rim visible left of the tree as a pale oval, Nick 2026-09-24; the light
+# now falls off smoothly all the way to nothing)
+rad([(0, '#303c49', .8), (.4, '#303c49', .75), (.6, '#303c49', .52), (.78, '#303c49', .22), (.9, '#303c49', .07), (1, '#303c49', 0)], id='treeAirG')
 lin([(0, '#030507', 1), (.7, '#0a1012', 1), (1, '#131c24', 1)], 0, 0, 0, 240, units=True, id='mass')
 lin([(0, '#070b0d', 1), (.5, '#0c1318', 1), (.62, '#0e161c', .9), (.82, '#10181e', .4), (1, '#111a20', 0)], id='lobe')  # darker than the air under it: a lit lobe bottom read as a snowy ridge
 TREE_LIFT = 74
@@ -555,7 +558,8 @@ veil.append('<rect x="%s" y="-40" width="%s" height="%s" fill="url(#mass)"/>' % 
 scud_ = ''.join('<ellipse cx="%s" cy="%s" rx="%s" ry="%s" fill="#0f171d" opacity="%s"/>' % (f(vr_.uniform(TX - 460, W)), f(vr_.uniform(96, 130)), f(vr_.uniform(40, 80)), f(vr_.uniform(3, 6)), f(vr_.uniform(.35, .6))) for _ in range(5))
 far.append('<!-- the cloud hanging in front of the top of the crown, and rags of scud across it -->'
            '<g filter="url(#cloudRelief)"><g filter="url(#cloud)">%s%s</g></g>' % (''.join(veil), scud_))
-far.append('<!-- the tree hazed by distance and rain --><rect x="%d" y="100" width="1100" height="%d" fill="#27313c" opacity=".12"/>' % (TX - 550, HZ - 90))
+lin([(0, '#27313c', 0), (1, '#27313c', 1)], TX - 560, 0, TX - 330, 0, units=True, id='treeHazeG')  # fading in from the left: a hard rect edge showed
+far.append('<!-- the tree hazed by distance and rain --><rect x="%d" y="100" width="1100" height="%d" fill="url(#treeHazeG)" opacity=".12"/>' % (TX - 560, HZ - 90))
 # mist lying across the trunk at several heights, and rain curtains between it and the viewer: the air
 # between here and there is miles deep
 mist_ = ''.join('<ellipse cx="%s" cy="%s" rx="%s" ry="%s" fill="#2c3642" opacity="%s"/>' % (f(TX + dx), f(y), f(rx), f(ry), f(op)) for dx, y, rx, ry, op in (
