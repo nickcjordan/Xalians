@@ -84,8 +84,8 @@ Text sources: `STORY[0]` to `STORY[3]` and `TOKENS` are Nick's 2022 paragraphs a
 
 - **Headline:** "The only way to safely generate new Xalians" (from `TOKENS`).
 - **Reading text:** `TOKENS`.
-- **What it shows:** the broken helix from beat 5 gathers itself. Its rungs shuffle into a new order, each pair lighting as it locks, and the rebuilt helix folds down into a small chip, the Scrambler Token, which settles face on. It reuses the brand's GSAP morph from the word's X into the helix, run the other way and ending in the chip.
-- **Motion:** scrubbed. It gathers in the first third, scrambles in the second and seals into the chip in the last.
+- **What it shows:** the last of the broken helix from beat 5 fades, and a new helix gathers out of the dark from scattered blanks. It is not rebuilt from the fallen pieces: a token's genome is generated new (the fact-check caught the first version implying salvage). Its rungs shuffle into a random order, each pair lighting as it locks, and the new helix folds down into a small chip, the Scrambler Token, with the genome sealed in its face. (Built as its own helix drawing rather than from the brand morph: the brand mark is a logo glyph, not a long helix.)
+- **Motion:** scrubbed. The remnant fades in the first eighth, the new helix gathers by a third, it scrambles in the second third and seals into the chip in the last.
 - **Chain step:** 5.
 
 ### Beat 7 · Full scene · The Reign of Kozrak (to build)
@@ -108,14 +108,18 @@ Text sources: `STORY[0]` to `STORY[3]` and `TOKENS` are Nick's 2022 paragraphs a
 
 Each step is its own PR, auto-merged and judged live by Nick.
 
-1. The stage: seven beats and their headlines, the timeline's major and minor marks, and the Accords spread out. Small pieces not yet built are left out of the sequence until their PR lands, so the live page never shows a placeholder.
-2. Beat 6, the Scrambler Token: the hook, and it starts from the existing brand morph.
-3. Beat 5, the Nemesis Plague: it shares the helix with beat 6.
+1. The stage, with beats 5 and 6 (shipped together, 2026-09-24, so no paragraph left the page between PRs): the headlines, weighted stretches and the timeline's major and minor marks, the Accords spread out, and the two helix pieces (`pages/home/helixPiece.tsx`). Beats 2 and 3 are left out of the sequence until their PR lands, so the live page never shows a placeholder.
+2. (Folded into step 1.)
+3. (Folded into step 1.)
 4. Beats 2 and 3: they share the vat and the creature.
 5. Beat 7, the present as a living plate: the largest piece, built through the `living-plate` skill with its review loop.
 
 Every step is verified by paint before it is presented: rendered at wide, phone and reduced motion with no console errors, and a scrub test of each small piece at several scroll positions.
 
-## 7. Deferred
+## 7. Fact-check notes (2026-09-24)
+
+The two pieces' screen-reader descriptions were checked claim by claim against the histories and the encyclopedia. The plague acting on the genome and the token as a chip carrying a random, encrypted genome are supported. The first token description, and the animation with it, had the new helix gather the plague's fallen pieces, which implied a token is rebuilt from the damaged genome; both were changed so the new helix gathers out of the dark. One delta in Nick's own words is reported rather than changed: "Only the strongest factions will survive…" speaks of factions, while the histories describe Xalians fighting in the king's tournament for their worlds. His 2022 tournament paragraph, later on the page, uses factions too.
+
+## 8. Deferred
 
 - **The closing tease:** after beat 7, the scrambled creature settles, and far behind it something vast stirs, never shown clearly. It would plant the ancient-presence thread without resolving it. Deferred until Nick wants the page to end on dread rather than on the call to action.

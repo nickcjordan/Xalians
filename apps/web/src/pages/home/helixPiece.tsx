@@ -1,0 +1,319 @@
+// Tier: featured component. The home story's two helix pieces (docs/design/
+// home-story-content-plan.md, beats 5 and 6): small scrubbed animations with no
+// landscape, one genome helix drawn on the dark ground.
+//
+// - `plague`: the Nemesis Plague reaches the helix from one end. Its rungs
+//   darken and fall away, its strands fray and drop, and a short broken length
+//   is left turning.
+// - `token`: the broken length fades, and a new helix gathers out of the dark
+//   from scattered blanks (a token's genome is generated new, not rebuilt from
+//   what the plague left); its rungs shuffle into a random order and light as
+//   each one locks, and it folds down into a small chip, the Scrambler Token,
+//   sealed inside it.
+//
+// The token piece starts exactly where the plague piece ends, so the two read
+// as one object across the stage. Both are drawn from their stretch of the
+// scroll (`SceneTime`): the stage writes the reader's place every frame the page
+// moves, and the piece redraws from it directly, so scrolling back plays it
+// backward. A slow turn runs on its own clock only while the piece is the
+// shown one and motion is allowed. Stacked, or under reduced motion, the piece
+// rests on its last frame.
+import * as React from 'react';
+import type { SceneTime } from './storyStage';
+
+const W = 640;
+const H = 360;
+const CY = 180;
+const AMP = 46;
+const K = (Math.PI * 2) / 210; // one turn every 210 units
+const X0 = 60;
+const X1 = 580;
+const SEG = 8; // strand segment length
+const RUNGS = Array.from({ length: 26 }, (_, i) => 70 + i * 20);
+const SEGS = Array.from({ length: (X1 - X0) / SEG }, (_, i) => X0 + i * SEG);
+const TURN = 0.55; // radians a second, while the piece is live
+
+// The four bases and their pairs, as art colors (lore art keeps its own palette).
+const BASE = ['#5fbfae', '#d6a95a', '#8196e2', '#d0708e'];
+const PAIR = [1, 0, 3, 2];
+const STRAND = '#b8cad2';
+const SICK = '#7a2c42'; // the plague's stain: dull, but still seen on the dark ground
+const ASH = '#5b4a50';
+const BLANK = '#8a969c';
+
+function rng(seed: number) {
+	let a = seed >>> 0;
+	return () => {
+		a = (a + 0x6d2b79f5) >>> 0;
+		let t = a;
+		t = Math.imul(t ^ (t >>> 15), t | 1);
+		t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+		return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+	};
+}
+
+const r = rng(606);
+// What each rung carried before, what it carries after the scramble, and when it locks.
+const OLD = RUNGS.map(() => Math.floor(r() * 4));
+const NEW = RUNGS.map((_, i) => (OLD[i] + 1 + Math.floor(r() * 3)) % 4);
+const ORDER = RUNGS.map((_, i) => i).sort(() => r() - 0.5);
+const LOCK = RUNGS.map((_, i) => 0.36 + 0.28 * (ORDER.indexOf(i) / (RUNGS.length - 1)));
+// Each falling piece's own drift and tumble.
+const DRIFT = [...RUNGS, ...SEGS, ...SEGS].map(() => [r() * 2 - 1, r() * 2 - 1, 0.7 + r() * 0.6]);
+
+const clamp = (v: number) => Math.min(1, Math.max(0, v));
+const smooth = (v: number) => {
+	const c = clamp(v);
+	return c * c * (3 - 2 * c);
+};
+
+// A color as '#rrggbb' or as the 'rgb(r,g,b)' that mixColor returns, so mixes can be mixed again.
+function hex(c: string) {
+	if (c[0] === '#') return [1, 3, 5].map((i) => parseInt(c.slice(i, i + 2), 16));
+	return c.slice(4, -1).split(',').map(Number);
+}
+function mixColor(a: string, b: string, t: number) {
+	const A = hex(a);
+	const B = hex(b);
+	return `rgb(${A.map((v, i) => Math.round(v + (B[i] - v) * clamp(t))).join(',')})`;
+}
+
+/** The plague's reach at `t`: how sick (0 to 1) and how far fallen (0 to 1) a piece at `x` is. */
+function plagueAt(x: number, t: number) {
+	const front = 20 + 480 * t;
+	const a = clamp((front - x) / 90);
+	return { sick: clamp(a / 0.4), fall: clamp((a - 0.4) / 0.6) };
+}
+
+type Mode = 'plague' | 'token';
+
+type Frame = {
+	rung: (i: number) => { a: string; b: string; fall: number; glow: number; op: number; scatter?: number };
+	strand: (x: number) => { color: string; fall: number; op?: number; scatter?: number };
+	squeeze: number; // 0: the helix at full length; 1: folded into the chip
+};
+
+function frameAt(mode: Mode, t: number): Frame {
+	if (mode === 'plague') {
+		return {
+			rung: (i) => {
+				const { sick, fall } = plagueAt(RUNGS[i], t);
+				const c = BASE[OLD[i]];
+				const p = BASE[PAIR[OLD[i]]];
+				return { a: mixColor(c, SICK, sick), b: mixColor(p, SICK, sick), fall, glow: 0, op: 1 };
+			},
+			strand: (x) => {
+				const { sick, fall } = plagueAt(x, t);
+				return { color: mixColor(STRAND, ASH, sick), fall };
+			},
+			squeeze: 0,
+		};
+	}
+	// The last of the broken helix fades first. A Scrambler Token's genome is generated new, not rebuilt from
+	// what the plague left, so the new helix gathers out of the dark from scattered blanks, not from the fallen pieces.
+	const fade = 1 - smooth(t / 0.12);
+	const arrive = 1 - smooth((t - 0.12) / 0.22); // 1: still scattered; 0: in place
+	return {
+		rung: (i) => {
+			if (t < 0.12) {
+				const end = plagueAt(RUNGS[i], 1);
+				return { a: mixColor(BASE[OLD[i]], SICK, end.sick), b: mixColor(BASE[PAIR[OLD[i]]], SICK, end.sick), fall: end.fall, glow: 0, op: fade };
+			}
+			const lock = LOCK[i];
+			// Before its lock a rung is a blank, flickering dimly through the bases as the order shuffles.
+			if (t < lock) {
+				const flick = t > 0.34 ? Math.floor(t * 60 + i * 7) % 4 : -1;
+				const a = flick >= 0 ? mixColor(BLANK, BASE[flick], 0.35) : BLANK;
+				const b = flick >= 0 ? mixColor(BLANK, BASE[PAIR[flick]], 0.35) : BLANK;
+				return { a, b, fall: 0, glow: 0, op: 1, scatter: arrive };
+			}
+			// Locked: a flash, then its new pair.
+			const since = clamp((t - lock) / 0.05);
+			return {
+				a: mixColor('#ffffff', BASE[NEW[i]], since),
+				b: mixColor('#ffffff', BASE[PAIR[NEW[i]]], since),
+				fall: 0,
+				glow: 1 - since,
+				op: 1,
+			};
+		},
+		strand: (x) => {
+			if (t < 0.12) {
+				const end = plagueAt(x, 1);
+				return { color: mixColor(STRAND, ASH, end.sick), fall: end.fall, op: fade };
+			}
+			return { color: STRAND, fall: 0, scatter: arrive };
+		},
+		squeeze: smooth((t - 0.68) / 0.32),
+	};
+}
+
+/** A piece still on its way in: out along its own direction, faded, turned. */
+function scattered(k: number, sc: number, cx: number, cy: number) {
+	const [dx, rot, sp] = DRIFT[k];
+	const ang = rot * Math.PI;
+	const d = (90 + 110 * sp) * sc;
+	return {
+		transform: `translate(${(Math.cos(ang) * d).toFixed(1)} ${(Math.sin(ang) * d * 0.8).toFixed(1)}) rotate(${(dx * 90 * sc).toFixed(1)} ${cx.toFixed(1)} ${cy.toFixed(1)})`,
+		opacity: 1 - sc,
+	};
+}
+
+/** A falling piece's transform and fade: it drops, drifts, tumbles and goes. */
+function fallen(k: number, fall: number, cx: number, cy: number) {
+	const [dx, rot, sp] = DRIFT[k];
+	const o = fall * fall;
+	return {
+		transform: fall > 0 ? `translate(${(dx * 26 * fall).toFixed(1)} ${(o * 170 * sp).toFixed(1)}) rotate(${(rot * 50 * fall).toFixed(1)} ${cx.toFixed(1)} ${cy.toFixed(1)})` : '',
+		opacity: 1 - Math.pow(fall, 1.6),
+	};
+}
+
+function reduced() {
+	return typeof window !== 'undefined' && !!window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+}
+
+export function HelixPiece({ mode, live, time, label }: { mode: Mode; live: boolean | undefined; time?: SceneTime; label: string }) {
+	const rungA = React.useRef<Array<SVGLineElement | null>>([]);
+	const rungB = React.useRef<Array<SVGLineElement | null>>([]);
+	const segs = React.useRef<Array<SVGLineElement | null>>([]);
+	const chip = React.useRef<SVGGElement | null>(null);
+	const state = React.useRef({ t: time ? time.value : 1, phase: 0.4 });
+
+	const draw = React.useCallback(() => {
+		const { t, phase } = state.current;
+		const fr = frameAt(mode, t);
+		const sq = fr.squeeze;
+		const sx = (x: number) => W / 2 + (x - W / 2) * (1 - 0.72 * sq);
+		const amp = AMP * (1 - 0.56 * sq);
+		const width = 1 - 0.45 * sq;
+		// The two strands, one short segment at a time, brighter and wider where they turn toward the viewer.
+		SEGS.forEach((x, j) => {
+			const { color, fall, op = 1, scatter = 0 } = fr.strand(x + SEG / 2);
+			const ph = phase * (1 - fall) + 0.4 * fall; // a piece that has let go stops turning
+			for (const side of [0, 1]) {
+				const el = segs.current[j * 2 + side];
+				if (!el) continue;
+				const s = side ? -1 : 1;
+				const y0 = CY + s * amp * Math.sin(K * x + ph);
+				const y1 = CY + s * amp * Math.sin(K * (x + SEG) + ph);
+				const z = s * Math.cos(K * (x + SEG / 2) + ph);
+				el.setAttribute('x1', sx(x).toFixed(1));
+				el.setAttribute('y1', y0.toFixed(1));
+				el.setAttribute('x2', sx(x + SEG).toFixed(1));
+				el.setAttribute('y2', y1.toFixed(1));
+				el.setAttribute('stroke', color);
+				el.setAttribute('stroke-width', ((2.2 + 1.8 * (z + 1) / 2) * width).toFixed(2));
+				const k = RUNGS.length + side * SEGS.length + j;
+				const f = scatter > 0 ? scattered(k, scatter, sx(x), (y0 + y1) / 2) : fallen(k, fall, sx(x), (y0 + y1) / 2);
+				el.setAttribute('transform', f.transform);
+				el.setAttribute('opacity', (f.opacity * op * (0.35 + 0.65 * (z + 1) / 2)).toFixed(3));
+			}
+		});
+		// The rungs: two halves, one base each, meeting between the strands.
+		RUNGS.forEach((x, i) => {
+			const rg = fr.rung(i);
+			const ph = phase * (1 - rg.fall) + 0.4 * rg.fall;
+			const y0 = CY + amp * Math.sin(K * x + ph);
+			const y1 = CY - amp * Math.sin(K * x + ph);
+			const my = (y0 + y1) / 2;
+			const f = rg.scatter ? scattered(i, rg.scatter, sx(x), my) : fallen(i, rg.fall, sx(x), my);
+			const sw = ((3.2 + 3 * rg.glow) * width).toFixed(2);
+			for (const [el, ya, color] of [
+				[rungA.current[i], y0, rg.a],
+				[rungB.current[i], y1, rg.b],
+			] as const) {
+				if (!el) continue;
+				el.setAttribute('x1', sx(x).toFixed(1));
+				el.setAttribute('x2', sx(x).toFixed(1));
+				el.setAttribute('y1', ya.toFixed(1));
+				el.setAttribute('y2', my.toFixed(1));
+				el.setAttribute('stroke', color);
+				el.setAttribute('stroke-width', sw);
+				el.setAttribute('transform', f.transform);
+				el.setAttribute('opacity', (f.opacity * rg.op * 0.92).toFixed(3));
+			}
+		});
+		// The chip rises around the folded helix.
+		if (chip.current) {
+			const c = sq;
+			chip.current.setAttribute('opacity', Math.pow(c, 0.7).toFixed(3));
+			chip.current.setAttribute('transform', `translate(${W / 2} ${CY}) scale(${(0.9 + 0.4 * c).toFixed(3)})`);
+		}
+	}, [mode]);
+
+	// Scrubbed by the scroll: redraw whenever the reader's place in this stretch moves.
+	// Under reduced motion it rests on its last frame instead.
+	React.useEffect(() => {
+		if (!time || reduced()) {
+			state.current.t = 1;
+			draw();
+			return undefined;
+		}
+		state.current.t = time.value;
+		draw();
+		return time.subscribe((t) => {
+			state.current.t = t;
+			draw();
+		});
+	}, [time, draw]);
+
+	// The slow turn, only while this is the shown piece and motion is allowed.
+	React.useEffect(() => {
+		if (!live || reduced()) return undefined;
+		let frame = 0;
+		let last = performance.now();
+		const tick = (now: number) => {
+			state.current.phase += (TURN * Math.min(100, now - last)) / 1000;
+			last = now;
+			draw();
+			frame = window.requestAnimationFrame(tick);
+		};
+		frame = window.requestAnimationFrame(tick);
+		return () => window.cancelAnimationFrame(frame);
+	}, [live, draw]);
+
+	return (
+		<svg viewBox={`0 0 ${W} ${H}`} role="img" aria-label={label} className="block h-auto w-full overflow-visible">
+			<defs>
+				<linearGradient id={`${mode}-chip`} x1="0" y1="0" x2="0" y2="1">
+					<stop offset="0" stopColor="#27323a" />
+					<stop offset=".5" stopColor="#151c22" />
+					<stop offset="1" stopColor="#0c1115" />
+				</linearGradient>
+				<radialGradient id={`${mode}-halo`}>
+					<stop offset="0" stopColor="#9fd9cf" stopOpacity=".16" />
+					<stop offset="1" stopColor="#9fd9cf" stopOpacity="0" />
+				</radialGradient>
+			</defs>
+			{mode === 'token' ? (
+				// The Scrambler Token: a small chip, contacts along its edges, the new genome sealed in its face.
+				<g ref={chip} opacity="0">
+					<ellipse cx="0" cy="0" rx="190" ry="120" fill={`url(#${mode}-halo)`} />
+					{Array.from({ length: 9 }, (_, i) => (
+						<g key={i} fill="#8d9aa2">
+							<rect x={-72 + i * 18 - 3} y={-86} width="6" height="12" rx="1" />
+							<rect x={-72 + i * 18 - 3} y={74} width="6" height="12" rx="1" />
+						</g>
+					))}
+					<rect x="-104" y="-76" width="208" height="152" rx="12" fill={`url(#${mode}-chip)`} stroke="#71838d" strokeWidth="2" />
+					<rect x="-88" y="-60" width="176" height="120" rx="6" fill="#0a0f12" stroke="#3a4850" strokeWidth="1.5" />
+				</g>
+			) : null}
+			<g strokeLinecap="round" fill="none">
+				{SEGS.map((x, j) => (
+					<React.Fragment key={x}>
+						<line ref={(el) => { segs.current[j * 2] = el; }} />
+						<line ref={(el) => { segs.current[j * 2 + 1] = el; }} />
+					</React.Fragment>
+				))}
+				{RUNGS.map((x, i) => (
+					<React.Fragment key={x}>
+						<line ref={(el) => { rungA.current[i] = el; }} />
+						<line ref={(el) => { rungB.current[i] = el; }} />
+					</React.Fragment>
+				))}
+			</g>
+		</svg>
+	);
+}

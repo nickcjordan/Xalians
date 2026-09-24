@@ -1,11 +1,13 @@
 // Tier: chrome. The front door, told as a story: the brand, one fixed sample
-// creature standing on its world, Nick's own 2022 account of Xalia in four
-// scenes, the creature's page, and the tournament that leads to the
-// Generator. Brief: docs/design/home-story-page-brief.md. The story's words
-// are Nick's (git 1285604e, my-app/src/pages/home.js) and the 2021 Yetimoth
-// entry. The one agent-written text is each scene's small label (SCENE_LABEL):
-// a plain description of what its painting shows, fact-checked against the
-// planet histories with the lore-factcheck skill before it shipped.
+// creature standing on its world, Nick's own 2022 account of Xalia as a
+// sequence of beats (full scenes and small pieces), the creature's page, and
+// the tournament that leads to the Generator. Brief: docs/design/home-story-
+// page-brief.md; the beats: docs/design/home-story-content-plan.md. The
+// story's words are Nick's (git 1285604e, my-app/src/pages/home.js) and the
+// 2021 Yetimoth entry, and every beat's headline is a phrase of his. The
+// agent-written text is each scene's small label (SCENE_LABEL) and each small
+// piece's description for screen readers: plain accounts of what is shown,
+// fact-checked against the planet histories with the lore-factcheck skill.
 import * as React from 'react';
 import { Link } from 'react-router';
 import XalianNavbar from '../components/navbar';
@@ -20,6 +22,7 @@ import { cn } from '@/lib/utils';
 import specimen from './home/specimen.json';
 import { startStoryMotion } from './home/motion';
 import { StoryStage, type StageScene } from './home/storyStage';
+import { HelixPiece } from './home/helixPiece';
 
 /* ------------------------------------------------------------------ copy */
 
@@ -80,16 +83,6 @@ const ART = {
 		// into the flood that was meant to wash its mistakes away.
 		live: '/assets/plates/unbirth/plate.html',
 		still: { src: '/assets/plates/unbirth/poster.jpg', small: '/assets/plates/unbirth/poster-768.jpg' },
-	},
-	accords: {
-		era: 'accords',
-		src: '/assets/img/lore/eras/accords.jpg',
-		small: '/assets/img/lore/eras/accords-768.jpg',
-		alt: 'A lattice mast on a metal summit reaching up into a crimson storm, lightning striking the peaks around it.',
-		// The living version: the QED works on Zolton, a cradle mast above a
-		// storm cloud sea where crimson sprites bloom and lightning strikes.
-		live: '/assets/plates/accords/plate.html',
-		still: { src: '/assets/plates/accords/poster.jpg', small: '/assets/plates/accords/poster-768.jpg' },
 	},
 	endWars: {
 		era: 'end-wars',
@@ -264,10 +257,6 @@ const SCENE_LABEL = {
 		title: 'The Genesis Prototype on Floria',
 		text: 'The first Xalian Generator, raised on a world of bare rock and shallow sea, runs at full capacity through the storm. The flood meant to wash its mistakes away carries its glowing seeds out over the world, where some split and let larvae swim free and others take root on the rocks; far off, a World Tree grown from earlier seeds rises into the cloud.',
 	},
-	accords: {
-		title: 'The QED Works on Zolton',
-		text: 'A QED works stands on the summit of one of Zolton’s metal spires, above a sea of storm cloud lit red from within, while crimson sprites bloom like jellyfish over the bloodstorm. Chips set at opposite ends of a sprite, one in a pod hung above and one in the cradle on the mast below, come out entangled: the link that let APEX reach the Generators.',
-	},
 	'end-wars': {
 		title: 'The Fall over Grimedes',
 		text: 'A warship burning from a breach in its spine falls between lit towers under a night sky crossed with weapon fire. This is the Battle of Grimedes, where the remnants of the Vallerii fleets made their final assault on APEX’s forces and the End Wars ended.',
@@ -291,12 +280,39 @@ const SCENE_LABEL = {
 type Layout = 'wide' | 'wide-right' | 'portrait' | 'side';
 type Era = keyof typeof SCENE_LABEL;
 
-const SPREADS: Array<{ n: string; art: Art & { era: Era }; text: string; layout: Layout; aspect: string; ar: number; position?: string }> = [
-	{ n: '01', art: ART.unbirth, text: STORY[0], layout: 'wide', aspect: 'aspect-[21/9]', ar: 21 / 9, position: 'object-[center_40%]' },
-	{ n: '02', art: ART.accords, text: STORY[1], layout: 'portrait', aspect: 'aspect-[4/5]', ar: 4 / 5, position: 'object-[60%_center]' },
-	{ n: '03', art: ART.endWars, text: STORY[2], layout: 'wide-right', aspect: 'aspect-[2/1]', ar: 2 },
-	{ n: '04', art: ART.present, text: STORY[3], layout: 'side', aspect: 'aspect-[4/3]', ar: 4 / 3, position: 'object-[40%_center]' },
+type Spread = { kind: 'scene'; art: Art & { era: Era }; headline: string; text: string; layout: Layout; aspect: string; ar: number; position?: string };
+type Piece = { kind: 'piece'; key: string; name: string; headline: string; text?: string; layout: 'side' | 'portrait'; mode: 'plague' | 'token'; alt: string };
+
+// The story's beats, in order (docs/design/home-story-content-plan.md). A
+// headline is a phrase from Nick's 2022 page; the reading text is his
+// paragraph. Beats 2 and 3 (the first Xalian, APEX taking the Generators) join
+// when they are built.
+const BEATS: Array<Spread | Piece> = [
+	{ kind: 'scene', art: ART.unbirth, headline: 'They birthed the first Xalians', text: STORY[0], layout: 'wide', aspect: 'aspect-[21/9]', ar: 21 / 9, position: 'object-[center_40%]' },
+	{ kind: 'scene', art: ART.endWars, headline: 'Turned the Xalians against their masters', text: STORY[1], layout: 'wide-right', aspect: 'aspect-[2/1]', ar: 2 },
+	{
+		kind: 'piece',
+		key: 'plague',
+		name: 'The Nemesis Plague',
+		headline: 'Designed by APEX to target the genome',
+		text: STORY[2],
+		layout: 'side',
+		mode: 'plague',
+		alt: 'A genome helix turning in the dark. The Nemesis Plague reaches it from one end: its rungs darken and fall away and its strands fray and drop, until a short broken length is left.',
+	},
+	{
+		kind: 'piece',
+		key: 'token',
+		name: 'The Scrambler Token',
+		headline: 'The only way to safely generate new Xalians',
+		text: TOKENS,
+		layout: 'side', // the same side as the plague piece: the helix stays where it was
+		mode: 'token',
+		alt: 'The last of the broken helix fades, and a new one gathers out of the dark. Its rungs shuffle into a random order and light as each one locks, and it folds down into a small chip, a Scrambler Token, with the new genome sealed in its face.',
+	},
+	{ kind: 'scene', art: ART.present, headline: 'Only the strongest factions will survive…', text: STORY[3], layout: 'side', aspect: 'aspect-[4/3]', ar: 4 / 3, position: 'object-[40%_center]' },
 ];
+const numeral = (i: number) => String(i + 1).padStart(2, '0');
 
 /** The painting's label: what the picture shows, small, outside the frame. */
 function SceneLabel({ era, className }: { era: Era; className?: string }) {
@@ -309,44 +325,82 @@ function SceneLabel({ era, className }: { era: Era; className?: string }) {
 	);
 }
 
-/** The reading column: the era's title and Nick's paragraph, set to be read. */
-function SceneReading({ n, era, text, className }: { n: string; era: Era; text: string; className?: string }) {
+/** The reading column: the beat's numeral and name, its headline, and Nick's paragraph, set to be read. */
+function SceneReading({ n, name, headline, text, className }: { n: string; name: string; headline: string; text?: string; className?: string }) {
 	return (
 		<div className={cn('scene-read flex flex-col', className)}>
-			<span className="type-data text-tiny tracking-legend text-ink-3">{n}</span>
-			<h3 className="type-heading m-0 mt-1.5 text-white lg:mt-2">{ERA_TITLE[era]}</h3>
-			<p className="m-0 mt-2 max-w-[62ch] font-body text-body leading-normal text-ink sm:text-lead sm:leading-normal lg:mt-3 lg:text-subhead lg:leading-normal">{text}</p>
+			<span className="type-data text-tiny tracking-legend text-ink-3">
+				{n} · {name}
+			</span>
+			<h3 className="type-heading m-0 mt-1.5 text-white lg:mt-2">{headline}</h3>
+			{text ? <p className="m-0 mt-2 max-w-[62ch] font-body text-body leading-normal text-ink sm:text-lead sm:leading-normal lg:mt-3 lg:text-subhead lg:leading-normal">{text}</p> : null}
 		</div>
 	);
 }
 
-const STORY_SCENES: StageScene[] = SPREADS.map((sp) => ({
-	key: sp.n,
-	n: sp.n,
-	label: ERA_TITLE[sp.art.era],
-	live: sp.art.live,
-	render: (live) =>
-		live === undefined ? (
-			// Stacked (a window too short for the stage): the scene in the page.
-			<div className="grid grid-cols-1 gap-x-8 gap-y-5 md:grid-cols-12">
-				<div className="md:col-span-7">
-					<Panel art={sp.art} aspect={sp.aspect} position={sp.position} />
-					<SceneLabel era={sp.art.era} className="mt-4" />
-				</div>
-				<SceneReading n={sp.n} era={sp.art.era} text={sp.text} className="md:col-span-5 md:self-center" />
-			</div>
-		) : (
-			<div className="scene-spread" data-layout={sp.layout} style={{ '--ar': sp.ar } as React.CSSProperties}>
-				<div className="scene-art">
-					<div className="scene-frame">
-						<Panel art={sp.art} aspect={sp.aspect} position={sp.position} live={live} staged />
+const STORY_SCENES: StageScene[] = BEATS.map((sp, i): StageScene => {
+	const n = numeral(i);
+	if (sp.kind === 'piece') {
+		// A small piece: one animation on the dark ground, no frame and no label,
+		// scrubbed by its stretch of the stage.
+		return {
+			key: sp.key,
+			n,
+			label: sp.name,
+			weight: 0.6,
+			minor: true,
+			render: (live, time) =>
+				live === undefined ? (
+					<div className="grid grid-cols-1 items-center gap-x-8 gap-y-5 md:grid-cols-12">
+						<div className="md:col-span-7">
+							<HelixPiece mode={sp.mode} live={undefined} label={sp.alt} />
+						</div>
+						<SceneReading n={n} name={sp.name} headline={sp.headline} text={sp.text} className="md:col-span-5" />
 					</div>
-					<SceneLabel era={sp.art.era} />
+				) : (
+					<div className="scene-spread" data-layout={sp.layout} style={{ '--ar': 16 / 9, '--label': '0rem' } as React.CSSProperties}>
+						<div className="scene-art">
+							<div className="scene-frame">
+								<div>
+									<HelixPiece mode={sp.mode} live={live} time={time} label={sp.alt} />
+								</div>
+							</div>
+						</div>
+						<SceneReading n={n} name={sp.name} headline={sp.headline} text={sp.text} />
+					</div>
+				),
+		};
+	}
+	return {
+		key: sp.art.era,
+		n,
+		label: ERA_TITLE[sp.art.era],
+		live: sp.art.live,
+		render: (live) =>
+			live === undefined ? (
+				// Stacked (a window too short for the stage): the scene in the page.
+				<div className="grid grid-cols-1 gap-x-8 gap-y-5 md:grid-cols-12">
+					<div className="md:col-span-7">
+						<Panel art={sp.art} aspect={sp.aspect} position={sp.position} />
+						<SceneLabel era={sp.art.era} className="mt-4" />
+					</div>
+					<SceneReading n={n} name={ERA_TITLE[sp.art.era]} headline={sp.headline} text={sp.text} className="md:col-span-5 md:self-center" />
 				</div>
-				<SceneReading n={sp.n} era={sp.art.era} text={sp.text} />
-			</div>
-		),
-}));
+			) : (
+				<div className="scene-spread" data-layout={sp.layout} style={{ '--ar': sp.ar } as React.CSSProperties}>
+					<div className="scene-art">
+						<div className="scene-frame">
+							<Panel art={sp.art} aspect={sp.aspect} position={sp.position} live={live} staged />
+						</div>
+						<SceneLabel era={sp.art.era} />
+					</div>
+					<SceneReading n={n} name={ERA_TITLE[sp.art.era]} headline={sp.headline} text={sp.text} />
+				</div>
+			),
+	};
+});
+// The tournament's plate follows the story's last beat.
+const TOURNAMENT_N = numeral(BEATS.length);
 
 /* ------------------------------------------------------------------ page */
 
@@ -409,9 +463,9 @@ function Home() {
 
 			<Shell className="pb-10">
 				<div className="mx-auto max-w-[1160px]">
-					{/* The Story: four scenes on one stage, shown one at a time as
-					    the reader scrolls. Same frame, same plate, a different
-					    arrangement every time. */}
+					{/* The Story: its beats on one stage, shown one at a time as the
+					    reader scrolls: full scenes (same frame, same plate, a
+					    different arrangement every time) and small pieces between. */}
 					<StoryStage id="story" title={<StoryHead id="story-title" className="mb-0">The Story</StoryHead>} scenes={STORY_SCENES} />
 
 					{/* The Galaxy of Xalia: the creature's page. */}
@@ -452,15 +506,14 @@ function Home() {
 
 						<div className="mb-12 grid grid-cols-1 gap-x-6 lg:mb-16 lg:grid-cols-12">
 							<div className="lg:col-start-1 lg:col-end-9 lg:row-start-1">
-								<Panel n="05" art={ART.generation} aspect="aspect-video" position="object-[center_60%]" />
+								<Panel n={TOURNAMENT_N} art={ART.generation} aspect="aspect-video" position="object-[center_60%]" />
 							</div>
-							<Plate n="05" from="right" className="-mt-7 mx-4 lg:col-start-8 lg:col-end-13 lg:row-start-1 lg:m-0 lg:-mb-12 lg:-ml-28 lg:self-end">
+							<Plate n={TOURNAMENT_N} from="right" className="-mt-7 mx-4 lg:col-start-8 lg:col-end-13 lg:row-start-1 lg:m-0 lg:-mb-12 lg:-ml-28 lg:self-end">
 								{TOURNAMENT}
 							</Plate>
 						</div>
 
 						<div className="flex max-w-[62ch] flex-col items-start gap-5 pt-6 lg:pt-10">
-							<p className="m-0 font-body text-lead text-ink">{TOKENS}</p>
 							<p className="type-display m-0 mt-1">Start generating now&hellip;</p>
 							<div className="flex flex-wrap items-center gap-6">
 								<Button asChild variant="secondary">
