@@ -51,7 +51,9 @@ the only other light. Wind and flood run left to right: rain slants and seeds dr
 - rain curtains: soft slanted shafts of heavier rain hanging from the cloud to the horizon. Static.
 - the World Tree: a colossal trunk far off at right, great boughs sweeping up into the storm; its
   canopy domes over it and spreads under the cloud base across the right half of the sky: masses of
-  foliage, clumped and ragged, no single leaf showing at this distance, lost into the cloud above; its
+  foliage, clumped and ragged, no single leaf showing at this distance, bulging in relief with only
+  its tops catching light, closing over the far reaches of the boughs, its far reach thinning into the
+  cloud; its
   own seed pods glowing faintly among them. Miles of air lie between: the trunk pales as it climbs,
   mist lies across it and rain curtains hang in front of it.
 - its island: land rising from the flood around its foot, covered in the young forest earlier seeds
@@ -79,7 +81,8 @@ the only other light. Wind and flood run left to right: rain slants and seeds dr
   glowing fluid sliding down it with light moving on it. It is a first
   prototype: a patch plate in another metal, a seam gone half dark, a split plate leaking light.
   Weathered by storm after storm: grime in vertical runoff streaks, rust toward the foot and in runs
-  from the rivets, plates wet in streaks, no two rivets alike; water drips off its ledges. The vat's
+  from the rivets, plates wet in streaks, no two rivets alike; water drips off its ledges. Every
+  plate, band, pipe, flange and rivet stands in relief, its upper edges catching wet sky light. The vat's
   light spills onto the plates around the window; strikes in the cloud catch its top edges.
   The vat breathes; steam puffs and drifts downwind; the gauge trembles; the lamps and beacon blink.
 - the overdrive surge, once a cycle: the vat charges and then flares white, every seam blazes, the
@@ -312,7 +315,7 @@ def cloud_flash(cx, cy, rx, ry, grad, period, onset, peak, name, vapor=0):
 
 flash.append(cloud_flash(300, 150, 260, 80, 'flash', 12, 3.1, .65, 'inside the cloud, left'))
 flash.append(cloud_flash(960, 140, 360, 100, 'flash', 24, 9.7, .9, 'inside the cloud, center'))
-flash.append(cloud_flash(1330, 235, 320, 105, 'flashBack', 24, 15.3, .95, 'behind the World Tree, lighting its silhouette', vapor=26))  # high in the crown, dimming toward the island
+flash.append(cloud_flash(1330, 235, 320, 105, 'flashBack', 24, 15.3, .7, 'behind the World Tree, lighting its silhouette', vapor=26))  # high in the crown, dimming toward the island
 flash.append(cloud_flash(640, 120, 260, 80, 'flash', 12, 8.3, .55, 'high in the cloud over the Generator'))
 
 # ------------------------------------------------------------------ far layer (static): curtains, the World Tree, the far plain
@@ -365,6 +368,16 @@ boughs = ''.join('<polygon points="%s" fill="url(#%s)"/>' % (pts(limb(*L[:8], n=
     (TX - 110, 250, TX - 120, 205, TX - 90, 150, 12, 4), (TX - 200, 196, TX - 215, 170, TX - 190, 140, 9, 3), (TX + 90, 232, TX + 96, 190, TX + 70, 145, 11, 4),
     (TX + 180, 180, TX + 196, 160, TX + 180, 138, 8, 3), (TX - 60, 222, TX - 30, 180, TX - 40, 130, 10, 4), (TX + 40, 214, TX + 20, 170, TX + 30, 126, 9, 3),
     (TX - 240, 188, TX - 300, 196, TX - 350, 214, 7, 2.5), (TX + 120, 226, TX + 170, 236, TX + 200, 256, 7, 2.5)])
+orng = random.Random(99)
+OVER_LEAVES = []
+for L in [(TX - 30, 290, TX - 150, 250, TX - 290, 150, 60, 16), (TX + 34, 276, TX + 140, 240, TX + 250, 140, 54, 16),
+          (TX - 20, 250, TX - 70, 190, TX - 150, 120, 34, 12), (TX + 24, 244, TX + 80, 182, TX + 140, 116, 30, 11),
+          (TX - 170, 200, TX - 280, 176, TX - 400, 150, 20, 6), (TX + 170, 184, TX + 240, 170, TX + 330, 150, 16, 6)]:
+    _poly, spine = limb(*L, n=20)
+    for px, py, w in spine[11:]:
+        for _ in range(2):
+            OVER_LEAVES.append('<ellipse cx="%s" cy="%s" rx="%s" ry="%s" fill="%s"/>' % (
+                f(px + orng.uniform(-14, 14)), f(py - w * .4 + orng.uniform(-12, 6)), f(orng.uniform(12, 24)), f(orng.uniform(7, 13)), mix('#152419', '#1f3326', orng.random())))
 TRUNK_RIM = ''  # a rim light down the trunk read as hanging vines, twice: its dark value against the cloud carries it
 # the air behind the crown a little paler than the cloud, always, so the boughs branch against it at rest
 BACKLIGHT = ''.join('<ellipse cx="%s" cy="%s" rx="%s" ry="%s" fill="#3c4a58" opacity="%s"/>' % (f(TX + dx), f(y), f(rx), f(ry), f(op)) for dx, y, rx, ry, op in (
@@ -399,11 +412,18 @@ for (gx0, gx1, gy0, gy1) in ((TX - 150, TX - 50, 196, 250), (TX + 55, TX + 170, 
         rx, ry = crnd_.uniform(10, 20), crnd_.uniform(6, 11)
         clumps.append('<ellipse cx="%s" cy="%s" rx="%s" ry="%s" fill="%s"/>' % (f(x), f(y), f(rx), f(ry), mix('#142219', '#1d3024', crnd_.random())))
 defs.append('<filter id="clumpEdge" x="-5%" y="-20%" width="110%" height="140%"><feTurbulence type="fractalNoise" baseFrequency=".13" numOctaves="2" seed="37" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="7" xChannelSelector="R" yChannelSelector="G" result="d"/><feGaussianBlur in="d" stdDeviation=".6"/></filter>')
+defs.append('<filter id="foliageRelief" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB">'
+            '<feTurbulence type="fractalNoise" baseFrequency=".022" numOctaves="4" seed="95" result="n"/><feColorMatrix in="n" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  1 0 0 0 0" result="h"/>'
+            '<feColorMatrix in="SourceGraphic" type="luminanceToAlpha" result="lum"/><feComposite in="h" in2="lum" operator="arithmetic" k1="0" k2=".6" k3="1.6" k4="0" result="hh"/>'
+            '<feDiffuseLighting in="hh" surfaceScale="6" diffuseConstant="1" lighting-color="#9fbc96" result="d"><feDistantLight azimuth="270" elevation="30"/></feDiffuseLighting>'
+            '<feComposite in="d" in2="SourceGraphic" operator="arithmetic" k1="1.05" k2=".15" k3="0" k4="0" result="m"/><feComposite in="m" in2="SourceGraphic" operator="in"/></filter>')
+lin([(0, '#fff', 0), (.16, '#fff', 1), (1, '#fff', 1)], 0, 0, 1, 0, id='canopyFadeG')
+defs.append('<mask id="canopyFade" x="0" y="0" width="1" height="1" maskContentUnits="objectBoundingBox"><rect width="1" height="1" fill="url(#canopyFadeG)"/></mask>')  # the crown's far reach thins into the cloud
 defs.append('<g id="canopyMass"><g filter="url(#canopyEdge)"><g filter="url(#cloud)">%s</g></g></g>' % ''.join(canopy))
 far.append('<!-- the air behind the World Tree\'s crown, held a little paler than the cloud --><g filter="url(#soft)" mask="url(#treeMask)">%s</g>' % BACKLIGHT)
 far.append('<!-- the World Tree: a colossal trunk far off on the plain, great boughs sweeping up into the storm, its canopy spread under the cloud across the right of the sky, -->'
-           '<g mask="url(#treeMask)"><g filter="url(#soft)" opacity=".4" fill="#0a0f10"><path d="%s"/>%s</g><use href="#canopyMass"/><g filter="url(#clumpEdge)" opacity=".85">%s</g><g filter="url(#leafMass)"><use href="#canopyMass"/></g><g filter="url(#soft2)"><path d="%s" fill="url(#%s)"/>%s<g fill="url(#%s)">%s</g></g>%s</g>' % (
-               trunk, boughs.replace(' fill="url(#%s)"' % g_trunk_rim, ''), ''.join(clumps), trunk, g_trunk_rim, boughs, g_trunk_rim, BUTTRESS, TRUNK_RIM))
+           '<g mask="url(#treeMask)"><g filter="url(#soft)" opacity=".4" fill="#0a0f10"><path d="%s"/>%s</g><g filter="url(#foliageRelief)" mask="url(#canopyFade)"><use href="#canopyMass"/><g filter="url(#clumpEdge)" opacity=".85">%s</g><g filter="url(#leafMass)"><use href="#canopyMass"/></g></g><g filter="url(#soft2)"><path d="%s" fill="url(#%s)"/>%s<g fill="url(#%s)">%s</g></g><g filter="url(#foliageRelief)"><g filter="url(#clumpEdge)">%s</g></g>%s</g>' % (
+               trunk, boughs.replace(' fill="url(#%s)"' % g_trunk_rim, ''), ''.join(clumps), trunk, g_trunk_rim, boughs, g_trunk_rim, BUTTRESS, ''.join(OVER_LEAVES), TRUNK_RIM))
 far.append('<!-- the tree hazed by distance and rain --><rect x="%d" y="100" width="1100" height="%d" fill="#27313c" opacity=".12"/>' % (TX - 550, HZ - 90))
 # mist lying across the trunk at several heights, and rain curtains between it and the viewer: the air
 # between here and there is miles deep
@@ -772,7 +792,13 @@ def _rivet(m):
 
 
 gen = [_re.sub(r'<circle cx="([\d.]+)" cy="([\d.]+)" r="(1\.[23])" fill="#56666b"/>', _rivet, g_) for g_ in gen]
-land.append('<g transform="%s">%s</g>' % (MT, ''.join(gen)))
+# the machine's forms in relief: its own tones read as height, so every plate, band, pipe and flange takes a
+# bevel of wet light from the sky on its upper edges and a shadow under
+defs.append('<filter id="machineRelief" x="-2%" y="-2%" width="104%" height="104%" color-interpolation-filters="sRGB">'
+            '<feColorMatrix in="SourceGraphic" type="luminanceToAlpha" result="lum"/><feGaussianBlur in="lum" stdDeviation="1.1" result="hb"/>'
+            '<feSpecularLighting in="hb" surfaceScale="9" specularConstant=".9" specularExponent="22" lighting-color="#a9bcc6" result="s"><feDistantLight azimuth="250" elevation="38"/></feSpecularLighting>'
+            '<feComposite in="s" in2="SourceAlpha" operator="in" result="si"/><feComposite in="si" in2="SourceGraphic" operator="arithmetic" k1="0" k2=".42" k3="1" k4="0"/></filter>')
+land.append('<g transform="%s" filter="url(#machineRelief)">%s</g>' % (MT, ''.join(gen)))
 
 MACHINE_SIL = ''.join('<polygon points="%s"/>' % pts(p) for p in (FOUND1, FOUND2, HOUSING, ANNEX, TURRET))
 
@@ -781,11 +807,11 @@ CHUTE0, CHUTE1 = (436, 436), (520, 474)  # the gate, and the chute's lip
 OUTFALL = (540, 482)  # where the seeds drop into the flood, carried a little past the lip
 _ca = math.atan2(CHUTE1[1] - CHUTE0[1], CHUTE1[0] - CHUTE0[0])
 _nx, _ny = -math.sin(_ca), math.cos(_ca)
-trough = [(CHUTE0[0] + _nx * 7, CHUTE0[1] + _ny * 7), (CHUTE1[0] + _nx * 7, CHUTE1[1] + _ny * 7), (CHUTE1[0] - _nx * 7, CHUTE1[1] - _ny * 7), (CHUTE0[0] - _nx * 7, CHUTE0[1] - _ny * 7)]
+trough = [(CHUTE0[0] + _nx * 9, CHUTE0[1] + _ny * 9), (CHUTE1[0] + _nx * 9, CHUTE1[1] + _ny * 9), (CHUTE1[0] - _nx * 9, CHUTE1[1] - _ny * 9), (CHUTE0[0] - _nx * 9, CHUTE0[1] - _ny * 9)]
 land.append('<!-- the chute\'s legs on the shelf --><line x1="470" y1="452" x2="468" y2="500" stroke="#0b0f10" stroke-width="4"/><line x1="505" y1="468" x2="504" y2="508" stroke="#0b0f10" stroke-width="4"/>'
-            '<!-- the chute: a trough of riveted plate, dark inside, its far lip and its near wall catching the light --><polygon points="%s" fill="#0a0e0f"/><line x1="%s" y1="%s" x2="%s" y2="%s" stroke="#3a4649" stroke-width="1.2"/>'
+            '<!-- the chute: a trough of riveted plate, dark inside, its far lip and its near wall catching the light --><polygon points="%s" fill="#0a0e0f"/><polygon points="%s" fill="#232d31"/><line x1="%s" y1="%s" x2="%s" y2="%s" stroke="#56666b" stroke-width="1.2"/>'
             '<polygon points="%s" fill="#1a2124"/><line x1="%s" y1="%s" x2="%s" y2="%s" stroke="#8a9aa0" stroke-width="1.2" opacity=".85"/>' % (
-                pts(trough), f(trough[3][0]), f(trough[3][1]), f(trough[2][0]), f(trough[2][1]),
+                pts(trough), pts([trough[3], trough[2], (trough[2][0] + _nx * 5, trough[2][1] + _ny * 5), (trough[3][0] + _nx * 5, trough[3][1] + _ny * 5)]), f(trough[3][0]), f(trough[3][1]), f(trough[2][0]), f(trough[2][1]),
                 pts([trough[0], trough[1], (trough[1][0], trough[1][1] + 6), (trough[0][0], trough[0][1] + 6)]), f(trough[0][0]), f(trough[0][1]), f(trough[1][0]), f(trough[1][1])) +
             ''.join('<circle cx="%s" cy="%s" r="1" fill="#3c484b"/>' % (f(lerp(trough[0][0], trough[1][0], k / 6)), f(lerp(trough[0][1], trough[1][1], k / 6) + 3)) for k in range(1, 6)) +
             '<!-- the sluice gate, with its wheel --><rect x="%d" y="%d" width="24" height="30" fill="#1c2427" stroke="#3a4649" stroke-width="1"/><circle cx="%d" cy="%d" r="7" fill="none" stroke="#3a4649" stroke-width="2"/><line x1="%d" y1="%d" x2="%d" y2="%d" stroke="#3a4649" stroke-width="1.2"/><line x1="%d" y1="%d" x2="%d" y2="%d" stroke="#3a4649" stroke-width="1.2"/>' % (
@@ -958,25 +984,25 @@ seams_ = ''
 for y, fr_s in SEAMS:
     x_ = GX - 90
     while x_ < GX - 90 + 172 * fr_s - 4:  # the seam blazes where the plates have parted, in pieces of uneven brightness
-        l_ = sr_.uniform(8, 34)
-        seams_ += '<line x1="%s" y1="%s" x2="%s" y2="%s" stroke-width="%s" opacity="%s"/>' % (f(x_), f(y + .6), f(min(x_ + l_, GX + 82)), f(y + .6), f(sr_.uniform(.8, 2.4)), f(sr_.uniform(.35, 1)))
+        l_ = sr_.uniform(5, 18)
+        seams_ += '<line x1="%s" y1="%s" x2="%s" y2="%s" stroke-width="%s" opacity="%s"/>' % (f(x_), f(y + .6), f(min(x_ + l_, GX + 82)), f(y + .6), f(sr_.uniform(.5, 1.3)), f(sr_.uniform(.3, .85)))
         x_ += l_ + sr_.uniform(2, 14)
 mglow.append('<!-- the surge: the seams blazing in pieces where the plates have parted --><g stroke="%s" filter="url(#glow)" opacity="0" stroke-linecap="round">%s%s</g>' % (GLOW_CORE, surge(SURGE_V), seams_))
 # glowing fluid running down the chute, the lit water where it spills into the flood, and the gate in the surge
-glow.append('<!-- one sheet of glowing fluid running down the chute, soft light sliding down it --><line x1="%s" y1="%s" x2="%s" y2="%s" stroke="%s" stroke-width="4" opacity=".55"/><line x1="%s" y1="%s" x2="%s" y2="%s" stroke="%s" stroke-width="1.2" opacity=".3"/>' % (
-    f(CHUTE0[0]), f(CHUTE0[1] - 1), f(CHUTE1[0]), f(CHUTE1[1] - 1), GLOW_EDGE, f(CHUTE0[0]), f(CHUTE0[1] - 1), f(CHUTE1[0]), f(CHUTE1[1] - 1), GLOW_MID) +
+glow.append('<!-- one sheet of glowing fluid running down the chute, soft light sliding down it --><line x1="%s" y1="%s" x2="%s" y2="%s" stroke="%s" stroke-width="6" opacity=".55"/><line x1="%s" y1="%s" x2="%s" y2="%s" stroke="%s" stroke-width="1.4" opacity=".3"/>' % (
+    f(CHUTE0[0] + _nx * 3), f(CHUTE0[1] + _ny * 3), f(CHUTE1[0] + _nx * 3), f(CHUTE1[1] + _ny * 3), GLOW_EDGE, f(CHUTE0[0] + _nx * 3), f(CHUTE0[1] + _ny * 3), f(CHUTE1[0] + _nx * 3), f(CHUTE1[1] + _ny * 3), GLOW_MID) +
     '<!-- the fluid spilling off the lip in a broken fall --><path d="M%s %s Q %s %s %s %s" stroke="%s" stroke-width="2.4" fill="none" opacity=".4" stroke-dasharray="3 2 5 2 2 3" filter="url(#soft1)"/>' % (
         f(CHUTE1[0]), f(CHUTE1[1] - 1), f(CHUTE1[0] + 8), f(CHUTE1[1] + 1), f(OUTFALL[0] - 4), f(OUTFALL[1]), GLOW_MID) + ''.join(
     '<ellipse rx="10" ry="1.8" fill="%s" opacity="0" filter="url(#soft2)" transform="rotate(%s)"><animateMotion path="M%s %s L %s %s" dur=".75s" begin="-%ss" repeatCount="indefinite"/><animate attributeName="opacity" values="0;.8;.8;0" keyTimes="0;.2;.8;1" dur=".75s" begin="-%ss" repeatCount="indefinite"/></ellipse>' % (
         GLOW_CORE, f(math.degrees(_ca)), f(CHUTE0[0]), f(CHUTE0[1] - 1), f(CHUTE1[0]), f(CHUTE1[1] - 1), f(ph), f(ph)) for ph in (0, .375)))
 glow.append('<!-- the lit water spreading from the outfall: a low glow, and over it the broken glitter of the fluid on the ripples, drifting downstream --><ellipse cx="%d" cy="%d" rx="72" ry="11" fill="url(#glowWash)" opacity=".45"><animate attributeName="opacity" values=".4;.6;.45;.4" keyTimes="0;.35;.7;1" dur="3s" repeatCount="indefinite" %s%s/></ellipse>' % (OUTFALL[0] + 30, OUTFALL[1] + 2, SPLINE, ease(3)) +
             '<g filter="url(#glitterLit)"><ellipse cx="%d" cy="%d" rx="130" ry="18" fill="url(#glitterFall)"/><ellipse cx="%d" cy="%d" rx="60" ry="9" fill="url(#glitterCore)"/></g>' % (OUTFALL[0] + 70, OUTFALL[1] + 6, OUTFALL[0] + 30, OUTFALL[1] + 3))
-glow.append('<!-- the surge: the gate bursting open --><ellipse cx="%d" cy="%d" rx="34" ry="26" fill="url(#glowPod)" opacity="0">%s</ellipse><line x1="%s" y1="%s" x2="%s" y2="%s" stroke="%s" stroke-width="5" opacity="0" filter="url(#glow)">%s</line>' % (
+glow.append('<!-- the surge: the gate bursting open --><ellipse cx="%d" cy="%d" rx="22" ry="12" fill="url(#glowWash)" opacity="0">%s</ellipse><line x1="%s" y1="%s" x2="%s" y2="%s" stroke="%s" stroke-width="5" opacity="0" filter="url(#glow)">%s</line>' % (
     CHUTE0[0], CHUTE0[1] - 8, surge(FIRE_V), f(CHUTE0[0]), f(CHUTE0[1] - 1), f(CHUTE1[0]), f(CHUTE1[1] - 1), GLOW_CORE, surge(FIRE_V, .3)))
 # the split plate leaking light, flickering unevenly
 mglow.append('<!-- the split plate leaking light, flickering -->'
             '<g opacity=".4"><animate attributeName="opacity" values=".35;.85;.4;.95;.3;.7;.35" keyTimes="0;.1;.18;.4;.55;.8;1" dur="4s" begin="-1.3s" repeatCount="indefinite"/>'
-            '<ellipse cx="%s" cy="%s" rx="4" ry="12" fill="url(#glowPod)" opacity=".7"/><polyline points="%s" fill="none" stroke="%s" stroke-width="1.1" stroke-linejoin="round" filter="url(#glow)"/></g>' % (
+            '<ellipse cx="%s" cy="%s" rx="3" ry="9" fill="url(#glowWash)" opacity=".5"/><polyline points="%s" fill="none" stroke="%s" stroke-width="1.1" stroke-linejoin="round" filter="url(#glow)"/></g>' % (
                 f(CRACK[2][0] + 1), f(CRACK[2][1] + 4), pts(CRACK), GLOW_CORE))
 mglow.append('<!-- the split blazing in the surge, its light spilling down the plate --><ellipse cx="%s" cy="%s" rx="6" ry="22" fill="url(#glowPod)" opacity="0">%s</ellipse>' % (f(CRACK[2][0] + 1), f(CRACK[2][1] + 8), surge(SURGE_V)))
 # the instrument lamps blinking in turn, and the gauge needle trembling
@@ -1642,11 +1668,11 @@ for (x, y, L) in LODGE:
 
     leaf = '<path d="M0 0 Q 5 -6 13 -4 Q 6 1 0 0 Z" fill="%s"/><path d="M0 0 Q 6 -3 11 -3.6" stroke="%s" stroke-width=".5" fill="none" opacity=".7"/>'
     leaves = ''.join('<g transform="scale(%d 1)"><g>%s%s</g></g>' % (side, sa(('-78', '-78', '-12', '-12'), (1.0, 2.8), typ='rotate'),
-                     '<g>%s%s</g>' % (sa(('.4', '.4', '1', '1'), (1.0, 2.8), typ='scale'), leaf % ('#a6d45a' if side > 0 else GREEN_LIT, GREEN_DARK))) for side in (1, -1))
+                     '<g>%s%s</g>' % (sa(('.4', '.4', '1', '1'), (1.0, 2.8), typ='scale'), leaf % ('#5f8a3a' if side > 0 else '#4a7430', GREEN_DARK))) for side in (1, -1))
     life.append('<!-- a sprout rising from a lodged pod at %d,%d -->' % (x, y) +
                 '<g transform="translate(%s %s) scale(%s)"><g opacity="0">%s' % (f(x), f(y - 1), f(sc), sa((0, 0, 1, 1, 0, 0), (.3, .6, 11, 12.5))) +
                 '<circle r="7" fill="url(#glowPod)" opacity=".8">%s</circle>' % sa((.9, .9, .25, .25), (.6, 3.0)) +
-                '<g>%s<path d="M0 0 C 1 -8, -2 -14, 1 -22" stroke="%s" stroke-width="1.8" fill="none" stroke-linecap="round"/></g>' % (sa(('1 .02', '1 .02', '1 1', '1 1'), (.3, 1.9), typ='scale'), GREEN_LIT) +
+                '<g>%s<path d="M0 0 C 1 -8, -2 -14, 1 -22" stroke="%s" stroke-width="1.8" fill="none" stroke-linecap="round"/></g>' % (sa(('1 .02', '1 .02', '1 1', '1 1'), (.3, 1.9), typ='scale'), '#4f7a2e') +
                 '<g>%s%s</g>' % (sa(('0 0', '0 0', '1 -22', '1 -22'), (.3, 1.9), typ='translate'), leaves) +
                 '</g></g>')
 
@@ -1679,9 +1705,9 @@ for i, (x, y, h, a) in enumerate(FROND_BASES):
                            '<animate attributeName="opacity" values=".7;.7;0;0" keyTimes="0;%s;%s;1" dur="%ss" begin="-%ss" repeatCount="indefinite"/></ellipse>' % (
                                f(rx_), f(ry_), f(fall_), f(fall_), f(tf / dp), f(dp), f(i * .37), f(tf / dp * .9), f(tf / dp), f(dp), f(i * .37)))
     fr.append('<!-- a young frond on the near rise --><g><animateTransform attributeName="transform" type="rotate" values="%s %s %s;%s %s %s;%s %s %s" keyTimes="0;.3;1" dur="%ss" begin="-%ss" repeatCount="indefinite" calcMode="spline" keySplines=".3 0 .3 1;.4 0 .6 1"/>'
-              '<path d="%s" fill="url(#frondG%d)"/><path d="%s" fill="#040706" opacity=".35"/><path d="%s" stroke="%s" stroke-width="1" fill="none" opacity=".6"/><path d="%s" stroke="#a9bcc2" stroke-width="1" fill="none" opacity=".4" stroke-dasharray="%s"/>%s</g>' % (
+              '<path d="%s" fill="url(#frondG%d)" stroke="%s" stroke-width="2.6" stroke-opacity=".35" stroke-linejoin="round"/><path d="%s" fill="#040706" opacity=".35"/><path d="%s" stroke="%s" stroke-width="1" fill="none" opacity=".6"/><path d="%s" stroke="#a9bcc2" stroke-width="1" fill="none" opacity=".4" stroke-dasharray="%s"/>%s</g>' % (
                   f(-2), f(x), f(y), f(amp), f(x), f(y), f(-2), f(x), f(y), f(per), f(i * .37),
-                  d, i, far_half, rib, mix(GREEN, '#0a1210', .45), d[:d.index(' Q ', d.index(' Q ') + 1)], ' '.join(f(v) for v in (12 + 3 * i, 7, 20, 10 + i, 30)), drip_))  # wet along its lit edge, in patches
+                  d, i, base_c, far_half, rib, mix(GREEN, '#0a1210', .45), d[:d.index(' Q ', d.index(' Q ') + 1)], ' '.join(f(v) for v in (12 + 3 * i, 7, 20, 10 + i, 30)), drip_))  # wet along its lit edge, in patches
 fr.append('<!-- drops falling from the frond tips -->' + ''.join(FROND_DRIPS))
 fr.append('<!-- three lodged pods at the frond feet -->' + ''.join(
     '<circle cx="%d" cy="%d" r="10" fill="url(#glowPod)" opacity=".25"/><g transform="translate(%d %d) rotate(%d) scale(.36) translate(0 13)">%s</g>' % (x, y, x, y, a, LODGED_POD) for x, y, a in [(1276, 552, -70), (1334, 548, 76), (1418, 549, -64)]))
@@ -1726,6 +1752,27 @@ rain.append('<!-- the streaks just outside the window blazing, the glass itself 
 defs.append('<mask id="rainSurgeMask" maskUnits="userSpaceOnUse" x="0" y="0" width="%d" height="%d"><ellipse cx="%d" cy="320" rx="330" ry="250" fill="url(#litSpot)"/></mask>' % (W, H, GX))
 rain.append('<!-- the surge: the rain around the machine lit up --><rect x="0" y="0" width="%d" height="%d" fill="url(#rainLit)" mask="url(#rainSurgeMask)" opacity="0">%s</rect>' % (W, H, surge(SURGE_V, .9)))
 
+# a few drops right in front of the lens: large, out of focus, falling fast on the rain's slant; green where the vat lights them
+rad([(0, '#c8d4da', .05), (.7, '#c8d4da', .12), (.88, '#dfe8ec', .3), (1, '#dfe8ec', 0)], id='bokehCool')
+rad([(0, GLOW_CORE, .08), (.7, GLOW_MID, .16), (.88, GLOW_CORE, .38), (1, GLOW_CORE, 0)], id='bokehLit')
+brnd = random.Random(97)
+bok = []
+for i in range(9):
+    x0 = brnd.uniform(-60, W - 200)
+    per = brnd.choice((1.5, 2, 2.4, 3, 4))
+    fall = .42 * brnd.uniform(.85, 1.15)
+    r_ = brnd.uniform(3.5, 8)
+    lit = x0 < 560
+    t0 = brnd.uniform(0, per - fall - .05)
+    # streaked along its fall by about a frame's travel, so it reads as one falling drop, not a chain of discs
+    bok.append('<g opacity="0">'
+               '<animateTransform attributeName="transform" type="translate" values="0 0;0 0;%s %s;%s %s" keyTimes="0;%s;%s;1" dur="%ss" begin="-%ss" repeatCount="indefinite"/>'
+               '<animate attributeName="opacity" values="0;0;1;1;0;0" keyTimes="0;%s;%s;%s;%s;1" dur="%ss" begin="-%ss" repeatCount="indefinite"/><ellipse cx="%s" cy="-20" rx="%s" ry="%s" fill="url(#%s)" transform="rotate(-25 %s -20)"/></g>' % (
+                   f(.466 * (H + 40)), f(H + 40), f(.466 * (H + 40)), f(H + 40),
+                   f(t0 / per), f((t0 + fall) / per), f(per), f(i * .53 % per),
+                   f(t0 / per), f((t0 + .03) / per), f((t0 + fall - .03) / per), f((t0 + fall) / per), f(per), f(i * .53 % per), f(x0), f(r_), f(r_ + 15), 'bokehLit' if lit else 'bokehCool', f(x0)))
+# (the drops read as soap bubbles at site size and were cut; the draws stay so nothing else moves)
+
 # ------------------------------------------------------------------ top layer: finish
 lin([(0, '#020303', .55), (.3, '#020303', 0), (.8, '#020303', 0), (1, '#020303', .55)], id='vignette')
 lin([(0, '#020303', .55), (.12, '#020303', 0), (.88, '#020303', 0), (1, '#020303', .55)], 0, 0, 1, 0, id='sideVignette')
@@ -1755,7 +1802,7 @@ layers = (piece_comment + svg_defs
           + layer('glow', '<!-- ===================== THE GENERATOR BREATHING, VENTS, RIPPLES ===================== -->\n' + '\n'.join(glow))
           + layer('life', '<!-- ===================== THE HATCH, THE NEWBORN, SPROUTS ===================== -->\n' + '\n'.join(life))
           + layer('pods', '<!-- ===================== SEED PODS ===================== -->\n' + '\n'.join(pods))
-          + layer('fronds', '<!-- ===================== NEAR FRONDS, a little out of focus this close ===================== -->\n<g filter="url(#nearDof)">' + '\n'.join(fr) + '</g>')
+          + layer('fronds', '<!-- ===================== NEAR FRONDS, a little out of focus this close (a baked soft edge: a live blur re-ran every frame as they swayed) ===================== -->\n' + '\n'.join(fr))
           + layer('rain', '<!-- ===================== RAIN ===================== -->\n' + '\n'.join(rain))
           + layer('top', '<!-- ===================== FINISH ===================== -->\n' + '\n'.join(top)))
 
