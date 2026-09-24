@@ -1,12 +1,12 @@
 # Home story content plan (2026-09-24)
 
-Written for: the agent building the home page's story stage, and Nick as the owner who judges each beat live.
+Written for: the agent building the home page's story, and Nick as the owner who judges each beat live.
 
 ## 1. Context
 
-The home page's story (`/`, section "The Story", `pages/home/storyStage.tsx`) showed four scenes, one per era: Unbirth, the Accords, the End Wars and the present. After the Unbirth plate settled, Nick asked to stop building scene by scene and decide the content first: the ideas a first-time visitor should take away, which moments in the lore show them best, where the gaps are, and only then what to build. He also opened the structure: full scenes with a landscape, as built so far, with smaller focused animations between them that have no background.
+The home page's story (`/`, section "The Story", then a pinned stage in `pages/home/storyStage.tsx`, now `pages/home/storyFlow.tsx`) showed four scenes, one per era: Unbirth, the Accords, the End Wars and the present. After the Unbirth plate settled, Nick asked to stop building scene by scene and decide the content first: the ideas a first-time visitor should take away, which moments in the lore show them best, where the gaps are, and only then what to build. He also opened the structure: full scenes with a landscape, as built so far, with smaller focused animations between them that have no background.
 
-Nick approved this sequence on 2026-09-24 ("agreed, proceed"). This plan records it so that the build does not reopen it. It supersedes the four-scene list in section 3 of `home-story-page-brief.md`; everything else in that brief (Nick's words, the spreads, the stage's scroll mechanics, the parts) still holds.
+Nick approved this sequence on 2026-09-24 ("agreed, proceed"). This plan records it so that the build does not reopen it. It supersedes the four-scene list in section 3 of `home-story-page-brief.md`; everything else in that brief (Nick's words, the spreads, the parts) still holds, except its pinned stage, which decision 11 replaced.
 
 ## 2. Assumptions and decisions
 
@@ -16,11 +16,12 @@ Nick approved this sequence on 2026-09-24 ("agreed, proceed"). This plan records
 | 2 | Every headline is a phrase from Nick's 2022 front page, not new copy. Agent-written headlines were rejected as robotic in the first demo. | 95% | `home-story-page-brief.md` section 1; `git show 1285604e:my-app/src/pages/home.js` |
 | 3 | A headline may quote a phrase from the paragraph of a neighboring beat, the way a pull quote repeats its article. Reported as a lever if it reads as repetition. | 70% | beats 2 and 3 below |
 | 4 | The Accords scene (the QED works on Zolton) leaves the stage. Its point, that APEX took the Generators, is made directly by beat 3. Its living plate and poster stay in the repo; nothing is deleted. | 90%, Nick approved the swap | conversation 2026-09-24; `apps/web/public/assets/plates/accords/` |
-| 5 | The small pieces play on their own clock and loop while they are the shown beat and on the screen; the scroll only chooses the beat and moves the timeline's dot. A piece off the stage holds nothing in the DOM. (Revised 2026-09-24: the first build scrubbed the pieces by scroll, and Nick ruled that buggy: "I don't think you should try and tie the scroll progression to the animation progression.") | 95%, Nick's ruling | conversation 2026-09-24; `pages/home/helixPiece.tsx` `loopAt` |
+| 5 | The small pieces play on their own clock and loop while they hold the page's plate stage (the one thing most in view); nothing is driven by the scroll position. A piece far from the screen holds nothing in the DOM. (Revised 2026-09-24: the first build scrubbed the pieces by scroll, and Nick ruled that buggy: "I don't think you should try and tie the scroll progression to the animation progression.") | 95%, Nick's ruling | conversation 2026-09-24; `pages/home/helixPiece.tsx` `loopAt` |
 | 6 | On a full scene the headline becomes the scene's heading, and the era title moves into the kicker with the numeral ("01 · The Age of Unbirth"). | 70%, a layout call Nick judges live | `apps/web/src/pages/home.tsx` `SceneReading` |
 | 7 | The small pieces are React components (inline SVG and GSAP), not plate fragments. They carry no landscape and no frame, so the plate pipeline's layers and poster are not needed. | 80% | `components/plates/livePlate.tsx`; the End Wars and Unbirth plates |
 | 8 | The optional closing tease (the ancient presence stirring behind the last creature) is deferred. I recommended leaving it out unless the page should end on dread, and Nick approved without adding it. | 80% | conversation 2026-09-24 |
 | 9 | The Tournament & Tokens section drops its token paragraph once beat 6 carries it. It keeps the tournament paragraph and the call to action. | 85% | `apps/web/src/pages/home.tsx` `TOKENS`, `TOURNAMENT` |
+| 11 | The story is told in the page's own scroll, not a pinned stage: the beats sit one after another at their natural height, each reveals once as it enters, and a slim chapter bar sticks to the top while the story is on screen (its dot the middle of the screen, a marker per beat where the beat really is) without ever holding the page. The pinned stage's purpose, one heavy thing at a time, is kept by the plate stage: every living plate and small piece joins it and only the one most in view animates. (Nick 2026-09-24 on the pinned stage: "technically works, but it's buggy and it feels gross"; he left the choice between a plain scroll and a click-through viewer to me.) | 85%, a taste call Nick judges live | `pages/home/storyFlow.tsx`, `components/plates/plateStage.ts`, `scripts/plates/snap-story.cjs` |
 | 10 | The world-forms in beat 2 are silhouettes of real ratified species, one each from an ice, an air and a fire world, chosen at build. No invented creature. | 85% | `docs/species-templates/RATIFIED.json` |
 
 ## 3. The chain a visitor should leave with
@@ -98,7 +99,7 @@ Text sources: `STORY[0]` to `STORY[3]` and `TOKENS` are Nick's 2022 paragraphs a
 
 ## 5. Page changes that follow
 
-- **Stage:** seven beats on the timeline in the order above, with major markers for full scenes and minor ticks for small pieces. The Accords spread leaves `SPREADS`. A small piece has no frame, no label and no door to the encyclopedia. Only the shown beat animates.
+- **The story in the page's scroll (decision 11):** seven beats in the order above, one after another. The chapter bar carries a major marker for each full scene and a minor tick for each small piece. The Accords spread is gone. A small piece has no frame, no label and no door to the encyclopedia. Only the one thing most in view animates.
 - **Reading column:** on a full scene, the headline is the `type-heading` line and the kicker reads numeral and era title. On a small piece, the headline sits under the piece at the same size, with the reading text beneath it on beats 5 and 6.
 - **Reduced motion and short windows:** a small piece shows its final state, and the stacked layout lists it with its headline like any scene.
 - **Tournament & Tokens:** the `TOKENS` paragraph leaves the section. The section keeps `TOURNAMENT`, "Start generating now…", the key, the account note and the games.
@@ -108,7 +109,7 @@ Text sources: `STORY[0]` to `STORY[3]` and `TOKENS` are Nick's 2022 paragraphs a
 
 Each step is its own PR, auto-merged and judged live by Nick.
 
-1. The stage, with beats 5 and 6 (shipped together, 2026-09-24, so no paragraph left the page between PRs): the headlines, weighted stretches and the timeline's major and minor marks, the Accords spread out, and the two helix pieces (`pages/home/helixPiece.tsx`). Beats 2 and 3 are left out of the sequence until their PR lands, so the live page never shows a placeholder.
+1. The headlines and beats 5 and 6 (shipped together, 2026-09-24, so no paragraph left the page between PRs): the Accords spread out, and the two helix pieces (`pages/home/helixPiece.tsx`). The same day the pinned stage gave way to the page's own scroll (decision 11). Beats 2 and 3 are left out of the sequence until their PR lands, so the live page never shows a placeholder.
 2. (Folded into step 1.)
 3. (Folded into step 1.)
 4. Beats 2 and 3: they share the vat and the creature.

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { render } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
-import { HelixPiece, loopAt } from '../helixPiece';
+import { HelixDrawing, HelixPiece, loopAt } from '../helixPiece';
 
 // The helix pieces play on their own clock, never the scroll's. jsdom has no
 // animation frames worth trusting, so the clock is checked through loopAt and
@@ -25,18 +25,29 @@ describe('loopAt', () => {
 	});
 });
 
-describe('HelixPiece', () => {
-	it('starts on the stage at its first frame: the plague piece whole, the token chip not yet sealed', () => {
-		const plague = render(<HelixPiece mode="plague" live={false} label="The plague" />);
+describe('HelixDrawing', () => {
+	it('holds its first frame until it is live: the plague piece whole, the token chip not yet sealed', () => {
+		const plague = render(<HelixDrawing mode="plague" live={false} label="The plague" />);
 		expect(plague.container.querySelector('svg')).toHaveAttribute('aria-label', 'The plague');
 		const lines = [...plague.container.querySelectorAll('line')].map((l) => Number(l.getAttribute('opacity')));
 		expect(lines.every((o) => o > 0)).toBe(true);
-		const token = render(<HelixPiece mode="token" live={false} label="The token" />);
+		const token = render(<HelixDrawing mode="token" live={false} label="The token" />);
 		expect(chipOpacity(token.container)).toBe(0);
 	});
 
-	it('rests on its last frame when stacked', () => {
-		const { container } = render(<HelixPiece mode="token" live={undefined} label="The token" />);
+	it('rests on its last frame when it will never play', () => {
+		const { container } = render(<HelixDrawing mode="token" live={undefined} label="The token" />);
 		expect(chipOpacity(container)).toBe(1);
+	});
+});
+
+describe('HelixPiece', () => {
+	it('keeps its box and, near the screen, a drawing that holds still until it holds the stage', () => {
+		// jsdom has no IntersectionObserver: the piece counts as near and never live.
+		const { container } = render(<HelixPiece mode="plague" label="The plague" />);
+		const box = container.querySelector('[data-piece="plague"]') as HTMLElement;
+		expect(box).toHaveClass('aspect-video');
+		expect(box).not.toHaveAttribute('data-live');
+		expect(box.querySelector('svg')).toHaveAttribute('aria-label', 'The plague');
 	});
 });

@@ -11,14 +11,19 @@
 //   each one locks, and it folds down into a small chip, the Scrambler Token,
 //   sealed inside it.
 //
-// The token piece starts exactly where the plague piece ends, so the two read
-// as one object across the stage. Each plays on its own clock and loops while
-// it is the shown piece and on the screen: the scroll only chooses which beat
-// is shown, it never drives the animation (Nick, 2026-09-24: tying the two was
-// buggy). Every loop holds its last frame, fades out and fades back in at its
-// first before it repeats. Stacked, or under reduced motion, a piece rests on
-// its last frame.
+// The token piece starts where the plague piece ends, so the two read as one
+// object down the page. Each plays on its own clock and loops, never driven by
+// the scroll (Nick, 2026-09-24: tying the two was buggy). Every loop holds its
+// last frame, fades out and fades back in at its first before it repeats.
+//
+// A piece takes its turn on the page's plate stage (components/plates/
+// plateStage.ts) like a living plate: only the one thing most in view on the
+// whole page animates. Near the screen its drawing is in the DOM, holding
+// still until it is live; far from it, the piece holds nothing but its box.
+// Under reduced motion it rests on its last frame.
 import * as React from 'react';
+import { joinStage } from '@/components/plates/plateStage';
+import { cn } from '@/lib/utils';
 
 const W = 640;
 const H = 360;
@@ -194,7 +199,8 @@ function reduced() {
 	return typeof window !== 'undefined' && !!window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 }
 
-export function HelixPiece({ mode, live, label }: { mode: Mode; live: boolean | undefined; label: string }) {
+/** The drawing itself. `live`: it plays; false: it holds; undefined: it rests on its last frame. */
+export function HelixDrawing({ mode, live, label }: { mode: Mode; live: boolean | undefined; label: string }) {
 	const rungA = React.useRef<Array<SVGLineElement | null>>([]);
 	const rungB = React.useRef<Array<SVGLineElement | null>>([]);
 	const segs = React.useRef<Array<SVGLineElement | null>>([]);
@@ -341,5 +347,42 @@ export function HelixPiece({ mode, live, label }: { mode: Mode; live: boolean | 
 			</g>
 			</g>
 		</svg>
+	);
+}
+
+// Mount the drawing this far ahead of the screen, so it is there, holding its first frame, when it scrolls in.
+const NEAR = '300px';
+const THRESHOLDS = Array.from({ length: 21 }, (_, i) => i / 20);
+
+/** A piece on the page: its box always, its drawing near the screen, its motion only while it holds the stage. */
+export function HelixPiece({ mode, label, className }: { mode: Mode; label: string; className?: string }) {
+	const boxRef = React.useRef<HTMLDivElement>(null);
+	const [near, setNear] = React.useState(false);
+	const [live, setLive] = React.useState(false);
+	const still = reduced();
+
+	React.useEffect(() => {
+		const box = boxRef.current;
+		if (!box || typeof IntersectionObserver === 'undefined') {
+			setNear(true);
+			return undefined;
+		}
+		const nearby = new IntersectionObserver((entries) => setNear(entries.some((e) => e.isIntersecting)), { rootMargin: NEAR });
+		nearby.observe(box);
+		if (still) return () => nearby.disconnect();
+		const slot = joinStage(setLive);
+		const seen = new IntersectionObserver((entries) => entries.forEach((e) => slot.update(e.isIntersecting ? e.intersectionRatio : 0)), { threshold: THRESHOLDS });
+		seen.observe(box);
+		return () => {
+			nearby.disconnect();
+			seen.disconnect();
+			slot.release();
+		};
+	}, [still]);
+
+	return (
+		<div ref={boxRef} className={cn('aspect-video w-full', className)} data-piece={mode} data-live={live ? '' : undefined}>
+			{near ? <HelixDrawing mode={mode} live={still ? undefined : live} label={label} /> : <span role="img" aria-label={label} className="block h-full w-full" />}
+		</div>
 	);
 }
