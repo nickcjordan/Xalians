@@ -1,6 +1,6 @@
 # Fathomaw ability audit (draft)
 
-Review date: 2026-09-23. Mode: initial authoring. Current source: [Poseidas deep-route proposal](../../../design/creature-proposals/poseidas-deep-route.md) and its recorded approvals, Poseidas planetary lore, the v5 catalog and derived-act tables. The proposal is not a ratified species. The [schema 5.1 draft template](fathomaw.json) compiles, and the [land-crawl concept](../../../design/creature-proposals/art/fathomaw-land-crawl-concept.png) was accepted as a direction, but it is not final portrait art. The draft remains outside the frozen roster and release.
+Review date: 2026-09-23, with a visual-source review on 2026-09-24. Mode: initial authoring. Current source: [Poseidas deep-route proposal](../../../design/creature-proposals/poseidas-deep-route.md) and its recorded approvals, Poseidas planetary lore, the v5 catalog and derived-act tables. The proposal is not a ratified species. The [schema 5.1 draft template](fathomaw.json) compiles. The [land-crawl concept](../../../design/creature-proposals/art/fathomaw-land-crawl-concept.png) remains a movement reference, and the [square-jaw portrait study](../../../design/creature-proposals/art/fathomaw-portrait-study.png) is the selected visual direction for now, not published site art. The draft remains outside the frozen roster and release.
 
 ## Mechanism inventory
 
@@ -13,6 +13,8 @@ Review date: 2026-09-23. Mode: initial authoring. Current source: [Poseidas deep
 - Element: water species identity. No water-emitting organ or conduit is established. Internal hydraulic fluid is retained working anatomy, not expelled elemental water.
 
 No `channels` or `conduits` are proposed. Pressure adaptation, dual-medium breathing, and echolocation belong to physiology rather than encounter passives.
+
+The 2026-09-24 portrait review made the lower jaw almost square-ended and the tail paddle broad and deeply notched. The teeth remain broad and blunt, and the tail remains a nonprehensile propulsion surface. These changes do not add piercing, cutting, grasping, armor, elemental projection, or another source. All jaws, tail, fins, and body derived-act families and exclusions below were rechecked against the changed shapes; their dispositions remain the same. The removed cheek crescent was surface decoration, not a lost hydraulic chamber or ability source.
 
 ## Derived-act and extension ledger
 
@@ -54,7 +56,7 @@ The included table acts plus extensions are the proposed species permission spac
 
 ## Neutral-land portability check
 
-The accepted concept shows a continuous belly contact surface, two broad planted anterior fins with reinforced roots, two smaller planted posterior fins, and a tail capable of assisting a slow crawl. At 105 to 170 kg under Poseidas's 1.7-Earth gravity, broad contact surfaces distribute weight rather than requiring an upright gait. This supports ordinary encounter-length movement, not equal land and water speed or sustained dry-land travel. Gas respiration and tolerance are declared separately from the visible locomotion mechanism.
+The accepted concept and current portrait study show a continuous belly contact surface, two broad planted anterior fins with reinforced roots, two smaller planted posterior fins, and a tail capable of assisting a slow crawl. At 105 to 170 kg under Poseidas's 1.7-Earth gravity, broad contact surfaces distribute weight rather than requiring an upright gait. This supports ordinary encounter-length movement, not equal land and water speed or sustained dry-land travel. Gas respiration and tolerance are declared separately from the visible locomotion mechanism.
 
 - Jaw crush, snare, both maintained holds, the quick bite, and `Yield Point` use self-contained jaw closure. None draws pressure or working fluid from the surrounding water.
 - Fin strike and shove use the same load-bearing anterior roots that pull the body across a solid surface. They do not require free swimming or a water wave.
@@ -62,8 +64,8 @@ The accepted concept shows a continuous belly contact surface, two broad planted
 - Body shove and the authored short ram use the planted fins, broad belly, and trunk mass. The ram is a short grounded push, not a sprint; the species' `sprint` capability remains zero.
 - Echolocation is a sense, not a required trigger for any action. Its range may be shorter in gas, but the jaw, fin, tail, and body acts remain available.
 
-No proposed act requires a home-world storm, deep-water pressure, a city structure, liquid around the body, or external life support. The final portrait and any compact representation must retain visible fin roots and a credible land-supporting posture; a concept approval alone does not verify their small-scale legibility.
+No proposed act requires a home-world storm, deep-water pressure, a city structure, liquid around the body, or external life support. The current portrait has visible fin roots and a credible land-supporting posture. At 35 px it is not a sufficiently clear game token, so a separate compact mark must preserve those features at the token's actual size.
 
 ## Completion status
 
-The draft compiles under schema 5.1 with ten distinct ordinary acts (jaws 3, fins 2, tail 3, body 2) plus the guaranteed signature. It includes four authored extensions and seven justified generic-row exclusions. The checker confirms four distinct actions can be constructed, no ordinary act was clamped by the signature, and 24 seeded examples had no structural parenthetical names or duplicate ordinary base names. The accepted concept supports the tail sweep and neutral-land mechanism at the design level. This is a structural, naming, lore and concept check, not final art approval or game balancing. No release, game integration or encyclopedia entry is claimed here.
+The draft compiles under schema 5.1 with ten distinct ordinary acts (jaws 3, fins 2, tail 3, body 2) plus the guaranteed signature. It includes four authored extensions and seven justified generic-row exclusions. The checker confirms four distinct actions can be constructed, no ordinary act was clamped by the signature, and 24 seeded examples had no structural parenthetical names or duplicate ordinary base names. A separate 240-seed draft sample retained four actions and the signature in every case. The accepted portrait direction supports the tail sweep and neutral-land mechanism at the design level, but its 35 px reduction is not a game token. This is a structural, naming, lore, and visual-source check, not game balancing or final asset delivery. No release, game integration, or encyclopedia entry is claimed here.
