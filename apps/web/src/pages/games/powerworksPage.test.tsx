@@ -520,7 +520,7 @@ describe("Powerworks player flow", () => {
     for (const e of chosen)
       expect(screen.getByRole("button", { name: `Select ${e.unit.name}` })).toBeInTheDocument();
     const save = JSON.parse(localStorage.getItem("xalians.powerworks.v1")!);
-    expect(save.version).toBe(6);
+    expect(save.version).toBe(7);
     expect(save.history[0]).toEqual({
       kind: "draft",
       squad: chosen.map((e) => e.index).sort((a, b) => a - b),
@@ -714,7 +714,8 @@ describe("Powerworks player flow", () => {
     });
 
     it("reads a heal as a touch, not an attack", () => {
-      const seed = 3;
+      // Seed 4's offer carries a Sonalloy with a heal (seed 3's did before contract decision 53).
+      const seed = 4;
       const offer = draftOffer(seed);
       const healer = offer.find((e) => e.species === "sonalloy");
       expect(healer).toBeDefined();

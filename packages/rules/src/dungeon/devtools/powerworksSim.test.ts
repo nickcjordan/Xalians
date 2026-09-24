@@ -1,12 +1,14 @@
 import { describe, expect, it } from "vitest";
 import {
   formatActionSurvey,
+  formatOfferSurvey,
   formatPass5,
   formatPass6,
   formatSurvey,
   formatTable,
   simulate,
   surveyActions,
+  surveyOffer,
   surveyPassives,
   type SimOptions,
 } from "./powerworksSim.ts";
@@ -49,6 +51,15 @@ ${formatPass6(stats)}
       expect(stats.wins + stats.losses).toBe(runs);
       expect(Object.values(stats.squadSpecies).reduce((n, v) => n + v.runs, 0)).toBe(runs * 4);
     }, 300000);
+  // Contract decision 53: how often each species is offered, and how often its tries pass.
+  it("surveys the draft offer over 400 seeds and prints it", () => {
+    const survey = surveyOffer(400);
+    console.log(`
+Powerworks draft offer survey (seeds 1-400)
+${formatOfferSurvey(survey)}
+`);
+    expect(Object.values(survey.offers).reduce((n, v) => n + v, 0)).toBe(400 * 8);
+  }, 300000);
   it("surveys 20 seeds per species at the seam and prints the table", () => {
     const survey = surveyPassives(20);
     console.log(

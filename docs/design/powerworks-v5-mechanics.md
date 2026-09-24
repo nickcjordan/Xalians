@@ -591,14 +591,15 @@ Nick, 2026-09-23: "go ahead", on the recommendation that Powerworks stop testing
 
 | # | Decision | Confidence | Evidence |
 |---|---|---|---|
-| 45 | **The offer.** Before the first encounter the player sees `DRAFT_OFFER_SIZE` (8) creatures and picks `SQUAD_SIZE` (4). The offer is seeded from the run seed: species drawn without replacement from the canonical roster, each creature generated from seed `powerworks-draft-<runSeed>-<index>` on the canonical release. Same run seed, same offer. | 80% | Reclamation's draft; seeded replay contract |
+| 45 | **The offer.** Before the first encounter the player sees `DRAFT_OFFER_SIZE` (8) creatures and picks `SQUAD_SIZE` (4). The offer is seeded from the run seed: species drawn without replacement from the canonical roster, each creature generated from seed `powerworks-draft-<runSeed>-<index>` on the canonical release. Same run seed, same offer. Since decision 53, each species is tried from its own seeds, `powerworks-draft-<runSeed>-<species>-<j>`. | 80% | Reclamation's draft; seeded replay contract |
 | 46 | **Offer guarantees.** Every offered creature passes decision 37 (an every-round harm after its signature; since the 2026-09-23 amendment, one whose move-card power is at least 1, so no offered creature leans on a harm that previews 0). The offer as a whole holds at least one creature with a bind and one with a displace, so the intro's two answers to a charge are always draftable, and at least one with a helpful move it can aim at a squadmate. The offer is built constructively: draw candidates in seed order and fill each guarantee from the first qualifying candidate, then fill the rest in order; never reroll the whole offer. | 80% | decisions 36, 37, 39; the power-1 amendment: 180 of 3,200 offers on 0.7.0-4 had a power-0 every-round harm (Avilily 60 of 115), 0 of 3,200 after it |
 | 47 | **The starter squad stays.** The briefing offers "Draft a squad" (the default action) and "Take the starter squad" (the current four seeds). The starter is the tutorial-safe path and the regression baseline. | 85% | the fixed four measured 92.0% |
-| 48 | **Saves carry the picks.** A run starts from `{seed, squad}` where squad is either "starter" or the four offer indexes; the draft is the first command in the history. `SAVE_VERSION` 6; version 5 is rejected. | 90% | command-replay saves |
+| 48 | **Saves carry the picks.** A run starts from `{seed, squad}` where squad is either "starter" or the four offer indexes; the draft is the first command in the history. `SAVE_VERSION` 6; version 5 is rejected. Since decision 53, `SAVE_VERSION` 7; version 6 is rejected. | 90% | command-replay saves |
 | 49 | **The draft screen is chrome, not the game.** It is setup, so it uses the site's design system (card, button and badge components, element hues only on element-tagged content, the accent only on the one forward action). Each offered creature shows its portrait, name, element, HP and speed as the game will read them, and its four actions as the game reads them, with any unsupported action marked plainly. Picks toggle; "Enter the facility" enables at four. One fixed screen at 1280x720 and 390x844, the list scrolling inside its own panel on a phone if it must. | 75% | DESIGN_SYSTEM.md tiers; games are one fixed screen |
 | 50 | **Companion art.** The four painted companions keep their painted art; every other species uses the site's species portrait component inside the same frame. No new art is generated. | 90% | Reclamation figures |
 | 51 | **Measurement.** The sim drafts two ways, 400 runs each: a random legal draft, and a greedy draft (pick by a simple score: every-round harm preview plus bind, displace and support presence). It reports win rate for each, the spread of win rates by species included (with counts), the most and least ordered acts, how often charged, status and support moves are ordered, and the starter squad's rate as the baseline. Win rates for the draft are expected to spread; the report says which species drag or carry, and nothing is retuned in this pass. | 80% | Reclamation's per-species simulator readout |
 | 52 | **The stall rule.** When `ENCOUNTER_STALL_ROUNDS` (6) consecutive rounds of one encounter resolve in which no unit on either side loses HP and none falls, the squad is forced out: the run ends as a retreat (the existing `retreated` phase), earned practice XP is kept, and the record says the facility's defenses outlasted the squad after six rounds without progress. Healing is not progress; any lost HP resets the count; a result on the sixth round still counts. It replaced a first reading as a 20-round cap. | 80%, the coordinator's ruling on the evidence, 2026-09-23 | the first pass 6 sim on 0.7.0-4 had one random and one greedy run loop for 397 rounds with nothing dealing damage; on 0.7.0-5 a 20-round cap turned 26 random and 9 greedy wins into losses (36 and 14 runs forced out, 44 of them at the guardian), while no run loops once the power-1 filter is in; the no-progress trigger ends 1 run in 1,000 |
+| 53 | **A fair offer.** One creature failing decision 37 does not make its species rare. For each species in shuffle order the offer tries up to `DRAFT_SEEDS_PER_SPECIES` (8) creatures, generated from `powerworks-draft-<runSeed>-<species>-<j>`, and takes the first that passes decision 37; the species is skipped on that pass only when none passes. The guarantees of decision 46 are still filled constructively from these candidates (one per species per pass, so they choose between species, never between creatures of one species), everything stays deterministic from the run seed, and offer indexes keep their meaning. The same seed now deals a different offer, so `SAVE_VERSION` is 7 and version 6 is rejected. | 85%, the coordinator's ruling on the evidence, 2026-09-24 | with one creature per species, 400 seeds on 0.7.0-5 offered Graviclaw 13 times and Hypnopet 11 against a median of 105 (range 11 to 160); with eight tries, 44 and 31 against a median of 105 (range 31 to 150), and no offer draws past the first pass |
 
 ## Pass 6: what it measured, 2026-09-23
 
@@ -627,6 +628,7 @@ Where the contract left a choice open, the build took the reading below. Each is
 | first run, 0.7.0-4, no amendment, no stall rule: win rate | 92.0% (184 won) | 58.5% (234 won; 1 run looped 397 rounds) | 79.8% (319 won; 1 run looped 397 rounds) |
 | decision 52 as a 20-round cap, 0.7.0-5: win rate (runs forced out) | 91.5% (0) | 58.3% (36 forced out, 32 at the guardian) | 78.8% (14 forced out, 12 at the guardian) |
 | **win rate** | **91.5% (183 won, 17 lost)** | **64.8% (259 won, 141 lost)** | **81.0% (324 won, 76 lost)** |
+| after decision 53 (per-species seed retries), 0.7.0-5: win rate (runs forced out) | 91.5% (183 won, 17 lost; 0) | 62.8% (251 won, 149 lost; 2) | 79.3% (317 won, 83 lost; 0) |
 | runs forced out by the stall rule (counted lost) | 0 | 1 | 0 |
 | runs reaching the final chamber | 200 | 365 | 391 |
 | rounds / encounter | 5.76 | 6.90 | 5.84 |
@@ -702,10 +704,77 @@ The offer itself, over 400 seeds on 0.7.0-5: codazzo 160 offers, hippochamp 159,
 
 - **A 20-round cap was the wrong shape for decision 52.** Measured first, it forced out 36 random and 14 greedy runs, 44 of them at the guardian, and 26 and 9 of those would have been wins; no run looped once the power-1 filter was in. Decision 52 is now the no-progress trigger, which ends one run in 1,000. The lever is `ENCOUNTER_STALL_ROUNDS`; a squad that heals itself while dealing nothing would still stall, which is the intent.
 - **The support guarantee drafts a weak body.** Guaranteeing "a helpful move it can aim at a squadmate" pulls Sonalloy (150 offers) and Shuntara (140) into most offers, and the greedy score's support bonus picks Shuntara at a 64.4% win rate. On a four-slot squad a support body costs more damage than its shields prevent. The levers are `SIM_DRAFT_ANSWER_VALUE.support` for the sim, and the guarantee itself for the game.
-- **Graviclaw and Hypnopet are almost never offered.** Three of Graviclaw's four actions are guaranteed, so it rarely rolls a repeatable harm: 13 offers in 400 seeds. Hypnopet (11), Tizzie (27), Figzy (31) and Neph (35) are nearly as rare. A player who liked the starter's Graviclaw will rarely see one to draft, and most drafted squads are drawn entirely as silhouettes.
+- **Graviclaw and Hypnopet are almost never offered.** Three of Graviclaw's four actions are guaranteed, so it rarely rolls a repeatable harm: 13 offers in 400 seeds. Hypnopet (11), Tizzie (27), Figzy (31) and Neph (35) are nearly as rare. A player who liked the starter's Graviclaw will rarely see one to draft, and most drafted squads are drawn entirely as silhouettes. Decision 53 answers the offer side of this (below): Graviclaw now appears 44 times in 400 seeds, Hypnopet 31.
 - **Avilily is the weakest body the offer carries.** After the amendment she qualifies only on a seed whose every-round peck reads power 1 or more; the starter's Avilily passes with Slashing Peck at exactly 1. She still binds, which is why the offer keeps her.
 - **Unsupported acts ride along.** Smokat's Smoke Dispersal (traversal) is carried in 77 random and 80 greedy runs and never ordered; the card marks it "No effect here", as decision 49 asks.
 - **The briefing scrolls.** At 1280x720 the briefing's starter roster sits below the fold (page height 836) and at 390x844 the page is 1,019 tall. The forward action is in view at both sizes; the layout is the pre-pass-6 briefing with a second key on the same row.
+
+## Decision 53: a fair offer, 2026-09-24
+
+The pass 6 offer generated one creature per species per run seed, and a species whose one creature failed decision 37 was skipped. A species whose kit is mostly guaranteed rarely rolls a repeatable harm on its free slots, so the skip landed on the same few species every time: over 400 seeds Graviclaw was offered 13 times and Hypnopet 11, against a median of 105. The offer should present species fairly; one creature failing a game filter should not make its whole species rare.
+
+### How it was read
+
+- `draftCandidate(seed, k)` is the species at `k` in the shuffled roster (unchanged, `draftOrder`), as the first of `DRAFT_SEEDS_PER_SPECIES` (8, a new lever) creatures, generated from `powerworks-draft-<runSeed>-<species>-<j>` (`draftSeed`), that passes decision 37. It is null, and the species skipped on that pass, only when none of the eight passes. The offer entry records the try that passed (`attempt`).
+- `DRAFT_MAX_ROSTER_PASSES` keeps its meaning: pass `p` over the roster tries `j` from `8p` to `8p + 7`, so a later pass never repeats a creature. Over 400 seeds no offer draws past the first pass (the furthest candidate is 25, against 101 before).
+- The guarantees of decision 46 are filled exactly as before, from the candidates in draw order. A species offers one candidate per pass, so a guarantee never reaches past a species' first passing creature to a later one that happens to carry a bind; the guarantees choose between species.
+- Offer indexes keep their meaning (a draft command names four of the eight listed in draw order), but the same seed now deals a different offer, so `SAVE_VERSION` is 7 and a version 6 history is rejected the way earlier versions were.
+- `surveyOffer` and `formatOfferSurvey` in `devtools/powerworksSim.ts` print the table below (the sim test file runs it at 400 seeds).
+
+### The offer over 400 seeds
+
+Before: min 11, median 105, max 160. After: min 31, median 105, max 150. Every offer holds eight creatures, so the total is 3,200 either way. The "before" pass column counts, for each species, the run seeds whose one first-pass creature passed; the "after" pass column counts the run seeds where one of its eight tries passed, whether or not the offer reached it.
+
+| species | offers before | offers after | first-pass seeds whose one creature passed, before | first-pass seeds with a pass within 8 tries, after | skipped after (no try passed) | mean passing try |
+|---|---|---|---|---|---|---|
+| shuntara | 140 | 150 | 159 | 395 | 5 | 1.33 |
+| sonalloy | 150 | 140 | 182 | 400 | 0 | 0.96 |
+| hippochamp | 159 | 123 | 206 | 400 | 0 | 0.94 |
+| bioflim | 94 | 117 | 162 | 399 | 1 | 1.23 |
+| drilltail | 117 | 117 | 203 | 399 | 1 | 0.84 |
+| codazzo | 160 | 114 | 259 | 400 | 0 | 0.53 |
+| vespersyn | 86 | 114 | 134 | 379 | 21 | 1.72 |
+| voltish | 139 | 113 | 245 | 400 | 0 | 0.65 |
+| chromocat | 153 | 110 | 234 | 399 | 1 | 0.64 |
+| dromeus | 141 | 110 | 249 | 400 | 0 | 0.66 |
+| kosanos | 138 | 110 | 248 | 400 | 0 | 0.64 |
+| thirstaserp | 95 | 109 | 159 | 393 | 7 | 1.38 |
+| smokat | 140 | 108 | 244 | 400 | 0 | 0.66 |
+| akinza | 136 | 106 | 250 | 398 | 2 | 0.73 |
+| crystorn | 99 | 106 | 178 | 397 | 3 | 1.22 |
+| scalatto | 140 | 105 | 224 | 398 | 2 | 0.79 |
+| venemist | 101 | 105 | 187 | 399 | 1 | 0.93 |
+| terragoyle | 73 | 102 | 153 | 393 | 7 | 1.40 |
+| imprit | 109 | 101 | 187 | 396 | 4 | 0.94 |
+| yetimoth | 64 | 99 | 125 | 374 | 26 | 1.88 |
+| frackworm | 71 | 97 | 145 | 388 | 12 | 1.68 |
+| foromeer | 135 | 96 | 244 | 400 | 0 | 0.63 |
+| xylum | 141 | 96 | 257 | 400 | 0 | 0.67 |
+| luceras | 116 | 95 | 205 | 398 | 2 | 0.91 |
+| avilily | 60 | 93 | 103 | 359 | 41 | 1.86 |
+| newtapede | 82 | 90 | 153 | 395 | 5 | 1.30 |
+| neph | 35 | 85 | 72 | 313 | 87 | 2.53 |
+| figzy | 31 | 73 | 44 | 206 | 194 | 2.96 |
+| ectoghoul | 44 | 72 | 73 | 304 | 96 | 2.77 |
+| tizzie | 27 | 69 | 43 | 234 | 166 | 2.90 |
+| graviclaw | 13 | 44 | 21 | 163 | 237 | 3.09 |
+| hypnopet | 11 | 31 | 13 | 95 | 305 | 2.97 |
+
+### Species still rare, and why
+
+- **Hypnopet (31, under a third of the median).** Its two authored acts are its signature, Empathic Steadying (a remove), and the guaranteed Chromatic Horn Trance (an entrance, no harm), so only two ordinary slots are rolled, and its mechanisms (stabilizing, focus, trance) carry no harm. About 45% of its creatures roll no ordinary harm at all, and a rolled harm is more often brief or prolonged recovery, or power 0, than repeatable. Roughly one creature in 18 to 30 passes, so eight tries pass on 95 of 400 seeds.
+- **Graviclaw (44, above a third of the median, under half).** Three of its four actions are authored: the signature and the guaranteed Gravity Draw and Ground Anchor, both brief-recovery non-harms. Its one rolled slot has to be a repeatable harm of power 1 or more, which about one creature in 19 is; eight tries pass on 163 of 400 seeds.
+- Tizzie (69), Ectoghoul (72) and Figzy (73) sit under the median for a milder version of the same reason: Tizzie's guaranteed Mind Strike and Ectoghoul's Ectoplasm Blast are brief-recovery harms, and Figzy's guaranteed Open-Handed Force is a brief non-harm, so their free slots have to supply the repeatable harm.
+- No species was edited. The game lever is `DRAFT_SEEDS_PER_SPECIES`; the other answer is the species' own kit (a repeatable authored harm), which is a species ruling, not a game one.
+- Shuntara (150) and Sonalloy (140) are the most offered, because the support guarantee pulls them in, as pass 6 reported.
+
+### Sim, after decision 53
+
+The row "after decision 53" in the pass 6 sim table. The starter is untouched (91.5%, the same 183 wins, since it never reads the offer). The random draft reads 62.8% (from 64.8%) and the greedy draft 79.3% (from 81.0%); both moves are inside one standard error at 400 runs (about 2.4 and 2.0 points), so the fair offer does not change how much the draft decides. Two random runs are forced out by the stall rule, none greedy; the longest runs are 144 random and 75 greedy rounds, and none reaches the 400-step guard. The species that were almost never seen now appear often enough to read: in the random draft Graviclaw is drafted 24 times (83.3%), Neph 43 (86.0%), Hypnopet 16 (56.3%), Tizzie 33 (54.5%), Figzy 33 (51.5%) and Ectoghoul 37 (45.9%), against 6, 13, 6, 14, 18 and 22 before. In the greedy draft Graviclaw is taken 44 times at 90.9% and Tizzie 33 at 84.8%. The strong species keep carrying (Terragoyle 98.1% and 100%, Kosanos 83.9% and 96.8%, Xylum 90.5% and 95.3%) but some are offered less, since they no longer inherit the slots the rare species gave up (Xylum 141 offers to 96), and the weak ones still drag (Avilily 36.6% and 37.5%, Shuntara 39.0% and 60.3%, Dromeus 44.4% and 63.4%). No game lever moved.
+
+### Friction reported
+
+- **A removal's words miss a status the offer now reaches.** Seed 7's offer now carries Neph `powerworks-draft-7-neph-5`, whose Disorienting Sweep applies disoriented removable by stabilizing, but `REMOVAL_WORDS.stabilizing.ends` in `apps/web/src/pages/games/powerworksVisuals.tsx` lists paralyzed, blinded, frightened and stunned only, so a Steadies card would not name Disoriented. `powerworksVisuals.test.tsx` ("names every removal in plain words") catches it. The fix is one word in that table.
 
 ## Fix, 2026-09-23: a degrading status that cannot tick does not take hold
 

@@ -46,6 +46,7 @@ import {
   COOLDOWN_ROUNDS,
   DEGRADE_FACTOR,
   DRAFT_OFFER_SIZE,
+  DRAFT_SEEDS_PER_SPECIES,
   ENCOUNTER_STALL_ROUNDS,
   SAVE_VERSION,
   SQUAD_SIZE,
@@ -625,18 +626,19 @@ describe("Powerworks battle rules", () => {
     expect(r.revival).toBe(1);
     expect(r.xp).toBe(0);
   });
-  it("replays a version 6 starter history deterministically and rejects versions 1 to 5", () => {
+  it("replays a version 7 starter history deterministically and rejects versions 1 to 6", () => {
     const s = createRun(41);
     const q = orders(s);
     const action = { kind: "round" as const, orders: q };
-    const restored = restoreRun(
-      JSON.stringify({
-        version: 6,
-        seed: 41,
-        history: [{ kind: "draft", squad: "starter" }, action],
-      })
-    );
+    const history = [{ kind: "draft", squad: "starter" }, action];
+    expect(SAVE_VERSION).toBe(7);
+    const restored = restoreRun(JSON.stringify({ version: 7, seed: 41, history }));
     expect(restored.state).toEqual(command(s, action));
+    // Version 6 histories name offer indexes of the offer before per-species seed retries
+    // (contract decision 53), so the same indexes would draft other creatures.
+    expect(() => restoreRun(JSON.stringify({ version: 6, seed: 41, history }))).toThrow(
+      "Unsupported save."
+    );
     // Version 5 histories open on a round, with no draft (pass 6, decision 48).
     expect(() =>
       restoreRun(JSON.stringify({ version: 5, seed: 41, history: [action] }))
@@ -1285,7 +1287,7 @@ describe("Powerworks status layer", () => {
     expect(r.state.phase).toBe("camp");
     expect(r.state.xp).toBe(10);
   });
-  it("replays a version 6 save deterministically with conditions in play", () => {
+  it("replays a current-version save deterministically with conditions in play", () => {
     const s = createRun(7);
     const first = orders(s);
     const after = command(s, { kind: "round", orders: first });
@@ -1296,7 +1298,7 @@ describe("Powerworks status layer", () => {
       { kind: "round" as const, orders: second },
     ];
     const restored = restoreRun(
-      JSON.stringify({ version: 6, seed: 7, history })
+      JSON.stringify({ version: SAVE_VERSION, seed: 7, history })
     );
     expect(restored.state).toEqual(command(after, history[2]));
   });
@@ -1744,7 +1746,7 @@ describe("Powerworks reactions", () => {
     expect(after.conditions.filter((c) => c.status === "mending")).toHaveLength(1);
     expect(after.passiveCooldowns).toEqual(carrier.passives.map(() => 0));
   });
-  it("replays a version 6 save deterministically through to a reaction", () => {
+  it("replays a current-version save deterministically through to a reaction", () => {
     // A real run, played honestly with legal orders until the guardian answers a
     // contact strike, then restored from its command history alone. The orders play to
     // win (strongest legal preview, a revival when someone falls) until the final
@@ -1792,7 +1794,7 @@ describe("Powerworks reactions", () => {
     expect(reacted, "no reaction occurred in the played run").toBe(true);
     expect(history.some((c) => c.kind === "advance")).toBe(true);
     const restored = restoreRun(
-      JSON.stringify({ version: 6, seed: 11, history: [{ kind: "draft", squad: "starter" }, ...history] })
+      JSON.stringify({ version: SAVE_VERSION, seed: 11, history: [{ kind: "draft", squad: "starter" }, ...history] })
     );
     expect(restored.state).toEqual(s);
     expect(restored.state.log.some((l) => /Core discharge/.test(l))).toBe(true);
@@ -2598,7 +2600,7 @@ describe("Powerworks pass 5: readings (decision 41)", () => {
     expect(events(r, "redirect", healer.id)).toHaveLength(0);
     expect(unit(r.state, healer.id).cooldowns).toEqual([0]);
   });
-  it("replays a version 6 save whose order names a squadmate", () => {
+  it("replays a current-version save whose order names a squadmate", () => {
     const s = createRun(5);
     const h = unit(s, "H");
     const cannon = h.moves.findIndex((m) => aimsAtSquadmate(m));
@@ -2606,7 +2608,7 @@ describe("Powerworks pass 5: readings (decision 41)", () => {
     const q = { ...orders(s), H: { move: cannon, target: "C" } };
     const after = command(s, { kind: "round", orders: q });
     const restored = restoreRun(
-      JSON.stringify({ version: 6, seed: 5, history: [{ kind: "draft", squad: "starter" }, { kind: "round", orders: q }] })
+      JSON.stringify({ version: SAVE_VERSION, seed: 5, history: [{ kind: "draft", squad: "starter" }, { kind: "round", orders: q }] })
     );
     expect(restored.state).toEqual(after);
     // Aimed at Crystorn, the cannon clears or finds nothing; it never deals damage to her.
@@ -2626,7 +2628,11 @@ describe("Powerworks pass 6: the offer (decisions 45 and 46)", () => {
     expect(b.map((e) => e.seed)).toEqual(a.map((e) => e.seed));
     expect(draftOrder(7)).toEqual(draftOrder(7));
     for (const e of a) {
-      expect(e.seed).toBe(`powerworks-draft-7-${e.candidate}`);
+      // Contract decision 53: a species is tried from its own seeds, one pass at a time.
+      expect(e.seed).toBe(`powerworks-draft-7-${e.species}-${e.attempt}`);
+      const pass = Math.floor(e.candidate / draftOrder(7).length);
+      expect(e.attempt).toBeGreaterThanOrEqual(pass * DRAFT_SEEDS_PER_SPECIES);
+      expect(e.attempt).toBeLessThan((pass + 1) * DRAFT_SEEDS_PER_SPECIES);
       // The record is exactly the canonical release's creature for that seed.
       expect(e.record).toEqual(roster(e.species, e.seed));
       expect(e.species).toBe(draftOrder(7)[e.candidate % draftOrder(7).length]);
@@ -2634,9 +2640,48 @@ describe("Powerworks pass 6: the offer (decisions 45 and 46)", () => {
     // A different seed deals a different offer.
     expect(draftOffer(8).map((e) => e.seed)).not.toEqual(a.map((e) => e.seed));
   });
+  it("retries a species over its own seeds and offers the first creature that passes decision 37", () => {
+    const passes = (species: string, seed: string) =>
+      everyRoundHarms(readCompanion(roster(species, seed), "X")).length > 0;
+    let retried = 0;
+    let skipped = 0;
+    for (let seed = 1; seed <= 12; seed++) {
+      const order = draftOrder(seed);
+      for (let k = 0; k < order.length; k++) {
+        const species = order[k];
+        const c = draftCandidate(seed, k, order);
+        const tries = Array.from({ length: DRAFT_SEEDS_PER_SPECIES }, (_, j) =>
+          passes(species, `powerworks-draft-${seed}-${species}-${j}`)
+        );
+        if (!c) {
+          // Skipped only when none of its tries passes.
+          expect(tries.some(Boolean), `seed ${seed} ${species}`).toBe(false);
+          skipped++;
+          continue;
+        }
+        // The candidate is the first try that passes; every earlier try failed.
+        expect(c.attempt, `seed ${seed} ${species}`).toBe(tries.indexOf(true));
+        expect(c.seed).toBe(`powerworks-draft-${seed}-${species}-${c.attempt}`);
+        if (c.attempt > 0) retried++;
+      }
+      // Deterministic: the same seed yields the same candidates.
+      expect(draftCandidate(seed, 0, order)?.seed).toBe(draftCandidate(seed, 0)?.seed);
+    }
+    // Both branches are exercised over these seeds.
+    expect(retried).toBeGreaterThan(0);
+    expect(skipped).toBeGreaterThan(0);
+    // A later pass over the roster tries fresh seeds, never repeating the first pass's.
+    const order = draftOrder(1);
+    const later = draftCandidate(1, order.length, order);
+    if (later) expect(later.attempt).toBeGreaterThanOrEqual(DRAFT_SEEDS_PER_SPECIES);
+  }, 120000);
   it("holds its guarantees over 200 seeds: eight distinct species, each with an every-round harm, and a bind, a displace and a support between them", () => {
+    const offered: Record<string, number> = Object.fromEntries(
+      getSpeciesTemplates().map((t) => [t.key, 0])
+    );
     for (let seed = 1; seed <= 200; seed++) {
       const offer = draftOffer(seed);
+      for (const e of offer) offered[e.species]++;
       expect(offer, `seed ${seed}`).toHaveLength(DRAFT_OFFER_SIZE);
       expect(offer.map((e) => e.index)).toEqual([0, 1, 2, 3, 4, 5, 6, 7]);
       expect(new Set(offer.map((e) => e.species)).size, `seed ${seed}`).toBe(DRAFT_OFFER_SIZE);
@@ -2649,6 +2694,10 @@ describe("Powerworks pass 6: the offer (decisions 45 and 46)", () => {
       expect(offer.some((e) => e.answers.displace), `seed ${seed} displace`).toBe(true);
       expect(offer.some((e) => e.answers.support), `seed ${seed} support`).toBe(true);
     }
+    // Contract decision 53: no species is left nearly unseen. Before per-species retries
+    // Hypnopet was offered 11 times in 400 seeds and Graviclaw 13, against a median of 105.
+    for (const [species, n] of Object.entries(offered))
+      expect(n, `${species} offered ${n} times in 200 seeds`).toBeGreaterThanOrEqual(10);
   }, 120000);
   it("is built constructively, never rerolled: guarantees from their first qualifier, the rest in draw order", () => {
     for (let seed = 1; seed <= 25; seed++) {
@@ -2766,7 +2815,7 @@ describe("Powerworks pass 6: the draft command and saves (decisions 47 and 48)",
           }
     expect(checked).toBe(35960);
   });
-  it("replays a version 6 save with a drafted squad deterministically", () => {
+  it("replays a current-version save with a drafted squad deterministically", () => {
     let s = command(openRun(19), { kind: "draft", squad: [0, 2, 5, 7] });
     const history: Command[] = [{ kind: "draft", squad: [0, 2, 5, 7] }];
     for (let step = 0; step < 6 && (s.phase === "planning" || s.phase === "camp"); step++) {
@@ -2782,17 +2831,17 @@ describe("Powerworks pass 6: the draft command and saves (decisions 47 and 48)",
     // An illegal draft, a second draft, no draft, or an empty history is rejected.
     expect(() =>
       restoreRun(
-        JSON.stringify({ version: 6, seed: 19, history: [{ kind: "draft", squad: [0, 0, 1, 2] }] })
+        JSON.stringify({ version: SAVE_VERSION, seed: 19, history: [{ kind: "draft", squad: [0, 0, 1, 2] }] })
       )
     ).toThrow();
     expect(() =>
-      restoreRun(JSON.stringify({ version: 6, seed: 19, history: [history[0], history[0]] }))
+      restoreRun(JSON.stringify({ version: SAVE_VERSION, seed: 19, history: [history[0], history[0]] }))
     ).toThrow();
-    expect(() => restoreRun(JSON.stringify({ version: 6, seed: 19, history: [] }))).toThrow(
+    expect(() => restoreRun(JSON.stringify({ version: SAVE_VERSION, seed: 19, history: [] }))).toThrow(
       "Unsupported save."
     );
     expect(() =>
-      restoreRun(JSON.stringify({ version: 6, seed: 19, history: history.slice(1) }))
+      restoreRun(JSON.stringify({ version: SAVE_VERSION, seed: 19, history: history.slice(1) }))
     ).toThrow();
   });
 });
