@@ -112,6 +112,8 @@ export interface Rules {
 	// Pass 25: reach at which an area act also catches the next world; 0 disables
 	// Pass 25: the handler chooses a creature's act at send
 	actFlip: boolean;
+	// Pass 55: a shield may also cancel its own side's sweep (off: only the other side's attacks)
+	shieldOwnSweeps: boolean;
 	projectionReach: number;
 	projectionFalloff: number;
 	worldsPerFrame: number;

@@ -194,8 +194,22 @@ for (const view of ['simple', 'advanced']) {
 			let guard = 0;
 			let sends = 0;
 			let captionSeen = false;
+			let sawReserve = false;
 			while (guard < 220) {
 				guard++;
+				/*
+					PASS 55, KEEP ONE BACK. Eleven sends from twelve: once this side's sends are
+					spent, the creature left in hand is drawn as the reserve, never as a card that
+					could still be played (Nick lost his last send without a word).
+				*/
+				if (!sawReserve && sends > 0 && await page.locator('[data-sends-side="mine"][data-sends-left="0"]').count()) {
+					const reserve = await page.locator('[data-slot-state="reserve"]').count();
+					const hand = await page.locator('[data-slot-state="hand"]').count();
+					if (reserve + hand > 0) {
+						assert(hand === 0 && reserve > 0, `${label}: with no sends left, ${hand} creature(s) still look playable and ${reserve} read as the reserve`);
+						sawReserve = true;
+					}
+				}
 				// pace controls first: never let playback stall the check
 				const skip = page.locator('[data-skip]');
 				if (await skip.count() && await skip.first().isVisible()) {
@@ -292,6 +306,7 @@ for (const view of ['simple', 'advanced']) {
 			assert(await page.locator('[data-world-row]').count() > 0, `${label}: the Charter names no world`);
 			assert(await page.locator('[data-notes]').count() > 0, `${label}: the Proving notes panel is missing`);
 			assert(sends > 0, `${label}: the Proving finished without a single send`);
+			assert(sends < 11 || sawReserve, `${label}: every send was spent but the reserve was never shown`);
 
 			assert.deepEqual(errors, [], `${label}: page errors`);
 			assert.deepEqual(consoleErrors, [], `${label}: console errors`);

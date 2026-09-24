@@ -74,6 +74,7 @@ import {
 	ARMORED_REDUCTION,
 	KEEN_FIGHTS_HURT,
 	SHIELD_CAP,
+	SHIELD_OWN_SWEEPS,
 	SHIELD_CAPS,
 	ROLE,
 	WILLFUL_THRESHOLD,
@@ -357,6 +358,8 @@ export const DEFAULT_RULES: Rules = {
 	// Pass 25: cross-world projection, the base redesign's own lever pool entry
 	// Pass 25: the handler chooses a creature's act at send (lever pool: act flip)
 	actFlip: ACT_FLIP,
+	// Pass 55: shields cancel only the other side's attacks
+	shieldOwnSweeps: SHIELD_OWN_SWEEPS,
 	projectionReach: PROJECTION_REACH,
 	projectionFalloff: PROJECTION_FALLOFF,
 	worldsPerFrame: WORLDS_PER_FRAME,
@@ -416,6 +419,7 @@ function normalizeRules(rules: RulesInput | null | undefined): Rules {
 		sendable: num(r.sendable, DEFAULT_RULES.sendable),
 		roundSendCap: num(r.roundSendCap, DEFAULT_RULES.roundSendCap),
 		actFlip: r.actFlip !== undefined ? !!r.actFlip : DEFAULT_RULES.actFlip,
+		shieldOwnSweeps: r.shieldOwnSweeps !== undefined ? !!r.shieldOwnSweeps : DEFAULT_RULES.shieldOwnSweeps,
 		projectionReach: num(r.projectionReach, DEFAULT_RULES.projectionReach),
 		projectionFalloff: num(r.projectionFalloff, DEFAULT_RULES.projectionFalloff),
 		worldsPerFrame: num(r.worldsPerFrame, DEFAULT_RULES.worldsPerFrame),
@@ -1144,6 +1148,20 @@ export function moveSwift(state: MatchState, handler: Seat, recordId: string, si
 	});
 }
 
+/*
+	forecastMove(state, handler, recordId, siteId) -> { [recordId]: ClashForecast } | null
+
+	PASS 55. What the Clash would leave if a swift creature stepped to another world now: the
+	move made exactly as moveSwift() makes it, then forecastClash(). Nick: "when it gives me
+	the option to move a creature, it doesn't give me the affordances to know how that
+	creature would perform on a different planet". Null when moveSwift() would refuse the move.
+	The state passed in is not touched.
+*/
+export function forecastMove(state: MatchState, handler: Seat, recordId: string, siteId: string): Record<string, ClashForecast> | null {
+	const moved = moveSwift(state, handler, recordId, siteId);
+	return moved ? forecastClash(moved, handler) : null;
+}
+
 // the handler's own creatures that may still move this round (assumption 20). Own side
 // only: which of the opponent's creatures are swift is not something the board tells you.
 export function movableRecordIdsFor(state: MatchState, handler: Seat): string[] {
@@ -1227,8 +1245,14 @@ function enemiesAtSite(entry: BoardEntry, entriesSnapshot: BoardEntry[]): BoardE
 	caller holding a state built before the round started still gets a number.
 */
 function currentHoldOf(state: MatchState, e: BoardEntry): number {
+	/*
+		PASS 55. Never below nothing. A creature whose bolsterer falls loses the bolster's share of
+		its full hold, and when the damage it has already taken is more than what is left, the
+		recompute left it standing at a negative hold that the Ruling then subtracted from its own
+		side (reproduced on seed nf225, round 1, Zolton: counted at -0.6). It counts as nothing.
+	*/
 	if (typeof e.currentHold === 'number') {
-		return e.currentHold;
+		return Math.max(0, e.currentHold);
 	}
 	const frame = currentFrame(state);
 	const site = siteById(frame, e.siteId) as FrameSite;
@@ -1798,6 +1822,10 @@ function resolveWorld(state: MatchState, site: FrameSite): void {
 	*/
 	function amountAgainstSide(declaration: Declaration, side: Seat): number {
 		if (declaration.cancelledAgainst[side]) {
+			return 0;
+		}
+		// pass 55: a shield stands against the other side, never its own side's sweep
+		if (!rules.shieldOwnSweeps && declaration.entry.player === side) {
 			return 0;
 		}
 		if (declaration.role === ROLE.STRIKE) {

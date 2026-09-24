@@ -6992,3 +6992,34 @@
 	.rec-console--match[data-terminal] .rec-turn-lamp--on.rec-turn-lamp--theirs { width: 7px; height: 9px; }
 	.rec-console--match[data-terminal] .rec-scoreboard { grid-template-columns: 7px auto auto 10px; }
 }
+
+/* --- pass 55: a sent card keeps its strip ----------------------------------------------
+   The column of the world it went to is its own forecast there: the bar what the Clash would
+   leave it, the hatched run above what the Clash would take, a cross when it would fall. A
+   swift creature that may still move shows what each move would do, striped as every "would
+   be" on the table is. */
+.rec-console--match[data-terminal] .rec-fit-col--sent .rec-fit-bar { transform: scaleY(var(--fit, 0)); background: var(--rec-you); }
+.rec-console--match[data-terminal] .rec-fit-going {
+	position: absolute;
+	left: 18%;
+	right: 18%;
+	bottom: 0;
+	height: 100%;
+	transform-origin: 50% 100%;
+	transform: scaleY(var(--fit-going, 0));
+	background: repeating-linear-gradient(135deg, color-mix(in srgb, var(--rec-loss) 75%, transparent) 0 2px, color-mix(in srgb, var(--rec-loss) 18%, transparent) 2px 5px);
+}
+.rec-console--match[data-terminal] .rec-fit-col--sent .rec-fit-num { color: var(--rec-you); }
+.rec-console--match[data-terminal] .rec-fit-col--falls .rec-fit-num { color: var(--rec-loss); }
+.rec-console--match[data-terminal] .rec-fit-falls { display: inline-block; width: 10px; height: 10px; vertical-align: -1px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; }
+.rec-console--match[data-terminal] .rec-fit-col--move .rec-fit-bar {
+	background: repeating-linear-gradient(0deg, color-mix(in srgb, var(--rec-you) 70%, transparent) 0 3px, color-mix(in srgb, var(--rec-you) 35%, transparent) 3px 5px);
+}
+.rec-console--match[data-terminal] .rec-fit-col--move .rec-fit-num { color: var(--rec-you); opacity: 0.85; }
+
+/* pass 55, keep one back: a creature left in hand with no sends left is the reserve */
+.rec-console--match[data-terminal] .rec-plinth--reserve { opacity: 0.75; }
+.rec-console--match[data-terminal] .rec-plinth--reserve .rec-plinth-art { filter: grayscale(0.6); }
+.rec-console--match[data-terminal] .rec-plinth-tag--reserve { color: var(--g-brass-light); }
+.rec-console--match[data-terminal] .rec-plinth-tag--reserve svg { fill: color-mix(in srgb, var(--g-brass-light) 35%, transparent); }
+.rec-console--match[data-terminal] .rec-status-reach[data-still-reachable="reserve"] { border-left-color: var(--g-brass-light); color: var(--g-ink); }

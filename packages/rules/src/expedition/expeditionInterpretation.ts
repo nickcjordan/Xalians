@@ -522,6 +522,15 @@ export const SHIELD_CAPS = ['none', 'ownHold', 'half'] as const;
 	'half' is also the setting where leading with the presences is worth least.
 */
 export const SHIELD_CAP = 'half';
+/*
+	PASS 55: false. A shield cancels only the other side's attacks. Before this pass it cancelled
+	the largest attack declared against its own side, and its own side's sweeps counted (they
+	hit allies too), so sending a second creature under your own sweep could turn your shield
+	onto your sweep and off the rival's strike: Nick's table showed -13 on two cards, the
+	shield fell paying backlash for a cancel of an attack that never landed, and the strike it
+	had been stopping downed the sweeper. Measured in the ownership log's pass 55 entry.
+*/
+export const SHIELD_OWN_SWEEPS = false;
 
 // A blow-role creature with no attacking ability at all still strikes, at the pool's
 // minimum printed magnitude (magnitudeOf floors at 1). The simulator counts how often
@@ -764,7 +773,18 @@ export const ROUND_SEND_CAP = 0;
 	gauge, because reach adds DAMAGE and the decision is about WHICH WORLD TO COMMIT TO. A
 	second axis has to change what a decision is about, not add a number to the one that exists.
 */
-export const ACT_FLIP = true;
+/*
+	PASS 55 (Nick, 2026-09-23): OFF. "The way you're presenting the option to go with the
+	sweep versus strike ... is not very intuitive. It defaults to one of them ... I don't know
+	why one creature would have one, and some of the creatures have two. I'm inclined to remove
+	this concept of giving two options because it just complicates the game unnecessarily."
+
+	Every creature now does its one natural act again. The lever stays so the axis can be
+	measured as an ablation; the cost it carried is recorded in the ownership log's pass 55
+	entry (the decision spread it bought back in round three), and the next pass's Clash is
+	where round three's decisions are measured again.
+*/
+export const ACT_FLIP = false;
 
 export const PROJECTION_REACH = 0;
 export const PROJECTION_FALLOFF = 0.5;
