@@ -224,7 +224,7 @@ export function PowerworksDraft({
             className="mt-3 mb-3"
             kicker="Powerworks · squad draft"
             title="Draft a squad"
-            subtitle={`Pick ${SQUAD_SIZE} of ${DRAFT_OFFER_SIZE}. The offer always holds a bind, a pull and a squadmate's helper.`}
+            subtitle={`Pick ${SQUAD_SIZE} of ${DRAFT_OFFER_SIZE}. The offer always holds a bind, a pull and a squadmate's helper. Past the first sector, a drafted squad meets sturdier machines than the starter squad does.`}
           />
           <ul
             className="m-0 grid min-h-0 flex-1 list-none grid-cols-1 content-start gap-2 overflow-y-auto p-0 pb-2 sm:grid-cols-2 lg:grid-cols-4"
