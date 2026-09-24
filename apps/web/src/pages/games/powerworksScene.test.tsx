@@ -1,5 +1,5 @@
 import React from "react";
-import { cleanup, render, screen, fireEvent } from "@testing-library/react";
+import { act, cleanup, render, screen, fireEvent } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { createRun, type Frame } from "@xalians/rules/dungeon";
 import {
@@ -8,6 +8,7 @@ import {
   type OrderChip,
   type UnitPreview,
 } from "./powerworksScene";
+import { CAMERA } from "./powerworksStage";
 
 /** A preview as the page builds it, with only the fields a test cares about set. */
 const preview = (over: Partial<UnitPreview>): UnitPreview => ({
@@ -296,24 +297,195 @@ describe("shared battlefield", () => {
     ).toBeEnabled();
   });
 
-  it("stands the room and the units in the camera layer and leaves the wheel outside it; reduced motion sets no transition", () => {
-    const run = createRun(1);
-    const { container } = scene(undefined, {
-      active: run.team[0],
-      reducedMotion: false,
-      ring: <div className="pw-radial" data-testid="ring" />,
+  /**
+    A laid-out stage for jsdom, which lays nothing out: the theater is 1000 by 450, each
+    figure a 100px box on its row, each plaque a strip under its figure.
+  */
+  function withLayout(run: ReturnType<typeof createRun>, body: () => void) {
+    const spots: Record<string, number> = {};
+    run.enemies.forEach((u, i) => (spots[u.id] = 200 + i * 300));
+    run.team.forEach((u, i) => (spots[u.id] = 120 + i * 200));
+    const rect = (left: number, top: number, w: number, h: number) =>
+      ({ left, top, right: left + w, bottom: top + h, x: left, y: top, width: w, height: h, toJSON() {} }) as DOMRect;
+    const original = Element.prototype.getBoundingClientRect;
+    const width = Object.getOwnPropertyDescriptor(HTMLElement.prototype, "clientWidth");
+    const height = Object.getOwnPropertyDescriptor(HTMLElement.prototype, "clientHeight");
+    Element.prototype.getBoundingClientRect = function (this: Element) {
+      if (this.classList.contains("pw-theater")) return rect(0, 0, 1000, 450);
+      const id = this.closest("[data-unit]")?.getAttribute("data-unit");
+      const enemy = !!id && run.enemies.some((u) => u.id === id);
+      if (id && this.classList.contains("pw-scene-character"))
+        return rect(spots[id], enemy ? 70 : 240, 100, 100);
+      if (id && this.classList.contains("pw-unit-plaque"))
+        return rect(spots[id] - 10, enemy ? 40 : 345, 120, 30);
+      return rect(0, 0, 0, 0);
+    };
+    Object.defineProperty(HTMLElement.prototype, "clientWidth", {
+      configurable: true,
+      get() {
+        return (this as HTMLElement).classList.contains("pw-theater") ? 1000 : 0;
+      },
     });
-    const layer = container.querySelector<HTMLElement>(".pw-stage-zoom")!;
-    expect(layer.querySelectorAll("[data-unit]")).toHaveLength(run.team.length + run.enemies.length);
-    expect(layer.querySelector(".pw-environment")).not.toBeNull();
-    expect(layer.contains(screen.getByTestId("ring"))).toBe(false);
-    expect(layer.style.transition).toMatch(/^transform 240ms/);
-    expect(layer.style.transform).toMatch(/scale\(/);
-    expect(container.querySelector(".pw-theater")).toHaveAttribute("data-motion", "full");
-    cleanup();
-    const reduced = scene(undefined, { active: run.team[0], reducedMotion: true });
-    expect(reduced.container.querySelector<HTMLElement>(".pw-stage-zoom")!.style.transition).toBe("none");
-    expect(reduced.container.querySelector(".pw-theater")).toHaveAttribute("data-motion", "reduced");
+    Object.defineProperty(HTMLElement.prototype, "clientHeight", {
+      configurable: true,
+      get() {
+        return (this as HTMLElement).classList.contains("pw-theater") ? 450 : 0;
+      },
+    });
+    try {
+      body();
+    } finally {
+      Element.prototype.getBoundingClientRect = original;
+      if (width) Object.defineProperty(HTMLElement.prototype, "clientWidth", width);
+      if (height) Object.defineProperty(HTMLElement.prototype, "clientHeight", height);
+    }
+  }
+
+  it("holds the stage still while planning: no transform on the camera layer, whoever is selected", () => {
+    const run = createRun(1);
+    withLayout(run, () => {
+      for (const active of run.team) {
+        const { container } = scene(undefined, {
+          active,
+          openId: active.id,
+          reducedMotion: false,
+          ring: <div className="pw-radial" data-testid="ring" />,
+        });
+        const layer = container.querySelector<HTMLElement>(".pw-stage-zoom")!;
+        expect(layer.style.transform).toBe("");
+        expect(layer.dataset.camera).toBe("rest");
+        // The room and the units stand in the camera layer; the wheel stays outside it.
+        expect(layer.querySelectorAll("[data-unit]")).toHaveLength(run.team.length + run.enemies.length);
+        expect(layer.querySelector(".pw-environment")).not.toBeNull();
+        expect(layer.contains(screen.getByTestId("ring"))).toBe(false);
+        cleanup();
+      }
+    });
+  });
+
+  it("pushes the camera in on a playback beat's actor and target, returns before the next beat, and holds still under reduced motion", () => {
+    vi.useFakeTimers();
+    const run = createRun(1);
+    const [actor] = run.team;
+    const [target] = run.enemies;
+    const frame: Frame = {
+      team: run.team,
+      enemies: run.enemies,
+      text: "A hit.",
+      event: { kind: "hit", actorId: actor.id, targetId: target.id, moveName: actor.moves[0].name, amount: 3 },
+    };
+    try {
+      withLayout(run, () => {
+        const { container } = scene(frame, { reducedMotion: false, paused: false, beatMs: 1200 });
+        const layer = container.querySelector<HTMLElement>(".pw-stage-zoom")!;
+        expect(layer.dataset.camera).toBe("push");
+        expect(layer.style.transform).toMatch(/^translate\(-?\d+px, -?\d+px\) scale\(1\.06\)$/);
+        expect(layer.style.transition).toBe(`transform ${CAMERA.pushMs}ms cubic-bezier(0.2, 0.7, 0.2, 1)`);
+        // It returns before the next beat, in time for the return to finish.
+        act(() => {
+          vi.advanceTimersByTime(1200 - CAMERA.returnMs - 1);
+        });
+        expect(layer.dataset.camera).toBe("push");
+        act(() => {
+          vi.advanceTimersByTime(2);
+        });
+        expect(layer.dataset.camera).toBe("rest");
+        expect(layer.style.transform).toBe("");
+        expect(layer.style.transition).toBe(`transform ${CAMERA.returnMs}ms cubic-bezier(0.2, 0.7, 0.2, 1)`);
+        cleanup();
+        // Paused on a beat, the camera holds its push.
+        const held = scene(frame, { reducedMotion: false, paused: true, beatMs: 1200 });
+        act(() => {
+          vi.advanceTimersByTime(5000);
+        });
+        expect(held.container.querySelector<HTMLElement>(".pw-stage-zoom")!.dataset.camera).toBe("push");
+        cleanup();
+        // Under reduced motion the camera holds still: no push at all, before or after the beat.
+        const still = scene(frame, { reducedMotion: true, paused: false, beatMs: 1200 });
+        const quiet = still.container.querySelector<HTMLElement>(".pw-stage-zoom")!;
+        expect(quiet.style.transition).toBe("none");
+        expect(quiet.dataset.camera).toBe("rest");
+        expect(quiet.style.transform).toBe("");
+        act(() => {
+          vi.advanceTimersByTime(5000);
+        });
+        expect(quiet.dataset.camera).toBe("rest");
+        expect(still.container.querySelector(".pw-theater")).toHaveAttribute("data-motion", "reduced");
+      });
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it("previews a hovered disc faintly: a faint ring and chunk, the matchup chevron and a contact reaction, and nothing becomes a target", () => {
+    const run = createRun(1);
+    const [performer] = run.team;
+    const [first, second] = run.enemies;
+    const { container } = scene(undefined, {
+      active: performer,
+      openId: performer.id,
+      hints: {
+        [first.id]: preview({
+          damage: 5,
+          matchup: 1.5,
+          words: "5 damage, 22 to 17, strong",
+          shock: { damage: 6, name: "Core discharge", element: "electric" },
+        }),
+        [second.id]: preview({ damage: 2, matchup: 0.5, words: "2 damage, 22 to 20, resisted" }),
+      },
+    });
+    const one = container.querySelector(`[data-unit="${first.id}"]`)!;
+    expect(one).toHaveClass("hinted");
+    expect(one).not.toHaveClass("targetable");
+    expect(one.querySelector(".pw-target-ring.faint")).not.toBeNull();
+    expect(one.querySelector(".pw-health.faint .pw-hp-chunk")).not.toBeNull();
+    expect(one.querySelector(".pw-hp-delta")).toBeNull();
+    expect(one.querySelector(".pw-matchup.strong")).not.toBeNull();
+    expect(one.querySelector(".pw-shock-mark.el-electric")).toHaveTextContent("shocks back−6");
+    expect(container.querySelector(`[data-unit="${second.id}"] .pw-matchup.weak`)).not.toBeNull();
+    // Nothing dims and no target button appears for a preview.
+    expect(container.querySelectorAll(".pw-scene-unit.ineligible")).toHaveLength(0);
+    expect(container.querySelectorAll(".pw-scene-character.valid-target")).toHaveLength(0);
+    // The rest of the squad steps back a little around the one selected.
+    expect(container.querySelectorAll(".pw-scene-unit.ally.resting")).toHaveLength(run.team.length - 1);
+    expect(container.querySelector(`[data-unit="${performer.id}"]`)).not.toHaveClass("resting");
+  });
+
+  it("marks a contact reaction on an armed target and keeps it in the target's name", () => {
+    const run = createRun(1);
+    const [performer] = run.team;
+    const [first] = run.enemies;
+    const { container } = scene(undefined, {
+      active: performer,
+      move: performer.moves[0],
+      targetIds: [first.id],
+      previews: {
+        [first.id]: preview({
+          damage: 5,
+          matchup: 0.5,
+          words: `5 damage, 22 to 17, resisted, shocks back 6 damage to ${performer.name}`,
+          shock: { damage: 6, name: "Core discharge", element: "electric" },
+        }),
+      },
+    });
+    expect(container.querySelector(`[data-unit="${first.id}"] .pw-shock-mark`)).toHaveTextContent("shocks back−6");
+    expect(
+      screen.getByRole("button", { name: new RegExp(`shocks back 6 damage to ${performer.name}$`) })
+    ).toHaveClass("valid-target");
+  });
+
+  it("keeps on the plaques only what answers a question while planning", () => {
+    const run = createRun(1);
+    const { container } = scene();
+    // No squad number on a figure: keys choose moves, not companions.
+    expect(container.querySelector(".pw-squad-number")).toBeNull();
+    // A companion's element is worn by its elemental moves; an enemy's stays on its plaque.
+    for (const u of run.team)
+      expect(container.querySelector(`[data-unit="${u.id}"] .pw-unit-plaque > div > svg`)).toBeNull();
+    for (const u of run.enemies)
+      expect(container.querySelector(`[data-unit="${u.id}"] .pw-unit-plaque > div > svg`)).not.toBeNull();
+    // No decorative room prop and no charged-defense banner on the stage.
+    expect(container.querySelector(".pw-room-prop, .pw-scene-direction")).toBeNull();
   });
 
   it("flashes the target ring once and lights the chip when an order locks, never under reduced motion", () => {
@@ -448,6 +620,8 @@ describe("shared battlefield", () => {
     scene(undefined, { team: run.team, enemies: run.enemies });
     const badge = screen.getByText("paralyzed").closest(".pw-status-badge")!;
     expect(badge).toHaveClass("group-binding");
+    // On the stage the badge prints a bare count; the words stay in its text and tooltip.
+    expect(badge.querySelector("small")).toHaveTextContent(/^1$/);
     expect(badge).toHaveTextContent("1 opportunity");
     expect(badge).toHaveAttribute("title", expect.stringContaining("close in"));
     const rot = screen.getByText("corroding").closest(".pw-status-badge")!;

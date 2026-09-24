@@ -51,6 +51,8 @@ import {
   selfBurst,
   guardFactor,
   protectionDegree,
+  asMove,
+  contactDelivery,
   LIKELIHOOD_PERCENT,
   ROOMS,
   ENCOUNTER_STALL_ROUNDS,
@@ -238,7 +240,9 @@ export default function PowerworksPage() {
   );
   const [plans, setPlans] = useState<Record<string, Order>>({}),
     [pending, setPending] = useState<number | null>(null),
-    [hoverTarget, setHoverTarget] = useState<string | null>(null);
+    [hoverTarget, setHoverTarget] = useState<string | null>(null),
+    // The disc hovered, focused or armed on the open wheel (round 3): previewed faintly.
+    [hint, setHint] = useState<number | null>(null);
 
   const [frames, setFrames] = useState<Frame[]>([]),
     [frameIndex, setFrameIndex] = useState(0),
@@ -416,6 +420,7 @@ export default function PowerworksPage() {
     setSelected(u.id);
     setPending(null);
     setHoverTarget(null);
+    setHint(null);
     setRingFocus(true);
     setNotice(
       `Planning ${u.name}. ${
@@ -430,6 +435,7 @@ export default function PowerworksPage() {
     setSelected("");
     setPending(null);
     setHoverTarget(null);
+    setHint(null);
     setNotice("");
     if (id) focusFigure(id);
   }
@@ -458,6 +464,7 @@ export default function PowerworksPage() {
     if (pending !== null) {
       setPending(null);
       setHoverTarget(null);
+      setHint(null);
       setRingFocus(true);
       setNotice(`Choose a move for ${active.name}.`);
     } else closeRing();
@@ -491,11 +498,13 @@ export default function PowerworksPage() {
     }
     setPending(i);
     setHoverTarget(null);
+    setHint(null);
+    const readings = buildPreviews(active, m, i, null);
+    const mates = targets.some((t) => !t.enemy && readings[t.id] && !readings[t.id].idle),
+      foes = targets.some((t) => t.enemy);
     setNotice(
       `${m.name} selected. ${
-        helps(m) && targets.some((t) => !t.enemy)
-          ? "Choose an enemy or a squadmate."
-          : "Choose an enemy."
+        foes && mates ? "Choose an enemy or a squadmate." : mates ? "Choose a squadmate." : "Choose an enemy."
       }`
     );
     if (keyboard)
@@ -537,6 +546,7 @@ export default function PowerworksPage() {
     setPlans(next);
     setPending(null);
     setHoverTarget(null);
+    setHint(null);
     const nextUnit = nextInSpeed(run, next);
     const named = [...run.team, ...run.enemies].find((t) => t.id === target);
     const m = moveAt(u, moveIndex);
@@ -716,6 +726,28 @@ export default function PowerworksPage() {
             (e.group === "attention" && focused),
         };
       });
+    // A contact strike on a unit with a contact reaction (the guardian's discharge) is
+    // answered at the companion acting, if the strike lands anything (round 3). The damage
+    // is the rules' own preview of the reaction's harm, read through its Move clothing.
+    const lands =
+      (strikes && !immune) || statuses.some((st) => !st.immune);
+    const reactor =
+      !mate && lands && contactDelivery(m) && !sedated(u)
+        ? u.passives.find(
+            (p, i) =>
+              p.kind === "triggered" &&
+              p.trigger === "contact" &&
+              p.support === "supported" &&
+              !(u.passiveCooldowns[i] > 0)
+          )
+        : undefined;
+    const shock = reactor
+      ? {
+          damage: damagePreview(u, asMove(reactor), a),
+          name: reactor.name,
+          element: reactor.element,
+        }
+      : null;
     const notes: UnitPreview["notes"] = [];
     // Why a helpful move would do nothing here: said in words, never drawn as a label.
     const nothing: string[] = [];
@@ -778,6 +810,7 @@ export default function PowerworksPage() {
         n.kind === "guard" ? n.text.replace("guards vs", "guards against about") : n.text
       );
     words.push(...nothing);
+    if (shock) words.push(`shocks back ${shock.damage} damage to ${a.name}`);
     if (!words.length) words.push("no effect here");
     // A squadmate the move would do nothing for is drawn as a non-target (round 2 review).
     const idle =
@@ -788,13 +821,25 @@ export default function PowerworksPage() {
       !notes.length;
     // The card's line keeps the clause that matters most: the damage (or the heal, or the
     // status); the rest is drawn on the creature and read in full by the accessible name.
-    const line =
+    const line = `${
       strikes && !immune
         ? `${damage} damage, ${u.hp} to ${Math.max(0, u.hp - damage)}${knockout ? ", knocks out" : ""}`
-        : words[0];
+        : words[0]
+    }${shock ? `; shocks back ${shock.damage}` : ""}`;
+    // The matchup in words for the chevron's tooltip (round 3 review): the move's element, or
+    // for a physical move the creature's own, against the target's.
+    const matchupText =
+      strikes && !immune && factor !== 1
+        ? `${factor > 1 ? "Strong" : "Weak"}: ${
+            m.element && !m.fallback ? m.element : `${a.name}'s ${a.element}`
+          } against ${u.element}`
+        : undefined;
     return {
       line,
       idle,
+      matchup: strikes && !immune ? factor : 1,
+      matchupText,
+      shock,
       role: "target",
       damage,
       heal,
@@ -854,6 +899,11 @@ export default function PowerworksPage() {
     move && hoverTarget && targetIds.includes(hoverTarget) ? hoverTarget : null;
   const previews: Record<string, UnitPreview> =
     move && active && pending !== null ? buildPreviews(active, move, pending, aimed) : {};
+  // Before the click (round 3): the hovered, focused or armed disc's outcome, drawn faintly.
+  const hints: Record<string, UnitPreview> =
+    ringOpen && active && hint !== null && available.includes(hint)
+      ? buildPreviews(active, moveAt(active, hint), hint, null)
+      : {};
   const aimedUnit = aimed
     ? [...run.team, ...run.enemies].find((u) => u.id === aimed)
     : null;
@@ -861,9 +911,13 @@ export default function PowerworksPage() {
     aimedUnit && previews[aimedUnit.id]
       ? `${labelFor(aimedUnit)}: ${previews[aimedUnit.id].line}`
       : null;
+  // The prompt names only the sides with a target the move would do something for (round 3
+  // review): a squadmate the move can name but would do nothing for is drawn as a non-target.
   const prompt = (() => {
     const foes = targetIds.some((id) => run.enemies.some((u) => u.id === id)),
-      mates = targetIds.some((id) => run.team.some((u) => u.id === id));
+      mates = targetIds.some(
+        (id) => run.team.some((u) => u.id === id) && !!previews[id] && !previews[id].idle
+      );
     return foes && mates
       ? "Choose an enemy or a squadmate"
       : mates
@@ -1296,6 +1350,8 @@ export default function PowerworksPage() {
                   reducedMotion={reducedMotion}
                   labelFor={labelFor}
                   previews={previews}
+                  hints={hints}
+                  beatMs={frameDuration / speed}
                   flash={flash}
                   onTarget={assign}
                   onSelect={select}
@@ -1346,6 +1402,7 @@ export default function PowerworksPage() {
                         onBack={backOut}
                         prompt={prompt}
                         targetLine={targetLine}
+                        onPreview={setHint}
                       />
                     ) : null,
                   ]}

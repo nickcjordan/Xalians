@@ -1,27 +1,35 @@
-// Tier: immersive. The Powerworks stage camera (docs/design/powerworks-radial-orders.md, round 2): the
-// slight zoom toward the selected companion, and the map from any element to where it will
-// stand on the stage once the zoom settles, which the wheel and the move card place against.
+// Tier: immersive. The Powerworks stage camera (docs/design/powerworks-radial-orders.md, round 3): planning
+// holds still, and the camera moves only while a round plays, pushing in on each acting unit
+// and its target for that beat. The map from any element to where it stands on the stage
+// once the camera settles is what the wheel and the move card place against.
 import { createContext, useContext, type RefObject } from "react";
 
 export type Box = { left: number; top: number; right: number; bottom: number };
-/** The zoom layer's transform: translate(tx, ty) then scale(s), origin at the stage's top left. */
+/** The camera layer's transform: translate(tx, ty) then scale(s), origin at the stage's top left. */
 export type Zoom = { s: number; tx: number; ty: number };
 export const IDENTITY: Zoom = { s: 1, tx: 0, ty: 0 };
 
-/** How far the camera leans in: a visible step that still keeps the whole room in frame. */
-export const MAX_ZOOM = { wide: 1.06, phone: 1.06 } as const;
-/** The gap every plaque and figure keeps from the stage edge at full zoom, in pixels. */
-export const ZOOM_MARGIN = 6;
+/**
+  The playback camera (round 3): how far it pushes in on a beat, how long the push and the
+  return take, and the gap every plaque and figure keeps from the stage edge while pushed.
+  A phone's squad row spans nearly the whole stage, so its end plaques may come within 3px.
+*/
+export const CAMERA = {
+  push: 1.06,
+  pushMs: 320,
+  returnMs: 280,
+  margin: { wide: 6, phone: 3 },
+  /** How far a beat brings the action toward the centre, at most, in pixels (round 3 review). */
+  lead: 28,
+} as const;
 
 export type StageRefs = {
   stage: RefObject<HTMLElement | null>;
   layer: RefObject<HTMLDivElement | null>;
-  /** The companion the camera leans toward, or null for the whole room. */
-  focus: string | null;
 };
 export const StageContext = createContext<StageRefs | null>(null);
 
-/** The zoom as painted right now (mid-transition included), read back from the layer. */
+/** The camera as painted right now (mid-transition included), read back from the layer. */
 export function paintedZoom(layer: HTMLElement): Zoom {
   let text = "";
   try {
@@ -35,57 +43,70 @@ export function paintedZoom(layer: HTMLElement): Zoom {
   return a > 0 && Number.isFinite(e) && Number.isFinite(f) ? { s: a, tx: e, ty: f } : IDENTITY;
 }
 
-const apply = (z: Zoom, b: Box): Box => ({
-  left: z.tx + z.s * b.left,
-  top: z.ty + z.s * b.top,
-  right: z.tx + z.s * b.right,
-  bottom: z.ty + z.s * b.bottom,
-});
-
 /**
-  The camera's zoom toward a companion (round 2 review): the largest scale, up to `max`, at
-  which every plaque, standing figure and condition row still fits inside the stage, then
-  the pan nearest to keeping the companion's feet where they stand that keeps them all
-  inside. Where the room allows, the feet stay fixed; near an edge the camera pans instead
-  of pushing a plaque out of the frame.
+  The camera on one playback beat (round 3, reworked on review). It brings the midpoint of
+  the acting unit and its target toward the stage's centre, by up to `CAMERA.lead` pixels
+  (or 30% of the way, if less), and pushes in as far as it can while doing so, up to `max`.
+  Every plaque, standing figure and condition row stays inside the stage, and above
+  `bottom` when an action banner holds the stage's floor. Where the room allows no push, the
+  camera only pans; where it allows no pan either, it stays put.
 */
-export function fitZoom(
-  focus: Box,
+export function beatZoom(
+  focus: Box[],
   boxes: Box[],
   width: number,
   height: number,
   max: number,
-  margin = ZOOM_MARGIN
+  margin: number = CAMERA.margin.wide,
+  bottom: number = height
 ): Zoom {
-  const p = { x: (focus.left + focus.right) / 2, y: focus.bottom };
-  const all = [...boxes, focus];
+  if (!focus.length || width <= 0 || height <= 0) return IDENTITY;
+  const center = (b: Box) => ({ x: (b.left + b.right) / 2, y: (b.top + b.bottom) / 2 });
+  const p = focus.map(center).reduce((a, c) => ({ x: a.x + c.x / focus.length, y: a.y + c.y / focus.length }), { x: 0, y: 0 });
+  const all = [...boxes, ...focus];
   const minL = Math.min(...all.map((b) => b.left)),
     maxR = Math.max(...all.map((b) => b.right)),
     minT = Math.min(...all.map((b) => b.top)),
     maxB = Math.max(...all.map((b) => b.bottom));
-  let s = Math.min(
-    max,
-    (width - 2 * margin) / Math.max(1, maxR - minL),
-    (height - 2 * margin) / Math.max(1, maxB - minT)
-  );
-  s = Math.floor(s * 1000) / 1000;
-  if (s <= 1) return IDENTITY;
-  const fit = (want: number, lo: number, hi: number) =>
-    lo > hi ? (lo + hi) / 2 : Math.min(hi, Math.max(lo, want));
-  return {
-    s,
-    tx: fit(p.x * (1 - s), margin - s * minL, width - margin - s * maxR),
-    ty: fit(p.y * (1 - s), margin - s * minT, height - margin - s * maxB),
+  const floor = Math.min(height, bottom);
+  const cx = width / 2,
+    cy = floor / 2;
+  const lead = Math.min(CAMERA.lead, Math.abs(cx - p.x) * 0.3);
+  const clamp = (v: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, v));
+  const at = (s: number): (Zoom & { toward: number }) | null => {
+    const lo = margin - s * minL,
+      hi = width - margin - s * maxR,
+      loY = margin - s * minT,
+      hiY = floor - margin - s * maxB;
+    if (lo > hi || loY > hiY) return null;
+    const tx = Math.round(clamp(cx - s * p.x, Math.ceil(lo), Math.floor(hi))),
+      ty = Math.round(clamp(cy - s * p.y, Math.ceil(loY), Math.floor(hiY)));
+    // How far the action's midpoint moves toward the centre, in pixels.
+    const toward = (p.x - (tx + s * p.x)) * Math.sign(p.x - cx);
+    return { s, tx, ty, toward };
   };
+  // The largest push that brings the action in by its lead; failing that, the largest that
+  // at least never carries it away from the centre (a phone's squad spans the stage);
+  // failing that, a pan alone.
+  let steady: Zoom | null = null;
+  for (let k = Math.round(max * 1000); k > 1000; k -= 5) {
+    const z = at(k / 1000);
+    if (!z) continue;
+    if (z.toward >= lead - 0.5) return { s: z.s, tx: z.tx, ty: z.ty };
+    if (!steady && z.toward >= 0) steady = { s: z.s, tx: z.tx, ty: z.ty };
+  }
+  if (steady) return steady;
+  const still = at(1);
+  return still && (still.tx || still.ty) ? { s: 1, tx: still.tx, ty: still.ty } : IDENTITY;
 }
 
 export type StageMap = {
   width: number;
   height: number;
-  /** The zoom the camera is settling to. */
-  zoom: Zoom;
-  /** An element's box in stage pixels once the zoom settles. */
+  /** An element's box in stage pixels once the camera settles at rest (planning never moves it). */
   box: (el: Element) => Box;
+  /** An element's box in stage pixels with no camera at all, whatever is painted now. */
+  flat: (el: Element) => Box;
 };
 
 /**
@@ -99,20 +120,20 @@ export function stageMap(refs: StageRefs | null, from?: Element | null): StageMa
   const layer =
     refs?.layer.current ??
     (stage?.querySelector(":scope > .pw-stage-zoom") as HTMLDivElement | null | undefined);
-  if (!refs || !stage || !layer) return null;
+  if (!stage || !layer) return null;
   const b = stage.getBoundingClientRect();
   const ox = b.left + stage.clientLeft,
     oy = b.top + stage.clientTop;
-  const width = stage.clientWidth,
-    height = stage.clientHeight;
   const painted = paintedZoom(layer);
   const raw = (el: Element): Box => {
     const r = el.getBoundingClientRect();
     return { left: r.left - ox, top: r.top - oy, right: r.right - ox, bottom: r.bottom - oy };
   };
-  // Where an element in the zoom layer stands with no zoom at all.
+  // Where an element in the camera layer stands with no camera at all: a playback beat's
+  // push may still be easing back out when planning opens.
   const flat = (el: Element): Box => {
     const r = raw(el);
+    if (!layer.contains(el)) return r;
     return {
       left: (r.left - painted.tx) / painted.s,
       top: (r.top - painted.ty) / painted.s,
@@ -120,35 +141,7 @@ export function stageMap(refs: StageRefs | null, from?: Element | null): StageMa
       bottom: (r.bottom - painted.ty) / painted.s,
     };
   };
-  let zoom = IDENTITY;
-  const figure = refs.focus
-    ? layer.querySelector(`[data-unit="${refs.focus}"] .pw-scene-character`)
-    : null;
-  if (figure && width > 0) {
-    const boxes = [
-      ...layer.querySelectorAll(
-        ".pw-unit-plaque, .pw-scene-unit:not(.fallen) .pw-scene-character, .pw-scene-status"
-      ),
-    ]
-      .map(flat)
-      .filter((x) => x.right - x.left > 0 && x.bottom - x.top > 0);
-    zoom = fitZoom(
-      flat(figure),
-      boxes,
-      width,
-      height,
-      width <= 600 ? MAX_ZOOM.phone : MAX_ZOOM.wide,
-      // A phone's squad row spans nearly the whole stage: its end plaques may come within
-      // 3px of the edge rather than 6, so the camera still leans in visibly.
-      width <= 600 ? 3 : ZOOM_MARGIN
-    );
-  }
-  return {
-    width,
-    height,
-    zoom,
-    box: (el) => (layer.contains(el) ? apply(zoom, flat(el)) : raw(el)),
-  };
+  return { width: stage.clientWidth, height: stage.clientHeight, box: flat, flat };
 }
 
 /** The stage map, built on demand inside a layout effect, from any element on the stage. */
