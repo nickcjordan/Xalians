@@ -1009,3 +1009,21 @@ The top bar became a round track (the nine worlds, filled by who won them) and t
 **Verified:** `reclamation-shift.mjs` now also holds the start screen, the start screen with a game to resume, and the draft to the viewport at all six screens, with their controls wholly on screen; the four checks green; 1619 web tests.
 
 **Open:** the end-of-game result still scrolls inside its own box on a short desk (1366 by 650: 816px of content in 570); it fits at 1440 by 900 and 390 by 844.
+
+### Pass 54 (2026-09-23): the world's standing
+
+**Nick**, on round 1 with a creature lifted: "Is the solid versus the striped section supposed to indicate [something] at this point in time? I don't see a reason for there to be a distinction ... a number in the top left corner of something is next to useless ... go through each of these affordances and ask if it's actually providing value." The audit, the design and the measurements are `reclamation-world-standing.md`.
+
+**Why the worlds were split alike:** pass 52's front line drew a share of each world, so any send into an empty world took all of it: a 5 and a 16 drew the same half-hatched field, and the only amounts were the two corner totals.
+
+- **The standing.** Each world's seam carries two bars from the same edge, the rival's above yours, on one scale shared by the three worlds that covers every total a send in hand could make (`standingScale()`), so it never rescales under the pointer. The fill is what the Clash is forecast to leave, the hatched run past it is what the Clash takes (the engine's forecast now reports each creature's hold going in, `ClashForecast.before`), and a brass mark drops the rival's end through your lane. With a creature pointed at or lifted, your bar grows by a striped run with the creature's silhouette on its end and its home, strain or fall mark beside the number. The side behind reads at half strength; the Ruling's pennant rides the winner's bar. The field is no longer tinted by who leads; the corner totals, the preview token and the faint emblem are gone.
+- **The world head** carries its element's symbol and a wash of its color, the color its column wears on every card.
+- **The top bar:** the score is pennants, sends are a tick per send with the count after (the count alone on a phone), and whose move it is is a pointer at the head of that side's row; the "Your move" words are gone.
+- **The Clash's caption** stands above the seam, over the rival's rank, so the bars stay in sight while they move.
+- 65 rules for the front line, the token, the emblem and the turn words pruned.
+
+**Measured:** blind readers on four moments of seed 7, before (live, pass 53) and after. With the reader model pass 52 used, both builds answered nearly every checkable question and both put ease at 5 of 10; the before reader "cannot tell why it splits at the midline", the after reader marked the two bars, the preview, the lifted creature's silhouette, the pennants and the ticks "sure". The pointer reads as "you or your turn" in a still picture. A weaker reader model first found the three things fixed above (the preview read as the board, the pips read as the round track, the dot said nothing).
+
+**Verified:** 610 rules tests (new: the forecast's `before` is positive and never less than what the Clash leaves); 1621 web tests (the standing, its scale, the pennant on the winner's bar, the ticks and the pointer); the four table checks green, `reclamation-proving.mjs` now asserts every world's standing and numbers stay inside its world while a creature is lifted; the Clash and the Ruling shot at 1884 and 390.
+
+**Open, from Nick's next list (2026-09-23):** remove the act choice; say why a creature is worth its column (hold against what its attacks take); say why a figure's bar changes when an enemy arrives; explain a negative column; columns for a moving creature; a sent card's space; the eleventh send leaving a creature on the bench with no signal; the Clash to the last side standing, with a scene per world; Mandala's mechanics.

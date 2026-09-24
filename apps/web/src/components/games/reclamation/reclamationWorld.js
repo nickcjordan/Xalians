@@ -1,10 +1,13 @@
 import React from 'react';
 import ReclamationFigure, { ReclamationSilhouette } from './reclamationFigure';
-import { RoleGlyph, SwiftGlyph, HomeGlyph, StrainGlyph } from './reclamationGlyphs';
-import { formatHold, formatHoldShown, countWord, speciesLabel } from './reclamationNarration';
+import XalianImage from '../../xalianImage';
+import { pieceShadowFilter } from '../duel/board/duelPieceToken';
+import { team } from '../../../constants/designTokens';
+import { SwiftGlyph } from './reclamationGlyphs';
+import { formatHoldShown, countWord } from './reclamationNarration';
 import { strainNote, strainCause } from './reclamationPreview';
 import { elementOf } from './reclamationVocabulary';
-import { FrontLine, HoldBar, Crest, frontSentence } from './reclamationInstruments';
+import { Standing, standingSentence } from './reclamationInstruments';
 import { getSpeciesTypeSymbol } from '../../../utils/svgUtil';
 
 /*
@@ -13,14 +16,18 @@ import { getSpeciesTypeSymbol } from '../../../utils/svgUtil';
 	Each site is a matte panel headed by the planet's name. The handler's creatures stand
 	below the midline facing up; the rival's stand above it facing down.
 
-	PASS 52, THE GLANCE REDESIGN (docs/design/reclamation-glance-redesign.md). Who is
-	winning a world is its front line: the field split into the rival's brass ground above
-	and your cyan ground below where the two totals put the line, with the totals on it.
-	No "rival" and "you" tags, no margin sentence, no footing count, no "best here" names:
-	whose a creature is reads from which side of the line it stands on, and what each of
-	yours would do here is on its own card (the fit strip). A creature pointed at or lifted
-	moves the line to where its send would put it and marks what the send would cost every
-	figure here.
+	PASS 52, THE GLANCE REDESIGN (docs/design/reclamation-glance-redesign.md). No "rival"
+	and "you" tags, no margin sentence, no footing count, no "best here" names: whose a
+	creature is reads from which side of the seam it stands on, and what each of yours
+	would do here is on its own card (the fit strip).
+
+	PASS 54, THE STANDING (docs/design/reclamation-world-standing.md). Who is winning a
+	world, and by how much, is two bars in the seam between the ranks, the rival's above
+	yours on one scale shared by the three worlds (reclamationInstruments' Standing). It
+	replaced pass 52's front line, which split the whole field by share and so drew every
+	send into an empty world the same, and the preview token and the corner totals with it.
+	A creature pointed at or lifted grows your bar by what it would add and marks every
+	figure here with what its send would cost.
 
 	Every number shown is passed in already computed by the engine (prepare(),
 	forecastClash(), forecastSend()): this component derives nothing.
@@ -157,7 +164,8 @@ function ReclamationWorld({
 	holdingIds,
 	hiddenEnemyCount,
 	forecast,
-	fronts,
+	standings,
+	standingScale,
 	preview,
 	highlights,
 	clashSiteId,
@@ -212,7 +220,7 @@ function ReclamationWorld({
 					const stake = stakes && stakes[site.id];
 					const stakedHere = !!(stake && stake.by && stake.by.length > 0);
 					const canStake = !!onStake && stakeable.has(site.id);
-					const front = (fronts && fronts[site.id]) || { theirs: 0, mine: 0 };
+					const front = (standings && standings[site.id]) || { theirs: 0, mine: 0, theirsBefore: 0, mineBefore: 0 };
 					const previewHere = preview && preview[site.id];
 					const lead = Math.abs(front.theirs - front.mine) < 0.05
 						? (front.theirs + front.mine > 0.05 ? 'level' : 'empty')
@@ -328,7 +336,7 @@ function ReclamationWorld({
 							data-site-id={site.id}
 							data-site-lead={lead}
 							style={{ '--rec-i': siteIndex }}
-							aria-label={frontSentence(site.world.planet, front.theirs, front.mine)}
+							aria-label={standingSentence(site.world.planet, front.theirs, front.mine)}
 							onClick={clickable ? () => onSiteClick(site.id) : undefined}
 							onMouseEnter={onSiteHover ? () => onSiteHover(site.id) : undefined}
 							onMouseLeave={onSiteHover ? () => onSiteHover(null) : undefined}
@@ -343,7 +351,8 @@ function ReclamationWorld({
 						>
 							<header className="rec-site-head">
 								{/* pass 38: the place and the temperature scale are advanced mode; the place's description stays on the name */}
-								<span className="rec-site-dot" aria-hidden="true" />
+								{/* pass 54: the world's element as its symbol, the mark its natives wear, in the color of its column on every card */}
+								<span className="rec-site-symbol" aria-hidden="true">{getSpeciesTypeSymbol(site.world.element, true, 16, 'rec-site-symbol-svg')}</span>
 								<h3 className="rec-site-name" title={`${site.name}${site.description ? `. ${site.description}` : ''}`}>{site.world.planet}</h3>
 								{advanced && <span className="rec-site-place" title={site.description || undefined}>{site.name}</span>}
 								{advanced && <span className="rec-env-slot"><EnvironmentScale site={site} ghost={ghost} /></span>}
@@ -367,24 +376,25 @@ function ReclamationWorld({
 							</header>
 
 							{/*
-								PASS 52. The ground: the rival's rank above, yours below, and between them
-								the front line, drawn where the two totals put it. There are no "rival" and
-								"you" tags: the ground's color and which side of the line a creature stands
-								on say whose it is.
+								The rival's rank above, yours below, and between them the seam, which
+								carries the world's standing. There are no "rival" and "you" tags: each
+								rank's edge color and which side of the seam a creature stands on say
+								whose it is.
 							*/}
 							<div className={`rec-site-field rec-site-floor${empty ? ' rec-site-field--empty' : ''}`}>
-								{/* pass 52: the world's element, large and faint, so its color on the bench's fit columns has somewhere to come from */}
-								<span className="rec-site-emblem" aria-hidden="true">{getSpeciesTypeSymbol(site.world.element, true, 120, 'rec-site-emblem-svg')}</span>
-								<FrontLine siteId={site.id} theirs={front.theirs} mine={front.mine} preview={previewHere ? previewHere.totals : null} />
 								<div className={`rec-rank rec-rank--theirs${theirs.length > 4 ? ' rec-rank--crowded' : ''}`} data-rank="theirs" data-rank-rows={rankGrid(theirs.length)['--rank-rows-n']} data-rank-list={theirs.length >= 2 && theirs.length <= 4 ? '' : undefined} data-rank-rows-wide={rankGrid(theirs.length)['--rank-rows-w']} style={rankGrid(theirs.length)}>
 									{theirs.map((entry) => <ReclamationFigure key={entry.recordId} {...figureProps(entry, opponent, 'down')} />)}
 								</div>
 
 								<div className={`rec-site-midline${empty ? ' rec-site-midline--empty' : ''}`}>
-									{ghost && (
-										/* pass 41: keyed by creature, so each creature's preview enters fresh */
-										<GhostToken key={ghost.recordId || 'ghost'} ghost={ghost} site={site} after={previewHere && previewHere.forecast ? previewHere.forecast[ghost.recordId] : null} />
-									)}
+									<Standing
+										siteId={site.id}
+										now={front}
+										preview={previewHere ? previewHere.totals : null}
+										scale={standingScale}
+										marks={ghost && previewHere ? previewMarks(ghost, site, previewHere.forecast) : null}
+										verdict={verdict || null}
+									/>
 									{!ghost && movingRecordId && <span className="rec-ghost rec-ghost--relocate" aria-label="Move here" title="Move here"><SwiftGlyph /></span>}
 									{/*
 										pass 45: the Clash told where it happens, between the two ranks, each
@@ -397,7 +407,6 @@ function ReclamationWorld({
 												: <b key={i} className={`rec-clash-name rec-clash-name--${part.seat === you ? 'you' : part.seat ? 'rival' : 'none'}`}>{part.name}</b>))}
 										</span>
 									)}
-									{!ghost && !movingRecordId && verdict && <Crest verdict={verdict} />}
 								</div>
 
 								<div className={`rec-rank rec-rank--mine${mine.length > 4 ? ' rec-rank--crowded' : ''}`} data-rank="mine" data-rank-rows={rankGrid(mine.length)['--rank-rows-n']} data-rank-list={mine.length >= 2 && mine.length <= 4 ? '' : undefined} data-rank-rows-wide={rankGrid(mine.length)['--rank-rows-w']} style={rankGrid(mine.length)}>
@@ -413,36 +422,26 @@ function ReclamationWorld({
 }
 
 /*
-	PASS 52. The creature under the pointer, or lifted, as it would stand at this world: its
-	role, its hold as a bar (the part the environment takes drawn dim, the part the Clash
-	would take striped) and the number. Why it is strained is a mark with its reason as the
-	title, in place of pass 44's "Too cold: -7 hold" line.
+	PASS 54. Why the creature under the pointer holds what it would here, as marks beside the
+	number at the end of your bar: a house on its home world, the strain glyph (its reason as
+	the title) where the world is too hot, too cold or the wrong air, a cross where the Clash
+	would drive it to nothing. The number already counts all three. The creature's own
+	silhouette rides the end of the run it would add, so the preview reads as that creature
+	sent here and not as the world as it stands (the first blind readers of the standing
+	took the lifted bars for the board).
 */
-function GhostToken({ ghost, site, after }) {
+function previewMarks(ghost, site, forecast) {
 	const strain = strainNote(ghost, site, formatHoldShown);
-	const cause = strain ? (strainCause(ghost.tolerance, site) || 'strained') : null;
-	const falls = !!(after && after.downed);
-	const afterHold = after ? (after.downed ? 0 : after.hold) : undefined;
-	const shownAfter = afterHold === undefined || Math.abs(afterHold - ghost.hold) < 0.05 ? undefined : afterHold;
-	return (
-		<span
-			className={`rec-ghost${falls ? ' rec-ghost--falls' : ''}`}
-			data-ghost={site.id}
-			data-ghost-hold={formatHold(ghost.hold)}
-			title={[
-				`${ghost.record ? speciesLabel(ghost.record) : 'It'} holds ${formatHold(ghost.hold)} here`,
-				ghost.isHome ? 'home ground' : null,
-				strain ? strain.title : null,
-				falls ? 'it would fall in the Clash, as the board stands' : null,
-			].filter(Boolean).join('. ')}
-		>
-			{ghost.role && ghost.role !== 'none' && <span className="rec-role-glyph rec-ghost-role" data-role={ghost.role}><RoleGlyph role={ghost.role} /></span>}
-			<HoldBar hold={ghost.hold} after={shownAfter} unstrained={ghost.unstrained} side="mine" className="rec-ghost-bar" />
-			<span className="rec-ghost-value g-mono">{formatHoldShown(ghost.hold)}</span>
-			{ghost.isHome && <span className="rec-ghost-mark rec-ghost-mark--home" data-ghost-home><HomeGlyph /></span>}
-			{cause && <span className={`rec-ghost-mark rec-ghost-mark--strain`} data-ghost-strain={cause}><StrainGlyph cause={cause} /></span>}
-		</span>
-	);
+	const after = forecast && forecast[ghost.recordId];
+	const record = ghost.record;
+	return {
+		art: record ? (
+			<XalianImage variant="token" speciesName={record.species} primaryType={elementOf(record)} padding="0px" fill="black" filter={pieceShadowFilter(team.one, 44)} moreClasses="rec-standing-art-img" />
+		) : null,
+		home: !!ghost.isHome,
+		strain: strain ? (strainCause(ghost.tolerance, site) || 'strained') : null,
+		falls: !!(after && after.downed),
+	};
 }
 
 /*

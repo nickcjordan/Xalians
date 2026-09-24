@@ -273,14 +273,6 @@
 	the row wrapped to a second line for some of them and back for others: measured at 51px
 	against 72px on a send at 390px, and the 21px came straight out of the board below.
 */
-.rec-status-turn {
-	display: flex;
-	align-items: center;
-	justify-content: flex-end;
-	gap: var(--g-3);
-	flex-wrap: wrap;
-	min-height: 72px;
-}
 
 .rec-status-phase {
 	font-family: var(--g-font-stencil);
@@ -293,22 +285,6 @@
 	border: var(--g-hairline) solid var(--g-brass-dark);
 	border-radius: 2px;
 }
-
-.rec-turn {
-	display: inline-flex;
-	align-items: center;
-	gap: var(--g-2);
-}
-
-.rec-turn-text {
-	font-family: var(--g-font-stencil);
-	font-size: var(--g-size-small);
-	text-transform: uppercase;
-	letter-spacing: var(--g-track-label);
-	color: var(--g-ink-mid);
-}
-
-.rec-turn--yours .rec-turn-text { color: var(--g-ink); }
 
 .rec-status-next {
 	font-size: var(--g-size-micro);
@@ -419,14 +395,6 @@
 	display: inline-flex;
 	align-items: center;
 	gap: var(--g-2);
-}
-
-.rec-ghost-value {
-	font-family: var(--g-font-mono);
-	font-variant-numeric: tabular-nums;
-	font-size: var(--g-size-small);
-	font-weight: 600;
-	color: color-mix(in srgb, var(--g-el) 78%, transparent);
 }
 
 .rec-ghost--relocate {
@@ -945,7 +913,6 @@
 		padding: var(--g-2) var(--g-3);
 	}
 	.rec-status-score { grid-column: 1; justify-content: flex-start; gap: var(--g-3); }
-	.rec-status-turn { grid-column: 2; grid-row: 1 / 3; align-items: flex-end; flex-direction: column; gap: var(--g-1); }
 	.rec-status-hint { font-size: var(--g-size-tiny); }
 
 	.rec-deploy-bar { gap: var(--g-2); padding: var(--g-2); }
@@ -993,13 +960,6 @@
 	background: var(--g-hull-lo);
 	box-shadow: var(--g-recess);
 }
-
-.rec-turn--yours .rec-turn-text {
-	color: var(--g-accent);
-	font-weight: 600;
-}
-
-.rec-turn--waiting .rec-turn-text { color: var(--g-ink-mid); }
 
 .rec-status-hint {
 	font-size: var(--g-size-body);
@@ -1076,8 +1036,6 @@
 	justify-content: center;
 	row-gap: 2px;
 }
-
-.rec-ghost-value { font-size: var(--g-size-body); color: var(--g-ink); }
 
 /* --- the hidden rival creature: a banner over the world, not a roster orphan --- */
 
@@ -1368,7 +1326,6 @@
 	.rec-status-next { display: none; }
 	.rec-status-score { grid-column: 1; justify-content: flex-start; gap: var(--g-3); }
 	.rec-score-of { display: none; }
-	.rec-status-turn { grid-column: 1; grid-row: auto; justify-content: space-between; flex-direction: row; }
 	/*
 		PASS 36. On a phone the hint is CLAMPED to two lines rather than reserving room for
 		its longest wrap: the reserved version cost 132px of an 844px viewport and squeezed
@@ -1515,8 +1472,6 @@
 
 /* home ground is the one genuinely good thing a world can offer, so it is the
    one line that carries the element's own colour */
-
-.rec-site--empty .rec-ghost-value { font-size: var(--g-size-lead); }
 
 /* kept in the DOM for the verification harness, out of sight for the reader */
 .rec-site-margin { position: relative; }
@@ -2074,27 +2029,16 @@
 }
 
 /* the turn readout: the new text slides in; while the rival thinks, its dots walk */
-.rec-turn-text--in { display: inline-block; animation: rec-turn-in 420ms cubic-bezier(0.3, 0, 0.2, 1) both; }
 
 @keyframes rec-turn-in {
 	from { opacity: 0; transform: translateY(-6px); }
 	to { opacity: 1; transform: translateY(0); }
 }
 
-.rec-turn--yours .rec-turn-text--in { animation: rec-turn-yours 700ms cubic-bezier(0.2, 0.9, 0.3, 1.2) both; }
-
 @keyframes rec-turn-yours {
 	0% { opacity: 0; transform: translateY(-6px) scale(0.96); }
 	55% { opacity: 1; transform: translateY(0) scale(1.08); }
 	100% { opacity: 1; transform: translateY(0) scale(1); }
-}
-
-.rec-turn--deciding .rec-turn-text::after {
-	content: '\2026';
-	display: inline-block;
-	width: 1.2em;
-	text-align: left;
-	animation: rec-dots 1200ms steps(3, end) infinite;
 }
 
 @keyframes rec-dots {
@@ -2342,8 +2286,6 @@
 	.rec-site--enter.rec-site--landed-mine,
 	.rec-site--enter.rec-site--landed-theirs,
 	.rec-tick,
-	.rec-turn-text--in,
-	.rec-turn--deciding .rec-turn-text::after,
 	.rec-pip--lit,
 	.rec-ticker-line--in,
 	.rec-rise,
@@ -2416,8 +2358,6 @@
 }
 
 /* --- the two sides, everywhere they are named ------------------------------ */
-
-.rec-turn--yours .rec-turn-text { color: var(--rec-you); }
 .rec-status-hint--yours { border-left-color: var(--rec-you); }
 
 .rec-site-margin--mine { border-left-color: var(--rec-you); }
@@ -2958,12 +2898,6 @@
 	fixed y whatever the preview says.
 */
 .rec-ghost { display: inline-flex; align-items: flex-start; align-content: flex-start; justify-content: center; flex-wrap: wrap; gap: var(--g-2) var(--g-3); max-width: 100%; }
-.rec-ghost .rec-ghost-value {
-	font-family: var(--g-font-mono);
-	font-variant-numeric: tabular-nums;
-	font-size: var(--g-size-h3);
-	color: var(--g-ink);
-}
 
 .rec-slot-meter-row { grid-template-columns: 26px auto minmax(0, 1fr); align-items: center; }
 
@@ -4109,14 +4043,6 @@
 
 /* the ghost preview: the role in a sentence under the bulb, then the arithmetic
    of the send, one line each (advanced only) */
-.rec-ghost-role {
-	display: inline-flex;
-	align-items: center;
-	gap: var(--g-1);
-	font-size: var(--g-size-micro);
-	color: var(--g-ink);
-}
-.rec-ghost-role svg { width: 12px; height: 12px; color: var(--g-el, var(--g-ink)); }
 
 /* the dossier: the role sentence where the act table used to be */
 .rec-inspect-role {
@@ -4795,18 +4721,6 @@
 	gap: 2px;
 	justify-content: start;
 }
-.rec-console--match[data-terminal] .rec-status-turn {
-	grid-column: auto;
-	display: grid;
-	justify-items: start;
-	justify-content: start;
-	align-content: center;
-	gap: 2px;
-	min-height: 0;
-	min-width: 0;
-}
-.rec-console--match[data-terminal] .rec-turn { max-width: 100%; min-width: 0; white-space: nowrap; }
-.rec-console--match[data-terminal] .rec-turn-text { overflow: hidden; text-overflow: ellipsis; }
 
 /* the one message slot: two lines of whatever is most urgent, and the reach line under it */
 .rec-console--match[data-terminal] .rec-status-say {
@@ -5121,13 +5035,11 @@
 	align-content: start;
 	padding-top: var(--g-1);
 }
-.rec-console--match[data-terminal] .rec-ghost-value { text-align: left; font-variant-numeric: tabular-nums; }
 .rec-console--match[data-terminal] .rec-site-floor .rec-ghost .rec-meter { grid-area: meter; justify-self: start; max-width: 100%; overflow: hidden; }
 /* the past-20 bulbs carry a border; drawn inside their box, a home meter is no taller than any other */
 .rec-console--match[data-terminal] .rec-bulb { box-sizing: border-box; }
 /* a home meter carries a third bank; in a narrow seam it runs off the edge rather than wrapping to a second line */
 .rec-console--match[data-terminal] .rec-site-floor .rec-ghost .rec-meter-bulbs { flex-wrap: nowrap; }
-.rec-console--match[data-terminal] .rec-site-floor .rec-ghost .rec-ghost-value { grid-area: value; }
 .rec-console--match[data-terminal] .rec-site-floor { position: relative; }
 .rec-console--match[data-terminal] .rec-site-field--empty .rec-site-midline { position: static; overflow: visible; }
 
@@ -5294,12 +5206,10 @@
 	.rec-console--match[data-terminal] .rec-status-say { grid-column: 1 / -1; height: auto; justify-content: flex-start; }
 	.rec-console--match[data-terminal] .rec-status-hint { font-size: var(--g-size-micro); padding-left: var(--g-1); }
 	.rec-console--match[data-terminal] .rec-status-say .rec-coach-steps { font-size: var(--g-size-micro); gap: var(--g-1); }
-	.rec-console--match[data-terminal] .rec-status-turn { justify-self: end; align-self: center; }
 	.rec-console--match[data-terminal] .rec-status-phase,
 	.rec-console--match[data-terminal] .rec-world-dots { display: none; }
 	.rec-console--match[data-terminal] .rec-status-score { grid-auto-flow: column; gap: var(--g-3); align-self: center; }
 	.rec-console--match[data-terminal] .rec-status-world { align-self: center; }
-	.rec-console--match[data-terminal] .rec-turn { font-size: var(--g-size-micro); }
 
 	.rec-console--match[data-terminal] .rec-sites { gap: var(--g-1); }
 	.rec-console--match[data-terminal] .rec-site { padding: var(--g-1); gap: 2px; }
@@ -5330,7 +5240,6 @@
 	.rec-console--match[data-terminal] .rec-site-floor .rec-rank:not([data-rank-rows="1"]) .rec-piece-disc { visibility: hidden; }
 	/* the ghost on a phone is the call over the number, centered in a narrow world */
 	.rec-console--match[data-terminal] .rec-site-floor .rec-ghost:not(.rec-ghost--relocate) { grid-template-columns: minmax(0, 1fr); grid-template-areas: "cta" "value"; justify-items: center; }
-	.rec-console--match[data-terminal] .rec-ghost-value { text-align: center; }
 	.rec-console--match[data-terminal] .rec-bench-acts-legend { display: none; }
 	.rec-console--match[data-terminal] .rec-bench-acts { min-width: 0; }
 	.rec-console--match[data-terminal] .rec-bench-act { flex: 1 1 0; min-width: 0; padding-inline: var(--g-1); font-size: var(--g-size-micro); }
@@ -5545,7 +5454,6 @@
 	.rec-console--match[data-terminal] .rec-leave { grid-column: 1; grid-row: 1; padding: 0 var(--g-2); }
 	.rec-console--match[data-terminal] .rec-status-world { grid-column: 2; grid-row: 1; align-self: center; }
 	.rec-console--match[data-terminal] .rec-status-score { grid-column: 3; grid-row: 1; justify-self: center; }
-	.rec-console--match[data-terminal] .rec-status-turn { display: none; }
 	.rec-console--match[data-terminal] .rec-status-tools { grid-column: 4; grid-row: 1; gap: 2px; }
 	.rec-console--match[data-terminal] .rec-tool { padding: 0 var(--g-2); }
 	.rec-console--match[data-terminal] .rec-status-say { grid-column: 1 / -1; grid-row: 2; }
@@ -5671,14 +5579,6 @@
 }
 
 /* each world carries its dot, the same color as its dot under every creature in the squad */
-.rec-console--match[data-terminal] .rec-site-dot {
-	flex: 0 0 auto;
-	width: 10px;
-	height: 10px;
-	border-radius: 50%;
-	background: var(--g-el);
-	box-shadow: 0 0 4px color-mix(in srgb, var(--g-el) 60%, transparent);
-}
 
 /* with a creature in hand, every world says it can be pressed */
 .rec-console--match[data-terminal] .rec-site--targeted {
@@ -5690,7 +5590,6 @@
 
 /* the preview's number says what it is */
 .rec-console--match[data-terminal] .rec-site-floor .rec-ghost:not(.rec-ghost--relocate) { grid-template-columns: minmax(0, 1fr) 9ch minmax(0, calc(14rem * var(--rec-scale))) minmax(0, 1fr); }
-.rec-console--match[data-terminal] .rec-ghost-value { white-space: nowrap; }
 
 /* the role glyph in the name plate */
 .rec-console--match[data-terminal] .rec-figure-plate-role { display: inline-flex; margin-right: 3px; flex: 0 0 auto; }
@@ -5724,7 +5623,6 @@
 
 @media (max-width: 760px) {
 	.rec-console--match[data-terminal] .rec-plinth-read { width: 32px; height: 32px; min-height: 32px; }
-	.rec-console--match[data-terminal] .rec-site-dot { width: 7px; height: 7px; }
 	.rec-console--match[data-terminal] .rec-site-field--empty .rec-ghost:not(.rec-ghost--relocate) { grid-template-columns: minmax(0, 1fr); grid-template-areas: "value" "plan"; }
 	.rec-console--match[data-terminal] .rec-site-floor .rec-ghost:not(.rec-ghost--relocate) { grid-template-rows: auto auto; }
 }
@@ -5833,7 +5731,6 @@
 /* the forecast after a creature's number: red for what the rival takes, amber for your own sweep, your color for a rival you would down */
 
 /* a send that would only hurt your side, or do nothing, reads amber */
-.rec-console--match[data-terminal] .rec-ghost-role--warn { color: var(--g-lamp-amber); }
 
 /* a sent squad card: the world's dot and its name */
 .rec-console--match[data-terminal] .rec-plinth-sent {
@@ -6025,7 +5922,6 @@
 @media (min-width: 761px) {
 	.rec-console--match[data-terminal] .rec-site-floor .rec-ghost:not(.rec-ghost--relocate) { grid-template-columns: calc(7.5rem * var(--rec-scale)) 10ch minmax(0, 1fr); }
 }
-.rec-console--match[data-terminal] .rec-ghost-value { white-space: nowrap; }
 @media (max-width: 760px) {
 	/* the round count is "1/3" on a phone, where "of 3" did not fit */
 }
@@ -6095,87 +5991,12 @@
 
 .rec-console--match[data-terminal] { --rec-loss: var(--g-lamp-red); --fit-h: 26px; }
 
-/* the front line: the world's field split where the two totals put it */
+/* the field: the two ranks and the seam between them (pass 54: the seam carries the standing) */
 .rec-console--match[data-terminal] .rec-site-field { position: relative; isolation: isolate; }
 .rec-console--match[data-terminal] .rec-site-field > .rec-rank,
 .rec-console--match[data-terminal] .rec-site-field > .rec-site-midline { position: relative; z-index: 1; }
 .rec-console--match[data-terminal] .rec-site-midline,
 .rec-console--match[data-terminal] .rec-site-field--empty .rec-site-midline { border: 0; background: none; }
-.rec-console--match[data-terminal] .rec-front {
-	position: absolute;
-	inset: 0;
-	z-index: 0;
-	display: block;
-	pointer-events: none;
-	container-type: size;
-}
-.rec-console--match[data-terminal] .rec-front--empty { display: none; }
-.rec-console--match[data-terminal] .rec-front-ground {
-	position: absolute;
-	inset: 0;
-	transition: clip-path 280ms cubic-bezier(0.3, 0.7, 0.2, 1);
-}
-.rec-console--match[data-terminal] .rec-front-ground--theirs {
-	background: linear-gradient(to bottom, color-mix(in srgb, var(--rec-rival) 30%, transparent), color-mix(in srgb, var(--rec-rival) 12%, transparent));
-	clip-path: inset(0 0 calc(100% - var(--front) * 1%) 0);
-}
-.rec-console--match[data-terminal] .rec-front-ground--mine {
-	background: linear-gradient(to top, color-mix(in srgb, var(--rec-you) 30%, transparent), color-mix(in srgb, var(--rec-you) 12%, transparent));
-	clip-path: inset(calc(var(--front) * 1%) 0 0 0);
-}
-.rec-console--match[data-terminal] .rec-front-line,
-.rec-console--match[data-terminal] .rec-front-was {
-	position: absolute;
-	left: 0;
-	right: 0;
-	top: -1px;
-	height: 2px;
-	transform: translateY(calc(var(--front) * 1cqh));
-	transition: transform 280ms cubic-bezier(0.3, 0.7, 0.2, 1);
-	background: var(--g-ink);
-}
-.rec-console--match[data-terminal] .rec-front--theirs .rec-front-line { background: var(--rec-rival); box-shadow: 0 0 10px var(--rec-rival); }
-.rec-console--match[data-terminal] .rec-front--mine .rec-front-line { background: var(--rec-you); box-shadow: 0 0 10px var(--rec-you); }
-.rec-console--match[data-terminal] .rec-front-was {
-	transform: translateY(calc(var(--front-was) * 1cqh));
-	background: none;
-	border-top: 1px dashed var(--g-ink-mid);
-	opacity: 0.7;
-}
-/* the ground a previewed send would change hands, hatched in the color of who gains it */
-.rec-console--match[data-terminal] .rec-front-gain {
-	position: absolute;
-	inset: 0;
-	clip-path: inset(calc(var(--front-lo) * 1%) 0 calc(100% - var(--front-hi) * 1%) 0);
-	background: repeating-linear-gradient(135deg, color-mix(in srgb, var(--rec-you) 40%, transparent) 0 5px, transparent 5px 11px);
-}
-.rec-console--match[data-terminal] .rec-front--gain-theirs .rec-front-gain {
-	background: repeating-linear-gradient(135deg, color-mix(in srgb, var(--rec-loss) 45%, transparent) 0 5px, transparent 5px 11px);
-}
-/* the two totals sit on the line: the rival's above it, yours below */
-.rec-console--match[data-terminal] .rec-front-totals {
-	position: absolute;
-	left: 6px;
-	top: 0;
-	display: flex;
-	flex-direction: column;
-	align-items: stretch;
-	min-width: 30px;
-	transform: translateY(calc(clamp(24px, calc(var(--front) * 1cqh), calc(100cqh - 24px)) - 50%));
-	transition: transform 280ms cubic-bezier(0.3, 0.7, 0.2, 1);
-	font-family: var(--g-font-mono);
-	font-variant-numeric: tabular-nums;
-	font-size: 0.95rem;
-	line-height: 1.15;
-	text-align: center;
-	background: color-mix(in srgb, var(--g-hull-lo) 88%, transparent);
-	border: 1px solid var(--g-seam);
-	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
-}
-.rec-console--match[data-terminal] .rec-front-total { padding: 1px 6px; font-weight: 700; }
-.rec-console--match[data-terminal] .rec-front-total--theirs { color: var(--rec-rival); border-bottom: 2px solid color-mix(in srgb, var(--g-ink) 70%, transparent); }
-.rec-console--match[data-terminal] .rec-front-total--mine { color: var(--rec-you); }
-.rec-console--match[data-terminal] .rec-front--preview .rec-front-total--mine { text-decoration: underline dotted; text-underline-offset: 3px; }
 
 /* a world a lifted creature can go to says so by its edge, not by a word */
 .rec-console--match[data-terminal] .rec-site--ready { box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--rec-you) 45%, transparent); }
@@ -6242,7 +6063,7 @@
 	transform: rotate(-35deg);
 }
 
-/* the creature under the pointer, as it would stand at a world */
+/* a swift creature's move target: the mark in the seam of every world it may step to */
 .rec-console--match[data-terminal] .rec-ghost {
 	display: inline-flex;
 	align-items: center;
@@ -6255,13 +6076,6 @@
 	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
 	color: var(--rec-you);
 }
-.rec-console--match[data-terminal] .rec-ghost-bar { width: 56px; flex: 0 1 56px; }
-.rec-console--match[data-terminal] .rec-ghost-value { font-weight: 700; font-size: var(--g-size-small); color: var(--g-ink); }
-.rec-console--match[data-terminal] .rec-ghost-role svg,
-.rec-console--match[data-terminal] .rec-ghost-mark svg { width: 14px; height: 14px; display: block; }
-.rec-console--match[data-terminal] .rec-ghost-mark--home { color: var(--g-brass-light); }
-.rec-console--match[data-terminal] .rec-ghost-mark--strain { color: var(--g-lamp-amber); }
-.rec-console--match[data-terminal] .rec-ghost--falls { border-color: var(--rec-loss); }
 .rec-console--match[data-terminal] .rec-ghost--relocate { padding: 4px; }
 .rec-console--match[data-terminal] .rec-ghost--relocate svg { width: 18px; height: 18px; }
 
@@ -6287,9 +6101,6 @@
 @keyframes rec-crest-in { from { opacity: 0; transform: scale(0.6); } to { opacity: 1; transform: none; } }
 @media (prefers-reduced-motion: reduce) {
 	.rec-console--match[data-terminal] .rec-crest { animation: none; }
-	.rec-console--match[data-terminal] .rec-front-ground,
-	.rec-console--match[data-terminal] .rec-front-line,
-	.rec-console--match[data-terminal] .rec-front-totals { transition: none; }
 }
 
 /* the fit strip on a bench card: one column per world, in world order */
@@ -6396,10 +6207,7 @@
 @media (max-width: 760px) {
 	.rec-console--match[data-terminal] { --fit-h: 18px; }
 	.rec-console--match[data-terminal] .rec-fit { gap: 2px; padding: 0 3px; }
-	.rec-console--match[data-terminal] .rec-front-totals { left: 2px; min-width: 22px; font-size: 0.75rem; }
-	.rec-console--match[data-terminal] .rec-front-total { padding: 0 3px; }
 	.rec-console--match[data-terminal] .rec-ghost { padding: 2px 4px; gap: 3px; }
-	.rec-console--match[data-terminal] .rec-ghost-bar { width: 32px; flex-basis: 32px; }
 	.rec-console--match[data-terminal] .rec-track-world { width: 8px; height: 8px; }
 	.rec-console--match[data-terminal] .rec-track-round { gap: 2px; padding: 2px; }
 	.rec-console--match[data-terminal] .rec-track { gap: 3px; }
@@ -6425,51 +6233,14 @@
 	.rec-console--match[data-terminal] .rec-plinth-role { display: none; }
 }
 
-/* pass 52, round 2: the totals stand above the figures and the preview; the preview is a centered token */
+/* pass 52, round 2 */
 .rec-console--match[data-terminal] .rec-site-floor { container-type: size; }
-.rec-console--match[data-terminal] .rec-front-totals { z-index: 3; pointer-events: none; }
-.rec-console--match[data-terminal] .rec-front-totals--preview .rec-front-total--mine { text-decoration: underline dotted; text-underline-offset: 3px; }
-.rec-console--match[data-terminal] .rec-site-floor .rec-ghost:not(.rec-ghost--relocate) {
-	display: inline-flex;
-	grid-template: none;
-	position: absolute;
-	inset: auto;
-	left: 50%;
-	top: 50%;
-	transform: translate(-50%, -50%);
-	width: auto;
-	max-width: calc(100% - 64px);
-	padding: 3px 8px;
-	column-gap: 5px;
-	align-items: center;
-	align-content: normal;
-	overflow: hidden;
-}
 .rec-console--match[data-terminal] .rec-fit-col--short .rec-fit-bar { opacity: 0.5; }
-@media (max-width: 760px) {
-	.rec-console--match[data-terminal] .rec-site-floor .rec-ghost:not(.rec-ghost--relocate) { left: calc(50% + 12px); max-width: calc(100% - 30px); padding: 2px 4px; column-gap: 3px; }
-	.rec-console--match[data-terminal] .rec-site-floor .rec-ghost .rec-ghost-role { display: none; }
-}
 
 /* pass 52, round 3: each world wears its element; the rival lead tick stands proud of its column */
-.rec-console--match[data-terminal] .rec-site-emblem {
-	position: absolute;
-	left: 50%;
-	top: 50%;
-	z-index: 0;
-	width: min(120px, 50%);
-	aspect-ratio: 1;
-	transform: translate(-50%, -50%);
-	opacity: 0.09;
-	pointer-events: none;
-	display: flex;
-}
-.rec-console--match[data-terminal] .rec-site-emblem svg { width: 100% !important; height: 100% !important; max-width: none !important; max-height: none !important; }
 .rec-console--match[data-terminal] .rec-site-head { border-bottom: 2px solid color-mix(in srgb, var(--g-el) 55%, transparent); }
 .rec-console--match[data-terminal] .rec-fit-tick { left: -3px; right: -3px; height: 3px; background: var(--rec-rival); box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.85); }
 @media (max-width: 760px) {
-	.rec-console--match[data-terminal] .rec-front-totals { left: auto; right: 2px; }
-	.rec-console--match[data-terminal] .rec-site-floor .rec-ghost:not(.rec-ghost--relocate) { left: 3px; transform: translateY(-50%); max-width: calc(100% - 34px); }
 	.rec-console--match[data-terminal] .rec-fit-tick { left: -1px; right: -1px; height: 2px; }
 }
 
@@ -6620,7 +6391,6 @@
 	.rec-legend-key { padding: 10px; }
 	.rec-legend-list { font-size: 12px; gap: 5px; }
 	.rec-legend-actions .g-btn { min-height: 32px; }
-	.rec-console--match[data-terminal] .rec-site-floor .rec-ghost .rec-ghost-bar { display: none; }
 }
 /* pass 52: advanced mode's speed and lane marks ride in the card's corners, so the name and the strip keep their room */
 .rec-console--match[data-terminal] .rec-plinth-name,
@@ -6645,12 +6415,6 @@
 }
 @media (min-width: 761px) and (min-height: 821px) {
 	.rec-console--match[data-terminal] .rec-match--advanced { --fit-h: 40px; }
-}
-@media (max-width: 760px) {
-	/* a phone world is too narrow for the totals to ride the line into the figures: they keep to the seam, at the right */
-	.rec-console--match[data-terminal] .rec-front-totals {
-		transform: translateY(calc(clamp(calc(50cqh - 26px), calc(var(--front) * 1cqh), calc(50cqh + 26px)) - 50%));
-	}
 }
 
 /* --- pass 53: the start screen is one screen -----------------------------------
@@ -6972,3 +6736,259 @@
 .rec-console--draft .rec-draft-card > .rec-plinth-name,
 .rec-console--draft .rec-draft-card > .rec-draft-lamps,
 .rec-console--draft .rec-draft-card > .rec-draft-best { flex-shrink: 0; }
+
+/* --- pass 54: the world's standing ---------------------------------------------------
+   docs/design/reclamation-world-standing.md. Nick, 2026-09-23, on pass 52's split field:
+   "I don't see a reason for there to be a distinction ... a number in the top left
+   corner of something is next to useless". A world's standing is two bars in the seam
+   between its ranks, the rival's above yours from the same edge, on one scale shared by
+   the three worlds; the number rides the end of each bar. The field is no longer tinted
+   by who leads. Every moving part is a clip-path or a transform, so pointing at a
+   creature repaints the table and never moves it. */
+
+.rec-console--match[data-terminal] {
+	--st-h: calc(16px * var(--rec-scale));
+	--st-gap: calc(8px * var(--rec-scale));
+	--st-num: calc(16px * var(--rec-scale));
+	--st-ease: 240ms cubic-bezier(0.3, 0.7, 0.2, 1);
+}
+.rec-console--match[data-terminal] .rec-site-floor .rec-site-midline { overflow: visible; z-index: 2; }
+
+.rec-console--match[data-terminal] .rec-standing {
+	position: absolute;
+	left: var(--g-3);
+	right: var(--g-3);
+	top: 50%;
+	transform: translateY(-50%);
+	display: grid;
+	grid-template-rows: var(--st-h) var(--st-h);
+	row-gap: var(--st-gap);
+	container-type: inline-size;
+	pointer-events: none;
+}
+.rec-console--match[data-terminal] .rec-standing-lane { position: relative; display: block; min-width: 0; }
+.rec-console--match[data-terminal] .rec-standing-lane > span:not(.rec-standing-num):not(.rec-standing-mark) {
+	position: absolute;
+	inset: 0;
+	transition: clip-path var(--st-ease), opacity 160ms ease;
+}
+/* the empty lane: a faint rail the length of the scale */
+.rec-console--match[data-terminal] .rec-standing-track {
+	background: color-mix(in srgb, var(--g-ink) 6%, transparent);
+	box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--g-ink) 8%, transparent);
+}
+.rec-console--match[data-terminal] .rec-standing-lane--theirs .rec-standing-track { box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--rec-rival) 22%, transparent); }
+.rec-console--match[data-terminal] .rec-standing-lane--mine .rec-standing-track { box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--rec-you) 22%, transparent); }
+/* what the Clash is forecast to leave, which decides the world */
+.rec-console--match[data-terminal] .rec-standing-lane--theirs .rec-standing-fill {
+	background: var(--rec-rival);
+	clip-path: inset(0 calc((1 - var(--st-t)) * 100%) 0 0);
+}
+.rec-console--match[data-terminal] .rec-standing-lane--mine .rec-standing-fill {
+	background: var(--rec-you);
+	clip-path: inset(0 calc((1 - var(--st-m0)) * 100%) 0 0);
+}
+/* what the Clash takes of what goes in: hatched past the fill, in the loss color */
+.rec-console--match[data-terminal] .rec-standing-loss {
+	background: repeating-linear-gradient(135deg, color-mix(in srgb, var(--rec-loss) 75%, transparent) 0 2px, color-mix(in srgb, var(--rec-loss) 18%, transparent) 2px 5px);
+}
+.rec-console--match[data-terminal] .rec-standing-lane--theirs .rec-standing-loss { clip-path: inset(0 calc((1 - var(--st-tb)) * 100%) 0 calc(var(--st-t) * 100%)); }
+.rec-console--match[data-terminal] .rec-standing-lane--mine .rec-standing-loss { clip-path: inset(0 calc((1 - var(--st-mb)) * 100%) 0 calc(var(--st-m) * 100%)); }
+/* what the creature under the pointer would add: your color, open */
+.rec-console--match[data-terminal] .rec-standing-ghost {
+	background: repeating-linear-gradient(90deg, color-mix(in srgb, var(--rec-you) 70%, transparent) 0 3px, color-mix(in srgb, var(--rec-you) 40%, transparent) 3px 5px);
+	clip-path: inset(0 calc((1 - var(--st-m)) * 100%) 0 calc(var(--st-m0) * 100%));
+	animation: rec-standing-ghost 900ms ease-in-out infinite alternate;
+}
+@keyframes rec-standing-ghost { from { opacity: 0.75; } to { opacity: 1; } }
+/* the rival's end, down through your lane: the mark to pass */
+.rec-console--match[data-terminal] .rec-standing-mark {
+	position: absolute;
+	left: 0;
+	top: calc(-1 * var(--st-gap));
+	bottom: -3px;
+	width: 2px;
+	background: var(--rec-rival);
+	box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.7);
+	transform: translateX(calc(var(--st-t) * 100cqw - 1px));
+	transition: transform var(--st-ease);
+}
+/* the number rides the end of its bar, and slides inside it at the far end of the scale */
+.rec-console--match[data-terminal] .rec-standing-num {
+	position: absolute;
+	left: 0;
+	top: 50%;
+	display: inline-flex;
+	align-items: center;
+	gap: 3px;
+	padding: 0 4px;
+	white-space: nowrap;
+	font-family: var(--g-font-mono);
+	font-size: var(--st-num);
+	font-weight: 700;
+	line-height: 1.2;
+	font-variant-numeric: tabular-nums;
+	background: color-mix(in srgb, var(--g-hull-lo) 78%, transparent);
+	transition: transform var(--st-ease);
+}
+.rec-console--match[data-terminal] .rec-standing-num b { font-weight: 700; }
+.rec-console--match[data-terminal] .rec-standing-lane--theirs .rec-standing-num {
+	color: var(--rec-rival);
+	transform: translate(min(calc(var(--st-t) * 100cqw + 4px), calc(100cqw - 100%)), -50%);
+}
+.rec-console--match[data-terminal] .rec-standing-lane--mine .rec-standing-num {
+	color: var(--rec-you);
+	transform: translate(min(calc(var(--st-m) * 100cqw + 4px), calc(100cqw - 100%)), -50%);
+}
+/* the side behind reads quieter; level, both read full */
+.rec-console--match[data-terminal] .rec-standing--mine .rec-standing-lane--theirs .rec-standing-fill,
+.rec-console--match[data-terminal] .rec-standing--theirs .rec-standing-lane--mine .rec-standing-fill,
+.rec-console--match[data-terminal] .rec-standing--theirs .rec-standing-lane--mine .rec-standing-ghost { opacity: 0.5; }
+.rec-console--match[data-terminal] .rec-standing--mine .rec-standing-lane--theirs .rec-standing-num,
+.rec-console--match[data-terminal] .rec-standing--theirs .rec-standing-lane--mine .rec-standing-num { opacity: 0.7; }
+/* why the previewed creature holds what it would: home, strain, falls */
+.rec-console--match[data-terminal] .rec-standing-why { display: inline-flex; }
+.rec-console--match[data-terminal] .rec-standing-why svg { width: calc(var(--st-num) * 0.9); height: calc(var(--st-num) * 0.9); display: block; }
+.rec-console--match[data-terminal] .rec-standing-why--home { color: var(--g-brass-light); }
+.rec-console--match[data-terminal] .rec-standing-why--strain { color: var(--g-lamp-amber); }
+.rec-console--match[data-terminal] .rec-standing-why--falls { color: var(--rec-loss); }
+.rec-console--match[data-terminal] .rec-standing-why--falls svg { fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; }
+/* the Ruling: the pennant at the end of the winner's bar, the loser's bar dimmed */
+.rec-console--match[data-terminal] .rec-standing .rec-crest {
+	padding: 0;
+	border: 0;
+	background: none;
+	gap: 0;
+}
+.rec-console--match[data-terminal] .rec-standing .rec-crest svg { width: calc(var(--st-num) * 1.25); height: calc(var(--st-num) * 1.25); }
+.rec-console--match[data-terminal] .rec-standing--won-mine .rec-standing-lane--theirs,
+.rec-console--match[data-terminal] .rec-standing--won-theirs .rec-standing-lane--mine { opacity: 0.45; }
+@media (prefers-reduced-motion: reduce) {
+	.rec-console--match[data-terminal] .rec-standing-lane > span,
+	.rec-console--match[data-terminal] .rec-standing-mark,
+	.rec-console--match[data-terminal] .rec-standing-num { transition: none; }
+	.rec-console--match[data-terminal] .rec-standing-ghost { animation: none; }
+}
+
+/* the Clash's caption stands just above the seam, over the rival's rank, so the bars stay in sight while they move */
+.rec-console--match[data-terminal] .rec-site-floor .rec-clash-caption {
+	position: absolute;
+	left: var(--g-1);
+	right: var(--g-1);
+	bottom: calc(100% + 2px);
+	width: fit-content;
+	margin-inline: auto;
+	z-index: 3;
+}
+/* a swift creature's move target sits at the seam's right end, clear of the bars */
+.rec-console--match[data-terminal] .rec-site-floor .rec-ghost--relocate {
+	position: absolute;
+	inset: auto;
+	right: var(--g-1);
+	bottom: calc(100% + 2px);
+	z-index: 3;
+}
+
+/* the world's element as its symbol in the head, where the dot was */
+.rec-console--match[data-terminal] .rec-site-symbol { flex: 0 0 auto; display: inline-flex; width: 18px; height: 18px; }
+.rec-console--match[data-terminal] .rec-site-symbol svg { width: 100% !important; height: 100% !important; max-width: none !important; max-height: none !important; margin: 0 !important; }
+/* the head band carries a wash of the world's color, so its column on every card has somewhere to come from */
+.rec-console--match[data-terminal] .rec-site-head { background: linear-gradient(to right, color-mix(in srgb, var(--g-el) 16%, transparent), transparent 70%); }
+
+/* the top bar: no turn column; the lamp rides the side's row */
+.rec-console--match[data-terminal] .rec-status,
+.rec-console--match[data-terminal] .rec-match--simple .rec-status { grid-template-columns: auto auto auto minmax(0, 1fr) auto; }
+.rec-console--match[data-terminal] .rec-scoreboard { grid-template-columns: 10px auto auto 14px; column-gap: 8px; }
+.rec-console--match[data-terminal] .rec-turn-lamp {
+	display: block;
+	width: 8px;
+	height: 8px;
+	border-radius: 50%;
+	background: transparent;
+	box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--g-ink) 18%, transparent);
+}
+.rec-console--match[data-terminal] .rec-turn-lamp--on.rec-turn-lamp--mine { background: var(--rec-you); box-shadow: 0 0 8px var(--rec-you); animation: rec-turn-lamp 1100ms ease-in-out infinite alternate; }
+.rec-console--match[data-terminal] .rec-turn-lamp--on.rec-turn-lamp--theirs { background: var(--rec-rival); box-shadow: 0 0 8px var(--rec-rival); animation: rec-turn-lamp 600ms ease-in-out infinite alternate; }
+@keyframes rec-turn-lamp { from { opacity: 0.55; } to { opacity: 1; } }
+/* the sends left: a tick per send the game allows, lit while unspent, the count after */
+.rec-console--match[data-terminal] .rec-sends { gap: 5px; }
+.rec-console--match[data-terminal] .rec-sends-ticks { display: inline-flex; gap: 2px; align-items: center; }
+.rec-console--match[data-terminal] .rec-send-tick {
+	display: block;
+	width: 4px;
+	height: 10px;
+	background: transparent;
+	box-shadow: inset 0 0 0 1px color-mix(in srgb, currentColor 35%, transparent);
+}
+.rec-console--match[data-terminal] .rec-send-tick--left { background: currentColor; box-shadow: none; }
+.rec-console--match[data-terminal] .rec-sends b { min-width: 2ch; font-size: var(--g-size-small); }
+@media (prefers-reduced-motion: reduce) {
+	.rec-console--match[data-terminal] .rec-turn-lamp--on { animation: none; }
+}
+
+@media (min-width: 761px) and (max-height: 760px) {
+	.rec-console--match[data-terminal] { --st-h: 12px; --st-gap: 6px; --st-num: 14px; }
+}
+@media (max-width: 760px) {
+	.rec-console--match[data-terminal] { --st-h: 7px; --st-gap: 6px; --st-num: 10px; }
+	.rec-console--match[data-terminal] .rec-standing { left: 3px; right: 3px; }
+	.rec-console--match[data-terminal] .rec-standing-num { padding: 0 2px; gap: 1px; letter-spacing: -0.03em; }
+	.rec-console--match[data-terminal] .rec-site-symbol { width: 12px; height: 12px; }
+	.rec-console--match[data-terminal] .rec-scoreboard { grid-template-columns: 6px auto auto 10px; column-gap: 4px; }
+	.rec-console--match[data-terminal] .rec-turn-lamp { width: 6px; height: 6px; }
+	/* a phone's top bar has no room for eleven ticks a side beside the pips: the count stands alone */
+	.rec-console--match[data-terminal] .rec-sends-ticks { display: none; }
+	.rec-console--match[data-terminal] .rec-sends b { font-size: 11px; }
+}
+
+/* pass 54, after the first blind readers: the lifted creature rides the run it would add */
+.rec-console--match[data-terminal] .rec-standing-art {
+	display: inline-flex;
+	width: calc(var(--st-num) * 1.6);
+	height: calc(var(--st-num) * 1.6);
+	margin: calc(var(--st-num) * -0.3) 0;
+}
+.rec-console--match[data-terminal] .rec-standing-art svg,
+.rec-console--match[data-terminal] .rec-standing-art img { width: 100% !important; height: 100% !important; max-width: none !important; max-height: none !important; }
+/* the score as pennants: a world won is a flag planted, unlit flags an outline */
+.rec-console--match[data-terminal] .rec-scoreboard .rec-pip.rec-pip--flag {
+	width: 13px;
+	height: 15px;
+	border: 0;
+	background: none;
+	box-shadow: none;
+	border-radius: 0;
+}
+.rec-console--match[data-terminal] .rec-scoreboard .rec-pip--flag svg { display: block; width: 100%; height: 100%; overflow: visible; }
+.rec-console--match[data-terminal] .rec-scoreboard .rec-pip--flag .rec-pip-staff { fill: none; stroke: currentColor; stroke-width: 1.4; stroke-linecap: round; }
+.rec-console--match[data-terminal] .rec-scoreboard .rec-pip--flag .rec-pip-cloth { fill: none; stroke: currentColor; stroke-width: 1.2; stroke-linejoin: round; }
+.rec-console--match[data-terminal] .rec-scoreboard .rec-pip--flag.rec-pip--theirs { color: color-mix(in srgb, var(--rec-rival) 45%, transparent); }
+.rec-console--match[data-terminal] .rec-scoreboard .rec-pip--flag.rec-pip--mine { color: color-mix(in srgb, var(--rec-you) 45%, transparent); }
+.rec-console--match[data-terminal] .rec-scoreboard .rec-pip--flag.rec-pip--lit.rec-pip--theirs { color: var(--rec-rival); }
+.rec-console--match[data-terminal] .rec-scoreboard .rec-pip--flag.rec-pip--lit.rec-pip--mine { color: var(--rec-you); }
+.rec-console--match[data-terminal] .rec-scoreboard .rec-pip--flag.rec-pip--lit .rec-pip-cloth { fill: currentColor; }
+.rec-console--match[data-terminal] .rec-score-row { gap: 4px; }
+/* whose move it is: a pointer at the head of that side's row; the other head is empty */
+.rec-console--match[data-terminal] .rec-turn-lamp,
+.rec-console--match[data-terminal] .rec-turn-lamp--on.rec-turn-lamp--mine,
+.rec-console--match[data-terminal] .rec-turn-lamp--on.rec-turn-lamp--theirs {
+	width: 12px;
+	height: 14px;
+	border-radius: 0;
+	background: none;
+	box-shadow: none;
+}
+.rec-console--match[data-terminal] .rec-turn-lamp svg { display: block; width: 100%; height: 100%; fill: currentColor; }
+.rec-console--match[data-terminal] .rec-turn-lamp--mine { color: var(--rec-you); filter: drop-shadow(0 0 4px var(--rec-you)); }
+.rec-console--match[data-terminal] .rec-turn-lamp--theirs { color: var(--rec-rival); filter: drop-shadow(0 0 4px var(--rec-rival)); }
+.rec-console--match[data-terminal] .rec-scoreboard { grid-template-columns: 12px auto auto 14px; }
+.rec-console--match[data-terminal] .rec-scoreboard .rec-pip.rec-pip--flag { width: 16px; height: 18px; }
+@media (max-width: 760px) {
+	.rec-console--match[data-terminal] .rec-standing-art { width: 14px; height: 14px; margin: -2px 0; }
+	.rec-console--match[data-terminal] .rec-scoreboard .rec-pip.rec-pip--flag { width: 8px; height: 10px; }
+	.rec-console--match[data-terminal] .rec-score-row { gap: 2px; }
+	.rec-console--match[data-terminal] .rec-turn-lamp,
+	.rec-console--match[data-terminal] .rec-turn-lamp--on.rec-turn-lamp--mine,
+	.rec-console--match[data-terminal] .rec-turn-lamp--on.rec-turn-lamp--theirs { width: 7px; height: 9px; }
+	.rec-console--match[data-terminal] .rec-scoreboard { grid-template-columns: 7px auto auto 10px; }
+}

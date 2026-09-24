@@ -19,7 +19,7 @@ import {
 	verdictOf, rulingLine,
 } from './reclamationNarration';
 import { flattenBoard, prepareWithCompanions, siteHoldTotal, ghostPlanFor } from './reclamationPreview';
-import { fitTable, roundTrack } from './reclamationFit';
+import { fitTable, roundTrack, standingScale } from './reclamationFit';
 import { RoundTrack, ScorePips } from './reclamationInstruments';
 
 
@@ -1661,6 +1661,8 @@ class ReclamationMatch extends React.Component {
 			const prepared = prepare(record, site, site.world, view.players[this.seatInPlay()].sentCount, { rules: view.rules });
 			const tolerance = (record.physiology && record.physiology.environmentalTolerance) || {};
 			ghosts[site.id] = {
+				// pass 54: the creature itself rides the bar it would add on each world's standing
+				record,
 				hold: plan.hold,
 				role: plan.role,
 				roleLine: plan.roleLine,
@@ -1745,31 +1747,11 @@ class ReclamationMatch extends React.Component {
 		return rulingLine(judged, order.map((id) => verdicts[id]).filter(Boolean));
 	}
 
-	// a rival beat holds the turn readout on what the rival just did, so "Your move" lands
-	// after it as its own change
+	// a rival beat holds the turn on what the rival just did, so your lamp lights after it
+	// as its own change
 	rivalBeat() {
 		const { beat } = this.state;
 		return beat && beat.seat === THEM ? beat : null;
-	}
-
-	turnText(view) {
-		if (this.state.playback) {
-			return 'Clash';
-		}
-		const rivalBeat = this.rivalBeat();
-		if (rivalBeat && view.phase === 'deploy' && !this.state.judged) {
-			return rivalBeat.short;
-		}
-		if (this.state.judged && view.phase !== 'matchEnd') {
-			return 'Round over';
-		}
-		if (view.phase === 'matchEnd') {
-			return 'Over';
-		}
-		if (view.turn === this.seatInPlay()) {
-			return 'Your move';
-		}
-		return 'Rival\u2019s move';
 	}
 
 	renderStatusStrip(view) {
@@ -1781,9 +1763,6 @@ class ReclamationMatch extends React.Component {
 		const rivalBeat = !!this.rivalBeat() && view.phase === 'deploy' && !this.state.judged;
 		const yourTurn = view.turn === this.seatInPlay() && view.phase === 'deploy' && !this.state.playback && !this.state.judged && !rivalBeat;
 		const waiting = (view.turn === THEM || rivalBeat) && view.phase === 'deploy' && !this.state.playback && !this.state.judged;
-		const deciding = waiting && !rivalBeat;
-		const turnLabel = this.turnText(view);
-		const lampKind = yourTurn ? 'amber' : waiting ? 'red' : 'off';
 		const simple = this.isSimple();
 		const toClinch = clinchFor(view.frame.sites.length, FRAMES_PER_MATCH);
 		/*
@@ -1831,17 +1810,18 @@ class ReclamationMatch extends React.Component {
 						rivalPassed={!!(them.passed && view.phase === 'deploy' && !this.state.judged && !this.state.playback)}
 						mySends={Math.max(0, (typeof you.sendableCap === 'number' ? you.sendableCap : SENDABLE) - (you.sentCount || 0))}
 						theirSends={Math.max(0, (typeof them.sendableCap === 'number' ? them.sendableCap : SENDABLE) - (them.sentCount || 0))}
+						myCap={typeof you.sendableCap === 'number' ? you.sendableCap : SENDABLE}
+						theirCap={typeof them.sendableCap === 'number' ? them.sendableCap : SENDABLE}
+						turn={yourTurn ? 'mine' : waiting ? 'theirs' : null}
 						worldsAhead={view.frame.sites.length * Math.max(1, FRAMES_PER_MATCH - (view.frameIndex || 0))}
 						sendsTone={stillReachable && (stillReachable.tone === 'lost' || stillReachable.tone === 'stake') ? stillReachable.tone : null}
 					/>
 				</div>
 
-				<div className="rec-status-turn">
-					<span className={`rec-turn${yourTurn ? ' rec-turn--yours' : ''}${waiting ? ' rec-turn--waiting' : ''}${deciding ? ' rec-turn--deciding' : ''}`}>
-						<span className={`g-lamp g-lamp--${lampKind}`} key={lampKind} />
-						<span className="rec-turn-text rec-turn-text--in" data-turn-text key={turnLabel}>{turnLabel}</span>
-					</span>
-				</div>
+				{/*
+					PASS 54. No "Your move" or "Rival's move": whose move it is is the lamp at the
+					head of that side's row on the scoreboard, and the squad lights when it is yours.
+				*/}
 
 				{/*
 					PASS 37 made this ONE MESSAGE SLOT. Pass 38 made it the only place on the table
@@ -2054,21 +2034,29 @@ class ReclamationMatch extends React.Component {
 		const holdingIds = [...me.holding, ...them.holding];
 
 		/*
-			PASS 52. Each world's front line stands on the Clash forecast while you deploy (what
-			the Ruling would decide if the round ended now) and on the live holds while the
-			round plays back, so the line you choose by is the line you watch move. The preview
-			is the fit table's row for the creature under the pointer or lifted.
+			PASS 52, PASS 54. Each world's standing stands on the Clash forecast while you deploy
+			(what the Ruling would decide if the round ended now, and what goes into the Clash)
+			and on the live holds while the round plays back, so the bars you choose by are the
+			bars you watch move. The preview is the fit table's row for the creature under the
+			pointer or lifted. One scale serves the three worlds: during Deploy it covers every
+			total any send in hand could make, and during the Clash every creature's hold on
+			arrival, so the bars never rescale under the pointer or mid-Clash.
 		*/
-		const orient = (t) => (this.seatInPlay() === YOU ? t : { mine: t.theirs, theirs: t.mine });
-		const fronts = {};
+		const orient = (t) => (this.seatInPlay() === YOU ? t : { mine: t.theirs, theirs: t.mine, mineBefore: t.theirsBefore, theirsBefore: t.mineBefore });
+		const standings = {};
+		const arrivals = [];
 		view.frame.sites.forEach((site) => {
 			if (fits && fits.base[site.id]) {
-				fronts[site.id] = orient(fits.base[site.id]);
+				standings[site.id] = orient(fits.base[site.id]);
 			} else {
 				const t = totals[site.id] || {};
-				fronts[site.id] = { mine: t[YOU] || 0, theirs: t[THEM] || 0 };
+				standings[site.id] = { mine: t[YOU] || 0, theirs: t[THEM] || 0, mineBefore: t[YOU] || 0, theirsBefore: t[THEM] || 0 };
+				['A', 'B'].forEach((seat) => {
+					arrivals.push((view.board[site.id][seat] || []).reduce((sum, e) => sum + ((holds[e.recordId] && holds[e.recordId].printed) || 0), 0));
+				});
 			}
 		});
+		const scale = standingScale(fits, arrivals);
 		const previewId = ghosts ? (this.state.armedRecordId || this.state.hoverRecordId) : null;
 		const previewRow = previewId && fits ? fits.fits[previewId] : null;
 		const preview = previewRow ? Object.fromEntries(Object.entries(previewRow).map(([siteId, cell]) => [siteId, {
@@ -2179,7 +2167,8 @@ class ReclamationMatch extends React.Component {
 							holdingIds={holdingIds}
 							hiddenEnemyCount={deploying ? (them.hiddenSentThisRound || 0) : 0}
 							forecast={forecast}
-							fronts={fronts}
+							standings={standings}
+							standingScale={scale}
 							preview={preview}
 							deploying={deploying}
 							highlights={highlights}

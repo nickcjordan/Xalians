@@ -33,6 +33,8 @@ The middle three rows are the decision, and none of them could be read at a glan
 
 ### 1. The front line (each world: who is winning)
 
+**Superseded by pass 54** (`reclamation-world-standing.md`): a share of each world said nothing when one side was absent, so every send into an empty world drew the same split. Each world now carries two bars on a shared scale.
+
 The world's field is split by a horizontal line into the rival's ground above it (brass) and yours below it (cyan). The line sits where the two totals put it: at the middle when level, pushed toward you when the rival holds more, toward the rival when you do. A world only the rival stands on is brass all the way down, so "the rival takes it" is a color, not a sentence. An empty world has no line and no tint.
 
 The two totals sit on the line, the rival's just above it and yours just below it, so each number is read as that side's strength.
