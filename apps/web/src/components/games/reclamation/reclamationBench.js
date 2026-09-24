@@ -41,9 +41,15 @@ import { SENDABLE, FRAMES_PER_MATCH } from '@xalians/rules/expedition/expedition
 	where the rival has one. Nothing on a card is suggested; it only says what would happen.
 */
 
-function Plinth({ record, view, you, armed, disabled, onArm, onInspect, onHover, advanced, fitRow, focusSiteId }) {
+function Plinth({ record, view, you, armed, disabled, onArm, onInspect, onHover, advanced, fitRow, focusSiteId, sentCell, moveRow, reserve }) {
 	const slot = slotStateOf(record, view, you);
-	const inHand = slot.state === 'hand';
+	/*
+		PASS 55, KEEP ONE BACK. With no sends left, a creature still in hand is the reserve: it
+		stays back for the rest of the Proving (and an unsent creature breaks a tie in worlds),
+		so it is drawn as kept, not as a card that can still be played.
+	*/
+	const kept = slot.state === 'hand' && !!reserve;
+	const inHand = slot.state === 'hand' && !kept;
 	const sites = view.frame.sites;
 	const readAt = prepare(record, view.frame.sites[0], null, 0, { rules: view.rules });
 	const stealthy = readAt.stealthy;
@@ -55,15 +61,16 @@ function Plinth({ record, view, you, armed, disabled, onArm, onInspect, onHover,
 	// beside the speed number, each with its own lane sentence (Pass 2, assumption 17)
 	const laneMarks = attributeLanes(readAt, view.rules).filter((l) => l.glyph);
 	const el = elementOf(record);
-	const classes = ['rec-plinth', `rec-plinth--${slot.state}`];
+	const classes = ['rec-plinth', `rec-plinth--${kept ? 'reserve' : slot.state}`];
 	if (armed) classes.push('rec-plinth--armed');
 	if (disabled) classes.push('rec-plinth--disabled');
 	if (inHand && fitRow && Object.values(fitRow).some((cell) => cell && cell.takes)) classes.push('rec-plinth--takes');
 	const title = inHand
 		? `${speciesLabel(record)}${armed ? ', lifted: press a world to send it there, or press it again to set it down' : ''}. ${fitSentence(sites, fitRow)}`
-		: slot.state === 'sent' ? `Sent to ${slot.site.world.planet}` : slot.state === 'holding' ? 'Won its world in an earlier round, and stays there' : slot.state === 'downed' ? 'Fell in a Clash, out of the game' : 'Spent on a world that was lost or tied, out of the game';
+		: kept ? 'Kept in reserve: eleven sends from a squad of twelve, so one creature always stays back. Unsent creatures break a tie in worlds.'
+			: slot.state === 'sent' ? `Sent to ${slot.site.world.planet}` : slot.state === 'holding' ? 'Won its world in an earlier round, and stays there' : slot.state === 'downed' ? 'Fell in a Clash, out of the game' : 'Spent on a world that was lost or tied, out of the game';
 	return (
-		<div className={classes.join(' ')} data-slot={record.id} data-slot-state={slot.state}>
+		<div className={classes.join(' ')} data-slot={record.id} data-slot-state={kept ? 'reserve' : slot.state}>
 			<button
 				type="button"
 				className="rec-plinth-main"
@@ -106,11 +113,18 @@ function Plinth({ record, view, you, armed, disabled, onArm, onInspect, onHover,
 						sites={sites}
 						row={inHand ? fitRow : null}
 						sentSiteId={slot.state === 'sent' && slot.site ? slot.site.id : null}
+						sentCell={slot.state === 'sent' ? sentCell : null}
+						moveRow={slot.state === 'sent' ? moveRow : null}
 						focusSiteId={inHand ? focusSiteId : null}
 						off={disabled}
 					/>
 				)}
-				{!inHand && slot.state !== 'sent' && (
+				{kept && (
+					<span className="rec-plinth-tag rec-plinth-tag--reserve" aria-label="kept in reserve">
+						<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h10v18l-5-4-5 4z" /></svg>
+					</span>
+				)}
+				{!inHand && !kept && slot.state !== 'sent' && (
 					<span className={`rec-plinth-tag rec-plinth-tag--${slot.state}`} aria-label={slot.state === 'holding' ? 'won its world' : slot.state === 'downed' ? 'fell in a Clash' : 'spent'}>
 						{slot.state === 'holding'
 							? <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 21V3" /><path d="M6 4h12l-3 4.5L18 13H6" /></svg>
@@ -287,6 +301,9 @@ function ReclamationBench({
 						you={you}
 						armed={armedRecordId === record.id}
 						fitRow={fits && fits.fits ? fits.fits[record.id] : null}
+						sentCell={fits && fits.forecast ? fits.forecast[record.id] || null : null}
+						moveRow={fits && fits.moves ? fits.moves[record.id] || null : null}
+						reserve={sendsLeft === 0}
 						focusSiteId={focusSiteId}
 						disabled={!yourTurn || me.passed || sendsLeft === 0}
 						onArm={onArm}

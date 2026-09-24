@@ -164,11 +164,26 @@ export function HoldBar({ hold, after, unstrained, side, className }) {
 }
 
 /*
-	FitStrip: one column per world. `row` is fitTable's row for this creature; `sentSiteId`
-	draws only the world it went to; `focusSiteId` lights one world's column and dims the
-	others while that world is pointed at.
+	FitStrip: one column per world. `row` is fitTable's row for this creature; `focusSiteId`
+	lights one world's column and dims the others while that world is pointed at.
+
+	PASS 55. A sent creature's card (`sentSiteId`) keeps its strip. The column of the world it
+	went to is its own forecast there (`sentCell`, the engine's { hold, downed, before }): the
+	bar is what the Clash would leave it, the hatched run above is what the Clash would take,
+	and a cross stands in for the number when it would fall. It used to be one blue bar the
+	same height on every card (Nick: "a poor way to denote that"). A swift creature that may
+	still step to another world (`moveRow`, fitTable's moves) shows, in the other columns,
+	what the move would do across the frame, striped like every other "would be" on the table.
 */
-export function FitStrip({ sites, row, sentSiteId, focusSiteId, off }) {
+function FallsMark() {
+	return <svg className="rec-fit-falls" viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 2.5l7 7M9.5 2.5l-7 7" /></svg>;
+}
+
+function swingNumber(swing) {
+	return swing < -0.5 ? `−${formatHoldShown(-swing)}` : formatHoldShown(Math.max(0, swing));
+}
+
+export function FitStrip({ sites, row, sentSiteId, sentCell, moveRow, focusSiteId, off }) {
 	return (
 		<span className={`rec-fit${off ? ' rec-fit--off' : ''}`} data-fit aria-hidden="true">
 			{sites.map((site) => {
@@ -176,9 +191,36 @@ export function FitStrip({ sites, row, sentSiteId, focusSiteId, off }) {
 				if (focusSiteId) {
 					classes.push(focusSiteId === site.id ? 'rec-fit-col--focus' : 'rec-fit-col--dim');
 				}
+				if (sentSiteId && sentSiteId === site.id) {
+					const falls = !!(sentCell && sentCell.downed);
+					const kept = sentCell && !falls ? clamp01(sentCell.hold / FIT_SCALE) : 0;
+					const going = sentCell ? clamp01(Math.max(sentCell.before || 0, falls ? 0 : sentCell.hold) / FIT_SCALE) : kept;
+					classes.push('rec-fit-col--sent');
+					if (falls) classes.push('rec-fit-col--falls');
+					return (
+						<span className={classes.join(' ')} key={site.id} style={{ '--fit': kept.toFixed(4), '--fit-going': going.toFixed(4) }} data-fit-site={site.id} data-fit-sent={sentCell ? (falls ? 'falls' : sentCell.hold.toFixed(1)) : ''}>
+							<span className="rec-fit-num g-mono">{sentCell ? (falls ? <FallsMark /> : formatHoldShown(sentCell.hold)) : ''}</span>
+							<span className="rec-fit-well">
+								{going > kept + 0.001 && <span className="rec-fit-going" />}
+								<span className="rec-fit-bar" />
+							</span>
+						</span>
+					);
+				}
 				if (sentSiteId) {
-					classes.push(sentSiteId === site.id ? 'rec-fit-col--sent' : 'rec-fit-col--gone');
-					return <span className={classes.join(' ')} key={site.id} data-fit-site={site.id}><span className="rec-fit-num" /><span className="rec-fit-well"><span className="rec-fit-bar" /></span></span>;
+					const move = moveRow && moveRow[site.id];
+					if (!move) {
+						classes.push('rec-fit-col--gone');
+						return <span className={classes.join(' ')} key={site.id} data-fit-site={site.id}><span className="rec-fit-num" /><span className="rec-fit-well" /></span>;
+					}
+					classes.push('rec-fit-col--move');
+					if (move.swing < -EPS) classes.push('rec-fit-col--hurts');
+					return (
+						<span className={classes.join(' ')} key={site.id} style={{ '--fit': clamp01(move.swing / FIT_SCALE).toFixed(4) }} data-fit-site={site.id} data-fit-move={move.swing.toFixed(2)}>
+							<span className="rec-fit-num g-mono">{swingNumber(move.swing)}</span>
+							<span className="rec-fit-well"><span className="rec-fit-bar" /></span>
+						</span>
+					);
 				}
 				const cell = row && row[site.id];
 				if (!cell) {
@@ -201,7 +243,7 @@ export function FitStrip({ sites, row, sentSiteId, focusSiteId, off }) {
 						data-fit-takes={cell.takes ? '' : undefined}
 					>
 						{/* the number sits on its column: what this send would move that world, the same unit as the totals on the world's line */}
-						<span className="rec-fit-num g-mono">{cell.swing < -0.5 ? `−${formatHoldShown(-cell.swing)}` : formatHoldShown(Math.max(0, cell.swing))}</span>
+						<span className="rec-fit-num g-mono">{swingNumber(cell.swing)}</span>
 						<span className="rec-fit-well">
 							<span className="rec-fit-bar" />
 							{tick !== null && <span className="rec-fit-tick" />}

@@ -1027,3 +1027,60 @@ The top bar became a round track (the nine worlds, filled by who won them) and t
 **Verified:** 610 rules tests (new: the forecast's `before` is positive and never less than what the Clash leaves); 1621 web tests (the standing, its scale, the pennant on the winner's bar, the ticks and the pointer); the four table checks green, `reclamation-proving.mjs` now asserts every world's standing and numbers stay inside its world while a creature is lifted; the Clash and the Ruling shot at 1884 and 390.
 
 **Open, from Nick's next list (2026-09-23):** remove the act choice; say why a creature is worth its column (hold against what its attacks take); say why a figure's bar changes when an enemy arrives; explain a negative column; columns for a moving creature; a sent card's space; the eleventh send leaving a creature on the bench with no signal; the Clash to the last side standing, with a scene per world; Mandala's mechanics.
+
+### Pass 55 (2026-09-23): one act per creature, keep one back, the sent card and the move
+
+From Nick's list after pass 54:
+
+- **The act choice is off.** "I'm inclined to remove this concept of giving two options because it just complicates the game unnecessarily." `ACT_FLIP` is `false`; every creature does its one natural act again and no picker appears. The lever stays as an ablation, and `reclamation-actflip.mjs` now holds the other side of the seam: no lifted creature offers a picker, and the role that lands on the board is the one the card shows.
+  - **What it cost, measured** (validation report regenerated; simulator, three seeds at 500):
+
+    | | Round 1 | Round 2 | Round 3 |
+    |---|---|---|---|
+    | near-best options, act choice on (pass 25) | 7.5 | 5.0 | 3.53 |
+    | near-best options, off | 5.37 | 3.59 | 2.34 |
+    | round 3's one dominant answer, on / off | | | 30% / 47% |
+
+    - No naive policy comes within five points of the proctor.
+    - Downs are 3.3 to 4.05, in band.
+    - Resolve changing the leader is 21.3 to 24.9 percent, just under the 25 to 40 band.
+    - The comeback rate is 29.5 to 32.4 percent.
+    - The strike keeper win rate is 66 percent, over the 40 to 60 band.
+    - Not retuned here: the next pass's Clash moves every one of these, so it is re-measured there.
+- **"-13 if I place a creature there": shields cancel only the other side's attacks.** An engine investigation reproduced Nick's table exactly (Luminax, Dark Side Wastes: Avilily and Newtapede at -13).
+  - The forecast was right and the rule was wrong. A shield cancelled the largest attack declared against its own side, and its own side's sweeps counted, since sweeps hit allies too. One more creature under Kosanos's sweep turned Figzy's shield onto that sweep and off the rival's strike. Figzy fell to its own recoil cancelling a sweep that never landed, and the strike downed Kosanos.
+  - The new lever `SHIELD_OWN_SWEEPS` is off.
+  - It moves no bot gauge: seed 7 reads the same before and after, because the bot almost never stacks allies under its own sweep. The fix is for the human who does.
+  - Also fixed: a creature whose bolster fell could be counted below zero at the Ruling (seed nf225, Zolton, -0.6); `currentHoldOf` now floors at zero.
+  - Negative cells were 3.9 per 1000 fit cells. Of those, 97.7 percent come from a sweep catching your own creatures, which is intended and still unnamed on the card: that is the next pass's "why".
+- **Keep one back** (`reclamation-mandala-study.md`, recommendation 4). Nick: "I still had a creature left on my bench, but when I placed my second to last creature ... it didn't let me place my last creature."
+  - The cause is the rule, shown without a word. Eleven sends come from a squad of twelve, and the engine auto-passes a handler with no send left (`autoPassIfNoLegalSend`). So his eleventh send ended his round, and with the rival already passed the worlds clashed at once.
+  - Now the send that spends the last one says so on the message line through that round's Clash ("That was your last send: Ectoghoul stays in reserve.").
+  - A creature left in hand with no sends is drawn as the reserve: dimmed, a bookmark, and the rule on its title. It is never shown as a card that could still be played.
+  - The key says "one always stays back". `reclamation-proving.mjs` asserts the reserve whenever a side's sends run out.
+  - The Clash that follows says "Your sends are spent and the rival has passed", not "Both sides have passed".
+- **A sent card keeps its strip.**
+  - The column of the world it went to is its own forecast there. The bar is what the Clash would leave it, the hatched run is what the Clash would take, and a cross replaces the number when it would fall. Before, one blue bar was drawn the same height on every card (Nick: "a poor way to denote that").
+  - A swift creature that may still move shows, in its other columns, what each move would do across the frame, striped like every other "would be". This comes from a new engine `forecastMove()` (the real `moveSwift()`, then `forecastClash()`).
+  - While a move is in hand, pointing at a world previews it on every world's standing: the world it leaves loses it, the world it joins gains it.
+- **The Mandala study** is `reclamation-mandala-study.md`, researched from the official rulebook and the designers' rulings. The ranked recommendations are:
+  1. keep one back (shipped here);
+  2. the fight to the last side standing (Nick's own idea);
+  3. close a world when three distinct elements stand at it, with the Rule of Element;
+  4. the pool and the offer, in place of the stake;
+  5. rolling worlds and a pass you can come back from.
+- `reclamation-design.md` no longer says a lost world's creatures return at double cost (removed in pass 33).
+
+**Verified:**
+
+- 611 rules tests pass. New: `forecastMove` equals `forecastClash` after the real move and refuses what `moveSwift` refuses. The act choice's tests now turn the lever on themselves.
+- 1623 web tests pass. New: the sent column, the fall cross, and the move columns. The Long Return extraction test times out under full-suite load on this machine and passes alone.
+- The four table checks are green.
+- The sent cards, a real swift move (seed 11) and the reserve were shot and read.
+
+**Open, next:**
+
+- The fight to the last side standing, with a scene per world.
+- Why a creature is worth its column (hold against what its attacks take).
+- Who will hit whom when an enemy arrives.
+- The negative column.

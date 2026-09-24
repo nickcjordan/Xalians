@@ -1013,6 +1013,25 @@ class ReclamationMatch extends React.Component {
 			return;
 		}
 		this.tellSend(match, next, record, siteId);
+		/*
+			PASS 55, KEEP ONE BACK (docs/design/reclamation-mandala-study.md). Eleven sends from a
+			squad of twelve means one creature always stays back, as Mandala keeps one card in
+			hand. The engine auto-passes a handler with no send left, so the send that spends the
+			last one also ends your round, and when the rival has already passed the worlds clash
+			at once. Nick: "it didn't let me place my last creature". Said here, and kept on the
+			message line through that round's Clash.
+		*/
+		const meBefore = match.players[this.seatInPlay()];
+		const meAfter = next.players[this.seatInPlay()];
+		if (!meBefore.passed && meAfter.passed) {
+			// the roster is what is still in hand: everything else has been sent
+			const kept = meAfter.roster || [];
+			const names = kept.map((r) => speciesLabel(r));
+			const who = names.length === 0 ? '' : names.length === 1 ? `${names[0]} stays` : `${names.slice(0, -1).join(', ')} and ${names[names.length - 1]} stay`;
+			const note = `That was your last send${who ? `: ${who} in reserve` : ''}.`;
+			this.appendLog(note);
+			this.setState({ reserveNote: note });
+		}
 		this.cue('send');
 		if (this.props.telemetry) {
 			this.props.telemetry.decisionEnd('deploy', 'send', { round: match.frameIndex });
@@ -1172,10 +1191,10 @@ class ReclamationMatch extends React.Component {
 
 	/*
 		commitStep(before, next, extra) - every engine step the driver takes goes through
-		here. A send never closes a round; a pass may, and when it does the state that
-		comes back has already resolved and judged (the engine's pass() runs both in one
-		call), so `before` is the last state that still shows the round as it was played,
-		and is what the playback is drawn over.
+		here. A pass may close a round, and so may a send that spends a handler's last send
+		(the engine auto-passes a handler with no send left); when either does, the state that
+		comes back has already resolved and judged, so `before` is the last state that still
+		shows the round as it was played, and is what the playback is drawn over.
 	*/
 	commitStep = (before, next, extra) => {
 		const resolved = next.frameIndex !== before.frameIndex || next.phase === 'matchEnd';
@@ -1240,9 +1259,15 @@ class ReclamationMatch extends React.Component {
 				this.props.telemetry.coachDismissed({ beforeFirstOrders: false });
 			}
 		}
-		this.appendLog('Both sides have passed. The worlds clash.');
+		// pass 55: a round closed by a send that spent the last one was not closed by two passes
+		const spent = (seat) => (next.players[seat].sentCount || 0) > (before.players[seat].sentCount || 0);
+		const closedBy = spent(this.seatInPlay()) ? 'mine' : spent(this.seatOpponent()) ? 'theirs' : null;
+		const why = closedBy === 'mine' ? 'Your sends are spent and the rival has passed.'
+			: closedBy === 'theirs' ? 'The rival’s sends are spent and you have passed.'
+				: 'Both sides have passed.';
+		this.appendLog(`${why} The worlds clash.`);
 		this.cutBeats();
-		this.beat({ kind: 'resolve', seat: null, short: 'The clash', text: 'Both sides have passed. Each world clashes in turn, fastest first.' });
+		this.beat({ kind: 'resolve', seat: null, short: 'The clash', text: `${why} Each world clashes in turn, fastest first.` });
 		this.playbackStartedAt = Date.now();
 		this.setState({
 			match: next,
@@ -1524,7 +1549,7 @@ class ReclamationMatch extends React.Component {
 	};
 
 	nextFrame = () => {
-		this.setState({ verdicts: null, judged: false, judgedFrame: null, judgedSnapshot: null, lastRival: null }, () => {
+		this.setState({ verdicts: null, judged: false, judgedFrame: null, judgedSnapshot: null, lastRival: null, reserveNote: null }, () => {
 			const { match } = this.state;
 			const frame = match.frames[match.frameIndex];
 			const names = frameWorldNames(frame);
@@ -1848,9 +1873,9 @@ class ReclamationMatch extends React.Component {
 							)}
 					<p
 						className="rec-status-reach g-body"
-						data-still-reachable={stillReachable && !beat ? stillReachable.tone : 'none'}
+						data-still-reachable={this.state.reserveNote ? 'reserve' : stillReachable && !beat ? stillReachable.tone : 'none'}
 					>
-						{stillReachable && !beat ? stillReachable.text : ''}
+						{this.state.reserveNote || (stillReachable && !beat ? stillReachable.text : '')}
 					</p>
 				</div>
 
@@ -2059,10 +2084,24 @@ class ReclamationMatch extends React.Component {
 		const scale = standingScale(fits, arrivals);
 		const previewId = ghosts ? (this.state.armedRecordId || this.state.hoverRecordId) : null;
 		const previewRow = previewId && fits ? fits.fits[previewId] : null;
-		const preview = previewRow ? Object.fromEntries(Object.entries(previewRow).map(([siteId, cell]) => [siteId, {
+		let preview = previewRow ? Object.fromEntries(Object.entries(previewRow).map(([siteId, cell]) => [siteId, {
 			totals: orient(cell.after),
 			forecast: cell.forecast,
 		}])) : null;
+		/*
+			PASS 55. A swift creature being moved previews the move on every world while a world
+			is pointed at: the world it would leave loses it and the world it would join gains
+			it, from the engine's own move and forecast (fitTable's moves).
+		*/
+		const movingId = this.state.movingRecordId;
+		const moveCell = movingId && this.state.hoverSiteId && fits && fits.moves && fits.moves[movingId]
+			? fits.moves[movingId][this.state.hoverSiteId] : null;
+		if (moveCell) {
+			preview = Object.fromEntries(Object.entries(moveCell.after).map(([siteId, totals]) => [siteId, {
+				totals: orient(totals),
+				forecast: moveCell.forecast,
+			}]));
+		}
 		const reach = deploying ? reachabilityLine(view, me, them) : null;
 
 		// assumption 20: your swift creatures that may still move this round, as the bench's

@@ -195,6 +195,32 @@ describe('the instruments', () => {
 		expect(cols[1].className).toContain('rec-fit-col--sent');
 	});
 
+	// pass 55: the sent column is the creature's own forecast there, not one bar the same height on every card
+	it('draws a sent creature as what the Clash would leave it, and a cross where it would fall', () => {
+		const sites = [{ id: 's1', world: { planet: 'One', element: 'fire' } }, { id: 's2', world: { planet: 'Two', element: 'air' } }];
+		const kept = render(<FitStrip sites={sites} row={null} sentSiteId="s1" sentCell={{ hold: 9.4, downed: false, before: 14 }} />);
+		const col = kept.container.querySelector('[data-fit-site="s1"]');
+		expect(col.getAttribute('data-fit-sent')).toBe('9.4');
+		expect(col.querySelector('.rec-fit-num').textContent).toBe('9');
+		expect(Number(col.style.getPropertyValue('--fit'))).toBeCloseTo(9.4 / FIT_SCALE, 3);
+		expect(col.querySelector('.rec-fit-going')).not.toBeNull();
+		const falls = render(<FitStrip sites={sites} row={null} sentSiteId="s1" sentCell={{ hold: 0, downed: true, before: 8 }} />);
+		const fallen = falls.container.querySelector('[data-fit-site="s1"]');
+		expect(fallen.getAttribute('data-fit-sent')).toBe('falls');
+		expect(fallen.className).toContain('rec-fit-col--falls');
+		expect(fallen.querySelector('.rec-fit-falls')).not.toBeNull();
+	});
+
+	it('draws what a swift creature would do by moving, in the columns of the worlds it could step to', () => {
+		const sites = [{ id: 's1', world: { planet: 'One', element: 'fire' } }, { id: 's2', world: { planet: 'Two', element: 'air' } }, { id: 's3', world: { planet: 'Three', element: 'ice' } }];
+		const { container } = render(<FitStrip sites={sites} row={null} sentSiteId="s1" sentCell={{ hold: 9, downed: false, before: 9 }} moveRow={{ s2: { swing: 6.2 }, s3: { swing: -5.8 } }} />);
+		const cols = [...container.querySelectorAll('[data-fit-site]')];
+		expect(cols[1].className).toContain('rec-fit-col--move');
+		expect(cols[1].querySelector('.rec-fit-num').textContent).toBe('6');
+		expect(cols[2].className).toContain('rec-fit-col--hurts');
+		expect(cols[2].querySelector('.rec-fit-num').textContent).toBe('\u22126');
+	});
+
 	it('puts the rival row above yours, each with its sends and its turn lamp, and marks a rival pass', () => {
 		const { container } = render(<ScorePips mine={1} theirs={3} toClinch={5} rivalPassed mySends={8} theirSends={6} myCap={11} theirCap={11} worldsAhead={6} turn="mine" />);
 		const rows = [...container.querySelectorAll('.rec-score-row')];

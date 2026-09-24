@@ -9,7 +9,7 @@ import {
 import {
 	ROSTER_SIZE, SENDABLE, SITES_TO_CLINCH, WORLDS_PER_MATCH, FRAMES_PER_MATCH, WORLDS_PER_FRAME,
 	ROUND_SEND_CAP,
-	PROJECTION_REACH, PROJECTION_FALLOFF, ACT_FLIP,
+	PROJECTION_REACH, PROJECTION_FALLOFF, ACT_FLIP, SHIELD_OWN_SWEEPS,
 	ROSTER_TRAILING_BONUS, ROLE, HOLD_FLOOR, HOLD_CEILING, MAGNITUDE_SCALE, SWEEP_DISCOUNT,
 	BOLSTER_FLOOR, ARMORED_REDUCTION, SHIELD_CAP, WILLFUL_THRESHOLD, KEEN_INSTINCT,
 	DULL_INSTINCT, KEEN_FIGHTS_HURT, SWIFT_SPEED, BOLSTER_RECOVERY,
@@ -647,6 +647,21 @@ describe('the four roles', () => {
 		expect(shielderRow.damage).toBeGreaterThanOrEqual(shield.selfDamage);
 	});
 
+	/*
+		PASS 55. A shield stands against the other side only. It used to cancel the largest attack
+		declared against its own side counting its own side's sweeps, so a crowd of allies under
+		your own sweep could turn the shield off the rival's strike (Nick's -13 cards).
+	*/
+	test('a shield never cancels its own side sweep, and did with the old lever on', () => {
+		const crowd = [shielder, areaCreature, smallStriker, smallStriker];
+		const now = deploy(crowd, [smallStriker], 'own-sweep-seed');
+		const shieldsNow = (now.resolutionLog as any[]).filter((e: any) => e.type === 'shield');
+		shieldsNow.forEach((e: any) => expect(String(e.cancelled || '')).not.toMatch(/^A_/));
+		const old = deploy(crowd, [smallStriker], 'own-sweep-seed', { shieldOwnSweeps: true });
+		const shieldsOld = (old.resolutionLog as any[]).filter((e: any) => e.type === 'shield');
+		expect(shieldsOld.some((e: any) => e.cancelled === 'A_1')).toBe(true);
+	});
+
 	test('a shield switched off leaves a plain holder that cancels nothing', () => {
 		const state = deploy([shielder, smallStriker], [bigStriker, smallStriker], 'shield-seed', { roles: { shield: false } });
 		expect((state.resolutionLog as any[]).filter((e: any) => e.type === 'shield').length).toBe(0);
@@ -1261,10 +1276,12 @@ describe('rules ablation switches', () => {
 			// built on the condition it names and shipped OFF. It fires hard (sweep victims
 			// 10.2 to 14.4 a match) and moves no gauge: reach adds damage across worlds and
 			// the decision is about which world to commit to. See PROJECTION_REACH.
-			// Pass 25: act flip, the second decision axis. Shipped ON: it takes round-three
-			// decision depth from 2.05 near-best options to 3.53 and the dominant share from
-			// 50 percent to 30, and unlike reach it does not deplete with the roster.
+			// Pass 25: act flip, the second decision axis. It took round-three decision depth
+			// from 2.05 near-best options to 3.53. Pass 55 turned it OFF on Nick's word (the
+			// choice read as an unexplained complication); off it measures 2.34.
 			actFlip: ACT_FLIP,
+			// Pass 55: shields cancel only the other side's attacks, never their own sweep
+			shieldOwnSweeps: SHIELD_OWN_SWEEPS,
 			projectionReach: PROJECTION_REACH,
 			projectionFalloff: PROJECTION_FALLOFF,
 			worldsPerFrame: WORLDS_PER_FRAME,
