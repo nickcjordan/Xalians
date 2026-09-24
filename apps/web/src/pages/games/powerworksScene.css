@@ -730,18 +730,6 @@
 .pw .pw-action-duet {
   display: none;
 }
-.pw .pw-command.resolving {
-  height: 130px;
-  min-height: 130px;
-}
-.pw .pw-action-story {
-  min-height: 52px;
-  justify-content: center;
-  text-align: center;
-}
-.pw .pw-action-copy p {
-  font-size: 14px;
-}
 .pw .pw-briefing {
   position: relative;
   isolation: isolate;
@@ -910,24 +898,6 @@
   }
   .pw-scene-direction > span:last-child {
     max-width: 300px;
-  }
-  .pw .pw-command.resolving {
-    height: 165px;
-    min-height: 165px;
-    gap: 12px;
-  }
-  .pw .pw-action-story {
-    min-height: 75px;
-  }
-  .pw .pw-action-copy > strong {
-    font-size: 18px;
-  }
-  .pw .pw-playback-controls button {
-    font-size: 12px;
-    min-height: 36px;
-  }
-  .pw .pw-playback-controls button:last-child {
-    font-size: 0;
   }
   .pw .pw-briefing {
     padding: 30px 20px;
@@ -1215,27 +1185,11 @@
     margin-bottom: auto;
   }
 }
-.pw .pw-order-link {
-  padding: 0 3px;
-  gap: 2px;
-  min-width: 36px;
-  min-height: 30px;
-  border-radius: 4px;
-  font-size: 12px;
-  background: var(--panel);
-}
-.pw-order-link .pw-portrait.small {
-  width: 20px;
-  height: 24px;
-}
 .pw-target-orders {
   display: flex;
   gap: 2px;
   justify-content: center;
   margin-top: 3px;
-}
-.pw .pw-order-link.active {
-  border-color: var(--lime);
 }
 .pw-queued-path {
   stroke: var(--lime);
@@ -1352,14 +1306,6 @@
   }
   .pw-scene-status {
     gap: 2px;
-  }
-  .pw .pw-order-link {
-    min-height: 24px;
-    min-width: 25px;
-    padding: 0 2px;
-  }
-  .pw-order-link .pw-portrait.small {
-    display: none;
   }
     .pw-action-banner {
     padding: 4px 9px;

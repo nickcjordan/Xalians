@@ -5,6 +5,7 @@ import { createRun, type Frame } from "@xalians/rules/dungeon";
 import {
   PowerworksScene,
   chipText,
+  listNames,
   type OrderChip,
   type UnitPreview,
 } from "./powerworksScene";
@@ -72,7 +73,9 @@ describe("shared battlefield", () => {
     });
     // Round 2 review: who aims at a unit shows only while that unit is hovered, named.
     expect(screen.queryByRole("button", { name: /^Edit / })).toBeNull();
-    fireEvent.mouseEnter(container.querySelector(`[data-unit="${target.id}"]`)!);
+    fireEvent.pointerEnter(container.querySelector(`[data-unit="${target.id}"]`)!, {
+      pointerType: "mouse",
+    });
     expect(screen.getByRole("group", { name: `Targeted by ${unit.name}` })).toHaveTextContent(
       `Targeted by ${unit.name}`
     );
@@ -85,6 +88,98 @@ describe("shared battlefield", () => {
       expect.objectContaining({ id: unit.id }),
       true
     );
+  });
+
+  it("names who aims at a unit as a sentence, only on a mouse hover or keyboard focus, never on a touch, and a tap anywhere closes it", () => {
+    const run = createRun(1);
+    const [a, b, c] = run.team;
+    const target = run.enemies[0];
+    const { container } = scene(undefined, {
+      plans: {
+        [a.id]: { move: 0, target: target.id },
+        [b.id]: { move: 0, target: target.id },
+        [c.id]: { move: 0, target: target.id },
+      },
+    });
+    const unit = container.querySelector(`[data-unit="${target.id}"]`)!;
+    const list = () => screen.queryByRole("group", { name: /^Targeted by / });
+    // jsdom has no PointerEvent: a stand-in that carries its pointer type.
+    class Pointer extends MouseEvent {
+      pointerType: string;
+      constructor(type: string, init: PointerEventInit = {}) {
+        super(type, init);
+        this.pointerType = init.pointerType ?? "mouse";
+      }
+    }
+    vi.stubGlobal("PointerEvent", Pointer);
+    // A touch leaves a sticky hover behind: it never opens the list.
+    fireEvent.pointerEnter(unit, { pointerType: "touch" });
+    expect(list()).toBeNull();
+    // A mouse hover does, worded as a sentence, each name the control that edits its order.
+    fireEvent.pointerEnter(unit, { pointerType: "mouse" });
+    const sentence = `Targeted by ${a.name}, ${b.name} and ${c.name}`;
+    expect(list()).toHaveAccessibleName(sentence);
+    expect(list()).toHaveTextContent(sentence);
+    for (const p of [a, b, c])
+      expect(
+        screen.getByRole("button", { name: `Edit ${p.name}'s order targeting ${target.name}` })
+      ).toHaveTextContent(new RegExp(`^${p.name}$`));
+    // No thumbnails: the names carry it.
+    expect(list()!.querySelector(".pw-portrait")).toBeNull();
+    fireEvent.pointerLeave(unit, { pointerType: "mouse" });
+    expect(list()).toBeNull();
+    // Keyboard focus opens it; the next tap anywhere closes it.
+    act(() => {
+      screen.getByRole("button", { name: `Target ${target.name} ${target.id}` }).focus();
+    });
+    expect(list()).not.toBeNull();
+    // A mouse press inside it does not; a tap anywhere does.
+    fireEvent.pointerDown(unit, { pointerType: "mouse" });
+    expect(list()).not.toBeNull();
+    fireEvent.pointerDown(container.querySelector(".pw-theater")!, { pointerType: "touch" });
+    expect(list()).toBeNull();
+    vi.unstubAllGlobals();
+  });
+
+  it("words a list of names as a sentence", () => {
+    expect(listNames([])).toBe("");
+    expect(listNames(["Avilily"])).toBe("Avilily");
+    expect(listNames(["Avilily", "Crystorn"])).toBe("Avilily and Crystorn");
+    expect(listNames(["Avilily", "Graviclaw", "Crystorn"])).toBe(
+      "Avilily, Graviclaw and Crystorn"
+    );
+  });
+
+  it("names every playback beat on the stage's banner, the target before the blow and what it did after", () => {
+    const run = createRun(1);
+    const [actor] = run.team;
+    const [target] = run.enemies;
+    const frame: Frame = {
+      team: run.team,
+      enemies: run.enemies,
+      text: "A hit.",
+      event: { kind: "hit", actorId: actor.id, targetId: target.id, moveName: actor.moves[0].name, amount: 3 },
+    };
+    const story = { eyebrow: actor.name, title: actor.moves[0].name, caption: null };
+    const { container } = scene(frame, { impact: false, story });
+    const banner = () => container.querySelector(".pw-theater > .pw-action-banner");
+    // An ordinary move carries the banner too, not only a signature.
+    expect(banner()).not.toBeNull();
+    expect(banner()!.querySelector(".pw-action-banner-head small")).toHaveTextContent(actor.name);
+    expect(banner()!.querySelector(".pw-action-banner-head strong")).toHaveTextContent(
+      actor.moves[0].name
+    );
+    expect(banner()!.querySelector(".pw-action-banner-line")).toHaveTextContent(`On ${target.name}`);
+    cleanup();
+    const after = scene(frame, {
+      impact: true,
+      story: { ...story, caption: `${target.name} takes 3 damage.` },
+    });
+    expect(
+      after.container.querySelector(".pw-action-banner .pw-action-banner-line")
+    ).toHaveTextContent(`${target.name} takes 3 damage.`);
+    // Only the one banner names the beat: nothing else on the stage repeats it.
+    expect(after.container.querySelectorAll(".pw-action-banner")).toHaveLength(1);
   });
 
   it("carries each companion's order on a chip under its health, and the chip reopens its ring", () => {

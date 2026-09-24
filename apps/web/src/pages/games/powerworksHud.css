@@ -275,22 +275,6 @@
 .pw-briefing h1,
 .pw-outcome-heading h2,
 .pw-dialog header h2 { color: #f1dfb0; text-shadow: 0 2px #071014; }
-.pw-command.resolving {
-  background: linear-gradient(180deg, #314047, #182a31 12%, #0c1b23);
-}
-.pw-action-story {
-  padding: 3px 12px;
-  border-left: 2px solid #c7a565;
-  background: linear-gradient(90deg, #e9cc8730, #d0a95a08 35%, transparent);
-}
-.pw-action-copy > strong { color: #f5e9c8; font-family: var(--font-legend); }
-.pw-playback-controls > span { color: #d5c19a; }
-.pw .pw-playback-controls button {
-  border-radius: 2px;
-  border-color: #998562;
-  background: linear-gradient(#304148, #102029);
-  box-shadow: inset 0 1px #ddc68c55;
-}
 .pw-outcome,
 .pw-outcome.lost {
   border: 1px solid #ac945f;
@@ -338,4 +322,148 @@
   .pw-unit-plaque strong { font-size: 10px; }
   .pw-command { border-top-width: 2px; }
   .pw-commit { margin-top: 0; }
+}
+
+/*
+  Overlay pass: the stage never resizes when a round plays. The playback controls take the
+  commit control's place in the bottom bar, and the on-stage banner is the one place a beat
+  is named: who acts and the move, then one small line (the target before the blow lands,
+  what it did once it has). Every beat carries the banner, so the camera always keeps the
+  pushed squad above it.
+*/
+.pw-action-banner {
+  min-width: min(300px, calc(100% - 24px));
+  justify-content: center;
+  border-bottom-color: #bca779;
+}
+.pw-action-banner.signature {
+  border-bottom-color: var(--lime);
+}
+.pw-action-banner > div {
+  min-width: 0;
+  text-align: center;
+}
+.pw-action-banner-head {
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.pw-action-banner-line {
+  margin: 1px 0 0;
+  font: 500 13px/1.3 var(--font-body);
+  color: #d9d2bd;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.pw-commit.playing .pw-order-count svg {
+  width: 20px;
+  height: 20px;
+  color: #d5c19a;
+}
+.pw-commit.playing .pw-readiness small {
+  font-variant-numeric: tabular-nums;
+}
+.pw-playback-controls {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: none;
+}
+.pw .pw-playback-controls button {
+  min-height: 40px;
+  padding: 0 12px;
+  gap: 6px;
+  font-size: 13px;
+  border-radius: 2px;
+  border-color: #998562;
+  background: linear-gradient(#304148, #102029);
+  box-shadow: inset 0 1px #ddc68c55;
+}
+.pw-playback-controls svg {
+  width: 15px;
+  height: 15px;
+}
+.pw .pw-playback-controls .pw-speed {
+  min-width: 44px;
+  padding: 0 8px;
+  font-variant-numeric: tabular-nums;
+}
+@media (max-width: 600px) {
+  /* A phone's banner line may wrap to two lines, and the banner keeps room for both from
+     the start of the beat (a shorter line sits centred), so it never grows under a pushed
+     squad. */
+  .pw-action-banner {
+    max-width: calc(100% - 16px);
+  }
+  .pw-action-banner > div {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 49px;
+  }
+  .pw-action-banner-line {
+    -webkit-line-clamp: 2;
+    font-size: 12px;
+  }
+  /* The controls are icons on a phone, each a full 44px target; their names stay. */
+  .pw-playback-controls {
+    gap: 4px;
+  }
+  .pw .pw-playback-controls button,
+  .pw .pw-playback-controls .pw-speed {
+    min-width: 44px;
+    min-height: 44px;
+    padding: 0;
+  }
+  .pw-playback-controls .pw-control-label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+  }
+  .pw-playback-controls svg {
+    width: 18px;
+    height: 18px;
+  }
+}
+/* Who aims at a unit reads as a sentence (overlay pass): each name is the inline control
+   that edits that companion's order, with no thumbnail. */
+.pw .pw-target-orders {
+  max-width: 280px;
+  padding: 4px 8px 5px;
+}
+.pw .pw-target-orders-label {
+  font: 600 12px/1.45 var(--font-legend);
+  text-wrap: balance;
+}
+.pw-order-name {
+  white-space: nowrap;
+}
+.pw .pw-order-link {
+  display: inline;
+  min-width: 0;
+  min-height: 0;
+  padding: 0 1px;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  font: inherit;
+  color: #f7e7bb;
+  text-decoration: underline dotted #bca779;
+  text-underline-offset: 3px;
+}
+.pw .pw-order-link.active {
+  color: var(--lime);
+}
+@media (hover: hover) and (pointer: fine) {
+  .pw .pw-order-link:hover:not(:disabled) {
+    background: none;
+    text-decoration-style: solid;
+  }
 }

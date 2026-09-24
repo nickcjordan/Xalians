@@ -98,6 +98,28 @@ export type UnitPreview = HealthPreview & {
 /** The one-shot beat when an order locks: the target ring flashes, the chip lights. */
 export type OrderFlash = { actor: string; target: string | null; stamp: number };
 
+/**
+  The playback beat as the on-stage banner names it (overlay pass): who acts, the move, and
+  one small line, the target before the blow lands and what it did once it has. The banner
+  is the one place a beat is named; the page passes it for every frame of a round.
+*/
+export type BeatStory = { eyebrow: string; title: string; caption: string | null };
+
+/** Names as a sentence lists them: "Avilily", "Avilily and Crystorn", "Avilily, Graviclaw and Crystorn". */
+export function listNames(names: string[]) {
+  if (names.length <= 1) return names[0] ?? "";
+  return `${names.slice(0, -1).join(", ")} and ${names[names.length - 1]}`;
+}
+
+/** Whether focus arrived from the keyboard rather than a pointer: a tap focuses too. */
+function keyboardFocus(el: Element) {
+  try {
+    return el.matches(":focus-visible");
+  } catch {
+    return true;
+  }
+}
+
 export const sectorStory = [
   {
     name: "Service entrance",
@@ -247,6 +269,7 @@ export function PowerworksScene({
   flash = null,
   hints = {},
   beatMs,
+  story = null,
 }: {
   team: Unit[];
   enemies: Unit[];
@@ -289,6 +312,8 @@ export function PowerworksScene({
   hints?: Record<string, UnitPreview>;
   /** How long this playback beat lasts as the page runs it, in milliseconds. */
   beatMs?: number;
+  /** The playback beat's names for the on-stage banner; null while planning. */
+  story?: BeatStory | null;
 }) {
   const open = onOpen ?? onSelect;
   const [arriving, setArriving] = useState(true);
@@ -370,8 +395,20 @@ export function PowerworksScene({
     layerRef = useRef<HTMLDivElement>(null);
   const stage: StageRefs = { stage: stageRef, layer: layerRef };
   const [size, setSize] = useState("");
-  // The unit whose who-targets-it chips are showing: only the one hovered or focused.
+  // The unit whose who-targets-it list is showing: only the one a mouse hovers or the
+  // keyboard focuses. A touch leaves a sticky hover and a tap focuses, so neither opens it,
+  // and the next tap anywhere closes one the keyboard opened (overlay pass).
   const [peek, setPeek] = useState<string | null>(null);
+  useEffect(() => {
+    if (!peek) return;
+    const tap = (e: PointerEvent) => {
+      if (e.pointerType === "mouse") return;
+      if ((e.target as Element | null)?.closest?.(".pw-target-orders")) return;
+      setPeek(null);
+    };
+    document.addEventListener("pointerdown", tap, true);
+    return () => document.removeEventListener("pointerdown", tap, true);
+  }, [peek]);
   const beatActor = !planning && !reducedMotion && frame && actor ? actor.id : null;
   const beatTarget =
     beatActor && recipient && recipient.id !== beatActor ? recipient.id : null;
@@ -659,9 +696,11 @@ export function PowerworksScene({
                   ineligible ? "ineligible" : ""
                 } ${faint ? "hinted" : ""} ${resting ? "resting" : ""}`}
                 data-unit={u.id}
-                onMouseEnter={() => setPeek(u.id)}
-                onMouseLeave={() => setPeek((p) => (p === u.id ? null : p))}
-                onFocus={() => setPeek(u.id)}
+                onPointerEnter={(e) => e.pointerType !== "touch" && setPeek(u.id)}
+                onPointerLeave={(e) =>
+                  e.pointerType !== "touch" && setPeek((p) => (p === u.id ? null : p))
+                }
+                onFocus={(e) => keyboardFocus(e.target) && setPeek(u.id)}
                 onBlur={(e) => {
                   if (!e.currentTarget.contains(e.relatedTarget as Node | null))
                     setPeek((p) => (p === u.id ? null : p));
@@ -700,9 +739,15 @@ export function PowerworksScene({
                   aria-describedby={!u.enemy && chip ? `order-${u.id}` : undefined}
                   disabled={!planning || u.hp <= 0 || (u.enemy && !!move && !target)}
                   onClick={(e) => act(e.detail === 0)}
-                  onMouseEnter={() => (u.enemy || target) && onHover(u.id)}
-                  onMouseLeave={() => onHover(null)}
-                  onFocus={() => (u.enemy || target) && onHover(u.id)}
+                  // A mouse aims on hover and the keyboard on focus. A touch aims with its
+                  // tap, which sets the order at once, so it leaves no sticky aim behind.
+                  onPointerEnter={(e) =>
+                    e.pointerType !== "touch" && (u.enemy || target) && onHover(u.id)
+                  }
+                  onPointerLeave={(e) => e.pointerType !== "touch" && onHover(null)}
+                  onFocus={(e) =>
+                    (u.enemy || target) && keyboardFocus(e.currentTarget) && onHover(u.id)
+                  }
                   onBlur={() => onHover(null)}
                 >
                   <span className="pw-ground" />
@@ -858,27 +903,33 @@ export function PowerworksScene({
                   {u.enemy && shock}
                 </div>
                 {planning && !move && queued.length > 0 && peek === u.id && (
-                  // Who already aims here, shown only while this unit is hovered or
-                  // focused, and named (round 2 review). While a move is armed the
-                  // target's own preview speaks instead.
+                  // Who already aims here, shown only while a mouse hovers this unit or the
+                  // keyboard focuses it, and named. Each name edits that companion's order.
+                  // While a move is armed the target's own preview speaks instead.
                   <div
                     className="pw-target-orders"
                     role="group"
-                    aria-label={`Targeted by ${queued.map((p) => p.name).join(" and ")}`}
+                    aria-label={`Targeted by ${listNames(queued.map((p) => p.name))}`}
                   >
                     <span className="pw-target-orders-label">
-                      Targeted by {queued.map((p) => p.name).join(" and ")}
+                      Targeted by{" "}
+                      {queued.map((p, k) => (
+                        <React.Fragment key={p.id}>
+                          {/* A name keeps its comma on its own line. */}
+                          <span className="pw-order-name">
+                            <button
+                              className={`pw-order-link ${active?.id === p.id ? "active" : ""}`}
+                              aria-label={`Edit ${p.name}'s order targeting ${labelFor(u)}`}
+                              onClick={(e) => open(p, e.detail === 0)}
+                            >
+                              {p.name}
+                            </button>
+                            {k < queued.length - 2 ? "," : ""}
+                          </span>
+                          {k === queued.length - 2 ? " and " : k < queued.length - 1 ? " " : ""}
+                        </React.Fragment>
+                      ))}
                     </span>
-                    {queued.map((p) => (
-                      <button
-                        key={p.id}
-                        className={`pw-order-link ${active?.id === p.id ? "active" : ""}`}
-                        aria-label={`Edit ${p.name}'s order targeting ${labelFor(u)}`}
-                        onClick={(e) => open(p, e.detail === 0)}
-                      >
-                        <Portrait u={p} small />
-                      </button>
-                    ))}
                   </div>
                 )}
               </div>
@@ -886,37 +937,56 @@ export function PowerworksScene({
           })}
         </div>
         {frame &&
-          (signature ||
+          (story ||
+            signature ||
             phase === "blocked" ||
             phase === "redirect" ||
             (bossDefeat && impact)) && (
-            <div className={`pw-action-banner ${phase}`} key={`banner-${frameIndex}`}>
+            // The one place a beat is named (overlay pass): who acts and the move, then one
+            // small line, the target before the blow lands and what it did once it has. The
+            // line keeps its room before the blow, so the banner never grows mid-beat.
+            <div
+              className={`pw-action-banner ${phase} ${signature ? "signature" : ""}`}
+              key={`banner-${frameIndex}`}
+            >
               {bossDefeat && impact ? (
                 <Crown />
               ) : phase === "blocked" ? (
                 <Ban />
               ) : phase === "redirect" ? (
                 <CornerUpRight />
-              ) : (
+              ) : signature ? (
                 <Crown />
-              )}
+              ) : null}
               <div>
-                <small>
-                  {bossDefeat && impact
-                    ? "Defense disabled"
-                    : phase === "blocked"
-                    ? "Stopped by binding"
-                    : phase === "redirect"
-                    ? "Target changed"
-                    : `${actor?.name} · Signature`}
-                </small>
-                <strong>
-                  {bossDefeat && impact
-                    ? "The guardian falls"
-                    : phase === "redirect"
-                    ? `Now targeting ${recipient ? labelFor(recipient) : ""}`
-                    : event?.moveName || "Cannot act"}
-                </strong>
+                <p className="pw-action-banner-head">
+                  <small>
+                    {bossDefeat && impact
+                      ? "Defense disabled"
+                      : phase === "blocked"
+                      ? "Stopped by binding"
+                      : phase === "redirect"
+                      ? "Target changed"
+                      : signature
+                      ? `${actor?.name} · Signature`
+                      : story?.eyebrow}
+                  </small>
+                  <strong>
+                    {bossDefeat && impact
+                      ? "The guardian falls"
+                      : phase === "redirect"
+                      ? `Now targeting ${recipient ? labelFor(recipient) : ""}`
+                      : story?.title || event?.moveName || "Cannot act"}
+                  </strong>
+                </p>
+                {story && (
+                  <p className="pw-action-banner-line">
+                    {story.caption ??
+                      (recipient && actor && recipient.id !== actor.id && phase !== "redirect"
+                        ? `On ${labelFor(recipient)}`
+                        : "\u00a0")}
+                  </p>
+                )}
               </div>
             </div>
           )}

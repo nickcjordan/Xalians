@@ -143,6 +143,51 @@ describe("Powerworks player flow", () => {
     fireEvent.click(screen.getByRole("button", { name: "Combat record" }));
     expect(screen.getByRole("log")).toHaveTextContent("Emergency Water Cannon");
   });
+  it("plays a round in the planning stage's place: the controls take Commit's place in the bottom bar and the banner names the beat", () => {
+    mount();
+    fireEvent.click(screen.getByRole("button", { name: "Take the starter squad" }));
+    planAll({
+      Hippochamp: "Emergency Water Cannon",
+      Crystorn: "Gem Radiance",
+      Avilily: "Blossoming Ambuscade",
+      Graviclaw: "Gravity Pincer",
+    });
+    const shell = document.querySelector(".pw-battle-shell")!;
+    // The stage and the bottom bar, and nothing else: the stage takes whatever the bar leaves.
+    const layout = () =>
+      [...shell.children].map((el) => `${el.tagName}.${el.classList[0]}`);
+    const planningLayout = layout();
+    expect(planningLayout).toEqual(["SECTION.pw-theater", "FOOTER.pw-commit"]);
+    fireEvent.click(screen.getByRole("button", { name: "Commit round" }));
+    // Playback adds nothing under the stage, so the stage keeps its planning size.
+    expect(layout()).toEqual(planningLayout);
+    expect(document.querySelector(".pw-command")).toBeNull();
+    expect(screen.queryByRole("button", { name: "Commit round" })).toBeNull();
+    const controls = screen.getByRole("group", { name: "Round playback" });
+    expect(controls.closest(".pw-commit")).not.toBeNull();
+    for (const name of ["Pause playback", "Next action", "Playback speed 1x", "Show round result"])
+      expect(controls).toContainElement(screen.getByRole("button", { name }));
+    // The banner on the stage is the one place the beat is named.
+    const banner = () => document.querySelector(".pw-theater > .pw-action-banner");
+    expect(banner()).not.toBeNull();
+    expect(banner()!.querySelector(".pw-action-banner-line")).not.toBeNull();
+    expect(document.querySelectorAll(".pw-action-banner")).toHaveLength(1);
+    // Pausing, stepping and changing speed keep their names and their place.
+    fireEvent.click(screen.getByRole("button", { name: "Pause playback" }));
+    expect(screen.getByRole("button", { name: "Resume playback" })).toBeInTheDocument();
+    expect(document.querySelector(".pw-commit")).toHaveTextContent(/Paused · Action 1 of \d+/);
+    fireEvent.click(screen.getByRole("button", { name: "Next action" }));
+    expect(document.querySelector(".pw-commit")).toHaveTextContent(/Action 2 of \d+/);
+    expect(banner()).not.toBeNull();
+    fireEvent.click(screen.getByRole("button", { name: "Playback speed 1x" }));
+    expect(screen.getByRole("button", { name: "Playback speed 2x" })).toBeInTheDocument();
+    expect(layout()).toEqual(planningLayout);
+    // The round result: the bar is Commit's again.
+    fireEvent.click(screen.getByRole("button", { name: "Show round result" }));
+    expect(layout()).toEqual(planningLayout);
+    expect(screen.getByRole("button", { name: "Commit round" })).toBeInTheDocument();
+    expect(banner()).toBeNull();
+  });
   it("recovers from an invalid save and explains the temporary exhaustion rule", () => {
     localStorage.setItem("xalians.powerworks.v1", "{broken");
     mount();
@@ -651,7 +696,7 @@ describe("Powerworks player flow", () => {
       expect(document.querySelector('[data-unit="H"]')).not.toHaveClass("ineligible");
       // Aiming at Crawler 1: it rises, the intent line runs to it, the sweep's area marks
       // Crawler 2 with its own chunk, and the card gains the one line for Crawler 1.
-      fireEvent.mouseEnter(target);
+      fireEvent.pointerEnter(target, { pointerType: "mouse" });
       expect(unit).toHaveClass("aimed");
       expect(document.querySelector('.pw-aim-path[data-aim="M1"]')).not.toBeNull();
       const m2 = document.querySelector('[data-unit="M2"]')!;
@@ -664,7 +709,7 @@ describe("Powerworks player flow", () => {
       expect(moveCard()!.querySelector(".pw-radial-card-target")).toHaveTextContent(
         `Crawler 1: ${hit} damage, 22 to ${22 - hit}`
       );
-      fireEvent.mouseLeave(target);
+      fireEvent.pointerLeave(target, { pointerType: "mouse" });
       expect(moveCard()).toHaveTextContent("Choose an enemy");
     });
 
@@ -902,7 +947,7 @@ describe("Powerworks player flow", () => {
         new RegExp(`shocks back ${shock} damage to Hippochamp$`)
       );
       // Aiming at it puts the discharge on the card's one line.
-      fireEvent.mouseEnter(targetButton(`Target ${guardian.name} ${guardian.id}`));
+      fireEvent.pointerEnter(targetButton(`Target ${guardian.name} ${guardian.id}`), { pointerType: "mouse" });
       expect(moveCard()!.querySelector(".pw-radial-card-target")).toHaveTextContent(`; shocks back ${shock}`);
       // A ranged strike does not touch it: no mark.
       fireEvent.keyDown(window, { key: "Escape" });

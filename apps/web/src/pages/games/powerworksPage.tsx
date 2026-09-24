@@ -93,6 +93,7 @@ import {
   PowerworksScene,
   ExpeditionTrail,
   sectorStory,
+  type BeatStory,
   type OrderChip,
   type OrderFlash,
   type UnitPreview,
@@ -617,6 +618,13 @@ export default function PowerworksPage() {
       setError("");
       setNotice("Orders committed. Resolving the round.");
       revealControls(".pw-theater", "start");
+      // Commit leaves the bar as the playback controls take its place: focus follows them.
+      if (document.activeElement?.closest(".pw-commit"))
+        requestAnimationFrame(() =>
+          document
+            .querySelector<HTMLButtonElement>(".pw-playback-controls button")
+            ?.focus({ preventScroll: true })
+        );
     } catch (e) {
       setError((e as Error).message);
     }
@@ -1141,6 +1149,21 @@ export default function PowerworksPage() {
     })
   );
 
+  // The beat as the on-stage banner names it (overlay pass): the banner is the one place a
+  // beat is named, so the playback controls can live in the bottom bar and the stage keeps
+  // its planning size while a round plays.
+  const beatActor = busy && frame?.event?.actorId
+    ? [...team, ...enemies].find((u) => u.id === frame.event?.actorId)
+    : undefined;
+  const story: BeatStory | null =
+    busy && frame
+      ? {
+          eyebrow: beatActor ? labelFor(beatActor) : `Round ${playRound}`,
+          title: frame.event?.moveName || eventLabel(frame),
+          caption: impact ? actionCaption(frame) : null,
+        }
+      : null;
+
   const phaseTitle =
     run.phase === "camp"
       ? "Sector secured"
@@ -1352,6 +1375,7 @@ export default function PowerworksPage() {
                   previews={previews}
                   hints={hints}
                   beatMs={frameDuration / speed}
+                  story={story}
                   flash={flash}
                   onTarget={assign}
                   onSelect={select}
@@ -1408,112 +1432,96 @@ export default function PowerworksPage() {
                   ]}
                 />
 
-                {busy && (
-                  <section
-                    className="pw-command resolving"
-                    aria-label="Round playback"
-                  >
-                    <div className="pw-action-story" aria-live="polite">
-                      <div className="pw-action-copy">
-                        <span className="pw-eyebrow">
-                          {frame.event?.actorId
-                            ? labelFor(
-                                [...team, ...enemies].find(
-                                  (u) => u.id === frame.event?.actorId
-                                )!
-                              )
-                            : `Round ${playRound}`}
+                {/* The bottom bar holds the one forward control in both phases (overlay
+                    pass): Commit while planning, the playback controls while a round plays.
+                    Nothing is added under the stage, so the stage never resizes. */}
+                <footer className={`pw-commit ${busy ? "playing" : ""}`}>
+                  {busy ? (
+                    <>
+                      <div className="pw-readiness">
+                        <span className="pw-order-count" aria-hidden="true">
+                          {paused ? <Pause /> : <Play />}
                         </span>
-                        <strong>
-                          {frame.event?.moveName || eventLabel(frame)}
-                        </strong>
                         <p>
-                          {impact
-                            ? actionCaption(frame)
-                            : "Preparing the action…"}
+                          Round {playRound}
+                          <small>
+                            {paused ? "Paused · " : ""}Action {frameIndex + 1} of{" "}
+                            {frames.length}
+                          </small>
                         </p>
                       </div>
-                    </div>
-                    <div className="pw-playback-controls">
-                      <span>
-                        {frameIndex + 1} / {frames.length}
-                      </span>
-                      <button
-                        onClick={() => setPaused((v) => !v)}
-                        aria-label={
-                          paused ? "Resume playback" : "Pause playback"
-                        }
+                      <div
+                        className="pw-playback-controls"
+                        role="group"
+                        aria-label="Round playback"
                       >
-                        {paused ? <Play /> : <Pause />}
-                        {paused ? "Resume" : "Pause"}
-                      </button>
-                      <button
-                        onClick={() => {
-                          setPaused(true);
-                          nextFrame();
-                        }}
-                        aria-label="Next action"
-                      >
-                        <ChevronRight />
-                        Next
-                      </button>
-                      <button
-                        onClick={() =>
-                          setSpeed((s) => (s === 1 ? 2 : s === 2 ? 0.5 : 1))
-                        }
-                        aria-label={`Playback speed ${speed}x`}
-                      >
-                        {speed}×
-                      </button>
-                      <button onClick={finishPlayback}>
-                        Show round result <SkipForward />
-                      </button>
-                    </div>
-                  </section>
-                )}
-
-                <footer className="pw-commit">
-                  <div className="pw-readiness" aria-live="polite">
-                    <span
-                      className={`pw-order-count ${
-                        ready === living.length ? "complete" : ""
-                      }`}
-                    >
-                      {busy ? (
-                        <Play />
-                      ) : ready === living.length ? (
-                        <Check />
-                      ) : (
-                        <>
-                          {ready}
-                          <small>/{living.length}</small>
-                        </>
-                      )}
-                    </span>
-                    <p>
-                      {busy
-                        ? "Resolving your orders"
-                        : ready === living.length
-                        ? "Squad ready"
-                        : "Plan your squad"}
-                      <small>
-                        {busy
-                          ? "Pause to inspect any action."
-                          : ready === living.length
-                          ? "Review or edit orders."
-                          : `${living.length - ready} ${
-                              living.length - ready === 1 ? "order" : "orders"
-                            } remaining`}
-                      </small>
-                    </p>
-                  </div>
-                  {busy ? (
-                    <span className="pw-resolving-state">
-                      <span />
-                      Round {playRound} · {paused ? "Paused" : "Playing"}
-                    </span>
+                        <button
+                          onClick={() => setPaused((v) => !v)}
+                          aria-label={paused ? "Resume playback" : "Pause playback"}
+                        >
+                          {paused ? <Play /> : <Pause />}
+                          <span className="pw-control-label">
+                            {paused ? "Resume" : "Pause"}
+                          </span>
+                        </button>
+                        <button
+                          onClick={() => {
+                            setPaused(true);
+                            nextFrame();
+                          }}
+                          aria-label="Next action"
+                        >
+                          <ChevronRight />
+                          <span className="pw-control-label">Next</span>
+                        </button>
+                        <button
+                          className="pw-speed"
+                          onClick={() =>
+                            setSpeed((s) => (s === 1 ? 2 : s === 2 ? 0.5 : 1))
+                          }
+                          aria-label={`Playback speed ${speed}x`}
+                        >
+                          {speed}×
+                        </button>
+                        <button onClick={finishPlayback} aria-label="Show round result">
+                          <span className="pw-control-label">Show round result</span>
+                          <SkipForward />
+                        </button>
+                      </div>
+                      <p className="pw-sr" aria-live="polite">
+                        {story && story.caption
+                          ? `${story.eyebrow}: ${story.title}. ${story.caption}`
+                          : ""}
+                      </p>
+                    </>
                   ) : (
                     <>
+                      <div className="pw-readiness" aria-live="polite">
+                        <span
+                          className={`pw-order-count ${
+                            ready === living.length ? "complete" : ""
+                          }`}
+                        >
+                          {ready === living.length ? (
+                            <Check />
+                          ) : (
+                            <>
+                              {ready}
+                              <small>/{living.length}</small>
+                            </>
+                          )}
+                        </span>
+                        <p>
+                          {ready === living.length ? "Squad ready" : "Plan your squad"}
+                          <small>
+                            {ready === living.length
+                              ? "Review or edit orders."
+                              : `${living.length - ready} ${
+                                  living.length - ready === 1 ? "order" : "orders"
+                                } remaining`}
+                          </small>
+                        </p>
+                      </div>
                       <button
                         className="pw-primary"
                         disabled={!planning || ready !== living.length}
