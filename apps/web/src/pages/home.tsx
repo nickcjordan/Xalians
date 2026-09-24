@@ -21,7 +21,7 @@ import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import specimen from './home/specimen.json';
 import { startStoryMotion } from './home/motion';
-import { StoryFlow, type FlowBeat } from './home/storyFlow';
+import { StoryViewer, type ViewerBeat } from './home/storyViewer';
 import { HelixPiece } from './home/helixPiece';
 
 /* ------------------------------------------------------------------ copy */
@@ -146,6 +146,8 @@ function Panel({
 	n,
 	eager = false,
 	still = false,
+	live,
+	staged = false,
 }: {
 	art: Art;
 	aspect: string;
@@ -154,16 +156,19 @@ function Panel({
 	/** The spread's numeral, repeated on its plate. */
 	n?: string;
 	eager?: boolean;
-	/** The hero's panel holds still; the story's drift with the scroll. */
+	/** The hero's panel holds still. */
 	still?: boolean;
+	/** In the story's viewer: whether its living plate may be live now. */
+	live?: boolean;
+	/** In the story's viewer, which moves it itself: no scroll-in and no drift. */
+	staged?: boolean;
 }) {
 	const figure = (
 		<figure className={cn('chamfer frame relative m-0', aspect, className)}>
 			<span className="frame-well">
 				{art.live ? (
-					// A living plate holds still in its frame: its motion is its own. It
-					// joins the page's plate stage, where the one most in view is live.
-					<LivePlate src={art.live} poster={{ ...(art.still ?? art), alt: art.alt }} />
+					// A living plate holds still in its frame: its motion is its own.
+					<LivePlate src={art.live} poster={{ ...(art.still ?? art), alt: art.alt }} active={live} />
 				) : (
 					<img
 						src={art.src}
@@ -174,7 +179,7 @@ function Panel({
 						height={768}
 						loading={eager ? 'eager' : 'lazy'}
 						decoding="async"
-						className={cn('h-full w-full object-cover', !still && 'scale-[1.12]', position)}
+						className={cn('h-full w-full object-cover', !still && !staged && 'scale-[1.12]', position)}
 					/>
 				)}
 			</span>
@@ -191,7 +196,7 @@ function Panel({
 	return (
 		<Link
 			to={`/encyclopedia/story/${art.era}`}
-			data-panel
+			data-panel={staged ? undefined : ''}
 			aria-label={`${art.alt} Opens ${ERA_TITLE[art.era]} in The Story.`}
 			className="mass-frame block no-underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
 		>
@@ -263,18 +268,19 @@ const SCENE_LABEL = {
 } as const;
 
 /**
- * The story's scenes. Every scene has the same three parts: the painting; its
- * label, small, under the frame's foot; and the reading column, the beat's
- * headline and Nick's paragraph, set large. Only the arrangement changes:
- * `wide` and `wide-right` run the painting across the column with the label
- * and the reading column in a row beneath it (label left or right); `side`
- * sets the reading column to the right of the painting. On a phone they stack:
- * painting, label, reading column.
+ * The story's scenes. Every scene has the same three parts: the painting, as
+ * large as the viewer's box allows; its label, small, under the frame's foot;
+ * and the reading column, the beat's headline and Nick's paragraph, set large.
+ * Only the arrangement changes (`.scene-spread` in globals.css): `wide` and
+ * `wide-right` run the painting across the box with the label and the reading
+ * column in a row beneath it (label left or right); `side` sets the reading
+ * column to the right of the painting. On a phone they stack: painting, label,
+ * reading column.
  */
 type Layout = 'wide' | 'wide-right' | 'side';
 type Era = keyof typeof SCENE_LABEL;
 
-type Spread = { kind: 'scene'; art: Art & { era: Era }; headline: string; text: string; layout: Layout; aspect: string; position?: string };
+type Spread = { kind: 'scene'; art: Art & { era: Era }; headline: string; text: string; layout: Layout; aspect: string; ar: number; position?: string };
 type Piece = { kind: 'piece'; key: string; name: string; headline: string; text?: string; mode: 'plague' | 'token'; alt: string };
 
 // The story's beats, in order (docs/design/home-story-content-plan.md). A
@@ -282,8 +288,8 @@ type Piece = { kind: 'piece'; key: string; name: string; headline: string; text?
 // paragraph. Beats 2 and 3 (the first Xalian, APEX taking the Generators) join
 // when they are built.
 const BEATS: Array<Spread | Piece> = [
-	{ kind: 'scene', art: ART.unbirth, headline: 'They birthed the first Xalians', text: STORY[0], layout: 'wide', aspect: 'aspect-[21/9]', position: 'object-[center_40%]' },
-	{ kind: 'scene', art: ART.endWars, headline: 'Turned the Xalians against their masters', text: STORY[1], layout: 'wide-right', aspect: 'aspect-[2/1]'},
+	{ kind: 'scene', art: ART.unbirth, headline: 'They birthed the first Xalians', text: STORY[0], layout: 'wide', aspect: 'aspect-[21/9]', ar: 21 / 9, position: 'object-[center_40%]' },
+	{ kind: 'scene', art: ART.endWars, headline: 'Turned the Xalians against their masters', text: STORY[1], layout: 'wide-right', aspect: 'aspect-[2/1]', ar: 2 },
 	{
 		kind: 'piece',
 		key: 'plague',
@@ -302,7 +308,7 @@ const BEATS: Array<Spread | Piece> = [
 		mode: 'token',
 		alt: 'The last of the broken helix fades, and a new one gathers out of the dark. Its rungs shuffle into a random order and light as each one locks, and it folds down into a small chip, a Scrambler Token, with the new genome sealed in its face.',
 	},
-	{ kind: 'scene', art: ART.present, headline: 'Only the strongest factions will survive…', text: STORY[3], layout: 'side', aspect: 'aspect-[4/3]', position: 'object-[40%_center]' },
+	{ kind: 'scene', art: ART.present, headline: 'Only the strongest factions will survive…', text: STORY[3], layout: 'side', aspect: 'aspect-[4/3]', ar: 4 / 3, position: 'object-[40%_center]' },
 ];
 const numeral = (i: number) => String(i + 1).padStart(2, '0');
 
@@ -320,7 +326,7 @@ function SceneLabel({ era, className }: { era: Era; className?: string }) {
 /** The reading column: the beat's numeral and name, its headline, and Nick's paragraph, set to be read. */
 function SceneReading({ n, name, headline, text, className }: { n: string; name: string; headline: string; text?: string; className?: string }) {
 	return (
-		<div data-reveal className={cn('scene-read flex flex-col', className)}>
+		<div className={cn('scene-read flex flex-col', className)}>
 			<span className="type-data text-tiny tracking-legend text-ink-3">
 				{n} · {name}
 			</span>
@@ -330,53 +336,44 @@ function SceneReading({ n, name, headline, text, className }: { n: string; name:
 	);
 }
 
-const STORY_BEATS: FlowBeat[] = BEATS.map((sp, i): FlowBeat => {
+const STORY_BEATS: ViewerBeat[] = BEATS.map((sp, i): ViewerBeat => {
 	const n = numeral(i);
 	if (sp.kind === 'piece') {
-		// A small piece: one animation on the dark ground, no frame and no label,
-		// beside its words. It animates only while it is the one thing most in
-		// view on the page (see HelixPiece).
+		// A small piece: one animation on the dark ground beside its words, no
+		// frame and no label. Off the screen it holds nothing in the DOM.
 		return {
 			key: sp.key,
 			n,
 			label: sp.name,
 			minor: true,
-			node: (
-				<div className="grid grid-cols-1 items-center gap-x-12 gap-y-6 lg:grid-cols-12">
-					<div data-reveal className="mx-auto w-full max-w-[640px] lg:col-span-6">
-						<HelixPiece mode={sp.mode} label={sp.alt} />
+			render: (live, shown) => (
+				<div className="scene-spread" data-layout="side" style={{ '--ar': 16 / 9, '--label': '0rem' } as React.CSSProperties}>
+					<div className="scene-art">
+						<div className="scene-frame">
+							<div className="aspect-video">{shown ? <HelixPiece mode={sp.mode} live={live} label={sp.alt} /> : null}</div>
+						</div>
 					</div>
-					<SceneReading n={n} name={sp.name} headline={sp.headline} text={sp.text} className="lg:col-span-6" />
+					<SceneReading n={n} name={sp.name} headline={sp.headline} text={sp.text} />
 				</div>
 			),
 		};
 	}
-	const reading = <SceneReading n={n} name={ERA_TITLE[sp.art.era]} headline={sp.headline} text={sp.text} />;
-	const label = <SceneLabel era={sp.art.era} />;
 	return {
 		key: sp.art.era,
 		n,
 		label: ERA_TITLE[sp.art.era],
-		node:
-			sp.layout === 'side' ? (
-				// Beside: the painting and its label, the reading column to the right.
-				<div className="grid grid-cols-1 items-center gap-x-12 gap-y-6 lg:grid-cols-12">
-					<div className="flex flex-col gap-4 lg:col-span-7">
-						<Panel art={sp.art} aspect={sp.aspect} position={sp.position} />
-						{label}
+		live: sp.art.live,
+		render: (live) => (
+			<div className="scene-spread" data-layout={sp.layout} style={{ '--ar': sp.ar } as React.CSSProperties}>
+				<div className="scene-art">
+					<div className="scene-frame">
+						<Panel art={sp.art} aspect={sp.aspect} position={sp.position} live={live} staged />
 					</div>
-					<div className="lg:col-span-5">{reading}</div>
+					<SceneLabel era={sp.art.era} />
 				</div>
-			) : (
-				// Wide: the painting across the column; under it, the label and the reading column side by side.
-				<div className="flex flex-col gap-6">
-					<Panel art={sp.art} aspect={sp.aspect} position={sp.position} />
-					<div className="grid grid-cols-1 gap-x-12 gap-y-5 lg:grid-cols-12">
-						<div className={cn('lg:col-span-4', sp.layout === 'wide-right' && 'lg:order-2')}>{label}</div>
-						<div className="lg:col-span-8">{reading}</div>
-					</div>
-				</div>
-			),
+				<SceneReading n={n} name={ERA_TITLE[sp.art.era]} headline={sp.headline} text={sp.text} />
+			</div>
+		),
 	};
 });
 // The tournament's plate follows the story's last beat.
@@ -443,11 +440,11 @@ function Home() {
 
 			<Shell className="pb-10">
 				<div className="mx-auto max-w-[1160px]">
-					{/* The Story: its beats one after another in the page's own
-					    scroll, full scenes (same frame, same plate, a different
-					    arrangement every time) and small pieces between them. Only
-					    the one thing most in view animates. */}
-					<StoryFlow id="story" title={<StoryHead id="story-title" className="mb-0">The Story</StoryHead>} beats={STORY_BEATS} />
+					{/* The Story: a click-through viewer, one beat at a time, full
+					    scenes (same frame, same plate, a different arrangement every
+					    time) and small pieces between them. Only the shown beat
+					    animates, and only once it has settled. */}
+					<StoryViewer id="story" title={<StoryHead id="story-title" className="mb-0">The Story</StoryHead>} beats={STORY_BEATS} after="#specimen" />
 
 					{/* The Galaxy of Xalia: the creature's page. */}
 					<section

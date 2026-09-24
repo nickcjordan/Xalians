@@ -11,7 +11,6 @@
 //   [data-panel]        a painting settling into its frame as it scrolls in, once
 //   [data-panel] img    a scroll-linked drift inside the frame (no loop)
 //   [data-plate]        a caption plate sliding out from behind its panel, once
-//   [data-reveal]       a story beat's words or small piece rising in, once
 //   [data-figure]       the specimen printing in (blur to sharp), once
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -67,11 +66,6 @@ export function startStoryMotion(root: HTMLElement): (() => void) | undefined {
 				const x = from === 'left' ? -56 : from === 'right' ? 56 : 0;
 				const y = from === 'up' ? 28 : 0;
 				keep(gsap.fromTo(plate, { x, y, autoAlpha: 0 }, { x: 0, y: 0, autoAlpha: 1, duration: 0.8, ease: ENTER, delay: 0.15, scrollTrigger: once(plate, 'top 90%') }));
-			});
-
-			root.querySelectorAll<HTMLElement>('[data-reveal]').forEach((el) => {
-				// Opacity, not visibility: words not yet revealed stay in the accessibility tree.
-				keep(gsap.fromTo(el, { y: 24, opacity: 0 }, { y: 0, opacity: 1, duration: 0.8, ease: ENTER, scrollTrigger: once(el, 'top 90%') }));
 			});
 
 			root.querySelectorAll<HTMLElement>('[data-figure]').forEach((fig) => {

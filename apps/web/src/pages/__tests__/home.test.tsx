@@ -64,7 +64,8 @@ describe('Home (the story front door)', () => {
 		expect(text.split('By scrambling and encrypting the genome').length).toBe(2);
 		// Every headline is a phrase of the 2022 page.
 		for (const headline of ['They birthed the first Xalians', 'Turned the Xalians against their masters', 'Designed by APEX to target the genome', 'The only way to safely generate new Xalians', 'Only the strongest factions will survive…']) {
-			expect(screen.getByRole('heading', { level: 3, name: headline })).toBeInTheDocument();
+			// Beats not shown in the viewer are hidden from assistive tech until they are.
+			expect(screen.getByRole('heading', { level: 3, name: headline, hidden: true })).toBeInTheDocument();
 		}
 		// No dashes of any kind in the copy.
 		expect(text).not.toMatch(/[–—]/);
