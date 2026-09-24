@@ -1,4 +1,4 @@
 {
-  "releaseId": "generation-0.8.0-1",
+  "releaseId": "generation-0.8.0-2",
   "entryPoint": "packages/rules/src/generator/canonicalCreatureRelease.ts"
 }

@@ -1526,6 +1526,16 @@
         "dreadscape",
         "city-of-wraiths"
       ]
+    },
+    {
+      "key": "fathomaw",
+      "title": "Fathomaw",
+      "category": "xalians",
+      "definition": "The Fathomaw is a broad-bellied aquatic Xalian generated on Poseidas to inspect submerged city foundations and clear deep service routes. Its short clicks reveal gaps in dark water, while its hydraulic crusher jaw tests weakened joints and its reinforced fins carry it across exposed ground.",
+      "related": [
+        "poseidas",
+        "xalians"
+      ]
     }
   ]
 }

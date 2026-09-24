@@ -1,6 +1,6 @@
-# Fathomaw ability audit (draft)
+# Fathomaw ability audit
 
-Review date: 2026-09-23, with a visual-source review on 2026-09-24. Mode: initial authoring. Current source: [Poseidas deep-route proposal](../../../design/creature-proposals/poseidas-deep-route.md) and its recorded approvals, Poseidas planetary lore, the v5 catalog and derived-act tables. The proposal is not a ratified species. The [schema 5.1 draft template](fathomaw.json) compiles. The [land-crawl concept](../../../design/creature-proposals/art/fathomaw-land-crawl-concept.png) remains a movement reference, and the [square-jaw portrait study](../../../design/creature-proposals/art/fathomaw-portrait-study.png) is the selected visual direction for now, not published site art. The draft remains outside the frozen roster and release.
+Review date: 2026-09-23, with visual-source review and ratification on 2026-09-24. Mode: initial authoring. Sources: [Poseidas deep-route design record](../../design/creature-proposals/poseidas-deep-route.md) and its recorded approvals, Poseidas planetary lore, the v5 catalog and derived-act tables. The [schema 5.1 template](fathomaw.json) compiles. The [land-crawl concept](../../design/creature-proposals/art/fathomaw-land-crawl-concept.png) remains a movement reference, and the [square-jaw portrait study](../../design/creature-proposals/art/fathomaw-portrait-study.png) is the selected visual direction, not published site art. This audit accompanies Fathomaw in the canonical v5 roster.
 
 ## Mechanism inventory
 
@@ -37,7 +37,7 @@ The 2026-09-24 portrait review made the lower jaw almost square-ended and the ta
 | `body/strike` | Exclude whole generic row, then extend | The row grants impact and compression. A short ram supports impact only; an authored impact-only body act preserves it without unsupported quick compression. |
 | `body/crush` | Exclude | Pinning something beneath the trunk needs a suitable surface and does not meet the portable moveset baseline. |
 | `body/ward` | Exclude | Resilient skin and pressure tolerance do not create an added shield. |
-| `body/terrorize` | Not derived | The current communication proposal is vocal calls, not an established threat display. |
+| `body/terrorize` | Not derived | Vocal calls are established communication, not an evidenced threat display. |
 | Echolocation reveal, mark, deafening, disorientation | Exclude | A locating sense is not an applied tracking status or weaponized sound. |
 | Water projection, elemental harm or status | Exclude | No conduit, water storage/ejection, or manipulation process is established. |
 | Restoration, protection, removal, beneficial status | Exclude | No repair, shielding, cleansing, or stimulation process is established. |
@@ -45,14 +45,14 @@ The 2026-09-24 portrait review made the lower jaw almost square-ended and the ta
 
 The available deliveries are contact for jaws, fins and body; contact and a self-anchored close sweep for the tail. Self, projectile, stream, pulse, field, signal, free-aim area and long range lack a source mechanism. Displacement is away only. The proposed status is jaw-applied restraint, either brief and lingering from the shared snare or sustained and source-bound from an authored hold, removable by freeing. No compound effect is inferred from incidental impact or fluid movement. Similar effects from different parts remain separately available because the parts can act independently.
 
-## Proposed authoring form
+## Ratified authoring form
 
-- Guaranteed action: `Yield Point`, `jaws`, physical compression at stationary contact, fixed structure and release. Output band 62 to 78 remains the agreed proposal.
+- Guaranteed action: `Yield Point`, `jaws`, physical compression at stationary contact, fixed structure and release. Output band 62 to 78 is approved.
 - `acts.exclude`: `jaws/strike`, `jaws/rake`, `tail/crush`, `tail/snare`, `body/strike`, `body/crush`, `body/ward`. Every exclusion is justified above. No exclusion is for compactness or because another part has the same effect category.
 - Authored extensions: compression-only quick jaw strike; impact-only short body ram; maintained noninjuring jaw grip; and maintained jaw squeeze with compression harm and restrained status. The first two recover supported variants that the shared exclusion granularity cannot isolate. The last two encode distinct source-bound holds absent from the table.
-- No `acts.output` override is selected. The drafted extension bands were compared against the shared derived output and the signature compression band. The shared table scales heavy physical harm at 0.8 of strength and light physical harm at 0.85; no ordinary compression exceeds the signature band.
+- No `acts.output` override is selected. The extension bands were compared against the shared derived output and the signature compression band. The shared table scales heavy physical harm at 0.8 of strength and light physical harm at 0.85; no ordinary compression exceeds the signature band.
 
-The included table acts plus extensions are the proposed species permission space, not a whitelist of complete moves assigned to every individual. Four selected actions per generated creature remain a separate generator rule. The shared fin row is v5-only while the pinned v4 registry remains unchanged.
+The included table acts plus extensions are the species permission space, not a whitelist of complete moves assigned to every individual. Four selected actions per generated creature remain a separate generator rule. The shared fin row is v5-only while the pinned v4 registry remains unchanged.
 
 ## Neutral-land portability check
 
@@ -64,8 +64,8 @@ The accepted concept and current portrait study show a continuous belly contact 
 - Body shove and the authored short ram use the planted fins, broad belly, and trunk mass. The ram is a short grounded push, not a sprint; the species' `sprint` capability remains zero.
 - Echolocation is a sense, not a required trigger for any action. Its range may be shorter in gas, but the jaw, fin, tail, and body acts remain available.
 
-No proposed act requires a home-world storm, deep-water pressure, a city structure, liquid around the body, or external life support. The current portrait has visible fin roots and a credible land-supporting posture. At 35 px it is not a sufficiently clear game token, so a separate compact mark must preserve those features at the token's actual size.
+No act requires a home-world storm, deep-water pressure, a city structure, liquid around the body, or external life support. The current portrait has visible fin roots and a credible land-supporting posture. At 35 px it is not a sufficiently clear game token, so a separate compact mark must preserve those features at the token's actual size.
 
 ## Completion status
 
-The draft compiles under schema 5.1 with ten distinct ordinary acts (jaws 3, fins 2, tail 3, body 2) plus the guaranteed signature. It includes four authored extensions and seven justified generic-row exclusions. The checker confirms four distinct actions can be constructed, no ordinary act was clamped by the signature, and 24 seeded examples had no structural parenthetical names or duplicate ordinary base names. A separate 240-seed draft sample retained four actions and the signature in every case. The accepted portrait direction supports the tail sweep and neutral-land mechanism at the design level, but its 35 px reduction is not a game token. This is a structural, naming, lore, and visual-source check, not game balancing or final asset delivery. No release, game integration, or encyclopedia entry is claimed here.
+The template compiles under schema 5.1 with ten distinct ordinary acts (jaws 3, fins 2, tail 3, body 2) plus the guaranteed signature. It includes four authored extensions and seven justified generic-row exclusions. The checker confirms four distinct actions can be constructed, no ordinary act was clamped by the signature, and 24 seeded examples had no structural parenthetical names or duplicate ordinary base names. A separate 240-seed draft sample retained four actions and the signature in every case. The accepted portrait direction supports the tail sweep and neutral-land mechanism at the design level, but its 35 px reduction is not a game token. Coverage verdict: complete within the ratified species scope. This is not game balancing or final game asset delivery; adoption by each game remains separate.
