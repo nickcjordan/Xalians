@@ -150,8 +150,10 @@ export const COMPANION_GENERATED_AT = "2026-09-21T00:00:00.000Z";
  * Version 5 (2026-09-23, pass 5): orders may name a squadmate (contract decisions 39 to 41), so a history
  * can carry side-crossing targets that a version 4 replay would reject or resolve as a foe order.
  * Version 6 (2026-09-23, pass 6): a run starts from the draft (contract decision 48), so the first command
- * of every history is `{kind: "draft", squad}`; a version 5 history has none and is rejected. */
-export const SAVE_VERSION = 6;
+ * of every history is `{kind: "draft", squad}`; a version 5 history has none and is rejected.
+ * Version 7 (2026-09-24, contract decision 53): the offer retries each species over its own seeds, so the
+ * same run seed deals a different offer and a version 6 history's offer indexes name other creatures; it is rejected. */
+export const SAVE_VERSION = 7;
 /*
   Pass 6 levers: the squad draft (contract decisions 45 to 48).
 */
@@ -159,8 +161,14 @@ export const SAVE_VERSION = 6;
 export const DRAFT_OFFER_SIZE = 8;
 /** Lever: how many of the offer the player picks, and so the squad size (contract decision 45). */
 export const SQUAD_SIZE = 4;
-/** Lever: the seed prefix of a drafted creature; candidate `k` of run seed `n` is generated from `${DRAFT_SEED_PREFIX}-${n}-${k}` (contract decision 45). */
+/** Lever: the seed prefix of a drafted creature; species `s` of run seed `n` is tried from `${DRAFT_SEED_PREFIX}-${n}-${s}-${j}` (contract decisions 45 and 53). */
 export const DRAFT_SEED_PREFIX = "powerworks-draft";
-/** Lever: how many passes over the roster the constructive offer may draw before it gives up (contract decision 46). One pass is 32 candidates; the 200-seed test never needs a second. */
+/**
+  Lever: how many seeds the offer tries for one species on one pass over the roster before it
+  skips that species (contract decision 53). The first creature that passes decision 37 is the
+  species' candidate. Pass `p` over the roster tries `j` from `p * DRAFT_SEEDS_PER_SPECIES` up.
+*/
+export const DRAFT_SEEDS_PER_SPECIES = 8;
+/** Lever: how many passes over the roster the constructive offer may draw before it gives up (contract decision 46). One pass is 32 candidates. */
 export const DRAFT_MAX_ROSTER_PASSES = 4;
 export const SAVE_HISTORY_LIMIT = 2000;
