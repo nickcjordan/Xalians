@@ -8,7 +8,7 @@ export default function ArrivalTrace({ scene, route, crew = [], companion }) {
   const origin = place.entry.join(' ');
   const destination = place.exit.join(' ');
   const ally = companion?.creature || companion;
-  return <figure data-arrival-trace role="img" aria-label={`After ${route.title}, the crew has traveled from ${origin} to ${destination}.${ally ? ` ${ally.species} is with them.` : ''}`}>
+  return <figure className="lr-arrival-trace" data-arrival-trace role="img" aria-label={`After ${route.title}, the crew has traveled from ${origin} to ${destination}.${ally ? ` ${ally.species} is with them.` : ''}`}>
     <figcaption>{route.title}</figcaption>
     <div aria-hidden="true" className="lr-arrival-trace-line">
       <span>{origin}</span>

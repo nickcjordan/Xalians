@@ -33,11 +33,11 @@ test('recommendation does not imply selection and selection only prepares an act
   expect(screen.queryByRole('button', { name: /Send/ })).toBeNull();
 });
 
-test('reporting and its trip cost stay together; contact risk appears only when relevant', () => {
+test('reporting and its trip cost stay together; native-contact forecasts stay off the default card', () => {
   const { rerender } = render(<ScoutChoices options={options} onSelect={() => {}} />);
   expect(screen.getByRole('button', { name: /Graviclaw/ }).textContent).toMatch(/Strong awareness.*Reports remotely.*1 energy/);
   expect(screen.getByRole('button', { name: /Chromocat/ }).textContent).toMatch(/Excellent awareness.*Must return.*2 energy · 1 stability/);
   expect(screen.queryByText('At risk of being cornered')).toBeNull();
   rerender(<ScoutChoices options={[{ ...options[1], outlook: { posture: 'native-first', label: 'At risk of being cornered' } }]} onSelect={() => {}} />);
-  expect(screen.getByText('At risk of being cornered')).toBeTruthy();
+  expect(screen.queryByText('At risk of being cornered')).toBeNull();
 });

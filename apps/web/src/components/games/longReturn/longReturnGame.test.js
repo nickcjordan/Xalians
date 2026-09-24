@@ -252,7 +252,7 @@ describe('Long Return Simple mode', () => {
     expect(container.querySelector('.lr-result-salvage').textContent).toMatch(/\+[1-9]/);
     clickElement(container.querySelector('button[aria-label="Abort mission"]'));
     const banked = Array.from(container.querySelectorAll('.lr-end-stats > div')).find(el => el.textContent.includes('Salvage banked'));
-    expect(banked.textContent).toContain('0 · None');
+    expect(banked.querySelector('strong').textContent).toBe('0');
     expect(container.querySelector('.lr-end-copy').textContent).toContain('no salvage is banked');
   });
 
@@ -363,7 +363,7 @@ describe('Long Return Simple mode', () => {
     expect(writeCheckpoint(saved)).toBe(true);
     renderGame();
     click(container, /resume expedition/i);
-    expect(container.querySelectorAll('.lr-crossing-prose > p')).toHaveLength(3);
+    expect(container.querySelectorAll('.lr-crossing-prose > p')).toHaveLength(1);
     expect(container.querySelectorAll('.lr-crossing-account p')).toHaveLength(4);
     expect(container.querySelector('.lr-crossing-account').open).toBe(false);
     expect(container.querySelector('.lr-crossing-prose').textContent).toContain('a side channel built to carry cooling water');
@@ -405,7 +405,7 @@ describe('Long Return Simple mode', () => {
     expect(writeCheckpoint(saved)).toBe(true);
     renderGame();
     click(container, /resume expedition/i);
-    expect(container.querySelectorAll('.lr-crossing-prose > p')).toHaveLength(3);
+    expect(container.querySelectorAll('.lr-crossing-prose > p')).toHaveLength(1);
     expect(container.querySelectorAll('.lr-crossing-account p')).toHaveLength(4);
     expect(container.querySelector('.lr-crossing-prose').textContent).toContain('beam');
     expect(container.querySelector('.lr-result-ability')).toBeTruthy();
@@ -543,14 +543,13 @@ describe('Long Return Simple mode', () => {
     expect(container.querySelector('.lr-companion-promise').textContent).toContain('1assist ready');
     expect(container.querySelector('.lr-companion-promise').textContent).toContain('Prevents the lead’s next 1 energy loss while crossing');
     expect(container.textContent).toContain('The native chooses to follow');
-    expect(container.querySelector('[data-expedition-map]').textContent).toContain('Ally');
     expect(container.querySelector('[data-map-ally]').getAttribute('data-location')).toBe('survey');
     click(container, /review scout report/i);
     expect(container.querySelector('[data-map-ally]').getAttribute('data-location')).toBe('survey');
     if (findButton(container, /choose a route/i)) click(container, /choose a route/i);
     expect(container.querySelector('[data-expedition-map] [data-map-ally]')).toBeTruthy();
     expect(container.querySelector('[data-map-ally]').getAttribute('data-location')).toBe('survey');
-    expect(container.querySelector('[data-expedition-map]').textContent).toMatch(/xylum · ally/i);
+    expect(container.querySelector('[data-expedition-map]').textContent).toMatch(/Xylum: beside the scout/i);
   });
 
   test('route review is reversible and native contact only starts when crossing is committed', () => {
@@ -615,7 +614,7 @@ describe('Long Return Simple mode', () => {
     click(container, /see encounter result/i);
     click(container, /compare routes again/i);
     selectUnderdeck();
-    expect(container.querySelector('.lr-lead-uncertainty').textContent).toContain('Unscouted danger');
+    expect(container.querySelector('.lr-lead-uncertainty').textContent).toContain('Unscouted route');
     click(container, /cross now/i);
     expect(container.querySelector('[aria-label="Encounter discovered"]')).toBeTruthy();
   });
@@ -644,15 +643,13 @@ describe('Long Return Simple mode', () => {
     expect(container.querySelectorAll('.lr-board-head > th[role="columnheader"]:not(.lr-board-axis)')).toHaveLength(2);
   });
 
-  test('opening-room map cue moves to scout choices without sending a creature', () => {
+  test('opening-room map and scout choices share the same stage without sending a creature', () => {
     renderGame();
     click(container, /seal crew/i);
-    const jump = findButton(container, /scout choices/i);
-    expect(jump).toBeTruthy();
-    clickElement(jump);
-    expect(document.activeElement).toBe(container.querySelector('.lr-simple-decision'));
+    expect(findButton(container, /scout choices/i)).toBeUndefined();
     expect(container.querySelector('.lr-wizard-phase-scout')).toBeTruthy();
     expect(container.querySelector('[data-scout-options]')).toBeTruthy();
+    expect(container.querySelector('[data-expedition-map]')).toBeTruthy();
     expect(container.querySelector('[data-field-record]')).toBeNull();
   });
 
@@ -664,7 +661,7 @@ describe('Long Return Simple mode', () => {
     click(container, /^send /i);
     expect(document.activeElement).toBe(findButton(container, /skip to outcome/i));
     act(() => container.querySelector('[role="dialog"]').dispatchEvent(new KeyboardEvent('keydown', { key: 'Tab', bubbles: true })));
-    expect(document.activeElement).toBe(container.querySelector('.lr-sequence-story-scroll'));
+    expect(document.activeElement).toBe(container.querySelector('.lr-story-steps button'));
     click(container, /skip to outcome/i);
     expect(document.activeElement).toBe(findButton(container, /review scout report/i));
     click(container, /review scout report/i);

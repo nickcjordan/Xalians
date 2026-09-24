@@ -4,7 +4,7 @@ import BiIcon from './BiIcon';
 import { encounterChoicePresentation } from './encounterPresentation';
 import './encounterChoices.css';
 
-export default function EncounterChoices({ options, actor, selectedId, onSelect }) {
+export default function EncounterChoices({ options, actor, selectedId, onSelect, description }) {
   return <section className="lr-encounter-choice-board" aria-label="Compare encounter responses">
     <div className="lr-encounter-column-labels" aria-hidden="true"><span>Your response</span><span>Spend now</span><span>What it offers</span></div>
     <div className="lr-encounter-options">{options.map(option => {
@@ -18,6 +18,6 @@ export default function EncounterChoices({ options, actor, selectedId, onSelect 
         <span className="lr-response-outcome"><BiIcon cls={`bi ${presentation.outcome.icon}`} /><strong>{presentation.outcome.label}</strong></span>
       </button>;
     })}</div>
-    <details className="lr-response-details"><summary>Why choose these responses?</summary>{options.map(option => <p key={option.id}><strong>{option.label}:</strong> {option.summary}</p>)}</details>
+    <details className="lr-response-details"><summary>Read encounter and response details</summary>{description && <p>{description}</p>}{options.map(option => <p key={option.id}><strong>{option.label}:</strong> {option.summary}</p>)}</details>
   </section>;
 }

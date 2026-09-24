@@ -1,8 +1,22 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './sequenceStory.css';
 import BiIcon from './BiIcon';
 
 const costIcons = { energy: 'bi-lightning-charge-fill', stability: 'bi-building', salvage: 'bi-box-seam', ability: 'bi-hourglass-split' };
+
+export function storyPages(message, compact) {
+  if (!compact || !message || message.length <= 165) return [message];
+  const sentences = message.match(/[^.!?]+[.!?]?(?:\s+|$)/g) || [message];
+  const pages = [];
+  let page = '';
+  for (const sentence of sentences) {
+    const next = sentence.trim();
+    if (page && `${page} ${next}`.length > 165) { pages.push(page); page = next; }
+    else page = page ? `${page} ${next}` : next;
+  }
+  if (page) pages.push(page);
+  return pages.length ? pages : [message];
+}
 
 export function trapSequenceFocus(event) {
   if (event.key !== 'Tab') return;
@@ -16,86 +30,48 @@ export function trapSequenceFocus(event) {
   }
 }
 
-// Reading back pauses playback, never the already-resolved gameplay action.
-// Only the parent's Continue dismisses this persistent account.
+// Each event has its own reading surface. The map and the account stay in place.
 export default function SequenceStory({ events, index, paused, onPause, onNext, action }) {
-  const scrollRef = useRef(null);
-  const follows = useRef(true);
-  const [canReadEarlier, setCanReadEarlier] = useState(false);
-  const [canReadLater, setCanReadLater] = useState(false);
+  const [selectedIndex, setSelectedIndex] = useState(null);
+  const [pageIndex, setPageIndex] = useState(0);
+  const [compact, setCompact] = useState(() => typeof window !== 'undefined' && window.innerWidth <= 360);
   const final = index === events.length - 1;
-  const readingScroller = () => {
-    const record = scrollRef.current?.closest('[data-field-record]');
-    return record && window.matchMedia?.('(max-width: 767px)').matches ? record : scrollRef.current;
-  };
-  const handleScroll = el => {
-    follows.current = el.scrollHeight - el.scrollTop - el.clientHeight < 36;
-    setCanReadEarlier(el.scrollTop > 8);
-    setCanReadLater(el.scrollHeight - el.scrollTop - el.clientHeight > 8);
-    if (!follows.current && !paused && !final) onPause();
-  };
-  const followLatest = () => {
-    follows.current = true;
-    const el = readingScroller();
-    if (el) el.scrollTop = el.scrollHeight;
-    setCanReadEarlier((el?.scrollTop || 0) > 8);
-  };
-  const readNext = () => {
-    const el = readingScroller();
-    el.scrollTop += Math.max(100, el.clientHeight - 48);
-    scrollRef.current.focus({ preventScroll: true });
-    setCanReadEarlier(el.scrollTop > 8);
-    setCanReadLater(el.scrollHeight - el.scrollTop - el.clientHeight > 8);
-  };
-  const readFromStart = () => {
-    if (!paused && !final) onPause();
-    follows.current = false;
-    const el = readingScroller();
-    el.scrollTop = 0;
-    scrollRef.current.focus({ preventScroll: true });
-    setCanReadEarlier(false);
-    setCanReadLater(el.scrollHeight - el.clientHeight > 8);
-  };
+  const shownIndex = Math.min(selectedIndex ?? index, index);
+  const entry = events[shownIndex];
+  const pages = storyPages(entry.message || entry.text, compact);
+  const currentPage = Math.min(pageIndex, pages.length - 1);
+  const morePages = currentPage < pages.length - 1;
+  const following = selectedIndex === null || selectedIndex === index;
   useEffect(() => {
-    const el = readingScroller();
-    if (el && final) {
-      el.scrollTop = 0;
-      follows.current = false;
-      setCanReadEarlier(false);
-      setCanReadLater(el.scrollHeight - el.clientHeight > 8);
-    } else if (el && follows.current) {
-      el.scrollTop = el.scrollHeight;
-      setCanReadEarlier(el.scrollTop > 8);
-      setCanReadLater(false);
-    }
-  }, [index, final]);
-  useEffect(() => {
-    const record = scrollRef.current?.closest('[data-field-record]');
-    if (!record || !window.matchMedia?.('(max-width: 767px)').matches) return undefined;
-    const onRecordScroll = () => handleScroll(record);
-    record.addEventListener('scroll', onRecordScroll, { passive: true });
-    return () => record.removeEventListener('scroll', onRecordScroll);
-  }, [paused, final, onPause]);
-  return <section className="lr-sequence-story p-3 md:p-5" aria-label="Action story">
-    <header>
-      <span>{final ? 'What happened' : 'The scene unfolds'}</span>
-      <div className="lr-story-navigation">
-        {final && canReadLater && <button type="button" aria-label="Continue reading the action" onClick={readNext}><span className="lr-story-nav-long">Continue reading</span><span className="lr-story-nav-short">More</span> ↓</button>}
-        {canReadEarlier && (!final || !canReadLater) && <button type="button" aria-label="Read from start" onClick={readFromStart}>↑ <span className="lr-story-nav-long">Read from start</span><span className="lr-story-nav-short">Start</span></button>}
-        <small>{index + 1} / {events.length}</small>
-      </div>
-    </header>
-    <div className="lr-sequence-story-scroll" ref={scrollRef} tabIndex={0} aria-label="Read the action story" onScroll={event => { if (readingScroller() === event.currentTarget) handleScroll(event.currentTarget); }}>
-      <ol aria-live="polite" aria-relevant="additions" aria-atomic="false">
-        {events.slice(0, index + 1).map((entry, position) => <li key={`${position}-${entry.kind}`} className={`is-${entry.kind}`}>
-          <span aria-hidden="true">{entry.title ? <BiIcon cls={`bi ${entry.icon}`} /> : String(position + 1).padStart(2, '0')}</span>
-          {entry.title ? <div className="lr-story-beat"><h3>{entry.title}</h3><p>{entry.message || entry.text}</p>{entry.costs?.length > 0 && <div className="lr-story-costs">{entry.costs.map(cost => <span key={`${cost.kind}-${cost.creatureId || ''}`} className={`is-${cost.kind} inline-flex items-center gap-1`}><BiIcon cls={`bi ${costIcons[cost.kind] || 'bi-info-circle'}`} className="shrink-0" /> {cost.text}</span>)}</div>}</div> : <p>{entry.message || entry.text}</p>}
-        </li>)}
-      </ol>
-    </div>
-    {(!final || action) && <footer className={`grid gap-2 ${final ? 'grid-cols-1' : 'grid-cols-3'}`}>
-      {!final && <><button className="inline-flex min-h-11 items-center justify-center gap-1 px-2 whitespace-normal" type="button" aria-pressed={paused} onClick={() => { if (paused) followLatest(); onPause(); }}>{paused ? 'Resume story' : 'Pause story'}</button><button className="inline-flex min-h-11 items-center justify-center gap-1 px-2 whitespace-normal" type="button" onClick={() => { followLatest(); onNext(); }}>Next event →</button></>}
-      {action}
-    </footer>}
+    if (typeof window === 'undefined') return undefined;
+    const update = () => setCompact(window.innerWidth <= 360);
+    window.addEventListener('resize', update);
+    return () => window.removeEventListener('resize', update);
+  }, []);
+  useEffect(() => setPageIndex(0), [shownIndex]);
+  useEffect(() => { if (pages.length > 1 && following && !paused) onPause(); }, [shownIndex, compact, paused, following, pages.length]);
+  const selectEvent = position => {
+    if (position < index && !paused && !final) onPause();
+    setPageIndex(0);
+    setSelectedIndex(position === index ? null : position);
+  };
+  const resume = () => {
+    setSelectedIndex(null);
+    if (paused) onPause();
+  };
+  return <section className="lr-sequence-story" aria-label="Action story">
+    <header><span>What happened</span><small>{shownIndex + 1} / {events.length}</small></header>
+    <nav className="lr-story-steps" aria-label="Story events">
+      {events.slice(0, index + 1).map((event, position) => <button key={`${position}-${event.kind}`} type="button" aria-label={`Read event ${position + 1}: ${event.title || event.kind}`} aria-current={shownIndex === position ? 'step' : undefined} onClick={() => selectEvent(position)} title={event.title || event.kind}>{String(position + 1).padStart(2, '0')}</button>)}
+    </nav>
+    <article key={`${shownIndex}-${entry.kind}`} className={`lr-story-current is-${entry.kind}`} aria-live="polite" aria-atomic="true" data-story-event={shownIndex}>
+      <div className="lr-story-beat"><span aria-hidden="true"><BiIcon cls={`bi ${entry.icon || 'bi-compass'}`} /></span><div><h3>{entry.title || `Event ${shownIndex + 1}`}</h3><p>{pages[currentPage]}</p>{pages.length > 1 && <small className="lr-story-page">Passage {currentPage + 1} of {pages.length}</small>}{!morePages && entry.costs?.length > 0 && <div className="lr-story-costs">{entry.costs.map(cost => <span key={`${cost.kind}-${cost.creatureId || ''}`} className={`is-${cost.kind} inline-flex items-center gap-1`}><BiIcon cls={`bi ${costIcons[cost.kind] || 'bi-info-circle'}`} className="shrink-0" /> {cost.text}</span>)}</div>}</div></div>
+    </article>
+    <footer>
+      {!final && <>{pages.length === 1 && <button type="button" aria-pressed={paused} onClick={() => { if (paused) resume(); else onPause(); }}>{paused ? 'Resume story' : 'Pause story'}</button>}<button type="button" onClick={() => { if (morePages) setPageIndex(value => value + 1); else { setSelectedIndex(null); onNext(); } }}>{morePages ? 'Next passage →' : 'Next event →'}</button></>}
+      {final && morePages && <button type="button" onClick={() => setPageIndex(value => value + 1)}>Next passage →</button>}
+      {final && !following && <button type="button" onClick={() => setSelectedIndex(null)}>Latest event →</button>}
+      {!morePages && action}
+    </footer>
   </section>;
 }

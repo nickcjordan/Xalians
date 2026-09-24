@@ -51,9 +51,9 @@ export default function RouteComparison({ scene, plans, crew = [], selectedId, o
       <TableHead className={axisClass} scope="col">Choose your crossing</TableHead>
       {plans.map((plan, index) => <TableHead key={plan.route.id} role="columnheader" scope="col" data-route-preview={plan.route.id} data-lowest-risk={plan.risk === lowestRisk ? 'true' : undefined} className={`${cellClass} ${selectedId === plan.route.id ? 'is-selected' : ''}${recommendation?.plan.route.id === plan.route.id ? ' is-recommended' : ''}`}>
         <Button variant="ghost" type="button" className="lr-board-pick h-auto min-h-11 w-full flex-col items-start justify-start gap-2 p-0 has-[>svg]:px-0 text-left font-body text-body normal-case tracking-normal whitespace-normal text-ink" aria-label={`Choose lead for: ${plan.route.title}. Preview: ${plan.lead.species} leads.`} aria-pressed={selectedId === plan.route.id} onClick={() => onSelect(plan.route.id)}>
-          <span className="flex items-start gap-2"><b aria-hidden="true" className="lr-board-route-tag">{index ? 'B' : 'A'}</b><strong className="text-body md:text-subhead">{plan.route.title}</strong></span>
+          <span className="flex items-start gap-2"><b aria-hidden="true" className="lr-board-route-tag">{index ? 'B' : 'A'}</b><strong className="lr-board-route-title">{plan.route.title}</strong></span>
           <span className="lr-board-plan-lead">{crew.findIndex(member => member.id === plan.lead.id) >= 0 && <b aria-hidden="true">{crew.findIndex(member => member.id === plan.lead.id) + 1}</b>}{plan.lead.species} leads</span>
-          <span className={`flex items-center gap-1 text-small ${values[index].uncertain ? 'text-caution' : 'text-ink-2'}`} title={values[index].uncertain ? 'Extra costs are unknown' : 'Costs are confirmed'}>{values[index].uncertain ? <HelpCircle /> : <ShieldCheck />}{values[index].uncertain ? 'Unknown' : 'Known'}</span>
+          <span className={`lr-board-certainty items-center gap-1 text-small ${values[index].uncertain ? 'text-caution' : 'text-ink-2'}`} title={values[index].uncertain ? 'Extra costs are unknown' : 'Costs are confirmed'}>{values[index].uncertain ? <HelpCircle /> : <ShieldCheck />}{values[index].uncertain ? 'Unknown' : 'Known'}</span>
           {recommendation?.plan.route.id === plan.route.id && <em className="text-small text-ink-2" title={recommendation.reason}>Recommended</em>}
           <span className="lr-board-next text-small font-bold text-viable">Pick lead <ArrowRight className="size-4" /></span>
         </Button>
@@ -67,10 +67,10 @@ export default function RouteComparison({ scene, plans, crew = [], selectedId, o
         const caption = costCaption(plan, key, value, unknown, values[index].saved, companion);
         return <TableCell key={plan.route.id} role="cell" data-route-preview={plan.route.id} className={`${cellClass} lr-board-value ${selectedId === plan.route.id ? 'is-selected' : ''}`} aria-label={`${plan.route.title}: ${value} ${key}${unknown ? ' known, plus unknown extra cost' : ''}`}>
           <div className="lr-board-amount mb-1 flex flex-wrap items-center gap-2 text-heading">{(!unknown || value > 0) && <b>{value}</b>}{unknown && <span className="lr-board-unknown border border-dashed border-current px-2" title={`${value} known cost. The scout has not established the extra cost; it may affect energy, stability, or both.`}>{value > 0 ? '+ ?' : '?'}</span>}{value === 0 && !unknown && <Check className="size-4" aria-label="None spent" />}</div>
-          {caption && <small className="block text-small text-ink-2">{caption}</small>}
+          {caption && <small className="lr-board-caption text-small text-ink-2">{caption}</small>}
           {stakes[index]?.kind === key
             ? <small className="lr-board-ending inline-flex items-start gap-1 text-small text-caution" title={stakes[index].detail}><TriangleAlert className="mt-0.5 size-4 shrink-0" aria-hidden="true" />Forced extraction afterward</small>
-            : key === 'energy' && values[index].exhaustsLead && <small className="lr-board-exhaustion block text-small text-caution">{plan.lead.species} has no energy left afterward{values[index].assisted ? ' · even with ally help' : ''}</small>}
+            : key === 'energy' && values[index].exhaustsLead && <small className="lr-board-exhaustion block text-small text-caution"><span className="lr-board-exhaustion-full">{plan.lead.species} has no energy left afterward{values[index].assisted ? ' · even with ally help' : ''}</span><span className="lr-board-exhaustion-compact">Lead spent</span></small>}
         </TableCell>;
       })}
     </TableRow>)}
