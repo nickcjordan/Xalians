@@ -338,7 +338,7 @@ def draw_leaf(x0, y0, ang, L, w, droop, light, rr, near=True, base='#070d09', mi
     return out
 
 
-def draw_fern(x0, y0, ang, L, lw, droop, light, rr, col='#122419', tipc='#2c4a30', broad=.18):
+def draw_fern(x0, y0, ang, L, lw, droop, light, rr, col='#122419', tipc='#2c4a30', broad=.18, soft=False):
     # a fern frond: a curved stem carrying paired leaflets that shorten toward the tip, the lit side catching light
     poly, spine, left, right = leaf_shape(x0, y0, ang, L, 1, droop, n=26)
     m = spine[len(spine) // 2]
@@ -347,6 +347,7 @@ def draw_fern(x0, y0, ang, L, lw, droop, light, rr, col='#122419', tipc='#2c4a30
     out = '<polyline points="%s" fill="none" stroke="%s" stroke-width="%s" stroke-linecap="round"/>' % (pts([(x, y) for x, y, _, _ in spine]), col, f(max(.8, lw * .16)))
     lf = ''
     lit = ''
+    lit_tips = []
     for i, (x, y, tx_, ty_) in enumerate(spine[2:-1]):
         t = (i + 2) / len(spine)
         pl = lw * (1 - t) ** .6 * (.55 + .45 * math.sin(math.pi * min(1, t * 1.6)))
@@ -357,8 +358,15 @@ def draw_fern(x0, y0, ang, L, lw, droop, light, rr, col='#122419', tipc='#2c4a30
             dx_, dy_ = dx_ / dd, dy_ / dd
             ex, ey = x + dx_ * pl, y + dy_ * pl + pl * .25  # the leaflet hangs a little
             lf += '<path d="M%s %s Q %s %s %s %s Q %s %s %s %s Z"/>' % (f(x), f(y), f(x + dx_ * pl * .5 - tx_ * pl * broad), f(y + dy_ * pl * .5 - ty_ * pl * broad), f(ex), f(ey), f(x + dx_ * pl * .5 + tx_ * pl * broad), f(y + dy_ * pl * .5 + ty_ * pl * broad), f(x), f(y))
-            if dy_ < 0 and i % 2 == 0:
+            if soft:
+                if dy_ < 0:
+                    lit_tips.append((ex, ey))
+            elif dy_ < 0 and i % 2 == 0:
                 lit += '<line x1="%s" y1="%s" x2="%s" y2="%s"/>' % (f(x + dx_ * pl * .2), f(y + dy_ * pl * .2), f(ex), f(ey))
+    if soft and len(lit_tips) > 2:
+        # out of focus, a lit dash on every other leaflet blurred into a row of square dots that read as pixels (Nick
+        # 2026-09-24): the light runs as one soft line along the tips of the leaflets that face it instead
+        lit = '<polyline points="%s" fill="none" stroke-linejoin="round"/>' % pts(lit_tips)
     lin([(0, col, 1), (1, tipc, 1)], x0, y0, spine[-1][0], spine[-1][1], units=True, id='fernG%d' % (LEAF_N[0] + 1))
     LEAF_N[0] += 1
     out += '<g fill="url(#fernG%d)">%s</g><g stroke="%s" stroke-width="%s" opacity="%s" stroke-linecap="round">%s</g>' % (LEAF_N[0], lf, rim_c, f(max(.6, lw * .08)), f(rim_o), lit)
@@ -1991,10 +1999,10 @@ nrr = random.Random(131)
 defs.append('<filter id="nearDof2" x="-10%" y="-10%" width="120%" height="120%"><feGaussianBlur stdDeviation="2.4"/></filter>')
 defs.append('<filter id="nearDof3" x="-10%" y="-10%" width="120%" height="120%"><feGaussianBlur stdDeviation="2.6"/></filter>')
 near_left = [draw_leaf(-34, 640, 8, 300, 44, 26, LIGHT_AT, nrr), draw_leaf(-40, 560, 58, 168, 36, 38, LIGHT_AT, nrr),
-             draw_fern(-30, 474, 70, 124, 16, 40, LIGHT_AT, nrr), draw_leaf(-26, 660, 26, 200, 30, 30, LIGHT_AT, nrr)]
+             draw_fern(-30, 474, 70, 124, 16, 40, LIGHT_AT, nrr, soft=True), draw_leaf(-26, 660, 26, 200, 30, 30, LIGHT_AT, nrr)]
 near_left += [draw_leaf(x_, H + 16, a_, L_, 5, 10, LIGHT_AT, nrr, near=False) for x_, a_, L_ in ((6, 12, 150), (22, 20, 120), (-4, 4, 176), (40, 30, 96))]  # grass
-near_left += [draw_leaf(-30, 430, 62, 110, 30, 34, LIGHT_AT, nrr), draw_fern(-20, 330, 76, 110, 26, 44, LIGHT_AT, nrr, broad=.3), draw_leaf(-36, 250, 70, 96, 26, 36, LIGHT_AT, nrr)]
-near_top = [draw_fern(-84, 150, 82, 200, 40, 74, LIGHT_AT, nrr, broad=.34), draw_fern(-64, 50, 102, 160, 32, 40, LIGHT_AT, nrr, broad=.34)]
+near_left += [draw_leaf(-30, 430, 62, 110, 30, 34, LIGHT_AT, nrr), draw_fern(-20, 330, 76, 110, 26, 44, LIGHT_AT, nrr, broad=.36, soft=True), draw_leaf(-36, 250, 70, 96, 26, 36, LIGHT_AT, nrr)]
+near_top = [draw_fern(-84, 150, 82, 200, 40, 74, LIGHT_AT, nrr, broad=.42, soft=True), draw_fern(-64, 50, 102, 160, 32, 40, LIGHT_AT, nrr, broad=.42, soft=True)]
 near_bottom = []
 for x_, a_, L_, w_, dr in ((30, -16, 140, 30, 20), (74, 6, 172, 36, 24), (116, 26, 118, 28, 22), (166, -8, 96, 24, 14)):
     near_bottom.append(draw_leaf(x_, H + 30, a_, L_, w_, dr, LIGHT_AT, nrr))
@@ -2006,7 +2014,7 @@ for i in range(30):  # grass along the foot of the frame
     x_ = lerp(180, 820, i / 29) + nrr.uniform(-10, 10)
     near_bottom.append(draw_leaf(x_, H + 10, nrr.uniform(-28, 28), nrr.uniform(36, 74), nrr.uniform(3, 5), nrr.uniform(4, 12), LIGHT_AT, nrr, near=False))
 for a_, L_ in ((-56, 84), (-22, 104), (14, 110), (48, 88)):
-    near_bottom.append(draw_fern(470, H + 18, a_, L_, 12, 30, LIGHT_AT, nrr))
+    near_bottom.append(draw_fern(470, H + 18, a_, L_, 12, 30, LIGHT_AT, nrr, soft=True))
 for x_, a_, L_, w_, dr in ((860, -22, 118, 28, 18), (900, 4, 146, 32, 22), (944, 24, 112, 26, 18), (980, 40, 80, 20, 14)):
     near_bottom.append(draw_leaf(x_, H + 30, a_, L_, w_, dr, LIGHT_AT, nrr))
 near = ['<!-- the growth right in front of the lens: fronds of a tree fern off the frame arching in at the top left --><g filter="url(#nearDof3)">%s</g>' % ''.join(near_top),
