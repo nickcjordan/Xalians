@@ -1,6 +1,6 @@
-# Fathomaw ability audit (draft, no species template yet)
+# Fathomaw ability audit (draft)
 
-Review date: 2026-09-23. Mode: initial authoring. Current source: [Poseidas deep-route proposal](../../design/creature-proposals/poseidas-deep-route.md) and its recorded approvals, Poseidas planetary lore, the v5 catalog and derived-act tables on `codex/fathomaw-current`. The proposal is not a ratified species. No final creature art or v5 template exists, and the approved mass/length schema is not yet reconciled with current main. This audit records the ability decision space without claiming publication readiness.
+Review date: 2026-09-23. Mode: initial authoring. Current source: [Poseidas deep-route proposal](../../../design/creature-proposals/poseidas-deep-route.md) and its recorded approvals, Poseidas planetary lore, the v5 catalog and derived-act tables. The proposal is not a ratified species. The [schema 5.1 draft template](fathomaw.json) compiles, but it has no approved creature art and is outside the frozen roster and release. This audit records the ability decision space without claiming publication readiness.
 
 ## Mechanism inventory
 
@@ -19,10 +19,11 @@ No `channels` or `conduits` are proposed. Pressure adaptation, dual-medium breat
 | Source and family | Disposition | Evidence and boundary |
 | --- | --- | --- |
 | `jaws/crush` | Include | Held contact compression from the hydraulic mouth, including the current table's brief or prolonged preparation. It remains structurally distinct from the guaranteed clamp-and-release signature. |
-| `jaws/snare` | Include | Nick approved a brief ordinary hold on a moving target. It applies restrained without requiring injury. |
+| `jaws/snare` | Include | The shared table grants a brief lingering restraint without requiring injury. It does not represent a maintained, source-bound grip; that requires an authored extension. |
 | `jaws/strike` | Exclude whole generic row, then extend | The row grants both piercing and compression. Broad blunt teeth do not pierce; a compression-only quick bite is supported and needs an authored mechanism because exclusions are per instrument/pattern. |
 | `jaws/rake` | Exclude | No cutting edge or raking teeth. |
-| Jaw compression plus restraint | Approved behavior requiring an extension | Maintaining a firm hydraulic bite can injure and hold the same recipient. Harm and restraint should be independent effects; blocking harm need not undo physical grip. Not a replacement for the separate noninjuring hold. |
+| Maintained jaw grip | Approved behavior requiring an extension | A noninjuring grip remains source-bound while Fathomaw keeps its jaws closed. It is distinct from the brief lingering shared snare. |
+| Jaw compression plus maintained restraint | Approved behavior requiring an extension | Maintaining a firm hydraulic bite can injure and hold the same recipient. Harm and restraint are independent effects; blocking harm need not undo physical grip. Not a replacement for the separate noninjuring hold. |
 | `fins/strike` | Include | Reinforced anterior fin roots deliver blunt impact. |
 | `fins/shove` | Include | The same fins bear weight and push loose material or a contacted target. |
 | Fin grasp, rake, ward, projection | Exclude | No grasping digits, cutting edge, defensive barrier, or emitter. |
@@ -40,17 +41,17 @@ No `channels` or `conduits` are proposed. Pressure adaptation, dual-medium breat
 | Restoration, protection, removal, beneficial status | Exclude | No repair, shielding, cleansing, or stimulation process is established. |
 | Event-triggered retaliation or automatic encounter passive | Exclude | No reactive mechanism beyond ordinary physiology is established. |
 
-The available deliveries are contact for jaws, fins and body; contact and a self-anchored close sweep for the tail. Self, projectile, stream, pulse, field, signal, free-aim area and long range lack a source mechanism. Displacement is away only. The only proposed status is a brief jaw-applied restraint, removable by freeing. No compound effect is inferred from incidental impact or fluid movement. Similar effects from different parts remain separately available because the parts can act independently.
+The available deliveries are contact for jaws, fins and body; contact and a self-anchored close sweep for the tail. Self, projectile, stream, pulse, field, signal, free-aim area and long range lack a source mechanism. Displacement is away only. The proposed status is jaw-applied restraint, either brief and lingering from the shared snare or sustained and source-bound from an authored hold, removable by freeing. No compound effect is inferred from incidental impact or fluid movement. Similar effects from different parts remain separately available because the parts can act independently.
 
 ## Proposed authoring form
 
 - Guaranteed action: `Yield Point`, `jaws`, physical compression at stationary contact, fixed structure and release. Output band 62 to 78 remains the agreed proposal.
 - `acts.exclude`: `jaws/strike`, `jaws/rake`, `tail/crush`, `tail/snare`, `body/strike`, `body/crush`, `body/ward`. Every exclusion is justified above. No exclusion is for compactness or because another part has the same effect category.
-- Authored extensions: compression-only quick jaw strike; impact-only short body ram; held jaw squeeze with compression harm and restrained status. The first two recover supported variants that the shared exclusion granularity cannot isolate. The third expresses a coherent compound act absent from the table.
-- No `acts.output` override is selected yet. Compare derived bands and the three extension bands against the current strength and rating benchmarks during template authoring. The current table scales heavy physical harm at 0.8 of strength and light physical harm at 0.85; do not mechanically preserve older draft numbers.
+- Authored extensions: compression-only quick jaw strike; impact-only short body ram; maintained noninjuring jaw grip; and maintained jaw squeeze with compression harm and restrained status. The first two recover supported variants that the shared exclusion granularity cannot isolate. The last two encode distinct source-bound holds absent from the table.
+- No `acts.output` override is selected. The drafted extension bands were compared against the shared derived output and the signature compression band. The shared table scales heavy physical harm at 0.8 of strength and light physical harm at 0.85; no ordinary compression exceeds the signature band.
 
 The included table acts plus extensions are the proposed species permission space, not a whitelist of complete moves assigned to every individual. Four selected actions per generated creature remain a separate generator rule. The shared fin row is v5-only while the pinned v4 registry remains unchanged.
 
 ## Completion status
 
-The audit is incomplete. The tail sweep needs a final anatomy and art check. Numeric calibration, naming review and template compilation also remain. Schema 5.1 now supports the approved mass, height, length and width bands, so scale no longer blocks honest template authoring. No Fathomaw template, generated creature, art approval, release, game integration or encyclopedia entry is claimed here.
+The draft compiles under schema 5.1 with ten distinct ordinary acts (jaws 3, fins 2, tail 3, body 2) plus the guaranteed signature. It includes four authored extensions and seven justified generic-row exclusions. The checker confirms four distinct actions can be constructed, no ordinary act was clamped by the signature, and 24 seeded examples had no structural parenthetical names or duplicate ordinary base names. This is a structural and naming check, not art approval or final balancing. The tail sweep still needs an anatomy and art check. No release, game integration or encyclopedia entry is claimed here.

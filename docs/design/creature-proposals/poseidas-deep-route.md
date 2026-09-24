@@ -1,6 +1,6 @@
 # Poseidas deep-route concept
 
-Status: engineered purpose agreed in discussion on 2026-09-21; ridge-oriented, belly-supported body direction, broad crusher teeth, a physical elementally unclassified signature direction, the species name `Fathomaw`, the signature title `Yield Point`, the overall scale bands, gas/liquid respiration and tolerance, the vocal loose-group communication model, omnivorous feeding ecology, environmental-only pressure adaptation, and the movement, sensing, attribute and temperament bands were accepted on 2026-09-22. On 2026-09-23 Nick also approved `fins` as anatomy, a distinct blunt anterior-fin contact move, an ordinary sustained jaw hold, and an ordinary damaging squeeze that can both injure and restrain, while clarifying that ordinary act coverage should be exhaustive within supported anatomy rather than compact for its own sake. Other physiology values remain proposals, not an approved species or v5 template. Art is not yet approved.
+Status: engineered purpose agreed in discussion on 2026-09-21; ridge-oriented, belly-supported body direction, broad crusher teeth, a physical elementally unclassified signature direction, the species name `Fathomaw`, the signature title `Yield Point`, the overall scale bands, gas/liquid respiration and tolerance, the vocal loose-group communication model, omnivorous feeding ecology, environmental-only pressure adaptation, and the movement, sensing, attribute and temperament bands were accepted on 2026-09-22. On 2026-09-23 Nick also approved `fins` as anatomy, a distinct blunt anterior-fin contact move, an ordinary sustained jaw hold, and an ordinary damaging squeeze that can both injure and restrain, while clarifying that ordinary act coverage should be exhaustive within supported anatomy rather than compact for its own sake. A schema 5.1 draft template now exists and compiles. Other physiology values and the complete species remain proposals, not ratified content. Art is not yet approved.
 
 ## Why this creature exists
 
@@ -93,11 +93,11 @@ Agreed temperament favors steady inspection over aggression: boldness 35 to 55, 
 - **Behavior:** Sweeps a route with short clicks, tests suspicious surfaces with its jaws, and pushes loosened pieces clear with its body, anterior fins, and tail.
 - **Company (agreed):** Several may service one route while remaining spaced across separate sections; they exchange low calls rather than working as one tightly coordinated body.
 
-The full species description remains unwritten until the body and these facts are approved. Naming still comes after the remaining defining pieces.
+The species description below is drafted in the schema 5.1 candidate. Nick accepted it as serviceable but found it boring; that reaction is a creative issue to revisit before final approval. Naming followed the defining body, purpose and ability decisions.
 
 ### Draft canonical prose for review
 
-These lines describe the agreed body direction and engineered role. They are not yet a published teaser or an approved template. The appearance lines specify the creature, not a single image pose.
+These lines describe the agreed body direction and engineered role. They are present in a draft template, not a published teaser or ratified species. The appearance lines specify the creature, not a single image pose.
 
 Proposed `lore.appearance`:
 
@@ -120,7 +120,7 @@ The current v5 model has one species element, optional ability element classific
 
 ### Fixed signature structure
 
-The recommended signature is an unnamed hydraulic jaw press. It sets its broad mouth around a contacted target, drives the lower jaw into the fixed palate through paired fluid-filled muscle chambers, and releases after the compression resolves.
+The agreed `Yield Point` signature is a hydraulic jaw press. It sets its broad mouth around a contacted target, drives the lower jaw into the fixed palate through paired fluid-filled muscle chambers, and releases after the compression resolves.
 
 | Field | Proposal |
 | --- | --- |
@@ -145,8 +145,9 @@ The proposed anatomy is `jaws`, `fins`, `tail` and `body`. No channel or conduit
 | Jaws | `crush` | Include. The hydraulic mouth applies compression at contact; this is distinct from the guaranteed, stationary `Yield Point` signature. |
 | Jaws | `strike` | Exclude the shared row as a whole because it would grant a piercing strike from broad, blunt crusher teeth. Restore its supported quick compression variant as an authored extension; `acts.exclude` cannot remove only the piercing variant. |
 | Jaws | `rake` | Exclude. The teeth have no cutting edge. |
-| Jaws | `snare` | Include. The broad teeth and hydraulic closure can grip a moving target for a brief hold without requiring an injuring squeeze. This is an ordinary action; the approved `Yield Point` signature still clamps and releases. |
-| Jaws | compression plus hold | Approved ordinary behavior requiring an authored extension. Maintaining hydraulic pressure while gripping can injure and restrain the same target. The table's separate `crush` and `snare` rows cannot express that compound act; neither outcome depends on the other succeeding. |
+| Jaws | `snare` | Include. The broad teeth and hydraulic closure can leave a brief restraint without requiring injury. The shared row does not maintain a source-bound grip; the approved `Yield Point` signature still clamps and releases. |
+| Jaws | maintained noninjuring grip | Approved ordinary behavior requiring an authored extension. The source-bound restraint lasts while Fathomaw keeps its jaws closed, unlike the brief shared snare. |
+| Jaws | compression plus maintained hold | Approved ordinary behavior requiring an authored extension. Maintaining hydraulic pressure while gripping can injure and restrain the same target. The table's separate `crush` and `snare` rows cannot express that compound act; neither outcome depends on the other succeeding. |
 | Anterior fins | `strike`, `shove` | Include both. Their reinforced roots and load-bearing rays can deliver blunt contact or push a target in liquid or on solid ground. |
 | Tail | `strike`, `lash`, `shove` | Include. The powered tail can hit one target, sweep across nearby targets, or redirect a contacted target. A sweep still uses the animal's own tail, not an external water wave. |
 | Tail | `crush`, `snare` | Exclude. The broad propulsion tail is not described as prehensile, able to maintain a hold, or able to apply held compression. |
@@ -162,7 +163,7 @@ These are source-by-source dispositions, not a manually chosen move-count target
 | Candidate or family | Disposition | Reason |
 | --- | --- | --- |
 | Contact compression and impact | Included through jaws, fins, tail and body as detailed above | Each source is audited separately; similar effects do not erase independently capable parts. |
-| Sustained jaw hold | Included | Nick approved an ordinary brief hold on a moving opponent. A noninjuring hold comes from `jaws/snare`; the separately approved damaging hold needs an authored extension. Neither changes the clamp-and-release signature. |
+| Sustained jaw hold | Included | Nick approved both noninjuring and damaging maintained grips. Each needs an authored source-bound extension; the shared `jaws/snare` is a separate brief lingering restraint. Neither changes the clamp-and-release signature. |
 | Fin grasp or cutting | Excluded | Broad supporting fins have no established grasping digits or cutting edge. |
 | Echolocation attack, deafening or disorientation | Excluded | Echolocation is a special sense. Nothing yet supports weaponized sound. |
 | Reveal or mark action | Excluded for now | Ordinary echolocation already establishes perception. A persistent applied status would invent a separate tracking process. |
@@ -171,7 +172,7 @@ These are source-by-source dispositions, not a manually chosen move-count target
 | Restoration, direct protection, status removal or beneficial status | Excluded | No repair, shielding, cleansing or stimulation mechanism has been established. |
 | Automatic passive | Excluded | Pressure tolerance, gas/liquid respiration and echolocation are physiology, not automatic encounter effects. |
 
-Registered `jaws`, `fins`, `tail` and `body` describe the proposed physical sources. No `channels` or `conduits` are proposed. Two generic rows reveal table-granularity friction: jaws strike grants piercing and compression together, while body strike grants impact and compression together, yet `acts.exclude` addresses only an entire instrument/pattern row. Fathomaw would exclude both rows and author their supported compression-only quick jaw act and impact-only body ram. A third extension would combine jaw compression with the approved hold. These preserve the full justified capability set without granting unsupported variants. The final v5 audit remains incomplete until the template is authored and compiled against the approved scale model.
+Registered `jaws`, `fins`, `tail` and `body` describe the proposed physical sources. No `channels` or `conduits` are proposed. Two generic rows reveal table-granularity friction: jaws strike grants piercing and compression together, while body strike grants impact and compression together, yet `acts.exclude` addresses only an entire instrument/pattern row. The [draft schema 5.1 template](../../species-templates/v5/drafts/fathomaw.json) excludes both rows and restores the supported compression-only quick jaw act and impact-only body ram. Two further extensions encode the separately approved maintained noninjuring and damaging jaw holds. These preserve the full justified capability set without granting unsupported variants. The [draft ability audit](../../species-templates/v5/drafts/fathomaw.ability-audit.md) has been compiled and sampled, but the species remains unratified pending creative and art review.
 
 ## Collision and novelty test
 
