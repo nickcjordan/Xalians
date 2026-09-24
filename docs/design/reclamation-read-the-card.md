@@ -45,7 +45,8 @@ So a creature with no mark shows the same number at all three worlds. Foromeer's
 6. **The ghost in each world shows how its number is made, in order, under it.**
    - It starts from the normal hold and applies each mark with its factor. When the Clash would take something, it adds what the creature arrives with and what the Clash takes: "+4" over `13 🔥×½ → 7 −3`, and "+7" over `13 ❄×½`.
    - A reader took pass 59's first "+4 🔥×½" for 4 being the halved number; the factor belongs to the arrival, so it stands before it.
-   - The loss printed is the difference of the two numbers printed, so the chain always lands on the number above it. A blow of 3.5 would otherwise round up on both sides. `reclamation-proving.mjs` checks it.
+   - When it also adds to your creatures already there (a shield covering one, a bolster lifting one), the chain ends with that too, beside two figures: `12 −5 +8` under +15.
+   - The loss printed is the difference of the two numbers printed, so the chain always lands on the number above it. A blow of 3.5 would otherwise round up on both sides. `reclamation-proving.mjs` checks it, and caught the first chain, which left out the ally step.
 7. **The match-point pennant glows in outline and stays empty.** Both of this pass's first readers took the filled glow for a fifth world already won.
 8. **Words.**
    - The key and How to play explain the box, the marks and their factors, and the worlds' colors on the card.
