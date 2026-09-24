@@ -4,8 +4,8 @@ import { prepare } from '@xalians/rules/expedition/creatureOnTable';
 /*
 	PASS 52, THE GLANCE REDESIGN (docs/design/reclamation-glance-redesign.md).
 
-	What the table draws without being asked: every world's forecast totals (the front
-	line), and what each creature in hand would do to each world if sent there now (the
+	What the table draws without being asked: every world's forecast totals (its standing,
+	pass 54), and what each creature in hand would do to each world if sent there now (the
 	fit strip on its card). Every number is the engine's: forecastClash() for the board as
 	it stands, forecastSend() for the board with one more creature on it, both blind to
 	the opponent's hidden sends. Nothing here is React.
@@ -25,13 +25,16 @@ function other(seat) {
 	The two sides' totals at one world under a forecast: the creatures `seat` can see there
 	(its own, and the opponent's that arrived in the open), each at the hold the forecast
 	leaves it, a fallen one at nothing. `extraId` is a creature placed by forecastSend.
+	PASS 54: `mineBefore` and `theirsBefore` are the same creatures at the hold they go into
+	the Clash with (the forecast's `before`), so the standing can draw what the Clash takes.
 */
 export function forecastTotalsAt(match, seat, forecast, siteId, extraId) {
 	const siteBoard = match.board[siteId];
 	if (!siteBoard || !forecast) {
-		return { mine: 0, theirs: 0 };
+		return { mine: 0, theirs: 0, mineBefore: 0, theirsBefore: 0 };
 	}
 	const held = (id) => (forecast[id] && !forecast[id].downed ? forecast[id].hold : 0);
+	const going = (id) => (forecast[id] && typeof forecast[id].before === 'number' ? forecast[id].before : held(id));
 	const mineIds = siteBoard[seat].map((e) => e.recordId);
 	if (extraId && !mineIds.includes(extraId)) {
 		mineIds.push(extraId);
@@ -40,6 +43,8 @@ export function forecastTotalsAt(match, seat, forecast, siteId, extraId) {
 	return {
 		mine: mineIds.reduce((sum, id) => sum + held(id), 0),
 		theirs: theirIds.reduce((sum, id) => sum + held(id), 0),
+		mineBefore: mineIds.reduce((sum, id) => sum + going(id), 0),
+		theirsBefore: theirIds.reduce((sum, id) => sum + going(id), 0),
 	};
 }
 
@@ -111,15 +116,32 @@ export function fitTable(match, seat, records, roleOf) {
 }
 
 /*
-	The fraction of a world's field that is the rival's ground: 0 is all yours, 1 all
-	theirs, a half is level. Null when nobody stands there.
+	PASS 54. THE STANDING'S SCALE. Every world's two bars are drawn on one scale, so a bar
+	at one world can be read against a bar at the next. The scale is the largest amount any
+	bar could show in this state: each side's total going into the Clash at every world, and
+	with a fit table every total a send of any creature in hand would make, so pointing from
+	one creature to the next never rescales the table under the pointer. Rounded up to a
+	step of six, never below STANDING_FLOOR, so a round's first send does not fill its world.
 */
-export function frontFraction(theirs, mine) {
-	const total = (theirs || 0) + (mine || 0);
-	if (!(total > EPS)) {
-		return null;
+export const STANDING_FLOOR = 24;
+const STANDING_STEP = 6;
+export function standingScale(fits, extra) {
+	let top = STANDING_FLOOR;
+	const take = (v) => {
+		if (typeof v === 'number' && Number.isFinite(v) && v > top) {
+			top = v;
+		}
+	};
+	(extra || []).forEach(take);
+	if (fits) {
+		Object.values(fits.base || {}).forEach((t) => [t.mine, t.theirs, t.mineBefore, t.theirsBefore].forEach(take));
+		Object.values(fits.fits || {}).forEach((row) => Object.values(row || {}).forEach((cell) => {
+			if (cell && cell.after) {
+				[cell.after.mine, cell.after.theirs, cell.after.mineBefore, cell.after.theirsBefore].forEach(take);
+			}
+		}));
 	}
-	return theirs / total;
+	return Math.ceil(top / STANDING_STEP) * STANDING_STEP;
 }
 
 /*

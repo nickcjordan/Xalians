@@ -1,6 +1,7 @@
 import React from 'react';
 import { formatHold, formatHoldShown, wholeOrTenths } from './reclamationNarration';
-import { FIT_SCALE, HOLD_BAR_SCALE, frontFraction } from './reclamationFit';
+import { FIT_SCALE, HOLD_BAR_SCALE } from './reclamationFit';
+import { HomeGlyph, StrainGlyph } from './reclamationGlyphs';
 
 /*
 	PASS 52, THE GLANCE REDESIGN (docs/design/reclamation-glance-redesign.md).
@@ -8,16 +9,16 @@ import { FIT_SCALE, HOLD_BAR_SCALE, frontFraction } from './reclamationFit';
 	The table's instruments, so whose a thing is and how much it counts are read from where
 	it sits, its color and its length, not from a label:
 
-	  FrontLine   a world's field split into the rival's ground (above, brass) and yours
-	              (below, cyan) where the two totals put the line, the totals on it
+	  Standing    a world's two bars, the rival's above yours on one scale (pass 54; it
+	              replaced pass 52's FrontLine)
 	  HoldBar     a creature's hold as a bar in its side's color, the part the Clash is
 	              forecast to take striped at its end
 	  FitStrip    three columns on a bench card, one per world in world order: how much
 	              sending it there now moves that world your way, with the rival's lead
 	              ticked where the rival has one
 	  RoundTrack  the game's nine worlds, three rounds of three, filled by who won them
-	  ScorePips   the rival's row of five above yours
-	  SendPips    the sends you have left
+	  ScorePips   the rival's row of five above yours, each with its turn lamp
+	  SendCount   the sends each side has left, as ticks
 
 	Every moving part is a transform or a clip-path, so pointing at a creature repaints the
 	table and never moves it (pass 37's rule, held by reclamation-shift.mjs).
@@ -34,56 +35,99 @@ function leadOf(theirs, mine) {
 }
 
 /*
-	FrontLine: `theirs` and `mine` are the totals the line stands on now; `preview`, when a
-	creature is pointed at or lifted, is { theirs, mine } with it sent here, and the line
-	moves there with the ground it would change hatched.
+	PASS 54, THE STANDING (Nick, 2026-09-23, on pass 52's front line: "I don't see a reason
+	for there to be a distinction between anything, so it just looks weird that all the
+	squares are split that way ... a number in the top left corner of something is next to
+	useless").
+
+	The front line drew a SHARE: the rival's part of a world against yours. A share says
+	nothing when one side is absent, so every send into an empty world filled the whole
+	field, and a 5 and a 16 looked the same. The standing draws AMOUNTS instead: two bars
+	from the same edge on one scale shared by the round's three worlds, the rival's above
+	yours, so the longer bar is the side that takes the world and a bar can be read against
+	the bars of the next world.
+
+	  fill     what the Clash is forecast to leave that side here, which decides the world
+	  loss     the hatched run past the fill: what the Clash takes of what goes in
+	  ghost    with a creature pointed at or lifted, the outlined run it adds to your bar
+	  mark     the rival's end, drawn down through your lane: pass it and the world is yours
+	  number   the side's total, riding the end of its bar
+
+	`now` and `preview` are { theirs, mine, theirsBefore, mineBefore } (reclamationFit's
+	forecast totals), `scale` is standingScale()'s, `marks` says what the previewed creature
+	is here ({ home, strain, falls }), and `verdict` is the Court's ruling on the world once
+	it is ruled, drawn as a pennant at the end of the winner's bar. Nothing is drawn for an
+	empty world.
 */
-export function FrontLine({ siteId, theirs, mine, preview }) {
-	const at = frontFraction(theirs, mine);
-	const next = preview ? frontFraction(preview.theirs, preview.mine) : null;
-	const shown = preview ? next : at;
-	if (shown === null) {
-		return <span className="rec-front rec-front--empty" data-front={siteId} data-front-lead="empty" aria-hidden="true" />;
-	}
-	const t = preview ? preview.theirs : theirs;
-	const m = preview ? preview.mine : mine;
-	const lead = leadOf(t, m);
+const round1 = (v) => Math.round(v * 10) / 10;
+
+export function Standing({ siteId, now, preview, scale, marks, verdict }) {
+	const base = now || { theirs: 0, mine: 0, theirsBefore: 0, mineBefore: 0 };
+	const shown = preview || base;
+	const t = shown.theirs || 0;
+	const m = shown.mine || 0;
+	const tb = Math.max(t, shown.theirsBefore || 0);
+	const mb = Math.max(m, shown.mineBefore || 0);
+	const solidMine = preview ? Math.min(base.mine || 0, m) : m;
+	const empty = !(t + m + tb + mb > EPS);
+	const lead = empty ? 'empty' : leadOf(t, m);
+	const s = scale > 0 ? scale : 24;
+	const f = (v) => clamp01(v / s).toFixed(4);
 	const [shownTheirs, shownMine] = wholeOrTenths(t, m);
-	const was = at === null ? (preview ? 0.5 : shown) : at;
-	const gain = preview ? (shown < was - 0.002 ? 'mine' : shown > was + 0.002 ? 'theirs' : null) : null;
+	const ghost = !!preview && m > solidMine + EPS;
 	const style = {
-		'--front': (shown * 100).toFixed(2),
-		'--front-was': (was * 100).toFixed(2),
-		'--front-lo': (Math.min(shown, was) * 100).toFixed(2),
-		'--front-hi': (Math.max(shown, was) * 100).toFixed(2),
+		'--st-t': f(t),
+		'--st-tb': f(tb),
+		'--st-m': f(m),
+		'--st-m0': f(solidMine),
+		'--st-mb': f(mb),
 	};
-	// the totals are the ground's sibling, not its child, so they stand above the figures and the preview
+	const mk = marks || {};
+	const won = verdict ? (verdict.who === 'yours' ? 'mine' : verdict.who === 'theirs' ? 'theirs' : 'tie') : null;
 	return (
-		<>
-			<span
-				className={`rec-front rec-front--${lead}${preview ? ' rec-front--preview' : ''}${gain ? ` rec-front--gain-${gain}` : ''}`}
-				style={style}
-				data-front={siteId}
-				data-front-lead={lead}
-				data-front-at={shown.toFixed(3)}
-				aria-hidden="true"
-			>
-				<span className="rec-front-ground rec-front-ground--theirs" />
-				<span className="rec-front-ground rec-front-ground--mine" />
-				{gain && <span className="rec-front-gain" />}
-				{preview && at !== null && <span className="rec-front-was" />}
-				<span className="rec-front-line" />
+		<span
+			className={`rec-standing rec-standing--${lead}${preview ? ' rec-standing--preview' : ''}${won ? ` rec-standing--ruled rec-standing--won-${won}` : ''}`}
+			style={style}
+			data-standing={siteId}
+			data-standing-lead={lead}
+			data-standing-scale={s}
+			data-standing-values={`${round1(t)}/${round1(m)}`}
+			aria-hidden="true"
+		>
+			<span className="rec-standing-lane rec-standing-lane--theirs" data-standing-side="theirs">
+				<span className="rec-standing-track" />
+				{tb > t + EPS && <span className="rec-standing-loss" />}
+				<span className="rec-standing-fill" />
+				{(t > EPS || won === 'theirs') && (
+					<span className="rec-standing-num" data-standing-total="theirs">
+						<b className="g-mono">{shownTheirs}</b>
+						{won === 'theirs' && <Crest verdict={verdict} />}
+					</span>
+				)}
 			</span>
-			<span className={`rec-front-totals rec-front-totals--${lead}${preview ? ' rec-front-totals--preview' : ''}`} style={style} data-front-totals={siteId} aria-hidden="true">
-				<b className="rec-front-total rec-front-total--theirs" data-front-total="theirs">{shownTheirs}</b>
-				<b className="rec-front-total rec-front-total--mine" data-front-total="mine">{shownMine}</b>
+			<span className="rec-standing-lane rec-standing-lane--mine" data-standing-side="mine">
+				<span className="rec-standing-track" />
+				{mb > m + EPS && <span className="rec-standing-loss" />}
+				{ghost && <span className="rec-standing-ghost" data-standing-ghost={round1(m - solidMine)} />}
+				<span className="rec-standing-fill" />
+				{t > EPS && <span className="rec-standing-mark" data-standing-mark />}
+				{(m > EPS || mb > EPS || preview || won === 'mine' || won === 'tie') && (
+					<span className="rec-standing-num" data-standing-total="mine">
+						{preview && mk.art && <span className="rec-standing-art" data-standing-art>{mk.art}</span>}
+						{(m > EPS || mb > EPS || preview || won === 'mine') && <b className="g-mono">{shownMine}</b>}
+						{(won === 'mine' || won === 'tie') && <Crest verdict={verdict} />}
+						{mk.home && <span className="rec-standing-why rec-standing-why--home" data-standing-home><HomeGlyph /></span>}
+						{mk.strain && <span className="rec-standing-why rec-standing-why--strain" data-standing-strain={mk.strain}><StrainGlyph cause={mk.strain} /></span>}
+						{mk.falls && <span className="rec-standing-why rec-standing-why--falls" data-standing-falls><svg viewBox="0 0 12 12"><path d="M2.5 2.5l7 7M9.5 2.5l-7 7" /></svg></span>}
+					</span>
+				)}
 			</span>
-		</>
+		</span>
 	);
 }
 
-// the words a world's line stands for, for its title and its reader's label
-export function frontSentence(planet, theirs, mine) {
+// the words a world's standing stands for, for its reader's label
+export function standingSentence(planet, theirs, mine) {
 	if (!(theirs + mine > EPS)) {
 		return `${planet}: nobody stands here yet`;
 	}
@@ -208,43 +252,69 @@ export function RoundTrack({ track, frameIndex }) {
 }
 
 /*
-	ScorePips: each side's row, the rival's above yours: five pips for the worlds won toward
-	the clinch, then the sends that side has left as a chevron and a count (a resource, read
-	the way a game prints one), and a pause mark once the rival has passed this round.
+	ScorePips: each side's row, the rival's above yours: five pennants for the worlds won
+	toward the clinch (pass 54: the first blind readers of the standing took the old pips for
+	more of the round track), then the sends that side has left, and a pause mark once the
+	rival has passed this round.
+
+	PASS 54. Whose move it is is a pointer at the head of that side's row, pulsing in its
+	color (the turn marker a board game passes across the table), in place of the "Your
+	move" and "Rival's move" words; the other row's head is empty. The sends left are a
+	row of ticks, one per send the game allows, lit for each one still to spend, with the
+	count after them, in place of a chevron and a bare number.
 */
-export function ScorePips({ mine, theirs, toClinch, rivalPassed, mySends, theirSends, worldsAhead, sendsTone }) {
+export function ScorePips({ mine, theirs, toClinch, rivalPassed, mySends, theirSends, myCap, theirCap, worldsAhead, sendsTone, turn }) {
+	// pass 54: each world won is a pennant, the same flag the Ruling plants on the winner's bar
 	const row = (n, side) => Array.from({ length: toClinch }).map((_, i) => (
-		<i className={`rec-pip rec-pip--${side}${i < n ? ' rec-pip--lit' : ''}`} key={`${i}-${i < n ? 'lit' : 'dark'}`} />
+		<i className={`rec-pip rec-pip--flag rec-pip--${side}${i < n ? ' rec-pip--lit' : ''}`} key={`${i}-${i < n ? 'lit' : 'dark'}`}>
+			<svg viewBox="0 0 12 14" aria-hidden="true"><path className="rec-pip-staff" d="M2.5 13.5V1" /><path className="rec-pip-cloth" d="M2.5 1.5h8L8.3 4.8l2.2 3.3h-8z" /></svg>
+		</i>
 	));
 	const label = `First to ${toClinch} worlds wins. The rival has ${theirs}, you have ${mine}.${rivalPassed ? ' The rival has passed this round.' : ''}`;
+	const lamp = (side) => (
+		<span
+			className={`rec-turn-lamp rec-turn-lamp--${side}${turn === side ? ' rec-turn-lamp--on' : ''}`}
+			key={`lamp-${side}-${turn === side ? 'on' : 'off'}`}
+			data-turn-lamp={side}
+			data-turn-on={turn === side ? '' : undefined}
+			title={turn === side ? (side === 'mine' ? 'Your move' : 'The rival is moving') : undefined}
+		>
+			{turn === side && <svg viewBox="0 0 10 12" aria-hidden="true"><path d="M1.5 1.2 9 6l-7.5 4.8z" /></svg>}
+		</span>
+	);
 	return (
-		<span className="rec-scoreboard" data-score>
+		<span className="rec-scoreboard" data-score data-turn={turn || 'none'}>
+			{lamp('theirs')}
 			<span className="rec-score-row rec-score-row--theirs" data-sites-b={theirs} title={label} aria-label={label} role="img">
 				{row(theirs, 'theirs')}
 			</span>
-			{typeof theirSends === 'number' && <SendCount left={theirSends} side="theirs" worldsAhead={worldsAhead} />}
+			{typeof theirSends === 'number' ? <SendCount left={theirSends} cap={theirCap} side="theirs" worldsAhead={worldsAhead} /> : <span />}
 			<span className="rec-score-passed-slot">
 				{rivalPassed && <span className="rec-score-passed" data-rival-passed title="The rival has passed this round"><svg viewBox="0 0 12 12" aria-hidden="true"><rect x="2.5" y="2" width="2.4" height="8" /><rect x="7.1" y="2" width="2.4" height="8" /></svg></span>}
 			</span>
+			{lamp('mine')}
 			<span className="rec-score-row rec-score-row--mine" data-sites-a={mine} title={label} aria-label={label} role="img">{row(mine, 'mine')}</span>
-			{typeof mySends === 'number' && <SendCount left={mySends} side="mine" worldsAhead={worldsAhead} tone={sendsTone} />}
+			{typeof mySends === 'number' ? <SendCount left={mySends} cap={myCap} side="mine" worldsAhead={worldsAhead} tone={sendsTone} /> : <span />}
 			<span className="rec-score-passed-slot" />
 		</span>
 	);
 }
 
-export function SendCount({ left, side, worldsAhead, tone }) {
+export function SendCount({ left, cap, side, worldsAhead, tone }) {
 	const who = side === 'theirs' ? 'The rival has' : 'You have';
 	const label = `${who} ${left} send${left === 1 ? '' : 's'} left${typeof worldsAhead === 'number' ? ` for the ${worldsAhead} world${worldsAhead === 1 ? '' : 's'} still to play` : ''}`;
+	const total = Math.max(typeof cap === 'number' ? cap : left, left);
 	return (
 		<span className={`rec-sends rec-sends--${side}${tone ? ` rec-sends--${tone}` : ''}`} title={label} aria-label={label} role="img" data-sends-left={left} data-sends-side={side}>
-			<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M1.5 1.5 5.5 6l-4 4.5M6 1.5 10 6l-4 4.5" /></svg>
+			<span className="rec-sends-ticks" aria-hidden="true">
+				{Array.from({ length: total }).map((_, i) => <i className={`rec-send-tick${i < left ? ' rec-send-tick--left' : ''}`} key={i} />)}
+			</span>
 			<b className="g-mono">{left}</b>
 		</span>
 	);
 }
 
-// the Ruling on a world: a pennant in the winner's color, the margin beside it
+// the Ruling on a world: a pennant in the winner's color (pass 54: at the end of the winner's bar, which shows the margin)
 export function Crest({ verdict }) {
 	if (!verdict) {
 		return null;
@@ -257,7 +327,6 @@ export function Crest({ verdict }) {
 					? <path d="M5 9h14M5 15h14" />
 					: <><path d="M6 21V3" /><path d="M6 4h12l-3 4.5L18 13H6" /></>}
 			</svg>
-			{who !== 'tie' && !verdict.unopposed && <span className="rec-crest-by">+{formatHoldShown(typeof verdict.shownMargin === 'number' ? verdict.shownMargin : verdict.margin)}</span>}
 		</span>
 	);
 }

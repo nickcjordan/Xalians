@@ -15,9 +15,9 @@ import React from 'react';
 */
 export const LEGEND_ITEMS = [
 	{ key: 'track', selector: '[data-round-track]', text: 'The nine worlds of the game, three rounds of three. Each fills with the color of whoever won it.' },
-	{ key: 'score', selector: '[data-score]', text: 'Worlds won toward five: the rival’s row above in brass, yours below in cyan. The » number is sends left.' },
-	{ key: 'totals', selector: '[data-front-totals]', text: 'Each side’s hold on this world after the Clash, the rival’s above yours. The higher takes the world.' },
-	{ key: 'world', selector: '[data-site-id]', fallbackFor: 'totals', text: 'A world goes to whoever holds more of it after the Clash. The rival stands above the line, you below.' },
+	{ key: 'score', selector: '[data-score]', text: 'Worlds won toward five: the rival’s row above in brass, yours below in cyan. The lit dot is whose move it is; the ticks are the sends each side has left.' },
+	{ key: 'standing', selector: '[data-standing]', text: 'Who holds this world after the Clash: the rival’s bar above, yours below, on one scale for all three worlds. The longer bar takes it. Hatched is what the Clash takes; pass the brass tick to lead.' },
+	{ key: 'world', selector: '[data-site-id]', fallbackFor: 'standing', text: 'A world goes to whoever holds more of it after the Clash. The rival stands above the seam, you below.' },
 	{ key: 'bar', selector: '[data-rank] .rec-figure-foot', text: 'A creature’s hold. A red striped end is what the Clash would take from it.' },
 	{ key: 'fit', selector: '[data-slot-state="hand"] [data-fit]', text: 'What this creature would add to each world if sent now, counting what it does in the Clash, in world order. Past a brass tick, it takes the lead there.' },
 	{ key: 'role', selector: '[data-slot-state="hand"] .rec-plinth-role', text: 'Its role in the Clash: strike one, sweep all, shield, or bolster.' },

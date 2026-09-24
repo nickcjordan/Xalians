@@ -929,7 +929,7 @@ function runResolveAndJudge(state: MatchState): MatchState {
 }
 
 /*
-	forecastClash(state, handler) -> { [recordId]: { hold, downed } } | null
+	forecastClash(state, handler) -> { [recordId]: { hold, downed, before } } | null
 
 	PASS 38. What the Clash would leave standing if the round ended now, as `handler` can
 	know it: the engine's own resolve and the Ruling's bolster recovery, run on a copy of
@@ -940,8 +940,11 @@ function runResolveAndJudge(state: MatchState): MatchState {
 	Resolve draws no randomness, so with nothing hidden the forecast is the Ruling exactly
 	(forecastClash.test.ts holds it to that). Every entry on the copy is keyed, downed
 	ones at hold 0. Null outside Deploy. The state passed in is not touched.
+
+	PASS 54. `before` is the hold each creature goes into the Clash with, so a world's
+	standing can draw what it holds now and what the Clash would leave of it from one call.
 */
-export interface ClashForecast { hold: number; downed: boolean }
+export interface ClashForecast { hold: number; downed: boolean; before: number }
 export function forecastClash(state: MatchState, handler: Seat): Record<string, ClashForecast> | null {
 	if (!state || state.phase !== 'deploy') {
 		return null;
@@ -969,9 +972,11 @@ export function forecastClash(state: MatchState, handler: Seat): Record<string, 
 		(['A', 'B'] as Seat[]).forEach((player) => {
 			board[site.id][player].forEach((e) => {
 				const after = resolved.board[site.id][player].find((x) => x.recordId === e.recordId);
+				// resolve() works on its own clone of the board, so `e` is still the entry going in
+				const before = currentHoldOf(copy, e);
 				out[e.recordId] = after && !after.downed
-					? { hold: currentHoldOf(resolved, after), downed: false }
-					: { hold: 0, downed: true };
+					? { hold: currentHoldOf(resolved, after), downed: false, before }
+					: { hold: 0, downed: true, before };
 			});
 		});
 	});

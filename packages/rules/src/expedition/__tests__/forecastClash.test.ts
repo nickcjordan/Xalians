@@ -131,6 +131,20 @@ describe('forecastClash', () => {
 		const state = playMatch('f8', () => {});
 		expect(forecastClash(state, 'A')).toBe(null);
 	});
+
+	// pass 54: a world's standing draws the hold going in and what the Clash leaves of it
+	test('gives each creature the hold it goes into the Clash with, never less than it keeps', () => {
+		let checked = 0;
+		playMatch('f9', (before) => {
+			const forecast = forecastClash(before, 'A') as Record<string, { hold: number; downed: boolean; before: number }>;
+			Object.values(forecast).forEach((f) => {
+				expect(f.before).toBeGreaterThan(0);
+				expect(f.hold).toBeLessThanOrEqual(f.before + 1e-9);
+				checked += 1;
+			});
+		});
+		expect(checked).toBeGreaterThan(10);
+	});
 });
 
 /*

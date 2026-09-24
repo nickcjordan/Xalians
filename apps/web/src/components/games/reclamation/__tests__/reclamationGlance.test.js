@@ -7,16 +7,16 @@ import {
 } from '@xalians/rules/expedition/expeditionRules';
 import { getWorlds } from '@xalians/rules/expedition/sites';
 import { ROSTER_SIZE } from '@xalians/rules/expedition/expeditionInterpretation';
-import { fitTable, forecastTotalsAt, frontFraction, roundTrack, FIT_SCALE } from '../reclamationFit';
-import { FrontLine, FitStrip, ScorePips, HoldBar, Crest } from '../reclamationInstruments';
+import { fitTable, forecastTotalsAt, standingScale, STANDING_FLOOR, roundTrack, FIT_SCALE } from '../reclamationFit';
+import { Standing, FitStrip, ScorePips, HoldBar, Crest } from '../reclamationInstruments';
 
 /*
 	PASS 52, THE GLANCE REDESIGN (docs/design/reclamation-glance-redesign.md).
 
 	The table's instruments print engine numbers without a label beside them, so what each
 	one says has to be pinned: the fit strip is the engine's forecast of that exact send,
-	the front line stands where the forecast totals put it, and the marks (the tick, the
-	lit column, the cross) appear exactly when the numbers call for them. The match under
+	the standing (pass 54) draws the forecast totals on one scale, and the marks (the tick,
+	the lit column, the cross) appear exactly when the numbers call for them. The match under
 	test is the engine's own, built from a real draft pool.
 */
 
@@ -69,7 +69,7 @@ describe('fitTable', () => {
 		expect(lit).toBeGreaterThan(0);
 	});
 
-	it('matches the forecast of the board as it stands for the line', () => {
+	it('matches the forecast of the board as it stands for the standing, and what goes into the Clash', () => {
 		let match = makeMatch();
 		const rival = match.turn;
 		const seat = other(rival);
@@ -77,6 +77,9 @@ describe('fitTable', () => {
 		match = send(match, rival, match.players[rival].roster[2].id, site.id);
 		const table = fitTable(match, seat, match.players[seat].roster);
 		expect(table.base[site.id]).toEqual(forecastTotalsAt(match, seat, forecastClash(match, seat), site.id));
+		// the rival's creature goes in at its full hold, and the Clash can only take from it
+		expect(table.base[site.id].theirsBefore).toBeGreaterThan(0);
+		expect(table.base[site.id].theirs).toBeLessThanOrEqual(table.base[site.id].theirsBefore + 1e-9);
 	});
 
 	it('is null outside Deploy', () => {
@@ -84,12 +87,19 @@ describe('fitTable', () => {
 	});
 });
 
-describe('frontFraction', () => {
-	it('is the rival share of the ground, and nothing on an empty world', () => {
-		expect(frontFraction(0, 0)).toBe(null);
-		expect(frontFraction(12, 0)).toBe(1);
-		expect(frontFraction(0, 3)).toBe(0);
-		expect(frontFraction(5, 5)).toBe(0.5);
+describe('standingScale', () => {
+	it('covers every total a send in hand could make, in steps of six, never below the floor', () => {
+		expect(standingScale(null, [])).toBe(STANDING_FLOOR);
+		expect(standingScale(null, [3, 25.2])).toBe(30);
+		const match = makeMatch();
+		const seat = match.turn;
+		const table = fitTable(match, seat, match.players[seat].roster);
+		const scale = standingScale(table);
+		Object.values(table.fits).forEach((row) => Object.values(row).forEach((cell) => {
+			expect(cell.after.mineBefore).toBeLessThanOrEqual(scale);
+			expect(cell.after.mine).toBeLessThanOrEqual(scale);
+		}));
+		expect(scale % 6).toBe(0);
 	});
 });
 
@@ -109,24 +119,50 @@ describe('roundTrack', () => {
 });
 
 describe('the instruments', () => {
-	it('draws a world only the rival stands on as all brass, with both totals on the line', () => {
-		const { container } = render(<FrontLine siteId="x" theirs={12} mine={0} />);
-		const front = container.querySelector('[data-front="x"]');
-		expect(front.getAttribute('data-front-lead')).toBe('theirs');
-		expect(front.getAttribute('data-front-at')).toBe('1.000');
-		expect(container.querySelector('[data-front-total="theirs"]').textContent).toBe('12');
-		expect(container.querySelector('[data-front-total="mine"]').textContent).toBe('0');
+	it('draws each side as a bar on the shared scale, the rival above, the number on each', () => {
+		const { container } = render(<Standing siteId="x" now={{ theirs: 12, mine: 3, theirsBefore: 12, mineBefore: 3 }} scale={24} />);
+		const st = container.querySelector('[data-standing="x"]');
+		expect(st.getAttribute('data-standing-lead')).toBe('theirs');
+		expect(Number(st.style.getPropertyValue('--st-t'))).toBeCloseTo(0.5, 4);
+		expect(Number(st.style.getPropertyValue('--st-m'))).toBeCloseTo(0.125, 4);
+		const lanes = [...st.querySelectorAll('[data-standing-side]')].map((l) => l.getAttribute('data-standing-side'));
+		expect(lanes).toEqual(['theirs', 'mine']);
+		expect(container.querySelector('[data-standing-total="theirs"]').textContent).toBe('12');
+		expect(container.querySelector('[data-standing-total="mine"]').textContent).toBe('3');
+		// the rival's end is marked down through your lane
+		expect(container.querySelector('[data-standing-mark]')).not.toBeNull();
 	});
 
-	it('draws nothing on an empty world, and a preview as the line moved with the ground it gains', () => {
-		const empty = render(<FrontLine siteId="e" theirs={0} mine={0} />);
-		expect(empty.container.querySelector('[data-front="e"]').getAttribute('data-front-lead')).toBe('empty');
-		const { container } = render(<FrontLine siteId="p" theirs={12} mine={0} preview={{ theirs: 12, mine: 18 }} />);
-		const front = container.querySelector('[data-front="p"]');
-		expect(front.getAttribute('data-front-lead')).toBe('mine');
-		expect(front.className).toContain('rec-front--preview');
-		expect(front.className).toContain('rec-front--gain-mine');
-		expect(container.querySelector('[data-front-total="mine"]').textContent).toBe('18');
+	it('draws nothing but the rails on an empty world, and no numbers', () => {
+		const { container } = render(<Standing siteId="e" now={{ theirs: 0, mine: 0, theirsBefore: 0, mineBefore: 0 }} scale={24} />);
+		expect(container.querySelector('[data-standing="e"]').getAttribute('data-standing-lead')).toBe('empty');
+		expect(container.querySelector('[data-standing-total]')).toBeNull();
+		expect(container.querySelector('[data-standing-mark]')).toBeNull();
+	});
+
+	it('draws a pointed creature as what it adds to your bar, and what the Clash would take as hatched', () => {
+		const { container } = render(
+			<Standing
+				siteId="p"
+				now={{ theirs: 12, mine: 0, theirsBefore: 12, mineBefore: 0 }}
+				preview={{ theirs: 4, mine: 18, theirsBefore: 12, mineBefore: 18 }}
+				scale={24}
+				marks={{ home: true, strain: null, falls: false }}
+			/>,
+		);
+		const st = container.querySelector('[data-standing="p"]');
+		expect(st.getAttribute('data-standing-lead')).toBe('mine');
+		expect(st.className).toContain('rec-standing--preview');
+		expect(container.querySelector('[data-standing-ghost]').getAttribute('data-standing-ghost')).toBe('18');
+		expect(container.querySelector('[data-standing-side="theirs"] .rec-standing-loss')).not.toBeNull();
+		expect(container.querySelector('[data-standing-total="mine"]').textContent).toBe('18');
+		expect(container.querySelector('[data-standing-home]')).not.toBeNull();
+	});
+
+	it('puts the pennant at the end of the winner bar once the world is ruled', () => {
+		const { container } = render(<Standing siteId="r" now={{ theirs: 7, mine: 10, theirsBefore: 7, mineBefore: 10 }} scale={24} verdict={{ who: 'yours', text: 'yours by 3', margin: 3 }} />);
+		expect(container.querySelector('[data-standing-total="mine"] [data-crest]').getAttribute('data-crest')).toBe('mine');
+		expect(container.querySelector('[data-standing-total="theirs"] [data-crest]')).toBeNull();
 	});
 
 	it('prints each column number, ticks a rival lead and lights a column that clears it', () => {
@@ -159,8 +195,8 @@ describe('the instruments', () => {
 		expect(cols[1].className).toContain('rec-fit-col--sent');
 	});
 
-	it('puts the rival row above yours, each with its sends, and marks a rival pass', () => {
-		const { container } = render(<ScorePips mine={1} theirs={3} toClinch={5} rivalPassed mySends={8} theirSends={6} worldsAhead={6} />);
+	it('puts the rival row above yours, each with its sends and its turn lamp, and marks a rival pass', () => {
+		const { container } = render(<ScorePips mine={1} theirs={3} toClinch={5} rivalPassed mySends={8} theirSends={6} myCap={11} theirCap={11} worldsAhead={6} turn="mine" />);
 		const rows = [...container.querySelectorAll('.rec-score-row')];
 		expect(rows[0].getAttribute('data-sites-b')).toBe('3');
 		expect(rows[1].getAttribute('data-sites-a')).toBe('1');
@@ -168,6 +204,12 @@ describe('the instruments', () => {
 		expect(container.querySelector('[data-sends-side="mine"]').textContent).toBe('8');
 		expect(container.querySelector('[data-sends-side="theirs"]').textContent).toBe('6');
 		expect(container.querySelector('[data-rival-passed]')).not.toBeNull();
+		// a tick per send the game allows, lit while unspent
+		expect(container.querySelectorAll('[data-sends-side="mine"] .rec-send-tick').length).toBe(11);
+		expect(container.querySelectorAll('[data-sends-side="mine"] .rec-send-tick--left').length).toBe(8);
+		// whose move it is: the lamp on that side's row, and only there
+		expect(container.querySelector('[data-turn-lamp="mine"]').hasAttribute('data-turn-on')).toBe(true);
+		expect(container.querySelector('[data-turn-lamp="theirs"]').hasAttribute('data-turn-on')).toBe(false);
 	});
 
 	it('strikes out what the Clash would take and marks a fall', () => {
@@ -177,9 +219,9 @@ describe('the instruments', () => {
 		expect(falls.container.firstChild.className).toContain('rec-hbar--falls');
 	});
 
-	it('crowns a ruled world in the winner color with the printed margin', () => {
+	it('crowns a ruled world in the winner color, the margin left to the bars', () => {
 		const { container } = render(<Crest verdict={{ who: 'yours', text: 'yours by 10', margin: 9.96, shownMargin: 10, unopposed: false }} />);
 		expect(container.querySelector('[data-crest]').getAttribute('data-crest')).toBe('mine');
-		expect(container.textContent).toBe('+10');
+		expect(container.textContent).toBe('');
 	});
 });

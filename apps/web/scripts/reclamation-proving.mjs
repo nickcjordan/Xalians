@@ -28,10 +28,11 @@ const browser = await chromium.launch({ executablePath: EDGE, headless: true });
 // the four questions the brief says a player must answer in under two seconds; each needs
 // its instrument present on the table, so the check asserts the instruments exist
 const GLANCE = [
-	// pass 52: the front line on each world, and the fit strip on each card in hand
-	['who is winning this world', '[data-front]'],
+	// pass 52: the fit strip on each card in hand; pass 54: each world's standing, and the
+	// scoreboard whose lamp says whose move it is
+	['who is winning this world', '[data-standing]'],
 	['what each creature would do at each world', '[data-slot-state="hand"] [data-fit] [data-fit-site]'],
-	['who is winning the Proving', '[data-terminal] [data-turn-text], [data-turn-text]'],
+	['who is winning the Proving', '[data-score] [data-turn-lamp]'],
 ];
 
 let failures = 0;
@@ -236,26 +237,32 @@ for (const view of ['simple', 'advanced']) {
 				if (await arm.count()) {
 					await arm.first().click({ timeout: 5000 }).catch(() => {});
 					/*
-						PASS 52. A lifted creature previews itself on every world, and the preview
-						token stays inside its world and clear of the totals on the world's line
-						(on a phone the two first landed on top of each other).
+						PASS 54. A lifted creature previews itself on every world's standing: each
+						world's bars and their numbers stay inside the world's seam, and the two
+						numbers never sit on top of each other.
 					*/
 					const previewFaults = await page.evaluate(() => {
 						const hits = (a, b) => !(a.right <= b.left || b.right <= a.left || a.bottom <= b.top || b.bottom <= a.top);
 						const out = [];
-						document.querySelectorAll('[data-ghost]').forEach((ghost) => {
-							const site = ghost.closest('[data-site-id]');
-							const g = ghost.getBoundingClientRect();
+						const lifted = document.querySelectorAll('[data-standing].rec-standing--preview').length;
+						if (lifted === 0) {
+							out.push('a lifted creature previews itself on no world');
+						}
+						document.querySelectorAll('[data-standing]').forEach((st) => {
+							const site = st.closest('[data-site-id]');
+							const id = site.getAttribute('data-site-id');
 							const w = site.getBoundingClientRect();
-							if (g.left < w.left - 1 || g.right > w.right + 1 || g.top < w.top - 1 || g.bottom > w.bottom + 1) {
-								out.push(`${site.getAttribute('data-site-id')}: the preview runs outside its world`);
-							}
-							const totals = site.querySelector('[data-front-totals]');
-							if (totals && hits(g, totals.getBoundingClientRect())) {
-								out.push(`${site.getAttribute('data-site-id')}: the preview covers the totals`);
+							const nums = [...st.querySelectorAll('[data-standing-total]')].map((n) => n.getBoundingClientRect());
+							[st.getBoundingClientRect(), ...nums].forEach((r) => {
+								if (r.left < w.left - 1 || r.right > w.right + 1 || r.top < w.top - 1 || r.bottom > w.bottom + 1) {
+									out.push(`${id}: the standing runs outside its world`);
+								}
+							});
+							if (nums.length === 2 && hits(nums[0], nums[1])) {
+								out.push(`${id}: the two totals sit on top of each other`);
 							}
 						});
-						return out;
+						return [...new Set(out)];
 					});
 					assert.deepEqual(previewFaults, [], `${label}: ${previewFaults[0]}`);
 					const siteCount = await site.count();
