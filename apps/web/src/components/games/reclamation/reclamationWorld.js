@@ -403,9 +403,14 @@ function ReclamationWorld({
 									{mine.map((entry) => <ReclamationFigure key={entry.recordId} {...figureProps(entry, you, 'up')} />)}
 									{/*
 										PASS 57. The creature pointed at or lifted stands in your half of every world
-										as it would there: its silhouette at the size of a piece, what it would move
-										the world (its card's number) and why, big, in the room an empty world was
-										not using. Laid over the rank, so pointing never moves a figure.
+										as it would there: its silhouette at the size of a piece, its number and why,
+										big, in the room an empty world was not using. Laid over the rank, so pointing
+										never moves a figure.
+										PASS 58. The number is its card's: what your side there would gain, and never
+										what it takes off the rival (pass 57's "20+14" added the two sides, Nick:
+										"Why is it adding my health and the opponent's health?"). What it does to the
+										rival is on the rival's side: the cross on the creature it would down, the
+										rival's struck number and the rival's bar.
 									*/}
 									{ghost && previewHere && previewHere.why && ghost.record && (
 										<span key={`ghost-${ghost.record.id}`} className={`rec-ghost-piece${mine.length ? ' rec-ghost-piece--beside' : ''}`} data-ghost-piece={site.id} aria-hidden="true">
@@ -413,17 +418,9 @@ function ReclamationWorld({
 												<XalianImage variant="token" speciesName={ghost.record.species} primaryType={elementOf(ghost.record)} padding="0px" fill="black" filter={pieceShadowFilter(team.one, 96)} moreClasses="rec-ghost-piece-img" />
 											</span>
 											<span className="rec-ghost-piece-read">
-												<b className="g-mono" data-ghost-swing={previewHere.why.swing.toFixed(2)}>{signedHold(previewHere.why.swing)}</b>
+												<b className="g-mono" data-ghost-gain={previewHere.why.gain.toFixed(2)}>{signedHold(previewHere.why.gain)}</b>
 												<WhyMarks reasons={previewHere.why} className="rec-ghost-piece-whys" />
 											</span>
-											{/* pass 57, after the blind readers: when part of the number comes off the rival, say how much of it is which */}
-											{previewHere.why.taken > 0.5 && (
-												<span className="rec-ghost-piece-split g-mono" data-ghost-split>
-													<i className="rec-ghost-piece-own">{formatHoldShown(Math.max(0, previewHere.why.own + previewHere.why.allies))}</i>
-													<span aria-hidden="true"> + </span>
-													<i className="rec-ghost-piece-taken">{formatHoldShown(previewHere.why.taken)}</i>
-												</span>
-											)}
 										</span>
 									)}
 								</div>
@@ -444,7 +441,7 @@ function ReclamationWorld({
 	Two grids are handed over, narrow and wide, and a container query on the rank's own
 	width picks between them.
 */
-// pass 57: what a send would move a world, as its card's column prints it
+// pass 57: what a send would add to your side of a world, as its card's column prints it
 function signedHold(v) {
 	return v < -0.5 ? `−${formatHoldShown(-v)}` : `+${formatHoldShown(Math.max(0, v))}`;
 }

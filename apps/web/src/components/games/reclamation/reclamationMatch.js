@@ -507,7 +507,7 @@ class ReclamationMatch extends React.Component {
 					fits: fits ? Object.fromEntries(Object.entries(fits.fits).map(([id, row]) => [id, {
 						name: names[id],
 						sites: Object.fromEntries(Object.entries(row).map(([siteId, cell]) => [siteId, {
-							swing: cell.swing, takes: cell.takes, deficit: cell.deficit, hold: cell.hold, isHome: cell.isHome, strainLevel: cell.strainLevel,
+							swing: cell.swing, gain: cell.gain, taken: cell.taken, clear: cell.clear, takes: cell.takes, deficit: cell.deficit, hold: cell.hold, isHome: cell.isHome, strainLevel: cell.strainLevel,
 						}])),
 					}])) : null,
 					sendsLeft: Math.max(0, (view.players[YOU].sendableCap || SENDABLE) - (view.players[YOU].sentCount || 0)),

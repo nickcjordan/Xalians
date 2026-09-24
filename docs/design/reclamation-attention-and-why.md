@@ -2,6 +2,8 @@
 
 Status: shipped in pass 57. It builds on `reclamation-world-standing.md` (pass 54) and `reclamation-glance-redesign.md` (pass 52); where they disagree, this document wins.
 
+Pass 58 (`reclamation-one-side-per-number.md`) changed what a card's number, its column and the ghost's number count: each is now your side alone, and what a send takes off the rival is a brass tag at the top of the column. Where the two disagree, pass 58 wins.
+
 ## What Nick asked
 
 Nick, 2026-09-24, on the pass 56 table:

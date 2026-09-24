@@ -235,6 +235,17 @@ export function CompanyGlyph({ className }) {
 }
 
 // pass 57: the Clash would drive it to nothing
+// pass 58: a piece, for a count of creatures (the sends a side has left), so the count is never read as the score
+export function PieceGlyph({ className }) {
+	return (
+		<svg className={`rec-glyph rec-glyph--piece${className ? ` ${className}` : ''}`} viewBox="0 0 24 24" aria-hidden="true">
+			<circle cx="12" cy="6.5" r="3.6" />
+			<path d="M8.4 12.2h7.2l1.6 6.3H6.8z" />
+			<path d="M5.5 21h13" />
+		</svg>
+	);
+}
+
 export function FallsGlyph({ className }) {
 	return (
 		<svg className={`rec-glyph rec-glyph--falls${className ? ` ${className}` : ''}`} {...box}>

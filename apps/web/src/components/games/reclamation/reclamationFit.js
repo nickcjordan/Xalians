@@ -85,12 +85,15 @@ export function breakdown(ownForecast, base, totals, record, site, reading, rule
 		: null;
 	const expected = body * (home ? 1.5 : 1) * (BAND[held] || 1);
 	const company = going - expected;
+	const allies = totals.mine - own - base.mine;
 	return {
 		own,
 		going,
+		// pass 58: what your side there would gain, the only number a card prints for the send
+		gain: own + allies,
 		toll: Math.max(0, going - own),
 		falls: !!(f && f.downed && going > EPS),
-		allies: totals.mine - own - base.mine,
+		allies,
 		taken: Math.max(0, base.theirs - totals.theirs),
 		body,
 		home,
@@ -103,20 +106,36 @@ export function breakdown(ownForecast, base, totals, record, site, reading, rule
 
 /*
 	The strip's scale: one for the whole bench, so a column on one card reads against the
-	columns on the next. The tallest column any card could draw (its swing and what the Clash
-	would take off it), rounded up to a step of six, between FIT_SCALE and twice it; a
-	column past the cap is clipped and marked.
+	columns on the next. The tallest column any card could draw (what it would go in with
+	and what it would add to your creatures there; since pass 58 what it takes off the rival
+	is not part of the column), rounded up to a step of six, between FIT_SCALE and twice it;
+	a column past the cap is clipped and marked.
 */
+const cellsOf = (fits) => {
+	const out = [];
+	['fits', 'moves'].forEach((key) => {
+		Object.values((fits && fits[key]) || {}).forEach((row) => Object.values(row || {}).forEach((cell) => {
+			if (cell) out.push(cell);
+		}));
+	});
+	return out;
+};
 export function fitScale(fits) {
 	let top = FIT_SCALE;
-	if (fits && fits.fits) {
-		Object.values(fits.fits).forEach((row) => Object.values(row || {}).forEach((cell) => {
-			if (cell) {
-				top = Math.max(top, (cell.going || 0) + Math.max(0, cell.allies || 0) + (cell.taken || 0), cell.swing || 0);
-			}
-		}));
-	}
+	cellsOf(fits).forEach((cell) => {
+		top = Math.max(top, (cell.going || 0) + Math.max(0, cell.allies || 0), cell.gain || 0);
+	});
 	return Math.min(FIT_SCALE * 2, Math.ceil(top / 6) * 6);
+}
+
+/*
+	PASS 58. Whether any column on the bench would take something off the rival: then every
+	card keeps the top of its columns for the rival's side (the brass tag of what it would
+	take), so a column never runs up under a tag and the columns still read on one scale.
+*/
+export const FIT_RIVAL_ROOM = 0.76;
+export function fitTakesAny(fits) {
+	return cellsOf(fits).some((cell) => (cell.taken || 0) > EPS);
 }
 
 /*
@@ -124,7 +143,16 @@ export function fitScale(fits) {
 		forecast,                         the board as it stands
 		base: { [siteId]: { mine, theirs } },
 		fits: { [recordId]: { [siteId]: {
-			swing,     how much this send moves your forecast margin at that world
+			swing,     how much this send moves your forecast margin at that world (pass 58:
+			           never printed, because it adds the rival's loss to your gain)
+			gain,      what your side there would gain: its own hold after the Clash and what
+			           it adds to your creatures there (breakdown(), with its parts)
+			taken,     what the rival's side there would lose
+			rivalBefore  the rival's total there as the board stands (its tag reads
+			           rivalBefore -> rivalBefore - taken)
+			clear,     what the rival would still lead by there after this send, less what you
+			           already have there: the gain must pass it to put you ahead
+			downs,     how many of the rival's creatures there this send would down
 			after,     { mine, theirs } there after it
 			deficit,   how far the rival leads there now (0 when it does not)
 			takes,     the rival leads there now and this send alone would put you ahead
@@ -141,6 +169,19 @@ export function fitScale(fits) {
 
 	`roleOf(recordId)` names a chosen act (the act flip) for a creature, when there is one.
 */
+// the rival's creatures at a world that `after` downs and the board as it stands does not
+function downsAt(match, seat, base, after, siteId) {
+	const siteBoard = match.board[siteId];
+	if (!siteBoard || !after) {
+		return 0;
+	}
+	return siteBoard[other(seat)].filter((e) => !e.hidden).filter((e) => {
+		const f = after[e.recordId];
+		const b = base && base[e.recordId];
+		return f && f.downed && !(b && b.downed);
+	}).length;
+}
+
 export function fitTable(match, seat, records, roleOf) {
 	if (!match || match.phase !== 'deploy') {
 		return null;
@@ -180,6 +221,9 @@ export function fitTable(match, seat, records, roleOf) {
 				swing: marginAfter - marginBefore,
 				after: totals,
 				deficit,
+				clear: Math.max(0, totals.theirs - before.mine),
+				rivalBefore: before.theirs,
+				downs: downsAt(match, seat, forecast, after, site.id),
 				takes: deficit > EPS && marginAfter > EPS,
 				hold: reading ? reading.hold : null,
 				isHome: !!(reading && reading.isHome),
@@ -225,7 +269,28 @@ export function fitTable(match, seat, records, roleOf) {
 				totals[s.id] = forecastTotalsAt(moved, seat, after, s.id);
 				swing += marginOf(totals[s.id]) - marginOf(base[s.id]);
 			});
-			row[site.id] = { swing, after: totals, forecast: after };
+			// pass 58: the column reads the world it would join, the same parts as a send there
+			const to = totals[site.id];
+			const from = base[site.id];
+			const f = after[recordId];
+			const own = f && !f.downed ? f.hold : 0;
+			const going = f && typeof f.before === 'number' ? f.before : own;
+			row[site.id] = {
+				swing,
+				after: totals,
+				forecast: after,
+				own,
+				going,
+				gain: to.mine - from.mine,
+				allies: to.mine - from.mine - own,
+				toll: Math.max(0, going - own),
+				falls: !!(f && f.downed && going > EPS),
+				taken: Math.max(0, from.theirs - to.theirs),
+				rivalBefore: from.theirs,
+				clear: Math.max(0, to.theirs - from.mine),
+				downs: downsAt(match, seat, forecast, after, site.id),
+				takes: from.theirs - from.mine > EPS && to.mine - to.theirs > EPS,
+			};
 		});
 		moves[recordId] = row;
 	});
