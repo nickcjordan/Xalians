@@ -1,6 +1,6 @@
 # Poseidas deep-route concept
 
-Status: engineered purpose agreed in discussion on 2026-09-21; ridge-oriented, belly-supported body direction, broad crusher teeth, a physical elementally unclassified signature direction, the species name `Fathomaw`, the signature title `Yield Point`, the overall scale bands, gas/liquid respiration and tolerance, the vocal loose-group communication model, omnivorous feeding ecology, environmental-only pressure adaptation, and the movement, sensing, attribute and temperament bands were accepted on 2026-09-22. On 2026-09-23 Nick also approved `fins` as anatomy, a distinct blunt anterior-fin contact move, an ordinary sustained jaw hold, and an ordinary damaging squeeze that can both injure and restrain, while clarifying that ordinary act coverage should be exhaustive within supported anatomy rather than compact for its own sake. A schema 5.1 draft template now exists and compiles. Nick accepted the revised low-crawl concept direction, with planted load-bearing fins that make land movement visually credible. Other physiology values and the complete species remain proposals, not ratified content. The concept image is a review reference, not published portrait art.
+Status: engineered purpose agreed in discussion on 2026-09-21; ridge-oriented, belly-supported body direction, broad crusher teeth, a physical elementally unclassified signature direction, the species name `Fathomaw`, the signature title `Yield Point`, the overall scale bands, gas/liquid respiration and tolerance, the vocal loose-group communication model, omnivorous feeding ecology, environmental-only pressure adaptation, and the movement, sensing, attribute and temperament bands were accepted on 2026-09-22. On 2026-09-23 Nick also approved `fins` as anatomy, a distinct blunt anterior-fin contact move, an ordinary sustained jaw hold, and an ordinary damaging squeeze that can both injure and restrain, while clarifying that ordinary act coverage should be exhaustive within supported anatomy rather than compact for its own sake. A schema 5.1 draft template now exists and compiles. Nick accepted the revised low-crawl concept direction, with planted load-bearing fins that make land movement visually credible. Nick also approved smooth flesh, a standard lifespan, no innate armor or special resistance, and a sustained 5 to 40 C range as remaining biology defaults. The complete species remains a draft, not ratified content. The concept image is a review reference, not published portrait art.
 
 ## Why this creature exists
 
@@ -10,7 +10,7 @@ This narrows the older target brief's open-water navigator into a ridge-oriented
 
 Agreed engineered purpose: inspect submerged ridgeline routes and the foundations that connect deep-city structures. The proposed means are echolocation to find voids and shifted joints in dark, turbid water, jaws to grip and crack already weakened obstructions into movable pieces, and body and fins to push those pieces aside. It is not a general builder or a source of Algael. Present-day animals can continue using the same navigation and clearance behavior in the inhabited deep layer without requiring a crew, tool, rig or city structure to act.
 
-This work assignment is a creative inference from the planet's existing infrastructure, not a previously established Poseidas species fact. Nick accepted an industrial purpose for this creature while cautioning that industrial work should not become the default identity for all future creatures. The specific anatomy and behavior above still need review.
+This work assignment is a creative inference from the planet's existing infrastructure, not a previously established Poseidas species fact. Nick accepted an industrial purpose for this creature while cautioning that industrial work should not become the default identity for all future creatures. The purpose, body direction, and land-crawl mechanism have been reviewed, but final portrait art and complete-species ratification remain separate steps.
 
 ## Proposed body as one integrated design
 
@@ -30,9 +30,9 @@ The playable design follows Poseidas's agreed amphibious baseline. It breathes a
 
 The jaw press is complete on neutral dry ground. Deep pressure does not make its bite stronger by default: ambient pressure acts throughout the body and the surrounding water. Depth is the condition under which the animal retains navigation, mobility and tolerance that many others lack. Any proposed depth-dependent amplification would need a separately evidenced mechanism, not a free bonus.
 
-## Proposed v5 physiology
+## Draft v5 physiology
 
-These values are the next design layer. The scale bands are agreed; the remaining rows are proposals.
+The scale, locomotion, senses, attributes, temperament, and remaining smooth-flesh biology defaults have been reviewed and approved. This table remains the candidate record rather than published species data; rolled chirality is the ordinary model default and was not a separate creative decision.
 
 | Field | Proposal | Reasoning |
 | --- | --- | --- |
