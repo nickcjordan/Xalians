@@ -481,3 +481,37 @@ Logged, not taken:
 - The frond plant repeating on the islets. Nick asked for that plant to be replicated.
 - The chute's glowing fluid reading as a tube. Nick's green streak was the split plate on the housing, now cut.
 - The hard-edged whitecap chips up close, the right-hand rock as a plain silhouette, and the larvae being small at site size.
+
+## The World Tree (Nick, 2026-09-24)
+
+Nick: the World Tree and its leaves "are still blending oddly into the foreground versus background versus cloud coverage".
+
+**Diagnosis.**
+- The canopy had nearly the cloud base's value (12,21,17 against 9,17,12).
+- The trunk stood between pale blobs and two rain curtains that lined up with its edges, which read as a funnel.
+- The boughs were thick and low-angled, and a soft dark shadow merged them into a bowl.
+
+**Round 1.**
+- The cloud base rides 46 units higher over the tree, and a band of paler open air lies behind it.
+- The blobs and the tree curtains are cut.
+- The trunk divides into five steep limbs and six secondary limbs, with no soft shadow.
+- The crown is a muted gray-green that does not read nearer than the wood, with a leafy fringe underneath.
+- The reviewer scored scale as lost: the tree was only 2.5 times the young trees.
+
+**Round 2.**
+- The tree's heights map up (ty()), so the fork is at y 240 and a long bare trunk shows above the island.
+- The young trees are capped at 30 to 46 units, and none stand on the trunk's axis.
+- The strike is centered high in the crown.
+- The crown's underside varies instead of forming a shelf.
+- The reviewer then found the tornado reading back: the crown matched the cloud, the limbs merged, and the trunk was a smooth gray column on a bell foot.
+
+**Round 3.**
+- The crown is one step lighter and greener than the cloud, with slivers of air at its top.
+- The limbs are thinner, with air between them at rest.
+- The trunk stays dark down to the foot. It has bark furrows that fade in and out, knots, two broken stubs and irregular edges.
+- It stands on four buttress roots instead of a bell.
+- The reviewer said ship.
+
+Logged:
+- two lit gaps in the strike keep crisp tips for a fraction of a second;
+- the limbs are fairly straight at mid-length (taste).
