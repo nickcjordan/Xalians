@@ -120,6 +120,8 @@ export interface Rules {
 	friendlyFire: boolean;
 	// Pass 57: the type chart, for a creature against its world and an attacker against its target
 	elementMatchups: boolean;
+	// Pass 59: a creature's normal hold and its hold at a world are whole numbers
+	wholeHolds: boolean;
 	projectionReach: number;
 	projectionFalloff: number;
 	worldsPerFrame: number;

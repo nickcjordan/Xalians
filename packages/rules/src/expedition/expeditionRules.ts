@@ -78,6 +78,7 @@ import {
 	CLASH_EXCHANGES,
 	FRIENDLY_FIRE,
 	ELEMENT_MATCHUPS,
+	WHOLE_HOLDS,
 	SHIELD_CAPS,
 	ROLE,
 	WILLFUL_THRESHOLD,
@@ -369,6 +370,8 @@ export const DEFAULT_RULES: Rules = {
 	friendlyFire: FRIENDLY_FIRE,
 	// Pass 57: the type chart, off (what schema 5 creatures have played since the conversion)
 	elementMatchups: ELEMENT_MATCHUPS,
+	// Pass 59: whole holds, so the card's factors add up
+	wholeHolds: WHOLE_HOLDS,
 	projectionReach: PROJECTION_REACH,
 	projectionFalloff: PROJECTION_FALLOFF,
 	worldsPerFrame: WORLDS_PER_FRAME,
@@ -432,6 +435,7 @@ function normalizeRules(rules: RulesInput | null | undefined): Rules {
 		clashExchanges: Math.max(1, Math.floor(num(r.clashExchanges, DEFAULT_RULES.clashExchanges))),
 		friendlyFire: r.friendlyFire !== undefined ? !!r.friendlyFire : DEFAULT_RULES.friendlyFire,
 		elementMatchups: r.elementMatchups !== undefined ? !!r.elementMatchups : DEFAULT_RULES.elementMatchups,
+		wholeHolds: r.wholeHolds !== undefined ? !!r.wholeHolds : DEFAULT_RULES.wholeHolds,
 		projectionReach: num(r.projectionReach, DEFAULT_RULES.projectionReach),
 		projectionFalloff: num(r.projectionFalloff, DEFAULT_RULES.projectionFalloff),
 		worldsPerFrame: num(r.worldsPerFrame, DEFAULT_RULES.worldsPerFrame),

@@ -308,6 +308,16 @@ for (const view of ['simple', 'advanced']) {
 							if (card !== ghostText) {
 								out.push(`${id}: the card prints ${card} and the ghost ${ghostNum.textContent.trim()}`);
 							}
+							// pass 59: what it arrives with, less what the Clash takes, is the ghost's number
+							const chain = document.querySelector(`[data-ghost-piece="${id}"] [data-ghost-chain]`);
+							if (chain && chain.querySelector('.rec-ghost-piece-going')) {
+								const going = Number((chain.querySelector('.rec-ghost-piece-going') || {}).textContent);
+								const toll = Number(((chain.querySelector('.rec-ghost-piece-toll') || {}).textContent || '').replace('−', ''));
+								const allies = Number(((chain.querySelector('.rec-ghost-piece-allies') || {}).textContent || '0').replace('−', '-').replace('+', ''));
+								if (!(going - toll + allies === Number(ghostText.replace('−', '-')))) {
+									out.push(`${id}: the ghost's chain ${going} less ${toll} plus ${allies} does not make ${ghostNum.textContent.trim()}`);
+								}
+							}
 						});
 						document.querySelectorAll('[data-standing]').forEach((st) => {
 							const site = st.closest('[data-site-id]');

@@ -2328,7 +2328,7 @@ class ReclamationMatch extends React.Component {
 							{judged && !playback && view.phase === 'matchEnd' && !this.state.reportOpen && (
 								<div className="rec-judge-bar rec-rise" data-judge-bar>
 									<span className="rec-judge-bar-text">
-										{view.winner === this.seatInPlay() ? 'You win the game' : view.winner ? 'The rival wins the game' : 'The game is over'}, {view.players[this.seatInPlay()].sitesWon} worlds to {view.players[this.seatOpponent()].sitesWon}.
+										{view.winner === this.seatInPlay() ? 'You win the game' : view.winner ? 'The rival wins the game' : 'The game is over'}, {view.players[this.seatInPlay()].sitesWon} world{view.players[this.seatInPlay()].sitesWon === 1 ? '' : 's'} to {view.players[this.seatOpponent()].sitesWon}.
 									</span>
 									<button type="button" className="g-btn g-btn--primary" onClick={() => this.setState({ reportOpen: true })} data-next-frame data-see-result>
 										See the result
