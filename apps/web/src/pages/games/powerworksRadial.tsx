@@ -1,21 +1,203 @@
-// Tier: immersive. The radial move menu that opens over a selected companion on the Powerworks stage (docs/design/powerworks-radial-orders.md, rounds 1 and 2).
+// Tier: immersive. The radial move menu that opens over a selected companion on the Powerworks stage (docs/design/powerworks-radial-orders.md, rounds 1 to 3).
 import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
-import { ArrowLeft, Crosshair, Crown, HeartPulse, Hourglass, Link2, Shield } from "lucide-react";
-import { moveAt, type Move, type Unit } from "@xalians/rules/dungeon";
 import {
-  FigureIcon,
+  ArrowLeft,
+  Ban,
+  Crosshair,
+  Crown,
+  HeartPulse,
+  Magnet,
+  RotateCcw,
+  Shield,
+  Sparkles,
+  Users,
+  Zap,
+} from "lucide-react";
+import {
+  DESPERATE_STRIKE_RECOIL,
+  LIKELIHOOD_PERCENT,
+  moveAt,
+  restorePreview,
+  selfBurst,
+  type Move,
+  type MoveEffect,
+  type Unit,
+} from "@xalians/rules/dungeon";
+import {
+  ElementIcon,
+  GroupIcon,
   MoveIcon,
   PowerIcon,
   baseName,
-  cardReading,
+  charges,
   closes,
   cooldownLimit,
+  effectSummary,
   moveDescription,
   moveFigure,
-  restLine,
+  removalWords,
 } from "./powerworksVisuals";
 import { useStageMap, type Box } from "./powerworksStage";
 import "./powerworksRadial.css";
+
+/** A move that wears its element (round 3): it carries its own element classification. */
+export const elementOf = (move: Move): string | null =>
+  move.element && !move.fallback ? move.element : null;
+/** How many rounds a move rests after use, as pips; none for a move usable every round. */
+export const restRounds = (move: Move) => (move.fallback ? 0 : cooldownLimit(move));
+/** The rest pips' tooltip: "Unavailable for 2 rounds after use." */
+export const restTip = (rounds: number) =>
+  `Unavailable for ${rounds} ${rounds === 1 ? "round" : "rounds"} after use.`;
+/** The charge mark's line and tooltip (round 3). */
+export const CHARGE_LINE = "Lands next round";
+export const CHARGE_TIP =
+  "Charges this round and lands at its next opportunity. A pull or a bind before then breaks the charge.";
+
+const cap = (text: string) => text.charAt(0).toUpperCase() + text.slice(1);
+type CardMark = { key: string; icon: React.ReactNode; text: string; tip: string; kind: string };
+/**
+  The move card's icon row (round 3): one mark per thing the move does, each an icon and at
+  most a word or a chance, its full sentence on a tooltip. Harm names its element, since
+  that is what sets the matchup chevrons on each target: a physical move is matched by its
+  creature's own element.
+*/
+export function cardMarks(unit: Unit, move: Move): CardMark[] {
+  const marks: CardMark[] = [];
+  const chance = (e: MoveEffect) =>
+    e.likelihood === "consistent" ? "" : ` ${LIKELIHOOD_PERCENT[e.likelihood]}%`;
+  if (move.fallback)
+    marks.push({
+      key: "harm",
+      icon: <PowerIcon />,
+      text: "Harm",
+      tip: "Flat harm, with no matchup.",
+      kind: "harm",
+    });
+  move.effects.forEach((e, n) => {
+    const key = `${e.support}-${n}`;
+    if (e.support === "harm") {
+      if (marks.some((m) => m.kind === "harm")) return;
+      const element = elementOf(move);
+      const reach = e.recipient === "area" ? " to everyone it reaches" : "";
+      marks.push(
+        element
+          ? {
+              key,
+              icon: <ElementIcon element={element} />,
+              text: cap(element),
+              tip: `${cap(element)} harm${reach}. Its matchup against each target shows as a chevron by that target's health.`,
+              kind: "harm",
+            }
+          : {
+              key,
+              icon: <PowerIcon />,
+              text: "Harm",
+              tip: `${cap(e.mechanism ?? "impact")} harm${reach}, matched by ${unit.name}'s own ${unit.element} element. Each target shows its matchup as a chevron by its health.`,
+              kind: "harm",
+            }
+      );
+    } else if (e.support === "displace")
+      marks.push({ key, icon: <Magnet />, text: "Pull", tip: effectSummary(e, move), kind: "pull" });
+    else if ((e.support === "bind" || e.support === "status") && e.group)
+      marks.push({
+        key,
+        icon: <GroupIcon group={e.group} />,
+        text: `${cap(e.status ?? "bound")}${chance(e)}`,
+        tip: effectSummary(e, move),
+        kind: e.support === "bind" ? "bind" : `status group-${e.group}`,
+      });
+    else if (e.support === "restore")
+      marks.push({
+        key,
+        icon: <HeartPulse />,
+        text: e.recipient === "self" ? "Recovers" : `Heal ${restorePreview(unit, e)}`,
+        tip: effectSummary(e, move),
+        kind: "heal",
+      });
+    else if (e.support === "protect")
+      marks.push({ key, icon: <Shield />, text: "Shield", tip: effectSummary(e, move), kind: "guard" });
+    else if (e.support === "remove")
+      marks.push({
+        key,
+        icon: <Sparkles />,
+        text: removalWords(e.methods).split(":")[0] || "Clears",
+        tip: effectSummary(e, move),
+        kind: "clear",
+      });
+    else if (e.support === "unsupported")
+      marks.push({ key, icon: <Ban />, text: "No effect", tip: effectSummary(e, move), kind: "none" });
+  });
+  if (selfBurst(move))
+    marks.push({
+      key: "burst",
+      icon: <Users />,
+      text: "Hits squad",
+      tip: "Also hits the squadmates standing either side of the user.",
+      kind: "danger",
+    });
+  if (move.fallback)
+    marks.push({
+      key: "recoil",
+      icon: <RotateCcw />,
+      text: `−${DESPERATE_STRIKE_RECOIL} HP`,
+      tip: `Costs ${DESPERATE_STRIKE_RECOIL} health in recoil.`,
+      kind: "danger",
+    });
+  if (move.signature)
+    marks.push({
+      key: "signature",
+      icon: <Crown />,
+      text: "",
+      tip: "Signature: usable once per encounter.",
+      kind: "signature",
+    });
+  return marks;
+}
+
+/**
+  One mark with its tooltip (round 3): the mark takes focus, and its tooltip shows on hover
+  or focus (a tap focuses it on touch). The sentence is the mark's accessible description.
+*/
+function Mark({
+  id,
+  tip,
+  className = "",
+  label,
+  children,
+}: {
+  id: string;
+  tip: string;
+  className?: string;
+  label?: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <span className="pw-mark-wrap">
+      <span
+        className={`pw-mark ${className}`}
+        tabIndex={0}
+        role={label ? "img" : undefined}
+        aria-label={label}
+        aria-describedby={id}
+      >
+        {children}
+      </span>
+      <span role="tooltip" id={id} className="pw-mark-tip">
+        {tip}
+      </span>
+    </span>
+  );
+}
+/** Rest pips: one per round the move rests after use. */
+function Pips({ rounds }: { rounds: number }) {
+  return (
+    <>
+      {Array.from({ length: rounds }, (_, n) => (
+        <i key={n} />
+      ))}
+    </>
+  );
+}
 
 /** Why a slot cannot be chosen, or its readiness, in the short form a slot prints. */
 export function slotState(
@@ -64,10 +246,14 @@ export const ringIndices = (unit: Unit, available: number[]) => [
   ...(available.includes(-1) ? [-1] : []),
 ];
 
-/** The accessible name a slot carries: "Crystorn: Heavy Ram, power 60, ready". */
+/**
+  The accessible name a slot carries: "Crystorn: Gem Radiance, signature, light, power 12,
+  ready". The element the disc wears is said in words (round 3).
+*/
 export function slotName(unit: Unit, move: Move, state: string) {
-  return `${unit.name}: ${move.name}${
-    move.signature ? ", signature" : ""
+  const element = elementOf(move);
+  return `${unit.name}: ${move.name}${move.signature ? ", signature" : ""}${
+    element ? `, ${element}` : ""
   }, ${moveFigure(unit, move).label}, ${state}`;
 }
 
@@ -123,6 +309,8 @@ const overlap = (a: Box, b: Box) =>
   Math.max(0, Math.min(a.bottom, b.bottom) - Math.max(a.top, b.top));
 const px = (style: CSSStyleDeclaration, name: string, fallback: number) =>
   parseFloat(style.getPropertyValue(name)) || fallback;
+const spot0Width = (best: { width: number } | null, fallback: number) =>
+  `${best?.width ?? fallback}px`;
 /** An eight-point outline at a box: the disc's octagon, the card's chamfer, a chip's corners. */
 const outline = (x: number, y: number, w: number, h: number, c: number) =>
   `polygon(${[
@@ -157,21 +345,6 @@ function play(
   return target.animate(frames, options);
 }
 
-/** The badge glyph beside a card's figure: what the number counts. */
-function FigureGlyph({ kind, move }: { kind: string; move: Move }) {
-  return kind === "control" ? (
-    <Link2 />
-  ) : kind === "heal" ? (
-    <HeartPulse />
-  ) : kind === "ward" ? (
-    <Shield />
-  ) : kind === "none" ? (
-    <FigureIcon move={move} />
-  ) : (
-    <PowerIcon />
-  );
-}
-
 /**
   The ring's geometry (decisions 3 and 8): the discs sit on a true circular arc centered on
   the companion's feet, at a radius of about one figure height, so the arc crowns the head.
@@ -184,9 +357,11 @@ function layout(
 ): { slots: Point[]; arc: string } {
   const spread = Math.max(...angles.map(Math.abs));
   const sign = below ? 1 : -1;
+  // Whole pixels (round 3): a disc and the name under it never stand on a half pixel, where
+  // their text and rim would be drawn soft.
   const at = (deg: number, r = radius) => {
     const a = (deg * Math.PI) / 180;
-    return { x: r * Math.sin(a), y: sign * r * Math.cos(a) };
+    return { x: Math.round(r * Math.sin(a)), y: Math.round(sign * r * Math.cos(a)) };
   };
   const reach = spread + 9;
   const a = at(-reach),
@@ -213,6 +388,7 @@ export function PowerworksRadial({
   onBack,
   prompt = "Choose a target",
   targetLine = null,
+  onPreview,
 }: {
   unit: Unit;
   /** The legal move indices for this unit this round (`legalMoves`). */
@@ -241,6 +417,11 @@ export function PowerworksRadial({
   prompt?: string;
   /** The aimed target's one-line outcome ("Crawler 1: 5 damage, 22 to 17"). */
   targetLine?: string | null;
+  /**
+    A disc is hovered, focused from the keyboard, or armed by a first tap (round 3): the
+    stage previews its outcome faintly; null when it is left.
+  */
+  onPreview?: (index: number | null) => void;
 }) {
   const indices = ringIndices(unit, available);
   const map = useStageMap();
@@ -258,6 +439,10 @@ export function PowerworksRadial({
       top: number;
       width: number | null;
       compact: boolean;
+      /** The card stands low on the stage: its tooltips open upward. */
+      up?: boolean;
+      /** Docked in the floor band between the enemy row and the squad, as one row (round 3 ruling). */
+      docked?: boolean;
     } | null>(null),
     [armed, setArmed] = useState<number | null>(null),
     [roving, setRoving] = useState(() => {
@@ -316,7 +501,7 @@ export function PowerworksRadial({
           ...stage.querySelectorAll<HTMLElement>(".pw-scene-unit.ally .pw-scene-character"),
         ].map((f) => {
           const artEl = f.querySelector<HTMLElement>(".pw-actor-art");
-          return m.box(f).top + (artEl?.offsetTop ?? 0) * m.zoom.s;
+          return m.box(f).top + (artEl?.offsetTop ?? 0);
         });
         const lift = a.bottom - (Math.min(...heads) - 6) + disc / 2;
         const xs = indices.map((_, k) => (k - (indices.length - 1) / 2) * pitch);
@@ -460,14 +645,23 @@ export function PowerworksRadial({
             : [{ left: p.left, right: p.right, top: p.top - 24, bottom: p.top }];
         })
       : [];
+    // Where no spot is free (a crowded room: the guardian's, three defenders), the card
+    // gives way by weight (round 3): it may cover the empty edge of an art box before the
+    // painted creature, and the creature before any plaque, condition or mark, since those
+    // carry the outcome the player is choosing by.
+    const weighted = (boxes: Box[], w: number) => boxes.map((b) => ({ ...b, w }));
     const solid = [
       // The whole art box, not only the painted square: its sides carry the aimed rise and
       // the target ring, and the card should read as standing clear of every unit.
-      ...all(".pw-scene-unit:not(.fallen) .pw-actor-art").map(risen),
-      ...all(
-        ".pw-scene-unit .pw-unit-plaque, .pw-scene-status, .pw-preview-marks, .pw-target-orders"
+      ...weighted(all(".pw-scene-unit:not(.fallen) .pw-actor-art").map(risen), 1),
+      ...weighted(all(".pw-scene-unit:not(.fallen) .pw-actor-art").map(paintedFigure), 3),
+      ...weighted(
+        all(
+          ".pw-scene-unit .pw-unit-plaque, .pw-scene-status, .pw-preview-marks, .pw-target-orders"
+        ),
+        12
       ),
-      ...bands,
+      ...weighted(bands, 12),
     ].filter((b) => b.right - b.left > 0 && b.bottom - b.top > 0);
     const actorEl = stage?.querySelector(`[data-unit="${unit.id}"] .pw-actor-art`);
     const actor = actorEl ? paintedFigure(m.box(actorEl)) : disc;
@@ -476,6 +670,7 @@ export function PowerworksRadial({
     const widths = phone ? [Math.min(354, W - 16)] : [264, 236, 208];
     const step = phone ? 2 : 4;
     let best: { left: number; top: number; width: number; compact: boolean; hit: number; score: number } | null = null;
+    let foundFree = false;
     search: for (const compact of [false, true])
       for (const w of widths) {
         card.style.width = `${w}px`;
@@ -485,7 +680,7 @@ export function PowerworksRadial({
         for (let top = EDGE; top <= H - EDGE - h; top += step)
           for (let left = EDGE; left <= W - EDGE - w; left += step) {
             const c = { left, top, right: left + w, bottom: top + h };
-            const hit = solid.reduce((n, f) => n + overlap(c, f), 0);
+            const hit = solid.reduce((n, f) => n + overlap(c, f) * f.w, 0);
             // Nearest the companion choosing, then nearest the disc it grew from.
             const gap = Math.hypot(
               Math.max(0, actor.left - c.right, c.left - actor.right),
@@ -499,16 +694,64 @@ export function PowerworksRadial({
           }
         if (free) {
           best = free;
+          foundFree = true;
           break search;
         }
       }
+    // No free spot on a desktop stage (the guardian's crowded room): before the card covers
+    // any creature, it docks as one row in the floor band between the enemy row and the
+    // squad, as the phone card does (round 3 ruling). The band is read from every standing
+    // unit's whole art box, condition row, marks and plaque.
+    let docked: { left: number; top: number; width: number } | null = null;
+    if (!foundFree && !phone && stage) {
+      const side = (enemy: boolean) =>
+        [...stage.querySelectorAll(`.pw-scene-unit.${enemy ? "defender" : "ally"}:not(.fallen)`)].flatMap(
+          (u) =>
+            [...u.querySelectorAll(".pw-actor-art, .pw-unit-plaque, .pw-scene-status, .pw-preview-marks")]
+              .map((el) => m.box(el))
+              .filter((b) => b.right - b.left > 0 && b.bottom - b.top > 0)
+        );
+      const foes = side(true),
+        mates = side(false);
+      if (foes.length && mates.length) {
+        const floor = Math.max(...foes.map((b) => b.bottom)),
+          // An aimed squadmate rises a little: leave it the room.
+          ceiling = Math.min(...mates.map((b) => b.top)) - 4;
+        const w = Math.min(W - 2 * EDGE, 900);
+        card.style.width = `${w}px`;
+        card.classList.add("docked");
+        const h = card.offsetHeight;
+        card.classList.remove("docked");
+        if (ceiling - floor >= h + 4) {
+          const cx = (actor.left + actor.right) / 2;
+          docked = {
+            left: Math.round(Math.min(W - EDGE - w, Math.max(EDGE, cx - w / 2))),
+            top: Math.round(floor + (ceiling - floor - h) / 2),
+            width: w,
+          };
+        }
+      }
+    }
+    card.style.width = spot0Width(best, widths[0]);
+    card.classList.toggle("compact", !!best?.compact);
+    const spotH = card.offsetHeight;
     card.style.width = "";
     card.classList.remove("compact");
-    const spot = best ?? { left: EDGE, top: EDGE, width: widths[0], compact: false };
+    const spot = docked
+      ? { ...docked, compact: false }
+      : best ?? { left: EDGE, top: EDGE, width: widths[0], compact: false };
+    // A tooltip needs about three lines of room: below the card when there is room, else above.
+    const up = !docked && spot.top + spotH + 64 > H - EDGE;
     setCardAt((c) =>
-      c && c.left === spot.left && c.top === spot.top && c.width === spot.width && c.compact === spot.compact
+      c &&
+      c.left === spot.left &&
+      c.top === spot.top &&
+      c.width === spot.width &&
+      c.compact === spot.compact &&
+      c.up === up &&
+      !!c.docked === !!docked
         ? c
-        : { left: spot.left, top: spot.top, width: spot.width, compact: spot.compact }
+        : { left: spot.left, top: spot.top, width: spot.width, compact: spot.compact, up, docked: !!docked }
     );
   }, [place, cardIndex]);
 
@@ -685,6 +928,8 @@ export function PowerworksRadial({
     if (!keyboard && pointer.current === "touch" && armed !== i) {
       setArmed(i);
       setRoving(k);
+      // The arming tap previews the move's outcome on the stage, as hovering does (round 3).
+      onPreview?.(legal ? i : null);
       return;
     }
     if (!legal) return;
@@ -719,8 +964,15 @@ export function PowerworksRadial({
         "--from-y": `${place.from.y}px`,
       } as React.CSSProperties)
     : ({ visibility: "hidden" } as React.CSSProperties);
-  const figure = cardMove ? moveFigure(unit, cardMove) : null;
+  const cardElement = cardMove ? elementOf(cardMove) : null;
+  const cardRest = cardMove ? restRounds(cardMove) : 0;
+  const marks = cardMove ? cardMarks(unit, cardMove) : [];
   const cardState = closing ? "leaving" : returning !== null && chosen === null ? "returning" : "open";
+  const tipId = (key: string) => `pw-mark-${unit.id}-${cardIndex}-${key}`;
+  /** The disc a pointer or the keyboard is on: the stage previews it faintly (round 3). */
+  const peek = (i: number | null) => {
+    if (wheel) onPreview?.(i);
+  };
 
   return (
     <>
@@ -757,7 +1009,9 @@ export function PowerworksRadial({
             const m = moveAt(unit, i),
               legal = available.includes(i),
               state = slotState(unit, m, i, legal),
-              point = place?.slots[k] ?? { x: 0, y: 0 };
+              point = place?.slots[k] ?? { x: 0, y: 0 },
+              element = elementOf(m),
+              rest = restRounds(m);
             return (
               <button
                 key={i}
@@ -772,14 +1026,16 @@ export function PowerworksRadial({
                 aria-current={current === i ? "true" : undefined}
                 data-slot={k + 1}
                 className={`pw-radial-slot ${m.signature ? "signature" : ""} ${
-                  state.dim ? "dim" : ""
-                } ${current === i ? "current" : ""} ${armed === i ? "armed" : ""} ${
-                  cardIndex === i ? "held" : ""
-                } ${closing && locked === i && chosen === null ? "flying" : ""}`}
+                  element ? `elemental el-${element}` : "physical"
+                } ${state.dim ? "dim" : ""} ${current === i ? "current" : ""} ${
+                  armed === i ? "armed" : ""
+                } ${cardIndex === i ? "held" : ""} ${
+                  closing && locked === i && chosen === null ? "flying" : ""
+                }`}
                 style={
                   {
-                    "--x": `${point.x.toFixed(1)}px`,
-                    "--y": `${point.y.toFixed(1)}px`,
+                    "--x": `${point.x}px`,
+                    "--y": `${point.y}px`,
                     "--k": k,
                     "--rk": indices.length - 1 - k,
                   } as React.CSSProperties
@@ -787,20 +1043,54 @@ export function PowerworksRadial({
                 onPointerDown={(e) => {
                   pointer.current = e.pointerType || "mouse";
                 }}
-                onFocus={() => setRoving(k)}
+                // A mouse previews on hover. A touch previews on its arming tap instead: a
+                // lifted finger leaves the disc, which must not clear what it armed.
+                onPointerEnter={(e) => e.pointerType !== "touch" && legal && peek(i)}
+                onPointerLeave={(e) => e.pointerType !== "touch" && peek(null)}
+                onFocus={() => {
+                  setRoving(k);
+                  // Keyboard focus previews; the focus a mouse click leaves behind does not.
+                  if (keyed) peek(legal ? i : null);
+                }}
+                onBlur={() => {
+                  if (keyed) peek(null);
+                }}
                 onClick={(e) => wheel && press(i, k, e.detail === 0)}
               >
                 <span className="pw-radial-disc" aria-hidden="true">
-                  <MoveIcon move={m} />
+                  <span className="pw-radial-core">
+                    <MoveIcon move={m} />
+                  </span>
                 </span>
-                {state.dim && (
+                {m.signature && (
+                  // The signature's crown on the rim (round 3 review): gold is not its only
+                  // cue, since the light and electric rims sit close to gold.
+                  <span className="pw-radial-crown" aria-hidden="true">
+                    <Crown />
+                  </span>
+                )}
+                {charges(m) && (
+                  <span className="pw-radial-charge" aria-hidden="true">
+                    <Zap />
+                  </span>
+                )}
+                {state.dim ? (
                   <span className="pw-radial-tag" aria-hidden="true">
                     <span className="pw-radial-reason">{state.short}</span>
                   </span>
+                ) : (
+                  rest > 0 && (
+                    // How long it rests after use: shown only while the disc is lifted.
+                    <span className="pw-radial-rest" aria-hidden="true">
+                      <Pips rounds={rest} />
+                    </span>
+                  )
                 )}
                 <span className="pw-radial-label" aria-hidden="true">
-                  {baseName(m)}
-                  {armed === i && legal && <small>Tap again</small>}
+                  <span className="pw-radial-name">
+                    {baseName(m)}
+                    {armed === i && legal && <small>Tap again</small>}
+                  </span>
                 </span>
                 {keyed && (
                   <span className="pw-radial-key" aria-hidden="true">
@@ -815,12 +1105,14 @@ export function PowerworksRadial({
           })}
         </div>
       </div>
-      {cardMove && figure && cardIndex !== null && (
+      {cardMove && cardIndex !== null && (
         <div
           ref={cardRef}
-          className={`pw-radial-card el-${unit.element} ${
+          className={`pw-radial-card ${cardElement ? `elemental el-${cardElement}` : "physical"} ${
             cardMove.signature ? "signature" : ""
-          } ${cardAt?.compact ? "compact" : ""} ${cardState}`}
+          } ${cardAt?.compact ? "compact" : ""} ${cardAt?.docked ? "docked" : ""} ${
+            cardAt?.up ? "tips-up" : ""
+          } ${cardState}`}
           style={
             cardAt
               ? { left: cardAt.left, top: cardAt.top, width: cardAt.width ?? undefined }
@@ -828,57 +1120,75 @@ export function PowerworksRadial({
           }
           role="group"
           aria-label={`${unit.name}: ${cardMove.name}, chosen`}
+          aria-describedby={`pw-card-desc-${unit.id}-${cardIndex}`}
           aria-hidden={cardState === "open" ? undefined : "true"}
           inert={cardState !== "open"}
           data-card={cardIndex}
         >
           <span ref={emblemRef} className="pw-radial-emblem" aria-hidden="true">
-            <MoveIcon move={cardMove} />
+            <span className="pw-radial-core">
+              <MoveIcon move={cardMove} />
+            </span>
           </span>
           <div ref={bodyRef} className="pw-radial-card-body">
             <div className="pw-radial-card-head">
               <strong title={cardMove.name}>{baseName(cardMove)}</strong>
-              <small>
-                {cardMove.signature && <Crown aria-hidden="true" />}
-                {cardMove.signature ? "Signature · chosen" : "Chosen move"}
-              </small>
+              {marks
+                .filter((m) => m.kind === "signature")
+                .map((m) => (
+                  <Mark key={m.key} id={tipId(m.key)} tip={m.tip} className="signature badge" label="Signature">
+                    {m.icon}
+                  </Mark>
+                ))}
             </div>
-            {figure.kind !== "none" && (
-              <p className={`pw-radial-card-figure ${figure.kind}`}>
-                <FigureGlyph kind={figure.kind} move={cardMove} />
-                <b>{figure.value}</b>
-                <span>
-                  {figure.kind === "power"
-                    ? "power"
-                    : figure.kind === "control"
-                    ? "action bound"
-                    : figure.kind === "heal"
-                    ? "health healed"
-                    : "damage taken"}
-                </span>
-              </p>
+            {/* What it does, then what using it costs (round 3): the rest pips at the row's
+                end. The signature's crown (once per encounter) is a badge by the name. */}
+            <div className="pw-radial-marks">
+              {marks
+                .filter((m) => m.kind !== "signature")
+                .map((m) => (
+                  <Mark
+                    key={m.key}
+                    id={tipId(m.key)}
+                    tip={m.tip}
+                    className={m.kind}
+                    label={m.text ? undefined : m.tip.split(":")[0]}
+                  >
+                    {m.icon}
+                    {m.text && <span>{m.text}</span>}
+                  </Mark>
+                ))}
+              {cardRest > 0 && (
+                <Mark
+                  id={tipId("rest")}
+                  tip={restTip(cardRest)}
+                  className="rest cost first"
+                  label={`Rests ${cardRest} ${cardRest === 1 ? "round" : "rounds"}`}
+                >
+                  <Pips rounds={cardRest} />
+                </Mark>
+              )}
+            </div>
+            {charges(cardMove) && (
+              <div className="pw-radial-marks pw-radial-card-charge">
+                <Mark id={tipId("charge")} tip={CHARGE_TIP} className="charge">
+                  <Zap />
+                  <span>{CHARGE_LINE}</span>
+                </Mark>
+              </div>
             )}
-            {cardReading(unit, cardMove).map((line, n) => (
-              <p
-                key={n}
-                className={n === 0 ? "pw-radial-card-reading" : "pw-radial-card-effect"}
-              >
-                {line}
-              </p>
-            ))}
-            <p className="pw-radial-card-rest">
-              <Hourglass aria-hidden="true" />
-              {restLine(cardMove)}
-            </p>
             <p className={`pw-radial-card-target ${targetLine ? "aimed" : ""}`}>
               <Crosshair aria-hidden="true" />
-              <span>{targetLine ?? prompt}</span>
+              <span title={targetLine ?? prompt}>{targetLine ?? prompt}</span>
             </p>
           </div>
+          <span className="pw-sr" id={`pw-card-desc-${unit.id}-${cardIndex}`}>
+            {moveDescription(unit, cardMove)}
+          </span>
           <button
             type="button"
             className="pw-radial-back"
-            aria-label={`Back to ${unit.name}'s moves`}
+            aria-label="Back to moves"
             tabIndex={cardState === "open" ? 0 : -1}
             onClick={(e) => {
               e.stopPropagation();
@@ -886,7 +1196,6 @@ export function PowerworksRadial({
             }}
           >
             <ArrowLeft aria-hidden="true" />
-            <span>Back</span>
           </button>
         </div>
       )}

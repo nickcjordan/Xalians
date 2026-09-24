@@ -83,18 +83,6 @@
   pointer-events: none;
   box-shadow: inset 0 0 100px #08141dcc;
 }
-.pw-room-prop {
-  position: absolute;
-  left: 50%;
-  top: 3%;
-  transform: translateX(-50%);
-  opacity: 0.4;
-  color: #eac780;
-}
-.pw-room-prop svg {
-  width: 28px;
-  height: 28px;
-}
 .pw-scene-heading {
   position: absolute;
   top: 12px;
@@ -1227,20 +1215,6 @@
     margin-bottom: auto;
   }
 }
-.pw-squad-number {
-  position: absolute;
-  bottom: 3px;
-  left: 5%;
-  width: 24px;
-  height: 24px;
-  display: grid;
-  place-items: center;
-  color: var(--ink);
-  background: var(--panel);
-  border: 1px solid var(--line);
-  border-radius: 50%;
-  font-size: 12px;
-}
 .pw .pw-order-link {
   padding: 0 3px;
   gap: 2px;
@@ -1387,12 +1361,7 @@
   .pw-order-link .pw-portrait.small {
     display: none;
   }
-  .pw-squad-number {
-    width: 20px;
-    height: 20px;
-    left: 0;
-  }
-  .pw-action-banner {
+    .pw-action-banner {
     padding: 4px 9px;
   }
   .pw-action-banner strong {
@@ -1439,9 +1408,11 @@
   drawn on the creatures themselves. Colors are the game's own: the target gold of the
   aimed ground, the plaque fill, the squad's heal green, the danger coral.
 */
-/* The camera layer: the room, the units and the intent lines lean in together toward the
-   selected companion's feet; the wheel, the card and every banner stay outside it. */
-/* The stage never scrolls: its zoomed room and its wheel overhang its edges, and focus
+/* The camera layer: the room, the units and the intent lines move together. Round 3: it
+   carries no transform while the player plans, and pushes in only on a playback beat; the
+   wheel, the card and every banner stay outside it. No `will-change`, so the browser draws
+   the text again at rest instead of keeping a scaled bitmap of it. */
+/* The stage never scrolls: its pushed room and its wheel overhang its edges, and focus
    moving inside an overflow-hidden box would scroll it and shift every unit (round 2 review). */
 .pw .pw-theater {
   overflow: clip;
@@ -1451,7 +1422,6 @@
   inset: 0;
   z-index: 0;
   transform-origin: 0 0;
-  will-change: transform;
 }
 .pw-scene-unit.ally .pw-unit-plaque {
   position: relative;
@@ -1471,8 +1441,12 @@
 .pw-theater.targeting .pw-scene-unit.aimed {
   z-index: 5;
 }
+/* The aimed target rises: a whole-pixel lift and a glow, never a scale (round 3). */
 .pw-theater.targeting .pw-scene-unit.aimed .pw-scene-character {
-  transform: translateY(-4px) scale(1.06);
+  transform: translateY(-4px);
+}
+.pw-theater.targeting .pw-scene-unit.aimed .pw-actor-art {
+  filter: drop-shadow(0 0 7px #f1cb6ccc) drop-shadow(0 4px 1px #07101e);
 }
 .pw-theater.targeting .pw-scene-unit.muted .pw-actor-art {
   filter: brightness(0.82);
@@ -1602,6 +1576,8 @@
   box-shadow: 0 0 6px #9fd8b8;
   animation: pw-fade-in 180ms ease-out both;
 }
+/* The outcome's number (round 3 review): a small solid tag at the chunk's edge, so no
+   hatching lies under the text. It overhangs the bar rather than growing the plaque. */
 .pw .pw-hp-delta {
   position: absolute;
   top: 50%;
@@ -1609,62 +1585,37 @@
   display: inline-flex;
   align-items: center;
   gap: 2px;
-  transform: translate(-50%, -52%);
-  font: 800 16px/1 var(--font-legend);
+  height: 16px;
+  margin-top: -8px;
+  padding: 0 4px;
+  font: 700 12px/1 var(--font-legend);
   font-variant-numeric: tabular-nums;
-  letter-spacing: 0.01em;
   color: #fff4d2;
-  text-shadow:
-    1px 0 0 #1a0f04,
-    -1px 0 0 #1a0f04,
-    0 1px 0 #1a0f04,
-    0 -1px 0 #1a0f04,
-    0 2px 4px #000,
-    0 0 8px #d19a3e;
+  background: #08151b;
+  border: 1px solid #d19a3e;
+  border-radius: 2px;
+  box-shadow: 0 1px 3px #000c;
   white-space: nowrap;
   pointer-events: none;
-  animation: pw-hit-in 200ms var(--ease-out) both;
-}
-@keyframes pw-hit-in {
-  from {
-    opacity: 0;
-    transform: translate(-50%, -20%) scale(0.8);
-  }
+  animation: pw-fade-in 160ms ease-out both;
 }
 .pw .pw-hp-delta svg {
-  width: 13px;
-  height: 13px;
-  filter: drop-shadow(0 1px 1px #000);
+  width: 11px;
+  height: 11px;
 }
 .pw .pw-hp-delta.knockout,
 .pw .pw-health.danger .pw-hp-delta {
   color: #ffd6ca;
-  text-shadow:
-    1px 0 0 #2a0b06,
-    -1px 0 0 #2a0b06,
-    0 1px 0 #2a0b06,
-    0 -1px 0 #2a0b06,
-    0 2px 4px #000,
-    0 0 8px var(--danger);
+  border-color: var(--danger);
 }
 .pw .pw-hp-delta.heal {
   color: #dcf9e3;
-  text-shadow:
-    1px 0 0 #06200f,
-    -1px 0 0 #06200f,
-    0 1px 0 #06200f,
-    0 -1px 0 #06200f,
-    0 2px 4px #000,
-    0 0 8px #6fae82;
+  border-color: #6fae82;
 }
 .pw .pw-hp-delta.immune {
-  font: 700 11px/1 var(--font-legend);
+  font-size: 11px;
   color: #d5dbd4;
-  text-shadow:
-    1px 0 0 #000,
-    -1px 0 0 #000,
-    0 1px 0 #000,
-    0 -1px 0 #000;
+  border-color: #6b7a74;
 }
 .pw-health.muted {
   opacity: 0.5;
@@ -1761,9 +1712,94 @@
   animation: pw-fade-in 150ms ease-out both;
 }
 
+/*
+  Round 3: before the click, a hovered, focused or armed disc previews faintly. The target
+  ring and the chunk show at low strength, nothing becomes a target and nothing dims.
+*/
+.pw-target-ring.faint {
+  opacity: 0.5;
+  border-style: dashed;
+  box-shadow: none;
+  background: none;
+}
+.pw-health.faint .pw-health-track > i.pw-hp-chunk,
+.pw-health.faint .pw-health-track > b.pw-hp-heal {
+  opacity: 0.55;
+  box-shadow: none;
+}
+/* A little thicker so the faint chunk reads, with no change to the plaque's height. */
+.pw .pw-unit-plaque .pw-health.faint .pw-health-track {
+  height: 7px;
+  margin: -2px 0;
+}
+/* The matchup mark beside the health bar (round 3 review): a filled triangle, no box. Up
+   and bright in the target gold when strong (two stacked for double), down in a readable
+   muted gray when weak. Matchup is interface state, so it never wears an element hue. */
+.pw .pw-matchup {
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  width: 11px;
+  height: 12px;
+  /* It overhangs the row rather than growing the plaque. */
+  margin: -3px 0;
+  animation: pw-fade-in 150ms ease-out both;
+}
+.pw .pw-matchup svg {
+  width: 11px;
+  height: 9px;
+  overflow: visible;
+}
+.pw .pw-matchup.double svg {
+  height: 14px;
+}
+.pw .pw-matchup polygon {
+  stroke: #08151b;
+  stroke-width: 1.2;
+  stroke-linejoin: round;
+}
+.pw .pw-matchup.strong polygon {
+  fill: #ffe08a;
+}
+.pw .pw-matchup.strong svg {
+  filter: drop-shadow(0 0 3px #f1cb6ccc);
+}
+.pw .pw-matchup.weak polygon {
+  fill: #b9c3bc;
+}
+/* A contact reaction's mark: the guardian shocks back whoever touches it, in the reaction's
+   element (element-tagged content), with the damage it would deal the companion acting. */
+.pw .pw-shock-mark {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 2px 5px;
+  font: 600 11px/1.1 var(--font-legend);
+  white-space: nowrap;
+  color: #f2ead5;
+  background: #08151bee;
+  border: 1px solid color-mix(in srgb, var(--el, #c6a767) 80%, transparent);
+  border-radius: 2px;
+  box-shadow: 0 0 8px color-mix(in srgb, var(--el, #c6a767) 45%, transparent);
+  animation: pw-fade-in 180ms ease-out both;
+}
+.pw .pw-shock-mark svg {
+  width: 12px;
+  height: 12px;
+  color: var(--el, #c6a767);
+}
+.pw .pw-shock-mark b {
+  color: var(--danger);
+  font-weight: 800;
+}
+.pw .pw-shock-mark.faint {
+  opacity: 0.8;
+}
+
 @media (max-width: 600px) {
   .pw .pw-hp-delta {
-    font-size: 14px;
+    font-size: 11px;
+    padding: 0 3px;
   }
   .pw-pull-arrow {
     width: 26px;

@@ -14,6 +14,7 @@ import {
   CornerUpRight,
   Ban,
   Sparkles,
+  Plus,
 } from "lucide-react";
 import { actionPresentation } from "./powerworksPresentation";
 import { PowerworksEnvironment } from "./powerworksEnvironment";
@@ -36,7 +37,15 @@ import {
   melee as contact,
   type HealthPreview,
 } from "./powerworksVisuals";
-import { StageContext, stageMap, IDENTITY, type StageRefs } from "./powerworksStage";
+import {
+  CAMERA,
+  IDENTITY,
+  StageContext,
+  beatZoom,
+  stageMap,
+  type Box,
+  type StageRefs,
+} from "./powerworksStage";
 
 /**
   What a companion's plaque chip says (radial orders decision 7): its order's move and
@@ -79,6 +88,12 @@ export type UnitPreview = HealthPreview & {
   words: string;
   /** The outcome's first clause, for the move card's one target line: "5 damage, 22 to 17". */
   line: string;
+  /**
+    The unit answers a contact strike automatically (round 3: the guardian's discharge), and
+    this move touches it: the damage its reaction would deal the companion acting, from the
+    rules' own preview, and the reaction's element.
+  */
+  shock?: { damage: number; name: string; element?: string } | null;
 };
 /** The one-shot beat when an order locks: the target ring flashes, the chip lights. */
 export type OrderFlash = { actor: string; target: string | null; stamp: number };
@@ -230,6 +245,8 @@ export function PowerworksScene({
   chips = {},
   ring = null,
   flash = null,
+  hints = {},
+  beatMs,
 }: {
   team: Unit[];
   enemies: Unit[];
@@ -265,6 +282,13 @@ export function PowerworksScene({
   ring?: React.ReactNode;
   /** The order that just locked, for its one-shot beat. */
   flash?: OrderFlash | null;
+  /**
+    What a hovered or focused disc would do (round 3), drawn faintly before the click: each
+    target's ring and chunk, its matchup chevron, and a contact reaction's mark.
+  */
+  hints?: Record<string, UnitPreview>;
+  /** How long this playback beat lasts as the page runs it, in milliseconds. */
+  beatMs?: number;
 }) {
   const open = onOpen ?? onSelect;
   const [arriving, setArriving] = useState(true);
@@ -339,28 +363,74 @@ export function PowerworksScene({
     "--impact-delay": `${presentation.impactDelay / speed}ms`,
   } as React.CSSProperties;
 
-  // The camera (round 2): while a companion is selected the stage leans in toward its
-  // feet, as far as keeps every plaque inside the stage, and eases back out after.
+  // The camera (round 3): planning holds still. While a round plays, the camera pushes in
+  // on each acting unit and its target for that beat, and returns before the next one.
+  // Under reduced motion it holds still throughout (no push at all).
   const stageRef = useRef<HTMLElement>(null),
     layerRef = useRef<HTMLDivElement>(null);
-  const focus = planning && active && active.hp > 0 ? active.id : null;
-  const stage: StageRefs = { stage: stageRef, layer: layerRef, focus };
+  const stage: StageRefs = { stage: stageRef, layer: layerRef };
   const [size, setSize] = useState("");
   // The unit whose who-targets-it chips are showing: only the one hovered or focused.
   const [peek, setPeek] = useState<string | null>(null);
+  const beatActor = !planning && !reducedMotion && frame && actor ? actor.id : null;
+  const beatTarget =
+    beatActor && recipient && recipient.id !== beatActor ? recipient.id : null;
+  const beatKey = beatActor ? `${frameIndex}:${beatActor}` : null;
+  // The beat whose camera has already returned.
+  const [rested, setRested] = useState<string | null>(null);
+  useEffect(() => {
+    if (!beatKey || paused) return;
+    const length = beatMs ?? presentation.duration / speed;
+    const timer = setTimeout(
+      () => setRested(beatKey),
+      Math.max(0, length - CAMERA.returnMs)
+    );
+    return () => clearTimeout(timer);
+  }, [beatKey, paused, beatMs, speed]);
+  const pushed = !!beatKey && rested !== beatKey;
   useLayoutEffect(() => {
     const layer = layerRef.current;
     if (!layer) return;
-    const map = stageMap(stage);
-    const z = focus && map ? map.zoom : IDENTITY;
+    let z = IDENTITY;
+    const map = pushed ? stageMap(stage, layer) : null;
+    if (map && map.width > 0) {
+      const box = (id: string | null) => {
+        const el = id ? layer.querySelector(`[data-unit="${id}"] .pw-scene-character`) : null;
+        return el ? map.flat(el) : null;
+      };
+      const focus = [box(beatActor), box(beatTarget)].filter((b): b is Box => !!b);
+      const boxes = [
+        ...layer.querySelectorAll(
+          ".pw-unit-plaque, .pw-scene-unit:not(.fallen) .pw-scene-character, .pw-scene-status"
+        ),
+      ]
+        .map(map.flat)
+        .filter((b) => b.right - b.left > 0 && b.bottom - b.top > 0);
+      // The action banner stands outside the camera layer, on the stage's floor: pushed
+      // plaques and order chips stay above it (round 3 review).
+      const banner = stageRef.current?.querySelector(":scope > .pw-action-banner");
+      const bannerTop = banner ? map.flat(banner).top : Infinity;
+      z = beatZoom(
+        focus,
+        boxes,
+        map.width,
+        map.height,
+        CAMERA.push,
+        map.width <= 600 ? CAMERA.margin.phone : CAMERA.margin.wide,
+        bannerTop > map.height / 2 ? bannerTop - 2 : map.height
+      );
+    }
+    const moved = z.s > 1 || z.tx !== 0 || z.ty !== 0;
     layer.style.transition = reducedMotion
       ? "none"
-      : "transform 240ms cubic-bezier(0.2, 0.7, 0.2, 1)";
-    layer.style.transform = `translate(${z.tx.toFixed(2)}px, ${z.ty.toFixed(
-      2
-    )}px) scale(${z.s})`;
+      : `transform ${moved ? CAMERA.pushMs : CAMERA.returnMs}ms cubic-bezier(0.2, 0.7, 0.2, 1)`;
+    // At rest the layer carries no transform at all, so nothing on the stage is rasterized
+    // through a scale while the player plans (round 3).
+    layer.style.transform = moved ? `translate(${z.tx}px, ${z.ty}px) scale(${z.s})` : "";
+    layer.dataset.camera = moved ? "push" : "rest";
+    layer.dataset.beat = beatActor ? `${beatActor}>${beatTarget ?? ""}` : "";
     layer.dataset.zoom = z.s.toFixed(3);
-  }, [focus, move?.key, size, reducedMotion, team.length, enemies.length]);
+  }, [pushed, beatActor, beatTarget, frameIndex, size, reducedMotion, team.length, enemies.length]);
   useEffect(() => {
     const el = stageRef.current;
     if (!el || typeof ResizeObserver === "undefined") return;
@@ -386,6 +456,8 @@ export function PowerworksScene({
           onBack();
         }}
         className={`pw-theater sector-${room} ${frame ? "playing" : "planning"} ${
+          enemies.length >= 3 ? "crowded" : ""
+        } ${
           paused ? "paused" : ""
         } ${arriving ? "arriving" : ""} ${signature ? "signature-action" : ""} ${
           knockout && impact ? "knockout-action" : ""
@@ -400,9 +472,6 @@ export function PowerworksScene({
       >
         <div className="pw-stage-zoom" ref={layerRef}>
           <PowerworksEnvironment room={room} />
-          <div className="pw-room-prop" aria-hidden="true">
-            {room === 1 ? <Shield /> : room >= 2 ? <Zap /> : null}
-          </div>
           <svg
             className={`pw-action-path ${actor ? `el-${actor.element}` : ""}`}
             viewBox="0 0 100 100"
@@ -486,7 +555,12 @@ export function PowerworksScene({
             const chip = !u.enemy ? chips[u.id] : undefined;
             const ringOpen = openId === u.id;
             const target = targetable(u);
-            const reading = targeting && u.hp > 0 ? previews[u.id] : undefined;
+            const armedReading = targeting && u.hp > 0 ? previews[u.id] : undefined;
+            // A hovered disc previews faintly (round 3): no unit becomes a target, nothing dims.
+            const hint =
+              !targeting && planning && u.hp > 0 && !armedReading ? hints[u.id] : undefined;
+            const faint = !!hint && !hint.idle;
+            const reading = armedReading ?? hint;
             // A squadmate the move would do nothing for reads as a non-target (round 2 review).
             const idle = !!reading?.idle;
             const preview = idle ? undefined : reading;
@@ -503,6 +577,9 @@ export function PowerworksScene({
             // the companion choosing it.
             const ineligible =
               targeting && ((!target && !preview) || idle) && active?.id !== u.id;
+            // The rest of the squad steps back a little while a companion is selected (round 3).
+            const resting =
+              planning && !targeting && !!active && !u.enemy && active.id !== u.id && u.hp > 0;
             const recoil =
               acting &&
               phase === "hit" &&
@@ -514,7 +591,21 @@ export function PowerworksScene({
             const from = active ? position(active) : pos;
             const Pull =
               pos.x - from.x > 8 ? ArrowDownLeft : from.x - pos.x > 8 ? ArrowDownRight : ArrowDown;
-            const marks = preview ? (
+            // A contact reaction's mark (round 3): the guardian shocks back whoever touches it.
+            const shock = preview?.shock ? (
+              <span
+                className={`pw-shock-mark ${preview.shock.element ? `el-${preview.shock.element}` : ""} ${
+                  faint ? "faint" : ""
+                }`}
+                title={`${preview.shock.name}: striking it in contact triggers its reaction, ${preview.shock.damage} damage back.`}
+                aria-hidden="true"
+              >
+                <Zap />
+                shocks back
+                <b>−{preview.shock.damage}</b>
+              </span>
+            ) : null;
+            const marks = preview && !faint ? (
               <>
                 {preview.statuses.map((s) => (
                   <span
@@ -566,7 +657,7 @@ export function PowerworksScene({
                   preview?.role === "reached" ? "reached" : ""
                 } ${preview?.danger ? "danger" : ""} ${preview?.muted ? "muted" : ""} ${
                   ineligible ? "ineligible" : ""
-                }`}
+                } ${faint ? "hinted" : ""} ${resting ? "resting" : ""}`}
                 data-unit={u.id}
                 onMouseEnter={() => setPeek(u.id)}
                 onMouseLeave={() => setPeek((p) => (p === u.id ? null : p))}
@@ -616,11 +707,11 @@ export function PowerworksScene({
                 >
                   <span className="pw-ground" />
                   {selected && <span className="pw-ground-ring" aria-hidden="true" />}
-                  {((target && !idle) || preview?.role === "reached") && (
+                  {((target && !idle) || preview?.role === "reached" || (faint && preview)) && (
                     <span
                       className={`pw-target-ring ${
                         preview?.role === "reached" ? "area" : ""
-                      } ${preview?.danger ? "danger" : ""}`}
+                      } ${preview?.danger ? "danger" : ""} ${faint ? "faint" : ""}`}
                       aria-hidden="true"
                     />
                   )}
@@ -630,11 +721,6 @@ export function PowerworksScene({
                       className="pw-target-flash"
                       aria-hidden="true"
                     />
-                  )}
-                  {!u.enemy && (
-                    <span className="pw-squad-number" aria-hidden="true">
-                      {team.indexOf(u) + 1}
-                    </span>
                   )}
                   <span className="pw-actor-art" key={`${u.id}-${frameIndex}`}>
                     <Portrait u={u} />
@@ -654,7 +740,7 @@ export function PowerworksScene({
                       <Zap />
                     </span>
                   )}
-                  {preview?.pull && (
+                  {preview?.pull && !faint && (
                     <span className="pw-pull-arrow" aria-hidden="true">
                       <Pull />
                     </span>
@@ -687,7 +773,7 @@ export function PowerworksScene({
                   }}
                 >
                   <div>
-                    <ElementIcon element={u.element} />
+                    {u.enemy && <ElementIcon element={u.element} />}
                     <strong>{labelFor(u)}</strong>
                     <button
                       aria-label={`Inspect ${u.name}${
@@ -698,7 +784,7 @@ export function PowerworksScene({
                       <Info />
                     </button>
                   </div>
-                  <Health u={u} preview={preview} />
+                  <Health u={u} preview={preview && faint ? { ...preview, faint } : preview} />
                   {chip && (
                     <button
                       className={`pw-order-chip ${chip.move ? "" : "empty"} ${
@@ -721,7 +807,16 @@ export function PowerworksScene({
                     >
                       {chip.move ? (
                         <>
-                          <MoveIcon move={chip.move} />
+                          <span
+                            className={`pw-order-chip-icon ${
+                              chip.move.element && !chip.move.fallback
+                                ? `elemental el-${chip.move.element}`
+                                : "physical"
+                            }`}
+                            aria-hidden="true"
+                          >
+                            <MoveIcon move={chip.move} />
+                          </span>
                           <span className="pw-order-chip-move">
                             {baseName(chip.move)}
                           </span>
@@ -736,6 +831,10 @@ export function PowerworksScene({
                             )}
                           </span>
                         </>
+                      ) : chip.empty === "No order" ? (
+                        // An empty slot waiting for an order (round 3): the dashed chip and a
+                        // quiet plus say it; the words stay in its name and description.
+                        <Plus className="pw-order-chip-open" aria-hidden="true" />
                       ) : (
                         <span className="pw-order-chip-move">{chip.empty}</span>
                       )}
@@ -751,10 +850,12 @@ export function PowerworksScene({
                       // its plaque, where they stay on the stage whatever it carries.
                       <span className="pw-preview-marks">{marks}</span>
                     )}
+                  {!u.enemy && shock && <span className="pw-preview-marks">{shock}</span>}
                 </div>
                 <div className="pw-scene-status">
-                  <StatusBadges u={u} />
+                  <StatusBadges u={u} compact />
                   {u.enemy && marks}
+                  {u.enemy && shock}
                 </div>
                 {planning && !move && queued.length > 0 && peek === u.id && (
                   // Who already aims here, shown only while this unit is hovered or
@@ -775,7 +876,6 @@ export function PowerworksScene({
                         aria-label={`Edit ${p.name}'s order targeting ${labelFor(u)}`}
                         onClick={(e) => open(p, e.detail === 0)}
                       >
-                        <span>{team.indexOf(p) + 1}</span>
                         <Portrait u={p} small />
                       </button>
                     ))}
@@ -835,13 +935,6 @@ export function PowerworksScene({
           </div>
         )}
         {ring}
-        {planning && !move && enemies.some((u) => u.charge && u.hp > 0) && (
-          <div className="pw-scene-direction">
-            <Zap />
-            <strong>Charged defense</strong>
-            <span>A release is coming</span>
-          </div>
-        )}
       </section>
     </StageContext.Provider>
   );

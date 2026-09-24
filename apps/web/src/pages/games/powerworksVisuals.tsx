@@ -248,9 +248,10 @@ export const pulls = (move: Move) => move.effects.some((e) => e.support === "dis
 export const heals = (move: Move) =>
   !harms(move) && move.effects.some((e) => e.support === "restore");
 /**
-  The kind of act a move is, as one icon (round 2): bind, heal, guard, pull, charge, then a
-  melee or ranged strike. The signature is marked by the disc's gold rim, never by its icon,
-  so a signature still shows what kind of move it is.
+  The kind of act a move is, as one icon (round 2): bind, heal, guard, pull, then a melee or
+  ranged strike. The signature is marked by the disc's gold rim, never by its icon, so a
+  signature still shows what kind of move it is; a charge is its own mark beside the icon
+  (round 3), so a charged strike still reads as a strike.
 */
 export function MoveIcon({ move }: { move: Move }) {
   const Icon = binds(move)
@@ -261,8 +262,6 @@ export function MoveIcon({ move }: { move: Move }) {
     ? Shield
     : pulls(move)
     ? Magnet
-    : charges(move)
-    ? Zap
     : melee(move)
     ? Swords
     : Crosshair;
@@ -684,7 +683,12 @@ export function Portrait({ u, small = false }: { u: Unit; small?: boolean }) {
     </span>
   );
 }
-export function StatusBadges({ u }: { u: Unit }) {
+/**
+  A unit's condition badges. On the stage (`compact`, round 3) a badge carries its status and
+  a bare count of the opportunities left; the word "opportunities" and the rule are on its
+  tooltip and read by its text. The inspector keeps the full words.
+*/
+export function StatusBadges({ u, compact = false }: { u: Unit; compact?: boolean }) {
   if (u.hp <= 0)
     return (
       <span className="pw-status-badge down">
@@ -706,11 +710,24 @@ export function StatusBadges({ u }: { u: Unit }) {
         <span
           key={`${condition.status}-${condition.source}`}
           className={`pw-status-badge condition group-${condition.group}`}
-          title={conditionRule(condition, u)}
+          title={
+            compact && condition.remaining !== Infinity
+              ? `${cap(remainingLabel(condition))} left. ${conditionRule(condition, u)}`
+              : conditionRule(condition, u)
+          }
         >
           <GroupIcon group={condition.group} />
           {condition.status}
-          <small>{remainingLabel(condition)}</small>
+          {compact ? (
+            <>
+              <small aria-hidden="true">
+                {condition.remaining === Infinity ? "∞" : condition.remaining}
+              </small>
+              <span className="pw-sr">{remainingLabel(condition)}</span>
+            </>
+          ) : (
+            <small>{remainingLabel(condition)}</small>
+          )}
         </span>
       ))}
       {u.ward && (
@@ -750,7 +767,44 @@ export type HealthPreview = {
   danger: boolean;
   /** Another target is being aimed at: this one's preview steps back. */
   muted: boolean;
+  /**
+    The element matchup of the move against this unit (round 3): above 1 strong, below 1
+    weak; 1 or absent is neutral. Drawn as a chevron beside the health bar.
+  */
+  matchup?: number;
+  /** A disc is only hovered (round 3): the chunk shows faintly, without its number. */
+  faint?: boolean;
+  /** The matchup in words, for the chevron's tooltip: "Strong: water against sand". */
+  matchupText?: string;
 };
+/**
+  The matchup mark beside a health bar (round 3 review): a filled triangle, up and bright when
+  strong (two for double), down and muted when weak, with the matchup in words on its tooltip.
+  No box, so it never reads as a dropdown caret.
+*/
+export function MatchupMark({ factor, text }: { factor?: number; text?: string }) {
+  if (factor === undefined || factor === 1 || factor === 0) return null;
+  const strong = factor > 1;
+  const count = factor >= 2 ? 2 : 1;
+  return (
+    <span
+      className={`pw-matchup ${strong ? "strong" : "weak"} ${count === 2 ? "double" : ""}`}
+      title={text ?? (strong ? `Strong: ×${factor} damage` : `Weak: ×${factor} damage`)}
+      data-factor={factor}
+    >
+      <svg viewBox={`0 0 10 ${count === 2 ? 14 : 9}`} aria-hidden="true">
+        {strong ? (
+          <>
+            <polygon points="5,0.5 9.5,8 0.5,8" />
+            {count === 2 && <polygon points="5,6 9.5,13.5 0.5,13.5" />}
+          </>
+        ) : (
+          <polygon points="0.5,1 9.5,1 5,8.5" />
+        )}
+      </svg>
+    </span>
+  );
+}
 export function Health({
   u,
   estimate = 0,
@@ -763,19 +817,20 @@ export function Health({
   const damage = Math.min(u.hp, preview ? preview.damage : estimate),
     heal = preview ? Math.max(0, Math.min(u.max - u.hp, preview.heal)) : 0,
     remaining = ((u.hp - damage) / u.max) * 100;
-  // The damage number floats over its chunk like a hit number (round 2), kept on the bar.
-  const center = Math.min(
-    88,
-    Math.max(
-      12,
-      damage > 0
-        ? remaining + (damage / u.max) * 50
-        : heal > 0
-        ? ((u.hp + heal / 2) / u.max) * 100
-        : 50
-    )
-  );
-  const shown = !!preview && (preview.immune || damage > 0 || heal > 0);
+  // The number sits on a small solid tag at the chunk's edge (round 3 review): its right
+  // edge meets the chunk where what remains ends, so no hatching lies under the text. Near
+  // the bar's start it hangs the other way, over the chunk; "no effect" sits at the bar's end.
+  const hp = (u.hp / u.max) * 100;
+  const tag: { edge: number; end: boolean } = preview?.immune
+    ? { edge: 100, end: true }
+    : damage > 0
+    ? remaining >= 30
+      ? { edge: remaining, end: true }
+      : { edge: remaining, end: false }
+    : hp >= 30
+    ? { edge: hp, end: true }
+    : { edge: ((u.hp + heal) / u.max) * 100, end: false };
+  const shown = !!preview && !preview.faint && (preview.immune || damage > 0 || heal > 0);
   const track = (
       <div
         className="pw-health-track"
@@ -811,7 +866,7 @@ export function Health({
   );
   return (
     <div
-      className={`pw-health ${preview ? "previewing" : ""} ${
+      className={`pw-health ${preview ? "previewing" : ""} ${preview?.faint ? "faint" : ""} ${
         preview?.muted ? "muted" : ""
       } ${preview?.danger ? "danger" : ""}`}
     >
@@ -821,8 +876,8 @@ export function Health({
           <span
             className={`pw-hp-delta ${preview!.knockout ? "knockout" : ""} ${
               heal > 0 && !damage ? "heal" : ""
-            } ${preview!.immune ? "immune" : ""}`}
-            style={{ left: `${center}%` }}
+            } ${preview!.immune ? "immune" : ""} ${tag.end ? "at-end" : "at-start"}`}
+            style={tag.end ? { right: `${100 - tag.edge}%` } : { left: `${tag.edge}%` }}
             aria-hidden="true"
           >
             {preview!.knockout ? (
@@ -838,6 +893,9 @@ export function Health({
         </div>
       ) : (
         track
+      )}
+      {preview && !preview.immune && (
+        <MatchupMark factor={preview.matchup} text={preview.matchupText} />
       )}
       <span className="pw-hp-label">
         {u.hp}
