@@ -13,7 +13,7 @@
   color: var(--ink);
   background: #09191e;
   font: 14px/1.4 var(--font-body);
-  min-height: 100svh;
+  min-height: calc(var(--pw-vh, 1svh) * 100);
   isolation: isolate;
 }
 .pw * {
@@ -153,7 +153,7 @@
   --room-glow: #8a6548;
 }
 .pw.in-run {
-  height: 100svh;
+  height: calc(var(--pw-vh, 1svh) * 100);
   min-height: 650px;
   display: flex;
   flex-direction: column;
@@ -990,7 +990,7 @@
   gap: 35px;
 }
 .pw-briefing h1 {
-  font-size: clamp(36px, 5vw, 62px);
+  font-size: clamp(36px, calc(var(--pw-vw, 1vw) * 5), 62px);
   font-weight: 550;
   line-height: 1.07;
   letter-spacing: -2px;
@@ -1093,8 +1093,8 @@
   color: #deebe1;
   border: 1px solid #6f918b66;
   border-radius: 16px;
-  width: min(660px, calc(100vw - 32px));
-  max-height: 85svh;
+  width: min(660px, calc(calc(var(--pw-vw, 1vw) * 100) - 32px));
+  max-height: calc(var(--pw-vh, 1svh) * 85);
   padding: 24px;
   font: 14px/1.55 Inter, ui-sans-serif, system-ui, sans-serif;
   box-shadow: 0 30px 100px #0009;
@@ -1354,7 +1354,7 @@
   padding: 12px 20px;
   border: 1px solid #edbd92;
   border-radius: 8px;
-  max-width: 90vw;
+  max-width: calc(var(--pw-vw, 1vw) * 90);
   font-size: 12px;
 }
 @keyframes pw-hit {
@@ -1712,7 +1712,7 @@
   }
   .pw-dialog {
     padding: 18px;
-    max-height: 88svh;
+    max-height: calc(var(--pw-vh, 1svh) * 88);
   }
   .pw-dialog header {
     top: -18px;
@@ -1985,7 +1985,7 @@
   flex-direction: column;
   align-items: center;
   gap: 23px;
-  padding: 30px clamp(16px, 4vw, 60px) 20px;
+  padding: 30px clamp(16px, calc(var(--pw-vw, 1vw) * 4), 60px) 20px;
   width: 100%;
   flex: 1;
 }
@@ -2090,12 +2090,12 @@
 @media (max-width: 600px) {
   .pw.in-run {
     height: auto;
-    min-height: 100svh;
+    min-height: calc(var(--pw-vh, 1svh) * 100);
     overflow: visible;
   }
   .pw-battle-shell {
     flex: none;
-    min-height: calc(100svh - 98px);
+    min-height: calc(calc(var(--pw-vh, 1svh) * 100) - 98px);
   }
   .pw-preview {
     min-height: 34px;
@@ -2129,7 +2129,7 @@
     max-width: 150px;
   }
   .pw-outcome {
-    max-height: calc(100svh - 98px);
+    max-height: calc(calc(var(--pw-vh, 1svh) * 100) - 98px);
   }
   /*
     One fixed screen in play (issue #589): the page is exactly the viewport and the theater
@@ -2139,7 +2139,7 @@
     crushing the stage.
   */
   .pw.in-run:has(.pw-theater) {
-    height: 100svh;
+    height: calc(var(--pw-vh, 1svh) * 100);
   }
   .pw-battle-shell:has(.pw-theater) {
     flex: 1 1 auto;
