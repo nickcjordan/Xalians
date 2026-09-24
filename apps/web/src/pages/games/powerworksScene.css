@@ -74,7 +74,8 @@
 @keyframes pw-env-drift {
   to { transform: translateX(22px); opacity: .025; }
 }
-.pw-theater:after {
+/* The vignette sits inside the zoom layer (round 2), under the units as before. */
+.pw-stage-zoom::after {
   content: "";
   position: absolute;
   inset: 0;
@@ -242,54 +243,6 @@
   font-size: 12px;
   padding: 2px 4px;
   box-shadow: 0 2px 5px #0005;
-}
-.pw-scene-preview {
-  display: flex;
-  gap: 3px;
-  justify-content: center;
-  align-items: center;
-  position: relative;
-  font-size: 12px;
-  line-height: 1.15;
-  margin: 3px -7px 0;
-  padding: 4px;
-  border-radius: 4px;
-  background: #152931f5;
-  color: #d4dcd8;
-}
-.pw-scene-preview.strong {
-  background: #304229;
-  color: #e8f5c3;
-}
-/* What a helpful move does for a squadmate it names (pass 5): heal, clear, guard. It is
-   anchored just above the squadmate's plaque, over the foot of its art, so it stays on the
-   stage whatever conditions the squadmate carries. */
-.pw-scene-unit.ally .pw-unit-plaque {
-  position: relative;
-}
-.pw-unit-plaque > .pw-scene-preview.support {
-  position: absolute;
-  left: -4px;
-  right: -4px;
-  bottom: calc(100% + 3px);
-  margin: 0;
-  z-index: 5;
-  pointer-events: none;
-  background: #1d3a33f2;
-  color: #d9f1e2;
-  box-shadow: inset 2px 0 #9fd8b8, 0 3px 8px #03090bcc;
-}
-.pw-scene-preview svg {
-  width: 12px;
-  height: 12px;
-}
-.pw-scene-reticle {
-  position: absolute;
-  top: 6%;
-  right: 0;
-  color: #fff0bc;
-  width: 23px !important;
-  height: 23px !important;
 }
 .pw-scene-unit.fallen .pw-actor-art {
   opacity: 0.26;
@@ -954,14 +907,6 @@
   .pw-scene-status .pw-status-badge svg {
     display: none;
   }
-  .pw-scene-preview {
-    margin: 2px -4px 0;
-    font-size: 12px;
-    min-height: 30px;
-  }
-  .pw-scene-preview svg {
-    display: none;
-  }
   .pw-scene-direction {
     top: 49%;
     font-size: 14px;
@@ -1485,6 +1430,357 @@
   .pw-theater .pw-scene-unit .pw-actor-art,
   .pw-theater .pw-environment {
     animation: none !important;
+    transition: none !important;
+  }
+}
+
+/*
+  Round 2 of the radial orders brief: the stage camera and what a chosen move would do,
+  drawn on the creatures themselves. Colors are the game's own: the target gold of the
+  aimed ground, the plaque fill, the squad's heal green, the danger coral.
+*/
+/* The camera layer: the room, the units and the intent lines lean in together toward the
+   selected companion's feet; the wheel, the card and every banner stay outside it. */
+/* The stage never scrolls: its zoomed room and its wheel overhang its edges, and focus
+   moving inside an overflow-hidden box would scroll it and shift every unit (round 2 review). */
+.pw .pw-theater {
+  overflow: clip;
+}
+.pw-stage-zoom {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  transform-origin: 0 0;
+  will-change: transform;
+}
+.pw-scene-unit.ally .pw-unit-plaque {
+  position: relative;
+}
+
+/* While a move is armed: units it cannot name or reach fade down, the aimed one rises. */
+.pw-scene-unit {
+  transition: filter 200ms ease-out;
+}
+.pw-theater.targeting .pw-scene-unit.ineligible {
+  filter: grayscale(0.85) brightness(0.55);
+}
+.pw .pw-scene-character {
+  transform-origin: 50% 100%;
+  transition: transform 150ms var(--ease-out);
+}
+.pw-theater.targeting .pw-scene-unit.aimed {
+  z-index: 5;
+}
+.pw-theater.targeting .pw-scene-unit.aimed .pw-scene-character {
+  transform: translateY(-4px) scale(1.06);
+}
+.pw-theater.targeting .pw-scene-unit.muted .pw-actor-art {
+  filter: brightness(0.82);
+}
+
+/* The target ring at a legal target's feet; dashed where only the aimed area reaches. */
+.pw-target-ring {
+  position: absolute;
+  left: 8%;
+  right: 8%;
+  bottom: -4%;
+  height: 16%;
+  border: 2px solid #f0d596;
+  border-radius: 50%;
+  background: radial-gradient(ellipse, #f0d59626 0%, #f0d59600 70%);
+  box-shadow: 0 0 10px #e9bb5288, inset 0 0 8px #f0d59644;
+  pointer-events: none;
+  animation: pw-ring-in 180ms var(--ease-out) both;
+}
+.pw-target-ring.area {
+  border-style: dashed;
+  border-color: #f0d596cc;
+  background: none;
+  box-shadow: none;
+}
+.pw-target-ring.danger {
+  border-color: var(--danger);
+  box-shadow: 0 0 12px #ec947e99;
+}
+.pw-theater.targeting .pw-scene-unit.aimed .pw-target-ring {
+  border: 3px solid #fff0bc;
+  background: radial-gradient(ellipse, #fff0bc33 0%, #fff0bc00 70%);
+  box-shadow: 0 0 16px #f1cb6ccc, inset 0 0 10px #fff0bc66;
+  animation:
+    pw-ring-in 180ms var(--ease-out) both,
+    pw-ring-breathe 1.4s ease-in-out 180ms infinite alternate;
+}
+.pw-theater.targeting .pw-scene-unit.muted .pw-target-ring {
+  opacity: 0.55;
+}
+@keyframes pw-ring-in {
+  from {
+    opacity: 0;
+    transform: scale(0.7);
+  }
+}
+@keyframes pw-ring-breathe {
+  to {
+    box-shadow: 0 0 7px #f1cb6c66, inset 0 0 4px #fff0bc33;
+  }
+}
+/* The one-shot beat when an order locks on this target. */
+.pw-target-flash {
+  position: absolute;
+  left: 4%;
+  right: 4%;
+  bottom: -6%;
+  height: 22%;
+  border: 3px solid #fff4cf;
+  border-radius: 50%;
+  pointer-events: none;
+  animation: pw-target-flash 250ms ease-out forwards;
+}
+@keyframes pw-target-flash {
+  from {
+    opacity: 1;
+    transform: scale(0.85);
+    box-shadow: 0 0 20px #fff0bc;
+  }
+  to {
+    opacity: 0;
+    transform: scale(1.3);
+    box-shadow: 0 0 4px #fff0bc00;
+  }
+}
+.pw .pw-unit-plaque .pw-order-chip.just-set {
+  animation: pw-chip-set 250ms ease-out 150ms both;
+}
+@keyframes pw-chip-set {
+  0% {
+    box-shadow: none;
+  }
+  35% {
+    box-shadow: 0 0 0 1px #fff0bc, 0 0 14px #f1cb6ccc;
+    border-color: #fff0bc;
+  }
+  100% {
+    box-shadow: none;
+  }
+}
+
+/* The health bar while a move is armed (round 2 review): thick, with the chunk the move
+   would remove and its number floating over the chunk like a hit number. */
+.pw .pw-unit-plaque .pw-health.previewing .pw-health-track {
+  height: 10px;
+  border-radius: 1px;
+  box-shadow: inset 0 0 0 1px #a0bbb233, 0 0 0 1px #03090bcc;
+}
+.pw-health-bar {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+}
+.pw-health-bar > .pw-health-track {
+  flex: 1;
+}
+.pw-health.previewing .pw-health-track > span {
+  transition: none;
+}
+.pw-health-track > i.pw-hp-chunk {
+  background: repeating-linear-gradient(120deg, #fff0bc 0 3px, #d19a3e 3px 6px);
+  box-shadow: 0 0 6px #f1cb6c;
+  animation: pw-fade-in 180ms ease-out both;
+}
+.pw-health-track > i.pw-hp-chunk.knockout,
+.pw-health.danger .pw-health-track > i.pw-hp-chunk {
+  background: repeating-linear-gradient(120deg, #ffc6b6 0 3px, #b9533c 3px 6px);
+  box-shadow: 0 0 6px var(--danger);
+}
+.pw-health-track > b.pw-hp-heal {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  background: repeating-linear-gradient(120deg, #d3f7dc 0 3px, #5fae7a 3px 6px);
+  box-shadow: 0 0 6px #9fd8b8;
+  animation: pw-fade-in 180ms ease-out both;
+}
+.pw .pw-hp-delta {
+  position: absolute;
+  top: 50%;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  transform: translate(-50%, -52%);
+  font: 800 16px/1 var(--font-legend);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.01em;
+  color: #fff4d2;
+  text-shadow:
+    1px 0 0 #1a0f04,
+    -1px 0 0 #1a0f04,
+    0 1px 0 #1a0f04,
+    0 -1px 0 #1a0f04,
+    0 2px 4px #000,
+    0 0 8px #d19a3e;
+  white-space: nowrap;
+  pointer-events: none;
+  animation: pw-hit-in 200ms var(--ease-out) both;
+}
+@keyframes pw-hit-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -20%) scale(0.8);
+  }
+}
+.pw .pw-hp-delta svg {
+  width: 13px;
+  height: 13px;
+  filter: drop-shadow(0 1px 1px #000);
+}
+.pw .pw-hp-delta.knockout,
+.pw .pw-health.danger .pw-hp-delta {
+  color: #ffd6ca;
+  text-shadow:
+    1px 0 0 #2a0b06,
+    -1px 0 0 #2a0b06,
+    0 1px 0 #2a0b06,
+    0 -1px 0 #2a0b06,
+    0 2px 4px #000,
+    0 0 8px var(--danger);
+}
+.pw .pw-hp-delta.heal {
+  color: #dcf9e3;
+  text-shadow:
+    1px 0 0 #06200f,
+    -1px 0 0 #06200f,
+    0 1px 0 #06200f,
+    0 -1px 0 #06200f,
+    0 2px 4px #000,
+    0 0 8px #6fae82;
+}
+.pw .pw-hp-delta.immune {
+  font: 700 11px/1 var(--font-legend);
+  color: #d5dbd4;
+  text-shadow:
+    1px 0 0 #000,
+    -1px 0 0 #000,
+    0 1px 0 #000,
+    0 -1px 0 #000;
+}
+.pw-health.muted {
+  opacity: 0.5;
+}
+
+/* Ghost status badges: what the move would leave on the unit, with its chance. */
+.pw .pw-status-badge.ghost {
+  border-style: dashed;
+  background-color: #08151bd9;
+  animation: pw-fade-in 200ms ease-out both;
+}
+.pw .pw-status-badge.ghost small {
+  opacity: 1;
+  font-weight: 700;
+}
+.pw .pw-status-badge.ghost.immune {
+  opacity: 0.65;
+  text-decoration: line-through;
+}
+.pw .pw-status-badge.ghost.note-none {
+  color: #b7bfb8;
+  border-color: #6b7a7488;
+}
+.pw-scene-unit.muted .pw-status-badge.ghost {
+  opacity: 0.45;
+}
+/* Who already aims at a unit: shown only while it is hovered or focused, and named. */
+.pw .pw-target-orders {
+  position: relative;
+  z-index: 6;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  width: max-content;
+  max-width: 180px;
+  margin: 3px auto 0;
+  padding: 3px 6px 4px;
+  background: #08151bf2;
+  border: 1px solid #bca77980;
+  border-radius: 2px;
+  box-shadow: 0 4px 10px #03090bbd;
+  animation: pw-fade-in 150ms ease-out both;
+}
+.pw-target-orders-label {
+  flex: 1 0 100%;
+  font: 600 11px/1.2 var(--font-legend);
+  color: #efdbab;
+  text-align: center;
+}
+/* A squadmate's marks sit just above its plaque, where they stay on the stage. */
+.pw-preview-marks {
+  position: absolute;
+  left: -6px;
+  right: -6px;
+  bottom: calc(100% + 4px);
+  z-index: 5;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 2px;
+  pointer-events: none;
+}
+/* A pull: a short arrow on the target, pointing toward the companion pulling. */
+.pw-pull-arrow {
+  position: absolute;
+  left: 50%;
+  top: 30%;
+  width: 30px;
+  height: 30px;
+  margin-left: -15px;
+  display: grid;
+  place-items: center;
+  color: #fff0bc;
+  background: #08151bd9;
+  border: 1px solid #f0d596;
+  border-radius: 50%;
+  box-shadow: 0 0 10px #f1cb6c88;
+  pointer-events: none;
+  animation: pw-fade-in 180ms ease-out both;
+}
+.pw .pw-pull-arrow svg {
+  width: 18px;
+  height: 18px;
+}
+/* The aimed intent line: the dashed gold path from the companion to the aimed target. */
+.pw-aim-path {
+  stroke: #fff0bc;
+  stroke-width: 2.5px;
+  stroke-dasharray: 5 6;
+  opacity: 0.85;
+  filter: drop-shadow(0 0 3px #f1cb6c);
+  animation: pw-fade-in 150ms ease-out both;
+}
+
+@media (max-width: 600px) {
+  .pw .pw-hp-delta {
+    font-size: 14px;
+  }
+  .pw-pull-arrow {
+    width: 26px;
+    height: 26px;
+    margin-left: -13px;
+  }
+}
+
+/* Everything above is instant under reduced motion, whether the media query or the page
+   says so; the ring's breathing is off too. */
+.pw-theater[data-motion="reduced"] *,
+.pw-theater[data-motion="reduced"] *::after {
+  animation: none !important;
+  transition: none !important;
+}
+@media (prefers-reduced-motion: reduce) {
+  .pw-stage-zoom {
     transition: none !important;
   }
 }

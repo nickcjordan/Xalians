@@ -85,7 +85,7 @@
 .pw-facility.sector-2 { background-image: linear-gradient(#07111933, #07111944), url('/assets/powerworks/facility-angle-3.webp'); }
 .pw-facility.sector-3 { background-image: linear-gradient(#07111933, #07111944), url('/assets/powerworks/facility-angle-4.webp'); }
 .pw-facility > svg { position: absolute; inset: 0; }
-.pw-theater::after {
+.pw-stage-zoom::after {
   box-shadow: inset 0 0 75px 18px #061016c9, inset 0 10px 30px #02090d99;
 }
 .pw-scene-heading {

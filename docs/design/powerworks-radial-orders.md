@@ -28,3 +28,48 @@ Planning today is three stacked bands under the stage: a command head and a four
 ## Done when
 
 Tests pass (rules unchanged; page, scene and visuals tests updated to the new controls), a paint check at 1280x720 and 390x844 covers: nothing selected, a ring open on a companion at each edge of the stage and in the middle, a slot's detail card, target selection with a preview, all four orders set, and a phone ring. Measurements: no page scroll, commit in view, ring and detail inside the stage, every slot receives its click at its center, slot size on phone. An independent reviewer judges the screenshots against this brief before the PR opens.
+
+## Round 2: what a move shows, and choosing one, 2026-09-23
+
+Nick on the shipped wheel (PR #611): "a step in the right direction ... I see symbols and numbers, but I don't know what they mean. I want you to ask yourself what of these need to be shown and what value they provide if they're shown, and which ones might make more sense to initially hide until hover or until you select it ... Once you click the move, it just goes away. I feel like what would be a better look is having the move expand to show the rest of the details of it, indicating that you selected that move, and then show how the selected move would affect each of the creatures. You sort of have this now, but it shows as more of a informational label log than a visual affordance like you would expect in video game. ... animations to do things like fade in and out when you select and deselect things, or zoom in on something when it's selected."
+
+### What each mark on a disc is for
+
+| Mark today | What it tells the player | Needed to choose at a glance? | Round 2 |
+|---|---|---|---|
+| Move icon | the kind of act: strike, bind, pull, guard, heal, status | yes, it is the fastest read | **keep**, larger |
+| Name | which move this is | yes, identity | **keep** |
+| Gold rim | this is the signature | yes, cheap and learned once | **keep** |
+| Power badge (glyph + number) | base power before matchup and guards | no: the number that matters is what it does to a particular target, which depends on the target | **hide** at rest; show in the expanded card, and as real outcomes on each target |
+| Bind count badge ("⇔ 1") | the bind holds one action | no | **hide**; the expanded card says it in words |
+| Cooldown pips or ∞ under the disc | how long the move rests after use | no, it is a cost, not a choice | **hide** at rest; the expanded card says "rests 1 round after use" or "use every round" |
+| Unavailable tag (cooling 2, bound, spent) | why it cannot be chosen now | yes | **keep**, as the only small tag: the disc is dimmed and carries one short word or a round count |
+| Hotkey keycap | keyboard shortcut | only for keyboard players | **show only after a key has been pressed** in this session (keyboard modality), hidden for pointer and touch |
+
+At rest a disc is: icon, name, gold rim if signature; dimmed with one short reason if unavailable. Nothing else.
+
+### Choosing a move
+
+1. **Hover or focus** a disc: it lifts and brightens (scale up slightly, glow), the other discs soften; no card yet on desktop. On touch the first tap does the same and arms it.
+2. **Choose** a disc (click, second tap, key): the chosen disc **expands in place into the move card** while the other discs fade and shrink back into the creature. The card is the chosen move's full reading in plain words: what it does, power, reach (melee or ranged, closes in), area, status and its chance, how long it rests after use. It stays open through targeting, marked as the chosen move, with a small back control that returns to the wheel (Escape does the same).
+3. **The stage shows what the move will do, on the creatures themselves**, not as text labels:
+   - Every legal target gets a target ring at its feet; illegal units dim and desaturate.
+   - **Damage** shows on each target's HP bar as a highlighted chunk the move would remove (the preview amount), with the number riding the bar. A knockout preview shows the whole remaining bar highlighted and a skull mark.
+   - **Heals** show as a green extension on a squadmate's HP bar.
+   - **Statuses** show as a ghost of the status badge on the target with its chance ("75%").
+   - **Guarded or immune** targets show the chunk shrunk and a small shield, or "no effect".
+   - **Area moves** also mark every unit the area would reach, each with its own chunk; squadmates the area reaches are marked in the danger color.
+   - **Pulls and pushes** show a short arrow on the target.
+4. **Hovering or focusing a target** raises it (scale up slightly), draws the intent line from the actor to it, and the move card adds one line for that target ("Crawler 1: 5 damage, 22 to 17").
+5. **Confirming** a target: the order locks with a short beat (the target ring flashes once, the card collapses into the actor's plaque chip), and the next companion without an order is selected.
+
+### Motion and focus
+
+- The wheel's discs open with a short staggered fade and scale out from the creature; they fold back the same way on close.
+- **Zoom:** while a companion is selected the stage eases in slightly toward it (a small scale on the stage layer with the origin at the companion), and eases back out when nothing is selected. Small enough that no enemy leaves the frame.
+- Target previews fade in; dimmed units fade down; everything is instant under reduced motion. No looping animation except that the chosen target ring may breathe gently while a move is armed, and that too is off under reduced motion.
+- Durations stay short (about 120 to 250 ms), so planning never waits on an animation.
+
+### Done when
+
+Same paint check as round 1, plus: a rest-state wheel with a signature and an unavailable disc; a hovered disc; the expanded card during targeting with damage chunks on two enemies, a status ghost with its chance, and an area move marking a second target; a heal preview on a squadmate; a hovered target with its intent line and card line; the order locked with the chip set; and frame captures at the midpoint of the open, expand and zoom animations to show they run. Measurements as before, plus the zoom never pushes any unit's plaque outside the stage. An independent reviewer judges the result against this section before the PR opens.

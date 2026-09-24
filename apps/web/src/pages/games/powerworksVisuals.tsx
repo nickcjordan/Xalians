@@ -21,7 +21,6 @@ import {
   Sun,
   Droplets,
   Mountain,
-  Crown,
   RotateCcw,
   Check,
   Hourglass,
@@ -42,6 +41,9 @@ import {
   FlaskConical,
   Ghost,
   Brain,
+  Skull,
+  Ban,
+  Magnet,
 } from "lucide-react";
 import {
   AREA_HARM_FACTOR,
@@ -65,6 +67,7 @@ import {
   type Move,
   type MoveEffect,
   type Passive,
+  type RemovalMethod,
   type StatusGroup,
   type Unit,
 } from "@xalians/rules/dungeon";
@@ -170,7 +173,7 @@ function protectionRule(condition: Condition): string {
 export const remainingLabel = (condition: Condition) =>
   condition.remaining === Infinity
     ? "always"
-    : `${condition.remaining} ${condition.remaining === 1 ? "opp" : "opps"}`;
+    : `${condition.remaining} ${condition.remaining === 1 ? "opportunity" : "opportunities"}`;
 
 /** The heading a passive sits under: it answers an event, or it is simply always on (contract decision 25). */
 export const passiveHeading = (passive: Passive) =>
@@ -239,15 +242,27 @@ export function ElementIcon({ element }: { element: string }) {
   const Icon = ELEMENT_ICONS[element as keyof typeof ELEMENT_ICONS] || Sun;
   return <Icon size={15} aria-hidden="true" />;
 }
+/** A move that pulls its target off its footing. */
+export const pulls = (move: Move) => move.effects.some((e) => e.support === "displace");
+/** A move that heals and does no harm. */
+export const heals = (move: Move) =>
+  !harms(move) && move.effects.some((e) => e.support === "restore");
+/**
+  The kind of act a move is, as one icon (round 2): bind, heal, guard, pull, charge, then a
+  melee or ranged strike. The signature is marked by the disc's gold rim, never by its icon,
+  so a signature still shows what kind of move it is.
+*/
 export function MoveIcon({ move }: { move: Move }) {
   const Icon = binds(move)
     ? Link2
+    : heals(move)
+    ? HeartPulse
     : guards(move)
     ? Shield
+    : pulls(move)
+    ? Magnet
     : charges(move)
     ? Zap
-    : move.signature
-    ? Crown
     : melee(move)
     ? Swords
     : Crosshair;
@@ -292,11 +307,43 @@ export function areaSummary(move: Move): string {
 }
 /** One sentence per effect, from its support reading. Unsupported effects are named and say so. */
 const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
+/**
+  What each removal method is called and which conditions it ends, in plain words. The
+  records declare removability on each status they apply (`removable`), so this mirrors that
+  data; powerworksVisuals.test checks it against every record in play.
+*/
+export const REMOVAL_WORDS: Record<RemovalMethod, { verb: string; ends: string[] }> = {
+  cooling: { verb: "Cools", ends: ["overheated", "burning"] },
+  smothering: { verb: "Smothers", ends: ["burning"] },
+  warming: { verb: "Warms", ends: ["chilled", "frozen", "slowed", "shielded"] },
+  cleansing: { verb: "Cleanses", ends: ["corroding", "restrained", "blinded"] },
+  detoxifying: { verb: "Detoxifies", ends: ["poisoned", "paralyzed"] },
+  freeing: { verb: "Frees", ends: ["restrained", "frozen", "buried"] },
+  stabilizing: { verb: "Steadies", ends: ["paralyzed", "blinded", "frightened", "stunned"] },
+  disrupting: { verb: "Disrupts", ends: ["entranced", "concealed", "protected", "shielded"] },
+};
+/** "Overheated and Burning", "Blinded, Paralyzed and Stunned". */
+const listed = (names: string[]) => {
+  const words = names.map(cap);
+  return words.length > 1
+    ? `${words.slice(0, -1).join(", ")} and ${words[words.length - 1]}`
+    : words[0] ?? "";
+};
+/** "Cools: ends Overheated and Burning." for each method a removal carries. */
+export function removalWords(methods: RemovalMethod[] = []): string {
+  return methods
+    .map((m) => {
+      const w = REMOVAL_WORDS[m];
+      return w ? `${w.verb}: ends ${listed(w.ends)}.` : `Ends what answers to ${m}.`;
+    })
+    .join(" ");
+}
 export function effectSummary(effect: MoveEffect, move?: Move): string {
+  // The chance leads, so it is never the part a narrow line cuts off (round 2).
   const chance =
     effect.likelihood === "consistent"
       ? ""
-      : ` (${LIKELIHOOD_PERCENT[effect.likelihood]}% chance)`;
+      : `${LIKELIHOOD_PERCENT[effect.likelihood]}% chance: `;
   // Since pass 5 a helpful effect that reaches its target is aimed at a squadmate
   // (contract decisions 39 and 40); it is still withheld from an enemy (decision 35).
   const onMate = helpful(effect) && effect.recipient !== "self";
@@ -309,9 +356,9 @@ export function effectSummary(effect: MoveEffect, move?: Move): string {
     case "displace":
       return "Pulls the target off its footing: breaks a charge and does impact harm.";
     case "bind":
-      return `${cap(
+      return `${chance}${cap(
         effect.status ?? "bound"
-      )}: moves that close in are blocked through one action opportunity${chance}.`;
+      )}, moves that close in are blocked for 1 opportunity.`;
     case "status": {
       const status = effect.status ?? "condition";
       const lasts =
@@ -322,36 +369,34 @@ export function effectSummary(effect: MoveEffect, move?: Move): string {
           : "";
       const rule =
         effect.group === "degrading"
-          ? `: damage at the start of each of its opportunities`
+          ? `, damage at the start of each of its opportunities`
           : effect.group === "guarding"
-          ? `: ${
+          ? `, ${
               status === "protected" ? "a declared protection" : "less damage taken"
             }`
           : effect.group === "attention"
           ? status === "entranced"
-            ? ": loses its next opportunity"
-            : ": its damage halved"
+            ? ", loses its next opportunity"
+            : ", its damage halved"
           : effect.group === "concealment"
-          ? ": cannot be targeted while another unit stands"
+          ? ", cannot be targeted while another unit stands"
           : effect.group === "mending"
-          ? ": health back each opportunity"
+          ? ", health back each opportunity"
           : effect.group === "shock"
-          ? ": loses its next opportunity and any charge"
+          ? ", loses its next opportunity and any charge"
           : effect.group === "tempo"
           ? status === "sedated"
-            ? ": acts last, defenses silent"
-            : ": acts at half speed"
+            ? ", acts last, defenses silent"
+            : ", half speed"
           : effect.group === "senses"
           ? status === "disoriented"
-            ? ": its next aimed action goes astray"
-            : ": its ranged damage halved"
+            ? ", its next aimed action goes astray"
+            : ", its ranged damage halved"
           : "";
-      return `${cap(status)}${onMate ? ` on ${mates}` : ""}${rule}${lasts}${chance}.`;
+      return `${chance}${cap(status)}${onMate ? ` on ${mates}` : ""}${rule}${lasts}.`;
     }
     case "remove":
-      return `Ends conditions that answer to ${(effect.methods ?? []).join(
-        " or "
-      )}, on ${effect.recipient === "self" ? "itself" : `${mates} or an enemy`}.`;
+      return `${removalWords(effect.methods)}${effect.recipient === "self" ? " On itself." : ""}`;
     case "protect":
       return onMate
         ? `Shields ${mates}: incoming damage halved until its next opportunity.`
@@ -368,6 +413,16 @@ export function effectSummary(effect: MoveEffect, move?: Move): string {
       }.`;
   }
 }
+/**
+  What kind of act a move is, in words: "Melee attack that closes in", "Ranged attack";
+  a move that only helps is a "Touch" or "At range", never an attack (round 2).
+*/
+export function kindWords(move: Move): string {
+  if (move.approach === "self") return "Acts on itself";
+  const hostile = harms(move) || move.effects.some((e) => !helpful(e) && e.support !== "unsupported" && e.support !== "remove");
+  if (!hostile) return melee(move) ? "Touch" : "At range";
+  return `${melee(move) ? "Melee attack" : "Ranged attack"}${closes(move) ? " that closes in" : ""}`;
+}
 export function moveDescription(u: Unit, move: Move) {
   const power = harms(move) ? ` ${basePower(u, move)} base power.` : "";
   const timing = `${
@@ -380,10 +435,7 @@ export function moveDescription(u: Unit, move: Move) {
       : " No cooldown."
   }`;
   const area = areaSummary(move);
-  const kind =
-    move.approach === "self"
-      ? "Acts on itself"
-      : `${melee(move) ? "Melee attack" : "Ranged attack"}${closes(move) ? " that closes in" : ""}`;
+  const kind = kindWords(move);
   return `${kind}.${power} ${
     area ? `${area} ` : ""
   }${move.effects
@@ -447,29 +499,24 @@ export function FigureIcon({ move }: { move: Move }) {
   return status?.group ? <GroupIcon group={status.group} /> : <MoveIcon move={move} />;
 }
 /**
-  The short reading the radial detail card shows: what kind of move it is, what it reaches
-  and what it does besides harm. Its power is on the disc and its timing on the readiness
-  line, so neither repeats here. The full reading stays on the slot's description.
+  The move card's reading (round 2), one line per thing it does, none of them clipped: what
+  kind of act it is and what it reaches, then each effect besides harm on its own line
+  ("75% chance: Slowed, half speed for 2 opportunities."). Power and timing have their own
+  lines on the card.
 */
-export function briefReading(u: Unit, move: Move) {
-  const kind =
-    move.approach === "self"
-      ? "Acts on itself."
-      : `${melee(move) ? "Melee attack" : "Ranged attack"}${
-          closes(move) ? " that closes in" : ""
-        }.`;
+export function cardReading(u: Unit, move: Move): string[] {
   const area = areaSummary(move).split(". ")[0];
+  const head = `${kindWords(move)}.${charges(move) ? " Charges first." : ""}${
+    area ? ` ${area.replace(/\.?$/, ".")}` : ""
+  }`;
   const effects = move.effects
     .filter((e) => e.support !== "harm")
-    .map((e) => effectSummary(e, move))
-    .join(" ");
-  return `${kind}${charges(move) ? " Charges first." : ""}${
-    area ? ` ${area.replace(/\.?$/, ".")}` : ""
-  }${effects ? ` ${effects}` : ""}${
-    move.fallback ? ` Costs ${DESPERATE_STRIKE_RECOIL} health.` : ""
-  }`
-    .replace(/\s+/g, " ")
-    .trim();
+    .map((e) => effectSummary(e, move));
+  return [
+    head,
+    ...effects,
+    ...(move.fallback ? [`Costs ${DESPERATE_STRIKE_RECOIL} health.`] : []),
+  ];
 }
 export function MoveCardContent({
   unit,
@@ -687,11 +734,49 @@ export function StatusBadges({ u }: { u: Unit }) {
     </>
   );
 }
-export function Health({ u, estimate = 0 }: { u: Unit; estimate?: number }) {
-  const damage = Math.min(u.hp, estimate),
+/**
+  What the chosen move would do to one unit, drawn on its own health bar while a target is
+  being chosen (radial orders round 2): the chunk it would remove, a heal's extension, and
+  the number beside the bar. Every figure comes from the rules' preview functions.
+*/
+export type HealthPreview = {
+  damage: number;
+  heal: number;
+  knockout: boolean;
+  guarded: boolean;
+  /** The move harms this unit but nothing gets through. */
+  immune: boolean;
+  /** A squadmate caught by the move's area. */
+  danger: boolean;
+  /** Another target is being aimed at: this one's preview steps back. */
+  muted: boolean;
+};
+export function Health({
+  u,
+  estimate = 0,
+  preview,
+}: {
+  u: Unit;
+  estimate?: number;
+  preview?: HealthPreview | null;
+}) {
+  const damage = Math.min(u.hp, preview ? preview.damage : estimate),
+    heal = preview ? Math.max(0, Math.min(u.max - u.hp, preview.heal)) : 0,
     remaining = ((u.hp - damage) / u.max) * 100;
-  return (
-    <div className="pw-health">
+  // The damage number floats over its chunk like a hit number (round 2), kept on the bar.
+  const center = Math.min(
+    88,
+    Math.max(
+      12,
+      damage > 0
+        ? remaining + (damage / u.max) * 50
+        : heal > 0
+        ? ((u.hp + heal / 2) / u.max) * 100
+        : 50
+    )
+  );
+  const shown = !!preview && (preview.immune || damage > 0 || heal > 0);
+  const track = (
       <div
         className="pw-health-track"
         role="meter"
@@ -706,13 +791,54 @@ export function Health({ u, estimate = 0 }: { u: Unit; estimate?: number }) {
         />
         {damage > 0 && (
           <i
+            className={`pw-hp-chunk ${preview?.knockout ? "knockout" : ""}`}
             style={{
               left: `${remaining}%`,
               width: `${(damage / u.max) * 100}%`,
             }}
           />
         )}
+        {heal > 0 && (
+          <b
+            className="pw-hp-heal"
+            style={{
+              left: `${(u.hp / u.max) * 100}%`,
+              width: `${(heal / u.max) * 100}%`,
+            }}
+          />
+        )}
       </div>
+  );
+  return (
+    <div
+      className={`pw-health ${preview ? "previewing" : ""} ${
+        preview?.muted ? "muted" : ""
+      } ${preview?.danger ? "danger" : ""}`}
+    >
+      {shown ? (
+        <div className="pw-health-bar">
+          {track}
+          <span
+            className={`pw-hp-delta ${preview!.knockout ? "knockout" : ""} ${
+              heal > 0 && !damage ? "heal" : ""
+            } ${preview!.immune ? "immune" : ""}`}
+            style={{ left: `${center}%` }}
+            aria-hidden="true"
+          >
+            {preview!.knockout ? (
+              <Skull />
+            ) : preview!.immune ? (
+              <Ban />
+            ) : preview!.guarded ? (
+              <Shield />
+            ) : null}
+            {/* The move's own damage, as the card states it; a knockout's chunk is the rest of the bar. */}
+            {preview!.immune ? "no effect" : damage > 0 ? `−${preview!.damage}` : `+${heal}`}
+          </span>
+        </div>
+      ) : (
+        track
+      )}
       <span className="pw-hp-label">
         {u.hp}
         <small> / {u.max}</small>
@@ -720,4 +846,18 @@ export function Health({ u, estimate = 0 }: { u: Unit; estimate?: number }) {
       </span>
     </div>
   );
+}
+/**
+  How long a move rests after use, in the player's words: the expanded move card's timing
+  line (round 2 replaces the cooldown pips with it).
+*/
+export function restLine(move: Move): string {
+  if (move.fallback) return `Use any round · costs ${DESPERATE_STRIKE_RECOIL} health`;
+  const rounds = cooldownLimit(move);
+  const rest = rounds
+    ? `Rests ${rounds} ${rounds === 1 ? "round" : "rounds"} after use`
+    : "Use every round";
+  // The signature's once-per-encounter rule (a rules lever the dungeon entry does not
+  // re-export), worded as the field guide words it.
+  return move.signature ? `${rest} · once per encounter` : rest;
 }

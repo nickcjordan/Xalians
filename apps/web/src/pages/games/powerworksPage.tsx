@@ -1,5 +1,5 @@
 // Tier: immersive. Powerworks presentation redesign authorized by Nick. The squad draft before the first encounter is chrome and lives in powerworksDraft.tsx (contract decision 49).
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 
 import { Link } from "react-router";
 
@@ -47,6 +47,11 @@ import {
   effectiveSpeed,
   sedated,
   areaReach,
+  beneficial,
+  selfBurst,
+  guardFactor,
+  protectionDegree,
+  LIKELIHOOD_PERCENT,
   ROOMS,
   ENCOUNTER_STALL_ROUNDS,
   SAVE_VERSION,
@@ -57,6 +62,7 @@ import {
   type Frame,
   type Move,
   type Squad,
+  type Reach,
 } from "@xalians/rules/dungeon";
 
 import {
@@ -67,7 +73,6 @@ import {
   effectSummary,
   areaSummary,
   actsOnSelf,
-  binds,
   harms,
   helps,
   closes,
@@ -87,6 +92,8 @@ import {
   ExpeditionTrail,
   sectorStory,
   type OrderChip,
+  type OrderFlash,
+  type UnitPreview,
 } from "./powerworksScene";
 import { PowerworksRadial, ringIndices } from "./powerworksRadial";
 import { PowerworksEnvironment } from "./powerworksEnvironment";
@@ -220,6 +227,11 @@ export default function PowerworksPage() {
   // Whether focus should enter the ring when it opens: a player opened it, rather than the
   // round beginning (radial orders decision 9).
   const [ringFocus, setRingFocus] = useState(false);
+  // Keyboard modality (round 2): the discs show their hotkeys only once a key has been
+  // pressed on this page, and hide them again after a touch.
+  const [keyed, setKeyed] = useState(false);
+  // The one-shot beat when an order locks: the target ring flashes, the chip lights.
+  const [flash, setFlash] = useState<OrderFlash | null>(null);
 
   const [playbackOrders, setPlaybackOrders] = useState<Record<string, Order>>(
     {}
@@ -313,6 +325,7 @@ export default function PowerworksPage() {
 
   // Escape backs out one step; keys 1 to 4 choose a slot of the open ring (decision 9).
   keys.current = (e: KeyboardEvent) => {
+    if (!keyed && !["Shift", "Control", "Alt", "Meta"].includes(e.key)) setKeyed(true);
     if (panel || e.defaultPrevented || e.altKey || e.ctrlKey || e.metaKey) return;
     const field = (e.target as Element | null)?.closest?.("input, textarea, select");
     if (field) return;
@@ -387,7 +400,7 @@ export default function PowerworksPage() {
         .querySelector<HTMLButtonElement>(
           `[data-unit="${id}"] .pw-scene-character`
         )
-        ?.focus()
+        ?.focus({ preventScroll: true })
     );
   }
 
@@ -433,7 +446,7 @@ export default function PowerworksPage() {
         requestAnimationFrame(() =>
           document
             .querySelector<HTMLButtonElement>('[role=menu] [tabindex="0"]')
-            ?.focus()
+            ?.focus({ preventScroll: true })
         );
       else closeRing();
     } else openRing(u);
@@ -486,10 +499,14 @@ export default function PowerworksPage() {
       }`
     );
     if (keyboard)
+      // Focus the first target the move would affect: a dimmed squadmate it can do
+      // nothing for comes last (round 2 review).
       requestAnimationFrame(() =>
-        document
-          .querySelector<HTMLButtonElement>(".pw-target:not(:disabled)")
-          ?.focus()
+        (
+          document.querySelector<HTMLButtonElement>(
+            ".pw-scene-unit.targetable:not(.ineligible) .pw-target:not(:disabled)"
+          ) ?? document.querySelector<HTMLButtonElement>(".pw-target:not(:disabled)")
+        )?.focus({ preventScroll: true })
       );
   }
 
@@ -510,6 +527,13 @@ export default function PowerworksPage() {
   /** Set an order, then move to the next companion in speed order without one (decision 6). */
   function order(u: Unit, moveIndex: number, target: string, keyboard: boolean) {
     const next = { ...plans, [u.id]: { move: moveIndex, target } };
+    lockedOrder.current = { id: u.id, move: moveIndex };
+    if (motion)
+      setFlash({
+        actor: u.id,
+        target: actsOnSelf(moveAt(u, moveIndex)) ? null : target,
+        stamp: Date.now(),
+      });
     setPlans(next);
     setPending(null);
     setHoverTarget(null);
@@ -632,76 +656,285 @@ export default function PowerworksPage() {
     }
   }
 
-  function previewText(u: Unit) {
-    if (!move || !active) return "";
-    if (!u.enemy) return squadmatePreview(u);
-    if (binds(move) && !harms(move))
-      return u.moves.some((m) => !closes(m))
-        ? "Blocks closing in · other moves still work"
-        : "Blocks its next move";
-    const factor = matchup(active, u, move);
-    // An area move names how many more foes it reaches from this target, and names every
-    // squadmate a burst on self would also hit (contract decision 33).
-    const around = areaReach(run, active, move, u);
-    const foes = around.filter((t) => t.enemy !== active.enemy).length;
-    const friends = around.filter((t) => t.enemy === active.enemy);
-    return `${damagePreview(active, move, u)} estimated${
-      foes ? ` · reaches ${foes} more` : ""
-    }${friends.length ? ` · also hits ${listNames(friends)}` : ""} · ${
-      factor === 0
-        ? "immune"
-        : factor > 1
-        ? "strong"
-        : factor < 1
-        ? "resisted"
-        : "neutral"
-    }${u.ward ? " · shielded" : ""}`;
-  }
-
   /**
-    What the pending move does for a squadmate it names (contract decisions 40 and 41):
-    "heals 12", "clears Restrained", "guards against about 8". Only its helpful effects
-    land on a squadmate, so nothing else is previewed.
+    What the chosen move would do to one unit (radial orders round 2), from the rules'
+    own preview functions: damage and its matchup and guards, a heal, a pull, each status
+    with its chance, and what a helpful move does for a squadmate. `reach` says whether the
+    unit is the aimed target or only caught by the area; `towardAlly` whether the move is
+    aimed at a squadmate, when only its helpful effects land (contract decision 40).
   */
-  function squadmatePreview(u: Unit) {
-    if (!move || !active) return "";
-    const parts: string[] = [];
-    for (const e of move.effects) {
-      if (!helpful(e) || e.recipient === "self") continue;
-      if (e.support === "restore")
-        parts.push(
-          u.hp >= u.max
-            ? "already at full health"
-            : `heals ${Math.min(u.max - u.hp, restorePreview(active, e))}`
-        );
-      else if (e.support === "remove") {
+  function previewOf(
+    a: Unit,
+    m: Move,
+    u: Unit,
+    reach: Reach,
+    towardAlly: boolean
+  ): UnitPreview {
+    const mate = u.enemy === a.enemy;
+    const effects = m.effects.filter(
+      (e) =>
+        e.support !== "unsupported" &&
+        e.recipient !== "self" &&
+        (reach === "target" || e.recipient === "area") &&
+        (!towardAlly || helpful(e))
+    );
+    const strikes =
+      !towardAlly &&
+      (m.fallback === true ||
+        effects.some((e) => e.support === "harm" || e.support === "displace"));
+    const damage = strikes ? damagePreview(a, m, u, reach) : 0;
+    const factor = strikes ? matchup(a, u, m) : 1;
+    const immune = strikes && damage === 0;
+    const guarded = strikes && damage > 0 && guardFactor(u) < 1;
+    const knockout = damage > 0 && damage >= u.hp;
+    const pull =
+      !towardAlly &&
+      effects.some((e) => e.support === "displace") &&
+      protectionDegree(u, { kind: "displace" }) !== "immune";
+    const heal = mate
+      ? effects
+          .filter((e) => e.support === "restore")
+          .reduce((n, e) => n + restorePreview(a, e), 0)
+      : 0;
+    // Focus shuts out attention statuses (the rules' FOCUS_STATUS, not re-exported).
+    const focused = u.conditions.some((c) => c.status === "focused");
+    const statuses = effects
+      .filter(
+        (e) =>
+          (e.support === "status" || e.support === "bind") &&
+          !!e.group &&
+          (mate || !beneficial(e))
+      )
+      .map((e) => {
+        const status = e.status ?? "condition";
+        return {
+          status,
+          group: e.group!,
+          chance: LIKELIHOOD_PERCENT[e.likelihood],
+          immune:
+            protectionDegree(u, { kind: "status", status }) === "immune" ||
+            (e.group === "attention" && focused),
+        };
+      });
+    const notes: UnitPreview["notes"] = [];
+    // Why a helpful move would do nothing here: said in words, never drawn as a label.
+    const nothing: string[] = [];
+    for (const e of effects) {
+      if (e.support === "remove") {
         const cleared = u.conditions.filter(
           (c) =>
             c.remaining !== Infinity &&
             c.removable.some((r) => e.methods?.includes(r))
         );
-        parts.push(
-          cleared.length
-            ? `clears ${cleared.map((c) => cap(c.status)).join(", ")}`
-            : "nothing to clear"
-        );
-      } else if (e.support === "protect" || e.group === "guarding") {
+        if (cleared.length)
+          notes.push({
+            kind: "clear",
+            text: `clears ${cleared.map((c) => c.status).join(", ")}`,
+          });
+        else if (mate) nothing.push("nothing to clear");
+      } else if (
+        mate &&
+        (e.support === "protect" || (e.support === "status" && e.group === "guarding"))
+      ) {
         const threat = guardedThreat(run, u, e);
-        const guard = threat
-          ? `guards against about ${threat}`
-          : "nothing it covers threatens";
-        parts.push(
-          e.support === "protect"
-            ? guard
-            : `${cap(e.status ?? "guarded")} · ${guard}`
-        );
-      } else if (e.group === "mending")
-        parts.push(`mending for ${e.opportunities ?? 1} opportunities`);
+        if (threat) notes.push({ kind: "guard", text: `guards vs ${threat}` });
+        else nothing.push("no threat to guard");
+      }
     }
-    const around = areaReach(run, active, move, u).filter((t) => !t.enemy);
-    if (around.length) parts.push(`also reaches ${listNames(around)}`);
-    return parts.join(" · ");
+    const words: string[] = [];
+    if (strikes)
+      words.push(
+        immune
+          ? "no effect"
+          : `${damage} damage, ${u.hp} to ${Math.max(0, u.hp - damage)}${
+              knockout ? ", knocks out" : ""
+            }`
+      );
+    if (strikes && !immune) {
+      if (factor > 1) words.push("strong");
+      else if (factor < 1) words.push("resisted");
+      if (guarded) words.push("guarded");
+    }
+    if (pull) words.push("pulled off its footing");
+    for (const st of statuses)
+      words.push(
+        st.immune
+          ? `immune to ${st.status}`
+          : `${st.status} ${st.chance}% chance${
+              st.group === "binding" ? ", blocks closing in" : ""
+            }`
+      );
+    if (heal > 0)
+      words.push(
+        u.hp >= u.max
+          ? "already at full health"
+          : `heals ${Math.min(heal, u.max - u.hp)}, ${u.hp} to ${Math.min(
+              u.max,
+              u.hp + heal
+            )}`
+      );
+    for (const n of notes)
+      words.push(
+        n.kind === "guard" ? n.text.replace("guards vs", "guards against about") : n.text
+      );
+    words.push(...nothing);
+    if (!words.length) words.push("no effect here");
+    // A squadmate the move would do nothing for is drawn as a non-target (round 2 review).
+    const idle =
+      mate &&
+      towardAlly &&
+      Math.min(heal, u.max - u.hp) <= 0 &&
+      !statuses.length &&
+      !notes.length;
+    // The card's line keeps the clause that matters most: the damage (or the heal, or the
+    // status); the rest is drawn on the creature and read in full by the accessible name.
+    const line =
+      strikes && !immune
+        ? `${damage} damage, ${u.hp} to ${Math.max(0, u.hp - damage)}${knockout ? ", knocks out" : ""}`
+        : words[0];
+    return {
+      line,
+      idle,
+      role: "target",
+      damage,
+      heal,
+      knockout,
+      guarded,
+      immune,
+      danger: false,
+      muted: false,
+      pull,
+      statuses,
+      notes,
+      words: words.join(", "),
+    };
   }
+
+  /**
+    The previews for every unit the chosen move names or reaches (round 2). Each legal
+    target reads as if it were aimed at; the aimed target (hovered or focused) adds every
+    unit its area reaches, squadmates in the danger color, and the other targets step back.
+  */
+  function buildPreviews(a: Unit, m: Move, index: number, aimedId: string | null) {
+    const targets = legalTargets(run, a, index);
+    const out: Record<string, UnitPreview> = {};
+    for (const t of targets) out[t.id] = previewOf(a, m, t, "target", t.enemy === a.enemy);
+    const reach = (from: Unit, only: (u: Unit) => boolean = () => true) => {
+      const toward = from.enemy === a.enemy;
+      const around = areaReach(run, a, m, from).filter(only);
+      for (const r of around)
+        out[r.id] = {
+          ...previewOf(a, m, r, "area", toward),
+          role: "reached",
+          danger: !toward && r.enemy === a.enemy,
+        };
+      return around;
+    };
+    const focus = targets.find((t) => t.id === aimedId);
+    if (focus) {
+      const around = reach(focus);
+      for (const t of targets)
+        if (t.id !== focus.id && !around.includes(t)) out[t.id].muted = true;
+      const foes = around.filter((r) => r.enemy !== a.enemy),
+        mates = around.filter((r) => r.enemy === a.enemy);
+      out[focus.id].words += `${foes.length ? `, also reaches ${listNames(foes)}` : ""}${
+        mates.length && focus.enemy !== a.enemy ? `, also hits ${listNames(mates)}` : ""
+      }`;
+    } else if (selfBurst(m)) {
+      // A burst on its user reaches the same squadmates whichever foe it names.
+      const foe = targets.find((t) => t.enemy !== a.enemy);
+      const mates = foe ? reach(foe, (r) => r.enemy === a.enemy) : [];
+      if (mates.length)
+        for (const t of targets)
+          if (t.enemy !== a.enemy) out[t.id].words += `, also hits ${listNames(mates)}`;
+    }
+    return out;
+  }
+  const aimed =
+    move && hoverTarget && targetIds.includes(hoverTarget) ? hoverTarget : null;
+  const previews: Record<string, UnitPreview> =
+    move && active && pending !== null ? buildPreviews(active, move, pending, aimed) : {};
+  const aimedUnit = aimed
+    ? [...run.team, ...run.enemies].find((u) => u.id === aimed)
+    : null;
+  const targetLine =
+    aimedUnit && previews[aimedUnit.id]
+      ? `${labelFor(aimedUnit)}: ${previews[aimedUnit.id].line}`
+      : null;
+  const prompt = (() => {
+    const foes = targetIds.some((id) => run.enemies.some((u) => u.id === id)),
+      mates = targetIds.some((id) => run.team.some((u) => u.id === id));
+    return foes && mates
+      ? "Choose an enemy or a squadmate"
+      : mates
+      ? "Choose a squadmate"
+      : "Choose an enemy";
+  })();
+
+  // The wheel on the stage, open or expanded into its move card (round 2), and the one
+  // leaving it: when the wheel moves to another companion or closes, the old one stays a
+  // moment to fold its discs back into the creature, or, when its order just locked, to
+  // collapse its card into the plaque chip. The same React key keeps its DOM, so its exit
+  // starts from exactly what was on screen. Nothing lingers under reduced motion.
+  type RingView = {
+    unit: Unit;
+    available: number[];
+    current: number | null;
+    chosen: number | null;
+    prompt: string;
+    line: string | null;
+  };
+  const motion = !reducedMotion;
+  const ringView: RingView | null =
+    planning && active
+      ? {
+          unit: active,
+          available,
+          current: plans[active.id]?.move ?? null,
+          chosen: pending,
+          prompt,
+          line: targetLine,
+        }
+      : null;
+  const [leaving, setLeaving] = useState<
+    (RingView & { locked: number | null; stamp: number }) | null
+  >(null);
+  const [ringKey, setRingKey] = useState(ringView?.unit.id ?? "");
+  const shownRing = useRef<RingView | null>(null),
+    lockedOrder = useRef<{ id: string; move: number } | null>(null);
+  const openKey = ringView?.unit.id ?? "";
+  if (openKey !== ringKey) {
+    setRingKey(openKey);
+    const last = shownRing.current;
+    setLeaving(
+      last && motion && last.unit.id !== openKey
+        ? {
+            ...last,
+            locked:
+              lockedOrder.current?.id === last.unit.id ? lockedOrder.current.move : null,
+            stamp: Date.now(),
+          }
+        : null
+    );
+  }
+  // After an order locks, the next wheel waits for the collapse (round 2 review).
+  const holdNext = !!leaving && leaving.locked !== null;
+  useLayoutEffect(() => {
+    // A wheel held back was never on screen, so it has nothing to fold away.
+    shownRing.current = holdNext ? null : ringView;
+    lockedOrder.current = null;
+  });
+  useEffect(() => {
+    if (!flash) return;
+    const timer = setTimeout(() => setFlash(null), 700);
+    return () => clearTimeout(timer);
+  }, [flash]);
+  useEffect(() => {
+    const touch = (e: PointerEvent) => e.pointerType === "touch" && setKeyed(false);
+    window.addEventListener("pointerdown", touch);
+    return () => window.removeEventListener("pointerdown", touch);
+  }, []);
+
   /** "Avilily", "Avilily and Crystorn": squadmates an area would also hit. */
   function listNames(units: Unit[]) {
     const names = units.map(labelFor);
@@ -1062,7 +1295,8 @@ export default function PowerworksPage() {
                   speed={speed}
                   reducedMotion={reducedMotion}
                   labelFor={labelFor}
-                  previewText={previewText}
+                  previews={previews}
+                  flash={flash}
                   onTarget={assign}
                   onSelect={select}
                   onOpen={(u) => openRing(u)}
@@ -1071,8 +1305,33 @@ export default function PowerworksPage() {
                   onHover={setHoverTarget}
                   openId={ringOpen ? active?.id : null}
                   chips={chips}
-                  ring={
-                    ringOpen && active ? (
+                  ring={[
+                    leaving && leaving.unit.id !== ringView?.unit.id ? (
+                      <PowerworksRadial
+                        key={leaving.unit.id}
+                        unit={leaving.unit}
+                        available={leaving.available}
+                        current={leaving.current}
+                        chosen={leaving.chosen}
+                        autoFocus={false}
+                        onChoose={() => {}}
+                        onStep={() => {}}
+                        keyed={keyed}
+                        motion={motion}
+                        closing
+                        locked={leaving.locked}
+                        prompt={leaving.prompt}
+                        targetLine={leaving.line}
+                        onClosed={() =>
+                          setLeaving((l) =>
+                            l && l.stamp === leaving.stamp ? null : l
+                          )
+                        }
+                      />
+                    ) : null,
+                    // After an order locks, the next companion's wheel opens only once the
+                    // card has collapsed into the chip: one thing moves at a time.
+                    ringView && active && !holdNext ? (
                       <PowerworksRadial
                         key={active.id}
                         unit={active}
@@ -1081,9 +1340,15 @@ export default function PowerworksPage() {
                         autoFocus={ringFocus}
                         onChoose={choose}
                         onStep={step}
+                        chosen={pending}
+                        keyed={keyed}
+                        motion={motion}
+                        onBack={backOut}
+                        prompt={prompt}
+                        targetLine={targetLine}
                       />
-                    ) : null
-                  }
+                    ) : null,
+                  ]}
                 />
 
                 {busy && (
@@ -1855,14 +2120,14 @@ export default function PowerworksPage() {
               active &&
               targetIds.includes(inspect.id) && (
                 <p className="pw-breakdown">
-                  {squadmatePreview(inspect)}. Only what helps lands on a
+                  {previews[inspect.id]?.words}. Only what helps lands on a
                   squadmate.
                 </p>
               )}
             {inspect.enemy && move && active && (
               <p className="pw-breakdown">
                 {!harms(move)
-                  ? previewText(inspect)
+                  ? previews[inspect.id]?.words ?? ""
                   : `${basePower(active, move)} base × ${matchup(
                       active,
                       inspect,
