@@ -342,14 +342,15 @@ const STORY_SCENES: StageScene[] = BEATS.map((sp, i): StageScene => {
 	const n = numeral(i);
 	if (sp.kind === 'piece') {
 		// A small piece: one animation on the dark ground, no frame and no label,
-		// scrubbed by its stretch of the stage.
+		// looping on its own clock while it is shown and on the screen. Off the
+		// stage it holds nothing in the DOM but its words.
 		return {
 			key: sp.key,
 			n,
 			label: sp.name,
 			weight: 0.6,
 			minor: true,
-			render: (live, time) =>
+			render: (live, shown) =>
 				live === undefined ? (
 					<div className="grid grid-cols-1 items-center gap-x-8 gap-y-5 md:grid-cols-12">
 						<div className="md:col-span-7">
@@ -361,9 +362,7 @@ const STORY_SCENES: StageScene[] = BEATS.map((sp, i): StageScene => {
 					<div className="scene-spread" data-layout={sp.layout} style={{ '--ar': 16 / 9, '--label': '0rem' } as React.CSSProperties}>
 						<div className="scene-art">
 							<div className="scene-frame">
-								<div>
-									<HelixPiece mode={sp.mode} live={live} time={time} label={sp.alt} />
-								</div>
+								<div className="aspect-video">{shown ? <HelixPiece mode={sp.mode} live={live} label={sp.alt} /> : null}</div>
 							</div>
 						</div>
 						<SceneReading n={n} name={sp.name} headline={sp.headline} text={sp.text} />

@@ -25,33 +25,13 @@
 // Two kinds of scene (docs/design/home-story-content-plan.md): a full scene, a
 // painting with its words, holds a full stretch of scroll and a major marker;
 // a small piece, one focused animation with no landscape, holds a shorter
-// stretch (`weight`) and a minor tick. A small piece is scrubbed: the stage
-// hands it a `SceneTime`, its own 0 to 1 through its stretch, written every
-// frame the page moves, so scrolling back plays it backward.
+// stretch (`weight`) and a minor tick. The scroll only chooses which scene is
+// shown and moves the dot; no animation is driven by it (Nick, 2026-09-24).
+// Each scene learns whether it is shown (`shown`), so a piece that is not
+// holds nothing in the DOM.
 import * as React from 'react';
 import { cn } from '@/lib/utils';
 import { loadFragment } from '@/components/plates/plateStage';
-
-/**
- * A scene's own place in its stretch of the stage, 0 at its marker and 1 at
- * the next, written from the scroll listener's frame. Pieces subscribe to it
- * and draw from it directly, never through React state.
- */
-export class SceneTime {
-	value = 0;
-	private listeners = new Set<(t: number) => void>();
-	set(t: number) {
-		if (t === this.value) return;
-		this.value = t;
-		this.listeners.forEach((fn) => fn(t));
-	}
-	subscribe(fn: (t: number) => void) {
-		this.listeners.add(fn);
-		return () => {
-			this.listeners.delete(fn);
-		};
-	}
-}
 
 export type StageScene = {
 	key: string;
@@ -69,12 +49,14 @@ export type StageScene = {
 	 * The scene itself. `live` says whether its plate is the page's live one;
 	 * undefined when the scenes are stacked and each plate decides for itself.
 	 */
-	render: (live: boolean | undefined, time?: SceneTime) => React.ReactNode;
+	render: (live: boolean | undefined, shown?: boolean) => React.ReactNode;
 };
 
 // The incoming frame's entrance (delay plus transform, see `.story-scene`)
 // is over by now; the live plate takes over from its still only after it.
 const SETTLE_MS = 1150;
+// The outgoing frame's exit (see `.story-scene`) is over by now.
+const EXIT_MS = 700;
 // A scene and its words need this much height (more on a narrow screen,
 // where they stack under the painting); below it the scenes stack.
 const STAGE_QUERY = '(min-width: 1000px) and (min-height: 560px), (min-height: 700px)';
@@ -97,16 +79,7 @@ export function stageProgress(scrolled: number, range: number, weights: number |
 	return { p, index };
 }
 
-/** Each scene's own 0 to 1 through its stretch, for the dot at `p`. */
-export function sceneTimes(p: number, weights: number[]) {
-	const at = p * weights.reduce((a, b) => a + b, 0);
-	let start = 0;
-	return weights.map((w) => {
-		const t = Math.min(1, Math.max(0, (at - start) / w));
-		start += w;
-		return t;
-	});
-}
+
 
 function reducedMotion() {
 	return typeof window !== 'undefined' && !!window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -129,7 +102,9 @@ export function StoryStage({ id, title, scenes }: { id: string; title: React.Rea
 	const measured = React.useRef(false);
 	const weights = React.useMemo(() => scenes.map((s) => s.weight ?? 1), [scenes]);
 	const total = weights.reduce((a, b) => a + b, 0);
-	const times = React.useMemo(() => scenes.map(() => new SceneTime()), [scenes]);
+	// The scene just left keeps its content through its exit, then lets it go.
+	const [leaving, setLeaving] = React.useState(-1);
+	const lastIndex = React.useRef(0);
 
 	React.useEffect(() => {
 		if (typeof window === 'undefined' || !window.matchMedia) return undefined;
@@ -158,8 +133,6 @@ export function StoryStage({ id, title, scenes }: { id: string; title: React.Rea
 			const { p, index: at } = stageProgress(-r.top, range(), weights);
 			// The dot, every frame the page moved: straight to the style, no render.
 			lineRef.current?.style.setProperty('--story-progress', String(p));
-			// And each small piece's own place in its stretch, the same way.
-			sceneTimes(p, weights).forEach((t, i) => times[i].set(t));
 			setIndex(at);
 			// The first reading is where the page opened, not a move: no entrance.
 			if (!measured.current) {
@@ -180,7 +153,15 @@ export function StoryStage({ id, title, scenes }: { id: string; title: React.Rea
 			window.removeEventListener('resize', schedule);
 			if (frame) window.cancelAnimationFrame(frame);
 		};
-	}, [staged, range, weights, times]);
+	}, [staged, range, weights]);
+
+	React.useEffect(() => {
+		if (lastIndex.current === index) return undefined;
+		setLeaving(lastIndex.current);
+		lastIndex.current = index;
+		const t = window.setTimeout(() => setLeaving(-1), EXIT_MS);
+		return () => window.clearTimeout(t);
+	}, [index]);
 
 	// The live plate follows the shown scene once its entrance has settled.
 	React.useEffect(() => {
@@ -219,7 +200,7 @@ export function StoryStage({ id, title, scenes }: { id: string; title: React.Rea
 				<div className="mb-8">{title}</div>
 				{scenes.map((s) => (
 					<div key={s.key} className="mb-16">
-						{s.render(undefined)}
+						{s.render(undefined, true)}
 					</div>
 				))}
 			</section>
@@ -278,7 +259,7 @@ export function StoryStage({ id, title, scenes }: { id: string; title: React.Rea
 								if (i !== index) goTo(i);
 							}}
 						>
-							{s.render(inView && settled === i, times[i])}
+							{s.render(inView && settled === i, i === index || i === leaving)}
 						</div>
 					))}
 				</div>

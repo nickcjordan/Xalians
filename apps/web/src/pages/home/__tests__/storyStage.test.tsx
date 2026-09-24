@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { SceneTime, StoryStage, sceneTimes, stageProgress, type StageScene } from '../storyStage';
+import { StoryStage, stageProgress, type StageScene } from '../storyStage';
 
 // The stage shows one scene at a time: the rest wait in the DOM, faded, with
 // their plates stilled. jsdom has no layout, so the stage reads as scrolled to
@@ -82,12 +82,12 @@ describe('stageProgress', () => {
 
 describe('small pieces on the stage', () => {
 	const mixed: StageScene[] = [
-		{ key: 'a', n: '01', label: 'Full', render: () => <p>Full</p> },
-		{ key: 'b', n: '02', label: 'Piece', weight: 0.5, minor: true, render: (_live, time) => <p data-time={time instanceof SceneTime ? 'yes' : 'no'}>Piece</p> },
-		{ key: 'c', n: '03', label: 'Full again', render: () => <p>Full again</p> },
+		{ key: 'a', n: '01', label: 'Full', render: (_live, shown) => <p data-shown={String(shown)}>Full</p> },
+		{ key: 'b', n: '02', label: 'Piece', weight: 0.5, minor: true, render: (_live, shown) => <p data-shown={String(shown)}>Piece</p> },
+		{ key: 'c', n: '03', label: 'Full again', render: (_live, shown) => <p data-shown={String(shown)}>Full again</p> },
 	];
 
-	it('gives a small piece its share of the scroll, a minor tick with its numeral only, and its own time', () => {
+	it('gives a small piece its share of the scroll and a minor tick with its numeral only', () => {
 		const { container } = render(<StoryStage id="story" title={<h2 id="story-title">The Story</h2>} scenes={mixed} />);
 		const stage = container.querySelector('.story-stage') as HTMLElement;
 		expect(stage.style.height).toBe('calc(100svh + 2.5 * var(--story-step))');
@@ -95,30 +95,19 @@ describe('small pieces on the stage', () => {
 		expect(minor).toHaveAttribute('data-minor');
 		expect(minor.textContent).toBe('02');
 		expect(screen.getByRole('button', { name: '01 Full' })).not.toHaveAttribute('data-minor');
-		expect(container.querySelector('[data-time]')).toHaveAttribute('data-time', 'yes');
 	});
 
-	it("cuts the range by weight, and runs each scene's own time from 0 to 1 through its stretch", () => {
+	it('tells only the shown scene that it is shown, so the others can hold nothing', () => {
+		const { container } = render(<StoryStage id="story" title={<h2 id="story-title">The Story</h2>} scenes={mixed} />);
+		expect([...container.querySelectorAll('[data-shown]')].map((e) => e.getAttribute('data-shown'))).toEqual(['true', 'false', 'false']);
+	});
+
+	it('cuts the range by weight', () => {
 		const w = [1, 0.5, 1];
 		// 2.5 shares over a range of 2500: the piece holds 1000 to 1500.
 		expect(stageProgress(999, 2500, w).index).toBe(0);
 		expect(stageProgress(1000, 2500, w).index).toBe(1);
 		expect(stageProgress(1499, 2500, w).index).toBe(1);
 		expect(stageProgress(1500, 2500, w).index).toBe(2);
-		expect(sceneTimes(0.5, w)).toEqual([1, 0.5, 0]);
-		expect(sceneTimes(0, w)).toEqual([0, 0, 0]);
-		expect(sceneTimes(1, w)).toEqual([1, 1, 1]);
-	});
-
-	it('tells a piece its time only when it moves', () => {
-		const t = new SceneTime();
-		const seen: number[] = [];
-		const off = t.subscribe((v) => seen.push(v));
-		t.set(0.25);
-		t.set(0.25);
-		t.set(0.5);
-		off();
-		t.set(0.75);
-		expect(seen).toEqual([0.25, 0.5]);
 	});
 });
