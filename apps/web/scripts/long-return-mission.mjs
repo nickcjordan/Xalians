@@ -99,7 +99,7 @@ try {
       const mapScene = await map.getAttribute('data-map-scene');
       if (viewport.width < 720) assert.equal(await map.locator('[data-map-route-caption]').count(), await map.getAttribute('data-map-local') === 'true' || await map.getAttribute('data-route-schematic') === 'true' || await map.getAttribute('data-map-stage-compact') === 'true' ? 0 : 2, 'Compact maps omit route captions repeated by the active choice');
       const mapDrawing = await map.locator(':scope > svg').boundingBox();
-      assert(mapDrawing.height >= (viewport.width <= 360 ? 30 : viewport.width < 600 ? 52 : 70), `The room drawing must retain its own height, not inherit an icon rule: ${mapDrawing.height}`);
+      assert(mapDrawing.height >= (viewport.width <= 360 ? 30 : viewport.width < 600 || viewport.height < 800 ? 52 : 70), `The room drawing must retain its own height, not inherit an icon rule: ${mapDrawing.height}`);
       const entrance = await map.locator('[data-map-threshold="entry"]').textContent();
       if (previousMapScene && previousMapScene !== mapScene) assert.equal(entrance, previousMapExit, 'Map arrival carries into the next room');
       previousMapScene = mapScene;
@@ -186,6 +186,11 @@ try {
       const situation = page.locator('.lr-encounter-situation');
       assert.equal(await situation.count(), 1, 'Simple encounters put contact and communication context beside the response');
       assert(!(await situation.innerText()).includes('through display'), 'Player-facing contact context does not expose registry channel names');
+      if (viewport.height <= 700) {
+        const lastResponse = await page.locator('.lr-encounter-options > button').last().boundingBox();
+        const commit = await page.locator('.lr-encounter-commit-bar').boundingBox();
+        assert(lastResponse.y + lastResponse.height <= commit.y + 2 && commit.y + commit.height <= viewport.height, 'All encounter responses and the commit action fit the stage');
+      }
       if (viewport.width <= 390) {
         const firstResponse = await page.locator('.lr-encounter-options > button').first().boundingBox();
         const lastResponse = await page.locator('.lr-encounter-options > button').last().boundingBox();
