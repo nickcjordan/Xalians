@@ -245,24 +245,28 @@
 .pw-radial-slot.signature {
   --lift-glow: #f1cb6cdd;
 }
-.pw-radial.open .pw-radial-slot:hover .pw-radial-disc,
+/* A disc lifts when the keyboard focuses it or a first tap arms it, and on hover only where
+   a pointer truly hovers (the hover versions are in the block below): a tap leaves a sticky
+   hover on a touch screen, which would keep a disc lifted after the finger has gone. */
 .pw-radial.open .pw-radial-slot:focus-visible .pw-radial-disc,
 .pw-radial.open .pw-radial-slot.armed .pw-radial-disc {
   transform: translateY(-4px);
   filter: drop-shadow(0 0 7px var(--lift-glow)) drop-shadow(0 0 2px var(--lift-glow))
     drop-shadow(0 6px 5px #03090bcc) brightness(1.12);
 }
-.pw-radial.open
-  .pw-radial-menu:has(.pw-radial-slot:hover, .pw-radial-slot:focus-visible, .pw-radial-slot.armed)
-  .pw-radial-slot:not(:hover):not(:focus-visible):not(.armed)
-  .pw-radial-disc {
-  opacity: 0.62;
+@media (hover: none), (pointer: coarse) {
+  .pw-radial.open
+    .pw-radial-menu:has(.pw-radial-slot:focus-visible, .pw-radial-slot.armed)
+    .pw-radial-slot:not(:focus-visible):not(.armed)
+    .pw-radial-disc {
+    opacity: 0.62;
+  }
 }
 .pw-radial-slot.dim {
   cursor: default;
 }
 .pw-radial-slot.dim .pw-radial-disc,
-.pw-radial.open .pw-radial-slot.dim:hover .pw-radial-disc {
+.pw-radial.open .pw-radial-slot.dim:is(:focus-visible, .armed) .pw-radial-disc {
   transform: none;
   filter: grayscale(0.8) brightness(0.58) drop-shadow(0 3px 4px #03090bcc);
 }
@@ -300,7 +304,7 @@
   width: 12px;
   height: 12px;
 }
-.pw-radial.open .pw-radial-slot:is(:hover, :focus-visible, .armed):not(.dim) .pw-radial-charge {
+.pw-radial.open .pw-radial-slot:is(:focus-visible, .armed):not(.dim) .pw-radial-charge {
   transform: translateY(-4px);
 }
 /* The signature's crown badge on the disc's upper left rim (round 3 review). */
@@ -323,7 +327,7 @@
   width: 12px;
   height: 12px;
 }
-.pw-radial.open .pw-radial-slot:is(:hover, :focus-visible, .armed):not(.dim) .pw-radial-crown {
+.pw-radial.open .pw-radial-slot:is(:focus-visible, .armed):not(.dim) .pw-radial-crown {
   transform: translateY(-4px);
 }
 /* Rest pips (round 3): one per round the move rests after use, on the disc's lower rim,
@@ -347,7 +351,7 @@
   transform: rotate(45deg);
   box-shadow: 0 0 0 1px #cbb98f88;
 }
-.pw-radial.open .pw-radial-slot:is(:hover, :focus-visible, .armed) .pw-radial-rest {
+.pw-radial.open .pw-radial-slot:is(:focus-visible, .armed) .pw-radial-rest {
   display: flex;
 }
 /* Why a disc cannot be chosen: the one small tag a disc may carry, on its lower rim. It is
@@ -405,24 +409,22 @@
   color: #aab4ad;
 }
 .pw-radial-slot.dim .pw-radial-label,
-.pw-radial.open .pw-radial-slot:is(:hover, :focus-visible, .armed) .pw-radial-rest ~ .pw-radial-label {
+.pw-radial.open .pw-radial-slot:is(:focus-visible, .armed) .pw-radial-rest ~ .pw-radial-label {
   transform: translateY(3px);
 }
-.pw .pw-radial.open .pw-radial-slot:hover,
 .pw .pw-radial.open .pw-radial-slot:focus-visible,
 .pw .pw-radial.open .pw-radial-slot.armed {
   z-index: 2;
 }
 /* A lifted disc shows its whole name, wrapped within its own width, so a disc at the stage
    edge never pushes its name outside the stage. */
-.pw-radial.open .pw-radial-slot:hover .pw-radial-name,
 .pw-radial.open .pw-radial-slot:focus-visible .pw-radial-name,
 .pw-radial-slot.armed .pw-radial-name {
   -webkit-line-clamp: unset;
   background: #08151bf2;
   box-shadow: 0 0 0 1px #c6a76799;
 }
-.pw-radial.open .pw-radial-slot.elemental:is(:hover, :focus-visible, .armed) .pw-radial-name {
+.pw-radial.open .pw-radial-slot.elemental:is(:focus-visible, .armed) .pw-radial-name {
   box-shadow: 0 0 0 1px color-mix(in srgb, var(--el) 70%, transparent);
 }
 .pw-radial-name small {
@@ -608,7 +610,6 @@
   flex: none;
   color: #d9c38f;
 }
-.pw-mark:hover,
 .pw-mark:focus-visible {
   border-color: #f2d68b;
   background: #1b2c33;
@@ -655,7 +656,7 @@
   background: transparent;
   border-color: transparent;
 }
-.pw .pw-mark.cost:is(:hover, :focus-visible) {
+.pw .pw-mark.cost:focus-visible {
   background: #1b2c33;
   border-color: #f2d68b;
 }
@@ -696,7 +697,6 @@
   top: auto;
   bottom: calc(100% + 6px);
 }
-.pw-mark:hover + .pw-mark-tip,
 .pw-mark:focus + .pw-mark-tip {
   display: block;
 }
@@ -821,7 +821,7 @@
   border-radius: 2px;
   box-shadow: inset 0 1px #e8d29c39;
 }
-.pw .pw-radial-card .pw-radial-back:hover {
+.pw .pw-radial-card .pw-radial-back:focus-visible {
   border-color: #f2d68b;
   color: #fff0bc;
   background: linear-gradient(#3b4b51, #13232b);
@@ -906,7 +906,7 @@
   color: #f2ead5;
   text-align: left;
 }
-.pw .pw-unit-plaque .pw-order-chip:hover:not(:disabled) {
+.pw .pw-unit-plaque .pw-order-chip:focus-visible:not(:disabled) {
   background: #1b2c33;
   border-color: #f2d68b;
 }
@@ -984,8 +984,9 @@
   .pw .pw-theater.planning .pw-scene-unit.defender {
     top: calc(9% + var(--lane-shift, 0%));
   }
-  /* The plaque chip makes a companion's plaque taller; during playback the stage is
-     shorter, so the squad stands a little higher and its chips clear the action banner. */
+  /* The plaque chip makes a companion's plaque taller; during playback every beat carries
+     the action banner on the stage's floor, so the squad stands a little higher and its
+     chips clear it (the stage itself keeps its planning size: overlay pass). */
   .pw .pw-theater.playing .pw-scene-unit.ally {
     top: calc(45% + var(--lane-shift, 0%));
   }
@@ -1140,4 +1141,66 @@
 .pw [data-motion="reduced"] .pw-unit-plaque {
   animation: none !important;
   transition: none !important;
+}
+
+/* Overlay pass: every hover in planning, only where a pointer truly hovers. A tap on a touch
+   screen leaves a sticky hover on whatever it touched last, so on touch the same looks come
+   from the keyboard's focus and the first tap's arming instead (the rules above). */
+@media (hover: hover) and (pointer: fine) {
+  .pw-radial.open .pw-radial-slot:hover .pw-radial-disc {
+    transform: translateY(-4px);
+    filter: drop-shadow(0 0 7px var(--lift-glow)) drop-shadow(0 0 2px var(--lift-glow))
+      drop-shadow(0 6px 5px #03090bcc) brightness(1.12);
+  }
+  .pw-radial.open
+    .pw-radial-menu:has(.pw-radial-slot:hover, .pw-radial-slot:focus-visible, .pw-radial-slot.armed)
+    .pw-radial-slot:not(:hover):not(:focus-visible):not(.armed)
+    .pw-radial-disc {
+    opacity: 0.62;
+  }
+  .pw-radial.open .pw-radial-slot.dim:hover .pw-radial-disc {
+    transform: none;
+    filter: grayscale(0.8) brightness(0.58) drop-shadow(0 3px 4px #03090bcc);
+  }
+  .pw-radial.open .pw-radial-slot:hover:not(.dim) .pw-radial-charge,
+  .pw-radial.open .pw-radial-slot:hover:not(.dim) .pw-radial-crown {
+    transform: translateY(-4px);
+  }
+  .pw-radial.open .pw-radial-slot:hover .pw-radial-rest {
+    display: flex;
+  }
+  .pw-radial.open .pw-radial-slot:hover .pw-radial-rest ~ .pw-radial-label {
+    transform: translateY(3px);
+  }
+  .pw .pw-radial.open .pw-radial-slot:hover {
+    z-index: 2;
+  }
+  .pw-radial.open .pw-radial-slot:hover .pw-radial-name {
+    -webkit-line-clamp: unset;
+    background: #08151bf2;
+    box-shadow: 0 0 0 1px #c6a76799;
+  }
+  .pw-radial.open .pw-radial-slot.elemental:hover .pw-radial-name {
+    box-shadow: 0 0 0 1px color-mix(in srgb, var(--el) 70%, transparent);
+  }
+  .pw-mark:hover {
+    border-color: #f2d68b;
+    background: #1b2c33;
+  }
+  .pw .pw-mark.cost:hover {
+    background: #1b2c33;
+    border-color: #f2d68b;
+  }
+  .pw-mark:hover + .pw-mark-tip {
+    display: block;
+  }
+  .pw .pw-radial-card .pw-radial-back:hover {
+    border-color: #f2d68b;
+    color: #fff0bc;
+    background: linear-gradient(#3b4b51, #13232b);
+  }
+  .pw .pw-unit-plaque .pw-order-chip:hover:not(:disabled) {
+    background: #1b2c33;
+    border-color: #f2d68b;
+  }
 }
