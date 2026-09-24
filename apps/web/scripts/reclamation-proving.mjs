@@ -284,6 +284,31 @@ for (const view of ['simple', 'advanced']) {
 						if (!document.querySelector('.rec-match[data-moment="lifted"]')) {
 							out.push('a creature is lifted but the table does not say the moment is the lift');
 						}
+						/*
+							PASS 58, ONE SIDE PER NUMBER. The lifted creature's number on each world is its
+							card's, and both are your side's gain alone, never what it would take off the
+							rival added in (Nick: "Why is it adding my health and the opponent's health?").
+						*/
+						const armedCard = document.querySelector('.rec-plinth--armed');
+						const armedCols = armedCard ? [...armedCard.querySelectorAll('[data-fit-site][data-fit-gain]')] : [];
+						if (armedCols.length > 0 && !armedCols.some((col) => document.querySelector(`[data-ghost-piece="${col.getAttribute('data-fit-site')}"] [data-ghost-gain]`))) {
+							out.push('no ghost prints its gain beside the lifted card');
+						}
+						armedCols.forEach((col) => {
+							const id = col.getAttribute('data-fit-site');
+							const ghostNum = document.querySelector(`[data-ghost-piece="${id}"] [data-ghost-gain]`);
+							if (!ghostNum) {
+								return;
+							}
+							if (ghostNum.getAttribute('data-ghost-gain') !== col.getAttribute('data-fit-gain')) {
+								out.push(`${id}: the ghost's number is not its card's`);
+							}
+							const card = ((col.querySelector('.rec-fit-num') || {}).textContent || '').trim();
+							const ghostText = ghostNum.textContent.trim().replace(/^\+/, '');
+							if (card !== ghostText) {
+								out.push(`${id}: the card prints ${card} and the ghost ${ghostNum.textContent.trim()}`);
+							}
+						});
 						document.querySelectorAll('[data-standing]').forEach((st) => {
 							const site = st.closest('[data-site-id]');
 							const id = site.getAttribute('data-site-id');

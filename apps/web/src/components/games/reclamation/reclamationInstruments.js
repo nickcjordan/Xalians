@@ -1,7 +1,7 @@
 import React from 'react';
 import { formatHold, formatHoldShown, wholeOrTenths } from './reclamationNarration';
 import { FIT_SCALE, HOLD_BAR_SCALE } from './reclamationFit';
-import { HomeGlyph, StrainGlyph, CompanyGlyph, FallsGlyph, NoMediumGlyph } from './reclamationGlyphs';
+import { HomeGlyph, StrainGlyph, CompanyGlyph, FallsGlyph, NoMediumGlyph, PieceGlyph } from './reclamationGlyphs';
 
 /*
 	PASS 52, THE GLANCE REDESIGN (docs/design/reclamation-glance-redesign.md).
@@ -13,12 +13,14 @@ import { HomeGlyph, StrainGlyph, CompanyGlyph, FallsGlyph, NoMediumGlyph } from 
 	              replaced pass 52's FrontLine)
 	  HoldBar     a creature's hold as a bar in its side's color, the part the Clash is
 	              forecast to take striped at its end
-	  FitStrip    three columns on a bench card, one per world in world order: how much
-	              sending it there now moves that world your way, with the rival's lead
-	              ticked where the rival has one
+	  FitStrip    three columns on a bench card, one per world in world order: what your
+	              side there would gain by sending it there now, what the rival would lose
+	              on a brass tag at the top, and the rival's remaining lead as a pointer
+	              (pass 58)
 	  RoundTrack  the game's nine worlds, three rounds of three, filled by who won them
 	  ScorePips   the rival's row of five above yours, each with its turn lamp
-	  SendCount   the sends each side has left, as ticks
+	  SendCount   the sends each side has left: a piece, then a tick per send in fives, then
+	              the count (pass 58: a bare numeral beside the pennants read as the score)
 
 	Every moving part is a transform or a clip-path, so pointing at a creature repaints the
 	table and never moves it (pass 37's rule, held by reclamation-shift.mjs).
@@ -100,7 +102,8 @@ export function Standing({ siteId, now, preview, scale, marks, verdict }) {
 				<span className="rec-standing-track" />
 				{tb > t + EPS && <span className="rec-standing-loss" />}
 				<span className="rec-standing-fill" />
-				{(t > EPS || won === 'theirs') && (
+				{/* pass 58: a preview that takes the rival's side to nothing says so, 0, rather than leaving the number off */}
+				{(t > EPS || won === 'theirs' || (preview && tb > EPS)) && (
 					<span className="rec-standing-num" data-standing-total="theirs">
 						<b className="g-mono">{shownTheirs}</b>
 						{won === 'theirs' && <Crest verdict={verdict} />}
@@ -175,28 +178,33 @@ export function HoldBar({ hold, after, unstrained, side, className }) {
 
 	PASS 57, THE COLUMN SAYS WHY (docs/design/reclamation-attention-and-why.md). A column is
 	stacked from what makes it, bottom up, on one scale for the whole bench (`scale`,
-	fitScale()):
+	fitScale()). A dashed line across the three columns marks its body, what it holds at a
+	world that neither favors nor strains it, so a column that stands above the line was
+	lifted by the world and one below it was cut; under each column a row of marks says by
+	what: a house on its home world, a flame, a snowflake or a breath where the world is too
+	hot, too cold or the wrong air, two figures where company moves it, a cross where it
+	would fall.
 
-	  own      the creature itself, what it would still stand with after the Clash, in the
-	           world's color
-	  lost     hatched red on top of it: what the Clash would take off it
+	PASS 58, ONE SIDE PER NUMBER (docs/design/reclamation-one-side-per-number.md). Nick,
+	2026-09-24, on a card reading 34 at a world where it would hold 20 and down a rival of
+	14: "Why does it show 20 plus 14? Why is it adding my health and the opponent's
+	health?" Nothing on a card adds the two sides any more. The column and its number are
+	your side only, in your color:
+
+	  own      what the creature would still stand with after the Clash
 	  allies   lighter: what it would add to your creatures already there
-	  taken    brass, the rival's color: what it would take off the rival there, so a column
-	           grows the moment a rival arrives and shows by what
+	  lost     hatched red on top: what the Clash would take off it
 
-	The solid parts add up to the number. A dashed line across the three columns marks its
-	body, what it holds at a world that neither favors nor strains it, so a column that
-	stands above the line was lifted by the world and one below it was cut; under each column
-	a row of marks says by what: a house on its home world, a flame, a snowflake or a
-	breath where the world is too hot, too cold or the wrong air, two figures where company
-	moves it, a cross where it would fall.
+	and the number is own and allies, what your side there would gain. What the send would
+	take off the rival is the rival's side, so it is drawn where the rival's side of a world
+	is, at the top: a brass tag hanging from the top of the column with the rival's total
+	there now and after the send, "12→0" (`room` keeps the top of every column on the bench
+	for it once any card has one). The brass
+	pointer on the column's edge is what the rival would still lead by after the send: a
+	column that passes it would put you ahead.
 */
 function FallsMark() {
 	return <svg className="rec-fit-falls" viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 2.5l7 7M9.5 2.5l-7 7" /></svg>;
-}
-
-function swingNumber(swing) {
-	return swing < -0.5 ? `\u2212${formatHoldShown(-swing)}` : formatHoldShown(Math.max(0, swing));
 }
 
 const CLIMATE_WORDS = {
@@ -255,29 +263,94 @@ export function WhyMarks({ reasons, className }) {
 	return <span className={`rec-whys${className ? ` ${className}` : ''}`} aria-hidden="true">{marks}</span>;
 }
 
-// the stacked parts of a column, as fractions of the bench's scale, bottom up
-function stackOf(cell, scale) {
+// the stacked parts of a column, as fractions of the bench's scale, bottom up; `room` is
+// the share of the column's height the parts may use (the rest is the rival's tag)
+function stackOf(cell, scale, room) {
 	const s = scale > 0 ? scale : FIT_SCALE;
-	const parts = [['own', cell.own], ['lost', cell.toll], ['allies', cell.allies], ['taken', cell.taken]];
+	const r = room > 0 ? room : 1;
+	const own = Math.max(0, cell.own || 0);
+	const allies = cell.allies || 0;
+	// a creature that costs your others something stands lower by that much, and the cost is hatched with its toll
+	const solid = Math.max(0, own + Math.min(0, allies));
+	const parts = [['own', solid], ['allies', Math.max(0, allies)], ['lost', Math.max(0, cell.toll || 0) + (own - solid)]];
 	let at = 0;
 	const style = {};
 	parts.forEach(([key, value]) => {
-		const v = Math.max(0, value || 0);
 		const from = Math.min(1, at / s);
-		const to = Math.min(1, (at + v) / s);
-		style[`--p-${key}-at`] = from.toFixed(4);
-		style[`--p-${key}`] = Math.max(0, to - from).toFixed(4);
-		at += v;
+		const to = Math.min(1, (at + value) / s);
+		style[`--p-${key}-at`] = (from * r).toFixed(4);
+		style[`--p-${key}`] = (Math.max(0, to - from) * r).toFixed(4);
+		at += value;
 	});
 	return { style, over: at > s + EPS };
 }
 
-export function FitStrip({ sites, row, sentSiteId, sentCell, moveRow, focusSiteId, off, scale, newsSiteId }) {
-	const s = scale > 0 ? scale : FIT_SCALE;
-	const anyCell = row ? sites.map((site) => row[site.id]).find(Boolean) : null;
-	const body = anyCell && typeof anyCell.body === 'number' ? clamp01(anyCell.body / s) : null;
+function gainNumber(gain) {
+	return gain < -0.5 ? `\u2212${formatHoldShown(-gain)}` : formatHoldShown(Math.max(0, gain));
+}
+
+/*
+	PASS 58: what a send would do to the rival at a world, on the rival's side of the column:
+	the rival's total there now and after it ("12→0"). The first build printed the change,
+	"−12", and a blind reader took a minus sign on their own card for their own loss.
+*/
+function RivalTag({ cell }) {
+	if (!(cell.taken > EPS) || typeof cell.rivalBefore !== 'number') {
+		return null;
+	}
+	const now = formatHoldShown(cell.rivalBefore);
+	const then = formatHoldShown(Math.max(0, cell.rivalBefore - cell.taken));
+	if (now === then) {
+		return null;
+	}
 	return (
-		<span className={`rec-fit${off ? ' rec-fit--off' : ''}`} data-fit data-fit-scale={s} aria-hidden="true" style={body !== null ? { '--fit-body': body.toFixed(4) } : undefined}>
+		<span className={`rec-fit-rival${cell.downs > 0 ? ' rec-fit-rival--downs' : ''}${now.length + then.length > 3 ? ' rec-fit-rival--long' : ''}`} data-fit-rival={cell.taken.toFixed(1)} data-fit-downs={cell.downs || 0}>
+			<i className="g-mono">{now}<span className="rec-fit-rival-to" aria-hidden="true">{'\u2192'}</span>{then}</i>
+		</span>
+	);
+}
+
+export function FitStrip({ sites, row, sentSiteId, sentCell, moveRow, focusSiteId, off, scale, newsSiteId, room }) {
+	const s = scale > 0 ? scale : FIT_SCALE;
+	const r = room > 0 ? room : 1;
+	const anyCell = row ? sites.map((site) => row[site.id]).find(Boolean) : null;
+	const body = anyCell && typeof anyCell.body === 'number' ? clamp01(anyCell.body / s) * r : null;
+	// one column of a send or a move: your side's gain, the rival's loss on its tag, the lead still to pass
+	const column = (site, cell, classes, extra) => {
+		const { style, over } = stackOf(cell, s, r);
+		const clear = cell.clear > EPS ? clamp01(cell.clear / s) * r : null;
+		if (cell.takes) classes.push('rec-fit-col--takes');
+		else if (clear !== null) classes.push('rec-fit-col--short');
+		if (over) classes.push('rec-fit-col--over');
+		if (cell.gain < -EPS) classes.push('rec-fit-col--hurts');
+		if (cell.taken > EPS) classes.push('rec-fit-col--fights');
+		if (clear !== null) style['--fit-tick'] = clear.toFixed(4);
+		return (
+			<span
+				className={classes.join(' ')}
+				key={site.id}
+				style={style}
+				data-fit-site={site.id}
+				data-fit-gain={cell.gain.toFixed(2)}
+				data-fit-parts={[cell.own, cell.allies, cell.toll].map((v) => (v || 0).toFixed(1)).join('/')}
+				data-fit-takes={cell.takes ? '' : undefined}
+				{...extra}
+			>
+				{/* the number sits on its column: what your side there would gain, the same unit as your total on the world */}
+				<span className="rec-fit-num g-mono">{gainNumber(cell.gain)}</span>
+				<span className="rec-fit-well">
+					<RivalTag cell={cell} />
+					<span className="rec-fit-part rec-fit-part--own" />
+					<span className="rec-fit-part rec-fit-part--allies" />
+					<span className="rec-fit-part rec-fit-part--lost" />
+					{clear !== null && <span className="rec-fit-tick" />}
+				</span>
+				<WhyMarks reasons={cell} className="rec-fit-why" />
+			</span>
+		);
+	};
+	return (
+		<span className={`rec-fit${off ? ' rec-fit--off' : ''}${r < 1 ? ' rec-fit--rival-room' : ''}`} data-fit data-fit-scale={s} aria-hidden="true" style={body !== null ? { '--fit-body': body.toFixed(4), '--fit-room': r.toFixed(4) } : { '--fit-room': r.toFixed(4) }}>
 			{sites.map((site) => {
 				const classes = ['rec-fit-col', `g-el-${site.world.element}`];
 				if (focusSiteId) {
@@ -290,7 +363,7 @@ export function FitStrip({ sites, row, sentSiteId, sentCell, moveRow, focusSiteI
 					const falls = !!(sentCell && sentCell.downed);
 					const kept = sentCell && !falls ? sentCell.hold : 0;
 					const going = sentCell ? Math.max(sentCell.before || 0, kept) : 0;
-					const { style } = stackOf({ own: kept, toll: Math.max(0, going - kept) }, s);
+					const { style } = stackOf({ own: kept, toll: Math.max(0, going - kept) }, s, r);
 					classes.push('rec-fit-col--sent');
 					if (falls) classes.push('rec-fit-col--falls');
 					return (
@@ -306,64 +379,26 @@ export function FitStrip({ sites, row, sentSiteId, sentCell, moveRow, focusSiteI
 				}
 				if (sentSiteId) {
 					const move = moveRow && moveRow[site.id];
-					if (!move) {
+					if (!move || typeof move.gain !== 'number') {
 						classes.push('rec-fit-col--gone');
 						return <span className={classes.join(' ')} key={site.id} data-fit-site={site.id}><span className="rec-fit-num" /><span className="rec-fit-well" /><span className="rec-whys rec-fit-why" /></span>;
 					}
+					// pass 58: a move reads like a send, at the world it would join
 					classes.push('rec-fit-col--move');
-					if (move.swing < -EPS) classes.push('rec-fit-col--hurts');
-					const { style } = stackOf({ own: Math.max(0, move.swing) }, s);
-					return (
-						<span className={classes.join(' ')} key={site.id} style={style} data-fit-site={site.id} data-fit-move={move.swing.toFixed(2)}>
-							<span className="rec-fit-num g-mono">{swingNumber(move.swing)}</span>
-							<span className="rec-fit-well"><span className="rec-fit-part rec-fit-part--own" /></span>
-							<span className="rec-whys rec-fit-why" />
-						</span>
-					);
+					return column(site, move, classes, { 'data-fit-move': move.gain.toFixed(2) });
 				}
 				const cell = row && row[site.id];
 				if (!cell) {
 					classes.push('rec-fit-col--none');
 					return <span className={classes.join(' ')} key={site.id} data-fit-site={site.id}><span className="rec-fit-num" /><span className="rec-fit-well" /><span className="rec-whys rec-fit-why" /></span>;
 				}
-				const { style, over } = stackOf(cell, s);
-				const tick = cell.deficit > EPS ? clamp01(cell.deficit / s) : null;
-				if (cell.takes) classes.push('rec-fit-col--takes');
-				else if (tick !== null) classes.push('rec-fit-col--short');
-				if (over) classes.push('rec-fit-col--over');
-				if (cell.swing < -EPS) classes.push('rec-fit-col--hurts');
-				if (cell.taken > EPS) classes.push('rec-fit-col--fights');
-				if (tick !== null) style['--fit-tick'] = tick.toFixed(4);
-				return (
-					<span
-						className={classes.join(' ')}
-						key={site.id}
-						style={style}
-						data-fit-site={site.id}
-						data-fit-swing={cell.swing.toFixed(2)}
-						data-fit-parts={[cell.own, cell.toll, cell.allies, cell.taken].map((v) => (v || 0).toFixed(1)).join('/')}
-						data-fit-takes={cell.takes ? '' : undefined}
-					>
-						{/* the number sits on its column: what this send would move that world, the same unit as the totals on the world's line */}
-						<span className="rec-fit-num g-mono">{swingNumber(cell.swing)}</span>
-						<span className="rec-fit-well">
-							<span className="rec-fit-part rec-fit-part--own" />
-							<span className="rec-fit-part rec-fit-part--lost" />
-							<span className="rec-fit-part rec-fit-part--allies" />
-							<span className="rec-fit-part rec-fit-part--taken">
-								{cell.taken >= Math.max(3, s * 0.14) && <i className="rec-fit-part-num g-mono">{formatHoldShown(cell.taken)}</i>}
-							</span>
-							{tick !== null && <span className="rec-fit-tick" />}
-						</span>
-						<WhyMarks reasons={cell} className="rec-fit-why" />
-					</span>
-				);
+				return column(site, cell, classes, {});
 			})}
 		</span>
 	);
 }
 
-// the fit strip's reading in words, for the card's title
+// the fit strip's reading in words, for the card's title: each side's part said on its own
 export function fitSentence(sites, row) {
 	if (!row) {
 		return '';
@@ -373,11 +408,21 @@ export function fitSentence(sites, row) {
 		if (!cell) {
 			return null;
 		}
-		const move = cell.swing >= 0 ? `+${formatHold(cell.swing)} your way` : `${formatHold(cell.swing)}, against you`;
-		const lead = cell.takes ? ', takes the lead' : cell.deficit > EPS ? `, the rival still ahead by ${formatHold(Math.max(0, cell.deficit - Math.max(0, cell.swing)))}` : '';
-		const taken = cell.taken > EPS ? `, ${formatHold(cell.taken)} of it off the rival there` : '';
+		const parts = [];
+		parts.push(cell.falls ? 'it would fall in the Clash' : `it would hold ${formatHold(cell.own)}`);
+		if (cell.allies > EPS) parts.push(`add ${formatHold(cell.allies)} to your creatures there`);
+		if (cell.allies < -EPS) parts.push(`cost your creatures there ${formatHold(-cell.allies)}`);
+		if (cell.toll > EPS && !cell.falls) parts.push(`the Clash would take ${formatHold(cell.toll)} off it`);
+		const rival = cell.taken > EPS
+			? `; the rival would lose ${formatHold(cell.taken)} there${cell.downs > 0 ? ` (${cell.downs === 1 ? 'one creature downed' : `${cell.downs} creatures downed`})` : ''}`
+			: '';
+		const mine = cell.after ? cell.after.mine : 0;
+		const theirs = cell.after ? cell.after.theirs : 0;
+		const lead = mine - theirs > EPS ? `you would lead ${formatHold(mine)} to ${formatHold(theirs)}`
+			: theirs - mine > EPS ? `the rival would still lead ${formatHold(theirs)} to ${formatHold(mine)}`
+				: 'level';
 		const why = whyWords(cell);
-		return `${site.world.planet} ${move}${lead}${taken}${why.length ? ` (${why.join('; ')})` : ''}`;
+		return `${site.world.planet}: ${parts.join(', ')}${rival}; ${lead}${why.length ? ` (${why.join('; ')})` : ''}`;
 	}).filter(Boolean).join('. ');
 }
 
@@ -415,12 +460,14 @@ export function RoundTrack({ track, frameIndex }) {
 */
 export function ScorePips({ mine, theirs, toClinch, rivalPassed, mySends, theirSends, myCap, theirCap, worldsAhead, sendsTone, turn }) {
 	// pass 54: each world won is a pennant, the same flag the Ruling plants on the winner's bar
+	// pass 58: one world from winning, that side's last pennant burns, so the game's stakes are on the table and not only in a count
 	const row = (n, side) => Array.from({ length: toClinch }).map((_, i) => (
-		<i className={`rec-pip rec-pip--flag rec-pip--${side}${i < n ? ' rec-pip--lit' : ''}`} key={`${i}-${i < n ? 'lit' : 'dark'}`}>
+		<i className={`rec-pip rec-pip--flag rec-pip--${side}${i < n ? ' rec-pip--lit' : ''}${i === n && n === toClinch - 1 ? ' rec-pip--point' : ''}`} key={`${i}-${i < n ? 'lit' : 'dark'}`} data-match-point={i === n && n === toClinch - 1 ? side : undefined}>
 			<svg viewBox="0 0 12 14" aria-hidden="true"><path className="rec-pip-staff" d="M2.5 13.5V1" /><path className="rec-pip-cloth" d="M2.5 1.5h8L8.3 4.8l2.2 3.3h-8z" /></svg>
 		</i>
 	));
-	const label = `First to ${toClinch} worlds wins. The rival has ${theirs}, you have ${mine}.${rivalPassed ? ' The rival has passed this round.' : ''}`;
+	const point = [theirs === toClinch - 1 ? ' The rival is one world from winning.' : '', mine === toClinch - 1 ? ' You are one world from winning.' : ''].join('');
+	const label = `First to ${toClinch} worlds wins. The rival has ${theirs}, you have ${mine}.${point}${rivalPassed ? ' The rival has passed this round.' : ''}`;
 	const lamp = (side) => (
 		<span
 			className={`rec-turn-lamp rec-turn-lamp--${side}${turn === side ? ' rec-turn-lamp--on' : ''}`}
@@ -456,8 +503,9 @@ export function SendCount({ left, cap, side, worldsAhead, tone }) {
 	const total = Math.max(typeof cap === 'number' ? cap : left, left);
 	return (
 		<span className={`rec-sends rec-sends--${side}${tone ? ` rec-sends--${tone}` : ''}`} title={label} aria-label={label} role="img" data-sends-left={left} data-sends-side={side}>
+			<PieceGlyph className="rec-sends-glyph" />
 			<span className="rec-sends-ticks" aria-hidden="true">
-				{Array.from({ length: total }).map((_, i) => <i className={`rec-send-tick${i < left ? ' rec-send-tick--left' : ''}`} key={i} />)}
+				{Array.from({ length: total }).map((_, i) => <i className={`rec-send-tick${i < left ? ' rec-send-tick--left' : ''}${i > 0 && i % 5 === 0 ? ' rec-send-tick--five' : ''}`} key={i} />)}
 			</span>
 			<b className="g-mono">{left}</b>
 		</span>

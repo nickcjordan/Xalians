@@ -9,7 +9,7 @@ import { team } from '../../../constants/designTokens';
 import { slotStateOf } from './reclamationRoster';
 import { speciesLabel, roleSentence, roleWord } from './reclamationNarration';
 import { FitStrip, fitSentence } from './reclamationInstruments';
-import { fitScale } from './reclamationFit';
+import { fitScale, fitTakesAny, FIT_RIVAL_ROOM } from './reclamationFit';
 import { prepare, speedOf, flippableRolesOf } from '@xalians/rules/expedition/creatureOnTable';
 import { attributeLanes } from './reclamationPreview';
 import { SENDABLE, FRAMES_PER_MATCH } from '@xalians/rules/expedition/expeditionInterpretation';
@@ -37,12 +37,13 @@ import { SENDABLE, FRAMES_PER_MATCH } from '@xalians/rules/expedition/expedition
 
 	PASS 52, THE GLANCE REDESIGN (docs/design/reclamation-glance-redesign.md). The lamps and
 	the best-world name became the fit strip: three columns, one per world in the order the
-	worlds stand above, each as tall as what sending this creature there now would move
-	that world your way (the engine's forecastSend), with the rival's lead ticked on it
-	where the rival has one. Nothing on a card is suggested; it only says what would happen.
+	worlds stand above (the engine's forecastSend). Since pass 58 each column is your side
+	only, what your side there would gain, with what the rival would lose on a brass tag at
+	its top (docs/design/reclamation-one-side-per-number.md). Nothing on a card is
+	suggested; it only says what would happen.
 */
 
-function Plinth({ record, view, you, armed, disabled, onArm, onInspect, onHover, advanced, fitRow, focusSiteId, sentCell, moveRow, reserve, stripScale, newsSiteId }) {
+function Plinth({ record, view, you, armed, disabled, onArm, onInspect, onHover, advanced, fitRow, focusSiteId, sentCell, moveRow, reserve, stripScale, stripRoom, newsSiteId }) {
 	const slot = slotStateOf(record, view, you);
 	/*
 		PASS 55, KEEP ONE BACK. With no sends left, a creature still in hand is the reserve: it
@@ -119,6 +120,7 @@ function Plinth({ record, view, you, armed, disabled, onArm, onInspect, onHover,
 						focusSiteId={inHand ? focusSiteId : null}
 						off={disabled}
 						scale={stripScale}
+						room={stripRoom}
 						newsSiteId={newsSiteId}
 					/>
 				)}
@@ -204,6 +206,8 @@ function ReclamationBench({
 	const movers = movable || [];
 	// pass 57: one scale for every card's columns, so a column reads against the next card's
 	const stripScale = fitScale(fits);
+	// pass 58: once any card would take something off the rival, every column keeps its top for the brass tag
+	const stripRoom = fitTakesAny(fits) ? FIT_RIVAL_ROOM : 1;
 
 	return (
 		<section className={`rec-bench rec-bench--step-${step}${yourTurn && !me.passed ? ' rec-bench--active' : ''}`} aria-label="Your squad" data-deploy-step={step}>
@@ -313,6 +317,7 @@ function ReclamationBench({
 						reserve={sendsLeft === 0}
 						focusSiteId={focusSiteId}
 						stripScale={stripScale}
+						stripRoom={stripRoom}
 						newsSiteId={newsSiteId}
 						disabled={!yourTurn || me.passed || sendsLeft === 0}
 						onArm={onArm}

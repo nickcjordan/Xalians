@@ -7090,7 +7090,7 @@
 	height: calc(var(--p, 0) * 100%);
 	transition: bottom 220ms ease, height 220ms ease;
 }
-.rec-console--match[data-terminal] .rec-fit-part--own { --p-at: var(--p-own-at); --p: var(--p-own); background: color-mix(in srgb, var(--g-el) 82%, var(--g-hull-lo)); }
+.rec-console--match[data-terminal] .rec-fit-part--own { --p-at: var(--p-own-at); --p: var(--p-own); background: color-mix(in srgb, var(--rec-you) 62%, var(--g-hull-lo)); }
 .rec-console--match[data-terminal] .rec-fit-part--lost {
 	--p-at: var(--p-lost-at);
 	--p: var(--p-lost);
@@ -7102,14 +7102,7 @@
 	background: color-mix(in srgb, var(--rec-you) 55%, transparent);
 	box-shadow: inset 0 1px 0 rgba(0, 0, 0, 0.6);
 }
-/* what it takes off the rival, solid in the rival's color (it counts), edged dark so it never merges with a brass-like world */
-.rec-console--match[data-terminal] .rec-fit-part--taken {
-	--p-at: var(--p-taken-at);
-	--p: var(--p-taken);
-	background: var(--rec-rival);
-	box-shadow: inset 0 0 0 1.5px rgba(0, 0, 0, 0.75), inset 0 2px 0 rgba(255, 244, 214, 0.35);
-}
-.rec-console--match[data-terminal] .rec-fit-col--takes .rec-fit-part--own { background: var(--g-el); box-shadow: 0 0 8px color-mix(in srgb, var(--g-el) 60%, transparent); }
+.rec-console--match[data-terminal] .rec-fit-col--takes .rec-fit-part--own { background: var(--rec-you); box-shadow: 0 0 8px color-mix(in srgb, var(--rec-you) 60%, transparent); }
 .rec-console--match[data-terminal] .rec-fit-col--short .rec-fit-part--own { opacity: 0.7; }
 .rec-console--match[data-terminal] .rec-fit-col--over .rec-fit-well { box-shadow: inset 0 2px 0 var(--g-ink); }
 /* the creature's body, across the three columns: above it the world lifted it, below it the world or the Clash cut it */
@@ -7348,37 +7341,6 @@
 	.rec-console--match[data-terminal] .rec-match--advanced .rec-dock { flex-basis: calc(292px * var(--rec-scale)); height: calc(292px * var(--rec-scale)); }
 	.rec-console--match[data-terminal] .rec-fit-num { font-size: calc(18px * var(--rec-scale)); }
 }
-.rec-console--match[data-terminal] .rec-fit-part-num {
-	position: absolute;
-	inset: 0;
-	display: grid;
-	place-items: center;
-	font-style: normal;
-	font-weight: 700;
-	font-size: calc(11px * var(--rec-scale));
-	line-height: 1;
-	color: rgba(10, 8, 4, 0.88);
-	pointer-events: none;
-}
-@media (max-width: 760px) {
-	.rec-console--match[data-terminal] .rec-fit-part-num { font-size: 8px; }
-}
-
-/* what the number is made of, under it, when part of it comes off the rival */
-.rec-console--match[data-terminal] .rec-ghost-piece-split {
-	display: inline-flex;
-	align-items: baseline;
-	gap: 2px;
-	padding: 0 calc(var(--st-num) * 0.3);
-	font-size: calc(var(--st-num) * 0.85);
-	font-weight: 700;
-	background: color-mix(in srgb, var(--g-hull-lo) 80%, transparent);
-	color: var(--g-ink-mid);
-}
-.rec-console--match[data-terminal] .rec-ghost-piece-split i { font-style: normal; }
-.rec-console--match[data-terminal] .rec-ghost-piece-own { color: var(--rec-you); }
-.rec-console--match[data-terminal] .rec-ghost-piece-taken { color: var(--rec-rival); }
-
 /* the rival's losses are your gains: hatched in its own fading brass, and a rival your send would down is crossed in your color */
 .rec-console--match[data-terminal] .rec-standing-lane--theirs .rec-standing-loss {
 	background: repeating-linear-gradient(135deg, color-mix(in srgb, var(--rec-rival) 60%, transparent) 0 2px, color-mix(in srgb, var(--rec-rival) 12%, transparent) 2px 6px);
@@ -7388,7 +7350,7 @@
 	background: repeating-linear-gradient(135deg, color-mix(in srgb, var(--rec-rival) 65%, transparent) 0 2px, color-mix(in srgb, var(--rec-rival) 15%, transparent) 2px 4px);
 }
 .rec-console--match[data-terminal] .rec-figure--theirs .rec-figure-mark--falls { color: var(--rec-you); filter: drop-shadow(0 0 4px color-mix(in srgb, var(--rec-you) 70%, transparent)) drop-shadow(0 0 2px rgba(0, 0, 0, 0.9)); }
-.rec-console--match[data-terminal] .rec-figure--theirs.rec-figure--falls .rec-figure-hold { color: var(--rec-you); }
+.rec-console--match[data-terminal] .rec-figure--theirs.rec-figure--falls .rec-figure-hold { color: var(--rec-rival); text-decoration: line-through; text-decoration-thickness: 2px; }
 
 /* the score is the stakes: bigger pennants, a bigger turn pointer, bigger send counts */
 .rec-console--match[data-terminal] .rec-scoreboard .rec-pip.rec-pip--flag { width: calc(20px * var(--rec-scale)); height: calc(23px * var(--rec-scale)); }
@@ -7427,3 +7389,141 @@
 @media (prefers-reduced-motion: reduce) {
 	.rec-console--match[data-terminal] .rec-match[data-moment="theirs"] .rec-site-floor::before { animation: none; opacity: 0.8; }
 }
+
+/* --- pass 58: one side per number ---------------------------------------------------
+   docs/design/reclamation-one-side-per-number.md. Nick, 2026-09-24, on a card that read 34
+   where the creature would hold 20 and down a rival of 14: "Why is it adding my health and
+   the opponent's health?" A number, a bar and a color belong to one side: cyan is yours,
+   brass is the rival's, and nothing adds the two. A card's column is your side's gain
+   there; what the send takes off the rival hangs from the column's top in brass, where the
+   rival's side of every world is. */
+
+/* the card's column is yours: a neutral well, your color in it, its number in your color */
+.rec-console--match[data-terminal] .rec-fit-well {
+	/* the foot in the world's own color, so each column still names its world (the house mark wears the same color) */
+	border-bottom: 3px solid color-mix(in srgb, var(--g-el) 75%, transparent);
+	background: linear-gradient(to top, color-mix(in srgb, var(--rec-you) 7%, transparent), transparent 70%);
+}
+.rec-console--match[data-terminal] .rec-fit-col--focus .rec-fit-well { background: linear-gradient(to top, color-mix(in srgb, var(--rec-you) 20%, transparent), transparent 80%); }
+/* the rival's side at the top of the column, yours at its foot: the number stands under the column it reads, with the marks that say why */
+.rec-console--match[data-terminal] .rec-fit-col { grid-template-rows: minmax(0, 1fr) auto var(--why); }
+.rec-console--match[data-terminal] .rec-fit-col > .rec-fit-well { grid-row: 1; }
+.rec-console--match[data-terminal] .rec-fit-col > .rec-fit-num { grid-row: 2; }
+.rec-console--match[data-terminal] .rec-fit-col > .rec-fit-why { grid-row: 3; }
+.rec-console--match[data-terminal] .rec-fit-num,
+.rec-console--match[data-terminal] .rec-fit-col--takes .rec-fit-num { color: var(--rec-you); }
+.rec-console--match[data-terminal] .rec-fit-col--takes .rec-fit-num { text-shadow: 0 0 10px color-mix(in srgb, var(--rec-you) 55%, transparent); }
+.rec-console--match[data-terminal] .rec-fit-col--short .rec-fit-num { color: color-mix(in srgb, var(--rec-you) 62%, var(--g-ink-low)); }
+.rec-console--match[data-terminal] .rec-fit-col--hurts .rec-fit-num { color: var(--rec-loss); }
+.rec-console--match[data-terminal] .rec-fit-part--allies {
+	background: repeating-linear-gradient(90deg, color-mix(in srgb, var(--rec-you) 70%, transparent) 0 2px, color-mix(in srgb, var(--rec-you) 30%, transparent) 2px 4px);
+	box-shadow: inset 0 1px 0 rgba(0, 0, 0, 0.6);
+}
+
+/* what the send would take off the rival: a brass tag hanging from the top of the column, the rival's end */
+.rec-console--match[data-terminal] .rec-fit-rival {
+	position: absolute;
+	left: 6%;
+	right: 6%;
+	top: 0;
+	height: calc((1 - var(--fit-room, 1)) * 100% - 3px);
+	min-height: 12px;
+	display: grid;
+	place-items: center;
+	z-index: 3;
+	border: 1px solid var(--rec-rival);
+	border-top-width: 3px;
+	background: repeating-linear-gradient(135deg, color-mix(in srgb, var(--rec-rival) 45%, transparent) 0 2px, color-mix(in srgb, var(--rec-rival) 10%, transparent) 2px 6px);
+}
+.rec-console--match[data-terminal] .rec-fit-rival i {
+	font-style: normal;
+	font-weight: 700;
+	font-size: calc(12px * var(--rec-scale));
+	line-height: 1.15;
+	letter-spacing: -0.05em;
+	padding: 0 2px;
+	color: var(--rec-rival);
+	background: color-mix(in srgb, var(--g-hull-lo) 88%, transparent);
+	font-variant-numeric: tabular-nums;
+	white-space: nowrap;
+}
+.rec-console--match[data-terminal] .rec-fit-col--dim .rec-fit-rival { opacity: 0.6; }
+@media (min-width: 761px) and (max-height: 820px) {
+	.rec-console--match[data-terminal] .rec-fit-rival i { font-size: 11px; }
+}
+/* a phone's column is narrower than the amount: the tag is a brass cap there, and the lifted preview gives the amount */
+@media (max-width: 760px) {
+	.rec-console--match[data-terminal] .rec-fit-rival { height: 5px; min-height: 5px; border-width: 0; border-top: 3px solid var(--rec-rival); left: 0; right: 0; }
+	.rec-console--match[data-terminal] .rec-fit-rival i { display: none; }
+}
+
+/* the score is the pennants; the sends left are a count of creatures, set apart from them:
+   a piece, the ticks in fives, the count after them (a bare numeral beside the pennants read as the score) */
+.rec-console--match[data-terminal] .rec-scoreboard .rec-pip.rec-pip--flag { width: calc(23px * var(--rec-scale)); height: calc(26px * var(--rec-scale)); }
+.rec-console--match[data-terminal] .rec-sends {
+	gap: calc(5px * var(--rec-scale));
+	margin-left: calc(8px * var(--rec-scale));
+	padding-left: calc(10px * var(--rec-scale));
+	border-left: 1px solid color-mix(in srgb, var(--g-ink) 18%, transparent);
+}
+.rec-console--match[data-terminal] .rec-sends svg.rec-sends-glyph { display: block; width: calc(14px * var(--rec-scale)); height: calc(14px * var(--rec-scale)); fill: currentColor; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; opacity: 0.85; }
+.rec-console--match[data-terminal] .rec-send-tick--five { margin-left: calc(4px * var(--rec-scale)); }
+.rec-console--match[data-terminal] .rec-sends b { font-size: calc(13px * var(--rec-scale)); font-weight: 600; opacity: 0.85; }
+@media (max-width: 760px) {
+	.rec-console--match[data-terminal] .rec-scoreboard .rec-pip.rec-pip--flag { width: 11px; height: 13px; }
+	.rec-console--match[data-terminal] .rec-sends { margin-left: 3px; padding-left: 4px; gap: 2px; }
+	.rec-console--match[data-terminal] .rec-sends svg.rec-sends-glyph { width: 9px; height: 9px; }
+	.rec-console--match[data-terminal] .rec-sends b { font-size: 11px; }
+}
+
+/* the fighting world: each creature's hold is what the fight is about, so its number, its bar and its
+   name grow with its piece (sized to the rank, so a crowded rank stays inside its world), each number in
+   its side's color, and the blow's number rises over the creature it lands on at the same size */
+.rec-console--match[data-terminal] .rec-site--clashing .rec-site-floor .rec-rank .rec-figure {
+	--fig-num: clamp(11px, calc(100cqw / var(--rank-cols, 1) * 0.085), calc(26px * var(--rec-scale)));
+}
+.rec-console--match[data-terminal] .rec-site--clashing .rec-site-floor .rec-rank .rec-figure-name { font-size: calc(var(--fig-num) * 0.5); }
+.rec-console--match[data-terminal] .rec-site--clashing .rec-site-floor .rec-rank .rec-figure-foot { gap: calc(var(--fig-num) * 0.3); }
+.rec-console--match[data-terminal] .rec-site--clashing .rec-site-floor .rec-rank .rec-figure-foot .rec-figure-hold { font-size: var(--fig-num); font-weight: 700; line-height: 1; }
+.rec-console--match[data-terminal] .rec-site--clashing .rec-site-floor .rec-rank .rec-figure--mine .rec-figure-hold { color: var(--rec-you); }
+.rec-console--match[data-terminal] .rec-site--clashing .rec-site-floor .rec-rank .rec-figure--theirs .rec-figure-hold { color: var(--rec-rival); }
+.rec-console--match[data-terminal] .rec-site--clashing .rec-site-floor .rec-rank .rec-hbar { height: calc(var(--fig-num) * 0.3); }
+.rec-console--match[data-terminal] .rec-site--clashing .rec-site-floor .rec-rank .rec-figure-flash { font-size: var(--fig-num); top: calc(var(--fig-num) * -1.4); padding: 1px calc(var(--fig-num) * 0.3); }
+
+/* a phone's rank is too narrow for the ghost beside a creature already there: its number and marks sit in the rank's top corner, without the silhouette */
+@media (max-width: 760px) {
+	.rec-console--match[data-terminal] .rec-ghost-piece--beside { justify-content: flex-start; padding-top: 2px; padding-right: 2px; }
+	.rec-console--match[data-terminal] .rec-ghost-piece--beside .rec-ghost-piece-art { display: none; }
+}
+
+/* one world from winning: that side's deciding pennant burns in its color */
+.rec-console--match[data-terminal] .rec-scoreboard .rec-pip--point { animation: rec-pip-point 1100ms ease-in-out infinite alternate; }
+.rec-console--match[data-terminal] .rec-scoreboard .rec-pip--point.rec-pip--theirs { color: var(--rec-rival); }
+.rec-console--match[data-terminal] .rec-scoreboard .rec-pip--point.rec-pip--mine { color: var(--rec-you); }
+.rec-console--match[data-terminal] .rec-scoreboard .rec-pip--point svg { filter: drop-shadow(0 0 4px currentColor) drop-shadow(0 0 10px currentColor); }
+.rec-console--match[data-terminal] .rec-scoreboard .rec-pip--point .rec-pip-cloth { fill: color-mix(in srgb, currentColor 60%, transparent); stroke-width: 1.8; }
+@keyframes rec-pip-point { from { opacity: 0.55; } to { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) {
+	.rec-console--match[data-terminal] .rec-scoreboard .rec-pip--point { animation: none; }
+}
+
+/* the rival's tag reads its total there now and after the send, the arrow lighter than the two numbers */
+.rec-console--match[data-terminal] .rec-fit-rival { left: 0; right: 0; overflow: visible; }
+.rec-console--match[data-terminal] .rec-fit-rival-to { font-weight: 400; opacity: 0.75; margin: 0 0.05em; }
+/* the tag's text sizes to its own column, so "12→0" and "12→11" fit on every screen */
+.rec-console--match[data-terminal] .rec-plinth .rec-fit-col { container-type: inline-size; }
+.rec-console--match[data-terminal] .rec-fit-rival i { font-size: min(calc(12px * var(--rec-scale)), 100cqw / 2.45); padding: 0 1px; }
+.rec-console--match[data-terminal] .rec-fit-rival--long i { font-size: min(calc(12px * var(--rec-scale)), 100cqw / 3); letter-spacing: -0.08em; }
+.rec-console--match[data-terminal] .rec-fit-rival--long .rec-fit-rival-to { margin: 0 -0.05em; }
+
+/* the round track: both blind readers of pass 58 misread a round's three squares at 16px */
+.rec-console--match[data-terminal] .rec-track-world { width: calc(20px * var(--rec-scale)); height: calc(20px * var(--rec-scale)); }
+.rec-console--match[data-terminal] .rec-track-round { gap: calc(4px * var(--rec-scale)); }
+@media (max-width: 760px) {
+	.rec-console--match[data-terminal] .rec-track-world { width: 9px; height: 9px; }
+	.rec-console--match[data-terminal] .rec-track-round { gap: 2px; }
+}
+
+/* a world at rest wears no side's color: brass means the rival, so the frame is neutral until a moment
+   (your lift, the rival's move, the Ruling) gives it one; :where keeps every moment's frame winning */
+.rec-console--match[data-terminal] :where(.rec-site.g-panel) { border-color: color-mix(in srgb, var(--g-ink) 22%, transparent); }

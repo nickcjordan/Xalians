@@ -396,7 +396,9 @@ export function captionEvent(event, ctx = {}) {
 	switch (event.type) {
 		case 'sweep': {
 			const n = typeof event.hitCount === 'number' ? event.hitCount : 0;
-			return n === 0 ? [actor, ' sweeps and hits nothing'] : [actor, ` sweeps: −${formatHoldShown(event.power)} to each of ${n}`];
+			// pass 58: a sweep that catches one creature is told as the one blow, not "to each of 1"
+			if (n === 0) return [actor, ' sweeps and hits nothing'];
+			return n === 1 ? [actor, ` sweeps: −${formatHoldShown(event.power)}`] : [actor, ` sweeps: −${formatHoldShown(event.power)} to each of ${n}`];
 		}
 		case 'shield':
 			return event.cancelled ? [actor, ' blocks ', target, `'s ${formatHoldShown(event.amount)}`] : [actor, ' shields; nothing comes'];

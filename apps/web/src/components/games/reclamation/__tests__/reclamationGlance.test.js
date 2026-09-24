@@ -8,8 +8,8 @@ import {
 import { getWorlds } from '@xalians/rules/expedition/sites';
 import { ROSTER_SIZE } from '@xalians/rules/expedition/expeditionInterpretation';
 import { roleOf } from '@xalians/rules/expedition/creatureOnTable';
-import { fitTable, forecastTotalsAt, standingScale, STANDING_FLOOR, roundTrack, FIT_SCALE, fitScale } from '../reclamationFit';
-import { Standing, FitStrip, ScorePips, HoldBar, Crest, WhyMarks, whyWords } from '../reclamationInstruments';
+import { fitTable, forecastTotalsAt, standingScale, STANDING_FLOOR, roundTrack, FIT_SCALE, fitScale, fitTakesAny, FIT_RIVAL_ROOM } from '../reclamationFit';
+import { Standing, FitStrip, ScorePips, HoldBar, Crest, WhyMarks, whyWords, fitSentence } from '../reclamationInstruments';
 
 /*
 	PASS 52, THE GLANCE REDESIGN (docs/design/reclamation-glance-redesign.md).
@@ -101,6 +101,14 @@ describe('fitTable', () => {
 		let reasons = 0;
 		Object.values(table.fits).forEach((row) => Object.entries(row).forEach(([siteId, cell]) => {
 			expect(cell.own + cell.allies + cell.taken).toBeCloseTo(cell.swing, 6);
+			// pass 58: the number a card prints is your side alone, and each side's part is its own total's change
+			expect(cell.gain).toBeCloseTo(cell.own + cell.allies, 6);
+			expect(cell.gain).toBeCloseTo(cell.after.mine - table.base[siteId].mine, 6);
+			expect(cell.taken).toBeCloseTo(Math.max(0, table.base[siteId].theirs - cell.after.theirs), 6);
+			// the pointer: the column passes it exactly when the send would put you ahead
+			expect(cell.clear).toBeCloseTo(Math.max(0, cell.after.theirs - table.base[siteId].mine), 6);
+			if (cell.clear > 0.05) expect(cell.gain > cell.clear + 0.05).toBe(cell.after.mine - cell.after.theirs > 0.05);
+			if (cell.downs > 0) expect(cell.taken).toBeGreaterThan(0);
 			expect(cell.toll).toBeGreaterThanOrEqual(0);
 			expect(cell.going).toBeCloseTo(cell.own + cell.toll, 6);
 			expect(cell.body).toBeGreaterThan(0);
@@ -117,6 +125,7 @@ describe('fitTable', () => {
 		}));
 		expect(fights).toBeGreaterThan(0);
 		expect(reasons).toBeGreaterThan(0);
+		expect(fitTakesAny(table)).toBe(true);
 		// the bench's scale holds the tallest column, in steps of six, and never shrinks below FIT_SCALE
 		const scale = fitScale(table);
 		expect(scale).toBeGreaterThanOrEqual(FIT_SCALE);
@@ -198,40 +207,61 @@ describe('the instruments', () => {
 		expect(container.querySelector('[data-standing-total="mine"] [data-why]')).toBeNull();
 	});
 
+	// pass 58: a send that takes the rival to nothing prints its 0, so the two totals are read side by side
+	it('prints the rival total as 0 when a preview takes it to nothing', () => {
+		const { container } = render(
+			<Standing siteId="z" now={{ theirs: 14, mine: 0, theirsBefore: 14, mineBefore: 0 }} preview={{ theirs: 0, mine: 20, theirsBefore: 14, mineBefore: 20 }} scale={24} />,
+		);
+		expect(container.querySelector('[data-standing-total="theirs"]').textContent).toBe('0');
+		expect(container.querySelector('[data-standing-total="mine"]').textContent).toBe('20');
+		const rest = render(<Standing siteId="e" now={{ theirs: 0, mine: 6, theirsBefore: 0, mineBefore: 6 }} scale={24} />);
+		expect(rest.container.querySelector('[data-standing-total="theirs"]')).toBeNull();
+	});
+
 	it('puts the pennant at the end of the winner bar once the world is ruled', () => {
 		const { container } = render(<Standing siteId="r" now={{ theirs: 7, mine: 10, theirsBefore: 7, mineBefore: 10 }} scale={24} verdict={{ who: 'yours', text: 'yours by 3', margin: 3 }} />);
 		expect(container.querySelector('[data-standing-total="mine"] [data-crest]').getAttribute('data-crest')).toBe('mine');
 		expect(container.querySelector('[data-standing-total="theirs"] [data-crest]')).toBeNull();
 	});
 
-	it('prints each column number, ticks a rival lead and lights a column that clears it', () => {
+	it('prints your side alone on each column, the rival loss on a brass tag, and ticks the lead still to pass', () => {
 		const sites = [
 			{ id: 's1', world: { planet: 'One', element: 'fire' } },
 			{ id: 's2', world: { planet: 'Two', element: 'air' } },
 			{ id: 's3', world: { planet: 'Three', element: 'ice' } },
 		];
+		// s1: holds 6.2 after losing 2, downs the rival's 12 there; s2: home, holds 9.6, the rival still 14 ahead; s3: falls
 		const row = {
-			s1: { swing: 18.2, deficit: 12, takes: true, after: {}, own: 6.2, toll: 2, allies: 0, taken: 12, body: 8, home: false, climate: null },
-			s2: { swing: 9.6, deficit: 14, takes: false, after: {}, own: 9.6, toll: 0, allies: 0, taken: 0, body: 8, home: true, climate: null },
-			s3: { swing: -1.2, deficit: 0, takes: false, after: {}, own: 0, toll: 3, allies: -1.2, taken: 0, body: 8, home: false, climate: { level: 'strained', cause: 'cold' }, falls: true },
+			s1: { swing: 18.2, gain: 6.2, clear: 0, downs: 1, rivalBefore: 12, deficit: 12, takes: true, after: { mine: 6.2, theirs: 0 }, own: 6.2, toll: 2, allies: 0, taken: 12, body: 8, home: false, climate: null },
+			s2: { swing: 9.6, gain: 9.6, clear: 14, downs: 0, rivalBefore: 14, deficit: 14, takes: false, after: { mine: 9.6, theirs: 14 }, own: 9.6, toll: 0, allies: 0, taken: 0, body: 8, home: true, climate: null },
+			s3: { swing: -1.2, gain: -1.2, clear: 0, downs: 0, deficit: 0, takes: false, after: { mine: 0, theirs: 0 }, own: 0, toll: 3, allies: -1.2, taken: 0, body: 8, home: false, climate: { level: 'strained', cause: 'cold' }, falls: true },
 		};
-		const { container } = render(<FitStrip sites={sites} row={row} scale={24} />);
+		const room = FIT_RIVAL_ROOM;
+		const { container } = render(<FitStrip sites={sites} row={row} scale={24} room={room} />);
 		const cols = [...container.querySelectorAll('[data-fit-site]')];
-		expect(cols.map((c) => c.querySelector('.rec-fit-num').textContent)).toEqual(['18', '10', '−1']);
+		// the number is your side's gain alone: 6, not the 18 that added the rival's 12
+		expect(cols.map((c) => c.querySelector('.rec-fit-num').textContent)).toEqual(['6', '10', '−1']);
 		expect(cols[0].className).toContain('rec-fit-col--takes');
 		expect(cols[1].className).toContain('rec-fit-col--short');
 		expect(cols[2].className).toContain('rec-fit-col--hurts');
-		expect(cols[0].querySelector('.rec-fit-tick')).not.toBeNull();
-		expect(cols[2].querySelector('.rec-fit-tick')).toBeNull();
-		// pass 57: own at the bottom, what the Clash takes off it hatched above, what it takes off the rival on top
-		expect(Number(cols[0].style.getPropertyValue('--p-own'))).toBeCloseTo(6.2 / 24, 3);
-		expect(Number(cols[0].style.getPropertyValue('--p-lost-at'))).toBeCloseTo(6.2 / 24, 3);
-		expect(Number(cols[0].style.getPropertyValue('--p-lost'))).toBeCloseTo(2 / 24, 3);
-		expect(Number(cols[0].style.getPropertyValue('--p-taken-at'))).toBeCloseTo(8.2 / 24, 3);
-		expect(Number(cols[0].style.getPropertyValue('--p-taken'))).toBeCloseTo(12 / 24, 3);
+		// the pointer is what the rival would still lead by: nothing once the send downs its 12
+		expect(cols[0].querySelector('.rec-fit-tick')).toBeNull();
+		expect(cols[1].querySelector('.rec-fit-tick')).not.toBeNull();
+		expect(Number(cols[1].style.getPropertyValue('--fit-tick'))).toBeCloseTo((14 / 24) * room, 3);
+		// what it does to the rival is the rival's own brass tag, its total there now and after, never part of the column
+		const tag = cols[0].querySelector('[data-fit-rival]');
+		expect(tag.textContent).toBe('12\u21920');
+		expect(tag.getAttribute('data-fit-downs')).toBe('1');
+		expect(cols[1].querySelector('[data-fit-rival]')).toBeNull();
+		expect(cols[0].querySelector('.rec-fit-part--taken')).toBeNull();
+		// own at the bottom, then allies, then what the Clash takes off it hatched on top, inside the room left under the tags
+		expect(Number(cols[0].style.getPropertyValue('--p-own'))).toBeCloseTo((6.2 / 24) * room, 3);
+		expect(Number(cols[0].style.getPropertyValue('--p-lost-at'))).toBeCloseTo((6.2 / 24) * room, 3);
+		expect(Number(cols[0].style.getPropertyValue('--p-lost'))).toBeCloseTo((2 / 24) * room, 3);
+		expect(cols[0].style.getPropertyValue('--p-taken')).toBe('');
 		expect(cols[0].className).toContain('rec-fit-col--fights');
 		// the body line across the strip, and the reasons under each column
-		expect(Number(container.querySelector('[data-fit]').style.getPropertyValue('--fit-body'))).toBeCloseTo(8 / 24, 3);
+		expect(Number(container.querySelector('[data-fit]').style.getPropertyValue('--fit-body'))).toBeCloseTo((8 / 24) * room, 3);
 		expect(cols[0].querySelector('[data-why]')).toBeNull();
 		expect(cols[1].querySelector('[data-why="home"]')).not.toBeNull();
 		expect(cols[2].querySelector('[data-why="cold"]')).not.toBeNull();
@@ -272,12 +302,38 @@ describe('the instruments', () => {
 
 	it('draws what a swift creature would do by moving, in the columns of the worlds it could step to', () => {
 		const sites = [{ id: 's1', world: { planet: 'One', element: 'fire' } }, { id: 's2', world: { planet: 'Two', element: 'air' } }, { id: 's3', world: { planet: 'Three', element: 'ice' } }];
-		const { container } = render(<FitStrip sites={sites} row={null} sentSiteId="s1" sentCell={{ hold: 9, downed: false, before: 9 }} moveRow={{ s2: { swing: 6.2 }, s3: { swing: -5.8 } }} />);
+		// pass 58: a move reads like a send at the world it would join, your side and the rival's apart
+		const moveRow = {
+			s2: { swing: 14.2, gain: 6.2, own: 6.2, allies: 0, toll: 1, taken: 8, rivalBefore: 11, downs: 0, clear: 0, takes: true },
+			s3: { swing: -12, gain: -1, own: 0, allies: -1, toll: 4, taken: 0, downs: 0, clear: 0, takes: false, falls: true },
+		};
+		const { container } = render(<FitStrip sites={sites} row={null} sentSiteId="s1" sentCell={{ hold: 9, downed: false, before: 9 }} moveRow={moveRow} />);
 		const cols = [...container.querySelectorAll('[data-fit-site]')];
 		expect(cols[1].className).toContain('rec-fit-col--move');
 		expect(cols[1].querySelector('.rec-fit-num').textContent).toBe('6');
+		expect(cols[1].querySelector('[data-fit-rival]').textContent).toBe('11\u21923');
 		expect(cols[2].className).toContain('rec-fit-col--hurts');
-		expect(cols[2].querySelector('.rec-fit-num').textContent).toBe('\u22126');
+		expect(cols[2].querySelector('.rec-fit-num').textContent).toBe('\u22121');
+	});
+
+	it('says each side apart in the card title, and who would lead', () => {
+		const sites = [{ id: 's1', world: { planet: 'Endessa', element: 'sand' } }];
+		const row = { s1: { gain: 20, own: 20, allies: 0, toll: 0, taken: 14, downs: 1, falls: false, after: { mine: 20, theirs: 0 }, home: true } };
+		const text = fitSentence(sites, row);
+		expect(text).toContain('it would hold 20');
+		expect(text).toContain('the rival would lose 14 there (one creature downed)');
+		expect(text).toContain('you would lead 20 to 0');
+		expect(text).not.toMatch(/34/);
+	});
+
+	// pass 58: a side one world from winning shows it, on its next pennant
+	it('lights the pennant that would win the game for a side one world away', () => {
+		const { container } = render(<ScorePips mine={2} theirs={4} toClinch={5} mySends={7} theirSends={4} myCap={11} theirCap={11} turn="mine" />);
+		const points = [...container.querySelectorAll('[data-match-point]')];
+		expect(points.map((p) => p.getAttribute('data-match-point'))).toEqual(['theirs']);
+		expect(container.querySelector('.rec-score-row--theirs').getAttribute('aria-label')).toContain('The rival is one world from winning.');
+		const none = render(<ScorePips mine={1} theirs={3} toClinch={5} turn="mine" />);
+		expect(none.container.querySelector('[data-match-point]')).toBeNull();
 	});
 
 	it('puts the rival row above yours, each with its sends and its turn lamp, and marks a rival pass', () => {

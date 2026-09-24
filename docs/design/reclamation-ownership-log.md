@@ -1156,3 +1156,33 @@ Validation report regenerated:
 - In round 2 a card's number sums what a creature keeps and what it takes; the last reader asked for the fight's result on the card ("7 v 0").
 - Whether element should matter (the chart, off) is Nick's call. If it should, the target matchup alone is the candidate, not the world matchup.
 - Strike keepers still win 67 to 70 percent.
+
+### Pass 58 (2026-09-24): one side per number
+
+**Nick**, on Scalatto's card reading 13, 34 and 13 while the rival's Bioflim (14) stood at Endessa: "Why does it show 20 plus 14? Why is it adding my health and the opponent's health?" The design and every number are in `reclamation-one-side-per-number.md`.
+
+- **The audit.** Every number on the table was listed with what it counts, whose it is, and whether it adds the two sides. Four places added them: the card's number (the swing), the card's column (the rival's loss stacked in brass on your hold, in a world color that for sand and light worlds is itself brass), the ghost (+34 and "20+14"), and a swift creature's move column. The rival's bar dropped its number when a preview took it to 0. A rival creature your send would down had its number turned cyan. The sends-left numerals beside the pennants read as the score. The help panel still described pass 52's table.
+- **The rule.** A number, a bar and a color belong to one side: cyan yours, brass the rival's, never added. A card's number and column are your side's gain there (`gain`: what it keeps plus what it adds to your creatures there), cyan, with the number at the column's foot and a foot line in the world's color. The rival's side hangs from the column's top as a brass tag reading its total there now and after (`12→0`). The pointer is what the rival would still lead by after the send. The ghost prints the card's number. The rival's bar prints its 0.
+- **Also:** the sends left set apart from the score (a piece, ticks in fives, a smaller count); the deciding pennant burns for a side one world from winning; the round track grew; worlds at rest wear a neutral frame instead of brass; each creature's hold in the fighting world grows with its piece, in its side's color; the one-target sweep caption; the phone ghost beside a creature moves clear of its name; the card title, the key and How to play rewritten to the table as it is.
+
+**Measured.** Blind readers, five moments at 1896 by 1100, a new numbers protocol (what each number counts and whose; what each side would hold after a send; who would lead; the score):
+
+| | Before (live) | After, `−12` tags | After, as shipped |
+|---|---|---|---|
+| What each number means and whose (1 to 10) | 4 | 5 | 6 |
+| Why a creature is worth more at one world | 5 | 5 | 5 |
+| How easily you could make a good move | 6 | 7 | 7 |
+| Most confusing thing | the summed card number (Nick's point, unprompted) | `−12` on your card read as your loss | the send counter |
+
+Every engine question (each side's hold after a send, who leads, which creature does better, the score) came back right from all three readers; before, the reader had to subtract to get there and guessed the result, and as shipped the reader read it straight off the card.
+
+**Verified:** web tests pass; the four table checks are green; `reclamation-proving.mjs` now holds the lifted creature's ghost number to its card's number at every world, and a build whose ghost printed the old sum fails it ("the card prints 9 and the ghost +22").
+
+**Open:**
+
+- The send counter: readers work out it falls one per send, but it is one fewer than the creatures in hand (one stays back) and sits in the score's row.
+- Lifting draws the cross over the rival at every world at once.
+- Rounding: parts and totals round separately (3 and +3 beside 7).
+- The fight side of "why" (why one creature loses more, or takes a rival only to 11) is not on the table.
+- Round 1's empty worlds are still the largest thing on screen; the Stake key explains nothing until pressed.
+- Carried: whether element should matter (the chart, off) is Nick's call; strike keepers win 67 to 70 percent.
