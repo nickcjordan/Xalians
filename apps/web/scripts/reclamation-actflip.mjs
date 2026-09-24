@@ -12,14 +12,20 @@
 	choice, and the board still showed the old role. Nothing but reading the board after a real
 	click would have caught it.
 
+	PASS 55 (Nick, 2026-09-23): the act choice is OFF ("I'm inclined to remove this concept of
+	giving two options because it just complicates the game unnecessarily"). This check now
+	holds the other side of the same seam: with the lever off, no lifted creature offers a
+	picker, and each one lands on the board with the role its card shows. The pass 25 bug above
+	(the board writing a different role than the one chosen) is exactly what the second claim
+	would catch.
+
 	Run: node apps/web/scripts/reclamation-actflip.mjs
 	against a preview server on 127.0.0.1:4173, the same as the other two checks.
 
 	Claims, each able to fail:
-	1. lifting a creature with more than one behaviour shows the picker,
-	2. the picker offers the table's own words (strike / sweep / bolster / shield),
-	3. choosing a non-natural behaviour and sending actually lands that role on the board,
-	4. a Proving still plays to the Charter with the axis live.
+	1. no lifted creature shows an act picker,
+	2. the role that lands on the board is the one the card shows,
+	3. a Proving still plays to the Charter, with the worlds visible.
 */
 import { chromium } from 'playwright-core';
 import { mkdir } from 'node:fs/promises';
@@ -44,43 +50,40 @@ const c = page.locator('[data-draft-confirm]');
 if (await c.count() && await c.first().isEnabled()) await c.first().click();
 await page.locator('[data-slot]').first().waitFor({ state: 'visible', timeout: 20000 });
 
-// lift creatures until one offers a choice
-let pickerFor = null; let words = []; let chosen = null; let landedRole = null;
+// lift every creature in hand: none may offer a choice
+let pickers = 0; let sentName = null; let cardRole = null; let landedRole = null;
 const arms = await page.locator('[data-arm]:not([disabled])').count();
-for (let i = 0; i < arms && !pickerFor; i++) {
+for (let i = 0; i < arms; i++) {
 	await page.locator('[data-arm]:not([disabled])').nth(i).click({ timeout: 4000 }).catch(() => {});
-	await page.waitForTimeout(120);
+	await page.waitForTimeout(100);
 	const pick = page.locator('[data-act-picker]');
-	if (await pick.count() && await pick.first().isVisible()) {
-		pickerFor = await pick.first().getAttribute('data-act-picker');
-		words = await page.locator('[data-act-role]').evaluateAll((els) => els.map((e) => e.getAttribute('data-act-role')));
-		await page.screenshot({ path: `${output}/actflip-picker.png` }).catch(() => {});
-		// choose the SECOND behaviour, which is never the natural one
-		if (words.length > 1) {
-			chosen = words[1];
-			await page.locator(`[data-act-role="${chosen}"]`).first().click();
-			await page.waitForTimeout(100);
-			// send it and read the role that landed
-			await page.locator('[data-site-id]').first().click({ force: true, timeout: 4000 }).catch(() => {});
-			await page.waitForTimeout(250);
-			landedRole = await page.evaluate((id) => {
-				const dbg = window.__reclamationDebug;
-				if (!dbg || !dbg.holds) return null;
-				const h = dbg.holds[id];
-				return h ? h.role : null;
-			}, pickerFor);
-		}
-	}
+	if (await pick.count() && await pick.first().isVisible()) pickers++;
+	// set it down again
+	await page.locator('[data-arm]:not([disabled])').nth(i).click({ timeout: 4000 }).catch(() => {});
+	await page.waitForTimeout(60);
 }
+// send the first creature and read the role that landed against the one its card shows
+const first = page.locator('[data-slot-state="hand"]').first();
+sentName = await first.getAttribute('data-slot');
+cardRole = await first.locator('.rec-plinth-role').first().getAttribute('data-role').catch(() => null);
+await first.locator('[data-arm]').first().click({ timeout: 4000 }).catch(() => {});
+await page.waitForTimeout(100);
+await page.locator('[data-site-id]').first().click({ force: true, timeout: 4000 }).catch(() => {});
+await page.waitForTimeout(300);
+landedRole = await page.evaluate((id) => {
+	const dbg = window.__reclamationDebug;
+	if (!dbg || !dbg.holds) return null;
+	const h = dbg.holds[id];
+	return h ? h.role : null;
+}, sentName);
 /*
 	PASS 37. The board is read here, with the role just landed on it, rather than at the
 	Charter. The table is one screen now and the Charter's report covers it when the
 	Proving ends, so reading the board at the end would measure the report.
 */
 const panels = await seenOn(page, '[data-site-id]');
-console.log(`picker appeared for: ${pickerFor || 'none'}`);
-console.log(`behaviours offered: ${words.join(', ') || 'none'}`);
-console.log(`chose: ${chosen}  role that landed on the board: ${landedRole}`);
+console.log(`creatures offering an act picker: ${pickers} of ${arms}`);
+console.log(`sent ${sentName}: card shows ${cardRole}, board shows ${landedRole}`);
 
 // play on to the Charter
 /*
@@ -122,7 +125,7 @@ if (errs.length) console.log(`PAGE ERRORS: ${errs.join(' | ')}`);
 const unseen = panels.filter((r) => !r.seen).map((r) => `${r.id}: ${r.reasons.join(', ')}`);
 console.log(`world panels seen: ${panels.filter((r) => r.seen).length} of ${panels.length}${unseen.length ? ` (${unseen.join(' | ')})` : ''}`);
 
-const ok = pickerFor && words.length > 1 && chosen && landedRole === chosen && reached && errs.length === 0
+const ok = pickers === 0 && arms > 0 && cardRole && landedRole === cardRole && reached && errs.length === 0
 	&& panels.length >= 3 && unseen.length === 0;
 console.log(ok ? 'PASS' : 'FAIL');
 if (!ok) process.exitCode = 1;

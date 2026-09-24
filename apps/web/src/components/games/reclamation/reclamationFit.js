@@ -1,4 +1,4 @@
-import { forecastClash, forecastSend } from '@xalians/rules/expedition/expeditionRules';
+import { forecastClash, forecastSend, moveSwift, movableRecordIdsFor } from '@xalians/rules/expedition/expeditionRules';
 import { prepare } from '@xalians/rules/expedition/creatureOnTable';
 
 /*
@@ -60,6 +60,12 @@ export function forecastTotalsAt(match, seat, forecast, siteId, extraId) {
 			hold, isHome, strainLevel,   the creature's own reading there
 			forecast,  the whole forecast with it sent there
 		} } },
+		moves: { [recordId]: { [siteId]: {      pass 55: a swift creature of yours on the board
+			swing,     how much stepping it there now moves the whole frame your way (the world
+			           it leaves and the world it joins together)
+			after,     { [siteId]: { mine, theirs, mineBefore, theirsBefore } } across the frame
+			forecast,  the whole forecast with it moved there
+		} } },
 	}
 
 	`roleOf(recordId)` names a chosen act (the act flip) for a creature, when there is one.
@@ -112,7 +118,46 @@ export function fitTable(match, seat, records, roleOf) {
 		});
 		fits[record.id] = row;
 	});
-	return { forecast, base, fits };
+	/*
+		PASS 55. A swift creature already on the board may step to another world once a round,
+		so its card carries columns for that too: the move forecast, netted across the frame,
+		because a move takes a creature away from one world as it gives it to another.
+	*/
+	const moves = {};
+	let movable = [];
+	try {
+		movable = match.turn === seat ? movableRecordIdsFor(match, seat) : [];
+	} catch (e) {
+		movable = [];
+	}
+	const marginOf = (t) => t.mine - t.theirs;
+	movable.forEach((recordId) => {
+		const row = {};
+		frame.sites.forEach((site) => {
+			// the engine's own move and forecast (forecastMove() is the same two calls); the moved
+			// board is kept, because the totals must count the creature where it now stands
+			let moved = null;
+			let after = null;
+			try {
+				moved = moveSwift(match, seat, recordId, site.id);
+				after = moved ? forecastClash(moved, seat) : null;
+			} catch (e) {
+				after = null;
+			}
+			if (!after) {
+				return;
+			}
+			const totals = {};
+			let swing = 0;
+			frame.sites.forEach((s) => {
+				totals[s.id] = forecastTotalsAt(moved, seat, after, s.id);
+				swing += marginOf(totals[s.id]) - marginOf(base[s.id]);
+			});
+			row[site.id] = { swing, after: totals, forecast: after };
+		});
+		moves[recordId] = row;
+	});
+	return { forecast, base, fits, moves };
 }
 
 /*

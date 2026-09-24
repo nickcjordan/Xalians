@@ -1,9 +1,11 @@
 // Tier: chrome. The front door, told as a story: the brand, one fixed sample
 // creature standing on its world, Nick's own 2022 account of Xalia in four
-// spreads, the creature's page, and the tournament that leads to the
-// Generator. Brief: docs/design/home-story-page-brief.md. The words are
-// Nick's (git 1285604e, my-app/src/pages/home.js) and the 2021 Yetimoth
-// entry; nothing on this page is written in the world's voice by an agent.
+// scenes, the creature's page, and the tournament that leads to the
+// Generator. Brief: docs/design/home-story-page-brief.md. The story's words
+// are Nick's (git 1285604e, my-app/src/pages/home.js) and the 2021 Yetimoth
+// entry. The one agent-written text is each scene's small label (SCENE_LABEL):
+// a plain description of what its painting shows, fact-checked against the
+// planet histories with the lore-factcheck skill before it shipped.
 import * as React from 'react';
 import { Link } from 'react-router';
 import XalianNavbar from '../components/navbar';
@@ -73,7 +75,7 @@ const ART = {
 		era: 'unbirth',
 		src: '/assets/img/lore/eras/unbirth.jpg',
 		small: '/assets/img/lore/eras/unbirth-768.jpg',
-		alt: 'A heavy industrial machine on flooded rock lets glowing seeds down a chute into the storm flood; the current spreads them across the plain, where some split and tadpole-like larvae swim out and others take root on the rocks; out in the distance the storm whips the water white, and far off a colossal tree rises from an island of young forest grown from earlier seeds.',
+		alt: 'A heavy industrial machine on flooded rock, ringed by young growth, lets glowing seeds down a chute into the storm flood; the current spreads them across the plain, where some split and larvae swim out and others take root on the rocks; out in the distance the storm whips the water white, and far off a colossal tree rises from an island of young forest grown from earlier seeds.',
 		// The living version: the Genesis Prototype on Floria, letting its seeds
 		// into the flood that was meant to wash its mistakes away.
 		live: '/assets/plates/unbirth/plate.html',
@@ -221,22 +223,19 @@ function Plate({
 	n,
 	from,
 	className,
-	compact = false,
 	children,
 }: {
 	n: string;
-	/** The side it slides out from as it scrolls in; left out on the stage, which moves it itself. */
+	/** The side it slides out from as it scrolls in. */
 	from?: 'left' | 'right' | 'up';
 	className?: string;
-	/** Body size on a phone, where the stage has to fit the plate and its painting on one screen. */
-	compact?: boolean;
 	children: React.ReactNode;
 }) {
 	return (
 		<div data-plate={from} className={cn('chamfer relative z-10 shadow-float', className)} style={PLATE_STYLE}>
-			<div className={cn('flex flex-col px-7 text-room sm:px-8', compact ? 'gap-2 pt-4 pb-5 lg:gap-3 lg:pt-5 lg:pb-7' : 'gap-3 pt-5 pb-7')}>
+			<div className="flex flex-col gap-3 px-7 pt-5 pb-7 text-room sm:px-8">
 				<span className="type-data text-tiny tracking-legend text-ink-4">{n}</span>
-				<p className={cn('m-0 font-body', compact ? 'text-body lg:text-lead' : 'text-lead')}>{children}</p>
+				<p className="m-0 font-body text-lead">{children}</p>
 			</div>
 		</div>
 	);
@@ -256,45 +255,95 @@ function StoryHead({ id, className, children }: { id?: string; className?: strin
 }
 
 /**
- * The story's scenes. Each spread keeps its own arrangement on the stage:
- * `wide` lays the caption over the painting's foot at the left, `wide-right`
- * at the right; `portrait` sets it beside the painting at the left, `side`
- * at the right. The stage sizes each painting to fit the screen by its aspect.
+ * What each painting shows, as a small label under it: a title and one or two
+ * plain sentences, the way a gallery labels a picture. Agent-written and
+ * fact-checked (see the file header); the story itself is the reading column.
+ */
+const SCENE_LABEL = {
+	unbirth: {
+		title: 'The Genesis Prototype on Floria',
+		text: 'The first Xalian Generator, raised on a world of bare rock and shallow sea, runs at full capacity through the storm. The flood meant to wash its mistakes away carries its glowing seeds out over the world, where some split and let larvae swim free and others take root on the rocks; far off, a World Tree grown from earlier seeds rises into the cloud.',
+	},
+	accords: {
+		title: 'The QED Works on Zolton',
+		text: 'A QED works stands on the summit of one of Zolton’s metal spires, above a sea of storm cloud lit red from within, while crimson sprites bloom like jellyfish over the bloodstorm. Chips set at opposite ends of a sprite, one in a pod hung above and one in the cradle on the mast below, come out entangled: the link that let APEX reach the Generators.',
+	},
+	'end-wars': {
+		title: 'The Fall over Grimedes',
+		text: 'A warship burning from a breach in its spine falls between lit towers under a night sky crossed with weapon fire. This is the Battle of Grimedes, where the remnants of the Vallerii fleets made their final assault on APEX’s forces and the End Wars ended.',
+	},
+	present: {
+		title: 'An Arena on Valleron',
+		text: 'A round bronze platform lies in the stone floor of an empty arena, ringed by tiered galleries and stairs. Xalians come to Valleron’s arenas to fight in King Kozrak’s tournament for the Scrambler Tokens their worlds need to replenish their numbers.',
+	},
+} as const;
+
+/**
+ * The story's scenes. Every scene has the same three parts: the painting, as
+ * large as the stage allows; its label, small, under the frame's foot; and the
+ * reading column, Nick's paragraph under its era's title, set large. Only the
+ * arrangement changes (`.scene-spread` in globals.css): `wide` and `wide-right`
+ * run the painting across the stage with the label and the reading column in
+ * a row beneath it (label left or right); `portrait` sets the reading column
+ * to the left of the painting and `side` to its right. On a phone all four
+ * stack: painting, label, reading column.
  */
 type Layout = 'wide' | 'wide-right' | 'portrait' | 'side';
+type Era = keyof typeof SCENE_LABEL;
 
-const SPREADS: Array<{ n: string; art: Art; text: string; layout: Layout; aspect: string; ar: number; position?: string; from: 'left' | 'right' }> = [
-	{ n: '01', art: ART.unbirth, text: STORY[0], layout: 'wide', aspect: 'aspect-[21/9]', ar: 21 / 9, position: 'object-[center_40%]', from: 'left' },
-	{ n: '02', art: ART.accords, text: STORY[1], layout: 'portrait', aspect: 'aspect-[4/5]', ar: 4 / 5, position: 'object-[60%_center]', from: 'left' },
-	// The turn of the story is the largest picture: it breaks the column where there is room.
-	{ n: '03', art: ART.endWars, text: STORY[2], layout: 'wide-right', aspect: 'aspect-[2/1]', ar: 2, from: 'right' },
-	{ n: '04', art: ART.present, text: STORY[3], layout: 'side', aspect: 'aspect-[4/3]', ar: 4 / 3, position: 'object-[40%_center]', from: 'right' },
+const SPREADS: Array<{ n: string; art: Art & { era: Era }; text: string; layout: Layout; aspect: string; ar: number; position?: string }> = [
+	{ n: '01', art: ART.unbirth, text: STORY[0], layout: 'wide', aspect: 'aspect-[21/9]', ar: 21 / 9, position: 'object-[center_40%]' },
+	{ n: '02', art: ART.accords, text: STORY[1], layout: 'portrait', aspect: 'aspect-[4/5]', ar: 4 / 5, position: 'object-[60%_center]' },
+	{ n: '03', art: ART.endWars, text: STORY[2], layout: 'wide-right', aspect: 'aspect-[2/1]', ar: 2 },
+	{ n: '04', art: ART.present, text: STORY[3], layout: 'side', aspect: 'aspect-[4/3]', ar: 4 / 3, position: 'object-[40%_center]' },
 ];
+
+/** The painting's label: what the picture shows, small, outside the frame. */
+function SceneLabel({ era, className }: { era: Era; className?: string }) {
+	const label = SCENE_LABEL[era];
+	return (
+		<div className={cn('scene-label flex flex-col gap-1 border-t border-edge pt-2.5', className)}>
+			<p className="m-0 font-body text-small font-bold text-ink-2">{label.title}</p>
+			<p className="m-0 font-body text-small text-ink-3">{label.text}</p>
+		</div>
+	);
+}
+
+/** The reading column: the era's title and Nick's paragraph, set to be read. */
+function SceneReading({ n, era, text, className }: { n: string; era: Era; text: string; className?: string }) {
+	return (
+		<div className={cn('scene-read flex flex-col', className)}>
+			<span className="type-data text-tiny tracking-legend text-ink-3">{n}</span>
+			<h3 className="type-heading m-0 mt-1.5 text-white lg:mt-2">{ERA_TITLE[era]}</h3>
+			<p className="m-0 mt-2 max-w-[62ch] font-body text-body leading-normal text-ink sm:text-lead sm:leading-normal lg:mt-3 lg:text-subhead lg:leading-normal">{text}</p>
+		</div>
+	);
+}
 
 const STORY_SCENES: StageScene[] = SPREADS.map((sp) => ({
 	key: sp.n,
 	n: sp.n,
-	label: ERA_TITLE[sp.art.era!],
+	label: ERA_TITLE[sp.art.era],
 	live: sp.art.live,
 	render: (live) =>
 		live === undefined ? (
-			// Stacked (a window too short for the stage): the spread in the page.
-			<div className="grid grid-cols-1">
-				<Panel n={sp.n} art={sp.art} aspect={sp.aspect} position={sp.position} />
-				<Plate n={sp.n} from={sp.from} className="-mt-7 mx-4">
-					{sp.text}
-				</Plate>
+			// Stacked (a window too short for the stage): the scene in the page.
+			<div className="grid grid-cols-1 gap-x-8 gap-y-5 md:grid-cols-12">
+				<div className="md:col-span-7">
+					<Panel art={sp.art} aspect={sp.aspect} position={sp.position} />
+					<SceneLabel era={sp.art.era} className="mt-4" />
+				</div>
+				<SceneReading n={sp.n} era={sp.art.era} text={sp.text} className="md:col-span-5 md:self-center" />
 			</div>
 		) : (
 			<div className="scene-spread" data-layout={sp.layout} style={{ '--ar': sp.ar } as React.CSSProperties}>
-				<div className="scene-frame">
-					<Panel n={sp.n} art={sp.art} aspect={sp.aspect} position={sp.position} live={live} staged />
+				<div className="scene-art">
+					<div className="scene-frame">
+						<Panel art={sp.art} aspect={sp.aspect} position={sp.position} live={live} staged />
+					</div>
+					<SceneLabel era={sp.art.era} />
 				</div>
-				<div className="scene-caption" data-from={sp.from}>
-					<Plate n={sp.n} compact>
-						{sp.text}
-					</Plate>
-				</div>
+				<SceneReading n={sp.n} era={sp.art.era} text={sp.text} />
 			</div>
 		),
 }));

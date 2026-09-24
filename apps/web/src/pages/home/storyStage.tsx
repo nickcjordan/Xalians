@@ -1,11 +1,16 @@
 // Tier: featured component. The home story's stage: the story's scenes shown
 // one at a time. The section pins a full-height stage while the reader scrolls
-// through it; each stretch of scroll is one scene, and crossing into the next
-// stretch sends the current scene out and brings the next one in (the frame
-// drifts and fades in the direction of travel, then its caption plate slides
-// out from behind it). The transitions themselves are CSS (`.story-scene` in
-// globals.css), keyed off each scene's state, so reversing direction plays them
-// backward for free.
+// through it, and a timeline in the stage's head answers every scroll: its dot
+// is the reader's place in the whole section, moved directly by the scroll
+// position, so no scroll ever goes unanswered (Nick, 2026-09-23). The track has
+// one marker per scene; when the dot reaches a scene's marker, that scene comes
+// on stage and the one before it leaves (the frame drifts and fades the way the
+// page travels, then the reading column and the painting's label arrive). The
+// transitions are CSS (`.story-scene` in globals.css), keyed off each scene's
+// state, so reversing direction plays them backward. The dot is written straight
+// to a custom property from the scroll listener's animation frame, never through
+// React state, and it follows the scroll under reduced motion too: it is
+// feedback, not decoration.
 //
 // Only one scene's living plate is ever in the DOM. The outgoing scene keeps its
 // plate playing while it fades; the incoming one shows its still, which is the
@@ -13,17 +18,18 @@
 // swap is invisible. A scene off the stage, or a stage off the screen, holds no
 // SVG at all.
 //
-// A window too short for a scene and its caption (a phone on its side) gets the
-// scenes stacked in the page instead, where the plate most in view is live.
+// A window too short for a scene and its words (a phone on its side, a small
+// phone) gets the scenes stacked in the page instead, where the plate most in
+// view is live.
 import * as React from 'react';
 import { cn } from '@/lib/utils';
 import { loadFragment } from '@/components/plates/plateStage';
 
 export type StageScene = {
 	key: string;
-	/** The scene's numeral on the rail, e.g. "01". */
+	/** The scene's numeral on the timeline, e.g. "01". */
 	n: string;
-	/** What the rail's key announces, e.g. "The Age of Unbirth". */
+	/** The scene's name on the timeline and in its marker's label, e.g. "The Age of Unbirth". */
 	label: string;
 	/** A living plate's fragment, fetched ahead while its scene is next. */
 	live?: string;
@@ -37,8 +43,22 @@ export type StageScene = {
 // The incoming frame's entrance (delay plus transform, see `.story-scene`)
 // is over by now; the live plate takes over from its still only after it.
 const SETTLE_MS = 1150;
-// A scene and its caption need this much height; below it the scenes stack.
-const STAGE_QUERY = '(min-height: 560px)';
+// A scene and its words need this much height (more on a narrow screen,
+// where they stack under the painting); below it the scenes stack.
+const STAGE_QUERY = '(min-width: 1000px) and (min-height: 560px), (min-height: 700px)';
+
+/**
+ * Where the reader is in the stage. `scrolled` is how far the section's top has
+ * gone above the viewport's top and `range` is how far it can go while pinned.
+ * `p` runs continuously from 0 to 1 over the whole range, so any scroll inside
+ * it moves the dot; the range is cut into one equal stretch per scene, and
+ * scene `i` is shown from its marker at `i / count` to the next one.
+ */
+export function stageProgress(scrolled: number, range: number, count: number) {
+	const p = range > 0 ? Math.min(1, Math.max(0, scrolled / range)) : 0;
+	const index = Math.min(count - 1, Math.floor(p * count));
+	return { p, index };
+}
 
 function reducedMotion() {
 	return typeof window !== 'undefined' && !!window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -52,12 +72,14 @@ function canStage() {
 export function StoryStage({ id, title, scenes }: { id: string; title: React.ReactNode; scenes: StageScene[] }) {
 	const wrapRef = React.useRef<HTMLElement>(null);
 	const stageRef = React.useRef<HTMLDivElement>(null);
+	const lineRef = React.useRef<HTMLDivElement>(null);
 	const [staged, setStaged] = React.useState(canStage);
 	const [index, setIndex] = React.useState(0);
 	const [settled, setSettled] = React.useState(0);
 	const [inView, setInView] = React.useState(false);
 	const [near, setNear] = React.useState(false);
 	const measured = React.useRef(false);
+	const count = scenes.length;
 
 	React.useEffect(() => {
 		if (typeof window === 'undefined' || !window.matchMedia) return undefined;
@@ -67,13 +89,13 @@ export function StoryStage({ id, title, scenes }: { id: string; title: React.Rea
 		return () => mq.removeEventListener?.('change', apply);
 	}, []);
 
-	// The scroll position picks the scene: each scene holds one step of scroll.
-	const step = React.useCallback(() => {
+	// How far the section can scroll while its stage is pinned.
+	const range = React.useCallback(() => {
 		const wrap = wrapRef.current;
 		const stage = stageRef.current;
-		if (!wrap || !stage || scenes.length < 2) return 0;
-		return (wrap.offsetHeight - stage.offsetHeight) / (scenes.length - 1);
-	}, [scenes.length]);
+		if (!wrap || !stage) return 0;
+		return Math.max(0, wrap.offsetHeight - stage.offsetHeight);
+	}, []);
 
 	React.useEffect(() => {
 		if (!staged) return undefined;
@@ -83,8 +105,9 @@ export function StoryStage({ id, title, scenes }: { id: string; title: React.Rea
 			const wrap = wrapRef.current;
 			if (!wrap) return;
 			const r = wrap.getBoundingClientRect();
-			const s = step();
-			const at = s > 0 ? Math.min(scenes.length - 1, Math.max(0, Math.round(-r.top / s))) : 0;
+			const { p, index: at } = stageProgress(-r.top, range(), count);
+			// The dot, every frame the page moved: straight to the style, no render.
+			lineRef.current?.style.setProperty('--story-progress', String(p));
 			setIndex(at);
 			// The first reading is where the page opened, not a move: no entrance.
 			if (!measured.current) {
@@ -105,7 +128,7 @@ export function StoryStage({ id, title, scenes }: { id: string; title: React.Rea
 			window.removeEventListener('resize', schedule);
 			if (frame) window.cancelAnimationFrame(frame);
 		};
-	}, [staged, step, scenes.length]);
+	}, [staged, range, count]);
 
 	// The live plate follows the shown scene once its entrance has settled.
 	React.useEffect(() => {
@@ -128,10 +151,11 @@ export function StoryStage({ id, title, scenes }: { id: string; title: React.Rea
 		}
 	}, [staged, near, index, scenes]);
 
+	// A marker puts the dot on itself: the start of its scene's stretch.
 	const goTo = (i: number) => {
 		const wrap = wrapRef.current;
 		if (!wrap) return;
-		const top = window.scrollY + wrap.getBoundingClientRect().top + i * step() + 1;
+		const top = window.scrollY + wrap.getBoundingClientRect().top + (i * range()) / count + 2;
 		// A jump, not a glide: the scene transition is the motion.
 		window.scrollTo({ top, behavior: 'auto' });
 	};
@@ -155,30 +179,39 @@ export function StoryStage({ id, title, scenes }: { id: string; title: React.Rea
 			ref={wrapRef}
 			aria-labelledby={`${id}-title`}
 			className="story-stage relative"
-			style={{ height: `calc(100svh + ${scenes.length - 1} * var(--story-step))` }}
+			style={{ height: `calc(100svh + ${count} * var(--story-step))` }}
 		>
-			<div ref={stageRef} className="sticky top-0 flex h-svh flex-col pt-14 pb-6">
-				<div className="flex items-end justify-between gap-6 pt-5 pb-5 lg:pt-7">
+			<div ref={stageRef} className="sticky top-0 flex h-svh flex-col pt-14 pb-5 lg:pb-6">
+				<div className="flex flex-wrap items-end gap-x-10 gap-y-1 pt-4 pb-3 lg:pt-6 lg:pb-5">
 					{title}
-					<ol className="m-0 flex list-none items-end gap-1 p-0" aria-label="Scenes">
-						{scenes.map((s, i) => (
-							<li key={s.key} className="m-0">
-								<button
-									type="button"
-									onClick={() => goTo(i)}
-									aria-label={`${s.n} ${s.label}`}
-									aria-current={i === index ? 'step' : undefined}
-									className={cn(
-										'type-data flex flex-col items-center gap-1.5 px-2 pt-1 pb-0 text-tiny tracking-legend transition-colors duration-1 ease-out focus-visible:outline-2 focus-visible:outline-ring',
-										i === index ? 'text-ink' : 'text-ink-4 hover:text-ink-2'
-									)}
-								>
-									{s.n}
-									<span aria-hidden="true" className={cn('block h-0.5 w-6 transition-colors duration-1 ease-out', i === index ? 'bg-ink' : 'bg-edge-strong')} />
-								</button>
-							</li>
-						))}
-					</ol>
+					{/* The timeline: one stretch per scene, a marker at the start of
+					    each, and a dot that is the reader's place in the section. */}
+					<div ref={lineRef} className="story-line min-w-64 flex-1" style={{ '--story-progress': 0 } as React.CSSProperties}>
+						<ol className="m-0 flex list-none p-0" aria-label="Scenes">
+							{scenes.map((s, i) => (
+								<li key={s.key} className="m-0 min-w-0 flex-1">
+									<button
+										type="button"
+										onClick={() => goTo(i)}
+										aria-label={`${s.n} ${s.label}`}
+										aria-current={i === index ? 'step' : undefined}
+										data-reached={i <= index ? '' : undefined}
+										className={cn(
+											'story-marker type-data flex h-11 w-full min-w-0 items-end gap-2 pb-3 pl-2 text-left text-tiny tracking-legend transition-colors duration-1 ease-out focus-visible:outline-2 focus-visible:outline-ring',
+											i === index ? 'text-ink' : 'text-ink-3 hover:text-ink-2'
+										)}
+									>
+										<span>{s.n}</span>
+										<span className="type-legend hidden truncate text-current lg:inline">{s.label}</span>
+									</button>
+								</li>
+							))}
+						</ol>
+						<span aria-hidden="true" className="story-track">
+							<span className="story-fill" />
+							<span className="story-dot" />
+						</span>
+					</div>
 				</div>
 				<div className="relative min-h-0 flex-1">
 					{scenes.map((s, i) => (

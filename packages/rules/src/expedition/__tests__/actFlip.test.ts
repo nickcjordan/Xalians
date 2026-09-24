@@ -70,8 +70,9 @@ const roster = () => Array.from({ length: 12 }, () => twoWay());
 const match = (rules: any) => createMatch({ rosterA: roster(), rosterB: roster(), worlds: makeWorlds(), seed: 'act-flip', rules });
 
 describe('act flip: the roles a record can support', () => {
-	test('is shipped on', () => {
-		expect(ACT_FLIP).toBe(true);
+	// pass 55 (Nick, 2026-09-23): the act choice is off; the lever stays, and the tests below turn it on
+	test('is shipped off', () => {
+		expect(ACT_FLIP).toBe(false);
 	});
 
 	test('a creature that can both attack and protect offers both', () => {
@@ -128,7 +129,7 @@ describe('act flip: the choice is honoured, and gated', () => {
 		printing the board entry after the send did.
 	*/
 	test('the chosen role survives on the board, not just in prepare', () => {
-		let state: any = match(null);
+		let state: any = match({ actFlip: true });
 		const seat = state.turn;
 		const rec = state.players[seat].roster[0];
 		const alt = flippableRolesOf(rec, state.rules).find((r: any) => r !== naturalRoleOf(rec));

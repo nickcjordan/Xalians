@@ -95,8 +95,8 @@ function makeWorlds(count = WORLDS_PER_MATCH): World[] {
 	read the BOARD only before the double pass. A board read after resolution is a board from
 	the next frame, which is empty by design.
 */
-function openAtOneWorld(rosterA: XalianRecord[], rosterB: XalianRecord[], seed: string) {
-	let state = createMatch({ rosterA, rosterB, worlds: makeWorlds(), seed });
+function openAtOneWorld(rosterA: XalianRecord[], rosterB: XalianRecord[], seed: string, rules?: any) {
+	let state = createMatch({ rosterA, rosterB, worlds: makeWorlds(), seed, rules });
 	const siteId = currentFrame(state).sites[0].id;
 	// the starter is drawn from the seed, so both sends follow the turn the engine hands out
 	const starter = state.starter;
@@ -116,8 +116,8 @@ function allEntries(view: any) {
 	return Object.values(view.board).flatMap((site: any) => [...site.A, ...site.B]);
 }
 
-function clashWith(rosterA: XalianRecord[], rosterB: XalianRecord[], seed = 'status-seed') {
-	let { state, siteId, starter, second } = openAtOneWorld(rosterA, rosterB, seed);
+function clashWith(rosterA: XalianRecord[], rosterB: XalianRecord[], seed = 'status-seed', rules?: any) {
+	let { state, siteId, starter, second } = openAtOneWorld(rosterA, rosterB, seed, rules);
 	state = pass(state, starter)!;
 	state = pass(state, second)!;
 	return { state, siteId, log: state.resolutionLog };
@@ -202,7 +202,7 @@ describe('held takes the swing away', () => {
 	});
 });
 
-describe('attrition is recorded even though the Clash resolves once', () => {
+describe('attrition bites between the exchanges of a fight', () => {
 	/*
 		A world sees one Clash, so a burning creature has no LATER round at that world to be
 		burned in. What attrition can still do is bite the creatures that are standing when the
@@ -214,14 +214,29 @@ describe('attrition is recorded even though the Clash resolves once', () => {
 		stands there is no second Clash for it to fire at. This test pins the fact rather than
 		claiming the feature works, so nobody reads the passing suite as proof that burning
 		does damage over time today.
+
+		PASS 56 changed that. A world's Clash is now fought exchange after exchange until one side
+		has nobody standing, and statuses tick between exchanges, so burning bites in the fight
+		that applied it (Nick: "that would also allow you to implement the concepts like burning
+		and other statuses that are multi-turn"). The single exchange is kept as a lever, and
+		under it the old fact still holds.
 	*/
-	test('a burning status is applied and recorded, and no second Clash follows it', () => {
+	test('a burning status bites in the next exchange of the fight', () => {
 		const burner = makeRoster('A', () => ({
 			actions: [action({ effects: [harmEffect({ intensity: 10 }), statusEffect('burning', { duration: 'prolonged' })] })],
 		}));
 		const { log } = clashWith(burner, makeRoster('B'));
 		expect(log.filter((e: any) => e.type === 'status' && e.status === 'burning').length).toBeGreaterThan(0);
-		// one Clash per frame: nothing ticked, because no round followed at this world
+		expect(log.filter((e: any) => e.type === 'exchange').length).toBeGreaterThan(0);
+		expect(log.filter((e: any) => e.type === 'attrition').length).toBeGreaterThan(0);
+	});
+
+	test('with a single exchange, a burning status is applied and nothing ticks', () => {
+		const burner = makeRoster('A', () => ({
+			actions: [action({ effects: [harmEffect({ intensity: 10 }), statusEffect('burning', { duration: 'prolonged' })] })],
+		}));
+		const { log } = clashWith(burner, makeRoster('B'), 'status-seed', { clashExchanges: 1 });
+		expect(log.filter((e: any) => e.type === 'status' && e.status === 'burning').length).toBeGreaterThan(0);
 		expect(log.filter((e: any) => e.type === 'attrition')).toHaveLength(0);
 	});
 });

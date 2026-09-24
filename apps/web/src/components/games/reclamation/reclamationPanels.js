@@ -24,9 +24,9 @@ export function Panel({ title, onClose, children, kind }) {
 
 const ROLES = [
 	['strike', 'Strike', 'hits one enemy creature at its world.'],
-	['sweep', 'Sweep', 'hits every other creature at its world, your own included.'],
-	['bolster', 'Bolster', 'restores half of what the round took from your creatures beside it.'],
-	['shield', 'Shield', 'blunts the biggest attack against your side at its world, and takes half of what it stops.'],
+	['sweep', 'Sweep', 'hits every enemy creature at its world, for less than a strike.'],
+	['bolster', 'Bolster', 'gives your creatures beside it back half of what the fight took, between exchanges and at the Ruling.'],
+	['shield', 'Shield', 'stops the biggest attack against your side at its world, every exchange.'],
 ];
 
 export function HelpPanel({ match, clinch, onClose }) {
@@ -35,7 +35,7 @@ export function HelpPanel({ match, clinch, onClose }) {
 		<Panel title="How to play" kind="help" onClose={onClose}>
 			<section className="rec-help-section">
 				<h3 className="rec-help-head">The aim</h3>
-				<p>Each round puts three worlds on the table. Whoever holds more of a world when the round ends wins it. The first to {clinch} worlds wins the game.</p>
+				<p>Each round puts three worlds on the table. Each world is fought until one side has nobody left standing, and that side takes it. The first to {clinch} worlds wins the game.</p>
 			</section>
 			<section className="rec-help-section">
 				<h3 className="rec-help-head">Your turn</h3>
@@ -44,7 +44,7 @@ export function HelpPanel({ match, clinch, onClose }) {
 					<li>Pick a world.</li>
 					<li>Or pass. A pass lasts the rest of the round, so pass when you want to keep creatures for later.</li>
 				</ol>
-				<p>You have {SENDABLE} sends for the whole game, across {FRAMES_PER_MATCH} rounds, so not every creature in your squad will be sent: choose which. When both sides have passed, the worlds clash one at a time, the fastest creatures acting first; each blow is told on the world it lands on, and the whole account is in the history (&equiv;). Then the round is ruled.</p>
+				<p>You have {SENDABLE} sends for the whole game, across {FRAMES_PER_MATCH} rounds, so not every creature in your squad will be sent: choose which. When both sides have passed, the worlds clash one at a time. At each, every creature still standing acts, fastest first, exchange after exchange, until one side has nobody standing (if nobody standing can attack, the side holding more takes it). Each blow is told on the world it lands on, and the whole account is in the history (&equiv;). Then the round is ruled.</p>
 			</section>
 			<section className="rec-help-section">
 				<h3 className="rec-help-head">Stake &times;2</h3>

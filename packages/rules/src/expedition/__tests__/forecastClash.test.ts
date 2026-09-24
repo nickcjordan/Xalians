@@ -5,7 +5,7 @@
 	Ruling leaves standing, at exactly their held values. And it must not touch the state.
 */
 import { describe, test, expect } from 'vitest';
-import { createMatch, send, pass, moveSwift, stakeWorld, getPublicState, forecastClash, forecastSend, createRngState, nextRandom } from '../expeditionRules.ts';
+import { createMatch, send, pass, moveSwift, stakeWorld, getPublicState, forecastClash, forecastSend, forecastMove, movableRecordIdsFor, createRngState, nextRandom } from '../expeditionRules.ts';
 import { chooseSend, chooseStake } from '../expeditionBot.ts';
 import { buildRosters } from '../roster.ts';
 import { getWorlds } from '../sites.ts';
@@ -191,5 +191,33 @@ describe('forecastSend', () => {
 	test('is null for a creature not in hand, a site not in the round, or outside Deploy', () => {
 		const state = playMatch('s3', () => {});
 		expect(forecastSend(state, 'A', 'nope', 'nope')).toBe(null);
+	});
+});
+
+/*
+	PASS 55. A swift creature's card shows what stepping to another world would do, so the
+	forecast of a move must be the move: forecastClash() after the real moveSwift().
+*/
+describe('forecastMove', () => {
+	test('equals forecastClash after the real move, and refuses what moveSwift refuses', () => {
+		let checked = 0;
+		['m1', 'm2', 'm3', 'm4', 'm5', 'm6', 'm7', 'm8'].forEach((seed) => {
+			playMatch(seed, (before) => {
+				const handler = before.turn as Seat;
+				movableRecordIdsFor(before, handler).forEach((id) => {
+					before.frames[before.frameIndex].sites.forEach((site: any) => {
+						const moved = moveSwift(before, handler, id, site.id);
+						const forecast = forecastMove(before, handler, id, site.id);
+						if (!moved) {
+							expect(forecast).toBe(null);
+							return;
+						}
+						expect(forecast).toEqual(forecastClash(moved, handler));
+						checked += 1;
+					});
+				});
+			});
+		});
+		expect(checked).toBeGreaterThan(0);
 	});
 });
