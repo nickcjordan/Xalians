@@ -1,4 +1,4 @@
-// Tier: immersive. Powerworks presentation redesign authorized by Nick. The squad draft before the first encounter is chrome and lives in powerworksDraft.tsx (contract decision 49).
+// Tier: immersive. Powerworks presentation redesign authorized by Nick. The run takes the preset squad (Nick, 2026-09-24: squad selection belongs outside this game, later).
 import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 
 import { Link } from "react-router";
@@ -101,7 +101,6 @@ import {
 } from "./powerworksScene";
 import { PowerworksRadial, ringIndices } from "./powerworksRadial";
 import { PowerworksEnvironment } from "./powerworksEnvironment";
-import { PowerworksDraft } from "./powerworksDraft";
 import { useBattlePresentation } from "./powerworksPresentation";
 import "./powerworks.css";
 import "./powerworksScene.css";
@@ -248,9 +247,8 @@ export default function PowerworksPage() {
 
   const [run, setRun] = useState<Run>(initial.state),
     [history, setHistory] = useState<Command[]>(initial.history),
-    [started, setStarted] = useState(initial.started),
-    [drafting, setDrafting] = useState(false);
-  // The starter squad as the briefing shows it before a squad is chosen (contract decision 47).
+    [started, setStarted] = useState(initial.started);
+  // The preset squad as the briefing shows it before the run begins (contract decision 47).
   const starter = useMemo(() => squadUnits(run.seed, "starter"), [run.seed]);
 
   // The companion whose orders are open on the stage; "" when nothing is selected.
@@ -733,7 +731,6 @@ export default function PowerworksPage() {
     setRun(next);
     setHistory([]);
     setStarted(false);
-    setDrafting(false);
     setSelected("");
     setPlans({});
     setPending(null);
@@ -741,7 +738,7 @@ export default function PowerworksPage() {
     setLastFrames([]);
     setPanel(null);
     setError("");
-    setNotice("New expedition ready. Choose a squad.");
+    setNotice("New expedition ready.");
     try {
       localStorage.removeItem(SAVE_KEY);
     } catch {
@@ -757,7 +754,6 @@ export default function PowerworksPage() {
       setRun(next);
       setHistory([action]);
       setStarted(true);
-      setDrafting(false);
       setSelected(nextInSpeed(next, {})?.id ?? "");
       setRingFocus(false);
       setPlans({});
@@ -1272,17 +1268,6 @@ export default function PowerworksPage() {
       ? "Forced out"
       : "Squad extracted";
 
-  // The draft is setup, so it is the site's chrome rather than this immersive page
-  // (contract decision 49). It replaces the page until a squad is chosen.
-  if (!started && drafting)
-    return (
-      <PowerworksDraft
-        seed={run.seed}
-        onBack={() => setDrafting(false)}
-        onEnter={(picks) => begin(picks)}
-      />
-    );
-
   return (
     <main
       className={`pw ${started ? "in-run" : ""} room-${run.room} ${
@@ -1403,9 +1388,8 @@ export default function PowerworksPage() {
             </h1>
             <p>The facility has been abandoned. Its defenses haven’t.</p>
             <p>
-              Draft four of eight generated creatures, or take the starter
-              squad. Plan their moves together, read the enemy’s behavior, and
-              reach the central guardian.
+              Lead a squad of four. Plan their moves together, read the
+              enemy’s behavior, and reach the central guardian.
             </p>
             <div className="pw-brief-facts">
               <span>
@@ -1419,11 +1403,8 @@ export default function PowerworksPage() {
               </span>
             </div>
             <div className="pw-brief-actions">
-              <button className="pw-primary" onClick={() => setDrafting(true)}>
-                Draft a squad <ArrowRight />
-              </button>
-              <button onClick={() => begin("starter")}>
-                Take the starter squad
+              <button className="pw-primary" onClick={() => begin("starter")}>
+                Enter the facility <ArrowRight />
               </button>
             </div>
             <small>
@@ -2327,7 +2308,7 @@ export default function PowerworksPage() {
           <>
             <p>
               This replaces your current run and returns to the briefing. The
-              same seed deals the same draft and the same starting point.
+              same seed deals the same starting point.
             </p>
             <div className="pw-outcome-actions">
               <button onClick={() => setPanel(null)}>Keep playing</button>

@@ -3,7 +3,6 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { act, fireEvent, render, screen, cleanup } from "@testing-library/react";
 import { MemoryRouter } from "react-router";
 import PowerworksPage, { consoleScale } from "./powerworksPage";
-import { PowerworksDraft } from "./powerworksDraft";
 import { kindWords } from "./powerworksVisuals";
 import {
   COMPANION_KEYS,
@@ -113,7 +112,7 @@ function planAll(moves: Record<string, [string, string | null] | string>) {
 describe("Powerworks player flow", () => {
   it("requires the whole squad, resolves a round, and restores it after remount", () => {
     const ui = mount();
-    fireEvent.click(screen.getByRole("button", { name: "Take the starter squad" }));
+    fireEvent.click(screen.getByRole("button", { name: "Enter the facility" }));
     expect(screen.getByRole("button", { name: "Commit round" })).toBeDisabled();
     // Seed 1 deals Hippochamp, Crystorn, Avilily, Graviclaw. The rings open in speed order,
     // fastest first, and each order moves on to the next companion without one.
@@ -145,7 +144,7 @@ describe("Powerworks player flow", () => {
   });
   it("plays a round in the planning stage's place: the controls take Commit's place in the bottom bar and the banner names the beat", () => {
     mount();
-    fireEvent.click(screen.getByRole("button", { name: "Take the starter squad" }));
+    fireEvent.click(screen.getByRole("button", { name: "Enter the facility" }));
     planAll({
       Hippochamp: "Emergency Water Cannon",
       Crystorn: "Gem Radiance",
@@ -192,14 +191,14 @@ describe("Powerworks player flow", () => {
     localStorage.setItem("xalians.powerworks.v1", "{broken");
     mount();
     expect(
-      screen.getByRole("button", { name: /Draft a squad/ })
+      screen.getByRole("button", { name: /Enter the facility/ })
     ).toBeInTheDocument();
     fireEvent.click(screen.getByRole("button", { name: "Field guide" }));
     expect(screen.getByText(/Desperate strike deals 3/)).toBeInTheDocument();
   });
   it("orders on the stage: select, choose by key, target, back out with Escape, reopen from the chip", () => {
     mount();
-    fireEvent.click(screen.getByRole("button", { name: "Take the starter squad" }));
+    fireEvent.click(screen.getByRole("button", { name: "Enter the facility" }));
     // The move tray and the squad row are gone: the stage is the only place orders are given.
     expect(document.querySelector(".pw-moves, .pw-squad, .pw-command-head")).toBeNull();
     expect(screen.queryByRole("region", { name: "Your squad" })).toBeNull();
@@ -263,7 +262,7 @@ describe("Powerworks player flow", () => {
   });
   it("names the ring as a menu of slots and moves between companions with Tab", () => {
     mount();
-    fireEvent.click(screen.getByRole("button", { name: "Take the starter squad" }));
+    fireEvent.click(screen.getByRole("button", { name: "Enter the facility" }));
     fireEvent.click(screen.getByRole("button", { name: "Select Crystorn" }));
     const menu = screen.getByRole("menu", { name: "Crystorn's moves" });
     const slots = screen.getAllByRole("menuitem");
@@ -294,7 +293,7 @@ describe("Powerworks player flow", () => {
     vi.stubGlobal("PointerEvent", TouchPointer);
     Object.defineProperty(window, "PointerEvent", { value: TouchPointer, configurable: true });
     mount();
-    fireEvent.click(screen.getByRole("button", { name: "Take the starter squad" }));
+    fireEvent.click(screen.getByRole("button", { name: "Enter the facility" }));
     fireEvent.click(screen.getByRole("button", { name: "Select Crystorn" }));
     const ram = screen.getByRole("menuitem", { name: /^Crystorn: Heavy Ram/ });
     fireEvent.pointerDown(ram, { pointerType: "touch" });
@@ -318,7 +317,7 @@ describe("Powerworks player flow", () => {
   });
   it("sets the order at once for a move that acts only on its user", () => {
     mount();
-    fireEvent.click(screen.getByRole("button", { name: "Take the starter squad" }));
+    fireEvent.click(screen.getByRole("button", { name: "Enter the facility" }));
     fireEvent.click(screen.getByRole("button", { name: "Select Graviclaw" }));
     // A guard on itself has no power; its name says what it does instead.
     const anchor = screen.getByRole("menuitem", { name: /^Graviclaw: Ground Anchor/ });
@@ -341,7 +340,7 @@ describe("Powerworks player flow", () => {
   });
   it("explains visual move stats without repeating power and range text on cards", () => {
     mount();
-    fireEvent.click(screen.getByRole("button", { name: "Take the starter squad" }));
+    fireEvent.click(screen.getByRole("button", { name: "Enter the facility" }));
     fireEvent.click(screen.getByRole("button", { name: "Select Hippochamp" }));
     const attack = screen.getByRole("menuitem", {
       name: /^Hippochamp: Emergency Water Cannon, signature, water, power 5, ready$/,
@@ -378,7 +377,7 @@ describe("Powerworks player flow", () => {
   });
   it("lists each condition on a companion with its plain-language rule in the inspector", () => {
     mount();
-    fireEvent.click(screen.getByRole("button", { name: "Take the starter squad" }));
+    fireEvent.click(screen.getByRole("button", { name: "Enter the facility" }));
     // Graviclaw's Ground Anchor is the squad's one guarding status; playing it puts a
     // real condition on a real companion, which the inspector must then explain. It acts
     // on its user, so it takes no target.
@@ -400,7 +399,7 @@ describe("Powerworks player flow", () => {
   });
   it("separates public initiative from hidden decisions and makes the route discoverable", () => {
     mount();
-    fireEvent.click(screen.getByRole("button", { name: "Take the starter squad" }));
+    fireEvent.click(screen.getByRole("button", { name: "Enter the facility" }));
     fireEvent.click(screen.getByRole("button", { name: "View turn order" }));
     const list = document.querySelector<HTMLElement>(".pw-turn-list")!;
     // The fastest companion leads the public order, with the speed its record reads.
@@ -420,7 +419,7 @@ describe("Powerworks player flow", () => {
   });
   it("shows the turn order in the bottom bar, marks set orders, and selects a companion from it (layout pass)", () => {
     mount();
-    fireEvent.click(screen.getByRole("button", { name: "Take the starter squad" }));
+    fireEvent.click(screen.getByRole("button", { name: "Enter the facility" }));
     const strip = screen.getByRole("list", { name: "Turn order" });
     const turns = Array.from(strip.querySelectorAll("button")).map((b) => b.getAttribute("aria-label"));
     // The same order the turn order panel reads: the fastest companion first, every
@@ -446,7 +445,7 @@ describe("Powerworks player flow", () => {
   });
   it("offers squadmates as targets for a helpful move and previews what lands on them (pass 5)", () => {
     mount();
-    fireEvent.click(screen.getByRole("button", { name: "Take the starter squad" }));
+    fireEvent.click(screen.getByRole("button", { name: "Enter the facility" }));
     // The cannon carries a cooling removal, so it may name a squadmate as well as an
     // enemy; Water Sweep only harms, so it names enemies only.
     fireEvent.click(screen.getByRole("button", { name: "Select Hippochamp" }));
@@ -498,7 +497,7 @@ describe("Powerworks player flow", () => {
   it("shows the base move name on a slot and the plaque chip and keeps the full name reachable", () => {
     naming.long = true;
     mount();
-    fireEvent.click(screen.getByRole("button", { name: "Take the starter squad" }));
+    fireEvent.click(screen.getByRole("button", { name: "Enter the facility" }));
     // A compositional name is the longest a move can carry; the ring slot and the plaque
     // chip must show its base name, not the whole qualifier list.
     fireEvent.click(screen.getByRole("button", { name: "Select Hippochamp" }));
@@ -515,63 +514,6 @@ describe("Powerworks player flow", () => {
     expect(label.textContent).not.toMatch(/;/);
     expect(label.closest("button")!.getAttribute("title")).toMatch(/;/);
   });
-  it("drafts four of eight generated creatures and plays the run with them (pass 6)", () => {
-    const ui = mount();
-    fireEvent.click(screen.getByRole("button", { name: /Draft a squad/ }));
-    const offer = draftOffer(1);
-    expect(screen.getAllByRole("button", { name: /^Pick / })).toHaveLength(8);
-    const enter = screen.getByRole("button", { name: /Enter the facility/ });
-    expect(enter).toBeDisabled();
-    // Four species outside the starter squad, so the game must draw drafted creatures.
-    const starter: readonly string[] = COMPANION_KEYS;
-    const chosen = offer.filter((e) => !starter.includes(e.species)).slice(0, 4);
-    expect(chosen).toHaveLength(4);
-    for (const e of chosen)
-      fireEvent.click(screen.getByRole("button", { name: `Pick ${e.unit.name}` }));
-    expect(enter).toBeEnabled();
-    // A fifth pick waits for a swap.
-    const other = offer.find((e) => !chosen.includes(e))!;
-    const fifth = screen.getByRole("button", { name: `Pick ${other.unit.name}` });
-    expect(fifth).toHaveAttribute("aria-disabled", "true");
-    fireEvent.click(fifth);
-    expect(fifth).toHaveAttribute("aria-pressed", "false");
-    expect(enter).toBeEnabled();
-    fireEvent.click(enter);
-    for (const e of chosen)
-      expect(screen.getByRole("button", { name: `Select ${e.unit.name}` })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Commit round" })).toBeDisabled();
-    // The drafted run is saved from its draft command and restored after a remount.
-    ui.unmount();
-    mount();
-    for (const e of chosen)
-      expect(screen.getByRole("button", { name: `Select ${e.unit.name}` })).toBeInTheDocument();
-    const save = JSON.parse(localStorage.getItem("xalians.powerworks.v1")!);
-    expect(save.version).toBe(8);
-    expect(save.history[0]).toEqual({
-      kind: "draft",
-      squad: chosen.map((e) => e.index).sort((a, b) => a - b),
-    });
-  });
-  it("shows each offered creature as the game reads it and marks an unsupported action plainly", () => {
-    // Find a seed whose offer carries an action the game cannot resolve (Smokat's Smoke Dispersal).
-    let seed = 1;
-    while (!draftOffer(seed).some((e) => e.unit.moves.some((m) => !usable(m)))) seed++;
-    const offer = draftOffer(seed);
-    render(
-      <MemoryRouter>
-        <PowerworksDraft seed={seed} onBack={() => {}} onEnter={() => {}} />
-      </MemoryRouter>
-    );
-    expect(document.querySelector('[data-tier="chrome"]')).toBeTruthy();
-    for (const e of offer) {
-      const card = screen.getByRole("heading", { name: e.unit.name }).closest("[data-slot=card]")!;
-      expect(card).toHaveTextContent(`HP ${e.unit.max}`);
-      expect(card).toHaveTextContent(`Speed ${e.unit.speed}`);
-      expect(card).toHaveTextContent(e.unit.element);
-      expect(card.querySelectorAll("ul li")).toHaveLength(4);
-    }
-    expect(screen.getAllByText("No effect here").length).toBeGreaterThan(0);
-  });
 
   describe("round 2: what a disc shows, choosing one, and the outcome on the creatures", () => {
     /** The starter run as the page deals it, to read the rules' own preview numbers. */
@@ -579,7 +521,7 @@ describe("Powerworks player flow", () => {
 
     it("rests each disc at its icon, name and signature rim; only an unavailable one carries a reason", () => {
       mount();
-      fireEvent.click(screen.getByRole("button", { name: "Take the starter squad" }));
+      fireEvent.click(screen.getByRole("button", { name: "Enter the facility" }));
       fireEvent.click(screen.getByRole("button", { name: "Select Hippochamp" }));
       const slots = screen.getAllByRole("menuitem");
       for (const slot of slots) {
@@ -629,7 +571,7 @@ describe("Powerworks player flow", () => {
 
     it("expands the chosen disc into its move card, which stays through targeting; Back and Escape return to the wheel", () => {
       mount();
-      fireEvent.click(screen.getByRole("button", { name: "Take the starter squad" }));
+      fireEvent.click(screen.getByRole("button", { name: "Enter the facility" }));
       fireEvent.click(screen.getByRole("button", { name: "Select Hippochamp" }));
       fireEvent.click(screen.getByRole("menuitem", { name: /^Hippochamp: Water Sweep/ }));
       // The wheel is gone from the accessibility tree; the card names the chosen move.
@@ -670,7 +612,7 @@ describe("Powerworks player flow", () => {
 
     it("shows hotkeys only after the keyboard has been used, and hides them after a touch", () => {
       mount();
-      fireEvent.click(screen.getByRole("button", { name: "Take the starter squad" }));
+      fireEvent.click(screen.getByRole("button", { name: "Enter the facility" }));
       expect(ringOwner()).toBe("Avilily");
       expect(document.querySelectorAll(".pw-radial-key")).toHaveLength(0);
       fireEvent.keyDown(window, { key: "ArrowRight" });
@@ -680,7 +622,7 @@ describe("Powerworks player flow", () => {
       cleanup();
       localStorage.clear();
       mount();
-      fireEvent.click(screen.getByRole("button", { name: "Take the starter squad" }));
+      fireEvent.click(screen.getByRole("button", { name: "Enter the facility" }));
       fireEvent.keyDown(window, { key: "Shift" });
       expect(document.querySelectorAll(".pw-radial-key")).toHaveLength(0);
       fireEvent.keyDown(window, { key: "Tab" });
@@ -702,7 +644,7 @@ describe("Powerworks player flow", () => {
       const hit = damagePreview(hippo, sweep, m1);
       const slowed = LIKELIHOOD_PERCENT[sweep.effects.find((e) => e.status === "slowed")!.likelihood];
       mount();
-      fireEvent.click(screen.getByRole("button", { name: "Take the starter squad" }));
+      fireEvent.click(screen.getByRole("button", { name: "Enter the facility" }));
       fireEvent.click(screen.getByRole("button", { name: "Select Hippochamp" }));
       fireEvent.click(screen.getByRole("menuitem", { name: /^Hippochamp: Water Sweep/ }));
       const target = targetButton("Target Maintenance crawler M1");
@@ -751,7 +693,7 @@ describe("Powerworks player flow", () => {
 
     it("marks a pull with an arrow on the target and names it", () => {
       mount();
-      fireEvent.click(screen.getByRole("button", { name: "Take the starter squad" }));
+      fireEvent.click(screen.getByRole("button", { name: "Enter the facility" }));
       fireEvent.click(screen.getByRole("button", { name: "Select Graviclaw" }));
       fireEvent.click(screen.getByRole("menuitem", { name: /^Graviclaw: Gravity Draw/ }));
       expect(document.querySelectorAll(".pw-pull-arrow")).toHaveLength(2);
@@ -764,7 +706,7 @@ describe("Powerworks player flow", () => {
       const animate = vi.fn();
       Element.prototype.animate = animate as unknown as Element["animate"];
       mount();
-      fireEvent.click(screen.getByRole("button", { name: "Take the starter squad" }));
+      fireEvent.click(screen.getByRole("button", { name: "Enter the facility" }));
       const stage = screen.getByRole("region", { name: "Battlefield" });
       expect(stage).toHaveAttribute("data-motion", "reduced");
       const layer = stage.querySelector<HTMLElement>(".pw-stage-zoom")!;
@@ -788,7 +730,7 @@ describe("Powerworks player flow", () => {
       }));
       Element.prototype.animate = animate as unknown as Element["animate"];
       mount();
-      fireEvent.click(screen.getByRole("button", { name: "Take the starter squad" }));
+      fireEvent.click(screen.getByRole("button", { name: "Enter the facility" }));
       const stage = screen.getByRole("region", { name: "Battlefield" });
       expect(stage).toHaveAttribute("data-motion", "full");
       const layer = stage.querySelector<HTMLElement>(".pw-stage-zoom")!;
@@ -875,7 +817,7 @@ describe("Powerworks player flow", () => {
 
     it("dresses an elemental disc in its element and leaves a physical one steel", () => {
       mount();
-      fireEvent.click(screen.getByRole("button", { name: "Take the starter squad" }));
+      fireEvent.click(screen.getByRole("button", { name: "Enter the facility" }));
       fireEvent.click(screen.getByRole("button", { name: "Select Hippochamp" }));
       const slot = (name: string) => screen.getByRole("menuitem", { name: new RegExp(`^Hippochamp: ${name}`) });
       expect(slot("Water Sweep")).toHaveClass("elemental", "el-water");
@@ -892,7 +834,7 @@ describe("Powerworks player flow", () => {
 
     it("previews a hovered disc faintly on its targets, with matchup chevrons, and clears it when the pointer leaves", () => {
       mount();
-      fireEvent.click(screen.getByRole("button", { name: "Take the starter squad" }));
+      fireEvent.click(screen.getByRole("button", { name: "Enter the facility" }));
       fireEvent.click(screen.getByRole("button", { name: "Select Hippochamp" }));
       const cannon = screen.getByRole("menuitem", { name: /^Hippochamp: Emergency Water Cannon/ });
       expect(document.querySelector(".pw-scene-unit.hinted")).toBeNull();
@@ -922,7 +864,7 @@ describe("Powerworks player flow", () => {
 
     it("trims the card of a charged move that rests two rounds to its marks, its charge line and its pips", () => {
       mount();
-      fireEvent.click(screen.getByRole("button", { name: "Take the starter squad" }));
+      fireEvent.click(screen.getByRole("button", { name: "Enter the facility" }));
       fireEvent.click(screen.getByRole("button", { name: "Select Hippochamp" }));
       fireEvent.click(screen.getByRole("menuitem", { name: /^Hippochamp: Crushing Kick/ }));
       const card = moveCard()!;

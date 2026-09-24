@@ -47,7 +47,6 @@ import {
   DEGRADE_FACTOR,
   DRAFT_OFFER_SIZE,
   DRAFT_SEEDS_PER_SPECIES,
-  DRAFTED_MACHINE_HP_FACTOR,
   ENCOUNTER_STALL_ROUNDS,
   SAVE_VERSION,
   SQUAD_SIZE,
@@ -627,17 +626,17 @@ describe("Powerworks battle rules", () => {
     expect(r.revival).toBe(1);
     expect(r.xp).toBe(0);
   });
-  it("replays a version 8 starter history deterministically and rejects versions 1 to 7", () => {
+  it("replays a version 9 starter history deterministically and rejects versions 1 to 8", () => {
     const s = createRun(41);
     const q = orders(s);
     const action = { kind: "round" as const, orders: q };
     const history = [{ kind: "draft", squad: "starter" }, action];
-    expect(SAVE_VERSION).toBe(8);
-    const restored = restoreRun(JSON.stringify({ version: 8, seed: 41, history }));
+    expect(SAVE_VERSION).toBe(9);
+    const restored = restoreRun(JSON.stringify({ version: 9, seed: 41, history }));
     expect(restored.state).toEqual(command(s, action));
-    // A drafted version 7 history was played against the pass 7 machine HP (pass 8,
-    // decision 55), so its orders would resolve against other numbers from chamber 2 on.
-    expect(() => restoreRun(JSON.stringify({ version: 7, seed: 41, history }))).toThrow(
+    // A drafted version 8 history was played against decision 55's machine HP, since
+    // withdrawn, so its orders would resolve against other numbers from chamber 2 on.
+    expect(() => restoreRun(JSON.stringify({ version: 8, seed: 41, history }))).toThrow(
       "Unsupported save."
     );
     // Version 6 histories name offer indexes of the offer before per-species seed retries
@@ -2755,7 +2754,7 @@ function anyOrders(s: Run): Record<string, Order> {
       })
   );
 }
-describe("Powerworks pass 8: a drafted squad meets a harder facility (decision 55)", () => {
+describe("Powerworks chambers read their rows as written (decision 55 withdrawn)", () => {
   /** Every chamber's machines as the run enters it, walking the rooms the way `boss()` does. */
   function chambers(start: Run) {
     let s = start;
@@ -2769,30 +2768,16 @@ describe("Powerworks pass 8: a drafted squad meets a harder facility (decision 5
   }
   const rowHp = (room: number, id: string) =>
     Number(cards.rooms[room].enemies.find((row) => row[1] === id)![2]);
-  it("scales a drafted run's machines from chamber 2 on and leaves chamber 1 alone", () => {
-    expect(DRAFTED_MACHINE_HP_FACTOR).toBe(1.5);
-    const seen = chambers(createRun(3, [1, 2, 4, 7]));
-    seen.forEach((enemies, room) => {
-      expect(enemies.length).toBe(cards.rooms[room].enemies.length);
-      for (const e of enemies) {
-        const expected =
-          room === 0 ? rowHp(room, e.id) : Math.round(rowHp(room, e.id) * DRAFTED_MACHINE_HP_FACTOR);
-        expect(e.hp, `${room}:${e.id}`).toBe(expected);
-        expect(e.max, `${room}:${e.id}`).toBe(expected);
-      }
+  // No handicap follows which creatures a squad holds: a drafted run meets the starter's machines.
+  for (const squad of ["starter", [1, 2, 4, 7]] as const)
+    it(`keeps every chamber at the rows as written (${squad === "starter" ? "starter" : "drafted"})`, () => {
+      chambers(createRun(3, squad === "starter" ? "starter" : [...squad])).forEach((enemies, room) => {
+        for (const e of enemies) {
+          expect(e.hp, `${room}:${e.id}`).toBe(rowHp(room, e.id));
+          expect(e.max, `${room}:${e.id}`).toBe(rowHp(room, e.id));
+        }
+      });
     });
-    expect(seen[0].map((e) => e.hp)).toEqual([22, 22]);
-    expect(seen[3].find((e) => e.id === "B4")!.hp).toBe(165);
-    expect(seen[2].find((e) => e.id === "V3")!.hp).toBe(72);
-  });
-  it("keeps every starter chamber at the rows as written", () => {
-    chambers(createRun(3)).forEach((enemies, room) => {
-      for (const e of enemies) {
-        expect(e.hp, `${room}:${e.id}`).toBe(rowHp(room, e.id));
-        expect(e.max, `${room}:${e.id}`).toBe(rowHp(room, e.id));
-      }
-    });
-  });
 });
 
 describe("Powerworks pass 6: the draft command and saves (decisions 47 and 48)", () => {

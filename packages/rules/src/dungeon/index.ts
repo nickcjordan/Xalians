@@ -55,7 +55,6 @@ import {
   DRAFT_OFFER_SIZE,
   DRAFT_SEED_PREFIX,
   DRAFT_SEEDS_PER_SPECIES,
-  DRAFTED_MACHINE_HP_FACTOR,
   SQUAD_SIZE,
   ENCOUNTER_STALL_ROUNDS,
   ENCOUNTER_XP,
@@ -113,7 +112,6 @@ export {
   DESPERATE_STRIKE_RECOIL,
   DRAFT_OFFER_SIZE,
   DRAFT_SEEDS_PER_SPECIES,
-  DRAFTED_MACHINE_HP_FACTOR,
   ENCOUNTER_STALL_ROUNDS,
   FRIGHTENED_OUTPUT_FACTOR,
   LIKELIHOOD_PERCENT,
@@ -1118,16 +1116,6 @@ function prepare(s: Run) {
     };
   }
 }
-/**
-  A machine's HP as this run meets it (contract decision 55): a drafted squad's machines from
-  the second chamber on carry DRAFTED_MACHINE_HP_FACTOR times their row HP, rounded; chamber 1
-  and every starter run read the row as written. `readCard` sets max HP to the same number.
-*/
-export function machineHp(s: Pick<Run, "squad" | "room">, rowHp: number): number {
-  return s.squad !== "starter" && s.room >= 1
-    ? Math.round(rowHp * DRAFTED_MACHINE_HP_FACTOR)
-    : rowHp;
-}
 function enter(s: Run) {
   s.round = 1;
   s.stalled = 0;
@@ -1152,7 +1140,7 @@ function enter(s: Run) {
     u.recovery = 0;
   }
   s.enemies = ROOMS[s.room].enemies.map((row) =>
-    enemyUnit(String(row[0]), String(row[1]), machineHp(s, Number(row[2])))
+    enemyUnit(String(row[0]), String(row[1]), Number(row[2]))
   );
   for (const row of [s.team, s.enemies])
     for (let i = row.length - 1; i > 0; i--) {

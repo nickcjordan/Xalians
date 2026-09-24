@@ -826,6 +826,8 @@ A player that looks two rounds ahead wins 100% with the starter squad, 97% with 
 
 ## Pass 8: difficulty for a player who plans, 2026-09-24
 
+**Withdrawn, 2026-09-24.** Nick: "I don't think we should be adding raw health multipliers or damage multipliers based on which creatures the user selected." The game will be played with a person's own creatures, so a handicap keyed to squad choice is the wrong kind of lever; the question is what makes one creature more worth taking than another, and whether every creature has a reasonable path to value in some squad. He also ruled that squad selection is out of scope for this game for now ("anything you build now to allow the user to select a squad is going to be throwaway code"): the run takes the preset squad. So `DRAFTED_MACHINE_HP_FACTOR` and `machineHp` are removed, every run reads the chamber rows as written, `SAVE_VERSION` is 9, and the draft screen (`powerworksDraft.tsx`) and the briefing's draft entry are gone; the briefing's one action is "Enter the facility". The engine's offer and draft command stay, because the simulator uses varied squads to measure what each species contributes (pass 9). The record below is kept as measured.
+
 Nick approved tuning the facility harder on pass 7's finding that a player who plans almost never loses, with the target pass 7 recommended: the look-ahead on a random draft at about 75% (72% to 80% accepted) over 400 runs. Only machine numbers were open to move: no machine, companion, status lever or draft changed. The reading, the coordinator's ruling on the first measurement: the starter is the tutorial and keeps its numbers; a drafted squad meets a harder facility.
 
 | # | Decision | Confidence | Evidence |
