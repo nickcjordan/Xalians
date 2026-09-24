@@ -546,7 +546,7 @@ describe("Powerworks player flow", () => {
     for (const e of chosen)
       expect(screen.getByRole("button", { name: `Select ${e.unit.name}` })).toBeInTheDocument();
     const save = JSON.parse(localStorage.getItem("xalians.powerworks.v1")!);
-    expect(save.version).toBe(7);
+    expect(save.version).toBe(8);
     expect(save.history[0]).toEqual({
       kind: "draft",
       squad: chosen.map((e) => e.index).sort((a, b) => a - b),

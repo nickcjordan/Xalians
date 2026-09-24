@@ -822,7 +822,101 @@ Win rate of random-draft runs whose squad included the species (400 runs), lowes
 
 ### The finding that matters: a player who plans rarely loses
 
-A player that looks two rounds ahead wins 100% with the starter squad, 97% with a sensibly drafted squad and 91% with four random picks. A human who plans is somewhere between the pass 5 player and the look-ahead, so a thoughtful player may find Powerworks easy once the rules are learned. Nothing was tuned: how hard the facility should be for a player who plans is a design call for Nick, best made after he plays a few drafted runs. If it plays easy, the smallest levers are the machines' numbers in the later chambers (each machine's HP in the `rooms` rows of `cards.json`, and its harm in `templates`), measured until the look-ahead on a random draft lands where he wants it, which I would put at about 75%, so that both the draft and the orders keep deciding runs.
+A player that looks two rounds ahead wins 100% with the starter squad, 97% with a sensibly drafted squad and 91% with four random picks. A human who plans is somewhere between the pass 5 player and the look-ahead, so a thoughtful player may find Powerworks easy once the rules are learned. Nothing was tuned: how hard the facility should be for a player who plans is a design call for Nick, best made after he plays a few drafted runs. If it plays easy, the smallest levers are the machines' numbers in the later chambers (each machine's HP in the `rooms` rows of `cards.json`, and its harm in `templates`), measured until the look-ahead on a random draft lands where he wants it, which I would put at about 75%, so that both the draft and the orders keep deciding runs. Pass 8 (below) makes that tuning for drafted squads only: the look-ahead on a random draft now wins 75%, and the starter keeps its numbers.
+
+## Pass 8: difficulty for a player who plans, 2026-09-24
+
+Nick approved tuning the facility harder on pass 7's finding that a player who plans almost never loses, with the target pass 7 recommended: the look-ahead on a random draft at about 75% (72% to 80% accepted) over 400 runs. Only machine numbers were open to move: no machine, companion, status lever or draft changed. The reading, the coordinator's ruling on the first measurement: the starter is the tutorial and keeps its numbers; a drafted squad meets a harder facility.
+
+| # | Decision | Confidence | Evidence |
+|---|---|---|---|
+| 55 | **A drafted squad meets a harder facility; the starter keeps its numbers.** A run whose squad is not `"starter"` enters every chamber from the second on (room index 1 and up) with each machine's row HP multiplied by `DRAFTED_MACHINE_HP_FACTOR` (1.5) and rounded, max HP the same number: crawlers M3, M4 and M5 22 to 33, drones D2 and D4 24 to 36, the shield S2 30 to 45, the discharge unit V3 48 to 72, the guardian B4 110 to 165. Chamber 1 (M1, M2 at 22), every starter run, the `rooms` rows in `cards.json` and every template (harm, speed) are unchanged. The look-ahead on a random draft wins 75% ±4 (from 91% ±3); the starter reads exactly as before (pass 5 92%, look-ahead 100%). A drafted save replays against the new HP, so `SAVE_VERSION` is 8 and version 7 is rejected. | 80%, the coordinator's ruling on the evidence, 2026-09-24: the target is met with one lever, the curve holds, and the tutorial path is untouched | the tables below; `powerworksCompare.ts`, seeds 1 to 400 (starter 1 to 200) |
+
+### What moved and why
+
+One lever, `DRAFTED_MACHINE_HP_FACTOR` in `levers.ts`, read by `machineHp` where `enter` in `index.ts` builds a chamber's machines. The story is "past the service entrance, a drafted squad finds the facility's machines take longer to bring down." The HP bars read the scaled number through the unit, since `readCard` sets `max` to the HP it is given.
+
+The first measurement scaled the `rooms` rows themselves, for every run. It hit the draft target with the same numbers as below, but the starter under the pass 5 player fell from 92% to 6% (12 of 200), 187 of its 188 losses at the guardian, while the look-ahead still won 99% with it. The starter is the tutorial-safe path (decision 47), so the factor now reads the squad: the starter keeps the rows as written, and only a drafted squad meets the harder machines.
+
+Chamber 1 still teaches: no look-ahead run loses there, before or after, and its two crawlers are untouched for every squad. The guardian stays the climax: 69 of the 101 look-ahead losses on a random draft are in chamber 4, and a squad that reaches it loses there 19% of the time, against 4% to 5% in chambers 2 and 3.
+
+Machine harm was tried first and does almost nothing to a player who plans. Every machine move is a closing move except the drone's Security beam, and a bound unit cannot use a closing move, so the look-ahead binds the machine that would act and its harm never lands. On seeds 1 to 200 the look-ahead won 183 at the old numbers; raising the guardian's and the discharge unit's harm by a third to a half (Clamp strike and Contact strike 70 to 100, Core surge 180 to 240, Capacitor rush 160 to 220) left it at 178. Raising the drone's harm (70 to 120, the one move a bind cannot stop) did more, 175, but it is a lever on chambers 2 and 4 at once and light hits the starter's Graviclaw for double. More HP works on the look-ahead because every extra round is another round it has to spend a bind or take a hit, and a drafted squad without a bind or a displace takes them.
+
+Levers measured on the way, each applied to every run (seeds 1 to 200, wins of 200; the pass 5 starter column is the same 200 seeds with the starter squad, and shows what the setting would have cost the tutorial had it not been limited to drafted runs):
+
+| setting | look-ahead, random draft | pass 5, starter |
+|---|---|---|
+| pass 7 numbers | 183 | 183 |
+| guardian 150 HP only | | 159 |
+| drone harm 70 to 120 only | 175 | 144 |
+| crawler harm 70 to 100 (all chambers, chamber 1 included) | 170 | 121 |
+| chambers 2 and 3 only: M3 30, D2 40, S2 44, V3 80, discharge harm 100 and 220 | 171 | 112 |
+| the sand machines only: M3, M4, M5 40, S2 50 | 164 | 90 |
+| drone harm 120 and D2, D4 32, S2 40, V3 64, B4 150 | 154 | 20 |
+| **every machine of chambers 2 to 4 at 1.5x HP (shipped, drafted runs only)** | **153** | **12 (not shipped: the starter keeps 183)** |
+
+At 400 runs, rows at 1.25x HP read 83% for the look-ahead on a random draft and 48% for pass 5 on a random draft.
+
+**Why the starter could not take the harder numbers.** Every setting measured cost the pass 5 starter about five runs for each run it cost the look-ahead on a random draft, whether it moved HP, harm, one chamber or three. The starter meets the guardian and the discharge unit with Hippochamp (electric hits water for double) and Graviclaw (electric hits dark for 1.5x, and the drone's light hits it for double), and the pass 5 player binds only a charging machine, so a longer guardian fight is exactly what that squad cannot survive without planning. That is a property of the starter's elements, not of the chambers, and it is why the factor reads the squad rather than the rows.
+
+### Sim, before and after, three commands
+
+Random draft, 400 runs (`--draft=random --policies=random,pass5,lookahead`):
+
+| | random orders | pass 5 | look-ahead |
+|---|---|---|---|
+| runs won, before | 147 (37% ±5) | 251 (63% ±5) | 362 (91% ±3) |
+| **runs won, after** | **56 (14% ±3)** | **140 (35% ±5)** | **299 (75% ±4)** |
+| runs outlasted (stall rule), before / after | 1 / 0 | 2 / 2 | 0 / 2 |
+| rounds per run, before / after | 27.3 / 26.9 | 26.5 / 30.6 | 27.3 / 38.3 |
+| encounters reached per run, before / after | 3.38 / 2.96 | 3.84 / 3.60 | 3.96 / 3.88 |
+| heals on squadmates (HP), before / after | 207 (1,143) / 197 (1,084) | 92 (678) / 114 (844) | 271 (1,869) / 275 (1,887) |
+| look-ahead moved off the pass 5 order, before / after | | | 32% / 35% |
+
+Starter squad, 200 runs (`--draft=starter --policies=random,pass5,lookahead`), unchanged by design:
+
+| | random orders | pass 5 | look-ahead |
+|---|---|---|---|
+| runs won, before | 16 (8% ±4) | 183 (92% ±4) | 200 (100% ±0) |
+| **runs won, after** | **16 (8% ±4)** | **183 (92% ±4)** | **200 (100% ±0)** |
+| runs outlasted (stall rule), before / after | 0 / 0 | 0 / 0 | 0 / 0 |
+| rounds per run, before / after | 25.6 / 25.6 | 23.1 / 23.1 | 20.3 / 20.3 |
+| encounters reached per run, before / after | 3.92 / 3.92 | 4.00 / 4.00 | 4.00 / 4.00 |
+
+Greedy draft, 400 runs (`--draft=greedy --policies=pass5,lookahead`):
+
+| | pass 5 | look-ahead |
+|---|---|---|
+| runs won, before | 317 (79% ±4) | 386 (97% ±2) |
+| **runs won, after** | **223 (56% ±5)** | **355 (89% ±3)** |
+| runs outlasted (stall rule), before / after | 0 / 1 | 0 / 0 |
+| rounds per run, before / after | 22.8 / 29.2 | 23.1 / 33.2 |
+| encounters reached per run, before / after | 3.94 / 3.87 | 3.98 / 3.96 |
+
+### Losses by chamber, drafted squads
+
+Runs lost in each chamber (the chamber the run ended in; a run forced out by the stall rule counts where it was forced out). The starter's losses are unchanged: random orders 0 / 0 / 17 / 167, pass 5 0 / 0 / 0 / 17, look-ahead none.
+
+| draft and player | before: 1 / 2 / 3 / 4 | after: 1 / 2 / 3 / 4 |
+|---|---|---|
+| random draft, random orders (400) | 4 / 92 / 54 / 103 | 4 / 163 / 78 / 99 |
+| random draft, pass 5 (400) | 2 / 18 / 21 / 108 | 2 / 51 / 54 / 153 |
+| **random draft, look-ahead (400)** | **0 / 6 / 3 / 29** | **0 / 14 / 18 / 69** |
+| greedy draft, pass 5 (400) | 0 / 9 / 4 / 70 | 0 / 17 / 20 / 140 |
+| greedy draft, look-ahead (400) | 0 / 3 / 1 / 10 | 0 / 6 / 5 / 34 |
+
+For the look-ahead on a random draft, the loss rate of the squads that reach each chamber is, before and after: chamber 1 0% and 0%, chamber 2 1.5% and 3.5% (of 400), chamber 3 0.8% and 4.7% (of 394 and 386), chamber 4 7.4% and 18.8% (of 391 and 368).
+
+### Reading
+
+The look-ahead on a random draft lands at 75% ±4, inside the target, and the draft still decides: a greedy draft wins 89%. The starter reads exactly as it did in pass 7, run for run, so the tutorial path forgives a greedy player (92%) and a planner never loses with it. The stall rule stays rare: 2 look-ahead runs and 2 pass 5 runs of 400 are forced out on a random draft, 1 pass 5 run of 400 on a greedy draft and none on the starter; drafted runs are longer (38 rounds for the look-ahead, from 27), not stuck.
+
+Under the look-ahead the species spread widens from 78% to 100% to 56% to 100%, and no species collapses: the lowest are Chromocat and Shuntara at 56% (±14 and ±11), Ectoghoul 57%, Voltish 58% and Venemist 59%. The largest drops are Chromocat (92% to 56%), Ectoghoul (86% to 57%), Smokat and Voltish (89% and 85% to 62% and 58%); the bulky species still carry (Terragoyle and Xylum 100%, Frackworm 98%, Neph 95%). Avilily, the weakest under pass 5 in pass 6 and pass 7, reads 61% here, mid-pack among the low group. With random orders, Avilily, Akinza and Yetimoth squads win 1 run in 50.
+
+### Friction reported
+
+- **The starter and a drafted squad now face different facilities.** A player who clears the starter's guardian at 110 HP meets 165 the first time they draft. The briefing does not say so; if play shows the step is a surprise, the smallest answer is one line on the draft screen, not a number.
+- **Machine harm is not a difficulty lever against a player who plans.** Every machine move but the drone's beam is closing, so binding answers all of them; raising their harm moves the look-ahead a few runs in 200. Harm stays a lever for how much a careless player is punished, not for how hard the facility is.
 
 ## Fix, 2026-09-23: a degrading status that cannot tick does not take hold
 
