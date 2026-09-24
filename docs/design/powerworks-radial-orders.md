@@ -73,3 +73,41 @@ At rest a disc is: icon, name, gold rim if signature; dimmed with one short reas
 ### Done when
 
 Same paint check as round 1, plus: a rest-state wheel with a signature and an unavailable disc; a hovered disc; the expanded card during targeting with damage chunks on two enemies, a status ghost with its chance, and an area move marking a second target; a heal preview on a squadmate; a hovered target with its intent line and card line; the order locked with the chip set; and frame captures at the midpoint of the open, expand and zoom animations to show they run. Measurements as before, plus the zoom never pushes any unit's plaque outside the stage. An independent reviewer judges the result against this section before the PR opens.
+
+## Round 3: calm camera, element on the move, every mark earns its place, 2026-09-24
+
+Nick on round 2 (PR #624): "overall, I think your changes are great. You went a tad heavy on the view focusing in and out between selecting creatures. And I also think it's causing a little bit of blurriness ... save the camera zooming in and out and moving around like that for the cinematic playout of the actions, not for the move selection portion. ... adjust affordances from being something like a water icon in an otherwise standardly styled card to maybe adjusting that so that it has a background that aligns to that element color, Or an outline, or maybe you just do that for the moves themselves that are elemental. I actually feel like I'd like that better because right now the moves are just a name, and there's not much of an indication as to how a move ... might affect a creature until you click it. ... it says it rests two turns after use and it charged, and it's a melee attack, and it's three power, but other than three power, I don't know how any of that actually affects. ... is that every move, or is my move different? ... identify areas where something is shown like this, and ask yourself if it's being beneficial by being shown or if it's just providing unnecessary details or details that could be hidden away somewhere available when they go looking ... Or, better yet, details that could be afforded in a different way through a more subtle visual approach rather than just listing out a line of text."
+
+### Camera
+
+- **Planning holds still.** No zoom and no pan while selecting companions or moves. Selection is shown by the ground ring, the raised plaque and a slight dimming of the rest of the squad, never by moving the stage.
+- **No scale transforms on anything that carries text or a thin line at rest or on hover.** Lifts use a small upward translate and a glow, not `scale()`, so text and HP bars stay crisp. (Scaling a layer rasterizes it and was the blur Nick saw.)
+- **The camera moves during playback only.** When a round plays, the stage eases toward each acting unit and its target for that beat and returns between beats: a push-in of about 1.06 and a pan, 250 to 350 ms, instant under reduced motion, never pushing any plaque outside the stage. This is the cinematic the camera is for.
+
+### Element on the move
+
+- **An elemental move wears its element.** A disc whose move carries an element has that element's hue on its rim and a low wash of it behind the icon; the move card's frame and header take the same hue. A physical move (no element) keeps the steel rim. The signature keeps its gold rim, with the element wash inside it when elemental. Use the site's element hues through the existing element tokens; this is element-tagged content, which is exactly what those hues are for.
+- **Before the click, hovering or focusing a disc previews its outcome** on the stage in a lighter form than the chosen state: each target's ring and HP chunk appear faintly, and matchup is shown on each target with a small up or down chevron beside its HP bar (strong or weak against this element). Moving off the disc clears it. On touch the arming tap does the same.
+
+### Every mark earns its place
+
+Audit of the move card as shipped in round 2, and what replaces each line:
+
+| Shown today | What the player can do with it | Round 3 |
+|---|---|---|
+| "7 power" | nothing on its own: the outcome depends on the target, and the outcome is already drawn on every target | **remove** from the card; the outcomes on the creatures carry the numbers, and the hovered-target line keeps "4 damage, 22 to 18" |
+| "Ranged attack" / "Melee attack" | matters only through its consequences: a bound unit cannot use a move that closes in, and striking the guardian in contact triggers its discharge | **remove** the line; show the consequence where it happens: the guardian's target preview carries a small "shocks back" mark with its damage when the move touches it, and a bound companion's closing moves are already dimmed with "bound" |
+| "Rests 1 round after use" / "Use every round" | a cost, and only when it is not the default | **remove** the text; a move that rests shows small rest pips on the card and the disc's lower rim only while armed (one pip per round it rests), with a hover or focus tooltip "Unavailable for 2 rounds after use". A move usable every round shows nothing |
+| "Charged" / prolonged preparation | the move lands a round later and can be broken by a pull or a bind | **replace** with a single charge mark on the disc and card (the game's charge icon) and, on the card, "Lands next round" as the one line of text; tooltip explains that a pull or bind breaks it |
+| "40% chance: Blinded, its ranged damage halved for 2 opportunities" | useful, but it is already drawn on each target as a ghost badge with its chance | **shorten** to an icon row on the card: the status icon and its chance ("Blinded 40%"); the full sentence moves to a tooltip on that row |
+| "Reaches the target and the next enemy in line" | useful, but already drawn by the area rings on the stage | **remove** the text; the stage shows who it reaches |
+| "Chosen move" subtitle | the card's position and the expanded disc already say it | **remove** |
+| Back button | needed | **keep**, as an icon button with the accessible name "Back to moves" |
+
+The card after round 3: the move's name in its element frame, an icon row for its effects (harm, status with chance, pull, bind, heal, guard) with a tooltip each, the charge mark and rest pips only when they apply, the hovered target's one-line outcome, and Back. Every sentence that left the card is still reachable: on the tooltips, in the inspector, and in the target button's accessible name.
+
+Apply the same test to the plaques and the stage: every icon, number and word visible during planning must answer a question the player has at that moment; anything else moves to hover, focus or the inspector. Report each item removed or moved.
+
+### Done when
+
+The round 2 paint check again, plus: a planning sequence captured frame by frame showing the stage does not move between selections; text and HP bars crisp at 100% zoom (compare a crop of a plaque at rest and on hover); an elemental disc, a physical disc and an elemental signature side by side; a hover preview before the click with matchup chevrons; the trimmed card for a charged move that rests two rounds; the guardian's "shocks back" mark; and playback frames showing the camera push-in on an acting unit and its return. An independent reviewer judges against this section.
