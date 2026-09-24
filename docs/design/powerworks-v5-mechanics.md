@@ -776,6 +776,54 @@ The row "after decision 53" in the pass 6 sim table. The starter is untouched (9
 
 - **A removal's words miss a status the offer now reaches.** Seed 7's offer now carries Neph `powerworks-draft-7-neph-5`, whose Disorienting Sweep applies disoriented removable by stabilizing, but `REMOVAL_WORDS.stabilizing.ends` in `apps/web/src/pages/games/powerworksVisuals.tsx` lists paralyzed, blinded, frightened and stunned only, so a Steadies card would not name Disoriented. `powerworksVisuals.test.tsx` ("names every removal in plain words") catches it. The fix is one word in that table.
 
+## Pass 7: a look-ahead player, 2026-09-24
+
+Nick, 2026-09-24: "go", on the recommendation to make the simulated player smarter so balance readings stop depending on its hand-set prices. The pass 5 policy prices every order with fixed values (`SIM_STATUS_VALUE`, the rest of `pairValue`) and picks the best one round at a time. When it loses with a species, that can mean the species is weak or that the prices are wrong, and nothing in its numbers can tell the two apart. Pass 7 adds two measuring sticks beside it. Nothing in the game changed.
+
+| # | Decision | Confidence | Evidence |
+|---|---|---|---|
+| 54 | **A look-ahead player and a random floor, sim-only.** `policy: "lookahead"` starts from the pass 5 orders and improves them one companion at a time: each candidate order (every legal order when there are at most 12, otherwise the best 2 targets of each move by the pass 5 price) is played forward with the squadmates' orders held, on 4 fresh sets of dice shared by every candidate, for the round being planned and 2 more under the pass 5 policy, and the order whose positions average best is kept. A position is worth, per standing unit, a half for standing plus its HP fraction, the squad's side for and the facility's against, and -100 once the run has ended. It never reads or advances the run's own rng, so it cannot see the real dice. `policy: "random"` gives any legal order uniformly (desperate strike only when nothing else is legal) from its own stream. The settings are `LOOKAHEAD` in `powerworksSim.ts`, a measuring stick and not a game lever. | 80% | `game-validation-principles.md` (naive-policy regret); the 8-dice, 4-round setting reads the same as 4 by 3 (below) |
+
+`powerworksCompare.ts` plays the same seeds and drafts under each policy on worker threads and prints the tables below (`node apps/web/scripts/runNode.cjs packages/rules/src/dungeon/devtools/powerworksCompare.ts --runs=400 --draft=random`). About 3 minutes for 400 look-ahead runs on 20 workers. Every rate carries a 95% interval.
+
+### Choices matter: the three players on the same seeds
+
+| squad | random orders | pass 5 | look-ahead |
+|---|---|---|---|
+| starter, 200 runs | 8% ±4 | 92% ±4 | 100% (200 of 200) |
+| random draft, 400 runs | 37% ±5 | 63% ±5 | 91% ±3 |
+| greedy draft, 400 runs | | 79% ±4 | 97% ±2 |
+| random draft, look-ahead at 8 dice by 4 rounds | | | 90% ±3 |
+
+The spread from random orders to the look-ahead is 54 points on a random draft and 92 on the starter, so the orders a player gives decide far more than luck does, and the pass 5 player leaves 28 points on the table. The stronger setting (twice the dice, one more round) reads the same 90%, so this kind of search has levelled off and its remaining losses are the squads and the dice, not too little search. The look-ahead moves off the pass 5 order in 30% to 32% of orders. What it chooses instead (random draft): a different harm 45%, a bind 20%, the same move at another target 20%, a status 10%, help for a squadmate 2%, other 2%, beginning a charge 1%. Support stays at 2% of orders under all three players, but the look-ahead heals nearly three times as much HP with those orders (1,869 against 678).
+
+### The balance reading changes
+
+Win rate of random-draft runs whose squad included the species (400 runs), lowest under the look-ahead first; intervals are 8 to 15 points at these counts.
+
+| species | drafted | random orders | pass 5 | look-ahead |
+|---|---|---|---|---|
+| avilily | 41 | 15% | 37% | 78% |
+| imprit | 45 | 27% | 56% | 78% |
+| dromeus | 63 | 29% | 44% | 79% |
+| figzy | 33 | 18% | 52% | 79% |
+| shuntara | 77 | 19% | 39% | 81% |
+| bioflim | 62 | 31% | 65% | 82% |
+| venemist | 49 | 22% | 45% | 82% |
+| ... | | | | |
+| xylum | 42 | 67% | 90% | 100% |
+| thirstaserp | 57 | 40% | 60% | 100% |
+| frackworm | 53 | 74% | 89% | 100% |
+| terragoyle | 53 | 91% | 98% | 100% |
+
+- **Avilily and Shuntara were mostly misplayed.** Under the pass 5 player they read 37% and 39%, the two worst; under the look-ahead 78% and 81%, still at the bottom but inside the intervals of the next ten species. The species range narrows from 37 to 98 points under pass 5 to 78 to 100. Nothing in their kits needs retuning on this evidence.
+- **Pass 5 misprices binding.** Its rule values a bind only against a charging machine. The look-ahead orders Avilily's binding acts 9.6 to 10.1 times per run carried, against 0.9 to 3.2 under pass 5, and a bind is a fifth of all its overrides. Binding a machine that would act this round is worth a lot, and the pass 5 price said it was worth nothing. Pass 5 is kept as written, as the naive baseline, not repaired.
+- **Bulk carries under careless play.** Terragoyle squads win 91% even with random orders, Frackworm 74% and Xylum 67%, where the field averages 37%. They are the bulkiest drafted species (Terragoyle averages 73 HP and a best move-card power of 9.3 against Avilily's 30 HP and 1.0), and the machines pick targets at random, so a large body takes its share of hits and survives them. Under the look-ahead the gap closes to within the intervals. It is a forgiveness effect, not a ceiling one.
+
+### The finding that matters: a player who plans rarely loses
+
+A player that looks two rounds ahead wins 100% with the starter squad, 97% with a sensibly drafted squad and 91% with four random picks. A human who plans is somewhere between the pass 5 player and the look-ahead, so a thoughtful player may find Powerworks easy once the rules are learned. Nothing was tuned: how hard the facility should be for a player who plans is a design call for Nick, best made after he plays a few drafted runs. If it plays easy, the smallest levers are the machines' numbers in the later chambers (each machine's HP in the `rooms` rows of `cards.json`, and its harm in `templates`), measured until the look-ahead on a random draft lands where he wants it, which I would put at about 75%, so that both the draft and the orders keep deciding runs.
+
 ## Fix, 2026-09-23: a degrading status that cannot tick does not take hold
 
 Nick saw Crystorn corroding on the live site with the rule "Takes 0 damage at the start of each of its own opportunities". The reading was faithful but useless: a degrading status's only effect in this game is its tick, the tick is multiplied by the effectiveness matrix, and chemical against light (and ice) is 0. The model allows elemental immunity to coexist with an application, but here the application would change nothing, so it is now refused with a `resisted` event: "Crystorn is unaffected: chemical has no effect on light, so corroding cannot take hold." A degrading status too weak to tick at all is refused the same way. Regression test: "does not let a degrading status take hold where it could never tick".

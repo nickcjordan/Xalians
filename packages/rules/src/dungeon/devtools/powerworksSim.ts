@@ -147,6 +147,11 @@ export type SimStats = {
   stalledRuns: number;
   /** The longest run, in rounds. */
   longestRun: number;
+  /** Pass 7 rows: companion orders the look-ahead planned, and how many it moved off the pass 5 order. */
+  lookaheadDecisions: number;
+  lookaheadOverrides: number;
+  /** What the look-ahead chose instead, by kind (`overrideKind`). */
+  lookaheadOverrideKinds: Record<string, number>;
 };
 
 /**
@@ -170,12 +175,18 @@ export const SIM_STATUS_VALUE: Record<StatusGroup, number> = {
 
 /** Which policy orders the squad, and whether support is taken away (contract decision 44). */
 export type SimOptions = {
-  /** "pass5" is decision 43's pricing; "pass4" is the damage-first policy passes 1 to 4 measured with. */
-  policy: "pass5" | "pass4";
+  /**
+    "pass5" is decision 43's pricing; "pass4" is the damage-first policy passes 1 to 4 measured
+    with; since pass 7, "lookahead" plays candidate orders forward and keeps the best position
+    (`planLookahead`), and "random" gives any legal order, the floor a choice is measured from.
+  */
+  policy: "pass5" | "pass4" | "lookahead" | "random";
   /** "none" is the shipped squad. "moves" removes every move carrying a helpful effect from the companions' legal orders (decision 44 as written); "aim" keeps every move but never names a squadmate. */
   healerFree: "none" | "moves" | "aim";
   /** Pass 6 (contract decision 51): the starter squad (the default), a random legal draft, or a greedy draft. */
   draft?: "starter" | "random" | "greedy";
+  /** Pass 7: the look-ahead's settings for this measurement, over LOOKAHEAD. */
+  lookahead?: Partial<Lookahead>;
 };
 const SHIPPED: SimOptions = { policy: "pass5", healerFree: "none" };
 
@@ -316,14 +327,14 @@ export function greedyDraft(seed: number): number[] {
 }
 /** A move carries a helpful effect (contract decision 44's healer-free crew drops these). */
 const supportMove = (m: Move) => m.effects.some((e) => helpful(e));
-function choose(u: Unit, s: Run, options: SimOptions): Order | null {
-  if (options.policy === "pass4") return choosePass4(u, s.enemies);
-  const legal = legalMoves(u, s).filter(
-    (i) => options.healerFree !== "moves" || i < 0 || !supportMove(u.moves[i])
-  );
-  if (!legal.length) return null;
-  let best: { order: Order; score: number } | null = null;
-  for (const i of legal) {
+/**
+  Every order the pass 5 policy may give `u`, priced as `choose` prices it, best first. The
+  sort is stable, so among equal prices the first-enumerated order leads, as it always did.
+*/
+function pricedOrders(u: Unit, s: Run, options: SimOptions): { order: Order; score: number }[] {
+  const priced: { order: Order; score: number }[] = [];
+  for (const i of legalMoves(u, s)) {
+    if (options.healerFree === "moves" && i >= 0 && supportMove(u.moves[i])) continue;
     const m = moveAt(u, i);
     const bind = m.effects.find((e) => e.support === "bind");
     const pull = m.effects.some((e) => e.support === "displace");
@@ -336,12 +347,148 @@ function choose(u: Unit, s: Run, options: SimOptions): Order | null {
         score = 1000 + (m.preparation === "immediate" ? 10 : 0) + LIKELIHOOD_PERCENT[bind.likelihood] / 100;
       else if (!ally && pull && charger) score = 900 + (t.charge ? 50 : 0);
       else score = pairValue(s, u, i, m, t);
-      if (!best || score > best.score) best = { order: { move: i, target: t.id }, score };
+      priced.push({ order: { move: i, target: t.id }, score });
     }
   }
-  if (best) return best.order;
+  return priced.sort((a, b) => b.score - a.score);
+}
+function choose(u: Unit, s: Run, options: SimOptions, random?: () => number): Order | null {
+  if (options.policy === "pass4") return choosePass4(u, s.enemies);
+  const legal = legalMoves(u, s).filter(
+    (i) => options.healerFree !== "moves" || i < 0 || !supportMove(u.moves[i])
+  );
+  if (!legal.length) return null;
+  const priced = pricedOrders(u, s, options);
+  if (options.policy === "random" && random) {
+    // Pass 7's floor: any legal order, uniformly. Desperate strike only when nothing else is legal.
+    const real = priced.filter((p) => p.order.move !== -1);
+    const pool = real.length ? real : priced;
+    if (pool.length) return pool[Math.floor(random() * pool.length)].order;
+  }
+  if (priced.length) return priced[0].order;
   const fallback = legal[0];
   return { move: fallback, target: legalTargets(s, u, fallback)[0]?.id ?? "" };
+}
+
+/**
+  Pass 7 (sim-only): the look-ahead policy's settings. It is a measuring stick, not a game
+  lever. `samples` fresh dice per candidate (the same dice for every candidate, so they are
+  compared on equal luck), `horizon` rounds played forward counting the one being planned,
+  and the candidate list: every legal order when there are at most `fullBelow`, otherwise the
+  best `perMove` targets of each move by the pass 5 price.
+*/
+export type Lookahead = { samples: number; horizon: number; perMove: number; fullBelow: number };
+export const LOOKAHEAD: Lookahead = { samples: 4, horizon: 3, perMove: 2, fullBelow: 12 };
+
+/**
+  What a position is worth to the squad, with no opinion about moves: each standing unit is
+  worth half a unit for standing plus its HP fraction, the squad's side counts for and the
+  facility's against, and a run that ends (fallen, or outlasted by the stall rule) is worth
+  far less than any position still in play. A cleared encounter leaves the facility's side
+  at zero, so clearing is its own reward.
+*/
+function positionValue(s: Run): number {
+  if (s.phase === "lost" || s.phase === "retreated") return -100;
+  const side = (units: Unit[]) =>
+    units.reduce((n, u) => n + (u.hp > 0 ? 0.5 + u.hp / u.max : 0), 0);
+  return side(s.team) - side(s.enemies);
+}
+function mixSeed(...parts: number[]): number {
+  let h = 0x9e3779b9;
+  for (const p of parts) h = Math.imul(h ^ (p >>> 0), 0x85ebca6b) ^ (h >>> 13);
+  return h >>> 0;
+}
+/** Every standing companion's pass 5 order, or the lockout order when it has none. */
+function greedyOrders(s: Run, options: SimOptions): Record<string, Order> {
+  const orders: Record<string, Order> = {};
+  for (const u of s.team.filter((t) => t.hp > 0))
+    orders[u.id] = choose(u, s, options) ?? { move: -2, target: "" };
+  return orders;
+}
+/**
+  Plays `orders` this round on dice `rng`, then the pass 5 policy for the rest of the
+  horizon or until the encounter ends, and prices where it lands. The run's own rng is never
+  read or advanced, so the look-ahead cannot see the real dice.
+*/
+function rollout(s: Run, orders: Record<string, Order>, rng: number, base: SimOptions, horizon: number): number {
+  let state = resolveRound({ ...s, log: [], rng }, orders).state;
+  for (let depth = 1; depth < horizon && state.phase === "planning"; depth++) {
+    state.log = [];
+    state = resolveRound(state, greedyOrders(state, base)).state;
+  }
+  return positionValue(state);
+}
+/** The orders the look-ahead weighs for `u`, the pass 5 pick first so it wins ties. */
+function lookaheadCandidates(u: Unit, s: Run, base: SimOptions, current: Order, k: Lookahead): Order[] {
+  const priced = pricedOrders(u, s, base);
+  const same = (a: Order, b: Order) => a.move === b.move && a.target === b.target;
+  let pool = priced.map((p) => p.order);
+  if (pool.length > k.fullBelow) {
+    const kept = new Map<number, number>();
+    pool = pool.filter((o) => {
+      const n = kept.get(o.move) ?? 0;
+      kept.set(o.move, n + 1);
+      return n < k.perMove;
+    });
+  }
+  return [current, ...pool.filter((o) => !same(o, current))];
+}
+/**
+  Pass 7: the squad's orders for this round under the look-ahead policy. It starts from the
+  pass 5 orders and improves them one companion at a time: for each candidate order, with the
+  squadmates' orders held, it plays the round and the horizon forward on LOOKAHEAD.samples
+  sets of dice and keeps the order whose positions average best. Returns the plan and how
+  many companions it moved off their pass 5 order.
+*/
+function planLookahead(
+  s: Run,
+  options: SimOptions
+): { orders: Record<string, Order>; overrides: number; kinds: string[] } {
+  const base: SimOptions = { ...options, policy: "pass5" };
+  const k: Lookahead = { ...LOOKAHEAD, ...options.lookahead };
+  const orders = greedyOrders(s, base);
+  const dice = Array.from({ length: k.samples }, (_, j) =>
+    mixSeed(s.seed, s.room, s.round, j, s.rng)
+  );
+  let overrides = 0;
+  const kinds: string[] = [];
+  for (const u of s.team.filter((t) => t.hp > 0)) {
+    if (orders[u.id].move === -2) continue;
+    const start = orders[u.id];
+    let best = start;
+    let bestValue = -Infinity;
+    for (const order of lookaheadCandidates(u, s, base, start, k)) {
+      const trial = { ...orders, [u.id]: order };
+      let total = 0;
+      for (const rng of dice) total += rollout(s, trial, rng, base, k.horizon);
+      if (total > bestValue) {
+        bestValue = total;
+        best = order;
+      }
+    }
+    orders[u.id] = best;
+    if (best !== start) {
+      overrides++;
+      kinds.push(overrideKind(s, u, start, best));
+    }
+  }
+  return { orders, overrides, kinds };
+}
+/**
+  What kind of order the look-ahead chose over the pass 5 order: the same move at another
+  target, a bind, a helpful order naming a squadmate, beginning a charge, another status, a
+  harm, or anything else (a self effect, a pull).
+*/
+function overrideKind(s: Run, u: Unit, from: Order, to: Order): string {
+  if (to.move === from.move) return "same move, other target";
+  const m = moveAt(u, to.move);
+  const target = [...s.team, ...s.enemies].find((t) => t.id === to.target);
+  if (m.effects.some((e) => e.support === "bind")) return "a bind";
+  if (target && target.id !== u.id && squadmateOf(u, target)) return "help for a squadmate";
+  if (m.preparation === "prolonged" && u.charge === null) return "begin a charge";
+  if (m.effects.some((e) => e.support === "status" && hostile(e))) return "a status";
+  if (damaging(m)) return "a harm";
+  return "other";
 }
 
 /** The damage-first policy passes 1 to 4 measured with, kept so pass 5 can tell the policy's effect from ally targeting's. */
@@ -434,6 +581,8 @@ export function playRun(seed: number, stats: SimStats, options: SimOptions = SHI
   }
   /** Companions whose standing ward came from a squadmate, until it is spent. */
   const allyWarded = new Set<string>();
+  // The random policy's own stream, apart from the run's rng so the dice are the same dice.
+  const random = draftRandom(mixSeed(seed, 0x5eed));
   let guard = 0;
   let rooms = 1;
   let roundsThisRun = 0;
@@ -447,10 +596,18 @@ export function playRun(seed: number, stats: SimStats, options: SimOptions = SHI
     }
     const orders: Record<string, Order> = {};
     const preemptive = new Set<string>();
+    const plan = options.policy === "lookahead" ? planLookahead(s, options) : null;
+    if (plan) {
+      stats.lookaheadDecisions += Object.values(plan.orders).filter((o) => o.move !== -2).length;
+      stats.lookaheadOverrides += plan.overrides;
+      for (const kind of plan.kinds)
+        stats.lookaheadOverrideKinds[kind] = (stats.lookaheadOverrideKinds[kind] ?? 0) + 1;
+    }
     for (const u of s.team.filter((u) => u.hp > 0)) {
       stats.playerOpportunities++;
       if (u.bound > 0) stats.companionOpportunitiesUnderParalysis++;
-      const order = choose(u, s, options);
+      const planned = plan?.orders[u.id];
+      const order = plan ? (planned && planned.move !== -2 ? planned : null) : choose(u, s, options, random);
       if (!order) {
         stats.lockouts++;
         orders[u.id] = { move: -2, target: "" };
@@ -692,6 +849,9 @@ export function simulate(
     outlastedRuns: 0,
     stalledRuns: 0,
     longestRun: 0,
+    lookaheadDecisions: 0,
+    lookaheadOverrides: 0,
+    lookaheadOverrideKinds: {},
   };
   for (let seed = firstSeed; seed < firstSeed + runs; seed++)
     playRun(seed, stats, options);
