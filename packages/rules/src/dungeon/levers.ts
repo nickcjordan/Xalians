@@ -152,8 +152,10 @@ export const COMPANION_GENERATED_AT = "2026-09-21T00:00:00.000Z";
  * Version 6 (2026-09-23, pass 6): a run starts from the draft (contract decision 48), so the first command
  * of every history is `{kind: "draft", squad}`; a version 5 history has none and is rejected.
  * Version 7 (2026-09-24, contract decision 53): the offer retries each species over its own seeds, so the
- * same run seed deals a different offer and a version 6 history's offer indexes name other creatures; it is rejected. */
-export const SAVE_VERSION = 7;
+ * same run seed deals a different offer and a version 6 history's offer indexes name other creatures; it is rejected.
+ * Version 8 (2026-09-24, pass 8, contract decision 55): every machine past the first chamber carries half again
+ * its HP, so a version 7 history's orders resolve against other numbers from chamber 2 on; it is rejected. */
+export const SAVE_VERSION = 8;
 /*
   Pass 6 levers: the squad draft (contract decisions 45 to 48).
 */

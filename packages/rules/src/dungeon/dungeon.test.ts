@@ -626,14 +626,19 @@ describe("Powerworks battle rules", () => {
     expect(r.revival).toBe(1);
     expect(r.xp).toBe(0);
   });
-  it("replays a version 7 starter history deterministically and rejects versions 1 to 6", () => {
+  it("replays a version 8 starter history deterministically and rejects versions 1 to 7", () => {
     const s = createRun(41);
     const q = orders(s);
     const action = { kind: "round" as const, orders: q };
     const history = [{ kind: "draft", squad: "starter" }, action];
-    expect(SAVE_VERSION).toBe(7);
-    const restored = restoreRun(JSON.stringify({ version: 7, seed: 41, history }));
+    expect(SAVE_VERSION).toBe(8);
+    const restored = restoreRun(JSON.stringify({ version: 8, seed: 41, history }));
     expect(restored.state).toEqual(command(s, action));
+    // Version 7 histories were played against the pass 7 machine HP (pass 8, decision 55),
+    // so the same orders would resolve against other numbers from chamber 2 on.
+    expect(() => restoreRun(JSON.stringify({ version: 7, seed: 41, history }))).toThrow(
+      "Unsupported save."
+    );
     // Version 6 histories name offer indexes of the offer before per-species seed retries
     // (contract decision 53), so the same indexes would draft other creatures.
     expect(() => restoreRun(JSON.stringify({ version: 6, seed: 41, history }))).toThrow(
@@ -701,7 +706,8 @@ describe("Powerworks battle rules", () => {
     target.ward = false;
     const neutral = { ...target, element: "fire" } as Unit;
     expect(b.moves[0].name).toBe("Clamp strike");
-    expect(b.hp).toBe(110);
+    // Pass 8 (decision 55): machines past the first chamber carry half again their HP.
+    expect(b.hp).toBe(165);
     expect(b.speed).toBe(65);
     // Neutral matchup: 7 for the strike, 18 for the surge, both at attr 50.
     expect(damagePreview(b, b.moves[0], neutral)).toBe(7);
