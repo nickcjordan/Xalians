@@ -994,3 +994,18 @@ The top bar became a round track (the nine worlds, filled by who won them) and t
 **Verified:** 607 rules tests (new: `forecastSend` equals `forecastClash` after the real send for every creature at every world, ignores whose turn it is, touches nothing); 1607 web tests (new: `reclamationGlance.test.js`, the fit table against the engine and each instrument's marks); the four table checks green, `reclamation-proving.mjs` extended as above; the glance set, the Clash and the Ruling shot and read at 1440, 1873 and 390, simple and advanced.
 
 **Open:** no human has used this table; the key's placement on a phone covers one figure; the rival's squad stays hidden by design, and every reader asked for it.
+
+### Pass 53 (2026-09-23): the start screen and the draft are one screen
+
+**Nick:** "You should make the starting screen the same behavior as the rest of the screens, in the sense that it all fits on one view."
+
+**Measured first.** The start screen was 1766px tall on a 1440 by 900 desk and 3522px on a 390 by 844 phone: the rival plates sat a whole scroll below Start, and three reference modules (hold, every attribute a job, the story) stood between the player and the game. The draft (`?draft=1`, and both handlers in hot-seat) was 940px on every desk and 2431px on a phone.
+
+- **The start screen** is now the viewport at every size: a head (title, the thesis, the seed), then one panel with the round's three steps and the game's four numbers beside the five rivals, the mode and Start. The rivals are rows on a desk and a row of glyphs on a phone with the chosen one named under them. On a phone the three steps stand side by side, and a game waiting to resume is two keys ("Resume round 2, 1 to 3", "Abandon") with the sentence on the key's accessible name.
+- **The reference is a key away:** "What each attribute does", "Hold and home worlds" and "The story behind it" open as panels over the screen, Escape closes them. The hold module's bulb meter is gone from the intro, since the table no longer draws hold that way; the panel says it in the table's terms.
+- **The draft** shares the height under the rounds and over its footer: fifteen cards in two rows on a desk (three below 1100 wide and on a phone), each sizing its picture to its own box.
+- 41 rules for the removed intro modules pruned.
+
+**Verified:** `reclamation-shift.mjs` now also holds the start screen, the start screen with a game to resume, and the draft to the viewport at all six screens, with their controls wholly on screen; the four checks green; 1619 web tests.
+
+**Open:** the end-of-game result still scrolls inside its own box on a short desk (1366 by 650: 816px of content in 570); it fits at 1440 by 900 and 390 by 844.

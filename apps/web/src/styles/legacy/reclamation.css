@@ -93,32 +93,6 @@
 	align-items: stretch;
 }
 
-.rec-rules-screen {
-	display: flex;
-	flex-direction: column;
-	gap: var(--g-3);
-	min-width: 0;
-}
-
-.rec-rules-screen .g-screen-line { max-width: none; }
-
-.rec-rules-phases {
-	display: grid;
-	grid-template-columns: max-content minmax(0, 1fr);
-	column-gap: var(--g-3);
-	row-gap: var(--g-2);
-	margin: var(--g-1) 0 0;
-	padding-top: var(--g-3);
-	border-top: 1px solid var(--g-phosphor-dim);
-}
-
-.rec-rules-phases dt {
-	text-transform: uppercase;
-	letter-spacing: var(--g-track-wide);
-}
-
-.rec-rules-phases dd { margin: 0; }
-
 .rec-intro-charter {
 	display: flex;
 	flex-direction: column;
@@ -3334,27 +3308,6 @@
    caps, one sentence of style, and the record from this browser in mono.
    ------------------------------------------------------------------------- */
 
-.rec-rivals-panel {
-	display: flex;
-	flex-direction: column;
-	gap: var(--g-3);
-	margin-top: var(--g-4);
-}
-
-.rec-rivals-head { display: flex; flex-direction: column; gap: var(--g-1); }
-.rec-rivals-head .g-kicker { margin: 0; }
-
-.rec-rivals-title {
-	margin: 0;
-	font-family: var(--g-font-stencil);
-	font-size: var(--g-size-h3);
-	text-transform: uppercase;
-	letter-spacing: var(--g-track-label);
-	color: var(--g-ink);
-}
-
-.rec-rivals-lead { margin: 0; max-width: 68ch; color: var(--g-ink-mid); font-size: var(--g-size-small); }
-
 .rec-rivals {
 	display: grid;
 	grid-template-columns: repeat(5, minmax(0, 1fr));
@@ -3685,65 +3638,6 @@
 
 .rec-phase-note { font-size: var(--g-size-small); color: var(--g-ink-mid); line-height: 1.35; }
 
-.rec-hold-lesson {
-	display: grid;
-	grid-template-columns: max-content minmax(0, 1fr);
-	gap: var(--g-3);
-	align-items: start;
-	padding: var(--g-3);
-	border: 1px solid var(--g-rule);
-	background: var(--g-hull-lo);
-	box-shadow: var(--g-recess);
-}
-
-.rec-hold-lesson-title {
-	font-family: var(--g-font-stencil);
-	font-size: var(--g-size-small);
-	font-weight: 600;
-	text-transform: uppercase;
-	letter-spacing: var(--g-track-wide);
-	color: var(--g-brass-light);
-	padding-top: 2px;
-}
-
-.rec-hold-cases {
-	list-style: none;
-	margin: 0;
-	padding: 0;
-	display: flex;
-	flex-direction: column;
-	gap: var(--g-2);
-}
-
-.rec-hold-case { display: flex; align-items: center; gap: var(--g-3); flex-wrap: wrap; }
-.rec-hold-case-note { font-size: var(--g-size-small); color: var(--g-ink-mid); }
-
-.rec-fiction { border-top: var(--g-hairline) solid var(--g-rule-faint); padding-top: var(--g-2); }
-
-.rec-fiction-summary {
-	cursor: pointer;
-	font-family: var(--g-font-stencil);
-	font-size: var(--g-size-tiny);
-	text-transform: uppercase;
-	letter-spacing: var(--g-track-wide);
-	color: var(--g-ink-low);
-	list-style: none;
-}
-
-.rec-fiction-summary::-webkit-details-marker { display: none; }
-.rec-fiction-summary::before { content: '+'; display: inline-block; width: 1.2em; color: var(--g-brass-light); }
-.rec-fiction[open] .rec-fiction-summary::before { content: '−'; }
-.rec-fiction .rec-rules-screen { margin-top: var(--g-3); }
-
-.rec-intro-against {
-	font-family: var(--g-font-stencil);
-	font-size: var(--g-size-tiny);
-	text-transform: uppercase;
-	letter-spacing: var(--g-track-wide);
-	color: var(--g-ink-low);
-	text-align: center;
-}
-
 .rec-rivals-ladder-note {
 	font-family: var(--g-font-stencil);
 	font-size: var(--g-size-tiny);
@@ -3765,7 +3659,6 @@
 
 @media (max-width: 760px) {
 	.rec-phases { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-	.rec-hold-lesson { grid-template-columns: minmax(0, 1fr); }
 }
 
 /* the intro takes the wide console's width and type as well */
@@ -3819,9 +3712,6 @@
 }
 
 .rec-module--round { grid-area: round; }
-.rec-module--hold { grid-area: hold; }
-.rec-module--charter { grid-area: charter; }
-.rec-intro-panel .rec-fiction { grid-area: fiction; }
 
 .rec-module-title {
 	margin: 0;
@@ -3834,8 +3724,6 @@
 	padding-bottom: var(--g-2);
 	border-bottom: var(--g-hairline) solid var(--g-rule-faint);
 }
-
-.rec-module-lead { margin: 0; font-size: var(--g-size-body); line-height: 1.45; color: var(--g-ink-mid); }
 
 /* the round: four rows, glyph beside the words */
 .rec-intro-panel .rec-phases {
@@ -3859,29 +3747,16 @@
 .rec-intro-panel .rec-phase-note { font-size: var(--g-size-body); }
 
 /* hold: the three meters stacked with room */
-.rec-intro-panel .rec-hold-cases { gap: var(--g-4); flex: 1 1 auto; justify-content: space-around; }
-.rec-intro-panel .rec-hold-case { flex-direction: column; align-items: flex-start; gap: var(--g-2); }
-.rec-intro-panel .rec-hold-case .rec-meter--large { --bulb-w: 7px; --bulb-h: 18px; --bulb-gap: 2px; --bank-gap: 6px; }
-.rec-intro-panel .rec-hold-case-note { font-size: var(--g-size-body); color: var(--g-ink); }
 
 /* the Charter: the figures large, the way in underneath */
-.rec-module--charter .rec-charter-figures { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--g-3); }
-.rec-module--charter .rec-charter-figure { padding: var(--g-4) var(--g-3); background: var(--g-hull); }
-.rec-module--charter .rec-charter-number { font-size: var(--g-size-readout); }
-.rec-module--charter .rec-charter-label { font-size: var(--g-size-tiny); }
-.rec-module--charter .rec-intro-actions { margin-top: auto; gap: var(--g-3); }
-.rec-module--charter .rec-intro-mode { display: flex; justify-content: center; }
 .rec-enter { font-size: var(--g-size-lead); padding: var(--g-4) var(--g-5); }
-.rec-module--charter .rec-intro-against { font-size: var(--g-size-small); }
 
 /* the rivals: plates with room and larger type */
-.rec-rivals-panel { margin-top: var(--g-5); gap: var(--g-4); }
 .rec-rival { padding: var(--g-4); gap: var(--g-3); min-height: 200px; }
 .rec-rival-glyph { font-size: 44px; }
 .rec-rival-name { font-size: var(--g-size-h3); }
 .rec-rival-tag { font-size: var(--g-size-body); }
 .rec-rival-ladder .g-lamp { width: 12px; height: 12px; }
-.rec-rivals-title { font-size: var(--g-size-h2); }
 
 @media (max-width: 1100px) {
 	.rec-intro-panel { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-areas: 'thesis thesis' 'round hold' 'charter charter' 'fiction fiction'; }
@@ -3891,7 +3766,6 @@
 	.rec-intro-panel { grid-template-columns: minmax(0, 1fr); grid-template-areas: 'thesis' 'charter' 'round' 'hold' 'fiction'; padding: var(--g-4); gap: var(--g-4); }
 	.rec-intro-panel .rec-thesis { font-size: var(--g-size-h3); }
 	.rec-intro-panel .rec-phase-glyph { font-size: 32px; }
-	.rec-intro-panel .rec-hold-case .rec-meter--large { --bulb-w: 5px; --bulb-h: 13px; }
 	.rec-rival { min-height: 0; }
 }
 
@@ -6778,3 +6652,323 @@
 		transform: translateY(calc(clamp(calc(50cqh - 26px), calc(var(--front) * 1cqh), calc(50cqh + 26px)) - 50%));
 	}
 }
+
+/* --- pass 53: the start screen is one screen -----------------------------------
+   Nick, 2026-09-23: "make the starting screen the same behavior as the rest of the
+   screens ... it all fits on one view". The console is the viewport, as the table's is:
+   the head (title, thesis, seed), then one panel with the round and the game's numbers
+   beside the rival, the mode and Start, and a row of keys to the reference panels.
+   reclamation-shift.mjs holds it to the viewport at every size it checks. */
+
+.rec-console--intro[data-terminal] {
+	height: 100vh;
+	height: 100dvh;
+	min-height: 0;
+	overflow: hidden;
+	display: flex;
+	flex-direction: column;
+}
+.rec-console--intro[data-terminal] > .rec-shell--intro {
+	flex: 1 1 0;
+	min-height: 0;
+	display: flex;
+	flex-direction: column;
+	gap: var(--g-3);
+	padding: var(--g-3) var(--g-4) var(--g-4);
+	overflow: hidden;
+}
+.rec-console--intro .rec-panel-cover { position: fixed; }
+
+.rec-console--intro .rec-intro-head {
+	flex: 0 0 auto;
+	display: grid;
+	grid-template-columns: auto minmax(0, 1fr) auto;
+	align-items: center;
+	gap: var(--g-5);
+}
+.rec-console--intro .rec-intro-title { margin: 0; font-size: clamp(1.8rem, 3.2vw, 3rem); line-height: 1; }
+.rec-console--intro .rec-intro-head .rec-thesis {
+	margin: 0;
+	max-width: 58ch;
+	font-size: var(--g-size-lead);
+	line-height: 1.3;
+	color: var(--g-ink);
+}
+.rec-console--intro .rec-intro-head .rec-masthead-seed { align-self: start; }
+
+.rec-console--intro .rec-resume { flex: 0 0 auto; margin: 0; padding: var(--g-2) var(--g-3); gap: var(--g-3); }
+.rec-console--intro .rec-resume-actions .g-key { padding: var(--g-2) var(--g-4); }
+
+.rec-console--intro .rec-intro-panel {
+	flex: 1 1 0;
+	min-height: 0;
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+	grid-template-rows: minmax(0, 1fr) auto;
+	grid-template-areas: 'round rivals' 'more more';
+	gap: var(--g-4);
+	padding: var(--g-4);
+	align-items: stretch;
+}
+.rec-console--intro .rec-module { min-height: 0; overflow: hidden; gap: var(--g-3); padding: var(--g-4); }
+.rec-console--intro .rec-module--round { grid-area: round; }
+.rec-console--intro .rec-module--rivals { grid-area: rivals; }
+
+/* the round: three rows, then the game's four numbers */
+.rec-console--intro .rec-intro-panel .rec-phases {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr);
+	grid-auto-rows: minmax(0, 1fr);
+	gap: var(--g-2);
+	flex: 1 1 auto;
+	min-height: 0;
+	margin: 0;
+	padding: 0;
+}
+.rec-console--intro .rec-intro-panel .rec-phase { padding: var(--g-2) var(--g-3); gap: var(--g-3); min-height: 0; }
+.rec-console--intro .rec-intro-panel .rec-phase-glyph { font-size: 34px; }
+.rec-console--intro .rec-charter-figures {
+	flex: 0 0 auto;
+	display: grid;
+	grid-template-columns: repeat(4, minmax(0, 1fr));
+	gap: var(--g-2);
+}
+.rec-console--intro .rec-charter-figure { padding: var(--g-2) var(--g-2); background: var(--g-hull); }
+.rec-console--intro .rec-charter-number { font-size: clamp(1.6rem, 2.6vw, 2.6rem); line-height: 1.1; }
+.rec-console--intro .rec-charter-label { font-size: var(--g-size-tiny); }
+
+/* the rival: five plates as rows, the chosen one lit; the mode and Start under them */
+.rec-console--intro .rec-rivals-ladder-note { margin-left: var(--g-2); font-size: var(--g-size-micro); color: var(--g-ink-low); letter-spacing: 0.08em; }
+.rec-console--intro .rec-rivals {
+	flex: 1 1 auto;
+	min-height: 0;
+	display: grid;
+	grid-template-columns: minmax(0, 1fr);
+	grid-auto-rows: minmax(0, 1fr);
+	gap: var(--g-2);
+}
+.rec-console--intro .rec-rival {
+	min-height: 0;
+	display: grid;
+	grid-template-columns: auto minmax(0, 1fr) auto auto;
+	grid-template-rows: auto auto;
+	grid-template-areas: 'glyph name ladder record' 'glyph tag ladder record';
+	align-items: center;
+	column-gap: var(--g-3);
+	row-gap: 0;
+	padding: var(--g-2) var(--g-3);
+	text-align: left;
+}
+.rec-console--intro .rec-rival-glyph { grid-area: glyph; font-size: 30px; display: flex; }
+.rec-console--intro .rec-rival-name { grid-area: name; font-size: var(--g-size-body); line-height: 1.15; }
+.rec-console--intro .rec-rival-tag { grid-area: tag; font-size: var(--g-size-small); line-height: 1.2; }
+.rec-console--intro .rec-rival-ladder { grid-area: ladder; }
+.rec-console--intro .rec-rival-ladder .g-lamp { width: 9px; height: 9px; }
+.rec-console--intro .rec-rival-record { grid-area: record; font-size: var(--g-size-small); }
+.rec-console--intro .rec-rival-chosen { display: none; }
+.rec-console--intro .rec-intro-actions {
+	flex: 0 0 auto;
+	display: flex;
+	align-items: center;
+	gap: var(--g-3);
+	margin: 0;
+}
+.rec-console--intro .rec-intro-actions .rec-enter { flex: 1 1 auto; font-size: var(--g-size-lead); padding: var(--g-3) var(--g-4); }
+
+/* the reference, a key away */
+.rec-console--intro .rec-intro-more {
+	grid-area: more;
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--g-2);
+}
+.rec-console--intro .rec-intro-more .g-btn { font-size: var(--g-size-micro); }
+.rec-intro-hold { margin: 0 0 var(--g-2); padding-left: 1.2em; display: grid; gap: var(--g-1); }
+.rec-intro-hold b { color: var(--g-ink); }
+.rec-panel-body .rec-intro-lanes { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--g-2); }
+.rec-panel-body .rec-intro-lanes .rec-lane { display: grid; gap: 1px; }
+
+/* a short desk gives up the glyphs' size and the thesis's second line first */
+@media (min-width: 761px) and (max-height: 760px) {
+	.rec-console--intro[data-terminal] > .rec-shell--intro { gap: var(--g-2); padding: var(--g-2) var(--g-4) var(--g-3); }
+	.rec-console--intro .rec-intro-panel { gap: var(--g-3); padding: var(--g-3); }
+	.rec-console--intro .rec-module { padding: var(--g-3); gap: var(--g-2); }
+	.rec-console--intro .rec-intro-panel .rec-phase-glyph { font-size: 26px; }
+	.rec-console--intro .rec-intro-panel .rec-phase-word { font-size: var(--g-size-body); }
+	.rec-console--intro .rec-intro-panel .rec-phase-note { font-size: var(--g-size-small); }
+	.rec-console--intro .rec-rival-glyph { font-size: 24px; }
+	.rec-console--intro .rec-intro-head .rec-thesis { font-size: var(--g-size-body); }
+	.rec-console--intro .rec-charter-number { font-size: 1.6rem; }
+}
+
+/* a phone: one column, the plates a row of glyphs with the chosen one named under them */
+@media (max-width: 760px) {
+	.rec-console--intro[data-terminal] > .rec-shell--intro { gap: var(--g-2); padding: var(--g-2); }
+	.rec-console--intro .rec-intro-head { grid-template-columns: minmax(0, 1fr) auto; row-gap: 2px; column-gap: var(--g-2); }
+	.rec-console--intro .rec-intro-title { font-size: 1.6rem; }
+	.rec-console--intro .rec-intro-head .rec-thesis { grid-column: 1 / -1; grid-row: 2; font-size: 14px; line-height: 1.3; }
+	.rec-console--intro .rec-intro-head .rec-masthead-seed { align-self: center; }
+	.rec-console--intro .rec-resume { flex-wrap: wrap; padding: var(--g-1) var(--g-2); gap: var(--g-1) var(--g-2); font-size: 12px; }
+	.rec-console--intro .rec-resume-actions .g-key { min-height: 32px; padding: 0 var(--g-3); }
+	.rec-console--intro .rec-intro-panel {
+		grid-template-columns: minmax(0, 1fr);
+		grid-template-rows: minmax(0, 1fr) auto auto;
+		grid-template-areas: 'round' 'rivals' 'more';
+		gap: var(--g-2);
+		padding: var(--g-2);
+	}
+	.rec-console--intro .rec-module { padding: var(--g-2); gap: var(--g-2); }
+	.rec-console--intro .rec-module-title { padding-bottom: 2px; font-size: 11px; }
+	.rec-console--intro .rec-intro-panel .rec-phase { padding: 4px var(--g-2); gap: var(--g-2); }
+	.rec-console--intro .rec-intro-panel .rec-phase-glyph { font-size: 22px; }
+	.rec-console--intro .rec-intro-panel .rec-phase-word { font-size: 13px; }
+	.rec-console--intro .rec-intro-panel .rec-phase-note { font-size: 11px; line-height: 1.25; }
+	.rec-console--intro .rec-charter-figure { padding: 2px; }
+	.rec-console--intro .rec-charter-number { font-size: 1.4rem; }
+	.rec-console--intro .rec-charter-label { font-size: 10px; }
+	.rec-console--intro .rec-rivals { grid-template-columns: repeat(5, minmax(0, 1fr)); grid-auto-rows: auto; flex: 0 0 auto; }
+	.rec-console--intro .rec-rival {
+		grid-template-columns: minmax(0, 1fr);
+		grid-template-rows: auto auto;
+		grid-template-areas: 'glyph' 'ladder';
+		justify-items: center;
+		row-gap: 4px;
+		padding: 6px 2px;
+		min-height: 48px;
+	}
+	.rec-console--intro .rec-rival-name,
+	.rec-console--intro .rec-rival-tag,
+	.rec-console--intro .rec-rival-record { display: none; }
+	.rec-console--intro .rec-rival-glyph { font-size: 22px; }
+	.rec-console--intro .rec-rival-ladder .g-lamp { width: 6px; height: 6px; }
+	.rec-console--intro .rec-rival-chosen { display: block; margin: 0; font-size: 12px; color: var(--g-ink-mid); }
+	.rec-console--intro .rec-rival-chosen b { color: var(--g-ink); margin-right: 4px; }
+	.rec-console--intro .rec-intro-actions { gap: var(--g-2); }
+	.rec-console--intro .rec-intro-actions .g-segment { min-height: 40px; }
+	.rec-console--intro .rec-intro-actions .rec-enter { font-size: var(--g-size-body); padding: var(--g-2) var(--g-3); min-height: 40px; }
+	.rec-console--intro .rec-intro-more { flex-wrap: nowrap; }
+	.rec-console--intro .rec-intro-more .g-btn { flex: 1 1 0; min-width: 0; min-height: 32px; padding: 2px 4px; font-size: 10px; line-height: 1.15; white-space: normal; }
+}
+.rec-console--intro .rec-rival--chosen { box-shadow: inset 0 0 0 2px var(--g-lamp-amber); }
+.rec-console--intro .rec-rival-ladder { align-self: center; justify-self: end; }
+/* the reference panels open over the site's navigation too, so their heads are never under it */
+.rec-console--intro .rec-panel-cover { z-index: 2000; }
+/* the mode and Start share one row */
+.rec-console--intro .rec-intro-actions { flex-direction: row; }
+.rec-console--intro .rec-intro-actions .rec-intro-mode { flex: 0 0 auto; }
+.rec-console--intro .rec-resume-short { display: none; }
+@media (max-width: 760px) {
+	/* on a phone the resume row is its two keys; the sentence rides on the key's name */
+	.rec-console--intro .rec-resume > .g-lamp,
+	.rec-console--intro .rec-resume-text { display: none; }
+	.rec-console--intro .rec-resume { flex-wrap: nowrap; padding: var(--g-1); }
+	.rec-console--intro .rec-resume-actions { display: flex; width: 100%; gap: var(--g-2); }
+	.rec-console--intro .rec-resume-actions .g-key { font-size: 12px; }
+	.rec-console--intro .rec-resume-actions [data-resume-match] { flex: 1 1 auto; }
+	.rec-console--intro .rec-resume-short { display: inline; }
+}
+@media (max-width: 760px) {
+	/* the three steps of a round stand side by side on a phone, each at its own height */
+	.rec-console--intro .rec-intro-panel { grid-template-rows: auto auto auto; align-content: space-between; }
+	.rec-console--intro .rec-module--round,
+	.rec-console--intro .rec-module--rivals { overflow: visible; }
+	.rec-console--intro .rec-intro-panel .rec-phases { grid-template-columns: repeat(3, minmax(0, 1fr)); grid-auto-rows: auto; flex: 0 0 auto; }
+	.rec-console--intro .rec-intro-panel .rec-phase { flex-direction: column; align-items: flex-start; gap: 2px; padding: 4px 6px; }
+	.rec-console--intro .rec-intro-panel .rec-phase-glyph { font-size: 18px; }
+	.rec-console--intro .rec-intro-panel .rec-phase-word { font-size: 12px; }
+	.rec-console--intro .rec-intro-panel .rec-phase-note { font-size: 10.5px; line-height: 1.25; }
+	.rec-console--intro .rec-intro-actions .g-segment { padding: 0 var(--g-2); font-size: 11px; }
+	.rec-console--intro .rec-intro-actions .rec-enter { font-size: 13px; letter-spacing: 0.08em; white-space: nowrap; padding: var(--g-2); }
+}
+@media (max-width: 760px) {
+	/* a tall phone keeps the panel at its own height rather than spreading its modules apart */
+	.rec-console--intro .rec-intro-panel { flex: 0 1 auto; align-content: start; }
+}
+
+/* --- pass 53: the draft is one screen too ------------------------------------------
+   The draft (?draft=1, and both handlers in hot-seat) was 940px tall on every desk and
+   2431px on a phone. The fifteen cards now share the height left under the rounds and
+   over the footer, two rows on a desk and three on a phone, and each card sizes its
+   picture to the room it gets (container units). */
+
+.rec-console--draft[data-terminal] {
+	height: 100vh;
+	height: 100dvh;
+	min-height: 0;
+	overflow: hidden;
+	display: flex;
+	flex-direction: column;
+}
+.rec-console--draft[data-terminal] > .rec-shell--draft {
+	flex: 1 1 0;
+	min-height: 0;
+	overflow: hidden;
+	gap: var(--g-2);
+	padding: var(--g-2) var(--g-4) var(--g-3);
+}
+.rec-console--draft .rec-draft { flex: 1 1 0; min-height: 0; gap: var(--g-3); }
+.rec-console--draft .rec-draft-head { flex: 0 0 auto; align-items: center; }
+.rec-console--draft .rec-draft-heading { font-size: clamp(1.4rem, 2.4vw, 2.2rem); margin: 0; }
+.rec-console--draft .rec-draft-worlds { flex: 0 0 auto; }
+.rec-console--draft .rec-draft-round { padding: var(--g-2) var(--g-3); }
+.rec-console--draft .rec-draft-grid {
+	flex: 1 1 0;
+	min-height: 0;
+	grid-template-columns: repeat(8, minmax(0, 1fr));
+	grid-auto-rows: minmax(0, 1fr);
+	gap: var(--g-2);
+}
+.rec-console--draft .rec-draft-card {
+	min-height: 0;
+	overflow: hidden;
+	container-type: size;
+	justify-content: center;
+	gap: clamp(2px, 3cqh, var(--g-2));
+	padding: var(--g-2);
+}
+.rec-console--draft .rec-draft-card .rec-plinth-stage { height: auto; }
+.rec-console--draft .rec-draft-card .rec-plinth-art { width: clamp(22px, 32cqh, 64px); height: clamp(22px, 32cqh, 64px); }
+.rec-console--draft .rec-draft-card .rec-plinth-name { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.rec-console--draft .rec-draft-foot { flex: 0 0 auto; position: static; padding: var(--g-2) var(--g-3); }
+
+@media (max-width: 1100px) {
+	.rec-console--draft .rec-draft-grid { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+	.rec-console--draft .rec-draft-worlds { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@media (min-width: 761px) and (max-height: 760px) {
+	.rec-console--draft .rec-draft-lamp-row .rec-lamp { width: 8px; height: 8px; }
+	.rec-console--draft .rec-draft-best { font-size: var(--g-size-micro); }
+}
+@media (max-width: 760px) {
+	.rec-console--draft[data-terminal] > .rec-shell--draft { padding: var(--g-2); }
+	.rec-console--draft .rec-masthead .g-kicker,
+	.rec-console--draft .rec-masthead-rival { display: none; }
+	.rec-console--draft .rec-draft { gap: var(--g-2); }
+	.rec-console--draft .rec-draft-heading { font-size: 1.2rem; }
+	.rec-console--draft .rec-draft-kicker { display: none; }
+	.rec-console--draft .rec-draft-worlds { gap: 4px; }
+	.rec-console--draft .rec-draft-round { padding: 4px; gap: 2px; display: flex; flex-direction: column; }
+	.rec-console--draft .rec-draft-round-label { font-size: 9px; }
+	.rec-console--draft .rec-draft-round-chips { flex-direction: column; gap: 2px; }
+	.rec-console--draft .rec-draft-round-chips .g-chip { font-size: 9px; padding: 0 4px; line-height: 1.5; }
+	.rec-console--draft .rec-draft-grid { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 3px; }
+	.rec-console--draft .rec-draft-card { padding: 3px 2px; border-width: 1px; }
+	.rec-console--draft .rec-draft-card .rec-plinth-name { font-size: 9px; }
+	.rec-console--draft .rec-draft-lamps { gap: 2px; }
+	.rec-console--draft .rec-draft-lamp-row { gap: 2px; }
+	.rec-console--draft .rec-draft-lamp-row .rec-lamp { width: 6px; height: 6px; }
+	.rec-console--draft .rec-draft-best { flex-direction: column; align-items: center; gap: 0; font-size: 11px; line-height: 1.15; }
+	.rec-console--draft .rec-draft-best-legend { margin: 0; font-size: 7.5px; letter-spacing: 0.04em; }
+	.rec-console--draft .rec-draft-best-planet { font-size: 8px; letter-spacing: 0.04em; }
+	.rec-console--draft .rec-draft-foot { flex-direction: row; align-items: center; padding: var(--g-1) var(--g-2); }
+	.rec-console--draft .rec-draft-lead { font-size: 13px; }
+	.rec-console--draft .rec-draft-actions .g-btn { min-height: 36px; font-size: 11px; padding: 0 var(--g-2); }
+}
+/* the picture's stage holds the picture's height, so the name sits under it and not over it */
+.rec-console--draft .rec-draft-card .rec-plinth-stage { flex: 0 0 auto; width: 100%; height: clamp(22px, 32cqh, 64px); display: flex; align-items: center; justify-content: center; }
+/* the best-of-nine figure reads as a caption, then the number and its world */
+.rec-console--draft .rec-draft-best { flex-direction: column; align-items: center; gap: 0; line-height: 1.2; }
+.rec-console--draft .rec-draft-best-legend { margin: 0; }
+.rec-console--draft .rec-draft-card > .rec-plinth-name,
+.rec-console--draft .rec-draft-card > .rec-draft-lamps,
+.rec-console--draft .rec-draft-card > .rec-draft-best { flex-shrink: 0; }
