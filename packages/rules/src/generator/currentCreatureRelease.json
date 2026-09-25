@@ -1,4 +1,0 @@
-{
-  "releaseId": "generation-0.9.0-1",
-  "entryPoint": "packages/rules/src/generator/creatureEngineRelease.ts"
-}

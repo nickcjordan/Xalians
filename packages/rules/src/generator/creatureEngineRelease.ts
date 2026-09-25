@@ -1,6 +1,6 @@
 /** Species-independent creature generator. The executable archive contains no roster. */
 import { z } from 'zod';
-import { CreatureRecordSchema, type CreatureRecord } from '@xalians/content/creature';
+import { CreatureRecordV52Schema, type CreatureRecordV52 } from '@xalians/content/creature';
 import { compileSpecies, generateCreatureDraft } from './creature.ts';
 import { makeRng } from './prng.ts';
 
@@ -12,10 +12,10 @@ export const SCHEMA_VERSION = '5.2.0';
 const GENERATION_SEED_NAMESPACE_VERSION = '0.8.0';
 const CREATURE_FACT_NAMESPACE_VERSION = '0.7.0';
 const revisionSchema = z.string().regex(/^[a-f0-9]{64}$/);
-const replayInputs = CreatureRecordSchema.shape.provenance.omit({
+const replayInputs = CreatureRecordV52Schema.shape.provenance.omit({
   generatorVersion: true, schemaVersion: true, releaseId: true, speciesRevision: true,
 });
-type Options = Omit<CreatureRecord['provenance'], 'seed' | 'generatorVersion' | 'schemaVersion' | 'releaseId' | 'speciesRevision'>;
+type Options = Omit<CreatureRecordV52['provenance'], 'seed' | 'generatorVersion' | 'schemaVersion' | 'releaseId' | 'speciesRevision'>;
 type Entry = { revision: string; template: unknown };
 const finishOdds = [['eclipse', 1 / 4000], ['prismatic', 1 / 400], ['gleam', 1 / 40]] as const;
 
@@ -29,7 +29,7 @@ export function createCreatureCatalog(entries: readonly Entry[]) {
   if (catalog.size !== entries.length) throw new Error('Creature catalog species keys must be unique');
   return {
     getSpeciesTemplates: () => [...catalog.values()].map(value => value.compiled.species),
-    generateXalian(species: string, seed: string, options: Options): CreatureRecord {
+    generateXalian(species: string, seed: string, options: Options): CreatureRecordV52 {
       const selected = catalog.get(species);
       if (!selected) throw new Error(`Unknown release species: ${species}`);
       const inputs = replayInputs.parse({ ...options, seed });
@@ -37,7 +37,7 @@ export function createCreatureCatalog(entries: readonly Entry[]) {
       const creatureFactSeed = JSON.stringify([species, seed, CREATURE_FACT_NAMESPACE_VERSION]);
       const rng = makeRng(generationSeed);
       const roll = rng.fork('appearance').float();
-      let finish: CreatureRecord['appearance']['finish'] = 'standard';
+      let finish: CreatureRecordV52['appearance']['finish'] = 'standard';
       let cumulative = 0;
       for (const [candidate, odds] of finishOdds) {
         cumulative += odds;
@@ -57,10 +57,10 @@ export function createCreatureCatalog(entries: readonly Entry[]) {
 }
 
 /** Historical replay supplies the exact archived template identified by the record. */
-export function generateXalian(template: unknown, revision: string, seed: string, options: Options): CreatureRecord {
+export function generateXalian(template: unknown, revision: string, seed: string, options: Options): CreatureRecordV52 {
   const catalog = createCreatureCatalog([{ template, revision }]);
   const species = catalog.getSpeciesTemplates()[0].key;
   return catalog.generateXalian(species, seed, options);
 }
 
-export { CreatureRecordSchema } from '@xalians/content/creature';
+export { CreatureRecordV52Schema as CreatureRecordSchema } from '@xalians/content/creature';

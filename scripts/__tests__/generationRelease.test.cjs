@@ -8,6 +8,16 @@ const { readManifest, replay, archiveRoot, freeze } = require('../generationRele
 
 const fixtureFile = path.join(__dirname, 'fixtures/generation-release-records.json');
 const fixtures = () => JSON.parse(fs.readFileSync(fixtureFile, 'utf8'));
+const historicalSpeciesEntries = () => {
+  const root = path.join(__dirname, '../../docs/species-templates/v5/revisions');
+  return fs.readdirSync(root, { withFileTypes: true }).filter(entry => entry.isDirectory()).flatMap(entry => {
+    const directory = path.join(root, entry.name);
+    return fs.readdirSync(directory).filter(file => file.endsWith('.json')).map(file => ({
+      revision: file.slice(0, -5),
+      template: JSON.parse(fs.readFileSync(path.join(directory, file), 'utf8')),
+    }));
+  });
+};
 function temporaryArchive(t) {
   const temporary = fs.mkdtempSync(path.join(os.tmpdir(), 'xalian-release-test-'));
   t.after(() => {
@@ -31,7 +41,7 @@ test('all species in every archived release replay with both profiles', async ()
     const { artifact, manifest } = readManifest(entry.name);
     const archived = await import(pathToFileURL(artifact).href);
     const entries = manifest.kind === 'species-independent'
-      ? JSON.parse(fs.readFileSync(path.join(__dirname, '../../packages/content/json/canonicalSpeciesCatalog.json'), 'utf8'))
+      ? historicalSpeciesEntries()
       : archived.getSpeciesTemplates().map(template => ({ template }));
     for (const { template, revision } of entries) {
       for (const profile of ['full', 'showroom']) {
@@ -166,12 +176,12 @@ const creatureEntry = 'scripts/__tests__/fixtures/creature-release.ts';
 const independentCreatureEntry = 'packages/rules/src/generator/creatureEngineRelease.ts';
 test('the species-independent engine freezes without any roster data and replays all current species', async t => {
   const temporary = temporaryArchive(t);
-  const releaseId = require('../../packages/rules/src/generator/currentCreatureRelease.json').releaseId;
+  const releaseId = 'generation-0.9.0-1';
   const manifest = await freeze({ entryPoint: independentCreatureEntry, releaseId, archives: temporary });
   assert.equal(manifest.kind, 'species-independent');
   const v5Files = fs.readdirSync(path.join(__dirname, '../../docs/species-templates/v5')).filter(file => file.endsWith('.json'));
   assert.equal(Object.keys(manifest.inputs).filter(file => /species-templates\/v5\/|canonicalSpeciesCatalog\.json/.test(file)).length, 0);
-  const catalog = JSON.parse(fs.readFileSync(path.join(__dirname, '../../packages/content/json/canonicalSpeciesCatalog.json'), 'utf8'));
+  const catalog = historicalSpeciesEntries();
   assert.deepEqual(catalog.map(entry => entry.template.key).sort(), v5Files.map(file => file.slice(0, -5)).sort());
   const { artifact } = readManifest(releaseId, temporary);
   const archived = await import(pathToFileURL(artifact).href);
@@ -188,14 +198,14 @@ test('the species-independent engine freezes without any roster data and replays
 test('a new valid species uses the existing engine archive and its own content revision', async t => {
   const temporary = temporaryArchive(t);
   const revisions = temporaryArchive(t);
-  const releaseId = require('../../packages/rules/src/generator/currentCreatureRelease.json').releaseId;
+  const releaseId = 'generation-0.9.0-1';
   const manifest = await freeze({ entryPoint: independentCreatureEntry, releaseId, archives: temporary });
   const { artifact } = readManifest(releaseId, temporary);
   const archived = await import(pathToFileURL(artifact).href);
   const template = JSON.parse(fs.readFileSync(path.join(__dirname, '../../packages/content/src/creature/fixtures/support-species.json'), 'utf8'));
   template.key = 'future-species';
   template.name = 'Future Species';
-  const { revisionOf } = require('../syncCreatureCatalog.cjs');
+  const { revisionOf } = require('../historicalSpeciesRevision.cjs');
   const revision = revisionOf(template);
   const directory = path.join(revisions, template.key);
   fs.mkdirSync(directory);
@@ -216,7 +226,7 @@ test('a new valid species uses the existing engine archive and its own content r
 test('separating the roster does not reroll existing species', async () => {
   const previous = await import(pathToFileURL(readManifest('generation-0.8.0-2').artifact).href);
   const current = await import(pathToFileURL(readManifest('generation-0.9.0-1').artifact).href);
-  const catalog = JSON.parse(fs.readFileSync(path.join(__dirname, '../../packages/content/json/canonicalSpeciesCatalog.json'), 'utf8'));
+  const catalog = historicalSpeciesEntries();
   const options = { profile: 'full', generatedAt: '2026-09-25T12:00:00.000Z', serial: 1, origin: 'poseidas' };
   for (const { template, revision } of catalog) {
     const seed = 'independent-roster:' + template.key;

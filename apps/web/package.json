@@ -40,6 +40,7 @@
   "scripts": {
     "codex": "node ../../scripts/buildCodex.js",
     "dev": "npm run codex && vite",
+    "predev": "node ../../scripts/bundleLore.js",
     "start": "npm run dev",
     "build": "npm run codex && vite build",
     "build:styleguide": "npm run codex && vite build --mode styleguide",
@@ -48,7 +49,7 @@
     "deploy": "aws s3 sync build s3://xalians.com --delete",
     "test": "vitest",
     "typecheck": "tsc --noEmit",
-    "prebuild": "node ../../scripts/generationRelease.cjs check"
+    "prebuild": "node ../../scripts/bundleLore.js"
   },
   "browserslist": {
     "production": [

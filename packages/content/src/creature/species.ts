@@ -65,7 +65,7 @@ export function checkPhysiology(value: { breathes: string[]; environmentalTolera
   if (value.breathes.some(phase => !value.environmentalTolerance.ambientMedia.includes(phase))) ctx.addIssue({ code: 'custom', message: 'breathing media must be supported ambient media' });
 }
 export const SpeciesSchema = z.strictObject({
-  schemaVersion: z.literal('5.1.0'), key: c.Key, name: z.string().min(1), nameOrigin: z.string().min(1),
+  schemaVersion: z.literal('5.1.0').optional(), key: c.Key, name: z.string().min(1), nameOrigin: z.string().min(1),
   element: c.ElementKeySchema, homePlanet: c.Key, generatorPlanets: c.choices(c.Key),
   lore: z.strictObject({ description: z.string().min(1), appearance: z.array(z.string().min(1)).min(3).max(8),
     origin: z.string().min(1), habitat: z.string().min(1), feeding: z.string().min(1), behavior: z.string().min(1), company: z.string().min(1) }),
