@@ -1,0 +1,299 @@
+{
+  "actions": [
+    {
+      "activation": {
+        "continuity": "ongoing"
+      },
+      "delivery": {
+        "approach": "stationary",
+        "mode": "contact"
+      },
+      "description": "It wraps its long segmented body around a contacted target and holds on.",
+      "effects": [
+        {
+          "bound": "source",
+          "key": "outcome",
+          "likelihood": "consistent",
+          "onset": "instant",
+          "persistence": "sustained",
+          "recipient": "target",
+          "removable": [
+            "freeing"
+          ],
+          "status": "restrained",
+          "type": "status"
+        }
+      ],
+      "instrument": "coils",
+      "key": "newtapede-defining",
+      "name": "Whole-Body Wrap",
+      "spatial": {
+        "range": "contact"
+      },
+      "targeting": [
+        "other"
+      ],
+      "timing": {
+        "preparation": "brief",
+        "recovery": "brief"
+      }
+    }
+  ],
+  "acts": {
+    "output": {
+      "body/strike": [
+        28,
+        50
+      ],
+      "coils/crush": [
+        35,
+        58
+      ]
+    }
+  },
+  "attributes": {
+    "agility": [
+      55,
+      80
+    ],
+    "charisma": [
+      15,
+      35
+    ],
+    "endurance": [
+      55,
+      80
+    ],
+    "instinct": [
+      45,
+      65
+    ],
+    "intelligence": [
+      25,
+      45
+    ],
+    "reflex": [
+      45,
+      70
+    ],
+    "resilience": [
+      15,
+      35
+    ],
+    "strength": [
+      25,
+      45
+    ],
+    "vitality": [
+      35,
+      55
+    ],
+    "willpower": [
+      30,
+      50
+    ]
+  },
+  "channels": [],
+  "conduits": {},
+  "element": "water",
+  "generatorPlanets": [
+    "poseidas"
+  ],
+  "homePlanet": "poseidas",
+  "key": "newtapede",
+  "lore": {
+    "appearance": [
+      "Long, arched, segmented body on sixteen legs",
+      "Slender frame",
+      "Webbed splayed feet",
+      "Broad rounded head",
+      "Very large forward-facing eyes",
+      "Two thin antennae",
+      "Bare hide"
+    ],
+    "behavior": "It is at home on land but far more dangerous in water, where its slender frame and webbed feet carry it. What it catches it wraps its whole length around and holds under.",
+    "company": "It works among the other water-breathing Xalians of the rigs.",
+    "description": "A 16 legged amphibious creature with a long, segmented body. While adapted to land, its slender frame and webbed feet make it a formidable opponent in water.",
+    "feeding": "It eats what it catches in the water and what it finds on land.",
+    "habitat": "The water around and beneath Poseidas's rigs and underwater cities.",
+    "origin": "One of the water-breathing Xalians the Poseidas Generator produced once the seas rose and turned acidic."
+  },
+  "mechanisms": [
+    {
+      "activation": {
+        "continuity": [
+          "ongoing"
+        ]
+      },
+      "delivery": {
+        "contact": {
+          "approach": [
+            "stationary",
+            "closing"
+          ],
+          "range": [
+            "contact"
+          ]
+        }
+      },
+      "description": "Its long body maintains a hold on one contacted creature.",
+      "effects": [
+        {
+          "bound": "source",
+          "key": "outcome",
+          "likelihood": [
+            "consistent"
+          ],
+          "onset": "instant",
+          "persistence": "sustained",
+          "recipient": "target",
+          "removable": [
+            "freeing"
+          ],
+          "status": "restrained",
+          "type": "status"
+        }
+      ],
+      "instrument": "coils",
+      "key": "body-wrap",
+      "name": "Body Wrap",
+      "targeting": [
+        "other"
+      ],
+      "timing": {
+        "preparation": [
+          "immediate",
+          "brief"
+        ],
+        "recovery": [
+          "brief"
+        ]
+      }
+    }
+  ],
+  "name": "Newtapede",
+  "nameOrigin": "A fusion of newt and centipede, matching its amphibious body and sixteen-legged segmented form.",
+  "passives": [],
+  "physiology": {
+    "anatomy": [
+      "antennae",
+      "coils",
+      "hide",
+      "body"
+    ],
+    "bodyPlan": "multiped",
+    "breathes": [
+      "gas",
+      "liquid"
+    ],
+    "capabilities": {
+      "burrow": [
+        5,
+        20
+      ],
+      "climb": [
+        45,
+        70
+      ],
+      "flight": [
+        0,
+        0
+      ],
+      "leap": [
+        10,
+        25
+      ],
+      "manipulation": [
+        30,
+        55
+      ],
+      "sprint": [
+        30,
+        50
+      ],
+      "swim": [
+        70,
+        92
+      ]
+    },
+    "communication": [
+      "vibration",
+      "display"
+    ],
+    "composition": {
+      "primary": "flesh"
+    },
+    "covering": "bare",
+    "diet": "omnivore",
+    "environmentalTolerance": {
+      "ambientMedia": [
+        "gas",
+        "liquid"
+      ],
+      "temperatureC": {
+        "max": 40,
+        "min": 5
+      }
+    },
+    "genome": {
+      "chirality": "rolled"
+    },
+    "lifespan": "standard",
+    "protections": [],
+    "senses": {
+      "hearing": [
+        25,
+        45
+      ],
+      "sight": [
+        55,
+        80
+      ],
+      "smell": [
+        30,
+        55
+      ],
+      "special": [
+        "tremorsense"
+      ]
+    },
+    "size": {
+      "heightCm": [
+        170,
+        230
+      ],
+      "massKg": [
+        70,
+        115
+      ]
+    },
+    "traversal": []
+  },
+  "schemaVersion": "5.1.0",
+  "signature": {
+    "key": "newtapede-defining",
+    "type": "action"
+  },
+  "temperament": {
+    "aggression": [
+      40,
+      65
+    ],
+    "boldness": [
+      40,
+      65
+    ],
+    "curiosity": [
+      35,
+      60
+    ],
+    "energy": [
+      45,
+      70
+    ],
+    "sociability": [
+      40,
+      65
+    ]
+  }
+}

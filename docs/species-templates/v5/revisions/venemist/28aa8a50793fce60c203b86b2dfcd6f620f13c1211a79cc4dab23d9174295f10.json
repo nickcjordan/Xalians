@@ -1,0 +1,334 @@
+{
+  "actions": [
+    {
+      "activation": {
+        "continuity": "discrete"
+      },
+      "delivery": {
+        "approach": "stationary",
+        "mode": "stream"
+      },
+      "description": "It expels solvent mist from its mouth tube to dissolve a selected target.",
+      "effects": [
+        {
+          "intensity": 65,
+          "key": "outcome",
+          "likelihood": "consistent",
+          "mechanism": "elemental",
+          "onset": "instant",
+          "persistence": "resolved",
+          "recipient": "target",
+          "type": "harm"
+        },
+        {
+          "duration": "brief",
+          "intensity": 70,
+          "key": "corrode",
+          "likelihood": "likely",
+          "onset": "instant",
+          "persistence": "lingering",
+          "recipient": "target",
+          "removable": [
+            "cleansing"
+          ],
+          "status": "corroding",
+          "type": "status"
+        }
+      ],
+      "element": "chemical",
+      "instrument": "vents",
+      "key": "venemist-defining",
+      "name": "Dissolving Mist",
+      "spatial": {
+        "range": "medium"
+      },
+      "targeting": [
+        "other"
+      ],
+      "timing": {
+        "preparation": "brief",
+        "recovery": "brief"
+      }
+    }
+  ],
+  "acts": {
+    "exclude": [
+      "vents/drain"
+    ],
+    "output": {
+      "fangs/strike": [
+        20,
+        40
+      ],
+      "hide/strike": [
+        18,
+        35
+      ]
+    }
+  },
+  "attributes": {
+    "agility": [
+      45,
+      68
+    ],
+    "charisma": [
+      20,
+      40
+    ],
+    "endurance": [
+      62,
+      88
+    ],
+    "instinct": [
+      55,
+      80
+    ],
+    "intelligence": [
+      25,
+      45
+    ],
+    "reflex": [
+      45,
+      68
+    ],
+    "resilience": [
+      40,
+      62
+    ],
+    "strength": [
+      30,
+      50
+    ],
+    "vitality": [
+      40,
+      62
+    ],
+    "willpower": [
+      35,
+      58
+    ]
+  },
+  "channels": [],
+  "conduits": {
+    "vents": "chemical"
+  },
+  "element": "chemical",
+  "generatorPlanets": [
+    "drainov"
+  ],
+  "homePlanet": "drainov",
+  "key": "venemist",
+  "lore": {
+    "appearance": [
+      "Mid-sized four-legged hunter, heavier in front",
+      "Shaggy along the neck and back, smooth on the flanks",
+      "Long upright ears",
+      "Wide gaping jaws holding two teeth, both long curved fangs",
+      "A tube in the mouth that sprays toxic mist",
+      "Long tail"
+    ],
+    "behavior": "It hunts by scent through smog too thick to see in.",
+    "company": "It hunts alone in the smog.",
+    "description": "The toxic mist expelled from a tube in its mouth helps to dissolve its prey. With only 2 teeth, this tactic is necessary for the creature to survive.",
+    "feeding": "With only two teeth, it dissolves its prey with the toxic mist it expels from the tube in its mouth.",
+    "habitat": "The acid swamps and derelict chemical plants of Drainov.",
+    "origin": "Made by the Drainov Generator to survive a world of acid swamps and industrial waste."
+  },
+  "mechanisms": [
+    {
+      "activation": {
+        "continuity": [
+          "discrete"
+        ]
+      },
+      "delivery": {
+        "stream": {
+          "approach": [
+            "stationary"
+          ],
+          "range": [
+            "short",
+            "medium"
+          ]
+        }
+      },
+      "description": "Mouth-tube mist chemically dissolves whatever it contacts.",
+      "effects": [
+        {
+          "intensity": [
+            45,
+            65
+          ],
+          "key": "outcome",
+          "likelihood": [
+            "consistent"
+          ],
+          "mechanism": "elemental",
+          "onset": "instant",
+          "persistence": "resolved",
+          "recipient": "target",
+          "type": "harm"
+        },
+        {
+          "duration": "brief",
+          "intensity": [
+            55,
+            78
+          ],
+          "key": "corrode",
+          "likelihood": [
+            "likely",
+            "occasional"
+          ],
+          "onset": "instant",
+          "persistence": "lingering",
+          "recipient": "target",
+          "removable": [
+            "cleansing"
+          ],
+          "status": "corroding",
+          "type": "status"
+        }
+      ],
+      "element": "chemical",
+      "instrument": "vents",
+      "key": "solvent-mist",
+      "name": "Solvent Mist",
+      "targeting": [
+        "other"
+      ],
+      "timing": {
+        "preparation": [
+          "immediate",
+          "brief"
+        ],
+        "recovery": [
+          "brief",
+          "prolonged"
+        ]
+      }
+    }
+  ],
+  "name": "Venemist",
+  "nameOrigin": "A fusion of venom and mist, naming the toxic cloud it sprays to dissolve prey.",
+  "passives": [],
+  "physiology": {
+    "anatomy": [
+      "jaws",
+      "fangs",
+      "vents",
+      "tail",
+      "hide"
+    ],
+    "bodyPlan": "quadruped",
+    "breathes": [
+      "gas"
+    ],
+    "capabilities": {
+      "burrow": [
+        0,
+        10
+      ],
+      "climb": [
+        15,
+        35
+      ],
+      "flight": [
+        0,
+        0
+      ],
+      "leap": [
+        35,
+        55
+      ],
+      "manipulation": [
+        10,
+        25
+      ],
+      "sprint": [
+        45,
+        70
+      ],
+      "swim": [
+        25,
+        45
+      ]
+    },
+    "communication": [
+      "vocal"
+    ],
+    "composition": {
+      "primary": "flesh"
+    },
+    "covering": "fur",
+    "diet": "carnivore",
+    "environmentalTolerance": {
+      "ambientMedia": [
+        "gas",
+        "liquid"
+      ],
+      "temperatureC": {
+        "max": 43,
+        "min": 0
+      }
+    },
+    "genome": {
+      "chirality": "rolled"
+    },
+    "lifespan": "standard",
+    "protections": [],
+    "senses": {
+      "hearing": [
+        55,
+        80
+      ],
+      "sight": [
+        40,
+        60
+      ],
+      "smell": [
+        60,
+        85
+      ],
+      "special": []
+    },
+    "size": {
+      "heightCm": [
+        95,
+        120
+      ],
+      "massKg": [
+        42,
+        62
+      ]
+    },
+    "traversal": []
+  },
+  "schemaVersion": "5.1.0",
+  "signature": {
+    "key": "venemist-defining",
+    "type": "action"
+  },
+  "temperament": {
+    "aggression": [
+      55,
+      80
+    ],
+    "boldness": [
+      35,
+      60
+    ],
+    "curiosity": [
+      25,
+      50
+    ],
+    "energy": [
+      35,
+      60
+    ],
+    "sociability": [
+      10,
+      35
+    ]
+  }
+}

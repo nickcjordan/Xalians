@@ -1,0 +1,359 @@
+{
+  "actions": [
+    {
+      "activation": {
+        "continuity": "discrete"
+      },
+      "delivery": {
+        "approach": "stationary",
+        "mode": "projectile"
+      },
+      "description": "Its tail levitates a boulder and flings it at a selected target.",
+      "effects": [
+        {
+          "intensity": 82,
+          "key": "outcome",
+          "likelihood": "consistent",
+          "mechanism": "impact",
+          "onset": "instant",
+          "persistence": "resolved",
+          "recipient": "target",
+          "type": "harm"
+        }
+      ],
+      "element": "rock",
+      "instrument": "tail",
+      "key": "terragoyle-defining",
+      "name": "Levitated Boulder",
+      "spatial": {
+        "range": "long"
+      },
+      "targeting": [
+        "other"
+      ],
+      "timing": {
+        "preparation": "brief",
+        "recovery": "prolonged"
+      }
+    },
+    {
+      "activation": {
+        "continuity": "discrete"
+      },
+      "delivery": {
+        "approach": "stationary",
+        "mode": "projectile"
+      },
+      "description": "It scatters a tail-launched volley of gravel over the target area while flying.",
+      "effects": [
+        {
+          "intensity": 52,
+          "key": "outcome",
+          "likelihood": "consistent",
+          "mechanism": "impact",
+          "onset": "instant",
+          "persistence": "resolved",
+          "recipient": "area",
+          "type": "harm"
+        }
+      ],
+      "element": "rock",
+      "instrument": "tail",
+      "key": "terragoyle-gravel",
+      "name": "Gravel Strafing",
+      "spatial": {
+        "area": {
+          "anchor": "target",
+          "extent": "medium",
+          "persistence": "resolved",
+          "shape": "radial"
+        },
+        "range": "medium"
+      },
+      "targeting": [
+        "other"
+      ],
+      "timing": {
+        "preparation": "brief",
+        "recovery": "brief"
+      }
+    }
+  ],
+  "acts": {
+    "exclude": [
+      "tail/strike",
+      "tail/crush",
+      "tail/lash",
+      "tail/snare",
+      "tail/shove"
+    ],
+    "output": {
+      "horns/strike": [
+        30,
+        55
+      ],
+      "tail/hurl": [
+        65,
+        82
+      ]
+    }
+  },
+  "attributes": {
+    "agility": [
+      20,
+      40
+    ],
+    "charisma": [
+      20,
+      40
+    ],
+    "endurance": [
+      55,
+      78
+    ],
+    "instinct": [
+      45,
+      68
+    ],
+    "intelligence": [
+      25,
+      45
+    ],
+    "reflex": [
+      25,
+      45
+    ],
+    "resilience": [
+      70,
+      90
+    ],
+    "strength": [
+      60,
+      80
+    ],
+    "vitality": [
+      62,
+      82
+    ],
+    "willpower": [
+      55,
+      78
+    ]
+  },
+  "channels": [],
+  "conduits": {
+    "tail": "rock"
+  },
+  "element": "rock",
+  "generatorPlanets": [
+    "stonera"
+  ],
+  "homePlanet": "stonera",
+  "key": "terragoyle",
+  "lore": {
+    "appearance": [
+      "Horned, vaguely humanoid bat, hunched on all fours",
+      "Very heavy for its height",
+      "Ribbed ram-like horns curling back from the skull",
+      "Large membranous wings",
+      "Bare muscled hide",
+      "Long tail ending in a cradle, with a ball of stone levitating above it"
+    ],
+    "behavior": "It stands guard over the perimeter in a statue-like state, hibernating to conserve energy until it senses a threat. Then it rises into the sky and uses its tail to levitate boulders and fling them across the Chasm, or carpet-bombs intruders with strafing runs of gravel and rock.",
+    "company": "It stands in a line with others along the rim.",
+    "description": "Resembling horned and vaguely humanoid bats with elongated tails tipped with a levitating ball of stone, Terragoyles can be found lining the edges of the Chasm. They were originally used to airlift debris out of Stonera's strip mines with their levitational tails, but now stand guard over the perimeter in a statue-like state, hibernating to conserve their energy until a threat is detected. When awoken, Terragoyles rise high into the sky, using their tails to levitate boulders and fling them like great flying catapults across the Chasm beneath them or to carpet bomb intruders with strafing runs of gravel and rock as they soar overhead.",
+    "feeding": "It eats when it wakes, whatever the rim offers, and goes long stretches without.",
+    "habitat": "The edges of the Chasm on Stonera.",
+    "origin": "Used to airlift debris out of Stonera's strip mines with its levitating tail."
+  },
+  "mechanisms": [
+    {
+      "activation": {
+        "continuity": [
+          "discrete"
+        ]
+      },
+      "delivery": {
+        "projectile": {
+          "approach": [
+            "stationary"
+          ],
+          "area": {
+            "anchor": [
+              "target"
+            ],
+            "extent": [
+              "small",
+              "medium"
+            ],
+            "persistence": "resolved",
+            "shape": [
+              "radial"
+            ]
+          },
+          "range": [
+            "short",
+            "medium"
+          ]
+        }
+      },
+      "description": "The same tail launches a dispersed gravel volley.",
+      "effects": [
+        {
+          "intensity": [
+            35,
+            62
+          ],
+          "key": "outcome",
+          "likelihood": [
+            "consistent"
+          ],
+          "mechanism": "impact",
+          "onset": "instant",
+          "persistence": "resolved",
+          "recipient": "area",
+          "type": "harm"
+        }
+      ],
+      "element": "rock",
+      "instrument": "tail",
+      "key": "tail-gravel",
+      "name": "Tail Gravel",
+      "targeting": [
+        "other"
+      ],
+      "timing": {
+        "preparation": [
+          "brief"
+        ],
+        "recovery": [
+          "brief",
+          "prolonged"
+        ]
+      }
+    }
+  ],
+  "name": "Terragoyle",
+  "nameOrigin": "A fusion of terra and gargoyle, matching a stone-moving, horned bat-like guardian that waits in a statue-like state.",
+  "passives": [],
+  "physiology": {
+    "anatomy": [
+      "horns",
+      "wings",
+      "tail",
+      "hide"
+    ],
+    "bodyPlan": "quadruped",
+    "breathes": [
+      "gas"
+    ],
+    "capabilities": {
+      "burrow": [
+        5,
+        20
+      ],
+      "climb": [
+        45,
+        70
+      ],
+      "flight": [
+        60,
+        85
+      ],
+      "leap": [
+        35,
+        60
+      ],
+      "manipulation": [
+        45,
+        70
+      ],
+      "sprint": [
+        20,
+        40
+      ],
+      "swim": [
+        0,
+        10
+      ]
+    },
+    "communication": [
+      "vocal",
+      "display"
+    ],
+    "composition": {
+      "primary": "flesh"
+    },
+    "covering": "hide",
+    "diet": "omnivore",
+    "environmentalTolerance": {
+      "ambientMedia": [
+        "gas"
+      ],
+      "temperatureC": {
+        "max": 25,
+        "min": -45
+      }
+    },
+    "genome": {
+      "chirality": "rolled"
+    },
+    "lifespan": "long",
+    "protections": [],
+    "senses": {
+      "hearing": [
+        60,
+        85
+      ],
+      "sight": [
+        55,
+        80
+      ],
+      "smell": [
+        20,
+        40
+      ],
+      "special": [
+        "tremorsense"
+      ]
+    },
+    "size": {
+      "heightCm": [
+        150,
+        185
+      ],
+      "massKg": [
+        300,
+        430
+      ]
+    },
+    "traversal": []
+  },
+  "schemaVersion": "5.1.0",
+  "signature": {
+    "key": "terragoyle-defining",
+    "type": "action"
+  },
+  "temperament": {
+    "aggression": [
+      40,
+      65
+    ],
+    "boldness": [
+      45,
+      70
+    ],
+    "curiosity": [
+      20,
+      45
+    ],
+    "energy": [
+      25,
+      50
+    ],
+    "sociability": [
+      25,
+      50
+    ]
+  }
+}

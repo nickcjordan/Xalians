@@ -1,0 +1,459 @@
+{
+  "actions": [
+    {
+      "activation": {
+        "continuity": "discrete"
+      },
+      "delivery": {
+        "approach": "stationary",
+        "mode": "stream"
+      },
+      "description": "It jets freezing Benthane from its tentacles onto a selected target.",
+      "effects": [
+        {
+          "duration": "brief",
+          "key": "outcome",
+          "likelihood": "consistent",
+          "onset": "instant",
+          "persistence": "lingering",
+          "recipient": "target",
+          "removable": [
+            "warming"
+          ],
+          "status": "chilled",
+          "type": "status"
+        }
+      ],
+      "element": "ice",
+      "instrument": "tendrils",
+      "key": "neph-defining",
+      "name": "Benthane Chill Jet",
+      "spatial": {
+        "range": "medium"
+      },
+      "targeting": [
+        "other"
+      ],
+      "timing": {
+        "preparation": "immediate",
+        "recovery": "brief"
+      }
+    },
+    {
+      "activation": {
+        "continuity": "discrete"
+      },
+      "delivery": {
+        "approach": "stationary",
+        "mode": "stream"
+      },
+      "description": "Its long tentacles draw a selected opponent closer.",
+      "effects": [
+        {
+          "direction": "toward",
+          "intensity": 62,
+          "key": "outcome",
+          "likelihood": "consistent",
+          "onset": "instant",
+          "persistence": "resolved",
+          "recipient": "target",
+          "type": "displace"
+        }
+      ],
+      "instrument": "tendrils",
+      "key": "neph-suction",
+      "name": "Tentacle Suction",
+      "spatial": {
+        "range": "short"
+      },
+      "targeting": [
+        "other"
+      ],
+      "timing": {
+        "preparation": "immediate",
+        "recovery": "brief"
+      }
+    },
+    {
+      "activation": {
+        "continuity": "discrete"
+      },
+      "delivery": {
+        "approach": "stationary",
+        "mode": "stream"
+      },
+      "description": "It sends a high-pressure air jet through its tentacles to drive a target away.",
+      "effects": [
+        {
+          "direction": "away",
+          "intensity": 58,
+          "key": "outcome",
+          "likelihood": "consistent",
+          "onset": "instant",
+          "persistence": "resolved",
+          "recipient": "target",
+          "type": "displace"
+        }
+      ],
+      "instrument": "tendrils",
+      "key": "neph-pressure",
+      "name": "Pressure Air Jet",
+      "spatial": {
+        "range": "medium"
+      },
+      "targeting": [
+        "other"
+      ],
+      "timing": {
+        "preparation": "immediate",
+        "recovery": "brief"
+      }
+    }
+  ],
+  "attributes": {
+    "agility": [
+      10,
+      30
+    ],
+    "charisma": [
+      20,
+      40
+    ],
+    "endurance": [
+      55,
+      80
+    ],
+    "instinct": [
+      35,
+      60
+    ],
+    "intelligence": [
+      10,
+      25
+    ],
+    "reflex": [
+      10,
+      30
+    ],
+    "resilience": [
+      15,
+      35
+    ],
+    "strength": [
+      30,
+      55
+    ],
+    "vitality": [
+      55,
+      80
+    ],
+    "willpower": [
+      25,
+      45
+    ]
+  },
+  "channels": [],
+  "conduits": {
+    "tendrils": "ice",
+    "vents": "air"
+  },
+  "element": "air",
+  "generatorPlanets": [
+    "saiphus"
+  ],
+  "homePlanet": "saiphus",
+  "key": "neph",
+  "lore": {
+    "appearance": [
+      "Colossal hydrogen jellyfish",
+      "Nearly weightless for its size",
+      "One large smooth bell",
+      "Small central body beneath the bell",
+      "Long trailing hollow tentacles, open at the ends",
+      "Bare untextured surface"
+    ],
+    "behavior": "When threatened it pulls opponents in with suction, jets air at high pressure, blasts freezing Benthane from its tentacles, or sprays flammable hydrogen.",
+    "company": "It travels in free-floating herds.",
+    "description": "Colossal hydrogen jellyfish that travel in free-floating herds across Saiphus's lower atmosphere, the Neph are instrumental to the Benthane industry. These domesticated creatures roam the clouds in flocks, grazing off of the biochemicals and atmospheric plankton contained in the gas-liquid slush of Saiphus's deeper atmosphere using long, trailing tentacles that vacuum up valuable Benthane along with their food. When threatened, these same tentacles can be used to pull in opponents with considerable suction or to jettison air at high pressure. Neph can also forcibly expel jets of Benthane gas, which is typically used a coolant for starship engines, from their tentacles in order to blast their enemies with freezing air. Finally, being composed almost entirely hydrogen means that the Neph can also spray their enemies with bouts of flammable gas.",
+    "feeding": "It grazes on the biochemicals and atmospheric plankton in the gas-liquid slush of the deeper atmosphere, drawing them up through its long trailing tentacles.",
+    "habitat": "The cloud layers of Saiphus's lower atmosphere.",
+    "origin": "Domesticated for the Benthane industry, which milks the Benthane its tentacles vacuum up along with its food."
+  },
+  "mechanisms": [
+    {
+      "activation": {
+        "continuity": [
+          "discrete"
+        ]
+      },
+      "delivery": {
+        "stream": {
+          "approach": [
+            "stationary"
+          ],
+          "range": [
+            "short",
+            "medium"
+          ]
+        }
+      },
+      "description": "Freezing coolant is expelled through a tentacle.",
+      "effects": [
+        {
+          "duration": "brief",
+          "key": "outcome",
+          "likelihood": [
+            "likely",
+            "occasional"
+          ],
+          "onset": "instant",
+          "persistence": "lingering",
+          "recipient": "target",
+          "removable": [
+            "warming"
+          ],
+          "status": "chilled",
+          "type": "status"
+        }
+      ],
+      "element": "ice",
+      "instrument": "tendrils",
+      "key": "benthane-jet",
+      "name": "Benthane Jet",
+      "targeting": [
+        "other"
+      ],
+      "timing": {
+        "preparation": [
+          "immediate",
+          "brief"
+        ],
+        "recovery": [
+          "brief",
+          "prolonged"
+        ]
+      }
+    },
+    {
+      "activation": {
+        "continuity": [
+          "discrete"
+        ]
+      },
+      "delivery": {
+        "stream": {
+          "approach": [
+            "stationary"
+          ],
+          "range": [
+            "short",
+            "medium"
+          ]
+        }
+      },
+      "description": "The tentacles pull a selected target toward the performer.",
+      "effects": [
+        {
+          "direction": "toward",
+          "intensity": [
+            40,
+            68
+          ],
+          "key": "outcome",
+          "likelihood": [
+            "consistent"
+          ],
+          "onset": "instant",
+          "persistence": "resolved",
+          "recipient": "target",
+          "type": "displace"
+        }
+      ],
+      "instrument": "tendrils",
+      "key": "tentacle-suction",
+      "name": "Tentacle Suction",
+      "targeting": [
+        "other"
+      ],
+      "timing": {
+        "preparation": [
+          "immediate",
+          "brief"
+        ],
+        "recovery": [
+          "brief"
+        ]
+      }
+    },
+    {
+      "activation": {
+        "continuity": [
+          "discrete"
+        ]
+      },
+      "delivery": {
+        "stream": {
+          "approach": [
+            "stationary"
+          ],
+          "range": [
+            "short",
+            "medium"
+          ]
+        }
+      },
+      "description": "Compressed air from a tentacle pushes the selected target away.",
+      "effects": [
+        {
+          "direction": "away",
+          "intensity": [
+            38,
+            65
+          ],
+          "key": "outcome",
+          "likelihood": [
+            "consistent"
+          ],
+          "onset": "instant",
+          "persistence": "resolved",
+          "recipient": "target",
+          "type": "displace"
+        }
+      ],
+      "element": "air",
+      "instrument": "tendrils",
+      "key": "pressure-air",
+      "name": "Pressure Air",
+      "targeting": [
+        "other"
+      ],
+      "timing": {
+        "preparation": [
+          "immediate",
+          "brief"
+        ],
+        "recovery": [
+          "brief"
+        ]
+      }
+    }
+  ],
+  "name": "Neph",
+  "nameOrigin": "A clipping of the Greek nephos, cloud, for the colossal creature that lives and feeds in Saiphus's atmosphere.",
+  "passives": [],
+  "physiology": {
+    "anatomy": [
+      "tendrils",
+      "vents"
+    ],
+    "bodyPlan": "floating",
+    "breathes": [
+      "gas"
+    ],
+    "capabilities": {
+      "burrow": [
+        0,
+        0
+      ],
+      "climb": [
+        0,
+        0
+      ],
+      "flight": [
+        55,
+        75
+      ],
+      "leap": [
+        0,
+        0
+      ],
+      "manipulation": [
+        40,
+        65
+      ],
+      "sprint": [
+        5,
+        15
+      ],
+      "swim": [
+        10,
+        25
+      ]
+    },
+    "communication": [
+      "chemical"
+    ],
+    "composition": {
+      "primary": "flesh"
+    },
+    "covering": "bare",
+    "diet": "herbivore",
+    "environmentalTolerance": {
+      "ambientMedia": [
+        "gas"
+      ],
+      "temperatureC": {
+        "max": 45,
+        "min": -30
+      }
+    },
+    "genome": {
+      "chirality": "rolled"
+    },
+    "lifespan": "standard",
+    "protections": [],
+    "senses": {
+      "hearing": [
+        20,
+        40
+      ],
+      "sight": [
+        25,
+        45
+      ],
+      "smell": [
+        55,
+        80
+      ],
+      "special": []
+    },
+    "size": {
+      "heightCm": [
+        380,
+        620
+      ],
+      "massKg": [
+        30,
+        90
+      ]
+    },
+    "traversal": []
+  },
+  "schemaVersion": "5.1.0",
+  "signature": {
+    "key": "neph-defining",
+    "type": "action"
+  },
+  "temperament": {
+    "aggression": [
+      25,
+      50
+    ],
+    "boldness": [
+      25,
+      50
+    ],
+    "curiosity": [
+      25,
+      50
+    ],
+    "energy": [
+      25,
+      50
+    ],
+    "sociability": [
+      60,
+      85
+    ]
+  }
+}

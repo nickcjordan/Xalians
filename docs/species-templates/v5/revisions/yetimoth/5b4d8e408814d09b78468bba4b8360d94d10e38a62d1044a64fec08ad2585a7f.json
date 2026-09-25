@@ -1,0 +1,345 @@
+{
+  "actions": [
+    {
+      "activation": {
+        "continuity": "discrete"
+      },
+      "delivery": {
+        "approach": "stationary",
+        "mode": "self"
+      },
+      "description": "The Yetimoth draws thick sheets of frost out of nothing and layers them over its own pelt until the blows of its opponents stop reaching it.",
+      "effects": [
+        {
+          "duration": "prolonged",
+          "intensity": 70,
+          "key": "outcome",
+          "likelihood": "consistent",
+          "onset": "instant",
+          "persistence": "lingering",
+          "recipient": "self",
+          "removable": [
+            "warming",
+            "disrupting"
+          ],
+          "status": "shielded",
+          "type": "status"
+        }
+      ],
+      "element": "ice",
+      "instrument": "hide",
+      "key": "yetimoth-defining",
+      "name": "Mantle of Unyielding Winter",
+      "spatial": {},
+      "targeting": [
+        "self"
+      ],
+      "timing": {
+        "preparation": "brief",
+        "recovery": "brief"
+      }
+    },
+    {
+      "activation": {
+        "continuity": "discrete"
+      },
+      "delivery": {
+        "approach": "stationary",
+        "mode": "field"
+      },
+      "description": "It forms thick ice around a selected opponent, limiting movement.",
+      "effects": [
+        {
+          "duration": "brief",
+          "key": "freeze",
+          "likelihood": "likely",
+          "onset": "instant",
+          "persistence": "lingering",
+          "recipient": "target",
+          "removable": [
+            "warming",
+            "freeing"
+          ],
+          "status": "frozen",
+          "type": "status"
+        }
+      ],
+      "element": "ice",
+      "instrument": "body",
+      "key": "yetimoth-encasement",
+      "name": "Ice Encasement",
+      "spatial": {
+        "range": "short"
+      },
+      "targeting": [
+        "other"
+      ],
+      "timing": {
+        "preparation": "brief",
+        "recovery": "brief"
+      }
+    }
+  ],
+  "acts": {
+    "output": {
+      "fists/strike": [
+        55,
+        85
+      ],
+      "tusks/strike": [
+        45,
+        75
+      ]
+    }
+  },
+  "attributes": {
+    "agility": [
+      12,
+      30
+    ],
+    "charisma": [
+      35,
+      55
+    ],
+    "endurance": [
+      60,
+      80
+    ],
+    "instinct": [
+      40,
+      60
+    ],
+    "intelligence": [
+      30,
+      50
+    ],
+    "reflex": [
+      15,
+      35
+    ],
+    "resilience": [
+      70,
+      90
+    ],
+    "strength": [
+      72,
+      92
+    ],
+    "vitality": [
+      65,
+      85
+    ],
+    "willpower": [
+      55,
+      75
+    ]
+  },
+  "channels": [],
+  "conduits": {
+    "body": "ice",
+    "fists": "ice",
+    "hide": "ice",
+    "tusks": "ice"
+  },
+  "element": "ice",
+  "generatorPlanets": [
+    "krystos"
+  ],
+  "homePlanet": "krystos",
+  "key": "yetimoth",
+  "lore": {
+    "appearance": [
+      "Hulking ape standing upright",
+      "Shaggy white fur",
+      "Head of a mammoth, with a domed skull, fanned ears and a long trunk",
+      "Enormous tusks of pure ice, sweeping wider than the shoulders",
+      "Heavy fists"
+    ],
+    "behavior": "It forms thick sheets of ice from thin air, armoring itself, walling off escape routes in frost, or encasing an opponent until it can lumber close enough to pummel it with its ice-gauntleted fists.",
+    "company": "It holds a line with others beside it.",
+    "description": "Hulking, white-furred apes with the heads of mammoths and tusks made of pure ice, the Yetimoths formed the rank and file of Krystos' prisonguards in ancient times.  If their enormous size and strength was not enough to keep prisoners in line, they could also form thick sheets of ice from thin air, covering themselves in a near-impenetrable armor, blocking off escape routes in walls of frost, or encapsulating their opponents until they could lumber over close enough to pummel them into submission with their meaty, ice-gauntleted fists.",
+    "feeding": "It eats what the frozen tundra gives, meat or otherwise.",
+    "habitat": "The high-security prison complexes of Krystos's frozen tundra and the waste outside them.",
+    "origin": "Formed the rank and file of Krystos's prison guards in ancient times."
+  },
+  "mechanisms": [
+    {
+      "activation": {
+        "continuity": [
+          "discrete"
+        ]
+      },
+      "delivery": {
+        "field": {
+          "approach": [
+            "stationary"
+          ],
+          "range": [
+            "short",
+            "medium"
+          ]
+        }
+      },
+      "description": "The body radiates cold that forms a sheet around one selected opponent.",
+      "effects": [
+        {
+          "duration": "brief",
+          "key": "outcome",
+          "likelihood": [
+            "likely",
+            "occasional"
+          ],
+          "onset": "instant",
+          "persistence": "lingering",
+          "recipient": "target",
+          "removable": [
+            "warming",
+            "freeing"
+          ],
+          "status": "frozen",
+          "type": "status"
+        }
+      ],
+      "element": "ice",
+      "instrument": "body",
+      "key": "ice-encasement",
+      "name": "Ice Encasement",
+      "targeting": [
+        "other"
+      ],
+      "timing": {
+        "preparation": [
+          "immediate",
+          "brief"
+        ],
+        "recovery": [
+          "repeatable",
+          "brief"
+        ]
+      }
+    }
+  ],
+  "name": "Yetimoth",
+  "nameOrigin": "A fusion of yeti and mammoth, matching its hulking white-furred ape body and mammoth head.",
+  "passives": [],
+  "physiology": {
+    "anatomy": [
+      "tusks",
+      "trunk",
+      "fists",
+      "hide",
+      "body"
+    ],
+    "bodyPlan": "biped",
+    "breathes": [
+      "gas"
+    ],
+    "capabilities": {
+      "burrow": [
+        15,
+        30
+      ],
+      "climb": [
+        20,
+        35
+      ],
+      "flight": [
+        0,
+        0
+      ],
+      "leap": [
+        15,
+        30
+      ],
+      "manipulation": [
+        45,
+        65
+      ],
+      "sprint": [
+        20,
+        35
+      ],
+      "swim": [
+        10,
+        25
+      ]
+    },
+    "communication": [
+      "vocal",
+      "display"
+    ],
+    "composition": {
+      "primary": "flesh",
+      "secondary": "mineral"
+    },
+    "covering": "fur",
+    "diet": "omnivore",
+    "environmentalTolerance": {
+      "ambientMedia": [
+        "gas"
+      ],
+      "temperatureC": {
+        "max": -10,
+        "min": -60
+      }
+    },
+    "genome": {
+      "chirality": "rolled"
+    },
+    "lifespan": "long",
+    "protections": [],
+    "senses": {
+      "hearing": [
+        55,
+        75
+      ],
+      "sight": [
+        40,
+        60
+      ],
+      "smell": [
+        55,
+        75
+      ],
+      "special": []
+    },
+    "size": {
+      "heightCm": [
+        205,
+        255
+      ],
+      "massKg": [
+        330,
+        470
+      ]
+    },
+    "traversal": []
+  },
+  "schemaVersion": "5.1.0",
+  "signature": {
+    "key": "yetimoth-defining",
+    "type": "action"
+  },
+  "temperament": {
+    "aggression": [
+      45,
+      65
+    ],
+    "boldness": [
+      65,
+      85
+    ],
+    "curiosity": [
+      15,
+      35
+    ],
+    "energy": [
+      25,
+      45
+    ],
+    "sociability": [
+      45,
+      65
+    ]
+  }
+}
