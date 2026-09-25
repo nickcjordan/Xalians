@@ -7,6 +7,7 @@ const { pathToFileURL } = require('node:url');
 const { buildSync, version: esbuildVersion } = require('esbuild');
 const root = path.resolve(__dirname, '..');
 const archiveRoot = path.join(root, 'packages/rules/releases');
+const speciesRevisionRoot = path.join(root, 'docs/species-templates/v5/revisions');
 const hash = bytes => crypto.createHash('sha256').update(bytes).digest('hex');
 const sourceHash = file => hash(fs.readFileSync(file, 'utf8').replace(/\r\n/g, '\n'));
 const validId = id => typeof id === 'string' && /^[a-z0-9][a-z0-9._-]*$/.test(id);
@@ -23,14 +24,25 @@ function readManifest(id, archives = archiveRoot) {
   if (hash(fs.readFileSync(artifact)) !== manifest.artifact.sha256) throw new Error(`Release artifact integrity failure: ${id}`);
   return { manifest, artifact };
 }
-async function replay(record, archives = archiveRoot) {
+async function replay(record, archives = archiveRoot, revisions = speciesRevisionRoot) {
   const p = record?.provenance;
   if (!p || typeof record.species !== 'string' || !record.species || typeof p.seed !== 'string' || !p.seed || typeof p.origin !== 'string' || !p.origin || !Number.isInteger(p.serial) || p.serial < 1 || typeof p.generatedAt !== 'string' || !Number.isFinite(Date.parse(p.generatedAt)) || (p.profile !== undefined && !['full', 'showroom'].includes(p.profile))) throw new Error('Incomplete or invalid replay inputs');
   const { manifest, artifact } = readManifest(record.provenance.releaseId, archives);
   if (manifest.generatorVersion !== record.provenance.generatorVersion || manifest.schemaVersion !== record.provenance.schemaVersion) throw new Error('Record versions disagree with release manifest');
   const archived = await import(pathToFileURL(artifact).href);
   if (archived.GENERATOR_VERSION !== manifest.generatorVersion || archived.SCHEMA_VERSION !== manifest.schemaVersion || archived.GENERATION_RELEASE_ID !== manifest.releaseId) throw new Error('Archived generator disagrees with release manifest');
-  return archived.generateXalian(record.species, p.seed, { origin: p.origin, serial: p.serial, generatedAt: p.generatedAt, profile: p.profile || 'full' });
+  const options = { origin: p.origin, serial: p.serial, generatedAt: p.generatedAt, profile: p.profile || 'full' };
+  if (manifest.kind === 'species-independent') {
+    const revision = p.speciesRevision;
+    if (!/^[a-z0-9-]+$/.test(record.species) || !/^[a-f0-9]{64}$/.test(revision || '')) throw new Error('Invalid species revision replay inputs');
+    const file = path.join(revisions, record.species, `${revision}.json`);
+    if (!fs.existsSync(file)) throw new Error(`Unavailable species revision: ${record.species}/${revision}`);
+    const template = JSON.parse(fs.readFileSync(file, 'utf8'));
+    const { revisionOf } = require('./syncCreatureCatalog.cjs');
+    if (template.key !== record.species || revisionOf(template) !== revision) throw new Error('Species revision integrity failure');
+    return archived.generateXalian(template, revision, p.seed, options);
+  }
+  return archived.generateXalian(record.species, p.seed, options);
 }
 function checkFrozenSource(releaseId, entryPoint) {
   const { manifest } = readManifest(releaseId);
@@ -46,6 +58,7 @@ function checkCurrent() {
   const creature = require('../packages/rules/src/generator/currentCreatureRelease.json');
   const legacyManifest = checkFrozenSource(releaseId);
   const creatureManifest = checkFrozenSource(creature.releaseId, creature.entryPoint);
+  if (creatureManifest.kind === 'species-independent') require('./syncCreatureCatalog.cjs').checkCatalog();
   return [legacyManifest, creatureManifest];
 }
 async function freeze({ entryPoint, releaseId = require('../packages/rules/src/generator/currentRelease.json').releaseId, archives = archiveRoot } = {}) {
@@ -60,7 +73,7 @@ async function freeze({ entryPoint, releaseId = require('../packages/rules/src/g
   // prevents two concurrent freeze commands from overwriting the same release.
   const archived = await import(`data:text/javascript;base64,${Buffer.from(bytes).toString('base64')}`);
   if (archived.GENERATION_RELEASE_ID !== releaseId || typeof archived.GENERATOR_VERSION !== 'string' || typeof archived.SCHEMA_VERSION !== 'string' || typeof archived.generateXalian !== 'function') throw new Error('Release entry point does not match the requested release contract');
-  const manifest = { formatVersion: 1, releaseId, generatorVersion: archived.GENERATOR_VERSION, schemaVersion: archived.SCHEMA_VERSION, build: { esbuild: esbuildVersion, target: 'es2022', runtime: 'ECMAScript 2022 (Node 20+ replay tooling)' }, artifact: { file: 'generator.mjs', sha256: hash(bytes) }, inputs };
+  const manifest = { formatVersion: 1, releaseId, ...(archived.RELEASE_KIND ? { kind: archived.RELEASE_KIND } : {}), generatorVersion: archived.GENERATOR_VERSION, schemaVersion: archived.SCHEMA_VERSION, build: { esbuild: esbuildVersion, target: 'es2022', runtime: 'ECMAScript 2022 (Node 20+ replay tooling)' }, artifact: { file: 'generator.mjs', sha256: hash(bytes) }, inputs };
   fs.mkdirSync(archives, { recursive: true });
   fs.mkdirSync(dir);
   fs.writeFileSync(path.join(dir, 'generator.mjs'), bytes, { flag: 'wx' });
@@ -76,11 +89,11 @@ if (require.main === module) (async () => {
     if (baseIndex >= 0) {
       const base = process.argv[baseIndex + 1];
       if (!base || base.startsWith('-')) throw new Error('Missing comparison git ref');
-      const changed = require('node:child_process').execFileSync('git', ['diff', '--name-only', '--diff-filter=MDR', base, '--', 'packages/rules/releases'], { cwd: root, encoding: 'utf8' }).trim();
-      if (changed) throw new Error(`Previously archived release files changed:\n${changed}`);
+      const changed = require('node:child_process').execFileSync('git', ['diff', '--name-only', '--diff-filter=MDR', base, '--', 'packages/rules/releases', 'docs/species-templates/v5/revisions'], { cwd: root, encoding: 'utf8' }).trim();
+      if (changed) throw new Error(`Previously archived generator or species files changed:\n${changed}`);
     }
     for (const entry of fs.readdirSync(archiveRoot, { withFileTypes: true })) if (entry.isDirectory()) readManifest(entry.name);
-    console.log(`Verified ${checkCurrent().map(manifest => manifest.releaseId).join(' and ')} plus archived artifact integrity`);
+    console.log(`Verified ${checkCurrent().map(manifest => manifest.releaseId).join(' and ')} plus archived artifact and species integrity`);
   } else if (command === 'replay' && file) console.log(JSON.stringify(await replay(JSON.parse(fs.readFileSync(file, 'utf8'))), null, 2));
   else throw new Error('Usage: node scripts/generationRelease.cjs freeze|check|replay <record.json>');
 })().catch(error => { console.error(error.message); process.exitCode = 1; });

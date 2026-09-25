@@ -1,0 +1,332 @@
+{
+  "actions": [
+    {
+      "activation": {
+        "continuity": "discrete"
+      },
+      "delivery": {
+        "approach": "stationary",
+        "mode": "signal",
+        "reception": "auditory"
+      },
+      "description": "Its cackle induces fear in a creature that hears it.",
+      "effects": [
+        {
+          "duration": "brief",
+          "key": "outcome",
+          "likelihood": "consistent",
+          "onset": "instant",
+          "persistence": "lingering",
+          "recipient": "target",
+          "removable": [
+            "stabilizing"
+          ],
+          "status": "frightened",
+          "type": "status"
+        }
+      ],
+      "instrument": "voice",
+      "key": "ectoghoul-defining",
+      "name": "Terrifying Cackle",
+      "spatial": {
+        "range": "medium"
+      },
+      "targeting": [
+        "other"
+      ],
+      "timing": {
+        "preparation": "immediate",
+        "recovery": "brief"
+      }
+    },
+    {
+      "activation": {
+        "continuity": "discrete"
+      },
+      "delivery": {
+        "approach": "stationary",
+        "mode": "projectile"
+      },
+      "description": "It blasts a selected target with its gooey ectoplasm.",
+      "effects": [
+        {
+          "intensity": 52,
+          "key": "outcome",
+          "likelihood": "consistent",
+          "mechanism": "impact",
+          "onset": "instant",
+          "persistence": "resolved",
+          "recipient": "target",
+          "type": "harm"
+        }
+      ],
+      "instrument": "secretion",
+      "key": "ectoghoul-ectoplasm",
+      "name": "Ectoplasm Blast",
+      "spatial": {
+        "range": "short"
+      },
+      "targeting": [
+        "other"
+      ],
+      "timing": {
+        "preparation": "immediate",
+        "recovery": "brief"
+      }
+    }
+  ],
+  "acts": {
+    "exclude": [
+      "secretion/mend"
+    ],
+    "output": {
+      "body/strike": [
+        22,
+        42
+      ]
+    }
+  },
+  "attributes": {
+    "agility": [
+      60,
+      88
+    ],
+    "charisma": [
+      40,
+      68
+    ],
+    "endurance": [
+      35,
+      60
+    ],
+    "instinct": [
+      45,
+      70
+    ],
+    "intelligence": [
+      30,
+      52
+    ],
+    "reflex": [
+      55,
+      82
+    ],
+    "resilience": [
+      15,
+      35
+    ],
+    "strength": [
+      8,
+      25
+    ],
+    "vitality": [
+      20,
+      40
+    ],
+    "willpower": [
+      35,
+      60
+    ]
+  },
+  "channels": [
+    "voice",
+    "secretion"
+  ],
+  "conduits": {},
+  "element": "ghost",
+  "generatorPlanets": [
+    "phantiri"
+  ],
+  "homePlanet": "phantiri",
+  "key": "ectoghoul",
+  "lore": {
+    "appearance": [
+      "Spectral green mist, without limbs",
+      "Weightless",
+      "Vague impression of a grinning skull",
+      "Ghost-like tail for a body, trailing off into drifting particles",
+      "Never touches the ground"
+    ],
+    "behavior": "It zips across the Dreadscape cackling, disappears and reappears at will, passes through surfaces, and zaps its opponents with blasts of gooey ectoplasm. It seems to amuse itself by terrorizing other Xalians.",
+    "company": "It roams alone, and it seeks out other Xalians only to torment them.",
+    "description": "Appearing as a spectral green mist that forms the vague impression of a grinning skull with a ghost-like tail for a body, Ectoghouls zip across the Dreadscape, emitting a terrifying cackle wherever they go. They seem to amuse themselves by terrorizing other Xalians, disappearing and re-appearing at will, passing through surfaces, and zapping their opponents with blasts of gooey ectoplasm.",
+    "feeding": "It takes nothing in and feeds on nothing.",
+    "habitat": "The Dreadscape of Phantiri.",
+    "origin": "One of the non-corporeal Xalians the abandoned Phantiri Generator produced after it rewrote itself under Leviticus Overdrive."
+  },
+  "mechanisms": [
+    {
+      "activation": {
+        "continuity": [
+          "discrete"
+        ]
+      },
+      "delivery": {
+        "projectile": {
+          "approach": [
+            "stationary"
+          ],
+          "range": [
+            "short",
+            "medium"
+          ]
+        }
+      },
+      "description": "Gooey ectoplasm launches toward a selected target.",
+      "effects": [
+        {
+          "intensity": [
+            35,
+            58
+          ],
+          "key": "outcome",
+          "likelihood": [
+            "consistent"
+          ],
+          "mechanism": "impact",
+          "onset": "instant",
+          "persistence": "resolved",
+          "recipient": "target",
+          "type": "harm"
+        }
+      ],
+      "instrument": "secretion",
+      "key": "ectoplasm-blast",
+      "name": "Ectoplasm Blast",
+      "targeting": [
+        "other"
+      ],
+      "timing": {
+        "preparation": [
+          "immediate",
+          "brief"
+        ],
+        "recovery": [
+          "repeatable",
+          "brief"
+        ]
+      }
+    }
+  ],
+  "name": "Ectoghoul",
+  "nameOrigin": "A compound of ecto, evoking ectoplasm, and ghoul, matching its spectral body and delight in terror.",
+  "passives": [],
+  "physiology": {
+    "anatomy": [
+      "jaws",
+      "tail",
+      "body"
+    ],
+    "bodyPlan": "floating",
+    "breathes": [],
+    "capabilities": {
+      "burrow": [
+        10,
+        25
+      ],
+      "climb": [
+        0,
+        0
+      ],
+      "flight": [
+        55,
+        80
+      ],
+      "leap": [
+        0,
+        0
+      ],
+      "manipulation": [
+        5,
+        20
+      ],
+      "sprint": [
+        0,
+        0
+      ],
+      "swim": [
+        20,
+        40
+      ]
+    },
+    "communication": [
+      "vocal"
+    ],
+    "composition": {
+      "primary": "spectral"
+    },
+    "covering": "mist",
+    "diet": "none",
+    "environmentalTolerance": {
+      "ambientMedia": [
+        "gas",
+        "liquid",
+        "vacuum"
+      ],
+      "temperatureC": {
+        "max": 20,
+        "min": -50
+      }
+    },
+    "genome": {
+      "chirality": "achiral"
+    },
+    "lifespan": "ageless",
+    "protections": [],
+    "senses": {
+      "hearing": [
+        45,
+        70
+      ],
+      "sight": [
+        50,
+        75
+      ],
+      "smell": [
+        0,
+        10
+      ],
+      "special": []
+    },
+    "size": {
+      "heightCm": [
+        80,
+        105
+      ],
+      "massKg": [
+        0.1,
+        0.5
+      ]
+    },
+    "traversal": [
+      "phase"
+    ]
+  },
+  "schemaVersion": "5.1.0",
+  "signature": {
+    "key": "ectoghoul-defining",
+    "type": "action"
+  },
+  "temperament": {
+    "aggression": [
+      55,
+      80
+    ],
+    "boldness": [
+      60,
+      85
+    ],
+    "curiosity": [
+      50,
+      75
+    ],
+    "energy": [
+      65,
+      90
+    ],
+    "sociability": [
+      15,
+      40
+    ]
+  }
+}

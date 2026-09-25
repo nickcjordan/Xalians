@@ -1,0 +1,299 @@
+{
+  "actions": [
+    {
+      "activation": {
+        "continuity": "discrete"
+      },
+      "delivery": {
+        "approach": "stationary",
+        "mode": "contact"
+      },
+      "description": "Conductive claws release stored environmental electricity into a contacted target.",
+      "effects": [
+        {
+          "intensity": 68,
+          "key": "outcome",
+          "likelihood": "consistent",
+          "mechanism": "elemental",
+          "onset": "instant",
+          "persistence": "resolved",
+          "recipient": "target",
+          "type": "harm"
+        }
+      ],
+      "element": "electric",
+      "instrument": "claws",
+      "key": "voltish-defining",
+      "name": "Charged Claws",
+      "spatial": {
+        "range": "contact"
+      },
+      "targeting": [
+        "other"
+      ],
+      "timing": {
+        "preparation": "brief",
+        "recovery": "brief"
+      }
+    }
+  ],
+  "acts": {
+    "output": {
+      "claws/strike": [
+        35,
+        58
+      ],
+      "jaws/strike": [
+        28,
+        50
+      ]
+    }
+  },
+  "attributes": {
+    "agility": [
+      40,
+      60
+    ],
+    "charisma": [
+      30,
+      50
+    ],
+    "endurance": [
+      70,
+      90
+    ],
+    "instinct": [
+      50,
+      70
+    ],
+    "intelligence": [
+      25,
+      45
+    ],
+    "reflex": [
+      45,
+      65
+    ],
+    "resilience": [
+      55,
+      75
+    ],
+    "strength": [
+      55,
+      75
+    ],
+    "vitality": [
+      50,
+      70
+    ],
+    "willpower": [
+      45,
+      65
+    ]
+  },
+  "channels": [],
+  "conduits": {
+    "claws": "electric"
+  },
+  "element": "electric",
+  "generatorPlanets": [
+    "zolton"
+  ],
+  "homePlanet": "zolton",
+  "key": "voltish",
+  "lore": {
+    "appearance": [
+      "Tall long-limbed biped, crouched low",
+      "Shaggy fur coat",
+      "Bones and claws of conductive metal alloy",
+      "Narrow head with a long muzzle",
+      "Upright pointed ears",
+      "Broad clawed hands",
+      "Large bushy tail"
+    ],
+    "behavior": "It stores the charge it gathers in its alloy bones and releases the shock into enemies through its claws.",
+    "company": "It keeps to itself.",
+    "description": "With bones and claws made from a tough, conductive metal alloy, this daunting creature can store electrical energy from its surroundings and release the shock into enemies.",
+    "feeding": "It feeds on electrical charge from its surroundings and on nothing else.",
+    "habitat": "The deep canyons and metallic peaks of Zolton, where ground-borne lightning surges over the crust. It keeps clear of the black lightning dead zones.",
+    "origin": "One of the expendable workforce the Zolton Generator sent onto the lightning fields. No record says what work it was made for."
+  },
+  "mechanisms": [
+    {
+      "activation": {
+        "continuity": [
+          "discrete"
+        ]
+      },
+      "delivery": {
+        "contact": {
+          "approach": [
+            "stationary",
+            "closing"
+          ],
+          "range": [
+            "contact"
+          ]
+        }
+      },
+      "description": "The alloy claws conduct stored electricity into a contacted target.",
+      "effects": [
+        {
+          "intensity": [
+            45,
+            68
+          ],
+          "key": "outcome",
+          "likelihood": [
+            "consistent"
+          ],
+          "mechanism": "elemental",
+          "onset": "instant",
+          "persistence": "resolved",
+          "recipient": "target",
+          "type": "harm"
+        }
+      ],
+      "element": "electric",
+      "instrument": "claws",
+      "key": "claw-discharge",
+      "name": "Claw Discharge",
+      "targeting": [
+        "other"
+      ],
+      "timing": {
+        "preparation": [
+          "immediate",
+          "brief"
+        ],
+        "recovery": [
+          "brief",
+          "prolonged"
+        ]
+      }
+    }
+  ],
+  "name": "Voltish",
+  "nameOrigin": "Built from volt, the measure associated with electricity, with a softened ending that turns it into a creature name.",
+  "passives": [],
+  "physiology": {
+    "anatomy": [
+      "claws",
+      "jaws",
+      "tail",
+      "hide"
+    ],
+    "bodyPlan": "biped",
+    "breathes": [
+      "gas"
+    ],
+    "capabilities": {
+      "burrow": [
+        5,
+        15
+      ],
+      "climb": [
+        40,
+        60
+      ],
+      "flight": [
+        0,
+        0
+      ],
+      "leap": [
+        40,
+        60
+      ],
+      "manipulation": [
+        55,
+        75
+      ],
+      "sprint": [
+        50,
+        70
+      ],
+      "swim": [
+        10,
+        25
+      ]
+    },
+    "communication": [
+      "vocal"
+    ],
+    "composition": {
+      "primary": "flesh",
+      "secondary": "metal"
+    },
+    "covering": "fur",
+    "diet": "energy-feeder",
+    "environmentalTolerance": {
+      "ambientMedia": [
+        "gas"
+      ],
+      "temperatureC": {
+        "max": 35,
+        "min": -55
+      }
+    },
+    "genome": {
+      "chirality": "rolled"
+    },
+    "lifespan": "standard",
+    "protections": [],
+    "senses": {
+      "hearing": [
+        50,
+        70
+      ],
+      "sight": [
+        45,
+        65
+      ],
+      "smell": [
+        40,
+        60
+      ],
+      "special": [
+        "electroreception"
+      ]
+    },
+    "size": {
+      "heightCm": [
+        190,
+        235
+      ],
+      "massKg": [
+        105,
+        145
+      ]
+    },
+    "traversal": []
+  },
+  "schemaVersion": "5.1.0",
+  "signature": {
+    "key": "voltish-defining",
+    "type": "action"
+  },
+  "temperament": {
+    "aggression": [
+      50,
+      75
+    ],
+    "boldness": [
+      45,
+      70
+    ],
+    "curiosity": [
+      35,
+      60
+    ],
+    "energy": [
+      55,
+      80
+    ],
+    "sociability": [
+      20,
+      45
+    ]
+  }
+}

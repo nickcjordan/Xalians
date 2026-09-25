@@ -1,0 +1,373 @@
+{
+  "actions": [
+    {
+      "activation": {
+        "continuity": "discrete"
+      },
+      "delivery": {
+        "approach": "stationary",
+        "mode": "contact"
+      },
+      "description": "Gravity intensifies at its massive pincer as it crushes a contacted target.",
+      "effects": [
+        {
+          "intensity": 85,
+          "key": "outcome",
+          "likelihood": "consistent",
+          "mechanism": "compression",
+          "onset": "instant",
+          "persistence": "resolved",
+          "recipient": "target",
+          "type": "harm"
+        }
+      ],
+      "instrument": "pincers",
+      "key": "graviclaw-defining",
+      "name": "Gravity Pincer",
+      "spatial": {
+        "range": "contact"
+      },
+      "targeting": [
+        "other"
+      ],
+      "timing": {
+        "preparation": "brief",
+        "recovery": "brief"
+      }
+    },
+    {
+      "activation": {
+        "continuity": "discrete"
+      },
+      "delivery": {
+        "approach": "stationary",
+        "mode": "field"
+      },
+      "description": "A focused gravitational pull draws a selected target toward its claws.",
+      "effects": [
+        {
+          "direction": "toward",
+          "intensity": 65,
+          "key": "outcome",
+          "likelihood": "consistent",
+          "onset": "instant",
+          "persistence": "resolved",
+          "recipient": "target",
+          "type": "displace"
+        }
+      ],
+      "instrument": "aura",
+      "key": "graviclaw-attract",
+      "name": "Gravity Draw",
+      "spatial": {
+        "range": "medium"
+      },
+      "targeting": [
+        "other"
+      ],
+      "timing": {
+        "preparation": "immediate",
+        "recovery": "brief"
+      }
+    },
+    {
+      "activation": {
+        "continuity": "discrete"
+      },
+      "delivery": {
+        "approach": "stationary",
+        "mode": "self"
+      },
+      "description": "It roots itself against attempts to move it.",
+      "effects": [
+        {
+          "duration": "brief",
+          "key": "outcome",
+          "likelihood": "consistent",
+          "onset": "instant",
+          "persistence": "lingering",
+          "protection": {
+            "degree": "immune",
+            "type": "displace"
+          },
+          "recipient": "self",
+          "removable": [
+            "disrupting"
+          ],
+          "status": "protected",
+          "type": "status"
+        }
+      ],
+      "instrument": "body",
+      "key": "graviclaw-anchor",
+      "name": "Ground Anchor",
+      "spatial": {},
+      "targeting": [
+        "self"
+      ],
+      "timing": {
+        "preparation": "brief",
+        "recovery": "brief"
+      }
+    }
+  ],
+  "acts": {
+    "exclude": [
+      "*/drain",
+      "aura/mend"
+    ],
+    "output": {
+      "pincers/strike": [
+        65,
+        85
+      ]
+    }
+  },
+  "attributes": {
+    "agility": [
+      10,
+      30
+    ],
+    "charisma": [
+      15,
+      40
+    ],
+    "endurance": [
+      50,
+      75
+    ],
+    "instinct": [
+      55,
+      80
+    ],
+    "intelligence": [
+      25,
+      50
+    ],
+    "reflex": [
+      25,
+      50
+    ],
+    "resilience": [
+      70,
+      95
+    ],
+    "strength": [
+      70,
+      95
+    ],
+    "vitality": [
+      55,
+      80
+    ],
+    "willpower": [
+      45,
+      70
+    ]
+  },
+  "channels": [
+    "aura"
+  ],
+  "conduits": {
+    "aura": "dark",
+    "pincers": "dark"
+  },
+  "element": "dark",
+  "generatorPlanets": [
+    "grimedes"
+  ],
+  "homePlanet": "grimedes",
+  "key": "graviclaw",
+  "lore": {
+    "appearance": [
+      "Centaur-like crustacean, crab body below and upright torso above",
+      "Black chitin shell",
+      "Heavy for its height",
+      "Many jointed legs",
+      "One massive pincer claw as long as the torso",
+      "Small head on heavy shoulders"
+    ],
+    "behavior": "It snaps its claws shut with a force many times its mass, cutting through the hardest materials. Against something too large to draw in, it roots itself to the ground and becomes an immovable wall of chitin.",
+    "company": "It lurks alone.",
+    "description": "With the black-shelled body of a crab and an upright torso, the centaur-like crustacean known as the Graviclaw lurks just beneath the foggy wetlands of Grimedes, using its bizarre control over the intensification of gravitational waves to generate miniature black holes in the water and draw its helpless prey right into its clutches. Graviclaws can strengthen the gravitational pull of their massive claws in order to snap them shut with a force many times heavier than their implied mass, severing through even the hardest of materials with crushing pressure. When facing larger foes, the Graviclaw can use its powers to root itself to the ground, becoming an immovable wall of chitin.",
+    "feeding": "It lurks under the water and draws prey to its claws with a miniature black hole rather than chasing it.",
+    "habitat": "The foggy wetlands of Grimedes, just beneath the surface.",
+    "origin": "Thought to come from the laboratory experiments on Grimedes, rumored to be ECHELON black sites, that produced the planet's gravity-bending Xalians."
+  },
+  "mechanisms": [
+    {
+      "activation": {
+        "continuity": [
+          "discrete"
+        ]
+      },
+      "delivery": {
+        "field": {
+          "approach": [
+            "stationary"
+          ],
+          "range": [
+            "short",
+            "medium"
+          ]
+        }
+      },
+      "description": "A focused gravity field pulls a target toward the performer.",
+      "effects": [
+        {
+          "direction": "toward",
+          "intensity": [
+            45,
+            72
+          ],
+          "key": "outcome",
+          "likelihood": [
+            "consistent"
+          ],
+          "onset": "instant",
+          "persistence": "resolved",
+          "recipient": "target",
+          "type": "displace"
+        }
+      ],
+      "instrument": "aura",
+      "key": "gravity-draw",
+      "name": "Gravity Draw",
+      "targeting": [
+        "other"
+      ],
+      "timing": {
+        "preparation": [
+          "immediate",
+          "brief"
+        ],
+        "recovery": [
+          "brief",
+          "prolonged"
+        ]
+      }
+    }
+  ],
+  "name": "Graviclaw",
+  "nameOrigin": "A compression of gravity and claw, naming the force it controls and the massive pincer where that force terminates.",
+  "passives": [],
+  "physiology": {
+    "anatomy": [
+      "pincers",
+      "shell",
+      "body"
+    ],
+    "bodyPlan": "multiped",
+    "breathes": [
+      "gas",
+      "liquid"
+    ],
+    "capabilities": {
+      "burrow": [
+        50,
+        75
+      ],
+      "climb": [
+        5,
+        20
+      ],
+      "flight": [
+        0,
+        0
+      ],
+      "leap": [
+        5,
+        20
+      ],
+      "manipulation": [
+        45,
+        70
+      ],
+      "sprint": [
+        15,
+        35
+      ],
+      "swim": [
+        45,
+        70
+      ]
+    },
+    "communication": [],
+    "composition": {
+      "primary": "flesh",
+      "secondary": "mineral"
+    },
+    "covering": "chitin",
+    "diet": "carnivore",
+    "environmentalTolerance": {
+      "ambientMedia": [
+        "gas",
+        "liquid"
+      ],
+      "temperatureC": {
+        "max": 5,
+        "min": -60
+      }
+    },
+    "genome": {
+      "chirality": "rolled"
+    },
+    "lifespan": "long",
+    "protections": [],
+    "senses": {
+      "hearing": [
+        30,
+        55
+      ],
+      "sight": [
+        20,
+        45
+      ],
+      "smell": [
+        35,
+        60
+      ],
+      "special": [
+        "void-sense"
+      ]
+    },
+    "size": {
+      "heightCm": [
+        165,
+        215
+      ],
+      "massKg": [
+        180,
+        260
+      ]
+    },
+    "traversal": []
+  },
+  "schemaVersion": "5.1.0",
+  "signature": {
+    "key": "graviclaw-defining",
+    "type": "action"
+  },
+  "temperament": {
+    "aggression": [
+      55,
+      80
+    ],
+    "boldness": [
+      50,
+      75
+    ],
+    "curiosity": [
+      25,
+      50
+    ],
+    "energy": [
+      20,
+      45
+    ],
+    "sociability": [
+      10,
+      35
+    ]
+  }
+}

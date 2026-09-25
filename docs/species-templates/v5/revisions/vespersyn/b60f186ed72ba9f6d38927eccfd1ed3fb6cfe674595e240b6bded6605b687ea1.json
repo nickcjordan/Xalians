@@ -1,0 +1,407 @@
+{
+  "actions": [
+    {
+      "activation": {
+        "continuity": "discrete"
+      },
+      "delivery": {
+        "approach": "stationary",
+        "mode": "field"
+      },
+      "description": "The central mind directs its small nonliving projections to bite a selected target.",
+      "effects": [
+        {
+          "intensity": 62,
+          "key": "outcome",
+          "likelihood": "consistent",
+          "mechanism": "piercing",
+          "onset": "instant",
+          "persistence": "resolved",
+          "recipient": "target",
+          "type": "harm"
+        }
+      ],
+      "instrument": "swarm",
+      "key": "vespersyn-defining",
+      "name": "Toothed Swarm",
+      "spatial": {
+        "range": "short"
+      },
+      "targeting": [
+        "other"
+      ],
+      "timing": {
+        "preparation": "immediate",
+        "recovery": "brief"
+      }
+    },
+    {
+      "activation": {
+        "continuity": "discrete"
+      },
+      "delivery": {
+        "approach": "stationary",
+        "mode": "self"
+      },
+      "description": "The projections gather around the central body to intercept harm.",
+      "effects": [
+        {
+          "intensity": 55,
+          "key": "outcome",
+          "likelihood": "consistent",
+          "onset": "instant",
+          "persistence": "resolved",
+          "recipient": "self",
+          "type": "protect"
+        }
+      ],
+      "instrument": "swarm",
+      "key": "vespersyn-guard",
+      "name": "Swarm Guard",
+      "spatial": {},
+      "targeting": [
+        "self"
+      ],
+      "timing": {
+        "preparation": "immediate",
+        "recovery": "brief"
+      }
+    }
+  ],
+  "acts": {
+    "output": {
+      "claws/strike": [
+        28,
+        48
+      ],
+      "swarm/strike": [
+        42,
+        62
+      ]
+    }
+  },
+  "attributes": {
+    "agility": [
+      55,
+      80
+    ],
+    "charisma": [
+      25,
+      50
+    ],
+    "endurance": [
+      30,
+      55
+    ],
+    "instinct": [
+      40,
+      65
+    ],
+    "intelligence": [
+      45,
+      70
+    ],
+    "reflex": [
+      50,
+      75
+    ],
+    "resilience": [
+      20,
+      40
+    ],
+    "strength": [
+      15,
+      35
+    ],
+    "vitality": [
+      25,
+      45
+    ],
+    "willpower": [
+      60,
+      85
+    ]
+  },
+  "channels": [
+    "swarm"
+  ],
+  "conduits": {},
+  "element": "dark",
+  "generatorPlanets": [
+    "grimedes"
+  ],
+  "homePlanet": "grimedes",
+  "key": "vespersyn",
+  "lore": {
+    "appearance": [
+      "Small bat-shaped flier",
+      "Light",
+      "Broad membranous wings",
+      "Upright ears",
+      "Hooked claws on the forelimbs and feet",
+      "Long thin tail",
+      "Surrounded by a swarm of summoned flying familiars, toothed like piranhas"
+    ],
+    "behavior": "In battle it summons a swarm of small flying familiars with teeth like piranhas and controls them with its mind, attacking or defending as one unit. It keeps its own body inside the swarm so nothing can tell which shape matters.",
+    "company": "It goes with its swarm and nothing else.",
+    "description": "When in battle, this creature summons a swarm of small flying familiars with teeth like piranhas. It controls the swarm with its mind, attacking or defending as one unit.",
+    "feeding": "It eats what its swarm brings down.",
+    "habitat": "The thick, stalky undergrowth of Grimedes, in permanent night.",
+    "origin": "One of the Xalians experimented on in the laboratories of Grimedes, rumored to be ECHELON black sites, rather than a labor form."
+  },
+  "mechanisms": [
+    {
+      "activation": {
+        "continuity": [
+          "discrete"
+        ]
+      },
+      "delivery": {
+        "field": {
+          "approach": [
+            "stationary"
+          ],
+          "range": [
+            "short",
+            "medium"
+          ]
+        }
+      },
+      "description": "Mind-guided toothed projections attack a selected target.",
+      "effects": [
+        {
+          "intensity": [
+            42,
+            62
+          ],
+          "key": "outcome",
+          "likelihood": [
+            "consistent"
+          ],
+          "mechanism": "piercing",
+          "onset": "instant",
+          "persistence": "resolved",
+          "recipient": "target",
+          "type": "harm"
+        }
+      ],
+      "instrument": "swarm",
+      "key": "swarm-bite",
+      "name": "Swarm Bite",
+      "targeting": [
+        "other"
+      ],
+      "timing": {
+        "preparation": [
+          "immediate",
+          "brief"
+        ],
+        "recovery": [
+          "repeatable",
+          "brief"
+        ]
+      }
+    },
+    {
+      "activation": {
+        "continuity": [
+          "discrete"
+        ]
+      },
+      "delivery": {
+        "contact": {
+          "approach": [
+            "stationary"
+          ],
+          "range": [
+            "contact"
+          ]
+        }
+      },
+      "description": "Projections intercept harm around the central body or another target.",
+      "effects": [
+        {
+          "intensity": [
+            35,
+            62
+          ],
+          "key": "outcome",
+          "likelihood": [
+            "consistent"
+          ],
+          "onset": "instant",
+          "persistence": "resolved",
+          "recipient": "target",
+          "type": "protect"
+        }
+      ],
+      "instrument": "swarm",
+      "key": "swarm-interpose",
+      "name": "Swarm Interpose",
+      "targeting": [
+        "self",
+        "other"
+      ],
+      "timing": {
+        "preparation": [
+          "immediate",
+          "brief"
+        ],
+        "recovery": [
+          "brief"
+        ]
+      }
+    }
+  ],
+  "name": "Vespersyn",
+  "nameOrigin": "A blend of the Latin vesper, evening, and Greek syn, together, reflecting a creature of perpetual night that moves its familiars as one unit.",
+  "passives": [
+    {
+      "activation": {
+        "continuity": "ongoing"
+      },
+      "delivery": {
+        "approach": "stationary",
+        "mode": "self"
+      },
+      "description": "The central body remains difficult to pick out within its nonliving projections.",
+      "effects": [
+        {
+          "bound": "source",
+          "key": "outcome",
+          "likelihood": "consistent",
+          "onset": "instant",
+          "persistence": "sustained",
+          "recipient": "self",
+          "removable": [
+            "disrupting"
+          ],
+          "status": "concealed",
+          "type": "status"
+        }
+      ],
+      "instrument": "swarm",
+      "key": "vespersyn-hidden-core",
+      "name": "Hidden Core",
+      "spatial": {},
+      "targeting": [
+        "self"
+      ]
+    }
+  ],
+  "physiology": {
+    "anatomy": [
+      "wings",
+      "claws",
+      "tail",
+      "body"
+    ],
+    "bodyPlan": "swarm",
+    "breathes": [
+      "gas"
+    ],
+    "capabilities": {
+      "burrow": [
+        0,
+        5
+      ],
+      "climb": [
+        35,
+        60
+      ],
+      "flight": [
+        60,
+        85
+      ],
+      "leap": [
+        40,
+        65
+      ],
+      "manipulation": [
+        20,
+        40
+      ],
+      "sprint": [
+        15,
+        35
+      ],
+      "swim": [
+        0,
+        10
+      ]
+    },
+    "communication": [],
+    "composition": {
+      "primary": "flesh"
+    },
+    "covering": "hide",
+    "diet": "carnivore",
+    "environmentalTolerance": {
+      "ambientMedia": [
+        "gas"
+      ],
+      "temperatureC": {
+        "max": 5,
+        "min": -60
+      }
+    },
+    "genome": {
+      "chirality": "rolled"
+    },
+    "lifespan": "short",
+    "protections": [],
+    "senses": {
+      "hearing": [
+        60,
+        85
+      ],
+      "sight": [
+        30,
+        55
+      ],
+      "smell": [
+        25,
+        45
+      ],
+      "special": []
+    },
+    "size": {
+      "heightCm": [
+        60,
+        90
+      ],
+      "massKg": [
+        8,
+        16
+      ]
+    },
+    "traversal": []
+  },
+  "schemaVersion": "5.1.0",
+  "signature": {
+    "key": "vespersyn-defining",
+    "type": "action"
+  },
+  "temperament": {
+    "aggression": [
+      50,
+      75
+    ],
+    "boldness": [
+      45,
+      70
+    ],
+    "curiosity": [
+      45,
+      70
+    ],
+    "energy": [
+      55,
+      80
+    ],
+    "sociability": [
+      20,
+      45
+    ]
+  }
+}

@@ -1,0 +1,393 @@
+{
+  "actions": [
+    {
+      "activation": {
+        "continuity": "discrete"
+      },
+      "delivery": {
+        "approach": "stationary",
+        "mode": "contact"
+      },
+      "description": "Already-burning secretion from its body reaches a contacted target.",
+      "effects": [
+        {
+          "intensity": 55,
+          "key": "outcome",
+          "likelihood": "consistent",
+          "mechanism": "elemental",
+          "onset": "instant",
+          "persistence": "resolved",
+          "recipient": "target",
+          "type": "harm"
+        }
+      ],
+      "element": "fire",
+      "instrument": "secretion",
+      "key": "imprit-ignited-oil",
+      "name": "Ignited Oil Contact",
+      "spatial": {
+        "range": "contact"
+      },
+      "targeting": [
+        "other"
+      ],
+      "timing": {
+        "preparation": "brief",
+        "recovery": "brief"
+      }
+    }
+  ],
+  "acts": {
+    "exclude": [
+      "secretion/mend"
+    ]
+  },
+  "attributes": {
+    "agility": [
+      66,
+      86
+    ],
+    "charisma": [
+      30,
+      52
+    ],
+    "endurance": [
+      40,
+      60
+    ],
+    "instinct": [
+      50,
+      70
+    ],
+    "intelligence": [
+      62,
+      80
+    ],
+    "reflex": [
+      64,
+      84
+    ],
+    "resilience": [
+      36,
+      54
+    ],
+    "strength": [
+      28,
+      46
+    ],
+    "vitality": [
+      34,
+      52
+    ],
+    "willpower": [
+      22,
+      44
+    ]
+  },
+  "channels": [
+    "secretion"
+  ],
+  "conduits": {
+    "secretion": "fire"
+  },
+  "element": "fire",
+  "generatorPlanets": [
+    "magmuth"
+  ],
+  "homePlanet": "magmuth",
+  "key": "imprit",
+  "lore": {
+    "appearance": [
+      "Small horned monkey on all fours",
+      "Fire-retardant fur",
+      "Wreathed in constant flame",
+      "Heavy curved horns",
+      "Long fangs",
+      "Bare gripping hands and feet",
+      "Long whip tail with a scythe-like tip"
+    ],
+    "behavior": "It climbs and leaps rather than crossing open ground, swinging from its tail as readily as from a hand. Underground it takes machinery apart and puts it back together. On the surface it is erratic, and it sets fires where they least belong.",
+    "company": "It keeps to itself, shaped by the isolation of the deep tunnels.",
+    "description": "Imprits are demonic looking creatures, resembling flaming, horned monkeys backed by long tails with scythe-like tips. Imprits possess fire-retardant fur that protects their bodies from the flammable oils they secrete, allowing them to survive despite being in a state of constant immolation.  They are remarkably intelligent among other Xalians, having been designed in ancient times as natural tinkerers and let loose into the various lightless mining shafts of Magmuth, where they were left to their own devices to fix and maintain the often makeshift mining equipment sent deep into the earth by the Vallerii. Today, they are known for being entirely erratic, likely driven mad by the isolation of the deep tunnels in which they tinkered and toiled. When released from their claustrophobic confines and set loose on the surface, Imprits take ecstatic pleasure from using their tails to swing through the air from place to place and setting fires where they least belong.",
+    "feeding": "It eats what it finds in the shafts and on the surface, whatever it is.",
+    "habitat": "The old mining shafts of Magmuth and the crag networks above them.",
+    "origin": "Designed by Magmuth's corporations as a tinkerer and let loose in the lightless mining shafts to fix and maintain the makeshift equipment the Vallerii sent down."
+  },
+  "mechanisms": [
+    {
+      "activation": {
+        "continuity": [
+          "discrete"
+        ]
+      },
+      "delivery": {
+        "contact": {
+          "approach": [
+            "stationary",
+            "closing"
+          ],
+          "range": [
+            "contact"
+          ]
+        }
+      },
+      "description": "Flaming oil already alight on its body harms at contact.",
+      "effects": [
+        {
+          "intensity": [
+            38,
+            62
+          ],
+          "key": "outcome",
+          "likelihood": [
+            "consistent"
+          ],
+          "mechanism": "elemental",
+          "onset": "instant",
+          "persistence": "resolved",
+          "recipient": "target",
+          "type": "harm"
+        }
+      ],
+      "element": "fire",
+      "instrument": "secretion",
+      "key": "ignited-oil",
+      "name": "Ignited Oil",
+      "targeting": [
+        "other"
+      ],
+      "timing": {
+        "preparation": [
+          "immediate",
+          "brief"
+        ],
+        "recovery": [
+          "brief"
+        ]
+      }
+    },
+    {
+      "activation": {
+        "continuity": [
+          "discrete"
+        ]
+      },
+      "delivery": {
+        "contact": {
+          "approach": [
+            "stationary",
+            "closing"
+          ],
+          "range": [
+            "contact"
+          ]
+        }
+      },
+      "description": "The scythe tip on its tail cuts at contact.",
+      "effects": [
+        {
+          "intensity": [
+            40,
+            68
+          ],
+          "key": "outcome",
+          "likelihood": [
+            "consistent"
+          ],
+          "mechanism": "cutting",
+          "onset": "instant",
+          "persistence": "resolved",
+          "recipient": "target",
+          "type": "harm"
+        }
+      ],
+      "instrument": "tail",
+      "key": "scythe-tail",
+      "name": "Scythe Tail",
+      "targeting": [
+        "other"
+      ],
+      "timing": {
+        "preparation": [
+          "immediate",
+          "brief"
+        ],
+        "recovery": [
+          "repeatable",
+          "brief"
+        ]
+      }
+    }
+  ],
+  "name": "Imprit",
+  "nameOrigin": "A compression of imp and sprite, matching its small demonic appearance and supernatural, erratic fire behavior.",
+  "passives": [
+    {
+      "activation": {
+        "continuity": "discrete",
+        "trigger": "contact"
+      },
+      "delivery": {
+        "approach": "stationary",
+        "mode": "contact"
+      },
+      "description": "Its always-burning oils ignite whatever directly contacts its body.",
+      "effects": [
+        {
+          "duration": "brief",
+          "key": "outcome",
+          "likelihood": "consistent",
+          "onset": "instant",
+          "persistence": "lingering",
+          "recipient": "target",
+          "removable": [
+            "cooling",
+            "smothering"
+          ],
+          "status": "burning",
+          "type": "status"
+        }
+      ],
+      "element": "fire",
+      "instrument": "secretion",
+      "key": "imprit-defining",
+      "name": "Living Flame",
+      "spatial": {
+        "range": "contact"
+      },
+      "targeting": [
+        "other"
+      ],
+      "timing": {
+        "preparation": "immediate",
+        "recovery": "repeatable"
+      }
+    }
+  ],
+  "physiology": {
+    "anatomy": [
+      "horns",
+      "fangs",
+      "tail",
+      "fists",
+      "hide"
+    ],
+    "bodyPlan": "quadruped",
+    "breathes": [
+      "gas"
+    ],
+    "capabilities": {
+      "burrow": [
+        10,
+        30
+      ],
+      "climb": [
+        78,
+        95
+      ],
+      "flight": [
+        0,
+        0
+      ],
+      "leap": [
+        70,
+        90
+      ],
+      "manipulation": [
+        74,
+        92
+      ],
+      "sprint": [
+        52,
+        72
+      ],
+      "swim": [
+        0,
+        12
+      ]
+    },
+    "communication": [
+      "vocal",
+      "display"
+    ],
+    "composition": {
+      "primary": "flesh"
+    },
+    "covering": "fur",
+    "diet": "omnivore",
+    "environmentalTolerance": {
+      "ambientMedia": [
+        "gas"
+      ],
+      "temperatureC": {
+        "max": 105,
+        "min": 65
+      }
+    },
+    "genome": {
+      "chirality": "rolled"
+    },
+    "lifespan": "standard",
+    "protections": [
+      {
+        "degree": "resistant",
+        "element": "fire",
+        "mechanism": "elemental",
+        "type": "harm"
+      }
+    ],
+    "senses": {
+      "hearing": [
+        60,
+        80
+      ],
+      "sight": [
+        52,
+        72
+      ],
+      "smell": [
+        35,
+        55
+      ],
+      "special": []
+    },
+    "size": {
+      "heightCm": [
+        72,
+        98
+      ],
+      "massKg": [
+        30,
+        48
+      ]
+    },
+    "traversal": []
+  },
+  "schemaVersion": "5.1.0",
+  "signature": {
+    "key": "imprit-defining",
+    "type": "passive"
+  },
+  "temperament": {
+    "aggression": [
+      55,
+      80
+    ],
+    "boldness": [
+      60,
+      85
+    ],
+    "curiosity": [
+      60,
+      85
+    ],
+    "energy": [
+      70,
+      95
+    ],
+    "sociability": [
+      15,
+      40
+    ]
+  }
+}

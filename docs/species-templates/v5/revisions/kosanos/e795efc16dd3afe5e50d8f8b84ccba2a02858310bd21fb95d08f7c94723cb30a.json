@@ -1,0 +1,297 @@
+{
+  "actions": [
+    {
+      "activation": {
+        "continuity": "discrete"
+      },
+      "delivery": {
+        "approach": "stationary",
+        "mode": "contact"
+      },
+      "description": "Its long trunk swings the broad blade through a contacted target.",
+      "effects": [
+        {
+          "intensity": 72,
+          "key": "outcome",
+          "likelihood": "consistent",
+          "mechanism": "cutting",
+          "onset": "instant",
+          "persistence": "resolved",
+          "recipient": "target",
+          "type": "harm"
+        }
+      ],
+      "instrument": "blades",
+      "key": "kosanos-defining",
+      "name": "Trunk Blade Sweep",
+      "spatial": {
+        "range": "contact"
+      },
+      "targeting": [
+        "other"
+      ],
+      "timing": {
+        "preparation": "brief",
+        "recovery": "brief"
+      }
+    }
+  ],
+  "acts": {
+    "output": {
+      "blades/strike": [
+        55,
+        72
+      ],
+      "jaws/strike": [
+        35,
+        60
+      ],
+      "trunk/strike": [
+        40,
+        68
+      ]
+    }
+  },
+  "attributes": {
+    "agility": [
+      12,
+      28
+    ],
+    "charisma": [
+      15,
+      30
+    ],
+    "endurance": [
+      65,
+      85
+    ],
+    "instinct": [
+      42,
+      62
+    ],
+    "intelligence": [
+      20,
+      36
+    ],
+    "reflex": [
+      18,
+      34
+    ],
+    "resilience": [
+      58,
+      78
+    ],
+    "strength": [
+      70,
+      90
+    ],
+    "vitality": [
+      62,
+      82
+    ],
+    "willpower": [
+      40,
+      60
+    ]
+  },
+  "channels": [],
+  "conduits": {},
+  "element": "plant",
+  "generatorPlanets": [
+    "floria"
+  ],
+  "homePlanet": "floria",
+  "key": "kosanos",
+  "lore": {
+    "appearance": [
+      "Large, heavy quadruped on thick columnar legs",
+      "Smooth hide",
+      "Blunt low-carried head",
+      "Wide gape of long teeth",
+      "Single long trunk arching over the back, ending in a blade as long as the body",
+      "Short upturned tail"
+    ],
+    "behavior": "It sets its feet, reads the ground, and fells standing growth in long low arcs of the blade on its trunk, then holds the lane it has cut.",
+    "company": "It moves in herds through the underforest.",
+    "description": "With a large blade at the end of its trunk, this simple yet powerful creature is thought to have been designed to clear the thick brush of Floria.",
+    "feeding": "It feeds as it works, on the growth it opens up and whatever the opening turns up.",
+    "habitat": "The underforests beneath the World Tree canopies.",
+    "origin": "Thought to have been designed to clear the thick brush of Floria."
+  },
+  "mechanisms": [
+    {
+      "activation": {
+        "continuity": [
+          "discrete"
+        ]
+      },
+      "delivery": {
+        "contact": {
+          "approach": [
+            "stationary"
+          ],
+          "range": [
+            "contact"
+          ]
+        }
+      },
+      "description": "The heavy quadruped body bears down at close contact.",
+      "effects": [
+        {
+          "intensity": [
+            45,
+            75
+          ],
+          "key": "outcome",
+          "likelihood": [
+            "consistent"
+          ],
+          "mechanism": "compression",
+          "onset": "instant",
+          "persistence": "resolved",
+          "recipient": "target",
+          "type": "harm"
+        }
+      ],
+      "instrument": "hide",
+      "key": "body-press",
+      "name": "Body Press",
+      "targeting": [
+        "other"
+      ],
+      "timing": {
+        "preparation": [
+          "immediate",
+          "brief"
+        ],
+        "recovery": [
+          "repeatable",
+          "brief"
+        ]
+      }
+    }
+  ],
+  "name": "Kosanos",
+  "nameOrigin": "A joining of Polish kosa, scythe, and nos, nose, naming the broad cutting blade at the end of its long trunk.",
+  "passives": [],
+  "physiology": {
+    "anatomy": [
+      "trunk",
+      "blades",
+      "jaws",
+      "tail",
+      "hide"
+    ],
+    "bodyPlan": "quadruped",
+    "breathes": [
+      "gas"
+    ],
+    "capabilities": {
+      "burrow": [
+        0,
+        5
+      ],
+      "climb": [
+        0,
+        10
+      ],
+      "flight": [
+        0,
+        0
+      ],
+      "leap": [
+        5,
+        15
+      ],
+      "manipulation": [
+        45,
+        65
+      ],
+      "sprint": [
+        20,
+        38
+      ],
+      "swim": [
+        15,
+        30
+      ]
+    },
+    "communication": [
+      "vibration"
+    ],
+    "composition": {
+      "primary": "flesh"
+    },
+    "covering": "hide",
+    "diet": "omnivore",
+    "environmentalTolerance": {
+      "ambientMedia": [
+        "gas"
+      ],
+      "temperatureC": {
+        "max": 36,
+        "min": 2
+      }
+    },
+    "genome": {
+      "chirality": "rolled"
+    },
+    "lifespan": "long",
+    "protections": [],
+    "senses": {
+      "hearing": [
+        40,
+        60
+      ],
+      "sight": [
+        45,
+        65
+      ],
+      "smell": [
+        50,
+        70
+      ],
+      "special": [
+        "tremorsense"
+      ]
+    },
+    "size": {
+      "heightCm": [
+        210,
+        265
+      ],
+      "massKg": [
+        320,
+        430
+      ]
+    },
+    "traversal": []
+  },
+  "schemaVersion": "5.1.0",
+  "signature": {
+    "key": "kosanos-defining",
+    "type": "action"
+  },
+  "temperament": {
+    "aggression": [
+      25,
+      50
+    ],
+    "boldness": [
+      40,
+      65
+    ],
+    "curiosity": [
+      25,
+      50
+    ],
+    "energy": [
+      30,
+      55
+    ],
+    "sociability": [
+      55,
+      80
+    ]
+  }
+}

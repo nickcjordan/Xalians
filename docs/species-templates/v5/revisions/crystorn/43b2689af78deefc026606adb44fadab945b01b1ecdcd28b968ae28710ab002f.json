@@ -1,0 +1,234 @@
+{
+  "actions": [
+    {
+      "activation": {
+        "continuity": "discrete"
+      },
+      "delivery": {
+        "approach": "stationary",
+        "mode": "stream"
+      },
+      "description": "The paired head gems focus and transmit powerful light onto one target.",
+      "effects": [
+        {
+          "intensity": 68,
+          "key": "outcome",
+          "likelihood": "consistent",
+          "mechanism": "elemental",
+          "onset": "instant",
+          "persistence": "resolved",
+          "recipient": "target",
+          "type": "harm"
+        }
+      ],
+      "element": "light",
+      "instrument": "horns",
+      "key": "crystorn-defining",
+      "name": "Gem Radiance",
+      "spatial": {
+        "range": "medium"
+      },
+      "targeting": [
+        "other"
+      ],
+      "timing": {
+        "preparation": "brief",
+        "recovery": "brief"
+      }
+    }
+  ],
+  "acts": {
+    "exclude": [
+      "horns/mend"
+    ]
+  },
+  "attributes": {
+    "agility": [
+      12,
+      32
+    ],
+    "charisma": [
+      35,
+      60
+    ],
+    "endurance": [
+      58,
+      82
+    ],
+    "instinct": [
+      40,
+      62
+    ],
+    "intelligence": [
+      45,
+      68
+    ],
+    "reflex": [
+      20,
+      42
+    ],
+    "resilience": [
+      58,
+      80
+    ],
+    "strength": [
+      55,
+      78
+    ],
+    "vitality": [
+      60,
+      85
+    ],
+    "willpower": [
+      62,
+      88
+    ]
+  },
+  "channels": [],
+  "conduits": {
+    "horns": "light"
+  },
+  "element": "light",
+  "generatorPlanets": [
+    "luminax"
+  ],
+  "homePlanet": "luminax",
+  "key": "crystorn",
+  "lore": {
+    "appearance": [
+      "Tall, heavy biped",
+      "Shaggy fur coat",
+      "Two large faceted gems growing out of the head",
+      "Broad blunt muzzle",
+      "Open hands with an opposable digit"
+    ],
+    "behavior": "It is calm and slow and holds still, and the gems on its head transmit powerful light energy when it is provoked.",
+    "company": "It lives alone.",
+    "description": "The gems growing out of this creature's head transmit powerful light energy, don't be deceived by its calm temperament.",
+    "feeding": "It feeds on the light of the twin suns through the gems on its head.",
+    "habitat": "The sunward face of Luminax.",
+    "origin": "One of the crystal-bearing forms the Luminax Generator grew to survive the light of the twin suns while working the fields."
+  },
+  "mechanisms": [],
+  "name": "Crystorn",
+  "nameOrigin": "A compression of crystal and horn, naming the paired head gems through which it releases stored light.",
+  "passives": [],
+  "physiology": {
+    "anatomy": [
+      "horns",
+      "fists",
+      "hide"
+    ],
+    "bodyPlan": "biped",
+    "breathes": [
+      "gas"
+    ],
+    "capabilities": {
+      "burrow": [
+        0,
+        0
+      ],
+      "climb": [
+        10,
+        25
+      ],
+      "flight": [
+        0,
+        0
+      ],
+      "leap": [
+        10,
+        25
+      ],
+      "manipulation": [
+        45,
+        70
+      ],
+      "sprint": [
+        10,
+        30
+      ],
+      "swim": [
+        5,
+        20
+      ]
+    },
+    "communication": [
+      "display",
+      "vocal"
+    ],
+    "composition": {
+      "primary": "flesh",
+      "secondary": "mineral"
+    },
+    "covering": "fur",
+    "diet": "energy-feeder",
+    "environmentalTolerance": {
+      "ambientMedia": [
+        "gas"
+      ],
+      "temperatureC": {
+        "max": 70,
+        "min": 30
+      }
+    },
+    "genome": {
+      "chirality": "rolled"
+    },
+    "lifespan": "long",
+    "protections": [],
+    "senses": {
+      "hearing": [
+        45,
+        70
+      ],
+      "sight": [
+        70,
+        92
+      ],
+      "smell": [
+        40,
+        65
+      ],
+      "special": []
+    },
+    "size": {
+      "heightCm": [
+        160,
+        195
+      ],
+      "massKg": [
+        300,
+        420
+      ]
+    },
+    "traversal": []
+  },
+  "schemaVersion": "5.1.0",
+  "signature": {
+    "key": "crystorn-defining",
+    "type": "action"
+  },
+  "temperament": {
+    "aggression": [
+      15,
+      40
+    ],
+    "boldness": [
+      20,
+      45
+    ],
+    "curiosity": [
+      20,
+      45
+    ],
+    "energy": [
+      10,
+      35
+    ],
+    "sociability": [
+      10,
+      30
+    ]
+  }
+}

@@ -1,0 +1,318 @@
+{
+  "actions": [
+    {
+      "activation": {
+        "continuity": "discrete"
+      },
+      "delivery": {
+        "approach": "stationary",
+        "mode": "stream"
+      },
+      "description": "A sustained high-pressure stream from its snout hammers a threat and cools active fire.",
+      "effects": [
+        {
+          "intensity": 55,
+          "key": "outcome",
+          "likelihood": "consistent",
+          "mechanism": "impact",
+          "onset": "instant",
+          "persistence": "resolved",
+          "recipient": "target",
+          "type": "harm"
+        },
+        {
+          "key": "cool",
+          "likelihood": "consistent",
+          "methods": [
+            "cooling"
+          ],
+          "onset": "instant",
+          "persistence": "resolved",
+          "recipient": "target",
+          "type": "remove"
+        }
+      ],
+      "element": "water",
+      "instrument": "trunk",
+      "key": "hippochamp-defining",
+      "name": "Emergency Water Cannon",
+      "spatial": {
+        "range": "medium"
+      },
+      "targeting": [
+        "other"
+      ],
+      "timing": {
+        "preparation": "brief",
+        "recovery": "brief"
+      }
+    }
+  ],
+  "acts": {
+    "exclude": [
+      "trunk/mend"
+    ]
+  },
+  "attributes": {
+    "agility": [
+      40,
+      60
+    ],
+    "charisma": [
+      30,
+      50
+    ],
+    "endurance": [
+      65,
+      88
+    ],
+    "instinct": [
+      45,
+      65
+    ],
+    "intelligence": [
+      35,
+      55
+    ],
+    "reflex": [
+      45,
+      65
+    ],
+    "resilience": [
+      45,
+      65
+    ],
+    "strength": [
+      45,
+      65
+    ],
+    "vitality": [
+      50,
+      70
+    ],
+    "willpower": [
+      50,
+      70
+    ]
+  },
+  "channels": [],
+  "conduits": {
+    "trunk": "water"
+  },
+  "element": "water",
+  "generatorPlanets": [
+    "poseidas"
+  ],
+  "homePlanet": "poseidas",
+  "key": "hippochamp",
+  "lore": {
+    "appearance": [
+      "Four-legged, horse-bodied and seahorse-headed",
+      "Long trunk-like snout, a water cannon",
+      "Sail-like crest from brow to neck",
+      "Fin-like spines continuing along the back",
+      "Blunt hooves",
+      "Thick tail coiled in a spiral",
+      "Smooth hide"
+    ],
+    "behavior": "It patrols the rigs and hoses down fires and threats alike with the steady stream from its snout. When storms or the toxic algae blooms come over the rigs it drops below the surface.",
+    "company": "It works in crews.",
+    "description": "Four-legged creatures resembling a seahorse that patrol the various hydro-processing fleets on Poseidas, Hippochamps were designed as emergency response crews for the various electrical and chemical fires that occur on rigs, as well as a means of defense against pirates seeking to steal valuable Algael. Their long, trunk-like snouts serve as high-pressure water cannons, and can maintain a steady stream that allows them to hose down fires and threats alike.",
+    "feeding": "It eats what the ocean around the rigs gives.",
+    "habitat": "The floating rig fleets on Poseidas's global ocean, above and below the surface.",
+    "origin": "Designed as emergency response crews for the hydro-processing rigs of Poseidas, putting out electrical and chemical fires and holding off pirates after the Algael."
+  },
+  "mechanisms": [
+    {
+      "activation": {
+        "continuity": [
+          "discrete"
+        ]
+      },
+      "delivery": {
+        "stream": {
+          "approach": [
+            "stationary"
+          ],
+          "range": [
+            "short",
+            "medium"
+          ]
+        }
+      },
+      "description": "The trunk directs a high-pressure water stream onto a selected target.",
+      "effects": [
+        {
+          "intensity": [
+            35,
+            55
+          ],
+          "key": "outcome",
+          "likelihood": [
+            "consistent"
+          ],
+          "mechanism": "impact",
+          "onset": "instant",
+          "persistence": "resolved",
+          "recipient": "target",
+          "type": "harm"
+        },
+        {
+          "key": "cool",
+          "likelihood": [
+            "consistent"
+          ],
+          "methods": [
+            "cooling"
+          ],
+          "onset": "instant",
+          "persistence": "resolved",
+          "recipient": "target",
+          "type": "remove"
+        }
+      ],
+      "element": "water",
+      "instrument": "trunk",
+      "key": "water-cannon",
+      "name": "Water Cannon",
+      "targeting": [
+        "other"
+      ],
+      "timing": {
+        "preparation": [
+          "immediate",
+          "brief"
+        ],
+        "recovery": [
+          "brief",
+          "prolonged"
+        ]
+      }
+    }
+  ],
+  "name": "Hippochamp",
+  "nameOrigin": "A shortening of hippocamp, whose Greek roots evoke horse and sea monster, matching its horse body and seahorse head.",
+  "passives": [],
+  "physiology": {
+    "anatomy": [
+      "trunk",
+      "hooves",
+      "tail",
+      "crest",
+      "spines",
+      "hide"
+    ],
+    "bodyPlan": "quadruped",
+    "breathes": [
+      "gas",
+      "liquid"
+    ],
+    "capabilities": {
+      "burrow": [
+        0,
+        0
+      ],
+      "climb": [
+        10,
+        25
+      ],
+      "flight": [
+        0,
+        0
+      ],
+      "leap": [
+        25,
+        45
+      ],
+      "manipulation": [
+        30,
+        50
+      ],
+      "sprint": [
+        40,
+        60
+      ],
+      "swim": [
+        55,
+        75
+      ]
+    },
+    "communication": [
+      "vocal",
+      "display"
+    ],
+    "composition": {
+      "primary": "flesh"
+    },
+    "covering": "hide",
+    "diet": "omnivore",
+    "environmentalTolerance": {
+      "ambientMedia": [
+        "gas",
+        "liquid"
+      ],
+      "temperatureC": {
+        "max": 40,
+        "min": 5
+      }
+    },
+    "genome": {
+      "chirality": "rolled"
+    },
+    "lifespan": "standard",
+    "protections": [],
+    "senses": {
+      "hearing": [
+        40,
+        60
+      ],
+      "sight": [
+        45,
+        65
+      ],
+      "smell": [
+        35,
+        55
+      ],
+      "special": []
+    },
+    "size": {
+      "heightCm": [
+        115,
+        145
+      ],
+      "massKg": [
+        120,
+        165
+      ]
+    },
+    "traversal": []
+  },
+  "schemaVersion": "5.1.0",
+  "signature": {
+    "key": "hippochamp-defining",
+    "type": "action"
+  },
+  "temperament": {
+    "aggression": [
+      25,
+      50
+    ],
+    "boldness": [
+      45,
+      70
+    ],
+    "curiosity": [
+      35,
+      60
+    ],
+    "energy": [
+      50,
+      75
+    ],
+    "sociability": [
+      60,
+      85
+    ]
+  }
+}

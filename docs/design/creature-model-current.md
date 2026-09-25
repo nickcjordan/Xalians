@@ -2,7 +2,7 @@
 
 Updated 2026-09-23. This document supersedes conflicting proposals and chronological notes in this directory. The implementation is available through `@xalians/content/creature` and `@xalians/rules/generator/creature`. These are the redesigned model's entry points; the legacy public generator and bundled species remain v4.
 
-Current implementation update, 2026-09-23: schema 5.1.0 and generator 0.8.0 are frozen as `generation-0.8.0-1`. Powerworks and Reclamation use this v5 canonical roster; the legacy public generator and its species bundle remain v4. Historical checkpoint paragraphs below describe the state when written, not the current game routing. The 32-species scale migration changed only measurement fields and resolution; archived earlier records keep their original representation.
+Current implementation update, 2026-09-25: record schema 5.2.0 and generator 0.9.0 separate the executable engine from species data. Authoring templates remain on schema 5.1.0. The 33-species current catalog has independent per-species revisions; compatible species additions no longer require a generator archive or version change. Historical combined archives remain replayable. Powerworks and Reclamation use the current v5 roster; the legacy public generator and its species bundle remain v4. Historical checkpoint paragraphs below describe the state when written, not the current game routing.
 
 ## Canonical roster audit decisions
 
@@ -14,7 +14,7 @@ The species template describes physiology, attribute and temperament bands, guar
 
 ```text
 Species                         Generated creature
-schemaVersion: 5.1.0             id / provenance / appearance (release envelope)
+schemaVersion: 5.1.0             id / provenance / appearance (record schema 5.2.0)
 key / name / nameOrigin          species
 element                         element
 homePlanet / generatorPlanets

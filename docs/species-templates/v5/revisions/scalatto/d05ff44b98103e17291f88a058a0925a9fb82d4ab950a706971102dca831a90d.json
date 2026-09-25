@@ -1,0 +1,252 @@
+{
+  "actions": [
+    {
+      "activation": {
+        "continuity": "discrete"
+      },
+      "delivery": {
+        "approach": "stationary",
+        "mode": "self"
+      },
+      "description": "It rolls inside its scaly exoskeleton to shield itself.",
+      "effects": [
+        {
+          "duration": "brief",
+          "key": "outcome",
+          "likelihood": "consistent",
+          "onset": "instant",
+          "persistence": "lingering",
+          "recipient": "self",
+          "removable": [
+            "disrupting"
+          ],
+          "status": "shielded",
+          "type": "status"
+        }
+      ],
+      "instrument": "shell",
+      "key": "scalatto-defining",
+      "name": "Shell Curl",
+      "spatial": {},
+      "targeting": [
+        "self"
+      ],
+      "timing": {
+        "preparation": "brief",
+        "recovery": "brief"
+      }
+    }
+  ],
+  "acts": {
+    "output": {
+      "claws/strike": [
+        30,
+        52
+      ],
+      "shell/strike": [
+        38,
+        62
+      ],
+      "tail/strike": [
+        25,
+        48
+      ]
+    }
+  },
+  "attributes": {
+    "agility": [
+      25,
+      50
+    ],
+    "charisma": [
+      15,
+      40
+    ],
+    "endurance": [
+      50,
+      75
+    ],
+    "instinct": [
+      40,
+      65
+    ],
+    "intelligence": [
+      20,
+      45
+    ],
+    "reflex": [
+      30,
+      55
+    ],
+    "resilience": [
+      70,
+      95
+    ],
+    "strength": [
+      45,
+      70
+    ],
+    "vitality": [
+      50,
+      75
+    ],
+    "willpower": [
+      40,
+      65
+    ]
+  },
+  "channels": [],
+  "conduits": {},
+  "element": "sand",
+  "generatorPlanets": [
+    "endessa"
+  ],
+  "homePlanet": "endessa",
+  "key": "scalatto",
+  "lore": {
+    "appearance": [
+      "Stout biped",
+      "Heavy for its height",
+      "Scaly chitin exoskeleton in overlapping bands",
+      "Long low head with a blunt snout",
+      "Backswept spines running from the head down the neck",
+      "Long curved claws on the forelimbs",
+      "Very long banded tail with a hooked tip"
+    ],
+    "behavior": "It rolls into a ball inside its scaly exoskeleton to protect itself, and it feels the ground through its plating.",
+    "company": "It crosses the dunes alone.",
+    "description": "Shielded by a scaly exoskeleton, this creature can roll into a ball to protect itself.",
+    "feeding": "It eats what it finds in the caverns and on the dunes in the low hours.",
+    "habitat": "The dunes and cavern networks of Endessa, crossing the surface only in the low hours.",
+    "origin": "One of the Xalians the Syndicate's stolen prototype Generator produced to work the drilling on Endessa."
+  },
+  "mechanisms": [],
+  "name": "Scalatto",
+  "nameOrigin": "A blend of scale and the French tatou, armadillo, matching its scaly armor and ability to roll into a protective ball.",
+  "passives": [],
+  "physiology": {
+    "anatomy": [
+      "shell",
+      "claws",
+      "tail",
+      "body"
+    ],
+    "bodyPlan": "biped",
+    "breathes": [
+      "gas"
+    ],
+    "capabilities": {
+      "burrow": [
+        35,
+        60
+      ],
+      "climb": [
+        15,
+        35
+      ],
+      "flight": [
+        0,
+        0
+      ],
+      "leap": [
+        15,
+        35
+      ],
+      "manipulation": [
+        30,
+        55
+      ],
+      "sprint": [
+        40,
+        70
+      ],
+      "swim": [
+        5,
+        20
+      ]
+    },
+    "communication": [
+      "vibration"
+    ],
+    "composition": {
+      "primary": "flesh"
+    },
+    "covering": "chitin",
+    "diet": "omnivore",
+    "environmentalTolerance": {
+      "ambientMedia": [
+        "gas"
+      ],
+      "temperatureC": {
+        "max": 48,
+        "min": -10
+      }
+    },
+    "genome": {
+      "chirality": "rolled"
+    },
+    "lifespan": "long",
+    "protections": [
+      {
+        "degree": "resistant",
+        "mechanism": "cutting",
+        "type": "harm"
+      }
+    ],
+    "senses": {
+      "hearing": [
+        40,
+        65
+      ],
+      "sight": [
+        30,
+        55
+      ],
+      "smell": [
+        35,
+        60
+      ],
+      "special": [
+        "tremorsense"
+      ]
+    },
+    "size": {
+      "heightCm": [
+        95,
+        125
+      ],
+      "massKg": [
+        58,
+        84
+      ]
+    },
+    "traversal": []
+  },
+  "schemaVersion": "5.1.0",
+  "signature": {
+    "key": "scalatto-defining",
+    "type": "action"
+  },
+  "temperament": {
+    "aggression": [
+      25,
+      50
+    ],
+    "boldness": [
+      20,
+      45
+    ],
+    "curiosity": [
+      20,
+      45
+    ],
+    "energy": [
+      25,
+      50
+    ],
+    "sociability": [
+      10,
+      35
+    ]
+  }
+}

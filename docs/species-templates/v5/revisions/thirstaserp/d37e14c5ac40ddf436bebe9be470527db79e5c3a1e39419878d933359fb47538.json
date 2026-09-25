@@ -1,0 +1,388 @@
+{
+  "actions": [
+    {
+      "activation": {
+        "continuity": "discrete"
+      },
+      "delivery": {
+        "approach": "stationary",
+        "mode": "signal",
+        "reception": "auditory"
+      },
+      "description": "Its tail rattle lures and mesmerizes a target that hears it.",
+      "effects": [
+        {
+          "duration": "brief",
+          "key": "outcome",
+          "likelihood": "consistent",
+          "onset": "instant",
+          "persistence": "lingering",
+          "recipient": "target",
+          "removable": [
+            "disrupting"
+          ],
+          "status": "entranced",
+          "type": "status"
+        }
+      ],
+      "instrument": "rattle",
+      "key": "thirstaserp-defining",
+      "name": "Subsonic Rattle",
+      "spatial": {
+        "range": "medium"
+      },
+      "targeting": [
+        "other"
+      ],
+      "timing": {
+        "preparation": "immediate",
+        "recovery": "brief"
+      }
+    },
+    {
+      "activation": {
+        "continuity": "discrete"
+      },
+      "delivery": {
+        "approach": "stationary",
+        "mode": "contact"
+      },
+      "description": "Its fangs introduce a venom that disrupts the victim through water loss.",
+      "effects": [
+        {
+          "duration": "prolonged",
+          "intensity": 75,
+          "key": "outcome",
+          "likelihood": "consistent",
+          "onset": "instant",
+          "persistence": "lingering",
+          "recipient": "target",
+          "removable": [
+            "detoxifying"
+          ],
+          "status": "poisoned",
+          "type": "status"
+        }
+      ],
+      "instrument": "fangs",
+      "key": "thirstaserp-venom",
+      "name": "Dehydrating Bite",
+      "spatial": {
+        "range": "contact"
+      },
+      "targeting": [
+        "other"
+      ],
+      "timing": {
+        "preparation": "brief",
+        "recovery": "brief"
+      }
+    }
+  ],
+  "acts": {
+    "output": {
+      "fangs/strike": [
+        32,
+        55
+      ]
+    }
+  },
+  "attributes": {
+    "agility": [
+      50,
+      70
+    ],
+    "charisma": [
+      30,
+      50
+    ],
+    "endurance": [
+      45,
+      65
+    ],
+    "instinct": [
+      65,
+      85
+    ],
+    "intelligence": [
+      20,
+      35
+    ],
+    "reflex": [
+      60,
+      80
+    ],
+    "resilience": [
+      35,
+      55
+    ],
+    "strength": [
+      45,
+      65
+    ],
+    "vitality": [
+      40,
+      60
+    ],
+    "willpower": [
+      35,
+      55
+    ]
+  },
+  "channels": [],
+  "conduits": {},
+  "element": "sand",
+  "generatorPlanets": [
+    "endessa"
+  ],
+  "homePlanet": "endessa",
+  "key": "thirstaserp",
+  "lore": {
+    "appearance": [
+      "Large cobra-like serpent",
+      "Scaled",
+      "Viper's wedge head with long curved fangs",
+      "Wide hood behind the head",
+      "Tail ending in a rattle shaped like a lotus flower"
+    ],
+    "behavior": "It hides beneath the sand and emits a subsonic vibration from the rattle on its tail that lures and mesmerizes opponents long enough for it to draw near and strike. It spreads its hood and shows its fangs before it does.",
+    "company": "It hunts alone.",
+    "description": "A large, cobra-like creature that hides beneath the sand, Thirstaserps emit a subsonic vibration from the rattles on their tails that can lure and mesmerize opponents long enough for them to draw near and attack with a unique venom that drains the victim’s water when bitten, causing them to suffer and die from extreme dehydration.",
+    "feeding": "It bites with a venom that drains the victim's water and leaves it to die of dehydration.",
+    "habitat": "Buried beneath the rolling dunes of Endessa.",
+    "origin": "One of the desert forms the Syndicate's stolen prototype Generator produced on Endessa. No record says what it was made for."
+  },
+  "mechanisms": [
+    {
+      "activation": {
+        "continuity": [
+          "discrete"
+        ]
+      },
+      "delivery": {
+        "signal": {
+          "approach": [
+            "stationary"
+          ],
+          "range": [
+            "short",
+            "medium"
+          ],
+          "reception": "auditory"
+        }
+      },
+      "description": "Subsonic rattling draws and entrances a listener.",
+      "effects": [
+        {
+          "duration": "brief",
+          "key": "outcome",
+          "likelihood": [
+            "likely",
+            "occasional"
+          ],
+          "onset": "instant",
+          "persistence": "lingering",
+          "recipient": "target",
+          "removable": [
+            "disrupting"
+          ],
+          "status": "entranced",
+          "type": "status"
+        }
+      ],
+      "instrument": "rattle",
+      "key": "rattle-mesmerism",
+      "name": "Rattle Mesmerism",
+      "targeting": [
+        "other"
+      ],
+      "timing": {
+        "preparation": [
+          "immediate",
+          "brief"
+        ],
+        "recovery": [
+          "brief"
+        ]
+      }
+    },
+    {
+      "activation": {
+        "continuity": [
+          "discrete"
+        ]
+      },
+      "delivery": {
+        "contact": {
+          "approach": [
+            "stationary",
+            "closing"
+          ],
+          "range": [
+            "contact"
+          ]
+        }
+      },
+      "description": "A fang bite introduces water-depleting venom.",
+      "effects": [
+        {
+          "duration": "prolonged",
+          "intensity": [
+            60,
+            85
+          ],
+          "key": "outcome",
+          "likelihood": [
+            "likely",
+            "occasional"
+          ],
+          "onset": "instant",
+          "persistence": "lingering",
+          "recipient": "target",
+          "removable": [
+            "detoxifying"
+          ],
+          "status": "poisoned",
+          "type": "status"
+        }
+      ],
+      "instrument": "fangs",
+      "key": "dehydrating-venom",
+      "name": "Dehydrating Venom",
+      "targeting": [
+        "other"
+      ],
+      "timing": {
+        "preparation": [
+          "immediate",
+          "brief"
+        ],
+        "recovery": [
+          "brief"
+        ]
+      }
+    }
+  ],
+  "name": "Thirstaserp",
+  "nameOrigin": "A fusion of thirst and serpent, naming its snake-like body and the venom that drains a victim's water.",
+  "passives": [],
+  "physiology": {
+    "anatomy": [
+      "jaws",
+      "fangs",
+      "tail",
+      "rattle"
+    ],
+    "bodyPlan": "serpentine",
+    "breathes": [
+      "gas"
+    ],
+    "capabilities": {
+      "burrow": [
+        60,
+        85
+      ],
+      "climb": [
+        10,
+        25
+      ],
+      "flight": [
+        0,
+        0
+      ],
+      "leap": [
+        40,
+        60
+      ],
+      "manipulation": [
+        5,
+        20
+      ],
+      "sprint": [
+        35,
+        55
+      ],
+      "swim": [
+        10,
+        25
+      ]
+    },
+    "communication": [
+      "vibration"
+    ],
+    "composition": {
+      "primary": "flesh"
+    },
+    "covering": "scales",
+    "diet": "carnivore",
+    "environmentalTolerance": {
+      "ambientMedia": [
+        "gas"
+      ],
+      "temperatureC": {
+        "max": 55,
+        "min": 10
+      }
+    },
+    "genome": {
+      "chirality": "rolled"
+    },
+    "lifespan": "standard",
+    "protections": [],
+    "senses": {
+      "hearing": [
+        30,
+        50
+      ],
+      "sight": [
+        40,
+        60
+      ],
+      "smell": [
+        55,
+        75
+      ],
+      "special": [
+        "tremorsense"
+      ]
+    },
+    "size": {
+      "heightCm": [
+        190,
+        250
+      ],
+      "massKg": [
+        95,
+        145
+      ]
+    },
+    "traversal": []
+  },
+  "schemaVersion": "5.1.0",
+  "signature": {
+    "key": "thirstaserp-defining",
+    "type": "action"
+  },
+  "temperament": {
+    "aggression": [
+      55,
+      80
+    ],
+    "boldness": [
+      40,
+      65
+    ],
+    "curiosity": [
+      25,
+      50
+    ],
+    "energy": [
+      35,
+      60
+    ],
+    "sociability": [
+      10,
+      35
+    ]
+  }
+}

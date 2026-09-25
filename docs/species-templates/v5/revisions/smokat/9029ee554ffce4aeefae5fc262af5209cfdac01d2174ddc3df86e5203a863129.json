@@ -1,0 +1,242 @@
+{
+  "actions": [
+    {
+      "activation": {
+        "continuity": "discrete"
+      },
+      "delivery": {
+        "approach": "stationary",
+        "mode": "self"
+      },
+      "description": "It briefly atomizes into smoke and slips through existing openings.",
+      "effects": [
+        {
+          "duration": "brief",
+          "key": "outcome",
+          "likelihood": "consistent",
+          "onset": "instant",
+          "persistence": "lingering",
+          "recipient": "self",
+          "removable": [
+            "disrupting"
+          ],
+          "status": "dispersed",
+          "type": "status"
+        }
+      ],
+      "instrument": "body",
+      "key": "smokat-defining",
+      "name": "Smoke Dispersal",
+      "spatial": {},
+      "targeting": [
+        "self"
+      ],
+      "timing": {
+        "preparation": "immediate",
+        "recovery": "brief"
+      }
+    }
+  ],
+  "acts": {
+    "output": {
+      "claws/strike": [
+        35,
+        60
+      ],
+      "jaws/strike": [
+        30,
+        52
+      ],
+      "tail/strike": [
+        20,
+        42
+      ]
+    }
+  },
+  "attributes": {
+    "agility": [
+      55,
+      82
+    ],
+    "charisma": [
+      25,
+      50
+    ],
+    "endurance": [
+      35,
+      60
+    ],
+    "instinct": [
+      50,
+      76
+    ],
+    "intelligence": [
+      45,
+      70
+    ],
+    "reflex": [
+      55,
+      82
+    ],
+    "resilience": [
+      20,
+      45
+    ],
+    "strength": [
+      45,
+      70
+    ],
+    "vitality": [
+      25,
+      50
+    ],
+    "willpower": [
+      35,
+      60
+    ]
+  },
+  "channels": [],
+  "conduits": {},
+  "element": "ghost",
+  "generatorPlanets": [
+    "phantiri"
+  ],
+  "homePlanet": "phantiri",
+  "key": "smokat",
+  "lore": {
+    "appearance": [
+      "Lean feline shape held in a body of smoke, standing on two legs",
+      "Surface of smoke with no firm edge",
+      "Long muzzle",
+      "Pointed tufted ears",
+      "Clawed paws",
+      "Long tail whose tip trails off into loose smoke",
+      "Nearly weightless"
+    ],
+    "behavior": "It holds a feline shape, climbs and springs where the footing is bad, and instantly atomizes into a cloud of smoke for a sneak attack or a quick escape.",
+    "company": "It hunts alone.",
+    "description": "Feline shaped in normal form, this clever creature can instantly atomize into a cloud of smoke for a sneak attack or quick evasion.",
+    "feeding": "It takes nothing in and feeds on nothing.",
+    "habitat": "The Dreadscape of Phantiri, inside its windless fog.",
+    "origin": "One of the non-corporeal Xalians the abandoned Phantiri Generator produced after it rewrote itself under Leviticus Overdrive."
+  },
+  "mechanisms": [],
+  "name": "Smokat",
+  "nameOrigin": "A fusion of smoke and cat, naming its feline silhouette and ability to atomize into smoke.",
+  "passives": [],
+  "physiology": {
+    "anatomy": [
+      "claws",
+      "jaws",
+      "tail",
+      "body"
+    ],
+    "bodyPlan": "biped",
+    "breathes": [],
+    "capabilities": {
+      "burrow": [
+        5,
+        20
+      ],
+      "climb": [
+        55,
+        80
+      ],
+      "flight": [
+        0,
+        0
+      ],
+      "leap": [
+        55,
+        80
+      ],
+      "manipulation": [
+        20,
+        40
+      ],
+      "sprint": [
+        60,
+        85
+      ],
+      "swim": [
+        10,
+        30
+      ]
+    },
+    "communication": [
+      "vocal"
+    ],
+    "composition": {
+      "primary": "gas"
+    },
+    "covering": "mist",
+    "diet": "none",
+    "environmentalTolerance": {
+      "ambientMedia": [
+        "gas"
+      ],
+      "temperatureC": {
+        "max": 20,
+        "min": -30
+      }
+    },
+    "genome": {
+      "chirality": "rolled"
+    },
+    "lifespan": "ageless",
+    "protections": [],
+    "senses": {
+      "hearing": [
+        55,
+        80
+      ],
+      "sight": [
+        55,
+        80
+      ],
+      "smell": [
+        45,
+        70
+      ],
+      "special": []
+    },
+    "size": {
+      "heightCm": [
+        150,
+        185
+      ],
+      "massKg": [
+        0.5,
+        3
+      ]
+    },
+    "traversal": []
+  },
+  "schemaVersion": "5.1.0",
+  "signature": {
+    "key": "smokat-defining",
+    "type": "action"
+  },
+  "temperament": {
+    "aggression": [
+      45,
+      70
+    ],
+    "boldness": [
+      50,
+      75
+    ],
+    "curiosity": [
+      55,
+      80
+    ],
+    "energy": [
+      55,
+      80
+    ],
+    "sociability": [
+      15,
+      40
+    ]
+  }
+}
