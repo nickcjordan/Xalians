@@ -8,7 +8,7 @@
     "build": "node esbuild.config.mjs",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
-    "prebuild": "node ../../scripts/generationRelease.cjs check"
+    "prebuild": "node ../../scripts/bundleLore.js"
   },
   "dependencies": {
     "@xalians/content": "1.0.0",

@@ -1,6 +1,6 @@
 # Adding a new species
 
-**Redesign routing:** use [the current creature contract](../design/creature-model-current.md), [derived-act rules](../design/creature-derived-acts.md), and the updated `migrate-species` skill for v5 authoring. Stage redesigned templates in `docs/species-templates/v5/` and validate with `npm run check:creature-model -- <path>`. After ratification run `npm run sync:species` and `npm run check:species`; this adds a species content revision without changing generator code or its archive. The numbered workflow below describes the existing v4 publishing pipeline, not v5 schema authority. Do not add retired traits or move pools to a v5 template to satisfy that pipeline.
+**Redesign routing:** use [the current creature contract](../design/creature-model-current.md), [derived-act rules](../design/creature-derived-acts.md), and the updated `migrate-species` skill for v5 authoring. Stage redesigned templates in `docs/species-templates/v5/` and validate with `npm run check:creature-model -- <path>`. After ratification run `node scripts/bundleLore.js` and `npm run check:species`; no species revision, generator version, or archive is created. The numbered workflow below describes the existing v4 publishing pipeline, not v5 schema authority. Do not add retired traits or move pools to a v5 template to satisfy that pipeline.
 
 The checklist for a creature that does not yet exist. Every path is relative to the creature worktree root. Each step's output is checked by the next step's tool; nothing is hand-copied between files.
 

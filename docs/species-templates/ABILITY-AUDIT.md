@@ -6,7 +6,7 @@ Use for every newly authored species and every edit to an existing species' defi
 
 Create or update `docs/species-templates/v5/<key>.ability-audit.md` using the sections below. This is species-level review evidence, not part of generated creature data. Mark items complete only with evidence; mark genuine non-applicability with a reason. Do not treat a passing schema validator as proof of creative coverage.
 
-Keep redesigned species in `docs/species-templates/v5/`. A ratified species change gets a new content revision through `npm run sync:species`; it does not require a generator release when the existing schema and shared vocabulary suffice. Record genuine representation gaps here; do not add private fields or silently feed v5 data to the v4 bundler.
+Keep redesigned species in `docs/species-templates/v5/`. A ratified prototype species change updates the current content bundle with `node scripts/bundleLore.js`; it does not create a species revision or generator release. Record genuine representation gaps here; do not add private fields or silently feed v5 data to the v4 species bundle.
 
 ## Review identity
 

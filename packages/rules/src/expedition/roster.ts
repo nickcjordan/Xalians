@@ -11,7 +11,7 @@
 	game logic: the engine takes whatever records it is given.
 */
 
-import { generateXalian, getSpeciesTemplates, GENERATION_RELEASE_ID } from '../generator/canonicalCreatureRelease.ts';
+import { generateXalian, getSpeciesTemplates } from '../generator/canonicalCreatureRelease.ts';
 import type { XalianRecord } from '@xalians/content/schema';
 import { createRngState, nextRandom } from './expeditionRules.ts';
 import { ROSTER_SIZE } from './expeditionInterpretation.ts';
@@ -79,8 +79,6 @@ export function buildExpeditionPool(seed: string | number, size: number): Xalian
 	}
 	return records;
 }
-
-export { GENERATION_RELEASE_ID };
 
 export interface BuildRostersOptions {
 	poolSize?: number;

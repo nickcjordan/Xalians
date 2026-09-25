@@ -38,28 +38,11 @@ async function replay(record, archives = archiveRoot, revisions = speciesRevisio
     const file = path.join(revisions, record.species, `${revision}.json`);
     if (!fs.existsSync(file)) throw new Error(`Unavailable species revision: ${record.species}/${revision}`);
     const template = JSON.parse(fs.readFileSync(file, 'utf8'));
-    const { revisionOf } = require('./syncCreatureCatalog.cjs');
+    const { revisionOf } = require('./historicalSpeciesRevision.cjs');
     if (template.key !== record.species || revisionOf(template) !== revision) throw new Error('Species revision integrity failure');
     return archived.generateXalian(template, revision, p.seed, options);
   }
   return archived.generateXalian(record.species, p.seed, options);
-}
-function checkFrozenSource(releaseId, entryPoint) {
-  const { manifest } = readManifest(releaseId);
-  for (const [file, expected] of Object.entries(manifest.inputs)) {
-    if (sourceHash(path.join(root, file)) !== expected) throw new Error(`Frozen release ${releaseId} changed: ${file}. Create a new release ID and freeze it.`);
-  }
-  if (manifest.build.esbuild !== esbuildVersion) throw new Error('Release build tool changed; create a new release');
-  if (hash(bundle(entryPoint).outputFiles[0].contents) !== manifest.artifact.sha256) throw new Error(`Generator bundle differs from frozen release ${releaseId}; create a new release`);
-  return manifest;
-}
-function checkCurrent() {
-  const { releaseId } = require('../packages/rules/src/generator/currentRelease.json');
-  const creature = require('../packages/rules/src/generator/currentCreatureRelease.json');
-  const legacyManifest = checkFrozenSource(releaseId);
-  const creatureManifest = checkFrozenSource(creature.releaseId, creature.entryPoint);
-  if (creatureManifest.kind === 'species-independent') require('./syncCreatureCatalog.cjs').checkCatalog();
-  return [legacyManifest, creatureManifest];
 }
 async function freeze({ entryPoint, releaseId = require('../packages/rules/src/generator/currentRelease.json').releaseId, archives = archiveRoot } = {}) {
   if (!validId(releaseId)) throw new Error('Invalid release ID');
@@ -80,7 +63,7 @@ async function freeze({ entryPoint, releaseId = require('../packages/rules/src/g
   fs.writeFileSync(path.join(dir, 'manifest.json'), JSON.stringify(manifest, null, 2) + '\n');
   return manifest;
 }
-module.exports = { freeze, checkCurrent, readManifest, replay, archiveRoot };
+module.exports = { freeze, readManifest, replay, archiveRoot };
 if (require.main === module) (async () => {
   const [command, file] = process.argv.slice(2);
   if (command === 'freeze') console.log(`Frozen ${(await freeze()).releaseId}`);
@@ -93,7 +76,7 @@ if (require.main === module) (async () => {
       if (changed) throw new Error(`Previously archived generator or species files changed:\n${changed}`);
     }
     for (const entry of fs.readdirSync(archiveRoot, { withFileTypes: true })) if (entry.isDirectory()) readManifest(entry.name);
-    console.log(`Verified ${checkCurrent().map(manifest => manifest.releaseId).join(' and ')} plus archived artifact and species integrity`);
+    console.log('Verified historical generation artifacts');
   } else if (command === 'replay' && file) console.log(JSON.stringify(await replay(JSON.parse(fs.readFileSync(file, 'utf8'))), null, 2));
   else throw new Error('Usage: node scripts/generationRelease.cjs freeze|check|replay <record.json>');
 })().catch(error => { console.error(error.message); process.exitCode = 1; });
