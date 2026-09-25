@@ -4,15 +4,16 @@ import { ArrowRight, Building2, Package, Route, ShieldCheck, Wrench, Zap } from 
 import { Button } from '../../ui/button';
 import { bankedSalvage } from './extractionOutcome';
 
-export default function ExtractionChoice({ salvage, potential, remaining = 1, nextScene, stability, readyCrew, canRepair = false, onRepair, onExtract, onContinue }) {
+export default function ExtractionChoice({ salvage, potential, remaining = 1, nextScene, stability, readyCrew, canRepair = false, onRepair, onExtract, onContinue, runFlags = [], recovery }) {
   const retained = bankedSalvage('failed', true, salvage);
   const risk = salvage - retained;
   return <section data-tier="immersive" className="lr-depth-decision lr-extraction-choice font-body text-body" aria-labelledby="lr-depth-title">
-    <div className="mb-4">
+    {recovery}
+    <div className="lr-extraction-heading mb-4">
       <div className="flex flex-wrap items-center justify-between gap-2"><span className="flex items-center gap-2 text-small text-ink-2"><ShieldCheck className="size-4" />Index secured either way · {salvage} salvage carried</span>{canRepair && <button type="button" className="inline-flex min-h-11 items-center gap-1 text-small text-viable underline underline-offset-4" onClick={onRepair}><Wrench className="size-4" />Repair with salvage</button>}</div>
       <h4 id="lr-depth-title" className="mt-2 mb-0 type-heading">Leave now or explore deeper?</h4>
     </div>
-    <div className="grid gap-4 md:grid-cols-2">
+    <div className="lr-extraction-options grid gap-4 md:grid-cols-2">
       <article data-depth-extract className="flex min-w-0 flex-col gap-3 border-t border-edge-strong pt-4">
         <h5 className="m-0 type-subhead normal-case tracking-normal">Return to the surface</h5>
         <div className="flex items-center gap-2"><Package className="size-5" /><strong data-banked-offer className="font-data text-heading tabular-nums">{salvage}</strong><span>salvage banked now</span></div>
@@ -22,6 +23,9 @@ export default function ExtractionChoice({ salvage, potential, remaining = 1, ne
       </article>
       <article data-depth-explore className="flex min-w-0 flex-col gap-3 border-t border-edge-strong pt-4">
         <h5 className="m-0 type-subhead normal-case tracking-normal">Continue into {nextScene.title}</h5>
+        <p className="lr-depth-invitation">{nextScene.id === 'core-reservoir'
+          ? `Below the service stairs, light moves beneath a charged pool. Its collectors and a submerged cell offer two ways to explore.${runFlags.includes('archive-controls-preserved') ? ' The archive circuit you preserved still reaches its control console.' : runFlags.includes('archive-controls-lost') ? ' The collapsed archive has cut off its control console; the crew will work at the pool itself.' : ''}`
+          : `Beyond the reservoir, huge rings turn around a view of the white planet. A complete control core sits inside them; a smaller memory spindle passes through the gaps.${runFlags.includes('reservoir-cell-recovered') ? ' The cell you recovered can power their service controls.' : runFlags.includes('reservoir-timing-diagram') ? ' The diagram you uncovered shows when the inner ring closes.' : ''} The extraction lift waits on the far side.`}</p>
         <div className="lr-depth-full-gain items-center gap-2"><Package className="size-5" /><span>Up to <strong data-depth-potential className="font-data text-heading tabular-nums">+{potential}</strong> more salvage</span></div>
         <span className="lr-depth-mini-gain"><Package className="size-4" />+{potential} possible</span>
         <span className="lr-depth-mini-distance">{remaining} more {remaining === 1 ? 'crossing' : 'crossings'}</span>

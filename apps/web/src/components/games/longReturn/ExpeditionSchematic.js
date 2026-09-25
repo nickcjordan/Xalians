@@ -5,6 +5,7 @@ import { MAP_ROUTES } from './expeditionPosition';
 import { visibleWorldFlags, routeMemory } from './routeVisuals';
 import { MAP_PLACES, SHARED_PASSAGES } from './mapPlaces';
 import MapLandmark from './MapLandmark';
+import SituationLandmark, { situationLabel } from './SituationLandmark';
 import ExpeditionReserves from './ExpeditionReserves';
 
 const positions = { entry: [74, 98], survey: [225, 98], approach: [225, 98], crossing: [304, 48], exit: [526, 98] };
@@ -58,6 +59,7 @@ export default function ExpeditionSchematic({ scene, crew = [], scout, helperId,
       {[['entry', 74], ['exit', 526]].map(([side, x]) => <text key={side} data-map-threshold={side} x={x} y="158" textAnchor="middle" fill="var(--color-ink-2)" className="hidden text-small md:block">{place[side].map((line, index) => <tspan key={line} x={x} dy={index ? 25 : 0}>{line}</tspan>)}</text>)}
       {passage && <path data-map-shared-passage d="M130 98 H260 M380 98 H470" fill="none" stroke={routeId ? 'var(--color-viable)' : 'var(--color-edge-strong)'} strokeWidth={routeId ? 3 : 2} strokeDasharray={routeId && preview ? '5 5' : undefined} />}
       <MapLandmark kind={place.landmark} />
+      <SituationLandmark scene={scene} flags={runFlags} />
       {scene.routes.map((route, i) => {
         const y = i === 0 ? 48 : 148;
         const selected = route.id === routeId;
@@ -84,6 +86,7 @@ export default function ExpeditionSchematic({ scene, crew = [], scout, helperId,
       {contact && <g data-map-native data-state={nativeState || 'contact'} transform={`translate(${scene.encounter?.archetype === 'trapped' ? 320 : passage ? 394 : 370} ${contactLane})`}><title>{`${contact.species}: ${contactLabel.toLowerCase()}`}</title><path d="M0 -11 L11 0 L0 11 L-11 0 Z" fill="var(--color-s0)" stroke={nativeState === 'bypassed' ? 'var(--color-ink-2)' : 'var(--color-caution)'} strokeWidth="2" /></g>}
       {ally && <g data-map-ally data-location={allyPlace} transform={`translate(${allyPoint[0]} ${allyLane + (allyLane === 148 ? -25 : 25)})`}><title>{`${ally.species}: ${allyPlace === 'survey' ? 'beside the scout' : 'with the crew'}`}</title><path d="M0 -8 L8 0 L0 8 L-8 0 Z" fill="var(--color-viable)" /></g>}
     </svg>
+    {situationLabel(scene, runFlags) && <p data-map-situation className="m-0 px-4 pb-2 font-body text-small text-ink-2">{situationLabel(scene, runFlags)}</p>}
     {!stageCompact && <div className="lr-map-thresholds justify-between gap-3 px-4 text-small text-ink-2 md:hidden"><span>{place.entry.join(' ')}</span><span className="text-right">→ {place.exit.join(' ')}</span></div>}
     {readingRecord && <div data-map-key className="lr-map-key flex-wrap gap-x-4 gap-y-1 px-4 pb-3 text-small text-ink-2">{tokens.map(({member,number,place}) => <span key={member.id}><b className="text-viable">{number}</b> {member.species}{place === 'survey' ? ' · ahead' : ''}</span>)}{contact && <span><b className="text-caution">◇</b> {contact.species}{nativeState === 'bypassed' ? ' · Still trapped' : ''}</span>}{ally && <span><b className="text-viable">◆</b> {ally.species} · ally</span>}</div>}
     {!readingRecord && !localOnly && !decisionInset && !stageCompact && <div className="flex justify-between gap-3 px-4 pt-2 text-small text-ink-2 md:hidden" aria-label="Approaches on the diagram">{scene.routes.map((route, index) => <span key={route.id} data-map-route-caption={route.id} className={index ? 'text-right' : ''}>{changeLabel(changes[index], route)}</span>)}</div>}
