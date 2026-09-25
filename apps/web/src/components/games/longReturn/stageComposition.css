@@ -1,0 +1,386 @@
+/* Each phase uses the whole play stage for its own decision, not a shrunken dossier. */
+@media (min-width: 768px) {
+  .lr-mode-simple .lr-game-grid {
+    width: 100%;
+    max-width: none;
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .lr-mode-simple .lr-wizard-view {
+    width: min(1740px, 100%);
+    margin-inline: auto;
+  }
+}
+
+@media (min-width: 1100px) and (min-height: 740px) {
+  /* The mission ending is a final game screen, not a small dialog in empty space. */
+  .lr-console > .lr-end-shell { padding: clamp(18px, 3vw, 48px); }
+  .lr-end-card {
+    display: grid;
+    width: min(1740px, 100%);
+    min-height: calc(100dvh - 110px);
+    max-height: calc(100dvh - 110px);
+    grid-template-columns: minmax(0, 1fr) minmax(420px, .9fr);
+    grid-template-rows: minmax(0, 1fr) auto auto;
+    gap: clamp(16px, 2.4vw, 36px);
+    padding: clamp(28px, 3vw, 52px);
+    align-items: center;
+    text-align: left;
+  }
+  .lr-end-card::after { background: linear-gradient(90deg, rgba(8, 11, 8, .5), rgba(8, 11, 8, .73) 55%, rgba(8, 11, 8, .88)); }
+  .lr-end-hero { min-width: 0; }
+  .lr-end-hero .g-kicker { margin: 0 0 32px; font-size: 14px; }
+  .lr-end-card .lr-end-seal { width: 74px; height: 74px; margin: 0 0 28px; font-size: 34px; }
+  .lr-end-card .lr-end-outcome { margin: 0 0 16px; font-size: 12px; }
+  .lr-end-hero .g-title { max-width: 14ch; margin: 0 0 20px; font-size: clamp(40px, 4vw, 70px); line-height: 1; }
+  .lr-end-brief { max-width: 50ch; margin: 0; font-size: clamp(18px, 1.25vw, 23px); line-height: 1.5; }
+  .lr-end-ledger { display: grid; gap: 20px; min-width: 0; }
+  .lr-end-card .lr-end-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .lr-end-card .lr-end-stats > div { min-height: 116px; align-content: center; gap: 10px; padding: 18px 22px; }
+  .lr-end-card .lr-end-stats span { font-size: 12px; }
+  .lr-end-card .lr-end-stats strong { font-size: clamp(23px, 1.6vw, 32px); }
+  .lr-end-crew-mini { gap: 8px; }
+  .lr-end-crew-mini span { gap: 9px; padding: 16px; }
+  .lr-end-crew-mini strong { font-size: 16px; }
+  .lr-end-crew-mini small { font-size: 14px; }
+  .lr-end-full { grid-column: 1 / -1; margin: 0; }
+  .lr-end-full > summary { width: 100%; min-height: 46px; padding: 13px 18px; font-size: 15px; }
+  .lr-end-card .lr-end-actions { grid-column: 1 / -1; justify-content: flex-end; margin: 0; }
+  .lr-end-actions button { min-height: 56px; padding-inline: 24px; font-size: 15px; }
+
+  .lr-mode-simple .lr-wizard-view {
+    padding: 0;
+    border-color: #434a3b;
+    background: #171a15;
+  }
+
+  .lr-mode-simple .lr-wizard-view > div:first-child {
+    min-width: 0;
+  }
+
+  .lr-mode-simple .lr-stage-context { width: 100%; }
+
+  /* The map and the active decision are peers during exploration. */
+  .lr-mode-simple .lr-wizard-view:is(.lr-wizard-phase-scout, .lr-wizard-phase-scan-result, .lr-wizard-phase-transition, .lr-wizard-phase-encounter) {
+    display: grid;
+    grid-template-columns: minmax(390px, .88fr) minmax(510px, 1.12fr);
+    grid-template-rows: minmax(0, 1fr);
+  }
+
+  .lr-mode-simple .lr-wizard-view:is(.lr-wizard-phase-scout, .lr-wizard-phase-scan-result, .lr-wizard-phase-transition, .lr-wizard-phase-encounter) > div:first-child {
+    position: relative;
+    isolation: isolate;
+    display: flex !important;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+    border-right: 1px solid #465142;
+    background: #101610;
+  }
+
+  .lr-mode-simple .lr-wizard-view:is(.lr-wizard-phase-scout, .lr-wizard-phase-scan-result, .lr-wizard-phase-transition, .lr-wizard-phase-encounter) > div:first-child::before {
+    position: absolute;
+    z-index: -1;
+    inset: 0;
+    content: '';
+    background: linear-gradient(180deg, rgba(9, 13, 10, .64), rgba(9, 13, 10, .3) 42%, rgba(9, 13, 10, .9)), var(--stage-art) center / cover;
+    filter: saturate(.55);
+  }
+
+  .lr-mode-simple .lr-wizard-view:is(.lr-wizard-phase-scout, .lr-wizard-phase-scan-result, .lr-wizard-phase-transition, .lr-wizard-phase-encounter) .lr-wizard-chrome {
+    flex: none;
+    width: 100%;
+    background: rgba(9, 13, 10, .64);
+  }
+
+  .lr-mode-simple .lr-wizard-view:is(.lr-wizard-phase-scout, .lr-wizard-phase-scan-result, .lr-wizard-phase-transition, .lr-wizard-phase-encounter) .lr-wizard-topline {
+    display: grid;
+    gap: 18px;
+    padding: clamp(18px, 2.2vw, 34px);
+  }
+
+  .lr-mode-simple .lr-wizard-view:is(.lr-wizard-phase-scout, .lr-wizard-phase-scan-result, .lr-wizard-phase-transition, .lr-wizard-phase-encounter) .lr-wizard-topline h1 {
+    font-size: clamp(28px, 2.5vw, 42px);
+    line-height: 1.05;
+    white-space: normal;
+  }
+
+  .lr-mode-simple .lr-wizard-view:is(.lr-wizard-phase-scout, .lr-wizard-phase-scan-result, .lr-wizard-phase-transition, .lr-wizard-phase-encounter) .lr-wizard-objective {
+    display: flex;
+    margin: 0 clamp(18px, 2.2vw, 34px) 20px;
+    padding: 10px 0 10px 15px;
+    background: rgba(9, 13, 10, .58);
+  }
+
+  .lr-mode-simple .lr-wizard-view:is(.lr-wizard-phase-scout, .lr-wizard-phase-scan-result, .lr-wizard-phase-transition, .lr-wizard-phase-encounter) .lr-wizard-objective strong {
+    font-size: clamp(14px, 1vw, 18px);
+    line-height: 1.35;
+  }
+
+  .lr-mode-simple .lr-wizard-view:is(.lr-wizard-phase-scout, .lr-wizard-phase-scan-result, .lr-wizard-phase-transition, .lr-wizard-phase-encounter) > div:first-child > [data-expedition-map] {
+    display: block;
+    width: calc(100% - clamp(36px, 4.4vw, 68px));
+    max-height: none;
+    margin: auto clamp(18px, 2.2vw, 34px);
+    border: 1px solid rgba(173, 215, 180, .45);
+    background: rgba(8, 17, 12, .83);
+    box-shadow: 0 18px 56px rgba(0, 0, 0, .55);
+  }
+
+  .lr-mode-simple .lr-wizard-view:is(.lr-wizard-phase-scout, .lr-wizard-phase-scan-result, .lr-wizard-phase-transition, .lr-wizard-phase-encounter) > div:first-child > [data-expedition-map] svg {
+    height: auto !important;
+    max-height: min(38vh, 340px) !important;
+  }
+
+  .lr-mode-simple .lr-wizard-view:is(.lr-wizard-phase-scout, .lr-wizard-phase-scan-result, .lr-wizard-phase-transition, .lr-wizard-phase-encounter) > div:first-child > [data-expedition-map] figcaption {
+    padding: 14px 18px 2px;
+    font-size: 15px;
+  }
+
+  .lr-mode-simple .lr-wizard-view:is(.lr-wizard-phase-scout, .lr-wizard-phase-scan-result, .lr-wizard-phase-transition, .lr-wizard-phase-encounter) > div:first-child > [data-expedition-map] [data-expedition-reserves] {
+    padding: 10px 18px 16px;
+    font-size: 14px;
+  }
+
+  .lr-mode-simple .lr-wizard-view:is(.lr-wizard-phase-scout, .lr-wizard-phase-scan-result, .lr-wizard-phase-transition, .lr-wizard-phase-encounter) > .lr-simple-decision,
+  .lr-mode-simple .lr-wizard-view:is(.lr-wizard-phase-scout, .lr-wizard-phase-scan-result, .lr-wizard-phase-transition, .lr-wizard-phase-encounter) > .lr-simple-report,
+  .lr-mode-simple .lr-wizard-view:is(.lr-wizard-phase-scout, .lr-wizard-phase-scan-result, .lr-wizard-phase-transition, .lr-wizard-phase-encounter) > .lr-transition-beat,
+  .lr-mode-simple .lr-wizard-view:is(.lr-wizard-phase-scout, .lr-wizard-phase-scan-result, .lr-wizard-phase-transition, .lr-wizard-phase-encounter) > .lr-field-encounter {
+    min-width: 0;
+    min-height: 0;
+    height: 100%;
+    margin: 0;
+    padding: clamp(22px, 2.2vw, 40px);
+  }
+
+  /* Scout cards are the choice surface, so they receive the space and type scale. */
+  .lr-mode-simple .lr-wizard-phase-scout > .lr-simple-decision {
+    display: flex;
+    flex-direction: column;
+    gap: clamp(12px, 1.3vh, 24px);
+  }
+
+  .lr-mode-simple .lr-wizard-phase-scout > .lr-simple-decision > h3 {
+    margin: 0;
+    font-size: clamp(27px, 2vw, 38px);
+  }
+
+  .lr-mode-simple .lr-wizard-phase-scout [data-scout-options] {
+    display: grid;
+    flex: 1;
+    min-height: 0;
+    grid-template-rows: repeat(3, minmax(0, 1fr));
+    gap: clamp(10px, 1.3vh, 18px);
+  }
+
+  .lr-mode-simple .lr-wizard-phase-scout [data-scout-choice] {
+    height: auto !important;
+    min-height: 0 !important;
+    grid-template-columns: clamp(90px, 13vh, 190px) minmax(0, 1fr) 24px !important;
+    gap: clamp(12px, 1.4vw, 24px);
+    padding: clamp(12px, 1.4vw, 22px);
+  }
+
+  .lr-mode-simple .lr-wizard-phase-scout .lr-scout-portrait {
+    width: clamp(90px, 13vh, 190px);
+    height: clamp(90px, 13vh, 190px);
+  }
+
+  .lr-mode-simple .lr-wizard-phase-scout [data-scout-choice] strong { font-size: clamp(19px, 2vh, 30px) !important; }
+  .lr-mode-simple .lr-wizard-phase-scout [data-scout-choice] [data-scout-summary] { display: grid; gap: 7px; font-size: clamp(15px, .95vw, 18px) !important; }
+  .lr-mode-simple .lr-wizard-phase-scout [data-scout-choice] [data-scout-summary] span { font-size: clamp(15px, .95vw, 18px) !important; }
+  .lr-mode-simple .lr-wizard-phase-scout .lr-scout-commit-bar { margin: 0; padding: 18px 0 0; gap: 14px; background: transparent; }
+  .lr-mode-simple .lr-wizard-phase-scout .lr-scout-commit-bar button { min-height: 62px; padding: 10px 18px; font-size: 15px; }
+  .lr-mode-simple .lr-wizard-phase-scout .lr-plan-analysis { margin: 0; }
+
+  /* Reports and encounters keep their outcome and next action in the same panel. */
+  .lr-mode-simple .lr-wizard-phase-scan-result .lr-simple-report {
+    display: flex;
+    flex-direction: column;
+    gap: clamp(18px, 2vh, 30px);
+  }
+
+  .lr-mode-simple .lr-wizard-phase-scan-result .lr-report-source {
+    display: grid;
+    grid-template-columns: 96px minmax(0, 1fr);
+    grid-template-rows: repeat(3, auto);
+    align-items: center;
+    gap: 2px 18px;
+    padding: 0 0 18px;
+    border-right: 0;
+    border-bottom: 1px solid #465142;
+  }
+
+  .lr-mode-simple .lr-wizard-phase-scan-result .lr-report-source .lr-portrait {
+    grid-row: 1 / 4;
+    width: 96px;
+    height: 96px;
+    min-height: 96px;
+    max-height: 96px;
+    margin: 0;
+  }
+
+  .lr-mode-simple .lr-wizard-phase-scan-result .lr-report-content { display: flex; flex: 1; flex-direction: column; min-height: 0; }
+  .lr-mode-simple .lr-wizard-phase-scan-result .lr-report-content .lr-simple-story { font-size: clamp(17px, 1.2vw, 21px); line-height: 1.55; }
+  .lr-mode-simple .lr-wizard-phase-scan-result .lr-report-content > .g-btn { min-height: 60px; margin-top: auto; }
+  .lr-mode-simple .lr-wizard-phase-transition .lr-transition-beat { display: flex; flex-direction: column; justify-content: center; gap: 24px; }
+  .lr-mode-simple .lr-wizard-phase-transition .lr-transition-beat > p { font-size: clamp(20px, 1.4vw, 27px); line-height: 1.5; }
+  .lr-mode-simple .lr-wizard-phase-transition .lr-transition-beat > button { min-height: 60px; margin-top: auto; }
+  .lr-mode-simple .lr-wizard-phase-encounter .lr-field-encounter { display: flex; flex-direction: column; }
+  .lr-mode-simple .lr-wizard-phase-encounter .lr-encounter-heading h3 { font-size: clamp(24px, 1.7vw, 34px); }
+  .lr-mode-simple .lr-wizard-phase-encounter .lr-encounter-heading p { font-size: clamp(15px, 1vw, 18px); }
+  .lr-mode-simple .lr-wizard-phase-encounter .lr-encounter-choice-board { display: flex; flex: 1; flex-direction: column; min-height: 0; }
+  .lr-mode-simple .lr-wizard-phase-encounter .lr-encounter-options { flex: 1; min-height: 0; height: auto; grid-auto-rows: minmax(0, 1fr); }
+  .lr-mode-simple .lr-wizard-phase-encounter .lr-encounter-options > button { min-height: 74px; padding: 12px 18px; }
+  .lr-mode-simple .lr-wizard-phase-encounter .lr-encounter-commit-bar { margin-top: auto; }
+
+  /* Planning uses the same room-and-decision grammar as scouting. */
+  .lr-mode-simple .lr-wizard-phase-assign.is-plan {
+    display: grid;
+    grid-template-columns: minmax(360px, .76fr) minmax(560px, 1.24fr);
+    grid-template-rows: minmax(0, 1fr);
+  }
+
+  .lr-mode-simple .lr-wizard-phase-assign.is-plan > .lr-stage-context {
+    position: relative;
+    isolation: isolate;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+    border-right: 1px solid #465142;
+    background: linear-gradient(180deg, rgba(9, 13, 10, .64), rgba(9, 13, 10, .25) 46%, rgba(9, 13, 10, .9)), var(--stage-art) center / cover;
+  }
+
+  .lr-mode-simple .lr-wizard-phase-assign.is-plan .lr-wizard-chrome { width: 100%; background: rgba(9, 13, 10, .64); }
+  .lr-mode-simple .lr-wizard-phase-assign.is-plan .lr-wizard-topline { display: grid; gap: 18px; padding: clamp(18px, 2vw, 34px); }
+  .lr-mode-simple .lr-wizard-phase-assign.is-plan .lr-wizard-topline h1 { font-size: clamp(28px, 2.3vw, 40px); line-height: 1.05; white-space: normal; }
+  .lr-mode-simple .lr-wizard-phase-assign.is-plan .lr-wizard-objective { display: flex; margin: 0 clamp(18px, 2vw, 34px) 20px; padding: 10px 0 10px 15px; background: rgba(9, 13, 10, .58); }
+  .lr-mode-simple .lr-wizard-phase-assign.is-plan > .lr-stage-context > [data-expedition-map] {
+    display: block;
+    width: calc(100% - clamp(36px, 4vw, 68px));
+    max-height: none;
+    margin: auto clamp(18px, 2vw, 34px);
+    border: 1px solid rgba(173, 215, 180, .45);
+    background: rgba(8, 17, 12, .83);
+    box-shadow: 0 18px 56px rgba(0, 0, 0, .55);
+  }
+  .lr-mode-simple .lr-wizard-phase-assign.is-plan > .lr-stage-context > [data-expedition-map] svg { height: auto !important; max-height: min(38vh, 340px) !important; }
+  .lr-mode-simple .lr-wizard-phase-assign.is-plan > .lr-stage-context > [data-expedition-map] figcaption { padding: 14px 18px 2px; font-size: 15px; }
+  .lr-mode-simple .lr-wizard-phase-assign.is-plan > .lr-stage-context > [data-expedition-map] [data-expedition-reserves] { padding: 10px 18px 16px; font-size: 14px; }
+
+  /* The comparison table is a game board, not a small table at the top of a page. */
+  .lr-mode-simple .lr-wizard-phase-assign:not(.is-plan) > .lr-crossing-workspace {
+    display: grid;
+    align-items: end;
+    min-height: 0;
+    padding: clamp(12px, 2vh, 30px) clamp(20px, 2vw, 38px);
+    background: linear-gradient(180deg, rgba(10, 15, 12, .18), rgba(10, 15, 12, .6) 42%, #141914 88%), var(--stage-art) center / cover;
+  }
+
+  .lr-mode-simple .lr-wizard-phase-assign:not(.is-plan) .lr-route-board {
+    width: 100%;
+    height: auto;
+    max-height: 100%;
+    font-size: clamp(14px, .95vw, 17px);
+    box-shadow: 0 16px 60px rgba(0, 0, 0, .55);
+  }
+
+  .lr-mode-simple .lr-wizard-phase-assign:not(.is-plan) .lr-board-context {
+    display: table-caption;
+    caption-side: top;
+    padding: 14px 18px;
+    border: 1px solid #465142;
+    border-bottom: 0;
+    background: #101710;
+    text-align: left;
+  }
+
+  .lr-mode-simple .lr-wizard-phase-assign:not(.is-plan) .lr-board-context > span,
+  .lr-mode-simple .lr-wizard-phase-assign:not(.is-plan) .lr-board-context > strong { display: none; }
+  .lr-mode-simple .lr-wizard-phase-assign:not(.is-plan) .lr-board-map { display: block; max-width: 900px; margin: 0 auto; }
+  .lr-mode-simple .lr-wizard-phase-assign:not(.is-plan) .lr-board-map figcaption { padding: 0 0 4px; font-size: 15px; }
+  .lr-mode-simple .lr-wizard-phase-assign:not(.is-plan) .lr-board-map svg { height: clamp(92px, 13vh, 155px) !important; max-height: none !important; }
+  .lr-mode-simple .lr-wizard-phase-assign:not(.is-plan) .lr-route-board th,
+  .lr-mode-simple .lr-wizard-phase-assign:not(.is-plan) .lr-route-board td { padding: clamp(10px, 1.3vh, 20px) clamp(12px, 1.4vw, 24px); vertical-align: middle; }
+  .lr-mode-simple .lr-wizard-phase-assign:not(.is-plan) .lr-board-head .lr-board-pick { min-height: clamp(95px, 11vh, 150px); }
+  .lr-mode-simple .lr-wizard-phase-assign:not(.is-plan) .lr-board-head strong { font-size: clamp(18px, 1.25vw, 24px); }
+  .lr-mode-simple .lr-wizard-phase-assign:not(.is-plan) .lr-board-value .lr-board-amount { font-size: clamp(27px, 2vw, 38px); }
+  .lr-mode-simple .lr-wizard-phase-assign:not(.is-plan) .lr-board-value small { font-size: 14px; }
+
+  /* Crew planning puts the three possible leads and the action in one eye path. */
+  .lr-mode-simple .lr-wizard-phase-assign.is-plan > .lr-crossing-workspace { display: flex; flex-direction: column; min-height: 0; margin: 0; padding: clamp(18px, 2vw, 36px); }
+  .lr-mode-simple .lr-wizard-phase-assign.is-plan .lr-simple-plan { flex: 1; min-height: 0; width: 100%; }
+  .lr-mode-simple .lr-wizard-phase-assign.is-plan .lr-lead-options { min-height: 0; }
+  .lr-mode-simple .lr-wizard-phase-assign.is-plan .lr-lead-options-list { display: grid; grid-template-rows: repeat(3, minmax(0, 1fr)); gap: 12px; height: min(55vh, 620px); }
+  .lr-mode-simple .lr-wizard-phase-assign.is-plan .lr-lead-options-list > button { min-height: 0; padding: 14px 20px; }
+  .lr-mode-simple .lr-wizard-phase-assign.is-plan .lr-lead-option-portrait { height: 74px; }
+  .lr-mode-simple .lr-wizard-phase-assign.is-plan .lr-lead-option-portrait svg { max-width: 70px; max-height: 74px; }
+  .lr-mode-simple .lr-wizard-phase-assign.is-plan .lr-lead-option-method strong { font-size: clamp(18px, 1.2vw, 23px); }
+  .lr-mode-simple .lr-wizard-phase-assign.is-plan .lr-simple-plan-actions { align-self: start; }
+  .lr-mode-simple .lr-wizard-phase-assign.is-plan .lr-cross-now { min-height: 70px; font-size: 18px; }
+
+  /* Arrival gives story and receipt equal visual weight, with the next move anchored. */
+  .lr-mode-simple .lr-wizard-phase-result { background: linear-gradient(90deg, rgba(20, 24, 19, .97), rgba(20, 24, 19, .88)), var(--stage-art) center / cover; }
+  .lr-mode-simple .lr-wizard-phase-result > .lr-simple-result { display: flex; flex-direction: column; min-height: 0; padding: clamp(18px, 2vw, 36px); }
+  .lr-mode-simple .lr-wizard-phase-result .lr-arrival-grid { display: grid; flex: 1; align-items: center; min-height: 0; width: 100%; grid-template-columns: minmax(0, 1.2fr) minmax(310px, .8fr); gap: clamp(20px, 2vw, 42px); }
+  .lr-mode-simple .lr-wizard-phase-result .lr-arrival-story { display: flex; flex-direction: column; gap: 14px; }
+  .lr-mode-simple .lr-wizard-phase-result .lr-simple-result-head h3 { font-size: clamp(24px, 1.7vw, 34px); }
+  .lr-mode-simple .lr-wizard-phase-result .lr-crossing-prose { display: block; }
+  .lr-mode-simple .lr-wizard-phase-result .lr-crossing-prose > .lr-simple-story { font-size: clamp(15px, 1vw, 19px); line-height: 1.5; }
+  .lr-mode-simple .lr-wizard-phase-result .lr-result-changes { padding: 22px; border: 1px solid #465142; background: rgba(8, 17, 12, .56); }
+  .lr-mode-simple .lr-wizard-phase-result .lr-result-changes > div { grid-template-columns: 1fr 1fr; gap: 12px; }
+  .lr-mode-simple .lr-wizard-phase-result .lr-result-changes article { padding: 12px !important; }
+  .lr-mode-simple .lr-wizard-phase-result .lr-result-changes article strong { font-size: 15px; }
+  .lr-mode-simple .lr-wizard-phase-result .lr-result-changes article b { font-size: 25px; }
+  .lr-mode-simple .lr-wizard-phase-result .lr-result-changes article .lr-projection-track { display: flex; }
+  .lr-mode-simple .lr-wizard-phase-result .lr-arrival-next { width: 100%; margin-top: auto; }
+  .lr-mode-simple .lr-wizard-phase-result .lr-result-actions { width: 100%; }
+  .lr-mode-simple .lr-wizard-phase-result .lr-result-actions button { min-height: 60px; font-size: 16px; }
+
+  .lr-mode-simple .lr-wizard-phase-result .lr-simple-result:has(.lr-extraction-choice):not(:has(.lr-workshop[open])):not(:has(.lr-field-receipt)) {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .lr-mode-simple .lr-wizard-phase-result .lr-extraction-choice { width: min(1120px, 100%); flex: none; }
+  .lr-mode-simple .lr-wizard-phase-result .lr-extraction-choice h4 { font-size: clamp(26px, 2vw, 38px); }
+  .lr-mode-simple .lr-wizard-phase-result .lr-extraction-choice article { padding: 24px; }
+  .lr-mode-simple .lr-wizard-phase-result .lr-extraction-choice h5 { font-size: 22px; }
+  .lr-mode-simple .lr-wizard-phase-result .lr-extraction-choice article button { min-height: 64px; font-size: 16px; }
+}
+
+/* A shorter monitor gets the same complete board with less vertical chrome. */
+@media (min-width: 1100px) and (min-height: 740px) and (max-height: 899px) {
+  .lr-mode-simple .lr-wizard-phase-assign:not(.is-plan) .lr-route-board { align-self: center; }
+  .lr-mode-simple .lr-wizard-phase-encounter .lr-field-encounter { padding: 20px; }
+  .lr-mode-simple .lr-wizard-phase-encounter .lr-encounter-heading { margin-bottom: 6px; }
+  .lr-mode-simple .lr-wizard-phase-encounter .lr-encounter-options { margin-top: 6px; }
+  .lr-mode-simple .lr-wizard-phase-encounter .lr-encounter-options > button { min-height: 0; padding: 6px 10px; }
+  .lr-mode-simple .lr-wizard-phase-encounter .lr-encounter-commit-bar { padding: 5px 0; }
+  .lr-mode-simple .lr-wizard-phase-assign:not(.is-plan) > .lr-crossing-workspace { padding: 6px 24px; }
+  .lr-mode-simple .lr-wizard-phase-assign:not(.is-plan) .lr-board-context { padding: 4px 14px; }
+  .lr-mode-simple .lr-wizard-phase-assign:not(.is-plan) .lr-board-map figcaption { display: none; }
+  .lr-mode-simple .lr-wizard-phase-assign:not(.is-plan) .lr-board-map svg { height: 56px !important; max-height: 56px !important; }
+  .lr-mode-simple .lr-wizard-phase-assign:not(.is-plan) .lr-route-board th,
+  .lr-mode-simple .lr-wizard-phase-assign:not(.is-plan) .lr-route-board td { padding: 5px 12px; }
+  .lr-mode-simple .lr-wizard-phase-assign:not(.is-plan) .lr-board-head .lr-board-pick { min-height: 72px; }
+  .lr-mode-simple .lr-wizard-phase-assign:not(.is-plan) .lr-board-head strong { font-size: 17px; }
+  .lr-mode-simple .lr-wizard-phase-assign:not(.is-plan) .lr-board-value .lr-board-amount { font-size: 25px; }
+  .lr-mode-simple .lr-wizard-phase-assign:not(.is-plan) .lr-board-value small { font-size: 11px; }
+}
+
+/* Tall tablets and phones give choices the spare height without shrinking labels. */
+@media (min-width: 768px) and (max-width: 1099px) and (min-height: 900px) {
+  .lr-mode-simple .lr-wizard-phase-scout > .lr-simple-decision { flex: 1; }
+  .lr-mode-simple .lr-wizard-phase-scout [data-scout-options] { flex: 1; display: grid; grid-template-rows: repeat(3, minmax(0, 1fr)); }
+  .lr-mode-simple .lr-wizard-phase-scout [data-scout-choice] { height: auto; min-height: 0; }
+  .lr-mode-simple .lr-wizard-phase-scout .lr-scout-commit-bar { margin-top: auto; }
+}
+
+@media (max-width: 767px) and (min-height: 760px) {
+  .lr-mode-simple .lr-wizard-phase-scout [data-scout-options] { display: grid; flex: 1; min-height: 0; grid-template-rows: repeat(3, minmax(0, 1fr)); }
+  .lr-mode-simple .lr-wizard-phase-scout [data-scout-choice] { height: auto !important; min-height: 58px !important; }
+}

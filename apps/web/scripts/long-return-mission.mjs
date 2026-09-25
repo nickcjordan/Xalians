@@ -25,6 +25,19 @@ try {
   }
   await page.getByRole('button', { name: /Seal Crew/ }).click();
   for (let step = 0; step < 100; step++) {
+    if (process.env.LR_VISUAL_AUDIT === '1') {
+      await page.waitForTimeout(450);
+      const stage = page.locator('.lr-wizard-view');
+      if (viewport.width >= 1600 && await stage.count()) {
+        const bounds = await stage.boundingBox();
+        assert(bounds.width >= Math.min(1500, viewport.width * .8), `The play stage uses the desktop width: ${JSON.stringify(bounds)}`);
+      }
+      if (viewport.width >= 1100 && viewport.height >= 740 && await page.locator('.lr-wizard-phase-scout').count()) {
+        const map = await page.locator('.lr-wizard-phase-scout > .lr-stage-context > [data-expedition-map]').boundingBox();
+        const choices = await page.locator('.lr-wizard-phase-scout [data-scout-options]').boundingBox();
+        assert(map.width >= 350 && map.height >= 220 && map.x + map.width < choices.x, `The map and scout choices occupy separate stage panels: ${JSON.stringify({ map, choices })}`);
+      }
+    }
     if (process.env.LR_VIEWPORT_AUDIT === '1') viewportAudit.push(await page.evaluate(stepNumber => {
       const record = document.querySelector('[data-field-record]');
       const wizard = document.querySelector('.lr-wizard-view');
@@ -186,7 +199,7 @@ try {
       const situation = page.locator('.lr-encounter-situation');
       assert.equal(await situation.count(), 1, 'Simple encounters put contact and communication context beside the response');
       assert(!(await situation.innerText()).includes('through display'), 'Player-facing contact context does not expose registry channel names');
-      if (viewport.height <= 700) {
+      if (viewport.height <= 900) {
         const lastResponse = await page.locator('.lr-encounter-options > button').last().boundingBox();
         const commit = await page.locator('.lr-encounter-commit-bar').boundingBox();
         assert(lastResponse.y + lastResponse.height <= commit.y + 2 && commit.y + commit.height <= viewport.height, 'All encounter responses and the commit action fit the stage');
@@ -257,6 +270,7 @@ try {
       assert(viewport.width < 600 ? await page.locator('.lr-board-context > strong').isVisible() : viewport.width < 768 ? await parentMap.isVisible() : await orientation.isVisible(), 'Scene context stays visible while choosing');
       const storyBox = await (viewport.width < 600 ? page.locator('.lr-board-context > strong') : viewport.width < 768 ? parentMap : orientation).boundingBox();
       const boardBox = await page.locator('.lr-route-board').boundingBox();
+      if (viewport.width >= 1100 && viewport.height <= 900) assert(boardBox.y + boardBox.height <= viewport.height, `The full route board fits a short desktop stage: ${JSON.stringify(boardBox)}`);
       if (viewport.width >= 600) assert(storyBox.y + storyBox.height <= boardBox.y, 'Story precedes comparison');
       assert.equal(await page.locator('.lr-route-setting').count(), 2, 'Both routes explain their physical approach');
       assert.equal(await page.locator('.lr-board-plan-lead').count(), 2, 'Every forecast identifies its assumed lead before route selection');

@@ -32,6 +32,7 @@ import './crossingWorkspace.css';
 import './expeditionSetup.css';
 import './essentialLegibility.css';
 import './oneScreenPlay.css';
+import './stageComposition.css';
 import MethodIdentity from './MethodIdentity';
 import { nativeRemains } from './nativePresence';
 import ExpeditionSchematic from './ExpeditionSchematic';
@@ -1289,19 +1290,23 @@ function LongReturnGame() {
     return (
       <main className="lr-shell lr-end-shell">
         <section className={`g-panel g-panel--bolted lr-end-card lr-end-card--${outcome.tone}${success ? ' lr-end-card--success' : ''}`} style={{ '--end-art': `url(${sceneArtFor(scene).src})` }}>
-          <p className="g-kicker">Mission report / {MISSION.id}</p>
-          <div className="lr-end-seal"><BiIcon cls={`bi ${outcome.icon}`} /></div>
-          <span className="lr-end-outcome">{outcome.label}</span>
-          <h1 className="g-title">{outcome.title}</h1>
-          <p className="lr-end-brief">{outcome.copy.split(/(?<=\.)\s+/).slice(0, 2).join(' ')}</p>
-          <div className="lr-end-stats">
-            <div><span>Objective</span><strong>{objectiveReached ? 'SECURED' : 'LOST'}</strong></div>
-            <div><span>Salvage banked</span><strong>{banked}</strong>{salvage > banked && <small className="lr-end-haul-loss">{salvage - banked} left behind</small>}</div>
-            <div><span>Annex stability</span><strong>{MAX_INSTABILITY - pressure} / {MAX_INSTABILITY}</strong></div>
-            <div><span>Scenes crossed</span><strong>{sceneIndex + (phase === 'result' ? 1 : 0)} / {MISSION.scenes.length}</strong></div>
+          <div className="lr-end-hero">
+            <p className="g-kicker">Mission report / {MISSION.id}</p>
+            <div className="lr-end-seal"><BiIcon cls={`bi ${outcome.icon}`} /></div>
+            <span className="lr-end-outcome">{outcome.label}</span>
+            <h1 className="g-title">{outcome.title}</h1>
+            <p className="lr-end-brief">{outcome.copy.split(/(?<=\.)\s+/).slice(0, 2).join(' ')}</p>
           </div>
-          <div className="lr-end-crew-mini" aria-label="Crew energy at extraction">
-            {crew.map(member => <span key={member.id}><strong>{member.species}</strong><small>{MAX_STRAIN - (strain[member.id] || 0)} / {MAX_STRAIN} energy</small></span>)}
+          <div className="lr-end-ledger">
+            <div className="lr-end-stats">
+              <div><span>Objective</span><strong>{objectiveReached ? 'SECURED' : 'LOST'}</strong></div>
+              <div><span>Salvage banked</span><strong>{banked}</strong>{salvage > banked && <small className="lr-end-haul-loss">{salvage - banked} left behind</small>}</div>
+              <div><span>Annex stability</span><strong>{MAX_INSTABILITY - pressure} / {MAX_INSTABILITY}</strong></div>
+              <div><span>Scenes crossed</span><strong>{sceneIndex + (phase === 'result' ? 1 : 0)} / {MISSION.scenes.length}</strong></div>
+            </div>
+            <div className="lr-end-crew-mini" aria-label="Crew energy at extraction">
+              {crew.map(member => <span key={member.id}><strong>{member.species}</strong><small>{MAX_STRAIN - (strain[member.id] || 0)} / {MAX_STRAIN} energy</small></span>)}
+            </div>
           </div>
           <details className="lr-end-full"><summary>Read full mission report</summary>
             <div className="lr-end-story"><p className="lr-end-copy">{outcome.copy}</p>{companion && <p className="lr-end-copy">{companionFarewell(companion)}</p>}</div>
@@ -1376,8 +1381,8 @@ function LongReturnGame() {
           </div>
         </aside>
 
-        <section key={guidanceLevel === 'simple' ? wizardViewKey : scene.id} className={`lr-scene g-panel g-panel--bolted lr-wizard-view overflow-clip is-${wizardDirection} lr-wizard-phase-${phase}${phase === 'assign' && routeId ? ' is-plan' : ''}`} ref={sceneRef}>
-          <div className={guidanceLevel === 'simple' ? 'grid min-w-0 gap-3 lg:grid-cols-2' : ''}>
+        <section key={guidanceLevel === 'simple' ? wizardViewKey : scene.id} className={`lr-scene g-panel g-panel--bolted lr-wizard-view overflow-clip is-${wizardDirection} lr-wizard-phase-${phase}${phase === 'assign' && routeId ? ' is-plan' : ''}`} style={guidanceLevel === 'simple' ? { '--stage-art': `url(${sceneArtFor(scene).src})` } : undefined} ref={sceneRef}>
+          <div className={guidanceLevel === 'simple' ? 'lr-stage-context' : ''}>
           {guidanceLevel === 'simple' && <SimpleWizardChrome scene={scene} sceneIndex={sceneIndex} crew={crew} strain={strain} pressure={pressure} salvage={salvage} phase={phase} routeId={routeId} choosingLead={choosingLead} simpleCustomizing={simpleCustomizing} soundEnabled={soundEnabled} journalCount={journal.length} journalButtonRef={memoryTriggerRef} onJournal={() => setMemoryOpen(true)} onToggleSound={() => { const next = !soundEnabled; setSoundEnabled(next); writeSoundEnabled(next); playGameSound('select', next); }} onHelp={openMechanics} runFlags={runFlags} />}
           {guidanceLevel !== 'simple' && <div className="lr-scene-heading">
             <div><p className="g-kicker">{scene.deck} / Scene {sceneIndex + 1} of {MISSION.scenes.length}</p><h2 className="g-h2">{scene.title}</h2></div>
