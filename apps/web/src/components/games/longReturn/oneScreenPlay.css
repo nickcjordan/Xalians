@@ -258,9 +258,9 @@ body:has(.lr-end-shell) { overflow: hidden; }
   .lr-mode-simple .lr-wizard-phase-result .lr-simple-result:has(.lr-extraction-choice):not(:has(.lr-workshop[open])):not(:has(.lr-field-receipt)) .lr-arrival-story { display: none; }
   .lr-mode-simple .lr-wizard-phase-result .lr-simple-result:has(.lr-extraction-choice):not(:has(.lr-workshop[open])):not(:has(.lr-field-receipt)) .lr-result-changes { padding: 3px 7px; }
   .lr-mode-simple .lr-wizard-phase-result .lr-extraction-choice { flex: 1; min-height: 0; padding: 4px 0; }
-  .lr-mode-simple .lr-wizard-phase-result .lr-extraction-choice > div:first-child { margin: 0 0 4px; }
+  .lr-mode-simple .lr-wizard-phase-result .lr-extraction-choice > .lr-extraction-heading { margin: 0 0 4px; }
   .lr-mode-simple .lr-wizard-phase-result .lr-extraction-choice h4 { margin: 2px 0; font-size: 18px; }
-  .lr-mode-simple .lr-wizard-phase-result .lr-extraction-choice > div:nth-child(2) { gap: 5px; }
+  .lr-mode-simple .lr-wizard-phase-result .lr-extraction-choice > .lr-extraction-options { gap: 5px; }
   .lr-mode-simple .lr-wizard-phase-result .lr-extraction-choice article { gap: 4px; padding: 5px 0; }
   .lr-mode-simple .lr-wizard-phase-result .lr-extraction-choice h5 { font-size: 14px; }
   .lr-mode-simple .lr-wizard-phase-result .lr-extraction-choice article p,
@@ -365,7 +365,7 @@ body:has(.lr-end-shell) { overflow: hidden; }
   .lr-mode-simple .lr-wizard-phase-encounter .lr-encounter-options > button svg { width: 12px; height: 12px; }
   .lr-mode-simple .lr-wizard-phase-encounter .lr-response-details { margin: 2px 0; }
   .lr-mode-simple .lr-wizard-phase-encounter .lr-response-details summary { font-size: 11px; line-height: 1.2; }
-  .lr-mode-simple .lr-wizard-phase-result .lr-extraction-choice > div:nth-child(2) { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 6px; }
+  .lr-mode-simple .lr-wizard-phase-result .lr-extraction-choice > .lr-extraction-options { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 6px; }
   .lr-mode-simple .lr-wizard-phase-result .lr-extraction-choice article { min-width: 0; gap: 4px; padding: 5px 2px; }
   .lr-mode-simple .lr-wizard-phase-result .lr-extraction-choice article h5 { font-size: 12px; line-height: 1.2; }
   .lr-mode-simple .lr-wizard-phase-result .lr-extraction-choice article > div { flex-wrap: wrap; gap: 2px; font-size: 11px; }
@@ -412,7 +412,7 @@ body:has(.lr-end-shell) { overflow: hidden; }
   .lr-mode-simple .lr-wizard-phase-encounter .lr-response-details { margin: 2px 0; }
   .lr-mode-simple .lr-wizard-phase-encounter .lr-response-details summary { font-size: 11px; line-height: 1.2; }
   .lr-mode-simple .lr-wizard-phase-result .lr-extraction-choice { position: relative; }
-  .lr-mode-simple .lr-wizard-phase-result .lr-extraction-choice > div:nth-child(2) { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 6px; }
+  .lr-mode-simple .lr-wizard-phase-result .lr-extraction-choice > .lr-extraction-options { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 6px; }
   .lr-mode-simple .lr-wizard-phase-result .lr-extraction-choice article { min-width: 0; gap: 4px; padding: 5px 2px; }
   .lr-mode-simple .lr-wizard-phase-result .lr-extraction-choice article h5 { font-size: 12px; line-height: 1.2; }
   .lr-mode-simple .lr-wizard-phase-result .lr-extraction-choice article > div { flex-wrap: wrap; gap: 2px; font-size: 11px; }

@@ -1,7 +1,19 @@
 import React, { act } from 'react';
 import { createRoot } from 'react-dom/client';
-import LongReturnGame, { encounterNarrative, missionOutcomePresentation, recommendationFor, routeAdvantage, supportRoleForPlan } from './longReturnGame';
+import LongReturnGame, { encounterNarrative, missionOutcomePresentation, recommendationFor, routeAdvantage, supportRoleForPlan, safestPlanForRoute } from './longReturnGame';
 import { readCheckpoint, writeCheckpoint } from './expeditionSave';
+import { CREATURES, MISSION } from './longReturnData';
+
+test('equal-effort techniques preserve authored order without changing the selected crew pair', () => {
+  const args = [MISSION.scenes[0].routes[0], CREATURES.slice(0, 3), {}, [], { revealedIds: [] }, null, null];
+  const scoreChoice = safestPlanForRoute(...args);
+  const storyChoice = safestPlanForRoute(...args, true);
+  expect(scoreChoice.method.key).toBe('leap');
+  expect(storyChoice.method.key).toBe('climb');
+  expect(storyChoice.lead.id).toBe(scoreChoice.lead.id);
+  expect(storyChoice.support.id).toBe(scoreChoice.support.id);
+  expect(storyChoice.risk).toBe(scoreChoice.risk);
+});
 
 vi.mock('../../xalianImage', () => ({ default: function MockXalianImage() { return <div data-testid="creature-portrait" />; } }));
 
@@ -48,7 +60,7 @@ function clickElement(element) {
 function finishScoutTransition(container) {
   if (!container.querySelector('[aria-label="Scouting in progress"], [aria-label="Scout returning"]')) return;
   click(container, /skip to outcome/i);
-  click(container, /review scout report|check scout status|respond to encounter/i);
+  click(container, /review scout report|check scout status|respond to encounter|choose an approach/i);
 }
 
 function selectRecommendedScout(container) {
@@ -58,7 +70,7 @@ function selectRecommendedScout(container) {
 }
 
 function chooseRecommendedEncounterResponse(container) {
-  clickElement(container.querySelector('.lr-encounter-options .is-recommended'));
+  clickElement(container.querySelector('.lr-encounter-options .is-recommended') || findButton(container, /treats the injury/i));
   clickElement(container.querySelector('.lr-encounter-commit-bar button.g-btn--primary'));
   expect(container.querySelector('[aria-label="Encounter response in progress"]')).toBeTruthy();
   const skip = findButton(container, /skip to outcome/i);
@@ -160,12 +172,14 @@ describe('Long Return Simple mode', () => {
   let root;
 
   beforeEach(() => {
+    vi.spyOn(Math, 'random').mockReturnValue(0.9);
     window.localStorage.clear();
     container = document.createElement('div');
     document.body.appendChild(container);
   });
 
   afterEach(() => {
+    vi.restoreAllMocks();
     if (root) {
       act(() => root.unmount());
       root = null;
@@ -173,12 +187,145 @@ describe('Long Return Simple mode', () => {
     container.remove();
   });
 
-  function renderGame() {
+  function renderGame(experiments = false) {
     if (!root) root = createRoot(container);
     act(() => {
-      root.render(<LongReturnGame />);
+      root.render(<LongReturnGame initialExperiments={experiments} />);
     });
   }
+
+  test('creature actions keep selection in place, preserve preview, and carry the intake consequence forward', () => {
+    renderGame(true);
+    click(container, /seal crew/i);
+    click(container, /stay together/i);
+    const before = container.querySelector('[aria-label="Choose a creature action"]');
+    expect(before).toBeTruthy();
+    expect(container.querySelectorAll('[data-map-scene]')).toHaveLength(1);
+    expect(findButton(container, /^go with/i)).toBeUndefined();
+    click(container, /ride the intake current/i);
+    expect(container.querySelector('[aria-label="Choose a creature action"]')).toBe(before);
+    expect(container.querySelectorAll('[data-map-scene]')).toHaveLength(1);
+    expect(container.querySelector('.lr-lead-options')).toBeNull();
+    expect(container.textContent).toContain('unresolved dangers');
+    click(container, /^go with/i);
+    click(container, /skip to outcome/i);
+    click(container, /continue to result/i);
+    expect(readCheckpoint().runFlags).toContain('coolant-bypass');
+    click(container, /continue mission/i);
+    expect(container.textContent).toContain('draining');
+  });
+
+  test('comparing another route preserves the player’s creature and technique for each approach', () => {
+    renderGame(true);
+    click(container, /seal crew/i);
+    click(container, /stay together/i);
+    click(container, /cross the hanging gantry/i);
+    clickElement(container.querySelector('[aria-label="Choose Hippochamp for Cross the hanging gantry"]'));
+    const gantryMethod = container.querySelector('[data-route-preview="gantry"] .lr-technique-action[aria-pressed="true"]').textContent;
+    clickElement(container.querySelector('[data-route-preview="gantry"] input[type="checkbox"]'));
+    click(container, /ride the intake current/i);
+    clickElement(container.querySelector('[aria-label="Choose Graviclaw for Ride the intake current"]'));
+    const intakeMethod = container.querySelector('[data-route-preview="intake"] .lr-technique-action[aria-pressed="true"]').textContent;
+    click(container, /cross the hanging gantry/i);
+    expect(container.querySelector('[data-route-preview="gantry"] .lr-action-creatures [aria-pressed="true"]').textContent).toContain('Hippochamp');
+    expect(container.querySelector('[data-route-preview="gantry"] .lr-technique-action[aria-pressed="true"]').textContent).toBe(gantryMethod);
+    expect(container.querySelector('[data-route-preview="gantry"] input[type="checkbox"]').checked).toBe(true);
+    click(container, /ride the intake current/i);
+    expect(container.querySelector('[data-route-preview="intake"] .lr-action-creatures [aria-pressed="true"]').textContent).toContain('Graviclaw');
+    expect(container.querySelector('[data-route-preview="intake"] .lr-technique-action[aria-pressed="true"]').textContent).toBe(intakeMethod);
+    click(container, /^go with Graviclaw/i);
+    click(container, /skip to outcome/i);
+    click(container, /continue to result/i);
+    expect(readCheckpoint().leadId).toBe('graviclaw-213');
+    expect(readCheckpoint().commands).toBe(2);
+  });
+
+  test('a delivered remote report leads straight to actions without inventing a discovered warning', () => {
+    renderGame(true);
+    click(container, /seal crew/i);
+    clickElement(container.querySelector('[data-scout-choice="graviclaw-213"]'));
+    click(container, /^send /i);
+    click(container, /skip to outcome/i);
+    click(container, /choose an approach/i);
+    expect(container.querySelector('[aria-label="Choose a creature action"]')).toBeTruthy();
+    expect(container.querySelector('.lr-simple-report')).toBeNull();
+    expect(container.textContent).toContain('unresolved dangers');
+    expect(container.textContent).not.toContain('Known danger:');
+  });
+
+  test('a scout out of contact must still return before using its findings', () => {
+    renderGame(true);
+    click(container, /seal crew/i);
+    clickElement(container.querySelector('[data-scout-choice="hippochamp-041"]'));
+    click(container, /^send /i);
+    click(container, /skip to outcome/i);
+    expect(findButton(container, /choose an approach/i)).toBeUndefined();
+    click(container, /check scout status/i);
+    expect(container.querySelector('[aria-label="Choose a creature action"]')).toBeNull();
+    click(container, /wait for .* to return/i);
+    click(container, /skip to outcome/i);
+    click(container, /choose an approach/i);
+    expect(container.querySelector('[aria-label="Choose a creature action"]')).toBeTruthy();
+    expect(container.textContent).toContain('Known danger:');
+  });
+
+  test('a discovered signal survives resume and informs an unscouted next room', () => {
+    const random = vi.spyOn(Math, 'random').mockReturnValue(0.1);
+    try {
+      renderGame(true);
+      click(container, /seal crew/i);
+      click(container, /stay together/i);
+      click(container, /ride the intake current/i);
+      click(container, /^go with/i);
+      click(container, /skip to outcome/i);
+      click(container, /continue to result/i);
+      const before = readCheckpoint().pressure;
+      click(container, /wait and read the signal/i);
+      expect(readCheckpoint().pressure).toBe(before + 1);
+      expect(readCheckpoint().runFlags).toContain('field-signal-read');
+      expect(findButton(container, /wait and read the signal/i)).toBeUndefined();
+      unmountGame();
+      random.mockReturnValue(0.9);
+      renderGame(true);
+      click(container, /resume expedition/i);
+      expect(readCheckpoint().runFlags).toContain('field-signal-read');
+      click(container, /continue mission/i);
+      expect(container.textContent).toContain('one turbine turns every forty seconds');
+      expect(findButton(container, /^enter /i)).toBeUndefined();
+      click(container, /stay together/i);
+      const catwalk = container.querySelector('[data-route-preview="catwalk"]');
+      expect(catwalk.textContent).toContain('Known');
+      expect(catwalk.textContent).not.toContain('unresolved dangers');
+    } finally { random.mockRestore(); }
+  });
+
+  test('a resolved crew encounter continues directly into crossing without choosing a lead again', () => {
+    renderGame(true);
+    click(container, /seal crew/i);
+    click(container, /stay together/i);
+    click(container, /ride the intake current/i);
+    click(container, /^go with/i);
+    click(container, /skip to outcome/i);
+    click(container, /continue to result/i);
+    click(container, /continue mission/i);
+    expect(findButton(container, /^enter /i)).toBeUndefined();
+    click(container, /stay together/i);
+    clickElement(container.querySelector('[data-route-preview="underdeck"] .lr-intention'));
+    click(container, /^go with/i);
+    click(container, /skip to outcome/i);
+    if (findButton(container, /respond to encounter/i)) click(container, /respond to encounter/i);
+    expect(container.querySelector('[aria-label="Choose how to respond"]').textContent).not.toContain('Recommended');
+    chooseRecommendedEncounterResponse(container);
+    expect(container.querySelector('.lr-companion-story').textContent).toContain('is coming with you');
+    expect(findButton(container, /continue through with/i)).toBeTruthy();
+    expect(findButton(container, /change the crossing plan/i)).toBeTruthy();
+    click(container, /continue through with/i);
+    expect(container.querySelector('[aria-label="Crossing in progress"]')).toBeTruthy();
+    expect(container.textContent).toContain('Picking up where we stopped');
+    click(container, /skip to outcome/i);
+    click(container, /continue to result/i);
+    expect(readCheckpoint().runFlags).toContain('maintenance-codes');
+  });
 
   test('a depleted but viable crew can stay together without a dead scout-selection gate', () => {
     renderGame();
@@ -202,6 +349,359 @@ describe('Long Return Simple mode', () => {
     expect(container.querySelector('[data-expedition-reserves]').textContent).toBe(reserves);
     choosePreferredRoute(container);
     expect(container.querySelectorAll('[data-lead-readiness]')).toHaveLength(3);
+  });
+
+  test('scout choices explain senses and delivery without ranking or revealing hidden hazards', () => {
+    renderGame(true);
+    click(container, /seal crew/i);
+    const choices = container.querySelector('[data-scout-options]');
+    expect(choices.textContent).not.toMatch(/Recommended|Excellent|Strong awareness|Conductive brine/);
+    expect(choices.querySelector('[data-scout-choice="graviclaw-213"]').textContent).toContain('vibrations through the structure');
+    expect(choices.querySelector('[data-scout-choice="hippochamp-041"]').textContent).toContain('Must return');
+    expect(choices.querySelector('[data-scout-choice="hippochamp-041"]').textContent).toContain('electrical fields');
+    expect(choices.querySelector('[data-scout-choice="hippochamp-041"]').textContent).toContain('scents and chemical traces');
+  });
+
+  test('changing the creature keeps its techniques separate and updates the committed actor', () => {
+    renderGame(true);
+    click(container, /seal crew/i);
+    click(container, /stay together/i);
+    click(container, /cross the hanging gantry/i);
+    const choice = container.querySelector('[aria-label="Choose Hippochamp for Cross the hanging gantry"]');
+    clickElement(choice);
+    const card = container.querySelector('[data-route-preview="gantry"]');
+    expect(card.querySelector('.lr-action-creatures button[aria-pressed="true"]').textContent).toContain('Hippochamp');
+    expect(card.querySelector(`[aria-label="Hippochamp's technique"]`)).toBeTruthy();
+    expect([...card.querySelectorAll('.lr-technique-action')].map(button => button.textContent).join(' ')).not.toContain('Chromocat');
+    click(container, /^go with Hippochamp/i);
+    click(container, /skip to outcome/i);
+    click(container, /continue to result/i);
+    expect(readCheckpoint().leadId).toBe('hippochamp-041');
+  });
+
+  function playCreatureAction(routeId, responseId, technique) {
+    if (findButton(container, /^enter /i)) click(container, /^enter /i);
+    if (findButton(container, /stay together/i)) click(container, /stay together/i);
+    expect(container.querySelector('.lr-route-board')).toBeNull();
+    expect(container.querySelector('[aria-label="Choose a creature action"]').textContent).not.toContain('Someone occupies this passage');
+    clickElement(container.querySelector(`[data-route-preview="${routeId}"] .lr-intention`));
+    if (technique) clickElement([...container.querySelectorAll(`[data-route-preview="${routeId}"] .lr-technique-action`)].find(button => technique.test(button.textContent)));
+    click(container, /^go with/i);
+    click(container, /skip to outcome/i);
+    if (findButton(container, /respond to encounter|choose response/i)) {
+      click(container, /respond to encounter|choose response/i);
+      if (responseId) click(container, responseId);
+      else clickElement(container.querySelector('.lr-story-responses button'));
+      clickElement(container.querySelector('.lr-encounter-commit-bar button.g-btn--primary'));
+      if (findButton(container, /skip to outcome/i)) click(container, /skip to outcome/i);
+      click(container, /see encounter result/i);
+      click(container, /continue through with/i);
+      click(container, /skip to outcome/i);
+    }
+    click(container, /continue to result/i);
+    return readCheckpoint();
+  }
+
+  test.each([0.1, 0.9])('a climbed cable survives resume and becomes a consumed encounter tool (%s)', sample => {
+    vi.spyOn(Math, 'random').mockReturnValue(sample);
+    renderGame(true);
+    click(container, /seal crew/i);
+    click(container, /stay together/i);
+    click(container, /cross the hanging gantry/i);
+    clickElement([...container.querySelectorAll('[data-route-preview="gantry"] .lr-technique-action')].find(button => /climb/i.test(button.textContent)));
+    click(container, /^go with/i);
+    click(container, /skip to outcome/i);
+    click(container, /continue to result/i);
+    expect(container.querySelector('[aria-label="A cable from the frame"]')).toBeTruthy();
+    expect(readCheckpoint().runFlags).toContain('gantry-service-line');
+    expect(readCheckpoint().journal[0].findId).toBe('gantry-service-line');
+    if (findButton(container, /wait and read the signal/i)) {
+      click(container, /wait and read the signal/i);
+      expect(readCheckpoint().journal[0].discovery).toContain('service cable');
+    }
+    unmountGame();
+    renderGame(true);
+    click(container, /resume expedition/i);
+    click(container, /continue mission/i);
+    const saved = playCreatureAction('underdeck', /with the recovered cable/i);
+    expect(saved.runFlags).not.toContain('gantry-service-line');
+    expect(saved.spentAbilities).toEqual([]);
+    expect(saved.journal[1].encounterId).toBe(sample < 0.5 ? 'lash-sleeve' : 'lift-bearing');
+    expect(saved.runFlags).toContain(sample < 0.5 ? 'underdeck-sleeve-secured' : 'underdeck-bearing-lifted');
+    if (sample < 0.5) expect(saved.companion.creature.species).toBe('Xylum');
+    else expect(saved.companion).toBeNull();
+    unmountGame();
+    renderGame(true);
+    click(container, /resume expedition/i);
+    expect(readCheckpoint().runFlags).not.toContain('gantry-service-line');
+  });
+
+  test('two recovered clues unlock a different archive rescue after checkpoint resume', () => {
+    const random = vi.spyOn(Math, 'random').mockReturnValue(0.35);
+    try {
+      renderGame(true);
+      click(container, /seal crew/i);
+      playCreatureAction('intake');
+      click(container, /wait and read the signal/i);
+      expect(container.textContent).toContain('emergency release instruction');
+      click(container, /continue mission/i);
+      playCreatureAction('underdeck');
+      unmountGame();
+      random.mockReturnValue(0.8);
+      renderGame(true);
+      click(container, /resume expedition/i);
+      click(container, /continue mission/i);
+      expect(container.textContent).toContain('underdeck code completes the release instruction');
+      playCreatureAction('decode', /Use the maintenance release/);
+      expect(readCheckpoint().sceneIndex).toBe(2);
+      expect(readCheckpoint().journal[2].encounter).toContain('two discoveries have come together');
+    } finally { random.mockRestore(); }
+  });
+
+  test('a coolant rescue spends the chosen helper ability and saves the companion outcome', () => {
+    const random = vi.spyOn(Math, 'random').mockReturnValue(0.1);
+    try {
+      renderGame(true);
+      click(container, /seal crew/i);
+      playCreatureAction('gantry');
+      click(container, /continue mission/i);
+      const saved = playCreatureAction('underdeck', /Hippochamp screens the jet with Pressure Screen/);
+      expect(saved.runFlags).toContain('underdeck-sleeve-secured');
+      expect(saved.spentAbilities).toContain('hippo-ward');
+      expect(saved.companion.creature.species).toBe('Xylum');
+      expect(saved.journal[1].encounter).toContain('Hippochamp screens the coolant jet');
+      expect(saved.journal[1].encounter).not.toContain('injury');
+      unmountGame();
+      renderGame(true);
+      click(container, /resume expedition/i);
+      expect(readCheckpoint().spentAbilities).toContain('hippo-ward');
+      expect(readCheckpoint().companion.creature.species).toBe('Xylum');
+    } finally { random.mockRestore(); }
+  });
+
+  test('exhausting the chosen lead in an encounter keeps the route open and asks for a new action', () => {
+    vi.spyOn(Math, 'random').mockReturnValue(0.1);
+    renderGame(true);
+    click(container, /seal crew/i);
+    const saved = playCreatureAction('gantry');
+    saved.strain['graviclaw-213'] = 4;
+    unmountGame();
+    expect(writeCheckpoint(saved)).toBe(true);
+    renderGame(true);
+    click(container, /resume expedition/i);
+    click(container, /continue mission/i);
+    expect(findButton(container, /^enter /i)).toBeUndefined();
+    click(container, /stay together/i);
+    click(container, /enter the maintenance underdeck/i);
+    clickElement(container.querySelector('[aria-label="Choose Graviclaw for Enter the maintenance underdeck"]'));
+    click(container, /^go with/i);
+    click(container, /skip to outcome/i);
+    click(container, /respond to encounter|choose response/i);
+    click(container, /Graviclaw braces the coolant sleeve/i);
+    clickElement(container.querySelector('.lr-encounter-commit-bar button.g-btn--primary'));
+    click(container, /skip to outcome/i);
+    click(container, /see encounter result/i);
+    expect(container.textContent).toContain('Graviclaw has no energy left to lead');
+    expect(findButton(container, /continue through with/i)).toBeUndefined();
+    click(container, /choose another crossing action/i);
+    expect(container.querySelectorAll('[data-route-preview]')).toHaveLength(2);
+    expect(container.querySelector('[aria-label="Choose Graviclaw for Enter the maintenance underdeck"]')).toBeNull();
+    clickElement(container.querySelector('[aria-label="Choose Hippochamp for Enter the maintenance underdeck"]'));
+    click(container, /^go with Hippochamp/i);
+    click(container, /skip to outcome/i);
+    click(container, /continue to result/i);
+    expect(readCheckpoint().journal[1].lead).toBe('Hippochamp');
+    expect(readCheckpoint().companion.creature.species).toBe('Xylum');
+  });
+
+  test('isolating the coolant line carries a new door intervention through checkpoint resume', () => {
+    const random = vi.spyOn(Math, 'random').mockReturnValue(0.1);
+    try {
+      renderGame(true);
+      click(container, /seal crew/i);
+      playCreatureAction('gantry');
+      click(container, /continue mission/i);
+      const saved = playCreatureAction('underdeck', /Close the upstream valve/);
+      expect(saved.runFlags).toContain('underdeck-flow-isolated');
+      expect(saved.companion).toBeNull();
+      unmountGame();
+      renderGame(true);
+      click(container, /resume expedition/i);
+      click(container, /continue mission/i);
+      expect(findButton(container, /^enter /i)).toBeUndefined();
+      click(container, /stay together/i);
+      clickElement(container.querySelector('[data-route-preview="breach"] .lr-intention'));
+      click(container, /From an earlier discoveryWork the depressurized service release/);
+      click(container, /^go with/i);
+      click(container, /skip to outcome/i);
+      click(container, /continue to result/i);
+      expect(readCheckpoint().journal[2].methodMemoryId).toBe('depressurized-release');
+      expect(readCheckpoint().journal[2].story).toContain('underdeck line isolated');
+    } finally { random.mockRestore(); }
+  });
+
+  test('the saved gallery circumstance survives resume and resolves as a different encounter', () => {
+    const random = vi.spyOn(Math, 'random').mockReturnValue(0.1);
+    try {
+      renderGame(true);
+      click(container, /seal crew/i);
+      playCreatureAction('gantry');
+      click(container, /continue mission/i);
+      playCreatureAction('underdeck');
+      click(container, /continue mission/i);
+      playCreatureAction('decode');
+      expect(readCheckpoint().runFlags).toContain('gallery-beacon-loop');
+      unmountGame();
+      random.mockReturnValue(0.9);
+      renderGame(true);
+      click(container, /resume expedition/i);
+      click(container, /continue mission/i);
+      playCreatureAction('conduit', /Turn the beacon toward the empty hull/);
+      expect(readCheckpoint().journal[3].encounter).toContain('turns the beacon');
+      expect(readCheckpoint().runFlags).toContain('gallery-beacon-redirected');
+    } finally { random.mockRestore(); }
+  });
+
+  test('an unscouted expedition carries a rescued native warning through resume and reaches all seven scenes', () => {
+    renderGame(true);
+    click(container, /seal crew/i);
+    const routes = ['gantry', 'underdeck', 'decode', 'conduit', 'stabilize', 'harvest', 'closure'];
+    const pacing = [];
+    for (let i = 0; i < routes.length; i++) {
+      const saved = playCreatureAction(routes[i], i === 1 ? /treats the injury/i : null, i === 0 ? /Leap between/i : null);
+      if (i === 2) expect(saved.runFlags).toContain('archive-native-rescued');
+      if (i === 3) {
+        unmountGame();
+        renderGame(true);
+        click(container, /resume expedition/i);
+      }
+      if (i === 4) expect(saved.lastResult.unseenHazards.map(hazard => hazard.id)).not.toContain('plague-dust');
+      if (i === 5) {
+        expect(saved.runFlags).toContain('reservoir-timing-diagram');
+        expect(saved.journal[5].story).toContain('service diagram');
+        unmountGame();
+        renderGame(true);
+        click(container, /resume expedition/i);
+        expect(readCheckpoint().runFlags).toContain('reservoir-timing-diagram');
+      }
+      if (i === 6) expect(saved.lastResult.unseenHazards.map(hazard => hazard.id)).not.toContain('ring-closure');
+      pacing.push({ scene: saved.sceneIndex, pressure: saved.pressure, strain: saved.strain, salvage: saved.salvage });
+      expect(saved.sceneIndex).toBe(i);
+      if (i < routes.length - 1) expect(findButton(container, /view mission report/i), JSON.stringify(pacing)).toBeUndefined();
+      if (i < routes.length - 1) {
+        const brace = [...container.querySelectorAll('button')].find(button => /Brace the annex with/.test(button.textContent) && !button.disabled);
+        if (saved.pressure >= 4 && brace) {
+          clickElement(brace);
+          click(container, /spend \d salvage/i);
+        }
+        click(container, /continue mission|go deeper/i);
+        if (i === 3) {
+          expect(container.querySelector('.lr-native-reunion').textContent).toContain('Hypnopet you freed');
+          const energyBeforeEntry = { ...readCheckpoint().strain };
+          expect(findButton(container, /^enter /i)).toBeUndefined();
+          expect(container.querySelector('[aria-label="Scouting decision"]')).toBeNull();
+          expect(container.querySelector('[aria-label="Choose a creature action"]')).toBeTruthy();
+          expect(container.textContent).toContain('Known danger: Opening the field');
+          expect(readCheckpoint().strain).toEqual(energyBeforeEntry);
+        }
+      }
+    }
+    expect(readCheckpoint().objectiveReached).toBe(true);
+    expect(readCheckpoint().pressure).toBe(7);
+    click(container, /leave with full salvage/i);
+    expect(container.textContent).toContain('Deep Retrieval Complete');
+    expect(container.textContent).toContain('Its warning revealed the contaminant layer');
+    expect(container.querySelector('.lr-mission-journal').textContent).toContain('7 crossings');
+  });
+
+  test.each(['keep', 'brace', 'balance'])('controlled recovery comparison: %s', policy => {
+    renderGame(true);
+    click(container, /seal crew/i);
+    const routes = ['gantry', 'underdeck', 'decode', 'conduit', 'stabilize', 'harvest', 'closure'];
+    let repairs = 0, saved;
+    for (let i = 0; i < routes.length; i++) {
+      saved = playCreatureAction(routes[i], i === 1 ? /treats the injury/i : null, i === 0 ? /Leap between/i : null);
+      expect(saved.journal).toHaveLength(i + 1);
+      if (findButton(container, /view mission report/i) || i === routes.length - 1) break;
+      const available = [...container.querySelectorAll('.lr-workshop-options button')].filter(button => !button.disabled);
+      const brace = available.find(button => /Brace the annex/.test(button.textContent));
+      const tired = CREATURES.filter(member => (saved.strain[member.id] || 0) >= 3).sort((a, b) => saved.strain[b.id] - saved.strain[a.id]);
+      const resupply = tired.map(member => available.find(button => button.textContent.includes(`Resupply ${member.species}`))).find(Boolean);
+      const repair = policy === 'brace' ? brace : policy === 'balance' ? (saved.pressure >= 5 && brace) || resupply || (saved.pressure >= 3 && brace) : null;
+      if (repair) { clickElement(repair); click(container, /spend \d salvage/i); repairs++; }
+      click(container, /continue mission|go deeper/i);
+    }
+    const result = { policy, crossed: saved.journal.length, objective: saved.objectiveReached, forced: !!findButton(container, /view mission report/i), repairs, salvage: saved.salvage, stability: 10 - saved.pressure, energy: Object.fromEntries(CREATURES.slice(0, 3).map(member => [member.species, 6 - (saved.strain[member.id] || 0)])) };
+    process.stdout.write('RECOVERY COMPARISON ' + JSON.stringify(result) + '\n');
+    expect(result.objective).toBe(true);
+    expect(result.forced).toBe(policy === 'keep');
+    expect(result.crossed).toBe(policy === 'keep' ? 6 : 7);
+  });
+
+  test.each([
+    ...[0.1, 0.35, 0.9].flatMap(sample => ['original', 'alternative'].map(crew => ({ sample, crew, scouting: 'none' }))),
+    ...['every-room', 'remote-only', 'chromocat-first'].map(scouting => ({ sample: 0.35, crew: 'original', scouting }))
+  ])('repeat experience comparison: $crew / $sample / $scouting', ({ sample, crew: roster, scouting }) => {
+    vi.spyOn(Math, 'random').mockReturnValue(sample);
+    renderGame(true);
+    const members = roster === 'original' ? CREATURES.slice(0, 3) : CREATURES.slice(3, 6);
+    if (roster === 'alternative') {
+      CREATURES.slice(0, 3).forEach(member => clickElement(container.querySelector(`[data-creature-id="${member.id}"]`)));
+      members.forEach(member => clickElement(container.querySelector(`[data-creature-id="${member.id}"]`)));
+    }
+    click(container, /seal crew/i);
+    const routes = ['gantry', 'underdeck', 'decode', 'conduit', 'stabilize', 'harvest', 'closure'];
+    let saved, repairs = 0, scouts = 0, returns = 0;
+    for (let i = 0; i < routes.length; i++) {
+      const scoutButtons = [...container.querySelectorAll('.lr-scout-intentions [data-scout-choice]')];
+      const remote = scoutButtons.find(button => /Reports remotely/.test(button.textContent));
+      const scout = scouting === 'chromocat-first' ? scoutButtons.find(button => /Chromocat/.test(button.textContent)) || remote || scoutButtons[0]
+        : scouting === 'every-room' ? remote || scoutButtons[0] : scouting === 'remote-only' ? remote : null;
+      if (scout) {
+        clickElement(scout);
+        click(container, /^send /i);
+        scouts++;
+        finishScoutTransition(container);
+        if (container.querySelector('.lr-field-encounter')) {
+          clickElement(container.querySelector('.lr-story-responses button'));
+          clickElement(container.querySelector('.lr-encounter-commit-bar button.g-btn--primary'));
+          if (findButton(container, /skip to outcome/i)) click(container, /skip to outcome/i);
+          click(container, /see encounter result/i);
+          click(container, /review scout report|choose an approach/i);
+        }
+        if (findButton(container, /wait for .* to return/i)) {
+          click(container, /wait for .* to return/i);
+          finishScoutTransition(container);
+          returns++;
+        }
+        if (findButton(container, /choose a route/i)) click(container, /choose a route/i);
+      }
+      saved = playCreatureAction(routes[i]);
+      expect(saved.journal).toHaveLength(i + 1);
+      if (findButton(container, /view mission report/i) || i === routes.length - 1) break;
+      if (findButton(container, /wait and read the signal/i)) click(container, /wait and read the signal/i);
+      saved = readCheckpoint();
+      if (findButton(container, /view mission report/i)) break;
+      const available = [...container.querySelectorAll('.lr-workshop-options button')].filter(button => !button.disabled);
+      const brace = available.find(button => /Brace the annex/.test(button.textContent));
+      const tired = members.filter(member => (saved.strain[member.id] || 0) >= 3).sort((a, b) => saved.strain[b.id] - saved.strain[a.id]);
+      const resupply = tired.map(member => available.find(button => button.textContent.includes(`Resupply ${member.species}`))).find(Boolean);
+      const repair = (saved.pressure >= 5 && brace) || resupply || (saved.pressure >= 3 && brace);
+      if (repair) { clickElement(repair); click(container, /spend \d salvage/i); repairs++; }
+      if (i === 1) {
+        const flags = [...readCheckpoint().runFlags];
+        unmountGame();
+        renderGame(true);
+        click(container, /resume expedition/i);
+        expect(readCheckpoint().runFlags).toEqual(flags);
+      }
+      click(container, /continue mission|go deeper/i);
+    }
+    const result = { roster, sample, scouting, scouts, returns, crossed: saved.journal.length, objective: saved.objectiveReached, repairs, stability: 10 - saved.pressure,
+      events: saved.journal.map(entry => ({ scene: entry.id, lead: entry.lead, encounter: entry.encounterId, discovery: entry.discovery || null })) };
+    process.stdout.write('REPEAT COMPARISON ' + JSON.stringify(result) + '\n');
+    expect(saved.journal.length).toBeGreaterThanOrEqual(1);
+    expect(findButton(container, /view mission report|leave with full salvage/i)).toBeTruthy();
   });
 
   test('keeps route selection in place and commits without a second approval screen', () => {
@@ -424,7 +924,10 @@ describe('Long Return Simple mode', () => {
       if (workshop) {
         const available = Array.from(workshop.querySelectorAll('.lr-workshop-options button')).filter(button => !button.disabled);
         const brace = available.find(button => /Brace the annex/.test(button.textContent));
-        const choice = brace || available[0];
+        const saved = readCheckpoint();
+        const tired = CREATURES.filter(member => (saved.strain[member.id] || 0) >= 3).sort((a, b) => saved.strain[b.id] - saved.strain[a.id]);
+        const resupply = tired.map(member => available.find(button => button.textContent.includes(`Resupply ${member.species}`))).find(Boolean);
+        const choice = (saved.pressure >= 5 && brace) || resupply || brace || available[0];
         if (choice) {
           clickElement(choice);
           click(workshop, /spend \d salvage/i);
@@ -434,7 +937,7 @@ describe('Long Return Simple mode', () => {
       if (scene < 6) clickElement(container.querySelector('.lr-depth-option.is-deeper, .lr-result-actions .g-btn--primary'));
     }
     expect(fieldActions).toBeGreaterThan(0);
-    expect(findButton(container, /leave with full salvage/i)).toBeTruthy();
+    expect(findButton(container, /leave with full salvage/i), JSON.stringify(readCheckpoint())).toBeTruthy();
     click(container, /leave with full salvage/i);
     expect(container.textContent).toContain('Deep Retrieval Complete');
     expect(container.textContent).toMatch(/Deep retrieval.*extraction lift carries the crew clear/i);
@@ -492,6 +995,7 @@ describe('Long Return Simple mode', () => {
     expect(container.querySelector('.lr-depth-decision').textContent).toMatch(/Index secured either way.*Leave now or explore deeper/i);
     expect(container.querySelector('.lr-depth-decision').textContent).toMatch(/Index secured either way.*salvage banked/i);
     expect(container.querySelector('.lr-depth-decision').textContent).toContain('Up to +19 more salvage');
+    expect(container.querySelector('.lr-depth-decision [aria-label="Recovered objects"]').textContent).toMatch(/Nemesis Index (plates|blackbox)/);
     expect(container.querySelector('[data-depth-distance]').textContent).toContain('Across 2 optional crossings');
     expect(container.querySelector('.lr-haul-risk').textContent).toMatch(/keep \d+ · lose \d+/);
     click(container, /extract now/i);
@@ -530,7 +1034,7 @@ describe('Long Return Simple mode', () => {
     expect(container.querySelectorAll('.lr-encounter-choice-board .lr-response-outcome')).toHaveLength(3);
     expect(container.querySelector('.lr-encounter-options .is-recommended').textContent).toMatch(/call Hippochamp.*1 stability.*possible ally/i);
     expect(container.textContent).not.toMatch(/Ready → Ready|Stable → Stable/);
-    clickElement(container.querySelector('.lr-encounter-options .is-recommended'));
+    clickElement(container.querySelector('.lr-encounter-options .is-recommended') || findButton(container, /treats the injury/i));
     expect(container.textContent).toContain('Selected response');
     expect(container.textContent).not.toContain('The native chooses to follow');
     clickElement(container.querySelector('.lr-encounter-commit-bar button.g-btn--primary'));
@@ -576,7 +1080,7 @@ describe('Long Return Simple mode', () => {
     click(container, /choose response/i);
     expect(container.textContent).toContain('Unexpected crew encounter');
     expect(container.querySelector('.lr-encounter-situation').textContent).toContain('Crew caught unaware · +1 energy to respond');
-    clickElement(container.querySelector('.lr-encounter-options .is-recommended'));
+    clickElement(container.querySelector('.lr-encounter-options .is-recommended') || findButton(container, /treats the injury/i));
     clickElement(container.querySelector('.lr-encounter-commit-bar button'));
     click(container, /skip to outcome/i);
     click(container, /see encounter result/i);

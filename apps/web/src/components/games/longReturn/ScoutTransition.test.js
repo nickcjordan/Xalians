@@ -2,6 +2,17 @@ import { scoutBeats } from './ScoutTransition';
 import { CREATURES, MISSION } from './longReturnData';
 import { scanScene, scanReport } from './longReturnEngine';
 
+test('an earlier discovery is not announced as a new scouting find', () => {
+  const base = MISSION.scenes[1];
+  const scene = { ...base, knownHazardIds: [base.hazards[0].id] };
+  const scout = CREATURES[0];
+  const result = scanScene(scene, scout);
+  const beats = scoutBeats({ type: 'scout', scene, scout, result, profile: { channel: 'vibration' }, energyBefore: 6, energyAfter: 5 });
+  expect(beats[1].title).toBe('Following an earlier warning');
+  expect(beats[1].text).toContain('no additional hazard warning');
+  expect(beats[1].text).not.toContain('waiting crew has not heard');
+});
+
 test('return narration agrees with actual energy and stability changes', () => {
   const action = { type: 'scout-return', scout: { species: 'Chromocat' }, energyBefore: 5, energyAfter: 4, stabilityBefore: 10, stabilityAfter: 9 };
   expect(scoutBeats(action).map(beat => beat.text).join(' ')).toContain('consumes another energy');

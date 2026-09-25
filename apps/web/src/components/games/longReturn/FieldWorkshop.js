@@ -3,6 +3,7 @@ import { fieldOptions, fieldWorkStory } from './fieldOperations';
 import { MAX_STRAIN } from './longReturnData';
 import BiIcon from './BiIcon';
 import FieldExchange from './FieldExchange';
+import ExpeditionReserves from './ExpeditionReserves';
 
 export default function FieldWorkshop({ crew, strain, pressure, salvage, commands, used, receipt, openRequest = 0, onChoose, onAdvance }) {
   const [selected, setSelected] = useState(null);
@@ -51,6 +52,7 @@ export default function FieldWorkshop({ crew, strain, pressure, salvage, command
     }}><BiIcon cls={expanded ? 'bi-arrow-left' : 'bi-tools'} /><span><strong>{expanded ? 'Back to crossing result' : 'Repair with salvage'}</strong><small>Trade final salvage for energy or stability</small></span><b>{salvage} carried <BiIcon cls="bi bi-chevron-down" /></b></summary>
     <div className="lr-workshop-body">
       <h4 className="lr-workshop-title">Put the haul to work</h4>
+      <ExpeditionReserves crew={crew} strain={strain} pressure={pressure} />
       <button type="button" className="lr-workshop-bank" aria-label={`Keep all ${salvage} salvage and return to crossing result`} onClick={() => showRepairs(false)}>
         <BiIcon cls="bi bi-box-seam" />
         <span><small>Keep the haul</small><strong>{salvage} salvage stays carried</strong></span>
@@ -70,6 +72,6 @@ export default function FieldWorkshop({ crew, strain, pressure, salvage, command
 export function MissionJournal({ entries }) {
   if (!entries.length) return null;
   return <details className="lr-mission-journal"><summary><BiIcon cls="bi bi-journal-text" /> Your expedition · {entries.length} {entries.length === 1 ? 'crossing' : 'crossings'} <BiIcon cls="bi bi-chevron-down" /></summary>
-    <ol>{entries.map((entry, index) => <li key={entry.id}><span className="lr-journal-number">{index + 1}</span><div><small>{entry.scene}</small><strong>{entry.route}</strong><p>{entry.story}</p><span>{entry.lead} led · {entry.energy ? `${entry.energy} energy spent` : 'No energy spent'} · {entry.stability ? `${entry.stability} stability lost` : 'No stability lost'} · {entry.salvage} salvage recovered</span>{entry.fieldWork && <p className="lr-journal-field"><BiIcon cls="bi bi-tools" /> {entry.fieldWork}</p>}</div></li>)}</ol>
+    <ol>{entries.map((entry, index) => <li key={entry.id}><span className="lr-journal-number">{index + 1}</span><div><small>{entry.scene}</small><strong>{entry.route}</strong><p>{entry.story}</p><span>{entry.lead} led · {entry.energy ? `${entry.energy} energy spent` : 'No energy spent'} · {entry.stability ? `${entry.stability} stability lost` : 'No stability lost'} · {entry.salvage} salvage recovered</span>{entry.encounter && <p>{entry.encounter}</p>}{entry.discovery && <p>{entry.discovery}</p>}{entry.fieldWork && <p className="lr-journal-field"><BiIcon cls="bi bi-tools" /> {entry.fieldWork}</p>}</div></li>)}</ol>
   </details>;
 }
