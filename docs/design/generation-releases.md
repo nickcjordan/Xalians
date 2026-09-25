@@ -1,5 +1,11 @@
 # Immutable generation releases
 
+## Current prototype override, 2026-09-25
+
+The release workflow below is historical, not the current creature-authoring process. Nick has deferred active generator and species versioning until real user creatures are ready to be issued. The current v5 generator compiles `docs/species-templates/v5/*.json` through the ordinary `canonicalSpeciesCatalog.json` content bundle. New prototype records do not carry generator/schema versions, release IDs, or species revisions. Adding or editing a species requires its creative audit, source validation, and `node scripts/bundleLore.js`, but no freeze, snapshot, or revision file. Current builds do not compare source to a frozen release. Historical archives and revisions stay available for records that already use them; the old release tooling is retained for historical replay and integrity only. Before public launch, explicitly design production provenance and how any retained prototype records are handled. Do not clear records now.
+
+The sections below document the earlier archival system. Their instructions to freeze, revise, or check current source no longer govern prototype authoring.
+
 ## Contract
 
 A creature stores its resolved record and provenance identifying the generating engine. Records made under schema 5.2 also carry `provenance.speciesRevision`, the hash of the exact species definition used. The engine archive stores implementation, shared schemas, registries, derived-act and naming rules, and runtime dependencies. Individual species definitions are archived separately by content hash.
@@ -10,7 +16,7 @@ The first archived release is `generation-0.3.0-1` (schema 2). The signature/abi
 
 ## Storage and integrity
 
-- `packages/rules/src/generator/currentRelease.json` selects the legacy public release; `currentCreatureRelease.json` selects the current species-independent creature engine.
+- `packages/rules/src/generator/currentRelease.json` remains a legacy public-generator pointer. The former v5 `currentCreatureRelease.json` pointer was removed when prototype versioning was disabled.
 - `packages/rules/releases/<releaseId>/generator.mjs` is a self-contained ECMAScript 2022 module built by esbuild. Current creature-engine archives contain shared code and schemas but no species roster; earlier archives retain their original combined form.
 - `docs/species-templates/v5/revisions/<key>/<sha256>.json` retains each exact species definition. `packages/content/json/canonicalSpeciesCatalog.json` is the generated current roster, not an engine input.
 - The adjacent `manifest.json` records the artifact's SHA-256 fingerprint, source input fingerprints, generator/schema versions, and build tool/target information.
@@ -34,11 +40,11 @@ The Node loader verifies archive integrity and version agreement, loads the arch
 
 This is a local/server tooling capability, not a new HTTP endpoint. Historical artifacts are not shipped in the browser bundle. Stored records continue to serve ordinary display without replay.
 
-## Authoring species content and engine releases
+## Former authoring and engine-release procedure (inactive)
 
-For a species that fits the current schema and shared vocabulary: author and audit `docs/species-templates/v5/<key>.json`, run `npm run sync:species`, and run `npm run check:species`, `npm run check:releases`, and the relevant generation tests. The sync command updates only the current data catalog and adds the species' immutable content revision. It does not change `currentCreatureRelease.json`, generator code, or the engine archive. Earlier content revisions remain available for replay. The v4 public bundle and each game's adaptation remain separately scoped.
+This procedure was used while the v5 generator was frozen. It is retained as historical context and must not be followed for current prototype authoring. The active process is stated above: validate, audit, and update the ordinary content bundle. Earlier content revisions remain available for historical replay.
 
-Only changes to shared generation behavior, schema, registries, derived-act rules, or naming rules require a new engine release:
+The former shared-change release procedure was:
 
 1. Make and validate the shared change. Use the low-level generator for experiments as needed.
 2. Choose a new unique engine release ID in the appropriate current-release pointer. Bump algorithm and schema versions only when their respective contracts change.
@@ -46,13 +52,13 @@ Only changes to shared generation behavior, schema, registries, derived-act rule
 4. Run `npm run check:releases`, `npm run test:releases`, and the relevant generation/content tests. Add enduring replay fixtures when behavior changes.
 5. Review and commit the new pointer, manifest, and artifact together with the source change. Retain all previous archives.
 
-Frontend and API production builds run integrity checks before building. The check verifies the selected legacy generator and current species-independent creature engine against their archived source and bundle hashes, and verifies the current species catalog and every archived species revision. CI also tests historical replay and rejects modifications or deletions to previously archived files relative to the base branch. Local equivalent: `npm run check:releases -- --base origin/main`.
+Frontend and API builds now regenerate the current content bundle instead of requiring a frozen generator. CI still tests historical replay and rejects modifications or deletions to archived files relative to the base branch. `npm run check:releases -- --base origin/main` checks those historical artifacts only.
 
-Do not modify an archived engine or species revision. Shared changes need a new engine release; creature-only changes need a new species revision, not a generator snapshot.
+Do not modify an archived engine or species revision. Current shared and creature-only prototype changes need no new engine release or species revision.
 
 ## Deliberate boundaries
 
-- Only records generated through the checked current catalog or replayable archived species revisions are certified. Low-level calls with arbitrary templates or claimed revision hashes are experimental; do not persist them as canonical production creatures. Production build checks reject a stale catalog or edited archived input.
+- Historical versioned records replay against their archives. Current prototype records are not certified for immutable replay and should not be represented as production creatures. The content-bundle check rejects stale current content.
 - Replay reconstructs generation facts, not later ownership, battle state, or game-specific derived grades.
 - A hash without the archived artifact is insufficient for replay. An unavailable archive produces an explicit error.
 - This does not recover pre-archive releases or change species lore, support roles, or ability-pool policy.

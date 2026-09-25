@@ -2,7 +2,7 @@
 
 Updated 2026-09-23. This document supersedes conflicting proposals and chronological notes in this directory. The implementation is available through `@xalians/content/creature` and `@xalians/rules/generator/creature`. These are the redesigned model's entry points; the legacy public generator and bundled species remain v4.
 
-Current implementation update, 2026-09-25: record schema 5.2.0 and generator 0.9.0 separate the executable engine from species data. Authoring templates remain on schema 5.1.0. The 33-species current catalog has independent per-species revisions; compatible species additions no longer require a generator archive or version change. Historical combined archives remain replayable. Powerworks and Reclamation use the current v5 roster; the legacy public generator and its species bundle remain v4. Historical checkpoint paragraphs below describe the state when written, not the current game routing.
+Current implementation update, 2026-09-25: v5 prototype generation reads the current species bundle directly. Adding or editing a species requires source validation, the ability audit, and the ordinary content bundle update, but no species revision, generator version, release ID, or archive. New prototype records do not claim immutable replay provenance. Existing historical archives remain readable for already versioned records. Powerworks and Reclamation use the current v5 roster; the legacy public generator and its species bundle remain v4. Historical checkpoint paragraphs below describe the state when written, not the current game routing.
 
 ## Canonical roster audit decisions
 

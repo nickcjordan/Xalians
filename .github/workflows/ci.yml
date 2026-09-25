@@ -51,7 +51,7 @@ jobs:
       - name: Typecheck
         run: npm run typecheck -w packages/content
 
-      - name: Generation release integrity and replay
+      - name: Historical archive integrity and replay
         run: |
           npm run check:releases -- --base origin/main
           npm run test:releases
