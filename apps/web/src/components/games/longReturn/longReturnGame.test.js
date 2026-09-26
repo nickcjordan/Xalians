@@ -913,6 +913,7 @@ describe('Long Return Simple mode', () => {
     expect(readCheckpoint().strain).toEqual(saved.strain);
   });
 
+  // Full expeditions render many scenes; retain their assertions without a five-second host-speed limit.
   test('can reach the deepest extraction by reinvesting salvage between crossings', () => {
     renderGame();
     click(container, /seal crew/i);
@@ -943,7 +944,7 @@ describe('Long Return Simple mode', () => {
     expect(container.textContent).toMatch(/Deep retrieval.*extraction lift carries the crew clear/i);
     expect(container.textContent).toContain('ObjectiveSECURED');
     expect(container.querySelector('.lr-mission-journal').textContent).toContain('7 crossings');
-  });
+  }, 15000);
 
   test('resolves a manually customized Simple plan and returns to the clean result view', () => {
     renderGame();
@@ -975,7 +976,7 @@ describe('Long Return Simple mode', () => {
     expect(container.textContent).toContain('Forced Extraction');
     expect(container.textContent).toContain('ObjectiveSECURED');
     expect(container.textContent).toMatch(/Emergency extraction.*half of the carried salvage/i);
-  });
+  }, 15000);
 
   test('supports aborting early and extracting after the objective', () => {
     renderGame();
@@ -1002,7 +1003,7 @@ describe('Long Return Simple mode', () => {
     expect(container.textContent).toContain('Crew Extracted');
     expect(container.textContent).toContain('ObjectiveSECURED');
     expect(container.textContent).toMatch(/Voluntary extraction.*At the extraction fork.*stair into the lower annex falls behind them/i);
-  });
+  }, 15000);
 
   test('moves from the recommended scout to the simplified report', () => {
     renderGame();
