@@ -35,10 +35,10 @@ export default function SequenceStory(props) {
   return props.accumulate ? <AccumulatingStory {...props} /> : <PagedStory {...props} />;
 }
 
-function AccumulatingStory({ events, index, onNext, action }) {
+function AccumulatingStory({ events, index, paused, onPause, action }) {
   const latest = useRef(null);
   useEffect(() => {
-    if (index > 0) latest.current?.scrollIntoView?.({ block: 'nearest', behavior: 'instant' });
+    if (index > 0) latest.current?.scrollIntoView?.({ block: 'nearest', behavior: window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth' });
   }, [index]);
   const final = index === events.length - 1;
   return <section className="lr-sequence-story lr-sequence-story--accumulating" aria-label="Action story">
@@ -51,7 +51,7 @@ function AccumulatingStory({ events, index, onNext, action }) {
         </div></div>
       </article>)}
     </div>
-    <footer><button type="button" disabled={final} onClick={onNext}>{final ? 'Account complete' : 'Next event →'}</button>{action}</footer>
+    <footer><button type="button" disabled={final} aria-pressed={!final && paused} onClick={onPause}>{final ? 'Account complete' : paused ? 'Resume story' : 'Pause story'}</button>{action}</footer>
   </section>;
 }
 
