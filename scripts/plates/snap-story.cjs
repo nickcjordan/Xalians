@@ -1,5 +1,5 @@
-// Click through the home story's viewer the way a reader does and check its
-// rules at every beat: at most one thing animates (a living plate with its SVG
+// Bring the home story's viewer to rest, click through it the way a reader
+// does, and check its rules: the archive screen is on at rest; at every beat at most one thing animates (a living plate with its SVG
 // ready, or a small piece playing), nothing is live mid-change, only the shown
 // beat and the one leaving hold a piece's drawing, nothing overflows sideways,
 // and the console stays clean. A screenshot of every settled beat is kept.
@@ -49,12 +49,24 @@ const state = (p) =>
 		p.on('console', (m) => m.type() === 'error' && errs.push(m.text()));
 		p.on('pageerror', (e) => errs.push(String(e)));
 		await p.goto(URL, { waitUntil: 'networkidle' });
-		await p.evaluate(() => document.getElementById('story').scrollIntoView({ block: 'start' }));
-		await p.waitForTimeout(1800);
+		// Bring the viewer to rest where a reader would: held by its pause in the
+		// box, or centered on a short screen. Its screen tunes in only then.
+		await p.evaluate(() => {
+			const s = document.getElementById('story');
+			const pin = s.firstElementChild;
+			if (pin.classList.contains('sticky')) window.scrollTo(0, s.getBoundingClientRect().top + window.scrollY + 32 - parseFloat(pin.style.top || '0') + 120);
+			else s.querySelector('.story-scene[data-state=active] .frame').scrollIntoView({ block: 'center' });
+		});
+		await p.waitForTimeout(2200);
+		const standby = await p.evaluate(() => document.querySelector('.story-scene[data-state=active] .archive')?.getAttribute('data-screen'));
+		if (standby !== 'on') {
+			broken++;
+			console.log(name, 'BROKEN the screen did not come on at rest:', standby);
+		}
 		const count = await p.evaluate(() => document.querySelectorAll('.story-marker').length);
 		for (let k = 0; k < count; k++) {
 			if (k > 0) {
-				await p.getByRole('button', { name: /^Next/ }).click();
+				await p.getByRole('button', { name: /^Next/ }).click({ noWaitAfter: true });
 				// mid-change: nothing may be live (under reduced motion a beat is still at once, so it may show its plate)
 				await p.waitForTimeout(250);
 				const mid = await state(p);
