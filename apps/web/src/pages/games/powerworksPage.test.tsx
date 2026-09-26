@@ -338,6 +338,26 @@ describe("Powerworks player flow", () => {
     // Auto-advance went on to the fastest companion still without an order.
     expect(ringOwner()).toBe("Avilily");
   });
+  it("draws every move's worth in health, and each machine's next blow with the part the orders stop (move value pass)", () => {
+    mount();
+    fireEvent.click(screen.getByRole("button", { name: "Enter the facility" }));
+    fireEvent.click(screen.getByRole("button", { name: "Select Hippochamp" }));
+    // Each legal disc carries a value bar; the cannon takes health, so its bar is red.
+    const cannon = screen.getByRole("menuitem", { name: /^Hippochamp: Emergency Water Cannon/ });
+    expect(cannon.querySelector(".pw-value .harm")).not.toBeNull();
+    expect(cannon).toHaveAccessibleDescription(/Best use this round: takes [0-9]+ health/);
+    // Each machine shows its next blow; nothing is stopped before an order that stops it.
+    const threats = screen.getAllByRole("img", { name: /^Threat: about [0-9]+ health$/ });
+    expect(threats).toHaveLength(2);
+    // Avilily's bind would stop part of a crawler's blow: hovering it lays gold on the threat.
+    fireEvent.click(screen.getByRole("button", { name: "Select Avilily" }));
+    const bind = screen.getByRole("menuitem", { name: /^Avilily: Binding/ });
+    expect(bind.querySelector(".pw-value .saved")).not.toBeNull();
+    fireEvent.pointerEnter(bind, { pointerType: "mouse" });
+    expect(
+      screen.getAllByRole("img", { name: /^Threat: about [0-9]+ health, [0-9]+ stopped$/ }).length
+    ).toBeGreaterThan(0);
+  });
   it("explains visual move stats without repeating power and range text on cards", () => {
     mount();
     fireEvent.click(screen.getByRole("button", { name: "Enter the facility" }));
@@ -345,8 +365,9 @@ describe("Powerworks player flow", () => {
     const attack = screen.getByRole("menuitem", {
       name: /^Hippochamp: Emergency Water Cannon, signature, water, power 5, ready$/,
     });
+    // The move value pass adds its best use this round, in health, to the description.
     expect(attack).toHaveAccessibleDescription(
-      "Ranged attack. 5 base power. Cools: ends Overheated and Burning. 1 round cooldown."
+      /^Ranged attack\. 5 base power\. Cools: ends Overheated and Burning\. 1 round cooldown\. Best use this round: takes [0-9]+ health\.$/
     );
     expect(attack.querySelector(".pw-radial-label")).not.toHaveTextContent(
       /power|ranged/
