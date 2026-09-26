@@ -13,6 +13,12 @@ The Encyclopedia (masthead: **Encyclopedia Xalia**) is the single public canon r
 3. The pre-repo Evernote material in `notes/` is reference only; nothing in it is canon unless it also appears in the histories or the entries.
 4. The creature-system design doc (`docs/design/xalian-creature-system-redesign.md`) governs everything mechanical (records, registries, generation). Mechanics never leak into Encyclopedia prose.
 
+## Reading editions and derived text
+
+World histories retain their source prose and later approved corrections. `worldChapters.json` supplies editorial chapter divisions, titles, and illustration positions without rewriting those histories. Its indices refer to the original paragraph order. Existing paragraph citations and read marks remain stable when chapter divisions change.
+
+World introductions, Story narration, and expanded reference articles are derived summaries. The reader labels them Editorial summary; they do not establish additional canon or override the histories and ratified definitions. Chapter headings, artwork, and captions likewise do not establish new facts. The Reading Room's About the texts fold explains this distinction publicly. Ratified newer species and reference entries remain canon even when they were not part of the original histories.
+
 ## Working canon that constrains public entries
 
 These are ratified constraints. Public entries must be consistent with them but must never announce them.

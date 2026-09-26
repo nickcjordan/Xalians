@@ -9,6 +9,7 @@ import { usePageTitle } from '@/components/system/head';
 import { IndexRow, IndexList } from '@/components/system/index-row';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Fold } from '@/components/system/fold';
 
 const SECTIONS = [
 	{
@@ -127,6 +128,12 @@ export default function ReadingRoom() {
 			</p>
 
 			<BeginOrResumeCard story={story} />
+
+			<Fold label="About the texts" className="mb-8">
+				<p className="m-0 mb-3 font-body text-body text-ink">World histories are the original source prose, including later corrections. Their chapter titles and divisions are editorial guides.</p>
+				<p className="m-0 mb-3 font-body text-body text-ink">World introductions, The Story narration, and expanded reference articles are editorial summaries drawn from that lore. They organize and explain it; the source histories take precedence.</p>
+				<p className="m-0 font-body text-body text-ink">Reference definitions and species descriptions include both inherited lore and later canon additions. Illustrations and captions accompany the text; they do not establish new lore.</p>
+			</Fold>
 
 			<section className="mb-8">
 				<SectionHead title="Galaxy of Xalia" />

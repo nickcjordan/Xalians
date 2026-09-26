@@ -277,7 +277,7 @@ Everything the chrome tier may be built from, as of 2026-09-10. Each is on `/sty
 | `fold.tsx` | Fold, FoldGroup | One collapsible on level 0 with a legend label, a count and a one-line hint; folds never nest (Encyclopedia polish, 2026-09-19) |
 | `index-row.tsx` | IndexRow, IndexList | A list of records on hairlines: leading number or kicker, title, one line of copy, meta at right, chevron when it links |
 | `station-row.tsx` | StationRow, Station | The pressed-segment row (era scrubber, category filters, section tabs, a world's timeline), with keyboard arrows and a disabled unlit state |
-| `reading-layout.tsx` | ReadingLayout, ReadingRail, ReadingBlock | Prose with a sticky navigation rail and a marginalia column; each block is its own row so margins stay beside their text; the rail becomes a Fold under `lg` |
+| `reading-layout.tsx` | ReadingLayout, ReadingRail, ReadingBlock | A sticky navigation rail beside one continuous 62ch reading body; prose, occasional illustrations, and reference notes flow in document order; the rail becomes a Fold under `lg` |
 
 Deliberately absent: Skeleton (section 6), Calendar and date pickers, Carousel, Resizable, Sidebar, Menubar, ContextMenu, NavigationMenu, InputOTP. Add one only when a page needs it, through step 2 of the build-ui skill.
 

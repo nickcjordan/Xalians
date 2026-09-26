@@ -80,6 +80,12 @@ function useStorageVersion() {
 	return version;
 }
 
+/** A named chapter is read only after all its original passages are read. */
+export function useReadGroup(kind, keys) {
+	useStorageVersion();
+	return keys.length > 0 && keys.every((key) => isRead(kind, key));
+}
+
 /** [trail, clear]; re-renders when any component records a visit. */
 export function useTrail() {
 	const version = useStorageVersion();

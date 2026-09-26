@@ -7,7 +7,7 @@ import { allEntries, planetsInOrder, legacySpeciesList, templateRecordsByKey, to
 import { getEntry } from './entries';
 import { getWorld } from './worlds';
 import { getSpecies } from './species';
-import { chapterLabel } from './chapterLabel';
+import { passageLabel } from './chapterLabel';
 
 function escapeRegExp(text) {
 	return text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -77,7 +77,7 @@ for (const planet of planetsInOrder) {
 		textUnits.push({
 			kind: 'world',
 			key: planet.key,
-			label: `${planet.name}, ${chapterLabel(index)}`,
+			label: `${planet.name}, ${passageLabel(index)}`,
 			text,
 		});
 	});
