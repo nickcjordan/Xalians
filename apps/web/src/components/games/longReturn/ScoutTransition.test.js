@@ -1,6 +1,29 @@
-import { scoutBeats } from './ScoutTransition';
+import React from 'react';
+import { render, fireEvent, act, cleanup } from '@testing-library/react';
+import ScoutTransition, { scoutBeats } from './ScoutTransition';
 import { CREATURES, MISSION } from './longReturnData';
 import { scanScene, scanReport } from './longReturnEngine';
+
+test('scouting waits for the reader and retains the full account through the final handoff', () => {
+  vi.useFakeTimers();
+  const scout = CREATURES[0], scene = MISSION.scenes[0];
+  const action = { type: 'scout', scene, scout, crew: CREATURES.slice(0, 3), result: scanScene(scene, scout), profile: { channel: 'vibration' }, energyBefore: 6, energyAfter: 5 };
+  const onComplete = vi.fn();
+  try {
+    const { container, getByRole } = render(<ScoutTransition action={action} onComplete={onComplete} soundEnabled={false} />);
+    act(() => vi.advanceTimersByTime(60000));
+    expect(container.querySelectorAll('[data-story-event]')).toHaveLength(1);
+    const first = container.querySelector('[data-story-event="0"]');
+    fireEvent.click(getByRole('button', { name: 'Next event →' }));
+    expect(container.querySelectorAll('[data-story-event]')).toHaveLength(2);
+    expect(container.querySelector('[data-story-event="0"]')).toBe(first);
+    fireEvent.click(getByRole('button', { name: 'Reveal full account' }));
+    expect(container.querySelectorAll('[data-story-event]')).toHaveLength(3);
+    expect(onComplete).not.toHaveBeenCalled();
+    fireEvent.click(getByRole('button', { name: 'Review scout report' }));
+    expect(onComplete).toHaveBeenCalledOnce();
+  } finally { cleanup(); vi.useRealTimers(); }
+});
 
 test('an earlier discovery is not announced as a new scouting find', () => {
   const base = MISSION.scenes[1];
