@@ -5,7 +5,7 @@
 	Ruling leaves standing, at exactly their held values. And it must not touch the state.
 */
 import { describe, test, expect } from 'vitest';
-import { createMatch, send, pass, moveSwift, stakeWorld, getPublicState, forecastClash, forecastSend, forecastMove, movableRecordIdsFor, createRngState, nextRandom } from '../expeditionRules.ts';
+import { createMatch, send, pass, moveSwift, stakeWorld, getPublicState, forecastClash, forecastSend, forecastSendBlows, forecastMove, movableRecordIdsFor, createRngState, nextRandom } from '../expeditionRules.ts';
 import { chooseSend, chooseStake } from '../expeditionBot.ts';
 import { buildRosters } from '../roster.ts';
 import { getWorlds } from '../sites.ts';
@@ -225,5 +225,58 @@ describe('forecastMove', () => {
 			});
 		});
 		expect(checked).toBeGreaterThan(0);
+	});
+});
+
+/*
+	PASS 61. The words beside a creature's number name the fight behind its toll, so the blows
+	must add up to the toll the forecast prints: what lands on it, less what is given back, is
+	what it goes in with less what it keeps; it falls exactly when the forecast downs it; and
+	every creature it is said to down is one the forecast downs.
+*/
+describe('forecastSendBlows', () => {
+	test('adds up to the forecast toll, and downs what the forecast downs', () => {
+		// unlifted counts the cases where a fallen ally's lift is part of the toll
+		let checked = 0;
+		let withBlows = 0;
+		let unlifted = 0;
+		['b1', 'b2', 'b3', 'b4', 'b5'].forEach((seed) => {
+			playMatch(seed, (before) => {
+				const handler = before.turn as Seat;
+				before.players[handler].roster.forEach((record: any) => {
+					before.frames[before.frameIndex].sites.forEach((site: any) => {
+						const forecast = forecastSend(before, handler, record.id, site.id);
+						const blows = forecastSendBlows(before, handler, record.id, site.id);
+						if (!forecast) {
+							expect(blows).toBe(null);
+							return;
+						}
+						expect(blows).not.toBe(null);
+						const own = forecast[record.id];
+						const landed = blows!.taken.reduce((sum, b) => sum + b.power, 0);
+						expect(blows!.falls).toBe(own.downed);
+						if (!own.downed) {
+							expect(Math.abs(landed - blows!.recovered + blows!.unlifted - (own.before - own.hold))).toBeLessThan(0.25);
+							// a hold lost to no blow is always a lift lost with an ally of yours that falls beside it
+							if (blows!.unlifted > 0.25) {
+								expect(blows!.alliesDowned.length).toBeGreaterThan(0);
+								unlifted += 1;
+							}
+						}
+						blows!.downs.forEach((id) => expect(forecast[id] && forecast[id].downed).toBe(true));
+						blows!.downsBeforeActing.forEach((id) => expect(blows!.downs).toContain(id));
+						// it downs exactly the creatures its own hits down
+						expect(blows!.dealt.filter((h) => h.downs).map((h) => h.to).sort()).toEqual([...blows!.downs].sort());
+						// a creature it downs before that creature acts never lands a blow on it
+						blows!.taken.forEach((b) => expect(blows!.downsBeforeActing).not.toContain(b.by));
+						checked += 1;
+						if (blows!.taken.length) withBlows += 1;
+					});
+				});
+			});
+		});
+		expect(checked).toBeGreaterThan(100);
+		expect(withBlows).toBeGreaterThan(10);
+		expect(unlifted).toBeGreaterThan(0);
 	});
 });

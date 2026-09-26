@@ -7,7 +7,7 @@ import { HelpPanel, HistoryPanel, SettingsPanel } from './reclamationPanels';
 import ReclamationLegend from './reclamationLegend';
 import { ReclamationReport, buildMatchReport } from './reclamationReport';
 import {
-	send, pass, moveSwift, stakeWorld, getPublicState, forecastClash,
+	send, pass, moveSwift, stakeWorld, getPublicState, forecastClash, forecastSendBlows,
 	createRngState, nextRandom,
 } from '@xalians/rules/expedition/expeditionRules';
 import { chooseSend, chooseStake, rivalById, DEFAULT_RIVAL_ID } from '@xalians/rules/expedition/expeditionBot';
@@ -19,6 +19,7 @@ import {
 	verdictOf, rulingLine,
 } from './reclamationNarration';
 import { flattenBoard, prepareWithCompanions, siteHoldTotal, ghostPlanFor, strainCause } from './reclamationPreview';
+import { nameBlows } from './reclamationReasons';
 import { fitTable, roundTrack, standingScale } from './reclamationFit';
 import { RoundTrack, ScorePips } from './reclamationInstruments';
 
@@ -1670,6 +1671,39 @@ class ReclamationMatch extends React.Component {
 		return value;
 	}
 
+	/*
+		PASS 61. The fight behind the Clash's toll on the creature pointed at or lifted, world by
+		world, with names: who lands how much on it, what it downs, what a bolster gives back,
+		and the lift it loses when an ally of yours beside it falls. The engine's own forecast
+		(forecastSendBlows), blind to the rival's hidden sends, cached like the fit table.
+	*/
+	blowsFor(recordId, role) {
+		const { match } = this.state;
+		if (!match || match.phase !== 'deploy' || !recordId) {
+			return null;
+		}
+		const seat = this.seatInPlay();
+		const key = `${seat}|${recordId}|${role || ''}`;
+		if (this.blowCache && this.blowCache.match === match && this.blowCache.key === key) {
+			return this.blowCache.value;
+		}
+		const value = {};
+		const frame = match.frames && match.frames[match.frameIndex];
+		((frame && frame.sites) || []).forEach((site) => {
+			let blows = null;
+			try {
+				blows = forecastSendBlows(match, seat, recordId, site.id, role || null);
+			} catch (e) {
+				blows = null;
+			}
+			if (blows) {
+				value[site.id] = nameBlows(blows, match, seat);
+			}
+		});
+		this.blowCache = { match, key, value };
+		return value;
+	}
+
 	totalsForBoard(view) {
 		const totals = {};
 		view.frame.sites.forEach((site) => {
@@ -1690,6 +1724,7 @@ class ReclamationMatch extends React.Component {
 		if (!record) {
 			return null;
 		}
+		const blows = this.blowsFor(id, id === armedRecordId ? this.state.armedRole : null);
 		const ghosts = {};
 		view.frame.sites.forEach((site) => {
 			// the whole arithmetic of this send at this world: hold after strain and any
@@ -1714,6 +1749,8 @@ class ReclamationMatch extends React.Component {
 				bolstered: plan.bolstered,
 				preview: !armedRecordId,
 				unstrained: plan.hold / strainMultiplierFor(plan.strainLevel),
+				// pass 61: the fight behind its toll here, named
+				blows: blows ? blows[site.id] || null : null,
 				// the creature's own band and media, drawn over the site's on the environment scale
 				tolerance: {
 					temperatureC: tolerance.temperatureC || null,
