@@ -50,7 +50,7 @@ export default function FieldRecord({ scene, title, label, map, mapFocusLabel, a
       <div className={`lr-field-map-panel ${focus ? 'is-focused' : ''}`}>
         <div className="lr-field-map-head" aria-hidden={!focus}><span>Site position update</span><strong>{focus ? mapFocusLabel || title : '\u00a0'}</strong></div>
         {React.cloneElement(map, { attentionTarget: focus?.target, attentionKey: focus?.signature, initialTravel: !!(focus?.initial && animateInitialTravel) })}
-        <div className="lr-field-map-resources hidden flex-wrap gap-3 pt-4 md:flex">{resources}</div>
+        <div className={`lr-field-map-resources hidden flex-wrap gap-3 pt-4 ${stableLayout ? 'lg:flex' : 'md:flex'}`}>{resources}</div>
       </div>
     </div>
     <div className="lr-field-story-stage min-h-0">{children}</div>
