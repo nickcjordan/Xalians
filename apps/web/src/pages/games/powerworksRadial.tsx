@@ -38,6 +38,7 @@ import {
   removalWords,
   ValueBar,
   valueWords,
+  type ValueReading,
 } from "./powerworksVisuals";
 import { useStageMap, type Box } from "./powerworksStage";
 import "./powerworksRadial.css";
@@ -392,6 +393,8 @@ export function PowerworksRadial({
   targetLine = null,
   onPreview,
   values,
+  valueLabel,
+  cardValue = null,
 }: {
   unit: Unit;
   /** The legal move indices for this unit this round (`legalMoves`). */
@@ -421,7 +424,14 @@ export function PowerworksRadial({
   /** The aimed target's one-line outcome ("Crawler 1: 5 damage, 22 to 17"). */
   targetLine?: string | null;
   /** Move value pass: each legal move's best use this round, in health taken and kept. */
-  values?: Record<number, { harm: number; saved: number; knockout: boolean }>;
+  values?: Record<number, ValueReading & { target: string | null }>;
+  /** The label of the unit a value is about, for its tooltip (readout pass). */
+  valueLabel?: (id: string) => string;
+  /**
+    Readout pass: the chosen move's value on the unit it is about (the aimed target, else its
+    best), shown on the card with that unit's name, so the number follows the aim.
+  */
+  cardValue?: { reading: ValueReading; label: string } | null;
   /**
     A disc is hovered, focused from the keyboard, or armed by a first tap (round 3): the
     stage previews its outcome faintly; null when it is left.
@@ -1098,9 +1108,8 @@ export function PowerworksRadial({
                   </span>
                   {legal && !state.dim && values?.[i] && (
                     <ValueBar
-                      harm={values[i].harm}
-                      saved={values[i].saved}
-                      knockout={values[i].knockout}
+                      value={values[i]}
+                      label={values[i].target ? valueLabel?.(values[i].target!) : undefined}
                       className="pw-radial-value"
                     />
                   )}
@@ -1112,7 +1121,12 @@ export function PowerworksRadial({
                 )}
                 <span className="pw-sr" id={`pw-slot-desc-${unit.id}-${i}`}>
                   {moveDescription(unit, m)}
-                  {legal && values?.[i] ? ` ${valueWords(values[i])}.` : ""}
+                  {legal && values?.[i]
+                    ? ` ${valueWords(
+                        values[i],
+                        values[i].target ? valueLabel?.(values[i].target!) : undefined
+                      )}.`
+                    : ""}
                 </span>
               </button>
             );
@@ -1189,6 +1203,17 @@ export function PowerworksRadial({
                   <Zap />
                   <span>{CHARGE_LINE}</span>
                 </Mark>
+              </div>
+            )}
+            {cardValue && (
+              // Readout pass: the value follows the aim, and names whom it is read on.
+              <div className="pw-radial-card-value">
+                <ValueBar value={cardValue.reading} label={cardValue.label} />
+                <span className="pw-radial-card-value-on">
+                  <Crosshair aria-hidden="true" />
+                  {cardValue.label}
+                </span>
+                <span className="pw-sr">{valueWords(cardValue.reading, cardValue.label)}.</span>
               </div>
             )}
             <p className={`pw-radial-card-target ${targetLine ? "aimed" : ""}`}>

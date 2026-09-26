@@ -772,7 +772,7 @@
   .pw-unit-plaque {
     padding: 2px 4px 3px;
   }
-  .pw-unit-plaque > div > svg {
+  .pw-unit-plaque > div > svg:not(.pw-referent) {
     display: none;
   }
 }
@@ -1444,6 +1444,11 @@
   border-radius: 1px;
   box-shadow: inset 0 0 0 1px #a0bbb233, 0 0 0 1px #03090bcc;
 }
+/* Readout pass: a bar carrying the plan's chunk thickens enough to read it. */
+.pw .pw-unit-plaque .pw-health.committed:not(.previewing) .pw-health-track {
+  height: 7px;
+  border-radius: 1px;
+}
 .pw-health-bar {
   position: relative;
   flex: 1;
@@ -1457,15 +1462,35 @@
 .pw-health.previewing .pw-health-track > span {
   transition: none;
 }
+/* Readout pass: one color language across bars. Red is health taken (the chunk a hit takes,
+   the value bar's red), gold is health kept, green is health restored. A knockout keeps the
+   red and adds the skull on its tag. */
 .pw-health-track > i.pw-hp-chunk {
-  background: repeating-linear-gradient(120deg, #fff0bc 0 3px, #d19a3e 3px 6px);
-  box-shadow: 0 0 6px #f1cb6c;
+  background: repeating-linear-gradient(120deg, #ffc6b6 0 3px, #b9533c 3px 6px);
+  box-shadow: 0 0 6px #e0735c;
   animation: pw-fade-in 180ms ease-out both;
 }
 .pw-health-track > i.pw-hp-chunk.knockout,
 .pw-health.danger .pw-health-track > i.pw-hp-chunk {
   background: repeating-linear-gradient(120deg, #ffc6b6 0 3px, #b9533c 3px 6px);
-  box-shadow: 0 0 6px var(--danger);
+  box-shadow: 0 0 8px var(--danger);
+}
+/* What the standing orders (and the unit's own ticks) already take: the same red, quieter,
+   so the move in hand's chunk reads in front of it. */
+.pw-health-track > i.pw-hp-planned {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  background: repeating-linear-gradient(120deg, #c98e80 0 3px, #6f3a30 3px 6px);
+  opacity: 0.85;
+}
+.pw-health-track > i.pw-hp-planned.knockout {
+  opacity: 1;
+}
+.pw .pw-hp-delta.falls {
+  padding: 0 3px;
+  color: #ffd6ca;
+  border-color: var(--danger);
 }
 .pw-health-track > b.pw-hp-heal {
   position: absolute;
@@ -1815,4 +1840,14 @@
   .pw-theater.playing .pw-scene-unit .pw-actor-art {
     transition: none;
   }
+}
+
+/* Readout pass: the unit the move in hand's value bar is read on, until one is aimed. */
+.pw .pw-unit-plaque svg.pw-referent {
+  flex: none;
+  width: 13px;
+  height: 13px;
+  margin-left: 4px;
+  color: #ffe7a6;
+  filter: drop-shadow(0 0 3px #e9bb5288);
 }

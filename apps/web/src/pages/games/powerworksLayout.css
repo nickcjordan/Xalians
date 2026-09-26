@@ -121,6 +121,29 @@
   border-color: #f4e2b0;
   box-shadow: 0 0 0 2px #f4e2b066, 0 0 16px #e9bb5288;
 }
+/* Readout pass: the order the move in hand would make. A unit it moves wears a small
+   arrow on its rim, pointing the way it moved. */
+.pw-turn-strip li.later > button,
+.pw-turn-strip li.earlier > button {
+  border-color: #f4e2b0;
+}
+.pw .pw-turn-shift {
+  position: absolute;
+  left: -3px;
+  bottom: -3px;
+  display: grid;
+  place-items: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #0e191e;
+  color: #ffe7a6;
+  box-shadow: 0 0 0 1px #f4e2b077;
+}
+.pw .pw-turn-shift svg {
+  width: 11px;
+  height: 11px;
+}
 .pw-turn-strip li.acted,
 .pw-turn-strip li.down {
   opacity: 0.4;

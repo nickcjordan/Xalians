@@ -2151,3 +2151,22 @@
     min-height: 300px;
   }
 }
+
+/* Readout pass: the inspector's figure is the move's worth this round, in health, on the
+   same bar and scale as the wheel (a machine's move reads as the blow it would land). */
+.pw .pw-move-card:has(.pw-card-effect.worth) {
+  grid-template-columns: minmax(0, 1fr) 118px;
+}
+.pw-card-effect.worth {
+  align-items: flex-start;
+}
+.pw .pw-card-effect.worth b {
+  font-size: 14px;
+  font-weight: 700;
+}
+.pw-card-effect.worth .pw-threat {
+  margin-top: 0;
+}
+.pw-card-effect.worth .pw-value.waiting {
+  opacity: 0.45;
+}

@@ -526,9 +526,15 @@ export function MoveCardContent({
   blocked,
   id,
   fullName = false,
+  worth,
 }: {
   unit: Unit;
   move: Move;
+  /**
+    Readout pass: what the move is worth this round, in health, drawn in place of its base
+    power (the inspector's one number used to be a second currency nothing converted).
+  */
+  worth?: React.ReactNode;
   /** Show the whole generated name (the inspector) rather than the base name (the move tray). */
   fullName?: boolean;
   /** Rounds remaining before the move returns; null for a move with no cooldown pips (repeatable, or Desperate strike). */
@@ -561,6 +567,11 @@ export function MoveCardContent({
           {fullName ? move.name : baseName(move)}
         </strong>
       </span>
+      {worth ? (
+        <span className="pw-card-effect worth" title={moveDescription(unit, move)}>
+          {worth}
+        </span>
+      ) : (
       <span
         className={`pw-card-effect ${control ? "control" : ""}`}
         title={moveDescription(unit, move)}
@@ -585,6 +596,7 @@ export function MoveCardContent({
         {!control && !heal && ward && !harms(move) && <small>damage</small>}
         {unsupported.length === move.effects.length && <small>no effect</small>}
       </span>
+      )}
       <span className="pw-card-resource" aria-hidden="true">
         <span className="pw-card-state">
           {blocked ? (
@@ -809,28 +821,41 @@ export function Health({
   u,
   estimate = 0,
   preview,
+  planned = 0,
 }: {
   u: Unit;
   estimate?: number;
   preview?: HealthPreview | null;
+  /**
+    Readout pass: the health the squad's standing orders and the unit's own degrading ticks
+    take this round, drawn as a quieter red chunk at the bar's end. The move in hand's chunk
+    stacks in front of it, so a plan that already finishes a machine reads at a glance.
+  */
+  planned?: number;
 }) {
-  const damage = Math.min(u.hp, preview ? preview.damage : estimate),
+  const committed = Math.max(0, Math.min(u.hp, planned)),
+    left = u.hp - committed;
+  const damage = Math.min(left, preview ? preview.damage : estimate),
     heal = preview ? Math.max(0, Math.min(u.max - u.hp, preview.heal)) : 0,
-    remaining = ((u.hp - damage) / u.max) * 100;
+    remaining = ((left - damage) / u.max) * 100;
+  // The plan already takes everything the unit has: nothing the move in hand does lands first.
+  const finished = committed > 0 && left <= 0;
   // The number sits on a small solid tag at the chunk's edge (round 3 review): its right
   // edge meets the chunk where what remains ends, so no hatching lies under the text. Near
   // the bar's start it hangs the other way, over the chunk; "no effect" sits at the bar's end.
   const hp = (u.hp / u.max) * 100;
-  const tag: { edge: number; end: boolean } = preview?.immune
-    ? { edge: 100, end: true }
-    : damage > 0
-    ? remaining >= 30
-      ? { edge: remaining, end: true }
-      : { edge: remaining, end: false }
-    : hp >= 30
-    ? { edge: hp, end: true }
-    : { edge: ((u.hp + heal) / u.max) * 100, end: false };
-  const shown = !!preview && !preview.faint && (preview.immune || damage > 0 || heal > 0);
+  const tag: { edge: number; end: boolean } =
+    preview?.immune || finished
+      ? { edge: 100, end: true }
+      : damage > 0
+      ? remaining >= 30
+        ? { edge: remaining, end: true }
+        : { edge: remaining, end: false }
+      : hp >= 30
+      ? { edge: hp, end: true }
+      : { edge: ((u.hp + heal) / u.max) * 100, end: false };
+  const shown =
+    !!preview && !preview.faint && (preview.immune || damage > 0 || heal > 0 || (finished && preview.damage > 0));
   const track = (
       <div
         className="pw-health-track"
@@ -844,6 +869,12 @@ export function Health({
           style={{ width: `${(u.hp / u.max) * 100}%` }}
           className={u.hp / u.max < 0.3 ? "critical" : ""}
         />
+        {committed > 0 && (
+          <i
+            className={`pw-hp-planned ${finished ? "knockout" : ""}`}
+            style={{ left: `${(left / u.max) * 100}%`, width: `${(committed / u.max) * 100}%` }}
+          />
+        )}
         {damage > 0 && (
           <i
             className={`pw-hp-chunk ${preview?.knockout ? "knockout" : ""}`}
@@ -868,19 +899,28 @@ export function Health({
     <div
       className={`pw-health ${preview ? "previewing" : ""} ${preview?.faint ? "faint" : ""} ${
         preview?.muted ? "muted" : ""
-      } ${preview?.danger ? "danger" : ""}`}
+      } ${preview?.danger ? "danger" : ""} ${committed > 0 ? "committed" : ""} ${
+        finished ? "finished" : ""
+      }`}
+      title={
+        committed > 0
+          ? `${finished ? "Your orders knock it out" : `Your orders take about ${committed}`} this round`
+          : undefined
+      }
     >
       {shown ? (
         <div className="pw-health-bar">
           {track}
           <span
-            className={`pw-hp-delta ${preview!.knockout ? "knockout" : ""} ${
+            className={`pw-hp-delta ${preview!.knockout && !finished ? "knockout" : ""} ${
               heal > 0 && !damage ? "heal" : ""
-            } ${preview!.immune ? "immune" : ""} ${tag.end ? "at-end" : "at-start"}`}
+            } ${preview!.immune || finished ? "immune" : ""} ${tag.end ? "at-end" : "at-start"}`}
             style={tag.end ? { right: `${100 - tag.edge}%` } : { left: `${tag.edge}%` }}
             aria-hidden="true"
           >
-            {preview!.knockout ? (
+            {finished ? (
+              <Skull />
+            ) : preview!.knockout ? (
               <Skull />
             ) : preview!.immune ? (
               <Ban />
@@ -888,13 +928,26 @@ export function Health({
               <Shield />
             ) : null}
             {/* The move's own damage, as the card states it; a knockout's chunk is the rest of the bar. */}
-            {preview!.immune ? "no effect" : damage > 0 ? `−${preview!.damage}` : `+${heal}`}
+            {finished
+              ? "already falls"
+              : preview!.immune
+              ? "no effect"
+              : damage > 0
+              ? `−${preview!.damage}`
+              : `+${heal}`}
+          </span>
+        </div>
+      ) : finished ? (
+        <div className="pw-health-bar">
+          {track}
+          <span className="pw-hp-delta falls at-start" style={{ left: 0 }} aria-hidden="true">
+            <Skull />
           </span>
         </div>
       ) : (
         track
       )}
-      {preview && !preview.immune && (
+      {preview && !preview.immune && !finished && (
         <MatchupMark factor={preview.matchup} text={preview.matchupText} />
       )}
       <span className="pw-hp-label">
@@ -924,83 +977,143 @@ export function restLine(move: Move): string {
   Move value (2026-09-26). Nick: there was no way to see how a move would affect a creature or
   why one move beats another. Every move's worth is drawn in one currency, health, on one
   scale: a track VALUE_TRACK_HP long (its width is the CSS variable --value-track, narrower on
-  a phone), cut into 2 HP segments like the health bars. Red is health a move takes from the
-  machines; gold is health it keeps for the squad (a blow prevented, a squadmate guarded or
-  healed). The same scale draws each machine's threat, so a move that stops a blow is visibly
-  as long as the blow it stops. Anything past the track's end shows as a "+".
+  a phone), cut into 2 HP segments like the health bars. The colors are the health bars' own:
+  red is health taken, gold is health kept for the squad (a blow prevented, a squadmate
+  guarded), green is health restored. The same scale draws each machine's threat, so a move
+  that stops a blow is visibly as long as the blow it stops.
+
+  Readout pass (2026-09-26, Nick: "what number or reference? what does it mean when the bar is
+  empty? all enemies or one?"): every bar ends in its number, in health, the way a health bar
+  does; an empty bar ends in a no-effect mark whose tooltip says why; and the target a value
+  is about is marked on the stage (see the scene's referent).
 */
 export const VALUE_TRACK_HP = 12;
 const share = (hp: number) => Math.max(0, Math.min(hp, VALUE_TRACK_HP)) / VALUE_TRACK_HP;
 
-/** Words for a value, for tooltips and assistive technology. */
-export function valueWords(v: { harm: number; saved: number; knockout: boolean }): string {
+export type ValueReading = {
+  harm: number;
+  saved: number;
+  healed?: number;
+  knockout: boolean;
+  why?: { kind: string; status?: string };
+};
+
+/** Why a use is worth nothing, in words, naming the target by its label. */
+export function idleWords(why: ValueReading["why"], label: string): string {
+  switch (why?.kind) {
+    case "falls":
+      return `${label} already falls to your other orders`;
+    case "harmless":
+      return why.status === "blinded"
+        ? `${label} strikes up close, so blinding does not weaken it`
+        : `${label} is not closing in, so ${why.status ?? "binding"} does not stop it`;
+    case "held":
+      return `${label} is already ${why.status ?? "held"} and loses its next turn`;
+    case "needless":
+      return `${label} needs nothing it gives right now`;
+    case "turn":
+      return `${cap(why.status ?? "it")} changes when ${label} acts, not how hard it hits`;
+    default:
+      return `Nothing it carries gets through to ${label}`;
+  }
+}
+
+/** Words for a value, for tooltips and assistive technology. `label` names the target it is about. */
+export function valueWords(v: ValueReading, label?: string): string {
   const parts: string[] = [];
   if (v.harm > 0) parts.push(`takes ${v.harm} health${v.knockout ? " and knocks out" : ""}`);
   if (v.saved > 0) parts.push(`keeps about ${v.saved} health for the squad`);
-  return parts.length ? `Best use this round: ${parts.join(", ")}` : "Does nothing useful this round";
+  if ((v.healed ?? 0) > 0) parts.push(`restores ${v.healed} health`);
+  const on = label ? ` on ${label}` : "";
+  return parts.length
+    ? `Worth ${valueTotal(v)} health${on} this round: ${parts.join(", ")}`
+    : `Worth nothing this round${label ? `: ${idleWords(v.why, label)}` : ""}`;
 }
+export const valueTotal = (v: ValueReading) => v.harm + v.saved + (v.healed ?? 0);
 
-/** A move's value as a segmented bar: red taken, then gold kept, a skull at the end of a knockout. */
+/**
+  A move's value as a segmented bar: red taken, gold kept, green restored, then its number in
+  health (a skull before it when the use knocks its target out). A use worth nothing ends in a
+  no-effect mark instead; its tooltip says why.
+*/
 export function ValueBar({
-  harm,
-  saved,
-  knockout = false,
+  value,
+  label,
   className = "",
 }: {
-  harm: number;
-  saved: number;
-  knockout?: boolean;
+  value: ValueReading;
+  /** The target the value is about, for the tooltip. */
+  label?: string;
   className?: string;
 }) {
-  const red = share(harm),
-    gold = Math.min(share(saved), 1 - red);
-  const over = harm + saved > VALUE_TRACK_HP;
+  const red = share(value.harm),
+    gold = Math.min(share(value.saved), 1 - red),
+    green = Math.min(share(value.healed ?? 0), 1 - red - gold);
+  const sum = valueTotal(value);
   return (
     <span
-      className={`pw-value ${className} ${harm + saved <= 0 ? "empty" : ""}`}
-      title={valueWords({ harm, saved, knockout })}
+      className={`pw-value ${className} ${sum <= 0 ? "empty" : ""}`}
+      title={valueWords(value, label)}
       aria-hidden="true"
     >
       <span className="pw-value-track">
         {red > 0 && <i className="harm" style={{ width: `${red * 100}%` }} />}
         {gold > 0 && <i className="saved" style={{ width: `${gold * 100}%` }} />}
+        {green > 0 && <i className="healed" style={{ width: `${green * 100}%` }} />}
       </span>
-      {knockout ? <Skull className="pw-value-end" /> : over ? <span className="pw-value-more">+</span> : null}
+      {sum > 0 ? (
+        <b className={`pw-value-num ${value.knockout ? "knockout" : ""}`}>
+          {value.knockout && <Skull />}
+          {sum}
+        </b>
+      ) : (
+        <Ban className="pw-value-none" />
+      )}
     </span>
   );
 }
 
 /**
   A machine's next blow on the same scale (move value pass): red for the health it is poised
-  to take from one companion, the part the squad's orders would stop overlaid in gold.
+  to take from one companion, the part the squad's orders would stop overlaid in gold, and the
+  number that still gets through. A machine that already loses its turn reads 0, and says why.
 */
 export function ThreatBar({
   amount,
   prevented = 0,
   ranged,
+  held,
+  label = "It",
 }: {
   amount: number;
   prevented?: number;
   ranged: boolean;
+  /** The status that already costs it its next turn. */
+  held?: string;
+  label?: string;
 }) {
-  if (amount <= 0) return null;
   const width = share(amount);
-  const stop = Math.min(1, prevented / Math.max(amount, 0.001));
+  const stop = amount > 0 ? Math.min(1, prevented / amount) : 0;
   const hp = Math.round(amount);
+  const stopped = Math.min(hp, Math.round(prevented));
+  const through = held ? 0 : hp - stopped;
+  const words = held
+    ? `${label} is ${held} and loses its next turn: no blow this round`
+    : `${label}'s next blow takes about ${hp} health from one of your squad${
+        stopped > 0 ? `; your orders stop about ${stopped} of it` : ""
+      }`;
   return (
     <span
-      className="pw-threat"
-      title={`Its next blow takes about ${hp} health from one of your squad${
-        prevented > 0 ? `; your orders stop about ${Math.min(hp, Math.round(prevented))} of it` : ""
-      }`}
-      aria-label={`Threat: about ${hp} health${prevented > 0 ? `, ${Math.min(hp, Math.round(prevented))} stopped` : ""}`}
+      className={`pw-threat ${held ? "held" : ""} ${hp > 0 && through <= 0 ? "stopped" : ""}`}
+      title={words}
+      aria-label={held ? `Threat: none, ${held}` : `Threat: about ${hp} health${stopped > 0 ? `, ${stopped} stopped` : ""}`}
       role="img"
     >
       {ranged ? <Crosshair /> : <Swords />}
       <span className="pw-threat-track" style={{ width: `calc(var(--value-track) * ${width})` }}>
         {stop > 0 && <i className="stopped" style={{ width: `${stop * 100}%` }} />}
       </span>
-      {amount > VALUE_TRACK_HP && <span className="pw-value-more">+</span>}
+      <b className="pw-threat-num">{through}</b>
     </span>
   );
 }
