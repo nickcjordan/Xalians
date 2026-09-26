@@ -115,7 +115,7 @@ type Frame = {
 	squeeze: number; // 0: the helix at full length; 1: folded into the chip
 };
 
-function frameAt(mode: Mode, t: number): Frame {
+export function frameAt(mode: Mode, t: number): Frame {
 	if (mode === 'plague') {
 		return {
 			rung: (i) => {
@@ -170,25 +170,21 @@ function frameAt(mode: Mode, t: number): Frame {
 	};
 }
 
+type Move = { dx: number; dy: number; rot: number; opacity: number };
+
 /** A piece still on its way in: out along its own direction, faded, turned. */
-function scattered(k: number, sc: number, cx: number, cy: number) {
+function scattered(k: number, sc: number): Move {
 	const [dx, rot, sp] = DRIFT[k];
 	const ang = rot * Math.PI;
 	const d = (90 + 110 * sp) * sc;
-	return {
-		transform: `translate(${(Math.cos(ang) * d).toFixed(1)} ${(Math.sin(ang) * d * 0.8).toFixed(1)}) rotate(${(dx * 90 * sc).toFixed(1)} ${cx.toFixed(1)} ${cy.toFixed(1)})`,
-		opacity: 1 - sc,
-	};
+	return { dx: Math.cos(ang) * d, dy: Math.sin(ang) * d * 0.8, rot: dx * 90 * sc, opacity: 1 - sc };
 }
 
-/** A falling piece's transform and fade: it drops, drifts, tumbles and goes. */
-function fallen(k: number, fall: number, cx: number, cy: number) {
+/** A falling piece's move and fade: it drops, drifts, tumbles and goes. */
+function fallen(k: number, fall: number): Move {
 	const [dx, rot, sp] = DRIFT[k];
 	const o = fall * fall;
-	return {
-		transform: fall > 0 ? `translate(${(dx * 26 * fall).toFixed(1)} ${(o * 170 * sp).toFixed(1)}) rotate(${(rot * 50 * fall).toFixed(1)} ${cx.toFixed(1)} ${cy.toFixed(1)})` : '',
-		opacity: 1 - Math.pow(fall, 1.6),
-	};
+	return { dx: dx * 26 * fall, dy: o * 170 * sp, rot: rot * 50 * fall, opacity: 1 - Math.pow(fall, 1.6) };
 }
 
 function reduced() {
@@ -196,44 +192,70 @@ function reduced() {
 }
 
 /** `live`: it plays; false: it holds its place; undefined: it rests on its last frame. */
+// The helix is drawn on a canvas: some two hundred short strokes a frame are
+// nothing to a canvas, where the same strokes as SVG attributes cost more main
+// thread than a whole living plate (measured 2026-09-26). The chip, which only
+// fades and grows, stays SVG beneath it. The loop draws at most thirty times a
+// second: the turn is slow and the story's pieces never need more.
+const FRAME_MS = 1000 / 30;
+
 export function HelixPiece({ mode, live, label }: { mode: Mode; live: boolean | undefined; label: string }) {
-	const rungA = React.useRef<Array<SVGLineElement | null>>([]);
-	const rungB = React.useRef<Array<SVGLineElement | null>>([]);
-	const segs = React.useRef<Array<SVGLineElement | null>>([]);
+	const canvasRef = React.useRef<HTMLCanvasElement | null>(null);
 	const chip = React.useRef<SVGGElement | null>(null);
-	const whole = React.useRef<SVGGElement | null>(null);
+	const whole = React.useRef<HTMLDivElement | null>(null);
 	// Stacked, or before its clock starts, a piece shows its last frame; on the stage it starts at its first.
 	const state = React.useRef({ t: live === undefined ? 1 : 0, fade: 1, phase: 0.4, sec: 0 });
 
 	const draw = React.useCallback(() => {
 		const { t, phase, fade } = state.current;
-		whole.current?.setAttribute('opacity', fade.toFixed(3));
+		if (whole.current) whole.current.style.opacity = fade.toFixed(3);
 		const fr = frameAt(mode, t);
 		const sq = fr.squeeze;
+		// The chip rises around the folded helix.
+		if (chip.current) {
+			chip.current.setAttribute('opacity', Math.pow(sq, 0.7).toFixed(3));
+			chip.current.setAttribute('transform', `translate(${W / 2} ${CY}) scale(${(0.9 + 0.4 * sq).toFixed(3)})`);
+		}
+		const canvas = canvasRef.current;
+		const ctx = canvas?.getContext?.('2d');
+		if (!canvas || !ctx) return;
+		const k = canvas.width / W;
+		ctx.setTransform(1, 0, 0, 1, 0, 0);
+		ctx.clearRect(0, 0, canvas.width, canvas.height);
+		ctx.lineCap = 'round';
 		const sx = (x: number) => W / 2 + (x - W / 2) * (1 - 0.72 * sq);
 		const amp = AMP * (1 - 0.56 * sq);
 		const width = 1 - 0.45 * sq;
+		const stroke = (x0: number, y0: number, x1: number, y1: number, m: Move, color: string, lw: number, alpha: number) => {
+			if (alpha <= 0.002) return;
+			const cx = (x0 + x1) / 2;
+			const cy = (y0 + y1) / 2;
+			ctx.setTransform(k, 0, 0, k, 0, 0);
+			if (m.dx || m.dy || m.rot) {
+				ctx.translate(m.dx + cx, m.dy + cy);
+				ctx.rotate((m.rot * Math.PI) / 180);
+				ctx.translate(-cx, -cy);
+			}
+			ctx.globalAlpha = alpha;
+			ctx.strokeStyle = color;
+			ctx.lineWidth = lw;
+			ctx.beginPath();
+			ctx.moveTo(x0, y0);
+			ctx.lineTo(x1, y1);
+			ctx.stroke();
+		};
 		// The two strands, one short segment at a time, brighter and wider where they turn toward the viewer.
 		SEGS.forEach((x, j) => {
 			const { color, fall, op = 1, scatter = 0 } = fr.strand(x + SEG / 2);
 			const ph = phase * (1 - fall) + 0.4 * fall; // a piece that has let go stops turning
 			for (const side of [0, 1]) {
-				const el = segs.current[j * 2 + side];
-				if (!el) continue;
-				const s = side ? -1 : 1;
-				const y0 = CY + s * amp * Math.sin(K * x + ph);
-				const y1 = CY + s * amp * Math.sin(K * (x + SEG) + ph);
-				const z = s * Math.cos(K * (x + SEG / 2) + ph);
-				el.setAttribute('x1', sx(x).toFixed(1));
-				el.setAttribute('y1', y0.toFixed(1));
-				el.setAttribute('x2', sx(x + SEG).toFixed(1));
-				el.setAttribute('y2', y1.toFixed(1));
-				el.setAttribute('stroke', color);
-				el.setAttribute('stroke-width', ((2.2 + 1.8 * (z + 1) / 2) * width).toFixed(2));
-				const k = RUNGS.length + side * SEGS.length + j;
-				const f = scatter > 0 ? scattered(k, scatter, sx(x), (y0 + y1) / 2) : fallen(k, fall, sx(x), (y0 + y1) / 2);
-				el.setAttribute('transform', f.transform);
-				el.setAttribute('opacity', (f.opacity * op * (0.35 + 0.65 * (z + 1) / 2)).toFixed(3));
+				const sgn = side ? -1 : 1;
+				const y0 = CY + sgn * amp * Math.sin(K * x + ph);
+				const y1 = CY + sgn * amp * Math.sin(K * (x + SEG) + ph);
+				const z = sgn * Math.cos(K * (x + SEG / 2) + ph);
+				const idx = RUNGS.length + side * SEGS.length + j;
+				const m = scatter > 0 ? scattered(idx, scatter) : fallen(idx, fall);
+				stroke(sx(x), y0, sx(x + SEG), y1, m, color, (2.2 + (1.8 * (z + 1)) / 2) * width, m.opacity * op * (0.35 + (0.65 * (z + 1)) / 2));
 			}
 		});
 		// The rungs: two halves, one base each, meeting between the strands.
@@ -243,30 +265,35 @@ export function HelixPiece({ mode, live, label }: { mode: Mode; live: boolean | 
 			const y0 = CY + amp * Math.sin(K * x + ph);
 			const y1 = CY - amp * Math.sin(K * x + ph);
 			const my = (y0 + y1) / 2;
-			const f = rg.scatter ? scattered(i, rg.scatter, sx(x), my) : fallen(i, rg.fall, sx(x), my);
-			const sw = ((3.2 + 3 * rg.glow) * width).toFixed(2);
-			for (const [el, ya, color] of [
-				[rungA.current[i], y0, rg.a],
-				[rungB.current[i], y1, rg.b],
-			] as const) {
-				if (!el) continue;
-				el.setAttribute('x1', sx(x).toFixed(1));
-				el.setAttribute('x2', sx(x).toFixed(1));
-				el.setAttribute('y1', ya.toFixed(1));
-				el.setAttribute('y2', my.toFixed(1));
-				el.setAttribute('stroke', color);
-				el.setAttribute('stroke-width', sw);
-				el.setAttribute('transform', f.transform);
-				el.setAttribute('opacity', (f.opacity * rg.op * 0.92).toFixed(3));
-			}
+			const m = rg.scatter ? scattered(i, rg.scatter) : fallen(i, rg.fall);
+			const lw = (3.2 + 3 * rg.glow) * width;
+			const alpha = m.opacity * rg.op * 0.92;
+			stroke(sx(x), y0, sx(x), my, m, rg.a, lw, alpha);
+			stroke(sx(x), y1, sx(x), my, m, rg.b, lw, alpha);
 		});
-		// The chip rises around the folded helix.
-		if (chip.current) {
-			const c = sq;
-			chip.current.setAttribute('opacity', Math.pow(c, 0.7).toFixed(3));
-			chip.current.setAttribute('transform', `translate(${W / 2} ${CY}) scale(${(0.9 + 0.4 * c).toFixed(3)})`);
-		}
+		ctx.setTransform(1, 0, 0, 1, 0, 0);
+		ctx.globalAlpha = 1;
 	}, [mode]);
+
+	// The canvas matches its box on the screen at the screen's pixel density.
+	React.useLayoutEffect(() => {
+		const canvas = canvasRef.current;
+		if (!canvas) return undefined;
+		const fit = () => {
+			const dpr = Math.min(2, window.devicePixelRatio || 1);
+			const w = Math.max(1, Math.round(canvas.clientWidth * dpr));
+			const h = Math.max(1, Math.round((w * H) / W));
+			if (canvas.width !== w || canvas.height !== h) {
+				canvas.width = w;
+				canvas.height = h;
+			}
+			draw();
+		};
+		fit();
+		const ro = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(fit) : null;
+		ro?.observe(canvas);
+		return () => ro?.disconnect();
+	}, [draw]);
 
 	// The first frame to show: the last one when stacked or under reduced motion.
 	React.useLayoutEffect(() => {
@@ -284,6 +311,8 @@ export function HelixPiece({ mode, live, label }: { mode: Mode; live: boolean | 
 		let frame = 0;
 		let last = performance.now();
 		const tick = (now: number) => {
+			frame = window.requestAnimationFrame(tick);
+			if (now - last < FRAME_MS - 1) return;
 			const dt = Math.min(100, now - last) / 1000;
 			last = now;
 			const st = state.current;
@@ -293,56 +322,41 @@ export function HelixPiece({ mode, live, label }: { mode: Mode; live: boolean | 
 			st.t = at.t;
 			st.fade = at.fade;
 			draw();
-			frame = window.requestAnimationFrame(tick);
 		};
 		frame = window.requestAnimationFrame(tick);
 		return () => window.cancelAnimationFrame(frame);
 	}, [live, mode, draw]);
 
 	return (
-		<svg viewBox={`0 0 ${W} ${H}`} role="img" aria-label={label} data-piece-live={String(!!live && !reduced())} className="block h-auto w-full overflow-visible">
-			<defs>
-				<linearGradient id={`${mode}-chip`} x1="0" y1="0" x2="0" y2="1">
-					<stop offset="0" stopColor="#27323a" />
-					<stop offset=".5" stopColor="#151c22" />
-					<stop offset="1" stopColor="#0c1115" />
-				</linearGradient>
-				<radialGradient id={`${mode}-halo`}>
-					<stop offset="0" stopColor="#9fd9cf" stopOpacity=".16" />
-					<stop offset="1" stopColor="#9fd9cf" stopOpacity="0" />
-				</radialGradient>
-			</defs>
-			<g ref={whole}>
+		<div ref={whole} role="img" aria-label={label} data-piece-live={String(!!live && !reduced())} className="relative w-full" style={{ aspectRatio: `${W} / ${H}` }}>
 			{mode === 'token' ? (
 				// The Scrambler Token: a small chip, contacts along its edges, the new genome sealed in its face.
-				<g ref={chip} opacity="0">
-					<ellipse cx="0" cy="0" rx="190" ry="120" fill={`url(#${mode}-halo)`} />
-					{Array.from({ length: 9 }, (_, i) => (
-						<g key={i} fill="#8d9aa2">
-							<rect x={-72 + i * 18 - 3} y={-86} width="6" height="12" rx="1" />
-							<rect x={-72 + i * 18 - 3} y={74} width="6" height="12" rx="1" />
-						</g>
-					))}
-					<rect x="-104" y="-76" width="208" height="152" rx="12" fill={`url(#${mode}-chip)`} stroke="#71838d" strokeWidth="2" />
-					<rect x="-88" y="-60" width="176" height="120" rx="6" fill="#0a0f12" stroke="#3a4850" strokeWidth="1.5" />
-				</g>
+				<svg viewBox={`0 0 ${W} ${H}`} aria-hidden="true" className="absolute inset-0 block h-full w-full overflow-visible">
+					<defs>
+						<linearGradient id={`${mode}-chip`} x1="0" y1="0" x2="0" y2="1">
+							<stop offset="0" stopColor="#27323a" />
+							<stop offset=".5" stopColor="#151c22" />
+							<stop offset="1" stopColor="#0c1115" />
+						</linearGradient>
+						<radialGradient id={`${mode}-halo`}>
+							<stop offset="0" stopColor="#9fd9cf" stopOpacity=".16" />
+							<stop offset="1" stopColor="#9fd9cf" stopOpacity="0" />
+						</radialGradient>
+					</defs>
+					<g ref={chip} opacity="0">
+						<ellipse cx="0" cy="0" rx="190" ry="120" fill={`url(#${mode}-halo)`} />
+						{Array.from({ length: 9 }, (_, i) => (
+							<g key={i} fill="#8d9aa2">
+								<rect x={-72 + i * 18 - 3} y={-86} width="6" height="12" rx="1" />
+								<rect x={-72 + i * 18 - 3} y={74} width="6" height="12" rx="1" />
+							</g>
+						))}
+						<rect x="-104" y="-76" width="208" height="152" rx="12" fill={`url(#${mode}-chip)`} stroke="#71838d" strokeWidth="2" />
+						<rect x="-88" y="-60" width="176" height="120" rx="6" fill="#0a0f12" stroke="#3a4850" strokeWidth="1.5" />
+					</g>
+				</svg>
 			) : null}
-			<g strokeLinecap="round" fill="none">
-				{SEGS.map((x, j) => (
-					<React.Fragment key={x}>
-						<line ref={(el) => { segs.current[j * 2] = el; }} />
-						<line ref={(el) => { segs.current[j * 2 + 1] = el; }} />
-					</React.Fragment>
-				))}
-				{RUNGS.map((x, i) => (
-					<React.Fragment key={x}>
-						<line ref={(el) => { rungA.current[i] = el; }} />
-						<line ref={(el) => { rungB.current[i] = el; }} />
-					</React.Fragment>
-				))}
-			</g>
-			</g>
-		</svg>
+			<canvas ref={canvasRef} aria-hidden="true" className="absolute inset-0 block h-full w-full" />
+		</div>
 	);
 }
-

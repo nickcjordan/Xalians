@@ -1,13 +1,18 @@
 import * as React from 'react';
 import { render } from '@testing-library/react';
-import { describe, expect, it } from 'vitest';
-import { HelixPiece, loopAt } from '../helixPiece';
+import { beforeAll, describe, expect, it } from 'vitest';
+import { HelixPiece, frameAt, loopAt } from '../helixPiece';
 
-// The helix pieces play on their own clock, never the scroll's. jsdom has no
-// animation frames worth trusting, so the clock is checked through loopAt and
-// the drawing through the first and last frames.
-// The chip is the group inside the whole piece's group.
-const chipOpacity = (c: HTMLElement) => Number(c.querySelector('g[opacity] g[opacity]')?.getAttribute('opacity'));
+// The helix pieces play on their own clock, never the scroll's, and draw on a
+// canvas (jsdom has none to read back), so the frames are checked as data and
+// the chip, which stays SVG, as attributes.
+const chipOpacity = (c: HTMLElement) => Number(c.querySelector('svg g[opacity]')?.getAttribute('opacity'));
+const RUNG_COUNT = 26;
+
+// jsdom has no canvas; the piece draws nothing there, quietly.
+beforeAll(() => {
+	HTMLCanvasElement.prototype.getContext = (() => null) as unknown as HTMLCanvasElement['getContext'];
+});
 
 describe('loopAt', () => {
 	it('fades in at the first frame, plays, holds the last, and fades out before it repeats', () => {
@@ -25,12 +30,30 @@ describe('loopAt', () => {
 	});
 });
 
+describe('frameAt', () => {
+	it('has the plague take the helix from one end: whole at the start, mostly fallen at the end', () => {
+		const start = frameAt('plague', 0);
+		const end = frameAt('plague', 1);
+		const fallen = (f: ReturnType<typeof frameAt>) => Array.from({ length: RUNG_COUNT }, (_, i) => f.rung(i).fall).filter((v) => v >= 1).length;
+		expect(fallen(start)).toBe(0);
+		expect(fallen(end)).toBeGreaterThan(RUNG_COUNT / 2);
+		expect(fallen(end)).toBeLessThan(RUNG_COUNT);
+	});
+
+	it('starts the token where the plague ended, and folds the new helix into the chip only at the end', () => {
+		expect(frameAt('token', 0).squeeze).toBe(0);
+		expect(frameAt('token', 1).squeeze).toBe(1);
+		// Locked rungs carry their new pair, never a stained one.
+		const done = frameAt('token', 1);
+		expect(Array.from({ length: RUNG_COUNT }, (_, i) => done.rung(i).fall).every((v) => v === 0)).toBe(true);
+	});
+});
+
 describe('HelixPiece', () => {
-	it('holds its first frame until it is live: the plague piece whole, the token chip not yet sealed', () => {
+	it('holds its first frame until it is live: the token chip not yet sealed', () => {
 		const plague = render(<HelixPiece mode="plague" live={false} label="The plague" />);
-		expect(plague.container.querySelector('svg')).toHaveAttribute('aria-label', 'The plague');
-		const lines = [...plague.container.querySelectorAll('line')].map((l) => Number(l.getAttribute('opacity')));
-		expect(lines.every((o) => o > 0)).toBe(true);
+		expect(plague.container.querySelector('[role="img"]')).toHaveAttribute('aria-label', 'The plague');
+		expect(plague.container.querySelector('canvas')).toBeInTheDocument();
 		const token = render(<HelixPiece mode="token" live={false} label="The token" />);
 		expect(chipOpacity(token.container)).toBe(0);
 	});
@@ -40,4 +63,3 @@ describe('HelixPiece', () => {
 		expect(chipOpacity(container)).toBe(1);
 	});
 });
-
