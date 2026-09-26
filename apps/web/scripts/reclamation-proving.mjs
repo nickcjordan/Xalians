@@ -40,10 +40,15 @@ const GLANCE = [
 let failures = 0;
 
 for (const view of ['simple', 'advanced']) {
-	for (const width of [1440, 390]) {
+	/*
+		PASS 62. 1366 by 768 is the commonest laptop screen, and pass 61's words were hidden on it
+		(and beside your creatures on every screen under 1920 by 1080) while this check ran at 1440
+		and 390 and passed. A check at the size people use is the one that could have failed.
+	*/
+	for (const width of [1440, 1366, 390]) {
 		const label = `${view}-${width}`;
 		const context = await browser.newContext({
-			viewport: { width, height: width === 390 ? 844 : 900 },
+			viewport: { width, height: width === 390 ? 844 : width === 1366 ? 768 : 900 },
 			reducedMotion: 'reduce',
 			isMobile: width === 390,
 			hasTouch: width === 390,
@@ -279,7 +284,8 @@ for (const view of ['simple', 'advanced']) {
 						if (ghosts.length === 0) {
 							out.push('a lifted creature stands as a ghost on no world');
 						}
-						ghosts.forEach((g) => {
+						// pass 62: on a phone, beside your creatures, the ghost stands down and your bar and the card carry its number
+						ghosts.filter((g) => g.getClientRects().length > 0).forEach((g) => {
 							const site = g.closest('[data-site-id]');
 							const w = site.getBoundingClientRect();
 							const read = g.querySelector('.rec-ghost-piece-read') || g;
@@ -335,12 +341,25 @@ for (const view of ['simple', 'advanced']) {
 								below the world's bars, and its words must not lie over a creature already there.
 							*/
 							const world = document.querySelector(`[data-site-id="${id}"]`);
+							const shownGhost = document.querySelector(`[data-ghost-piece="${id}"]`);
+							if (!shownGhost || shownGhost.getClientRects().length === 0) {
+								return;
+							}
 							const read = document.querySelector(`[data-ghost-piece="${id}"] .rec-ghost-piece-read`);
 							const bars = world && world.querySelector('[data-standing]');
 							if (read && bars && read.getBoundingClientRect().top < bars.getBoundingClientRect().bottom - 1) {
 								out.push(`${id}: the ghost's number rides up over the world's bars`);
 							}
 							const words = document.querySelector(`[data-ghost-piece="${id}"] [data-reasons]`);
+							/*
+								PASS 62. The words are fitted by measure, and on a desktop screen they must show
+								wherever something moves the number; on a phone, wherever the ghost stands alone.
+							*/
+							const ghost = document.querySelector(`[data-ghost-piece="${id}"]`);
+							const beside = ghost && ghost.classList.contains('rec-ghost-piece--beside');
+							if (words && (innerWidth >= 1024 || !beside) && getComputedStyle(words).display === 'none') {
+								out.push(`${id}: something moves the number and the words that say what give way (step ${ghost.getAttribute('data-says-fit')})`);
+							}
 							if (words && getComputedStyle(words).display !== 'none') {
 								const wr = words.getBoundingClientRect();
 								world.querySelectorAll('[data-rank="mine"] .rec-figure').forEach((fig) => {
@@ -349,6 +368,15 @@ for (const view of ['simple', 'advanced']) {
 									}
 								});
 							}
+							// pass 62: nor its number and chain on their names and bars (two of yours stand one per row across the half, and the number sat on their names)
+							[read, document.querySelector(`[data-ghost-piece="${id}"] [data-ghost-chain]`)].filter((part) => part && part.getClientRects().length > 0).forEach((part) => {
+								const pr = part.getBoundingClientRect();
+								world.querySelectorAll('[data-rank="mine"] .rec-figure .rec-figure-plate, [data-rank="mine"] .rec-figure .rec-figure-foot').forEach((fig) => {
+									if (fig.getClientRects().length > 0 && hits(pr, fig.getBoundingClientRect())) {
+										out.push(`${id}: the ghost's number lies over a creature of yours`);
+									}
+								});
+							});
 						});
 						document.querySelectorAll('[data-standing]').forEach((st) => {
 							const site = st.closest('[data-site-id]');

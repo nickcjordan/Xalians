@@ -505,16 +505,18 @@ export function RoundTrack({ track, frameIndex }) {
 	hourglass, the Proctor's scales) where yours carries the piece. Hot-seat has no rival
 	persona, and both rows keep the piece.
 */
-export function ScorePips({ mine, theirs, toClinch, rivalPassed, mySends, theirSends, myCap, theirCap, worldsAhead, sendsTone, turn, rivalEmblem }) {
+export function ScorePips({ mine, theirs, toClinch, rivalPassed, mySends, theirSends, myCap, theirCap, worldsAhead, sendsTone, turn, rivalEmblem, over }) {
 	// pass 54: each world won is a pennant, the same flag the Ruling plants on the winner's bar
 	// pass 58: one world from winning, that side's last pennant burns, so the game's stakes are on the table and not only in a count
+	// pass 62: and it goes out when the game is over (the loser's kept burning under "You win the game")
+	const point = (n, i) => !over && i === n && n === toClinch - 1;
 	const row = (n, side) => Array.from({ length: toClinch }).map((_, i) => (
-		<i className={`rec-pip rec-pip--flag rec-pip--${side}${i < n ? ' rec-pip--lit' : ''}${i === n && n === toClinch - 1 ? ' rec-pip--point' : ''}`} key={`${i}-${i < n ? 'lit' : 'dark'}`} data-match-point={i === n && n === toClinch - 1 ? side : undefined}>
+		<i className={`rec-pip rec-pip--flag rec-pip--${side}${i < n ? ' rec-pip--lit' : ''}${point(n, i) ? ' rec-pip--point' : ''}`} key={`${i}-${i < n ? 'lit' : 'dark'}`} data-match-point={point(n, i) ? side : undefined}>
 			<svg viewBox="0 0 12 14" aria-hidden="true"><path className="rec-pip-staff" d="M2.5 13.5V1" /><path className="rec-pip-cloth" d="M2.5 1.5h8L8.3 4.8l2.2 3.3h-8z" /></svg>
 		</i>
 	));
-	const point = [theirs === toClinch - 1 ? ' The rival is one world from winning.' : '', mine === toClinch - 1 ? ' You are one world from winning.' : ''].join('');
-	const label = `First to ${toClinch} worlds wins. The rival has ${theirs}, you have ${mine}.${point}${rivalPassed ? ' The rival has passed this round.' : ''}`;
+	const near = over ? '' : [theirs === toClinch - 1 ? ' The rival is one world from winning.' : '', mine === toClinch - 1 ? ' You are one world from winning.' : ''].join('');
+	const label = `First to ${toClinch} worlds wins. The rival has ${theirs}, you have ${mine}.${near}${rivalPassed ? ' The rival has passed this round.' : ''}`;
 	const lamp = (side) => (
 		<span
 			className={`rec-turn-lamp rec-turn-lamp--${side}${turn === side ? ' rec-turn-lamp--on' : ''}`}

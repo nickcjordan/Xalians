@@ -7784,16 +7784,42 @@
    card, what it does in bold ("Too cold for it: it holds half."), and why in plain ink
    ("Zolton runs −40 to 20°C; Hippochamp is comfortable at 5 to 35°C."). */
 .rec-console--match[data-terminal] .rec-ghost-piece--says { justify-content: flex-end; padding-bottom: calc(6px * var(--rec-scale)); }
-/* the silhouette gives way first, so the words fit the half they stand in: your half of a world is
-   142 to 232 pixels tall from a 720 to an 1100 pixel screen, and only a taller one keeps the figure */
+/*
+   pass 62: what fits is measured (reclamationWorld's GhostPiece), not guessed from the half's
+   height: each step gives up one thing, and the first that fits is kept. The silhouette only
+   ever shows in a tall half, and first gives way.
+*/
 .rec-console--match[data-terminal] .rec-ghost-piece--says .rec-ghost-piece-art { display: none; }
 @container (min-height: 300px) {
 	.rec-console--match[data-terminal] .rec-ghost-piece--says { --ghost: clamp(24px, calc(100cqh - 250px), 90px); }
-	.rec-console--match[data-terminal] .rec-ghost-piece--says .rec-ghost-piece-art { display: block; }
+	.rec-console--match[data-terminal] .rec-ghost-piece--says:not([data-says-art]) .rec-ghost-piece-art { display: block; }
 }
-@container (max-height: 210px) {
-	.rec-console--match[data-terminal] .rec-ghost-piece--says .rec-ghost-piece-read b { font-size: calc(var(--st-num) * 1.25); }
-	.rec-console--match[data-terminal] .rec-ghost-piece--says .rec-reasons { font-size: calc(12px * var(--rec-scale)); gap: 2px; padding-block: 3px; }
+.rec-console--match[data-terminal] .rec-ghost-piece--says[data-says-small] .rec-ghost-piece-read b { font-size: calc(var(--st-num) * 1.25); }
+.rec-console--match[data-terminal] .rec-ghost-piece--says[data-says-small] { gap: 2px; padding-bottom: 2px; }
+.rec-console--match[data-terminal] .rec-ghost-piece--says[data-says-small] .rec-reasons { font-size: calc(12px * var(--rec-scale)); line-height: 1.22; gap: 2px; padding-block: 3px; }
+.rec-console--match[data-terminal] .rec-ghost-piece--says[data-says-chain] .rec-ghost-piece-chain { display: none; }
+.rec-console--match[data-terminal] .rec-ghost-piece--says[data-says-why] .rec-reason-cause { display: none; }
+.rec-console--match[data-terminal] .rec-ghost-piece--says[data-says-words] .rec-reasons { display: none; }
+/* measured in the same frame they change: nothing here may ease, and the site's reduced-motion rule
+   gives every property a 0.01ms transition, which leaves the measure a frame behind */
+.rec-console--match[data-terminal] .rec-site-floor .rec-rank--mine,
+.rec-console--match[data-terminal] .rec-ghost-piece--says,
+.rec-console--match[data-terminal] .rec-ghost-piece--says * { transition-property: none; }
+/* through the Deploy your creatures stand in the left of your half, and the right is kept for the one
+   pointed at or lifted, so pointing moves nothing; a long chain wraps inside it */
+@media (min-width: 761px) {
+	.rec-console--match[data-terminal] .rec-site-floor .rec-rank--mine[data-ghost-lane] { padding-right: 50%; }
+	.rec-console--match[data-terminal] .rec-rank[data-ghost-lane] > .rec-ghost-piece--beside .rec-reasons { width: 44%; }
+	.rec-console--match[data-terminal] .rec-rank[data-ghost-lane] > .rec-ghost-piece--beside .rec-ghost-piece-chain { max-width: 46%; flex-wrap: wrap; justify-content: flex-end; }
+}
+/* the small step sets the chain smaller too, so a chain that wraps in the lane leaves the words their room */
+.rec-console--match[data-terminal] .rec-ghost-piece--says[data-says-small] .rec-ghost-piece-chain { font-size: calc(var(--st-num) * 0.62); }
+.rec-console--match[data-terminal] .rec-ghost-piece--says[data-says-small] .rec-ghost-piece-chain .rec-ghost-piece-whys { --why: calc(var(--st-num) * 0.62); }
+.rec-console--match[data-terminal] .rec-ghost-piece--says[data-says-small] .rec-ghost-piece-chain .rec-why-x { font-size: calc(var(--st-num) * 0.56); }
+/* a phone's world is 110 pixels wide, and beside your creatures there is no corner the ghost's number
+   does not sit on one of their names: there your bar and the lifted card carry its number */
+@media (max-width: 760px) {
+	.rec-console--match[data-terminal] .rec-ghost-piece--beside { display: none; }
 }
 .rec-console--match[data-terminal] .rec-reasons {
 	list-style: none;
@@ -7824,21 +7850,42 @@
 .rec-console--match[data-terminal] .rec-reason-mark.rec-why--hot { color: var(--g-lamp-amber); }
 .rec-console--match[data-terminal] .rec-reason-mark.rec-why--falls { color: var(--rec-loss); }
 .rec-console--match[data-terminal] .rec-reason-effect { color: var(--g-ink); font-weight: 700; }
-/* beside your creatures the ghost has the room right of them: what each thing does, not why */
+/* beside your creatures the ghost has the room right of them; the measured steps decide how much it says */
 .rec-console--match[data-terminal] .rec-ghost-piece--beside .rec-reasons { width: min(30%, 13em); font-size: calc(12px * var(--rec-scale)); }
-.rec-console--match[data-terminal] .rec-ghost-piece--beside .rec-reason-cause { display: none; }
-/* a short half keeps what each thing does and drops why; a very short one keeps the chain alone */
-@container (max-height: 150px) {
-	.rec-console--match[data-terminal] .rec-reason-cause { display: none; }
-}
-/* beside your creatures on a short world the words would push the number off the top: the chain carries it */
-@container (max-height: 170px) {
-	.rec-console--match[data-terminal] .rec-ghost-piece--beside .rec-reasons { display: none; }
-}
-@container (max-height: 90px) {
-	.rec-console--match[data-terminal] .rec-reasons { display: none; }
-}
 @media (max-width: 760px) {
-	.rec-console--match[data-terminal] .rec-reasons { font-size: 10px; padding: 2px 4px; gap: 2px; }
-	.rec-console--match[data-terminal] .rec-reason-cause { display: none; }
+	.rec-console--match[data-terminal] .rec-ghost-piece--says[data-says-fit] .rec-reasons { font-size: 10px; padding: 2px 4px; gap: 2px; }
+}
+
+/* --- pass 62: the audit ------------------------------------------------------------------
+   docs/design/reclamation-audit-2026-09-26.md. The Court's words in the top bar fit it. A
+   callout there already has the bar's edge, so it needs no padding above and below (on a phone
+   its third line was cut in half); during the Clash the skip key takes the kicker's room (at 1440
+   the message was squeezed to 148 pixels and cut at its first line and its last); and a message
+   that runs long is cut at its end, never at its start. */
+.rec-console--match[data-terminal] .rec-status-say .rec-callout { padding-block: 2px; }
+.rec-console--match[data-terminal] .rec-status-say--skip { align-content: start; }
+.rec-console--match[data-terminal] .rec-status-say--skip .rec-callout-kicker { display: none; }
+.rec-console--match[data-terminal] .rec-status-say--skip .rec-callout-text { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; }
+@media (max-width: 760px) {
+	.rec-console--match[data-terminal] .rec-status-say .rec-callout { padding: 0 var(--g-2); }
+}
+
+/* pass 62: on the result, a creature that fell is named where it fell, struck, and a bolster's
+   give-back is said in words ("mended 32"), not a bare "+32" beside the hold it made */
+.rec-report-creature--fell .rec-report-creature-name { color: var(--g-ink-low); text-decoration: line-through; text-decoration-color: color-mix(in srgb, var(--g-ink-low) 70%, transparent); }
+.rec-report-creature--fell .rec-role-glyph { opacity: 0.55; }
+.rec-report-creature-recovered { font-size: var(--g-size-micro); color: var(--g-ink-mid); }
+
+/* pass 62: advanced mode's head carries the world's place as well as its name and climate. Pass 57
+   set the head to one line, and the place's full-width basis squeezed the name to nothing and laid
+   the place under the climate readout. Name and climate on the first line, the place under them. */
+.rec-console--match[data-terminal] .rec-match--advanced .rec-site-head { flex-wrap: wrap; align-content: center; row-gap: 2px; }
+.rec-console--match[data-terminal] .rec-match--advanced .rec-site-head .rec-site-name { flex: 0 0 auto; }
+.rec-console--match[data-terminal] .rec-match--advanced .rec-site-head .rec-site-place { order: 3; flex: 1 0 100%; min-width: 0; }
+/* a card's numbers shrink to their column when it is narrow: beside advanced mode's log a column is 20 pixels, and "13 10 9" ran together as "131069" */
+@media (min-width: 761px) and (max-height: 820px) {
+	.rec-console--match[data-terminal] .rec-plinth .rec-fit-num { font-size: min(13px, 100cqw / 1.2); }
+}
+@media (min-width: 761px) and (min-height: 821px) {
+	.rec-console--match[data-terminal] .rec-plinth .rec-fit-num { font-size: min(calc(18px * var(--rec-scale)), 100cqw / 1.2); }
 }

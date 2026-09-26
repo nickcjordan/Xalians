@@ -80,6 +80,16 @@ describe('reasonLines', () => {
 		expect(text(reasonLines({ why: { going: 12, own: 0, falls: true }, record: frackworm, site: zolton, blows: falls }))).toEqual(['It falls in the Clash (it goes in with 12). Venemist strikes it for 14.']);
 	});
 
+	// pass 62: "It steadies itself: +6" at one world and "+1" at the next, with nothing to tell them apart
+	it('says whether a bolster eased the world a grade or added the flat 1', () => {
+		const hot = reasonLines({ why: { climate: { level: 'strained', cause: 'hot', factor: 0.5 }, selfLift: 6 }, record: frackworm, site: zolton, tolerance: warm });
+		expect(hot.find((l) => l.key === 'self').cause).toBe('A bolster eases the heat one grade for it. Its lift reaches every creature of yours at its world, itself included.');
+		const easy = reasonLines({ why: { selfLift: 1 }, record: frackworm, site: zolton, tolerance: warm });
+		expect(easy.find((l) => l.key === 'self').cause).toBe('A bolster adds 1 where the world does not strain it. Its lift reaches every creature of yours at its world, itself included.');
+		const steadied = reasonLines({ why: { climate: { level: 'severe', cause: 'cold', factor: 0.25 }, company: 3 }, record: frackworm, site: zolton, tolerance: warm });
+		expect(steadied.find((l) => l.key === 'company').cause).toBe('A bolster of yours here eases the cold one grade for it.');
+	});
+
 	it('says nothing for a creature nothing moves', () => {
 		expect(reasonLines({ why: { going: 9, own: 9 }, record: frackworm, site: zolton, tolerance: warm, blows: { taken: [], downs: [], recovered: 0, unlifted: 0, alliesDowned: [], falls: false } })).toEqual([]);
 	});
