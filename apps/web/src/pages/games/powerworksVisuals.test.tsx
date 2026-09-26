@@ -480,24 +480,27 @@ describe("Powerworks radial orders round 2: the card's words, the bar's preview,
     const target = { left: 300, top: 60, right: 400, bottom: 160 };
     const roomy = [{ left: 100, top: 60, right: 800, bottom: 400 }];
     const z = beatZoom([actor, target], roomy, 1000, 450, CAMERA.push, 6);
-    expect(z.s).toBe(1.06);
+    expect(z.s).toBe(CAMERA.push);
     expect(inside(z, [...roomy, actor, target])).toBe(true);
     // The midpoint of the pair (260, 205) moves toward the stage center (500, 225).
     const mid = { x: z.tx + z.s * 260, y: z.ty + z.s * 205 };
     expect(Math.abs(mid.x - 500)).toBeLessThan(Math.abs(260 - 500));
+    // But only a drift: at most CAMERA.lead on each axis beyond where the lean alone leaves it.
+    expect(Math.abs(mid.x - 260)).toBeLessThanOrEqual(CAMERA.lead + 0.5);
+    expect(Math.abs(mid.y - 205)).toBeLessThanOrEqual(CAMERA.lead + 0.5);
     // Whole pixels: the pushed layer never stands on a half pixel.
     expect(Number.isInteger(z.tx) && Number.isInteger(z.ty)).toBe(true);
     // No room at all: the camera stays put. No focus: the camera stays put.
     expect(beatZoom([actor], [{ left: 0, top: 0, right: 1000, bottom: 20 }], 1000, 450, CAMERA.push, 6)).toEqual(IDENTITY);
     expect(beatZoom([], roomy, 1000, 450, CAMERA.push, 6)).toEqual(IDENTITY);
-    // A row that spans the stage leaves the full push no pan: the camera pushes less, and the
-    // action still comes toward the centre by its lead (round 3 review).
+    // A row that spans the stage: the camera pushes no more than the full lean, and the action
+    // still comes toward the centre by its lead (round 3 review, calm pass).
     const wide = [{ left: 60, top: 60, right: 940, bottom: 400 }];
     const right = { left: 700, top: 250, right: 800, bottom: 350 };
     const far = { left: 760, top: 60, right: 860, bottom: 160 };
     const w = beatZoom([right, far], wide, 1000, 450, CAMERA.push, 6);
     expect(w.s).toBeGreaterThan(1);
-    expect(w.s).toBeLessThan(1.06);
+    expect(w.s).toBeLessThanOrEqual(CAMERA.push);
     expect(inside(w, [...wide, right, far])).toBe(true);
     const was = (750 + 810) / 2;
     expect(was - (w.tx + w.s * was)).toBeGreaterThanOrEqual(CAMERA.lead - 0.5);
@@ -516,11 +519,9 @@ describe("Powerworks radial orders round 2: the card's words, the bar's preview,
     // An action banner holding the floor: every box stays above it.
     const banned = beatZoom([actor, target], roomy, 1000, 450, CAMERA.push, 6, 380);
     expect(roomy.every((b) => banned.ty + banned.s * b.bottom <= 380 - 6 + 1e-6)).toBe(true);
-    // The push and the return each last 250 to 350 ms.
-    for (const ms of [CAMERA.pushMs, CAMERA.returnMs]) {
-      expect(ms).toBeGreaterThanOrEqual(250);
-      expect(ms).toBeLessThanOrEqual(350);
-    }
+    // Calm pass (2026-09-26): a lean of at most 2%, moving over a second or more, never a snap.
+    expect(CAMERA.push).toBeLessThanOrEqual(1.02);
+    for (const ms of [CAMERA.pushMs, CAMERA.returnMs]) expect(ms).toBeGreaterThanOrEqual(1000);
   });
   it("names every removal in plain words, and the words cover every status the records let each method end", () => {
     const seen: Record<string, Set<string>> = {};

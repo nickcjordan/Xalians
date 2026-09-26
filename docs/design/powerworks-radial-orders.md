@@ -130,3 +130,17 @@ Nick, 2026-09-24, on the live page at 2549x1435: the content was "shrunken down 
 | 6 | **A phone on its side asks to be turned upright.** A coarse-pointer landscape screen under 480 pixels tall used to scroll 260 pixels; it now shows one line, "Turn your screen upright to play." | 80% | 844x390 scrolled; games are one fixed screen |
 
 Paint checks (headless Chrome, `scratchpad/layout/snap.cjs`, `play.cjs`, `camp.cjs`): no page scroll at 3440x1440, 2560x1440, 1920x1080, 1440x900, 1280x720, 1024x768 and 390x844; the stage measures 2560x1208 at 2560x1440 and 1280x604 at 1280x720; the wheel opens over the selected figure and the order card aims correctly at zoom 2; playback pushes in on the actor with the banner above the bottom bar and the strip lighting the acting unit; the camp screen and the field guide fit the screen at zoom 2 (the guide was cut off until its viewport units were converted); no console errors.
+
+## Calm pass: playback that does not make you queasy, 2026-09-26
+
+Nick, 2026-09-26, on the live playback: it was "a little jumpy and kind of makes me nauseous zooming around so much"; any zoom should be toned down "a lot and just give a very slight perception of a change in turn", it should "slow down quite a bit", and the actor could be shown by other means, "a vignette or a blur to the stuff out of focus".
+
+| # | Decision | Confidence | Evidence |
+|---|---|---|---|
+| 1 | **A lean, not a zoom.** The playback camera scales to at most 1.015 (was 1.06) and drifts the pair toward the centre by at most 10 pixels on each axis beyond where the lean alone leaves it (was up to 28, and in practice the solver centred the pair: 45 by 28 pixels at 1280x720). One slow even curve, 1,100 ms, `cubic-bezier(0.45, 0, 0.3, 1)`, for every move. | 85% | sampled camera at 1280x720: `matrix(1.015, 0, 0, 1.015, 3, -14)`, before `matrix(1.06, ..., 45, -28)` |
+| 2 | **No pumping.** The camera no longer springs back before every beat. It holds on the beat's pair through the beat and through beats with no actor (a tick, a round heading), drifts on to the next actor, and settles home only when the round ends. | 90% | the push-return cycle was two camera moves every 1.15 seconds |
+| 3 | **Slower.** Every beat, and the moment its blow lands, takes 1.5 times as long (`PLAYBACK_PACE`): a routine blow lands at 540 ms of a 1,725 ms beat. The 1x/2x/0.5x speed control still applies on top. | 75% | Nick: "slow down quite a bit" |
+| 4 | **Focus by light.** A soft spotlight (a radial falloff under the units, following the pair on the same curve) darkens the room around the beat's actor and target; the room behind softens (blur 1.5px, a little desaturated); every creature not in the beat dims (brightness 0.72) and softens (blur 0.8px), and its plaque fades to 72%. Plaques and text are never blurred. Everything returns when the round ends. | 80% | paint checks at 1280x720 and 390x844 |
+| 5 | **Smaller moves.** A melee actor steps 30% of the way to its target (was the whole way) at 1.03 scale (was 1.12); a cast rises 4px (was 8px); a recoil shifts 5px and 2 degrees (was 9px and 5 degrees) over 560 ms (was 380). | 75% | Nick: the view was jumpy |
+
+Reduced motion is unchanged: no camera, no spotlight transitions, the whole beat at once.

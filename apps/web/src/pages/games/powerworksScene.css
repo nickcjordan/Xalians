@@ -410,7 +410,7 @@
   animation: pw-gather var(--action-time) ease-out both;
 }
 .pw-theater[data-action="hit"] .pw-scene-unit.receiving .pw-actor-art {
-  animation: pw-recoil 380ms ease-out both;
+  animation: pw-recoil 560ms ease-out both;
 }
 .pw-scene-float {
   position: absolute;
@@ -573,38 +573,6 @@
     transform: scale(1.7);
   }
 }
-@keyframes pw-lunge {
-  0% {
-    transform: translate(0, 0);
-  }
-  12% {
-    transform: translate(0, 8px) scale(0.94);
-  }
-  27%,
-  34% {
-    transform: translate(var(--travel-x), var(--travel-y)) scale(1.12);
-  }
-  65%,
-  100% {
-    transform: translate(0, 0);
-  }
-}
-@keyframes pw-cast {
-  0% {
-    transform: scale(1);
-  }
-  14% {
-    transform: translateY(5px) scale(0.94);
-  }
-  28% {
-    transform: translateY(-8px) scale(1.08);
-    filter: drop-shadow(0 0 14px var(--accent));
-  }
-  55%,
-  100% {
-    transform: scale(1);
-  }
-}
 @keyframes pw-gather {
   0% {
     filter: brightness(1);
@@ -615,21 +583,6 @@
   }
   100% {
     filter: brightness(1);
-  }
-}
-@keyframes pw-recoil {
-  0% {
-    transform: translateX(0);
-    filter: brightness(2);
-  }
-  30% {
-    transform: translateX(9px) rotate(5deg);
-  }
-  65% {
-    transform: translateX(-5px);
-  }
-  100% {
-    transform: translateX(0);
   }
 }
 @keyframes pw-feedback {
@@ -1764,5 +1717,106 @@
 @media (prefers-reduced-motion: reduce) {
   .pw-stage-zoom {
     transition: none !important;
+  }
+}
+
+/*
+  The calm pass (2026-09-26). Nick: the playback camera zoomed around too much and made him
+  queasy. The camera now only leans (powerworksStage CAMERA), the beats run half again as
+  long (PLAYBACK_PACE), and focus comes from light instead of motion: a soft spotlight on
+  the beat's actor and target, the room darkened and softened around them, and every other
+  creature dimmed a little. Plaques and text are never blurred.
+*/
+.pw-spotlight {
+  position: absolute;
+  left: -50%;
+  top: -50%;
+  width: 200%;
+  height: 200%;
+  z-index: -1;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse 30% 36% at 50% 50%,
+    #00000000 0%,
+    #00000000 40%,
+    #03080cb3 100%
+  );
+  opacity: 0;
+  transition:
+    transform 1100ms cubic-bezier(0.45, 0, 0.3, 1),
+    opacity 700ms ease-out;
+}
+.pw-spotlight[data-lit="on"] {
+  opacity: 1;
+}
+.pw-theater .pw-environment {
+  transition: filter 700ms ease-out;
+}
+.pw-theater.playing .pw-environment {
+  filter: blur(1.5px) saturate(0.8);
+}
+.pw-theater.playing .pw-scene-unit .pw-actor-art {
+  transition: filter 600ms ease-out, opacity 600ms ease-out;
+}
+.pw-theater.playing .pw-scene-unit:not(.in-focus):not(.fallen) .pw-actor-art {
+  filter: brightness(0.72) saturate(0.75) blur(0.8px);
+}
+.pw-theater.playing .pw-scene-unit:not(.in-focus) .pw-unit-plaque {
+  opacity: 0.72;
+  transition: opacity 600ms ease-out;
+}
+/* Motion that stays: the actor still moves toward its target, but a short step, not a leap. */
+@keyframes pw-lunge {
+  0% {
+    transform: translate(0, 0);
+  }
+  18% {
+    transform: translate(0, 4px) scale(0.98);
+  }
+  34%,
+  44% {
+    transform: translate(calc(var(--travel-x) * 0.3), calc(var(--travel-y) * 0.3)) scale(1.03);
+  }
+  75%,
+  100% {
+    transform: translate(0, 0);
+  }
+}
+@keyframes pw-cast {
+  0% {
+    transform: scale(1);
+  }
+  18% {
+    transform: translateY(3px) scale(0.98);
+  }
+  34% {
+    transform: translateY(-4px) scale(1.03);
+    filter: drop-shadow(0 0 12px var(--accent));
+  }
+  60%,
+  100% {
+    transform: scale(1);
+  }
+}
+@keyframes pw-recoil {
+  0% {
+    transform: translateX(0);
+    filter: brightness(1.7);
+  }
+  35% {
+    transform: translateX(5px) rotate(2deg);
+  }
+  70% {
+    transform: translateX(-2px);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pw-spotlight,
+  .pw-theater .pw-environment,
+  .pw-theater.playing .pw-scene-unit .pw-actor-art {
+    transition: none;
   }
 }

@@ -388,11 +388,12 @@ export function PowerworksScene({
     "--impact-delay": `${presentation.impactDelay / speed}ms`,
   } as React.CSSProperties;
 
-  // The camera (round 3): planning holds still. While a round plays, the camera pushes in
-  // on each acting unit and its target for that beat, and returns before the next one.
+  // The camera (round 3, calmed 2026-09-26): planning holds still. While a round plays, it
+  // leans a little toward each beat's actor and target and holds there until the next.
   // Under reduced motion it holds still throughout (no push at all).
   const stageRef = useRef<HTMLElement>(null),
-    layerRef = useRef<HTMLDivElement>(null);
+    layerRef = useRef<HTMLDivElement>(null),
+    spotRef = useRef<HTMLDivElement>(null);
   const stage: StageRefs = { stage: stageRef, layer: layerRef };
   const [size, setSize] = useState("");
   // The unit whose who-targets-it list is showing: only the one a mouse hovers or the
@@ -412,30 +413,34 @@ export function PowerworksScene({
   const beatActor = !planning && !reducedMotion && frame && actor ? actor.id : null;
   const beatTarget =
     beatActor && recipient && recipient.id !== beatActor ? recipient.id : null;
-  const beatKey = beatActor ? `${frameIndex}:${beatActor}` : null;
-  // The beat whose camera has already returned.
-  const [rested, setRested] = useState<string | null>(null);
-  useEffect(() => {
-    if (!beatKey || paused) return;
-    const length = beatMs ?? presentation.duration / speed;
-    const timer = setTimeout(
-      () => setRested(beatKey),
-      Math.max(0, length - CAMERA.returnMs)
-    );
-    return () => clearTimeout(timer);
-  }, [beatKey, paused, beatMs, speed]);
-  const pushed = !!beatKey && rested !== beatKey;
+  // The calm pass (2026-09-26): the camera no longer pushes in and springs back on every
+  // beat. It leans slightly toward the beat's actor and target and stays there, drifting on
+  // to the next actor, through beats with no actor (a tick, a round heading), until the
+  // round ends and it settles home.
+  const held = useRef<{ actor: string; target: string | null } | null>(null);
+  if (planning || !frame || reducedMotion) held.current = null;
+  else if (beatActor) held.current = { actor: beatActor, target: beatTarget };
+  const focusActor = held.current?.actor ?? null,
+    focusTarget = held.current?.target ?? null;
+  const pushed = !!focusActor;
   useLayoutEffect(() => {
     const layer = layerRef.current;
     if (!layer) return;
     let z = IDENTITY;
+    let spot: { x: number; y: number } | null = null;
     const map = pushed ? stageMap(stage, layer) : null;
     if (map && map.width > 0) {
       const box = (id: string | null) => {
         const el = id ? layer.querySelector(`[data-unit="${id}"] .pw-scene-character`) : null;
         return el ? map.flat(el) : null;
       };
-      const focus = [box(beatActor), box(beatTarget)].filter((b): b is Box => !!b);
+      const focus = [box(focusActor), box(focusTarget)].filter((b): b is Box => !!b);
+      // The spotlight follows the same pair: its centre sits between them.
+      if (focus.length) {
+        const cx = focus.reduce((n, b) => n + (b.left + b.right) / 2, 0) / focus.length,
+          cy = focus.reduce((n, b) => n + (b.top + b.bottom) / 2, 0) / focus.length;
+        spot = { x: cx - map.width / 2, y: cy - map.height / 2 };
+      }
       const boxes = [
         ...layer.querySelectorAll(
           ".pw-unit-plaque, .pw-scene-unit:not(.fallen) .pw-scene-character, .pw-scene-status"
@@ -460,14 +465,19 @@ export function PowerworksScene({
     const moved = z.s > 1 || z.tx !== 0 || z.ty !== 0;
     layer.style.transition = reducedMotion
       ? "none"
-      : `transform ${moved ? CAMERA.pushMs : CAMERA.returnMs}ms cubic-bezier(0.2, 0.7, 0.2, 1)`;
+      : `transform ${moved ? CAMERA.pushMs : CAMERA.returnMs}ms ${CAMERA.ease}`;
+    const light = spotRef.current;
+    if (light) {
+      if (spot) light.style.transform = `translate(${spot.x}px, ${spot.y}px)`;
+      light.dataset.lit = spot ? "on" : "off";
+    }
     // At rest the layer carries no transform at all, so nothing on the stage is rasterized
     // through a scale while the player plans (round 3).
     layer.style.transform = moved ? `translate(${z.tx}px, ${z.ty}px) scale(${z.s})` : "";
     layer.dataset.camera = moved ? "push" : "rest";
-    layer.dataset.beat = beatActor ? `${beatActor}>${beatTarget ?? ""}` : "";
+    layer.dataset.beat = focusActor ? `${focusActor}>${focusTarget ?? ""}` : "";
     layer.dataset.zoom = z.s.toFixed(3);
-  }, [pushed, beatActor, beatTarget, frameIndex, size, reducedMotion, team.length, enemies.length]);
+  }, [pushed, focusActor, focusTarget, frameIndex, size, reducedMotion, team.length, enemies.length]);
   useEffect(() => {
     const el = stageRef.current;
     if (!el || typeof ResizeObserver === "undefined") return;
@@ -509,6 +519,9 @@ export function PowerworksScene({
       >
         <div className="pw-stage-zoom" ref={layerRef}>
           <PowerworksEnvironment room={room} />
+          {/* The calm pass's focus: a soft light on the beat's actor and target, the room
+              darker and softer around them. Under the units, so it never dims a plaque. */}
+          <div className="pw-spotlight" ref={spotRef} aria-hidden="true" data-lit="off" />
           <svg
             className={`pw-action-path ${actor ? `el-${actor.element}` : ""}`}
             viewBox="0 0 100 100"
@@ -684,7 +697,9 @@ export function PowerworksScene({
                   selected ? "selected" : ""
                 } ${acting ? `performing ${melee ? "melee" : "ranged"}` : ""} ${
                   receiving && impact ? "receiving" : ""
-                } ${u.hp <= 0 && !beforeKnockout ? "fallen" : ""} ${
+                } ${u.id === focusActor || u.id === focusTarget ? "in-focus" : ""} ${
+                  u.hp <= 0 && !beforeKnockout ? "fallen" : ""
+                } ${
                   u.hp > 0 && u.charge ? "charged" : ""
                 } ${u.hp > 0 && u.bound ? "restrained" : ""} ${
                   u.hp > 0 && u.ward ? "protected" : ""
