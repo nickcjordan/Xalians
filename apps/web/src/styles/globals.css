@@ -322,6 +322,7 @@
 		color: color-mix(in srgb, var(--color-archive-ink) 82%, transparent);
 		text-shadow: 0 0 6px rgb(0 0 0 / .9), 0 0 2px rgb(0 0 0 / .9);
 	}
+	@media (max-width: 719px) { .archive-hud { padding: 8px 10px; } .archive-play { padding: 8px 14px 8px 12px; font-size: var(--text-tiny); } }
 	.archive-hud-status { display: inline-flex; align-items: center; gap: 8px; }
 	.archive-hud-clock { justify-self: end; font-variant-numeric: tabular-nums; }
 	.archive-hud-rec { grid-column: 1 / -1; grid-row: 3; }
@@ -407,7 +408,9 @@
 	   track, a tick where each beat's marker starts and one at the end, the
 	   part behind the dot filled in ink, and the dot itself on the shown beat,
 	   all read from --story-progress (0 to 1), gliding when the beat changes. */
-	.story-line { position: relative; }
+	.story-line { position: relative; --bar-at: var(--story-progress, 0); }
+	/* From lg the items are weighted (the full scenes' names need room; storyViewer.tsx), and so is the dot. */
+	@media (min-width: 1000px) { .story-line { --bar-at: var(--story-progress-lg, var(--story-progress, 0)); } }
 	.story-track {
 		position: absolute;
 		left: 0;
@@ -431,13 +434,13 @@
 		inset: 0;
 		background: var(--color-ink-3);
 		transform-origin: left center;
-		transform: scaleX(var(--story-progress, 0));
+		transform: scaleX(var(--bar-at));
 		transition: transform 520ms var(--ease-out);
 	}
 	.story-dot {
 		position: absolute;
 		top: 50%;
-		left: calc(var(--story-progress, 0) * 100%);
+		left: calc(var(--bar-at) * 100%);
 		width: 10px;
 		height: 10px;
 		border-radius: 50%;
@@ -476,7 +479,8 @@
 	.story-scene[data-state="active"] { z-index: 1; pointer-events: auto; }
 
 	/* One column by default (a phone): the painting takes the height the words
-	   leave it, then its label, then the reading column. The painting's cell
+	   leave it, then the reading column, then the painting's label (the story
+	   comes straight after its picture; the label reads as its caption). The painting's cell
 	   is a size container so the frame fits it by its aspect either way. Its
 	   row never grows past the painting's own height at full width, and the
 	   scene sits centered in the stage, so a tall window gets even space
@@ -492,7 +496,7 @@
 		display: grid;
 		grid-template-columns: minmax(0, 1fr);
 		grid-template-rows: minmax(0, var(--fit)) auto auto;
-		grid-template-areas: "frame" "label" "read";
+		grid-template-areas: "frame" "read" "label";
 		align-content: center;
 		row-gap: 12px;
 		height: 100%;
