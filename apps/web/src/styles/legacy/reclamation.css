@@ -7646,3 +7646,133 @@
 .rec-console--match[data-terminal] .rec-ghost-piece-arrow { color: var(--g-ink-low); font-weight: 400; }
 .rec-console--match[data-terminal] .rec-ghost-piece-allies { display: inline-flex; align-items: center; gap: 1px; color: var(--g-ink); }
 .rec-console--match[data-terminal] .rec-ghost-piece-allies svg { width: calc(var(--st-num) * 0.75); height: calc(var(--st-num) * 0.75); fill: none; stroke: currentColor; stroke-width: 2; }
+
+/* --- pass 60: sides by position --------------------------------------------------------
+   docs/design/reclamation-sides-by-position.md. Nick, 2026-09-24, on the question pass 59
+   left him: "yeah i am fine with removing the use of amber and cyan to denote sides, i think
+   you can do that in better ways".
+
+   A hue on the table now means a world (and, on the badge at a creature's foot, its
+   element); red means what the Clash would take from you; everything else is ink. Whose a
+   thing is, is read from where it sits: the rival above and you below on every world, in the
+   score and on the round track, with your squad at the foot of the table, and "your" in the
+   Clash's words.
+
+   The two side tokens are retuned to ink rather than deleted, so every older rule that names
+   a side still paints, only neutrally; the rules after them give each job its own look. */
+.rec-match,
+.rec-console--match[data-terminal] .rec-match { --rec-you: var(--g-ink); --rec-rival: var(--g-ink); }
+.rec-figure { --rec-team: var(--g-ink-mid); }
+/* the world's own hue, fixed on the world so a creature's element badge inside it cannot retint what is the world's */
+.rec-site { --rec-world: var(--g-el); }
+
+/* the worlds: neither half is painted; the ranks stand at the far and near edges */
+.rec-console--match[data-terminal] .rec-site-floor .rec-rank--theirs { border-top-color: transparent; background: none; }
+.rec-console--match[data-terminal] .rec-site-floor .rec-rank--mine { border-bottom-color: transparent; background: none; }
+
+/* a world's two bars wear the world, as the card columns that feed them do; the rival's above, yours below */
+.rec-console--match[data-terminal] .rec-standing-lane--theirs .rec-standing-track,
+.rec-console--match[data-terminal] .rec-standing-lane--mine .rec-standing-track { box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--g-ink) 10%, transparent); }
+.rec-console--match[data-terminal] .rec-standing-lane--theirs .rec-standing-fill,
+.rec-console--match[data-terminal] .rec-standing-lane--mine .rec-standing-fill { background: color-mix(in srgb, var(--rec-world) 85%, var(--g-hull-lo)); }
+.rec-console--match[data-terminal] .rec-standing-ghost {
+	background: repeating-linear-gradient(90deg, color-mix(in srgb, var(--rec-world) 80%, transparent) 0 3px, color-mix(in srgb, var(--rec-world) 32%, transparent) 3px 5px);
+}
+/* what your send would take off the rival is the rival's bar fading, in the world's hue; red stays yours */
+.rec-console--match[data-terminal] .rec-standing-lane--theirs .rec-standing-loss {
+	background: repeating-linear-gradient(135deg, color-mix(in srgb, var(--rec-world) 55%, transparent) 0 2px, color-mix(in srgb, var(--rec-world) 10%, transparent) 2px 6px);
+	box-shadow: none;
+}
+.rec-console--match[data-terminal] .rec-standing-mark { background: var(--g-ink); }
+
+/* a creature's bar, the same */
+.rec-console--match[data-terminal] .rec-hbar--mine .rec-hbar-fill,
+.rec-console--match[data-terminal] .rec-hbar--theirs .rec-hbar-fill { background: color-mix(in srgb, var(--rec-world, var(--g-ink-mid)) 85%, var(--g-hull-lo)); }
+.rec-console--match[data-terminal] .rec-hbar--theirs .rec-hbar-loss {
+	background: repeating-linear-gradient(135deg, color-mix(in srgb, var(--rec-world, var(--g-ink-mid)) 60%, transparent) 0 2px, color-mix(in srgb, var(--rec-world, var(--g-ink-mid)) 12%, transparent) 2px 4px);
+}
+.rec-console--match[data-terminal] .rec-figure--theirs .rec-figure-mark--falls { filter: drop-shadow(0 0 3px rgba(0, 0, 0, 0.9)); }
+
+/* the acting creature and the Ruling's bar lose their brass too: gold on the table is Zolton's, Endessa's or Luminax's */
+.rec-figure--acting .rec-piece-stage::before { border-color: var(--g-ink); }
+.rec-figure--acting .rec-figure-plate { outline-color: var(--g-ink); }
+.rec-console--match[data-terminal] .rec-match[data-moment="ruling"] .rec-dock > .rec-judge-bar { border-left-color: var(--g-ink-low); }
+
+/* your move: your squad is lit until you lift a creature; then the worlds are the subject and the squad steps back */
+.rec-console--match[data-terminal] .rec-match[data-moment="mine"] .rec-dock > .rec-bench {
+	border-color: color-mix(in srgb, var(--g-ink) 55%, transparent);
+	box-shadow: var(--g-relief), var(--g-drop), inset 0 0 0 1px color-mix(in srgb, var(--g-ink) 30%, transparent);
+}
+.rec-console--match[data-terminal] .rec-match[data-moment="lifted"] .rec-dock > .rec-bench { border-color: var(--g-seam); box-shadow: var(--g-relief), var(--g-drop); }
+.rec-console--match[data-terminal] .rec-match[data-moment="lifted"] .rec-plinth--armed { box-shadow: 0 0 0 2px var(--g-ink), 0 0 14px color-mix(in srgb, var(--g-ink) 30%, transparent); }
+.rec-console--match[data-terminal] .rec-site--targeted { box-shadow: var(--g-relief), 0 0 0 1px var(--g-ink), inset 0 0 24px color-mix(in srgb, var(--g-ink) 6%, transparent); }
+.rec-console--match[data-terminal] .rec-site--targeted:hover { box-shadow: var(--g-relief), 0 0 0 2px var(--g-ink), inset 0 0 32px color-mix(in srgb, var(--g-ink) 10%, transparent); }
+.rec-console--match[data-terminal] .rec-ghost-piece-art { filter: drop-shadow(0 0 8px color-mix(in srgb, var(--g-ink) 30%, transparent)); }
+
+/* the rival's move: no frame on the worlds; the rival's half of each world breathes where its creature will land */
+.rec-console--match[data-terminal] .rec-match[data-moment="theirs"] .rec-sites { box-shadow: none; }
+.rec-console--match[data-terminal] .rec-match[data-moment="theirs"] .rec-site { border-color: color-mix(in srgb, var(--g-ink) 22%, transparent); }
+.rec-console--match[data-terminal] .rec-match[data-moment="theirs"] .rec-site-floor::before {
+	background: linear-gradient(to bottom, color-mix(in srgb, var(--g-ink) 20%, transparent), transparent);
+}
+
+/* the Ruling: the pennant on the winner's bar says who; the world keeps its own frame */
+.rec-console--match[data-terminal] .rec-site--verdict-yours,
+.rec-console--match[data-terminal] .rec-site--verdict-theirs { border-color: color-mix(in srgb, var(--g-ink) 22%, transparent); box-shadow: none; }
+
+/* the round track: a world won fills the winner's half, the rival's top and yours bottom, in the world's hue */
+.rec-console--match[data-terminal] .rec-track-world--theirs { background: linear-gradient(to bottom, var(--g-el) 50%, transparent 50%); border-color: var(--g-el); }
+.rec-console--match[data-terminal] .rec-track-world--mine { background: linear-gradient(to top, var(--g-el) 50%, transparent 50%); border-color: var(--g-el); }
+.rec-console--match[data-terminal] .rec-track-world--tie { background: linear-gradient(to bottom, transparent 36%, var(--g-el) 36% 64%, transparent 64%); border-color: var(--g-el); }
+
+/* the key's own marks, and what is still reachable, in ink */
+.rec-legend-ring { border-color: var(--g-ink); box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0), 0 0 12px color-mix(in srgb, var(--g-ink) 40%, transparent); }
+.rec-legend-badge,
+.rec-legend-n { background: var(--g-ink); color: var(--g-ink-invert); }
+.rec-legend-key { border-color: color-mix(in srgb, var(--g-ink) 40%, transparent); }
+.rec-status-reach[data-still-reachable="behind"],
+.rec-status-reach[data-still-reachable="won"],
+.rec-status-reach[data-still-reachable="lost"] { border-left-color: var(--g-ink-mid); }
+
+/* the game's report: its words say whose; the winner's number is the brighter */
+.rec-report-world--you,
+.rec-report-world--rival { border-left-color: var(--g-rule); }
+.rec-report-hold--you,
+.rec-report-hold--rival,
+.rec-report-figure .rec-report-hold--you,
+.rec-report-figure .rec-report-hold--rival { color: var(--g-ink-mid); }
+.rec-report-hold--winner.rec-report-hold--you,
+.rec-report-hold--winner.rec-report-hold--rival { color: var(--g-ink); }
+
+/* the key never runs past the foot of the screen: its list scrolls and its buttons stay put */
+.rec-legend-key { display: flex; flex-direction: column; }
+.rec-legend-key .rec-legend-list { flex: 1 1 auto; min-height: 0; overflow-y: auto; }
+.rec-legend-key .rec-legend-actions { flex: 0 0 auto; }
+
+/* the rival's row carries the rival's own emblem where yours carries the piece */
+.rec-console--match[data-terminal] .rec-sends svg.rec-sends-emblem { display: block; width: calc(17px * var(--rec-scale)); height: calc(17px * var(--rec-scale)); fill: none; stroke: currentColor; stroke-width: 2; opacity: 0.9; }
+@media (max-width: 760px) {
+	.rec-console--match[data-terminal] .rec-sends svg.rec-sends-emblem { width: 11px; height: 11px; }
+}
+
+/* the phone's top bar keeps its four columns: a later desktop rule gave every width five, which put
+   the tools over the end of the score and hid both sides' sends (and now the rival's emblem) */
+@media (max-width: 760px) {
+	.rec-console--match[data-terminal] .rec-status,
+	.rec-console--match[data-terminal] .rec-match--simple .rec-status { grid-template-columns: auto auto minmax(0, 1fr) auto; column-gap: 4px; }
+	.rec-console--match[data-terminal] .rec-status-tools .rec-tool { padding: 0 5px; }
+	.rec-console--match[data-terminal] .rec-leave { padding: 0 6px; }
+	.rec-console--match[data-terminal] .rec-track { gap: 2px; }
+	.rec-console--match[data-terminal] .rec-track-round { padding: 1px; gap: 1px; }
+	.rec-console--match[data-terminal] .rec-scoreboard { column-gap: 3px; }
+	/* the score takes the rest of the first row; the tools sit at the end of the second, beside the news */
+	.rec-console--match[data-terminal] .rec-status-score { grid-column: 3 / -1; grid-row: 1; }
+	.rec-console--match[data-terminal] .rec-status-tools { grid-column: 4; grid-row: 2; align-self: start; }
+	.rec-console--match[data-terminal] .rec-status-say { grid-column: 1 / 4; grid-row: 2; }
+	/* the news is narrower beside the tools, so it may run to three lines; the bar grows 8px to hold them */
+	.rec-console--match[data-terminal] { --os-status: 100px; }
+	.rec-console--match[data-terminal] .rec-status-hint,
+	.rec-console--match[data-terminal] .rec-status-say .rec-callout-text { -webkit-line-clamp: 3; font-size: 13px; line-height: 1.2; }
+	.rec-console--match[data-terminal] .rec-status-say { height: 100%; }
+	.rec-console--match[data-terminal] .rec-status-hint { max-height: 3lh; }
+}

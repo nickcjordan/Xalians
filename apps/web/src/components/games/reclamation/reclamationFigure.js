@@ -1,22 +1,24 @@
 import React from 'react';
 import { speciesLabel, formatHold, formatHoldShown, roleSentence } from './reclamationNarration';
-import { RoleGlyph } from './reclamationGlyphs';
+import { RoleGlyph, PIECE_RIM } from './reclamationGlyphs';
 import XalianImage from '../../xalianImage';
 import XalianTypeSymbolBadge from '../duel/board/xalianTypeSymbolBadge';
 import { pieceShadowFilter } from '../duel/board/duelPieceToken';
 import { getSpeciesTemplate } from '@xalians/rules/generator';
-import { team } from '../../../constants/designTokens';
 import { HoldBar, WhyMarks } from './reclamationInstruments';
 
 /*
 	ReclamationFigure — one creature standing at a site.
 
 	It is the Duel's piece (Nick, 2026-09-04: reuse the duel design system rather than a
-	fresh one). The species silhouette stands on the floor with a rim of light in its
-	side's colour (cyan for you, brass for the rival, the same two paints the Duel uses),
-	the element disc pinned at its foot, and its name on a stencilled plate below with
+	fresh one). The species silhouette stands on the floor with a rim of light, the
+	element disc pinned at its foot, and its name on a stencilled plate below with
 	the live hold stamped large beside it, because hold is the number this game is
 	counted in. The rival's figures face down the table; yours face up.
+
+	PASS 60. The rim was the side's colour (cyan for you, brass for the rival, the Duel's
+	two paints) until Nick ruled the side colours off the table; it is now one neutral
+	rim for both, and a figure's side is read from the rank it stands in.
 
 	Every number here is passed in from the engine's own prepare(); this component never
 	computes one.
@@ -139,7 +141,6 @@ function ReclamationFigure({
 }) {
 	const mine = seat === you;
 	const px = size === 'small' ? 40 : FIGURE_SIZE;
-	const teamHex = mine ? team.one : team.two;
 	const classes = ['rec-figure', 'rec-piece'];
 	classes.push(mine ? 'rec-figure--mine' : 'rec-figure--theirs');
 	classes.push(facing === 'down' ? 'rec-figure--down' : 'rec-figure--up');
@@ -195,7 +196,7 @@ function ReclamationFigure({
 		<button
 			type="button"
 			className={classes.join(' ')}
-			style={{ '--rec-team': mine ? 'var(--g-team-one)' : 'var(--g-team-two)', '--rec-piece': `${px}px` }}
+			style={{ '--rec-piece': `${px}px` }}
 			onClick={onClick}
 			title={title || name}
 			aria-label={`${name}${typeof hold === 'number' ? `, hold ${formatHold(hold)}` : ''}${mine ? ', yours' : ', the rival’s'}`}
@@ -213,7 +214,7 @@ function ReclamationFigure({
 						primaryType={element || 'ghost'}
 						padding="0px"
 						fill="black"
-						filter={pieceShadowFilter(teamHex, px)}
+						filter={pieceShadowFilter(PIECE_RIM, px)}
 						moreClasses="rec-piece-art"
 					/>
 				)}
@@ -274,13 +275,13 @@ function ReclamationFigure({
 
 /*
 	A hidden send from the rival: the opponent sees that a creature was sent, not which
-	one or where. Drawn as an empty stage in the rival's paint with a blank plate.
+	one or where. Drawn as an empty stage with a blank plate, in the rival's rank.
 */
 export function ReclamationSilhouette({ count }) {
 	return (
 		<div className="rec-silhouettes" aria-label={`${count} hidden send${count === 1 ? '' : 's'}`}>
 			{Array.from({ length: count }).map((_, i) => (
-				<div className="rec-figure rec-piece rec-figure--theirs rec-figure--silhouette rec-figure--down" style={{ '--rec-team': 'var(--g-team-two)', '--rec-piece': '40px' }} key={i}>
+				<div className="rec-figure rec-piece rec-figure--theirs rec-figure--silhouette rec-figure--down" style={{ '--rec-piece': '40px' }} key={i}>
 					<span className="rec-piece-stage" aria-hidden="true"><span className="rec-piece-base" /><span className="rec-piece-unknown">?</span></span>
 					<span className="rec-figure-plate"><span className="rec-figure-name">unknown</span></span>
 				</div>

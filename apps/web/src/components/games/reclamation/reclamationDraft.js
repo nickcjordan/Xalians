@@ -2,11 +2,10 @@ import { elementOf } from './reclamationVocabulary';
 import React from 'react';
 import XalianImage from '../../xalianImage';
 import { pieceShadowFilter } from '../duel/board/duelPieceToken';
-import { team } from '../../../constants/designTokens';
 import { speciesLabel, formatHold } from './reclamationNarration';
 import { rateForDraft, botDraft } from '@xalians/rules/expedition/draft';
 import { ROSTER_SIZE } from '@xalians/rules/expedition/expeditionInterpretation';
-import { HiddenGlyph } from './reclamationGlyphs';
+import { HiddenGlyph, PIECE_RIM } from './reclamationGlyphs';
 
 /*
 	ReclamationDraft — keep twelve of fifteen before the Proving.
@@ -55,7 +54,7 @@ function DraftCard({ record, frames, kept, onToggle }) {
 		>
 			<span className="rec-plinth-stage" aria-hidden="true">
 				<span className="rec-plinth-base" />
-				<XalianImage variant="token" speciesName={record.species} primaryType={el} padding="0px" fill="black" filter={pieceShadowFilter(team.one, 44)} moreClasses="rec-plinth-art" />
+				<XalianImage variant="token" speciesName={record.species} primaryType={el} padding="0px" fill="black" filter={pieceShadowFilter(PIECE_RIM, 44)} moreClasses="rec-plinth-art" />
 			</span>
 			<span className="rec-plinth-name">{speciesLabel(record)}</span>
 			{/* the nine lamps ARE the nine worlds, one row per round, in the order the frame

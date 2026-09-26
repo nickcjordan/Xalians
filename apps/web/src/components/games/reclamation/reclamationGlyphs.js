@@ -1,4 +1,12 @@
 import React from 'react';
+import { ink } from '../../../constants/designTokens';
+
+/*
+	PASS 60. The rim of light every silhouette on the table wears, yours and the rival's
+	alike. It was the side's colour (cyan or brass) until the side colours left the table;
+	a creature's side is now read from where it stands.
+*/
+export const PIECE_RIM = ink.mid;
 
 /*
 	Glyphs for the Reclamation intro and bench: stroke icons in the console's ink, so a

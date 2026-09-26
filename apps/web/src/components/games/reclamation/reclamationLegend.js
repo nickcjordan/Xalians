@@ -14,11 +14,11 @@ import React from 'react';
 	left out rather than pointed at nothing.
 */
 export const LEGEND_ITEMS = [
-	{ key: 'track', selector: '[data-round-track]', text: 'The nine worlds of the game, three rounds of three. Each fills with the color of whoever won it.' },
-	{ key: 'score', selector: '[data-score]', text: 'Worlds won toward five: the rival’s row above in brass, yours below in cyan. The pointer is whose move it is; the ticks and the number after them are the sends each side has left. Eleven sends from twelve creatures: one always stays back.' },
-	{ key: 'standing', selector: '[data-standing]', text: 'What each side would hold here after the Clash: the rival’s bar and total above in brass, yours below in cyan, on one scale for all three worlds. The longer bar takes it. Hatched is what the Clash takes; pass the brass mark to lead.' },
+	{ key: 'track', selector: '[data-round-track]', text: 'The nine worlds of the game, three rounds of three. A world won fills its top half for the rival, its bottom half for you.' },
+	{ key: 'score', selector: '[data-score]', text: 'Worlds won toward five: the rival’s row above, with its emblem, and yours below with a piece, as on every world. The pointer is whose move it is; the ticks and the number after them are the sends each side has left. Eleven sends from twelve creatures: one always stays back.' },
+	{ key: 'standing', selector: '[data-standing]', text: 'What each side would hold here after the Clash: the rival’s bar and total above, yours below, in the world’s color and on one scale for all three worlds. The longer bar takes it. Hatched is what the Clash takes; pass the rival’s mark to lead.' },
 	{ key: 'world', selector: '[data-site-id]', fallbackFor: 'standing', text: 'A world goes to whoever holds more of it after the Clash. The rival stands above the seam, you below.' },
-	{ key: 'bar', selector: '[data-rank] .rec-figure-foot', text: 'A creature’s hold. A red striped end is what the Clash would take from it.' },
+	{ key: 'bar', selector: '[data-rank] .rec-figure-foot', text: 'A creature’s hold, in its world’s color. A striped end is what the Clash would take from it, red when the creature is yours.' },
 	{ key: 'fit', selector: '[data-slot-state="hand"] [data-fit]', text: 'What it would hold at each world if you sent it now, one column per world in the worlds’ own order and colors. Hatched red is what the Clash would take off it. A tag at the top is the rival’s total there now and after it (12→0). Past the small pointer, you would lead there.' },
 	{ key: 'why', selector: '[data-slot-state="hand"] .rec-fit .rec-why', text: 'The dashed box is what it holds at a world that neither helps nor hurts it. Under each column, what changed it and by how much: a house ×1½ on its home world; a flame or a snowflake ×½ where the world is too hot or too cold (×¼ when far off); the world’s air or water struck out ×½ or ×¼ where it cannot breathe. No mark: the world leaves it as it is.' },
 	{ key: 'climate', selector: '[data-site-id] .rec-env-scale', text: 'The world’s temperature band. Point at a creature and its own band lies over it: where the two miss, the world strains it.' },
@@ -140,7 +140,8 @@ export default function ReclamationLegend({ onClose, onRules }) {
 				</React.Fragment>
 			))}
 			{key && (
-				<div className="g-panel rec-legend-key" ref={panelRef} style={{ left: Math.max(8, key.left), top: key.top, width: key.width }}>
+				// pass 60: the key stops at the foot of the screen and its list scrolls, so Got it is always in view (nine entries ran past the bottom at 1100 high)
+				<div className="g-panel rec-legend-key" ref={panelRef} style={{ left: Math.max(8, key.left), top: key.top, width: key.width, maxHeight: `calc(100dvh - ${Math.round(key.top) + 8}px)` }}>
 					<ol className="rec-legend-list">
 						{items.map((item) => (
 							<li key={item.key} data-legend-item={item.key}>
