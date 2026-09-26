@@ -2,7 +2,7 @@
 
 Status: shipped in pass 58. It builds on `reclamation-attention-and-why.md` (pass 57); where they disagree, this document wins.
 
-Pass 59 (`reclamation-read-the-card.md`) reversed this document's assumption 2: Nick read the cyan columns as pointing at the blue world, and a card is only ever yours, so its columns wear their worlds' colors again and the card carries no side color. The rest (never adding the two sides; the rival's side at the column's top) stands.
+Pass 59 (`reclamation-read-the-card.md`) reversed this document's assumption 2: Nick read the cyan columns as pointing at the blue world, and a card is only ever yours, so its columns wear their worlds' colors again and the card carries no side color. The rest (never adding the two sides; the rival's side at the column's top) stands. Pass 60 (`reclamation-sides-by-position.md`) then took cyan and brass off the whole table: "cyan is yours and brass is the rival's" below is history, and a side is now told by position.
 
 ## What Nick asked
 

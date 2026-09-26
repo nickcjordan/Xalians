@@ -104,6 +104,13 @@ for (const view of ['simple', 'advanced']) {
 				table's own panels (the resolution log among them) were never exercised here.
 				Assert the mode took, or the check quietly goes back to testing one thing twice.
 			*/
+			/*
+				PASS 60. The table builds its creatures from the seed after its last chunk arrives,
+				which takes 550 to 650 ms on this machine, and networkidle fires 500 ms after the
+				last request, so reading the switch at networkidle raced the render and failed on
+				main as often as not. Wait for the switch to be drawn, then ask which mode it shows.
+			*/
+			await page.locator('[data-mode-switch] [aria-pressed="true"]').first().waitFor({ state: 'attached', timeout: 20000 }).catch(() => {});
 			const modeNow = await page.evaluate(() => {
 				const pressed = document.querySelector('[data-mode-switch] [aria-pressed="true"]');
 				return pressed ? pressed.getAttribute('data-mode') : null;

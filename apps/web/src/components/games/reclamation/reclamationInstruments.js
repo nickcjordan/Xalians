@@ -1,7 +1,7 @@
 import React from 'react';
 import { formatHold, formatHoldShown, wholeOrTenths } from './reclamationNarration';
 import { FIT_SCALE, HOLD_BAR_SCALE } from './reclamationFit';
-import { HomeGlyph, StrainGlyph, CompanyGlyph, FallsGlyph, NoMediumGlyph, PieceGlyph, RoleGlyph } from './reclamationGlyphs';
+import { HomeGlyph, StrainGlyph, CompanyGlyph, FallsGlyph, NoMediumGlyph, PieceGlyph, RoleGlyph, RivalGlyph } from './reclamationGlyphs';
 
 /*
 	PASS 52, THE GLANCE REDESIGN (docs/design/reclamation-glance-redesign.md).
@@ -498,8 +498,14 @@ export function RoundTrack({ track, frameIndex }) {
 	move" and "Rival's move" words; the other row's head is empty. The sends left are a
 	row of ticks, one per send the game allows, lit for each one still to spend, with the
 	count after them, in place of a chevron and a bare number.
+
+	PASS 60. With the side colors gone the two rows differ only by place, and a blind reader
+	had to count sends against the squad to be sure which row was theirs. So the rival's row
+	carries the rival's own emblem (`rivalEmblem`, the one chosen in the lobby: the Envoy's
+	hourglass, the Proctor's scales) where yours carries the piece. Hot-seat has no rival
+	persona, and both rows keep the piece.
 */
-export function ScorePips({ mine, theirs, toClinch, rivalPassed, mySends, theirSends, myCap, theirCap, worldsAhead, sendsTone, turn }) {
+export function ScorePips({ mine, theirs, toClinch, rivalPassed, mySends, theirSends, myCap, theirCap, worldsAhead, sendsTone, turn, rivalEmblem }) {
 	// pass 54: each world won is a pennant, the same flag the Ruling plants on the winner's bar
 	// pass 58: one world from winning, that side's last pennant burns, so the game's stakes are on the table and not only in a count
 	const row = (n, side) => Array.from({ length: toClinch }).map((_, i) => (
@@ -526,7 +532,7 @@ export function ScorePips({ mine, theirs, toClinch, rivalPassed, mySends, theirS
 			<span className="rec-score-row rec-score-row--theirs" data-sites-b={theirs} title={label} aria-label={label} role="img">
 				{row(theirs, 'theirs')}
 			</span>
-			{typeof theirSends === 'number' ? <SendCount left={theirSends} cap={theirCap} side="theirs" worldsAhead={worldsAhead} /> : <span />}
+			{typeof theirSends === 'number' ? <SendCount left={theirSends} cap={theirCap} side="theirs" worldsAhead={worldsAhead} emblem={rivalEmblem} /> : <span />}
 			<span className="rec-score-passed-slot">
 				{rivalPassed && <span className="rec-score-passed" data-rival-passed title="The rival has passed this round"><svg viewBox="0 0 12 12" aria-hidden="true"><rect x="2.5" y="2" width="2.4" height="8" /><rect x="7.1" y="2" width="2.4" height="8" /></svg></span>}
 			</span>
@@ -538,13 +544,13 @@ export function ScorePips({ mine, theirs, toClinch, rivalPassed, mySends, theirS
 	);
 }
 
-export function SendCount({ left, cap, side, worldsAhead, tone }) {
+export function SendCount({ left, cap, side, worldsAhead, tone, emblem }) {
 	const who = side === 'theirs' ? 'The rival has' : 'You have';
 	const label = `${who} ${left} send${left === 1 ? '' : 's'} left${typeof worldsAhead === 'number' ? ` for the ${worldsAhead} world${worldsAhead === 1 ? '' : 's'} still to play` : ''}`;
 	const total = Math.max(typeof cap === 'number' ? cap : left, left);
 	return (
 		<span className={`rec-sends rec-sends--${side}${tone ? ` rec-sends--${tone}` : ''}`} title={label} aria-label={label} role="img" data-sends-left={left} data-sends-side={side}>
-			<PieceGlyph className="rec-sends-glyph" />
+			{(emblem && <RivalGlyph id={emblem} className="rec-sends-emblem" />) || <PieceGlyph className="rec-sends-glyph" />}
 			<span className="rec-sends-ticks" aria-hidden="true">
 				{Array.from({ length: total }).map((_, i) => <i className={`rec-send-tick${i < left ? ' rec-send-tick--left' : ''}${i > 0 && i % 5 === 0 ? ' rec-send-tick--five' : ''}`} key={i} />)}
 			</span>

@@ -1208,3 +1208,30 @@ Every engine question (each side's hold after a send, who leads, which creature 
 - A verdict per column ("7 v 0"), asked for by three readers across passes 57 to 59.
 - The send counter's one held back.
 - Carried: whether element should matter; strike keepers near 67 to 68 percent.
+
+### Pass 60 (2026-09-24): sides by position
+
+**Nick**, answering pass 59's one question: "yeah i am fine with removing the use of amber and cyan to denote sides, i think you can do that in better ways". The design and every number are in `reclamation-sides-by-position.md`.
+
+- **The rule:** a hue on the table means a world (or, on its badge, a creature's element); red means what the Clash would take from you; everything else is ink. 77 kinds of element wore a side color on the live table; a repaint audit finds none now.
+- **How a side is told:**
+  - the rival above and you below, on every world, in the score and on the round track (a won world fills the winner's half);
+  - the rival's emblem on its score row;
+  - "your" in the Clash's line ("Your Frackworm downs Venemist");
+  - a world's bars and its creatures' bars in the world's hue, as the card columns that feed them.
+- **Less gold:** the acting frame and the Ruling's bar edge are ink; the rival's loss is hatched in the world's fading hue, so red stays yours.
+- **Found and fixed:**
+  - the key ran past the foot of an 1100-pixel screen, hiding "Got it";
+  - on a phone the tool buttons covered the end of the score and both sides' sends (a desktop rule had given every width five columns);
+  - the proving check raced the table's first render (550 to 650 ms after the last chunk against networkidle's 500) and failed on main as often as here; it now waits for the switch.
+
+**Measured.** Three blind readers, same seed before and after, rules not saying whose half is whose. Every answer right in all three (whose each creature is, the score, whose move, each world, the Clash, the Ruling, the round track). Scores (yours versus the rival's / numbers / good move): live 7/4/6, first build 5/4/6, shipped with the emblem 6/4/6. The cost is confidence, not accuracy, and it sits in the score rows: both readers after the change counted sends across screens to find their row.
+
+**Verified:** rules tests (630) and web tests pass (one species-art test lost to load, passes alone); the four table checks are green.
+
+**Open:**
+
+- The score rows: seat your row with your squad at the foot of the table (position, not a label); it needs a home that survives the Clash folding the squad away.
+- Dullness carries four meanings (trailing, waiting, out of focus, fallen); element badges are now the loudest color on a creature.
+- A verdict per column ("7 v 0"); the fight's cause on the card and the ghost; the send counter's one held back.
+- Carried: whether element should matter; strike keepers near 67 to 68 percent.

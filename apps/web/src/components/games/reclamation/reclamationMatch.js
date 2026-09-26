@@ -1843,6 +1843,7 @@ class ReclamationMatch extends React.Component {
 
 				<div className="rec-status-score">
 					<ScorePips
+						rivalEmblem={this.hotSeat ? null : this.rival && this.rival.id}
 						mine={you.sitesWon}
 						theirs={them.sitesWon}
 						toClinch={toClinch}

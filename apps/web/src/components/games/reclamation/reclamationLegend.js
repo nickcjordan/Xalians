@@ -15,7 +15,7 @@ import React from 'react';
 */
 export const LEGEND_ITEMS = [
 	{ key: 'track', selector: '[data-round-track]', text: 'The nine worlds of the game, three rounds of three. A world won fills its top half for the rival, its bottom half for you.' },
-	{ key: 'score', selector: '[data-score]', text: 'Worlds won toward five: the rival’s row above, yours below, as on every world. The pointer is whose move it is; the ticks and the number after them are the sends each side has left. Eleven sends from twelve creatures: one always stays back.' },
+	{ key: 'score', selector: '[data-score]', text: 'Worlds won toward five: the rival’s row above, with its emblem, and yours below with a piece, as on every world. The pointer is whose move it is; the ticks and the number after them are the sends each side has left. Eleven sends from twelve creatures: one always stays back.' },
 	{ key: 'standing', selector: '[data-standing]', text: 'What each side would hold here after the Clash: the rival’s bar and total above, yours below, in the world’s color and on one scale for all three worlds. The longer bar takes it. Hatched is what the Clash takes; pass the rival’s mark to lead.' },
 	{ key: 'world', selector: '[data-site-id]', fallbackFor: 'standing', text: 'A world goes to whoever holds more of it after the Clash. The rival stands above the seam, you below.' },
 	{ key: 'bar', selector: '[data-rank] .rec-figure-foot', text: 'A creature’s hold, in its world’s color. A striped end is what the Clash would take from it, red when the creature is yours.' },

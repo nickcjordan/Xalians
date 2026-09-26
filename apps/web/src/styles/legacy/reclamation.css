@@ -7748,3 +7748,31 @@
 .rec-legend-key { display: flex; flex-direction: column; }
 .rec-legend-key .rec-legend-list { flex: 1 1 auto; min-height: 0; overflow-y: auto; }
 .rec-legend-key .rec-legend-actions { flex: 0 0 auto; }
+
+/* the rival's row carries the rival's own emblem where yours carries the piece */
+.rec-console--match[data-terminal] .rec-sends svg.rec-sends-emblem { display: block; width: calc(17px * var(--rec-scale)); height: calc(17px * var(--rec-scale)); fill: none; stroke: currentColor; stroke-width: 2; opacity: 0.9; }
+@media (max-width: 760px) {
+	.rec-console--match[data-terminal] .rec-sends svg.rec-sends-emblem { width: 11px; height: 11px; }
+}
+
+/* the phone's top bar keeps its four columns: a later desktop rule gave every width five, which put
+   the tools over the end of the score and hid both sides' sends (and now the rival's emblem) */
+@media (max-width: 760px) {
+	.rec-console--match[data-terminal] .rec-status,
+	.rec-console--match[data-terminal] .rec-match--simple .rec-status { grid-template-columns: auto auto minmax(0, 1fr) auto; column-gap: 4px; }
+	.rec-console--match[data-terminal] .rec-status-tools .rec-tool { padding: 0 5px; }
+	.rec-console--match[data-terminal] .rec-leave { padding: 0 6px; }
+	.rec-console--match[data-terminal] .rec-track { gap: 2px; }
+	.rec-console--match[data-terminal] .rec-track-round { padding: 1px; gap: 1px; }
+	.rec-console--match[data-terminal] .rec-scoreboard { column-gap: 3px; }
+	/* the score takes the rest of the first row; the tools sit at the end of the second, beside the news */
+	.rec-console--match[data-terminal] .rec-status-score { grid-column: 3 / -1; grid-row: 1; }
+	.rec-console--match[data-terminal] .rec-status-tools { grid-column: 4; grid-row: 2; align-self: start; }
+	.rec-console--match[data-terminal] .rec-status-say { grid-column: 1 / 4; grid-row: 2; }
+	/* the news is narrower beside the tools, so it may run to three lines; the bar grows 8px to hold them */
+	.rec-console--match[data-terminal] { --os-status: 100px; }
+	.rec-console--match[data-terminal] .rec-status-hint,
+	.rec-console--match[data-terminal] .rec-status-say .rec-callout-text { -webkit-line-clamp: 3; font-size: 13px; line-height: 1.2; }
+	.rec-console--match[data-terminal] .rec-status-say { height: 100%; }
+	.rec-console--match[data-terminal] .rec-status-hint { max-height: 3lh; }
+}
