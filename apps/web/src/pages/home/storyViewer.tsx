@@ -12,8 +12,16 @@
 // like a shot: the picture arrives, then it moves. The whole viewer holds still
 // while it is mostly off the screen or the tab is hidden.
 //
+// A short pause on the way past (Nick, 2026-09-26: "a slight pause in the
+// middle of the screen and then it's a tiny bit sticky when you start to
+// scroll again"): the section is a little taller than the viewer, and the
+// viewer is CSS-sticky at the height that centers it, so it comes to rest in
+// the middle of the screen for `DWELL` of scroll and then moves on with the
+// page. Native sticky, no scroll listener, and the story never moves with it.
+//
 // A window too short for the box (a small phone, a phone on its side) shows the
-// shown beat in the page at its natural height instead, with the same controls.
+// shown beat in the page at its natural height instead, with the same controls
+// and no pause.
 import * as React from 'react';
 import { ArrowDown, ArrowLeft, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -45,6 +53,8 @@ const SETTLE_MS = 1150;
 const EXIT_MS = 700;
 // The box needs this much window; below it the shown beat sits in the page.
 const BOX_QUERY = '(min-width: 1000px) and (min-height: 560px), (min-height: 700px)';
+// How much scroll the viewer rests in the middle of the screen for.
+const DWELL = '32svh';
 
 function reducedMotion() {
 	return typeof window !== 'undefined' && !!window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -58,6 +68,8 @@ function canBox() {
 export function StoryViewer({ id, title, beats, after }: { id: string; title: React.ReactNode; beats: ViewerBeat[]; after?: string }) {
 	const wrapRef = React.useRef<HTMLElement>(null);
 	const boxRef = React.useRef<HTMLDivElement>(null);
+	const pinRef = React.useRef<HTMLDivElement>(null);
+	const [pinTop, setPinTop] = React.useState(0);
 	const [boxed, setBoxed] = React.useState(canBox);
 	const [index, setIndex] = React.useState(0);
 	const [settled, setSettled] = React.useState(-1);
@@ -73,6 +85,21 @@ export function StoryViewer({ id, title, beats, after }: { id: string; title: Re
 		mq.addEventListener?.('change', apply);
 		return () => mq.removeEventListener?.('change', apply);
 	}, []);
+
+	// Where the viewer rests: the height that centers it on the screen.
+	React.useEffect(() => {
+		const pin = pinRef.current;
+		if (!boxed || !pin || typeof window === 'undefined') return undefined;
+		const measure = () => setPinTop(Math.max(8, Math.round((window.innerHeight - pin.offsetHeight) / 2)));
+		measure();
+		window.addEventListener('resize', measure);
+		const ro = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(measure) : null;
+		ro?.observe(pin);
+		return () => {
+			window.removeEventListener('resize', measure);
+			ro?.disconnect();
+		};
+	}, [boxed]);
 
 	// The picture mostly on the screen: the only time anything in it may move.
 	React.useEffect(() => {
@@ -160,92 +187,103 @@ export function StoryViewer({ id, title, beats, after }: { id: string; title: Re
 	const beat = beats[index];
 
 	return (
-		<section id={id} ref={wrapRef} aria-labelledby={`${id}-title`} aria-roledescription="carousel" className="story-viewer scroll-mt-16 pt-8">
-			<div className="flex flex-wrap items-end gap-x-10 gap-y-2 pb-4 lg:pb-5">
-				{title}
-				{/* The chapter bar: one marker per beat, the dot on the shown one. */}
-				<div className="story-line min-w-64 flex-1" style={{ '--story-progress': index / count } as React.CSSProperties}>
-					<ol className="m-0 flex list-none p-0" aria-label="Chapters">
-						{beats.map((b, i) => (
-							<li key={b.key} className="m-0 min-w-0 flex-1">
-								<button
-									type="button"
-									onClick={() => go(i)}
-									aria-label={`${b.n} ${b.label}`}
-									aria-current={i === index ? 'step' : undefined}
-									data-reached={i <= index ? '' : undefined}
-									data-minor={b.minor ? '' : undefined}
-									className={cn(
-										'story-marker type-data flex h-11 w-full min-w-0 items-end gap-2 pb-3 pl-2 text-left text-tiny tracking-legend transition-colors duration-1 ease-out focus-visible:outline-2 focus-visible:outline-ring',
-										i === index ? 'text-ink' : 'text-ink-3 hover:text-ink-2'
-									)}
-								>
-									<span>{b.n}</span>
-									{b.minor ? null : <span className="type-legend hidden truncate text-current lg:inline">{b.label}</span>}
-								</button>
-							</li>
-						))}
-					</ol>
-					<span aria-hidden="true" className="story-track">
-						<span className="story-fill" />
-						<span className="story-dot" />
+		<section
+			id={id}
+			ref={wrapRef}
+			aria-labelledby={`${id}-title`}
+			aria-roledescription="carousel"
+			className="story-viewer scroll-mt-16 pt-8"
+		>
+			{/* The viewer itself, resting in the middle of the screen for a moment on the way past. */}
+			<div ref={pinRef} className={cn(boxed && 'sticky')} style={boxed ? { top: pinTop } : undefined}>
+				<div className="flex flex-wrap items-end gap-x-10 gap-y-2 pb-4 lg:pb-5">
+					{title}
+					{/* The chapter bar: one marker per beat, the dot on the shown one. */}
+					<div className="story-line min-w-64 flex-1" style={{ '--story-progress': index / count } as React.CSSProperties}>
+						<ol className="m-0 flex list-none p-0" aria-label="Chapters">
+							{beats.map((b, i) => (
+								<li key={b.key} className="m-0 min-w-0 flex-1">
+									<button
+										type="button"
+										onClick={() => go(i)}
+										aria-label={`${b.n} ${b.label}`}
+										aria-current={i === index ? 'step' : undefined}
+										data-reached={i <= index ? '' : undefined}
+										data-minor={b.minor ? '' : undefined}
+										className={cn(
+											'story-marker type-data flex h-11 w-full min-w-0 items-end gap-2 pb-3 pl-2 text-left text-tiny tracking-legend transition-colors duration-1 ease-out focus-visible:outline-2 focus-visible:outline-ring',
+											i === index ? 'text-ink' : 'text-ink-3 hover:text-ink-2'
+										)}
+									>
+										<span>{b.n}</span>
+										{b.minor ? null : <span className="type-legend hidden truncate text-current lg:inline">{b.label}</span>}
+									</button>
+								</li>
+							))}
+						</ol>
+						<span aria-hidden="true" className="story-track">
+							<span className="story-fill" />
+							<span className="story-dot" />
+						</span>
+					</div>
+				</div>
+
+				<div
+					ref={boxRef}
+					className={cn('story-box relative', boxed ? 'h-[clamp(360px,calc(100svh-14.5rem),820px)]' : '')}
+					data-boxed={boxed ? '' : undefined}
+					onTouchStart={onTouchStart}
+					onTouchEnd={onTouchEnd}
+					aria-live="polite"
+				>
+					{beats.map((b, i) => {
+						const shown = i === index || i === leaving;
+						if (!boxed && i !== index) return null;
+						return (
+							<div
+								key={b.key}
+								className="story-scene"
+								role="group"
+								aria-roledescription="slide"
+								aria-label={`${b.n} of ${beats[count - 1].n}: ${b.label}`}
+								aria-hidden={i === index ? undefined : true}
+								inert={i === index ? undefined : true}
+								data-state={i === index ? 'active' : i < index ? 'past' : 'future'}
+							>
+								{b.render(liveNow(i), shown)}
+							</div>
+						);
+					})}
+				</div>
+
+				{/* Back and Next, with where the reader is. On the last beat Next reads on into the page. */}
+				<div className="mt-4 flex items-center justify-between gap-4">
+					<span className="type-data text-tiny tracking-legend text-ink-3" aria-hidden="true">
+						{beat.n} / {beats[count - 1].n}
 					</span>
+					<div className="flex items-center gap-3">
+						<Button type="button" variant="outline" onClick={() => go(index - 1)} disabled={index === 0}>
+							<ArrowLeft aria-hidden="true" />
+							Back
+						</Button>
+						{last && after ? (
+							<Button asChild variant="secondary">
+								<a href={after}>
+									Read on
+									<ArrowDown aria-hidden="true" />
+								</a>
+							</Button>
+						) : (
+							<Button type="button" variant="secondary" onClick={() => go(index + 1)} disabled={last}>
+								Next
+								<ArrowRight aria-hidden="true" />
+							</Button>
+						)}
+					</div>
 				</div>
 			</div>
-
-			<div
-				ref={boxRef}
-				className={cn('story-box relative', boxed ? 'h-[clamp(360px,calc(100svh-14.5rem),820px)]' : '')}
-				data-boxed={boxed ? '' : undefined}
-				onTouchStart={onTouchStart}
-				onTouchEnd={onTouchEnd}
-				aria-live="polite"
-			>
-				{beats.map((b, i) => {
-					const shown = i === index || i === leaving;
-					if (!boxed && i !== index) return null;
-					return (
-						<div
-							key={b.key}
-							className="story-scene"
-							role="group"
-							aria-roledescription="slide"
-							aria-label={`${b.n} of ${beats[count - 1].n}: ${b.label}`}
-							aria-hidden={i === index ? undefined : true}
-							inert={i === index ? undefined : true}
-							data-state={i === index ? 'active' : i < index ? 'past' : 'future'}
-						>
-							{b.render(liveNow(i), shown)}
-						</div>
-					);
-				})}
-			</div>
-
-			{/* Back and Next, with where the reader is. On the last beat Next reads on into the page. */}
-			<div className="mt-4 flex items-center justify-between gap-4">
-				<span className="type-data text-tiny tracking-legend text-ink-3" aria-hidden="true">
-					{beat.n} / {beats[count - 1].n}
-				</span>
-				<div className="flex items-center gap-3">
-					<Button type="button" variant="outline" onClick={() => go(index - 1)} disabled={index === 0}>
-						<ArrowLeft aria-hidden="true" />
-						Back
-					</Button>
-					{last && after ? (
-						<Button asChild variant="secondary">
-							<a href={after}>
-								Read on
-								<ArrowDown aria-hidden="true" />
-							</a>
-						</Button>
-					) : (
-						<Button type="button" variant="secondary" onClick={() => go(index + 1)} disabled={last}>
-							Next
-							<ArrowRight aria-hidden="true" />
-						</Button>
-					)}
-				</div>
-			</div>
+			{/* The room it rests over: inside the section, so the sticky viewer has it to travel in (padding would not count). */}
+			{boxed ? <div aria-hidden="true" style={{ height: DWELL }} /> : null}
 		</section>
 	);
 }
