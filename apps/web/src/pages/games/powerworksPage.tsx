@@ -2061,6 +2061,19 @@ export default function PowerworksPage() {
               </section>
               <section>
                 <h3>
+                  <Zap />
+                  Size, speed and element
+                </h3>
+                <p>
+                  Machines lock onto the largest bodies more often. A creature
+                  quicker than a machine slips part of its blow: 1% less harm
+                  per point of speed it has over the attacker, up to 30%. Only
+                  elemental moves have a matchup; a physical strike lands the
+                  same on everything.
+                </p>
+              </section>
+              <section>
+                <h3>
                   <Heart />
                   Helping a squadmate
                 </h3>

@@ -49,6 +49,7 @@ import {
   DRAFT_SEEDS_PER_SPECIES,
   ENCOUNTER_STALL_ROUNDS,
   SAVE_VERSION,
+  MACHINE_HP_FACTOR,
   SQUAD_SIZE,
   ENTRANCE_IMMUNITY_OPPORTUNITIES,
   FRIGHTENED_OUTPUT_FACTOR,
@@ -626,14 +627,18 @@ describe("Powerworks battle rules", () => {
     expect(r.revival).toBe(1);
     expect(r.xp).toBe(0);
   });
-  it("replays a version 9 starter history deterministically and rejects versions 1 to 8", () => {
+  it("replays a version 10 starter history deterministically and rejects versions 1 to 9", () => {
     const s = createRun(41);
     const q = orders(s);
     const action = { kind: "round" as const, orders: q };
     const history = [{ kind: "draft", squad: "starter" }, action];
-    expect(SAVE_VERSION).toBe(9);
-    const restored = restoreRun(JSON.stringify({ version: 9, seed: 41, history }));
+    expect(SAVE_VERSION).toBe(10);
+    const restored = restoreRun(JSON.stringify({ version: 10, seed: 41, history }));
     expect(restored.state).toEqual(command(s, action));
+    // A version 9 history was played under the pass 8 harm and machine numbers (pass 9).
+    expect(() => restoreRun(JSON.stringify({ version: 9, seed: 41, history }))).toThrow(
+      "Unsupported save."
+    );
     // A drafted version 8 history was played against decision 55's machine HP, since
     // withdrawn, so its orders would resolve against other numbers from chamber 2 on.
     expect(() => restoreRun(JSON.stringify({ version: 8, seed: 41, history }))).toThrow(
@@ -706,9 +711,9 @@ describe("Powerworks battle rules", () => {
     target.ward = false;
     const neutral = { ...target, element: "fire" } as Unit;
     expect(b.moves[0].name).toBe("Clamp strike");
-    // The starter keeps the rows as written (decision 55 scales drafted runs only).
-    expect(b.hp).toBe(110);
-    expect(b.max).toBe(110);
+    // The row's 110 at the facility's HP lever (pass 9), the same for every squad.
+    expect(b.hp).toBe(Math.round(110 * MACHINE_HP_FACTOR));
+    expect(b.max).toBe(b.hp);
     expect(b.speed).toBe(65);
     // Neutral matchup: 7 for the strike, 18 for the surge, both at attr 50.
     expect(damagePreview(b, b.moves[0], neutral)).toBe(7);
@@ -1797,11 +1802,14 @@ describe("Powerworks reactions", () => {
       }
       return { s, history, reacted };
     };
-    const { s, history, reacted } = play(11);
+    // The first seed from 11 whose played run reaches a reaction (pass 9's levers moved seed 11's run).
+    let seed = 11;
+    while (seed < 60 && !play(seed).reacted) seed++;
+    const { s, history, reacted } = play(seed);
     expect(reacted, "no reaction occurred in the played run").toBe(true);
     expect(history.some((c) => c.kind === "advance")).toBe(true);
     const restored = restoreRun(
-      JSON.stringify({ version: SAVE_VERSION, seed: 11, history: [{ kind: "draft", squad: "starter" }, ...history] })
+      JSON.stringify({ version: SAVE_VERSION, seed, history: [{ kind: "draft", squad: "starter" }, ...history] })
     );
     expect(restored.state).toEqual(s);
     expect(restored.state.log.some((l) => /Core discharge/.test(l))).toBe(true);
@@ -2754,7 +2762,7 @@ function anyOrders(s: Run): Record<string, Order> {
       })
   );
 }
-describe("Powerworks chambers read their rows as written (decision 55 withdrawn)", () => {
+describe("Powerworks chambers read their rows the same for every squad (decision 55 withdrawn)", () => {
   /** Every chamber's machines as the run enters it, walking the rooms the way `boss()` does. */
   function chambers(start: Run) {
     let s = start;
@@ -2767,10 +2775,11 @@ describe("Powerworks chambers read their rows as written (decision 55 withdrawn)
     return seen;
   }
   const rowHp = (room: number, id: string) =>
-    Number(cards.rooms[room].enemies.find((row) => row[1] === id)![2]);
-  // No handicap follows which creatures a squad holds: a drafted run meets the starter's machines.
+    Math.round(Number(cards.rooms[room].enemies.find((row) => row[1] === id)![2]) * MACHINE_HP_FACTOR);
+  // No handicap follows which creatures a squad holds: a drafted run meets the starter's machines,
+  // every machine at its row HP times the facility's one HP lever (pass 9).
   for (const squad of ["starter", [1, 2, 4, 7]] as const)
-    it(`keeps every chamber at the rows as written (${squad === "starter" ? "starter" : "drafted"})`, () => {
+    it(`keeps every chamber at its rows times MACHINE_HP_FACTOR (${squad === "starter" ? "starter" : "drafted"})`, () => {
       chambers(createRun(3, squad === "starter" ? "starter" : [...squad])).forEach((enemies, room) => {
         for (const e of enemies) {
           expect(e.hp, `${room}:${e.id}`).toBe(rowHp(room, e.id));
@@ -2914,9 +2923,10 @@ describe("Powerworks pass 6: the stalemate rule (decision 52)", () => {
     fitAll(s, () => fitted("Glancing Tap", [harm(0)]));
     for (let round = 1; round < ENCOUNTER_STALL_ROUNDS; round++) s = resolveRound(s, tapAll(s)).state;
     expect(s.stalled).toBe(ENCOUNTER_STALL_ROUNDS - 1);
-    // One companion lands one point: progress, so the count starts again.
+    // One companion lands a point or so: progress, so the count starts again. Intensity 20 so
+    // the blow still lands a point through the most a nimble target can slip (pass 9).
     const nudge = { ...tapAll(s), [s.team[0].id]: { move: 0, target: s.enemies[0].id } };
-    fitOnly(s.team[0], fitted("Scratch", [harm(10)]));
+    fitOnly(s.team[0], fitted("Scratch", [harm(20)]));
     const after = resolveRound(s, nudge).state;
     expect(after.phase).toBe("planning");
     expect(after.stalled).toBe(0);

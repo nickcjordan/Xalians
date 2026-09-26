@@ -580,7 +580,7 @@ describe("Powerworks radial orders round 3: element on the move, every mark earn
     // A physical strike says what sets its matchup: its creature's own element.
     const kick = cardMarks(hippo, named(hippo, "Crushing Kick"));
     expect(kick.map((m) => m.text)).toEqual(["Harm"]);
-    expect(kick[0].tip).toMatch(/matched by Hippochamp's own water element/);
+    expect(kick[0].tip).toMatch(/Physical, so it lands the same on every element/);
     // A pull, and the signature's once-per-encounter rule as an icon with its tooltip.
     expect(words(hippo, "Repelling Slam")).toEqual(["Pull"]);
     const cannon = cardMarks(hippo, named(hippo, "Emergency Water Cannon"));

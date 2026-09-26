@@ -152,6 +152,30 @@ export type SimStats = {
   lookaheadOverrides: number;
   /** What the look-ahead chose instead, by kind (`overrideKind`). */
   lookaheadOverrideKinds: Record<string, number>;
+  /** Pass 9 rows: what each species did for its squad, summed over the runs it was in (`credit`). */
+  contrib: Record<string, Contribution>;
+  /** Pass 9: one row per run, for the species value fit (`speciesValue`). */
+  runRecords: { species: string[]; rooms: number; won: boolean; hpLeft: number }[];
+};
+/**
+  Pass 9: what one companion did for its squad, by channel. `dealt` is harm to machines,
+  degrading ticks it applied included; `taken` is harm it absorbed; `healed` is HP it restored
+  to squadmates; `guards` counts wards and guarding statuses it gave squadmates; `denied`
+  counts machine opportunities its effects cost them (a stun or trance it applied, a closing
+  move its bind stopped, a charge it broke); `fell` counts knockouts.
+*/
+export type Contribution = {
+  runs: number;
+  dealt: number;
+  taken: number;
+  healed: number;
+  guards: number;
+  denied: number;
+  fell: number;
+  /** The creature as drafted, summed over its runs: max HP, speed, and its best move-card power. */
+  max: number;
+  speed: number;
+  power: number;
 };
 
 /**
@@ -573,6 +597,15 @@ export function playRun(seed: number, stats: SimStats, options: SimOptions = SHI
       ? greedyDraft(seed)
       : "starter";
   let s: Run = createRun(seed, squad);
+  for (const u of s.team) {
+    const c = (stats.contrib[u.species] ??= emptyContribution());
+    c.runs++;
+    c.max += u.max;
+    c.speed += u.speed;
+    c.power += Math.max(0, ...u.moves.map((m) => basePower(u, m)));
+  }
+  /** Who last bound each machine, so a closing move the binding stops is credited to it. */
+  const binder = new Map<string, string>();
   // Pass 6 rows: who was drafted and which acts the squad carried.
   for (const u of s.team) {
     (stats.squadSpecies[u.species] ??= { runs: 0, wins: 0 }).runs++;
@@ -768,8 +801,18 @@ export function playRun(seed: number, stats: SimStats, options: SimOptions = SHI
       row.areaOnly += reached.areaOnly.size;
       row.allies += reached.allies.size;
     }
+    credit(stats, result.frames, binder);
     s = result.state;
   }
+  stats.runRecords.push({
+    species: s.team.map((u) => u.species),
+    rooms: s.phase === "won" ? 4 : rooms - 1,
+    won: s.phase === "won",
+    hpLeft:
+      s.phase === "won"
+        ? s.team.reduce((n, u) => n + Math.max(0, u.hp), 0) / s.team.reduce((n, u) => n + u.max, 0)
+        : 0,
+  });
   stats.encounters += rooms;
   stats.roomsReached.push(rooms);
   if (s.phase === "planning" || s.phase === "camp") stats.stalledRuns++;
@@ -779,6 +822,129 @@ export function playRun(seed: number, stats: SimStats, options: SimOptions = SHI
     stats.wins++;
     for (const u of s.team) stats.squadSpecies[u.species].wins++;
   } else stats.losses++;
+}
+
+const emptyContribution = (): Contribution => ({
+  runs: 0,
+  dealt: 0,
+  taken: 0,
+  healed: 0,
+  guards: 0,
+  denied: 0,
+  fell: 0,
+  max: 0,
+  speed: 0,
+  power: 0,
+});
+/**
+  Pass 9: credit one round's events to the companions that caused them. A companion is keyed
+  by species (a squad never holds two of one). A tick or a lost opportunity is credited to the
+  source of the condition that caused it, read from the frame before the event.
+*/
+function credit(stats: SimStats, frames: Frame[], binder: Map<string, string>) {
+  frames.forEach((f, k) => {
+    const e = f.event;
+    if (!e || e.kind === "round") return;
+    const before = k > 0 ? frames[k - 1] : f;
+    const all = [...before.team, ...before.enemies];
+    const unit = (id?: string) => all.find((u) => u.id === id);
+    const companion = (id?: string) => before.team.find((u) => u.id === id);
+    const row = (u: Unit) => (stats.contrib[u.species] ??= emptyContribution());
+    const sourceOf = (victim: Unit | undefined, status?: string) =>
+      companion(victim?.conditions.find((c) => c.status === status)?.source);
+    const actor = unit(e.actorId),
+      target = unit(e.targetId);
+    const ally = (u?: Unit): u is Unit => !!u && !u.enemy;
+    if (e.kind === "hit" && ally(actor) && target?.enemy) row(actor).dealt += e.amount ?? 0;
+    if (e.kind === "hit" && ally(target)) {
+      row(target).taken += e.amount ?? 0;
+      if ((e.amount ?? 0) >= target.hp) row(target).fell++;
+    }
+    if (e.kind === "tick" && e.group === "degrading") {
+      if (target?.enemy) {
+        const src = sourceOf(target, e.status);
+        if (src) row(src).dealt += e.amount ?? 0;
+      } else if (ally(target)) row(target).taken += e.amount ?? 0;
+    }
+    if (e.kind === "restore" && ally(actor) && ally(target) && actor.id !== target.id)
+      row(actor).healed += e.amount ?? 0;
+    if (e.kind === "tick" && e.group === "mending" && ally(target)) {
+      const src = sourceOf(target, e.status);
+      if (src && src.id !== target.id) row(src).healed += e.amount ?? 0;
+    }
+    if (
+      (e.kind === "ward" || (e.kind === "status" && e.group === "guarding")) &&
+      ally(actor) &&
+      ally(target) &&
+      actor.id !== target.id
+    )
+      row(actor).guards++;
+    if (e.kind === "bind" && ally(actor) && target?.enemy) binder.set(target.id, actor.id);
+    if (e.kind === "blocked" && actor?.enemy && e.moveName) {
+      const src = companion(binder.get(actor.id));
+      if (src) row(src).denied++;
+    }
+    if (e.kind === "lost" && actor?.enemy) {
+      const src = sourceOf(actor, e.status);
+      if (src) row(src).denied++;
+    }
+    if ((e.kind === "broken" || e.kind === "displace") && ally(actor) && target?.enemy && target.charge)
+      row(actor).denied++;
+  });
+}
+
+/**
+  Pass 9: each species' value to a squad, fitted over whole runs. A run scores the encounters
+  it cleared (0 to 4) plus, when it won, the share of the squad's HP left; the fit is the
+  least-squares additive model score = base + the sum of the squad's species values, with a
+  small ridge so a rarely drafted species is pulled toward zero rather than guessed wildly.
+  Values are centred on the roster's mean, so a species above zero adds more to a squad than
+  the average pick does.
+*/
+export function speciesValue(
+  records: SimStats["runRecords"],
+  ridge = 2
+): Record<string, { runs: number; value: number }> {
+  const species = [...new Set(records.flatMap((r) => r.species))].sort();
+  const n = species.length + 1;
+  const A = Array.from({ length: n }, () => new Array<number>(n).fill(0));
+  const b = new Array<number>(n).fill(0);
+  for (const r of records) {
+    const x = new Array<number>(n).fill(0);
+    x[0] = 1;
+    for (const k of r.species) x[species.indexOf(k) + 1] = 1;
+    const y = r.rooms + (r.won ? r.hpLeft : 0);
+    for (let i = 0; i < n; i++) {
+      b[i] += x[i] * y;
+      for (let j = 0; j < n; j++) A[i][j] += x[i] * x[j];
+    }
+  }
+  for (let i = 1; i < n; i++) A[i][i] += ridge;
+  // Gaussian elimination with partial pivoting.
+  for (let c = 0; c < n; c++) {
+    let p = c;
+    for (let r = c + 1; r < n; r++) if (Math.abs(A[r][c]) > Math.abs(A[p][c])) p = r;
+    [A[c], A[p]] = [A[p], A[c]];
+    [b[c], b[p]] = [b[p], b[c]];
+    for (let r = c + 1; r < n; r++) {
+      const f = A[r][c] / A[c][c];
+      for (let j = c; j < n; j++) A[r][j] -= f * A[c][j];
+      b[r] -= f * b[c];
+    }
+  }
+  const w = new Array<number>(n).fill(0);
+  for (let i = n - 1; i >= 0; i--) {
+    let sum = b[i];
+    for (let j = i + 1; j < n; j++) sum -= A[i][j] * w[j];
+    w[i] = sum / A[i][i];
+  }
+  const mean = species.reduce((m, _, i) => m + w[i + 1], 0) / species.length;
+  return Object.fromEntries(
+    species.map((k, i) => [
+      k,
+      { runs: records.filter((r) => r.species.includes(k)).length, value: w[i + 1] - mean },
+    ])
+  );
 }
 
 export function simulate(
@@ -852,6 +1018,8 @@ export function simulate(
     lookaheadDecisions: 0,
     lookaheadOverrides: 0,
     lookaheadOverrideKinds: {},
+    contrib: {},
+    runRecords: [],
   };
   for (let seed = firstSeed; seed < firstSeed + runs; seed++)
     playRun(seed, stats, options);

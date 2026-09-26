@@ -61,6 +61,13 @@ import {
   FINAL_ENCOUNTER_XP,
   HARM_ATTR_DIVISOR,
   HARM_BASE,
+  HARM_ATTRIBUTE_WEIGHT,
+  PHYSICAL_HARM_NEUTRAL,
+  NIMBLE_PER_SPEED,
+  NIMBLE_MAX,
+  NIMBLE_MACHINES,
+  TARGET_SIZE_WEIGHT,
+  MACHINE_HP_FACTOR,
   HARM_DIVISOR,
   IMMEDIATE_INITIATIVE_BONUS,
   LIKELIHOOD_PERCENT,
@@ -628,6 +635,8 @@ export function selectableTargets(units: Unit[]): Unit[] {
 /** Matchup by the move's element classification when it has one, else the attacker's element, against the target's element. */
 export function matchup(attacker: Unit, target: Unit, move?: Move): number {
   if (move?.fallback) return 1;
+  // Pass 9: a physical strike carries no element, so nothing resists or amplifies it.
+  if (PHYSICAL_HARM_NEUTRAL && move && !move.element) return 1;
   const key = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
   return (effectiveness as Record<string, Record<string, number>>)[
     key(move?.element ?? attacker.element)
@@ -644,7 +653,11 @@ function rawHarm(u: Unit, e: MoveEffect): number {
   const intensity =
     (e.support === "displace" ? e.intensity * DISPLACE_HARM_FACTOR : e.intensity) *
     (e.recipient === "area" ? AREA_HARM_FACTOR : 1);
-  return (intensity / HARM_DIVISOR) * (HARM_BASE + attr / HARM_ATTR_DIVISOR);
+  return (intensity / HARM_DIVISOR) * attributeFactor(attr);
+}
+/** The harm and restore curve's attribute term, weighted by HARM_ATTRIBUTE_WEIGHT (pass 9). */
+function attributeFactor(attr: number): number {
+  return 1 + HARM_ATTRIBUTE_WEIGHT * (HARM_BASE + attr / HARM_ATTR_DIVISOR - 1);
 }
 /** Which recipient a unit is for one move: the selected target, or a unit only its area reaches. */
 export type Reach = "target" | "area";
@@ -698,8 +711,15 @@ export function damagePreview(
       matchup(u, target, move) *
       outputFactor(u) *
       sensesFactor(u, move) *
-      guardFactor(target)
+      guardFactor(target) *
+      nimbleFactor(u, target, move)
   );
+}
+/** Pass 9: the share of a blow a quicker target keeps off (NIMBLE_PER_SPEED, NIMBLE_MAX). */
+export function nimbleFactor(u: Unit, target: Unit, move: Move): number {
+  if (move.fallback || !NIMBLE_PER_SPEED || (target.enemy && !NIMBLE_MACHINES)) return 1;
+  const lead = effectiveSpeed(target) - effectiveSpeed(u);
+  return lead > 0 ? 1 - Math.min(NIMBLE_MAX, lead * NIMBLE_PER_SPEED) : 1;
 }
 /*
   Who a move's area reaches beyond its selected target (contract decision 33). The line
@@ -787,7 +807,7 @@ export function guardedThreat(
 export function restorePreview(u: Unit, effect: MoveEffect): number {
   return Math.floor(
     (effect.intensity / RESTORE_DIVISOR) *
-      (HARM_BASE + u.attrs.willpower / HARM_ATTR_DIVISOR)
+      attributeFactor(u.attrs.willpower)
   );
 }
 type Emit = (text: string, event?: BattleEvent) => void;
@@ -1112,9 +1132,21 @@ function prepare(s: Run) {
     const foes = selectableTargets(s.team);
     s.orders[u.id] = {
       move: move ?? -2,
-      target: u.charge ?? foes[Math.floor(random(s) * foes.length)].id,
+      target: u.charge ?? pickTarget(s, foes).id,
     };
   }
+}
+/**
+  A machine's target among the companions it may select: uniform, or weighted by max HP raised
+  to TARGET_SIZE_WEIGHT (pass 9). One draw from the run rng either way.
+*/
+function pickTarget(s: Run, foes: Unit[]): Unit {
+  const roll = random(s);
+  if (!TARGET_SIZE_WEIGHT) return foes[Math.floor(roll * foes.length)];
+  const weights = foes.map((f) => Math.pow(f.max, TARGET_SIZE_WEIGHT));
+  let left = roll * weights.reduce((a, b) => a + b, 0);
+  for (let i = 0; i < foes.length; i++) if ((left -= weights[i]) < 0) return foes[i];
+  return foes[foes.length - 1];
 }
 function enter(s: Run) {
   s.round = 1;
@@ -1140,7 +1172,7 @@ function enter(s: Run) {
     u.recovery = 0;
   }
   s.enemies = ROOMS[s.room].enemies.map((row) =>
-    enemyUnit(String(row[0]), String(row[1]), Number(row[2]))
+    enemyUnit(String(row[0]), String(row[1]), Math.round(Number(row[2]) * MACHINE_HP_FACTOR))
   );
   for (const row of [s.team, s.enemies])
     for (let i = row.length - 1; i > 0; i--) {
