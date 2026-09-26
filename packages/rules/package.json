@@ -13,6 +13,7 @@
     "./duel": "./src/duel/index.ts",
     "./duel/*": "./src/duel/*.ts",
     "./dungeon": "./src/dungeon/index.ts",
+    "./dungeon/value": "./src/dungeon/value.ts",
     "./arcade": "./src/arcade/index.ts",
     "./arcade/*": "./src/arcade/*.ts"
   },

@@ -36,6 +36,8 @@ import {
   moveDescription,
   moveFigure,
   removalWords,
+  ValueBar,
+  valueWords,
 } from "./powerworksVisuals";
 import { useStageMap, type Box } from "./powerworksStage";
 import "./powerworksRadial.css";
@@ -389,6 +391,7 @@ export function PowerworksRadial({
   prompt = "Choose a target",
   targetLine = null,
   onPreview,
+  values,
 }: {
   unit: Unit;
   /** The legal move indices for this unit this round (`legalMoves`). */
@@ -417,6 +420,8 @@ export function PowerworksRadial({
   prompt?: string;
   /** The aimed target's one-line outcome ("Crawler 1: 5 damage, 22 to 17"). */
   targetLine?: string | null;
+  /** Move value pass: each legal move's best use this round, in health taken and kept. */
+  values?: Record<number, { harm: number; saved: number; knockout: boolean }>;
   /**
     A disc is hovered, focused from the keyboard, or armed by a first tap (round 3): the
     stage previews its outcome faintly; null when it is left.
@@ -1091,6 +1096,14 @@ export function PowerworksRadial({
                     {baseName(m)}
                     {armed === i && legal && <small>Tap again</small>}
                   </span>
+                  {legal && !state.dim && values?.[i] && (
+                    <ValueBar
+                      harm={values[i].harm}
+                      saved={values[i].saved}
+                      knockout={values[i].knockout}
+                      className="pw-radial-value"
+                    />
+                  )}
                 </span>
                 {keyed && (
                   <span className="pw-radial-key" aria-hidden="true">
@@ -1099,6 +1112,7 @@ export function PowerworksRadial({
                 )}
                 <span className="pw-sr" id={`pw-slot-desc-${unit.id}-${i}`}>
                   {moveDescription(unit, m)}
+                  {legal && values?.[i] ? ` ${valueWords(values[i])}.` : ""}
                 </span>
               </button>
             );
