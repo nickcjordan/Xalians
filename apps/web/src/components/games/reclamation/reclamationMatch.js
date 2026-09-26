@@ -567,7 +567,7 @@ class ReclamationMatch extends React.Component {
 	/*
 		The pre-clash view with every effect of the events told so far applied: each
 		creature at the hold the last attack left it with (the event's own `remaining`),
-		downed ones off the world, hit ones flagged hurt, recovered ones lifted back by
+		downed ones fallen where they stood, hit ones flagged hurt, recovered ones lifted back by
 		their `recover` event, and a rival's hidden send revealed the moment it acts
 		(assumption 9: hidden creatures are revealed when they act, not before).
 
@@ -1892,6 +1892,7 @@ class ReclamationMatch extends React.Component {
 						turn={yourTurn ? 'mine' : waiting ? 'theirs' : null}
 						worldsAhead={view.frame.sites.length * Math.max(1, FRAMES_PER_MATCH - (view.frameIndex || 0))}
 						sendsTone={stillReachable && (stillReachable.tone === 'lost' || stillReachable.tone === 'stake') ? stillReachable.tone : null}
+						over={view.phase === 'matchEnd'}
 					/>
 				</div>
 
@@ -2449,7 +2450,7 @@ function writeLegendSeen() {
 /*
 	playbackEffects(frozenView, events, index) -> the frozen view with every effect of the
 	first `index` events applied: each creature at the hold the last attack left it with
-	(the event's own `remaining`), downed ones off the world, hit ones flagged hurt,
+	(the event's own `remaining`), downed ones fallen where they stood, hit ones flagged hurt,
 	recovered ones lifted back by their `recover` event (assumption 19), and a rival's
 	hidden send revealed the moment it acts (assumption 9).
 
@@ -2493,7 +2494,14 @@ export function playbackEffects(frozenView, events, index) {
 	base.frame.sites.forEach((site) => {
 		['A', 'B'].forEach((seat) => {
 			(base.board[site.id][seat] || []).forEach((entry) => {
+				/*
+					PASS 62. A creature downed in the Clash stays where it fell, marked fallen, as it
+					does at the Ruling (pass 38). It used to leave the world on the very step that
+					downs it, so the caption "Hypnopet downs your Scalatto" played over an empty half
+					and a blind critic scored the Clash 3 of 10: "the target has already vanished".
+				*/
 				if (downed.has(entry.recordId)) {
+					board[site.id][seat].push({ ...entry, currentHold: 0, hidden: false, revealPending: false, fallen: true });
 					return;
 				}
 				if (entry.revealPending && !revealed.has(entry.recordId)) {

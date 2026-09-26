@@ -79,16 +79,31 @@ function climateLine(why, name, planet, env, tol, site) {
 	return { key: 'climate', mark: cause, medium: env.medium || null, effect, cause: because };
 }
 
+/*
+	PASS 62. A bolster eases the world one grade for each creature of yours at its world, itself
+	included, and a creature the world does not strain gains 1 instead (holdAtSite). A blind critic
+	saw "It steadies itself: +6" at one world and "+1" at the next with nothing to tell them apart:
+	the six was the heat eased a grade, the one the flat lift.
+*/
+const EASES = { hot: 'the heat', cold: 'the cold', breath: 'the want of air', medium: 'the wrong air or water' };
+function bolsterWhy(why, whose) {
+	const climate = why.climate || null;
+	if (climate && EASES[climate.cause]) {
+		return `${whose} eases ${EASES[climate.cause]} one grade for it.`;
+	}
+	return `${whose} adds 1 where the world does not strain it.`;
+}
+
 function companyLines(why, record) {
 	const out = [];
 	const traits = Array.isArray(record && record.traits) ? record.traits : [];
 	if (why.selfLift) {
-		out.push({ key: 'self', mark: 'self', effect: `It steadies itself: +${shown(why.selfLift)}.`, cause: 'A bolster lifts every creature of yours at its world, itself included.' });
+		out.push({ key: 'self', mark: 'self', effect: `It steadies itself: +${shown(why.selfLift)}.`, cause: `${bolsterWhy(why, 'A bolster')} Its lift reaches every creature of yours at its world, itself included.` });
 	}
 	if (why.company > 0) {
 		out.push(traits.includes('pack-bonded')
 			? { key: 'company', mark: 'company', effect: `Pack-bonded: +${shown(why.company)}.`, cause: 'Each of its kin of yours here adds 1.' }
-			: { key: 'company', mark: 'company', effect: `Steadied: +${shown(why.company)}.`, cause: 'A bolster of yours here lifts it.' });
+			: { key: 'company', mark: 'company', effect: `Steadied: +${shown(why.company)}.`, cause: bolsterWhy(why, 'A bolster of yours here') });
 	} else if (why.company < 0) {
 		out.push({ key: 'company', mark: 'company', effect: `Solitary: −${shown(-why.company)}.`, cause: 'Each creature of yours here costs it 1.' });
 	}

@@ -66,10 +66,53 @@ function recoveredByRound(match) {
 	return byRound;
 }
 
+/*
+	PASS 62. Who fell where, per round: the judge lists only the creatures still standing, so a
+	world where your Newtapede fell read "You: no one" beside the rival's survivor. Each downing
+	is an attack event at its site; the round turns at each judge event.
+*/
+function fallenByRound(match) {
+	const byRound = new Map();
+	let round = 0;
+	(match.resolutionLog || []).forEach((event) => {
+		if (!event) {
+			return;
+		}
+		if (event.type === 'judge') {
+			round = typeof event.round === 'number' ? event.round + 1 : round + 1;
+			return;
+		}
+		if (event.type === 'attack' && event.outcome === 'downed' && event.target && event.site) {
+			if (!byRound.has(round)) {
+				byRound.set(round, {});
+			}
+			const forRound = byRound.get(round);
+			forRound[event.site] = forRound[event.site] || [];
+			if (!forRound[event.site].includes(event.target)) {
+				forRound[event.site].push(event.target);
+			}
+		}
+	});
+	return byRound;
+}
+
+// the role a creature played, from any blow it threw (a fallen creature is not in the judge's list)
+function rolesFromLog(match) {
+	const roles = {};
+	(match.resolutionLog || []).forEach((event) => {
+		if (event && event.type === 'attack' && event.recordId && event.role && !roles[event.recordId]) {
+			roles[event.recordId] = event.role;
+		}
+	});
+	return roles;
+}
+
 function buildWorlds(match, you, recordsById) {
 	const rival = otherSide(you);
 	const worlds = [];
 	const recovered = recoveredByRound(match);
+	const fallen = fallenByRound(match);
+	const roles = rolesFromLog(match);
 	const judgeEvents = (match.resolutionLog || []).filter((e) => e && e.type === 'judge');
 	/*
 		PASS 41. The judge lists only the creatures still standing, so a world where every one
@@ -80,6 +123,7 @@ function buildWorlds(match, you, recordsById) {
 	const mine = new Set();
 	const p = (match.players && match.players[you]) || {};
 	[...(p.roster || []).map((r) => r.id), ...(p.holding || []), ...(p.withdrawn || []), ...(p.downed || [])].forEach((id) => mine.add(id));
+	const mineAll = mine;
 	const contestedSites = new Set();
 	(match.resolutionLog || []).forEach((e) => {
 		if (e && e.site && (mine.has(e.recordId) || mine.has(e.target))) {
@@ -97,6 +141,20 @@ function buildWorlds(match, you, recordsById) {
 			// the judge entry carries the hold the Court counted and the role the creature
 			// played (the base redesign's judge event), so the row needs nothing derived
 			const recoveredHere = recovered.get(event.round) || {};
+			const sideOf = (recordId) => (mineAll.has(recordId) ? you : rival);
+			const fellHere = ((fallen.get(event.round) || {})[siteId] || []);
+			const fellFor = (side) => fellHere.filter((id) => sideOf(id) === side).map((recordId) => ({
+				recordId,
+				record: recordsById ? recordsById[recordId] || null : null,
+				hold: 0,
+				fullHold: null,
+				damage: 0,
+				role: roles[recordId] || null,
+				hurt: true,
+				recovered: 0,
+				fate: 'downed',
+				fell: true,
+			}));
 			const rowsFor = (side) => (entries[side] || []).map((e) => ({
 				recordId: e.recordId,
 				record: recordsById ? recordsById[e.recordId] || null : null,
@@ -107,7 +165,7 @@ function buildWorlds(match, you, recordsById) {
 				hurt: !!e.hurt,
 				recovered: recoveredHere[e.recordId] || 0,
 				fate: fateOf(e.recordId, match.players),
-			}));
+			})).concat(fellFor(side));
 			worlds.push({
 				frameIndex: event.round,
 				siteId,
@@ -368,7 +426,17 @@ function CreatureLine({ entries }) {
 	}
 	return (
 		<>
-			{entries.map((e) => (
+			{entries.map((e) => (e.fell ? (
+				<span className="rec-report-creature rec-report-creature--fell" key={e.recordId} data-report-creature={e.recordId} data-report-fell="" title="Downed in the Clash">
+					{e.role && e.role !== 'none' && (
+						<span className="rec-role-glyph rec-report-role" data-role={e.role}>
+							<RoleGlyph role={e.role} />
+						</span>
+					)}
+					<span className="rec-report-creature-name">{speciesLabel(e.record)}</span>
+					<span className="rec-report-creature-fate">fell</span>
+				</span>
+			) : (
 				<span className="rec-report-creature" key={e.recordId} data-report-creature={e.recordId}>
 					{e.role && e.role !== 'none' && (
 						<span className="rec-role-glyph rec-report-role" title={roleSentence(e.role)} data-role={e.role}>
@@ -378,12 +446,13 @@ function CreatureLine({ entries }) {
 					<span className="rec-report-creature-name">{speciesLabel(e.record)}</span>
 					{/* pass 30: the face rounds, the title keeps the tenth for anyone who wants it */}
 					<span className="rec-report-creature-hold g-mono" title={`hold ${formatHold(e.hold)}`}>{formatHoldShown(e.hold)}</span>
+					{/* pass 62: "Bioflim 8 +32" read as a sum; it is what a bolster gave back over the whole fight */}
 					{e.recovered > 0 && (
-						<span className="rec-report-creature-recovered g-mono" title={`Recovered ${formatHold(e.recovered)} under a bolster at the Ruling`}>+{formatHoldShown(e.recovered)}</span>
+						<span className="rec-report-creature-recovered" title={`A bolster gave it back ${formatHold(e.recovered)} over the Clash`}>{`mended ${formatHoldShown(e.recovered)}`}</span>
 					)}
 					{e.fate === 'downed' && <span className="rec-report-creature-fate">downed</span>}
 				</span>
-			))}
+			)))}
 		</>
 	);
 }

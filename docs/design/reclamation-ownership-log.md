@@ -2,34 +2,60 @@
 
 Status: the running state of the game under ownership (brief: `reclamation-ownership-brief.md`). This file is the resume point. Any reset reads this first and continues at the weakest thing named below, never from scratch. Each pass appends its own section; the standing state at the top is rewritten in place.
 
-## Standing state (after pass 31, 2026-09-20)
+## Standing state (after pass 62, 2026-09-26)
 
-### Gauges, proctor mirror
+Pass 62 rewrote this section; it had said "after pass 31" through passes 32 to 61 (`reclamation-audit-2026-09-26.md`, "What was wrong with how I work"). Each pass ends by rewriting it.
 
-Pass 6 changed no rule. It re-read two gauges with enough statistical power to say what they mean, and both turned out to be measurement artifacts rather than regressions. Readings below are the shipped settings; pooled rows are five seeds at 1000 matches each, which is the batch size a difference of a few points actually needs.
+### Gauges (simulator, proctor mirror, 500 matches each on seeds 7 and 13, pass 62)
 
-| Gauge | Band | Reading | Verdict |
-|---|---|---|---|
-| Resolution changes the leader at contested worlds | 25 to 40 | 26.1 / 26.9 / 24.5 (seeds 7, 13, 21, after pass 9) | met, seed 21 marginally under |
-| Downs per match | 3 to 5 | 4.85 / 4.64 / 4.80 (after pass 9) | met |
-| Contested worlds that are one creature against one | lower is better | 56.2% (was 62.7%) | improved, pass 9 |
-| Naive margin (pass-early under the mirror) | 8 or more points | 13.1 / 13.1 / 14.5 (was 21.5 / 19.4 / 17.8) | met, **narrowing; the constraint on the send budget** |
-| **Affordance: comprehension by prediction** | beat deploy-totals-only | **12 of 12 (100%)**, 3 of 3 on flipped worlds (pass 11, with the resolution trace; was 92% and 1 of 2) | **met with room** |
-| Contested worlds where no attack lands at all | reported only | 9.5 / 11.1 / 10.4 percent | **judged pass 14: not a hole** |
-| A side fielding only presences wins its world | reported only | 41.9% +/- 1.5 against 53.0% +/- 1.2 with an attacker | fielding no attacker is a worse bet, not a free win |
-| **Rubric critic score** | rising per pass | **60 / 100** (pass 30, the FIRST read of captures that watch a Clash; 55 at pass 27) | style 8, first five minutes 7, craft 7, fiction 7; lowest: **mobile 3**, pace 5, numbers 5, glanceability 6, reason to keep playing 6, feedback 6 |
-| **Comeback from a CONTESTED round 1** (trailing by one or two worlds) | 30 to 40 | **30.8 / 32.0 / 35.1**; pooled 29.1 +/- 1.4 | **met on three seeds** |
-| Comeback from a SWEPT round 1 (trailing by three) | not safeguarded, by ruling | 7 to 12 percent; pooled 8.0 +/- 1.8 | working as ruled |
-| Comeback, both populations averaged | (the old single gauge) | 25.9 / 27.1 / 30.7; pooled 25.2 +/- 1.2 | reported, superseded by the split |
-| **Stake: staked world against the staker's unstaked worlds** | variance-neutral | **-0.6 +/- 3.0 points** (pooled, n=1619) | **variance-neutral, as designed** |
-| Naive-policy regret (best naive against the mirror) | 8 or more points under | passEarly 25.5 against 50.0 | met with room |
-| Option spread (near-best per decision) | 3 to 5 | 2.85, dominant 32.5% | just under |
-| Every role inside 40 to 60 keeper win rate | 40 to 60 | shield 46.0, bolster 46.4, sweep 51.4, strike 52.3 | met (pass 7 census) |
-| **Clash frames with a figure in motion** | 60 percent or more | **99%** (was 21% before pass 28) | **met**, `reclamation-clash.mjs` |
-| **Largest figure transform in a round** | 18px or more | **26px** (was 10px) | **met**; gutted, the gauge reads 4.7px and fails |
-| **Clash frames marking which world is clashing** | 60 percent or more | **95%**, all three worlds in turn (was 0%) | **met** |
+| Gauge | Band | Seed 7 | Seed 13 | Verdict |
+|---|---|---|---|---|
+| Round-one starter wins | about 50 | 50.2 | 44.6 (CI 40.2 to 49.0) | watch: seed 13 under |
+| Comeback (trailing after world 1, won) | 30 to 40 | 28.7 | 32.4 | about met |
+| Resolution changes the leader | 25 to 40 | 27.3 | 26.4 | met |
+| Downs per match | (the 3 to 5 band predates pass 56's fight to the last side) | 8.69 | 8.54 | reported |
+| Uncontested sites | reported | 18.1 | 17.1 | reported |
+| Strike keeper win rate | 40 to 60 | 64.9 | 63.5 | **over** |
+| Sweep / shield / bolster keeper win rate | 40 to 60 | 53.5 / 54.7 / 41.2 | 52.8 / 51.6 / 44.0 | met, bolster low |
+| Games with a stake | reported | 3.4 | 2.2 | **the stake is offered every round and almost never used** |
 
-**The lesson pass 6 paid for, and the rule that now applies to every gauge:** a gauge that compares two rates must be read against the interval of their difference, and a gauge that averages two populations must say which one it is about. The stake's trap flag compared two point estimates bare, so it fired on about half of all runs by construction, and the comeback gauge averaged a case the design protects with a case it deliberately abandons. Between them they cost three rules changes that measured nothing before the measurement was done properly. Before any future gauge is called a failure, pool it and put an interval on it.
+### The blind critic (last read: pass 62, seed 21; next due: pass 65)
+
+| Clarity | Decisions | The Clash | Arc | Another game | Phone | Numbers | Feedback |
+|---|---|---|---|---|---|---|---|
+| 7 | 5 | 3 | 4 | 6 | 6 | 5 | 6 |
+
+Pass 50's read, for comparison: clarity 6, decisions 4, Clash 5, arc 3, another game 5, phone 7.
+
+### Open items, ranked (resume here)
+
+**Nick's steer, 2026-09-19: the priority is whether the game is mechanically deep and fun, not how two people play it.** The ranking is the audit's (`reclamation-audit-2026-09-26.md`).
+
+1. **The send budget is invisible when you decide, and wasted sends go unmarked.** The critic's player sent 8 of 11 in round 1, three to worlds already won by 20 or more, and had nothing for round 3.
+2. **A decided game plays out a round with no moves.** With no sends left, round 3 went to the rival unopposed, and nothing said the game was over.
+3. **The Clash is a caption, not a fight** (critic: 3). Pass 62 keeps the victim on the world. Still missing: the blow itself, and the two waiting worlds shrink to 7-pixel labels.
+4. **The top bar is unlabeled marks:** the flags, the tallies, the nine squares. Carried from passes 58 to 60: the score rows beside the squad, and the send counter's one held back.
+5. **Round 1's empty worlds are the largest thing on screen** while the decision is on the cards (carried since pass 57).
+6. **Balance:**
+   - strike keepers at 63.5 to 64.9 percent;
+   - the stake almost never used;
+   - the starter seat on seed 13;
+   - bolster keepers at 41 to 44 percent.
+7. **Fathomaw has no art** ("?").
+8. **On a phone, a creature pointed at beside yours shows only its number** (a world there is 110 pixels wide).
+9. **Nick's call, not mine:** whether element should matter (the type chart, off since pass 57).
+10. **No human has played a full Proving.** The hot-seat instrument exists (passes 20 to 23).
+
+### Every pass, the checklist
+
+1. Cut a branch from origin/main in the pass worktree. Every PR opens ready and auto-merges.
+2. Web tests (`npx vitest run` in apps/web), rules tests (`npm test -w packages/rules`) and the rules typecheck.
+3. The four table checks against a preview of this build, in turn: proving (1440, 1366 and 390, both views), shift, actflip and hotseat.
+4. Read the change in pictures at 1366 by 768, 1440 by 900 and 390 by 844, never one size. Pass 61 read one size, and its words were hidden on the commonest laptop.
+5. After any rule or data change, rerun the simulator and record it here.
+6. Every third pass, run a blind rubric critic and record its scores above.
+7. Close the oldest carried item, or drop it with a reason.
+8. Rewrite this standing state.
 
 ### What the game reads of the record (pass 7 onward)
 
@@ -54,20 +80,6 @@ What it reads, and where each effect kind lands (measured over the seed-7 pool, 
 - **Unavailability is real**: a creature with no usable action cannot be sent and the dossier prints the reason. On current content **0 of 400 records are unfieldable and 0 actions are unsupported**, so the path costs nothing today and is the safety for the day a release produces an effect family this game has no rule for.
 - **Passives are read and reported but carry no table rule.** 13 on 400 records, all `protect`.
 
-### Open items, ranked (resume here)
-
-**Nick's steer, 2026-09-19: the priority is whether the game is mechanically deep and fun, not how two people play it.**
-
-1. **(Pass 37: addressed, needs a play.)** The table is one fixed screen at every size and the three worlds stand side by side on a phone, so all three compare at a glance. What is left is judging the phone figures by hand; they are small when a world is crowded. **Mobile scored 3 of 10, now the lowest score on the sheet.** The overlap bug is fixed, but the critic's structural complaint stands: "the three worlds need a horizontal swipe-carousel or a compact three-up summary row, because vertical stacking destroys the comparison the game is built on." At 390 you cannot see two worlds at once, so **the core act of the game, comparing three worlds to choose one, requires scrolling three times.** This is the weakest thing left and it is a layout decision, not a polish item.
-2. **(Pass 45: done. Each blow is captioned on the world it lands on; the top bar names the clashing world.)** **The Clash still narrates itself in a log above the board.** Pass 28 made the board move; the critic still says "the narration of the fight is happening in a monospace log at the top of the page, which is paperwork by definition" and reads the SKIP button as the designer conceding the Clash is not worth watching. The next move is the sentence landing ON the world card rather than in the terminal.
-3. **(Pass 45: closed without a change; see the pass 45 entry.)** **The footing answers "who can stand here", not "what does holding it do".** Pass 29 gave the empty world the half of the stake the game can compute from the record. The other half - what claiming a world is worth toward the Charter, what losing it costs - is still only in the status strip's sentence. Five of nine worlds clinch; a panel could say where this one sits in that count.
-4. **(Pass 44: done. The phone world head carries the temperature scale and readout, each card its speed; the log stays behind ≡ and the attribute marks in the creature's reading.)** **Advanced mode is Simple on a phone.** `advanced-390` differs from `simple-390` only by a temperature range: the log and the inspector, its two best features, are both absent at 390. Either give them a phone form or say the mode is desktop-only.
-5. **(Pass 38: done.)** The site navbar and masthead are gone from the match, and the top bar is one row. **The first viewport on a phone is all chrome.** Breadcrumb, mode toggle, rival name, sound, round header, world chips, two score strips, phase badge, turn line and a three-line instruction, before any world panel.
-6. **(Pass 49: closed. Schema 5 retired transfer, restrain and suppress as effect types; the status layer of pass 32 carries what they meant, and displace stays an attack by the base redesign's ruling. See recordReading.ts.)** **The three borrowed effect kinds** (displace, transfer, suppress, 261 actions) still read as plain attacks. Act flip makes a creature's second act matter, which changes the case for these.
-7. **(Pass 48: done for dromeus, akinza and avilily; imprit is still cut most of the time.)** **Fire is a dead element and dromeus a dead species** in the draft. Read it pooled first.
-8. **(Pass 46: done. The record schema is the published range; a test holds the game's scale to it.)** **The generator's attribute ranges are not published anywhere the game can read.**
-9. **No human has played a full Proving.** The instrument exists (hot-seat, passes 20 to 23).
-
 ### Hot-seat: what pass 20 did and did not do
 
 The seat the table is drawn for is now a value (`seatInPlay()`), not the constant `'A'` compiled into sixty-four readings. With no `hotSeat` prop it always returns `'A'`, so solo play is unchanged, and the hand-off can land without touching those call sites at the same time as everything else.
@@ -82,32 +94,12 @@ The seat the table is drawn for is now a value (`seatInPlay()`), not the constan
 
 The constraint that shaped the design: **16.8 percent of sends arrive hidden, and removing hiding moves the flip gauge +2.46 +/- 0.98, beyond noise.** Hot-seat could not simply reveal everything, which is why there is a cover at all.
 
-### Findings from the headless check (pass 5, recorded not fixed)
-
-The check plays a whole Proving in both views at 1440 and 390 and all four configurations pass with zero page errors, zero console errors and no horizontal overflow. Three things it surfaced that are not failures but are worth a pass:
-
-- **`?view=advanced` does not switch the view.** The masthead still lights SIMPLE when the URL asks for advanced, so the two views could only be told apart by clicking. The check drives both and they behave identically, which is itself the finding. Low cost, and it blocks per-view verification.
-- ~~**On 390 the three worlds stack to full height above the bench**~~ **Fixed in pass 13**: an empty world panel went from 386px to 176px and the bench-to-world distance from 1576px to 948px, so with a creature lifted all three worlds sit within roughly one phone screen. Guarded by the check.
-- **A dossier panel in the rail can intercept a press on a world**, which the check works around with a forced click. On a real screen that is a press that does nothing.
-
-
-**PASS 18 CORRECTION.** The headless check had been opening `?view=simple` and `?view=advanced` since pass 5, and the page never read a `view` parameter: **both halves ran simple mode**. Half of every pass's verification was a duplicate, and the advanced table's own panels (the resolution log among them) were never exercised by it. The page now reads `?view=`, and the check asserts the mode actually took before it plays, so this cannot silently return.
-
-### Verification run each pass
-
-1. `npm test` at the root (1912 tests across the three workspaces).
-2. `npm run typecheck -w packages/rules`.
-3. The validation tool on seeds 7, 13 and 21.
-4. `npm run build -w apps/web` (enforces the bundle budgets).
-5. `npx vite preview --port 4173 --host 127.0.0.1` from `apps/web`, then `node apps/web/scripts/reclamation-proving.mjs` (added in pass 5; a whole Proving in both views at 1440 and 390, screenshots, overflow and console assertions).
-6. Every third pass: the rubric critic (a fresh agent, screenshots only, `game-validation-principles.md` section 4) and the affordance gauge (`node apps/web/scripts/runNode.cjs packages/rules/src/expedition/devtools/predictionPositions.ts --count=12 --seed=7`, then a fresh reader predicts and `--score=` scores it). Log both numbers.
-
 ### Where the seam is
 
-The single place the game's reading of a creature is decided:
-
-- `packages/rules/src/expedition/creatureOnTable.ts` lines about 403, 409 and 544 are the only three calls to `historicalCategory`. Every role, act class and magnitude decision in the game flows through them. One adapter placed here is the one-place change the brief asks for, so that when the platform-side redesign finishes only this adapter moves.
-- `packages/rules/src/expedition/expeditionInterpretation.ts` holds every tunable as a named constant; `expeditionRules.DEFAULT_RULES` holds every ablation flag.
+- `packages/rules/src/expedition/recordReading.ts` is the one adapter between the record schema and the game (pass 7).
+- `packages/rules/src/expedition/expeditionInterpretation.ts` holds every tunable as a named constant.
+- `expeditionRules.DEFAULT_RULES` holds every ablation flag and lever.
+- The table's words come from `apps/web/src/components/games/reclamation/reclamationReasons.js` (pass 61). The forecast's blows come from `forecastSendBlows` in the rules.
 
 ## Pass log
 
@@ -1261,3 +1253,43 @@ Every engine question (each side's hold after a send, who leads, which creature 
 - Creatures already standing on a world get no words (a reader asked why Scalatto holds half, not a quarter, on Luminax).
 - The header thermometer has no scale a reader can decode.
 - Carried: a verdict per column; the send counter's one held back; the score rows beside the squad (pass 60); dullness meaning four things; whether element should matter; strike keepers near 67 to 68 percent.
+
+### Pass 62 (2026-09-26): the self-audit
+
+**Nick:** "You do an audit yourself and identify where you need to improve and follow up with improving those areas." The audit and every number are in `reclamation-audit-2026-09-26.md`.
+
+**How:**
+- a first visit, and a whole game captured at six screen sizes;
+- a blind rubric critic on seed 21 (the first since pass 50);
+- the simulator on seeds 7 and 13;
+- every panel's text read in full.
+
+**Fixed:**
+- **Pass 61's words were hidden on the commonest screens.** Container queries read the inner box, 18 pixels under the heights pass 61 measured. The words are fitted by measure now, a step at a time: silhouette, number size, chain, why, words. Through the Deploy, the right of your half is kept for the creature pointed at, so pointing moves nothing.
+- **The dossier's strain line printed the world's grade** while its hold used the grade after willpower. It now prints the factor the hold uses. The dossier opens with the table's words for a creature already standing, and its body line is rounded.
+- **The Clash took a downed creature off the world on the step that downed it.** It now stays, fallen.
+- **The top bar cut its messages** at 1440 during the Clash, and on a phone at the Ruling.
+- **The result screen:** it named the fallen as "no one"; they are named and struck now. A bolster's "+32" reads "mended 32".
+- **A bolster's lift says why:** a grade eased, or the flat 1.
+- **The match-point pennant** goes out at the end.
+- **Advanced mode:** the world head's place sat over its climate readout, and card numbers ran together beside the log.
+
+**Changed in how I work** (now the checklist at the top of this log):
+- the standing state is rewritten every pass (it had said "after pass 31");
+- a rubric critic runs every third pass (next: pass 65);
+- each pass closes or drops the oldest carried item;
+- changes are read at 1366, 1440 and 390;
+- the proving check plays at 1366 by 768 too. It fails when words that should show are hidden, and when the ghost's number sits on your creatures' names.
+
+**Critic** (pass 50, then pass 62):
+
+| | Pass 50 | Pass 62 |
+|---|---|---|
+| Clarity | 6 | 7 |
+| Decisions | 4 | 5 |
+| The Clash | 5 | 3 |
+| Arc | 3 | 4 |
+| Another game | 5 | 6 |
+| Phone | 7 | 6 |
+
+**Next,** from the audit's ranking: the send budget and wasted sends, then the dead last round, then the Clash's blow.

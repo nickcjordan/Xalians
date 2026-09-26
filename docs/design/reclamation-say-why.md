@@ -20,8 +20,8 @@ He read it right: Zolton and Stonera are too cold for Hippochamp, so it holds ha
 | Too cold or too hot | "Too cold for it: it holds half." Far off: "Far too cold for it: it holds a quarter." | "Zolton runs −40 to 20°C, mostly colder than the 5 to 40°C Fathomaw is comfortable at." |
 | Air or water it cannot take | "It cannot breathe here: it holds a quarter." or "The wrong air or water for it: it holds half." | "Luminax here has no air at all; Frackworm breathes air." |
 | Willful | "Far too cold for it, but it is willful: it holds half, not a quarter." | (the temperatures, as above) |
-| Company | "Steadied: +3." / "Pack-bonded: +2." / "Solitary: −1." | "A bolster of yours here lifts it." and so on |
-| A bolster's own lift | "It steadies itself: +1." | "A bolster lifts every creature of yours at its world, itself included." |
+| Company | "Steadied: +3." / "Pack-bonded: +2." / "Solitary: −1." | "A bolster of yours here eases the cold one grade for it." or "adds 1 where the world does not strain it" (pass 62) |
+| A bolster's own lift | "It steadies itself: +6." | "A bolster eases the heat one grade for it. Its lift reaches every creature of yours at its world, itself included." (pass 62: "+6" at one world and "+1" at the next had no reason) |
 | The Clash | "The Clash takes 5." or "It falls in the Clash (it goes in with 9)." | "It acts first and hits Hippochamp for 5; Hippochamp, hurt by then and so weaker, catches it in three sweeps for 11 in all." |
 | What it downs | "It downs Hippochamp, and Kosanos before it can act." | |
 
@@ -36,13 +36,24 @@ The temperature words follow the engine's own test. A creature is comfortable wh
 
 A rules test holds these to the forecast's toll. On five seeds, for every creature at every world, the blows landed, less what is given back, plus the lost lift, equal what it goes in with less what it keeps. It falls exactly when the forecast downs it, and it downs exactly what its own hits down.
 
-**Fitting the words in.** Your half of a world is 142 pixels tall on a 1280 by 720 screen and 232 on 1896 by 1100. So the words take priority over the creature's silhouette:
-- the silhouette only shows in a half at least 300 pixels tall;
-- the number shrinks in a half under 210;
-- under 150 only what each thing does shows, not why;
-- under 90 the chain stands alone.
-- Beside creatures of yours already on the world, the words keep to the right third and say only what each thing does; on a short world they give way to the chain.
-- On a phone the words are small and say only what each thing does.
+**Fitting the words in.** Your half of a world is 142 pixels tall on a 1280 by 720 screen and 232 on 1896 by 1100. So the words take priority over the creature's silhouette.
+
+*Pass 62 replaced the rules below.* They were container queries on your half's height, and the heights were measured on its outer box while a container query reads the inner box, 18 pixels less. So beside your creatures the words never showed under 1920 by 1080, and the why never showed at 1366 by 768 (`reclamation-audit-2026-09-26.md`). Now the ghost measures itself. It tries each step in turn and keeps the first that sits inside the half without covering a creature of yours:
+1. everything (the silhouette only in a half 300 pixels tall or more);
+2. without the silhouette;
+3. the number smaller and the words set closer;
+4. what each thing does, not why;
+5. the number and the chain alone.
+
+Beside your creatures, the right of your half is kept for the ghost through the whole Deploy (`data-ghost-lane`), and your creatures stand in the left. With two or more of yours standing one per row across the half, the ghost's number had sat on their names. The room is kept for the whole Deploy rather than taken while a card is pointed at, because pointing must move nothing (pass 36; the shift check failed the first version). Nothing measured may ease: the site's reduced-motion rule gives every property a 0.01ms transition, which leaves a measurement a frame behind. On a phone a world is 110 pixels wide, so beside your creatures the ghost is its number in the corner, and the card carries the rest.
+
+The pass 61 rules, for the record:
+- the silhouette only showed in a half at least 300 pixels tall;
+- the number shrank in a half under 210;
+- under 150 only what each thing does showed, not why;
+- under 90 the chain stood alone;
+- beside creatures of yours, the words kept to the right third and said only what each thing does, and gave way to the chain on a short world;
+- on a phone the words were small and said only what each thing does.
 
 **The Clash line has its own mark:** two blows crossing, the Clash phase's glyph. A reader took the strike role's arrow for part of the line.
 
@@ -88,6 +99,6 @@ What changed in the answers:
 
 ## Open
 
-- **Creatures already standing on a world** get no words. Pointing at one could show its own lines. A reader could not see why Scalatto, already on Luminax, holds half and not a quarter under a struck-out circle.
+- **Creatures already standing on a world** had no words. Pass 62: its dossier (press it) opens with the same lines, and its strain line now prints the factor the hold uses.
 - **The header thermometer** still has no scale a reader can decode. The words now carry its information.
 - Carried: a verdict per column; the send counter's one held back; whether element should matter; strike keepers near 67 to 68 percent.

@@ -212,6 +212,26 @@ describe('buildMatchReport', () => {
 		}
 	});
 
+	// pass 62: a world where your creature fell read "You: no one" beside the rival's survivor
+	it('names every creature that fell, on its own side of the world row where it fell', () => {
+		const { rosterA, rosterB, state } = playToMatchEnd('report-seed-2');
+		const report = buildMatchReport(state, 'A', recordsByIdFrom(rosterA, rosterB));
+		const mine = new Set(rosterA.map((r) => r.id));
+		let round = 0;
+		let fell = 0;
+		state.resolutionLog.forEach((e) => {
+			if (!e) return;
+			if (e.type === 'judge') { round = typeof e.round === 'number' ? e.round + 1 : round + 1; return; }
+			if (e.type !== 'attack' || e.outcome !== 'downed') return;
+			const row = report.worlds.find((w) => w.frameIndex === round && w.siteId === e.site);
+			expect(row).toBeTruthy();
+			const side = mine.has(e.target) ? row.yours : row.theirs;
+			expect(side.find((x) => x.recordId === e.target)).toMatchObject({ fell: true, hold: 0, fate: 'downed' });
+			fell += 1;
+		});
+		expect(fell).toBeGreaterThan(0);
+	});
+
 	it('champion, when present, is on a world the player won and carries the highest counted hold there', () => {
 		const { rosterA, rosterB, state } = playToMatchEnd('report-seed-3');
 		const recordsById = recordsByIdFrom(rosterA, rosterB);
