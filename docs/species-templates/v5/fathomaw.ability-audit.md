@@ -1,6 +1,6 @@
-# Fathomaw ability audit (draft, no species template yet)
+# Fathomaw ability audit
 
-Review date: 2026-09-23. Mode: initial authoring. Current source: [Poseidas deep-route proposal](../../design/creature-proposals/poseidas-deep-route.md) and its recorded approvals, Poseidas planetary lore, the v5 catalog and derived-act tables on `codex/fathomaw-current`. The proposal is not a ratified species. No final creature art or v5 template exists, and the approved mass/length schema is not yet reconciled with current main. This audit records the ability decision space without claiming publication readiness.
+Review date: 2026-09-23, with visual-source review and ratification on 2026-09-24. Mode: initial authoring. Sources: [Poseidas deep-route design record](../../design/creature-proposals/poseidas-deep-route.md) and its recorded approvals, Poseidas planetary lore, the v5 catalog and derived-act tables. The [schema 5.1 template](fathomaw.json) compiles. The [land-crawl concept](../../design/creature-proposals/art/fathomaw-land-crawl-concept.png) remains a movement reference, and the [square-jaw portrait study](../../design/creature-proposals/art/fathomaw-portrait-study.png) is the selected visual direction, not published site art. This audit accompanies Fathomaw in the canonical v5 roster.
 
 ## Mechanism inventory
 
@@ -14,43 +14,58 @@ Review date: 2026-09-23. Mode: initial authoring. Current source: [Poseidas deep
 
 No `channels` or `conduits` are proposed. Pressure adaptation, dual-medium breathing, and echolocation belong to physiology rather than encounter passives.
 
+The 2026-09-24 portrait review made the lower jaw almost square-ended and the tail paddle broad and deeply notched. The teeth remain broad and blunt, and the tail remains a nonprehensile propulsion surface. These changes do not add piercing, cutting, grasping, armor, elemental projection, or another source. All jaws, tail, fins, and body derived-act families and exclusions below were rechecked against the changed shapes; their dispositions remain the same. The removed cheek crescent was surface decoration, not a lost hydraulic chamber or ability source.
+
 ## Derived-act and extension ledger
 
 | Source and family | Disposition | Evidence and boundary |
 | --- | --- | --- |
 | `jaws/crush` | Include | Held contact compression from the hydraulic mouth, including the current table's brief or prolonged preparation. It remains structurally distinct from the guaranteed clamp-and-release signature. |
-| `jaws/snare` | Include | Nick approved a brief ordinary hold on a moving target. It applies restrained without requiring injury. |
+| `jaws/snare` | Include | The shared table grants a brief lingering restraint without requiring injury. It does not represent a maintained, source-bound grip; that requires an authored extension. |
 | `jaws/strike` | Exclude whole generic row, then extend | The row grants both piercing and compression. Broad blunt teeth do not pierce; a compression-only quick bite is supported and needs an authored mechanism because exclusions are per instrument/pattern. |
 | `jaws/rake` | Exclude | No cutting edge or raking teeth. |
-| Jaw compression plus restraint | Approved behavior requiring an extension | Maintaining a firm hydraulic bite can injure and hold the same recipient. Harm and restraint should be independent effects; blocking harm need not undo physical grip. Not a replacement for the separate noninjuring hold. |
+| Maintained jaw grip | Approved behavior requiring an extension | A noninjuring grip remains source-bound while Fathomaw keeps its jaws closed. It is distinct from the brief lingering shared snare. |
+| Jaw compression plus maintained restraint | Approved behavior requiring an extension | Maintaining a firm hydraulic bite can injure and hold the same recipient. Harm and restraint are independent effects; blocking harm need not undo physical grip. Not a replacement for the separate noninjuring hold. |
 | `fins/strike` | Include | Reinforced anterior fin roots deliver blunt impact. |
 | `fins/shove` | Include | The same fins bear weight and push loose material or a contacted target. |
 | Fin grasp, rake, ward, projection | Exclude | No grasping digits, cutting edge, defensive barrier, or emitter. |
 | `tail/strike` | Include | Direct impact with a powerful propulsion tail. |
-| `tail/lash` | Include as proposal | A lateral sweep with the tail can reach nearby recipients in either supported medium. It is body contact, not a water wave. Review against the final anatomy and art. |
+| `tail/lash` | Include | The accepted concept has a thick tail root and broad paddle that can sweep laterally. The sweep uses the animal's tail in either medium, not a water wave. Final art must preserve this capability. |
 | `tail/shove` | Include | The tail propels the animal and redirects contacted material or targets. |
 | `tail/crush`, `tail/snare` | Exclude | The tail is broad and propulsive, not established as wrapping, grasping, or sustaining pressure on a target. |
 | `body/shove` | Include | Whole-body mass can push at contact without sprinting or external terrain. |
 | `body/strike` | Exclude whole generic row, then extend | The row grants impact and compression. A short ram supports impact only; an authored impact-only body act preserves it without unsupported quick compression. |
 | `body/crush` | Exclude | Pinning something beneath the trunk needs a suitable surface and does not meet the portable moveset baseline. |
 | `body/ward` | Exclude | Resilient skin and pressure tolerance do not create an added shield. |
-| `body/terrorize` | Not derived | The current communication proposal is vocal calls, not an established threat display. |
+| `body/terrorize` | Not derived | Vocal calls are established communication, not an evidenced threat display. |
 | Echolocation reveal, mark, deafening, disorientation | Exclude | A locating sense is not an applied tracking status or weaponized sound. |
 | Water projection, elemental harm or status | Exclude | No conduit, water storage/ejection, or manipulation process is established. |
 | Restoration, protection, removal, beneficial status | Exclude | No repair, shielding, cleansing, or stimulation process is established. |
 | Event-triggered retaliation or automatic encounter passive | Exclude | No reactive mechanism beyond ordinary physiology is established. |
 
-The available deliveries are contact for jaws, fins and body; contact and a self-anchored close sweep for the tail. Self, projectile, stream, pulse, field, signal, free-aim area and long range lack a source mechanism. Displacement is away only. The only proposed status is a brief jaw-applied restraint, removable by freeing. No compound effect is inferred from incidental impact or fluid movement. Similar effects from different parts remain separately available because the parts can act independently.
+The available deliveries are contact for jaws, fins and body; contact and a self-anchored close sweep for the tail. Self, projectile, stream, pulse, field, signal, free-aim area and long range lack a source mechanism. Displacement is away only. The proposed status is jaw-applied restraint, either brief and lingering from the shared snare or sustained and source-bound from an authored hold, removable by freeing. No compound effect is inferred from incidental impact or fluid movement. Similar effects from different parts remain separately available because the parts can act independently.
 
-## Proposed authoring form
+## Ratified authoring form
 
-- Guaranteed action: `Yield Point`, `jaws`, physical compression at stationary contact, fixed structure and release. Output band 62 to 78 remains the agreed proposal.
+- Guaranteed action: `Yield Point`, `jaws`, physical compression at stationary contact, fixed structure and release. Output band 62 to 78 is approved.
 - `acts.exclude`: `jaws/strike`, `jaws/rake`, `tail/crush`, `tail/snare`, `body/strike`, `body/crush`, `body/ward`. Every exclusion is justified above. No exclusion is for compactness or because another part has the same effect category.
-- Authored extensions: compression-only quick jaw strike; impact-only short body ram; held jaw squeeze with compression harm and restrained status. The first two recover supported variants that the shared exclusion granularity cannot isolate. The third expresses a coherent compound act absent from the table.
-- No `acts.output` override is selected yet. Compare derived bands and the three extension bands against the current strength and rating benchmarks during template authoring. The current table scales heavy physical harm at 0.8 of strength and light physical harm at 0.85; do not mechanically preserve older draft numbers.
+- Authored extensions: compression-only quick jaw strike; impact-only short body ram; maintained noninjuring jaw grip; and maintained jaw squeeze with compression harm and restrained status. The first two recover supported variants that the shared exclusion granularity cannot isolate. The last two encode distinct source-bound holds absent from the table.
+- No `acts.output` override is selected. The extension bands were compared against the shared derived output and the signature compression band. The shared table scales heavy physical harm at 0.8 of strength and light physical harm at 0.85; no ordinary compression exceeds the signature band.
 
-The included table acts plus extensions are the proposed species permission space, not a whitelist of complete moves assigned to every individual. Four selected actions per generated creature remain a separate generator rule. The shared fin row is v5-only while the pinned v4 registry remains unchanged.
+The included table acts plus extensions are the species permission space, not a whitelist of complete moves assigned to every individual. Four selected actions per generated creature remain a separate generator rule. The shared fin row is v5-only while the pinned v4 registry remains unchanged.
+
+## Neutral-land portability check
+
+The accepted concept and current portrait study show a continuous belly contact surface, two broad planted anterior fins with reinforced roots, two smaller planted posterior fins, and a tail capable of assisting a slow crawl. At 105 to 170 kg under Poseidas's 1.7-Earth gravity, broad contact surfaces distribute weight rather than requiring an upright gait. This supports ordinary encounter-length movement, not equal land and water speed or sustained dry-land travel. Gas respiration and tolerance are declared separately from the visible locomotion mechanism.
+
+- Jaw crush, snare, both maintained holds, the quick bite, and `Yield Point` use self-contained jaw closure. None draws pressure or working fluid from the surrounding water.
+- Fin strike and shove use the same load-bearing anterior roots that pull the body across a solid surface. They do not require free swimming or a water wave.
+- Tail strike, lash, and shove use the thick tail and paddle directly. A lateral sweep is possible without swimming, though its reach and speed may differ by medium in a game's interpretation.
+- Body shove and the authored short ram use the planted fins, broad belly, and trunk mass. The ram is a short grounded push, not a sprint; the species' `sprint` capability remains zero.
+- Echolocation is a sense, not a required trigger for any action. Its range may be shorter in gas, but the jaw, fin, tail, and body acts remain available.
+
+No act requires a home-world storm, deep-water pressure, a city structure, liquid around the body, or external life support. The current portrait has visible fin roots and a credible land-supporting posture. At 35 px it is not a sufficiently clear game token, so a separate compact mark must preserve those features at the token's actual size.
 
 ## Completion status
 
-The audit is incomplete. The tail sweep needs a final anatomy and art check. Numeric calibration, naming review and template compilation also remain. Schema 5.1 now supports the approved mass, height, length and width bands, so scale no longer blocks honest template authoring. No Fathomaw template, generated creature, art approval, release, game integration or encyclopedia entry is claimed here.
+The template compiles under schema 5.1 with ten distinct ordinary acts (jaws 3, fins 2, tail 3, body 2) plus the guaranteed signature. It includes four authored extensions and seven justified generic-row exclusions. The checker confirms four distinct actions can be constructed, no ordinary act was clamped by the signature, and 24 seeded examples had no structural parenthetical names or duplicate ordinary base names. A separate 240-seed draft sample retained four actions and the signature in every case. The accepted portrait direction supports the tail sweep and neutral-land mechanism at the design level, but its 35 px reduction is not a game token. Coverage verdict: complete within the ratified species scope. This is not game balancing or final game asset delivery; adoption by each game remains separate.

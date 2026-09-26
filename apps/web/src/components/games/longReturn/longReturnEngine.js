@@ -1,4 +1,7 @@
 import effectiveness from '@xalians/content/typeEffectivenessMatrix.json';
+import { rememberedHazards, RELEASE_SIGNAL, SIGNAL_READ } from './fieldDiscovery';
+import { encounterCircumstance } from './encounterCircumstances';
+import { crossingFind, serviceLineResponse, SERVICE_LINE } from './crossingFinds';
 
 const titleCase = (value) => value ? value.charAt(0).toUpperCase() + value.slice(1) : '';
 
@@ -19,13 +22,29 @@ export function instabilityState(value = 0) {
 
 export function applyMissionMemory(scene, flags = []) {
   if (!scene) return scene;
+  scene = encounterCircumstance(scene, flags);
   return {
     ...scene,
+    knownHazardIds: rememberedHazards(scene, flags),
+    serviceLineAvailable: flags.includes(SERVICE_LINE),
+    maintenanceReleaseKnown: scene.id === 'archive-vestibule' && flags.includes('maintenance-codes') && flags.includes(SIGNAL_READ) && flags.includes(RELEASE_SIGNAL),
     routes: scene.routes.map((route) => {
       const activeEffects = (route.legacyAdjustments || []).filter((effect) => flags.includes(effect.flag));
       const difficultyChange = activeEffects.reduce((sum, effect) => sum + (effect.difficulty || 0), 0);
       return {
         ...route,
+        ...(scene.id === 'core-reservoir' && route.id === 'harvest' && flags.includes('archive-controls-preserved') ? {
+          description: 'The archive control link survived. Regulate the collectors from the dry console or work their valves at the rim.',
+          methods: [...route.methods, { memoryId: 'surviving-console', kind: 'attribute', key: 'intelligence', secondary: 'manipulation', label: 'Regulate charge from the surviving console', narrativeMotion: 'follows the surviving archive circuit to the dry console and regulates the collectors while the crew gathers the released charge' }]
+        } : {}),
+        ...(scene.id === 'archive-vestibule' && route.id === 'breach' && flags.includes('underdeck-flow-isolated') ? {
+          description: 'Closing the underdeck valve relieved the pressure behind this door. Work its exposed service release or force the damaged seam.',
+          methods: [...route.methods, { memoryId: 'depressurized-release', kind: 'attribute', key: 'manipulation', secondary: 'intelligence', label: 'Work the depressurized service release', narrativeMotion: 'works the service release exposed beside the fracture; with the underdeck line isolated, the door plates can be eased apart', narrativeEffort: 'keeps the old release moving while the crew guides the heavy plates apart' }]
+        } : {}),
+        ...(scene.id === 'generator-spine' && route.id === 'align' && flags.includes('reservoir-cell-recovered') ? {
+          description: 'The cell recovered below fits the service socket. Power the controls or work directly against the rings.',
+          methods: [...route.methods, { memoryId: 'powered-ring-controls', kind: 'attribute', key: 'intelligence', secondary: 'manipulation', difficulty: 50, bypassedHazardIds: ['ring-closure'], label: 'Power the ring controls with the recovered cell', observation: 'The powered motors hold the rings open. The crew still faces the chamber’s exposure.', narrativeMotion: 'connects the cell recovered from the reservoir and works the service controls, bringing the rings into alignment while the crew lifts the core clear', narrativeEffort: 'keeps the worn controls steady as the recovered cell drives the ring motors' }]
+        } : {}),
         originalDifficulty: route.difficulty,
         difficulty: Math.max(1, route.difficulty + difficultyChange),
         activeEffects
@@ -70,12 +89,36 @@ export function encounterOutlook(scene, creature) {
   };
 }
 
-export function encounterOptions(scene, scout, crew, mode = 'scout', informed = false, strain = {}) {
+export function encounterOptions(scene, scout, crew, mode = 'scout', informed = false, strain = {}, spentAbilities = []) {
   if (!scene.encounter) return [];
   const outlook = scout ? encounterOutlook(scene, scout) : null;
   const medic = crew.find((member) => readinessState(strain[member.id]).id !== 'spent' && (member.traits.includes('healing') || member.abilities.some((ability) => ability.action === 'mend')));
   const baseSurprise = mode === 'group' && !informed ? 1 : outlook ? outlook.surpriseStrain : 0;
   const archetype = scene.encounter.archetype || 'injured';
+
+  if (archetype === 'coolant') {
+    const candidates = (mode === 'scout' ? [scout].filter(Boolean) : crew).filter(member => readinessState(strain[member.id]).id !== 'spent');
+    const helpers = candidates.flatMap(member => {
+      const anchored = member.traits.includes('anchored');
+      const ward = member.abilities.find(ability => ability.action === 'ward' && !spentAbilities.includes(ability.id));
+      if (!anchored && !ward) return [];
+      return [{ id: `support-sleeve-${member.id}`, actorId: member.id, abilityId: anchored ? undefined : ward.id, companion: true, resolution: 'befriended',
+        label: anchored ? `${member.species} braces the coolant sleeve` : `${member.species} screens the jet with ${ward.name}`,
+        summary: anchored ? 'Take the load while the crew secures the sleeve. Give Xylum a way to let go without shutting the line down.' : `Use ${ward.name} once to shield the repair. Xylum can let go while the sleeve is secured.`,
+        scoutStrain: mode === 'scout' ? baseSurprise + 1 : 0, crewStrain: mode === 'group' ? baseSurprise + 1 : 0, instability: 0,
+        worldFlag: 'underdeck-sleeve-secured' }];
+    });
+    return [...helpers, ...serviceLineResponse(scene, mode, baseSurprise),
+      { id: 'isolate-coolant', label: 'Close the upstream valve', summary: 'Stop the flow. Xylum can leave through its shelter; the same line supplies pressure to the archive door.', scoutStrain: mode === 'scout' ? baseSurprise : 0, crewStrain: mode === 'group' ? baseSurprise : 0, instability: 1, companion: false, resolution: 'cleared', worldFlag: 'underdeck-flow-isolated' },
+      { id: mode === 'scout' ? 'withdraw' : 'detour', label: 'Leave room and withdraw', summary: 'Leave the sleeve supported by Xylum and reconsider the upper passage.', scoutStrain: mode === 'scout' ? baseSurprise : 0, crewStrain: mode === 'group' ? baseSurprise : 0, instability: 0, companion: false, resolution: mode === 'scout' ? 'unresolved' : 'detour' }
+    ];
+  }
+
+  if (archetype === 'beacon') return [
+    { id: 'redirect-beacon', worldFlag: 'gallery-beacon-redirected', label: 'Turn the beacon toward the empty hull', summary: 'Change what catches its attention. Let the light lead it away while the crew enters the conduit.', scoutStrain: mode === 'scout' ? baseSurprise : 0, crewStrain: mode === 'group' ? baseSurprise : 0, instability: mode === 'group' && !informed ? 1 : 0, resolution: 'cleared', companion: false },
+    { id: 'stop-beacon', worldFlag: 'gallery-beacon-stopped', label: 'Stop the repeating mechanism', summary: 'Hold the worn mechanism still until the light fades. The conduit stays dark while the crew passes.', scoutStrain: mode === 'scout' ? baseSurprise + 1 : 0, crewStrain: mode === 'group' ? baseSurprise + 1 : 0, instability: 0, resolution: 'cleared', companion: false },
+    { id: mode === 'scout' ? 'withdraw' : 'detour', label: mode === 'scout' ? 'Leave the beacon for the crew' : 'Leave the light and take another way', summary: 'The beacon keeps repeating and the Ectoghoul keeps returning. Withdraw without changing either.', scoutStrain: mode === 'scout' ? baseSurprise : 0, crewStrain: mode === 'group' ? baseSurprise : 0, instability: 0, resolution: mode === 'scout' ? 'unresolved' : 'detour', companion: false }
+  ];
 
   if (archetype === 'territorial') {
     if (mode === 'group') return [
@@ -92,13 +135,16 @@ export function encounterOptions(scene, scout, crew, mode = 'scout', informed = 
   }
 
   if (archetype === 'trapped') {
+    const learnedRelease = scene.maintenanceReleaseKnown ? [{ id: 'maintenance-release', label: 'Use the maintenance release', summary: 'Combine the instruction from the service signal with the underdeck code. Open the arms without wrestling the rig; the archive door still needs opening.', scoutStrain: mode === 'scout' ? baseSurprise : 0, crewStrain: mode === 'group' ? baseSurprise : 0, instability: 0, companion: false, resolution: 'cleared' }] : [];
     if (mode === 'group') return [
+      ...learnedRelease,
       { id: 'free-native', label: 'Stop and free it', summary: 'Take time to release the native and quiet the false commands entering the lock.', crewStrain: baseSurprise, instability: 1, companion: false, resolution: 'cleared', recommended: true },
       { id: 'pin-rig', label: 'Pin the arms and pass', summary: 'Protect the crew and leave the native trapped. Fast, but physically demanding.', crewStrain: baseSurprise + 1, instability: 0, companion: false, resolution: 'cleared' },
       { id: 'detour', label: 'Leave the rig alone', summary: 'Back away from the decode route and reconsider the pressure seam.', crewStrain: baseSurprise, instability: informed ? 0 : 1, companion: false, resolution: 'detour' }
     ];
     const precise = outlook && (outlook.contact >= 62 || outlook.detect >= 72);
     return [
+      ...learnedRelease,
       { id: 'release', label: 'Release it from the arms', summary: 'Use empathy or careful observation to stop its panic without calling the crew.', scoutStrain: baseSurprise + (precise ? 0 : 1), instability: precise ? 0 : 1, companion: false, resolution: 'cleared', recommended: precise },
       { id: 'mark', label: 'Mark the safe controls and withdraw', summary: outlook?.channel ? 'Leave the native trapped, but relay the marked controls so the crew avoids surprise.' : 'Leave the native trapped. Return with the marked controls so the crew avoids surprise.', scoutStrain: baseSurprise, instability: 0, companion: false, resolution: 'unresolved', recommended: !precise },
       { id: 'force-arms', label: 'Force the arms apart', summary: 'Resolve the trap through strength. It works, but the rig records the intrusion.', scoutStrain: baseSurprise + (outlook && outlook.hold >= 62 ? 1 : 2), instability: 2, companion: false, resolution: 'cleared' }
@@ -106,7 +152,7 @@ export function encounterOptions(scene, scout, crew, mode = 'scout', informed = 
   }
 
   if (mode === 'group') {
-    const options = [];
+    const options = serviceLineResponse(scene, mode, baseSurprise);
     if (medic) options.push({ id: 'aid', helperId: medic.id, label: `${medic.species} treats the injury`, summary: 'Help the native and attempt a temporary field bond.', crewStrain: baseSurprise, instability: informed ? 0 : 1, companion: true, resolution: 'befriended', recommended: true });
     options.push({ id: 'drive-off', label: 'Drive it out of the underdeck', summary: 'Open the route by force. The crew stays together, but the annex hears it.', crewStrain: baseSurprise + 1, instability: 2, companion: false, resolution: 'cleared' });
     options.push({ id: 'detour', label: 'Back out and take the catwalk', summary: 'Avoid contact and reconsider the other route.', crewStrain: baseSurprise, instability: informed ? 0 : 1, companion: false, resolution: 'detour' });
@@ -114,7 +160,7 @@ export function encounterOptions(scene, scout, crew, mode = 'scout', informed = 
   }
 
   const directMedic = scout && readinessState(strain[scout.id]).id !== 'spent' && (scout.traits.includes('healing') || scout.abilities.some((ability) => ability.action === 'mend'));
-  const options = [];
+  const options = serviceLineResponse(scene, mode, baseSurprise);
   if (directMedic) {
     options.push({ id: 'aid', helperId: scout.id, label: 'Treat the injury', summary: scout.traits.includes('healing') ? 'Use the scout’s innate healing to establish trust. Its one-use crossing techniques stay available.' : 'Use the scout’s mending expertise to establish trust without calling the crew.', scoutStrain: baseSurprise, instability: 0, companion: true, resolution: 'befriended', recommended: true });
   } else if (medic && outlook && outlook.channel) {
@@ -149,7 +195,8 @@ export function scanScene(scene, creature) {
   const hazards = scene.hazards.map((hazard) => {
     const special = creature.physiology.senses.special || [];
     const sensed = (creature.physiology.senses[hazard.sense] || 0) >= hazard.threshold || special.includes(hazard.special);
-    return { ...hazard, sensed, revealed: sensed && relay };
+    const known = scene.knownHazardIds?.includes(hazard.id);
+    return { ...hazard, sensed: sensed || known, revealed: known || (sensed && relay) };
   });
   return {
     relay,
@@ -288,7 +335,7 @@ export function methodOptions(creature, route, spentAbilities = []) {
   if (!options.length) {
     options.push({
       id: 'fallback-careful-advance', kind: 'fallback', key: 'instinct', attribute: 'resilience',
-      label: 'Careful advance', sourceValue: creature.attributes.instinct
+      label: route.fallbackLabel || 'Careful advance', sourceValue: creature.attributes.instinct
     });
   }
   return options;
@@ -350,18 +397,19 @@ export function decisionForecast({ route, lead, support, method, scan, leadLoad 
   const leadScore = Math.max(0, methodScore(lead, method) - leadReadiness.scorePenalty);
   const supportBonus = support ? Math.max(0, supportScore(support, method) - supportReadiness.supportPenalty) : 0;
   const teamScore = leadScore + supportBonus;
-  const margin = teamScore - route.difficulty;
+  const difficulty = method.difficulty ?? route.difficulty;
+  const margin = teamScore - difficulty;
   const outcome = outcomeForMargin(margin);
   const environment = environmentConsequences(lead, route.environment);
   const naturalReaction = reactionMatches(lead, route.reaction);
   const unresolvedHazards = scan
-    ? route.hazardIds.filter((id) => !scan.revealedIds.includes(id))
-    : [...route.hazardIds];
+    ? route.hazardIds.filter((id) => !scan.revealedIds.includes(id) && !method.bypassedHazardIds?.includes(id))
+    : route.hazardIds.filter(id => !method.bypassedHazardIds?.includes(id));
   return {
     leadScore,
     supportBonus,
     teamScore,
-    difficulty: route.difficulty,
+    difficulty,
     margin,
     ...outcome,
     environment,
@@ -432,11 +480,12 @@ export function resolveScene({ scene, route, lead, support, method, scan, useCom
   const rawMethodScore = Math.max(0, methodScore(lead, method) - leadReadiness.scorePenalty);
   const supportBonus = Math.max(0, supportScore(support, method) - supportReadiness.supportPenalty);
   const totalScore = rawMethodScore + supportBonus;
-  const margin = totalScore - route.difficulty;
+  const difficulty = method.difficulty ?? route.difficulty;
+  const margin = totalScore - difficulty;
   let leadStrain = margin >= 14 ? 0 : margin >= 0 ? 1 : margin >= -14 ? 2 : 3;
   let supportStrain = margin < -8 ? 1 : 0;
   let pressure = route.pressure;
-  const unseenHazards = scene.hazards.filter((hazard) => route.hazardIds.includes(hazard.id) && !scan.revealedIds.includes(hazard.id));
+  const unseenHazards = scene.hazards.filter((hazard) => route.hazardIds.includes(hazard.id) && !scan.revealedIds.includes(hazard.id) && !method.bypassedHazardIds?.includes(hazard.id));
   unseenHazards.forEach((hazard) => {
     leadStrain += hazard.strain;
     pressure += hazard.pressure;
@@ -454,6 +503,8 @@ export function resolveScene({ scene, route, lead, support, method, scan, useCom
   const quality = margin >= 14 ? 'clean' : margin >= 0 ? 'costly' : margin >= -14 ? 'rough' : 'critical';
   return {
     quality,
+    difficulty,
+    find: crossingFind(route, method, quality),
     rawMethodScore,
     supportBonus,
     totalScore,

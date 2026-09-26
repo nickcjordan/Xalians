@@ -1,0 +1,287 @@
+{
+  "actions": [
+    {
+      "activation": {
+        "continuity": "discrete"
+      },
+      "delivery": {
+        "approach": "stationary",
+        "mode": "contact"
+      },
+      "description": "The long drill-shaped forelimb spurs drive through contacted material.",
+      "effects": [
+        {
+          "intensity": 70,
+          "key": "outcome",
+          "likelihood": "consistent",
+          "mechanism": "piercing",
+          "onset": "instant",
+          "persistence": "resolved",
+          "recipient": "target",
+          "type": "harm"
+        }
+      ],
+      "instrument": "spurs",
+      "key": "foromeer-defining",
+      "name": "Forelimb Bore",
+      "spatial": {
+        "range": "contact"
+      },
+      "targeting": [
+        "other"
+      ],
+      "timing": {
+        "preparation": "brief",
+        "recovery": "brief"
+      }
+    }
+  ],
+  "acts": {
+    "output": {
+      "spurs/strike": [
+        50,
+        70
+      ]
+    }
+  },
+  "attributes": {
+    "agility": [
+      28,
+      48
+    ],
+    "charisma": [
+      15,
+      32
+    ],
+    "endurance": [
+      58,
+      80
+    ],
+    "instinct": [
+      35,
+      55
+    ],
+    "intelligence": [
+      22,
+      42
+    ],
+    "reflex": [
+      25,
+      45
+    ],
+    "resilience": [
+      52,
+      74
+    ],
+    "strength": [
+      55,
+      78
+    ],
+    "vitality": [
+      42,
+      62
+    ],
+    "willpower": [
+      40,
+      62
+    ]
+  },
+  "channels": [],
+  "conduits": {},
+  "element": "metal",
+  "generatorPlanets": [
+    "veridium"
+  ],
+  "homePlanet": "veridium",
+  "key": "foromeer",
+  "lore": {
+    "appearance": [
+      "Tall biped on long jointed legs",
+      "Metallic exoskeleton on the limbs",
+      "Long drill-like horns for arms, longer than the body",
+      "Narrow deer-like head",
+      "A pair of long thin antennae swept back from the crown"
+    ],
+    "behavior": "It opens the metal veins with its horns. It signals by drumming through the ground rather than by call, since the manufactory is too loud for anything else.",
+    "company": "It works the veins alone.",
+    "description": "This creature has a metallic exoskeleton on its limbs, with long drill-like horns for arms. Thought to once be used for mineral excavation, its powerful horns can break through the strongest of material.",
+    "feeding": "It eats what it finds in the trenches and forge districts.",
+    "habitat": "The ore-filled crust and heavy-metal veins of Veridium, among its factory trenches and forge districts.",
+    "origin": "Thought to have been used for mineral excavation on Veridium, its drill-like horns breaking through the strongest material."
+  },
+  "mechanisms": [
+    {
+      "activation": {
+        "continuity": [
+          "discrete"
+        ]
+      },
+      "delivery": {
+        "contact": {
+          "approach": [
+            "stationary"
+          ],
+          "range": [
+            "contact"
+          ]
+        }
+      },
+      "description": "The forelimb drills press and crush at close contact.",
+      "effects": [
+        {
+          "intensity": [
+            45,
+            70
+          ],
+          "key": "outcome",
+          "likelihood": [
+            "consistent"
+          ],
+          "mechanism": "compression",
+          "onset": "instant",
+          "persistence": "resolved",
+          "recipient": "target",
+          "type": "harm"
+        }
+      ],
+      "instrument": "spurs",
+      "key": "spur-pressure",
+      "name": "Spur Pressure",
+      "targeting": [
+        "other"
+      ],
+      "timing": {
+        "preparation": [
+          "immediate",
+          "brief"
+        ],
+        "recovery": [
+          "repeatable",
+          "brief"
+        ]
+      }
+    }
+  ],
+  "name": "Foromeer",
+  "nameOrigin": "A blend of Italian foro, hole, and meerkat, matching an upright creature whose drill hands bore through material for excavation.",
+  "passives": [],
+  "physiology": {
+    "anatomy": [
+      "spurs",
+      "antennae",
+      "shell",
+      "body"
+    ],
+    "bodyPlan": "biped",
+    "breathes": [
+      "gas"
+    ],
+    "capabilities": {
+      "burrow": [
+        45,
+        75
+      ],
+      "climb": [
+        15,
+        35
+      ],
+      "flight": [
+        0,
+        0
+      ],
+      "leap": [
+        15,
+        35
+      ],
+      "manipulation": [
+        10,
+        25
+      ],
+      "sprint": [
+        25,
+        45
+      ],
+      "swim": [
+        0,
+        10
+      ]
+    },
+    "communication": [
+      "vibration"
+    ],
+    "composition": {
+      "primary": "flesh"
+    },
+    "covering": "plating",
+    "diet": "omnivore",
+    "environmentalTolerance": {
+      "ambientMedia": [
+        "gas"
+      ],
+      "temperatureC": {
+        "max": 36,
+        "min": -10
+      }
+    },
+    "genome": {
+      "chirality": "rolled"
+    },
+    "lifespan": "long",
+    "protections": [],
+    "senses": {
+      "hearing": [
+        20,
+        40
+      ],
+      "sight": [
+        30,
+        55
+      ],
+      "smell": [
+        15,
+        35
+      ],
+      "special": [
+        "tremorsense"
+      ]
+    },
+    "size": {
+      "heightCm": [
+        180,
+        215
+      ],
+      "massKg": [
+        82,
+        112
+      ]
+    },
+    "traversal": []
+  },
+  "schemaVersion": "5.1.0",
+  "signature": {
+    "key": "foromeer-defining",
+    "type": "action"
+  },
+  "temperament": {
+    "aggression": [
+      30,
+      55
+    ],
+    "boldness": [
+      35,
+      60
+    ],
+    "curiosity": [
+      30,
+      55
+    ],
+    "energy": [
+      40,
+      65
+    ],
+    "sociability": [
+      10,
+      35
+    ]
+  }
+}

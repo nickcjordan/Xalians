@@ -1,0 +1,359 @@
+{
+  "actions": [
+    {
+      "activation": {
+        "continuity": "discrete"
+      },
+      "delivery": {
+        "approach": "stationary",
+        "mode": "contact"
+      },
+      "description": "Its acid slime corrodes whatever it settles over.",
+      "effects": [
+        {
+          "intensity": [
+            35,
+            65
+          ],
+          "key": "acid",
+          "likelihood": "consistent",
+          "mechanism": "elemental",
+          "onset": "instant",
+          "persistence": "resolved",
+          "recipient": "target",
+          "type": "harm"
+        },
+        {
+          "duration": "brief",
+          "key": "corrode",
+          "likelihood": "likely",
+          "onset": "instant",
+          "persistence": "lingering",
+          "recipient": "target",
+          "removable": [
+            "cleansing"
+          ],
+          "status": "corroding",
+          "type": "status"
+        }
+      ],
+      "element": "chemical",
+      "instrument": "secretion",
+      "key": "bioflim-acid",
+      "name": "Acid Slime",
+      "spatial": {
+        "range": "contact"
+      },
+      "targeting": [
+        "other"
+      ],
+      "timing": {
+        "preparation": "brief",
+        "recovery": "brief"
+      }
+    }
+  ],
+  "acts": {
+    "exclude": [
+      "secretion/mend"
+    ]
+  },
+  "attributes": {
+    "agility": [
+      5,
+      20
+    ],
+    "charisma": [
+      5,
+      20
+    ],
+    "endurance": [
+      55,
+      75
+    ],
+    "instinct": [
+      30,
+      50
+    ],
+    "intelligence": [
+      15,
+      35
+    ],
+    "reflex": [
+      10,
+      25
+    ],
+    "resilience": [
+      75,
+      95
+    ],
+    "strength": [
+      45,
+      65
+    ],
+    "vitality": [
+      60,
+      80
+    ],
+    "willpower": [
+      40,
+      60
+    ]
+  },
+  "channels": [
+    "secretion"
+  ],
+  "conduits": {
+    "secretion": "chemical"
+  },
+  "element": "chemical",
+  "generatorPlanets": [
+    "drainov"
+  ],
+  "homePlanet": "drainov",
+  "key": "bioflim",
+  "lore": {
+    "appearance": [
+      "Shapeless mass of acid slime, without limbs",
+      "Tall as a person",
+      "Very heavy",
+      "A single eye in the hooded top",
+      "Thick rocky exoskeleton over the upper mass, continually regrown",
+      "Pseudopods for reaching",
+      "Drips and runnels where the slime sags"
+    ],
+    "behavior": "It moves slowly, flowing through the swamps rather than over them, and its slime continually regrows the rocky shell around it.",
+    "company": "It lives alone.",
+    "description": "An acid slime organism protected by a thick rocky exoskeleton. Its slime can continually regenerate an outer shell, allowing for great defense.",
+    "feeding": "It feeds on whatever it settles over.",
+    "habitat": "The acid swamps and derelict chemical plants of Drainov.",
+    "origin": "Made by the Drainov Generator to live in the planet's acid swamps and chemical waste."
+  },
+  "mechanisms": [
+    {
+      "activation": {
+        "continuity": [
+          "discrete"
+        ]
+      },
+      "delivery": {
+        "contact": {
+          "approach": [
+            "stationary"
+          ],
+          "range": [
+            "contact"
+          ]
+        }
+      },
+      "description": "The acid slime acts through direct contact.",
+      "effects": [
+        {
+          "intensity": [
+            35,
+            65
+          ],
+          "key": "acid",
+          "likelihood": [
+            "consistent"
+          ],
+          "mechanism": "elemental",
+          "onset": "instant",
+          "persistence": "resolved",
+          "recipient": "target",
+          "type": "harm"
+        },
+        {
+          "duration": "brief",
+          "key": "corrode",
+          "likelihood": [
+            "likely",
+            "occasional"
+          ],
+          "onset": "instant",
+          "persistence": "lingering",
+          "recipient": "target",
+          "removable": [
+            "cleansing"
+          ],
+          "status": "corroding",
+          "type": "status"
+        }
+      ],
+      "element": "chemical",
+      "instrument": "secretion",
+      "key": "acid-slime",
+      "name": "Acid Slime",
+      "targeting": [
+        "other"
+      ],
+      "timing": {
+        "preparation": [
+          "immediate",
+          "brief"
+        ],
+        "recovery": [
+          "repeatable",
+          "brief"
+        ]
+      }
+    }
+  ],
+  "name": "Bioflim",
+  "nameOrigin": "A stylized transposition of biofilm, evoking the regenerating slime layer that continually forms its protective surface.",
+  "passives": [
+    {
+      "activation": {
+        "continuity": "ongoing"
+      },
+      "delivery": {
+        "approach": "stationary",
+        "mode": "self"
+      },
+      "description": "The slime beneath floods over the broken plates and hardens into new shell faster than the acid can take it away.",
+      "effects": [
+        {
+          "intensity": [
+            40,
+            85
+          ],
+          "key": "regrow-shell",
+          "likelihood": "consistent",
+          "onset": "gradual",
+          "persistence": "sustained",
+          "recipient": "self",
+          "type": "restore"
+        }
+      ],
+      "element": "chemical",
+      "instrument": "secretion",
+      "key": "bioflim-defining",
+      "name": "Everforming Carapace",
+      "spatial": {},
+      "targeting": [
+        "self"
+      ]
+    }
+  ],
+  "physiology": {
+    "anatomy": [
+      "shell",
+      "pseudopods",
+      "body"
+    ],
+    "bodyPlan": "amorphous",
+    "breathes": [],
+    "capabilities": {
+      "burrow": [
+        10,
+        25
+      ],
+      "climb": [
+        5,
+        20
+      ],
+      "flight": [
+        0,
+        0
+      ],
+      "leap": [
+        0,
+        5
+      ],
+      "manipulation": [
+        20,
+        40
+      ],
+      "sprint": [
+        3,
+        15
+      ],
+      "swim": [
+        30,
+        50
+      ]
+    },
+    "communication": [],
+    "composition": {
+      "primary": "slime"
+    },
+    "covering": "plating",
+    "diet": "omnivore",
+    "environmentalTolerance": {
+      "ambientMedia": [
+        "gas",
+        "liquid"
+      ],
+      "temperatureC": {
+        "max": 43,
+        "min": 0
+      }
+    },
+    "genome": {
+      "chirality": "rolled"
+    },
+    "lifespan": "long",
+    "protections": [
+      {
+        "degree": "resistant",
+        "mechanism": "impact",
+        "type": "harm"
+      }
+    ],
+    "senses": {
+      "hearing": [
+        10,
+        30
+      ],
+      "sight": [
+        20,
+        40
+      ],
+      "smell": [
+        45,
+        70
+      ],
+      "special": [
+        "tremorsense"
+      ]
+    },
+    "size": {
+      "heightCm": [
+        180,
+        250
+      ],
+      "massKg": [
+        320,
+        500
+      ]
+    },
+    "traversal": []
+  },
+  "schemaVersion": "5.1.0",
+  "signature": {
+    "key": "bioflim-defining",
+    "type": "passive"
+  },
+  "temperament": {
+    "aggression": [
+      20,
+      40
+    ],
+    "boldness": [
+      15,
+      35
+    ],
+    "curiosity": [
+      20,
+      40
+    ],
+    "energy": [
+      10,
+      30
+    ],
+    "sociability": [
+      5,
+      25
+    ]
+  }
+}

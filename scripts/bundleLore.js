@@ -49,6 +49,16 @@ const registriesSrc = read(path.join(docs, 'species-templates', 'registries.json
 write('registries.json', registriesSrc);
 write('abilityPatterns.json', read(path.join(docs, 'ability-catalog', 'ability-patterns.json')));
 
+// Current prototype species are ordinary content, not immutable release inputs.
+const prototypeSpeciesDir = path.join(docs, 'species-templates', 'v5');
+const prototypeSpeciesFiles = fs.readdirSync(prototypeSpeciesDir).filter(file => file.endsWith('.json')).sort();
+if (!prototypeSpeciesFiles.length) throw new Error('Prototype species catalog must not be empty');
+write('canonicalSpeciesCatalog.json', prototypeSpeciesFiles.map(file => {
+  const template = read(path.join(prototypeSpeciesDir, file));
+  if (template.key !== file.slice(0, -5)) throw new Error(`${file}: species key disagrees with file name`);
+  return template;
+}));
+
 // ---- registriesConst.ts: literal `as const` key arrays for every closed registry list ----
 function keyArray(name, entries) {
   const keys = entries.map((entry) => entry.key);

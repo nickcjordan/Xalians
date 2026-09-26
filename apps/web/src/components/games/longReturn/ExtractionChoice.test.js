@@ -56,7 +56,7 @@ test('a thin reserve is shown beside the deeper option, without a separate warni
 test('available repair is a separate reversible action, never an implicit deeper commitment', () => {
   const onRepair = vi.fn(), onContinue = vi.fn();
   const { container, rerender } = render(<ExtractionChoice salvage={4} potential={19} remaining={2} stability={3} readyCrew={3} canRepair onRepair={onRepair} onContinue={onContinue} nextScene={{ title: 'Core Reservoir' }} />);
-  fireEvent.click(screen.getByRole('button', { name: 'Repair before choosing' }));
+  fireEvent.click(screen.getByRole('button', { name: 'Repair with salvage' }));
   expect(onRepair).toHaveBeenCalledTimes(1);
   expect(onContinue).not.toHaveBeenCalled();
   rerender(<ExtractionChoice salvage={1} potential={19} remaining={2} stability={3} readyCrew={3} canRepair={false} onRepair={onRepair} onContinue={onContinue} nextScene={{ title: 'Core Reservoir' }} />);

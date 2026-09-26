@@ -31,7 +31,7 @@ test('result recap promotes the authored arrival and does not repeat its opening
   expect([...container.querySelectorAll('details p')].map(p => p.textContent)).toEqual(paragraphs);
 });
 
-test('a resolved crossing keeps its decisive action and consequence visible beside the receipt', () => {
+test('a resolved crossing shows the arrival beat and keeps the full action available', () => {
   const paragraphs = [
     'Three of them reach the silent rings.',
     'Hippochamp braces the control core while Chromocat holds the release.',
@@ -39,8 +39,6 @@ test('a resolved crossing keeps its decisive action and consequence visible besi
     'The complete control core is clear of the rings. They turn toward the extraction lift.'
   ];
   const { container } = render(<ArrivalStory paragraphs={paragraphs} recap />);
-  expect([...container.querySelectorAll('.lr-crossing-prose > p')].map(node => node.textContent)).toEqual([
-    paragraphs[1], paragraphs[2], 'They turn toward the extraction lift.'
-  ]);
+  expect([...container.querySelectorAll('.lr-crossing-prose > p')].map(node => node.textContent)).toEqual(['They turn toward the extraction lift.']);
   expect([...container.querySelectorAll('details p')].map(node => node.textContent)).toEqual(paragraphs);
 });

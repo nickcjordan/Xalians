@@ -1,7 +1,7 @@
 import React from 'react';
 import { formatHold, formatHoldShown, wholeOrTenths } from './reclamationNarration';
 import { FIT_SCALE, HOLD_BAR_SCALE } from './reclamationFit';
-import { HomeGlyph, StrainGlyph, CompanyGlyph, FallsGlyph, NoMediumGlyph, PieceGlyph } from './reclamationGlyphs';
+import { HomeGlyph, StrainGlyph, CompanyGlyph, FallsGlyph, NoMediumGlyph, PieceGlyph, RoleGlyph } from './reclamationGlyphs';
 
 /*
 	PASS 52, THE GLANCE REDESIGN (docs/design/reclamation-glance-redesign.md).
@@ -226,24 +226,60 @@ export function whyWords(reasons) {
 	if (r.home) out.push('its home world: it holds half again as much here');
 	if (r.climate) out.push(`${CLIMATE_WORDS[r.climate.cause] || CLIMATE_WORDS.strained}: it holds ${r.climate.level === 'severe' ? 'a quarter' : 'half'} of what it would`);
 	if (r.company) out.push(`the creatures with it here ${r.company > 0 ? 'add' : 'take'} ${formatHold(Math.abs(r.company))}`);
+	if (r.selfLift) out.push(`it is a bolster, and steadies itself as it steadies its allies: ${formatHold(r.selfLift)} more`);
 	if (r.falls) out.push('the Clash would drive it to nothing');
 	return out;
 }
 
 const upperFirst = (text) => text.replace(/^./, (c) => c.toUpperCase());
 
-export function WhyMarks({ reasons, className }) {
+// pass 59: a factor as the card prints it beside its mark
+export function factorText(v) {
+	const whole = Math.floor(v + 1e-9);
+	const part = Math.round((v - whole) * 4) / 4;
+	const frac = part === 0.25 ? '\u00bc' : part === 0.5 ? '\u00bd' : part === 0.75 ? '\u00be' : '';
+	return `\u00d7${whole > 0 ? whole : ''}${frac || (whole > 0 ? '' : '0')}`;
+}
+
+const signed = (v) => `${v < 0 ? '\u2212' : '+'}${formatHoldShown(Math.abs(v))}`;
+
+/*
+	PASS 59. With `factors`, each mark carries what it does to the number beside it: the house
+	"×1½", a flame or a snowflake "×½" (or "×¼" where it is severe), the struck air the same, company
+	and a bolster's own lift as "+1". Nick could not tell what the icons meant or how a bar
+	was calculated; the factor is the calculation, and the mark says what caused it.
+*/
+function chip(key, mark, factor) {
+	return (
+		<span className="rec-why-chip" key={key}>
+			{mark}
+			{factor && <i className="rec-why-x g-mono">{factor}</i>}
+		</span>
+	);
+}
+
+export function WhyMarks({ reasons, className, factors: withFactors, roomy }) {
 	const r = reasons || {};
 	const marks = [];
+	// a creature that would fall holds nothing whatever the factors, and two marks share one narrow column:
+	// the cross stands alone, and only the first mark carries its factor
+	const crowded = !roomy && [r.home, r.climate, r.selfLift, r.company, r.falls].filter(Boolean).length > 1;
+	let factors = withFactors && !r.falls;
+	const once = (text) => {
+		if (!factors) return null;
+		if (crowded) factors = false;
+		return text;
+	};
 	if (r.home) {
-		marks.push(<span className="rec-why rec-why--home" key="home" data-why="home" title="Home world: it holds half again as much here"><HomeGlyph /></span>);
+		marks.push(chip('home', <span className="rec-why rec-why--home" data-why="home" title="Home world: it holds half again as much here"><HomeGlyph /></span>, once(factorText(r.homeFactor || 1.5))));
 	}
 	if (r.climate) {
 		const cause = r.climate.cause || 'strained';
-		marks.push(
+		const factor = typeof r.climate.factor === 'number' ? r.climate.factor : (r.climate.level === 'severe' ? 0.25 : 0.5);
+		marks.push(chip(
+			'climate',
 			<span
 				className={`rec-why rec-why--climate rec-why--${cause} rec-why--level-${r.climate.level}`}
-				key="climate"
 				data-why={cause}
 				data-why-level={r.climate.level}
 				title={`${upperFirst(CLIMATE_WORDS[cause] || CLIMATE_WORDS.strained)}: it holds ${r.climate.level === 'severe' ? 'a quarter' : 'half'} of what it would`}
@@ -252,15 +288,19 @@ export function WhyMarks({ reasons, className }) {
 					? <NoMediumGlyph medium={r.climate.medium} />
 					: <StrainGlyph cause={cause === 'strained' ? 'medium' : cause} />}
 			</span>,
-		);
+			once(factorText(factor)),
+		));
+	}
+	if (r.selfLift) {
+		marks.push(chip('self', <span className="rec-why rec-why--self" data-why="self" title="A bolster steadies itself as it steadies its allies"><RoleGlyph role="bolster" /></span>, once(signed(r.selfLift))));
 	}
 	if (r.company) {
-		marks.push(<span className={`rec-why rec-why--company rec-why--company-${r.company > 0 ? 'up' : 'down'}`} key="company" data-why="company" title={`The creatures with it here ${r.company > 0 ? 'add' : 'take'} ${formatHold(Math.abs(r.company))}`}><CompanyGlyph /></span>);
+		marks.push(chip('company', <span className={`rec-why rec-why--company rec-why--company-${r.company > 0 ? 'up' : 'down'}`} data-why="company" title={`The creatures with it here ${r.company > 0 ? 'add' : 'take'} ${formatHold(Math.abs(r.company))}`}><CompanyGlyph /></span>, once(signed(r.company))));
 	}
 	if (r.falls) {
-		marks.push(<span className="rec-why rec-why--falls" key="falls" data-why="falls" title="The Clash would drive it to nothing"><FallsGlyph /></span>);
+		marks.push(chip('falls', <span className="rec-why rec-why--falls" data-why="falls" title="The Clash would drive it to nothing"><FallsGlyph /></span>, null));
 	}
-	return <span className={`rec-whys${className ? ` ${className}` : ''}`} aria-hidden="true">{marks}</span>;
+	return <span className={`rec-whys${withFactors ? ' rec-whys--factors' : ''}${className ? ` ${className}` : ''}`} aria-hidden="true">{marks}</span>;
 }
 
 // the stacked parts of a column, as fractions of the bench's scale, bottom up; `room` is
@@ -345,7 +385,7 @@ export function FitStrip({ sites, row, sentSiteId, sentCell, moveRow, focusSiteI
 					<span className="rec-fit-part rec-fit-part--lost" />
 					{clear !== null && <span className="rec-fit-tick" />}
 				</span>
-				<WhyMarks reasons={cell} className="rec-fit-why" />
+				<WhyMarks reasons={cell} className="rec-fit-why" factors />
 			</span>
 		);
 	};

@@ -47,7 +47,9 @@ export function startStoryMotion(root: HTMLElement): (() => void) | undefined {
 
 			root.querySelectorAll<HTMLElement>('[data-panel]').forEach((panel) => {
 				keep(gsap.fromTo(panel, { y: 32, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.9, ease: ENTER, scrollTrigger: once(panel) }));
-				const img = panel.querySelector('img');
+				// A living plate holds still in its frame: its SVG cannot travel with
+				// its poster, so only a plain painting drifts.
+				const img = panel.querySelector('[data-live-plate]') ? null : panel.querySelector('img');
 				if (img) {
 					// The image is drawn a little larger than its frame (see the
 					// panel's classes) so it can travel without showing an edge.

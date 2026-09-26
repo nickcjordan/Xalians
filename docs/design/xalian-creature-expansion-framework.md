@@ -13,6 +13,8 @@ New creatures are selected from demonstrated universe needs, not from an isolate
 
 Every playable design also obeys a **common encounter envelope**: it must sustain ordinary encounter-length activity in gas and assume a visually credible unsupported pose with basic movement on solid ground. This is a bioengineering constraint, not a claim that every creature thrives everywhere. Native environments may remain necessary for long-term life, feeding, travel, or peak mobility. Truly medium-bound organisms may exist as fauna, but they do not enter the cross-game playable roster without an explicit product-level decision.
 
+For an aquatic-bodied playable creature, technical survival is not enough. Its anatomy must make it look reasonably capable on land: show how its weight is supported, which structures grip or push against the ground, and how it can move and turn without being stranded. Test this in a neutral land pose even if its primary portrait shows it swimming. A viewer should not have to invent an unseen walking mechanism to believe the creature can participate in a land encounter. This is a visual and functional design test, not a requirement for equal land and water speed, upright legs, or a terrestrial lifestyle. A Water-element creature that is already land-primary does not need an artificial aquatic body plan to satisfy it.
+
 Within that envelope, every design obeys a **portable moveset baseline**: environmental specialization may govern where a creature lives comfortably, but it may not make the creature's moveset conditional on a home-world event. Every generated ability and signature must retain a complete, lore-valid baseline anywhere the creature itself can participate. A home biome, storm, resource, structure, allied species, or other external condition may amplify the effect or change its presentation, but may never be required to invoke it.
 
 These rules do not make every creature environmentally universal. They distinguish temporary cross-game deployment, long-term ecological fitness, and access to authored actions. Invisible short-term physiology may be explained lightly, but visible support and movement may not be hand-waved: no unexplained hovering and no improvised life-support equipment added after the creature is designed.
@@ -90,7 +92,7 @@ Before any name, silhouette, or lore paragraph is proposed, write a one-page tar
 4. **Mechanical identity:** the observable act that distinguishes it from existing species, stated without game-specific numbers.
 5. **Contrast set:** the two or three current species it could be confused with and the exact distinction from each.
 6. **Constraints:** home-world habitable band, terrain mobility, breathes/ambient-media relationship, element graph, and established lore.
-7. **Encounter deployment:** how the body sustains encounter-length activity in gas and visibly supports and moves itself on solid ground without equipment, while preserving its native ecological specialization.
+7. **Encounter deployment:** how the body sustains encounter-length activity in gas and visibly supports and moves itself on solid ground without equipment, while preserving its native ecological specialization. For an aquatic-bodied creature, test a neutral land pose for convincing mobility, not merely survival.
 8. **Portable moveset baseline:** how the central act remains available without a home-world weather event, terrain feature, resource, structure, or companion. State any environmental amplification separately.
 9. **Do-not-force list:** attractive coverage gaps that do not belong on this creature.
 
@@ -128,7 +130,7 @@ At every step, compare the draft to its contrast set and record the coverage del
 
 - Physiology supports the stated capabilities, senses, instruments, and signature.
 - Temperature and media fit the home world.
-- A neutral encounter pose shows unsupported body weight and basic movement on solid ground; `gas` is included in playable ambient tolerance without erasing native specialization.
+- A neutral encounter pose shows unsupported body weight and credible movement on solid ground; `gas` is included in playable ambient tolerance without erasing native specialization. For aquatic-bodied creatures, the visible anatomy and pose must suggest competent movement and turning rather than a stranded animal whose land participation is only explained in prose.
 - Traits follow from ratified facts and do not duplicate raw fields.
 - Lore, data, and art describe the same silhouette and central act.
 - Every ability instrument and the signature's complete baseline remain usable wherever the creature can participate; environmental bonuses are explicitly secondary.

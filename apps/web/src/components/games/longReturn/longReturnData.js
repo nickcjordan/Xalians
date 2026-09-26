@@ -173,7 +173,7 @@ export const MISSION = {
           environment: { medium: 'gas', temperatureC: 5, element: 'metal' }, hazardIds: [],
           reaction: { axis: 'boldness', direction: 'low', label: 'A cautious lead tests each span.' },
           methods: [
-            { kind: 'capability', key: 'climb', attribute: 'agility', label: 'Climb the suspension frame' },
+            { kind: 'capability', key: 'climb', attribute: 'agility', label: 'Climb the suspension frame', observation: 'A loose service cable hangs along the frame, within reach of this approach.' },
             { kind: 'capability', key: 'leap', attribute: 'reflex', label: 'Leap between intact sections' },
             { kind: 'action', key: 'beam', attribute: 'intelligence', label: 'Cut a controlled path' }
           ] },
@@ -284,8 +284,8 @@ export const MISSION = {
             { kind: 'action', key: 'beam', attribute: 'intelligence', label: 'Feed the optical reader' },
             { kind: 'action', key: 'snare', attribute: 'manipulation', label: 'Move the authentication arms remotely' }
           ] },
-        { id: 'breach', title: 'Open the pressure seam', description: 'Ignore the lock and force the iris along its oldest fracture.', difficulty: 72, pressure: 2, salvage: 1,
-          legacyAdjustments: [{ flag: 'security-pulse', difficulty: 5, label: 'Alerted lock', detail: 'The turbine hall’s security pulse has fully engaged the locking collar.' }],
+        { id: 'breach', title: 'Open the pressure seam', description: 'Ignore the lock and force the iris along its oldest fracture.', fallbackLabel: 'Work at the old fracture', difficulty: 72, pressure: 2, salvage: 1,
+          legacyAdjustments: [{ flag: 'underdeck-flow-isolated', difficulty: 0, detail: 'Closing the coolant valve relieved pressure behind the service release.' }, { flag: 'security-pulse', difficulty: 5, label: 'Alerted lock', detail: 'The turbine hall’s security pulse has fully engaged the locking collar.' }],
           outcomes: {
             clean: 'The lead finds the old fracture and opens the iris before the locking collar can answer.',
             costly: 'The seam opens one grinding segment at a time, showering the crew in brittle alloy.',
@@ -353,6 +353,7 @@ export const MISSION = {
       ],
       routes: [
         { id: 'stabilize', title: 'Stabilize the archive', description: 'Preserve the chamber and recover every readable index plate.', difficulty: 76, pressure: 1, sustainedWork: 2, salvage: 5,
+          consequence: { id: 'archive-controls-preserved', label: 'Archive controls preserved', detail: 'The intact control circuit still reaches the reservoir below.', future: 'Leaves a working control link for collecting charge in the reservoir.' },
           environment: { medium: 'gas', temperatureC: -5, element: 'chemical' }, hazardIds: ['plague-dust'],
           reaction: { axis: 'aggression', direction: 'low', label: 'A gentle lead avoids rupturing the stasis membrane.' },
           methods: [
@@ -361,6 +362,7 @@ export const MISSION = {
             { kind: 'attribute', key: 'intelligence', secondary: 'manipulation', label: 'Rebuild the index cradle' }
           ] },
         { id: 'blackbox', title: 'Pull the archive blackbox', description: 'Take the essential index and let the rest of the chamber collapse.', difficulty: 70, pressure: 3, salvage: 3,
+          consequence: { id: 'archive-controls-lost', label: 'Archive control link lost', detail: 'The collapsing chamber tears its control circuit apart.', future: 'The reservoir remains reachable, but its collectors must be operated at the rim.' },
           environment: { medium: 'gas', temperatureC: -5, element: 'chemical' }, hazardIds: ['plague-dust'],
           reaction: { axis: 'boldness', direction: 'high', label: 'A bold lead holds position through the collapse.' },
           methods: [
@@ -383,6 +385,11 @@ export const MISSION = {
       ],
       routes: [
         { id: 'harvest', title: 'Harvest the surface charge', description: 'Work from the rim and bleed the reservoir slowly.', difficulty: 74, pressure: 0, salvage: 6,
+          consequence: { id: 'reservoir-timing-diagram', label: 'Ring timing recovered', preview: 'Faint markings show beneath the clouded collector glass. Draining it may uncover them.', detail: 'As the charge drains, a service diagram appears beneath the collector glass. It shows the inner ring closing before the outer assembly.', future: 'Carry the diagram into the spine to recognize its uneven closing interval.' },
+          legacyAdjustments: [
+            { flag: 'archive-controls-preserved', difficulty: 0, detail: 'The preserved archive circuit opens a way to regulate the collectors from the console.' },
+            { flag: 'archive-controls-lost', difficulty: 0, detail: 'The archive circuit is severed. Work at the collector valves themselves.' }
+          ],
           environment: { medium: 'gas', temperatureC: -8, element: 'electric' }, hazardIds: ['charge-bloom'],
           reaction: { axis: 'energy', direction: 'low', label: 'A patient lead waits between discharge cycles.' },
           methods: [
@@ -390,7 +397,8 @@ export const MISSION = {
             { kind: 'attribute', key: 'manipulation', secondary: 'intelligence', label: 'Bleed the collector valves' },
             { kind: 'trait', key: 'resistant', attribute: 'resilience', label: 'Work at the charged rim' }
           ] },
-        { id: 'dive', title: 'Dive for the intact cell', description: 'The richest cell is below the charged liquid surface.', difficulty: 80, pressure: 2, salvage: 9,
+        { id: 'dive', title: 'Recover the submerged cell', description: 'The richest cell is below the charged liquid surface.', difficulty: 80, pressure: 2, salvage: 9,
+          consequence: { id: 'reservoir-cell-recovered', label: 'Intact service cell recovered', preview: 'An unbroken cell rests in the submerged housing, its connector still sealed.', detail: 'The intact cell still holds charge. Its connector matches the service socket marked on the spine access panel.', future: 'Use the recovered cell to power the ring controls in the final chamber.' },
           environment: { medium: 'liquid', temperatureC: -8, element: 'electric' }, hazardIds: ['charge-bloom'],
           reaction: { axis: 'boldness', direction: 'high', label: 'A bold lead commits before the bloom peaks.' },
           methods: [
@@ -413,6 +421,7 @@ export const MISSION = {
       ],
       routes: [
         { id: 'align', title: 'Realign the spine', description: 'Stop the rings and recover a complete Vallerii control core.', difficulty: 82, pressure: 2, salvage: 10,
+          legacyAdjustments: [{ flag: 'reservoir-cell-recovered', difficulty: 0, detail: 'The recovered cell can power the service controls.' }, { flag: 'reservoir-timing-diagram', difficulty: 0, detail: 'The collector diagram reveals the early inner-ring closure.' }],
           environment: { medium: 'vacuum', temperatureC: 38, element: 'light' }, hazardIds: ['ring-closure'],
           reaction: { axis: 'sociability', direction: 'high', label: 'A social lead keeps every brace synchronized.' },
           methods: [
@@ -421,6 +430,7 @@ export const MISSION = {
             { kind: 'trait', key: 'anchored', attribute: 'strength', label: 'Brace against the turning spine' }
           ] },
         { id: 'closure', title: 'Take the closing interval', description: 'Abandon the machinery and snatch its exposed memory spindle.', difficulty: 78, pressure: 3, salvage: 8,
+          legacyAdjustments: [{ flag: 'reservoir-timing-diagram', difficulty: 0, detail: 'The collector diagram reveals the early inner-ring closure.' }],
           environment: { medium: 'vacuum', temperatureC: 38, element: 'light' }, hazardIds: ['ring-closure'],
           reaction: { axis: 'energy', direction: 'high', label: 'An energetic lead commits to the full interval.' },
           methods: [

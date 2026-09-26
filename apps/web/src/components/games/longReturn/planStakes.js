@@ -5,7 +5,7 @@ import { comparisonCosts } from './RouteComparison';
 export function planStakes(plan, crew, strain, pressure, companion) {
   if (!plan) return null;
   const cost = comparisonCosts(plan, companion);
-  if (pressure + cost.stability >= MAX_INSTABILITY) return { kind: 'stability', label: 'This crossing uses the last stability', detail: 'Forced extraction follows this crossing.' };
+  if (pressure + cost.stability >= MAX_INSTABILITY) return { kind: 'stability', label: 'Last stability: forced extraction next', detail: 'The crew must leave after this crossing unless the site is repaired first.' };
   // On an unresolved route the display cannot promise ally help, but the
   // warning cannot claim a forced ending if that help could still save one.
   const leastLeadCost = companion?.ready && cost.uncertain

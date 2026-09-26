@@ -7527,3 +7527,122 @@
 /* a world at rest wears no side's color: brass means the rival, so the frame is neutral until a moment
    (your lift, the rival's move, the Ruling) gives it one; :where keeps every moment's frame winning */
 .rec-console--match[data-terminal] :where(.rec-site.g-panel) { border-color: color-mix(in srgb, var(--g-ink) 22%, transparent); }
+
+/* --- pass 59: read the card ------------------------------------------------------------
+   docs/design/reclamation-read-the-card.md. Nick, 2026-09-24, on pass 58's cyan columns:
+   "Why are all of the bars the same blue color? Before they were insinuating which planet
+   they aligned to ... is that insinuating they can only go to the blue planet? I'm not sold
+   on this whole amber versus cyan thing ... I also don't understand what the icons are
+   beneath each bar or how each bar is calculated." A card is only ever yours, so it wears
+   no side's color: each column is its world's color again, the numbers are plain ink, the
+   rival's tag and the lead pointer are neutral. And each column shows its calculation: a
+   dashed box at the creature's normal hold, the fill at what it holds there, and under it
+   the mark with the factor that made the difference. */
+
+/* the column in its world's color */
+.rec-console--match[data-terminal] .rec-fit-well {
+	border-bottom: 3px solid color-mix(in srgb, var(--g-el) 80%, transparent);
+	background: linear-gradient(to top, color-mix(in srgb, var(--g-el) 9%, transparent), transparent 75%);
+}
+.rec-console--match[data-terminal] .rec-fit-col--focus .rec-fit-well { background: linear-gradient(to top, color-mix(in srgb, var(--g-el) 24%, transparent), transparent 85%); }
+.rec-console--match[data-terminal] .rec-fit-part--own,
+.rec-console--match[data-terminal] .rec-fit-col--sent .rec-fit-part--own { background: color-mix(in srgb, var(--g-el) 80%, var(--g-hull-lo)); }
+.rec-console--match[data-terminal] .rec-fit-col--takes .rec-fit-part--own { background: var(--g-el); box-shadow: 0 0 9px color-mix(in srgb, var(--g-el) 55%, transparent); }
+.rec-console--match[data-terminal] .rec-fit-col--short .rec-fit-part--own { opacity: 0.6; }
+.rec-console--match[data-terminal] .rec-fit-part--allies {
+	background: repeating-linear-gradient(90deg, color-mix(in srgb, var(--g-el) 75%, transparent) 0 2px, color-mix(in srgb, var(--g-el) 30%, transparent) 2px 4px);
+}
+.rec-console--match[data-terminal] .rec-fit-col--move .rec-fit-part--own {
+	background: repeating-linear-gradient(0deg, color-mix(in srgb, var(--g-el) 75%, transparent) 0 3px, color-mix(in srgb, var(--g-el) 35%, transparent) 3px 5px);
+}
+
+/* the number in plain ink: bright where the send would take the lead, quieter where the rival would still lead */
+.rec-console--match[data-terminal] .rec-fit-num,
+.rec-console--match[data-terminal] .rec-fit-col--takes .rec-fit-num { color: var(--g-ink); text-shadow: none; }
+.rec-console--match[data-terminal] .rec-fit-col--short .rec-fit-num { color: var(--g-ink-mid); }
+.rec-console--match[data-terminal] .rec-fit-col--hurts .rec-fit-num { color: var(--rec-loss); }
+.rec-console--match[data-terminal] .rec-match[data-moment="mine"] .rec-plinth--hand .rec-plinth-name { color: var(--g-ink); }
+
+/* its normal hold, per column: a dashed box from the foot, so the fill shows what the world did to it */
+.rec-console--match[data-terminal] .rec-fit[style*="--fit-body"] .rec-fit-col:not(.rec-fit-col--gone):not(.rec-fit-col--none):not(.rec-fit-col--sent) .rec-fit-well::after {
+	left: 10%;
+	right: 10%;
+	bottom: 0;
+	height: calc(var(--fit-body) * 100%);
+	border: 1.5px dashed color-mix(in srgb, var(--g-ink) 70%, transparent);
+	border-bottom: 0;
+	z-index: 2;
+}
+
+/* the rival's tag and the lead to pass, in neutral ink: the card is yours, and the tag's place at the top says whose it is */
+.rec-console--match[data-terminal] .rec-fit-rival {
+	border: 1px solid color-mix(in srgb, var(--g-ink) 45%, transparent);
+	border-top-width: 3px;
+	background: repeating-linear-gradient(135deg, color-mix(in srgb, var(--g-ink) 22%, transparent) 0 2px, transparent 2px 6px);
+}
+.rec-console--match[data-terminal] .rec-fit-rival i { color: var(--g-ink); background: color-mix(in srgb, var(--g-hull-lo) 90%, transparent); }
+.rec-console--match[data-terminal] .rec-fit-tick { border-left-color: var(--g-ink); }
+.rec-console--match[data-terminal] .rec-fit-col--news .rec-fit-well { animation-name: rec-fit-news-ink; }
+@keyframes rec-fit-news-ink {
+	0%, 35% { box-shadow: 0 0 0 2px var(--g-ink), 0 0 14px color-mix(in srgb, var(--g-ink) 45%, transparent); }
+	100% { box-shadow: 0 0 0 2px transparent; }
+}
+@media (max-width: 760px) {
+	.rec-console--match[data-terminal] .rec-fit-rival { border-top-color: var(--g-ink); }
+}
+@media (prefers-reduced-motion: reduce) {
+	.rec-console--match[data-terminal] .rec-fit-col--news .rec-fit-well { animation: none; box-shadow: 0 0 0 2px color-mix(in srgb, var(--g-ink) 60%, transparent); }
+}
+
+/* each mark with the factor it applies: the house x1½, a flame, a snowflake or the struck air x½ or x¼, company and a bolster's own lift +n */
+.rec-console--match[data-terminal] .rec-why-chip { display: inline-flex; align-items: center; gap: 1px; min-width: 0; }
+.rec-console--match[data-terminal] .rec-why-x {
+	font-style: normal;
+	font-weight: 700;
+	font-size: calc(var(--why) * 0.8);
+	line-height: 1;
+	letter-spacing: -0.04em;
+	color: var(--g-ink);
+	white-space: nowrap;
+}
+.rec-console--match[data-terminal] .rec-why--self { color: var(--g-ink); }
+.rec-console--match[data-terminal] .rec-why--self svg { fill: none; stroke: currentColor; stroke-width: 2; }
+/* on a card the marks share a narrow column: they size to it */
+.rec-console--match[data-terminal] .rec-fit-why.rec-whys--factors { --why: min(calc(17px * var(--rec-scale)), 44cqw); gap: 3px; flex-wrap: nowrap; overflow: visible; }
+.rec-console--match[data-terminal] .rec-fit-why .rec-why-chip { flex: 0 0 auto; }
+.rec-console--match[data-terminal] .rec-fit-why .rec-why-x { font-size: min(calc(13px * var(--rec-scale)), 33cqw); }
+@media (min-width: 761px) and (min-height: 821px) {
+	.rec-console--match[data-terminal] .rec-fit-why.rec-whys--factors { --why: min(calc(18px * var(--rec-scale)), 44cqw); }
+}
+@media (max-width: 760px) {
+	.rec-console--match[data-terminal] .rec-fit-why .rec-why-x { display: none; }
+}
+/* the ghost's marks carry the same factors, at its size */
+.rec-console--match[data-terminal] .rec-ghost-piece-whys .rec-why-x { font-size: calc(var(--why) * 0.72); margin-left: 1px; }
+
+/* the ghost's chain: what it arrives with, and in the Clash's red what the Clash takes */
+.rec-console--match[data-terminal] .rec-ghost-piece-chain {
+	display: inline-flex;
+	align-items: baseline;
+	gap: calc(var(--st-num) * 0.25);
+	padding: 0 calc(var(--st-num) * 0.3);
+	font-size: calc(var(--st-num) * 0.8);
+	font-weight: 700;
+	background: color-mix(in srgb, var(--g-hull-lo) 80%, transparent);
+}
+.rec-console--match[data-terminal] .rec-ghost-piece-chain i { font-style: normal; }
+.rec-console--match[data-terminal] .rec-ghost-piece-going { color: var(--g-ink); }
+.rec-console--match[data-terminal] .rec-ghost-piece-toll { color: var(--rec-loss); }
+
+/* one world from winning: the deciding pennant glows in outline and stays empty, so it never reads as already won */
+.rec-console--match[data-terminal] .rec-scoreboard .rec-pip--point .rec-pip-cloth { fill: none; stroke-width: 1.8; }
+.rec-console--match[data-terminal] .rec-scoreboard .rec-pip--point svg { filter: drop-shadow(0 0 3px currentColor); }
+
+/* the ghost's chain: normal hold, each mark with its factor, what it arrives with, what the Clash takes */
+.rec-console--match[data-terminal] .rec-ghost-piece-chain { align-items: center; }
+.rec-console--match[data-terminal] .rec-ghost-piece-chain .rec-ghost-piece-whys { --why: calc(var(--st-num) * 0.8); }
+.rec-console--match[data-terminal] .rec-ghost-piece-chain .rec-why-x { font-size: calc(var(--st-num) * 0.72); }
+.rec-console--match[data-terminal] .rec-ghost-piece-body { color: var(--g-ink-mid); }
+.rec-console--match[data-terminal] .rec-ghost-piece-arrow { color: var(--g-ink-low); font-weight: 400; }
+.rec-console--match[data-terminal] .rec-ghost-piece-allies { display: inline-flex; align-items: center; gap: 1px; color: var(--g-ink); }
+.rec-console--match[data-terminal] .rec-ghost-piece-allies svg { width: calc(var(--st-num) * 0.75); height: calc(var(--st-num) * 0.75); fill: none; stroke: currentColor; stroke-width: 2; }

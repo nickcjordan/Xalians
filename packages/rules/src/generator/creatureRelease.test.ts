@@ -1,6 +1,6 @@
 import { expect, it } from 'vitest';
 import fixture from '../../../content/src/creature/fixtures/support-species.json';
-import { CreatureRecordSchema } from '@xalians/content/creature';
+import { CreatureRecordV51Schema } from '@xalians/content/creature';
 import { createCreatureRelease } from './creatureRelease.ts';
 
 const options = { origin: 'saiphus', serial: 1, generatedAt: '2026-09-21T12:00:00.000Z', profile: 'full' as const };
@@ -9,7 +9,7 @@ it('owns an immutable roster and keeps caller mutations out of subsequent genera
   const source = structuredClone(fixture);
   const release = createCreatureRelease('test-v5', [source]);
   const first = release.generateXalian(source.key, 'repeat', options);
-  expect(CreatureRecordSchema.parse(first)).toEqual(first);
+  expect(CreatureRecordV51Schema.parse(first)).toEqual(first);
   source.actions.length = 0;
   expect(() => { release.getSpeciesTemplates()[0].actions.length = 0; }).toThrow();
   const changed = release.generateXalian(source.key, 'repeat', options);

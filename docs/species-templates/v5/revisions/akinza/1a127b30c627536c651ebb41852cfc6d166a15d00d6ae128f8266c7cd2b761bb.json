@@ -1,0 +1,230 @@
+{
+  "actions": [
+    {
+      "activation": {
+        "continuity": "discrete"
+      },
+      "delivery": {
+        "approach": "stationary",
+        "mode": "self"
+      },
+      "description": "Its low-light eyes and quiet movement let it slip from notice while stalking.",
+      "effects": [
+        {
+          "duration": "brief",
+          "key": "outcome",
+          "likelihood": "consistent",
+          "onset": "instant",
+          "persistence": "lingering",
+          "recipient": "self",
+          "removable": [
+            "disrupting"
+          ],
+          "status": "concealed",
+          "type": "status"
+        }
+      ],
+      "instrument": "hide",
+      "key": "akinza-defining",
+      "name": "Night Stalk",
+      "spatial": {},
+      "targeting": [
+        "self"
+      ],
+      "timing": {
+        "preparation": "immediate",
+        "recovery": "brief"
+      }
+    }
+  ],
+  "attributes": {
+    "agility": [
+      62,
+      90
+    ],
+    "charisma": [
+      15,
+      40
+    ],
+    "endurance": [
+      40,
+      65
+    ],
+    "instinct": [
+      58,
+      85
+    ],
+    "intelligence": [
+      35,
+      60
+    ],
+    "reflex": [
+      60,
+      88
+    ],
+    "resilience": [
+      25,
+      48
+    ],
+    "strength": [
+      30,
+      55
+    ],
+    "vitality": [
+      30,
+      52
+    ],
+    "willpower": [
+      30,
+      55
+    ]
+  },
+  "channels": [],
+  "conduits": {},
+  "element": "ice",
+  "generatorPlanets": [
+    "krystos"
+  ],
+  "homePlanet": "krystos",
+  "key": "akinza",
+  "lore": {
+    "appearance": [
+      "Upright feline biped",
+      "Slender and light in the frame",
+      "Fur coat",
+      "Large rabbit-like ears atop the head",
+      "Large eyes",
+      "Slender arms ending in clawed hands",
+      "Long plumed tail"
+    ],
+    "behavior": "It moves at night, using its stealth and night vision to go unseen.",
+    "company": "It goes alone.",
+    "description": "This creature's incredible stealth and night vision allow it to sneak through the night with ease.",
+    "feeding": "It forages the tundra at night and eats what it finds.",
+    "habitat": "The arctic wastes outside the prison complexes of Krystos.",
+    "origin": "Feral stock from the Krystos Generator after the impact, when the machine turned from making dainty, graceful creatures to lifeforms that could survive the frozen tundra."
+  },
+  "mechanisms": [],
+  "name": "Akinza",
+  "nameOrigin": "A compressed blend of Norwegian kanin, rabbit, and German Katze, cat, reflecting its feline frame and oversized rabbit-like ears.",
+  "passives": [],
+  "physiology": {
+    "anatomy": [
+      "claws",
+      "jaws",
+      "tail",
+      "hide"
+    ],
+    "bodyPlan": "biped",
+    "breathes": [
+      "gas"
+    ],
+    "capabilities": {
+      "burrow": [
+        10,
+        30
+      ],
+      "climb": [
+        45,
+        70
+      ],
+      "flight": [
+        0,
+        0
+      ],
+      "leap": [
+        55,
+        80
+      ],
+      "manipulation": [
+        30,
+        55
+      ],
+      "sprint": [
+        65,
+        88
+      ],
+      "swim": [
+        5,
+        20
+      ]
+    },
+    "communication": [
+      "display"
+    ],
+    "composition": {
+      "primary": "flesh"
+    },
+    "covering": "fur",
+    "diet": "omnivore",
+    "environmentalTolerance": {
+      "ambientMedia": [
+        "gas"
+      ],
+      "temperatureC": {
+        "max": -10,
+        "min": -60
+      }
+    },
+    "genome": {
+      "chirality": "rolled"
+    },
+    "lifespan": "standard",
+    "protections": [],
+    "senses": {
+      "hearing": [
+        65,
+        90
+      ],
+      "sight": [
+        70,
+        95
+      ],
+      "smell": [
+        35,
+        60
+      ],
+      "special": [
+        "lowlight"
+      ]
+    },
+    "size": {
+      "heightCm": [
+        130,
+        165
+      ],
+      "massKg": [
+        48,
+        74
+      ]
+    },
+    "traversal": []
+  },
+  "schemaVersion": "5.1.0",
+  "signature": {
+    "key": "akinza-defining",
+    "type": "action"
+  },
+  "temperament": {
+    "aggression": [
+      30,
+      55
+    ],
+    "boldness": [
+      25,
+      50
+    ],
+    "curiosity": [
+      35,
+      60
+    ],
+    "energy": [
+      45,
+      70
+    ],
+    "sociability": [
+      10,
+      30
+    ]
+  }
+}

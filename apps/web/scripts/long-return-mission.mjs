@@ -8,7 +8,7 @@ try {
   const viewport = { width: Number(process.env.LR_WIDTH || 1280), height: Number(process.env.LR_HEIGHT || 900) };
   const context = await browser.newContext({ viewport, reducedMotion: process.env.LR_REDUCED === '1' ? 'reduce' : 'no-preference' });
   const page = await context.newPage();
-  const events = [], errors = [], observedEffects = new Set();
+  const events = [], errors = [], observedEffects = new Set(), viewportAudit = [];
   let crossed = 0;
   let expectedBanked;
   let previousMapScene = '', previousMapExit = '';
@@ -25,14 +25,22 @@ try {
   }
   await page.getByRole('button', { name: /Seal Crew/ }).click();
   for (let step = 0; step < 100; step++) {
+    if (process.env.LR_VIEWPORT_AUDIT === '1') viewportAudit.push(await page.evaluate(stepNumber => {
+      const record = document.querySelector('[data-field-record]');
+      const wizard = document.querySelector('.lr-wizard-view');
+      const active = record || wizard;
+      const content = record?.querySelector('.lr-sequence-story') || wizard?.querySelector('.lr-simple-decision, .lr-phase-panel, .lr-transition-beat, .lr-field-encounter');
+      const rect = node => node ? { top: Math.round(node.getBoundingClientRect().top), bottom: Math.round(node.getBoundingClientRect().bottom), height: Math.round(node.getBoundingClientRect().height), scroll: node.scrollHeight, client: node.clientHeight } : null;
+      return { step: stepNumber, phase: record ? 'field-record' : [...(wizard?.classList || [])].find(name => name.startsWith('lr-wizard-phase-')), viewport: innerHeight, document: { scroll: document.documentElement.scrollHeight, client: document.documentElement.clientHeight }, active: rect(active), content: rect(content), record: rect(record), story: rect(record?.querySelector('.lr-sequence-story')) };
+    }, step));
     const dialog = page.locator('[data-field-record]');
     if (await dialog.count()) {
       if (process.env.LR_MAP_FOCUS === '1' && process.env.LR_REDUCED !== '1') {
-        const spotlight = dialog.locator('[data-map-focus="active"]');
+        const spotlight = dialog.locator('.lr-field-map-panel.is-focused');
         await spotlight.waitFor({ timeout: 1500 });
         const box = await spotlight.boundingBox();
         const style = await spotlight.evaluate(node => ({position: getComputedStyle(node).position, inset: getComputedStyle(node).inset, className: node.className}));
-        assert(box.width >= viewport.width * .9 && box.height >= viewport.height * .9, `A map change takes over the action viewport: ${JSON.stringify({ box, viewport, style })}`);
+        assert(box.width < viewport.width && box.height < viewport.height, `Map motion remains inside the persistent stage: ${JSON.stringify({ box, viewport, style })}`);
         assert(await spotlight.locator('[data-map-attention]').count(), 'The changed map station is called out');
         await page.waitForTimeout(350);
         await page.screenshot({ path: `${output}/${step}-map-focus.png` });
@@ -50,41 +58,33 @@ try {
         }
       }
       const started = Date.now();
+      if (viewport.width <= 360) {
+        await page.waitForTimeout(100);
+        for (let passage = 0; passage < 12; passage++) {
+          const nextPassage = dialog.getByRole('button', { name: /Next passage/ });
+          if (!await nextPassage.isVisible().catch(() => false)) break;
+          const layout = await dialog.evaluate(node => ({ beat: node.querySelector('.lr-story-beat').getBoundingClientRect().bottom, controls: node.querySelector('.lr-sequence-story footer').getBoundingClientRect().top }));
+          assert(layout.beat <= layout.controls + 2, `Story passage fits its stage: ${JSON.stringify(layout)}`);
+          await nextPassage.click();
+        }
+      }
       await dialog.getByRole('button', { name: /Continue to result|Review scout report|Check scout status|Respond to encounter|See encounter result|Choose response/ }).waitFor({ timeout: 120000 });
       events.push({ type: 'animation', elapsed: Date.now()-started, text: await dialog.innerText() });
       await page.screenshot({ path: `${output}/${step}-animation.png` });
-      if (viewport.width < 768) {
-        const readingLayout = await dialog.evaluate(node => {
-          const story = node.querySelector('.lr-sequence-story-scroll');
-          const lastBeat = story.querySelector('li:last-child');
-          const footer = node.querySelector('.lr-sequence-story footer');
-          return { innerOverflow: getComputedStyle(story).overflowY, lastBeatBottom: lastBeat.getBoundingClientRect().bottom, footerTop: footer.getBoundingClientRect().top };
-        });
-        assert.equal(readingLayout.innerOverflow, 'visible', 'Phone field record uses one natural page scroll');
-        assert(readingLayout.footerTop >= readingLayout.lastBeatBottom, 'Continue action follows the entire account rather than covering it');
-      }
-      if (viewport.width === 390 && !events.some(event => event.type === 'read-start')) {
-        const readStart = dialog.getByRole('button', { name: /Read from start/ });
-        if (viewport.height <= 700 && step === 1) {
-          assert.equal(await dialog.evaluate(node => node.scrollTop), 0, 'Completed short-phone scout account begins with its opening beat');
-          assert.equal(await readStart.count(), 0, 'No rewind control is needed when the account starts at the beginning');
-          const continueReading = dialog.getByRole('button', { name: /Continue reading the action/ });
-          assert.equal(await continueReading.count(), 1, 'Short-phone account signals that more story follows');
-          await continueReading.click();
-          assert(await dialog.evaluate(node => node.scrollTop > 0), 'Reading cue moves to the next part of the account');
-        }
-        if (await readStart.count()) {
-          await readStart.click();
-          const scroller = dialog.locator('.lr-sequence-story-scroll');
-          assert.equal(await scroller.evaluate(node => node.scrollTop), 0, 'Finished account can be read from its opening beat');
-          assert.equal(await scroller.evaluate(node => document.activeElement === node), true, 'Reading starts with keyboard focus in the account');
-          events.push({ type: 'read-start' });
-          await page.screenshot({ path: `${output}/read-from-start.png` });
-        }
-      }
+      const storyLayout = await dialog.evaluate(node => {
+        const story = node.querySelector('.lr-sequence-story');
+        const beat = node.querySelector('.lr-story-beat');
+        const footer = node.querySelector('.lr-sequence-story footer');
+        const map = node.querySelector('.lr-field-map-stage');
+        const figure = map.querySelector('[data-expedition-map]');
+        return { viewport: innerHeight, dialog: node.getBoundingClientRect(), map: map.getBoundingClientRect(), figure: figure.getBoundingClientRect(), figureChildren:[...figure.children].map(child=>({name:child.tagName,className:child.className?.baseVal||child.className,height:child.getBoundingClientRect().height,display:getComputedStyle(child).display})), story: story.getBoundingClientRect(), beat: beat.getBoundingClientRect(), footer: footer.getBoundingClientRect() };
+      });
+      assert(viewport.width < 768 ? storyLayout.map.bottom <= storyLayout.story.top + 2 : storyLayout.story.right <= storyLayout.map.left + 2, 'Map and story occupy separate parts of one persistent stage');
+      if (viewport.width < 768) assert(storyLayout.figure.top >= storyLayout.map.top && storyLayout.figure.bottom <= storyLayout.map.bottom + 2, `The phone map is not cropped by its stage: ${JSON.stringify(storyLayout)}`);
+      assert(storyLayout.beat.bottom <= storyLayout.footer.top + 2, `Current beat fits above its action controls: ${JSON.stringify(storyLayout)}`);
+      assert(storyLayout.footer.bottom <= storyLayout.viewport, 'Field record action stays on screen');
       const continueAction = dialog.getByRole('button', { name: /Continue to result|Review scout report|Check scout status|Respond to encounter|See encounter result|Choose response/ });
       if (viewport.width < 768 && !events.some(event => event.type === 'record-end')) {
-        await continueAction.evaluate(element => element.scrollIntoView({ block: 'end', behavior: 'instant' }));
         await page.screenshot({ path: `${output}/record-end.png` });
         events.push({ type: 'record-end' });
       }
@@ -95,11 +95,11 @@ try {
     const parentMap = page.locator('.lr-shell [data-expedition-map]');
     const insetMap = page.locator('.lr-route-board [data-route-schematic]');
     const map = await insetMap.isVisible() ? insetMap : parentMap;
-    if (await map.count()) {
+    if (await map.count() && await map.isVisible()) {
       const mapScene = await map.getAttribute('data-map-scene');
-      if (viewport.width < 720) assert.equal(await map.locator('[data-map-route-caption]').count(), await map.getAttribute('data-map-local') === 'true' || await map.getAttribute('data-route-schematic') === 'true' ? 0 : 2, 'Phone inset and encounter maps omit route captions repeated by the active choice');
+      if (viewport.width < 720) assert.equal(await map.locator('[data-map-route-caption]').count(), await map.getAttribute('data-map-local') === 'true' || await map.getAttribute('data-route-schematic') === 'true' || await map.getAttribute('data-map-stage-compact') === 'true' ? 0 : 2, 'Compact maps omit route captions repeated by the active choice');
       const mapDrawing = await map.locator(':scope > svg').boundingBox();
-      assert(mapDrawing.height >= 70, `The room drawing must retain its own height, not inherit an icon rule: ${mapDrawing.height}`);
+      assert(mapDrawing.height >= (viewport.width <= 360 ? 30 : viewport.width < 600 || viewport.height < 800 ? 52 : 70), `The room drawing must retain its own height, not inherit an icon rule: ${mapDrawing.height}`);
       const entrance = await map.locator('[data-map-threshold="entry"]').textContent();
       if (previousMapScene && previousMapScene !== mapScene) assert.equal(entrance, previousMapExit, 'Map arrival carries into the next room');
       previousMapScene = mapScene;
@@ -130,30 +130,35 @@ try {
         assert.equal(await ally.getAttribute('data-location'), await map.getAttribute('data-crew-position'), 'Established ally stays with crew, not a solo scout');
       }
     }
-    const click = async locator => { events.push({ type: 'choice', text: await locator.innerText() }); await locator.click(); };
+    const click = async locator => { events.push({ type: 'choice', text: await locator.innerText() }); try { await locator.click({ timeout: 5000 }); } catch (error) { if (process.env.LR_VIEWPORT_AUDIT === '1') console.error('CLICK LAYOUT', await locator.evaluate(node => { const rect = node.getBoundingClientRect(); const ancestors = []; for (let parent = node.parentElement; parent && ancestors.length < 6; parent = parent.parentElement) { const box = parent.getBoundingClientRect(); ancestors.push({ className: parent.className, top: box.top, bottom: box.bottom, overflow: getComputedStyle(parent).overflow }); } return { rect: rect.toJSON(), ancestors, atCenter: document.elementFromPoint(rect.x + rect.width / 2, rect.y + rect.height / 2)?.className }; })); throw error; } };
     if (await page.locator('.lr-end-card').count()) {
       const trail = page.locator('[data-ending-trail]');
       assert.equal(await trail.locator('[data-ending-sector]').count(), 7, 'The ending traces the whole site');
       assert.equal(await trail.locator('[data-ending-sector][data-visited="true"]').count(), crossed, 'The ending marks only crossings the crew actually completed');
-      if (crossed) assert(await trail.locator('[data-ending-memory]').isVisible(), 'The ending remembers the last resolved crossing');
+      if (process.env.LR_VIEWPORT_AUDIT === '1') {
+        await page.screenshot({ path: `${output}/ending-viewport.png` });
+        const endingLayout = await page.evaluate(() => { const node=document.querySelector('.lr-end-card'), card=node.getBoundingClientRect(), shell=node.parentElement, parent=shell.getBoundingClientRect(); const ancestors=[]; for(let el=shell;el&&ancestors.length<5;el=el.parentElement){const style=getComputedStyle(el);ancestors.push({name:el.className,top:el.getBoundingClientRect().top,position:style.position,filter:style.filter,transform:style.transform});} return {top:card.top,bottom:card.bottom,viewport:innerHeight,bodyOverflow:getComputedStyle(document.body).overflowY,shell:{top:parent.top,bottom:parent.bottom,padding:getComputedStyle(shell).padding,align:getComputedStyle(shell).alignItems},ancestors}; });
+        assert(endingLayout.top >= 62 && endingLayout.bottom <= endingLayout.viewport && endingLayout.bodyOverflow === 'hidden', `Default mission report fits without scrolling: ${JSON.stringify(endingLayout)}`);
+        const endingAction = await page.locator('.lr-end-actions button').last().boundingBox();
+        assert(endingAction.y >= 62 && endingAction.y + endingAction.height <= viewport.height, 'Mission report actions remain visible');
+      }
+      await page.locator('.lr-end-full > summary').click();
+      if (crossed) assert(await trail.locator('[data-ending-memory]').isVisible(), 'The full report remembers the last resolved crossing');
       events.push({ type: 'ending', text: await page.locator('.lr-end-card').innerText() }); break;
     }
     if (await page.locator('.lr-transition-beat').count()) { await click(page.locator('.lr-transition-beat > button')); continue; }
     if (await page.locator('[data-scout-options]').count()) {
+      if (process.env.LR_VIEWPORT_AUDIT === '1' && crossed === 0 && viewport.width <= 390) await writeFile(`${output}/scout-layout.json`, JSON.stringify(await page.evaluate(() => {
+        const selectors = ['.lr-wizard-chrome','[data-expedition-map]','.lr-simple-decision','[data-scout-options]','[data-scout-choice]','.lr-scout-portrait','.lr-scout-small-info','.lr-scout-commit-bar','.lr-scout-commit-bar button'];
+        return Object.fromEntries(selectors.map(selector => [selector,[...document.querySelectorAll(selector)].filter(node => node.getBoundingClientRect().width).map(node => ({rect:node.getBoundingClientRect().toJSON(),scroll:node.scrollHeight,client:node.clientHeight,display:getComputedStyle(node).display,grid:getComputedStyle(node).gridTemplateColumns,height:getComputedStyle(node).height,overflow:getComputedStyle(node).overflow}))]));
+      }),null,2));
       if (viewport.width >= 768 && crossed === 0) assert.equal(await page.getByRole('button', { name: /scout choices/i }).count(), 0, 'The desktop map retains its original caption rather than a phone jump control');
       if (viewport.width <= 390) {
         const firstChoice = await page.locator('[data-scout-options] > button').first().boundingBox();
         events.push({ type: 'scout-viewport', scene: crossed + 1, top: firstChoice?.y, height: viewport.height });
         if (crossed === 0) {
-          const jump = page.getByRole('button', { name: /scout choices/i });
-          const cue = await jump.boundingBox();
-          assert(cue.y >= 0 && cue.y < viewport.height, 'The opening site map visibly offers a way to reach the first scout choice');
-          assert(cue.height >= 44, 'The opening map cue has a touch-sized target');
+          assert(firstChoice.y >= 0 && firstChoice.y < viewport.height, 'The opening scout choice shares the screen with the site map');
           await page.screenshot({ path: `${output}/scout-opening-viewport.png` });
-          await jump.click();
-          const arrived = await page.locator('[data-scout-options] > button').first().boundingBox();
-          assert(arrived.y >= 0 && arrived.y < viewport.height, 'The map cue lands on the first choice without performing the scouting action');
-          assert(await page.locator('.lr-simple-decision').evaluate(node => document.activeElement === node), 'The map cue moves keyboard focus to the scout choice');
         }
         if (crossed > 0 && firstChoice) {
           const heading = await page.locator('.lr-simple-decision h3').first().boundingBox();
@@ -174,17 +179,25 @@ try {
       const scoutPick = Number(process.env.LR_SCOUT_PICKS?.split(',')[crossed] ?? process.env.LR_SCOUT_PICK ?? 0);
       assert(scoutPick >= 0 && scoutPick < await page.locator('[data-scout-options] > button').count(), `Scout choice ${scoutPick} is available`);
       await click(page.locator('[data-scout-options] > button').nth(scoutPick));
+      if (viewport.width <= 390) { const send = await page.getByRole('button', { name: /^Send / }).boundingBox(); assert(send.y >= 0 && send.y + send.height <= viewport.height, `Scout action fits on the phone stage: scene ${crossed + 1}, ${JSON.stringify(send)}`); }
       await click(page.getByRole('button', { name: /^Send / })); continue;
     }
     if (await page.locator('.lr-field-encounter:not(.is-resolved)').count()) {
       const situation = page.locator('.lr-encounter-situation');
       assert.equal(await situation.count(), 1, 'Simple encounters put contact and communication context beside the response');
       assert(!(await situation.innerText()).includes('through display'), 'Player-facing contact context does not expose registry channel names');
+      if (viewport.height <= 700) {
+        const lastResponse = await page.locator('.lr-encounter-options > button').last().boundingBox();
+        const commit = await page.locator('.lr-encounter-commit-bar').boundingBox();
+        assert(lastResponse.y + lastResponse.height <= commit.y + 2 && commit.y + commit.height <= viewport.height, 'All encounter responses and the commit action fit the stage');
+      }
       if (viewport.width <= 390) {
         const firstResponse = await page.locator('.lr-encounter-options > button').first().boundingBox();
-        assert(firstResponse.y >= 0 && firstResponse.y < viewport.height, 'The encounter opens with its first actual response in the phone viewport');
-        assert(await page.locator('.lr-field-encounter').evaluate(node => document.activeElement === node), 'Keyboard focus follows the phone into the encounter response');
+        const lastResponse = await page.locator('.lr-encounter-options > button').last().boundingBox();
         await page.screenshot({ path: `${output}/encounter-viewport-${crossed}-${responses[crossed] || 0}.png` });
+        assert(firstResponse.y >= 0 && firstResponse.y < viewport.height, 'The encounter opens with its first actual response in the phone viewport');
+        assert(lastResponse.y + lastResponse.height <= viewport.height - 48, `Every encounter response appears above the commit control: ${JSON.stringify(lastResponse)}`);
+        assert(await page.locator('.lr-field-encounter').evaluate(node => document.activeElement === node), 'Keyboard focus follows the phone into the encounter response');
       }
       const prescribedResponse = process.env.LR_ENCOUNTER_PICK !== undefined && !responses[crossed];
       await click(prescribedResponse ? page.locator('.lr-encounter-options > button').nth(Number(process.env.LR_ENCOUNTER_PICK)) : page.locator('.lr-encounter-options > .is-recommended'));
@@ -230,6 +243,9 @@ try {
         assert.deepEqual(await page.locator('.lr-board-route-tag').evaluateAll(nodes => nodes.map(node => node.textContent)), ['A', 'B']);
         const firstCost = await page.locator('.lr-route-board .is-energy').boundingBox();
         assert(firstCost.y < viewport.height, 'The first cost comparison remains in the initial phone viewport with the schematic');
+        const reward = await page.locator('.lr-route-board .is-salvage').boundingBox();
+        await page.screenshot({ path: `${output}/route-viewport-${crossed}.png` });
+        assert(reward.y + reward.height <= viewport.height, `Both route rewards remain visible: ${JSON.stringify({reward, certainty:await page.locator('.lr-board-certainty').first().evaluate(node => ({className:node.className,display:getComputedStyle(node).display})), header:await page.locator('.lr-board-head').boundingBox()})}`);
         assert(await page.locator('.lr-route-board').evaluate(node => document.activeElement === node), 'Keyboard focus follows the phone into route comparison');
         await page.screenshot({ path: `${output}/route-viewport-${crossed}.png` });
       }
@@ -238,10 +254,10 @@ try {
       assert.equal(await map.locator('[data-map-connection="intervention"]').count(), sharedObstacle ? 2 : 0, 'Shared obstacles use intervention outlines, not invented corridors');
       assert.equal(await map.locator('[data-map-connection="route"]').count(), sharedObstacle ? 0 : 2, 'Physical alternatives share the actual room diagram');
       const orientation = page.locator('.lr-route-orientation');
-      assert(await orientation.isVisible(), 'Scene context stays visible while choosing');
-      const storyBox = await orientation.boundingBox();
+      assert(viewport.width < 600 ? await page.locator('.lr-board-context > strong').isVisible() : viewport.width < 768 ? await parentMap.isVisible() : await orientation.isVisible(), 'Scene context stays visible while choosing');
+      const storyBox = await (viewport.width < 600 ? page.locator('.lr-board-context > strong') : viewport.width < 768 ? parentMap : orientation).boundingBox();
       const boardBox = await page.locator('.lr-route-board').boundingBox();
-      assert(storyBox.y + storyBox.height <= boardBox.y, 'Story precedes comparison');
+      if (viewport.width >= 600) assert(storyBox.y + storyBox.height <= boardBox.y, 'Story precedes comparison');
       assert.equal(await page.locator('.lr-route-setting').count(), 2, 'Both routes explain their physical approach');
       assert.equal(await page.locator('.lr-board-plan-lead').count(), 2, 'Every forecast identifies its assumed lead before route selection');
       assert.equal(await page.locator('.lr-board-plan-lead b').count(), 2, 'Projected leads use the same crew numbers as the map');
@@ -301,7 +317,7 @@ try {
       const traceAccount = await arrivalTrace.getAttribute('aria-label');
       assert(traceAccount.includes(`from ${origin} to ${destination}`), 'The arrival trace uses the same thresholds as the room map');
       assert.equal(await arrivalTrace.locator('.lr-arrival-trace-party b:not(.is-ally)').count(), 3, 'All three crew members reach the destination together');
-      if (viewport.width < 768) assert((await arrivalTrace.boundingBox()).y < viewport.height, 'The arrival station is visible with the result headline on a phone');
+      if (viewport.width < 768 && !await page.locator('.lr-extraction-choice').count()) assert((await arrivalTrace.boundingBox()).y < viewport.height, 'The arrival station is visible with the result headline on a phone');
       const stabilityLeft = Number(await map.locator('[data-reserve-stability] b').innerText());
       if (stabilityLeft === 0) {
         assert.match(await page.locator('.lr-simple-result-head').innerText(), /evacuate now/i, 'Zero stability changes the arrival status before the player scrolls to the ending');
@@ -313,10 +329,15 @@ try {
       }
       const arrivalDetail = page.locator('.lr-crossing-prose > p');
       assert(!/^(The crew is through|The crew crossed, but paid for it|A hard-won crossing)$/.test(arrivalHeading), 'Result names the selected passage instead of a generic verdict');
-      assert.equal(await arrivalDetail.count(), 3, 'The settled result keeps action, consequence, and arrival visible');
+      assert.equal(await arrivalDetail.count(), 1, 'The settled result keeps one closing thought visible after the field record');
+      assert.equal(await page.locator('.lr-crossing-account').count(), 1, 'The full crossing account remains available on request');
       assert(!(await arrivalDetail.last().innerText()).startsWith(arrivalHeading), 'Arrival paragraph does not repeat its headline');
       await page.locator('.lr-simple-result').evaluate(node => node.scrollIntoView({ block: 'start', behavior: 'instant' }));
       await page.screenshot({ path: `${output}/result-${crossed + 1}.png` });
+      if (process.env.LR_VIEWPORT_AUDIT === '1' && crossed === 0) await writeFile(`${output}/result-layout.json`, JSON.stringify(await page.evaluate(() => {
+        const select = selector => [...document.querySelectorAll(selector)].map(node => ({ selector, text: node.textContent.slice(0, 70), top: Math.round(node.getBoundingClientRect().top), bottom: Math.round(node.getBoundingClientRect().bottom), height: Math.round(node.getBoundingClientRect().height), display: getComputedStyle(node).display, minHeight: getComputedStyle(node).minHeight }));
+        return ['.lr-simple-result', '.lr-arrival-story', '.lr-result-changes', '.lr-result-changes > div', '.lr-result-changes article', '.lr-arrival-next', '.lr-result-actions'].flatMap(select);
+      }), null, 2));
       crossed++;
       if (Number(process.env.LR_LIMIT_SCENES) === crossed) { events.push({type:'milestone',text:await page.locator('.lr-simple-result').innerText()}); break; }
       const extract = page.locator('.lr-depth-option.is-extract');
@@ -334,7 +355,7 @@ try {
           await page.locator('.lr-extraction-choice').scrollIntoViewIfNeeded();
           await page.screenshot({ path: `${output}/depth-${crossed}-${width}.png`, fullPage: true });
           assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), 'Extraction choice overflow');
-          assert(await page.locator('.lr-haul-risk').isVisible());
+          assert(await page.locator(width < 768 ? '.lr-depth-mini-risk' : '.lr-haul-risk').isVisible(), 'The risk is visible in the current guidance layout');
           await page.locator('.lr-extraction-choice').screenshot({ path: `${output}/choice-${crossed}-${width}.png` });
           const disclosure = page.locator('.lr-extraction-choice summary');
           await disclosure.focus();
@@ -349,9 +370,9 @@ try {
         await click(extract.first()); continue;
       }
       const workshop = page.locator('.lr-workshop');
-      if (await workshop.count()) {
+      if (await workshop.count() && (await workshop.locator(':scope > summary').isVisible() || await page.getByRole('button', { name: 'Repair with salvage' }).count())) {
         if (process.env.LR_REPAIR_FROM_DEPTH === '1' && crossed === 5) {
-          const repairLink = page.getByRole('button', { name: 'Repair before choosing' });
+          const repairLink = page.getByRole('button', { name: 'Repair with salvage' });
           assert.equal(await repairLink.count(), 1, 'Thin stability offers a direct, noncommittal way to inspect repairs');
           const reservesBefore = await map.locator('[data-expedition-reserves]').innerText();
           await click(repairLink);
@@ -361,7 +382,11 @@ try {
           assert(repairHeading.y >= 0 && repairHeading.y < viewport.height, 'Repair choices replace the depth fork in the current viewport');
           await page.screenshot({ path: `${output}/depth-repair-open.png` });
         }
-        if (await workshop.getAttribute('open') === null) await workshop.locator(':scope > summary').click();
+        if (await workshop.getAttribute('open') === null) {
+          const summary = workshop.locator(':scope > summary');
+          if (await summary.isVisible()) await click(summary);
+          else await click(page.getByRole('button', { name: 'Repair with salvage' }));
+        }
         const brace = workshop.locator('.lr-workshop-options button:not([disabled])').filter({ hasText: 'Brace the annex' }).first();
         const choices = workshop.locator('.lr-workshop-options button:not([disabled])');
         if (await choices.count()) {
@@ -373,7 +398,19 @@ try {
           await click(repair);
           await click(workshop.getByRole('button', { name: /^Spend / }));
         } else await click(workshop.getByRole('button', { name: /Keep all .* salvage and return/ }));
+        const repairReceipt = page.locator('.lr-field-receipt');
+        if (await repairReceipt.count()) {
+          if (process.env.LR_VIEWPORT_AUDIT === '1') {
+            await page.screenshot({ path: `${output}/after-workshop-${crossed}.png` });
+            const action = await repairReceipt.locator('.lr-field-repair-next').boundingBox();
+            assert(action.y >= 0 && action.y + action.height <= viewport.height, `Field repair advances in the current viewport: ${JSON.stringify(action)}`);
+          }
+          await click(repairReceipt.locator('.lr-field-repair-next'));
+          if (await page.locator('.lr-extraction-choice').count()) await click(page.locator('.lr-depth-option.is-deeper'));
+          continue;
+        }
       }
+      if (process.env.LR_VIEWPORT_AUDIT === '1') await page.screenshot({ path: `${output}/after-workshop-${crossed}.png` });
       await click(page.locator('.lr-depth-option.is-deeper, .lr-result-actions .g-btn--primary')); continue;
     }
     throw Error('Unrecognized mission state');
@@ -392,6 +429,7 @@ try {
   if (process.env.LR_EXPECT_SALVAGE) assert(endingText.includes(`SALVAGE BANKED\n${process.env.LR_EXPECT_SALVAGE}`), 'The resulting banked haul matches the selected path');
   for (const expected of process.env.LR_EXPECT_MAP_EFFECTS?.split(',') || []) assert(observedEffects.has(expected), `Mission reached earned map effect: ${expected}`);
   await writeFile(`${output}/run.json`, JSON.stringify(events,null,2));
+  if (process.env.LR_VIEWPORT_AUDIT === '1') await writeFile(`${output}/viewport.json`, JSON.stringify(viewportAudit,null,2));
   console.log(JSON.stringify({ crossed, clicks: events.filter(e=>e.type==='choice').length, animations: events.filter(e=>e.type==='animation').map(e=>e.elapsed), ending: events.find(e=>e.type==='ending')?.text || 'Requested scene milestone reached' }, null,2));
   await context.close();
 } finally { await browser.close(); }

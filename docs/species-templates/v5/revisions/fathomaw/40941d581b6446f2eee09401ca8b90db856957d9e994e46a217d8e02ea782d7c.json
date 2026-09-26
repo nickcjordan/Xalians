@@ -1,0 +1,467 @@
+{
+  "actions": [
+    {
+      "activation": {
+        "continuity": "discrete"
+      },
+      "delivery": {
+        "approach": "stationary",
+        "mode": "contact"
+      },
+      "description": "Fathomaw closes its broad jaws around a target, drives the lower jaw into the fixed palate with fluid-powered muscle, then releases.",
+      "effects": [
+        {
+          "intensity": [
+            62,
+            78
+          ],
+          "key": "compression",
+          "likelihood": "consistent",
+          "mechanism": "compression",
+          "onset": "instant",
+          "persistence": "resolved",
+          "recipient": "target",
+          "type": "harm"
+        }
+      ],
+      "instrument": "jaws",
+      "key": "fathomaw-yield-point",
+      "name": "Yield Point",
+      "spatial": {
+        "range": "contact"
+      },
+      "targeting": [
+        "other"
+      ],
+      "timing": {
+        "preparation": "brief",
+        "recovery": "brief"
+      }
+    }
+  ],
+  "acts": {
+    "exclude": [
+      "jaws/strike",
+      "jaws/rake",
+      "tail/crush",
+      "tail/snare",
+      "body/strike",
+      "body/crush",
+      "body/ward"
+    ]
+  },
+  "attributes": {
+    "agility": [
+      52,
+      72
+    ],
+    "charisma": [
+      18,
+      38
+    ],
+    "endurance": [
+      68,
+      88
+    ],
+    "instinct": [
+      62,
+      82
+    ],
+    "intelligence": [
+      42,
+      62
+    ],
+    "reflex": [
+      44,
+      64
+    ],
+    "resilience": [
+      58,
+      78
+    ],
+    "strength": [
+      62,
+      82
+    ],
+    "vitality": [
+      52,
+      72
+    ],
+    "willpower": [
+      50,
+      70
+    ]
+  },
+  "channels": [],
+  "conduits": {},
+  "element": "water",
+  "generatorPlanets": [
+    "poseidas"
+  ],
+  "homePlanet": "poseidas",
+  "key": "fathomaw",
+  "lore": {
+    "appearance": [
+      "A long, broad-chested piscine trunk tapers into a muscular tail with a broad, deeply notched two-lobed paddle above a wide, continuous belly surface.",
+      "Smooth, flexible skin covers the trunk.",
+      "A blunt wedge head carries one broad upper jaw and one almost square-ended lower jaw, with a few large interlocking crusher teeth.",
+      "Muscular ridges beside the jaw hinges contain the paired fluid-filled chambers that drive the lower jaw.",
+      "A broad resonant brow and elongated sensory ridges frame small eyes set toward the front of the head.",
+      "Two large anterior fins attach at reinforced shoulders and a shorter posterior pair farther down the trunk; thick fin bases and broad splayed edges bear and propel the body during a low ground crawl."
+    ],
+    "behavior": "It sweeps a route with short clicks, tests suspicious surfaces with its jaws, and pushes loose pieces clear with its body, anterior fins, and tail.",
+    "company": "Several may service one route while remaining spaced across separate sections; they exchange low calls rather than acting as one tightly coordinated body.",
+    "description": "Fathomaw, a broad-chested, low-bellied swimmer with a hydraulic crusher jaw, was generated to inspect submerged ridgeline routes and the foundations of Poseidas's expanding deep cities. Short clicks reveal gaps in dark water; its blunt teeth test weakened joints, and reinforced fins and a powerful tail shift loose fragments without delicate tools. Its smooth, pressure-tolerant body bears its weight on a broad underside when it must cross exposed ground, though sustained travel remains aquatic. With the Vallerii gone, Fathomaws still patrol the approaches to Poseidas's underwater cities, locating shifted structures and clearing obstructed passages.",
+    "feeding": "It crops attached growth and takes small aquatic animals exposed along fractured surfaces.",
+    "habitat": "Stable deep water along continental ridgelines, deep-city approaches, and submerged service routes on Poseidas.",
+    "origin": "Generated to inspect submerged ridgeline routes and structural foundations as Poseidas's operations moved deeper beneath the storm layer."
+  },
+  "mechanisms": [
+    {
+      "activation": {
+        "continuity": [
+          "discrete"
+        ]
+      },
+      "delivery": {
+        "contact": {
+          "approach": [
+            "stationary",
+            "closing"
+          ],
+          "range": [
+            "contact"
+          ]
+        }
+      },
+      "description": "A quick bite compresses a contacted target without maintaining a hold.",
+      "effects": [
+        {
+          "intensity": [
+            48,
+            64
+          ],
+          "key": "compression",
+          "likelihood": [
+            "consistent"
+          ],
+          "mechanism": "compression",
+          "onset": "instant",
+          "persistence": "resolved",
+          "recipient": "target",
+          "type": "harm"
+        }
+      ],
+      "instrument": "jaws",
+      "key": "quick-jaw-compression",
+      "name": "Crusher Snap",
+      "targeting": [
+        "other"
+      ],
+      "timing": {
+        "preparation": [
+          "immediate"
+        ],
+        "recovery": [
+          "brief"
+        ]
+      }
+    },
+    {
+      "activation": {
+        "continuity": [
+          "discrete"
+        ]
+      },
+      "delivery": {
+        "contact": {
+          "approach": [
+            "closing"
+          ],
+          "range": [
+            "contact"
+          ]
+        }
+      },
+      "description": "Its broad trunk closes a short distance to strike a target by impact.",
+      "effects": [
+        {
+          "intensity": [
+            50,
+            66
+          ],
+          "key": "impact",
+          "likelihood": [
+            "consistent"
+          ],
+          "mechanism": "impact",
+          "onset": "instant",
+          "persistence": "resolved",
+          "recipient": "target",
+          "type": "harm"
+        }
+      ],
+      "instrument": "body",
+      "key": "low-body-ram",
+      "name": "Low Ram",
+      "targeting": [
+        "other"
+      ],
+      "timing": {
+        "preparation": [
+          "brief"
+        ],
+        "recovery": [
+          "brief"
+        ]
+      }
+    },
+    {
+      "activation": {
+        "continuity": [
+          "ongoing"
+        ]
+      },
+      "delivery": {
+        "contact": {
+          "approach": [
+            "stationary",
+            "closing"
+          ],
+          "range": [
+            "contact"
+          ]
+        }
+      },
+      "description": "Its broad mouth maintains a noninjuring grip on one contacted target.",
+      "effects": [
+        {
+          "bound": "source",
+          "key": "hold",
+          "likelihood": [
+            "consistent"
+          ],
+          "onset": "instant",
+          "persistence": "sustained",
+          "recipient": "target",
+          "removable": [
+            "freeing"
+          ],
+          "status": "restrained",
+          "type": "status"
+        }
+      ],
+      "instrument": "jaws",
+      "key": "jaw-hold",
+      "name": "Jaw Grip",
+      "targeting": [
+        "other"
+      ],
+      "timing": {
+        "preparation": [
+          "brief"
+        ],
+        "recovery": [
+          "brief"
+        ]
+      }
+    },
+    {
+      "activation": {
+        "continuity": [
+          "ongoing"
+        ]
+      },
+      "delivery": {
+        "contact": {
+          "approach": [
+            "stationary",
+            "closing"
+          ],
+          "range": [
+            "contact"
+          ]
+        }
+      },
+      "description": "It maintains pressure through a firm jaw grip, injuring and restraining the contacted target.",
+      "effects": [
+        {
+          "intensity": [
+            52,
+            68
+          ],
+          "key": "compression",
+          "likelihood": [
+            "consistent"
+          ],
+          "mechanism": "compression",
+          "onset": "instant",
+          "persistence": "resolved",
+          "recipient": "target",
+          "type": "harm"
+        },
+        {
+          "bound": "source",
+          "key": "hold",
+          "likelihood": [
+            "consistent"
+          ],
+          "onset": "instant",
+          "persistence": "sustained",
+          "recipient": "target",
+          "removable": [
+            "freeing"
+          ],
+          "status": "restrained",
+          "type": "status"
+        }
+      ],
+      "instrument": "jaws",
+      "key": "damaging-jaw-hold",
+      "name": "Hydraulic Hold",
+      "targeting": [
+        "other"
+      ],
+      "timing": {
+        "preparation": [
+          "brief"
+        ],
+        "recovery": [
+          "prolonged"
+        ]
+      }
+    }
+  ],
+  "name": "Fathomaw",
+  "nameOrigin": "A fusion of fathom, reflecting how it measures and interprets the deep, and maw, for the broad hydraulic mouth it uses to test and clear weakened structures.",
+  "passives": [],
+  "physiology": {
+    "anatomy": [
+      "jaws",
+      "fins",
+      "tail",
+      "body"
+    ],
+    "bodyPlan": "piscine",
+    "breathes": [
+      "gas",
+      "liquid"
+    ],
+    "capabilities": {
+      "burrow": [
+        0,
+        0
+      ],
+      "climb": [
+        0,
+        0
+      ],
+      "flight": [
+        0,
+        0
+      ],
+      "leap": [
+        0,
+        0
+      ],
+      "manipulation": [
+        18,
+        32
+      ],
+      "sprint": [
+        0,
+        0
+      ],
+      "swim": [
+        80,
+        98
+      ]
+    },
+    "communication": [
+      "vocal"
+    ],
+    "composition": {
+      "primary": "flesh"
+    },
+    "covering": "bare",
+    "diet": "omnivore",
+    "environmentalTolerance": {
+      "ambientMedia": [
+        "gas",
+        "liquid"
+      ],
+      "temperatureC": {
+        "max": 40,
+        "min": 5
+      }
+    },
+    "genome": {
+      "chirality": "rolled"
+    },
+    "lifespan": "standard",
+    "protections": [],
+    "senses": {
+      "hearing": [
+        72,
+        92
+      ],
+      "sight": [
+        22,
+        42
+      ],
+      "smell": [
+        28,
+        48
+      ],
+      "special": [
+        "echolocation"
+      ]
+    },
+    "size": {
+      "heightCm": [
+        50,
+        70
+      ],
+      "lengthCm": [
+        190,
+        250
+      ],
+      "massKg": [
+        105,
+        170
+      ],
+      "widthCm": [
+        55,
+        75
+      ]
+    },
+    "traversal": []
+  },
+  "schemaVersion": "5.1.0",
+  "signature": {
+    "key": "fathomaw-yield-point",
+    "type": "action"
+  },
+  "temperament": {
+    "aggression": [
+      15,
+      35
+    ],
+    "boldness": [
+      35,
+      55
+    ],
+    "curiosity": [
+      55,
+      75
+    ],
+    "energy": [
+      38,
+      58
+    ],
+    "sociability": [
+      35,
+      55
+    ]
+  }
+}

@@ -25,13 +25,13 @@ const NEXT_THRESHOLDS = {
 };
 
 const HAZARDS = {
-  'conductive-brine': ['A blue flash travels through the flood. The brine carries an electrical charge, and the crew is already in its path.', 'The crew watches for the charge moving through the brine and works around the danger the scout identified.', 'A surge races into submerged cabling. A shudder runs through the old intake wall.'],
-  'servo-cycle': ['One of the apparently dormant turbines begins its silent turn. The safe interval is closing sooner than the crew expected.', 'The crew follows the rotation the scout marked, anticipating the turbine rather than discovering it in motion.', 'The unexpected rotation jolts its mountings and shakes the hall.'],
-  countermeasure: ['The lock answers with an interrogation pattern instead of an opening signal. Its obsolete questions press into the crew’s thoughts while the arms continue their work.', 'The crew recognizes the lock’s interrogation pattern from the report and prepares for it before answering the rig.', 'The false response drives the arms against their frame, shaking the door’s old mountings.'],
-  'void-shear': ['Loose fragments begin sliding toward the outer hull. The pull changes across the centerline, catching the crew where the crossing had seemed straight.', 'The drifting fragments reveal the changing pull the scout warned about. The crew adjusts its passage before reaching the shear.', 'The sliding debris strikes a hull seam, shifting the already exposed structure.'],
-  'plague-dust': ['A sealed layer breaks open around the field. Fine contaminant dust lifts into the space where the crew is working.', 'The crew approaches the sealed contaminant layer with the scout’s warning in mind, keeping its disturbance under control.', 'The failing containment frame shudders as the dust escapes, pulling on the archive’s old supports.'],
-  'charge-bloom': ['The disturbed reservoir releases a sudden bloom of charge. Light spreads across the surface toward the collection point.', 'The crew anticipates the surface discharge described in the report and works around its cycle.', 'The discharge kicks through the collector assembly, rattling its mountings.'],
-  'ring-closure': ['The inner ring closes ahead of the outer assembly. The opening is disappearing in the wrong order.', 'The crew accounts for the inner ring closing early, using the timing the scout identified.', 'The uneven closure slams a new load into the spine’s old bearings.']
+  'conductive-brine': ['A blue flash travels through the flood. The brine carries an electrical charge, and the crew is already in its path.', 'The crew watches for the charge moving through the brine and works around the known danger.', 'A surge races into submerged cabling. A shudder runs through the old intake wall.'],
+  'servo-cycle': ['One of the apparently dormant turbines begins its silent turn. The safe interval is closing sooner than the crew expected.', 'The crew follows the known rotation, anticipating the turbine rather than discovering it in motion.', 'The unexpected rotation jolts its mountings and shakes the hall.'],
+  countermeasure: ['The lock answers with an interrogation pattern instead of an opening signal. Its obsolete questions press into the crew’s thoughts while the arms continue their work.', 'The crew recognizes the lock’s interrogation pattern from its earlier warning and prepares for it before answering the rig.', 'The false response drives the arms against their frame, shaking the door’s old mountings.'],
+  'void-shear': ['Loose fragments begin sliding toward the outer hull. The pull changes across the centerline, catching the crew where the crossing had seemed straight.', 'The drifting fragments reveal the changing pull the crew was warned about. The crew adjusts its passage before reaching the shear.', 'The sliding debris strikes a hull seam, shifting the already exposed structure.'],
+  'plague-dust': ['A sealed layer breaks open around the field. Fine contaminant dust lifts into the space where the crew is working.', 'The crew approaches the sealed contaminant layer with the earlier warning in mind, keeping its disturbance under control.', 'The failing containment frame shudders as the dust escapes, pulling on the archive’s old supports.'],
+  'charge-bloom': ['The disturbed reservoir releases a sudden bloom of charge. Light spreads across the surface toward the collection point.', 'The crew anticipates the surface discharge it was warned about and works around its cycle.', 'The discharge kicks through the collector assembly, rattling its mountings.'],
+  'ring-closure': ['The inner ring closes ahead of the outer assembly. The opening is disappearing in the wrong order.', 'The crew accounts for the inner ring closing early, using the timing learned earlier.', 'The uneven closure slams a new load into the spine’s old bearings.']
 };
 
 const MOTIONS = {
@@ -162,15 +162,15 @@ export function crossingScene({ scene, route, lead, support, method, result, com
   if (!passage) return null;
   const name = lead.species;
   const unseen = new Set(result.unseenHazards.map(hazard => hazard.id));
-  const danger = (route.hazardIds || []).map(id => HAZARDS[id]?.[unseen.has(id) ? 0 : 1]).filter(Boolean).join(' ');
-  const motion = method.kind === 'fallback' ? CAREFUL_MOTIONS[route.id] : SPECIFIC_MOTIONS[`${route.id}:${method.key}`] || MOTIONS[method.key];
+  const danger = (route.hazardIds || []).filter(id => !method.bypassedHazardIds?.includes(id)).map(id => HAZARDS[id]?.[unseen.has(id) ? 0 : 1]).filter(Boolean).join(' ');
+  const motion = method.narrativeMotion || (method.kind === 'fallback' ? CAREFUL_MOTIONS[route.id] : SPECIFIC_MOTIONS[`${route.id}:${method.key}`] || MOTIONS[method.key]);
   const action = `${name} ${motion || 'works through the obstacle carefully'}, with ${support.species} backing the effort.`;
   const effort = result.leadStrain > 0
-    ? `${name} ${EFFORTS[route.id]}.`
+    ? `${name} ${method.narrativeEffort || (method.narrativeMotion && route.id === 'harvest' ? 'keeps correcting the worn controls as the collectors pulse unevenly' : EFFORTS[route.id])}.`
     : ['stabilize', 'blackbox', 'harvest', 'dive', 'align', 'closure'].includes(route.id)
       ? `${name} finishes the work steadily, with strength still in reserve.`
       : `${name} carries the movement through steadily, emerging with strength still in reserve.`;
-  const alone = result.rawMethodScore - route.difficulty;
+  const alone = result.rawMethodScore - (result.difficulty ?? route.difficulty);
   const supportDifference = alone < 0 && result.margin >= 0
     ? ` With ${support.species} coordinating the others, ${name} can finish without forcing the work alone.`
     : alone < 14 && result.margin >= 14 && result.leadStrain === 0
@@ -194,6 +194,7 @@ export function crossingScene({ scene, route, lead, support, method, result, com
   const hazardWear = result.unseenHazards.filter(hazard => hazard.pressure > 0).map(hazard => HAZARDS[hazard.id]?.[2]).filter(Boolean).join(' ');
   const wear = result.pressure > 0 ? [routeWear, hazardWear].filter(Boolean).join(' ') : '';
   const stability = wear ? ` ${wear}` : '';
+  const find = result.find ? ` ${result.find.detail}` : '';
   const salvage = result.salvage > 0
     ? (['harvest', 'dive', 'align', 'closure', 'stabilize', 'blackbox'].includes(route.id)
       ? ' The recovered material joins the haul they must carry out.'
@@ -202,5 +203,5 @@ export function crossingScene({ scene, route, lead, support, method, result, com
     ? 'From inside the iris, the release finally answers. The door opens for the rest of the crew, admitting them into the gallery.'
     : passage[1];
   const reunion = scoutAhead ? ` ${scoutAhead.species} waits ${SCOUT_MEETING_POINTS[scene?.id] || 'a short way ahead'}. The crew catches up; all three are together before the next move.` : '';
-  return [`${passage[0]}${reunion}`, `${action}${danger ? ` ${danger}` : ''}${supportDifference}`, `${effort}${exposure ? ` ${exposure}` : ''}${supportEffort}${stability}${companionHelp ? ` ${companionHelp}` : ''}`, `${arrival}${salvage}${NEXT_THRESHOLDS[route.id] || ''}`];
+  return [`${passage[0]}${reunion}`, `${action}${danger ? ` ${danger}` : ''}${supportDifference}`, `${effort}${exposure ? ` ${exposure}` : ''}${supportEffort}${stability}${companionHelp ? ` ${companionHelp}` : ''}`, `${arrival}${find}${route.consequence && ['stabilize', 'blackbox', 'harvest', 'dive'].includes(route.id) ? ` ${route.consequence.detail}` : ''}${salvage}${NEXT_THRESHOLDS[route.id] || ''}`];
 }

@@ -13,6 +13,8 @@ test('repair selection and cancellation are reversible; only spending commits', 
   const onChoose = vi.fn();
   const { container } = render(<FieldWorkshop {...initial} onChoose={onChoose} />);
   fireEvent.click(container.querySelector('summary'));
+  expect(screen.getByRole('group', { name: 'Graviclaw: 3 of 6 energy' })).toBeTruthy();
+  expect(screen.getByRole('group', { name: 'Annex stability: 5 of 10' })).toBeTruthy();
   fireEvent.click(screen.getByRole('button', { name: /Resupply Graviclaw/ }));
   expect(screen.getByRole('img', { name: 'Graviclaw energy: 3 to 5 of 6' })).toBeTruthy();
   expect(container.querySelector('.lr-field-payment small').textContent).toBe('5 → 3 carried');

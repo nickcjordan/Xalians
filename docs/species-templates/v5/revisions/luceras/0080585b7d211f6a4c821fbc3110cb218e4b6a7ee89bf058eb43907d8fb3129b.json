@@ -1,0 +1,241 @@
+{
+  "actions": [
+    {
+      "activation": {
+        "continuity": "discrete"
+      },
+      "delivery": {
+        "approach": "closing",
+        "mode": "contact"
+      },
+      "description": "It leaps high and descends horns-first into a contacted opponent.",
+      "effects": [
+        {
+          "intensity": 56,
+          "key": "outcome",
+          "likelihood": "consistent",
+          "mechanism": "impact",
+          "onset": "instant",
+          "persistence": "resolved",
+          "recipient": "target",
+          "type": "harm"
+        }
+      ],
+      "instrument": "horns",
+      "key": "luceras-defining",
+      "name": "Horns-First Descent",
+      "spatial": {
+        "range": "contact"
+      },
+      "targeting": [
+        "other"
+      ],
+      "timing": {
+        "preparation": "brief",
+        "recovery": "brief"
+      }
+    }
+  ],
+  "acts": {
+    "output": {
+      "body/strike": [
+        22,
+        45
+      ],
+      "horns/strike": [
+        32,
+        56
+      ],
+      "tail/strike": [
+        20,
+        42
+      ]
+    }
+  },
+  "attributes": {
+    "agility": [
+      70,
+      90
+    ],
+    "charisma": [
+      30,
+      50
+    ],
+    "endurance": [
+      45,
+      65
+    ],
+    "instinct": [
+      55,
+      75
+    ],
+    "intelligence": [
+      25,
+      45
+    ],
+    "reflex": [
+      65,
+      85
+    ],
+    "resilience": [
+      28,
+      48
+    ],
+    "strength": [
+      38,
+      58
+    ],
+    "vitality": [
+      30,
+      50
+    ],
+    "willpower": [
+      35,
+      55
+    ]
+  },
+  "channels": [],
+  "conduits": {},
+  "element": "air",
+  "generatorPlanets": [
+    "saiphus"
+  ],
+  "homePlanet": "saiphus",
+  "key": "luceras",
+  "lore": {
+    "appearance": [
+      "Small bounding quadruped, built around its hind legs",
+      "Shaggy fur",
+      "A pair of curved ram-like horns",
+      "Long upright ears",
+      "Long whiskers",
+      "Whip tail longer than the body, ending in a spiked plume"
+    ],
+    "behavior": "It jumps so high it seems to fly, then comes missiling down on its enemy like a battering ram.",
+    "company": "It grazes in groups.",
+    "description": "This creature can jump so high that at times it seems as if it is flying. Once up in the air, it comes missiling down on its enemy like a battering ram.",
+    "feeding": "It grazes the rolling plains of the islands and drinks where vapor condenses in the canyons.",
+    "habitat": "The floating islands of Saiphus and the gaps between them.",
+    "origin": "One of the leaping animals the Saiphus Generator raised to bound between the floating islands as if gravity held no sway over them."
+  },
+  "mechanisms": [],
+  "name": "Luceras",
+  "nameOrigin": "A stylized blend of Latin lepus, hare, and Greek keras, horn, matching its long-eared bounding frame and paired ram-like horns.",
+  "passives": [],
+  "physiology": {
+    "anatomy": [
+      "horns",
+      "tail",
+      "body"
+    ],
+    "bodyPlan": "quadruped",
+    "breathes": [
+      "gas"
+    ],
+    "capabilities": {
+      "burrow": [
+        10,
+        30
+      ],
+      "climb": [
+        35,
+        55
+      ],
+      "flight": [
+        0,
+        0
+      ],
+      "leap": [
+        82,
+        97
+      ],
+      "manipulation": [
+        15,
+        35
+      ],
+      "sprint": [
+        60,
+        82
+      ],
+      "swim": [
+        5,
+        20
+      ]
+    },
+    "communication": [
+      "vocal"
+    ],
+    "composition": {
+      "primary": "flesh"
+    },
+    "covering": "fur",
+    "diet": "omnivore",
+    "environmentalTolerance": {
+      "ambientMedia": [
+        "gas"
+      ],
+      "temperatureC": {
+        "max": 42,
+        "min": -30
+      }
+    },
+    "genome": {
+      "chirality": "rolled"
+    },
+    "lifespan": "short",
+    "protections": [],
+    "senses": {
+      "hearing": [
+        70,
+        90
+      ],
+      "sight": [
+        55,
+        75
+      ],
+      "smell": [
+        40,
+        60
+      ],
+      "special": []
+    },
+    "size": {
+      "heightCm": [
+        48,
+        66
+      ],
+      "massKg": [
+        9,
+        17
+      ]
+    },
+    "traversal": []
+  },
+  "schemaVersion": "5.1.0",
+  "signature": {
+    "key": "luceras-defining",
+    "type": "action"
+  },
+  "temperament": {
+    "aggression": [
+      35,
+      60
+    ],
+    "boldness": [
+      45,
+      70
+    ],
+    "curiosity": [
+      35,
+      60
+    ],
+    "energy": [
+      60,
+      85
+    ],
+    "sociability": [
+      50,
+      75
+    ]
+  }
+}

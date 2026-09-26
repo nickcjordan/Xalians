@@ -1,0 +1,281 @@
+{
+  "actions": [
+    {
+      "activation": {
+        "continuity": "discrete"
+      },
+      "delivery": {
+        "approach": "closing",
+        "mode": "contact"
+      },
+      "description": "The auger on its tail drives into a contacted target.",
+      "effects": [
+        {
+          "intensity": 58,
+          "key": "outcome",
+          "likelihood": "consistent",
+          "mechanism": "piercing",
+          "onset": "instant",
+          "persistence": "resolved",
+          "recipient": "target",
+          "type": "harm"
+        }
+      ],
+      "instrument": "tail",
+      "key": "drilltail-defining",
+      "name": "Tail Drill",
+      "spatial": {
+        "range": "contact"
+      },
+      "targeting": [
+        "other"
+      ],
+      "timing": {
+        "preparation": "brief",
+        "recovery": "brief"
+      }
+    }
+  ],
+  "attributes": {
+    "agility": [
+      52,
+      76
+    ],
+    "charisma": [
+      12,
+      30
+    ],
+    "endurance": [
+      45,
+      68
+    ],
+    "instinct": [
+      58,
+      84
+    ],
+    "intelligence": [
+      20,
+      38
+    ],
+    "reflex": [
+      55,
+      80
+    ],
+    "resilience": [
+      45,
+      68
+    ],
+    "strength": [
+      35,
+      58
+    ],
+    "vitality": [
+      30,
+      50
+    ],
+    "willpower": [
+      25,
+      45
+    ]
+  },
+  "channels": [],
+  "conduits": {},
+  "element": "sand",
+  "generatorPlanets": [
+    "endessa"
+  ],
+  "homePlanet": "endessa",
+  "key": "drilltail",
+  "lore": {
+    "appearance": [
+      "Dog-sized scorpion-like body on many legs",
+      "Chitin shell",
+      "Canine head with biting jaws",
+      "Scissor-like pincer claws on the forelimbs",
+      "Segmented tail arched over the back, ending in a helical drill"
+    ],
+    "behavior": "It tunnels quickly with the small drill on its tail, and it feels what moves overhead through the ground.",
+    "company": "Wildcatters kept several at a time. Left to itself it hunts alone.",
+    "description": "Dog-sized, scorpion-like creatures, Drilltails were originally used by wildcatters who lacked the funding to employ larger drilling Xalians like the Frackworm. Drilltails use their small, stinger-like drills to quickly tunnel through the earth, darting in and out of the surface as they hunt for prey to ambush with their sharp, scissor-like claws.",
+    "feeding": "It hunts by darting in and out of the surface and ambushing prey with its scissor-like claws.",
+    "habitat": "The wells and cavern networks beneath Endessa's dunes.",
+    "origin": "Used by wildcatters who could not afford larger drilling Xalians like the Frackworm."
+  },
+  "mechanisms": [
+    {
+      "activation": {
+        "continuity": [
+          "discrete"
+        ]
+      },
+      "delivery": {
+        "contact": {
+          "approach": [
+            "stationary",
+            "closing"
+          ],
+          "range": [
+            "contact"
+          ]
+        }
+      },
+      "description": "Its helical tail bores into a contacted surface.",
+      "effects": [
+        {
+          "intensity": [
+            42,
+            58
+          ],
+          "key": "outcome",
+          "likelihood": [
+            "consistent"
+          ],
+          "mechanism": "piercing",
+          "onset": "instant",
+          "persistence": "resolved",
+          "recipient": "target",
+          "type": "harm"
+        }
+      ],
+      "instrument": "tail",
+      "key": "tail-auger",
+      "name": "Tail Auger",
+      "targeting": [
+        "other"
+      ],
+      "timing": {
+        "preparation": [
+          "immediate",
+          "brief"
+        ],
+        "recovery": [
+          "repeatable",
+          "brief"
+        ]
+      }
+    }
+  ],
+  "name": "Drilltail",
+  "nameOrigin": "A direct compound naming the drill at the end of its tail.",
+  "passives": [],
+  "physiology": {
+    "anatomy": [
+      "pincers",
+      "tail",
+      "jaws",
+      "shell",
+      "claws"
+    ],
+    "bodyPlan": "multiped",
+    "breathes": [
+      "gas"
+    ],
+    "capabilities": {
+      "burrow": [
+        80,
+        95
+      ],
+      "climb": [
+        35,
+        55
+      ],
+      "flight": [
+        0,
+        0
+      ],
+      "leap": [
+        18,
+        34
+      ],
+      "manipulation": [
+        45,
+        65
+      ],
+      "sprint": [
+        52,
+        72
+      ],
+      "swim": [
+        5,
+        18
+      ]
+    },
+    "communication": [
+      "vibration"
+    ],
+    "composition": {
+      "primary": "flesh"
+    },
+    "covering": "chitin",
+    "diet": "carnivore",
+    "environmentalTolerance": {
+      "ambientMedia": [
+        "gas"
+      ],
+      "temperatureC": {
+        "max": 52,
+        "min": -5
+      }
+    },
+    "genome": {
+      "chirality": "rolled"
+    },
+    "lifespan": "long",
+    "protections": [],
+    "senses": {
+      "hearing": [
+        42,
+        60
+      ],
+      "sight": [
+        35,
+        55
+      ],
+      "smell": [
+        46,
+        64
+      ],
+      "special": [
+        "tremorsense"
+      ]
+    },
+    "size": {
+      "heightCm": [
+        55,
+        85
+      ],
+      "massKg": [
+        22,
+        40
+      ]
+    },
+    "traversal": []
+  },
+  "schemaVersion": "5.1.0",
+  "signature": {
+    "key": "drilltail-defining",
+    "type": "action"
+  },
+  "temperament": {
+    "aggression": [
+      50,
+      75
+    ],
+    "boldness": [
+      45,
+      70
+    ],
+    "curiosity": [
+      25,
+      50
+    ],
+    "energy": [
+      50,
+      75
+    ],
+    "sociability": [
+      10,
+      35
+    ]
+  }
+}

@@ -33,11 +33,31 @@ function checkAbilities(value: z.infer<typeof data>, ctx: z.RefinementCtx) {
 export const CreatureDataSchema = data.superRefine(checkAbilities);
 export type CreatureData = z.infer<typeof CreatureDataSchema>;
 
-/** Persistence boundary. Draft generation cannot assign itself a canonical release ID. */
-export const CreatureRecordSchema = data.extend({
+/** Historical roster-bound persistence boundary. Archived 5.1 releases retain this shape. */
+export const CreatureRecordV51Schema = data.extend({
   id: z.string().regex(/^xal_/),
   provenance: z.strictObject({ seed: z.string().min(1), generatorVersion: z.string().min(1), schemaVersion: z.literal('5.1.0'),
     releaseId: z.string().min(1), generatedAt: z.string().datetime({ offset: true }), origin: c.Key,
+    serial: z.number().int().positive(), profile: z.enum(['full', 'showroom']) }),
+  appearance: z.strictObject({ finish: z.enum(['standard', 'gleam', 'prismatic', 'eclipse']) }),
+}).superRefine(checkAbilities);
+export type CreatureRecordV51 = z.infer<typeof CreatureRecordV51Schema>;
+
+/** Historical species-independent release shape. */
+export const CreatureRecordV52Schema = data.extend({
+  id: z.string().regex(/^xal_/),
+  provenance: z.strictObject({ seed: z.string().min(1), generatorVersion: z.string().min(1), schemaVersion: z.literal('5.2.0'),
+    releaseId: z.string().min(1), speciesRevision: z.string().regex(/^[a-f0-9]{64}$/),
+    generatedAt: z.string().datetime({ offset: true }), origin: c.Key,
+    serial: z.number().int().positive(), profile: z.enum(['full', 'showroom']) }),
+  appearance: z.strictObject({ finish: z.enum(['standard', 'gleam', 'prismatic', 'eclipse']) }),
+}).superRefine(checkAbilities);
+export type CreatureRecordV52 = z.infer<typeof CreatureRecordV52Schema>;
+
+/** Current prototype record. Historical released records retain their own archived schemas. */
+export const CreatureRecordSchema = data.extend({
+  id: z.string().regex(/^xal_/),
+  provenance: z.strictObject({ seed: z.string().min(1), generatedAt: z.string().datetime({ offset: true }), origin: c.Key,
     serial: z.number().int().positive(), profile: z.enum(['full', 'showroom']) }),
   appearance: z.strictObject({ finish: z.enum(['standard', 'gleam', 'prismatic', 'eclipse']) }),
 }).superRefine(checkAbilities);

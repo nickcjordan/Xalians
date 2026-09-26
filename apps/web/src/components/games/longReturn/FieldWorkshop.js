@@ -3,11 +3,12 @@ import { fieldOptions, fieldWorkStory } from './fieldOperations';
 import { MAX_STRAIN } from './longReturnData';
 import BiIcon from './BiIcon';
 import FieldExchange from './FieldExchange';
+import ExpeditionReserves from './ExpeditionReserves';
 
-export default function FieldWorkshop({ crew, strain, pressure, salvage, commands, used, receipt, openRequest = 0, onChoose }) {
+export default function FieldWorkshop({ crew, strain, pressure, salvage, commands, used, receipt, openRequest = 0, onChoose, onAdvance }) {
   const [selected, setSelected] = useState(null);
   const [expanded, setExpanded] = useState(false);
-  const [reviewingCrossing, setReviewingCrossing] = useState(false);
+  const [receiptDismissed, setReceiptDismissed] = useState(false);
   const summaryRef = useRef(null);
   const lastOpenRequest = useRef(openRequest);
   const showRepairs = value => {
@@ -24,7 +25,7 @@ export default function FieldWorkshop({ crew, strain, pressure, salvage, command
       showRepairs(true);
     }
   }, [openRequest]);
-  useEffect(() => { if (receipt) { receiptRef.current?.focus(); receiptRef.current?.closest('.lr-simple-result')?.scrollIntoView?.({ block:'start', behavior:'instant' }); } }, [receipt]);
+  useEffect(() => { if (receipt) { setReceiptDismissed(false); receiptRef.current?.focus(); receiptRef.current?.closest('.lr-simple-result')?.scrollIntoView?.({ block:'start', behavior:'instant' }); } }, [receipt]);
   const options = fieldOptions({ crew, strain, pressure, salvage, commands, used });
   const choice = options.find(option => option.id === selected);
   const renderOption = option => <button type="button" key={option.id} disabled={!!option.disabled} aria-pressed={selected === option.id} title={option.reason} onClick={() => setSelected(option.id)}>
@@ -35,21 +36,23 @@ export default function FieldWorkshop({ crew, strain, pressure, salvage, command
     {option.disabled && <small>{option.disabled}</small>}
   </button>;
   const unavailable = options.filter(option => option.disabled);
-  if (receipt) return <section className={`lr-field-receipt${reviewingCrossing ? ' is-reviewing-crossing' : ''}`} aria-label="Field work complete">
-    <button type="button" className="lr-lead-back" aria-expanded={reviewingCrossing} onClick={() => setReviewingCrossing(!reviewingCrossing)}>{reviewingCrossing ? 'Back to repair result' : '← Review crossing'}</button>
+  if (receipt && receiptDismissed) return null;
+  if (receipt) return <section className="lr-field-receipt" aria-label="Field work complete">
     <h4 ref={receiptRef} tabIndex={-1}><BiIcon cls="bi-check-circle" />{receipt.title} · complete</h4>
-    <p className="lr-field-work-story">{fieldWorkStory(receipt)}</p>
+    <p className="lr-field-work-story">{fieldWorkStory(receipt).split(/(?<=\.)\s+/).slice(0, 2).join(' ')}</p>
     <FieldExchange option={receipt} salvageBefore={salvage + receipt.cost} energyBefore={MAX_STRAIN - (strain[receipt.creature.id] || 0) + receipt.energy} settled />
-    <details><summary>How the repair worked</summary><p>{receipt.result}</p></details>
+    <details className="lr-field-repair-detail"><summary>Read the full repair account</summary><p>{fieldWorkStory(receipt)}</p><p>{receipt.result}</p></details>
+    <button type="button" className="g-btn g-btn--primary lr-field-repair-next" onClick={onAdvance || (() => setReceiptDismissed(true))}>{onAdvance ? 'Continue mission' : 'Choose whether to leave'} <BiIcon cls="bi-arrow-right" /></button>
   </section>;
   if (!options.length) return null;
   return <details className="lr-workshop" open={expanded}>
     <summary ref={summaryRef} onClick={event => {
       event.preventDefault();
       showRepairs(!expanded);
-    }}><BiIcon cls={expanded ? 'bi-arrow-left' : 'bi-tools'} /><span><strong>{expanded ? 'Back to crossing result' : 'Repair now—or bank the haul'}</strong><small>Trade final salvage for energy or stability</small></span><b>{salvage} carried <BiIcon cls="bi bi-chevron-down" /></b></summary>
+    }}><BiIcon cls={expanded ? 'bi-arrow-left' : 'bi-tools'} /><span><strong>{expanded ? 'Back to crossing result' : 'Repair with salvage'}</strong><small>Trade final salvage for energy or stability</small></span><b>{salvage} carried <BiIcon cls="bi bi-chevron-down" /></b></summary>
     <div className="lr-workshop-body">
       <h4 className="lr-workshop-title">Put the haul to work</h4>
+      <ExpeditionReserves crew={crew} strain={strain} pressure={pressure} />
       <button type="button" className="lr-workshop-bank" aria-label={`Keep all ${salvage} salvage and return to crossing result`} onClick={() => showRepairs(false)}>
         <BiIcon cls="bi bi-box-seam" />
         <span><small>Keep the haul</small><strong>{salvage} salvage stays carried</strong></span>
@@ -69,6 +72,6 @@ export default function FieldWorkshop({ crew, strain, pressure, salvage, command
 export function MissionJournal({ entries }) {
   if (!entries.length) return null;
   return <details className="lr-mission-journal"><summary><BiIcon cls="bi bi-journal-text" /> Your expedition · {entries.length} {entries.length === 1 ? 'crossing' : 'crossings'} <BiIcon cls="bi bi-chevron-down" /></summary>
-    <ol>{entries.map((entry, index) => <li key={entry.id}><span className="lr-journal-number">{index + 1}</span><div><small>{entry.scene}</small><strong>{entry.route}</strong><p>{entry.story}</p><span>{entry.lead} led · {entry.energy ? `${entry.energy} energy spent` : 'No energy spent'} · {entry.stability ? `${entry.stability} stability lost` : 'No stability lost'} · {entry.salvage} salvage recovered</span>{entry.fieldWork && <p className="lr-journal-field"><BiIcon cls="bi bi-tools" /> {entry.fieldWork}</p>}</div></li>)}</ol>
+    <ol>{entries.map((entry, index) => <li key={entry.id}><span className="lr-journal-number">{index + 1}</span><div><small>{entry.scene}</small><strong>{entry.route}</strong><p>{entry.story}</p><span>{entry.lead} led · {entry.energy ? `${entry.energy} energy spent` : 'No energy spent'} · {entry.stability ? `${entry.stability} stability lost` : 'No stability lost'} · {entry.salvage} salvage recovered</span>{entry.encounter && <p>{entry.encounter}</p>}{entry.discovery && <p>{entry.discovery}</p>}{entry.fieldWork && <p className="lr-journal-field"><BiIcon cls="bi bi-tools" /> {entry.fieldWork}</p>}</div></li>)}</ol>
   </details>;
 }

@@ -1,0 +1,329 @@
+{
+  "actions": [
+    {
+      "activation": {
+        "continuity": "ongoing"
+      },
+      "delivery": {
+        "approach": "stationary",
+        "mode": "contact"
+      },
+      "description": "The roots emerge and wrap a contacted creature in a maintained hold.",
+      "effects": [
+        {
+          "bound": "source",
+          "key": "outcome",
+          "likelihood": "consistent",
+          "onset": "instant",
+          "persistence": "sustained",
+          "recipient": "target",
+          "removable": [
+            "freeing"
+          ],
+          "status": "restrained",
+          "type": "status"
+        }
+      ],
+      "instrument": "roots",
+      "key": "xylum-root-hold",
+      "name": "Root Hold",
+      "spatial": {
+        "range": "contact"
+      },
+      "targeting": [
+        "other"
+      ],
+      "timing": {
+        "preparation": "brief",
+        "recovery": "brief"
+      }
+    }
+  ],
+  "acts": {
+    "exclude": [
+      "spines/hurl"
+    ],
+    "output": {
+      "roots/strike": [
+        45,
+        70
+      ],
+      "spines/strike": [
+        32,
+        58
+      ]
+    }
+  },
+  "attributes": {
+    "agility": [
+      8,
+      25
+    ],
+    "charisma": [
+      10,
+      30
+    ],
+    "endurance": [
+      55,
+      80
+    ],
+    "instinct": [
+      40,
+      65
+    ],
+    "intelligence": [
+      20,
+      45
+    ],
+    "reflex": [
+      15,
+      35
+    ],
+    "resilience": [
+      50,
+      75
+    ],
+    "strength": [
+      55,
+      80
+    ],
+    "vitality": [
+      60,
+      85
+    ],
+    "willpower": [
+      45,
+      70
+    ]
+  },
+  "channels": [],
+  "conduits": {},
+  "element": "plant",
+  "generatorPlanets": [
+    "floria"
+  ],
+  "homePlanet": "floria",
+  "key": "xylum",
+  "lore": {
+    "appearance": [
+      "Giant squid-like organism, inverted, its mantle buried below the soil",
+      "Six thick root-like tentacles rising from the body, serrated along the edges",
+      "A mouth at the base where the tentacles meet",
+      "An eye on either side of the body at the soil line",
+      "Plant tissue throughout"
+    ],
+    "behavior": "It stays buried. When the ground above it is disturbed its tentacles come up out of the soil and wrap whatever is there, and a tentacle torn off grows back.",
+    "company": "It lies alone under the soil.",
+    "description": "A giant organism of thick, intertwined roots that act as tentacles. It lives mostly underground as this is where it absorbs its power.",
+    "feeding": "It draws its power from the ground beneath the World Trees and eats nothing.",
+    "habitat": "Underground in Floria's understory, beneath the World Trees, where it absorbs its power.",
+    "origin": "Grown by the Genesis Prototype on Floria, the first Generator, which ran wild and filled the world with forms like it. No record says what it was made for."
+  },
+  "mechanisms": [
+    {
+      "activation": {
+        "continuity": [
+          "ongoing"
+        ]
+      },
+      "delivery": {
+        "contact": {
+          "approach": [
+            "stationary"
+          ],
+          "range": [
+            "contact"
+          ]
+        }
+      },
+      "description": "Emergent roots maintain a hold on one contacted target.",
+      "effects": [
+        {
+          "bound": "source",
+          "key": "outcome",
+          "likelihood": [
+            "consistent"
+          ],
+          "onset": "instant",
+          "persistence": "sustained",
+          "recipient": "target",
+          "removable": [
+            "freeing"
+          ],
+          "status": "restrained",
+          "type": "status"
+        }
+      ],
+      "instrument": "roots",
+      "key": "root-wrap",
+      "name": "Root Wrap",
+      "targeting": [
+        "other"
+      ],
+      "timing": {
+        "preparation": [
+          "immediate",
+          "brief"
+        ],
+        "recovery": [
+          "brief"
+        ]
+      }
+    }
+  ],
+  "name": "Xylum",
+  "nameOrigin": "A stylization of xylem, the plant tissue that transports water and minerals, matching its rooted body and underground feeding.",
+  "passives": [
+    {
+      "activation": {
+        "continuity": "ongoing"
+      },
+      "delivery": {
+        "approach": "stationary",
+        "mode": "self"
+      },
+      "description": "Its living root body regrows torn tentacles from its grounded reserves.",
+      "effects": [
+        {
+          "intensity": [
+            40,
+            75
+          ],
+          "key": "outcome",
+          "likelihood": "consistent",
+          "onset": "gradual",
+          "persistence": "sustained",
+          "recipient": "self",
+          "type": "restore"
+        }
+      ],
+      "instrument": "roots",
+      "key": "xylum-defining",
+      "name": "Root Regrowth",
+      "spatial": {},
+      "targeting": [
+        "self"
+      ]
+    }
+  ],
+  "physiology": {
+    "anatomy": [
+      "roots",
+      "tendrils",
+      "spines",
+      "body"
+    ],
+    "bodyPlan": "multiped",
+    "breathes": [
+      "gas"
+    ],
+    "capabilities": {
+      "burrow": [
+        70,
+        92
+      ],
+      "climb": [
+        10,
+        30
+      ],
+      "flight": [
+        0,
+        0
+      ],
+      "leap": [
+        0,
+        10
+      ],
+      "manipulation": [
+        45,
+        70
+      ],
+      "sprint": [
+        5,
+        20
+      ],
+      "swim": [
+        5,
+        20
+      ]
+    },
+    "communication": [
+      "vibration"
+    ],
+    "composition": {
+      "primary": "plant"
+    },
+    "covering": "bare",
+    "diet": "energy-feeder",
+    "environmentalTolerance": {
+      "ambientMedia": [
+        "gas",
+        "liquid"
+      ],
+      "temperatureC": {
+        "max": 34,
+        "min": -4
+      }
+    },
+    "genome": {
+      "chirality": "rolled"
+    },
+    "lifespan": "long",
+    "protections": [],
+    "senses": {
+      "hearing": [
+        20,
+        40
+      ],
+      "sight": [
+        0,
+        15
+      ],
+      "smell": [
+        30,
+        55
+      ],
+      "special": [
+        "tremorsense"
+      ]
+    },
+    "size": {
+      "heightCm": [
+        240,
+        400
+      ],
+      "massKg": [
+        180,
+        320
+      ]
+    },
+    "traversal": []
+  },
+  "schemaVersion": "5.1.0",
+  "signature": {
+    "key": "xylum-defining",
+    "type": "passive"
+  },
+  "temperament": {
+    "aggression": [
+      40,
+      65
+    ],
+    "boldness": [
+      35,
+      60
+    ],
+    "curiosity": [
+      20,
+      45
+    ],
+    "energy": [
+      20,
+      45
+    ],
+    "sociability": [
+      10,
+      30
+    ]
+  }
+}

@@ -1,9 +1,10 @@
 export const encounterChoicePresentation = (option) => {
   const id = option.id || '';
   const assist = option.companion || /aid|medic|free|release/.test(id);
-  const signal = /signal/.test(id);
+  const signal = /signal|beacon/.test(id);
   const retreat = /withdraw|mark/.test(id);
   const detour = /detour|yield|leave/.test(id);
+  if (id === 'isolate-coolant') return { identity: { label: 'Operate', icon: 'bi-tools', tone: 'signal' }, outcome: { label: 'Pressure line isolated', icon: 'bi-unlock-fill', tone: 'clear' } };
   const identity = assist
     ? { label: 'Assist', icon: 'bi-bandaid', tone: 'assist' }
     : signal

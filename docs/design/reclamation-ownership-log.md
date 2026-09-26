@@ -1186,3 +1186,25 @@ Every engine question (each side's hold after a send, who leads, which creature 
 - The fight side of "why" (why one creature loses more, or takes a rival only to 11) is not on the table.
 - Round 1's empty worlds are still the largest thing on screen; the Stake key explains nothing until pressed.
 - Carried: whether element should matter (the chart, off) is Nick's call; strike keepers win 67 to 70 percent.
+
+### Pass 59 (2026-09-24): read the card
+
+**Nick**, on pass 58's cyan card columns: "Why are all of the bars the same blue color? Before they were insinuating which planet they aligned to ... is that insinuating they can only go to the blue planet? I'm not sold on this whole amber versus cyan thing to denote the platoons. I feel like you're really stuck on that and it's causing issues. I also don't understand what the icons are beneath each bar or how each bar is calculated. Why do some creatures have the same number across all three bars and some creatures vary?" The design and every number are in `reclamation-read-the-card.md`.
+
+- **Reversed:** pass 58's cyan columns. A card is only ever yours, so it carries no side's color; each column wears its world's color again, its numbers are plain ink, and the rival's tag and the lead pointer are neutral.
+- **The calculation, on the card:** a dashed box at the creature's normal hold in each column, and under it the mark that changed it with its factor (house ×1½; flame, snowflake or struck air ×½ or ×¼; company and a bolster's own lift +1). The ghost prints the chain under its number (`13 🔥×½ → 7 −3` under +4).
+- **Found:** a lone bolster lifts itself (the rules say "itself included"), and pass 57 drew that as two figures on an empty world (Nick's Bioflim, 15, 15, 15). It carries the bolster's own mark now.
+- **Rules lever `wholeHolds`, on:** the normal hold and the hold at a world are whole numbers, so the printed factors add up (a reader had found 12 × 1½ printing 19). Simulator, seeds 7 and 13, 500 matches, off against on: starter 49.2/45.2 against 46.6/43.2, falls 8.72/8.41 against 8.72/8.56, strike keepers 69.6/67.5 against 68.2/66.6, comeback 31.0 against 28.1 pooled (1.4 standard errors); all within noise.
+- **Also:** the match-point pennant glows empty (readers took the filled one for a fifth world won); "1 world", not "1 worlds".
+
+**Measured.** A protocol built on Nick's questions. Every reader answered every question right. Column colors: before, "the fill means yours"; after, each column is its world, sure. How Terragoyle's numbers are made: before, "the rounding never reconciles"; as shipped, "I could back out every base value exactly". Scores (numbers mean / how a number is made / good move): live 5/5/6, first build 6/4/5, as shipped 5/4/6. The "how a number is made" score held at 4 because the fight's cause is not drawn.
+
+**Verified:** rules tests (628) and web tests pass; the four table checks are green; the proving check now also holds the ghost's chain to its number.
+
+**Open:**
+
+- For Nick: whether the side colors leave the table (all three readers found gold doing too many jobs).
+- The fight's cause on the card and the ghost (which rival takes what, and why).
+- A verdict per column ("7 v 0"), asked for by three readers across passes 57 to 59.
+- The send counter's one held back.
+- Carried: whether element should matter; strike keepers near 67 to 68 percent.

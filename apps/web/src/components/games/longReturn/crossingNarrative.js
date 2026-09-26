@@ -49,7 +49,7 @@ export function crossingNarrative({ scene, route, lead, support, method, result,
   const stories = route.outcomes || STORIES[route.id];
   const story = (stories && (stories[result.quality] || stories.rough) || `${lead.species} brings the crew through ${route.title.toLowerCase()}.`)
     .replace(/The lead/g, lead.species).replace(/the lead/g, lead.species);
-  const alone = result.rawMethodScore - route.difficulty;
+  const alone = result.rawMethodScore - (result.difficulty ?? route.difficulty);
   const reactionStyles = { 'aggression:low': 'gentle', 'aggression:high': 'forceful', 'boldness:low': 'cautious', 'boldness:high': 'bold', 'sociability:low': 'independent', 'sociability:high': 'cooperative', 'energy:low': 'patient', 'energy:high': 'energetic', 'curiosity:low': 'disciplined', 'curiosity:high': 'curious' };
   const style = reactionStyles[`${route.reaction?.axis}:${route.reaction?.direction}`] || 'instinctive';
   const dangers = result.unseenHazards.filter(hazard => hazard.strain > 0 || hazard.pressure > 0);

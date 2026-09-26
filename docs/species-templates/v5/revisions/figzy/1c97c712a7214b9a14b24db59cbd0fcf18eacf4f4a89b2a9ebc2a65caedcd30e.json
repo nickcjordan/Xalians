@@ -1,0 +1,380 @@
+{
+  "actions": [
+    {
+      "activation": {
+        "continuity": "discrete"
+      },
+      "delivery": {
+        "approach": "stationary",
+        "mode": "signal"
+      },
+      "description": "It interposes a focused mental force to protect a distressed creature.",
+      "effects": [
+        {
+          "intensity": 55,
+          "key": "outcome",
+          "likelihood": "consistent",
+          "onset": "instant",
+          "persistence": "resolved",
+          "recipient": "target",
+          "type": "protect"
+        }
+      ],
+      "instrument": "mind",
+      "key": "figzy-defining",
+      "name": "Steadying Intervention",
+      "spatial": {
+        "range": "short"
+      },
+      "targeting": [
+        "other"
+      ],
+      "timing": {
+        "preparation": "immediate",
+        "recovery": "brief"
+      }
+    },
+    {
+      "activation": {
+        "continuity": "discrete"
+      },
+      "delivery": {
+        "approach": "stationary",
+        "mode": "pulse"
+      },
+      "description": "A burst of sourced mental force from its open hands drives a threat back.",
+      "effects": [
+        {
+          "direction": "away",
+          "intensity": 48,
+          "key": "outcome",
+          "likelihood": "consistent",
+          "onset": "instant",
+          "persistence": "resolved",
+          "recipient": "target",
+          "type": "displace"
+        }
+      ],
+      "element": "psychic",
+      "instrument": "fists",
+      "key": "figzy-force",
+      "name": "Open-Handed Force",
+      "spatial": {
+        "range": "short"
+      },
+      "targeting": [
+        "other"
+      ],
+      "timing": {
+        "preparation": "immediate",
+        "recovery": "brief"
+      }
+    }
+  ],
+  "acts": {
+    "exclude": [
+      "*/drain",
+      "*/mend"
+    ]
+  },
+  "attributes": {
+    "agility": [
+      55,
+      82
+    ],
+    "charisma": [
+      40,
+      68
+    ],
+    "endurance": [
+      30,
+      55
+    ],
+    "instinct": [
+      45,
+      70
+    ],
+    "intelligence": [
+      58,
+      84
+    ],
+    "reflex": [
+      50,
+      78
+    ],
+    "resilience": [
+      18,
+      40
+    ],
+    "strength": [
+      12,
+      32
+    ],
+    "vitality": [
+      25,
+      48
+    ],
+    "willpower": [
+      55,
+      80
+    ]
+  },
+  "channels": [
+    "mind"
+  ],
+  "conduits": {
+    "fists": "psychic",
+    "mind": "psychic"
+  },
+  "element": "psychic",
+  "generatorPlanets": [
+    "telypso"
+  ],
+  "homePlanet": "telypso",
+  "key": "figzy",
+  "lore": {
+    "appearance": [
+      "Small upright biped",
+      "Lightly built",
+      "Shaggy fur coat",
+      "Very large ears",
+      "Slender branched antlers",
+      "Very large eyes",
+      "Small hands"
+    ],
+    "behavior": "It is small, deceptively smart, and docile with those it trusts. It puts itself between a distressed mind and whatever is agitating it, holding one quiet and driving the other back with a burst from its open hands.",
+    "company": "It stays with those it trusts.",
+    "description": "What this creature lacks in stature it makes up for with its incredible magical abilities. It is deceptively smart, yet known to be docile when it trusts you.",
+    "feeding": "It eats what the fungal forests offer.",
+    "habitat": "The fungal forests and bioluminescent jungles of Telypso.",
+    "origin": "Made by the Telypso Generator to help settle the unstable minds of the Vallerii marooned on the world, whom it treats as patients."
+  },
+  "mechanisms": [
+    {
+      "activation": {
+        "continuity": [
+          "discrete"
+        ]
+      },
+      "delivery": {
+        "signal": {
+          "approach": [
+            "stationary"
+          ],
+          "range": [
+            "short",
+            "medium"
+          ]
+        }
+      },
+      "description": "Focused mental force protects another creature.",
+      "effects": [
+        {
+          "intensity": [
+            35,
+            62
+          ],
+          "key": "outcome",
+          "likelihood": [
+            "consistent"
+          ],
+          "onset": "instant",
+          "persistence": "resolved",
+          "recipient": "target",
+          "type": "protect"
+        }
+      ],
+      "instrument": "mind",
+      "key": "mental-intervention",
+      "name": "Mental Intervention",
+      "targeting": [
+        "other"
+      ],
+      "timing": {
+        "preparation": [
+          "immediate",
+          "brief"
+        ],
+        "recovery": [
+          "brief"
+        ]
+      }
+    },
+    {
+      "activation": {
+        "continuity": [
+          "discrete"
+        ]
+      },
+      "delivery": {
+        "pulse": {
+          "approach": [
+            "stationary"
+          ],
+          "range": [
+            "short",
+            "medium"
+          ]
+        }
+      },
+      "description": "A burst of sourced psychic force from the hands pushes a target away.",
+      "effects": [
+        {
+          "direction": "away",
+          "intensity": [
+            30,
+            55
+          ],
+          "key": "outcome",
+          "likelihood": [
+            "consistent"
+          ],
+          "onset": "instant",
+          "persistence": "resolved",
+          "recipient": "target",
+          "type": "displace"
+        }
+      ],
+      "element": "psychic",
+      "instrument": "fists",
+      "key": "hand-force",
+      "name": "Hand Force",
+      "targeting": [
+        "other"
+      ],
+      "timing": {
+        "preparation": [
+          "immediate",
+          "brief"
+        ],
+        "recovery": [
+          "brief",
+          "prolonged"
+        ]
+      }
+    }
+  ],
+  "name": "Figzy",
+  "nameOrigin": "A playful, whimsical coinage chosen to fit the creature's mischievous spirit rather than describe a literal body part.",
+  "passives": [],
+  "physiology": {
+    "anatomy": [
+      "antlers",
+      "fists",
+      "hide",
+      "body"
+    ],
+    "bodyPlan": "biped",
+    "breathes": [
+      "gas"
+    ],
+    "capabilities": {
+      "burrow": [
+        0,
+        10
+      ],
+      "climb": [
+        35,
+        60
+      ],
+      "flight": [
+        0,
+        0
+      ],
+      "leap": [
+        40,
+        65
+      ],
+      "manipulation": [
+        45,
+        70
+      ],
+      "sprint": [
+        55,
+        80
+      ],
+      "swim": [
+        10,
+        30
+      ]
+    },
+    "communication": [
+      "telepathic",
+      "display"
+    ],
+    "composition": {
+      "primary": "flesh"
+    },
+    "covering": "fur",
+    "diet": "omnivore",
+    "environmentalTolerance": {
+      "ambientMedia": [
+        "gas"
+      ],
+      "temperatureC": {
+        "max": 44,
+        "min": 12
+      }
+    },
+    "genome": {
+      "chirality": "rolled"
+    },
+    "lifespan": "standard",
+    "protections": [],
+    "senses": {
+      "hearing": [
+        65,
+        90
+      ],
+      "sight": [
+        55,
+        80
+      ],
+      "smell": [
+        30,
+        55
+      ],
+      "special": [
+        "psychic"
+      ]
+    },
+    "size": {
+      "heightCm": [
+        95,
+        125
+      ],
+      "massKg": [
+        34,
+        52
+      ]
+    },
+    "traversal": []
+  },
+  "schemaVersion": "5.1.0",
+  "signature": {
+    "key": "figzy-defining",
+    "type": "action"
+  },
+  "temperament": {
+    "aggression": [
+      10,
+      35
+    ],
+    "boldness": [
+      35,
+      60
+    ],
+    "curiosity": [
+      55,
+      80
+    ],
+    "energy": [
+      35,
+      60
+    ],
+    "sociability": [
+      45,
+      70
+    ]
+  }
+}

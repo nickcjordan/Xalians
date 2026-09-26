@@ -1,0 +1,425 @@
+{
+  "actions": [
+    {
+      "activation": {
+        "continuity": "discrete"
+      },
+      "delivery": {
+        "approach": "stationary",
+        "mode": "contact"
+      },
+      "description": "Its tendrils work warm extruded alloy into damage on another creature.",
+      "effects": [
+        {
+          "intensity": 65,
+          "key": "outcome",
+          "likelihood": "consistent",
+          "onset": "instant",
+          "persistence": "resolved",
+          "recipient": "target",
+          "type": "restore"
+        }
+      ],
+      "instrument": "tendrils",
+      "key": "sonalloy-defining",
+      "name": "Living-Alloy Seam",
+      "spatial": {
+        "range": "contact"
+      },
+      "targeting": [
+        "other"
+      ],
+      "timing": {
+        "preparation": "brief",
+        "recovery": "brief"
+      }
+    }
+  ],
+  "acts": {
+    "exclude": [
+      "secretion/beam"
+    ],
+    "output": {
+      "pincers/strike": [
+        30,
+        52
+      ]
+    }
+  },
+  "attributes": {
+    "agility": [
+      28,
+      48
+    ],
+    "charisma": [
+      26,
+      46
+    ],
+    "endurance": [
+      56,
+      80
+    ],
+    "instinct": [
+      44,
+      66
+    ],
+    "intelligence": [
+      60,
+      84
+    ],
+    "reflex": [
+      34,
+      56
+    ],
+    "resilience": [
+      62,
+      88
+    ],
+    "strength": [
+      38,
+      58
+    ],
+    "vitality": [
+      54,
+      76
+    ],
+    "willpower": [
+      58,
+      82
+    ]
+  },
+  "channels": [
+    "secretion"
+  ],
+  "conduits": {
+    "secretion": "metal"
+  },
+  "element": "metal",
+  "generatorPlanets": [
+    "veridium"
+  ],
+  "homePlanet": "veridium",
+  "key": "sonalloy",
+  "lore": {
+    "appearance": [
+      "A low broad body made entirely of satin-finished metal",
+      "Two small recessed eyes grouped on the lower forward slope directly above the extrusion vent",
+      "Six jointed load-bearing legs tipped with split gripping pads",
+      "A pair of broad facing pincers beneath the front of the body",
+      "Two fine tendrils that unfurl from recesses beside the pincers",
+      "A single broad downward-facing extrusion vent centered beneath the front body between the two tendril bases",
+      "A bare unplated surface crossed by slow-moving lines of forge glow"
+    ],
+    "behavior": "A Sonalloy drums across a damaged surface to map the break, braces it with its pincers, extrudes warm alloy between its tendrils, and uses them to draw the material directly into the fracture and work it until the join bears weight again.",
+    "company": "Several may converge on widespread breakage and coordinate through alternating patterns of seam glow, but they separate once the repair is stable.",
+    "description": "A low six-legged creature of living metal, the Sonalloy climbs Veridium's gantries and draws warm alloy from a broad extrusion vent beneath its front body, working it into damaged creatures and structures with a pair of fine tendrils and broad pincers.",
+    "feeding": "They draw heat from forge districts and passing metal channels, retaining enough of it to keep a reserve of seam alloy mobile inside the body, and fold small pieces of scrap into that reserve to replace material spent on repairs.",
+    "habitat": "They move along factory trenches, gantries, salvage fields, and the cooler banks of Veridium's liquid metal channels.",
+    "origin": "The Veridium Generator produced Sonalloys to maintain metal-shaping fauna and factory systems in forge districts where fractures accumulate faster than ordinary crews can answer them."
+  },
+  "mechanisms": [
+    {
+      "activation": {
+        "continuity": [
+          "discrete"
+        ]
+      },
+      "delivery": {
+        "contact": {
+          "approach": [
+            "stationary"
+          ],
+          "range": [
+            "contact"
+          ]
+        }
+      },
+      "description": "Fine tendrils shape extruded living alloy into damage on another creature.",
+      "effects": [
+        {
+          "intensity": [
+            45,
+            65
+          ],
+          "key": "outcome",
+          "likelihood": [
+            "consistent"
+          ],
+          "onset": "instant",
+          "persistence": "resolved",
+          "recipient": "target",
+          "type": "restore"
+        }
+      ],
+      "instrument": "tendrils",
+      "key": "alloy-seam",
+      "name": "Alloy Seam",
+      "targeting": [
+        "other"
+      ],
+      "timing": {
+        "preparation": [
+          "brief",
+          "prolonged"
+        ],
+        "recovery": [
+          "brief",
+          "prolonged"
+        ]
+      }
+    },
+    {
+      "activation": {
+        "continuity": [
+          "discrete"
+        ]
+      },
+      "delivery": {
+        "contact": {
+          "approach": [
+            "stationary"
+          ],
+          "range": [
+            "contact"
+          ]
+        }
+      },
+      "description": "Shaped alloy braces a damaged area on another creature.",
+      "effects": [
+        {
+          "duration": "brief",
+          "key": "outcome",
+          "likelihood": [
+            "consistent"
+          ],
+          "onset": "instant",
+          "persistence": "lingering",
+          "recipient": "target",
+          "removable": [
+            "disrupting"
+          ],
+          "status": "reinforced",
+          "type": "status"
+        }
+      ],
+      "instrument": "tendrils",
+      "key": "alloy-reinforcement",
+      "name": "Alloy Reinforcement",
+      "targeting": [
+        "other"
+      ],
+      "timing": {
+        "preparation": [
+          "brief",
+          "prolonged"
+        ],
+        "recovery": [
+          "brief",
+          "prolonged"
+        ]
+      }
+    },
+    {
+      "activation": {
+        "continuity": [
+          "discrete"
+        ]
+      },
+      "delivery": {
+        "contact": {
+          "approach": [
+            "stationary"
+          ],
+          "range": [
+            "contact"
+          ]
+        }
+      },
+      "description": "Broad pincers squeeze a contacted target.",
+      "effects": [
+        {
+          "intensity": [
+            30,
+            52
+          ],
+          "key": "outcome",
+          "likelihood": [
+            "consistent"
+          ],
+          "mechanism": "compression",
+          "onset": "instant",
+          "persistence": "resolved",
+          "recipient": "target",
+          "type": "harm"
+        }
+      ],
+      "instrument": "pincers",
+      "key": "pincer-compression",
+      "name": "Pincer Compression",
+      "targeting": [
+        "other"
+      ],
+      "timing": {
+        "preparation": [
+          "immediate",
+          "brief"
+        ],
+        "recovery": [
+          "repeatable",
+          "brief"
+        ]
+      }
+    }
+  ],
+  "name": "Sonalloy",
+  "nameOrigin": "A fusion of sonic and alloy, naming the vibrations it uses to locate damage and the living metal it works into the repair.",
+  "passives": [
+    {
+      "activation": {
+        "continuity": "ongoing"
+      },
+      "delivery": {
+        "approach": "stationary",
+        "mode": "self"
+      },
+      "description": "Living alloy within its own body continuously replaces damage.",
+      "effects": [
+        {
+          "intensity": [
+            30,
+            55
+          ],
+          "key": "outcome",
+          "likelihood": "consistent",
+          "onset": "gradual",
+          "persistence": "sustained",
+          "recipient": "self",
+          "type": "restore"
+        }
+      ],
+      "instrument": "body",
+      "key": "sonalloy-self-renewal",
+      "name": "Living Alloy Renewal",
+      "spatial": {},
+      "targeting": [
+        "self"
+      ]
+    }
+  ],
+  "physiology": {
+    "anatomy": [
+      "pincers",
+      "tendrils",
+      "vents",
+      "body"
+    ],
+    "bodyPlan": "multiped",
+    "breathes": [],
+    "capabilities": {
+      "burrow": [
+        0,
+        5
+      ],
+      "climb": [
+        62,
+        86
+      ],
+      "flight": [
+        0,
+        0
+      ],
+      "leap": [
+        4,
+        16
+      ],
+      "manipulation": [
+        72,
+        94
+      ],
+      "sprint": [
+        18,
+        38
+      ],
+      "swim": [
+        0,
+        8
+      ]
+    },
+    "communication": [
+      "vibration",
+      "display"
+    ],
+    "composition": {
+      "primary": "metal"
+    },
+    "covering": "bare",
+    "diet": "energy-feeder",
+    "environmentalTolerance": {
+      "ambientMedia": [
+        "gas"
+      ],
+      "temperatureC": {
+        "max": 80,
+        "min": -10
+      }
+    },
+    "genome": {
+      "chirality": "rolled"
+    },
+    "lifespan": "enduring",
+    "protections": [],
+    "senses": {
+      "hearing": [
+        48,
+        72
+      ],
+      "sight": [
+        38,
+        62
+      ],
+      "smell": [
+        0,
+        5
+      ],
+      "special": []
+    },
+    "size": {
+      "heightCm": [
+        72,
+        98
+      ],
+      "massKg": [
+        220,
+        360
+      ]
+    },
+    "traversal": []
+  },
+  "schemaVersion": "5.1.0",
+  "signature": {
+    "key": "sonalloy-defining",
+    "type": "action"
+  },
+  "temperament": {
+    "aggression": [
+      10,
+      30
+    ],
+    "boldness": [
+      25,
+      50
+    ],
+    "curiosity": [
+      35,
+      60
+    ],
+    "energy": [
+      35,
+      60
+    ],
+    "sociability": [
+      40,
+      65
+    ]
+  }
+}

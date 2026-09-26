@@ -1,0 +1,240 @@
+{
+  "actions": [
+    {
+      "activation": {
+        "continuity": "discrete"
+      },
+      "delivery": {
+        "approach": "closing",
+        "mode": "contact"
+      },
+      "description": "After a fast run, it spreads its wings for a brief launch and sinks its teeth into prey.",
+      "effects": [
+        {
+          "intensity": 62,
+          "key": "outcome",
+          "likelihood": "consistent",
+          "mechanism": "piercing",
+          "onset": "instant",
+          "persistence": "resolved",
+          "recipient": "target",
+          "type": "harm"
+        }
+      ],
+      "instrument": "jaws",
+      "key": "dromeus-defining",
+      "name": "Running Fang Launch",
+      "spatial": {
+        "range": "contact"
+      },
+      "targeting": [
+        "other"
+      ],
+      "timing": {
+        "preparation": "brief",
+        "recovery": "brief"
+      }
+    }
+  ],
+  "acts": {
+    "output": {
+      "fangs/strike": [
+        40,
+        62
+      ]
+    }
+  },
+  "attributes": {
+    "agility": [
+      72,
+      94
+    ],
+    "charisma": [
+      25,
+      45
+    ],
+    "endurance": [
+      55,
+      78
+    ],
+    "instinct": [
+      62,
+      84
+    ],
+    "intelligence": [
+      22,
+      40
+    ],
+    "reflex": [
+      66,
+      88
+    ],
+    "resilience": [
+      28,
+      46
+    ],
+    "strength": [
+      38,
+      58
+    ],
+    "vitality": [
+      35,
+      55
+    ],
+    "willpower": [
+      30,
+      50
+    ]
+  },
+  "channels": [],
+  "conduits": {},
+  "element": "fire",
+  "generatorPlanets": [
+    "magmuth"
+  ],
+  "homePlanet": "magmuth",
+  "key": "dromeus",
+  "lore": {
+    "appearance": [
+      "Ground bird with lizard features, on two legs",
+      "Light for its height",
+      "Partly feathered, with bare hide between",
+      "Narrow lizard-like head with jaws of sharp teeth",
+      "Clawed forelimbs held clear of the ground",
+      "Plumed wings along the arms",
+      "Hooked toe claws",
+      "Long plumed tail"
+    ],
+    "behavior": "It runs. When it reaches speed it spreads its wings, launches itself at its prey, and bites.",
+    "company": "It runs in packs.",
+    "description": "Partially feathered ground birds with lizard features, these creatures are extremely quick with razor sharp teeth. When running at high speeds, they can spread their wings to temporarily take flight as they launch into the air and sink their teeth into their prey.",
+    "feeding": "It hunts on the flats and eats whatever it can run down.",
+    "habitat": "The hardened lava flats and ash fields of Magmuth.",
+    "origin": "Magmuth's mining corporations designed it to cross the transient mineral islands, where a cooling lava flow gives only a short window before the ground opens again."
+  },
+  "mechanisms": [],
+  "name": "Dromeus",
+  "nameOrigin": "From the Greek dromeus, runner, reflecting the creature's defining ground speed and running launch.",
+  "passives": [],
+  "physiology": {
+    "anatomy": [
+      "jaws",
+      "fangs",
+      "claws",
+      "talons",
+      "wings",
+      "tail",
+      "hide"
+    ],
+    "bodyPlan": "biped",
+    "breathes": [
+      "gas"
+    ],
+    "capabilities": {
+      "burrow": [
+        0,
+        0
+      ],
+      "climb": [
+        25,
+        45
+      ],
+      "flight": [
+        15,
+        35
+      ],
+      "leap": [
+        58,
+        82
+      ],
+      "manipulation": [
+        20,
+        38
+      ],
+      "sprint": [
+        80,
+        98
+      ],
+      "swim": [
+        0,
+        10
+      ]
+    },
+    "communication": [
+      "vocal",
+      "display"
+    ],
+    "composition": {
+      "primary": "flesh"
+    },
+    "covering": "feathers",
+    "diet": "carnivore",
+    "environmentalTolerance": {
+      "ambientMedia": [
+        "gas"
+      ],
+      "temperatureC": {
+        "max": 105,
+        "min": 65
+      }
+    },
+    "genome": {
+      "chirality": "rolled"
+    },
+    "lifespan": "standard",
+    "protections": [],
+    "senses": {
+      "hearing": [
+        50,
+        70
+      ],
+      "sight": [
+        70,
+        90
+      ],
+      "smell": [
+        45,
+        65
+      ],
+      "special": []
+    },
+    "size": {
+      "heightCm": [
+        88,
+        112
+      ],
+      "massKg": [
+        38,
+        56
+      ]
+    },
+    "traversal": []
+  },
+  "schemaVersion": "5.1.0",
+  "signature": {
+    "key": "dromeus-defining",
+    "type": "action"
+  },
+  "temperament": {
+    "aggression": [
+      45,
+      70
+    ],
+    "boldness": [
+      45,
+      70
+    ],
+    "curiosity": [
+      30,
+      55
+    ],
+    "energy": [
+      75,
+      95
+    ],
+    "sociability": [
+      55,
+      75
+    ]
+  }
+}
