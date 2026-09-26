@@ -11,15 +11,27 @@
 // What it does, on the exported plate (apps/web/public/assets/plates/<era>/plate.html):
 //  1. Every run of still siblings in a layer (a whole still layer is one run)
 //     is drawn alone at twice the plate's size, cropped to what it covers, and
-//     replaced by an <image> of it in the same place in the stack. It looks
+//     replaced by an <image> of it in the same place in the stack. A copy at
+//     the plate's own size goes in live/1x/, which the page loads instead on a
+//     screen that shows the plate at 1x or less (plateStage.ts). It looks
 //     inside plain groups (no transform, opacity, filter or mask of their own),
 //     so still pieces between moving ones are baked too.
 //  2. A mask that is only a white field with black shapes cut from it becomes
 //     a clip path, which the browser applies without an offscreen pass; each
 //     is checked against its mask by pixels first and kept as a mask if not equal.
 //  3. Definitions nothing live uses any more are dropped.
+//  4. Drifting layers (components/plates/plateDrift.ts): a layer made only of
+//     rects filled with a pattern that slides one tile along, over and over
+//     (the rain), becomes plain boxes, each a still mask picture over a sheet
+//     tiled with a picture of one tile, which only slides.
+//  5. Culling marks (components/plates/plateCull.ts): every moving piece is
+//     stepped through its own loop at the film rate, and the frames in which
+//     it shows at all are written on it, so the page keeps it out of the DOM
+//     the rest of the time. A piece that always shows is looked inside instead.
 // Then it renders the original and the baked plate at several moments and
-// compares them pixel by pixel, and fails if they differ beyond encoding noise.
+// compares them pixel by pixel, and fails if they differ beyond encoding noise;
+// and it renders the baked plate culled and uncut at many frames of the loop,
+// and fails if they differ at all.
 //
 // usage: node scripts/plates/bake-plate.cjs <era>   (dev server on port 3012, which serves the textures)
 // writes apps/web/public/assets/plates/<era>/live.html and live/*.webp; the site plays live.html
@@ -31,6 +43,7 @@ const ROOT = path.join(__dirname, '..', '..');
 const BASE = 'http://localhost:3012';
 const PLATES = path.join(ROOT, 'apps/web/public/assets/plates');
 const SCALE = 2; // baked pictures at twice the plate's own size: sharp on a 2x screen at full width
+const FPS = 20; // the film rate the site plays at (FILM_FPS in livePlate.tsx); culling is measured frame by frame at it
 const QUALITY = Number(process.env.QUALITY || 0.8); // indistinguishable from 0.9 at 2x on Unbirth's sky, a third smaller
 const FORMAT = process.env.FORMAT || 'webp'; // FORMAT=png for a lossless check of the bake itself
 const era = process.argv[2];
@@ -190,7 +203,15 @@ async function cropInPage({ png, scale, quality, format }) {
 	o.height = y1 - y0;
 	o.getContext('2d').drawImage(c, x0, y0, o.width, o.height, 0, 0, o.width, o.height);
 	const url = o.toDataURL('image/' + format, quality);
-	return { x: x0 / scale, y: y0 / scale, w: o.width / scale, h: o.height / scale, webp: url.slice(url.indexOf(',') + 1) };
+	// the same picture at the plate's own size, for screens that show it at 1x or less
+	const h = document.createElement('canvas');
+	h.width = Math.round(o.width / scale);
+	h.height = Math.round(o.height / scale);
+	const hg = h.getContext('2d');
+	hg.imageSmoothingQuality = 'high';
+	hg.drawImage(o, 0, 0, h.width, h.height);
+	const url1 = h.toDataURL('image/' + format, quality);
+	return { x: x0 / scale, y: y0 / scale, w: o.width / scale, h: o.height / scale, webp: url.slice(url.indexOf(',') + 1), webp1: url1.slice(url1.indexOf(',') + 1) };
 }
 
 // In the page: turn each simple mask into a clip path where the pixels agree. Returns the ids converted.
@@ -261,6 +282,209 @@ async function masksToClipsInPage({ W, H }) {
 	return done;
 }
 
+// In the page: mark each moving piece with the frames of its own loop in which it shows (plateCull.ts).
+function cullPlanInPage({ fps }) {
+	const ANIM = 'animate, animateTransform, animateMotion, set';
+	const NONRENDER = new Set(['defs', 'title', 'desc', 'metadata', 'clipPath', 'mask', 'pattern', 'linearGradient', 'radialGradient', 'filter', 'symbol', 'marker', 'style', 'script']);
+	const svgs = [...document.querySelectorAll('svg.layer, svg.defs')];
+	const gcd = (a, b) => (b ? gcd(b, a % b) : a);
+	// A piece can be culled when all of its motion loops forever from the plate's start, and nothing refers to it.
+	const loopOf = (el) => {
+		const anims = [...el.querySelectorAll(ANIM)];
+		let period = 1;
+		for (const a of anims) {
+			if (a.getAttribute('repeatCount') !== 'indefinite') return 0;
+			const b = a.getAttribute('begin');
+			if (b && !/^-?[\d.]+s$/.test(b)) return 0;
+			if (b && parseFloat(b) > 0) return 0;
+			const d = parseFloat(a.getAttribute('dur'));
+			const f = Math.round(d * fps);
+			if (!(d > 0) || Math.abs(d * fps - f) > 1e-6) return 0;
+			period = (period * f) / gcd(period, f);
+		}
+		return period <= 60 * fps ? period : 0;
+	};
+	const candidates = (container) => {
+		const out = [];
+		for (const c of container.children) {
+			if (NONRENDER.has(c.tagName) || c.matches(ANIM)) continue;
+			if (!c.querySelector(ANIM) || c.id || c.querySelector('[id]')) continue;
+			const period = loopOf(c);
+			if (period) out.push({ el: c, period });
+		}
+		return out;
+	};
+	const shows = (el) => {
+		let o = 1;
+		for (let x = el; x && !x.matches('svg.layer'); x = x.parentElement) {
+			const cs = getComputedStyle(x);
+			if (cs.display === 'none' || cs.visibility === 'hidden') return false;
+			o *= parseFloat(cs.opacity);
+		}
+		return o > 0;
+	};
+	let marked = 0, frames = 0, shown = 0;
+	let todo = [...document.querySelectorAll('svg.layer')].flatMap(candidates);
+	for (let depth = 0; depth < 5 && todo.length; depth++) {
+		const max = Math.max(...todo.map((c) => c.period));
+		todo.forEach((c) => (c.seen = new Uint8Array(c.period)));
+		for (let n = 0; n < max; n++) {
+			svgs.forEach((s) => s.setCurrentTime(n / fps));
+			for (const c of todo) if (n < c.period) c.seen[n] = shows(c.el) ? 1 : 0;
+		}
+		const next = [];
+		for (const c of todo) {
+			const on = c.seen.reduce((a, v) => a + v, 0);
+			// Always shows: look inside it, unless it is filtered. A filter's region can follow the bounds of
+			// everything in it, visible or not, so taking a hidden piece out could move the filter's grid.
+			if (on === c.period) { if (!c.el.closest('[filter]')) next.push(...candidates(c.el)); continue; }
+			if (on > c.period * 0.9) continue;
+			// widen each span by a frame on both sides, then write it as from-to pairs within the loop
+			const want = new Uint8Array(c.period);
+			for (let n = 0; n < c.period; n++) if (c.seen[n]) for (const d of [-1, 0, 1]) want[(n + d + c.period) % c.period] = 1;
+			const spans = [];
+			for (let n = 0; n < c.period; n++) if (want[n] && (n === 0 || !want[n - 1])) { let e = n; while (e < c.period && want[e]) e++; spans.push(n + '-' + e); }
+			c.el.setAttribute('data-cull', c.period + ':' + spans.join(','));
+			marked++;
+			frames += c.period;
+			shown += want.reduce((a, v) => a + v, 0);
+		}
+		todo = next;
+	}
+	svgs.forEach((s) => s.setCurrentTime(0));
+	document.querySelector('svg.defs').setAttribute('data-cull-fps', String(fps));
+	return { marked, share: frames ? shown / frames : 1 };
+}
+
+// In the page: find layers made only of rects filled with a pattern that slides one tile along, over and
+// over (the rain), which can become drifting sheets (plateDrift.ts). Returns what each rect needs.
+function driftPlanInPage({ W, H }) {
+	const ANIM = 'animate, animateTransform, animateMotion, set';
+	const NONRENDER = new Set(['defs', 'title', 'desc', 'metadata']);
+	const num = (v) => (v == null ? NaN : Number(v));
+	const secs = (v) => (v == null || v === '' ? 0 : parseFloat(v));
+	const plan = [];
+	document.querySelectorAll('svg.layer').forEach((layer) => {
+		const kids = [...layer.children].filter((k) => !NONRENDER.has(k.tagName));
+		if (!kids.length) return;
+		const rects = [];
+		for (const r of kids) {
+			if (r.tagName !== 'rect') return;
+			const allowed = new Set(['x', 'y', 'width', 'height', 'fill', 'mask', 'opacity', 'data-cull']);
+			if ([...r.attributes].some((a) => !allowed.has(a.name))) return;
+			const pm = (r.getAttribute('fill') || '').match(/^url\(#([^)]+)\)$/);
+			const pat = pm && document.getElementById(pm[1]);
+			if (!pat || pat.tagName !== 'pattern' || pat.getAttribute('patternUnits') !== 'userSpaceOnUse' || pat.hasAttribute('patternTransform') || pat.hasAttribute('x') || pat.hasAttribute('y')) return;
+			const pa = [...pat.children].filter((c) => c.matches(ANIM));
+			if (pa.length !== 1 || pat.querySelectorAll(ANIM).length !== 1) return;
+			const a = pa[0];
+			if (a.tagName !== 'animateTransform' || a.getAttribute('attributeName') !== 'patternTransform' || a.getAttribute('type') !== 'translate' || a.getAttribute('repeatCount') !== 'indefinite' || a.hasAttribute('keyTimes') || (a.getAttribute('calcMode') || 'linear') !== 'linear') return;
+			const vals = (a.getAttribute('values') || '').split(';').map((v) => v.trim().split(/[\s,]+/).map(Number));
+			const tw = num(pat.getAttribute('width')), th = num(pat.getAttribute('height'));
+			if (vals.length !== 2 || vals[0][0] !== 0 || vals[0][1] !== 0) return;
+			const [dx, dy] = vals[1];
+			if (Math.abs(dx / tw - Math.round(dx / tw)) > 1e-9 || Math.abs(dy / th - Math.round(dy / th)) > 1e-9) return;
+			// strength: still, or one linear fade loop
+			let fade = null;
+			const ra = [...r.children].filter((c) => c.matches(ANIM));
+			if (r.querySelectorAll(ANIM).length !== ra.length || ra.length > 1) return;
+			if (ra.length === 1) {
+				const f = ra[0];
+				if (f.tagName !== 'animate' || f.getAttribute('attributeName') !== 'opacity' || f.getAttribute('repeatCount') !== 'indefinite' || (f.getAttribute('calcMode') || 'linear') !== 'linear') return;
+				const values = f.getAttribute('values').split(';').map(Number);
+				const times = f.hasAttribute('keyTimes') ? f.getAttribute('keyTimes').split(';').map(Number) : values.map((_, i) => i / (values.length - 1));
+				fade = [secs(f.getAttribute('dur')), secs(f.getAttribute('begin')), values.join(','), times.join(',')].join(';');
+			}
+			const mm = (r.getAttribute('mask') || '').match(/^url\(#([^)]+)\)$/);
+			if (r.hasAttribute('mask') && !mm) return;
+			rects.push({ x: num(r.getAttribute('x') || 0), y: num(r.getAttribute('y') || 0), w: num(r.getAttribute('width')), h: num(r.getAttribute('height')), opacity: r.hasAttribute('opacity') ? num(r.getAttribute('opacity')) : 1, fade, mask: mm ? mm[1] : null, pattern: pat.id, tw, th, dx, dy, dur: secs(a.getAttribute('dur')), begin: secs(a.getAttribute('begin')) });
+		}
+		layer.setAttribute('data-drift-layer', String(plan.length));
+		plan.push({ layer: layer.id, rects });
+	});
+	return plan;
+}
+
+// In the page: show only a temporary picture of one tile of a pattern (made still), or of a mask over a box.
+function stageInPage({ kind, id, x, y, w, h }) {
+	document.querySelectorAll('svg.layer, .surface, .plate-drift').forEach((l) => { l.style.display = 'none'; l.setAttribute('data-hidden-by-bake', ''); });
+	document.getElementById('bake-stage')?.remove();
+	const NS = 'http://www.w3.org/2000/svg';
+	const svg = document.createElementNS(NS, 'svg');
+	svg.id = 'bake-stage';
+	svg.setAttribute('viewBox', `${x} ${y} ${w} ${h}`);
+	svg.setAttribute('width', w);
+	svg.setAttribute('height', h);
+	svg.style.cssText = 'position:fixed;left:0;top:0;overflow:hidden';
+	if (kind === 'tile') {
+		const still = document.getElementById(id).cloneNode(true);
+		still.id = 'bake-still';
+		still.querySelectorAll('animate, animateTransform, animateMotion, set').forEach((a) => a.remove());
+		// a clone can carry the running slide with it (seen: the tile came out a third of a tile along); pin it at rest
+		still.setAttribute('patternTransform', 'translate(0 0)');
+		svg.innerHTML = '<defs></defs>';
+		svg.firstChild.appendChild(still);
+		svg.insertAdjacentHTML('beforeend', `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="url(#bake-still)"/>`);
+	} else svg.innerHTML = `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="#fff" mask="url(#${id})"/>`;
+	document.body.appendChild(svg);
+}
+
+// In the page: encode a PNG screenshot as WebP, at its size and, if asked, at half.
+async function encodeInPage({ png, w, h, quality, format, half }) {
+	const img = new Image();
+	img.src = 'data:image/png;base64,' + png;
+	await img.decode();
+	const out = [];
+	for (const k of half ? [1, 0.5] : [1]) {
+		const c = document.createElement('canvas');
+		c.width = Math.round(w * k);
+		c.height = Math.round(h * k);
+		const g = c.getContext('2d');
+		g.imageSmoothingQuality = 'high';
+		g.drawImage(img, 0, 0, img.width, img.height, 0, 0, c.width, c.height);
+		const u = c.toDataURL('image/' + format, quality);
+		out.push(u.slice(u.indexOf(',') + 1));
+	}
+	return out;
+}
+
+// In the page: replace each drifting layer with its boxes.
+function driftBuildInPage({ plan, W, H, URL_DIR }) {
+	document.getElementById('bake-stage')?.remove();
+	document.querySelectorAll('[data-hidden-by-bake]').forEach((e) => { e.style.display = ''; e.removeAttribute('data-hidden-by-bake'); if (!e.getAttribute('style')) e.removeAttribute('style'); });
+	const pc = (v) => +(v * 100).toFixed(4) + '%';
+	for (const [li, L] of plan.entries()) {
+		const layer = document.querySelector(`[data-drift-layer="${li}"]`);
+		const div = document.createElement('div');
+		div.className = 'plate-drift';
+		div.id = layer.id;
+		div.setAttribute('aria-hidden', 'true');
+		const box = document.createElement('div');
+		box.className = 'plate-drift-box';
+		box.style.setProperty('--plate-ar', String(W / H));
+		div.appendChild(box);
+		for (const r of L.rects) {
+			const rect = document.createElement('div');
+			rect.className = 'plate-drift-rect';
+			rect.style.cssText += `left:${pc(r.x / W)};top:${pc(r.y / H)};width:${pc(r.w / W)};height:${pc(r.h / H)};`;
+			if (r.fade) rect.setAttribute('data-fade', r.fade);
+			else if (r.opacity !== 1) rect.style.opacity = String(r.opacity);
+			if (r.maskFile) rect.style.cssText += `-webkit-mask-image:url(${URL_DIR}/${r.maskFile});mask-image:url(${URL_DIR}/${r.maskFile});`;
+			// the sheet: whole tiles on the pattern's own grid, one loop's slide spare on each side
+			const mx = Math.ceil(Math.abs(r.dx) / r.tw) * r.tw, my = Math.ceil(Math.abs(r.dy) / r.th) * r.th;
+			const sl = Math.floor(r.x / r.tw) * r.tw - mx, st = Math.floor(r.y / r.th) * r.th - my;
+			const sw = r.x + r.w + mx - sl, sh = r.y + r.h + my - st;
+			const sheet = document.createElement('div');
+			sheet.className = 'plate-drift-sheet';
+			sheet.style.cssText = `left:${pc((sl - r.x) / r.w)};top:${pc((st - r.y) / r.h)};width:${pc(sw / r.w)};height:${pc(sh / r.h)};background-image:url(${URL_DIR}/${r.tileFile});background-size:${pc(r.tw / sw)} ${pc(r.th / sh)};`;
+			sheet.setAttribute('data-drift', [r.dur, r.begin, +((r.dx / sw) * 100).toFixed(5), +((r.dy / sh) * 100).toFixed(5)].join(';'));
+			rect.appendChild(sheet);
+			box.appendChild(rect);
+		}
+		layer.replaceWith(div);
+	}
+}
+
 // In the page: drop definitions nothing rendered refers to any more.
 function pruneDefsInPage() {
 	const defsSvg = document.querySelector('svg.defs');
@@ -321,7 +545,7 @@ async function diffInPage({ a, b }) {
 	const runs = await p.evaluate(planInPage);
 	console.log(`${era}: ${runs.length} still runs, ${runs.reduce((a, r) => a + r.els, 0)} elements to bake`);
 	fs.rmSync(OUT_DIR, { recursive: true, force: true });
-	fs.mkdirSync(OUT_DIR, { recursive: true });
+	fs.mkdirSync(path.join(OUT_DIR, '1x'), { recursive: true });
 	const pictures = [];
 	for (const r of runs) {
 		await p.evaluate(isolateInPage, r.i);
@@ -329,13 +553,44 @@ async function diffInPage({ a, b }) {
 		const png = (await p.screenshot({ omitBackground: true, clip: { x: 0, y: 0, width: W, height: H } })).toString('base64');
 		const pic = await p.evaluate(cropInPage, { png, scale: SCALE, quality: QUALITY, format: FORMAT });
 		const name = `${r.layer.replace(/^layer-/, '')}-${r.i}.${FORMAT}`;
-		if (pic) fs.writeFileSync(path.join(OUT_DIR, name), Buffer.from(pic.webp, 'base64'));
+		if (pic) {
+			fs.writeFileSync(path.join(OUT_DIR, name), Buffer.from(pic.webp, 'base64'));
+			fs.writeFileSync(path.join(OUT_DIR, '1x', name), Buffer.from(pic.webp1, 'base64'));
+		}
 		pictures.push(pic ? { i: r.i, name, x: pic.x, y: pic.y, w: pic.w, h: pic.h } : { i: r.i, name: null });
 	}
 	// Replace each run with its picture, turn masks into clips, prune, serialize.
 	await p.evaluate(() => document.querySelectorAll('[data-hidden-by-bake]').forEach((e) => { e.style.display = ''; e.removeAttribute('data-hidden-by-bake'); if (!e.getAttribute('style')) e.removeAttribute('style'); }));
 	const clips = await p.evaluate(masksToClipsInPage, { W, H });
 	const merged = await p.evaluate(mergeMasksInPage);
+	// Drifting layers: a picture of each pattern's tile and of each mask, then boxes in place of the layer.
+	const drift = await p.evaluate(driftPlanInPage, { W, H });
+	const tiles = {};
+	let masks = 0;
+	for (const L of drift)
+		for (const [ri, r] of L.rects.entries()) {
+			if (!tiles[r.pattern]) {
+				await p.evaluate(stageInPage, { kind: 'tile', id: r.pattern, x: 0, y: 0, w: r.tw, h: r.th });
+				const png = (await p.screenshot({ omitBackground: true, clip: { x: 0, y: 0, width: r.tw, height: r.th } })).toString('base64');
+				const [two, one] = await p.evaluate(encodeInPage, { png, w: r.tw * SCALE, h: r.th * SCALE, quality: QUALITY, format: FORMAT, half: true });
+				tiles[r.pattern] = `tile-${r.pattern}.${FORMAT}`;
+				fs.writeFileSync(path.join(OUT_DIR, tiles[r.pattern]), Buffer.from(two, 'base64'));
+				fs.writeFileSync(path.join(OUT_DIR, '1x', tiles[r.pattern]), Buffer.from(one, 'base64'));
+			}
+			r.tileFile = tiles[r.pattern];
+			if (r.mask) {
+				// masks are soft light falloffs: the plate's own size is plenty, on 2x screens too
+				await p.evaluate(stageInPage, { kind: 'mask', id: r.mask, x: r.x, y: r.y, w: r.w, h: r.h });
+				const png = (await p.screenshot({ omitBackground: true, clip: { x: 0, y: 0, width: r.w, height: r.h } })).toString('base64');
+				const [one] = await p.evaluate(encodeInPage, { png, w: r.w, h: r.h, quality: QUALITY, format: FORMAT, half: false });
+				r.maskFile = `mask-${L.layer.replace(/^layer-/, '')}-${ri}.${FORMAT}`;
+				fs.writeFileSync(path.join(OUT_DIR, r.maskFile), Buffer.from(one, 'base64'));
+				fs.writeFileSync(path.join(OUT_DIR, '1x', r.maskFile), Buffer.from(one, 'base64'));
+				masks++;
+			}
+		}
+	await p.evaluate(driftBuildInPage, { plan: drift, W, H, URL_DIR });
+	console.log(`drifting layers: ${drift.map((L) => `${L.layer} (${L.rects.length} sheets)`).join(', ') || 'none'}; ${Object.keys(tiles).length} tiles, ${masks} masks`);
 	await p.evaluate(({ pictures, URL_DIR }) => {
 		document.querySelectorAll('[data-hidden-by-bake]').forEach((e) => { e.style.display = ''; e.removeAttribute('data-hidden-by-bake'); if (!e.getAttribute('style')) e.removeAttribute('style'); });
 		const NS = 'http://www.w3.org/2000/svg';
@@ -353,6 +608,9 @@ async function diffInPage({ a, b }) {
 		document.querySelectorAll('[data-bake]').forEach((e) => e.removeAttribute('data-bake'));
 	}, { pictures, URL_DIR });
 	const pruned = await p.evaluate(pruneDefsInPage);
+	const culled = await p.evaluate(cullPlanInPage, { fps: FPS });
+	console.log(`culling: ${culled.marked} moving pieces marked, in the page ${(culled.share * 100).toFixed(0)}% of the time on average`);
+	await p.evaluate(() => { const w = document.createTreeWalker(document.querySelector('.live-plate-host'), NodeFilter.SHOW_COMMENT); const dead = []; while (w.nextNode()) dead.push(w.currentNode); dead.forEach((c) => c.remove()); });
 	const html = await p.evaluate(() => document.querySelector('.live-plate-host').innerHTML);
 	const head = `<!-- The ${era} era plate, baked for the site by scripts/plates/bake-plate.cjs from plate.html: every still piece is a picture in live/, only the moving pieces are SVG. Regenerate it after every export; edit art/plates/${era}/, never this file. -->\n`;
 	fs.writeFileSync(path.join(PLATES, era, 'live.html'), head + html.trim() + '\n');
@@ -363,18 +621,69 @@ async function diffInPage({ a, b }) {
 	const cmp = await browser.newContext({ viewport: { width: W, height: H }, deviceScaleFactor: SCALE });
 	const A = await open(cmp, 'a', page(frag, '#000', true));
 	const B = await open(cmp, 'b', page(head + html, '#000', true));
+	const C = await open(cmp, 'c', page(head + html, '#000', true));
+	// Number the marked pieces the same way in both, before any is taken out.
+	for (const q of [B, C]) await q.evaluate(() => document.querySelectorAll('[data-cull]').forEach((e, i) => e.setAttribute('data-ci', String(i))));
+	// The page's own culling code, bundled, in the baked page B (C stays uncut).
+	const { transformSync } = require(require.resolve('esbuild', { paths: [path.join(ROOT, 'apps/web')] }));
+	const bundle = (file, name) => transformSync(fs.readFileSync(path.join(ROOT, 'apps/web/src/components/plates', file), 'utf8'), { loader: 'ts', format: 'iife', globalName: name }).code;
+	const cullJs = bundle('plateCull.ts', 'PlateCull');
+	const driftJs = bundle('plateDrift.ts', 'PlateDrift') + ';window.__drift = PlateDrift.prepareDrift(document.querySelector(".live-plate-host"));';
+	await B.addScriptTag({ content: cullJs + (process.env.NOCULL ? '' : ';window.__cull = PlateCull.prepareCull(document.querySelector(".live-plate-host"));') + driftJs });
+	await C.addScriptTag({ content: driftJs });
+	const shot = async (q, t) => {
+		await q.bringToFront();
+		await q.evaluate((t) => { if (window.__cull) PlateCull.cullAt(window.__cull, t); if (window.__drift) PlateDrift.driftAt(window.__drift, t); document.querySelectorAll('svg.layer, svg.defs').forEach((s) => s.setCurrentTime(t)); }, t);
+		await q.waitForTimeout(120);
+		return (await q.screenshot()).toString('base64');
+	};
 	let worst = 0;
 	for (const t of [0, 0.75, 1.9, 3.35, 6.1, 9.4, 13.3]) {
-		const shot = async (q) => { await q.bringToFront(); await q.evaluate((t) => document.querySelectorAll('svg.layer, svg.defs').forEach((s) => s.setCurrentTime(t)), t); await q.waitForTimeout(120); return (await q.screenshot()).toString('base64'); };
-		const a = await shot(A), b = await shot(B);
+		const a = await shot(A, t), b = await shot(B, t);
 		const d = await A.evaluate(diffInPage, { a, b });
 		worst = Math.max(worst, d.bigShare);
 		console.log(`  t=${String(t).padEnd(5)} mean diff ${d.mean.toFixed(2)}  pixels off by more than 24: ${(d.bigShare * 100).toFixed(3)}%`);
 		if (process.env.SNAP) { fs.writeFileSync(path.join(ROOT, 'untracked', `bake-${era}-${t}-heat.png`), Buffer.from(d.heat, 'base64')); fs.writeFileSync(path.join(ROOT, 'untracked', `bake-${era}-${t}-a.png`), Buffer.from(a, 'base64')); fs.writeFileSync(path.join(ROOT, 'untracked', `bake-${era}-${t}-b.png`), Buffer.from(b, 'base64')); }
 	}
+	// Culling must change nothing. Two checks, frame by frame across the loop, the baked plate culled (B)
+	// against uncut (C). First the state of every piece in the page: its opacity, where it is and its
+	// extent must be the same in both, so a piece put back is at the right moment of its motion. Then the
+	// pixels. These can differ a little at shape edges: taking pieces out changes how many shapes a tile
+	// of a layer holds, and the browser picks its edge smoothing by that, so the pixel check only fails
+	// on more than edge noise.
+	const fingerprint = (q) => q.evaluate(() => [...document.querySelectorAll('[data-cull]')].filter((e) => e.isConnected).map((e) => {
+		const all = [e, ...e.querySelectorAll('*')].filter((x) => typeof x.getBBox === 'function' && !['animate', 'animateTransform', 'animateMotion', 'set'].includes(x.tagName));
+		return all.map((x) => { const b = x.getBBox(), m = x.getCTM() || { a: 0, b: 0, c: 0, d: 0, e: 0, f: 0 }; return [getComputedStyle(x).opacity, b.x, b.y, b.width, b.height, m.a, m.b, m.c, m.d, m.e, m.f].map((v) => Math.round(Number(v) * 100) / 100).join(','); }).join(';');
+	}));
+	let cullWorst = 0;
+	let stateBad = 0;
+	const frames = process.env.FRAMES ? process.env.FRAMES.split(',').map(Number) : Array.from({ length: 36 }, (_, i) => Math.round(i * 13.37 * FPS) / FPS % 60);
+	for (const t of frames) {
+		const b = await shot(B, t), c = await shot(C, t);
+		const fb = await fingerprint(B);
+		// the same pieces, looked up in the uncut page by their order among the marked ones
+		const pairs = await B.evaluate(() => [...document.querySelectorAll('[data-cull]')].map((e) => e.getAttribute('data-ci')));
+		const fcs = await C.evaluate((idx) => {
+			return idx.map((i) => {
+				const e = document.querySelector(`[data-ci="${i}"]`);
+				const all = [e, ...e.querySelectorAll('*')].filter((x) => typeof x.getBBox === 'function' && !['animate', 'animateTransform', 'animateMotion', 'set'].includes(x.tagName));
+				return all.map((x) => { const b = x.getBBox(), m = x.getCTM() || { a: 0, b: 0, c: 0, d: 0, e: 0, f: 0 }; return [getComputedStyle(x).opacity, b.x, b.y, b.width, b.height, m.a, m.b, m.c, m.d, m.e, m.f].map((v) => Math.round(Number(v) * 100) / 100).join(','); }).join(';');
+			});
+		}, pairs);
+		fb.forEach((v, i) => { if (v !== fcs[i]) { stateBad++; if (stateBad < 4) console.log(`  a piece put back differs at t=${t}: ${v.slice(0, 80)} vs ${fcs[i].slice(0, 80)}`); } });
+		const d = await B.evaluate(diffInPage, { a: b, b: c });
+		if (d.bigShare > cullWorst) cullWorst = d.bigShare;
+		if (d.bigShare > 0.00005 && process.env.SNAP) fs.writeFileSync(path.join(ROOT, 'untracked', `cull-${era}-${t.toFixed(2)}-heat.png`), Buffer.from(d.heat, 'base64'));
+	}
+	const inPage = await B.evaluate(() => (window.__cull ? window.__cull.entries.filter((e) => e.on).length + '/' + window.__cull.entries.length : 'none'));
+	console.log(`culled vs uncut over ${frames.length} frames: ${stateBad} pieces in a different state; pixels off by more than 24 at worst ${(cullWorst * 100).toFixed(4)}% (pieces in the page at the last frame: ${inPage})`);
 	await browser.close();
-	const size = fs.readdirSync(OUT_DIR).reduce((a, f) => a + fs.statSync(path.join(OUT_DIR, f)).size, 0);
-	console.log(`live.html ${(fs.statSync(path.join(PLATES, era, 'live.html')).size / 1024).toFixed(0)} KB (plate.html ${(frag.length / 1024).toFixed(0)} KB), ${fs.readdirSync(OUT_DIR).length} pictures ${(size / 1024).toFixed(0)} KB`);
+	const kb = (dir) => (fs.readdirSync(dir).filter((f) => f.endsWith('.' + FORMAT)).reduce((a, f) => a + fs.statSync(path.join(dir, f)).size, 0) / 1024).toFixed(0);
+	console.log(`live.html ${(fs.statSync(path.join(PLATES, era, 'live.html')).size / 1024).toFixed(0)} KB (plate.html ${(frag.length / 1024).toFixed(0)} KB); pictures ${kb(OUT_DIR)} KB at 2x, ${kb(path.join(OUT_DIR, '1x'))} KB at 1x`);
+	if (stateBad || cullWorst > 0.0001) {
+		console.error('FAIL: culling changes the picture');
+		process.exit(1);
+	}
 	if (worst > 0.002) {
 		console.error('FAIL: the baked plate differs from the original');
 		process.exit(1);

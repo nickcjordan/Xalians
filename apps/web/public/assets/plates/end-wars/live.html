@@ -1,8 +1,7 @@
 <!-- The end-wars era plate, baked for the site by scripts/plates/bake-plate.cjs from plate.html: every still piece is a picture in live/, only the moving pieces are SVG. Regenerate it after every export; edit art/plates/end-wars/, never this file. -->
-<!-- The end-wars era plate as a living painting: stacked SVG layers sharing one set of definitions, and two raster surface sheets blended over them. Exported from art/plates/end-wars/source.html by scripts/plates/export-plate.py; edit the source, not this file. -->
-<svg class="defs" id="layer-defs" width="0" height="0" viewBox="0 0 1536 768" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+<svg class="defs" id="layer-defs" width="0" height="0" viewBox="0 0 1536 768" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" aria-hidden="true" data-cull-fps="20">
   <defs>
-    <!-- ---------- sky, haze, water ---------- -->
+    
     
     
     
@@ -15,7 +14,7 @@
     </linearGradient>
     
     
-    <!-- ---------- cloud, smoke ---------- -->
+    
     
     
     <radialGradient id="smoke" cx=".5" cy=".5" r=".5">
@@ -33,7 +32,6 @@
       <stop offset=".5" stop-color="#7a3d1e" stop-opacity=".3"></stop>
       <stop offset="1" stop-color="#3a2a22" stop-opacity="0"></stop>
     </radialGradient>
-    <!-- ---------- hull ---------- -->
     
     
     
@@ -41,7 +39,8 @@
     
     
     
-    <!-- ---------- fire, light ---------- -->
+    
+    
     <radialGradient id="fireCore" cx=".5" cy=".5" r=".5">
       <stop offset="0" stop-color="#ffffff"></stop>
       <stop offset=".15" stop-color="#ffeeb0"></stop>
@@ -78,16 +77,16 @@
       <stop offset="1" stop-color="#0b0a10" stop-opacity=".5"></stop>
     </linearGradient>
 
-    <!-- ---------- static lighting and material (painted once; the hull and tower layers never repaint) ---------- -->
-    <!-- The fire as a light on the hull: a specular pass from a point at the blaze, screened onto the plating -->
     
-    <!-- A soft halo around every lit window, so glass glows into the air instead of sitting on the wall -->
+    
+    
+    
     <filter id="windowGlow" x="-40%" y="-20%" width="180%" height="140%">
       <feGaussianBlur stdDeviation="3" result="b"></feGaussianBlur>
       <feColorMatrix in="b" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 .7 0" result="halo"></feColorMatrix>
       <feMerge><feMergeNode in="halo"></feMergeNode><feMergeNode in="SourceGraphic"></feMergeNode></feMerge>
     </filter>
-    <!-- Painted edges for the far city: the outline is eaten by noise so nothing distant is razor cut -->
+    
     <filter id="paintEdge" x="-5%" y="-10%" width="110%" height="120%">
       <feTurbulence type="fractalNoise" baseFrequency=".08" numOctaves="3" seed="4" result="n"></feTurbulence>
       <feColorMatrix in="n" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 6 -2.2" result="m"></feColorMatrix>
@@ -96,7 +95,7 @@
       <feComposite in="SourceGraphic" in2="m" operator="in" result="ragged"></feComposite>
       <feMerge><feMergeNode in="ragged"></feMergeNode><feMergeNode in="core"></feMergeNode></feMerge>
     </filter>
-    <!-- The tower faces have a curve: a horizontal gradient rounds each face -->
+    
     <linearGradient id="faceLit" x1="0" y1="0" x2="1" y2="0">
       <stop offset="0" stop-color="#2c2e34"></stop>
       <stop offset=".45" stop-color="#4a4d55"></stop>
@@ -110,14 +109,14 @@
       <stop offset="0" stop-color="#15161a"></stop>
       <stop offset="1" stop-color="#0a0b0d"></stop>
     </linearGradient>
-    <!-- Light in the air: the trail's scatter, a cone of pale haze toward the ground -->
+    
     
     
     
     
     
 
-    <!-- ---------- filters (the same set as the first pass, none added) ---------- -->
+    
     <filter id="soft" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="14"></feGaussianBlur></filter>
     <filter id="softer" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="28"></feGaussianBlur></filter>
     <filter id="glow" x="-60%" y="-60%" width="220%" height="220%">
@@ -126,8 +125,7 @@
     </filter>
     
     
-    <!-- the fire's disturbance: two noise fields, each streaming aft along the hull, crossfaded so
-         neither is ever seen resetting. Field A carries the flame while B is invisible and vice versa. -->
+    
     <filter id="fire" x="-40%" y="-40%" width="180%" height="180%">
       <feTurbulence type="fractalNoise" baseFrequency=".03 .06" numOctaves="3" seed="11" result="na"></feTurbulence>
       <feOffset in="na" dx="0" dy="0" result="oa"><animate attributeName="dx" values="0;44" dur="6s" begin="-3s" repeatCount="indefinite"></animate><animate attributeName="dy" values="0;-18" dur="6s" begin="-3s" repeatCount="indefinite"></animate></feOffset>
@@ -150,7 +148,7 @@
       <feGaussianBlur in="d" stdDeviation="6"></feGaussianBlur>
     </filter>
     
-    <!-- the live water: the same disturbance as rippleHard, but the noise field shifts slowly so the reflection moves -->
+    
     <filter id="rippleLive" x="-10%" y="-110%" width="120%" height="320%">
       <feTurbulence type="turbulence" baseFrequency=".004 .07" numOctaves="2" seed="7" result="na"></feTurbulence>
       <feOffset in="na" dy="0" result="oa"><animate attributeName="dy" values="0;150" dur="16s" begin="-8s" repeatCount="indefinite"></animate></feOffset>
@@ -163,7 +161,7 @@
       <feDisplacementMap in="SourceGraphic" in2="t2" scale="26" xChannelSelector="R" yChannelSelector="G"></feDisplacementMap>
     </filter>
     
-    <!-- the glitter path: horizontal streaks of noise, thresholded, cut the reflection into flecks; the field drifts so the flecks move -->
+    
     <filter id="glitterFar" x="-5%" y="-200%" width="110%" height="500%">
       <feTurbulence type="fractalNoise" baseFrequency=".002 .12" numOctaves="3" seed="3" result="na"></feTurbulence>
       <feOffset in="na" dy="0" result="oa"><animate attributeName="dy" values="0;140" dur="14s" begin="-7s" repeatCount="indefinite"></animate></feOffset>
@@ -197,7 +195,7 @@
     </linearGradient>
     
     
-    <!-- grain lives in the mid-tones: a ramp keeps it out of the dark sky -->
+    
     
     <linearGradient id="ashRamp" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0" stop-color="#fff"></stop>
@@ -216,10 +214,9 @@
     
     
 
-    <!-- ---------- pieces ---------- -->
-    <!-- A detonation: a hot core, a halo, and the long thin rays a bright point
-         throws across a wet lens. -->
-    <!-- an anti-air bolt from the city's batteries: a white-hot head and a tail that tapers and cools behind it -->
+    
+    
+    
     <linearGradient id="boltTail" x1="0" y1="0" x2="1" y2="0">
       <stop offset="0" stop-color="#ffd9a8" stop-opacity="0"></stop>
       <stop offset=".55" stop-color="#ffe9cc" stop-opacity=".45"></stop>
@@ -240,11 +237,7 @@
     </g>
     <g id="lampGlow"><circle r="18" fill="url(#lamp)"></circle><circle r="2.6" fill="#fff0cc"></circle></g>
 
-    <!-- A Grimedes spire: a tapering tower of three faces, ribbed like a
-         cathedral, with a lit spine of tall windows on the face that catches
-         the crash light, collar ledges where the sections join, buttress fins
-         at the foot and a needle mast with a beacon at the tip.
-         Base at (0,0), apex at (0,-560), mast to -640. -->
+    
     <g id="spire">
       <polygon points="-88,0 -70,-96 -70,0" fill="#1a1b1f"></polygon>
       <polygon points="88,0 70,-96 70,0" fill="#0c0d0f"></polygon>
@@ -287,7 +280,7 @@
       <line x1="-6" y1="-620" x2="6" y2="-620" stroke="#1d1e21" stroke-width="2"></line>
     </g>
 
-    <!-- The second pattern of spire: the same body, a different window spine and a wider collar rhythm -->
+    
     <g id="spireB">
       <polygon points="-88,0 -70,-96 -70,0" fill="#1a1b1f"></polygon>
       <polygon points="88,0 70,-96 70,0" fill="#0c0d0f"></polygon>
@@ -323,59 +316,57 @@
       <line x1="-12" y1="-590" x2="12" y2="-590" stroke="#1d1e21" stroke-width="2"></line>
     </g>
 
-    <!-- A landing deck: a column carrying a wide flat platform, its rail lined
-         with lamps, guy cables down to the ground. Base (0,0), deck at -200. -->
+    
     
   </defs>
 </svg>
 <svg class="layer" id="layer-water" viewBox="0 0 1536 768" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
-  <!-- the crash light on the river: the same glow that lights the city, under the surface -->
-  <image href="/assets/plates/end-wars/live/water-0.webp" x="447" y="614" width="633" height="154" preserveAspectRatio="none"></image>
-  <!-- the water: a channel running straight out of the picture to the light -->
   
-  <!-- the crash light lying on the water as a long reflection, broken harder than the surface tone -->
+  <image href="/assets/plates/end-wars/live/water-0.webp" x="447" y="614" width="633" height="154" preserveAspectRatio="none"></image>
+  
+  
+  
   <g filter="url(#rippleLive)">
     <path d="M738 614 L760 614 L1000 768 L470 768 Z" fill="url(#waterLight)" opacity=".45" filter="url(#softer)"></path>
     <g filter="url(#glitterFar)"><path d="M738 614 L760 614 L878 690 L607 690 Z" fill="url(#waterLight)"></path></g>
     <g filter="url(#glitterNear)"><path d="M607 690 L878 690 L1000 768 L470 768 Z" fill="url(#waterLight)"></path></g>
-    <!-- the same broken light, faint, across the whole surface: the sky on the water -->
+    
     <g filter="url(#glitterFar)" opacity=".22"><path d="M728 612 L796 612 L938 690 L584 690 Z" fill="#e9e7df"></path></g>
     <g filter="url(#glitterNear)" opacity=".22"><path d="M584 690 L938 690 L1080 768 L440 768 Z" fill="#e9e7df"></path></g>
-    <!-- sheens: the sky lying on the surface in soft bands that widen toward the viewer -->
+    
     <g fill="#e9e7df" filter="url(#soft)">
       <ellipse cx="760" cy="640" rx="50" ry="2.5" opacity=".35"></ellipse><ellipse cx="750" cy="660" rx="70" ry="3" opacity=".3"></ellipse><ellipse cx="720" cy="700" rx="110" ry="4" opacity=".24"></ellipse><ellipse cx="820" cy="722" rx="120" ry="4" opacity=".2"></ellipse><ellipse cx="640" cy="748" rx="170" ry="5" opacity=".16"></ellipse><ellipse cx="900" cy="756" rx="150" ry="5" opacity=".15"></ellipse>
-      <!-- the crest of each sheen: a thinner, brighter line along its upper edge -->
+      
       <ellipse cx="760" cy="638" rx="46" ry="1.2" opacity=".47"></ellipse><ellipse cx="750" cy="658" rx="64" ry="1.5" opacity=".42"></ellipse><ellipse cx="720" cy="698" rx="100" ry="2" opacity=".36"></ellipse><ellipse cx="820" cy="720" rx="110" ry="2" opacity=".32"></ellipse><ellipse cx="640" cy="746" rx="156" ry="2.5" opacity=".28"></ellipse><ellipse cx="900" cy="754" rx="138" ry="2.5" opacity=".27"></ellipse>
     </g>
-    <!-- the broad swells nearest the viewer: wide, very soft, barely there -->
+    
     <g fill="#7c7e84" filter="url(#soft20)">
       <ellipse cx="620" cy="734" rx="210" ry="12" opacity=".14"></ellipse><ellipse cx="900" cy="750" rx="230" ry="13" opacity=".13"></ellipse><ellipse cx="740" cy="764" rx="280" ry="12" opacity=".12"></ellipse>
     </g>
-    <!-- the bridge lamps, broken threads in the water under the deck -->
+    
     <g stroke="#ffd28a" stroke-width="1.2" opacity=".3" fill="none" stroke-linecap="round"><path d="M660 700 Q 655 712 660 722 T 658 740"></path><path d="M780 700 Q 786 714 780 728 T 782 750"></path><path d="M900 700 Q 895 712 901 724 T 904 740"></path></g>
-    <!-- the reflected tower lamps, orange threads in the water -->
+    
     <g stroke="#ff9a3c" stroke-width="2" opacity=".35" stroke-linecap="round">
       <path d="M700 640 Q 694 656 698 670 T 692 700" fill="none"></path><path d="M850 650 Q 858 668 854 686 T 866 720" fill="none"></path><path d="M612 690 Q 606 706 610 720 T 600 740" fill="none"></path>
     </g>
   </g>
-  <!-- the quays and towers in the water: soft dark verticals along both banks -->
+  
   <image href="/assets/plates/end-wars/live/water-1.webp" x="522" y="626" width="496" height="142" preserveAspectRatio="none"></image>
 </svg>
 <svg class="layer" id="layer-sky" viewBox="0 0 1536 768" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" role="img" aria-labelledby="scene-title scene-desc">
   <title id="scene-title">The Battle of Grimedes</title>
   <desc id="scene-desc">A warship wrapped in fire plunges toward a night city of tall dark towers on a river, under a sky crossed with weapon fire.</desc>
-  <!-- ===================== SKY ===================== -->
+  
   <image href="/assets/plates/end-wars/live/sky-2.webp" x="0" y="0" width="1536" height="768" preserveAspectRatio="none"></image>
   
 
-  <!-- The cloud sheet: banks and the long swirled strokes the painter dragged through them -->
+  
   
 
-  <!-- the glow of the burning city low on the horizon, where the river meets it -->
   
-  <!-- ===================== THE FAR CITY ===================== -->
-  <!-- The far city: setback blocks, domes, stacks and lesser spires, each with a
-       lit side toward the crash, then the haze over all of it -->
+  
+  
+  
   <g filter="url(#paintEdge)">
     <g fill="#606268">
       <rect x="20" y="572" width="54" height="34"></rect><rect x="30" y="556" width="34" height="16"></rect><rect x="40" y="546" width="14" height="10"></rect>
@@ -432,85 +423,83 @@
   </g>
   <image href="/assets/plates/end-wars/live/sky-3.webp" x="0" y="336" width="1536" height="432" preserveAspectRatio="none"></image>
   
-  <!-- ===================== THE RIVER AND ITS BANKS ===================== -->
-  <!-- ground on both banks -->
-  
-  
-  <!-- embankment walls along the water -->
-  <!-- the near water is darker than the far: the light is at the mouth -->
-  
-  <!-- embankment walls: shadowed stone below the quay line, a coping strip along the top -->
   
   
   
   
-  <!-- the banks are not one straight line: a slipway on the left, a projecting pier on the right -->
+  
+  
+  
+  
+  
+  
+  
+  
+  
   
   
   
 
-  <!-- the far bridge: a faint span half lost in the mist, its deck carried on as a road along both far banks -->
-  
-  <!-- the mist lying on the far reach of the river: the water runs into it and is lost -->
   
   
-  <!-- ground fog lying on the far bank, and the haze that swallows the bank's edge: both behind the towers -->
   
   
-  <!-- the middle distance: warehouses, blocks, stacks and lesser spires filling both banks from the river to the edges of the plate,
-       between the near bridge and the mist, each row hazier than the one before it -->
   
   
-  <!-- ===================== THE MID TOWERS ===================== -->
   
-  <!-- ===================== THE QUAYS ===================== -->
   
-  <!-- the blaze throws the right-hand spires' shadows down the quay, away from it -->
   
-  <!-- the warehouses sit in their own shadow -->
   
-  <!-- panel joints on the facades -->
   
-  <!-- a gantry crane over the left quay -->
   
-  <circle cx="570" cy="612" r="1.8" fill="#ff5a4a"><animate attributeName="opacity" values="0;1;1;0;0" keyTimes="0;.12;.45;.57;1" dur="1.6s" repeatCount="indefinite" calcMode="spline" keySplines=".2 0 .8 1;.2 0 .8 1;.2 0 .8 1;.2 0 .8 1"></animate></circle>
-  <!-- containers stacked on the right quay -->
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <circle cx="570" cy="612" r="1.8" fill="#ff5a4a" data-cull="32:0-20"><animate attributeName="opacity" values="0;1;1;0;0" keyTimes="0;.12;.45;.57;1" dur="1.6s" repeatCount="indefinite" calcMode="spline" keySplines=".2 0 .8 1;.2 0 .8 1;.2 0 .8 1;.2 0 .8 1"></animate></circle>
+  
   <image href="/assets/plates/end-wars/live/sky-4.webp" x="199" y="640" width="1099" height="128" preserveAspectRatio="none"></image>
-  <!-- a barge moored under the right embankment, its cabin lit -->
   
-  <!-- a rail line along the left quay, sleepers catching the light -->
+  
+  
   
 
-  <!-- lamp posts on the quays, each with its pool on the ground -->
-  
-  <!-- warehouse windows: each quay's rows follow its recession -->
   
   
   
-  <!-- ===================== THE NEAR BRIDGE ===================== -->
-  <!-- the riverside roads: the bridge lands on a road along each quay that runs toward the viewer and out of the picture -->
   
-  <!-- a through-truss from bank to bank: two chords, verticals, diagonals, a closed deck, and battered piers standing in the water -->
+  
+  
+  
+  
+  
+  
   
 </svg>
 <svg class="layer" id="layer-smoke" viewBox="0 0 1536 768" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
-  <!-- ===================== THE WARSHIP ===================== -->
-  <!-- the root of the plume: nearly black where it leaves the fire -->
+  
+  
   <g filter="url(#soft)">
     <ellipse cx="1000" cy="180" rx="48" ry="32" fill="url(#smoke)"></ellipse>
     <ellipse cx="1060" cy="130" rx="58" ry="36" fill="url(#smoke)"></ellipse>
     <ellipse cx="1120" cy="95" rx="62" ry="38" fill="url(#smoke)"></ellipse>
     <animateTransform attributeName="transform" type="translate" values="0 0;10 -8;0 0" dur="14s" repeatCount="indefinite" calcMode="spline" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"></animateTransform>
   </g>
-  <!-- Smoke: a column boiling off the burning midsection and climbing away on the wind.
-       Each mass is larger and thinner than the one below it; the lowest are lit from the fire. -->
+  
   <g filter="url(#smokeF)" opacity=".94">
     <g>
       <animateTransform attributeName="transform" type="translate" values="0 0;34 -26;0 0" dur="40s" repeatCount="indefinite" calcMode="spline" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"></animateTransform>
-      <!-- rim light on the whole column so it reads against the dark sky -->
+      
       <ellipse cx="1150" cy="150" rx="260" ry="150" fill="url(#smokeRim)"></ellipse>
       <ellipse cx="1000" cy="60" rx="220" ry="110" fill="url(#smokeRim)"></ellipse>
-      <!-- the plume, base to crown -->
+      
       <ellipse cx="1120" cy="200" rx="50" ry="34" fill="url(#smokeLit)" opacity=".45"></ellipse>
       <ellipse cx="1180" cy="160" rx="50" ry="34" fill="url(#smokeLit)" opacity=".45"></ellipse>
       <ellipse cx="1240" cy="130" rx="50" ry="34" fill="url(#smokeLit)" opacity=".45"></ellipse>
@@ -527,15 +516,15 @@
       <ellipse cx="1460" cy="150" rx="170" ry="70" fill="url(#smoke)" opacity=".5"></ellipse>
       <ellipse cx="1380" cy="-20" rx="190" ry="60" fill="url(#smoke)" opacity=".35"></ellipse>
       <ellipse cx="1480" cy="10" rx="170" ry="50" fill="url(#smoke)" opacity=".35"></ellipse>
-      <!-- the stern's own dark cloud, pouring straight off the engines -->
+      
       <ellipse cx="1080" cy="40" rx="120" ry="60" fill="url(#smoke)" opacity=".9"></ellipse>
       <ellipse cx="1180" cy="20" rx="140" ry="50" fill="url(#smoke)" opacity=".7"></ellipse>
     </g>
-    <!-- the masses also breathe: the column swells and thins on its own clock -->
+    
     <animateTransform attributeName="transform" type="scale" values="1 1;1.02 1.03;1 1" dur="9s" repeatCount="indefinite" additive="sum" calcMode="spline" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"></animateTransform>
   </g>
   <g transform="translate(760 538) rotate(-52)">
-    <!-- fire behind the hull -->
+    
     <g filter="url(#fire)">
       <ellipse cx="470" cy="-80" rx="80" ry="34" fill="url(#fireCore)" opacity=".4"></ellipse>
       <ellipse cx="660" cy="60" rx="90" ry="50" fill="url(#fireCore)" opacity=".4"></ellipse>
@@ -543,7 +532,7 @@
       <ellipse cx="560" cy="-110" rx="70" ry="30" fill="url(#fireCore)" opacity=".35"></ellipse>
       <path d="M400 -40 C 430 -110, 470 -130, 490 -170 C 500 -120, 540 -110, 570 -150 C 575 -100, 620 -90, 640 -70 L 600 -50 Z" fill="url(#tongue)"></path>
       <path d="M440 -42 C 470 -80, 520 -96, 540 -130 C 560 -96, 600 -90, 640 -110 C 650 -80, 680 -70, 700 -60 L 600 -52 Z" fill="url(#tongue)" opacity=".8"></path>
-      <!-- the slipstream carries the blaze past the transom and out to the ship's lee -->
+      
       <path d="M596 -50 C 660 -60, 720 -20, 760 40 C 720 30, 700 80, 720 150 C 680 110, 640 120, 620 170 C 610 110, 590 70, 604 50 Z" fill="url(#tongue)" opacity=".85" transform="translate(-34 0) rotate(-100 640 50)"></path>
       <path d="M600 40 C 660 30, 720 70, 750 140 C 710 120, 690 170, 700 230 C 660 190, 630 200, 616 250 C 606 180, 590 130, 600 90 Z" fill="url(#tongue)" opacity=".7" transform="translate(-40 0) rotate(-100 650 120)"></path>
       <path d="M470 -54 C 500 -90, 540 -100, 560 -140 C 580 -100, 620 -90, 660 -90 L 600 -52 Z" fill="url(#tongue)" opacity=".9"></path>
@@ -554,8 +543,7 @@
   <image href="/assets/plates/end-wars/live/hull-5.webp" x="686" y="0" width="667" height="616" preserveAspectRatio="none"></image>
 </svg>
 <svg class="layer" id="layer-fire" viewBox="0 0 1536 768" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
-  <!-- Anti-air fire from the city: bolts climbing from the rooftops toward the ship, at a constant speed, fading in
-       as they clear the roofs and out at their end; hits flash on the hull, misses burst as flak -->
+  
   <g>
     <use href="#bolt" opacity="0"><animateMotion dur="4.60s" repeatCount="indefinite" path="M170 640 L 899 393" rotate="auto" keyPoints="0;1;1" keyTimes="0;0.3486;1" calcMode="linear"></animateMotion><animate attributeName="opacity" values="0;1;1;0;0" keyTimes="0;0.0418;0.3137;0.3486;1" dur="4.60s" repeatCount="indefinite"></animate></use>
     <g transform="translate(899 393)" opacity="0"><circle r="6" fill="#ffd9a8" opacity=".8" filter="url(#glow)"></circle><circle r="2" fill="#ffffff"></circle><animate attributeName="opacity" values="0;0;1;.3;0;0" keyTimes="0;0.3486;0.3636;0.4686;0.6486;1" dur="4.60s" repeatCount="indefinite" calcMode="spline" keySplines="0 0 1 1;.2 0 .6 1;.3 0 .7 1;.4 0 .6 1;0 0 1 1"></animate></g>
@@ -586,7 +574,7 @@
     <use href="#bolt" opacity="0"><animateMotion dur="5.10s" begin="-2.90s" repeatCount="indefinite" path="M860 650 L 1080 30" rotate="auto" keyPoints="0;1;1" keyTimes="0;0.2687;1" calcMode="linear"></animateMotion><animate attributeName="opacity" values="0;1;1;0;0" keyTimes="0;0.0322;0.2419;0.2687;1" dur="5.10s" begin="-2.90s" repeatCount="indefinite"></animate></use>
     <use href="#flareStar" transform="translate(1080 30) scale(.3)" filter="url(#glow)" opacity="0"><animate attributeName="opacity" values="0;0;1;.35;0;0" keyTimes="0;0.2687;0.2837;0.3887;0.5687;1" dur="5.10s" begin="-2.90s" repeatCount="indefinite" calcMode="spline" keySplines="0 0 1 1;.2 0 .6 1;.3 0 .7 1;.4 0 .6 1;0 0 1 1"></animate></use>
   </g>
-  <!-- Stars -->
+  
   <g fill="#f4f2ea">
     <circle cx="120" cy="60" r="1.4"><animate attributeName="opacity" values=".9;.3;.9" dur="4s" repeatCount="indefinite" calcMode="spline" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"></animate></circle>
     <circle cx="410" cy="90" r="1.1"><animate attributeName="opacity" values=".5;1;.5" dur="5.5s" repeatCount="indefinite" calcMode="spline" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"></animate></circle>
@@ -609,7 +597,7 @@
     
     
   </g>
-  <!-- traffic on the near bridge: headlamps one way, tail lamps the other, passing behind the abutment houses at each end -->
+  
   <g>
     <circle r="1.3" fill="#fff4d6"><animateMotion dur="11s" repeatCount="indefinite" path="M400 780 L530 694 L556 688 Q 750 678 944 688 L970 694 L1120 780"></animateMotion></circle>
     <circle r="1.3" fill="#fff4d6"><animateMotion dur="11s" begin="-5s" repeatCount="indefinite" path="M400 780 L530 694 L556 688 Q 750 678 944 688 L970 694 L1120 780"></animateMotion></circle>
@@ -617,7 +605,7 @@
     <circle r="1.2" fill="#ff5a4a"><animateMotion dur="13s" begin="-8s" repeatCount="indefinite" path="M1100 780 L950 696 L944 690 Q 750 680 556 690 L550 696 L430 780"></animateMotion></circle>
   </g>
   <g transform="translate(760 538) rotate(-52)">
-    <!-- flakes of glowing plating peeling off the ram and drifting back along the hull -->
+    
     <g fill="#ffd9a8">
       <circle r="1.1"><animateMotion dur="3.2s" repeatCount="indefinite" path="M6 -4 C 20 -10, 36 -16, 52 -26"></animateMotion><animate attributeName="opacity" values="0;.9;.6;0" keyTimes="0;.15;.6;1" dur="3.2s" repeatCount="indefinite"></animate></circle>
       <circle r=".9"><animateMotion dur="2.7s" begin="-1.1s" repeatCount="indefinite" path="M8 6 C 22 12, 34 18, 46 28"></animateMotion><animate attributeName="opacity" values="0;.8;.5;0" keyTimes="0;.15;.6;1" dur="2.7s" begin="-1.1s" repeatCount="indefinite"></animate></circle>
@@ -626,7 +614,7 @@
     <g fill="#fff0c4">
       <rect x="326" y="-70.6" width="5" height="3.4"><animate attributeName="opacity" values="1;.15;1;.3;1" keyTimes="0;.82;.85;.9;.93" dur="4.7s" repeatCount="indefinite" calcMode="discrete"></animate></rect>
       <rect x="350" y="-71.5" width="5" height="3.4"><animate attributeName="opacity" values="1;.15;1;.3;1" keyTimes="0;.82;.85;.9;.93" dur="6.3s" begin="-2s" repeatCount="indefinite" calcMode="discrete"></animate></rect>
-      <!-- the last engine, still burning: a blue-white core that gutters, and its short exhaust -->
+      
       <ellipse cx="630" cy="1" rx="3" ry="11" fill="#8fe0e8" filter="url(#glow)"><animate attributeName="opacity" values=".9;.3;.8;.1;.6;.9" dur="2.3s" repeatCount="indefinite" calcMode="spline" keySplines="0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1"></animate></ellipse>
       <polygon points="632,-9 690,-16 690,18 632,11" fill="#5fd0d8" opacity=".3" filter="url(#soft)"><animate attributeName="opacity" values=".3;.1;.28;.04;.2;.3" dur="2.3s" repeatCount="indefinite" calcMode="spline" keySplines="0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1"></animate></polygon>
     </g>
@@ -634,14 +622,13 @@
     <circle cx="60" cy="24" r="1.8" fill="#ff5a4a"><animate attributeName="opacity" values="0;1;1;0;0" keyTimes="0;.12;.45;.57;1" dur="2.2s" begin="-.7s" repeatCount="indefinite" calcMode="spline" keySplines=".2 0 .8 1;.2 0 .8 1;.2 0 .8 1;.2 0 .8 1"></animate></circle>
     <circle cx="605" cy="-59" r="1.6" fill="#ffffff" filter="url(#glow)"><animate attributeName="opacity" values="0;1;0;0" keyTimes="0;.04;.12;1" dur="1.9s" repeatCount="indefinite"></animate></circle>
     <circle cx="340" cy="-121" r="2.2" fill="#ff5a4a"><animate attributeName="opacity" values="0;1;1;0;0" keyTimes="0;.12;.45;.57;1" dur="1s" repeatCount="indefinite" calcMode="spline" keySplines=".2 0 .8 1;.2 0 .8 1;.2 0 .8 1;.2 0 .8 1"></animate></circle>
-    <!-- breaches: the hull torn open and lit from inside -->
+    
     <path d="M404 -14 L 416 -22 L 436 -16 L 442 -2 L 430 6 L 412 2 L 400 -6 Z" fill="#ff9c2a" opacity=".6" filter="url(#glow)">
       <animate attributeName="opacity" values=".9;.7;1;.8;.65;.95;.9" keyTimes="0;.1;.28;.45;.62;.8;1" dur="2.1s" repeatCount="indefinite" calcMode="spline" keySplines=".45 0 .55 1;.45 0 .55 1;.45 0 .55 1;.45 0 .55 1;.45 0 .55 1;.45 0 .55 1"></animate>
     </path>
 
-    <!-- fire in front of the hull: every tongue is rooted in a breach and
-         breathes on its own clock, so the blaze is many fires, not one shape -->
-    <!-- the fire's halo: the same tongues, blurred and darkened, so the flame turns into smoke at its edge rather than stopping -->
+    
+    
     <g filter="url(#soft12)" fill="#b8400e" opacity=".5">
       <g transform="translate(418 -24)"><path d="M-16 6 C -30 30, -24 60, -40 86 C -14 70, 0 90, 12 110 C 18 76, 34 60, 44 30 C 30 40, 18 20, 10 -6 Z"></path></g>
       <g transform="translate(468 -44) scale(1.25 -1.25)"><path d="M-14 4 C -26 26, -16 54, -30 74 C -10 62, 4 80, 14 96 C 18 66, 30 50, 36 24 C 24 32, 14 16, 8 -4 Z"></path></g>
@@ -682,7 +669,7 @@
       <ellipse cx="470" cy="-56" rx="20" ry="12" fill="url(#fireCore)" opacity=".85"><animate attributeName="opacity" values=".85;.7;.95;.8;1;.75;.85" keyTimes="0;.1;.28;.45;.62;.8;1" dur="2.7s" repeatCount="indefinite" calcMode="spline" keySplines=".45 0 .55 1;.45 0 .55 1;.45 0 .55 1;.45 0 .55 1;.45 0 .55 1;.45 0 .55 1"></animate></ellipse>
     </g>
   </g>
-  <!-- ash and embers drifting down over the city on the wind, lost in the fog as they descend -->
+  
   <g fill="#8a7f72" mask="url(#ashMask)">
     <circle r="1.4" opacity=".7"><animateMotion dur="17s" repeatCount="indefinite" path="M1040 300 C 1080 420, 1140 520, 1210 700"></animateMotion><animate attributeName="opacity" values="0;.7;.7;0" keyTimes="0;.1;.8;1" dur="17s" repeatCount="indefinite"></animate></circle>
     <circle r="1.1" opacity=".35"><animateMotion dur="21s" begin="-3s" repeatCount="indefinite" path="M1120 280 C 1170 400, 1230 520, 1330 720"></animateMotion><animate attributeName="opacity" values="0;.35;.35;0" keyTimes="0;.1;.8;1" dur="21s" begin="-3s" repeatCount="indefinite"></animate></circle>
@@ -693,7 +680,7 @@
     <circle r="1.5" opacity=".7" fill="#ffb454"><animateMotion dur="15s" begin="-2s" repeatCount="indefinite" path="M1010 320 C 1060 440, 1120 540, 1190 720"></animateMotion><animate attributeName="opacity" values=".8;.2;.7;.1" dur="15s" begin="-2s" repeatCount="indefinite" calcMode="spline" keySplines="0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1"></animate></circle>
     <circle r="1.2" opacity=".7" fill="#ffb454"><animateMotion dur="18s" begin="-8s" repeatCount="indefinite" path="M1140 300 C 1200 420, 1260 540, 1360 730"></animateMotion><animate attributeName="opacity" values=".7;.1;.6;0" dur="18s" begin="-8s" repeatCount="indefinite" calcMode="spline" keySplines="0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1"></animate></circle>
   </g>
-  <!-- Debris shed from the ship: torn plating, one edge still glowing, each piece trailing its own smoke -->
+  
   <g>
     <g transform="translate(10 -170)"><g>
       <line x1="1000" y1="370" x2="964" y2="332" stroke="#3a3430" stroke-width="12" stroke-linecap="round" opacity=".28" filter="url(#soft)"></line>
@@ -726,7 +713,7 @@
       <animateTransform attributeName="transform" type="translate" values="0 0;30 90" dur="12s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 1 1"></animateTransform><animate attributeName="opacity" values="0;1;1;0" keyTimes="0;.05;.82;1" dur="12s" repeatCount="indefinite"></animate>
     </g></g>
   </g>
-  <!-- embers -->
+  
   <g fill="#ffb454" filter="url(#glow)">
     <circle cx="1060" cy="300" r="1.8"><animateTransform attributeName="transform" type="translate" values="0 0;30 160" dur="9s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 1 1"></animateTransform><animate attributeName="opacity" values="0;1;1;0" keyTimes="0;.08;.7;1" dur="9s" repeatCount="indefinite" calcMode="spline" keySplines="0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1"></animate></circle>
     <circle cx="1120" cy="230" r="1.5"><animateTransform attributeName="transform" type="translate" values="0 0;40 180" dur="11s" begin="-3s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 1 1"></animateTransform><animate attributeName="opacity" values="0;1;1;0" keyTimes="0;.08;.7;1" dur="11s" begin="-3s" repeatCount="indefinite" calcMode="spline" keySplines="0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1"></animate></circle>
@@ -734,12 +721,12 @@
     <circle cx="1010" cy="260" r="1.4"><animateTransform attributeName="transform" type="translate" values="0 0;25 140" dur="8s" begin="-5s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 1 1"></animateTransform><animate attributeName="opacity" values="0;1;1;0" keyTimes="0;.08;.7;1" dur="8s" begin="-5s" repeatCount="indefinite" calcMode="spline" keySplines="0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1"></animate></circle>
     <circle cx="1090" cy="180" r="1.3"><animateTransform attributeName="transform" type="translate" values="0 0;50 200" dur="13s" begin="-2s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 1 1"></animateTransform><animate attributeName="opacity" values="0;1;1;0" keyTimes="0;.08;.7;1" dur="13s" begin="-2s" repeatCount="indefinite" calcMode="spline" keySplines="0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1"></animate></circle>
   </g>
-  <!-- firelight on everything near the ship -->
+  
   <ellipse cx="960" cy="330" rx="260" ry="150" fill="#ff8a2a" opacity=".13" filter="url(#softer)">
     <animate attributeName="opacity" values=".13;.16;.12;.15;.13" dur="2.3s" repeatCount="indefinite" calcMode="spline" keySplines="0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1"></animate>
   </ellipse>
 
-  <!-- A flying wing crossing the far sky, slowly, its cabin lit -->
+  
   <g opacity=".9">
     <g>
       <path d="M0 4 L 22 -6 L 40 -9 L 62 -6 L 84 4 L 62 8 L 40 10 L 22 8 Z" fill="#26272b"></path>
@@ -759,23 +746,23 @@
   </g>
 </svg>
 <svg class="layer" id="layer-near" viewBox="0 0 1536 768" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
-  <!-- ===================== THE NEAR TOWERS ===================== -->
+  
   <g>
     <image href="/assets/plates/end-wars/live/near-13.webp" x="122" y="94" width="1354" height="674" preserveAspectRatio="none"></image>
     
-    <!-- a ringed deck around the right tower at mid height -->
-    
-    
-    
-    
-    <!-- the crown: blunt, flat, two red lights, no mast -->
     
     
     
     
     
-    <g fill="#ff5a4a"><circle cx="1391" cy="317" r="1.8"><animate attributeName="opacity" values="0;1;1;0;0" keyTimes="0;.12;.45;.57;1" dur="1.6s" repeatCount="indefinite" calcMode="spline" keySplines=".2 0 .8 1;.2 0 .8 1;.2 0 .8 1;.2 0 .8 1"></animate></circle><circle cx="1409" cy="317" r="1.8"><animate attributeName="opacity" values="0;1;1;0;0" keyTimes="0;.12;.45;.57;1" dur="1.6s" begin="-.8s" repeatCount="indefinite" calcMode="spline" keySplines=".2 0 .8 1;.2 0 .8 1;.2 0 .8 1;.2 0 .8 1"></animate></circle></g>
-    <!-- the block at the left edge, a lit face of small square windows -->
+    
+    
+    
+    
+    
+    
+    <g fill="#ff5a4a"><circle cx="1391" cy="317" r="1.8" data-cull="32:0-20"><animate attributeName="opacity" values="0;1;1;0;0" keyTimes="0;.12;.45;.57;1" dur="1.6s" repeatCount="indefinite" calcMode="spline" keySplines=".2 0 .8 1;.2 0 .8 1;.2 0 .8 1;.2 0 .8 1"></animate></circle><circle cx="1409" cy="317" r="1.8" data-cull="32:0-4,16-32"><animate attributeName="opacity" values="0;1;1;0;0" keyTimes="0;.12;.45;.57;1" dur="1.6s" begin="-.8s" repeatCount="indefinite" calcMode="spline" keySplines=".2 0 .8 1;.2 0 .8 1;.2 0 .8 1;.2 0 .8 1"></animate></circle></g>
+    
     <image href="/assets/plates/end-wars/live/near-14.webp" x="0" y="392" width="1536" height="376" preserveAspectRatio="none"></image>
     
     
@@ -783,11 +770,11 @@
     
     
     
-    <!-- a mast on the flat of the roof -->
     
     
     
-    <!-- the block at the right edge -->
+    
+    
     
     
     
@@ -797,28 +784,28 @@
     
   </g>
   <polygon points="1341,768 1356,768 1401,336 1398,334" fill="url(#flankLit)" opacity=".5"></polygon>
-  <!-- the abutment houses at either end of the bridge: the road passes behind them -->
+  
   <g>
     <image href="/assets/plates/end-wars/live/near-16.webp" x="516" y="636" width="468" height="64" preserveAspectRatio="none"></image>
     
-    <circle cx="546" cy="635" r="1.6" fill="#ff5a4a"><animate attributeName="opacity" values="0;1;1;0;0" keyTimes="0;.12;.45;.57;1" dur="2s" repeatCount="indefinite" calcMode="spline" keySplines=".2 0 .8 1;.2 0 .8 1;.2 0 .8 1;.2 0 .8 1"></animate></circle>
-    <line x1="964" y1="656" x2="964" y2="638" stroke="#111214" stroke-width="1.5"></line><circle cx="964" cy="637" r="1.6" fill="#ff5a4a"><animate attributeName="opacity" values="0;1;1;0;0" keyTimes="0;.12;.45;.57;1" dur="2s" begin="-1s" repeatCount="indefinite" calcMode="spline" keySplines=".2 0 .8 1;.2 0 .8 1;.2 0 .8 1;.2 0 .8 1"></animate></circle>
+    <circle cx="546" cy="635" r="1.6" fill="#ff5a4a" data-cull="40:0-24"><animate attributeName="opacity" values="0;1;1;0;0" keyTimes="0;.12;.45;.57;1" dur="2s" repeatCount="indefinite" calcMode="spline" keySplines=".2 0 .8 1;.2 0 .8 1;.2 0 .8 1;.2 0 .8 1"></animate></circle>
+    <line x1="964" y1="656" x2="964" y2="638" stroke="#111214" stroke-width="1.5"></line><circle cx="964" cy="637" r="1.6" fill="#ff5a4a" data-cull="40:0-4,20-40"><animate attributeName="opacity" values="0;1;1;0;0" keyTimes="0;.12;.45;.57;1" dur="2s" begin="-1s" repeatCount="indefinite" calcMode="spline" keySplines=".2 0 .8 1;.2 0 .8 1;.2 0 .8 1;.2 0 .8 1"></animate></circle>
   </g>
 </svg>
 <svg class="layer" id="layer-top" viewBox="0 0 1536 768" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
-  <!-- beacons -->
+  
   <use href="#lampGlow" x="212" y="96" transform="scale(1.3) translate(-49 -22)"><animate attributeName="opacity" values="1;.75;1" dur="2.4s" repeatCount="indefinite" calcMode="spline" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"></animate></use>
-  <!-- a few flickering windows on the near towers, over the brush layer so they stay crisp -->
+  
   <g fill="url(#window)" filter="url(#windowGlow)">
     <rect x="207" y="590" width="10" height="36"><animate attributeName="opacity" values="1;.35;1" dur="7s" repeatCount="indefinite" calcMode="spline" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"></animate></rect>
     <rect x="1391" y="690" width="8" height="22"><animate attributeName="opacity" values="1;.4;1;1" dur="5.2s" begin="-2s" repeatCount="indefinite" calcMode="spline" keySplines="0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1"></animate></rect>
   </g>
-  <!-- the fire's light on the faces that turn toward it -->
+  
   <ellipse cx="1260" cy="380" rx="300" ry="220" fill="#ff8a2a" opacity=".16" filter="url(#softer)">
     <animate attributeName="opacity" values=".16;.19;.15;.18;.16" dur="3.1s" repeatCount="indefinite" calcMode="spline" keySplines="0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1"></animate>
   </ellipse>
 
-  <!-- ===================== FINISH ===================== -->
+  
 
   <rect width="1536" height="768" fill="url(#vignette)"></rect>
   <rect width="1536" height="768" fill="url(#sideVignette)" opacity=".3"></rect>

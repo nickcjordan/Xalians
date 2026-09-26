@@ -23,8 +23,13 @@
 // filtered SVG layer is costly on the graphics chip; at the screen's rate the
 // Unbirth plate kept it fully busy, which is what made the whole page jumpy
 // around it. The recordings are archive footage, and a lower frame rate suits them.
+// A device that cannot keep up plays at half the rate. A baked plate also keeps
+// its hidden pieces out of the page (plateCull.ts), and its rain slides as whole
+// sheets rather than being redrawn (plateDrift.ts).
 import * as React from 'react';
 import { cn } from '@/lib/utils';
+import { cullAt, prepareCull, type Cull } from './plateCull';
+import { driftAt, prepareDrift, type Drift } from './plateDrift';
 import { joinStage, loadFragment } from './plateStage';
 
 type Props = {
@@ -64,27 +69,73 @@ function plateSvgs(host: HTMLElement) {
  * and is set to the next frame's time FILM_FPS times a second. Starts from
  * `from` seconds; returns a stop that gives back where it got to.
  */
+// The culling marks and drifting sheets of each mounted plate (plateCull.ts, plateDrift.ts), read once when it goes in.
+const culls = new WeakMap<HTMLElement, Cull | null>();
+const drifts = new WeakMap<HTMLElement, Drift | null>();
+
+/** Show a mounted plate at `seconds`: only the pieces that show then are in the page, and every timeline is there. */
+function seek(host: HTMLElement, svgs: SVGSVGElement[], seconds: number) {
+	const cull = culls.get(host);
+	if (cull) cullAt(cull, seconds);
+	const drift = drifts.get(host);
+	if (drift) driftAt(drift, seconds);
+	svgs.forEach((svg) => svg.setCurrentTime?.(seconds));
+}
+
+// A device that cannot keep up plays every other frame instead (half the
+// film rate, still on the frames the bake measured). Once a device has shown
+// it is too slow, every plate after plays at the lower rate for the visit.
+let stride = 1;
+// How a device is judged: over two seconds of play, after the first second
+// (when the plate's pictures are still being decoded and first drawn, which
+// is slow everywhere). Not keeping up is a step arriving more than half an
+// interval late, too often, or the step itself (the plate's own work in
+// script, before any drawing) costing too much.
+const WARM_MS = 1000;
+const JUDGE_MS = 2000;
+const LATE_SHARE = 0.3;
+const STEP_BUDGET_MS = 10;
+
 function playFilm(host: HTMLElement, from: number): () => number {
 	const svgs = plateSvgs(host);
 	svgs.forEach((svg) => svg.pauseAnimations());
-	const step = 1 / FILM_FPS;
-	let at = from;
+	// Whole frames, so the clock lands exactly on the frames the bake measured.
+	let n = Math.round(from * FILM_FPS);
 	let last = -1;
 	let frame = 0;
+	let steps = 0;
+	let late = 0;
+	let cost = 0;
+	let started = -1;
+	host.dataset.filmFps = String(FILM_FPS / stride);
 	const tick = (now: number) => {
 		frame = window.requestAnimationFrame(tick);
-		if (last < 0) last = now;
-		const n = Math.floor((now - last) / 1000 / step);
-		if (n < 1) return;
+		if (last < 0) last = started = now;
+		const interval = (1000 * stride) / FILM_FPS;
+		const elapsed = now - last;
+		const due = Math.floor(elapsed / interval);
+		if (due < 1) return;
 		// A long stall (a busy main thread) skips ahead at most a few frames, never a jump.
-		at += Math.min(n, 3) * step;
-		last += n * step * 1000;
-		svgs.forEach((svg) => svg.setCurrentTime?.(at));
+		n = n - (n % stride) + Math.min(due, 3) * stride;
+		last += due * interval;
+		const t0 = performance.now();
+		seek(host, svgs, n / FILM_FPS);
+		if (stride > 1 || now - started < WARM_MS) return;
+		cost += performance.now() - t0;
+		if (elapsed > interval * 1.5) late++;
+		steps++;
+		if (now - started < WARM_MS + JUDGE_MS) return;
+		if (late > steps * LATE_SHARE || cost / steps > STEP_BUDGET_MS) {
+			stride = 2;
+			host.dataset.filmFps = String(FILM_FPS / stride);
+		}
+		started = now - WARM_MS; // judge the next two seconds afresh
+		steps = late = cost = 0;
 	};
 	frame = window.requestAnimationFrame(tick);
 	return () => {
 		window.cancelAnimationFrame(frame);
-		return at;
+		return n / FILM_FPS;
 	};
 }
 
@@ -94,11 +145,11 @@ function playFilm(host: HTMLElement, from: number): () => number {
 // to zero while paused forces that first sample, so the reduced-motion still
 // and the first frame before play are the plate's real t=0.
 function holdAtStart(host: HTMLElement) {
-	host.querySelectorAll<SVGSVGElement>(PLATE_SVGS).forEach((svg) => {
-		if (typeof svg.pauseAnimations !== 'function') return;
-		svg.pauseAnimations();
-		if (typeof svg.setCurrentTime === 'function') svg.setCurrentTime(0);
-	});
+	culls.set(host, prepareCull(host));
+	drifts.set(host, prepareDrift(host));
+	const svgs = plateSvgs(host);
+	svgs.forEach((svg) => svg.pauseAnimations());
+	seek(host, svgs, 0);
 }
 
 export function LivePlate({ src, poster, active, primed = false, className }: Props) {

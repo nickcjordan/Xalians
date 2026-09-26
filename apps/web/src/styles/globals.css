@@ -262,6 +262,14 @@
 	.live-plate { position: relative; filter: contrast(1.06); }
 	.live-plate-host { position: absolute; inset: 0; }
 	.live-plate-host svg.layer { position: absolute; inset: 0; display: block; width: 100%; height: 100%; will-change: transform; }
+	/* A baked plate's drifting layer (components/plates/plateDrift.ts): plain boxes in the plate's own
+	   coordinates, fitted to the well the way the SVG layers are (slice: cover, centered), each a still
+	   mask over a tiled sheet that only slides. */
+	.live-plate-host { container-type: size; }
+	.live-plate-host .plate-drift { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+	.live-plate-host .plate-drift-box { position: absolute; left: 50%; top: 50%; width: max(100cqw, calc(100cqh * var(--plate-ar))); aspect-ratio: var(--plate-ar); transform: translate(-50%, -50%); }
+	.live-plate-host .plate-drift-rect { position: absolute; overflow: hidden; -webkit-mask-size: 100% 100%; mask-size: 100% 100%; -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat; }
+	.live-plate-host .plate-drift-sheet { position: absolute; background-repeat: repeat; will-change: transform; }
 	.live-plate-host svg.defs { position: absolute; width: 0; height: 0; overflow: hidden; }
 	.live-plate-host .surface { position: absolute; inset: 0; pointer-events: none; mix-blend-mode: overlay; background-size: 100% 100%; }
 	.live-plate-host .surface.strokes { opacity: .22; -webkit-mask-image: linear-gradient(transparent 0, black 16%, black 75%, color-mix(in srgb, black 25%, transparent) 82%, color-mix(in srgb, black 25%, transparent)); mask-image: linear-gradient(transparent 0, black 16%, black 75%, color-mix(in srgb, black 25%, transparent) 82%, color-mix(in srgb, black 25%, transparent)); }
@@ -307,7 +315,11 @@
 		background: linear-gradient(to bottom, transparent, rgb(210 225 220 / .045), transparent);
 		opacity: 0;
 	}
-	.archive[data-screen="on"] .archive-glass::after { opacity: 1; animation: archive-roll 7.5s linear infinite; }
+	/* The band rolls at the plates' film rate (20 steps a second, livePlate.tsx), not the screen's:
+	   each move of it recomposites the whole plate stack under the glass, and at the screen's rate that
+	   was most of the graphics chip's work while a recording played (measured 2026-09-26: End Wars from
+	   about 940 to about 225 ms of GPU a second). */
+	.archive[data-screen="on"] .archive-glass::after { opacity: 1; animation: archive-roll 7.5s steps(150) infinite; }
 	.archive-hud {
 		position: absolute;
 		inset: 0;
