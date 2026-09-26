@@ -270,6 +270,96 @@
 		mask-image: linear-gradient(black 0 78%, color-mix(in srgb, black 33%, transparent) 80%, color-mix(in srgb, black 33%, transparent)), radial-gradient(ellipse 20% 30% at 61% 36%, color-mix(in srgb, black 50%, transparent), black 100%), url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1536 768' preserveAspectRatio='none'%3E%3Cpath d='M0 0 H1536 V768 H0 Z M728 612 L796 612 L1080 768 L440 768 Z' fill-rule='evenodd' fill='white'/%3E%3Cpath d='M728 612 L796 612 L1080 768 L440 768 Z' fill='white' fill-opacity='.36'/%3E%3C/svg%3E");
 		-webkit-mask-size: 100% 100%; mask-size: 100% 100%; -webkit-mask-composite: source-in; mask-composite: intersect; }
 
+	/* The archive's playback screen (pages/home/archiveScreen.tsx): the home
+	   story's recordings, played back. Lore art, not interface: its colors are
+	   the screen's own. The picture sits under a static layer, the glass (scan
+	   lines, a slow rolling band, a vignette) and a readout; the power state
+	   (`data-screen`) runs every change in CSS. Only the rolling band and the
+	   static's jitter move, and only while they are seen. */
+	.archive { --noise: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.92' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .86 0 0 0 0 .88 0 0 0 0 .86 0 0 0 1.6 -.45'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23n)'/%3E%3C/svg%3E"); position: absolute; inset: 0; background: var(--color-archive-glass); overflow: hidden; }
+	.archive-picture { position: absolute; inset: 0; transform-origin: 50% 50%; }
+	.archive[data-screen="standby"] .archive-picture { visibility: hidden; }
+	.archive-static {
+		position: absolute;
+		inset: -50%;
+		background-image: var(--noise);
+		background-size: 220px 220px;
+		opacity: 0;
+		pointer-events: none;
+	}
+	.archive[data-screen="standby"] .archive-static { opacity: .1; }
+	.archive-glass {
+		position: absolute;
+		inset: 0;
+		pointer-events: none;
+		background:
+			repeating-linear-gradient(to bottom, rgb(0 0 0 / .22) 0 1px, transparent 1px 3px),
+			radial-gradient(ellipse 75% 70% at 50% 50%, transparent 60%, rgb(0 0 0 / .55) 100%);
+	}
+	.archive-glass::after {
+		content: "";
+		position: absolute;
+		left: 0;
+		right: 0;
+		top: -20%;
+		height: 18%;
+		background: linear-gradient(to bottom, transparent, rgb(210 225 220 / .045), transparent);
+		opacity: 0;
+	}
+	.archive[data-screen="on"] .archive-glass::after { opacity: 1; animation: archive-roll 7.5s linear infinite; }
+	.archive-hud {
+		position: absolute;
+		inset: 0;
+		pointer-events: none;
+		padding: 14px 18px;
+		display: grid;
+		grid-template-columns: 1fr auto;
+		grid-template-rows: auto 1fr auto;
+		font-size: var(--text-tiny);
+		letter-spacing: var(--tracking-legend, .08em);
+		text-transform: uppercase;
+		color: color-mix(in srgb, var(--color-archive-ink) 82%, transparent);
+		text-shadow: 0 0 6px rgb(0 0 0 / .9), 0 0 2px rgb(0 0 0 / .9);
+	}
+	.archive-hud-status { display: inline-flex; align-items: center; gap: 8px; }
+	.archive-hud-clock { justify-self: end; font-variant-numeric: tabular-nums; }
+	.archive-hud-rec { grid-column: 1 / -1; grid-row: 3; }
+	.archive-dot { width: 7px; height: 7px; border-radius: 50%; background: color-mix(in srgb, var(--color-archive-ink) 50%, transparent); }
+	.archive[data-screen="on"] .archive-dot { background: var(--color-archive-lamp); animation: archive-blink 1.6s steps(1) infinite; }
+	.archive[data-screen="standby"] .archive-hud-clock,
+	.archive[data-screen="tuning"] .archive-hud-clock { opacity: .35; }
+
+	/* Tuning: static bursts in, the picture opens out of a bright line, the static clears. */
+	.archive[data-screen="tuning"] .archive-static { animation: archive-static 1100ms linear both, archive-jitter 240ms steps(6) infinite; }
+	.archive[data-screen="tuning"] .archive-picture { animation: archive-on 1100ms cubic-bezier(.2, .7, .2, 1) both; }
+	/* Switching recordings: a short burst of static over the cut. */
+	.archive[data-screen="switch"] .archive-static { animation: archive-static-cut 520ms linear both, archive-jitter 240ms steps(6) infinite; }
+	/* Off: the picture collapses to a line and goes. */
+	.archive[data-screen="off"] .archive-picture { animation: archive-off 380ms cubic-bezier(.6, 0, .9, .4) both; }
+
+	@keyframes archive-static { 0% { opacity: 0; } 8% { opacity: .95; } 52% { opacity: .9; } 78% { opacity: .18; } 100% { opacity: 0; } }
+	@keyframes archive-static-cut { 0% { opacity: 0; } 15% { opacity: .9; } 60% { opacity: .75; } 100% { opacity: 0; } }
+	@keyframes archive-jitter { 0% { transform: translate(0, 0); } 100% { transform: translate(-110px, 66px); } }
+	@keyframes archive-on {
+		0%, 50% { opacity: 0; transform: scale(1, .004); filter: brightness(4); }
+		51% { opacity: 1; transform: scale(1, .004); filter: brightness(4); }
+		74% { transform: scale(1, 1); filter: brightness(1.7); }
+		100% { opacity: 1; transform: none; filter: none; }
+	}
+	@keyframes archive-off {
+		0% { transform: none; filter: none; opacity: 1; }
+		62% { transform: scale(1, .004); filter: brightness(4); opacity: 1; }
+		100% { transform: scale(0, .004); filter: brightness(4); opacity: 0; }
+	}
+	@keyframes archive-roll { from { transform: translateY(0); } to { transform: translateY(700%); } }
+	@keyframes archive-blink { 0% { opacity: 1; } 50% { opacity: .25; } }
+	@media (prefers-reduced-motion: reduce) {
+		.archive .archive-static,
+		.archive .archive-picture,
+		.archive .archive-glass::after,
+		.archive .archive-dot { animation: none !important; }
+	}
+
 	/* The home story's chapter bar (pages/home/storyViewer.tsx): a hairline
 	   track, a tick where each beat's marker starts and one at the end, the
 	   part behind the dot filled in ink, and the dot itself on the shown beat,

@@ -7,10 +7,13 @@
 // animations on or off for a scroll").
 //
 // One heavy thing at a time, by construction: only the shown beat can be live.
-// A beat starts still (a living plate shows its poster, a small piece holds its
-// first frame) and goes live once its entrance has settled, so every beat opens
-// like a shot: the picture arrives, then it moves. The whole viewer holds still
-// while it is mostly off the screen or the tab is hidden.
+// Its recordings play back on an archive screen (archiveScreen.tsx, Nick
+// 2026-09-26): until the viewer has come to rest in the middle of the screen
+// the screen stands by, dark, with nothing heavy in it; once it rests, the
+// screen tunes in (static, then the picture opening out of a bright line) and
+// the recording plays. Scrolling on switches it off. Choosing another beat
+// cuts to it through a burst of static. Nothing is live while the page scrolls
+// under it, mid-change, or in a hidden tab.
 //
 // A short pause on the way past (Nick, 2026-09-26: "a slight pause in the
 // middle of the screen and then it's a tiny bit sticky when you start to
@@ -27,6 +30,7 @@ import { ArrowDown, ArrowLeft, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { loadFragment } from '@/components/plates/plateStage';
+import { SCREEN_MS, type ScreenState } from './archiveScreen';
 
 export type ViewerBeat = {
 	key: string;
@@ -41,14 +45,17 @@ export type ViewerBeat = {
 	/**
 	 * The beat itself. `live`: whether it may animate now. `shown`: whether it
 	 * is on the screen at all (the shown beat, or the one leaving), so a beat
-	 * that is not can hold nothing heavy in the DOM.
+	 * that is not can hold nothing heavy in the DOM. `screen`: its archive
+	 * screen's power state.
 	 */
-	render: (live: boolean, shown: boolean) => React.ReactNode;
+	render: (live: boolean, shown: boolean, screen: ScreenState) => React.ReactNode;
 };
 
 // The incoming beat's entrance (delay plus transform, see `.story-scene`) is
 // over by now; it goes live only after it, like a shot that settles first.
 const SETTLE_MS = 1150;
+// Resting this long counts as having stopped: the screen tunes in.
+const REST_MS = 220;
 // The outgoing beat's exit is over by now.
 const EXIT_MS = 700;
 // The box needs this much window; below it the shown beat sits in the page.
@@ -76,6 +83,9 @@ export function StoryViewer({ id, title, beats, after }: { id: string; title: Re
 	const [leaving, setLeaving] = React.useState(-1);
 	const [inView, setInView] = React.useState(false);
 	const [visible, setVisible] = React.useState(true);
+	// Whether the viewer is resting where the reader can watch it, and the screen that follows.
+	const [resting, setResting] = React.useState(false);
+	const [screen, setScreen] = React.useState<ScreenState>('standby');
 	const count = beats.length;
 
 	React.useEffect(() => {
@@ -100,6 +110,70 @@ export function StoryViewer({ id, title, beats, after }: { id: string; title: Re
 			ro?.disconnect();
 		};
 	}, [boxed]);
+
+	// Resting: in the box, the viewer held at its centered place by the sticky
+	// pause; without it, nearly all of the shown picture on the screen. A reading of positions
+	// on each scroll frame, nothing more; it counts as resting after REST_MS still.
+	React.useEffect(() => {
+		const pin = pinRef.current;
+		const box = boxRef.current;
+		if (!pin || !box || typeof window === 'undefined') return undefined;
+		let frame = 0;
+		let timer = 0;
+		let was = false;
+		const read = () => {
+			frame = 0;
+			let now: boolean;
+			if (boxed) {
+				const r = pin.getBoundingClientRect();
+				now = Math.abs(r.top - pinTop) < 2 && r.bottom <= window.innerHeight + 1;
+			} else {
+				// Without the box the beat can be taller than the screen: its picture is what must be in view.
+				const pic = box.querySelector<HTMLElement>('.story-scene[data-state="active"] .frame') ?? box;
+				const r = pic.getBoundingClientRect();
+				const seen = Math.min(window.innerHeight, r.bottom) - Math.max(0, r.top);
+				now = r.height > 0 && seen / r.height >= 0.9;
+			}
+			if (now === was) return;
+			was = now;
+			window.clearTimeout(timer);
+			if (now) timer = window.setTimeout(() => setResting(true), REST_MS);
+			else setResting(false);
+		};
+		const schedule = () => {
+			if (!frame) frame = window.requestAnimationFrame(read);
+		};
+		read();
+		window.addEventListener('scroll', schedule, { passive: true });
+		window.addEventListener('resize', schedule);
+		return () => {
+			window.removeEventListener('scroll', schedule);
+			window.removeEventListener('resize', schedule);
+			window.clearTimeout(timer);
+			if (frame) window.cancelAnimationFrame(frame);
+		};
+	}, [boxed, pinTop]);
+
+	// The screen follows: resting and watched, it tunes in and plays; otherwise it switches off and stands by.
+	const power = resting && visible;
+	React.useEffect(() => {
+		const quick = reducedMotion();
+		let t = 0;
+		setScreen((cur) => {
+			if (power && (cur === 'standby' || cur === 'off')) {
+				if (quick) return 'on';
+				t = window.setTimeout(() => setScreen((c) => (c === 'tuning' ? 'on' : c)), SCREEN_MS.tuning);
+				return 'tuning';
+			}
+			if (!power && (cur === 'on' || cur === 'tuning' || cur === 'switch')) {
+				if (quick) return 'standby';
+				t = window.setTimeout(() => setScreen((c) => (c === 'off' ? 'standby' : c)), SCREEN_MS.off);
+				return 'off';
+			}
+			return cur;
+		});
+		return () => window.clearTimeout(t);
+	}, [power]);
 
 	// The picture mostly on the screen: the only time anything in it may move.
 	React.useEffect(() => {
@@ -144,6 +218,11 @@ export function StoryViewer({ id, title, beats, after }: { id: string; title: Re
 			setLeaving(index);
 			window.setTimeout(() => setLeaving((l) => (l === index ? -1 : l)), EXIT_MS);
 			setIndex(next);
+			// A playing screen cuts to the next recording through a burst of static.
+			if (!reducedMotion()) {
+				setScreen((c) => (c === 'on' || c === 'switch' ? 'switch' : c));
+				window.setTimeout(() => setScreen((c) => (c === 'switch' ? 'on' : c)), SCREEN_MS.switch);
+			}
 			// In the page (no box) the beat's height changes: keep the viewer's top in sight.
 			const wrap = wrapRef.current;
 			if (!boxed && wrap && wrap.getBoundingClientRect().top < 0) wrap.scrollIntoView({ block: 'start' });
@@ -182,7 +261,7 @@ export function StoryViewer({ id, title, beats, after }: { id: string; title: Re
 		if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.5) go(index + (dx < 0 ? 1 : -1));
 	};
 
-	const liveNow = (i: number) => inView && visible && settled === index && i === index;
+	const liveNow = (i: number) => inView && visible && screen === 'on' && settled === index && i === index;
 	const last = index === count - 1;
 	const beat = beats[index];
 
@@ -250,7 +329,7 @@ export function StoryViewer({ id, title, beats, after }: { id: string; title: Re
 								inert={i === index ? undefined : true}
 								data-state={i === index ? 'active' : i < index ? 'past' : 'future'}
 							>
-								{b.render(liveNow(i), shown)}
+								{b.render(liveNow(i), shown, i === index ? screen : 'standby')}
 							</div>
 						);
 					})}
