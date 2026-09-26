@@ -45,6 +45,7 @@ const write = (name, data) => {
 
 write('encyclopedia.json', read(path.join(docs, 'encyclopedia', 'encyclopedia.json')));
 write('chronicle.json', read(path.join(docs, 'encyclopedia', 'chronicle.json')));
+write('worldChapters.json', read(path.join(docs, 'encyclopedia', 'worldChapters.json')));
 const registriesSrc = read(path.join(docs, 'species-templates', 'registries.json'));
 write('registries.json', registriesSrc);
 write('abilityPatterns.json', read(path.join(docs, 'ability-catalog', 'ability-patterns.json')));

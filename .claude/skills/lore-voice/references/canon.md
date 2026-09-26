@@ -83,6 +83,8 @@ Xalians have no sex or gender and no concept of reproduction: every Xalian is pr
 
 ## Xalian intelligence and speech (continuity constraint, ratified 2026-08-31)
 
+Nick clarified on 2026-09-25 that Xalians are semi-intelligent, bioengineered creatures, distinct from intelligent citizens. Do not call creature populations people or assign citizens' work to creatures merely because they share a world. The planetary demonyms on the Powers page refer to creatures in their source passages; Vallerii, King Kozrak, and Windsailor pilots refer to people. Phantiri's generated spectral creatures are distinct from its extinct civilization. Older wording that calls creatures people does not override this distinction.
+
 Xalian intelligence spans octopus-to-near-human. **No Xalian speaks a language.** They comprehend instruction because comprehension was an engineering requirement of a purpose-built labor force: the Generators made workers that understand orders, not workers that talk back. Depict communication as calls, cries, signaling (percussion, posture, light patterns), or telepathic feeling; never words, never dialogue, never a named Xalian "saying" anything. This is a source-canon constraint for writers; do not surface it in public-facing lore as an announcement — let it show implicitly in how creatures are written.
 
 ## Xalian lifespan is wear-out, not aging (working canon, internal, 2026-09-01)
