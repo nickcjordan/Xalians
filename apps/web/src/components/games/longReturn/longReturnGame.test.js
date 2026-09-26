@@ -59,7 +59,7 @@ function clickElement(element) {
 
 function finishScoutTransition(container) {
   if (!container.querySelector('[aria-label="Scouting in progress"], [aria-label="Scout returning"]')) return;
-  click(container, /skip to outcome/i);
+  click(container, /skip to outcome|reveal full account/i);
   click(container, /review scout report|check scout status|respond to encounter|choose an approach/i);
 }
 
@@ -73,7 +73,7 @@ function chooseRecommendedEncounterResponse(container) {
   clickElement(container.querySelector('.lr-encounter-options .is-recommended') || findButton(container, /treats the injury/i));
   clickElement(container.querySelector('.lr-encounter-commit-bar button.g-btn--primary'));
   expect(container.querySelector('[aria-label="Encounter response in progress"]')).toBeTruthy();
-  const skip = findButton(container, /skip to outcome/i);
+  const skip = findButton(container, /skip to outcome|reveal full account/i);
   if (skip) clickElement(skip);
   click(container, /see encounter result/i);
 }
@@ -112,7 +112,7 @@ function playRecommendedScene(container) {
   if (findButton(container, /choose a route/i)) click(container, /choose a route/i);
   choosePreferredRoute(container);
   click(container, /cross now/i);
-  if (findButton(container, /skip to outcome/i)) click(container, /skip to outcome/i);
+  if (findButton(container, /skip to outcome|reveal full account/i)) click(container, /skip to outcome|reveal full account/i);
   if (findButton(container, /continue to result/i)) click(container, /continue to result/i);
   expect(container.querySelector('.lr-simple-result-head').textContent).toMatch(/Crossing complete|evacuate now/i);
 }
@@ -208,7 +208,7 @@ describe('Long Return Simple mode', () => {
     expect(container.querySelector('.lr-lead-options')).toBeNull();
     expect(container.textContent).toContain('unresolved dangers');
     click(container, /^go with/i);
-    click(container, /skip to outcome/i);
+    click(container, /skip to outcome|reveal full account/i);
     click(container, /continue to result/i);
     expect(readCheckpoint().runFlags).toContain('coolant-bypass');
     click(container, /continue mission/i);
@@ -234,7 +234,7 @@ describe('Long Return Simple mode', () => {
     expect(container.querySelector('[data-route-preview="intake"] .lr-action-creatures [aria-pressed="true"]').textContent).toContain('Graviclaw');
     expect(container.querySelector('[data-route-preview="intake"] .lr-technique-action[aria-pressed="true"]').textContent).toBe(intakeMethod);
     click(container, /^go with Graviclaw/i);
-    click(container, /skip to outcome/i);
+    click(container, /skip to outcome|reveal full account/i);
     click(container, /continue to result/i);
     expect(readCheckpoint().leadId).toBe('graviclaw-213');
     expect(readCheckpoint().commands).toBe(2);
@@ -245,7 +245,7 @@ describe('Long Return Simple mode', () => {
     click(container, /seal crew/i);
     clickElement(container.querySelector('[data-scout-choice="graviclaw-213"]'));
     click(container, /^send /i);
-    click(container, /skip to outcome/i);
+    click(container, /skip to outcome|reveal full account/i);
     click(container, /choose an approach/i);
     expect(container.querySelector('[aria-label="Choose a creature action"]')).toBeTruthy();
     expect(container.querySelector('.lr-simple-report')).toBeNull();
@@ -258,12 +258,12 @@ describe('Long Return Simple mode', () => {
     click(container, /seal crew/i);
     clickElement(container.querySelector('[data-scout-choice="hippochamp-041"]'));
     click(container, /^send /i);
-    click(container, /skip to outcome/i);
+    click(container, /skip to outcome|reveal full account/i);
     expect(findButton(container, /choose an approach/i)).toBeUndefined();
     click(container, /check scout status/i);
     expect(container.querySelector('[aria-label="Choose a creature action"]')).toBeNull();
     click(container, /wait for .* to return/i);
-    click(container, /skip to outcome/i);
+    click(container, /skip to outcome|reveal full account/i);
     click(container, /choose an approach/i);
     expect(container.querySelector('[aria-label="Choose a creature action"]')).toBeTruthy();
     expect(container.textContent).toContain('Known danger:');
@@ -277,7 +277,7 @@ describe('Long Return Simple mode', () => {
       click(container, /stay together/i);
       click(container, /ride the intake current/i);
       click(container, /^go with/i);
-      click(container, /skip to outcome/i);
+      click(container, /skip to outcome|reveal full account/i);
       click(container, /continue to result/i);
       const before = readCheckpoint().pressure;
       click(container, /wait and read the signal/i);
@@ -305,14 +305,14 @@ describe('Long Return Simple mode', () => {
     click(container, /stay together/i);
     click(container, /ride the intake current/i);
     click(container, /^go with/i);
-    click(container, /skip to outcome/i);
+    click(container, /skip to outcome|reveal full account/i);
     click(container, /continue to result/i);
     click(container, /continue mission/i);
     expect(findButton(container, /^enter /i)).toBeUndefined();
     click(container, /stay together/i);
     clickElement(container.querySelector('[data-route-preview="underdeck"] .lr-intention'));
     click(container, /^go with/i);
-    click(container, /skip to outcome/i);
+    click(container, /skip to outcome|reveal full account/i);
     if (findButton(container, /respond to encounter/i)) click(container, /respond to encounter/i);
     expect(container.querySelector('[aria-label="Choose how to respond"]').textContent).not.toContain('Recommended');
     chooseRecommendedEncounterResponse(container);
@@ -322,7 +322,7 @@ describe('Long Return Simple mode', () => {
     click(container, /continue through with/i);
     expect(container.querySelector('[aria-label="Crossing in progress"]')).toBeTruthy();
     expect(container.textContent).toContain('Picking up where we stopped');
-    click(container, /skip to outcome/i);
+    click(container, /skip to outcome|reveal full account/i);
     click(container, /continue to result/i);
     expect(readCheckpoint().runFlags).toContain('maintenance-codes');
   });
@@ -374,7 +374,7 @@ describe('Long Return Simple mode', () => {
     expect(card.querySelector(`[aria-label="Hippochamp's technique"]`)).toBeTruthy();
     expect([...card.querySelectorAll('.lr-technique-action')].map(button => button.textContent).join(' ')).not.toContain('Chromocat');
     click(container, /^go with Hippochamp/i);
-    click(container, /skip to outcome/i);
+    click(container, /skip to outcome|reveal full account/i);
     click(container, /continue to result/i);
     expect(readCheckpoint().leadId).toBe('hippochamp-041');
   });
@@ -387,16 +387,16 @@ describe('Long Return Simple mode', () => {
     clickElement(container.querySelector(`[data-route-preview="${routeId}"] .lr-intention`));
     if (technique) clickElement([...container.querySelectorAll(`[data-route-preview="${routeId}"] .lr-technique-action`)].find(button => technique.test(button.textContent)));
     click(container, /^go with/i);
-    click(container, /skip to outcome/i);
+    click(container, /skip to outcome|reveal full account/i);
     if (findButton(container, /respond to encounter|choose response/i)) {
       click(container, /respond to encounter|choose response/i);
       if (responseId) click(container, responseId);
       else clickElement(container.querySelector('.lr-story-responses button'));
       clickElement(container.querySelector('.lr-encounter-commit-bar button.g-btn--primary'));
-      if (findButton(container, /skip to outcome/i)) click(container, /skip to outcome/i);
+      if (findButton(container, /skip to outcome|reveal full account/i)) click(container, /skip to outcome|reveal full account/i);
       click(container, /see encounter result/i);
       click(container, /continue through with/i);
-      click(container, /skip to outcome/i);
+      click(container, /skip to outcome|reveal full account/i);
     }
     click(container, /continue to result/i);
     return readCheckpoint();
@@ -410,7 +410,7 @@ describe('Long Return Simple mode', () => {
     click(container, /cross the hanging gantry/i);
     clickElement([...container.querySelectorAll('[data-route-preview="gantry"] .lr-technique-action')].find(button => /climb/i.test(button.textContent)));
     click(container, /^go with/i);
-    click(container, /skip to outcome/i);
+    click(container, /skip to outcome|reveal full account/i);
     click(container, /continue to result/i);
     expect(container.querySelector('[aria-label="A cable from the frame"]')).toBeTruthy();
     expect(readCheckpoint().runFlags).toContain('gantry-service-line');
@@ -495,11 +495,11 @@ describe('Long Return Simple mode', () => {
     click(container, /enter the maintenance underdeck/i);
     clickElement(container.querySelector('[aria-label="Choose Graviclaw for Enter the maintenance underdeck"]'));
     click(container, /^go with/i);
-    click(container, /skip to outcome/i);
+    click(container, /skip to outcome|reveal full account/i);
     click(container, /respond to encounter|choose response/i);
     click(container, /Graviclaw braces the coolant sleeve/i);
     clickElement(container.querySelector('.lr-encounter-commit-bar button.g-btn--primary'));
-    click(container, /skip to outcome/i);
+    click(container, /skip to outcome|reveal full account/i);
     click(container, /see encounter result/i);
     expect(container.textContent).toContain('Graviclaw has no energy left to lead');
     expect(findButton(container, /continue through with/i)).toBeUndefined();
@@ -508,7 +508,7 @@ describe('Long Return Simple mode', () => {
     expect(container.querySelector('[aria-label="Choose Graviclaw for Enter the maintenance underdeck"]')).toBeNull();
     clickElement(container.querySelector('[aria-label="Choose Hippochamp for Enter the maintenance underdeck"]'));
     click(container, /^go with Hippochamp/i);
-    click(container, /skip to outcome/i);
+    click(container, /skip to outcome|reveal full account/i);
     click(container, /continue to result/i);
     expect(readCheckpoint().journal[1].lead).toBe('Hippochamp');
     expect(readCheckpoint().companion.creature.species).toBe('Xylum');
@@ -533,7 +533,7 @@ describe('Long Return Simple mode', () => {
       clickElement(container.querySelector('[data-route-preview="breach"] .lr-intention'));
       click(container, /From an earlier discoveryWork the depressurized service release/);
       click(container, /^go with/i);
-      click(container, /skip to outcome/i);
+      click(container, /skip to outcome|reveal full account/i);
       click(container, /continue to result/i);
       expect(readCheckpoint().journal[2].methodMemoryId).toBe('depressurized-release');
       expect(readCheckpoint().journal[2].story).toContain('underdeck line isolated');
@@ -665,7 +665,7 @@ describe('Long Return Simple mode', () => {
         if (container.querySelector('.lr-field-encounter')) {
           clickElement(container.querySelector('.lr-story-responses button'));
           clickElement(container.querySelector('.lr-encounter-commit-bar button.g-btn--primary'));
-          if (findButton(container, /skip to outcome/i)) click(container, /skip to outcome/i);
+          if (findButton(container, /skip to outcome|reveal full account/i)) click(container, /skip to outcome|reveal full account/i);
           click(container, /see encounter result/i);
           click(container, /review scout report|choose an approach/i);
         }
@@ -737,7 +737,7 @@ describe('Long Return Simple mode', () => {
     expect(container.querySelector('.lr-lead-options button[aria-pressed="true"] strong').textContent).toBe(species);
     click(container, /cross now/i);
     expect(container.querySelector('[aria-label="Crossing in progress"]').textContent).toContain(species);
-    click(container, /skip to outcome/i);
+    click(container, /skip to outcome|reveal full account/i);
     click(container, /continue to result/i);
     expect(container.querySelector('.lr-arrival-story').textContent).toContain(species);
   });
@@ -747,7 +747,7 @@ describe('Long Return Simple mode', () => {
     enterSimpleRouteChoice(container, { scan: false });
     choosePreferredRoute(container);
     click(container, /cross now/i);
-    click(container, /skip to outcome/i);
+    click(container, /skip to outcome|reveal full account/i);
     click(container, /continue to result/i);
     expect(container.querySelector('.lr-result-salvage').textContent).toMatch(/\+[1-9]/);
     clickElement(container.querySelector('button[aria-label="Abort mission"]'));
@@ -772,7 +772,7 @@ describe('Long Return Simple mode', () => {
     expect(container.querySelector('[role="dialog"][aria-label="Crossing in progress"]')).toBeTruthy();
     expect(container.querySelector('[data-field-record] [data-expedition-map][data-crew-position="approach"]')).toBeTruthy();
     expect(container.querySelectorAll('[data-field-record] [data-map-creature][data-location="approach"]')).toHaveLength(3);
-    click(container, /skip to outcome/i);
+    click(container, /skip to outcome|reveal full account/i);
     expect(container.querySelector('.lr-sequence-story').textContent).toMatch(/What happened/i);
     expect(container.querySelectorAll('[data-field-record] [data-map-creature][data-location="exit"]')).toHaveLength(3);
     click(container, /continue to result/i);
@@ -1013,7 +1013,7 @@ describe('Long Return Simple mode', () => {
     click(container, /^send /i);
     expect(container.querySelector('[aria-label="Scouting in progress"]')).toBeTruthy();
     expect(container.querySelector('[data-field-reserve="energy"]').getAttribute('aria-label')).toContain('5 of 6');
-    click(container, /skip to outcome/i);
+    click(container, /skip to outcome|reveal full account/i);
     expect(container.querySelector('[data-field-reserve="energy"]').getAttribute('aria-label')).toContain('5 of 6');
     click(container, /review scout report/i);
     expect(container.textContent).toContain('Scout result');
@@ -1039,7 +1039,7 @@ describe('Long Return Simple mode', () => {
     expect(container.textContent).not.toContain('The native chooses to follow');
     clickElement(container.querySelector('.lr-encounter-commit-bar button.g-btn--primary'));
     expect(container.querySelector('[aria-label="Encounter response in progress"]')).toBeTruthy();
-    const skip = findButton(container, /skip to outcome/i);
+    const skip = findButton(container, /skip to outcome|reveal full account/i);
     expect(document.activeElement).toBe(skip);
     if (skip) clickElement(skip);
     click(container, /see encounter result/i);
@@ -1075,14 +1075,14 @@ describe('Long Return Simple mode', () => {
     click(container, /cross now/i);
     expect(container.querySelector('[role="dialog"][aria-label="Encounter discovered"]')).toBeTruthy();
     expect(container.querySelector('[data-field-record] [data-expedition-map][data-crew-position="approach"]')).toBeTruthy();
-    click(container, /skip to outcome/i);
+    click(container, /skip to outcome|reveal full account/i);
     expect(container.querySelector('.lr-sequence-story').textContent).toMatch(/Choose how the crew responds before continuing/i);
     click(container, /choose response/i);
     expect(container.textContent).toContain('Unexpected crew encounter');
     expect(container.querySelector('.lr-encounter-situation').textContent).toContain('Crew caught unaware · +1 energy to respond');
     clickElement(container.querySelector('.lr-encounter-options .is-recommended') || findButton(container, /treats the injury/i));
     clickElement(container.querySelector('.lr-encounter-commit-bar button'));
-    click(container, /skip to outcome/i);
+    click(container, /skip to outcome|reveal full account/i);
     click(container, /see encounter result/i);
     click(container, /plan the crossing/i);
     expect(container.querySelector('.lr-route-board')).toBeNull();
@@ -1110,11 +1110,11 @@ describe('Long Return Simple mode', () => {
     const selectUnderdeck = () => clickElement(Array.from(container.querySelectorAll('.lr-board-pick')).find(button => /maintenance underdeck/i.test(button.textContent)));
     selectUnderdeck();
     click(container, /cross now/i);
-    click(container, /skip to outcome/i);
+    click(container, /skip to outcome|reveal full account/i);
     click(container, /choose response/i);
     clickElement(Array.from(container.querySelectorAll('.lr-encounter-options > button')).find(button => /back out/i.test(button.textContent)));
     clickElement(container.querySelector('.lr-encounter-commit-bar button'));
-    click(container, /skip to outcome/i);
+    click(container, /skip to outcome|reveal full account/i);
     click(container, /see encounter result/i);
     click(container, /compare routes again/i);
     selectUnderdeck();
@@ -1163,10 +1163,10 @@ describe('Long Return Simple mode', () => {
     expect(document.activeElement).toBe(container.querySelector('[data-wizard-focus]'));
     clickElement(container.querySelector('[data-scout-options] [data-recommended]'));
     click(container, /^send /i);
-    expect(document.activeElement).toBe(findButton(container, /skip to outcome/i));
+    expect(document.activeElement).toBe(findButton(container, /skip to outcome|reveal full account/i));
     act(() => container.querySelector('[role="dialog"]').dispatchEvent(new KeyboardEvent('keydown', { key: 'Tab', bubbles: true })));
-    expect(document.activeElement).toBe(container.querySelector('.lr-story-steps button'));
-    click(container, /skip to outcome/i);
+    expect(document.activeElement).toBe(container.querySelector('.lr-story-account'));
+    click(container, /skip to outcome|reveal full account/i);
     expect(document.activeElement).toBe(findButton(container, /review scout report/i));
     click(container, /review scout report/i);
     expect(document.activeElement).toBe(container.querySelector('[data-wizard-focus]'));
@@ -1175,8 +1175,8 @@ describe('Long Return Simple mode', () => {
     clickElement(container.querySelector('.lr-board-pick'));
       expect(container.querySelector('.lr-lead-options button[aria-pressed="true"]')).toBeTruthy();
     click(container, /cross now/i);
-    expect(document.activeElement).toBe(findButton(container, /skip to outcome/i));
-    click(container, /skip to outcome/i);
+    expect(document.activeElement).toBe(findButton(container, /skip to outcome|reveal full account/i));
+    click(container, /skip to outcome|reveal full account/i);
     click(container, /continue to result/i);
     expect(document.activeElement).toBe(container.querySelector('[data-arrival-focus]'));
   });
