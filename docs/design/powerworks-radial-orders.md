@@ -144,3 +144,5 @@ Nick, 2026-09-26, on the live playback: it was "a little jumpy and kind of makes
 | 5 | **Smaller moves.** A melee actor steps 30% of the way to its target (was the whole way) at 1.03 scale (was 1.12); a cast rises 4px (was 8px); a recoil shifts 5px and 2 degrees (was 9px and 5 degrees) over 560 ms (was 380). | 75% | Nick: the view was jumpy |
 
 Reduced motion is unchanged: no camera, no spotlight transitions, the whole beat at once.
+
+**No-blur amendment, 2026-09-26.** Nick: "the blur didn't come across great, it kinda makes me dizzy." Decision 4 changes: nothing on the stage is blurred any more (the room and the bystanders were), and the light no longer travels with the actors (a moving spotlight is motion too). A still vignette darkens the room's edges while a round plays and fades in and out once per round; the room dims a little (brightness 0.88, saturation 0.85); bystanders dim to brightness 0.6 and saturation 0.65 with their plaques at 72%; the beat's actor and target stay at full light. Changes fade over 700 to 900 ms.

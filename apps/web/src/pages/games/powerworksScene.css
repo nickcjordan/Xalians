@@ -1721,49 +1721,45 @@
 }
 
 /*
-  The calm pass (2026-09-26). Nick: the playback camera zoomed around too much and made him
-  queasy. The camera now only leans (powerworksStage CAMERA), the beats run half again as
-  long (PLAYBACK_PACE), and focus comes from light instead of motion: a soft spotlight on
-  the beat's actor and target, the room darkened and softened around them, and every other
-  creature dimmed a little. Plaques and text are never blurred.
+  The calm pass (2026-09-26), with the no-blur pass the same day. Nick: the playback camera
+  zoomed around too much and made him queasy, and then the blur that replaced it made him
+  dizzy too. So nothing on the stage is ever blurred and no light travels. The camera only
+  leans (powerworksStage CAMERA), the beats run half again as long (PLAYBACK_PACE), a still
+  vignette darkens the room's edges while a round plays, and focus is a matter of brightness:
+  the beat's actor and target stay at full light and colour, everyone else dims.
 */
 .pw-spotlight {
   position: absolute;
-  left: -50%;
-  top: -50%;
-  width: 200%;
-  height: 200%;
+  inset: 0;
   z-index: -1;
   pointer-events: none;
   background: radial-gradient(
-    ellipse 30% 36% at 50% 50%,
-    #00000000 0%,
-    #00000000 40%,
-    #03080cb3 100%
+    ellipse 70% 72% at 50% 46%,
+    #00000000 52%,
+    #03080c99 100%
   );
   opacity: 0;
-  transition:
-    transform 1100ms cubic-bezier(0.45, 0, 0.3, 1),
-    opacity 700ms ease-out;
+  transition: opacity 900ms ease-out;
 }
 .pw-spotlight[data-lit="on"] {
   opacity: 1;
 }
-.pw-theater .pw-environment {
-  transition: filter 700ms ease-out;
+.pw-theater .pw-environment,
+.pw-theater .pw-facility {
+  transition: filter 900ms ease-out;
 }
 .pw-theater.playing .pw-environment {
-  filter: blur(1.5px) saturate(0.8);
+  filter: brightness(0.88) saturate(0.85);
 }
 .pw-theater.playing .pw-scene-unit .pw-actor-art {
-  transition: filter 600ms ease-out, opacity 600ms ease-out;
+  transition: filter 700ms ease-out;
 }
 .pw-theater.playing .pw-scene-unit:not(.in-focus):not(.fallen) .pw-actor-art {
-  filter: brightness(0.72) saturate(0.75) blur(0.8px);
+  filter: brightness(0.6) saturate(0.65);
 }
 .pw-theater.playing .pw-scene-unit:not(.in-focus) .pw-unit-plaque {
   opacity: 0.72;
-  transition: opacity 600ms ease-out;
+  transition: opacity 700ms ease-out;
 }
 /* Motion that stays: the actor still moves toward its target, but a short step, not a leap. */
 @keyframes pw-lunge {
