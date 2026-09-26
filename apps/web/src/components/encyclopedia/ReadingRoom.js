@@ -29,7 +29,7 @@ const SECTIONS = [
 		copy: 'The Vallerii, the factions, and the peoples of each world.',
 		count: () => {
 			const powers = lore.getPowers();
-			return `${powers.factions.length + powers.vallerii.length + powers.peoples.length} powers and peoples`;
+			return `${powers.factions.length + powers.vallerii.length + powers.peoples.length} records`;
 		},
 	},
 	{
