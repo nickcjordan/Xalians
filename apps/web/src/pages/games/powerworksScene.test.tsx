@@ -458,7 +458,7 @@ describe("shared battlefield", () => {
     });
   });
 
-  it("pushes the camera in on a playback beat's actor and target, returns before the next beat, and holds still under reduced motion", () => {
+  it("leans the camera toward a playback beat's pair and holds it through the beat, lights them, and holds still under reduced motion", () => {
     vi.useFakeTimers();
     const run = createRun(1);
     const [actor] = run.team;
@@ -474,19 +474,21 @@ describe("shared battlefield", () => {
         const { container } = scene(frame, { reducedMotion: false, paused: false, beatMs: 1200 });
         const layer = container.querySelector<HTMLElement>(".pw-stage-zoom")!;
         expect(layer.dataset.camera).toBe("push");
-        expect(layer.style.transform).toMatch(/^translate\(-?\d+px, -?\d+px\) scale\(1\.06\)$/);
-        expect(layer.style.transition).toBe(`transform ${CAMERA.pushMs}ms cubic-bezier(0.2, 0.7, 0.2, 1)`);
-        // It returns before the next beat, in time for the return to finish.
+        // A lean, not a zoom (calm pass): at most CAMERA.push, on one slow even curve.
+        const scale = Number(/scale\(([\d.]+)\)/.exec(layer.style.transform)![1]);
+        expect(scale).toBeGreaterThan(1);
+        expect(scale).toBeLessThanOrEqual(CAMERA.push);
+        expect(layer.style.transition).toBe(`transform ${CAMERA.pushMs}ms ${CAMERA.ease}`);
+        // The pair is lit and everyone else is not.
+        expect(container.querySelector(".pw-spotlight")).toHaveAttribute("data-lit", "on");
+        expect(container.querySelector(`[data-unit="${actor.id}"]`)).toHaveClass("in-focus");
+        expect(container.querySelector(`[data-unit="${target.id}"]`)).toHaveClass("in-focus");
+        expect(container.querySelectorAll(".pw-scene-unit.in-focus")).toHaveLength(2);
+        // It does not spring back before the next beat: it holds through the whole beat.
         act(() => {
-          vi.advanceTimersByTime(1200 - CAMERA.returnMs - 1);
+          vi.advanceTimersByTime(5000);
         });
         expect(layer.dataset.camera).toBe("push");
-        act(() => {
-          vi.advanceTimersByTime(2);
-        });
-        expect(layer.dataset.camera).toBe("rest");
-        expect(layer.style.transform).toBe("");
-        expect(layer.style.transition).toBe(`transform ${CAMERA.returnMs}ms cubic-bezier(0.2, 0.7, 0.2, 1)`);
         cleanup();
         // Paused on a beat, the camera holds its push.
         const held = scene(frame, { reducedMotion: false, paused: true, beatMs: 1200 });

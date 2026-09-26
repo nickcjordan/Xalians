@@ -1,6 +1,12 @@
 import { useEffect, useRef, useState } from "react";
 import type { Frame } from "@xalians/rules/dungeon";
 
+/**
+  Playback pace (calm pass, 2026-09-26): every beat, and the moment its blow lands, takes this
+  many times the round 3 timing. Nick found the playback jumpy and too quick to follow.
+*/
+export const PLAYBACK_PACE = 1.5;
+
 export function actionPresentation(frame?: Frame) {
   const event = frame?.event;
   const units = [...(frame?.team || []), ...(frame?.enemies || [])];
@@ -16,14 +22,14 @@ export function actionPresentation(frame?: Frame) {
   const knockout = event?.kind === "hit" && target?.hp === 0;
   const bossDefeat = knockout && target?.species === "guardian";
   // A reaction is a short answering beat: it reads fast so the exchange stays one motion.
-  const impactDelay = signature
+  const impactDelay = PLAYBACK_PACE * (signature
     ? 680
     : event?.kind === "charge"
     ? 600
     : event?.kind === "react"
     ? 260
-    : 360;
-  const duration = bossDefeat
+    : 360);
+  const duration = PLAYBACK_PACE * (bossDefeat
     ? 2800
     : knockout
     ? 2000
@@ -41,7 +47,7 @@ export function actionPresentation(frame?: Frame) {
     ? 850
     : actor
     ? 1150
-    : 700;
+    : 700);
   return { signature, knockout, bossDefeat, impactDelay, duration };
 }
 
