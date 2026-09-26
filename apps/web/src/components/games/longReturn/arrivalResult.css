@@ -68,7 +68,8 @@
 .lr-arrival-next .lr-workshop[open] { width: 100%; }
 .lr-mode-simple .lr-arrival-grid .lr-projection-track.is-annex i.is-current { background: #80c99e; border-color: #9cdab4; }
 .lr-mode-simple .lr-arrival-grid .lr-result-changes article.lr-result-salvage { border-bottom: 0; }
-@media(max-width:700px) { .lr-mode-simple .lr-simple-result { display: flex; flex-direction: column; gap: 18px; } .lr-result-changes { width: 100%; } .lr-arrival-next { flex-direction: column; } }
+@media(max-width:900px) { .lr-mode-simple .lr-simple-result { display: flex; flex-direction: column; gap: 18px; } .lr-result-changes { width: 100%; } .lr-arrival-next { flex-direction: column; } }
+@media(max-width:700px) { .lr-console .lr-mode-simple .lr-wizard-phase-result .lr-arrival-story { display: block; } }
 
 /* A deliberate recovery workspace, not another long panel appended to the receipt. */
 .lr-mode-simple .lr-simple-result:has(.lr-workshop[open]) { display: block; }

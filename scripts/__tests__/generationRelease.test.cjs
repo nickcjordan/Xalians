@@ -8,6 +8,16 @@ const { readManifest, replay, archiveRoot, freeze } = require('../generationRele
 
 const fixtureFile = path.join(__dirname, 'fixtures/generation-release-records.json');
 const fixtures = () => JSON.parse(fs.readFileSync(fixtureFile, 'utf8'));
+const historicalSpeciesEntries = () => {
+  const root = path.join(__dirname, '../../docs/species-templates/v5/revisions');
+  return fs.readdirSync(root, { withFileTypes: true }).filter(entry => entry.isDirectory()).flatMap(entry => {
+    const directory = path.join(root, entry.name);
+    return fs.readdirSync(directory).filter(file => file.endsWith('.json')).map(file => ({
+      revision: file.slice(0, -5),
+      template: JSON.parse(fs.readFileSync(path.join(directory, file), 'utf8')),
+    }));
+  });
+};
 function temporaryArchive(t) {
   const temporary = fs.mkdtempSync(path.join(os.tmpdir(), 'xalian-release-test-'));
   t.after(() => {
@@ -28,13 +38,19 @@ test('all species in every archived release replay with both profiles', async ()
   const { XalianRecordSchema } = require('../../packages/content/src/schema/record.ts');
   for (const entry of fs.readdirSync(archiveRoot, { withFileTypes: true })) {
     if (!entry.isDirectory()) continue;
-    const { artifact } = readManifest(entry.name);
+    const { artifact, manifest } = readManifest(entry.name);
     const archived = await import(pathToFileURL(artifact).href);
-    for (const template of archived.getSpeciesTemplates()) {
+    const entries = manifest.kind === 'species-independent'
+      ? historicalSpeciesEntries()
+      : archived.getSpeciesTemplates().map(template => ({ template }));
+    for (const { template, revision } of entries) {
       for (const profile of ['full', 'showroom']) {
-        const record = archived.generateXalian(template.key, 'historical:' + template.key, {
+        const options = {
           profile, generatedAt: '2026-09-15T12:34:56.000Z', serial: 42, origin: 'saiphus',
-        });
+        };
+        const record = manifest.kind === 'species-independent'
+          ? archived.generateXalian(template, revision, 'historical:' + template.key, options)
+          : archived.generateXalian(template.key, 'historical:' + template.key, options);
         const schema = archived.SCHEMA_VERSION.startsWith('5.') ? archived.CreatureRecordSchema : XalianRecordSchema;
         assert.deepEqual(schema.parse(record), record, 'schema for the archived representation accepts replay');
         assert.deepEqual(await replay(record), record, entry.name + ': ' + template.key + ': ' + profile);
@@ -70,6 +86,26 @@ test('schema 5.1 changes scale without rerolling other v5 creature facts', async
     }
     assert.ok(oldHeight > 0 && oldWeight > 0);
   }
+});
+
+test('Fathomaw release adds one species without changing existing v5 results', async () => {
+  const before = await import(pathToFileURL(readManifest('generation-0.8.0-1').artifact).href);
+  const after = await import(pathToFileURL(readManifest('generation-0.8.0-2').artifact).href);
+  const previous = before.getSpeciesTemplates().map(species => species.key);
+  assert.deepEqual(after.getSpeciesTemplates().map(species => species.key), [
+    ...previous.slice(0, previous.indexOf('figzy')), 'fathomaw', ...previous.slice(previous.indexOf('figzy')),
+  ]);
+  const options = { profile: 'full', generatedAt: '2026-09-24T12:00:00.000Z', serial: 1, origin: 'poseidas' };
+  for (const key of previous) {
+    const oldRecord = before.generateXalian(key, 'fathomaw-content-release:' + key, options);
+    const newRecord = after.generateXalian(key, 'fathomaw-content-release:' + key, options);
+    assert.deepEqual({ ...newRecord, provenance: { ...newRecord.provenance, releaseId: oldRecord.provenance.releaseId } }, oldRecord, key);
+  }
+  const newRecord = after.generateXalian('fathomaw', 'fathomaw-content-release', options);
+  assert.equal(newRecord.provenance.releaseId, 'generation-0.8.0-2');
+  assert.equal(newRecord.actions[0].name, 'Yield Point');
+  assert.deepEqual(after.CreatureRecordSchema.parse(newRecord), newRecord);
+  assert.deepEqual(await replay(newRecord), newRecord);
 });
 
 test('a copied archive replays independently of the live template tree', async t => {
@@ -137,24 +173,70 @@ test('artifact tampering fails even after a successful import', async t => {
   await assert.rejects(replay(record, temporary), /artifact integrity failure/);
 });
 const creatureEntry = 'scripts/__tests__/fixtures/creature-release.ts';
-const canonicalCreatureEntry = 'packages/rules/src/generator/canonicalCreatureRelease.ts';
-test('the complete v5 roster freezes and replays without the live species tree', async t => {
+const independentCreatureEntry = 'packages/rules/src/generator/creatureEngineRelease.ts';
+test('the species-independent engine freezes without any roster data and replays all current species', async t => {
   const temporary = temporaryArchive(t);
-  const releaseId = 'generation-0.8.0-1';
-  const manifest = await freeze({ entryPoint: canonicalCreatureEntry, releaseId, archives: temporary });
-  const ratified = JSON.parse(fs.readFileSync(path.join(__dirname, '../../docs/species-templates/RATIFIED.json'), 'utf8')).species;
-  assert.equal(Object.keys(manifest.inputs).filter(file => /^docs\/species-templates\/v5\/[^/]+\.json$/.test(file)).length, 32);
+  const releaseId = 'generation-0.9.0-1';
+  const manifest = await freeze({ entryPoint: independentCreatureEntry, releaseId, archives: temporary });
+  assert.equal(manifest.kind, 'species-independent');
+  const v5Files = fs.readdirSync(path.join(__dirname, '../../docs/species-templates/v5')).filter(file => file.endsWith('.json'));
+  assert.equal(Object.keys(manifest.inputs).filter(file => /species-templates\/v5\/|canonicalSpeciesCatalog\.json/.test(file)).length, 0);
+  const catalog = historicalSpeciesEntries();
+  assert.deepEqual(catalog.map(entry => entry.template.key).sort(), v5Files.map(file => file.slice(0, -5)).sort());
   const { artifact } = readManifest(releaseId, temporary);
   const archived = await import(pathToFileURL(artifact).href);
-  assert.deepEqual(archived.getSpeciesTemplates().map(template => template.key).sort(), [...ratified].sort());
-  for (const key of ratified) {
+  for (const { template, revision } of catalog) {
     for (const profile of ['full', 'showroom']) {
-      const record = archived.generateXalian(key, 'v5-replay:' + key, {
+      const record = archived.generateXalian(template, revision, 'v5-replay:' + template.key, {
         profile, generatedAt: '2026-09-21T12:34:56.000Z', serial: 7, origin: 'saiphus',
       });
       assert.deepEqual(archived.CreatureRecordSchema.parse(record), record);
       assert.deepEqual(await replay(record, temporary), record);
     }
+  }
+});
+test('a new valid species uses the existing engine archive and its own content revision', async t => {
+  const temporary = temporaryArchive(t);
+  const revisions = temporaryArchive(t);
+  const releaseId = 'generation-0.9.0-1';
+  const manifest = await freeze({ entryPoint: independentCreatureEntry, releaseId, archives: temporary });
+  const { artifact } = readManifest(releaseId, temporary);
+  const archived = await import(pathToFileURL(artifact).href);
+  const template = JSON.parse(fs.readFileSync(path.join(__dirname, '../../packages/content/src/creature/fixtures/support-species.json'), 'utf8'));
+  template.key = 'future-species';
+  template.name = 'Future Species';
+  const { revisionOf } = require('../historicalSpeciesRevision.cjs');
+  const revision = revisionOf(template);
+  const directory = path.join(revisions, template.key);
+  fs.mkdirSync(directory);
+  const file = path.join(directory, `${revision}.json`);
+  fs.writeFileSync(file, JSON.stringify(template));
+  const record = archived.generateXalian(template, revision, 'future-seed', {
+    profile: 'full', generatedAt: '2026-09-25T12:00:00.000Z', serial: 1, origin: 'saiphus',
+  });
+  assert.equal(record.species, template.key);
+  assert.equal(record.provenance.releaseId, releaseId);
+  assert.equal(record.provenance.speciesRevision, revision);
+  assert.deepEqual(await replay(record, temporary, revisions), record);
+  assert.equal(manifest.inputs['packages/content/json/canonicalSpeciesCatalog.json'], undefined);
+  template.name = 'Changed after generation';
+  fs.writeFileSync(file, JSON.stringify(template));
+  await assert.rejects(replay(record, temporary, revisions), /Species revision integrity failure/);
+});
+test('separating the roster does not reroll existing species', async () => {
+  const previous = await import(pathToFileURL(readManifest('generation-0.8.0-2').artifact).href);
+  const current = await import(pathToFileURL(readManifest('generation-0.9.0-1').artifact).href);
+  const catalog = historicalSpeciesEntries();
+  const options = { profile: 'full', generatedAt: '2026-09-25T12:00:00.000Z', serial: 1, origin: 'poseidas' };
+  for (const { template, revision } of catalog) {
+    const seed = 'independent-roster:' + template.key;
+    const oldRecord = previous.generateXalian(template.key, seed, options);
+    const newRecord = current.generateXalian(template, revision, seed, options);
+    const { provenance: oldProvenance, ...oldFacts } = oldRecord;
+    const { provenance: newProvenance, ...newFacts } = newRecord;
+    assert.deepEqual(newFacts, oldFacts, template.key);
+    assert.equal(newProvenance.speciesRevision, revision);
+    assert.equal(oldProvenance.seed, newProvenance.seed);
   }
 });
 test('v5 freezes its actual species, catalog, compiler and naming dependencies and replays standalone', async t => {

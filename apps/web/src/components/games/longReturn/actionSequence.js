@@ -55,7 +55,7 @@ export function buildActionSequence(action) {
   // The resolved story owns the account. Resource ticks annotate its causes;
   // they are not extra events the player must mentally fit back into it.
   return [
-    beat('move', titles?.[0] || 'At the obstacle', 'bi-signpost-2-fill', paragraphs?.[0] || movement, { actorId: lead.id }),
+    beat(action.continuingFromEncounter ? 'resume' : 'move', action.continuingFromEncounter ? 'Picking up where we stopped' : titles?.[0] || 'At the obstacle', 'bi-signpost-2-fill', action.continuingFromEncounter ? `The encounter is behind them. ${lead.species} resumes the work with ${support.species}, while the crew stays together.` : paragraphs?.[0] || movement, { actorId: lead.id }),
     beat(result.unseenHazards.length ? 'hazard' : 'method', titles?.[1] || 'Making a way through', 'bi-people', paragraphs?.[1] || [movement, ...result.unseenHazards.map(hazard => `${hazard.label} interrupts the crossing.`)].join(' '), { actorId: lead.id, costs: tools }),
     beat('effort', costs.length ? 'The cost of the effort' : 'The effort holds', 'bi-lightning-charge', paragraphs?.[2] || [result.supportHelp || (result.supportStrain > 0 ? `${support.species} takes over part of the work to keep the crew moving.` : `${lead.species} brings the others through.`), result.companionHelp].filter(Boolean).join(' '), { costs, supportId: support?.id, companionId: action.companion?.id }),
     beat('complete', titles?.[2] || 'The crew regroups', 'bi-check-circle', paragraphs?.[3] || result.story || result.impactLabel, { costs: haul })

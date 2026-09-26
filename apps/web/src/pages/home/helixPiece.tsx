@@ -16,14 +16,10 @@
 // the scroll (Nick, 2026-09-24: tying the two was buggy). Every loop holds its
 // last frame, fades out and fades back in at its first before it repeats.
 //
-// A piece takes its turn on the page's plate stage (components/plates/
-// plateStage.ts) like a living plate: only the one thing most in view on the
-// whole page animates. Near the screen its drawing is in the DOM, holding
-// still until it is live; far from it, the piece holds nothing but its box.
-// Under reduced motion it rests on its last frame.
+// In the story's viewer a piece is live only while it is the shown beat, has
+// settled, and the viewer is on the screen; until then it holds its first
+// frame. Under reduced motion it rests on its last frame.
 import * as React from 'react';
-import { joinStage } from '@/components/plates/plateStage';
-import { cn } from '@/lib/utils';
 
 const W = 640;
 const H = 360;
@@ -199,8 +195,8 @@ function reduced() {
 	return typeof window !== 'undefined' && !!window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 }
 
-/** The drawing itself. `live`: it plays; false: it holds; undefined: it rests on its last frame. */
-export function HelixDrawing({ mode, live, label }: { mode: Mode; live: boolean | undefined; label: string }) {
+/** `live`: it plays; false: it holds its place; undefined: it rests on its last frame. */
+export function HelixPiece({ mode, live, label }: { mode: Mode; live: boolean | undefined; label: string }) {
 	const rungA = React.useRef<Array<SVGLineElement | null>>([]);
 	const rungB = React.useRef<Array<SVGLineElement | null>>([]);
 	const segs = React.useRef<Array<SVGLineElement | null>>([]);
@@ -304,7 +300,7 @@ export function HelixDrawing({ mode, live, label }: { mode: Mode; live: boolean 
 	}, [live, mode, draw]);
 
 	return (
-		<svg viewBox={`0 0 ${W} ${H}`} role="img" aria-label={label} className="block h-auto w-full overflow-visible">
+		<svg viewBox={`0 0 ${W} ${H}`} role="img" aria-label={label} data-piece-live={String(!!live && !reduced())} className="block h-auto w-full overflow-visible">
 			<defs>
 				<linearGradient id={`${mode}-chip`} x1="0" y1="0" x2="0" y2="1">
 					<stop offset="0" stopColor="#27323a" />
@@ -350,39 +346,3 @@ export function HelixDrawing({ mode, live, label }: { mode: Mode; live: boolean 
 	);
 }
 
-// Mount the drawing this far ahead of the screen, so it is there, holding its first frame, when it scrolls in.
-const NEAR = '300px';
-const THRESHOLDS = Array.from({ length: 21 }, (_, i) => i / 20);
-
-/** A piece on the page: its box always, its drawing near the screen, its motion only while it holds the stage. */
-export function HelixPiece({ mode, label, className }: { mode: Mode; label: string; className?: string }) {
-	const boxRef = React.useRef<HTMLDivElement>(null);
-	const [near, setNear] = React.useState(false);
-	const [live, setLive] = React.useState(false);
-	const still = reduced();
-
-	React.useEffect(() => {
-		const box = boxRef.current;
-		if (!box || typeof IntersectionObserver === 'undefined') {
-			setNear(true);
-			return undefined;
-		}
-		const nearby = new IntersectionObserver((entries) => setNear(entries.some((e) => e.isIntersecting)), { rootMargin: NEAR });
-		nearby.observe(box);
-		if (still) return () => nearby.disconnect();
-		const slot = joinStage(setLive);
-		const seen = new IntersectionObserver((entries) => entries.forEach((e) => slot.update(e.isIntersecting ? e.intersectionRatio : 0)), { threshold: THRESHOLDS });
-		seen.observe(box);
-		return () => {
-			nearby.disconnect();
-			seen.disconnect();
-			slot.release();
-		};
-	}, [still]);
-
-	return (
-		<div ref={boxRef} className={cn('aspect-video w-full', className)} data-piece={mode} data-live={live ? '' : undefined}>
-			{near ? <HelixDrawing mode={mode} live={still ? undefined : live} label={label} /> : <span role="img" aria-label={label} className="block h-full w-full" />}
-		</div>
-	);
-}

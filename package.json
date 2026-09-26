@@ -13,6 +13,8 @@
     "simulate:creatures": "node apps/web/scripts/runNode.cjs packages/rules/src/generator/devtools/simulateGenerator.ts",
     "check:creature-simulation": "node apps/web/scripts/runNode.cjs packages/rules/src/generator/devtools/simulateGenerator.ts --check",
     "check:creature-model": "node apps/web/scripts/runNode.cjs packages/rules/src/generator/devtools/checkCreature.ts",
+    "sync:species": "node scripts/bundleLore.js",
+    "check:species": "npm run check:bundle -w packages/content",
     "wt": "node scripts/worktrees.js",
     "publish": "terraform apply -auto-approve",
     "release:freeze": "node scripts/generationRelease.cjs freeze",

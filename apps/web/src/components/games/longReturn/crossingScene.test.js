@@ -44,7 +44,7 @@ test('brine appears during the action and the bypass is introduced through the p
 
 test('known danger is anticipated, not rediscovered; costs and salvage are conditional', () => {
   const paragraphs = resolve(MISSION.scenes[0].routes[1]);
-  expect(paragraphs[1]).toContain('danger the scout identified');
+  expect(paragraphs[1]).toContain('known danger');
   expect(paragraphs.join(' ')).not.toMatch(/A blue flash|shudder|takes its toll|usable components/);
   expect(resolve(MISSION.scenes[0].routes[0]).join(' ')).not.toMatch(/brine|bypass/);
 });

@@ -2846,7 +2846,7 @@ describe("Powerworks pass 6: the draft command and saves (decisions 47 and 48)",
             expect(unitIds([...four].reverse()).reverse()).toEqual(ids);
             checked++;
           }
-    expect(checked).toBe(35960);
+    expect(checked).toBe((keys.length * (keys.length - 1) * (keys.length - 2) * (keys.length - 3)) / 24);
   });
   it("replays a current-version save with a drafted squad deterministically", () => {
     let s = command(openRun(19), { kind: "draft", squad: [0, 2, 5, 7] });

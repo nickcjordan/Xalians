@@ -1,6 +1,6 @@
 /** Bind the redesigned generator to an explicitly supplied release roster. */
 import { z } from 'zod';
-import { CreatureRecordSchema, type CreatureRecord } from '@xalians/content/creature';
+import { CreatureRecordV51Schema, type CreatureRecordV51 } from '@xalians/content/creature';
 import { compileSpecies, generateCreatureDraft } from './creature.ts';
 import { makeRng } from './prng.ts';
 
@@ -8,8 +8,8 @@ export const GENERATOR_VERSION = '0.8.0';
 export const SCHEMA_VERSION = '5.1.0';
 // Size resolution changed. Keep unrelated authored facts on their established stream.
 const CREATURE_FACT_NAMESPACE_VERSION = '0.7.0';
-const replayInputs = CreatureRecordSchema.shape.provenance.omit({ generatorVersion: true, schemaVersion: true, releaseId: true });
-type Options = Omit<CreatureRecord['provenance'], 'seed' | 'generatorVersion' | 'schemaVersion' | 'releaseId'>;
+const replayInputs = CreatureRecordV51Schema.shape.provenance.omit({ generatorVersion: true, schemaVersion: true, releaseId: true });
+type Options = Omit<CreatureRecordV51['provenance'], 'seed' | 'generatorVersion' | 'schemaVersion' | 'releaseId'>;
 // Preserve the existing appearance policy; no retired v4 generation tables are imported.
 const finishOdds = [['eclipse', 1 / 4000], ['prismatic', 1 / 400], ['gleam', 1 / 40]] as const;
 
@@ -25,7 +25,7 @@ export function createCreatureRelease(releaseId: string, sources: readonly unkno
   return {
     GENERATION_RELEASE_ID: releaseId,
     getSpeciesTemplates: () => [...roster.values()].map(value => value.species),
-    generateXalian(species: string, seed: string, options: Options): CreatureRecord {
+    generateXalian(species: string, seed: string, options: Options): CreatureRecordV51 {
       const compiled = roster.get(species);
       if (!compiled) throw new Error(`Unknown release species: ${species}`);
       // Validate caller metadata only, not generated combinations. Never invent replay inputs.
@@ -34,7 +34,7 @@ export function createCreatureRelease(releaseId: string, sources: readonly unkno
       const creatureFactSeed = JSON.stringify([species, seed, CREATURE_FACT_NAMESPACE_VERSION]);
       const rng = makeRng(generationSeed);
       const roll = rng.fork('appearance').float();
-      let finish: CreatureRecord['appearance']['finish'] = 'standard';
+      let finish: CreatureRecordV51['appearance']['finish'] = 'standard';
       let cumulative = 0;
       for (const [candidate, odds] of finishOdds) {
         cumulative += odds;
