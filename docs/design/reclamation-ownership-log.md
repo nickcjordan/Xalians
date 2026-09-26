@@ -1235,3 +1235,29 @@ Every engine question (each side's hold after a send, who leads, which creature 
 - Dullness carries four meanings (trailing, waiting, out of focus, fallen); element badges are now the loudest color on a creature.
 - A verdict per column ("7 v 0"); the fight's cause on the card and the ghost; the send counter's one held back.
 - Carried: whether element should matter; strike keepers near 67 to 68 percent.
+
+### Pass 61 (2026-09-26): say why
+
+**Nick**, on pass 60 with Hippochamp lifted (6, 6 and 12, a snowflake and ×½ under the sixes): "ok this looks much better, it is a big step in the right direction. we still need to work on explaining why numbers are differennt in one spot versus another ... I think in the space on each planet, for ones where the creature is affected by something, we need to do better job explaining what that effect is and why". The design and every number are in `reclamation-say-why.md`.
+
+- **Words under the preview on each world:** one line per cause, with the card's mark, what it does, and why, in the engine's own facts:
+  - its home ("Frackworm comes from Endessa");
+  - a temperature it is not made for ("Zolton runs −40 to 20°C, mostly colder than the 5 to 40°C Fathomaw is comfortable at");
+  - air or water it cannot take;
+  - its will;
+  - the creatures beside it;
+  - the Clash.
+- **The fight's cause, open since pass 57:** `forecastSendBlows` (rules) reads the forecast's own resolution log. It gives who strikes the creature and how often, whether it acts first, whether an attacker is already hurt, what it lands, whom it downs before they act, and the lift it loses when an ally falls. A rules test holds it to the forecast's toll on five seeds.
+- **Fitting:** your half of a world is 142 to 232 pixels tall on common screens, so the silhouette gives way first, then the number shrinks, then the why. The proving check now holds the words' toll to the chain's, the number below the bars, and the words off your creatures.
+
+**Measured.** Blind readers, same seed before and after. Scores (why a number differs / numbers / good move): live 6/4/7, first build 7/5/7, final 7/5/7.
+- "Cannot tell" became "sure" on the creature's tolerance, the breathing cause and the Clash's attackers.
+- The first build's gap was why a sweep lands 5 on one creature and 11 on another. The final words give the sweep counts, "hurt by then and so weaker", and "before it can act". The final reader asked for the creature's own hit, which was added.
+
+**Verified:** rules tests (635) and web tests (1761) pass; the four table checks are green.
+
+**Open:**
+
+- Creatures already standing on a world get no words (a reader asked why Scalatto holds half, not a quarter, on Luminax).
+- The header thermometer has no scale a reader can decode.
+- Carried: a verdict per column; the send counter's one held back; the score rows beside the squad (pass 60); dullness meaning four things; whether element should matter; strike keepers near 67 to 68 percent.
