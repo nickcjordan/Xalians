@@ -7,17 +7,19 @@ import { HomeGlyph, StrainGlyph, CompanyGlyph, FallsGlyph, NoMediumGlyph, PieceG
 	PASS 52, THE GLANCE REDESIGN (docs/design/reclamation-glance-redesign.md).
 
 	The table's instruments, so whose a thing is and how much it counts are read from where
-	it sits, its color and its length, not from a label:
+	it sits and its length, not from a label (pass 60: and no longer from a side color; the
+	rival's is above and yours below, and a hue is a world's):
 
 	  Standing    a world's two bars, the rival's above yours on one scale (pass 54; it
 	              replaced pass 52's FrontLine)
-	  HoldBar     a creature's hold as a bar in its side's color, the part the Clash is
+	  HoldBar     a creature's hold as a bar in its world's color, the part the Clash is
 	              forecast to take striped at its end
 	  FitStrip    three columns on a bench card, one per world in world order: what your
 	              side there would gain by sending it there now, what the rival would lose
-	              on a brass tag at the top, and the rival's remaining lead as a pointer
+	              on a tag at the top, and the rival's remaining lead as a pointer
 	              (pass 58)
-	  RoundTrack  the game's nine worlds, three rounds of three, filled by who won them
+	  RoundTrack  the game's nine worlds, three rounds of three, a won world filled on the
+	              winner's half, the rival's top and yours bottom (pass 60)
 	  ScorePips   the rival's row of five above yours, each with its turn lamp
 	  SendCount   the sends each side has left: a piece, then a tick per send in fives, then
 	              the count (pass 58: a bare numeral beside the pennants read as the score)
@@ -197,10 +199,9 @@ export function HoldBar({ hold, after, unstrained, side, className }) {
 
 	and the number is own and allies, what your side there would gain. What the send would
 	take off the rival is the rival's side, so it is drawn where the rival's side of a world
-	is, at the top: a brass tag hanging from the top of the column with the rival's total
-	there now and after the send, "12→0" (`room` keeps the top of every column on the bench
-	for it once any card has one). The brass
-	pointer on the column's edge is what the rival would still lead by after the send: a
+	is, at the top: a tag hanging from the top of the column with the rival's total there
+	now and after the send, "12→0" (`room` keeps the top of every column on the bench for it
+	once any card has one). The small pointer on the column's edge is what the rival would still lead by after the send: a
 	column that passes it would put you ahead.
 */
 function FallsMark() {
@@ -492,8 +493,8 @@ export function RoundTrack({ track, frameIndex }) {
 	more of the round track), then the sends that side has left, and a pause mark once the
 	rival has passed this round.
 
-	PASS 54. Whose move it is is a pointer at the head of that side's row, pulsing in its
-	color (the turn marker a board game passes across the table), in place of the "Your
+	PASS 54. Whose move it is is a pointer at the head of that side's row, pulsing (the turn
+	marker a board game passes across the table), in place of the "Your
 	move" and "Rival's move" words; the other row's head is empty. The sends left are a
 	row of ticks, one per send the game allows, lit for each one still to spend, with the
 	count after them, in place of a chevron and a bare number.
@@ -552,7 +553,7 @@ export function SendCount({ left, cap, side, worldsAhead, tone }) {
 	);
 }
 
-// the Ruling on a world: a pennant in the winner's color (pass 54: at the end of the winner's bar, which shows the margin)
+// the Ruling on a world: a pennant at the end of the winner's bar (pass 54), which shows the margin; since pass 60 the bar it rides says whose
 export function Crest({ verdict }) {
 	if (!verdict) {
 		return null;

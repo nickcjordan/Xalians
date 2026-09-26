@@ -1,12 +1,31 @@
 import { describe, it, expect } from 'vitest';
-import { captionEvent, narrateEvent } from '../reclamationNarration';
+import { captionEvent, captionOwned, narrateEvent } from '../reclamationNarration';
 
 const rakh = { name: 'Rakh', seat: 'A' };
 const vrix = { name: 'Vrix', seat: 'B' };
 const text = (parts) => parts.map((p) => (typeof p === 'string' ? p : p.name)).join('');
 
+describe('captionOwned (pass 60: whose, in a word, now that names carry no side color)', () => {
+	const own = (parts, you) => captionOwned(parts, you).map((p) => (typeof p === 'string' ? p : `${p.whose || ''}${p.name}`)).join('');
+	it("says 'your' before your creatures and leaves the rival's bare", () => {
+		const hurt = captionEvent({ type: 'attack', role: 'strike', outcome: 'hurt', power: 4, remaining: 3 }, { actor: rakh, target: vrix });
+		expect(own(hurt, 'A')).toBe('Your Rakh strikes Vrix: −4, 3 left');
+		expect(own(hurt, 'B')).toBe('Rakh strikes your Vrix: −4, 3 left');
+		expect(own(captionEvent({ type: 'recover', amount: 2 }, { actor: rakh, bolster: vrix }), 'A')).toBe('Vrix gives your Rakh 2 back');
+	});
+	it("keeps 'its own' on a blow to a creature's own side", () => {
+		const mine = { name: 'Hippochamp', seat: 'A' };
+		expect(own(captionEvent({ type: 'attack', role: 'sweep', outcome: 'downed', power: 6 }, { actor: rakh, target: mine }), 'A')).toBe('Your Rakh downs its own Hippochamp');
+	});
+	it('leaves a line with no creature of yours as it was', () => {
+		const parts = captionEvent({ type: 'exchange', exchange: 2 }, {});
+		expect(captionOwned(parts, 'A')).toEqual(parts);
+		expect(captionOwned(null, 'A')).toBe(null);
+	});
+});
+
 describe('captionEvent', () => {
-	it('keeps the two names as parts, so each can wear its side', () => {
+	it('keeps the two names as parts, so each can say whose it is', () => {
 		const parts = captionEvent({ type: 'attack', role: 'strike', outcome: 'hurt', power: 4, remaining: 3 }, { actor: rakh, target: vrix });
 		expect(parts[0]).toBe(rakh);
 		expect(parts[2]).toBe(vrix);
