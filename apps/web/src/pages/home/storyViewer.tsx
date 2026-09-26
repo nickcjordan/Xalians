@@ -46,9 +46,11 @@ export type ViewerBeat = {
 	 * The beat itself. `live`: whether it may animate now. `shown`: whether it
 	 * is on the screen at all (the shown beat, or the one leaving), so a beat
 	 * that is not can hold nothing heavy in the DOM. `screen`: its archive
-	 * screen's power state.
+	 * screen's power state. `primed`: its heavy picture may be mounted now,
+	 * held still, under the static of the screen tuning in, so going live
+	 * later only starts it.
 	 */
-	render: (live: boolean, shown: boolean, screen: ScreenState) => React.ReactNode;
+	render: (live: boolean, shown: boolean, screen: ScreenState, primed: boolean) => React.ReactNode;
 };
 
 // The incoming beat's entrance (delay plus transform, see `.story-scene`) is
@@ -329,7 +331,7 @@ export function StoryViewer({ id, title, beats, after }: { id: string; title: Re
 								inert={i === index ? undefined : true}
 								data-state={i === index ? 'active' : i < index ? 'past' : 'future'}
 							>
-								{b.render(liveNow(i), shown, i === index ? screen : 'standby')}
+								{b.render(liveNow(i), shown, i === index ? screen : 'standby', i === index && visible && screen !== 'standby' && screen !== 'off')}
 							</div>
 						);
 					})}

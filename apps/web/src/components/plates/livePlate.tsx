@@ -27,6 +27,14 @@ type Props = {
 	poster: { src: string; small: string; alt: string };
 	/** Controlled: whether this plate is the live one. Left out, the plate most in view is live. */
 	active?: boolean;
+	/**
+	 * Controlled: mount the plate's SVG now, held at its first frame, so that
+	 * going live later only starts it. Injecting a plate is the costliest thing
+	 * it does (a parse and a first style of every layer); a page that has a
+	 * moment to hide it in, such as the story's archive screen tuning in under
+	 * static, primes the plate then.
+	 */
+	primed?: boolean;
 	className?: string;
 };
 
@@ -59,11 +67,12 @@ function holdAtStart(host: HTMLElement) {
 	});
 }
 
-export function LivePlate({ src, poster, active, className }: Props) {
+export function LivePlate({ src, poster, active, primed = false, className }: Props) {
 	const hostRef = React.useRef<HTMLDivElement>(null);
 	const controlled = active !== undefined;
 	const [staged, setStaged] = React.useState(false);
 	const live = controlled ? active : staged;
+	const mounted = live || (controlled && primed);
 	const [ready, setReady] = React.useState(false);
 
 	// Join the stage: report how much of this plate is in view; the stage says when it is live.
@@ -91,11 +100,22 @@ export function LivePlate({ src, poster, active, className }: Props) {
 		};
 	}, [src, controlled]);
 
-	// Mount the SVG while live; take it out of the DOM entirely when not.
+	// Out of the DOM before the browser restyles: a plate leaving the stage is
+	// often under a change of state (a beat going inert and hidden), and with
+	// its thousands of elements still in place that restyle was the costliest
+	// frame of a change (measured 2026-09-26).
+	React.useLayoutEffect(() => {
+		const host = hostRef.current;
+		if (mounted || !host || !host.firstChild) return;
+		setPlaying(host, false);
+		host.innerHTML = '';
+	}, [mounted]);
+
+	// Mount the SVG while live or primed; take it out of the DOM entirely when neither.
 	React.useEffect(() => {
 		const host = hostRef.current;
 		if (!host) return undefined;
-		if (!live) {
+		if (!mounted) {
 			setPlaying(host, false);
 			host.innerHTML = '';
 			setReady(false);
@@ -115,12 +135,12 @@ export function LivePlate({ src, poster, active, className }: Props) {
 		return () => {
 			cancelled = true;
 		};
-	}, [live, src]);
+	}, [mounted, src]);
 
-	// The live plate plays while the tab is shown, never under reduced motion.
+	// The live plate plays while the tab is shown, never under reduced motion; a primed one holds.
 	React.useEffect(() => {
 		const host = hostRef.current;
-		if (!ready || !host) return undefined;
+		if (!ready || !host || !live) return undefined;
 		const reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 		if (reduced) return undefined;
 		const apply = () => setPlaying(host, document.visibilityState !== 'hidden');
@@ -130,10 +150,10 @@ export function LivePlate({ src, poster, active, className }: Props) {
 			document.removeEventListener('visibilitychange', apply);
 			setPlaying(host, false);
 		};
-	}, [ready]);
+	}, [ready, live]);
 
 	return (
-		<span className={cn('live-plate block h-full w-full', className)} data-live-plate={ready ? 'ready' : 'poster'} data-plate-src={src}>
+		<span className={cn('live-plate block h-full w-full', className)} data-live-plate={ready ? (live ? 'ready' : 'primed') : 'poster'} data-plate-src={src}>
 			<img
 				src={poster.src}
 				srcSet={`${poster.small} 768w, ${poster.src} 1536w`}

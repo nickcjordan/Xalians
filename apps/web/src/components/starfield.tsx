@@ -7,18 +7,26 @@ import * as React from 'react';
  * as the sky moving). Fixed alone would leave it behind the reading sections
  * and the footer, so this fades it out over the first screen of scrolling:
  * full strength at the top, gone by the time the hero has left. Written to
- * a CSS variable rather than React state so scrolling never re-renders.
+ * the starfield's own opacity, and only when it changes: a custom property on
+ * <html> made every element on the page restyle on every scroll frame
+ * (measured 2026-09-26), and past the hero the value never changes at all.
  */
-function useStarfieldFade() {
+function useStarfieldFade(ref: React.RefObject<HTMLDivElement | null>) {
 	React.useEffect(() => {
-		const root = document.documentElement;
+		const el = ref.current;
+		if (!el) return undefined;
 		let frame = 0;
+		let shown = '';
 		const apply = () => {
 			frame = 0;
 			// Fully faded once the hero band is off screen.
 			const span = Math.max(1, window.innerHeight * 0.6);
-			const fade = 1 - Math.min(1, window.scrollY / span);
-			root.style.setProperty('--starfield-fade', fade.toFixed(3));
+			const fade = (1 - Math.min(1, window.scrollY / span)).toFixed(3);
+			if (fade === shown) return;
+			shown = fade;
+			el.style.opacity = fade;
+			// Gone entirely: its drifting layers stop costing anything.
+			el.style.visibility = fade === '0.000' ? 'hidden' : '';
 		};
 		const onScroll = () => {
 			if (!frame) frame = window.requestAnimationFrame(apply);
@@ -30,11 +38,8 @@ function useStarfieldFade() {
 			if (frame) window.cancelAnimationFrame(frame);
 			window.removeEventListener('scroll', onScroll);
 			window.removeEventListener('resize', onScroll);
-			// The variable is set on <html>, so it has to be cleaned up when the
-			// page unmounts or every other route inherits the last value.
-			root.style.removeProperty('--starfield-fade');
 		};
-	}, []);
+	}, [ref]);
 }
 
 /**
@@ -44,9 +49,10 @@ function useStarfieldFade() {
  * own mask keeps it to the top band (`.starfield` in globals.css).
  */
 function Starfield() {
-	useStarfieldFade();
+	const ref = React.useRef<HTMLDivElement>(null);
+	useStarfieldFade(ref);
 	return (
-		<div className="starfield" aria-hidden="true">
+		<div ref={ref} className="starfield" aria-hidden="true">
 			<div className="starfield-far" />
 		</div>
 	);

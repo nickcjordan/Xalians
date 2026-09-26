@@ -278,7 +278,8 @@
 	   static's jitter move, and only while they are seen. */
 	.archive { --noise: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.92' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .86 0 0 0 0 .88 0 0 0 0 .86 0 0 0 1.6 -.45'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23n)'/%3E%3C/svg%3E"); position: absolute; inset: 0; background: var(--color-archive-glass); overflow: hidden; }
 	.archive-picture { position: absolute; inset: 0; transform-origin: 50% 50%; }
-	.archive[data-screen="standby"] .archive-picture { visibility: hidden; }
+	/* Opacity, not visibility: visibility is inherited, so hiding a mounted plate that way restyled every one of its thousands of elements on each change of state. */
+	.archive[data-screen="standby"] .archive-picture { opacity: 0; }
 	.archive-static {
 		position: absolute;
 		inset: -50%;
@@ -336,26 +337,43 @@
 	.archive[data-screen="switch"] .archive-static { animation: archive-static-cut 520ms linear both, archive-jitter 240ms steps(6) infinite; }
 	/* Off: the picture collapses to a line and goes. */
 	.archive[data-screen="off"] .archive-picture { animation: archive-off 380ms cubic-bezier(.6, 0, .9, .4) both; }
+	.archive-picture { will-change: transform; }
 
 	@keyframes archive-static { 0% { opacity: 0; } 8% { opacity: .95; } 52% { opacity: .9; } 78% { opacity: .18; } 100% { opacity: 0; } }
 	@keyframes archive-static-cut { 0% { opacity: 0; } 15% { opacity: .9; } 60% { opacity: .75; } 100% { opacity: 0; } }
 	@keyframes archive-jitter { 0% { transform: translate(0, 0); } 100% { transform: translate(-110px, 66px); } }
+	/* Transform and opacity only, so the compositor runs them even while the
+	   page is busy mounting the recording under the static; the glow of the
+	   line is a pale layer fading over the picture, not a filter on it (a filter
+	   on a living plate repaints every layer of it, every frame). */
+	.archive-picture::after {
+		content: "";
+		position: absolute;
+		inset: 0;
+		background: var(--color-archive-ink);
+		opacity: 0;
+		pointer-events: none;
+	}
+	.archive[data-screen="tuning"] .archive-picture::after { animation: archive-flash-on 1100ms linear both; }
+	.archive[data-screen="off"] .archive-picture::after { animation: archive-flash-off 380ms linear both; }
 	@keyframes archive-on {
-		0%, 50% { opacity: 0; transform: scale(1, .004); filter: brightness(4); }
-		51% { opacity: 1; transform: scale(1, .004); filter: brightness(4); }
-		74% { transform: scale(1, 1); filter: brightness(1.7); }
-		100% { opacity: 1; transform: none; filter: none; }
+		0%, 50% { opacity: 0; transform: scale(1, .004); }
+		51% { opacity: 1; transform: scale(1, .004); }
+		74%, 100% { opacity: 1; transform: none; }
 	}
+	@keyframes archive-flash-on { 0%, 50% { opacity: 0; } 51% { opacity: .9; } 70% { opacity: .35; } 100% { opacity: 0; } }
 	@keyframes archive-off {
-		0% { transform: none; filter: none; opacity: 1; }
-		62% { transform: scale(1, .004); filter: brightness(4); opacity: 1; }
-		100% { transform: scale(0, .004); filter: brightness(4); opacity: 0; }
+		0% { transform: none; opacity: 1; }
+		62% { transform: scale(1, .004); opacity: 1; }
+		100% { transform: scale(0, .004); opacity: 0; }
 	}
+	@keyframes archive-flash-off { 0% { opacity: 0; } 60% { opacity: .85; } 100% { opacity: .85; } }
 	@keyframes archive-roll { from { transform: translateY(0); } to { transform: translateY(700%); } }
 	@keyframes archive-blink { 0% { opacity: 1; } 50% { opacity: .25; } }
 	@media (prefers-reduced-motion: reduce) {
 		.archive .archive-static,
 		.archive .archive-picture,
+		.archive .archive-picture::after,
 		.archive .archive-glass::after,
 		.archive .archive-dot { animation: none !important; }
 	}
@@ -771,14 +789,13 @@
 	z-index: -1;
 	overflow: hidden;
 	pointer-events: none;
-	/* Two masks, multiplied. The vertical gradient fades the sky out below the
-	   hero band. The second is driven by --starfield-fade, which the page sets
-	   from scroll position: the sky is only ever behind the hero, so once the
-	   hero has left the screen the layer is gone entirely rather than sitting
-	   behind the destination list and the footer. */
+	/* The vertical gradient fades the sky out below the hero band. The page
+	   also fades the whole layer by scroll position (its opacity, set by
+	   components/starfield.tsx): the sky is only ever behind the hero, so once
+	   the hero has left the screen the layer is hidden entirely rather than
+	   sitting behind the destination list and the footer. */
 	-webkit-mask-image: linear-gradient(to bottom, rgb(0 0 0) 0, rgb(0 0 0) 40vh, transparent 70vh);
 	mask-image: linear-gradient(to bottom, rgb(0 0 0) 0, rgb(0 0 0) 40vh, transparent 70vh);
-	opacity: var(--starfield-fade, 1);
 }
 
 .starfield::before,

@@ -148,6 +148,7 @@ function Panel({
 	eager = false,
 	still = false,
 	live,
+	primed = false,
 	staged = false,
 	screen,
 }: {
@@ -162,6 +163,8 @@ function Panel({
 	still?: boolean;
 	/** In the story's viewer: whether its living plate may be live now. */
 	live?: boolean;
+	/** In the story's viewer: mount the living plate now, held still, so going live only starts it. */
+	primed?: boolean;
 	/** In the story's viewer, which moves it itself: no scroll-in and no drift. */
 	staged?: boolean;
 	/** In the story's viewer: the recording's archive screen, its state and readout. */
@@ -169,7 +172,7 @@ function Panel({
 }) {
 	const picture = art.live ? (
 		// A living plate holds still in its frame: its motion is its own.
-		<LivePlate src={art.live} poster={{ ...(art.still ?? art), alt: art.alt }} active={live} />
+		<LivePlate src={art.live} poster={{ ...(art.still ?? art), alt: art.alt }} active={live} primed={primed} />
 	) : (
 		<img
 			src={art.src}
@@ -386,11 +389,11 @@ const STORY_BEATS: ViewerBeat[] = BEATS.map((sp, i): ViewerBeat => {
 		n,
 		label: ERA_TITLE[sp.art.era],
 		live: sp.art.live,
-		render: (live, _shown, screen) => (
+		render: (live, _shown, screen, primed) => (
 			<div className="scene-spread" data-layout={sp.layout} style={{ '--ar': sp.ar } as React.CSSProperties}>
 				<div className="scene-art">
 					<div className="scene-frame">
-						<Panel art={sp.art} aspect={sp.aspect} position={sp.position} live={live} staged screen={{ state: screen, rec: n, place: RECORDED[sp.art.era], start: reelStart(i) }} />
+						<Panel art={sp.art} aspect={sp.aspect} position={sp.position} live={live} primed={primed} staged screen={{ state: screen, rec: n, place: RECORDED[sp.art.era], start: reelStart(i) }} />
 					</div>
 					<SceneLabel era={sp.art.era} />
 				</div>
