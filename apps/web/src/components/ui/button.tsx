@@ -32,6 +32,9 @@ const buttonVariants = cva(
         "icon-lg": "size-12",
       },
     },
+    /* A text link lines up with the text around it: the size's side padding never applies to it
+       (the size classes come after the variant's, so the variant's px-0 alone lost). */
+    compoundVariants: [{ variant: "link", class: "px-0 has-[>svg]:px-0" }],
     defaultVariants: {
       variant: "default",
       size: "default",

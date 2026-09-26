@@ -70,6 +70,11 @@ function reducedMotion() {
 	return typeof window !== 'undefined' && !!window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 }
 
+// How much of the chapter bar a beat's item takes on a wide screen, where the full scenes show their names.
+function barWeight(b: ViewerBeat) {
+	return b.minor ? 0.45 : 1.5;
+}
+
 function canBox() {
 	if (typeof window === 'undefined' || !window.matchMedia) return true;
 	return window.matchMedia(BOX_QUERY).matches;
@@ -237,6 +242,18 @@ export function StoryViewer({ id, title, beats, after }: { id: string; title: Re
 		window.scrollTo({ top: window.scrollY + by, behavior: reducedMotion() ? 'auto' : 'smooth' });
 	}, [boxed, pinTop]);
 
+	// Where a beat's marker sits on the bar once the full scenes carry their names (lg): a small piece's
+	// numeral needs less room than a scene's name, so the bar gives the names more, and "05 The Reign of
+	// Kozrak" is no longer cut short. Each marker is its item's left edge, so the dot goes to the share of
+	// the bar that the items before it take.
+	const barAt = React.useCallback(
+		(i: number) => {
+			const total = beats.reduce((a, b) => a + barWeight(b), 0);
+			return beats.slice(0, i).reduce((a, b) => a + barWeight(b), 0) / total;
+		},
+		[beats]
+	);
+
 	const go = React.useCallback(
 		(to: number) => {
 			const next = Math.max(0, Math.min(count - 1, to));
@@ -304,10 +321,10 @@ export function StoryViewer({ id, title, beats, after }: { id: string; title: Re
 				<div className="flex flex-wrap items-end gap-x-10 gap-y-2 pb-4 lg:pb-5">
 					{title}
 					{/* The chapter bar: one marker per beat, the dot on the shown one. */}
-					<div className="story-line min-w-64 flex-1" style={{ '--story-progress': index / count } as React.CSSProperties}>
+					<div className="story-line min-w-64 flex-1" style={{ '--story-progress': index / count, '--story-progress-lg': barAt(index) } as React.CSSProperties}>
 						<ol className="m-0 flex list-none p-0" aria-label="Chapters">
 							{beats.map((b, i) => (
-								<li key={b.key} className="m-0 min-w-0 flex-1">
+								<li key={b.key} className="m-0 min-w-0 flex-1 lg:grow-(--bar-w)" style={{ '--bar-w': barWeight(b) } as React.CSSProperties}>
 									<button
 										type="button"
 										onClick={() => go(i)}
