@@ -95,7 +95,7 @@ export const lamp = {
 	off: '#3d3a30',
 };
 
-/** The two seats at any table: your side cyan, the rival's brass, as the Duel paints them. */
+/** The two seats at the Duel's table: your side cyan, the rival's brass. Reclamation tells sides by position instead (its pass 60). */
 export const team = {
 	one: '#3bbedf',
 	two: '#c39738',

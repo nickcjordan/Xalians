@@ -27,7 +27,7 @@ function sectionSubtitle(to) {
             return `${lore.getSpeciesList().length} species, ${lore.getWorlds().length} worlds`;
         case '/encyclopedia/powers': {
             const powers = lore.getPowers();
-            return `${powers.factions.length + powers.vallerii.length + powers.peoples.length} powers and peoples`;
+            return `${powers.factions.length + powers.vallerii.length + powers.peoples.length} records`;
         }
         case '/encyclopedia/index':
             return `${lore.getEntries().length} entries`;

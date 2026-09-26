@@ -95,7 +95,25 @@ Used by a world, a species and an entry. Breadcrumb, masthead, identity strip, b
 - **Folds**: one `Fold` component (level 0, legend label, count at right, chevron, one level deep). Two per record: Cross references, and For builders holding the machine data flat (no nested accordion). "Record data" and "Survey data" become the fold's content directly.
 - **Foot**: "This world in the story: Part 4, The Age of Generators" as an `IndexRow`, not a bare `RecordRow`.
 
-### Shape C: the reading layout
+### Reading flow correction, 2026-09-25
+
+Nick requested a chapter-book reading flow with occasional pictures after the world history layout left a large blank space between passages. This supersedes the three-track layout and per-paragraph margin treatment below for world histories and Story parts.
+
+- The outer reading grid has exactly two items: navigation and one continuous text body. A rail spanning implicit grid rows stretched the first chapter to the rail's height; individual passages must never share outer rows with navigation.
+- Keep the text at a readable 62ch measure with relaxed line spacing. World histories use named chapters, ordinary paragraph spacing, and illustrations after their associated passage. No divider, repeated era tag, or visible chapter number on every paragraph.
+- Keep existing passage IDs, links, and read marks. The desktop contents rail uses chapter numbers and titles; on smaller screens it folds above the text.
+- Story illustrations stay in the reading column. Records consulted follow each beat in a closed Fold. Source records and fixed points remain available in their existing folds.
+- Verify all 14 world histories and all seven Story parts in a real browser at phone, tablet, and desktop widths with `scripts/design/check-reading-flow.js`. DOM-only tests cannot catch grid row stretching.
+
+### Chapter structure and text provenance, 2026-09-26
+
+The 163 source paragraphs now form 68 named chapters across 14 worlds. `docs/encyclopedia/worldChapters.json` owns editorial titles, zero-based starting passage indices, and illustration placement. It does not replace or rewrite the history prose. Poseidas has five chapters: An ocean paradise, The death tides, The Algael boom, The drowning of Poseidas, and Neutral ground.
+
+Chapter navigation follows the active heading and shows completion only when all its passages have read marks. Original paragraph anchors and stored read marks remain compatible. Search results and source citations call these smaller units passages. Repeated term links appear only once per chapter.
+
+World introductions, Story narration, and expanded reference articles carry an Editorial summary label. The Reading Room explains source precedence in About the texts. Chapter titles and art placement are editorial aids, not additional canon. Independent lore review verified all 68 headings and 14 illustration placements against the source histories.
+
+### Shape C: the reading layout (original plan, revised above)
 
 Used by a story part and by a world's History section. A three-track grid across the shell: a sticky rail (240px), the text (62ch), and a marginalia column that takes the rest.
 

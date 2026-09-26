@@ -253,6 +253,10 @@ Open after this pass: sites with many creatures scroll inside their floor (ten a
 
 Nick gave full reins to deepen the play and polish the experience, with research into what makes games hold. The digest, the audit and the roadmap are in `reclamation-play-enhancements.md`; this pass took assumptions 27 to 31. It also restored something lost since the simple-mode commit of 2026-09-03: the bar that loads the next round after the Court rules and the panel at the Charter had stopped being rendered, so the table could not be played past round one. The headless check now plays a whole Proving to the report, so that cannot pass silently again. Wording: the match is a Proving everywhere; "expedition" survives only in the engine's file names. The measured ladder (envoy 37.5, heir 39, broker 44.5, proctor 48, windsailor 54.5 percent against the proctor) runs opposite to the fiction's guess, and the hide rule turned out to be the flip condition restated; both are recorded as lever cases in the enhancements document.
 
+### Sides by position (Nick, 2026-09-24, pass 60)
+
+The two sides no longer have colors. The table borrowed the Duel's cyan and brass for you and the rival in its first week, and by pass 59 gold was doing five jobs at once (the rival, three worlds, the flame). Nick: "i am fine with removing the use of amber and cyan to denote sides, i think you can do that in better ways". A hue on the table now means a world (or a creature's element, on its badge), red means what the Clash would take from you, and everything else is ink. Whose a thing is comes from where it sits: the rival above and you below on every world, in the score and on the round track, with your squad at the foot. The Clash's line names your creatures "your". The full account is `reclamation-sides-by-position.md`.
+
 ## Open items
 
 - The name. Tribute was named for the row game's fiction. "The Proving" is the fiction's name for a match; whether the game itself takes it is open.

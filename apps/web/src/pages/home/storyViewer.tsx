@@ -48,9 +48,10 @@ export type ViewerBeat = {
 	 * that is not can hold nothing heavy in the DOM. `screen`: its archive
 	 * screen's power state. `primed`: its heavy picture may be mounted now,
 	 * held still, under the static of the screen tuning in, so going live
-	 * later only starts it.
+	 * later only starts it. `play`: brings the viewer to its resting place,
+	 * which is what starts the recording (the screen's Play key).
 	 */
-	render: (live: boolean, shown: boolean, screen: ScreenState, primed: boolean) => React.ReactNode;
+	render: (live: boolean, shown: boolean, screen: ScreenState, primed: boolean, play: () => void) => React.ReactNode;
 };
 
 // The incoming beat's entrance (delay plus transform, see `.story-scene`) is
@@ -213,6 +214,29 @@ export function StoryViewer({ id, title, beats, after }: { id: string; title: Re
 		}
 	}, [inView, index, beats]);
 
+	// Play: scroll the page to where the viewer rests, and let resting start the recording as it always
+	// does. In the box that is the middle of its centered pause; in the page, the picture centered on the
+	// screen (or its top, if it is taller than the screen).
+	const play = React.useCallback(() => {
+		const wrap = wrapRef.current;
+		const pin = pinRef.current;
+		const box = boxRef.current;
+		if (!wrap || !pin || !box || typeof window === 'undefined') return;
+		let by: number;
+		if (boxed) {
+			const spacer = wrap.lastElementChild as HTMLElement | null;
+			const dwell = spacer && spacer !== pin ? spacer.getBoundingClientRect().height : 0;
+			const natural = wrap.getBoundingClientRect().top + parseFloat(getComputedStyle(wrap).paddingTop || '0');
+			by = natural - pinTop + dwell / 2;
+		} else {
+			const pic = box.querySelector<HTMLElement>('.story-scene[data-state="active"] .frame') ?? box;
+			const r = pic.getBoundingClientRect();
+			by = r.height <= window.innerHeight ? r.top - (window.innerHeight - r.height) / 2 : r.top - 8;
+		}
+		if (Math.abs(by) < 1) return;
+		window.scrollTo({ top: window.scrollY + by, behavior: reducedMotion() ? 'auto' : 'smooth' });
+	}, [boxed, pinTop]);
+
 	const go = React.useCallback(
 		(to: number) => {
 			const next = Math.max(0, Math.min(count - 1, to));
@@ -331,7 +355,7 @@ export function StoryViewer({ id, title, beats, after }: { id: string; title: Re
 								inert={i === index ? undefined : true}
 								data-state={i === index ? 'active' : i < index ? 'past' : 'future'}
 							>
-								{b.render(liveNow(i), shown, i === index ? screen : 'standby', i === index && visible && screen !== 'standby' && screen !== 'off')}
+								{b.render(liveNow(i), shown, i === index ? screen : 'standby', i === index && visible && screen !== 'standby' && screen !== 'off', play)}
 							</div>
 						);
 					})}

@@ -339,6 +339,31 @@
 	.archive-hud-rec { grid-column: 1 / -1; grid-row: 3; }
 	.archive-dot { width: 7px; height: 7px; border-radius: 50%; background: color-mix(in srgb, var(--color-archive-ink) 50%, transparent); }
 	.archive[data-screen="on"] .archive-dot { background: var(--color-archive-lamp); animation: archive-blink 1.6s steps(1) infinite; }
+	/* The Play key over a screen standing by (ArchivePlay): a plain transport key in the screen's own ink,
+	   laid over the frame by the beat, beside the frame's link rather than inside it. */
+	.archive-play {
+		position: absolute;
+		z-index: 20;
+		left: 50%;
+		top: 50%;
+		transform: translate(-50%, -50%);
+		display: inline-flex;
+		align-items: center;
+		gap: 10px;
+		min-height: 44px;
+		padding: 10px 20px 10px 16px;
+		border: 1px solid color-mix(in srgb, var(--color-archive-ink) 55%, transparent);
+		background: color-mix(in srgb, var(--color-archive-glass) 72%, transparent);
+		color: var(--color-archive-ink);
+		font-size: var(--text-small);
+		letter-spacing: var(--tracking-legend, .08em);
+		text-transform: uppercase;
+		cursor: pointer;
+		transition: border-color 120ms var(--ease-out), background-color 120ms var(--ease-out);
+	}
+	.archive-play svg { width: 18px; height: 18px; fill: currentColor; }
+	.archive-play:hover { border-color: var(--color-archive-ink); background: color-mix(in srgb, var(--color-archive-glass) 88%, transparent); }
+	.archive-play:focus-visible { outline: 2px solid var(--color-ring); outline-offset: 3px; }
 	.archive[data-screen="standby"] .archive-hud-clock,
 	.archive[data-screen="tuning"] .archive-hud-clock { opacity: .35; }
 

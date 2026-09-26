@@ -23,6 +23,8 @@ import {
   Trophy,
   Info,
   ChevronRight,
+  ChevronsLeft,
+  ChevronsRight,
   Crown,
   Volume2,
   VolumeX,
@@ -88,6 +90,9 @@ import {
   remainingLabel,
   Health,
   shortName,
+  valueWords,
+  ValueBar,
+  ThreatBar,
 } from "./powerworksVisuals";
 
 import {
@@ -100,6 +105,17 @@ import {
   type UnitPreview,
 } from "./powerworksScene";
 import { PowerworksRadial, ringIndices } from "./powerworksRadial";
+import {
+  atHealth,
+  blowOf,
+  machineThreat,
+  moveValue,
+  projectOrders,
+  ticksDue,
+  total,
+  valueOn,
+  type MoveValue,
+} from "@xalians/rules/dungeon/value";
 import { PowerworksEnvironment } from "./powerworksEnvironment";
 import { useBattlePresentation } from "./powerworksPresentation";
 import "./powerworks.css";
@@ -581,8 +597,13 @@ export default function PowerworksPage() {
         >
           <span className="pw-eyebrow">Turn order</span>
         </button>
-        <ol aria-label="Turn order">
-          {initiativeUnits.map((u, i) => {
+        <ol aria-label="Turn order" className={handOrder ? "previewing" : ""}>
+          {(handOrder ?? initiativeUnits).map((u, i) => {
+            // Readout pass: the move in hand's turn order. Only a unit whose own pace the move
+            // changes is marked (the machine it slows, the companion an immediate move hurries),
+            // not every unit that shuffles one place to make room.
+            const was = initiativeUnits.findIndex((x) => x.id === u.id);
+            const shift = handOrder && was >= 0 && paced.has(u.id) ? i - was : 0;
             const standing = (busy ? [...team, ...enemies] : [...run.team, ...run.enemies]).find(
               (t) => t.id === u.id
             );
@@ -595,17 +616,22 @@ export default function PowerworksPage() {
                   acted.has(u.id) && actor !== u.id ? "acted" : ""
                 } ${down ? "down" : ""} ${!busy && active?.id === u.id ? "selected" : ""} ${
                   set ? "set" : ""
-                }`}
+                } ${shift > 0 ? "later" : shift < 0 ? "earlier" : ""}`}
               >
                 <button
                   onClick={() => (u.enemy ? inspectUnit(u.id) : select(u))}
                   disabled={!u.enemy && (!planning || down)}
                   aria-label={`Turn ${i + 1}: ${labelFor(u)}${
                     u.enemy ? "" : set ? ", order set" : busy ? "" : ", needs an order"
-                  }`}
+                  }${shift ? `, ${shift > 0 ? "later" : "earlier"} with this move` : ""}`}
                   title={labelFor(u)}
                 >
                   <Portrait u={u} small />
+                  {shift !== 0 && (
+                    <span className="pw-turn-shift" aria-hidden="true">
+                      {shift > 0 ? <ChevronsRight /> : <ChevronsLeft />}
+                    </span>
+                  )}
                 </button>
               </li>
             );
@@ -615,6 +641,32 @@ export default function PowerworksPage() {
     );
   }
 
+  /**
+    Readout pass: a move's worth this round in the inspector, in the same health as the
+    wheel. A companion's move reads against the machines after the squad's other orders; a
+    machine's move reads as the blow it would land on the squad.
+  */
+  function inspectWorth(u: Unit, i: number): React.ReactNode {
+    const m = moveAt(u, i);
+    if (u.hp <= 0 || m.fallback) return null;
+    if (u.enemy)
+      return (
+        <ThreatBar amount={blowOf(run, u, i)} ranged={m.range !== "contact"} label={labelFor(u)} />
+      );
+    const rest = Object.fromEntries(Object.entries(plans).filter(([id]) => id !== u.id));
+    const at = run.phase === "planning" ? atHealth(run, projectOrders(run, rest).hp) : run;
+    if (!legalTargets(at, u, i).length) return null;
+    const v = moveValue(at, u, i);
+    const on = v.target ? [...run.enemies, ...run.team].find((x) => x.id === v.target) : undefined;
+    // A move resting or spent shows what it would be worth, faded: not an option this round.
+    return (
+      <ValueBar
+        value={v}
+        label={on ? labelFor(on) : undefined}
+        className={legalMoves(u, run).includes(i) ? "" : "waiting"}
+      />
+    );
+  }
   function labelFor(u: Unit) {
     const peers = run.enemies.filter((e) => e.species === u.species);
     return (
@@ -797,7 +849,10 @@ export default function PowerworksPage() {
     const factor = strikes ? matchup(a, u, m) : 1;
     const immune = strikes && damage === 0;
     const guarded = strikes && damage > 0 && guardFactor(u) < 1;
-    const knockout = damage > 0 && damage >= u.hp;
+    // Readout pass: the unit arrives at its health after the squad's other orders. A machine
+    // they already finish takes nothing from this move, whatever it would have done.
+    const gone = !mate && u.hp <= 0;
+    const knockout = !gone && damage > 0 && damage >= u.hp;
     const pull =
       !towardAlly &&
       effects.some((e) => e.support === "displace") &&
@@ -809,6 +864,8 @@ export default function PowerworksPage() {
       : 0;
     // Focus shuts out attention statuses (the rules' FOCUS_STATUS, not re-exported).
     const focused = u.conditions.some((c) => c.status === "focused");
+    // Readout pass: a status that would land but not weaken this machine's next blow.
+    const threat = !mate && u.hp > 0 ? machineThreat(run, u) : null;
     const statuses = effects
       .filter(
         (e) =>
@@ -825,6 +882,11 @@ export default function PowerworksPage() {
           immune:
             protectionDegree(u, { kind: "status", status }) === "immune" ||
             (e.group === "attention" && focused),
+          harmless:
+            !!threat &&
+            !threat.held &&
+            ((status === "blinded" && !threat.ranged) ||
+              (e.group === "binding" && !threat.closing && u.charge === null)),
         };
       });
     // A contact strike on a unit with a contact reaction (the guardian's discharge) is
@@ -875,7 +937,8 @@ export default function PowerworksPage() {
       }
     }
     const words: string[] = [];
-    if (strikes)
+    if (gone) words.push("already falls to your other orders");
+    else if (strikes)
       words.push(
         immune
           ? "no effect"
@@ -893,6 +956,8 @@ export default function PowerworksPage() {
       words.push(
         st.immune
           ? `immune to ${st.status}`
+          : st.harmless
+          ? `${st.status} would not weaken its next blow`
           : `${st.status} ${st.chance}% chance${
               st.group === "binding" ? ", blocks closing in" : ""
             }`
@@ -923,7 +988,7 @@ export default function PowerworksPage() {
     // The card's line keeps the clause that matters most: the damage (or the heal, or the
     // status); the rest is drawn on the creature and read in full by the accessible name.
     const line = `${
-      strikes && !immune
+      strikes && !immune && !gone
         ? `${damage} damage, ${u.hp} to ${Math.max(0, u.hp - damage)}${knockout ? ", knocks out" : ""}`
         : words[0]
     }${shock ? `; shocks back ${shock.damage}` : ""}`;
@@ -964,13 +1029,13 @@ export default function PowerworksPage() {
   function buildPreviews(a: Unit, m: Move, index: number, aimedId: string | null) {
     const targets = legalTargets(run, a, index);
     const out: Record<string, UnitPreview> = {};
-    for (const t of targets) out[t.id] = previewOf(a, m, t, "target", t.enemy === a.enemy);
+    for (const t of targets) out[t.id] = previewOf(a, m, seen(t), "target", t.enemy === a.enemy);
     const reach = (from: Unit, only: (u: Unit) => boolean = () => true) => {
       const toward = from.enemy === a.enemy;
       const around = areaReach(run, a, m, from).filter(only);
       for (const r of around)
         out[r.id] = {
-          ...previewOf(a, m, r, "area", toward),
+          ...previewOf(a, m, seen(r), "area", toward),
           role: "reached",
           danger: !toward && r.enemy === a.enemy,
         };
@@ -996,6 +1061,24 @@ export default function PowerworksPage() {
     }
     return out;
   }
+  /*
+    Readout pass (2026-09-26). Nick asked what the value bars measure, what full and empty
+    mean, and whether a value is about one machine or all of them. So every value here is
+    read against the machines' health after the squad's other standing orders and their own
+    degrading ticks (projectOrders), names the target it is about (the referent), and says
+    why when it is zero. The companion choosing is read without its own old order.
+  */
+  const others: Record<string, Order> =
+    planning && active
+      ? Object.fromEntries(Object.entries(plans).filter(([id]) => id !== active.id))
+      : plans;
+  const othersPlan = planning ? projectOrders(run, others) : null;
+  const valueRun = othersPlan ? atHealth(run, othersPlan.hp) : run;
+  const seen = (u: Unit) => valueRun.enemies.find((e) => e.id === u.id) ?? u;
+  const values: Record<number, MoveValue> =
+    planning && active
+      ? Object.fromEntries(available.map((i) => [i, moveValue(valueRun, active, i)]))
+      : {};
   const aimed =
     move && hoverTarget && targetIds.includes(hoverTarget) ? hoverTarget : null;
   const previews: Record<string, UnitPreview> =
@@ -1005,6 +1088,109 @@ export default function PowerworksPage() {
     ringOpen && active && hint !== null && available.includes(hint)
       ? buildPreviews(active, moveAt(active, hint), hint, null)
       : {};
+  // The move in hand (hovered, armed or chosen), what it is worth, and the target that value
+  // is about: the aimed unit while one is aimed, else the move's best target (the referent,
+  // marked on the stage so a bar is never read as "every machine").
+  const held = !planning || !active ? null : pending ?? (ringOpen ? hint : null);
+  const inHand = held !== null && available.includes(held) ? held : null;
+  const aimedAt = aimed
+    ? valueRun.enemies.find((e) => e.id === aimed) ?? run.team.find((u) => u.id === aimed)
+    : undefined;
+  const handValue: MoveValue | null =
+    active && inHand !== null
+      ? aimedAt
+        ? valueOn(valueRun, active, inHand, aimedAt)
+        : values[inHand] ?? null
+      : null;
+  const referent = handValue?.target ?? null;
+  const referentUnit = referent
+    ? [...run.enemies, ...run.team].find((u) => u.id === referent)
+    : undefined;
+  // What the standing orders take from each unit this round, drawn at the end of its health
+  // bar: the machines' planned damage and ticks, a companion's own degrading ticks.
+  const standingPlan = !planning ? null : inHand !== null ? othersPlan : projectOrders(run, plans);
+  const planned: Record<string, number> = {};
+  if (planning) {
+    for (const e of run.enemies)
+      if (e.hp > 0 && standingPlan && e.hp - standingPlan.hp[e.id] > 0)
+        planned[e.id] = e.hp - standingPlan.hp[e.id];
+    for (const u of run.team) if (ticksDue(u) > 0) planned[u.id] = ticksDue(u);
+  }
+  // Each machine's next blow, and the part the orders (with the move in hand on its
+  // referent only) would stop: a status on it, or a knockout the whole plan lands.
+  const threats = planning
+    ? Object.fromEntries(
+        run.enemies.filter((e) => e.hp > 0).map((e) => [e.id, machineThreat(run, e)])
+      )
+    : {};
+  const withHand: Record<string, Order> =
+    active && inHand !== null && referent
+      ? { ...others, [active.id]: { move: inHand, target: referent } }
+      : inHand !== null
+      ? others
+      : plans;
+  const finalPlan = planning ? projectOrders(run, withHand) : null;
+  const prevented: Record<string, number> = {};
+  if (planning && finalPlan) {
+    for (const [id, q] of Object.entries(withHand)) {
+      const u = run.team.find((x) => x.id === id);
+      if (!u || u.hp <= 0 || q.move < 0 || actsOnSelf(moveAt(u, q.move))) continue;
+      const t = run.enemies.find((e) => e.id === q.target && e.hp > 0);
+      if (t) prevented[t.id] = (prevented[t.id] ?? 0) + valueOn(run, u, q.move, t).stops;
+    }
+    for (const e of run.enemies)
+      if (e.hp > 0 && finalPlan.hp[e.id] <= 0) prevented[e.id] = threats[e.id]?.amount ?? 0;
+  }
+  // An order that does nothing (its target already finished by the orders before it, a heal
+  // on a squadmate at full health) says so on its chip.
+  const idleOrders: Record<string, string> = {};
+  if (planning && finalPlan)
+    for (const [id, q] of Object.entries(plans)) {
+      const u = run.team.find((x) => x.id === id);
+      if (!u || u.hp <= 0 || q.move < -1 || (active && inHand !== null && id === active.id)) continue;
+      const t = actsOnSelf(moveAt(u, q.move))
+        ? u
+        : [...run.enemies, ...run.team].find((x) => x.id === q.target);
+      if (!t) continue;
+      const at = finalPlan.before[id] ? atHealth(run, finalPlan.before[id]) : run;
+      const v = valueOn(at, u, q.move, at.enemies.find((e) => e.id === t.id) ?? t);
+      if (total(v) <= 0) idleOrders[id] = valueWords(v, labelFor(t));
+    }
+  // The turn order the move in hand would make: an immediate move's bonus, and a machine it
+  // slows sliding later (readout pass). Only while a move is in hand.
+  const paced = new Set<string>();
+  const handOrder: Unit[] | null = (() => {
+    if (!planning || !active || inHand === null) return null;
+    const m = moveAt(active, inHand);
+    const was = plans[active.id] ? moveAt(active, plans[active.id].move) : null;
+    if ((m.preparation === "immediate") !== (was?.preparation === "immediate")) paced.add(active.id);
+    const slow = m.effects.find(
+      (e) => e.support === "status" && e.status === "slowed" && e.recipient !== "self"
+    );
+    const slowed = (u: Unit) =>
+      !!slow &&
+      u.id === referent &&
+      u.enemy !== active.enemy &&
+      protectionDegree(u, { kind: "status", status: "slowed" }) !== "immune" &&
+      !u.conditions.some((c) => c.status === "slowed");
+    for (const e of run.enemies) if (slowed(e)) paced.add(e.id);
+    const enemiesThen = run.enemies.map((e) =>
+      slowed(e)
+        ? {
+            ...e,
+            conditions: [
+              ...e.conditions,
+              { status: "slowed", group: slow!.group ?? "tempo", intensity: 0, remaining: 1, source: active.id, removable: [] },
+            ],
+          }
+        : e
+    );
+    return initiative(run.team, enemiesThen, run.round, {
+      ...run.orders,
+      ...plans,
+      [active.id]: { move: inHand, target: referent ?? plans[active.id]?.target ?? "" },
+    });
+  })();
   const aimedUnit = aimed
     ? [...run.team, ...run.enemies].find((u) => u.id === aimed)
     : null;
@@ -1038,6 +1224,7 @@ export default function PowerworksPage() {
     chosen: number | null;
     prompt: string;
     line: string | null;
+    value: { reading: MoveValue; label: string } | null;
   };
   const motion = !reducedMotion;
   const ringView: RingView | null =
@@ -1049,6 +1236,10 @@ export default function PowerworksPage() {
           chosen: pending,
           prompt,
           line: targetLine,
+          value:
+            pending !== null && handValue && referentUnit
+              ? { reading: handValue, label: labelFor(referentUnit) }
+              : null,
         }
       : null;
   const [leaving, setLeaving] = useState<
@@ -1457,6 +1648,11 @@ export default function PowerworksPage() {
                   labelFor={labelFor}
                   previews={previews}
                   hints={hints}
+                  threats={threats}
+                  prevented={prevented}
+                  planned={planned}
+                  referent={referent && !aimed ? referent : null}
+                  idleOrders={idleOrders}
                   beatMs={frameDuration / speed}
                   story={story}
                   flash={flash}
@@ -1485,6 +1681,7 @@ export default function PowerworksPage() {
                         locked={leaving.locked}
                         prompt={leaving.prompt}
                         targetLine={leaving.line}
+                        cardValue={leaving.value}
                         onClosed={() =>
                           setLeaving((l) =>
                             l && l.stamp === leaving.stamp ? null : l
@@ -1510,6 +1707,12 @@ export default function PowerworksPage() {
                         prompt={prompt}
                         targetLine={targetLine}
                         onPreview={setHint}
+                        values={values}
+                        valueLabel={(id) => {
+                          const u = [...run.enemies, ...run.team].find((x) => x.id === id);
+                          return u ? labelFor(u) : "";
+                        }}
+                        cardValue={ringView?.value ?? null}
                       />
                     ) : null,
                   ]}
@@ -2061,6 +2264,34 @@ export default function PowerworksPage() {
               </section>
               <section>
                 <h3>
+                  <Swords />
+                  Reading a move
+                </h3>
+                <p>
+                  Under each move, a bar measured in health, ending in its
+                  number. Every bar uses one scale: a full bar is 12 health,
+                  each segment 2. Red is what the move takes from a machine,
+                  gold what it keeps for your squad (a blow stopped, a machine
+                  knocked out before it strikes again, a squadmate guarded),
+                  green what it heals. It is read on one target, the one it
+                  does the most with, marked with a crosshair on the stage;
+                  aim at another and the card's bar follows. A crossed-out
+                  circle means the move does nothing useful this round; point
+                  at it to see why.
+                </p>
+                <p>
+                  Under each machine, red is the blow it is poised to land on
+                  one of your squad, and its number is what still gets
+                  through; gold is the part your orders stop. What your
+                  standing orders already take shows as a darker chunk on each
+                  health bar, so a machine they finish is plain before you
+                  pick another move. The turn order shows where the move in
+                  hand would put everyone, with an arrow on anyone it hurries
+                  or slows.
+                </p>
+              </section>
+              <section>
+                <h3>
                   <Zap />
                   Size, speed and element
                 </h3>
@@ -2248,6 +2479,7 @@ export default function PowerworksPage() {
                       blocked={!!inspect.bound && closes(m)}
                       id={`inspect-move-${i}`}
                       fullName
+                      worth={inspectWorth(inspect, i)}
                     />
                   </div>
                   <p>

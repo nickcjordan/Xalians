@@ -184,8 +184,9 @@
 
 	/* --- sides ------------------------------------------------------------
 	   The two seats at any table, as the Duel paints them: your pieces rimmed
-	   in cyan, the rival's in brass. Shared by every game so a side reads the
-	   same way everywhere. */
+	   in cyan, the rival's in brass. Reclamation stopped using them in its pass
+	   60 (Nick, 2026-09-24): its sides are told by position, and a hue there is
+	   a world's. */
 	--g-team-one: #3bbedf;
 	--g-team-two: #c39738;
 

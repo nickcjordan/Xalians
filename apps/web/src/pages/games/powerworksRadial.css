@@ -702,6 +702,30 @@
 }
 /* The target line: the instruction, then the aimed target's one-line outcome. A fixed two
    lines, so the card never changes height while the player aims. */
+/* Readout pass: the chosen move's value, on the unit it is read on (the aimed one, else its best). */
+.pw-radial-card-value {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+.pw-radial-card-value-on {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  min-width: 0;
+  overflow: hidden;
+  font: 600 12px/1 var(--font-legend);
+  color: #d7c9a3;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.pw .pw-radial-card-value-on svg {
+  flex: none;
+  width: 11px;
+  height: 11px;
+  color: #cbb98f;
+}
 .pw-radial-card-target {
   display: flex;
   align-items: flex-start;
@@ -947,12 +971,42 @@
   height: 10px;
   color: #efdbab;
 }
+/* Readout pass: an order that would do nothing (its target already finished, a heal on a
+   squadmate at full health) keeps its place but reads as spent, with the no-effect mark. */
+.pw .pw-unit-plaque .pw-order-chip.idle {
+  border-color: #aab4ad55;
+}
+.pw .pw-unit-plaque .pw-order-chip.idle .pw-order-chip-move,
+.pw .pw-unit-plaque .pw-order-chip.idle .pw-order-chip-target {
+  color: #aab4ad;
+}
+.pw .pw-unit-plaque .pw-order-chip-target svg.pw-order-chip-idle {
+  width: 11px;
+  height: 11px;
+  margin-right: 3px;
+  color: #d9ddd6;
+}
 .pw .pw-unit-plaque .pw-order-chip.empty {
   border-style: dashed;
   border-color: #aab4ad44;
   background: transparent;
   font-weight: 400;
   color: #aab4ad;
+}
+/* Readout pass: an order that would do nothing (its target already finished, a heal on a
+   squadmate at full health) keeps its place but reads as spent, with the no-effect mark. */
+.pw .pw-unit-plaque .pw-order-chip.idle {
+  border-color: #aab4ad55;
+}
+.pw .pw-unit-plaque .pw-order-chip.idle .pw-order-chip-move,
+.pw .pw-unit-plaque .pw-order-chip.idle .pw-order-chip-target {
+  color: #aab4ad;
+}
+.pw .pw-unit-plaque .pw-order-chip-target svg.pw-order-chip-idle {
+  width: 11px;
+  height: 11px;
+  margin-right: 3px;
+  color: #d9ddd6;
 }
 .pw .pw-unit-plaque .pw-order-chip.empty {
   justify-content: center;
@@ -1203,4 +1257,145 @@
     background: #1b2c33;
     border-color: #f2d68b;
   }
+}
+
+/*
+  Move value (2026-09-26): one currency, health, on one scale (VALUE_PX_PER_HP). Under each
+  disc's name, a segmented bar: red is the health the move takes from the machines at its best
+  this round, gold the health it keeps for the squad. Under each machine's plate, its next
+  blow on the same scale, with the part the squad's orders would stop in gold. The segments
+  are 2 HP each, like a health bar's chunks; lengths compare directly across discs.
+*/
+.pw {
+  --value-track: 72px;
+}
+@media (max-width: 600px) {
+  .pw {
+    --value-track: 50px;
+  }
+}
+.pw-radial-label {
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+}
+.pw-value {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+.pw-value-track {
+  position: relative;
+  display: flex;
+  width: var(--value-track);
+  height: 8px;
+  overflow: hidden;
+  border-radius: 1px;
+  /* The empty track is the scale (readout pass): it has to read as a ruler, not as nothing. */
+  background: #1d2f35e6;
+  box-shadow: inset 0 0 0 1px #d5c08c55, 0 1px 2px #000a;
+}
+.pw-value-track > i {
+  display: block;
+  height: 100%;
+}
+/* The same hatches the health bars use: red for health lost, gold for health kept. */
+.pw-value-track > i.harm {
+  background: repeating-linear-gradient(120deg, #ffc6b6 0 3px, #b9533c 3px 6px);
+}
+.pw-value-track > i.saved {
+  background: repeating-linear-gradient(120deg, #fff0bc 0 3px, #d19a3e 3px 6px);
+}
+/* The 2 HP segment gaps, drawn over the fills. */
+.pw-value-track::after,
+.pw-threat-track::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  /* One gap per 2 HP: the track is VALUE_TRACK_HP (12) long, so six segments. */
+  background: repeating-linear-gradient(
+    90deg,
+    #0000 0 calc(var(--value-track) / 6 - 1px),
+    #08151bcc calc(var(--value-track) / 6 - 1px) calc(var(--value-track) / 6)
+  );
+  pointer-events: none;
+}
+.pw-value.empty .pw-value-track {
+  opacity: 0.55;
+}
+/* Readout pass: every bar ends in its number, in health, set like a health bar's number. */
+.pw-value-num,
+.pw-threat-num {
+  display: inline-flex;
+  align-items: center;
+  gap: 1px;
+  min-width: 1.4em;
+  font: 700 12px/1 var(--font-legend);
+  font-variant-numeric: tabular-nums;
+  color: #f4eee0;
+  text-shadow: 0 1px 1px #000, 0 0 3px #000;
+}
+.pw-value-num svg {
+  width: 11px !important;
+  height: 11px !important;
+  color: #f2a28f;
+  filter: drop-shadow(0 1px 1px #000);
+}
+/* A use worth nothing ends in the no-effect mark; its tooltip says why. */
+.pw-value-none {
+  width: 12px !important;
+  height: 12px !important;
+  color: #b9c3bd;
+  filter: drop-shadow(0 1px 1px #000);
+}
+.pw-value-track > i.healed {
+  background: repeating-linear-gradient(120deg, #d3f7dc 0 3px, #5fae7a 3px 6px);
+}
+.pw-radial-slot.dim .pw-radial-value {
+  display: none;
+}
+
+.pw-threat {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 3px;
+}
+.pw-threat > svg {
+  width: 12px !important;
+  height: 12px !important;
+  flex: none;
+  color: #e79380;
+}
+.pw-threat-track {
+  position: relative;
+  display: block;
+  height: 7px;
+  overflow: hidden;
+  border-radius: 1px;
+  background: #c5604a;
+  box-shadow: 0 0 0 1px #0008;
+  transition: width 200ms var(--ease-out);
+}
+.pw-threat-num {
+  color: #ffd2c6;
+}
+/* Everything it would have landed is stopped: the number that gets through reads in gold. */
+.pw-threat.stopped .pw-threat-num {
+  color: #ffe7a6;
+}
+/* It already loses its turn: no track, a quiet 0. */
+.pw-threat.held .pw-threat-track {
+  width: 0 !important;
+}
+.pw-threat.held .pw-threat-num {
+  color: #b9c3bd;
+}
+/* The part of the blow the squad's orders would stop: gold, laid over the red from its start. */
+.pw-threat-track > i.stopped {
+  position: absolute;
+  inset: 0 auto 0 0;
+  background: repeating-linear-gradient(120deg, #fff0bc 0 3px, #d19a3e 3px 6px);
+  transition: width 200ms var(--ease-out);
 }

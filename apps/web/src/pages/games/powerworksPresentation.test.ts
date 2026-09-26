@@ -2,6 +2,7 @@ import { act, cleanup, renderHook } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { Frame } from "@xalians/rules/dungeon";
 import {
+  PLAYBACK_PACE,
   actionPresentation,
   useBattlePresentation,
 } from "./powerworksPresentation";
@@ -75,7 +76,8 @@ describe("battle presentation timing", () => {
       { initialProps: { frame: hit, index: 1 } }
     );
     expect(result.current.impact).toBe(false);
-    act(() => vi.advanceTimersByTime(359));
+    // A routine blow lands 360ms in, at the calm pass's pace.
+    act(() => vi.advanceTimersByTime(360 * PLAYBACK_PACE - 1));
     expect(result.current.impact).toBe(false);
     act(() => vi.advanceTimersByTime(1));
     expect(result.current.impact).toBe(true);
@@ -87,7 +89,7 @@ describe("battle presentation timing", () => {
     const { result } = renderHook(() =>
       useBattlePresentation(hit, 1, 2, false)
     );
-    act(() => vi.advanceTimersByTime(179));
+    act(() => vi.advanceTimersByTime((360 * PLAYBACK_PACE) / 2 - 1));
     expect(result.current.impact).toBe(false);
     act(() => vi.advanceTimersByTime(1));
     expect(result.current.impact).toBe(true);
@@ -112,7 +114,9 @@ describe("battle presentation timing", () => {
     vi.stubGlobal("matchMedia", () => ({ matches: true }));
     const reduced = renderHook(() => useBattlePresentation(hit, 1, 1, false));
     expect(reduced.result.current.impact).toBe(true);
-    expect(reduced.result.current.frameDuration).toBe(1200);
+    expect(reduced.result.current.frameDuration).toBe(
+      Math.max(1200, actionPresentation(hit).duration)
+    );
     expect(reduced.result.current.sound).toBe(false);
   });
 });

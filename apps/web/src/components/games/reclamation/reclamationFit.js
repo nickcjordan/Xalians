@@ -145,8 +145,7 @@ export function fitScale(fits) {
 
 /*
 	PASS 58. Whether any column on the bench would take something off the rival: then every
-	card keeps the top of its columns for the rival's side (the brass tag of what it would
-	take), so a column never runs up under a tag and the columns still read on one scale.
+	card keeps the top of its columns for the rival's side (the tag of what it would take), so a column never runs up under a tag and the columns still read on one scale.
 */
 export const FIT_RIVAL_ROOM = 0.76;
 export function fitTakesAny(fits) {

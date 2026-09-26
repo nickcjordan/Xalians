@@ -543,13 +543,12 @@ const SECTIONS: { id: string; label: string; node: React.ReactNode }[] = [
       <>
         <SectionHead title="Reading layout" />
         <p className="text-body text-ink-2">
-          Shape C: a sticky rail beside a column of reading blocks, each block carrying its own inner grid (62ch text,
-          a marginalia cell that is filled on purpose) so a block&apos;s margin can never drift into another block&apos;s
-          row. Used by a story part and a world&apos;s History. Under `lg` the rail collapses into a `Fold` above the
-          text and each block&apos;s margin renders above its text as a compact row.
+          A sticky contents rail beside one continuous reading column, capped at 62ch.
+          Paragraphs, illustrations, and reference notes follow document order. The rail cannot
+          stretch the first passage. Under `lg` the contents collapse into a Fold above the text.
         </p>
         <div className="mt-6 border border-edge bg-s0 p-4">
-          <ReadingLayout>
+          <ReadingLayout rail={
             <ReadingRail label="Part 4 of 7" hint="12 read">
               <ol className="m-0 flex list-none flex-col gap-1 p-0">
                 <li className="type-legend border-l-2 border-l-transparent py-1.5 pl-3 text-ink-2">01 The Age of Unbirth</li>
@@ -557,6 +556,7 @@ const SECTIONS: { id: string; label: string; node: React.ReactNode }[] = [
                 <li className="type-legend border-l-2 border-l-transparent py-1.5 pl-3 text-ink-2">03 The End Wars</li>
               </ol>
             </ReadingRail>
+          }>
             <ReadingBlock span="wide">
               <p className="type-legend m-0 mb-2">From the records</p>
             </ReadingBlock>

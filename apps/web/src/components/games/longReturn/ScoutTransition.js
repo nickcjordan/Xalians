@@ -2,13 +2,13 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import ExpeditionSchematic from './ExpeditionSchematic';
 import FieldRecord from './FieldRecord';
 import { expeditionPosition } from './expeditionPosition';
-import { beatDuration } from './beatTiming';
 import { MAX_INSTABILITY, MAX_STRAIN } from './longReturnData';
 import { playGameSound } from './gameAudio';
 import BiIcon from './BiIcon';
 import FieldReserve from './FieldReserve';
 import SequenceStory from './SequenceStory';
 import { scoutCommunication } from './scoutCommunication';
+import { beatDuration } from './beatTiming';
 
 export function scoutBeats(action) {
   const energy = Math.max(0, action.energyBefore - action.energyAfter);
@@ -56,25 +56,29 @@ export default function ScoutTransition({ action, onComplete, soundEnabled = tru
     buttonRef.current?.focus();
     return () => { document.documentElement.style.overflow = previousOverflow; };
   }, []);
-  useEffect(() => {
-    if (final || paused) return undefined;
-    if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) { setIndex(beats.length - 1); return undefined; }
-    const timer = window.setTimeout(() => setIndex((value) => value + 1), beatDuration(beat.kind, beat.text));
-    return () => window.clearTimeout(timer);
-  }, [index, beat.kind, beats.length, final, paused]);
   useEffect(() => { playGameSound(beat.kind, soundEnabled); }, [beat.kind, soundEnabled]);
-  useEffect(() => { if (final) buttonRef.current?.focus({ preventScroll: true }); }, [final]);
+  useEffect(() => {
+    if (paused || final) return undefined;
+    const timer = window.setTimeout(() => setIndex(value => Math.min(beats.length - 1, value + 1)), beatDuration(beat.kind, beat.text));
+    return () => window.clearTimeout(timer);
+  }, [index, paused, final, beats, beat]);
 
   const energyBefore = action.energyBefore;
   const energyAfter = action.energyAfter;
   const stabilityBefore = action.stabilityBefore ?? MAX_INSTABILITY;
   const stabilityAfter = action.stabilityAfter ?? stabilityBefore;
-  const skip = () => final ? onComplete() : setIndex(beats.length - 1);
+  const skip = () => {
+    if (final) onComplete();
+    else {
+      setIndex(beats.length - 1);
+      buttonRef.current?.focus({ preventScroll: true });
+    }
+  };
   const revealedIds = returning ? final ? action.result?.hazards?.filter(hazard => hazard.sensed).map(hazard => hazard.id) : [] : action.result?.relay && index >= 2 ? action.result.revealedIds : [];
-  return <FieldRecord scene={action.scene} title={returning ? action.energyBefore === 0 ? 'Retrieve the scout' : 'The scout returns' : 'Scouting ahead'} label={returning ? action.energyBefore === 0 ? 'Crew retrieving scout' : 'Scout returning' : 'Scouting in progress'} mapFocusLabel={beat.title} animateInitialTravel={!returning} map={<ExpeditionSchematic scene={action.scene} crew={action.crew} scout={action.scout} helperId={action.helperId} companion={action.fieldCompanion} allyWithScout={action.allyWithScout} readingRecord position={expeditionPosition({ actionType: action.type, beat: beat.kind, scan: action.result, encounterMode: action.encounterMode, scoutNeedsRescue: returning && action.energyBefore === 0 })} revealedIds={revealedIds} native={action.encounter && index >= nativeAt ? action.encounter : action.knownNative} nativeState={action.knownNativeState} runFlags={action.runFlags} />} resources={<>
+  return <FieldRecord stableLayout scene={action.scene} title={returning ? action.energyBefore === 0 ? 'Retrieve the scout' : 'The scout returns' : 'Scouting ahead'} label={returning ? action.energyBefore === 0 ? 'Crew retrieving scout' : 'Scout returning' : 'Scouting in progress'} mapFocusLabel={beat.title} animateInitialTravel={!returning} map={<ExpeditionSchematic scene={action.scene} crew={action.crew} scout={action.scout} helperId={action.helperId} companion={action.fieldCompanion} allyWithScout={action.allyWithScout} readingRecord position={expeditionPosition({ actionType: action.type, beat: beat.kind, scan: action.result, encounterMode: action.encounterMode, scoutNeedsRescue: returning && action.energyBefore === 0 })} revealedIds={revealedIds} native={action.encounter && index >= nativeAt ? action.encounter : action.knownNative} nativeState={action.knownNativeState} runFlags={action.runFlags} />} resources={<>
       <FieldReserve kind="energy" label={`${action.scout.species} energy`} max={MAX_STRAIN} before={energyBefore} after={energyAfter} active={index >= energyAt} />
       {returning && <FieldReserve kind="stability" label="Annex stability" max={MAX_INSTABILITY} before={stabilityBefore} after={stabilityAfter} active={index >= stabilityAt} />}
     </>}>
-    <SequenceStory events={beats} index={index} paused={paused} onPause={() => setPaused(!paused)} onNext={() => { setPaused(true); setIndex(Math.min(beats.length - 1, index + 1)); }} action={<button className="inline-flex min-h-11 items-center justify-center gap-1 px-2 whitespace-normal" ref={buttonRef} type="button" onClick={skip}>{final ? completeLabel || (action.encounter ? 'Respond to encounter' : !returning && !action.result.relay ? 'Check scout status' : 'Review scout report') : 'Skip to outcome'} <BiIcon cls="bi bi-arrow-right" /></button>} />
+    <SequenceStory accumulate events={beats} index={index} paused={paused} onPause={() => setPaused(value => !value)} action={<button className="inline-flex min-h-11 items-center justify-center gap-1 px-2 whitespace-normal" ref={buttonRef} type="button" onClick={skip}>{final ? completeLabel || (action.encounter ? 'Respond to encounter' : !returning && !action.result.relay ? 'Check scout status' : 'Review scout report') : 'Reveal full account'} <BiIcon cls="bi bi-arrow-right" /></button>} />
   </FieldRecord>;
 }

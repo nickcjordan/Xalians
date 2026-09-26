@@ -12,18 +12,15 @@ describe('chapterLabel', () => {
 
 	it('agrees with the world page chapter numbering for the same chapter', () => {
 		const world = getWorlds()[0];
-		expect(world.chapters.length).toBeGreaterThan(0);
-		const chapter = world.chapters[0];
-		// The world page renders `CH. {String(index + 1).padStart(2, '0')}` for
-		// chapter.index -- chapterLabel must produce the same number (modulo
-		// case) so the story part, the world page, and search results never
-		// disagree about which chapter is which.
+		expect(world.readingChapters.length).toBeGreaterThan(0);
+		const chapter = world.readingChapters[0];
+		// Named chapter numbers are separate from persistent passage indices.
 		const worldPageDisplay = `CH. ${String(chapter.index + 1).padStart(2, '0')}`;
 		expect(chapterLabel(chapter.index).toUpperCase()).toBe(worldPageDisplay);
 	});
 
 	it('a world lookup by key produces chapters whose displayed numbers start at Ch. 01', () => {
 		const world = getWorld(getWorlds()[0].key);
-		expect(chapterLabel(world.chapters[0].index)).toBe('Ch. 01');
+		expect(chapterLabel(world.readingChapters[0].index)).toBe('Ch. 01');
 	});
 });

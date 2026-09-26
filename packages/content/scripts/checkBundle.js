@@ -28,6 +28,7 @@ const committedSrcDir = path.join(repoRoot, 'packages', 'content', 'src');
 const BUNDLED_FILES = [
   'encyclopedia.json',
   'chronicle.json',
+  'worldChapters.json',
   'registries.json',
   'tour.json',
   'narration.json',

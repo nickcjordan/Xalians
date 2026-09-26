@@ -6,6 +6,8 @@ Nick, 2026-09-23, looking at round 1 of a live game:
 
 This is the brief for the table during Deploy, the Clash and the Ruling. The intro, the draft and the report are unchanged by this pass.
 
+Pass 60 (`reclamation-sides-by-position.md`) replaced this brief's side colors: the rival is still above and you below, but neither side has a color, and a hue on the table means a world.
+
 ## What a decision needs, and where the old table kept it
 
 A send is one creature to one world. What decides it, in the order a player weighs it:

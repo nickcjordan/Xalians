@@ -43,7 +43,7 @@ import {
   slotState,
 } from "./powerworksRadial";
 import { CAMERA, IDENTITY, beatZoom } from "./powerworksStage";
-import { MatchupMark, StatusBadges } from "./powerworksVisuals";
+import { MatchupMark, StatusBadges, ThreatBar, ValueBar } from "./powerworksVisuals";
 import type { Condition, Move, MoveEffect, StatusGroup } from "@xalians/rules/dungeon";
 
 afterEach(cleanup);
@@ -457,6 +457,41 @@ describe("Powerworks radial orders round 2: the card's words, the bar's preview,
     rerender(<Health u={u} />);
     expect(container.querySelector(".pw-hp-label")).toHaveTextContent(`40 / ${u.max}`);
     expect(container.querySelector(".pw-hp-chunk, .pw-hp-heal, .pw-hp-delta")).toBeNull();
+    // Readout pass: what the standing orders take sits at the bar's end, and the move in
+    // hand's chunk stacks in front of it.
+    rerender(<Health u={u} planned={12} preview={{ ...none, damage: 10 }} />);
+    const planned = container.querySelector<HTMLElement>(".pw-hp-planned")!;
+    expect(planned.style.left).toBe(`${(28 / u.max) * 100}%`);
+    expect(container.querySelector<HTMLElement>(".pw-hp-chunk")!.style.left).toBe(`${(18 / u.max) * 100}%`);
+    // A plan that already takes everything: the move in hand lands on nothing, and says so.
+    rerender(<Health u={u} planned={40} preview={{ ...none, damage: 10 }} />);
+    expect(container.querySelector(".pw-hp-delta")).toHaveTextContent("already falls");
+    expect(container.querySelector(".pw-hp-chunk")).toBeNull();
+  });
+  it("ends every value bar in its number, and an empty one in the no-effect mark (readout pass)", () => {
+    const { container, rerender } = render(
+      <ValueBar value={{ harm: 6, saved: 7, healed: 0, knockout: true }} label="Crawler 1" />
+    );
+    expect(container.querySelector(".pw-value-num")).toHaveTextContent("13");
+    expect(container.querySelector(".pw-value-num svg")).not.toBeNull();
+    expect(container.querySelector(".pw-value")).toHaveAttribute(
+      "title",
+      "Worth 13 health on Crawler 1 this round: takes 6 health and knocks out, keeps about 7 health for the squad"
+    );
+    rerender(
+      <ValueBar value={{ harm: 0, saved: 0, knockout: false, why: { kind: "harmless", status: "blinded" } }} label="Crawler 1" />
+    );
+    expect(container.querySelector(".pw-value-num")).toBeNull();
+    expect(container.querySelector(".pw-value-none")).not.toBeNull();
+    expect(container.querySelector(".pw-value")).toHaveAttribute(
+      "title",
+      "Worth nothing this round: Crawler 1 strikes up close, so blinding does not weaken it"
+    );
+    // A machine's blow ends in what still gets through; one that loses its turn reads 0.
+    rerender(<ThreatBar amount={7} prevented={3} ranged={false} label="Crawler 1" />);
+    expect(container.querySelector(".pw-threat-num")).toHaveTextContent("4");
+    rerender(<ThreatBar amount={0} ranged={false} held="stunned" label="Crawler 1" />);
+    expect(screen.getByRole("img", { name: "Threat: none, stunned" })).toHaveClass("held");
   });
   it("tells a charging companion's other discs why they wait", () => {
     const u = readCompanion(COMPANION_RECORDS.hippochamp, "H");
@@ -480,24 +515,27 @@ describe("Powerworks radial orders round 2: the card's words, the bar's preview,
     const target = { left: 300, top: 60, right: 400, bottom: 160 };
     const roomy = [{ left: 100, top: 60, right: 800, bottom: 400 }];
     const z = beatZoom([actor, target], roomy, 1000, 450, CAMERA.push, 6);
-    expect(z.s).toBe(1.06);
+    expect(z.s).toBe(CAMERA.push);
     expect(inside(z, [...roomy, actor, target])).toBe(true);
     // The midpoint of the pair (260, 205) moves toward the stage center (500, 225).
     const mid = { x: z.tx + z.s * 260, y: z.ty + z.s * 205 };
     expect(Math.abs(mid.x - 500)).toBeLessThan(Math.abs(260 - 500));
+    // But only a drift: at most CAMERA.lead on each axis beyond where the lean alone leaves it.
+    expect(Math.abs(mid.x - 260)).toBeLessThanOrEqual(CAMERA.lead + 0.5);
+    expect(Math.abs(mid.y - 205)).toBeLessThanOrEqual(CAMERA.lead + 0.5);
     // Whole pixels: the pushed layer never stands on a half pixel.
     expect(Number.isInteger(z.tx) && Number.isInteger(z.ty)).toBe(true);
     // No room at all: the camera stays put. No focus: the camera stays put.
     expect(beatZoom([actor], [{ left: 0, top: 0, right: 1000, bottom: 20 }], 1000, 450, CAMERA.push, 6)).toEqual(IDENTITY);
     expect(beatZoom([], roomy, 1000, 450, CAMERA.push, 6)).toEqual(IDENTITY);
-    // A row that spans the stage leaves the full push no pan: the camera pushes less, and the
-    // action still comes toward the centre by its lead (round 3 review).
+    // A row that spans the stage: the camera pushes no more than the full lean, and the action
+    // still comes toward the centre by its lead (round 3 review, calm pass).
     const wide = [{ left: 60, top: 60, right: 940, bottom: 400 }];
     const right = { left: 700, top: 250, right: 800, bottom: 350 };
     const far = { left: 760, top: 60, right: 860, bottom: 160 };
     const w = beatZoom([right, far], wide, 1000, 450, CAMERA.push, 6);
     expect(w.s).toBeGreaterThan(1);
-    expect(w.s).toBeLessThan(1.06);
+    expect(w.s).toBeLessThanOrEqual(CAMERA.push);
     expect(inside(w, [...wide, right, far])).toBe(true);
     const was = (750 + 810) / 2;
     expect(was - (w.tx + w.s * was)).toBeGreaterThanOrEqual(CAMERA.lead - 0.5);
@@ -516,11 +554,9 @@ describe("Powerworks radial orders round 2: the card's words, the bar's preview,
     // An action banner holding the floor: every box stays above it.
     const banned = beatZoom([actor, target], roomy, 1000, 450, CAMERA.push, 6, 380);
     expect(roomy.every((b) => banned.ty + banned.s * b.bottom <= 380 - 6 + 1e-6)).toBe(true);
-    // The push and the return each last 250 to 350 ms.
-    for (const ms of [CAMERA.pushMs, CAMERA.returnMs]) {
-      expect(ms).toBeGreaterThanOrEqual(250);
-      expect(ms).toBeLessThanOrEqual(350);
-    }
+    // Calm pass (2026-09-26): a lean of at most 2%, moving over a second or more, never a snap.
+    expect(CAMERA.push).toBeLessThanOrEqual(1.02);
+    for (const ms of [CAMERA.pushMs, CAMERA.returnMs]) expect(ms).toBeGreaterThanOrEqual(1000);
   });
   it("names every removal in plain words, and the words cover every status the records let each method end", () => {
     const seen: Record<string, Set<string>> = {};

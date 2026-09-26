@@ -4,6 +4,7 @@
 
 import { planetsInOrder, planetsByKey, chronicleParagraphsByPlanetIndex, legacySpeciesList, allEntries } from './loaders';
 import { getEntry } from './entries';
+import chapterPlans from '@xalians/content/worldChapters.json';
 
 function findWholeWord(text, title) {
 	const escaped = title.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -28,6 +29,15 @@ function buildChapters(planet) {
 
 function buildPlanetView(planet) {
 	const entry = getEntry(planet.key);
+	// Keep the legacy paragraph array and indices for chronicle citations,
+	// bookmarks, and existing read marks. Named chapters group these records.
+	const chapters = buildChapters(planet);
+	const plan = chapterPlans.worlds[planet.key];
+	const readingChapters = plan.chapters.map((chapter, index) => ({
+		...chapter,
+		index,
+		paragraphs: chapters.slice(chapter.start, plan.chapters[index + 1]?.start ?? chapters.length),
+	}));
 	// Every entry that names this world can be a route from the world page.
 	const entries = allEntries.filter(
 		(e) => e.key !== planet.key && findWholeWord(e.definition, planet.name)
@@ -42,7 +52,9 @@ function buildPlanetView(planet) {
 		images: planet.images,
 		physical: planet.physical,
 		report: planet.report,
-		chapters: buildChapters(planet),
+		chapters,
+		readingChapters,
+		illustrationAfter: plan.illustrationAfter,
 		nativeSpecies: [],
 		entries,
 		entry,

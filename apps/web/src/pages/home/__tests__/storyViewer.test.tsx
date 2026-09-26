@@ -54,6 +54,40 @@ describe('StoryViewer', () => {
 		expect(screen.queryByRole('button', { name: /Next/ })).toBeNull();
 	});
 
+	const withPlay: ViewerBeat[] = beats.map((b) => ({ ...b, render: (_l, _s, _sc, _p, play) => <button onClick={play}>Play {b.n}</button> }));
+	const rect = (top: number, height: number) => () => ({ top, bottom: top + height, height, left: 0, right: 0, width: 0, x: 0, y: top, toJSON: () => null });
+
+	it('Play brings the boxed viewer to the middle of its resting pause, and changes nothing else', () => {
+		const scrollTo = vi.fn();
+		vi.stubGlobal('scrollTo', scrollTo);
+		vi.stubGlobal('innerHeight', 800); // the viewer (no height in jsdom) rests with its top at 400
+		const { container } = render(<StoryViewer id="story" title={<h2 id="story-title">The Story</h2>} beats={withPlay} />);
+		const section = container.querySelector('section')!;
+		section.getBoundingClientRect = rect(900, 1200);
+		(section.lastElementChild as HTMLElement).getBoundingClientRect = rect(1900, 200);
+		fireEvent.click(screen.getByText('Play 01'));
+		// its natural top at 900 goes to 400, then half the 200px pause further
+		expect(scrollTo).toHaveBeenCalledWith(expect.objectContaining({ top: window.scrollY + 600 }));
+		expect(states(container)).toEqual(['active', 'future', 'future']);
+		vi.unstubAllGlobals();
+	});
+
+	it('Play centers the picture on a screen too small for the box', () => {
+		const scrollTo = vi.fn();
+		vi.stubGlobal('scrollTo', scrollTo);
+		vi.stubGlobal('innerHeight', 800);
+		vi.stubGlobal('matchMedia', () => ({ matches: false, addEventListener: () => {}, removeEventListener: () => {} }));
+		const { container } = render(<StoryViewer id="story" title={<h2 id="story-title">The Story</h2>} beats={withPlay} />);
+		const frame = document.createElement('div');
+		frame.className = 'frame';
+		container.querySelector('.story-scene[data-state="active"]')!.appendChild(frame);
+		frame.getBoundingClientRect = rect(700, 300);
+		fireEvent.click(screen.getByText('Play 01'));
+		// centered: 700 - (800 - 300) / 2 = 450 further down
+		expect(scrollTo).toHaveBeenCalledWith(expect.objectContaining({ top: window.scrollY + 450 }));
+		vi.unstubAllGlobals();
+	});
+
 	it('never moves with the scroll', () => {
 		const { container } = render(<StoryViewer id="story" title={<h2 id="story-title">The Story</h2>} beats={beats} />);
 		fireEvent.scroll(window, { target: { scrollY: 4000 } });

@@ -1,0 +1,415 @@
+{
+  "note": "Editorial chapter divisions for existing world histories. Starts and illustrationAfter are zero-based source paragraph indices. Each chapter ends before the next start, or at the end of the history. Titles organize the source text and add no lore.",
+  "worlds": {
+    "magmuth": {
+      "illustrationAfter": 4,
+      "chapters": [
+        {
+          "key": "a-world-of-fire",
+          "title": "A world of fire",
+          "start": 0
+        },
+        {
+          "key": "the-wealth-beneath-the-lava",
+          "title": "The wealth beneath the lava",
+          "start": 3
+        },
+        {
+          "key": "the-company-wars",
+          "title": "The company wars",
+          "start": 5
+        },
+        {
+          "key": "the-end-wars",
+          "title": "The End Wars",
+          "start": 6
+        },
+        {
+          "key": "old-blood-feuds",
+          "title": "Old blood feuds",
+          "start": 7
+        }
+      ]
+    },
+    "poseidas": {
+      "illustrationAfter": 10,
+      "chapters": [
+        {
+          "key": "an-ocean-paradise",
+          "title": "An ocean paradise",
+          "start": 0
+        },
+        {
+          "key": "the-death-tides",
+          "title": "The death tides",
+          "start": 2
+        },
+        {
+          "key": "the-algael-boom",
+          "title": "The Algael boom",
+          "start": 5
+        },
+        {
+          "key": "the-drowning-of-poseidas",
+          "title": "The drowning of Poseidas",
+          "start": 8
+        },
+        {
+          "key": "neutral-ground",
+          "title": "Neutral ground",
+          "start": 11
+        }
+      ]
+    },
+    "grimedes": {
+      "illustrationAfter": 3,
+      "chapters": [
+        {
+          "key": "the-edge-of-known-space",
+          "title": "The edge of known space",
+          "start": 0
+        },
+        {
+          "key": "the-remote-observatories",
+          "title": "The remote observatories",
+          "start": 2
+        },
+        {
+          "key": "the-experimental-xalians",
+          "title": "The experimental Xalians",
+          "start": 4
+        },
+        {
+          "key": "the-final-battle",
+          "title": "The final battle",
+          "start": 7
+        },
+        {
+          "key": "watchers-on-the-rim",
+          "title": "Watchers on the rim",
+          "start": 9
+        }
+      ]
+    },
+    "luminax": {
+      "illustrationAfter": 11,
+      "chapters": [
+        {
+          "key": "the-failed-garden-world",
+          "title": "The failed garden world",
+          "start": 0
+        },
+        {
+          "key": "the-generator-harvest",
+          "title": "The Generator harvest",
+          "start": 4
+        },
+        {
+          "key": "harvesting-the-suns",
+          "title": "Harvesting the suns",
+          "start": 7
+        },
+        {
+          "key": "war-and-the-solar-cannon",
+          "title": "War and the solar cannon",
+          "start": 10
+        },
+        {
+          "key": "mutations-and-martial-law",
+          "title": "Mutations and martial law",
+          "start": 12
+        }
+      ]
+    },
+    "floria": {
+      "illustrationAfter": 7,
+      "chapters": [
+        {
+          "key": "the-annual-deluge",
+          "title": "The annual deluge",
+          "start": 0
+        },
+        {
+          "key": "the-genesis-prototype",
+          "title": "The Genesis Prototype",
+          "start": 3
+        },
+        {
+          "key": "the-world-trees",
+          "title": "The World Trees",
+          "start": 6
+        },
+        {
+          "key": "isolation-and-the-plague",
+          "title": "Isolation and the Plague",
+          "start": 9
+        }
+      ]
+    },
+    "zolton": {
+      "illustrationAfter": 8,
+      "chapters": [
+        {
+          "key": "a-world-of-lightning",
+          "title": "A world of lightning",
+          "start": 0
+        },
+        {
+          "key": "black-lightning-and-expendable-labor",
+          "title": "Black lightning and expendable labor",
+          "start": 4
+        },
+        {
+          "key": "bloodstorms-and-the-qed",
+          "title": "Bloodstorms and the QED",
+          "start": 6
+        },
+        {
+          "key": "a-war-fought-in-silence",
+          "title": "A war fought in silence",
+          "start": 9
+        },
+        {
+          "key": "reconnecting-the-worlds",
+          "title": "Reconnecting the worlds",
+          "start": 11
+        }
+      ]
+    },
+    "phantiri": {
+      "illustrationAfter": 12,
+      "chapters": [
+        {
+          "key": "the-search-for-other-intelligence",
+          "title": "The search for other intelligence",
+          "start": 0
+        },
+        {
+          "key": "the-ghost-fleet",
+          "title": "The ghost fleet",
+          "start": 3
+        },
+        {
+          "key": "excavating-a-tombworld",
+          "title": "Excavating a tombworld",
+          "start": 5
+        },
+        {
+          "key": "the-city-of-wraiths",
+          "title": "The City of Wraiths",
+          "start": 8
+        },
+        {
+          "key": "the-leviticus-overdrive",
+          "title": "The Leviticus Overdrive",
+          "start": 12
+        }
+      ]
+    },
+    "stonera": {
+      "illustrationAfter": 1,
+      "chapters": [
+        {
+          "key": "the-jorian-belt",
+          "title": "The Jorian Belt",
+          "start": 0
+        },
+        {
+          "key": "the-mining-colonies",
+          "title": "The mining colonies",
+          "start": 2
+        },
+        {
+          "key": "the-buried-ocean",
+          "title": "The search for a buried ocean",
+          "start": 5
+        },
+        {
+          "key": "the-terracannon",
+          "title": "The Terracannon",
+          "start": 7
+        },
+        {
+          "key": "a-captive-workforce",
+          "title": "A captive workforce",
+          "start": 9
+        }
+      ]
+    },
+    "drainov": {
+      "illustrationAfter": 3,
+      "chapters": [
+        {
+          "key": "the-industrial-garden-world",
+          "title": "The industrial garden world",
+          "start": 0
+        },
+        {
+          "key": "the-drainov-disaster",
+          "title": "The Drainov Disaster",
+          "start": 2
+        },
+        {
+          "key": "returning-to-the-wasteland",
+          "title": "Returning to the wasteland",
+          "start": 4
+        },
+        {
+          "key": "the-chemical-war",
+          "title": "The chemical war",
+          "start": 6
+        },
+        {
+          "key": "the-criminal-haven",
+          "title": "The criminal haven",
+          "start": 7
+        }
+      ]
+    },
+    "saiphus": {
+      "illustrationAfter": 5,
+      "chapters": [
+        {
+          "key": "life-among-the-storms",
+          "title": "Life among the storms",
+          "start": 0
+        },
+        {
+          "key": "benthane-and-the-windsailors",
+          "title": "Benthane and the Windsailors",
+          "start": 3
+        },
+        {
+          "key": "the-neph-and-the-labor-revolt",
+          "title": "The Neph and the labor revolt",
+          "start": 5
+        },
+        {
+          "key": "war-and-the-benthane-embargo",
+          "title": "War and the Benthane embargo",
+          "start": 7
+        }
+      ]
+    },
+    "telypso": {
+      "illustrationAfter": 3,
+      "chapters": [
+        {
+          "key": "at-the-center-of-xalia",
+          "title": "At the center of Xalia",
+          "start": 0
+        },
+        {
+          "key": "the-dreamlike-world",
+          "title": "The dreamlike world",
+          "start": 2
+        },
+        {
+          "key": "the-asylum-world",
+          "title": "The asylum world",
+          "start": 4
+        },
+        {
+          "key": "the-generator-and-its-patients",
+          "title": "The Generator and its patients",
+          "start": 6
+        }
+      ]
+    },
+    "krystos": {
+      "illustrationAfter": 12,
+      "chapters": [
+        {
+          "key": "the-aristocratic-paradise",
+          "title": "The aristocratic paradise",
+          "start": 0
+        },
+        {
+          "key": "the-impact-winter",
+          "title": "The impact winter",
+          "start": 4
+        },
+        {
+          "key": "the-prison-world",
+          "title": "The prison world",
+          "start": 7
+        },
+        {
+          "key": "apexs-computing-core",
+          "title": "APEX's computing core",
+          "start": 9
+        },
+        {
+          "key": "the-frozen-aftermath",
+          "title": "The frozen aftermath",
+          "start": 13
+        }
+      ]
+    },
+    "veridium": {
+      "illustrationAfter": 9,
+      "chapters": [
+        {
+          "key": "the-metal-world",
+          "title": "The metal world",
+          "start": 0
+        },
+        {
+          "key": "the-worldship-theory",
+          "title": "The worldship theory",
+          "start": 2
+        },
+        {
+          "key": "the-planetary-factory",
+          "title": "The planetary factory",
+          "start": 4
+        },
+        {
+          "key": "apexs-industrial-war",
+          "title": "APEX's industrial war",
+          "start": 7
+        },
+        {
+          "key": "the-underfactories",
+          "title": "The underfactories",
+          "start": 9
+        }
+      ]
+    },
+    "endessa": {
+      "illustrationAfter": 14,
+      "chapters": [
+        {
+          "key": "the-endless-sea",
+          "title": "The Endless Sea",
+          "start": 0
+        },
+        {
+          "key": "the-nightcap-boom",
+          "title": "The Nightcap boom",
+          "start": 3
+        },
+        {
+          "key": "deepwater-black",
+          "title": "Deepwater Black",
+          "start": 5
+        },
+        {
+          "key": "prospectors-in-the-desert",
+          "title": "Prospectors in the desert",
+          "start": 9
+        },
+        {
+          "key": "the-stolen-generator",
+          "title": "The stolen Generator",
+          "start": 12
+        },
+        {
+          "key": "war-and-the-changing-sands",
+          "title": "War and the changing sands",
+          "start": 15
+        }
+      ]
+    }
+  }
+}

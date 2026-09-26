@@ -5,7 +5,7 @@ import MiniSearch from 'minisearch';
 import { allEntries, planetsInOrder, legacySpeciesList, chronicleData, erasInOrder } from './loaders';
 import { getSpeciesList } from './species';
 import { routeFor } from './routeFor';
-import { chapterLabel } from './chapterLabel';
+import { passageLabel } from './chapterLabel';
 
 function buildDocuments() {
 	const docs = [];
@@ -71,7 +71,7 @@ function flattenWords(value) {
 			id: `paragraph:${key}`,
 			kind: 'paragraph',
 			key,
-			title: `${planetNames.get(paragraph.planet) || paragraph.planet}, ${chapterLabel(paragraph.index)}`,
+			title: `${planetNames.get(paragraph.planet) || paragraph.planet}, ${passageLabel(paragraph.index)}`,
 			text: paragraph.summary,
 			route: routeFor('paragraph', key),
 		});

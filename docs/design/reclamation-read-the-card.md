@@ -2,6 +2,8 @@
 
 Status: shipped in pass 59. It corrects `reclamation-one-side-per-number.md` (pass 58) where the two disagree: a card's columns are in their worlds' colors again, and the card carries no side's color at all.
 
+Pass 60 (`reclamation-sides-by-position.md`) answered this document's open question: Nick ruled the side colors off the whole table, so the world's bars, the creatures on it and the score rows no longer wear cyan or brass either.
+
 ## What Nick asked
 
 Nick, 2026-09-24, on the pass 58 table in round 1:

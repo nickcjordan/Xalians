@@ -15,12 +15,14 @@ export const IDENTITY: Zoom = { s: 1, tx: 0, ty: 0 };
   A phone's squad row spans nearly the whole stage, so its end plaques may come within 3px.
 */
 export const CAMERA = {
-  push: 1.06,
-  pushMs: 320,
-  returnMs: 280,
+  push: 1.015,
+  pushMs: 1100,
+  returnMs: 1100,
+  /** One slow, even curve for every camera move (calm pass): no snap in, no snap back. */
+  ease: "cubic-bezier(0.45, 0, 0.3, 1)",
   margin: { wide: 6, phone: 3 },
-  /** How far a beat brings the action toward the centre, at most, in pixels (round 3 review). */
-  lead: 28,
+  /** How far a beat brings the action toward the centre, at most, in pixels (calm pass: 28 was too much). */
+  lead: 10,
 } as const;
 
 export type StageRefs = {
@@ -79,8 +81,16 @@ export function beatZoom(
       loY = margin - s * minT,
       hiY = floor - margin - s * maxB;
     if (lo > hi || loY > hiY) return null;
-    const tx = Math.round(clamp(cx - s * p.x, Math.ceil(lo), Math.floor(hi))),
-      ty = Math.round(clamp(cy - s * p.y, Math.ceil(loY), Math.floor(hiY)));
+    // Calm pass: the action drifts toward the centre by at most CAMERA.lead on each axis from
+    // where the lean alone would leave it, never the whole way (a 45px pan read as motion).
+    const natX = p.x - s * p.x,
+      natY = p.y - s * p.y;
+    const tx = Math.round(
+        clamp(clamp(cx - s * p.x, natX - CAMERA.lead, natX + CAMERA.lead), Math.ceil(lo), Math.floor(hi))
+      ),
+      ty = Math.round(
+        clamp(clamp(cy - s * p.y, natY - CAMERA.lead, natY + CAMERA.lead), Math.ceil(loY), Math.floor(hiY))
+      );
     // How far the action's midpoint moves toward the centre, in pixels.
     const toward = (p.x - (tx + s * p.x)) * Math.sign(p.x - cx);
     return { s, tx, ty, toward };

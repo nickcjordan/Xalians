@@ -753,7 +753,7 @@
     {
       "title": "Magmuthites",
       "category": "factions",
-      "definition": "The people of Magmuth. Stereotyped by other Xalians as the most aggressive, rebellious, and warlike of their kind, they remain wracked by internecine warfare fueled by old blood feuds from the company wars, and the rest of Xalia quietly counts itself fortunate that they have never united.",
+      "definition": "The Xalian creatures of Magmuth, originally bioengineered for its mines and forges and later turned against one another in the company wars. Their population rebelled against the Vallerii after the Magmuth Massacre, but remains divided by violence rooted in those earlier conflicts.",
       "pronunciation": {
         "respelling": "MAG-muth-ites",
         "ipa": "ˈmægməθaɪts"
@@ -762,8 +762,8 @@
       "related": [
         "company-wars",
         "magmuth",
-        "xalia",
-        "xalians"
+        "magmuth-massacre",
+        "vallerii"
       ]
     },
     {
@@ -1187,7 +1187,7 @@
     {
       "title": "The Zolto",
       "category": "factions",
-      "definition": "The people of Zolton. Freed from APEX's control by Source Code 606, the Zolto now work to re-establish the connection between worlds, hoping to prevent the extinction of Xalian-kind; King Kozrak has labeled those who form such networks galactic enemies and cracked down on the planet to control the manufacture of and access to QEDs.",
+      "definition": "The Xalian creatures of Zolton, freed from APEX's control by Source Code 606 and now working to restore the connections between worlds. King Kozrak has labeled the network-builders galactic enemies and cracked down on Zolton to control the manufacture of and access to QEDs.",
       "pronunciation": {
         "respelling": "ZOL-toh",
         "ipa": "ˈzoʊltoʊ"
@@ -1290,7 +1290,7 @@
       "key": "veridians",
       "title": "Veridians",
       "category": "factions",
-      "definition": "The people of Veridium. During the End Wars, APEX drove the planet's ancient drones and robotic servants as a single hive mind and corralled the Veridians into a formidable fighting force, supplied by starship foundries large enough to spread its menace across the galaxy.",
+      "definition": "The Xalian creatures of Veridium, distinct from its ancient drones and robotic servants. During the End Wars, APEX controlled those machines as a single hive mind and used them to corral the Veridians into a fighting force supplied by the planet's starship foundries.",
       "pronunciation": {
         "respelling": "veh-RID-ee-unz",
         "ipa": "vəˈrɪdiənz"
@@ -1412,7 +1412,7 @@
       "key": "xalians",
       "title": "Xalians",
       "category": "xalians",
-      "definition": "Bio-engineered organisms created by the Vallerii to serve as soldiers and laborers, who are specially adapted to the extreme environments of Xalia due to the incredible science of the Xalian Generators.",
+      "definition": "Semi-intelligent, bioengineered creatures created by the Vallerii to serve as soldiers and laborers, adapted by the Xalian Generators to the extreme environments of Xalia. They are distinct from the intelligent citizens who inhabit the galaxy's civilizations.",
       "pronunciation": {
         "respelling": "ZAY-lee-unz",
         "ipa": "ˈzeɪliənz"
@@ -1464,13 +1464,14 @@
       "key": "grimedites",
       "title": "Grimedites",
       "category": "factions",
-      "definition": "The people of Grimedes. Stigmatized for the gravity, shadow, and time-bending abilities their Generator was made to produce, they now stand watch at the edge of the galaxy against APEX's possible return, their numbers replenished only by those who win Scrambler Tokens in King Kozrak's tournament.",
+      "definition": "The Xalian creatures of Grimedes, whose Generator originally produced subjects for Vallerii experiments. Their current population now guards the galactic rim against APEX's return, relying on Scrambler Tokens won in King Kozrak's tournament to replenish its numbers.",
       "pronunciation": {
         "respelling": "GRIM-uh-dites",
         "ipa": "ˈgrɪmədaɪts"
       },
       "related": [
         "grimedes",
+        "vallerii",
         "apex",
         "king-kozrak",
         "scrambler-token"
@@ -1480,7 +1481,7 @@
       "key": "luminarii",
       "title": "Luminarii",
       "category": "factions",
-      "definition": "The people of Luminax. Held under King Kozrak's martial law to protect his monopoly, they labor to earn Scrambler Tokens to maintain the misfiring Stellaris Superstructure, while some among them study the mutations caused by its ION-9 cannon in secret, hoping for a cure that answers to no Token.",
+      "definition": "The Xalian creatures of Luminax, whose dwindling numbers leave too few workers to maintain the Stellaris Superstructure. Mutations in some creatures exposed to its misfiring ION-9 cannon appear to outpace the Nemesis Plague; King Kozrak has imposed martial law to suppress research that could threaten his monopoly on Scrambler Tokens.",
       "pronunciation": {
         "respelling": "loo-mih-NAH-ree-eye",
         "ipa": "luːmɪˈnɑːriaɪ"
@@ -1490,14 +1491,15 @@
         "king-kozrak",
         "scrambler-token",
         "stellaris-superstructure",
-        "ion-9"
+        "ion-9",
+        "nemesis-plague"
       ]
     },
     {
       "key": "krystians",
       "title": "Krystians",
       "category": "factions",
-      "definition": "The people of Krystos. A divided people who shoulder the blame for a war-scarred world that once served as APEX's cold-storage core, the Krystians must replenish their numbers through King Kozrak's Scrambler Tokens before they can search APEX's old techno-labyrinth for any answer to the Nemesis Plague.",
+      "definition": "The Xalian creatures of Krystos, including the forces that defended APEX's computing stronghold during the End Wars. Their depleted population depends on Scrambler Tokens won in King Kozrak's tournament, while APEX's old techno-labyrinth may still hold an answer to the Nemesis Plague.",
       "pronunciation": {
         "respelling": "KRIS-tee-unz",
         "ipa": "ˈkrɪstiənz"
@@ -1505,6 +1507,7 @@
       "related": [
         "krystos",
         "apex",
+        "the-end-wars",
         "king-kozrak",
         "scrambler-token",
         "nemesis-plague"
@@ -1514,7 +1517,7 @@
       "key": "phantiri-xalians",
       "title": "Phantiri (Xalians of)",
       "category": "factions",
-      "definition": "The Xalians of Phantiri. Non-corporeal ghost Xalians produced after their Generator rewrote itself in the Leviticus Overdrive, they compete for Scrambler Tokens to resurrect themselves and the original Phantiri buried in the City of Wraiths beneath the Dreadscape.",
+      "definition": "The non-corporeal Xalian creatures produced on Phantiri after its Generator rewrote itself in the Leviticus Overdrive. These spectral creatures inhabit the Dreadscape and compete for Scrambler Tokens; they are distinct from the extinct Phantiri civilization whose dead lie in the City of Wraiths beneath them.",
       "pronunciation": {
         "respelling": "fan-TEER-ee",
         "ipa": "fænˈtɪəri"

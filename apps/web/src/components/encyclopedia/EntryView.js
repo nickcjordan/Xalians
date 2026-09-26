@@ -112,7 +112,7 @@ function StoryEra({ row, entryTitle }) {
                         <Link to={lore.routeFor('world', excerpt.world.key)}>
                             <Badge variant="chip-outline">{excerpt.world.name}</Badge>
                         </Link>
-                        <span className="type-data text-small text-ink-2">{lore.chapterLabel(excerpt.index)}</span>
+                        <span className="type-data text-small text-ink-2">{lore.passageLabel(excerpt.index)}</span>
                     </div>
                     <div className="min-w-0">
                         <p className="m-0 max-w-[62ch] font-body text-body text-ink">
@@ -161,7 +161,7 @@ function IdentityPlate({ entry, story }) {
     if (chapterCount > 0) {
         entries.push({
             key: 'Appears in',
-            value: bodyValue(`${chapterCount} chapter${chapterCount === 1 ? '' : 's'} across ${partCount} part${partCount === 1 ? '' : 's'}`),
+            value: bodyValue(`${chapterCount} passage${chapterCount === 1 ? '' : 's'} across ${partCount} part${partCount === 1 ? '' : 's'}`),
         });
     }
 
@@ -232,6 +232,8 @@ export default function EntryView() {
                 <div className="flex min-w-0 flex-col gap-8">
                     {entry.article && entry.article.length > 0 && (
                         <section className="flex flex-col gap-4">
+                            <SectionHead title="Editorial summary" className="mb-0" />
+                            <p className="m-0 font-body text-small text-ink-2">Drawn from the world histories and reference entries. Source excerpts follow below.</p>
                             {entry.article.map((paragraph, i) => (
                                 <Prose key={i} text={paragraph} except={key} />
                             ))}

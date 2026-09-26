@@ -2,9 +2,9 @@ import React from 'react';
 import ReclamationFigure, { ReclamationSilhouette } from './reclamationFigure';
 import XalianImage from '../../xalianImage';
 import { pieceShadowFilter } from '../duel/board/duelPieceToken';
-import { team } from '../../../constants/designTokens';
-import { SwiftGlyph, MediumGlyph, CompanyGlyph } from './reclamationGlyphs';
-import { formatHoldShown, countWord } from './reclamationNarration';
+import { SwiftGlyph, MediumGlyph, CompanyGlyph, PIECE_RIM } from './reclamationGlyphs';
+import { formatHoldShown, countWord, captionOwned } from './reclamationNarration';
+import { reasonLines, ReasonLines } from './reclamationReasons';
 import { elementOf } from './reclamationVocabulary';
 import { Standing, standingSentence, WhyMarks } from './reclamationInstruments';
 import { getSpeciesTypeSymbol } from '../../../utils/svgUtil';
@@ -387,14 +387,20 @@ function ReclamationWorld({
 									/>
 									{!ghost && movingRecordId && <span className="rec-ghost rec-ghost--relocate" aria-label="Move here" title="Move here"><SwiftGlyph /></span>}
 									{/*
-										pass 45: the Clash told where it happens, between the two ranks, each
-										name in its side's color; keyed per step so each line enters fresh
+										pass 45: the Clash told where it happens, between the two ranks; keyed
+										per step so each line enters fresh. Pass 60: your creatures carry
+										"your" in place of a side color, and a bare name is the rival's.
 									*/}
 									{!ghost && !movingRecordId && clashing === site.id && hl.caption && (
 										<span className="rec-clash-caption" key={`cap-${hl.caption.key}`} data-clash-caption={site.id}>
-											{hl.caption.parts.map((part, i) => (typeof part === 'string'
+											{captionOwned(hl.caption.parts, you).map((part, i) => (typeof part === 'string'
 												? <React.Fragment key={i}>{part}</React.Fragment>
-												: <b key={i} className={`rec-clash-name rec-clash-name--${part.seat === you ? 'you' : part.seat ? 'rival' : 'none'}`}>{part.name}</b>))}
+												: (
+													<React.Fragment key={i}>
+														{part.whose}
+														<b className={`rec-clash-name rec-clash-name--${part.seat === you ? 'you' : part.seat ? 'rival' : 'none'}`}>{part.name}</b>
+													</React.Fragment>
+												)))}
 										</span>
 									)}
 								</div>
@@ -412,10 +418,13 @@ function ReclamationWorld({
 										rival is on the rival's side: the cross on the creature it would down, the
 										rival's struck number and the rival's bar.
 									*/}
-									{ghost && previewHere && previewHere.why && ghost.record && (
-										<span key={`ghost-${ghost.record.id}`} className={`rec-ghost-piece${mine.length ? ' rec-ghost-piece--beside' : ''}`} data-ghost-piece={site.id} aria-hidden="true">
+									{ghost && previewHere && previewHere.why && ghost.record && (() => {
+										// pass 61: what moves its number here, and why, in words under the chain
+										const reasons = reasonLines({ why: previewHere.why, record: ghost.record, site, tolerance: ghost.tolerance, blows: ghost.blows });
+										return (
+										<span key={`ghost-${ghost.record.id}`} className={`rec-ghost-piece${mine.length ? ' rec-ghost-piece--beside' : ''}${reasons.length ? ' rec-ghost-piece--says' : ''}`} data-ghost-piece={site.id} aria-hidden="true">
 											<span className="rec-ghost-piece-art">
-												<XalianImage variant="token" speciesName={ghost.record.species} primaryType={elementOf(ghost.record)} padding="0px" fill="black" filter={pieceShadowFilter(team.one, 96)} moreClasses="rec-ghost-piece-img" />
+												<XalianImage variant="token" speciesName={ghost.record.species} primaryType={elementOf(ghost.record)} padding="0px" fill="black" filter={pieceShadowFilter(PIECE_RIM, 96)} moreClasses="rec-ghost-piece-img" />
 											</span>
 											<span className="rec-ghost-piece-read">
 												<b className="g-mono" data-ghost-gain={previewHere.why.gain.toFixed(2)}>{signedHold(previewHere.why.gain)}</b>
@@ -459,8 +468,10 @@ function ReclamationWorld({
 													</span>
 												);
 											})()}
+											<ReasonLines lines={reasons} className="rec-ghost-piece-reasons" />
 										</span>
-									)}
+										);
+									})()}
 								</div>
 							</div>
 						</section>

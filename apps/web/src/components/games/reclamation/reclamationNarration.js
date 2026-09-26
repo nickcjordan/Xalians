@@ -380,9 +380,9 @@ export function narrateMatchEnd(ctx = {}) {
 	The Clash was told in a sentence in the top bar, a screen away from the creatures doing
 	it; the ownership log's open item 2 since pass 28 ("paperwork by definition"). The caption
 	sits on the clashing world itself, between the two ranks. It names creatures bare,
-	because the ranks already say whose is whose and the caption colors each name by side;
-	and it is short enough for a phone column under a hundred pixels wide. The full
-	sentence stays in the log.
+	because the ranks already say whose is whose, and it is short enough for a phone
+	column under a hundred pixels wide. The full sentence stays in the log. (Pass 60: the
+	caption used to color each name by side; captionOwned says it in a word instead.)
 
 	ctx: actor, target, bolster as { name, seat } (target is the blocked attacker for a shield).
 */
@@ -438,6 +438,32 @@ export function captionEvent(event, ctx = {}) {
 		default:
 			return null;
 	}
+}
+
+/*
+	PASS 60. WHOSE, IN A WORD. captionOwned(parts, you) -> the same parts with `whose` set on
+	each of your creatures: "Your" leading the line, "your" inside it.
+
+	The caption told sides apart by painting each name cyan or brass. With the side colors
+	gone from the table (Nick, 2026-09-24), the words carry it the way the log already does,
+	but only for your side: there are two sides, so a bare name is the rival's, and the line
+	stays short enough for a phone ("Your Hippochamp downs Avilily", "Venemist strikes your
+	Hippochamp: −3, 7 left"). A blow on a creature's own side already reads "its own".
+*/
+export function captionOwned(parts, you) {
+	if (!Array.isArray(parts)) {
+		return parts;
+	}
+	return parts.map((part, i) => {
+		if (!part || typeof part === 'string' || !part.seat || part.seat !== you) {
+			return part;
+		}
+		const before = i > 0 ? parts[i - 1] : null;
+		if (typeof before === 'string' && /its own $/.test(before)) {
+			return part;
+		}
+		return { ...part, whose: i === 0 ? 'Your ' : 'your ' };
+	});
 }
 
 /*

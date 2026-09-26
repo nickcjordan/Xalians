@@ -13,6 +13,7 @@ import {
   Zap,
   CornerUpRight,
   Ban,
+  Crosshair,
   Sparkles,
   Plus,
 } from "lucide-react";
@@ -30,6 +31,7 @@ import {
   ElementIcon,
   GroupIcon,
   Health,
+  ThreatBar,
   MoveIcon,
   Portrait,
   StatusBadges,
@@ -82,6 +84,8 @@ export type UnitPreview = HealthPreview & {
     group: StatusGroup;
     chance: number;
     immune: boolean;
+    /** Readout pass: it would land but not weaken this machine's next blow (a blind on a machine that strikes up close). */
+    harmless?: boolean;
   }[];
   /** A helpful move's reading on a squadmate: guards, clears, or why it does nothing. */
   notes: { kind: "guard" | "clear" | "none"; text: string }[];
@@ -268,6 +272,11 @@ export function PowerworksScene({
   ring = null,
   flash = null,
   hints = {},
+  threats = {},
+  prevented = {},
+  planned = {},
+  referent = null,
+  idleOrders = {},
   beatMs,
   story = null,
 }: {
@@ -310,6 +319,16 @@ export function PowerworksScene({
     target's ring and chunk, its matchup chevron, and a contact reaction's mark.
   */
   hints?: Record<string, UnitPreview>;
+  /** Move value pass: each standing machine's next blow while planning, in health. */
+  threats?: Record<string, { amount: number; ranged: boolean; held?: string }>;
+  /** Move value pass: how much of each machine's blow the squad's orders, or the move in hand, would stop. */
+  prevented?: Record<string, number>;
+  /** Readout pass: what the standing orders and degrading ticks take from each unit this round. */
+  planned?: Record<string, number>;
+  /** Readout pass: the unit the move in hand's value is about, marked on its plaque until one is aimed. */
+  referent?: string | null;
+  /** Readout pass: standing orders that would do nothing, with why. */
+  idleOrders?: Record<string, string>;
   /** How long this playback beat lasts as the page runs it, in milliseconds. */
   beatMs?: number;
   /** The playback beat's names for the on-stage banner; null while planning. */
@@ -388,11 +407,12 @@ export function PowerworksScene({
     "--impact-delay": `${presentation.impactDelay / speed}ms`,
   } as React.CSSProperties;
 
-  // The camera (round 3): planning holds still. While a round plays, the camera pushes in
-  // on each acting unit and its target for that beat, and returns before the next one.
+  // The camera (round 3, calmed 2026-09-26): planning holds still. While a round plays, it
+  // leans a little toward each beat's actor and target and holds there until the next.
   // Under reduced motion it holds still throughout (no push at all).
   const stageRef = useRef<HTMLElement>(null),
-    layerRef = useRef<HTMLDivElement>(null);
+    layerRef = useRef<HTMLDivElement>(null),
+    spotRef = useRef<HTMLDivElement>(null);
   const stage: StageRefs = { stage: stageRef, layer: layerRef };
   const [size, setSize] = useState("");
   // The unit whose who-targets-it list is showing: only the one a mouse hovers or the
@@ -412,19 +432,16 @@ export function PowerworksScene({
   const beatActor = !planning && !reducedMotion && frame && actor ? actor.id : null;
   const beatTarget =
     beatActor && recipient && recipient.id !== beatActor ? recipient.id : null;
-  const beatKey = beatActor ? `${frameIndex}:${beatActor}` : null;
-  // The beat whose camera has already returned.
-  const [rested, setRested] = useState<string | null>(null);
-  useEffect(() => {
-    if (!beatKey || paused) return;
-    const length = beatMs ?? presentation.duration / speed;
-    const timer = setTimeout(
-      () => setRested(beatKey),
-      Math.max(0, length - CAMERA.returnMs)
-    );
-    return () => clearTimeout(timer);
-  }, [beatKey, paused, beatMs, speed]);
-  const pushed = !!beatKey && rested !== beatKey;
+  // The calm pass (2026-09-26): the camera no longer pushes in and springs back on every
+  // beat. It leans slightly toward the beat's actor and target and stays there, drifting on
+  // to the next actor, through beats with no actor (a tick, a round heading), until the
+  // round ends and it settles home.
+  const held = useRef<{ actor: string; target: string | null } | null>(null);
+  if (planning || !frame || reducedMotion) held.current = null;
+  else if (beatActor) held.current = { actor: beatActor, target: beatTarget };
+  const focusActor = held.current?.actor ?? null,
+    focusTarget = held.current?.target ?? null;
+  const pushed = !!focusActor;
   useLayoutEffect(() => {
     const layer = layerRef.current;
     if (!layer) return;
@@ -435,7 +452,7 @@ export function PowerworksScene({
         const el = id ? layer.querySelector(`[data-unit="${id}"] .pw-scene-character`) : null;
         return el ? map.flat(el) : null;
       };
-      const focus = [box(beatActor), box(beatTarget)].filter((b): b is Box => !!b);
+      const focus = [box(focusActor), box(focusTarget)].filter((b): b is Box => !!b);
       const boxes = [
         ...layer.querySelectorAll(
           ".pw-unit-plaque, .pw-scene-unit:not(.fallen) .pw-scene-character, .pw-scene-status"
@@ -460,14 +477,17 @@ export function PowerworksScene({
     const moved = z.s > 1 || z.tx !== 0 || z.ty !== 0;
     layer.style.transition = reducedMotion
       ? "none"
-      : `transform ${moved ? CAMERA.pushMs : CAMERA.returnMs}ms cubic-bezier(0.2, 0.7, 0.2, 1)`;
+      : `transform ${moved ? CAMERA.pushMs : CAMERA.returnMs}ms ${CAMERA.ease}`;
+    // The vignette holds still (no-blur pass): it fades in while a round plays and out when
+    // it ends. A light that travelled with the actors read as more motion.
+    if (spotRef.current) spotRef.current.dataset.lit = pushed ? "on" : "off";
     // At rest the layer carries no transform at all, so nothing on the stage is rasterized
     // through a scale while the player plans (round 3).
     layer.style.transform = moved ? `translate(${z.tx}px, ${z.ty}px) scale(${z.s})` : "";
     layer.dataset.camera = moved ? "push" : "rest";
-    layer.dataset.beat = beatActor ? `${beatActor}>${beatTarget ?? ""}` : "";
+    layer.dataset.beat = focusActor ? `${focusActor}>${focusTarget ?? ""}` : "";
     layer.dataset.zoom = z.s.toFixed(3);
-  }, [pushed, beatActor, beatTarget, frameIndex, size, reducedMotion, team.length, enemies.length]);
+  }, [pushed, focusActor, focusTarget, frameIndex, size, reducedMotion, team.length, enemies.length]);
   useEffect(() => {
     const el = stageRef.current;
     if (!el || typeof ResizeObserver === "undefined") return;
@@ -509,6 +529,9 @@ export function PowerworksScene({
       >
         <div className="pw-stage-zoom" ref={layerRef}>
           <PowerworksEnvironment room={room} />
+          {/* The calm pass's focus: a still vignette that darkens the room's edges while a
+              round plays. Under the units, so it never dims a plaque. */}
+          <div className="pw-spotlight" ref={spotRef} aria-hidden="true" data-lit="off" />
           <svg
             className={`pw-action-path ${actor ? `el-${actor.element}` : ""}`}
             viewBox="0 0 100 100"
@@ -648,13 +671,13 @@ export function PowerworksScene({
                   <span
                     key={`ghost-${s.status}`}
                     className={`pw-status-badge condition group-${s.group} ghost ${
-                      s.immune ? "immune" : ""
+                      s.immune || s.harmless ? "immune" : ""
                     }`}
                     aria-hidden="true"
                   >
                     <GroupIcon group={s.group} />
                     {s.status}
-                    <small>{s.immune ? "immune" : `${s.chance}%`}</small>
+                    <small>{s.immune ? "immune" : s.harmless ? "no effect" : `${s.chance}%`}</small>
                   </span>
                 ))}
                 {preview.notes.map((n) => (
@@ -684,7 +707,9 @@ export function PowerworksScene({
                   selected ? "selected" : ""
                 } ${acting ? `performing ${melee ? "melee" : "ranged"}` : ""} ${
                   receiving && impact ? "receiving" : ""
-                } ${u.hp <= 0 && !beforeKnockout ? "fallen" : ""} ${
+                } ${u.id === focusActor || u.id === focusTarget ? "in-focus" : ""} ${
+                  u.hp <= 0 && !beforeKnockout ? "fallen" : ""
+                } ${
                   u.hp > 0 && u.charge ? "charged" : ""
                 } ${u.hp > 0 && u.bound ? "restrained" : ""} ${
                   u.hp > 0 && u.ward ? "protected" : ""
@@ -820,6 +845,13 @@ export function PowerworksScene({
                   <div>
                     {u.enemy && <ElementIcon element={u.element} />}
                     <strong>{labelFor(u)}</strong>
+                    {referent === u.id && (
+                      // The target the move in hand's value bar is about (readout pass).
+                      <Crosshair
+                        className="pw-referent"
+                        aria-label="The move's value is read on this target"
+                      />
+                    )}
                     <button
                       aria-label={`Inspect ${u.name}${
                         u.enemy ? ` ${u.id}` : " on battlefield"
@@ -829,18 +861,37 @@ export function PowerworksScene({
                       <Info />
                     </button>
                   </div>
-                  <Health u={u} preview={preview && faint ? { ...preview, faint } : preview} />
+                  <Health
+                    u={u}
+                    preview={preview && faint ? { ...preview, faint } : preview}
+                    planned={planned[u.id] ?? 0}
+                  />
+                  {u.enemy && threats[u.id] && (
+                    <ThreatBar
+                      amount={threats[u.id].amount}
+                      ranged={threats[u.id].ranged}
+                      held={threats[u.id].held}
+                      prevented={prevented[u.id] ?? 0}
+                      label={labelFor(u)}
+                    />
+                  )}
                   {chip && (
                     <button
                       className={`pw-order-chip ${chip.move ? "" : "empty"} ${
                         chip.status === "Acted" ? "done" : ""
-                      } ${
+                      } ${idleOrders[u.id] ? "idle" : ""} ${
                         flash && !reducedMotion && flash.actor === u.id ? "just-set" : ""
                       }`}
                       key={flash && flash.actor === u.id ? `chip-${flash.stamp}` : "chip"}
                       disabled={!planning || u.hp <= 0}
                       tabIndex={-1}
-                      title={chip.move ? chip.move.name : undefined}
+                      title={
+                        chip.move
+                          ? idleOrders[u.id]
+                            ? `${chip.move.name}. ${idleOrders[u.id]}.`
+                            : chip.move.name
+                          : undefined
+                      }
                       aria-label={
                         !planning || u.hp <= 0
                           ? `${u.name}'s order: ${chipText(chip)}`
@@ -866,6 +917,9 @@ export function PowerworksScene({
                             {baseName(chip.move)}
                           </span>
                           <span className="pw-order-chip-target">
+                            {idleOrders[u.id] && !chip.status && (
+                              <Ban className="pw-order-chip-idle" aria-hidden="true" />
+                            )}
                             {chip.status ? (
                               chip.status
                             ) : (
@@ -885,6 +939,7 @@ export function PowerworksScene({
                       )}
                       <span className="pw-sr" id={`order-${u.id}`}>
                         {chipText(chip)}
+                        {idleOrders[u.id] ? `. ${idleOrders[u.id]}.` : ""}
                       </span>
                     </button>
                   )}

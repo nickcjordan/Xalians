@@ -57,7 +57,7 @@ export default function StoryContents({ story }) {
 			{story.parts.map((part, i) => {
 				const total = partParagraphCount(part);
 				const read = readCounts[i] || 0;
-				const meta = `${total} chapter${total === 1 ? '' : 's'}, ${part.worlds.length} world${part.worlds.length === 1 ? '' : 's'}${read > 0 ? `, ${read} read` : ''}`;
+				const meta = `${total} passage${total === 1 ? '' : 's'}, ${part.worlds.length} world${part.worlds.length === 1 ? '' : 's'}${read > 0 ? `, ${read} read` : ''}`;
 				return (
 					<IndexRow
 						key={part.era.key}

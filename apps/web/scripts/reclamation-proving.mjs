@@ -104,6 +104,13 @@ for (const view of ['simple', 'advanced']) {
 				table's own panels (the resolution log among them) were never exercised here.
 				Assert the mode took, or the check quietly goes back to testing one thing twice.
 			*/
+			/*
+				PASS 60. The table builds its creatures from the seed after its last chunk arrives,
+				which takes 550 to 650 ms on this machine, and networkidle fires 500 ms after the
+				last request, so reading the switch at networkidle raced the render and failed on
+				main as often as not. Wait for the switch to be drawn, then ask which mode it shows.
+			*/
+			await page.locator('[data-mode-switch] [aria-pressed="true"]').first().waitFor({ state: 'attached', timeout: 20000 }).catch(() => {});
 			const modeNow = await page.evaluate(() => {
 				const pressed = document.querySelector('[data-mode-switch] [aria-pressed="true"]');
 				return pressed ? pressed.getAttribute('data-mode') : null;
@@ -317,6 +324,30 @@ for (const view of ['simple', 'advanced']) {
 								if (!(going - toll + allies === Number(ghostText.replace('−', '-')))) {
 									out.push(`${id}: the ghost's chain ${going} less ${toll} plus ${allies} does not make ${ghostNum.textContent.trim()}`);
 								}
+								// pass 61: the words say the same toll the chain prints
+								const said = document.querySelector(`[data-ghost-piece="${id}"] [data-reason="clash"] .rec-reason-effect`);
+								if (toll > 0 && said && getComputedStyle(said.closest('[data-reasons]')).display !== 'none' && said.textContent.trim() !== `The Clash takes ${toll}.`) {
+									out.push(`${id}: the chain takes ${toll} and the words say "${said.textContent.trim()}"`);
+								}
+							}
+							/*
+								PASS 61. The words under the number take room, so the ghost's number must still sit
+								below the world's bars, and its words must not lie over a creature already there.
+							*/
+							const world = document.querySelector(`[data-site-id="${id}"]`);
+							const read = document.querySelector(`[data-ghost-piece="${id}"] .rec-ghost-piece-read`);
+							const bars = world && world.querySelector('[data-standing]');
+							if (read && bars && read.getBoundingClientRect().top < bars.getBoundingClientRect().bottom - 1) {
+								out.push(`${id}: the ghost's number rides up over the world's bars`);
+							}
+							const words = document.querySelector(`[data-ghost-piece="${id}"] [data-reasons]`);
+							if (words && getComputedStyle(words).display !== 'none') {
+								const wr = words.getBoundingClientRect();
+								world.querySelectorAll('[data-rank="mine"] .rec-figure').forEach((fig) => {
+									if (hits(wr, fig.getBoundingClientRect())) {
+										out.push(`${id}: the ghost's words lie over a creature of yours`);
+									}
+								});
 							}
 						});
 						document.querySelectorAll('[data-standing]').forEach((st) => {

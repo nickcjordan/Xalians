@@ -76,3 +76,35 @@
   .lr-map-attention-ring { animation: none; }
   .lr-field-record, .lr-field-map-head, .lr-field-map-panel [data-expedition-map] { transition: none; }
 }
+
+/* Scout updates move markers inside fixed panels, never the reading surface. */
+.lr-field-record[data-stable-layout] { grid-template-rows: auto 112px minmax(0, 1fr); transition: none; }
+.lr-field-record[data-stable-layout] .lr-field-map-head { display: none; }
+.lr-field-record[data-stable-layout] .lr-field-map-panel { justify-content: flex-start; }
+.lr-field-record[data-stable-layout] .lr-field-map-resources { opacity: 1; }
+@media (min-width: 600px) and (max-width: 767px) and (min-height: 800px) {
+  .lr-field-record[data-stable-layout] { grid-template-rows: auto 160px minmax(0, 1fr); }
+}
+@media (min-width: 768px) {
+  .lr-field-record[data-stable-layout] {
+    grid-template-columns: minmax(0, 1.65fr) minmax(340px, .85fr);
+    grid-template-rows: auto minmax(0, 1fr);
+    gap: 20px 28px;
+    padding: 80px max(24px, calc((100vw - 1600px) / 2)) 24px;
+  }
+  .lr-field-record[data-stable-layout] .lr-field-map-stage { grid-column: 1; max-height: 720px; }
+  .lr-field-record[data-stable-layout] .lr-field-map-panel { height: 100%; padding: 20px; }
+  .lr-field-record[data-stable-layout] .lr-field-map-panel [data-expedition-map] { display: flex; flex-direction: column; flex: 1; min-height: 0; background: color-mix(in srgb, var(--color-s0) 88%, transparent); }
+  .lr-field-record[data-stable-layout] .lr-field-map-panel [data-expedition-map] > svg { flex: 1; min-height: 0; max-height: none !important; }
+  .lr-field-record[data-stable-layout] .lr-field-map-resources { flex-shrink: 0; }
+  .lr-field-record[data-stable-layout] .lr-field-story-stage { grid-column: 2; max-height: 720px; }
+  .lr-field-record[data-stable-layout] .lr-sequence-story { padding: 20px; }
+  .lr-field-record[data-stable-layout] .lr-story-entry { padding: 20px 0; }
+}
+@media (min-width: 768px) and (max-width: 1023px) {
+  .lr-field-record[data-stable-layout] { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(200px, .85fr) minmax(0, 1fr); gap: 12px; }
+  .lr-field-record[data-stable-layout] .lr-field-map-stage { grid-column: 1; grid-row: 2; }
+  .lr-field-record[data-stable-layout] .lr-field-story-stage { grid-column: 1; grid-row: 3; }
+  .lr-field-record[data-stable-layout] .lr-field-map-panel { padding: 0; }
+  .lr-field-record[data-stable-layout] .lr-field-map-panel [data-expedition-map] > svg { height: 100% !important; }
+}

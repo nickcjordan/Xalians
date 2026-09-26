@@ -23,9 +23,8 @@ function EntryRecord({ entry }) {
 }
 
 /**
- * Powers and Peoples: factions, notable people, and the demonyms of the
- * fourteen worlds. Contract: docs/design/xalian-encyclopedia-page.md §5
- * "Powers and peoples".
+ * Tier: chrome. Factions, notable people, and named Xalian populations.
+ * Creature populations are distinct from a world's intelligent citizens.
  */
 export default function Powers() {
     usePageTitle('Powers');
@@ -56,7 +55,7 @@ export default function Powers() {
             </section>
 
             <section className="mt-8">
-                <SectionHead title="Xalian Peoples" count={`${peoples.length} record${peoples.length === 1 ? '' : 's'}`} />
+                <SectionHead title="Xalian populations" count={`${peoples.length} record${peoples.length === 1 ? '' : 's'}`} />
                 <div className="grid grid-cols-1 border-t border-edge lg:grid-cols-2 lg:gap-x-6">
                     {peoples.map((p) => (
                         <RecordRow
