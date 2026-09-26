@@ -20,11 +20,14 @@ test.each(['scout', 'scout-return'])('%s tells its story automatically, can paus
     act(() => vi.advanceTimersByTime(60000));
     expect(container.querySelectorAll('[data-story-event]')).toHaveLength(1);
     fireEvent.click(getByRole('button', { name: 'Resume story' }));
+    const account = getByRole('log', { name: 'Scouting events' });
+    account.focus();
     for (let i = 0; i < beats.length - 1; i++) {
       act(() => vi.advanceTimersByTime(beatDuration(beats[i].kind, beats[i].text)));
       expect(container.querySelectorAll('[data-story-event]')).toHaveLength(i + 2);
     }
     expect(container.querySelector('[data-story-event="0"]')).toBe(first);
+    expect(document.activeElement).toBe(account);
     act(() => vi.advanceTimersByTime(60000));
     expect(onComplete).not.toHaveBeenCalled();
     fireEvent.click(getByRole('button', { name: 'Review scout report' }));

@@ -67,7 +67,13 @@ export default function ScoutTransition({ action, onComplete, soundEnabled = tru
   const energyAfter = action.energyAfter;
   const stabilityBefore = action.stabilityBefore ?? MAX_INSTABILITY;
   const stabilityAfter = action.stabilityAfter ?? stabilityBefore;
-  const skip = () => final ? onComplete() : setIndex(beats.length - 1);
+  const skip = () => {
+    if (final) onComplete();
+    else {
+      setIndex(beats.length - 1);
+      buttonRef.current?.focus({ preventScroll: true });
+    }
+  };
   const revealedIds = returning ? final ? action.result?.hazards?.filter(hazard => hazard.sensed).map(hazard => hazard.id) : [] : action.result?.relay && index >= 2 ? action.result.revealedIds : [];
   return <FieldRecord stableLayout scene={action.scene} title={returning ? action.energyBefore === 0 ? 'Retrieve the scout' : 'The scout returns' : 'Scouting ahead'} label={returning ? action.energyBefore === 0 ? 'Crew retrieving scout' : 'Scout returning' : 'Scouting in progress'} mapFocusLabel={beat.title} animateInitialTravel={!returning} map={<ExpeditionSchematic scene={action.scene} crew={action.crew} scout={action.scout} helperId={action.helperId} companion={action.fieldCompanion} allyWithScout={action.allyWithScout} readingRecord position={expeditionPosition({ actionType: action.type, beat: beat.kind, scan: action.result, encounterMode: action.encounterMode, scoutNeedsRescue: returning && action.energyBefore === 0 })} revealedIds={revealedIds} native={action.encounter && index >= nativeAt ? action.encounter : action.knownNative} nativeState={action.knownNativeState} runFlags={action.runFlags} />} resources={<>
       <FieldReserve kind="energy" label={`${action.scout.species} energy`} max={MAX_STRAIN} before={energyBefore} after={energyAfter} active={index >= energyAt} />
