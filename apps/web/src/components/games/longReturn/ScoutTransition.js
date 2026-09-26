@@ -8,6 +8,7 @@ import BiIcon from './BiIcon';
 import FieldReserve from './FieldReserve';
 import SequenceStory from './SequenceStory';
 import { scoutCommunication } from './scoutCommunication';
+import { beatDuration } from './beatTiming';
 
 export function scoutBeats(action) {
   const energy = Math.max(0, action.energyBefore - action.energyAfter);
@@ -40,6 +41,7 @@ export function scoutBeats(action) {
 export default function ScoutTransition({ action, onComplete, soundEnabled = true, completeLabel }) {
   const beats = useMemo(() => scoutBeats(action), [action]);
   const [index, setIndex] = useState(0);
+  const [paused, setPaused] = useState(false);
   const buttonRef = useRef(null);
   const beat = beats[index];
   const final = index === beats.length - 1;
@@ -55,7 +57,11 @@ export default function ScoutTransition({ action, onComplete, soundEnabled = tru
     return () => { document.documentElement.style.overflow = previousOverflow; };
   }, []);
   useEffect(() => { playGameSound(beat.kind, soundEnabled); }, [beat.kind, soundEnabled]);
-  useEffect(() => { if (final) buttonRef.current?.focus({ preventScroll: true }); }, [final]);
+  useEffect(() => {
+    if (paused || final) return undefined;
+    const timer = window.setTimeout(() => setIndex(value => Math.min(beats.length - 1, value + 1)), beatDuration(beat.kind, beat.text));
+    return () => window.clearTimeout(timer);
+  }, [index, paused, final, beats, beat]);
 
   const energyBefore = action.energyBefore;
   const energyAfter = action.energyAfter;
@@ -67,6 +73,6 @@ export default function ScoutTransition({ action, onComplete, soundEnabled = tru
       <FieldReserve kind="energy" label={`${action.scout.species} energy`} max={MAX_STRAIN} before={energyBefore} after={energyAfter} active={index >= energyAt} />
       {returning && <FieldReserve kind="stability" label="Annex stability" max={MAX_INSTABILITY} before={stabilityBefore} after={stabilityAfter} active={index >= stabilityAt} />}
     </>}>
-    <SequenceStory accumulate events={beats} index={index} onNext={() => setIndex(Math.min(beats.length - 1, index + 1))} action={<button className="inline-flex min-h-11 items-center justify-center gap-1 px-2 whitespace-normal" ref={buttonRef} type="button" onClick={skip}>{final ? completeLabel || (action.encounter ? 'Respond to encounter' : !returning && !action.result.relay ? 'Check scout status' : 'Review scout report') : 'Reveal full account'} <BiIcon cls="bi bi-arrow-right" /></button>} />
+    <SequenceStory accumulate events={beats} index={index} paused={paused} onPause={() => setPaused(value => !value)} action={<button className="inline-flex min-h-11 items-center justify-center gap-1 px-2 whitespace-normal" ref={buttonRef} type="button" onClick={skip}>{final ? completeLabel || (action.encounter ? 'Respond to encounter' : !returning && !action.result.relay ? 'Check scout status' : 'Review scout report') : 'Reveal full account'} <BiIcon cls="bi bi-arrow-right" /></button>} />
   </FieldRecord>;
 }
