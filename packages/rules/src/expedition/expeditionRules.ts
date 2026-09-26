@@ -966,6 +966,29 @@ function runResolveAndJudge(state: MatchState): MatchState {
 */
 export interface ClashForecast { hold: number; downed: boolean; before: number }
 export function forecastClash(state: MatchState, handler: Seat): Record<string, ClashForecast> | null {
+	const run = forecastRun(state, handler);
+	if (!run) {
+		return null;
+	}
+	const { copy, board, resolved } = run;
+	const out: Record<string, ClashForecast> = {};
+	currentFrame(state).sites.forEach((site) => {
+		(['A', 'B'] as Seat[]).forEach((player) => {
+			board[site.id][player].forEach((e) => {
+				const after = resolved.board[site.id][player].find((x) => x.recordId === e.recordId);
+				// resolve() works on its own clone of the board, so `e` is still the entry going in
+				const before = currentHoldOf(copy, e);
+				out[e.recordId] = after && !after.downed
+					? { hold: currentHoldOf(resolved, after), downed: false, before }
+					: { hold: 0, downed: true, before };
+			});
+		});
+	});
+	return out;
+}
+
+// the forecast's resolve, on a copy of the board with the opponent's hidden sends taken off
+function forecastRun(state: MatchState, handler: Seat): { copy: MatchState; board: Board; resolved: MatchState } | null {
 	if (!state || state.phase !== 'deploy') {
 		return null;
 	}
@@ -987,20 +1010,118 @@ export function forecastClash(state: MatchState, handler: Seat): Record<string, 
 	};
 	const resolved = resolve(copy);
 	applyBolsterRecovery(resolved);
-	const out: Record<string, ClashForecast> = {};
-	currentFrame(state).sites.forEach((site) => {
-		(['A', 'B'] as Seat[]).forEach((player) => {
-			board[site.id][player].forEach((e) => {
-				const after = resolved.board[site.id][player].find((x) => x.recordId === e.recordId);
-				// resolve() works on its own clone of the board, so `e` is still the entry going in
-				const before = currentHoldOf(copy, e);
-				out[e.recordId] = after && !after.downed
-					? { hold: currentHoldOf(resolved, after), downed: false, before }
-					: { hold: 0, downed: true, before };
-			});
-		});
+	return { copy, board, resolved };
+}
+
+/*
+	PASS 61. forecastSendBlows(state, handler, recordId, siteId, chosenRole?) ->
+	{ taken, downs, recovered } | null
+
+	What the forecast Clash would do to the creature sent, and what it would do, read from
+	the forecast's own resolution log: the blows that land on it (by whom, how much in all
+	across the exchanges, and whether it falls), what its conditions cost it, what a bolster
+	gives back, and the creatures it would down. Nick, 2026-09-24: "for ones where the
+	creature is affected by something, we need to do a better job explaining what that
+	effect is and why". The card and the ghost printed the Clash's toll as a bare "-3"; this
+	names the fight behind it. Built on forecastSend's placement, so the opponent's hidden
+	sends stay hidden here too. `recovered` is what a bolster or a mending condition gives
+	back (a blow is summed over every exchange it lands in, `count` of them), and `unlifted`
+	what it loses with no blow at all, when a bolster or kin of yours beside
+	it falls and its lift goes with it (`alliesDowned`); the blows, less what is given back, plus
+	that, are the toll the forecast prints. The order of the fight comes too: `first` when it
+	acts before any rival there, `hurt` on a blow from an attacker already hit (a hurt attacker
+	lands less), `dealt`, what it lands on each creature, and `downsBeforeActing`, the creatures
+	it downs before they act at all.
+*/
+export interface ForecastBlow { by: string | null; power: number; count: number; roles: string[]; downs: boolean; statuses?: string[]; hurt?: boolean }
+export interface ForecastHit { to: string; power: number; count: number; downs: boolean }
+export interface ForecastBlows { taken: ForecastBlow[]; dealt: ForecastHit[]; downs: string[]; downsBeforeActing: string[]; recovered: number; falls: boolean; unlifted: number; alliesDowned: string[]; first: boolean }
+export function forecastSendBlows(state: MatchState, handler: Seat, recordId: string, siteId: string, chosenRole: string | null = null): ForecastBlows | null {
+	if (!state || state.phase !== 'deploy') {
+		return null;
+	}
+	const p = state.players[handler];
+	const record = p.roster.find((r) => r.id === recordId);
+	if (!record || !isFieldable(record) || !siteById(currentFrame(state), siteId)) {
+		return null;
+	}
+	const placed = placeEntry(state, handler, record, siteId, arrivesHidden(record, rulesOf(state)), sendCostFor(p, recordId, rulesOf(state)), rulesOf(state).actFlip ? chosenRole || null : null);
+	const run = forecastRun(placed, handler);
+	if (!run) {
+		return null;
+	}
+	const taken: ForecastBlow[] = [];
+	const byAttacker = new Map<string, ForecastBlow>();
+	const dealt: ForecastHit[] = [];
+	const byTarget = new Map<string, ForecastHit>();
+	const downs: string[] = [];
+	// fell before it acted: its turn lapsed, and it never acted in an earlier exchange either
+	const lapsed = new Set<string>();
+	const acted = new Set<string>();
+	// who has been hit so far, so a blow from an attacker already hurt says why it lands less
+	const struck = new Set<string>();
+	const theirs = new Set(run.board[siteId][otherPlayer(handler)].map((e) => e.recordId));
+	let ourFirst = Infinity;
+	let theirFirst = Infinity;
+	let recovered = 0;
+	let falls = false;
+	(run.resolved.resolutionLog || []).forEach((event, index) => {
+		if (event.site !== siteId) {
+			return;
+		}
+		if (event.type === 'attack' && event.outcome === 'lapsed') {
+			lapsed.add(String(event.recordId));
+		} else if (event.type === 'attack') {
+			acted.add(String(event.recordId));
+			if (event.recordId === recordId) ourFirst = Math.min(ourFirst, index);
+			if (theirs.has(String(event.recordId))) theirFirst = Math.min(theirFirst, index);
+		}
+		if (event.type === 'attack' && event.target === recordId && typeof event.power === 'number' && event.power > 0 && (event.outcome === 'hurt' || event.outcome === 'downed')) {
+			const by = String(event.recordId);
+			const blow = byAttacker.get(by) || { by, power: 0, count: 0, roles: [], downs: false, hurt: struck.has(by) };
+			blow.power = round1(blow.power + (event.power as number));
+			blow.count += 1;
+			if (!blow.roles.includes(String(event.role))) blow.roles.push(String(event.role));
+			if (event.outcome === 'downed') { blow.downs = true; falls = true; }
+			if (!byAttacker.has(by)) { byAttacker.set(by, blow); taken.push(blow); }
+		} else if (event.type === 'attrition' && event.recordId === recordId && typeof event.amount === 'number' && event.amount > 0) {
+			taken.push({ by: null, power: round1(event.amount as number), count: 1, roles: [], downs: event.outcome === 'downed', statuses: (event.statuses as string[]) || [] });
+			if (event.outcome === 'downed') falls = true;
+		} else if (event.type === 'attack' && event.recordId === recordId && event.target && typeof event.power === 'number' && event.power > 0 && (event.outcome === 'hurt' || event.outcome === 'downed')) {
+			// what it lands, on whom, across the exchanges
+			const to = String(event.target);
+			const hit = byTarget.get(to) || { to, power: 0, count: 0, downs: false };
+			hit.power = round1(hit.power + (event.power as number));
+			hit.count += 1;
+			if (!byTarget.has(to)) { byTarget.set(to, hit); dealt.push(hit); }
+			if (event.outcome === 'downed') {
+				hit.downs = true;
+				if (!downs.includes(to)) downs.push(to);
+			}
+		} else if ((event.type === 'recover' || event.type === 'mending') && event.recordId === recordId && typeof event.amount === 'number') {
+			recovered = round1(recovered + (event.amount as number));
+		}
+		if ((event.type === 'attack' || event.type === 'attrition') && (event.outcome === 'hurt' || event.outcome === 'downed')) {
+			struck.add(String(event.type === 'attack' ? event.target : event.recordId));
+		}
 	});
-	return out;
+	// what it loses with no blow at all: the lift of a bolster or of kin of yours that fall beside it
+	const entry = run.board[siteId][handler].find((e) => e.recordId === recordId);
+	const after = run.resolved.board[siteId][handler].find((e) => e.recordId === recordId);
+	const alliesDowned = run.board[siteId][handler]
+		.filter((e) => e.recordId !== recordId)
+		.filter((e) => {
+			const out = run.resolved.board[siteId][handler].find((x) => x.recordId === e.recordId);
+			return !out || out.downed;
+		})
+		.map((e) => e.recordId);
+	let unlifted = 0;
+	if (entry && after && !after.downed) {
+		const landed = taken.reduce((sum, b) => sum + b.power, 0);
+		const toll = currentHoldOf(run.copy, entry) - currentHoldOf(run.resolved, after);
+		unlifted = Math.max(0, round1(toll - (landed - recovered)));
+	}
+	return { taken, dealt, downs, downsBeforeActing: downs.filter((id) => lapsed.has(id) && !acted.has(id)), recovered, falls, unlifted, alliesDowned, first: ourFirst < theirFirst };
 }
 
 /*

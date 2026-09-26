@@ -4,6 +4,7 @@ import XalianImage from '../../xalianImage';
 import { pieceShadowFilter } from '../duel/board/duelPieceToken';
 import { SwiftGlyph, MediumGlyph, CompanyGlyph, PIECE_RIM } from './reclamationGlyphs';
 import { formatHoldShown, countWord, captionOwned } from './reclamationNarration';
+import { reasonLines, ReasonLines } from './reclamationReasons';
 import { elementOf } from './reclamationVocabulary';
 import { Standing, standingSentence, WhyMarks } from './reclamationInstruments';
 import { getSpeciesTypeSymbol } from '../../../utils/svgUtil';
@@ -417,8 +418,11 @@ function ReclamationWorld({
 										rival is on the rival's side: the cross on the creature it would down, the
 										rival's struck number and the rival's bar.
 									*/}
-									{ghost && previewHere && previewHere.why && ghost.record && (
-										<span key={`ghost-${ghost.record.id}`} className={`rec-ghost-piece${mine.length ? ' rec-ghost-piece--beside' : ''}`} data-ghost-piece={site.id} aria-hidden="true">
+									{ghost && previewHere && previewHere.why && ghost.record && (() => {
+										// pass 61: what moves its number here, and why, in words under the chain
+										const reasons = reasonLines({ why: previewHere.why, record: ghost.record, site, tolerance: ghost.tolerance, blows: ghost.blows });
+										return (
+										<span key={`ghost-${ghost.record.id}`} className={`rec-ghost-piece${mine.length ? ' rec-ghost-piece--beside' : ''}${reasons.length ? ' rec-ghost-piece--says' : ''}`} data-ghost-piece={site.id} aria-hidden="true">
 											<span className="rec-ghost-piece-art">
 												<XalianImage variant="token" speciesName={ghost.record.species} primaryType={elementOf(ghost.record)} padding="0px" fill="black" filter={pieceShadowFilter(PIECE_RIM, 96)} moreClasses="rec-ghost-piece-img" />
 											</span>
@@ -464,8 +468,10 @@ function ReclamationWorld({
 													</span>
 												);
 											})()}
+											<ReasonLines lines={reasons} className="rec-ghost-piece-reasons" />
 										</span>
-									)}
+										);
+									})()}
 								</div>
 							</div>
 						</section>
