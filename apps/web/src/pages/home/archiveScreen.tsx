@@ -14,7 +14,15 @@
 //
 // All of it is CSS on a few layers (`.archive` in globals.css); the only
 // script is the readout's clock, ticking once a second while it plays.
+//
+// While a screen stands by, a Play key sits over it (ArchivePlay). A reader
+// who stopped a little short of the resting place need not guess why nothing
+// plays: Play brings the viewer to rest (Nick, 2026-09-26), and resting is
+// still the one thing that starts a recording. The key is laid over the
+// frame by the beat, not put inside the screen, because a scene's frame is a
+// link and a key cannot sit inside a link.
 import * as React from 'react';
+import { Play } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 export type ScreenState = 'standby' | 'tuning' | 'switch' | 'on' | 'off';
@@ -27,6 +35,17 @@ function clock(sec: number) {
 	const m = Math.floor(sec / 60) % 60;
 	const s = sec % 60;
 	return [h, m, s].map((v) => String(v).padStart(2, '0')).join(':');
+}
+
+/** The Play key over a screen that stands by; nothing in any other state. Lay it over the frame, in a positioned box. */
+export function ArchivePlay({ state, rec, onPlay }: { state: ScreenState; rec: string; onPlay: () => void }) {
+	if (state !== 'standby') return null;
+	return (
+		<button type="button" className="archive-play type-data" onClick={onPlay} aria-label={`Play recording ${rec}`}>
+			<Play aria-hidden="true" />
+			Play
+		</button>
+	);
 }
 
 export function ArchiveScreen({

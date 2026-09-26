@@ -22,7 +22,7 @@ import { cn } from '@/lib/utils';
 import specimen from './home/specimen.json';
 import { startStoryMotion } from './home/motion';
 import { StoryViewer, type ViewerBeat } from './home/storyViewer';
-import { ArchiveScreen, type ScreenState } from './home/archiveScreen';
+import { ArchivePlay, ArchiveScreen, type ScreenState } from './home/archiveScreen';
 import { HelixPiece } from './home/helixPiece';
 
 /* ------------------------------------------------------------------ copy */
@@ -168,7 +168,7 @@ function Panel({
 	/** In the story's viewer, which moves it itself: no scroll-in and no drift. */
 	staged?: boolean;
 	/** In the story's viewer: the recording's archive screen, its state and readout. */
-	screen?: { state: ScreenState; rec: string; place: string; start: number };
+	screen?: { state: ScreenState; rec: string; place: string; start: number; onPlay?: () => void };
 }) {
 	const picture = art.live ? (
 		// A living plate holds still in its frame: its motion is its own.
@@ -207,7 +207,7 @@ function Panel({
 		</figure>
 	);
 	if (still || !art.era) return figure;
-	return (
+	const link = (
 		<Link
 			to={`/encyclopedia/story/${art.era}`}
 			data-panel={staged ? undefined : ''}
@@ -216,6 +216,14 @@ function Panel({
 		>
 			{figure}
 		</Link>
+	);
+	// In the story's viewer, the screen's Play key lies over the frame beside the link, never inside it.
+	if (!screen?.onPlay) return link;
+	return (
+		<div className="relative">
+			{link}
+			<ArchivePlay state={screen.state} rec={screen.rec} onPlay={screen.onPlay} />
+		</div>
 	);
 }
 
@@ -365,7 +373,7 @@ const STORY_BEATS: ViewerBeat[] = BEATS.map((sp, i): ViewerBeat => {
 			n,
 			label: sp.name,
 			minor: true,
-			render: (live, shown, screen) => (
+			render: (live, shown, screen, _primed, play) => (
 				<div className="scene-spread" data-layout="side" style={{ '--ar': 16 / 9, '--label': '0rem' } as React.CSSProperties}>
 					<div className="scene-art">
 						<div className="scene-frame">
@@ -376,6 +384,7 @@ const STORY_BEATS: ViewerBeat[] = BEATS.map((sp, i): ViewerBeat => {
 										<span className="flex h-full w-full items-center px-[6%]">{shown ? <HelixPiece mode={sp.mode} live={live} label={sp.alt} /> : null}</span>
 									</ArchiveScreen>
 								</span>
+								<ArchivePlay state={screen} rec={n} onPlay={play} />
 							</figure>
 						</div>
 					</div>
@@ -389,11 +398,11 @@ const STORY_BEATS: ViewerBeat[] = BEATS.map((sp, i): ViewerBeat => {
 		n,
 		label: ERA_TITLE[sp.art.era],
 		live: sp.art.live,
-		render: (live, _shown, screen, primed) => (
+		render: (live, _shown, screen, primed, play) => (
 			<div className="scene-spread" data-layout={sp.layout} style={{ '--ar': sp.ar } as React.CSSProperties}>
 				<div className="scene-art">
 					<div className="scene-frame">
-						<Panel art={sp.art} aspect={sp.aspect} position={sp.position} live={live} primed={primed} staged screen={{ state: screen, rec: n, place: RECORDED[sp.art.era], start: reelStart(i) }} />
+						<Panel art={sp.art} aspect={sp.aspect} position={sp.position} live={live} primed={primed} staged screen={{ state: screen, rec: n, place: RECORDED[sp.art.era], start: reelStart(i), onPlay: play }} />
 					</div>
 					<SceneLabel era={sp.art.era} />
 				</div>
