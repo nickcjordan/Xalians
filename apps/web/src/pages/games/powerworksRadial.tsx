@@ -58,8 +58,8 @@ type CardMark = { key: string; icon: React.ReactNode; text: string; tip: string;
 /**
   The move card's icon row (round 3): one mark per thing the move does, each an icon and at
   most a word or a chance, its full sentence on a tooltip. Harm names its element, since
-  that is what sets the matchup chevrons on each target: a physical move is matched by its
-  creature's own element.
+  that is what sets the matchup chevrons on each target; a physical move has no element and
+  no matchup (pass 9).
 */
 export function cardMarks(unit: Unit, move: Move): CardMark[] {
   const marks: CardMark[] = [];
@@ -92,7 +92,7 @@ export function cardMarks(unit: Unit, move: Move): CardMark[] {
               key,
               icon: <PowerIcon />,
               text: "Harm",
-              tip: `${cap(e.mechanism ?? "impact")} harm${reach}, matched by ${unit.name}'s own ${unit.element} element. Each target shows its matchup as a chevron by its health.`,
+              tip: `${cap(e.mechanism ?? "impact")} harm${reach}. Physical, so it lands the same on every element.`,
               kind: "harm",
             }
       );

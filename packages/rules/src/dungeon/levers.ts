@@ -13,7 +13,45 @@ export const SPEED_SCALE = 1;
 export const HARM_DIVISOR = 10;
 export const HARM_BASE = 0.5;
 export const HARM_ATTR_DIVISOR = 100;
-/** Lever: restore heals floor(intensity / HARM_DIVISOR * (HARM_BASE + willpower / HARM_ATTR_DIVISOR)); the same curve as harm. */
+/**
+  Lever (pass 9): how far the performer's attribute scales harm and restore on top of the
+  intensity the creature record already rolled from that attribute (acts.ts bands every harm
+  and restore by strength or willpower). 1 is the pass 1 curve, (HARM_BASE + attr /
+  HARM_ATTR_DIVISOR); 0 reads the record's intensity alone. The machines sit at attribute 50,
+  where the curve is 1, so either setting leaves them unchanged.
+*/
+export const HARM_ATTRIBUTE_WEIGHT = 0;
+/**
+  Lever (pass 9): a harm with no element of its own (a physical strike, a pull's impact) is
+  neutral, 1, against every element. False is the pass 1 reading, where a physical strike took
+  its performer's element and was matched by it.
+*/
+export const PHYSICAL_HARM_NEUTRAL = true;
+/**
+  Lever (pass 9): a quicker target slips part of a slower attacker's blow. Harm is reduced by
+  NIMBLE_PER_SPEED for every point of speed (initiative speed, so slowed counts) the target has
+  over the attacker, at most NIMBLE_MAX. 0 turns it off. With NIMBLE_MACHINES true it would work
+  both ways; a first reading did, and it cost slow, heavy companions up to 30% of every blow
+  against the quicker machines (the naive player's starter fell from 92% to 0%).
+*/
+export const NIMBLE_PER_SPEED = 0.01;
+export const NIMBLE_MAX = 0.3;
+/** Lever (pass 9): whether machines slip blows too. False: only creatures do; a machine's frame takes a blow as it lands. */
+export const NIMBLE_MACHINES = false;
+/**
+  Lever (pass 9): how a machine picks its target among the companions it may select. 0 picks
+  uniformly; above 0 weights each by its max HP raised to this power, so the largest bodies
+  draw the most fire.
+*/
+export const TARGET_SIZE_WEIGHT = 1;
+/**
+  Lever (pass 9): every machine's HP, in every run and chamber, is its row HP times this,
+  rounded. It sets how hard the facility is for everyone and never depends on the squad. 0.62
+  puts the naive (pass 5) player's starter back where pass 8 had it (93% against 92%) once the
+  other pass 9 levers took their share of the companions' harm away.
+*/
+export const MACHINE_HP_FACTOR = 0.62;
+/** Lever: restore heals floor(intensity / RESTORE_DIVISOR) times the attribute term at willpower, weighted by HARM_ATTRIBUTE_WEIGHT; the same curve as harm. */
 export const RESTORE_DIVISOR = HARM_DIVISOR;
 /** Lever: a displace effect that lands does impact harm at this share of its force intensity (contract decision 5). */
 export const DISPLACE_HARM_FACTOR = 0.6;
@@ -158,8 +196,11 @@ export const COMPANION_GENERATED_AT = "2026-09-21T00:00:00.000Z";
  * from chamber 2 on; version 7 is rejected.
  * Version 9 (2026-09-24, decision 55 withdrawn): Nick ruled out handicaps tied to which creatures a squad
  * holds, so every run reads the chamber rows as written again and a drafted version 8 history would resolve
- * against other numbers; it is rejected. */
-export const SAVE_VERSION = 9;
+ * against other numbers; it is rejected.
+ * Version 10 (2026-09-26, pass 9): harm reads the record's intensity alone, physical harm is neutral,
+ * nimble creatures slip blows, machines favor large targets and carry MACHINE_HP_FACTOR of their row HP,
+ * so a version 9 history's orders resolve against other numbers; it is rejected. */
+export const SAVE_VERSION = 10;
 /*
   Pass 6 levers: the squad draft (contract decisions 45 to 48).
 */

@@ -920,6 +920,73 @@ Under the look-ahead the species spread widens from 78% to 100% to 56% to 100%, 
 - **The starter and a drafted squad now face different facilities.** A player who clears the starter's guardian at 110 HP meets 165 the first time they draft. The briefing does not say so; if play shows the step is a surprise, the smallest answer is one line on the draft screen, not a number.
 - **Machine harm is not a difficulty lever against a player who plans.** Every machine move but the drone's beam is closing, so binding answers all of them; raising their harm moves the look-ahead a few runs in 200. Harm stays a lever for how much a careless player is punished, not for how hard the facility is.
 
+## Pass 9: what makes a creature worth taking, 2026-09-26
+
+Nick, 2026-09-24, withdrawing decision 55: "I feel like you're putting too much emphasis on handicaps for selecting the creatures rather than identifying the mechanics that make one creature more desirable to use than another ... The bigger concern there is ensuring that things are relatively balanced and that we're implementing things in a way where each creature has a reasonable path towards providing value to a certain squad build." The run takes the preset squad; the simulator still drafts random squads, because that is how each species' contribution can be measured.
+
+### How a species' value is measured
+
+`powerworksCompare.ts --species` plays random drafts and fits each species' value to a squad: a run scores the encounters it cleared (0 to 4) plus, when it won, the share of the squad's HP left, and the least-squares additive model `score = base + the sum of the four species' values` (ridge 2) gives each species a value in encounters, centred so 0 is the average pick. Beside it, per run the species was in, `credit` records what it did: harm dealt to machines (degrading ticks it applied included), harm taken, HP healed and guards given to squadmates, machine opportunities denied (a stun or trance it applied, a closing move its bind stopped, a charge it broke), and knockouts. Every reading below is the look-ahead player (pass 7) over 1,200 random drafts, seeds 1 to 1,200; at these counts each species value carries roughly ±0.07 of noise, so a spread whose standard deviation is near 0.07 is about as even as this measure can show.
+
+### What the baseline showed
+
+Species values ran from -0.38 (Venemist) to +0.38 (Xylum), standard deviation 0.23. The value correlated with the species' element matchup against this facility (0.60), its move-card power (0.53) and its HP (0.49), and against its speed (-0.59, because the fast species are the small ones). Denying machine opportunities barely registered (-0.16): Hypnopet denied 10.8 per run and still sat at -0.20. Two of those drivers are game rules, not creatures:
+
+- **Every physical strike took its performer's element.** The move record marks an elemental move with its own element; a claw, a kick or a ram carries none. Pass 1 read "no element" as "the creature's element", so a chemical creature's bite was chemical and did nothing to the light drone. The facility's machines are sand (140 HP a run), electric (158) and light (48), so fire, ice, chemical, electric and light species lost most of their harm here, physical and elemental alike: their harm per point of move-card power was 8 to 12 against 16 to 30 for sand, rock, plant and air.
+- **Attributes counted twice in harm.** `acts.ts` already bands every harm and restore intensity by the performer's strength or willpower, and the game multiplied by `(0.5 + attr / 100)` again, so a low-strength creature was punished twice: Avilily's best harm read 1 where its intensity alone reads 1.9, Graviclaw's 8.7 where it reads 7.0.
+
+With both fixed (below) the element correlation fell to 0.22 and the spread to 0.19, and what remained was body size: the bottom eleven were all light creatures (HP 30 to 46), because the machines chose targets uniformly and a small body falls to the same number of blows whoever it is, while its speed only decided when it acted.
+
+### Decisions
+
+| # | Decision | Confidence | Evidence |
+|---|---|---|---|
+| 56 | **Physical harm is neutral.** A harm with no element of its own is 1 against every element (`PHYSICAL_HARM_NEUTRAL`); only an elemental move has a matchup. This is what the record says (an elemental move carries its element) and what Duel already does (typeless moves are neutral). Machines' physical strikes are neutral too. The move card's harm mark now says "Physical, so it lands the same on every element." | 85% | the element correlation 0.60 to 0.14 on its own; the move record's `element` field is absent exactly on physical moves |
+| 57 | **Harm reads the record's intensity.** `HARM_ATTRIBUTE_WEIGHT` 0: harm and restore are `intensity / 10`, and the performer's attribute no longer multiplies it again. The machines sit at attribute 50, where the old curve was 1, so their numbers do not move. | 85% | the double count, measured per species above; the creature system owns how hard a creature hits, through its bands |
+| 58 | **Nimble creatures slip blows.** A creature takes 1% less harm per point of speed it has over the attacker, at most 30% (`NIMBLE_PER_SPEED` 0.01, `NIMBLE_MAX` 0.3), deterministic like all harm (decision 6), and shown in every preview. Machines do not slip blows (`NIMBLE_MACHINES` false): a first reading that did cost slow, heavy companions up to 30% of every blow against the quicker machines and took the naive player's starter from 92% to 0%. | 75% | with 56 and 57 (two-way reading): spread 0.19 to 0.17, the speed correlation -0.63 to -0.26; as shipped with 59, spread 0.12 and speed -0.46 |
+| 59 | **Machines lock onto large bodies.** A machine picks its target among the companions it may select with weight equal to the companion's max HP (`TARGET_SIZE_WEIGHT` 1), where it used to pick uniformly. A large body draws fire for the small ones behind it, so bulk becomes a way to protect a squad rather than only a way to survive. Targets stay hidden until they resolve. | 75% | with 56 and 57: spread 0.19 to 0.17; with the two-way 58 as well, 0.14; as shipped, 0.12 |
+| 60 | **One facility HP lever.** Every machine's HP is its row HP times `MACHINE_HP_FACTOR`, rounded, for every run and every squad. 56 to 59 took companion harm away on balance (mostly from the heavy strikers the old curve and matchups favored), so the facility is set at 0.62 to put the naive (pass 5) player's run with the preset squad back where pass 8 had it: 93% against 92%. How hard the facility should be for a player who plans is still Nick's call (pass 7); this only keeps the difficulty he played from moving under the balance change. `SAVE_VERSION` is 10. | 80% | the sweep below |
+
+The guide gains one section, "Size, speed and element", saying all three in plain words.
+
+### Species value, like for like
+
+Each row is the look-ahead over the same 1,200 random drafts at the pass 8 facility (`MACHINE_HP_FACTOR` 1), so only the rule changes differ.
+
+| setting | lowest | highest | standard deviation | look-ahead wins |
+|---|---|---|---|---|
+| pass 8 (baseline) | -0.38 Venemist | +0.38 Xylum | 0.23 | 90% |
+| 56 only | -0.52 Ectoghoul | +0.36 | 0.20 | 90% |
+| 57 only | -0.43 | +0.43 | 0.25 | 88% |
+| 56 and 57 | -0.30 Avilily | +0.40 Xylum | 0.19 | 89% |
+| 56, 57, 58 (two-way, first reading) | -0.30 | +0.36 | 0.17 | 88% |
+| 56, 57, 59 | -0.30 | +0.36 | 0.17 | |
+| 56 to 59 (two-way 58) | -0.27 Vespersyn | +0.33 Xylum | 0.14 | 90% |
+| **56 to 59 as shipped (one-way 58)** | **-0.24 Venemist** | **+0.29 Xylum** | **0.12** | **94%** |
+
+At the shipped facility (0.62) the look-ahead wins 1,197 of 1,200 random drafts, so its species values compress toward zero (-0.09 Hypnopet to +0.11 Xylum, 0.05): nearly any four creatures get through when the orders are good. The pass 5 player reads -0.40 to +0.36 (0.18) there; its values still carry its known mispricing of binds (pass 7).
+
+### The shipped settings
+
+| squad | random orders | pass 5 | look-ahead |
+|---|---|---|---|
+| preset squad, 200 runs (pass 8) | 8% | 92% | 100% |
+| preset squad, 200 runs (pass 9) | 25% | 93% | 100% |
+| random draft, 1,200 runs (pass 8) | 37% (400 runs) | 61% | 90% |
+| random draft, 1,200 runs (pass 9) | 63% | 88% | 100% |
+
+The facility HP sweep behind decision 60, pass 5 with 56 to 59 in place (preset squad of 200, random drafts of 800): factor 1, 10% and 51%; 0.8, 50% and 72%; 0.75, 66% and 79%; 0.7, 81% and 84%; 0.65, 90% and 87%; 0.62, 93% and 89%; 0.6, 97% and 91%. The random draft gets easier than it was because the draft's typical squad lost less harm to 56 and 57 than the preset did: the preset's Graviclaw and Crystorn were among the heaviest strikers under the old curve.
+
+### What each species does for a squad now
+
+Per run, under the look-ahead at the shipped settings: the heavy bodies (Terragoyle, Frackworm, Kosanos, Graviclaw) deal the most harm (73 to 95) and take a large share of the blows; the quick small strikers (Tizzie, Luceras, Dromeus, Chromocat) now take 8 to 23 harm a run where they used to fall, and deal 58 to 74; the controllers deny machine opportunities (Hypnopet 8.3, Neph 5.8, Avilily 5.3, Voltish 4.7, Newtapede 4.3, Thirstaserp 4.2); Sonalloy heals 20.5 HP a run, and Figzy and Shuntara guard squadmates about 3 times a run. No companion is knocked out more than once in ten runs.
+
+### Friction reported
+
+- **Almost no creature can heal or guard a squadmate.** Across the roster's generated creatures only Sonalloy carries a heal it aims at others, and only Figzy and Shuntara give guards; the look-ahead orders support in 3% of its orders because there is nothing else to order. A support build is a real path to value only if more species can take it. That is creature data (which derived acts include a mend or guard aimed at another), not a game rule, so nothing was changed here; the next step is to count, per species, the derived acts with an other-aimed restore, remove or protect, and see which species' anatomy justifies one that the tables do not yet produce.
+- **Control is not yet worth its slot on the most fragile controllers.** Hypnopet denies the most opportunities and still reads lowest; its every-round harm is about 1.6. The game treats one denied machine opportunity as worth one of the controller's own, which is fair, but a denial only prevents what that machine would have done that opportunity. A lever to try next: stun and trance durations counted in the victim's opportunities (currently 1 for attention statuses).
+- **This facility still favors some elements.** Venemist (chemical) and Vespersyn (dark) sit lowest at the pass 8 facility after every change: their elemental moves meet a facility that is mostly sand and electric. That is element counterplay working as intended, but with one facility it reads as a weak species. More facilities with other element mixes would let each element have a place where it is the right pick.
+
 ## Fix, 2026-09-23: a degrading status that cannot tick does not take hold
 
 Nick saw Crystorn corroding on the live site with the rule "Takes 0 damage at the start of each of its own opportunities". The reading was faithful but useless: a degrading status's only effect in this game is its tick, the tick is multiplied by the effectiveness matrix, and chemical against light (and ice) is 0. The model allows elemental immunity to coexist with an application, but here the application would change nothing, so it is now refused with a `resisted` event: "Crystorn is unaffected: chemical has no effect on light, so corroding cannot take hold." A degrading status too weak to tick at all is refused the same way. Regression test: "does not let a degrading status take hold where it could never tick".

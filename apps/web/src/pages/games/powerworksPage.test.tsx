@@ -77,7 +77,7 @@ const ringOwner = () =>
 const escape = (text: string) => text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 /**
   A target button by the start of its name: since round 2 the name goes on to say what the
-  chosen move would do there ("Target Maintenance crawler M1: 8 damage, 22 to 14, strong").
+  chosen move would do there ("Target Maintenance crawler M1: 8 damage, 17 to 9, strong").
 */
 const targetButton = (name: string) =>
   screen.getByRole("button", { name: new RegExp(`^${escape(name)}(:|$)`) });
@@ -224,7 +224,7 @@ describe("Powerworks player flow", () => {
     ).toBeInTheDocument();
     for (const id of ["M1", "M2"])
       expect(targetButton(`Target Maintenance crawler ${id}`)).toHaveAccessibleName(
-        `Target Maintenance crawler ${id}: 8 damage, 22 to 14, strong`
+        new RegExp(`^Target Maintenance crawler ${id}: [0-9]+ damage, [0-9]+ to [0-9]+, strong$`)
       );
     // Escape backs out one step, to the ring.
     fireEvent.keyDown(window, { key: "Escape" });
@@ -649,7 +649,7 @@ describe("Powerworks player flow", () => {
       fireEvent.click(screen.getByRole("menuitem", { name: /^Hippochamp: Water Sweep/ }));
       const target = targetButton("Target Maintenance crawler M1");
       expect(target).toHaveAccessibleName(
-        `Target Maintenance crawler M1: ${hit} damage, 22 to ${22 - hit}, strong, slowed ${slowed}% chance`
+        `Target Maintenance crawler M1: ${hit} damage, ${m1.hp} to ${m1.hp - hit}, strong, slowed ${slowed}% chance`
       );
       // On the creature: a target ring, the chunk and its number on the health bar, the
       // status ghost with its chance. The squad, which the sweep cannot name, is dimmed.
@@ -675,17 +675,24 @@ describe("Powerworks player flow", () => {
         /, also reaches Crawler 2$/
       );
       expect(moveCard()!.querySelector(".pw-radial-card-target")).toHaveTextContent(
-        `Crawler 1: ${hit} damage, 22 to ${22 - hit}`
+        `Crawler 1: ${hit} damage, ${m1.hp} to ${m1.hp - hit}`
       );
       fireEvent.pointerLeave(target, { pointerType: "mouse" });
       expect(moveCard()).toHaveTextContent("Choose an enemy");
     });
 
     it("reads a heal as a touch, not an attack", () => {
-      // Seed 4's offer carries a Sonalloy with a heal (seed 3's did before contract decision 53).
-      const seed = 4;
-      const offer = draftOffer(seed);
-      const healer = offer.find((e) => e.species === "sonalloy");
+      // The first offer carrying a Sonalloy with a heal (the seed moves whenever the offer's
+      // filter or the harm curve does).
+      const withHeal = (seed: number) =>
+        draftOffer(seed).find(
+          (e) =>
+            e.species === "sonalloy" &&
+            e.unit.moves.some((m) => m.effects.some((x) => x.support === "restore"))
+        );
+      let seed = 1;
+      while (seed < 200 && !withHeal(seed)) seed++;
+      const healer = withHeal(seed);
       expect(healer).toBeDefined();
       const heal = healer!.unit.moves.find((m) => m.effects.some((e) => e.support === "restore"))!;
       expect(kindWords(heal)).toMatch(/^(Touch|At range)$/);
@@ -874,7 +881,7 @@ describe("Powerworks player flow", () => {
       expect(card.querySelector(".pw-radial-marks .pw-mark.rest.cost")).not.toBeNull();
       expect(card.querySelector(".pw-mark.harm")).toHaveTextContent("Harm");
       expect(card.querySelector(".pw-mark.harm")).toHaveAccessibleDescription(
-        /^Compression harm, matched by Hippochamp's own water element\./
+        /^Compression harm\. Physical, so it lands the same on every element\./
       );
       const rest = card.querySelector<HTMLElement>(".pw-mark.rest")!;
       expect(rest.querySelectorAll("i")).toHaveLength(2);

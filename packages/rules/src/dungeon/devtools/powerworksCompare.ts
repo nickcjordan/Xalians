@@ -13,7 +13,14 @@
 import { readFileSync, writeFileSync } from "node:fs";
 import { availableParallelism } from "node:os";
 import { isMainThread, parentPort, Worker } from "node:worker_threads";
-import { LOOKAHEAD, simulate, type Lookahead, type SimOptions, type SimStats } from "./powerworksSim.ts";
+import {
+  LOOKAHEAD,
+  simulate,
+  speciesValue,
+  type Lookahead,
+  type SimOptions,
+  type SimStats,
+} from "./powerworksSim.ts";
 
 type Job = { first: number; runs: number; options: SimOptions };
 type Policy = SimOptions["policy"];
@@ -171,6 +178,33 @@ export function formatActs(byPolicy: [Policy, SimStats][], species: string[]): s
   return out.join("\n");
 }
 
+/**
+  Pass 9: each species' value to a squad under one policy, and what it did per run it was in:
+  its fitted value (`speciesValue`), its drafted HP, speed and best power, harm dealt and
+  taken, HP healed and guards given to squadmates, machine opportunities denied, knockouts.
+*/
+export function formatSpecies(policy: Policy, stats: SimStats): string {
+  const values = speciesValue(stats.runRecords);
+  const rows = Object.entries(stats.contrib)
+    .map(([k, c]) => ({ k, c, v: values[k]?.value ?? 0 }))
+    .sort((a, b) => a.v - b.v);
+  const vs = rows.map((r) => r.v);
+  const sd = Math.sqrt(vs.reduce((n, v) => n + v * v, 0) / (vs.length || 1));
+  const per = (n: number, c: { runs: number }) => (c.runs ? (n / c.runs).toFixed(1) : "-");
+  return [
+    `Species value under ${policy}: fitted value in encounters (0 is the average pick), then per run it was in.`,
+    `Spread: lowest ${vs[0]?.toFixed(2)}, highest ${vs[vs.length - 1]?.toFixed(2)}, standard deviation ${sd.toFixed(2)}.`,
+    "",
+    "| species | runs | value | HP | speed | power | dealt | taken | healed | guards | denied | fell |",
+    "|---|---|---|---|---|---|---|---|---|---|---|---|",
+    ...rows.map(
+      ({ k, c, v }) =>
+        `| ${k} | ${c.runs} | ${v >= 0 ? "+" : ""}${v.toFixed(2)} | ${per(c.max, c)} | ${per(c.speed, c)} | ${per(c.power, c)} | ${per(c.dealt, c)} | ${per(c.taken, c)} | ${per(c.healed, c)} | ${per(c.guards, c)} | ${per(c.denied, c)} | ${per(c.fell, c)} |`
+    ),
+    "",
+  ].join("\n");
+}
+
 async function main() {
   const arg = (name: string, fallback: string) =>
     process.argv.find((a) => a.startsWith(`--${name}=`))?.slice(name.length + 3) ?? fallback;
@@ -195,7 +229,10 @@ async function main() {
     console.error(`${policy}: ${stats.wins}/${stats.runs} won in ${Math.round((Date.now() - started) / 1000)}s`);
     byPolicy.push([policy, stats]);
   }
-  const report = `${formatCompare(runs, draft, byPolicy, lookahead)}\n${formatActs(byPolicy, acts)}`;
+  const species = process.argv.includes("--species")
+    ? byPolicy.map(([p, st]) => formatSpecies(p, st)).join("\n")
+    : "";
+  const report = `${formatCompare(runs, draft, byPolicy, lookahead)}\n${formatActs(byPolicy, acts)}\n${species}`;
   console.log(report);
   if (md) writeFileSync(md, report);
 }
