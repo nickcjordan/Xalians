@@ -324,16 +324,19 @@ describe("Powerworks player flow", () => {
     expect(anchor).toHaveAccessibleName(/protected on itself/);
     // Every disc carries its name underneath.
     expect(
-      screen.getAllByRole("menuitem").map((m) => m.querySelector(".pw-radial-label")!.textContent)
+      screen.getAllByRole("menuitem").map((m) => m.querySelector(".pw-radial-name")!.textContent)
     ).toEqual(["Gravity Pincer", "Gravity Draw", "Ground Anchor", "Slashing Pinch"]);
     // A mouse click chooses a slot at once (only touch arms first).
     fireEvent.click(
       screen.getByRole("menuitem", { name: /^Graviclaw: Ground Anchor/ }),
       { detail: 1 }
     );
+    // Against machines that never pull, the anchor guards nothing, and its chip says so.
     expect(
       screen.getByRole("button", { name: "Select Graviclaw" })
-    ).toHaveAccessibleDescription("Ground Anchor → itself");
+    ).toHaveAccessibleDescription(
+      "Ground Anchor → itself. Worth nothing this round: Graviclaw needs nothing it gives right now."
+    );
     expect(document.querySelector('[data-intent="G"]')).toBeNull();
     // Auto-advance went on to the fastest companion still without an order.
     expect(ringOwner()).toBe("Avilily");
@@ -345,7 +348,9 @@ describe("Powerworks player flow", () => {
     // Each legal disc carries a value bar; the cannon takes health, so its bar is red.
     const cannon = screen.getByRole("menuitem", { name: /^Hippochamp: Emergency Water Cannon/ });
     expect(cannon.querySelector(".pw-value .harm")).not.toBeNull();
-    expect(cannon).toHaveAccessibleDescription(/Best use this round: takes [0-9]+ health/);
+    expect(cannon).toHaveAccessibleDescription(
+      /Worth [0-9]+ health on Crawler [12] this round: takes [0-9]+ health/
+    );
     // Each machine shows its next blow; nothing is stopped before an order that stops it.
     const threats = screen.getAllByRole("img", { name: /^Threat: about [0-9]+ health$/ });
     expect(threats).toHaveLength(2);
@@ -358,6 +363,49 @@ describe("Powerworks player flow", () => {
       screen.getAllByRole("img", { name: /^Threat: about [0-9]+ health, [0-9]+ stopped$/ }).length
     ).toBeGreaterThan(0);
   });
+  it("names the target a value is read on, follows the aim, and reads the plan (readout pass)", () => {
+    mount();
+    fireEvent.click(screen.getByRole("button", { name: "Enter the facility" }));
+    fireEvent.click(screen.getByRole("button", { name: "Select Avilily" }));
+    // Hovering the bind marks one machine as the one its value is read on, and lays gold on
+    // that machine's blow only: a bind names one target, so it never stops both.
+    const bind = screen.getByRole("menuitem", { name: /^Avilily: Binding/ });
+    fireEvent.pointerEnter(bind, { pointerType: "mouse" });
+    expect(screen.getAllByLabelText("The move's value is read on this target")).toHaveLength(1);
+    expect(screen.getAllByRole("img", { name: /^Threat: about [0-9]+ health, [0-9]+ stopped$/ })).toHaveLength(1);
+    // Every value bar ends in its number, in health.
+    expect(bind.querySelector(".pw-value-num")?.textContent).toMatch(/^[0-9]+$/);
+    // Choosing it opens the card with the value and the target it is read on; aiming at the
+    // other machine moves both.
+    fireEvent.click(bind, { detail: 1 });
+    const card = () => document.querySelector(".pw-radial-card-value-on")!;
+    const first = card().textContent;
+    expect(first).toMatch(/^Crawler [12]$/);
+    const other = first === "Crawler 1" ? "Crawler 2" : "Crawler 1";
+    const otherId = other === "Crawler 1" ? "M1" : "M2";
+    fireEvent.pointerEnter(screen.getByRole("button", { name: new RegExp(`^Target Maintenance crawler ${otherId}`) }), {
+      pointerType: "mouse",
+    });
+    expect(card().textContent).toBe(other);
+  });
+  it("shows what standing orders take, and marks an order that would do nothing (readout pass)", () => {
+    mount();
+    fireEvent.click(screen.getByRole("button", { name: "Enter the facility" }));
+    // Hippochamp's cannon on a squadmate with nothing to clear does nothing: its chip says so.
+    fireEvent.click(screen.getByRole("button", { name: "Select Hippochamp" }));
+    fireEvent.click(screen.getByRole("menuitem", { name: /^Hippochamp: Emergency Water Cannon/ }), {
+      detail: 1,
+    });
+    fireEvent.click(screen.getByRole("button", { name: /^Target Avilily \(squadmate\)/ }), { detail: 1 });
+    expect(
+      screen.getByRole("button", { name: "Select Hippochamp" })
+    ).toHaveAccessibleDescription(/Emergency Water Cannon → Avilily\. Worth nothing this round: Avilily needs nothing/);
+    // An attack order on a machine draws its planned damage on that machine's health bar.
+    fireEvent.click(screen.getByRole("button", { name: "Select Graviclaw" }));
+    fireEvent.click(screen.getByRole("menuitem", { name: /^Graviclaw: Gravity Pincer/ }), { detail: 1 });
+    fireEvent.click(screen.getByRole("button", { name: /^Target Maintenance crawler M1/ }), { detail: 1 });
+    expect(document.querySelector('[data-unit="M1"] .pw-hp-planned')).not.toBeNull();
+  });
   it("explains visual move stats without repeating power and range text on cards", () => {
     mount();
     fireEvent.click(screen.getByRole("button", { name: "Enter the facility" }));
@@ -367,7 +415,7 @@ describe("Powerworks player flow", () => {
     });
     // The move value pass adds its best use this round, in health, to the description.
     expect(attack).toHaveAccessibleDescription(
-      /^Ranged attack\. 5 base power\. Cools: ends Overheated and Burning\. 1 round cooldown\. Best use this round: takes [0-9]+ health\.$/
+      /^Ranged attack\. 5 base power\. Cools: ends Overheated and Burning\. 1 round cooldown\. Worth [0-9]+ health on Crawler [12] this round: takes [0-9]+ health\.$/
     );
     expect(attack.querySelector(".pw-radial-label")).not.toHaveTextContent(
       /power|ranged/

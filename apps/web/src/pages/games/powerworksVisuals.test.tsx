@@ -43,7 +43,7 @@ import {
   slotState,
 } from "./powerworksRadial";
 import { CAMERA, IDENTITY, beatZoom } from "./powerworksStage";
-import { MatchupMark, StatusBadges } from "./powerworksVisuals";
+import { MatchupMark, StatusBadges, ThreatBar, ValueBar } from "./powerworksVisuals";
 import type { Condition, Move, MoveEffect, StatusGroup } from "@xalians/rules/dungeon";
 
 afterEach(cleanup);
@@ -457,6 +457,41 @@ describe("Powerworks radial orders round 2: the card's words, the bar's preview,
     rerender(<Health u={u} />);
     expect(container.querySelector(".pw-hp-label")).toHaveTextContent(`40 / ${u.max}`);
     expect(container.querySelector(".pw-hp-chunk, .pw-hp-heal, .pw-hp-delta")).toBeNull();
+    // Readout pass: what the standing orders take sits at the bar's end, and the move in
+    // hand's chunk stacks in front of it.
+    rerender(<Health u={u} planned={12} preview={{ ...none, damage: 10 }} />);
+    const planned = container.querySelector<HTMLElement>(".pw-hp-planned")!;
+    expect(planned.style.left).toBe(`${(28 / u.max) * 100}%`);
+    expect(container.querySelector<HTMLElement>(".pw-hp-chunk")!.style.left).toBe(`${(18 / u.max) * 100}%`);
+    // A plan that already takes everything: the move in hand lands on nothing, and says so.
+    rerender(<Health u={u} planned={40} preview={{ ...none, damage: 10 }} />);
+    expect(container.querySelector(".pw-hp-delta")).toHaveTextContent("already falls");
+    expect(container.querySelector(".pw-hp-chunk")).toBeNull();
+  });
+  it("ends every value bar in its number, and an empty one in the no-effect mark (readout pass)", () => {
+    const { container, rerender } = render(
+      <ValueBar value={{ harm: 6, saved: 7, healed: 0, knockout: true }} label="Crawler 1" />
+    );
+    expect(container.querySelector(".pw-value-num")).toHaveTextContent("13");
+    expect(container.querySelector(".pw-value-num svg")).not.toBeNull();
+    expect(container.querySelector(".pw-value")).toHaveAttribute(
+      "title",
+      "Worth 13 health on Crawler 1 this round: takes 6 health and knocks out, keeps about 7 health for the squad"
+    );
+    rerender(
+      <ValueBar value={{ harm: 0, saved: 0, knockout: false, why: { kind: "harmless", status: "blinded" } }} label="Crawler 1" />
+    );
+    expect(container.querySelector(".pw-value-num")).toBeNull();
+    expect(container.querySelector(".pw-value-none")).not.toBeNull();
+    expect(container.querySelector(".pw-value")).toHaveAttribute(
+      "title",
+      "Worth nothing this round: Crawler 1 strikes up close, so blinding does not weaken it"
+    );
+    // A machine's blow ends in what still gets through; one that loses its turn reads 0.
+    rerender(<ThreatBar amount={7} prevented={3} ranged={false} label="Crawler 1" />);
+    expect(container.querySelector(".pw-threat-num")).toHaveTextContent("4");
+    rerender(<ThreatBar amount={0} ranged={false} held="stunned" label="Crawler 1" />);
+    expect(screen.getByRole("img", { name: "Threat: none, stunned" })).toHaveClass("held");
   });
   it("tells a charging companion's other discs why they wait", () => {
     const u = readCompanion(COMPANION_RECORDS.hippochamp, "H");

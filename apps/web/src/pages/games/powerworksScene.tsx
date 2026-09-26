@@ -13,6 +13,7 @@ import {
   Zap,
   CornerUpRight,
   Ban,
+  Crosshair,
   Sparkles,
   Plus,
 } from "lucide-react";
@@ -83,6 +84,8 @@ export type UnitPreview = HealthPreview & {
     group: StatusGroup;
     chance: number;
     immune: boolean;
+    /** Readout pass: it would land but not weaken this machine's next blow (a blind on a machine that strikes up close). */
+    harmless?: boolean;
   }[];
   /** A helpful move's reading on a squadmate: guards, clears, or why it does nothing. */
   notes: { kind: "guard" | "clear" | "none"; text: string }[];
@@ -271,6 +274,9 @@ export function PowerworksScene({
   hints = {},
   threats = {},
   prevented = {},
+  planned = {},
+  referent = null,
+  idleOrders = {},
   beatMs,
   story = null,
 }: {
@@ -314,9 +320,15 @@ export function PowerworksScene({
   */
   hints?: Record<string, UnitPreview>;
   /** Move value pass: each standing machine's next blow while planning, in health. */
-  threats?: Record<string, { amount: number; ranged: boolean }>;
+  threats?: Record<string, { amount: number; ranged: boolean; held?: string }>;
   /** Move value pass: how much of each machine's blow the squad's orders, or the move in hand, would stop. */
   prevented?: Record<string, number>;
+  /** Readout pass: what the standing orders and degrading ticks take from each unit this round. */
+  planned?: Record<string, number>;
+  /** Readout pass: the unit the move in hand's value is about, marked on its plaque until one is aimed. */
+  referent?: string | null;
+  /** Readout pass: standing orders that would do nothing, with why. */
+  idleOrders?: Record<string, string>;
   /** How long this playback beat lasts as the page runs it, in milliseconds. */
   beatMs?: number;
   /** The playback beat's names for the on-stage banner; null while planning. */
@@ -659,13 +671,13 @@ export function PowerworksScene({
                   <span
                     key={`ghost-${s.status}`}
                     className={`pw-status-badge condition group-${s.group} ghost ${
-                      s.immune ? "immune" : ""
+                      s.immune || s.harmless ? "immune" : ""
                     }`}
                     aria-hidden="true"
                   >
                     <GroupIcon group={s.group} />
                     {s.status}
-                    <small>{s.immune ? "immune" : `${s.chance}%`}</small>
+                    <small>{s.immune ? "immune" : s.harmless ? "no effect" : `${s.chance}%`}</small>
                   </span>
                 ))}
                 {preview.notes.map((n) => (
@@ -833,6 +845,13 @@ export function PowerworksScene({
                   <div>
                     {u.enemy && <ElementIcon element={u.element} />}
                     <strong>{labelFor(u)}</strong>
+                    {referent === u.id && (
+                      // The target the move in hand's value bar is about (readout pass).
+                      <Crosshair
+                        className="pw-referent"
+                        aria-label="The move's value is read on this target"
+                      />
+                    )}
                     <button
                       aria-label={`Inspect ${u.name}${
                         u.enemy ? ` ${u.id}` : " on battlefield"
@@ -842,25 +861,37 @@ export function PowerworksScene({
                       <Info />
                     </button>
                   </div>
-                  <Health u={u} preview={preview && faint ? { ...preview, faint } : preview} />
+                  <Health
+                    u={u}
+                    preview={preview && faint ? { ...preview, faint } : preview}
+                    planned={planned[u.id] ?? 0}
+                  />
                   {u.enemy && threats[u.id] && (
                     <ThreatBar
                       amount={threats[u.id].amount}
                       ranged={threats[u.id].ranged}
+                      held={threats[u.id].held}
                       prevented={prevented[u.id] ?? 0}
+                      label={labelFor(u)}
                     />
                   )}
                   {chip && (
                     <button
                       className={`pw-order-chip ${chip.move ? "" : "empty"} ${
                         chip.status === "Acted" ? "done" : ""
-                      } ${
+                      } ${idleOrders[u.id] ? "idle" : ""} ${
                         flash && !reducedMotion && flash.actor === u.id ? "just-set" : ""
                       }`}
                       key={flash && flash.actor === u.id ? `chip-${flash.stamp}` : "chip"}
                       disabled={!planning || u.hp <= 0}
                       tabIndex={-1}
-                      title={chip.move ? chip.move.name : undefined}
+                      title={
+                        chip.move
+                          ? idleOrders[u.id]
+                            ? `${chip.move.name}. ${idleOrders[u.id]}.`
+                            : chip.move.name
+                          : undefined
+                      }
                       aria-label={
                         !planning || u.hp <= 0
                           ? `${u.name}'s order: ${chipText(chip)}`
@@ -886,6 +917,9 @@ export function PowerworksScene({
                             {baseName(chip.move)}
                           </span>
                           <span className="pw-order-chip-target">
+                            {idleOrders[u.id] && !chip.status && (
+                              <Ban className="pw-order-chip-idle" aria-hidden="true" />
+                            )}
                             {chip.status ? (
                               chip.status
                             ) : (
@@ -905,6 +939,7 @@ export function PowerworksScene({
                       )}
                       <span className="pw-sr" id={`order-${u.id}`}>
                         {chipText(chip)}
+                        {idleOrders[u.id] ? `. ${idleOrders[u.id]}.` : ""}
                       </span>
                     </button>
                   )}
