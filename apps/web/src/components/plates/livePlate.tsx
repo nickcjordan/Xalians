@@ -16,6 +16,13 @@
 // 2026-09-22): the plate's fire, smoke and water loop because they are the
 // painting, not the interface. The live plate pauses when the tab is hidden,
 // and always under reduced motion, where it holds its composed first frame.
+//
+// Film rate (2026-09-26): a plate plays at FILM_FPS, not the screen's rate.
+// Its timelines stay paused and are stepped forward by hand, so the browser
+// redraws the plate's moving layers a third as often. Every redraw of a
+// filtered SVG layer is costly on the graphics chip; at the screen's rate the
+// Unbirth plate kept it fully busy, which is what made the whole page jumpy
+// around it. The recordings are archive footage, and a lower frame rate suits them.
 import * as React from 'react';
 import { cn } from '@/lib/utils';
 import { joinStage, loadFragment } from './plateStage';
@@ -45,13 +52,40 @@ const NEAR = '600px';
 // clip paths would otherwise run free while the layers are paused.
 const PLATE_SVGS = 'svg.layer, svg.defs';
 const THRESHOLDS = Array.from({ length: 21 }, (_, i) => i / 20);
+/** Frames a second a live plate plays at. */
+export const FILM_FPS = 20;
 
-function setPlaying(host: HTMLElement, playing: boolean) {
-	host.querySelectorAll<SVGSVGElement>(PLATE_SVGS).forEach((svg) => {
-		if (typeof svg.pauseAnimations !== 'function') return;
-		if (playing) svg.unpauseAnimations();
-		else svg.pauseAnimations();
-	});
+function plateSvgs(host: HTMLElement) {
+	return [...host.querySelectorAll<SVGSVGElement>(PLATE_SVGS)].filter((svg) => typeof svg.pauseAnimations === 'function');
+}
+
+/**
+ * Play a mounted plate at the film rate: each of its timelines stays paused
+ * and is set to the next frame's time FILM_FPS times a second. Starts from
+ * `from` seconds; returns a stop that gives back where it got to.
+ */
+function playFilm(host: HTMLElement, from: number): () => number {
+	const svgs = plateSvgs(host);
+	svgs.forEach((svg) => svg.pauseAnimations());
+	const step = 1 / FILM_FPS;
+	let at = from;
+	let last = -1;
+	let frame = 0;
+	const tick = (now: number) => {
+		frame = window.requestAnimationFrame(tick);
+		if (last < 0) last = now;
+		const n = Math.floor((now - last) / 1000 / step);
+		if (n < 1) return;
+		// A long stall (a busy main thread) skips ahead at most a few frames, never a jump.
+		at += Math.min(n, 3) * step;
+		last += n * step * 1000;
+		svgs.forEach((svg) => svg.setCurrentTime?.(at));
+	};
+	frame = window.requestAnimationFrame(tick);
+	return () => {
+		window.cancelAnimationFrame(frame);
+		return at;
+	};
 }
 
 // A freshly injected plate is paused before its timeline has ever been
@@ -107,7 +141,6 @@ export function LivePlate({ src, poster, active, primed = false, className }: Pr
 	React.useLayoutEffect(() => {
 		const host = hostRef.current;
 		if (mounted || !host || !host.firstChild) return;
-		setPlaying(host, false);
 		host.innerHTML = '';
 	}, [mounted]);
 
@@ -116,7 +149,6 @@ export function LivePlate({ src, poster, active, primed = false, className }: Pr
 		const host = hostRef.current;
 		if (!host) return undefined;
 		if (!mounted) {
-			setPlaying(host, false);
 			host.innerHTML = '';
 			setReady(false);
 			return undefined;
@@ -137,18 +169,30 @@ export function LivePlate({ src, poster, active, primed = false, className }: Pr
 		};
 	}, [mounted, src]);
 
-	// The live plate plays while the tab is shown, never under reduced motion; a primed one holds.
+	// Where the plate's clock has got to, so a pause resumes rather than restarts; a fresh mount starts at zero.
+	const clock = React.useRef(0);
+	React.useEffect(() => {
+		if (!mounted) clock.current = 0;
+	}, [mounted]);
+
+	// The live plate plays at the film rate while the tab is shown, never under reduced motion; a primed one holds.
 	React.useEffect(() => {
 		const host = hostRef.current;
 		if (!ready || !host || !live) return undefined;
 		const reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 		if (reduced) return undefined;
-		const apply = () => setPlaying(host, document.visibilityState !== 'hidden');
+		let stop: (() => number) | null = null;
+		const apply = () => {
+			if (document.visibilityState === 'hidden') {
+				if (stop) clock.current = stop();
+				stop = null;
+			} else if (!stop) stop = playFilm(host, clock.current);
+		};
 		apply();
 		document.addEventListener('visibilitychange', apply);
 		return () => {
 			document.removeEventListener('visibilitychange', apply);
-			setPlaying(host, false);
+			if (stop) clock.current = stop();
 		};
 	}, [ready, live]);
 

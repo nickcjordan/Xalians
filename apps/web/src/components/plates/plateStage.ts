@@ -64,10 +64,27 @@ export function joinStage(onActive: (active: boolean) => void): StageSlot {
 // leaves the stage and comes back re-injects without another request.
 const fragments = new Map<string, Promise<string>>();
 
+// A baked plate's still parts are pictures (scripts/plates/bake-plate.cjs):
+// start fetching them with the fragment, so they are decoded by the time the
+// plate goes into the page rather than arriving in pieces after it.
+function warmPictures(html: string) {
+	if (typeof Image === 'undefined') return;
+	for (const m of html.matchAll(/<image [^>]*href="([^"]+)"/g)) {
+		const img = new Image();
+		img.decoding = 'async';
+		img.src = m[1];
+	}
+}
+
 export function loadFragment(src: string): Promise<string> {
 	let p = fragments.get(src);
 	if (!p) {
-		p = fetch(src).then((r) => (r.ok ? r.text() : Promise.reject(new Error(String(r.status)))));
+		p = fetch(src)
+			.then((r) => (r.ok ? r.text() : Promise.reject(new Error(String(r.status)))))
+			.then((html) => {
+				warmPictures(html);
+				return html;
+			});
 		p.catch(() => fragments.delete(src));
 		fragments.set(src, p);
 	}

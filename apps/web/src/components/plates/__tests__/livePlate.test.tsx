@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, waitFor, act } from '@testing-library/react';
-import { LivePlate } from '../livePlate';
+import { FILM_FPS, LivePlate } from '../livePlate';
 import { resetStage } from '../plateStage';
 
 const FRAGMENT =
@@ -55,7 +55,7 @@ describe('LivePlate', () => {
 		expect(layers(container)).toBe(0);
 	});
 
-	it('goes live in view: injects the fragment, seeks it to its first frame and plays it', async () => {
+	it('goes live in view: injects the fragment, seeks it to its first frame and plays it at the film rate', async () => {
 		const { container } = render(<LivePlate src="/assets/plates/x/plate.html" poster={poster} />);
 		show(container, 0.6);
 		await waitFor(() => expect(container.querySelector('[data-live-plate="ready"]')).toBeTruthy());
@@ -63,12 +63,10 @@ describe('LivePlate', () => {
 		expect(layers(container)).toBe(2);
 		const seek = SVGSVGElement.prototype.setCurrentTime as unknown as ReturnType<typeof vi.fn>;
 		expect(seek).toHaveBeenCalledWith(0);
-		// both layers and the defs sheet, whose animated filters keep their own clock
-		const play = SVGSVGElement.prototype.unpauseAnimations as unknown as ReturnType<typeof vi.fn>;
-		// Play starts in the effect that runs after the "ready" commit; wait for it rather
-		// than assuming it has flushed (it had not on CI, 2026-09-24).
-		await waitFor(() => expect(play).toHaveBeenCalledTimes(3));
-		expect(play.mock.instances).toContain(container.querySelector('svg.defs'));
+		// Never set running: every timeline, the defs sheet's too, is stepped by hand to the next film frame.
+		await waitFor(() => expect(seek).toHaveBeenCalledWith(1 / FILM_FPS));
+		expect(seek.mock.instances).toContain(container.querySelector('svg.defs'));
+		expect(SVGSVGElement.prototype.unpauseAnimations).not.toHaveBeenCalled();
 	});
 
 	it('keeps only one plate live: the one most in view has its SVG, the other none', async () => {

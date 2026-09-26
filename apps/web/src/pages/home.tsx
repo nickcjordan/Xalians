@@ -81,8 +81,9 @@ const ART = {
 		small: '/assets/img/lore/eras/unbirth-768.jpg',
 		alt: 'A heavy industrial machine on flooded rock, ringed by young growth, lets glowing seeds down a chute into the storm flood; the current spreads them across the plain, where some split and larvae swim out and others take root on the rocks; out in the distance the storm whips the water white, and far off a colossal tree rises from an island of young forest grown from earlier seeds.',
 		// The living version: the Genesis Prototype on Floria, letting its seeds
-		// into the flood that was meant to wash its mistakes away.
-		live: '/assets/plates/unbirth/plate.html',
+		// into the flood that was meant to wash its mistakes away. Baked for the
+		// site (scripts/plates/bake-plate.cjs): its still parts are pictures.
+		live: '/assets/plates/unbirth/live.html',
 		still: { src: '/assets/plates/unbirth/poster.jpg', small: '/assets/plates/unbirth/poster-768.jpg' },
 	},
 	endWars: {
@@ -92,7 +93,7 @@ const ART = {
 		alt: 'A burning warship falling between the towers of a night city under a sky of tracer fire.',
 		// The living version of this plate: stacked SVG layers with fire, smoke,
 		// weapon fire and water in motion; live while it is the plate most in view.
-		live: '/assets/plates/end-wars/plate.html',
+		live: '/assets/plates/end-wars/live.html',
 		still: { src: '/assets/plates/end-wars/poster.jpg', small: '/assets/plates/end-wars/poster-768.jpg' },
 	},
 	present: {
