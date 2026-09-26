@@ -100,6 +100,7 @@ import {
   type UnitPreview,
 } from "./powerworksScene";
 import { PowerworksRadial, ringIndices } from "./powerworksRadial";
+import { machineThreat, moveValue, valueOn } from "@xalians/rules/dungeon/value";
 import { PowerworksEnvironment } from "./powerworksEnvironment";
 import { useBattlePresentation } from "./powerworksPresentation";
 import "./powerworks.css";
@@ -1005,6 +1006,32 @@ export default function PowerworksPage() {
     ringOpen && active && hint !== null && available.includes(hint)
       ? buildPreviews(active, moveAt(active, hint), hint, null)
       : {};
+  // Move value pass (2026-09-26): every legal move's best use this round, in health taken
+  // and kept, and each machine's next blow with the part the squad's orders would stop. The
+  // move in hand (hovered, armed or chosen) shows what it would stop on each machine it can
+  // name, on top of the other companions' standing orders.
+  const values = planning && active
+    ? Object.fromEntries(available.map((i) => [i, moveValue(run, active, i)]))
+    : {};
+  const threats = planning
+    ? Object.fromEntries(
+        run.enemies.filter((e) => e.hp > 0).map((e) => [e.id, machineThreat(run, e)])
+      )
+    : {};
+  const inHand = !planning || !active ? null : pending ?? (ringOpen ? hint : null);
+  const prevented: Record<string, number> = {};
+  if (planning) {
+    for (const u of run.team) {
+      const q = plans[u.id];
+      if (!q || q.move < 0 || u.hp <= 0 || (inHand !== null && u.id === active?.id)) continue;
+      const t = run.enemies.find((e) => e.id === q.target && e.hp > 0);
+      if (t) prevented[t.id] = (prevented[t.id] ?? 0) + valueOn(run, u, q.move, t).saved;
+    }
+    if (active && inHand !== null && available.includes(inHand))
+      for (const t of legalTargets(run, active, inHand))
+        if (t.enemy !== active.enemy)
+          prevented[t.id] = (prevented[t.id] ?? 0) + valueOn(run, active, inHand, t).saved;
+  }
   const aimedUnit = aimed
     ? [...run.team, ...run.enemies].find((u) => u.id === aimed)
     : null;
@@ -1457,6 +1484,8 @@ export default function PowerworksPage() {
                   labelFor={labelFor}
                   previews={previews}
                   hints={hints}
+                  threats={threats}
+                  prevented={prevented}
                   beatMs={frameDuration / speed}
                   story={story}
                   flash={flash}
@@ -1510,6 +1539,7 @@ export default function PowerworksPage() {
                         prompt={prompt}
                         targetLine={targetLine}
                         onPreview={setHint}
+                        values={values}
                       />
                     ) : null,
                   ]}
@@ -2057,6 +2087,20 @@ export default function PowerworksPage() {
                   If a target falls, the same move redirects to the next living
                   enemy in its row. Previews use current defenses; hidden
                   actions may change the result.
+                </p>
+              </section>
+              <section>
+                <h3>
+                  <Swords />
+                  Reading a move
+                </h3>
+                <p>
+                  Under each move, a bar measured in health: red is what it
+                  takes from the machines at its best this round, gold what it
+                  keeps for your squad by stopping a blow, knocking a machine
+                  out, or guarding or healing a squadmate. Under each machine,
+                  red is the blow it is poised to land; gold shows how much of
+                  it your orders stop.
                 </p>
               </section>
               <section>

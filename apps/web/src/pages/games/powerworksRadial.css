@@ -1204,3 +1204,112 @@
     border-color: #f2d68b;
   }
 }
+
+/*
+  Move value (2026-09-26): one currency, health, on one scale (VALUE_PX_PER_HP). Under each
+  disc's name, a segmented bar: red is the health the move takes from the machines at its best
+  this round, gold the health it keeps for the squad. Under each machine's plate, its next
+  blow on the same scale, with the part the squad's orders would stop in gold. The segments
+  are 2 HP each, like a health bar's chunks; lengths compare directly across discs.
+*/
+.pw {
+  --value-track: 72px;
+}
+@media (max-width: 600px) {
+  .pw {
+    --value-track: 50px;
+  }
+}
+.pw-radial-label {
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+}
+.pw-value {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+.pw-value-track {
+  position: relative;
+  display: flex;
+  width: var(--value-track);
+  height: 8px;
+  overflow: hidden;
+  border-radius: 1px;
+  background: #08151bd9;
+  box-shadow: inset 0 0 0 1px #d5c08c33, 0 1px 2px #000a;
+}
+.pw-value-track > i {
+  display: block;
+  height: 100%;
+}
+/* The same hatches the health bars use: red for health lost, gold for health kept. */
+.pw-value-track > i.harm {
+  background: repeating-linear-gradient(120deg, #ffc6b6 0 3px, #b9533c 3px 6px);
+}
+.pw-value-track > i.saved {
+  background: repeating-linear-gradient(120deg, #fff0bc 0 3px, #d19a3e 3px 6px);
+}
+/* The 2 HP segment gaps, drawn over the fills. */
+.pw-value-track::after,
+.pw-threat-track::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  /* One gap per 2 HP: the track is VALUE_TRACK_HP (12) long, so six segments. */
+  background: repeating-linear-gradient(
+    90deg,
+    #0000 0 calc(var(--value-track) / 6 - 1px),
+    #08151bcc calc(var(--value-track) / 6 - 1px) calc(var(--value-track) / 6)
+  );
+  pointer-events: none;
+}
+.pw-value.empty .pw-value-track {
+  opacity: 0.55;
+}
+.pw-value-end {
+  width: 11px !important;
+  height: 11px !important;
+  color: #f2a28f;
+  filter: drop-shadow(0 1px 1px #000);
+}
+.pw-value-more {
+  font: 700 10px/1 var(--font-legend);
+  color: #f4eee0;
+  text-shadow: 0 1px 1px #000;
+}
+.pw-radial-slot.dim .pw-radial-value {
+  display: none;
+}
+
+.pw-threat {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 3px;
+}
+.pw-threat > svg {
+  width: 12px !important;
+  height: 12px !important;
+  flex: none;
+  color: #e79380;
+}
+.pw-threat-track {
+  position: relative;
+  display: block;
+  height: 7px;
+  overflow: hidden;
+  border-radius: 1px;
+  background: #c5604a;
+  box-shadow: 0 0 0 1px #0008;
+  transition: width 200ms var(--ease-out);
+}
+/* The part of the blow the squad's orders would stop: gold, laid over the red from its start. */
+.pw-threat-track > i.stopped {
+  position: absolute;
+  inset: 0 auto 0 0;
+  background: repeating-linear-gradient(120deg, #fff0bc 0 3px, #d19a3e 3px 6px);
+  transition: width 200ms var(--ease-out);
+}

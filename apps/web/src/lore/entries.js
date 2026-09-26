@@ -89,11 +89,8 @@ export function getAppearances(key) {
 	return appearances;
 }
 
-// Demonyms for getPowers().peoples, ratified in the Chronicle doc (§4 of the
-// UX-pass contract). Every one of the seven now has an entryKey; the four
-// new entries (grimedites, luminarii, krystians, phantiri-xalians) are being
-// written by another agent concurrently, so lookups must tolerate a missing
-// entry (entry comes back undefined, never throws).
+// Named creature populations, displayed separately from intelligent people.
+// Keep the existing getPowers().peoples shape for its callers.
 const PEOPLES = [
 	{ name: 'Magmuthites', planet: 'magmuth', entryKey: 'magmuthites' },
 	{ name: 'Grimedites', planet: 'grimedes', entryKey: 'grimedites' },
@@ -104,7 +101,7 @@ const PEOPLES = [
 	{ name: 'Phantiri', planet: 'phantiri', entryKey: 'phantiri-xalians' },
 ];
 
-// Demonym entry keys that render only under Xalian Peoples, never under
+// Demonym entry keys that render only under Xalian populations, never under
 // Factions, even though they are still categorized 'factions' in
 // encyclopedia.json (append-only categories; the page regroups them).
 const PEOPLES_ENTRY_KEYS = new Set(PEOPLES.map((p) => p.entryKey));

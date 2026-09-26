@@ -76,3 +76,25 @@
   .lr-map-attention-ring { animation: none; }
   .lr-field-record, .lr-field-map-head, .lr-field-map-panel [data-expedition-map] { transition: none; }
 }
+
+/* Scout updates move markers inside fixed panels, never the reading surface. */
+.lr-field-record[data-stable-layout] { grid-template-rows: auto 112px minmax(0, 1fr); transition: none; }
+.lr-field-record[data-stable-layout] .lr-field-map-head { display: none; }
+.lr-field-record[data-stable-layout] .lr-field-map-panel { justify-content: flex-start; }
+.lr-field-record[data-stable-layout] .lr-field-map-resources { opacity: 1; }
+@media (min-width: 600px) and (max-width: 767px) and (min-height: 800px) {
+  .lr-field-record[data-stable-layout] { grid-template-rows: auto 160px minmax(0, 1fr); }
+}
+@media (min-width: 768px) {
+  .lr-field-record[data-stable-layout] {
+    grid-template-columns: minmax(0, 1.45fr) minmax(300px, 1fr);
+    grid-template-rows: auto minmax(0, 1fr);
+    gap: 20px 28px;
+    padding: 80px max(24px, calc((100vw - 1280px) / 2)) 24px;
+  }
+  .lr-field-record[data-stable-layout] .lr-field-map-stage { align-self: start; }
+  .lr-field-record[data-stable-layout] .lr-field-map-panel { height: auto; padding: 16px; }
+  .lr-field-record[data-stable-layout] .lr-field-story-stage { max-height: 620px; }
+  .lr-field-record[data-stable-layout] .lr-sequence-story { padding: 24px; }
+  .lr-field-record[data-stable-layout] .lr-story-entry { padding: 20px 0; }
+}

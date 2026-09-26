@@ -28,7 +28,7 @@ function changedTarget(before, after) {
   return after.scout && !before ? 'scout' : 'crew';
 }
 
-export default function FieldRecord({ scene, title, label, map, mapFocusLabel, animateInitialTravel = false, resources, children }) {
+export default function FieldRecord({ scene, title, label, map, mapFocusLabel, animateInitialTravel = false, resources, children, stableLayout = false }) {
   const art = sceneArtFor(scene);
   const previousMap = useRef(null);
   const [focus, setFocus] = useState(null);
@@ -43,7 +43,7 @@ export default function FieldRecord({ scene, title, label, map, mapFocusLabel, a
     const timer = window.setTimeout(() => setFocus(null), 1750);
     return () => window.clearTimeout(timer);
   }, [signature]);
-  return <div data-tier="immersive" data-field-record data-map-focus={focus ? 'active' : undefined} className="lr-field-record fixed inset-0 z-[1100] bg-room text-ink" role="dialog" aria-modal="true" aria-label={label} onKeyDown={trapSequenceFocus}>
+  return <div data-tier="immersive" data-field-record data-stable-layout={stableLayout || undefined} data-map-focus={focus ? 'active' : undefined} className="lr-field-record fixed inset-0 z-[1100] bg-room text-ink" role="dialog" aria-modal="true" aria-label={label} onKeyDown={trapSequenceFocus}>
     <header className="lr-field-record-title min-w-0"><span className="type-legend text-ink-2">{scene.deck} · field record</span><h2 className="type-heading m-0">{title}</h2></header>
     <div className="lr-field-map-stage relative min-h-0 overflow-hidden [&_[data-site-next]]:hidden">
       <div aria-hidden="true" className="absolute inset-0 hidden bg-cover bg-center opacity-20 md:block" style={{ backgroundImage: `url(${art.src})` }} />

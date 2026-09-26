@@ -30,6 +30,7 @@ import {
   ElementIcon,
   GroupIcon,
   Health,
+  ThreatBar,
   MoveIcon,
   Portrait,
   StatusBadges,
@@ -268,6 +269,8 @@ export function PowerworksScene({
   ring = null,
   flash = null,
   hints = {},
+  threats = {},
+  prevented = {},
   beatMs,
   story = null,
 }: {
@@ -310,6 +313,10 @@ export function PowerworksScene({
     target's ring and chunk, its matchup chevron, and a contact reaction's mark.
   */
   hints?: Record<string, UnitPreview>;
+  /** Move value pass: each standing machine's next blow while planning, in health. */
+  threats?: Record<string, { amount: number; ranged: boolean }>;
+  /** Move value pass: how much of each machine's blow the squad's orders, or the move in hand, would stop. */
+  prevented?: Record<string, number>;
   /** How long this playback beat lasts as the page runs it, in milliseconds. */
   beatMs?: number;
   /** The playback beat's names for the on-stage banner; null while planning. */
@@ -836,6 +843,13 @@ export function PowerworksScene({
                     </button>
                   </div>
                   <Health u={u} preview={preview && faint ? { ...preview, faint } : preview} />
+                  {u.enemy && threats[u.id] && (
+                    <ThreatBar
+                      amount={threats[u.id].amount}
+                      ranged={threats[u.id].ranged}
+                      prevented={prevented[u.id] ?? 0}
+                    />
+                  )}
                   {chip && (
                     <button
                       className={`pw-order-chip ${chip.move ? "" : "empty"} ${

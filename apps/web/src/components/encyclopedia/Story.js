@@ -34,9 +34,8 @@ function RecordsConsulted({ beat }) {
 	if (beat.worlds.length === 0 && beat.entries.length === 0) return null;
 	const { worlds, entries } = dedupeRecordsConsulted(beat.worlds, beat.entries);
 	return (
-		<div className="flex flex-col gap-2">
-			<p className="type-legend m-0">Records consulted</p>
-			<div className="flex flex-wrap gap-2 lg:flex-col lg:items-start">
+		<Fold label="Records consulted">
+			<div className="flex flex-wrap items-baseline gap-x-4 gap-y-2 py-2">
 				{worlds.map((world) => (
 					<Link key={world.key} to={lore.routeFor('world', world.key)} className={`el-${world.element}`}>
 						<Badge variant="chip-outline">{world.name}</Badge>
@@ -48,7 +47,7 @@ function RecordsConsulted({ beat }) {
 					</Link>
 				))}
 			</div>
-		</div>
+		</Fold>
 	);
 }
 
@@ -60,7 +59,7 @@ function NarratorBeat({ beat }) {
 			text={
 				<>
 					<SectionHead title={beat.title} />
-					<Prose text={beat.prose} />
+					<Prose text={beat.prose} className="m-0 leading-relaxed" />
 					<LoreArt kind="beats" recordKey={beat.key} />
 				</>
 			}
@@ -119,24 +118,21 @@ function ParagraphRow({ world, index, text }) {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [world.key, index]);
 
-	// This row lives inside a Fold's content, not directly in ReadingLayout's
-	// grid, so it lays itself out with its own two-column grid mirroring the
-	// layout's proportions rather than ReadingBlock's `display: contents`
-	// (which only places its children onto an ancestor grid's own tracks).
+	// Source paragraphs keep their anchors and read marks in normal text flow.
 	return (
 		<div
 			ref={ref}
 			id={`chapter-${world.key}-${index}`}
 			data-story-paragraph="true"
-			className="grid grid-cols-1 items-start gap-x-8 gap-y-2 border-t border-edge py-4 first:border-t-0 first:pt-0 lg:grid-cols-[minmax(0,1fr)_9rem]"
+			className="mb-5 last:mb-0 scroll-mt-16"
 		>
-			<div className="order-2 min-w-0 lg:order-1">
-				<Prose text={text} className="m-0" />
-				<LoreArt kind="paragraphs" recordKey={`${world.key}:${index}`} />
-			</div>
-			<div className="order-1 flex items-center gap-2 lg:order-2 lg:justify-end">
-				<span className="type-data text-[11px] text-ink-3">{lore.chapterLabel(index)}</span>
+			<div className="mb-2 flex items-center gap-2">
+				<span className="type-data text-small text-ink-3">{lore.passageLabel(index)}</span>
 				<span className={`inline-block size-1.5 rounded-full ${read ? 'bg-viable' : 'bg-edge-strong'}`} aria-hidden="true" />
+			</div>
+			<div className="min-w-0">
+				<Prose text={text} className="m-0 leading-relaxed" />
+				<LoreArt kind="paragraphs" recordKey={`${world.key}:${index}`} />
 			</div>
 		</div>
 	);
@@ -256,7 +252,7 @@ function RecordsByWorld({ sections }) {
 									<Badge variant="chip-outline">{group.world.name}</Badge>
 								</span>
 							}
-							count={`${group.paragraphs.length} chapter${group.paragraphs.length === 1 ? '' : 's'}`}
+							count={`${group.paragraphs.length} passage${group.paragraphs.length === 1 ? '' : 's'}`}
 							hint={firstSentence(group.paragraphs[0].text)}
 						>
 							<div className="flex flex-col">
@@ -319,11 +315,11 @@ function EventBody({ event }) {
 					{event.anchors.map((anchor, i) => (
 						<p key={i} className="m-0 font-body text-small text-ink-2">
 							<Link
-								to={`${lore.routeFor('world', anchor.world.key)}#chapter-${anchor.world.key}-${anchor.index}`}
+								to={`${lore.routeFor('world', anchor.world.key)}#chapter-${anchor.index}`}
 								className="text-ink-2 no-underline hover:text-ink"
 							>
 								<span className="type-legend">
-									{anchor.world.name}, {lore.chapterLabel(anchor.index)}
+									{anchor.world.name}, {lore.passageLabel(anchor.index)}
 								</span>
 							</Link>{' '}
 							&ldquo;{anchor.quote}&rdquo;
@@ -447,7 +443,7 @@ function StoryContentsPage() {
 	return (
 		<div>
 			<p className="mb-6 max-w-[62ch] font-body text-body text-ink-2">
-				Seven parts, one for each era the Generator's records carry. Begin at Part 1, or open any part below.
+			Seven narrated summaries drawn from the world histories, one per era. Each part includes the original source passages under From the records.
 			</p>
 			<StoryContents story={story} />
 		</div>
@@ -528,10 +524,13 @@ function StoryPart() {
 
 	return (
 		<div>
-			<ReadingLayout>
+			<ReadingLayout rail={
 				<ReadingRail label={`Part ${part.order} of ${story.parts.length}`}>
 					<PartRailBody story={story} part={part} progress={progress} />
 				</ReadingRail>
+			}>
+
+				<ReadingBlock text={<p className="m-0 font-body text-small text-ink-2">Editorial summary. The narration brings together the world histories; original passages appear under From the records.</p>} />
 
 				{part.plate && (
 					<ReadingBlock span="wide">

@@ -18,13 +18,20 @@ const SIZE_CLASS = {
  * `size` sets the one text-size class ("body" default, "lead", "small") so
  * callers stop stacking a size class on top of this component's own.
  */
-export default function Prose({ text, except, as: Tag = 'p', size = 'body', className = '' }) {
+export default function Prose({ text, except, as: Tag = 'p', size = 'body', className = '', linkOnce = false, precedingText = '' }) {
     if (!text) return null;
     const segments = lore.linkify(text, { except });
+    const linked = new Set(linkOnce ? lore.linkify(precedingText, { except }).map((seg) => seg.key).filter(Boolean) : []);
+    const readableSegments = segments.map((seg) => {
+        if (!linkOnce || !seg.key) return seg;
+        if (linked.has(seg.key)) return { text: seg.text };
+        linked.add(seg.key);
+        return seg;
+    });
     const sizeClass = SIZE_CLASS[size] || SIZE_CLASS.body;
     return (
         <Tag className={`measure font-body ${sizeClass} text-ink ${className}`.trim()}>
-            {segments.map((seg, i) =>
+            {readableSegments.map((seg, i) =>
                 seg.key ? (
                     <EntryHoverCard key={i} entryKey={seg.key}>
                         <Link to={lore.routeFor('entry', seg.key)} className={TERM_LINK_CLASS}>{seg.text}</Link>

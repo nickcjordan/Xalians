@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import './sequenceStory.css';
 import BiIcon from './BiIcon';
 
@@ -31,7 +31,31 @@ export function trapSequenceFocus(event) {
 }
 
 // Each event has its own reading surface. The map and the account stay in place.
-export default function SequenceStory({ events, index, paused, onPause, onNext, action }) {
+export default function SequenceStory(props) {
+  return props.accumulate ? <AccumulatingStory {...props} /> : <PagedStory {...props} />;
+}
+
+function AccumulatingStory({ events, index, paused, onPause, action }) {
+  const latest = useRef(null);
+  useEffect(() => {
+    if (index > 0) latest.current?.scrollIntoView?.({ block: 'nearest', behavior: window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth' });
+  }, [index]);
+  const final = index === events.length - 1;
+  return <section className="lr-sequence-story lr-sequence-story--accumulating" aria-label="Action story">
+    <header><span>Scouting account</span><small>{index + 1} / {events.length}</small></header>
+    <div className="lr-story-account" role="log" aria-label="Scouting events" aria-live="polite" aria-relevant="additions" tabIndex={0}>
+      {events.slice(0, index + 1).map((entry, position) => <article key={`${position}-${entry.kind}`} ref={position === index ? latest : null} data-story-event={position} className={`lr-story-entry is-${entry.kind}`}>
+        <div className="lr-story-beat"><span aria-hidden="true"><BiIcon cls={`bi ${entry.icon || 'bi-compass'}`} /></span><div>
+          <h3>{entry.title || `Event ${position + 1}`}</h3><p>{entry.message || entry.text}</p>
+          {entry.costs?.length > 0 && <div className="lr-story-costs">{entry.costs.map(cost => <span key={`${cost.kind}-${cost.creatureId || ''}`} className={`is-${cost.kind}`}><BiIcon cls={`bi ${costIcons[cost.kind] || 'bi-info-circle'}`} /> {cost.text}</span>)}</div>}
+        </div></div>
+      </article>)}
+    </div>
+    <footer><button type="button" disabled={final} aria-pressed={!final && paused} onClick={onPause}>{final ? 'Account complete' : paused ? 'Resume story' : 'Pause story'}</button>{action}</footer>
+  </section>;
+}
+
+function PagedStory({ events, index, paused, onPause, onNext, action }) {
   const [selectedIndex, setSelectedIndex] = useState(null);
   const [pageIndex, setPageIndex] = useState(0);
   const [compact, setCompact] = useState(() => typeof window !== 'undefined' && window.innerWidth <= 360);

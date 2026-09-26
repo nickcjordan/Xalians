@@ -919,3 +919,88 @@ export function restLine(move: Move): string {
   // re-export), worded as the field guide words it.
   return move.signature ? `${rest} · once per encounter` : rest;
 }
+
+/*
+  Move value (2026-09-26). Nick: there was no way to see how a move would affect a creature or
+  why one move beats another. Every move's worth is drawn in one currency, health, on one
+  scale: a track VALUE_TRACK_HP long (its width is the CSS variable --value-track, narrower on
+  a phone), cut into 2 HP segments like the health bars. Red is health a move takes from the
+  machines; gold is health it keeps for the squad (a blow prevented, a squadmate guarded or
+  healed). The same scale draws each machine's threat, so a move that stops a blow is visibly
+  as long as the blow it stops. Anything past the track's end shows as a "+".
+*/
+export const VALUE_TRACK_HP = 12;
+const share = (hp: number) => Math.max(0, Math.min(hp, VALUE_TRACK_HP)) / VALUE_TRACK_HP;
+
+/** Words for a value, for tooltips and assistive technology. */
+export function valueWords(v: { harm: number; saved: number; knockout: boolean }): string {
+  const parts: string[] = [];
+  if (v.harm > 0) parts.push(`takes ${v.harm} health${v.knockout ? " and knocks out" : ""}`);
+  if (v.saved > 0) parts.push(`keeps about ${v.saved} health for the squad`);
+  return parts.length ? `Best use this round: ${parts.join(", ")}` : "Does nothing useful this round";
+}
+
+/** A move's value as a segmented bar: red taken, then gold kept, a skull at the end of a knockout. */
+export function ValueBar({
+  harm,
+  saved,
+  knockout = false,
+  className = "",
+}: {
+  harm: number;
+  saved: number;
+  knockout?: boolean;
+  className?: string;
+}) {
+  const red = share(harm),
+    gold = Math.min(share(saved), 1 - red);
+  const over = harm + saved > VALUE_TRACK_HP;
+  return (
+    <span
+      className={`pw-value ${className} ${harm + saved <= 0 ? "empty" : ""}`}
+      title={valueWords({ harm, saved, knockout })}
+      aria-hidden="true"
+    >
+      <span className="pw-value-track">
+        {red > 0 && <i className="harm" style={{ width: `${red * 100}%` }} />}
+        {gold > 0 && <i className="saved" style={{ width: `${gold * 100}%` }} />}
+      </span>
+      {knockout ? <Skull className="pw-value-end" /> : over ? <span className="pw-value-more">+</span> : null}
+    </span>
+  );
+}
+
+/**
+  A machine's next blow on the same scale (move value pass): red for the health it is poised
+  to take from one companion, the part the squad's orders would stop overlaid in gold.
+*/
+export function ThreatBar({
+  amount,
+  prevented = 0,
+  ranged,
+}: {
+  amount: number;
+  prevented?: number;
+  ranged: boolean;
+}) {
+  if (amount <= 0) return null;
+  const width = share(amount);
+  const stop = Math.min(1, prevented / Math.max(amount, 0.001));
+  const hp = Math.round(amount);
+  return (
+    <span
+      className="pw-threat"
+      title={`Its next blow takes about ${hp} health from one of your squad${
+        prevented > 0 ? `; your orders stop about ${Math.min(hp, Math.round(prevented))} of it` : ""
+      }`}
+      aria-label={`Threat: about ${hp} health${prevented > 0 ? `, ${Math.min(hp, Math.round(prevented))} stopped` : ""}`}
+      role="img"
+    >
+      {ranged ? <Crosshair /> : <Swords />}
+      <span className="pw-threat-track" style={{ width: `calc(var(--value-track) * ${width})` }}>
+        {stop > 0 && <i className="stopped" style={{ width: `${stop * 100}%` }} />}
+      </span>
+      {amount > VALUE_TRACK_HP && <span className="pw-value-more">+</span>}
+    </span>
+  );
+}

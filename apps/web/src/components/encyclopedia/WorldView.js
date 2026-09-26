@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Link, useParams } from 'react-router';
 import * as lore from '../../lore';
 import Prose from './Prose';
@@ -6,7 +6,7 @@ import WorldArt from './WorldArt';
 import planetArtwork from '@xalians/content/planetArtwork.json';
 import XalianImage from '../xalianImage';
 import Connections from './Connections';
-import { useVisit, useReadMark, markRead, useResume } from './trail';
+import { useVisit, useReadGroup, markRead, useResume } from './trail';
 import { SectionHead } from '@/components/system/masthead';
 import { usePageTitle } from '@/components/system/head';
 import { SpecPlate, RecordRow, Tile, TileArt, TileMeta, TileGrid, EmptyState } from '@/components/system/record';
@@ -37,34 +37,19 @@ const PHYSICAL_DISPLAY_SET = [
 
 const MOBILITY_ORDER = ['flight', 'swim', 'burrow', 'climb', 'sprint'];
 
-function chapterEraTag(chapter) {
-    return chapter.era && chapter.era !== 'natural' ? chapter.era : null;
-}
-
-function chapterEraLabel(chapter, eraLabel) {
-    if (!chapterEraTag(chapter)) return 'Natural history';
-    return eraLabel || chapter.era;
-}
-
-/** One row in the chapter rail. Reads its own read mark and reports clicks as a fallback read trigger. */
-function ChapterRailRow({ chapter, index, label, onFallbackRead }) {
-    const read = useReadMark('chapter', `${chapter.worldKey}:${chapter.index}`);
-    const words = chapter.text.trim().split(/\s+/).slice(0, 8).join(' ');
-
+/** Read status is complete only when every source passage has been read. */
+function ChapterRailRow({ chapter, worldKey, active, onFallbackRead }) {
+    const read = useReadGroup('chapter', chapter.paragraphs.map((p) => worldKey + ':' + p.index));
     return (
         <a
-            href={`#chapter-${chapter.index}`}
-            className="flex flex-wrap items-baseline gap-2 py-2 text-ink no-underline hover:bg-s2"
+            href={'#section-' + chapter.key}
+            aria-current={active ? 'location' : undefined}
+            className={'flex min-h-11 items-baseline gap-2 border-l-2 py-2 pl-3 text-ink no-underline hover:bg-s2 ' + (active ? 'border-viable' : 'border-transparent')}
             onClick={onFallbackRead}
         >
-            <span className={`inline-block size-1.5 rounded-full ${read ? 'bg-viable' : 'bg-edge-strong'}`} aria-hidden="true" />
-            <span className="type-data shrink-0 text-[11px] text-ink-2">
-                {lore.chapterLabel(index).toUpperCase()}
-            </span>
-            <span className="type-legend shrink-0 text-[11px] text-ink-3">{label}</span>
-            <span className="min-w-0 flex-[1_1_100%] overflow-hidden whitespace-nowrap text-ellipsis font-body text-small text-ink-2">
-                {words}&hellip;
-            </span>
+            <span className="type-data shrink-0 text-small text-ink-2">{String(chapter.index + 1).padStart(2, '0')}</span>
+            <span className="min-w-0 font-body text-small">{chapter.title}</span>
+            {read && <span className="type-data ml-auto text-small text-ink-3">Read</span>}
         </a>
     );
 }
@@ -75,7 +60,8 @@ function WorldLede({ world }) {
     if (!lede) return null;
     return (
         <div className="flex flex-col gap-3">
-            <Prose text={lede.prose} className="text-lead text-ink-2" />
+            <p className="type-legend m-0">Editorial summary</p>
+            <Prose text={lede.prose} size="lead" className="m-0 text-ink-2" />
             {(lede.sources.length > 0 || lede.entries.length > 0) && (
                 <div className="flex flex-col gap-2">
                     <p className="type-legend m-0">Records consulted</p>
@@ -142,6 +128,29 @@ export default function WorldView() {
 
     const hasIntersectionObserver = typeof window !== 'undefined' && 'IntersectionObserver' in window;
     const chapterRefs = useRef([]);
+    const [activeChapter, setActiveChapter] = useState(0);
+
+    useEffect(() => {
+        if (!world) return undefined;
+        let frame;
+        const update = () => {
+            let active = 0;
+            world.readingChapters.forEach((chapter, index) => {
+                const heading = document.getElementById(`section-${chapter.key}`);
+                if (heading && heading.getBoundingClientRect().top <= 160) active = index;
+            });
+            setActiveChapter(active);
+        };
+        const schedule = () => { cancelAnimationFrame(frame); frame = requestAnimationFrame(update); };
+        schedule();
+        window.addEventListener('scroll', schedule, { passive: true });
+        window.addEventListener('resize', schedule);
+        return () => {
+            cancelAnimationFrame(frame);
+            window.removeEventListener('scroll', schedule);
+            window.removeEventListener('resize', schedule);
+        };
+    }, [world]);
 
     useEffect(() => {
         if (!world || !hasIntersectionObserver) return undefined;
@@ -238,68 +247,43 @@ export default function WorldView() {
                 </div>
             </Card>
 
-            <section className="min-w-0">
-                <SectionHead title="History" count={`${world.chapters.length} chapters`} />
-                <ReadingLayout>
-                    <ReadingRail label={`Chapters (${world.chapters.length})`}>
-                        <ol className="m-0 flex list-none flex-col p-0">
-                            {world.chapters.map((chapter, i) => {
-                                const eraKey = chapterEraTag(chapter);
-                                const label = chapterEraLabel(chapter, eraKey ? eraNameByKey.get(eraKey) : null);
-                                return (
-                                    <li key={chapter.index}>
-                                        <ChapterRailRow
-                                            chapter={{ ...chapter, worldKey: world.key }}
-                                            index={i}
-                                            label={label}
-                                            onFallbackRead={handleFallbackRead(chapter.index)}
-                                        />
+            <section className="mx-auto w-full min-w-0 max-w-[calc(62ch+232px)] font-body text-body">
+                <SectionHead title="History" count={world.readingChapters.length + ' chapters'} />
+                <p className="mb-6 font-body text-small text-ink-2">Original world history, arranged into named chapters. Passage numbers preserve citations to the source.</p>
+                <ReadingLayout rail={
+                    <ReadingRail label={'Chapters (' + world.readingChapters.length + ')'}>
+                        <nav aria-label="History chapters">
+                            <ol className="m-0 flex list-none flex-col p-0">
+                                {world.readingChapters.map((chapter) => (
+                                    <li key={chapter.key}>
+                                        <ChapterRailRow chapter={chapter} worldKey={world.key} active={activeChapter === chapter.index} onFallbackRead={handleFallbackRead(chapter.start)} />
                                     </li>
-                                );
-                            })}
-                        </ol>
+                                ))}
+                            </ol>
+                        </nav>
                     </ReadingRail>
-
-                    {world.chapters.map((chapter, i) => {
-                        const eraKey = chapterEraTag(chapter);
-                        const label = chapterEraLabel(chapter, eraKey ? eraNameByKey.get(eraKey) : null);
-                        return (
-                            <ReadingBlock
-                                key={chapter.index}
-                                divided
-                                text={
-                                    <div
-                                        id={`chapter-${chapter.index}`}
-                                        data-chapter-index={chapter.index}
-                                        ref={(el) => {
-                                            chapterRefs.current[i] = el;
-                                        }}
-                                        className="scroll-mt-16"
-                                    >
-                                        <p className="type-data m-0 mb-2 text-ink-2">
-                                            {lore.chapterLabel(i).toUpperCase()}
-                                        </p>
-                                        <Prose text={chapter.text} />
-                                    </div>
-                                }
-                                margin={
+                }>
+                    {world.readingChapters.map((chapter) => (
+                        <section key={chapter.key} data-history-chapter={chapter.key} className="mb-10 last:mb-0">
+                            <h3 id={'section-' + chapter.key} className="type-subhead m-0 mb-5 scroll-mt-20">
+                                <span className="type-data mr-3 text-small text-ink-2">{String(chapter.index + 1).padStart(2, '0')}</span>
+                                {chapter.title}
+                            </h3>
+                            {chapter.paragraphs.map((paragraph, index) => (
+                                <ReadingBlock key={paragraph.index} text={
                                     <>
-                                        {eraKey ? (
-                                            <Link
-                                                to={lore.routeFor('era', eraKey)}
-                                                className="type-legend text-ink-2 no-underline hover:text-ink"
-                                            >
-                                                {label}
-                                            </Link>
-                                        ) : (
-                                            <span className="type-legend text-ink-3">{label}</span>
+                                        <div id={'chapter-' + paragraph.index} data-chapter-index={paragraph.index} ref={(el) => { chapterRefs.current[paragraph.index] = el; }} className="scroll-mt-20">
+                                            <span id={'chapter-' + world.key + '-' + paragraph.index} className="sr-only">{lore.passageLabel(paragraph.index)}</span>
+                                            <Prose text={paragraph.text} linkOnce precedingText={chapter.paragraphs.slice(0, index).map((p) => p.text).join(' ')} className="m-0 leading-relaxed" />
+                                        </div>
+                                        {paragraph.index === world.illustrationAfter && secondArt && (
+                                            <div className="my-6"><WorldArt art={secondArt} /></div>
                                         )}
-                                        {i === 1 && secondArt && <WorldArt art={secondArt} />}
                                     </>
-                                }
-                            />
-                        );
-                    })}
+                                } />
+                            ))}
+                        </section>
+                    ))}
                 </ReadingLayout>
             </section>
 
