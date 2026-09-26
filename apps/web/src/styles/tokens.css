@@ -61,6 +61,12 @@
 	--color-caution-tint: rgba(207, 165, 74, 0.14);
 	--color-neutral: #8a97a6;
 
+	/* --- the home story's archive screen (lore art, not interface: its own
+	   glass and its playback lamp; pages/home/archiveScreen.tsx) --- */
+	--color-archive-glass: #07090a;
+	--color-archive-lamp: #d94b4b;
+	--color-archive-ink: #e2e8e4;
+
 	/* --- element hues (section 3.4, revised 2026-09-08) --- */
 	--color-el-electric: #e9c93a;
 	--color-el-air: #d8e6ee;

@@ -22,6 +22,7 @@ import { cn } from '@/lib/utils';
 import specimen from './home/specimen.json';
 import { startStoryMotion } from './home/motion';
 import { StoryViewer, type ViewerBeat } from './home/storyViewer';
+import { ArchiveScreen, type ScreenState } from './home/archiveScreen';
 import { HelixPiece } from './home/helixPiece';
 
 /* ------------------------------------------------------------------ copy */
@@ -148,6 +149,7 @@ function Panel({
 	still = false,
 	live,
 	staged = false,
+	screen,
 }: {
 	art: Art;
 	aspect: string;
@@ -162,25 +164,34 @@ function Panel({
 	live?: boolean;
 	/** In the story's viewer, which moves it itself: no scroll-in and no drift. */
 	staged?: boolean;
+	/** In the story's viewer: the recording's archive screen, its state and readout. */
+	screen?: { state: ScreenState; rec: string; place: string; start: number };
 }) {
+	const picture = art.live ? (
+		// A living plate holds still in its frame: its motion is its own.
+		<LivePlate src={art.live} poster={{ ...(art.still ?? art), alt: art.alt }} active={live} />
+	) : (
+		<img
+			src={art.src}
+			srcSet={`${art.small} 768w, ${art.src} 1536w`}
+			sizes="(min-width: 1000px) 1160px, 100vw"
+			alt={art.alt}
+			width={1536}
+			height={768}
+			loading={eager ? 'eager' : 'lazy'}
+			decoding="async"
+			className={cn('h-full w-full object-cover', !still && !staged && 'scale-[1.12]', position)}
+		/>
+	);
 	const figure = (
 		<figure className={cn('chamfer frame relative m-0', aspect, className)}>
 			<span className="frame-well">
-				{art.live ? (
-					// A living plate holds still in its frame: its motion is its own.
-					<LivePlate src={art.live} poster={{ ...(art.still ?? art), alt: art.alt }} active={live} />
+				{screen ? (
+					<ArchiveScreen state={screen.state} rec={screen.rec} place={screen.place} start={screen.start}>
+						{picture}
+					</ArchiveScreen>
 				) : (
-					<img
-						src={art.src}
-						srcSet={`${art.small} 768w, ${art.src} 1536w`}
-						sizes="(min-width: 1000px) 1160px, 100vw"
-						alt={art.alt}
-						width={1536}
-						height={768}
-						loading={eager ? 'eager' : 'lazy'}
-						decoding="async"
-						className={cn('h-full w-full object-cover', !still && !staged && 'scale-[1.12]', position)}
-					/>
+					picture
 				)}
 			</span>
 			{n && art.era ? (
@@ -283,6 +294,11 @@ type Era = keyof typeof SCENE_LABEL;
 type Spread = { kind: 'scene'; art: Art & { era: Era }; headline: string; text: string; layout: Layout; aspect: string; ar: number; position?: string };
 type Piece = { kind: 'piece'; key: string; name: string; headline: string; text?: string; mode: 'plague' | 'token'; alt: string };
 
+// Each recording's readout on its archive screen: where it was recorded, or what it is.
+const RECORDED: Record<string, string> = { unbirth: 'Floria', 'end-wars': 'Grimedes', plague: 'Genome record', token: 'Genome record', present: 'Valleron' };
+// Each reel's clock starts partway in, so the clip reads as a cut from a longer recording.
+const reelStart = (i: number) => 1800 + ((i * 7919) % 5400);
+
 // The story's beats, in order (docs/design/home-story-content-plan.md). A
 // headline is a phrase from Nick's 2022 page; the reading text is his
 // paragraph. Beats 2 and 3 (the first Xalian, APEX taking the Generators) join
@@ -346,11 +362,18 @@ const STORY_BEATS: ViewerBeat[] = BEATS.map((sp, i): ViewerBeat => {
 			n,
 			label: sp.name,
 			minor: true,
-			render: (live, shown) => (
+			render: (live, shown, screen) => (
 				<div className="scene-spread" data-layout="side" style={{ '--ar': 16 / 9, '--label': '0rem' } as React.CSSProperties}>
 					<div className="scene-art">
 						<div className="scene-frame">
-							<div className="aspect-video">{shown ? <HelixPiece mode={sp.mode} live={live} label={sp.alt} /> : null}</div>
+							{/* A small piece plays on the same archive screen as the scenes, in a plain frame. */}
+							<figure className="chamfer frame relative m-0 aspect-video">
+								<span className="frame-well">
+									<ArchiveScreen state={screen} rec={n} place={RECORDED[sp.key]} start={reelStart(i)}>
+										<span className="flex h-full w-full items-center px-[6%]">{shown ? <HelixPiece mode={sp.mode} live={live} label={sp.alt} /> : null}</span>
+									</ArchiveScreen>
+								</span>
+							</figure>
 						</div>
 					</div>
 					<SceneReading n={n} name={sp.name} headline={sp.headline} text={sp.text} />
@@ -363,11 +386,11 @@ const STORY_BEATS: ViewerBeat[] = BEATS.map((sp, i): ViewerBeat => {
 		n,
 		label: ERA_TITLE[sp.art.era],
 		live: sp.art.live,
-		render: (live) => (
+		render: (live, _shown, screen) => (
 			<div className="scene-spread" data-layout={sp.layout} style={{ '--ar': sp.ar } as React.CSSProperties}>
 				<div className="scene-art">
 					<div className="scene-frame">
-						<Panel art={sp.art} aspect={sp.aspect} position={sp.position} live={live} staged />
+						<Panel art={sp.art} aspect={sp.aspect} position={sp.position} live={live} staged screen={{ state: screen, rec: n, place: RECORDED[sp.art.era], start: reelStart(i) }} />
 					</div>
 					<SceneLabel era={sp.art.era} />
 				</div>
