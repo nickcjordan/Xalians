@@ -67,8 +67,8 @@ function SiteFooter({ className, ...props }: React.ComponentProps<"footer">) {
 			{...props}
 		>
 			<Shell className="py-10">
-				<div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_repeat(3,minmax(0,auto))]">
-					<div className="max-w-sm">
+				<div className="grid grid-cols-2 gap-x-6 gap-y-8 sm:grid-cols-3 lg:grid-cols-[minmax(0,1fr)_repeat(3,minmax(0,auto))]">
+					<div className="col-span-2 max-w-sm sm:col-span-3 lg:col-span-1">
 						<BrandLockup />
 						<p className="mt-3 font-body text-small text-ink-2">
 							Xalians is a world of generated creatures, the archive of the worlds they come from, and

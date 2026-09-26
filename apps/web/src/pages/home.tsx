@@ -18,11 +18,12 @@ import { LivePlate } from '../components/plates/livePlate';
 import { usePageTitle } from '@/components/system/head';
 import { Shell } from '@/components/system/masthead';
 import { Button } from '@/components/ui/button';
+import { ChevronRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import specimen from './home/specimen.json';
 import { startStoryMotion } from './home/motion';
 import { StoryViewer, type ViewerBeat } from './home/storyViewer';
-import { ArchiveScreen, type ScreenState } from './home/archiveScreen';
+import { ArchivePlay, ArchiveScreen, type ScreenState } from './home/archiveScreen';
 import { HelixPiece } from './home/helixPiece';
 
 /* ------------------------------------------------------------------ copy */
@@ -168,7 +169,7 @@ function Panel({
 	/** In the story's viewer, which moves it itself: no scroll-in and no drift. */
 	staged?: boolean;
 	/** In the story's viewer: the recording's archive screen, its state and readout. */
-	screen?: { state: ScreenState; rec: string; place: string; start: number };
+	screen?: { state: ScreenState; rec: string; place: string; start: number; onPlay?: () => void };
 }) {
 	const picture = art.live ? (
 		// A living plate holds still in its frame: its motion is its own.
@@ -207,7 +208,7 @@ function Panel({
 		</figure>
 	);
 	if (still || !art.era) return figure;
-	return (
+	const link = (
 		<Link
 			to={`/encyclopedia/story/${art.era}`}
 			data-panel={staged ? undefined : ''}
@@ -216,6 +217,14 @@ function Panel({
 		>
 			{figure}
 		</Link>
+	);
+	// In the story's viewer, the screen's Play key lies over the frame beside the link, never inside it.
+	if (!screen?.onPlay) return link;
+	return (
+		<div className="relative">
+			{link}
+			<ArchivePlay state={screen.state} rec={screen.rec} onPlay={screen.onPlay} />
+		</div>
 	);
 }
 
@@ -365,7 +374,7 @@ const STORY_BEATS: ViewerBeat[] = BEATS.map((sp, i): ViewerBeat => {
 			n,
 			label: sp.name,
 			minor: true,
-			render: (live, shown, screen) => (
+			render: (live, shown, screen, _primed, play) => (
 				<div className="scene-spread" data-layout="side" style={{ '--ar': 16 / 9, '--label': '0rem' } as React.CSSProperties}>
 					<div className="scene-art">
 						<div className="scene-frame">
@@ -376,6 +385,7 @@ const STORY_BEATS: ViewerBeat[] = BEATS.map((sp, i): ViewerBeat => {
 										<span className="flex h-full w-full items-center px-[6%]">{shown ? <HelixPiece mode={sp.mode} live={live} label={sp.alt} /> : null}</span>
 									</ArchiveScreen>
 								</span>
+								<ArchivePlay state={screen} rec={n} onPlay={play} />
 							</figure>
 						</div>
 					</div>
@@ -389,11 +399,11 @@ const STORY_BEATS: ViewerBeat[] = BEATS.map((sp, i): ViewerBeat => {
 		n,
 		label: ERA_TITLE[sp.art.era],
 		live: sp.art.live,
-		render: (live, _shown, screen, primed) => (
+		render: (live, _shown, screen, primed, play) => (
 			<div className="scene-spread" data-layout={sp.layout} style={{ '--ar': sp.ar } as React.CSSProperties}>
 				<div className="scene-art">
 					<div className="scene-frame">
-						<Panel art={sp.art} aspect={sp.aspect} position={sp.position} live={live} primed={primed} staged screen={{ state: screen, rec: n, place: RECORDED[sp.art.era], start: reelStart(i) }} />
+						<Panel art={sp.art} aspect={sp.aspect} position={sp.position} live={live} primed={primed} staged screen={{ state: screen, rec: n, place: RECORDED[sp.art.era], start: reelStart(i), onPlay: play }} />
 					</div>
 					<SceneLabel era={sp.art.era} />
 				</div>
@@ -476,10 +486,11 @@ function Home() {
 					<section
 						id="specimen"
 						aria-labelledby="galaxy"
-						className={`el-${ELEMENT} grid scroll-mt-24 grid-cols-1 gap-x-6 gap-y-8 pt-4 pb-16 lg:grid-cols-12 lg:pb-24`}
+						className={`el-${ELEMENT} grid scroll-mt-24 grid-cols-1 gap-x-6 gap-y-8 pt-16 pb-16 lg:grid-cols-12 lg:pt-24 lg:pb-24`}
 					>
-						<StoryHead id="galaxy" className="lg:col-span-12">The Galaxy of Xalia</StoryHead>
-						<div className="flex flex-col gap-4 lg:col-span-5">
+						<StoryHead id="galaxy" className="mb-0 lg:col-span-12">The Galaxy of Xalia</StoryHead>
+						{/* On a phone the creature comes first, at a size that leaves its words in reach; beside them on a wide screen. */}
+						<div className="order-last flex flex-col gap-4 lg:order-none lg:col-span-5">
 							<p className="m-0 border-l-2 border-edge-strong bg-s1 px-5 py-4 font-body text-body text-ink">{KRYSTOS_TODAY}</p>
 							<h3 className="type-display m-0 mt-2 text-white">
 								{SPECIES_NAME}
@@ -490,7 +501,7 @@ function Home() {
 								<span className="type-legend block">Signature ability</span>
 								<span className="font-body text-body font-bold text-white">{SIGNATURE}</span>
 							</p>
-							<p className="m-0 flex flex-wrap gap-x-4 font-body text-small">
+							<p className="m-0 flex flex-wrap gap-x-6 font-body text-small">
 								<Button asChild variant="link" className="text-small">
 									<Link to={`/encyclopedia/species/${SPECIES_KEY}`}>Its record</Link>
 								</Button>
@@ -499,7 +510,7 @@ function Home() {
 								</Button>
 							</p>
 						</div>
-						<div data-figure className="mx-auto w-full max-w-[420px] lg:col-span-7 lg:max-w-[560px] lg:justify-self-center lg:self-center">
+						<div data-figure className="mx-auto w-full max-w-[240px] sm:max-w-[320px] lg:col-span-7 lg:max-w-[560px] lg:justify-self-center lg:self-center">
 							<span className="block" style={{ filter: GLOW }}><XalianImage speciesName={SPECIES_NAME} primaryType={ELEMENT} unPadded moreClasses="w-full" /></span>
 						</div>
 					</section>
@@ -535,9 +546,12 @@ function Home() {
 								<li key={g.name} className="m-0">
 									<Link
 										to={g.to}
-										className="flex h-full flex-col gap-2 border border-edge bg-s1 px-4 pt-4 pb-5 no-underline transition-[background-color,border-color] duration-[120ms] ease-out hover:border-edge-strong hover:bg-s2 focus-visible:outline-2 focus-visible:outline-ring"
+										className="group flex h-full flex-col gap-2 border border-edge bg-s1 px-4 pt-4 pb-5 no-underline transition-[background-color,border-color] duration-[120ms] ease-out hover:border-edge-strong hover:bg-s2 focus-visible:outline-2 focus-visible:outline-ring"
 									>
-										<span className="type-legend text-ink">{g.name}</span>
+										<span className="flex items-center justify-between gap-2">
+											<span className="type-legend text-ink">{g.name}</span>
+											<ChevronRight aria-hidden="true" className="size-4 shrink-0 text-ink-3 transition-transform duration-1 ease-out group-hover:translate-x-0.5 group-hover:text-ink" />
+										</span>
 										<span className="font-body text-small text-ink-3">{g.copy}</span>
 									</Link>
 								</li>

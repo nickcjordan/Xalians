@@ -48,9 +48,10 @@ export type ViewerBeat = {
 	 * that is not can hold nothing heavy in the DOM. `screen`: its archive
 	 * screen's power state. `primed`: its heavy picture may be mounted now,
 	 * held still, under the static of the screen tuning in, so going live
-	 * later only starts it.
+	 * later only starts it. `play`: brings the viewer to its resting place,
+	 * which is what starts the recording (the screen's Play key).
 	 */
-	render: (live: boolean, shown: boolean, screen: ScreenState, primed: boolean) => React.ReactNode;
+	render: (live: boolean, shown: boolean, screen: ScreenState, primed: boolean, play: () => void) => React.ReactNode;
 };
 
 // The incoming beat's entrance (delay plus transform, see `.story-scene`) is
@@ -67,6 +68,11 @@ const DWELL = '32svh';
 
 function reducedMotion() {
 	return typeof window !== 'undefined' && !!window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+}
+
+// How much of the chapter bar a beat's item takes on a wide screen, where the full scenes show their names.
+function barWeight(b: ViewerBeat) {
+	return b.minor ? 0.45 : 1.5;
 }
 
 function canBox() {
@@ -213,6 +219,41 @@ export function StoryViewer({ id, title, beats, after }: { id: string; title: Re
 		}
 	}, [inView, index, beats]);
 
+	// Play: scroll the page to where the viewer rests, and let resting start the recording as it always
+	// does. In the box that is the middle of its centered pause; in the page, the picture centered on the
+	// screen (or its top, if it is taller than the screen).
+	const play = React.useCallback(() => {
+		const wrap = wrapRef.current;
+		const pin = pinRef.current;
+		const box = boxRef.current;
+		if (!wrap || !pin || !box || typeof window === 'undefined') return;
+		let by: number;
+		if (boxed) {
+			const spacer = wrap.lastElementChild as HTMLElement | null;
+			const dwell = spacer && spacer !== pin ? spacer.getBoundingClientRect().height : 0;
+			const natural = wrap.getBoundingClientRect().top + parseFloat(getComputedStyle(wrap).paddingTop || '0');
+			by = natural - pinTop + dwell / 2;
+		} else {
+			const pic = box.querySelector<HTMLElement>('.story-scene[data-state="active"] .frame') ?? box;
+			const r = pic.getBoundingClientRect();
+			by = r.height <= window.innerHeight ? r.top - (window.innerHeight - r.height) / 2 : r.top - 8;
+		}
+		if (Math.abs(by) < 1) return;
+		window.scrollTo({ top: window.scrollY + by, behavior: reducedMotion() ? 'auto' : 'smooth' });
+	}, [boxed, pinTop]);
+
+	// Where a beat's marker sits on the bar once the full scenes carry their names (lg): a small piece's
+	// numeral needs less room than a scene's name, so the bar gives the names more, and "05 The Reign of
+	// Kozrak" is no longer cut short. Each marker is its item's left edge, so the dot goes to the share of
+	// the bar that the items before it take.
+	const barAt = React.useCallback(
+		(i: number) => {
+			const total = beats.reduce((a, b) => a + barWeight(b), 0);
+			return beats.slice(0, i).reduce((a, b) => a + barWeight(b), 0) / total;
+		},
+		[beats]
+	);
+
 	const go = React.useCallback(
 		(to: number) => {
 			const next = Math.max(0, Math.min(count - 1, to));
@@ -280,10 +321,10 @@ export function StoryViewer({ id, title, beats, after }: { id: string; title: Re
 				<div className="flex flex-wrap items-end gap-x-10 gap-y-2 pb-4 lg:pb-5">
 					{title}
 					{/* The chapter bar: one marker per beat, the dot on the shown one. */}
-					<div className="story-line min-w-64 flex-1" style={{ '--story-progress': index / count } as React.CSSProperties}>
+					<div className="story-line min-w-64 flex-1" style={{ '--story-progress': index / count, '--story-progress-lg': barAt(index) } as React.CSSProperties}>
 						<ol className="m-0 flex list-none p-0" aria-label="Chapters">
 							{beats.map((b, i) => (
-								<li key={b.key} className="m-0 min-w-0 flex-1">
+								<li key={b.key} className="m-0 min-w-0 flex-1 lg:grow-(--bar-w)" style={{ '--bar-w': barWeight(b) } as React.CSSProperties}>
 									<button
 										type="button"
 										onClick={() => go(i)}
@@ -331,7 +372,7 @@ export function StoryViewer({ id, title, beats, after }: { id: string; title: Re
 								inert={i === index ? undefined : true}
 								data-state={i === index ? 'active' : i < index ? 'past' : 'future'}
 							>
-								{b.render(liveNow(i), shown, i === index ? screen : 'standby', i === index && visible && screen !== 'standby' && screen !== 'off')}
+								{b.render(liveNow(i), shown, i === index ? screen : 'standby', i === index && visible && screen !== 'standby' && screen !== 'off', play)}
 							</div>
 						);
 					})}
