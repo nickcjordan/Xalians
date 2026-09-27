@@ -276,8 +276,12 @@ export function ticksDue(u: Unit): number {
   The machines' health after their own degrading ticks and the squad's standing orders land (readout pass), each as its
   preview reads, in the public turn order: the direct hit and its area, never a charge that
   only begins this round. `dealt` is the health each companion's order takes, after the
-  orders before it, so an order whose target the others already finish reads 0. The squad's
-  own losses before it acts are not modelled: a plan is read as if every order lands.
+  orders before it. An order whose target has already fallen goes where the engine sends it:
+  the next standing machine in the row (`redirect`), as the resolver does (audit run 1 found
+  the screen calling such orders wasted). `fallsFirst` says, for each machine the plan knocks
+  out, whether it falls before its own turn this round, so a knockout is only read as stopping
+  this round's blow when it lands first (audit run 1: "7 → 0" on a crawler that struck first).
+  The squad's own losses before it acts are not modelled: a plan is read as if every order lands.
 */
 export function projectOrders(
   s: Run,
@@ -286,16 +290,26 @@ export function projectOrders(
   hp: Record<string, number>;
   dealt: Record<string, number>;
   before: Record<string, Record<string, number>>;
+  redirect: Record<string, string>;
+  fallsFirst: Record<string, boolean>;
 } {
   const hp: Record<string, number> = Object.fromEntries(
     s.enemies.map((e) => [e.id, Math.max(0, e.hp - ticksDue(e))])
   );
   const dealt: Record<string, number> = {};
   const before: Record<string, Record<string, number>> = {};
+  const redirect: Record<string, string> = {};
+  const fallsFirst: Record<string, boolean> = {};
+  const acted = new Set<string>();
   const standing = { team: s.team, enemies: s.enemies };
+  const row = s.enemies;
   for (const u of initiative(s.team, s.enemies, s.round, orders)) {
+    if (u.enemy) {
+      acted.add(u.id);
+      continue;
+    }
     const q = orders[u.id];
-    if (u.enemy || !q || q.move < -1 || u.hp <= 0) continue;
+    if (!q || q.move < -1 || u.hp <= 0) continue;
     const m = moveAt(u, q.move);
     before[u.id] = { ...hp };
     // A charge begun this round lands at the unit's next opportunity, not this round.
@@ -303,22 +317,30 @@ export function projectOrders(
       dealt[u.id] = 0;
       continue;
     }
-    const t = s.enemies.find((e) => e.id === q.target);
+    let t = row.find((e) => e.id === q.target);
+    if (t && hp[t.id] <= 0) {
+      const index = row.indexOf(t);
+      const next = Array.from({ length: row.length }, (_, i) => row[(index + i + 1) % row.length]).find(
+        (e) => hp[e.id] > 0 && selectableTargets([e]).length > 0
+      );
+      if (next) redirect[u.id] = next.id;
+      t = next;
+    }
     let taken = 0;
-    if (t && hp[t.id] > 0) {
-      const hit = Math.min(hp[t.id], damagePreview(u, m, t));
-      hp[t.id] -= hit;
+    const hurt = (e: Unit, amount: number) => {
+      const hit = Math.min(hp[e.id], amount);
+      hp[e.id] -= hit;
       taken += hit;
+      if (hp[e.id] <= 0 && !(e.id in fallsFirst)) fallsFirst[e.id] = !acted.has(e.id);
+    };
+    if (t && hp[t.id] > 0) {
+      hurt(t, damagePreview(u, m, t));
       for (const r of areaReach(standing, u, m, t))
-        if (r.enemy && hp[r.id] > 0) {
-          const splash = Math.min(hp[r.id], damagePreview(u, m, r, "area"));
-          hp[r.id] -= splash;
-          taken += splash;
-        }
+        if (r.enemy && hp[r.id] > 0) hurt(r, damagePreview(u, m, r, "area"));
     }
     dealt[u.id] = taken;
   }
-  return { hp, dealt, before };
+  return { hp, dealt, before, redirect, fallsFirst };
 }
 
 /** The run as it would stand after projected damage: the machines at their projected health. */

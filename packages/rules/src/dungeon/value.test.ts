@@ -99,6 +99,27 @@ describe("move value, in health", () => {
     graviclaw.hp = 0;
     expect(pickShare(run, graviclaw)).toBe(0);
   });
+  it("follows a fallen target's order to the next machine, and says who falls before their turn (audit pass A)", () => {
+    const run = createRun(1);
+    const [m1, m2] = run.enemies;
+    const hippo = run.team.find((u) => u.name === "Hippochamp")!;
+    const graviclaw = run.team.find((u) => u.name === "Graviclaw")!;
+    const crystorn = run.team.find((u) => u.name === "Crystorn")!;
+    const cannon = legalMoves(hippo, run).find((k) => moveAt(hippo, k).name.includes("Water Cannon"))!;
+    const pincer = legalMoves(graviclaw, run).find((k) => moveAt(graviclaw, k).name.includes("Pincer"))!;
+    const ram = legalMoves(crystorn, run).find((k) => moveAt(crystorn, k).name.includes("Heavy Ram"))!;
+    const plan = projectOrders(run, {
+      [hippo.id]: { move: cannon, target: m1.id },
+      [graviclaw.id]: { move: pincer, target: m1.id },
+      [crystorn.id]: { move: ram, target: m1.id },
+    });
+    expect(plan.hp[m1.id]).toBe(0);
+    // Crystorn acts last: Crawler 1 is already down, so its order goes on to Crawler 2.
+    expect(plan.redirect[crystorn.id]).toBe(m2.id);
+    expect(plan.hp[m2.id]).toBeLessThan(m2.hp);
+    // The crawlers are quicker than every companion but Avilily: Crawler 1 strikes before it falls.
+    expect(plan.fallsFirst[m1.id]).toBe(false);
+  });
   it("counts a degrading status's next tick, capped at what the unit has left", () => {
     const run = createRun(1);
     const u = run.team[0];

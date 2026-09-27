@@ -198,6 +198,8 @@ export type BattleEvent = {
     effect whose prerequisite did not succeed (contract decision 34).
   */
   reason?: "foe" | "requires";
+  /** blocked events only: what stopped the order (audit fix pass A). "binding" is a bind on the actor; "recovery" is a charge broken earlier, by a pull, a stun or a bind. */
+  cause?: "binding" | "recovery";
   /** withheld events only: the effect that did not resolve, as a status name or an effect type. */
   effect?: string;
   actorId?: string;
@@ -1325,13 +1327,22 @@ export function resolveRound(
       spendOpportunity(s, u, emit);
       continue;
     }
-    spendOpportunity(s, u, emit);
-    if (q.move === -2)
+    // A condition that ends with this opportunity is reported after what it stopped, so a bind
+    // reads "stopped by binding", then "no longer restrained" (audit run 1: the reverse order
+    // read as the bind wearing off before it blocked anything).
+    const ending: [string, BattleEvent | undefined][] = [];
+    spendOpportunity(s, u, (text, event) => ending.push([text, event]));
+    const reportEnding = () => {
+      for (const [text, event] of ending.splice(0)) emit(text, event);
+    };
+    if (q.move === -2) {
       emit(`${u.name} cannot act while bound.`, {
         kind: "blocked",
         actorId: u.id,
+        cause: "binding",
       });
-    else {
+      reportEnding();
+    } else {
       const m = moveAt(u, q.move);
       const release = prolonged(m) && u.charge !== null;
       if (wasBound && m.approach === "closing") {
@@ -1340,16 +1351,20 @@ export function resolveRound(
           `${u.name}'s ${m.name} is stopped by binding.${
             release ? " Charge dispersed; recovery begins." : ""
           }`,
-          { kind: "blocked", actorId: u.id, moveName: m.name }
+          { kind: "blocked", actorId: u.id, moveName: m.name, cause: "binding" }
         );
+        reportEnding();
       } else if (prolonged(m) && !release && recovering) {
+        reportEnding();
         // A stale release order after the charge was broken this round.
         emit(`${u.name}'s charge was broken; it cannot begin another yet.`, {
           kind: "blocked",
           actorId: u.id,
           moveName: m.name,
+          cause: "recovery",
         });
       } else {
+        reportEnding();
         // An order names a foe or, since pass 5, a squadmate (contract decision 39). A
         // redirect never switches sides (decision 41): an ally-aimed order walks its own
         // line, the performer left out, and concealment does not hide a unit from its own

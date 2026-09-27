@@ -327,6 +327,12 @@ describe("Powerworks battle rules", () => {
     const r = resolveRound(s, orders(s));
     expect(r.state.log.some((l) => l.includes("stopped by binding"))).toBe(true);
     expect(unit(r.state, e.id).cooldowns).toEqual([0]);
+    // Audit pass A: the blocked order is reported before the bind that stopped it ends, and says why.
+    const events = r.frames.map((f) => f.event).filter(Boolean);
+    const blocked = events.findIndex((ev) => ev!.kind === "blocked" && ev!.actorId === e.id);
+    expect(events[blocked]!.cause).toBe("binding");
+    const ended = events.findIndex((ev) => ev!.kind === "expired" && ev!.targetId === e.id);
+    if (ended >= 0) expect(ended).toBeGreaterThan(blocked);
     // A companion carrying both approaches: bound, only its stationary moves stay legal,
     // and a stationary damaging move keeps Desperate strike off the list.
     const contact = { range: "contact" as const };

@@ -14,7 +14,7 @@ The method is in `docs/design/powerworks-intuitiveness-audit.md`; run records li
 4. Build the neutral reader packets (images named by number only, no meaning in any file name):
    `python scripts/powerworks-audit/build_packets.py`
    Check the playback frame numbers in `build_packets.py` (the `beats` list) against `untracked/powerworks-audit/shots/*-frames.json` after any change to playback timing.
-5. Run the readers: three per packet (`planning`, `planning-guide`, `playback`, `phone`, `signals`), each a fresh subagent with the reader prompt below. Have each save its answers to `untracked/powerworks-audit/answers/<packet>-r<n>.md`.
+5. Run the readers: three per packet (`planning`, `planning-guide`, `playback`, `phone`, `signals`), each a fresh subagent on Opus (Sonnet readers read every design lower, even correct ones) with the reader prompt below. Have each save its answers to `untracked/powerworks-audit/answers/<packet>-r<n>.md`.
 6. Run one grader subagent with `keys.md` and the answers. It writes `grades.json` and `confusions.md`. The builder does not grade.
 7. Copy the answers, grades and confusions to `docs/design/powerworks-audit-runs/<date>/` and add the scores to the audit document.
 

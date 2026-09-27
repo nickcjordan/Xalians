@@ -249,6 +249,12 @@ The signals that failed are almost all glyphs that must be learned: bars, crowns
 
 The evidence says a short word or number in place is what a newcomer understands, and an abstract glyph is what they misread. The 2026-09-23 ruling is against board labels, sentences and suggestions. This audit does not argue for sentences or suggestions: the crown fails precisely because it reads as a suggestion. It argues for replacing glyphs with the word or number they stand for ("Signature", "acts later", "strong", "8 dmg"), in the place the glyph now sits. That is decision 4 of this plan, now with data. Nick decides.
 
+**Ruled 2026-09-27 (Nick):** "if there isn't a reasonable icon that is intuitive enough, then I am willing to consider using a word as a badge." So pass C tries a familiar icon first, and uses a one-word badge where no icon reads on its own; the rerun decides which.
+
+### Readers' model
+
+Run 1's readers ran on Sonnet. The Reclamation audits later found Sonnet readers scoring every design lower than Opus readers, including designs Opus read correctly, so run 1's absolute scores may understate comprehension. The findings are still sound: every finding above rests on specific misreadings, and the four wrong readouts are wrong whoever reads them. Reruns use Opus readers, and the first rerun also repeats run 1's screens on Opus to give a like-for-like baseline.
+
 ### Proposed fix passes, each followed by a rerun of this audit
 
 - **A. Make the screen true (no design question).**
@@ -266,3 +272,11 @@ The evidence says a short word or number in place is what a newcomer understands
   - Give the lightning bolt one meaning.
   - Separate selection rings from target rings.
   - Build the one-meaning lint (3.5) on the resulting dictionary.
+
+## Pass A, shipped 2026-09-27: make the screen true
+
+- **A knockout no longer stops a blow that lands first.** The plan projection (`projectOrders`) tracks, for each machine the plan knocks out, whether it falls before its own turn. The attack badge reads "7 → 0" only then. A status or bind from a companion who acts after the machine no longer counts against this round's blow either.
+- **Orders follow the engine's redirect.** An order whose target falls to the orders before it goes to the next standing machine in the row, as the resolver does. The projection deals its damage there, and the chip names where it lands ("↱ Crawler 2") in place of the "wasted" mark. The idle mark stays for orders that really do nothing, like a heal on a squadmate at full health.
+- **"Down" rides the fallen unit's own plate.** It no longer floats under a fallen machine into the squad's row.
+- **Playback names a broken charge.** A blocked event now carries its cause. The banner reads "Charge broken" when a pull, stun or earlier bind broke the charge, and "Stopped by binding" only when a bind stops the order.
+- **A bind that ends with the opportunity it spent is reported after the blow it stopped.** The sequence is "stopped by binding", then "no longer restrained".
