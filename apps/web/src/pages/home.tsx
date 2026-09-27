@@ -62,7 +62,6 @@ const ERA_TITLE = {
 	accords: 'The Accords',
 	'end-wars': 'The End Wars',
 	present: 'The Reign of Kozrak',
-	generation: 'The Age of Generators',
 } as const;
 
 type Art = {
@@ -104,12 +103,6 @@ const ART = {
 		small: '/assets/img/lore/eras/present-768.jpg',
 		alt: 'A round bronze platform on the floor of an empty stone arena.',
 	},
-	generation: {
-		era: 'generation',
-		src: '/assets/img/lore/eras/generation.jpg',
-		small: '/assets/img/lore/eras/generation-768.jpg',
-		alt: 'A channel of molten metal running between rows of smoking foundry stacks.',
-	},
 	krystos: {
 		src: '/assets/img/planets/art/krystos-landscape.webp',
 		small: '/assets/img/planets/art/krystos-landscape-768.webp',
@@ -147,7 +140,6 @@ function Panel({
 	aspect,
 	position,
 	className,
-	n,
 	eager = false,
 	still = false,
 	live,
@@ -159,8 +151,6 @@ function Panel({
 	aspect: string;
 	position?: string;
 	className?: string;
-	/** The spread's numeral, repeated on its plate. */
-	n?: string;
 	eager?: boolean;
 	/** The hero's panel holds still. */
 	still?: boolean;
@@ -200,13 +190,6 @@ function Panel({
 					picture
 				)}
 			</span>
-			{n && art.era ? (
-				<span className="type-data absolute top-2 right-2 z-10 flex items-baseline gap-2.5 border border-edge-strong bg-room/80 px-2 py-1 text-tiny tracking-legend text-ink sm:top-4 sm:right-4 sm:px-2.5 sm:py-1.5">
-					<span>{n}</span>
-					{/* On a phone the tag would cover a quarter of the painting; the numeral stays, the era name is in the link's label. */}
-					<span className="hidden text-ink-3 sm:inline">{ERA_TITLE[art.era]}</span>
-				</span>
-			) : null}
 		</figure>
 	);
 	if (still || !art.era) return figure;
@@ -230,34 +213,8 @@ function Panel({
 	);
 }
 
-/**
- * The caption plate: cream, cut with the system's chamfer so the hairline
- * follows the corner, a numeral in the data face, and the float shadow
- * because it sits over its painting rather than on the page.
- */
+/** The hero's tag: cream, cut with the system's chamfer so the hairline follows the corner. */
 const PLATE_STYLE = { '--chamfer-fill': 'var(--color-ink)', '--chamfer-edge': 'var(--color-ink-3)' } as React.CSSProperties;
-
-function Plate({
-	n,
-	from,
-	className,
-	children,
-}: {
-	n: string;
-	/** The side it slides out from as it scrolls in. */
-	from?: 'left' | 'right' | 'up';
-	className?: string;
-	children: React.ReactNode;
-}) {
-	return (
-		<div data-plate={from} className={cn('chamfer relative z-10 shadow-float', className)} style={PLATE_STYLE}>
-			<div className="flex flex-col gap-3 px-7 pt-5 pb-7 text-room sm:px-8">
-				<span className="type-data text-tiny tracking-legend text-ink-4">{n}</span>
-				<p className="m-0 font-body text-lead">{children}</p>
-			</div>
-		</div>
-	);
-}
 
 /** The creature silhouette with a white glow, so it separates from whatever stands behind it (Nick, 2026-09-22). */
 const GLOW =
@@ -288,7 +245,9 @@ const SCENE_LABEL = {
 	},
 	present: {
 		title: 'An Arena on Valleron',
-		text: 'A round bronze platform lies in the stone floor of an empty arena, ringed by tiered galleries and stairs. Xalians come to Valleron’s arenas to fight in King Kozrak’s tournament for the Scrambler Tokens their worlds need to replenish their numbers.',
+		// The tournament is Nick's 2022 paragraph, told under the arena it is fought in (it sat in its own
+		// section below the viewer until 2026-09-27; Nick: the last scene belongs inside the video player).
+		text: TOURNAMENT,
 	},
 } as const;
 
@@ -325,7 +284,7 @@ const BEATS: Array<Spread | Piece> = [
 		name: 'The first Xalian',
 		headline: "Designed to thrive in Xalia's most extreme environments",
 		mode: 'forms',
-		alt: "A round window into a Generator's vat of green gel, bubbles rising. A creature gathers out of the glow and takes three shapes in turn, a Neph of Saiphus, an Imprit of Magmuth and a Yetimoth of Krystos, each in its own world's light, then settles and opens its eyes.",
+		alt: "A round window into a Generator's vat of green gel, bubbles rising. Points of light write a genome helix in the gel, pair by pair. The recording cuts between three Generators, each on its own world, shown on a display beside the window: Saiphus, a gas giant; Magmuth, split by molten channels; and frozen Krystos. With each, the gel takes on that world's light and the helix's bases are rewritten in its colors. Then a heartbeat starts on the life-signs line.",
 	},
 	{
 		kind: 'piece',
@@ -333,7 +292,7 @@ const BEATS: Array<Spread | Piece> = [
 		name: 'APEX takes the Generators',
 		headline: "The galaxy's first artificial intelligence",
 		mode: 'apex',
-		alt: "The same vat. A thin line of violet light runs round the window's rim and threads into the glass; the green gel is overtaken from the edge inward, the bubbles stop where they are, and last the creature's eyes turn the same violet.",
+		alt: "The same vat. A thin line of violet light runs round the window's rim and threads into the glass; the gel is overtaken from the edge inward, the helix's pairs turn violet as the light reaches them, and the bubbles stop where they are. A net of the same light closes over the display, and last the heartbeat turns violet and falls into an even, machine-regular beat.",
 	},
 	{ kind: 'scene', art: ART.endWars, headline: 'Turned the Xalians against their masters', text: STORY[1], layout: 'wide-right', aspect: 'aspect-[2/1]', ar: 2 },
 	{
@@ -430,8 +389,6 @@ const STORY_BEATS: ViewerBeat[] = BEATS.map((sp, i): ViewerBeat => {
 		),
 	};
 });
-// The tournament's plate follows the story's last beat.
-const TOURNAMENT_N = numeral(BEATS.length);
 
 /* ------------------------------------------------------------------ page */
 
@@ -533,20 +490,11 @@ function Home() {
 						</div>
 					</section>
 
-					{/* The Tournament & Tokens: one more spread, then the door. */}
+					{/* The Tournament & Tokens: the door. The tournament itself is the story's last beat. */}
 					<section aria-labelledby="tournament" className="pt-4">
 						<StoryHead id="tournament">The Tournament &amp; Tokens</StoryHead>
 
-						<div className="mb-12 grid grid-cols-1 gap-x-6 lg:mb-16 lg:grid-cols-12">
-							<div className="lg:col-start-1 lg:col-end-9 lg:row-start-1">
-								<Panel n={TOURNAMENT_N} art={ART.generation} aspect="aspect-video" position="object-[center_60%]" />
-							</div>
-							<Plate n={TOURNAMENT_N} from="right" className="-mt-7 mx-4 lg:col-start-8 lg:col-end-13 lg:row-start-1 lg:m-0 lg:-mb-12 lg:-ml-28 lg:self-end">
-								{TOURNAMENT}
-							</Plate>
-						</div>
-
-						<div className="flex max-w-[62ch] flex-col items-start gap-5 pt-6 lg:pt-10">
+						<div className="flex max-w-[62ch] flex-col items-start gap-5">
 							<p className="type-display m-0 mt-1">Start generating now&hellip;</p>
 							<div className="flex flex-wrap items-center gap-6">
 								<Button asChild variant="secondary">

@@ -1,121 +1,170 @@
 // Beats 2 and 3, the Generator's vat (docs/design/home-story-small-pieces.md). A round window in a dark
-// riveted housing, filling the frame; green gel behind thick curved glass, lit from below; bubbles rising at
-// several depths.
+// riveted housing, left of center; green gel behind thick curved glass, lit from below; bubbles rising at
+// several depths. Right of it, sunk in the same housing, the vat's readout: a round display showing the world
+// the Generator is writing for, three lamps for the three worlds, and a life-signs strip. No creature is ever
+// drawn (Nick, 2026-09-27: the creature art is still being worked out, so the story shows worlds, objects and
+// ideas); the subject is the genome.
 //
-// - `forms` (beat 2): a creature condenses out of the glow as a cloud of motes that gathers into its shape, and
-//   passes through three forms from three deadly worlds, each in its world's light, which floods the gel: Neph
-//   of Saiphus (air), drawn as the glowing filaments it is, Imprit of Magmuth (fire) and Yetimoth of Krystos
-//   (ice), lit from below inside the gel; then it settles and opens its eyes, two points of light. The
-//   silhouettes are Nick's own (`src/svg/species/token/<key>.svg`), never redrawn.
-// - `apex` (beat 3): the same vat and creature, eyes open. A hard line of violet-white light runs round the
-//   rim, catching the bolts as it passes, and threads into the glass; the gel is overtaken from the edge
-//   inward, near white at the front of the light and violet where it has settled; the bubbles slow and hang;
-//   last, the creature's eyes flare violet. The color is an art choice, not canon.
-import nephSvg from '@/svg/species/token/neph.svg?raw';
-import impritSvg from '@/svg/species/token/imprit.svg?raw';
-import yetimothSvg from '@/svg/species/token/yetimoth.svg?raw';
-import { type Ctx, type RGB, H, W, clamp, css, easeOut, glow, lighter, loopFade, mix, mixRGB, motes, ramp, rng, smooth, sphere, vignette } from './stage';
+// - `forms` (beat 2): points of light write a genome helix in the gel, pair by pair from the bottom up, blank.
+//   Then the readout tunes to a world, three in turn (Saiphus, a gas giant; Magmuth, volcanic; Krystos,
+//   frozen): the gel floods with that world's light and a band runs up the helix, rewriting its bases in the
+//   world's colors. After the last world a heartbeat starts on the strip, and the helix pulses with it.
+// - `apex` (beat 3): the same vat, Krystos's genome, the heartbeat going. A hard line of violet-white light
+//   runs round the rim, catching the bolts, and threads into the glass; the gel is overtaken from the edge
+//   inward and the helix's pairs turn violet as the front reaches them; the bubbles slow and hang; a lattice
+//   of the same light closes over the world on the display; last, the heartbeat turns violet and falls into
+//   an even, machine-regular beat. The color is an art choice, not canon.
+import { BACKBONE, type Helix, type PairLook, PAIRED, drawHelix, pairPoint } from './helix';
+import { type Camera, type Ctx, type RGB, H, W, blot, clamp, css, glow, lighter, loopFade, mix, mixRGB, motes, ramp, rng, smooth, sphere, vignette } from './stage';
 
-export const FORMS_LOOP = 14;
+export const FORMS_LOOP = 16;
 export const APEX_LOOP = 12;
 
-const CX = W / 2;
+// The window.
+const CX = 392;
 const CY = H / 2;
-const R = 236; // the window's radius
-const RIM = 30; // the ring's width
+const R = 226;
+const RIM = 28;
+
+// The readout: a recessed panel, its round display, lamps and strip.
+const PANEL = { x: 704, y: 66, w: 258, h: 430 };
+const GLOBE = { x: PANEL.x + PANEL.w / 2, y: 190, r: 84 };
+const LAMPS_Y = 306;
+const STRIP = { x: PANEL.x + 16, y: 350, w: PANEL.w - 32, h: 118 };
 
 const VIOLET: RGB = [168, 118, 255];
 const APEX_WHITE: RGB = [236, 226, 255];
+const GREEN: RGB = [70, 190, 96];
+const BLANK: RGB = [150, 162, 172];
+const LIFE: RGB = [150, 255, 190];
+const MACHINE: RGB = [206, 176, 255];
 
-// ---- The creatures, from their 64 unit silhouettes.
+// ---- The worlds.
 
-type Form = { key: string; d: string; tint: RGB; glowing?: boolean; eyes?: [number, number][] };
-const pathOf = (svg: string) => (/\sd="([^"]+)"/.exec(svg) || [])[1] || '';
-export const FORMS: Form[] = [
-	{ key: 'neph', d: pathOf(nephSvg), tint: [112, 176, 255], glowing: true },
-	{ key: 'imprit', d: pathOf(impritSvg), tint: [255, 146, 70] },
-	{ key: 'yetimoth', d: pathOf(yetimothSvg), tint: [206, 228, 255], eyes: [[25.2, 12.6], [38.8, 12.6]] },
+type World = { key: 'saiphus' | 'magmuth' | 'krystos'; gel: RGB; flood: number; bases: RGB[]; lamp: RGB };
+export const WORLDS: World[] = [
+	{ key: 'saiphus', gel: [80, 140, 255], flood: 0.72, bases: [[70, 150, 255], [110, 220, 255], [60, 96, 236], [150, 170, 255]], lamp: [120, 180, 255] },
+	{ key: 'magmuth', gel: [255, 104, 40], flood: 0.74, bases: [[255, 120, 40], [255, 196, 70], [236, 64, 40], [255, 150, 90]], lamp: [255, 150, 70] },
+	{ key: 'krystos', gel: [160, 206, 255], flood: 0.84, bases: [[214, 240, 255], [120, 190, 250], [240, 250, 255], [110, 220, 240]], lamp: [214, 236, 255] },
 ];
-const SIL = 360; // the silhouette's box on the stage
-const toStage = (x: number, y: number) => ({ x: CX + (x - 32) * (SIL / 64), y: CY + 6 + (y - 33) * (SIL / 64) });
+const VIOLETS: RGB[] = [[132, 64, 240], [160, 90, 250], [104, 48, 220], [176, 116, 250]];
 
-const paths = new Map<string, Path2D>();
-function path(f: Form): Path2D | null {
-	if (typeof Path2D === 'undefined') return null;
-	let p = paths.get(f.key);
-	if (!p) {
-		p = new Path2D(f.d);
-		paths.set(f.key, p);
-	}
-	return p;
-}
+// ---- The genome.
 
-// Points inside each silhouette, for its motes to gather to.
-const DOTS = 240;
-const inside = new Map<string, { x: number; y: number }[]>();
-function dots(f: Form): { x: number; y: number }[] {
-	const hit = inside.get(f.key);
-	if (hit) return hit;
-	const p = path(f);
-	const out: { x: number; y: number }[] = [];
-	if (p && typeof document !== 'undefined') {
-		const c = document.createElement('canvas').getContext('2d');
-		const r = rng(f.key.length * 977);
-		for (let k = 0; k < 30000 && out.length < DOTS && c; k++) {
-			const x = r() * 64;
-			const y = r() * 64;
-			if (c.isPointInPath(p, x, y, 'evenodd')) out.push(toStage(x, y));
-		}
-	}
-	while (out.length < DOTS) out.push({ x: CX, y: CY });
-	inside.set(f.key, out);
+const PAIRS = 16;
+const HELIX: Omit<Helix, 'phase' | 'center'> = { pairs: PAIRS, rise: 29, radius: 100, scale: 0.8 };
+// Turned upright, a few degrees off, so it hangs in the gel like a specimen; written from the bottom up.
+const CAM: Camera = { cx: CX, cy: CY, pitch: 0.3, roll: Math.PI / 2 - 0.14, dist: 1500, zoom: 1 };
+const SEQ = WORLDS.map((_, k) => {
+	const r = rng(211 + k * 97);
+	return Array.from({ length: PAIRS }, () => Math.floor(r() * 4));
+});
+const JIT = (() => {
+	const r = rng(77);
+	return Array.from({ length: PAIRS }, () => r());
+})();
+
+// Beat 2's clock.
+const WRITE: [number, number] = [0.5, 2.3];
+const WORLD_AT = [2.5, 5.8, 9.1];
+const TUNE = 1.5; // the band's run up the helix
+const HEART_AT = 12.4;
+const writeAt = (i: number) => WRITE[0] + (i / (PAIRS - 1)) * (WRITE[1] - WRITE[0]);
+const tuneAt = (k: number, i: number) => WORLD_AT[k] + 0.65 + ((i + 1.5) / (PAIRS + 3)) * TUNE + JIT[i] * 0.08;
+/** The world the readout shows at `t` in beat 2 (-1: none yet). */
+const worldAt = (t: number) => (t >= WORLD_AT[2] ? 2 : t >= WORLD_AT[1] ? 1 : t >= WORLD_AT[0] ? 0 : -1);
+
+// Beat 3's clock.
+const RIM_RUN: [number, number] = [1.0, 2.6];
+const THREAD: [number, number] = [2.4, 3.6];
+const TAKE: [number, number] = [3.2, 8.0];
+const LATTICE: [number, number] = [6.6, 8.2];
+const MACHINE_AT = 8.6;
+const MACHINE_BEAT = 0.5;
+
+// ---- The heartbeat.
+
+/** The organic beats from `from`: a little uneven, as a living one is. */
+function beatsFrom(from: number, until: number) {
+	const r = rng(Math.round(from * 100) + 5);
+	const out: number[] = [];
+	for (let b = from; b < until; b += 0.74 + r() * 0.18) out.push(b);
 	return out;
 }
+const HEART_2 = beatsFrom(HEART_AT, FORMS_LOOP + 1);
+const HEART_3 = beatsFrom(-4.2, APEX_LOOP + 1);
 
-/** The creature in the gel: lit from below by `light`, hazed by the gel in front of it. */
-function drawCreature(ctx: Ctx, f: Form, alpha: number, light: RGB, gelColor: RGB, lift: number) {
-	const p = path(f);
-	if (!p || alpha <= 0.004) return;
-	ctx.save();
-	ctx.translate(CX - 32 * (SIL / 64), CY + 6 - 33 * (SIL / 64) - lift);
-	ctx.scale(SIL / 64, SIL / 64);
-	ctx.globalAlpha = alpha;
-	if (f.glowing) {
-		// a creature of light: its own paths, glowing
-		ctx.globalCompositeOperation = 'lighter';
-		ctx.shadowColor = css(light, 1);
-		ctx.shadowBlur = 14;
-		ctx.fillStyle = css(light, 0.8);
-		ctx.fill(p, 'evenodd');
-		ctx.shadowBlur = 0;
-		ctx.fillStyle = css(mixRGB(light, [255, 255, 255], 0.35), 0.3);
-		ctx.fill(p, 'evenodd');
-		ctx.globalCompositeOperation = 'source-over';
-	} else {
-		// its body: lit from below, bright at its base where the light meets it and dark toward its head
-		const body = ctx.createLinearGradient(0, 62, 0, 6);
-		body.addColorStop(0, css(mixRGB(light, [10, 16, 16], 0.25)));
-		body.addColorStop(0.35, css(mixRGB(light, [10, 16, 16], 0.62)));
-		body.addColorStop(1, css(mixRGB(light, [4, 8, 8], 0.9)));
-		ctx.fillStyle = body;
-		ctx.fill(p, 'evenodd');
-		// its edge caught by the light below and at the sides, gone at the top
-		const rim = ctx.createLinearGradient(0, 64, 0, 0);
-		rim.addColorStop(0, css(light, 1));
-		rim.addColorStop(0.55, css(light, 0.35));
-		rim.addColorStop(1, css(light, 0));
-		ctx.shadowColor = css(light, 0.8);
-		ctx.shadowBlur = 10;
-		ctx.strokeStyle = rim;
-		ctx.lineWidth = 0.45;
-		ctx.stroke(p);
-		ctx.shadowBlur = 0;
-		// the gel in front of it
-		ctx.fillStyle = css(gelColor, 0.14);
-		ctx.fill(p, 'evenodd');
+const bump = (p: number, at: number, w: number) => Math.exp(-Math.pow((p - at) / w, 2));
+/** One organic beat's trace, `p` seconds after it. */
+const ecg = (p: number) => (p < 0 || p > 0.7 ? 0 : 0.12 * bump(p, 0.07, 0.03) - 0.1 * bump(p, 0.16, 0.016) + bump(p, 0.195, 0.02) - 0.26 * bump(p, 0.23, 0.018) + 0.24 * bump(p, 0.42, 0.055));
+const lastBefore = (beats: number[], s: number) => {
+	let b = -Infinity;
+	for (const x of beats) if (x <= s) b = x;
+	return b;
+};
+
+type Signal = { v: number; machine: boolean; alive: boolean };
+/** The life-signs trace at moment `s`. */
+function signal(mode: 'forms' | 'apex', s: number): Signal {
+	if (mode === 'forms') {
+		if (s < HEART_AT) return { v: 0, machine: false, alive: false };
+		return { v: ecg(s - lastBefore(HEART_2, s)), machine: false, alive: true };
 	}
-	ctx.restore();
-	ctx.globalAlpha = 1;
+	if (s < MACHINE_AT) return { v: ecg(s - lastBefore(HEART_3, s)), machine: false, alive: true };
+	const p = (s - MACHINE_AT) % MACHINE_BEAT;
+	return { v: p < 0.06 ? 0.78 : p < 0.1 ? -0.08 : 0, machine: true, alive: true };
+}
+/** The helix's pulse with the heartbeat, 0 to 1. */
+function pulse(mode: 'forms' | 'apex', t: number) {
+	if (mode === 'forms') return t < HEART_AT ? 0 : bump(t - lastBefore(HEART_2, t), 0.2, 0.12);
+	if (t < MACHINE_AT) return bump(t - lastBefore(HEART_3, t), 0.2, 0.12);
+	return (t - MACHINE_AT) % MACHINE_BEAT < 0.08 ? 1 : 0;
+}
+
+// ---- The helix's look.
+
+function formsLook(i: number, t: number, sec: number, tint: RGB): PairLook {
+	const w = writeAt(i);
+	// the whole helix is there faintly from the start, a scaffold the writing fills
+	const alpha = Math.max(0.3 * smooth(0.15, 0.6, t), smooth(w, w + 0.18, t));
+	let a = BLANK;
+	let b = BLANK;
+	let glowV = 0.12;
+	let flash = 1 - ramp(w, w + 0.4, t);
+	let tuned = -1;
+	for (let k = 0; k < 3; k++) if (t >= tuneAt(k, i)) tuned = k;
+	const k = worldAt(t);
+	const inBand = k >= 0 && t >= WORLD_AT[k] + 0.2 && t < tuneAt(k, i) && t > tuneAt(k, i) - 0.35;
+	if (inBand) {
+		// the band passing: cycling through the world's bases
+		const c = Math.floor(sec * 16 + i * 3) % 4;
+		a = mixRGB(BLANK, WORLDS[k].bases[c], 0.7);
+		b = mixRGB(BLANK, WORLDS[k].bases[PAIRED[c]], 0.7);
+		glowV = 0.8;
+	} else if (tuned >= 0) {
+		const s = SEQ[tuned][i];
+		a = WORLDS[tuned].bases[s];
+		b = WORLDS[tuned].bases[PAIRED[s]];
+		glowV = 0.8;
+		flash = Math.max(flash, 1 - ramp(tuneAt(tuned, i), tuneAt(tuned, i) + 0.35, t));
+	}
+	const beat = pulse('forms', t);
+	return { a, b, glow: (glowV + 0.45 * beat) * smooth(w, w + 0.18, t), bead: mixRGB(mixRGB(BLANK, BACKBONE, smooth(WORLD_AT[0], WORLD_AT[0] + 1, t)), tint, 0.4), sheen: 0.6, alpha, flash: flash * alpha };
+}
+
+function apexLook(i: number, t: number, turned: number, tint: RGB): PairLook {
+	const s = SEQ[2][i];
+	const own = WORLDS[2].bases;
+	const beat = pulse('apex', t);
+	return {
+		a: mixRGB(own[s], VIOLETS[s], turned),
+		b: mixRGB(own[PAIRED[s]], VIOLETS[PAIRED[s]], turned),
+		glow: 0.8 + 0.4 * turned + 0.45 * beat,
+		bead: mixRGB(mixRGB(BACKBONE, tint, 0.4), [150, 110, 220], turned),
+		sheen: 0.6,
+		alpha: 1,
+		flash: 0.8 * bump(turned, 0.5, 0.25),
+	};
 }
 
 // ---- The vat.
@@ -126,19 +175,7 @@ const BUBBLES: Bubble[] = (() => {
 	return Array.from({ length: 54 }, () => ({ x: (r() * 2 - 1) * R * 0.9, y0: r(), speed: 30 + r() * 60, r: 2 + r() * 7, depth: r(), wob: r() * Math.PI * 2 }));
 })();
 
-type Mote = { x: number; y: number; ph: number };
-const MOTES: Mote[] = (() => {
-	const r = rng(8);
-	return Array.from({ length: DOTS }, () => {
-		const a = r() * Math.PI * 2;
-		const d = Math.sqrt(r()) * R * 0.95;
-		return { x: CX + Math.cos(a) * d, y: CY + Math.sin(a) * d, ph: r() * Math.PI * 2 };
-	});
-})();
-
-const GREEN: RGB = [70, 190, 96];
-
-/** The gel behind the glass, lit from below, its light leaning toward `light`. */
+/** The gel behind the glass, lit from below, its light leaning toward `base`. */
 function gel(ctx: Ctx, sec: number, base: RGB) {
 	const g = ctx.createRadialGradient(CX, CY + R * 0.6, 10, CX, CY + R * 0.1, R * 1.25);
 	g.addColorStop(0, css(mixRGB(base, [255, 255, 220], 0.28)));
@@ -169,9 +206,10 @@ function bubbles(ctx: Ctx, sec: number, hang: number, color: RGB) {
 			glow(ctx, x, y, r * 2.2, mixRGB(color, [255, 255, 255], 0.3), 0.18);
 			continue;
 		}
-		ctx.globalAlpha = 0.3 + 0.5 * near;
+		glow(ctx, x, y, r * 1.5, mixRGB(color, [255, 255, 255], 0.2), 0.16 * near);
+		ctx.globalAlpha = 0.14 + 0.3 * near;
 		ctx.strokeStyle = css(mixRGB(color, [255, 255, 255], 0.5));
-		ctx.lineWidth = 1.1;
+		ctx.lineWidth = 1;
 		ctx.beginPath();
 		ctx.arc(x, y, r, 0, Math.PI * 2);
 		ctx.stroke();
@@ -181,7 +219,7 @@ function bubbles(ctx: Ctx, sec: number, hang: number, color: RGB) {
 }
 
 function housing(ctx: Ctx, spill: RGB, rimLight: number, runAt: number) {
-	// the plate around the window
+	// the plate around the window and the readout
 	const g = ctx.createLinearGradient(0, 0, W, H);
 	g.addColorStop(0, css([34, 38, 40]));
 	g.addColorStop(1, css([12, 14, 16]));
@@ -193,11 +231,20 @@ function housing(ctx: Ctx, spill: RGB, rimLight: number, runAt: number) {
 	// panel seams
 	ctx.strokeStyle = 'rgba(0,0,0,0.5)';
 	ctx.lineWidth = 2;
-	for (const x of [150, W - 150]) {
+	for (const x of [96, 670]) {
 		ctx.beginPath();
 		ctx.moveTo(x, 0);
 		ctx.lineTo(x, H);
 		ctx.stroke();
+	}
+	// the conduit from the ring to the readout
+	for (const y of [CY - 34, CY + 34]) {
+		const c = ctx.createLinearGradient(0, y - 7, 0, y + 7);
+		c.addColorStop(0, css([70, 76, 78]));
+		c.addColorStop(0.4, css([36, 40, 42]));
+		c.addColorStop(1, css([10, 12, 13]));
+		ctx.fillStyle = c;
+		ctx.fillRect(CX + R + RIM - 4, y - 7, PANEL.x - (CX + R + RIM) + 8, 14);
 	}
 	// the ring
 	const ring = ctx.createLinearGradient(CX - R, CY - R, CX + R, CY + R);
@@ -225,7 +272,7 @@ function housing(ctx: Ctx, spill: RGB, rimLight: number, runAt: number) {
 		const a = (k / 16) * Math.PI * 2 - Math.PI / 2 + 0.1;
 		const bx = CX + Math.cos(a) * (R + RIM / 2);
 		const by = CY + Math.sin(a) * (R + RIM / 2);
-		sphere(ctx, bx, by, 5.2, [120, 126, 128], 1, 0.8);
+		sphere(ctx, bx, by, 5, [120, 126, 128], 1, 0.8);
 		if (rimLight > 0) {
 			const since = ((a + Math.PI / 2 + Math.PI * 2) % (Math.PI * 2)) / (Math.PI * 2);
 			const hit = Math.exp(-Math.pow((runAt - since) * 14, 2));
@@ -260,116 +307,417 @@ function glass(ctx: Ctx, sec: number) {
 	ctx.stroke();
 }
 
-/** Where the forms stand at `t`: which form, how gathered and solid it is, and its eyes. */
-function formsAt(t: number) {
-	const S = [0.8, 4.0, 7.2]; // each form begins to gather
-	const GATHER = 1.6;
-	const HOLD = 1.1;
-	let which = 0;
-	for (let k = 0; k < 3; k++) if (t >= S[k]) which = k;
-	const t0 = S[which];
-	const gather = smooth(t0, t0 + GATHER, t);
-	const loosen = which < 2 ? smooth(t0 + GATHER + HOLD, t0 + GATHER + HOLD + 0.5, t) : 0;
-	// the motes draw the outline first; the body fills in after
-	const solid = smooth(t0 + GATHER * 0.8, t0 + GATHER + 0.3, t) * (1 - loosen);
-	return { which, gather, loosen, solid, eyes: ramp(10.0, 10.6, t) };
+// ---- The readout's worlds: small globes lit from the upper left, turning slowly.
+
+type Feature = { lon: number; lat: number; size: number; kind: number };
+const FEATURES: Record<World['key'], Feature[]> = (() => {
+	const make = (seed: number, n: number): Feature[] => {
+		const r = rng(seed);
+		return Array.from({ length: n }, () => ({ lon: r() * Math.PI * 2, lat: Math.asin(r() * 2 - 1) * 0.9, size: 0.08 + r() * 0.22, kind: r() }));
+	};
+	return { saiphus: make(3, 10), magmuth: make(5, 26), krystos: make(7, 18) };
+})();
+/** Channels over a world's face, as walks in longitude and latitude. */
+const channels = (seed: number, n: number, steps: number, stride: number): [number, number][][] => {
+	const r = rng(seed);
+	return Array.from({ length: n }, () => {
+		let lon = r() * Math.PI * 2;
+		let lat = (r() * 2 - 1) * 1.1;
+		let dir = r() * Math.PI * 2;
+		const out: [number, number][] = [];
+		for (let s = 0; s < steps; s++) {
+			out.push([lon, lat]);
+			dir += (r() - 0.5) * 1.3;
+			lon += Math.cos(dir) * stride;
+			lat = clamp(lat + Math.sin(dir) * stride * 0.7, -1.3, 1.3);
+		}
+		return out;
+	});
+};
+const LAVA = channels(15, 11, 12, 0.13);
+const CREVASSES = channels(17, 12, 9, 0.1);
+
+/** Draw walks `lines` over the globe's facing side. */
+function trace(ctx: Ctx, lines: [number, number][][], spin: number) {
+	ctx.beginPath();
+	for (const line of lines) {
+		let on = false;
+		for (const [lon, lat] of line) {
+			const p = onGlobe(lon, lat, spin);
+			if (p.facing <= 0.05) {
+				on = false;
+				continue;
+			}
+			if (on) ctx.lineTo(p.x, p.y);
+			else ctx.moveTo(p.x, p.y);
+			on = true;
+		}
+	}
 }
+
+/** A point on the globe: its place on the display and how squarely it faces the viewer (under 0: behind). */
+function onGlobe(lon: number, lat: number, spin: number, rk = 1) {
+	const l = lon + spin;
+	const facing = Math.cos(lat) * Math.cos(l);
+	return { x: GLOBE.x + Math.cos(lat) * Math.sin(l) * GLOBE.r * rk, y: GLOBE.y - Math.sin(lat) * GLOBE.r * rk, facing };
+}
+
+function globe(ctx: Ctx, w: World, sec: number, alpha: number) {
+	if (alpha <= 0.01) return;
+	const { x, y, r } = GLOBE;
+	const spin = sec * 0.12;
+	ctx.save();
+	ctx.globalAlpha = alpha;
+	ctx.beginPath();
+	ctx.arc(x, y, r, 0, Math.PI * 2);
+	ctx.clip();
+	if (w.key === 'saiphus') {
+		// a gas giant: soft bands in blues and teal, their edges drifting
+		ctx.fillStyle = css([60, 104, 170]);
+		ctx.fillRect(x - r, y - r, r * 2, r * 2);
+		const band: RGB[] = [[120, 180, 240], [70, 120, 200], [150, 214, 236], [52, 90, 170], [110, 160, 226], [170, 206, 246], [64, 110, 190]];
+		for (let k = 0; k < 14; k++) {
+			const by = y - r + (k + 0.5) * ((r * 2) / 14);
+			const wob = Math.sin(k * 1.9 + sec * 0.3) * 4;
+			blot(ctx, x + wob, by, r * 1.3, r * 0.1, 0.02 * Math.sin(k), band[k % band.length], 0.9);
+		}
+		for (const f of FEATURES.saiphus) {
+			const p = onGlobe(f.lon, f.lat * 0.5, spin);
+			if (p.facing > 0.1) blot(ctx, p.x, p.y, r * f.size * 0.7 * p.facing, r * f.size * 0.22, 0, [200, 230, 255], 0.35 * p.facing);
+		}
+	} else if (w.key === 'magmuth') {
+		// basalt, split by glowing channels and dotted with vents
+		ctx.fillStyle = css([46, 32, 30]);
+		ctx.fillRect(x - r, y - r, r * 2, r * 2);
+		for (const f of FEATURES.magmuth) {
+			const p = onGlobe(f.lon, f.lat, spin);
+			if (p.facing > 0) blot(ctx, p.x, p.y, r * f.size * p.facing, r * f.size, 0, f.kind > 0.5 ? [20, 14, 14] : [80, 56, 48], 0.6);
+		}
+		lighter(ctx, () => {
+			trace(ctx, LAVA, spin);
+			ctx.lineJoin = 'round';
+			ctx.strokeStyle = css([255, 80, 30], 0.35);
+			ctx.lineWidth = 7;
+			ctx.stroke();
+			ctx.strokeStyle = css([255, 150, 50], 0.95);
+			ctx.lineWidth = 1.8;
+			ctx.stroke();
+			for (const f of FEATURES.magmuth.slice(0, 10)) {
+				const p = onGlobe(f.lon, f.lat, spin);
+				if (p.facing > 0.1) glow(ctx, p.x, p.y, 12 * p.facing, [255, 140, 50], 0.85 * p.facing, 'core');
+			}
+		});
+	} else {
+		// ice: white and pale blue, with gray-blue ground where the ice is thin, split by crevasses
+		ctx.fillStyle = css([222, 234, 246]);
+		ctx.fillRect(x - r, y - r, r * 2, r * 2);
+		for (const f of FEATURES.krystos) {
+			const p = onGlobe(f.lon, f.lat, spin);
+			if (p.facing > 0) blot(ctx, p.x, p.y, r * f.size * p.facing, r * f.size * 0.8, f.kind, f.kind > 0.6 ? [104, 128, 164] : [150, 180, 222], 0.6);
+		}
+		trace(ctx, CREVASSES, spin);
+		ctx.lineJoin = 'round';
+		ctx.strokeStyle = css([90, 130, 190], 0.7);
+		ctx.lineWidth = 1.4;
+		ctx.stroke();
+		blot(ctx, x, y - r * 0.95, r * 0.9, r * 0.3, 0, [255, 255, 255], 0.9);
+		blot(ctx, x, y + r * 0.95, r * 0.8, r * 0.25, 0, [255, 255, 255], 0.8);
+	}
+	// light from the upper left, night toward the lower right
+	const shade = ctx.createRadialGradient(x - r * 0.4, y - r * 0.45, r * 0.1, x - r * 0.1, y - r * 0.1, r * 1.35);
+	shade.addColorStop(0, 'rgba(255,255,255,0.18)');
+	shade.addColorStop(0.45, 'rgba(0,0,0,0)');
+	shade.addColorStop(0.8, 'rgba(0,0,0,0.6)');
+	shade.addColorStop(1, 'rgba(0,0,0,0.92)');
+	ctx.fillStyle = shade;
+	ctx.fillRect(x - r, y - r, r * 2, r * 2);
+	ctx.restore();
+	// the air at its edge
+	ctx.globalAlpha = alpha;
+	ctx.strokeStyle = css(mixRGB(w.lamp, [255, 255, 255], 0.3), 0.45);
+	ctx.lineWidth = 2.5;
+	ctx.beginPath();
+	ctx.arc(x, y, r, Math.PI * 0.85, Math.PI * 1.75);
+	ctx.stroke();
+	ctx.globalAlpha = 1;
+}
+
+/** APEX's lattice closing over the world on the display: meridians and parallels drawn in its light. */
+function lattice(ctx: Ctx, amt: number, sec: number) {
+	if (amt <= 0.01) return;
+	const spin = sec * 0.12;
+	// the world takes on the light under the net
+	ctx.save();
+	ctx.beginPath();
+	ctx.arc(GLOBE.x, GLOBE.y, GLOBE.r, 0, Math.PI * 2);
+	ctx.clip();
+	ctx.fillStyle = css([70, 30, 150], 0.5 * amt);
+	ctx.fillRect(GLOBE.x - GLOBE.r, GLOBE.y - GLOBE.r, GLOBE.r * 2, GLOBE.r * 2);
+	ctx.restore();
+	lighter(ctx, () => {
+		// a net, a shell a little larger than the world, its strands wound both ways from the south pole
+		// and climbing until it closes over the top
+		ctx.lineWidth = 1.5;
+		ctx.lineJoin = 'round';
+		const reach = clamp(amt * 1.15);
+		for (let m = 0; m < 12; m++)
+			for (const way of [1, -1]) {
+				ctx.beginPath();
+				let on = false;
+				for (let s = 0; s <= 28; s++) {
+					const lat = -Math.PI / 2 + (s / 28) * Math.PI * reach;
+					const p = onGlobe((m / 12) * Math.PI * 2 + way * (lat + Math.PI / 2) * 1.1, lat, spin, 1.07);
+					if (p.facing <= 0) {
+						on = false;
+						continue;
+					}
+					if (on) ctx.lineTo(p.x, p.y);
+					else ctx.moveTo(p.x, p.y);
+					on = true;
+				}
+				ctx.strokeStyle = css(way > 0 ? MACHINE : VIOLET, 0.8);
+				ctx.stroke();
+			}
+		glow(ctx, GLOBE.x, GLOBE.y, GLOBE.r * 1.3, VIOLET, 0.35 * amt);
+	});
+}
+
+/** Static across the display while it retunes, `amt` 0 to 1. */
+function retune(ctx: Ctx, amt: number, sec: number) {
+	if (amt <= 0.01) return;
+	const r = rng(Math.floor(sec * 20) * 13 + 1);
+	ctx.save();
+	ctx.beginPath();
+	ctx.arc(GLOBE.x, GLOBE.y, GLOBE.r, 0, Math.PI * 2);
+	ctx.clip();
+	for (let k = 0; k < 40; k++) {
+		const y = GLOBE.y - GLOBE.r + r() * GLOBE.r * 2;
+		const v = 120 + r() * 135;
+		ctx.fillStyle = `rgba(${v | 0},${v | 0},${v | 0},${(amt * (0.25 + r() * 0.5)).toFixed(3)})`;
+		ctx.fillRect(GLOBE.x - GLOBE.r, y, GLOBE.r * 2, 1 + r() * 4);
+	}
+	ctx.restore();
+}
+
+function readout(ctx: Ctx, mode: 'forms' | 'apex', t: number, sec: number, take: number) {
+	const { x, y, w, h } = PANEL;
+	// the recess
+	ctx.fillStyle = css([6, 9, 10]);
+	ctx.fillRect(x, y, w, h);
+	ctx.strokeStyle = 'rgba(0,0,0,0.8)';
+	ctx.lineWidth = 3;
+	ctx.strokeRect(x + 1.5, y + 1.5, w - 3, h - 3);
+	ctx.strokeStyle = 'rgba(255,255,255,0.08)';
+	ctx.lineWidth = 1;
+	ctx.beginPath();
+	ctx.moveTo(x, y + h + 1);
+	ctx.lineTo(x + w + 1, y + h + 1);
+	ctx.lineTo(x + w + 1, y);
+	ctx.stroke();
+	for (const [sx, sy] of [[x + 10, y + 10], [x + w - 10, y + 10], [x + 10, y + h - 10], [x + w - 10, y + h - 10]]) sphere(ctx, sx, sy, 3.2, [110, 116, 118], 1, 0.8);
+
+	// the display's bezel and dark glass
+	ctx.fillStyle = css([2, 5, 6]);
+	ctx.beginPath();
+	ctx.arc(GLOBE.x, GLOBE.y, GLOBE.r + 10, 0, Math.PI * 2);
+	ctx.fill();
+	ctx.strokeStyle = css([60, 66, 68]);
+	ctx.lineWidth = 4;
+	ctx.stroke();
+
+	// which world, and how it arrives
+	const k = mode === 'apex' ? 2 : worldAt(t);
+	if (k >= 0) {
+		const since = mode === 'apex' ? 9 : t - WORLD_AT[k];
+		globe(ctx, WORLDS[k], sec, smooth(0.15, 0.5, since));
+		retune(ctx, mode === 'apex' ? 0 : 1 - ramp(0.1, 0.5, since), sec);
+	} else {
+		// searching: a faint sweep
+		lighter(ctx, () => {
+			const a = sec * 2.4;
+			glow(ctx, GLOBE.x + Math.cos(a) * GLOBE.r * 0.55, GLOBE.y + Math.sin(a) * GLOBE.r * 0.55, 20, LIFE, 0.22);
+		});
+	}
+	if (mode === 'apex') lattice(ctx, smooth(LATTICE[0], LATTICE[1], t), sec);
+	// the display's glass
+	ctx.strokeStyle = 'rgba(255,255,255,0.12)';
+	ctx.lineWidth = 5;
+	ctx.lineCap = 'round';
+	ctx.beginPath();
+	ctx.arc(GLOBE.x, GLOBE.y, GLOBE.r * 0.86, Math.PI * 1.12, Math.PI * 1.38);
+	ctx.stroke();
+
+	// the three worlds' lamps
+	for (let n = 0; n < 3; n++) {
+		const lx = GLOBE.x + (n - 1) * 40;
+		const on = mode === 'apex' || n <= k;
+		const now = mode === 'apex' ? n === 2 : n === k;
+		const color = mixRGB(WORLDS[n].lamp, VIOLET, take);
+		sphere(ctx, lx, LAMPS_Y, 8, on ? mixRGB(color, [40, 40, 40], now ? 0 : 0.55) : [40, 44, 46], 1, 0.7);
+		if (now) lighter(ctx, () => glow(ctx, lx, LAMPS_Y, 28, color, 0.8));
+	}
+
+	// the life-signs strip: the newest moment at its right edge, three seconds across
+	const S = STRIP;
+	ctx.fillStyle = css([4, 12, 10]);
+	ctx.fillRect(S.x, S.y, S.w, S.h);
+	ctx.strokeStyle = css([60, 66, 68]);
+	ctx.lineWidth = 2;
+	ctx.strokeRect(S.x, S.y, S.w, S.h);
+	ctx.strokeStyle = 'rgba(120,200,160,0.08)';
+	ctx.lineWidth = 1;
+	for (let g = 1; g < 6; g++) {
+		ctx.beginPath();
+		ctx.moveTo(S.x + (g * S.w) / 6, S.y);
+		ctx.lineTo(S.x + (g * S.w) / 6, S.y + S.h);
+		ctx.stroke();
+	}
+	const base = S.y + S.h * 0.62;
+	const amp = S.h * 0.5;
+	const SPAN = 3;
+	const N = 180;
+	lighter(ctx, () => {
+		ctx.lineJoin = 'round';
+		let px = 0;
+		let py = 0;
+		let pm = false;
+		for (let n = 0; n <= N; n++) {
+			const s = t - (1 - n / N) * SPAN;
+			const sig = signal(mode, s);
+			const xx = S.x + (n / N) * S.w;
+			const yy = base - sig.v * amp;
+			if (n) {
+				const color = sig.machine ? MACHINE : sig.alive ? LIFE : [90, 130, 110];
+				const fresh = 0.35 + 0.65 * (n / N);
+				ctx.strokeStyle = css(color as RGB, sig.machine ? 0.5 + 0.5 * fresh : fresh);
+				ctx.lineWidth = sig.machine ? 2.6 : 2;
+				ctx.beginPath();
+				ctx.moveTo(px, py);
+				ctx.lineTo(xx, yy);
+				ctx.stroke();
+				if (sig.machine !== pm && sig.machine) glow(ctx, xx, yy, 16, APEX_WHITE, 0.6 * fresh, 'core');
+			}
+			px = xx;
+			py = yy;
+			pm = sig.machine;
+		}
+		const now = signal(mode, t);
+		glow(ctx, px, py, 12, now.machine ? APEX_WHITE : now.alive ? [220, 255, 230] : [140, 180, 160], 0.9, 'core');
+	});
+}
+
+// ---- A moment of either piece.
 
 export function drawVat(ctx: Ctx, mode: 'forms' | 'apex', t: number, sec: number) {
 	ctx.fillStyle = '#000';
 	ctx.fillRect(0, 0, W, H);
 	// the takeover (apex only)
-	const take = mode === 'apex' ? smooth(3.2, 8.0, t) : 0;
-	const rimRun = mode === 'apex' ? ramp(1.0, 2.6, t) : 0;
-	const thread = mode === 'apex' ? smooth(2.4, 3.6, t) : 0;
-	const eyeTurn = mode === 'apex' ? smooth(8.3, 8.9, t) : 0;
+	const take = mode === 'apex' ? smooth(TAKE[0], TAKE[1], t) : 0;
+	const rimRun = mode === 'apex' ? ramp(RIM_RUN[0], RIM_RUN[1], t) : 0;
+	const thread = mode === 'apex' ? smooth(THREAD[0], THREAD[1], t) : 0;
 
-	const f = mode === 'apex' ? { which: 2, gather: 1, loosen: 0, solid: 1, eyes: 1 } : formsAt(t);
-	const form = FORMS[f.which];
-	const light = mixRGB(form.tint, VIOLET, take * 0.7);
-	// each world's light floods the gel while its form holds; the ice world's cold light stays in the creature
-	const flood = form.key === 'yetimoth' ? 0.12 : 0.42;
-	const gelBase = mixRGB(mixRGB(GREEN, form.tint, flood * f.solid), mixRGB(VIOLET, [40, 20, 90], 0.4), take * 0.85);
+	// the gel: green until a world's light floods it; in beat 3 it holds Krystos's light until APEX's takes it
+	let gelBase: RGB = GREEN;
+	if (mode === 'forms') {
+		for (let k = 0; k < 3; k++) gelBase = mixRGB(gelBase, mixRGB(GREEN, WORLDS[k].gel, WORLDS[k].flood), smooth(WORLD_AT[k], WORLD_AT[k] + 1.2, t));
+	} else gelBase = mixRGB(GREEN, WORLDS[2].gel, WORLDS[2].flood);
+	const taken: RGB = mixRGB(VIOLET, [40, 20, 90], 0.35);
+	// the light the gel gives everything in it
+	const tint = mixRGB(gelBase, taken, take);
+
+	const helix: Helix = { ...HELIX, phase: sec * 0.5, center: { x: 0, y: Math.sin(sec * 0.7) * 3, z: 0 }, haze: mixRGB(tint, [0, 0, 0], 0.45) };
 
 	ctx.save();
 	ctx.beginPath();
 	ctx.arc(CX, CY, R, 0, Math.PI * 2);
 	ctx.clip();
 	gel(ctx, sec, gelBase);
+	// APEX's light: violet gel outside a front closing in from the rim, a hard bright edge at the front
+	const front = R * (1 - take) * 1.04;
 	if (take > 0) {
-		// the front of the light: a near-white band closing in from the rim
-		const front = R * (1 - take) * 1.02;
+		ctx.save();
+		ctx.beginPath();
+		ctx.arc(CX, CY, R + 2, 0, Math.PI * 2);
+		ctx.arc(CX, CY, Math.max(0.1, front), 0, Math.PI * 2);
+		ctx.clip('evenodd');
+		gel(ctx, sec, taken);
+		ctx.restore();
 		lighter(ctx, () => {
-			const g = ctx.createRadialGradient(CX, CY, Math.max(0, front - 26), CX, CY, front + 40);
+			const edge = 1 - smooth(0.85, 1, take);
+			const g = ctx.createRadialGradient(CX, CY, Math.max(0, front - 30), CX, CY, front + 30);
 			g.addColorStop(0, css(APEX_WHITE, 0));
-			g.addColorStop(0.5, css(APEX_WHITE, 0.35 * (1 - take * 0.6)));
-			g.addColorStop(1, css(VIOLET, 0.12));
+			g.addColorStop(0.5, css(APEX_WHITE, 0.4 * edge));
+			g.addColorStop(1, css(VIOLET, 0));
 			ctx.fillStyle = g;
 			ctx.fillRect(CX - R, CY - R, R * 2, R * 2);
-			glow(ctx, CX, CY, R * 1.2, VIOLET, 0.28 * take);
+			ctx.strokeStyle = css(APEX_WHITE, 0.9 * edge);
+			ctx.lineWidth = 2.5;
+			ctx.beginPath();
+			ctx.arc(CX, CY, Math.max(0.1, front), 0, Math.PI * 2);
+			ctx.stroke();
+			glow(ctx, CX, CY, R * 1.2, VIOLET, 0.18 * take);
 		});
 	}
 	lighter(ctx, () => bubbles(ctx, sec, take, mixRGB([150, 240, 170], APEX_WHITE, take)));
 
-	// the motes the creature gathers from, and loosens back into
-	const pts = dots(form);
-	const moteAmt = mode === 'apex' ? 0 : (f.gather < 1 ? 1 : 0) * (1 - f.solid * 0.8) + f.loosen;
-	if (moteAmt > 0.01)
-		lighter(ctx, () => {
-			for (let k = 0; k < DOTS; k++) {
-				const m = MOTES[k];
-				const p = pts[k];
-				const g = easeOut(f.gather);
-				let x = mix(m.x, p.x, g);
-				let y = mix(m.y, p.y, g);
-				if (f.loosen > 0) {
-					x += Math.cos(m.ph) * 40 * f.loosen;
-					y += Math.sin(m.ph) * 40 * f.loosen - 20 * f.loosen;
-				}
-				x += Math.sin(sec * 1.1 + m.ph) * 3;
-				const a = clamp(moteAmt) * (0.55 + 0.45 * Math.sin(sec * 3 + m.ph));
-				glow(ctx, x, y, 9, form.tint, 0.4 * a);
-				glow(ctx, x, y, 2.6, [255, 255, 255], 0.9 * a, 'core');
-			}
-		});
-	const breathe = Math.sin(sec * 1.2) * 3;
-	drawCreature(ctx, form, f.solid, light, gelBase, breathe);
-	// the eyes: two points of light that open, flare and settle; in the takeover they flare violet, last
-	if (form.eyes && f.eyes > 0.001 && f.solid > 0.5) {
-		const flare = mode === 'apex' ? Math.exp(-Math.pow((t - 8.6) / 0.35, 2)) : Math.exp(-Math.pow((t - 10.4) / 0.3, 2));
-		const eyeColor = mixRGB([226, 255, 236], VIOLET, eyeTurn);
-		lighter(ctx, () => {
-			for (const [ex, ey] of form.eyes!) {
-				const p = toStage(ex, ey);
-				const open = f.eyes * (0.9 + 0.1 * Math.sin(sec * 2.1));
-				glow(ctx, p.x, p.y - breathe, (26 + 40 * flare) * open, eyeColor, (0.55 + 0.35 * flare) * open);
-				glow(ctx, p.x, p.y - breathe, (7 + 5 * flare) * open, mixRGB([255, 255, 255], eyeColor, eyeTurn * 0.5), 1, 'core');
-			}
-		});
-	}
-	glass(ctx, sec);
-	ctx.restore();
+	// the light round the helix, which swells with each heartbeat
+	const beat = pulse(mode, t);
+	const lightOf = mode === 'apex' ? mixRGB(WORLDS[2].lamp, VIOLET, take) : worldAt(t) >= 0 ? WORLDS[worldAt(t)].lamp : [200, 240, 220];
+	const written = mode === 'apex' ? 1 : smooth(WRITE[0], WRITE[1], t);
+	lighter(ctx, () => glow(ctx, CX, CY, R * 0.8, lightOf as RGB, (0.14 + 0.16 * beat) * written));
 
-	housing(ctx, mixRGB(gelBase, [255, 255, 255], 0.3), rimRun > 0 ? 1 - take * 0.5 : 0, rimRun);
-	if (mode === 'apex')
-		lighter(ctx, () => {
-			// the light running round the rim, then threading in across the glass
-			if (rimRun > 0) {
-				const a0 = -Math.PI / 2;
-				const a1 = a0 + rimRun * Math.PI * 2;
-				ctx.strokeStyle = css(APEX_WHITE, 0.85);
-				ctx.lineWidth = 3;
-				ctx.beginPath();
-				ctx.arc(CX, CY, R + RIM + 2, a0, a1);
-				ctx.stroke();
-				ctx.strokeStyle = css(VIOLET, 0.35);
-				ctx.lineWidth = 9;
-				ctx.beginPath();
-				ctx.arc(CX, CY, R + RIM + 2, a0, a1);
-				ctx.stroke();
-				if (rimRun < 1) glow(ctx, CX + Math.cos(a1) * (R + RIM + 2), CY + Math.sin(a1) * (R + RIM + 2), 34, APEX_WHITE, 0.9, 'core');
+	if (mode === 'forms') {
+		drawHelix(ctx, CAM, helix, (i) => formsLook(i, t, sec, tint));
+		// the writing head, climbing as it writes
+		if (t > WRITE[0] - 0.2 && t < WRITE[1] + 0.4) {
+			const u = clamp(ramp(WRITE[0], WRITE[1], t) * (PAIRS - 1), 0, PAIRS - 1);
+			const p = pairPoint(CAM, helix, u);
+			const on = smooth(WRITE[0] - 0.2, WRITE[0], t) * (1 - smooth(WRITE[1], WRITE[1] + 0.4, t));
+			lighter(ctx, () => {
+				glow(ctx, p.x, p.y, 70, [220, 255, 236], 0.45 * on);
+				glow(ctx, p.x, p.y, 16, [255, 255, 255], on, 'core');
+			});
+		}
+		// the rewrite: a bright plane climbing the helix, the bases changing behind it
+		const k = worldAt(t);
+		if (k >= 0) {
+			const u = ((t - WORLD_AT[k] - 0.65) / TUNE) * (PAIRS + 3) - 1.5;
+			const on = smooth(-1.5, 0, u) * (1 - smooth(PAIRS - 1, PAIRS + 1, u));
+			if (on > 0.01) {
+				const c = pairPoint(CAM, helix, u);
+				const a = pairPoint(CAM, helix, u - 0.5);
+				const b = pairPoint(CAM, helix, u + 0.5);
+				// across the axis
+				let nx = -(b.y - a.y);
+				let ny = b.x - a.x;
+				const l = Math.hypot(nx, ny) || 1;
+				nx /= l;
+				ny /= l;
+				const half = 110;
+				const color = mixRGB(WORLDS[k].lamp, [255, 255, 255], 0.35);
+				const ang = Math.atan2(ny, nx);
+				lighter(ctx, () => {
+					ctx.save();
+					ctx.translate(c.x, c.y);
+					ctx.rotate(ang);
+					ctx.scale(1, 0.16);
+					glow(ctx, 0, 0, half, color, 0.75 * on);
+					glow(ctx, 0, 0, half * 0.6, [255, 255, 255], 0.4 * on);
+					ctx.restore();
+				});
 			}
-			if (thread > 0) {
+		}
+	} else {
+		// each pair turns as the front reaches it, the outer ends first
+		const turned = Array.from({ length: PAIRS }, (_, i) => {
+			const p = pairPoint(CAM, helix, i);
+			return take > 0 ? smooth(0, 1, (Math.hypot(p.x - CX, p.y - CY) - front + 30 + JIT[i] * 20) / 60) : 0;
+		});
+		drawHelix(ctx, CAM, helix, (i) => apexLook(i, t, turned[i], tint));
+		// the threads, in from the glass's edge toward the helix
+		if (thread > 0)
+			lighter(ctx, () => {
+				const fade = 1 - smooth(0.2, 0.6, take);
 				for (let k = 0; k < 5; k++) {
 					const a0 = -Math.PI / 2 + (k / 5) * Math.PI * 2 + 0.3;
 					ctx.beginPath();
@@ -378,24 +726,48 @@ export function drawVat(ctx: Ctx, mode: 'forms' | 'apex', t: number, sec: number
 					for (let s = 0; s <= 24; s++) {
 						const fr = (s / 24) * thread;
 						const a = a0 + fr * 0.9 + Math.sin(fr * 9 + k) * 0.05;
-						const rr = mix(R + RIM, R * 0.6, fr);
+						const rr = mix(R, R * 0.55, fr);
 						hx = CX + Math.cos(a) * rr;
 						hy = CY + Math.sin(a) * rr;
 						if (s) ctx.lineTo(hx, hy);
 						else ctx.moveTo(hx, hy);
 					}
-					ctx.strokeStyle = css(VIOLET, 0.4 * (1 - take));
+					ctx.strokeStyle = css(VIOLET, 0.4 * fade);
 					ctx.lineWidth = 7;
 					ctx.stroke();
-					ctx.strokeStyle = css(APEX_WHITE, 0.85 * (1 - take));
+					ctx.strokeStyle = css(APEX_WHITE, 0.85 * fade);
 					ctx.lineWidth = 2.4;
 					ctx.stroke();
-					glow(ctx, hx, hy, 20, APEX_WHITE, 0.8 * thread * (1 - take), 'core');
+					glow(ctx, hx, hy, 20, APEX_WHITE, 0.8 * thread * fade, 'core');
 				}
-			}
+			});
+	}
+	glass(ctx, sec);
+	ctx.restore();
+
+	housing(ctx, mixRGB(tint, [255, 255, 255], 0.3), rimRun > 0 ? 1 - take * 0.5 : 0, rimRun);
+	// the gel's light on the housing round the window
+	lighter(ctx, () => glow(ctx, CX, CY, R * 1.7, tint, 0.1));
+	readout(ctx, mode, t, sec, mode === 'apex' ? smooth(MACHINE_AT - 0.6, MACHINE_AT, t) : 0);
+	if (mode === 'apex' && rimRun > 0)
+		lighter(ctx, () => {
+			// the light running round the rim
+			const a0 = -Math.PI / 2;
+			const a1 = a0 + rimRun * Math.PI * 2;
+			ctx.strokeStyle = css(APEX_WHITE, 0.85);
+			ctx.lineWidth = 3;
+			ctx.beginPath();
+			ctx.arc(CX, CY, R + RIM + 2, a0, a1);
+			ctx.stroke();
+			ctx.strokeStyle = css(VIOLET, 0.35);
+			ctx.lineWidth = 9;
+			ctx.beginPath();
+			ctx.arc(CX, CY, R + RIM + 2, a0, a1);
+			ctx.stroke();
+			if (rimRun < 1) glow(ctx, CX + Math.cos(a1) * (R + RIM + 2), CY + Math.sin(a1) * (R + RIM + 2), 34, APEX_WHITE, 0.9, 'core');
 		});
 	motes(ctx, sec, mixRGB([170, 220, 190], VIOLET, take), 'front', 0.8);
-	vignette(ctx, 0.7);
+	vignette(ctx, 0.62);
 	const fade = loopFade(t, mode === 'apex' ? APEX_LOOP : FORMS_LOOP);
 	if (fade < 1) {
 		ctx.fillStyle = `rgba(0,0,0,${(1 - fade).toFixed(3)})`;

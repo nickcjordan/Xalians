@@ -42,16 +42,18 @@ describe('Home (the story front door)', () => {
 		}
 		const text = document.body.textContent || '';
 		// docs/design/home-story-content-plan.md: the token paragraph is its own
-		// beat, after the plague and before the king's Valleron.
+		// beat, after the plague and before the king's Valleron. The king's
+		// tournament is told in the last beat, under the arena's picture (so
+		// ahead of that beat's reading column), inside the viewer.
 		const order = [
 			'For thousands of years, the ancient race known as the Vallerii',
 			'But the high technology of the Vallerii',
 			'The wars have long since ended',
 			'By scrambling and encrypting the genome',
+			'Recently, the king has announced plans',
 			'With the plague burning through the galaxy',
 			'Today, Krystos remains a snowy wasteland',
 			'Hulking, white-furred apes',
-			'Recently, the king has announced plans',
 			'Start generating now',
 		];
 		let last = -1;
@@ -62,6 +64,7 @@ describe('Home (the story front door)', () => {
 		}
 		// Told once: the token paragraph left the tournament section for its beat.
 		expect(text.split('By scrambling and encrypting the genome').length).toBe(2);
+		expect(text.split('Recently, the king has announced plans').length).toBe(2);
 		// Every headline is a phrase of the 2022 page.
 		for (const headline of ['They birthed the first Xalians', 'Turned the Xalians against their masters', 'Designed by APEX to target the genome', 'The only way to safely generate new Xalians', 'Only the strongest factions will survive…']) {
 			// Beats not shown in the viewer are hidden from assistive tech until they are.

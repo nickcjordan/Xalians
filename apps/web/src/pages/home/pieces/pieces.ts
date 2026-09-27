@@ -9,8 +9,8 @@ export type PieceKey = 'forms' | 'apex' | 'plague' | 'token';
 
 /** `rest`: the moment that tells the piece when it is shown still (reduced motion, or stacked in the page). */
 export const PIECES: Record<PieceKey, { loop: number; rest: number; draw: (ctx: Ctx, t: number, sec: number) => void }> = {
-	forms: { loop: FORMS_LOOP, rest: 11.5, draw: (ctx, t, sec) => drawVat(ctx, 'forms', t, sec) },
-	apex: { loop: APEX_LOOP, rest: 10, draw: (ctx, t, sec) => drawVat(ctx, 'apex', t, sec) },
+	forms: { loop: FORMS_LOOP, rest: 14.3, draw: (ctx, t, sec) => drawVat(ctx, 'forms', t, sec) },
+	apex: { loop: APEX_LOOP, rest: 10.4, draw: (ctx, t, sec) => drawVat(ctx, 'apex', t, sec) },
 	plague: { loop: PLAGUE_LOOP, rest: 9.6, draw: drawPlague },
 	token: { loop: TOKEN_LOOP, rest: 11, draw: drawToken },
 };
