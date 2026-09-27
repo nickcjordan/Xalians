@@ -8077,3 +8077,23 @@
 	.rec-console--match[data-terminal] .rec-side-count,
 	.rec-console--match[data-terminal] .rec-sendbar-count { font-size: 12px; }
 }
+
+/* --- pass 66: a plate's number reads now and after ------------------------------------
+   The pass 65 critic found Scalatto at 13 on its world and 10 on its card: the plate printed
+   the hold now, while the card and the world's total count what the Clash would leave. Where
+   the Clash would cut it and leave it standing, the plate now reads "13→10", as a card's rival
+   tag reads "12→0" (pass 58). A creature it would down keeps its struck number and cross. */
+.rec-console--match[data-terminal] .rec-figure-foot .rec-figure-hold { display: inline-flex; align-items: baseline; white-space: nowrap; }
+.rec-console--match[data-terminal] .rec-figure-hold-arrow { font-style: normal; font-weight: 400; opacity: 0.55; margin: 0 1px; }
+
+/* pass 66: on a phone, two Move keys pushed your row's counts off the foot. The counts come
+   first: the row drops its empty sockets ("1/5" says how many are left), the keys drop the word
+   "Move" (the swift mark stays), and a key that still does not fit shortens its name. */
+@media (max-width: 760px) {
+	.rec-console--match[data-terminal] .rec-bench-head { grid-template-columns: max-content 0 minmax(0, 1fr); }
+	.rec-console--match[data-terminal] .rec-bench-actions { grid-column: 3; justify-self: end; min-width: 0; max-width: 100%; }
+	.rec-console--match[data-terminal] .rec-bench-actions .g-btn { min-width: 0; flex: 0 1 auto; }
+	.rec-console--match[data-terminal] .rec-move-word { display: none; }
+	.rec-console--match[data-terminal] .rec-side .rec-flag:not(.rec-flag--lit):not(.rec-flag--point) { display: none; }
+}
+

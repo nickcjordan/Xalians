@@ -178,6 +178,9 @@ function ReclamationFigure({
 	*/
 	// pass 52: forecast to fall in the Clash, as the board stands
 	const falls = typeof forecast === 'number' && forecast === 0 && typeof hold === 'number' && hold > 0;
+	// pass 66: the Clash would cut its hold and leave it standing, so the number reads now and after
+	// (a creature it would down keeps its struck number and its cross, which already say "to nothing")
+	const changes = !downed && !falls && typeof forecast === 'number' && forecast > 0 && typeof hold === 'number' && formatHoldShown(forecast) !== formatHoldShown(hold);
 	if (falls) classes.push('rec-figure--falls');
 	if (noTarget) classes.push('rec-figure--no-target');
 	if (role && role !== 'none') classes.push(`rec-figure--role-${role}`);
@@ -263,7 +266,20 @@ function ReclamationFigure({
 			<span className="rec-figure-foot" data-forecast={typeof hold === 'number' && typeof forecast === 'number' ? formatHoldShown(forecast) : undefined} title={lossText}>
 				{typeof hold === 'number' && <HoldBar hold={hold} after={forecast} side={mine ? 'mine' : 'theirs'} className="rec-figure-bar" />}
 				{/* pass 47: a standing creature under half a point read "0", and a critic asked why it had not fallen */}
-				{typeof hold === 'number' && <span className="rec-figure-hold" title={`hold ${formatHold(hold)}`}>{hold > 0 && hold < 0.5 && !downed ? '<1' : formatHoldShown(hold)}</span>}
+				{/*
+					PASS 66. The number says now and after ("13→10") where the Clash would cut it and
+					leave it standing, as the rival's tag on a card does ("12→0", pass 58). The plate
+					read 13 while the creature's card and the world's total counted the 10 it keeps,
+					so the plates on a world did not add up to its total (the pass 65 critic: "numbers
+					a stranger cannot trust"). A creature the Clash would down keeps its struck number
+					and its cross: an arrow to 0 cost a crowded rank most of every name.
+				*/}
+				{typeof hold === 'number' && (
+					<span className="rec-figure-hold" title={`hold ${formatHold(hold)}${changes ? `; the Clash would leave it ${formatHold(forecast)}` : ''}`} data-hold-after={changes ? formatHoldShown(forecast) : undefined}>
+						<span className="rec-figure-hold-now">{hold > 0 && hold < 0.5 && !downed ? '<1' : formatHoldShown(hold)}</span>
+						{changes && <><i className="rec-figure-hold-arrow" aria-hidden="true">→</i><span className="rec-figure-hold-after">{formatHoldShown(forecast)}</span></>}
+					</span>
+				)}
 			</span>
 			{tags.length > 0 && (
 				<span className="rec-figure-tags">
