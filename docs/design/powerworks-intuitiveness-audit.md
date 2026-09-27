@@ -1,6 +1,6 @@
 # Powerworks: an audit of how intuitive the play screen is
 
-Status: run 1 done 2026-09-27 (results at the end); fix passes proposed. Tier: immersive (the play screen). Follows [powerworks-move-value.md](powerworks-move-value.md), whose three passes (move value, readout, legible effects) each added indicators in answer to a question Nick asked.
+Status: run 1 and run 2 done 2026-09-27; passes A, B and C shipped (results at the end). Tier: immersive (the play screen). Follows [powerworks-move-value.md](powerworks-move-value.md), whose three passes (move value, readout, legible effects) each added indicators in answer to a question Nick asked.
 
 ## Context
 
@@ -280,3 +280,52 @@ Run 1's readers ran on Sonnet. The Reclamation audits later found Sonnet readers
 - **"Down" rides the fallen unit's own plate.** It no longer floats under a fallen machine into the squad's row.
 - **Playback names a broken charge.** A blocked event now carries its cause. The banner reads "Charge broken" when a pull, stun or earlier bind broke the charge, and "Stopped by binding" only when a bind stops the order.
 - **A bind that ends with the opportunity it spent is reported after the blow it stopped.** The sequence is "stopped by binding", then "no longer restrained".
+
+## Passes B and C, and run 2 (2026-09-27)
+
+Passes B and C shipped together, then run 2 of this audit tested them. Nick's ruling applied throughout: use a familiar icon where one reads on its own, otherwise one word as a badge.
+
+### What changed
+
+| Was | Now | Why (run 1) |
+|---|---|---|
+| Striped value bar under each move | The effect in words: "8 dmg", "8 dmg on 2", "KO", "stops 7", "heals 6", "no effect" | Every reader without the guide read the bar as a cost or cooldown |
+| "⚔ 7" under each machine | "⚔ next hit 7", or "next hit 7 → 4" when your orders stop part of it before it strikes | Read as an attack stat, not as the blow coming |
+| Crown on the signature disc and card | "once" | Read as "leader" or "recommended" |
+| Lightning bolt on a charging move, on a charging machine, and "Charged" | Hourglass, and "Charging" | The bolt also meant shock-back and the electric element |
+| Rest pips (diamonds) | "rests 1" | Unexplained to 8 of 15 readers |
+| Matchup triangle | "strong", "very strong", "weak" | Read as a warning |
+| » on a turn-order portrait | "later" or "sooner" | Read as fast-forward |
+| Gold dot on a turn-order portrait | A check | Read as "acted" or "selected" |
+| Crosshair on the plate a value is read on | Removed from sight (screen-reader text only); the full before and after change on that plate marks it | The crosshair also meant "ranged" |
+
+### Run 2 scores
+
+Run 2 ran on Opus readers against the pass A, B and C build, loaded from the same saves. The baseline is Opus readers on run 1's screens, which were captured before pass A. Planning used 3 readers and 34 questions in each run, with no guide.
+
+| Player question | Opus baseline | Run 2 |
+|---|---|---|
+| 1. Who acts, in what order | 0 of 3 | 3 of 3 |
+| 2. What each machine will do | 15 of 15 | 14 of 15 |
+| 3. The state of every unit | 18 of 18 | 18 of 18 |
+| 4. What this move does | 15 of 15 | 15 of 15 |
+| 5. Which move is better | 9 of 9 | 7 of 9 |
+| 6. What the whole plan does | 9 of 15 | **15 of 15** |
+| 7. What a companion is good for | 7 of 9 | 9 of 9 |
+| Marks and previews | 12 of 15 | 15 of 15 |
+| **All planning** | **88 of 102 (86%)** | **99 of 102 (97%)**, no answer misled by the screen |
+| Signals named in place | 46 of 62 (74%) | 54 of 60 (90%) after correcting one key entry |
+
+Run 1's readers were Sonnet, and the Opus baseline scored 86% on the same screens where Sonnet scored 38%. So much of run 1's gap was the reader, not the screen, as the Reclamation audits had found. The findings that still held for Opus are the ones the passes fixed:
+- "7 → 0" misled all three baseline readers about whether Crawler 1 strikes first (4c, 4d). In run 2, all three were correct.
+- The value bar was read as "strength" rather than what the move does (1f, 8c). In run 2, all three were correct.
+- The triangle, the », the no-entry mark and the lightning bolt were misread in place. In run 2 they are words, and they read correctly.
+
+The pass bar was 90% on the core planning questions with no guide. Run 2 scores 97%.
+
+### Open after run 2
+
+- **The hourglass on a resting charge move reads as a cooldown.** Both signal readers read it that way on the dimmed Crushing Kick disc. On a disc that is ready, it is read correctly. The fix, if it still reads badly in play, is the word "next round".
+- **The dashed ring on a turn-order portrait** still does not read as "no order yet".
+- **Water Sweep against the Cannon (2b).** One of three readers chose the Cannon because 8 + 8 finishes Crawler 1. That is a defensible plan, not a misreading.
+- **Nick's cold play (3.4) and the one-meaning lint (3.5)** are still to do.

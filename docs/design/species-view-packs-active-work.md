@@ -21,9 +21,16 @@ Nick requested the layer described in `species-view-packs-brief.md`: tooling and
 - Read repository guidance, species record and source SVG; inspected the existing Akinza PNG. Read the earlier art pipeline log for run tracking and failure lessons.
 - Wrote the proposed plan in `species-view-packs.md`. Numeric checks and reviewed semantic evidence are explicitly distinguished.
 - Opened ready-for-review PR #697, https://github.com/nickcjordan/Xalians/pull/697, and enabled auto-merge as requested by the brief. Merging documents is not art approval.
-- Wrote `species-view-readings/akinza/reading.md`, preserving the asymmetric stance and identifying tail attachment and depth as proposals. The reading is awaiting Nick's approval.
-- No generation, tooling implementation, or species approval has occurred. No creature record, source silhouette, or platform policy is changed.
+- PR #697 merged. Continued from fresh main on `codex/akinza-view-pilot`.
+- Nick approved trying the initial reading with corrections: the ear outline means shaggy hair, and the eye squiggles are an abstraction for large, distinctive eyes. His exact words are recorded in the reading.
+- Generated two six-view sheets and two front-only diagnostic experiments through the built-in subscription tool. No paid API, key, or local image model was used. Working outputs and exact prompt/input records are under `untracked/species-views/akinza/run-0001` through `run-0004`.
+- Nick prefers run-0001 over run-0002. This is a style preference, not pack approval. Continue from the first round's softer appearance and large oval eyes.
+- Nick identified an odd tail attachment in the back view. The revised reading proposes one root on the rear centerline at the base of the spine, with a short common base bending left behind the hip before the three plumes fan out. Confirmation was requested before generating that correction.
+- Added initial crop, mask, uniform registration, diagnostic check, and gated contact tools under `art/species-views/`. Nine focused tests pass. White-background occupancy fills only explicitly annotated surface regions, preserving arm gaps.
+- These are diagnostic tools, not a complete production validator. Strict manifest validation, independent source annotation inventories, binding the eye exception, part inventory validation, and body-axis projection checks remain unfinished. The checker explicitly blocks promotion until those gaps are resolved.
+- The first two sheets fail visual checks for source proportions and cross-view pose; overlapping view bounds prevent trustworthy rectangular crops. The front-only experiments score approximately 0.9264 and 0.7042 occupancy IoU under the recorded normalization, below the required 0.95. These are diagnostic scores, not final certified comparisons. No reviewable contact sheet or approved pack exists.
+- No creature record, source silhouette, platform policy, or approved-pack directory was changed.
 
 ## Next unfinished action
 
-Present `species-view-readings/akinza/reading.md` and obtain Nick's explicit approval or corrections. This is the current user-requested gate. Do not generate while approval is absent. After approval, implement and test the tools, generate Akinza candidates through the subscription tool, check and inspect, and present only passing candidates. The overall task remains incomplete until all required individual approvals.
+Obtain Nick's confirmation or correction of the centered tail-root reading. Preserve run-0001's preferred style. Then generate a targeted back-view correction that reveals the single root and leftward bend before attempting another full pack. Complete the production validation gaps listed above before presenting an eligible contact sheet. The previous approval permits the eye and ear exploration; it does not approve the newly clarified attachment or any output. The overall task remains incomplete until all required individual approvals.

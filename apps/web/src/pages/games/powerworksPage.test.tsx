@@ -345,9 +345,9 @@ describe("Powerworks player flow", () => {
     mount();
     fireEvent.click(screen.getByRole("button", { name: "Enter the facility" }));
     fireEvent.click(screen.getByRole("button", { name: "Select Hippochamp" }));
-    // Each legal disc carries a value bar; the cannon takes health, so its bar is red.
+    // Each legal disc carries its effect in words; the cannon takes health, so it reads dmg.
     const cannon = screen.getByRole("menuitem", { name: /^Hippochamp: Emergency Water Cannon/ });
-    expect(cannon.querySelector(".pw-value .harm")).not.toBeNull();
+    expect(cannon.querySelector(".pw-effect .harm")).not.toBeNull();
     expect(cannon).toHaveAccessibleDescription(
       /Worth [0-9]+ health on Crawler [12] this round: takes [0-9]+ health/
     );
@@ -357,7 +357,7 @@ describe("Powerworks player flow", () => {
     // Avilily's bind would stop part of a crawler's blow: hovering it lays gold on the threat.
     fireEvent.click(screen.getByRole("button", { name: "Select Avilily" }));
     const bind = screen.getByRole("menuitem", { name: /^Avilily: Binding/ });
-    expect(bind.querySelector(".pw-value .saved")).not.toBeNull();
+    expect(bind.querySelector(".pw-effect .saved")).not.toBeNull();
     fireEvent.pointerEnter(bind, { pointerType: "mouse" });
     expect(
       screen.getAllByRole("img", { name: /^Threat: about [0-9]+ health, [0-9]+ stopped$/ }).length
@@ -371,22 +371,22 @@ describe("Powerworks player flow", () => {
     // that machine's blow only: a bind names one target, so it never stops both.
     const bind = screen.getByRole("menuitem", { name: /^Avilily: Binding/ });
     fireEvent.pointerEnter(bind, { pointerType: "mouse" });
-    expect(screen.getAllByLabelText("The move's value is read on this target")).toHaveLength(1);
+    expect(screen.getAllByText("The move's value is read on this target")).toHaveLength(1);
     expect(screen.getAllByRole("img", { name: /^Threat: about [0-9]+ health, [0-9]+ stopped$/ })).toHaveLength(1);
-    // Every value bar ends in its number, in health.
-    expect(bind.querySelector(".pw-value-num")?.textContent).toMatch(/^[0-9]+$/);
+    // Every effect word carries its number, in health.
+    expect(bind.querySelector(".pw-effect .saved")?.textContent).toMatch(/[0-9]+/);
     // Choosing it opens the card with the value and the target it is read on; aiming at the
     // other machine moves both.
     fireEvent.click(bind, { detail: 1 });
     const card = () => document.querySelector(".pw-radial-card-value-on")!;
     const first = card().textContent;
-    expect(first).toMatch(/^Crawler [12]$/);
-    const other = first === "Crawler 1" ? "Crawler 2" : "Crawler 1";
+    expect(first).toMatch(/^on Crawler [12]$/);
+    const other = first === "on Crawler 1" ? "Crawler 2" : "Crawler 1";
     const otherId = other === "Crawler 1" ? "M1" : "M2";
     fireEvent.pointerEnter(screen.getByRole("button", { name: new RegExp(`^Target Maintenance crawler ${otherId}`) }), {
       pointerType: "mouse",
     });
-    expect(card().textContent).toBe(other);
+    expect(card().textContent).toBe(`on ${other}`);
   });
   it("says what a companion's body is worth in the inspector (legible effects)", () => {
     mount();
@@ -434,11 +434,11 @@ describe("Powerworks player flow", () => {
     expect(attack.querySelector(".pw-radial-power")).toBeNull();
     fireEvent.click(attack);
     // Round 3: no power on the card (each target carries its own outcome); how long it
-    // rests is a pip with its tooltip, and once per encounter is the crown's tooltip.
+    // rests is said in words with its tooltip, and once per encounter is the badge's tooltip.
     const body = moveCard()!.querySelector(".pw-radial-card-body")!;
     expect(shownText(body)).not.toMatch(/power|Rests|once per encounter|Ranged/);
     const rest = moveCard()!.querySelector<HTMLElement>(".pw-mark.rest")!;
-    expect(rest.querySelectorAll("i")).toHaveLength(1);
+    expect(rest.querySelector(".pw-rest-word")).toHaveTextContent("rests 1");
     expect(rest).toHaveAccessibleName("Rests 1 round");
     expect(rest).toHaveAccessibleDescription("Unavailable for 1 round after use.");
     expect(moveCard()!.querySelector(".pw-mark.signature")).toHaveAccessibleDescription(
@@ -610,11 +610,12 @@ describe("Powerworks player flow", () => {
       }
       const cannon = screen.getByRole("menuitem", { name: /^Hippochamp: Emergency Water Cannon/ });
       expect(cannon).toHaveClass("signature");
-      // Round 3 review: the signature wears a crown badge on its rim, not only a gold rim.
-      expect(cannon.querySelector(".pw-radial-crown svg")).toHaveClass("lucide-crown");
+      // Words pass (round 3 review): the signature wears a badge reading "once" on its rim,
+      // not only a gold rim.
+      expect(cannon.querySelector(".pw-radial-crown.pw-radial-once")).toHaveTextContent("once");
       expect(document.querySelectorAll(".pw-radial-crown")).toHaveLength(1);
       // The signature shows what kind of move it is (a ranged strike); its gold rim alone
-      // marks it, and no disc wears a crown or a kind-colored rim.
+      // marks it, and no disc wears a crown icon or a kind-colored rim.
       expect(cannon.querySelector(".pw-radial-disc svg")).toHaveClass("lucide-crosshair");
       expect(document.querySelector(".pw-radial-disc .lucide-crown")).toBeNull();
       fireEvent.click(cannon);
@@ -910,11 +911,12 @@ describe("Powerworks player flow", () => {
       expect(slot("Emergency Water Cannon")).toHaveClass("signature", "elemental", "el-water");
       expect(slot("Repelling Slam")).toHaveClass("physical");
       expect(slot("Repelling Slam")).not.toHaveClass("elemental");
-      // A charged move carries the charge mark on its disc, and its icon still reads as a strike.
-      expect(slot("Crushing Kick").querySelector(".pw-radial-charge")).not.toBeNull();
+      // A charged move carries the charge mark (an hourglass) on its disc, and its icon still
+      // reads as a strike.
+      expect(slot("Crushing Kick").querySelector(".pw-radial-charge svg")).toHaveClass("lucide-hourglass");
       expect(slot("Crushing Kick").querySelector(".pw-radial-disc svg")).toHaveClass("lucide-swords");
-      // Its rest pips wait on its rim until the disc is lifted; a move usable every round has none.
-      expect(slot("Crushing Kick").querySelectorAll(".pw-radial-rest i")).toHaveLength(2);
+      // Its rest word waits on its rim until the disc is lifted; a move usable every round has none.
+      expect(slot("Crushing Kick").querySelector(".pw-radial-rest")).toHaveTextContent("rests 2");
       expect(slot("Water Sweep").querySelector(".pw-radial-rest")).toBeNull();
     });
 
@@ -954,7 +956,7 @@ describe("Powerworks player flow", () => {
       expect(document.querySelector(".pw-scene-unit.hinted")).toBeNull();
     });
 
-    it("trims the card of a charged move that rests two rounds to its marks, its charge line and its pips", () => {
+    it("trims the card of a charged move that rests two rounds to its marks, its charge line and its rest word", () => {
       mount();
       fireEvent.click(screen.getByRole("button", { name: "Enter the facility" }));
       fireEvent.click(screen.getByRole("button", { name: "Select Hippochamp" }));
@@ -962,16 +964,17 @@ describe("Powerworks player flow", () => {
       const card = moveCard()!;
       expect(card).toHaveClass("physical");
       expect(card.querySelector(".pw-radial-card-head strong")).toHaveTextContent(/^Crushing Kick$/);
-      // What using it costs closes the row: the rest pips.
+      // What using it costs closes the row: the rest word.
       expect(card.querySelector(".pw-radial-marks .pw-mark.rest.cost")).not.toBeNull();
       expect(card.querySelector(".pw-mark.harm")).toHaveTextContent("Harm");
       expect(card.querySelector(".pw-mark.harm")).toHaveAccessibleDescription(
         /^Compression harm\. Physical, so it lands the same on every element\./
       );
       const rest = card.querySelector<HTMLElement>(".pw-mark.rest")!;
-      expect(rest.querySelectorAll("i")).toHaveLength(2);
+      expect(rest.querySelector(".pw-rest-word")).toHaveTextContent("rests 2");
       expect(rest).toHaveAccessibleDescription("Unavailable for 2 rounds after use.");
       const charge = card.querySelector<HTMLElement>(".pw-mark.charge")!;
+      expect(charge.querySelector("svg")).toHaveClass("lucide-hourglass");
       expect(charge).toHaveTextContent("Lands next round");
       expect(charge).toHaveAccessibleDescription(CHARGE_TIP);
       expect(CHARGE_TIP).toMatch(/pull or a bind/);

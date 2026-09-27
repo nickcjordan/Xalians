@@ -713,10 +713,10 @@ export function StatusBadges({ u, compact = false }: { u: Unit; compact?: boolea
       {!!u.charge && (
         <span
           className="pw-status-badge charged"
-          title="Releases a powerful attack at its next opportunity"
+          title="Winding up a powerful attack: it lands at its next turn"
         >
-          <Zap />
-          Charged
+          <Hourglass />
+          Charging
         </span>
       )}
       {u.conditions.map((condition) => (
@@ -798,23 +798,15 @@ export type HealthPreview = {
 export function MatchupMark({ factor, text }: { factor?: number; text?: string }) {
   if (factor === undefined || factor === 1 || factor === 0) return null;
   const strong = factor > 1;
-  const count = factor >= 2 ? 2 : 1;
+  // Words pass (audit run 1): the triangle read as a warning to every reader. One word says it.
+  const word = strong ? (factor >= 2 ? "very strong" : "strong") : "weak";
   return (
     <span
-      className={`pw-matchup ${strong ? "strong" : "weak"} ${count === 2 ? "double" : ""}`}
+      className={`pw-matchup ${strong ? "strong" : "weak"} ${factor >= 2 ? "double" : ""}`}
       title={text ?? (strong ? `Strong: ×${factor} damage` : `Weak: ×${factor} damage`)}
       data-factor={factor}
     >
-      <svg viewBox={`0 0 10 ${count === 2 ? 14 : 9}`} aria-hidden="true">
-        {strong ? (
-          <>
-            <polygon points="5,0.5 9.5,8 0.5,8" />
-            {count === 2 && <polygon points="5,6 9.5,13.5 0.5,13.5" />}
-          </>
-        ) : (
-          <polygon points="0.5,1 9.5,1 5,8.5" />
-        )}
-      </svg>
+      {word}
     </span>
   );
 }
@@ -1019,6 +1011,41 @@ export function valueWords(v: ValueReading, label?: string): string {
 export const valueTotal = (v: ValueReading) => v.harm + v.saved + (v.healed ?? 0);
 
 /**
+  Words pass (2026-09-27, audit run 1). No reader without the guide read the value bar as what a
+  move does: all read it as a cost, a cooldown or charges. The effect is said instead, in the
+  words and numbers the readers did read: "8 dmg", "8 dmg on 2", "KO", "stops 7", "heals 6",
+  "no effect". The value's tooltip says the rest.
+*/
+export function effectParts(v: ValueReading & { reached?: number; squad?: boolean }): { kind: string; text: string }[] {
+  const out: { kind: string; text: string }[] = [];
+  if (v.harm > 0) out.push({ kind: "harm", text: `${v.harm} dmg${(v.reached ?? 1) > 1 ? ` on ${v.reached}` : ""}` });
+  if (v.knockout) out.push({ kind: "knockout", text: "KO" });
+  if (v.saved > 0) out.push({ kind: "saved", text: `${v.squad ? "guards" : "stops"} ${v.saved}` });
+  if ((v.healed ?? 0) > 0) out.push({ kind: "healed", text: `heals ${v.healed}` });
+  if (!out.length) out.push({ kind: "none", text: "no effect" });
+  return out;
+}
+export function EffectWords({
+  value,
+  label,
+  className = "",
+}: {
+  value: ValueReading & { reached?: number; squad?: boolean };
+  label?: string;
+  className?: string;
+}) {
+  return (
+    <span className={`pw-effect ${className}`} title={valueWords(value, label)} aria-hidden="true">
+      {effectParts(value).map((p) => (
+        <b key={p.kind} className={p.kind}>
+          {p.text}
+        </b>
+      ))}
+    </span>
+  );
+}
+
+/**
   A move's value as a segmented bar: red taken, gold kept, green restored, then its number in
   health (a skull before it when the use knocks its target out). A use worth nothing ends in a
   no-effect mark instead; its tooltip says why.
@@ -1099,7 +1126,9 @@ export function ThreatBadge({
       role="img"
     >
       {ranged ? <Crosshair /> : <Swords />}
-      <b className="pw-threat-num">{held ? 0 : hp}</b>
+      {/* Words pass: "⚔ 7" read as an attack stat; "next hit" says it is the blow coming. */}
+      <span className="pw-threat-word">{held ? "no hit" : "next hit"}</span>
+      {!held && <b className="pw-threat-num">{hp}</b>}
       {stopped > 0 && (
         <>
           <ArrowRight className="pw-threat-arrow" />

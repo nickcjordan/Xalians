@@ -630,7 +630,7 @@ describe("Powerworks radial orders round 3: element on the move, every mark earn
     // A pull, and the signature's once-per-encounter rule as an icon with its tooltip.
     expect(words(hippo, "Repelling Slam")).toEqual(["Pull"]);
     const cannon = cardMarks(hippo, named(hippo, "Emergency Water Cannon"));
-    expect(cannon.map((m) => m.text)).toEqual(["Water", "Cools", ""]);
+    expect(cannon.map((m) => m.text)).toEqual(["Water", "Cools", "Once per fight"]);
     expect(cannon[2].tip).toBe("Signature: usable once per encounter.");
     // No power figure, reach or area sentence survives on a mark.
     for (const m of [...shot, ...kick, ...cannon]) expect(m.text).not.toMatch(/power|melee|ranged|reaches/i);
@@ -638,17 +638,18 @@ describe("Powerworks radial orders round 3: element on the move, every mark earn
   it("puts a matchup chevron beside the health bar: up when strong, down when weak, none when even", () => {
     const u = readCompanion(COMPANION_RECORDS.crystorn, "C");
     const none = { damage: 5, heal: 0, knockout: false, guarded: false, immune: false, danger: false, muted: false };
-    // A filled triangle with no box (round 3 review), its matchup in words on the tooltip.
+    // A word beside the health bar (words pass: the triangle read as a warning), its matchup
+    // repeated in words on the tooltip.
     const { container, rerender } = render(
       <Health u={u} preview={{ ...none, matchup: 1.5, matchupText: "Strong: water against sand" }} />
     );
     const up = container.querySelector(".pw-matchup.strong")!;
-    expect(up.querySelectorAll("polygon")).toHaveLength(1);
+    expect(up).toHaveTextContent("strong");
     expect(up).toHaveAttribute("title", "Strong: water against sand");
     rerender(<Health u={u} preview={{ ...none, matchup: 2 }} />);
-    expect(container.querySelectorAll(".pw-matchup.strong.double polygon")).toHaveLength(2);
+    expect(container.querySelector(".pw-matchup.strong.double")).toHaveTextContent("very strong");
     rerender(<Health u={u} preview={{ ...none, matchup: 0.5, matchupText: "Weak: light against sand" }} />);
-    expect(container.querySelectorAll(".pw-matchup.weak polygon")).toHaveLength(1);
+    expect(container.querySelector(".pw-matchup.weak")).toHaveTextContent("weak");
     expect(container.querySelector(".pw-matchup.weak")).toHaveAttribute("title", "Weak: light against sand");
     rerender(<Health u={u} preview={{ ...none, matchup: 1 }} />);
     expect(container.querySelector(".pw-matchup")).toBeNull();

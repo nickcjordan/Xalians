@@ -141,6 +141,37 @@ describe('StoryViewer', () => {
 		vi.unstubAllGlobals();
 	});
 
+	it('phases a playing screen through static into the next recording on Next', () => {
+		vi.useFakeTimers();
+		let y = 0;
+		vi.stubGlobal('innerHeight', 800);
+		vi.stubGlobal('scrollTo', (o: ScrollToOptions) => {
+			y = o.top ?? y;
+		});
+		Object.defineProperty(window, 'scrollY', { configurable: true, get: () => y });
+		const probe: ViewerBeat[] = beats.map((b) => ({ ...b, render: (_l, _s, sc) => <p data-screen={sc}>{b.label}</p> }));
+		const { container } = render(<StoryViewer id="story" title={<h2 id="story-title">The Story</h2>} beats={probe} />);
+		container.querySelector('section')!.getBoundingClientRect = () => rect(900 - y, 1200)();
+		const screens = () => [...container.querySelectorAll('[data-screen]')].map((e) => e.getAttribute('data-screen'));
+		act(() => { window.dispatchEvent(new Event('scroll')); });
+		act(() => { window.dispatchEvent(new WheelEvent('wheel', { deltaY: 600, cancelable: true })); });
+		for (let i = 0; i < 20; i++) act(() => { vi.advanceTimersByTime(100); });
+		expect(screens()).toEqual(['on', 'standby', 'standby']);
+		fireEvent.click(screen.getByRole('button', { name: /Next/ }));
+		// Static rises over the picture; the beat has not changed yet.
+		expect(screens()).toEqual(['out', 'standby', 'standby']);
+		expect(states(container)).toEqual(['active', 'future', 'future']);
+		act(() => { vi.advanceTimersByTime(330); });
+		// Cut: the leaving screen holds its static, the new one searches, then locks on and plays.
+		expect(states(container)).toEqual(['past', 'active', 'future']);
+		expect(screens()).toEqual(['search', 'search', 'standby']);
+		for (let i = 0; i < 5; i++) act(() => { vi.advanceTimersByTime(100); });
+		expect(screens()[1]).toBe('lock');
+		for (let i = 0; i < 6; i++) act(() => { vi.advanceTimersByTime(100); });
+		expect(screens()[1]).toBe('on');
+		vi.unstubAllGlobals();
+	});
+
 	it('never moves with the scroll', () => {
 		const { container } = render(<StoryViewer id="story" title={<h2 id="story-title">The Story</h2>} beats={beats} />);
 		fireEvent.scroll(window, { target: { scrollY: 4000 } });

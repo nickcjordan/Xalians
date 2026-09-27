@@ -11,6 +11,7 @@ import {
   ArrowDownRight,
   Shield,
   Zap,
+  Hourglass,
   CornerUpRight,
   Ban,
   Crosshair,
@@ -817,7 +818,7 @@ export function PowerworksScene({
                   )}
                   {u.hp > 0 && u.charge && (
                     <span className="pw-charge-aura" aria-hidden="true">
-                      <Zap />
+                      <Hourglass />
                     </span>
                   )}
                   {preview?.pull && !faint && (
@@ -862,11 +863,11 @@ export function PowerworksScene({
                       <span className="pw-plaque-down">× Down</span>
                     )}
                     {referent === u.id && (
-                      // The target the move in hand's value bar is about (readout pass).
-                      <Crosshair
-                        className="pw-referent"
-                        aria-label="The move's value is read on this target"
-                      />
+                      // The unit the move in hand's effect is read on. Words pass: the crosshair
+                      // here also meant "ranged" and "target"; its full before and after change
+                      // and solid ring mark it on the stage, so the plate says it only in words
+                      // for assistive technology.
+                      <span className="pw-sr pw-referent">The move's value is read on this target</span>
                     )}
                     <button
                       aria-label={`Inspect ${u.name}${

@@ -57,9 +57,9 @@ export type ViewerBeat = {
 	render: (live: boolean, shown: boolean, screen: ScreenState, primed: boolean, play: () => void) => React.ReactNode;
 };
 
-// The incoming beat's entrance (delay plus transform, see `.story-scene`) is
-// over by now; it goes live only after it, like a shot that settles first.
-const SETTLE_MS = 1150;
+// The incoming beat's frame has faded in by now (see `.story-scene`); its screen locks on only after,
+// like a shot that settles first.
+const SETTLE_MS = 420;
 // Resting this long counts as having stopped: the screen tunes in.
 const REST_MS = 220;
 // The longest the screen searches for a recording that does not arrive, once nothing else holds it.
@@ -187,7 +187,7 @@ export function StoryViewer({ id, title, beats, after }: { id: string; title: Re
 				searchMin.current = SCREEN_MS.search;
 				return 'search';
 			}
-			if (!power && (cur === 'on' || cur === 'search' || cur === 'lock' || cur === 'switch')) {
+			if (!power && (cur === 'on' || cur === 'search' || cur === 'lock' || cur === 'out')) {
 				if (quick) return 'standby';
 				t = window.setTimeout(() => setScreen((c) => (c === 'off' ? 'standby' : c)), SCREEN_MS.off);
 				return 'off';
@@ -225,7 +225,7 @@ export function StoryViewer({ id, title, beats, after }: { id: string; title: Re
 		let t = 0;
 		const check = () => {
 			const now = performance.now();
-			if (now - searchSince.current >= searchMin.current && (pictureReady() || now - unheldAt.current >= SEARCH_CAP_MS)) {
+			if (settled === index && now - searchSince.current >= searchMin.current && (pictureReady() || now - unheldAt.current >= SEARCH_CAP_MS)) {
 				setScreen((c) => (c === 'search' ? 'lock' : c));
 				return;
 			}
@@ -233,7 +233,7 @@ export function StoryViewer({ id, title, beats, after }: { id: string; title: Re
 		};
 		check();
 		return () => window.clearTimeout(t);
-	}, [screen, unheld, pictureReady]);
+	}, [screen, unheld, pictureReady, settled, index]);
 
 	// The picture mostly on the screen: the only time anything in it may move.
 	React.useEffect(() => {
@@ -331,28 +331,54 @@ export function StoryViewer({ id, title, beats, after }: { id: string; title: Re
 		[beats]
 	);
 
-	const go = React.useCallback(
-		(to: number) => {
-			const next = Math.max(0, Math.min(count - 1, to));
-			if (next === index) return;
-			setLeaving(index);
-			window.setTimeout(() => setLeaving((l) => (l === index ? -1 : l)), EXIT_MS);
+	// Show another beat at once.
+	const indexRef = React.useRef(index);
+	React.useEffect(() => {
+		indexRef.current = index;
+	}, [index]);
+	const cut = React.useCallback(
+		(next: number) => {
+			const from = indexRef.current;
+			if (next === from) return;
+			setLeaving(from);
+			window.setTimeout(() => setLeaving((l) => (l === from ? -1 : l)), EXIT_MS);
 			setIndex(next);
-			// A playing screen cuts to the next recording through a burst of static. If that recording is not
-			// in the page by the height of the burst, the static holds and searches for it instead.
-			if (!reducedMotion()) {
-				setScreen((c) => (c === 'on' || c === 'switch' ? 'switch' : c));
-				window.setTimeout(() => {
-					searchMin.current = 0;
-					setScreen((c) => (c === 'switch' && !pictureReady() ? 'search' : c));
-				}, SCREEN_MS.switch * 0.6);
-				window.setTimeout(() => setScreen((c) => (c === 'switch' ? 'on' : c)), SCREEN_MS.switch);
-			}
 			// In the page (no box) the beat's height changes: keep the viewer's top in sight.
 			const wrap = wrapRef.current;
 			if (!boxed && wrap && wrap.getBoundingClientRect().top < 0) wrap.scrollIntoView({ block: 'start' });
 		},
-		[count, index, boxed, pictureReady]
+		[boxed]
+	);
+
+	// Moving the story on. A screen that is on (or tuning in) phases through static: static rises over the
+	// picture (`out`), the viewer cuts to the chosen beat, and its screen searches and locks on as it
+	// always does, the leaving screen holding its static as it fades. A screen standing by just cuts.
+	// Choices made during the rise take the last one.
+	const pending = React.useRef<number | null>(null);
+	const go = React.useCallback(
+		(to: number) => {
+			const next = Math.max(0, Math.min(count - 1, to));
+			const powered = screen === 'on' || screen === 'search' || screen === 'lock' || screen === 'out';
+			if (reducedMotion() || !powered) {
+				cut(next);
+				return;
+			}
+			if (screen === 'out') {
+				pending.current = next;
+				return;
+			}
+			if (next === indexRef.current) return;
+			pending.current = next;
+			setScreen('out');
+			window.setTimeout(() => {
+				const target = pending.current;
+				pending.current = null;
+				if (target != null) cut(target);
+				searchMin.current = 0;
+				setScreen((c) => (c === 'out' ? 'search' : c));
+			}, SCREEN_MS.out);
+		},
+		[count, screen, cut]
 	);
 
 	// The arrow keys move the story while it is mostly on the screen, unless the reader is typing.
@@ -455,7 +481,7 @@ export function StoryViewer({ id, title, beats, after }: { id: string; title: Re
 								data-state={i === index ? 'active' : i < index ? 'past' : 'future'}
 								tabIndex={i === index ? -1 : undefined}
 							>
-								{b.render(liveNow(i), shown, i === index ? screen : 'standby', i === index && visible && unheld && screen !== 'standby' && screen !== 'off', play)}
+								{b.render(liveNow(i), shown, i === index ? screen : i === leaving && screen !== 'standby' && screen !== 'off' ? 'search' : 'standby', i === index && visible && unheld && screen !== 'standby' && screen !== 'off', play)}
 							</div>
 						);
 					})}
