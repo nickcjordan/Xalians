@@ -55,14 +55,16 @@ Text sources: `STORY[0]` to `STORY[3]` and `TOKENS` are Nick's 2022 paragraphs a
 ### Beat 2 · Small piece · The first Xalian
 
 - **Headline:** "Designed to thrive in Xalia's most extreme environments" (from `STORY[0]`).
-- **Reading text:** none. The headline stands alone beside the piece.
+- **Reading text:** `GENERATORS`, Nick's 2022 draft slide "Creatures of Xalia" (commented out in `git show 1285604e:my-app/src/pages/home.js`), its last two sentences. (Added 2026-09-27; Nick: the piece had "just two titles" and no caption or paragraph to read alongside it.)
+- **Label:** "A Generator's vat", what the recording shows (agent-written, fact-checked).
 - **What it shows:** a Generator's vat window, and beside it the vat's readout. A genome helix is written in the gel, then the recording cuts between three Generators, each on its own world, and the genome is rewritten for each as the readout shows it (Saiphus, Magmuth, Krystos), the gel flooding with each world's light; then a heartbeat starts. No creature is drawn (decision 10). Storyboard in `home-story-small-pieces.md`.
 - **Chain step:** 2.
 
 ### Beat 3 · Small piece · APEX takes the Generators
 
 - **Headline:** "The galaxy's first artificial intelligence" (from `STORY[1]`).
-- **Reading text:** none.
+- **Reading text:** `TAKEN`, Nick's 2022 draft slide "The End Wars: Fall of the Vallerii", its second sentence (added 2026-09-27).
+- **Label:** "The same vat, under APEX": the Accords placed the Generators under APEX, and what the recording shows (agent-written, fact-checked).
 - **What it shows:** the same vat and genome. A violet light runs round the rim and takes the gel from the edge inward, turning the helix's pairs as it reaches them; a net of it closes over the readout; last the heartbeat turns violet and falls into a machine's even beat. The color is an art choice, not canon.
 - **Chain step:** 3.
 
@@ -100,7 +102,7 @@ Text sources: `STORY[0]` to `STORY[3]` and `TOKENS` are Nick's 2022 paragraphs a
 
 ## 5. Page changes that follow
 
-- **The viewer (decision 12):** seven beats in the order above, one at a time. The chapter bar carries a major marker for each full scene and a minor tick for each small piece. The Accords spread is gone. A small piece has no frame, no label and no door to the encyclopedia. Only the shown beat animates.
+- **The viewer (decision 12):** seven beats in the order above, one at a time. The chapter bar carries a major marker for each full scene and a minor tick for each small piece. The Accords spread is gone. Since 2026-09-27 a small piece has the same three parts as a scene: its recording, a label under it (agent-written, fact-checked, saying what the recording shows) and a reading column; it still has no door to the encyclopedia. Only the shown beat animates.
 - **Reading column:** on a full scene, the headline is the `type-heading` line and the kicker reads numeral and era title. On a small piece, the headline sits under the piece at the same size, with the reading text beneath it on beats 5 and 6.
 - **Reduced motion and short windows:** a small piece shows its final state, and the stacked layout lists it with its headline like any scene.
 - **Tournament & Tokens:** the `TOKENS` paragraph leaves the section, and `TOURNAMENT` moves into beat 7 (decision 9). The section keeps "Start generating now…", the key, the account note and the games.
