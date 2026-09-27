@@ -90,3 +90,4 @@ The first Opus reader on the same images got every answer right. So the flat Son
   - the Clash's foot bar and the Ruling's bar are each 36 pixels (35 on a phone);
   - no page scroll;
   - the Ruling's full line fits the top bar at 1366.
+- **The rubric critic, due this pass,** found one regression of this pass. A side that ends the game past the clinch (the last round is played out) showed "6/5". The row now plants every world won and prints "6", and a test holds it.

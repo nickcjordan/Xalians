@@ -386,6 +386,10 @@ describe('the instruments', () => {
 		expect(none.container.querySelector('[data-match-point]')).toBeNull();
 		const over = render(<SideRow side="theirs" pennants={flags(4)} toClinch={5} over />);
 		expect(over.container.querySelector('[data-match-point]')).toBeNull();
+		// the last round is played out, so a side can finish past the clinch: six pennants and "6", never "6/5"
+		const past = render(<SideRow side="theirs" pennants={flags(6)} toClinch={5} over />);
+		expect(past.container.querySelectorAll('.rec-flag--lit').length).toBe(6);
+		expect(past.container.querySelector('.rec-side-count').textContent).toBe('6');
 	});
 
 	/*

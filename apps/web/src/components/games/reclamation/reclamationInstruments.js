@@ -567,7 +567,8 @@ export function SideRow({ side, pennants, toClinch, sends, cap, turn, emblem, pa
 			</span>
 			{(emblem && <RivalGlyph id={emblem} className="rec-side-emblem" />) || <PieceGlyph className="rec-side-emblem rec-side-piece" />}
 			<span className={`rec-score-row rec-score-row--${side}`} {...count} title={label} aria-label={label} role="img">
-				{Array.from({ length: toClinch }).map((_, i) => {
+				{/* a side can end a game past the clinch (the last round is played out): every world won is planted */}
+				{Array.from({ length: Math.max(toClinch, n) }).map((_, i) => {
 					const flag = flags[i];
 					return (
 						<i
@@ -582,7 +583,7 @@ export function SideRow({ side, pennants, toClinch, sends, cap, turn, emblem, pa
 						</i>
 					);
 				})}
-				<b className="rec-side-count g-mono" aria-hidden="true">{n}<i>/{toClinch}</i></b>
+				<b className="rec-side-count g-mono" aria-hidden="true">{n}{n <= toClinch && <i>/{toClinch}</i>}</b>
 			</span>
 			{typeof sends === 'number' && <SendMeter left={sends} cap={cap} side={side} worldsAhead={worldsAhead} tone={tone} />}
 			{passed && <span className="rec-score-passed" data-rival-passed title="The rival has passed this round"><svg viewBox="0 0 12 12" aria-hidden="true"><rect x="2.5" y="2" width="2.4" height="8" /><rect x="7.1" y="2" width="2.4" height="8" /></svg></span>}
