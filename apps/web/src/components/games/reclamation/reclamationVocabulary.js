@@ -117,6 +117,10 @@ export function bodyPlanName(key) {
 	return nameOf(BODY_PLANS, key);
 }
 
+// pass 62: a record stores its measures to the full float; the dossier printed "height 102.36373238265514 cm"
+const cm = (n) => `${Math.round(n)} cm`;
+const kg = (n) => `${n >= 100 ? Math.round(n) : Math.round(n * 10) / 10} kg`;
+
 // A record carries mass and whichever overall dimensions describe its body plan.
 export function sizeLine(physiology) {
 	if (!physiology) {
@@ -124,18 +128,18 @@ export function sizeLine(physiology) {
 	}
 	const parts = [];
 	if (typeof physiology.heightCm === 'number') {
-		parts.push(`height ${physiology.heightCm} cm`);
+		parts.push(`height ${cm(physiology.heightCm)}`);
 	}
 	if (typeof physiology.lengthCm === 'number') {
-		parts.push(`length ${physiology.lengthCm} cm`);
+		parts.push(`length ${cm(physiology.lengthCm)}`);
 	}
 	if (typeof physiology.widthCm === 'number') {
-		parts.push(`width ${physiology.widthCm} cm`);
+		parts.push(`width ${cm(physiology.widthCm)}`);
 	}
 	if (typeof physiology.massKg === 'number') {
-		parts.push(`mass ${physiology.massKg} kg`);
+		parts.push(`mass ${kg(physiology.massKg)}`);
 	} else if (typeof physiology.weightKg === 'number') {
-		parts.push(`${physiology.weightKg} kg`);
+		parts.push(kg(physiology.weightKg));
 	}
 	return parts.join(', ');
 }
@@ -146,7 +150,7 @@ export function toleranceLine(physiology) {
 	}
 	const t = physiology.environmentalTolerance;
 	const media = (t.ambientMedia || []).map((m) => mediumName(m).toLowerCase()).join(' or ');
-	const band = t.temperatureC ? `${t.temperatureC.min} to ${t.temperatureC.max} C` : '';
+	const band = t.temperatureC ? `${t.temperatureC.min} to ${t.temperatureC.max}°C` : '';
 	return [band, media ? `in ${media}` : ''].filter(Boolean).join(' ');
 }
 

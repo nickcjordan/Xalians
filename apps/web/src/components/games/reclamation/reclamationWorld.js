@@ -149,6 +149,7 @@ function ReclamationWorld({
 	stakeableSiteIds,
 	pendingStakeSiteId,
 	onStake,
+	settled,
 }) {
 	const opponent = you === 'A' ? 'B' : 'A';
 	const hl = highlights || {};
@@ -384,6 +385,7 @@ function ReclamationWorld({
 										scale={standingScale}
 										marks={null}
 										verdict={verdict || null}
+										settled={settled ? settled[site.id] || null : null}
 									/>
 									{!ghost && movingRecordId && <span className="rec-ghost rec-ghost--relocate" aria-label="Move here" title="Move here"><SwiftGlyph /></span>}
 									{/*
@@ -405,7 +407,13 @@ function ReclamationWorld({
 									)}
 								</div>
 
-								<div className={`rec-rank rec-rank--mine${mine.length > 4 ? ' rec-rank--crowded' : ''}`} data-rank="mine" data-rank-rows={rankGrid(mine.length)['--rank-rows-n']} data-rank-list={mine.length >= 2 && mine.length <= 4 ? '' : undefined} data-rank-rows-wide={rankGrid(mine.length)['--rank-rows-w']} style={rankGrid(mine.length)}>
+								{/*
+									PASS 62. While sends are being made, your creatures on a world stand in the left of
+									your half, and the right is kept for the creature you point at or lift: its number,
+									its chain and its words. Kept for the whole Deploy, so pointing and lifting move
+									nothing (pass 36's rule), and let go when the worlds clash.
+								*/}
+								<div className={`rec-rank rec-rank--mine${mine.length > 4 ? ' rec-rank--crowded' : ''}`} data-rank="mine" data-rank-rows={rankGrid(mine.length)['--rank-rows-n']} data-rank-list={mine.length >= 2 && mine.length <= 4 ? '' : undefined} data-rank-rows-wide={rankGrid(mine.length)['--rank-rows-w']} data-ghost-lane={deploying && mine.length > 0 ? '' : undefined} style={rankGrid(mine.length)}>
 									{mine.map((entry) => <ReclamationFigure key={entry.recordId} {...figureProps(entry, you, 'up')} />)}
 									{/*
 										PASS 57. The creature pointed at or lifted stands in your half of every world
@@ -418,61 +426,11 @@ function ReclamationWorld({
 										rival is on the rival's side: the cross on the creature it would down, the
 										rival's struck number and the rival's bar.
 									*/}
-									{ghost && previewHere && previewHere.why && ghost.record && (() => {
-										// pass 61: what moves its number here, and why, in words under the chain
-										const reasons = reasonLines({ why: previewHere.why, record: ghost.record, site, tolerance: ghost.tolerance, blows: ghost.blows });
-										return (
-										<span key={`ghost-${ghost.record.id}`} className={`rec-ghost-piece${mine.length ? ' rec-ghost-piece--beside' : ''}${reasons.length ? ' rec-ghost-piece--says' : ''}`} data-ghost-piece={site.id} aria-hidden="true">
-											<span className="rec-ghost-piece-art">
-												<XalianImage variant="token" speciesName={ghost.record.species} primaryType={elementOf(ghost.record)} padding="0px" fill="black" filter={pieceShadowFilter(PIECE_RIM, 96)} moreClasses="rec-ghost-piece-img" />
-											</span>
-											<span className="rec-ghost-piece-read">
-												<b className="g-mono" data-ghost-gain={previewHere.why.gain.toFixed(2)}>{signedHold(previewHere.why.gain)}</b>
-											</span>
-											{/*
-												PASS 59. How the number is made, in order, under it: its normal hold, each mark
-												with its factor, and when the Clash would take something off it, what it
-												arrives with and what the Clash takes ("13 🔥×½ → 7 −3" under "+4"), and what it
-												adds to your creatures already there ("+8" beside two figures). A blind
-												reader took "+4 🔥×½" for 4 being the halved number; the factor belongs to the
-												arrival, so it stands before it. One side only: the rival's side is the rival's
-												bar and its crossed creatures. The loss printed is the difference of the two
-												numbers printed, so the chain always lands on the number above it.
-											*/}
-											{(() => {
-												const why = previewHere.why;
-												const marked = !!(why.home || why.climate || why.selfLift || why.company);
-												const fights = why.toll > 0.5;
-												const going = Number(formatHoldShown(why.going));
-												const kept = Number(formatHoldShown(Math.max(0, why.own)));
-												// what it adds to your creatures already there: the rest of its number, so the chain lands on it exactly
-												const helps = Number(formatHoldShown(why.gain)) - kept;
-												const steps = fights || helps !== 0;
-												if (!marked && !steps && !why.falls) {
-													return null;
-												}
-												return (
-													<span className="rec-ghost-piece-chain g-mono" data-ghost-chain>
-														{marked && <i className="rec-ghost-piece-body">{formatHoldShown(why.body)}</i>}
-														{marked && <WhyMarks reasons={{ ...why, falls: false }} className="rec-ghost-piece-whys" factors roomy />}
-														{marked && steps && <i className="rec-ghost-piece-arrow" aria-hidden="true">{'\u2192'}</i>}
-														{steps && <i className="rec-ghost-piece-going">{going}</i>}
-														{fights && <i className="rec-ghost-piece-toll">{`\u2212${Math.max(0, going - kept)}`}</i>}
-														{helps !== 0 && (
-															<i className="rec-ghost-piece-allies" title="What it would add to your creatures already there">
-																{`${helps > 0 ? '+' : '\u2212'}${Math.abs(helps)}`}
-																<CompanyGlyph />
-															</i>
-														)}
-														{why.falls && <WhyMarks reasons={{ falls: true }} className="rec-ghost-piece-whys" />}
-													</span>
-												);
-											})()}
-											<ReasonLines lines={reasons} className="rec-ghost-piece-reasons" />
-										</span>
-										);
-									})()}
+									{ghost && previewHere && previewHere.why && ghost.record && (
+										<GhostPiece key={`ghost-${ghost.record.id}`} ghost={ghost} previewHere={previewHere} site={site} beside={mine.length} settled={settled && settled[site.id] === 'mine' ? { side: 'mine', lead: front.mine - front.theirs } : null} />
+									)}
 								</div>
+								{clashing === site.id && <BlowTracer acting={hl.acting} hit={hl.hit} beat={hl.beat} />}
 							</div>
 						</section>
 					);
@@ -490,6 +448,220 @@ function ReclamationWorld({
 	Two grids are handed over, narrow and wide, and a container query on the rank's own
 	width picks between them.
 */
+/*
+	PASS 64, THE BLOW. The pass 62 critic scored the Clash 3 of 10: "one static caption with a white
+	box around the attacker ... nothing shows the hit or the damage." While a world fights, each blow
+	is drawn from the creature that throws it to the creature it lands on: a stroke runs out from the
+	attacker and ends in a burst on the target, red when the target is yours (red is what the Clash
+	takes from you, pass 60), ink when it is the rival's.
+*/
+function BlowTracer({ acting, hit, beat }) {
+	const ref = React.useRef(null);
+	const [line, setLine] = React.useState(null);
+	React.useLayoutEffect(() => {
+		const svg = ref.current;
+		const field = svg && svg.parentElement;
+		const stageOf = (id) => field && field.querySelector(`[data-record-id="${id}"] .rec-piece-stage`);
+		const measure = () => {
+			const from = acting && stageOf(acting);
+			const to = hit && stageOf(hit);
+			if (!field || !from || !to || acting === hit) {
+				return null;
+			}
+			const box = field.getBoundingClientRect();
+			const a = from.getBoundingClientRect();
+			const b = to.getBoundingClientRect();
+			const target = to.closest('[data-record-id]');
+			return {
+				x1: Math.round(a.left + a.width / 2 - box.left),
+				y1: Math.round(a.top + a.height / 2 - box.top),
+				x2: Math.round(b.left + b.width / 2 - box.left),
+				y2: Math.round(b.top + b.height / 2 - box.top),
+				r: Math.round(Math.max(8, Math.min(b.width, b.height) * 0.42)),
+				onMine: !!target && target.getAttribute('data-seat') === 'mine',
+				beat,
+			};
+		};
+		const first = measure();
+		setLine(first);
+		if (!first || typeof requestAnimationFrame === 'undefined') {
+			return undefined;
+		}
+		// the world is still opening to take the table when its first blow lands, so the ends follow the creatures while it does
+		const started = Date.now();
+		let frame = requestAnimationFrame(function follow() {
+			const next = measure();
+			setLine((prev) => (next && prev && ['x1', 'y1', 'x2', 'y2', 'r'].every((k) => prev[k] === next[k]) ? prev : next));
+			if (Date.now() - started < 900) {
+				frame = requestAnimationFrame(follow);
+			}
+		});
+		return () => cancelAnimationFrame(frame);
+	}, [acting, hit, beat]);
+	return (
+		<svg ref={ref} className="rec-blow-tracer" aria-hidden="true" data-blow-tracer={line ? (line.onMine ? 'mine' : 'theirs') : undefined}>
+			{line && (
+				<g key={`blow-${line.beat}`} className={`rec-blow${line.onMine ? ' rec-blow--on-mine' : ''}`}>
+					<line x1={line.x1} y1={line.y1} x2={line.x2} y2={line.y2} pathLength="1" />
+					<circle className="rec-blow-burst" cx={line.x2} cy={line.y2} r={line.r} />
+				</g>
+			)}
+		</svg>
+	);
+}
+
+/*
+	PASS 62, THE WORDS FITTED BY MEASURE. Pass 61 gave up the silhouette, the why and then the
+	words at fixed heights of the half they stand in, measured on that half's outer box. A
+	container query reads its inner box, 18 pixels less, so beside your creatures the words never
+	showed on a screen under 1920 by 1080, and the why never showed at 1366 by 768, the commonest
+	laptop there is. Now the ghost tries each step in turn and keeps the first that sits inside
+	its half without covering a creature of yours. Each step gives up one thing:
+	  art    the silhouette, which only a tall half ever shows
+	  small  the number smaller and the words set closer
+	  chain  the chain, whose marks and numbers the words say in full
+	  why    what each thing does, not why
+	  words  the number and the chain alone, as the last resort
+	Beside your creatures the ghost takes the right of your half, which the world keeps for it
+	through the Deploy (data-ghost-lane): two or more of yours stood one per row across the whole
+	half, and the ghost's number sat on their names.
+*/
+const SAYS_STEPS = [{}, { art: 0 }, { art: 0, small: 1 }, { art: 0, small: 1, chain: 0 }, { art: 0, small: 1, chain: 0, why: 0 }, { art: 0, small: 1, words: 0 }];
+
+export function saysFits(el) {
+	if (!el) {
+		return true;
+	}
+	const box = el.getBoundingClientRect();
+	const shown = [...el.children].filter((child) => child.getClientRects().length > 0);
+	if (shown.length === 0) {
+		return true;
+	}
+	const top = Math.min(...shown.map((child) => child.getBoundingClientRect().top));
+	if (top < box.top - 0.5) {
+		return false;
+	}
+	const rank = el.parentElement;
+	if (!rank) {
+		return true;
+	}
+	const over = (a, b) => a.left < b.right && a.right > b.left && a.top < b.bottom && a.bottom > b.top;
+	// the words keep off your creatures entirely; the number and chain off their names and bars
+	const words = el.querySelector('.rec-reasons');
+	if (words && words.getClientRects().length > 0) {
+		const w = words.getBoundingClientRect();
+		if ([...rank.querySelectorAll('.rec-figure')].some((figure) => over(w, figure.getBoundingClientRect()))) {
+			return false;
+		}
+	}
+	const parts = [...el.querySelectorAll('.rec-ghost-piece-read, .rec-ghost-piece-chain')].filter((part) => part.getClientRects().length > 0).map((part) => part.getBoundingClientRect());
+	const marks = [...rank.querySelectorAll('.rec-figure .rec-figure-plate, .rec-figure .rec-figure-foot')].filter((mark) => mark.getClientRects().length > 0).map((mark) => mark.getBoundingClientRect());
+	return !parts.some((part) => marks.some((mark) => over(part, mark)));
+}
+
+// the first step that fits, found before paint; a new creature, new words or a new size starts over
+function useSaysFit(ref, key, count) {
+	const [size, setSize] = React.useState('');
+	const [fit, setFit] = React.useState({ key: null, size: null, step: 0 });
+	const step = fit.key === key && fit.size === size ? fit.step : 0;
+	React.useLayoutEffect(() => {
+		const el = ref.current;
+		if (!el) {
+			return;
+		}
+		if (step < count - 1 && !saysFits(el)) {
+			setFit({ key, size, step: step + 1 });
+		} else if (fit.key !== key || fit.size !== size) {
+			setFit({ key, size, step });
+		}
+	});
+	React.useEffect(() => {
+		const rank = ref.current && ref.current.parentElement;
+		if (!rank || typeof ResizeObserver === 'undefined') {
+			return undefined;
+		}
+		const observer = new ResizeObserver((entries) => {
+			const b = entries[0] && entries[0].borderBoxSize && entries[0].borderBoxSize[0];
+			if (b) {
+				setSize(`${Math.round(b.inlineSize)}x${Math.round(b.blockSize)}`);
+			}
+		});
+		observer.observe(rank, { box: 'border-box' });
+		return () => observer.disconnect();
+	}, [ref]);
+	return step;
+}
+
+/*
+	PASS 57. The creature pointed at or lifted stands in your half of every world as it would
+	there: its number and why, in the room an empty world was not using, laid over the rank.
+	PASS 58: the number is its card's, what your side there would gain, never what it takes off
+	the rival. PASS 61: what moves the number, and why, in words. PASS 62: beside creatures of
+	yours, it stands in the right of your half, kept for it through the Deploy.
+*/
+function GhostPiece({ ghost, previewHere, site, beside, settled }) {
+	const why = previewHere.why;
+	// pass 61: what moves its number here, and why, in words under the chain
+	const reasons = reasonLines({ why, record: ghost.record, site, tolerance: ghost.tolerance, blows: ghost.blows, settled });
+	const ref = React.useRef(null);
+	const step = useSaysFit(ref, `${ghost.record.id}|${beside}|${reasons.map((line) => line.effect + line.cause).join('|')}`, reasons.length ? SAYS_STEPS.length : 1);
+	const says = reasons.length ? SAYS_STEPS[Math.min(step, SAYS_STEPS.length - 1)] : null;
+	/*
+		PASS 59. How the number is made, in order, under it: its normal hold, each mark with its
+		factor, and when the Clash would take something off it, what it arrives with and what the
+		Clash takes ("13 🔥×½ → 7 −3" under "+4"), and what it adds to your creatures already there
+		("+8" beside two figures). The factor belongs to the arrival, so it stands before it. The
+		loss printed is the difference of the two numbers printed, so the chain always lands on
+		the number above it.
+	*/
+	const marked = !!(why.home || why.climate || why.selfLift || why.company);
+	const fights = why.toll > 0.5;
+	const going = Number(formatHoldShown(why.going));
+	const kept = Number(formatHoldShown(Math.max(0, why.own)));
+	// what it adds to your creatures already there: the rest of its number, so the chain lands on it exactly
+	const helps = Number(formatHoldShown(why.gain)) - kept;
+	const steps = fights || helps !== 0;
+	const chain = marked || steps || why.falls;
+	return (
+		<span
+			ref={ref}
+			className={`rec-ghost-piece${beside ? ' rec-ghost-piece--beside' : ''}${reasons.length ? ' rec-ghost-piece--says' : ''}`}
+			data-ghost-piece={site.id}
+			data-says-fit={says ? step : undefined}
+			data-says-art={says && says.art === 0 ? 'off' : undefined}
+			data-says-small={says && says.small ? '' : undefined}
+			data-says-chain={says && says.chain === 0 ? 'off' : undefined}
+			data-says-why={says && says.why === 0 ? 'off' : undefined}
+			data-says-words={says && says.words === 0 ? 'off' : undefined}
+			aria-hidden="true"
+		>
+			<span className="rec-ghost-piece-art">
+				<XalianImage variant="token" speciesName={ghost.record.species} primaryType={elementOf(ghost.record)} padding="0px" fill="black" filter={pieceShadowFilter(PIECE_RIM, 96)} moreClasses="rec-ghost-piece-img" />
+			</span>
+			<span className="rec-ghost-piece-read">
+				<b className="g-mono" data-ghost-gain={why.gain.toFixed(2)}>{signedHold(why.gain)}</b>
+			</span>
+			{chain && (
+				<span className="rec-ghost-piece-chain g-mono" data-ghost-chain>
+					{marked && <i className="rec-ghost-piece-body">{formatHoldShown(why.body)}</i>}
+					{marked && <WhyMarks reasons={{ ...why, falls: false }} className="rec-ghost-piece-whys" factors roomy />}
+					{marked && steps && <i className="rec-ghost-piece-arrow" aria-hidden="true">{'→'}</i>}
+					{steps && <i className="rec-ghost-piece-going">{going}</i>}
+					{fights && <i className="rec-ghost-piece-toll">{`−${Math.max(0, going - kept)}`}</i>}
+					{helps !== 0 && (
+						<i className="rec-ghost-piece-allies" title="What it would add to your creatures already there">
+							{`${helps > 0 ? '+' : '−'}${Math.abs(helps)}`}
+							<CompanyGlyph />
+						</i>
+					)}
+					{why.falls && <WhyMarks reasons={{ falls: true }} className="rec-ghost-piece-whys" />}
+				</span>
+			)}
+			<ReasonLines lines={reasons} className="rec-ghost-piece-reasons" />
+		</span>
+	);
+}
+
 // pass 57: what a send would add to your side of a world, as its card's column prints it
 function signedHold(v) {
 	return v < -0.5 ? `−${formatHoldShown(-v)}` : `+${formatHoldShown(Math.max(0, v))}`;

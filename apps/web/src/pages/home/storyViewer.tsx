@@ -15,22 +15,25 @@
 // cuts to it through a burst of static. Nothing is live while the page scrolls
 // under it, mid-change, or in a hidden tab.
 //
-// A short pause on the way past (Nick, 2026-09-26: "a slight pause in the
-// middle of the screen and then it's a tiny bit sticky when you start to
-// scroll again"): the section is a little taller than the viewer, and the
-// viewer is CSS-sticky at the height that centers it, so it comes to rest in
-// the middle of the screen for `DWELL` of scroll and then moves on with the
-// page. Native sticky, no scroll listener, and the story never moves with it.
+// A catch on the way down (Nick, 2026-09-26: "always catch at the video
+// player so that it always requires 2 swipes"): however fast the reader
+// scrolls, the page stops where the viewer rests, holds until that swipe or
+// wheel has ended, and the next one goes on (storyCatch.ts). The section is a
+// little taller than the viewer, and the viewer is CSS-sticky at the height
+// that centers it; the catch is at the start of that pause, so the viewer
+// stays still for `DWELL` of scroll as the reader moves on ("a tiny bit
+// sticky when you start to scroll again"). The story never moves with it.
 //
 // A window too short for the box (a small phone, a phone on its side) shows the
 // shown beat in the page at its natural height instead, with the same controls
-// and no pause.
+// and the same catch, with the picture centered, but no pause.
 import * as React from 'react';
 import { ArrowDown, ArrowLeft, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { loadFragment } from '@/components/plates/plateStage';
 import { SCREEN_MS, type ScreenState } from './archiveScreen';
+import { catchAtRest } from './storyCatch';
 
 export type ViewerBeat = {
 	key: string;
@@ -63,8 +66,10 @@ const REST_MS = 220;
 const EXIT_MS = 700;
 // The box needs this much window; below it the shown beat sits in the page.
 const BOX_QUERY = '(min-width: 1000px) and (min-height: 560px), (min-height: 700px)';
-// How much scroll the viewer rests in the middle of the screen for.
-const DWELL = '32svh';
+// How much scroll the viewer stays in the middle of the screen for after the catch.
+const DWELL = '20svh';
+// How far into that pause the viewer rests: just inside it, so it is held by the sticky.
+const REST_IN = 4;
 
 function reducedMotion() {
 	return typeof window !== 'undefined' && !!window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -93,6 +98,8 @@ export function StoryViewer({ id, title, beats, after }: { id: string; title: Re
 	const [visible, setVisible] = React.useState(true);
 	// Whether the viewer is resting where the reader can watch it, and the screen that follows.
 	const [resting, setResting] = React.useState(false);
+	// Whether the catch is holding the page: the screen waits for it to let go (storyCatch.ts).
+	const [holding, setHolding] = React.useState(false);
 	const [screen, setScreen] = React.useState<ScreenState>('standby');
 	const count = beats.length;
 
@@ -163,7 +170,7 @@ export function StoryViewer({ id, title, beats, after }: { id: string; title: Re
 	}, [boxed, pinTop]);
 
 	// The screen follows: resting and watched, it tunes in and plays; otherwise it switches off and stands by.
-	const power = resting && visible;
+	const power = resting && visible && !holding;
 	React.useEffect(() => {
 		const quick = reducedMotion();
 		let t = 0;
@@ -219,28 +226,38 @@ export function StoryViewer({ id, title, beats, after }: { id: string; title: Re
 		}
 	}, [inView, index, beats]);
 
-	// Play: scroll the page to where the viewer rests, and let resting start the recording as it always
-	// does. In the box that is the middle of its centered pause; in the page, the picture centered on the
-	// screen (or its top, if it is taller than the screen).
-	const play = React.useCallback(() => {
+	// How far the page is from where the viewer rests, or null without a viewer. In the box that is just
+	// inside its centered pause; in the page, the picture centered on the screen (or its top, if it is
+	// taller than the screen).
+	const restBy = React.useCallback((): number | null => {
 		const wrap = wrapRef.current;
 		const pin = pinRef.current;
 		const box = boxRef.current;
-		if (!wrap || !pin || !box || typeof window === 'undefined') return;
-		let by: number;
+		if (!wrap || !pin || !box || typeof window === 'undefined') return null;
 		if (boxed) {
-			const spacer = wrap.lastElementChild as HTMLElement | null;
-			const dwell = spacer && spacer !== pin ? spacer.getBoundingClientRect().height : 0;
 			const natural = wrap.getBoundingClientRect().top + parseFloat(getComputedStyle(wrap).paddingTop || '0');
-			by = natural - pinTop + dwell / 2;
-		} else {
-			const pic = box.querySelector<HTMLElement>('.story-scene[data-state="active"] .frame') ?? box;
-			const r = pic.getBoundingClientRect();
-			by = r.height <= window.innerHeight ? r.top - (window.innerHeight - r.height) / 2 : r.top - 8;
+			return natural - pinTop + REST_IN;
 		}
-		if (Math.abs(by) < 1) return;
-		window.scrollTo({ top: window.scrollY + by, behavior: reducedMotion() ? 'auto' : 'smooth' });
+		const pic = box.querySelector<HTMLElement>('.story-scene[data-state="active"] .frame') ?? box;
+		const r = pic.getBoundingClientRect();
+		return r.height <= window.innerHeight ? r.top - (window.innerHeight - r.height) / 2 : r.top - 8;
 	}, [boxed, pinTop]);
+
+	// The catch on the way down (storyCatch.ts).
+	React.useEffect(() => {
+		if (typeof window === 'undefined') return undefined;
+		return catchAtRest(() => {
+			const by = restBy();
+			return by == null ? null : window.scrollY + by;
+		}, setHolding);
+	}, [restBy]);
+
+	// Play: scroll the page to where the viewer rests, and let resting start the recording as it always does.
+	const play = React.useCallback(() => {
+		const by = restBy();
+		if (by == null || Math.abs(by) < 1) return;
+		window.scrollTo({ top: window.scrollY + by, behavior: reducedMotion() ? 'auto' : 'smooth' });
+	}, [restBy]);
 
 	// Where a beat's marker sits on the bar once the full scenes carry their names (lg): a small piece's
 	// numeral needs less room than a scene's name, so the bar gives the names more, and "05 The Reign of

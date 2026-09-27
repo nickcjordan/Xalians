@@ -416,6 +416,13 @@
 		.archive .archive-dot { animation: none !important; }
 	}
 
+	/* The home story's catch (pages/home/storyCatch.ts) holding the page: the
+	   scroll is taken away until the gesture stops (a glide, a spinning wheel
+	   or a busy main thread gets nothing past it), and the scrollbar's room is
+	   kept on that page so nothing shifts sideways while it is gone. */
+	html.story-catch { scrollbar-gutter: stable; }
+	html.story-held { overflow: hidden; }
+
 	/* The home story's chapter bar (pages/home/storyViewer.tsx): a hairline
 	   track, a tick where each beat's marker starts and one at the end, the
 	   part behind the dot filled in ink, and the dot itself on the shown beat,

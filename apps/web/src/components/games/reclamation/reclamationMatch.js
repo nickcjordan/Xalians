@@ -42,6 +42,8 @@ const BOT_DELAY_MS = 1900;
 const BEAT_MS = 1400;
 const ARRIVE_MS = 1300;
 const RESOLUTION_STEP_MS = 700;
+// pass 64: how long a blow flies before it lands (its step is 700ms, a downing's 1.9 times that)
+const BLOW_FLIGHT_MS = 320;
 const LOG_CAP = 120;
 // "Zolton, Krystos and Saiphus": the frame's worlds as a sentence fragment
 // pass 57: a creature's tolerances in the shape strainCause reads, to name what strains it
@@ -78,6 +80,74 @@ function frameWorldNames(frame) {
 	A staked world counts two, so the arithmetic reads the counted value rather than the
 	number of worlds. This never announces a rule the player does not have; it only counts.
 */
+/*
+	PASS 63, SETTLED WORLDS (docs/design/reclamation-audit-2026-09-26.md, weakness 1). A world is
+	settled this round when the side behind there can no longer act: the rival has passed with
+	nothing hidden while you lead, or you are done (passed, or no sends left) while the rival
+	leads. What follows can only add to the side still acting (no friendly fire), so the forecast
+	leader holds it. A blind critic, with the rival passed, sent three creatures into worlds won
+	by 20 or more, and nothing on the table said a send there changed nothing.
+*/
+export function settledWorlds(standings, { rivalDone, rivalHidden, youDone }) {
+	const out = {};
+	Object.entries(standings || {}).forEach(([siteId, st]) => {
+		const mine = (st && st.mine) || 0;
+		const theirs = (st && st.theirs) || 0;
+		if (mine > theirs + 0.05 && rivalDone && !rivalHidden) {
+			out[siteId] = 'mine';
+		} else if (theirs > mine + 0.05 && youDone) {
+			out[siteId] = 'theirs';
+		}
+	});
+	return out;
+}
+
+// pass 63: the rival's pass, and what it settles, in one sentence
+export function rivalPassedLine(sites, standings, settled, budget) {
+	const planet = (site) => (site.world && site.world.planet) || site.id;
+	const yours = sites.filter((site) => settled && settled[site.id] === 'mine').map(planet);
+	const theirs = sites
+		.filter((site) => standings[site.id] && standings[site.id].theirs > standings[site.id].mine + 0.05)
+		.map((site) => `${planet(site)} is the rival's by ${formatHoldShown(standings[site.id].theirs - standings[site.id].mine)}`);
+	const list = (items) => (items.length <= 1 ? items[0] || '' : `${items.slice(0, -1).join(', ')} and ${items[items.length - 1]}`);
+	if (yours.length === 0) {
+		return theirs.length ? `The rival has passed. ${list(theirs)}.` : 'The rival has passed.';
+	}
+	const whole = yours.length === sites.length ? `all ${sites.length} worlds are yours as they stand` : `${list(yours)} ${yours.length === 1 ? 'is' : 'are'} yours as ${yours.length === 1 ? 'it stands' : 'they stand'}`;
+	// when nothing this round can change, what a send would spend: a blind reader asked for the budget beside the pass
+	const spend = yours.length === sites.length && budget && budget.toCome > 0
+		? ` You have ${plural(budget.left, 'send')} for the ${budget.toCome} worlds to come.`
+		: '';
+	return `The rival has passed: ${whole}${theirs.length ? `; ${list(theirs)}` : ''}.${spend}`;
+}
+
+// pass 63: the send budget at the moment of choosing a send, against what is still to come
+export function budgetLine(sendsLeft, worldsToCome) {
+	const after = Math.max(0, sendsLeft - 1);
+	if (after === 0) {
+		return worldsToCome > 0 ? `This is your last send: the ${worldsToCome} worlds still to come get none.` : 'This is your last send.';
+	}
+	return worldsToCome > 0
+		? `After this send: ${plural(after, 'send')} left for the ${worldsToCome} worlds still to come.`
+		: `After this send: ${plural(after, 'send')} left.`;
+}
+
+/*
+	PASS 63. The line under a Ruling says what the next round holds. With no sends left, a blind
+	critic watched a whole last round go to the rival unopposed after a line that read only "The
+	rival sends first."
+*/
+export function nextRoundLine(nextFrame, you, them, toClinch, youFirst) {
+	const names = nextFrame.map((w) => w.planet).join(', ');
+	const left = Math.max(0, (typeof you.sendableCap === 'number' ? you.sendableCap : SENDABLE) - (you.sentCount || 0));
+	if (left <= 0) {
+		const theirNeed = Math.max(0, toClinch - (them.sitesWon || 0));
+		const decides = theirNeed > 0 && theirNeed <= nextFrame.length;
+		return `Next: ${names}. You have no sends left, so the rival takes any of them it sends to${decides ? `, and it needs ${theirNeed} to win` : ''}.`;
+	}
+	return `Next: ${names}. ${youFirst ? 'You send first.' : 'The rival sends first.'}`;
+}
+
 export function reachabilityLine(view, you, them) {
 	if (!view || !view.frame || view.phase === 'matchEnd') {
 		return null;
@@ -435,7 +505,7 @@ class ReclamationMatch extends React.Component {
 
 	componentWillUnmount() {
 		document.removeEventListener('keydown', this.handleKeyDown);
-		[this.botTimer, this.noticeTimer, this.playbackTimer, this.beatTimer, this.arrivalTimer, this.legendTimer].forEach((t) => t && clearTimeout(t));
+		[this.botTimer, this.noticeTimer, this.playbackTimer, this.landTimer, this.beatTimer, this.arrivalTimer, this.legendTimer].forEach((t) => t && clearTimeout(t));
 		if (typeof window !== 'undefined') {
 			delete window.__reclamationDebug;
 		}
@@ -567,7 +637,7 @@ class ReclamationMatch extends React.Component {
 	/*
 		The pre-clash view with every effect of the events told so far applied: each
 		creature at the hold the last attack left it with (the event's own `remaining`),
-		downed ones off the world, hit ones flagged hurt, recovered ones lifted back by
+		downed ones fallen where they stood, hit ones flagged hurt, recovered ones lifted back by
 		their `recover` event, and a rival's hidden send revealed the moment it acts
 		(assumption 9: hidden creatures are revealed when they act, not before).
 
@@ -575,7 +645,7 @@ class ReclamationMatch extends React.Component {
 		number as it is told, which is the whole of "the Clash told per world".
 	*/
 	applyPlaybackEffects(playback) {
-		return playbackEffects(playback.frozenView, playback.events, playback.index);
+		return playbackEffects(playback.frozenView, playback.events, toldIndex(playback));
 	}
 
 	appendLog = (line) => {
@@ -1369,10 +1439,23 @@ class ReclamationMatch extends React.Component {
 		if (cue) {
 			this.cue(cue.name, cue.opts);
 		}
-		this.setState((prev) => ({ playback: { ...prev.playback, index: prev.playback.index + 1, current: event } }));
+		/*
+			PASS 64. A blow is told in two beats: in flight, with the target still at what it held,
+			and then landing, when its hold drops and the blow's word stands on it. Two blind readers
+			said the same thing of the one-beat Clash: "the result appears before the action".
+		*/
+		const flies = event && event.type === 'attack' && (event.outcome === 'hurt' || event.outcome === 'downed');
+		this.setState((prev) => ({ playback: { ...prev.playback, index: prev.playback.index + 1, current: event, landed: !flies } }));
 		// dev hook: window.__reclamationStepMs slows playback so it can be watched or captured
 		const stepMs = (typeof window !== 'undefined' && window.__reclamationStepMs) || RESOLUTION_STEP_MS;
-		this.playbackTimer = setTimeout(this.stepPlayback, Math.round(stepMs * stepWeight(event)));
+		const stepLength = Math.round(stepMs * stepWeight(event));
+		if (this.landTimer) {
+			clearTimeout(this.landTimer);
+		}
+		this.landTimer = flies
+			? setTimeout(() => this.setState((prev) => (prev.playback ? { playback: { ...prev.playback, landed: true } } : null)), Math.round(Math.min(BLOW_FLIGHT_MS, stepLength * 0.4)))
+			: null;
+		this.playbackTimer = setTimeout(this.stepPlayback, stepLength);
 	};
 
 	// the player sets the pace of watching: jump the resolution to the ruling, or the
@@ -1410,7 +1493,11 @@ class ReclamationMatch extends React.Component {
 		for (let i = playback.index; i < playback.events.length; i++) {
 			this.tellEvent(playback.events[i], playback);
 		}
-		this.setState((prev) => ({ playback: { ...prev.playback, index: prev.playback.events.length } }), this.finishPlayback);
+		if (this.landTimer) {
+			clearTimeout(this.landTimer);
+			this.landTimer = null;
+		}
+		this.setState((prev) => ({ playback: { ...prev.playback, index: prev.playback.events.length, landed: true } }), this.finishPlayback);
 	};
 
 	/*
@@ -1771,7 +1858,7 @@ class ReclamationMatch extends React.Component {
 		bench lead and the coaching strip that used to repeat it are gone
 		(docs/design/reclamation-declutter.md).
 	*/
-	whatAClickDoes(view) {
+	whatAClickDoes(view, table = {}) {
 		const { armedRecordId, movingRecordId, playback } = this.state;
 		/*
 			PASS 52. Words only for news (docs/design/reclamation-glance-redesign.md): what the
@@ -1801,10 +1888,26 @@ class ReclamationMatch extends React.Component {
 		if (this.state.stakeMode) {
 			return 'Pick a world to stake. It counts two.';
 		}
-		if (armedRecordId || movingRecordId) {
+		/*
+			PASS 63. The send budget at the moment a send is chosen: what it leaves against the
+			worlds still to come. A blind critic spent 8 of 11 sends in round one, with the
+			count only a small numeral in the top bar.
+		*/
+		if (armedRecordId) {
+			const perRound = view.frame.sites.length;
+			const toCome = Math.max(0, FRAMES_PER_MATCH - (view.frameIndex + 1)) * perRound;
+			const budget = budgetLine(cap - (me.sentCount || 0), toCome);
+			return this.state.coached ? budget : `Now pick a world. ${budget}`;
+		}
+		if (movingRecordId) {
 			return this.state.coached ? '' : 'Now pick a world.';
 		}
 		const rivalPassed = view.players[this.seatOpponent()].passed;
+		// pass 63: what the rival's pass settles, world by world, in place of the bare pass
+		if (rivalPassed && table.standings) {
+			const toCome = Math.max(0, FRAMES_PER_MATCH - (view.frameIndex + 1)) * view.frame.sites.length;
+			return rivalPassedLine(view.frame.sites, table.standings, table.settled, { left: cap - (me.sentCount || 0), toCome });
+		}
 		if (this.state.lastRival) {
 			return this.state.lastRival;
 		}
@@ -1830,7 +1933,7 @@ class ReclamationMatch extends React.Component {
 		return beat && beat.seat === THEM ? beat : null;
 	}
 
-	renderStatusStrip(view) {
+	renderStatusStrip(view, table = {}) {
 		const you = view.players[this.seatInPlay()];
 		const them = view.players[this.seatOpponent()];
 		const reach = reachabilityLine(view, you, them);
@@ -1892,6 +1995,7 @@ class ReclamationMatch extends React.Component {
 						turn={yourTurn ? 'mine' : waiting ? 'theirs' : null}
 						worldsAhead={view.frame.sites.length * Math.max(1, FRAMES_PER_MATCH - (view.frameIndex || 0))}
 						sendsTone={stillReachable && (stillReachable.tone === 'lost' || stillReachable.tone === 'stake') ? stillReachable.tone : null}
+						over={view.phase === 'matchEnd'}
 					/>
 				</div>
 
@@ -1920,7 +2024,7 @@ class ReclamationMatch extends React.Component {
 						: beat && !handling ? this.renderCallout(beat)
 							: (
 								<p className={`rec-status-hint g-body${yourTurn ? ' rec-status-hint--yours' : ''}`} data-hint>
-									{rivalBeat && !handling ? this.rivalBeat().text : this.whatAClickDoes(view)}
+									{rivalBeat && !handling ? this.rivalBeat().text : this.whatAClickDoes(view, table)}
 								</p>
 							)}
 					<p
@@ -2157,6 +2261,10 @@ class ReclamationMatch extends React.Component {
 			}]));
 		}
 		const reach = deploying ? reachabilityLine(view, me, them) : null;
+		const sendsLeftNow = Math.max(0, (typeof me.sendableCap === 'number' ? me.sendableCap : SENDABLE) - (me.sentCount || 0));
+		const settled = deploying
+			? settledWorlds(standings, { rivalDone: !!them.passed, rivalHidden: (them.hiddenSentThisRound || 0) > 0, youDone: !!me.passed || sendsLeftNow <= 0 })
+			: null;
 
 		// assumption 20: your swift creatures that may still move this round, as the bench's
 		// move buttons. The engine's own list, so a button never offers an illegal move.
@@ -2191,9 +2299,17 @@ class ReclamationMatch extends React.Component {
 			// pass 32: the step index, so a figure acting twice running replays its animation
 			highlights.beat = playback.index;
 			if (kind === 'attack' || kind === 'sweep' || kind === 'shield') {
-				highlights.acting = playback.current.recordId;
-				highlights.hit = playback.current.target || null;
-				highlights.flash = flashFor(playback.current);
+				/*
+					PASS 64. Only a blow that lands has a target: a creature downed before it acts
+					throws nothing, and a blind reader saw a stroke run from the fallen Hippochamp to
+					Fathomaw, framed as hit, under "Hippochamp falls before it acts".
+				*/
+				const outcome = playback.current.outcome;
+				const lands = playback.current.type !== 'attack' || outcome === 'hurt' || outcome === 'downed' || outcome === 'cancelled';
+				highlights.acting = outcome === 'lapsed' ? null : playback.current.recordId;
+				highlights.hit = lands ? playback.current.target || null : null;
+				// the blow's word stands on the target when it lands, not while it flies
+				highlights.flash = playback.landed === false ? undefined : flashFor(playback.current);
 			}
 			if (kind === 'recover') {
 				// a recovery moves the creature's own bulb, so it lights as the acted-on one
@@ -2257,7 +2373,7 @@ class ReclamationMatch extends React.Component {
 
 		return (
 			<div className={`rec-match${simple ? ' rec-match--simple' : ' rec-match--advanced'}`} data-moment={moment}>
-				{this.renderStatusStrip(view)}
+				{this.renderStatusStrip(view, { standings, settled })}
 				{this.renderPanel(view)}
 
 				{/*
@@ -2297,6 +2413,7 @@ class ReclamationMatch extends React.Component {
 							stakes={view.stakes}
 							stakeableSiteIds={deploying && view.turn === this.seatInPlay() && (this.state.stakeMode || this.state.pendingStakeSiteId) ? (me.stakeableSiteIds || []) : []}
 							pendingStakeSiteId={this.state.pendingStakeSiteId}
+							settled={settled}
 							onStake={this.askStake}
 							onSiteClick={this.handleSiteClick}
 							onSiteHover={(id) => this.setState({ hoverSiteId: id })}
@@ -2333,6 +2450,7 @@ class ReclamationMatch extends React.Component {
 									fits={fits}
 									focusSiteId={this.state.hoverSiteId}
 									newsSiteId={newsSiteId}
+									settled={settled}
 									sendsTone={reach && (reach.tone === 'lost' || reach.tone === 'stake') ? reach.tone : null}
 									movable={movable}
 									onArm={this.armRecord}
@@ -2376,7 +2494,7 @@ class ReclamationMatch extends React.Component {
 							{judged && !playback && view.phase !== 'matchEnd' && (
 								<div className="rec-judge-bar rec-rise" data-judge-bar>
 									<span className="rec-judge-bar-text">
-										{view.nextFrame ? <>Next: {view.nextFrame.map((w) => w.planet).join(', ')}. {this.state.match.turn === YOU ? 'You send first.' : 'The rival sends first.'}</> : 'That was the last round.'}
+										{view.nextFrame ? nextRoundLine(view.nextFrame, view.players[this.seatInPlay()], view.players[this.seatOpponent()], clinchFor(view.frame.sites.length, FRAMES_PER_MATCH), this.state.match.turn === this.seatInPlay()) : 'That was the last round.'}
 									</span>
 									<button type="button" className="g-btn g-btn--primary" onClick={this.nextFrame} data-next-frame>
 										Round {(this.state.judgedFrame || 0) + 2}
@@ -2449,13 +2567,18 @@ function writeLegendSeen() {
 /*
 	playbackEffects(frozenView, events, index) -> the frozen view with every effect of the
 	first `index` events applied: each creature at the hold the last attack left it with
-	(the event's own `remaining`), downed ones off the world, hit ones flagged hurt,
+	(the event's own `remaining`), downed ones fallen where they stood, hit ones flagged hurt,
 	recovered ones lifted back by their `recover` event (assumption 19), and a rival's
 	hidden send revealed the moment it acts (assumption 9).
 
 	Pure and exported so the playback can be tested without a table:
 	see __tests__/reclamationPlayback.test.js.
 */
+// pass 64: how many events the board shows told: while the current blow is in flight its target still stands at what it held
+export function toldIndex(playback) {
+	return playback.landed === false ? Math.max(0, playback.index - 1) : playback.index;
+}
+
 export function playbackEffects(frozenView, events, index) {
 	const base = frozenView;
 	const hurt = {};
@@ -2493,7 +2616,14 @@ export function playbackEffects(frozenView, events, index) {
 	base.frame.sites.forEach((site) => {
 		['A', 'B'].forEach((seat) => {
 			(base.board[site.id][seat] || []).forEach((entry) => {
+				/*
+					PASS 62. A creature downed in the Clash stays where it fell, marked fallen, as it
+					does at the Ruling (pass 38). It used to leave the world on the very step that
+					downs it, so the caption "Hypnopet downs your Scalatto" played over an empty half
+					and a blind critic scored the Clash 3 of 10: "the target has already vanished".
+				*/
 				if (downed.has(entry.recordId)) {
+					board[site.id][seat].push({ ...entry, currentHold: 0, hidden: false, revealPending: false, fallen: true });
 					return;
 				}
 				if (entry.revealPending && !revealed.has(entry.recordId)) {

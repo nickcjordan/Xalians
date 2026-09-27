@@ -13,7 +13,9 @@ import { RoleGlyph, SwiftGlyph, WillfulGlyph, InstinctGlyph } from './reclamatio
 import XalianImage from '../../xalianImage';
 import {
 	speciesFacts, archetypeLabel, traitName, traitNature,
-	elementName, sizeLine, toleranceLine, breathesLine, coveringName, bodyPlanName, elementOf } from './reclamationVocabulary';
+	elementName, sizeLine, toleranceLine, breathesLine, coveringName, bodyPlanName, elementOf, mediumName } from './reclamationVocabulary';
+import { reasonLines, ReasonLines } from './reclamationReasons';
+import { strainCause } from './reclamationPreview';
 import { TRAIT } from '@xalians/rules/expedition/expeditionInterpretation';
 
 // the traits this game reads (design doc, "Instinct"); every other trait is shown but marked
@@ -38,7 +40,7 @@ const READ_TRAITS = new Set(Object.values(TRAIT));
 	does on this table and the number this creature brings to it ("every attribute a
 	job", assumption 17). The same sentences ride as the titles of the plinth's marks.
 */
-function multiplierLines(record, prepared, site, world) {
+export function multiplierLines(record, prepared, site, world) {
 	const lines = [];
 	lines.push({ key: 'Base hold', val: formatHold(prepared.baseHold) });
 	// pass 57: the type chart is off as shipped (rules.elementMatchups), so the line prints only when it moves the hold
@@ -46,14 +48,49 @@ function multiplierLines(record, prepared, site, world) {
 		lines.push({ key: 'World matchup', val: `x${(Math.round(prepared.holdMultiplier * 100) / 100)}` });
 	}
 	lines.push({ key: 'Home ground', val: prepared.isHome ? `x${HOME_GROUND_MULTIPLIER}` : 'x1 (not its origin world)' });
-	const strainMult = prepared.strainLevel === 'severe' ? SEVERE_STRAIN_MULTIPLIER
-		: prepared.strainLevel === 'strained' ? STRAIN_MULTIPLIER : 1;
+	/*
+		PASS 62. The strain the hold is made with is the grade after willpower (and a bolster),
+		not the world's own grade: a willful Scalatto on airless Luminax read "Strain x0.25
+		(severe)" above "Base hold 14" and "Hold here 7". The line now prints the factor the
+		hold uses and says what lifted it.
+	*/
+	const GRADE = { none: 'comfortable', strained: 'strained', severe: 'far off' };
+	const held = prepared.effectiveStrainLevel || prepared.heldStrainLevel || prepared.strainLevel;
+	const strainMult = held === 'severe' ? SEVERE_STRAIN_MULTIPLIER : held === 'strained' ? STRAIN_MULTIPLIER : 1;
+	const lifted = [];
+	if (prepared.willful && prepared.heldStrainLevel && prepared.heldStrainLevel !== prepared.strainLevel) {
+		lifted.push('willful: one grade less');
+	}
+	if (prepared.bolstered && prepared.effectiveStrainLevel !== prepared.heldStrainLevel) {
+		lifted.push('a bolster: one grade less');
+	}
 	lines.push({
 		key: 'Strain',
-		val: prepared.strainLevel === 'none' ? 'x1 (at home in this environment)' : `x${strainMult} (${prepared.strainLevel})`,
+		val: prepared.strainLevel === 'none' ? 'x1 (at home in this environment)' : `x${strainMult} (${GRADE[prepared.strainLevel]}${lifted.length ? `; ${lifted.join('; ')}` : ''})`,
 	});
 	lines.push({ key: 'Hold here', val: formatHold(prepared.hold) });
 	return lines;
+}
+
+/*
+	PASS 62. What moves a standing creature's hold at its world, in the words the table says under a
+	creature lifted (pass 61), made from the same prepare() the lines above print. A reader asked why
+	Scalatto, already on Luminax, held half and not a quarter under a struck-out circle; the table
+	said nothing about a creature once sent.
+*/
+export function standingReasons(record, prepared, site) {
+	const physiology = record.physiology || {};
+	const tol = physiology.environmentalTolerance || {};
+	const tolerance = { temperatureC: tol.temperatureC, ambientMedia: tol.ambientMedia || [], breathes: physiology.breathes || [] };
+	const held = prepared.heldStrainLevel || prepared.strainLevel;
+	const factor = held === 'severe' ? SEVERE_STRAIN_MULTIPLIER : held === 'strained' ? STRAIN_MULTIPLIER : 1;
+	const why = {
+		home: !!prepared.isHome,
+		homeFactor: prepared.isHome ? HOME_GROUND_MULTIPLIER : 1,
+		climate: held !== 'none' ? { level: held, cause: strainCause(tolerance, site) || 'strained', medium: (site.environment && site.environment.medium) || null, factor } : null,
+		shrugged: held !== prepared.strainLevel,
+	};
+	return reasonLines({ why, record, site, tolerance });
 }
 
 function temperamentWords(temperament) {
@@ -140,6 +177,8 @@ function ReclamationInspect({ record, site, frame, rules, onClose }) {
 			<p className="g-label rec-inspect-context">
 				Read on {world.planet}, at {target.name}{site ? '' : ' (not yet sent; shown for the first world in the frame)'}
 			</p>
+			{/* pass 62: a creature standing on a world says why it holds what it holds, in the table's own words */}
+			<ReasonLines lines={standingReasons(record, prepared, target)} className="rec-inspect-reasons" />
 
 			<div className="g-spec rec-inspect-spec">
 				{multiplierLines(record, prepared, target, world).map((l) => (
@@ -279,7 +318,7 @@ function ReclamationInspect({ record, site, frame, rules, onClose }) {
 						sizeLine(record.physiology),
 					].filter(Boolean).join(', ')}.
 					{' '}{breathesLine(record.physiology).charAt(0).toUpperCase() + breathesLine(record.physiology).slice(1)}; at ease {toleranceLine(record.physiology)}.
-					{' '}Here: {target.environment.medium}, {target.environment.temperatureC.min} to {target.environment.temperatureC.max} C.
+					{' '}Here: {mediumName(target.environment.medium).toLowerCase()}, {target.environment.temperatureC.min} to {target.environment.temperatureC.max}°C.
 				</p>
 			</div>
 

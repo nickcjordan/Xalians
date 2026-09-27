@@ -79,16 +79,31 @@ function climateLine(why, name, planet, env, tol, site) {
 	return { key: 'climate', mark: cause, medium: env.medium || null, effect, cause: because };
 }
 
+/*
+	PASS 62. A bolster eases the world one grade for each creature of yours at its world, itself
+	included, and a creature the world does not strain gains 1 instead (holdAtSite). A blind critic
+	saw "It steadies itself: +6" at one world and "+1" at the next with nothing to tell them apart:
+	the six was the heat eased a grade, the one the flat lift.
+*/
+const EASES = { hot: 'the heat', cold: 'the cold', breath: 'the want of air', medium: 'the wrong air or water' };
+function bolsterWhy(why, whose) {
+	const climate = why.climate || null;
+	if (climate && EASES[climate.cause]) {
+		return `${whose} eases ${EASES[climate.cause]} one grade for it.`;
+	}
+	return `${whose} adds 1 where the world does not strain it.`;
+}
+
 function companyLines(why, record) {
 	const out = [];
 	const traits = Array.isArray(record && record.traits) ? record.traits : [];
 	if (why.selfLift) {
-		out.push({ key: 'self', mark: 'self', effect: `It steadies itself: +${shown(why.selfLift)}.`, cause: 'A bolster lifts every creature of yours at its world, itself included.' });
+		out.push({ key: 'self', mark: 'self', effect: `It steadies itself: +${shown(why.selfLift)}.`, cause: `${bolsterWhy(why, 'A bolster')} Its lift reaches every creature of yours at its world, itself included.` });
 	}
 	if (why.company > 0) {
 		out.push(traits.includes('pack-bonded')
 			? { key: 'company', mark: 'company', effect: `Pack-bonded: +${shown(why.company)}.`, cause: 'Each of its kin of yours here adds 1.' }
-			: { key: 'company', mark: 'company', effect: `Steadied: +${shown(why.company)}.`, cause: 'A bolster of yours here lifts it.' });
+			: { key: 'company', mark: 'company', effect: `Steadied: +${shown(why.company)}.`, cause: bolsterWhy(why, 'A bolster of yours here') });
 	} else if (why.company < 0) {
 		out.push({ key: 'company', mark: 'company', effect: `Solitary: −${shown(-why.company)}.`, cause: 'Each creature of yours here costs it 1.' });
 	}
@@ -182,13 +197,21 @@ export function nameBlows(blows, match, seat) {
 	};
 }
 
-export function reasonLines({ why, record, site, tolerance, blows }) {
+export function reasonLines({ why, record, site, tolerance, blows, settled }) {
 	const w = why || {};
 	const name = record ? speciesLabel(record) : 'It';
 	const planet = site && site.world ? site.world.planet : 'This world';
 	const env = (site && site.environment) || {};
 	const tol = tolerance || {};
 	const out = [];
+	/*
+		PASS 63. First, when it no longer matters: the rival has passed with nothing hidden and you
+		lead here, so the world is yours this round whatever is sent. A blind critic sent three
+		creatures into worlds won by 20 or more with nothing on the table to say so.
+	*/
+	if (settled && settled.side === 'mine') {
+		out.push({ key: 'settled', mark: 'settled', effect: 'Already yours this round.', cause: `The rival has passed and cannot answer here; you lead by ${shown(settled.lead)}.` });
+	}
 	if (w.home) {
 		out.push({ key: 'home', mark: 'home', effect: 'Its home world: it holds half again.', cause: `${name} comes from ${planet}.` });
 	}
@@ -221,6 +244,8 @@ function ReasonMark({ line }) {
 		case 'falls':
 		case 'downs':
 			return <FallsGlyph />;
+		case 'settled':
+			return <svg viewBox="0 0 24 24" className="rec-reason-flag"><path d="M6 21V3" /><path d="M6 4h12l-3 4.5L18 13H6" /></svg>;
 		default:
 			return null;
 	}

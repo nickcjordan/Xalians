@@ -1,11 +1,11 @@
 import { describe, it, expect } from 'vitest';
-import { playbackEffects, flashFor, stepWeight } from '../reclamationMatch';
+import { playbackEffects, flashFor, stepWeight, toldIndex } from '../reclamationMatch';
 
 /*
 	The clash and the Ruling, told over a frozen board (docs/design/
 	reclamation-base-redesign.md, Pass 2). The table replays the round event by event, so
 	what the bulbs and the balance bar show at step N is exactly what these events say:
-	an attack takes hold off, a downing takes the figure off the world, and a bolster's
+	an attack takes hold off, a downing leaves the figure fallen where it stood, and a bolster's
 	`recover` puts hold back before the Court reads the worlds (assumption 19).
 */
 function frozenView() {
@@ -46,9 +46,19 @@ describe('playbackEffects', () => {
 		expect(view.board.s1.B.map((e) => e.recordId)).toEqual(['b1', 'b2']);
 	});
 
-	it('takes a downed creature off the world', () => {
+	// pass 62: the caption "downs Bioflim" played over an empty half; the fallen stay, as at the Ruling
+	it('leaves a downed creature where it fell, fallen, at nothing', () => {
 		const view = playbackEffects(frozenView(), EVENTS, 2);
-		expect(view.board.s1.B.map((e) => e.recordId)).toEqual(['b2']);
+		expect(view.board.s1.B.map((e) => e.recordId)).toEqual(['b1', 'b2']);
+		expect(view.board.s1.B[0]).toMatchObject({ fallen: true, currentHold: 0 });
+	});
+
+	// pass 64: "the result appears before the action", two blind readers; a blow flies, then lands
+	it('shows a blow in flight with its target still at what it held, and landed a beat later', () => {
+		const flying = playbackEffects(frozenView(), EVENTS, toldIndex({ index: 2, landed: false }));
+		expect(flying.board.s1.B.find((e) => e.recordId === 'b1')).toMatchObject({ currentHold: 6 });
+		const landed = playbackEffects(frozenView(), EVENTS, toldIndex({ index: 2, landed: true }));
+		expect(landed.board.s1.B.find((e) => e.recordId === 'b1')).toMatchObject({ fallen: true, currentHold: 0 });
 	});
 
 	// assumption 19: the Ruling's first step, told before the Court reads the worlds
