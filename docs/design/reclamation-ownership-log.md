@@ -2,7 +2,7 @@
 
 Status: the running state of the game under ownership (brief: `reclamation-ownership-brief.md`). This file is the resume point. Any reset reads this first and continues at the weakest thing named below, never from scratch. Each pass appends its own section; the standing state at the top is rewritten in place.
 
-## Standing state (after pass 66, 2026-09-27)
+## Standing state (after pass 67, 2026-09-27)
 
 Pass 62 rewrote this section; it had said "after pass 31" through passes 32 to 61 (`reclamation-audit-2026-09-26.md`, "What was wrong with how I work"). Each pass ends by rewriting it.
 
@@ -1432,4 +1432,18 @@ Open item 3, the pass 65 critic's numbers. The design is in `reclamation-plates-
 - paint at 1440, 1366 and 390, where the rival's plates match the live table name for name.
 
 **Oldest carried item:** balance, carried since before pass 50. It is next in line after the Clash, and it needs the simulator. The stake has been offered every round and used in 2 to 3 percent of games since pass 62.
+
+### Pass 67 (2026-09-27): who goes first
+
+**Nick,** on Sonalloy forecast to fall to Kosanos and Tizzie forecast to beat it: "How does one of them decide that my creature would win the fight and the other one decides that my creature would lose?" The design is in `reclamation-who-goes-first.md`.
+
+- **The forecast records the order:** which blows land before the creature's own attack, whether it attacks at all, and whether it falls before its turn.
+- **The words say who goes first, in every case.** "Kosanos is quicker and catches it first in a sweep for 8." A bolster or a shield "never strikes, so nothing weakens Kosanos first".
+- **The forecast's first line ends "if nothing else arrives"** while the rival can still send or has creatures hidden.
+
+**Verified:**
+- rules test over five bot games;
+- web tests (261);
+- the four table checks;
+- paint at 1366 and 1440.
 

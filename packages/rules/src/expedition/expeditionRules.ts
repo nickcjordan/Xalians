@@ -1032,10 +1032,18 @@ function forecastRun(state: MatchState, handler: Seat): { copy: MatchState; boar
 	acts before any rival there, `hurt` on a blow from an attacker already hit (a hurt attacker
 	lands less), `dealt`, what it lands on each creature, and `downsBeforeActing`, the creatures
 	it downs before they act at all.
+
+	PASS 67. Who goes first, for every case. Nick, on two creatures sent against Kosanos, one
+	forecast to fall and one to win: "How does one of them decide that my creature would win the
+	fight and the other one decides that my creature would lose?" The words said "it acts first"
+	for the winner and nothing for the loser. So: `before` on a blow that lands before the
+	creature's own first attack (it never attacking counts as never), `strikes` when the creature
+	attacks at all (a bolster or a shield never swings, so nothing it does weakens an attacker
+	first), and `fallsBeforeActing` when it is downed before its own turn comes.
 */
-export interface ForecastBlow { by: string | null; power: number; count: number; roles: string[]; downs: boolean; statuses?: string[]; hurt?: boolean }
+export interface ForecastBlow { by: string | null; power: number; count: number; roles: string[]; downs: boolean; statuses?: string[]; hurt?: boolean; before?: boolean }
 export interface ForecastHit { to: string; power: number; count: number; downs: boolean }
-export interface ForecastBlows { taken: ForecastBlow[]; dealt: ForecastHit[]; downs: string[]; downsBeforeActing: string[]; recovered: number; falls: boolean; unlifted: number; alliesDowned: string[]; first: boolean }
+export interface ForecastBlows { taken: ForecastBlow[]; dealt: ForecastHit[]; downs: string[]; downsBeforeActing: string[]; recovered: number; falls: boolean; unlifted: number; alliesDowned: string[]; first: boolean; strikes: boolean; fallsBeforeActing: boolean }
 export function forecastSendBlows(state: MatchState, handler: Seat, recordId: string, siteId: string, chosenRole: string | null = null): ForecastBlows | null {
 	if (!state || state.phase !== 'deploy') {
 		return null;
@@ -1078,7 +1086,7 @@ export function forecastSendBlows(state: MatchState, handler: Seat, recordId: st
 		}
 		if (event.type === 'attack' && event.target === recordId && typeof event.power === 'number' && event.power > 0 && (event.outcome === 'hurt' || event.outcome === 'downed')) {
 			const by = String(event.recordId);
-			const blow = byAttacker.get(by) || { by, power: 0, count: 0, roles: [], downs: false, hurt: struck.has(by) };
+			const blow = byAttacker.get(by) || { by, power: 0, count: 0, roles: [], downs: false, hurt: struck.has(by), before: index < ourFirst };
 			blow.power = round1(blow.power + (event.power as number));
 			blow.count += 1;
 			if (!blow.roles.includes(String(event.role))) blow.roles.push(String(event.role));
@@ -1121,7 +1129,20 @@ export function forecastSendBlows(state: MatchState, handler: Seat, recordId: st
 		const toll = currentHoldOf(run.copy, entry) - currentHoldOf(run.resolved, after);
 		unlifted = Math.max(0, round1(toll - (landed - recovered)));
 	}
-	return { taken, dealt, downs, downsBeforeActing: downs.filter((id) => lapsed.has(id) && !acted.has(id)), recovered, falls, unlifted, alliesDowned, first: ourFirst < theirFirst };
+	const strikes = ourFirst < Infinity || lapsed.has(recordId);
+	return {
+		taken,
+		dealt,
+		downs,
+		downsBeforeActing: downs.filter((id) => lapsed.has(id) && !acted.has(id)),
+		recovered,
+		falls,
+		unlifted,
+		alliesDowned,
+		first: ourFirst < theirFirst,
+		strikes,
+		fallsBeforeActing: falls && lapsed.has(recordId) && !acted.has(recordId),
+	};
 }
 
 /*

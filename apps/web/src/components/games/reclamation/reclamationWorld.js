@@ -602,7 +602,7 @@ function useSaysFit(ref, key, count) {
 function GhostPiece({ ghost, previewHere, site, beside, settled }) {
 	const why = previewHere.why;
 	// pass 61: what moves its number here, and why, in words under the chain
-	const reasons = reasonLines({ why, record: ghost.record, site, tolerance: ghost.tolerance, blows: ghost.blows, settled });
+	const reasons = reasonLines({ why, record: ghost.record, site, tolerance: ghost.tolerance, blows: ghost.blows, settled, open: ghost.open, role: ghost.role });
 	const ref = React.useRef(null);
 	const step = useSaysFit(ref, `${ghost.record.id}|${beside}|${reasons.map((line) => line.effect + line.cause).join('|')}`, reasons.length ? SAYS_STEPS.length : 1);
 	const says = reasons.length ? SAYS_STEPS[Math.min(step, SAYS_STEPS.length - 1)] : null;

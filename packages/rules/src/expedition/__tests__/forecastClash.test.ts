@@ -279,4 +279,45 @@ describe('forecastSendBlows', () => {
 		expect(withBlows).toBeGreaterThan(10);
 		expect(unlifted).toBeGreaterThan(0);
 	});
+
+	// pass 67: who goes first, for the creature that loses as well as the one that wins
+	test('says which blows land before its own attack, whether it attacks at all, and whether it falls before its turn', () => {
+		let quicker = 0;
+		let neverStrikes = 0;
+		let beforeTurn = 0;
+		['b1', 'b2', 'b3', 'b4', 'b5'].forEach((seed) => {
+			playMatch(seed, (before) => {
+				const handler = before.turn as Seat;
+				before.players[handler].roster.forEach((record: any) => {
+					before.frames[before.frameIndex].sites.forEach((site: any) => {
+						const blows = forecastSendBlows(before, handler, record.id, site.id);
+						if (!blows) {
+							return;
+						}
+						// a creature that never attacks has every blow land before it (it has no turn to beat)
+						if (!blows.strikes) {
+							blows.taken.filter((b) => b.by).forEach((b) => expect(b.before).toBe(true));
+							expect(blows.first).toBe(false);
+							expect(blows.fallsBeforeActing).toBe(false);
+							if (blows.taken.some((b) => b.by)) neverStrikes += 1;
+						}
+						// acting first means no rival blow landed before it
+						if (blows.first) {
+							blows.taken.filter((b) => b.by).forEach((b) => expect(b.before).toBe(false));
+						}
+						if (blows.fallsBeforeActing) {
+							expect(blows.falls).toBe(true);
+							expect(blows.strikes).toBe(true);
+							expect(blows.dealt).toEqual([]);
+							beforeTurn += 1;
+						}
+						if (blows.strikes && blows.taken.some((b) => b.by && b.before)) quicker += 1;
+					});
+				});
+			});
+		});
+		expect(quicker).toBeGreaterThan(0);
+		expect(neverStrikes).toBeGreaterThan(0);
+		expect(beforeTurn).toBeGreaterThan(0);
+	});
 });

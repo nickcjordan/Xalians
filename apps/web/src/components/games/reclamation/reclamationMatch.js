@@ -1812,6 +1812,14 @@ class ReclamationMatch extends React.Component {
 			return null;
 		}
 		const blows = this.blowsFor(id, id === armedRecordId ? this.state.armedRole : null);
+		/*
+			pass 67: the forecast is the Clash on the board as you can see it. While the rival can
+			still send, or has creatures hidden, its words say it holds only if nothing else arrives.
+		*/
+		const rival = view.players[this.seatOpponent()];
+		const rivalCap = typeof rival.sendableCap === 'number' ? rival.sendableCap : SENDABLE;
+		const rivalDone = !!rival.passed || (rival.sentCount || 0) >= rivalCap;
+		const open = !rivalDone || (rival.hiddenSentThisRound || 0) > 0;
 		const ghosts = {};
 		view.frame.sites.forEach((site) => {
 			// the whole arithmetic of this send at this world: hold after strain and any
@@ -1838,6 +1846,7 @@ class ReclamationMatch extends React.Component {
 				unstrained: plan.hold / strainMultiplierFor(plan.strainLevel),
 				// pass 61: the fight behind its toll here, named
 				blows: blows ? blows[site.id] || null : null,
+				open,
 				// the creature's own band and media, drawn over the site's on the environment scale
 				tolerance: {
 					temperatureC: tolerance.temperatureC || null,
