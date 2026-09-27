@@ -326,3 +326,16 @@ export const atHealth = (s: Run, hp: Record<string, number>): Run => ({
   ...s,
   enemies: s.enemies.map((e) => (e.id in hp && hp[e.id] !== e.hp ? { ...e, hp: hp[e.id] } : e)),
 });
+
+/**
+  How often the machines pick this companion as a target (legible effects, 2026-09-26): its
+  share of the size weights they pick by (TARGET_SIZE_WEIGHT), among the companions they may
+  select. Nick asked why Avilily is so weak; part of her worth is that the machines pick her
+  about half as often as the big three, and nothing on the screen said so.
+*/
+export function pickShare(s: Sides, u: Unit): number {
+  const foes = selectableTargets(s.team.filter((t) => t.hp > 0));
+  if (!foes.some((f) => f.id === u.id)) return 0;
+  const weight = (f: Unit) => (TARGET_SIZE_WEIGHT ? Math.pow(f.max, TARGET_SIZE_WEIGHT) : 1);
+  return weight(u) / foes.reduce((n, f) => n + weight(f), 0);
+}

@@ -19,6 +19,7 @@ import {
   Zap,
   Link2,
   Crosshair,
+  Wind,
   Swords,
   Trophy,
   Info,
@@ -48,6 +49,7 @@ import {
   matchup,
   initiative,
   effectiveSpeed,
+  nimbleFactor,
   sedated,
   areaReach,
   beneficial,
@@ -92,7 +94,7 @@ import {
   shortName,
   valueWords,
   ValueBar,
-  ThreatBar,
+  ThreatBadge,
 } from "./powerworksVisuals";
 
 import {
@@ -110,6 +112,7 @@ import {
   blowOf,
   machineThreat,
   moveValue,
+  pickShare,
   projectOrders,
   ticksDue,
   total,
@@ -651,7 +654,7 @@ export default function PowerworksPage() {
     if (u.hp <= 0 || m.fallback) return null;
     if (u.enemy)
       return (
-        <ThreatBar amount={blowOf(run, u, i)} ranged={m.range !== "contact"} label={labelFor(u)} />
+        <ThreatBadge amount={blowOf(run, u, i)} ranged={m.range !== "contact"} label={labelFor(u)} />
       );
     const rest = Object.fromEntries(Object.entries(plans).filter(([id]) => id !== u.id));
     const at = run.phase === "planning" ? atHealth(run, projectOrders(run, rest).hp) : run;
@@ -665,6 +668,41 @@ export default function PowerworksPage() {
         label={on ? labelFor(on) : undefined}
         className={legalMoves(u, run).includes(i) ? "" : "waiting"}
       />
+    );
+  }
+  /**
+    Legible effects (2026-09-26, Nick: "why is the bird so weak?"): what a companion's body is
+    worth, which no move bar shows. How often the machines pick it (they pick by size), and how
+    much of each machine's blow it slips by being quicker (pass 9's nimble rule).
+  */
+  function holdsUp(u: Unit): React.ReactNode {
+    const share = Math.round(pickShare(run, u) * 100);
+    const even = Math.round(100 / Math.max(1, run.team.filter((t) => t.hp > 0).length));
+    const slips = [
+      ...new Map(
+        run.enemies
+          .filter((e) => e.hp > 0)
+          .map((e) => {
+            const t = machineThreat(run, e);
+            const m = t.move !== null ? moveAt(e, t.move) : null;
+            return [shortName(e), m ? Math.round((1 - nimbleFactor(e, u, m)) * 100) : 0] as const;
+          })
+      ),
+    ].filter(([, pct]) => pct > 0);
+    return (
+      <ul className="pw-holds-up">
+        <li>
+          <Crosshair aria-hidden="true" />
+          Machines pick it about {share}% of the time
+          {share < even ? ", less than an even share: they aim at bigger bodies" : share > even ? ", more than an even share: they aim at bigger bodies" : ""}.
+        </li>
+        <li>
+          <Wind aria-hidden="true" />
+          {slips.length
+            ? `Slips ${slips.map(([name, pct]) => `${pct}% of each ${name} blow`).join(", ")}: it is quicker.`
+            : "Slips nothing: every machine here is at least as quick."}
+        </li>
+      </ul>
     );
   }
   function labelFor(u: Unit) {
@@ -2280,14 +2318,18 @@ export default function PowerworksPage() {
                   at it to see why.
                 </p>
                 <p>
-                  Under each machine, red is the blow it is poised to land on
-                  one of your squad, and its number is what still gets
-                  through; gold is the part your orders stop. What your
-                  standing orders already take shows as a darker chunk on each
-                  health bar, so a machine they finish is plain before you
-                  pick another move. The turn order shows where the move in
-                  hand would put everyone, with an arrow on anyone it hurries
-                  or slows.
+                  Any change a move would make is said as before and after
+                  where the health number sits: 14 → 6, a skull when it
+                  falls. The move in hand's result is boxed; what your other
+                  orders already take reads quieter, and shows as a darker
+                  chunk at the end of the bar. The badge under each machine,
+                  a sword for up close or a crosshair for range, is the
+                  attack it is poised to land on one of your squad; when
+                  your orders stop part of it, it reads 7 → 4. The turn order
+                  shows where the move in hand would put everyone, with an
+                  arrow on anyone it hurries or slows. Inspect a companion to
+                  see what its body is worth: how often the machines pick it,
+                  and how much of each blow it slips by being quicker.
                 </p>
               </section>
               <section>
@@ -2422,6 +2464,7 @@ export default function PowerworksPage() {
                   ·{" "}
                   {inspect.enemy ? "Facility defense" : "Your companion"}
                 </p>
+                {!inspect.enemy && inspect.hp > 0 && holdsUp(inspect)}
                 <div className="pw-statuses">
                   <StatusBadges u={inspect} />
                 </div>

@@ -43,7 +43,7 @@ import {
   slotState,
 } from "./powerworksRadial";
 import { CAMERA, IDENTITY, beatZoom } from "./powerworksStage";
-import { MatchupMark, StatusBadges, ThreatBar, ValueBar } from "./powerworksVisuals";
+import { MatchupMark, StatusBadges, ThreatBadge, ValueBar } from "./powerworksVisuals";
 import type { Condition, Move, MoveEffect, StatusGroup } from "@xalians/rules/dungeon";
 
 afterEach(cleanup);
@@ -416,7 +416,7 @@ describe("Powerworks radial orders round 2: the card's words, the bar's preview,
     expect(restLine(cannon)).toBe("Rests 1 round after use · once per encounter");
     expect(restLine(kick)).toBe(`Rests ${COOLDOWN_ROUNDS.prolonged} rounds after use`);
   });
-  it("draws a preview on the health bar: the chunk, a heal's extension, and the number beside the bar", () => {
+  it("draws a preview on the health bar: the chunk, and the change said before and after beside the bar", () => {
     const u = readCompanion(COMPANION_RECORDS.crystorn, "C");
     u.hp = 40;
     const none = {
@@ -432,40 +432,45 @@ describe("Powerworks radial orders round 2: the card's words, the bar's preview,
     const chunk = container.querySelector<HTMLElement>(".pw-hp-chunk")!;
     expect(chunk.style.left).toBe(`${(30 / u.max) * 100}%`);
     expect(chunk.style.width).toBe(`${(10 / u.max) * 100}%`);
-    expect(container.querySelector(".pw-hp-delta")).toHaveTextContent("−10");
-    // A guard shrank it: the shield rides with the number.
-    expect(container.querySelector(".pw-hp-delta svg")).not.toBeNull();
-    // The number sits on a solid tag whose right edge meets the chunk (round 3 review), so no
-    // hatching lies under the text; the health figure stays beside the bar.
-    const tag = container.querySelector<HTMLElement>(".pw-health-bar > .pw-hp-delta")!;
-    expect(tag).toHaveClass("at-end");
-    expect(tag.style.right).toBe(`${100 - (30 / u.max) * 100}%`);
-    expect(tag.style.left).toBe("");
-    expect(container.querySelector(".pw-hp-label")).toHaveTextContent("40");
+    // Legible effects: the change reads before and after where the health number sits.
+    const change = () => container.querySelector(".pw-hp-delta")!;
+    expect(change()).toHaveClass("hit");
+    expect(change().querySelector(".pw-hp-from")).toHaveTextContent("40");
+    expect(change().querySelector(".pw-hp-to")).toHaveTextContent("30");
+    // A guard shrank it: the shield rides with the result.
+    expect(change().querySelector(".pw-hp-to svg")).not.toBeNull();
     rerender(<Health u={u} preview={{ ...none, heal: 12 }} />);
     const heal = container.querySelector<HTMLElement>(".pw-hp-heal")!;
     expect(heal.style.left).toBe(`${(40 / u.max) * 100}%`);
-    expect(container.querySelector(".pw-hp-delta.heal")).toHaveTextContent("+12");
+    expect(container.querySelector(".pw-hp-delta.heal .pw-hp-to")).toHaveTextContent(String(Math.min(u.max, 52)));
     rerender(<Health u={u} preview={{ ...none, damage: 55, knockout: true }} />);
     expect(container.querySelector<HTMLElement>(".pw-hp-chunk.knockout")!.style.left).toBe("0%");
-    // Near the bar's start the tag hangs the other way, over the chunk.
-    expect(container.querySelector(".pw-hp-delta")).toHaveClass("at-start");
-    expect(container.querySelector(".pw-hp-delta.knockout")).toHaveTextContent("−55");
+    expect(change().querySelector(".pw-hp-to")).toHaveTextContent("0");
+    expect(change().querySelector(".pw-hp-to svg")).not.toBeNull();
     rerender(<Health u={u} preview={{ ...none, immune: true }} />);
     expect(container.querySelector(".pw-hp-delta.immune")).toHaveTextContent("no effect");
+    // A faint (hovered) preview changes only the bar.
+    rerender(<Health u={u} preview={{ ...none, damage: 10, faint: true }} />);
+    expect(container.querySelector(".pw-hp-chunk")).not.toBeNull();
+    expect(container.querySelector(".pw-hp-delta")).toBeNull();
     // With no preview the bar reads as it always has.
     rerender(<Health u={u} />);
     expect(container.querySelector(".pw-hp-label")).toHaveTextContent(`40 / ${u.max}`);
     expect(container.querySelector(".pw-hp-chunk, .pw-hp-heal, .pw-hp-delta")).toBeNull();
-    // Readout pass: what the standing orders take sits at the bar's end, and the move in
-    // hand's chunk stacks in front of it.
+    // What the standing orders take sits at the bar's end, and the move in hand's chunk
+    // stacks in front of it; the result counts both.
     rerender(<Health u={u} planned={12} preview={{ ...none, damage: 10 }} />);
     const planned = container.querySelector<HTMLElement>(".pw-hp-planned")!;
     expect(planned.style.left).toBe(`${(28 / u.max) * 100}%`);
     expect(container.querySelector<HTMLElement>(".pw-hp-chunk")!.style.left).toBe(`${(18 / u.max) * 100}%`);
-    // A plan that already takes everything: the move in hand lands on nothing, and says so.
+    expect(change().querySelector(".pw-hp-to")).toHaveTextContent("18");
+    // The standing orders alone read quieter, in the same form.
+    rerender(<Health u={u} planned={12} />);
+    expect(change()).toHaveClass("plan");
+    expect(change().querySelector(".pw-hp-to")).toHaveTextContent("28");
+    // A plan that already takes everything: the move in hand lands on nothing.
     rerender(<Health u={u} planned={40} preview={{ ...none, damage: 10 }} />);
-    expect(container.querySelector(".pw-hp-delta")).toHaveTextContent("already falls");
+    expect(change().querySelector(".pw-hp-to")).toHaveTextContent("0");
     expect(container.querySelector(".pw-hp-chunk")).toBeNull();
   });
   it("ends every value bar in its number, and an empty one in the no-effect mark (readout pass)", () => {
@@ -487,10 +492,15 @@ describe("Powerworks radial orders round 2: the card's words, the bar's preview,
       "title",
       "Worth nothing this round: Crawler 1 strikes up close, so blinding does not weaken it"
     );
-    // A machine's blow ends in what still gets through; one that loses its turn reads 0.
-    rerender(<ThreatBar amount={7} prevented={3} ranged={false} label="Crawler 1" />);
-    expect(container.querySelector(".pw-threat-num")).toHaveTextContent("4");
-    rerender(<ThreatBar amount={0} ranged={false} held="stunned" label="Crawler 1" />);
+    // A machine's next attack is a badge, not a bar; what the orders stop reads before and
+    // after. One that loses its turn reads 0.
+    rerender(<ThreatBadge amount={7} ranged={false} label="Crawler 1" />);
+    expect(container.querySelector(".pw-threat-num")).toHaveTextContent("7");
+    expect(container.querySelector(".pw-threat-to")).toBeNull();
+    rerender(<ThreatBadge amount={7} prevented={3} ranged={false} label="Crawler 1" />);
+    expect(container.querySelector(".pw-threat-num")).toHaveTextContent("7");
+    expect(container.querySelector(".pw-threat-to")).toHaveTextContent("4");
+    rerender(<ThreatBadge amount={0} ranged={false} held="stunned" label="Crawler 1" />);
     expect(screen.getByRole("img", { name: "Threat: none, stunned" })).toHaveClass("held");
   });
   it("tells a charging companion's other discs why they wait", () => {

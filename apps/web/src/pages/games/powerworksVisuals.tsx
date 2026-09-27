@@ -44,6 +44,7 @@ import {
   Skull,
   Ban,
   Magnet,
+  ArrowRight,
 } from "lucide-react";
 import {
   AREA_HARM_FACTOR,
@@ -835,27 +836,31 @@ export function Health({
 }) {
   const committed = Math.max(0, Math.min(u.hp, planned)),
     left = u.hp - committed;
+  const faint = !!preview?.faint;
   const damage = Math.min(left, preview ? preview.damage : estimate),
     heal = preview ? Math.max(0, Math.min(u.max - u.hp, preview.heal)) : 0,
     remaining = ((left - damage) / u.max) * 100;
   // The plan already takes everything the unit has: nothing the move in hand does lands first.
   const finished = committed > 0 && left <= 0;
-  // The number sits on a small solid tag at the chunk's edge (round 3 review): its right
-  // edge meets the chunk where what remains ends, so no hatching lies under the text. Near
-  // the bar's start it hangs the other way, over the chunk; "no effect" sits at the bar's end.
-  const hp = (u.hp / u.max) * 100;
-  const tag: { edge: number; end: boolean } =
-    preview?.immune || finished
-      ? { edge: 100, end: true }
-      : damage > 0
-      ? remaining >= 30
-        ? { edge: remaining, end: true }
-        : { edge: remaining, end: false }
-      : hp >= 30
-      ? { edge: hp, end: true }
-      : { edge: ((u.hp + heal) / u.max) * 100, end: false };
-  const shown =
-    !!preview && !preview.faint && (preview.immune || damage > 0 || heal > 0 || (finished && preview.damage > 0));
+  /*
+    Legible effects (2026-09-26, Nick: "striped versus solid is not enough to tell me 'this is
+    the effect'"). A change is said as before and after, in numbers, where the health number
+    already sits: "14 → 6". The move in hand's change is bold and colored by what it does (red
+    lost, green healed) and its chunk wears the hand's outline; the standing orders' change
+    alone reads quieter. A faint (hovered, not the target the move is read on) preview changes
+    only the bar.
+  */
+  const hand = !!preview && !faint && (preview.immune || damage > 0 || heal > 0 || finished);
+  const after = heal > 0 && !damage ? Math.min(u.max, u.hp + heal) : left - (hand ? damage : 0);
+  const change: "hit" | "heal" | "immune" | "plan" | null = hand
+    ? preview!.immune && !finished
+      ? "immune"
+      : heal > 0 && !damage
+      ? "heal"
+      : "hit"
+    : committed > 0
+    ? "plan"
+    : null;
   const track = (
       <div
         className="pw-health-track"
@@ -897,7 +902,7 @@ export function Health({
   );
   return (
     <div
-      className={`pw-health ${preview ? "previewing" : ""} ${preview?.faint ? "faint" : ""} ${
+      className={`pw-health ${preview ? "previewing" : ""} ${faint ? "faint" : ""} ${
         preview?.muted ? "muted" : ""
       } ${preview?.danger ? "danger" : ""} ${committed > 0 ? "committed" : ""} ${
         finished ? "finished" : ""
@@ -908,53 +913,35 @@ export function Health({
           : undefined
       }
     >
-      {shown ? (
-        <div className="pw-health-bar">
-          {track}
-          <span
-            className={`pw-hp-delta ${preview!.knockout && !finished ? "knockout" : ""} ${
-              heal > 0 && !damage ? "heal" : ""
-            } ${preview!.immune || finished ? "immune" : ""} ${tag.end ? "at-end" : "at-start"}`}
-            style={tag.end ? { right: `${100 - tag.edge}%` } : { left: `${tag.edge}%` }}
-            aria-hidden="true"
-          >
-            {finished ? (
-              <Skull />
-            ) : preview!.knockout ? (
-              <Skull />
-            ) : preview!.immune ? (
-              <Ban />
-            ) : preview!.guarded ? (
-              <Shield />
-            ) : null}
-            {/* The move's own damage, as the card states it; a knockout's chunk is the rest of the bar. */}
-            {finished
-              ? "already falls"
-              : preview!.immune
-              ? "no effect"
-              : damage > 0
-              ? `−${preview!.damage}`
-              : `+${heal}`}
-          </span>
-        </div>
-      ) : finished ? (
-        <div className="pw-health-bar">
-          {track}
-          <span className="pw-hp-delta falls at-start" style={{ left: 0 }} aria-hidden="true">
-            <Skull />
-          </span>
-        </div>
-      ) : (
-        track
-      )}
+      <div className="pw-health-bar">{track}</div>
       {preview && !preview.immune && !finished && (
         <MatchupMark factor={preview.matchup} text={preview.matchupText} />
       )}
-      <span className="pw-hp-label">
-        {u.hp}
-        <small> / {u.max}</small>
-        {estimate > 0 && <em> −{estimate}?</em>}
-      </span>
+      {change ? (
+        <span className={`pw-hp-label pw-hp-delta ${change}`} aria-hidden="true">
+          <span className="pw-hp-from">{u.hp}</span>
+          {change === "immune" ? (
+            <span className="pw-hp-to">
+              <Ban />
+              no effect
+            </span>
+          ) : (
+            <>
+              <ArrowRight className="pw-hp-arrow" />
+              <b className="pw-hp-to">
+                {after <= 0 ? <Skull /> : change === "hit" && preview?.guarded ? <Shield /> : null}
+                {Math.max(0, after)}
+              </b>
+            </>
+          )}
+        </span>
+      ) : (
+        <span className="pw-hp-label">
+          {u.hp}
+          <small> / {u.max}</small>
+          {estimate > 0 && <em> −{estimate}?</em>}
+        </span>
+      )}
     </div>
   );
 }
@@ -1074,11 +1061,13 @@ export function ValueBar({
 }
 
 /**
-  A machine's next blow on the same scale (move value pass): red for the health it is poised
-  to take from one companion, the part the squad's orders would stop overlaid in gold, and the
-  number that still gets through. A machine that already loses its turn reads 0, and says why.
+  A machine's next blow (move value pass), drawn as an attack badge rather than a bar
+  (legible effects, 2026-09-26: Nick could not tell its bar from the health bar above it). A
+  sword or crosshair for up close or at range, then the health the blow is poised to take
+  from one companion; when the squad's orders stop part of it, the change reads before and
+  after, "7 → 0", like a health change. A machine that already loses its turn reads 0.
 */
-export function ThreatBar({
+export function ThreatBadge({
   amount,
   prevented = 0,
   ranged,
@@ -1092,28 +1081,31 @@ export function ThreatBar({
   held?: string;
   label?: string;
 }) {
-  const width = share(amount);
-  const stop = amount > 0 ? Math.min(1, prevented / amount) : 0;
   const hp = Math.round(amount);
-  const stopped = Math.min(hp, Math.round(prevented));
+  const stopped = held ? 0 : Math.min(hp, Math.round(prevented));
   const through = held ? 0 : hp - stopped;
   const words = held
-    ? `${label} is ${held} and loses its next turn: no blow this round`
-    : `${label}'s next blow takes about ${hp} health from one of your squad${
+    ? `${label} is ${held} and loses its next turn: no attack this round`
+    : `${label}'s next attack takes about ${hp} health from one of your squad${
         stopped > 0 ? `; your orders stop about ${stopped} of it` : ""
       }`;
   return (
     <span
-      className={`pw-threat ${held ? "held" : ""} ${hp > 0 && through <= 0 ? "stopped" : ""}`}
+      className={`pw-threat ${held ? "held" : ""} ${stopped > 0 ? "changed" : ""} ${
+        hp > 0 && through <= 0 ? "stopped" : ""
+      }`}
       title={words}
       aria-label={held ? `Threat: none, ${held}` : `Threat: about ${hp} health${stopped > 0 ? `, ${stopped} stopped` : ""}`}
       role="img"
     >
       {ranged ? <Crosshair /> : <Swords />}
-      <span className="pw-threat-track" style={{ width: `calc(var(--value-track) * ${width})` }}>
-        {stop > 0 && <i className="stopped" style={{ width: `${stop * 100}%` }} />}
-      </span>
-      <b className="pw-threat-num">{through}</b>
+      <b className="pw-threat-num">{held ? 0 : hp}</b>
+      {stopped > 0 && (
+        <>
+          <ArrowRight className="pw-threat-arrow" />
+          <b className="pw-threat-to">{through}</b>
+        </>
+      )}
     </span>
   );
 }

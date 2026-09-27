@@ -2170,3 +2170,26 @@
 .pw-card-effect.worth .pw-value.waiting {
   opacity: 0.45;
 }
+
+/* Legible effects: what a companion's body is worth, under its speed line in the inspector. */
+.pw-holds-up {
+  display: grid;
+  gap: 4px;
+  margin: 8px 0 0;
+  padding: 0;
+  list-style: none;
+  font-size: 13px;
+  color: #c6d3cc;
+}
+.pw-holds-up li {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+}
+.pw-holds-up svg {
+  flex: none;
+  width: 14px;
+  height: 14px;
+  margin-top: 2px;
+  color: #cbb98f;
+}
