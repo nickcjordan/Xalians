@@ -95,3 +95,41 @@ Considered and left: the status chips' remaining count ("Blinded 1", "Corroding 
 - **Blinding a machine can hurt the squad.** A blinded target cannot receive a visual signal, so the squad's own visual moves fail on a machine it blinded. The value does not subtract that; it is rare in the preset squad. Report only.
 - **Disoriented is close to worthless against machines.** A machine already picks its target by size; disoriented makes that pick uniform, which changes little. It reads as worth nothing and says why.
 - **A bind and a knockout on the same machine are both credited one blow.** That is right (they stop two different blows, this round's and the next), but a player adding up gold may read it as counting twice.
+
+## Legible effects pass (2026-09-26)
+
+### What Nick said
+
+With four screenshots from a live run: "striped versus solid is not enough to tell me 'this is the effect'. Also, why is the bird so weak? is that just how it is designed or is the game not compensating fairly? also, i dont understand the difference between the 2 bars on the enemy. also, visual overlap issue in one of these screenshots with the bird."
+
+### What changed
+
+| # | Decision | Confidence | Evidence |
+|---|---|---|---|
+| L1 | **A change reads before and after, in numbers, where the health number sits: "14 → 6".** The hatch on the bar stays, but it is no longer the only signal. The move in hand's result is boxed and colored by what it does (red lost, green healed), with a skull when the unit falls and a shield when a guard shrank it; the hatch of the move in hand wears a gold outline. What the other standing orders take reads in the same form but quieter. This replaces the floating "−8" tag, which said the move's damage but not where the unit ends up. | 85% | Nick: striped versus solid is not enough |
+| L2 | **A machine's next attack is a badge, not a bar.** A sword (up close) or crosshair (at range) and the health it is poised to take, "⚔ 7"; when the orders stop part of it, "7 → 4" with the first number struck through. Two bars stacked on one plate read as two kinds of health. | 85% | Nick: I don't understand the difference between the 2 bars |
+| L3 | **The hovered move's full change shows on the unit its value is read on** (the crosshair from R2), every other unit it could name stays faint, and status ghosts wait for the chosen move: on a hover the wheel's discs stand where they would sit. | 80% | paint check: the ghost chip under Crawler 1 collided with Avilily's discs |
+| L4 | **The inspector says what a companion's body is worth.** Two lines under its speed: how often the machines pick it ("about 15% of the time, less than an even share: they aim at bigger bodies") and how much of each blow it slips by being quicker ("Slips 12% of each Crawler blow: it is quicker"). Both were rules since pass 9 and invisible. | 80% | Nick: why is the bird so weak |
+| L5 | **The planning composition holds through playback.** Playback used to put the defenders back at full size and lower and lift the squad for the action banner; art boxes overlapped by 80 to 120px in every sector during playback (0 while planning), which is the bird meeting the Bulwark's feet in Nick's screenshot. Now nothing moves or grows when the round starts, and the order chips step aside during playback so the banner fits. | 80% | the overlap measure below; the chips are the overridable part |
+
+### Is Avilily weak by design, or is the game not compensating?
+
+By design she is the squad's controller, not a striker, and the game credits her about fairly when she is played well. Her strength is 25, the roster's lowest band, so her pecks land 1 or 2; her worth is elsewhere:
+
+- **Binds.** Her signature paralyzes a machine outright; her Binding Rake stops a closing attack 40% of the time. With the preset squad she denies the machines 4.6 to 5.1 turns a run, the most in the squad.
+- **Her body.** Machines pick by size, so she draws about 15% of their attacks against an even share of 25%, and at speed 72 she slips 12% of each crawler blow. She takes 11 to 14 damage a run where Graviclaw takes 25 to 30.
+
+Measured over 800 random drafts under the look-ahead player (the one that plans): Avilily reads −0.05 encounters against the average pick, in the lower third but inside the spread (Hypnopet −0.08 to Xylum +0.10, standard deviation 0.05). Under the naive player she reads −0.31, third worst, because her value is in timing the binds. So the gap is in how hard she is to play, and until this pass the screen hid most of what she does.
+
+Tried and not shipped: binds lasting two of the victim's opportunities (`BIND_OPPORTUNITIES` 2). Avilily moves from −0.05 to +0.03 and the spread tightens from 0.05 to 0.04, but random orders on the preset squad win 39% instead of 25% and the naive player 96% instead of 93%. The game gets easier for careless play and the help to controllers is inside the noise at this facility, so the Snare rule stays at one opportunity.
+
+### The overlap, measured
+
+Largest overlap of any squad art box with any defender art box while standing (acting units excluded), from a save at the start of each sector, first round:
+
+| | planning | playback |
+|---|---|---|
+| live site before this pass, 1675x890 | 0 in every sector | 79 to 118px in all four (Avilily into a crawler or the Bulwark, Graviclaw into the guardian) |
+| this pass, 1280x720, 1675x890, 2560x1440 and 390x844 | 0 | 0 |
+
+Holding the planning composition meant the squad no longer rises for the action banner, so two more changes keep the banner clear of the plaques (measured 0px of cover at every size): the order chips step aside while a round plays (the banner names each beat's actor and move, and the turn strip marks who has acted), the banner is set tighter, and in a crowded room the squad stands 2% higher in both phases. The move card still clears every plaque in the crowded rooms, desktop and phone. On a phone a plate is too narrow for the bar and "14 → 6" side by side, so while a change shows it reads on its own line under the bar.

@@ -898,6 +898,11 @@
 	animation: starfield-drift-far 560s linear infinite;
 }
 
+/* Scrolled away (components/starfield.tsx): the drift stops until the sky is back. */
+.starfield[data-idle]::before,
+.starfield[data-idle]::after,
+.starfield[data-idle] > .starfield-far { animation-play-state: paused; }
+
 /* Each layer travels exactly one tile, so the loop is seamless. */
 @keyframes starfield-drift-near { to { transform: translate3d(-340px, 170px, 0); } }
 @keyframes starfield-drift-mid  { to { transform: translate3d(-240px, 120px, 0); } }

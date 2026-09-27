@@ -336,6 +336,20 @@
   justify-content: center;
   border-bottom-color: #bca779;
 }
+/* Legible effects (2026-09-26): the squad no longer rises when a round starts, so the banner
+   is set tighter to fit under their plaques. */
+@media (min-width: 601px) {
+  .pw-action-banner {
+    padding: 2px 14px 3px;
+  }
+  .pw-action-banner strong {
+    line-height: 1.1;
+  }
+  .pw-action-banner-line {
+    margin: 0;
+    line-height: 1.2;
+  }
+}
 .pw-action-banner.signature {
   border-bottom-color: var(--lime);
 }

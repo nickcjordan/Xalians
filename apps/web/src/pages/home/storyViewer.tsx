@@ -253,7 +253,12 @@ export function StoryViewer({ id, title, beats, after }: { id: string; title: Re
 	}, [restBy]);
 
 	// Play: scroll the page to where the viewer rests, and let resting start the recording as it always does.
+	// The key goes away as the screen tunes in, so a keyboard reader's focus moves to the beat it plays
+	// rather than falling out to the page.
 	const play = React.useCallback(() => {
+		const box = boxRef.current;
+		const scene = box?.querySelector<HTMLElement>('.story-scene[data-state="active"]');
+		if (scene && box?.contains(document.activeElement)) scene.focus({ preventScroll: true });
 		const by = restBy();
 		if (by == null || Math.abs(by) < 1) return;
 		window.scrollTo({ top: window.scrollY + by, behavior: reducedMotion() ? 'auto' : 'smooth' });
@@ -381,13 +386,14 @@ export function StoryViewer({ id, title, beats, after }: { id: string; title: Re
 						return (
 							<div
 								key={b.key}
-								className="story-scene"
+								className="story-scene focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
 								role="group"
 								aria-roledescription="slide"
 								aria-label={`${b.n} of ${beats[count - 1].n}: ${b.label}`}
 								aria-hidden={i === index ? undefined : true}
 								inert={i === index ? undefined : true}
 								data-state={i === index ? 'active' : i < index ? 'past' : 'future'}
+								tabIndex={i === index ? -1 : undefined}
 							>
 								{b.render(liveNow(i), shown, i === index ? screen : 'standby', i === index && visible && screen !== 'standby' && screen !== 'off', play)}
 							</div>

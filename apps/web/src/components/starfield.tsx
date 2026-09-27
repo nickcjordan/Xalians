@@ -25,8 +25,14 @@ function useStarfieldFade(ref: React.RefObject<HTMLDivElement | null>) {
 			if (fade === shown) return;
 			shown = fade;
 			el.style.opacity = fade;
-			// Gone entirely: its drifting layers stop costing anything.
-			el.style.visibility = fade === '0.000' ? 'hidden' : '';
+			// Gone entirely: hidden, and its drift paused. Hiding alone is not enough: a hidden layer
+			// cannot be drifted by the compositor, so Chrome drifts it on the main thread instead, restyling
+			// the page on every frame (measured 2026-09-27: about 160 ms a second of main thread on the home
+			// page, the whole time the reader is below the hero). Paused, it resumes where it stopped.
+			const gone = fade === '0.000';
+			el.style.visibility = gone ? 'hidden' : '';
+			if (gone) el.dataset.idle = '';
+			else delete el.dataset.idle;
 		};
 		const onScroll = () => {
 			if (!frame) frame = window.requestAnimationFrame(apply);

@@ -388,6 +388,14 @@ describe("Powerworks player flow", () => {
     });
     expect(card().textContent).toBe(other);
   });
+  it("says what a companion's body is worth in the inspector (legible effects)", () => {
+    mount();
+    fireEvent.click(screen.getByRole("button", { name: "Enter the facility" }));
+    fireEvent.click(screen.getByRole("button", { name: /^Inspect Avilily/ }));
+    const lines = document.querySelector(".pw-holds-up")!;
+    expect(lines).toHaveTextContent(/Machines pick it about 1[0-9]% of the time, less than an even share/);
+    expect(lines).toHaveTextContent(/Slips [0-9]+% of each Crawler blow: it is quicker\./);
+  });
   it("shows what standing orders take, and marks an order that would do nothing (readout pass)", () => {
     mount();
     fireEvent.click(screen.getByRole("button", { name: "Enter the facility" }));
@@ -726,7 +734,9 @@ describe("Powerworks player flow", () => {
       expect(unit).toHaveClass("targetable");
       expect(unit.querySelector(".pw-target-ring")).not.toBeNull();
       expect(unit.querySelector(".pw-hp-chunk")).not.toBeNull();
-      expect(unit.querySelector(".pw-hp-delta")).toHaveTextContent(`−${hit}`);
+      // Legible effects: the change reads before and after, where the health number sits.
+      expect(unit.querySelector(".pw-hp-delta .pw-hp-from")).toHaveTextContent(String(m1.hp));
+      expect(unit.querySelector(".pw-hp-delta .pw-hp-to")).toHaveTextContent(String(m1.hp - hit));
       expect(unit.querySelector(".pw-status-badge.ghost")).toHaveTextContent(`slowed${slowed}%`);
       for (const id of ["C", "A", "G"])
         expect(document.querySelector(`[data-unit="${id}"]`)).toHaveClass("ineligible");
@@ -915,11 +925,17 @@ describe("Powerworks player flow", () => {
       const cannon = screen.getByRole("menuitem", { name: /^Hippochamp: Emergency Water Cannon/ });
       expect(document.querySelector(".pw-scene-unit.hinted")).toBeNull();
       fireEvent.pointerEnter(cannon);
+      // The machine the disc's value is read on shows its full change, before and after; the
+      // other one it could name previews faintly (legible effects).
+      const lead = document.querySelector(".pw-scene-unit:has(.pw-referent)")!;
+      expect(lead.querySelector(".pw-hp-delta .pw-hp-to")).not.toBeNull();
       for (const id of ["M1", "M2"]) {
         const unit = document.querySelector(`[data-unit="${id}"]`)!;
-        expect(unit).toHaveClass("hinted");
-        expect(unit.querySelector(".pw-target-ring.faint")).not.toBeNull();
-        expect(unit.querySelector(".pw-health.faint .pw-hp-chunk")).not.toBeNull();
+        expect(unit.querySelector(unit === lead ? ".pw-target-ring" : ".pw-target-ring.faint")).not.toBeNull();
+        if (unit !== lead) {
+          expect(unit).toHaveClass("hinted");
+          expect(unit.querySelector(".pw-health.faint .pw-hp-chunk")).not.toBeNull();
+        }
         // Water against the sand crawlers: strong, said in words on the mark's tooltip.
         expect(unit.querySelector(".pw-matchup.strong")).toHaveAttribute("title", "Strong: water against sand");
       }
@@ -930,7 +946,7 @@ describe("Powerworks player flow", () => {
       expect(document.querySelector(".pw-scene-unit.hinted, .pw-target-ring.faint, .pw-matchup")).toBeNull();
       // An unavailable disc previews nothing.
       fireEvent.pointerEnter(screen.getByRole("menuitem", { name: /^Hippochamp: Water Sweep/ }));
-      expect(document.querySelectorAll(".pw-scene-unit.hinted")).toHaveLength(2);
+      expect(document.querySelectorAll(".pw-scene-unit.hinted")).toHaveLength(1);
       fireEvent.pointerLeave(screen.getByRole("menuitem", { name: /^Hippochamp: Water Sweep/ }));
       // The chosen move keeps its chevrons on each target, beside the outcome.
       fireEvent.click(cannon);
