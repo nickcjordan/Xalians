@@ -545,7 +545,6 @@ export function MoveCardContent({
   blocked: boolean;
   id: string;
 }) {
-  const Range = melee(move) ? Swords : Crosshair;
   const control = binds(move);
   const ward = guards(move);
   const heal = healsFor(unit, move);
@@ -553,15 +552,9 @@ export function MoveCardContent({
   const unsupported = move.effects.filter((e) => e.support === "unsupported");
   return (
     <>
-      <span
-        className={`pw-card-emblem ${control ? "control" : ward ? "ward" : ""}`}
-        aria-hidden="true"
-      >
-        <MoveIcon move={move} />
-      </span>
       <span className="pw-card-identity">
+        {/* Move plates: no range icon, which stood alone above most names; the word only. */}
         <span className="pw-card-category" aria-hidden="true">
-          {(move.signature || control || ward || charges(move)) && <Range />}
           {move.signature && "Signature"}
         </span>
         <strong title={fullName ? undefined : move.name}>
@@ -621,13 +614,10 @@ export function MoveCardContent({
             cooldown === null || limit === 0 ? "Repeatable" : "Ready"
           )}
         </span>
-        <span className="pw-card-charges">
-          {cooldown === null || limit === 0
-            ? "∞"
-            : Array.from({ length: limit }, (_, n) => (
-                <i key={n} className={n < limit - cooldown ? "full" : ""} />
-              ))}
-        </span>
+        {/* Move plates: how long it rests, in the plate's words, for pips and an infinity. */}
+        {!move.signature && limit > 0 && cooldown !== null && (
+          <span className="pw-card-charges pw-rest-word">rests {limit}</span>
+        )}
         {move.fallback && (
           <span className="pw-card-recoil">
             <RotateCcw />−{DESPERATE_STRIKE_RECOIL} HP
@@ -1013,14 +1003,16 @@ export const valueTotal = (v: ValueReading) => v.harm + v.saved + (v.healed ?? 0
 /**
   Words pass (2026-09-27, audit run 1). No reader without the guide read the value bar as what a
   move does: all read it as a cost, a cooldown or charges. The effect is said instead, in the
-  words and numbers the readers did read: "8 dmg", "8 dmg on 2", "KO", "stops 7", "heals 6",
+  words and numbers the readers did read: "8 dmg", "8 dmg across 2", "KO", "stops 7 dmg", "heals 6",
   "no effect". The value's tooltip says the rest.
 */
 export function effectParts(v: ValueReading & { reached?: number; squad?: boolean }): { kind: string; text: string }[] {
   const out: { kind: string; text: string }[] = [];
-  if (v.harm > 0) out.push({ kind: "harm", text: `${v.harm} dmg${(v.reached ?? 1) > 1 ? ` on ${v.reached}` : ""}` });
+  // Move plates pass: readers took "8 dmg on 2" for 8 on each machine, against a plate that
+  // read 14 → 10, and asked what "stops 7" stops; the split and the unit are now said.
+  if (v.harm > 0) out.push({ kind: "harm", text: `${v.harm} dmg${(v.reached ?? 1) > 1 ? ` across ${v.reached}` : ""}` });
   if (v.knockout) out.push({ kind: "knockout", text: "KO" });
-  if (v.saved > 0) out.push({ kind: "saved", text: `${v.squad ? "guards" : "stops"} ${v.saved}` });
+  if (v.saved > 0) out.push({ kind: "saved", text: `${v.squad ? "guards" : "stops"} ${v.saved} dmg` });
   if ((v.healed ?? 0) > 0) out.push({ kind: "healed", text: `heals ${v.healed}` });
   if (!out.length) out.push({ kind: "none", text: "no effect" });
   return out;

@@ -77,7 +77,6 @@ import {
   Portrait,
   ElementIcon,
   MoveCardContent,
-  PowerIcon,
   effectSummary,
   areaSummary,
   actsOnSelf,
@@ -2252,29 +2251,6 @@ export default function PowerworksPage() {
         )}
         {panel === "guide" && (
           <>
-            <div className="pw-symbol-key" aria-label="Move symbol key">
-              <span>
-                <Swords /> Melee attack
-              </span>
-              <span>
-                <Crosshair /> Ranged attack
-              </span>
-              <span>
-                <PowerIcon /> Base power
-              </span>
-              <span>
-                <Link2 /> Binding opportunities
-              </span>
-              <span>
-                <Crown /> Signature move
-              </span>
-              <span>
-                <RotateCcw /> Health recoil
-              </span>
-              <span>
-                <i className="pw-key-pip" /> Cooldown rounds
-              </span>
-            </div>
             <div className="pw-guide-steps">
               <span>
                 <Portrait u={run.team[0] ?? starter[0]} small />
@@ -2337,13 +2313,18 @@ export default function PowerworksPage() {
                   Reading a move
                 </h3>
                 <p>
-                  Under each move, what it would do this round on the target
-                  it does the most with: "8 dmg", "8 dmg on 2" when it also
-                  hits a second machine, "KO" when it knocks that machine
-                  out, "stops 7" when it prevents a blow, "heals 6", or "no
-                  effect" (point at it to see why). That target shows the
-                  full change on its plate; aim at another and the card
-                  follows.
+                  Each move is a plate over the companion: its name, then
+                  what it would do this round on the target it does the most
+                  with: "8 dmg", "8 dmg across 2" when it splits its harm
+                  over a second machine, "KO" when it knocks that machine
+                  out, "stops 7 dmg" when it prevents that much of a blow, "heals 6", or "no effect" (point at
+                  it to see why). That target shows the full change on its
+                  plate; aim at another and the card follows. Under a line,
+                  what using it costs: "once" when it can be used once per
+                  fight, "lands next round" when it winds up this round, and
+                  "rests 1" when it cannot be used for a round after. A plate
+                  that cannot be used now says why instead: "spent", "cooling
+                  2".
                 </p>
                 <p>
                   Any change a move would make is said as before and after
@@ -2352,9 +2333,7 @@ export default function PowerworksPage() {
                   and shows as a darker chunk at the end of the bar. Under
                   each machine, "next hit 7" is the attack it is poised to
                   land on one of your squad; when your orders stop it before
-                  it strikes, it reads 7 → 0. A move marked "once" can be
-                  used once per fight; one with an hourglass winds up this
-                  round and lands next round. On the turn order, "later" and
+                  it strikes, it reads 7 → 0. On the turn order, "later" and
                   "sooner" show who the move in hand would move, and a check
                   marks a companion whose order is set. Inspect a companion to
                   see how often the machines pick it, and how much of each
