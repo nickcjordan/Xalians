@@ -1,0 +1,61 @@
+{
+  "species": "akinza",
+  "candidateId": "run-0004",
+  "status": "rejected",
+  "generation": {
+    "tool": "image_gen.imagegen",
+    "model": null,
+    "seed": null,
+    "unavailableMetadata": "Built-in tool exposed neither model nor seed.",
+    "recordedAt": "2026-09-27T18:06:40.547371+00:00",
+    "billingRoute": "Codex subscription",
+    "prompt": "Create ONE FRONT VIEW only, square canvas, white background, with generous white margins. Image 1 is the preferred STYLE AND FACE reference chosen by the designer: use the first/front creature's charming large oval eyes, smooth soft furry form, restrained fur texture, gentle gray shading, face and small paws. Preserve that appealing simple animated-character look. Do not become heavily shaggy, realistic, muscular, or feathered. Image 2 is the exact required FRONT SHAPE AND POSE template.\nFit the preferred rendering style INSIDE the black contour of Image 2, replacing the black with mid-gray shaded furry volume. Precisely follow Image 2's outline and proportions, including the very long three tail plumes, their individual shapes and gaps, huge sideways ears, slender body, asymmetric elbows with hands on hips and unequal legs. The tail fan must extend far to the viewer's right at the same height and length as the black template, not the shorter tail fan in the style reference.\nOnly the eyes may freely reinterpret the white squiggles: use Image 1's two large distinctive oval eyes at Image 2's eye positions. Ear edge points mean soft shaggy fur, not jagged anatomy. Keep the small muzzle, inner-ear fur, and delicate hands. No new chest marking; shading only. No change of camera or stance. No props, clothing, text, ground shadows, extra limbs or tails. Return a single full-body front view, not a sheet.\n",
+    "inputs": [
+      {
+        "path": "untracked\\species-views\\akinza\\run-0004\\inputs\\preferred-style.png",
+        "sha256": "cd172ed009b20b65a93f02ac33b9f0af15d47dd78a7448ba9767996a52af1fcb"
+      },
+      {
+        "path": "untracked\\species-views\\akinza\\run-0004\\inputs\\reading.md",
+        "sha256": "9e7caf74e9dbe43f3630a54c63a420928ff783f2e41156ade1e6b1c548c9a4ad"
+      },
+      {
+        "path": "untracked\\species-views\\akinza\\run-0004\\inputs\\shape.png",
+        "sha256": "93568782132baea844a594223aaa498e16e94692b7d11dc8f12f6cf2bd773eae"
+      }
+    ],
+    "submittedImages": [
+      "inputs/preferred-style.png",
+      "inputs/shape.png"
+    ],
+    "inputNote": "The submittedImages list identifies actual tool image arguments. Other input snapshots are preparation and provenance sources.",
+    "output": {
+      "path": "untracked\\species-views\\akinza\\run-0004\\front.png",
+      "sha256": "e5336814077ac41ac0b2f895da1141948b56606ba2587fb23efff5fd7d8a2ba3",
+      "size": [
+        1254,
+        1254
+      ]
+    }
+  },
+  "readingApproval": {
+    "date": "2026-09-27",
+    "source": "Current Codex chat",
+    "quote": "the \"ragged edge ears\" are supposed to just be shaggy hair, not jagged edges. Regarding the eyes, the squiggle eyes that are there are more of an abstraction. So I just want the eyes to be something big and unique looking more than explicitly wanting you to have the jagged look. but sure lets see what you produce from these"
+  },
+  "approval": null,
+  "checks": {
+    "status": "fail",
+    "frontOccupancyIoU": 0.7041637884154676,
+    "threshold": 0.95,
+    "missing": [
+      "Other five views",
+      "Complete feature correspondence",
+      "Semantic masks and landmark review"
+    ],
+    "clipping": {
+      "touchesOriginalEdge": false,
+      "note": "Diagnostic padding cannot restore any lost pixels."
+    }
+  }
+}
