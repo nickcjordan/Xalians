@@ -95,16 +95,39 @@ describe('catchAtRest', () => {
 		expect(held()).toBe(false);
 	});
 
-	it('never holds past the longest hold while input keeps coming', () => {
+	it('holds for as long as the wheel keeps turning, however long, and takes the scroll away meanwhile', () => {
 		stop = catchAtRest(() => REST);
 		scrollBy(1950);
 		wheel(120);
-		for (let i = 0; i < 30; i++) {
-			vi.advanceTimersByTime(100);
-			wheel(40);
+		expect(held()).toBe(true);
+		for (let i = 0; i < 100; i++) {
+			vi.advanceTimersByTime(200);
+			wheel(120);
+			scrollBy(REST + 120);
+			expect(y).toBe(REST);
 		}
-		scrollBy(2100);
-		expect(y).toBe(2100);
+		expect(held()).toBe(true);
+		// A complete stop, then the next turn goes on.
+		vi.advanceTimersByTime(400);
+		expect(held()).toBe(false);
+		wheel(120);
+		scrollBy(2120);
+		expect(y).toBe(2120);
+	});
+
+	it('does not let go when a busy main thread delays its quiet check past turns still queued', () => {
+		stop = catchAtRest(() => REST);
+		scrollBy(1950);
+		wheel(120);
+		// The main thread is busy for over a second: the check runs late, before the queued turns are heard.
+		vi.setSystemTime(Date.now() + 1200);
+		vi.advanceTimersByTime(300);
+		expect(held()).toBe(true);
+		wheel(120);
+		vi.advanceTimersByTime(200);
+		expect(held()).toBe(true);
+		vi.advanceTimersByTime(400);
+		expect(held()).toBe(false);
 	});
 
 	it('lets a jump through: no wheel, swipe or key behind it (a link, the scrollbar, find in page)', () => {
@@ -157,6 +180,30 @@ describe('catchAtRest', () => {
 		wheel(-120);
 		scrollBy(4000);
 		expect(y).toBe(4000);
+	});
+
+	it('puts the hold back on for a turn made before the let-go but heard after it', () => {
+		const onHold = vi.fn();
+		stop = catchAtRest(() => REST, onHold);
+		scrollBy(1950);
+		wheel(120);
+		expect(onHold).toHaveBeenLastCalledWith(true);
+		vi.advanceTimersByTime(400);
+		expect(onHold).toHaveBeenLastCalledWith(false);
+		// Queued behind a busy browser: made before the let-go.
+		const late = new WheelEvent('wheel', { deltaY: 120 });
+		Object.defineProperty(late, 'timeStamp', { value: performance.now() - 300 });
+		y = 2120;
+		window.dispatchEvent(late);
+		expect(held()).toBe(true);
+		expect(y).toBe(REST);
+		vi.advanceTimersByTime(400);
+		// A new turn, made after the let-go, goes on.
+		const next = new WheelEvent('wheel', { deltaY: 120 });
+		Object.defineProperty(next, 'timeStamp', { value: performance.now() + 10 });
+		window.dispatchEvent(next);
+		scrollBy(2120);
+		expect(y).toBe(2120);
 	});
 
 	it('takes everything away when stopped', () => {
