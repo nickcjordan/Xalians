@@ -38,8 +38,20 @@ The side and true overhead views now show full curved volumes and substantial de
 
 ![Fuller rounded-tail geometry turntable](evidence/tail-probe-0002-turntable.gif)
 
+## probe-0003: direct body fusion and pointed taper
+
+Nick asked for pointier tips, then clarified: "Yes, and I also think you need to fix where the tail splits. Right now it's shaped more like a trident where there's one base and it branches later. But what I want is more like three distinct tails coming to one base where they're all fusing together at the base and body together". He authorized continuation with "proceed with adjustments".
+
+The [new spec](probe-spec-0003.json) removes the trunk sweep entirely. All three tail sweeps start at the spinal attachment and fuse into a compact base touching the body. Their paths diverge immediately, retaining round cross sections and depth. Each tail narrows over a longer terminal section into a pointed end. The pelvis is unchanged. This supersedes probe-0002's delayed split and rounded caps, while preserving its fuller volume direction.
+
+The mesh has one connected component, zero nonmanifold edges and 72,122 vertices. Eleven actual camera views and alpha-derived masks are retained. These are technical geometry checks, not Nick's approval. Full-body proportion, fur and final topology remain outside this local study.
+
+![Three tails fused directly at the body, with pointed taper](evidence/tail-probe-0003-contact.png)
+
+![Direct-fusion pointed-tail geometry turntable](evidence/tail-probe-0003-turntable.gif)
+
 ## Approval state and next action
 
 Nick's earlier direction on root, fork, restrained pelvis, eye interpretation, hair and style is retained. He has not approved the new modeling pose, these construction images, this probe, or a final pack. All stage approval fields remain null.
 
-The concrete next design review is probe-0002's fuller cattail-like shape. This correction invalidates earlier flat-tail references; their stale input records are retained rather than refreshed onto unchanged images. Use the accepted result to correct the construction master, then make the complete rough creature. Do not promote either failed generated sheet to skip that review.
+The concrete next design review is probe-0003's direct body fusion and pointed full tails. Earlier flat, blunt-tip and delayed-split references remain superseded, with stale input records retained rather than refreshed onto unchanged images. Use the accepted result to correct the construction master, then make the complete rough creature. Do not promote either failed generated sheet to skip that review.

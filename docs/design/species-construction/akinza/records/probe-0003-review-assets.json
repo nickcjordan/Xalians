@@ -1,0 +1,63 @@
+{
+  "geometryReportSha256": "120bf3ae476a26ab9b149798fbb42540459c3a80eb1bb7f8e309b8274569233b",
+  "masks": {
+    "rear.occupancy.png": {
+      "sourceSha256": "366af83ecf67f1a16058bc1ba8abbb571d4e4c1bc5f910556a29b3a148f5745e",
+      "sha256": "f8800a94e1b4b856134c558f9a34a7cba70ae60500762305dcdec3c44fa74abe",
+      "method": "render alpha >= 128; black foreground"
+    },
+    "left.occupancy.png": {
+      "sourceSha256": "ad69337c17bab92f3d4f07e7b33069f97e8d8494069b4e5f6062d40b86551dd6",
+      "sha256": "3715fee47d34b032b98aa23587b45e50f362e27522222ed97a6123ff233aba53",
+      "method": "render alpha >= 128; black foreground"
+    },
+    "above.occupancy.png": {
+      "sourceSha256": "2f749ab228bde3ccbfb59bbf1f38ab149a397c6af7d56119e355384639745095",
+      "sha256": "2be9b975c689564e377aeef53e92609c0995f110fddd96a49e4d6ae3aa9ec557",
+      "method": "render alpha >= 128; black foreground"
+    },
+    "turn-000.occupancy.png": {
+      "sourceSha256": "55ef56a4e5dd131cda88ba12b7c5d2a35ce617b53a8389d37c9061d179276d1c",
+      "sha256": "10deacc5301a001ab10ef9178dbed024671c1184a3fe08b116f2701b1a9a5d32",
+      "method": "render alpha >= 128; black foreground"
+    },
+    "turn-045.occupancy.png": {
+      "sourceSha256": "b9e28148117192d8982ed7ce9c142c2e7e044eb5ac55c53bde206ad58cda70a0",
+      "sha256": "4447c958a20d81410e2d7532142833dc7259657459ef7edbe06eb8f1c1ad3f75",
+      "method": "render alpha >= 128; black foreground"
+    },
+    "turn-090.occupancy.png": {
+      "sourceSha256": "c5f3847488653d341138f2ae046e2381a578ce1c1248a9544cb21b842d642d5c",
+      "sha256": "88e4595baec4c41ef7f7bf5f58eb25e9281ee368f450b3c14bfefb83b357b02a",
+      "method": "render alpha >= 128; black foreground"
+    },
+    "turn-135.occupancy.png": {
+      "sourceSha256": "306ac87f3dd96ca214874dd3f341dd47bb1575c6d8a737e2413e86c4178d488c",
+      "sha256": "2afa1a5288ca9ff9f34916893de12aa715257072e1ccd9d22d66aeaa27de3025",
+      "method": "render alpha >= 128; black foreground"
+    },
+    "turn-180.occupancy.png": {
+      "sourceSha256": "cc4d4a8b954baaed27c00878f9864fd4fec5e4d008a98fb63ea31a5ed7116557",
+      "sha256": "02224378560b90ff29a628fa9bc106b56ef4a5d12c5bc6b21ee0dfc8d405d4c9",
+      "method": "render alpha >= 128; black foreground"
+    },
+    "turn-225.occupancy.png": {
+      "sourceSha256": "5c2c2b52ad975498d71b6a24129405f10f49f4048d6df8b99c2569d41fe7ea20",
+      "sha256": "5b14734a2f4d16a9774231f6e0015a7c440de76378b1b3b07eae9cbebac9b9c5",
+      "method": "render alpha >= 128; black foreground"
+    },
+    "turn-270.occupancy.png": {
+      "sourceSha256": "206794478c40580bb3e36c05c5ef98eadb6f813428c5f6ff4e257b2e492cdac3",
+      "sha256": "4634cab5b442588a293a18e0f0bdf374406544285d5e7663ba09bbf883306fd3",
+      "method": "render alpha >= 128; black foreground"
+    },
+    "turn-315.occupancy.png": {
+      "sourceSha256": "83815b83f735c5073ebe573785fb2e40df8c951d35da682cdd72341edae765b5",
+      "sha256": "3eba4b5b5abbc14d39860247e722c661be514d8588cfb5975da6fac79bcb520c",
+      "method": "render alpha >= 128; black foreground"
+    }
+  },
+  "contactSha256": "6348f6e327bc5d740d2ba0ad693f9b8fb0f38a176339960dcd6356eac33a2eda",
+  "turntableSha256": "e3caa1a48f61371f63abc4f839a6a857912b20db7ef3dba8c04c5a75c4f4815a",
+  "approval": null
+}

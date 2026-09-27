@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "species": "akinza",
+  "status": "provisional-fused-base-pointed-tail-probe",
+  "designIntent": "Three distinct full rounded tails fuse directly with each other and the body at a compact spinal base. No projecting common trunk or delayed trident split. Each tail narrows through a sustained taper to a point.",
+  "coordinateSystem": {"x": "creature left", "y": "rear", "z": "up", "units": "arbitrary construction units, not measured anatomy"},
+  "target": [0.9, 0.28, 0.12],
+  "orthoScale": 3.2,
+  "voxelSize": 0.015,
+  "volumes": [
+    {"id": "pelvis", "center": [0, 0, 0.0], "scale": [0.34, 0.20, 0.46]},
+    {"id": "lower-torso", "center": [0, -0.015, 0.46], "scale": [0.26, 0.18, 0.43]},
+    {"id": "left-upper-leg", "center": [0.20, 0, -0.43], "scale": [0.18, 0.17, 0.40]},
+    {"id": "right-upper-leg", "center": [-0.20, 0, -0.43], "scale": [0.18, 0.17, 0.40]},
+    {"id": "tail-fused-base", "center": [0, 0.17, 0.08], "scale": [0.16, 0.15, 0.19]}
+  ],
+  "sweeps": [
+    {"id": "plume-upper", "controls": [[0,0.15,0.10,0.13,0.13],[0.12,0.27,0.34,0.15,0.15],[0.42,0.33,0.63,0.20,0.20],[0.86,0.31,0.84,0.25,0.25],[1.24,0.30,0.88,0.24,0.24],[1.55,0.32,0.81,0.19,0.19],[1.78,0.36,0.69,0.10,0.10],[1.97,0.40,0.55,0.01,0.01]]},
+    {"id": "plume-middle", "controls": [[0,0.16,0.08,0.13,0.13],[0.27,0.46,0.09,0.17,0.17],[0.71,0.67,0.10,0.22,0.22],[1.17,0.81,0.11,0.26,0.26],[1.57,0.88,0.10,0.24,0.24],[1.89,0.88,0.02,0.18,0.18],[2.10,0.85,-0.10,0.09,0.09],[2.27,0.80,-0.24,0.01,0.01]]},
+    {"id": "plume-lower", "controls": [[0,0.15,0.06,0.13,0.13],[0.14,0.28,-0.17,0.15,0.15],[0.43,0.42,-0.44,0.20,0.20],[0.88,0.53,-0.75,0.25,0.25],[1.23,0.52,-0.87,0.24,0.24],[1.56,0.48,-0.86,0.19,0.19],[1.80,0.44,-0.76,0.10,0.10],[1.99,0.40,-0.61,0.01,0.01]]}
+  ]
+}

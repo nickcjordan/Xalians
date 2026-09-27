@@ -14,9 +14,9 @@ Three long, broad, pointed plume shapes sweep to Akinza's left, the viewer's rig
 
 ## Approved depth interpretation for the pilot
 
-Nick confirmed this correction after his back-view feedback: treat the tail as one shared root on the rear centerline, at the base of the spine just above the buttocks, opening into three distinct furry plumes. It does not grow from the side of the hip, flank, or either buttock. The root remains centered while a short common base bends toward Akinza's left behind the pelvis. The plumes fan left and slightly backward from that base. Nick subsequently rejected a shallow, flat interpretation: each plume needs full rounded cattail-like volume, soft tips and meaningful depth rather than a flat fork or blade. In front, the hip hides the central root; the point where the fan becomes visible beside the body is not its anatomical origin. The drawing establishes the three shapes; Nick's direction resolves their hidden attachment and volume.
+Nick confirmed the attachment on the rear centerline at the base of the spine, not the hip, flank or either buttock. His latest correction specifies three distinct tails fused together and into the body at that compact shared base. They separate immediately at the body and sweep left and slightly backward; there is no extended shared stalk before they branch. Each tail has full rounded cattail-like volume, meaningful depth and a sustained taper to a pointed tip. In front, the hip hides the central fusion; the point where the tails become visible beside the body is not their anatomical origin. The drawing establishes the three shapes; Nick's direction resolves their hidden attachment and volume.
 
-Nick's next correction makes the junction explicit: all three plume stems merge smoothly into one substantial common base, like branches joining a tree trunk. Each plume must have a continuous, visible connection through that junction to the spinal root. Do not let two plumes appear to originate in empty space behind a third foreground tail. Favor one shallow, readable three-way fork near the common base, with blended transitions and no crossing stems hiding the joins. This is a furry anatomical junction, not literal wood or a new appendage.
+Each tail must have a continuous, visible connection into the shared body-level fusion. Do not let two tails appear to originate in empty space behind a third foreground tail. The earlier tree-trunk analogy established continuity, but Nick has now rejected a trident-like common stalk with a delayed split. The three distinct tails and body blend together directly at the base. Preserve smooth organic transitions without a long neck, disconnected roots or crossing stems hiding the joins.
 
 Reduce the prominence of the buttock forms. The rear pelvis should be modest, flatter, and softly fur-covered, without a pronounced buttock cleft, rounded cheek highlights, or exaggerated hourglass shaping. Preserve the established stance and hands-on-hips pose while reducing that emphasis.
 
@@ -84,3 +84,9 @@ Tail volume correction, 2026-09-27:
 > It should feel fuller what you built is too flat, It should look closer to three cattails than whatever fork-looking thing you have there
 
 This rejects probe-0001's flattened volume. Carry forward three rounded, full tail forms with nearly circular cross sections and soft taper while preserving their shared root and continuous junction. The existing source silhouette remains abstract; its broad drawn plume outlines must not be interpreted as thin fins. Probe-0002 exercises this direction and still needs Nick's review.
+
+Base and taper correction, 2026-09-27: Nick asked whether the tips were insufficiently pointed. After the explanation that taper belongs in this geometry layer, he said:
+
+> Yes, and I also think you need to fix where the tail splits. Right now it's shaped more like a trident where there's one base and it branches later. But what I want is more like three distinct tails coming to one base where they're all fusing together at the base and body together
+
+He then said "proceed with adjustments". This authorizes the pointed-taper and compact body-level fusion changes. Probe-0003 implements that direction as an unapproved study. It supersedes the earlier common-trunk and blunt-tip interpretation.

@@ -2,21 +2,20 @@
   "schemaVersion": 1,
   "species": "akinza",
   "scope": "tail attachment interpretation; not the complete skeletal or mesh topology",
-  "decisionIds": ["tail-root", "tail-fork-pelvis", "tail-depth"],
-  "parts": ["pelvis", "tail-root", "tail-trunk", "tail-junction", "plume-upper", "plume-middle", "plume-lower"],
+  "decisionIds": ["tail-root", "tail-fork-pelvis", "tail-depth", "tail-taper"],
+  "parts": ["pelvis", "tail-root", "plume-upper", "plume-middle", "plume-lower"],
   "connections": [
     {"parent": "pelvis", "child": "tail-root", "region": "rear midline at base of spine", "continuity": "continuous organic surface", "status": "user-direction"},
-    {"parent": "tail-root", "child": "tail-trunk", "region": "short common base", "continuity": "continuous organic surface", "status": "user-direction"},
-    {"parent": "tail-trunk", "child": "tail-junction", "region": "blended common fork", "continuity": "continuous organic surface", "status": "user-direction"},
-    {"parent": "tail-junction", "child": "plume-upper", "region": "upper branch", "continuity": "continuous organic surface", "status": "user-direction"},
-    {"parent": "tail-junction", "child": "plume-middle", "region": "middle branch", "continuity": "continuous organic surface", "status": "user-direction"},
-    {"parent": "tail-junction", "child": "plume-lower", "region": "lower branch", "continuity": "continuous organic surface", "status": "user-direction"}
+    {"parent": "tail-root", "child": "plume-upper", "region": "upper tail fused directly at body", "continuity": "continuous organic surface", "status": "user-direction"},
+    {"parent": "tail-root", "child": "plume-middle", "region": "middle tail fused directly at body", "continuity": "continuous organic surface", "status": "user-direction"},
+    {"parent": "tail-root", "child": "plume-lower", "region": "lower tail fused directly at body", "continuity": "continuous organic surface", "status": "user-direction"}
   ],
   "proposedSpatialInterpretation": {
-    "tail-trunk": "slightly rearward then toward creature left",
-    "plumeFan": "three full rounded cattail-like volumes with meaningful front-back thickness and depth separation; no flat blades or fork-like fan",
+    "tail-root": "compact shared fusion at body; three tails separate immediately, with no projecting common trunk",
+    "plumeFan": "three full rounded cattail-like volumes with depth separation and pointed tapers; no flat blades or delayed trident split",
     "measurements": null,
     "approval": null
   },
-  "exclusions": ["independent tail roots on a hip or buttock", "floating disconnected plume stems", "new creature abilities or lore"]
+  "retiredPartIds": {"tail-trunk": "removed by body-level fusion correction", "tail-junction": "merged into tail-root at body"},
+  "exclusions": ["independent tail roots on a hip or buttock", "floating disconnected plume stems", "extended common stalk before tails divide", "blunt rounded terminal caps", "new creature abilities or lore"]
 }
