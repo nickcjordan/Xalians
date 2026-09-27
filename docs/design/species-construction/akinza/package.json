@@ -68,8 +68,9 @@
       }
     },
     "tail-pose": {
-      "status": "proposal",
-      "instruction": "Compare relaxed down/back with a farther rearward sweep, using rigid orientation of the accepted tail assembly. No pose selected yet.",
+      "status": "deferred",
+      "instruction": "Nick declined A/B pose coaching. Agent chooses a neutral technical arrangement for construction. Expressive posing waits until the complete creature can be judged. Accepted tail form is unchanged.",
+      "source": "Nick, this chat: no, Do I need to be coaching you on the pose here, or is that a later phase",
       "approval": null
     }
   },
@@ -97,7 +98,7 @@
         {
           "path": "docs/design/species-construction/akinza/brief.md",
           "role": "construction-brief",
-          "sha256": "a7a9daeb70de8bf24ac731cffdc2ab4bbbcc5bd40cd1de92145e04a794d2687a"
+          "sha256": "7a4adee1e5168f4b6272acf1909ecee19b4bcc1262bca3eca0a877f3d039fc12"
         },
         {
           "path": "apps/web/src/svg/species/akinza.svg",
@@ -120,15 +121,15 @@
           "tail-depth": "2b54dba1c8276f71db0fc6e9009ed42f87874d540fcf077bcc598a47e90828dc",
           "tail-taper": "211fc8098ff683cf5fcf42dd88e94f0643f39af622a638e98104e2fa0a9df838",
           "tail-shape-acceptance": "4370bf068e5f1fb051167bf99a919d3740c405714d0de4b906e43757bea4cb22",
-          "tail-pose": "5c21084a5d273e1ed71708c355963369c3315bee515ce2891d42c3e51f179935"
+          "tail-pose": "1e1acdbcf653d31f6e808d97ef97d361e4ece868c41afbfa418c67ea077d7230"
         },
         "dependencies": {}
       },
       "review": {
         "status": "pending",
         "reviewer": "Codex",
-        "notes": "Recorded exact shape-only acceptance and explicit pose reservation. Earlier study dependencies remain stale.",
-        "artifactDigest": "281369e796936c1681a1881e01e0d7d4ee82f5f7cdda0167f56f1337bfadbb0a"
+        "notes": "Accepted tail form retained; expressive posing deferred. Return to whole-body construction in neutral technical arrangement.",
+        "artifactDigest": "9a9bcd965f10058fa1644a842dce99f45dc2ebc1e93c545336507ddfbc2b0635"
       },
       "approval": null
     },
@@ -805,7 +806,7 @@
       "review": {
         "status": "pending",
         "reviewer": "Codex",
-        "notes": "Probe-0003 tail shape accepted by Nick, with pose explicitly excluded. Probes 0004/0005 compare rigid orientations of unchanged analytic tail forms. Fused body contact is recomputed. No new pose or complete stage approval claimed.",
+        "notes": "Probe-0003 shape accepted. Pose probes 0004/0005 archived; no A/B selection required. Full-body construction and full rough model remain incomplete.",
         "artifactDigest": "545a4f5990fbabbee84dce1c3d91a00f7760a1c402766090b0cc057d59d33dd9"
       },
       "approval": null

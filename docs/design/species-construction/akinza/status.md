@@ -13,7 +13,7 @@ Generated evidence report. Integrity is not visual or user approval.
 
 ## interpretation
 
-Recorded exact shape-only acceptance and explicit pose reservation. Earlier study dependencies remain stale.
+Accepted tail form retained; expressive posing deferred. Return to whole-body construction in neutral technical arrangement.
 
 ## identity
 
@@ -34,7 +34,8 @@ Generated side/top views are unreliable; use actual geometry probe for the next 
 
 ## geometry
 
-Probe-0003 tail shape accepted by Nick, with pose explicitly excluded. Probes 0004/0005 compare rigid orientations of unchanged analytic tail forms. Fused body contact is recomputed. No new pose or complete stage approval claimed.
+Probe-0003 shape accepted. Pose probes 0004/0005 archived; no A/B selection required. Full-body construction and full rough model remain incomplete.
+- Inputs changed since this study was recorded
 - Upstream evidence is stale or missing: construction
 - Upstream evidence is stale or missing: connections
 
