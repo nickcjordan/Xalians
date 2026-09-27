@@ -329,3 +329,7 @@ The pass bar was 90% on the core planning questions with no guide. Run 2 scores 
 - **The dashed ring on a turn-order portrait** still does not read as "no order yet".
 - **Water Sweep against the Cannon (2b).** One of three readers chose the Cannon because 8 + 8 finishes Crawler 1. That is a defensible plan, not a misreading.
 - **Nick's cold play (3.4) and the one-meaning lint (3.5)** are still to do.
+
+## Move plates (2026-09-27)
+
+Nick's case against the move disc's icon (a magnet on a pull that harms, a crosshair on a move with no effect) led to the move plates round in [powerworks-radial-orders.md](powerworks-radial-orders.md#round-4-move-plates-2026-09-27). The disc's icon, crown, hourglass and rest pips are gone, so run 2's first open item (the hourglass read as a cooldown) is closed: in the plates' reader check, all four readers read "lands next round" correctly. Still open from there: which machine a plate's number is about, and what the rim color means.

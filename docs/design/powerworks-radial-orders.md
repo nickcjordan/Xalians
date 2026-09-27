@@ -146,3 +146,39 @@ Nick, 2026-09-26, on the live playback: it was "a little jumpy and kind of makes
 Reduced motion is unchanged: no camera, no spotlight transitions, the whole beat at once.
 
 **No-blur amendment, 2026-09-26.** Nick: "the blur didn't come across great, it kinda makes me dizzy." Decision 4 changes: nothing on the stage is blurred any more (the room and the bystanders were), and the light no longer travels with the actors (a moving spotlight is motion too). A still vignette darkens the room's edges while a round plays and fades in and out once per round; the room dims a little (brightness 0.88, saturation 0.85); bystanders dim to brightness 0.6 and saturation 0.65 with their plaques at 72%; the beat's actor and target stay at full light. Changes fade over 700 to 900 ms.
+
+## Round 4: move plates, 2026-09-27
+
+Nick, on Graviclaw's wheel: the icons on the hexagon badges "are not really doing that much": one move "has a magnet but does damage", one "has a sword but does damage", and one "has a reticle that apparently doesn't do damage", and "none of those really align when you think about them together". He asked to reconsider "having just one useless icon that's giant inside the badge while having a handful of smaller indicators below the badge": "the whole thing needs to be rethought".
+
+The icon named one kind of act per move (bind, heal, guard, pull, melee, else ranged), picked by a fixed priority, so it could only ever describe one of a move's effects. Since the words pass, the effect itself sits under each move in words ("8 dmg", "stops 7"), so the largest thing on the badge said the least. This round reverses round 2's "Move icon: keep, larger" with that case as the evidence.
+
+| # | Decision | Confidence | Evidence |
+|---|---|---|---|
+| 1 | **A move is one plate.** Each move is a bounded, chamfered plate, read top to bottom: its name, then what it does this round in words and numbers (the loudest thing on it), then under a hairline what using it costs, in words: "once", "lands next round", "rests 1". A plate that cannot be used says why where its effect would stand ("spent", "cooling 2"). No icon stands for the move. | 85% | the Graviclaw case; the words pass readers read words and numbers, not glyphs (audit run 1) |
+| 2 | **The plates stand in a straight row** over the selected companion, clamped inside the stage, with its bottom just clear of the highest head it passes over. The arc suited round discs; plates in a row line up their names, effects and costs, so moves compare at a glance. Every plate in the row is as tall as the tallest. | 75% | paint at 1920x1080, 1366x768 and 390x844 |
+| 3 | **The rim says the kind of move**, as before: steel for physical, the element's hue for elemental, doubled gold for the signature. | 80% | round 3 |
+| 4 | **The signature never shows a rest.** It is used once per fight, so how long it would rest never matters; the plate says "once" and the card drops its rest mark. | 90% | the signature is spent after use (`slotState`) |
+| 5 | **The same icon leaves everywhere it stood for a move:** the move card (its emblem), the order chip on each plaque, and the inspector's move cards (its emblem and the orphan range icon above most names). The inspector says a move's rest in words instead of pips and an infinity sign. | 80% | one meaning per mark |
+| 6 | **The field guide drops its symbol key**, which explained a crown, pips and range icons that no plate carries, and says what a plate reads instead. | 90% | the key was stale since the words pass |
+| 7 | **Effect words carry their split and their unit:** "8 dmg across 2" (was "8 dmg on 2": all four first readers asked whether that meant 8 on each machine, against a plate that read 14 → 10), and "stops 7 dmg" (was "stops 7": readers asked what it stops). | 80% | reader check below |
+| 8 | **Plates the pointer is not on darken rather than fade**, so the stage never shows through their words. | 90% | paint: a faded plate showed a target ring through its text |
+
+Also fixed in this round: the "later" and "sooner" words over a turn-order portrait were cut off by the strip's clip at 1920x1080 (live since the words pass).
+
+### Reader check
+
+Two Opus readers per packet, context-free, the same four moments (Graviclaw's moves, Hippochamp's with the pointer on Water Sweep, a spent signature in the guardian's room, and a phone). Packet p2 is the disc design as live; p1 is the plates; p3 is the plates after decisions 7 and 8. An independent grader scored twelve questions per reader against the engine's facts (record: [powerworks-audit-runs/2026-09-27-plates/](powerworks-audit-runs/2026-09-27-plates/)).
+
+| Packet | Score (2 readers, 12 questions each) |
+|---|---|
+| p2, discs as live | 22 of 24 |
+| p1, plates | 22.5 of 24 |
+| p3, plates revised | 23 of 24 |
+
+The plates do not win on comprehension so much as stop losing it. Readers of both designs read the moves' words and numbers well. Only one question separated them: all four plate readers read "lands next round, rests 2" correctly, and both disc readers had to guess at the hourglass. After decision 7, both readers took "stops 2 dmg" as damage prevented (one p1 reader had read "stops 2" as a delay). No reader in any packet linked a steel or blue rim to a physical or elemental move (blue was read as the hover glow), and gold was always read as the once-per-fight move.
+
+### Open after round 4
+
+- **Which machine a plate's number is about.** Every reader in every packet asked it. The number is the move's best use this round; the target is chosen after the move, and the card then follows the aim. Naming the best target on the plate would read as a suggestion, which the affordances ruling forbids, so it stays for Nick's call.
+- **The row covers a machine's feet** when the companion stands under one (Hippochamp and Crawler 1). The arc did too. The card that replaces the row once a move is chosen stands clear of every unit.
