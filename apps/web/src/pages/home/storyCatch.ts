@@ -20,9 +20,10 @@
 //
 // A busy browser can hold a spinning wheel's turns back and deliver them late,
 // after the quiet check has already let go. Two things keep that from carrying
-// the page past: the screen does not tune in (the heavy moment) until the hold
-// has let go (`onHold`, storyViewer.tsx), and a turn that arrives after the
-// let-go but was made before it (its timeStamp says so) puts the hold back on.
+// the page past: the recording's picture, the heavy moment, does not go into
+// the page until the hold has let go (`onHold`, storyViewer.tsx; the screen
+// itself tunes in at once), and a turn that arrives after the let-go but was
+// made before it (its timeStamp says so) puts the hold back on.
 //
 // CSS scroll snapping was measured first and does not do this: Chrome lets a
 // wheel or a fling pass a `scroll-snap-stop: always` point under `proximity`,

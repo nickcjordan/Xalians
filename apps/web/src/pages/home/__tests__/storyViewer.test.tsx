@@ -90,6 +90,57 @@ describe('StoryViewer', () => {
 		vi.unstubAllGlobals();
 	});
 
+	it('tunes the screen in the moment the catch stops the page, puts the picture in once the hold lets go, and opens it only once it is in', () => {
+		vi.useFakeTimers();
+		let y = 0;
+		vi.stubGlobal('innerHeight', 800);
+		vi.stubGlobal('scrollTo', (o: ScrollToOptions) => {
+			y = o.top ?? y;
+		});
+		Object.defineProperty(window, 'scrollY', { configurable: true, get: () => y });
+		// The beat's living picture: in the page once it is primed and has arrived.
+		let arrived = false;
+		const probe: ViewerBeat[] = beats.map((b) => ({
+			...b,
+			render: (live, _s, sc, primed) => (
+				<p data-screen={sc} data-primed={String(primed)} data-live={String(live)}>
+					<span data-live-plate={primed && arrived ? 'primed' : 'poster'} />
+					{b.label}
+				</p>
+			),
+		}));
+		const view = () => <StoryViewer id="story" title={<h2 id="story-title">The Story</h2>} beats={[...probe]} />;
+		const { container, rerender } = render(view());
+		// The section moves with the page: its natural top 900 at scroll 0, so the viewer rests at 504.
+		container.querySelector('section')!.getBoundingClientRect = () => rect(900 - y, 1200)();
+		const at = () => container.querySelector('[data-screen]')!;
+		const turn = () => act(() => { window.dispatchEvent(new WheelEvent('wheel', { deltaY: 600, cancelable: true })); });
+		act(() => { window.dispatchEvent(new Event('scroll')); });
+		turn();
+		expect(y).toBe(504);
+		// Caught: the screen tunes in straight away, the wheel still turning.
+		expect(at().getAttribute('data-screen')).toBe('search');
+		expect(at().getAttribute('data-primed')).toBe('false');
+		for (let i = 0; i < 5; i++) {
+			act(() => { vi.advanceTimersByTime(150); });
+			turn();
+		}
+		expect(at().getAttribute('data-primed')).toBe('false');
+		// The wheel stops: the hold lets go, and the picture may go in. The static holds until it has.
+		act(() => { vi.advanceTimersByTime(400); });
+		expect(at().getAttribute('data-primed')).toBe('true');
+		act(() => { vi.advanceTimersByTime(300); });
+		expect(at().getAttribute('data-screen')).toBe('search');
+		arrived = true;
+		rerender(view());
+		act(() => { vi.advanceTimersByTime(60); });
+		// In: the picture opens out of its line already allowed to move, and plays on.
+		expect(at().getAttribute('data-screen')).toBe('lock');
+		act(() => { vi.advanceTimersByTime(600); });
+		expect(at().getAttribute('data-screen')).toBe('on');
+		vi.unstubAllGlobals();
+	});
+
 	it('never moves with the scroll', () => {
 		const { container } = render(<StoryViewer id="story" title={<h2 id="story-title">The Story</h2>} beats={beats} />);
 		fireEvent.scroll(window, { target: { scrollY: 4000 } });
