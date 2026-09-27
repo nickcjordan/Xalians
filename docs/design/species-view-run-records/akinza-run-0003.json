@@ -1,0 +1,64 @@
+{
+  "species": "akinza",
+  "candidateId": "run-0003",
+  "status": "rejected",
+  "generation": {
+    "tool": "image_gen.imagegen",
+    "model": null,
+    "seed": null,
+    "unavailableMetadata": "Built-in tool exposed neither model nor seed.",
+    "recordedAt": "2026-09-27T18:06:38.595603+00:00",
+    "billingRoute": "Codex subscription",
+    "prompt": "Edit this exact front silhouette into a shaded gray 2D character reference, ONE view only, front, on white. This is Akinza, an invented creature. Preserve the full black outer shape pixel-for-pixel as closely as possible, same bounding box, exact asymmetric hands-on-hips posture, slender torso, long limbs, feet, the enormous ears held sideways, and the three very large tail plumes sweeping to the viewer's right. Do not shrink the tails or change the pose. Give the interior neutral medium-gray shaded furry volume with soft even light, no ground shadow. The silhouette's ear edge points are shaggy hair, not serrated skin. The white eye squiggles are abstract placeholders: replace them with two big distinctive pale eyes with elongated oval forms and crescent irises, same positions and approximate size as the squiggles, not zigzags. Preserve nose and mouth, pale inner-ear fur, hand and toe markings. No extra fingers, no clothes, no accessories, no wings, no new anatomy. The exact supplied shape, not a redesigned cat. Full figure with a small white margin. This is an edit of the input, not a new turnaround or a new pose.\n",
+    "inputs": [
+      {
+        "path": "untracked\\species-views\\akinza\\run-0003\\inputs\\akinza-source.png",
+        "sha256": "90c0dc142a62da714ee84843858f4254922e17ec3792b575df78745b10c8a181"
+      },
+      {
+        "path": "untracked\\species-views\\akinza\\run-0003\\inputs\\akinza.json",
+        "sha256": "d148d0258d8ab8bb617a9faec4b38f0a6790eec0d4e29253cc0f7eda10197592"
+      },
+      {
+        "path": "untracked\\species-views\\akinza\\run-0003\\inputs\\akinza.svg",
+        "sha256": "4aa4da87a273784806e685cf1a99395c4425700e46888b3e4ed5e87d792157a5"
+      },
+      {
+        "path": "untracked\\species-views\\akinza\\run-0003\\inputs\\reading.md",
+        "sha256": "9e7caf74e9dbe43f3630a54c63a420928ff783f2e41156ade1e6b1c548c9a4ad"
+      }
+    ],
+    "submittedImages": [
+      "inputs/akinza-source.png"
+    ],
+    "inputNote": "The submittedImages list identifies actual tool image arguments. Other input snapshots are preparation and provenance sources.",
+    "output": {
+      "path": "untracked\\species-views\\akinza\\run-0003\\front.png",
+      "sha256": "cd53433686f8b7d694cf0a8936a5d1001a0d552e1e8bf9b9249a5ceb947a76b4",
+      "size": [
+        1209,
+        1300
+      ]
+    }
+  },
+  "readingApproval": {
+    "date": "2026-09-27",
+    "source": "Current Codex chat",
+    "quote": "the \"ragged edge ears\" are supposed to just be shaggy hair, not jagged edges. Regarding the eyes, the squiggle eyes that are there are more of an abstraction. So I just want the eyes to be something big and unique looking more than explicitly wanting you to have the jagged look. but sure lets see what you produce from these"
+  },
+  "approval": null,
+  "checks": {
+    "status": "fail",
+    "frontOccupancyIoU": 0.9263751422560954,
+    "threshold": 0.95,
+    "missing": [
+      "Other five views",
+      "Complete feature correspondence",
+      "Semantic masks and landmark review"
+    ],
+    "clipping": {
+      "touchesOriginalEdge": true,
+      "note": "Diagnostic padding cannot restore any lost pixels."
+    }
+  }
+}

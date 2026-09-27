@@ -2,6 +2,8 @@
 
 Status: proposed implementation plan, 2026-09-27. Nick has authorized planning and the Akinza reading, not approved their subjective interpretation. The [brief](species-view-packs-brief.md) governs this work. Progress and approval gates live in [the work record](species-view-packs-active-work.md).
 
+Akinza pilot correction, 2026-09-27: Nick approved proceeding with shaggy ear hair and large, distinctive eyes interpreting the abstract squiggles. Its [reading](species-view-readings/akinza/reading.md) records his words. Preserve raw front scores, require occupancy IoU >= 0.95, and allow a declared source-eye-region exclusion from the feature-mask score while separately checking eye position and prominence. No other source feature or outline is exempt. This supersedes literal eye-shape preservation for Akinza only; pack approval is still pending.
+
 ## Outcome and boundaries
 
 Produce registered, shaded gray references for all 30 species, with image-derived masks, reproducible checks, generation provenance, and Nick's explicit approval for each pack. These are references for a later 3D pipeline. This work does not create models, animation, gameplay integration, or revised creature facts and abilities.

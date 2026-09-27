@@ -1,0 +1,66 @@
+{
+  "species": "akinza",
+  "candidateId": "run-0002",
+  "status": "rejected",
+  "generation": {
+    "tool": "image_gen.imagegen",
+    "model": null,
+    "seed": null,
+    "unavailableMetadata": "Built-in tool exposed neither model nor seed.",
+    "recordedAt": "2026-09-27T18:06:38.592103+00:00",
+    "billingRoute": "Codex subscription",
+    "prompt": "Use case: sketch-to-render.\nEdit the attached silhouette into an orthographic shaded gray turnaround sheet of Akinza, the same invented creature, same frozen pose, six full-body views on a wide pure white canvas in ONE horizontal row. Left to right: front, front-left three-quarter, own left profile, back, own right profile, front-right three-quarter. No text or labels.\nThe reference is the exact front shape and pose. Retain its huge sideways ears (over twice head width), small head and neck, slender long torso and limbs, hands resting on hips with elbows out, asymmetric stance: own right leg near under body and own left leg diagonally out. Three broad long furry tail plumes fan to its own left (viewer right in front), from one shared rear pelvis base, mainly sideways and slightly backward. Upper plume highest, middle farthest outward, lower curves down and out. Do not change these proportions into a stock cat or fox.\nIMPORTANT designer correction: ear outline points are soft shaggy HAIR, not jagged ear flesh or rigid spikes. White eye squiggles are abstract placeholders for TWO BIG DISTINCTIVE EYES; use bold elongated oval eyes with subtly unusual crescent-shaped irises and large pale reflective surfaces, positioned in the original eye regions, NOT literal squiggles or zigzags. This eye treatment is a concept exploration. Keep the small nose/mouth, pale inner-ear fur and hand/toe divisions.\nRendering: neutral mid-gray furry volumes, restrained short-fur shading, soft even lighting, no cast or contact shadows, pure white background. Pale source markings describe surface features, not body holes. No environment, clothing, horns, extra ears, extra limbs or extra tails.\nCameras move around a stationary body. All six figures at identical scale and height with soles on one common row. Complete silhouettes with generous margins. Front must preserve original outline, limb lengths and stance exactly; shade within that form. Ears remain held sideways, never raised.\nFront-left: nearer own left cheek, hip and outward leg, tail fan on near side, foreshortened. Left profile faces image left; tail's backward component points image right, lateral fan foreshortened toward camera, ears seen edge-on. Back: mirrored outer projection of front, tail fan image left, plain fur behind head and ears, no face on back. Right profile faces image right, tail fan on far side with base hidden by pelvis, backward component image left. Front-right: nearer own right side and under-body leg, tail attachment more occluded. Do not reposition tails or limbs to reveal them. Preserve all three plume identities through occlusion. No guides crossing creatures.\n\nImage 1 is the EDIT TARGET: a six-slot canvas with the exact source silhouette placed in the first slot. Work on that template. Image 2 is the full-resolution source for detail. Fill the five blank slots and shade the first silhouette while preserving its complete outer contour and pose. Keep the source proportions in the first slot: the tail fan reaches almost twice as far sideways as the feet, and the plume tips reach up toward the shoulders. Do NOT shorten the plumes. Leave clear white space between complete figures; no neighboring ears or tail tips may enter another slot. Convert the entire black first silhouette into shaded medium gray fur, keep the asymmetric elbows and legs exactly, and replace only abstract eye interiors with large distinctive eyes. Match remaining views to that anatomy. Remove small gray template tick marks in final.\n",
+    "inputs": [
+      {
+        "path": "untracked\\species-views\\akinza\\run-0002\\inputs\\akinza-source.png",
+        "sha256": "90c0dc142a62da714ee84843858f4254922e17ec3792b575df78745b10c8a181"
+      },
+      {
+        "path": "untracked\\species-views\\akinza\\run-0002\\inputs\\akinza.json",
+        "sha256": "d148d0258d8ab8bb617a9faec4b38f0a6790eec0d4e29253cc0f7eda10197592"
+      },
+      {
+        "path": "untracked\\species-views\\akinza\\run-0002\\inputs\\akinza.svg",
+        "sha256": "4aa4da87a273784806e685cf1a99395c4425700e46888b3e4ed5e87d792157a5"
+      },
+      {
+        "path": "untracked\\species-views\\akinza\\run-0002\\inputs\\reading.md",
+        "sha256": "9e7caf74e9dbe43f3630a54c63a420928ff783f2e41156ade1e6b1c548c9a4ad"
+      },
+      {
+        "path": "untracked\\species-views\\akinza\\run-0002\\inputs\\template.png",
+        "sha256": "b65c8dbd0901ce9cc1b02c1fc60fdd8ce3ebcfddccf0edbb348066f2a6caf137"
+      }
+    ],
+    "submittedImages": [
+      "inputs/template.png",
+      "inputs/akinza-source.png"
+    ],
+    "inputNote": "The submittedImages list identifies actual tool image arguments. Other input snapshots are preparation and provenance sources.",
+    "output": {
+      "path": "untracked\\species-views\\akinza\\run-0002\\sheet.png",
+      "sha256": "11528d1187055f2414ab6d71fd1ac69c8ed871e936ac21afc99a8b48b43db304",
+      "size": [
+        2172,
+        724
+      ]
+    }
+  },
+  "readingApproval": {
+    "date": "2026-09-27",
+    "source": "Current Codex chat",
+    "quote": "the \"ragged edge ears\" are supposed to just be shaggy hair, not jagged edges. Regarding the eyes, the squiggle eyes that are there are more of an abstraction. So I just want the eyes to be something big and unique looking more than explicitly wanting you to have the jagged look. but sure lets see what you produce from these"
+  },
+  "approval": null,
+  "checks": {
+    "status": "fail",
+    "method": "visual inspection",
+    "reviewer": "Codex",
+    "reasons": [
+      "Tail proportions change relative to source",
+      "Pose changes across angles",
+      "Neighboring view bounds overlap; rectangular splitting clips or contaminates views"
+    ],
+    "numericChecks": "blocked: clean view crops unavailable"
+  }
+}
