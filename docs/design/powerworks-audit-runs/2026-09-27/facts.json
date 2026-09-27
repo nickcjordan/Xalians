@@ -1,0 +1,3287 @@
+{
+ "P1-opening": {
+  "room": 1,
+  "round": 1,
+  "units": [
+   {
+    "who": "Hippochamp",
+    "hp": "63/63",
+    "speed": 48,
+    "conditions": [],
+    "charging": null,
+    "bound": 0,
+    "guarded": false
+   },
+   {
+    "who": "Avilily",
+    "hp": "36/36",
+    "speed": 72,
+    "conditions": [],
+    "charging": null,
+    "bound": 0,
+    "guarded": false
+   },
+   {
+    "who": "Crystorn",
+    "hp": "68/68",
+    "speed": 28,
+    "conditions": [],
+    "charging": null,
+    "bound": 0,
+    "guarded": false
+   },
+   {
+    "who": "Graviclaw",
+    "hp": "73/73",
+    "speed": 32,
+    "conditions": [],
+    "charging": null,
+    "bound": 0,
+    "guarded": false
+   },
+   {
+    "who": "Crawler 1",
+    "hp": "14/14",
+    "speed": 60,
+    "conditions": [],
+    "charging": null,
+    "bound": 0,
+    "guarded": false
+   },
+   {
+    "who": "Crawler 2",
+    "hp": "14/14",
+    "speed": 60,
+    "conditions": [],
+    "charging": null,
+    "bound": 0,
+    "guarded": false
+   }
+  ],
+  "turnOrder": [
+   "Avilily",
+   "Crawler 1",
+   "Crawler 2",
+   "Hippochamp",
+   "Graviclaw",
+   "Crystorn"
+  ],
+  "machineNextAttack": [
+   {
+    "who": "Crawler 1",
+    "expectedHealth": 7,
+    "move": "Tool strike",
+    "upClose": true,
+    "held": null,
+    "targetKnown": false
+   },
+   {
+    "who": "Crawler 2",
+    "expectedHealth": 7,
+    "move": "Tool strike",
+    "upClose": true,
+    "held": null,
+    "targetKnown": false
+   }
+  ],
+  "legalMoves": {
+   "Hippochamp": [
+    "Emergency Water Cannon",
+    "Repelling Slam",
+    "Crushing Kick",
+    "Water Sweep"
+   ],
+   "Avilily": [
+    "Blossoming Ambuscade",
+    "Piercing Peck",
+    "Binding Rake",
+    "Slashing Peck"
+   ],
+   "Crystorn": [
+    "Gem Radiance",
+    "Repelling Punch",
+    "Blinding Shot",
+    "Heavy Ram"
+   ],
+   "Graviclaw": [
+    "Gravity Pincer",
+    "Gravity Draw",
+    "Ground Anchor",
+    "Slashing Pinch"
+   ]
+  },
+  "companionBody": [
+   {
+    "who": "Hippochamp",
+    "pickedByMachinesPct": 26,
+    "slipsPctVs": {
+     "Crawler 1": 0,
+     "Crawler 2": 0
+    }
+   },
+   {
+    "who": "Avilily",
+    "pickedByMachinesPct": 15,
+    "slipsPctVs": {
+     "Crawler 1": 12,
+     "Crawler 2": 12
+    }
+   },
+   {
+    "who": "Crystorn",
+    "pickedByMachinesPct": 28,
+    "slipsPctVs": {
+     "Crawler 1": 0,
+     "Crawler 2": 0
+    }
+   },
+   {
+    "who": "Graviclaw",
+    "pickedByMachinesPct": 30,
+    "slipsPctVs": {
+     "Crawler 1": 0,
+     "Crawler 2": 0
+    }
+   }
+  ],
+  "selectedMoves": [
+   {
+    "move": "Blossoming Ambuscade",
+    "legal": true,
+    "valueHealth": 7,
+    "harm": 0,
+    "kept": 7,
+    "healed": 0,
+    "knockout": false,
+    "readOn": "Crawler 1",
+    "whyZero": null
+   },
+   {
+    "move": "Piercing Peck",
+    "legal": true,
+    "valueHealth": 1,
+    "harm": 1,
+    "kept": 0,
+    "healed": 0,
+    "knockout": false,
+    "readOn": "Crawler 1",
+    "whyZero": null
+   },
+   {
+    "move": "Binding Rake",
+    "legal": true,
+    "valueHealth": 3,
+    "harm": 0,
+    "kept": 3,
+    "healed": 0,
+    "knockout": false,
+    "readOn": "Crawler 1",
+    "whyZero": null
+   },
+   {
+    "move": "Slashing Peck",
+    "legal": true,
+    "valueHealth": 1,
+    "harm": 1,
+    "kept": 0,
+    "healed": 0,
+    "knockout": false,
+    "readOn": "Crawler 1",
+    "whyZero": null
+   }
+  ]
+ },
+ "P2-hover": {
+  "room": 1,
+  "round": 1,
+  "units": [
+   {
+    "who": "Hippochamp",
+    "hp": "63/63",
+    "speed": 48,
+    "conditions": [],
+    "charging": null,
+    "bound": 0,
+    "guarded": false
+   },
+   {
+    "who": "Avilily",
+    "hp": "36/36",
+    "speed": 72,
+    "conditions": [],
+    "charging": null,
+    "bound": 0,
+    "guarded": false
+   },
+   {
+    "who": "Crystorn",
+    "hp": "68/68",
+    "speed": 28,
+    "conditions": [],
+    "charging": null,
+    "bound": 0,
+    "guarded": false
+   },
+   {
+    "who": "Graviclaw",
+    "hp": "73/73",
+    "speed": 32,
+    "conditions": [],
+    "charging": null,
+    "bound": 0,
+    "guarded": false
+   },
+   {
+    "who": "Crawler 1",
+    "hp": "14/14",
+    "speed": 60,
+    "conditions": [],
+    "charging": null,
+    "bound": 0,
+    "guarded": false
+   },
+   {
+    "who": "Crawler 2",
+    "hp": "14/14",
+    "speed": 60,
+    "conditions": [],
+    "charging": null,
+    "bound": 0,
+    "guarded": false
+   }
+  ],
+  "turnOrder": [
+   "Avilily",
+   "Crawler 1",
+   "Crawler 2",
+   "Hippochamp",
+   "Graviclaw",
+   "Crystorn"
+  ],
+  "machineNextAttack": [
+   {
+    "who": "Crawler 1",
+    "expectedHealth": 7,
+    "move": "Tool strike",
+    "upClose": true,
+    "held": null,
+    "targetKnown": false
+   },
+   {
+    "who": "Crawler 2",
+    "expectedHealth": 7,
+    "move": "Tool strike",
+    "upClose": true,
+    "held": null,
+    "targetKnown": false
+   }
+  ],
+  "legalMoves": {
+   "Hippochamp": [
+    "Emergency Water Cannon",
+    "Repelling Slam",
+    "Crushing Kick",
+    "Water Sweep"
+   ],
+   "Avilily": [
+    "Blossoming Ambuscade",
+    "Piercing Peck",
+    "Binding Rake",
+    "Slashing Peck"
+   ],
+   "Crystorn": [
+    "Gem Radiance",
+    "Repelling Punch",
+    "Blinding Shot",
+    "Heavy Ram"
+   ],
+   "Graviclaw": [
+    "Gravity Pincer",
+    "Gravity Draw",
+    "Ground Anchor",
+    "Slashing Pinch"
+   ]
+  },
+  "companionBody": [
+   {
+    "who": "Hippochamp",
+    "pickedByMachinesPct": 26,
+    "slipsPctVs": {
+     "Crawler 1": 0,
+     "Crawler 2": 0
+    }
+   },
+   {
+    "who": "Avilily",
+    "pickedByMachinesPct": 15,
+    "slipsPctVs": {
+     "Crawler 1": 12,
+     "Crawler 2": 12
+    }
+   },
+   {
+    "who": "Crystorn",
+    "pickedByMachinesPct": 28,
+    "slipsPctVs": {
+     "Crawler 1": 0,
+     "Crawler 2": 0
+    }
+   },
+   {
+    "who": "Graviclaw",
+    "pickedByMachinesPct": 30,
+    "slipsPctVs": {
+     "Crawler 1": 0,
+     "Crawler 2": 0
+    }
+   }
+  ],
+  "selectedMoves": [
+   {
+    "move": "Emergency Water Cannon",
+    "legal": true,
+    "valueHealth": 8,
+    "harm": 8,
+    "kept": 0,
+    "healed": 0,
+    "knockout": false,
+    "readOn": "Crawler 1",
+    "whyZero": null
+   },
+   {
+    "move": "Repelling Slam",
+    "legal": true,
+    "valueHealth": 2,
+    "harm": 2,
+    "kept": 0,
+    "healed": 0,
+    "knockout": false,
+    "readOn": "Crawler 1",
+    "whyZero": null
+   },
+   {
+    "move": "Crushing Kick",
+    "legal": true,
+    "valueHealth": 3,
+    "harm": 3,
+    "kept": 0,
+    "healed": 0,
+    "knockout": false,
+    "readOn": "Crawler 1",
+    "whyZero": null
+   },
+   {
+    "move": "Water Sweep",
+    "legal": true,
+    "valueHealth": 10,
+    "harm": 8,
+    "kept": 2,
+    "healed": 0,
+    "knockout": false,
+    "readOn": "Crawler 1",
+    "whyZero": null
+   }
+  ],
+  "moveInHand": {
+   "move": "Water Sweep",
+   "range": "contact",
+   "approach": "stationary",
+   "preparation": "brief",
+   "effects": [
+    "harm consistent area",
+    "status:slowed likely area"
+   ],
+   "onEachTarget": [
+    {
+     "target": "Crawler 1",
+     "damage": 4,
+     "healthAfter": 10,
+     "alsoReaches": [
+      "Crawler 2 (4 damage)"
+     ],
+     "value": 10,
+     "kept": 2,
+     "why": null
+    },
+    {
+     "target": "Crawler 2",
+     "damage": 4,
+     "healthAfter": 10,
+     "alsoReaches": [],
+     "value": 6,
+     "kept": 2,
+     "why": null
+    }
+   ],
+   "aimedAt": null
+  }
+ },
+ "P3-aimed": {
+  "room": 1,
+  "round": 1,
+  "units": [
+   {
+    "who": "Hippochamp",
+    "hp": "63/63",
+    "speed": 48,
+    "conditions": [],
+    "charging": null,
+    "bound": 0,
+    "guarded": false
+   },
+   {
+    "who": "Avilily",
+    "hp": "36/36",
+    "speed": 72,
+    "conditions": [],
+    "charging": null,
+    "bound": 0,
+    "guarded": false
+   },
+   {
+    "who": "Crystorn",
+    "hp": "68/68",
+    "speed": 28,
+    "conditions": [],
+    "charging": null,
+    "bound": 0,
+    "guarded": false
+   },
+   {
+    "who": "Graviclaw",
+    "hp": "73/73",
+    "speed": 32,
+    "conditions": [],
+    "charging": null,
+    "bound": 0,
+    "guarded": false
+   },
+   {
+    "who": "Crawler 1",
+    "hp": "14/14",
+    "speed": 60,
+    "conditions": [],
+    "charging": null,
+    "bound": 0,
+    "guarded": false
+   },
+   {
+    "who": "Crawler 2",
+    "hp": "14/14",
+    "speed": 60,
+    "conditions": [],
+    "charging": null,
+    "bound": 0,
+    "guarded": false
+   }
+  ],
+  "turnOrder": [
+   "Avilily",
+   "Crawler 1",
+   "Crawler 2",
+   "Hippochamp",
+   "Graviclaw",
+   "Crystorn"
+  ],
+  "machineNextAttack": [
+   {
+    "who": "Crawler 1",
+    "expectedHealth": 7,
+    "move": "Tool strike",
+    "upClose": true,
+    "held": null,
+    "targetKnown": false
+   },
+   {
+    "who": "Crawler 2",
+    "expectedHealth": 7,
+    "move": "Tool strike",
+    "upClose": true,
+    "held": null,
+    "targetKnown": false
+   }
+  ],
+  "legalMoves": {
+   "Hippochamp": [
+    "Emergency Water Cannon",
+    "Repelling Slam",
+    "Crushing Kick",
+    "Water Sweep"
+   ],
+   "Avilily": [
+    "Blossoming Ambuscade",
+    "Piercing Peck",
+    "Binding Rake",
+    "Slashing Peck"
+   ],
+   "Crystorn": [
+    "Gem Radiance",
+    "Repelling Punch",
+    "Blinding Shot",
+    "Heavy Ram"
+   ],
+   "Graviclaw": [
+    "Gravity Pincer",
+    "Gravity Draw",
+    "Ground Anchor",
+    "Slashing Pinch"
+   ]
+  },
+  "companionBody": [
+   {
+    "who": "Hippochamp",
+    "pickedByMachinesPct": 26,
+    "slipsPctVs": {
+     "Crawler 1": 0,
+     "Crawler 2": 0
+    }
+   },
+   {
+    "who": "Avilily",
+    "pickedByMachinesPct": 15,
+    "slipsPctVs": {
+     "Crawler 1": 12,
+     "Crawler 2": 12
+    }
+   },
+   {
+    "who": "Crystorn",
+    "pickedByMachinesPct": 28,
+    "slipsPctVs": {
+     "Crawler 1": 0,
+     "Crawler 2": 0
+    }
+   },
+   {
+    "who": "Graviclaw",
+    "pickedByMachinesPct": 30,
+    "slipsPctVs": {
+     "Crawler 1": 0,
+     "Crawler 2": 0
+    }
+   }
+  ],
+  "selectedMoves": [
+   {
+    "move": "Gravity Pincer",
+    "legal": true,
+    "valueHealth": 8,
+    "harm": 8,
+    "kept": 0,
+    "healed": 0,
+    "knockout": false,
+    "readOn": "Crawler 1",
+    "whyZero": null
+   },
+   {
+    "move": "Gravity Draw",
+    "legal": true,
+    "valueHealth": 3,
+    "harm": 3,
+    "kept": 0,
+    "healed": 0,
+    "knockout": false,
+    "readOn": "Crawler 1",
+    "whyZero": null
+   },
+   {
+    "move": "Ground Anchor",
+    "legal": true,
+    "valueHealth": 0,
+    "harm": 0,
+    "kept": 0,
+    "healed": 0,
+    "knockout": false,
+    "readOn": "Graviclaw",
+    "whyZero": {
+     "kind": "needless"
+    }
+   },
+   {
+    "move": "Slashing Pinch",
+    "legal": true,
+    "valueHealth": 7,
+    "harm": 7,
+    "kept": 0,
+    "healed": 0,
+    "knockout": false,
+    "readOn": "Crawler 1",
+    "whyZero": null
+   }
+  ],
+  "moveInHand": {
+   "move": "Gravity Pincer",
+   "range": "contact",
+   "approach": "stationary",
+   "preparation": "brief",
+   "effects": [
+    "harm consistent target"
+   ],
+   "onEachTarget": [
+    {
+     "target": "Crawler 1",
+     "damage": 8,
+     "healthAfter": 6,
+     "alsoReaches": [],
+     "value": 8,
+     "kept": 0,
+     "why": null
+    },
+    {
+     "target": "Crawler 2",
+     "damage": 8,
+     "healthAfter": 6,
+     "alsoReaches": [],
+     "value": 8,
+     "kept": 0,
+     "why": null
+    }
+   ],
+   "aimedAt": "Crawler 1"
+  }
+ },
+ "P4-plan": {
+  "room": 1,
+  "round": 1,
+  "units": [
+   {
+    "who": "Hippochamp",
+    "hp": "63/63",
+    "speed": 48,
+    "conditions": [],
+    "charging": null,
+    "bound": 0,
+    "guarded": false
+   },
+   {
+    "who": "Avilily",
+    "hp": "36/36",
+    "speed": 72,
+    "conditions": [],
+    "charging": null,
+    "bound": 0,
+    "guarded": false
+   },
+   {
+    "who": "Crystorn",
+    "hp": "68/68",
+    "speed": 28,
+    "conditions": [],
+    "charging": null,
+    "bound": 0,
+    "guarded": false
+   },
+   {
+    "who": "Graviclaw",
+    "hp": "73/73",
+    "speed": 32,
+    "conditions": [],
+    "charging": null,
+    "bound": 0,
+    "guarded": false
+   },
+   {
+    "who": "Crawler 1",
+    "hp": "14/14",
+    "speed": 60,
+    "conditions": [],
+    "charging": null,
+    "bound": 0,
+    "guarded": false
+   },
+   {
+    "who": "Crawler 2",
+    "hp": "14/14",
+    "speed": 60,
+    "conditions": [],
+    "charging": null,
+    "bound": 0,
+    "guarded": false
+   }
+  ],
+  "turnOrder": [
+   "Avilily",
+   "Crawler 1",
+   "Crawler 2",
+   "Hippochamp",
+   "Graviclaw",
+   "Crystorn"
+  ],
+  "machineNextAttack": [
+   {
+    "who": "Crawler 1",
+    "expectedHealth": 7,
+    "move": "Tool strike",
+    "upClose": true,
+    "held": null,
+    "targetKnown": false
+   },
+   {
+    "who": "Crawler 2",
+    "expectedHealth": 7,
+    "move": "Tool strike",
+    "upClose": true,
+    "held": null,
+    "targetKnown": false
+   }
+  ],
+  "legalMoves": {
+   "Hippochamp": [
+    "Emergency Water Cannon",
+    "Repelling Slam",
+    "Crushing Kick",
+    "Water Sweep"
+   ],
+   "Avilily": [
+    "Blossoming Ambuscade",
+    "Piercing Peck",
+    "Binding Rake",
+    "Slashing Peck"
+   ],
+   "Crystorn": [
+    "Gem Radiance",
+    "Repelling Punch",
+    "Blinding Shot",
+    "Heavy Ram"
+   ],
+   "Graviclaw": [
+    "Gravity Pincer",
+    "Gravity Draw",
+    "Ground Anchor",
+    "Slashing Pinch"
+   ]
+  },
+  "companionBody": [
+   {
+    "who": "Hippochamp",
+    "pickedByMachinesPct": 26,
+    "slipsPctVs": {
+     "Crawler 1": 0,
+     "Crawler 2": 0
+    }
+   },
+   {
+    "who": "Avilily",
+    "pickedByMachinesPct": 15,
+    "slipsPctVs": {
+     "Crawler 1": 12,
+     "Crawler 2": 12
+    }
+   },
+   {
+    "who": "Crystorn",
+    "pickedByMachinesPct": 28,
+    "slipsPctVs": {
+     "Crawler 1": 0,
+     "Crawler 2": 0
+    }
+   },
+   {
+    "who": "Graviclaw",
+    "pickedByMachinesPct": 30,
+    "slipsPctVs": {
+     "Crawler 1": 0,
+     "Crawler 2": 0
+    }
+   }
+  ],
+  "planResult": [
+   {
+    "who": "Crawler 1",
+    "healthNow": 14,
+    "healthAfterPlan": 0
+   },
+   {
+    "who": "Crawler 2",
+    "healthNow": 14,
+    "healthAfterPlan": 14
+   }
+  ],
+  "wastedOrders": [
+   {
+    "who": "Crystorn",
+    "move": "Heavy Ram",
+    "target": "Crawler 1",
+    "why": {
+     "kind": "falls"
+    }
+   }
+  ]
+ },
+ "P5-statuses": {
+  "room": 1,
+  "round": 2,
+  "units": [
+   {
+    "who": "Hippochamp",
+    "hp": "63/63",
+    "speed": 48,
+    "conditions": [],
+    "charging": null,
+    "bound": 0,
+    "guarded": false
+   },
+   {
+    "who": "Avilily",
+    "hp": "36/36",
+    "speed": 72,
+    "conditions": [],
+    "charging": null,
+    "bound": 0,
+    "guarded": false
+   },
+   {
+    "who": "Crystorn",
+    "hp": "68/68",
+    "speed": 28,
+    "conditions": [],
+    "charging": null,
+    "bound": 0,
+    "guarded": false
+   },
+   {
+    "who": "Graviclaw",
+    "hp": "64/73",
+    "speed": 32,
+    "conditions": [
+     "corroding (degrading, 1 left)"
+    ],
+    "charging": null,
+    "bound": 0,
+    "guarded": false
+   },
+   {
+    "who": "Crawler 1",
+    "hp": "0/14",
+    "speed": 60,
+    "conditions": [
+     "slowed (tempo, 2 left)"
+    ],
+    "charging": null,
+    "bound": 0,
+    "guarded": false
+   },
+   {
+    "who": "Crawler 2",
+    "hp": "10/14",
+    "speed": 60,
+    "conditions": [
+     "slowed (tempo, 2 left)"
+    ],
+    "charging": null,
+    "bound": 0,
+    "guarded": false
+   }
+  ],
+  "turnOrder": [
+   "Avilily",
+   "Hippochamp",
+   "Graviclaw",
+   "Crawler 2",
+   "Crystorn"
+  ],
+  "machineNextAttack": [
+   {
+    "who": "Crawler 2",
+    "expectedHealth": 6,
+    "move": "Tool strike",
+    "upClose": true,
+    "held": null,
+    "targetKnown": false
+   }
+  ],
+  "legalMoves": {
+   "Hippochamp": [
+    "Emergency Water Cannon",
+    "Repelling Slam",
+    "Crushing Kick",
+    "Water Sweep"
+   ],
+   "Avilily": [
+    "Piercing Peck",
+    "Binding Rake",
+    "Slashing Peck"
+   ],
+   "Crystorn": [
+    "Gem Radiance",
+    "Repelling Punch",
+    "Blinding Shot"
+   ],
+   "Graviclaw": [
+    "Gravity Draw",
+    "Ground Anchor",
+    "Slashing Pinch"
+   ]
+  },
+  "companionBody": [
+   {
+    "who": "Hippochamp",
+    "pickedByMachinesPct": 26,
+    "slipsPctVs": {
+     "Crawler 2": 18
+    }
+   },
+   {
+    "who": "Avilily",
+    "pickedByMachinesPct": 15,
+    "slipsPctVs": {
+     "Crawler 2": 30
+    }
+   },
+   {
+    "who": "Crystorn",
+    "pickedByMachinesPct": 28,
+    "slipsPctVs": {
+     "Crawler 2": 0
+    }
+   },
+   {
+    "who": "Graviclaw",
+    "pickedByMachinesPct": 30,
+    "slipsPctVs": {
+     "Crawler 2": 2
+    }
+   }
+  ],
+  "selectedMoves": [
+   {
+    "move": "Blossoming Ambuscade",
+    "legal": false,
+    "valueHealth": null,
+    "readOn": null,
+    "whyZero": null
+   },
+   {
+    "move": "Piercing Peck",
+    "legal": true,
+    "valueHealth": 1,
+    "harm": 1,
+    "kept": 0,
+    "healed": 0,
+    "knockout": false,
+    "readOn": "Crawler 2",
+    "whyZero": null
+   },
+   {
+    "move": "Binding Rake",
+    "legal": true,
+    "valueHealth": 2,
+    "harm": 0,
+    "kept": 2,
+    "healed": 0,
+    "knockout": false,
+    "readOn": "Crawler 2",
+    "whyZero": null
+   },
+   {
+    "move": "Slashing Peck",
+    "legal": true,
+    "valueHealth": 1,
+    "harm": 1,
+    "kept": 0,
+    "healed": 0,
+    "knockout": false,
+    "readOn": "Crawler 2",
+    "whyZero": null
+   }
+  ]
+ },
+ "P6-charged": {
+  "room": 4,
+  "round": 6,
+  "units": [
+   {
+    "who": "Avilily",
+    "hp": "32/36",
+    "speed": 72,
+    "conditions": [],
+    "charging": null,
+    "bound": 0,
+    "guarded": false
+   },
+   {
+    "who": "Graviclaw",
+    "hp": "67/73",
+    "speed": 32,
+    "conditions": [],
+    "charging": null,
+    "bound": 0,
+    "guarded": false
+   },
+   {
+    "who": "Hippochamp",
+    "hp": "44/63",
+    "speed": 48,
+    "conditions": [],
+    "charging": null,
+    "bound": 0,
+    "guarded": false
+   },
+   {
+    "who": "Crystorn",
+    "hp": "61/68",
+    "speed": 28,
+    "conditions": [],
+    "charging": null,
+    "bound": 0,
+    "guarded": false
+   },
+   {
+    "who": "Crawler",
+    "hp": "0/14",
+    "speed": 60,
+    "conditions": [],
+    "charging": null,
+    "bound": 0,
+    "guarded": false
+   },
+   {
+    "who": "Drone",
+    "hp": "0/15",
+    "speed": 50,
+    "conditions": [],
+    "charging": null,
+    "bound": 0,
+    "guarded": false
+   },
+   {
+    "who": "Guardian",
+    "hp": "20/68",
+    "speed": 65,
+    "conditions": [
+     "slowed (tempo, 2 left)"
+    ],
+    "charging": "charging Core surge at Hippochamp",
+    "bound": 0,
+    "guarded": false
+   }
+  ],
+  "turnOrder": [
+   "Avilily",
+   "Hippochamp",
+   "Guardian",
+   "Graviclaw",
+   "Crystorn"
+  ],
+  "machineNextAttack": [
+   {
+    "who": "Guardian",
+    "expectedHealth": 22,
+    "move": "Core surge",
+    "upClose": true,
+    "held": null,
+    "targetKnown": false
+   }
+  ],
+  "legalMoves": {
+   "Avilily": [
+    "Piercing Peck",
+    "Binding Rake",
+    "Slashing Peck"
+   ],
+   "Graviclaw": [
+    "Gravity Draw",
+    "Ground Anchor",
+    "Slashing Pinch"
+   ],
+   "Hippochamp": [
+    "Repelling Slam",
+    "Water Sweep"
+   ],
+   "Crystorn": [
+    "Repelling Punch",
+    "Blinding Shot",
+    "Heavy Ram"
+   ]
+  },
+  "companionBody": [
+   {
+    "who": "Avilily",
+    "pickedByMachinesPct": 15,
+    "slipsPctVs": {
+     "Guardian": 30
+    }
+   },
+   {
+    "who": "Graviclaw",
+    "pickedByMachinesPct": 30,
+    "slipsPctVs": {
+     "Guardian": 0
+    }
+   },
+   {
+    "who": "Hippochamp",
+    "pickedByMachinesPct": 26,
+    "slipsPctVs": {
+     "Guardian": 16
+    }
+   },
+   {
+    "who": "Crystorn",
+    "pickedByMachinesPct": 28,
+    "slipsPctVs": {
+     "Guardian": 0
+    }
+   }
+  ],
+  "selectedMoves": [
+   {
+    "move": "Blossoming Ambuscade",
+    "legal": false,
+    "valueHealth": null,
+    "readOn": null,
+    "whyZero": null
+   },
+   {
+    "move": "Piercing Peck",
+    "legal": true,
+    "valueHealth": 1,
+    "harm": 1,
+    "kept": 0,
+    "healed": 0,
+    "knockout": false,
+    "readOn": "Guardian",
+    "whyZero": null
+   },
+   {
+    "move": "Binding Rake",
+    "legal": true,
+    "valueHealth": 9,
+    "harm": 0,
+    "kept": 9,
+    "healed": 0,
+    "knockout": false,
+    "readOn": "Guardian",
+    "whyZero": null
+   },
+   {
+    "move": "Slashing Peck",
+    "legal": true,
+    "valueHealth": 1,
+    "harm": 1,
+    "kept": 0,
+    "healed": 0,
+    "knockout": false,
+    "readOn": "Guardian",
+    "whyZero": null
+   }
+  ]
+ },
+ "P7-crowded": {
+  "room": 4,
+  "round": 1,
+  "units": [
+   {
+    "who": "Avilily",
+    "hp": "36/36",
+    "speed": 72,
+    "conditions": [],
+    "charging": null,
+    "bound": 0,
+    "guarded": false
+   },
+   {
+    "who": "Graviclaw",
+    "hp": "67/73",
+    "speed": 32,
+    "conditions": [],
+    "charging": null,
+    "bound": 0,
+    "guarded": false
+   },
+   {
+    "who": "Hippochamp",
+    "hp": "63/63",
+    "speed": 48,
+    "conditions": [],
+    "charging": null,
+    "bound": 0,
+    "guarded": false
+   },
+   {
+    "who": "Crystorn",
+    "hp": "68/68",
+    "speed": 28,
+    "conditions": [],
+    "charging": null,
+    "bound": 0,
+    "guarded": false
+   },
+   {
+    "who": "Crawler",
+    "hp": "14/14",
+    "speed": 60,
+    "conditions": [],
+    "charging": null,
+    "bound": 0,
+    "guarded": false
+   },
+   {
+    "who": "Drone",
+    "hp": "15/15",
+    "speed": 50,
+    "conditions": [],
+    "charging": null,
+    "bound": 0,
+    "guarded": false
+   },
+   {
+    "who": "Guardian",
+    "hp": "68/68",
+    "speed": 65,
+    "conditions": [],
+    "charging": null,
+    "bound": 0,
+    "guarded": false
+   }
+  ],
+  "turnOrder": [
+   "Avilily",
+   "Guardian",
+   "Crawler",
+   "Drone",
+   "Hippochamp",
+   "Graviclaw",
+   "Crystorn"
+  ],
+  "machineNextAttack": [
+   {
+    "who": "Crawler",
+    "expectedHealth": 7,
+    "move": "Tool strike",
+    "upClose": true,
+    "held": null,
+    "targetKnown": false
+   },
+   {
+    "who": "Drone",
+    "expectedHealth": 8,
+    "move": "Security beam",
+    "upClose": false,
+    "held": null,
+    "targetKnown": false
+   },
+   {
+    "who": "Guardian",
+    "expectedHealth": 24,
+    "move": "Core surge",
+    "upClose": true,
+    "held": null,
+    "targetKnown": false
+   }
+  ],
+  "legalMoves": {
+   "Avilily": [
+    "Blossoming Ambuscade",
+    "Piercing Peck",
+    "Binding Rake",
+    "Slashing Peck"
+   ],
+   "Graviclaw": [
+    "Gravity Pincer",
+    "Gravity Draw",
+    "Ground Anchor",
+    "Slashing Pinch"
+   ],
+   "Hippochamp": [
+    "Emergency Water Cannon",
+    "Repelling Slam",
+    "Crushing Kick",
+    "Water Sweep"
+   ],
+   "Crystorn": [
+    "Gem Radiance",
+    "Repelling Punch",
+    "Blinding Shot",
+    "Heavy Ram"
+   ]
+  },
+  "companionBody": [
+   {
+    "who": "Avilily",
+    "pickedByMachinesPct": 15,
+    "slipsPctVs": {
+     "Crawler": 12,
+     "Drone": 22,
+     "Guardian": 7
+    }
+   },
+   {
+    "who": "Graviclaw",
+    "pickedByMachinesPct": 30,
+    "slipsPctVs": {
+     "Crawler": 0,
+     "Drone": 0,
+     "Guardian": 0
+    }
+   },
+   {
+    "who": "Hippochamp",
+    "pickedByMachinesPct": 26,
+    "slipsPctVs": {
+     "Crawler": 0,
+     "Drone": 0,
+     "Guardian": 0
+    }
+   },
+   {
+    "who": "Crystorn",
+    "pickedByMachinesPct": 28,
+    "slipsPctVs": {
+     "Crawler": 0,
+     "Drone": 0,
+     "Guardian": 0
+    }
+   }
+  ],
+  "selectedMoves": [
+   {
+    "move": "Blossoming Ambuscade",
+    "legal": true,
+    "valueHealth": 24,
+    "harm": 0,
+    "kept": 24,
+    "healed": 0,
+    "knockout": false,
+    "readOn": "Guardian",
+    "whyZero": null
+   },
+   {
+    "move": "Piercing Peck",
+    "legal": true,
+    "valueHealth": 1,
+    "harm": 1,
+    "kept": 0,
+    "healed": 0,
+    "knockout": false,
+    "readOn": "Crawler",
+    "whyZero": null
+   },
+   {
+    "move": "Binding Rake",
+    "legal": true,
+    "valueHealth": 10,
+    "harm": 0,
+    "kept": 10,
+    "healed": 0,
+    "knockout": false,
+    "readOn": "Guardian",
+    "whyZero": null
+   },
+   {
+    "move": "Slashing Peck",
+    "legal": true,
+    "valueHealth": 1,
+    "harm": 1,
+    "kept": 0,
+    "healed": 0,
+    "knockout": false,
+    "readOn": "Crawler",
+    "whyZero": null
+   }
+  ],
+  "moveInHand": {
+   "move": "Blossoming Ambuscade",
+   "range": "contact",
+   "approach": "stationary",
+   "preparation": "brief",
+   "effects": [
+    "bind:paralyzed consistent target"
+   ],
+   "onEachTarget": [
+    {
+     "target": "Crawler",
+     "damage": 0,
+     "healthAfter": 14,
+     "alsoReaches": [],
+     "value": 7,
+     "kept": 7,
+     "why": null
+    },
+    {
+     "target": "Drone",
+     "damage": 0,
+     "healthAfter": 15,
+     "alsoReaches": [],
+     "value": 0,
+     "kept": 0,
+     "why": {
+      "kind": "harmless",
+      "status": "paralyzed"
+     }
+    },
+    {
+     "target": "Guardian",
+     "damage": 0,
+     "healthAfter": 68,
+     "alsoReaches": [],
+     "value": 24,
+     "kept": 24,
+     "why": null
+    }
+   ],
+   "aimedAt": null
+  }
+ },
+ "P8-inspect": {
+  "room": 1,
+  "round": 1,
+  "units": [
+   {
+    "who": "Hippochamp",
+    "hp": "63/63",
+    "speed": 48,
+    "conditions": [],
+    "charging": null,
+    "bound": 0,
+    "guarded": false
+   },
+   {
+    "who": "Avilily",
+    "hp": "36/36",
+    "speed": 72,
+    "conditions": [],
+    "charging": null,
+    "bound": 0,
+    "guarded": false
+   },
+   {
+    "who": "Crystorn",
+    "hp": "68/68",
+    "speed": 28,
+    "conditions": [],
+    "charging": null,
+    "bound": 0,
+    "guarded": false
+   },
+   {
+    "who": "Graviclaw",
+    "hp": "73/73",
+    "speed": 32,
+    "conditions": [],
+    "charging": null,
+    "bound": 0,
+    "guarded": false
+   },
+   {
+    "who": "Crawler 1",
+    "hp": "14/14",
+    "speed": 60,
+    "conditions": [],
+    "charging": null,
+    "bound": 0,
+    "guarded": false
+   },
+   {
+    "who": "Crawler 2",
+    "hp": "14/14",
+    "speed": 60,
+    "conditions": [],
+    "charging": null,
+    "bound": 0,
+    "guarded": false
+   }
+  ],
+  "turnOrder": [
+   "Avilily",
+   "Crawler 1",
+   "Crawler 2",
+   "Hippochamp",
+   "Graviclaw",
+   "Crystorn"
+  ],
+  "machineNextAttack": [
+   {
+    "who": "Crawler 1",
+    "expectedHealth": 7,
+    "move": "Tool strike",
+    "upClose": true,
+    "held": null,
+    "targetKnown": false
+   },
+   {
+    "who": "Crawler 2",
+    "expectedHealth": 7,
+    "move": "Tool strike",
+    "upClose": true,
+    "held": null,
+    "targetKnown": false
+   }
+  ],
+  "legalMoves": {
+   "Hippochamp": [
+    "Emergency Water Cannon",
+    "Repelling Slam",
+    "Crushing Kick",
+    "Water Sweep"
+   ],
+   "Avilily": [
+    "Blossoming Ambuscade",
+    "Piercing Peck",
+    "Binding Rake",
+    "Slashing Peck"
+   ],
+   "Crystorn": [
+    "Gem Radiance",
+    "Repelling Punch",
+    "Blinding Shot",
+    "Heavy Ram"
+   ],
+   "Graviclaw": [
+    "Gravity Pincer",
+    "Gravity Draw",
+    "Ground Anchor",
+    "Slashing Pinch"
+   ]
+  },
+  "companionBody": [
+   {
+    "who": "Hippochamp",
+    "pickedByMachinesPct": 26,
+    "slipsPctVs": {
+     "Crawler 1": 0,
+     "Crawler 2": 0
+    }
+   },
+   {
+    "who": "Avilily",
+    "pickedByMachinesPct": 15,
+    "slipsPctVs": {
+     "Crawler 1": 12,
+     "Crawler 2": 12
+    }
+   },
+   {
+    "who": "Crystorn",
+    "pickedByMachinesPct": 28,
+    "slipsPctVs": {
+     "Crawler 1": 0,
+     "Crawler 2": 0
+    }
+   },
+   {
+    "who": "Graviclaw",
+    "pickedByMachinesPct": 30,
+    "slipsPctVs": {
+     "Crawler 1": 0,
+     "Crawler 2": 0
+    }
+   }
+  ]
+ },
+ "P9-phone-opening": {
+  "room": 1,
+  "round": 1,
+  "units": [
+   {
+    "who": "Hippochamp",
+    "hp": "63/63",
+    "speed": 48,
+    "conditions": [],
+    "charging": null,
+    "bound": 0,
+    "guarded": false
+   },
+   {
+    "who": "Avilily",
+    "hp": "36/36",
+    "speed": 72,
+    "conditions": [],
+    "charging": null,
+    "bound": 0,
+    "guarded": false
+   },
+   {
+    "who": "Crystorn",
+    "hp": "68/68",
+    "speed": 28,
+    "conditions": [],
+    "charging": null,
+    "bound": 0,
+    "guarded": false
+   },
+   {
+    "who": "Graviclaw",
+    "hp": "73/73",
+    "speed": 32,
+    "conditions": [],
+    "charging": null,
+    "bound": 0,
+    "guarded": false
+   },
+   {
+    "who": "Crawler 1",
+    "hp": "14/14",
+    "speed": 60,
+    "conditions": [],
+    "charging": null,
+    "bound": 0,
+    "guarded": false
+   },
+   {
+    "who": "Crawler 2",
+    "hp": "14/14",
+    "speed": 60,
+    "conditions": [],
+    "charging": null,
+    "bound": 0,
+    "guarded": false
+   }
+  ],
+  "turnOrder": [
+   "Avilily",
+   "Crawler 1",
+   "Crawler 2",
+   "Hippochamp",
+   "Graviclaw",
+   "Crystorn"
+  ],
+  "machineNextAttack": [
+   {
+    "who": "Crawler 1",
+    "expectedHealth": 7,
+    "move": "Tool strike",
+    "upClose": true,
+    "held": null,
+    "targetKnown": false
+   },
+   {
+    "who": "Crawler 2",
+    "expectedHealth": 7,
+    "move": "Tool strike",
+    "upClose": true,
+    "held": null,
+    "targetKnown": false
+   }
+  ],
+  "legalMoves": {
+   "Hippochamp": [
+    "Emergency Water Cannon",
+    "Repelling Slam",
+    "Crushing Kick",
+    "Water Sweep"
+   ],
+   "Avilily": [
+    "Blossoming Ambuscade",
+    "Piercing Peck",
+    "Binding Rake",
+    "Slashing Peck"
+   ],
+   "Crystorn": [
+    "Gem Radiance",
+    "Repelling Punch",
+    "Blinding Shot",
+    "Heavy Ram"
+   ],
+   "Graviclaw": [
+    "Gravity Pincer",
+    "Gravity Draw",
+    "Ground Anchor",
+    "Slashing Pinch"
+   ]
+  },
+  "companionBody": [
+   {
+    "who": "Hippochamp",
+    "pickedByMachinesPct": 26,
+    "slipsPctVs": {
+     "Crawler 1": 0,
+     "Crawler 2": 0
+    }
+   },
+   {
+    "who": "Avilily",
+    "pickedByMachinesPct": 15,
+    "slipsPctVs": {
+     "Crawler 1": 12,
+     "Crawler 2": 12
+    }
+   },
+   {
+    "who": "Crystorn",
+    "pickedByMachinesPct": 28,
+    "slipsPctVs": {
+     "Crawler 1": 0,
+     "Crawler 2": 0
+    }
+   },
+   {
+    "who": "Graviclaw",
+    "pickedByMachinesPct": 30,
+    "slipsPctVs": {
+     "Crawler 1": 0,
+     "Crawler 2": 0
+    }
+   }
+  ],
+  "selectedMoves": [
+   {
+    "move": "Blossoming Ambuscade",
+    "legal": true,
+    "valueHealth": 7,
+    "harm": 0,
+    "kept": 7,
+    "healed": 0,
+    "knockout": false,
+    "readOn": "Crawler 1",
+    "whyZero": null
+   },
+   {
+    "move": "Piercing Peck",
+    "legal": true,
+    "valueHealth": 1,
+    "harm": 1,
+    "kept": 0,
+    "healed": 0,
+    "knockout": false,
+    "readOn": "Crawler 1",
+    "whyZero": null
+   },
+   {
+    "move": "Binding Rake",
+    "legal": true,
+    "valueHealth": 3,
+    "harm": 0,
+    "kept": 3,
+    "healed": 0,
+    "knockout": false,
+    "readOn": "Crawler 1",
+    "whyZero": null
+   },
+   {
+    "move": "Slashing Peck",
+    "legal": true,
+    "valueHealth": 1,
+    "harm": 1,
+    "kept": 0,
+    "healed": 0,
+    "knockout": false,
+    "readOn": "Crawler 1",
+    "whyZero": null
+   }
+  ]
+ },
+ "P10-phone-chosen": {
+  "room": 1,
+  "round": 1,
+  "units": [
+   {
+    "who": "Hippochamp",
+    "hp": "63/63",
+    "speed": 48,
+    "conditions": [],
+    "charging": null,
+    "bound": 0,
+    "guarded": false
+   },
+   {
+    "who": "Avilily",
+    "hp": "36/36",
+    "speed": 72,
+    "conditions": [],
+    "charging": null,
+    "bound": 0,
+    "guarded": false
+   },
+   {
+    "who": "Crystorn",
+    "hp": "68/68",
+    "speed": 28,
+    "conditions": [],
+    "charging": null,
+    "bound": 0,
+    "guarded": false
+   },
+   {
+    "who": "Graviclaw",
+    "hp": "73/73",
+    "speed": 32,
+    "conditions": [],
+    "charging": null,
+    "bound": 0,
+    "guarded": false
+   },
+   {
+    "who": "Crawler 1",
+    "hp": "14/14",
+    "speed": 60,
+    "conditions": [],
+    "charging": null,
+    "bound": 0,
+    "guarded": false
+   },
+   {
+    "who": "Crawler 2",
+    "hp": "14/14",
+    "speed": 60,
+    "conditions": [],
+    "charging": null,
+    "bound": 0,
+    "guarded": false
+   }
+  ],
+  "turnOrder": [
+   "Avilily",
+   "Crawler 1",
+   "Crawler 2",
+   "Hippochamp",
+   "Graviclaw",
+   "Crystorn"
+  ],
+  "machineNextAttack": [
+   {
+    "who": "Crawler 1",
+    "expectedHealth": 7,
+    "move": "Tool strike",
+    "upClose": true,
+    "held": null,
+    "targetKnown": false
+   },
+   {
+    "who": "Crawler 2",
+    "expectedHealth": 7,
+    "move": "Tool strike",
+    "upClose": true,
+    "held": null,
+    "targetKnown": false
+   }
+  ],
+  "legalMoves": {
+   "Hippochamp": [
+    "Emergency Water Cannon",
+    "Repelling Slam",
+    "Crushing Kick",
+    "Water Sweep"
+   ],
+   "Avilily": [
+    "Blossoming Ambuscade",
+    "Piercing Peck",
+    "Binding Rake",
+    "Slashing Peck"
+   ],
+   "Crystorn": [
+    "Gem Radiance",
+    "Repelling Punch",
+    "Blinding Shot",
+    "Heavy Ram"
+   ],
+   "Graviclaw": [
+    "Gravity Pincer",
+    "Gravity Draw",
+    "Ground Anchor",
+    "Slashing Pinch"
+   ]
+  },
+  "companionBody": [
+   {
+    "who": "Hippochamp",
+    "pickedByMachinesPct": 26,
+    "slipsPctVs": {
+     "Crawler 1": 0,
+     "Crawler 2": 0
+    }
+   },
+   {
+    "who": "Avilily",
+    "pickedByMachinesPct": 15,
+    "slipsPctVs": {
+     "Crawler 1": 12,
+     "Crawler 2": 12
+    }
+   },
+   {
+    "who": "Crystorn",
+    "pickedByMachinesPct": 28,
+    "slipsPctVs": {
+     "Crawler 1": 0,
+     "Crawler 2": 0
+    }
+   },
+   {
+    "who": "Graviclaw",
+    "pickedByMachinesPct": 30,
+    "slipsPctVs": {
+     "Crawler 1": 0,
+     "Crawler 2": 0
+    }
+   }
+  ],
+  "selectedMoves": [
+   {
+    "move": "Gravity Pincer",
+    "legal": true,
+    "valueHealth": 8,
+    "harm": 8,
+    "kept": 0,
+    "healed": 0,
+    "knockout": false,
+    "readOn": "Crawler 1",
+    "whyZero": null
+   },
+   {
+    "move": "Gravity Draw",
+    "legal": true,
+    "valueHealth": 3,
+    "harm": 3,
+    "kept": 0,
+    "healed": 0,
+    "knockout": false,
+    "readOn": "Crawler 1",
+    "whyZero": null
+   },
+   {
+    "move": "Ground Anchor",
+    "legal": true,
+    "valueHealth": 0,
+    "harm": 0,
+    "kept": 0,
+    "healed": 0,
+    "knockout": false,
+    "readOn": "Graviclaw",
+    "whyZero": {
+     "kind": "needless"
+    }
+   },
+   {
+    "move": "Slashing Pinch",
+    "legal": true,
+    "valueHealth": 7,
+    "harm": 7,
+    "kept": 0,
+    "healed": 0,
+    "knockout": false,
+    "readOn": "Crawler 1",
+    "whyZero": null
+   }
+  ],
+  "moveInHand": {
+   "move": "Gravity Pincer",
+   "range": "contact",
+   "approach": "stationary",
+   "preparation": "brief",
+   "effects": [
+    "harm consistent target"
+   ],
+   "onEachTarget": [
+    {
+     "target": "Crawler 1",
+     "damage": 8,
+     "healthAfter": 6,
+     "alsoReaches": [],
+     "value": 8,
+     "kept": 0,
+     "why": null
+    },
+    {
+     "target": "Crawler 2",
+     "damage": 8,
+     "healthAfter": 6,
+     "alsoReaches": [],
+     "value": 8,
+     "kept": 0,
+     "why": null
+    }
+   ],
+   "aimedAt": null
+  }
+ },
+ "G-guide": {
+  "room": 1,
+  "round": 1,
+  "units": [
+   {
+    "who": "Hippochamp",
+    "hp": "63/63",
+    "speed": 48,
+    "conditions": [],
+    "charging": null,
+    "bound": 0,
+    "guarded": false
+   },
+   {
+    "who": "Avilily",
+    "hp": "36/36",
+    "speed": 72,
+    "conditions": [],
+    "charging": null,
+    "bound": 0,
+    "guarded": false
+   },
+   {
+    "who": "Crystorn",
+    "hp": "68/68",
+    "speed": 28,
+    "conditions": [],
+    "charging": null,
+    "bound": 0,
+    "guarded": false
+   },
+   {
+    "who": "Graviclaw",
+    "hp": "73/73",
+    "speed": 32,
+    "conditions": [],
+    "charging": null,
+    "bound": 0,
+    "guarded": false
+   },
+   {
+    "who": "Crawler 1",
+    "hp": "14/14",
+    "speed": 60,
+    "conditions": [],
+    "charging": null,
+    "bound": 0,
+    "guarded": false
+   },
+   {
+    "who": "Crawler 2",
+    "hp": "14/14",
+    "speed": 60,
+    "conditions": [],
+    "charging": null,
+    "bound": 0,
+    "guarded": false
+   }
+  ],
+  "turnOrder": [
+   "Avilily",
+   "Crawler 1",
+   "Crawler 2",
+   "Hippochamp",
+   "Graviclaw",
+   "Crystorn"
+  ],
+  "machineNextAttack": [
+   {
+    "who": "Crawler 1",
+    "expectedHealth": 7,
+    "move": "Tool strike",
+    "upClose": true,
+    "held": null,
+    "targetKnown": false
+   },
+   {
+    "who": "Crawler 2",
+    "expectedHealth": 7,
+    "move": "Tool strike",
+    "upClose": true,
+    "held": null,
+    "targetKnown": false
+   }
+  ],
+  "legalMoves": {
+   "Hippochamp": [
+    "Emergency Water Cannon",
+    "Repelling Slam",
+    "Crushing Kick",
+    "Water Sweep"
+   ],
+   "Avilily": [
+    "Blossoming Ambuscade",
+    "Piercing Peck",
+    "Binding Rake",
+    "Slashing Peck"
+   ],
+   "Crystorn": [
+    "Gem Radiance",
+    "Repelling Punch",
+    "Blinding Shot",
+    "Heavy Ram"
+   ],
+   "Graviclaw": [
+    "Gravity Pincer",
+    "Gravity Draw",
+    "Ground Anchor",
+    "Slashing Pinch"
+   ]
+  },
+  "companionBody": [
+   {
+    "who": "Hippochamp",
+    "pickedByMachinesPct": 26,
+    "slipsPctVs": {
+     "Crawler 1": 0,
+     "Crawler 2": 0
+    }
+   },
+   {
+    "who": "Avilily",
+    "pickedByMachinesPct": 15,
+    "slipsPctVs": {
+     "Crawler 1": 12,
+     "Crawler 2": 12
+    }
+   },
+   {
+    "who": "Crystorn",
+    "pickedByMachinesPct": 28,
+    "slipsPctVs": {
+     "Crawler 1": 0,
+     "Crawler 2": 0
+    }
+   },
+   {
+    "who": "Graviclaw",
+    "pickedByMachinesPct": 30,
+    "slipsPctVs": {
+     "Crawler 1": 0,
+     "Crawler 2": 0
+    }
+   }
+  ]
+ },
+ "B1-sector1": {
+  "room": 1,
+  "round": 1,
+  "units": [
+   {
+    "who": "Hippochamp",
+    "hp": "63/63",
+    "speed": 48,
+    "conditions": [],
+    "charging": null,
+    "bound": 0,
+    "guarded": false
+   },
+   {
+    "who": "Avilily",
+    "hp": "36/36",
+    "speed": 72,
+    "conditions": [],
+    "charging": null,
+    "bound": 0,
+    "guarded": false
+   },
+   {
+    "who": "Crystorn",
+    "hp": "68/68",
+    "speed": 28,
+    "conditions": [],
+    "charging": null,
+    "bound": 0,
+    "guarded": false
+   },
+   {
+    "who": "Graviclaw",
+    "hp": "73/73",
+    "speed": 32,
+    "conditions": [],
+    "charging": null,
+    "bound": 0,
+    "guarded": false
+   },
+   {
+    "who": "Crawler 1",
+    "hp": "14/14",
+    "speed": 60,
+    "conditions": [],
+    "charging": null,
+    "bound": 0,
+    "guarded": false
+   },
+   {
+    "who": "Crawler 2",
+    "hp": "14/14",
+    "speed": 60,
+    "conditions": [],
+    "charging": null,
+    "bound": 0,
+    "guarded": false
+   }
+  ],
+  "turnOrder": [
+   "Avilily",
+   "Crawler 1",
+   "Crawler 2",
+   "Hippochamp",
+   "Graviclaw",
+   "Crystorn"
+  ],
+  "machineNextAttack": [
+   {
+    "who": "Crawler 1",
+    "expectedHealth": 7,
+    "move": "Tool strike",
+    "upClose": true,
+    "held": null,
+    "targetKnown": false
+   },
+   {
+    "who": "Crawler 2",
+    "expectedHealth": 7,
+    "move": "Tool strike",
+    "upClose": true,
+    "held": null,
+    "targetKnown": false
+   }
+  ],
+  "legalMoves": {
+   "Hippochamp": [
+    "Emergency Water Cannon",
+    "Repelling Slam",
+    "Crushing Kick",
+    "Water Sweep"
+   ],
+   "Avilily": [
+    "Blossoming Ambuscade",
+    "Piercing Peck",
+    "Binding Rake",
+    "Slashing Peck"
+   ],
+   "Crystorn": [
+    "Gem Radiance",
+    "Repelling Punch",
+    "Blinding Shot",
+    "Heavy Ram"
+   ],
+   "Graviclaw": [
+    "Gravity Pincer",
+    "Gravity Draw",
+    "Ground Anchor",
+    "Slashing Pinch"
+   ]
+  },
+  "companionBody": [
+   {
+    "who": "Hippochamp",
+    "pickedByMachinesPct": 26,
+    "slipsPctVs": {
+     "Crawler 1": 0,
+     "Crawler 2": 0
+    }
+   },
+   {
+    "who": "Avilily",
+    "pickedByMachinesPct": 15,
+    "slipsPctVs": {
+     "Crawler 1": 12,
+     "Crawler 2": 12
+    }
+   },
+   {
+    "who": "Crystorn",
+    "pickedByMachinesPct": 28,
+    "slipsPctVs": {
+     "Crawler 1": 0,
+     "Crawler 2": 0
+    }
+   },
+   {
+    "who": "Graviclaw",
+    "pickedByMachinesPct": 30,
+    "slipsPctVs": {
+     "Crawler 1": 0,
+     "Crawler 2": 0
+    }
+   }
+  ],
+  "planResult": [
+   {
+    "who": "Crawler 1",
+    "healthNow": 14,
+    "healthAfterPlan": 0
+   },
+   {
+    "who": "Crawler 2",
+    "healthNow": 14,
+    "healthAfterPlan": 14
+   }
+  ],
+  "wastedOrders": [
+   {
+    "who": "Crystorn",
+    "move": "Heavy Ram",
+    "target": "Crawler 1",
+    "why": {
+     "kind": "falls"
+    }
+   }
+  ]
+ },
+ "B2-release": {
+  "room": 4,
+  "round": 6,
+  "units": [
+   {
+    "who": "Avilily",
+    "hp": "32/36",
+    "speed": 72,
+    "conditions": [],
+    "charging": null,
+    "bound": 0,
+    "guarded": false
+   },
+   {
+    "who": "Graviclaw",
+    "hp": "67/73",
+    "speed": 32,
+    "conditions": [],
+    "charging": null,
+    "bound": 0,
+    "guarded": false
+   },
+   {
+    "who": "Hippochamp",
+    "hp": "44/63",
+    "speed": 48,
+    "conditions": [],
+    "charging": null,
+    "bound": 0,
+    "guarded": false
+   },
+   {
+    "who": "Crystorn",
+    "hp": "61/68",
+    "speed": 28,
+    "conditions": [],
+    "charging": null,
+    "bound": 0,
+    "guarded": false
+   },
+   {
+    "who": "Crawler",
+    "hp": "0/14",
+    "speed": 60,
+    "conditions": [],
+    "charging": null,
+    "bound": 0,
+    "guarded": false
+   },
+   {
+    "who": "Drone",
+    "hp": "0/15",
+    "speed": 50,
+    "conditions": [],
+    "charging": null,
+    "bound": 0,
+    "guarded": false
+   },
+   {
+    "who": "Guardian",
+    "hp": "20/68",
+    "speed": 65,
+    "conditions": [
+     "slowed (tempo, 2 left)"
+    ],
+    "charging": "charging Core surge at Hippochamp",
+    "bound": 0,
+    "guarded": false
+   }
+  ],
+  "turnOrder": [
+   "Avilily",
+   "Hippochamp",
+   "Guardian",
+   "Graviclaw",
+   "Crystorn"
+  ],
+  "machineNextAttack": [
+   {
+    "who": "Guardian",
+    "expectedHealth": 22,
+    "move": "Core surge",
+    "upClose": true,
+    "held": null,
+    "targetKnown": false
+   }
+  ],
+  "legalMoves": {
+   "Avilily": [
+    "Piercing Peck",
+    "Binding Rake",
+    "Slashing Peck"
+   ],
+   "Graviclaw": [
+    "Gravity Draw",
+    "Ground Anchor",
+    "Slashing Pinch"
+   ],
+   "Hippochamp": [
+    "Repelling Slam",
+    "Water Sweep"
+   ],
+   "Crystorn": [
+    "Repelling Punch",
+    "Blinding Shot",
+    "Heavy Ram"
+   ]
+  },
+  "companionBody": [
+   {
+    "who": "Avilily",
+    "pickedByMachinesPct": 15,
+    "slipsPctVs": {
+     "Guardian": 30
+    }
+   },
+   {
+    "who": "Graviclaw",
+    "pickedByMachinesPct": 30,
+    "slipsPctVs": {
+     "Guardian": 0
+    }
+   },
+   {
+    "who": "Hippochamp",
+    "pickedByMachinesPct": 26,
+    "slipsPctVs": {
+     "Guardian": 16
+    }
+   },
+   {
+    "who": "Crystorn",
+    "pickedByMachinesPct": 28,
+    "slipsPctVs": {
+     "Guardian": 0
+    }
+   }
+  ],
+  "planResult": [
+   {
+    "who": "Crawler",
+    "healthNow": 0,
+    "healthAfterPlan": 0
+   },
+   {
+    "who": "Drone",
+    "healthNow": 0,
+    "healthAfterPlan": 0
+   },
+   {
+    "who": "Guardian",
+    "healthNow": 20,
+    "healthAfterPlan": 5
+   }
+  ],
+  "wastedOrders": []
+ },
+ "B3-broken": {
+  "room": 4,
+  "round": 6,
+  "units": [
+   {
+    "who": "Avilily",
+    "hp": "32/36",
+    "speed": 72,
+    "conditions": [],
+    "charging": null,
+    "bound": 0,
+    "guarded": false
+   },
+   {
+    "who": "Graviclaw",
+    "hp": "67/73",
+    "speed": 32,
+    "conditions": [],
+    "charging": null,
+    "bound": 0,
+    "guarded": false
+   },
+   {
+    "who": "Hippochamp",
+    "hp": "44/63",
+    "speed": 48,
+    "conditions": [],
+    "charging": null,
+    "bound": 0,
+    "guarded": false
+   },
+   {
+    "who": "Crystorn",
+    "hp": "61/68",
+    "speed": 28,
+    "conditions": [],
+    "charging": null,
+    "bound": 0,
+    "guarded": false
+   },
+   {
+    "who": "Crawler",
+    "hp": "0/14",
+    "speed": 60,
+    "conditions": [],
+    "charging": null,
+    "bound": 0,
+    "guarded": false
+   },
+   {
+    "who": "Drone",
+    "hp": "0/15",
+    "speed": 50,
+    "conditions": [],
+    "charging": null,
+    "bound": 0,
+    "guarded": false
+   },
+   {
+    "who": "Guardian",
+    "hp": "20/68",
+    "speed": 65,
+    "conditions": [
+     "slowed (tempo, 2 left)"
+    ],
+    "charging": "charging Core surge at Hippochamp",
+    "bound": 0,
+    "guarded": false
+   }
+  ],
+  "turnOrder": [
+   "Avilily",
+   "Hippochamp",
+   "Graviclaw",
+   "Guardian",
+   "Crystorn"
+  ],
+  "machineNextAttack": [
+   {
+    "who": "Guardian",
+    "expectedHealth": 22,
+    "move": "Core surge",
+    "upClose": true,
+    "held": null,
+    "targetKnown": false
+   }
+  ],
+  "legalMoves": {
+   "Avilily": [
+    "Piercing Peck",
+    "Binding Rake",
+    "Slashing Peck"
+   ],
+   "Graviclaw": [
+    "Gravity Draw",
+    "Ground Anchor",
+    "Slashing Pinch"
+   ],
+   "Hippochamp": [
+    "Repelling Slam",
+    "Water Sweep"
+   ],
+   "Crystorn": [
+    "Repelling Punch",
+    "Blinding Shot",
+    "Heavy Ram"
+   ]
+  },
+  "companionBody": [
+   {
+    "who": "Avilily",
+    "pickedByMachinesPct": 15,
+    "slipsPctVs": {
+     "Guardian": 30
+    }
+   },
+   {
+    "who": "Graviclaw",
+    "pickedByMachinesPct": 30,
+    "slipsPctVs": {
+     "Guardian": 0
+    }
+   },
+   {
+    "who": "Hippochamp",
+    "pickedByMachinesPct": 26,
+    "slipsPctVs": {
+     "Guardian": 16
+    }
+   },
+   {
+    "who": "Crystorn",
+    "pickedByMachinesPct": 28,
+    "slipsPctVs": {
+     "Guardian": 0
+    }
+   }
+  ],
+  "planResult": [
+   {
+    "who": "Crawler",
+    "healthNow": 0,
+    "healthAfterPlan": 0
+   },
+   {
+    "who": "Drone",
+    "healthNow": 0,
+    "healthAfterPlan": 0
+   },
+   {
+    "who": "Guardian",
+    "healthNow": 20,
+    "healthAfterPlan": 9
+   }
+  ],
+  "wastedOrders": []
+ },
+ "S1-worthless": {
+  "room": 1,
+  "round": 1,
+  "units": [
+   {
+    "who": "Hippochamp",
+    "hp": "63/63",
+    "speed": 48,
+    "conditions": [],
+    "charging": null,
+    "bound": 0,
+    "guarded": false
+   },
+   {
+    "who": "Avilily",
+    "hp": "36/36",
+    "speed": 72,
+    "conditions": [],
+    "charging": null,
+    "bound": 0,
+    "guarded": false
+   },
+   {
+    "who": "Crystorn",
+    "hp": "68/68",
+    "speed": 28,
+    "conditions": [],
+    "charging": null,
+    "bound": 0,
+    "guarded": false
+   },
+   {
+    "who": "Graviclaw",
+    "hp": "73/73",
+    "speed": 32,
+    "conditions": [],
+    "charging": null,
+    "bound": 0,
+    "guarded": false
+   },
+   {
+    "who": "Crawler 1",
+    "hp": "14/14",
+    "speed": 60,
+    "conditions": [],
+    "charging": null,
+    "bound": 0,
+    "guarded": false
+   },
+   {
+    "who": "Crawler 2",
+    "hp": "14/14",
+    "speed": 60,
+    "conditions": [],
+    "charging": null,
+    "bound": 0,
+    "guarded": false
+   }
+  ],
+  "turnOrder": [
+   "Avilily",
+   "Crawler 1",
+   "Crawler 2",
+   "Hippochamp",
+   "Graviclaw",
+   "Crystorn"
+  ],
+  "machineNextAttack": [
+   {
+    "who": "Crawler 1",
+    "expectedHealth": 7,
+    "move": "Tool strike",
+    "upClose": true,
+    "held": null,
+    "targetKnown": false
+   },
+   {
+    "who": "Crawler 2",
+    "expectedHealth": 7,
+    "move": "Tool strike",
+    "upClose": true,
+    "held": null,
+    "targetKnown": false
+   }
+  ],
+  "legalMoves": {
+   "Hippochamp": [
+    "Emergency Water Cannon",
+    "Repelling Slam",
+    "Crushing Kick",
+    "Water Sweep"
+   ],
+   "Avilily": [
+    "Blossoming Ambuscade",
+    "Piercing Peck",
+    "Binding Rake",
+    "Slashing Peck"
+   ],
+   "Crystorn": [
+    "Gem Radiance",
+    "Repelling Punch",
+    "Blinding Shot",
+    "Heavy Ram"
+   ],
+   "Graviclaw": [
+    "Gravity Pincer",
+    "Gravity Draw",
+    "Ground Anchor",
+    "Slashing Pinch"
+   ]
+  },
+  "companionBody": [
+   {
+    "who": "Hippochamp",
+    "pickedByMachinesPct": 26,
+    "slipsPctVs": {
+     "Crawler 1": 0,
+     "Crawler 2": 0
+    }
+   },
+   {
+    "who": "Avilily",
+    "pickedByMachinesPct": 15,
+    "slipsPctVs": {
+     "Crawler 1": 12,
+     "Crawler 2": 12
+    }
+   },
+   {
+    "who": "Crystorn",
+    "pickedByMachinesPct": 28,
+    "slipsPctVs": {
+     "Crawler 1": 0,
+     "Crawler 2": 0
+    }
+   },
+   {
+    "who": "Graviclaw",
+    "pickedByMachinesPct": 30,
+    "slipsPctVs": {
+     "Crawler 1": 0,
+     "Crawler 2": 0
+    }
+   }
+  ],
+  "selectedMoves": [
+   {
+    "move": "Gravity Pincer",
+    "legal": true,
+    "valueHealth": 8,
+    "harm": 8,
+    "kept": 0,
+    "healed": 0,
+    "knockout": false,
+    "readOn": "Crawler 1",
+    "whyZero": null
+   },
+   {
+    "move": "Gravity Draw",
+    "legal": true,
+    "valueHealth": 3,
+    "harm": 3,
+    "kept": 0,
+    "healed": 0,
+    "knockout": false,
+    "readOn": "Crawler 1",
+    "whyZero": null
+   },
+   {
+    "move": "Ground Anchor",
+    "legal": true,
+    "valueHealth": 0,
+    "harm": 0,
+    "kept": 0,
+    "healed": 0,
+    "knockout": false,
+    "readOn": "Graviclaw",
+    "whyZero": {
+     "kind": "needless"
+    }
+   },
+   {
+    "move": "Slashing Pinch",
+    "legal": true,
+    "valueHealth": 7,
+    "harm": 7,
+    "kept": 0,
+    "healed": 0,
+    "knockout": false,
+    "readOn": "Crawler 1",
+    "whyZero": null
+   }
+  ]
+ },
+ "S2-bind-aimed": {
+  "room": 1,
+  "round": 1,
+  "units": [
+   {
+    "who": "Hippochamp",
+    "hp": "63/63",
+    "speed": 48,
+    "conditions": [],
+    "charging": null,
+    "bound": 0,
+    "guarded": false
+   },
+   {
+    "who": "Avilily",
+    "hp": "36/36",
+    "speed": 72,
+    "conditions": [],
+    "charging": null,
+    "bound": 0,
+    "guarded": false
+   },
+   {
+    "who": "Crystorn",
+    "hp": "68/68",
+    "speed": 28,
+    "conditions": [],
+    "charging": null,
+    "bound": 0,
+    "guarded": false
+   },
+   {
+    "who": "Graviclaw",
+    "hp": "73/73",
+    "speed": 32,
+    "conditions": [],
+    "charging": null,
+    "bound": 0,
+    "guarded": false
+   },
+   {
+    "who": "Crawler 1",
+    "hp": "14/14",
+    "speed": 60,
+    "conditions": [],
+    "charging": null,
+    "bound": 0,
+    "guarded": false
+   },
+   {
+    "who": "Crawler 2",
+    "hp": "14/14",
+    "speed": 60,
+    "conditions": [],
+    "charging": null,
+    "bound": 0,
+    "guarded": false
+   }
+  ],
+  "turnOrder": [
+   "Avilily",
+   "Crawler 1",
+   "Crawler 2",
+   "Hippochamp",
+   "Graviclaw",
+   "Crystorn"
+  ],
+  "machineNextAttack": [
+   {
+    "who": "Crawler 1",
+    "expectedHealth": 7,
+    "move": "Tool strike",
+    "upClose": true,
+    "held": null,
+    "targetKnown": false
+   },
+   {
+    "who": "Crawler 2",
+    "expectedHealth": 7,
+    "move": "Tool strike",
+    "upClose": true,
+    "held": null,
+    "targetKnown": false
+   }
+  ],
+  "legalMoves": {
+   "Hippochamp": [
+    "Emergency Water Cannon",
+    "Repelling Slam",
+    "Crushing Kick",
+    "Water Sweep"
+   ],
+   "Avilily": [
+    "Blossoming Ambuscade",
+    "Piercing Peck",
+    "Binding Rake",
+    "Slashing Peck"
+   ],
+   "Crystorn": [
+    "Gem Radiance",
+    "Repelling Punch",
+    "Blinding Shot",
+    "Heavy Ram"
+   ],
+   "Graviclaw": [
+    "Gravity Pincer",
+    "Gravity Draw",
+    "Ground Anchor",
+    "Slashing Pinch"
+   ]
+  },
+  "companionBody": [
+   {
+    "who": "Hippochamp",
+    "pickedByMachinesPct": 26,
+    "slipsPctVs": {
+     "Crawler 1": 0,
+     "Crawler 2": 0
+    }
+   },
+   {
+    "who": "Avilily",
+    "pickedByMachinesPct": 15,
+    "slipsPctVs": {
+     "Crawler 1": 12,
+     "Crawler 2": 12
+    }
+   },
+   {
+    "who": "Crystorn",
+    "pickedByMachinesPct": 28,
+    "slipsPctVs": {
+     "Crawler 1": 0,
+     "Crawler 2": 0
+    }
+   },
+   {
+    "who": "Graviclaw",
+    "pickedByMachinesPct": 30,
+    "slipsPctVs": {
+     "Crawler 1": 0,
+     "Crawler 2": 0
+    }
+   }
+  ],
+  "selectedMoves": [
+   {
+    "move": "Blossoming Ambuscade",
+    "legal": true,
+    "valueHealth": 7,
+    "harm": 0,
+    "kept": 7,
+    "healed": 0,
+    "knockout": false,
+    "readOn": "Crawler 1",
+    "whyZero": null
+   },
+   {
+    "move": "Piercing Peck",
+    "legal": true,
+    "valueHealth": 1,
+    "harm": 1,
+    "kept": 0,
+    "healed": 0,
+    "knockout": false,
+    "readOn": "Crawler 1",
+    "whyZero": null
+   },
+   {
+    "move": "Binding Rake",
+    "legal": true,
+    "valueHealth": 3,
+    "harm": 0,
+    "kept": 3,
+    "healed": 0,
+    "knockout": false,
+    "readOn": "Crawler 1",
+    "whyZero": null
+   },
+   {
+    "move": "Slashing Peck",
+    "legal": true,
+    "valueHealth": 1,
+    "harm": 1,
+    "kept": 0,
+    "healed": 0,
+    "knockout": false,
+    "readOn": "Crawler 1",
+    "whyZero": null
+   }
+  ],
+  "moveInHand": {
+   "move": "Binding Rake",
+   "range": "contact",
+   "approach": "closing",
+   "preparation": "brief",
+   "effects": [
+    "bind:restrained occasional target"
+   ],
+   "onEachTarget": [
+    {
+     "target": "Crawler 1",
+     "damage": 0,
+     "healthAfter": 14,
+     "alsoReaches": [],
+     "value": 3,
+     "kept": 3,
+     "why": null
+    },
+    {
+     "target": "Crawler 2",
+     "damage": 0,
+     "healthAfter": 14,
+     "alsoReaches": [],
+     "value": 3,
+     "kept": 3,
+     "why": null
+    }
+   ],
+   "aimedAt": "Crawler 1"
+  }
+ },
+ "S3-shock": {
+  "room": 4,
+  "round": 1,
+  "units": [
+   {
+    "who": "Avilily",
+    "hp": "36/36",
+    "speed": 72,
+    "conditions": [],
+    "charging": null,
+    "bound": 0,
+    "guarded": false
+   },
+   {
+    "who": "Graviclaw",
+    "hp": "67/73",
+    "speed": 32,
+    "conditions": [],
+    "charging": null,
+    "bound": 0,
+    "guarded": false
+   },
+   {
+    "who": "Hippochamp",
+    "hp": "63/63",
+    "speed": 48,
+    "conditions": [],
+    "charging": null,
+    "bound": 0,
+    "guarded": false
+   },
+   {
+    "who": "Crystorn",
+    "hp": "68/68",
+    "speed": 28,
+    "conditions": [],
+    "charging": null,
+    "bound": 0,
+    "guarded": false
+   },
+   {
+    "who": "Crawler",
+    "hp": "14/14",
+    "speed": 60,
+    "conditions": [],
+    "charging": null,
+    "bound": 0,
+    "guarded": false
+   },
+   {
+    "who": "Drone",
+    "hp": "15/15",
+    "speed": 50,
+    "conditions": [],
+    "charging": null,
+    "bound": 0,
+    "guarded": false
+   },
+   {
+    "who": "Guardian",
+    "hp": "68/68",
+    "speed": 65,
+    "conditions": [],
+    "charging": null,
+    "bound": 0,
+    "guarded": false
+   }
+  ],
+  "turnOrder": [
+   "Avilily",
+   "Guardian",
+   "Crawler",
+   "Drone",
+   "Hippochamp",
+   "Graviclaw",
+   "Crystorn"
+  ],
+  "machineNextAttack": [
+   {
+    "who": "Crawler",
+    "expectedHealth": 7,
+    "move": "Tool strike",
+    "upClose": true,
+    "held": null,
+    "targetKnown": false
+   },
+   {
+    "who": "Drone",
+    "expectedHealth": 8,
+    "move": "Security beam",
+    "upClose": false,
+    "held": null,
+    "targetKnown": false
+   },
+   {
+    "who": "Guardian",
+    "expectedHealth": 24,
+    "move": "Core surge",
+    "upClose": true,
+    "held": null,
+    "targetKnown": false
+   }
+  ],
+  "legalMoves": {
+   "Avilily": [
+    "Blossoming Ambuscade",
+    "Piercing Peck",
+    "Binding Rake",
+    "Slashing Peck"
+   ],
+   "Graviclaw": [
+    "Gravity Pincer",
+    "Gravity Draw",
+    "Ground Anchor",
+    "Slashing Pinch"
+   ],
+   "Hippochamp": [
+    "Emergency Water Cannon",
+    "Repelling Slam",
+    "Crushing Kick",
+    "Water Sweep"
+   ],
+   "Crystorn": [
+    "Gem Radiance",
+    "Repelling Punch",
+    "Blinding Shot",
+    "Heavy Ram"
+   ]
+  },
+  "companionBody": [
+   {
+    "who": "Avilily",
+    "pickedByMachinesPct": 15,
+    "slipsPctVs": {
+     "Crawler": 12,
+     "Drone": 22,
+     "Guardian": 7
+    }
+   },
+   {
+    "who": "Graviclaw",
+    "pickedByMachinesPct": 30,
+    "slipsPctVs": {
+     "Crawler": 0,
+     "Drone": 0,
+     "Guardian": 0
+    }
+   },
+   {
+    "who": "Hippochamp",
+    "pickedByMachinesPct": 26,
+    "slipsPctVs": {
+     "Crawler": 0,
+     "Drone": 0,
+     "Guardian": 0
+    }
+   },
+   {
+    "who": "Crystorn",
+    "pickedByMachinesPct": 28,
+    "slipsPctVs": {
+     "Crawler": 0,
+     "Drone": 0,
+     "Guardian": 0
+    }
+   }
+  ],
+  "selectedMoves": [
+   {
+    "move": "Gravity Pincer",
+    "legal": true,
+    "valueHealth": 8,
+    "harm": 8,
+    "kept": 0,
+    "healed": 0,
+    "knockout": false,
+    "readOn": "Crawler",
+    "whyZero": null
+   },
+   {
+    "move": "Gravity Draw",
+    "legal": true,
+    "valueHealth": 3,
+    "harm": 3,
+    "kept": 0,
+    "healed": 0,
+    "knockout": false,
+    "readOn": "Crawler",
+    "whyZero": null
+   },
+   {
+    "move": "Ground Anchor",
+    "legal": true,
+    "valueHealth": 0,
+    "harm": 0,
+    "kept": 0,
+    "healed": 0,
+    "knockout": false,
+    "readOn": "Graviclaw",
+    "whyZero": {
+     "kind": "needless"
+    }
+   },
+   {
+    "move": "Slashing Pinch",
+    "legal": true,
+    "valueHealth": 7,
+    "harm": 7,
+    "kept": 0,
+    "healed": 0,
+    "knockout": false,
+    "readOn": "Crawler",
+    "whyZero": null
+   }
+  ],
+  "moveInHand": {
+   "move": "Slashing Pinch",
+   "range": "contact",
+   "approach": "closing",
+   "preparation": "brief",
+   "effects": [
+    "harm consistent target"
+   ],
+   "onEachTarget": [
+    {
+     "target": "Crawler",
+     "damage": 7,
+     "healthAfter": 7,
+     "alsoReaches": [],
+     "value": 7,
+     "kept": 0,
+     "why": null
+    },
+    {
+     "target": "Drone",
+     "damage": 7,
+     "healthAfter": 8,
+     "alsoReaches": [],
+     "value": 7,
+     "kept": 0,
+     "why": null
+    },
+    {
+     "target": "Guardian",
+     "damage": 7,
+     "healthAfter": 61,
+     "alsoReaches": [],
+     "value": 7,
+     "kept": 0,
+     "why": null
+    }
+   ],
+   "aimedAt": null
+  }
+ }
+}

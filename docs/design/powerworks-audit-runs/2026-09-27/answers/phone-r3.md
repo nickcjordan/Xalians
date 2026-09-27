@@ -1,0 +1,10 @@
+1a. It's my decision (choosing orders for my squad); the choices shown are four move icons (Blossoming Ambuscade, Piercing Peck, Binding Rake, Slashing Peck) plus creature slots with "+" to assign them. (confidence 4)
+1b. Crawler 1: 14 HP, Crawler 2: 14 HP. My creatures: Hippochamp 63, Avilily 36, Crystorn 68, Graviclaw 73 (these numbers look like HP bars, all shown full/green). (confidence 3)
+1c. Can't tell from this screen alone — no target or damage preview is shown for Crawler 1's action on screen 01, only an attack-power icon "7" is listed on its card, with no stated target. (confidence 4)
+1d. They appear to be a move's cost/intensity meter (striped segments filled out of a total, with a number label) — likely something like an action cost or power rating (e.g. "1", "3", "7" filled segments), but the exact meaning can't be confirmed from this screen. (guess) (confidence 2)
+1e. Can't tell for certain without knowing move targets/effects, but "Blossoming Ambuscade" is crowned/highlighted as apparently a default or recommended pick, and its bar shows the highest fill (7), suggesting it may be the strongest option right now. (guess) (confidence 2)
+1f. What the striped number bars under each move mean (cost? power? charges?); why "Blossoming Ambuscade" has a crown icon and gold highlight; what the small "i" info icons reveal; why some creatures (Avilily) are highlighted with a ring/glow versus others; what the "0/4" and "4 orders remaining" fully control. (confidence 5)
+
+2a. Crawler 1 takes 8 damage, going from 14 HP down to 6 HP. (confidence 5)
+2b. The panel shows the move name "Gravity Pincer" (crowned), a "Harm" tag, a striped bar reading "8" (apparently the damage/power amount), the target "Crawler 1," and a summary line "Crawler 1: 8 damage, 14 to 6." (confidence 5)
+2c. What the "Harm" tag category means versus other possible tags; what the diamond icon on the right of the move panel does; why the bar under "Harm" shows partial stripes with the number 8; what the crown icon on the move name signifies. (confidence 5)

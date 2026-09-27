@@ -1,6 +1,6 @@
 # Powerworks: an audit of how intuitive the play screen is
 
-Status: proposed 2026-09-27, not yet run. Tier: immersive (the play screen). Follows [powerworks-move-value.md](powerworks-move-value.md), whose three passes (move value, readout, legible effects) each added indicators in answer to a question Nick asked.
+Status: run 1 done 2026-09-27 (results at the end); fix passes proposed. Tier: immersive (the play screen). Follows [powerworks-move-value.md](powerworks-move-value.md), whose three passes (move value, readout, legible effects) each added indicators in answer to a question Nick asked.
 
 ## Context
 
@@ -155,3 +155,114 @@ The blind tests run as subagents reading screenshots.
 - **Test 3.3:** about 8 beat kinds times 3 readers.
 
 In total, about 150 short agent runs, each a few screenshots and a page of questions. The screenshots come from the saves-per-sector harness already built for the overlap check. Nick's session (3.4) is about 15 minutes.
+
+## Run 1 results (2026-09-27)
+
+Run on the live site at commit 96e4bec5 (PR #686), seed 7, the preset squad. Record: [powerworks-audit-runs/2026-09-27/](powerworks-audit-runs/2026-09-27/) (every reader's answers, the grades, the merged confusions, the engine facts). Signal inventory: [powerworks-signal-inventory.md](powerworks-signal-inventory.md). Harness: `scripts/powerworks-audit/`.
+
+### What was run
+
+- Planning, no guide: 8 moments, 34 questions, 3 readers.
+- Planning with the field guide: the same, 3 readers.
+- Phone: 2 moments, 3 readers.
+- Playback: 11 beats as frame strips, 3 readers.
+- Signal naming: 31 marks, first in isolation and then in place, 3 readers.
+- One independent grader scored every answer against the engine's key.
+- One agent compiled the signal inventory from the code.
+
+That is 17 agent runs, not the 150 this plan estimated. Readers took moments in sequence, as a player does, instead of one run per moment. Nick's cold play (3.4) and the lint (3.5) are still to come.
+
+### Scores
+
+Share of answers graded fully correct, by the player's question:
+
+| Player question | No guide | With the guide |
+|---|---|---|
+| 1. Who acts, in what order | 67% | 67% |
+| 2. What each machine will do | 47% | 80% |
+| 3. The state of every unit | 78% | 83% |
+| 4. What this move does | 53% | 53% |
+| 5. Which move is better, and why | **0%** | 22% |
+| 6. What the whole plan does | 40% | 47% |
+| 7. What a companion is good for | **0%** | 89% |
+| Marks and previews | 13% | 60% |
+| **All planning questions** | **38%** (39 of 102) | **62%** (63 of 102) |
+| Phone (7 questions) | 52% | |
+| Playback (27 questions) | **98%** (79 of 81) | |
+| Signals named in place | 45% (42 of 93) | |
+
+The pass bar was 90% on the core planning questions with no guide. The screen scores 38%. Playback passes.
+
+**The guide adds 24 correct answers, so its knowledge is learnable but not on the screen.** Everything the guide explains (the value bar, the attack badge, the inspector lines) was misread without it.
+
+### Findings, worst first
+
+**F1. Four things on screen are wrong, not just unclear.** These led readers to confident wrong answers (flagged M by the grader), and they are bugs to fix whatever the design direction.
+
+- **"7 → 0" under a machine says your orders stop its attack, but it attacks first.** In screen 4, Crawler 1 acts second, before the companions who knock it out; the badge counts the knockout as stopping its blow. Five of six readers concluded it would not attack; in play it hit Hippochamp for 7 before it fell.
+- **The "wasted" mark is wrong.** Crystorn's order on a machine the others finish is marked as doing nothing, but the engine redirects it to the next machine (it hit Crawler 2 for 6).
+- **A fallen machine's "Down" label sits in the squad's area.** On screen 5 it landed beside Avilily's move wheel, and five of six readers said Avilily was knocked out.
+- **Playback says "Stopped by binding" when a pull broke a charge.** Readers read past it only because the second line said "its charge was broken".
+
+**F2. The move value bar reads as a resource meter.**
+- **What readers said.** No blind reader, and no phone reader, read the striped bar under each move as what the move is worth. All nine said cost, cooldown, charges or stamina. In the naming test, 0 of 6 answers were right. It is the most-raised confusion (10 of 15 readers).
+- **The consequence.** "Which move is better" scored 0 of 9 without the guide, and that is the question the bar was built to answer.
+- **What does work.** The move card's sentence, "Crawler 1: 8 damage, 14 to 6", was read correctly by every reader.
+
+**F3. A machine's intent does not read as intent.**
+- **What readers said.** Asked what Crawler 1 will do this round, all three blind readers said they couldn't tell. They read the "⚔ 7" badge as an attack stat, not as the attack about to land.
+- **With the guide,** all three got it.
+
+**F4. Symbols that mean something else to a newcomer.** In the naming test (six readings each, isolated and in place):
+- **The crown** read as "leader", "recommended" or "default" (0 correct). That is the reverse of the no-suggestions ruling.
+- **The » on a turn-order portrait** read as "fast-forward" or "faster" (0 correct, flagged misleading); it means the unit would act later.
+- **The matchup triangle** read as a warning (0 correct, flagged misleading).
+- **The dot on a turn-order portrait** was not read as "order set" (0 correct).
+- **The diamond on the move card** was unexplained to 8 of 15 readers.
+- **The lightning bolt** marks a charge, a shock-back reaction and the "Charged" status. "Charged" was the second most-raised confusion (9 of 15), and two readers credited the Guardian's shock-back to its charge.
+
+**F5. Hovering a move does not show what it does.**
+- **Blind readers.** No blind reader could say what Water Sweep would do from the hover. The change appears on a machine's plate across the stage, with nothing tying it to the hovered disc.
+- **Once chosen,** the card says it in words, and every reader got it.
+
+**F6. Marks that look alike.**
+- **Rings.** The gold rings under a selected companion, an aimed target and a possible target read as one thing.
+- **The crossed-out circle.** It means both "this order does nothing" and "this move is worth nothing".
+- **Greyed creatures.** They read as "not ordered yet", "already used" and "not a target" by different readers.
+
+**F7. The inspector.**
+- **Readers do read it.** With context, readers understood the new lines about how often machines pick a companion and how much it slips.
+- **The move cards** read as costs and cooldowns (see F2).
+
+### What works, and should be kept as the pattern
+
+Every signal read correctly by all six readings is a word or a number said in place:
+- the before and after health readout ("14 → 6", "14 → 💀 0");
+- the move card's sentence;
+- status words with a count ("Corroding 1", "Restrained 40%", "shocks back −4", "× Down");
+- order chips ("Heavy Ram → Crawler 1");
+- the playback banners, at 98%.
+
+The signals that failed are almost all glyphs that must be learned: bars, crowns, chevrons, triangles, dots, diamonds and rings.
+
+### What this means for the "affordances, not labels" ruling
+
+The evidence says a short word or number in place is what a newcomer understands, and an abstract glyph is what they misread. The 2026-09-23 ruling is against board labels, sentences and suggestions. This audit does not argue for sentences or suggestions: the crown fails precisely because it reads as a suggestion. It argues for replacing glyphs with the word or number they stand for ("Signature", "acts later", "strong", "8 dmg"), in the place the glyph now sits. That is decision 4 of this plan, now with data. Nick decides.
+
+### Proposed fix passes, each followed by a rerun of this audit
+
+- **A. Make the screen true (no design question).**
+  - Stop the plan readout from counting a knockout against a blow that lands first.
+  - Show a redirected order as redirected, not wasted.
+  - Pin a fallen unit's label to its own plate.
+  - Word a broken charge as a broken charge.
+  - Order "wears off" after the blow it stopped.
+- **B. Say each move's effect in words and numbers.**
+  - Replace the value bar with the effect itself on each disc, for example "8 dmg" or "stops 7".
+  - Make hovering open the same card that choosing does.
+  - Say a machine's intent as its next attack on one of yours, for example "next: ~7 to one of yours".
+- **C. Shrink and fix the vocabulary.**
+  - Replace the crown, », triangle, dot and diamond with the word they stand for.
+  - Give the lightning bolt one meaning.
+  - Separate selection rings from target rings.
+  - Build the one-meaning lint (3.5) on the resulting dictionary.

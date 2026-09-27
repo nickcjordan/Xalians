@@ -1,0 +1,326 @@
+[
+ {
+  "id": "P1-opening",
+  "history": "sector0",
+  "select": "Avilily",
+  "clickSelect": false,
+  "signals": [
+   {
+    "name": "crown",
+    "selector": ".pw-radial-crown"
+   },
+   {
+    "name": "value-bar",
+    "selector": ".pw-radial-value"
+   },
+   {
+    "name": "threat-badge",
+    "selector": ".pw-threat"
+   },
+   {
+    "name": "ground-ring-selected",
+    "selector": ".pw-ground-ring"
+   },
+   {
+    "name": "element-icon",
+    "selector": ".pw-scene-unit.defender .pw-unit-plaque > div > svg"
+   },
+   {
+    "name": "info-button",
+    "selector": ".pw-unit-plaque > div > button"
+   },
+   {
+    "name": "empty-order-chip",
+    "selector": ".pw-order-chip.empty"
+   },
+   {
+    "name": "turn-strip-needs-order",
+    "selector": ".pw-turn-strip li.ally:not(.set) > button"
+   },
+   {
+    "name": "turn-strip-machine",
+    "selector": ".pw-turn-strip li.enemy > button"
+   }
+  ]
+ },
+ {
+  "id": "P2-hover",
+  "history": "sector0",
+  "select": "Hippochamp",
+  "hover": "Water Sweep",
+  "signals": [
+   {
+    "name": "referent-crosshair",
+    "selector": ".pw-referent"
+   },
+   {
+    "name": "turn-shift-arrow",
+    "selector": ".pw-turn-shift"
+   },
+   {
+    "name": "matchup-triangle",
+    "selector": ".pw-matchup"
+   },
+   {
+    "name": "charge-mark-on-disc",
+    "selector": ".pw-radial-charge"
+   },
+   {
+    "name": "faint-target-ring",
+    "selector": ".pw-target-ring.faint"
+   }
+  ]
+ },
+ {
+  "id": "P3-aimed",
+  "history": "sector0",
+  "select": "Graviclaw",
+  "choose": "Gravity Pincer",
+  "aim": "M1",
+  "signals": [
+   {
+    "name": "health-before-after",
+    "selector": ".pw-hp-delta.hit"
+   },
+   {
+    "name": "target-ring",
+    "selector": ".pw-target-ring:not(.faint)"
+   },
+   {
+    "name": "card-value-row",
+    "selector": ".pw-radial-card-value"
+   },
+   {
+    "name": "card-element-mark",
+    "selector": ".pw-radial-card .pw-radial-marks > *:first-child"
+   }
+  ]
+ },
+ {
+  "id": "P4-plan",
+  "history": "sector0",
+  "plans": {
+   "Graviclaw": {
+    "move": "Gravity Pincer",
+    "target": "M1"
+   },
+   "Crystorn": {
+    "move": "Heavy Ram",
+    "target": "M1"
+   },
+   "Hippochamp": {
+    "move": "Emergency Water Cannon",
+    "target": "M1"
+   },
+   "Avilily": {
+    "move": "Binding Rake",
+    "target": "M2"
+   }
+  },
+  "signals": [
+   {
+    "name": "plan-readout",
+    "selector": ".pw-hp-delta.plan"
+   },
+   {
+    "name": "idle-order-chip",
+    "selector": ".pw-order-chip.idle"
+   },
+   {
+    "name": "order-chip",
+    "selector": ".pw-order-chip:not(.idle):not(.empty)"
+   },
+   {
+    "name": "turn-strip-order-set",
+    "selector": ".pw-turn-strip li.ally.set > button"
+   },
+   {
+    "name": "threat-stopped",
+    "selector": ".pw-threat.changed"
+   }
+  ]
+ },
+ {
+  "id": "P5-statuses",
+  "history": "conditions",
+  "select": "Avilily",
+  "clickSelect": false,
+  "signals": [
+   {
+    "name": "status-badge-companion",
+    "selector": ".pw-scene-unit.ally .pw-scene-status .pw-status-badge"
+   },
+   {
+    "name": "status-badge-machine",
+    "selector": ".pw-scene-unit.defender .pw-scene-status .pw-status-badge"
+   },
+   {
+    "name": "fallen-machine",
+    "selector": ".pw-scene-unit.fallen .pw-unit-plaque"
+   },
+   {
+    "name": "rest-pips",
+    "selector": ".pw-radial-rest"
+   }
+  ]
+ },
+ {
+  "id": "P6-charged",
+  "history": "charged",
+  "select": "Avilily",
+  "clickSelect": false,
+  "signals": [
+   {
+    "name": "spent-disc",
+    "selector": ".pw-radial-tag"
+   },
+   {
+    "name": "charged-badge",
+    "selector": ".pw-status-badge.charged"
+   }
+  ]
+ },
+ {
+  "id": "P7-crowded",
+  "history": "sector3",
+  "select": "Avilily",
+  "clickSelect": false,
+  "hover": "Blossoming Ambuscade",
+  "signals": [
+   {
+    "name": "threat-stopped-big",
+    "selector": ".pw-threat.changed"
+   }
+  ]
+ },
+ {
+  "id": "P8-inspect",
+  "history": "sector0",
+  "inspect": "Avilily"
+ },
+ {
+  "id": "P9-phone-opening",
+  "history": "sector0",
+  "size": "390x844",
+  "select": "Avilily",
+  "clickSelect": false
+ },
+ {
+  "id": "P10-phone-chosen",
+  "history": "sector0",
+  "size": "390x844",
+  "select": "Graviclaw",
+  "choose": "Gravity Pincer"
+ },
+ {
+  "id": "G-guide",
+  "history": "sector0",
+  "guide": true
+ },
+ {
+  "id": "B1-sector1",
+  "history": "sector0",
+  "playback": true,
+  "plans": {
+   "Graviclaw": {
+    "move": "Gravity Pincer",
+    "target": "M1"
+   },
+   "Crystorn": {
+    "move": "Heavy Ram",
+    "target": "M1"
+   },
+   "Hippochamp": {
+    "move": "Emergency Water Cannon",
+    "target": "M1"
+   },
+   "Avilily": {
+    "move": "Binding Rake",
+    "target": "M2"
+   }
+  }
+ },
+ {
+  "id": "B2-release",
+  "history": "charged",
+  "playback": true,
+  "plans": {
+   "Avilily": {
+    "move": "Piercing Peck",
+    "target": "B4"
+   },
+   "Hippochamp": {
+    "move": "Water Sweep",
+    "target": "B4"
+   },
+   "Graviclaw": {
+    "move": "Slashing Pinch",
+    "target": "B4"
+   },
+   "Crystorn": {
+    "move": "Heavy Ram",
+    "target": "B4"
+   }
+  }
+ },
+ {
+  "id": "B3-broken",
+  "history": "charged",
+  "playback": true,
+  "plans": {
+   "Avilily": {
+    "move": "Piercing Peck",
+    "target": "B4"
+   },
+   "Hippochamp": {
+    "move": "Water Sweep",
+    "target": "B4"
+   },
+   "Graviclaw": {
+    "move": "Gravity Draw",
+    "target": "B4"
+   },
+   "Crystorn": {
+    "move": "Heavy Ram",
+    "target": "B4"
+   }
+  }
+ },
+ {
+  "id": "S1-worthless",
+  "history": "sector0",
+  "select": "Graviclaw",
+  "signals": [
+   {
+    "name": "no-effect-value",
+    "selector": ".pw-value-none"
+   }
+  ]
+ },
+ {
+  "id": "S2-bind-aimed",
+  "history": "sector0",
+  "select": "Avilily",
+  "clickSelect": false,
+  "choose": "Binding Rake",
+  "aim": "M1",
+  "signals": [
+   {
+    "name": "ghost-status",
+    "selector": ".pw-status-badge.ghost"
+   }
+  ]
+ },
+ {
+  "id": "S3-shock",
+  "history": "sector3",
+  "select": "Graviclaw",
+  "hover": "Slashing Pinch",
+  "signals": [
+   {
+    "name": "shock-back-mark",
+    "selector": ".pw-shock-mark"
+   }
+  ]
+ }
+]
