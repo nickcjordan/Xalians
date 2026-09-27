@@ -8097,3 +8097,8 @@
 	.rec-console--match[data-terminal] .rec-side .rec-flag:not(.rec-flag--lit):not(.rec-flag--point) { display: none; }
 }
 
+/* pass 68: before the words go entirely, the last lines go one at a time (reclamationWorld SAYS_STEPS) */
+.rec-console--match[data-terminal] .rec-ghost-piece--says[data-says-lines="3"] .rec-reasons > :nth-child(n+4),
+.rec-console--match[data-terminal] .rec-ghost-piece--says[data-says-lines="2"] .rec-reasons > :nth-child(n+3),
+.rec-console--match[data-terminal] .rec-ghost-piece--says[data-says-lines="1"] .rec-reasons > :nth-child(n+2) { display: none; }
+

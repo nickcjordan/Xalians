@@ -3,6 +3,7 @@ import { formatHold, formatHoldShown, wholeOrTenths } from './reclamationNarrati
 import { FIT_SCALE, HOLD_BAR_SCALE } from './reclamationFit';
 import { HomeGlyph, StrainGlyph, CompanyGlyph, FallsGlyph, NoMediumGlyph, PieceGlyph, RoleGlyph, RivalGlyph } from './reclamationGlyphs';
 import { getSpeciesTypeSymbol } from '../../../utils/svgUtil';
+import { strainMultiplierFor } from '@xalians/rules/expedition/creatureOnTable';
 
 /*
 	PASS 52, THE GLANCE REDESIGN (docs/design/reclamation-glance-redesign.md).
@@ -230,7 +231,7 @@ export function whyWords(reasons) {
 	const r = reasons || {};
 	const out = [];
 	if (r.home) out.push('its home world: it holds half again as much here');
-	if (r.climate) out.push(`${CLIMATE_WORDS[r.climate.cause] || CLIMATE_WORDS.strained}: it holds ${r.climate.level === 'severe' ? 'a quarter' : 'half'} of what it would`);
+	if (r.climate) out.push(`${CLIMATE_WORDS[r.climate.cause] || CLIMATE_WORDS.strained}: it holds ${climateShare(r.climate)} of what it would`);
 	if (r.company) out.push(`the creatures with it here ${r.company > 0 ? 'add' : 'take'} ${formatHold(Math.abs(r.company))}`);
 	if (r.selfLift) out.push(`it is a bolster, and steadies itself as it steadies its allies: ${formatHold(r.selfLift)} more`);
 	if (r.falls) out.push('the Clash would drive it to nothing');
@@ -239,8 +240,19 @@ export function whyWords(reasons) {
 
 const upperFirst = (text) => text.replace(/^./, (c) => c.toUpperCase());
 
-// pass 59: a factor as the card prints it beside its mark
+// pass 68: how much of itself it keeps, in words; a world's temperature now costs a tenth or a quarter
+const SHARE = { 0.25: 'a quarter', 0.5: 'half', 0.75: 'three quarters', 0.9: 'nine tenths' };
+function climateShare(climate) {
+	const temperature = climate.cause === 'cold' || climate.cause === 'hot';
+	const factor = typeof climate.factor === 'number' ? climate.factor : strainMultiplierFor(climate.level, temperature ? climate.cause : null);
+	return SHARE[factor] || `${Math.round(factor * 100)} percent`;
+}
+
+// pass 59: a factor as the card prints it beside its mark (pass 68: a tenth off prints as ×0.9)
 export function factorText(v) {
+	if (Math.abs(v * 4 - Math.round(v * 4)) > 1e-6) {
+		return `\u00d7${Number(v.toFixed(2))}`;
+	}
 	const whole = Math.floor(v + 1e-9);
 	const part = Math.round((v - whole) * 4) / 4;
 	const frac = part === 0.25 ? '\u00bc' : part === 0.5 ? '\u00bd' : part === 0.75 ? '\u00be' : '';
@@ -281,14 +293,14 @@ export function WhyMarks({ reasons, className, factors: withFactors, roomy }) {
 	}
 	if (r.climate) {
 		const cause = r.climate.cause || 'strained';
-		const factor = typeof r.climate.factor === 'number' ? r.climate.factor : (r.climate.level === 'severe' ? 0.25 : 0.5);
+		const factor = typeof r.climate.factor === 'number' ? r.climate.factor : strainMultiplierFor(r.climate.level, cause === 'cold' || cause === 'hot' ? cause : null);
 		marks.push(chip(
 			'climate',
 			<span
 				className={`rec-why rec-why--climate rec-why--${cause} rec-why--level-${r.climate.level}`}
 				data-why={cause}
 				data-why-level={r.climate.level}
-				title={`${upperFirst(CLIMATE_WORDS[cause] || CLIMATE_WORDS.strained)}: it holds ${r.climate.level === 'severe' ? 'a quarter' : 'half'} of what it would`}
+				title={`${upperFirst(CLIMATE_WORDS[cause] || CLIMATE_WORDS.strained)}: it holds ${climateShare({ ...r.climate, factor })} of what it would`}
 			>
 				{(cause === 'breath' || cause === 'medium') && r.climate.medium
 					? <NoMediumGlyph medium={r.climate.medium} />

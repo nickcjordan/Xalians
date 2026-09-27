@@ -44,7 +44,7 @@ export function siteHoldsFor(record, view, you) {
 	const sentCount = view.players[you].sentCount || 0;
 	return view.frame.sites.map((site, index) => {
 		const p = prepare(record, site, site.world, sentCount);
-		return { site, index, hold: p.hold, strainLevel: p.strainLevel, isHome: p.isHome, unstrained: p.hold / strainMultiplierFor(p.strainLevel) };
+		return { site, index, hold: p.hold, strainLevel: p.strainLevel, isHome: p.isHome, unstrained: p.hold / strainMultiplierFor(p.strainLevel, p.strainCause) };
 	});
 }
 

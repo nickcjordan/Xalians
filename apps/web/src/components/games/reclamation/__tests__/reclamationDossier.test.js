@@ -56,7 +56,7 @@ describe('the dossier', () => {
 				if (prepared.isHome) expect(keys).toContain('home');
 				if (prepared.heldStrainLevel !== 'none' || prepared.heldStrainLevel !== prepared.strainLevel) expect(keys).toContain('climate');
 				if (prepared.strainLevel === 'severe' && prepared.heldStrainLevel === 'strained') {
-					expect(lines.find((l) => l.key === 'climate').effect).toMatch(/but it is willful: it holds half, not a quarter\.$/);
+					expect(lines.find((l) => l.key === 'climate').effect).toMatch(/but it is willful: it holds (half, not a quarter|nine tenths, not three quarters)\.$/);
 					said += 1;
 				}
 				lines.forEach((l) => expect(`${l.effect} ${l.cause}`).not.toMatch(/undefined|NaN/));

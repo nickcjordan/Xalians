@@ -1713,7 +1713,7 @@ class ReclamationMatch extends React.Component {
 						isHome: prepared.isHome,
 						// the hold it would have here unstrained: the meter draws the difference
 						// as what the environment took
-						unstrained: full / strainMultiplierFor(prepared.strainLevel),
+						unstrained: full / strainMultiplierFor(prepared.strainLevel, prepared.strainCause),
 						baseHold: prepared.baseHold,
 						// pass 57: why it holds what it does here, the marks its card's column carries
 						reasons: {
@@ -1843,7 +1843,7 @@ class ReclamationMatch extends React.Component {
 				isHome: plan.isHome,
 				bolstered: plan.bolstered,
 				preview: !armedRecordId,
-				unstrained: plan.hold / strainMultiplierFor(plan.strainLevel),
+				unstrained: plan.hold / strainMultiplierFor(plan.strainLevel, prepared.strainCause),
 				// pass 61: the fight behind its toll here, named
 				blows: blows ? blows[site.id] || null : null,
 				open,

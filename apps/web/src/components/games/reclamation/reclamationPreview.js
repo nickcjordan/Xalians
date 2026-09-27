@@ -468,6 +468,10 @@ export function strainCause(tolerance, site) {
 	if (env.medium && breathes.length > 0 && !breathes.includes(env.medium)) {
 		return 'breath';
 	}
+	// pass 68: the wrong medium outweighs any temperature (the engine's strainCauseOf)
+	if (env.medium && !(tol.ambientMedia || []).includes(env.medium)) {
+		return 'medium';
+	}
 	const band = tol.temperatureC;
 	const t = env.temperatureC;
 	if (band && t && [band.min, band.max, t.min, t.max].every((n) => typeof n === 'number') && !(t.min >= band.min && t.max <= band.max)) {
@@ -476,9 +480,6 @@ export function strainCause(tolerance, site) {
 			// the side of the world's band that reaches furthest past the creature's
 			return band.min - t.min >= t.max - band.max ? 'cold' : 'hot';
 		}
-	}
-	if (env.medium && !(tol.ambientMedia || []).includes(env.medium)) {
-		return 'medium';
 	}
 	return null;
 }

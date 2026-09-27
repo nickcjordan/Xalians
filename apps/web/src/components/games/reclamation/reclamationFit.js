@@ -66,7 +66,8 @@ export function forecastTotalsAt(match, seat, forecast, siteId, extraId) {
 	and `toll` is what the Clash would take off it (its hold going in, less `own`). Its hold
 	going in is made of its body and the world: `body` is what it holds at a world that
 	neither favors nor strains it (baseHold: vitality, resilience and endurance), times 1.5
-	on its home world, times a half or a quarter where the climate or the air strains it
+	on its home world, times a half or a quarter where the air strains it (nine tenths or
+	three quarters where it is the temperature, pass 68)
 	(a willful creature shrugs off one grade), and `company` is whatever bolsters and packs
 	add on top. The element type chart is not in it: it has read 1 for every schema 5
 	creature since the conversion (rules.elementMatchups, off as shipped).
@@ -79,7 +80,6 @@ export function forecastTotalsAt(match, seat, forecast, siteId, extraId) {
 	drew that as two figures on a world with nobody else on it. It is `selfLift` now, drawn
 	with the bolster's own role mark.
 */
-const BAND = { none: 1, strained: 0.5, severe: 0.25 };
 export function breakdown(ownForecast, base, totals, record, site, reading, rules) {
 	const f = ownForecast || null;
 	const own = f && !f.downed ? f.hold : 0;
@@ -93,7 +93,7 @@ export function breakdown(ownForecast, base, totals, record, site, reading, rule
 		? (strainCause({ temperatureC: tolerance.temperatureC, ambientMedia: tolerance.ambientMedia || [], breathes: (record.physiology && record.physiology.breathes) || [] }, site) || 'strained')
 		: null;
 	// rounded as the engine rounds a hold at a world (rules.wholeHolds), so a plain 13 x 1/2 is 7 and no company
-	const plain = body * (home ? HOME_GROUND_MULTIPLIER : 1) * (BAND[held] || 1);
+	const plain = body * (home ? HOME_GROUND_MULTIPLIER : 1) * strainMultiplierFor(held, cause);
 	const expected = wholeHoldsOn(rules) ? Math.round(plain) : plain;
 	const lift = going - expected;
 	// a bolster with none of yours beside it can only have lifted itself
@@ -111,7 +111,7 @@ export function breakdown(ownForecast, base, totals, record, site, reading, rule
 		body,
 		home,
 		homeFactor: home ? HOME_GROUND_MULTIPLIER : 1,
-		climate: held !== 'none' ? { level: held, cause, medium: (site.environment && site.environment.medium) || null, factor: strainMultiplierFor(held) } : null,
+		climate: held !== 'none' ? { level: held, cause, medium: (site.environment && site.environment.medium) || null, factor: strainMultiplierFor(held, cause) } : null,
 		// willpower lifted its grade here: it would be strained, and is not (or less so)
 		shrugged: level !== held,
 		company: Math.abs(lift) >= 0.5 && !self ? lift : 0,

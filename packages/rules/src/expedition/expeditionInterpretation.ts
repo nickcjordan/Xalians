@@ -65,6 +65,25 @@ export const STRAIN_MULTIPLIER = 0.5;
 export const SEVERE_STRAIN_MULTIPLIER = 0.25;
 
 /*
+	PASS 68, TEMPERATURE WEIGHS LESS. Nick, 2026-09-27: "I feel like the temperature bands have
+	way too much weight on the factor of the creature's hold. I think I like the idea of keeping
+	the concept in place, but instead of cutting the hold in half or in quarter, I feel like it
+	should be something more along the lines of removing a quarter or removing 10% or something
+	like that. I want the majority of the weight of your decision making to be based on the more
+	important factors, and the planet's temperature band is a boring factor to base so much of
+	the gameplay on."
+
+	A world too hot or too cold now takes a tenth off a creature's hold and blows, and a
+	quarter where the bands miss by more than STRAIN_GAP_SEVERE_C. The air and the medium keep
+	the ladder above: a creature that cannot breathe a world still holds a quarter, and one in
+	the wrong air or water half (Nick named temperature; the other two are one lever away).
+	Where a world strains a creature both ways, the medium's grade is the one that counts, so
+	a mild temperature never hides the wrong air. Willpower and a bolster still lift one grade.
+*/
+export const TEMPERATURE_STRAIN_MULTIPLIER = 0.9;
+export const TEMPERATURE_SEVERE_MULTIPLIER = 0.75;
+
+/*
 	PASS 59, WHOLE HOLDS (docs/design/reclamation-read-the-card.md). A creature's normal hold
 	and its hold at a world are whole numbers. The card prints each reason with its factor
 	(a house x1 1/2, a flame x1/2), and a blind reader checking the arithmetic found it would

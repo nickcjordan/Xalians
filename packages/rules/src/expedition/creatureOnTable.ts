@@ -22,6 +22,8 @@ import {
 	HOME_GROUND_MULTIPLIER,
 	STRAIN_MULTIPLIER,
 	SEVERE_STRAIN_MULTIPLIER,
+	TEMPERATURE_STRAIN_MULTIPLIER,
+	TEMPERATURE_SEVERE_MULTIPLIER,
 	BOLSTER_FLOOR,
 	MAGNITUDE_SCALE,
 	ELEMENT_MATCHUPS,
@@ -183,6 +185,21 @@ export function worldOfSite(site: AnySite | null | undefined, world: WorldFacts 
 }
 
 export function strainLevel(record: XalianRecord, site: AnySite | null | undefined, worldArg?: WorldFacts | null): StrainLevel {
+	return strainOf(record, site, worldArg).level;
+}
+
+/*
+	PASS 68. strainCauseOf(record, site, world) -> 'breath' | 'cold' | 'hot' | 'medium' | null:
+	what sets the creature's grade at this world, because a world's temperature now weighs less
+	than its air (TEMPERATURE_STRAIN_MULTIPLIER). The cause is the one that decides the grade:
+	no breath first, then a temperature far off, then the wrong medium, then a temperature off.
+*/
+export type StrainCause = 'breath' | 'cold' | 'hot' | 'medium' | null;
+export function strainCauseOf(record: XalianRecord, site: AnySite | null | undefined, worldArg?: WorldFacts | null): StrainCause {
+	return strainOf(record, site, worldArg).cause;
+}
+
+function strainOf(record: XalianRecord, site: AnySite | null | undefined, worldArg?: WorldFacts | null): { level: StrainLevel; cause: StrainCause } {
 	const world = worldOfSite(site, worldArg);
 	const physiology = (record && record.physiology) || ({} as Partial<XalianRecord['physiology']>);
 	const tolerance = physiology.environmentalTolerance || ({} as Partial<XalianRecord['physiology']['environmentalTolerance']>);
@@ -192,10 +209,10 @@ export function strainLevel(record: XalianRecord, site: AnySite | null | undefin
 
 	const planetName = world && world.planet;
 	if (planetName === 'Grimedes' && hasAnyTraitKeyword(record, 'nocturnal')) {
-		return 'none';
+		return { level: 'none', cause: null };
 	}
 	if (planetName === 'Luminax' && hasAnyTraitKeyword(record, 'luminous')) {
-		return 'none';
+		return { level: 'none', cause: null };
 	}
 
 	const siteEnvironment = (site && (site as AuthoredSite).environment) || ({} as Partial<AuthoredSite['environment']>);
@@ -204,7 +221,7 @@ export function strainLevel(record: XalianRecord, site: AnySite | null | undefin
 
 	const cannotBreathe = !!siteMedium && breathes.length > 0 && !breathes.includes(siteMedium);
 	if (cannotBreathe) {
-		return 'severe';
+		return { level: 'severe', cause: 'breath' };
 	}
 
 	const toleratesMedium = siteMedium ? ambientMedia.includes(siteMedium) : true;
@@ -214,6 +231,8 @@ export function strainLevel(record: XalianRecord, site: AnySite | null | undefin
 	const siteMax = typeof siteTemp.max === 'number' ? siteTemp.max : max;
 
 	let temperature: StrainLevel = 'none';
+	// the side of the world's band that reaches furthest past the creature's
+	const side: StrainCause = min - siteMin >= siteMax - max ? 'cold' : 'hot';
 	if (!(siteMin >= min && siteMax <= max)) {
 		const overlap = Math.min(max, siteMax) - Math.max(min, siteMin);
 		if (overlap > 0) {
@@ -225,21 +244,27 @@ export function strainLevel(record: XalianRecord, site: AnySite | null | undefin
 		}
 	}
 
+	// pass 68: the wrong air or water outweighs any temperature now (a half against a tenth or a quarter)
+	if (!toleratesMedium) {
+		return { level: 'strained', cause: 'medium' };
+	}
 	if (temperature === 'severe') {
-		return 'severe';
+		return { level: 'severe', cause: side };
 	}
-	if (!toleratesMedium || temperature === 'strained') {
-		return 'strained';
+	if (temperature === 'strained') {
+		return { level: 'strained', cause: side };
 	}
-	return 'none';
+	return { level: 'none', cause: null };
 }
 
-export function strainMultiplierFor(level: StrainLevel): number {
+// pass 68: a grade costs less when it is the world's temperature (TEMPERATURE_STRAIN_MULTIPLIER)
+export function strainMultiplierFor(level: StrainLevel, cause: StrainCause = null): number {
+	const temperature = cause === 'cold' || cause === 'hot';
 	if (level === 'severe') {
-		return SEVERE_STRAIN_MULTIPLIER;
+		return temperature ? TEMPERATURE_SEVERE_MULTIPLIER : SEVERE_STRAIN_MULTIPLIER;
 	}
 	if (level === 'strained') {
-		return STRAIN_MULTIPLIER;
+		return temperature ? TEMPERATURE_STRAIN_MULTIPLIER : STRAIN_MULTIPLIER;
 	}
 	return 1;
 }
@@ -318,7 +343,7 @@ export function holdAtSite(
 	const origin = record && record.provenance && record.provenance.origin;
 	const isHome = !!origin && !!(world && world.planet) && String(origin).toLowerCase() === String(world.planet).toLowerCase();
 	const homeGround = isHome ? HOME_GROUND_MULTIPLIER : 1;
-	const level = strainLevel(record, site, world);
+	const { level, cause } = strainOf(record, site, world);
 	// willpower's job (assumption 17): a willful creature holds against the world, one
 	// grade less strain, applied BEFORE bolster so the two never stack past comfortable.
 	const willful = isWillful(record, rules);
@@ -330,11 +355,11 @@ export function holdAtSite(
 	const bolstered = !!opts.bolstered;
 	const bolsterScale = typeof opts.bolsterScale === 'number' ? opts.bolsterScale : 1;
 	const effectiveLevel = bolstered ? liftedStrainLevel(heldLevel) : heldLevel;
-	const strain = strainMultiplierFor(effectiveLevel);
+	const strain = strainMultiplierFor(effectiveLevel, cause);
 
 	// the lift is priced as a delta so the bolsterer's charisma can scale exactly what the
 	// bolster added and nothing else
-	const unlifted = base * matchup * homeGround * strainMultiplierFor(heldLevel);
+	const unlifted = base * matchup * homeGround * strainMultiplierFor(heldLevel, cause);
 	let value = unlifted + (base * matchup * homeGround * strain - unlifted) * bolsterScale;
 	if (bolstered && heldLevel === 'none') {
 		const floorBonus = rules && typeof rules.bolsterFloor === 'number' ? rules.bolsterFloor : BOLSTER_FLOOR;
@@ -822,13 +847,13 @@ export function prepare(
 ): PreparedCreature {
 	const world = worldOfSite(site, worldArg);
 	const rules = opts.rules as Partial<Rules> | undefined;
-	const level = strainLevel(record, site, world);
+	const { level, cause: strainCause } = strainOf(record, site, world);
 	// willpower first, then bolster, and never past comfortable (assumption 17)
 	const willful = isWillful(record, rules);
 	const heldLevel = willful ? liftedStrainLevel(level) : level;
 	const bolstered = !!opts.bolstered;
 	const effectiveLevel = bolstered ? liftedStrainLevel(heldLevel) : heldLevel;
-	const strainMult = strainMultiplierFor(effectiveLevel);
+	const strainMult = strainMultiplierFor(effectiveLevel, strainCause);
 	const { value: hold, isHome, matchup } = holdAtSite(record, site, world, opts);
 	const magnitudeScale = rules && typeof rules.magnitudeScale === 'number' ? rules.magnitudeScale : MAGNITUDE_SCALE;
 	const acts = buildActs(record, strainMult, magnitudeScale);
@@ -872,6 +897,7 @@ export function prepare(
 		swift: isSwift(record, rules),
 		presenceScale: presenceScaleOf(record, rules),
 		strainLevel: level,
+		strainCause,
 		heldStrainLevel: heldLevel,
 		effectiveStrainLevel: effectiveLevel,
 		strainMultiplier: strainMult,
