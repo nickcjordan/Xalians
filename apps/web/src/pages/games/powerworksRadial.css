@@ -1409,3 +1409,10 @@
 .pw-threat.held > svg {
   color: #8d9a94;
 }
+
+/* Audit fix pass A: an order whose target falls first names where it will land instead. */
+.pw .pw-unit-plaque .pw-order-chip-redirect {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+}

@@ -1168,27 +1168,44 @@ export default function PowerworksPage() {
       ? others
       : plans;
   const finalPlan = planning ? projectOrders(run, withHand) : null;
+  // Audit fix pass A (2026-09-27): a machine's blow is only "stopped" this round by what lands
+  // before its own turn. A status from a companion who acts after it, or a knockout that lands
+  // after it has struck, stops its next blow, not this one (run 1: "7 → 0" on a crawler that
+  // struck first). Orders whose target falls first follow the engine to the next machine.
   const prevented: Record<string, number> = {};
+  const redirects: Record<string, string> = {};
   if (planning && finalPlan) {
+    const turn = initiative(run.team, run.enemies, run.round, { ...run.orders, ...withHand }).map(
+      (x) => x.id
+    );
     for (const [id, q] of Object.entries(withHand)) {
       const u = run.team.find((x) => x.id === id);
       if (!u || u.hp <= 0 || q.move < 0 || actsOnSelf(moveAt(u, q.move))) continue;
-      const t = run.enemies.find((e) => e.id === q.target && e.hp > 0);
-      if (t) prevented[t.id] = (prevented[t.id] ?? 0) + valueOn(run, u, q.move, t).stops;
+      const t = run.enemies.find((e) => e.id === (finalPlan.redirect[id] ?? q.target) && e.hp > 0);
+      if (!t || turn.indexOf(u.id) > turn.indexOf(t.id)) continue;
+      const v = valueOn(run, u, q.move, t);
+      const stops = v.stops - (v.knockout ? threats[t.id]?.amount ?? 0 : 0);
+      if (stops > 0) prevented[t.id] = (prevented[t.id] ?? 0) + stops;
     }
     for (const e of run.enemies)
-      if (e.hp > 0 && finalPlan.hp[e.id] <= 0) prevented[e.id] = threats[e.id]?.amount ?? 0;
+      if (e.hp > 0 && finalPlan.hp[e.id] <= 0 && finalPlan.fallsFirst[e.id])
+        prevented[e.id] = threats[e.id]?.amount ?? 0;
+    for (const [id, to] of Object.entries(finalPlan.redirect)) {
+      const t = run.enemies.find((e) => e.id === to);
+      if (t && !(active && inHand !== null && id === active.id)) redirects[id] = labelFor(t);
+    }
   }
-  // An order that does nothing (its target already finished by the orders before it, a heal
-  // on a squadmate at full health) says so on its chip.
+  // An order that does nothing (a heal on a squadmate at full health, a guard with nothing to
+  // guard against) says so on its chip. One whose target falls first is redirected, not idle.
   const idleOrders: Record<string, string> = {};
   if (planning && finalPlan)
     for (const [id, q] of Object.entries(plans)) {
       const u = run.team.find((x) => x.id === id);
       if (!u || u.hp <= 0 || q.move < -1 || (active && inHand !== null && id === active.id)) continue;
+      const aimedAt = finalPlan.redirect[id] ?? q.target;
       const t = actsOnSelf(moveAt(u, q.move))
         ? u
-        : [...run.enemies, ...run.team].find((x) => x.id === q.target);
+        : [...run.enemies, ...run.team].find((x) => x.id === aimedAt);
       if (!t) continue;
       const at = finalPlan.before[id] ? atHealth(run, finalPlan.before[id]) : run;
       const v = valueOn(at, u, q.move, at.enemies.find((e) => e.id === t.id) ?? t);
@@ -1381,7 +1398,7 @@ export default function PowerworksPage() {
     if (e.kind === "charge")
       return "Preparing a release for the next opportunity.";
     if (e.kind === "blocked")
-      return current.text.includes("charge was broken")
+      return e.cause === "recovery" || current.text.includes("charge was broken")
         ? "Its charge was broken; it must recover first."
         : "Binding prevented the action.";
     if (e.kind === "redirect")
@@ -1691,6 +1708,7 @@ export default function PowerworksPage() {
                   planned={planned}
                   referent={referent && !aimed ? referent : null}
                   idleOrders={idleOrders}
+                  redirects={redirects}
                   beatMs={frameDuration / speed}
                   story={story}
                   flash={flash}

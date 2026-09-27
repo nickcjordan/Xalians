@@ -277,6 +277,7 @@ export function PowerworksScene({
   planned = {},
   referent = null,
   idleOrders = {},
+  redirects = {},
   beatMs,
   story = null,
 }: {
@@ -329,6 +330,11 @@ export function PowerworksScene({
   referent?: string | null;
   /** Readout pass: standing orders that would do nothing, with why. */
   idleOrders?: Record<string, string>;
+  /**
+    Audit fix pass A: an order whose target falls to the orders before it moves on to the
+    next machine, as the engine does; the chip names where it will land instead.
+  */
+  redirects?: Record<string, string>;
   /** How long this playback beat lasts as the page runs it, in milliseconds. */
   beatMs?: number;
   /** The playback beat's names for the on-stage banner; null while planning. */
@@ -849,6 +855,12 @@ export function PowerworksScene({
                   <div>
                     {u.enemy && <ElementIcon element={u.element} />}
                     <strong>{labelFor(u)}</strong>
+                    {u.hp <= 0 && (
+                      // Audit fix pass A: "Down" sits on the fallen unit's own plate. Under a
+                      // fallen machine it floated into the squad's row, and readers took it
+                      // for the companion beside it (run 1, five of six readers).
+                      <span className="pw-plaque-down">× Down</span>
+                    )}
                     {referent === u.id && (
                       // The target the move in hand's value bar is about (readout pass).
                       <Crosshair
@@ -891,7 +903,9 @@ export function PowerworksScene({
                       tabIndex={-1}
                       title={
                         chip.move
-                          ? idleOrders[u.id]
+                          ? redirects[u.id]
+                            ? `${chip.move.name}. ${chip.target} falls first, so it goes to ${redirects[u.id]}.`
+                            : idleOrders[u.id]
                             ? `${chip.move.name}. ${idleOrders[u.id]}.`
                             : chip.move.name
                           : undefined
@@ -927,10 +941,17 @@ export function PowerworksScene({
                             {chip.status ? (
                               chip.status
                             ) : (
-                              <>
-                                <ArrowRight />
-                                {chip.target ?? "Self"}
-                              </>
+                              redirects[u.id] ? (
+                                <span className="pw-order-chip-redirect">
+                                  <CornerUpRight aria-hidden="true" />
+                                  {redirects[u.id]}
+                                </span>
+                              ) : (
+                                <>
+                                  <ArrowRight />
+                                  {chip.target ?? "Self"}
+                                </>
+                              )
                             )}
                           </span>
                         </>
@@ -944,6 +965,9 @@ export function PowerworksScene({
                       <span className="pw-sr" id={`order-${u.id}`}>
                         {chipText(chip)}
                         {idleOrders[u.id] ? `. ${idleOrders[u.id]}.` : ""}
+                        {redirects[u.id]
+                          ? `. ${chip.target} falls first, so it goes to ${redirects[u.id]}.`
+                          : ""}
                       </span>
                     </button>
                   )}
@@ -957,7 +981,7 @@ export function PowerworksScene({
                   {!u.enemy && shock && <span className="pw-preview-marks">{shock}</span>}
                 </div>
                 <div className="pw-scene-status">
-                  <StatusBadges u={u} compact />
+                  {u.hp > 0 && <StatusBadges u={u} compact />}
                   {u.enemy && marks}
                   {u.enemy && shock}
                 </div>
@@ -1023,7 +1047,9 @@ export function PowerworksScene({
                     {bossDefeat && impact
                       ? "Defense disabled"
                       : phase === "blocked"
-                      ? "Stopped by binding"
+                      ? event?.cause === "recovery"
+                        ? "Charge broken"
+                        : "Stopped by binding"
                       : phase === "redirect"
                       ? "Target changed"
                       : signature

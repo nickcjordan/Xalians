@@ -1884,3 +1884,13 @@
     flex: 1 0 100%;
   }
 }
+
+/* Audit fix pass A: a fallen unit's "Down" rides its own plate. */
+.pw .pw-unit-plaque .pw-plaque-down {
+  flex: none;
+  padding: 0 4px;
+  border-radius: 2px;
+  font: 700 11px/1.5 var(--font-legend);
+  color: #ffd6ca;
+  background: #5a1d14;
+}
