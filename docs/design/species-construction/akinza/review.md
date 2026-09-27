@@ -2,6 +2,8 @@
 
 Reviewer: Codex, 2026-09-27. These are agent observations, not Nick's approval. Run paths are relative to the repository root and working files remain local under `untracked/species-construction/akinza/`.
 
+Exact prompts, subscription tool metadata and input/output hashes: [modeling-pose study](records/study-0001.json) and [attachment study](records/study-0002.json). The geometry probe uses [the versioned volume spec](probe-spec.json) and [recorded cameras and checks](records/probe-0001-geometry.json).
+
 ## study-0001: modeling pose
 
 `study-0001/construction.png` proposes arms lowered away from the torso while preserving the large ears, eyes and three plumes. It is useful for evaluating whether the new pose is desirable. It is not a valid multiview construction master: the left profile retains too much lateral tail spread; the back hand is obscured; substantial fur detail remains; nominal cameras and projections are not measured. Reject it as a geometry constraint set while retaining it as a pose proposal.

@@ -46,6 +46,7 @@ Scope extension, 2026-09-27: Nick approved implementing the proposed layered sys
 - Built Akinza probe-0001 with the existing local Blender 5.2.2 installation. It is one connected closed tail/pelvis mesh with 16,778 vertices and zero nonmanifold edges. Exported eleven actual camera renders, eleven alpha-derived occupancy masks, camera matrices, a three-view contact and eight-angle turntable. Volumes use arbitrary provisional dimensions. No full creature, final topology or approved art is claimed.
 - Committed-design preview locations are `species-construction/akinza/evidence/`; these are labeled provisional technical review artifacts. Full working images and the Blender scene remain under gitignored `untracked/species-construction/akinza/`. Committed provenance explicitly records these local dependencies; missing local originals block integrity checks on another checkout.
 - Validation: 12 construction tracker/initializer tests and 10 existing view-tool tests pass. The source-overlap regression confirms that low source IoU is diagnostic only; a portability test covers Git line-ending conversion. Live Akinza artifact integrity passes while every release gate remains blocked, as intended. Prior untracked production-validator drafts and their dependency edit remain preserved locally and excluded from this system PR until completed and tested.
+- Opened ready PR #707, https://github.com/nickcjordan/Xalians/pull/707, and enabled auto-merge. Repository CI is checking the implementation. A PR merge is not art approval.
 
 ## Next unfinished action
 
