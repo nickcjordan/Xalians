@@ -2,7 +2,7 @@
 
 Status: the running state of the game under ownership (brief: `reclamation-ownership-brief.md`). This file is the resume point. Any reset reads this first and continues at the weakest thing named below, never from scratch. Each pass appends its own section; the standing state at the top is rewritten in place.
 
-## Standing state (after pass 65, 2026-09-27)
+## Standing state (after pass 66, 2026-09-27)
 
 Pass 62 rewrote this section; it had said "after pass 31" through passes 32 to 61 (`reclamation-audit-2026-09-26.md`, "What was wrong with how I work"). Each pass ends by rewriting it.
 
@@ -45,10 +45,9 @@ Pass 50's read, for comparison: clarity 6, decisions 4, Clash 5, arc 3, another 
 
    A longer fight is a rules question, and Nick has said the mechanics are in a decent place.
 2. **Overkill goes unflagged while the rival can still answer** (critic problem 2). Pass 63 marks a world settled only once the rival cannot act. A send that takes a world from 23 to 36 against 13 reads as a win, not as waste.
-3. **Defects the pass 65 critic found, to check and fix next:**
-   - a world's own total goes missing at the end of the Clash (Grimedes' 29 in `1440-07`, also on the live build);
-   - Scalatto shows 13 on the board and 10 on its card (`1440-05`);
-   - Stake ×2 and Move are never explained on the table.
+3. **Stake ×2 and Move are never explained on the table** (pass 65 critic). They are controls with their rule in their title and in How to play. Pass 66 fixed the critic's other two cases (`reclamation-plates-add-up.md`):
+   - the plates now add up to their world's total, and a check holds it;
+   - Grimedes' missing total was the number sliding back as the arena closed, caught mid-slide.
 4. **Balance:**
    - strike keepers at 63.5 to 64.9 percent;
    - the stake almost never used;
@@ -1411,3 +1410,26 @@ The top bar, open item 2. The design and every number are in `reclamation-each-s
 - paint at 1366, 1440 and 390.
 
 **Oldest carried item:** round 1's empty worlds (pass 57), dropped with a reason (standing state, item 10).
+
+### Pass 66 (2026-09-27): the plates add up
+
+Open item 3, the pass 65 critic's numbers. The design is in `reclamation-plates-add-up.md`.
+
+**What was wrong:**
+- **The plates did not add up to their world.** A plate printed the hold now, while the card and the world's bar count what the Clash would leave. So Saiphus's plates read 13, 15 and 11 under a bar of 36.
+- **A pass 65 defect on a phone:** two Move keys pushed your row's counts off the foot.
+
+**What changed:**
+- **A plate reads "14→7"** where the Clash would cut a creature and leave it standing. A creature marked to fall keeps its struck number and cross; an arrow to 0 cut every name in a crowded rank to three letters.
+- **On a phone**, your row drops its empty sockets and the keys drop the word "Move".
+- **The proving check now holds the meaning:** each side's plates on a world add up to that side's total on the world's bar, at every turn. It fails on the live build (Zolton, the rival's plates 9 against a bar of 5.8) and passes here.
+
+**Not a defect:** Grimedes' missing total in the critic's still. The number slides back as the arena narrows at the end of the Clash, and the still caught it mid-slide.
+
+**Verified:**
+- Reclamation tests (258);
+- the four table checks, the proving check with the new sum;
+- paint at 1440, 1366 and 390, where the rival's plates match the live table name for name.
+
+**Oldest carried item:** balance, carried since before pass 50. It is next in line after the Clash, and it needs the simulator. The stake has been offered every round and used in 2 to 3 percent of games since pass 62.
+

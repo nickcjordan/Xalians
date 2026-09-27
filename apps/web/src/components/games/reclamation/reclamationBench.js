@@ -279,7 +279,8 @@ function ReclamationBench({
 								title="Swift: it may move to another world of the frame once a round, without spending your turn."
 							>
 								<SwiftGlyph />
-								{movingRecordId === mover.record.id ? 'Choose a world' : `Move ${speciesLabel(mover.record)}`}
+								{/* pass 66: on a phone the word goes and the swift mark stays, so your row keeps its counts beside two keys */}
+								{movingRecordId === mover.record.id ? 'Choose a world' : <><span className="rec-move-word">Move </span>{speciesLabel(mover.record)}</>}
 							</button>
 						))}
 						{/* pass 38: the stake is one key here, not a button on every world's head */}

@@ -262,7 +262,42 @@ for (const view of ['simple', 'advanced']) {
 
 				const arm = page.locator('[data-arm]:not([disabled])');
 				const site = page.locator('[data-site-id]');
+				/*
+					PASS 66. The plates on a world add up to its total. The pass 65 critic found
+					Scalatto at 13 on its world and 10 on its card: the plate printed the hold now
+					while the world's bar counted what the Clash would leave. Each side's plates,
+					read as they print (after where they read "13→10", nothing where they are marked
+					to fall), must come to that side's total on the world's bar, to rounding.
+				*/
 				if (await arm.count()) {
+					const sumFaults = await page.evaluate(() => {
+						const out = [];
+						document.querySelectorAll('[data-site-id]').forEach((w) => {
+							const standing = w.querySelector('[data-standing]');
+							if (!standing) {
+								return;
+							}
+							const [theirs, mine] = (standing.getAttribute('data-standing-values') || '0/0').split('/').map(Number);
+							[['theirs', theirs], ['mine', mine]].forEach(([side, total]) => {
+								const figures = [...w.querySelectorAll(`[data-rank="${side}"] .rec-figure`)].filter((f) => f.querySelector('.rec-figure-hold'));
+								const sum = figures.reduce((acc, f) => {
+									if (f.querySelector('[data-threat="downed"]') || f.classList.contains('rec-figure--routed')) {
+										return acc;
+									}
+									const hold = f.querySelector('.rec-figure-hold');
+									const after = hold.getAttribute('data-hold-after');
+									const now = (hold.querySelector('.rec-figure-hold-now') || hold).textContent.trim();
+									const read = after !== null ? after : now === '<1' ? '0.5' : now;
+									return acc + Number(read.replace('−', '-'));
+								}, 0);
+								if (Math.abs(sum - total) > 0.5 * figures.length + 0.11) {
+									out.push(`${w.getAttribute('data-site-id')}: ${side}'s plates read ${sum} but the world's bar reads ${total}`);
+								}
+							});
+						});
+						return out;
+					});
+					assert(sumFaults.length === 0, `${label}: ${sumFaults.join('; ')}`);
 					await arm.first().click({ timeout: 5000 }).catch(() => {});
 					/*
 						PASS 54. A lifted creature previews itself on every world's standing: each
