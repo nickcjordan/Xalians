@@ -8,11 +8,13 @@ Read `../species-construction-pipeline.md`, this workflow, the species folder's 
 
 1. Create a species folder from `TEMPLATE.md`. Read the source SVG and species record, inspect available art, and write observed features, proposed interpretations, uncertainties, and stable part IDs. Put accepted user directions in the decision register with exact words and source.
 2. Develop an identity sheet. Record which aspects Nick actually accepted; a style preference is not complete pack approval. Keep the original source, preferred look, and accepted corrections as distinct input roles.
-3. Develop construction views that resolve volumes. Add a separate modeling pose only as a named proposal. Keep the original expressive pose set separate. Identify each image's nominal camera angle; do not label generated views calibrated.
+3. Develop construction views that resolve volumes. The agent chooses a neutral modeling arrangement that exposes anatomy and avoids overlap, keeping it distinct from expressive posing. Do not block construction on Nick choosing among aesthetic pose options. Keep each pose set internally consistent. Identify each image's nominal camera angle; do not label generated views calibrated.
 4. Develop attachment and hidden-surface studies where needed. Name the parent, shared root, branches and expected occlusion. Drawings of smooth clay are still drawings. Check that apparent angle changes actually depict the same form.
 5. Use a small geometry probe when illustrations cannot resolve a connection. This is permitted exploratory work before stage approval, clearly labeled provisional. Render complementary views from one continuous mesh. Export actual cameras and a connectivity report. Do not infer art approval, measured creature dimensions, or full-body readiness from a successful technical probe.
 6. After Nick approves coherent construction and connection references, build and review the complete rough creature. Render matching views and an unseen-angle turntable. Correct contradictions at their source. Detailed modeling waits for rough-form approval.
 7. Produce the final handoff using `HANDOFF.md`. Bind approved images, derived masks, geometry, decisions and camera conventions. Implement the adapter for the actual consumer; do not assume a generic PNG folder is sufficient for the existing Blender template builder.
+
+Process correction after the Akinza tail exercise: expressive posing is deferred until the complete creature can be judged in context. A local tail shape approval is a completed design decision, not a reason to open a pose-selection subtask. Return to unresolved whole-body construction. Request feedback on meaningful construction results and substantive anatomy choices; handle technical viewing arrangements without requiring coaching. Rigging, deformation checks and animation belong downstream of the approved construction handoff and are not yet implemented by this workflow.
 
 ## Every study
 
