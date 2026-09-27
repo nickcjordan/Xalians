@@ -98,6 +98,8 @@ export function StoryViewer({ id, title, beats, after }: { id: string; title: Re
 	const [visible, setVisible] = React.useState(true);
 	// Whether the viewer is resting where the reader can watch it, and the screen that follows.
 	const [resting, setResting] = React.useState(false);
+	// Whether the catch is holding the page: the screen waits for it to let go (storyCatch.ts).
+	const [holding, setHolding] = React.useState(false);
 	const [screen, setScreen] = React.useState<ScreenState>('standby');
 	const count = beats.length;
 
@@ -168,7 +170,7 @@ export function StoryViewer({ id, title, beats, after }: { id: string; title: Re
 	}, [boxed, pinTop]);
 
 	// The screen follows: resting and watched, it tunes in and plays; otherwise it switches off and stands by.
-	const power = resting && visible;
+	const power = resting && visible && !holding;
 	React.useEffect(() => {
 		const quick = reducedMotion();
 		let t = 0;
@@ -247,7 +249,7 @@ export function StoryViewer({ id, title, beats, after }: { id: string; title: Re
 		return catchAtRest(() => {
 			const by = restBy();
 			return by == null ? null : window.scrollY + by;
-		});
+		}, setHolding);
 	}, [restBy]);
 
 	// Play: scroll the page to where the viewer rests, and let resting start the recording as it always does.

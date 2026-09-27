@@ -5,28 +5,43 @@
 // stays put until that gesture has ended (a finger lifted, a wheel or a glide
 // gone quiet); the next gesture goes on as usual.
 //
-// It is a speed bump, not a wall: it catches once per trip down and never on
-// the way up, never holds past MAX_HOLD_MS once no finger is down, and lets
-// every deliberate jump through (a link, End or Home, the scrollbar, find in
-// page, the Play key's own scroll): only a scroll that a wheel, a swipe or a
-// scroll key is driving is caught.
+// It holds for as long as the gesture goes on, however long (Nick,
+// 2026-09-26: "as long as it keep spinning without stopping, it will not
+// continue past the video player until the scroller comes to a complete stop
+// and subsequently begins scrolling again"). While it holds, the page cannot
+// scroll at all (`overflow: hidden`), so nothing gets past even while the main
+// thread is busy tuning the screen in; the wheel, the finger and the keys are
+// still heard, and only QUIET_MS without any of them lets go.
+//
+// It catches once per trip down and never on the way up, and lets every
+// deliberate jump through (a link, End or Home, the scrollbar, find in page,
+// the Play key's own scroll): only a scroll that a wheel, a swipe or a scroll
+// key is driving is caught.
+//
+// A busy browser can hold a spinning wheel's turns back and deliver them late,
+// after the quiet check has already let go. Two things keep that from carrying
+// the page past: the screen does not tune in (the heavy moment) until the hold
+// has let go (`onHold`, storyViewer.tsx), and a turn that arrives after the
+// let-go but was made before it (its timeStamp says so) puts the hold back on.
 //
 // CSS scroll snapping was measured first and does not do this: Chrome lets a
 // wheel or a fling pass a `scroll-snap-stop: always` point under `proximity`,
 // and `mandatory` snaps the rest of the page.
 
-/** This long without wheel, key, swipe or pushed-back scroll: the gesture has stopped. */
-const QUIET_MS = 220;
-/** The longest a hold lasts once no finger is down, so a stream of input can never trap the page. */
-const MAX_HOLD_MS = 2000;
+/** This long without wheel, key, swipe or pushed-back scroll: the gesture has come to a complete stop. */
+const QUIET_MS = 300;
+/** A quiet check that runs this late was held up by a busy main thread, whose queued input it has not heard yet. */
+const LATE_MS = 60;
 /** A swipe's glide after the finger lifts counts as that swipe for this long. */
 const GLIDE_MS = 2500;
 /** A wheel turn or a scroll key drives the scroll for this long after it. */
 const DRIVE_MS = 400;
 /** A deliberate jump (a link, End, Home) is never caught for this long. */
 const JUMP_MS = 1500;
-/** The class that stops a glide on a touch screen while the page is held (globals.css). */
+/** The class that takes the page's scroll away while it is held (globals.css). */
 export const HELD_CLASS = 'story-held';
+/** The class that keeps the scrollbar's room while it is taken away, so nothing shifts sideways. */
+export const CATCH_CLASS = 'story-catch';
 
 const SCROLL_KEYS = new Set(['ArrowDown', 'PageDown', ' ', 'Spacebar']);
 
@@ -39,7 +54,7 @@ function typing(t: EventTarget | null) {
  * Catch the page at `rest()` (a scroll position, or null while there is none) on the way down.
  * Returns the function that takes it all away again.
  */
-export function catchAtRest(rest: () => number | null, win: Window = window): () => void {
+export function catchAtRest(rest: () => number | null, onHold: (holding: boolean) => void = () => {}, win: Window = window): () => void {
 	const doc = win.document;
 	const root = doc.documentElement;
 	const now = () => Date.now();
@@ -51,6 +66,8 @@ export function catchAtRest(rest: () => number | null, win: Window = window): ()
 		return r != null && win.scrollY < r - 1;
 	})();
 	let held: { y: number; since: number } | null = null;
+	// When the last hold let go, on the events' clock, so a turn made before it can be told from a new one.
+	let letGo = -Infinity;
 	let lastWheel = -Infinity;
 	let lastKey = -Infinity;
 	let lastTouchEnd = -Infinity;
@@ -60,6 +77,7 @@ export function catchAtRest(rest: () => number | null, win: Window = window): ()
 	let touchMoved = false;
 	let swiped = false;
 	let timer = 0;
+	let due = 0;
 	let wheelOn = false;
 
 	const driven = (t: number) =>
@@ -67,28 +85,37 @@ export function catchAtRest(rest: () => number | null, win: Window = window): ()
 
 	const release = () => {
 		held = null;
+		letGo = win.performance.now();
+		onHold(false);
 		armed = false;
 		root.classList.remove(HELD_CLASS);
 		win.clearTimeout(timer);
 		timer = 0;
 		sync();
 	};
+	const wait = (ms = QUIET_MS) => {
+		win.clearTimeout(timer);
+		due = now() + ms;
+		timer = win.setTimeout(check, ms);
+	};
 	const check = () => {
 		timer = 0;
 		if (!held) return;
 		const t = now();
-		// A finger still down holds it until it lifts; otherwise quiet, or the longest hold, lets go.
-		if (!touching && (t - lastActivity >= QUIET_MS || t - held.since >= MAX_HOLD_MS)) release();
-		else timer = win.setTimeout(check, QUIET_MS);
+		// Late: the main thread was busy, and the wheel turns queued behind it have not been heard. Wait again.
+		if (t - due > LATE_MS) return wait();
+		// A finger still down holds it until it lifts; otherwise only a complete stop lets go.
+		if (touching) return wait();
+		if (t - lastActivity < QUIET_MS) return wait(QUIET_MS - (t - lastActivity) + 1);
+		release();
 	};
 	const hold = (y: number, t: number) => {
+		if (!held) onHold(true);
 		held = { y, since: t };
 		lastActivity = t;
-		// A touch screen's glide carries on after the finger lifts; only taking the scroll away stops it.
-		if (touching || t - lastTouchEnd < GLIDE_MS) root.classList.add(HELD_CLASS);
+		root.classList.add(HELD_CLASS);
 		jump(y);
-		win.clearTimeout(timer);
-		timer = win.setTimeout(check, QUIET_MS);
+		wait();
 		sync();
 	};
 
@@ -144,8 +171,13 @@ export function catchAtRest(rest: () => number | null, win: Window = window): ()
 		sync(r, y);
 	};
 
-	const onWheel = () => {
+	const onWheel = (e: WheelEvent) => {
 		lastWheel = now();
+		// A turn made before the let-go and heard only now was held back by a busy browser: the same spin.
+		if (!held && e.deltaY > 0 && e.timeStamp > 0 && e.timeStamp < letGo) {
+			const r = rest();
+			if (r != null && win.scrollY >= r - 1) hold(r, lastWheel);
+		} else if (e.timeStamp >= letGo) letGo = -Infinity;
 	};
 	const onKey = (e: KeyboardEvent) => {
 		if (e.defaultPrevented || e.altKey || e.ctrlKey || e.metaKey || typing(e.target)) return;
@@ -179,8 +211,7 @@ export function catchAtRest(rest: () => number | null, win: Window = window): ()
 		swiped = touchMoved;
 		if (held) {
 			lastActivity = t;
-			win.clearTimeout(timer);
-			timer = win.setTimeout(check, QUIET_MS);
+			wait();
 		}
 	};
 	const onClick = (e: MouseEvent) => {
@@ -199,6 +230,7 @@ export function catchAtRest(rest: () => number | null, win: Window = window): ()
 	win.addEventListener('touchcancel', onTouchEnd, { passive: true });
 	doc.addEventListener('click', onClick, true);
 	win.addEventListener('hashchange', onHash);
+	root.classList.add(CATCH_CLASS);
 	sync();
 
 	return () => {
@@ -213,6 +245,6 @@ export function catchAtRest(rest: () => number | null, win: Window = window): ()
 		doc.removeEventListener('click', onClick, true);
 		win.removeEventListener('hashchange', onHash);
 		win.clearTimeout(timer);
-		root.classList.remove(HELD_CLASS);
+		root.classList.remove(HELD_CLASS, CATCH_CLASS);
 	};
 }
