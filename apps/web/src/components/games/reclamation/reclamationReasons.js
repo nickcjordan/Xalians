@@ -112,11 +112,24 @@ function companyLines(why, record) {
 
 const whoseName = (who) => (who.mine ? `your ${who.name}` : who.name);
 
-function clashLines(why, blows) {
+/*
+	PASS 67. Who goes first, in every case, and what the forecast rests on. Nick, on Sonalloy
+	forecast to fall to Kosanos and Tizzie forecast to beat it: "How does one of them decide that
+	my creature would win the fight and the other one decides that my creature would lose?" The
+	winner's words said "it acts first"; the loser's said nothing about the order. Now a blow that
+	lands before the creature's own attack says so ("Kosanos is quicker and strikes it first"),
+	and a bolster or a shield, which never strikes, says that nothing it does weakens the attacker
+	first. And while the rival can still send, or has creatures hidden, the forecast says it holds
+	only if nothing else arrives: it is the Clash on the board as you can see it, not a promise.
+*/
+const NEVER_STRIKES = { bolster: 'A bolster lifts and never strikes', shield: 'A shield guards and never strikes' };
+
+function clashLines(why, blows, { open, role } = {}) {
 	const out = [];
 	if (!blows) {
 		return out;
 	}
+	const unless = open ? ' if nothing else arrives' : '';
 	const going = Number(formatHoldShown(why.going || 0));
 	const kept = Number(formatHoldShown(Math.max(0, why.own || 0)));
 	const parts = [];
@@ -126,7 +139,7 @@ function clashLines(why, blows) {
 	// the order of the fight says why a blow lands less: it acts first, and an attacker already hurt lands less
 	if (blows.first && (hits.length || hurts.length)) {
 		parts.push(hurts.length ? `it acts first and hits ${listWords(hurts)}` : 'it acts first');
-	} else if (hurts.length) {
+	} else if (hurts.length && !hits.length) {
 		parts.push(`it hits ${listWords(hurts)}`);
 	}
 	(blows.taken || []).forEach((blow) => {
@@ -134,14 +147,25 @@ function clashLines(why, blows) {
 			// the fight runs in exchanges, so one attacker may land more than once
 			const n = blow.count || 1;
 			const sweep = blow.roles && blow.roles.includes('sweep') && !blow.roles.includes('strike');
+			// pass 67: a blow that lands before its own attack says the attacker is the quicker
+			const quicker = !!blow.before && blows.strikes;
+			const first = quicker ? ' first' : '';
 			const verb = sweep
-				? (n > 1 ? `catches it in ${COUNT_WORDS[n] || n} sweeps for` : 'catches it in a sweep for')
-				: (n > 1 ? `strikes it ${n === 2 ? 'twice' : `${COUNT_WORDS[n] || n} times`} for` : 'strikes it for');
-			parts.push(`${whoseName({ name: blow.name, mine: blow.mine })}${blow.hurt ? ', hurt by then and so weaker,' : ''} ${verb} ${formatHoldShown(blow.power)}${n > 1 ? ' in all' : ''}`);
+				? (n > 1 ? `catches it${first} in ${COUNT_WORDS[n] || n} sweeps for` : `catches it${first} in a sweep for`)
+				: (n > 1 ? `strikes it${first} ${n === 2 ? 'twice' : `${COUNT_WORDS[n] || n} times`} for` : `strikes it${first} for`);
+			parts.push(`${whoseName({ name: blow.name, mine: blow.mine })}${blow.hurt ? ', hurt by then and so weaker,' : ''}${quicker ? ' is quicker and' : ''} ${verb} ${formatHoldShown(blow.power)}${n > 1 ? ' in all' : ''}`);
 		} else {
 			parts.push(`it loses ${formatHoldShown(blow.power)} to ${listWords(blow.statuses && blow.statuses.length ? blow.statuses : ['its condition'])}`);
 		}
 	});
+	// pass 67: a rival that lands first is said first, and what it lands back comes after
+	if (!blows.first && hurts.length && hits.length) {
+		parts.push(`then it hits ${listWords(hurts)}`);
+	}
+	// a creature that never attacks cannot weaken its attackers first, whatever its speed
+	if (blows.strikes === false && hits.length) {
+		parts.push(`${(NEVER_STRIKES[role] || 'It never strikes').replace(/^./, (c) => c.toLowerCase())}, so nothing weakens ${listWords(hits.map((b) => whoseName({ name: b.name, mine: b.mine })))} first`);
+	}
 	if (blows.unlifted > 0.5 && (blows.alliesDowned || []).length) {
 		parts.push(`your ${listWords(blows.alliesDowned)} ${blows.alliesDowned.length === 1 ? 'falls' : 'fall'} beside it, and the lift goes with ${blows.alliesDowned.length === 1 ? 'it' : 'them'} (${formatHoldShown(blows.unlifted)})`);
 	}
@@ -150,11 +174,12 @@ function clashLines(why, blows) {
 	}
 	const because = parts.length ? `${parts.join('; ').replace(/^./, (c) => c.toUpperCase())}.` : '';
 	if (blows.falls || why.falls) {
-		out.push({ key: 'falls', mark: 'falls', effect: `It falls in the Clash (it goes in with ${going}).`, cause: because });
+		const when = blows.fallsBeforeActing ? 'before it can act' : 'in the Clash';
+		out.push({ key: 'falls', mark: 'falls', effect: `It falls ${when}${unless} (it goes in with ${going}).`, cause: because });
 	} else if (going - kept > 0) {
-		out.push({ key: 'clash', mark: 'clash', effect: `The Clash takes ${going - kept}.`, cause: because });
+		out.push({ key: 'clash', mark: 'clash', effect: `The Clash takes ${going - kept}${unless}.`, cause: because });
 	} else if (hurts.length) {
-		out.push({ key: 'hits', mark: 'clash', effect: `It hits ${listWords(hurts)}.`, cause: '' });
+		out.push({ key: 'hits', mark: 'clash', effect: `It hits ${listWords(hurts)}${unless}.`, cause: '' });
 	}
 	const downs = blows.downs || [];
 	if (downs.length) {
@@ -162,7 +187,8 @@ function clashLines(why, blows) {
 		const early = downs.filter((d) => d.early).map(whoseName);
 		const before = early.length ? `${listWords(early)} before ${early.length === 1 ? 'it' : 'they'} can act` : '';
 		const said = late.length && before ? `${listWords(late)}, and ${before}` : late.length ? listWords(late) : before;
-		out.push({ key: 'downs', mark: 'downs', effect: `It downs ${said}.`, cause: '' });
+		// the condition is said once, on the first line of the fight
+		out.push({ key: 'downs', mark: 'downs', effect: `It downs ${said}${out.length ? '' : unless}.`, cause: '' });
 	}
 	return out;
 }
@@ -197,7 +223,7 @@ export function nameBlows(blows, match, seat) {
 	};
 }
 
-export function reasonLines({ why, record, site, tolerance, blows, settled }) {
+export function reasonLines({ why, record, site, tolerance, blows, settled, open, role }) {
 	const w = why || {};
 	const name = record ? speciesLabel(record) : 'It';
 	const planet = site && site.world ? site.world.planet : 'This world';
@@ -220,7 +246,7 @@ export function reasonLines({ why, record, site, tolerance, blows, settled }) {
 		out.push(climate);
 	}
 	out.push(...companyLines(w, record));
-	out.push(...clashLines(w, blows));
+	out.push(...clashLines(w, blows, { open, role }));
 	return out;
 }
 

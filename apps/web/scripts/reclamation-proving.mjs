@@ -365,9 +365,9 @@ for (const view of ['simple', 'advanced']) {
 								if (!(going - toll + allies === Number(ghostText.replace('−', '-')))) {
 									out.push(`${id}: the ghost's chain ${going} less ${toll} plus ${allies} does not make ${ghostNum.textContent.trim()}`);
 								}
-								// pass 61: the words say the same toll the chain prints
+								// pass 61: the words say the same toll the chain prints (pass 67: while the rival can answer, "if nothing else arrives")
 								const said = document.querySelector(`[data-ghost-piece="${id}"] [data-reason="clash"] .rec-reason-effect`);
-								if (toll > 0 && said && getComputedStyle(said.closest('[data-reasons]')).display !== 'none' && said.textContent.trim() !== `The Clash takes ${toll}.`) {
+								if (toll > 0 && said && getComputedStyle(said.closest('[data-reasons]')).display !== 'none' && !new RegExp(`^The Clash takes ${toll}( if nothing else arrives)?\\.$`).test(said.textContent.trim())) {
 									out.push(`${id}: the chain takes ${toll} and the words say "${said.textContent.trim()}"`);
 								}
 							}

@@ -80,6 +80,29 @@ describe('reasonLines', () => {
 		expect(text(reasonLines({ why: { going: 12, own: 0, falls: true }, record: frackworm, site: zolton, blows: falls }))).toEqual(['It falls in the Clash (it goes in with 12). Venemist strikes it for 14.']);
 	});
 
+	/*
+		PASS 67. Nick, on Sonalloy forecast to fall to Kosanos and Tizzie forecast to beat it: "How
+		does one of them decide that my creature would win the fight and the other one decides that
+		my creature would lose?" Both now say who goes first, and the forecast says what it rests on.
+	*/
+	it('says who goes first when the rival lands before it, and that a bolster never strikes', () => {
+		const quicker = { taken: [{ by: 'k', name: 'Kosanos', power: 16, roles: ['strike'], mine: false, before: true }], dealt: [], downs: [], recovered: 0, unlifted: 0, alliesDowned: [], falls: true, first: false, strikes: true, fallsBeforeActing: true };
+		expect(text(reasonLines({ why: { going: 13, own: 0, falls: true }, record: frackworm, site: zolton, blows: quicker }))).toEqual(['It falls before it can act (it goes in with 13). Kosanos is quicker and strikes it first for 16.']);
+		const bolster = { taken: [{ by: 'k', name: 'Kosanos', power: 16, roles: ['strike'], mine: false, before: true }], dealt: [], downs: [], recovered: 0, unlifted: 0, alliesDowned: [], falls: true, first: false, strikes: false, fallsBeforeActing: false };
+		expect(text(reasonLines({ why: { going: 13, own: 0, falls: true }, record: frackworm, site: zolton, blows: bolster, role: 'bolster' }))).toEqual(['It falls in the Clash (it goes in with 13). Kosanos strikes it for 16; a bolster lifts and never strikes, so nothing weakens Kosanos first.']);
+	});
+
+	it("says a quicker rival's blow before what the creature lands back", () => {
+		const blows = { taken: [{ by: 'h', name: 'Hippochamp', power: 11, count: 2, roles: ['sweep'], mine: false, before: true }], dealt: [{ to: 'h', name: 'Hippochamp', power: 1, count: 1, downs: false, mine: false }], downs: [], recovered: 0, unlifted: 0, alliesDowned: [], falls: true, first: false, strikes: true, fallsBeforeActing: false };
+		expect(reasonLines({ why: { going: 7, own: 0, falls: true }, record: frackworm, site: zolton, blows })[0].cause).toBe('Hippochamp is quicker and catches it first in two sweeps for 11 in all; then it hits Hippochamp for 1.');
+	});
+
+	it('says the forecast holds only if nothing else arrives while the rival can still answer', () => {
+		const blows = { taken: [{ by: 'k', name: 'Kosanos', power: 4, roles: ['strike'], mine: false, hurt: true }], dealt: [], downs: [{ name: 'Kosanos', mine: false, early: false }], recovered: 0, unlifted: 0, alliesDowned: [], falls: false, first: true, strikes: true };
+		expect(text(reasonLines({ why: { going: 7, own: 3 }, record: frackworm, site: zolton, blows, open: true }))).toEqual(['The Clash takes 4 if nothing else arrives. It acts first; Kosanos, hurt by then and so weaker, strikes it for 4.', 'It downs Kosanos.']);
+		expect(text(reasonLines({ why: { going: 7, own: 3 }, record: frackworm, site: zolton, blows, open: false }))[0]).toMatch(/^The Clash takes 4\. /);
+	});
+
 	// pass 62: "It steadies itself: +6" at one world and "+1" at the next, with nothing to tell them apart
 	it('says whether a bolster eased the world a grade or added the flat 1', () => {
 		const hot = reasonLines({ why: { climate: { level: 'strained', cause: 'hot', factor: 0.5 }, selfLift: 6 }, record: frackworm, site: zolton, tolerance: warm });
