@@ -41,6 +41,15 @@ const STORY = [
 	'With the plague burning through the galaxy, few planets are safe. As a result, most life forms have gathered to the capital planet of Valleron, home to their only hope: an ancient Vallerii device known as the Mercurius Machine, which is said to be able to birth a new generation of Xalians immune to APEX’s apocalyptic designs.',
 ];
 
+// The vat beats read from Nick's 2022 draft slides for the same page ("Creatures of Xalia" and "The End
+// Wars: Fall of the Vallerii", commented out in git 1285604e my-app/src/pages/home.js); one dash aside
+// became a comma, as above.
+const GENERATORS =
+	'Their mastery of biotechnology led to the invention of Xalian Generators. These machines would be used to create the first generation of Xalians, bioengineered organisms designed to thrive in the galaxy’s most extreme environments.';
+
+const TAKEN =
+	'Instead of monitoring and regulating the Xalian Generators as intended, APEX rapidly infected the Xalian Generators across all of Vallerii space, turning the Xalians against their creators.';
+
 const KRYSTOS_TODAY =
 	'Today, Krystos remains a snowy wasteland, dotted with the splendorous ruins of ancient and extravagant Vallerii estates.';
 
@@ -265,7 +274,7 @@ type Layout = 'wide' | 'wide-right' | 'side';
 type Era = keyof typeof SCENE_LABEL;
 
 type Spread = { kind: 'scene'; art: Art & { era: Era }; headline: string; text: string; layout: Layout; aspect: string; ar: number; position?: string };
-type Piece = { kind: 'piece'; key: string; name: string; headline: string; text?: string; mode: PieceKey; alt: string };
+type Piece = { kind: 'piece'; key: string; name: string; headline: string; text: string; label: { title: string; text: string }; mode: PieceKey; alt: string };
 
 // Each recording's readout on its archive screen: where it was recorded, or what it is.
 const RECORDED: Record<string, string> = { unbirth: 'Floria', forms: 'Generator vat', apex: 'Generator vat', 'end-wars': 'Grimedes', plague: 'Genome record', token: 'Genome record', present: 'Valleron' };
@@ -283,6 +292,11 @@ const BEATS: Array<Spread | Piece> = [
 		key: 'forms',
 		name: 'The first Xalian',
 		headline: "Designed to thrive in Xalia's most extreme environments",
+		text: GENERATORS,
+		label: {
+			title: 'A Generator’s vat',
+			text: 'The recording shows a genome written in the vat’s gel and rewritten for the world its Xalian will live on, cutting between three Generators, each on its own world: Saiphus, Magmuth and Krystos. Then a heartbeat shows on the vat’s life signs.',
+		},
 		mode: 'forms',
 		alt: "A round window into a Generator's vat of green gel, bubbles rising. Points of light write a genome helix in the gel, pair by pair. The recording cuts between three Generators, each on its own world, shown on a display beside the window: Saiphus, a gas giant; Magmuth, split by molten channels; and frozen Krystos. With each, the gel takes on that world's light and the helix's bases are rewritten in its colors. Then a heartbeat starts on the life-signs line.",
 	},
@@ -291,6 +305,11 @@ const BEATS: Array<Spread | Piece> = [
 		key: 'apex',
 		name: 'APEX takes the Generators',
 		headline: "The galaxy's first artificial intelligence",
+		text: TAKEN,
+		label: {
+			title: 'The same vat, under APEX',
+			text: 'Under the APEX Accords, signed by the Thousand Families, the Generators were placed under the control of APEX, an artificial intelligence. In the recording its light takes the vat’s gel, the genome and the display in turn, until the heartbeat keeps a machine’s time.',
+		},
 		mode: 'apex',
 		alt: "The same vat. A thin line of violet light runs round the window's rim and threads into the glass; the gel is overtaken from the edge inward, the helix's pairs turn violet as the light reaches them, and the bubbles stop where they are. A net of the same light closes over the display, and last the heartbeat turns violet and falls into an even, machine-regular beat.",
 	},
@@ -301,6 +320,10 @@ const BEATS: Array<Spread | Piece> = [
 		name: 'The Nemesis Plague',
 		headline: 'Designed by APEX to target the genome',
 		text: STORY[2],
+		label: {
+			title: 'A genome under the Nemesis Plague',
+			text: 'The plague reaches a genome from one end. Its bases burn, its pairs break apart and fall, and a short length is left.',
+		},
 		mode: 'plague',
 		alt: 'A genome helix turning in the dark. A crimson haze reaches it from one end: where it passes, the bases flare and burn black, the pairs break apart and fall away in pieces, and a short, guttering length is left.',
 	},
@@ -310,6 +333,10 @@ const BEATS: Array<Spread | Piece> = [
 		name: 'The Scrambler Token',
 		headline: 'The only way to safely generate new Xalians',
 		text: TOKENS,
+		label: {
+			title: 'A Scrambler Token',
+			text: 'A new genome is generated at random, encrypted and sealed into a Scrambler Token, a chip a Generator can use to create a Xalian the plague cannot target.',
+		},
 		mode: 'token',
 		alt: 'The last of the broken helix fades. Points of light spiral in and build a new, blank helix; a flicker runs along it as each base locks into place, and it winds tight into a ring of light sealed in the round window of a Scrambler Token, a hexagonal chip.',
 	},
@@ -318,8 +345,9 @@ const BEATS: Array<Spread | Piece> = [
 const numeral = (i: number) => String(i + 1).padStart(2, '0');
 
 /** The painting's label: what the picture shows, small, outside the frame. */
-function SceneLabel({ era, className }: { era: Era; className?: string }) {
-	const label = SCENE_LABEL[era];
+type Label = { title: string; text: string };
+
+function SceneLabel({ label, className }: { label: Label; className?: string }) {
 	return (
 		<div className={cn('scene-label flex flex-col gap-1 border-t border-edge pt-2.5', className)}>
 			<p className="m-0 font-body text-small font-bold text-ink-2">{label.title}</p>
@@ -344,15 +372,15 @@ function SceneReading({ n, name, headline, text, className }: { n: string; name:
 const STORY_BEATS: ViewerBeat[] = BEATS.map((sp, i): ViewerBeat => {
 	const n = numeral(i);
 	if (sp.kind === 'piece') {
-		// A small piece: one animation on the dark ground beside its words, no
-		// frame and no label. Off the screen it holds nothing in the DOM.
+		// A small piece: one animation on the archive screen, its label under it,
+		// its words beside it, like a scene. Off the screen it holds nothing in the DOM.
 		return {
 			key: sp.key,
 			n,
 			label: sp.name,
 			minor: true,
 			render: (live, shown, screen, _primed, play) => (
-				<div className="scene-spread" data-layout="side" style={{ '--ar': 16 / 9, '--label': '0rem' } as React.CSSProperties}>
+				<div className="scene-spread" data-layout="side" style={{ '--ar': 16 / 9 } as React.CSSProperties}>
 					<div className="scene-art">
 						<div className="scene-frame">
 							{/* A small piece plays on the same archive screen as the scenes, in a plain frame. */}
@@ -365,6 +393,7 @@ const STORY_BEATS: ViewerBeat[] = BEATS.map((sp, i): ViewerBeat => {
 								<ArchivePlay state={screen} rec={n} onPlay={play} />
 							</figure>
 						</div>
+						<SceneLabel label={sp.label} />
 					</div>
 					<SceneReading n={n} name={sp.name} headline={sp.headline} text={sp.text} />
 				</div>
@@ -382,7 +411,7 @@ const STORY_BEATS: ViewerBeat[] = BEATS.map((sp, i): ViewerBeat => {
 					<div className="scene-frame">
 						<Panel art={sp.art} aspect={sp.aspect} position={sp.position} live={live} primed={primed} staged screen={{ state: screen, rec: n, place: RECORDED[sp.art.era], start: reelStart(i), onPlay: play }} />
 					</div>
-					<SceneLabel era={sp.art.era} />
+					<SceneLabel label={SCENE_LABEL[sp.art.era]} />
 				</div>
 				<SceneReading n={n} name={ERA_TITLE[sp.art.era]} headline={sp.headline} text={sp.text} />
 			</div>
