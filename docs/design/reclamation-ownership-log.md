@@ -2,7 +2,7 @@
 
 Status: the running state of the game under ownership (brief: `reclamation-ownership-brief.md`). This file is the resume point. Any reset reads this first and continues at the weakest thing named below, never from scratch. Each pass appends its own section; the standing state at the top is rewritten in place.
 
-## Standing state (after pass 62, 2026-09-26)
+## Standing state (after pass 63, 2026-09-26)
 
 Pass 62 rewrote this section; it had said "after pass 31" through passes 32 to 61 (`reclamation-audit-2026-09-26.md`, "What was wrong with how I work"). Each pass ends by rewriting it.
 
@@ -31,20 +31,19 @@ Pass 50's read, for comparison: clarity 6, decisions 4, Clash 5, arc 3, another 
 
 **Nick's steer, 2026-09-19: the priority is whether the game is mechanically deep and fun, not how two people play it.** The ranking is the audit's (`reclamation-audit-2026-09-26.md`).
 
-1. **The send budget is invisible when you decide, and wasted sends go unmarked.** The critic's player sent 8 of 11 in round 1, three to worlds already won by 20 or more, and had nothing for round 3.
-2. **A decided game plays out a round with no moves.** With no sends left, round 3 went to the rival unopposed, and nothing said the game was over.
-3. **The Clash is a caption, not a fight** (critic: 3). Pass 62 keeps the victim on the world. Still missing: the blow itself, and the two waiting worlds shrink to 7-pixel labels.
-4. **The top bar is unlabeled marks:** the flags, the tallies, the nine squares. Carried from passes 58 to 60: the score rows beside the squad, and the send counter's one held back.
-5. **Round 1's empty worlds are the largest thing on screen** while the decision is on the cards (carried since pass 57).
-6. **Balance:**
+1. **The Clash is a caption, not a fight** (critic: 3). Pass 62 keeps the victim on the world. Still missing: the blow itself, and the two waiting worlds shrink to 7-pixel labels.
+2. **The top bar is unlabeled marks:** the flags, the tallies, the nine squares. Carried from passes 58 to 60: the score rows beside the squad, and the send counter's one held back.
+3. **Round 1's empty worlds are the largest thing on screen** while the decision is on the cards (carried since pass 57).
+4. **Balance:**
    - strike keepers at 63.5 to 64.9 percent;
    - the stake almost never used;
    - the starter seat on seed 13;
    - bolster keepers at 41 to 44 percent.
-7. **Fathomaw has no art** ("?").
-8. **On a phone, a creature pointed at beside yours shows only its number** (a world there is 110 pixels wide).
-9. **Nick's call, not mine:** whether element should matter (the type chart, off since pass 57).
-10. **No human has played a full Proving.** The hot-seat instrument exists (passes 20 to 23).
+5. **Fathomaw has no art** ("?").
+6. **On a phone, a creature pointed at beside yours shows nothing on the world** (a world there is 110 pixels wide).
+7. **Nick's call, not mine:** whether element should matter (the type chart, off since pass 57).
+8. **No human has played a full Proving.** The hot-seat instrument exists (passes 20 to 23).
+9. **Closed in pass 63:** the send budget at the moment of choosing and wasted sends (settled worlds), and the dead last round (the line under the Ruling). Blind readers: whether a send matters 3 to 8, the budget 2 to 6.
 
 ### Every pass, the checklist
 
@@ -1293,3 +1292,29 @@ Every engine question (each side's hold after a send, who leads, which creature 
 | Phone | 7 | 6 |
 
 **Next,** from the audit's ranking: the send budget and wasted sends, then the dead last round, then the Clash's blow.
+
+### Pass 63 (2026-09-26): settled worlds and the send budget
+
+The audit's first two weaknesses. The design and every number are in `reclamation-settled-worlds.md`.
+
+- **Settled worlds.** A world is settled for the round once the side behind can no longer act: the rival has passed with nothing hidden while you lead, or you are done while it leads. It then shows:
+  - the Ruling's pennant in dashed outline on the leader's bar;
+  - a quiet column on every card for a world already yours;
+  - "Already yours this round" first in the words under a creature pointed at;
+  - what the pass settles in the top bar, world by world, and what a send would spend when nothing can change.
+- **The budget** shows while a creature is lifted: "After this send: 4 sends left for the 6 worlds still to come."
+- **The line under a Ruling** says when you have no sends left for the next round, and what the rival needs.
+- **No rule changed.**
+
+**Measured.** Blind readers, the critic's line on seed 21, live against this build:
+
+| | Live | Pass 63 |
+|---|---|---|
+| Whether a send still matters | 3 | 8 |
+| Sends left and what they must cover | 2 | 6 |
+| A good move | 4 | 6 |
+
+**Verified:** 1780 web tests; the four table checks green.
+
+**Oldest carried item** (the checklist's rule): the send counter's held-back one, carried since pass 58. It is partly closed: the budget is now said in words where it is used. The counter itself stays with the top bar, open item 2.
+

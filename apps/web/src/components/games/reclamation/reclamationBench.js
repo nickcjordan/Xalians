@@ -42,7 +42,7 @@ import { SENDABLE, FRAMES_PER_MATCH } from '@xalians/rules/expedition/expedition
 	suggested; it only says what would happen.
 */
 
-function Plinth({ record, view, you, armed, disabled, onArm, onInspect, onHover, advanced, fitRow, focusSiteId, sentCell, moveRow, reserve, stripScale, stripRoom, newsSiteId }) {
+function Plinth({ record, view, you, armed, disabled, onArm, onInspect, onHover, advanced, fitRow, focusSiteId, sentCell, moveRow, reserve, stripScale, stripRoom, newsSiteId, settled }) {
 	const slot = slotStateOf(record, view, you);
 	/*
 		PASS 55, KEEP ONE BACK. With no sends left, a creature still in hand is the reserve: it
@@ -121,6 +121,7 @@ function Plinth({ record, view, you, armed, disabled, onArm, onInspect, onHover,
 						scale={stripScale}
 						room={stripRoom}
 						newsSiteId={newsSiteId}
+						settled={settled}
 					/>
 				)}
 				{kept && (
@@ -187,6 +188,7 @@ function ReclamationBench({
 	sendsTone,
 	// pass 57: the world the rival just sent to, whose columns changed with the arrival
 	newsSiteId,
+	settled,
 }) {
 	const me = view.players[you];
 	const yourTurn = interactive && view.turn === you && view.phase === 'deploy';
@@ -318,6 +320,7 @@ function ReclamationBench({
 						stripScale={stripScale}
 						stripRoom={stripRoom}
 						newsSiteId={newsSiteId}
+						settled={settled}
 						disabled={!yourTurn || me.passed || sendsLeft === 0}
 						onArm={onArm}
 						onInspect={onInspect}

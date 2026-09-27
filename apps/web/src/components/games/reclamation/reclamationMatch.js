@@ -78,6 +78,74 @@ function frameWorldNames(frame) {
 	A staked world counts two, so the arithmetic reads the counted value rather than the
 	number of worlds. This never announces a rule the player does not have; it only counts.
 */
+/*
+	PASS 63, SETTLED WORLDS (docs/design/reclamation-audit-2026-09-26.md, weakness 1). A world is
+	settled this round when the side behind there can no longer act: the rival has passed with
+	nothing hidden while you lead, or you are done (passed, or no sends left) while the rival
+	leads. What follows can only add to the side still acting (no friendly fire), so the forecast
+	leader holds it. A blind critic, with the rival passed, sent three creatures into worlds won
+	by 20 or more, and nothing on the table said a send there changed nothing.
+*/
+export function settledWorlds(standings, { rivalDone, rivalHidden, youDone }) {
+	const out = {};
+	Object.entries(standings || {}).forEach(([siteId, st]) => {
+		const mine = (st && st.mine) || 0;
+		const theirs = (st && st.theirs) || 0;
+		if (mine > theirs + 0.05 && rivalDone && !rivalHidden) {
+			out[siteId] = 'mine';
+		} else if (theirs > mine + 0.05 && youDone) {
+			out[siteId] = 'theirs';
+		}
+	});
+	return out;
+}
+
+// pass 63: the rival's pass, and what it settles, in one sentence
+export function rivalPassedLine(sites, standings, settled, budget) {
+	const planet = (site) => (site.world && site.world.planet) || site.id;
+	const yours = sites.filter((site) => settled && settled[site.id] === 'mine').map(planet);
+	const theirs = sites
+		.filter((site) => standings[site.id] && standings[site.id].theirs > standings[site.id].mine + 0.05)
+		.map((site) => `${planet(site)} is the rival's by ${formatHoldShown(standings[site.id].theirs - standings[site.id].mine)}`);
+	const list = (items) => (items.length <= 1 ? items[0] || '' : `${items.slice(0, -1).join(', ')} and ${items[items.length - 1]}`);
+	if (yours.length === 0) {
+		return theirs.length ? `The rival has passed. ${list(theirs)}.` : 'The rival has passed.';
+	}
+	const whole = yours.length === sites.length ? `all ${sites.length} worlds are yours as they stand` : `${list(yours)} ${yours.length === 1 ? 'is' : 'are'} yours as ${yours.length === 1 ? 'it stands' : 'they stand'}`;
+	// when nothing this round can change, what a send would spend: a blind reader asked for the budget beside the pass
+	const spend = yours.length === sites.length && budget && budget.toCome > 0
+		? ` You have ${plural(budget.left, 'send')} for the ${budget.toCome} worlds to come.`
+		: '';
+	return `The rival has passed: ${whole}${theirs.length ? `; ${list(theirs)}` : ''}.${spend}`;
+}
+
+// pass 63: the send budget at the moment of choosing a send, against what is still to come
+export function budgetLine(sendsLeft, worldsToCome) {
+	const after = Math.max(0, sendsLeft - 1);
+	if (after === 0) {
+		return worldsToCome > 0 ? `This is your last send: the ${worldsToCome} worlds still to come get none.` : 'This is your last send.';
+	}
+	return worldsToCome > 0
+		? `After this send: ${plural(after, 'send')} left for the ${worldsToCome} worlds still to come.`
+		: `After this send: ${plural(after, 'send')} left.`;
+}
+
+/*
+	PASS 63. The line under a Ruling says what the next round holds. With no sends left, a blind
+	critic watched a whole last round go to the rival unopposed after a line that read only "The
+	rival sends first."
+*/
+export function nextRoundLine(nextFrame, you, them, toClinch, youFirst) {
+	const names = nextFrame.map((w) => w.planet).join(', ');
+	const left = Math.max(0, (typeof you.sendableCap === 'number' ? you.sendableCap : SENDABLE) - (you.sentCount || 0));
+	if (left <= 0) {
+		const theirNeed = Math.max(0, toClinch - (them.sitesWon || 0));
+		const decides = theirNeed > 0 && theirNeed <= nextFrame.length;
+		return `Next: ${names}. You have no sends left, so the rival takes any of them it sends to${decides ? `, and it needs ${theirNeed} to win` : ''}.`;
+	}
+	return `Next: ${names}. ${youFirst ? 'You send first.' : 'The rival sends first.'}`;
+}
+
 export function reachabilityLine(view, you, them) {
 	if (!view || !view.frame || view.phase === 'matchEnd') {
 		return null;
@@ -1771,7 +1839,7 @@ class ReclamationMatch extends React.Component {
 		bench lead and the coaching strip that used to repeat it are gone
 		(docs/design/reclamation-declutter.md).
 	*/
-	whatAClickDoes(view) {
+	whatAClickDoes(view, table = {}) {
 		const { armedRecordId, movingRecordId, playback } = this.state;
 		/*
 			PASS 52. Words only for news (docs/design/reclamation-glance-redesign.md): what the
@@ -1801,10 +1869,26 @@ class ReclamationMatch extends React.Component {
 		if (this.state.stakeMode) {
 			return 'Pick a world to stake. It counts two.';
 		}
-		if (armedRecordId || movingRecordId) {
+		/*
+			PASS 63. The send budget at the moment a send is chosen: what it leaves against the
+			worlds still to come. A blind critic spent 8 of 11 sends in round one, with the
+			count only a small numeral in the top bar.
+		*/
+		if (armedRecordId) {
+			const perRound = view.frame.sites.length;
+			const toCome = Math.max(0, FRAMES_PER_MATCH - (view.frameIndex + 1)) * perRound;
+			const budget = budgetLine(cap - (me.sentCount || 0), toCome);
+			return this.state.coached ? budget : `Now pick a world. ${budget}`;
+		}
+		if (movingRecordId) {
 			return this.state.coached ? '' : 'Now pick a world.';
 		}
 		const rivalPassed = view.players[this.seatOpponent()].passed;
+		// pass 63: what the rival's pass settles, world by world, in place of the bare pass
+		if (rivalPassed && table.standings) {
+			const toCome = Math.max(0, FRAMES_PER_MATCH - (view.frameIndex + 1)) * view.frame.sites.length;
+			return rivalPassedLine(view.frame.sites, table.standings, table.settled, { left: cap - (me.sentCount || 0), toCome });
+		}
 		if (this.state.lastRival) {
 			return this.state.lastRival;
 		}
@@ -1830,7 +1914,7 @@ class ReclamationMatch extends React.Component {
 		return beat && beat.seat === THEM ? beat : null;
 	}
 
-	renderStatusStrip(view) {
+	renderStatusStrip(view, table = {}) {
 		const you = view.players[this.seatInPlay()];
 		const them = view.players[this.seatOpponent()];
 		const reach = reachabilityLine(view, you, them);
@@ -1921,7 +2005,7 @@ class ReclamationMatch extends React.Component {
 						: beat && !handling ? this.renderCallout(beat)
 							: (
 								<p className={`rec-status-hint g-body${yourTurn ? ' rec-status-hint--yours' : ''}`} data-hint>
-									{rivalBeat && !handling ? this.rivalBeat().text : this.whatAClickDoes(view)}
+									{rivalBeat && !handling ? this.rivalBeat().text : this.whatAClickDoes(view, table)}
 								</p>
 							)}
 					<p
@@ -2158,6 +2242,10 @@ class ReclamationMatch extends React.Component {
 			}]));
 		}
 		const reach = deploying ? reachabilityLine(view, me, them) : null;
+		const sendsLeftNow = Math.max(0, (typeof me.sendableCap === 'number' ? me.sendableCap : SENDABLE) - (me.sentCount || 0));
+		const settled = deploying
+			? settledWorlds(standings, { rivalDone: !!them.passed, rivalHidden: (them.hiddenSentThisRound || 0) > 0, youDone: !!me.passed || sendsLeftNow <= 0 })
+			: null;
 
 		// assumption 20: your swift creatures that may still move this round, as the bench's
 		// move buttons. The engine's own list, so a button never offers an illegal move.
@@ -2258,7 +2346,7 @@ class ReclamationMatch extends React.Component {
 
 		return (
 			<div className={`rec-match${simple ? ' rec-match--simple' : ' rec-match--advanced'}`} data-moment={moment}>
-				{this.renderStatusStrip(view)}
+				{this.renderStatusStrip(view, { standings, settled })}
 				{this.renderPanel(view)}
 
 				{/*
@@ -2298,6 +2386,7 @@ class ReclamationMatch extends React.Component {
 							stakes={view.stakes}
 							stakeableSiteIds={deploying && view.turn === this.seatInPlay() && (this.state.stakeMode || this.state.pendingStakeSiteId) ? (me.stakeableSiteIds || []) : []}
 							pendingStakeSiteId={this.state.pendingStakeSiteId}
+							settled={settled}
 							onStake={this.askStake}
 							onSiteClick={this.handleSiteClick}
 							onSiteHover={(id) => this.setState({ hoverSiteId: id })}
@@ -2334,6 +2423,7 @@ class ReclamationMatch extends React.Component {
 									fits={fits}
 									focusSiteId={this.state.hoverSiteId}
 									newsSiteId={newsSiteId}
+									settled={settled}
 									sendsTone={reach && (reach.tone === 'lost' || reach.tone === 'stake') ? reach.tone : null}
 									movable={movable}
 									onArm={this.armRecord}
@@ -2377,7 +2467,7 @@ class ReclamationMatch extends React.Component {
 							{judged && !playback && view.phase !== 'matchEnd' && (
 								<div className="rec-judge-bar rec-rise" data-judge-bar>
 									<span className="rec-judge-bar-text">
-										{view.nextFrame ? <>Next: {view.nextFrame.map((w) => w.planet).join(', ')}. {this.state.match.turn === YOU ? 'You send first.' : 'The rival sends first.'}</> : 'That was the last round.'}
+										{view.nextFrame ? nextRoundLine(view.nextFrame, view.players[this.seatInPlay()], view.players[this.seatOpponent()], clinchFor(view.frame.sites.length, FRAMES_PER_MATCH), this.state.match.turn === this.seatInPlay()) : 'That was the last round.'}
 									</span>
 									<button type="button" className="g-btn g-btn--primary" onClick={this.nextFrame} data-next-frame>
 										Round {(this.state.judgedFrame || 0) + 2}

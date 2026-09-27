@@ -149,6 +149,7 @@ function ReclamationWorld({
 	stakeableSiteIds,
 	pendingStakeSiteId,
 	onStake,
+	settled,
 }) {
 	const opponent = you === 'A' ? 'B' : 'A';
 	const hl = highlights || {};
@@ -384,6 +385,7 @@ function ReclamationWorld({
 										scale={standingScale}
 										marks={null}
 										verdict={verdict || null}
+										settled={settled ? settled[site.id] || null : null}
 									/>
 									{!ghost && movingRecordId && <span className="rec-ghost rec-ghost--relocate" aria-label="Move here" title="Move here"><SwiftGlyph /></span>}
 									{/*
@@ -425,7 +427,7 @@ function ReclamationWorld({
 										rival's struck number and the rival's bar.
 									*/}
 									{ghost && previewHere && previewHere.why && ghost.record && (
-										<GhostPiece key={`ghost-${ghost.record.id}`} ghost={ghost} previewHere={previewHere} site={site} beside={mine.length} />
+										<GhostPiece key={`ghost-${ghost.record.id}`} ghost={ghost} previewHere={previewHere} site={site} beside={mine.length} settled={settled && settled[site.id] === 'mine' ? { side: 'mine', lead: front.mine - front.theirs } : null} />
 									)}
 								</div>
 							</div>
@@ -534,10 +536,10 @@ function useSaysFit(ref, key, count) {
 	the rival. PASS 61: what moves the number, and why, in words. PASS 62: beside creatures of
 	yours, it stands in the right of your half, kept for it through the Deploy.
 */
-function GhostPiece({ ghost, previewHere, site, beside }) {
+function GhostPiece({ ghost, previewHere, site, beside, settled }) {
 	const why = previewHere.why;
 	// pass 61: what moves its number here, and why, in words under the chain
-	const reasons = reasonLines({ why, record: ghost.record, site, tolerance: ghost.tolerance, blows: ghost.blows });
+	const reasons = reasonLines({ why, record: ghost.record, site, tolerance: ghost.tolerance, blows: ghost.blows, settled });
 	const ref = React.useRef(null);
 	const step = useSaysFit(ref, `${ghost.record.id}|${beside}|${reasons.map((line) => line.effect + line.cause).join('|')}`, reasons.length ? SAYS_STEPS.length : 1);
 	const says = reasons.length ? SAYS_STEPS[Math.min(step, SAYS_STEPS.length - 1)] : null;

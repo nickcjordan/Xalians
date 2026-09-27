@@ -7889,3 +7889,13 @@
 @media (min-width: 761px) and (min-height: 821px) {
 	.rec-console--match[data-terminal] .rec-plinth .rec-fit-num { font-size: min(calc(18px * var(--rec-scale)), 100cqw / 1.2); }
 }
+
+/* --- pass 63: settled worlds and the send budget ---------------------------------------
+   docs/design/reclamation-settled-worlds.md. A world whose side behind can no longer act this
+   round wears the Ruling's pennant in outline on the leader's bar, and a card's column there is
+   drawn quiet: a send to a world already yours adds to a world that is won. */
+.rec-console--match[data-terminal] .rec-standing .rec-crest--settled { color: var(--g-ink); opacity: 0.8; }
+.rec-console--match[data-terminal] .rec-standing .rec-crest--settled svg path:last-child { fill: none; }
+.rec-console--match[data-terminal] .rec-standing .rec-crest--settled svg { stroke-dasharray: 3 2; }
+.rec-console--match[data-terminal] .rec-plinth .rec-fit-col.rec-fit-col--settled { opacity: 0.35; }
+.rec-console--match[data-terminal] .rec-reason-mark .rec-reason-flag { fill: none; stroke: currentColor; stroke-width: 2; stroke-linejoin: round; stroke-dasharray: 3 2; }
