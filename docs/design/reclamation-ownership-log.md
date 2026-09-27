@@ -2,11 +2,13 @@
 
 Status: the running state of the game under ownership (brief: `reclamation-ownership-brief.md`). This file is the resume point. Any reset reads this first and continues at the weakest thing named below, never from scratch. Each pass appends its own section; the standing state at the top is rewritten in place.
 
-## Standing state (after pass 64, 2026-09-27)
+## Standing state (after pass 66, 2026-09-27)
 
 Pass 62 rewrote this section; it had said "after pass 31" through passes 32 to 61 (`reclamation-audit-2026-09-26.md`, "What was wrong with how I work"). Each pass ends by rewriting it.
 
 ### Gauges (simulator, proctor mirror, 500 matches each on seeds 7 and 13, pass 62)
+
+No rule has changed since pass 62, so these still stand.
 
 | Gauge | Band | Seed 7 | Seed 13 | Verdict |
 |---|---|---|---|---|
@@ -19,42 +21,61 @@ Pass 62 rewrote this section; it had said "after pass 31" through passes 32 to 6
 | Sweep / shield / bolster keeper win rate | 40 to 60 | 53.5 / 54.7 / 41.2 | 52.8 / 51.6 / 44.0 | met, bolster low |
 | Games with a stake | reported | 3.4 | 2.2 | **the stake is offered every round and almost never used** |
 
-### The blind critic (last read: pass 62, seed 21; next due: pass 65)
+### The blind critic (last read: pass 65, seed 21, on Opus; next due: pass 68)
 
 | Clarity | Decisions | The Clash | Arc | Another game | Phone | Numbers | Feedback |
 |---|---|---|---|---|---|---|---|
-| 7 | 5 | 3 | 4 | 6 | 6 | 5 | 6 |
+| 6 | 6 | 4 | 5 | 5 | 6 | 5 | 7 |
 
-Pass 50's read, for comparison: clarity 6, decisions 4, Clash 5, arc 3, another game 5, phone 7.
+Pass 62's read: 7, 5, 3, 4, 6, 6, 5, 6. The critic's best thing, again: the three bars per card and the lifted preview. Its three problems:
+1. "The Clash is a formality": the forecast already showed the outcome, and each world gets about one blow.
+2. Round 1 decided the game. Sends to worlds already won by 20 went unflagged while the rival could still answer, so rounds 2 and 3 were walkovers.
+3. Numbers and controls a stranger cannot trust (details in open item 3).
+
+Pass 50's read, for comparison: clarity 6, decisions 4, Clash 5, arc 3, another game 5, phone 7. Pass 65's critic ran on Opus with the rules given; the model behind earlier critics was not recorded, so compare the trend, not single points.
 
 ### Open items, ranked (resume here)
 
-**Nick's steer, 2026-09-19: the priority is whether the game is mechanically deep and fun, not how two people play it.** The ranking is the audit's (`reclamation-audit-2026-09-26.md`).
+**Nick's steer, 2026-09-19: the priority is whether the game is mechanically deep and fun, not how two people play it.** The ranking is the audit's (`reclamation-audit-2026-09-26.md`), updated by pass 65's critic.
 
-1. **The Clash is short to watch** (critic: 3; pass 64 readers: 3). Pass 64 draws each blow and tells it in two beats; following who hits whom went from 5 to 7. What is left is the fight itself: on most worlds it is one blow, and the two waiting worlds shrink to 7-pixel labels.
-2. **The top bar is unlabeled marks:** the flags, the tallies, the nine squares. Carried from passes 58 to 60: the score rows beside the squad, and the send counter's one held back.
-3. **Round 1's empty worlds are the largest thing on screen** while the decision is on the cards (carried since pass 57).
+1. **The Clash is short to watch** (critic 4, up from 3; pass 64 readers 3). Each blow is drawn and told in two beats (pass 64). What is left is the fight itself:
+   - one blow per world, with the outcome already forecast;
+   - no number on a downing blow;
+   - on a phone, the waiting worlds become slivers, and an element badge covers the caption.
+
+   A longer fight is a rules question, and Nick has said the mechanics are in a decent place.
+2. **Overkill goes unflagged while the rival can still answer** (critic problem 2). Pass 63 marks a world settled only once the rival cannot act. A send that takes a world from 23 to 36 against 13 reads as a win, not as waste.
+3. **Stake ×2 and Move are never explained on the table** (pass 65 critic). They are controls with their rule in their title and in How to play. Pass 66 fixed the critic's other two cases (`reclamation-plates-add-up.md`):
+   - the plates now add up to their world's total, and a check holds it;
+   - Grimedes' missing total was the number sliding back as the arena closed, caught mid-slide.
 4. **Balance:**
    - strike keepers at 63.5 to 64.9 percent;
    - the stake almost never used;
    - the starter seat on seed 13;
    - bolster keepers at 41 to 44 percent.
-5. **Fathomaw has no art** ("?").
-6. **On a phone, a creature pointed at beside yours shows nothing on the world** (a world there is 110 pixels wide).
-7. **Nick's call, not mine:** whether element should matter (the type chart, off since pass 57).
-8. **No human has played a full Proving.** The hot-seat instrument exists (passes 20 to 23).
-9. **Closed in pass 63:** the send budget at the moment of choosing and wasted sends (settled worlds), and the dead last round (the line under the Ruling). Blind readers: whether a send matters 3 to 8, the budget 2 to 6.
+5. **Fathomaw has no art** ("?"). Readers take its dashed "?" box for a hidden or unplaced creature.
+6. **Whose move it is does not read.** Every pass 65 reader took it from the rival's last line and the Pass key, not from the pointer.
+7. **On a phone, a creature pointed at beside yours shows nothing on the world** (a world there is 110 pixels wide).
+8. **Nick's call, not mine:** whether element should matter (the type chart, off since pass 57).
+9. **No human has played a full Proving.** The hot-seat instrument exists (passes 20 to 23).
+10. **Closed in pass 65:** the top bar. Opus readers went from 6 to 7 of 10, with every answer right. The score rows now sit beside the squad (carried since pass 60), and the send counter's one held back is gone (carried since pass 58).
+
+    **Dropped in pass 65:** round 1's empty worlds (carried since pass 57). Two reasons:
+    - Growing the squad on your move would move the table on every lift, against pass 36's rule.
+    - The lifted creature's words need the world's height (pass 62).
+11. **Closed in pass 63:** the send budget at the moment of choosing and wasted sends (settled worlds), and the dead last round. Blind readers: whether a send matters 3 to 8, the budget 2 to 6.
 
 ### Every pass, the checklist
 
 1. Cut a branch from origin/main in the pass worktree. Every PR opens ready and auto-merges.
-2. Web tests (`npx vitest run` in apps/web), rules tests (`npm test -w packages/rules`) and the rules typecheck.
+2. Web tests (`npx vitest run` in apps/web), rules tests (`npm test -w packages/rules`, on the Mac mini through `mini-run`) and the rules typecheck.
 3. The four table checks against a preview of this build, in turn: proving (1440, 1366 and 390, both views), shift, actflip and hotseat.
 4. Read the change in pictures at 1366 by 768, 1440 by 900 and 390 by 844, never one size. Pass 61 read one size, and its words were hidden on the commonest laptop.
-5. After any rule or data change, rerun the simulator and record it here.
-6. Every third pass, run a blind rubric critic and record its scores above.
-7. Close the oldest carried item, or drop it with a reason.
-8. Rewrite this standing state.
+5. Blind readers and critics run on Opus, with 2x crops of any small strip and neutral file names (pass 65: fifteen Sonnet readers scored every design 2 or 3, the live one included, while Opus read every answer right).
+6. After any rule or data change, rerun the simulator and record it here.
+7. Every third pass, run a blind rubric critic and record its scores above.
+8. Close the oldest carried item, or drop it with a reason.
+9. Rewrite this standing state.
 
 ### What the game reads of the record (pass 7 onward)
 
@@ -1349,4 +1370,66 @@ The watching score stays low because each world here is one blow. A longer fight
 - a probe of the lapsed steps finds no stroke and no hit frame.
 
 **Oldest carried item:** the score rows beside the squad (pass 60). Still open, as part of item 2.
+
+
+### Pass 65 (2026-09-27): each side at its edge
+
+The top bar, open item 2. The design and every number are in `reclamation-each-side-at-its-edge.md`.
+
+**What changed:**
+- **Each side's row sits at its own edge.** The rival's row stays in the top bar. Yours moves to the foot, on the squad's head, and stays there through the Clash (on a 36-pixel foot bar that now holds Skip) and at the Ruling.
+- **Each row:**
+  - the turn pointer;
+  - the rival's emblem or your piece;
+  - a pennant per world won, in that world's color, with "2/5" after them;
+  - the sends left, as one unbroken meter with "8/11".
+- **The match-point pennant is a dashed outline.** Every reader first counted its old glowing outline as a fifth world won.
+- **The track shows the worlds' symbols.**
+- **The Ruling's line no longer cuts short at 1366.**
+
+**Measured.** Opus blind readers, given the rules, read four moments with 2x strip crops:
+
+| Opus readers (1 to 10) | Live | This pass | Final |
+|---|---|---|---|
+| Scores | 6, 6, 6 | 7, 7, 7 | 7, 7 |
+| Answers right | all | all | all |
+
+**A method finding:**
+- **Sonnet readers:** fifteen of them, across three designs and three protocols, scored every design 2 or 3, the live one included.
+- **Opus readers:** the first one on the same images got every answer right.
+- **What it means:** blind readers now run on Opus (checklist item 5). The pass 62 critic's model was not recorded.
+
+**The critic** (due this pass, Opus, seed 21) scored 6, 6, 4, 5, 5, 6, 5, 7 (see the standing state). It found a regression of this pass: a side that ends the game past the clinch showed "6/5". The row now plants every world won and prints "6".
+
+**Verified:**
+- web tests (1799);
+- rules tests 639 of 640 on the Mac mini (one generator test timed out under load and passes alone);
+- the rules typecheck;
+- the four table checks;
+- the Clash gauge, at 46 to 55 percent in motion over five runs, against 51 to 53 live (the fighting world is 36 pixels shorter);
+- paint at 1366, 1440 and 390.
+
+**Oldest carried item:** round 1's empty worlds (pass 57), dropped with a reason (standing state, item 10).
+
+### Pass 66 (2026-09-27): the plates add up
+
+Open item 3, the pass 65 critic's numbers. The design is in `reclamation-plates-add-up.md`.
+
+**What was wrong:**
+- **The plates did not add up to their world.** A plate printed the hold now, while the card and the world's bar count what the Clash would leave. So Saiphus's plates read 13, 15 and 11 under a bar of 36.
+- **A pass 65 defect on a phone:** two Move keys pushed your row's counts off the foot.
+
+**What changed:**
+- **A plate reads "14→7"** where the Clash would cut a creature and leave it standing. A creature marked to fall keeps its struck number and cross; an arrow to 0 cut every name in a crowded rank to three letters.
+- **On a phone**, your row drops its empty sockets and the keys drop the word "Move".
+- **The proving check now holds the meaning:** each side's plates on a world add up to that side's total on the world's bar, at every turn. It fails on the live build (Zolton, the rival's plates 9 against a bar of 5.8) and passes here.
+
+**Not a defect:** Grimedes' missing total in the critic's still. The number slides back as the arena narrows at the end of the Clash, and the still caught it mid-slide.
+
+**Verified:**
+- Reclamation tests (258);
+- the four table checks, the proving check with the new sum;
+- paint at 1440, 1366 and 390, where the rival's plates match the live table name for name.
+
+**Oldest carried item:** balance, carried since before pass 50. It is next in line after the Clash, and it needs the simulator. The stake has been offered every round and used in 2 to 3 percent of games since pass 62.
 

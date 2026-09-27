@@ -189,6 +189,8 @@ function ReclamationBench({
 	// pass 57: the world the rival just sent to, whose columns changed with the arrival
 	newsSiteId,
 	settled,
+	// pass 65: your side row (pointer, piece, pennants, sends), at the foot with your squad
+	sideRow,
 }) {
 	const me = view.players[you];
 	const yourTurn = interactive && view.turn === you && view.phase === 'deploy';
@@ -213,6 +215,8 @@ function ReclamationBench({
 	return (
 		<section className={`rec-bench rec-bench--step-${step}${yourTurn && !me.passed ? ' rec-bench--active' : ''}`} aria-label="Your squad" data-deploy-step={step}>
 			<header className="rec-bench-head">
+				{/* pass 65: your side's row at your edge of the table, beside the squad it counts */}
+				<div className="rec-bench-side">{sideRow}</div>
 				{/*
 					PASS 38. The head keeps only what is acted on: the act picker, the sends left and
 					the pass. "Your squad 12/12", the heading and the lead line repeated the top bar's
@@ -275,7 +279,8 @@ function ReclamationBench({
 								title="Swift: it may move to another world of the frame once a round, without spending your turn."
 							>
 								<SwiftGlyph />
-								{movingRecordId === mover.record.id ? 'Choose a world' : `Move ${speciesLabel(mover.record)}`}
+								{/* pass 66: on a phone the word goes and the swift mark stays, so your row keeps its counts beside two keys */}
+								{movingRecordId === mover.record.id ? 'Choose a world' : <><span className="rec-move-word">Move </span>{speciesLabel(mover.record)}</>}
 							</button>
 						))}
 						{/* pass 38: the stake is one key here, not a button on every world's head */}
