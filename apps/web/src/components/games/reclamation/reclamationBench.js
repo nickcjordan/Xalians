@@ -189,6 +189,8 @@ function ReclamationBench({
 	// pass 57: the world the rival just sent to, whose columns changed with the arrival
 	newsSiteId,
 	settled,
+	// pass 65: your side row (pointer, piece, pennants, sends), at the foot with your squad
+	sideRow,
 }) {
 	const me = view.players[you];
 	const yourTurn = interactive && view.turn === you && view.phase === 'deploy';
@@ -213,6 +215,8 @@ function ReclamationBench({
 	return (
 		<section className={`rec-bench rec-bench--step-${step}${yourTurn && !me.passed ? ' rec-bench--active' : ''}`} aria-label="Your squad" data-deploy-step={step}>
 			<header className="rec-bench-head">
+				{/* pass 65: your side's row at your edge of the table, beside the squad it counts */}
+				<div className="rec-bench-side">{sideRow}</div>
 				{/*
 					PASS 38. The head keeps only what is acted on: the act picker, the sends left and
 					the pass. "Your squad 12/12", the heading and the lead line repeated the top bar's

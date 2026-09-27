@@ -21,7 +21,7 @@ import {
 import { flattenBoard, prepareWithCompanions, siteHoldTotal, ghostPlanFor, strainCause } from './reclamationPreview';
 import { nameBlows } from './reclamationReasons';
 import { fitTable, roundTrack, standingScale } from './reclamationFit';
-import { RoundTrack, ScorePips } from './reclamationInstruments';
+import { RoundTrack, SideRow, pennantsFor } from './reclamationInstruments';
 
 
 function capitalize(sentence) {
@@ -1964,12 +1964,13 @@ class ReclamationMatch extends React.Component {
 					PASS 52. The round is a track of the game's nine worlds and the score is two rows
 					of pips, the rival's above yours, in each side's color: no "Round 2 of 3", no
 					"You" and "Rival" labels, no digits beside the pips.
+
+					PASS 65. The track's tiles are the worlds' symbols, and the two rows sit at their
+					sides' edges: the rival's here, yours at the foot. Each count now stands against
+					the rules' own number ("2/5", "8/11"): numbers on what they measure, not labels.
 				*/}
 				<div className="rec-status-world">
-					<RoundTrack
-						track={roundTrack(this.state.match.frames, this.state.playback ? view.resolutionLog : this.state.match.resolutionLog, this.seatInPlay(), view.frameIndex)}
-						frameIndex={view.frameIndex}
-					/>
+					<RoundTrack track={this.trackNow(view)} frameIndex={view.frameIndex} />
 					{/* the next round's worlds are planning arithmetic: advanced mode, and the help panel's round list */}
 					{!simple && view.nextFrame && !this.state.judged && (
 						<span className="rec-next-plate" data-next-plate>
@@ -1981,23 +1982,12 @@ class ReclamationMatch extends React.Component {
 					)}
 				</div>
 
-				<div className="rec-status-score">
-					<ScorePips
-						rivalEmblem={this.hotSeat ? null : this.rival && this.rival.id}
-						mine={you.sitesWon}
-						theirs={them.sitesWon}
-						toClinch={toClinch}
-						rivalPassed={!!(them.passed && view.phase === 'deploy' && !this.state.judged && !this.state.playback)}
-						mySends={Math.max(0, (typeof you.sendableCap === 'number' ? you.sendableCap : SENDABLE) - (you.sentCount || 0))}
-						theirSends={Math.max(0, (typeof them.sendableCap === 'number' ? them.sendableCap : SENDABLE) - (them.sentCount || 0))}
-						myCap={typeof you.sendableCap === 'number' ? you.sendableCap : SENDABLE}
-						theirCap={typeof them.sendableCap === 'number' ? them.sendableCap : SENDABLE}
-						turn={yourTurn ? 'mine' : waiting ? 'theirs' : null}
-						worldsAhead={view.frame.sites.length * Math.max(1, FRAMES_PER_MATCH - (view.frameIndex || 0))}
-						sendsTone={stillReachable && (stillReachable.tone === 'lost' || stillReachable.tone === 'stake') ? stillReachable.tone : null}
-						over={view.phase === 'matchEnd'}
-					/>
-				</div>
+				{/*
+					PASS 65. The rival's side at the rival's edge of the table: its pointer, emblem,
+					pennants and sends, above every world as its creatures are. Yours is at the foot,
+					with your squad (renderMySide).
+				*/}
+				<div className="rec-status-score">{this.renderSide(view, 'theirs', { toClinch, rivalPassed: !!(them.passed && view.phase === 'deploy' && !this.state.judged && !this.state.playback), turn: yourTurn ? 'mine' : waiting ? 'theirs' : null })}</div>
 
 				{/*
 					PASS 54. No "Your move" or "Rival's move": whose move it is is the lamp at the
@@ -2009,12 +1999,7 @@ class ReclamationMatch extends React.Component {
 					that says what to do next: the stake's question, what the rival or the Court
 					just did, or the one instruction for this moment.
 				*/}
-				<div className={`rec-status-say${this.state.playback ? ' rec-status-say--skip' : ''}`} data-say>
-					{this.state.playback && (
-						<button type="button" className="g-btn rec-skip" onClick={this.hurry} data-skip title="Space">
-							Skip <kbd>Space</kbd>
-						</button>
-					)}
+				<div className="rec-status-say" data-say>
 					{/*
 						pass 47: with a creature in hand the instruction wins over the rival's last
 						move; a critic lifted a creature on a phone and read a stale rival line
@@ -2052,6 +2037,51 @@ class ReclamationMatch extends React.Component {
 				</div>
 			</div>
 		);
+	}
+
+	// the round track as the table shows it: during the Clash, only as far as the log has been told
+	trackNow(view) {
+		return roundTrack(this.state.match.frames, this.state.playback ? view.resolutionLog : this.state.match.resolutionLog, this.seatInPlay(), view.frameIndex);
+	}
+
+	/*
+		PASS 65. One side's row (reclamationInstruments.SideRow): the rival's in the top bar, yours
+		at the foot of the table in every moment (the bench's head, the Clash's foot, the Ruling's
+		bar), so whose a row is reads from where it sits, as on every world.
+	*/
+	renderSide(view, side, { toClinch, rivalPassed, turn } = {}) {
+		const seat = side === 'mine' ? this.seatInPlay() : this.seatOpponent();
+		const p = view.players[seat];
+		const cap = typeof p.sendableCap === 'number' ? p.sendableCap : SENDABLE;
+		const clinch = toClinch || clinchFor(view.frame.sites.length, FRAMES_PER_MATCH);
+		const reach = side === 'mine' ? reachabilityLine(view, p, view.players[this.seatOpponent()]) : null;
+		return (
+			<SideRow
+				side={side}
+				pennants={pennantsFor(this.trackNow(view), side, p.sitesWon)}
+				toClinch={clinch}
+				sends={Math.max(0, cap - (p.sentCount || 0))}
+				cap={cap}
+				turn={turn}
+				emblem={side === 'theirs' && !this.hotSeat && this.rival ? this.rival.id : null}
+				passed={side === 'theirs' && !!rivalPassed}
+				over={view.phase === 'matchEnd'}
+				tone={reach && (reach.tone === 'lost' || reach.tone === 'stake') ? reach.tone : null}
+				worldsAhead={view.frame.sites.length * Math.max(1, FRAMES_PER_MATCH - (view.frameIndex || 0))}
+			/>
+		);
+	}
+
+	// whose move it is, for the pointer at the head of each side's row (the same reading as the top bar's)
+	turnNow(view) {
+		const rivalBeat = !!this.rivalBeat() && view.phase === 'deploy' && !this.state.judged;
+		const yourTurn = view.turn === this.seatInPlay() && view.phase === 'deploy' && !this.state.playback && !this.state.judged && !rivalBeat;
+		const waiting = (view.turn === THEM || rivalBeat) && view.phase === 'deploy' && !this.state.playback && !this.state.judged;
+		return yourTurn ? 'mine' : waiting ? 'theirs' : null;
+	}
+
+	renderMySide(view) {
+		return this.renderSide(view, 'mine', { turn: this.turnNow(view) });
 	}
 
 	renderPanel(view) {
@@ -2370,6 +2400,7 @@ class ReclamationMatch extends React.Component {
 							: 'theirs';
 		const arrival = this.state.arrival;
 		const newsSiteId = deploying && arrival && arrival.seat !== this.seatInPlay() ? arrival.siteId : null;
+		const mySide = this.renderMySide(view);
 
 		return (
 			<div className={`rec-match${simple ? ' rec-match--simple' : ' rec-match--advanced'}`} data-moment={moment}>
@@ -2472,7 +2503,21 @@ class ReclamationMatch extends React.Component {
 									onToggleStake={this.toggleStakeMode}
 									rivalBeat={this.rivalBeat()}
 									interactive={deployPanelOpen}
+									sideRow={mySide}
 								/>
+							)}
+
+							{/*
+								PASS 65. The Clash keeps a foot: your side's row where it stood on the
+								bench's head, and Skip at the right, under the Pass that started it.
+							*/}
+							{playback && (
+								<div className="rec-clash-foot" data-clash-foot>
+									<span className="rec-foot-side">{mySide}</span>
+									<button type="button" className="g-btn rec-skip" onClick={this.hurry} data-skip title="Space">
+										Skip <kbd>Space</kbd>
+									</button>
+								</div>
 							)}
 
 							{/*
@@ -2483,6 +2528,7 @@ class ReclamationMatch extends React.Component {
 							*/}
 							{judged && !playback && view.phase === 'matchEnd' && !this.state.reportOpen && (
 								<div className="rec-judge-bar rec-rise" data-judge-bar>
+									<span className="rec-foot-side">{mySide}</span>
 									<span className="rec-judge-bar-text">
 										{view.winner === this.seatInPlay() ? 'You win the game' : view.winner ? 'The rival wins the game' : 'The game is over'}, {view.players[this.seatInPlay()].sitesWon} world{view.players[this.seatInPlay()].sitesWon === 1 ? '' : 's'} to {view.players[this.seatOpponent()].sitesWon}.
 									</span>
@@ -2493,6 +2539,7 @@ class ReclamationMatch extends React.Component {
 							)}
 							{judged && !playback && view.phase !== 'matchEnd' && (
 								<div className="rec-judge-bar rec-rise" data-judge-bar>
+									<span className="rec-foot-side">{mySide}</span>
 									<span className="rec-judge-bar-text">
 										{view.nextFrame ? nextRoundLine(view.nextFrame, view.players[this.seatInPlay()], view.players[this.seatOpponent()], clinchFor(view.frame.sites.length, FRAMES_PER_MATCH), this.state.match.turn === this.seatInPlay()) : 'That was the last round.'}
 									</span>

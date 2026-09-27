@@ -9,7 +9,7 @@ import { getWorlds } from '@xalians/rules/expedition/sites';
 import { ROSTER_SIZE } from '@xalians/rules/expedition/expeditionInterpretation';
 import { roleOf } from '@xalians/rules/expedition/creatureOnTable';
 import { fitTable, forecastTotalsAt, standingScale, STANDING_FLOOR, roundTrack, FIT_SCALE, fitScale, fitTakesAny, FIT_RIVAL_ROOM } from '../reclamationFit';
-import { Standing, FitStrip, ScorePips, HoldBar, Crest, WhyMarks, whyWords, fitSentence, factorText } from '../reclamationInstruments';
+import { Standing, FitStrip, SideRow, RoundTrack, pennantsFor, HoldBar, Crest, WhyMarks, whyWords, fitSentence, factorText } from '../reclamationInstruments';
 
 /*
 	PASS 52, THE GLANCE REDESIGN (docs/design/reclamation-glance-redesign.md).
@@ -378,29 +378,74 @@ describe('the instruments', () => {
 
 	// pass 58: a side one world from winning shows it, on its next pennant
 	it('lights the pennant that would win the game for a side one world away', () => {
-		const { container } = render(<ScorePips mine={2} theirs={4} toClinch={5} mySends={7} theirSends={4} myCap={11} theirCap={11} turn="mine" />);
-		const points = [...container.querySelectorAll('[data-match-point]')];
-		expect(points.map((p) => p.getAttribute('data-match-point'))).toEqual(['theirs']);
-		expect(container.querySelector('.rec-score-row--theirs').getAttribute('aria-label')).toContain('The rival is one world from winning.');
-		const none = render(<ScorePips mine={1} theirs={3} toClinch={5} turn="mine" />);
+		const flags = (n) => Array.from({ length: n }).map(() => ({ element: 'fire', planet: 'Magmuth' }));
+		const theirs = render(<SideRow side="theirs" pennants={flags(4)} toClinch={5} sends={4} cap={11} turn="mine" />);
+		expect([...theirs.container.querySelectorAll('[data-match-point]')].map((p) => p.getAttribute('data-match-point'))).toEqual(['theirs']);
+		expect(theirs.container.querySelector('.rec-score-row--theirs').getAttribute('aria-label')).toContain('The rival is one world from winning.');
+		const none = render(<SideRow side="mine" pennants={flags(3)} toClinch={5} turn="mine" />);
 		expect(none.container.querySelector('[data-match-point]')).toBeNull();
+		const over = render(<SideRow side="theirs" pennants={flags(4)} toClinch={5} over />);
+		expect(over.container.querySelector('[data-match-point]')).toBeNull();
 	});
 
-	it('puts the rival row above yours, each with its sends and its turn lamp, and marks a rival pass', () => {
-		const { container } = render(<ScorePips mine={1} theirs={3} toClinch={5} rivalPassed mySends={8} theirSends={6} myCap={11} theirCap={11} worldsAhead={6} turn="mine" />);
-		const rows = [...container.querySelectorAll('.rec-score-row')];
-		expect(rows[0].getAttribute('data-sites-b')).toBe('3');
-		expect(rows[1].getAttribute('data-sites-a')).toBe('1');
-		expect(rows[0].querySelectorAll('.rec-pip--lit').length).toBe(3);
-		expect(container.querySelector('[data-sends-side="mine"]').textContent).toBe('8');
-		expect(container.querySelector('[data-sends-side="theirs"]').textContent).toBe('6');
-		expect(container.querySelector('[data-rival-passed]')).not.toBeNull();
-		// a tick per send the game allows, lit while unspent
-		expect(container.querySelectorAll('[data-sends-side="mine"] .rec-send-tick').length).toBe(11);
-		expect(container.querySelectorAll('[data-sends-side="mine"] .rec-send-tick--left').length).toBe(8);
-		// whose move it is: the lamp on that side's row, and only there
-		expect(container.querySelector('[data-turn-lamp="mine"]').hasAttribute('data-turn-on')).toBe(true);
-		expect(container.querySelector('[data-turn-lamp="theirs"]').hasAttribute('data-turn-on')).toBe(false);
+	/*
+		PASS 65. Each side's row stands at its own edge: the rival's in the top bar, yours at the
+		foot. A row carries its pointer, its pennants in the colors of the worlds won, and its deck.
+	*/
+	it('draws a side as its pointer, its pennants in the worlds\' colors, and its meter of sends', () => {
+		const pennants = [{ element: 'electric', planet: 'Zolton' }, { element: 'psychic', planet: 'Telypso' }, { element: 'psychic', planet: 'Telypso' }];
+		const { container } = render(<SideRow side="theirs" pennants={pennants} toClinch={5} sends={6} cap={11} worldsAhead={6} turn="mine" passed emblem="proctor" />);
+		const row = container.querySelector('[data-score="theirs"]');
+		expect(row.querySelector('.rec-score-row').getAttribute('data-sites-b')).toBe('3');
+		const lit = [...row.querySelectorAll('.rec-flag--lit')];
+		expect(lit.map((f) => f.getAttribute('data-flag-world'))).toEqual(['Zolton', 'Telypso', 'Telypso']);
+		expect(lit[0].className).toContain('g-el-electric');
+		expect(row.querySelectorAll('.rec-flag').length).toBe(5);
+		expect(row.querySelector('.rec-score-row').getAttribute('aria-label')).toContain('won 3 worlds of the 5 that win the game (Zolton, Telypso, Telypso)');
+		const deck = row.querySelector('[data-sends-side="theirs"]');
+		// the counts stand against the rules' own numbers: sends left of the eleven, worlds won of the five
+		expect(deck.textContent).toBe('6/11');
+		expect(row.querySelector('.rec-side-count').textContent).toBe('3/5');
+		expect(deck.getAttribute('aria-label')).toContain('6 sends left for the 6 worlds still to play');
+		// one unbroken run of ticks, a tick per send the game allows, lit while unspent
+		expect(deck.querySelectorAll('.rec-sendbar-tick').length).toBe(11);
+		expect(deck.querySelectorAll('.rec-sendbar-tick--left').length).toBe(6);
+		// an empty slot is a socket, not an outline flag
+		expect(row.querySelectorAll('.rec-flag-socket').length).toBe(2);
+		expect(row.querySelector('[data-rival-passed]')).not.toBeNull();
+		expect(row.querySelector('.rec-side-emblem')).not.toBeNull();
+		// whose move it is: the pointer rides the row of the side to move
+		expect(row.querySelector('[data-turn-lamp="theirs"]').hasAttribute('data-turn-on')).toBe(false);
+		const mine = render(<SideRow side="mine" pennants={[]} toClinch={5} sends={0} cap={11} turn="mine" />);
+		expect(mine.container.querySelector('[data-turn-lamp="mine"]').hasAttribute('data-turn-on')).toBe(true);
+		expect(mine.container.querySelector('[data-sites-a]').getAttribute('data-sites-a')).toBe('0');
+		expect(mine.container.querySelector('.rec-sendbar').className).toContain('rec-sendbar--empty');
+		// your row carries the piece where the rival's carries its emblem
+		expect(mine.container.querySelector('.rec-side-piece')).not.toBeNull();
+	});
+
+	it('plants a pennant per world won, two for a staked one, fitted to the count the table shows', () => {
+		const track = [
+			{ index: 0, sites: [{ planet: 'Zolton', element: 'electric', who: 'theirs' }, { planet: 'Stonera', element: 'rock', who: 'mine' }, { planet: 'Telypso', element: 'psychic', who: 'theirs', staked: true }] },
+			{ index: 1, sites: [{ planet: 'Endessa', element: 'sand', who: 'tie' }, { planet: 'Saiphus', element: 'air', who: null }, { planet: 'Luminax', element: 'light', who: null }] },
+		];
+		expect(pennantsFor(track, 'theirs', 3).map((f) => f.planet)).toEqual(['Zolton', 'Telypso', 'Telypso']);
+		expect(pennantsFor(track, 'mine', 1).map((f) => f.planet)).toEqual(['Stonera']);
+		// the Clash tells the log a step at a time: a count ahead of it gets plain pennants, and never more than the count
+		expect(pennantsFor(track, 'mine', 2).map((f) => f.planet)).toEqual(['Stonera', null]);
+		expect(pennantsFor(track, 'theirs', 1).map((f) => f.planet)).toEqual(['Zolton']);
+	});
+
+	it('draws the track as the worlds themselves, each with its symbol, the table\'s three framed', () => {
+		const track = [
+			{ index: 0, current: false, sites: [{ siteId: 'a', planet: 'Zolton', element: 'electric', who: 'theirs' }] },
+			{ index: 1, current: true, sites: [{ siteId: 'b', planet: 'Endessa', element: 'sand', who: null }] },
+		];
+		const { container } = render(<RoundTrack track={track} frameIndex={1} />);
+		const worlds = [...container.querySelectorAll('[data-track-world]')];
+		expect(worlds.map((w) => w.getAttribute('data-track-world'))).toEqual(['Zolton', 'Endessa']);
+		expect(worlds.every((w) => w.querySelector('svg'))).toBe(true);
+		expect(container.querySelector('.rec-track-round--now [data-track-world]').getAttribute('data-track-world')).toBe('Endessa');
 	});
 
 	it('strikes out what the Clash would take and marks a fall', () => {
