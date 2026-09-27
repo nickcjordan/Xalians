@@ -67,7 +67,7 @@ function leadOf(theirs, mine) {
 */
 const round1 = (v) => Math.round(v * 10) / 10;
 
-export function Standing({ siteId, now, preview, scale, marks, verdict }) {
+export function Standing({ siteId, now, preview, scale, marks, verdict, settled }) {
 	const base = now || { theirs: 0, mine: 0, theirsBefore: 0, mineBefore: 0 };
 	const shown = preview || base;
 	const t = shown.theirs || 0;
@@ -109,6 +109,7 @@ export function Standing({ siteId, now, preview, scale, marks, verdict }) {
 					<span className="rec-standing-num" data-standing-total="theirs">
 						<b className="g-mono">{shownTheirs}</b>
 						{won === 'theirs' && <Crest verdict={verdict} />}
+						{!won && settled === 'theirs' && <SettledFlag side="theirs" />}
 					</span>
 				)}
 			</span>
@@ -123,6 +124,7 @@ export function Standing({ siteId, now, preview, scale, marks, verdict }) {
 						{preview && mk.art && <span className="rec-standing-art" data-standing-art>{mk.art}</span>}
 						{(m > EPS || mb > EPS || preview || won === 'mine') && <b className="g-mono">{shownMine}</b>}
 						{(won === 'mine' || won === 'tie') && <Crest verdict={verdict} />}
+						{!won && settled === 'mine' && <SettledFlag side="mine" />}
 					</span>
 				)}
 			</span>
@@ -351,7 +353,7 @@ function RivalTag({ cell }) {
 	);
 }
 
-export function FitStrip({ sites, row, sentSiteId, sentCell, moveRow, focusSiteId, off, scale, newsSiteId, room }) {
+export function FitStrip({ sites, row, sentSiteId, sentCell, moveRow, focusSiteId, off, scale, newsSiteId, room, settled }) {
 	const s = scale > 0 ? scale : FIT_SCALE;
 	const r = room > 0 ? room : 1;
 	const anyCell = row ? sites.map((site) => row[site.id]).find(Boolean) : null;
@@ -432,6 +434,11 @@ export function FitStrip({ sites, row, sentSiteId, sentCell, moveRow, focusSiteI
 				if (!cell) {
 					classes.push('rec-fit-col--none');
 					return <span className={classes.join(' ')} key={site.id} data-fit-site={site.id}><span className="rec-fit-num" /><span className="rec-fit-well" /><span className="rec-whys rec-fit-why" /></span>;
+				}
+				// pass 63: a world already yours this round, where a send adds to a world that is won
+				if (settled && settled[site.id] === 'mine') {
+					classes.push('rec-fit-col--settled');
+					return column(site, cell, classes, { 'data-fit-settled': '' });
 				}
 				return column(site, cell, classes, {});
 			})}
@@ -562,6 +569,18 @@ export function SendCount({ left, cap, side, worldsAhead, tone, emblem }) {
 }
 
 // the Ruling on a world: a pennant at the end of the winner's bar (pass 54), which shows the margin; since pass 60 the bar it rides says whose
+/*
+	PASS 63. A world settled before the Clash: the Ruling's pennant, in outline, on the bar of the
+	side that will hold it, because the side behind can no longer act this round.
+*/
+export function SettledFlag({ side }) {
+	return (
+		<span className={`rec-crest rec-crest--settled rec-crest--${side}`} data-settled={side} title={side === 'mine' ? 'Yours this round: the rival can no longer answer here' : "The rival's this round: you can no longer answer here"}>
+			<svg viewBox="0 0 24 24" aria-hidden="true" className="rec-crest-flag"><path d="M6 21V3" /><path d="M6 4h12l-3 4.5L18 13H6" /></svg>
+		</span>
+	);
+}
+
 export function Crest({ verdict }) {
 	if (!verdict) {
 		return null;
