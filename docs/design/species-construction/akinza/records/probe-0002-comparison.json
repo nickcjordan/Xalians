@@ -1,0 +1,233 @@
+{
+  "scope": "Whole probe screen-space bounds at unchanged orthographic scale; not isolated tail measurements",
+  "metrics": {
+    "probe-0001": {
+      "above": {
+        "bounds": [
+          97,
+          244,
+          575,
+          406
+        ],
+        "width": 478,
+        "height": 162
+      },
+      "left": {
+        "bounds": [
+          244,
+          168,
+          406,
+          508
+        ],
+        "width": 162,
+        "height": 340
+      },
+      "rear": {
+        "bounds": [
+          97,
+          168,
+          575,
+          508
+        ],
+        "width": 478,
+        "height": 340
+      },
+      "turn-000": {
+        "bounds": [
+          65,
+          166,
+          543,
+          512
+        ],
+        "width": 478,
+        "height": 346
+      },
+      "turn-045": {
+        "bounds": [
+          104,
+          150,
+          519,
+          504
+        ],
+        "width": 415,
+        "height": 354
+      },
+      "turn-090": {
+        "bounds": [
+          244,
+          134,
+          406,
+          516
+        ],
+        "width": 162,
+        "height": 382
+      },
+      "turn-135": {
+        "bounds": [
+          203,
+          140,
+          485,
+          519
+        ],
+        "width": 282,
+        "height": 379
+      },
+      "turn-180": {
+        "bounds": [
+          97,
+          162,
+          575,
+          511
+        ],
+        "width": 478,
+        "height": 349
+      },
+      "turn-225": {
+        "bounds": [
+          121,
+          171,
+          536,
+          531
+        ],
+        "width": 415,
+        "height": 360
+      },
+      "turn-270": {
+        "bounds": [
+          234,
+          159,
+          396,
+          548
+        ],
+        "width": 162,
+        "height": 389
+      },
+      "turn-315": {
+        "bounds": [
+          155,
+          158,
+          437,
+          541
+        ],
+        "width": 282,
+        "height": 383
+      }
+    },
+    "probe-0002": {
+      "above": {
+        "bounds": [
+          53,
+          224,
+          575,
+          480
+        ],
+        "width": 522,
+        "height": 256
+      },
+      "left": {
+        "bounds": [
+          224,
+          138,
+          480,
+          549
+        ],
+        "width": 256,
+        "height": 411
+      },
+      "rear": {
+        "bounds": [
+          53,
+          138,
+          576,
+          549
+        ],
+        "width": 523,
+        "height": 411
+      },
+      "turn-000": {
+        "bounds": [
+          64,
+          141,
+          587,
+          539
+        ],
+        "width": 523,
+        "height": 398
+      },
+      "turn-045": {
+        "bounds": [
+          90,
+          153,
+          593,
+          556
+        ],
+        "width": 503,
+        "height": 403
+      },
+      "turn-090": {
+        "bounds": [
+          224,
+          134,
+          480,
+          567
+        ],
+        "width": 256,
+        "height": 433
+      },
+      "turn-135": {
+        "bounds": [
+          178,
+          136,
+          471,
+          565
+        ],
+        "width": 293,
+        "height": 429
+      },
+      "turn-180": {
+        "bounds": [
+          53,
+          141,
+          576,
+          553
+        ],
+        "width": 523,
+        "height": 412
+      },
+      "turn-225": {
+        "bounds": [
+          47,
+          126,
+          550,
+          538
+        ],
+        "width": 503,
+        "height": 412
+      },
+      "turn-270": {
+        "bounds": [
+          160,
+          119,
+          416,
+          549
+        ],
+        "width": 256,
+        "height": 430
+      },
+      "turn-315": {
+        "bounds": [
+          169,
+          126,
+          462,
+          544
+        ],
+        "width": 293,
+        "height": 418
+      }
+    }
+  },
+  "allViewsUnclipped": true,
+  "leftWidthRatio": 1.5802469135802468,
+  "overheadDepthRatio": 1.5802469135802468,
+  "approval": null
+}

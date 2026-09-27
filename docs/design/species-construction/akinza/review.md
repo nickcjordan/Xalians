@@ -12,7 +12,7 @@ Exact prompts, subscription tool metadata and input/output hashes: [modeling-pos
 
 `study-0002/tail.png` simplifies the tail into smooth volumes. The labeled left and above panels do not provide trustworthy orthographic left/top views of one object. The above panel is tilted, and the pelvic form regresses toward prominent rounded cheeks. The prompt also contained an incorrect page-side instruction for the above camera. Reject this sheet as geometric evidence. Do not carry its body shaping or camera labels into modeling.
 
-## probe-0001: actual geometry
+## probe-0001: actual geometry, rejected for flatness
 
 `probe-0001/probe.blend` contains one fused tail and pelvis mesh, built from the versioned `probe-spec.json`. `geometry.json` records one connected component, zero nonmanifold edges, 16,778 vertices, actual camera matrices and output hashes. These are connectivity checks, not artistic approval or animation-topology certification.
 
@@ -26,8 +26,20 @@ Portable technical previews, explicitly unapproved:
 
 Eleven occupancy masks are derived from render alpha at threshold 128, with provenance in `review-assets.json`. No painted normal/depth maps or independently generated masks are presented as measurements. The Blender builder is a tested local geometry-probe adapter, not an adapter to the existing full-creature rig templates.
 
+## probe-0002: fuller rounded tails
+
+Nick's correction: "It should feel fuller what you built is too flat, It should look closer to three cattails than whatever fork-looking thing you have there".
+
+`probe-spec-0002.json` replaces the blade-like cross sections with round sweeps, sustained thickness, rounded terminal caps and staggered front-back paths. The common spinal root and connected trunk remain. The pelvis is unchanged. All eleven views come from the same new mesh; this is local Blender geometry, not an image-generation call. Occupancy masks are derived from its render alpha.
+
+The side and true overhead views now show full curved volumes and substantial depth. The tails remain smooth construction surfaces without final fur. Provisional dimensions, tip shape and fullness still require Nick's visual judgment. The earlier probe and its evidence remain preserved as rejected history.
+
+![Fuller provisional tails from actual rear, side and top cameras](evidence/tail-probe-0002-contact.png)
+
+![Fuller rounded-tail geometry turntable](evidence/tail-probe-0002-turntable.gif)
+
 ## Approval state and next action
 
 Nick's earlier direction on root, fork, restrained pelvis, eye interpretation, hair and style is retained. He has not approved the new modeling pose, these construction images, this probe, or a final pack. All stage approval fields remain null.
 
-The concrete next design review is the modeling pose plus the three-dimensional tail connection and depth. Use the accepted result to correct the construction master, then make the complete rough creature. Do not promote either failed generated sheet to skip that review.
+The concrete next design review is probe-0002's fuller cattail-like shape. This correction invalidates earlier flat-tail references; their stale input records are retained rather than refreshed onto unchanged images. Use the accepted result to correct the construction master, then make the complete rough creature. Do not promote either failed generated sheet to skip that review.
