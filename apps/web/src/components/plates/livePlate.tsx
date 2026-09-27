@@ -25,11 +25,15 @@
 // around it. The recordings are archive footage, and a lower frame rate suits them.
 // A device that cannot keep up plays at half the rate. A baked plate also keeps
 // its hidden pieces out of the page (plateCull.ts), and its rain slides as whole
-// sheets rather than being redrawn (plateDrift.ts).
+// sheets rather than being redrawn (plateDrift.ts). Nearly all of a plate's
+// motion is played by script from a table rather than by SMIL (plateTimeline.ts),
+// which is several times cheaper a step; only what script cannot play exactly
+// (motion along a path) is still stepped as SMIL, and only in the layers that have it.
 import * as React from 'react';
 import { cn } from '@/lib/utils';
 import { cullAt, prepareCull, type Cull } from './plateCull';
 import { driftAt, prepareDrift, type Drift } from './plateDrift';
+import { hasSmil, prepareTimeline, timelineAt, type Timeline } from './plateTimeline';
 import { joinStage, loadFragment } from './plateStage';
 
 type Props = {
@@ -72,6 +76,9 @@ function plateSvgs(host: HTMLElement) {
 // The culling marks and drifting sheets of each mounted plate (plateCull.ts, plateDrift.ts), read once when it goes in.
 const culls = new WeakMap<HTMLElement, Cull | null>();
 const drifts = new WeakMap<HTMLElement, Drift | null>();
+// Its motion taken over by script (plateTimeline.ts), and the layers left with SMIL to step.
+const timelines = new WeakMap<HTMLElement, Timeline | null>();
+const smilSvgs = new WeakMap<HTMLElement, SVGSVGElement[]>();
 
 /** Show a mounted plate at `seconds`: only the pieces that show then are in the page, and every timeline is there. */
 function seek(host: HTMLElement, svgs: SVGSVGElement[], seconds: number) {
@@ -79,7 +86,9 @@ function seek(host: HTMLElement, svgs: SVGSVGElement[], seconds: number) {
 	if (cull) cullAt(cull, seconds);
 	const drift = drifts.get(host);
 	if (drift) driftAt(drift, seconds);
-	svgs.forEach((svg) => svg.setCurrentTime?.(seconds));
+	const tl = timelines.get(host);
+	if (tl) timelineAt(tl, seconds);
+	(smilSvgs.get(host) ?? svgs).forEach((svg) => svg.setCurrentTime?.(seconds));
 }
 
 // A device that cannot keep up plays every other frame instead (half the
@@ -147,7 +156,9 @@ function playFilm(host: HTMLElement, from: number): () => number {
 function holdAtStart(host: HTMLElement) {
 	culls.set(host, prepareCull(host));
 	drifts.set(host, prepareDrift(host));
+	timelines.set(host, prepareTimeline(host));
 	const svgs = plateSvgs(host);
+	smilSvgs.set(host, svgs.filter(hasSmil));
 	svgs.forEach((svg) => svg.pauseAnimations());
 	seek(host, svgs, 0);
 }

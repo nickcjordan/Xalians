@@ -65,7 +65,10 @@ const OUT = path.join(__dirname, '..', '..', 'untracked');
 	const storyTop = await p.evaluate(() => document.getElementById('story').getBoundingClientRect().top);
 	await wheel(100, Math.max(1, Math.round(storyTop / 100)), 30);
 	await mark('arrive and tune in');
-	await wheel(60, 4, 40);
+	// Land where the viewer rests (the page's own Play key does that), whatever the screen's height.
+	const key = p.locator('.archive-play').first();
+	if (await key.isVisible().catch(() => false)) await key.click({ noWaitAfter: true });
+	else await wheel(60, 4, 40);
 	await p.waitForTimeout(2500);
 	await mark('playing 01');
 	await p.waitForTimeout(3000);

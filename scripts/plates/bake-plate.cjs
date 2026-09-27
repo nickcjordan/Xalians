@@ -629,11 +629,21 @@ async function diffInPage({ a, b }) {
 	const bundle = (file, name) => transformSync(fs.readFileSync(path.join(ROOT, 'apps/web/src/components/plates', file), 'utf8'), { loader: 'ts', format: 'iife', globalName: name }).code;
 	const cullJs = bundle('plateCull.ts', 'PlateCull');
 	const driftJs = bundle('plateDrift.ts', 'PlateDrift') + ';window.__drift = PlateDrift.prepareDrift(document.querySelector(".live-plate-host"));';
-	await B.addScriptTag({ content: cullJs + (process.env.NOCULL ? '' : ';window.__cull = PlateCull.prepareCull(document.querySelector(".live-plate-host"));') + driftJs });
+	// B plays the way the page does: culled, drifting, and its motion played by script where script can (plateTimeline.ts).
+	const tlJs = bundle('plateTimeline.ts', 'PlateTimeline') + ';window.__tl = PlateTimeline.prepareTimeline(document.querySelector(".live-plate-host"));';
+	await B.addScriptTag({ content: cullJs + (process.env.NOCULL ? '' : ';window.__cull = PlateCull.prepareCull(document.querySelector(".live-plate-host"));') + driftJs + tlJs });
 	await C.addScriptTag({ content: driftJs });
+	const seekTo = (q, t) => q.evaluate((t) => { if (window.__cull) PlateCull.cullAt(window.__cull, t); if (window.__drift) PlateDrift.driftAt(window.__drift, t); if (window.__tl) PlateTimeline.timelineAt(window.__tl, t); document.querySelectorAll('svg.layer, svg.defs').forEach((s) => s.setCurrentTime(t)); }, t);
+	// Two piece states agree when every number does, to within what script's rounding of a value (three
+	// decimals) can move a box or an opacity.
+	const same = (a, b) => {
+		if (a === b) return true;
+		const x = a.split(/[;,]/).map(Number), y = b.split(/[;,]/).map(Number);
+		return x.length === y.length && x.every((v, i) => Math.abs(v - y[i]) <= 0.05);
+	};
 	const shot = async (q, t) => {
 		await q.bringToFront();
-		await q.evaluate((t) => { if (window.__cull) PlateCull.cullAt(window.__cull, t); if (window.__drift) PlateDrift.driftAt(window.__drift, t); document.querySelectorAll('svg.layer, svg.defs').forEach((s) => s.setCurrentTime(t)); }, t);
+		await q.evaluate((t) => { if (window.__cull) PlateCull.cullAt(window.__cull, t); if (window.__drift) PlateDrift.driftAt(window.__drift, t); if (window.__tl) PlateTimeline.timelineAt(window.__tl, t); document.querySelectorAll('svg.layer, svg.defs').forEach((s) => s.setCurrentTime(t)); }, t);
 		await q.waitForTimeout(120);
 		return (await q.screenshot()).toString('base64');
 	};
@@ -645,8 +655,8 @@ async function diffInPage({ a, b }) {
 		console.log(`  t=${String(t).padEnd(5)} mean diff ${d.mean.toFixed(2)}  pixels off by more than 24: ${(d.bigShare * 100).toFixed(3)}%`);
 		if (process.env.SNAP) { fs.writeFileSync(path.join(ROOT, 'untracked', `bake-${era}-${t}-heat.png`), Buffer.from(d.heat, 'base64')); fs.writeFileSync(path.join(ROOT, 'untracked', `bake-${era}-${t}-a.png`), Buffer.from(a, 'base64')); fs.writeFileSync(path.join(ROOT, 'untracked', `bake-${era}-${t}-b.png`), Buffer.from(b, 'base64')); }
 	}
-	// Culling must change nothing. Two checks, frame by frame across the loop, the baked plate culled (B)
-	// against uncut (C). First the state of every piece in the page: its opacity, where it is and its
+	// Culling and script playback must change nothing. Two checks, frame by frame across the loop, the
+	// baked plate as the page plays it (B) against uncut SMIL (C). First the state of every piece in the page: its opacity, where it is and its
 	// extent must be the same in both, so a piece put back is at the right moment of its motion. Then the
 	// pixels. These can differ a little at shape edges: taking pieces out changes how many shapes a tile
 	// of a layer holds, and the browser picks its edge smoothing by that, so the pixel check only fails
@@ -657,6 +667,7 @@ async function diffInPage({ a, b }) {
 	}));
 	let cullWorst = 0;
 	let stateBad = 0;
+	let edges = 0;
 	const frames = process.env.FRAMES ? process.env.FRAMES.split(',').map(Number) : Array.from({ length: 36 }, (_, i) => Math.round(i * 13.37 * FPS) / FPS % 60);
 	for (const t of frames) {
 		const b = await shot(B, t), c = await shot(C, t);
@@ -670,13 +681,30 @@ async function diffInPage({ a, b }) {
 				return all.map((x) => { const b = x.getBBox(), m = x.getCTM() || { a: 0, b: 0, c: 0, d: 0, e: 0, f: 0 }; return [getComputedStyle(x).opacity, b.x, b.y, b.width, b.height, m.a, m.b, m.c, m.d, m.e, m.f].map((v) => Math.round(Number(v) * 100) / 100).join(','); }).join(';');
 			});
 		}, pairs);
-		fb.forEach((v, i) => { if (v !== fcs[i]) { stateBad++; if (stateBad < 4) console.log(`  a piece put back differs at t=${t}: ${v.slice(0, 80)} vs ${fcs[i].slice(0, 80)}`); } });
-		const d = await B.evaluate(diffInPage, { a: b, b: c });
+		let edge = false;
+		for (let i = 0; i < fb.length; i++) {
+			if (same(fb[i], fcs[i])) continue;
+			// Where a loop ends exactly on a film frame, Chrome's SMIL shows either side of the edge (by
+			// rounding) and script the next loop's start: a piece that agrees a moment either side is that.
+			let agrees = true;
+			for (const dt of [-0.002, 0.002]) {
+				await seekTo(B, t + dt); await seekTo(C, t + dt);
+				const [x] = await B.evaluate((ci) => [...document.querySelectorAll('[data-cull]')].filter((e) => e.getAttribute('data-ci') === ci).map((e) => [e, ...e.querySelectorAll('*')].filter((q) => typeof q.getBBox === 'function' && !['animate', 'animateTransform', 'animateMotion', 'set'].includes(q.tagName)).map((q) => { const bb = q.getBBox(), m = q.getCTM() || { a: 0, b: 0, c: 0, d: 0, e: 0, f: 0 }; return [getComputedStyle(q).opacity, bb.x, bb.y, bb.width, bb.height, m.a, m.b, m.c, m.d, m.e, m.f].map((v) => Math.round(Number(v) * 100) / 100).join(','); }).join(';')), pairs[i]);
+				const [y] = await C.evaluate((ci) => { const e = document.querySelector(`[data-ci="${ci}"]`); return [[e, ...e.querySelectorAll('*')].filter((q) => typeof q.getBBox === 'function' && !['animate', 'animateTransform', 'animateMotion', 'set'].includes(q.tagName)).map((q) => { const bb = q.getBBox(), m = q.getCTM() || { a: 0, b: 0, c: 0, d: 0, e: 0, f: 0 }; return [getComputedStyle(q).opacity, bb.x, bb.y, bb.width, bb.height, m.a, m.b, m.c, m.d, m.e, m.f].map((v) => Math.round(Number(v) * 100) / 100).join(','); }).join(';')]; }, pairs[i]);
+				if (!same(x, y)) agrees = false;
+			}
+			if (agrees) { edges++; edge = true; continue; }
+			stateBad++;
+			if (stateBad < 4) console.log(`  a piece put back differs at t=${t}: ${fb[i].slice(0, 80)} vs ${fcs[i].slice(0, 80)}`);
+		}
+		let d = await B.evaluate(diffInPage, { a: b, b: c });
+		// At such an edge, compare the pixels just after it instead.
+		if (edge) d = await B.evaluate(diffInPage, { a: await shot(B, t + 0.002), b: await shot(C, t + 0.002) });
 		if (d.bigShare > cullWorst) cullWorst = d.bigShare;
 		if (d.bigShare > 0.00005 && process.env.SNAP) fs.writeFileSync(path.join(ROOT, 'untracked', `cull-${era}-${t.toFixed(2)}-heat.png`), Buffer.from(d.heat, 'base64'));
 	}
 	const inPage = await B.evaluate(() => (window.__cull ? window.__cull.entries.filter((e) => e.on).length + '/' + window.__cull.entries.length : 'none'));
-	console.log(`culled vs uncut over ${frames.length} frames: ${stateBad} pieces in a different state; pixels off by more than 24 at worst ${(cullWorst * 100).toFixed(4)}% (pieces in the page at the last frame: ${inPage})`);
+	console.log(`culled vs uncut over ${frames.length} frames: ${stateBad} pieces in a different state (${edges} more only exactly at a loop's edge); pixels off by more than 24 at worst ${(cullWorst * 100).toFixed(4)}% (pieces in the page at the last frame: ${inPage})`);
 	await browser.close();
 	const kb = (dir) => (fs.readdirSync(dir).filter((f) => f.endsWith('.' + FORMAT)).reduce((a, f) => a + fs.statSync(path.join(dir, f)).size, 0) / 1024).toFixed(0);
 	console.log(`live.html ${(fs.statSync(path.join(PLATES, era, 'live.html')).size / 1024).toFixed(0)} KB (plate.html ${(frag.length / 1024).toFixed(0)} KB); pictures ${kb(OUT_DIR)} KB at 2x, ${kb(path.join(OUT_DIR, '1x'))} KB at 1x`);
