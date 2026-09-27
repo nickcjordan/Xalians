@@ -1,6 +1,6 @@
 # Akinza: proposed view reading
 
-Status: initial reading approved to pilot with Nick's eye and ear corrections on 2026-09-27. The explicit centered tail-root correction below is proposed after his back-view feedback and awaits confirmation. No generated pack is approved.
+Status: reading approved to pilot with Nick's eye, ear, and centered tail-root corrections on 2026-09-27. No generated pack is approved.
 
 Sources: `apps/web/src/svg/species/akinza.svg`, its existing preview at `docs/species-templates/art/akinza.png`, and `docs/species-templates/akinza.json`. The SVG controls the proportions and outline. Camera angles name Akinza's own sides.
 
@@ -12,9 +12,9 @@ Both hands rest at the hips, with elbows out. The stance is deliberately uneven:
 
 Three long, broad, pointed plume shapes sweep to Akinza's left, the viewer's right in front. The upper plume rises highest, the middle plume reaches farthest sideways, and the lower plume curves downward before turning outward. Preserve their jagged edges, unequal shapes, and white separations. There are two arms, two legs, two ears, and these three plume shapes, with no props or accessories.
 
-## Proposed depth, subject to approval
+## Approved depth interpretation for the pilot
 
-Proposed correction after Nick's back-view feedback: treat the tail as one shared root on the rear centerline, at the base of the spine just above the buttocks, opening into three distinct furry plumes. It does not grow from the side of the hip, flank, or either buttock. The root remains centered while a short common base bends toward Akinza's left behind the pelvis. The plumes fan left and slightly backward from that base, with shallow front-to-back separation. In front, the hip hides the central root; the point where the fan becomes visible beside the body is not its anatomical origin. The drawing establishes the three shapes but does not prove the hidden attachment or their depth.
+Nick confirmed this correction after his back-view feedback: treat the tail as one shared root on the rear centerline, at the base of the spine just above the buttocks, opening into three distinct furry plumes. It does not grow from the side of the hip, flank, or either buttock. The root remains centered while a short common base bends toward Akinza's left behind the pelvis. The plumes fan left and slightly backward from that base, with shallow front-to-back separation. In front, the hip hides the central root; the point where the fan becomes visible beside the body is not its anatomical origin. The drawing establishes the three shapes; Nick's direction resolves their hidden attachment.
 
 Give the head a short, modest muzzle; keep the ears broad, thin, and fur-covered, held in the drawing's sideways attitude. Give the slender torso, arms, legs, hands, and feet enough rounded depth to read as a body. Do not enlarge the chest, paws, muzzle, or ear thickness into a different animal. The back has continuous fur, without invented stripes, ridges, or ornaments. These unseen surfaces are restrained proposals, not facts established by the front drawing.
 
@@ -49,6 +49,10 @@ Attachment feedback, 2026-09-27:
 
 > I also noticed that your tail placement was odd. I think you need to reevaluate where the tail is connecting to the body. The view from the back exposes an odd placement
 
-The proposed centered root above addresses the distinction between the hidden attachment and the visible silhouette exit. Confirmation has been requested before generating a corrected back view.
+Nick confirmed the centered root on 2026-09-27:
+
+> yes The tail should be coming from the base of the spine, like every real animal's tail does
+
+This approves the attachment interpretation for generation, not any generated result.
 
 For checking, retain the raw source comparison, but do not fail the pilot solely for replacing the abstract eye squiggles. Compare front occupancy against the source and check the two eye positions and prominence separately. Any eye-region exemption in the feature comparison is bounded to the source eye regions, recorded explicitly, and does not excuse changes elsewhere. Shaggy fur remains part of the outline comparison; no broad outline exemption is implied.
