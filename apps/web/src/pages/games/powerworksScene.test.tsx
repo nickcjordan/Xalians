@@ -796,7 +796,7 @@ describe("shared battlefield", () => {
         onHover={() => {}}
       />
     );
-    expect(screen.getByText("Charged")).toBeInTheDocument();
+    expect(container.querySelector(".pw-status-badge.charged")).toHaveTextContent("Charging");
     expect(container.querySelector(".pw-flight")).toBeNull();
     expect(container.querySelector(".receiving")).toBeNull();
   });

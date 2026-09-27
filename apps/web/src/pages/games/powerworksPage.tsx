@@ -20,6 +20,7 @@ import {
   Link2,
   Crosshair,
   Wind,
+  Hourglass,
   Swords,
   Trophy,
   Info,
@@ -93,7 +94,7 @@ import {
   Health,
   shortName,
   valueWords,
-  ValueBar,
+  EffectWords,
   ThreatBadge,
 } from "./powerworksVisuals";
 
@@ -630,9 +631,16 @@ export default function PowerworksPage() {
                   title={labelFor(u)}
                 >
                   <Portrait u={u} small />
+                  {set && (
+                    // Words pass: a gold dot read as "acted" or "selected"; a check says done.
+                    <span className="pw-turn-set" aria-hidden="true">
+                      <Check />
+                    </span>
+                  )}
                   {shift !== 0 && (
                     <span className="pw-turn-shift" aria-hidden="true">
-                      {shift > 0 ? <ChevronsRight /> : <ChevronsLeft />}
+                      {/* Words pass: "»" read as fast-forward to every reader. */}
+                      {shift > 0 ? "later" : "sooner"}
                     </span>
                   )}
                 </button>
@@ -663,8 +671,8 @@ export default function PowerworksPage() {
     const on = v.target ? [...run.enemies, ...run.team].find((x) => x.id === v.target) : undefined;
     // A move resting or spent shows what it would be worth, faded: not an option this round.
     return (
-      <ValueBar
-        value={v}
+      <EffectWords
+        value={{ ...v, squad: !!on && !on.enemy }}
         label={on ? labelFor(on) : undefined}
         className={legalMoves(u, run).includes(i) ? "" : "waiting"}
       />
@@ -1113,9 +1121,14 @@ export default function PowerworksPage() {
   const othersPlan = planning ? projectOrders(run, others) : null;
   const valueRun = othersPlan ? atHealth(run, othersPlan.hp) : run;
   const seen = (u: Unit) => valueRun.enemies.find((e) => e.id === u.id) ?? u;
-  const values: Record<number, MoveValue> =
+  const values: Record<number, MoveValue & { squad?: boolean }> =
     planning && active
-      ? Object.fromEntries(available.map((i) => [i, moveValue(valueRun, active, i)]))
+      ? Object.fromEntries(
+          available.map((i) => {
+            const v = moveValue(valueRun, active, i);
+            return [i, { ...v, squad: !!v.target && run.team.some((u) => u.id === v.target) }];
+          })
+        )
       : {};
   const aimed =
     move && hoverTarget && targetIds.includes(hoverTarget) ? hoverTarget : null;
@@ -1134,10 +1147,10 @@ export default function PowerworksPage() {
   const aimedAt = aimed
     ? valueRun.enemies.find((e) => e.id === aimed) ?? run.team.find((u) => u.id === aimed)
     : undefined;
-  const handValue: MoveValue | null =
+  const handValue: (MoveValue & { squad?: boolean }) | null =
     active && inHand !== null
       ? aimedAt
-        ? valueOn(valueRun, active, inHand, aimedAt)
+        ? { ...valueOn(valueRun, active, inHand, aimedAt), squad: !aimedAt.enemy }
         : values[inHand] ?? null
       : null;
   const referent = handValue?.target ?? null;
@@ -1967,7 +1980,7 @@ export default function PowerworksPage() {
                     </span>
                     {run.room === 2 && run.phase === "camp" && (
                       <span className="pw-station">
-                        <Zap />
+                        <Heart />
                         Ahead: +10 HP to standing companions
                       </span>
                     )}
@@ -2299,7 +2312,7 @@ export default function PowerworksPage() {
               </section>
               <section>
                 <h3>
-                  <Zap />
+                  <Hourglass />
                   Read the charge
                 </h3>
                 <p>
@@ -2324,35 +2337,33 @@ export default function PowerworksPage() {
                   Reading a move
                 </h3>
                 <p>
-                  Under each move, a bar measured in health, ending in its
-                  number. Every bar uses one scale: a full bar is 12 health,
-                  each segment 2. Red is what the move takes from a machine,
-                  gold what it keeps for your squad (a blow stopped, a machine
-                  knocked out before it strikes again, a squadmate guarded),
-                  green what it heals. It is read on one target, the one it
-                  does the most with, marked with a crosshair on the stage;
-                  aim at another and the card's bar follows. A crossed-out
-                  circle means the move does nothing useful this round; point
-                  at it to see why.
+                  Under each move, what it would do this round on the target
+                  it does the most with: "8 dmg", "8 dmg on 2" when it also
+                  hits a second machine, "KO" when it knocks that machine
+                  out, "stops 7" when it prevents a blow, "heals 6", or "no
+                  effect" (point at it to see why). That target shows the
+                  full change on its plate; aim at another and the card
+                  follows.
                 </p>
                 <p>
                   Any change a move would make is said as before and after
                   where the health number sits: 14 → 6, a skull when it
-                  falls. The move in hand's result is boxed; what your other
-                  orders already take reads quieter, and shows as a darker
-                  chunk at the end of the bar. The badge under each machine,
-                  a sword for up close or a crosshair for range, is the
-                  attack it is poised to land on one of your squad; when
-                  your orders stop part of it, it reads 7 → 4. The turn order
-                  shows where the move in hand would put everyone, with an
-                  arrow on anyone it hurries or slows. Inspect a companion to
-                  see what its body is worth: how often the machines pick it,
-                  and how much of each blow it slips by being quicker.
+                  falls. What your other orders already take reads quieter,
+                  and shows as a darker chunk at the end of the bar. Under
+                  each machine, "next hit 7" is the attack it is poised to
+                  land on one of your squad; when your orders stop it before
+                  it strikes, it reads 7 → 0. A move marked "once" can be
+                  used once per fight; one with an hourglass winds up this
+                  round and lands next round. On the turn order, "later" and
+                  "sooner" show who the move in hand would move, and a check
+                  marks a companion whose order is set. Inspect a companion to
+                  see how often the machines pick it, and how much of each
+                  blow it slips by being quicker.
                 </p>
               </section>
               <section>
                 <h3>
-                  <Zap />
+                  <Wind />
                   Size, speed and element
                 </h3>
                 <p>
@@ -2490,7 +2501,7 @@ export default function PowerworksPage() {
             </div>
             {inspect.charge && (
               <p className="pw-warning">
-                <Zap />A release is coming at its next opportunity. The
+                <Hourglass />A release is coming at its next opportunity. The
                 selected target is hidden.
               </p>
             )}

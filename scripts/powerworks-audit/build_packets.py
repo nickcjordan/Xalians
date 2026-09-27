@@ -33,11 +33,32 @@ for k, m in enumerate(['P9-phone-opening', 'P10-phone-chosen'], 1):
     copy(f'{m}.png', os.path.join(d, f'screen-{k:02d}.png'))
 
 # 3. Playback session: each beat is a strip of its frames, left to right, in time order.
+# Beats are found in each stream's frame log by what the banner says, so frame timing can change
+# between builds: consecutive frames with the same action and banner head form one run.
+def runs(stream):
+    fr = json.load(open(os.path.join(S, f'{stream}-frames.json')))
+    out = []
+    for i, f in enumerate(fr):
+        key = (f['action'], f['banner'][:20])
+        if out and out[-1][0] == key:
+            out[-1][1].append(i)
+        else:
+            out.append((key, [i]))
+    return out
+def pick(stream, specs):
+    rs = runs(stream)
+    idx = []
+    for action, text in specs:
+        r = next(r for r in rs if r[0][0] == action and text in r[0][1] + ' ' and r[1][0] not in idx)
+        idx += [r[1][0], r[1][-1]] if len(r[1]) > 1 else r[1]
+    return (stream, sorted(set(idx)))
 beats = [
-    ('B1-sector1', [0, 1]), ('B1-sector1', [2, 3]), ('B1-sector1', [4, 5]), ('B1-sector1', [6, 7]),
-    ('B1-sector1', [8, 9, 10, 11]), ('B1-sector1', [12, 13]), ('B1-sector1', [19, 20, 21]),
-    ('B1-sector1', [22, 23, 24]), ('B2-release', [2, 3, 4, 5, 6]), ('B2-release', [14, 15, 16]),
-    ('B3-broken', [7, 8, 9, 10, 11]),
+    pick('B1-sector1', [('round', '')]), pick('B1-sector1', [('bind', '')]),
+    pick('B1-sector1', [('hit', 'Crawler 1')]), pick('B1-sector1', [('status', '')]),
+    pick('B1-sector1', [('blocked', ''), ('expired', '')]), pick('B1-sector1', [('tick', '')]),
+    pick('B1-sector1', [('hit', 'Graviclaw')]), pick('B1-sector1', [('redirect', ''), ('hit', 'Crystorn')]),
+    pick('B2-release', [('hit', 'Avilily'), ('react', '')]), pick('B2-release', [('hit', 'GuardianCore surge')]),
+    pick('B3-broken', [('displace', ''), ('blocked', '')]),
 ]
 d = os.path.join(P, 'playback'); os.makedirs(d)
 for k, (b, idx) in enumerate(beats, 1):

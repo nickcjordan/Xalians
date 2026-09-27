@@ -96,16 +96,23 @@
   border-style: solid;
   border-color: #e7cf8f;
 }
-.pw .pw-turn-strip li.ally.set > button::after {
-  content: "";
+.pw .pw-turn-set {
   position: absolute;
-  right: -2px;
-  bottom: -2px;
-  width: 10px;
-  height: 10px;
+  right: -4px;
+  bottom: -4px;
+  display: grid;
+  place-items: center;
+  width: 16px;
+  height: 16px;
   border-radius: 50%;
+  color: #0e191e;
   background: #e7cf8f;
   box-shadow: 0 0 0 2px #0e191e;
+}
+.pw .pw-turn-set svg {
+  width: 11px;
+  height: 11px;
+  stroke-width: 3;
 }
 .pw .pw-turn-strip li.selected > button {
   border-color: #f4e2b0;
@@ -129,16 +136,17 @@
 }
 .pw .pw-turn-shift {
   position: absolute;
-  left: -3px;
-  bottom: -3px;
-  display: grid;
-  place-items: center;
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
+  left: 50%;
+  top: -10px;
+  transform: translateX(-50%);
+  padding: 0 4px;
+  border-radius: 2px;
   background: #0e191e;
   color: #ffe7a6;
   box-shadow: 0 0 0 1px #f4e2b077;
+  font: 700 10px/1.4 var(--font-legend);
+  text-transform: uppercase;
+  white-space: nowrap;
 }
 .pw .pw-turn-shift svg {
   width: 11px;

@@ -1678,37 +1678,24 @@
 /* The matchup mark beside the health bar (round 3 review): a filled triangle, no box. Up
    and bright in the target gold when strong (two stacked for double), down in a readable
    muted gray when weak. Matchup is interface state, so it never wears an element hue. */
+/* The matchup, as a word beside the health bar (words pass: the triangle read as a warning). */
 .pw .pw-matchup {
-  display: inline-grid;
-  place-items: center;
   flex: none;
-  width: 11px;
-  height: 12px;
-  /* It overhangs the row rather than growing the plaque. */
-  margin: -3px 0;
+  padding: 0 4px;
+  border-radius: 2px;
+  font: 700 10px/1.5 var(--font-legend);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
   animation: pw-fade-in 150ms ease-out both;
 }
-.pw .pw-matchup svg {
-  width: 11px;
-  height: 9px;
-  overflow: visible;
+.pw .pw-matchup.strong {
+  color: #1b1405;
+  background: #ffe08a;
 }
-.pw .pw-matchup.double svg {
-  height: 14px;
-}
-.pw .pw-matchup polygon {
-  stroke: #08151b;
-  stroke-width: 1.2;
-  stroke-linejoin: round;
-}
-.pw .pw-matchup.strong polygon {
-  fill: #ffe08a;
-}
-.pw .pw-matchup.strong svg {
-  filter: drop-shadow(0 0 3px #f1cb6ccc);
-}
-.pw .pw-matchup.weak polygon {
-  fill: #b9c3bc;
+.pw .pw-matchup.weak {
+  color: #d5dbd4;
+  background: #3b4a47;
 }
 /* A contact reaction's mark: the guardian shocks back whoever touches it, in the reaction's
    element (element-tagged content), with the damage it would deal the companion acting. */

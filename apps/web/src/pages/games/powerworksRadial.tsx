@@ -12,6 +12,7 @@ import {
   Sparkles,
   Users,
   Zap,
+  Hourglass,
 } from "lucide-react";
 import {
   DESPERATE_STRIKE_RECOIL,
@@ -36,7 +37,7 @@ import {
   moveDescription,
   moveFigure,
   removalWords,
-  ValueBar,
+  EffectWords,
   valueWords,
   type ValueReading,
 } from "./powerworksVisuals";
@@ -149,8 +150,8 @@ export function cardMarks(unit: Unit, move: Move): CardMark[] {
   if (move.signature)
     marks.push({
       key: "signature",
-      icon: <Crown />,
-      text: "",
+      icon: null,
+      text: "Once per fight",
       tip: "Signature: usable once per encounter.",
       kind: "signature",
     });
@@ -191,15 +192,12 @@ function Mark({
     </span>
   );
 }
-/** Rest pips: one per round the move rests after use. */
+/**
+  How long a move rests after use. Words pass (audit run 1): the pips read as an unexplained
+  diamond to 8 of 15 readers; "rests 1" says it.
+*/
 function Pips({ rounds }: { rounds: number }) {
-  return (
-    <>
-      {Array.from({ length: rounds }, (_, n) => (
-        <i key={n} />
-      ))}
-    </>
-  );
+  return <span className="pw-rest-word">rests {rounds}</span>;
 }
 
 /** Why a slot cannot be chosen, or its readiness, in the short form a slot prints. */
@@ -424,7 +422,7 @@ export function PowerworksRadial({
   /** The aimed target's one-line outcome ("Crawler 1: 5 damage, 22 to 17"). */
   targetLine?: string | null;
   /** Move value pass: each legal move's best use this round, in health taken and kept. */
-  values?: Record<number, ValueReading & { target: string | null }>;
+  values?: Record<number, ValueReading & { target: string | null; reached?: number; squad?: boolean }>;
   /** The label of the unit a value is about, for its tooltip (readout pass). */
   valueLabel?: (id: string) => string;
   /**
@@ -1078,15 +1076,18 @@ export function PowerworksRadial({
                   </span>
                 </span>
                 {m.signature && (
-                  // The signature's crown on the rim (round 3 review): gold is not its only
-                  // cue, since the light and electric rims sit close to gold.
-                  <span className="pw-radial-crown" aria-hidden="true">
-                    <Crown />
+                  // The signature's badge on the rim. Words pass (audit run 1): the crown read
+                  // as "leader" or "recommended" to every reader; what matters is that it is
+                  // usable once per fight, so the badge says that.
+                  <span className="pw-radial-crown pw-radial-once" aria-hidden="true">
+                    once
                   </span>
                 )}
                 {charges(m) && (
+                  // A move that charges first: the hourglass (waits), not the lightning bolt,
+                  // which the game also uses for shocks and the electric element.
                   <span className="pw-radial-charge" aria-hidden="true">
-                    <Zap />
+                    <Hourglass />
                   </span>
                 )}
                 {state.dim ? (
@@ -1107,7 +1108,7 @@ export function PowerworksRadial({
                     {armed === i && legal && <small>Tap again</small>}
                   </span>
                   {legal && !state.dim && values?.[i] && (
-                    <ValueBar
+                    <EffectWords
                       value={values[i]}
                       label={values[i].target ? valueLabel?.(values[i].target!) : undefined}
                       className="pw-radial-value"
@@ -1164,8 +1165,8 @@ export function PowerworksRadial({
               {marks
                 .filter((m) => m.kind === "signature")
                 .map((m) => (
-                  <Mark key={m.key} id={tipId(m.key)} tip={m.tip} className="signature badge" label="Signature">
-                    {m.icon}
+                  <Mark key={m.key} id={tipId(m.key)} tip={m.tip} className="signature badge once" label="Once per fight">
+                    <span>once</span>
                   </Mark>
                 ))}
             </div>
@@ -1200,7 +1201,7 @@ export function PowerworksRadial({
             {charges(cardMove) && (
               <div className="pw-radial-marks pw-radial-card-charge">
                 <Mark id={tipId("charge")} tip={CHARGE_TIP} className="charge">
-                  <Zap />
+                  <Hourglass />
                   <span>{CHARGE_LINE}</span>
                 </Mark>
               </div>
@@ -1208,11 +1209,8 @@ export function PowerworksRadial({
             {cardValue && (
               // Readout pass: the value follows the aim, and names whom it is read on.
               <div className="pw-radial-card-value">
-                <ValueBar value={cardValue.reading} label={cardValue.label} />
-                <span className="pw-radial-card-value-on">
-                  <Crosshair aria-hidden="true" />
-                  {cardValue.label}
-                </span>
+                <EffectWords value={cardValue.reading} label={cardValue.label} />
+                <span className="pw-radial-card-value-on">on {cardValue.label}</span>
                 <span className="pw-sr">{valueWords(cardValue.reading, cardValue.label)}.</span>
               </div>
             )}

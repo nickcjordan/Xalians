@@ -13,7 +13,7 @@ The method is in `docs/design/powerworks-intuitiveness-audit.md`; run records li
    `node scripts/powerworks-audit/capture.cjs`
 4. Build the neutral reader packets (images named by number only, no meaning in any file name):
    `python scripts/powerworks-audit/build_packets.py`
-   Check the playback frame numbers in `build_packets.py` (the `beats` list) against `untracked/powerworks-audit/shots/*-frames.json` after any change to playback timing.
+   Beats are picked from each stream's frame log by action and banner text, so playback timing can change between builds; check the `beats` list if a round's orders change.
 5. Run the readers: three per packet (`planning`, `planning-guide`, `playback`, `phone`, `signals`), each a fresh subagent on Opus (Sonnet readers read every design lower, even correct ones) with the reader prompt below. Have each save its answers to `untracked/powerworks-audit/answers/<packet>-r<n>.md`.
 6. Run one grader subagent with `keys.md` and the answers. It writes `grades.json` and `confusions.md`. The builder does not grade.
 7. Copy the answers, grades and confusions to `docs/design/powerworks-audit-runs/<date>/` and add the scores to the audit document.
@@ -27,4 +27,5 @@ For `signals`, add: answer Part 1 for every number before opening any part-2 scr
 ## Known flaws in run 1 (2026-09-27)
 
 - The playback sheet asks M03 (iii) about a label that appears in moment 04; graders accepted answers about the corroding label.
-- Playback frames were sampled about every 0.8 s, so most beats have two frames (before and after the blow), not the whole animation.
+- Playback frames were sampled about every 0.8 s, so most beats have two frames (before and after the blow), not the whole animation. In run 2 a beat's result could fall between samples (the Guardian's 30-damage release), which cost the playback score, not the screen.
+- Run 2's two signal readers did not get their question sheet (it was missing from the packet); they still named each numbered mark, and their end answers were not graded.
