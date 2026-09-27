@@ -430,6 +430,7 @@ function ReclamationWorld({
 										<GhostPiece key={`ghost-${ghost.record.id}`} ghost={ghost} previewHere={previewHere} site={site} beside={mine.length} settled={settled && settled[site.id] === 'mine' ? { side: 'mine', lead: front.mine - front.theirs } : null} />
 									)}
 								</div>
+								{clashing === site.id && <BlowTracer acting={hl.acting} hit={hl.hit} beat={hl.beat} />}
 							</div>
 						</section>
 					);
@@ -447,6 +448,68 @@ function ReclamationWorld({
 	Two grids are handed over, narrow and wide, and a container query on the rank's own
 	width picks between them.
 */
+/*
+	PASS 64, THE BLOW. The pass 62 critic scored the Clash 3 of 10: "one static caption with a white
+	box around the attacker ... nothing shows the hit or the damage." While a world fights, each blow
+	is drawn from the creature that throws it to the creature it lands on: a stroke runs out from the
+	attacker and ends in a burst on the target, red when the target is yours (red is what the Clash
+	takes from you, pass 60), ink when it is the rival's.
+*/
+function BlowTracer({ acting, hit, beat }) {
+	const ref = React.useRef(null);
+	const [line, setLine] = React.useState(null);
+	React.useLayoutEffect(() => {
+		const svg = ref.current;
+		const field = svg && svg.parentElement;
+		const stageOf = (id) => field && field.querySelector(`[data-record-id="${id}"] .rec-piece-stage`);
+		const measure = () => {
+			const from = acting && stageOf(acting);
+			const to = hit && stageOf(hit);
+			if (!field || !from || !to || acting === hit) {
+				return null;
+			}
+			const box = field.getBoundingClientRect();
+			const a = from.getBoundingClientRect();
+			const b = to.getBoundingClientRect();
+			const target = to.closest('[data-record-id]');
+			return {
+				x1: Math.round(a.left + a.width / 2 - box.left),
+				y1: Math.round(a.top + a.height / 2 - box.top),
+				x2: Math.round(b.left + b.width / 2 - box.left),
+				y2: Math.round(b.top + b.height / 2 - box.top),
+				r: Math.round(Math.max(8, Math.min(b.width, b.height) * 0.42)),
+				onMine: !!target && target.getAttribute('data-seat') === 'mine',
+				beat,
+			};
+		};
+		const first = measure();
+		setLine(first);
+		if (!first || typeof requestAnimationFrame === 'undefined') {
+			return undefined;
+		}
+		// the world is still opening to take the table when its first blow lands, so the ends follow the creatures while it does
+		const started = Date.now();
+		let frame = requestAnimationFrame(function follow() {
+			const next = measure();
+			setLine((prev) => (next && prev && ['x1', 'y1', 'x2', 'y2', 'r'].every((k) => prev[k] === next[k]) ? prev : next));
+			if (Date.now() - started < 900) {
+				frame = requestAnimationFrame(follow);
+			}
+		});
+		return () => cancelAnimationFrame(frame);
+	}, [acting, hit, beat]);
+	return (
+		<svg ref={ref} className="rec-blow-tracer" aria-hidden="true" data-blow-tracer={line ? (line.onMine ? 'mine' : 'theirs') : undefined}>
+			{line && (
+				<g key={`blow-${line.beat}`} className={`rec-blow${line.onMine ? ' rec-blow--on-mine' : ''}`}>
+					<line x1={line.x1} y1={line.y1} x2={line.x2} y2={line.y2} pathLength="1" />
+					<circle className="rec-blow-burst" cx={line.x2} cy={line.y2} r={line.r} />
+				</g>
+			)}
+		</svg>
+	);
+}
+
 /*
 	PASS 62, THE WORDS FITTED BY MEASURE. Pass 61 gave up the silhouette, the why and then the
 	words at fixed heights of the half they stand in, measured on that half's outer box. A

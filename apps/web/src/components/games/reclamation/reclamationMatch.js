@@ -42,6 +42,8 @@ const BOT_DELAY_MS = 1900;
 const BEAT_MS = 1400;
 const ARRIVE_MS = 1300;
 const RESOLUTION_STEP_MS = 700;
+// pass 64: how long a blow flies before it lands (its step is 700ms, a downing's 1.9 times that)
+const BLOW_FLIGHT_MS = 320;
 const LOG_CAP = 120;
 // "Zolton, Krystos and Saiphus": the frame's worlds as a sentence fragment
 // pass 57: a creature's tolerances in the shape strainCause reads, to name what strains it
@@ -503,7 +505,7 @@ class ReclamationMatch extends React.Component {
 
 	componentWillUnmount() {
 		document.removeEventListener('keydown', this.handleKeyDown);
-		[this.botTimer, this.noticeTimer, this.playbackTimer, this.beatTimer, this.arrivalTimer, this.legendTimer].forEach((t) => t && clearTimeout(t));
+		[this.botTimer, this.noticeTimer, this.playbackTimer, this.landTimer, this.beatTimer, this.arrivalTimer, this.legendTimer].forEach((t) => t && clearTimeout(t));
 		if (typeof window !== 'undefined') {
 			delete window.__reclamationDebug;
 		}
@@ -643,7 +645,7 @@ class ReclamationMatch extends React.Component {
 		number as it is told, which is the whole of "the Clash told per world".
 	*/
 	applyPlaybackEffects(playback) {
-		return playbackEffects(playback.frozenView, playback.events, playback.index);
+		return playbackEffects(playback.frozenView, playback.events, toldIndex(playback));
 	}
 
 	appendLog = (line) => {
@@ -1437,10 +1439,23 @@ class ReclamationMatch extends React.Component {
 		if (cue) {
 			this.cue(cue.name, cue.opts);
 		}
-		this.setState((prev) => ({ playback: { ...prev.playback, index: prev.playback.index + 1, current: event } }));
+		/*
+			PASS 64. A blow is told in two beats: in flight, with the target still at what it held,
+			and then landing, when its hold drops and the blow's word stands on it. Two blind readers
+			said the same thing of the one-beat Clash: "the result appears before the action".
+		*/
+		const flies = event && event.type === 'attack' && (event.outcome === 'hurt' || event.outcome === 'downed');
+		this.setState((prev) => ({ playback: { ...prev.playback, index: prev.playback.index + 1, current: event, landed: !flies } }));
 		// dev hook: window.__reclamationStepMs slows playback so it can be watched or captured
 		const stepMs = (typeof window !== 'undefined' && window.__reclamationStepMs) || RESOLUTION_STEP_MS;
-		this.playbackTimer = setTimeout(this.stepPlayback, Math.round(stepMs * stepWeight(event)));
+		const stepLength = Math.round(stepMs * stepWeight(event));
+		if (this.landTimer) {
+			clearTimeout(this.landTimer);
+		}
+		this.landTimer = flies
+			? setTimeout(() => this.setState((prev) => (prev.playback ? { playback: { ...prev.playback, landed: true } } : null)), Math.round(Math.min(BLOW_FLIGHT_MS, stepLength * 0.4)))
+			: null;
+		this.playbackTimer = setTimeout(this.stepPlayback, stepLength);
 	};
 
 	// the player sets the pace of watching: jump the resolution to the ruling, or the
@@ -1478,7 +1493,11 @@ class ReclamationMatch extends React.Component {
 		for (let i = playback.index; i < playback.events.length; i++) {
 			this.tellEvent(playback.events[i], playback);
 		}
-		this.setState((prev) => ({ playback: { ...prev.playback, index: prev.playback.events.length } }), this.finishPlayback);
+		if (this.landTimer) {
+			clearTimeout(this.landTimer);
+			this.landTimer = null;
+		}
+		this.setState((prev) => ({ playback: { ...prev.playback, index: prev.playback.events.length, landed: true } }), this.finishPlayback);
 	};
 
 	/*
@@ -2280,9 +2299,17 @@ class ReclamationMatch extends React.Component {
 			// pass 32: the step index, so a figure acting twice running replays its animation
 			highlights.beat = playback.index;
 			if (kind === 'attack' || kind === 'sweep' || kind === 'shield') {
-				highlights.acting = playback.current.recordId;
-				highlights.hit = playback.current.target || null;
-				highlights.flash = flashFor(playback.current);
+				/*
+					PASS 64. Only a blow that lands has a target: a creature downed before it acts
+					throws nothing, and a blind reader saw a stroke run from the fallen Hippochamp to
+					Fathomaw, framed as hit, under "Hippochamp falls before it acts".
+				*/
+				const outcome = playback.current.outcome;
+				const lands = playback.current.type !== 'attack' || outcome === 'hurt' || outcome === 'downed' || outcome === 'cancelled';
+				highlights.acting = outcome === 'lapsed' ? null : playback.current.recordId;
+				highlights.hit = lands ? playback.current.target || null : null;
+				// the blow's word stands on the target when it lands, not while it flies
+				highlights.flash = playback.landed === false ? undefined : flashFor(playback.current);
 			}
 			if (kind === 'recover') {
 				// a recovery moves the creature's own bulb, so it lights as the acted-on one
@@ -2547,6 +2574,11 @@ function writeLegendSeen() {
 	Pure and exported so the playback can be tested without a table:
 	see __tests__/reclamationPlayback.test.js.
 */
+// pass 64: how many events the board shows told: while the current blow is in flight its target still stands at what it held
+export function toldIndex(playback) {
+	return playback.landed === false ? Math.max(0, playback.index - 1) : playback.index;
+}
+
 export function playbackEffects(frozenView, events, index) {
 	const base = frozenView;
 	const hurt = {};

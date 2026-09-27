@@ -2,7 +2,7 @@
 
 Status: the running state of the game under ownership (brief: `reclamation-ownership-brief.md`). This file is the resume point. Any reset reads this first and continues at the weakest thing named below, never from scratch. Each pass appends its own section; the standing state at the top is rewritten in place.
 
-## Standing state (after pass 63, 2026-09-26)
+## Standing state (after pass 64, 2026-09-27)
 
 Pass 62 rewrote this section; it had said "after pass 31" through passes 32 to 61 (`reclamation-audit-2026-09-26.md`, "What was wrong with how I work"). Each pass ends by rewriting it.
 
@@ -31,7 +31,7 @@ Pass 50's read, for comparison: clarity 6, decisions 4, Clash 5, arc 3, another 
 
 **Nick's steer, 2026-09-19: the priority is whether the game is mechanically deep and fun, not how two people play it.** The ranking is the audit's (`reclamation-audit-2026-09-26.md`).
 
-1. **The Clash is a caption, not a fight** (critic: 3). Pass 62 keeps the victim on the world. Still missing: the blow itself, and the two waiting worlds shrink to 7-pixel labels.
+1. **The Clash is short to watch** (critic: 3; pass 64 readers: 3). Pass 64 draws each blow and tells it in two beats; following who hits whom went from 5 to 7. What is left is the fight itself: on most worlds it is one blow, and the two waiting worlds shrink to 7-pixel labels.
 2. **The top bar is unlabeled marks:** the flags, the tallies, the nine squares. Carried from passes 58 to 60: the score rows beside the squad, and the send counter's one held back.
 3. **Round 1's empty worlds are the largest thing on screen** while the decision is on the cards (carried since pass 57).
 4. **Balance:**
@@ -1317,4 +1317,36 @@ The audit's first two weaknesses. The design and every number are in `reclamatio
 **Verified:** 1780 web tests; the four table checks green.
 
 **Oldest carried item** (the checklist's rule): the send counter's held-back one, carried since pass 58. It is partly closed: the budget is now said in words where it is used. The counter itself stays with the top bar, open item 2.
+
+### Pass 64 (2026-09-27): the blow
+
+The audit's lowest score, the Clash (3). The design and the numbers are in `reclamation-the-blow.md`.
+
+Filmed at the game's own speed, the Clash showed three faults:
+- nothing joined the attacker to its target;
+- "DOWNED" stood above the rival's creature, where the half clips it (half its letters showed);
+- a creature downed greyed out on the step that downed it.
+
+**What changed:**
+- **Each blow is drawn.** A stroke runs from attacker to target and ends in a burst: red on yours, ink on the rival's.
+- **The blow's word stands on the creature it lands on.**
+- **A blow is told in two beats:** in flight, then landing, after a reader said "the result appears before the action".
+- **Only a blow that lands has a target.** A reader saw a fallen creature strike under "falls before it acts".
+
+**Measured.** Blind readers, eight frames of one Clash on seed 21:
+
+| | Live | First build | Two beats |
+|---|---|---|---|
+| Following who hits whom | 5 | 7 | 7 |
+| How worth watching | 2 | 3 | 3 |
+
+The watching score stays low because each world here is one blow. A longer fight is a rules question.
+
+**Verified:**
+- web tests;
+- the four table checks;
+- the Clash gauge, at 55 percent in motion, the same as live;
+- a probe of the lapsed steps finds no stroke and no hit frame.
+
+**Oldest carried item:** the score rows beside the squad (pass 60). Still open, as part of item 2.
 
